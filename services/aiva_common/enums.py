@@ -56,3 +56,26 @@ class VulnerabilityType(str, Enum):
     BOLA = "BOLA"
     INFO_LEAK = "Information Leak"
     WEAK_AUTH = "Weak Authentication"
+
+
+class TaskStatus(str, Enum):
+    """任務狀態枚舉 - 用於追蹤任務執行狀態"""
+
+    PENDING = "pending"
+    QUEUED = "queued"
+    RUNNING = "running"
+    COMPLETED = "completed"
+    FAILED = "failed"
+    CANCELLED = "cancelled"
+    TIMEOUT = "timeout"
+
+
+class ScanStatus(str, Enum):
+    """掃描狀態枚舉 - 用於追蹤掃描執行狀態"""
+
+    INITIALIZING = "initializing"
+    RUNNING = "running"
+    PAUSED = "paused"
+    COMPLETED = "completed"
+    FAILED = "failed"
+    CANCELLED = "cancelled"
