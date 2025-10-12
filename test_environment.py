@@ -20,10 +20,10 @@ print("測試模組導入...")
 print("=" * 60)
 
 try:
-    from services.aiva_common.schemas import (
+    from services.aiva_common.schemas import (  # noqa: F401
+        AivaMessage,
         FindingPayload,
         MessageHeader,
-        AivaMessage,
     )
 
     print("✅ services.aiva_common.schemas - 導入成功")
@@ -32,11 +32,11 @@ except ImportError as e:
     sys.exit(1)
 
 try:
-    from services.aiva_common.enums import (
-        ModuleName,
-        Topic,
-        Severity,
+    from services.aiva_common.enums import (  # noqa: F401
         Confidence,
+        ModuleName,
+        Severity,
+        Topic,
     )
 
     print("✅ services.aiva_common.enums - 導入成功")
@@ -45,7 +45,7 @@ except ImportError as e:
     sys.exit(1)
 
 try:
-    from services.aiva_common.utils import get_logger
+    from services.aiva_common.utils import get_logger  # noqa: F401
 
     print("✅ services.aiva_common.utils - 導入成功")
 except ImportError as e:
