@@ -60,10 +60,15 @@ def do_run_migrations(connection: Connection) -> None:
 async def run_async_migrations() -> None:
     """非同步運行遷移"""
     configuration = config.get_section(config.config_ini_section)
+    
+    # 確保 configuration 不為 None
+    if configuration is None:
+        configuration = {}
+    
     configuration["sqlalchemy.url"] = get_database_url()
 
     connectable = async_engine_from_config(
-        configuration,
+        configuration,  # type: ignore[arg-type]
         prefix="sqlalchemy.",
         poolclass=pool.NullPool,
     )
