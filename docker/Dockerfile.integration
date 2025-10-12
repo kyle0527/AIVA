@@ -1,0 +1,49 @@
+# syntax=docker/dockerfile:1
+FROM python:3.11-slim
+
+# 設置環境變數
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    PIP_NO_CACHE_DIR=1 \
+    PIP_DISABLE_PIP_VERSION_CHECK=1
+
+# 創建應用用戶 (安全性)
+RUN groupadd -r aiva && useradd -r -g aiva -d /app -s /bin/bash aiva
+
+# 安裝系統依賴
+RUN apt-get update && apt-get install -y \
+    gcc \
+    libpq-dev \
+    curl \
+    && rm -rf /var/lib/apt/lists/*
+
+# 設置工作目錄
+WORKDIR /app
+
+# 複製依賴文件
+COPY pyproject.toml ./
+
+# 安裝 Python 依賴
+RUN pip install --upgrade pip && \
+    pip install fastapi uvicorn[standard] "sqlalchemy>=2.0" \
+    psycopg2-binary alembic prometheus-client reportlab \
+    --no-cache-dir
+
+# 複製應用代碼
+COPY . /app/
+
+# 設置權限
+RUN chown -R aiva:aiva /app
+
+# 切換到應用用戶
+USER aiva
+
+# 健康檢查
+HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
+    CMD curl -f http://localhost:8083/health || exit 1
+
+# 暴露端口
+EXPOSE 8083
+
+# 入口點腳本
+ENTRYPOINT ["bash", "-c", "./docker/entrypoint.integration.sh"]

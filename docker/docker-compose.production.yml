@@ -1,0 +1,204 @@
+version: "3.9"
+
+services:
+  # 資料庫服務
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: aiva
+      POSTGRES_PASSWORD: aiva_secure_password
+      POSTGRES_DB: aiva
+      POSTGRES_INITDB_ARGS: "--auth-host=scram-sha-256"
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./docker/initdb:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U aiva -d aiva"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  # 消息隊列服務
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    environment:
+      RABBITMQ_DEFAULT_USER: aiva
+      RABBITMQ_DEFAULT_PASS: aiva_mq_password
+      RABBITMQ_DEFAULT_VHOST: aiva
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    restart: unless-stopped
+
+  # Redis 快取服務
+  redis:
+    image: redis:7-alpine
+    command: redis-server --appendonly yes --requirepass aiva_redis_password
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "--raw", "incr", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+    restart: unless-stopped
+
+  # API Gateway
+  api-gateway:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.api-gateway
+    environment:
+      - AIVA_DATABASE_URL=postgresql://aiva:aiva_secure_password@postgres:5432/aiva
+      - AIVA_RABBITMQ_URL=amqp://aiva:aiva_mq_password@rabbitmq:5672/aiva
+      - AIVA_REDIS_URL=redis://:aiva_redis_password@redis:6379/0
+      - AIVA_API_KEY=production_api_key_change_me
+      - AIVA_LOG_LEVEL=INFO
+    ports:
+      - "8080:8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    restart: unless-stopped
+
+  # Core Engine
+  core-engine:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.core
+    environment:
+      - AIVA_DATABASE_URL=postgresql://aiva:aiva_secure_password@postgres:5432/aiva
+      - AIVA_RABBITMQ_URL=amqp://aiva:aiva_mq_password@rabbitmq:5672/aiva
+      - AIVA_REDIS_URL=redis://:aiva_redis_password@redis:6379/0
+      - AIVA_LOG_LEVEL=INFO
+    depends_on:
+      postgres:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    restart: unless-stopped
+
+  # Integration Module  
+  integration:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.integration
+    environment:
+      - AIVA_DATABASE_URL=postgresql://aiva:aiva_secure_password@postgres:5432/aiva
+      - AIVA_INTEGRATION_TOKEN=integration_secure_token
+      - AIVA_CORS_ORIGINS=http://localhost:3000,https://your-domain.com
+      - AIVA_RATE_LIMIT_RPS=20
+      - AIVA_RATE_LIMIT_BURST=60
+      - AIVA_ENABLE_PROM=1
+      - AIVA_DB_POOL_SIZE=12
+      - AIVA_DB_MAX_OVERFLOW=24
+      - AIVA_DB_POOL_TIMEOUT=30
+      - AIVA_DB_POOL_RECYCLE=1800
+      - AUTO_MIGRATE=1
+    ports:
+      - "8083:8083"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    restart: unless-stopped
+
+  # Scan Module
+  scan-module:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.scan
+    environment:
+      - AIVA_DATABASE_URL=postgresql://aiva:aiva_secure_password@postgres:5432/aiva
+      - AIVA_RABBITMQ_URL=amqp://aiva:aiva_mq_password@rabbitmq:5672/aiva
+      - AIVA_LOG_LEVEL=INFO
+    depends_on:
+      postgres:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    restart: unless-stopped
+
+  # OAST Service
+  oast-service:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.oast
+    environment:
+      - AIVA_LOG_LEVEL=INFO
+    ports:
+      - "8084:8084"
+    restart: unless-stopped
+
+  # Function Modules
+  function-xss:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.function
+      args:
+        MODULE_NAME: function_xss
+    environment:
+      - AIVA_RABBITMQ_URL=amqp://aiva:aiva_mq_password@rabbitmq:5672/aiva
+      - AIVA_LOG_LEVEL=INFO
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    restart: unless-stopped
+
+  function-sqli:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.function
+      args:
+        MODULE_NAME: function_sqli
+    environment:
+      - AIVA_RABBITMQ_URL=amqp://aiva:aiva_mq_password@rabbitmq:5672/aiva
+      - AIVA_LOG_LEVEL=INFO
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    restart: unless-stopped
+
+  function-ssrf:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.function
+      args:
+        MODULE_NAME: function_ssrf
+    environment:
+      - AIVA_RABBITMQ_URL=amqp://aiva:aiva_mq_password@rabbitmq:5672/aiva
+      - AIVA_OAST_URL=http://oast-service:8084
+      - AIVA_LOG_LEVEL=INFO
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+      oast-service:
+        condition: service_started
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+    driver: local
+  rabbitmq_data:
+    driver: local
+  redis_data:
+    driver: local
+
+networks:
+  default:
+    driver: bridge

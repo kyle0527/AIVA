@@ -1,0 +1,128 @@
+
+[build-system]
+requires = ["setuptools", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "aiva-platform-integrated"
+version = "1.0.0"
+description = "AI-Assisted Vulnerability Analysis Platform — Enhanced Stability & Modern Architecture"
+readme = "README.md"
+requires-python = ">=3.13"
+authors = [{name = "AIVA Maintainers"}]
+dependencies = [
+  "fastapi>=0.115.0",
+  "uvicorn[standard]>=0.30.0",
+  "pydantic>=2.7.0",
+  "aio-pika>=9.4.0",
+  "httpx>=0.27.0",
+  "beautifulsoup4>=4.12.2",
+  "lxml>=5.0.0",
+  "structlog>=24.1.0",
+  "redis>=5.0.0",
+  "python-dotenv>=1.0.1",
+  "orjson>=3.10.0",
+  "sqlalchemy>=2.0.31",
+  "asyncpg>=0.29.0",
+  "psycopg2-binary>=2.9.0",
+  "alembic>=1.13.2",
+  "neo4j>=5.23.0",
+  "tenacity>=8.3.0",
+]
+
+[project.optional-dependencies]
+# 生產環境可選依賴
+rabbit = ["aio-pika>=9.4"]
+pdf = ["reportlab>=3.6"]
+monitoring = ["prometheus-client>=0.20"]
+dev = [
+  "pytest>=8.0.0",
+  "pytest-cov>=4.0.0",
+  "pytest-asyncio>=0.23.0",
+  "black>=24.0.0",
+  "ruff>=0.3.0",
+  "mypy>=1.8.0",
+  "pre-commit>=3.6.0",
+]
+
+[tool.black]
+line-length = 88
+target-version = ["py313"]
+
+[tool.ruff]
+line-length = 88
+select = ["E", "F", "I", "UP", "B", "SIM", "C4", "PIE"]
+ignore = ["E501"]  # handled by black
+fix = true
+target-version = "py313"
+
+[tool.ruff.isort]
+known-first-party = ["services"]
+force-sort-within-sections = true
+
+[tool.isort]
+profile = "black"
+line_length = 88
+multi_line_output = 3
+known_first_party = ["services"]
+
+[tool.mypy]
+python_version = "3.13"
+warn_return_any = true
+warn_unused_configs = true
+warn_redundant_casts = true
+warn_unused_ignores = true
+disallow_any_generics = true
+check_untyped_defs = true
+no_implicit_reexport = true
+no_implicit_optional = false
+disallow_untyped_defs = false
+ignore_missing_imports = true
+exclude = "^(tests|services[\\/]scan)[\\/]"
+disable_error_code = [
+    "no-any-return",
+    "assignment", 
+    "type-arg",
+    "valid-type",
+    "override",
+    "misc",
+    "unused-ignore"
+]
+
+[[tool.mypy.overrides]]
+module = [
+    "aio_pika.*",
+    "httpx.*", 
+    "beautifulsoup4.*",
+    "lxml.*",
+    "redis.*",
+    "neo4j.*",
+    "reportlab.*",
+    "prometheus_client.*"
+]
+ignore_missing_imports = true
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-v --tb=short --strict-markers"
+asyncio_mode = "auto"
+markers = [
+    "asyncio: marks tests as async tests",
+    "integration: marks tests as integration tests",
+    "unit: marks tests as unit tests",
+    "slow: marks tests as slow running",
+]
+
+[tool.coverage.run]
+source = ["services"]
+omit = ["tests/*", "*/test_*"]
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "def __repr__",
+    "if self.debug:",
+    "if __name__ == .__main__.:",
+    "raise AssertionError",
+    "raise NotImplementedError",
+]

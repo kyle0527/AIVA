@@ -1,0 +1,30 @@
+
+version: "3.9"
+
+services:
+  rabbitmq:
+    image: rabbitmq:3.13-management
+    ports: ["5672:5672", "15672:15672"]
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+
+  redis:
+    image: redis:7
+    ports: ["6379:6379"]
+
+  postgres:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: aiva
+      POSTGRES_PASSWORD: aiva
+      POSTGRES_DB: aiva
+    ports: ["5432:5432"]
+    volumes:
+      - ./initdb:/docker-entrypoint-initdb.d
+
+  neo4j:
+    image: neo4j:5
+    environment:
+      NEO4J_AUTH: neo4j/password
+    ports: ["7474:7474", "7687:7687"]
