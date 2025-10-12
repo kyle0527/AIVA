@@ -57,7 +57,9 @@ class FindingRecord(Base):  # type: ignore[misc, valid-type]
 
     def to_finding_payload(self) -> FindingPayload:
         """轉換為 FindingPayload 對象"""
-        return FindingPayload.model_validate_json(self.raw_data)
+        # 從資料庫欄位取得字串值
+        raw_data_str: str = str(self.raw_data)  # type: ignore[attr-defined]
+        return FindingPayload.model_validate_json(raw_data_str)
 
 
 class SqlResultDatabase(TestResultDatabase):
@@ -115,9 +117,9 @@ class SqlResultDatabase(TestResultDatabase):
 
             if existing:
                 # 更新現有記錄
-                existing.status = finding.status
-                existing.raw_data = finding.model_dump_json()
-                existing.updated_at = datetime.utcnow()
+                existing.status = finding.status  # type: ignore[misc]
+                existing.raw_data = finding.model_dump_json()  # type: ignore[misc]
+                existing.updated_at = datetime.utcnow()  # type: ignore[misc]
             else:
                 # 創建新記錄
                 record = FindingRecord(
@@ -239,8 +241,8 @@ class SqlResultDatabase(TestResultDatabase):
             return {
                 "scan_id": scan_id,
                 "total_findings": total,
-                "by_severity": dict(severity_stats),
-                "by_vulnerability_type": dict(vuln_type_stats),
+                "by_severity": {row[0]: row[1] for row in severity_stats},  # type: ignore[misc]
+                "by_vulnerability_type": {row[0]: row[1] for row in vuln_type_stats},  # type: ignore[misc]
             }
         finally:
             session.close()
