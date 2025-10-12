@@ -1,6 +1,7 @@
 """
 測試 AIVA 模組導入 - 用於驗證環境設定
 """
+
 from __future__ import annotations
 
 import sys
@@ -10,7 +11,7 @@ print("AIVA 環境診斷測試")
 print("=" * 60)
 
 print(f"\n當前工作目錄: {sys.path[0]}")
-print(f"\nPython 路徑:")
+print("\nPython 路徑:")
 for i, path in enumerate(sys.path[:5], 1):
     print(f"  {i}. {path}")
 
@@ -24,6 +25,7 @@ try:
         MessageHeader,
         AivaMessage,
     )
+
     print("✅ services.aiva_common.schemas - 導入成功")
 except ImportError as e:
     print(f"❌ services.aiva_common.schemas - 導入失敗: {e}")
@@ -36,6 +38,7 @@ try:
         Severity,
         Confidence,
     )
+
     print("✅ services.aiva_common.enums - 導入成功")
 except ImportError as e:
     print(f"❌ services.aiva_common.enums - 導入失敗: {e}")
@@ -43,6 +46,7 @@ except ImportError as e:
 
 try:
     from services.aiva_common.utils import get_logger
+
     print("✅ services.aiva_common.utils - 導入成功")
 except ImportError as e:
     print(f"❌ services.aiva_common.utils - 導入失敗: {e}")
@@ -61,14 +65,14 @@ try:
         source_module=ModuleName.CORE,
     )
     print(f"✅ MessageHeader 實例化成功: {header.message_id}")
-    
+
     message = AivaMessage(
         header=header,
         topic=Topic.TASK_SCAN_START,
         payload={"test": "data"},
     )
     print(f"✅ AivaMessage 實例化成功: {message.topic}")
-    
+
     print("\n🎉 所有測試完成！環境設定正確！")
 except Exception as e:
     print(f"❌ 模型實例化失敗: {e}")

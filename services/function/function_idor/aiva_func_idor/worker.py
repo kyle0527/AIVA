@@ -325,7 +325,7 @@ class IdorWorker:
                     f"Privilege: {result.actual_level.value if result.actual_level else 'Unknown'} → "
                     f"{result.attempted_level.value if result.attempted_level else 'Unknown'}"
                 ),
-                proof=result.evidence if hasattr(result, 'evidence') else None,
+                proof=result.evidence if hasattr(result, "evidence") else None,
             ),
             impact=FindingImpact(
                 description=(
