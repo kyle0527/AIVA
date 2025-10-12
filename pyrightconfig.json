@@ -1,0 +1,8 @@
+{
+  "include": ["services"],
+  "exclude": ["**/__pycache__", "**/.venv"],
+  "reportMissingImports": "none",
+  "reportMissingTypeStubs": "none",
+  "reportImportCycles": "none",
+  "typeCheckingMode": "off"
+}

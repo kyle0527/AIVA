@@ -8,7 +8,7 @@ from __future__ import annotations
 from enum import Enum
 
 import httpx
-from pydantic import BaseModel, Field
+from pydantic import BaseModel
 
 from services.aiva_common.enums import Confidence, Severity, VulnerabilityType
 from services.aiva_common.schemas import FunctionTaskPayload
