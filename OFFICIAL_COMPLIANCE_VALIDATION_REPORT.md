@@ -20,12 +20,14 @@
 ## 1️⃣ Module-APISec (Python)
 
 ### 📍 檔案清單
+
 - `services/function/function_idor/aiva_func_idor/bfla_tester.py` (375 行)
 - `services/function/function_idor/aiva_func_idor/mass_assignment_tester.py` (343 行)
 
 ### ✅ 官方規範驗證
 
 #### **Pydantic v2.12.0**
+
 | 項目 | 官方要求 | 實際使用 | 狀態 |
 |------|---------|---------|------|
 | Import | `from pydantic import BaseModel, Field, field_validator` | ✅ 正確 | ✅ |
@@ -34,6 +36,7 @@
 | Type Hints | 使用 `str \| None` (Python 3.10+) | ✅ 正確 | ✅ |
 
 #### **數據合約 (schemas.py)**
+
 ```python
 # ✅ 正確使用 Pydantic v2 語法
 from pydantic import BaseModel, Field, field_validator
@@ -50,6 +53,7 @@ class FindingPayload(BaseModel):
 ```
 
 #### **HTTP 客戶端 (httpx)**
+
 ```python
 # ✅ 使用官方推薦的 async API
 async with httpx.AsyncClient() as client:
@@ -57,6 +61,7 @@ async with httpx.AsyncClient() as client:
 ```
 
 ### 📝 驗證結論
+
 **✅ 完全符合 Pydantic v2 官方規範，無需修正**
 
 ---
@@ -64,6 +69,7 @@ async with httpx.AsyncClient() as client:
 ## 2️⃣ Function-SCA (Go)
 
 ### 📍 檔案清單
+
 - `services/function/function_sca_go/cmd/worker/main.go`
 - `services/function/function_sca_go/internal/scanner/sca_scanner.go`
 - `services/function/function_sca_go/pkg/messaging/publisher.go`
@@ -73,6 +79,7 @@ async with httpx.AsyncClient() as client:
 ### ✅ 官方規範驗證
 
 #### **amqp091-go (RabbitMQ)**
+
 | 項目 | 官方要求 | 實際使用 | 狀態 |
 |------|---------|---------|------|
 | Import | `import amqp "github.com/rabbitmq/amqp091-go"` | ✅ 正確 | ✅ |
@@ -82,9 +89,10 @@ async with httpx.AsyncClient() as client:
 | Consume | 官方參數順序 | ✅ 正確 | ✅ |
 | 版本 | v1.10.0 (2024-05-08 最新) | ⚠️ **v1.9.0** | ⚠️ |
 
-**官方文檔**: https://pkg.go.dev/github.com/rabbitmq/amqp091-go@v1.10.0
+**官方文檔**: <https://pkg.go.dev/github.com/rabbitmq/amqp091-go@v1.10.0>
 
 #### **實際代碼示例**
+
 ```go
 // ✅ 正確使用官方 API
 import amqp "github.com/rabbitmq/amqp091-go"
@@ -115,12 +123,14 @@ msgs, err := ch.Consume(
 ### ⚠️ 建議改進
 
 #### **1. 升級 amqp091-go 版本**
+
 **當前**: v1.9.0  
 **建議**: v1.10.0 (最新穩定版, 2024-05-08)
 
 **修改檔案**: `services/function/function_sca_go/go.mod`
 
 **修改前**:
+
 ```go
 require (
     github.com/rabbitmq/amqp091-go v1.9.0
@@ -128,6 +138,7 @@ require (
 ```
 
 **修改後**:
+
 ```go
 require (
     github.com/rabbitmq/amqp091-go v1.10.0
@@ -135,6 +146,7 @@ require (
 ```
 
 **執行命令**:
+
 ```powershell
 cd services/function/function_sca_go
 go get github.com/rabbitmq/amqp091-go@v1.10.0
@@ -142,6 +154,7 @@ go mod tidy
 ```
 
 ### 📝 驗證結論
+
 **⚠️ API 使用完全正確，建議升級到最新版本 v1.10.0**
 
 ---
@@ -149,6 +162,7 @@ go mod tidy
 ## 3️⃣ Module-Secrets (Rust)
 
 ### 📍 檔案清單
+
 - `services/scan/info_gatherer_rust/src/secret_detector.rs`
 - `services/scan/info_gatherer_rust/src/git_history_scanner.rs`
 - `services/scan/info_gatherer_rust/Cargo.toml`
@@ -156,6 +170,7 @@ go mod tidy
 ### ✅ 官方規範驗證
 
 #### **Regex Crate**
+
 | 項目 | 官方要求 | 實際使用 | 狀態 |
 |------|---------|---------|------|
 | Import | `use regex::Regex;` | ✅ 正確 | ✅ |
@@ -163,9 +178,10 @@ go mod tidy
 | 簡單正則 | 簡單正則使用 `r"..."` | ✅ 正確 | ✅ |
 | Error Handling | 使用 `.unwrap()` 或 `?` | ✅ 正確 | ✅ |
 
-**官方文檔**: https://docs.rs/regex/latest/regex/
+**官方文檔**: <https://docs.rs/regex/latest/regex/>
 
 #### **實際代碼示例**
+
 ```rust
 // ✅ 正確使用 regex crate
 use regex::Regex;
@@ -182,6 +198,7 @@ SecretRule {
 ```
 
 #### **Serde (序列化)**
+
 ```rust
 // ✅ 正確使用 serde
 use serde::{Deserialize, Serialize};
@@ -195,6 +212,7 @@ pub struct SecretFinding {
 ```
 
 #### **Git2 Crate**
+
 ```rust
 // ✅ 正確使用 git2
 use git2::Repository;
@@ -206,6 +224,7 @@ pub fn scan_git_history(repo_path: &Path) -> Result<Vec<SecretFinding>> {
 ```
 
 #### **Cargo.toml 依賴版本**
+
 ```toml
 [dependencies]
 regex = "1.10"           # ✅ 最新穩定版
@@ -215,6 +234,7 @@ lapin = "2.3"            # ✅ RabbitMQ 客戶端
 ```
 
 ### 📝 驗證結論
+
 **✅ 完全符合 Rust 官方規範與最佳實踐，無需修正**
 
 ---
@@ -222,6 +242,7 @@ lapin = "2.3"            # ✅ RabbitMQ 客戶端
 ## 4️⃣ Module-AttackPath (Python + Neo4j)
 
 ### 📍 檔案清單
+
 - `services/integration/aiva_integration/attack_path_analyzer/engine.py`
 - `services/integration/aiva_integration/attack_path_analyzer/graph_builder.py`
 - `services/integration/aiva_integration/attack_path_analyzer/visualizer.py`
@@ -230,6 +251,7 @@ lapin = "2.3"            # ✅ RabbitMQ 客戶端
 ### ✅ 官方規範驗證
 
 #### **Neo4j Python Driver**
+
 | 項目 | 官方要求 | 實際使用 | 狀態 |
 |------|---------|---------|------|
 | Import | `from neo4j import GraphDatabase` | ✅ 正確 | ✅ |
@@ -237,9 +259,10 @@ lapin = "2.3"            # ✅ RabbitMQ 客戶端
 | **推薦 API** | `driver.execute_query(query, params)` | ❌ 未使用 | ⚠️ |
 | Session (舊式) | `with driver.session() as session` | ✅ 使用 | ⚠️ |
 
-**官方文檔**: https://neo4j.com/docs/python-manual/current/
+**官方文檔**: <https://neo4j.com/docs/python-manual/current/>
 
 #### **當前實作 (Session-based API)**
+
 ```python
 # ⚠️ 使用舊式 session API (仍可用，但不推薦)
 def initialize_graph(self):
@@ -249,6 +272,7 @@ def initialize_graph(self):
 ```
 
 #### **官方推薦 API (execute_query)**
+
 ```python
 # ✅ 官方推薦使用 execute_query (更簡單、自動管理 session、自動重試)
 def initialize_graph(self):
@@ -265,6 +289,7 @@ def initialize_graph(self):
 #### **1. 使用官方推薦的 execute_query API**
 
 **優點**:
+
 - ✅ 自動管理 session 生命週期
 - ✅ 自動重試機制
 - ✅ 更簡潔的代碼
@@ -273,6 +298,7 @@ def initialize_graph(self):
 **改進範例**:
 
 **修改前** (當前使用 `session.run`):
+
 ```python
 def add_asset_node(self, asset: Asset):
     with self.driver.session() as session:
@@ -288,6 +314,7 @@ def add_asset_node(self, asset: Asset):
 ```
 
 **修改後** (推薦使用 `execute_query`):
+
 ```python
 def add_asset_node(self, asset: Asset):
     self.driver.execute_query(
@@ -302,6 +329,7 @@ def add_asset_node(self, asset: Asset):
 ```
 
 **需修改的方法**:
+
 - `initialize_graph()` - 索引創建
 - `add_asset_node()` - 資產節點
 - `add_vulnerability_node()` - 漏洞節點
@@ -310,6 +338,7 @@ def add_asset_node(self, asset: Asset):
 - `calculate_risk_score()` - 風險計算
 
 ### 📝 驗證結論
+
 **⚠️ API 使用正確但不符合官方最佳實踐，建議全面改用 `execute_query()`**
 
 ---
@@ -317,14 +346,17 @@ def add_asset_node(self, asset: Asset):
 ## 📋 修正優先級總結
 
 ### 🔴 P0 (必須修正)
+
 無
 
 ### 🟡 P1 (強烈建議)
+
 1. **Module-AttackPath**: 改用 Neo4j 官方推薦的 `execute_query()` API
    - 影響: 性能改善、代碼簡化、自動重試
    - 工作量: 中等 (需修改所有查詢方法)
 
 ### 🟢 P2 (建議改進)
+
 1. **Function-SCA**: 升級 amqp091-go 從 v1.9.0 到 v1.10.0
    - 影響: 獲得最新安全補丁與功能
    - 工作量: 極小 (僅需修改 go.mod 並執行 `go mod tidy`)
@@ -334,6 +366,7 @@ def add_asset_node(self, asset: Asset):
 ## 🎯 執行建議
 
 ### 選項 1: 全面優化 (推薦)
+
 ```powershell
 # 1. 升級 Go 依賴
 cd services/function/function_sca_go
@@ -346,9 +379,11 @@ go mod tidy
 ```
 
 ### 選項 2: 僅修正必要項目
+
 當前無 P0 必須修正項目，所有模組均可正常運行。
 
 ### 選項 3: 保持現狀
+
 所有模組符合官方 API 語法，可以正常運行，暫不進行任何修改。
 
 ---
@@ -356,14 +391,17 @@ go mod tidy
 ## 📊 總結
 
 ### ✅ 符合官方規範的模組
+
 - **Module-APISec (Python)**: 100% 符合 Pydantic v2 官方規範
 - **Module-Secrets (Rust)**: 100% 符合 Rust 官方最佳實踐
 
 ### ⚠️ 建議改進的模組
+
 - **Function-SCA (Go)**: API 使用正確，建議升級版本
 - **Module-AttackPath (Python)**: API 使用正確，建議改用推薦方法
 
 ### 🎉 整體評估
+
 **所有 P0 模組代碼品質良好，無編譯錯誤，API 使用正確，符合官方規範要求。**
 
 建議優先進行 **Neo4j API 重構**，以獲得更好的性能與維護性。

@@ -5,7 +5,19 @@ from typing import Any
 
 from pydantic import BaseModel, Field, HttpUrl, field_validator
 
-from .enums import Confidence, ModuleName, Severity, Topic, VulnerabilityType
+from .enums import (
+    Confidence,
+    IntelSource,
+    IOCType,
+    ModuleName,
+    PostExTestType,
+    RemediationStatus,
+    RemediationType,
+    Severity,
+    ThreatLevel,
+    Topic,
+    VulnerabilityType,
+)
 
 
 class MessageHeader(BaseModel):
@@ -395,3 +407,123 @@ class ModuleStatus(BaseModel):
         if v not in allowed:
             raise ValueError(f"Invalid status: {v}. Must be one of {allowed}")
         return v
+
+
+# ==================== ThreatIntel Payloads ====================
+
+
+class ThreatIntelLookupPayload(BaseModel):
+    """威脅情報查詢 Payload"""
+
+    task_id: str
+    scan_id: str
+    indicator: str
+    indicator_type: IOCType
+    sources: list[IntelSource] | None = None
+    enrich: bool = True
+
+
+class ThreatIntelResultPayload(BaseModel):
+    """威脅情報查詢結果 Payload"""
+
+    task_id: str
+    scan_id: str
+    indicator: str
+    indicator_type: IOCType
+    threat_level: ThreatLevel
+    sources: dict[str, Any] = Field(default_factory=dict)
+    mitre_techniques: list[str] = Field(default_factory=list)
+    enrichment_data: dict[str, Any] = Field(default_factory=dict)
+    timestamp: datetime = Field(default_factory=lambda: datetime.now(UTC))
+
+
+# ==================== AuthZ Payloads ====================
+
+
+class AuthZCheckPayload(BaseModel):
+    """權限檢查 Payload"""
+
+    task_id: str
+    scan_id: str
+    user_id: str
+    resource: str
+    permission: str
+    context: dict[str, Any] = Field(default_factory=dict)
+
+
+class AuthZAnalysisPayload(BaseModel):
+    """權限分析 Payload"""
+
+    task_id: str
+    scan_id: str
+    analysis_type: str  # "coverage", "conflicts", "over_privileged"
+    target: str | None = None  # user_id or role_id
+
+
+class AuthZResultPayload(BaseModel):
+    """權限分析結果 Payload"""
+
+    task_id: str
+    scan_id: str
+    decision: str  # "allow", "deny", "conditional"
+    analysis: dict[str, Any] = Field(default_factory=dict)
+    recommendations: list[str] = Field(default_factory=list)
+    timestamp: datetime = Field(default_factory=lambda: datetime.now(UTC))
+
+
+# ==================== Remediation Payloads ====================
+
+
+class RemediationGeneratePayload(BaseModel):
+    """修復方案生成 Payload"""
+
+    task_id: str
+    scan_id: str
+    finding_id: str
+    vulnerability_type: VulnerabilityType
+    remediation_type: RemediationType
+    context: dict[str, Any] = Field(default_factory=dict)
+    auto_apply: bool = False
+
+
+class RemediationResultPayload(BaseModel):
+    """修復方案結果 Payload"""
+
+    task_id: str
+    scan_id: str
+    finding_id: str
+    remediation_type: RemediationType
+    status: RemediationStatus
+    patch_content: str | None = None
+    instructions: list[str] = Field(default_factory=list)
+    verification_steps: list[str] = Field(default_factory=list)
+    risk_assessment: dict[str, Any] = Field(default_factory=dict)
+    timestamp: datetime = Field(default_factory=lambda: datetime.now(UTC))
+
+
+# ==================== PostEx Payloads ====================
+
+
+class PostExTestPayload(BaseModel):
+    """後滲透測試 Payload (僅用於授權測試環境)"""
+
+    task_id: str
+    scan_id: str
+    test_type: PostExTestType
+    target: str  # 目標系統/網絡
+    safe_mode: bool = True
+    authorization_token: str | None = None
+    context: dict[str, Any] = Field(default_factory=dict)
+
+
+class PostExResultPayload(BaseModel):
+    """後滲透測試結果 Payload"""
+
+    task_id: str
+    scan_id: str
+    test_type: PostExTestType
+    findings: list[dict[str, Any]] = Field(default_factory=list)
+    risk_level: ThreatLevel
+    safe_mode: bool
+    authorization_verified: bool = False
+    timestamp: datetime = Field(default_factory=lambda: datetime.now(UTC))

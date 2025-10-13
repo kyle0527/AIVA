@@ -46,6 +46,7 @@ AIVA-main/
 ```
 
 這個腳本會自動:
+
 - ✅ 建立 Python 虛擬環境並安裝依賴
 - ✅ 安裝 Node.js 依賴和 Playwright 瀏覽器
 - ✅ 下載 Go 模組依賴
@@ -87,6 +88,7 @@ AIVA-main/
 | **Integration** | `services/integration/aiva_integration` | 報告整合 | `uvicorn app:app --port 8003` |
 
 **手動啟動單一模組**:
+
 ```powershell
 .\.venv\Scripts\Activate.ps1
 cd services\core\aiva_core
@@ -102,6 +104,7 @@ python -m uvicorn app:app --port 8001 --reload
 | **Scan (Playwright)** | `services/scan/aiva_scan_node` | 動態網頁掃描 | Node.js 事件迴圈天生適合瀏覽器 I/O |
 
 **安裝與啟動**:
+
 ```powershell
 cd services\scan\aiva_scan_node
 
@@ -120,12 +123,14 @@ npm start
 ```
 
 **依賴**:
+
 - Node.js 20+
 - Playwright 1.41+
 - amqplib (RabbitMQ 客戶端)
 - pino (日誌)
 
 **任務格式**:
+
 ```json
 {
   "scan_id": "scan_xxx",
@@ -145,6 +150,7 @@ npm start
 | **SSRF Detector** | `services/function/function_ssrf_go` | SSRF 漏洞檢測 | Goroutines 支援 100K+ 並發連接 |
 
 **安裝與啟動**:
+
 ```powershell
 cd services\function\function_ssrf_go
 
@@ -161,17 +167,20 @@ go build -o ssrf_worker.exe cmd/worker/main.go
 ```
 
 **依賴**:
+
 - Go 1.21+
 - streadway/amqp (RabbitMQ)
 - uber/zap (日誌)
 
 **檢測 Payloads**:
+
 - AWS IMDS: `http://169.254.169.254/latest/meta-data/`
 - GCP Metadata: `http://metadata.google.internal/...`
 - Localhost: `http://127.0.0.1/`, `http://[::1]/`
 - Private IPs: `http://192.168.1.1/`, `http://10.0.0.1/`
 
 **性能**:
+
 - 單次檢測: <1 秒
 - 並發能力: 1000+ 任務/秒
 - 記憶體: ~10 MB
@@ -185,6 +194,7 @@ go build -o ssrf_worker.exe cmd/worker/main.go
 | **Sensitive Info Gatherer** | `services/scan/info_gatherer_rust` | 敏感資訊掃描 | 正則引擎比 Python 快 10-100x |
 
 **安裝與啟動**:
+
 ```powershell
 cd services\scan\info_gatherer_rust
 
@@ -197,6 +207,7 @@ cargo build --release
 ```
 
 **依賴**:
+
 - Rust 1.70+
 - regex (正則引擎)
 - aho-corasick (關鍵字匹配)
@@ -204,6 +215,7 @@ cargo build --release
 - lapin (RabbitMQ)
 
 **支援檢測**:
+
 1. AWS Access Key (`AKIA[0-9A-Z]{16}`)
 2. AWS Secret Key
 3. GitHub Token (`ghp_...`)
@@ -216,6 +228,7 @@ cargo build --release
 10. Database Connection String
 
 **性能基準** (AMD Ryzen 5 5600):
+
 - 小文件 (10 KB): ~0.5 ms
 - 中文件 (100 KB): ~2 ms
 - 大文件 (1 MB): ~15 ms
@@ -227,10 +240,10 @@ cargo build --release
 
 | 服務 | 埠號 | 用途 | 存取方式 |
 |-----|------|------|---------|
-| **Core API** | 8001 | 智慧分析引擎 API | http://localhost:8001/docs |
-| **Integration API** | 8003 | 報告整合 API | http://localhost:8003/docs |
+| **Core API** | 8001 | 智慧分析引擎 API | <http://localhost:8001/docs> |
+| **Integration API** | 8003 | 報告整合 API | <http://localhost:8003/docs> |
 | **RabbitMQ AMQP** | 5672 | 訊息佇列 | `amqp://localhost:5672` |
-| **RabbitMQ 管理** | 15672 | Web 管理介面 | http://localhost:15672 (aiva/dev_password) |
+| **RabbitMQ 管理** | 15672 | Web 管理介面 | <http://localhost:15672> (aiva/dev_password) |
 | **PostgreSQL** | 5432 | 資料庫 | `postgresql://localhost:5432/aiva_dev` |
 
 ---
@@ -378,24 +391,28 @@ Invoke-RestMethod -Uri "http://localhost:8003/findings"
 ### 單一模組測試
 
 **Python 模組**:
+
 ```powershell
 cd services\core\aiva_core
 pytest tests/ -v --cov=. --cov-report=html
 ```
 
 **Node.js 模組**:
+
 ```powershell
 cd services\scan\aiva_scan_node
 npm test
 ```
 
 **Go 模組**:
+
 ```powershell
 cd services\function\function_ssrf_go
 go test -v -cover ./...
 ```
 
 **Rust 模組**:
+
 ```powershell
 cd services\scan\info_gatherer_rust
 cargo test --release
@@ -410,6 +427,7 @@ cargo test --release
 **錯誤**: `Connection refused: localhost:5672`
 
 **解決**:
+
 ```powershell
 # 檢查 Docker 是否運行
 docker ps
@@ -428,6 +446,7 @@ Test-NetConnection localhost -Port 5672
 **錯誤**: `Cannot find module 'playwright'`
 
 **解決**:
+
 ```powershell
 cd services\scan\aiva_scan_node
 npm install
@@ -441,6 +460,7 @@ npm run install:browsers
 **錯誤**: `package xxx is not in GOROOT`
 
 **解決**:
+
 ```powershell
 cd services\function\function_ssrf_go
 go mod download
@@ -455,6 +475,7 @@ go clean -modcache  # 清理快取
 **說明**: 第一次編譯 Rust 專案需要 5-10 分鐘
 
 **解決**:
+
 ```powershell
 # 使用釋出模式編譯 (更快)
 cargo build --release
@@ -471,6 +492,7 @@ $env:RUSTC_WRAPPER = "sccache"
 **錯誤**: `Activate.ps1 is not digitally signed`
 
 **解決**:
+
 ```powershell
 # 設置執行策略
 Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
@@ -492,6 +514,7 @@ Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
 | **開發速度** | ✅ 最快 | ✅ 快 | ⚠️ 中等 | ❌ 慢 |
 
 **建議使用場景**:
+
 - **Python**: 複雜業務邏輯、快速原型、ML/AI 整合
 - **Node.js**: 瀏覽器自動化、WebSocket、前端工具鏈
 - **Go**: 高並發網路請求、微服務、API Gateway
@@ -502,6 +525,7 @@ Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
 ## 🎯 開發路線圖
 
 ### Phase 1: MVP (當前)
+
 - ✅ Python 所有模組可運行
 - ✅ Node.js Playwright 掃描器
 - ✅ Go SSRF 探測器
@@ -509,18 +533,21 @@ Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
 - ✅ 多語言啟動腳本
 
 ### Phase 2: 整合 (2 週)
+
 - ⏳ gRPC 跨語言通訊
 - ⏳ Protocol Buffers Schema
 - ⏳ OpenTelemetry 追蹤串接
 - ⏳ 統一日誌格式
 
 ### Phase 3: 優化 (4 週)
+
 - ⏳ 性能基準測試
 - ⏳ 記憶體洩漏檢測
 - ⏳ 負載測試
 - ⏳ CI/CD Pipeline
 
 ### Phase 4: 生產 (6 週)
+
 - ⏳ Kubernetes 部署
 - ⏳ 監控告警
 - ⏳ 自動擴展

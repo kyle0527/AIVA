@@ -8,7 +8,7 @@
 
 ## 📁 目錄結構總覽
 
-```
+```plaintext
 services/
 ├── aiva_common/          [Python] 共享 Schema/MQ/Config
 ├── core/aiva_core/       [Python] 智慧分析與協調中心
@@ -72,6 +72,7 @@ Start-Process pwsh -ArgumentList "-Command", "cd services\core\aiva_core; python
 ```
 
 **環境變數** (可選):
+
 ```powershell
 $env:RABBITMQ_URL = "amqp://aiva:dev_password@localhost:5672/"
 $env:LOG_LEVEL = "DEBUG"
@@ -95,6 +96,7 @@ python -m services.scan.aiva_scan.worker
 ```
 
 **測試掃描任務**:
+
 ```powershell
 # 發送測試訊息到 RabbitMQ
 python -c "
@@ -148,6 +150,7 @@ Start-Process pwsh -ArgumentList "-Command", "cd services\function\function_xss\
 ```
 
 **依賴**:
+
 - Playwright (瀏覽器自動化)
 - 需先安裝瀏覽器: `playwright install chromium`
 
@@ -251,6 +254,7 @@ Write-Host "📍 RabbitMQ 管理介面: http://localhost:15672 (帳號: aiva / d
 ```
 
 **使用方式**:
+
 ```powershell
 .\start_all.ps1
 ```
@@ -300,6 +304,7 @@ npm start
 ```
 
 **package.json** (MVP):
+
 ```json
 {
   "scripts": {
@@ -336,7 +341,8 @@ go build -o ssrf_worker.exe cmd/worker/main.go
 ```
 
 **目錄結構** (MVP):
-```
+
+```plaintext
 function_ssrf_go/
 ├── cmd/
 │   └── worker/
@@ -378,6 +384,7 @@ cargo build --release
 ```
 
 **Cargo.toml** (MVP):
+
 ```toml
 [package]
 name = "aiva-info-gatherer"

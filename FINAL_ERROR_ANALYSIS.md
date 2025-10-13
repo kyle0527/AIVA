@@ -8,6 +8,7 @@
 ## ✅ schemas.py 定義 (標準規範)
 
 ### Vulnerability
+
 ```python
 class Vulnerability(BaseModel):
     name: VulnerabilityType    # ✅ 必須
@@ -17,6 +18,7 @@ class Vulnerability(BaseModel):
 ```
 
 ### FindingPayload
+
 ```python
 class FindingPayload(BaseModel):
     finding_id: str           # ✅ 必須
@@ -37,6 +39,7 @@ class FindingPayload(BaseModel):
 ```
 
 ### Authentication
+
 ```python
 class Authentication(BaseModel):
     method: str = "none"
@@ -54,9 +57,10 @@ class Authentication(BaseModel):
 
 ## 📋 檔案錯誤清單
 
-### ✅ bfla_tester.py - 全部正確!
+### ✅ bfla_tester.py - 全部正確
 
 **Vulnerability 創建** (行 251-256):
+
 ```python
 vulnerability = Vulnerability(
     name=VulnerabilityType.BOLA,  # ✅
@@ -67,6 +71,7 @@ vulnerability = Vulnerability(
 ```
 
 **FindingPayload 創建** (行 306-316):
+
 ```python
 return FindingPayload(
     finding_id=finding_id,         # ✅
@@ -82,6 +87,7 @@ return FindingPayload(
 ```
 
 **Authentication 創建** (行 338-352):
+
 ```python
 admin_auth = Authentication(
     method="bearer",               # ✅
@@ -100,6 +106,7 @@ admin_auth = Authentication(
 ### ❌ mass_assignment_tester.py - 5 處錯誤
 
 **Vulnerability 創建** (行 347-352): ✅ 正確
+
 ```python
 vulnerability = Vulnerability(
     name=VulnerabilityType.BOLA,  # ✅
@@ -110,6 +117,7 @@ vulnerability = Vulnerability(
 ```
 
 **Authentication 創建** (行 448-450): ✅ 正確
+
 ```python
 auth = Authentication(
     method="bearer",               # ✅
@@ -118,6 +126,7 @@ auth = Authentication(
 ```
 
 **FindingPayload 創建** (行 408-418): ❌ **5 處錯誤**
+
 ```python
 return FindingPayload(
     finding_id=finding_id,         # ✅
@@ -142,6 +151,7 @@ return FindingPayload(
 ### mass_assignment_tester.py 第 408-418 行
 
 **修正前**:
+
 ```python
 return FindingPayload(
     finding_id=finding_id,
@@ -158,6 +168,7 @@ return FindingPayload(
 ```
 
 **修正後**:
+
 ```python
 return FindingPayload(
     finding_id=finding_id,
@@ -187,6 +198,7 @@ return FindingPayload(
 ## ✅ 修正執行
 
 只需修正 1 處:
+
 - `mass_assignment_tester.py` 行 408-418
 
 ---

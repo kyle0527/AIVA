@@ -94,24 +94,28 @@ func handleTask(
 		testType = "all"
 	}
 
-	switch testType {
-	case "brute_force", "all":
+	// 執行暴力破解測試
+	if testType == "brute_force" || testType == "all" {
 		bf, err := bruteForcer.Test(ctx, task)
 		if err != nil {
 			logger.Error("Brute force test failed", zap.Error(err))
 		} else {
 			findings = append(findings, bf...)
 		}
+	}
 
-	case "weak_config", "all":
+	// 執行弱配置測試
+	if testType == "weak_config" || testType == "all" {
 		wc, err := weakConfigTester.Test(ctx, task)
 		if err != nil {
 			logger.Error("Weak config test failed", zap.Error(err))
 		} else {
 			findings = append(findings, wc...)
 		}
+	}
 
-	case "token", "all":
+	// 執行 Token 分析測試
+	if testType == "token" || testType == "all" {
 		tk, err := tokenAnalyzer.Test(ctx, task)
 		if err != nil {
 			logger.Error("Token test failed", zap.Error(err))

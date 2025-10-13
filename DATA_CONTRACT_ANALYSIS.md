@@ -806,7 +806,7 @@ def test_scan_start_payload_validation():
     # 有效數據
     valid_payload = ScanStartPayload(
         scan_id="scan_abc123",
-        targets=["https://example.com"]
+        targets=["<https://example.com"]>
     )
     assert valid_payload.scan_id == "scan_abc123"
     
@@ -814,7 +814,7 @@ def test_scan_start_payload_validation():
     with pytest.raises(ValidationError):
         ScanStartPayload(
             scan_id="invalid",
-            targets=["https://example.com"]
+            targets=["<https://example.com"]>
         )
 ```
 

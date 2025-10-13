@@ -1,4 +1,5 @@
 # AIVA 數據合約完整文檔
+
 **Data Contract Documentation**
 
 版本：1.0.0  
@@ -104,7 +105,7 @@ from services.aiva_common.enums import Topic
 
 scan_payload = ScanStartPayload(
     scan_id="scan_abc123",
-    targets=["https://example.com"],
+    targets=["<https://example.com"],>
 )
 
 message = AivaMessage(
@@ -149,8 +150,8 @@ from services.aiva_common.schemas import ScanStartPayload
 payload = ScanStartPayload(
     scan_id="scan_abc123xyz",
     targets=[
-        "https://example.com",
-        "https://api.example.com",
+        "<https://example.com",>
+        "<https://api.example.com",>
     ],
     strategy="deep",
 )
@@ -211,7 +212,7 @@ task = FunctionTaskPayload(
     scan_id="scan_abc123",
     priority=8,
     target=FunctionTaskTarget(
-        url="https://example.com/search",
+        url="<https://example.com/search",>
         parameter="q",
         method="GET",
         parameter_location="query",
@@ -288,7 +289,7 @@ finding = FindingPayload(
         confidence=Confidence.CERTAIN,
     ),
     target=FindingTarget(
-        url="https://example.com/search?q=test",
+        url="<https://example.com/search?q=test",>
         parameter="q",
         method="GET",
     ),
@@ -691,7 +692,7 @@ from pydantic import ValidationError
 try:
     payload = ScanStartPayload(
         scan_id="scan_abc123xyz",
-        targets=["https://example.com"],
+        targets=["<https://example.com"],>
     )
 except ValidationError as e:
     print(f"Validation error: {e}")

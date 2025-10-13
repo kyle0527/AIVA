@@ -31,6 +31,7 @@ services/function/function_idor/aiva_func_idor/
 ### 核心功能
 
 #### `bfla_tester.py` (378 行)
+
 - **功能**：檢測普通使用者是否能執行管理員專用的 HTTP 方法
 - **測試方法**：DELETE, PUT, PATCH, POST
 - **檢測邏輯**：
@@ -46,6 +47,7 @@ services/function/function_idor/aiva_func_idor/
   - `create_finding()`: 生成 FindingPayload
 
 #### `mass_assignment_tester.py` (462 行)
+
 - **功能**：檢測應用程式是否接受不應由客戶端控制的欄位
 - **危險欄位**：
   - 權限提升：`isAdmin`, `role`, `permissions`
@@ -61,6 +63,7 @@ services/function/function_idor/aiva_func_idor/
   - `MassAssignmentTestResult`: 測試結果
 
 ### 整合方式
+
 - 擴展現有 `function_idor/` 模組
 - 直接使用現有的 RabbitMQ 訂閱（`tasks.function.idor`）
 - 數據合約：`FindingPayload` (VulnerabilityType.BOLA)
@@ -91,6 +94,7 @@ services/function/function_sca_go/
 ### 核心功能
 
 #### `main.go`
+
 - **功能**：RabbitMQ 消費者，接收 SCA 掃描任務
 - **訊息流程**：
   1. 訂閱 `tasks.function.sca` 佇列
@@ -99,6 +103,7 @@ services/function/function_sca_go/
   4. 發布結果到 `results.finding`
 
 #### `sca_scanner.go`
+
 - **功能**：整合 Google OSV-Scanner，掃描第三方依賴漏洞
 - **支援的套件管理檔案**：
   - Node.js: package.json, yarn.lock, pnpm-lock.yaml
@@ -116,16 +121,19 @@ services/function/function_sca_go/
 - **風險評分**：根據 CVSS 分數判斷嚴重性
 
 #### `publisher.go`
+
 - **功能**：發布 Finding 到 RabbitMQ
 - **Topic**: `results.finding`
 - **訊息持久化**: Persistent delivery mode
 
 ### 依賴
+
 - `github.com/google/osv-scanner` (需預先安裝)
 - `github.com/rabbitmq/amqp091-go v1.9.0`
 - `go.uber.org/zap v1.26.0`
 
 ### 建置與執行
+
 ```bash
 cd services/function/function_sca_go
 go mod download
@@ -154,6 +162,7 @@ services/scan/info_gatherer_rust/
 ### 核心功能
 
 #### `secret_detector.rs`
+
 - **功能**：掃描原始碼中的硬編碼密鑰和高熵字串
 - **檢測規則** (15 種)：
   - AWS Access Key ID / Secret Access Key
@@ -180,6 +189,7 @@ services/scan/info_gatherer_rust/
 - **安全性**：自動遮蔽敏感資訊 (`redact_secret()`)
 
 #### `git_history_scanner.rs`
+
 - **功能**：掃描 Git 提交歷史中的憑證洩漏
 - **掃描對象**：
   - 所有提交的差異 (diff)
@@ -198,12 +208,14 @@ services/scan/info_gatherer_rust/
   - `scan_file_history()`: 掃描特定檔案歷史
 
 ### 新增依賴
+
 ```toml
 git2 = "0.18"       # Git 操作
 tempfile = "3.8"    # 測試用臨時目錄
 ```
 
 ### 整合方式
+
 - 擴展現有 `info_gatherer_rust` 模組
 - 可作為獨立掃描器或整合到 `scanner.rs`
 
@@ -225,6 +237,7 @@ services/integration/aiva_integration/attack_path_analyzer/
 ### 核心功能
 
 #### `engine.py`
+
 - **功能**：使用 Neo4j 建立資產與漏洞的關聯圖
 - **圖結構**：
   - **節點類型**：Attacker, Asset, Vulnerability, Database, InternalNetwork, Credential, APIEndpoint
@@ -247,6 +260,7 @@ services/integration/aiva_integration/attack_path_analyzer/
   - `get_vulnerability_statistics()`: 漏洞統計
 
 #### `graph_builder.py`
+
 - **功能**：從 PostgreSQL 讀取資產與 Findings，建立 Neo4j 圖
 - **資料來源**：AIVA Integration 模組的 `assets` 和 `findings` 資料表
 - **類別**：
@@ -257,6 +271,7 @@ services/integration/aiva_integration/attack_path_analyzer/
   - `incremental_update()`: 增量更新
 
 #### `visualizer.py`
+
 - **功能**：將攻擊路徑匯出為視覺化格式
 - **輸出格式**：
   1. **Mermaid 流程圖**：Markdown 友善，支援 GitHub
@@ -270,10 +285,12 @@ services/integration/aiva_integration/attack_path_analyzer/
   - `to_html()`: 生成互動式 HTML
 
 ### 依賴
+
 - `neo4j-driver`
 - `asyncpg` (從 PostgreSQL 讀取資料)
 
 ### Cypher 查詢範例
+
 ```cypher
 # 尋找最短攻擊路徑
 MATCH path = shortestPath(
@@ -289,6 +306,7 @@ RETURN path, total_risk ORDER BY total_risk DESC LIMIT 10
 ```
 
 ### 整合到 AIVA
+
 1. **定期重建圖**（每日 02:00）
 2. **即時更新**（接收到新 Finding 時）
 3. **API 端點**（`/attack-paths/to-database`）
@@ -318,12 +336,15 @@ Rust:   577 行  (17.5%)
 ### 依賴新增
 
 #### Python
+
 - `neo4j-driver` (Module-AttackPath)
 
 #### Go
+
 - `github.com/google/osv-scanner` (Function-SCA)
 
 #### Rust
+
 - `git2 = "0.18"` (Module-Secrets)
 - `tempfile = "3.8"` (Module-Secrets 測試)
 
@@ -336,6 +357,7 @@ Rust:   577 行  (17.5%)
 **檔案**: `services/function/function_sca_go/cmd/worker/main.go`
 
 **問題**:
+
 ```
 - "fmt" imported and not used
 - could not import github.com/rabbitmq/amqp091-go (需執行 go mod download)
@@ -343,6 +365,7 @@ Rust:   577 行  (17.5%)
 ```
 
 **修正**:
+
 ```bash
 cd services/function/function_sca_go
 go mod tidy
@@ -354,6 +377,7 @@ go mod download
 **檔案**: `services/scan/info_gatherer_rust/src/main.rs`
 
 **修正**: 已更新，新增模組導入：
+
 ```rust
 mod secret_detector;
 mod git_history_scanner;
@@ -362,6 +386,7 @@ mod git_history_scanner;
 ### 3. Python Lint 警告
 
 **問題**:
+
 - Import 順序不符合 PEP 8
 - 未使用的 import
 - Trailing whitespace
@@ -371,6 +396,7 @@ mod git_history_scanner;
 ### 4. Markdown Lint 警告
 
 **問題**:
+
 - 缺少程式碼語言標記 (MD040)
 - Bare URLs (MD034)
 
@@ -383,6 +409,7 @@ mod git_history_scanner;
 ### 立即執行（今日）
 
 1. **修正編譯錯誤**
+
    ```bash
    # Go 模組
    cd services/function/function_sca_go
@@ -399,6 +426,7 @@ mod git_history_scanner;
    ```
 
 2. **安裝外部依賴**
+
    ```bash
    # 安裝 OSV-Scanner
    go install github.com/google/osv-scanner/cmd/osv-scanner@latest
@@ -414,6 +442,7 @@ mod git_history_scanner;
    ```
 
 3. **執行單元測試**
+
    ```bash
    # Python
    pytest services/function/function_idor/aiva_func_idor/
@@ -483,17 +512,20 @@ mod git_history_scanner;
 ## 🎯 成功指標
 
 ✅ **已完成**:
+
 - [x] 所有 P0 模組腳本產出
 - [x] 完整的 README 文檔
 - [x] 數據模型設計
 - [x] 訊息流設計
 
 ⏳ **進行中**:
+
 - [ ] 編譯錯誤修正
 - [ ] 依賴安裝
 - [ ] 單元測試
 
 📅 **待執行**:
+
 - [ ] 整合測試
 - [ ] 效能測試
 - [ ] 文檔完善

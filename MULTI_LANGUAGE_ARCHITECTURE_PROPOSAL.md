@@ -1,4 +1,5 @@
 # AIVA 多語言架構遷移方案
+
 ## 基於實際網路分析的完整建議
 
 **文件版本**: 1.0  
@@ -47,12 +48,14 @@
 #### 主要選擇: gRPC + Protocol Buffers
 
 **論據**:
+
 - **性能**: gRPC 使用 HTTP/2,支援多工、頭部壓縮,減少延遲 20-50%
 - **跨語言**: 官方工具鏈自動生成 12+ 語言的客戶端/服務端代碼
 - **串流支援**: 原生支援 Server Streaming、Client Streaming、Bidirectional Streaming
 - **型別安全**: Protobuf 提供強型別定義,避免序列化錯誤
 
 **實際案例**:
+
 ```protobuf
 // aiva/v1/scan.proto
 syntax = "proto3";
@@ -107,6 +110,7 @@ message TaskAck {
 ```
 
 **工具鏈建議**:
+
 ```bash
 # 使用 Buf 管理 Proto 契約
 buf generate  # 自動產生多語言代碼
@@ -116,12 +120,14 @@ buf lint  # Proto 語法檢查
 
 #### 輔助選擇: RabbitMQ (AMQP) 用於事件流
 
-**用途**: 
+**用途**:
+
 - 任務佇列 (Task Queue)
 - 結果事件發布 (Result Event Publishing)
 - 非即時通知 (Delayed Notifications)
 
 **原因**:
+
 - 多語言客戶端齊全 (Python: pika, Go: amqp091-go, Node: amqplib, Rust: lapin)
 - 支援回壓 (Backpressure) 與重試機制
 - 持久化保證不丟失任務
@@ -133,12 +139,14 @@ buf lint  # Proto 語法檢查
 #### 選擇: Node.js + Playwright
 
 **論據** (基於官方文檔):
+
 1. **功能對等**: 所有核心 API 在 JS/Python/.NET/Java 保持一致
 2. **生態優勢**: npm 有 2000+ Playwright 相關套件,Python 僅 200+
 3. **性能**: Node.js 單執行緒事件迴圈天生適合瀏覽器 I/O
 4. **維護**: Playwright 團隊優先支援 JS/TS,其他語言綁定滯後
 
 **架構**:
+
 ```
 ┌─────────────────────────────────────────┐
 │  Core (Python FastAPI)                  │
@@ -167,6 +175,7 @@ buf lint  # Proto 語法檢查
 ```
 
 **實作範例 (Node.js)**:
+
 ```javascript
 // aiva-scan-node/src/server.js
 import * as grpc from '@grpc/grpc-js';
@@ -242,6 +251,7 @@ server.bindAsync('0.0.0.0:50051', grpc.ServerCredentials.createInsecure(), () =>
 #### 統一標準: OpenTelemetry
 
 **成熟度評估** (2025 年現況):
+
 | 語言 | Tracing | Metrics | Logs |
 |------|---------|---------|------|
 | Python | ✅ Stable | ✅ Stable | 🟡 Development |
@@ -250,6 +260,7 @@ server.bindAsync('0.0.0.0:50051', grpc.ServerCredentials.createInsecure(), () =>
 | Rust | 🟡 Beta | 🟡 Beta | 🟡 Beta |
 
 **實作策略**:
+
 ```python
 # Python (Core Service)
 from opentelemetry import trace
@@ -282,6 +293,7 @@ async def create_scan(task: ScanTask):
 ```
 
 **Prometheus Metrics**:
+
 ```python
 from prometheus_client import Counter, Histogram
 
@@ -307,17 +319,20 @@ async def create_scan(task: ScanTask):
 #### WebAssembly (WASM) + WASI
 
 **使用場景**:
+
 - 第三方偵測器插件
 - 使用者提供的自定義規則
 - 高風險代碼沙箱執行
 
 **支援現況** (Wasmtime):
+
 - ✅ Rust (原生支援)
 - ✅ Go (wasmtime-go 綁定)
 - ✅ Python (wasmtime-py)
 - ✅ Node.js (@bytecodealliance/wasmtime)
 
 **範例** (Rust 編譯為 WASM,Python 執行):
+
 ```rust
 // custom_detector.rs
 #[no_mangle]
@@ -372,17 +387,20 @@ result = detect_func(store, input_data)
 #### A. scan/aiva_scan → Node.js + Playwright
 
 **選擇理由**:
+
 1. ✅ **生態系成熟**: Playwright 官方優先支援 JS/TS
 2. ✅ **Event Loop**: 單執行緒非阻塞 I/O 天生適合瀏覽器多工
 3. ✅ **社群資源**: Stack Overflow 上 Playwright+JavaScript 問題數是 Python 的 5 倍
 4. ⚠️ **注意事項**: 避免 CPU 密集運算阻塞主執行緒,改用 Worker Threads
 
 **性能指標** (基於實測):
+
 - 單實例可管理 10-15 個瀏覽器 Tab
 - HAR 記錄對記憶體影響 <100MB/tab
 - Tracing 開啟後效能下降 <5%
 
 **部署架構**:
+
 ```yaml
 # docker-compose.yml
 services:
@@ -406,12 +424,14 @@ services:
 #### B. info_gatherer → Rust
 
 **選擇理由**:
+
 1. ✅ **零 GC 開銷**: 無停頓,適合低延遲服務
 2. ✅ **正則性能**: `regex` crate 使用 DFA,比 Python re 模組快 10-100 倍
 3. ✅ **並行**: Rayon 資料並行庫讓多核心 CPU 利用率達 95%+
 4. ⚠️ **學習曲線**: 所有權系統需 1-2 週適應
 
 **實測數據**:
+
 | 操作 | Python (re) | Rust (regex) | 倍數 |
 |------|-------------|--------------|------|
 | 1MB 文本搜尋 "password" | 12ms | 0.8ms | 15x |
@@ -419,6 +439,7 @@ services:
 | 敏感資訊掃描 (10MB DOM) | 2.3s | 95ms | 24x |
 
 **範例實作**:
+
 ```rust
 // src/detector.rs
 use regex::RegexSet;
@@ -490,12 +511,14 @@ impl ScanService for InfoGatherer {
 #### C. function_ssrf/idor/sqli → Go
 
 **選擇理由**:
+
 1. ✅ **Goroutine**: 輕量級協程,單機可跑 100 萬個
 2. ✅ **Context 取消**: 內建超時、取消機制
 3. ✅ **HTTP/2 客戶端**: 標準庫原生支援,連線池自動管理
 4. ✅ **編譯速度**: 比 Rust 快 5-10 倍,適合快速迭代
 
 **併發模型對比**:
+
 ```go
 // Go - 天然支援高併發
 func scanURLs(targets []string) {
@@ -528,6 +551,7 @@ func scanURLs(targets []string) {
 ```
 
 **SSRF 檢測實作**:
+
 ```go
 // function_ssrf/server.go
 package main
@@ -713,6 +737,7 @@ jobs:
 **目標**: 建立跨語言契約基礎設施
 
 **任務清單**:
+
 - [ ] 設計 `aiva/v1/scan.proto` (ScanTask, Finding, ScanService)
 - [ ] 設定 Buf 工作流程 (lint + breaking check)
 - [ ] 產生 Python、Go、Node、Rust SDK
@@ -720,11 +745,13 @@ jobs:
 - [ ] CI 集成 (GitHub Actions)
 
 **驗收標準**:
+
 - ✅ 四語言 SDK 可互通 (Python → Go, Go → Node 等)
 - ✅ PR 必須通過 `buf breaking` 檢查
 - ✅ 自動生成代碼提交到 `services/aiva_common/generated/`
 
 **風險**:
+
 - ⚠️ Protobuf 3 的 `optional` 在舊版編譯器不支援 (需 protoc 3.15+)
 
 ---
@@ -734,6 +761,7 @@ jobs:
 **目標**: 落地 Node.js 掃描服務與全鏈路追蹤
 
 **任務清單**:
+
 - [ ] 實作 `aiva-scan-node` 微服務 (Playwright + gRPC)
 - [ ] Python Core 改為 gRPC 客戶端呼叫 Node 服務
 - [ ] 部署 OpenTelemetry Collector
@@ -742,12 +770,14 @@ jobs:
 - [ ] Grafana 儀表板 (掃描 QPS、延遲 P95/P99、錯誤率)
 
 **驗收標準**:
+
 - ✅ 10+ 網站目標的端到端掃描穩定執行
 - ✅ Jaeger UI 可查看完整 Trace (Core → Node → Playwright)
 - ✅ Prometheus 抓取到所有服務指標
 - ✅ 無記憶體洩漏 (連續運行 24 小時)
 
 **風險**:
+
 - ⚠️ Playwright 在 Docker 中需 `--no-sandbox` 或特權模式
 - ⚠️ 大量 HAR 檔案可能撐爆磁碟 (需設定自動清理)
 
@@ -758,6 +788,7 @@ jobs:
 **目標**: 以 Go/Rust 重構性能瓶頸模組
 
 **任務清單**:
+
 - [ ] `function_ssrf` Go 版本 (含 IP 黑名單、DNS Rebinding 防護)
 - [ ] `function_sqli` Go 版本 (連線池、時間盲注)
 - [ ] `info_gatherer` Rust 版本 (正則引擎、流式處理)
@@ -765,12 +796,14 @@ jobs:
 - [ ] 金絲雀部署 (50% 流量到新服務)
 
 **驗收標準**:
+
 - ✅ 同等資源下吞吐提升 >30%
 - ✅ P95 延遲降低 >40%
 - ✅ 記憶體使用減少 >50%
 - ✅ 錯誤率 <0.1%
 
 **性能目標**:
+
 | 模組 | Python (基線) | Go/Rust (目標) |
 |------|--------------|----------------|
 | SSRF 掃描 (100 URLs) | 45s | <15s |
@@ -784,12 +817,15 @@ jobs:
 ### 5.1 維運複雜度
 
 **挑戰**:
+
 - 多套建置工具鏈 (Python: pip, Go: go mod, Node: npm, Rust: cargo)
 - 多套監控指標格式
 - 依賴套件安全更新
 
 **緩解策略**:
+
 1. **容器化標準化**:
+
    ```dockerfile
    # 多階段建置範例 (Go)
    FROM golang:1.21 AS builder
@@ -805,6 +841,7 @@ jobs:
    ```
 
 2. **依賴掃描自動化**:
+
    ```yaml
    # .github/workflows/security.yml
    - uses: aquasecurity/trivy-action@master
@@ -816,12 +853,14 @@ jobs:
    ```
 
 3. **統一日誌格式** (JSON Structured Logging):
+
    ```python
    # Python
    import structlog
    logger = structlog.get_logger()
    logger.info("scan_started", task_id="abc123", target="https://example.com")
    ```
+
    ```go
    // Go
    log.Info().Str("task_id", "abc123").Str("target", "https://example.com").Msg("scan_started")
@@ -830,6 +869,7 @@ jobs:
 ### 5.2 人力技能分佈
 
 **團隊技能矩陣**:
+
 | 角色 | Python | Go | Node.js | Rust | 優先訓練 |
 |------|--------|----|---------| -----|----------|
 | 後端工程師 A | ⭐⭐⭐ | ⭐⭐ | ⭐ | - | Go 併發模型 |
@@ -837,6 +877,7 @@ jobs:
 | 安全研究員 C | ⭐⭐⭐ | ⭐ | ⭐ | ⭐⭐ | Rust 所有權 |
 
 **訓練計畫**:
+
 - Week 1-2: Go 基礎 + Goroutine/Channel
 - Week 3-4: gRPC 實戰 (Protocol Buffers 設計)
 - Week 5-6: Rust 所有權系統 (The Rust Book Ch 4-10)
@@ -845,6 +886,7 @@ jobs:
 ### 5.3 回饋迭代機制
 
 **關鍵指標 (KPIs)**:
+
 | 指標 | 目標 | 測量方式 |
 |------|------|----------|
 | 服務可用性 | >99.9% | Prometheus Uptime |
@@ -854,6 +896,7 @@ jobs:
 | 資源利用率 | CPU <70%, Mem <80% | cAdvisor |
 
 **A/B 測試框架**:
+
 ```python
 # 流量分配器
 class ServiceRouter:
@@ -871,6 +914,7 @@ class ServiceRouter:
 ### 6.1 SSRF 防護
 
 **多層防禦**:
+
 ```go
 // Layer 1: DNS 解析前過濾
 func isBlockedDomain(domain string) bool {
@@ -910,6 +954,7 @@ client := &http.Client{
 ### 6.2 XSS 偵測
 
 **DOM 污染追蹤** (Node.js + Playwright):
+
 ```javascript
 // 注入 Taint Tracking 腳本
 await page.addInitScript(() => {
@@ -965,6 +1010,7 @@ node src/poc.js https://example.com
 ```
 
 **POC 腳本**:
+
 ```javascript
 // src/poc.js
 const { chromium } = require('playwright');
@@ -1002,6 +1048,7 @@ opentelemetry-bootstrap -a install
 ```
 
 **Python 追蹤範例**:
+
 ```python
 from opentelemetry import trace
 from opentelemetry.sdk.trace import TracerProvider
@@ -1026,30 +1073,35 @@ def scan_website(url):
 ## 8. 參考文獻與延伸閱讀
 
 ### 官方文檔
-1. **gRPC**: https://grpc.io/docs/languages/
-2. **Playwright 多語言**: https://playwright.dev/docs/languages
-3. **OpenTelemetry**: https://opentelemetry.io/docs/languages/
-4. **Buf**: https://buf.build/docs/
-5. **Go Concurrency**: https://go.dev/blog/pipelines
-6. **Rust Ownership**: https://doc.rust-lang.org/book/ch04-00-understanding-ownership.html
-7. **Wasmtime**: https://wasmtime.dev/
+
+1. **gRPC**: <https://grpc.io/docs/languages/>
+2. **Playwright 多語言**: <https://playwright.dev/docs/languages>
+3. **OpenTelemetry**: <https://opentelemetry.io/docs/languages/>
+4. **Buf**: <https://buf.build/docs/>
+5. **Go Concurrency**: <https://go.dev/blog/pipelines>
+6. **Rust Ownership**: <https://doc.rust-lang.org/book/ch04-00-understanding-ownership.html>
+7. **Wasmtime**: <https://wasmtime.dev/>
 
 ### 效能基準
-- gRPC vs REST: https://www.usenix.org/conference/atc20/presentation/poke
-- Playwright Performance: https://blog.checklyhq.com/playwright-vs-puppeteer/
-- Rust vs Go: https://benchmarksgame-team.pages.debian.net/benchmarksgame/
+
+- gRPC vs REST: <https://www.usenix.org/conference/atc20/presentation/poke>
+- Playwright Performance: <https://blog.checklyhq.com/playwright-vs-puppeteer/>
+- Rust vs Go: <https://benchmarksgame-team.pages.debian.net/benchmarksgame/>
 
 ### 最佳實踐
-- gRPC Error Handling: https://grpc.io/docs/guides/error/
-- OpenTelemetry Semantic Conventions: https://opentelemetry.io/docs/specs/semconv/
-- Go Concurrency Patterns: https://go.dev/talks/2012/concurrency.slide
+
+- gRPC Error Handling: <https://grpc.io/docs/guides/error/>
+- OpenTelemetry Semantic Conventions: <https://opentelemetry.io/docs/specs/semconv/>
+- Go Concurrency Patterns: <https://go.dev/talks/2012/concurrency.slide>
 
 ---
 
 ## 9. 常見問題 (FAQ)
 
 ### Q1: 為什麼不全部用 Python?
+
 **A**: Python 在以下場景有瓶頸:
+
 - 高併發 I/O (GIL 限制)
 - CPU 密集計算 (正則匹配、加密)
 - 記憶體管理 (大量小物件 GC 開銷)
@@ -1057,13 +1109,17 @@ def scan_website(url):
 實測顯示 Go SSRF 掃描比 Python 快 3 倍,Rust 正則比 Python 快 25 倍。
 
 ### Q2: gRPC 比 REST 複雜,值得嗎?
+
 **A**: 對於微服務架構,gRPC 優勢明顯:
+
 - **型別安全**: Protobuf 避免序列化錯誤
 - **性能**: HTTP/2 多工減少延遲 40%
 - **串流**: 原生支援 Server Streaming (Python requests 需手動實作)
 
 ### Q3: 如何處理多語言日誌聚合?
+
 **A**: 統一 JSON 格式 + ELK Stack:
+
 ```json
 {
   "timestamp": "2025-10-13T10:30:00Z",
@@ -1080,7 +1136,9 @@ def scan_website(url):
 ```
 
 ### Q4: WASM 性能真的好嗎?
+
 **A**: WASM 適合 CPU 密集但不需系統呼叫的場景:
+
 - ✅ 影像處理、加密、壓縮
 - ✅ 正則匹配、JSON 解析
 - ❌ 網路 I/O、檔案存取 (WASI 有限支援)
@@ -1099,18 +1157,20 @@ def scan_website(url):
 4. **技能培養**: 透過 3 個 Milestone 讓團隊逐步適應新技術
 
 **預期效益**:
+
 - 📈 掃描吞吐提升 50-100%
 - ⚡ 延遲降低 40-60%
 - 💾 記憶體使用減少 30-50%
 - 🔒 型別安全減少 70% 序列化錯誤
 
 **下一步行動**:
+
 1. 團隊評審本方案 (1 週)
 2. 執行 M1: 契約先行 (2 週)
 3. POC 驗證 (Node.js + gRPC,1 週)
 4. 正式啟動 M2/M3 (8-10 週)
 
---- 
+---
 
 **文件維護者**: AIVA 架構團隊  
 **最後更新**: 2025-10-13  

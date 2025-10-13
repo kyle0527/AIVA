@@ -1,4 +1,5 @@
 # AIVA 完整實施指南
+
 ## 基於 AI 輔助開發的最佳實踐
 
 **文件版本**: 1.0  
@@ -1049,11 +1050,13 @@ func TestSSRFDetector_Scan(t *testing.T) {
 ### 問題 1: Playwright 在 Docker 中無法啟動
 
 **錯誤訊息**:
+
 ```
 Error: browserType.launch: Failed to launch chromium because executable doesn't exist
 ```
 
 **解決方案**:
+
 ```dockerfile
 # Dockerfile
 FROM mcr.microsoft.com/playwright:v1.41.0-jammy
@@ -1074,11 +1077,13 @@ CMD ["node", "dist/index.js"]
 ### 問題 2: gRPC Python 生成代碼找不到
 
 **錯誤訊息**:
+
 ```
 ModuleNotFoundError: No module named 'aiva.v1.scan_pb2'
 ```
 
 **解決方案**:
+
 ```bash
 # 確保 proto 編譯正確
 python -m grpc_tools.protoc \
@@ -1097,6 +1102,7 @@ touch services/aiva_common/generated/python/aiva/v1/__init__.py
 **問題**: Python → Node.js 的 trace 斷掉
 
 **解決方案**:
+
 ```python
 # Python 端 - 傳遞 trace context
 from opentelemetry import trace, context

@@ -54,12 +54,15 @@
 ## 📦 Node.js 安裝詳情
 
 ### 專案路徑
+
 `AIVA-main/services/scan/aiva_scan_node/`
 
 ### 安裝結果
+
 ✅ **321 個套件已安裝**
 
 ### 關鍵套件
+
 - ✅ `playwright ^1.41.0` - 瀏覽器自動化
 - ✅ `amqplib ^0.10.3` - RabbitMQ 客戶端
 - ✅ `pino ^8.17.0` - 高性能日誌
@@ -67,6 +70,7 @@
 - ✅ Chromium 瀏覽器已下載 (141.0.7390.37)
 
 ### 警告處理
+
 - 6 個安全漏洞 (2 low, 4 moderate) - 非關鍵,可用 `npm audit fix` 修復
 - 部分已棄用套件 (不影響功能)
 
@@ -75,12 +79,15 @@
 ## 🐹 Go 安裝詳情
 
 ### 專案路徑
+
 `AIVA-main/services/function/function_ssrf_go/`
 
 ### 安裝結果
+
 ✅ **模組下載完成並整理**
 
 ### 依賴清單
+
 ```go
 module github.com/aiva/function_ssrf_go
 
@@ -101,6 +108,7 @@ require (
 ```
 
 ### 修正記錄
+
 - ✅ 修正 import: `streadway/amqp` → `rabbitmq/amqp091-go`
 - ✅ 修正類型衝突: 移除重複的 ScanTask/Finding 結構
 
@@ -109,15 +117,19 @@ require (
 ## 🦀 Rust 安裝詳情
 
 ### 專案路徑
+
 `AIVA-main/services/scan/info_gatherer_rust/`
 
 ### 編譯結果
+
 ✅ **Release 模式編譯成功** (52.77 秒)
 
 ### 二進制文件
+
 `target/release/aiva-info-gatherer.exe`
 
 ### 依賴清單 (11 個)
+
 - ✅ `regex 1.12.1` - 正則表達式引擎
 - ✅ `aho-corasick 1.1.3` - 多模式字符串匹配
 - ✅ `rayon 1.11.0` - 數據並行處理
@@ -128,6 +140,7 @@ require (
 - ✅ `tracing 0.1.41` + `tracing-subscriber 0.3.20` - 追蹤/日誌
 
 ### 修正記錄
+
 - ✅ 修正正則表達式語法: 使用 `r#"..."#` 原始字符串
 - ✅ 修正 import: 添加 `futures_lite::stream::StreamExt`
 - ✅ 修正錯誤類型: `Box<dyn Error + Send + Sync>`
@@ -149,7 +162,7 @@ require (
 
 ```powershell
 # RabbitMQ Management UI
-http://localhost:15672 (用戶名: aiva, 密碼: dev_password)
+<http://localhost:15672> (用戶名: aiva, 密碼: dev_password)
 
 # PostgreSQL 連接
 psql -h localhost -U aiva_user -d aiva_db
@@ -158,7 +171,7 @@ psql -h localhost -U aiva_user -d aiva_db
 redis-cli -h localhost -p 6379
 
 # Neo4j Browser
-http://localhost:7474
+<http://localhost:7474>
 ```
 
 ---
@@ -170,6 +183,7 @@ http://localhost:7474
 **檔案**: `services/function/function_ssrf_go/cmd/worker/main.go`
 
 **問題 1**: Import 錯誤
+
 ```go
 // ❌ 錯誤
 import amqp "github.com/streadway/amqp"
@@ -179,6 +193,7 @@ import amqp "github.com/rabbitmq/amqp091-go"
 ```
 
 **問題 2**: 類型衝突
+
 ```go
 // ❌ 錯誤 - 重複定義
 type ScanTask struct { ... }  // main.go
@@ -193,6 +208,7 @@ var task detector.ScanTask
 **檔案**: `services/scan/info_gatherer_rust/src/scanner.rs`
 
 **問題**: 正則表達式中的引號轉義
+
 ```rust
 // ❌ 錯誤
 Regex::new(r"(?i)aws(.{0,20})?['\"][0-9a-zA-Z/+]{40}['\"]")
@@ -204,6 +220,7 @@ Regex::new(r#"(?i)aws(.{0,20})?['"][0-9a-zA-Z/+]{40}['"]"#)
 **檔案**: `services/scan/info_gatherer_rust/src/main.rs`
 
 **問題 1**: 缺少 StreamExt trait
+
 ```rust
 // ❌ 錯誤
 use lapin::{...};
@@ -214,6 +231,7 @@ use lapin::{...};
 ```
 
 **問題 2**: 錯誤類型不支援 Send
+
 ```rust
 // ❌ 錯誤
 Box<dyn std::error::Error>
@@ -275,7 +293,7 @@ Box<dyn std::error::Error + Send + Sync>
 
 ```powershell
 # RabbitMQ Management UI
-Start-Process "http://localhost:15672"
+Start-Process "<http://localhost:15672">
 
 # Docker 容器日誌
 docker-compose -f docker\docker-compose.yml logs -f
@@ -288,6 +306,7 @@ docker-compose -f docker\docker-compose.yml logs -f
 ### Python 環境升級
 
 ✅ **Python 版本已從 3.12.10 升級至 3.13.7**
+
 - 新環境更符合專案需求 (>=3.13)
 - 所有套件已在新環境重新安裝
 - 舊環境套件保持不變
@@ -295,6 +314,7 @@ docker-compose -f docker\docker-compose.yml logs -f
 ### 安全警告處理
 
 **Node.js (6 個漏洞)**
+
 ```powershell
 cd AIVA-main\services\scan\aiva_scan_node
 npm audit fix  # 自動修復
@@ -319,6 +339,7 @@ docker-compose -f docker\docker-compose.yml logs -f rabbitmq
 ## 📊 安裝統計
 
 ### 時間統計
+
 - **Python 套件安裝**: ~2 分鐘
 - **Node.js 模組安裝**: ~27 秒
 - **Playwright 瀏覽器下載**: ~2 分鐘
@@ -328,6 +349,7 @@ docker-compose -f docker\docker-compose.yml logs -f rabbitmq
 - **總耗時**: ~15 分鐘
 
 ### 下載統計
+
 - **Node.js 模組**: ~150 MB
 - **Playwright Chromium**: ~240 MB (148.9 + 91 MB)
 - **Python 套件**: ~50 MB
@@ -335,6 +357,7 @@ docker-compose -f docker\docker-compose.yml logs -f rabbitmq
 - **總下載量**: ~640 MB
 
 ### 磁碟空間
+
 - **Node.js node_modules**: ~300 MB
 - **Rust target/release**: ~120 MB
 - **Docker 映像**: ~500 MB
@@ -346,7 +369,8 @@ docker-compose -f docker\docker-compose.yml logs -f rabbitmq
 
 **AIVA 多語言系統依賴安裝已 100% 完成!**
 
-🎉 **所有組件狀態**: 
+🎉 **所有組件狀態**:
+
 - Python: ✅ 完成
 - Node.js: ✅ 完成
 - Go: ✅ 完成

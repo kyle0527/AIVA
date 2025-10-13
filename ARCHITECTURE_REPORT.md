@@ -1,9 +1,11 @@
 # AIVA 四大模組架構報告
+
 生成時間: 2025-10-13
 
 ## 1. 架構概覽
 
 ### 1.1 四大核心模組
+
 ```
 AIVA-main/
 ├── services/
@@ -17,6 +19,7 @@ AIVA-main/
 ## 2. Schemas 架構（基於 schemas.py）
 
 ### 2.1 核心 Schemas（已完整定義）
+
 ✅ MessageHeader - 訊息標頭
 ✅ AivaMessage - 訊息封裝
 ✅ Authentication - 認證配置
@@ -43,32 +46,39 @@ AIVA-main/
 ✅ ConfigUpdatePayload - 配置更新載荷
 
 ### 2.2 Enums 定義（基於 enums.py）
+
 ✅ ModuleName - 模組名稱
-  - API_GATEWAY, CORE, SCAN, INTEGRATION
-  - FUNC_XSS, FUNC_SQLI, FUNC_SSRF, FUNC_IDOR
-  - OAST
+
+- API_GATEWAY, CORE, SCAN, INTEGRATION
+- FUNC_XSS, FUNC_SQLI, FUNC_SSRF, FUNC_IDOR
+- OAST
 
 ✅ Topic - 主題/事件類型
-  - TASK_SCAN_START, TASK_FUNCTION_XSS, TASK_FUNCTION_SQLI
-  - TASK_FUNCTION_SSRF, FUNCTION_IDOR_TASK
-  - RESULTS_SCAN_COMPLETED, FINDING_DETECTED
-  - LOG_RESULTS_ALL, STATUS_TASK_UPDATE
-  - FEEDBACK_CORE_STRATEGY, MODULE_HEARTBEAT
-  - COMMAND_TASK_CANCEL, CONFIG_GLOBAL_UPDATE
+
+- TASK_SCAN_START, TASK_FUNCTION_XSS, TASK_FUNCTION_SQLI
+- TASK_FUNCTION_SSRF, FUNCTION_IDOR_TASK
+- RESULTS_SCAN_COMPLETED, FINDING_DETECTED
+- LOG_RESULTS_ALL, STATUS_TASK_UPDATE
+- FEEDBACK_CORE_STRATEGY, MODULE_HEARTBEAT
+- COMMAND_TASK_CANCEL, CONFIG_GLOBAL_UPDATE
 
 ✅ Severity - 嚴重性級別
-  - CRITICAL, HIGH, MEDIUM, LOW, INFORMATIONAL
+
+- CRITICAL, HIGH, MEDIUM, LOW, INFORMATIONAL
 
 ✅ Confidence - 信心級別
-  - CERTAIN, FIRM, POSSIBLE
+
+- CERTAIN, FIRM, POSSIBLE
 
 ✅ VulnerabilityType - 漏洞類型
-  - XSS, SQLI, SSRF, IDOR, BOLA
-  - INFO_LEAK, WEAK_AUTH
+
+- XSS, SQLI, SSRF, IDOR, BOLA
+- INFO_LEAK, WEAK_AUTH
 
 ## 3. 模組內部架構
 
 ### 3.1 Core 模組
+
 ```
 services/core/aiva_core/
 ├── app.py                    # FastAPI 主應用
@@ -85,6 +95,7 @@ services/core/aiva_core/
 ```
 
 ### 3.2 Scan 模組
+
 ```
 services/scan/aiva_scan/
 ├── scan_orchestrator.py      # 掃描協調器
@@ -96,6 +107,7 @@ services/scan/aiva_scan/
 ```
 
 ### 3.3 Function 模組
+
 ```
 services/function/
 ├── common/                   # 共用檢測管理
@@ -116,6 +128,7 @@ services/function/
 ```
 
 ### 3.4 Integration 模組
+
 ```
 services/integration/aiva_integration/
 ├── app.py                    # 主應用
@@ -129,6 +142,7 @@ services/integration/aiva_integration/
 ## 4. 資料流架構
 
 ### 4.1 掃描流程
+
 ```
 1. API Gateway 接收掃描請求
    ↓ (Topic.TASK_SCAN_START)
@@ -144,6 +158,7 @@ services/integration/aiva_integration/
 ```
 
 ### 4.2 訊息流轉
+
 ```
 所有模組間通訊使用 AivaMessage:
 - header: MessageHeader (追蹤資訊)
@@ -154,16 +169,19 @@ services/integration/aiva_integration/
 ## 5. 命名規範
 
 ### 5.1 模組命名
+
 - ✅ 模組名稱: `services.{module_name}`
 - ✅ 子模組: `services.{module}.aiva_{module}`
 - ✅ 功能模組: `services.function.function_{vuln_type}`
 
 ### 5.2 類別命名
+
 - ✅ Schema 類: PascalCase (e.g., `FunctionTaskPayload`)
 - ✅ Enum 類: PascalCase (e.g., `ModuleName`)
 - ✅ Dataclass: PascalCase + Result/Config 後綴
 
 ### 5.3 函數命名
+
 - ✅ 函數名: snake_case (e.g., `process_task`)
 - ✅ 私有函數: _snake_case (e.g., `_helper_function`)
 - ✅ 異步函數: async def snake_case
@@ -171,6 +189,7 @@ services/integration/aiva_integration/
 ## 6. 技術棧
 
 ### 6.1 核心技術
+
 - Python 3.13+
 - Pydantic v2.12.0 (資料驗證)
 - FastAPI (Web 框架)
@@ -179,6 +198,7 @@ services/integration/aiva_integration/
 - Redis (快取)
 
 ### 6.2 檢測技術
+
 - httpx (HTTP 客戶端)
 - BeautifulSoup4 (HTML 解析)
 - Playwright (動態內容)
@@ -187,6 +207,7 @@ services/integration/aiva_integration/
 ## 7. 配置檔案
 
 ### 7.1 專案配置
+
 - ✅ pyproject.toml - 專案依賴與設定
 - ✅ ruff.toml - 程式碼格式化與檢查
 - ✅ mypy.ini - 類型檢查配置
@@ -194,6 +215,7 @@ services/integration/aiva_integration/
 - ✅ setup_env.bat - 環境設定腳本
 
 ### 7.2 IDE 配置
+
 - ✅ .vscode/settings.json - VS Code 設定
   - Python 路徑: extraPaths 包含所有 services 子目錄
   - Linting: Ruff 啟用
@@ -202,6 +224,7 @@ services/integration/aiva_integration/
 ## 8. 檢查清單
 
 ### 8.1 Schemas 完整性
+
 ✅ 所有核心 Schema 已定義
 ✅ 所有 Enum 已定義
 ✅ 符合 Pydantic v2.12.0 標準
@@ -209,12 +232,14 @@ services/integration/aiva_integration/
 ✅ 類型提示完整 (Union[X, None] → X | None)
 
 ### 8.2 模組結構
+
 ✅ 四大模組架構完整
 ✅ 所有模組有 __init__.py
 ✅ 導入路徑統一 (services.*)
 ✅ 共用模組集中在 aiva_common
 
 ### 8.3 程式碼品質
+
 ✅ PEP 8 合規 (通過 Ruff 格式化)
 ✅ 類型提示完整 (通過 Mypy 檢查)
 ✅ 模組化設計
@@ -223,16 +248,19 @@ services/integration/aiva_integration/
 ## 9. 待優化項目
 
 ### 9.1 優先級 HIGH
+
 - [ ] IDE 模組解析問題 (Mypy 找不到 services.aiva_common)
   - 解決方案: 已創建 .vscode/settings.json 配置
   - 需要重啟 VS Code 或 Python Language Server
 
 ### 9.2 優先級 MEDIUM
+
 - [ ] 完善單元測試覆蓋率
 - [ ] 增加 API 文件自動生成
 - [ ] 完善日誌追蹤機制
 
 ### 9.3 優先級 LOW
+
 - [ ] 性能優化與快取策略
 - [ ] 監控與告警系統
 - [ ] 容器化部署優化
@@ -240,6 +268,7 @@ services/integration/aiva_integration/
 ## 10. 結論
 
 AIVA 平台的四大模組架構已經完整建立：
+
 - ✅ Core 模組: 智慧分析與協調中心
 - ✅ Scan 模組: 資產發現與爬蟲引擎
 - ✅ Function 模組: 多種漏洞檢測能力

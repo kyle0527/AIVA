@@ -1,4 +1,5 @@
 # AIVA 系統完整發展藍圖
+
 ## Comprehensive Development Roadmap 2025-2026
 
 **文件版本**: 2.0  
@@ -8,7 +9,7 @@
 
 ---
 
-## 📋 目錄
+## 目錄
 
 1. [專案現況總覽](#專案現況總覽)
 2. [技術債務清單](#技術債務清單)
@@ -23,10 +24,44 @@
 
 ---
 
-## 🎯 專案現況總覽
+## 專案現況總覽
 
 ### 系統架構概覽
 
+AIVA 智慧漏洞掃描系統
+├── 四大核心模組 (Python)
+│   ├── Core - 智慧分析與協調 ✅ 良好
+│   ├── Scan - 爬蟲與資產發現 ✅ 已重構
+│   ├── Function - 漏洞檢測 ⚠️ 部分完善
+│   └── Integration - 資料整合與報告 ✅ 良好
+│
+├── 共用基礎設施
+│   ├── aiva_common (數據合約) ✅ 已統一
+│   ├── RabbitMQ (消息隊列) ✅ 運作中
+│   └── PostgreSQL (數據庫) ✅ 運作中
+│
+└── 計畫中的多語言服務
+    ├── Node.js - 動態掃描引擎 (Playwright) 📋 規劃中
+    ├── Go - 高併發探測器 (SSRF/SQLi) 📋 規劃中
+    └── Rust - 敏感資訊掃描器 📋 規劃中
+
+```plaintext
+AIVA 智慧漏洞掃描系統
+├── 四大核心模組 (Python)
+│   ├── Core - 智慧分析與協調 ✅ 良好
+│   ├── Scan - 爬蟲與資產發現 ✅ 已重構
+│   ├── Function - 漏洞檢測 ⚠️ 部分完善
+│   └── Integration - 資料整合與報告 ✅ 良好
+│
+├── 共用基礎設施
+│   ├── aiva_common (數據合約) ✅ 已統一
+│   ├── RabbitMQ (消息隊列) ✅ 運作中
+│   └── PostgreSQL (數據庫) ✅ 運作中
+│
+└── 計畫中的多語言服務
+    ├── Node.js - 動態掃描引擎 (Playwright) 📋 規劃中
+    ├── Go - 高併發探測器 (SSRF/SQLi) 📋 規劃中
+    └── Rust - 敏感資訊掃描器 📋 規劃中
 ```
 AIVA 智慧漏洞掃描系統
 ├── 四大核心模組 (Python)
@@ -98,7 +133,7 @@ AIVA 智慧漏洞掃描系統
 
 ---
 
-## 🔧 技術債務清單
+## 技術債務清單
 
 ### P0 - 關鍵級 (必須立即處理)
 
@@ -130,7 +165,7 @@ AIVA 智慧漏洞掃描系統
 
 ---
 
-## 📅 短期計畫 (Q4 2025)
+## 短期計畫 (Q4 2025)
 
 **時程**: 2025-10-13 ~ 2025-12-31  
 **目標**: 補足關鍵功能,建立測試基礎
@@ -175,6 +210,7 @@ async def test_generate_idor_tasks(sample_assets):
   - 端到端測試腳本
 
 **交付成果**:
+
 - ✅ `tests/` 目錄結構完整
 - ✅ pytest 配置檔 (`pytest.ini`)
 - ✅ Core 模組測試覆蓋率報告 (>60%)
@@ -264,6 +300,7 @@ class AIEnhancedStrategyGenerator(StrategyGenerator):
 ```
 
 **交付成果**:
+
 - ✅ 規則引擎實作 (15+ 規則)
 - ✅ 優先級計算器 (多維度評分)
 - ✅ AI 模型整合介面
@@ -348,6 +385,7 @@ async def generate_tasks(
 ```
 
 **交付成果**:
+
 - ✅ IDOR 候選檢測邏輯
 - ✅ 上下文感知任務生成
 - ✅ 任務參數優化器
@@ -395,6 +433,7 @@ class AttackSurfaceAnalyzer:
 ```
 
 **交付成果**:
+
 - ✅ 7 種攻擊面分析器
 - ✅ 攻擊面視覺化報告
 - ✅ 風險評分模型
@@ -468,6 +507,7 @@ jobs:
   - 撰寫開發者指南
 
 **交付成果**:
+
 - ✅ GitHub Actions CI/CD
 - ✅ 自動化測試報告
 - ✅ OpenAPI 文檔 (Swagger UI)
@@ -475,7 +515,7 @@ jobs:
 
 ---
 
-## 📅 中期計畫 (Q1-Q2 2026)
+## 中期計畫 (Q1-Q2 2026)
 
 **時程**: 2026-01-01 ~ 2026-06-30  
 **目標**: 多語言架構遷移,性能大幅提升
@@ -550,6 +590,7 @@ enum Severity {
   - 跨語言端到端測試
 
 **交付成果**:
+
 - ✅ Proto 契約倉庫 (proto/)
 - ✅ Buf CI/CD 流程
 - ✅ 四語言 SDK (Python, Go, Node, Rust)
@@ -732,6 +773,7 @@ services:
 ```
 
 **交付成果**:
+
 - ✅ aiva-scan-node 微服務
 - ✅ Playwright 整合 (Chromium, Firefox, WebKit)
 - ✅ OpenTelemetry Collector 部署
@@ -929,6 +971,7 @@ func BenchmarkSSRFDetection(b *testing.B) {
 ```
 
 **交付成果**:
+
 - ✅ Go SSRF 檢測器 (含 IP 黑名單)
 - ✅ Go SQLi 檢測器 (Union/Boolean/Time-based)
 - ✅ 性能基準報告 (Go vs Python)
@@ -937,7 +980,7 @@ func BenchmarkSSRFDetection(b *testing.B) {
 
 ---
 
-## 📅 長期計畫 (Q3-Q4 2026)
+## 長期計畫 (Q3-Q4 2026)
 
 **時程**: 2026-07-01 ~ 2026-12-31  
 **目標**: AI 增強,企業級功能
@@ -1018,6 +1061,7 @@ impl ScanService for InfoGatherer {
 ```
 
 **交付成果**:
+
 - ✅ Rust 敏感資訊掃描器
 - ✅ 性能提升 >10x (vs Python)
 - ✅ WASM 編譯版本 (選配)
@@ -1071,13 +1115,14 @@ class MLStrategyOptimizer:
 ```
 
 **交付成果**:
+
 - ✅ ML 模型訓練流程
 - ✅ 模型準確率 >85%
 - ✅ 策略優化效果評估
 
 ---
 
-## 🎯 多語言架構遷移路線圖
+## 多語言架構遷移路線圖
 
 ### 整體時程
 
@@ -1110,7 +1155,7 @@ class MLStrategyOptimizer:
 
 ---
 
-## 👥 資源需求與團隊配置
+## 資源需求與團隊配置
 
 ### 團隊規模
 
@@ -1125,28 +1170,32 @@ class MLStrategyOptimizer:
 ### 技能培訓計畫
 
 **Week 1-2: Go 基礎**
+
 - Go Tour 完成
 - 併發模型 (Goroutine/Channel)
 - gRPC 實作練習
 
 **Week 3-4: Protobuf & gRPC**
+
 - Protocol Buffers 設計
 - gRPC 四種通訊模式
 - 跨語言互通性測試
 
 **Week 5-6: Rust 基礎**
+
 - The Rust Book Ch 1-10
 - 所有權系統理解
 - Async Rust (Tokio)
 
 **Week 7-8: 觀測性工具**
+
 - OpenTelemetry SDK
 - Prometheus + Grafana
 - Jaeger 分散式追蹤
 
 ---
 
-## ⚠️ 風險管理與應變計畫
+## 風險管理與應變計畫
 
 ### 風險矩陣
 
@@ -1178,7 +1227,7 @@ class MLStrategyOptimizer:
 
 ---
 
-## 📊 關鍵績效指標 (KPIs)
+## 關鍵績效指標 (KPIs)
 
 ### 技術指標
 
@@ -1202,7 +1251,7 @@ class MLStrategyOptimizer:
 
 ---
 
-## 📝 技術決策記錄 (ADR)
+## 技術決策記錄 (ADR)
 
 ### ADR-001: 選擇 Pydantic v2 作為數據驗證框架
 
@@ -1216,12 +1265,14 @@ class MLStrategyOptimizer:
 採用 Pydantic v2.12.0
 
 **理由**:
+
 1. 自動驗證 (型別檢查)
 2. JSON 序列化/反序列化
 3. FastAPI 原生支援
 4. 性能優異 (Rust 核心)
 
 **後果**:
+
 - ✅ 代碼一致性提升
 - ⚠️ 需遷移現有 dataclass (已完成)
 
@@ -1239,12 +1290,14 @@ class MLStrategyOptimizer:
 採用 gRPC + Protocol Buffers
 
 **理由**:
+
 1. 官方支援 12+ 語言
 2. HTTP/2 性能優勢
 3. 原生串流支援
 4. 型別安全
 
 **替代方案**:
+
 - REST API (JSON) - 被拒絕 (性能較差)
 - Thrift - 被拒絕 (社群較小)
 
@@ -1262,18 +1315,20 @@ class MLStrategyOptimizer:
 採用 Node.js + Playwright
 
 **理由**:
+
 1. Playwright JS 生態最成熟
 2. Event Loop 適合瀏覽器 I/O
 3. 官方優先支援 TypeScript
 4. 社群資源豐富
 
 **替代方案**:
+
 - Python + Playwright - 被拒絕 (性能較差)
 - Selenium - 被拒絕 (過時)
 
 ---
 
-## 🚀 執行建議
+## 執行建議
 
 ### 立即行動 (本週)
 
@@ -1309,7 +1364,7 @@ class MLStrategyOptimizer:
 
 ---
 
-## 📚 附錄
+## 附錄
 
 ### A. 參考文檔
 

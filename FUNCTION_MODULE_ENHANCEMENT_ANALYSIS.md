@@ -1,4 +1,5 @@
 # AIVA 功能模組強化分析報告
+
 **Function Module Enhancement Analysis**
 
 版本：1.0.0  
@@ -48,12 +49,14 @@
 ### 技術債務與改進空間
 
 #### ✅ 優勢
+
 1. **統一數據合約**：所有模組遵循 Pydantic BaseModel
 2. **多語言支持**：Python + Go 混合架構已驗證可行
 3. **Topic-based 通訊**：RabbitMQ 訊息佇列解耦設計
 4. **模組化設計**：各功能獨立部署、獨立擴展
 
 #### ⚠️ 不足
+
 1. **檢測廣度有限**：僅覆蓋 4 種漏洞類型（OWASP Top 10 覆蓋 40%）
 2. **靜態分析缺失**：無 SAST 能力，無法分析原始碼漏洞
 3. **依賴掃描缺失**：無 SCA 能力，無法檢測第三方庫漏洞
@@ -73,11 +76,13 @@
 **可行性評估**：⭐⭐⭐⭐⭐ (5/5)
 
 **現狀分析**：
+
 - ✅ AIVA 已有檔案掃描能力（`info_gatherer/`）
 - ✅ 已有 `package.json`, `pyproject.toml`, `go.mod` 解析經驗
 - ❌ 尚未整合 OSV/GitHub Advisories API
 
 **建議技術棧**：
+
 - **主要語言**：Go（高併發、OSV-Scanner 整合）
 - **次要語言**：Rust（檔案解析效能）
 - **核心依賴**：
@@ -86,6 +91,7 @@
   - `cyclonedx-go` (SBOM 生成)
 
 **整合方式**：
+
 ```python
 # 新增 Topic
 Topic.TASK_FUNCTION_SCA = "tasks.function.sca"
@@ -101,6 +107,7 @@ if asset.type == AssetType.PACKAGE_FILE:
 ```
 
 **數據合約設計**：
+
 ```python
 class SCAFindingPayload(FindingPayload):
     package_name: str              # 套件名稱
@@ -120,11 +127,13 @@ class SCAFindingPayload(FindingPayload):
 **可行性評估**：⭐⭐⭐⭐ (4/5)
 
 **現狀分析**：
+
 - ✅ AIVA 已有 `javascript_source_analyzer.py`（簡化版 SAST）
 - ✅ Core 模組的 `knowledge_base.py` 使用 Python `ast` 模組
 - ❌ 尚未實現完整的污點分析（Taint Analysis）
 
 **建議技術棧**：
+
 - **主要語言**：Rust（效能、tree-sitter 整合）
 - **核心依賴**：
   - `tree-sitter`（多語言 AST 解析）
@@ -132,6 +141,7 @@ class SCAFindingPayload(FindingPayload):
   - `datalog`（資料流分析）
 
 **整合方式**：
+
 ```python
 # 擴展現有 info_gatherer
 class StaticAnalysisEngine:
@@ -144,6 +154,7 @@ class StaticAnalysisEngine:
 ```
 
 **現有程式碼複用**：
+
 - `services/scan/aiva_scan/info_gatherer/javascript_source_analyzer.py`
   - 已有 Sink 檢測邏輯（`eval`, `innerHTML`）
   - 可擴展為完整污點分析
@@ -157,11 +168,13 @@ class StaticAnalysisEngine:
 **可行性評估**：⭐⭐⭐⭐ (4/5)
 
 **現狀分析**：
+
 - ✅ AIVA 已有 Docker 環境（`docker-compose.yml`）
 - ✅ 已有檔案掃描能力
 - ❌ 尚未整合 Trivy/Checkov
 
 **建議技術棧**：
+
 - **主要語言**：Go（雲端 SDK 生態豐富）
 - **核心依賴**：
   - `trivy`（容器與 IaC 掃描）
@@ -169,6 +182,7 @@ class StaticAnalysisEngine:
   - AWS SDK for Go
 
 **整合方式**：
+
 ```python
 # Scan 模組發現 IaC 檔案時觸發
 if asset.type in [AssetType.DOCKERFILE, AssetType.K8S_YAML]:
@@ -189,11 +203,13 @@ if asset.type in [AssetType.DOCKERFILE, AssetType.K8S_YAML]:
 **可行性評估**：⭐⭐⭐⭐⭐ (5/5)
 
 **現狀分析**：
+
 - ✅ AIVA 已有 Neo4j（`docker-compose.yml` 包含）
 - ✅ Core 模組有 `VulnerabilityCorrelationAnalyzer`（雛形）
 - ✅ Integration 模組有完整 Finding 資料庫
 
 **建議技術棧**：
+
 - **主要語言**：Python（Neo4j driver、NetworkX）
 - **核心依賴**：
   - `neo4j-driver`
@@ -201,6 +217,7 @@ if asset.type in [AssetType.DOCKERFILE, AssetType.K8S_YAML]:
   - `pygraphviz`（視覺化）
 
 **整合方式**：
+
 ```python
 # Integration 模組新增分析器
 class AttackPathEngine:
@@ -231,17 +248,20 @@ class AttackPathEngine:
 **可行性評估**：⭐⭐⭐⭐ (4/5)
 
 **現狀分析**：
+
 - ✅ SSRF 模組已有高併發請求能力（Go 實現）
 - ✅ Scan 模組能識別登入端點
 - ❌ 尚無專門的認證測試邏輯
 
 **建議技術棧**：
+
 - **主要語言**：Go（高併發 HTTP 請求）
 - **核心依賴**：
   - `jwt-go`（JWT 解析）
   - `colly`（爬蟲框架）
 
 **整合方式**：
+
 ```python
 # Core 模組識別認證端點
 if asset.category == "authentication":
@@ -262,15 +282,18 @@ if asset.category == "authentication":
 **可行性評估**：⭐⭐⭐⭐⭐ (5/5)
 
 **現狀分析**：
+
 - ✅ IDOR 模組已實現 BOLA 檢測
 - ✅ Scan 模組能識別 `AJAX_ENDPOINT`, `API_CALL`
 - ✅ 可直接擴展為完整 API 安全測試
 
 **建議技術棧**：
+
 - **主要語言**：Python（靈活的 HTTP 庫）
 - **輔助語言**：Go（高併發測試）
 
 **整合方式**：
+
 ```python
 # 擴展現有 function_idor 模組
 class APISecTester(CrossUserTester):
@@ -299,11 +322,13 @@ class APISecTester(CrossUserTester):
 **可行性評估**：⭐⭐⭐⭐⭐ (5/5)
 
 **現狀分析**：
+
 - ✅ AIVA 已有 `SensitiveInfoDetector`（執行期檢測）
 - ✅ Rust 模組 `info_gatherer_rust` 已實現正則掃描
 - ✅ 可擴展為 Git 歷史掃描
 
 **建議技術棧**：
+
 - **主要語言**：Rust（高效能檔案 I/O）
 - **核心依賴**：
   - `regex`, `aho-corasick`
@@ -311,6 +336,7 @@ class APISecTester(CrossUserTester):
   - `entropy`（熵值計算）
 
 **整合方式**：
+
 ```rust
 // 擴展現有 info_gatherer_rust
 pub struct SecretScanner {
@@ -343,16 +369,19 @@ impl SecretScanner {
 **可行性評估**：⭐⭐⭐ (3/5) - **需謹慎設計**
 
 **風險警告**：
+
 - ⚠️ 可能造成目標系統實際損害
 - ⚠️ 需嚴格的權限控制與審計
 - ⚠️ 建議僅在授權環境（沙盒、測試環境）使用
 
 **現狀分析**：
+
 - ✅ SSRF 模組已有內網探測能力
 - ✅ SQLi 模組已有時間盲注檢測
 - ❌ 尚無實際 RCE 利用能力
 
 **建議技術棧**：
+
 - **主要語言**：Python（pwntools、Metasploit 整合）
 - **核心依賴**：
   - `pwntools`
@@ -360,6 +389,7 @@ impl SecretScanner {
   - `nuclei`（PoC 驗證）
 
 **整合方式**：
+
 ```python
 # Core 模組條件觸發
 async def process_function_results(finding: FindingPayload):
@@ -375,6 +405,7 @@ async def process_function_results(finding: FindingPayload):
 **歸屬模組**：**Function 模組**（新增 `function_postex/`）
 
 **必要控制**：
+
 1. 預設關閉，需用戶明確啟用
 2. 記錄所有利用行為到審計日誌
 3. 限制僅在標記為「測試環境」的目標上執行
@@ -390,17 +421,20 @@ async def process_function_results(finding: FindingPayload):
 **可行性評估**：⭐⭐⭐⭐⭐ (5/5)
 
 **現狀分析**：
+
 - ✅ Core 模組有 `RiskAssessmentEngine`
 - ✅ 已有 HTTP 請求能力
 - ❌ 尚未整合外部情資 API
 
 **建議技術棧**：
+
 - **主要語言**：Python（API 整合、資料處理）
 - **核心依賴**：
   - `httpx`
   - `pandas`
 
 **整合方式**：
+
 ```python
 # Core 模組新增情資服務
 class ThreatIntelService:
@@ -431,17 +465,20 @@ class ThreatIntelService:
 **可行性評估**：⭐⭐⭐ (3/5) - **需 LLM 整合**
 
 **現狀分析**：
+
 - ✅ Core 模組有 AI 引擎（`BioNeuronRAGAgent`）
 - ❌ 尚無程式碼生成能力
 - ❌ 需整合 GitHub API
 
 **建議技術棧**：
+
 - **主要語言**：Python（Git 操作、LLM API）
 - **核心依賴**：
   - `gitpython`
   - OpenAI API / Anthropic Claude API
 
 **整合方式**：
+
 ```python
 # Integration 模組新增修復服務
 class RemediationService:
@@ -474,17 +511,20 @@ class RemediationService:
 **可行性評估**：⭐⭐ (2/5) - **極度依賴 AI**
 
 **現狀分析**：
+
 - ✅ AI 引擎已能理解程式碼語意
 - ❌ 需要 AI 理解業務邏輯（極高難度）
 - ❌ 需要大量人工定義業務規則
 
 **建議技術棧**：
+
 - **主要語言**：Python（靈活的測試腳本）
 - **核心依賴**：
   - LLM API（理解業務流程）
   - `locust`（併發測試）
 
 **整合方式**：
+
 ```python
 # 用戶自然語言描述 → AI 生成測試
 user_input = "測試購物車是否能透過併發請求操縱價格"
@@ -496,6 +536,7 @@ results = await execute_test_script(test_script)
 **歸屬模組**：**Function 模組**（新增 `function_bizlogic/`）
 
 **挑戰**：
+
 1. AI 需理解複雜的業務邏輯（電商、金融、社交）
 2. 需大量真實案例訓練
 3. 誤報率可能極高
@@ -509,11 +550,13 @@ results = await execute_test_script(test_script)
 **可行性評估**：⭐⭐⭐⭐ (4/5)
 
 **現狀分析**：
+
 - ✅ IDOR 模組已有多角色測試能力
 - ✅ Scan 模組能發現所有端點
 - ✅ 可擴展為系統化權限矩陣
 
 **建議技術棧**：
+
 - **主要語言**：Python（資料分析、視覺化）
 - **核心依賴**：
   - `httpx`
@@ -521,6 +564,7 @@ results = await execute_test_script(test_script)
   - `matplotlib`（權限矩陣視覺化）
 
 **整合方式**：
+
 ```python
 # Function 模組新增授權測試器
 class AuthorizationMapper:
@@ -606,12 +650,14 @@ class AuthorizationMapper:
 ### P0 級（立即實施，3 個月內完成）
 
 #### ✅ Module-APISec（擴展現有 IDOR）
+
 - **時程**：2 週
 - **工作量**：小（基於現有程式碼擴展）
 - **價值**：高（覆蓋 OWASP API Top 10）
 - **技術風險**：低
 
 **實施步驟**：
+
 1. 擴展 `function_idor/cross_user_tester.py`
 2. 新增 `bfla_tester.py`（函式級授權）
 3. 新增 `mass_assignment_tester.py`
@@ -620,12 +666,14 @@ class AuthorizationMapper:
 ---
 
 #### ✅ Function-SCA（新建 Go 模組）
+
 - **時程**：4 週
 - **工作量**：中
 - **價值**：極高（自動化依賴掃描）
 - **技術風險**：低（整合 OSV-Scanner）
 
 **實施步驟**：
+
 1. 建立 `services/function/function_sca_go/`
 2. 整合 Google OSV-Scanner
 3. 解析 `package.json`, `pyproject.toml`, `go.mod`, `Cargo.toml`
@@ -635,12 +683,14 @@ class AuthorizationMapper:
 ---
 
 #### ✅ Module-Secrets（擴展 Rust 掃描器）
+
 - **時程**：3 週
 - **工作量**：中
 - **價值**：高（防止憑證洩漏）
 - **技術風險**：低
 
 **實施步驟**：
+
 1. 擴展 `services/scan/info_gatherer_rust/`
 2. 新增 `git2` 依賴，實現 Git 歷史掃描
 3. 新增熵值計算模組
@@ -649,12 +699,14 @@ class AuthorizationMapper:
 ---
 
 #### ✅ Module-AttackPath（新建 Python 分析引擎）
+
 - **時程**：6 週
 - **工作量**：大
 - **價值**：極高（最有價值的差異化功能）
 - **技術風險**：中
 
 **實施步驟**：
+
 1. 在 `services/integration/` 新增 `attack_path_analyzer/`
 2. 設計 Neo4j 圖結構（資產節點、漏洞節點、攻擊邊）
 3. 實現圖資料導入邏輯
@@ -690,6 +742,7 @@ class AuthorizationMapper:
 ## 📈 預期成果
 
 ### 完成 P0 級後（3 個月）
+
 - ✅ 漏洞覆蓋率：從 4 種 → 10+ 種
 - ✅ OWASP Top 10 覆蓋率：從 40% → 80%
 - ✅ 新增能力：
@@ -699,6 +752,7 @@ class AuthorizationMapper:
   - 攻擊路徑視覺化（AttackPath）
 
 ### 完成 P1 級後（6 個月）
+
 - ✅ 漏洞覆蓋率：15+ 種
 - ✅ 新增能力：
   - 原始碼靜態分析（SAST）
@@ -708,6 +762,7 @@ class AuthorizationMapper:
   - 授權模型分析（AuthZ）
 
 ### 完成 P2 級後（1 年）
+
 - ✅ 深度利用能力（PostEx）
 - ✅ 自動化修復建議（Remediation）
 
@@ -733,6 +788,7 @@ class AuthorizationMapper:
 | AuthZ | Python | 擴展現有 IDOR |
 
 ### 語言分布統計
+
 - **Python**：6 個模組（APISec, AttackPath, PostEx, ThreatIntel, Remediation, BizLogic, AuthZ）
 - **Go**：3 個模組（SCA, CSPM, AuthN）
 - **Rust**：2 個模組（SAST, Secrets）
@@ -742,22 +798,26 @@ class AuthorizationMapper:
 ## ✅ 結論
 
 ### 可立即實施（P0）
+
 1. ✅ **Module-APISec** - 擴展現有 function_idor
 2. ✅ **Function-SCA** - 新建 Go 模組
 3. ✅ **Module-Secrets** - 擴展 Rust 掃描器
 4. ✅ **Module-AttackPath** - 新建 Python 分析引擎
 
 ### 需適度調整（P1-P2）
+
 5. ⚠️ **Function-SAST** - 建議先實現簡化版
 6. ⚠️ **Module-PostEx** - 需嚴格權限控制
 7. ⚠️ **Module-Remediation** - 需 LLM 整合
 
 ### 暫緩實施（P3）
+
 8. ❌ **Module-BizLogic** - 技術不成熟，建議觀察業界進展
 
 ---
 
 **下一步行動**：
+
 1. 創建詳細的 P0 模組實施計劃
 2. 設計各模組的數據合約擴展
 3. 準備開發環境與依賴
