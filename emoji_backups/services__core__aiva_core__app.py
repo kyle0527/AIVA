@@ -60,9 +60,9 @@ session_state_manager = SessionStateManager()
 @app.on_event("startup")
 async def startup() -> None:
     """啟動核心引擎服務"""
-    logger.info("[啟動] AIVA Core Engine starting up...")
-    logger.info("[統計] Initializing analysis components...")
-    logger.info("[循環] Starting message processing loops...")
+    logger.info("🚀 AIVA Core Engine starting up...")
+    logger.info("📊 Initializing analysis components...")
+    logger.info("🔄 Starting message processing loops...")
 
     # 啟動各種處理任務
     asyncio.create_task(process_scan_results())
@@ -96,7 +96,7 @@ async def process_scan_results() -> None:
     處理掃描模組回傳的結果 - 核心分析與策略生成
     這是第3階段: 核心分析與建議的主要邏輯
     """
-    logger.info("[API] Starting scan results processor...")
+    logger.info("📡 Starting scan results processor...")
     broker = await get_broker()
 
     aiterator = broker.subscribe(Topic.RESULTS_SCAN_COMPLETED)
@@ -109,7 +109,7 @@ async def process_scan_results() -> None:
             payload = ScanCompletedPayload(**msg.payload)
             scan_id = payload.scan_id
 
-            logger.info(f"[U+1F50D] [Stage 1/7] Processing scan results for {scan_id}")
+            logger.info(f"🔍 [Stage 1/7] Processing scan results for {scan_id}")
 
             # ===== 階段1：資料接收與預處理 (Data Ingestion) =====
             await scan_interface.process_scan_data(payload)  # 處理但不需要暫存
@@ -124,14 +124,14 @@ async def process_scan_results() -> None:
                 },
             )
             logger.info(
-                f"[接收] [Stage 1/7] Data ingested - "
+                f"📥 [Stage 1/7] Data ingested - "
                 f"Assets: {len(payload.assets)}, "
                 f"URLs: {payload.summary.urls_found}, "
                 f"Forms: {payload.summary.forms_found}"
             )
 
             # ===== 階段2：初步攻擊面分析 (Initial Attack Surface Analysis) =====
-            logger.info(f"[U+1F50D] [Stage 2/7] Analyzing attack surface for {scan_id}")
+            logger.info(f"🔍 [Stage 2/7] Analyzing attack surface for {scan_id}")
             # 直接使用payload而非processed_data
             attack_surface = surface_analyzer.analyze(payload)
             session_state_manager.update_context(
@@ -144,13 +144,13 @@ async def process_scan_results() -> None:
                 },
             )
             logger.info(
-                f"[列表] [Stage 2/7] Attack surface identified - "
+                f"📋 [Stage 2/7] Attack surface identified - "
                 f"High risk: {attack_surface.get('high_risk_assets', 0)}, "
                 f"Medium risk: {attack_surface.get('medium_risk_assets', 0)}"
             )
 
             # ===== 階段3：測試策略生成 (Test Strategy Generation) =====
-            logger.info(f"[目標] [Stage 3/7] Generating test strategy for {scan_id}")
+            logger.info(f"🎯 [Stage 3/7] Generating test strategy for {scan_id}")
             # Legacy strategy generator removed - using direct strategy
             base_strategy = {"test_plans": [], "strategy_type": "default"}
             session_state_manager.update_context(
@@ -162,13 +162,13 @@ async def process_scan_results() -> None:
                 },
             )
             logger.info(
-                f"[記錄] [Stage 3/7] Base strategy generated - "
+                f"📝 [Stage 3/7] Base strategy generated - "
                 f"Tests: {len(base_strategy.get('test_plans', []))}"
             )
 
             # ===== 階段4：動態策略調整 (Dynamic Strategy Adjustment) =====
             logger.info(
-                f"[設定] [Stage 4/7] Adjusting strategy based on context for {scan_id}"
+                f"⚙️ [Stage 4/7] Adjusting strategy based on context for {scan_id}"
             )
             session_context = session_state_manager.get_session_context(scan_id)
             # 將fingerprints整合到context中
@@ -185,12 +185,12 @@ async def process_scan_results() -> None:
                 },
             )
             logger.info(
-                f"[調整] [Stage 4/7] Strategy adjusted - "
+                f"🔧 [Stage 4/7] Strategy adjusted - "
                 f"Optimizations: {len(adjusted_strategy.get('optimizations', []))}"
             )
 
             # ===== 階段5：任務生成 (Task Generation) =====
-            logger.info(f"[快速] [Stage 5/7] Generating tasks for {scan_id}")
+            logger.info(f"⚡ [Stage 5/7] Generating tasks for {scan_id}")
             # 將generator轉為list以便重複使用
             tasks = list(task_generator.from_strategy(adjusted_strategy, payload))
             session_state_manager.update_context(
@@ -202,13 +202,13 @@ async def process_scan_results() -> None:
                 },
             )
             logger.info(
-                f"[U+1F4E6] [Stage 5/7] Tasks generated - "
+                f"📦 [Stage 5/7] Tasks generated - "
                 f"Total: {len(tasks)}, "
                 f"Types: {_count_tasks_by_type(tasks)}"
             )
 
             # Stage 6: Task Queue Management & Distribution
-            logger.info(f"[U+1F4E4] [Stage 6/7] Dispatching tasks for {scan_id}")
+            logger.info(f"📤 [Stage 6/7] Dispatching tasks for {scan_id}")
             dispatched_count = 0
             for topic, task_payload in tasks:
                 # 將任務加入佇列管理
@@ -234,10 +234,10 @@ async def process_scan_results() -> None:
                     "pending_tasks": len(tasks),
                 },
             )
-            logger.info(f"[啟動] [Stage 6/7] Dispatched {dispatched_count} tasks")
+            logger.info(f"🚀 [Stage 6/7] Dispatched {dispatched_count} tasks")
 
             # ===== 階段7：執行狀態監控 (Execution Status Monitoring) =====
-            logger.info(f"[監控] [Stage 7/7] Monitoring execution for {scan_id}")
+            logger.info(f"👁️ [Stage 7/7] Monitoring execution for {scan_id}")
             session_state_manager.update_context(
                 scan_id,
                 {
@@ -257,10 +257,10 @@ async def process_scan_results() -> None:
                 },
             )
 
-            logger.info(f"[已] [Stage 7/7] All stages completed for {scan_id}")
+            logger.info(f"✅ [Stage 7/7] All stages completed for {scan_id}")
 
         except Exception as e:
-            logger.error(f"[失敗] Error processing scan results: {e}")
+            logger.error(f"❌ Error processing scan results: {e}")
 
 
 async def process_function_results() -> None:
@@ -268,7 +268,7 @@ async def process_function_results() -> None:
     處理功能模組回傳的結果 - 用於下一輪優化
     實現動態學習與策略調整
     """
-    logger.info("[循環] Starting function results processor...")
+    logger.info("🔄 Starting function results processor...")
     broker = await get_broker()
 
     # 監聽所有功能模組的結果
@@ -285,7 +285,7 @@ async def process_function_results() -> None:
             scan_id = result_data.get("scan_id")
             vulnerability_info = result_data.get("vulnerability", {})
 
-            logger.info(f"[統計] Received result from {msg.header.source_module}")
+            logger.info(f"📊 Received result from {msg.header.source_module}")
 
             # 回饋給策略調整器，用於改善下次決策
             feedback_data = {
@@ -299,12 +299,12 @@ async def process_function_results() -> None:
             strategy_adjuster.learn_from_result(feedback_data)
 
         except Exception as e:
-            logger.error(f"[失敗] Error processing function result: {e}")
+            logger.error(f"❌ Error processing function result: {e}")
 
 
 async def monitor_execution_status() -> None:
     """監控執行狀態與效能"""
-    logger.info("[U+1F4C8] Starting execution status monitor...")
+    logger.info("📈 Starting execution status monitor...")
 
     while True:
         try:
@@ -316,7 +316,7 @@ async def monitor_execution_status() -> None:
 
             # 檢查是否有異常情況需要處理
             if system_status.get("status") != "healthy":
-                logger.warning(f"[警告] System health issue: {system_status}")
+                logger.warning(f"⚠️ System health issue: {system_status}")
 
         except Exception as e:
-            logger.error(f"[失敗] Error in status monitoring: {e}")
+            logger.error(f"❌ Error in status monitoring: {e}")

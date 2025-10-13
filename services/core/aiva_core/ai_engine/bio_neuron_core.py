@@ -1,0 +1,278 @@
+"""
+BioNeuron Core - 生物啟發式神經網路決策核心
+來源: BioNeuronAI/src/bioneuronai/scalable_architecture.py
+來源: BioNeuronAI/src/bioneuronai/improved_core.py
+
+這個模組實現了一個可擴展的生物啟發式神經網路 (500萬參數規模)
+用於 AI 代理的決策核心,包含 RAG 功能和抗幻覺機制
+"""
+
+from __future__ import annotations
+
+import logging
+import time
+from typing import TYPE_CHECKING, Any
+
+import numpy as np
+
+if TYPE_CHECKING:
+    pass
+
+logger = logging.getLogger(__name__)
+
+
+# --- 核心神經網路元件 ---
+
+
+class BiologicalSpikingLayer:
+    """一個模擬生物尖峰行為的簡化層."""
+
+    def __init__(self, input_size: int, output_size: int) -> None:
+        """初始化尖峰神經層.
+
+        Args:
+            input_size: 輸入維度
+            output_size: 輸出維度
+        """
+        self.weights = np.random.randn(input_size, output_size) * np.sqrt(
+            2.0 / input_size
+        )
+        self.threshold = 1.0  # 尖峰閾值
+        self.refractory_period = 0.1  # 不反應期
+        self.last_spike_time = np.zeros(output_size) - self.refractory_period
+        self.params = input_size * output_size
+
+    def forward(self, x: np.ndarray) -> np.ndarray:
+        """前向傳播,產生尖峰訊號.
+
+        Args:
+            x: 輸入訊號
+
+        Returns:
+            尖峰輸出 (0 或 1)
+        """
+        current_time = time.time()
+        potential = x @ self.weights
+        spikes = (potential > self.threshold).astype(int)
+
+        # 實現不反應期
+        for i in range(len(spikes)):
+            if spikes[i] and (
+                current_time - self.last_spike_time[i] < self.refractory_period
+            ):
+                spikes[i] = 0  # 抑制尖峰
+            elif spikes[i]:
+                self.last_spike_time[i] = current_time
+
+        return spikes
+
+
+class AntiHallucinationModule:
+    """抗幻覺模組,用於評估決策的信心度."""
+
+    def check_confidence(
+        self, decision_potential: np.ndarray, threshold: float = 0.7
+    ) -> tuple[bool, float]:
+        """檢查決策的信心度是否足夠.
+
+        Args:
+            decision_potential: 決策潛力向量
+            threshold: 信心度閾值
+
+        Returns:
+            (是否有信心, 信心度分數)
+        """
+        confidence = float(np.max(decision_potential))
+        is_confident = confidence >= threshold
+        if not is_confident:
+            logger.warning(
+                f"[Anti-Hallucination] 決策信心度不足 "
+                f"({confidence:.2f} < {threshold})，建議請求確認。"
+            )
+        return is_confident, confidence
+
+
+class ScalableBioNet:
+    """
+    可擴展的生物啟發式神經網路 - 500萬參數規模.
+
+    這是 AI 代理的「決策核心」
+    """
+
+    def __init__(self, input_size: int, num_tools: int) -> None:
+        """初始化決策網路.
+
+        Args:
+            input_size: 輸入向量大小
+            num_tools: 可用工具數量
+        """
+        # EXTRA_LARGE (5M 參數) 配置
+        # 這是為了達到約 500 萬參數目標的設計
+        self.hidden_size_1 = 2048
+        self.hidden_size_2 = 1024
+
+        # 層定義
+        self.fc1 = np.random.randn(input_size, self.hidden_size_1)
+        self.spiking1 = BiologicalSpikingLayer(self.hidden_size_1, self.hidden_size_2)
+        self.fc2 = np.random.randn(self.hidden_size_2, num_tools)
+
+        # 參數計算
+        self.params_fc1 = input_size * self.hidden_size_1
+        self.params_spiking1 = self.spiking1.params
+        self.params_fc2 = self.hidden_size_2 * num_tools
+        self.total_params = self.params_fc1 + self.params_spiking1 + self.params_fc2
+
+        logger.info("--- ScalableBioNet (決策核心) 初始化 ---")
+        logger.info(f"  - FC1 參數: {self.params_fc1:,}")
+        logger.info(f"  - Spiking1 參數: {self.params_spiking1:,}")
+        logger.info(f"  - FC2 參數: {self.params_fc2:,}")
+        logger.info(f"  - 總參數約: {self.total_params / 1_000_000:.2f}M")
+        logger.info("-" * 41)
+
+    def forward(self, x: np.ndarray) -> np.ndarray:
+        """前向傳播,產生決策潛力.
+
+        Args:
+            x: 輸入向量
+
+        Returns:
+            決策機率分布
+        """
+        x = np.tanh(x @ self.fc1)
+        x = self.spiking1.forward(x)
+        decision_potential = x @ self.fc2
+        return self._softmax(decision_potential)
+
+    def _softmax(self, x: np.ndarray) -> np.ndarray:
+        """Softmax 激活函數.
+
+        Args:
+            x: 輸入向量
+
+        Returns:
+            機率分布
+        """
+        e_x = np.exp(x - np.max(x))
+        return e_x / e_x.sum(axis=0)
+
+
+class BioNeuronRAGAgent:
+    """
+    具備 RAG 功能的 BioNeuron AI 代理.
+
+    結合檢索增強生成 (RAG) 與生物啟發式決策核心
+    """
+
+    def __init__(self, codebase_path: str) -> None:
+        """初始化 RAG 代理.
+
+        Args:
+            codebase_path: 程式碼庫路徑
+        """
+        logger.info("正在初始化 BioNeuronRAGAgent...")
+
+        # 注意: 這裡需要實現 KnowledgeBase, Tool, CodeReader, CodeWriter
+        # 目前暫時使用 mock 實作
+        self.tools: list[dict[str, str]] = [
+            {"name": "CodeReader"},
+            {"name": "CodeWriter"},
+        ]
+        self.tool_map: dict[str, dict[str, str]] = {
+            tool["name"]: tool for tool in self.tools
+        }
+
+        # RAG 檢索的上下文會被嵌入,需要一個固定的向量大小
+        # 假設嵌入向量大小 + 任務向量大小 = 1024
+        self.input_vector_size = 1024
+
+        self.decision_core = ScalableBioNet(self.input_vector_size, len(self.tools))
+        self.anti_hallucination = AntiHallucinationModule()
+        self.history: list[dict[str, Any]] = []
+
+    def _create_input_vector(self, task: str, context: str) -> np.ndarray:
+        """將任務和上下文轉換為輸入向量.
+
+        Args:
+            task: 任務描述
+            context: 上下文資訊
+
+        Returns:
+            輸入向量
+        """
+        # 這是一個簡化的嵌入過程
+        # 在實際應用中,會使用真正的 embedding model (如 SentenceTransformer)
+        task_hash = np.array([ord(c) for c in task], dtype=np.float32)
+        context_hash = np.array([ord(c) for c in context], dtype=np.float32)
+
+        task_vec = np.pad(
+            task_hash,
+            (0, self.input_vector_size // 2 - len(task_hash)),
+            "constant",
+        )
+        context_vec = np.pad(
+            context_hash,
+            (0, self.input_vector_size // 2 - len(context_hash)),
+            "constant",
+        )
+
+        combined_vec = np.concatenate([task_vec, context_vec])
+        return combined_vec / np.linalg.norm(combined_vec)  # 正規化
+
+    def invoke(self, task: str) -> dict[str, Any]:
+        """
+        執行一個任務,包含完整的 RAG 流程.
+
+        Args:
+            task: 任務描述
+
+        Returns:
+            執行結果字典
+        """
+        logger.info(f"\n--- 開始新任務: {task} ---")
+
+        # 1. RAG - 檢索 (Retrieve)
+        logger.info("1. [檢索] 正在從知識庫中搜尋相關上下文...")
+        # TODO: 實作實際的知識庫檢索
+        context_str = ""
+
+        # 2. RAG - 增強 (Augment)
+        logger.info("2. [增強] 正在結合任務與上下文...")
+        input_vector = self._create_input_vector(task, context_str)
+
+        # 3. 決策 (Decision Making)
+        logger.info("3. [決策] BioNeuronAI 決策核心正在思考...")
+        decision_potential = self.decision_core.forward(input_vector)
+
+        # 4. 可靠性檢查 (Anti-Hallucination)
+        is_confident, confidence = self.anti_hallucination.check_confidence(
+            decision_potential
+        )
+        if not is_confident:
+            return {
+                "status": "uncertain",
+                "message": (
+                    f"我對下一步操作的信心度 ({confidence:.2f}) 不足，"
+                    "需要您提供更多資訊或確認。"
+                ),
+                "confidence": confidence,
+            }
+
+        # 5. 選擇工具並執行
+        chosen_tool_index = int(np.argmax(decision_potential))
+        chosen_tool = self.tools[chosen_tool_index]
+        tool_confidence = float(decision_potential[chosen_tool_index])
+        logger.info(
+            f"4. [執行] 選擇工具: '{chosen_tool['name']}' "
+            f"(信心度: {tool_confidence:.2f})"
+        )
+
+        logger.info("5. [完成] 任務步驟執行完畢。")
+
+        response = {
+            "status": "success",
+            "tool_used": chosen_tool["name"],
+            "confidence": tool_confidence,
+            "result": "執行成功 (Mock)",
+        }
+        self.history.append(response)
+        return response

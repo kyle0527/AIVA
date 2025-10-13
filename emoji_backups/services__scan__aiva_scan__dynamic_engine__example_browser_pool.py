@@ -21,16 +21,16 @@ async def example_basic_usage() -> None:
     try:
         # 初始化池
         await pool.initialize()
-        print("[V] 瀏覽器池初始化完成")
+        print("✓ 瀏覽器池初始化完成")
 
         # 使用上下文管理器獲取頁面
         async with pool.get_page() as page:
             if page:  # 真實瀏覽器模式
                 await page.goto("https://example.com")
                 title = await page.title()
-                print(f"[V] 頁面標題: {title}")
+                print(f"✓ 頁面標題: {title}")
             else:  # 模擬模式
-                print("[V] 在模擬模式下運行（未安裝 Playwright）")
+                print("✓ 在模擬模式下運行（未安裝 Playwright）")
 
         # 查看統計
         stats = pool.get_stats()
@@ -42,7 +42,7 @@ async def example_basic_usage() -> None:
     finally:
         # 關閉池
         await pool.shutdown()
-        print("\n[V] 瀏覽器池已關閉")
+        print("\n✓ 瀏覽器池已關閉")
 
 
 async def example_custom_config() -> None:
@@ -232,7 +232,7 @@ async def example_error_handling() -> None:
             async with pool.get_page() as _page:
                 pass
         except RuntimeError as e:
-            print(f"[V] 捕獲到預期錯誤: {e}")
+            print(f"✓ 捕獲到預期錯誤: {e}")
 
         # 正確初始化
         await pool.initialize()
@@ -242,7 +242,7 @@ async def example_error_handling() -> None:
             async with pool.get_page(browser_id="invalid_id") as _page:
                 pass
         except ValueError as e:
-            print(f"[V] 捕獲到預期錯誤: {e}")
+            print(f"✓ 捕獲到預期錯誤: {e}")
 
     finally:
         await pool.shutdown()

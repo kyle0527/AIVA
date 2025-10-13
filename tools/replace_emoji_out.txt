@@ -1,0 +1,11 @@
+files_modified: 10
+c:\D\E\AIVA\AIVA-main\tools\replace_emoji.py
+c:\D\E\AIVA\AIVA-main\tools\update_imports.py
+c:\D\E\AIVA\AIVA-main\services\core\aiva_core\app.py
+c:\D\E\AIVA\AIVA-main\services\core\aiva_core\ai_engine\bio_neuron_core_v2.py
+c:\D\E\AIVA\AIVA-main\services\core\aiva_core\analysis\strategy_generator.py
+c:\D\E\AIVA\AIVA-main\services\core\aiva_core\ui_panel\server.py
+c:\D\E\AIVA\AIVA-main\services\function\function_idor\aiva_func_idor\worker.py
+c:\D\E\AIVA\AIVA-main\services\scan\aiva_scan\dynamic_engine\example_browser_pool.py
+c:\D\E\AIVA\AIVA-main\services\scan\aiva_scan\dynamic_engine\example_usage.py
+c:\D\E\AIVA\AIVA-main\services\scan\aiva_scan\info_gatherer\javascript_source_analyzer.py

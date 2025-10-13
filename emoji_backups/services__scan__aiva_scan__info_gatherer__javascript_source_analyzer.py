@@ -538,7 +538,7 @@ class JavaScriptSourceAnalyzer:
                 lines.append(f"  Line {sink.line_number}: {sink.code_snippet[:80]}")
                 lines.append(f"  {sink.description}")
                 if sink.tainted_source:
-                    lines.append(f"  [警告]  {sink.tainted_source}")
+                    lines.append(f"  ⚠️  {sink.tainted_source}")
 
         if result.patterns:
             lines.append("\n" + "Patterns Found".center(60, "─"))

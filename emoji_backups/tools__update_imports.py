@@ -34,13 +34,13 @@ def update_import_in_file(file_path: Path) -> bool:
         if content != original_content:
             with open(file_path, "w", encoding="utf-8") as f:
                 f.write(content)
-            print(f"[已] 已更新: {file_path}")
+            print(f"✅ 已更新: {file_path}")
             return True
         else:
             return False
 
     except Exception as e:
-        print(f"[失敗] 更新失敗 {file_path}: {e}")
+        print(f"❌ 更新失敗 {file_path}: {e}")
         return False
 
 
@@ -61,17 +61,17 @@ def main():
 
     for directory in directories_to_update:
         if not directory.exists():
-            print(f"[警告] 目錄不存在: {directory}")
+            print(f"⚠️ 目錄不存在: {directory}")
             continue
 
-        print(f"\n[目錄] 處理目錄: {directory}")
+        print(f"\n📁 處理目錄: {directory}")
 
         # 遞歸查找所有 Python 檔案
         for py_file in directory.rglob("*.py"):
             if update_import_in_file(py_file):
                 updated_files.append(py_file)
 
-    print(f"\n[完成] 更新完成！共更新了 {len(updated_files)} 個檔案")
+    print(f"\n🎉 更新完成！共更新了 {len(updated_files)} 個檔案")
 
     if updated_files:
         print("\n更新的檔案列表:")
