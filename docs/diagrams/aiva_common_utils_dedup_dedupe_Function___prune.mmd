@@ -1,0 +1,20 @@
+flowchart TB
+    n1([開始])
+    n2([結束])
+    n3[&amp;&#35;39;Remove expired fingerprints.&amp;&#35;39;]
+    n4{if self._ttl_seconds &amp;gt; 0}
+    n5[deleted = self._conn.execute&#40;&amp;&#35;39;...]
+    n6{if deleted &amp;gt; 0}
+    n7[logger.debug&#40;&amp;&#35;39;Pruned %d expired fingerpri...]
+    n8[]
+    n9[]
+    n1 --> n3
+    n3 --> n4
+    n4 -->|Yes| n5
+    n4 -->|No| n9
+    n5 --> n6
+    n6 -->|Yes| n7
+    n6 -->|No| n8
+    n7 --> n8
+    n8 --> n9
+    n9 --> n2

@@ -1,0 +1,17 @@
+flowchart TB
+    n1([開始])
+    n2([結束])
+    n3[&amp;&#35;39;\n        移除排除模式\n\n        Args:\n         ...]
+    n4{if pattern in self.scope.exclu...}
+    n5[self.scope.exclusions.remove&#40;pattern&#41;]
+    n6[self._exclusion_patterns = self._compile_exclus...]
+    n7[logger.info&#40;f&amp;&#35;39;Removed exclusion pattern: ...]
+    n8[]
+    n1 --> n3
+    n3 --> n4
+    n4 -->|Yes| n5
+    n4 -->|No| n8
+    n5 --> n6
+    n6 --> n7
+    n7 --> n8
+    n8 --> n2

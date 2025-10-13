@@ -1,0 +1,44 @@
+flowchart TB
+    n1([開始])
+    n2([結束])
+    n3[&amp;&#35;39;\n        從測試結果中學習，更新策略知識庫\n\n        Args:\...]
+    n4[scan_id = feedback_data.get&#40;&amp;&#35;39;s...]
+    n5[module = feedback_data.get&#40;&amp;&#35;39;m...]
+    n6[success = feedback_data.get&#40;&amp;&#35;39;s...]
+    n7{if not scan_id or not module}
+    n8[return]
+    n9[]
+    n10{if scan_id not in self._learni...}
+    n11[self._learning_data&#91;scan_id&#93; = &#91;&#93;]
+    n12[]
+    n13[self._learning_data&#91;scan_id&#93;.append&#40;feedback_...]
+    n14{if success and module}
+    n15{if module not in self._success...}
+    n16[self._success_patterns&#91;module&#93; = &#91;&#93;]
+    n17[]
+    n18[self._success_patterns&#91;module&#93;.append&#40;feedbac...]
+    n19[]
+    n20[logger.info&#40;f&amp;&#35;39;Learned from &#123;module&#...]
+    n1 --> n3
+    n3 --> n4
+    n4 --> n5
+    n5 --> n6
+    n6 --> n7
+    n7 -->|Yes| n8
+    n7 -->|No| n9
+    n8 --> n9
+    n9 --> n10
+    n10 -->|Yes| n11
+    n10 -->|No| n12
+    n11 --> n12
+    n12 --> n13
+    n13 --> n14
+    n14 -->|Yes| n15
+    n14 -->|No| n19
+    n15 -->|Yes| n16
+    n15 -->|No| n17
+    n16 --> n17
+    n17 --> n18
+    n18 --> n19
+    n19 --> n20
+    n20 --> n2

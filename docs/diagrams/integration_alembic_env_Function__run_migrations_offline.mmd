@@ -1,0 +1,14 @@
+flowchart TB
+    n1([開始])
+    n2([結束])
+    n3[&amp;&#35;39;離線模式運行遷移&amp;&#35;39;]
+    n4[url = get_database_url&#40;&#41;]
+    n5[context.configure&#40;url=url, target_metadata=target_...]
+    n6[with context.b...]
+    n7[context.run_migrations&#40;&#41;]
+    n1 --> n3
+    n3 --> n4
+    n4 --> n5
+    n5 --> n6
+    n6 --> n7
+    n7 --> n2

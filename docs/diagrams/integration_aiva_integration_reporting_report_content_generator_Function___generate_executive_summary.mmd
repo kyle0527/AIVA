@@ -1,0 +1,54 @@
+flowchart TB
+    n1([開始])
+    n2([結束])
+    n3[&amp;&#35;39;生成執行摘要&amp;&#35;39;]
+    n4[total_findings = len&#40;findings&#41;]
+    n5[risk_level = risk_assessment.get&#40;...]
+    n6[compliance_score = compliance_result.ge...]
+    n7[severity_counts: dict&#91;str, int&#93; = &#123;&#125;]
+    n8{for finding in findings}
+    n9[severity = finding.get&#40;&amp;&#35;39;severit...]
+    n10[severity_counts&#91;severity&#93; = severity_counts.get&#...]
+    n11[]
+    n12[critical_count = severity_counts.get&#40;...]
+    n13[high_count = severity_counts.get&#40;...]
+    n14[key_findings = &#91;&#93;]
+    n15{if critical_count &amp;gt; 0}
+    n16[key_findings.append&#40;f&amp;&#35;39;發現 &#123;critical_c...]
+    n17[]
+    n18{if high_count &amp;gt; 0}
+    n19[key_findings.append&#40;f&amp;&#35;39;發現 &#123;high_count...]
+    n20[]
+    n21{if compliance_score &amp;lt; 70}
+    n22[key_findings.append&#40;f&amp;&#35;39;合規分數偏低 &#40;&#123;c...]
+    n23[]
+    n24[risk_descriptions = &#123;&amp;&#35;39;critical&amp;&#35;...]
+    n25[return &#123;&amp;&#35;39;total_findings&amp;&#35;39;: to...]
+    n1 --> n3
+    n3 --> n4
+    n4 --> n5
+    n5 --> n6
+    n6 --> n7
+    n7 --> n8
+    n8 -->|Yes| n9
+    n8 -->|No| n11
+    n9 --> n10
+    n10 --> n8
+    n11 --> n12
+    n12 --> n13
+    n13 --> n14
+    n14 --> n15
+    n15 -->|Yes| n16
+    n15 -->|No| n17
+    n16 --> n17
+    n17 --> n18
+    n18 -->|Yes| n19
+    n18 -->|No| n20
+    n19 --> n20
+    n20 --> n21
+    n21 -->|Yes| n22
+    n21 -->|No| n23
+    n22 --> n23
+    n23 --> n24
+    n24 --> n25
+    n25 --> n2

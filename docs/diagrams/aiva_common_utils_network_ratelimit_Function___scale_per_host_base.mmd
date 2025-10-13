@@ -1,0 +1,15 @@
+flowchart TB
+    n1([開始])
+    n2([結束])
+    n3[&amp;&#35;39;Scale per-host base rate by a factor.&amp;&#...]
+    n4{if factor &amp;lt;= 0}
+    n5[return]
+    n6[]
+    n7[self._set_per_host_base&#40;self.per_host_rps * factor...]
+    n1 --> n3
+    n3 --> n4
+    n4 -->|Yes| n5
+    n4 -->|No| n6
+    n5 --> n6
+    n6 --> n7
+    n7 --> n2

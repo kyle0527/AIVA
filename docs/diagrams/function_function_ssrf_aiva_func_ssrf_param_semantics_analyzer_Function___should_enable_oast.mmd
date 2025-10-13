@@ -1,0 +1,40 @@
+flowchart TB
+    n1([開始])
+    n2([結束])
+    n3[token_set = set&#40;tokens&#41;]
+    n4{if &#123;&amp;&#35;39;callback&amp;&#35;39;, &amp;&#35;39...}
+    n5[return True]
+    n6[]
+    n7{if &#123;&amp;&#35;39;notify&amp;&#35;39;, &amp;&#35;39;p...}
+    n8[return True]
+    n9[]
+    n10[payload_sources: list&#91;str&#93; = &#91;&#93;]
+    n11{if task.custom_payloads}
+    n12[payload_sources.extend&#40;task.custom_payloads&#41;]
+    n13[]
+    n14[payload_sources.extend&#40;task.test_config.custom_pay...]
+    n15{if payload_sources}
+    n16[return any&#40;&#40;OAST_PLACEHOLDER in paylo...]
+    n17[]
+    n18[return False]
+    n1 --> n3
+    n3 --> n4
+    n4 -->|Yes| n5
+    n4 -->|No| n6
+    n5 --> n6
+    n6 --> n7
+    n7 -->|Yes| n8
+    n7 -->|No| n9
+    n8 --> n9
+    n9 --> n10
+    n10 --> n11
+    n11 -->|Yes| n12
+    n11 -->|No| n13
+    n12 --> n13
+    n13 --> n14
+    n14 --> n15
+    n15 -->|Yes| n16
+    n15 -->|No| n17
+    n16 --> n17
+    n17 --> n18
+    n18 --> n2

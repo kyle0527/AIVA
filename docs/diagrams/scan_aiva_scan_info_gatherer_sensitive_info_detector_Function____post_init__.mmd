@@ -1,0 +1,20 @@
+flowchart TB
+    n1([開始])
+    n2([結束])
+    n3[&amp;&#35;39;自動設置描述和建議&amp;&#35;39;]
+    n4{if not self.description}
+    n5[self.description = self._get_default_de...]
+    n6[]
+    n7{if not self.recommendation}
+    n8[self.recommendation = self._get_default_re...]
+    n9[]
+    n1 --> n3
+    n3 --> n4
+    n4 -->|Yes| n5
+    n4 -->|No| n6
+    n5 --> n6
+    n6 --> n7
+    n7 -->|Yes| n8
+    n7 -->|No| n9
+    n8 --> n9
+    n9 --> n2

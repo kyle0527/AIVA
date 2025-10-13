@@ -1,0 +1,39 @@
+flowchart TB
+    n1([開始])
+    n2([結束])
+    n3[&amp;&#35;39;Check whether special protocol schemes are h...]
+    n4[supported_protocols: list&#91;str&#93; = &#91;&#93;]
+    n5{for protocol in self._special_pro...}
+    n6[try]
+    n7[test_url = f&amp;&#35;39;&#123;protocol&#125;127.0.0....]
+    n8[response = test_function&#40;url, p...]
+    n9{if self._is_protocol_supported...}
+    n10[supported_protocols.append&#40;protocol.removesuffix&#40;...]
+    n11[logger.info&#40;f&amp;&#35;39;Protocol support detected: ...]
+    n12[]
+    n13[]
+    n14[except Exception]
+    n15[logger.debug&#40;f&amp;&#35;39;Error testing protocol &#1...]
+    n16[continue]
+    n17[]
+    n18[return supported_protocols]
+    n1 --> n3
+    n3 --> n4
+    n4 --> n5
+    n5 -->|Yes| n6
+    n5 -->|No| n17
+    n6 --> n7
+    n6 --> n14
+    n7 --> n8
+    n8 --> n9
+    n9 -->|Yes| n10
+    n9 -->|No| n12
+    n10 --> n11
+    n11 --> n12
+    n12 --> n13
+    n13 --> n5
+    n14 --> n15
+    n15 --> n16
+    n16 --> n13
+    n17 --> n18
+    n18 --> n2

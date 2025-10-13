@@ -1,0 +1,31 @@
+flowchart TB
+    n1([開始])
+    n2([結束])
+    n3[&amp;&#35;39;\n        檢查SLA違規\n\n        Returns:\n     ...]
+    n4[violations = &#91;&#93;]
+    n5[now = datetime.now&#40;UTC&#41;]
+    n6{for &#40;task_id, metric&#41; in self._task_metric...}
+    n7{if metric&#91;&amp;&#35;39;status&amp;&#35;39;&#93; == &a...}
+    n8[runtime = &#40;now - metric&#91;&amp;&#35;39;start...]
+    n9{if runtime &amp;gt; 600}
+    n10[violations.append&#40;&#123;&amp;&#35;39;task_id&amp;&#35...]
+    n11[]
+    n12[]
+    n13[]
+    n14[return violations]
+    n1 --> n3
+    n3 --> n4
+    n4 --> n5
+    n5 --> n6
+    n6 -->|Yes| n7
+    n6 -->|No| n13
+    n7 -->|Yes| n8
+    n7 -->|No| n12
+    n8 --> n9
+    n9 -->|Yes| n10
+    n9 -->|No| n11
+    n10 --> n11
+    n11 --> n12
+    n12 --> n6
+    n13 --> n14
+    n14 --> n2

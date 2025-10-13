@@ -1,0 +1,8 @@
+flowchart TB
+    n1([開始])
+    n2([結束])
+    n3[parsed = urlparse&#40;str&#40;self._t...]
+    n4[return urlunparse&#40;parsed._replace&#40;que...]
+    n1 --> n3
+    n3 --> n4
+    n4 --> n2

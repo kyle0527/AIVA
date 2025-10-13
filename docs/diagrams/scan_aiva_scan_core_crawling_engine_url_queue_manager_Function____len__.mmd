@@ -1,0 +1,8 @@
+flowchart TB
+    n1([開始])
+    n2([結束])
+    n3[&amp;&#35;39;返回佇列中待處理的 URL 數量&amp;&#35;39;]
+    n4[return len&#40;self._queue&#41;]
+    n1 --> n3
+    n3 --> n4
+    n4 --> n2

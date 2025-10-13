@@ -1,0 +1,22 @@
+flowchart TB
+    n1([開始])
+    n2([結束])
+    n3[&amp;&#35;39;根據測試結果建立 Finding&amp;&#35;39;]
+    n4[finding_id = new_id&#40;&amp;&#35;39;finding&amp;&#35;39;...]
+    n5[severity = self._determine_seve...]
+    n6[vulnerability = Vulnerability&#40;name=V...]
+    n7[target = FindingTarget&#40;url=te...]
+    n8[evidence = FindingEvidence&#40;requ...]
+    n9[impact = FindingImpact&#40;confid...]
+    n10[recommendation = FindingRecommendatio...]
+    n11[return FindingPayload&#40;finding_id=find...]
+    n1 --> n3
+    n3 --> n4
+    n4 --> n5
+    n5 --> n6
+    n6 --> n7
+    n7 --> n8
+    n8 --> n9
+    n9 --> n10
+    n10 --> n11
+    n11 --> n2

@@ -1,0 +1,8 @@
+flowchart TB
+    n1([開始])
+    n2([結束])
+    n3[self._queue: asyncio.Queue&#91;QueuedTask &#124; None&#93...]
+    n4[self._closed = False]
+    n1 --> n3
+    n3 --> n4
+    n4 --> n2

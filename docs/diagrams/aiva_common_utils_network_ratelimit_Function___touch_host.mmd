@@ -1,0 +1,17 @@
+flowchart TB
+    n1([開始])
+    n2([結束])
+    n3[&amp;&#35;39;Update last used timestamp for a host.&amp;&...]
+    n4{if now_mono is None}
+    n5[now_mono = time.monotonic&#40;&#41;]
+    n6[]
+    n7[with self._hos...]
+    n8[self.host_last_used&#91;host&#93; = now_mono]
+    n1 --> n3
+    n3 --> n4
+    n4 -->|Yes| n5
+    n4 -->|No| n6
+    n5 --> n6
+    n6 --> n7
+    n7 --> n8
+    n8 --> n2

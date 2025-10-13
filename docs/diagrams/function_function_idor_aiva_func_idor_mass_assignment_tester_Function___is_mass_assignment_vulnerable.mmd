@@ -1,0 +1,56 @@
+flowchart TB
+    n1([開始])
+    n2([結束])
+    n3[&amp;&#35;39;\n        判斷是否存在巨量賦值漏洞\n\n        漏洞條件：\n   ...]
+    n4{if not 200 &amp;lt;= injected_respons...}
+    n5[return False]
+    n6[]
+    n7[try]
+    n8[normal_json = normal_response.json...]
+    n9[injected_json = injected_response.js...]
+    n10{if injection_field.field_name ...}
+    n11[injected_value = injected_json&#91;inject...]
+    n12{if injected_value == injection...}
+    n13[return True]
+    n14[]
+    n15[]
+    n16[privilege_fields = &#91;&amp;&#35;39;isAdmin&amp;&#35;39;...]
+    n17{for field in privilege_fields}
+    n18{if field in injected_json and ...}
+    n19[return True]
+    n20[]
+    n21[]
+    n22[]
+    n23[except Exception]
+    n24[logger.debug&#40;f&amp;&#35;39;Failed to parse JSON respo...]
+    n25[return False]
+    n1 --> n3
+    n3 --> n4
+    n4 -->|Yes| n5
+    n4 -->|No| n6
+    n5 --> n6
+    n6 --> n7
+    n7 --> n8
+    n7 --> n23
+    n8 --> n9
+    n9 --> n10
+    n10 -->|Yes| n11
+    n10 -->|No| n15
+    n11 --> n12
+    n12 -->|Yes| n13
+    n12 -->|No| n14
+    n13 --> n14
+    n14 --> n15
+    n15 --> n16
+    n16 --> n17
+    n17 -->|Yes| n18
+    n17 -->|No| n21
+    n18 -->|Yes| n19
+    n18 -->|No| n20
+    n19 --> n20
+    n20 --> n17
+    n21 --> n22
+    n22 --> n25
+    n23 --> n24
+    n24 --> n22
+    n25 --> n2

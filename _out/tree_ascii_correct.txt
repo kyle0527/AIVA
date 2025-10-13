@@ -1,0 +1,424 @@
+[34;42m.[0m
+├── [34;42m_out[0m
+│   ├── [34;42manalysis[0m
+│   │   ├── analysis_report_20251013_115525.json
+│   │   ├── analysis_report_20251013_115525.txt
+│   │   ├── analysis_report_20251013_120144.json
+│   │   ├── analysis_report_20251013_120144.txt
+│   │   ├── analysis_report_20251013_121623.json
+│   │   ├── analysis_report_20251013_121623.txt
+│   │   ├── analysis_report_20251013_124406.json
+│   │   ├── analysis_report_20251013_124406.txt
+│   │   ├── analysis_report_20251013_125408.json
+│   │   └── analysis_report_20251013_125408.txt
+│   ├── ARCHITECTURE_DIAGRAMS.md
+│   ├── PROJECT_REPORT.txt
+│   ├── ext_counts.csv
+│   ├── loc_by_ext.csv
+│   ├── tree.html
+│   ├── tree.md
+│   ├── tree.mmd
+│   ├── tree_ascii.txt
+│   ├── tree_ascii_correct.txt
+│   ├── tree_ascii_new.txt
+│   └── tree_unicode.txt
+├── [34;42mdocker[0m
+│   ├── [34;42minitdb[0m
+│   │   └── 001_schema.sql
+│   ├── Dockerfile.integration
+│   ├── docker-compose.production.yml
+│   ├── docker-compose.yml
+│   └── entrypoint.integration.sh
+├── [34;42mdocs[0m
+│   └── [34;42mdiagrams[0m
+│       ├── Function____init__.mmd
+│       ├── Function___add_chunk.mmd
+│       ├── Function___create_input_vector.mmd
+│       ├── Function___extract_keywords.mmd
+│       ├── Function___get_mode_display.mmd
+│       ├── Function___index_file.mmd
+│       ├── Function___init_ai_agent.mmd
+│       ├── Function___softmax.mmd
+│       ├── Function__analyze_code.mmd
+│       ├── Function__check_confidence.mmd
+│       ├── Function__create_scan_task.mmd
+│       ├── Function__detect_vulnerability.mmd
+│       ├── Function__forward.mmd
+│       ├── Function__get_ai_history.mmd
+│       ├── Function__get_chunk_count.mmd
+│       ├── Function__get_detections.mmd
+│       ├── Function__get_file_content.mmd
+│       ├── Function__get_stats.mmd
+│       ├── Function__get_tasks.mmd
+│       ├── Function__index_codebase.mmd
+│       ├── Function__invoke.mmd
+│       ├── Function__read_code.mmd
+│       ├── Function__search.mmd
+│       └── Module.mmd
+├── [34;42mservices[0m
+│   ├── [34;42maiva_common[0m
+│   │   ├── [34;42mutils[0m
+│   │   │   ├── [34;42mdedup[0m
+│   │   │   │   ├── __init__.py
+│   │   │   │   └── dedupe.py
+│   │   │   ├── [34;42mnetwork[0m
+│   │   │   │   ├── __init__.py
+│   │   │   │   ├── backoff.py
+│   │   │   │   └── ratelimit.py
+│   │   │   ├── __init__.py
+│   │   │   ├── ids.py
+│   │   │   └── logging.py
+│   │   ├── __init__.py
+│   │   ├── config.py
+│   │   ├── enums.py
+│   │   ├── mq.py
+│   │   ├── py.typed
+│   │   └── schemas.py
+│   ├── [34;42mcore[0m
+│   │   └── [34;42maiva_core[0m
+│   │       ├── [34;42mai_engine[0m
+│   │       │   ├── __init__.py
+│   │       │   ├── bio_neuron_core.py
+│   │       │   ├── bio_neuron_core.py.backup
+│   │       │   ├── bio_neuron_core_v2.py
+│   │       │   ├── knowledge_base.py
+│   │       │   ├── knowledge_base.py.backup
+│   │       │   └── tools.py
+│   │       ├── [34;42mai_model[0m
+│   │       │   └── train_classifier.py
+│   │       ├── [34;42manalysis[0m
+│   │       │   ├── __init__.py
+│   │       │   ├── dynamic_strategy_adjustment.py
+│   │       │   ├── initial_surface.py
+│   │       │   └── strategy_generator.py
+│   │       ├── [34;42mexecution[0m
+│   │       │   ├── __init__.py
+│   │       │   ├── execution_status_monitor.py
+│   │       │   ├── task_generator.py
+│   │       │   └── task_queue_manager.py
+│   │       ├── [34;42mingestion[0m
+│   │       │   ├── __init__.py
+│   │       │   └── scan_module_interface.py
+│   │       ├── [34;42moutput[0m
+│   │       │   ├── __init__.py
+│   │       │   └── to_functions.py
+│   │       ├── [34;42mstate[0m
+│   │       │   ├── __init__.py
+│   │       │   └── session_state_manager.py
+│   │       ├── [34;42mui_panel[0m
+│   │       │   ├── __init__.py
+│   │       │   ├── dashboard.py
+│   │       │   ├── dashboard.py.backup
+│   │       │   ├── improved_ui.py
+│   │       │   ├── server.py
+│   │       │   └── server.py.backup
+│   │       ├── __init__.py
+│   │       ├── ai_ui_schemas.py
+│   │       ├── app.py
+│   │       └── schemas.py
+│   ├── [34;42mfunction[0m
+│   │   ├── [34;42mcommon[0m
+│   │   │   ├── __init__.py
+│   │   │   ├── detection_config.py
+│   │   │   └── unified_smart_detection_manager.py
+│   │   ├── [34;42mfunction_authn_go[0m
+│   │   │   ├── [34;42mcmd[0m
+│   │   │   │   └── [34;42mworker[0m
+│   │   │   │       └── main.go
+│   │   │   ├── [34;42minternal[0m
+│   │   │   │   ├── [34;42mbrute_force[0m
+│   │   │   │   │   └── brute_forcer.go
+│   │   │   │   ├── [34;42mtoken_test[0m
+│   │   │   │   │   └── token_analyzer.go
+│   │   │   │   └── [34;42mweak_config[0m
+│   │   │   │       └── config_tester.go
+│   │   │   ├── [34;42mpkg[0m
+│   │   │   │   ├── [34;42mmessaging[0m
+│   │   │   │   │   ├── consumer.go
+│   │   │   │   │   └── publisher.go
+│   │   │   │   └── [34;42mmodels[0m
+│   │   │   │       └── models.go
+│   │   │   └── go.mod
+│   │   ├── [34;42mfunction_cspm_go[0m
+│   │   │   ├── [34;42mcmd[0m
+│   │   │   │   └── [34;42mworker[0m
+│   │   │   │       └── main.go
+│   │   │   ├── [34;42minternal[0m
+│   │   │   │   └── [34;42mscanner[0m
+│   │   │   │       └── cspm_scanner.go
+│   │   │   ├── [34;42mpkg[0m
+│   │   │   │   ├── [34;42mmessaging[0m
+│   │   │   │   │   ├── consumer.go
+│   │   │   │   │   └── publisher.go
+│   │   │   │   └── [34;42mmodels[0m
+│   │   │   │       └── models.go
+│   │   │   └── go.mod
+│   │   ├── [34;42mfunction_idor[0m
+│   │   │   └── [34;42maiva_func_idor[0m
+│   │   │       ├── __init__.py
+│   │   │       ├── bfla_tester.py
+│   │   │       ├── cross_user_tester.py
+│   │   │       ├── enhanced_worker.py
+│   │   │       ├── mass_assignment_tester.py
+│   │   │       ├── resource_id_extractor.py
+│   │   │       ├── smart_idor_detector.py
+│   │   │       ├── vertical_escalation_tester.py
+│   │   │       └── worker.py
+│   │   ├── [34;42mfunction_sast_rust[0m
+│   │   │   ├── [34;42msrc[0m
+│   │   │   │   ├── analyzers.rs
+│   │   │   │   ├── main.rs
+│   │   │   │   ├── models.rs
+│   │   │   │   ├── parsers.rs
+│   │   │   │   ├── rules.rs
+│   │   │   │   └── worker.rs
+│   │   │   └── Cargo.toml
+│   │   ├── [34;42mfunction_sca_go[0m
+│   │   │   ├── [34;42mcmd[0m
+│   │   │   │   └── [34;42mworker[0m
+│   │   │   │       └── main.go
+│   │   │   ├── [34;42minternal[0m
+│   │   │   │   └── [34;42mscanner[0m
+│   │   │   │       └── sca_scanner.go
+│   │   │   ├── [34;42mpkg[0m
+│   │   │   │   ├── [34;42mmessaging[0m
+│   │   │   │   │   └── publisher.go
+│   │   │   │   └── [34;42mmodels[0m
+│   │   │   │       └── models.go
+│   │   │   ├── README.md
+│   │   │   └── go.mod
+│   │   ├── [34;42mfunction_sqli[0m
+│   │   │   ├── [34;42maiva_func_sqli[0m
+│   │   │   │   ├── [34;42mengines[0m
+│   │   │   │   │   ├── __init__.py
+│   │   │   │   │   ├── boolean_detection_engine.py
+│   │   │   │   │   ├── error_detection_engine.py
+│   │   │   │   │   ├── oob_detection_engine.py
+│   │   │   │   │   ├── time_detection_engine.py
+│   │   │   │   │   └── union_detection_engine.py
+│   │   │   │   ├── __init__.py
+│   │   │   │   ├── backend_db_fingerprinter.py
+│   │   │   │   ├── config.py
+│   │   │   │   ├── detection_models.py
+│   │   │   │   ├── exceptions.py
+│   │   │   │   ├── payload_wrapper_encoder.py
+│   │   │   │   ├── result_binder_publisher.py
+│   │   │   │   ├── schemas.py
+│   │   │   │   ├── smart_detection_manager.py
+│   │   │   │   ├── task_queue.py
+│   │   │   │   ├── telemetry.py
+│   │   │   │   ├── worker.py
+│   │   │   │   └── worker_legacy.py
+│   │   │   └── __init__.py
+│   │   ├── [34;42mfunction_ssrf[0m
+│   │   │   ├── [34;42maiva_func_ssrf[0m
+│   │   │   │   ├── __init__.py
+│   │   │   │   ├── enhanced_worker.py
+│   │   │   │   ├── internal_address_detector.py
+│   │   │   │   ├── oast_dispatcher.py
+│   │   │   │   ├── param_semantics_analyzer.py
+│   │   │   │   ├── result_publisher.py
+│   │   │   │   ├── schemas.py
+│   │   │   │   ├── smart_ssrf_detector.py
+│   │   │   │   └── worker.py
+│   │   │   └── __init__.py
+│   │   ├── [34;42mfunction_ssrf_go[0m
+│   │   │   ├── [34;42mcmd[0m
+│   │   │   │   └── [34;42mworker[0m
+│   │   │   │       └── main.go
+│   │   │   ├── [34;42minternal[0m
+│   │   │   │   └── [34;42mdetector[0m
+│   │   │   │       └── ssrf.go
+│   │   │   ├── README.md
+│   │   │   └── go.mod
+│   │   └── [34;42mfunction_xss[0m
+│   │       ├── [34;42maiva_func_xss[0m
+│   │       │   ├── __init__.py
+│   │       │   ├── blind_xss_listener_validator.py
+│   │       │   ├── dom_xss_detector.py
+│   │       │   ├── payload_generator.py
+│   │       │   ├── result_publisher.py
+│   │       │   ├── schemas.py
+│   │       │   ├── stored_detector.py
+│   │       │   ├── task_queue.py
+│   │       │   ├── traditional_detector.py
+│   │       │   └── worker.py
+│   │       └── __init__.py
+│   ├── [34;42mintegration[0m
+│   │   ├── [34;42maiva_integration[0m
+│   │   │   ├── [34;42manalysis[0m
+│   │   │   │   ├── __init__.py
+│   │   │   │   ├── compliance_policy_checker.py
+│   │   │   │   ├── risk_assessment_engine.py
+│   │   │   │   └── vuln_correlation_analyzer.py
+│   │   │   ├── [34;42mattack_path_analyzer[0m
+│   │   │   │   ├── README.md
+│   │   │   │   ├── __init__.py
+│   │   │   │   ├── engine.py
+│   │   │   │   ├── graph_builder.py
+│   │   │   │   └── visualizer.py
+│   │   │   ├── [34;42mconfig_template[0m
+│   │   │   │   ├── __init__.py
+│   │   │   │   └── config_template_manager.py
+│   │   │   ├── [34;42mmiddlewares[0m
+│   │   │   │   ├── __init__.py
+│   │   │   │   └── rate_limiter.py
+│   │   │   ├── [34;42mobservability[0m
+│   │   │   │   ├── __init__.py
+│   │   │   │   └── metrics.py
+│   │   │   ├── [34;42mperf_feedback[0m
+│   │   │   │   ├── __init__.py
+│   │   │   │   ├── improvement_suggestion_generator.py
+│   │   │   │   └── scan_metadata_analyzer.py
+│   │   │   ├── [34;42mreception[0m
+│   │   │   │   ├── __init__.py
+│   │   │   │   ├── data_reception_layer.py
+│   │   │   │   └── sql_result_database.py
+│   │   │   ├── [34;42mreporting[0m
+│   │   │   │   ├── __init__.py
+│   │   │   │   ├── formatter_exporter.py
+│   │   │   │   ├── report_content_generator.py
+│   │   │   │   └── report_template_selector.py
+│   │   │   ├── [34;42msecurity[0m
+│   │   │   │   ├── __init__.py
+│   │   │   │   └── auth.py
+│   │   │   ├── [34;42mthreat_intel[0m
+│   │   │   │   └── __init__.py
+│   │   │   ├── __init__.py
+│   │   │   ├── app.py
+│   │   │   └── settings.py
+│   │   ├── [34;42malembic[0m
+│   │   │   ├── [34;42mversions[0m
+│   │   │   │   └── 001_initial_schema.py
+│   │   │   └── env.py
+│   │   ├── [34;42mapi_gateway[0m
+│   │   │   └── [34;42mapi_gateway[0m
+│   │   │       └── app.py
+│   │   └── alembic.ini
+│   ├── [34;42mscan[0m
+│   │   ├── [34;42maiva_scan[0m
+│   │   │   ├── [34;42mcore_crawling_engine[0m
+│   │   │   │   ├── __init__.py
+│   │   │   │   ├── http_client_hi.py
+│   │   │   │   ├── static_content_parser.py
+│   │   │   │   └── url_queue_manager.py
+│   │   │   ├── [34;42mdynamic_engine[0m
+│   │   │   │   ├── __init__.py
+│   │   │   │   ├── dynamic_content_extractor.py
+│   │   │   │   ├── example_browser_pool.py
+│   │   │   │   ├── example_extractor.py
+│   │   │   │   ├── example_usage.py
+│   │   │   │   ├── example_usage.py.backup
+│   │   │   │   ├── headless_browser_pool.py
+│   │   │   │   └── js_interaction_simulator.py
+│   │   │   ├── [34;42minfo_gatherer[0m
+│   │   │   │   ├── __init__.py
+│   │   │   │   ├── javascript_source_analyzer.py
+│   │   │   │   ├── passive_fingerprinter.py
+│   │   │   │   └── sensitive_info_detector.py
+│   │   │   ├── __init__.py
+│   │   │   ├── authentication_manager.py
+│   │   │   ├── config_control_center.py
+│   │   │   ├── fingerprint_manager.py
+│   │   │   ├── header_configuration.py
+│   │   │   ├── scan_context.py
+│   │   │   ├── scan_orchestrator.py
+│   │   │   ├── scan_orchestrator_new.py
+│   │   │   ├── scan_orchestrator_old.py
+│   │   │   ├── schemas.py
+│   │   │   ├── scope_manager.py
+│   │   │   ├── strategy_controller.py
+│   │   │   └── worker.py
+│   │   ├── [34;42maiva_scan_node[0m
+│   │   │   ├── [34;42msrc[0m
+│   │   │   │   ├── [34;42mservices[0m
+│   │   │   │   │   └── scan-service.ts
+│   │   │   │   ├── [34;42mutils[0m
+│   │   │   │   │   └── logger.ts
+│   │   │   │   └── index.ts
+│   │   │   ├── README.md
+│   │   │   ├── package.json
+│   │   │   └── tsconfig.json
+│   │   └── [34;42minfo_gatherer_rust[0m
+│   │       ├── [34;42msrc[0m
+│   │       │   ├── git_history_scanner.rs
+│   │       │   ├── main.rs
+│   │       │   ├── scanner.rs
+│   │       │   └── secret_detector.rs
+│   │       ├── Cargo.toml
+│   │       └── README.md
+│   └── __init__.py
+├── [34;42mtools[0m
+│   ├── README.md
+│   ├── analyze_codebase.py
+│   ├── find_non_cp950_filtered.py
+│   ├── [01;32mgenerate_mermaid_diagrams.py[0m
+│   ├── markdown_check.py
+│   ├── markdown_check_out.txt
+│   ├── non_cp950_filtered_report.txt
+│   ├── py2mermaid.py
+│   ├── replace_emoji.py
+│   ├── replace_non_cp950.py
+│   ├── test_tools.py
+│   └── update_imports.py
+├── .editorconfig
+├── .env.example
+├── .gitignore
+├── .pre-commit-config.yaml
+├── .pylintrc
+├── ANALYSIS_EXECUTION_SUMMARY.md
+├── ANALYSIS_REPORTS_INDEX.md
+├── ANALYSIS_TOOLS_SUMMARY.md
+├── ARCHITECTURE_REPORT.md
+├── CODE_ANALYSIS_REPORT_20251013.md
+├── CODE_ANALYSIS_UPGRADE_REPORT.md
+├── COMPREHENSIVE_PROJECT_ANALYSIS.md
+├── COMPREHENSIVE_ROADMAP.md
+├── CORE_MODULE_ANALYSIS.md
+├── DATA_CONTRACT.md
+├── DATA_CONTRACT_ANALYSIS.md
+├── DATA_CONTRACT_UPDATE.md
+├── DEPENDENCY_ANALYSIS.md
+├── DEPENDENCY_STATUS_VERIFIED.md
+├── FINAL_ERROR_ANALYSIS.md
+├── FINAL_FIX_REPORT.md
+├── FUNCTION_MODULE_ENHANCEMENT_ANALYSIS.md
+├── IMPLEMENTATION_GUIDE.md
+├── INSTALLATION_COMPLETE.md
+├── MODULE_CLASSIFICATION_QUICK_REFERENCE.md
+├── MULTI_LANGUAGE_ARCHITECTURE_PROPOSAL.md
+├── OFFICIAL_COMPLIANCE_VALIDATION_REPORT.md
+├── P0_MODULES_ERROR_ANALYSIS.md
+├── P0_MODULE_SCRIPT_OUTPUT_SUMMARY.md
+├── QUICK_GUIDE_ANALYSIS_TOOLS.md
+├── QUICK_REFERENCE_MULTILANG.md
+├── QUICK_START.md
+├── RUN_SCRIPTS.md
+├── SCAN_ENGINE_IMPROVEMENT_REPORT.md
+├── SCHEMA_NAMING_ISSUES.md
+├── TYPESCRIPT_FIX_REPORT.md
+├── USAGE_GUIDE.md
+├── __init__.py
+├── c:\D\E\AIVA\AIVA-main\tools\non_cp950_filtered_report.txt
+├── check_status.ps1
+├── demo_bio_neuron_agent.py
+├── demo_ui_panel.py
+├── generate_clean_tree.ps1
+├── generate_project_report.ps1
+├── [01;32mgenerate_project_report.sh[0m
+├── generate_stats.ps1
+├── init_go_deps.ps1
+├── mypy.ini
+├── pyproject.toml
+├── pyrightconfig.json
+├── ruff.toml
+├── setup_env.bat
+├── setup_multilang.ps1
+├── start_all.ps1
+├── start_all_multilang.ps1
+├── start_dev.bat
+├── stop_all.ps1
+├── stop_all_multilang.ps1
+└── test_scan.ps1
+
+94 directories, 328 files

@@ -1,0 +1,16 @@
+flowchart TB
+    n1([開始])
+    n2([結束])
+    n3[&amp;&#35;39;\nAIVA Module-ThreatIntel\n威脅情報整合模組 - 整合 Vir...]
+    n4[__version__ = &amp;&#35;39;0.1.0&amp;&#35;39;]
+    n5[__all__ = &#91;&amp;&#35;39;IntelAggregator&amp;&#35;39;,...]
+    n6[from .intel_aggregator import IntelAggregator]
+    n7[from .mitre_mapper import MitreMapper]
+    n8[from .ioc_enricher import IOCEnricher]
+    n1 --> n3
+    n3 --> n4
+    n4 --> n5
+    n5 --> n6
+    n6 --> n7
+    n7 --> n8
+    n8 --> n2

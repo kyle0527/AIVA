@@ -1,0 +1,12 @@
+flowchart TB
+    n1([開始])
+    n2([結束])
+    n3[&amp;&#35;39;執行遷移的核心邏輯&amp;&#35;39;]
+    n4[context.configure&#40;connection=connection, target_me...]
+    n5[with context.b...]
+    n6[context.run_migrations&#40;&#41;]
+    n1 --> n3
+    n3 --> n4
+    n4 --> n5
+    n5 --> n6
+    n6 --> n2

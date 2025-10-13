@@ -1,0 +1,18 @@
+flowchart TB
+    n1([開始])
+    n2([結束])
+    n3[&amp;&#35;39;Apply new rate to a bucket.&amp;&#35;39;]
+    n4[burst = max&#40;1, int&#40;rate&#41;&#41;]
+    n5[with bucket.lock]
+    n6[bucket.rate = rate]
+    n7[bucket.capacity = burst]
+    n8[bucket.tokens = min&#40;bucket.capacity,...]
+    n9[bucket.updated = time.monotonic&#40;&#41;]
+    n1 --> n3
+    n3 --> n4
+    n4 --> n5
+    n5 --> n6
+    n6 --> n7
+    n7 --> n8
+    n8 --> n9
+    n9 --> n2

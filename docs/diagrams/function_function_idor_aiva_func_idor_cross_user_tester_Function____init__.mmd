@@ -1,0 +1,8 @@
+flowchart TB
+    n1([開始])
+    n2([結束])
+    n3[self.client = client]
+    n4[self.logger = get_logger&#40;__name__&#41;]
+    n1 --> n3
+    n3 --> n4
+    n4 --> n2

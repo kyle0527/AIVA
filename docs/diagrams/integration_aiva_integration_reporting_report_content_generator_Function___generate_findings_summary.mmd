@@ -1,0 +1,38 @@
+flowchart TB
+    n1([開始])
+    n2([結束])
+    n3[&amp;&#35;39;生成發現摘要&amp;&#35;39;]
+    n4{if not findings}
+    n5[return &#123;&amp;&#35;39;message&amp;&#35;39;: &amp;&#35...]
+    n6[]
+    n7[by_type: dict&#91;str, int&#93; = &#123;&#125;]
+    n8[by_severity: dict&#91;str, int&#93; = &#123;&#125;]
+    n9[by_location: dict&#91;str, int&#93; = &#123;&#125;]
+    n10{for finding in findings}
+    n11[vuln_type = finding.get&#40;&amp;&#35;39;vulnera...]
+    n12[severity = finding.get&#40;&amp;&#35;39;severit...]
+    n13[location = finding.get&#40;&amp;&#35;39;locatio...]
+    n14[by_type&#91;vuln_type&#93; = by_type.get&#40;vuln_typ...]
+    n15[by_severity&#91;severity&#93; = by_severity.get&#40;seve...]
+    n16[by_location&#91;location&#93; = by_location.get&#40;loca...]
+    n17[]
+    n18[return &#123;&amp;&#35;39;by_vulnerability_type&amp;&#35;...]
+    n1 --> n3
+    n3 --> n4
+    n4 -->|Yes| n5
+    n4 -->|No| n6
+    n5 --> n6
+    n6 --> n7
+    n7 --> n8
+    n8 --> n9
+    n9 --> n10
+    n10 -->|Yes| n11
+    n10 -->|No| n17
+    n11 --> n12
+    n12 --> n13
+    n13 --> n14
+    n14 --> n15
+    n15 --> n16
+    n16 --> n10
+    n17 --> n18
+    n18 --> n2

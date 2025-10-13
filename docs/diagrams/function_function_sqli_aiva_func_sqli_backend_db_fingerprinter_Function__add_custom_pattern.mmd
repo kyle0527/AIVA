@@ -1,0 +1,17 @@
+flowchart TB
+    n1([開始])
+    n2([結束])
+    n3[&amp;&#35;39;\n        添加自定義資料庫識別模式\n\n        Args:\n   ...]
+    n4{if db_name not in self._db_pat...}
+    n5[self._db_patterns&#91;db_name&#93; = &#91;&#93;]
+    n6[]
+    n7[self._db_patterns&#91;db_name&#93;.append&#40;pattern&#41;]
+    n8[logger.info&#40;f&amp;&#35;39;Added custom pattern for &#...]
+    n1 --> n3
+    n3 --> n4
+    n4 -->|Yes| n5
+    n4 -->|No| n6
+    n5 --> n6
+    n6 --> n7
+    n7 --> n8
+    n8 --> n2

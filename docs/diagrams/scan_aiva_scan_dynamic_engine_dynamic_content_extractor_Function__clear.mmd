@@ -1,0 +1,12 @@
+flowchart TB
+    n1([開始])
+    n2([結束])
+    n3[&amp;&#35;39;清空已提取的內容和網絡請求&amp;&#35;39;]
+    n4[self._extracted_contents.clear&#40;&#41;]
+    n5[self._network_requests.clear&#40;&#41;]
+    n6[logger.debug&#40;&amp;&#35;39;Cleared extracted contents ...]
+    n1 --> n3
+    n3 --> n4
+    n4 --> n5
+    n5 --> n6
+    n6 --> n2

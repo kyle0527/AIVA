@@ -1,0 +1,31 @@
+flowchart TB
+    n1([開始])
+    n2([結束])
+    n3[&amp;&#35;39;計算循環複雜度.\n        \n        Args:\n         ...]
+    n4[import ast]
+    n5[complexity = 1]
+    n6{for node in ast.walk&#40;tree&#41;}
+    n7{if isinstance&#40;node, &#40;ast.If, a...}
+    n8[complexity += 1]
+    n9{if isinstance&#40;node, ast.BoolOp&#41;}
+    n10[complexity += len&#40;node.values&#41; - 1]
+    n11[]
+    n12[]
+    n13[]
+    n14[return complexity]
+    n1 --> n3
+    n3 --> n4
+    n4 --> n5
+    n5 --> n6
+    n6 -->|Yes| n7
+    n6 -->|No| n13
+    n7 -->|Yes| n8
+    n7 -->|No| n9
+    n8 --> n12
+    n9 -->|Yes| n10
+    n9 -->|No| n11
+    n10 --> n11
+    n11 --> n12
+    n12 --> n6
+    n13 --> n14
+    n14 --> n2

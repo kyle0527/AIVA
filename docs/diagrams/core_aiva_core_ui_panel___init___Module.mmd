@@ -1,0 +1,12 @@
+flowchart TB
+    n1([開始])
+    n2([結束])
+    n3[&amp;&#35;39;\nUI Panel - AIVA 核心 Web 控制面板\n提供圖形化介面來管理和控制...]
+    n4[from .dashboard import Dashboard]
+    n5[from .server import start_ui_server]
+    n6[__all__ = &#91;&amp;&#35;39;Dashboard&amp;&#35;39;, &amp;...]
+    n1 --> n3
+    n3 --> n4
+    n4 --> n5
+    n5 --> n6
+    n6 --> n2
