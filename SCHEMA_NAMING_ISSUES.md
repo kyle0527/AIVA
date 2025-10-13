@@ -8,6 +8,7 @@
 ## 📋 schemas.py 正確定義 (官方規範)
 
 ### 1. **Authentication** (認證模型)
+
 ```python
 class Authentication(BaseModel):
     method: str = "none"
@@ -15,6 +16,7 @@ class Authentication(BaseModel):
 ```
 
 **❌ 錯誤使用**:
+
 - `auth.bearer_token` → 不存在
 - `auth.username` → 不存在
 - `auth.password` → 不存在
@@ -22,6 +24,7 @@ class Authentication(BaseModel):
 - `auth.custom_headers` → 不存在
 
 **✅ 正確使用**:
+
 ```python
 # 使用 credentials 字典
 auth.credentials.get("bearer_token")  # 如果 method="bearer"
@@ -32,6 +35,7 @@ auth.credentials.get("password")      # 如果 method="basic"
 ---
 
 ### 2. **Vulnerability** (漏洞模型)
+
 ```python
 class Vulnerability(BaseModel):
     name: VulnerabilityType    # 枚舉類型
@@ -41,12 +45,14 @@ class Vulnerability(BaseModel):
 ```
 
 **❌ 錯誤使用**:
+
 - `vuln.type` → 應為 `vuln.name`
 - `vuln.description` → 不存在
 - `vuln.cve_id` → 應為 `vuln.cwe`
 - `vuln.owasp_category` → 不存在
 
 **✅ 正確使用**:
+
 ```python
 vuln.name        # VulnerabilityType 枚舉 (SQLI, XSS, IDOR, etc.)
 vuln.cwe         # CWE 編號字串 (例如 "CWE-89")
@@ -57,6 +63,7 @@ vuln.confidence  # Confidence 枚舉 (CERTAIN, FIRM, TENTATIVE)
 ---
 
 ### 3. **FindingPayload** (發現結果模型)
+
 ```python
 class FindingPayload(BaseModel):
     finding_id: str
@@ -72,6 +79,7 @@ class FindingPayload(BaseModel):
 ```
 
 **❌ 錯誤使用**:
+
 - `finding.severity` → 應為 `finding.vulnerability.severity`
 - `finding.confidence` → 應為 `finding.vulnerability.confidence`
 - `finding.type` → 應為 `finding.vulnerability.name`
@@ -84,6 +92,7 @@ class FindingPayload(BaseModel):
 - `finding.availability` → 不存在
 
 **✅ 正確使用**:
+
 ```python
 # 漏洞基本信息
 finding.vulnerability.name         # VulnerabilityType
@@ -110,6 +119,7 @@ finding.recommendation.fix         # 修復建議
 ---
 
 ### 4. **Asset** (資產模型)
+
 ```python
 class Asset(BaseModel):
     asset_id: str
@@ -120,11 +130,13 @@ class Asset(BaseModel):
 ```
 
 **❌ 錯誤使用**:
+
 - `asset.url` → 應為 `asset.value`
 - `asset.category` → 不存在
 - `asset.name` → 不存在
 
 **✅ 正確使用**:
+
 ```python
 asset.asset_id    # 資產 ID
 asset.type        # 資產類型 (例如 "url", "api", "form")
@@ -142,6 +154,7 @@ asset.has_form    # 是否包含表單
 #### `bfla_tester.py` - 33 處錯誤
 
 **Authentication 錯誤** (10 處):
+
 ```python
 # ❌ 行 103-117
 if auth.bearer_token:  # 應為 auth.credentials.get("bearer_token")
@@ -157,6 +170,7 @@ Authentication(method="bearer", credentials={"bearer_token": "..."})
 ```
 
 **Vulnerability 創建錯誤** (5 處):
+
 ```python
 # ❌ 行 245-253
 Vulnerability(
@@ -177,6 +191,7 @@ Vulnerability(
 ```
 
 **FindingPayload 創建錯誤** (15 處):
+
 ```python
 # ❌ 行 305-316
 FindingPayload(
@@ -224,6 +239,7 @@ FindingPayload(
 ```
 
 **其他錯誤** (3 處):
+
 ```python
 # ❌ 行 206-209
 if success:
@@ -242,6 +258,7 @@ logger.info(f"Severity: {finding.severity}")
 #### `mass_assignment_tester.py` - 預估 25+ 處類似錯誤
 
 類似 `bfla_tester.py` 的錯誤模式:
+
 - Authentication 屬性錯誤
 - Vulnerability 參數錯誤
 - FindingPayload 結構錯誤
@@ -253,6 +270,7 @@ logger.info(f"Severity: {finding.severity}")
 #### `engine.py` - 已修正 ✅
 
 所有命名問題已在最新版本中修正:
+
 - ✅ 使用 `asset.value` 而非 `asset.url`
 - ✅ 使用 `finding.vulnerability.name` 而非 `finding.vulnerability.type`
 - ✅ 使用 `finding.vulnerability.severity` 而非 `finding.severity`
@@ -274,6 +292,7 @@ logger.info(f"Severity: {finding.severity}")
 ## 🎯 修正優先級
 
 ### P0 (立即修正 - 影響功能)
+
 1. **FindingPayload 必要參數缺失**
    - 缺少 `scan_id`, `status` 參數
    - 影響: 無法正常創建 Finding 對象
@@ -287,6 +306,7 @@ logger.info(f"Severity: {finding.severity}")
    - 影響: AttributeError 運行時錯誤
 
 ### P1 (強烈建議 - 影響可維護性)
+
 1. **Authentication 屬性訪問錯誤**
    - 使用不存在的 `auth.bearer_token`, `auth.username` 等
    - 影響: AttributeError 或邏輯錯誤
@@ -296,6 +316,7 @@ logger.info(f"Severity: {finding.severity}")
    - 影響: AttributeError
 
 ### P2 (建議改進 - 代碼品質)
+
 1. **Import 排序問題** (Ruff I001)
 2. **未使用的 Import** (Ruff F401: `defaultdict`)
 3. **簡化布爾返回** (Ruff SIM103)
@@ -305,6 +326,7 @@ logger.info(f"Severity: {finding.severity}")
 ## 🔧 修正模板
 
 ### Template 1: Vulnerability 創建
+
 ```python
 # ❌ 錯誤
 Vulnerability(
@@ -323,6 +345,7 @@ Vulnerability(
 ```
 
 ### Template 2: FindingPayload 創建
+
 ```python
 # ❌ 錯誤
 FindingPayload(
@@ -347,6 +370,7 @@ FindingPayload(
 ```
 
 ### Template 3: Authentication 使用
+
 ```python
 # ❌ 錯誤
 if auth.bearer_token:

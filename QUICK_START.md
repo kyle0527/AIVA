@@ -3,6 +3,7 @@
 ## 環境設定
 
 ### 1. 設定 Python 路徑
+
 ```batch
 # Windows
 cd c:\D\E\AIVA\AIVA-main
@@ -10,6 +11,7 @@ cd c:\D\E\AIVA\AIVA-main
 ```
 
 ### 2. 安裝依賴
+
 ```batch
 pip install sqlalchemy alembic
 # 或完整安裝
@@ -17,6 +19,7 @@ pip install -e .
 ```
 
 ### 3. 重啟 VS Code
+
 關閉並重新開啟 VS Code 以載入新的配置。
 
 ## 執行測試
@@ -31,9 +34,11 @@ python -c "from services.aiva_common.schemas import AivaMessage; print('✅ 成�
 ## 已知問題與解決方案
 
 ### Mypy 警告: Cannot find module "services.aiva_common"
+
 **解決方案**: 重啟 VS Code 並確保執行了 `setup_env.bat`
 
 ### ModuleNotFoundError: sqlalchemy
+
 **解決方案**: `pip install sqlalchemy alembic`
 
 ## 四大模組導入範例

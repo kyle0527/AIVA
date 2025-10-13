@@ -414,7 +414,7 @@ Request
 # 深度掃描 - 啟用動態引擎
 scan_request = ScanStartPayload(
     scan_id="scan_001",
-    targets=["https://example.com"],
+    targets=["<https://example.com"],>
     strategy="deep",  # 自動啟用動態引擎
     authentication={},
     custom_headers={}
@@ -423,7 +423,7 @@ scan_request = ScanStartPayload(
 # 快速掃描 - 靜態引擎
 scan_request = ScanStartPayload(
     scan_id="scan_002",
-    targets=["https://example.com"],
+    targets=["<https://example.com"],>
     strategy="fast",  # 使用靜態引擎
     authentication={},
     custom_headers={}

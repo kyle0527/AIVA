@@ -7,11 +7,17 @@ from __future__ import annotations
 import time
 from typing import TYPE_CHECKING
 
-from services.aiva_common.schemas import Asset
+from services.aiva_common.schemas import (
+    Asset,
+    Fingerprints,
+    JavaScriptAnalysisResult,
+    ScanStartPayload,
+    SensitiveMatch,
+)
 from services.aiva_common.utils import get_logger
 
 if TYPE_CHECKING:
-    from services.aiva_common.schemas import Fingerprints, ScanStartPayload
+    pass
 
 logger = get_logger(__name__)
 
@@ -104,6 +110,30 @@ class ScanContext:
             count: 要增加的數量，默認為 1
         """
         self.apis_found += count
+
+    def add_sensitive_match(self, match: SensitiveMatch) -> None:
+        """
+        記錄發現的敏感資料匹配
+
+        Args:
+            match: 敏感資料匹配對象
+        """
+        if not hasattr(self, "sensitive_matches"):
+            self.sensitive_matches: list[SensitiveMatch] = []
+        self.sensitive_matches.append(match)
+        logger.info(f"Sensitive match recorded: {match.pattern_name} at {match.url or 'unknown'}")
+
+    def add_js_analysis_result(self, result: JavaScriptAnalysisResult) -> None:
+        """
+        記錄 JavaScript 分析結果
+
+        Args:
+            result: JavaScript 分析結果對象
+        """
+        if not hasattr(self, "js_analysis_results"):
+            self.js_analysis_results: list[JavaScriptAnalysisResult] = []
+        self.js_analysis_results.append(result)
+        logger.debug(f"JS analysis result recorded for {result.url}")
 
     def increment_pages_crawled(self, count: int = 1) -> None:
         """

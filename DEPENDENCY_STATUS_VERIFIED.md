@@ -258,7 +258,7 @@ cargo build --release
 1. **RabbitMQ**
    - 映像: `rabbitmq:3.13-management-alpine`
    - 端口: 5672 (AMQP), 15672 (Management UI)
-   
+
 2. **PostgreSQL**
    - 映像: `postgres:16-alpine`
    - 端口: 5432
@@ -404,7 +404,7 @@ docker-compose -f docker\docker-compose.yml up -d
 
 ## 🎯 推薦執行步驟
 
-### 最快路徑 (推薦):
+### 最快路徑 (推薦)
 
 ```powershell
 # 1. 安裝 Python 缺失套件 (2 分鐘)
@@ -418,7 +418,7 @@ cd AIVA-main
 .\check_status.ps1
 ```
 
-### 驗證成功標準:
+### 驗證成功標準
 
 - ✅ Python: `pip show aio-pika sqlalchemy` 有輸出
 - ✅ Node.js: `node_modules` 目錄存在且 > 500MB

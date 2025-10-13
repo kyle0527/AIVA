@@ -20,13 +20,16 @@
 ## 🎯 按四大模組分類
 
 ### Core 模組（1 個）
+
 - ✅ **Module-ThreatIntel** (P1) - 威脅情資整合
 
 ### Scan 模組（2 個）
+
 - ✅ **Function-SAST** (P1) - 靜態原始碼分析
 - ✅ **Module-Secrets** (P0) - 憑證洩漏掃描
 
 ### Function 模組（7 個）
+
 - ✅ **Function-SCA** (P0) - 軟體組成分析
 - ✅ **Function-CSPM** (P1) - 雲端安全態勢管理
 - ✅ **Module-AuthN** (P1) - 認證安全測試
@@ -36,6 +39,7 @@
 - ✅ **Module-AuthZ** (P1) - 授權模型繪製
 
 ### Integration 模組（2 個）
+
 - ✅ **Module-AttackPath** (P0) - 攻擊路徑分析
 - ⚠️ **Module-Remediation** (P2) - 自動化修復（需 LLM）
 
@@ -50,17 +54,20 @@
 ## 🚀 實施優先級時程
 
 ### P0 級（3 個月）- 4 個模組
+
 1. ✅ **Module-APISec** (2週) - 擴展現有 IDOR
 2. ✅ **Function-SCA** (4週) - Go + OSV-Scanner
 3. ✅ **Module-Secrets** (3週) - Rust + Git 歷史掃描
 4. ✅ **Module-AttackPath** (6週) - Python + Neo4j
 
 **預期成果**：
+
 - OWASP Top 10 覆蓋率：40% → 80%
 - 漏洞類型：4 種 → 10+ 種
 - 新增攻擊路徑視覺化能力
 
 ### P1 級（6 個月）- 5 個模組
+
 5. ✅ **Function-SAST** (8週)
 6. ✅ **Function-CSPM** (4週)
 7. ✅ **Module-AuthN** (4週)
@@ -68,65 +75,81 @@
 9. ✅ **Module-AuthZ** (3週)
 
 **預期成果**：
+
 - 漏洞類型：10+ 種 → 15+ 種
 - 新增原始碼分析能力
 - 新增 IaC 掃描能力
 
 ### P2 級（1 年）- 2 個模組
+
 10. ⚠️ **Module-PostEx** (8週) - 需嚴格權限控制
 11. ⚠️ **Module-Remediation** (12週) - 需 LLM 整合
 
 ### P3 級（暫緩）- 1 個模組
+
 12. ❌ **Module-BizLogic** - 技術不成熟
 
 ## ⚠️ 特別注意事項
 
 ### 需嚴格控制的模組
+
 - **Module-PostEx**：可能造成實際損害，需要：
   - 預設關閉
   - 審計日誌
   - 僅限沙盒環境
 
 ### 需 AI/LLM 整合的模組
+
 - **Module-Remediation**：需 OpenAI API 或 Claude API
 - **Module-BizLogic**：極度依賴 AI 理解業務邏輯
 
 ## ✅ 可立即開始實施的模組（基於現有程式碼）
 
 ### 1. Module-APISec（最容易）
+
 **現有基礎**：
+
 - `services/function/function_idor/aiva_func_idor/cross_user_tester.py`
 - `services/function/function_idor/aiva_func_idor/vertical_escalation_tester.py`
 
 **新增內容**：
+
 ```python
 # 新增檔案：bfla_tester.py（函式級授權測試）
 # 新增檔案：mass_assignment_tester.py（巨量賦值測試）
 ```
 
 ### 2. Module-Secrets（現有 Rust 掃描器擴展）
+
 **現有基礎**：
+
 - `services/scan/info_gatherer_rust/src/scanner.rs`（已有 regex 掃描）
 
 **新增內容**：
+
 ```rust
 // 新增模組：git_history_scanner.rs
 // 新增模組：entropy_detector.rs
 ```
 
 ### 3. Function-SCA（新建但技術成熟）
+
 **整合現有工具**：
+
 - Google OSV-Scanner（開源）
 - Trivy（開源）
 
 **實施難度**：低（主要是 API 整合）
 
 ### 4. Module-AttackPath（現有 Neo4j 基礎）
+
 **現有基礎**：
+
 - `docker-compose.yml` 已包含 Neo4j
 - `services/core/aiva_core/analysis/strategy_generator.py` 有 VulnerabilityCorrelationAnalyzer
 
 **新增內容**：
+
 ```python
 # 新增檔案：attack_path_engine.py
 # 新增檔案：graph_builder.py

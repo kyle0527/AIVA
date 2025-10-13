@@ -8,21 +8,29 @@ class ModuleName(str, Enum):
     CORE = "CoreModule"
     SCAN = "ScanModule"
     INTEGRATION = "IntegrationModule"
+    FUNCTION = "FunctionModule"
     FUNC_XSS = "FunctionXSS"
     FUNC_SQLI = "FunctionSQLI"
     FUNC_SSRF = "FunctionSSRF"
     FUNC_IDOR = "FunctionIDOR"
     OAST = "OASTService"
+    THREAT_INTEL = "ThreatIntelModule"
+    AUTHZ = "AuthZModule"
+    POSTEX = "PostExModule"
+    REMEDIATION = "RemediationModule"
+    BIZLOGIC = "BizLogicModule"
 
 
 class Topic(str, Enum):
     TASK_SCAN_START = "tasks.scan.start"
+    TASK_FUNCTION_START = "tasks.function.start"
     TASK_FUNCTION_XSS = "tasks.function.xss"
     TASK_FUNCTION_SQLI = "tasks.function.sqli"
     TASK_FUNCTION_SSRF = "tasks.function.ssrf"
     FUNCTION_IDOR_TASK = "tasks.function.idor"
 
     RESULTS_SCAN_COMPLETED = "results.scan.completed"
+    RESULTS_FUNCTION_COMPLETED = "results.function.completed"
     FINDING_DETECTED = "findings.detected"
     LOG_RESULTS_ALL = "log.results.all"
     STATUS_TASK_UPDATE = "status.task.update"
@@ -32,6 +40,29 @@ class Topic(str, Enum):
 
     COMMAND_TASK_CANCEL = "command.task.cancel"
     CONFIG_GLOBAL_UPDATE = "config.global.update"
+
+    # ThreatIntel Topics
+    TASK_THREAT_INTEL_LOOKUP = "tasks.threat_intel.lookup"
+    TASK_IOC_ENRICHMENT = "tasks.threat_intel.ioc_enrichment"
+    TASK_MITRE_MAPPING = "tasks.threat_intel.mitre_mapping"
+    RESULTS_THREAT_INTEL = "results.threat_intel"
+
+    # AuthZ Topics
+    TASK_AUTHZ_CHECK = "tasks.authz.check"
+    TASK_AUTHZ_ANALYZE = "tasks.authz.analyze"
+    RESULTS_AUTHZ = "results.authz"
+
+    # PostEx Topics (僅用於授權測試環境)
+    TASK_POSTEX_TEST = "tasks.postex.test"
+    TASK_POSTEX_PRIVILEGE_ESCALATION = "tasks.postex.privilege_escalation"
+    TASK_POSTEX_LATERAL_MOVEMENT = "tasks.postex.lateral_movement"
+    TASK_POSTEX_DATA_EXFILTRATION = "tasks.postex.data_exfiltration"
+    TASK_POSTEX_PERSISTENCE = "tasks.postex.persistence"
+    RESULTS_POSTEX = "results.postex"
+
+    # Remediation Topics
+    TASK_REMEDIATION_GENERATE = "tasks.remediation.generate"
+    RESULTS_REMEDIATION = "results.remediation"
 
 
 class Severity(str, Enum):
@@ -56,6 +87,12 @@ class VulnerabilityType(str, Enum):
     BOLA = "BOLA"
     INFO_LEAK = "Information Leak"
     WEAK_AUTH = "Weak Authentication"
+    # BizLogic Vulnerabilities
+    PRICE_MANIPULATION = "Price Manipulation"
+    WORKFLOW_BYPASS = "Workflow Bypass"
+    RACE_CONDITION = "Race Condition"
+    FORCED_BROWSING = "Forced Browsing"
+    STATE_MANIPULATION = "State Manipulation"
 
 
 class TaskStatus(str, Enum):
@@ -134,3 +171,104 @@ class Location(str, Enum):
     META_TAG = "meta_tag"
     INLINE_SCRIPT = "inline_script"
     EXTERNAL_SCRIPT = "external_script"
+
+
+class ThreatLevel(str, Enum):
+    """威脅等級枚舉 - 用於威脅情報"""
+
+    CRITICAL = "critical"
+    HIGH = "high"
+    MEDIUM = "medium"
+    LOW = "low"
+    INFO = "info"
+    UNKNOWN = "unknown"
+
+
+class IntelSource(str, Enum):
+    """威脅情報來源枚舉"""
+
+    VIRUSTOTAL = "virustotal"
+    ABUSEIPDB = "abuseipdb"
+    SHODAN = "shodan"
+    ALIENVAULT_OTX = "alienvault_otx"
+    MITRE_ATTACK = "mitre_attack"
+    INTERNAL = "internal"
+
+
+class IOCType(str, Enum):
+    """IOC (Indicator of Compromise) 類型枚舉"""
+
+    IP_ADDRESS = "ip_address"
+    DOMAIN = "domain"
+    URL = "url"
+    FILE_HASH = "file_hash"
+    EMAIL = "email"
+    CVE = "cve"
+
+
+class RemediationType(str, Enum):
+    """修復類型枚舉"""
+
+    CODE_FIX = "code_fix"
+    CONFIG_CHANGE = "config_change"
+    PATCH = "patch"
+    UPGRADE = "upgrade"
+    WORKAROUND = "workaround"
+    MITIGATION = "mitigation"
+
+
+class RemediationStatus(str, Enum):
+    """修復狀態枚舉"""
+
+    PENDING = "pending"
+    GENERATED = "generated"
+    APPLIED = "applied"
+    VERIFIED = "verified"
+    FAILED = "failed"
+    REJECTED = "rejected"
+
+
+class Permission(str, Enum):
+    """權限枚舉 - 用於授權檢查"""
+
+    READ = "read"
+    WRITE = "write"
+    DELETE = "delete"
+    EXECUTE = "execute"
+    ADMIN = "admin"
+    CREATE = "create"
+    UPDATE = "update"
+    LIST = "list"
+    MANAGE = "manage"
+
+
+class AccessDecision(str, Enum):
+    """訪問決策枚舉 - 用於授權結果"""
+
+    ALLOW = "allow"
+    DENY = "deny"
+    CONDITIONAL = "conditional"
+    NOT_APPLICABLE = "not_applicable"
+
+
+class PostExTestType(str, Enum):
+    """後滲透測試類型枚舉 - 僅用於授權測試環境"""
+
+    PRIVILEGE_ESCALATION = "privilege_escalation"
+    LATERAL_MOVEMENT = "lateral_movement"
+    DATA_EXFILTRATION = "data_exfiltration"
+    PERSISTENCE = "persistence"
+    CREDENTIAL_HARVESTING = "credential_harvesting"
+    COMMAND_EXECUTION = "command_execution"
+
+
+class PersistenceType(str, Enum):
+    """持久化類型枚舉 - 用於持久化機制檢測"""
+
+    REGISTRY = "registry"
+    SCHEDULED_TASK = "scheduled_task"
+    SERVICE = "service"
+    STARTUP = "startup"
+    CRON = "cron"
+    SYSTEMD = "systemd"
+    AUTOSTART = "autostart"

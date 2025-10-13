@@ -34,38 +34,27 @@
 
 \n### 核心運行時依賴 (18 個)\n
 
-**Web 框架與 HTTP:**
+
 
 - ❌ `fastapi >= 0.115.0` - 主要 Web 框架
 - ❌ `uvicorn >= 0.30.0` - ASGI 服務器 (含 standard extra)
 - ❌ `httpx >= 0.27.0` - 異步 HTTP 客戶端
 
 
-**數據驗證與處理:**
-
 - ❌ `pydantic >= 2.7.0` - 數據模型驗證
 - ❌ `pydantic-settings >= 2.2.0` - 配置管理
 
 
-**消息隊列:**
-
-- ❌ `aio-pika >= 9.4.0` - RabbitMQ 異步客戶端
-
-
-**Web 抓取與解析:**
 
 - ❌ `beautifulsoup4 >= 4.12.2` - HTML 解析
 - ❌ `lxml >= 5.0.0` - XML/HTML 處理器
 - ❌ `selenium >= 4.18.0` - 瀏覽器自動化
 
 
-**日誌與配置:**
-
 - ❌ `structlog >= 24.1.0` - 結構化日誌
 - ❌ `python-dotenv >= 1.0.0` - 環境變量管理
 
 
-**數據庫:**
 
 - ❌ `redis >= 5.0.0` - Redis 客戶端
 - ❌ `sqlalchemy >= 2.0.31` - ORM 框架
@@ -74,7 +63,6 @@
 - ❌ `neo4j >= 5.23.0` - Neo4j 圖數據庫客戶端
 
 
-**其他工具:**
 
 - ❌ `charset-normalizer >= 3.3.0` - 字符編碼檢測
 - ❌ `jinja2 >= 3.1.0` - 模板引擎
@@ -83,7 +71,7 @@
 \n### 開發工具依賴 (11 個)\n
 
 
-**測試框架:**
+
 
 - ❌ `pytest >= 8.0.0` - 單元測試框架
 - ❌ `pytest-asyncio >= 0.23.0` - 異步測試支援
@@ -92,7 +80,7 @@
 - ❌ `httpx >= 0.27.0` - HTTP 測試客戶端
 
 
-**代碼質量工具:**
+
 
 - ❌ `black >= 24.0.0` - 代碼格式化
 - ❌ `isort >= 5.13.0` - Import 排序
@@ -100,7 +88,6 @@
 - ❌ `mypy >= 1.8.0` - 靜態類型檢查
 
 
-**文檔工具:**
 
 - ❌ `sphinx >= 7.2.0` - 文檔生成
 - ❌ `sphinx-rtd-theme >= 2.0.0` - ReadTheDocs 主題
@@ -113,8 +100,7 @@
 python -m venv .venv
 
 # 2. 啟動虛擬環境
-.\.venv\Scripts\Activate.ps1
-
+\.venv\Scripts\Activate.ps1
 # 3. 升級 pip
 python -m pip install --upgrade pip
 
@@ -140,38 +126,31 @@ pip show fastapi uvicorn pydantic aio-pika sqlalchemy
 \n## 📦 Node.js 依賴狀態\n
 
 
-\n### 專案位置\n
-`services/scan/aiva_scan_node/`
 
-\n### 運行時依賴 (4 個)\n
 
 - ❌ `amqplib ^0.10.3` - RabbitMQ 客戶端
 - ❌ `playwright ^1.41.0` - 瀏覽器自動化 (支援 Chromium/Firefox/WebKit)
 - ❌ `pino ^8.17.0` - 高性能日誌框架
 - ❌ `pino-pretty ^10.3.0` - 日誌美化輸出
 
-\n### 開發工具依賴 (9 個)\n
-
-**TypeScript 支援:**
 
 - ❌ `typescript ^5.3.3` - TypeScript 編譯器
 - ❌ `@types/node ^20.11.0` - Node.js 類型定義
 - ❌ `@types/amqplib ^0.10.4` - amqplib 類型定義
 - ❌ `tsx ^4.7.0` - TypeScript 直接執行器
 
-**測試工具:**
+*
 
 - ❌ `vitest ^1.2.0` - 單元測試框架
 - ❌ `@vitest/ui ^1.2.0` - 測試 UI 界面
 
-**代碼質量:**
+
 
 - ❌ `eslint ^8.56.0` - JavaScript/TypeScript Linter
 - ❌ `@typescript-eslint/parser ^6.19.0` - ESLint TypeScript 解析器
 - ❌ `@typescript-eslint/eslint-plugin ^6.19.0` - ESLint TypeScript 規則
 
 
-\n### 📌 安裝命令\n
 
 ```powershell
 # 進入專案目錄
@@ -184,7 +163,7 @@ npm install
 npx playwright install chromium
 ```
 
-\n### ✔️ 驗證安裝\n
+in
 
 ```powershell
 # 檢查已安裝套件
@@ -203,23 +182,12 @@ npm test
 \n## 🐹 Go 依賴狀態\n
 
 
-\n### 專案位置\n
-`services/function/function_ssrf_go/`
-
-
-\n### 直接依賴 (2 個)\n
-
+main
 
 - ❌ `github.com/rabbitmq/amqp091-go v1.9.0` - RabbitMQ 官方客戶端
 - ❌ `go.uber.org/zap v1.26.0` - 高性能結構化日誌
 
-
-\n### 間接依賴 (1 個)\n
-
-
-- ❌ `go.uber.org/multierr v1.11.0` - Zap 的依賴項
-
-\n### 📌 安裝命令\n
+ain
 
 ```powershell
 # 進入專案目錄
@@ -235,7 +203,7 @@ go mod tidy
 go mod verify
 ```
 
-\n### ✔️ 驗證安裝\n
+in
 
 ```powershell
 # 檢查模組依賴樹
@@ -252,28 +220,32 @@ go test ./...
 
 \n## 🦀 Rust 依賴狀態\n
 
-\n### 專案位置\n
-`services/scan/info_gatherer_rust/`
+> main
 
-\n### 運行時依賴 (10 個)\n
-
-**正則表達式引擎:**
 - ❌ `regex = "1.10"` - 標準正則表達式
 - ❌ `aho-corasick = "1.1"` - 多模式字符串匹配 (高效能)
 
-**並發處理:**
+- **並發處理:**
+
+- **並發處理:**
+
 - ❌ `rayon = "1.8"` - 數據並行處理框架
 - ❌ `tokio = { version = "1.35", features = ["full"] }` - 異步運行時
 
-**序列化:**
+- **序列化:**
+
+- **序列化:**
+
 - ❌ `serde = { version = "1.0", features = ["derive"] }` - 序列化框架
 - ❌ `serde_json = "1.0"` - JSON 支援
 
-**消息隊列:**
+- **消息隊列:**
+
 - ❌ `lapin = "2.3"` - RabbitMQ 異步客戶端
 - ❌ `futures = "0.3"` - Future trait 和工具
 
-**日誌:**
+- **日誌:**
+
 - ❌ `tracing = "0.1"` - 應用級追蹤框架
 - ❌ `tracing-subscriber = { version = "0.3", features = ["env-filter"] }` - 日誌訂閱器
 
@@ -281,7 +253,7 @@ go test ./...
 
 - ❌ `criterion = "0.5"` - 性能基準測試框架
 
-\n### 📌 安裝命令\n
+main
 
 ```powershell
 # 進入專案目錄
@@ -297,7 +269,7 @@ cargo build
 cargo build --release
 ```
 
-\n### ✔️ 驗證安裝\n
+main
 
 ```powershell
 # 檢查依賴樹
@@ -317,11 +289,13 @@ cargo bench
 ### Docker 服務 (2 個)
 
 **RabbitMQ:**
+
 - 映像: `rabbitmq:3.13-management-alpine`
 - 端口: 5672 (AMQP), 15672 (Management UI)
 - 狀態: ❓ 需檢查
 
 **PostgreSQL:**
+
 - 映像: `postgres:16-alpine`
 - 端口: 5432
 - 狀態: ❓ 需檢查
@@ -360,7 +334,7 @@ psql -h localhost -U aiva_user -d aiva_db
 .\setup_multilang.ps1
 ```
 
-### 安裝腳本執行內容
+
 
 1. ✅ **檢查工具鏈**: 驗證 Python/Node.js/Go/Rust 是否已安裝
 2. 🐍 **Python 環境**: 創建 `.venv` + 安裝所有 pip 套件
@@ -403,6 +377,7 @@ psql -h localhost -U aiva_user -d aiva_db
 ### Python 版本問題
 
 **問題**: 當前 Python 3.12.10,專案需求 3.13+
+
 ```powershell
 # 解決方案 1: 放寬版本限制 (修改 pyproject.toml)
 # requires-python = ">=3.12"  # 原為 >=3.13
@@ -461,7 +436,7 @@ netstat -ano | findstr "5672 15672 5432"
 4. **測試功能**: `.\test_scan.ps1` (發送測試任務)
 5. **查看日誌**: 檢查各服務日誌確認運行正常
 
-### 手動安裝（自動化腳本失敗時）
+
 
 ```powershell
 # 1. Python

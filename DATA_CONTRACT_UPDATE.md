@@ -238,8 +238,8 @@ content: str = Field(max_length=5000)
 @field_validator("target_url")
 @classmethod
 def validate_url(cls, v: str) -> str:
-    if not v.startswith(("http://", "https://")):
-        raise ValueError("URL must start with http:// or https://")
+    if not v.startswith(("<http://",> "<https://")):>
+        raise ValueError("URL must start with http:// or <https://")>
     return v
 
 @field_validator("path")
