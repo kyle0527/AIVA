@@ -25,6 +25,15 @@ futures-lite = "2.6"
 tracing = "0.1"
 tracing-subscriber = { version = "0.3", features = ["env-filter"] }
 
+# Git 操作
+git2 = "0.18"
+
+# 熵值計算（已使用內建 HashMap）
+
+[dev-dependencies]
+criterion = "0.5"
+tempfile = "3.8"
+
 [dev-dependencies]
 criterion = "0.5"
 

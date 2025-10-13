@@ -12,6 +12,8 @@ use tracing::{info, error};
 use tracing_subscriber;
 
 mod scanner;
+mod secret_detector;
+mod git_history_scanner;
 use scanner::SensitiveInfoScanner;
 
 const RABBITMQ_URL: &str = "amqp://aiva:dev_password@localhost:5672";
