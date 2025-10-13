@@ -1,0 +1,82 @@
+================================================================================
+AIVA 多語言程式碼分析報告
+生成時間: 2025-10-13 15:05:06
+================================================================================
+
+多語言程式碼統計總覽
+--------------------------------------------------------------------------------
+
+GO:
+  檔案數: 18
+  總行數: 2,972
+    - 程式碼行: 2,563
+    - 註解行: 238
+    - 空白行: 409
+  函數數: 68
+  結構體數: 50
+  介面數: 0
+
+RUST:
+  檔案數: 10
+  總行數: 1,552
+    - 程式碼行: 1,337
+    - 註解行: 101
+    - 空白行: 215
+  函數數: 49
+  結構體數: 25
+  Traits: 0
+  Impls: 10
+
+TYPESCRIPT:
+  檔案數: 3
+  總行數: 352
+    - 程式碼行: 295
+    - 註解行: 21
+    - 空白行: 57
+  函數數: 4
+  類別數: 1
+  介面數: 4
+  類型別名: 0
+
+
+最大的檔案（各語言前 10）
+--------------------------------------------------------------------------------
+
+GO:
+檔案路徑                                                       行數       函數
+----------------------------------------------------------------------
+...nction_sca_go/internal/scanner/sca_scanner.go          368        8
+...uthn_go/internal/weak_config/config_tester.go          296        8
+...uthn_go/internal/token_test/token_analyzer.go          292        6
+...tion_cspm_go/internal/scanner/cspm_scanner.go          256       12
+...authn_go/internal/brute_force/brute_forcer.go          218        6
+...on/function_ssrf_go/internal/detector/ssrf.go          215        4
+function/function_sca_go/cmd/worker/main.go               187        3
+function/function_ssrf_go/cmd/worker/main.go              166        1
+function/function_authn_go/cmd/worker/main.go             135        2
+...n/function_authn_go/pkg/messaging/consumer.go          112        4
+
+RUST:
+檔案路徑                                                       行數       函數
+----------------------------------------------------------------------
+scan/info_gatherer_rust/src/secret_detector.rs            350       14
+...info_gatherer_rust/src/git_history_scanner.rs          253        7
+scan/info_gatherer_rust/src/scanner.rs                    180        6
+scan/info_gatherer_rust/src/main.rs                       173        2
+function/function_sast_rust/src/rules.rs                  166        5
+function/function_sast_rust/src/worker.rs                 128        4
+function/function_sast_rust/src/models.rs                 126        1
+function/function_sast_rust/src/analyzers.rs               98        6
+function/function_sast_rust/src/parsers.rs                 47        3
+function/function_sast_rust/src/main.rs                    31        1
+
+TYPESCRIPT:
+檔案路徑                                                       行數       函數
+----------------------------------------------------------------------
+scan/aiva_scan_node/src/services/scan-service.ts          210        0
+scan/aiva_scan_node/src/index.ts                          125        4
+scan/aiva_scan_node/src/utils/logger.ts                    17        0
+
+================================================================================
+報告結束
+================================================================================

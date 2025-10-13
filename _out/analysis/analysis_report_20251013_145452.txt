@@ -1,0 +1,61 @@
+================================================================================
+AIVA 程式碼庫分析報告
+生成時間: 2025-10-13 14:54:52
+================================================================================
+
+整體統計
+--------------------------------------------------------------------------------
+總檔案數: 155
+總行數: 27,015
+  - 程式碼行: 22,435
+  - 註解行: 2,590
+  - 空白行: 4,580
+總函數數: 704
+總類別數: 299
+總導入數: 803
+平均複雜度: 11.94
+
+程式碼品質指標
+--------------------------------------------------------------------------------
+類型提示覆蓋率: 74.8% (116/155)
+文檔字串覆蓋率: 81.9% (127/155)
+
+模組分析
+--------------------------------------------------------------------------------
+模組                                    檔案數           行數         函數         類別
+--------------------------------------------------------------------------------
+__init__.py                             1            4          0          0
+aiva_common                            13        1,960         53         48
+core                                   28        4,850        128         55
+function                               53        9,864        228        119
+integration                            32        3,174         96         24
+scan                                   28        7,163        199         53
+
+最複雜的檔案（前 20）
+--------------------------------------------------------------------------------
+檔案路徑                                                                複雜度       行數
+--------------------------------------------------------------------------------
+aiva_common/utils/network/ratelimit.py                               91      659
+scan/aiva_scan/dynamic_engine/dynamic_content_extractor.py           54      695
+function/function_ssrf/aiva_func_ssrf/worker.py                      49      432
+function/function_xss/aiva_func_xss/worker.py                        48      444
+scan/aiva_scan/dynamic_engine/headless_browser_pool.py               48      553
+...tion/function_xss/aiva_func_xss/traditional_detector.py           45      237
+...unction_ssrf/aiva_func_ssrf/param_semantics_analyzer.py           44      225
+...ion/function_ssrf/aiva_func_ssrf/smart_ssrf_detector.py           42      532
+core/aiva_core/ai_engine/tools.py                                    38      435
+...nction_ssrf/aiva_func_ssrf/internal_address_detector.py           36      339
+scan/aiva_scan/scope_manager.py                                      36      405
+scan/aiva_scan/info_gatherer/sensitive_info_detector.py              36      561
+core/aiva_core/analysis/dynamic_strategy_adjustment.py               34      188
+function/function_xss/aiva_func_xss/stored_detector.py               33      156
+core/aiva_core/analysis/initial_surface.py                           33      323
+function/common/unified_smart_detection_manager.py                   31      410
+.../function_idor/aiva_func_idor/mass_assignment_tester.py           30      483
+function/function_idor/aiva_func_idor/bfla_tester.py                 30      382
+scan/aiva_scan/dynamic_engine/js_interaction_simulator.py            30      347
+scan/aiva_scan/info_gatherer/javascript_source_analyzer.py           30      556
+
+================================================================================
+報告結束
+================================================================================

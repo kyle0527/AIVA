@@ -1,0 +1,333 @@
+/workspaces/AIVA
+├── __init__.py
+├── _out
+│   ├── analysis
+│   ├── ext_counts.csv
+│   ├── loc_by_ext.csv
+│   └── tree.html
+├── check_status.ps1
+├── demo_bio_neuron_agent.py
+├── demo_ui_panel.py
+├── docker
+│   ├── Dockerfile.integration
+│   ├── docker-compose.production.yml
+│   ├── docker-compose.yml
+│   ├── entrypoint.integration.sh
+│   └── initdb
+│       └── 001_schema.sql
+├── docs
+│   └── diagrams
+├── generate_clean_tree.ps1
+├── generate_project_report.ps1
+├── generate_project_report.sh
+├── generate_stats.ps1
+├── init_go_deps.ps1
+├── mypy.ini
+├── pyproject.toml
+├── ruff.toml
+├── services
+│   ├── __init__.py
+│   ├── aiva_common
+│   │   ├── __init__.py
+│   │   ├── config.py
+│   │   ├── enums.py
+│   │   ├── mq.py
+│   │   ├── py.typed
+│   │   ├── schemas.py
+│   │   └── utils
+│   │       ├── __init__.py
+│   │       ├── dedup
+│   │       │   ├── __init__.py
+│   │       │   └── dedupe.py
+│   │       ├── ids.py
+│   │       ├── logging.py
+│   │       └── network
+│   │           ├── __init__.py
+│   │           ├── backoff.py
+│   │           └── ratelimit.py
+│   ├── core
+│   │   └── aiva_core
+│   │       ├── __init__.py
+│   │       ├── ai_engine
+│   │       │   ├── __init__.py
+│   │       │   ├── bio_neuron_core.py
+│   │       │   ├── bio_neuron_core.py.backup
+│   │       │   ├── bio_neuron_core_v2.py
+│   │       │   ├── knowledge_base.py
+│   │       │   ├── knowledge_base.py.backup
+│   │       │   └── tools.py
+│   │       ├── ai_model
+│   │       │   └── train_classifier.py
+│   │       ├── ai_ui_schemas.py
+│   │       ├── analysis
+│   │       │   ├── __init__.py
+│   │       │   ├── dynamic_strategy_adjustment.py
+│   │       │   ├── initial_surface.py
+│   │       │   └── strategy_generator.py
+│   │       ├── app.py
+│   │       ├── execution
+│   │       │   ├── __init__.py
+│   │       │   ├── execution_status_monitor.py
+│   │       │   ├── task_generator.py
+│   │       │   └── task_queue_manager.py
+│   │       ├── ingestion
+│   │       │   ├── __init__.py
+│   │       │   └── scan_module_interface.py
+│   │       ├── output
+│   │       │   ├── __init__.py
+│   │       │   └── to_functions.py
+│   │       ├── schemas.py
+│   │       ├── state
+│   │       │   ├── __init__.py
+│   │       │   └── session_state_manager.py
+│   │       └── ui_panel
+│   │           ├── __init__.py
+│   │           ├── dashboard.py
+│   │           ├── dashboard.py.backup
+│   │           ├── improved_ui.py
+│   │           ├── server.py
+│   │           └── server.py.backup
+│   ├── function
+│   │   ├── common
+│   │   │   ├── __init__.py
+│   │   │   ├── detection_config.py
+│   │   │   └── unified_smart_detection_manager.py
+│   │   ├── function_authn_go
+│   │   │   ├── cmd
+│   │   │   │   └── worker
+│   │   │   │       └── main.go
+│   │   │   ├── go.mod
+│   │   │   ├── internal
+│   │   │   │   ├── brute_force
+│   │   │   │   │   └── brute_forcer.go
+│   │   │   │   ├── token_test
+│   │   │   │   │   └── token_analyzer.go
+│   │   │   │   └── weak_config
+│   │   │   │       └── config_tester.go
+│   │   │   └── pkg
+│   │   │       ├── messaging
+│   │   │       │   ├── consumer.go
+│   │   │       │   └── publisher.go
+│   │   │       └── models
+│   │   │           └── models.go
+│   │   ├── function_cspm_go
+│   │   │   ├── cmd
+│   │   │   │   └── worker
+│   │   │   │       └── main.go
+│   │   │   ├── go.mod
+│   │   │   ├── internal
+│   │   │   │   └── scanner
+│   │   │   │       └── cspm_scanner.go
+│   │   │   └── pkg
+│   │   │       ├── messaging
+│   │   │       │   ├── consumer.go
+│   │   │       │   └── publisher.go
+│   │   │       └── models
+│   │   │           └── models.go
+│   │   ├── function_idor
+│   │   │   └── aiva_func_idor
+│   │   │       ├── __init__.py
+│   │   │       ├── bfla_tester.py
+│   │   │       ├── cross_user_tester.py
+│   │   │       ├── enhanced_worker.py
+│   │   │       ├── mass_assignment_tester.py
+│   │   │       ├── resource_id_extractor.py
+│   │   │       ├── smart_idor_detector.py
+│   │   │       ├── vertical_escalation_tester.py
+│   │   │       └── worker.py
+│   │   ├── function_sast_rust
+│   │   │   ├── Cargo.toml
+│   │   │   └── src
+│   │   │       ├── analyzers.rs
+│   │   │       ├── main.rs
+│   │   │       ├── models.rs
+│   │   │       ├── parsers.rs
+│   │   │       ├── rules.rs
+│   │   │       └── worker.rs
+│   │   ├── function_sca_go
+│   │   │   ├── cmd
+│   │   │   │   └── worker
+│   │   │   │       └── main.go
+│   │   │   ├── go.mod
+│   │   │   ├── internal
+│   │   │   │   └── scanner
+│   │   │   │       └── sca_scanner.go
+│   │   │   └── pkg
+│   │   │       ├── messaging
+│   │   │       │   └── publisher.go
+│   │   │       └── models
+│   │   │           └── models.go
+│   │   ├── function_sqli
+│   │   │   ├── __init__.py
+│   │   │   └── aiva_func_sqli
+│   │   │       ├── __init__.py
+│   │   │       ├── backend_db_fingerprinter.py
+│   │   │       ├── config.py
+│   │   │       ├── detection_models.py
+│   │   │       ├── engines
+│   │   │       │   ├── __init__.py
+│   │   │       │   ├── boolean_detection_engine.py
+│   │   │       │   ├── error_detection_engine.py
+│   │   │       │   ├── oob_detection_engine.py
+│   │   │       │   ├── time_detection_engine.py
+│   │   │       │   └── union_detection_engine.py
+│   │   │       ├── exceptions.py
+│   │   │       ├── payload_wrapper_encoder.py
+│   │   │       ├── result_binder_publisher.py
+│   │   │       ├── schemas.py
+│   │   │       ├── smart_detection_manager.py
+│   │   │       ├── task_queue.py
+│   │   │       ├── telemetry.py
+│   │   │       ├── worker.py
+│   │   │       └── worker_legacy.py
+│   │   ├── function_ssrf
+│   │   │   ├── __init__.py
+│   │   │   └── aiva_func_ssrf
+│   │   │       ├── __init__.py
+│   │   │       ├── enhanced_worker.py
+│   │   │       ├── internal_address_detector.py
+│   │   │       ├── oast_dispatcher.py
+│   │   │       ├── param_semantics_analyzer.py
+│   │   │       ├── result_publisher.py
+│   │   │       ├── schemas.py
+│   │   │       ├── smart_ssrf_detector.py
+│   │   │       └── worker.py
+│   │   ├── function_ssrf_go
+│   │   │   ├── cmd
+│   │   │   │   └── worker
+│   │   │   │       └── main.go
+│   │   │   ├── go.mod
+│   │   │   └── internal
+│   │   │       └── detector
+│   │   │           └── ssrf.go
+│   │   └── function_xss
+│   │       ├── __init__.py
+│   │       └── aiva_func_xss
+│   │           ├── __init__.py
+│   │           ├── blind_xss_listener_validator.py
+│   │           ├── dom_xss_detector.py
+│   │           ├── payload_generator.py
+│   │           ├── result_publisher.py
+│   │           ├── schemas.py
+│   │           ├── stored_detector.py
+│   │           ├── task_queue.py
+│   │           ├── traditional_detector.py
+│   │           └── worker.py
+│   ├── integration
+│   │   ├── aiva_integration
+│   │   │   ├── __init__.py
+│   │   │   ├── analysis
+│   │   │   │   ├── __init__.py
+│   │   │   │   ├── compliance_policy_checker.py
+│   │   │   │   ├── risk_assessment_engine.py
+│   │   │   │   └── vuln_correlation_analyzer.py
+│   │   │   ├── app.py
+│   │   │   ├── attack_path_analyzer
+│   │   │   │   ├── __init__.py
+│   │   │   │   ├── engine.py
+│   │   │   │   ├── graph_builder.py
+│   │   │   │   └── visualizer.py
+│   │   │   ├── config_template
+│   │   │   │   ├── __init__.py
+│   │   │   │   └── config_template_manager.py
+│   │   │   ├── middlewares
+│   │   │   │   ├── __init__.py
+│   │   │   │   └── rate_limiter.py
+│   │   │   ├── observability
+│   │   │   │   ├── __init__.py
+│   │   │   │   └── metrics.py
+│   │   │   ├── perf_feedback
+│   │   │   │   ├── __init__.py
+│   │   │   │   ├── improvement_suggestion_generator.py
+│   │   │   │   └── scan_metadata_analyzer.py
+│   │   │   ├── reception
+│   │   │   │   ├── __init__.py
+│   │   │   │   ├── data_reception_layer.py
+│   │   │   │   └── sql_result_database.py
+│   │   │   ├── reporting
+│   │   │   │   ├── __init__.py
+│   │   │   │   ├── formatter_exporter.py
+│   │   │   │   ├── report_content_generator.py
+│   │   │   │   └── report_template_selector.py
+│   │   │   ├── security
+│   │   │   │   ├── __init__.py
+│   │   │   │   └── auth.py
+│   │   │   ├── settings.py
+│   │   │   └── threat_intel
+│   │   │       └── __init__.py
+│   │   ├── alembic
+│   │   │   ├── env.py
+│   │   │   └── versions
+│   │   │       └── 001_initial_schema.py
+│   │   ├── alembic.ini
+│   │   └── api_gateway
+│   │       └── api_gateway
+│   │           └── app.py
+│   └── scan
+│       ├── aiva_scan
+│       │   ├── __init__.py
+│       │   ├── authentication_manager.py
+│       │   ├── config_control_center.py
+│       │   ├── core_crawling_engine
+│       │   │   ├── __init__.py
+│       │   │   ├── http_client_hi.py
+│       │   │   ├── static_content_parser.py
+│       │   │   └── url_queue_manager.py
+│       │   ├── dynamic_engine
+│       │   │   ├── __init__.py
+│       │   │   ├── dynamic_content_extractor.py
+│       │   │   ├── example_browser_pool.py
+│       │   │   ├── example_extractor.py
+│       │   │   ├── example_usage.py
+│       │   │   ├── example_usage.py.backup
+│       │   │   ├── headless_browser_pool.py
+│       │   │   └── js_interaction_simulator.py
+│       │   ├── fingerprint_manager.py
+│       │   ├── header_configuration.py
+│       │   ├── info_gatherer
+│       │   │   ├── __init__.py
+│       │   │   ├── javascript_source_analyzer.py
+│       │   │   ├── passive_fingerprinter.py
+│       │   │   └── sensitive_info_detector.py
+│       │   ├── scan_context.py
+│       │   ├── scan_orchestrator.py
+│       │   ├── scan_orchestrator_new.py
+│       │   ├── scan_orchestrator_old.py
+│       │   ├── schemas.py
+│       │   ├── scope_manager.py
+│       │   ├── strategy_controller.py
+│       │   └── worker.py
+│       ├── aiva_scan_node
+│       │   └── src
+│       │       ├── index.ts
+│       │       ├── services
+│       │       │   └── scan-service.ts
+│       │       └── utils
+│       │           └── logger.ts
+│       └── info_gatherer_rust
+│           ├── Cargo.toml
+│           └── src
+│               ├── git_history_scanner.rs
+│               ├── main.rs
+│               ├── scanner.rs
+│               └── secret_detector.rs
+├── setup_env.bat
+├── setup_multilang.ps1
+├── start_all.ps1
+├── start_all_multilang.ps1
+├── start_dev.bat
+├── stop_all.ps1
+├── stop_all_multilang.ps1
+├── test_scan.ps1
+└── tools
+    ├── analyze_codebase.py
+    ├── find_non_cp950_filtered.py
+    ├── generate_mermaid_diagrams.py
+    ├── markdown_check.py
+    ├── py2mermaid.py
+    ├── replace_emoji.py
+    ├── replace_non_cp950.py
+    ├── test_tools.py
+    └── update_imports.py
+
+94 directories, 237 files

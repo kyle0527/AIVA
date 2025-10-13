@@ -106,9 +106,16 @@ echo "🌳 生成專案樹狀結構..."
 echo ""
 
 TREE_FILE="$OUTPUT_DIR/tree_ascii.txt"
+TREE_CLEAN_FILE="$OUTPUT_DIR/tree_clean.txt"
+
 if command -v tree &> /dev/null; then
-    tree -L 3 -I "$(IFS='|'; echo "${EXCLUDE_DIRS[*]}")" "$PROJECT_ROOT" > "$TREE_FILE"
-    echo "✅ 樹狀圖已生成: tree_ascii.txt"
+    # 生成完整樹狀圖（無層數限制）
+    tree -I "$(IFS='|'; echo "${EXCLUDE_DIRS[*]}")" "$PROJECT_ROOT" > "$TREE_FILE"
+    echo "✅ 完整樹狀圖已生成: tree_ascii.txt"
+
+    # 生成過濾後的樹狀圖（排除文檔檔案，無層數限制）
+    tree -I "$(IFS='|'; echo "${EXCLUDE_DIRS[*]}")|*.md|*.txt|*.mmd|*.log|*.json" "$PROJECT_ROOT" > "$TREE_CLEAN_FILE"
+    echo "✅ 過濾樹狀圖已生成: tree_clean.txt (已排除 .md/.txt/.mmd/.log/.json)"
 else
     echo "⚠️  tree 命令不存在，跳過樹狀圖生成"
     echo "專案根目錄: $PROJECT_ROOT" > "$TREE_FILE"
