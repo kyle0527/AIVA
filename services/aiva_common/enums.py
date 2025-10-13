@@ -8,6 +8,7 @@ class ModuleName(str, Enum):
     CORE = "CoreModule"
     SCAN = "ScanModule"
     INTEGRATION = "IntegrationModule"
+    FUNCTION = "FunctionModule"
     FUNC_XSS = "FunctionXSS"
     FUNC_SQLI = "FunctionSQLI"
     FUNC_SSRF = "FunctionSSRF"
@@ -17,16 +18,19 @@ class ModuleName(str, Enum):
     AUTHZ = "AuthZModule"
     POSTEX = "PostExModule"
     REMEDIATION = "RemediationModule"
+    BIZLOGIC = "BizLogicModule"
 
 
 class Topic(str, Enum):
     TASK_SCAN_START = "tasks.scan.start"
+    TASK_FUNCTION_START = "tasks.function.start"
     TASK_FUNCTION_XSS = "tasks.function.xss"
     TASK_FUNCTION_SQLI = "tasks.function.sqli"
     TASK_FUNCTION_SSRF = "tasks.function.ssrf"
     FUNCTION_IDOR_TASK = "tasks.function.idor"
 
     RESULTS_SCAN_COMPLETED = "results.scan.completed"
+    RESULTS_FUNCTION_COMPLETED = "results.function.completed"
     FINDING_DETECTED = "findings.detected"
     LOG_RESULTS_ALL = "log.results.all"
     STATUS_TASK_UPDATE = "status.task.update"
@@ -83,6 +87,12 @@ class VulnerabilityType(str, Enum):
     BOLA = "BOLA"
     INFO_LEAK = "Information Leak"
     WEAK_AUTH = "Weak Authentication"
+    # BizLogic Vulnerabilities
+    PRICE_MANIPULATION = "Price Manipulation"
+    WORKFLOW_BYPASS = "Workflow Bypass"
+    RACE_CONDITION = "Race Condition"
+    FORCED_BROWSING = "Forced Browsing"
+    STATE_MANIPULATION = "State Manipulation"
 
 
 class TaskStatus(str, Enum):

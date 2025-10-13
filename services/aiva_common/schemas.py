@@ -527,3 +527,72 @@ class PostExResultPayload(BaseModel):
     safe_mode: bool
     authorization_verified: bool = False
     timestamp: datetime = Field(default_factory=lambda: datetime.now(UTC))
+
+
+# ==================== Info Gatherer Schemas ====================
+
+
+class SensitiveMatch(BaseModel):
+    """敏感資訊匹配結果"""
+
+    match_id: str
+    pattern_name: str  # e.g., "password", "api_key", "credit_card", "private_key"
+    matched_text: str
+    context: str  # 前後文 (遮蔽敏感部分)
+    confidence: float = Field(ge=0.0, le=1.0)  # 0.0 - 1.0
+    line_number: int | None = None
+    file_path: str | None = None
+    url: str | None = None
+    severity: Severity = Severity.MEDIUM
+
+
+class JavaScriptAnalysisResult(BaseModel):
+    """JavaScript 分析結果"""
+
+    analysis_id: str
+    url: str
+    source_size_bytes: int
+    
+    # 詳細分析結果
+    dangerous_functions: list[str] = Field(default_factory=list)  # eval, Function, setTimeout等
+    external_resources: list[str] = Field(default_factory=list)  # 外部 URL
+    data_leaks: list[dict[str, str]] = Field(default_factory=list)  # 數據洩漏信息
+    
+    # 通用欄位 (保持兼容)
+    findings: list[str] = Field(default_factory=list)  # e.g., ["uses_eval", "dom_manipulation"]
+    apis_called: list[str] = Field(default_factory=list)  # 發現的 API 端點
+    ajax_endpoints: list[str] = Field(default_factory=list)  # AJAX 呼叫端點
+    suspicious_patterns: list[str] = Field(default_factory=list)
+    
+    # 評分欄位
+    risk_score: float = Field(ge=0.0, le=10.0, default=0.0)  # 0.0 - 10.0
+    security_score: int = Field(ge=0, le=100, default=100)  # 0-100 分
+    
+    timestamp: datetime = Field(default_factory=lambda: datetime.now(UTC))
+
+
+# ==================== BizLogic Payloads ====================
+
+
+class BizLogicTestPayload(BaseModel):
+    """業務邏輯測試 Payload"""
+
+    task_id: str
+    scan_id: str
+    test_type: str  # price_manipulation, workflow_bypass, race_condition
+    target_urls: dict[str, str]  # 目標 URL 字典 {"cart_api": "...", "checkout_api": "..."}
+    test_config: dict[str, Any] = Field(default_factory=dict)
+    product_id: str | None = None
+    workflow_steps: list[dict[str, str]] = Field(default_factory=list)
+
+
+class BizLogicResultPayload(BaseModel):
+    """業務邏輯測試結果 Payload"""
+
+    task_id: str
+    scan_id: str
+    test_type: str
+    status: str  # completed, failed, error
+    findings: list[dict[str, Any]] = Field(default_factory=list)  # FindingPayload dicts
+    statistics: dict[str, Any] = Field(default_factory=dict)
+    timestamp: datetime = Field(default_factory=lambda: datetime.now(UTC))

@@ -5,10 +5,12 @@ Dynamic Engine Module
 - 無頭瀏覽器池管理
 - JavaScript 互動模擬
 - 動態內容提取
+- AJAX/API 端點處理
 """
 
 from __future__ import annotations
 
+from .ajax_api_handler import AjaxApiHandler
 from .dynamic_content_extractor import (
     ContentType,
     DynamicContent,
@@ -33,6 +35,8 @@ from .js_interaction_simulator import (
 )
 
 __all__ = [
+    # AJAX/API Handler
+    "AjaxApiHandler",
     # Browser Pool
     "BrowserInstance",
     "BrowserStatus",

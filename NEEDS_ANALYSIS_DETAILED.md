@@ -10,15 +10,18 @@
 ## 📋 執行摘要
 
 ### ✅ 已完成
+
 - **清理重複檔案**: 刪除 `scan_orchestrator_new.py` 和 `scan_orchestrator_old.py`
 - **保留統一版本**: `scan_orchestrator.py` (373 行,功能完整)
 
 ### 🔍 核心發現
 
 #### 1. Worker.py 需要重構
+
 **問題**: `worker.py` 的 `_perform_scan` 方法直接實作掃描邏輯,**完全未使用** `ScanOrchestrator`
 
 **現況**:
+
 ```python
 # services/scan/aiva_scan/worker.py (第 54-96 行)
 async def _perform_scan(req: ScanStartPayload) -> ScanCompletedPayload:
@@ -37,7 +40,8 @@ async def _perform_scan(req: ScanStartPayload) -> ScanCompletedPayload:
         # ... (40+ 行掃描邏輯)
 ```
 
-**影響**: 
+**影響**:
+
 - 代碼重複,維護困難
 - 無法享受 ScanOrchestrator 的完整功能 (動態掃描、策略控制等)
 - worker.py 高達 106 行,大部分是應該被封裝的邏輯
@@ -45,7 +49,9 @@ async def _perform_scan(req: ScanStartPayload) -> ScanCompletedPayload:
 ---
 
 #### 2. PostEx 模組是「後滲透測試」,非業務邏輯測試
+
 **發現**: `services/postex/` 包含以下模組:
+
 - `data_exfiltration_tester.py` - 數據外洩測試器
 - `lateral_movement.py` - 橫向移動測試
 - `persistence_checker.py` - 持久化檢測
@@ -56,7 +62,9 @@ async def _perform_scan(req: ScanStartPayload) -> ScanCompletedPayload:
 ---
 
 #### 3. Core 模組已有 StrategyGenerator,但未與配置中心整合
+
 **發現**: `services/core/aiva_core/analysis/strategy_generator.py` 存在,但:
+
 - ✅ 有 `RuleBasedStrategyGenerator` 類別
 - ❌ `ScanOrchestrator` 未呼叫 `strategy_controller.apply_to_config()`
 - ❌ 策略參數無法動態應用到配置中心
@@ -64,12 +72,16 @@ async def _perform_scan(req: ScanStartPayload) -> ScanCompletedPayload:
 ---
 
 #### 4. ScanOrchestrator 動態引擎已部分實作,但處理不完整
+
 **已實作**:
+
 - ✅ 瀏覽器池管理 (`HeadlessBrowserPool`)
+
 - ✅ 動態內容提取器 (`DynamicContentExtractor`)
 - ✅ 配置支援 AJAX 和 API 呼叫提取
 
 **缺失**:
+
 - ❌ 提取的 AJAX/API 資料未被處理 (未加入 url_queue)
 - ❌ JavaScript 變數未進行敏感資訊分析
 - ❌ ScanContext 未記錄這些發現
@@ -83,6 +95,7 @@ async def _perform_scan(req: ScanStartPayload) -> ScanCompletedPayload:
 #### 1. 重構 worker.py 使用 ScanOrchestrator
 
 **現況**:
+
 ```python
 # ❌ 當前實作 (106 行)
 async def _perform_scan(req: ScanStartPayload) -> ScanCompletedPayload:
@@ -91,6 +104,7 @@ async def _perform_scan(req: ScanStartPayload) -> ScanCompletedPayload:
 ```
 
 **目標**:
+
 ```python
 # ✅ 重構後 (<20 行)
 async def _perform_scan(req: ScanStartPayload) -> ScanCompletedPayload:
@@ -102,6 +116,7 @@ async def _perform_scan(req: ScanStartPayload) -> ScanCompletedPayload:
 ```
 
 **效益**:
+
 - worker.py 從 106 行減少到 ~30 行
 - 自動支援動態掃描、策略控制等完整功能
 - 統一維護點 (所有掃描邏輯在 ScanOrchestrator)
@@ -115,6 +130,7 @@ async def _perform_scan(req: ScanStartPayload) -> ScanCompletedPayload:
 **位置**: `services/scan/aiva_scan/scan_orchestrator.py` 第 ~85 行
 
 **改進**:
+
 ```python
 async def execute_scan(self, request: ScanStartPayload):
     # ... 現有代碼 ...
@@ -148,6 +164,7 @@ async def execute_scan(self, request: ScanStartPayload):
 **位置**: `services/scan/aiva_scan/scan_orchestrator.py` 的 `_process_url_dynamic` 方法
 
 **改進**:
+
 ```python
 async def _process_url_dynamic(
     self, 
@@ -215,6 +232,7 @@ async def _process_url_dynamic(
 **位置**: `services/scan/aiva_scan/scan_context.py`
 
 **改進**:
+
 ```python
 class ScanContext:
     def __init__(self, request: ScanStartPayload):
@@ -269,7 +287,9 @@ class ScanContext:
 **位置**: `services/core/aiva_core/analysis/risk_assessment_engine.py`
 
 **改進** (需先檢查該檔案是否存在):
+
 ```python
+
 # services/core/aiva_core/analysis/risk_assessment_engine.py
 
 from services.threat_intel.intel_aggregator import IntelAggregator
@@ -317,10 +337,12 @@ class RiskAssessmentEngine:
 #### 6. 撰寫已實作模組的整合文檔
 
 **任務**: 更新以下文件:
+
 - `ARCHITECTURE_REPORT.md` - 新增 threat_intel, remediation, authz 模組說明
 - `COMPREHENSIVE_ROADMAP.md` - 更新模組狀態為「已完成」
 
 **內容**:
+
 ```markdown
 ## 已實作的進階模組
 
@@ -441,6 +463,7 @@ else:
 #### 7. 評估是否需要獨立的 BizLogic 模組
 
 **分析**:
+
 - `postex/` 模組專注於「後滲透攻擊鏈」(已入侵後的行為)
 - **業務邏輯漏洞測試**是完全不同的領域:
   - 價格操縱
@@ -452,6 +475,7 @@ else:
 **建議**: 新增獨立的 `services/bizlogic/` 模組
 
 **核心類別設計**:
+
 ```python
 # services/bizlogic/price_manipulation_tester.py
 class PriceManipulationTester:
@@ -477,7 +501,8 @@ class WorkflowBypassTester:
 
 **決策點**: 先檢查 PostEx 模組的完整功能,確認無重疊後再新增
 
-**預估工時**: 
+**預估工時**:
+
 - 評估階段: 4 小時
 - 如需新增: 20 小時 (基礎框架 + 3-5 個測試器)
 
@@ -502,6 +527,7 @@ class WorkflowBypassTester:
 ## 🚀 建議執行順序
 
 ### Week 1 (優先完成)
+
 1. **Day 1-2**: 任務 2 - StrategyController 整合 (2h)
    - 先確認 `ConfigControlCenter` 和方法是否存在
    - 如果存在,快速整合
@@ -517,26 +543,35 @@ class WorkflowBypassTester:
    - 更新 to_summary
 
 ### Week 2 (功能增強)
-4. **Day 1-2**: 任務 3 - 動態引擎擴充 (6h)
-   - 依賴任務 4 完成
-   - 實作 AJAX/API/JS 處理
-   - 測試動態掃描流程
 
-5. **Day 3**: 任務 6 - 撰寫文檔 (4h)
-   - 更新 ARCHITECTURE_REPORT.md
-   - 更新 COMPREHENSIVE_ROADMAP.md
-   - 新增使用範例
+4.**Day 1-2**: 任務 3 - 動態引擎擴充 (6h)
+
+- 依賴任務
+
+  - 實作 AJAX/API/JS 處理
+- 測試動態掃描流程
+
+5.**Day 3**:
+
+ 任務 6 - 撰寫文檔 (4h)
+
+- 更新 ARCHITECTURE_REPORT.md
+  - 更新 COMPREHENSIVE_ROADMAP.md
+ 新增使用範例
 
 ### Week 3 (深度整合)
-6. **Day 1-2**: 任務 5 - ThreatIntel 整合 (6h)
-   - 確認 RiskAssessmentEngine 存在
-   - 實作情報查詢邏輯
-   - 測試風險評分調整
 
-7. **Day 3**: 任務 7 - BizLogic 評估 (4h)
-   - 深入檢查 PostEx 模組
-   - 決策是否新增
-   - 如需新增,制定實作計畫
+6.**Day 1-2**: 任務 5 - ThreatIntel 整合 (6h)
+
+- 確認 RiskAssessmentEngine 存在
+- 實作情報查詢邏輯
+- 測試風險評分調整
+
+7.**Day 3**: 任務 7 - BizLogic 評估 (4h)
+
+- 深入檢查 PostEx 模組
+- 決策是否新增
+  - 如需新增,制定實作計畫
 
 ---
 
