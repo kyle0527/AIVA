@@ -358,10 +358,154 @@ def build_for_file(
     charts = []
     builder = Builder(f"Module: {Path(file_path).name}", config)
     graph = builder.build_module(tree)
-    charts.append(("Module", graph.to_mermaid()))
+    charts.append((("Module", graph.to_mermaid())))
     for node in ast.walk(tree):
         if isinstance(node, ast.FunctionDef):
             builder = Builder(f"Function: {node.name}", config)
             graph = builder.build_function(node)
             charts.append((f"Function: {node.name}", graph.to_mermaid()))
     return charts
+
+
+def analyze_and_generate(
+    root_path: Path,
+    output_dir: Path,
+    ignore_patterns: list[str] | None = None,
+    max_files: int = 50,
+) -> None:
+    """分析 Python 檔案並生成 Mermaid 流程圖.
+    
+    Args:
+        root_path: 要分析的根目錄
+        output_dir: 輸出目錄
+        ignore_patterns: 要忽略的路徑模式
+        max_files: 最大處理檔案數
+    """
+    if ignore_patterns is None:
+        ignore_patterns = [
+            "__pycache__",
+            ".git",
+            ".venv",
+            "venv",
+            "node_modules",
+            "_out",
+            "emoji_backups",
+            ".pytest_cache",
+            "target",
+            "build",
+            "dist",
+        ]
+    
+    files = scan_py_files(root_path, ignore_patterns, max_files)
+    output_dir.mkdir(parents=True, exist_ok=True)
+    
+    print(f"找到 {len(files)} 個 Python 檔案")
+    print(f"開始生成 Mermaid 流程圖...")
+    
+    total_charts = 0
+    for i, file_path in enumerate(files, 1):
+        if i % 10 == 0:
+            print(f"進度: {i}/{len(files)}")
+        
+        charts = build_for_file(file_path)
+        if not charts:
+            continue
+        
+        # 為每個函數生成單獨的檔案
+        rel_path = file_path.relative_to(root_path)
+        file_prefix = str(rel_path).replace("/", "_").replace("\\", "_").replace(".py", "")
+        
+        for chart_name, mermaid_code in charts:
+            safe_name = chart_name.replace(" ", "_").replace(":", "_")
+            output_file = output_dir / f"{file_prefix}_{safe_name}.mmd"
+            
+            with open(output_file, "w", encoding="utf-8") as f:
+                f.write(mermaid_code)
+            
+            total_charts += 1
+    
+    print(f"完成！共生成 {total_charts} 個流程圖檔案")
+    print(f"輸出目錄: {output_dir}")
+
+
+def main():
+    """主函數 - 提供命令列介面."""
+    import argparse
+    
+    parser = argparse.ArgumentParser(
+        description="Python AST 解析與 Mermaid 流程圖產生工具"
+    )
+    parser.add_argument(
+        "--input",
+        "-i",
+        type=Path,
+        help="輸入目錄或檔案路徑 (預設: ./services)",
+    )
+    parser.add_argument(
+        "--output",
+        "-o",
+        type=Path,
+        help="輸出目錄 (預設: ./docs/diagrams)",
+    )
+    parser.add_argument(
+        "--max-files",
+        "-m",
+        type=int,
+        default=50,
+        help="最大處理檔案數 (預設: 50)",
+    )
+    parser.add_argument(
+        "--direction",
+        "-d",
+        choices=["TB", "BT", "LR", "RL"],
+        default="TB",
+        help="流程圖方向 (預設: TB = 從上到下)",
+    )
+    
+    args = parser.parse_args()
+    
+    # 設定預設路徑
+    script_dir = Path(__file__).parent
+    project_root = script_dir.parent
+    
+    input_path = args.input or (project_root / "services")
+    output_path = args.output or (project_root / "docs" / "diagrams")
+    
+    print("=" * 80)
+    print("Python 程式碼流程圖生成工具")
+    print("=" * 80)
+    print(f"輸入路徑: {input_path}")
+    print(f"輸出路徑: {output_path}")
+    print(f"最大檔案數: {args.max_files}")
+    print(f"流程圖方向: {args.direction}")
+    print("=" * 80)
+    print()
+    
+    config = {"direction": args.direction}
+    
+    if input_path.is_file():
+        # 處理單一檔案
+        charts = build_for_file(input_path, config)
+        output_path.mkdir(parents=True, exist_ok=True)
+        
+        for chart_name, mermaid_code in charts:
+            safe_name = chart_name.replace(" ", "_").replace(":", "_")
+            output_file = output_path / f"{input_path.stem}_{safe_name}.mmd"
+            
+            with open(output_file, "w", encoding="utf-8") as f:
+                f.write(mermaid_code)
+            
+            print(f"生成: {output_file}")
+        
+        print(f"\n完成！共生成 {len(charts)} 個流程圖")
+    else:
+        # 處理目錄
+        analyze_and_generate(
+            root_path=input_path,
+            output_dir=output_path,
+            max_files=args.max_files,
+        )
+
+
+if __name__ == "__main__":
+    main()
