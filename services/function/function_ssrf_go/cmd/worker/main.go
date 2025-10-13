@@ -13,7 +13,7 @@ import (
 	"time"
 
 	"github.com/aiva/function-ssrf-go/internal/detector"
-	"github.com/streadway/amqp"
+	amqp "github.com/rabbitmq/amqp091-go"
 	"go.uber.org/zap"
 )
 
@@ -22,23 +22,6 @@ const (
 	taskQueue   = "task.function.ssrf"
 	resultQueue = "results.function.finding"
 )
-
-type ScanTask struct {
-	TaskID   string            `json:"task_id"`
-	Module   string            `json:"module"`
-	Target   string            `json:"target"`
-	Metadata map[string]string `json:"metadata"`
-}
-
-type Finding struct {
-	TaskID   string   `json:"task_id"`
-	Module   string   `json:"module"`
-	Severity string   `json:"severity"`
-	Title    string   `json:"title"`
-	Summary  string   `json:"summary"`
-	Evidence string   `json:"evidence"`
-	CWEIDs   []string `json:"cwe_ids"`
-}
 
 var logger *zap.Logger
 
@@ -120,7 +103,7 @@ func main() {
 
 	go func() {
 		for d := range msgs {
-			var task ScanTask
+			var task detector.ScanTask
 			err := json.Unmarshal(d.Body, &task)
 			if err != nil {
 				logger.Error("無法解析任務", zap.Error(err))

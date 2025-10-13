@@ -34,7 +34,7 @@ impl SensitiveInfoScanner {
             },
             Pattern {
                 name: "AWS Secret Key",
-                regex: Regex::new(r"(?i)aws(.{0,20})?['\"][0-9a-zA-Z/+]{40}['\"]").unwrap(),
+                regex: Regex::new(r#"(?i)aws(.{0,20})?['"][0-9a-zA-Z/+]{40}['"]"#).unwrap(),
                 confidence: 0.85,
             },
             Pattern {
@@ -44,7 +44,7 @@ impl SensitiveInfoScanner {
             },
             Pattern {
                 name: "Generic API Key",
-                regex: Regex::new(r"(?i)api[_-]?key['\"]?\s*[:=]\s*['\"]?([0-9a-zA-Z\-_]{20,})").unwrap(),
+                regex: Regex::new(r#"(?i)api[_-]?key['"]?\s*[:=]\s*['"]?([0-9a-zA-Z\-_]{20,})"#).unwrap(),
                 confidence: 0.75,
             },
             Pattern {

@@ -3,7 +3,7 @@
  */
 
 import { Browser, Page, BrowserContext } from 'playwright';
-import { logger } from '../utils/logger.js';
+import { logger } from '../utils/logger';
 
 interface ScanTask {
   scan_id: string;

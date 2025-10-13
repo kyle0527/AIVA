@@ -19,6 +19,7 @@ serde_json = "1.0"
 lapin = "2.3"
 tokio = { version = "1.35", features = ["full"] }
 futures = "0.3"
+futures-lite = "2.6"
 
 # 日誌
 tracing = "0.1"

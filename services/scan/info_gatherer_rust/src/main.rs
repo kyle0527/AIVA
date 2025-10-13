@@ -2,12 +2,13 @@
 // 日期: 2025-10-13
 // 功能: 高性能敏感資訊掃描器
 
+use futures_lite::stream::StreamExt;
 use lapin::{
     options::*, types::FieldTable, Connection, ConnectionProperties,
 };
 use serde::{Deserialize, Serialize};
 use std::sync::Arc;
-use tracing::{info, warn, error};
+use tracing::{info, error};
 use tracing_subscriber;
 
 mod scanner;
@@ -34,7 +35,7 @@ struct Finding {
 }
 
 #[tokio::main]
-async fn main() -> Result<(), Box<dyn std::error::Error>> {
+async fn main() -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
     // 初始化日誌
     tracing_subscriber::fmt()
         .with_max_level(tracing::Level::INFO)
@@ -118,7 +119,7 @@ async fn process_task(
     data: &[u8],
     scanner: Arc<SensitiveInfoScanner>,
     channel: &lapin::Channel,
-) -> Result<(), Box<dyn std::error::Error>> {
+) -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
     let task: ScanTask = serde_json::from_slice(data)?;
     info!("📥 收到敏感資訊掃描任務: {}", task.task_id);
 
