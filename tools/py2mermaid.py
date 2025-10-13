@@ -192,7 +192,7 @@ class Builder(ast.NodeVisitor):
             if len(value) > 20:
                 value = value[:20] + "..."
             return f"{', '.join(targets)} = {value}"
-        elif isinstance(stmt, (ast.FunctionDef, ast.AsyncFunctionDef)):
+        elif isinstance(stmt, ast.FunctionDef | ast.AsyncFunctionDef):
             return f"def {stmt.name}(...)"
         elif isinstance(stmt, ast.ClassDef):
             return f"class {stmt.name}(...)"

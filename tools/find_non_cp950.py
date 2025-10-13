@@ -1,5 +1,4 @@
 from pathlib import Path
-import sys
 
 root = Path(r"c:\D\E\AIVA\AIVA-main")
 out = Path(r"c:\D\E\AIVA\AIVA-main\tools\non_cp950_report.txt")
@@ -11,7 +10,7 @@ for p in root.rglob('*.py'):
     files_checked += 1
     try:
         text = p.read_text(encoding='utf-8')
-    except Exception as e:
+    except Exception:
         continue
     for i, line in enumerate(text.splitlines(), start=1):
         try:

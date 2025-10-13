@@ -41,7 +41,7 @@ def demo_ui_mode() -> None:
 
     # 顯示統計
     stats = dashboard.get_stats()
-    print(f"\n統計資訊:")
+    print("\n統計資訊:")
     print(f"  模式: {stats['mode_display']}")
     print(f"  任務數: {stats['total_tasks']}")
     print(f"  檢測數: {stats['total_detections']}")
@@ -69,7 +69,7 @@ def demo_ai_mode() -> None:
     # 分析程式碼 (AI 執行)
     analysis = dashboard.analyze_code("services/core/aiva_core/app.py")
     if analysis["status"] == "success":
-        print(f"\n程式碼分析完成:")
+        print("\n程式碼分析完成:")
         print(f"  使用工具: {analysis.get('tool_used', 'N/A')}")
         print(f"  信心度: {analysis.get('confidence', 0):.2%}")
 
@@ -117,7 +117,7 @@ def demo_hybrid_mode() -> None:
 
     # 統計
     stats = dashboard.get_stats()
-    print(f"\n統計資訊:")
+    print("\n統計資訊:")
     print(f"  模式: {stats['mode_display']}")
     print(f"  總任務: {stats['total_tasks']}")
     print(f"  AI 知識庫: {stats.get('ai_chunks', 0)} 個片段")

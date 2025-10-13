@@ -1,0 +1,26 @@
+flowchart TB
+    n1([開始])
+    n2([結束])
+    n3[&amp;&#35;39;從內容中提取關鍵字.\n\n        Args:\n            con...]
+    n4[keywords = set&#40;&#41;]
+    n5[keywords.add&#40;node_name.lower&#40;&#41;&#41;]
+    n6[common_keywords = &#91;&amp;&#35;39;def&amp;&#35;39;, &am...]
+    n7{for keyword in common_keywords}
+    n8{if keyword in content.lower&#40;&#41;}
+    n9[keywords.add&#40;keyword&#41;]
+    n10[]
+    n11[]
+    n12[return keywords]
+    n1 --> n3
+    n3 --> n4
+    n4 --> n5
+    n5 --> n6
+    n6 --> n7
+    n7 -->|Yes| n8
+    n7 -->|No| n11
+    n8 -->|Yes| n9
+    n8 -->|No| n10
+    n9 --> n10
+    n10 --> n7
+    n11 --> n12
+    n12 --> n2

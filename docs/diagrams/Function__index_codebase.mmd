@@ -1,0 +1,37 @@
+flowchart TB
+    n1([開始])
+    n2([結束])
+    n3[&amp;&#35;39;索引整個程式碼庫.&amp;&#35;39;]
+    n4[logger.info&#40;f&amp;&#35;39;正在索引程式碼庫: &#123;self.codeba...]
+    n5[exclude_dirs = &#123;&amp;&#35;39;__pycache__&amp;&#35;39...]
+    n6{for py_file in self.codebase_pat...}
+    n7{if any&#40;&#40;excluded in py_file.pa...}
+    n8[continue]
+    n9[]
+    n10[try]
+    n11[content = py_file.read_text&#40;en...]
+    n12[self._index_file&#40;py_file, content&#41;]
+    n13[]
+    n14[except Exception]
+    n15[logger.warning&#40;f&amp;&#35;39;  跳過檔案 &#123;py_file&#12...]
+    n16[]
+    n17[logger.info&#40;f&amp;&#35;39;索引完成,共 &#123;len&#40;self.c...]
+    n1 --> n3
+    n3 --> n4
+    n4 --> n5
+    n5 --> n6
+    n6 -->|Yes| n7
+    n6 -->|No| n16
+    n7 -->|Yes| n8
+    n7 -->|No| n9
+    n8 --> n9
+    n9 --> n10
+    n10 --> n11
+    n10 --> n14
+    n11 --> n12
+    n12 --> n13
+    n13 --> n6
+    n14 --> n15
+    n15 --> n13
+    n16 --> n17
+    n17 --> n2

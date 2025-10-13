@@ -46,6 +46,28 @@
 
 #### 5. 程式碼品質 (100% 完成)
 
+#### 6. 日誌系統遷移 (100% 完成)
+
+- `print` 語句 → `logger` 呼叫 ✓
+- 添加模組級別 logger 初始化 ✓
+- 避免 Windows cp950 編碼問題 ✓
+- 支援生產環境日誌控制 ✓
+
+**遷移檔案**：
+
+- `services/core/aiva_core/ai_engine/bio_neuron_core.py` ✓
+- `services/core/aiva_core/ai_engine/knowledge_base.py` ✓
+- `services/core/aiva_core/ui_panel/dashboard.py` ✓
+- `services/core/aiva_core/ui_panel/server.py` ✓
+- `services/scan/aiva_scan/dynamic_engine/example_usage.py` ✓
+- `demo_ui_panel.py` f-string 修正 ✓
+
+**日誌等級對應**：
+
+- 資訊訊息: `logger.info()`
+- 警告訊息: `logger.warning()`
+- 錯誤訊息: `logger.error()`
+
 ### ⚠️ 已知問題（不影響實際執行）
 
 #### 1. IDE 類型檢查問題（Mypy 警告）
@@ -116,7 +138,8 @@ from services.aiva_common.enums import ModuleName, Topic, Severity
 ### 測試 2：Pydantic BaseModel 驗證
 
 ```python
-from services.function.function_idor.aiva_func_idor.vertical_escalation_tester import VerticalTestResult
+from services.function.function_idor.aiva_func_idor.vertical_escalation_tester \
+    import VerticalTestResult
 
 result = VerticalTestResult(
     vulnerable=True,

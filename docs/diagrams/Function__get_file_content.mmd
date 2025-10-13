@@ -1,0 +1,21 @@
+flowchart TB
+    n1([開始])
+    n2([結束])
+    n3[&amp;&#35;39;獲取完整檔案內容.\n\n        Args:\n            file...]
+    n4[try]
+    n5[full_path = self.codebase_path /...]
+    n6[return full_path.read_text&#40;encoding=&amp;&#35;39;...]
+    n7[]
+    n8[except Exception]
+    n9[logger.error&#40;f&amp;&#35;39;無法讀取檔案 &#123;file_path&#12...]
+    n10[return None]
+    n1 --> n3
+    n3 --> n4
+    n4 --> n5
+    n4 --> n8
+    n5 --> n6
+    n6 --> n7
+    n7 --> n2
+    n8 --> n9
+    n9 --> n10
+    n10 --> n7
