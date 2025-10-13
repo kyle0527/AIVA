@@ -1,7 +1,8 @@
 # AIVA Core 模組完整分析與建議報告
-**Core Module Analysis & Recommendations Report**
 
-生成時間：2025-10-13  
+## Core Module Analysis & Recommendations Report
+
+生成時間:2025-10-13
 分析範圍：Core 核心模組（services/core/aiva_core）  
 維護狀態：四大模組架構 ✅
 
@@ -35,20 +36,23 @@
 
 ### 關鍵發現
 
-#### ✅ **優勢**
-1. **清晰的架構分層**：五大子系統分工明確
+#### ✅ 優勢
+
+1. **清晰的架構分層**:五大子系統分工明確
 2. **異步處理機制**：使用 asyncio 實現高效並發
 3. **狀態管理完善**：SessionStateManager 設計良好
-4. **日誌系統完整**：詳細的分階段日誌記錄
+4. **日誌系統完整**:詳細的分階段日誌記錄
 
-#### ⚠️ **需改進**
-1. **缺少專用數據合約**：未創建 core 模組專用 schemas.py
+#### ⚠️ 需改進
+
+1. **缺少專用數據合約**:未創建 core 模組專用 schemas.py
 2. **策略生成器被移除**：test_strategy_generation.py 被註釋
 3. **測試覆蓋不足**：沒有單元測試和集成測試
-4. **硬編碼配置**：缺少配置管理機制
+4. **硬編碼配置**:缺少配置管理機制
 
-#### ❌ **嚴重問題**
-1. **任務生成邏輯簡化**：TaskGenerator 只生成基本任務
+#### ❌ 嚴重問題
+
+1. **任務生成邏輯簡化**:TaskGenerator 只生成基本任務
 2. **攻擊面分析不完整**：IDOR 候選檢測缺失
 3. **學習機制未啟用**：StrategyAdjuster 的學習功能未被調用
 
@@ -58,7 +62,7 @@
 
 ### 模組結構
 
-```
+```text
 services/core/aiva_core/
 ├── __init__.py                 ✅ 模組初始化
 ├── app.py                      ✅ 主應用入口（FastAPI）
@@ -93,11 +97,13 @@ services/core/aiva_core/
 #### 1. 資料接收與預處理（Ingestion）
 
 **職責**：
+
 - 接收掃描模組數據
 - 數據標準化和清理
 - 資產分類和風險評分
 
 **現狀**：
+
 ```python
 class ScanModuleInterface:
     async def process_scan_data(self, payload: ScanCompletedPayload) -> dict[str, Any]
@@ -108,11 +114,13 @@ class ScanModuleInterface:
 ```
 
 **評估**：✅ **良好**
+
 - 清晰的數據處理流程
 - 完善的資產分類邏輯
 - 風險評分機制合理
 
 **建議**：
+
 1. 添加輸入驗證（使用 Pydantic）
 2. 提取風險評分規則到配置文件
 3. 添加數據清理和去重邏輯
@@ -122,6 +130,7 @@ class ScanModuleInterface:
 #### 2. 分析與策略引擎（Analysis）
 
 **職責**：
+
 - 攻擊面分析
 - 測試策略生成
 - 動態策略調整
@@ -137,12 +146,14 @@ class InitialAttackSurface:
     def _detect_ssrf_candidates(self, asset: Asset) -> Iterable[dict[str, Any]]
 ```
 
-**優點**：
+**優點**:
+
 - SSRF 候選檢測邏輯清晰
 - 參數語義分析機制
 
-**缺點**：
-- ❌ 只檢測 SSRF，缺少 XSS/SQLi/IDOR 候選檢測
+**缺點**:
+
+- ❌ 只檢測 SSRF,缺少 XSS/SQLi/IDOR 候選檢測
 - ❌ 沒有風險優先級排序
 - ❌ 返回格式未使用 Pydantic 驗證
 
@@ -157,10 +168,12 @@ class StrategyAdjuster:
 ```
 
 **優點**：
+
 - 完整的調整邏輯（WAF、成功率、技術棧）
 - 學習機制設計良好
 
-**缺點**：
+**缺點**:
+
 - ❌ `learn_from_result()` 從未被調用
 - ❌ 學習數據未持久化
 - ⚠️ 調整規則硬編碼
@@ -173,7 +186,8 @@ class StrategyAdjuster:
 # from services.core.aiva_core.analysis.test_strategy_generation import StrategyGenerator  # noqa: E501
 ```
 
-**問題**：
+**問題**:
+
 - 核心策略生成功能缺失
 - 目前使用空策略：`{"test_plans": [], "strategy_type": "default"}`
 - 導致任務生成不完整
@@ -192,19 +206,22 @@ class TaskGenerator:
         -> Iterable[tuple[Topic, FunctionTaskPayload]]
 ```
 
-**問題**：
-1. **過度簡化**：只從 plan 中的 xss/sqli/ssrf 列表生成任務
+**問題**:
+
+1. **過度簡化**:只從 plan 中的 xss/sqli/ssrf 列表生成任務
 2. **缺少智能**：沒有基於攻擊面分析的任務生成
 3. **缺少 IDOR**：沒有 IDOR 任務生成邏輯
 4. **缺少優先級**：priority 直接從 plan 獲取，沒有動態計算
 
-**當前流程**：
-```
+**當前流程**:
+
+```text
 plan (空的) -> TaskGenerator -> 0 個任務
 ```
 
-**預期流程**：
-```
+**預期流程**:
+
+```text
 AttackSurface -> StrategyGenerator -> Plan -> TaskGenerator -> N 個任務
 ```
 
@@ -219,6 +236,7 @@ class TaskQueueManager:
 ```
 
 **評估**：✅ **優秀**
+
 - 完整的任務狀態追蹤
 - 優先級隊列管理
 - 統計數據收集
@@ -235,6 +253,7 @@ class ExecutionStatusMonitor:
 ```
 
 **評估**：✅ **優秀**
+
 - 完整的健康監控
 - SLA 違規檢測
 - 系統指標追蹤
@@ -255,12 +274,14 @@ class SessionStateManager:
 ```
 
 **評估**：✅ **優秀**
+
 - 完整的會話管理
 - 歷史記錄追蹤
 - 上下文豐富化
 
 **建議**：
-1. 添加持久化機制（數據庫/Redis）
+
+1. 添加持久化機制(數據庫/Redis)
 2. 添加會話過期和清理邏輯
 3. 使用 Pydantic 模型替代 dict
 
@@ -280,6 +301,7 @@ def to_function_message(
 ```
 
 **評估**：✅ **完美**
+
 - 簡潔明確
 - 符合數據合約
 
@@ -289,25 +311,29 @@ def to_function_message(
 
 ### 優點
 
-1. **類型提示完整**：
+1. **類型提示完整**:
+
    ```python
    async def process_scan_data(self, payload: ScanCompletedPayload) -> dict[str, Any]:
    ```
 
-2. **異步處理**：
+2. **異步處理**:
+
    ```python
    asyncio.create_task(process_scan_results())
    asyncio.create_task(process_function_results())
    asyncio.create_task(monitor_execution_status())
    ```
 
-3. **清晰的日誌**：
+3. **清晰的日誌**:
+
    ```python
    logger.info(f"📥 [Stage 1/7] Data ingested - Assets: {len(payload.assets)}")
    logger.info(f"🔍 [Stage 2/7] Analyzing attack surface for {scan_id}")
    ```
 
 4. **錯誤處理**：
+
    ```python
    except Exception as e:
        logger.error(f"❌ Error processing scan results: {e}")
@@ -316,6 +342,7 @@ def to_function_message(
 ### 缺點
 
 1. **字典驅動**：大量使用 `dict[str, Any]` 而非 Pydantic 模型
+
    ```python
    # ❌ 不佳
    def analyze(self, payload: ScanCompletedPayload) -> dict[str, Any]:
@@ -325,6 +352,7 @@ def to_function_message(
    ```
 
 2. **硬編碼配置**：
+
    ```python
    # ❌ 硬編碼
    if runtime > 600:  # 10分鐘
@@ -334,6 +362,7 @@ def to_function_message(
    ```
 
 3. **魔術數字**：
+
    ```python
    # ❌ 魔術數字
    if success_rate > 0.7:
@@ -346,6 +375,7 @@ def to_function_message(
    ```
 
 4. **未使用的導入**：
+
    ```python
    # ❌ 被註釋但未刪除
    # from services.core.aiva_core.analysis.test_strategy_generation import StrategyGenerator
@@ -360,19 +390,22 @@ def to_function_message(
 #### 問題 1：策略生成器缺失
 
 **現狀**：
+
 ```python
 # Legacy strategy generator removed - using direct strategy
 base_strategy = {"test_plans": [], "strategy_type": "default"}
 ```
 
 **影響**：
+
 - ❌ 無法生成測試任務
 - ❌ 攻擊面分析結果未被使用
 - ❌ Core 模組核心功能缺失
 
 **建議**：
 
-**選項 A：修復現有策略生成器**
+### 選項 A：修復現有策略生成器
+
 ```python
 # services/core/aiva_core/analysis/test_strategy_generation.py
 class StrategyGenerator:
@@ -399,7 +432,8 @@ class StrategyGenerator:
         return TestStrategy(tasks=tasks)
 ```
 
-**選項 B：使用基於規則的簡化生成器**
+### 選項 B：使用基於規則的簡化生成器
+
 ```python
 class RuleBasedStrategyGenerator:
     def from_attack_surface(
@@ -428,6 +462,7 @@ class RuleBasedStrategyGenerator:
 #### 問題 2：缺少 Core 模組專用 schemas.py
 
 **現狀**：
+
 - ❌ 大量使用 `dict[str, Any]`
 - ❌ 缺少類型安全
 - ❌ 難以維護和擴展
@@ -502,6 +537,7 @@ class StrategyAdjustment(BaseModel):
 #### 問題 3：學習機制未啟用
 
 **現狀**：
+
 ```python
 def learn_from_result(self, feedback_data: dict[str, Any]) -> None:
     """從測試結果中學習，更新策略知識庫"""
@@ -509,6 +545,7 @@ def learn_from_result(self, feedback_data: dict[str, Any]) -> None:
 ```
 
 **影響**：
+
 - ❌ 無法根據測試結果優化策略
 - ❌ 浪費了設計良好的學習機制
 - ❌ 無法實現自適應測試
@@ -552,6 +589,7 @@ async def process_function_results() -> None:
 #### 問題 4：TaskGenerator 功能不完整
 
 **現狀**：
+
 ```python
 def from_strategy(self, plan: dict, payload: ScanCompletedPayload):
     tasks = []
@@ -561,6 +599,7 @@ def from_strategy(self, plan: dict, payload: ScanCompletedPayload):
 ```
 
 **問題**：
+
 1. 依賴於 plan 中已有的任務列表
 2. 無法自動從攻擊面生成任務
 3. 缺少 IDOR 任務生成
@@ -631,6 +670,7 @@ class EnhancedTaskGenerator:
 #### 問題 5：攻擊面分析不完整
 
 **現狀**：
+
 ```python
 class InitialAttackSurface:
     def _detect_ssrf_candidates(self, asset: Asset):
@@ -638,6 +678,7 @@ class InitialAttackSurface:
 ```
 
 **缺失**：
+
 - ❌ XSS 候選檢測
 - ❌ SQLi 候選檢測  
 - ❌ IDOR 候選檢測
@@ -776,42 +817,49 @@ class PersistentStateManager(SessionStateManager):
 
 ### Week 1-2：關鍵功能修復
 
-**任務 1：創建 Core 模組 schemas.py**
+### 任務 1：創建 Core 模組 schemas.py
+
 - [ ] 定義 AttackSurfaceAnalysis, TestStrategy, TestTask 等模型
 - [ ] 更新所有組件使用 Pydantic 模型
 - [ ] 添加完整的 field_validator
 
-**任務 2：修復策略生成器**
+### 任務 2：修復策略生成器
+
 - [ ] 選擇實現方案（修復現有 vs. 新建簡化版）
 - [ ] 實現從攻擊面到測試策略的轉換
 - [ ] 集成到主流程
 
-**任務 3：啟用學習機制**
+### 任務 3：啟用學習機制
+
 - [ ] 在 process_function_results() 中調用 learn_from_result()
 - [ ] 添加學習數據持久化
 - [ ] 實現學習效果監控
 
 ### Week 2-3：功能擴展
 
-**任務 4：擴展攻擊面分析**
+### 任務 4：擴展攻擊面分析
+
 - [ ] 實現 XSS 候選檢測
 - [ ] 實現 SQLi 候選檢測
 - [ ] 實現 IDOR 候選檢測
 - [ ] 添加風險評分和排序
 
-**任務 5：增強任務生成**
+### 任務 5：增強任務生成
+
 - [ ] 實現從攻擊面直接生成任務
 - [ ] 添加智能優先級計算
 - [ ] 支持 IDOR 任務生成
 
 ### Week 3-4：質量提升
 
-**任務 6：配置管理**
+### 任務 6：配置管理
+
 - [ ] 創建 CoreEngineConfig
 - [ ] 提取所有硬編碼值
 - [ ] 支持環境變量和配置文件
 
-**任務 7：測試覆蓋**
+### 任務 7：測試覆蓋
+
 - [ ] 單元測試：所有分析器和生成器
 - [ ] 集成測試：完整的處理流程
 - [ ] 性能測試：高負載場景
@@ -839,29 +887,29 @@ class PersistentStateManager(SessionStateManager):
 
 ### P1 - 盡快執行（下週）
 
-4. **擴展攻擊面分析**
+1. **擴展攻擊面分析**
    - 影響：高
    - 工作量：中
    - 依賴：schemas.py
 
-5. **增強任務生成**
+2. **增強任務生成**
    - 影響：高
    - 工作量：中
    - 依賴：攻擊面分析、策略生成器
 
 ### P2 - 計劃執行（2-4週）
 
-6. **配置管理**
+1. **配置管理**
    - 影響：中
    - 工作量：低
    - 依賴：無
 
-7. **測試覆蓋**
+2. **測試覆蓋**
    - 影響：中
    - 工作量：高
    - 依賴：所有功能穩定
 
-8. **持久化機制**
+3. **持久化機制**
    - 影響：中
    - 工作量：中
    - 依賴：schemas.py
@@ -894,6 +942,7 @@ class PersistentStateManager(SessionStateManager):
 ### 預期成果
 
 完成改進後，Core 模組將具備：
+
 - ✅ 完整的測試策略生成能力
 - ✅ 類型安全的數據處理
 - ✅ 自適應學習和優化
@@ -902,4 +951,4 @@ class PersistentStateManager(SessionStateManager):
 
 ---
 
-**分析完成 - AIVA Core Module v1.0**
+### 分析完成 - AIVA Core Module v1.0

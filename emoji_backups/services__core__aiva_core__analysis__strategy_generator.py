@@ -41,7 +41,7 @@ class RuleBasedStrategyGenerator:
             config: 策略生成配置，如果為 None 則使用默認配置
         """
         self.config = config or StrategyGenerationConfig()
-        logger.info("[目標] RuleBasedStrategyGenerator initialized")
+        logger.info("🎯 RuleBasedStrategyGenerator initialized")
 
     def generate(
         self,
@@ -58,7 +58,7 @@ class RuleBasedStrategyGenerator:
         Returns:
             完整的測試策略
         """
-        logger.info(f"[目標] Generating test strategy for scan {attack_surface.scan_id}")
+        logger.info(f"🎯 Generating test strategy for scan {attack_surface.scan_id}")
         logger.info(f"   - Total candidates: {attack_surface.total_candidates}")
 
         # 生成各類型任務
@@ -73,7 +73,7 @@ class RuleBasedStrategyGenerator:
         )
         if total_tasks > self.config.max_tasks_per_scan:
             logger.warning(
-                f"[警告]  Total tasks ({total_tasks}) exceeds limit "
+                f"⚠️  Total tasks ({total_tasks}) exceeds limit "
                 f"({self.config.max_tasks_per_scan}), prioritizing..."
             )
             # 優先保留高優先級任務
@@ -98,7 +98,7 @@ class RuleBasedStrategyGenerator:
         )
 
         logger.info(
-            f"[已] Strategy generated: {strategy.total_tasks} tasks "
+            f"✅ Strategy generated: {strategy.total_tasks} tasks "
             f"(XSS:{len(xss_tasks)}, SQLi:{len(sqli_tasks)}, "
             f"SSRF:{len(ssrf_tasks)}, IDOR:{len(idor_tasks)})"
         )

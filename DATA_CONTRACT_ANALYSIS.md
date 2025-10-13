@@ -1,5 +1,6 @@
 # AIVA 數據合約完整分析報告
-**Data Contract Analysis Report**
+
+## Data Contract Analysis Report
 
 生成時間：2025-10-13  
 系統版本：1.0.0  
@@ -95,6 +96,7 @@
 ```
 
 **驗證規則現狀**：
+
 - ✅ RateLimit: non_negative validator
 - ⚠️ 其他模型缺少驗證器
 
@@ -116,7 +118,7 @@
 
 ### 3. SQLi 模組數據模型
 
-#### ⚠️ **需轉換 - 使用 dataclass**
+#### ⚠️ **需轉換 - SQLi 模組使用 dataclass**
 
 ```python
 # detection_models.py
@@ -179,7 +181,7 @@ class SqliDetectionContext:     # ❌ 應為 Pydantic BaseModel
 
 ### 4. XSS 模組數據模型
 
-#### ⚠️ **需轉換 - 使用 dataclass**
+#### ⚠️ **需轉換 - XSS 模組使用 dataclass**
 
 ```python
 # traditional_detector.py
@@ -227,7 +229,7 @@ class StoredXssResult:          # ❌ 應為 Pydantic BaseModel
 
 ### 5. SSRF 模組數據模型
 
-#### ⚠️ **需轉換 - 使用 dataclass**
+#### ⚠️ **需轉換 - SSRF 模組使用 dataclass**
 
 ```python
 # worker.py
@@ -301,7 +303,7 @@ class CrossUserTestResult(BaseModel):  # ✅ Pydantic BaseModel
 
 ### 7. Scan 模組數據模型
 
-#### ⚠️ **需轉換 - 使用 dataclass**
+#### ⚠️ **需轉換 - Scan 模組使用 dataclass**
 
 ```python
 # sensitive_info_detector.py
@@ -397,14 +399,16 @@ class FindingRecord(Base):             # ✅ SQLAlchemy ORM
 ### 問題清單
 
 #### 1. **數據模型不統一**
+
 - **問題**: SQLi, XSS, SSRF 使用 dataclass；IDOR 使用 Pydantic
-- **影響**: 
+- **影響**:
   - 無法使用 Pydantic 的驗證功能
   - JSON 序列化不一致
   - 與 FastAPI 集成困難
 - **建議**: 全部轉換為 Pydantic BaseModel
 
 #### 2. **缺少統一的基礎類**
+
 - **問題**: 每個模組自定義 DetectionResult, Telemetry
 - **影響**: 代碼重複，維護困難
 - **建議**: 在 aiva_common.schemas 定義通用基礎類
@@ -433,8 +437,9 @@ class ExecutionError(BaseModel):
 ```
 
 #### 3. **驗證規則不完整**
+
 - **問題**: 大部分模型沒有 field_validator
-- **影響**: 
+- **影響**:
   - 無效數據可能進入系統
   - 運行時錯誤增加
   - 安全風險
@@ -456,18 +461,20 @@ class FunctionTaskPayload(BaseModel):
 ```
 
 #### 4. **缺少 OAST 事件合約**
+
 - **問題**: SSRF 模組使用 OAST，但沒有標準化事件格式
 - **影響**: OAST 服務難以標準化
 - **建議**: 定義 OastEvent, OastProbe 等合約
 
 #### 5. **模組專用 schemas 未實現**
+
 - **問題**: 各功能模組沒有專用的 schemas 子模組
-- **影響**: 
+- **影響**:
   - 無法清晰區分通用與專用合約
   - 維護困難
 - **建議**: 創建模組專用 schemas
 
-```
+```text
 services/function_sqli/aiva_func_sqli/
     schemas.py              # SQLi 專用數據合約
     __init__.py
@@ -478,11 +485,13 @@ services/function_xss/aiva_func_xss/
 ```
 
 #### 6. **JSON 序列化不一致**
+
 - **問題**: dataclass 需要手動實現 to_dict；Pydantic 有 model_dump
 - **影響**: 代碼不一致
 - **建議**: 統一使用 Pydantic model_dump()
 
 #### 7. **缺少文檔**
+
 - **問題**: 沒有數據合約文檔
 - **影響**: 新開發者難以理解
 - **建議**: 創建 DATA_CONTRACT.md
@@ -782,6 +791,7 @@ class SsrfTelemetry(FunctionTelemetry):
 #### 4.1 創建 DATA_CONTRACT.md
 
 完整記錄：
+
 - 所有數據合約的用途
 - 字段說明與示例
 - 驗證規則
@@ -813,24 +823,28 @@ def test_scan_start_payload_validation():
 ## 📅 **實施路線圖**
 
 ### Week 1-2: 基礎設施
+
 - [x] ✅ 分析現有數據合約
 - [ ] 🔄 擴展 aiva_common.schemas（通用基礎類）
 - [ ] 🔄 添加完整驗證規則
 - [ ] 🔄 更新 enums.py（TaskStatus 等）
 
 ### Week 2-3: 模組專用 schemas
+
 - [ ] 📝 創建 function_sqli/schemas.py
 - [ ] 📝 創建 function_xss/schemas.py
 - [ ] 📝 創建 function_ssrf/schemas.py
 - [ ] 📝 創建 scan/schemas.py
 
 ### Week 3-4: 代碼轉換
+
 - [ ] 🔄 轉換 SQLi 模組（6 個 dataclass）
 - [ ] 🔄 轉換 XSS 模組（5 個 dataclass）
 - [ ] 🔄 轉換 SSRF 模組（4 個 dataclass）
 - [ ] 🔄 轉換 Scan 模組（4 個 dataclass）
 
 ### Week 4-5: 測試與文檔
+
 - [ ] 📖 創建 DATA_CONTRACT.md
 - [ ] ✅ 添加數據合約單元測試
 - [ ] ✅ 添加集成測試
@@ -858,4 +872,4 @@ def test_scan_start_payload_validation():
 
 ---
 
-**報告完成 - 準備開始實施**
+## 報告完成 - 準備開始實施

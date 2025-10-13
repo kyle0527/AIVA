@@ -182,7 +182,7 @@ class IdorWorker:
 
                 if result.vulnerable:
                     logger.warning(
-                        f"[警報] 檢測到 IDOR 漏洞: {test_url} "
+                        f"🚨 檢測到 IDOR 漏洞: {test_url} "
                         f"(相似度: {result.similarity_score:.2%})"
                     )
                     findings.append(
@@ -244,7 +244,7 @@ class IdorWorker:
 
             if result.vulnerable:
                 logger.warning(
-                    f"[警報] 檢測到 BFLA 漏洞: {url_str} "
+                    f"🚨 檢測到 BFLA 漏洞: {url_str} "
                     f"(user={test_level.value}, required={required_level.value})"
                 )
                 findings.append(

@@ -1,67 +1,13 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from enum import Enum
 import re
 from typing import Any
 
-from services.aiva_common.enums import Severity
+from services.aiva_common.enums import Location, SensitiveInfoType, Severity
 from services.aiva_common.utils import get_logger
 
 logger = get_logger(__name__)
-
-
-class SensitiveInfoType(Enum):
-    """敏感信息類型"""
-
-    # 認證憑證
-    API_KEY = "api_key"
-    ACCESS_TOKEN = "access_token"
-    SECRET_KEY = "secret_key"
-    PASSWORD = "password"
-    PRIVATE_KEY = "private_key"
-    JWT_TOKEN = "jwt_token"
-    SESSION_ID = "session_id"
-    AUTH_COOKIE = "auth_cookie"
-
-    # 個人識別信息 (PII)
-    EMAIL = "email"
-    PHONE = "phone"
-    SSN = "ssn"  # Social Security Number
-    CREDIT_CARD = "credit_card"
-    ID_CARD = "id_card"
-    PASSPORT = "passport"
-
-    # 系統信息
-    DATABASE_CONNECTION = "database_connection"
-    INTERNAL_IP = "internal_ip"
-    AWS_KEY = "aws_key"
-    GCP_KEY = "gcp_key"
-    AZURE_KEY = "azure_key"
-    GITHUB_TOKEN = "github_token"
-    SLACK_TOKEN = "slack_token"
-
-    # 路徑和配置
-    FILE_PATH = "file_path"
-    BACKUP_FILE = "backup_file"
-    DEBUG_INFO = "debug_info"
-    ERROR_MESSAGE = "error_message"
-    STACK_TRACE = "stack_trace"
-    SOURCE_CODE = "source_code"
-    COMMENT = "comment"
-
-
-class Location(Enum):
-    """信息位置"""
-
-    HTML_BODY = "html_body"
-    HTML_COMMENT = "html_comment"
-    JAVASCRIPT = "javascript"
-    RESPONSE_HEADER = "response_header"
-    RESPONSE_BODY = "response_body"
-    URL = "url"
-    COOKIE = "cookie"
-    META_TAG = "meta_tag"
 
 
 @dataclass

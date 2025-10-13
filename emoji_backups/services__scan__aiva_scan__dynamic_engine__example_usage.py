@@ -7,16 +7,13 @@ JsInteractionSimulator 使用範例
 from __future__ import annotations
 
 import asyncio
-import logging
 
 from .js_interaction_simulator import InteractionType, JsEvent, JsInteractionSimulator
-
-logger = logging.getLogger(__name__)
 
 
 async def example_basic_usage() -> None:
     """基本使用範例"""
-    logger.info("=== 基本使用範例 ===\n")
+    print("=== 基本使用範例 ===\n")
 
     # 創建模擬器實例
     simulator = JsInteractionSimulator(
@@ -33,10 +30,10 @@ async def example_basic_usage() -> None:
     results = await simulator.execute_queue()
 
     # 查看結果
-    logger.info(f"\n執行了 {len(results)} 個事件")
+    print(f"\n執行了 {len(results)} 個事件")
     for i, result in enumerate(results, 1):
-        status = "[V]" if result.success else "[X]"
-        logger.info(
+        status = "✓" if result.success else "✗"
+        print(
             f"{status} 事件 {i}: {result.event.event_type.value} "
             f"on {result.event.selector} "
             f"({result.execution_time_ms:.2f}ms)"
@@ -44,15 +41,15 @@ async def example_basic_usage() -> None:
 
     # 獲取統計信息
     stats = simulator.get_stats()
-    logger.info("\n統計信息:")
-    logger.info(f"  成功率: {stats['success_rate'] * 100:.1f}%")
-    logger.info(f"  平均執行時間: {stats['avg_execution_time_ms']:.2f}ms")
-    logger.info(f"  事件類型分佈: {stats['events_by_type']}")
+    print("\n統計信息:")
+    print(f"  成功率: {stats['success_rate'] * 100:.1f}%")
+    print(f"  平均執行時間: {stats['avg_execution_time_ms']:.2f}ms")
+    print(f"  事件類型分佈: {stats['events_by_type']}")
 
 
 async def example_advanced_usage() -> None:
     """進階使用範例 - 自定義事件"""
-    logger.info("\n\n=== 進階使用範例 ===\n")
+    print("\n\n=== 進階使用範例 ===\n")
 
     simulator = JsInteractionSimulator(enable_logging=False)
 
@@ -81,15 +78,15 @@ async def example_advanced_usage() -> None:
     # 執行並收集結果
     results = await simulator.execute_queue()
 
-    logger.info(f"執行了 {len(results)} 個自定義事件")
-    logger.info(f"成功率: {simulator.get_success_rate() * 100:.1f}%")
+    print(f"執行了 {len(results)} 個自定義事件")
+    print(f"成功率: {simulator.get_success_rate() * 100:.1f}%")
 
 
 async def example_with_playwright() -> None:
     """與 Playwright 集成的範例（需要安裝 playwright）"""
-    logger.info("\n\n=== Playwright 集成範例 ===\n")
-    logger.info("注意：此範例需要安裝 playwright: pip install playwright")
-    logger.info("並運行: playwright install\n")
+    print("\n\n=== Playwright 集成範例 ===\n")
+    print("注意：此範例需要安裝 playwright: pip install playwright")
+    print("並運行: playwright install\n")
 
     try:
         from playwright.async_api import (  # type: ignore[import-not-found]
@@ -112,20 +109,20 @@ async def example_with_playwright() -> None:
             # 執行事件（傳入 page 對象）
             results = await simulator.execute_queue(page=page)
 
-            logger.info(f"\n在實際頁面上執行了 {len(results)} 個事件")
+            print(f"\n在實際頁面上執行了 {len(results)} 個事件")
             for result in results:
                 status = "成功" if result.success else "失敗"
-                logger.info(f"  {result.event.event_type.value}: {status}")
+                print(f"  {result.event.event_type.value}: {status}")
 
             await browser.close()
 
     except ImportError:
-        logger.warning("未安裝 Playwright，跳過此範例")
+        print("未安裝 Playwright，跳過此範例")
 
 
 async def example_error_handling() -> None:
     """錯誤處理範例"""
-    logger.info("\n\n=== 錯誤處理範例 ===\n")
+    print("\n\n=== 錯誤處理範例 ===\n")
 
     simulator = JsInteractionSimulator(max_retry=3, enable_logging=True)
 
@@ -138,9 +135,9 @@ async def example_error_handling() -> None:
     # 檢查失敗的事件
     failed_events = [r for r in results if not r.success]
     if failed_events:
-        logger.warning(f"\n有 {len(failed_events)} 個事件失敗:")
+        print(f"\n有 {len(failed_events)} 個事件失敗:")
         for result in failed_events:
-            logger.warning(f"  - {result.event.selector}: {result.error}")
+            print(f"  - {result.event.selector}: {result.error}")
 
 
 async def main() -> None:

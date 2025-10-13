@@ -109,7 +109,7 @@ async def process_scan_results() -> None:
             payload = ScanCompletedPayload(**msg.payload)
             scan_id = payload.scan_id
 
-            logger.info(f"[U+1F50D] [Stage 1/7] Processing scan results for {scan_id}")
+            logger.info(f"🔍 [Stage 1/7] Processing scan results for {scan_id}")
 
             # ===== 階段1：資料接收與預處理 (Data Ingestion) =====
             await scan_interface.process_scan_data(payload)  # 處理但不需要暫存
@@ -131,7 +131,7 @@ async def process_scan_results() -> None:
             )
 
             # ===== 階段2：初步攻擊面分析 (Initial Attack Surface Analysis) =====
-            logger.info(f"[U+1F50D] [Stage 2/7] Analyzing attack surface for {scan_id}")
+            logger.info(f"🔍 [Stage 2/7] Analyzing attack surface for {scan_id}")
             # 直接使用payload而非processed_data
             attack_surface = surface_analyzer.analyze(payload)
             session_state_manager.update_context(
@@ -202,13 +202,13 @@ async def process_scan_results() -> None:
                 },
             )
             logger.info(
-                f"[U+1F4E6] [Stage 5/7] Tasks generated - "
+                f"📦 [Stage 5/7] Tasks generated - "
                 f"Total: {len(tasks)}, "
                 f"Types: {_count_tasks_by_type(tasks)}"
             )
 
             # Stage 6: Task Queue Management & Distribution
-            logger.info(f"[U+1F4E4] [Stage 6/7] Dispatching tasks for {scan_id}")
+            logger.info(f"📤 [Stage 6/7] Dispatching tasks for {scan_id}")
             dispatched_count = 0
             for topic, task_payload in tasks:
                 # 將任務加入佇列管理
@@ -304,7 +304,7 @@ async def process_function_results() -> None:
 
 async def monitor_execution_status() -> None:
     """監控執行狀態與效能"""
-    logger.info("[U+1F4C8] Starting execution status monitor...")
+    logger.info("📈 Starting execution status monitor...")
 
     while True:
         try:

@@ -5,49 +5,9 @@ Scan 模組專用數據合約
 
 from __future__ import annotations
 
-from enum import Enum
-
 from pydantic import BaseModel, Field, field_validator
 
-from services.aiva_common.enums import Severity
-
-
-class SensitiveInfoType(str, Enum):
-    """敏感信息類型枚舉"""
-
-    API_KEY = "api_key"
-    ACCESS_TOKEN = "access_token"
-    SECRET_KEY = "secret_key"
-    PASSWORD = "password"
-    EMAIL = "email"
-    PHONE = "phone"
-    CREDIT_CARD = "credit_card"
-    DATABASE_CONNECTION = "database_connection"
-    INTERNAL_IP = "internal_ip"
-    AWS_KEY = "aws_key"
-    FILE_PATH = "file_path"
-    STACK_TRACE = "stack_trace"
-    DEBUG_INFO = "debug_info"
-    ERROR_MESSAGE = "error_message"
-    PRIVATE_KEY = "private_key"
-    JWT_TOKEN = "jwt_token"
-    SOURCE_CODE = "source_code"
-    COMMENT = "comment"
-
-
-class Location(str, Enum):
-    """信息位置枚舉"""
-
-    HTML_BODY = "html_body"
-    HTML_COMMENT = "html_comment"
-    JAVASCRIPT = "javascript"
-    RESPONSE_HEADER = "response_header"
-    RESPONSE_BODY = "response_body"
-    URL = "url"
-    COOKIE = "cookie"
-    META_TAG = "meta_tag"
-    INLINE_SCRIPT = "inline_script"
-    EXTERNAL_SCRIPT = "external_script"
+from services.aiva_common.enums import Location, SensitiveInfoType, Severity
 
 
 class SensitiveMatch(BaseModel):
