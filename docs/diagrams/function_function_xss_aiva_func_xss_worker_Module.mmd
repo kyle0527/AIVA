@@ -1,0 +1,78 @@
+flowchart TB
+    n1([開始])
+    n2([結束])
+    n3[from __future__ import annotations]
+    n4[import asyncio]
+    n5[from collections.abc import Iterable]
+    n6[from dataclasses import dataclass, field]
+    n7[from typing import Any]
+    n8[from urllib.parse import parse_qsl, urlencode, url...]
+    n9[from pydantic import HttpUrl, TypeAdapter]
+    n10[from services.aiva_common.enums import Confidence,...]
+    n11[from services.aiva_common.mq import get_broker]
+    n12[from services.aiva_common.schemas import AivaMessa...]
+    n13[from services.aiva_common.utils import get_logger,...]
+    n14[from .blind_xss_listener_validator import BlindXss...]
+    n15[from .dom_xss_detector import DomDetectionResult, ...]
+    n16[from .payload_generator import XssPayloadGenerator]
+    n17[from .result_publisher import XssResultPublisher]
+    n18[from .stored_detector import StoredXssDetector, St...]
+    n19[from .task_queue import QueuedTask, XssTaskQueue]
+    n20[from .traditional_detector import TraditionalXssDe...]
+    n21[logger = get_logger&#40;__name__&#41;]
+    n22[_HTTP_URL_VALIDATOR = TypeAdapter&#40;HttpUrl&#41;]
+    n23[def _validated_http_url&#40;...&#41;]
+    n24[DEFAULT_TIMEOUT_SECONDS = 20.0]
+    n25[class XssExecutionTelemetry&#40;...&#41;]
+    n26[class TaskExecutionResult&#40;...&#41;]
+    n27[def run&#40;...&#41;]
+    n28[def _consume_queue&#40;...&#41;]
+    n29[def _execute_task&#40;...&#41;]
+    n30[def process_task&#40;...&#41;]
+    n31[def _build_payloads&#40;...&#41;]
+    n32[def _build_finding&#40;...&#41;]
+    n33[def _build_blind_finding&#40;...&#41;]
+    n34[def _build_impact&#40;...&#41;]
+    n35[def _build_recommendation&#40;...&#41;]
+    n36[def _proof_text&#40;...&#41;]
+    n37[def _format_request&#40;...&#41;]
+    n38[def _format_response&#40;...&#41;]
+    n39[def _inject_query&#40;...&#41;]
+    n1 --> n3
+    n3 --> n4
+    n4 --> n5
+    n5 --> n6
+    n6 --> n7
+    n7 --> n8
+    n8 --> n9
+    n9 --> n10
+    n10 --> n11
+    n11 --> n12
+    n12 --> n13
+    n13 --> n14
+    n14 --> n15
+    n15 --> n16
+    n16 --> n17
+    n17 --> n18
+    n18 --> n19
+    n19 --> n20
+    n20 --> n21
+    n21 --> n22
+    n22 --> n23
+    n23 --> n24
+    n24 --> n25
+    n25 --> n26
+    n26 --> n27
+    n27 --> n28
+    n28 --> n29
+    n29 --> n30
+    n30 --> n31
+    n31 --> n32
+    n32 --> n33
+    n33 --> n34
+    n34 --> n35
+    n35 --> n36
+    n36 --> n37
+    n37 --> n38
+    n38 --> n39
+    n39 --> n2

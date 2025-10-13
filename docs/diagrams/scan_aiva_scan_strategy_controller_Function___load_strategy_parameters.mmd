@@ -1,0 +1,17 @@
+flowchart TB
+    n1([開始])
+    n2([結束])
+    n3[&amp;&#35;39;\n        加載策略參數\n\n        Returns:\n      ...]
+    n4{if self.strategy in self._STRA...}
+    n5[return self._STRATEGY_PRESETS&#91;self.st...]
+    n6[]
+    n7[logger.warning&#40;f&amp;quot;Unknown strategy &amp;&#35;...]
+    n8[return self._STRATEGY_PRESETS&#91;ScanStr...]
+    n1 --> n3
+    n3 --> n4
+    n4 -->|Yes| n5
+    n4 -->|No| n6
+    n5 --> n6
+    n6 --> n7
+    n7 --> n8
+    n8 --> n2

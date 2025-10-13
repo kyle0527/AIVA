@@ -1,0 +1,48 @@
+flowchart TB
+    n1([開始])
+    n2([結束])
+    n3[&amp;&#35;39;\n        轉換為 Cytoscape JSON 格式（用於互動式視覺化）\n\...]
+    n4[elements = &#123;&amp;&#35;39;nodes&amp;&#35;39;: &#91;&#...]
+    n5[node_ids = set&#40;&#41;]
+    n6{for &#40;path_idx, path&#41; in enumerate&#40;paths&#41;}
+    n7{for &#40;i, node&#41; in enumerate&#40;path.no...}
+    n8[node_id = node.get&#40;&amp;&#35;39;id&amp;&#35;39;, f&am...]
+    n9{if node_id not in node_ids}
+    n10[node_data = &#123;&amp;&#35;39;id&amp;&#35;39;: node_id, ...]
+    n11[elements&#91;&amp;&#35;39;nodes&amp;&#35;39;&#93;.append&...]
+    n12[node_ids.add&#40;node_id&#41;]
+    n13[]
+    n14{if i &amp;gt; 0}
+    n15[prev_node = path.nodes&#91;i - 1&#93;]
+    n16[prev_id = prev_node.get&#40;&amp;&#35;39;id&amp;&#35;39;,...]
+    n17[edge_data = &#123;&amp;&#35;39;id&amp;&#35;39;: f&amp;&#3...]
+    n18[elements&#91;&amp;&#35;39;edges&amp;&#35;39;&#93;.append&...]
+    n19[]
+    n20[]
+    n21[]
+    n22[return json.dumps&#40;elements, indent=2&#41;]
+    n1 --> n3
+    n3 --> n4
+    n4 --> n5
+    n5 --> n6
+    n6 -->|Yes| n7
+    n6 -->|No| n21
+    n7 -->|Yes| n8
+    n7 -->|No| n20
+    n8 --> n9
+    n9 -->|Yes| n10
+    n9 -->|No| n13
+    n10 --> n11
+    n11 --> n12
+    n12 --> n13
+    n13 --> n14
+    n14 -->|Yes| n15
+    n14 -->|No| n19
+    n15 --> n16
+    n16 --> n17
+    n17 --> n18
+    n18 --> n19
+    n19 --> n7
+    n20 --> n6
+    n21 --> n22
+    n22 --> n2

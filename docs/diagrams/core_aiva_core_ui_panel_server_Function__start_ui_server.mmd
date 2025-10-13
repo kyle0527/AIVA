@@ -1,0 +1,74 @@
+flowchart TB
+    n1([開始])
+    n2([結束])
+    n3[&amp;&#35;39;啟動 UI 面板伺服器.\n\n    Args:\n        mode: 運作模...]
+    n4[try]
+    n5[from fastapi import FastAPI]
+    n6[from fastapi.responses import HTMLResponse]
+    n7[]
+    n8[except ImportError]
+    n9[logger.error&#40;&amp;&#35;39;錯誤: 需要安裝 FastAPI&amp;&#35;3...]
+    n10[logger.error&#40;&amp;&#35;39;請執行: pip install fastapi uv...]
+    n11[return]
+    n12[from .dashboard import Dashboard]
+    n13[app = FastAPI&#40;title=&amp;&#35;39;AIVA ...]
+    n14[dashboard = Dashboard&#40;mode=mode&#41;]
+    n15[def index&#40;...&#41;]
+    n16[def get_stats&#40;...&#41;]
+    n17[def get_tasks&#40;...&#41;]
+    n18[def get_detections&#40;...&#41;]
+    n19[def create_scan&#40;...&#41;]
+    n20[def detect_vuln&#40;...&#41;]
+    n21[def read_code&#40;...&#41;]
+    n22[def analyze_code&#40;...&#41;]
+    n23[def get_ai_history&#40;...&#41;]
+    n24[logger.info&#40;f&amp;&#35;39;\n&#123;&amp;&#35;39;=&amp;...]
+    n25[logger.info&#40;&amp;&#35;39;   啟動 AIVA UI 面板伺服器&amp;&#35...]
+    n26[logger.info&#40;f&amp;&#35;39;&#123;&amp;&#35;39;=&amp;&#...]
+    n27[logger.info&#40;f&amp;&#35;39;位址: http://&#123;host&#125;...]
+    n28[logger.info&#40;f&amp;&#35;39;API 文檔: http://&#123;host&#...]
+    n29[logger.info&#40;f&amp;&#35;39;&#123;&amp;&#35;39;=&amp;&#...]
+    n30[try]
+    n31[import uvicorn]
+    n32[uvicorn.run&#40;app, host=host, port=port&#41;]
+    n33[]
+    n34[except ImportError]
+    n35[logger.error&#40;&amp;&#35;39;錯誤: 需要安裝 uvicorn&amp;&#35;3...]
+    n36[logger.error&#40;&amp;&#35;39;請執行: pip install uvicorn&am...]
+    n1 --> n3
+    n3 --> n4
+    n4 --> n5
+    n4 --> n8
+    n5 --> n6
+    n6 --> n7
+    n7 --> n12
+    n8 --> n9
+    n9 --> n10
+    n10 --> n11
+    n11 --> n7
+    n12 --> n13
+    n13 --> n14
+    n14 --> n15
+    n15 --> n16
+    n16 --> n17
+    n17 --> n18
+    n18 --> n19
+    n19 --> n20
+    n20 --> n21
+    n21 --> n22
+    n22 --> n23
+    n23 --> n24
+    n24 --> n25
+    n25 --> n26
+    n26 --> n27
+    n27 --> n28
+    n28 --> n29
+    n29 --> n30
+    n30 --> n31
+    n30 --> n34
+    n31 --> n32
+    n32 --> n33
+    n33 --> n2
+    n34 --> n35
+    n35 --> n36
+    n36 --> n33

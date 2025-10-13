@@ -1,0 +1,18 @@
+flowchart TB
+    n1([開始])
+    n2([結束])
+    n3[from __future__ import annotations]
+    n4[import re]
+    n5[from urllib.parse import urlparse]
+    n6[from services.aiva_common.schemas import ScanScope]
+    n7[from services.aiva_common.utils import get_logger]
+    n8[logger = get_logger&#40;__name__&#41;]
+    n9[class ScopeManager&#40;...&#41;]
+    n1 --> n3
+    n3 --> n4
+    n4 --> n5
+    n5 --> n6
+    n6 --> n7
+    n7 --> n8
+    n8 --> n9
+    n9 --> n2

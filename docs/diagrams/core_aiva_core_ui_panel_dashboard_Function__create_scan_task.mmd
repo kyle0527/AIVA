@@ -1,0 +1,36 @@
+flowchart TB
+    n1([開始])
+    n2([結束])
+    n3[&amp;&#35;39;建立掃描任務.\n\n        Args:\n            target...]
+    n4{if use_ai is None}
+    n5[use_ai = self.mode in &#40;&amp;&#35;39;ai&amp;&#35;39;, ...]
+    n6[]
+    n7[task_id = f&amp;&#35;39;scan_&#123;hash&#40;target_...]
+    n8{if use_ai and self.ai_agent}
+    n9[logger.info&#40;&amp;&#35;39;\n&#91;AI&#93; 使用 AI 代理建立掃描任...]
+    n10[result = self.ai_agent.invoke...]
+    n11[task = &#123;&amp;&#35;39;task_id&amp;&#35;39;: task_id,...]
+    n12[logger.info&#40;&amp;&#35;39;\n&#91;UI&#93; 使用 UI 模式建立掃描任...]
+    n13[task = &#123;&amp;&#35;39;task_id&amp;&#35;39;: task_id,...]
+    n14[]
+    n15[self.scan_tasks.append&#40;task&#41;]
+    n16[logger.info&#40;f&amp;&#35;39;掃描任務已建立: &#123;task_id&#125...]
+    n17[return task]
+    n1 --> n3
+    n3 --> n4
+    n4 -->|Yes| n5
+    n4 -->|No| n6
+    n5 --> n6
+    n6 --> n7
+    n7 --> n8
+    n8 -->|Yes| n9
+    n8 -->|No| n12
+    n9 --> n10
+    n10 --> n11
+    n11 --> n14
+    n12 --> n13
+    n13 --> n14
+    n14 --> n15
+    n15 --> n16
+    n16 --> n17
+    n17 --> n2

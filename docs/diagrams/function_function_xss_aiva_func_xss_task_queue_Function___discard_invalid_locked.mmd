@@ -1,0 +1,11 @@
+flowchart TB
+    n1([開始])
+    n2([結束])
+    n3{while self._heap and &#40;not se...}
+    n4[heapq.heappop&#40;self._heap&#41;]
+    n5[]
+    n1 --> n3
+    n3 -->|Yes| n4
+    n3 -->|No| n5
+    n4 --> n3
+    n5 --> n2

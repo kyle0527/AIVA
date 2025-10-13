@@ -11,7 +11,7 @@ Write-Host "🚀 開始生成專案完整報告..." -ForegroundColor Cyan
 # 要排除的目錄
 $excludeDirs = @(
     '.git', '__pycache__', '.mypy_cache', '.ruff_cache',
-    'node_modules', '.venv', 'venv', '.pytest_cache', 
+    'node_modules', '.venv', 'venv', '.pytest_cache',
     '.tox', 'dist', 'build', '.egg-info', '.eggs',
     'htmlcov', '.coverage', '.hypothesis', '.idea', '.vscode'
 )
@@ -20,21 +20,21 @@ $excludeDirs = @(
 Write-Host "`n📊 收集專案統計數據..." -ForegroundColor Yellow
 
 # 副檔名統計
-$allFiles = Get-ChildItem -Path $ProjectRoot -Recurse -File -ErrorAction SilentlyContinue | 
-    Where-Object { 
+$allFiles = Get-ChildItem -Path $ProjectRoot -Recurse -File -ErrorAction SilentlyContinue |
+    Where-Object {
         $path = $_.FullName
         -not ($excludeDirs | Where-Object { $path -like "*\$_\*" })
     }
 
-$extStats = $allFiles | Group-Object Extension | 
-    Select-Object @{Name='Extension';Expression={if($_.Name -eq ''){'.no_ext'}else{$_.Name}}}, Count | 
+$extStats = $allFiles | Group-Object Extension |
+    Select-Object @{Name='Extension';Expression={if($_.Name -eq ''){'.no_ext'}else{$_.Name}}}, Count |
     Sort-Object Count -Descending
 
 # 程式碼行數統計
-$codeExts = @('.py', '.js', '.ts', '.sql', '.sh', '.bat', '.ps1', '.md', '.yaml', '.yml', '.toml', '.json', '.html', '.css')
+$codeExts = @('.py', '.js', '.ts', '.go', '.rs', '.sql', '.sh', '.bat', '.ps1', '.md', '.yaml', '.yml', '.toml', '.json', '.html', '.css')
 
-$locStats = $allFiles | 
-    Where-Object { $codeExts -contains $_.Extension } | 
+$locStats = $allFiles |
+    Where-Object { $codeExts -contains $_.Extension } |
     ForEach-Object {
         $lineCount = (Get-Content $_.FullName -ErrorAction SilentlyContinue | Measure-Object -Line).Lines
         [PSCustomObject]@{
@@ -42,13 +42,25 @@ $locStats = $allFiles |
             Lines = $lineCount
             File = $_.Name
         }
-    } | 
-    Group-Object Extension | 
-    Select-Object @{Name='Extension';Expression={$_.Name}}, 
-                  @{Name='TotalLines';Expression={($_.Group | Measure-Object -Property Lines -Sum).Sum}}, 
+    } |
+    Group-Object Extension |
+    Select-Object @{Name='Extension';Expression={$_.Name}},
+                  @{Name='TotalLines';Expression={($_.Group | Measure-Object -Property Lines -Sum).Sum}},
                   @{Name='FileCount';Expression={$_.Count}},
-                  @{Name='AvgLines';Expression={[math]::Round(($_.Group | Measure-Object -Property Lines -Average).Average, 1)}} | 
+                  @{Name='AvgLines';Expression={[math]::Round(($_.Group | Measure-Object -Property Lines -Average).Average, 1)}} |
     Sort-Object TotalLines -Descending
+
+# 多語言統計
+$pythonStats = $locStats | Where-Object Extension -eq '.py'
+$goStats = $locStats | Where-Object Extension -eq '.go'
+$rustStats = $locStats | Where-Object Extension -eq '.rs'
+$tsStats = $locStats | Where-Object Extension -in @('.ts', '.js')
+
+$totalCodeLines = ($locStats | Measure-Object -Property TotalLines -Sum).Sum
+$pythonPct = if ($pythonStats) { [math]::Round(($pythonStats.TotalLines / $totalCodeLines) * 100, 1) } else { 0 }
+$goPct = if ($goStats) { [math]::Round(($goStats.TotalLines / $totalCodeLines) * 100, 1) } else { 0 }
+$rustPct = if ($rustStats) { [math]::Round(($rustStats.TotalLines / $totalCodeLines) * 100, 1) } else { 0 }
+$tsPct = if ($tsStats) { [math]::Round((($tsStats | Measure-Object -Property TotalLines -Sum).Sum / $totalCodeLines) * 100, 1) } else { 0 }
 
 # ==================== 2. 生成樹狀圖 ====================
 Write-Host "🌳 生成專案樹狀結構..." -ForegroundColor Yellow
@@ -60,29 +72,29 @@ function Get-CleanTree {
         [int]$Level = 0,
         [int]$MaxLevel = 10
     )
-    
+
     if ($Level -ge $MaxLevel) { return }
-    
+
     try {
-        $items = Get-ChildItem -Path $Path -Force -ErrorAction Stop | 
-            Where-Object { 
+        $items = Get-ChildItem -Path $Path -Force -ErrorAction Stop |
+            Where-Object {
                 $name = $_.Name
                 if ($_.PSIsContainer) {
                     $excludeDirs -notcontains $name
                 } else {
                     $name -notlike '*.pyc' -and $name -notlike '*.pyo'
                 }
-            } | 
+            } |
             Sort-Object @{Expression={$_.PSIsContainer}; Descending=$true}, Name
-        
+
         $itemCount = $items.Count
         for ($i = 0; $i -lt $itemCount; $i++) {
             $item = $items[$i]
             $isLast = ($i -eq $itemCount - 1)
-            
+
             $connector = if ($isLast) { "└─" } else { "├─" }
             $extension = if ($isLast) { "    " } else { "│   " }
-            
+
             if ($item.PSIsContainer) {
                 $output = "$Prefix$connector📁 $($item.Name)/"
                 Write-Output $output
@@ -100,6 +112,8 @@ function Get-CleanTree {
                     '.sh' { '⚡' }
                     '.bat' { '⚡' }
                     '.ps1' { '⚡' }
+                    '.go' { '🔷' }
+                    '.rs' { '🦀' }
                     '.txt' { '📄' }
                     '.html' { '🌐' }
                     '.css' { '🎨' }
@@ -163,12 +177,34 @@ $($locStats | ForEach-Object {
 📈 專案規模分析
 ───────────────────────────────────────────────────────────────────────────────
 
-Python 程式碼行數: $($locStats | Where-Object Extension -eq '.py' | Select-Object -ExpandProperty TotalLines) 行
-Python 檔案數量: $($locStats | Where-Object Extension -eq '.py' | Select-Object -ExpandProperty FileCount) 個
-平均每個 Python 檔案: $($locStats | Where-Object Extension -eq '.py' | Select-Object -ExpandProperty AvgLines) 行
+🐍 Python 程式碼: $($pythonStats.TotalLines) 行 ($($pythonStats.FileCount) 個檔案, $pythonPct% 佔比)
+   平均每個檔案: $($pythonStats.AvgLines) 行
 
-文檔 (Markdown) 行數: $($locStats | Where-Object Extension -eq '.md' | Select-Object -ExpandProperty TotalLines) 行
-配置檔案數量: $(($extStats | Where-Object {$_.Extension -in @('.json', '.yml', '.yaml', '.toml', '.ini')}) | Measure-Object -Property Count -Sum | Select-Object -ExpandProperty Sum) 個
+🔷 Go 程式碼: $(if ($goStats) { $goStats.TotalLines } else { 0 }) 行 ($(if ($goStats) { $goStats.FileCount } else { 0 }) 個檔案, $goPct% 佔比)
+   $(if ($goStats) { "平均每個檔案: $($goStats.AvgLines) 行" } else { "無 Go 檔案" })
+
+🦀 Rust 程式碼: $(if ($rustStats) { $rustStats.TotalLines } else { 0 }) 行 ($(if ($rustStats) { $rustStats.FileCount } else { 0 }) 個檔案, $rustPct% 佔比)
+   $(if ($rustStats) { "平均每個檔案: $($rustStats.AvgLines) 行" } else { "無 Rust 檔案" })
+
+📘 TypeScript/JavaScript: $(if ($tsStats) { ($tsStats | Measure-Object -Property TotalLines -Sum).Sum } else { 0 }) 行 ($(if ($tsStats) { ($tsStats | Measure-Object -Property FileCount -Sum).Sum } else { 0 }) 個檔案, $tsPct% 佔比)
+   $(if ($tsStats) { "平均每個檔案: " + [math]::Round((($tsStats | Measure-Object -Property AvgLines -Average).Average), 1) + " 行" } else { "無 TS/JS 檔案" })
+
+📝 文檔 (Markdown) 行數: $($locStats | Where-Object Extension -eq '.md' | Select-Object -ExpandProperty TotalLines) 行
+⚙️  配置檔案數量: $(($extStats | Where-Object {$_.Extension -in @('.json', '.yml', '.yaml', '.toml', '.ini')}) | Measure-Object -Property Count -Sum | Select-Object -ExpandProperty Sum) 個
+
+───────────────────────────────────────────────────────────────────────────────
+🌐 多語言架構概覽
+───────────────────────────────────────────────────────────────────────────────
+
+總程式碼檔案數: $($locStats | Measure-Object -Property FileCount -Sum | Select-Object -ExpandProperty Sum)
+總程式碼行數: $totalCodeLines
+
+語言分布:
+  Python:     $pythonPct% ████████████████████
+  Go:         $goPct%
+  Rust:       $rustPct%
+  TS/JS:      $tsPct%
+  其他:       $([math]::Round(100 - $pythonPct - $goPct - $rustPct - $tsPct, 1))%
 
 ───────────────────────────────────────────────────────────────────────────────
 🚫 已排除的目錄類型
@@ -200,7 +236,7 @@ $($treeOutput | Out-String)
 
 
 ═══════════════════════════════════════════════════════════════════════════════
-�📌 報告說明
+📌 報告說明
 ═══════════════════════════════════════════════════════════════════════════════
 
 • 本報告整合了專案的檔案統計、程式碼行數分析和目錄結構
@@ -208,7 +244,14 @@ $($treeOutput | Out-String)
 • 圖示說明:
   🐍 Python   📜 JavaScript   📘 TypeScript   📝 Markdown
   ⚙️ JSON      🔧 YAML         🗄️ SQL          ⚡ Shell/Batch
-  🌐 HTML      🎨 CSS          📁 目錄         📄 其他檔案
+  🔷 Go        🦀 Rust         🌐 HTML         🎨 CSS
+  📁 目錄      📄 其他檔案
+
+• 多語言架構:
+  - Python: 主要業務邏輯、Web API、核心引擎
+  - Go: 高效能模組 (身份驗證、雲端安全、組成分析)
+  - Rust: 靜態分析、資訊收集 (記憶體安全、高效能)
+  - TypeScript: 動態掃描引擎 (Playwright 瀏覽器自動化)
 
 
 ═══════════════════════════════════════════════════════════════════════════════
@@ -222,18 +265,179 @@ $reportContent | Out-File $reportFile -Encoding utf8
 
 Write-Host "✅ 報告已生成: PROJECT_REPORT.txt" -ForegroundColor Green
 
-# ==================== 4. 清理其他檔案 ====================
+# ==================== 4. 生成 Mermaid 圖表 ====================
+Write-Host "`n📊 生成 Mermaid 架構圖..." -ForegroundColor Yellow
+
+$mermaidContent = @"
+# AIVA 專案架構圖
+
+## 1. 多語言架構概覽
+
+``````mermaid
+graph TB
+    subgraph "🐍 Python Layer"
+        PY_API[FastAPI Web API]
+        PY_CORE[核心引擎]
+        PY_SCAN[掃描服務]
+        PY_INTG[整合層]
+    end
+
+    subgraph "🔷 Go Layer"
+        GO_AUTH[身份驗證檢測]
+        GO_CSPM[雲端安全]
+        GO_SCA[軟體組成分析]
+        GO_SSRF[SSRF 檢測]
+    end
+
+    subgraph "🦀 Rust Layer"
+        RS_SAST[靜態分析引擎]
+        RS_INFO[資訊收集器]
+    end
+
+    subgraph "📘 TypeScript Layer"
+        TS_SCAN[Playwright 掃描]
+    end
+
+    subgraph "🗄️ Data Layer"
+        DB[(PostgreSQL)]
+        MQ[RabbitMQ]
+    end
+
+    PY_API --> PY_CORE
+    PY_CORE --> PY_SCAN
+    PY_SCAN --> PY_INTG
+
+    PY_INTG -->|RPC| GO_AUTH
+    PY_INTG -->|RPC| GO_CSPM
+    PY_INTG -->|RPC| GO_SCA
+    PY_INTG -->|RPC| GO_SSRF
+    PY_INTG -->|RPC| RS_SAST
+    PY_INTG -->|RPC| RS_INFO
+    PY_INTG -->|RPC| TS_SCAN
+
+    GO_AUTH --> MQ
+    GO_CSPM --> MQ
+    GO_SCA --> MQ
+    GO_SSRF --> MQ
+    RS_SAST --> MQ
+    RS_INFO --> MQ
+    TS_SCAN --> MQ
+
+    MQ --> DB
+    PY_CORE --> DB
+
+    style PY_API fill:#3776ab
+    style GO_AUTH fill:#00ADD8
+    style RS_SAST fill:#CE422B
+    style TS_SCAN fill:#3178C6
+``````
+
+## 2. 程式碼分布統計
+
+``````mermaid
+pie title 程式碼行數分布
+    "Python ($pythonPct%)" : $($pythonStats.TotalLines)
+    "Go ($goPct%)" : $(if ($goStats) { $goStats.TotalLines } else { 0 })
+    "Rust ($rustPct%)" : $(if ($rustStats) { $rustStats.TotalLines } else { 0 })
+    "TypeScript/JS ($tsPct%)" : $(if ($tsStats) { ($tsStats | Measure-Object -Property TotalLines -Sum).Sum } else { 0 })
+    "其他" : $(($locStats | Where-Object { $_.Extension -notin @('.py', '.go', '.rs', '.ts', '.js') } | Measure-Object -Property TotalLines -Sum).Sum)
+``````
+
+## 3. 模組關係圖
+
+``````mermaid
+graph LR
+    subgraph "services"
+        aiva_common[aiva_common<br/>共用模組]
+        core[core<br/>核心引擎]
+        function[function<br/>功能模組]
+        integration[integration<br/>整合層]
+        scan[scan<br/>掃描引擎]
+    end
+
+    subgraph "function 子模組"
+        func_py[Python 模組]
+        func_go[Go 模組]
+        func_rs[Rust 模組]
+    end
+
+    subgraph "scan 子模組"
+        scan_py[Python 掃描]
+        scan_ts[Node.js 掃描]
+    end
+
+    core --> aiva_common
+    scan --> aiva_common
+    function --> aiva_common
+    integration --> aiva_common
+
+    integration --> function
+    integration --> scan
+
+    function --> func_py
+    function --> func_go
+    function --> func_rs
+
+    scan --> scan_py
+    scan --> scan_ts
+
+    style aiva_common fill:#90EE90
+    style core fill:#FFD700
+    style function fill:#87CEEB
+    style integration fill:#FFA07A
+    style scan fill:#DDA0DD
+``````
+
+## 4. 技術棧選擇流程圖
+
+``````mermaid
+flowchart TD
+    Start([新功能需求]) --> Perf{需要高效能?}
+    Perf -->|是| Memory{需要記憶體安全?}
+    Perf -->|否| Web{是 Web API?}
+
+    Memory -->|是| Rust[使用 Rust<br/>靜態分析/資訊收集]
+    Memory -->|否| Go[使用 Go<br/>認證/雲端安全/SCA]
+
+    Web -->|是| Python[使用 Python<br/>FastAPI/核心邏輯]
+    Web -->|否| Browser{需要瀏覽器?}
+
+    Browser -->|是| TS[使用 TypeScript<br/>Playwright 掃描]
+    Browser -->|否| Python
+
+    Rust --> MQ[Message Queue]
+    Go --> MQ
+    Python --> MQ
+    TS --> MQ
+
+    MQ --> Deploy([部署模組])
+
+    style Rust fill:#CE422B
+    style Go fill:#00ADD8
+    style Python fill:#3776ab
+    style TS fill:#3178C6
+``````
+
+生成時間: $(Get-Date -Format "yyyy-MM-dd HH:mm:ss")
+"@
+
+$mermaidFile = Join-Path $OutputDir "tree.mmd"
+$mermaidContent | Out-File $mermaidFile -Encoding utf8
+
+Write-Host "✅ Mermaid 圖表已生成: tree.mmd" -ForegroundColor Green
+
+# ==================== 5. 清理其他檔案 ====================
 Write-Host "`n🧹 清理舊的檔案..." -ForegroundColor Yellow
 
-$filesToKeep = @('PROJECT_REPORT.txt')
-$filesToDelete = Get-ChildItem $OutputDir -File | Where-Object { $filesToKeep -notcontains $_.Name }
+$filesToKeep = @('PROJECT_REPORT.txt', 'tree.mmd')
+$filesToDelete = Get-ChildItem $OutputDir -File | Where-Object { $filesToKeep -notcontains $_.Name -and $_.Extension -ne '.csv' }
 
 foreach ($file in $filesToDelete) {
     Remove-Item $file.FullName -Force
     Write-Host "  🗑️  已刪除: $($file.Name)" -ForegroundColor Gray
 }
 
-# ==================== 5. 完成 ====================
+# ==================== 6. 完成 ====================
 Write-Host "`n" -NoNewline
 Write-Host "╔════════════════════════════════════════════════╗" -ForegroundColor Green
 Write-Host "║          ✨ 報告生成完成！                    ║" -ForegroundColor Green
@@ -242,6 +446,7 @@ Write-Host ""
 Write-Host "📄 報告位置: $reportFile" -ForegroundColor Cyan
 Write-Host "📊 統計資料: 已整合" -ForegroundColor Cyan
 Write-Host "🌳 目錄結構: 已整合" -ForegroundColor Cyan
+Write-Host "📈 Mermaid 圖表: $mermaidFile" -ForegroundColor Cyan
 Write-Host "🗑️  舊檔案: 已清理" -ForegroundColor Cyan
 Write-Host ""
 

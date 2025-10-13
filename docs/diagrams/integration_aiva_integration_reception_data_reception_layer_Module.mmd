@@ -1,0 +1,12 @@
+flowchart TB
+    n1([開始])
+    n2([結束])
+    n3[from __future__ import annotations]
+    n4[from services.aiva_common.schemas import FindingPa...]
+    n5[from .sql_result_database import SqlResultDatabase...]
+    n6[class DataReceptionLayer&#40;...&#41;]
+    n1 --> n3
+    n3 --> n4
+    n4 --> n5
+    n5 --> n6
+    n6 --> n2

@@ -1,0 +1,17 @@
+flowchart TB
+    n1([開始])
+    n2([結束])
+    n3{if not parameter}
+    n4[return set&#40;&#41;]
+    n5[]
+    n6[normalized = re.sub&#40;&amp;&#35;39;&#40;&#91;A-Z&#93;&#...]
+    n7[parts = re.split&#40;&amp;&#35;39;&#91;^a-z0-9&#93;+...]
+    n8[return &#123;part for part in parts if par...]
+    n1 --> n3
+    n3 -->|Yes| n4
+    n3 -->|No| n5
+    n4 --> n5
+    n5 --> n6
+    n6 --> n7
+    n7 --> n8
+    n8 --> n2

@@ -1,0 +1,19 @@
+flowchart TB
+    n1([開始])
+    n2([結束])
+    n3[&amp;&#35;39;獲取統計信息&amp;&#35;39;]
+    n4[type_counts: dict&#91;str, int&#93; = &#123;&#125;]
+    n5{for content in self._extracted_c...}
+    n6[type_name = content.content_type...]
+    n7[type_counts&#91;type_name&#93; = type_counts.get&#40;type...]
+    n8[]
+    n9[return &#123;&amp;&#35;39;total_contents&amp;&#35;39;: le...]
+    n1 --> n3
+    n3 --> n4
+    n4 --> n5
+    n5 -->|Yes| n6
+    n5 -->|No| n8
+    n6 --> n7
+    n7 --> n5
+    n8 --> n9
+    n9 --> n2

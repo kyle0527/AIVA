@@ -1,0 +1,17 @@
+flowchart TB
+    n1([開始])
+    n2([結束])
+    n3[&amp;&#35;39;記錄 HTTP 請求指標&amp;&#35;39;]
+    n4{if not self.enabled}
+    n5[return]
+    n6[]
+    n7[self.http_requests_total.labels&#40;method=method, end...]
+    n8[self.http_request_duration.labels&#40;method=method, e...]
+    n1 --> n3
+    n3 --> n4
+    n4 -->|Yes| n5
+    n4 -->|No| n6
+    n5 --> n6
+    n6 --> n7
+    n7 --> n8
+    n8 --> n2

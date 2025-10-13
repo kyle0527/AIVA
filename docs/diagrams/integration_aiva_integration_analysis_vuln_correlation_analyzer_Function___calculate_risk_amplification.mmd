@@ -1,0 +1,30 @@
+flowchart TB
+    n1([開始])
+    n2([結束])
+    n3[&amp;&#35;39;計算風險放大係數&amp;&#35;39;]
+    n4[base_amplification = 1.0]
+    n5{for group in correlation_groups}
+    n6[multiplier = group.get&#40;&amp;&#35;39;multiplie...]
+    n7[related_count = len&#40;group.get&#40;&amp;&#35;39;relat...]
+    n8[base_amplification += &#40;multiplier - 1.0&#41; * &#40;r...]
+    n9[]
+    n10{for chain in attack_chains}
+    n11[chain_risk = chain.get&#40;&amp;&#35;39;chain_ris...]
+    n12[base_amplification += chain_risk / 20]
+    n13[]
+    n14[return round&#40;min&#40;base_amplification, ...]
+    n1 --> n3
+    n3 --> n4
+    n4 --> n5
+    n5 -->|Yes| n6
+    n5 -->|No| n9
+    n6 --> n7
+    n7 --> n8
+    n8 --> n5
+    n9 --> n10
+    n10 -->|Yes| n11
+    n10 -->|No| n13
+    n11 --> n12
+    n12 --> n10
+    n13 --> n14
+    n14 --> n2

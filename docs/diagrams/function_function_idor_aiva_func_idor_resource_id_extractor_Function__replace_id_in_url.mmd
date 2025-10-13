@@ -1,0 +1,26 @@
+flowchart TB
+    n1([開始])
+    n2([結束])
+    n3[&amp;&#35;39;\n        Replace an ID in URL with a new ID...]
+    n4[from urllib.parse import parse_qsl, urlencode, url...]
+    n5[parsed = urlparse&#40;url&#41;]
+    n6[path_parts = parsed.path.split&#40;&amp;&#35;39;/...]
+    n7[path_parts = &#91;new_id if part == o...]
+    n8[new_path = &amp;&#35;39;/&amp;&#35;39;.join&#40;path_part...]
+    n9[query_params = parse_qsl&#40;parsed.que...]
+    n10[new_query_params = &#91;&#40;k, new_id if v == ...]
+    n11[new_query = urlencode&#40;new_query_...]
+    n12[new_url = urlunparse&#40;&#40;parsed.s...]
+    n13[return new_url]
+    n1 --> n3
+    n3 --> n4
+    n4 --> n5
+    n5 --> n6
+    n6 --> n7
+    n7 --> n8
+    n8 --> n9
+    n9 --> n10
+    n10 --> n11
+    n11 --> n12
+    n12 --> n13
+    n13 --> n2

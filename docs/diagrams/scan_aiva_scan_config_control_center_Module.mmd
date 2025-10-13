@@ -1,0 +1,30 @@
+flowchart TB
+    n1([開始])
+    n2([結束])
+    n3[from __future__ import annotations]
+    n4[from dataclasses import dataclass, field]
+    n5[from typing import Any]
+    n6[from services.aiva_common.utils import get_logger]
+    n7[logger = get_logger&#40;__name__&#41;]
+    n8[class CrawlingConfig&#40;...&#41;]
+    n9[class DynamicScanConfig&#40;...&#41;]
+    n10[class FingerprintConfig&#40;...&#41;]
+    n11[class SecurityConfig&#40;...&#41;]
+    n12[class PerformanceConfig&#40;...&#41;]
+    n13[class ReportingConfig&#40;...&#41;]
+    n14[class ScanModuleConfig&#40;...&#41;]
+    n15[class ConfigControlCenter&#40;...&#41;]
+    n1 --> n3
+    n3 --> n4
+    n4 --> n5
+    n5 --> n6
+    n6 --> n7
+    n7 --> n8
+    n8 --> n9
+    n9 --> n10
+    n10 --> n11
+    n11 --> n12
+    n12 --> n13
+    n13 --> n14
+    n14 --> n15
+    n15 --> n2

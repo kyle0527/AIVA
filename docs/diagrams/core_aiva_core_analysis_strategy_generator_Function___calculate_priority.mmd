@@ -1,0 +1,24 @@
+flowchart TB
+    n1([開始])
+    n2([結束])
+    n3[&amp;&#35;39;\n        計算任務優先級\n\n        Args:\n        ...]
+    n4[base_priority = &#123;&amp;&#35;39;high_risk&amp;&#35;39;...]
+    n5{if confidence &amp;gt;= self.config.h...}
+    n6[base_priority = min&#40;base_priority + ...]
+    n7{if confidence &amp;gt;= 0.5}
+    n8[base_priority = min&#40;base_priority + ...]
+    n9[]
+    n10[]
+    n11[return base_priority]
+    n1 --> n3
+    n3 --> n4
+    n4 --> n5
+    n5 -->|Yes| n6
+    n5 -->|No| n7
+    n6 --> n10
+    n7 -->|Yes| n8
+    n7 -->|No| n9
+    n8 --> n9
+    n9 --> n10
+    n10 --> n11
+    n11 --> n2

@@ -1,0 +1,21 @@
+flowchart TB
+    n1([開始])
+    n2([結束])
+    n3[&amp;&#35;39;提取錯誤簽名&amp;&#35;39;]
+    n4[error_signatures = &#91;&#93;]
+    n5[error_patterns = &#91;&amp;&#35;39;syntax error&amp;&#35;...]
+    n6{for pattern in error_patterns}
+    n7[matches = re.findall&#40;pattern, ...]
+    n8[error_signatures.extend&#40;matches&#41;]
+    n9[]
+    n10[return list&#40;set&#40;error_signatures&#41;&#41;]
+    n1 --> n3
+    n3 --> n4
+    n4 --> n5
+    n5 --> n6
+    n6 -->|Yes| n7
+    n6 -->|No| n9
+    n7 --> n8
+    n8 --> n6
+    n9 --> n10
+    n10 --> n2

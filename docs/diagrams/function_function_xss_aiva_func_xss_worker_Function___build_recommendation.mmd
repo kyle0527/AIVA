@@ -1,0 +1,17 @@
+flowchart TB
+    n1([開始])
+    n2([結束])
+    n3{if blind}
+    n4[fix = &amp;&#35;39;Audit server-side s...]
+    n5[fix = &amp;&#35;39;Apply context-aware...]
+    n6[]
+    n7[priority = &amp;&#35;39;Critical&amp;&#35;39; if blind ...]
+    n8[return FindingRecommendation&#40;fix=fix,...]
+    n1 --> n3
+    n3 -->|Yes| n4
+    n3 -->|No| n5
+    n4 --> n6
+    n5 --> n6
+    n6 --> n7
+    n7 --> n8
+    n8 --> n2

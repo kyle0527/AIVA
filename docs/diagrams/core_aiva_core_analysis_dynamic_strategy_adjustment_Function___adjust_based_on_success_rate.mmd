@@ -1,0 +1,74 @@
+flowchart TB
+    n1([開始])
+    n2([結束])
+    n3[&amp;&#35;39;基於成功率調整&amp;&#35;39;]
+    n4[scan_id = str&#40;context.get&#40;&amp;&#35;39;sca...]
+    n5[learning_data = self._learning_data....]
+    n6{if not learning_data}
+    n7[return plan]
+    n8[]
+    n9[module_stats = &#123;&#125;]
+    n10{for data in learning_data}
+    n11[module = data.get&#40;&amp;&#35;39;module&amp;&#35;39;&#41;]
+    n12[success = data.get&#40;&amp;&#35;39;success&amp;&#35;39;,...]
+    n13{if module not in module_stats}
+    n14[module_stats&#91;module&#93; = &#123;&amp;&#35;39;total&a...]
+    n15[]
+    n16[module_stats&#91;module&#93;&#91;&amp;&#35;39;total&amp;&...]
+    n17{if success}
+    n18[module_stats&#91;module&#93;&#91;&amp;&#35;39;success&amp...]
+    n19[]
+    n20[]
+    n21{for task in plan.get&#40;&amp;&#35;39;tasks&amp;&#35;39;,...}
+    n22[task_type = task.get&#40;&amp;&#35;39;type&amp;&#35;39;&#41;]
+    n23{if task_type in module_stats}
+    n24[success_rate = module_stats&#91;task_ty...]
+    n25{if success_rate &amp;gt; 0.7}
+    n26[task&#91;&amp;&#35;39;priority&amp;&#35;39;&#93; = min&#4...]
+    n27{if success_rate &amp;lt; 0.3}
+    n28[task&#91;&amp;&#35;39;priority&amp;&#35;39;&#93; = max&#4...]
+    n29[]
+    n30[]
+    n31[]
+    n32[]
+    n33[return plan]
+    n1 --> n3
+    n3 --> n4
+    n4 --> n5
+    n5 --> n6
+    n6 -->|Yes| n7
+    n6 -->|No| n8
+    n7 --> n8
+    n8 --> n9
+    n9 --> n10
+    n10 -->|Yes| n11
+    n10 -->|No| n20
+    n11 --> n12
+    n12 --> n13
+    n13 -->|Yes| n14
+    n13 -->|No| n15
+    n14 --> n15
+    n15 --> n16
+    n16 --> n17
+    n17 -->|Yes| n18
+    n17 -->|No| n19
+    n18 --> n19
+    n19 --> n10
+    n20 --> n21
+    n21 -->|Yes| n22
+    n21 -->|No| n32
+    n22 --> n23
+    n23 -->|Yes| n24
+    n23 -->|No| n31
+    n24 --> n25
+    n25 -->|Yes| n26
+    n25 -->|No| n27
+    n26 --> n30
+    n27 -->|Yes| n28
+    n27 -->|No| n29
+    n28 --> n29
+    n29 --> n30
+    n30 --> n31
+    n31 --> n21
+    n32 --> n33
+    n33 --> n2

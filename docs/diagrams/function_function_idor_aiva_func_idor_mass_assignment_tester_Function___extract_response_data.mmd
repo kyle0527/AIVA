@@ -1,0 +1,17 @@
+flowchart TB
+    n1([開始])
+    n2([結束])
+    n3[&amp;&#35;39;提取回應資料&amp;&#35;39;]
+    n4[try]
+    n5[return response.json&#40;&#41;]
+    n6[]
+    n7[except Exception]
+    n8[return &#123;&amp;&#35;39;status_code&amp;&#35;39;: respo...]
+    n1 --> n3
+    n3 --> n4
+    n4 --> n5
+    n4 --> n7
+    n5 --> n6
+    n6 --> n2
+    n7 --> n8
+    n8 --> n6

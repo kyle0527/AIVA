@@ -1,0 +1,86 @@
+flowchart TB
+    n1([開始])
+    n2([結束])
+    n3[&amp;&#35;39;\nAttack Path Analyzer - 攻擊路徑分析引擎\n\n使用 Neo4...]
+    n4[from dataclasses import dataclass]
+    n5[from enum import Enum]
+    n6[import logging]
+    n7[from typing import Any]
+    n8[from neo4j import GraphDatabase]
+    n9[from services.aiva_common.enums import Severity]
+    n10[from services.aiva_common.schemas import Asset, Fi...]
+    n11[logger = logging.getLogger&#40;__...]
+    n12[class NodeType&#40;...&#41;]
+    n13[class EdgeType&#40;...&#41;]
+    n14[class AttackPath&#40;...&#41;]
+    n15[class AttackPathEngine&#40;...&#41;]
+    n16{if __name__ == &amp;&#35;39;__main__&amp;&#35;39;}
+    n17[logging.basicConfig&#40;level=logging.INFO&#41;]
+    n18[engine = AttackPathEngine&#40;neo...]
+    n19[try]
+    n20[engine.initialize_graph&#40;&#41;]
+    n21[paths = engine.find_attack_p...]
+    n22{for path in paths}
+    n23[print&#40;f&amp;&#35;39;\n攻擊路徑 &#123;path.path_id&#125;:&...]
+    n24[print&#40;f&amp;&#35;39;  風險分數: &#123;path.total_risk_sco...]
+    n25[print&#40;f&amp;&#35;39;  路徑長度: &#123;path.length&#125;&a...]
+    n26[print&#40;f&amp;&#35;39;  描述: &#123;path.description&#125...]
+    n27[]
+    n28[critical_nodes = engine.find_critical...]
+    n29[print&#40;&amp;&#35;39;\n關鍵節點:&amp;&#35;39;&#41;]
+    n30{for node in critical_nodes}
+    n31[print&#40;f&amp;&#35;39;  - &#123;node.get&#40;&amp;&#35;...]
+    n32[]
+    n33[stats = engine.get_vulnerabi...]
+    n34[print&#40;f&amp;&#35;39;\n漏洞統計: 總計 &#123;stats&#91;&amp;&...]
+    n35{for &#40;severity, count&#41; in stats&#91;&amp;&#35;39;b...}
+    n36[print&#40;f&amp;&#35;39;  &#123;severity&#125;: &#123;cou...]
+    n37[]
+    n38[]
+    n39[finally]
+    n40[engine.close&#40;&#41;]
+    n41[]
+    n1 --> n3
+    n3 --> n4
+    n4 --> n5
+    n5 --> n6
+    n6 --> n7
+    n7 --> n8
+    n8 --> n9
+    n9 --> n10
+    n10 --> n11
+    n11 --> n12
+    n12 --> n13
+    n13 --> n14
+    n14 --> n15
+    n15 --> n16
+    n16 -->|Yes| n17
+    n16 -->|No| n41
+    n17 --> n18
+    n18 --> n19
+    n19 --> n20
+    n20 --> n21
+    n21 --> n22
+    n22 -->|Yes| n23
+    n22 -->|No| n27
+    n23 --> n24
+    n24 --> n25
+    n25 --> n26
+    n26 --> n22
+    n27 --> n28
+    n28 --> n29
+    n29 --> n30
+    n30 -->|Yes| n31
+    n30 -->|No| n32
+    n31 --> n30
+    n32 --> n33
+    n33 --> n34
+    n34 --> n35
+    n35 -->|Yes| n36
+    n35 -->|No| n37
+    n36 --> n35
+    n37 --> n38
+    n38 --> n39
+    n39 --> n40
+    n40 --> n41
+    n41 --> n2

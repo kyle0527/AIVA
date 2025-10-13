@@ -1,0 +1,24 @@
+flowchart TB
+    n1([開始])
+    n2([結束])
+    n3[&amp;&#35;39;\n        將任務加入佇列\n\n        Args:\n        ...]
+    n4[scan_id = task_payload.scan_id]
+    n5[task_id = task_payload.task_id]
+    n6[priority = task_payload.priorit...]
+    n7[queue_item = &#40;-priority, datetime...]
+    n8[self._task_queues&#91;scan_id&#93;.put&#40;queue_item&#41;]
+    n9[self._task_status&#91;task_id&#93; = &#123;&amp;&#35;39;s...]
+    n10[self._scan_stats&#91;scan_id&#93;&#91;&amp;&#35;39;total&...]
+    n11[self._scan_stats&#91;scan_id&#93;&#91;&amp;&#35;39;pendin...]
+    n12[logger.info&#40;f&amp;&#35;39;Enqueued task &#123;task_id...]
+    n1 --> n3
+    n3 --> n4
+    n4 --> n5
+    n5 --> n6
+    n6 --> n7
+    n7 --> n8
+    n8 --> n9
+    n9 --> n10
+    n10 --> n11
+    n11 --> n12
+    n12 --> n2

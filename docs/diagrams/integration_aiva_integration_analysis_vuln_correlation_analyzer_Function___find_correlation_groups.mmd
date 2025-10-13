@@ -1,0 +1,88 @@
+flowchart TB
+    n1([開始])
+    n2([結束])
+    n3[&amp;&#35;39;尋找相關的漏洞組合&amp;&#35;39;]
+    n4[correlation_groups = &#91;&#93;]
+    n5{for &#40;vuln_type, findings&#41; in vulns_by_type.ite...}
+    n6{if vuln_type in self._correlat...}
+    n7[rule = self._correlation_ru...]
+    n8[related = rule.get&#40;&amp;&#35;39;related_ty...]
+    n9{if isinstance&#40;related, str&#41;}
+    n10[related_types = &#91;related&#93;]
+    n11{if isinstance&#40;related, list &#124; ...}
+    n12[related_types = list&#40;related&#41;]
+    n13[related_types = &#91;&#93;]
+    n14[]
+    n15[]
+    n16[found_related = &#91;&#93;]
+    n17{for related_type in related_types}
+    n18{if related_type in vulns_by_type}
+    n19[found_related.append&#40;&#123;&amp;&#35;39;type&amp;&#35...]
+    n20[]
+    n21[]
+    n22{if found_related}
+    n23[raw_multiplier = rule.get&#40;&amp;&#35;39;multiplier...]
+    n24[multiplier = 1.0]
+    n25{if isinstance&#40;raw_multiplier, ...}
+    n26[multiplier = float&#40;raw_multiplier...]
+    n27{if isinstance&#40;raw_multiplier, ...}
+    n28[try]
+    n29[multiplier = float&#40;raw_multiplier...]
+    n30[]
+    n31[except ValueError]
+    n32[multiplier = 1.0]
+    n33[]
+    n34[]
+    n35[correlation_groups.append&#40;&#123;&amp;&#35;39;primary_...]
+    n36[]
+    n37[]
+    n38[]
+    n39[return correlation_groups]
+    n1 --> n3
+    n3 --> n4
+    n4 --> n5
+    n5 -->|Yes| n6
+    n5 -->|No| n38
+    n6 -->|Yes| n7
+    n6 -->|No| n37
+    n7 --> n8
+    n8 --> n9
+    n9 -->|Yes| n10
+    n9 -->|No| n11
+    n10 --> n15
+    n11 -->|Yes| n12
+    n11 -->|No| n13
+    n12 --> n14
+    n13 --> n14
+    n14 --> n15
+    n15 --> n16
+    n16 --> n17
+    n17 -->|Yes| n18
+    n17 -->|No| n21
+    n18 -->|Yes| n19
+    n18 -->|No| n20
+    n19 --> n20
+    n20 --> n17
+    n21 --> n22
+    n22 -->|Yes| n23
+    n22 -->|No| n36
+    n23 --> n24
+    n24 --> n25
+    n25 -->|Yes| n26
+    n25 -->|No| n27
+    n26 --> n34
+    n27 -->|Yes| n28
+    n27 -->|No| n33
+    n28 --> n29
+    n28 --> n31
+    n29 --> n30
+    n30 --> n33
+    n31 --> n32
+    n32 --> n30
+    n33 --> n34
+    n34 --> n35
+    n35 --> n36
+    n36 --> n37
+    n37 --> n5
+    n38 --> n39
+    n39 --> n2

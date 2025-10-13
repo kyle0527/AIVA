@@ -1,0 +1,60 @@
+flowchart TB
+    n1([開始])
+    n2([結束])
+    n3[&amp;&#35;39;\n重構的 SQLi Worker - 實現依賴注入和責任分離\n這是原始 worker...]
+    n4[from __future__ import annotations]
+    n5[import asyncio]
+    n6[from dataclasses import dataclass, field]
+    n7[from typing import Protocol]
+    n8[import httpx]
+    n9[from services.aiva_common.enums import Topic]
+    n10[from services.aiva_common.mq import get_broker]
+    n11[from services.aiva_common.schemas import AivaMessa...]
+    n12[from services.aiva_common.utils import get_logger,...]
+    n13[from .detection_models import DetectionResult]
+    n14[from .engines import BooleanDetectionEngine, Error...]
+    n15[from .result_binder_publisher import SqliResultBin...]
+    n16[from .task_queue import QueuedTask, SqliTaskQueue]
+    n17[from .telemetry import SqliExecutionTelemetry]
+    n18[logger = get_logger&#40;__name__&#41;]
+    n19[DEFAULT_TIMEOUT_SECONDS = 20.0]
+    n20[class DetectionEngineProtocol&#40;...&#41;]
+    n21[class SqliEngineConfig&#40;...&#41;]
+    n22[class SqliContext&#40;...&#41;]
+    n23[class SqliOrchestrator&#40;...&#41;]
+    n24[class SqliWorkerService&#40;...&#41;]
+    n25[def run&#40;...&#41;]
+    n26[def _consume_queue&#40;...&#41;]
+    n27[def _execute_task&#40;...&#41;]
+    n28[def process_task&#40;...&#41;]
+    n29[SqliDetectionContext = SqliContext]
+    n30[SqliDetectionOrchestrator = SqliOrchestrator]
+    n1 --> n3
+    n3 --> n4
+    n4 --> n5
+    n5 --> n6
+    n6 --> n7
+    n7 --> n8
+    n8 --> n9
+    n9 --> n10
+    n10 --> n11
+    n11 --> n12
+    n12 --> n13
+    n13 --> n14
+    n14 --> n15
+    n15 --> n16
+    n16 --> n17
+    n17 --> n18
+    n18 --> n19
+    n19 --> n20
+    n20 --> n21
+    n21 --> n22
+    n22 --> n23
+    n23 --> n24
+    n24 --> n25
+    n25 --> n26
+    n26 --> n27
+    n27 --> n28
+    n28 --> n29
+    n29 --> n30
+    n30 --> n2

@@ -1,0 +1,78 @@
+flowchart TB
+    n1([開始])
+    n2([結束])
+    n3[&amp;quot;Remove hosts that haven&amp;&#35;39;t been used...]
+    n4[ttl = self.host_ttl if ttl...]
+    n5{if ttl is None}
+    n6[return]
+    n7[]
+    n8[try]
+    n9[ttl_val = float&#40;ttl&#41;]
+    n10[]
+    n11[except &#40;TypeError, ...]
+    n12[return]
+    n13{if ttl_val &amp;lt;= 0}
+    n14[return]
+    n15[]
+    n16{if now_mono is None}
+    n17[now_mono = time.monotonic&#40;&#41;]
+    n18[]
+    n19[cutoff = now_mono - ttl_val]
+    n20[with self._hos...]
+    n21[stale_hosts = &#91;host for host, seen...]
+    n22{if not stale_hosts}
+    n23[return]
+    n24[]
+    n25[with self._hos...]
+    n26{for host in stale_hosts}
+    n27[self.host_last_used.pop&#40;host, None&#41;]
+    n28[]
+    n29[with self.conf...]
+    n30{for host in stale_hosts}
+    n31[self.host_overrides.pop&#40;host, None&#41;]
+    n32[]
+    n33{for host in stale_hosts}
+    n34[self.host_buckets.pop&#40;host, None&#41;]
+    n35[]
+    n1 --> n3
+    n3 --> n4
+    n4 --> n5
+    n5 -->|Yes| n6
+    n5 -->|No| n7
+    n6 --> n7
+    n7 --> n8
+    n8 --> n9
+    n8 --> n11
+    n9 --> n10
+    n10 --> n13
+    n11 --> n12
+    n12 --> n10
+    n13 -->|Yes| n14
+    n13 -->|No| n15
+    n14 --> n15
+    n15 --> n16
+    n16 -->|Yes| n17
+    n16 -->|No| n18
+    n17 --> n18
+    n18 --> n19
+    n19 --> n20
+    n20 --> n21
+    n21 --> n22
+    n22 -->|Yes| n23
+    n22 -->|No| n24
+    n23 --> n24
+    n24 --> n25
+    n25 --> n26
+    n26 -->|Yes| n27
+    n26 -->|No| n28
+    n27 --> n26
+    n28 --> n29
+    n29 --> n30
+    n30 -->|Yes| n31
+    n30 -->|No| n32
+    n31 --> n30
+    n32 --> n33
+    n33 -->|Yes| n34
+    n33 -->|No| n35
+    n34 --> n33
+    n35 --> n2
