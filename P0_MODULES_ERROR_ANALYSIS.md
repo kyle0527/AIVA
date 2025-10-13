@@ -29,6 +29,7 @@
 **錯誤位置**: Line 226-240
 
 **當前錯誤代碼**:
+
 ```python
 if self.auth.bearer_token:  # ❌ 屬性不存在
     headers["Authorization"] = f"Bearer {self.auth.bearer_token}"
@@ -37,6 +38,7 @@ elif self.auth.username and self.auth.password:  # ❌ 屬性不存在
 ```
 
 **修正方法**:
+
 ```python
 if self.auth.credentials:
     if "bearer_token" in self.auth.credentials:
@@ -52,6 +54,7 @@ if self.auth.credentials:
 **問題**: `Vulnerability` 模型參數不匹配
 
 **schemas.py 實際定義**:
+
 ```python
 class Vulnerability(BaseModel):
     name: VulnerabilityType  # ✅
@@ -61,6 +64,7 @@ class Vulnerability(BaseModel):
 ```
 
 **當前錯誤代碼**:
+
 ```python
 vulnerability = Vulnerability(
     type=VulnerabilityType.BOLA,  # ❌ 參數名錯誤,應為 name
@@ -72,6 +76,7 @@ vulnerability = Vulnerability(
 ```
 
 **修正方法**:
+
 ```python
 vulnerability = Vulnerability(
     name=VulnerabilityType.BOLA,
@@ -88,6 +93,7 @@ vulnerability = Vulnerability(
 **問題**: `proof_of_concept` 參數不存在,應為 `proof`
 
 **schemas.py 實際定義**:
+
 ```python
 class FindingEvidence(BaseModel):
     payload: str | None = None
@@ -107,6 +113,7 @@ class FindingEvidence(BaseModel):
 **問題**: 無 `confidentiality`, `integrity`, `availability` 參數
 
 **schemas.py 實際定義**:
+
 ```python
 class FindingImpact(BaseModel):
     description: str | None = None
@@ -122,6 +129,7 @@ class FindingImpact(BaseModel):
 **問題**: 無 `remediation`, `references` 參數
 
 **schemas.py 實際定義**:
+
 ```python
 class FindingRecommendation(BaseModel):
     fix: str | None = None
@@ -137,6 +145,7 @@ class FindingRecommendation(BaseModel):
 **問題**: 缺少 `scan_id`, `status` 參數;不應有 `severity`, `confidence`, `tags` 參數
 
 **schemas.py 實際定義**:
+
 ```python
 class FindingPayload(BaseModel):
     finding_id: str
@@ -153,6 +162,7 @@ class FindingPayload(BaseModel):
 ```
 
 **修正**:
+
 ```python
 return FindingPayload(
     finding_id=finding_id,
@@ -173,6 +183,7 @@ return FindingPayload(
 ### 7. `mass_assignment_tester.py` - main() Authentication 構造錯誤
 
 **當前錯誤代碼**:
+
 ```python
 auth = Authentication(
     bearer_token="user_token_12345",  # ❌ 參數不存在
@@ -180,6 +191,7 @@ auth = Authentication(
 ```
 
 **修正**:
+
 ```python
 auth = Authentication(
     method="bearer",
@@ -196,11 +208,13 @@ auth = Authentication(
 **問題**: `FindingPayload` 沒有 `severity` 屬性
 
 **當前錯誤代碼**:
+
 ```python
 print(f"    Severity: {finding.severity}")  # ❌
 ```
 
 **修正**:
+
 ```python
 print(f"    Severity: {finding.vulnerability.severity.value}")  # ✅
 ```
@@ -214,16 +228,19 @@ print(f"    Severity: {finding.vulnerability.severity.value}")  # ✅
 **問題**: 使用了 `cast` 但未 import
 
 **當前錯誤代碼**:
+
 ```python
 result = session.run(cast(str, query_str))  # ❌ cast 未定義
 ```
 
 **修正方法 1** (使用 type: ignore):
+
 ```python
 result = session.run(query_str)  # type: ignore[arg-type]
 ```
 
 **修正方法 2** (移除 cast):
+
 ```python
 # Neo4j f-string 查詢在運行時沒問題,忽略類型檢查
 result = session.run(query_str)  # type: ignore[arg-type]
@@ -236,6 +253,7 @@ result = session.run(query_str)  # type: ignore[arg-type]
 **問題**: `Asset` 沒有 `url` 參數,缺少 `value` 參數
 
 **schemas.py 實際定義**:
+
 ```python
 class Asset(BaseModel):
     asset_id: str
@@ -246,6 +264,7 @@ class Asset(BaseModel):
 ```
 
 **當前錯誤代碼**:
+
 ```python
 asset = Asset(
     asset_id=row["asset_id"],
@@ -255,6 +274,7 @@ asset = Asset(
 ```
 
 **修正**:
+
 ```python
 asset = Asset(
     asset_id=row["asset_id"],
@@ -272,6 +292,7 @@ asset = Asset(
 **所有檔案**: 需要使用 `ruff` 或 `isort` 自動排序
 
 **修正命令**:
+
 ```powershell
 cd c:\D\E\AIVA\AIVA-main
 ruff check --select I --fix services/function/function_idor/aiva_func_idor/
@@ -351,6 +372,7 @@ ruff check --select I --fix services/integration/aiva_integration/attack_path_an
 **需修正的方法**:
 
 #### `_build_headers()` 方法
+
 ```python
 def _build_headers(self) -> dict[str, str]:
     """建立請求標頭"""
@@ -385,6 +407,7 @@ def _build_headers(self) -> dict[str, str]:
 ```
 
 #### `create_finding()` 方法
+
 ```python
 def create_finding(
     self,
@@ -462,6 +485,7 @@ def create_finding(
 ```
 
 #### `main()` 範例修正
+
 ```python
 async def main():
     """測試範例"""
@@ -498,6 +522,7 @@ async def main():
 5. ✅ 驗證所有錯誤已修正
 
 **驗證命令**:
+
 ```powershell
 # 檢查所有錯誤
 pylance --check services/function/function_idor/aiva_func_idor/
