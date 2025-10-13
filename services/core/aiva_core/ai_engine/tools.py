@@ -150,11 +150,14 @@ class CodeAnalyzer(Tool):
         Args:
             **kwargs: 工具參數
                 path (str): 檔案路徑
+                detailed (bool): 是否進行詳細分析 (預設 False)
 
         Returns:
             分析結果
         """
         path = kwargs.get("path", "")
+        detailed = kwargs.get("detailed", False)
+        
         if not path:
             return {"status": "error", "error": "缺少必需參數: path"}
 
@@ -162,24 +165,143 @@ class CodeAnalyzer(Tool):
             full_path = self.codebase_path / path
             content = full_path.read_text(encoding="utf-8")
 
-            # 簡單的程式碼統計
+            # 基本統計
             lines = content.splitlines()
-            import_count = sum(1 for line in lines if line.strip().startswith("import"))
-            function_count = sum(1 for line in lines if line.strip().startswith("def "))
-            class_count = sum(
-                1 for line in lines if line.strip().startswith("class ")
-            )
-
-            return {
+            non_empty_lines = [line for line in lines if line.strip()]
+            comment_lines = [
+                line for line in lines 
+                if line.strip().startswith("#") or line.strip().startswith('"""') or line.strip().startswith("'''")
+            ]
+            
+            result = {
                 "status": "success",
                 "path": path,
                 "total_lines": len(lines),
-                "imports": import_count,
-                "functions": function_count,
-                "classes": class_count,
+                "code_lines": len(non_empty_lines),
+                "comment_lines": len(comment_lines),
+                "blank_lines": len(lines) - len(non_empty_lines),
             }
+
+            # 如果要求詳細分析，使用 AST
+            if detailed:
+                try:
+                    import ast
+                    tree = ast.parse(content)
+                    
+                    # 統計各種節點
+                    imports = []
+                    functions = []
+                    classes = []
+                    async_functions = []
+                    
+                    for node in ast.walk(tree):
+                        if isinstance(node, ast.Import):
+                            imports.extend(alias.name for alias in node.names)
+                        elif isinstance(node, ast.ImportFrom):
+                            module = node.module or ""
+                            imports.append(module)
+                        elif isinstance(node, ast.FunctionDef):
+                            functions.append(node.name)
+                        elif isinstance(node, ast.AsyncFunctionDef):
+                            async_functions.append(node.name)
+                        elif isinstance(node, ast.ClassDef):
+                            classes.append(node.name)
+                    
+                    # 計算複雜度指標
+                    complexity = self._calculate_complexity(tree)
+                    
+                    result.update({
+                        "imports": list(set(imports)),
+                        "import_count": len(set(imports)),
+                        "functions": functions,
+                        "function_count": len(functions),
+                        "async_functions": async_functions,
+                        "async_function_count": len(async_functions),
+                        "classes": classes,
+                        "class_count": len(classes),
+                        "cyclomatic_complexity": complexity,
+                        "has_type_hints": self._check_type_hints(tree),
+                        "has_docstrings": self._check_docstrings(tree),
+                    })
+                except SyntaxError as e:
+                    result["syntax_error"] = str(e)
+            else:
+                # 簡單統計（向後兼容）
+                import_count = sum(1 for line in lines if line.strip().startswith("import"))
+                function_count = sum(1 for line in lines if line.strip().startswith("def "))
+                class_count = sum(1 for line in lines if line.strip().startswith("class "))
+                
+                result.update({
+                    "imports": import_count,
+                    "functions": function_count,
+                    "classes": class_count,
+                })
+
+            return result
         except Exception as e:
             return {"status": "error", "path": path, "error": str(e)}
+    
+    def _calculate_complexity(self, tree: Any) -> int:
+        """計算循環複雜度.
+        
+        Args:
+            tree: AST 樹
+            
+        Returns:
+            複雜度分數
+        """
+        import ast
+        complexity = 1  # 基礎複雜度
+        
+        for node in ast.walk(tree):
+            # 每個決策點增加複雜度
+            if isinstance(node, (ast.If, ast.While, ast.For, ast.ExceptHandler)):
+                complexity += 1
+            elif isinstance(node, ast.BoolOp):
+                complexity += len(node.values) - 1
+                
+        return complexity
+    
+    def _check_type_hints(self, tree: Any) -> bool:
+        """檢查是否使用類型提示.
+        
+        Args:
+            tree: AST 樹
+            
+        Returns:
+            是否有類型提示
+        """
+        import ast
+        
+        for node in ast.walk(tree):
+            if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
+                # 檢查參數類型提示
+                if node.args.args:
+                    for arg in node.args.args:
+                        if arg.annotation is not None:
+                            return True
+                # 檢查返回值類型提示
+                if node.returns is not None:
+                    return True
+        return False
+    
+    def _check_docstrings(self, tree: Any) -> bool:
+        """檢查是否有文檔字串.
+        
+        Args:
+            tree: AST 樹
+            
+        Returns:
+            是否有文檔字串
+        """
+        import ast
+        
+        for node in ast.walk(tree):
+            if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef, ast.Module)):
+                docstring = ast.get_docstring(node)
+                if docstring:
+                    return True
+        return False
 
 
 class CommandExecutor(Tool):
