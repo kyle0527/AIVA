@@ -1,0 +1,45 @@
+flowchart TB
+    n1([開始])
+    n2([結束])
+    n3[&amp;&#35;39;\n        執行一個任務,包含完整的 RAG 流程.\n\n        Ar...]
+    n4[logger.info&#40;f&amp;&#35;39;\n--- 開始新任務: &#123;task&#12...]
+    n5[logger.info&#40;&amp;&#35;39;1. &#91;檢索&#93; 正在從知識庫中搜尋相關上...]
+    n6[context_str = &amp;&#35;39;&amp;&#35;39;]
+    n7[logger.info&#40;&amp;&#35;39;2. &#91;增強&#93; 正在結合任務與上下文.....]
+    n8[input_vector = self._create_input_v...]
+    n9[logger.info&#40;&amp;&#35;39;3. &#91;決策&#93; BioNeuronAI ...]
+    n10[decision_potential = self.decision_core.f...]
+    n11[&#40;is_confident, confidence&#41; = self.anti_hallucinat...]
+    n12{if not is_confident}
+    n13[return &#123;&amp;&#35;39;status&amp;&#35;39;: &amp;&#35;...]
+    n14[]
+    n15[chosen_tool_index = int&#40;np.argmax&#40;decisi...]
+    n16[chosen_tool = self.tools&#91;chosen_to...]
+    n17[tool_confidence = float&#40;decision_poten...]
+    n18[logger.info&#40;f&amp;quot;4. &#91;執行&#93; 選擇工具: &amp;&#3...]
+    n19[logger.info&#40;&amp;&#35;39;5. &#91;完成&#93; 任務步驟執行完畢。&am...]
+    n20[response = &#123;&amp;&#35;39;status&amp;&#35;39;: &amp;&...]
+    n21[self.history.append&#40;response&#41;]
+    n22[return response]
+    n1 --> n3
+    n3 --> n4
+    n4 --> n5
+    n5 --> n6
+    n6 --> n7
+    n7 --> n8
+    n8 --> n9
+    n9 --> n10
+    n10 --> n11
+    n11 --> n12
+    n12 -->|Yes| n13
+    n12 -->|No| n14
+    n13 --> n14
+    n14 --> n15
+    n15 --> n16
+    n16 --> n17
+    n17 --> n18
+    n18 --> n19
+    n19 --> n20
+    n20 --> n21
+    n21 --> n22
+    n22 --> n2

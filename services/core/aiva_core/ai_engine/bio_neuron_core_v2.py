@@ -5,8 +5,8 @@ BioNeuron Core V2 - 完整 RAG 與工具整合版本
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any
 import logging
+from typing import TYPE_CHECKING, Any
 
 import numpy as np
 

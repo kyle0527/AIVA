@@ -216,7 +216,7 @@ def start_ui_server(
 
     # 啟動伺服器
     print(f"\n{'='*60}")
-    print(f"   啟動 AIVA UI 面板伺服器")
+    print("   啟動 AIVA UI 面板伺服器")
     print(f"{'='*60}")
     print(f"位址: http://{host}:{port}")
     print(f"API 文檔: http://{host}:{port}/docs")

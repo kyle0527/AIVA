@@ -1,0 +1,42 @@
+flowchart TB
+    n1([開始])
+    n2([結束])
+    n3[&amp;&#35;39;檢索相關的程式碼片段.\n\n        Args:\n            qu...]
+    n4[query_keywords = query.lower&#40;&#41;.split&#40;...]
+    n5[scores: dict&#91;int, int&#93; = &#123;&#125;]
+    n6{for keyword in query_keywords}
+    n7{if keyword in self.index}
+    n8{for chunk_id in self.index&#91;keyword&#93;}
+    n9[scores&#91;chunk_id&#93; = scores.get&#40;chunk_id,...]
+    n10[]
+    n11[]
+    n12[]
+    n13[sorted_chunks = sorted&#40;scores.items&#40;...]
+    n14[results = &#91;&#93;]
+    n15{for &#40;chunk_id, score&#41; in sorted_chunks&#91;:to...}
+    n16[chunk = self.chunks&#91;chunk_id...]
+    n17[results.append&#40;&#123;&amp;&#35;39;path&amp;&#35;39;: ...]
+    n18[]
+    n19[return results]
+    n1 --> n3
+    n3 --> n4
+    n4 --> n5
+    n5 --> n6
+    n6 -->|Yes| n7
+    n6 -->|No| n12
+    n7 -->|Yes| n8
+    n7 -->|No| n11
+    n8 -->|Yes| n9
+    n8 -->|No| n10
+    n9 --> n8
+    n10 --> n11
+    n11 --> n6
+    n12 --> n13
+    n13 --> n14
+    n14 --> n15
+    n15 -->|Yes| n16
+    n15 -->|No| n18
+    n16 --> n17
+    n17 --> n15
+    n18 --> n19
+    n19 --> n2

@@ -1,5 +1,5 @@
-files_checked: 168
-issues_found: 99
+files_checked: 169
+issues_found: 98
 c:\D\E\AIVA\AIVA-main\emoji_backups\services__core__aiva_core__ai_engine__bio_neuron_core_v2.py	202	        print(f"🚀 收到新任務: {query}")
 c:\D\E\AIVA\AIVA-main\emoji_backups\services__core__aiva_core__ai_engine__bio_neuron_core_v2.py	206	        print("📚 [步驟 1/5] RAG 知識檢索")
 c:\D\E\AIVA\AIVA-main\emoji_backups\services__core__aiva_core__ai_engine__bio_neuron_core_v2.py	208	        print(f"   ✓ 檢索到 {len(retrieved_chunks)} 個相關程式碼片段:")
@@ -87,7 +87,6 @@ c:\D\E\AIVA\AIVA-main\emoji_backups\tools__replace_emoji.py	33	    '🔢': '[數
 c:\D\E\AIVA\AIVA-main\emoji_backups\tools__replace_emoji.py	34	    '🧠': '[神經網路]',
 c:\D\E\AIVA\AIVA-main\emoji_backups\tools__replace_emoji.py	35	    '🚨': '[警報]',
 c:\D\E\AIVA\AIVA-main\emoji_backups\tools__replace_emoji.py	36	    '📖': '[說明]',
-c:\D\E\AIVA\AIVA-main\emoji_backups\tools__replace_emoji.py	37	    '📡': '[API]',
 c:\D\E\AIVA\AIVA-main\emoji_backups\tools__update_imports.py	37	            print(f"✅ 已更新: {file_path}")
 c:\D\E\AIVA\AIVA-main\emoji_backups\tools__update_imports.py	43	        print(f"❌ 更新失敗 {file_path}: {e}")
 c:\D\E\AIVA\AIVA-main\emoji_backups\tools__update_imports.py	64	            print(f"⚠️ 目錄不存在: {directory}")
