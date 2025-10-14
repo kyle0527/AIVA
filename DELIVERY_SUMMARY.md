@@ -36,13 +36,13 @@
 
 ### ✅ 架構與視覺化文件 (2份)
 
-5. **docs/ARCHITECTURE_MULTILANG.md** (3KB)
+1. **docs/ARCHITECTURE_MULTILANG.md** (3KB)
    - Mermaid 架構圖
    - 語言職責分佈
    - 通訊流程
    - 設計原則
 
-6. **PROGRESS_DASHBOARD.md** (25KB)
+1. **PROGRESS_DASHBOARD.md** (25KB)
    - 進度追蹤看板
    - 關鍵指標儀表板
    - 時間軸與里程碑
@@ -50,8 +50,9 @@
 
 ### ✅ Go 共用模組 (已完成並測試)
 
-7. **aiva_common_go/** 
-   ```
+7. **aiva_common_go/**
+
+   ```text
    services/function/common/go/aiva_common_go/
    ├── go.mod                    ✅
    ├── README.md                 ✅
@@ -67,8 +68,9 @@
        ├── message.go            ✅
        └── message_test.go       ✅
    ```
-   
+
    **測試結果:**
+
    ```
    === RUN   TestLoadConfig
    --- PASS: TestLoadConfig (0.00s)
@@ -86,12 +88,13 @@
 
 ### ✅ 工具腳本 (2個)
 
-8. **init_go_common.ps1**
-   - 初始化 Go 共用模組
-   - 下載依賴
-   - 執行測試
+   **init_go_common.ps1**
 
-9. **migrate_sca_service.ps1**
+- 初始化 Go 共用模組
+- 下載依賴
+- 執行測試
+
+1. **migrate_sca_service.ps1**
    - SCA 服務遷移範例
    - 備份與回滾機制
    - 差異比較
@@ -112,25 +115,33 @@
 ### 2. 解決的關鍵問題
 
 #### ❌ 問題: Go 服務 60% 程式碼重複
-**✅ 解決方案:** 
+
+**✅ 解決方案:**
+
 - 建立 `aiva_common_go` 統一模組
 - 提供 MQ、Logger、Config、Schema 共用功能
 - 預期減少 45% 程式碼量
 
 #### ❌ 問題: Schema 跨語言同步困難
+
 **✅ 解決方案:**
+
 - 短期: Go struct 對應 Python Pydantic
 - 長期: 評估 Protocol Buffers 遷移
 - CI/CD 自動驗證 Schema 一致性
 
 #### ❌ 問題: SAST 規則更新需重編譯
+
 **✅ 解決方案:**
+
 - 規則外部化 (YAML 檔案)
 - 動態重載機制
 - 擴充到 50+ 條規則
 
 #### ❌ 問題: 動態掃描 API 發現率僅 30%
+
 **✅ 解決方案:**
+
 - 實作 `APIDiscoveryService`
 - 增強 `InteractionSimulator`
 - 目標提升到 80%+
@@ -246,8 +257,10 @@ code services\function\function_sca_go\cmd\worker\main.go.example
 ## 🎯 關鍵里程碑
 
 ### Milestone 1: Go 服務統一化 (Week 2 結束)
+
 **日期:** 2025-10-27  
 **標準:**
+
 - ✅ 4個 Go 服務全部使用 aiva_common_go
 - ✅ 程式碼重複率 < 15%
 - ✅ 所有測試通過
@@ -256,8 +269,10 @@ code services\function\function_sca_go\cmd\worker\main.go.example
 **慶祝:** 團隊聚餐 + 技術分享
 
 ### Milestone 2: 動態掃描能力提升 (Week 4 結束)
+
 **日期:** 2025-11-10  
 **標準:**
+
 - ✅ API 發現率 > 75%
 - ✅ 表單填充成功率 > 85%
 - ✅ Python Playwright 完全移除
@@ -265,8 +280,10 @@ code services\function\function_sca_go\cmd\worker\main.go.example
 **慶祝:** Demo 展示
 
 ### Milestone 3: SAST 引擎業界領先 (Week 6 結束)
+
 **日期:** 2025-11-24  
 **標準:**
+
 - ✅ 規則數量 > 50
 - ✅ 規則可動態載入
 - ✅ 掃描效能提升 25%+
@@ -274,8 +291,10 @@ code services\function\function_sca_go\cmd\worker\main.go.example
 **慶祝:** 技術部落格發布
 
 ### Milestone 4: 多語言架構完全實施 (Week 10 結束)
+
 **日期:** 2025-12-22  
 **標準:**
+
 - ✅ 所有 Phase 完成
 - ✅ 整合測試覆蓋率 > 70%
 - ✅ Protobuf 遷移決策完成
@@ -289,11 +308,13 @@ code services\function\function_sca_go\cmd\worker\main.go.example
 ### 專案團隊
 
 **專案經理:**
+
 - 姓名: [待填寫]
 - Email: [待填寫]
 - Slack: [待填寫]
 
 **Tech Leads:**
+
 - Python Lead: [待填寫]
 - Go Lead: [待填寫]
 - Rust Lead: [待填寫]
@@ -320,12 +341,14 @@ code services\function\function_sca_go\cmd\worker\main.go.example
 ### 程式碼審查
 
 **標準流程:**
+
 1. 建立 PR 並填寫完整描述
 2. 執行 CI/CD 確保測試通過
 3. 至少 2 位 reviewer 批准
 4. 合併前 rebase main 分支
 
 **審查重點:**
+
 - 程式碼品質與可讀性
 - 測試覆蓋率
 - 文件更新
@@ -351,11 +374,13 @@ git push origin feature/task-description
 ### 測試策略
 
 **必須包含:**
+
 - ✅ 單元測試 (覆蓋率 > 80%)
 - ✅ 整合測試 (關鍵路徑)
 - ✅ 效能測試 (基準比較)
 
 **測試金字塔:**
+
 ```
         /\
        /  \  E2E Tests (10%)

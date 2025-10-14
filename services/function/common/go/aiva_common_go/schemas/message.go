@@ -26,27 +26,27 @@ type AivaMessage struct {
 
 // FunctionTaskPayload 對應 Python aiva_common.schemas.FunctionTaskPayload
 type FunctionTaskPayload struct {
-	TaskID         string                  `json:"task_id"`
-	ScanID         string                  `json:"scan_id"`
-	Priority       int                     `json:"priority"`
-	Target         FunctionTaskTarget      `json:"target"`
-	Context        FunctionTaskContext     `json:"context"`
-	Strategy       string                  `json:"strategy"`
-	CustomPayloads []string                `json:"custom_payloads,omitempty"`
-	TestConfig     FunctionTaskTestConfig  `json:"test_config"`
+	TaskID         string                 `json:"task_id"`
+	ScanID         string                 `json:"scan_id"`
+	Priority       int                    `json:"priority"`
+	Target         FunctionTaskTarget     `json:"target"`
+	Context        FunctionTaskContext    `json:"context"`
+	Strategy       string                 `json:"strategy"`
+	CustomPayloads []string               `json:"custom_payloads,omitempty"`
+	TestConfig     FunctionTaskTestConfig `json:"test_config"`
 }
 
 // FunctionTaskTarget 對應 Python aiva_common.schemas.FunctionTaskTarget
 type FunctionTaskTarget struct {
-	URL                string                 `json:"url"`
-	Parameter          *string                `json:"parameter,omitempty"`
-	Method             string                 `json:"method"`
-	ParameterLocation  string                 `json:"parameter_location"`
-	Headers            map[string]string      `json:"headers"`
-	Cookies            map[string]string      `json:"cookies"`
-	FormData           map[string]interface{} `json:"form_data"`
-	JSONData           map[string]interface{} `json:"json_data,omitempty"`
-	Body               *string                `json:"body,omitempty"`
+	URL               string                 `json:"url"`
+	Parameter         *string                `json:"parameter,omitempty"`
+	Method            string                 `json:"method"`
+	ParameterLocation string                 `json:"parameter_location"`
+	Headers           map[string]string      `json:"headers"`
+	Cookies           map[string]string      `json:"cookies"`
+	FormData          map[string]interface{} `json:"form_data"`
+	JSONData          map[string]interface{} `json:"json_data,omitempty"`
+	Body              *string                `json:"body,omitempty"`
 }
 
 // FunctionTaskContext 對應 Python aiva_common.schemas.FunctionTaskContext
@@ -69,19 +69,19 @@ type FunctionTaskTestConfig struct {
 
 // FindingPayload 對應 Python aiva_common.schemas.FindingPayload
 type FindingPayload struct {
-	FindingID      string                  `json:"finding_id"`
-	TaskID         string                  `json:"task_id"`
-	ScanID         string                  `json:"scan_id"`
-	Status         string                  `json:"status"`
-	Vulnerability  Vulnerability           `json:"vulnerability"`
-	Target         Target                  `json:"target"`
-	Strategy       *string                 `json:"strategy,omitempty"`
-	Evidence       *FindingEvidence        `json:"evidence,omitempty"`
-	Impact         *FindingImpact          `json:"impact,omitempty"`
-	Recommendation *FindingRecommendation  `json:"recommendation,omitempty"`
-	Metadata       map[string]interface{}  `json:"metadata,omitempty"`
-	CreatedAt      time.Time               `json:"created_at"`
-	UpdatedAt      time.Time               `json:"updated_at"`
+	FindingID      string                 `json:"finding_id"`
+	TaskID         string                 `json:"task_id"`
+	ScanID         string                 `json:"scan_id"`
+	Status         string                 `json:"status"`
+	Vulnerability  Vulnerability          `json:"vulnerability"`
+	Target         Target                 `json:"target"`
+	Strategy       *string                `json:"strategy,omitempty"`
+	Evidence       *FindingEvidence       `json:"evidence,omitempty"`
+	Impact         *FindingImpact         `json:"impact,omitempty"`
+	Recommendation *FindingRecommendation `json:"recommendation,omitempty"`
+	Metadata       map[string]interface{} `json:"metadata,omitempty"`
+	CreatedAt      time.Time              `json:"created_at"`
+	UpdatedAt      time.Time              `json:"updated_at"`
 }
 
 // Vulnerability 對應 Python aiva_common.schemas.Vulnerability
@@ -137,11 +137,11 @@ type FindingRecommendation struct {
 
 // LocationInfo 位置資訊 (保留用於舊版相容)
 type LocationInfo struct {
-	URL       string  `json:"url,omitempty"`
-	FilePath  string  `json:"file_path,omitempty"`
-	Line      *int    `json:"line,omitempty"`
-	Column    *int    `json:"column,omitempty"`
-	Function  string  `json:"function,omitempty"`
-	Method    string  `json:"method,omitempty"`
-	Parameter string  `json:"parameter,omitempty"`
+	URL       string `json:"url,omitempty"`
+	FilePath  string `json:"file_path,omitempty"`
+	Line      *int   `json:"line,omitempty"`
+	Column    *int   `json:"column,omitempty"`
+	Function  string `json:"function,omitempty"`
+	Method    string `json:"method,omitempty"`
+	Parameter string `json:"parameter,omitempty"`
 }

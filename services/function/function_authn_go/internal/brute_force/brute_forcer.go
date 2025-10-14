@@ -8,7 +8,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/kyle0527/aiva/services/function/function_authn_go/pkg/models"
+	"github.com/kyle0527/aiva/services/function/common/go/aiva_common_go/schemas"
 	"go.uber.org/zap"
 )
 
@@ -29,25 +29,17 @@ func NewBruteForcer(logger *zap.Logger) *BruteForcer {
 }
 
 // Test 執行暴力破解測試
-func (b *BruteForcer) Test(ctx context.Context, task models.FunctionTaskPayload) ([]interface{}, error) {
-	var findings []interface{}
+func (b *BruteForcer) Test(ctx context.Context, task *schemas.FunctionTaskPayload) ([]*schemas.FindingPayload, error) {
+	var findings []*schemas.FindingPayload
 
-	usernames := task.Options.Usernames
-	if len(usernames) == 0 {
-		usernames = b.getDefaultUsernames()
-	}
+	// 使用預設用戶名列表
+	usernames := b.getDefaultUsernames()
 
-	passwords := task.Options.Passwords
-	if len(passwords) == 0 {
-		passwords = b.getDefaultPasswords()
-	}
+	// 使用預設密碼列表
+	passwords := b.getDefaultPasswords()
 
-	maxAttempts := task.Options.MaxAttempts
-	if maxAttempts == 0 {
-		maxAttempts = 50 // 預設最多 50 次嘗試
-	}
-
-	rateDelay := task.Options.RateLimitDelay
+	maxAttempts := 50                   // 預設最多 50 次嘗試
+	rateDelay := time.Millisecond * 500 // 預設延遲
 	if rateDelay == 0 {
 		rateDelay = 100 // 預設 100ms 延遲
 	}

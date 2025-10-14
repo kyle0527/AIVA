@@ -33,18 +33,21 @@
 
 ### 2. 三大核心原則
 
-**契約先行 (Contract First)**
+#### 契約先行 (Contract First)
+
 - 單一事實來源: `aiva_common/schemas.py`
 - 未來遷移到 Protocol Buffers 實現多語言程式碼生成
 - 強制版本控制與向後相容性
 
-**共用程式碼庫 (Shared Libraries)**
+#### 共用程式碼庫 (Shared Libraries)
+
 - Python: `aiva_common` (已完成 ✅)
 - Go: `aiva_common_go` (新建 🆕)
 - TypeScript: `@aiva/common` (規劃中)
 - Rust: `aiva_common_rust` (規劃中)
 
 **Docker 最終抽象層**
+
 - 每個微服務獨立容器化
 - 語言實作對外部透明
 - 統一部署與擴展
@@ -56,6 +59,7 @@
 ### 1. Go 共用模組 - `aiva_common_go`
 
 **建立的檔案:**
+
 ```
 services/function/common/go/aiva_common_go/
 ├── go.mod                        # 模組定義
@@ -67,6 +71,7 @@ services/function/common/go/aiva_common_go/
 ```
 
 **功能特性:**
+
 - ✅ 統一的 RabbitMQ 連接與重連機制
 - ✅ 自動 Ack/Nack 處理
 - ✅ 結構化日誌 (基於 zap)
@@ -74,6 +79,7 @@ services/function/common/go/aiva_common_go/
 - ✅ 與 Python schemas 對應的 Go struct
 
 **預期效果:**
+
 - 消除 **60%** 的重複程式碼
 - 加速新 Go 服務開發 **50%**
 - 統一錯誤處理和日誌格式
@@ -81,11 +87,13 @@ services/function/common/go/aiva_common_go/
 ### 2. 遷移指南與腳本
 
 **提供的工具:**
+
 - `init_go_common.ps1` - 初始化 Go 共用模組
 - `migrate_sca_service.ps1` - SCA 服務遷移範例
 - 詳細的重構前後對比程式碼
 
 **遷移效果 (以 SCA 為例):**
+
 ```
 遷移前: main.go ~150 行 (包含 RabbitMQ 連接、日誌設定等)
 遷移後: main.go ~80 行 (專注於業務邏輯)
@@ -100,15 +108,19 @@ services/function/common/go/aiva_common_go/
 ### Python - 智慧中樞
 
 **當前優勢:**
+
 - ✅ `aiva_common` 已建立完善
 - ✅ Pydantic schemas 提供強類型
 - ✅ FastAPI 架構清晰
 
 **高優先級改進 (2週內):**
+
 1. **深化類型檢查**
+
    ```bash
    mypy services/core services/integration --strict
    ```
+
    目標: 類型覆蓋率從 60% 提升到 90%
 
 2. **強化 FastAPI 依賴注入**
@@ -122,6 +134,7 @@ services/function/common/go/aiva_common_go/
    - 通用錯誤處理裝飾器
 
 **核心職責:**
+
 - ✅ Core 協調與任務分發
 - ✅ AI 引擎 (BioNeuronRAGAgent)
 - ✅ 資產與漏洞生命週期管理
@@ -133,18 +146,22 @@ services/function/common/go/aiva_common_go/
 ### Go - 高效工兵
 
 **當前問題:**
+
 - ❌ 各服務重複實作 RabbitMQ (60% 重複)
 - ❌ 日誌格式不統一
 - ❌ Schema 與 Python 不同步
 
 **已解決 (透過 aiva_common_go):**
+
 - ✅ 統一 MQ 客戶端
 - ✅ 標準化日誌
 - ✅ 統一配置管理
 - ✅ Schema 對應
 
 **高優先級改進 (1週內):**
+
 1. **遷移現有服務使用共用模組**
+
    ```powershell
    # 第1個: function_sca_go
    .\migrate_sca_service.ps1
@@ -160,6 +177,7 @@ services/function/common/go/aiva_common_go/
    - 使用 WaitGroup 和 Channel 模式
 
 3. **整合業界工具**
+
    ```go
    // 在 SCA 中整合 Trivy
    func scanWithTrivy(image string) []Vulnerability {
@@ -169,6 +187,7 @@ services/function/common/go/aiva_common_go/
    ```
 
 **核心職責:**
+
 - ✅ CSPM (雲端安全組態管理)
 - ✅ SCA (軟體組成分析)
 - ✅ 認證測試 (暴力破解)
@@ -180,12 +199,15 @@ services/function/common/go/aiva_common_go/
 ### Rust - 效能刺客
 
 **當前優勢:**
+
 - ✅ `function_sast_rust` 已整合 tree-sitter
 - ✅ `info_gatherer_rust` 使用高效 aho-corasick
 - ✅ Release 優化配置完善 (LTO, opt-level=3)
 
 **高優先級改進 (2週內):**
+
 1. **規則引擎外部化**
+
    ```yaml
    # rules/sql_injection.yml
    - id: sql-001
@@ -198,7 +220,7 @@ services/function/common/go/aiva_common_go/
          function: (identifier) @func
          arguments: (binary_expression))
    ```
-   
+
    優勢:
    - 規則可動態更新,無需重新編譯
    - 安全研究員可直接貢獻規則
@@ -210,6 +232,7 @@ services/function/common/go/aiva_common_go/
    - 提取準確的程式碼上下文
 
 3. **為 Python 提供高效能擴充 (PyO3)**
+
    ```rust
    #[pyfunction]
    fn fast_entropy_scan(text: &str) -> Vec<(String, f64)> {
@@ -218,6 +241,7 @@ services/function/common/go/aiva_common_go/
    ```
 
 **核心職責:**
+
 - ✅ SAST (靜態程式碼分析)
 - ✅ 秘密與敏感資訊掃描
 - ✅ 正則表達式密集運算
@@ -229,13 +253,16 @@ services/function/common/go/aiva_common_go/
 ### TypeScript/Node.js - 瀏覽器大師
 
 **當前優勢:**
+
 - ✅ `aiva_scan_node` 已實作完整的 Playwright 動態掃描
 - ✅ 已有增強服務: `EnhancedDynamicScanService`
 - ✅ 已有互動模擬: `InteractionSimulator`
 - ✅ 已有網路攔截: `NetworkInterceptor`
 
 **高優先級改進 (1週內):**
+
 1. **確認完全替代 Python Playwright**
+
    ```powershell
    # 檢查是否有殘留
    grep -r "playwright" services/core/ services/integration/
@@ -248,6 +275,7 @@ services/function/common/go/aiva_common_go/
    - DOM 穩定性等待
 
 3. **增強 API 端點發現**
+
    ```typescript
    // 自動記錄所有 XHR/Fetch 請求
    class APIDiscoveryService {
@@ -257,11 +285,13 @@ services/function/common/go/aiva_common_go/
 
 **中優先級改進 (1個月內):**
 4. **建立 `@aiva/common` npm package**
-   - 與 Python schemas 對應的 TypeScript interfaces
-   - 統一的 RabbitMQ 客戶端
-   - 標準化日誌
+
+- 與 Python schemas 對應的 TypeScript interfaces
+- 統一的 RabbitMQ 客戶端
+- 標準化日誌
 
 **核心職責:**
+
 - ✅ 所有 Playwright 相關的動態掃描
 - ✅ SPA (單頁應用) 渲染與測試
 - ✅ API 端點自動發現
@@ -284,6 +314,7 @@ services/function/common/go/aiva_common_go/
 - [ ] 更新文件
 
 **執行指令:**
+
 ```powershell
 # 初始化
 .\init_go_common.ps1
@@ -292,7 +323,8 @@ services/function/common/go/aiva_common_go/
 .\migrate_sca_service.ps1
 ```
 
-**驗收標準:** 
+**驗收標準:**
+
 - `function_sca_go` 程式碼行數減少 30%
 - 所有測試通過
 - 功能與原版一致
@@ -309,6 +341,7 @@ services/function/common/go/aiva_common_go/
 - [ ] 建立單元測試覆蓋共用模組
 
 **驗收標準:**
+
 - 所有 Go 服務使用共用模組
 - 測試覆蓋率 > 80%
 - CI/CD 通過
@@ -325,6 +358,7 @@ services/function/common/go/aiva_common_go/
 - [ ] 確認 Python 中無 Playwright 殘留
 
 **驗收標準:**
+
 - 動態掃描能自動發現並填充 80% 的表單
 - 記錄所有 API 請求
 - API 發現率從 30% 提升到 80%
@@ -341,6 +375,7 @@ services/function/common/go/aiva_common_go/
 - [ ] 效能基準測試
 
 **驗收標準:**
+
 - 規則可動態更新,無需重編譯
 - SAST 規則數量從 15 增加到 50
 - 掃描效能提升 20%
@@ -356,6 +391,7 @@ services/function/common/go/aiva_common_go/
 - [ ] 混沌測試: 服務失敗時的復原能力
 
 **驗收標準:**
+
 - 整合測試覆蓋率 > 70%
 - 所有核心流程可自動化驗證
 - 平均回應時間 < 500ms
@@ -372,6 +408,7 @@ services/function/common/go/aiva_common_go/
 - [ ] 決策: 是否全面遷移
 
 **驗收標準:**
+
 - 完成可行性評估報告
 - POC 驗證 Schema 自動生成可行
 - 制定遷移計劃 (如決定採用)
@@ -408,12 +445,14 @@ services/function/common/go/aiva_common_go/
 ### 1. 為什麼選擇多語言架構?
 
 **單一語言的局限:**
+
 - Python: 效能不足以應對大規模程式碼掃描
 - Go: 缺乏成熟的 AI 生態系統
 - Rust: 開發速度慢,不適合快速迭代
 - Node.js: 不擅長 CPU 密集型計算
 
 **多語言的優勢:**
+
 - ✅ 為每個任務選擇最適任的工具
 - ✅ 發揮各語言的生態系統優勢
 - ✅ 團隊成員可專精不同領域
@@ -422,6 +461,7 @@ services/function/common/go/aiva_common_go/
 ### 2. 如何避免混亂?
 
 **關鍵機制:**
+
 1. **契約先行**: 統一的 Schema 定義
 2. **共用模組**: 消除重複程式碼
 3. **清晰邊界**: 每種語言專注於特定領域
@@ -431,12 +471,14 @@ services/function/common/go/aiva_common_go/
 ### 3. 團隊如何協作?
 
 **專精領域分工:**
+
 - Python 團隊: Core, Integration, AI
 - Go 團隊: 雲端安全, 依賴掃描
 - Rust 團隊: SAST, 秘密掃描
 - Full-stack 團隊: Node.js 動態掃描
 
 **跨團隊協作:**
+
 - 每週技術分享會
 - Pair Programming 促進知識傳遞
 - 統一的程式碼審查標準
@@ -452,6 +494,7 @@ services/function/common/go/aiva_common_go/
 **影響:** 高  
 
 **緩解措施:**
+
 - ✅ 嚴格執行共用模組策略
 - ✅ 建立完善的 CI/CD 自動化測試
 - ✅ 定期舉辦跨語言技術分享會
@@ -465,6 +508,7 @@ services/function/common/go/aiva_common_go/
 **影響:** 高  
 
 **緩解措施:**
+
 - ✅ 短期: 建立自動化驗證腳本
 - ✅ 中期: 遷移到 Protocol Buffers
 - ✅ 強制執行版本控制
@@ -478,6 +522,7 @@ services/function/common/go/aiva_common_go/
 **影響:** 中  
 
 **緩解措施:**
+
 - ✅ 每位成員專精 1-2 種語言,了解其他語言基礎
 - ✅ 建立詳細的開發文件和範例
 - ✅ Pair Programming 促進知識傳遞
@@ -488,18 +533,22 @@ services/function/common/go/aiva_common_go/
 ## 📚 相關文件
 
 ### 核心文件
+
 - **[MULTILANG_STRATEGY.md](./MULTILANG_STRATEGY.md)** - 完整策略文件 (146KB)
 - **[MULTILANG_STRATEGY_SUMMARY.md](./MULTILANG_STRATEGY_SUMMARY.md)** - 快速摘要
 - **[ARCHITECTURE_MULTILANG.md](./docs/ARCHITECTURE_MULTILANG.md)** - 架構圖與視覺化
 
 ### 實施工具
+
 - **[init_go_common.ps1](./init_go_common.ps1)** - 初始化 Go 共用模組
 - **[migrate_sca_service.ps1](./migrate_sca_service.ps1)** - SCA 服務遷移範例
 
 ### 共用模組
+
 - **[aiva_common_go README](./services/function/common/go/aiva_common_go/README.md)** - Go 共用模組使用指南
 
 ### 現有實施報告
+
 - **[ENHANCEMENT_IMPLEMENTATION_REPORT.md](./ENHANCEMENT_IMPLEMENTATION_REPORT.md)** - 生命週期管理增強報告
 
 ---
@@ -517,6 +566,7 @@ services/function/common/go/aiva_common_go/
 ### 立即行動
 
 **本週內:**
+
 ```powershell
 # 1. 初始化 Go 共用模組
 .\init_go_common.ps1

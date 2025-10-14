@@ -2,48 +2,53 @@ package main
 
 import (
 	"context"
+	"encoding/json"
 	"os"
 	"os/signal"
 	"syscall"
 
+	"github.com/kyle0527/aiva/services/function/common/go/aiva_common_go/config"
+	"github.com/kyle0527/aiva/services/function/common/go/aiva_common_go/logger"
+	"github.com/kyle0527/aiva/services/function/common/go/aiva_common_go/mq"
+	"github.com/kyle0527/aiva/services/function/common/go/aiva_common_go/schemas"
 	"github.com/kyle0527/aiva/services/function/function_authn_go/internal/brute_force"
 	"github.com/kyle0527/aiva/services/function/function_authn_go/internal/token_test"
-	"github.com/kyle0527/aiva/services/function/function_authn_go/internal/weak_config"
-	"github.com/kyle0527/aiva/services/function/function_authn_go/pkg/messaging"
+
+	// TODO: 需要更新 internal 測試器使用 schemas 而不是 models
+	// "github.com/kyle0527/aiva/services/function/function_authn_go/internal/brute_force"
+	// "github.com/kyle0527/aiva/services/function/function_authn_go/internal/token_test"
 	"go.uber.org/zap"
 )
 
 func main() {
-	// 初始化日誌
-	logger, _ := zap.NewProduction()
-	defer logger.Sync()
-
-	logger.Info("🔐 Starting AIVA Function-AuthN Worker (Go)")
-
-	// RabbitMQ URL
-	rabbitmqURL := os.Getenv("RABBITMQ_URL")
-	if rabbitmqURL == "" {
-		rabbitmqURL = "amqp://guest:guest@localhost:5672/"
+	// 載入配置
+	cfg, err := config.LoadConfig("function-authn")
+	if err != nil {
+		panic(err)
 	}
+
+	// 初始化日誌
+	log, err := logger.NewLogger(cfg.ServiceName)
+	if err != nil {
+		panic(err)
+	}
+	defer log.Sync()
+
+	log.Info("🔐 Starting AIVA Function-AuthN Worker (Go)",
+		zap.String("service", cfg.ServiceName),
+		zap.String("version", "2.0.0-unified"))
+
+	// 建立 MQ 客戶端
+	mqClient, err := mq.NewMQClient(cfg.RabbitMQURL, log)
+	if err != nil {
+		log.Fatal("Failed to create MQ client", zap.Error(err))
+	}
+	defer mqClient.Close()
 
 	// 建立測試器
-	bruteForcer := brute_force.NewBruteForcer(logger)
-	weakConfigTester := weak_config.NewWeakConfigTester(logger)
-	tokenAnalyzer := token_test.NewTokenAnalyzer(logger)
-
-	// 建立 RabbitMQ 消費者
-	consumer, err := messaging.NewConsumer(rabbitmqURL, "tasks.function.authn", logger)
-	if err != nil {
-		logger.Fatal("Failed to create consumer", zap.Error(err))
-	}
-	defer consumer.Close()
-
-	// 建立 RabbitMQ 發布者
-	publisher, err := messaging.NewPublisher(rabbitmqURL, logger)
-	if err != nil {
-		logger.Fatal("Failed to create publisher", zap.Error(err))
-	}
-	defer publisher.Close()
+	bruteForcer := brute_force.NewBruteForcer(log)
+	// weakConfigTester := weak_config.NewWeakConfigTester(log) // TODO: weak_config 不存在
+	tokenAnalyzer := token_test.NewTokenAnalyzer(log)
 
 	// 啟動消費循環
 	ctx, cancel := context.WithCancel(context.Background())
@@ -55,17 +60,18 @@ func main() {
 
 	go func() {
 		<-sigChan
-		logger.Info("Shutting down gracefully...")
+		log.Info("Shutting down gracefully...")
 		cancel()
 	}()
 
 	// 開始消費任務
-	err = consumer.Consume(ctx, func(taskData []byte) error {
-		return handleTask(ctx, taskData, bruteForcer, weakConfigTester, tokenAnalyzer, publisher, logger)
+	queueName := "tasks.function.authn"
+	err = mqClient.Consume(queueName, func(body []byte) error {
+		return handleTask(ctx, body, bruteForcer, tokenAnalyzer, mqClient, log)
 	})
 
 	if err != nil {
-		logger.Fatal("Consumer error", zap.Error(err))
+		log.Fatal("Consumer error", zap.Error(err))
 	}
 }
 
@@ -73,32 +79,33 @@ func handleTask(
 	ctx context.Context,
 	taskData []byte,
 	bruteForcer *brute_force.BruteForcer,
-	weakConfigTester *weak_config.WeakConfigTester,
+	// weakConfigTester *weak_config.WeakConfigTester, // TODO: weak_config 不存在
 	tokenAnalyzer *token_test.TokenAnalyzer,
-	publisher *messaging.Publisher,
-	logger *zap.Logger,
+	mqClient *mq.MQClient,
+	log *zap.Logger,
 ) error {
 	// 解析任務
-	task, err := messaging.ParseTask(taskData)
-	if err != nil {
+	var task schemas.FunctionTaskPayload
+	if err := json.Unmarshal(taskData, &task); err != nil {
+		log.Error("Failed to parse task", zap.Error(err))
 		return err
 	}
 
-	logger.Info("Processing AuthN task", zap.String("task_id", task.TaskID))
+	log.Info("Processing AuthN task", zap.String("task_id", task.TaskID))
 
-	var findings []interface{}
+	var findings []*schemas.FindingPayload
 
-	// 根據測試類型執行
-	testType := task.Options.TestType
-	if testType == "" {
-		testType = "all"
+	// 根據策略執行測試類型 (使用 Strategy 字段)
+	testType := "all"
+	if task.Strategy != "" {
+		testType = task.Strategy
 	}
 
 	// 執行暴力破解測試
 	if testType == "brute_force" || testType == "all" {
-		bf, err := bruteForcer.Test(ctx, task)
+		bf, err := bruteForcer.Test(ctx, &task)
 		if err != nil {
-			logger.Error("Brute force test failed", zap.Error(err))
+			log.Error("Brute force test failed", zap.Error(err))
 		} else {
 			findings = append(findings, bf...)
 		}
@@ -106,32 +113,37 @@ func handleTask(
 
 	// 執行弱配置測試
 	if testType == "weak_config" || testType == "all" {
-		wc, err := weakConfigTester.Test(ctx, task)
-		if err != nil {
-			logger.Error("Weak config test failed", zap.Error(err))
-		} else {
-			findings = append(findings, wc...)
-		}
+		// TODO: weak_config 測試器不存在，需要實現
+		log.Warn("Weak config test not implemented yet")
+		/*
+			wc, err := weakConfigTester.Test(ctx, &task)
+			if err != nil {
+				log.Error("Weak config test failed", zap.Error(err))
+			} else {
+				findings = append(findings, wc...)
+			}
+		*/
 	}
 
 	// 執行 Token 分析測試
 	if testType == "token" || testType == "all" {
-		tk, err := tokenAnalyzer.Test(ctx, task)
+		tk, err := tokenAnalyzer.Test(ctx, &task)
 		if err != nil {
-			logger.Error("Token test failed", zap.Error(err))
+			log.Error("Token test failed", zap.Error(err))
 		} else {
 			findings = append(findings, tk...)
 		}
 	}
 
-	logger.Info("AuthN test completed",
+	log.Info("AuthN test completed",
 		zap.String("task_id", task.TaskID),
 		zap.Int("findings_count", len(findings)))
 
 	// 發布 Findings
+	resultQueue := "findings.new"
 	for _, finding := range findings {
-		if err := publisher.PublishFinding(finding); err != nil {
-			logger.Error("Failed to publish finding", zap.Error(err))
+		if err := mqClient.Publish(resultQueue, finding); err != nil {
+			log.Error("Failed to publish finding", zap.Error(err))
 		}
 	}
 
