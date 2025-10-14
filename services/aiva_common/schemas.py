@@ -1642,7 +1642,7 @@ class EnhancedFindingPayload(BaseModel):
             Severity.HIGH: "error",
             Severity.MEDIUM: "warning",
             Severity.LOW: "warning",
-            Severity.INFO: "note",
+            Severity.INFORMATIONAL: "note",
         }
 
         locations = []
