@@ -4,39 +4,39 @@
     "successful_tests": 0,
     "failed_tests": 6,
     "success_rate": 0.0,
-    "total_execution_time": 0.46376824378967285
+    "total_execution_time": 0.6105854511260986
   },
   "detailed_results": [
     {
       "success": false,
-      "error": "cannot import name 'ExecutionContext' from 'services.core.models' (C:\\AMD\\AIVA\\services\\core\\models.py)",
+      "error": "No module named 'aiva_common'",
       "test_name": "BioNeuronRAGAgent 基本功能"
     },
     {
       "success": false,
-      "error": "cannot import name 'ExecutionContext' from 'services.core.models' (C:\\AMD\\AIVA\\services\\core\\models.py)",
+      "error": "No module named 'aiva_common'",
       "test_name": "統一 AI 控制器"
     },
     {
       "success": false,
-      "error": "cannot import name 'ExecutionContext' from 'services.core.models' (C:\\AMD\\AIVA\\services\\core\\models.py)",
+      "error": "No module named 'aiva_common'",
       "test_name": "自然語言生成系統"
     },
     {
       "success": false,
-      "error": "cannot import name 'ExecutionContext' from 'services.core.models' (C:\\AMD\\AIVA\\services\\core\\models.py)",
+      "error": "No module named 'aiva_common'",
       "test_name": "多語言協調器"
     },
     {
       "success": false,
-      "error": "cannot import name 'ExecutionContext' from 'services.core.models' (C:\\AMD\\AIVA\\services\\core\\models.py)",
+      "error": "No module named 'aiva_common'",
       "test_name": "AI 組件整合"
     },
     {
       "success": false,
-      "error": "cannot import name 'ExecutionContext' from 'services.core.models' (C:\\AMD\\AIVA\\services\\core\\models.py)",
+      "error": "No module named 'aiva_common'",
       "test_name": "AIVA 自主性證明"
     }
   ],
-  "timestamp": "2025-10-15 03:15:03"
+  "timestamp": "2025-10-15 06:21:01"
 }

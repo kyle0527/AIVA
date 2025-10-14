@@ -314,9 +314,10 @@ class AICommander:
         logger.info("🔍 Detecting vulnerabilities across languages...")
 
         # 協調多語言 AI 模組
+        target = context.get("target")
+        vuln_types = context.get("vulnerability_types", [])
+
         # TODO: 實際協調邏輯
-        # target = context.get("target")
-        # vuln_types = context.get("vulnerability_types", [])
         # results = await self.multilang_coordinator.coordinate_detection(
         #     target=target,
         #     vuln_types=vuln_types

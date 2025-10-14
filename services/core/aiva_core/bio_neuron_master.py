@@ -30,8 +30,8 @@ from enum import Enum
 import logging
 from typing import Any
 
-from .ai_engine import BioNeuronRAGAgent
-from .rag import RAGEngine
+from aiva_core.ai_engine import BioNeuronRAGAgent
+from aiva_core.rag import RAGEngine
 
 logger = logging.getLogger(__name__)
 

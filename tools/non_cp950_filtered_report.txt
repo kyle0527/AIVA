@@ -1,11 +1,11 @@
 CP950 編碼兼容性檢查報告
 掃描目錄: C:\AMD\AIVA
-檢查時間: 1760474814.1690276
+檢查時間: 1760475202.6168733
 ============================================================
 
 檢查統計:
-  總文件數: 3284
-  問題行數: 10614
+  總文件數: 3292
+  問題行數: 10635
 
 問題詳情:
 文件路徑                                                   行號 問題內容
@@ -101,6 +101,27 @@ test_integration.py                                    72 print("✅ 存儲管�
 test_integration.py                                    75 print(f"❌ 存儲管理器測試失敗: {e}")
 test_integration.py                                    80 print("🚀 AIVA-1 整合驗證測試")
 test_integration.py                                    87 print("✨ 測試完成")
+services\check_schema_health.py                         9 print("🔍 AIVA Schema 健康檢查")
+services\check_schema_health.py                        16 print("\n📦 測試模組導入...")
+services\check_schema_health.py                        26 print("  ✅ 所有核心類別導入成功")
+services\check_schema_health.py                        29 print(f"  ❌ 導入失敗: {e}")
+services\check_schema_health.py                        32 print("\n🧮 測試 CVSS 計算...")
+services\check_schema_health.py                        47 print(f"  ✅ CVSS 計算正確: {score}")
+services\check_schema_health.py                        50 print(f"  ⚠️  CVSS 分數異常: {score}")
+services\check_schema_health.py                        53 print(f"  ❌ CVSS 計算失敗: {e}")
+services\check_schema_health.py                        56 print("\n📄 測試 SARIF 結構...")
+services\check_schema_health.py                        72 print("  ✅ SARIF 結構創建成功")
+services\check_schema_health.py                        75 print(f"  ❌ SARIF 創建失敗: {e}")
+services\check_schema_health.py                        78 print("\n⚔️  測試攻擊計畫...")
+services\check_schema_health.py                        89 print("  ✅ AttackStep 創建成功")
+services\check_schema_health.py                        92 print(f"  ❌ AttackStep 創建失敗: {e}")
+services\check_schema_health.py                        95 print("\n🔍 檢查重複類別定義...")
+services\check_schema_health.py                       115 print(f"  ❌ {class_name} 重複 {count} 次")
+services\check_schema_health.py                       119 print("  ✅ 無重複類別定義")
+services\check_schema_health.py                       123 print("📊 檢查總結")
+services\check_schema_health.py                       127 print("✨ 所有檢查通過！系統健康狀態良好。")
+services\check_schema_health.py                       131 print(f"❌ 發現 {len(errors)} 個錯誤:")
+services\check_schema_health.py                       136 print(f"⚠️  發現 {len(warnings)} 個警告:")
 tools\analyze_codebase.py                             935 print("📊 階段 1: 分析 Python 程式碼")
 tools\analyze_codebase.py                             944 print("\n📊 階段 2: 分析多語言程式碼 (Go/Rust/TypeScript/JavaScript)")
 tools\analyze_codebase.py                             953 print("✅ Python 分析完成！摘要:")

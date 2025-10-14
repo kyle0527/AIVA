@@ -1,15 +1,15 @@
 [
   {
     "file": "services\\core\\aiva_core\\ai_commander.py",
-    "total_lines": 489,
-    "code_lines": 348,
-    "comment_lines": 35,
+    "total_lines": 488,
+    "code_lines": 346,
+    "comment_lines": 37,
     "classes": 3,
     "functions": 3,
     "async_functions": 9,
     "imports": 15,
     "decorators": 0,
-    "avg_function_length": 32.9,
+    "avg_function_length": 32.8,
     "max_function_length": 82,
     "class_names": [
       "AITaskType",
@@ -22,23 +22,23 @@
       "save_state"
     ],
     "import_modules": [
-      "logging",
       "aiva_core.messaging.message_broker",
-      "aiva_core.rag",
-      "aiva_core.ai_engine",
       "enum",
-      "typing",
-      "datetime",
+      "aiva_core.rag",
       "aiva_core.multilang_coordinator",
-      "pathlib",
       "__future__",
+      "datetime",
       "aiva_core.execution.plan_executor",
-      "aiva_core.training.training_orchestrator",
       "aiva_core.training.scenario_manager",
       "aiva_core.learning.experience_manager",
-      "aiva_core.learning.model_trainer"
+      "pathlib",
+      "aiva_core.ai_engine",
+      "aiva_core.learning.model_trainer",
+      "logging",
+      "typing",
+      "aiva_core.training.training_orchestrator"
     ],
-    "complexity_score": 48.916666666666664
+    "complexity_score": 48.833333333333336
   },
   {
     "file": "services\\core\\aiva_core\\ai_controller.py",
@@ -62,11 +62,11 @@
       "get_control_statistics"
     ],
     "import_modules": [
-      "logging",
       "asyncio",
-      "typing",
       "__future__",
-      "ai_engine"
+      "logging",
+      "ai_engine",
+      "typing"
     ],
     "complexity_score": 20.8
   },
@@ -92,18 +92,18 @@
       "_generate_recommendations"
     ],
     "import_modules": [
-      "multilang_coordinator",
-      "json",
       "dataclasses",
-      "nlg_system",
       "asyncio",
-      "typing",
-      "pathlib",
-      "os",
-      "time",
       "ai_controller",
       "ai_engine.bio_neuron_rag_agent",
-      "sys"
+      "multilang_coordinator",
+      "time",
+      "typing",
+      "nlg_system",
+      "pathlib",
+      "sys",
+      "os",
+      "json"
     ],
     "complexity_score": 50.84615384615385
   },
@@ -147,10 +147,10 @@
       "validate_score"
     ],
     "import_modules": [
-      "pydantic",
-      "typing",
+      "__future__",
       "datetime",
-      "__future__"
+      "typing",
+      "pydantic"
     ],
     "complexity_score": 100
   },
@@ -171,24 +171,24 @@
       "_count_tasks_by_type"
     ],
     "import_modules": [
-      "collections",
-      "services.aiva_common.schemas",
-      "json",
-      "services.core.aiva_core.execution.execution_status_monitor",
-      "services.core.aiva_core.execution.task_generator",
-      "services.core.aiva_core.analysis.initial_surface",
-      "services.aiva_common.enums",
-      "services.core.aiva_core.ingestion.scan_module_interface",
-      "asyncio",
-      "typing",
       "services.aiva_common.utils",
-      "services.core.aiva_core.execution.task_queue_manager",
+      "asyncio",
+      "services.aiva_common.enums",
+      "services.aiva_common.mq",
       "__future__",
       "services.core.aiva_core.analysis.dynamic_strategy_adjustment",
-      "services.aiva_common.mq",
-      "services.core.aiva_core.state.session_state_manager",
+      "collections",
+      "services.core.aiva_core.execution.execution_status_monitor",
+      "services.core.aiva_core.analysis.initial_surface",
+      "services.core.aiva_core.output.to_functions",
+      "services.core.aiva_core.execution.task_queue_manager",
       "fastapi",
-      "services.core.aiva_core.output.to_functions"
+      "services.aiva_common.schemas",
+      "services.core.aiva_core.state.session_state_manager",
+      "typing",
+      "services.core.aiva_core.ingestion.scan_module_interface",
+      "services.core.aiva_core.execution.task_generator",
+      "json"
     ],
     "complexity_score": 36.142857142857146
   },
@@ -217,21 +217,21 @@
       "_get_system_status"
     ],
     "import_modules": [
-      "logging",
-      "aiva_core.rag",
+      "rag",
       "enum",
-      "collections.abc",
-      "typing",
-      "datetime",
+      "aiva_core.rag",
       "__future__",
+      "datetime",
+      "collections.abc",
+      "logging",
       "ai_engine",
-      "rag"
+      "typing"
     ],
     "complexity_score": 45.480000000000004
   },
   {
     "file": "services\\core\\aiva_core\\business_schemas.py",
-    "total_lines": 344,
+    "total_lines": 342,
     "code_lines": 187,
     "comment_lines": 51,
     "classes": 11,
@@ -258,11 +258,11 @@
       "validate_task_id"
     ],
     "import_modules": [
-      "aiva_common.standards",
-      "typing",
-      "datetime",
       "__future__",
       "aiva_common.enums",
+      "datetime",
+      "aiva_common.standards",
+      "typing",
       "pydantic"
     ],
     "complexity_score": 63
@@ -292,11 +292,11 @@
       "_distribute_ai_tasks"
     ],
     "import_modules": [
-      "logging",
+      "dataclasses",
       "asyncio",
-      "typing",
       "__future__",
-      "dataclasses"
+      "logging",
+      "typing"
     ],
     "complexity_score": 48.315789473684205
   },
@@ -323,10 +323,10 @@
       "generate_response"
     ],
     "import_modules": [
+      "__future__",
       "random",
-      "typing",
       "re",
-      "__future__"
+      "typing"
     ],
     "complexity_score": 46.3125
   },
@@ -359,20 +359,20 @@
       "__init__"
     ],
     "import_modules": [
-      "collections",
-      "contextlib",
-      "tracemalloc",
-      "collections.abc",
+      "dataclasses",
       "asyncio",
-      "typing",
-      "gc",
+      "weakref",
       "__future__",
       "psutil",
-      "numpy",
-      "dataclasses",
+      "collections",
+      "tracemalloc",
+      "contextlib",
       "time",
+      "collections.abc",
       "fastapi",
-      "weakref"
+      "gc",
+      "typing",
+      "numpy"
     ],
     "complexity_score": 100
   },
@@ -430,10 +430,10 @@
     "class_names": [],
     "function_names": [],
     "import_modules": [
-      "services.core.models",
       "aiva_common.enums",
+      "aiva_common.models",
       "services.core.ai_models",
-      "aiva_common.models"
+      "services.core.models"
     ],
     "complexity_score": 4
   },
@@ -463,20 +463,20 @@
       "forward"
     ],
     "import_modules": [
-      "logging",
-      "planner.orchestrator",
-      "execution_tracer.execution_monitor",
-      "execution_tracer.task_executor",
-      "aiva_integration.reception.experience_repository",
-      "typing",
-      "__future__",
-      "pathlib",
-      "analysis.ast_trace_comparator",
-      "numpy",
       "planner.task_converter",
+      "training.model_updater",
+      "__future__",
+      "execution_tracer.execution_monitor",
       "time",
-      "sys",
-      "training.model_updater"
+      "execution_tracer.task_executor",
+      "analysis.ast_trace_comparator",
+      "planner.orchestrator",
+      "pathlib",
+      "aiva_integration.reception.experience_repository",
+      "logging",
+      "typing",
+      "numpy",
+      "sys"
     ],
     "complexity_score": 74.58333333333334
   },
@@ -506,13 +506,13 @@
       "__init__"
     ],
     "import_modules": [
+      "__future__",
+      "time",
+      "tools",
       "logging",
       "knowledge_base",
       "typing",
-      "__future__",
-      "numpy",
-      "tools",
-      "time"
+      "numpy"
     ],
     "complexity_score": 52.5
   },
@@ -539,11 +539,11 @@
       "_extract_keywords"
     ],
     "import_modules": [
-      "logging",
-      "typing",
-      "pathlib",
       "__future__",
-      "ast"
+      "pathlib",
+      "ast",
+      "logging",
+      "typing"
     ],
     "complexity_score": 30.0
   },
@@ -576,12 +576,12 @@
       "__init__"
     ],
     "import_modules": [
-      "typing",
-      "pathlib",
-      "subprocess",
-      "__future__",
       "abc",
-      "ast"
+      "__future__",
+      "pathlib",
+      "ast",
+      "subprocess",
+      "typing"
     ],
     "complexity_score": 80.05882352941177
   },
@@ -600,10 +600,10 @@
     "class_names": [],
     "function_names": [],
     "import_modules": [
+      "__future__",
       "knowledge_base",
-      "tools",
       "bio_neuron_core_v2",
-      "__future__"
+      "tools"
     ],
     "complexity_score": 4
   },
@@ -633,11 +633,11 @@
       "forward"
     ],
     "import_modules": [
+      "__future__",
+      "time",
       "logging",
       "typing",
-      "__future__",
-      "numpy",
-      "time"
+      "numpy"
     ],
     "complexity_score": 47.9
   },
@@ -667,13 +667,13 @@
       "__init__"
     ],
     "import_modules": [
+      "__future__",
+      "time",
+      "tools",
       "logging",
       "knowledge_base",
       "typing",
-      "__future__",
-      "numpy",
-      "tools",
-      "time"
+      "numpy"
     ],
     "complexity_score": 52.5
   },
@@ -700,11 +700,11 @@
       "_extract_keywords"
     ],
     "import_modules": [
-      "logging",
-      "typing",
-      "pathlib",
       "__future__",
-      "ast"
+      "pathlib",
+      "ast",
+      "logging",
+      "typing"
     ],
     "complexity_score": 30.0
   },
@@ -737,12 +737,12 @@
       "__init__"
     ],
     "import_modules": [
-      "typing",
-      "pathlib",
-      "subprocess",
-      "__future__",
       "abc",
-      "ast"
+      "__future__",
+      "pathlib",
+      "ast",
+      "subprocess",
+      "typing"
     ],
     "complexity_score": 80.05882352941177
   },
@@ -761,10 +761,10 @@
     "class_names": [],
     "function_names": [],
     "import_modules": [
+      "__future__",
       "knowledge_base",
-      "tools",
       "bio_neuron_core_v2",
-      "__future__"
+      "tools"
     ],
     "complexity_score": 4
   },
@@ -787,14 +787,14 @@
       "train_and_save_model"
     ],
     "import_modules": [
-      "joblib",
-      "sklearn.linear_model",
-      "sklearn.metrics",
-      "__future__",
-      "sklearn.model_selection",
-      "os",
       "sqlite3",
-      "sklearn.feature_extraction.text"
+      "__future__",
+      "sklearn.feature_extraction.text",
+      "sklearn.linear_model",
+      "sklearn.model_selection",
+      "joblib",
+      "os",
+      "sklearn.metrics"
     ],
     "complexity_score": 14
   },
@@ -823,11 +823,11 @@
       "_extract_actual_steps"
     ],
     "import_modules": [
+      "dataclasses",
+      "__future__",
+      "planner.ast_parser",
       "logging",
       "typing",
-      "planner.ast_parser",
-      "__future__",
-      "dataclasses",
       "execution_tracer.trace_recorder"
     ],
     "complexity_score": 51.38461538461539
@@ -855,9 +855,9 @@
       "_adjust_based_on_success_rate"
     ],
     "import_modules": [
-      "services.aiva_common.utils",
+      "__future__",
       "typing",
-      "__future__"
+      "services.aiva_common.utils"
     ],
     "complexity_score": 25.571428571428573
   },
@@ -884,10 +884,10 @@
       "_detect_sqli_candidates"
     ],
     "import_modules": [
-      "services.aiva_common.schemas",
-      "typing",
+      "__future__",
       "services.core.aiva_core.schemas",
-      "__future__"
+      "typing",
+      "services.aiva_common.schemas"
     ],
     "complexity_score": 34.875
   },
@@ -915,11 +915,11 @@
       "_calculate_step_similarity"
     ],
     "import_modules": [
-      "logging",
       "aiva_common.schemas",
-      "typing",
+      "__future__",
       "datetime",
-      "__future__"
+      "logging",
+      "typing"
     ],
     "complexity_score": 58.285714285714285
   },
@@ -946,13 +946,13 @@
       "get_risk_level"
     ],
     "import_modules": [
-      "services.aiva_common.schemas",
-      "services.aiva_common.enums",
-      "asyncio",
-      "typing",
       "services.aiva_common.utils",
+      "asyncio",
+      "services.aiva_common.enums",
       "__future__",
-      "services.integration.aiva_integration.threat_intel.intel_aggregator"
+      "services.integration.aiva_integration.threat_intel.intel_aggregator",
+      "services.aiva_common.schemas",
+      "typing"
     ],
     "complexity_score": 29.125
   },
@@ -980,8 +980,8 @@
     ],
     "import_modules": [
       "logging",
-      "services.aiva_common.schemas",
-      "services.core.aiva_core.schemas"
+      "services.core.aiva_core.schemas",
+      "services.aiva_common.schemas"
     ],
     "complexity_score": 33.22222222222222
   },
@@ -1027,10 +1027,10 @@
       "set_user_attribute"
     ],
     "import_modules": [
-      "structlog",
       "permission_matrix",
+      "datetime",
       "typing",
-      "datetime"
+      "structlog"
     ],
     "complexity_score": 45.16666666666667
   },
@@ -1057,13 +1057,13 @@
       "generate_role_comparison_chart"
     ],
     "import_modules": [
-      "plotly.graph_objects",
-      "datetime",
-      "pathlib",
-      "jinja2",
       "plotly.subplots",
       "permission_matrix",
-      "structlog"
+      "datetime",
+      "plotly.graph_objects",
+      "structlog",
+      "pathlib",
+      "jinja2"
     ],
     "complexity_score": 73.14285714285714
   },
@@ -1091,11 +1091,11 @@
     ],
     "import_modules": [
       "services.aiva_common.enums",
-      "typing",
       "datetime",
-      "numpy",
       "pandas",
-      "structlog"
+      "structlog",
+      "typing",
+      "numpy"
     ],
     "complexity_score": 48.6875
   },
@@ -1114,9 +1114,9 @@
     "class_names": [],
     "function_names": [],
     "import_modules": [
-      "matrix_visualizer",
+      "authz_mapper",
       "permission_matrix",
-      "authz_mapper"
+      "matrix_visualizer"
     ],
     "complexity_score": 3
   },
@@ -1137,11 +1137,11 @@
       "create_bizlogic_finding"
     ],
     "import_modules": [
-      "services.aiva_common.schemas",
-      "services.aiva_common.enums",
-      "typing",
       "services.aiva_common.utils",
-      "__future__"
+      "services.aiva_common.enums",
+      "__future__",
+      "services.aiva_common.schemas",
+      "typing"
     ],
     "complexity_score": 40.0
   },
@@ -1160,15 +1160,15 @@
     "class_names": [],
     "function_names": [],
     "import_modules": [
-      "services.aiva_common.schemas",
-      "json",
-      "price_manipulation_tester",
-      "workflow_bypass_tester",
-      "services.aiva_common.enums",
       "services.aiva_common.utils",
+      "services.aiva_common.mq",
+      "services.aiva_common.enums",
       "__future__",
       "race_condition_tester",
-      "services.aiva_common.mq"
+      "price_manipulation_tester",
+      "services.aiva_common.schemas",
+      "workflow_bypass_tester",
+      "json"
     ],
     "complexity_score": 45.5
   },
@@ -1214,11 +1214,11 @@
       "get_system_health"
     ],
     "import_modules": [
-      "asyncio",
       "services.aiva_common.utils",
-      "typing",
+      "asyncio",
+      "__future__",
       "datetime",
-      "__future__"
+      "typing"
     ],
     "complexity_score": 31.22222222222222
   },
@@ -1245,14 +1245,14 @@
       "_generate_recommendations"
     ],
     "import_modules": [
-      "logging",
       "uuid",
-      "asyncio",
-      "typing",
-      "datetime",
       "aiva_common.schemas",
+      "asyncio",
       "__future__",
-      "trace_logger"
+      "datetime",
+      "trace_logger",
+      "logging",
+      "typing"
     ],
     "complexity_score": 40.4
   },
@@ -1275,10 +1275,10 @@
       "from_strategy"
     ],
     "import_modules": [
-      "services.aiva_common.enums",
-      "collections.abc",
+      "__future__",
       "services.aiva_common.schemas",
-      "__future__"
+      "collections.abc",
+      "services.aiva_common.enums"
     ],
     "complexity_score": 47.0
   },
@@ -1305,14 +1305,14 @@
       "mark_task_completed"
     ],
     "import_modules": [
-      "collections",
-      "queue",
-      "services.aiva_common.schemas",
-      "services.aiva_common.enums",
-      "typing",
-      "datetime",
       "services.aiva_common.utils",
-      "__future__"
+      "services.aiva_common.enums",
+      "__future__",
+      "collections",
+      "datetime",
+      "services.aiva_common.schemas",
+      "queue",
+      "typing"
     ],
     "complexity_score": 31.22222222222222
   },
@@ -1339,12 +1339,12 @@
       "get_session"
     ],
     "import_modules": [
-      "logging",
       "uuid",
-      "typing",
-      "datetime",
       "aiva_common.schemas",
-      "__future__"
+      "__future__",
+      "datetime",
+      "logging",
+      "typing"
     ],
     "complexity_score": 31.142857142857142
   },
@@ -1363,8 +1363,8 @@
     "class_names": [],
     "function_names": [],
     "import_modules": [
-      "plan_executor",
-      "trace_logger"
+      "trace_logger",
+      "plan_executor"
     ],
     "complexity_score": 2
   },
@@ -1392,15 +1392,15 @@
       "record_tool_invocation"
     ],
     "import_modules": [
-      "logging",
-      "planner.orchestrator",
-      "typing",
-      "datetime",
-      "__future__",
       "planner.task_converter",
-      "trace_recorder",
+      "dataclasses",
       "planner.tool_selector",
-      "dataclasses"
+      "__future__",
+      "datetime",
+      "planner.orchestrator",
+      "trace_recorder",
+      "logging",
+      "typing"
     ],
     "complexity_score": 43.72727272727273
   },
@@ -1424,12 +1424,12 @@
       "__init__"
     ],
     "import_modules": [
+      "planner.task_converter",
+      "dataclasses",
+      "planner.tool_selector",
+      "__future__",
       "logging",
       "typing",
-      "__future__",
-      "planner.task_converter",
-      "planner.tool_selector",
-      "dataclasses",
       "execution_monitor"
     ],
     "complexity_score": 32.714285714285715
@@ -1460,14 +1460,14 @@
       "get_entries_by_type"
     ],
     "import_modules": [
-      "logging",
-      "json",
       "uuid",
       "enum",
-      "typing",
-      "datetime",
+      "dataclasses",
       "__future__",
-      "dataclasses"
+      "datetime",
+      "logging",
+      "typing",
+      "json"
     ],
     "complexity_score": 66
   },
@@ -1486,9 +1486,9 @@
     "class_names": [],
     "function_names": [],
     "import_modules": [
+      "task_executor",
       "execution_monitor",
-      "trace_recorder",
-      "task_executor"
+      "trace_recorder"
     ],
     "complexity_score": 3
   },
@@ -1514,9 +1514,9 @@
       "_categorize_asset"
     ],
     "import_modules": [
-      "services.aiva_common.schemas",
+      "__future__",
       "typing",
-      "__future__"
+      "services.aiva_common.schemas"
     ],
     "complexity_score": 20.0
   },
@@ -1559,12 +1559,12 @@
       "_calculate_quality_score"
     ],
     "import_modules": [
-      "logging",
       "uuid",
-      "typing",
-      "datetime",
       "aiva_common.schemas",
-      "__future__"
+      "__future__",
+      "datetime",
+      "logging",
+      "typing"
     ],
     "complexity_score": 26.11111111111111
   },
@@ -1591,13 +1591,13 @@
       "_build_state_vector"
     ],
     "import_modules": [
-      "logging",
       "uuid",
-      "typing",
-      "datetime",
       "aiva_common.schemas",
-      "pathlib",
       "__future__",
+      "datetime",
+      "pathlib",
+      "logging",
+      "typing",
       "numpy"
     ],
     "complexity_score": 42.0
@@ -1617,8 +1617,8 @@
     "class_names": [],
     "function_names": [],
     "import_modules": [
-      "experience_manager",
-      "model_trainer"
+      "model_trainer",
+      "experience_manager"
     ],
     "complexity_score": 2
   },
@@ -1643,16 +1643,16 @@
       "__init__"
     ],
     "import_modules": [
-      "logging",
-      "json",
-      "collections.abc",
-      "asyncio",
-      "typing",
-      "aio_pika.abc",
       "aiva_common.schemas",
+      "asyncio",
       "__future__",
       "aiva_common.config",
-      "aio_pika"
+      "aio_pika",
+      "collections.abc",
+      "logging",
+      "typing",
+      "aio_pika.abc",
+      "json"
     ],
     "complexity_score": 31.636363636363637
   },
@@ -1678,16 +1678,16 @@
       "_set_pending_result"
     ],
     "import_modules": [
-      "logging",
-      "json",
-      "collections.abc",
-      "asyncio",
-      "typing",
-      "datetime",
-      "aio_pika.abc",
-      "__future__",
+      "message_broker",
       "aiva_common.schemas",
-      "message_broker"
+      "asyncio",
+      "__future__",
+      "datetime",
+      "collections.abc",
+      "logging",
+      "typing",
+      "aio_pika.abc",
+      "json"
     ],
     "complexity_score": 23
   },
@@ -1714,15 +1714,15 @@
       "register_callback"
     ],
     "import_modules": [
-      "logging",
       "uuid",
-      "collections.abc",
-      "asyncio",
-      "typing",
-      "datetime",
+      "message_broker",
       "aiva_common.schemas",
+      "asyncio",
       "__future__",
-      "message_broker"
+      "datetime",
+      "collections.abc",
+      "logging",
+      "typing"
     ],
     "complexity_score": 39.142857142857146
   },
@@ -1741,9 +1741,9 @@
     "class_names": [],
     "function_names": [],
     "import_modules": [
-      "task_dispatcher",
       "result_collector",
-      "message_broker"
+      "message_broker",
+      "task_dispatcher"
     ],
     "complexity_score": 3
   },
@@ -1764,10 +1764,10 @@
       "to_function_message"
     ],
     "import_modules": [
-      "services.aiva_common.enums",
+      "__future__",
       "services.aiva_common.schemas",
       "services.aiva_common.utils",
-      "__future__"
+      "services.aiva_common.enums"
     ],
     "complexity_score": 6
   },
@@ -1815,11 +1815,11 @@
       "get_start_node"
     ],
     "import_modules": [
-      "logging",
       "enum",
-      "typing",
+      "dataclasses",
       "__future__",
-      "dataclasses"
+      "logging",
+      "typing"
     ],
     "complexity_score": 52
   },
@@ -1847,14 +1847,14 @@
       "update_task_status"
     ],
     "import_modules": [
-      "logging",
       "uuid",
-      "task_converter",
-      "typing",
-      "__future__",
+      "ast_parser",
       "dataclasses",
       "tool_selector",
-      "ast_parser"
+      "__future__",
+      "task_converter",
+      "logging",
+      "typing"
     ],
     "complexity_score": 32
   },
@@ -1885,13 +1885,13 @@
       "get_runnable_tasks"
     ],
     "import_modules": [
-      "logging",
       "uuid",
+      "ast_parser",
       "enum",
-      "typing",
-      "__future__",
       "dataclasses",
-      "ast_parser"
+      "__future__",
+      "logging",
+      "typing"
     ],
     "complexity_score": 50
   },
@@ -1920,12 +1920,12 @@
       "_determine_endpoint_and_function"
     ],
     "import_modules": [
-      "logging",
-      "task_converter",
       "enum",
-      "typing",
+      "dataclasses",
       "__future__",
-      "dataclasses"
+      "task_converter",
+      "logging",
+      "typing"
     ],
     "complexity_score": 38.285714285714285
   },
@@ -1944,16 +1944,16 @@
     "class_names": [],
     "function_names": [],
     "import_modules": [
+      "ast_parser",
       "task_converter",
       "tool_selector",
-      "orchestrator",
-      "ast_parser"
+      "orchestrator"
     ],
     "complexity_score": 4
   },
   {
     "file": "services\\core\\aiva_core\\rag\\demo_rag_integration.py",
-    "total_lines": 258,
+    "total_lines": 257,
     "code_lines": 193,
     "comment_lines": 19,
     "classes": 1,
@@ -1971,11 +1971,11 @@
       "_build_prompt_with_context"
     ],
     "import_modules": [
-      "logging",
+      "aiva_common.schemas",
       "aiva_core.rag",
       "asyncio",
-      "aiva_common.schemas",
-      "__future__"
+      "__future__",
+      "logging"
     ],
     "complexity_score": 49.0
   },
@@ -2004,16 +2004,16 @@
       "save_knowledge_base"
     ],
     "import_modules": [
-      "logging",
-      "json",
       "enum",
-      "typing",
-      "datetime",
+      "dataclasses",
       "aiva_common.schemas",
-      "__future__",
-      "pathlib",
       "vector_store",
-      "dataclasses"
+      "__future__",
+      "datetime",
+      "pathlib",
+      "logging",
+      "typing",
+      "json"
     ],
     "complexity_score": 57.38461538461539
   },
@@ -2040,11 +2040,11 @@
       "get_relevant_payloads"
     ],
     "import_modules": [
+      "aiva_common.schemas",
+      "__future__",
       "logging",
       "knowledge_base",
-      "aiva_common.schemas",
-      "typing",
-      "__future__"
+      "typing"
     ],
     "complexity_score": 44.111111111111114
   },
@@ -2071,15 +2071,15 @@
       "add_document"
     ],
     "import_modules": [
-      "logging",
-      "json",
-      "typing",
       "faiss",
-      "pathlib",
+      "sentence_transformers",
       "__future__",
+      "pathlib",
+      "logging",
       "chromadb",
+      "typing",
       "numpy",
-      "sentence_transformers"
+      "json"
     ],
     "complexity_score": 42.83333333333333
   },
@@ -2099,8 +2099,8 @@
     "function_names": [],
     "import_modules": [
       "knowledge_base",
-      "rag_engine",
-      "vector_store"
+      "vector_store",
+      "rag_engine"
     ],
     "complexity_score": 3
   },
@@ -2127,11 +2127,11 @@
       "update_session_status"
     ],
     "import_modules": [
-      "services.aiva_common.schemas",
       "services.aiva_common.utils",
-      "typing",
+      "__future__",
       "datetime",
-      "__future__"
+      "services.aiva_common.schemas",
+      "typing"
     ],
     "complexity_score": 20
   },
@@ -2178,15 +2178,15 @@
       "__init__"
     ],
     "import_modules": [
-      "json",
-      "models",
-      "typing",
-      "datetime",
       "aiva_common.schemas",
-      "pathlib",
-      "sqlalchemy.orm",
+      "models",
       "abc",
-      "sqlalchemy"
+      "datetime",
+      "pathlib",
+      "sqlalchemy",
+      "typing",
+      "sqlalchemy.orm",
+      "json"
     ],
     "complexity_score": 42
   },
@@ -2207,8 +2207,8 @@
       "get_storage_config"
     ],
     "import_modules": [
-      "pathlib",
-      "os"
+      "os",
+      "pathlib"
     ],
     "complexity_score": 4
   },
@@ -2234,9 +2234,9 @@
     ],
     "function_names": [],
     "import_modules": [
-      "sqlalchemy",
+      "datetime",
       "sqlalchemy.orm",
-      "datetime"
+      "sqlalchemy"
     ],
     "complexity_score": 33
   },
@@ -2286,8 +2286,8 @@
     "function_names": [],
     "import_modules": [
       "storage_manager",
-      "backends",
-      "models"
+      "models",
+      "backends"
     ],
     "complexity_score": 3
   },
@@ -2314,16 +2314,16 @@
       "_create_xss_plan_easy"
     ],
     "import_modules": [
-      "logging",
-      "json",
       "uuid",
-      "httpx",
-      "typing",
-      "datetime",
       "aiva_common.schemas",
-      "pathlib",
+      "httpx",
       "__future__",
-      "aiva_common.enums"
+      "aiva_common.enums",
+      "datetime",
+      "pathlib",
+      "logging",
+      "typing",
+      "json"
     ],
     "complexity_score": 56.55
   },
@@ -2349,18 +2349,18 @@
       "_save_single_session"
     ],
     "import_modules": [
-      "logging",
-      "json",
-      "aiva_core.rag",
-      "typing",
-      "datetime",
       "aiva_common.schemas",
-      "pathlib",
+      "aiva_core.rag",
       "__future__",
+      "datetime",
       "aiva_core.execution.plan_executor",
       "aiva_core.training.scenario_manager",
       "aiva_core.learning.experience_manager",
-      "aiva_core.learning.model_trainer"
+      "pathlib",
+      "aiva_core.learning.model_trainer",
+      "logging",
+      "typing",
+      "json"
     ],
     "complexity_score": 45.875
   },
@@ -2403,13 +2403,13 @@
       "main"
     ],
     "import_modules": [
-      "logging",
-      "improved_ui",
-      "uvicorn",
       "socket",
-      "pathlib",
       "__future__",
       "argparse",
+      "uvicorn",
+      "pathlib",
+      "logging",
+      "improved_ui",
       "sys"
     ],
     "complexity_score": 41.0
@@ -2437,11 +2437,11 @@
       "detect_vulnerability"
     ],
     "import_modules": [
-      "logging",
-      "typing",
-      "pathlib",
       "__future__",
-      "ai_engine"
+      "pathlib",
+      "logging",
+      "ai_engine",
+      "typing"
     ],
     "complexity_score": 36.36363636363636
   },
@@ -2463,12 +2463,12 @@
       "create_app"
     ],
     "import_modules": [
-      "typing",
       "__future__",
-      "fastapi.responses",
       "services.core.aiva_core.ui_panel.dashboard",
       "fastapi",
-      "sys"
+      "sys",
+      "fastapi.responses",
+      "typing"
     ],
     "complexity_score": 31.555555555555557
   },
@@ -2490,14 +2490,14 @@
       "start_ui_server"
     ],
     "import_modules": [
-      "logging",
-      "typing",
-      "uvicorn",
       "socket",
-      "__future__",
-      "fastapi.responses",
       "dashboard",
-      "fastapi"
+      "__future__",
+      "uvicorn",
+      "fastapi",
+      "logging",
+      "fastapi.responses",
+      "typing"
     ],
     "complexity_score": 30.0
   },
@@ -2516,9 +2516,9 @@
     "class_names": [],
     "function_names": [],
     "import_modules": [
+      "server",
       "dashboard",
-      "auto_server",
-      "server"
+      "auto_server"
     ],
     "complexity_score": 3
   },
@@ -2545,10 +2545,10 @@
       "load_dataset_samples"
     ],
     "import_modules": [
-      "logging",
-      "numpy",
+      "__future__",
       "typing",
-      "__future__"
+      "logging",
+      "numpy"
     ],
     "complexity_score": 29.5
   },
@@ -2575,14 +2575,14 @@
       "load_model"
     ],
     "import_modules": [
-      "logging",
-      "data_loader",
-      "typing",
-      "datetime",
-      "pathlib",
-      "__future__",
       "trainer",
-      "pickle"
+      "data_loader",
+      "__future__",
+      "datetime",
+      "pickle",
+      "pathlib",
+      "logging",
+      "typing"
     ],
     "complexity_score": 40.0
   },
@@ -2610,11 +2610,11 @@
       "_forward_batch"
     ],
     "import_modules": [
+      "dataclasses",
+      "__future__",
       "logging",
       "typing",
-      "__future__",
-      "numpy",
-      "dataclasses"
+      "numpy"
     ],
     "complexity_score": 38.85714285714286
   },
@@ -2633,9 +2633,9 @@
     "class_names": [],
     "function_names": [],
     "import_modules": [
+      "trainer",
       "model_updater",
-      "data_loader",
-      "trainer"
+      "data_loader"
     ],
     "complexity_score": 3
   }
