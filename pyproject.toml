@@ -8,7 +8,7 @@ name = "aiva-platform-integrated"
 version = "1.0.0"
 description = "AI-Assisted Vulnerability Analysis Platform — Enhanced Stability & Modern Architecture"
 readme = "README.md"
-requires-python = ">=3.13"
+requires-python = ">=3.12"
 authors = [{name = "AIVA Maintainers"}]
 dependencies = [
   "fastapi>=0.115.0",
@@ -45,16 +45,23 @@ dev = [
   "pre-commit>=3.6.0",
 ]
 
+[tool.setuptools]
+packages = ["services"]
+include-package-data = true
+
+[tool.setuptools.package-dir]
+services = "services"
+
 [tool.black]
 line-length = 88
-target-version = ["py313"]
+target-version = ["py312"]
 
 [tool.ruff]
 line-length = 88
 select = ["E", "F", "I", "UP", "B", "SIM", "C4", "PIE"]
 ignore = ["E501"]  # handled by black
 fix = true
-target-version = "py313"
+target-version = "py312"
 
 [tool.ruff.isort]
 known-first-party = ["services"]
@@ -81,7 +88,7 @@ ignore_missing_imports = true
 exclude = "^(tests|services[\\/]scan)[\\/]"
 disable_error_code = [
     "no-any-return",
-    "assignment", 
+    "assignment",
     "type-arg",
     "valid-type",
     "override",
@@ -92,7 +99,7 @@ disable_error_code = [
 [[tool.mypy.overrides]]
 module = [
     "aio_pika.*",
-    "httpx.*", 
+    "httpx.*",
     "beautifulsoup4.*",
     "lxml.*",
     "redis.*",

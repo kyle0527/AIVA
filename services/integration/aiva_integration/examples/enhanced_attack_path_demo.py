@@ -6,8 +6,8 @@ Enhanced Attack Path Analysis Demo
 import logging
 from pathlib import Path
 
+from services.aiva_common.enums import Confidence, Severity, VulnerabilityName
 from services.aiva_common.schemas import Asset, FindingPayload, Target, Vulnerability
-from services.aiva_common.enums import Severity, VulnerabilityName, Confidence
 from services.integration.aiva_integration.attack_path_analyzer.engine import (
     AttackPathEngine,
 )
@@ -185,7 +185,7 @@ def demo_nlp_recommendations(paths: list):
         logger.info(f"預估風險降低: {rec.estimated_risk_reduction:.0f}%")
 
         if rec.quick_wins:
-            logger.info(f"\n快速修復建議:")
+            logger.info("\n快速修復建議:")
             for quick_win in rec.quick_wins:
                 logger.info(f"  {quick_win}")
 
@@ -248,7 +248,7 @@ def demo_critical_nodes():
 
             # 這些是關鍵節點，應該優先加強防護
             if node_degree >= 3:
-                logger.info(f"   ⚠️ 高連接度節點，建議加強監控和防護")
+                logger.info("   ⚠️ 高連接度節點，建議加強監控和防護")
 
     finally:
         engine.close()

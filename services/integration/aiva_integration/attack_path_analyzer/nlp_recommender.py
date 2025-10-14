@@ -643,7 +643,7 @@ class AttackPathNLPRecommender:
         report += f"本次分析發現 **{len(recommendations)}** 條需要關注的攻擊路徑。\n\n"
 
         # 風險等級統計
-        risk_counts = {level: 0 for level in RiskLevel}
+        risk_counts = dict.fromkeys(RiskLevel, 0)
         for rec in recommendations:
             risk_counts[rec.risk_level] += 1
 

@@ -162,7 +162,7 @@ def example_comparison():
     print("\n" + "=" * 80)
     print("上下文對風險評估的影響對比")
     print("=" * 80)
-    print(f"相同漏洞: SQL Injection (HIGH)")
+    print("相同漏洞: SQL Injection (HIGH)")
 
     print("\n開發環境 (非關鍵):")
     print(f"  業務風險分數: {result_dev['business_risk_score']}")
