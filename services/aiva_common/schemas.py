@@ -552,22 +552,22 @@ class JavaScriptAnalysisResult(BaseModel):
     analysis_id: str
     url: str
     source_size_bytes: int
-    
+
     # 詳細分析結果
     dangerous_functions: list[str] = Field(default_factory=list)  # eval, Function, setTimeout等
     external_resources: list[str] = Field(default_factory=list)  # 外部 URL
     data_leaks: list[dict[str, str]] = Field(default_factory=list)  # 數據洩漏信息
-    
+
     # 通用欄位 (保持兼容)
     findings: list[str] = Field(default_factory=list)  # e.g., ["uses_eval", "dom_manipulation"]
     apis_called: list[str] = Field(default_factory=list)  # 發現的 API 端點
     ajax_endpoints: list[str] = Field(default_factory=list)  # AJAX 呼叫端點
     suspicious_patterns: list[str] = Field(default_factory=list)
-    
+
     # 評分欄位
     risk_score: float = Field(ge=0.0, le=10.0, default=0.0)  # 0.0 - 10.0
     security_score: int = Field(ge=0, le=100, default=100)  # 0-100 分
-    
+
     timestamp: datetime = Field(default_factory=lambda: datetime.now(UTC))
 
 

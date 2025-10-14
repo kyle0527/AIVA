@@ -276,3 +276,12 @@ class BioNeuronRAGAgent:
         }
         self.history.append(response)
         return response
+
+    def get_knowledge_stats(self) -> dict[str, int]:
+        """獲取知識庫統計信息"""
+        return {
+            "total_chunks": 1279,  # 模擬知識庫塊數
+            "total_keywords": 997,  # 模擬關鍵詞數
+            "indexed_files": 156,   # 模擬已索引檔案數
+            "ai_tools": len(self.tools)  # AI 工具數量
+        }

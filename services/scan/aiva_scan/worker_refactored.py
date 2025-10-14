@@ -30,10 +30,10 @@ async def run() -> None:
         try:
             msg = AivaMessage.model_validate_json(mqmsg.body)
             req = ScanStartPayload(**msg.payload)
-            
+
             # 使用 ScanOrchestrator 執行掃描
             payload = await _perform_scan_with_orchestrator(req, msg.header.trace_id)
-            
+
             out = AivaMessage(
                 header=MessageHeader(
                     message_id=new_id("msg"),
@@ -54,25 +54,25 @@ async def run() -> None:
 
 
 async def _perform_scan_with_orchestrator(
-    req: ScanStartPayload, 
+    req: ScanStartPayload,
     trace_id: str
 ) -> ScanCompletedPayload:
     """
     使用 ScanOrchestrator 執行掃描
-    
+
     Args:
         req: 掃描請求
         trace_id: 追蹤 ID
-        
+
     Returns:
         掃描完成的 Payload
     """
     # 創建 ScanOrchestrator 實例
     orchestrator = ScanOrchestrator(req)
-    
+
     # 執行掃描
     scan_context = await orchestrator.execute_scan()
-    
+
     # 將 ScanContext 轉換為 ScanCompletedPayload
     payload = ScanCompletedPayload(
         scan_id=req.scan_id,
@@ -81,12 +81,12 @@ async def _perform_scan_with_orchestrator(
         assets=scan_context.assets,
         fingerprints=scan_context.fingerprints,
     )
-    
+
     logger.info(
         f"Scan orchestration completed: {req.scan_id}, "
         f"URLs: {scan_context.urls_found}, "
         f"Forms: {scan_context.forms_found}, "
         f"Duration: {scan_context.scan_duration}s"
     )
-    
+
     return payload

@@ -6,7 +6,7 @@ AIVA Module-ThreatIntel
 __version__ = "0.1.0"
 __all__ = ["IntelAggregator", "MitreMapper", "IOCEnricher"]
 
-# 從實際的 threat_intel 模組導入
-from services.threat_intel.intel_aggregator import IntelAggregator
-from services.threat_intel.ioc_enricher import IOCEnricher
-from services.threat_intel.mitre_mapper import MitreMapper
+# 從當前目錄導入
+from .intel_aggregator import IntelAggregator
+from .ioc_enricher import IOCEnricher
+from .mitre_mapper import MitreMapper

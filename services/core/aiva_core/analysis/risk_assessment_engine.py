@@ -19,7 +19,9 @@ from services.aiva_common.schemas import FindingPayload
 from services.aiva_common.utils import get_logger
 
 if TYPE_CHECKING:
-    from services.threat_intel.intel_aggregator import IntelAggregator
+    from services.integration.aiva_integration.threat_intel.intel_aggregator import (
+        IntelAggregator,
+    )
 
 logger = get_logger(__name__)
 
@@ -43,7 +45,9 @@ class RiskAssessmentEngine:
 
         if enable_threat_intel:
             try:
-                from services.threat_intel.intel_aggregator import IntelAggregator
+                from services.integration.aiva_integration.threat_intel.intel_aggregator import (
+                    IntelAggregator,
+                )
 
                 self.intel_aggregator = IntelAggregator()
                 logger.info("Threat intelligence enabled for risk assessment")

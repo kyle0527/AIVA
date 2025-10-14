@@ -4,6 +4,7 @@ Code Fixer - 代碼修復器
 使用 LLM (OpenAI/LiteLLM) 自動修復代碼中的漏洞和問題
 """
 
+import contextlib
 from datetime import datetime
 import hashlib
 from typing import Any
@@ -267,10 +268,8 @@ CONFIDENCE:
                 continue
             if "CONFIDENCE:" in line:
                 in_explanation = False
-                try:
+                with contextlib.suppress(ValueError):
                     confidence = float(line.split(":")[-1].strip())
-                except ValueError:
-                    pass
                 continue
 
             if in_code:
@@ -286,20 +285,17 @@ CONFIDENCE:
 
     def _mock_fix_sql_injection(self, code: str, language: str) -> str:
         """Mock SQL 注入修復"""
-        if language == "python":
-            # 簡單替換
-            if "execute(" in code and ("%" in code or "+" in code):
-                return code.replace(
-                    "execute(",
-                    "# Fixed: Use parameterized query\nexecute("
-                ) + "\n# Use: cursor.execute(query, (param1, param2))"
+        if language == "python" and "execute(" in code and ("%" in code or "+" in code):
+            return code.replace(
+                "execute(",
+                "# Fixed: Use parameterized query\nexecute("
+            ) + "\n# Use: cursor.execute(query, (param1, param2))"
         return f"# Fixed SQL Injection\n{code}"
 
     def _mock_fix_xss(self, code: str, language: str) -> str:
         """Mock XSS 修復"""
-        if language == "python":
-            if "render(" in code or "template" in code.lower():
-                return f"import html\n# Fixed: Escape HTML\n{code.replace('render(', 'render(html.escape(')}"
+        if language == "python" and ("render(" in code or "template" in code.lower()):
+            return f"import html\n# Fixed: Escape HTML\n{code.replace('render(', 'render(html.escape(')}"
         return f"# Fixed XSS - Add HTML escaping\n{code}"
 
     def _mock_fix_path_traversal(self, code: str, language: str) -> str:

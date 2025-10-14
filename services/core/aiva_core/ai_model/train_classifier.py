@@ -1,13 +1,15 @@
-# -*- coding: utf-8 -*-
 
 from __future__ import annotations
-import os, sqlite3
-from typing import List, Tuple
-from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.model_selection import train_test_split
-from sklearn.linear_model import LogisticRegression
-from sklearn.metrics import classification_report, accuracy_score
+
+import os
+import sqlite3
+
 import joblib
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import accuracy_score, classification_report
+from sklearn.model_selection import train_test_split
+
 
 def create_database(db_path: str = "data/training_data.db") -> None:
     os.makedirs(os.path.dirname(db_path), exist_ok=True)
@@ -44,7 +46,7 @@ def create_database(db_path: str = "data/training_data.db") -> None:
         conn.commit()
     conn.close()
 
-def load_data(db_path: str = "data/training_data.db") -> Tuple[List[str], List[str]]:
+def load_data(db_path: str = "data/training_data.db") -> tuple[list[str], list[str]]:
     conn = sqlite3.connect(db_path)
     cur = conn.cursor()
     cur.execute("SELECT text, label FROM vulnerabilities")

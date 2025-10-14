@@ -170,10 +170,7 @@ class AjaxApiHandler:
         # 檢查是否為靜態資源（排除）
         static_extensions = ['.css', '.js', '.jpg', '.png', '.gif', '.svg', '.woff', '.ttf']
         parsed = urlparse(url)
-        if any(parsed.path.lower().endswith(ext) for ext in static_extensions):
-            return False
-
-        return True
+        return not any(parsed.path.lower().endswith(ext) for ext in static_extensions)
 
     def _create_api_asset(
         self, url: str, source: str, method: str = "GET"

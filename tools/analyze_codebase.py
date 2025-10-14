@@ -148,7 +148,7 @@ class CodeAnalyzer:
 
         for node in ast.walk(tree):
             # 每個決策點增加複雜度
-            if isinstance(node, (ast.If, ast.While, ast.For, ast.ExceptHandler)):
+            if isinstance(node, ast.If | ast.While | ast.For | ast.ExceptHandler):
                 complexity += 1
             elif isinstance(node, ast.BoolOp):
                 complexity += len(node.values) - 1
@@ -165,7 +165,7 @@ class CodeAnalyzer:
             是否有類型提示
         """
         for node in ast.walk(tree):
-            if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
+            if isinstance(node, ast.FunctionDef | ast.AsyncFunctionDef):
                 # 檢查參數類型提示
                 if node.args.args:
                     for arg in node.args.args:
@@ -187,7 +187,7 @@ class CodeAnalyzer:
         """
         for node in ast.walk(tree):
             if isinstance(
-                node, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef, ast.Module)
+                node, ast.FunctionDef | ast.AsyncFunctionDef | ast.ClassDef | ast.Module
             ):
                 docstring = ast.get_docstring(node)
                 if docstring:

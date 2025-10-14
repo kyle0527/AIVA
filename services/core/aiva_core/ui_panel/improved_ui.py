@@ -18,7 +18,6 @@ from typing import Any
 from fastapi import FastAPI
 from fastapi.responses import HTMLResponse
 
-
 # Add the path to the AIVA project so that ``services`` can be imported.
 # When running this script from outside the project root, this ensures
 # that ``services.core.aiva_core.ui_panel.dashboard`` is discoverable.
@@ -77,7 +76,7 @@ def _build_index_html(dashboard: Dashboard) -> str:
         method = det.get("method", "-")
         result = det.get("result", det.get("findings", "-"))
         # Show a short preview of the result to avoid overly long cells
-        if isinstance(result, (list, dict)):
+        if isinstance(result, list | dict):
             result_preview = "[複雜結果]"
         else:
             result_str = str(result)

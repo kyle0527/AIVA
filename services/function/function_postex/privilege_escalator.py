@@ -27,7 +27,6 @@ logger = structlog.get_logger(__name__)
 class AuthorizationError(Exception):
     """授權錯誤異常"""
 
-    pass
 
 
 class PrivilegeEscalator:

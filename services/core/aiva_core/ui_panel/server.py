@@ -6,6 +6,7 @@ Server - AIVA UI 面板 Web 伺服器
 from __future__ import annotations
 
 import logging
+import socket
 from typing import TYPE_CHECKING, Any
 
 if TYPE_CHECKING:
@@ -14,17 +15,42 @@ if TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 
+def find_free_port(start_port: int = 8080, max_attempts: int = 100) -> int:
+    """尋找可用的端口號.
+
+    Args:
+        start_port: 起始端口號
+        max_attempts: 最大嘗試次數
+
+    Returns:
+        可用的端口號
+
+    Raises:
+        RuntimeError: 找不到可用的端口
+    """
+    for port in range(start_port, start_port + max_attempts):
+        try:
+            with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+                s.bind(('127.0.0.1', port))
+                return port
+        except OSError:
+            continue
+
+    msg = f"無法在 {start_port}-{start_port + max_attempts - 1} 範圍內找到可用端口"
+    raise RuntimeError(msg)
+
+
 def start_ui_server(
     mode: str = "hybrid",
     host: str = "127.0.0.1",
-    port: int = 8080,
+    port: int | None = None,
 ) -> None:
     """啟動 UI 面板伺服器.
 
     Args:
         mode: 運作模式 (ui/ai/hybrid)
         host: 綁定的主機位址
-        port: 綁定的埠號
+        port: 指定的端口號 (None 表示自動選擇)
     """
     try:
         from fastapi import FastAPI
@@ -217,6 +243,15 @@ def start_ui_server(
         """獲取 AI 執行歷史."""
         return dashboard.get_ai_history()
 
+    # 自動選擇可用端口
+    if port is None:
+        try:
+            port = find_free_port()
+            logger.info(f"自動選擇可用端口: {port}")
+        except RuntimeError as e:
+            logger.error(f"端口選擇失敗: {e}")
+            return
+
     # 啟動伺服器
     logger.info(f"\n{'='*60}")
     logger.info("   啟動 AIVA UI 面板伺服器")
@@ -228,7 +263,18 @@ def start_ui_server(
     try:
         import uvicorn
 
-        uvicorn.run(app, host=host, port=port)
+        uvicorn.run(app, host=host, port=port, log_level="info")
     except ImportError:
         logger.error("錯誤: 需要安裝 uvicorn")
         logger.error("請執行: pip install uvicorn")
+    except OSError as e:
+        if "Address already in use" in str(e):
+            logger.error(f"端口 {port} 已被佔用，嘗試自動選擇其他端口...")
+            try:
+                new_port = find_free_port(port + 1)
+                logger.info(f"使用新端口: {new_port}")
+                uvicorn.run(app, host=host, port=new_port, log_level="info")
+            except (RuntimeError, ImportError) as retry_error:
+                logger.error(f"重試失敗: {retry_error}")
+        else:
+            logger.error(f"伺服器啟動失敗: {e}")
