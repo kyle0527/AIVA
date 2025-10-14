@@ -7,21 +7,21 @@ import (
 // NewLogger 建立標準化的日誌實例
 func NewLogger(serviceName string) (*zap.Logger, error) {
 	config := zap.NewProductionConfig()
-	
+
 	// 自訂配置
 	config.OutputPaths = []string{"stdout"}
 	config.ErrorOutputPaths = []string{"stderr"}
-	
+
 	// 添加服務名稱到所有日誌
 	config.InitialFields = map[string]interface{}{
 		"service": serviceName,
 	}
-	
+
 	logger, err := config.Build()
 	if err != nil {
 		return nil, err
 	}
-	
+
 	return logger, nil
 }
 
@@ -31,6 +31,6 @@ func NewDevelopmentLogger(serviceName string) (*zap.Logger, error) {
 	config.InitialFields = map[string]interface{}{
 		"service": serviceName,
 	}
-	
+
 	return config.Build()
 }

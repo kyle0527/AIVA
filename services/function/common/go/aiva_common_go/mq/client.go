@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"net/url"
 	"time"
 
 	amqp "github.com/rabbitmq/amqp091-go"
@@ -20,10 +21,10 @@ type MQClient struct {
 
 // Config RabbitMQ 配置
 type Config struct {
-	URL             string
-	ReconnectDelay  time.Duration
-	PrefetchCount   int
-	AutoAck         bool
+	URL            string
+	ReconnectDelay time.Duration
+	PrefetchCount  int
+	AutoAck        bool
 }
 
 // NewMQClient 建立新的 MQ 客戶端
@@ -32,32 +33,32 @@ func NewMQClient(url string, logger *zap.Logger) (*MQClient, error) {
 		url:    url,
 		logger: logger,
 	}
-	
+
 	if err := client.connect(); err != nil {
 		return nil, err
 	}
-	
+
 	return client, nil
 }
 
 // connect 建立連接
 func (c *MQClient) connect() error {
 	c.logger.Info("連接 RabbitMQ...", zap.String("url", maskPassword(c.url)))
-	
+
 	conn, err := amqp.Dial(c.url)
 	if err != nil {
 		return fmt.Errorf("無法連接 RabbitMQ: %w", err)
 	}
-	
+
 	ch, err := conn.Channel()
 	if err != nil {
 		conn.Close()
 		return fmt.Errorf("無法創建 Channel: %w", err)
 	}
-	
+
 	c.conn = conn
 	c.channel = ch
-	
+
 	c.logger.Info("✅ RabbitMQ 連接成功")
 	return nil
 }
@@ -80,12 +81,12 @@ func (c *MQClient) Consume(queueName string, handler func([]byte) error) error {
 	if err := c.DeclareQueue(queueName); err != nil {
 		return fmt.Errorf("聲明隊列失敗: %w", err)
 	}
-	
+
 	// 設置 Qos
 	if err := c.channel.Qos(1, 0, false); err != nil {
 		return fmt.Errorf("設置 Qos 失敗: %w", err)
 	}
-	
+
 	msgs, err := c.channel.Consume(
 		queueName,
 		"",    // consumer
@@ -98,14 +99,14 @@ func (c *MQClient) Consume(queueName string, handler func([]byte) error) error {
 	if err != nil {
 		return fmt.Errorf("註冊消費者失敗: %w", err)
 	}
-	
+
 	c.logger.Info("開始消費訊息", zap.String("queue", queueName))
-	
+
 	for msg := range msgs {
-		c.logger.Debug("收到訊息", 
+		c.logger.Debug("收到訊息",
 			zap.String("queue", queueName),
 			zap.Int("size", len(msg.Body)))
-		
+
 		if err := handler(msg.Body); err != nil {
 			c.logger.Error("處理訊息失敗",
 				zap.Error(err),
@@ -117,7 +118,7 @@ func (c *MQClient) Consume(queueName string, handler func([]byte) error) error {
 			msg.Ack(false)
 		}
 	}
-	
+
 	return nil
 }
 
@@ -127,10 +128,10 @@ func (c *MQClient) Publish(queueName string, body interface{}) error {
 	if err != nil {
 		return fmt.Errorf("序列化失敗: %w", err)
 	}
-	
+
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
-	
+
 	return c.channel.PublishWithContext(
 		ctx,
 		"",        // exchange
@@ -158,7 +159,30 @@ func (c *MQClient) Close() error {
 }
 
 // maskPassword 隱藏密碼用於日誌
-func maskPassword(url string) string {
-	// 簡單實作,生產環境應使用更安全的方式
-	return "amqp://***:***@..."
+func maskPassword(rawURL string) string {
+	if rawURL == "" {
+		return ""
+	}
+
+	// 使用標準 net/url 套件解析 URL
+	u, err := url.Parse(rawURL)
+	if err != nil {
+		// 如果解析失敗,返回通用遮蔽字串
+		return "amqp://***:***@..."
+	}
+
+	// 如果沒有使用者資訊,直接返回原 URL
+	if u.User == nil {
+		return rawURL
+	}
+
+	// 遮蔽密碼
+	username := u.User.Username()
+	if username == "" {
+		return rawURL
+	}
+
+	// 重建 URL,保留使用者名稱但遮蔽密碼
+	u.User = url.UserPassword(username, "***")
+	return u.String()
 }
