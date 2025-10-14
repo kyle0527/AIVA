@@ -7,16 +7,33 @@ PostEx Module - 後滲透測試模組 (僅供授權測試使用)
 提供權限提升、橫向移動、數據外洩檢測、持久化檢查等功能。
 """
 
-from .data_exfiltration_tester import DataExfiltrationTester
+# 導入現有模組（暫時註釋缺失的模組以避免導入錯誤）
+# from .data_exfiltration_tester import DataExfiltrationTester
 from .lateral_movement import LateralMovementTester
 from .persistence_checker import PersistenceChecker
 from .privilege_escalator import PrivilegeEscalator
 
+# 導入新的 schemas
+from .schemas import (
+    PostExDetectionResult,
+    PostExTelemetry,
+    PostExTestVector,
+    SystemFingerprint,
+    TaskExecutionResult,
+)
+
 __all__ = [
-    "PrivilegeEscalator",
+    # 現有模組
     "LateralMovementTester",
-    "DataExfiltrationTester",
     "PersistenceChecker",
+    "PrivilegeEscalator",
+    # "DataExfiltrationTester",  # 暫時註釋
+    # Schemas (按字母順序)
+    "PostExDetectionResult",
+    "PostExTelemetry",
+    "PostExTestVector",
+    "SystemFingerprint",
+    "TaskExecutionResult",
 ]
 
 __version__ = "1.0.0"

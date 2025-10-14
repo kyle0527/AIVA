@@ -5,6 +5,8 @@ Scan 模組專用數據合約
 
 from __future__ import annotations
 
+from typing import Any
+
 from pydantic import BaseModel, Field, field_validator
 
 from services.aiva_common.enums import Location, SensitiveInfoType, Severity
@@ -142,6 +144,31 @@ class InteractionResult(BaseModel):
         return v
 
 
+# TypeScript 兼容的動態掃描數據結構
+class DynamicScanTask(BaseModel):
+    """動態掃描任務 - 與 TypeScript 介面對應"""
+
+    task_id: str
+    scan_id: str
+    url: str
+    extraction_config: dict[str, Any] = Field(default_factory=dict)
+    interaction_config: dict[str, Any] = Field(default_factory=dict)
+    timeout_ms: int = Field(ge=1000, le=300000, default=30000)
+
+
+class DynamicScanResult(BaseModel):
+    """動態掃描結果 - 與 TypeScript 介面對應"""
+
+    task_id: str
+    scan_id: str
+    url: str
+    status: str  # "completed", "failed", "timeout"
+    contents: list[dict[str, Any]] = Field(default_factory=list)
+    interactions: list[dict[str, Any]] = Field(default_factory=list)
+    network_requests: list[dict[str, Any]] = Field(default_factory=list)
+    dom_changes: list[dict[str, Any]] = Field(default_factory=list)
+    metadata: dict[str, Any] = Field(default_factory=dict)
+    error_message: str | None = None
 # 導出所有公共類
 __all__ = [
     "SensitiveInfoType",
@@ -150,4 +177,6 @@ __all__ = [
     "JavaScriptAnalysisResult",
     "NetworkRequest",
     "InteractionResult",
+    "DynamicScanTask",
+    "DynamicScanResult",
 ]

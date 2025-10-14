@@ -8,9 +8,12 @@ import { chromium, Browser } from 'playwright';
 import * as amqp from 'amqplib';
 import { logger } from './utils/logger';
 import { ScanService } from './services/scan-service';
+// import { EnhancedDynamicScanService } from './services/enhanced-dynamic-scan.service';
+// import { DynamicScanTask, DynamicScanResult } from './interfaces/dynamic-scan.interfaces';
 
 const RABBITMQ_URL = process.env.RABBITMQ_URL || 'amqp://aiva:dev_password@localhost:5672/';
 const TASK_QUEUE = 'task.scan.dynamic';
+// const ENHANCED_TASK_QUEUE = 'task.scan.dynamic.enhanced';
 
 interface ScanTask {
   scan_id: string;
@@ -23,6 +26,7 @@ interface ScanTask {
 let browser: Browser | null = null;
 let connection: amqp.Channel | null = null;
 let scanService: ScanService | null = null;
+// let enhancedScanService: EnhancedDynamicScanService | null = null;
 
 async function initialize(): Promise<void> {
   logger.info('🚀 初始化 AIVA Scan Node...');
@@ -37,6 +41,7 @@ async function initialize(): Promise<void> {
 
   // 初始化掃描服務
   scanService = new ScanService(browser);
+  // enhancedScanService = new EnhancedDynamicScanService(browser);
 
   // 連接 RabbitMQ (使用官方 Promise API)
   logger.info('📡 連接 RabbitMQ...');
