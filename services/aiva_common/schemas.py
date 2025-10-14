@@ -206,13 +206,44 @@ class FeedbackEventPayload(BaseModel):
 
 
 class Vulnerability(BaseModel):
-    """漏洞基本資訊 - 用於 Finding 中的漏洞描述"""
+    """漏洞基本資訊 - 用於 Finding 中的漏洞描述
+
+    符合標準：
+    - CWE: Common Weakness Enumeration (MITRE)
+    - CVE: Common Vulnerabilities and Exposures
+    - CVSS: Common Vulnerability Scoring System v3.1/v4.0
+    - OWASP: Open Web Application Security Project
+    """
 
     name: VulnerabilityType
-    cwe: str | None = None
+    cwe: str | None = Field(
+        default=None,
+        description="CWE ID (格式: CWE-XXX)，參考 https://cwe.mitre.org/",
+        pattern=r"^CWE-\d+$",
+    )
+    cve: str | None = Field(
+        default=None,
+        description="CVE ID (格式: CVE-YYYY-NNNNN)，參考 https://cve.mitre.org/",
+        pattern=r"^CVE-\d{4}-\d{4,}$",
+    )
     severity: Severity
     confidence: Confidence
     description: str | None = None
+    cvss_score: float | None = Field(
+        default=None,
+        ge=0.0,
+        le=10.0,
+        description="CVSS v3.1 Base Score (0.0-10.0)，參考 https://www.first.org/cvss/",
+    )
+    cvss_vector: str | None = Field(
+        default=None,
+        description="CVSS v3.1 Vector String，例如: CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
+        pattern=r"^CVSS:3\.[01]/.*",
+    )
+    owasp_category: str | None = Field(
+        default=None,
+        description="OWASP Top 10 分類，例如: A03:2021-Injection",
+    )
 
 
 class Target(BaseModel):
@@ -590,12 +621,16 @@ class JavaScriptAnalysisResult(BaseModel):
     source_size_bytes: int
 
     # 詳細分析結果
-    dangerous_functions: list[str] = Field(default_factory=list)  # eval, Function, setTimeout等
+    dangerous_functions: list[str] = Field(
+        default_factory=list
+    )  # eval, Function, setTimeout等
     external_resources: list[str] = Field(default_factory=list)  # 外部 URL
     data_leaks: list[dict[str, str]] = Field(default_factory=list)  # 數據洩漏信息
 
     # 通用欄位 (保持兼容)
-    findings: list[str] = Field(default_factory=list)  # e.g., ["uses_eval", "dom_manipulation"]
+    findings: list[str] = Field(
+        default_factory=list
+    )  # e.g., ["uses_eval", "dom_manipulation"]
     apis_called: list[str] = Field(default_factory=list)  # 發現的 API 端點
     ajax_endpoints: list[str] = Field(default_factory=list)  # AJAX 呼叫端點
     suspicious_patterns: list[str] = Field(default_factory=list)
@@ -616,7 +651,9 @@ class BizLogicTestPayload(BaseModel):
     task_id: str
     scan_id: str
     test_type: str  # price_manipulation, workflow_bypass, race_condition
-    target_urls: dict[str, str]  # 目標 URL 字典 {"cart_api": "...", "checkout_api": "..."}
+    target_urls: dict[
+        str, str
+    ]  # 目標 URL 字典 {"cart_api": "...", "checkout_api": "..."}
     test_config: dict[str, Any] = Field(default_factory=dict)
     product_id: str | None = None
     workflow_steps: list[dict[str, str]] = Field(default_factory=list)
@@ -954,4 +991,903 @@ class EASMDiscoveryResult(BaseModel):
     status: str  # "completed", "in_progress", "failed"
     discovered_assets: list[DiscoveredAsset] = Field(default_factory=list)
     statistics: dict[str, Any] = Field(default_factory=dict)
+    timestamp: datetime = Field(default_factory=lambda: datetime.now(UTC))
+
+
+# ==================== 強化學習與自動決策 Schemas ====================
+
+
+class AttackStep(BaseModel):
+    """攻擊步驟 - AST 節點的可執行表示
+
+    符合標準：
+    - MITRE ATT&CK: 可選擇性映射到 ATT&CK 技術和戰術
+    """
+
+    step_id: str
+    action: str  # 動作描述，如 "SSRF Attack", "Validate Response"
+    tool_type: str  # 工具類型，如 "function_ssrf_go", "function_sqli"
+    target: dict[str, Any] = Field(default_factory=dict)  # 目標參數
+    parameters: dict[str, Any] = Field(default_factory=dict)  # 執行參數
+    expected_result: str | None = None  # 預期結果描述
+    timeout_seconds: float = 30.0
+    retry_count: int = 0
+    # MITRE ATT&CK 映射（可選）
+    mitre_technique_id: str | None = Field(
+        default=None,
+        description="MITRE ATT&CK 技術 ID，例如: T1190 (Exploit Public-Facing Application)",
+        pattern=r"^T\d{4}(\.\d{3})?$",
+    )
+    mitre_tactic: str | None = Field(
+        default=None,
+        description="MITRE ATT&CK 戰術，例如: Initial Access, Execution, Persistence",
+    )
+    metadata: dict[str, Any] = Field(default_factory=dict)
+
+
+class AttackPlan(BaseModel):
+    """攻擊計畫 - 完整的攻擊流程定義
+
+    符合標準：
+    - MITRE ATT&CK: 支持映射到攻擊技術和戰術
+    - CAPEC: Common Attack Pattern Enumeration and Classification (可選)
+    """
+
+    plan_id: str
+    scan_id: str
+    attack_type: VulnerabilityType  # 攻擊類型，如 SQLI, XSS, SSRF
+    steps: list[AttackStep]  # 攻擊步驟序列
+    dependencies: dict[str, list[str]] = Field(
+        default_factory=dict
+    )  # step_id -> [dependency_step_ids]
+    context: dict[str, Any] = Field(default_factory=dict)  # 場景上下文
+    target_info: dict[str, Any] = Field(default_factory=dict)  # 目標系統資訊
+    created_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
+    created_by: str = "ai_planner"  # 創建者（AI 或人工）
+    # MITRE ATT&CK 映射（可選）
+    mitre_techniques: list[str] = Field(
+        default_factory=list,
+        description="關聯的 MITRE ATT&CK 技術 ID 列表，例如: ['T1190', 'T1059.001']",
+    )
+    mitre_tactics: list[str] = Field(
+        default_factory=list,
+        description="關聯的 MITRE ATT&CK 戰術列表，例如: ['Initial Access', 'Execution']",
+    )
+    # CAPEC 映射（可選）
+    capec_id: str | None = Field(
+        default=None,
+        description="CAPEC ID (格式: CAPEC-XXX)，參考 https://capec.mitre.org/",
+        pattern=r"^CAPEC-\d+$",
+    )
+    metadata: dict[str, Any] = Field(default_factory=dict)
+
+    @field_validator("plan_id")
+    @classmethod
+    def validate_plan_id(cls, v: str) -> str:
+        if not v.startswith("plan_"):
+            raise ValueError("plan_id must start with 'plan_'")
+        return v
+
+
+class TraceRecord(BaseModel):
+    """執行追蹤記錄 - 單個步驟的執行詳情"""
+
+    trace_id: str
+    plan_id: str
+    step_id: str
+    session_id: str  # 會話 ID，用於關聯同一次攻擊鏈
+    tool_name: str  # 實際使用的工具模組名稱
+    input_data: dict[str, Any] = Field(default_factory=dict)  # 輸入參數
+    output_data: dict[str, Any] = Field(default_factory=dict)  # 輸出結果
+    status: str  # "success", "failed", "timeout", "skipped"
+    error_message: str | None = None
+    execution_time_seconds: float = 0.0
+    timestamp: datetime = Field(default_factory=lambda: datetime.now(UTC))
+    environment_response: dict[str, Any] = Field(default_factory=dict)  # 靶場環境回應
+    metadata: dict[str, Any] = Field(default_factory=dict)
+
+    @field_validator("status")
+    def validate_status(cls, v: str) -> str:
+        allowed = {"success", "failed", "timeout", "skipped", "error"}
+        if v not in allowed:
+            raise ValueError(f"Invalid status: {v}. Must be one of {allowed}")
+        return v
+
+
+class PlanExecutionMetrics(BaseModel):
+    """計畫執行指標 - AST vs Trace 對比結果"""
+
+    plan_id: str
+    session_id: str
+    expected_steps: int  # AST 中預期的步驟數
+    executed_steps: int  # 實際執行的步驟數
+    completed_steps: int  # 成功完成的步驟數
+    failed_steps: int  # 失敗的步驟數
+    skipped_steps: int  # 跳過的步驟數
+    extra_actions: int  # AST 中未規劃的額外動作數
+    completion_rate: float  # 完成率 (0.0 - 1.0)
+    success_rate: float  # 成功率 (0.0 - 1.0)
+    sequence_accuracy: float  # 順序準確度 (0.0 - 1.0)
+    goal_achieved: bool  # 是否達成攻擊目標
+    reward_score: float  # 獎勵分數（用於強化學習）
+    total_execution_time: float  # 總執行時間（秒）
+    timestamp: datetime = Field(default_factory=lambda: datetime.now(UTC))
+
+
+class PlanExecutionResult(BaseModel):
+    """計畫執行結果 - 完整的執行報告"""
+
+    result_id: str
+    plan_id: str
+    session_id: str
+    plan: AttackPlan  # 原始攻擊計畫
+    trace: list[TraceRecord]  # 執行追蹤記錄
+    metrics: PlanExecutionMetrics  # 執行指標
+    findings: list[FindingPayload] = Field(default_factory=list)  # 發現的漏洞
+    anomalies: list[str] = Field(default_factory=list)  # 異常事件
+    recommendations: list[str] = Field(default_factory=list)  # 改進建議
+    status: str  # "completed", "partial", "failed", "aborted"
+    completed_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
+    metadata: dict[str, Any] = Field(default_factory=dict)
+
+    @field_validator("status")
+    def validate_status(cls, v: str) -> str:
+        allowed = {"completed", "partial", "failed", "aborted"}
+        if v not in allowed:
+            raise ValueError(f"Invalid status: {v}. Must be one of {allowed}")
+        return v
+
+
+class ExperienceSample(BaseModel):
+    """經驗樣本 - 用於機器學習訓練"""
+
+    sample_id: str
+    plan_id: str
+    session_id: str
+    context: dict[str, Any]  # 場景上下文（目標系統、漏洞類型等）
+    plan: AttackPlan  # 攻擊計畫
+    trace: list[TraceRecord]  # 執行軌跡
+    metrics: PlanExecutionMetrics  # 執行指標
+    result: PlanExecutionResult  # 執行結果
+    label: str  # "success", "failure", "partial_success"
+    quality_score: float  # 樣本質量分數 (0.0 - 1.0)
+    created_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
+    annotations: dict[str, Any] = Field(default_factory=dict)  # 人工標註
+    metadata: dict[str, Any] = Field(default_factory=dict)
+
+    @field_validator("label")
+    def validate_label(cls, v: str) -> str:
+        allowed = {"success", "failure", "partial_success", "invalid"}
+        if v not in allowed:
+            raise ValueError(f"Invalid label: {v}. Must be one of {allowed}")
+        return v
+
+    @field_validator("quality_score")
+    def validate_quality_score(cls, v: float) -> float:
+        if not 0.0 <= v <= 1.0:
+            raise ValueError("quality_score must be between 0.0 and 1.0")
+        return v
+
+
+class SessionState(BaseModel):
+    """會話狀態 - 多步驟攻擊鏈的會話管理"""
+
+    session_id: str
+    plan_id: str
+    scan_id: str
+    status: str  # "active", "paused", "completed", "failed", "aborted"
+    current_step_index: int = 0
+    completed_steps: list[str] = Field(default_factory=list)  # step_ids
+    pending_steps: list[str] = Field(default_factory=list)  # step_ids
+    context: dict[str, Any] = Field(default_factory=dict)  # 動態上下文
+    variables: dict[str, Any] = Field(
+        default_factory=dict
+    )  # 會話變數（用於步驟間傳遞數據）
+    started_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
+    updated_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
+    timeout_at: datetime | None = None
+    metadata: dict[str, Any] = Field(default_factory=dict)
+
+    @field_validator("session_id")
+    def validate_session_id(cls, v: str) -> str:
+        if not v.startswith("session_"):
+            raise ValueError("session_id must start with 'session_'")
+        return v
+
+    @field_validator("status")
+    def validate_status(cls, v: str) -> str:
+        allowed = {"active", "paused", "completed", "failed", "aborted"}
+        if v not in allowed:
+            raise ValueError(f"Invalid status: {v}. Must be one of {allowed}")
+        return v
+
+
+class ModelTrainingConfig(BaseModel):
+    """模型訓練配置"""
+
+    config_id: str
+    model_type: str  # "supervised", "reinforcement", "hybrid"
+    training_mode: str  # "batch", "online", "incremental"
+    batch_size: int = 32
+    learning_rate: float = 0.001
+    epochs: int = 10
+    validation_split: float = 0.2
+    early_stopping: bool = True
+    patience: int = 3
+    reward_function: str = "completion_rate"  # 獎勵函數類型
+    discount_factor: float = 0.99  # 折扣因子（用於強化學習）
+    exploration_rate: float = 0.1  # 探索率
+    hyperparameters: dict[str, Any] = Field(default_factory=dict)
+    metadata: dict[str, Any] = Field(default_factory=dict)
+
+    @field_validator(
+        "learning_rate", "validation_split", "discount_factor", "exploration_rate"
+    )
+    def validate_rate(cls, v: float) -> float:
+        if not 0.0 <= v <= 1.0:
+            raise ValueError("Rate must be between 0.0 and 1.0")
+        return v
+
+
+class ModelTrainingResult(BaseModel):
+    """模型訓練結果"""
+
+    training_id: str
+    config: ModelTrainingConfig
+    model_version: str
+    training_samples: int
+    validation_samples: int
+    training_loss: float
+    validation_loss: float
+    accuracy: float | None = None
+    precision: float | None = None
+    recall: float | None = None
+    f1_score: float | None = None
+    average_reward: float | None = None  # 強化學習平均獎勵
+    training_duration_seconds: float = 0.0
+    started_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
+    completed_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
+    metrics: dict[str, Any] = Field(default_factory=dict)
+    model_path: str | None = None
+    metadata: dict[str, Any] = Field(default_factory=dict)
+
+
+class StandardScenario(BaseModel):
+    """標準靶場場景 - 用於訓練和測試"""
+
+    scenario_id: str
+    name: str
+    description: str
+    vulnerability_type: VulnerabilityType
+    difficulty_level: str  # "easy", "medium", "hard", "expert"
+    target_config: dict[str, Any]  # 靶場配置
+    expected_plan: AttackPlan  # 預期的最佳攻擊計畫
+    success_criteria: dict[str, Any]  # 成功標準
+    tags: list[str] = Field(default_factory=list)
+    created_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
+    metadata: dict[str, Any] = Field(default_factory=dict)
+
+    @field_validator("difficulty_level")
+    def validate_difficulty(cls, v: str) -> str:
+        allowed = {"easy", "medium", "hard", "expert"}
+        if v not in allowed:
+            raise ValueError(f"Invalid difficulty: {v}. Must be one of {allowed}")
+        return v
+
+
+class ScenarioTestResult(BaseModel):
+    """場景測試結果 - 模型在標準場景上的表現"""
+
+    test_id: str
+    scenario_id: str
+    model_version: str
+    generated_plan: AttackPlan
+    execution_result: PlanExecutionResult
+    score: float  # 綜合評分 (0.0 - 100.0)
+    comparison: dict[str, Any]  # 與預期計畫的對比
+    passed: bool
+    tested_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
+    metadata: dict[str, Any] = Field(default_factory=dict)
+
+
+# ==================== CVSS 漏洞評分系統 (符合 CVSS v3.1 標準) ====================
+
+
+class CVSSv3Metrics(BaseModel):
+    """CVSS v3.1 評分指標
+
+    符合標準: CVSS v3.1 Specification (https://www.first.org/cvss/v3.1/specification-document)
+    """
+
+    # Base Metrics (基礎指標)
+    attack_vector: str = Field(
+        default="N",
+        description="攻擊向量: N(Network), A(Adjacent), L(Local), P(Physical)",
+        pattern=r"^[NALP]$",
+    )
+    attack_complexity: str = Field(
+        default="L", description="攻擊複雜度: L(Low), H(High)", pattern=r"^[LH]$"
+    )
+    privileges_required: str = Field(
+        default="N",
+        description="所需權限: N(None), L(Low), H(High)",
+        pattern=r"^[NLH]$",
+    )
+    user_interaction: str = Field(
+        default="N", description="用戶交互: N(None), R(Required)", pattern=r"^[NR]$"
+    )
+    scope: str = Field(
+        default="U", description="影響範圍: U(Unchanged), C(Changed)", pattern=r"^[UC]$"
+    )
+    confidentiality_impact: str = Field(
+        default="N",
+        description="機密性影響: N(None), L(Low), H(High)",
+        pattern=r"^[NLH]$",
+    )
+    integrity_impact: str = Field(
+        default="N",
+        description="完整性影響: N(None), L(Low), H(High)",
+        pattern=r"^[NLH]$",
+    )
+    availability_impact: str = Field(
+        default="N",
+        description="可用性影響: N(None), L(Low), H(High)",
+        pattern=r"^[NLH]$",
+    )
+
+    # Temporal Metrics (時間指標 - 可選)
+    exploit_code_maturity: str | None = Field(
+        default=None,
+        description="漏洞利用程式碼成熟度: X(Not Defined), U(Unproven), P(Proof-of-Concept), F(Functional), H(High)",
+        pattern=r"^[XUPFH]$",
+    )
+    remediation_level: str | None = Field(
+        default=None,
+        description="修復級別: X(Not Defined), O(Official Fix), T(Temporary Fix), W(Workaround), U(Unavailable)",
+        pattern=r"^[XOTWU]$",
+    )
+    report_confidence: str | None = Field(
+        default=None,
+        description="報告可信度: X(Not Defined), U(Unknown), R(Reasonable), C(Confirmed)",
+        pattern=r"^[XURC]$",
+    )
+
+    def calculate_base_score(self) -> float:
+        """計算 CVSS v3.1 基礎分數
+
+        Returns:
+            基礎分數 (0.0 - 10.0)
+        """
+        # 這裡是簡化版的計算邏輯，完整實現應該嚴格遵循 CVSS v3.1 規範
+        # 參考: https://www.first.org/cvss/v3.1/specification-document
+
+        # Impact Sub-Score (ISC)
+        impact_values = {"N": 0.0, "L": 0.22, "H": 0.56}
+        isc_base = 1 - (1 - impact_values[self.confidentiality_impact]) * (
+            1 - impact_values[self.integrity_impact]
+        ) * (1 - impact_values[self.availability_impact])
+
+        if self.scope == "U":
+            impact = 6.42 * isc_base
+        else:  # Changed
+            impact = 7.52 * (isc_base - 0.029) - 3.25 * ((isc_base - 0.02) ** 15)
+
+        # Exploitability Sub-Score (ESS)
+        av_values = {"N": 0.85, "A": 0.62, "L": 0.55, "P": 0.2}
+        ac_values = {"L": 0.77, "H": 0.44}
+        pr_values_unchanged = {"N": 0.85, "L": 0.62, "H": 0.27}
+        pr_values_changed = {"N": 0.85, "L": 0.68, "H": 0.5}
+        ui_values = {"N": 0.85, "R": 0.62}
+
+        pr_values = pr_values_unchanged if self.scope == "U" else pr_values_changed
+
+        exploitability = (
+            8.22
+            * av_values[self.attack_vector]
+            * ac_values[self.attack_complexity]
+            * pr_values[self.privileges_required]
+            * ui_values[self.user_interaction]
+        )
+
+        # Base Score
+        if impact <= 0:
+            return 0.0
+        elif self.scope == "U":
+            base_score = min(impact + exploitability, 10.0)
+        else:
+            base_score = min(1.08 * (impact + exploitability), 10.0)
+
+        # Round up to one decimal place
+        return round(base_score * 10) / 10
+
+    def to_vector_string(self) -> str:
+        """生成 CVSS v3.1 向量字串
+
+        Returns:
+            CVSS 向量字串，例如: "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H"
+        """
+        vector = (
+            f"CVSS:3.1/AV:{self.attack_vector}/AC:{self.attack_complexity}/"
+            f"PR:{self.privileges_required}/UI:{self.user_interaction}/"
+            f"S:{self.scope}/C:{self.confidentiality_impact}/"
+            f"I:{self.integrity_impact}/A:{self.availability_impact}"
+        )
+
+        # 添加時間指標（如果定義）
+        if self.exploit_code_maturity and self.exploit_code_maturity != "X":
+            vector += f"/E:{self.exploit_code_maturity}"
+        if self.remediation_level and self.remediation_level != "X":
+            vector += f"/RL:{self.remediation_level}"
+        if self.report_confidence and self.report_confidence != "X":
+            vector += f"/RC:{self.report_confidence}"
+
+        return vector
+
+
+class CVEReference(BaseModel):
+    """CVE 參考資訊
+
+    符合標準: CVE Numbering Authority (https://www.cve.org/)
+    """
+
+    cve_id: str = Field(
+        description="CVE ID (格式: CVE-YYYY-NNNNN)",
+        pattern=r"^CVE-\d{4}-\d{4,}$",
+    )
+    description: str | None = None
+    cvss_score: float | None = Field(default=None, ge=0.0, le=10.0)
+    cvss_vector: str | None = None
+    references: list[str] = Field(default_factory=list)
+    published_date: datetime | None = None
+    last_modified_date: datetime | None = None
+
+
+class CWEReference(BaseModel):
+    """CWE 參考資訊
+
+    符合標準: Common Weakness Enumeration (https://cwe.mitre.org/)
+    """
+
+    cwe_id: str = Field(description="CWE ID (格式: CWE-XXX)", pattern=r"^CWE-\d+$")
+    name: str | None = None
+    description: str | None = None
+    weakness_category: str | None = None  # "Class", "Base", "Variant", "Compound"
+    likelihood_of_exploit: str | None = None  # "High", "Medium", "Low"
+
+
+# ==================== SARIF 格式支持 (Static Analysis Results Interchange Format) ====================
+
+
+class SARIFLocation(BaseModel):
+    """SARIF 位置資訊
+
+    符合標準: SARIF v2.1.0 (https://docs.oasis-open.org/sarif/sarif/v2.1.0/)
+    """
+
+    uri: str  # 檔案 URI
+    start_line: int | None = None
+    start_column: int | None = None
+    end_line: int | None = None
+    end_column: int | None = None
+    snippet: str | None = None  # 代碼片段
+
+
+class SARIFResult(BaseModel):
+    """SARIF 結果項
+
+    符合標準: SARIF v2.1.0
+    """
+
+    rule_id: str  # 規則 ID (可以是 CWE ID 或自定義規則)
+    level: str = Field(
+        default="warning",
+        description="嚴重性級別",
+        pattern=r"^(none|note|warning|error)$",
+    )
+    message: str  # 訊息文本
+    locations: list[SARIFLocation] = Field(default_factory=list)
+    properties: dict[str, Any] = Field(default_factory=dict)
+
+
+class SARIFReport(BaseModel):
+    """SARIF 報告
+
+    符合標準: SARIF v2.1.0
+    完整規範: https://docs.oasis-open.org/sarif/sarif/v2.1.0/sarif-v2.1.0.html
+    """
+
+    version: str = "2.1.0"
+    schema_uri: str = (
+        "https://raw.githubusercontent.com/oasis-tcs/sarif-spec/"
+        "master/Schemata/sarif-schema-2.1.0.json"
+    )
+    runs: list[dict[str, Any]] = Field(default_factory=list)
+
+    def add_run(
+        self,
+        tool_name: str,
+        tool_version: str,
+        results: list[SARIFResult],
+    ) -> None:
+        """添加一個掃描運行結果
+
+        Args:
+            tool_name: 工具名稱
+            tool_version: 工具版本
+            results: 結果列表
+        """
+        run = {
+            "tool": {
+                "driver": {
+                    "name": tool_name,
+                    "version": tool_version,
+                    "informationUri": "https://github.com/kyle0527/AIVA",
+                }
+            },
+            "results": [
+                {
+                    "ruleId": r.rule_id,
+                    "level": r.level,
+                    "message": {"text": r.message},
+                    "locations": [
+                        {
+                            "physicalLocation": {
+                                "artifactLocation": {"uri": loc.uri},
+                                "region": {
+                                    "startLine": loc.start_line,
+                                    "startColumn": loc.start_column,
+                                    "endLine": loc.end_line,
+                                    "endColumn": loc.end_column,
+                                    "snippet": (
+                                        {"text": loc.snippet} if loc.snippet else None
+                                    ),
+                                },
+                            }
+                        }
+                        for loc in r.locations
+                    ],
+                    "properties": r.properties,
+                }
+                for r in results
+            ],
+        }
+        self.runs.append(run)
+
+
+# ==================== 增強版漏洞發現 (集成 CVSS、CVE、CWE、SARIF) ====================
+
+
+class EnhancedVulnerability(BaseModel):
+    """增強版漏洞資訊 - 集成多種業界標準
+
+    集成標準:
+    - CWE: Common Weakness Enumeration
+    - CVE: Common Vulnerabilities and Exposures
+    - CVSS: Common Vulnerability Scoring System
+    - MITRE ATT&CK: 攻擊技術框架
+    """
+
+    name: VulnerabilityType
+    severity: Severity
+    confidence: Confidence
+    description: str | None = None
+
+    # CWE 參考
+    cwe: CWEReference | None = None
+
+    # CVE 參考（如果已知）
+    cve: CVEReference | None = None
+
+    # CVSS 評分
+    cvss: CVSSv3Metrics | None = None
+
+    # MITRE ATT&CK 映射
+    mitre_techniques: list[str] = Field(
+        default_factory=list,
+        description="關聯的 MITRE ATT&CK 技術 ID",
+    )
+
+    # OWASP Top 10 分類（可選）
+    owasp_category: str | None = Field(
+        default=None,
+        description="OWASP Top 10 分類，例如: A01:2021-Broken Access Control",
+    )
+
+
+class EnhancedFindingPayload(BaseModel):
+    """增強版漏洞發現 Payload - 集成所有業界標準
+
+    此 Schema 擴展了基礎 FindingPayload，添加了完整的標準支持
+    """
+
+    finding_id: str
+    task_id: str
+    scan_id: str
+    status: str
+
+    # 使用增強版漏洞資訊
+    vulnerability: EnhancedVulnerability
+
+    target: Target
+    strategy: str | None = None
+    evidence: FindingEvidence | None = None
+    impact: FindingImpact | None = None
+    recommendation: FindingRecommendation | None = None
+
+    # SARIF 格式支持
+    sarif_result: SARIFResult | None = None
+
+    metadata: dict[str, Any] = Field(default_factory=dict)
+    created_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
+    updated_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
+
+    @field_validator("finding_id")
+    def validate_finding_id(cls, v: str) -> str:
+        if not v.startswith("finding_"):
+            raise ValueError("finding_id must start with 'finding_'")
+        return v
+
+    def to_sarif_result(self) -> SARIFResult:
+        """轉換為 SARIF 結果格式
+
+        Returns:
+            SARIF 結果項
+        """
+        if self.sarif_result:
+            return self.sarif_result
+
+        # 構建 SARIF 結果
+        level_mapping = {
+            Severity.CRITICAL: "error",
+            Severity.HIGH: "error",
+            Severity.MEDIUM: "warning",
+            Severity.LOW: "warning",
+            Severity.INFO: "note",
+        }
+
+        locations = []
+        if self.target.url:
+            locations.append(
+                SARIFLocation(
+                    uri=str(self.target.url),
+                    snippet=self.evidence.payload if self.evidence else None,
+                )
+            )
+
+        return SARIFResult(
+            rule_id=(
+                self.vulnerability.cwe.cwe_id
+                if self.vulnerability.cwe
+                else f"AIVA-{self.vulnerability.name.value}"
+            ),
+            level=level_mapping.get(self.vulnerability.severity, "warning"),
+            message=self.vulnerability.description
+            or f"{self.vulnerability.name.value} detected",
+            locations=locations,
+            properties={
+                "finding_id": self.finding_id,
+                "confidence": self.vulnerability.confidence.value,
+                "cvss_score": (
+                    self.vulnerability.cvss.calculate_base_score()
+                    if self.vulnerability.cvss
+                    else None
+                ),
+                "mitre_techniques": self.vulnerability.mitre_techniques,
+            },
+        )
+
+
+# ==================== AI 訓練與學習合約 ====================
+
+
+class AITrainingStartPayload(BaseModel):
+    """AI 訓練啟動請求 - 用於啟動新的訓練會話"""
+
+    training_id: str = Field(description="訓練會話 ID")
+    training_type: str = Field(description="訓練類型: single|batch|continuous|scenario")
+    scenario_id: str | None = Field(default=None, description="靶場場景 ID")
+    target_vulnerability: str | None = Field(default=None, description="目標漏洞類型")
+    config: ModelTrainingConfig = Field(description="訓練配置")
+    metadata: dict[str, Any] = Field(default_factory=dict)
+
+    @field_validator("training_id")
+    def validate_training_id(cls, v: str) -> str:
+        if not v.startswith("training_"):
+            raise ValueError("training_id must start with 'training_'")
+        return v
+
+
+class AITrainingProgressPayload(BaseModel):
+    """AI 訓練進度報告 - 定期報告訓練進度"""
+
+    training_id: str
+    episode_number: int
+    total_episodes: int
+    successful_episodes: int = 0
+    failed_episodes: int = 0
+    total_samples: int = 0
+    high_quality_samples: int = 0
+    avg_reward: float | None = None
+    avg_quality: float | None = None
+    best_reward: float | None = None
+    model_metrics: dict[str, float] = Field(default_factory=dict)
+    status: str = "running"
+    metadata: dict[str, Any] = Field(default_factory=dict)
+    timestamp: datetime = Field(default_factory=lambda: datetime.now(UTC))
+
+
+class AITrainingCompletedPayload(BaseModel):
+    """AI 訓練完成報告 - 訓練會話完成時的最終報告"""
+
+    training_id: str
+    status: str
+    total_episodes: int
+    successful_episodes: int
+    failed_episodes: int
+    total_duration_seconds: float
+    total_samples: int
+    high_quality_samples: int
+    medium_quality_samples: int
+    low_quality_samples: int
+    final_avg_reward: float | None = None
+    final_avg_quality: float | None = None
+    best_episode_reward: float | None = None
+    model_checkpoint_path: str | None = None
+    model_metrics: dict[str, float] = Field(default_factory=dict)
+    error_message: str | None = None
+    metadata: dict[str, Any] = Field(default_factory=dict)
+    completed_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
+
+
+class AIExperienceCreatedEvent(BaseModel):
+    """AI 經驗樣本創建事件 - 當新的經驗樣本被創建時發送"""
+
+    experience_id: str
+    training_id: str | None = None
+    trace_id: str
+    vulnerability_type: str
+    quality_score: float = Field(ge=0.0, le=1.0)
+    success: bool
+    plan_summary: dict[str, Any] = Field(default_factory=dict)
+    result_summary: dict[str, Any] = Field(default_factory=dict)
+    metadata: dict[str, Any] = Field(default_factory=dict)
+    timestamp: datetime = Field(default_factory=lambda: datetime.now(UTC))
+
+
+class AITraceCompletedEvent(BaseModel):
+    """AI 執行追蹤完成事件 - 當執行追蹤完成時發送"""
+
+    trace_id: str
+    session_id: str | None = None
+    training_id: str | None = None
+    total_steps: int
+    successful_steps: int
+    failed_steps: int
+    duration_seconds: float
+    final_success: bool
+    plan_type: str
+    metadata: dict[str, Any] = Field(default_factory=dict)
+    timestamp: datetime = Field(default_factory=lambda: datetime.now(UTC))
+
+
+class AIModelUpdatedEvent(BaseModel):
+    """AI 模型更新事件 - 當模型被訓練更新時發送"""
+
+    model_id: str
+    model_version: str
+    training_id: str | None = None
+    update_type: str  # checkpoint|deployment|fine_tune|architecture
+    performance_metrics: dict[str, float] = Field(default_factory=dict)
+    model_path: str | None = None
+    checkpoint_path: str | None = None
+    is_deployed: bool = False
+    metadata: dict[str, Any] = Field(default_factory=dict)
+    timestamp: datetime = Field(default_factory=lambda: datetime.now(UTC))
+
+
+class AIModelDeployCommand(BaseModel):
+    """AI 模型部署命令 - 用於部署訓練好的模型到生產環境"""
+
+    model_id: str
+    model_version: str
+    checkpoint_path: str
+    deployment_target: str = "production"  # production|staging|testing
+    deployment_config: dict[str, Any] = Field(default_factory=dict)
+    require_validation: bool = True
+    min_performance_threshold: dict[str, float] = Field(default_factory=dict)
+    metadata: dict[str, Any] = Field(default_factory=dict)
+
+
+class RAGKnowledgeUpdatePayload(BaseModel):
+    """RAG 知識庫更新請求 - 用於向 RAG 知識庫添加新知識"""
+
+    knowledge_type: str  # vulnerability|payload|technique|scenario|experience|cve|mitre
+    content: str
+    source_id: str | None = None
+    category: str | None = None
+    tags: list[str] = Field(default_factory=list)
+    related_cve: str | None = None
+    related_cwe: str | None = None
+    mitre_techniques: list[str] = Field(default_factory=list)
+    confidence: float = Field(default=1.0, ge=0.0, le=1.0)
+    metadata: dict[str, Any] = Field(default_factory=dict)
+
+
+class RAGQueryPayload(BaseModel):
+    """RAG 查詢請求 - 用於從 RAG 知識庫檢索相關知識"""
+
+    query_id: str
+    query_text: str
+    top_k: int = Field(default=5, ge=1, le=100)
+    min_similarity: float = Field(default=0.5, ge=0.0, le=1.0)
+    knowledge_types: list[str] | None = None
+    categories: list[str] | None = None
+    metadata: dict[str, Any] = Field(default_factory=dict)
+
+
+class RAGResponsePayload(BaseModel):
+    """RAG 查詢響應 - RAG 知識庫查詢的結果"""
+
+    query_id: str
+    results: list[dict[str, Any]] = Field(default_factory=list)
+    total_results: int
+    avg_similarity: float | None = None
+    enhanced_context: str | None = None
+    metadata: dict[str, Any] = Field(default_factory=dict)
+    timestamp: datetime = Field(default_factory=lambda: datetime.now(UTC))
+
+
+# ==================== 模組間通訊統一包裝 ====================
+
+
+class AIVARequest(BaseModel):
+    """統一的請求包裝器 - 用於模組間的請求消息"""
+
+    request_id: str
+    source_module: ModuleName
+    target_module: ModuleName
+    request_type: str
+    payload: dict[str, Any]
+    trace_id: str | None = None
+    timeout_seconds: int = Field(default=30, ge=1, le=300)
+    metadata: dict[str, Any] = Field(default_factory=dict)
+    timestamp: datetime = Field(default_factory=lambda: datetime.now(UTC))
+
+
+class AIVAResponse(BaseModel):
+    """統一的響應包裝器 - 用於模組間的響應消息"""
+
+    request_id: str
+    response_type: str
+    success: bool
+    payload: dict[str, Any] | None = None
+    error_code: str | None = None
+    error_message: str | None = None
+    metadata: dict[str, Any] = Field(default_factory=dict)
+    timestamp: datetime = Field(default_factory=lambda: datetime.now(UTC))
+
+
+class AIVAEvent(BaseModel):
+    """統一的事件包裝器 - 用於模組間的事件通知"""
+
+    event_id: str
+    event_type: str
+    source_module: ModuleName
+    payload: dict[str, Any]
+    trace_id: str | None = None
+    metadata: dict[str, Any] = Field(default_factory=dict)
+    timestamp: datetime = Field(default_factory=lambda: datetime.now(UTC))
+
+
+class AIVACommand(BaseModel):
+    """統一的命令包裝器 - 用於模組間的命令消息"""
+
+    command_id: str
+    command_type: str
+    source_module: ModuleName
+    target_module: ModuleName
+    payload: dict[str, Any]
+    priority: int = Field(default=0, ge=0, le=10)
+    trace_id: str | None = None
+    metadata: dict[str, Any] = Field(default_factory=dict)
     timestamp: datetime = Field(default_factory=lambda: datetime.now(UTC))
