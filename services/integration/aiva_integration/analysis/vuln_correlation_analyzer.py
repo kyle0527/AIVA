@@ -293,3 +293,375 @@ class VulnerabilityCorrelationAnalyzer:
                 f"風險放大係數: {risk_amplification}x",
             ],
         }
+
+    def analyze_code_level_root_cause(
+        self, findings: list[dict[str, Any]]
+    ) -> dict[str, Any]:
+        """
+        程式碼層面的根因分析
+        
+        識別多個漏洞是否源於同一個有問題的共用元件、函式庫或父類別
+        
+        Args:
+            findings: 漏洞發現列表，需包含程式碼位置資訊
+            
+        Returns:
+            根因分析結果
+        """
+        if not findings:
+            return {"root_causes": [], "derived_vulnerabilities": []}
+
+        # 按程式碼路徑分組
+        code_path_groups = defaultdict(list)
+        for finding in findings:
+            location = finding.get("location", {})
+            file_path = location.get("file_path") or location.get("code_file")
+
+            if file_path:
+                code_path_groups[file_path].append(finding)
+
+        # 尋找共用元件
+        root_causes = []
+        derived_vulnerabilities = []
+
+        for file_path, file_findings in code_path_groups.items():
+            if len(file_findings) < 2:
+                continue
+
+            # 檢查是否有共用的函式或類別
+            common_components = self._identify_common_components(file_findings)
+
+            if common_components:
+                # 識別根本原因
+                root_cause = {
+                    "component_type": common_components["type"],
+                    "component_name": common_components["name"],
+                    "file_path": file_path,
+                    "affected_vulnerabilities": len(file_findings),
+                    "vulnerability_ids": [
+                        f.get("finding_id") or f.get("vulnerability_id")
+                        for f in file_findings
+                    ],
+                    "severity_distribution": self._count_severities(file_findings),
+                    "recommendation": self._generate_root_cause_recommendation(
+                        common_components
+                    ),
+                }
+                root_causes.append(root_cause)
+
+                # 標記衍生漏洞
+                for finding in file_findings:
+                    derived_vulnerabilities.append(
+                        {
+                            "vulnerability_id": finding.get("finding_id")
+                            or finding.get("vulnerability_id"),
+                            "root_cause_component": common_components["name"],
+                            "relationship": "derived_from_shared_component",
+                        }
+                    )
+
+        logger.info(
+            f"Root cause analysis found {len(root_causes)} shared components "
+            f"affecting {len(derived_vulnerabilities)} vulnerabilities"
+        )
+
+        return {
+            "root_causes": root_causes,
+            "derived_vulnerabilities": derived_vulnerabilities,
+            "summary": {
+                "total_root_causes": len(root_causes),
+                "total_affected_vulnerabilities": len(derived_vulnerabilities),
+                "fix_efficiency": (
+                    f"修復 {len(root_causes)} 個根本問題可以解決 "
+                    f"{len(derived_vulnerabilities)} 個漏洞"
+                    if root_causes
+                    else "未發現共用根本原因"
+                ),
+            },
+        }
+
+    def analyze_sast_dast_correlation(
+        self, findings: list[dict[str, Any]]
+    ) -> dict[str, Any]:
+        """
+        SAST-DAST 資料流關聯分析
+        
+        將 SAST 的潛在漏洞 (Sink) 與 DAST 的可控輸入 (Source) 進行關聯，
+        驗證漏洞的真實可利用性
+        
+        Args:
+            findings: 混合的 SAST 和 DAST 發現列表
+            
+        Returns:
+            關聯分析結果
+        """
+        if not findings:
+            return {"confirmed_flows": [], "unconfirmed_sast": [], "orphan_dast": []}
+
+        # 分類 SAST 和 DAST 發現
+        sast_findings = []
+        dast_findings = []
+
+        for finding in findings:
+            scan_type = finding.get("scan_type", "").lower()
+            vuln_type = finding.get("vulnerability_type", "").lower()
+
+            # 根據掃描類型或位置資訊判斷
+            if scan_type == "sast" or "code_file" in finding.get("location", {}):
+                sast_findings.append(finding)
+            elif scan_type == "dast" or "url" in finding.get("location", {}):
+                dast_findings.append(finding)
+
+        # 尋找資料流匹配
+        confirmed_flows = []
+        unconfirmed_sast = list(sast_findings)  # 先假設都未確認
+        orphan_dast = list(dast_findings)
+
+        for sast_finding in sast_findings:
+            sast_location = sast_finding.get("location", {})
+            sast_vuln_type = sast_finding.get("vulnerability_type", "").lower()
+
+            # 尋找對應的 DAST 發現
+            for dast_finding in dast_findings:
+                dast_location = dast_finding.get("location", {})
+                dast_vuln_type = dast_finding.get("vulnerability_type", "").lower()
+
+                # 檢查漏洞類型是否匹配
+                if self._are_vulnerability_types_compatible(
+                    sast_vuln_type, dast_vuln_type
+                ):
+                    # 檢查路徑是否匹配
+                    if self._check_path_correlation(sast_location, dast_location):
+                        # 找到匹配的資料流
+                        confirmed_flow = {
+                            "sast_finding_id": sast_finding.get("finding_id"),
+                            "dast_finding_id": dast_finding.get("finding_id"),
+                            "vulnerability_type": sast_vuln_type,
+                            "source": {
+                                "type": "external_input",
+                                "location": dast_location.get("url"),
+                                "parameter": dast_location.get("parameter"),
+                            },
+                            "sink": {
+                                "type": "dangerous_function",
+                                "location": sast_location.get("code_file"),
+                                "line": sast_location.get("line_number"),
+                                "function": sast_location.get("function_name"),
+                            },
+                            "confidence": "high",
+                            "impact": self._calculate_flow_impact(
+                                sast_finding, dast_finding
+                            ),
+                            "recommendation": "此漏洞已被 DAST 驗證為可利用，應立即修復",
+                        }
+                        confirmed_flows.append(confirmed_flow)
+
+                        # 從未確認列表中移除
+                        if sast_finding in unconfirmed_sast:
+                            unconfirmed_sast.remove(sast_finding)
+                        if dast_finding in orphan_dast:
+                            orphan_dast.remove(dast_finding)
+
+        logger.info(
+            f"SAST-DAST correlation: {len(confirmed_flows)} confirmed flows, "
+            f"{len(unconfirmed_sast)} unconfirmed SAST findings, "
+            f"{len(orphan_dast)} orphan DAST findings"
+        )
+
+        return {
+            "confirmed_flows": confirmed_flows,
+            "unconfirmed_sast": [
+                {
+                    "finding_id": f.get("finding_id"),
+                    "vulnerability_type": f.get("vulnerability_type"),
+                    "status": "potential",
+                    "recommendation": "SAST 發現但未被 DAST 驗證，可能為誤報或需要特定條件觸發",
+                }
+                for f in unconfirmed_sast
+            ],
+            "orphan_dast": [
+                {
+                    "finding_id": f.get("finding_id"),
+                    "vulnerability_type": f.get("vulnerability_type"),
+                    "status": "confirmed_by_dast",
+                    "recommendation": "DAST 確認的漏洞但未找到對應的程式碼位置",
+                }
+                for f in orphan_dast
+            ],
+            "summary": {
+                "total_confirmed": len(confirmed_flows),
+                "total_unconfirmed_sast": len(unconfirmed_sast),
+                "total_orphan_dast": len(orphan_dast),
+                "confirmation_rate": (
+                    round(
+                        len(confirmed_flows) / len(sast_findings) * 100, 1
+                    )
+                    if sast_findings
+                    else 0
+                ),
+                "key_insight": (
+                    f"{len(confirmed_flows)} 個 SAST 發現已被 DAST 驗證為真實可利用漏洞"
+                    if confirmed_flows
+                    else "未發現 SAST-DAST 關聯"
+                ),
+            },
+        }
+
+    def _identify_common_components(
+        self, findings: list[dict[str, Any]]
+    ) -> dict[str, Any] | None:
+        """識別共用的程式碼元件"""
+        # 收集所有可能的共用元件
+        functions = []
+        classes = []
+        modules = []
+
+        for finding in findings:
+            location = finding.get("location", {})
+            functions.append(location.get("function_name"))
+            classes.append(location.get("class_name"))
+            modules.append(location.get("module_name"))
+
+        # 尋找最常見的元件
+        function_counts = defaultdict(int)
+        class_counts = defaultdict(int)
+        module_counts = defaultdict(int)
+
+        for func in functions:
+            if func:
+                function_counts[func] += 1
+
+        for cls in classes:
+            if cls:
+                class_counts[cls] += 1
+
+        for mod in modules:
+            if mod:
+                module_counts[mod] += 1
+
+        # 找出出現次數最多的元件
+        if function_counts and max(function_counts.values()) >= 2:
+            common_func = max(function_counts.items(), key=lambda x: x[1])
+            return {"type": "function", "name": common_func[0], "count": common_func[1]}
+
+        if class_counts and max(class_counts.values()) >= 2:
+            common_class = max(class_counts.items(), key=lambda x: x[1])
+            return {
+                "type": "class",
+                "name": common_class[0],
+                "count": common_class[1],
+            }
+
+        if module_counts and max(module_counts.values()) >= 2:
+            common_module = max(module_counts.items(), key=lambda x: x[1])
+            return {
+                "type": "module",
+                "name": common_module[0],
+                "count": common_module[1],
+            }
+
+        return None
+
+    def _count_severities(self, findings: list[dict[str, Any]]) -> dict[str, int]:
+        """統計嚴重程度分布"""
+        severity_counts = defaultdict(int)
+        for finding in findings:
+            severity = finding.get("severity", "unknown").upper()
+            severity_counts[severity] += 1
+        return dict(severity_counts)
+
+    def _generate_root_cause_recommendation(
+        self, component: dict[str, Any]
+    ) -> str:
+        """生成根因修復建議"""
+        comp_type = component["type"]
+        comp_name = component["name"]
+        count = component["count"]
+
+        return (
+            f"建議重點審查和修復 {comp_type} '{comp_name}'，"
+            f"該元件導致了 {count} 個相關漏洞。"
+            f"修復此共用元件將同時解決所有衍生的安全問題。"
+        )
+
+    def _are_vulnerability_types_compatible(
+        self, sast_type: str, dast_type: str
+    ) -> bool:
+        """檢查 SAST 和 DAST 的漏洞類型是否匹配"""
+        # 定義類型映射關係
+        type_mappings = {
+            "sql_injection": ["sqli", "sql", "injection"],
+            "xss": ["cross_site_scripting", "xss", "script_injection"],
+            "command_injection": ["os_command", "cmd_injection", "command"],
+            "path_traversal": ["lfi", "directory_traversal", "path"],
+            "xxe": ["xml_external_entity", "xxe"],
+        }
+
+        # 標準化類型名稱
+        sast_normalized = sast_type.replace("-", "_").replace(" ", "_")
+        dast_normalized = dast_type.replace("-", "_").replace(" ", "_")
+
+        # 檢查直接匹配
+        if sast_normalized == dast_normalized:
+            return True
+
+        # 檢查映射匹配
+        for category, variants in type_mappings.items():
+            if sast_normalized in variants and dast_normalized in variants:
+                return True
+
+        return False
+
+    def _check_path_correlation(
+        self, sast_location: dict[str, Any], dast_location: dict[str, Any]
+    ) -> bool:
+        """檢查 SAST 程式碼位置與 DAST URL 路徑是否相關"""
+        code_file = sast_location.get("code_file", "")
+        url = dast_location.get("url", "")
+
+        if not code_file or not url:
+            return False
+
+        # 提取 URL 路徑
+        from urllib.parse import urlparse
+
+        parsed_url = urlparse(url)
+        url_path = parsed_url.path
+
+        # 簡單的路徑匹配邏輯
+        # 例如：/api/users 可能對應到 api/users.py 或 UserController
+        url_segments = [seg for seg in url_path.split("/") if seg]
+        code_segments = [seg for seg in code_file.replace("\\", "/").split("/") if seg]
+
+        # 檢查是否有共同的路徑段
+        common_segments = set(url_segments) & set(code_segments)
+        return len(common_segments) > 0
+
+    def _calculate_flow_impact(
+        self, sast_finding: dict[str, Any], dast_finding: dict[str, Any]
+    ) -> str:
+        """計算資料流的影響等級"""
+        sast_severity = sast_finding.get("severity", "medium").upper()
+        dast_severity = dast_finding.get("severity", "medium").upper()
+
+        # 取兩者中較高的嚴重程度
+        severity_order = ["LOW", "MEDIUM", "HIGH", "CRITICAL"]
+
+        sast_level = (
+            severity_order.index(sast_severity)
+            if sast_severity in severity_order
+            else 1
+        )
+        dast_level = (
+            severity_order.index(dast_severity)
+            if dast_severity in severity_order
+            else 1
+        )
+
+        max_level = max(sast_level, dast_level)
+
+        # 因為已被驗證，提升一個等級
+        confirmed_level = min(max_level + 1, len(severity_order) - 1)
+
+        return severity_order[confirmed_level]
+

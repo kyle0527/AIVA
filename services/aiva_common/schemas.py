@@ -6,16 +6,27 @@ from typing import Any
 from pydantic import BaseModel, Field, HttpUrl, field_validator
 
 from .enums import (
+    AssetExposure,
+    AssetType,
+    AttackPathEdgeType,
+    AttackPathNodeType,
+    BusinessCriticality,
+    ComplianceFramework,
     Confidence,
+    DataSensitivity,
+    Environment,
+    Exploitability,
     IntelSource,
     IOCType,
     ModuleName,
     PostExTestType,
     RemediationStatus,
     RemediationType,
+    RiskLevel,
     Severity,
     ThreatLevel,
     Topic,
+    VulnerabilityStatus,
     VulnerabilityType,
 )
 
@@ -195,17 +206,28 @@ class FeedbackEventPayload(BaseModel):
 
 
 class Vulnerability(BaseModel):
+    """漏洞基本資訊 - 用於 Finding 中的漏洞描述"""
+
     name: VulnerabilityType
     cwe: str | None = None
     severity: Severity
     confidence: Confidence
+    description: str | None = None
 
 
-class FindingTarget(BaseModel):
-    # Accept arbitrary URL-like values
-    url: Any
+class Target(BaseModel):
+    """目標資訊 - FindingTarget 的別名，保持向後相容"""
+
+    url: Any  # Accept arbitrary URL-like values
     parameter: str | None = None
     method: str | None = None
+    headers: dict[str, str] = Field(default_factory=dict)
+    params: dict[str, Any] = Field(default_factory=dict)
+    body: str | None = None
+
+
+# 保持向後相容的別名
+FindingTarget = Target
 
 
 class FindingEvidence(BaseModel):
@@ -218,26 +240,40 @@ class FindingEvidence(BaseModel):
 
 
 class FindingImpact(BaseModel):
+    """漏洞影響描述"""
+
     description: str | None = None
     business_impact: str | None = None
+    technical_impact: str | None = None
+    affected_users: int | None = None
+    estimated_cost: float | None = None
 
 
 class FindingRecommendation(BaseModel):
+    """漏洞修復建議"""
+
     fix: str | None = None
     priority: str | None = None
+    remediation_steps: list[str] = Field(default_factory=list)
+    references: list[str] = Field(default_factory=list)
 
 
 class FindingPayload(BaseModel):
+    """漏洞發現 Payload - 統一的漏洞報告格式"""
+
     finding_id: str
     task_id: str
     scan_id: str
     status: str
     vulnerability: Vulnerability
-    target: FindingTarget
+    target: Target  # 使用 Target 而不是 FindingTarget
     strategy: str | None = None
     evidence: FindingEvidence | None = None
     impact: FindingImpact | None = None
     recommendation: FindingRecommendation | None = None
+    metadata: dict[str, Any] = Field(default_factory=dict)
+    created_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
+    updated_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
 
     @field_validator("finding_id")
     def validate_finding_id(cls, v: str) -> str:
@@ -594,5 +630,328 @@ class BizLogicResultPayload(BaseModel):
     test_type: str
     status: str  # completed, failed, error
     findings: list[dict[str, Any]] = Field(default_factory=list)  # FindingPayload dicts
+    statistics: dict[str, Any] = Field(default_factory=dict)
+    timestamp: datetime = Field(default_factory=lambda: datetime.now(UTC))
+
+
+# ==================== 資產與漏洞生命週期管理 Schemas ====================
+
+
+class AssetLifecyclePayload(BaseModel):
+    """資產生命週期管理 Payload"""
+
+    asset_id: str
+    asset_type: AssetType
+    value: str  # URL, IP, repository URL, etc.
+    environment: Environment
+    business_criticality: BusinessCriticality
+    data_sensitivity: DataSensitivity | None = None
+    asset_exposure: AssetExposure | None = None
+    owner: str | None = None
+    team: str | None = None
+    compliance_tags: list[ComplianceFramework] = Field(default_factory=list)
+    metadata: dict[str, Any] = Field(default_factory=dict)
+    created_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
+
+
+class VulnerabilityLifecyclePayload(BaseModel):
+    """漏洞生命週期管理 Payload"""
+
+    vulnerability_id: str
+    finding_id: str
+    asset_id: str
+    vulnerability_type: VulnerabilityType
+    severity: Severity
+    confidence: Confidence
+    status: VulnerabilityStatus
+    exploitability: Exploitability | None = None
+    assigned_to: str | None = None
+    due_date: datetime | None = None
+    first_detected: datetime = Field(default_factory=lambda: datetime.now(UTC))
+    last_seen: datetime = Field(default_factory=lambda: datetime.now(UTC))
+    resolution_date: datetime | None = None
+    metadata: dict[str, Any] = Field(default_factory=dict)
+
+
+class VulnerabilityUpdatePayload(BaseModel):
+    """漏洞狀態更新 Payload"""
+
+    vulnerability_id: str
+    status: VulnerabilityStatus
+    assigned_to: str | None = None
+    comment: str | None = None
+    metadata: dict[str, Any] = Field(default_factory=dict)
+    updated_by: str | None = None
+    timestamp: datetime = Field(default_factory=lambda: datetime.now(UTC))
+
+
+# ==================== 風險評估增強 Schemas ====================
+
+
+class RiskAssessmentContext(BaseModel):
+    """風險評估上下文 - 用於增強風險評估"""
+
+    environment: Environment
+    business_criticality: BusinessCriticality
+    data_sensitivity: DataSensitivity | None = None
+    asset_exposure: AssetExposure | None = None
+    compliance_tags: list[ComplianceFramework] = Field(default_factory=list)
+    asset_value: float | None = None  # 資產價值（金額）
+    user_base: int | None = None  # 使用者基數
+    sla_hours: int | None = None  # SLA 要求（小時）
+
+
+class RiskAssessmentResult(BaseModel):
+    """風險評估結果"""
+
+    finding_id: str
+    technical_risk_score: float  # 技術風險分數 (0-10)
+    business_risk_score: float  # 業務風險分數 (0-100)
+    risk_level: RiskLevel
+    priority_score: float  # 優先級分數 (0-100)
+    context_multiplier: float  # 上下文乘數
+    business_impact: dict[str, Any] = Field(default_factory=dict)
+    recommendations: list[str] = Field(default_factory=list)
+    estimated_effort: str | None = None
+    timestamp: datetime = Field(default_factory=lambda: datetime.now(UTC))
+
+
+class RiskTrendAnalysis(BaseModel):
+    """風險趨勢分析"""
+
+    period_start: datetime
+    period_end: datetime
+    total_vulnerabilities: int
+    risk_distribution: dict[str, int]  # {risk_level: count}
+    average_risk_score: float
+    trend: str  # "increasing", "stable", "decreasing"
+    improvement_percentage: float | None = None
+    top_risks: list[dict[str, Any]] = Field(default_factory=list)
+
+
+# ==================== 攻擊路徑分析 Schemas ====================
+
+
+class AttackPathNode(BaseModel):
+    """攻擊路徑節點"""
+
+    node_id: str
+    node_type: AttackPathNodeType
+    name: str
+    properties: dict[str, Any] = Field(default_factory=dict)
+
+
+class AttackPathEdge(BaseModel):
+    """攻擊路徑邊"""
+
+    edge_id: str
+    source_node_id: str
+    target_node_id: str
+    edge_type: AttackPathEdgeType
+    risk_score: float = 0.0
+    properties: dict[str, Any] = Field(default_factory=dict)
+
+
+class AttackPathPayload(BaseModel):
+    """攻擊路徑 Payload"""
+
+    path_id: str
+    scan_id: str
+    source_node: AttackPathNode
+    target_node: AttackPathNode
+    nodes: list[AttackPathNode]
+    edges: list[AttackPathEdge]
+    total_risk_score: float
+    path_length: int
+    description: str | None = None
+    timestamp: datetime = Field(default_factory=lambda: datetime.now(UTC))
+
+
+class AttackPathRecommendation(BaseModel):
+    """攻擊路徑推薦"""
+
+    path_id: str
+    risk_level: RiskLevel
+    priority_score: float
+    executive_summary: str
+    technical_explanation: str
+    business_impact: str
+    remediation_steps: list[str]
+    quick_wins: list[str] = Field(default_factory=list)
+    affected_assets: list[str] = Field(default_factory=list)
+    estimated_effort: str
+    estimated_risk_reduction: float
+    timestamp: datetime = Field(default_factory=lambda: datetime.now(UTC))
+
+
+# ==================== 漏洞關聯分析 Schemas ====================
+
+
+class VulnerabilityCorrelation(BaseModel):
+    """漏洞關聯分析結果"""
+
+    correlation_id: str
+    correlation_type: str  # "code_level", "data_flow", "attack_chain"
+    related_findings: list[str]  # finding_ids
+    confidence_score: float  # 0.0 - 1.0
+    root_cause: str | None = None
+    common_components: list[str] = Field(default_factory=list)
+    explanation: str | None = None
+    timestamp: datetime = Field(default_factory=lambda: datetime.now(UTC))
+
+
+class CodeLevelRootCause(BaseModel):
+    """程式碼層面根因分析結果"""
+
+    analysis_id: str
+    vulnerable_component: str  # 共用函式庫、父類別等
+    affected_findings: list[str]  # finding_ids
+    code_location: str | None = None
+    vulnerability_pattern: str | None = None
+    fix_recommendation: str | None = None
+
+
+class SASTDASTCorrelation(BaseModel):
+    """SAST-DAST 資料流關聯結果"""
+
+    correlation_id: str
+    sast_finding_id: str
+    dast_finding_id: str
+    data_flow_path: list[str]  # Source -> Sink path
+    verification_status: str  # "verified", "partial", "unverified"
+    confidence_score: float  # 0.0 - 1.0
+    explanation: str | None = None
+
+
+# ==================== API 安全測試 Schemas ====================
+
+
+class APISchemaPayload(BaseModel):
+    """API Schema 解析 Payload"""
+
+    schema_id: str
+    scan_id: str
+    schema_type: str  # "openapi", "graphql", "grpc"
+    schema_content: dict[str, Any] | str
+    base_url: str
+    authentication: Authentication = Field(default_factory=Authentication)
+
+
+class APITestCase(BaseModel):
+    """API 測試案例"""
+
+    test_id: str
+    test_type: str  # "bola", "bfla", "data_leak", "mass_assignment"
+    endpoint: str
+    method: str
+    test_vectors: list[dict[str, Any]] = Field(default_factory=list)
+    expected_behavior: str | None = None
+
+
+class APISecurityTestPayload(BaseModel):
+    """API 安全測試 Payload"""
+
+    task_id: str
+    scan_id: str
+    api_type: str  # "rest", "graphql", "grpc"
+    schema: APISchemaPayload | None = None
+    test_cases: list[APITestCase] = Field(default_factory=list)
+    authentication: Authentication = Field(default_factory=Authentication)
+
+
+# ==================== AI 驅動漏洞驗證 Schemas ====================
+
+
+class AIVerificationRequest(BaseModel):
+    """AI 驅動漏洞驗證請求"""
+
+    verification_id: str
+    finding_id: str
+    scan_id: str
+    vulnerability_type: VulnerabilityType
+    target: FindingTarget
+    evidence: FindingEvidence
+    verification_mode: str = "non_destructive"  # "non_destructive", "safe", "full"
+    context: dict[str, Any] = Field(default_factory=dict)
+
+
+class AIVerificationResult(BaseModel):
+    """AI 驅動漏洞驗證結果"""
+
+    verification_id: str
+    finding_id: str
+    verification_status: str  # "confirmed", "false_positive", "needs_review"
+    confidence_score: float  # 0.0 - 1.0
+    verification_method: str
+    test_steps: list[str] = Field(default_factory=list)
+    observations: list[str] = Field(default_factory=list)
+    recommendations: list[str] = Field(default_factory=list)
+    timestamp: datetime = Field(default_factory=lambda: datetime.now(UTC))
+
+
+# ==================== SIEM 整合 Schemas ====================
+
+
+class SIEMEventPayload(BaseModel):
+    """SIEM 事件 Payload"""
+
+    event_id: str
+    event_type: str  # "vulnerability_detected", "scan_completed", "high_risk_finding"
+    severity: Severity
+    source: str
+    destination: str | None = None
+    message: str
+    details: dict[str, Any] = Field(default_factory=dict)
+    timestamp: datetime = Field(default_factory=lambda: datetime.now(UTC))
+
+
+class NotificationPayload(BaseModel):
+    """通知 Payload - 用於 Slack/Teams/Email"""
+
+    notification_id: str
+    notification_type: str  # "slack", "teams", "email", "webhook"
+    priority: str  # "critical", "high", "medium", "low"
+    title: str
+    message: str
+    details: dict[str, Any] = Field(default_factory=dict)
+    recipients: list[str] = Field(default_factory=list)
+    attachments: list[dict[str, Any]] = Field(default_factory=list)
+    timestamp: datetime = Field(default_factory=lambda: datetime.now(UTC))
+
+
+# ==================== EASM 資產探索 Schemas ====================
+
+
+class EASMDiscoveryPayload(BaseModel):
+    """EASM 資產探索 Payload"""
+
+    discovery_id: str
+    scan_id: str
+    discovery_type: str  # "subdomain", "port_scan", "cloud_storage", "certificate"
+    targets: list[str]  # 起始目標
+    scope: ScanScope = Field(default_factory=ScanScope)
+    max_depth: int = 3
+    passive_only: bool = False
+
+
+class DiscoveredAsset(BaseModel):
+    """探索到的資產"""
+
+    asset_id: str
+    asset_type: AssetType
+    value: str
+    discovery_method: str  # "subdomain_enum", "port_scan", "certificate_transparency"
+    confidence: Confidence
+    metadata: dict[str, Any] = Field(default_factory=dict)
+    discovered_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
+
+
+class EASMDiscoveryResult(BaseModel):
+    """EASM 探索結果"""
+
+    discovery_id: str
+    scan_id: str
+    status: str  # "completed", "in_progress", "failed"
+    discovered_assets: list[DiscoveredAsset] = Field(default_factory=list)
     statistics: dict[str, Any] = Field(default_factory=dict)
     timestamp: datetime = Field(default_factory=lambda: datetime.now(UTC))

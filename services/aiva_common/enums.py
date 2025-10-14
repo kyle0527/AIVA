@@ -87,6 +87,8 @@ class VulnerabilityType(str, Enum):
     BOLA = "BOLA"
     INFO_LEAK = "Information Leak"
     WEAK_AUTH = "Weak Authentication"
+    RCE = "Remote Code Execution"
+    AUTHENTICATION_BYPASS = "Authentication Bypass"
     # BizLogic Vulnerabilities
     PRICE_MANIPULATION = "Price Manipulation"
     WORKFLOW_BYPASS = "Workflow Bypass"
@@ -272,3 +274,137 @@ class PersistenceType(str, Enum):
     CRON = "cron"
     SYSTEMD = "systemd"
     AUTOSTART = "autostart"
+
+
+# ==================== 資產與漏洞生命週期管理 ====================
+
+
+class BusinessCriticality(str, Enum):
+    """業務重要性等級"""
+
+    CRITICAL = "critical"
+    HIGH = "high"
+    MEDIUM = "medium"
+    LOW = "low"
+
+
+class Environment(str, Enum):
+    """環境類型"""
+
+    PRODUCTION = "production"
+    STAGING = "staging"
+    DEVELOPMENT = "development"
+    TESTING = "testing"
+
+
+class AssetType(str, Enum):
+    """資產類型"""
+
+    URL = "url"
+    REPOSITORY = "repository"
+    HOST = "host"
+    CONTAINER = "container"
+    API_ENDPOINT = "api_endpoint"
+    MOBILE_APP = "mobile_app"
+    WEB_APPLICATION = "web_application"
+    DATABASE = "database"
+    API_SERVICE = "api_service"
+
+
+class AssetStatus(str, Enum):
+    """資產狀態"""
+
+    ACTIVE = "active"
+    INACTIVE = "inactive"
+    ARCHIVED = "archived"
+    DELETED = "deleted"
+
+
+class VulnerabilityStatus(str, Enum):
+    """漏洞狀態 - 用於漏洞生命週期管理"""
+
+    NEW = "new"
+    OPEN = "open"
+    IN_PROGRESS = "in_progress"
+    FIXED = "fixed"
+    VERIFIED = "verified"
+    RISK_ACCEPTED = "risk_accepted"
+    FALSE_POSITIVE = "false_positive"
+    WONT_FIX = "wont_fix"
+    DUPLICATE = "duplicate"
+
+
+class DataSensitivity(str, Enum):
+    """資料敏感度等級"""
+
+    HIGHLY_SENSITIVE = "highly_sensitive"  # 信用卡、健康資料、密碼
+    SENSITIVE = "sensitive"  # PII（個人識別信息）
+    INTERNAL = "internal"  # 內部資料
+    PUBLIC = "public"  # 公開資料
+
+
+class AssetExposure(str, Enum):
+    """資產網路暴露度"""
+
+    INTERNET_FACING = "internet_facing"  # 直接暴露於互聯網
+    DMZ = "dmz"  # DMZ 區域
+    INTERNAL_NETWORK = "internal_network"  # 內部網路
+    ISOLATED = "isolated"  # 隔離網路
+
+
+class Exploitability(str, Enum):
+    """漏洞可利用性評估"""
+
+    PROVEN = "proven"  # 已有公開 exploit
+    HIGH = "high"  # 高度可利用
+    MEDIUM = "medium"  # 中等可利用性
+    LOW = "low"  # 低可利用性
+    THEORETICAL = "theoretical"  # 理論上可利用
+
+
+class ComplianceFramework(str, Enum):
+    """合規框架標籤"""
+
+    PCI_DSS = "pci-dss"
+    HIPAA = "hipaa"
+    GDPR = "gdpr"
+    SOX = "sox"
+    ISO27001 = "iso27001"
+    NIST = "nist"
+    CIS = "cis"
+
+
+class RiskLevel(str, Enum):
+    """風險等級 - 用於風險評估"""
+
+    CRITICAL = "critical"
+    HIGH = "high"
+    MEDIUM = "medium"
+    LOW = "low"
+    INFO = "info"
+
+
+# ==================== 攻擊路徑分析 ====================
+
+
+class AttackPathNodeType(str, Enum):
+    """攻擊路徑節點類型"""
+
+    ATTACKER = "attacker"
+    ASSET = "asset"
+    VULNERABILITY = "vulnerability"
+    CREDENTIAL = "credential"
+    DATABASE = "database"
+    API_ENDPOINT = "api_endpoint"
+    INTERNAL_NETWORK = "internal_network"
+
+
+class AttackPathEdgeType(str, Enum):
+    """攻擊路徑邊類型"""
+
+    EXPLOITS = "exploits"
+    LEADS_TO = "leads_to"
+    GRANTS_ACCESS = "grants_access"
+    EXPOSES = "exposes"
+    CONTAINS = "contains"
+    CAN_ACCESS = "can_access"
