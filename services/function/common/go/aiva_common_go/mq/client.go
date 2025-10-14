@@ -1,0 +1,164 @@
+package mq
+
+import (
+	"context"
+	"encoding/json"
+	"fmt"
+	"time"
+
+	amqp "github.com/rabbitmq/amqp091-go"
+	"go.uber.org/zap"
+)
+
+// MQClient 提供統一的 RabbitMQ 操作介面
+type MQClient struct {
+	conn    *amqp.Connection
+	channel *amqp.Channel
+	logger  *zap.Logger
+	url     string
+}
+
+// Config RabbitMQ 配置
+type Config struct {
+	URL             string
+	ReconnectDelay  time.Duration
+	PrefetchCount   int
+	AutoAck         bool
+}
+
+// NewMQClient 建立新的 MQ 客戶端
+func NewMQClient(url string, logger *zap.Logger) (*MQClient, error) {
+	client := &MQClient{
+		url:    url,
+		logger: logger,
+	}
+	
+	if err := client.connect(); err != nil {
+		return nil, err
+	}
+	
+	return client, nil
+}
+
+// connect 建立連接
+func (c *MQClient) connect() error {
+	c.logger.Info("連接 RabbitMQ...", zap.String("url", maskPassword(c.url)))
+	
+	conn, err := amqp.Dial(c.url)
+	if err != nil {
+		return fmt.Errorf("無法連接 RabbitMQ: %w", err)
+	}
+	
+	ch, err := conn.Channel()
+	if err != nil {
+		conn.Close()
+		return fmt.Errorf("無法創建 Channel: %w", err)
+	}
+	
+	c.conn = conn
+	c.channel = ch
+	
+	c.logger.Info("✅ RabbitMQ 連接成功")
+	return nil
+}
+
+// DeclareQueue 聲明隊列
+func (c *MQClient) DeclareQueue(name string) error {
+	_, err := c.channel.QueueDeclare(
+		name,  // name
+		true,  // durable
+		false, // delete when unused
+		false, // exclusive
+		false, // no-wait
+		nil,   // arguments
+	)
+	return err
+}
+
+// Consume 消費訊息
+func (c *MQClient) Consume(queueName string, handler func([]byte) error) error {
+	if err := c.DeclareQueue(queueName); err != nil {
+		return fmt.Errorf("聲明隊列失敗: %w", err)
+	}
+	
+	// 設置 Qos
+	if err := c.channel.Qos(1, 0, false); err != nil {
+		return fmt.Errorf("設置 Qos 失敗: %w", err)
+	}
+	
+	msgs, err := c.channel.Consume(
+		queueName,
+		"",    // consumer
+		false, // auto-ack (設為 false,手動確認)
+		false, // exclusive
+		false, // no-local
+		false, // no-wait
+		nil,   // args
+	)
+	if err != nil {
+		return fmt.Errorf("註冊消費者失敗: %w", err)
+	}
+	
+	c.logger.Info("開始消費訊息", zap.String("queue", queueName))
+	
+	for msg := range msgs {
+		c.logger.Debug("收到訊息", 
+			zap.String("queue", queueName),
+			zap.Int("size", len(msg.Body)))
+		
+		if err := handler(msg.Body); err != nil {
+			c.logger.Error("處理訊息失敗",
+				zap.Error(err),
+				zap.String("queue", queueName))
+			// Nack 訊息,重新放回隊列
+			msg.Nack(false, true)
+		} else {
+			// Ack 訊息
+			msg.Ack(false)
+		}
+	}
+	
+	return nil
+}
+
+// Publish 發布訊息
+func (c *MQClient) Publish(queueName string, body interface{}) error {
+	data, err := json.Marshal(body)
+	if err != nil {
+		return fmt.Errorf("序列化失敗: %w", err)
+	}
+	
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+	
+	return c.channel.PublishWithContext(
+		ctx,
+		"",        // exchange
+		queueName, // routing key
+		false,     // mandatory
+		false,     // immediate
+		amqp.Publishing{
+			ContentType:  "application/json",
+			Body:         data,
+			DeliveryMode: amqp.Persistent,
+			Timestamp:    time.Now(),
+		},
+	)
+}
+
+// Close 關閉連接
+func (c *MQClient) Close() error {
+	if c.channel != nil {
+		c.channel.Close()
+	}
+	if c.conn != nil {
+		return c.conn.Close()
+	}
+	return nil
+}
+
+// maskPassword 隱藏密碼用於日誌
+func maskPassword(url string) string {
+	// 簡單實作,生產環境應使用更安全的方式
+	return "amqp://***:***@..."
+}
