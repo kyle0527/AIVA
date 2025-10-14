@@ -5,6 +5,12 @@ BioNeuron Core - 生物啟發式神經網路決策核心
 
 這個模組實現了一個可擴展的生物啟發式神經網路 (500萬參數規模)
 用於 AI 代理的決策核心,包含 RAG 功能和抗幻覺機制
+
+新增功能：
+- 攻擊計畫執行器 (Planner)
+- 任務執行追蹤 (Tracer)
+- AST 與 Trace 對比分析
+- 經驗學習機制
 """
 
 from __future__ import annotations
@@ -160,16 +166,34 @@ class BioNeuronRAGAgent:
     """
     具備 RAG 功能的 BioNeuron AI 代理.
 
-    結合檢索增強生成 (RAG) 與生物啟發式決策核心
+    結合檢索增強生成 (RAG) 與生物啟發式決策核心，
+    並整合攻擊計畫執行、追蹤記錄和經驗學習能力。
     """
 
-    def __init__(self, codebase_path: str) -> None:
+    def __init__(
+        self,
+        codebase_path: str,
+        enable_planner: bool = True,
+        enable_tracer: bool = True,
+        enable_experience: bool = True,
+        database_url: str = "sqlite:///./aiva_experience.db",
+    ) -> None:
         """初始化 RAG 代理.
 
         Args:
             codebase_path: 程式碼庫路徑
+            enable_planner: 是否啟用計畫執行器
+            enable_tracer: 是否啟用執行追蹤
+            enable_experience: 是否啟用經驗學習
+            database_url: 經驗資料庫連接字串
         """
         logger.info("正在初始化 BioNeuronRAGAgent...")
+
+        # 基本配置
+        self.codebase_path = codebase_path
+        self.enable_planner = enable_planner
+        self.enable_tracer = enable_tracer
+        self.enable_experience = enable_experience
 
         # 注意: 這裡需要實現 KnowledgeBase, Tool, CodeReader, CodeWriter
         # 目前暫時使用 mock 實作
@@ -188,6 +212,66 @@ class BioNeuronRAGAgent:
         self.decision_core = ScalableBioNet(self.input_vector_size, len(self.tools))
         self.anti_hallucination = AntiHallucinationModule()
         self.history: list[dict[str, Any]] = []
+
+        # 新增：攻擊計畫執行器
+        if enable_planner:
+            from ..planner.orchestrator import AttackOrchestrator
+
+            self.orchestrator = AttackOrchestrator()
+            logger.info("✓ Planner/Orchestrator enabled")
+        else:
+            self.orchestrator = None
+
+        # 新增：執行監控與追蹤
+        if enable_tracer:
+            from ..execution_tracer.execution_monitor import ExecutionMonitor
+            from ..execution_tracer.task_executor import TaskExecutor
+
+            self.execution_monitor = ExecutionMonitor()
+            self.task_executor = TaskExecutor(self.execution_monitor)
+            logger.info("✓ Execution Tracer enabled")
+        else:
+            self.execution_monitor = None
+            self.task_executor = None
+
+        # 新增：經驗資料庫和對比分析
+        if enable_experience:
+            try:
+                # 延遲導入以避免循環依賴
+                from pathlib import Path
+                import sys
+
+                # 添加 integration 路徑
+                integration_path = (
+                    Path(__file__).parent.parent.parent.parent.parent / "integration"
+                )
+                if str(integration_path) not in sys.path:
+                    sys.path.insert(0, str(integration_path))
+
+                from aiva_integration.reception.experience_repository import (
+                    ExperienceRepository,
+                )
+
+                from ..analysis.ast_trace_comparator import ASTTraceComparator
+                from .training.model_updater import ModelUpdater
+
+                self.experience_repo = ExperienceRepository(database_url)
+                self.comparator = ASTTraceComparator()
+                self.model_updater = ModelUpdater(
+                    self.decision_core, self.experience_repo
+                )
+                logger.info(f"✓ Experience learning enabled (DB: {database_url})")
+            except Exception as e:
+                logger.warning(f"Failed to enable experience learning: {e}")
+                self.experience_repo = None
+                self.comparator = None
+                self.model_updater = None
+        else:
+            self.experience_repo = None
+            self.comparator = None
+            self.model_updater = None
+
+        logger.info("BioNeuronRAGAgent 初始化完成 ✓")
 
     def _create_input_vector(self, task: str, context: str) -> np.ndarray:
         """將任務和上下文轉換為輸入向量.
@@ -279,9 +363,168 @@ class BioNeuronRAGAgent:
 
     def get_knowledge_stats(self) -> dict[str, int]:
         """獲取知識庫統計信息"""
-        return {
+        stats = {
             "total_chunks": 1279,  # 模擬知識庫塊數
             "total_keywords": 997,  # 模擬關鍵詞數
-            "indexed_files": 156,   # 模擬已索引檔案數
-            "ai_tools": len(self.tools)  # AI 工具數量
+            "indexed_files": 156,  # 模擬已索引檔案數
+            "ai_tools": len(self.tools),  # AI 工具數量
         }
+
+        # 如果啟用經驗學習，添加經驗統計
+        if self.experience_repo:
+            try:
+                exp_stats = self.experience_repo.get_statistics()
+                stats["total_experiences"] = exp_stats["total_experiences"]
+                stats["avg_experience_score"] = exp_stats["average_score"]
+            except Exception as e:
+                logger.warning(f"Failed to get experience stats: {e}")
+
+        return stats
+
+    async def execute_attack_plan(
+        self, attack_plan_ast: dict[str, Any]
+    ) -> dict[str, Any]:
+        """執行攻擊計畫（新增方法）
+
+        Args:
+            attack_plan_ast: 攻擊計畫 AST 字典
+
+        Returns:
+            執行結果，包含 trace 和比較指標
+        """
+        if not self.orchestrator:
+            return {
+                "status": "error",
+                "message": "Planner not enabled",
+            }
+
+        logger.info("開始執行攻擊計畫...")
+
+        try:
+            # 1. 創建執行計畫
+            execution_plan = self.orchestrator.create_execution_plan(attack_plan_ast)
+
+            # 2. 開始監控
+            if self.execution_monitor:
+                trace = self.execution_monitor.start_monitoring(execution_plan)
+                trace_session_id = trace.trace_session_id
+            else:
+                trace_session_id = "mock_trace"
+
+            # 3. 執行任務
+            executed_tasks = []
+            while not self.orchestrator.is_plan_complete(execution_plan):
+                # 獲取可執行任務
+                next_tasks = self.orchestrator.get_next_executable_tasks(execution_plan)
+
+                if not next_tasks:
+                    break
+
+                # 執行每個任務
+                for task, tool_decision in next_tasks:
+                    if self.task_executor:
+                        result = await self.task_executor.execute_task(
+                            task, tool_decision, trace_session_id
+                        )
+
+                        # 更新任務狀態
+                        from ..planner.task_converter import TaskStatus
+
+                        status = (
+                            TaskStatus.SUCCESS if result.success else TaskStatus.FAILED
+                        )
+                        self.orchestrator.update_task_status(
+                            execution_plan,
+                            task.task_id,
+                            status,
+                            result.output,
+                            result.error,
+                        )
+
+                        executed_tasks.append(
+                            {
+                                "task_id": task.task_id,
+                                "success": result.success,
+                                "output": result.output,
+                            }
+                        )
+
+            # 4. 結束監控
+            if self.execution_monitor:
+                final_trace = self.execution_monitor.finalize_monitoring(
+                    trace_session_id
+                )
+            else:
+                final_trace = None
+
+            # 5. 對比分析
+            if self.comparator and final_trace:
+                metrics = self.comparator.compare(execution_plan.graph, final_trace)
+                feedback = self.comparator.generate_feedback(metrics)
+
+                # 6. 保存經驗
+                if self.experience_repo:
+                    self.experience_repo.save_experience(
+                        plan_id=execution_plan.plan_id,
+                        attack_type=execution_plan.metadata.get(
+                            "attack_type", "unknown"
+                        ),
+                        ast_graph=attack_plan_ast,
+                        execution_trace=final_trace.to_dict(),
+                        metrics=metrics.to_dict(),
+                        feedback=feedback,
+                        target_info=execution_plan.graph.metadata.get("target", {}),
+                    )
+
+                return {
+                    "status": "success",
+                    "plan_id": execution_plan.plan_id,
+                    "executed_tasks": executed_tasks,
+                    "trace_session_id": trace_session_id,
+                    "metrics": metrics.to_dict(),
+                    "feedback": feedback,
+                    "plan_complete": True,
+                }
+            else:
+                return {
+                    "status": "success",
+                    "plan_id": execution_plan.plan_id,
+                    "executed_tasks": executed_tasks,
+                    "plan_complete": True,
+                }
+
+        except Exception as e:
+            logger.error(f"Attack plan execution failed: {e}")
+            return {
+                "status": "error",
+                "message": str(e),
+            }
+
+    def train_from_experiences(
+        self, min_score: float = 0.6, max_samples: int = 1000
+    ) -> dict[str, Any]:
+        """從經驗庫訓練模型（新增方法）
+
+        Args:
+            min_score: 最低分數閾值
+            max_samples: 最大樣本數
+
+        Returns:
+            訓練結果
+        """
+        if not self.model_updater:
+            return {
+                "status": "error",
+                "message": "Experience learning not enabled",
+            }
+
+        logger.info("開始從經驗庫訓練模型...")
+
+        try:
+            result = self.model_updater.update_from_recent_experiences(
+                min_score=min_score, max_samples=max_samples
+            )
+            return result
+        except Exception as e:
+            logger.error(f"Training failed: {e}")
+            return {"status": "error", "message": str(e)}

@@ -22,22 +22,43 @@ class ModuleName(str, Enum):
 
 
 class Topic(str, Enum):
+    # Scan Topics
     TASK_SCAN_START = "tasks.scan.start"
+    RESULTS_SCAN_COMPLETED = "results.scan.completed"
+
+    # Function Topics
     TASK_FUNCTION_START = "tasks.function.start"
     TASK_FUNCTION_XSS = "tasks.function.xss"
     TASK_FUNCTION_SQLI = "tasks.function.sqli"
     TASK_FUNCTION_SSRF = "tasks.function.ssrf"
     FUNCTION_IDOR_TASK = "tasks.function.idor"
-
-    RESULTS_SCAN_COMPLETED = "results.scan.completed"
     RESULTS_FUNCTION_COMPLETED = "results.function.completed"
+
+    # AI Training Topics
+    TASK_AI_TRAINING_START = "tasks.ai.training.start"
+    TASK_AI_TRAINING_EPISODE = "tasks.ai.training.episode"
+    TASK_AI_TRAINING_STOP = "tasks.ai.training.stop"
+    RESULTS_AI_TRAINING_PROGRESS = "results.ai.training.progress"
+    RESULTS_AI_TRAINING_COMPLETED = "results.ai.training.completed"
+    RESULTS_AI_TRAINING_FAILED = "results.ai.training.failed"
+
+    # AI Experience & Learning Topics
+    EVENT_AI_EXPERIENCE_CREATED = "events.ai.experience.created"
+    EVENT_AI_TRACE_COMPLETED = "events.ai.trace.completed"
+    EVENT_AI_MODEL_UPDATED = "events.ai.model.updated"
+    COMMAND_AI_MODEL_DEPLOY = "commands.ai.model.deploy"
+
+    # RAG Knowledge Topics
+    TASK_RAG_KNOWLEDGE_UPDATE = "tasks.rag.knowledge.update"
+    TASK_RAG_QUERY = "tasks.rag.query"
+    RESULTS_RAG_RESPONSE = "results.rag.response"
+
+    # General Topics
     FINDING_DETECTED = "findings.detected"
     LOG_RESULTS_ALL = "log.results.all"
     STATUS_TASK_UPDATE = "status.task.update"
-
     FEEDBACK_CORE_STRATEGY = "feedback.core.strategy"
     MODULE_HEARTBEAT = "module.heartbeat"
-
     COMMAND_TASK_CANCEL = "command.task.cancel"
     CONFIG_GLOBAL_UPDATE = "config.global.update"
 
