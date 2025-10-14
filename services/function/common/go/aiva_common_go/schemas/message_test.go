@@ -53,8 +53,7 @@ func TestMessageHeaderSerialization(t *testing.T) {
 // TestFunctionTaskPayloadSerialization 測試 FunctionTaskPayload 的序列化
 func TestFunctionTaskPayloadSerialization(t *testing.T) {
 	customPayloads := []string{"payload1", "payload2"}
-	timeout := 30.0
-	
+
 	task := FunctionTaskPayload{
 		TaskID:   "task_123",
 		ScanID:   "scan_456",
@@ -77,7 +76,7 @@ func TestFunctionTaskPayloadSerialization(t *testing.T) {
 			CustomPayloads: []string{},
 			BlindXSS:       false,
 			DOMTesting:     false,
-			Timeout:        &timeout,
+			Timeout:        float64Ptr(30.0),
 		},
 	}
 
@@ -108,7 +107,7 @@ func TestFindingPayloadSerialization(t *testing.T) {
 	now := time.Now()
 	cwe := "CWE-89"
 	desc := "SQL Injection vulnerability found"
-	
+
 	finding := FindingPayload{
 		FindingID: "finding_123",
 		TaskID:    "task_456",
@@ -125,6 +124,10 @@ func TestFindingPayloadSerialization(t *testing.T) {
 			URL:     "https://example.com/api",
 			Headers: map[string]string{},
 			Params:  map[string]interface{}{},
+		},
+		Impact: &FindingImpact{
+			AffectedUsers: intPtr(1000),
+			EstimatedCost: float64Ptr(50000.0),
 		},
 		CreatedAt: now,
 		UpdatedAt: now,
@@ -298,29 +301,29 @@ func TestPythonGoInteroperability(t *testing.T) {
 func TestZeroValueVsNilPointer(t *testing.T) {
 	// 測試 1: nil 指標 + omitempty = 欄位省略
 	evidence1 := FindingEvidence{
-		Request:  nil,  // nil 指標
-		Response: nil,  // nil 指標
+		Request:  nil, // nil 指標
+		Response: nil, // nil 指標
 	}
-	
+
 	data1, _ := json.Marshal(evidence1)
 	var map1 map[string]interface{}
 	json.Unmarshal(data1, &map1)
-	
+
 	if _, exists := map1["request"]; exists {
 		t.Error("Expected nil pointer field 'request' to be omitted")
 	}
-	
+
 	// 測試 2: 指向空字串的指標 + omitempty = 欄位保留
 	emptyStr := ""
 	evidence2 := FindingEvidence{
-		Request:  &emptyStr,  // 指向空字串
-		Response: &emptyStr,  // 指向空字串
+		Request:  &emptyStr, // 指向空字串
+		Response: &emptyStr, // 指向空字串
 	}
-	
+
 	data2, _ := json.Marshal(evidence2)
 	var map2 map[string]interface{}
 	json.Unmarshal(data2, &map2)
-	
+
 	if _, exists := map2["request"]; !exists {
 		t.Error("Expected non-nil pointer field 'request' to be included")
 	}
