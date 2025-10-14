@@ -2,9 +2,11 @@
 
 Go 實現的軟體組成分析模組，使用 Google OSV-Scanner 檢測第三方依賴套件的已知漏洞。
 
+**✨ 已遷移到使用 `aiva_common_go` 共用模組**
+
 ## 功能
 
-- 支援多種套件管理系統（Node.js, Python, Go, Rust, Java, PHP, Ruby）
+- 支援多種套件管理系統（Node.js, Python, Go, Rust, Java, PHP, Ruby)
 - 整合 Google OSV-Scanner
 - 自動偵測專案中的套件管理檔案
 - 與 AIVA RabbitMQ 訊息系統整合
@@ -16,22 +18,27 @@ Go 實現的軟體組成分析模組，使用 Google OSV-Scanner 檢測第三方
 function_sca_go/
 ├── cmd/
 │   └── worker/
-│       └── main.go              # 主程式入口
+│       └── main.go              # 主程式入口 (使用 aiva_common_go)
 ├── internal/
 │   └── scanner/
 │       └── sca_scanner.go       # SCA 掃描邏輯
 ├── pkg/
-│   ├── messaging/
-│   │   └── publisher.go         # RabbitMQ 發布器
 │   └── models/
 │       └── models.go            # 數據模型
 ├── go.mod
 └── README.md
 ```
 
+**註:** `pkg/messaging` 已移除，改用 `aiva_common_go/mq` 統一實作
+
 ## 依賴
 
 - Go 1.25.0+
+- `aiva_common_go` (內部共用模組)
+  - RabbitMQ 客戶端
+  - 標準化日誌
+  - 配置管理
+  - Schema 定義
 - Google OSV-Scanner (需預先安裝)
 - RabbitMQ
 
