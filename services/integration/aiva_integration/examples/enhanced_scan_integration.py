@@ -380,16 +380,16 @@ async def example_scan_workflow():
     )
     print(f"嚴重程度分布: {result['vulnerabilities']['by_severity']}")
 
-    print(f"\n相關性分析:")
+    print("\n相關性分析:")
     print(f"  - 相關性組合: {result['correlation_analysis']['correlation_groups']}")
     print(f"  - 攻擊鏈: {result['correlation_analysis']['attack_chains']}")
     print(f"  - 風險放大: {result['correlation_analysis']['risk_amplification']}x")
 
-    print(f"\n根因分析:")
+    print("\n根因分析:")
     print(f"  - 根本原因: {result['root_cause_analysis']['root_causes']}")
     print(f"  - {result['root_cause_analysis']['fix_efficiency']}")
 
-    print(f"\nSAST-DAST 關聯:")
+    print("\nSAST-DAST 關聯:")
     print(f"  - 已驗證資料流: {result['sast_dast_correlation']['confirmed_flows']}")
     print(
         f"  - 確認率: {result['sast_dast_correlation']['confirmation_rate']}%"

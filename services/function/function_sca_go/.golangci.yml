@@ -1,0 +1,54 @@
+run:
+  timeout: 5m
+  issues-exit-code: 1
+  tests: true
+
+linters:
+  disable-all: true
+  enable:
+    # 官方推薦的核心 linters
+    - errcheck      # 檢查錯誤處理
+    - gosimple      # 簡化代碼建議
+    - govet         # Go 官方靜態分析
+    - ineffassign   # 檢查無效賦值
+    - staticcheck   # 靜態分析檢查
+    - typecheck     # 類型檢查
+    - unused        # 檢查未使用的代碼
+    
+    # 代碼品質
+    - gocritic      # 代碼審查建議
+    - gocyclo       # 圈複雜度檢查
+    - gofmt         # 格式檢查
+    - goimports     # 導入格式檢查
+    - misspell      # 拼寫檢查
+    - unconvert     # 不必要的類型轉換
+    - unparam       # 未使用的函數參數
+    
+    # 安全性
+    - gosec         # 安全問題檢查
+    
+    # 性能
+    - prealloc      # 切片預分配
+
+linters-settings:
+  gocyclo:
+    min-complexity: 15
+  
+  gocritic:
+    enabled-tags:
+      - diagnostic
+      - style
+      - performance
+    
+  gosec:
+    severity: medium
+    
+  staticcheck:
+    checks: ["all"]
+
+issues:
+  exclude-use-default: false
+  exclude-rules:
+    - path: _test\.go
+      linters:
+        - gosec

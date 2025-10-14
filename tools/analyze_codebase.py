@@ -230,7 +230,7 @@ def analyze_directory(
     analyzer = CodeAnalyzer(str(root_path))
 
     # 統計數據
-    stats = {
+    stats: dict[str, Any] = {
         "total_files": 0,
         "total_lines": 0,
         "total_code_lines": 0,
@@ -676,7 +676,7 @@ def analyze_multilang_files(
         ]
 
     # 統一 schema 結構（對齊 analyze_directory）
-    multilang_stats = {
+    multilang_stats: dict[str, Any] = {
         "go": {
             "total_files": 0,
             "total_lines": 0,

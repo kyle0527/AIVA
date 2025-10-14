@@ -15,10 +15,38 @@ $ErrorActionPreference = "Continue"
 Write-Host "📦 檢查基礎設施..." -ForegroundColor Yellow
 
 # 檢查 Docker
-$dockerRunning = docker ps 2>$null
+docker ps 2>$null | Out-Null
 if ($LASTEXITCODE -ne 0) {
-    Write-Host "❌ Docker 未運行! 請先啟動 Docker Desktop" -ForegroundColor Red
-    exit 1
+    Write-Host "⚠️  Docker 未運行，嘗試啟動 Docker Desktop..." -ForegroundColor Yellow
+
+    # 嘗試啟動 Docker Desktop
+    $dockerDesktopPath = "C:\Program Files\Docker\Docker\Docker Desktop.exe"
+    if (Test-Path $dockerDesktopPath) {
+        Write-Host "🔄 正在啟動 Docker Desktop..." -ForegroundColor Cyan
+        Start-Process $dockerDesktopPath
+
+        # 等待 Docker 啟動 (最多等待 60 秒)
+        $timeout = 60
+        $elapsed = 0
+        do {
+            Start-Sleep -Seconds 5
+            $elapsed += 5
+            Write-Host "   ⏳ 等待 Docker 啟動... ($elapsed/$timeout 秒)" -ForegroundColor Gray
+            docker ps 2>$null | Out-Null
+        } while ($LASTEXITCODE -ne 0 -and $elapsed -lt $timeout)
+
+        if ($LASTEXITCODE -ne 0) {
+            Write-Host "❌ Docker 啟動超時! 請手動啟動 Docker Desktop 後重新執行此腳本" -ForegroundColor Red
+            Write-Host "💡 或者執行: Start-Process 'C:\Program Files\Docker\Docker\Docker Desktop.exe'" -ForegroundColor Yellow
+            exit 1
+        } else {
+            Write-Host "✅ Docker 已成功啟動!" -ForegroundColor Green
+        }
+    } else {
+        Write-Host "❌ 找不到 Docker Desktop! 請確認已安裝 Docker Desktop" -ForegroundColor Red
+        Write-Host "💡 下載地址: https://www.docker.com/products/docker-desktop/" -ForegroundColor Yellow
+        exit 1
+    }
 }
 
 # 啟動 RabbitMQ + PostgreSQL
@@ -36,7 +64,31 @@ Write-Host "-----------------------------------" -ForegroundColor Gray
 
 # 檢查虛擬環境
 if (-not (Test-Path ".\.venv\Scripts\Activate.ps1")) {
-    Write-Host "⚠️  虛擬環境不存在,跳過 Python 模組" -ForegroundColor Yellow
+    Write-Host "⚠️  虛擬環境不存在，嘗試創建..." -ForegroundColor Yellow
+
+    # 檢查 Python 是否安裝
+    $pythonInstalled = Get-Command python -ErrorAction SilentlyContinue
+    if ($pythonInstalled) {
+        Write-Host "🔄 創建 Python 虛擬環境..." -ForegroundColor Cyan
+        python -m venv .venv
+
+        if (Test-Path ".\.venv\Scripts\Activate.ps1") {
+            Write-Host "✅ 虛擬環境創建成功!" -ForegroundColor Green
+            Write-Host "🔄 安裝依賴..." -ForegroundColor Cyan
+            & .\.venv\Scripts\Activate.ps1
+            if (Test-Path "requirements.txt") {
+                pip install -r requirements.txt
+            }
+            if (Test-Path "pyproject.toml") {
+                pip install -e .
+            }
+        } else {
+            Write-Host "❌ 虛擬環境創建失敗，跳過 Python 模組" -ForegroundColor Red
+        }
+    } else {
+        Write-Host "❌ Python 未安裝，跳過 Python 模組" -ForegroundColor Red
+        Write-Host "💡 請先安裝 Python: https://www.python.org/downloads/" -ForegroundColor Yellow
+    }
 } else {
     $pythonModules = @(
         @{ Name = "Core"; Path = "services\core\aiva_core"; Cmd = "python -m uvicorn app:app --port 8001 --reload" },
@@ -159,4 +211,17 @@ Write-Host "   • Integration API: http://localhost:8003/docs" -ForegroundColor
 Write-Host "   • RabbitMQ:        http://localhost:15672" -ForegroundColor White
 Write-Host ""
 Write-Host "💡 使用 stop_all_multilang.ps1 停止所有服務" -ForegroundColor Yellow
+Write-Host "💡 使用 health_check_multilang.ps1 檢查系統狀態" -ForegroundColor Yellow
 Write-Host ""
+
+# 可選：等待 10 秒後自動進行健康檢查
+Write-Host "⏳ 10 秒後將進行健康檢查..." -ForegroundColor Gray
+Start-Sleep -Seconds 10
+Write-Host ""
+
+# 執行健康檢查
+if (Test-Path "health_check_multilang.ps1") {
+    & .\health_check_multilang.ps1
+} else {
+    Write-Host "⚠️  健康檢查腳本不存在" -ForegroundColor Yellow
+}
