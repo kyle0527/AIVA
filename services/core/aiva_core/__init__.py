@@ -15,7 +15,7 @@ AIVA Core - 核心引擎模組
 __version__ = "1.0.0"
 
 # 從 aiva_common 導入共享基礎設施
-from aiva_common.enums import (
+from services.aiva_common.enums import (
     ComplianceFramework,
     Confidence,
     ModuleName,

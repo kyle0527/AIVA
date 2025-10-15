@@ -10,7 +10,7 @@ from datetime import UTC, datetime
 import logging
 from typing import Any
 
-from aiva_common.schemas import (
+from services.aiva_common.schemas import (
     AttackPlan,
     AttackStep,
     PlanExecutionMetrics,

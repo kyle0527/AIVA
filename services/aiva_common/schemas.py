@@ -970,14 +970,14 @@ class APITestCase(BaseModel):
 class APISecurityTestPayload(BaseModel):
     """API 安全測試 Payload"""
 
+    model_config = {"protected_namespaces": ()}
+
     task_id: str
     scan_id: str
     api_type: str  # "rest", "graphql", "grpc"
-    schema: APISchemaPayload | None = None
+    api_schema: APISchemaPayload | None = None
     test_cases: list[APITestCase] = Field(default_factory=list)
     authentication: Authentication = Field(default_factory=Authentication)
-
-
 # ==================== AI 驅動漏洞驗證 Schemas ====================
 
 
@@ -1257,6 +1257,8 @@ class SessionState(BaseModel):
 
 class ModelTrainingConfig(BaseModel):
     """模型訓練配置"""
+    
+    model_config = {"protected_namespaces": ()}
 
     config_id: str
     model_type: str  # "supervised", "reinforcement", "hybrid"
@@ -1282,6 +1284,8 @@ class ModelTrainingConfig(BaseModel):
 
 class ModelTrainingResult(BaseModel):
     """模型訓練結果"""
+    
+    model_config = {"protected_namespaces": ()}
 
     training_id: str
     config: ModelTrainingConfig
@@ -1328,6 +1332,8 @@ class StandardScenario(BaseModel):
 
 class ScenarioTestResult(BaseModel):
     """場景測試結果 - 模型在標準場景上的表現"""
+    
+    model_config = {"protected_namespaces": ()}
 
     test_id: str
     scenario_id: str
@@ -1530,6 +1536,8 @@ class AITrainingStartPayload(BaseModel):
 
 class AITrainingProgressPayload(BaseModel):
     """AI 訓練進度報告 - 定期報告訓練進度"""
+    
+    model_config = {"protected_namespaces": ()}
 
     training_id: str
     episode_number: int
@@ -1549,6 +1557,8 @@ class AITrainingProgressPayload(BaseModel):
 
 class AITrainingCompletedPayload(BaseModel):
     """AI 訓練完成報告 - 訓練會話完成時的最終報告"""
+    
+    model_config = {"protected_namespaces": ()}
 
     training_id: str
     status: str
@@ -1603,6 +1613,8 @@ class AITraceCompletedEvent(BaseModel):
 
 class AIModelUpdatedEvent(BaseModel):
     """AI 模型更新事件 - 當模型被訓練更新時發送"""
+    
+    model_config = {"protected_namespaces": ()}
 
     model_id: str
     model_version: str
@@ -1618,6 +1630,8 @@ class AIModelUpdatedEvent(BaseModel):
 
 class AIModelDeployCommand(BaseModel):
     """AI 模型部署命令 - 用於部署訓練好的模型到生產環境"""
+    
+    model_config = {"protected_namespaces": ()}
 
     model_id: str
     model_version: str
@@ -1839,10 +1853,14 @@ class SARIFRun(BaseModel):
 
 class SARIFReport(BaseModel):
     """SARIF v2.1.0 報告"""
+    
+    model_config = {"protected_namespaces": ()}
 
     version: str = Field(default="2.1.0", description="SARIF版本")
-    schema: str = Field(
-        default="https://json.schemastore.org/sarif-2.1.0.json", description="JSON Schema"
+    sarif_schema: str = Field(
+        default="https://json.schemastore.org/sarif-2.1.0.json", 
+        description="JSON Schema",
+        alias="$schema"
     )
     runs: list[SARIFRun] = Field(description="運行列表")
 

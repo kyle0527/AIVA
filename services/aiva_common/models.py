@@ -290,11 +290,14 @@ class SARIFReport(BaseModel):
     符合標準: SARIF v2.1.0 完整格式
     官方規範: https://docs.oasis-open.org/sarif/sarif/v2.1.0/sarif-v2.1.0.html
     """
+    
+    model_config = {"protected_namespaces": ()}
 
     version: str = Field(default="2.1.0", description="SARIF版本")
-    schema: str = Field(
+    sarif_schema: str = Field(
         default="https://json.schemastore.org/sarif-2.1.0.json",
-        description="JSON Schema URI"
+        description="JSON Schema URI",
+        alias="$schema"
     )
     runs: list[SARIFRun] = Field(description="運行列表")
 

@@ -10,7 +10,7 @@ from __future__ import annotations
 from datetime import UTC, datetime
 from typing import Any
 
-from aiva_common.enums import DataSource, IntegrationStatus, Severity
+from services.aiva_common.enums import DataSource, IntegrationStatus, Severity
 from pydantic import BaseModel, Field
 
 # ==================== 威脅情報整合 ====================

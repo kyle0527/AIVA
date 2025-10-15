@@ -1,0 +1,2591 @@
+{
+  "total_files": 261,
+  "total_lines": 74256,
+  "total_code_lines": 60241,
+  "total_comment_lines": 8024,
+  "total_blank_lines": 14015,
+  "total_functions": 1466,
+  "total_classes": 1298,
+  "total_imports": 1430,
+  "files_with_type_hints": 192,
+  "files_with_docstrings": 235,
+  "total_complexity": 3538,
+  "syntax_errors": [],
+  "file_details": [
+    {
+      "path": "aiva_common\\utils\\network\\ratelimit.py",
+      "lines": 659,
+      "functions": 22,
+      "classes": 2,
+      "complexity": 91,
+      "has_type_hints": true,
+      "has_docstrings": true
+    },
+    {
+      "path": "integration\\aiva_integration\\analysis\\vuln_correlation_analyzer.py",
+      "lines": 667,
+      "functions": 16,
+      "classes": 1,
+      "complexity": 69,
+      "has_type_hints": true,
+      "has_docstrings": true
+    },
+    {
+      "path": "integration\\aiva_integration\\attack_path_analyzer\\nlp_recommender.py",
+      "lines": 741,
+      "functions": 17,
+      "classes": 3,
+      "complexity": 67,
+      "has_type_hints": true,
+      "has_docstrings": true
+    },
+    {
+      "path": "scan\\aiva_scan\\dynamic_engine\\dynamic_content_extractor.py",
+      "lines": 695,
+      "functions": 7,
+      "classes": 6,
+      "complexity": 54,
+      "has_type_hints": true,
+      "has_docstrings": true
+    },
+    {
+      "path": "integration\\aiva_integration\\threat_intel\\threat_intel\\intel_aggregator.py",
+      "lines": 447,
+      "functions": 8,
+      "classes": 1,
+      "complexity": 50,
+      "has_type_hints": true,
+      "has_docstrings": true
+    },
+    {
+      "path": "integration\\aiva_integration\\threat_intel\\threat_intel\\mitre_mapper.py",
+      "lines": 434,
+      "functions": 10,
+      "classes": 2,
+      "complexity": 50,
+      "has_type_hints": true,
+      "has_docstrings": true
+    },
+    {
+      "path": "function\\function_ssrf\\aiva_func_ssrf\\worker.py",
+      "lines": 432,
+      "functions": 8,
+      "classes": 3,
+      "complexity": 49,
+      "has_type_hints": true,
+      "has_docstrings": false
+    },
+    {
+      "path": "aiva_common\\schemas_fixed.py",
+      "lines": 3009,
+      "functions": 33,
+      "classes": 137,
+      "complexity": 48,
+      "has_type_hints": true,
+      "has_docstrings": true
+    },
+    {
+      "path": "function\\function_xss\\aiva_func_xss\\worker.py",
+      "lines": 444,
+      "functions": 11,
+      "classes": 2,
+      "complexity": 48,
+      "has_type_hints": true,
+      "has_docstrings": false
+    },
+    {
+      "path": "scan\\aiva_scan\\dynamic_engine\\headless_browser_pool.py",
+      "lines": 553,
+      "functions": 5,
+      "classes": 6,
+      "complexity": 48,
+      "has_type_hints": true,
+      "has_docstrings": true
+    },
+    {
+      "path": "function\\function_xss\\aiva_func_xss\\traditional_detector.py",
+      "lines": 237,
+      "functions": 7,
+      "classes": 3,
+      "complexity": 45,
+      "has_type_hints": true,
+      "has_docstrings": true
+    },
+    {
+      "path": "integration\\aiva_integration\\analysis\\risk_assessment_engine_enhanced.py",
+      "lines": 492,
+      "functions": 9,
+      "classes": 1,
+      "complexity": 45,
+      "has_type_hints": true,
+      "has_docstrings": true
+    },
+    {
+      "path": "aiva_common\\schemas_backup.py",
+      "lines": 2969,
+      "functions": 32,
+      "classes": 137,
+      "complexity": 44,
+      "has_type_hints": true,
+      "has_docstrings": true
+    },
+    {
+      "path": "aiva_common\\schemas_current_backup.py",
+      "lines": 2967,
+      "functions": 32,
+      "classes": 137,
+      "complexity": 44,
+      "has_type_hints": true,
+      "has_docstrings": true
+    },
+    {
+      "path": "aiva_common\\schemas_master_backup_1.py",
+      "lines": 2967,
+      "functions": 32,
+      "classes": 137,
+      "complexity": 44,
+      "has_type_hints": true,
+      "has_docstrings": true
+    },
+    {
+      "path": "function\\function_ssrf\\aiva_func_ssrf\\param_semantics_analyzer.py",
+      "lines": 225,
+      "functions": 4,
+      "classes": 3,
+      "complexity": 44,
+      "has_type_hints": true,
+      "has_docstrings": true
+    },
+    {
+      "path": "function\\function_ssrf\\aiva_func_ssrf\\smart_ssrf_detector.py",
+      "lines": 532,
+      "functions": 9,
+      "classes": 2,
+      "complexity": 42,
+      "has_type_hints": true,
+      "has_docstrings": true
+    },
+    {
+      "path": "core\\aiva_core\\training\\scenario_manager.py",
+      "lines": 974,
+      "functions": 8,
+      "classes": 1,
+      "complexity": 41,
+      "has_type_hints": true,
+      "has_docstrings": true
+    },
+    {
+      "path": "aiva_common\\schemas.py",
+      "lines": 2539,
+      "functions": 30,
+      "classes": 126,
+      "complexity": 39,
+      "has_type_hints": true,
+      "has_docstrings": true
+    },
+    {
+      "path": "core\\aiva_core\\bio_neuron_master.py",
+      "lines": 688,
+      "functions": 9,
+      "classes": 3,
+      "complexity": 38,
+      "has_type_hints": true,
+      "has_docstrings": true
+    },
+    {
+      "path": "core\\aiva_core\\ai_engine\\tools.py",
+      "lines": 435,
+      "functions": 17,
+      "classes": 7,
+      "complexity": 38,
+      "has_type_hints": true,
+      "has_docstrings": true
+    },
+    {
+      "path": "core\\aiva_core\\ai_engine_backup\\tools.py",
+      "lines": 435,
+      "functions": 17,
+      "classes": 7,
+      "complexity": 38,
+      "has_type_hints": true,
+      "has_docstrings": true
+    },
+    {
+      "path": "core\\aiva_core\\multilang_coordinator.py",
+      "lines": 572,
+      "functions": 10,
+      "classes": 3,
+      "complexity": 36,
+      "has_type_hints": true,
+      "has_docstrings": true
+    },
+    {
+      "path": "core\\aiva_core\\analysis\\plan_comparator.py",
+      "lines": 539,
+      "functions": 14,
+      "classes": 2,
+      "complexity": 36,
+      "has_type_hints": true,
+      "has_docstrings": true
+    },
+    {
+      "path": "function\\function_ssrf\\aiva_func_ssrf\\internal_address_detector.py",
+      "lines": 339,
+      "functions": 12,
+      "classes": 3,
+      "complexity": 36,
+      "has_type_hints": true,
+      "has_docstrings": true
+    },
+    {
+      "path": "scan\\aiva_scan\\scope_manager.py",
+      "lines": 405,
+      "functions": 23,
+      "classes": 1,
+      "complexity": 36,
+      "has_type_hints": true,
+      "has_docstrings": true
+    },
+    {
+      "path": "scan\\aiva_scan\\info_gatherer\\sensitive_info_detector.py",
+      "lines": 561,
+      "functions": 20,
+      "classes": 3,
+      "complexity": 36,
+      "has_type_hints": true,
+      "has_docstrings": true
+    },
+    {
+      "path": "core\\aiva_core\\ai_integration_test.py",
+      "lines": 610,
+      "functions": 3,
+      "classes": 2,
+      "complexity": 35,
+      "has_type_hints": true,
+      "has_docstrings": true
+    },
+    {
+      "path": "integration\\aiva_integration\\remediation\\code_fixer.py",
+      "lines": 401,
+      "functions": 12,
+      "classes": 1,
+      "complexity": 35,
+      "has_type_hints": true,
+      "has_docstrings": true
+    },
+    {
+      "path": "core\\aiva_core\\nlg_system.py",
+      "lines": 441,
+      "functions": 16,
+      "classes": 1,
+      "complexity": 34,
+      "has_type_hints": true,
+      "has_docstrings": true
+    },
+    {
+      "path": "core\\aiva_core\\analysis\\dynamic_strategy_adjustment.py",
+      "lines": 188,
+      "functions": 7,
+      "classes": 1,
+      "complexity": 34,
+      "has_type_hints": true,
+      "has_docstrings": true
+    },
+    {
+      "path": "core\\aiva_core\\analysis\\initial_surface.py",
+      "lines": 323,
+      "functions": 8,
+      "classes": 1,
+      "complexity": 33,
+      "has_type_hints": true,
+      "has_docstrings": true
+    },
+    {
+      "path": "core\\aiva_core\\authz\\authz_mapper.py",
+      "lines": 413,
+      "functions": 12,
+      "classes": 1,
+      "complexity": 33,
+      "has_type_hints": true,
+      "has_docstrings": true
+    },
+    {
+      "path": "function\\function_xss\\aiva_func_xss\\stored_detector.py",
+      "lines": 156,
+      "functions": 3,
+      "classes": 2,
+      "complexity": 33,
+      "has_type_hints": true,
+      "has_docstrings": true
+    },
+    {
+      "path": "function\\common\\unified_smart_detection_manager.py",
+      "lines": 410,
+      "functions": 24,
+      "classes": 7,
+      "complexity": 31,
+      "has_type_hints": true,
+      "has_docstrings": true
+    },
+    {
+      "path": "integration\\aiva_integration\\remediation\\report_generator.py",
+      "lines": 571,
+      "functions": 14,
+      "classes": 1,
+      "complexity": 31,
+      "has_type_hints": true,
+      "has_docstrings": true
+    },
+    {
+      "path": "integration\\aiva_integration\\examples\\enhanced_scan_integration.py",
+      "lines": 454,
+      "functions": 6,
+      "classes": 1,
+      "complexity": 30,
+      "has_type_hints": true,
+      "has_docstrings": true
+    },
+    {
+      "path": "scan\\aiva_scan\\dynamic_engine\\js_interaction_simulator.py",
+      "lines": 347,
+      "functions": 12,
+      "classes": 4,
+      "complexity": 30,
+      "has_type_hints": true,
+      "has_docstrings": true
+    },
+    {
+      "path": "scan\\aiva_scan\\info_gatherer\\javascript_source_analyzer.py",
+      "lines": 556,
+      "functions": 13,
+      "classes": 6,
+      "complexity": 30,
+      "has_type_hints": true,
+      "has_docstrings": true
+    },
+    {
+      "path": "core\\aiva_core\\optimized_core.py",
+      "lines": 639,
+      "functions": 27,
+      "classes": 7,
+      "complexity": 29,
+      "has_type_hints": true,
+      "has_docstrings": true
+    },
+    {
+      "path": "function\\function_idor\\aiva_func_idor\\smart_idor_detector.py",
+      "lines": 547,
+      "functions": 7,
+      "classes": 2,
+      "complexity": 29,
+      "has_type_hints": true,
+      "has_docstrings": true
+    },
+    {
+      "path": "integration\\aiva_integration\\reception\\lifecycle_manager.py",
+      "lines": 526,
+      "functions": 18,
+      "classes": 1,
+      "complexity": 29,
+      "has_type_hints": true,
+      "has_docstrings": true
+    },
+    {
+      "path": "core\\aiva_core\\ai_engine\\bio_neuron_core.py",
+      "lines": 530,
+      "functions": 11,
+      "classes": 4,
+      "complexity": 28,
+      "has_type_hints": true,
+      "has_docstrings": true
+    },
+    {
+      "path": "core\\aiva_core\\execution\\plan_executor.py",
+      "lines": 618,
+      "functions": 5,
+      "classes": 1,
+      "complexity": 28,
+      "has_type_hints": true,
+      "has_docstrings": true
+    },
+    {
+      "path": "core\\aiva_core\\messaging\\result_collector.py",
+      "lines": 391,
+      "functions": 4,
+      "classes": 1,
+      "complexity": 28,
+      "has_type_hints": true,
+      "has_docstrings": true
+    },
+    {
+      "path": "function\\function_sqli\\aiva_func_sqli\\engines\\union_detection_engine.py",
+      "lines": 282,
+      "functions": 6,
+      "classes": 1,
+      "complexity": 28,
+      "has_type_hints": true,
+      "has_docstrings": true
+    },
+    {
+      "path": "integration\\aiva_integration\\remediation\\config_recommender.py",
+      "lines": 407,
+      "functions": 11,
+      "classes": 1,
+      "complexity": 28,
+      "has_type_hints": true,
+      "has_docstrings": true
+    },
+    {
+      "path": "scan\\aiva_scan\\dynamic_engine\\ajax_api_handler.py",
+      "lines": 287,
+      "functions": 6,
+      "classes": 1,
+      "complexity": 28,
+      "has_type_hints": true,
+      "has_docstrings": true
+    },
+    {
+      "path": "core\\aiva_core\\authz\\permission_matrix.py",
+      "lines": 456,
+      "functions": 16,
+      "classes": 1,
+      "complexity": 27,
+      "has_type_hints": true,
+      "has_docstrings": true
+    },
+    {
+      "path": "integration\\aiva_integration\\threat_intel\\threat_intel\\ioc_enricher.py",
+      "lines": 378,
+      "functions": 9,
+      "classes": 1,
+      "complexity": 27,
+      "has_type_hints": true,
+      "has_docstrings": true
+    },
+    {
+      "path": "function\\function_idor\\aiva_func_idor\\resource_id_extractor.py",
+      "lines": 254,
+      "functions": 3,
+      "classes": 2,
+      "complexity": 26,
+      "has_type_hints": true,
+      "has_docstrings": true
+    },
+    {
+      "path": "integration\\aiva_integration\\analysis\\risk_assessment_engine.py",
+      "lines": 373,
+      "functions": 6,
+      "classes": 1,
+      "complexity": 25,
+      "has_type_hints": true,
+      "has_docstrings": true
+    },
+    {
+      "path": "core\\aiva_core\\rag\\vector_store.py",
+      "lines": 338,
+      "functions": 12,
+      "classes": 1,
+      "complexity": 24,
+      "has_type_hints": true,
+      "has_docstrings": true
+    },
+    {
+      "path": "function\\function_postex\\schemas.py",
+      "lines": 305,
+      "functions": 10,
+      "classes": 5,
+      "complexity": 24,
+      "has_type_hints": true,
+      "has_docstrings": true
+    },
+    {
+      "path": "function\\function_idor\\aiva_func_idor\\schemas.py",
+      "lines": 226,
+      "functions": 10,
+      "classes": 5,
+      "complexity": 24,
+      "has_type_hints": true,
+      "has_docstrings": true
+    },
+    {
+      "path": "core\\aiva_core\\messaging\\message_broker.py",
+      "lines": 339,
+      "functions": 2,
+      "classes": 2,
+      "complexity": 23,
+      "has_type_hints": true,
+      "has_docstrings": true
+    },
+    {
+      "path": "core\\aiva_core\\execution\\trace_logger.py",
+      "lines": 350,
+      "functions": 9,
+      "classes": 1,
+      "complexity": 22,
+      "has_type_hints": true,
+      "has_docstrings": true
+    },
+    {
+      "path": "core\\aiva_core\\rag\\knowledge_base.py",
+      "lines": 416,
+      "functions": 13,
+      "classes": 3,
+      "complexity": 22,
+      "has_type_hints": true,
+      "has_docstrings": true
+    },
+    {
+      "path": "function\\function_ssrf\\aiva_func_ssrf\\oast_dispatcher.py",
+      "lines": 143,
+      "functions": 2,
+      "classes": 3,
+      "complexity": 22,
+      "has_type_hints": true,
+      "has_docstrings": true
+    },
+    {
+      "path": "core\\aiva_core\\ui_panel\\dashboard.py",
+      "lines": 286,
+      "functions": 11,
+      "classes": 1,
+      "complexity": 21,
+      "has_type_hints": true,
+      "has_docstrings": true
+    },
+    {
+      "path": "function\\function_sqli\\aiva_func_sqli\\payload_wrapper_encoder.py",
+      "lines": 105,
+      "functions": 4,
+      "classes": 2,
+      "complexity": 21,
+      "has_type_hints": true,
+      "has_docstrings": true
+    },
+    {
+      "path": "function\\function_xss\\aiva_func_xss\\blind_xss_listener_validator.py",
+      "lines": 184,
+      "functions": 3,
+      "classes": 5,
+      "complexity": 21,
+      "has_type_hints": true,
+      "has_docstrings": true
+    },
+    {
+      "path": "scan\\aiva_scan\\config_control_center.py",
+      "lines": 508,
+      "functions": 26,
+      "classes": 8,
+      "complexity": 21,
+      "has_type_hints": true,
+      "has_docstrings": true
+    },
+    {
+      "path": "scan\\aiva_scan\\scan_orchestrator.py",
+      "lines": 372,
+      "functions": 3,
+      "classes": 1,
+      "complexity": 21,
+      "has_type_hints": true,
+      "has_docstrings": true
+    },
+    {
+      "path": "aiva_common\\utils\\dedup\\dedupe.py",
+      "lines": 341,
+      "functions": 8,
+      "classes": 1,
+      "complexity": 20,
+      "has_type_hints": true,
+      "has_docstrings": true
+    },
+    {
+      "path": "core\\aiva_core\\learning\\experience_manager.py",
+      "lines": 286,
+      "functions": 4,
+      "classes": 1,
+      "complexity": 20,
+      "has_type_hints": true,
+      "has_docstrings": true
+    },
+    {
+      "path": "core\\aiva_core\\planner\\task_converter.py",
+      "lines": 247,
+      "functions": 9,
+      "classes": 5,
+      "complexity": 20,
+      "has_type_hints": true,
+      "has_docstrings": true
+    },
+    {
+      "path": "function\\function_idor\\aiva_func_idor\\worker.py",
+      "lines": 447,
+      "functions": 7,
+      "classes": 1,
+      "complexity": 20,
+      "has_type_hints": true,
+      "has_docstrings": true
+    },
+    {
+      "path": "function\\function_sqli\\aiva_func_sqli\\worker.py",
+      "lines": 278,
+      "functions": 5,
+      "classes": 5,
+      "complexity": 20,
+      "has_type_hints": true,
+      "has_docstrings": true
+    },
+    {
+      "path": "function\\function_sqli\\aiva_func_sqli\\worker_legacy.py",
+      "lines": 278,
+      "functions": 5,
+      "classes": 5,
+      "complexity": 20,
+      "has_type_hints": true,
+      "has_docstrings": true
+    },
+    {
+      "path": "function\\function_sqli\\aiva_func_sqli\\engines\\boolean_detection_engine.py",
+      "lines": 254,
+      "functions": 3,
+      "classes": 1,
+      "complexity": 20,
+      "has_type_hints": true,
+      "has_docstrings": true
+    },
+    {
+      "path": "core\\aiva_core\\analysis\\risk_assessment_engine.py",
+      "lines": 251,
+      "functions": 5,
+      "classes": 1,
+      "complexity": 19,
+      "has_type_hints": true,
+      "has_docstrings": true
+    },
+    {
+      "path": "core\\aiva_core\\execution\\execution_status_monitor.py",
+      "lines": 254,
+      "functions": 8,
+      "classes": 1,
+      "complexity": 19,
+      "has_type_hints": true,
+      "has_docstrings": true
+    },
+    {
+      "path": "core\\aiva_core\\ingestion\\scan_module_interface.py",
+      "lines": 139,
+      "functions": 4,
+      "classes": 1,
+      "complexity": 19,
+      "has_type_hints": true,
+      "has_docstrings": true
+    },
+    {
+      "path": "core\\aiva_core\\learning\\model_trainer.py",
+      "lines": 607,
+      "functions": 9,
+      "classes": 1,
+      "complexity": 19,
+      "has_type_hints": true,
+      "has_docstrings": true
+    },
+    {
+      "path": "core\\aiva_core\\ai_engine\\knowledge_base.py",
+      "lines": 220,
+      "functions": 8,
+      "classes": 1,
+      "complexity": 18,
+      "has_type_hints": true,
+      "has_docstrings": true
+    },
+    {
+      "path": "core\\aiva_core\\ai_engine_backup\\knowledge_base.py",
+      "lines": 220,
+      "functions": 8,
+      "classes": 1,
+      "complexity": 18,
+      "has_type_hints": true,
+      "has_docstrings": true
+    },
+    {
+      "path": "function\\function_sqli\\aiva_func_sqli\\schemas.py",
+      "lines": 198,
+      "functions": 10,
+      "classes": 7,
+      "complexity": 18,
+      "has_type_hints": true,
+      "has_docstrings": true
+    },
+    {
+      "path": "integration\\aiva_integration\\remediation\\patch_generator.py",
+      "lines": 358,
+      "functions": 12,
+      "classes": 1,
+      "complexity": 18,
+      "has_type_hints": true,
+      "has_docstrings": true
+    },
+    {
+      "path": "integration\\aiva_integration\\reporting\\report_content_generator.py",
+      "lines": 330,
+      "functions": 16,
+      "classes": 1,
+      "complexity": 18,
+      "has_type_hints": true,
+      "has_docstrings": true
+    },
+    {
+      "path": "check_schema_health.py",
+      "lines": 143,
+      "functions": 1,
+      "classes": 0,
+      "complexity": 17,
+      "has_type_hints": false,
+      "has_docstrings": true
+    },
+    {
+      "path": "core\\aiva_core\\planner\\ast_parser.py",
+      "lines": 264,
+      "functions": 11,
+      "classes": 5,
+      "complexity": 17,
+      "has_type_hints": true,
+      "has_docstrings": true
+    },
+    {
+      "path": "core\\aiva_core\\storage\\backends.py",
+      "lines": 443,
+      "functions": 4,
+      "classes": 5,
+      "complexity": 17,
+      "has_type_hints": true,
+      "has_docstrings": true
+    },
+    {
+      "path": "core\\aiva_core\\training\\training_orchestrator.py",
+      "lines": 375,
+      "functions": 4,
+      "classes": 1,
+      "complexity": 17,
+      "has_type_hints": true,
+      "has_docstrings": true
+    },
+    {
+      "path": "integration\\aiva_integration\\reception\\experience_repository.py",
+      "lines": 434,
+      "functions": 12,
+      "classes": 1,
+      "complexity": 17,
+      "has_type_hints": true,
+      "has_docstrings": true
+    },
+    {
+      "path": "core\\aiva_core\\analysis\\ast_trace_comparator.py",
+      "lines": 398,
+      "functions": 13,
+      "classes": 3,
+      "complexity": 16,
+      "has_type_hints": true,
+      "has_docstrings": true
+    },
+    {
+      "path": "core\\aiva_core\\analysis\\strategy_generator.py",
+      "lines": 288,
+      "functions": 9,
+      "classes": 1,
+      "complexity": 16,
+      "has_type_hints": true,
+      "has_docstrings": true
+    },
+    {
+      "path": "core\\aiva_core\\storage\\storage_manager.py",
+      "lines": 194,
+      "functions": 5,
+      "classes": 1,
+      "complexity": 16,
+      "has_type_hints": true,
+      "has_docstrings": true
+    },
+    {
+      "path": "function\\function_sqli\\aiva_func_sqli\\backend_db_fingerprinter.py",
+      "lines": 253,
+      "functions": 9,
+      "classes": 1,
+      "complexity": 16,
+      "has_type_hints": true,
+      "has_docstrings": true
+    },
+    {
+      "path": "function\\function_xss\\aiva_func_xss\\task_queue.py",
+      "lines": 143,
+      "functions": 3,
+      "classes": 3,
+      "complexity": 16,
+      "has_type_hints": true,
+      "has_docstrings": true
+    },
+    {
+      "path": "integration\\aiva_integration\\attack_path_analyzer\\engine.py",
+      "lines": 468,
+      "functions": 12,
+      "classes": 4,
+      "complexity": 15,
+      "has_type_hints": true,
+      "has_docstrings": true
+    },
+    {
+      "path": "scan\\aiva_scan\\javascript_analyzer.py",
+      "lines": 251,
+      "functions": 8,
+      "classes": 1,
+      "complexity": 15,
+      "has_type_hints": true,
+      "has_docstrings": true
+    },
+    {
+      "path": "core\\aiva_core\\ui_panel\\auto_server.py",
+      "lines": 169,
+      "functions": 3,
+      "classes": 0,
+      "complexity": 14,
+      "has_type_hints": true,
+      "has_docstrings": true
+    },
+    {
+      "path": "function\\function_postex\\persistence_checker.py",
+      "lines": 375,
+      "functions": 10,
+      "classes": 1,
+      "complexity": 14,
+      "has_type_hints": true,
+      "has_docstrings": true
+    },
+    {
+      "path": "integration\\aiva_integration\\examples\\enhanced_attack_path_demo.py",
+      "lines": 320,
+      "functions": 6,
+      "classes": 0,
+      "complexity": 14,
+      "has_type_hints": true,
+      "has_docstrings": true
+    },
+    {
+      "path": "integration\\aiva_integration\\reporting\\formatter_exporter.py",
+      "lines": 173,
+      "functions": 8,
+      "classes": 1,
+      "complexity": 14,
+      "has_type_hints": true,
+      "has_docstrings": true
+    },
+    {
+      "path": "scan\\aiva_scan\\sensitive_data_scanner.py",
+      "lines": 252,
+      "functions": 10,
+      "classes": 1,
+      "complexity": 14,
+      "has_type_hints": true,
+      "has_docstrings": true
+    },
+    {
+      "path": "scan\\aiva_scan\\core_crawling_engine\\url_queue_manager.py",
+      "lines": 219,
+      "functions": 12,
+      "classes": 1,
+      "complexity": 14,
+      "has_type_hints": true,
+      "has_docstrings": true
+    },
+    {
+      "path": "aiva_common\\mq.py",
+      "lines": 125,
+      "functions": 2,
+      "classes": 4,
+      "complexity": 13,
+      "has_type_hints": true,
+      "has_docstrings": true
+    },
+    {
+      "path": "core\\aiva_core\\ai_ui_schemas.py",
+      "lines": 331,
+      "functions": 9,
+      "classes": 18,
+      "complexity": 13,
+      "has_type_hints": true,
+      "has_docstrings": true
+    },
+    {
+      "path": "core\\aiva_core\\authz\\matrix_visualizer.py",
+      "lines": 500,
+      "functions": 7,
+      "classes": 1,
+      "complexity": 13,
+      "has_type_hints": true,
+      "has_docstrings": true
+    },
+    {
+      "path": "function\\function_sqli\\aiva_func_sqli\\engines\\time_detection_engine.py",
+      "lines": 247,
+      "functions": 2,
+      "classes": 1,
+      "complexity": 13,
+      "has_type_hints": true,
+      "has_docstrings": true
+    },
+    {
+      "path": "scan\\aiva_scan\\core_crawling_engine\\static_content_parser.py",
+      "lines": 71,
+      "functions": 1,
+      "classes": 1,
+      "complexity": 13,
+      "has_type_hints": true,
+      "has_docstrings": true
+    },
+    {
+      "path": "core\\aiva_core\\ai_commander.py",
+      "lines": 488,
+      "functions": 3,
+      "classes": 3,
+      "complexity": 12,
+      "has_type_hints": true,
+      "has_docstrings": true
+    },
+    {
+      "path": "core\\aiva_core\\messaging\\task_dispatcher.py",
+      "lines": 515,
+      "functions": 6,
+      "classes": 1,
+      "complexity": 12,
+      "has_type_hints": true,
+      "has_docstrings": true
+    },
+    {
+      "path": "core\\aiva_core\\ui_panel\\improved_ui.py",
+      "lines": 398,
+      "functions": 2,
+      "classes": 0,
+      "complexity": 12,
+      "has_type_hints": true,
+      "has_docstrings": true
+    },
+    {
+      "path": "function\\function_postex\\lateral_movement.py",
+      "lines": 334,
+      "functions": 10,
+      "classes": 1,
+      "complexity": 12,
+      "has_type_hints": true,
+      "has_docstrings": true
+    },
+    {
+      "path": "integration\\aiva_integration\\observability\\metrics.py",
+      "lines": 144,
+      "functions": 11,
+      "classes": 2,
+      "complexity": 12,
+      "has_type_hints": true,
+      "has_docstrings": true
+    },
+    {
+      "path": "core\\aiva_core\\ai_controller.py",
+      "lines": 262,
+      "functions": 4,
+      "classes": 1,
+      "complexity": 11,
+      "has_type_hints": true,
+      "has_docstrings": true
+    },
+    {
+      "path": "core\\aiva_core\\execution\\task_queue_manager.py",
+      "lines": 212,
+      "functions": 9,
+      "classes": 1,
+      "complexity": 11,
+      "has_type_hints": true,
+      "has_docstrings": true
+    },
+    {
+      "path": "core\\aiva_core\\ui_panel\\server.py",
+      "lines": 280,
+      "functions": 2,
+      "classes": 0,
+      "complexity": 11,
+      "has_type_hints": true,
+      "has_docstrings": true
+    },
+    {
+      "path": "core\\aiva_core\\ai_engine\\training\\trainer.py",
+      "lines": 250,
+      "functions": 7,
+      "classes": 2,
+      "complexity": 11,
+      "has_type_hints": true,
+      "has_docstrings": true
+    },
+    {
+      "path": "function\\function_sqli\\aiva_func_sqli\\engines\\oob_detection_engine.py",
+      "lines": 207,
+      "functions": 3,
+      "classes": 1,
+      "complexity": 11,
+      "has_type_hints": true,
+      "has_docstrings": true
+    },
+    {
+      "path": "integration\\aiva_integration\\analysis\\compliance_policy_checker.py",
+      "lines": 129,
+      "functions": 4,
+      "classes": 1,
+      "complexity": 11,
+      "has_type_hints": true,
+      "has_docstrings": true
+    },
+    {
+      "path": "integration\\aiva_integration\\attack_path_analyzer\\visualizer.py",
+      "lines": 293,
+      "functions": 4,
+      "classes": 1,
+      "complexity": 11,
+      "has_type_hints": true,
+      "has_docstrings": true
+    },
+    {
+      "path": "integration\\aiva_integration\\reception\\sql_result_database.py",
+      "lines": 248,
+      "functions": 4,
+      "classes": 2,
+      "complexity": 11,
+      "has_type_hints": true,
+      "has_docstrings": true
+    },
+    {
+      "path": "scan\\aiva_scan\\header_configuration.py",
+      "lines": 437,
+      "functions": 24,
+      "classes": 1,
+      "complexity": 11,
+      "has_type_hints": true,
+      "has_docstrings": true
+    },
+    {
+      "path": "scan\\aiva_scan\\schemas.py",
+      "lines": 182,
+      "functions": 7,
+      "classes": 6,
+      "complexity": 11,
+      "has_type_hints": true,
+      "has_docstrings": true
+    },
+    {
+      "path": "aiva_common\\standards.py",
+      "lines": 289,
+      "functions": 3,
+      "classes": 6,
+      "complexity": 10,
+      "has_type_hints": true,
+      "has_docstrings": true
+    },
+    {
+      "path": "aiva_common\\utils\\network\\backoff.py",
+      "lines": 210,
+      "functions": 3,
+      "classes": 1,
+      "complexity": 10,
+      "has_type_hints": true,
+      "has_docstrings": true
+    },
+    {
+      "path": "core\\aiva_core\\planner\\orchestrator.py",
+      "lines": 186,
+      "functions": 7,
+      "classes": 2,
+      "complexity": 10,
+      "has_type_hints": true,
+      "has_docstrings": true
+    },
+    {
+      "path": "core\\aiva_core\\rag\\demo_rag_integration.py",
+      "lines": 257,
+      "functions": 2,
+      "classes": 1,
+      "complexity": 10,
+      "has_type_hints": true,
+      "has_docstrings": true
+    },
+    {
+      "path": "function\\function_idor\\aiva_func_idor\\enhanced_worker.py",
+      "lines": 357,
+      "functions": 3,
+      "classes": 3,
+      "complexity": 10,
+      "has_type_hints": true,
+      "has_docstrings": true
+    },
+    {
+      "path": "function\\function_sqli\\aiva_func_sqli\\config.py",
+      "lines": 140,
+      "functions": 6,
+      "classes": 1,
+      "complexity": 10,
+      "has_type_hints": true,
+      "has_docstrings": true
+    },
+    {
+      "path": "scan\\aiva_scan\\strategy_controller.py",
+      "lines": 506,
+      "functions": 21,
+      "classes": 3,
+      "complexity": 10,
+      "has_type_hints": true,
+      "has_docstrings": true
+    },
+    {
+      "path": "scan\\aiva_scan\\dynamic_engine\\example_browser_pool.py",
+      "lines": 263,
+      "functions": 0,
+      "classes": 0,
+      "complexity": 10,
+      "has_type_hints": true,
+      "has_docstrings": true
+    },
+    {
+      "path": "core\\aiva_core\\app.py",
+      "lines": 322,
+      "functions": 1,
+      "classes": 0,
+      "complexity": 9,
+      "has_type_hints": true,
+      "has_docstrings": true
+    },
+    {
+      "path": "core\\aiva_core\\execution_tracer\\execution_monitor.py",
+      "lines": 304,
+      "functions": 11,
+      "classes": 2,
+      "complexity": 9,
+      "has_type_hints": true,
+      "has_docstrings": true
+    },
+    {
+      "path": "function\\function_postex\\privilege_escalator.py",
+      "lines": 276,
+      "functions": 11,
+      "classes": 2,
+      "complexity": 9,
+      "has_type_hints": true,
+      "has_docstrings": true
+    },
+    {
+      "path": "function\\function_ssrf\\aiva_func_ssrf\\enhanced_worker.py",
+      "lines": 321,
+      "functions": 3,
+      "classes": 3,
+      "complexity": 9,
+      "has_type_hints": true,
+      "has_docstrings": true
+    },
+    {
+      "path": "scan\\aiva_scan\\dynamic_engine\\example_extractor.py",
+      "lines": 258,
+      "functions": 0,
+      "classes": 0,
+      "complexity": 9,
+      "has_type_hints": true,
+      "has_docstrings": true
+    },
+    {
+      "path": "core\\aiva_core\\ai_engine_backup\\bio_neuron_core.py",
+      "lines": 287,
+      "functions": 10,
+      "classes": 4,
+      "complexity": 8,
+      "has_type_hints": true,
+      "has_docstrings": true
+    },
+    {
+      "path": "core\\aiva_core\\bizlogic\\worker.py",
+      "lines": 137,
+      "functions": 0,
+      "classes": 0,
+      "complexity": 8,
+      "has_type_hints": true,
+      "has_docstrings": true
+    },
+    {
+      "path": "core\\aiva_core\\ai_engine\\training\\data_loader.py",
+      "lines": 198,
+      "functions": 6,
+      "classes": 1,
+      "complexity": 8,
+      "has_type_hints": true,
+      "has_docstrings": true
+    },
+    {
+      "path": "function\\function_sqli\\aiva_func_sqli\\engines\\error_detection_engine.py",
+      "lines": 173,
+      "functions": 3,
+      "classes": 1,
+      "complexity": 8,
+      "has_type_hints": true,
+      "has_docstrings": true
+    },
+    {
+      "path": "function\\function_xss\\aiva_func_xss\\payload_generator.py",
+      "lines": 44,
+      "functions": 1,
+      "classes": 1,
+      "complexity": 8,
+      "has_type_hints": true,
+      "has_docstrings": true
+    },
+    {
+      "path": "integration\\aiva_integration\\settings.py",
+      "lines": 87,
+      "functions": 3,
+      "classes": 1,
+      "complexity": 8,
+      "has_type_hints": true,
+      "has_docstrings": true
+    },
+    {
+      "path": "scan\\aiva_scan\\fingerprint_manager.py",
+      "lines": 54,
+      "functions": 4,
+      "classes": 2,
+      "complexity": 8,
+      "has_type_hints": true,
+      "has_docstrings": true
+    },
+    {
+      "path": "scan\\aiva_scan\\dynamic_engine\\example_usage.py",
+      "lines": 157,
+      "functions": 0,
+      "classes": 0,
+      "complexity": 8,
+      "has_type_hints": true,
+      "has_docstrings": true
+    },
+    {
+      "path": "scan\\models.py",
+      "lines": 475,
+      "functions": 4,
+      "classes": 20,
+      "complexity": 7,
+      "has_type_hints": true,
+      "has_docstrings": true
+    },
+    {
+      "path": "core\\aiva_core\\execution_tracer\\task_executor.py",
+      "lines": 280,
+      "functions": 1,
+      "classes": 2,
+      "complexity": 7,
+      "has_type_hints": true,
+      "has_docstrings": true
+    },
+    {
+      "path": "core\\aiva_core\\execution_tracer\\trace_recorder.py",
+      "lines": 299,
+      "functions": 19,
+      "classes": 4,
+      "complexity": 7,
+      "has_type_hints": true,
+      "has_docstrings": true
+    },
+    {
+      "path": "function\\function_ssrf\\aiva_func_ssrf\\schemas.py",
+      "lines": 140,
+      "functions": 10,
+      "classes": 5,
+      "complexity": 7,
+      "has_type_hints": true,
+      "has_docstrings": true
+    },
+    {
+      "path": "function\\function_xss\\aiva_func_xss\\dom_xss_detector.py",
+      "lines": 48,
+      "functions": 1,
+      "classes": 2,
+      "complexity": 7,
+      "has_type_hints": true,
+      "has_docstrings": true
+    },
+    {
+      "path": "function\\function_xss\\aiva_func_xss\\schemas.py",
+      "lines": 178,
+      "functions": 12,
+      "classes": 6,
+      "complexity": 7,
+      "has_type_hints": true,
+      "has_docstrings": true
+    },
+    {
+      "path": "integration\\aiva_integration\\middlewares\\rate_limiter.py",
+      "lines": 123,
+      "functions": 3,
+      "classes": 2,
+      "complexity": 7,
+      "has_type_hints": true,
+      "has_docstrings": true
+    },
+    {
+      "path": "integration\\aiva_integration\\security\\auth.py",
+      "lines": 61,
+      "functions": 1,
+      "classes": 1,
+      "complexity": 7,
+      "has_type_hints": true,
+      "has_docstrings": true
+    },
+    {
+      "path": "core\\aiva_core\\rag\\rag_engine.py",
+      "lines": 362,
+      "functions": 9,
+      "classes": 1,
+      "complexity": 6,
+      "has_type_hints": true,
+      "has_docstrings": true
+    },
+    {
+      "path": "integration\\aiva_integration\\examples\\enhanced_risk_assessment_demo.py",
+      "lines": 248,
+      "functions": 4,
+      "classes": 0,
+      "complexity": 6,
+      "has_type_hints": false,
+      "has_docstrings": true
+    },
+    {
+      "path": "scan\\aiva_scan\\scan_context.py",
+      "lines": 210,
+      "functions": 14,
+      "classes": 1,
+      "complexity": 6,
+      "has_type_hints": true,
+      "has_docstrings": true
+    },
+    {
+      "path": "scan\\aiva_scan\\core_crawling_engine\\http_client_hi.py",
+      "lines": 181,
+      "functions": 1,
+      "classes": 1,
+      "complexity": 6,
+      "has_type_hints": true,
+      "has_docstrings": true
+    },
+    {
+      "path": "scan\\discovery_schemas.py",
+      "lines": 257,
+      "functions": 4,
+      "classes": 14,
+      "complexity": 5,
+      "has_type_hints": true,
+      "has_docstrings": true
+    },
+    {
+      "path": "core\\aiva_core\\ai_model\\train_classifier.py",
+      "lines": 80,
+      "functions": 3,
+      "classes": 0,
+      "complexity": 5,
+      "has_type_hints": true,
+      "has_docstrings": false
+    },
+    {
+      "path": "core\\aiva_core\\planner\\tool_selector.py",
+      "lines": 221,
+      "functions": 7,
+      "classes": 3,
+      "complexity": 5,
+      "has_type_hints": true,
+      "has_docstrings": true
+    },
+    {
+      "path": "core\\aiva_core\\state\\session_state_manager.py",
+      "lines": 118,
+      "functions": 5,
+      "classes": 1,
+      "complexity": 5,
+      "has_type_hints": true,
+      "has_docstrings": true
+    },
+    {
+      "path": "function\\function_sqli\\aiva_func_sqli\\exceptions.py",
+      "lines": 94,
+      "functions": 10,
+      "classes": 8,
+      "complexity": 5,
+      "has_type_hints": true,
+      "has_docstrings": true
+    },
+    {
+      "path": "integration\\alembic\\env.py",
+      "lines": 90,
+      "functions": 4,
+      "classes": 0,
+      "complexity": 5,
+      "has_type_hints": true,
+      "has_docstrings": true
+    },
+    {
+      "path": "function\\test_schemas.py",
+      "lines": 274,
+      "functions": 3,
+      "classes": 11,
+      "complexity": 4,
+      "has_type_hints": true,
+      "has_docstrings": true
+    },
+    {
+      "path": "core\\aiva_core\\ai_engine\\bio_neuron_core_v2.py",
+      "lines": 298,
+      "functions": 10,
+      "classes": 4,
+      "complexity": 4,
+      "has_type_hints": true,
+      "has_docstrings": true
+    },
+    {
+      "path": "core\\aiva_core\\ai_engine_backup\\bio_neuron_core_v2.py",
+      "lines": 298,
+      "functions": 10,
+      "classes": 4,
+      "complexity": 4,
+      "has_type_hints": true,
+      "has_docstrings": true
+    },
+    {
+      "path": "core\\aiva_core\\execution\\task_generator.py",
+      "lines": 71,
+      "functions": 1,
+      "classes": 1,
+      "complexity": 4,
+      "has_type_hints": true,
+      "has_docstrings": true
+    },
+    {
+      "path": "integration\\aiva_integration\\perf_feedback\\improvement_suggestion_generator.py",
+      "lines": 31,
+      "functions": 1,
+      "classes": 1,
+      "complexity": 4,
+      "has_type_hints": true,
+      "has_docstrings": true
+    },
+    {
+      "path": "scan\\aiva_scan\\worker.py",
+      "lines": 105,
+      "functions": 0,
+      "classes": 0,
+      "complexity": 4,
+      "has_type_hints": true,
+      "has_docstrings": false
+    },
+    {
+      "path": "function\\models.py",
+      "lines": 484,
+      "functions": 2,
+      "classes": 25,
+      "complexity": 3,
+      "has_type_hints": true,
+      "has_docstrings": true
+    },
+    {
+      "path": "core\\aiva_core\\schemas.py",
+      "lines": 291,
+      "functions": 5,
+      "classes": 12,
+      "complexity": 3,
+      "has_type_hints": true,
+      "has_docstrings": true
+    },
+    {
+      "path": "core\\aiva_core\\ai_engine\\training\\model_updater.py",
+      "lines": 241,
+      "functions": 6,
+      "classes": 1,
+      "complexity": 3,
+      "has_type_hints": true,
+      "has_docstrings": true
+    },
+    {
+      "path": "function\\common\\detection_config.py",
+      "lines": 199,
+      "functions": 1,
+      "classes": 5,
+      "complexity": 3,
+      "has_type_hints": true,
+      "has_docstrings": true
+    },
+    {
+      "path": "function\\function_sqli\\aiva_func_sqli\\task_queue.py",
+      "lines": 36,
+      "functions": 1,
+      "classes": 2,
+      "complexity": 3,
+      "has_type_hints": true,
+      "has_docstrings": true
+    },
+    {
+      "path": "function\\function_sqli\\aiva_func_sqli\\telemetry.py",
+      "lines": 54,
+      "functions": 7,
+      "classes": 1,
+      "complexity": 3,
+      "has_type_hints": true,
+      "has_docstrings": true
+    },
+    {
+      "path": "function\\function_ssrf\\aiva_func_ssrf\\result_publisher.py",
+      "lines": 98,
+      "functions": 2,
+      "classes": 1,
+      "complexity": 3,
+      "has_type_hints": true,
+      "has_docstrings": true
+    },
+    {
+      "path": "function\\function_xss\\aiva_func_xss\\result_publisher.py",
+      "lines": 98,
+      "functions": 2,
+      "classes": 1,
+      "complexity": 3,
+      "has_type_hints": true,
+      "has_docstrings": true
+    },
+    {
+      "path": "integration\\aiva_integration\\app.py",
+      "lines": 65,
+      "functions": 0,
+      "classes": 0,
+      "complexity": 3,
+      "has_type_hints": true,
+      "has_docstrings": false
+    },
+    {
+      "path": "integration\\aiva_integration\\perf_feedback\\scan_metadata_analyzer.py",
+      "lines": 34,
+      "functions": 2,
+      "classes": 1,
+      "complexity": 3,
+      "has_type_hints": true,
+      "has_docstrings": true
+    },
+    {
+      "path": "aiva_common\\models.py",
+      "lines": 325,
+      "functions": 1,
+      "classes": 14,
+      "complexity": 2,
+      "has_type_hints": true,
+      "has_docstrings": true
+    },
+    {
+      "path": "core\\models.py",
+      "lines": 704,
+      "functions": 1,
+      "classes": 35,
+      "complexity": 2,
+      "has_type_hints": true,
+      "has_docstrings": true
+    },
+    {
+      "path": "aiva_common\\utils\\logging.py",
+      "lines": 19,
+      "functions": 1,
+      "classes": 0,
+      "complexity": 2,
+      "has_type_hints": true,
+      "has_docstrings": true
+    },
+    {
+      "path": "core\\aiva_core\\business_schemas.py",
+      "lines": 341,
+      "functions": 1,
+      "classes": 11,
+      "complexity": 2,
+      "has_type_hints": true,
+      "has_docstrings": true
+    },
+    {
+      "path": "function\\function_sqli\\aiva_func_sqli\\result_binder_publisher.py",
+      "lines": 72,
+      "functions": 2,
+      "classes": 1,
+      "complexity": 2,
+      "has_type_hints": true,
+      "has_docstrings": true
+    },
+    {
+      "path": "scan\\aiva_scan\\worker_refactored.py",
+      "lines": 92,
+      "functions": 0,
+      "classes": 0,
+      "complexity": 2,
+      "has_type_hints": true,
+      "has_docstrings": true
+    },
+    {
+      "path": "__init__.py",
+      "lines": 7,
+      "functions": 0,
+      "classes": 0,
+      "complexity": 1,
+      "has_type_hints": false,
+      "has_docstrings": true
+    },
+    {
+      "path": "aiva_common\\ai_schemas.py",
+      "lines": 425,
+      "functions": 0,
+      "classes": 14,
+      "complexity": 1,
+      "has_type_hints": false,
+      "has_docstrings": true
+    },
+    {
+      "path": "aiva_common\\config.py",
+      "lines": 36,
+      "functions": 1,
+      "classes": 1,
+      "complexity": 1,
+      "has_type_hints": true,
+      "has_docstrings": true
+    },
+    {
+      "path": "aiva_common\\enums.py",
+      "lines": 441,
+      "functions": 0,
+      "classes": 31,
+      "complexity": 1,
+      "has_type_hints": false,
+      "has_docstrings": true
+    },
+    {
+      "path": "aiva_common\\schemas_compat.py",
+      "lines": 275,
+      "functions": 0,
+      "classes": 0,
+      "complexity": 1,
+      "has_type_hints": false,
+      "has_docstrings": true
+    },
+    {
+      "path": "aiva_common\\__init__.py",
+      "lines": 212,
+      "functions": 0,
+      "classes": 0,
+      "complexity": 1,
+      "has_type_hints": false,
+      "has_docstrings": true
+    },
+    {
+      "path": "aiva_common\\__init___backup.py",
+      "lines": 374,
+      "functions": 0,
+      "classes": 0,
+      "complexity": 1,
+      "has_type_hints": false,
+      "has_docstrings": true
+    },
+    {
+      "path": "aiva_common\\__init___fixed.py",
+      "lines": 224,
+      "functions": 0,
+      "classes": 0,
+      "complexity": 1,
+      "has_type_hints": false,
+      "has_docstrings": true
+    },
+    {
+      "path": "aiva_common\\__init___new.py",
+      "lines": 234,
+      "functions": 0,
+      "classes": 0,
+      "complexity": 1,
+      "has_type_hints": false,
+      "has_docstrings": true
+    },
+    {
+      "path": "aiva_common\\__init___old.py",
+      "lines": 220,
+      "functions": 0,
+      "classes": 0,
+      "complexity": 1,
+      "has_type_hints": false,
+      "has_docstrings": true
+    },
+    {
+      "path": "core\\ai_models.py",
+      "lines": 540,
+      "functions": 0,
+      "classes": 27,
+      "complexity": 1,
+      "has_type_hints": false,
+      "has_docstrings": true
+    },
+    {
+      "path": "core\\__init__.py",
+      "lines": 102,
+      "functions": 0,
+      "classes": 0,
+      "complexity": 1,
+      "has_type_hints": false,
+      "has_docstrings": true
+    },
+    {
+      "path": "function\\__init__.py",
+      "lines": 93,
+      "functions": 0,
+      "classes": 0,
+      "complexity": 1,
+      "has_type_hints": false,
+      "has_docstrings": true
+    },
+    {
+      "path": "integration\\models.py",
+      "lines": 197,
+      "functions": 0,
+      "classes": 7,
+      "complexity": 1,
+      "has_type_hints": false,
+      "has_docstrings": true
+    },
+    {
+      "path": "integration\\service_schemas.py",
+      "lines": 350,
+      "functions": 0,
+      "classes": 11,
+      "complexity": 1,
+      "has_type_hints": false,
+      "has_docstrings": true
+    },
+    {
+      "path": "integration\\__init__.py",
+      "lines": 46,
+      "functions": 0,
+      "classes": 0,
+      "complexity": 1,
+      "has_type_hints": false,
+      "has_docstrings": true
+    },
+    {
+      "path": "scan\\__init__.py",
+      "lines": 78,
+      "functions": 0,
+      "classes": 0,
+      "complexity": 1,
+      "has_type_hints": false,
+      "has_docstrings": true
+    },
+    {
+      "path": "aiva_common\\utils\\ids.py",
+      "lines": 8,
+      "functions": 1,
+      "classes": 0,
+      "complexity": 1,
+      "has_type_hints": true,
+      "has_docstrings": true
+    },
+    {
+      "path": "aiva_common\\utils\\__init__.py",
+      "lines": 4,
+      "functions": 0,
+      "classes": 0,
+      "complexity": 1,
+      "has_type_hints": false,
+      "has_docstrings": false
+    },
+    {
+      "path": "aiva_common\\utils\\dedup\\__init__.py",
+      "lines": 11,
+      "functions": 0,
+      "classes": 0,
+      "complexity": 1,
+      "has_type_hints": false,
+      "has_docstrings": true
+    },
+    {
+      "path": "aiva_common\\utils\\network\\__init__.py",
+      "lines": 13,
+      "functions": 0,
+      "classes": 0,
+      "complexity": 1,
+      "has_type_hints": false,
+      "has_docstrings": true
+    },
+    {
+      "path": "core\\aiva_core\\__init__.py",
+      "lines": 180,
+      "functions": 0,
+      "classes": 0,
+      "complexity": 1,
+      "has_type_hints": false,
+      "has_docstrings": true
+    },
+    {
+      "path": "core\\aiva_core\\ai_engine\\__init__.py",
+      "lines": 41,
+      "functions": 0,
+      "classes": 0,
+      "complexity": 1,
+      "has_type_hints": false,
+      "has_docstrings": true
+    },
+    {
+      "path": "core\\aiva_core\\ai_engine_backup\\__init__.py",
+      "lines": 41,
+      "functions": 0,
+      "classes": 0,
+      "complexity": 1,
+      "has_type_hints": false,
+      "has_docstrings": true
+    },
+    {
+      "path": "core\\aiva_core\\analysis\\__init__.py",
+      "lines": 9,
+      "functions": 0,
+      "classes": 0,
+      "complexity": 1,
+      "has_type_hints": false,
+      "has_docstrings": true
+    },
+    {
+      "path": "core\\aiva_core\\authz\\__init__.py",
+      "lines": 17,
+      "functions": 0,
+      "classes": 0,
+      "complexity": 1,
+      "has_type_hints": false,
+      "has_docstrings": true
+    },
+    {
+      "path": "core\\aiva_core\\bizlogic\\finding_helper.py",
+      "lines": 70,
+      "functions": 1,
+      "classes": 0,
+      "complexity": 1,
+      "has_type_hints": true,
+      "has_docstrings": true
+    },
+    {
+      "path": "core\\aiva_core\\bizlogic\\__init__.py",
+      "lines": 22,
+      "functions": 0,
+      "classes": 0,
+      "complexity": 1,
+      "has_type_hints": false,
+      "has_docstrings": true
+    },
+    {
+      "path": "core\\aiva_core\\execution\\__init__.py",
+      "lines": 10,
+      "functions": 0,
+      "classes": 0,
+      "complexity": 1,
+      "has_type_hints": false,
+      "has_docstrings": true
+    },
+    {
+      "path": "core\\aiva_core\\execution_tracer\\__init__.py",
+      "lines": 19,
+      "functions": 0,
+      "classes": 0,
+      "complexity": 1,
+      "has_type_hints": false,
+      "has_docstrings": true
+    },
+    {
+      "path": "core\\aiva_core\\ingestion\\__init__.py",
+      "lines": 0,
+      "functions": 0,
+      "classes": 0,
+      "complexity": 1,
+      "has_type_hints": false,
+      "has_docstrings": false
+    },
+    {
+      "path": "core\\aiva_core\\learning\\__init__.py",
+      "lines": 10,
+      "functions": 0,
+      "classes": 0,
+      "complexity": 1,
+      "has_type_hints": false,
+      "has_docstrings": true
+    },
+    {
+      "path": "core\\aiva_core\\messaging\\__init__.py",
+      "lines": 11,
+      "functions": 0,
+      "classes": 0,
+      "complexity": 1,
+      "has_type_hints": false,
+      "has_docstrings": true
+    },
+    {
+      "path": "core\\aiva_core\\output\\to_functions.py",
+      "lines": 24,
+      "functions": 1,
+      "classes": 0,
+      "complexity": 1,
+      "has_type_hints": true,
+      "has_docstrings": true
+    },
+    {
+      "path": "core\\aiva_core\\output\\__init__.py",
+      "lines": 0,
+      "functions": 0,
+      "classes": 0,
+      "complexity": 1,
+      "has_type_hints": false,
+      "has_docstrings": false
+    },
+    {
+      "path": "core\\aiva_core\\planner\\__init__.py",
+      "lines": 22,
+      "functions": 0,
+      "classes": 0,
+      "complexity": 1,
+      "has_type_hints": false,
+      "has_docstrings": true
+    },
+    {
+      "path": "core\\aiva_core\\rag\\__init__.py",
+      "lines": 11,
+      "functions": 0,
+      "classes": 0,
+      "complexity": 1,
+      "has_type_hints": false,
+      "has_docstrings": true
+    },
+    {
+      "path": "core\\aiva_core\\state\\__init__.py",
+      "lines": 0,
+      "functions": 0,
+      "classes": 0,
+      "complexity": 1,
+      "has_type_hints": false,
+      "has_docstrings": false
+    },
+    {
+      "path": "core\\aiva_core\\storage\\config.py",
+      "lines": 110,
+      "functions": 1,
+      "classes": 0,
+      "complexity": 1,
+      "has_type_hints": true,
+      "has_docstrings": true
+    },
+    {
+      "path": "core\\aiva_core\\storage\\models.py",
+      "lines": 256,
+      "functions": 0,
+      "classes": 6,
+      "complexity": 1,
+      "has_type_hints": false,
+      "has_docstrings": true
+    },
+    {
+      "path": "core\\aiva_core\\storage\\__init__.py",
+      "lines": 37,
+      "functions": 0,
+      "classes": 0,
+      "complexity": 1,
+      "has_type_hints": false,
+      "has_docstrings": true
+    },
+    {
+      "path": "core\\aiva_core\\training\\__init__.py",
+      "lines": 15,
+      "functions": 0,
+      "classes": 0,
+      "complexity": 1,
+      "has_type_hints": false,
+      "has_docstrings": true
+    },
+    {
+      "path": "core\\aiva_core\\ui_panel\\__init__.py",
+      "lines": 14,
+      "functions": 0,
+      "classes": 0,
+      "complexity": 1,
+      "has_type_hints": false,
+      "has_docstrings": true
+    },
+    {
+      "path": "core\\aiva_core\\ai_engine\\training\\__init__.py",
+      "lines": 16,
+      "functions": 0,
+      "classes": 0,
+      "complexity": 1,
+      "has_type_hints": false,
+      "has_docstrings": true
+    },
+    {
+      "path": "function\\common\\__init__.py",
+      "lines": 26,
+      "functions": 0,
+      "classes": 0,
+      "complexity": 1,
+      "has_type_hints": false,
+      "has_docstrings": true
+    },
+    {
+      "path": "function\\function_postex\\__init__.py",
+      "lines": 40,
+      "functions": 0,
+      "classes": 0,
+      "complexity": 1,
+      "has_type_hints": false,
+      "has_docstrings": true
+    },
+    {
+      "path": "function\\function_sqli\\__init__.py",
+      "lines": 1,
+      "functions": 0,
+      "classes": 0,
+      "complexity": 1,
+      "has_type_hints": false,
+      "has_docstrings": false
+    },
+    {
+      "path": "function\\function_ssrf\\__init__.py",
+      "lines": 1,
+      "functions": 0,
+      "classes": 0,
+      "complexity": 1,
+      "has_type_hints": false,
+      "has_docstrings": false
+    },
+    {
+      "path": "function\\function_xss\\__init__.py",
+      "lines": 1,
+      "functions": 0,
+      "classes": 0,
+      "complexity": 1,
+      "has_type_hints": false,
+      "has_docstrings": false
+    },
+    {
+      "path": "function\\function_idor\\aiva_func_idor\\__init__.py",
+      "lines": 11,
+      "functions": 0,
+      "classes": 0,
+      "complexity": 1,
+      "has_type_hints": false,
+      "has_docstrings": true
+    },
+    {
+      "path": "function\\function_sqli\\aiva_func_sqli\\detection_models.py",
+      "lines": 49,
+      "functions": 1,
+      "classes": 2,
+      "complexity": 1,
+      "has_type_hints": true,
+      "has_docstrings": true
+    },
+    {
+      "path": "function\\function_sqli\\aiva_func_sqli\\smart_detection_manager.py",
+      "lines": 0,
+      "functions": 0,
+      "classes": 0,
+      "complexity": 1,
+      "has_type_hints": false,
+      "has_docstrings": false
+    },
+    {
+      "path": "function\\function_sqli\\aiva_func_sqli\\__init__.py",
+      "lines": 1,
+      "functions": 0,
+      "classes": 0,
+      "complexity": 1,
+      "has_type_hints": false,
+      "has_docstrings": false
+    },
+    {
+      "path": "function\\function_sqli\\aiva_func_sqli\\engines\\__init__.py",
+      "lines": 17,
+      "functions": 0,
+      "classes": 0,
+      "complexity": 1,
+      "has_type_hints": false,
+      "has_docstrings": true
+    },
+    {
+      "path": "function\\function_ssrf\\aiva_func_ssrf\\__init__.py",
+      "lines": 1,
+      "functions": 0,
+      "classes": 0,
+      "complexity": 1,
+      "has_type_hints": false,
+      "has_docstrings": false
+    },
+    {
+      "path": "function\\function_xss\\aiva_func_xss\\__init__.py",
+      "lines": 1,
+      "functions": 0,
+      "classes": 0,
+      "complexity": 1,
+      "has_type_hints": false,
+      "has_docstrings": false
+    },
+    {
+      "path": "integration\\aiva_integration\\__init__.py",
+      "lines": 0,
+      "functions": 0,
+      "classes": 0,
+      "complexity": 1,
+      "has_type_hints": false,
+      "has_docstrings": false
+    },
+    {
+      "path": "integration\\aiva_integration\\analysis\\__init__.py",
+      "lines": 0,
+      "functions": 0,
+      "classes": 0,
+      "complexity": 1,
+      "has_type_hints": false,
+      "has_docstrings": false
+    },
+    {
+      "path": "integration\\aiva_integration\\attack_path_analyzer\\__init__.py",
+      "lines": 19,
+      "functions": 0,
+      "classes": 0,
+      "complexity": 1,
+      "has_type_hints": false,
+      "has_docstrings": true
+    },
+    {
+      "path": "integration\\aiva_integration\\config_template\\config_template_manager.py",
+      "lines": 46,
+      "functions": 4,
+      "classes": 1,
+      "complexity": 1,
+      "has_type_hints": true,
+      "has_docstrings": true
+    },
+    {
+      "path": "integration\\aiva_integration\\config_template\\__init__.py",
+      "lines": 0,
+      "functions": 0,
+      "classes": 0,
+      "complexity": 1,
+      "has_type_hints": false,
+      "has_docstrings": false
+    },
+    {
+      "path": "integration\\aiva_integration\\middlewares\\__init__.py",
+      "lines": 1,
+      "functions": 0,
+      "classes": 0,
+      "complexity": 1,
+      "has_type_hints": false,
+      "has_docstrings": true
+    },
+    {
+      "path": "integration\\aiva_integration\\observability\\__init__.py",
+      "lines": 1,
+      "functions": 0,
+      "classes": 0,
+      "complexity": 1,
+      "has_type_hints": false,
+      "has_docstrings": true
+    },
+    {
+      "path": "integration\\aiva_integration\\perf_feedback\\__init__.py",
+      "lines": 0,
+      "functions": 0,
+      "classes": 0,
+      "complexity": 1,
+      "has_type_hints": false,
+      "has_docstrings": false
+    },
+    {
+      "path": "integration\\aiva_integration\\reception\\data_reception_layer.py",
+      "lines": 15,
+      "functions": 1,
+      "classes": 1,
+      "complexity": 1,
+      "has_type_hints": true,
+      "has_docstrings": true
+    },
+    {
+      "path": "integration\\aiva_integration\\reception\\experience_models.py",
+      "lines": 201,
+      "functions": 4,
+      "classes": 4,
+      "complexity": 1,
+      "has_type_hints": true,
+      "has_docstrings": true
+    },
+    {
+      "path": "integration\\aiva_integration\\reception\\models_enhanced.py",
+      "lines": 404,
+      "functions": 7,
+      "classes": 13,
+      "complexity": 1,
+      "has_type_hints": true,
+      "has_docstrings": true
+    },
+    {
+      "path": "integration\\aiva_integration\\reception\\__init__.py",
+      "lines": 0,
+      "functions": 0,
+      "classes": 0,
+      "complexity": 1,
+      "has_type_hints": false,
+      "has_docstrings": false
+    },
+    {
+      "path": "integration\\aiva_integration\\remediation\\__init__.py",
+      "lines": 19,
+      "functions": 0,
+      "classes": 0,
+      "complexity": 1,
+      "has_type_hints": false,
+      "has_docstrings": true
+    },
+    {
+      "path": "integration\\aiva_integration\\reporting\\report_template_selector.py",
+      "lines": 25,
+      "functions": 3,
+      "classes": 1,
+      "complexity": 1,
+      "has_type_hints": true,
+      "has_docstrings": true
+    },
+    {
+      "path": "integration\\aiva_integration\\reporting\\__init__.py",
+      "lines": 0,
+      "functions": 0,
+      "classes": 0,
+      "complexity": 1,
+      "has_type_hints": false,
+      "has_docstrings": false
+    },
+    {
+      "path": "integration\\aiva_integration\\security\\__init__.py",
+      "lines": 1,
+      "functions": 0,
+      "classes": 0,
+      "complexity": 1,
+      "has_type_hints": false,
+      "has_docstrings": true
+    },
+    {
+      "path": "integration\\aiva_integration\\threat_intel\\__init__.py",
+      "lines": 12,
+      "functions": 0,
+      "classes": 0,
+      "complexity": 1,
+      "has_type_hints": false,
+      "has_docstrings": true
+    },
+    {
+      "path": "integration\\aiva_integration\\threat_intel\\threat_intel\\__init__.py",
+      "lines": 17,
+      "functions": 0,
+      "classes": 0,
+      "complexity": 1,
+      "has_type_hints": false,
+      "has_docstrings": true
+    },
+    {
+      "path": "integration\\alembic\\versions\\001_initial_schema.py",
+      "lines": 169,
+      "functions": 2,
+      "classes": 0,
+      "complexity": 1,
+      "has_type_hints": true,
+      "has_docstrings": true
+    },
+    {
+      "path": "integration\\api_gateway\\api_gateway\\app.py",
+      "lines": 125,
+      "functions": 0,
+      "classes": 1,
+      "complexity": 1,
+      "has_type_hints": true,
+      "has_docstrings": false
+    },
+    {
+      "path": "scan\\aiva_scan\\authentication_manager.py",
+      "lines": 10,
+      "functions": 1,
+      "classes": 1,
+      "complexity": 1,
+      "has_type_hints": true,
+      "has_docstrings": true
+    },
+    {
+      "path": "scan\\aiva_scan\\__init__.py",
+      "lines": 0,
+      "functions": 0,
+      "classes": 0,
+      "complexity": 1,
+      "has_type_hints": false,
+      "has_docstrings": false
+    },
+    {
+      "path": "scan\\aiva_scan\\core_crawling_engine\\__init__.py",
+      "lines": 0,
+      "functions": 0,
+      "classes": 0,
+      "complexity": 1,
+      "has_type_hints": false,
+      "has_docstrings": false
+    },
+    {
+      "path": "scan\\aiva_scan\\dynamic_engine\\__init__.py",
+      "lines": 59,
+      "functions": 0,
+      "classes": 0,
+      "complexity": 1,
+      "has_type_hints": false,
+      "has_docstrings": true
+    },
+    {
+      "path": "scan\\aiva_scan\\info_gatherer\\passive_fingerprinter.py",
+      "lines": 27,
+      "functions": 1,
+      "classes": 1,
+      "complexity": 1,
+      "has_type_hints": true,
+      "has_docstrings": true
+    },
+    {
+      "path": "scan\\aiva_scan\\info_gatherer\\__init__.py",
+      "lines": 0,
+      "functions": 0,
+      "classes": 0,
+      "complexity": 1,
+      "has_type_hints": false,
+      "has_docstrings": false
+    }
+  ],
+  "top_complex_files": [
+    {
+      "path": "aiva_common\\utils\\network\\ratelimit.py",
+      "lines": 659,
+      "functions": 22,
+      "classes": 2,
+      "complexity": 91,
+      "has_type_hints": true,
+      "has_docstrings": true
+    },
+    {
+      "path": "integration\\aiva_integration\\analysis\\vuln_correlation_analyzer.py",
+      "lines": 667,
+      "functions": 16,
+      "classes": 1,
+      "complexity": 69,
+      "has_type_hints": true,
+      "has_docstrings": true
+    },
+    {
+      "path": "integration\\aiva_integration\\attack_path_analyzer\\nlp_recommender.py",
+      "lines": 741,
+      "functions": 17,
+      "classes": 3,
+      "complexity": 67,
+      "has_type_hints": true,
+      "has_docstrings": true
+    },
+    {
+      "path": "scan\\aiva_scan\\dynamic_engine\\dynamic_content_extractor.py",
+      "lines": 695,
+      "functions": 7,
+      "classes": 6,
+      "complexity": 54,
+      "has_type_hints": true,
+      "has_docstrings": true
+    },
+    {
+      "path": "integration\\aiva_integration\\threat_intel\\threat_intel\\intel_aggregator.py",
+      "lines": 447,
+      "functions": 8,
+      "classes": 1,
+      "complexity": 50,
+      "has_type_hints": true,
+      "has_docstrings": true
+    },
+    {
+      "path": "integration\\aiva_integration\\threat_intel\\threat_intel\\mitre_mapper.py",
+      "lines": 434,
+      "functions": 10,
+      "classes": 2,
+      "complexity": 50,
+      "has_type_hints": true,
+      "has_docstrings": true
+    },
+    {
+      "path": "function\\function_ssrf\\aiva_func_ssrf\\worker.py",
+      "lines": 432,
+      "functions": 8,
+      "classes": 3,
+      "complexity": 49,
+      "has_type_hints": true,
+      "has_docstrings": false
+    },
+    {
+      "path": "aiva_common\\schemas_fixed.py",
+      "lines": 3009,
+      "functions": 33,
+      "classes": 137,
+      "complexity": 48,
+      "has_type_hints": true,
+      "has_docstrings": true
+    },
+    {
+      "path": "function\\function_xss\\aiva_func_xss\\worker.py",
+      "lines": 444,
+      "functions": 11,
+      "classes": 2,
+      "complexity": 48,
+      "has_type_hints": true,
+      "has_docstrings": false
+    },
+    {
+      "path": "scan\\aiva_scan\\dynamic_engine\\headless_browser_pool.py",
+      "lines": 553,
+      "functions": 5,
+      "classes": 6,
+      "complexity": 48,
+      "has_type_hints": true,
+      "has_docstrings": true
+    },
+    {
+      "path": "function\\function_xss\\aiva_func_xss\\traditional_detector.py",
+      "lines": 237,
+      "functions": 7,
+      "classes": 3,
+      "complexity": 45,
+      "has_type_hints": true,
+      "has_docstrings": true
+    },
+    {
+      "path": "integration\\aiva_integration\\analysis\\risk_assessment_engine_enhanced.py",
+      "lines": 492,
+      "functions": 9,
+      "classes": 1,
+      "complexity": 45,
+      "has_type_hints": true,
+      "has_docstrings": true
+    },
+    {
+      "path": "aiva_common\\schemas_backup.py",
+      "lines": 2969,
+      "functions": 32,
+      "classes": 137,
+      "complexity": 44,
+      "has_type_hints": true,
+      "has_docstrings": true
+    },
+    {
+      "path": "aiva_common\\schemas_current_backup.py",
+      "lines": 2967,
+      "functions": 32,
+      "classes": 137,
+      "complexity": 44,
+      "has_type_hints": true,
+      "has_docstrings": true
+    },
+    {
+      "path": "aiva_common\\schemas_master_backup_1.py",
+      "lines": 2967,
+      "functions": 32,
+      "classes": 137,
+      "complexity": 44,
+      "has_type_hints": true,
+      "has_docstrings": true
+    },
+    {
+      "path": "function\\function_ssrf\\aiva_func_ssrf\\param_semantics_analyzer.py",
+      "lines": 225,
+      "functions": 4,
+      "classes": 3,
+      "complexity": 44,
+      "has_type_hints": true,
+      "has_docstrings": true
+    },
+    {
+      "path": "function\\function_ssrf\\aiva_func_ssrf\\smart_ssrf_detector.py",
+      "lines": 532,
+      "functions": 9,
+      "classes": 2,
+      "complexity": 42,
+      "has_type_hints": true,
+      "has_docstrings": true
+    },
+    {
+      "path": "core\\aiva_core\\training\\scenario_manager.py",
+      "lines": 974,
+      "functions": 8,
+      "classes": 1,
+      "complexity": 41,
+      "has_type_hints": true,
+      "has_docstrings": true
+    },
+    {
+      "path": "aiva_common\\schemas.py",
+      "lines": 2539,
+      "functions": 30,
+      "classes": 126,
+      "complexity": 39,
+      "has_type_hints": true,
+      "has_docstrings": true
+    },
+    {
+      "path": "core\\aiva_core\\bio_neuron_master.py",
+      "lines": 688,
+      "functions": 9,
+      "classes": 3,
+      "complexity": 38,
+      "has_type_hints": true,
+      "has_docstrings": true
+    }
+  ],
+  "module_analysis": {
+    "check_schema_health.py": {
+      "files": 1,
+      "lines": 143,
+      "functions": 1,
+      "classes": 0
+    },
+    "__init__.py": {
+      "files": 1,
+      "lines": 7,
+      "functions": 0,
+      "classes": 0
+    },
+    "aiva_common": {
+      "files": 25,
+      "lines": 18896,
+      "functions": 201,
+      "classes": 748
+    },
+    "core": {
+      "files": 90,
+      "lines": 24444,
+      "functions": 502,
+      "classes": 228
+    },
+    "function": {
+      "files": 58,
+      "lines": 11163,
+      "functions": 271,
+      "classes": 158
+    },
+    "integration": {
+      "files": 53,
+      "lines": 11175,
+      "functions": 264,
+      "classes": 74
+    },
+    "scan": {
+      "files": 33,
+      "lines": 8428,
+      "functions": 227,
+      "classes": 90
+    }
+  }
+}

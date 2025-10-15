@@ -14,7 +14,7 @@ import json
 from pathlib import Path
 from typing import Any
 
-from aiva_common.schemas import AttackPlan, AttackResult, ExperienceSample, TraceRecord
+from services.aiva_common.schemas import AttackPlan, AttackResult, ExperienceSample, TraceRecord
 from sqlalchemy import create_engine, desc, func
 from sqlalchemy.orm import sessionmaker
 
