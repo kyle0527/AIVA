@@ -14,7 +14,7 @@ import logging
 from pathlib import Path
 from typing import Any
 
-from aiva_common.schemas import (
+from services.aiva_common.schemas import (
     AttackPlan,
     ExperienceSample,
 )

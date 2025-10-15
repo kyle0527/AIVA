@@ -413,8 +413,13 @@ class SARIFRun(BaseModel):
 class SARIFReport(BaseModel):
     """SARIF v2.1.0 報告"""
 
+    model_config = {
+        "protected_namespaces": (),
+        "arbitrary_types_allowed": True
+    }
+
     version: str = Field(default="2.1.0", description="SARIF版本")
-    schema_url: str = Field(
+    sarif_schema: str = Field(
         default="https://json.schemastore.org/sarif-2.1.0.json",
         description="JSON Schema URL",
         alias="$schema"

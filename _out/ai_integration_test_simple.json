@@ -1,42 +1,84 @@
 {
   "summary": {
     "total_tests": 6,
-    "successful_tests": 0,
-    "failed_tests": 6,
-    "success_rate": 0.0,
-    "total_execution_time": 0.6105854511260986
+    "successful_tests": 6,
+    "failed_tests": 0,
+    "success_rate": 100.0,
+    "total_execution_time": 7.284572601318359
   },
   "detailed_results": [
     {
-      "success": false,
-      "error": "No module named 'aiva_common'",
+      "success": true,
+      "details": {
+        "knowledge_chunks": 1279,
+        "keywords": 997,
+        "tools_count": 2
+      },
       "test_name": "BioNeuronRAGAgent 基本功能"
     },
     {
-      "success": false,
-      "error": "No module named 'aiva_common'",
+      "success": true,
+      "details": {
+        "initialized": true,
+        "has_process_method": true,
+        "controller_type": "UnifiedAIController"
+      },
       "test_name": "統一 AI 控制器"
     },
     {
-      "success": false,
-      "error": "No module named 'aiva_common'",
+      "success": true,
+      "details": {
+        "response_generated": true,
+        "has_chinese": true,
+        "response_length": 35,
+        "preview": "🔧 技術問題：系統錯誤導致中斷，正在自動恢復中 (AIVA 自主執行)"
+      },
       "test_name": "自然語言生成系統"
     },
     {
-      "success": false,
-      "error": "No module named 'aiva_common'",
+      "success": true,
+      "details": {
+        "coordinator_initialized": true,
+        "language_modules_count": 9,
+        "supported_languages": [
+          "Python",
+          "Python",
+          "Go",
+          "Go",
+          "Go",
+          "Go",
+          "Rust",
+          "Rust",
+          "TypeScript"
+        ]
+      },
       "test_name": "多語言協調器"
     },
     {
-      "success": false,
-      "error": "No module named 'aiva_common'",
+      "success": true,
+      "details": {
+        "total_components": 4,
+        "initialized_components": 4,
+        "components_status": {
+          "BioNeuronRAGAgent": true,
+          "UnifiedAIController": true,
+          "AIVANaturalLanguageGenerator": true,
+          "MultiLanguageAICoordinator": true
+        }
+      },
       "test_name": "AI 組件整合"
     },
     {
-      "success": false,
-      "error": "No module named 'aiva_common'",
+      "success": true,
+      "details": {
+        "autonomy_score": 100,
+        "self_sufficient": true,
+        "vs_gpt4_advantages": 7,
+        "scenarios_handled": 4,
+        "conclusion": "AIVA 自己就行！不需要外部 AI！"
+      },
       "test_name": "AIVA 自主性證明"
     }
   ],
-  "timestamp": "2025-10-15 06:21:01"
+  "timestamp": "2025-10-15 09:26:09"
 }
