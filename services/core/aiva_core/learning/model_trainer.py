@@ -12,7 +12,7 @@ from pathlib import Path
 from typing import Any
 from uuid import uuid4
 
-from aiva_common.schemas import (
+from services.aiva_common.schemas import (
     ExperienceSample,
     ModelTrainingConfig,
     ModelTrainingResult,

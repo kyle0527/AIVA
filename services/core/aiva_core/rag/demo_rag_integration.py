@@ -9,6 +9,7 @@ from __future__ import annotations
 import asyncio
 import logging
 
+
 from aiva_core.rag import KnowledgeBase, RAGEngine, VectorStore
 from services.aiva_common.schemas import AttackPlan, AttackTarget
 

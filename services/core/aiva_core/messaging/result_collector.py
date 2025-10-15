@@ -14,7 +14,7 @@ import logging
 from typing import Any
 
 from aio_pika.abc import AbstractIncomingMessage
-from aiva_common.schemas import (
+from services.aiva_common.schemas import (
     FindingPayload,
     ScanCompletedPayload,
     TaskUpdatePayload,

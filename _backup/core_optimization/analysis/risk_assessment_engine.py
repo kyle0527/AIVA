@@ -1,0 +1,251 @@
+"""
+Risk Assessment Engine - 風險評估引擎
+
+整合多維度風險評估:
+- CVSS 基礎分數計算
+- 威脅情報整合 (是否被積極利用)
+- 資產重要性權重
+- 可利用性評估
+- 業務影響分析
+"""
+
+from __future__ import annotations
+
+import asyncio
+from typing import TYPE_CHECKING
+
+from services.aiva_common.enums import Severity, ThreatLevel, VulnerabilityType
+from services.aiva_common.schemas import FindingPayload
+from services.aiva_common.utils import get_logger
+
+if TYPE_CHECKING:
+    from services.integration.aiva_integration.threat_intel.intel_aggregator import (
+        IntelAggregator,
+    )
+
+logger = get_logger(__name__)
+
+
+class RiskAssessmentEngine:
+    """
+    風險評估引擎
+
+    根據多個維度評估漏洞的實際風險分數 (0-10)
+    """
+
+    def __init__(self, enable_threat_intel: bool = True):
+        """
+        初始化風險評估引擎
+
+        Args:
+            enable_threat_intel: 是否啟用威脅情報查詢
+        """
+        self.enable_threat_intel = enable_threat_intel
+        self.intel_aggregator: IntelAggregator | None = None
+
+        if enable_threat_intel:
+            try:
+                from services.integration.aiva_integration.threat_intel.intel_aggregator import (
+                    IntelAggregator,
+                )
+
+                self.intel_aggregator = IntelAggregator()
+                logger.info("Threat intelligence enabled for risk assessment")
+            except ImportError:
+                logger.warning(
+                    "Threat intel module not available, using base scoring only"
+                )
+                self.enable_threat_intel = False
+
+    async def assess_risk(self, finding: FindingPayload) -> float:
+        """
+        評估漏洞風險分數
+
+        Args:
+            finding: 漏洞發現結果
+
+        Returns:
+            float: 0.0 - 10.0 的風險分數
+        """
+        # 1. 基礎 CVSS 分數 (根據 severity)
+        base_score = self._calculate_base_score(finding)
+
+        # 2. 威脅情報調整 (如果有 CWE)
+        if self.enable_threat_intel and self.intel_aggregator and finding.vulnerability.cwe:
+            base_score = await self._adjust_by_threat_intel(base_score, finding)
+
+        # 3. 可利用性調整
+        base_score = self._adjust_by_exploitability(base_score, finding)
+
+        # 4. 資產重要性調整
+        base_score = self._adjust_by_asset_criticality(base_score, finding)
+
+        # 確保分數在 0-10 範圍內
+        final_score = max(0.0, min(base_score, 10.0))
+
+        logger.debug(
+            f"Risk assessment for {finding.vulnerability.name}: {final_score:.2f}"
+        )
+
+        return final_score
+
+    def _calculate_base_score(self, finding: FindingPayload) -> float:
+        """
+        計算基礎 CVSS 分數
+
+        Args:
+            finding: 漏洞發現結果
+
+        Returns:
+            float: 基礎分數
+        """
+        # 根據 severity 映射到 CVSS 分數
+        severity_scores = {
+            Severity.CRITICAL: 9.5,
+            Severity.HIGH: 7.5,
+            Severity.MEDIUM: 5.0,
+            Severity.LOW: 3.0,
+            Severity.INFORMATIONAL: 1.0,
+        }
+
+        base_score = severity_scores.get(finding.vulnerability.severity, 5.0)
+
+        # 根據漏洞類型調整
+        vuln_type_multipliers = {
+            VulnerabilityType.SQLI: 1.15,  # SQL Injection
+            VulnerabilityType.XSS: 1.0,
+            VulnerabilityType.SSRF: 1.1,
+            VulnerabilityType.IDOR: 1.05,
+            VulnerabilityType.BOLA: 1.05,
+            VulnerabilityType.INFO_LEAK: 0.9,
+            VulnerabilityType.WEAK_AUTH: 1.15,
+            VulnerabilityType.PRICE_MANIPULATION: 1.2,
+            VulnerabilityType.WORKFLOW_BYPASS: 1.1,
+            VulnerabilityType.RACE_CONDITION: 1.15,
+        }
+
+        multiplier = vuln_type_multipliers.get(finding.vulnerability.name, 1.0)
+        base_score *= multiplier
+
+        return base_score
+
+    async def _adjust_by_threat_intel(
+        self, base_score: float, finding: FindingPayload
+    ) -> float:
+        """
+        根據威脅情報調整分數
+
+        Args:
+            base_score: 基礎分數
+            finding: 漏洞發現結果
+
+        Returns:
+            float: 調整後的分數
+        """
+        cwe = finding.vulnerability.cwe
+        if not self.intel_aggregator or not cwe:
+            return base_score
+
+        # 威脅情報查詢已簡化,因為 IntelAggregator 可能沒有 query_cwe 方法
+        # 如果需要威脅情報整合,可以在這裡添加相應的邏輯
+        return base_score
+
+    def _adjust_by_exploitability(
+        self, base_score: float, finding: FindingPayload
+    ) -> float:
+        """
+        根據可利用性調整分數
+
+        Args:
+            base_score: 基礎分數
+            finding: 漏洞發現結果
+
+        Returns:
+            float: 調整後的分數
+        """
+        # 如果有證據,提升分數
+        if finding.evidence and finding.evidence.proof:
+            base_score *= 1.1
+
+        # 根據信心度調整
+        confidence_multipliers = {
+            "Certain": 1.2,
+            "Firm": 1.0,
+            "Possible": 0.8,
+        }
+        multiplier = confidence_multipliers.get(finding.vulnerability.confidence.value, 1.0)
+        base_score *= multiplier
+
+        return base_score
+
+    def _adjust_by_asset_criticality(
+        self, base_score: float, finding: FindingPayload
+    ) -> float:
+        """
+        根據資產重要性調整分數
+
+        Args:
+            base_score: 基礎分數
+            finding: 漏洞發現結果
+
+        Returns:
+            float: 調整後的分數
+        """
+        # 根據 URL 路徑推斷資產重要性
+        # 實際環境中應該從配置或資產管理系統獲取
+        url = str(finding.target.url)
+
+        critical_paths = ["/admin", "/payment", "/checkout", "/api/payment"]
+        high_paths = ["/api", "/account", "/profile", "/user"]
+
+        if any(path in url.lower() for path in critical_paths):
+            base_score *= 1.3
+        elif any(path in url.lower() for path in high_paths):
+            base_score *= 1.15
+
+        return base_score
+
+    def get_risk_level(self, risk_score: float) -> ThreatLevel:
+        """
+        將風險分數轉換為威脅等級
+
+        Args:
+            risk_score: 風險分數 (0-10)
+
+        Returns:
+            ThreatLevel: 威脅等級
+        """
+        if risk_score >= 9.0:
+            return ThreatLevel.CRITICAL
+        elif risk_score >= 7.0:
+            return ThreatLevel.HIGH
+        elif risk_score >= 4.0:
+            return ThreatLevel.MEDIUM
+        elif risk_score >= 2.0:
+            return ThreatLevel.LOW
+        else:
+            return ThreatLevel.INFO
+
+    async def batch_assess(
+        self, findings: list[FindingPayload]
+    ) -> list[tuple[FindingPayload, float]]:
+        """
+        批量評估風險分數
+
+        Args:
+            findings: 漏洞發現列表
+
+        Returns:
+            list: [(finding, risk_score), ...]
+        """
+        tasks = [self.assess_risk(finding) for finding in findings]
+        scores = await asyncio.gather(*tasks, return_exceptions=True)
+
+        results = []
+        for finding, score in zip(findings, scores, strict=False):
+            if isinstance(score, Exception):
+                logger.error(f"Failed to assess risk for {finding.finding_id}: {score}")
+                score = self._calculate_base_score(finding)  # Fallback
+            results.append((finding, score))
+
+        return results

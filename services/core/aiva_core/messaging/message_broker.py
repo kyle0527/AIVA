@@ -16,8 +16,7 @@ from typing import Any
 import aio_pika
 from aio_pika import Channel, Connection, Exchange, Queue
 from aio_pika.abc import AbstractIncomingMessage
-from aiva_common.config import get_settings
-from aiva_common.schemas import AivaMessage, ModuleName
+
 
 logger = logging.getLogger(__name__)
 

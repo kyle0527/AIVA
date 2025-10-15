@@ -10,8 +10,8 @@ Asset and Vulnerability Lifecycle Manager
 
 from __future__ import annotations
 
-import hashlib
 from datetime import datetime, timedelta
+import hashlib
 from typing import Any
 
 from sqlalchemy import and_  # type: ignore[import-not-found]

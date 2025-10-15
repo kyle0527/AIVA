@@ -4,7 +4,7 @@
     "successful_tests": 6,
     "failed_tests": 0,
     "success_rate": 100.0,
-    "total_execution_time": 9.009438514709473
+
   },
   "detailed_results": [
     {
@@ -30,8 +30,7 @@
       "details": {
         "response_generated": true,
         "has_chinese": true,
-        "response_length": 41,
-        "preview": "⚡ 需要協助：無法完成，詳細錯誤信息。請聯繫技術支援 (500萬參數 AI 處理)"
+
       },
       "test_name": "自然語言生成系統"
     },
@@ -80,5 +79,5 @@
       "test_name": "AIVA 自主性證明"
     }
   ],
-  "timestamp": "2025-10-15 01:07:08"
+
 }

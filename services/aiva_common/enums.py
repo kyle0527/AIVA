@@ -150,6 +150,16 @@ class TaskStatus(str, Enum):
     TIMEOUT = "timeout"
 
 
+class TestStatus(str, Enum):
+    """測試狀態枚舉 - 用於追蹤測試執行狀態"""
+
+    PENDING = "pending"
+    RUNNING = "running"
+    COMPLETED = "completed"
+    FAILED = "failed"
+    CANCELLED = "cancelled"
+
+
 class ScanStatus(str, Enum):
     """掃描狀態枚舉 - 用於追蹤掃描執行狀態"""
 
