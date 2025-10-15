@@ -9,9 +9,9 @@ from __future__ import annotations
 import asyncio
 import logging
 
-from services.aiva_common.schemas import AttackPlan, AttackTarget
 
 from aiva_core.rag import KnowledgeBase, RAGEngine, VectorStore
+from services.aiva_common.schemas import AttackPlan, AttackTarget
 
 logger = logging.getLogger(__name__)
 

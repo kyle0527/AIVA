@@ -30,6 +30,12 @@ class Settings(BaseModel):
     req_per_sec_default: int = int(os.getenv("AIVA_RATE_LIMIT_RPS", "25"))
     burst_default: int = int(os.getenv("AIVA_RATE_LIMIT_BURST", "50"))
 
+    # Core Engine 配置
+    core_monitor_interval: int = int(os.getenv("AIVA_CORE_MONITOR_INTERVAL", "30"))
+    enable_strategy_generator: bool = (
+        os.getenv("AIVA_ENABLE_STRATEGY_GEN", "false").lower() == "true"
+    )
+
 
 @lru_cache(maxsize=1)
 def get_settings() -> Settings:

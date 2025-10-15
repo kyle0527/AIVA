@@ -11,17 +11,16 @@ import logging
 from pathlib import Path
 from typing import Any
 
-from services.aiva_common.schemas import (
-    AttackPlan,
-    ExperienceSample,
-)
+
 from aiva_core.execution.plan_executor import PlanExecutor
 from aiva_core.learning.experience_manager import ExperienceManager
 from aiva_core.learning.model_trainer import ModelTrainer
 from aiva_core.rag import RAGEngine
-from aiva_core.training.scenario_manager import (
-    Scenario,
-    ScenarioManager,
+from aiva_core.training.scenario_manager import ScenarioManager
+from services.aiva_common.schemas import (
+    AttackPlan,
+    ExperienceSample,
+    StandardScenario,
 )
 
 logger = logging.getLogger(__name__)
@@ -167,7 +166,7 @@ class TrainingOrchestrator:
 
     async def _extract_experience_samples(
         self,
-        scenario: Scenario,
+        scenario: StandardScenario,
         attack_plan: AttackPlan,
         execution_result: dict[str, Any],
     ) -> list[ExperienceSample]:
@@ -216,7 +215,7 @@ class TrainingOrchestrator:
         )
 
         # 訓練會話
-        session = {
+        session: dict[str, Any] = {
             "session_id": f"training_{datetime.now().strftime('%Y%m%d_%H%M%S')}",
             "start_time": datetime.now().isoformat(),
             "scenario_ids": scenario_ids,

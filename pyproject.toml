@@ -1,6 +1,6 @@
 
 [build-system]
-requires = ["setuptools", "wheel"]
+requires = ["setuptools>=61.0", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
@@ -9,7 +9,7 @@ version = "1.0.0"
 description = "AI-Assisted Vulnerability Analysis Platform — Enhanced Stability & Modern Architecture"
 readme = "README.md"
 requires-python = ">=3.12"
-authors = [{name = "AIVA Maintainers"}]
+
 dependencies = [
   "fastapi>=0.115.0",
   "uvicorn[standard]>=0.30.0",
@@ -29,6 +29,12 @@ dependencies = [
   "neo4j>=5.23.0",
   "tenacity>=8.3.0",
 ]
+
+[tool.setuptools]
+packages = ["services"]
+
+[tool.setuptools.package-data]
+"*" = ["*.json", "*.yml", "*.yaml"]
 
 [project.optional-dependencies]
 # 生產環境可選依賴
@@ -59,7 +65,7 @@ target-version = ["py312"]
 [tool.ruff]
 line-length = 88
 select = ["E", "F", "I", "UP", "B", "SIM", "C4", "PIE"]
-ignore = ["E501"]  # handled by black
+ignore = ["E501"]                                       # handled by black
 fix = true
 target-version = "py312"
 
@@ -87,6 +93,7 @@ disallow_untyped_defs = false
 ignore_missing_imports = true
 exclude = "^(tests|services[\\/]scan)[\\/]"
 disable_error_code = [
+
     "no-any-return",
     "assignment",
     "type-arg",
@@ -94,10 +101,21 @@ disable_error_code = [
     "override",
     "misc",
     "unused-ignore"
+
 ]
 
 [[tool.mypy.overrides]]
 module = [
+
+  "aio_pika.*",
+  "httpx.*",
+  "beautifulsoup4.*",
+  "lxml.*",
+  "redis.*",
+  "neo4j.*",
+  "reportlab.*",
+  "prometheus_client.*",
+
     "aio_pika.*",
     "httpx.*",
     "beautifulsoup4.*",
@@ -106,6 +124,7 @@ module = [
     "neo4j.*",
     "reportlab.*",
     "prometheus_client.*"
+
 ]
 ignore_missing_imports = true
 
@@ -114,10 +133,10 @@ testpaths = ["tests"]
 addopts = "-v --tb=short --strict-markers"
 asyncio_mode = "auto"
 markers = [
-    "asyncio: marks tests as async tests",
-    "integration: marks tests as integration tests",
-    "unit: marks tests as unit tests",
-    "slow: marks tests as slow running",
+  "asyncio: marks tests as async tests",
+  "integration: marks tests as integration tests",
+  "unit: marks tests as unit tests",
+  "slow: marks tests as slow running",
 ]
 
 [tool.coverage.run]
@@ -126,10 +145,10 @@ omit = ["tests/*", "*/test_*"]
 
 [tool.coverage.report]
 exclude_lines = [
-    "pragma: no cover",
-    "def __repr__",
-    "if self.debug:",
-    "if __name__ == .__main__.:",
-    "raise AssertionError",
-    "raise NotImplementedError",
+  "pragma: no cover",
+  "def __repr__",
+  "if self.debug:",
+  "if __name__ == .__main__.:",
+  "raise AssertionError",
+  "raise NotImplementedError",
 ]

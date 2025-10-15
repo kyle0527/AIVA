@@ -60,11 +60,8 @@ class ExperienceManager:
         # 提取場景上下文
         context = self._extract_context(result.plan)
 
-        # 自動標註
-        if auto_label:
-            label = self._auto_label(result.metrics)
-        else:
-            label = "unlabeled"
+        # 自動標記
+        label = self._auto_label(result.metrics) if auto_label else "unlabeled"
 
         # 計算樣本質量分數
         quality_score = self._calculate_quality_score(result)

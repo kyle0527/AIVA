@@ -435,10 +435,7 @@ class PlanExecutor:
             return False
 
         # 如果達到目標，可以選擇提前停止
-        if trace.output_data.get("goal_achieved"):
-            return False
-
-        return True
+        return not trace.output_data.get("goal_achieved", False)
 
     async def _record_skipped_step(
         self, session_id: str, plan_id: str, step: AttackStep

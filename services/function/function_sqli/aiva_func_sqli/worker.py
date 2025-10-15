@@ -172,21 +172,93 @@ class SqliWorkerService:
         self.publisher = publisher
         self.config = config or SqliEngineConfig()
 
+    @staticmethod
+    def _create_config_from_strategy(strategy: str) -> SqliEngineConfig:
+        """
+        根據掃描策略動態創建引擎配置
+
+        Args:
+            strategy: 掃描策略 (FAST/NORMAL/DEEP/AGGRESSIVE)
+
+        Returns:
+            對應策略的引擎配置
+        """
+        strategy_upper = strategy.upper()
+
+        if strategy_upper == "FAST":
+            # 快速模式: 只使用錯誤檢測,速度最快
+            return SqliEngineConfig(
+                timeout_seconds=10.0,
+                max_retries=1,
+                enable_error_detection=True,
+                enable_boolean_detection=False,
+                enable_time_detection=False,
+                enable_union_detection=False,
+                enable_oob_detection=False,
+            )
+
+        elif strategy_upper == "NORMAL":
+            # 正常模式: 使用錯誤和布林檢測,平衡速度與覆蓋率
+            return SqliEngineConfig(
+                timeout_seconds=15.0,
+                max_retries=2,
+                enable_error_detection=True,
+                enable_boolean_detection=True,
+                enable_time_detection=False,
+                enable_union_detection=False,
+                enable_oob_detection=False,
+            )
+
+        elif strategy_upper == "DEEP":
+            # 深度模式: 啟用所有檢測引擎,覆蓋率最高
+            return SqliEngineConfig(
+                timeout_seconds=30.0,
+                max_retries=3,
+                enable_error_detection=True,
+                enable_boolean_detection=True,
+                enable_time_detection=True,
+                enable_union_detection=True,
+                enable_oob_detection=True,
+            )
+
+        elif strategy_upper == "AGGRESSIVE":
+            # 激進模式: 所有引擎 + 更長超時,最全面的檢測
+            return SqliEngineConfig(
+                timeout_seconds=60.0,
+                max_retries=5,
+                enable_error_detection=True,
+                enable_boolean_detection=True,
+                enable_time_detection=True,
+                enable_union_detection=True,
+                enable_oob_detection=True,
+            )
+
+        else:
+            # 預設: 使用標準配置
+            logger.warning(f"Unknown strategy '{strategy}', using default config")
+            return SqliEngineConfig()
+
     async def process_task(
         self, task: FunctionTaskPayload, http_client: httpx.AsyncClient | None = None
     ) -> SqliContext:
         """處理單個檢測任務"""
 
-        timeout = task.test_config.timeout or self.config.timeout_seconds
-        context = SqliContext(task=task, config=self.config)
+        # 根據任務策略動態創建配置
+        task_config = self._create_config_from_strategy(task.strategy)
+
+        # 使用任務特定的配置創建編排器
+        orchestrator = SqliOrchestrator(task_config)
+
+        timeout = task.test_config.timeout or task_config.timeout_seconds
+        context = SqliContext(task=task, config=task_config)
 
         if http_client is None:
             async with httpx.AsyncClient(
                 timeout=timeout, follow_redirects=True
             ) as client:
-                context = await self.orchestrator.execute_detection(context, client)
+                context = await orchestrator.execute_detection(context, client)
         else:
-            context = await self.orchestrator.execute_detection(context, http_client)
+            context = await orchestrator.execute_detection(context, http_client)
 
         return context
 

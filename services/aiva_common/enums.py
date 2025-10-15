@@ -68,6 +68,26 @@ class Topic(str, Enum):
     TASK_MITRE_MAPPING = "tasks.threat_intel.mitre_mapping"
     RESULTS_THREAT_INTEL = "results.threat_intel"
 
+    # Scan Progress & Failure Topics (新增)
+    RESULTS_SCAN_PROGRESS = "results.scan.progress"
+    RESULTS_SCAN_FAILED = "results.scan.failed"
+    EVENT_SCAN_ASSET_DISCOVERED = "events.scan.asset.discovered"
+
+    # Function Progress & Failure Topics (新增)
+    RESULTS_FUNCTION_PROGRESS = "results.function.progress"
+    RESULTS_FUNCTION_FAILED = "results.function.failed"
+    EVENT_FUNCTION_VULN_FOUND = "events.function.vuln.found"
+
+    # Integration Analysis Topics (新增)
+    TASK_INTEGRATION_ANALYSIS_START = "tasks.integration.analysis.start"
+    RESULTS_INTEGRATION_ANALYSIS_PROGRESS = "results.integration.analysis.progress"
+    RESULTS_INTEGRATION_ANALYSIS_COMPLETED = "results.integration.analysis.completed"
+    COMMAND_INTEGRATION_REPORT_GENERATE = "commands.integration.report.generate"
+    EVENT_INTEGRATION_REPORT_GENERATED = "events.integration.report.generated"
+
+    # AI Scenario Topics (新增)
+    EVENT_AI_SCENARIO_LOADED = "events.ai.scenario.loaded"
+
     # AuthZ Topics
     TASK_AUTHZ_CHECK = "tasks.authz.check"
     TASK_AUTHZ_ANALYZE = "tasks.authz.analyze"

@@ -246,17 +246,17 @@ class ModelTrainer:
         Returns:
             特徵向量
         """
-        features = []
+        features: list[float] = []
 
         # 1. 攻擊類型特徵（one-hot encoding）
         attack_types = ["SQLI", "XSS", "SSRF", "IDOR", "other"]
         attack_type = sample.context.get("attack_type", "other")
-        attack_one_hot = [1 if t == attack_type else 0 for t in attack_types]
+        attack_one_hot = [1.0 if t == attack_type else 0.0 for t in attack_types]
         features.extend(attack_one_hot)
 
         # 2. 計畫複雜度特徵
-        features.append(len(sample.plan.steps))  # 步驟數量
-        features.append(len(sample.plan.dependencies))  # 依賴關係數量
+        features.append(float(len(sample.plan.steps)))  # 步驟數量
+        features.append(float(len(sample.plan.dependencies)))  # 依賴關係數量
 
         # 3. 執行指標特徵
         metrics = sample.metrics
@@ -271,7 +271,7 @@ class ModelTrainer:
 
         # 4. 目標特徵（簡化）
         target_info = sample.context.get("target_info", {})
-        features.append(1 if target_info.get("waf_detected") else 0)
+        features.append(1.0 if target_info.get("waf_detected") else 0.0)
         features.append(len(target_info.get("parameters", [])) / 10.0)  # 標準化
 
         return np.array(features, dtype=np.float32)
