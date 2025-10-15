@@ -63,6 +63,8 @@ class AIVerificationResult(BaseModel):
 
 class AITrainingStartPayload(BaseModel):
     """AI訓練開始載荷"""
+    
+    model_config = {"protected_namespaces": ()}
 
     training_id: str = Field(description="訓練ID")
     model_type: str = Field(description="模型類型")
@@ -86,6 +88,8 @@ class AITrainingProgressPayload(BaseModel):
 
 class AITrainingCompletedPayload(BaseModel):
     """AI訓練完成載荷"""
+    
+    model_config = {"protected_namespaces": ()}
 
     training_id: str = Field(description="訓練ID")
     success: bool = Field(description="是否成功")
@@ -122,6 +126,8 @@ class AITraceCompletedEvent(BaseModel):
 
 class AIModelUpdatedEvent(BaseModel):
     """AI模型更新事件"""
+    
+    model_config = {"protected_namespaces": ()}
 
     model_id: str = Field(description="模型ID")
     model_type: str = Field(description="模型類型")
@@ -134,6 +140,8 @@ class AIModelUpdatedEvent(BaseModel):
 
 class AIModelDeployCommand(BaseModel):
     """AI模型部署命令"""
+    
+    model_config = {"protected_namespaces": ()}
 
     model_id: str = Field(description="模型ID")
     deployment_target: str = Field(description="部署目標")
@@ -292,6 +300,8 @@ class SessionState(BaseModel):
 
 class ModelTrainingConfig(BaseModel):
     """模型訓練配置"""
+    
+    model_config = {"protected_namespaces": ()}
 
     config_id: str = Field(description="配置ID")
     model_type: str = Field(description="模型類型")
@@ -323,6 +333,8 @@ class ModelTrainingConfig(BaseModel):
 
 class ModelTrainingResult(BaseModel):
     """模型訓練結果"""
+    
+    model_config = {"protected_namespaces": ()}
 
     training_id: str = Field(description="訓練ID")
     model_type: str = Field(description="模型類型")
@@ -390,6 +402,8 @@ class StandardScenario(BaseModel):
 
 class ScenarioTestResult(BaseModel):
     """場景測試結果"""
+    
+    model_config = {"protected_namespaces": ()}
 
     test_id: str = Field(description="測試ID")
     scenario_id: str = Field(description="場景ID")

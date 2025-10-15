@@ -1,0 +1,302 @@
+{
+  "go": {
+    "total_files": 18,
+    "total_lines": 3065,
+    "total_code_lines": 2629,
+    "total_comment_lines": 292,
+    "total_blank_lines": 436,
+    "total_functions": 68,
+    "total_structs": 52,
+    "total_interfaces": 0,
+    "file_details": [
+      {
+        "path": "function\\common\\go\\aiva_common_go\\config\\config.go",
+        "lines": 42,
+        "functions": 2,
+        "structs": 1,
+        "interfaces": 0
+      },
+      {
+        "path": "function\\common\\go\\aiva_common_go\\config\\config_test.go",
+        "lines": 50,
+        "functions": 2,
+        "structs": 0,
+        "interfaces": 0
+      },
+      {
+        "path": "function\\common\\go\\aiva_common_go\\logger\\logger.go",
+        "lines": 36,
+        "functions": 2,
+        "structs": 0,
+        "interfaces": 0
+      },
+      {
+        "path": "function\\common\\go\\aiva_common_go\\mq\\client.go",
+        "lines": 188,
+        "functions": 7,
+        "structs": 2,
+        "interfaces": 0
+      },
+      {
+        "path": "function\\common\\go\\aiva_common_go\\mq\\client_test.go",
+        "lines": 54,
+        "functions": 2,
+        "structs": 0,
+        "interfaces": 0
+      },
+      {
+        "path": "function\\common\\go\\aiva_common_go\\schemas\\message.go",
+        "lines": 147,
+        "functions": 0,
+        "structs": 13,
+        "interfaces": 0
+      },
+      {
+        "path": "function\\common\\go\\aiva_common_go\\schemas\\message_test.go",
+        "lines": 333,
+        "functions": 10,
+        "structs": 0,
+        "interfaces": 0
+      },
+      {
+        "path": "function\\function_authn_go\\cmd\\worker\\main.go",
+        "lines": 151,
+        "functions": 2,
+        "structs": 0,
+        "interfaces": 0
+      },
+      {
+        "path": "function\\function_authn_go\\internal\\brute_force\\brute_forcer.go",
+        "lines": 210,
+        "functions": 6,
+        "structs": 1,
+        "interfaces": 0
+      },
+      {
+        "path": "function\\function_authn_go\\internal\\token_test\\token_analyzer.go",
+        "lines": 292,
+        "functions": 6,
+        "structs": 1,
+        "interfaces": 0
+      },
+      {
+        "path": "function\\function_cspm_go\\cmd\\worker\\main.go",
+        "lines": 114,
+        "functions": 2,
+        "structs": 0,
+        "interfaces": 0
+      },
+      {
+        "path": "function\\function_cspm_go\\internal\\scanner\\cspm_scanner.go",
+        "lines": 259,
+        "functions": 12,
+        "structs": 4,
+        "interfaces": 0
+      },
+      {
+        "path": "function\\function_sca_go\\cmd\\worker\\main.go",
+        "lines": 130,
+        "functions": 2,
+        "structs": 0,
+        "interfaces": 0
+      },
+      {
+        "path": "function\\function_sca_go\\internal\\scanner\\sca_scanner.go",
+        "lines": 368,
+        "functions": 8,
+        "structs": 5,
+        "interfaces": 0
+      },
+      {
+        "path": "function\\function_sca_go\\pkg\\models\\models.go",
+        "lines": 86,
+        "functions": 0,
+        "structs": 10,
+        "interfaces": 0
+      },
+      {
+        "path": "function\\function_sca_go\\pkg\\schemas\\schemas.go",
+        "lines": 224,
+        "functions": 0,
+        "structs": 12,
+        "interfaces": 0
+      },
+      {
+        "path": "function\\function_ssrf_go\\cmd\\worker\\main.go",
+        "lines": 166,
+        "functions": 1,
+        "structs": 0,
+        "interfaces": 0
+      },
+      {
+        "path": "function\\function_ssrf_go\\internal\\detector\\ssrf.go",
+        "lines": 215,
+        "functions": 4,
+        "structs": 3,
+        "interfaces": 0
+      }
+    ]
+  },
+  "rust": {
+    "total_files": 10,
+    "total_lines": 1552,
+    "total_code_lines": 1337,
+    "total_comment_lines": 101,
+    "total_blank_lines": 215,
+    "total_functions": 49,
+    "total_structs": 25,
+    "total_traits": 0,
+    "total_impls": 10,
+    "file_details": [
+      {
+        "path": "function\\function_sast_rust\\src\\analyzers.rs",
+        "lines": 98,
+        "functions": 6,
+        "structs": 1,
+        "traits": 0
+      },
+      {
+        "path": "function\\function_sast_rust\\src\\main.rs",
+        "lines": 31,
+        "functions": 1,
+        "structs": 0,
+        "traits": 0
+      },
+      {
+        "path": "function\\function_sast_rust\\src\\models.rs",
+        "lines": 126,
+        "functions": 1,
+        "structs": 9,
+        "traits": 0
+      },
+      {
+        "path": "function\\function_sast_rust\\src\\parsers.rs",
+        "lines": 47,
+        "functions": 3,
+        "structs": 1,
+        "traits": 0
+      },
+      {
+        "path": "function\\function_sast_rust\\src\\rules.rs",
+        "lines": 166,
+        "functions": 5,
+        "structs": 2,
+        "traits": 0
+      },
+      {
+        "path": "function\\function_sast_rust\\src\\worker.rs",
+        "lines": 128,
+        "functions": 4,
+        "structs": 1,
+        "traits": 0
+      },
+      {
+        "path": "scan\\info_gatherer_rust\\src\\git_history_scanner.rs",
+        "lines": 253,
+        "functions": 7,
+        "structs": 2,
+        "traits": 0
+      },
+      {
+        "path": "scan\\info_gatherer_rust\\src\\main.rs",
+        "lines": 173,
+        "functions": 2,
+        "structs": 2,
+        "traits": 0
+      },
+      {
+        "path": "scan\\info_gatherer_rust\\src\\scanner.rs",
+        "lines": 180,
+        "functions": 6,
+        "structs": 3,
+        "traits": 0
+      },
+      {
+        "path": "scan\\info_gatherer_rust\\src\\secret_detector.rs",
+        "lines": 350,
+        "functions": 14,
+        "structs": 4,
+        "traits": 0
+      }
+    ]
+  },
+  "typescript": {
+    "total_files": 8,
+    "total_lines": 1872,
+    "total_code_lines": 1591,
+    "total_comment_lines": 103,
+    "total_blank_lines": 281,
+    "total_functions": 4,
+    "total_classes": 5,
+    "total_interfaces": 14,
+    "total_types": 0,
+    "file_details": [
+      {
+        "path": "scan\\aiva_scan_node\\src\\index.ts",
+        "lines": 130,
+        "functions": 4,
+        "classes": 0,
+        "interfaces": 1
+      },
+      {
+        "path": "scan\\aiva_scan_node\\src\\interfaces\\dynamic-scan.interfaces.ts",
+        "lines": 111,
+        "functions": 0,
+        "classes": 0,
+        "interfaces": 10
+      },
+      {
+        "path": "scan\\aiva_scan_node\\src\\services\\enhanced-content-extractor.service.ts",
+        "lines": 486,
+        "functions": 0,
+        "classes": 1,
+        "interfaces": 0
+      },
+      {
+        "path": "scan\\aiva_scan_node\\src\\services\\enhanced-dynamic-scan.service.ts",
+        "lines": 274,
+        "functions": 0,
+        "classes": 1,
+        "interfaces": 0
+      },
+      {
+        "path": "scan\\aiva_scan_node\\src\\services\\interaction-simulator.service.ts",
+        "lines": 448,
+        "functions": 0,
+        "classes": 1,
+        "interfaces": 0
+      },
+      {
+        "path": "scan\\aiva_scan_node\\src\\services\\network-interceptor.service.ts",
+        "lines": 196,
+        "functions": 0,
+        "classes": 1,
+        "interfaces": 0
+      },
+      {
+        "path": "scan\\aiva_scan_node\\src\\services\\scan-service.ts",
+        "lines": 210,
+        "functions": 0,
+        "classes": 1,
+        "interfaces": 3
+      },
+      {
+        "path": "scan\\aiva_scan_node\\src\\utils\\logger.ts",
+        "lines": 17,
+        "functions": 0,
+        "classes": 0,
+        "interfaces": 0
+      }
+    ]
+  },
+  "javascript": {
+    "total_files": 0,
+    "total_lines": 0,
+    "total_code_lines": 0,
+    "total_comment_lines": 0,
+    "total_blank_lines": 0,
+    "total_functions": 0,
+    "total_classes": 0,
+    "file_details": []
+  }
+}
