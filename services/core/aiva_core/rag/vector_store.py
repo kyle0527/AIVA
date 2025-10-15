@@ -82,7 +82,7 @@ class VectorStore:
 
         elif self.backend == "faiss":
             try:
-                import faiss
+                import faiss  # noqa: F401
 
                 self.persist_directory.mkdir(parents=True, exist_ok=True)
                 self.index = None  # 延遲初始化
@@ -233,7 +233,7 @@ class VectorStore:
             )
 
         # 排序並返回 top_k
-        similarities.sort(key=lambda x: x["score"], reverse=True)
+        similarities.sort(key=lambda x: float(x.get("score", 0.0)), reverse=True)  # type: ignore[arg-type]
 
         return similarities[:top_k]
 

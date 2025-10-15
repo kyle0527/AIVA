@@ -247,7 +247,7 @@ class ScenarioManager:
         Returns:
             驗證結果
         """
-        validation_result = {
+        validation_result: dict[str, Any] = {
             "scenario_id": scenario.scenario_id,
             "valid": True,
             "errors": [],
@@ -933,7 +933,7 @@ class ScenarioManager:
         """
         scenarios = await self.list_scenarios()
 
-        stats = {
+        stats: dict[str, Any] = {
             "total_scenarios": len(scenarios),
             "by_difficulty": {},
             "by_vulnerability_type": {},

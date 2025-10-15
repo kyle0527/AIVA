@@ -997,6 +997,207 @@ class EASMDiscoveryResult(BaseModel):
 # ==================== 強化學習與自動決策 Schemas ====================
 
 
+class AttackTarget(BaseModel):
+    """攻擊目標 - 定義測試的目標系統
+
+    用於 RAG 模組和訓練場景管理
+    """
+
+    target_id: str = Field(description="目標唯一標識")
+    name: str = Field(description="目標名稱")
+    base_url: str = Field(description="基礎 URL")
+    target_type: str = Field(
+        description="目標類型",
+        examples=["web_app", "api", "mobile_backend", "iot_device"],
+    )
+    description: str | None = Field(default=None, description="目標描述")
+
+    # 環境配置
+    environment: str = Field(
+        default="development",
+        description="環境類型: development, staging, production, sandbox",
+    )
+    authentication: dict[str, Any] = Field(
+        default_factory=dict,
+        description="認證信息 (credentials, tokens, etc.)",
+    )
+
+    # 技術堆疊
+    technologies: list[str] = Field(
+        default_factory=list,
+        description="技術堆疊: ['PHP', 'MySQL', 'Apache'] 等",
+    )
+    frameworks: list[str] = Field(
+        default_factory=list,
+        description="框架列表: ['Laravel', 'WordPress'] 等",
+    )
+
+    # 安全特性
+    waf_enabled: bool = Field(default=False, description="是否啟用 WAF")
+    waf_type: str | None = Field(default=None, description="WAF 類型")
+    rate_limiting: bool = Field(default=False, description="是否有速率限制")
+
+    # 測試範圍
+    allowed_paths: list[str] = Field(
+        default_factory=list,
+        description="允許測試的路徑",
+    )
+    excluded_paths: list[str] = Field(
+        default_factory=list,
+        description="禁止測試的路徑",
+    )
+
+    # 元數據
+    metadata: dict[str, Any] = Field(default_factory=dict)
+    created_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
+    updated_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
+
+    @field_validator("target_type")
+    @classmethod
+    def validate_target_type(cls, v: str) -> str:
+        allowed = {"web_app", "api", "mobile_backend", "iot_device", "cloud_service"}
+        if v not in allowed:
+            raise ValueError(f"Invalid target_type: {v}. Must be one of {allowed}")
+        return v
+
+
+class Scenario(BaseModel):
+    """訓練場景 - 標準化的測試場景定義
+
+    用於 AI 訓練和場景管理
+    """
+
+    scenario_id: str = Field(description="場景唯一標識")
+    name: str = Field(description="場景名稱")
+    description: str = Field(description="場景描述")
+
+    # 場景分類
+    category: str = Field(
+        description="場景類別",
+        examples=["owasp_top10", "custom", "ctf", "real_world"],
+    )
+    vulnerability_type: VulnerabilityType = Field(description="漏洞類型")
+    difficulty_level: str = Field(
+        default="medium",
+        description="難度等級: easy, medium, hard, expert",
+    )
+
+    # 目標配置
+    target: AttackTarget = Field(description="攻擊目標")
+
+    # 預期計畫
+    expected_plan: AttackPlan = Field(description="預期的攻擊計畫")
+
+    # 成功標準
+    success_criteria: dict[str, Any] = Field(
+        default_factory=dict,
+        description="成功標準 (goal_achieved, exploit_successful 等)",
+    )
+
+    # 評分權重
+    scoring_weights: dict[str, float] = Field(
+        default_factory=lambda: {
+            "completion_rate": 0.3,
+            "success_rate": 0.3,
+            "sequence_accuracy": 0.2,
+            "efficiency": 0.2,
+        },
+        description="評分權重配置",
+    )
+
+    # 標籤與元數據
+    tags: list[str] = Field(default_factory=list, description="標籤")
+    metadata: dict[str, Any] = Field(
+        default_factory=dict,
+        description="額外元數據 (estimated_duration, author, etc.)",
+    )
+
+    # 時間戳
+    created_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
+    updated_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
+
+    @field_validator("difficulty_level")
+    @classmethod
+    def validate_difficulty(cls, v: str) -> str:
+        allowed = {"easy", "medium", "hard", "expert"}
+        if v not in allowed:
+            raise ValueError(f"Invalid difficulty_level: {v}. Must be one of {allowed}")
+        return v
+
+
+class ScenarioResult(BaseModel):
+    """場景執行結果 - 訓練或測試場景的執行結果
+
+    用於記錄訓練成果和性能評估
+    """
+
+    result_id: str = Field(description="結果唯一標識")
+    scenario_id: str = Field(description="關聯的場景 ID")
+    session_id: str = Field(description="訓練會話 ID")
+
+    # 執行狀態
+    status: str = Field(
+        description="執行狀態: completed, failed, timeout, cancelled",
+    )
+
+    # 執行指標
+    metrics: PlanExecutionMetrics = Field(description="執行指標")
+
+    # 計畫與追蹤
+    executed_plan: AttackPlan = Field(description="實際執行的計畫")
+    trace_records: list[TraceRecord] = Field(
+        default_factory=list,
+        description="執行追蹤記錄",
+    )
+
+    # 結果分析
+    goal_achieved: bool = Field(default=False, description="是否達成目標")
+    exploit_successful: bool = Field(default=False, description="利用是否成功")
+    overall_score: float = Field(
+        default=0.0,
+        ge=0.0,
+        le=1.0,
+        description="總體評分 (0-1)",
+    )
+
+    # 錯誤與問題
+    errors: list[str] = Field(default_factory=list, description="錯誤列表")
+    warnings: list[str] = Field(default_factory=list, description="警告列表")
+
+    # 性能數據
+    total_duration_seconds: float = Field(default=0.0, description="總執行時間")
+    resource_usage: dict[str, Any] = Field(
+        default_factory=dict,
+        description="資源使用情況 (cpu, memory, network 等)",
+    )
+
+    # 學習數據
+    experience_sample_ids: list[str] = Field(
+        default_factory=list,
+        description="生成的經驗樣本 ID 列表",
+    )
+
+    # 元數據
+    metadata: dict[str, Any] = Field(default_factory=dict)
+    started_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
+    completed_at: datetime | None = Field(default=None)
+
+    @field_validator("status")
+    @classmethod
+    def validate_status(cls, v: str) -> str:
+        allowed = {"completed", "failed", "timeout", "cancelled", "in_progress"}
+        if v not in allowed:
+            raise ValueError(f"Invalid status: {v}. Must be one of {allowed}")
+        return v
+
+    @field_validator("overall_score")
+    @classmethod
+    def validate_score(cls, v: float) -> float:
+        if not 0.0 <= v <= 1.0:
+            raise ValueError("overall_score must be between 0.0 and 1.0")
+        return v
+
+
 class AttackStep(BaseModel):
     """攻擊步驟 - AST 節點的可執行表示
 
@@ -1891,3 +2092,242 @@ class AIVACommand(BaseModel):
     trace_id: str | None = None
     metadata: dict[str, Any] = Field(default_factory=dict)
     timestamp: datetime = Field(default_factory=lambda: datetime.now(UTC))
+
+
+# ==================== 補充的 AI 訓練合約 ====================
+
+
+class AITrainingStopPayload(BaseModel):
+    """AI 訓練停止請求 - 用於停止正在進行的訓練會話"""
+
+    training_id: str = Field(description="訓練會話 ID")
+    reason: str = Field(default="user_requested", description="停止原因")
+    save_checkpoint: bool = Field(default=True, description="是否保存檢查點")
+    metadata: dict[str, Any] = Field(default_factory=dict)
+
+
+class AITrainingFailedPayload(BaseModel):
+    """AI 訓練失敗通知 - 訓練過程中發生錯誤"""
+
+    training_id: str
+    error_type: str = Field(description="錯誤類型")
+    error_message: str = Field(description="錯誤訊息")
+    traceback: str | None = Field(default=None, description="錯誤追蹤")
+    failed_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
+    partial_results_available: bool = Field(default=False)
+    checkpoint_saved: bool = Field(default=False)
+    metadata: dict[str, Any] = Field(default_factory=dict)
+
+
+class AIScenarioLoadedEvent(BaseModel):
+    """標準場景載入事件 - 當 OWASP 靶場場景被載入時觸發"""
+
+    scenario_id: str
+    scenario_name: str
+    target_system: str
+    vulnerability_type: VulnerabilityType
+    expected_steps: int
+    difficulty_level: str = Field(
+        default="medium", description="難度等級: easy|medium|hard"
+    )
+    loaded_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
+    metadata: dict[str, Any] = Field(default_factory=dict)
+
+
+# ==================== 補充的 Scan 模組合約 ====================
+
+
+class ScanProgressPayload(BaseModel):
+    """掃描進度通知 - 定期報告掃描進度"""
+
+    scan_id: str
+    progress_percentage: float = Field(ge=0.0, le=100.0, description="進度百分比")
+    current_target: HttpUrl | None = Field(default=None, description="當前掃描目標")
+    assets_discovered: int = Field(default=0, description="已發現資產數")
+    vulnerabilities_found: int = Field(default=0, description="已發現漏洞數")
+    tests_completed: int = Field(default=0, description="已完成測試數")
+    tests_total: int = Field(default=0, description="總測試數")
+    estimated_time_remaining_seconds: int | None = Field(
+        default=None, description="預計剩餘時間（秒）"
+    )
+    current_phase: str = Field(
+        default="discovery", description="當前階段: discovery|fingerprinting|scanning"
+    )
+    timestamp: datetime = Field(default_factory=lambda: datetime.now(UTC))
+    metadata: dict[str, Any] = Field(default_factory=dict)
+
+
+class ScanFailedPayload(BaseModel):
+    """掃描失敗通知 - 掃描過程中發生錯誤"""
+
+    scan_id: str
+    error_type: str = Field(
+        description="錯誤類型: network|timeout|authentication|internal"
+    )
+    error_message: str = Field(description="錯誤訊息")
+    failed_target: HttpUrl | None = Field(default=None, description="失敗的目標 URL")
+    failed_at_phase: str = Field(
+        default="unknown", description="失敗階段: discovery|fingerprinting|scanning"
+    )
+    partial_results_available: bool = Field(default=False, description="是否有部分結果")
+    assets_discovered: int = Field(default=0, description="已發現資產數")
+    vulnerabilities_found: int = Field(default=0, description="已發現漏洞數")
+    failed_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
+    metadata: dict[str, Any] = Field(default_factory=dict)
+
+
+class ScanAssetDiscoveredEvent(BaseModel):
+    """資產發現事件 - 當新資產被發現時觸發"""
+
+    scan_id: str
+    asset: Asset
+    discovery_method: str = Field(
+        description="發現方法: crawler|dns|port_scan|subdomain|directory"
+    )
+    confidence: Confidence = Field(default=Confidence.FIRM)
+    discovered_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
+    metadata: dict[str, Any] = Field(default_factory=dict)
+
+
+# ==================== 補充的 Function 模組合約 ====================
+
+
+class FunctionTaskProgressPayload(BaseModel):
+    """功能測試進度通知 - 定期報告測試進度"""
+
+    task_id: str
+    scan_id: str
+    progress_percentage: float = Field(ge=0.0, le=100.0, description="進度百分比")
+    tests_completed: int = Field(default=0, description="已完成測試數")
+    tests_total: int = Field(default=0, description="總測試數")
+    vulnerabilities_found: int = Field(default=0, description="已發現漏洞數")
+    current_test: str | None = Field(default=None, description="當前測試項目")
+    timestamp: datetime = Field(default_factory=lambda: datetime.now(UTC))
+    metadata: dict[str, Any] = Field(default_factory=dict)
+
+
+class FunctionTaskCompletedPayload(BaseModel):
+    """功能測試完成通知 - 測試任務完成時的報告"""
+
+    task_id: str
+    scan_id: str
+    status: str = Field(description="狀態: success|partial|failed")
+    vulnerabilities_found: int = Field(default=0, description="發現的漏洞數")
+    tests_executed: int = Field(default=0, description="執行的測試數")
+    tests_passed: int = Field(default=0, description="通過的測試數")
+    tests_failed: int = Field(default=0, description="失敗的測試數")
+    duration_seconds: float = Field(description="執行時間（秒）")
+    results: list[dict[str, Any]] = Field(
+        default_factory=list, description="測試結果詳情"
+    )
+    completed_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
+    metadata: dict[str, Any] = Field(default_factory=dict)
+
+
+class FunctionTaskFailedPayload(BaseModel):
+    """功能測試失敗通知 - 測試過程中發生錯誤"""
+
+    task_id: str
+    scan_id: str
+    error_type: str = Field(description="錯誤類型: network|timeout|crash|validation")
+    error_message: str = Field(description="錯誤訊息")
+    traceback: str | None = Field(default=None, description="錯誤追蹤")
+    tests_completed: int = Field(default=0, description="已完成測試數")
+    tests_failed: int = Field(default=0, description="失敗測試數")
+    partial_results: list[dict[str, Any]] = Field(
+        default_factory=list, description="部分測試結果"
+    )
+    failed_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
+    metadata: dict[str, Any] = Field(default_factory=dict)
+
+
+class FunctionVulnFoundEvent(BaseModel):
+    """漏洞發現事件 - 當功能測試發現漏洞時觸發"""
+
+    task_id: str
+    scan_id: str
+    vulnerability: Vulnerability
+    confidence: Confidence
+    severity: Severity
+    test_type: str = Field(description="測試類型: xss|sqli|ssrf|idor|etc")
+    evidence: FindingEvidence
+    discovered_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
+    metadata: dict[str, Any] = Field(default_factory=dict)
+
+
+# ==================== 補充的 Integration 模組合約 ====================
+
+
+class IntegrationAnalysisStartPayload(BaseModel):
+    """整合分析啟動請求 - 啟動漏洞相關性分析和攻擊路徑生成"""
+
+    analysis_id: str = Field(description="分析會話 ID")
+    scan_id: str
+    analysis_types: list[str] = Field(
+        description="分析類型: correlation|attack_path|risk_assessment|root_cause"
+    )
+    findings: list[FindingPayload] = Field(description="待分析的漏洞發現")
+    context: dict[str, Any] = Field(default_factory=dict, description="分析上下文")
+    metadata: dict[str, Any] = Field(default_factory=dict)
+
+
+class IntegrationAnalysisProgressPayload(BaseModel):
+    """整合分析進度通知 - 定期報告分析進度"""
+
+    analysis_id: str
+    scan_id: str
+    progress_percentage: float = Field(ge=0.0, le=100.0, description="進度百分比")
+    current_analysis_type: str = Field(description="當前分析類型")
+    correlations_found: int = Field(default=0, description="已發現關聯數")
+    attack_paths_generated: int = Field(default=0, description="已生成攻擊路徑數")
+    timestamp: datetime = Field(default_factory=lambda: datetime.now(UTC))
+    metadata: dict[str, Any] = Field(default_factory=dict)
+
+
+class IntegrationAnalysisCompletedPayload(BaseModel):
+    """整合分析完成通知 - 分析完成時的最終報告"""
+
+    analysis_id: str
+    scan_id: str
+    status: str = Field(description="狀態: success|partial|failed")
+    correlations: list[VulnerabilityCorrelation] = Field(
+        default_factory=list, description="漏洞相關性分析結果"
+    )
+    attack_paths: list[AttackPathPayload] = Field(
+        default_factory=list, description="攻擊路徑分析結果"
+    )
+    risk_assessment: RiskAssessmentResult | None = Field(
+        default=None, description="風險評估結果"
+    )
+    recommendations: list[str] = Field(default_factory=list, description="修復建議")
+    duration_seconds: float = Field(description="分析時間（秒）")
+    completed_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
+    metadata: dict[str, Any] = Field(default_factory=dict)
+
+
+class IntegrationReportGenerateCommand(BaseModel):
+    """報告生成命令 - 請求生成掃描報告"""
+
+    report_id: str = Field(description="報告 ID")
+    scan_id: str
+    report_format: str = Field(description="報告格式: pdf|html|json|sarif|markdown")
+    include_sections: list[str] = Field(
+        default_factory=lambda: ["summary", "findings", "recommendations"],
+        description="包含的章節",
+    )
+    template: str | None = Field(default=None, description="報告模板")
+    language: str = Field(default="zh-TW", description="報告語言")
+    metadata: dict[str, Any] = Field(default_factory=dict)
+
+
+class IntegrationReportGeneratedEvent(BaseModel):
+    """報告生成完成事件 - 報告生成完成時觸發"""
+
+    report_id: str
+    scan_id: str
+    report_format: str
+    file_path: str | None = Field(default=None, description="報告文件路徑")
+    file_size_bytes: int | None = Field(default=None, description="文件大小（字節）")
+    download_url: str | None = Field(default=None, description="下載 URL")
+    generated_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
+    metadata: dict[str, Any] = Field(default_factory=dict)

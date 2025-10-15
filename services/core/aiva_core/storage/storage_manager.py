@@ -37,7 +37,7 @@ class StorageManager:
         self.db_config = db_config or {}
 
         # 目錄結構
-        self.dirs = {
+        self.dirs: dict[str, Any] = {
             "training": {
                 "root": self.data_root / "training",
                 "experiences": self.data_root / "training/experiences",
@@ -77,12 +77,13 @@ class StorageManager:
 
     def initialize(self) -> None:
         """創建所有必要的目錄"""
-        for category, paths in self.dirs.items():
+        for _category, paths in self.dirs.items():
             if isinstance(paths, dict):
                 for path in paths.values():
-                    path.mkdir(parents=True, exist_ok=True)
-                    logger.debug(f"Created directory: {path}")
-            else:
+                    if isinstance(path, Path):
+                        path.mkdir(parents=True, exist_ok=True)
+                        logger.debug(f"Created directory: {path}")
+            elif isinstance(paths, Path):
                 paths.mkdir(parents=True, exist_ok=True)
                 logger.debug(f"Created directory: {paths}")
 
@@ -130,14 +131,24 @@ class StorageManager:
         if subcategory:
             paths = self.dirs[category]
             if isinstance(paths, dict) and subcategory in paths:
-                return paths[subcategory]
+                result = paths[subcategory]
+                if isinstance(result, Path):
+                    return result
+                raise TypeError(
+                    f"Path for {category}/{subcategory} is not a Path object"
+                )
             else:
                 raise ValueError(f"Unknown subcategory: {subcategory} in {category}")
 
         paths = self.dirs[category]
         if isinstance(paths, dict):
-            return paths["root"]
-        return paths
+            result = paths.get("root")
+            if isinstance(result, Path):
+                return result
+            raise TypeError(f"Root path for {category} is not a Path object")
+        if isinstance(paths, Path):
+            return paths
+        raise TypeError(f"Path for {category} is not a Path object")
 
     async def get_statistics(self) -> dict[str, Any]:
         """獲取完整統計信息"""

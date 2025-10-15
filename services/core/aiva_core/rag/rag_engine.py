@@ -9,7 +9,7 @@ from __future__ import annotations
 import logging
 from typing import Any
 
-from aiva_common.schemas import (
+from services.aiva_common.schemas import (
     AttackPlan,
     AttackStep,
     AttackTarget,

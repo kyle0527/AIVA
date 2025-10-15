@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import asyncio
 from collections.abc import Callable
+from contextlib import suppress
 import json
 import logging
 from typing import Any
@@ -15,7 +16,7 @@ from typing import Any
 import aio_pika
 from aio_pika import Channel, Connection, Exchange, Queue
 from aio_pika.abc import AbstractIncomingMessage
-from aiva_common.config import get_config
+from aiva_common.config import get_settings
 from aiva_common.schemas import AivaMessage, ModuleName
 
 logger = logging.getLogger(__name__)
@@ -34,7 +35,7 @@ class MessageBroker:
             module_name: 當前模組名稱
         """
         self.module_name = module_name
-        self.config = get_config()
+        self.config = get_settings()
         self.connection: Connection | None = None
         self.channel: Channel | None = None
         self.exchanges: dict[str, Exchange] = {}
@@ -178,7 +179,7 @@ class MessageBroker:
             logger.debug(f"Bound queue {queue_name} to {routing_key}")
 
         # 開始消費
-        consumer_tag = await queue.consume(callback, no_ack=auto_ack)
+        await queue.consume(callback, no_ack=auto_ack)
 
         logger.info(
             f"Subscribed to {queue_name} on {exchange_name} "
@@ -215,12 +216,10 @@ class MessageBroker:
     async def disconnect(self) -> None:
         """斷開連接"""
         # 停止所有消費者
-        for consumer_tag, task in self.consumers.items():
+        for _consumer_tag, task in self.consumers.items():
             task.cancel()
-            try:
+            with suppress(asyncio.CancelledError):
                 await task
-            except asyncio.CancelledError:
-                pass
 
         # 關閉通道和連接
         if self.channel:

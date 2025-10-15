@@ -318,11 +318,7 @@ class PlanComparator:
                 return False
 
         # 檢查關鍵步驟是否完成
-        critical_steps_completed = self._check_critical_steps(plan, trace_records)
-        if not critical_steps_completed:
-            return False
-
-        return True
+        return self._check_critical_steps(plan, trace_records)
 
     def _check_critical_steps(
         self, plan: AttackPlan, trace_records: list[TraceRecord]
@@ -440,7 +436,7 @@ class PlanComparator:
         """
         matches = self._match_steps(plan.steps, trace_records)
 
-        report = {
+        report: dict[str, Any] = {
             "plan_id": plan.plan_id,
             "session_id": metrics.session_id,
             "timestamp": datetime.now(UTC).isoformat(),

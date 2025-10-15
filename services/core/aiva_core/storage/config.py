@@ -6,6 +6,7 @@ AIVA 數據存儲配置
 
 import os
 from pathlib import Path
+from typing import Any
 
 # 數據根目錄
 DATA_ROOT = Path(os.getenv("AIVA_DATA_DIR", "/workspaces/AIVA/data"))
@@ -53,7 +54,7 @@ AUTO_BACKUP = {
 }
 
 # 目錄路徑
-PATHS = {
+PATHS: dict[str, Any] = {
     "training": {
         "root": DATA_ROOT / "training",
         "experiences": DATA_ROOT / "training/experiences",

@@ -14,7 +14,13 @@ import json
 from pathlib import Path
 from typing import Any
 
-from aiva_common.schemas import AttackPlan, AttackResult, ExperienceSample, TraceRecord
+from aiva_common.schemas import (
+    AttackPlan,
+    ExperienceSample,
+    PlanExecutionMetrics,
+    PlanExecutionResult,
+    TraceRecord,
+)
 from sqlalchemy import create_engine, desc, func
 from sqlalchemy.orm import sessionmaker
 
@@ -129,18 +135,33 @@ class SQLiteBackend(StorageBackend):
             # 轉換為 Pydantic 模型
             results = []
             for model in query.all():
+                # 從數據庫模型重建 ExperienceSample
+                # 注意: ExperienceSample 的結構已更新，需要完整的 result 對象
                 sample = ExperienceSample(
                     sample_id=model.sample_id,
-                    timestamp=model.created_at,
+                    plan_id=model.plan_data.get("plan_id", "unknown"),
+                    session_id=model.plan_data.get("session_id", "unknown"),
+                    context=model.metadata or {},
                     plan=AttackPlan(**model.plan_data),
-                    trace_id=model.trace_id,
-                    actual_result=AttackResult(**model.actual_result),
-                    expected_result=(
-                        AttackResult(**model.expected_result)
-                        if model.expected_result
+                    trace=[],  # Trace 記錄需要單獨查詢
+                    metrics=PlanExecutionMetrics(
+                        completion_rate=1.0 if model.success else 0.0,
+                        success_rate=1.0 if model.success else 0.0,
+                        total_steps=0,  # 需要從 trace 計算
+                        successful_steps=0,
+                        failed_steps=0,
+                        avg_step_duration=0.0,
+                        total_duration=0.0,
+                    ),
+                    result=(
+                        PlanExecutionResult(**model.actual_result)
+                        if model.actual_result
                         else None
                     ),
+                    label="success" if model.success else "failure",
                     quality_score=model.quality_score,
+                    created_at=model.created_at,
+                    annotations={},
                     metadata=model.metadata or {},
                 )
                 results.append(sample)
@@ -171,7 +192,11 @@ class SQLiteBackend(StorageBackend):
         return True
 
     async def get_traces_by_session(self, session_id: str) -> list[TraceRecord]:
-        """獲取會話的所有追蹤記錄"""
+        """獲取會話的所有追蹤記錄
+
+        注意：由於 TraceRecord schema 已更新為單個步驟記錄，
+        此方法返回資料庫中存儲的所有步驟記錄
+        """
         with self.SessionLocal() as session:
             query = (
                 session.query(TraceRecordModel)
@@ -181,25 +206,30 @@ class SQLiteBackend(StorageBackend):
 
             results = []
             for model in query.all():
-                trace = TraceRecord(
-                    trace_id=model.trace_id,
-                    session_id=model.session_id,
-                    timestamp=model.created_at,
-                    plan=AttackPlan(**model.plan_data),
-                    steps=model.steps,
-                    total_steps=model.total_steps,
-                    successful_steps=model.successful_steps,
-                    failed_steps=model.failed_steps,
-                    duration_seconds=model.duration_seconds,
-                    final_result=(
-                        AttackResult(**model.final_result)
-                        if model.final_result
-                        else None
-                    ),
-                    error_message=model.error_message,
-                    metadata=model.metadata or {},
-                )
-                results.append(trace)
+                # 由於 TraceRecordModel.steps 儲存的是步驟列表，
+                # 我們需要為每個步驟創建一個 TraceRecord
+                if model.steps and isinstance(model.steps, list):
+                    for step_data in model.steps:
+                        trace = TraceRecord(
+                            trace_id=step_data.get("trace_id", model.trace_id),
+                            plan_id=step_data.get("plan_id", model.trace_id),
+                            step_id=step_data.get("step_id", ""),
+                            session_id=model.session_id,
+                            tool_name=step_data.get("tool_name", ""),
+                            input_data=step_data.get("input_data", {}),
+                            output_data=step_data.get("output_data", {}),
+                            status=step_data.get("status", "unknown"),
+                            error_message=step_data.get("error_message"),
+                            execution_time_seconds=step_data.get(
+                                "execution_time_seconds", 0.0
+                            ),
+                            timestamp=step_data.get("timestamp", model.created_at),
+                            environment_response=step_data.get(
+                                "environment_response", {}
+                            ),
+                            metadata=step_data.get("metadata", {}),
+                        )
+                        results.append(trace)
 
             return results
 
@@ -263,7 +293,7 @@ class SQLiteBackend(StorageBackend):
                 .group_by(ExperienceSampleModel.vulnerability_type)
                 .all()
             )
-            stats["experiences_by_type"] = {vtype: count for vtype, count in vuln_types}
+            stats["experiences_by_type"] = dict(vuln_types)
 
             return stats
 
