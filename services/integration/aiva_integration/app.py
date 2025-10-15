@@ -3,7 +3,7 @@ from __future__ import annotations
 import asyncio
 from typing import Any
 
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 
 from services.aiva_common.enums import Topic
 from services.aiva_common.mq import get_broker
@@ -47,14 +47,27 @@ async def startup() -> None:
 
 @app.get("/findings/{finding_id}")
 async def get_finding(finding_id: str) -> dict[str, Any]:
-    result = db.get_finding(finding_id)
-    if isinstance(result, dict):
-        return result
-    # Convert Pydantic model to dict if needed
-    try:
-        return result.model_dump()
-    except Exception:
-        return {"error": "not_found", "finding_id": finding_id}
+    """
+    獲取指定 ID 的漏洞發現
+
+    Args:
+        finding_id: 漏洞發現的唯一識別碼
+
+    Returns:
+        漏洞發現的詳細資料
+
+    Raises:
+        HTTPException: 當找不到對應的漏洞發現時,返回 404
+    """
+    result = await db.get_finding(finding_id)
+
+    if result is None:
+        raise HTTPException(
+            status_code=404,
+            detail=f"Finding with ID '{finding_id}' not found",
+        )
+
+    return result.model_dump()
 
 
 async def _consume_logs() -> None:
