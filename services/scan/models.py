@@ -27,7 +27,7 @@ from ..aiva_common.enums import (
     VulnerabilityStatus,
     VulnerabilityType,
 )
-from ..aiva_common.models import (
+from ..aiva_common.schemas import (
     Authentication,
     RateLimit,
 )

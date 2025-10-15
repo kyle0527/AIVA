@@ -49,16 +49,7 @@ from .enums import (
     VulnerabilityType,
 )
 
-# 從 models.py 導入基礎模型類（如果存在）
-with contextlib.suppress(ImportError):
-    from .models import (
-        CAPECReference,
-        SARIFRule,
-        SARIFRun,
-        SARIFTool,
-    )
-
-# 從 schemas.py 導入修復版本中的所有類
+# 從 schemas.py 導入所有類（統一來源）
 with contextlib.suppress(ImportError):
     from .schemas import (
         AivaMessage,
@@ -68,6 +59,7 @@ with contextlib.suppress(ImportError):
         # 授權分析
         AuthZCheckPayload,
         AuthZResultPayload,
+        CAPECReference,
         ConfigUpdatePayload,
         CVEReference,
         # 安全標準和評分
@@ -110,6 +102,9 @@ with contextlib.suppress(ImportError):
         SARIFLocation,
         SARIFReport,
         SARIFResult,
+        SARIFRule,
+        SARIFRun,
+        SARIFTool,
         ScanCompletedPayload,
         # 掃描相關
         ScanScope,
@@ -204,8 +199,12 @@ __all__ = [
     "CVSSv3Metrics",
     "CVEReference",
     "CWEReference",
+    "CAPECReference",
     "SARIFLocation",
     "SARIFResult",
+    "SARIFRule",
+    "SARIFTool",
+    "SARIFRun",
     "SARIFReport",
     "EnhancedVulnerability",
     "EnhancedFindingPayload",

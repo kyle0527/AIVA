@@ -1,18 +1,19 @@
 """
 AIVA Common Models - 共享基礎模型
 
-此文件包含所有模組共享的核心基礎設施和官方標準實現。
-這些定義是跨模組的基礎，不屬於任何特定業務領域。
+此文件已被棄用，所有類現在都定義在 schemas.py 中。
+為了向後兼容，這裡重新導出 schemas.py 中的相應類。
+
+請直接從 aiva_common.schemas 或 aiva_common 導入這些類。
 
 包含內容：
 1. 核心消息協議 (MessageHeader, AivaMessage)
 2. 通用認證和限流 (Authentication, RateLimit)
-3. 官方安全標準 (CVSS v3.1, SARIF v2.1.0, CVE/CWE)
+3. 官方安全標準 (CVSS v3.1, SARIF v2.1.0, CVE/CWE/CAPEC)
 """
 
 from __future__ import annotations
-
-from datetime import UTC, datetime
+me
 from typing import Any
 
 from pydantic import BaseModel, Field, field_validator
@@ -305,24 +306,4 @@ class SARIFReport(BaseModel):
     properties: dict[str, Any] = Field(default_factory=dict, description="報告屬性")
 
 
-__all__ = [
-    # 核心消息協議
-    "MessageHeader",
-    "AivaMessage",
-    # 通用認證和控制
-    "Authentication",
-    "RateLimit",
-    # CVSS v3.1
-    "CVSSv3Metrics",
-    # CVE/CWE/CAPEC
-    "CVEReference",
-    "CWEReference",
-    "CAPECReference",
-    # SARIF v2.1.0
-    "SARIFLocation",
-    "SARIFResult",
-    "SARIFRule",
-    "SARIFTool",
-    "SARIFRun",
-    "SARIFReport",
-]
+
