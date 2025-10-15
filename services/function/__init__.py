@@ -26,7 +26,7 @@ from ..aiva_common.enums import (
     TaskStatus,
     VulnerabilityType,
 )
-from ..aiva_common.models import CVSSv3Metrics
+from ..aiva_common.schemas import CVSSv3Metrics
 
 # 從本模組導入功能測試相關模型
 from .models import (

@@ -20,7 +20,7 @@ from ..aiva_common.enums import (
     ScanStatus,
     Severity,
 )
-from ..aiva_common.models import CVEReference, CVSSv3Metrics, CWEReference
+from ..aiva_common.schemas import CVEReference, CVSSv3Metrics, CWEReference
 
 # 從本模組導入掃描相關模型
 from .models import (

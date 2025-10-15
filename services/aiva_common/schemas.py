@@ -1376,6 +1376,18 @@ class CWEReference(BaseModel):
     likelihood_of_exploit: str | None = None  # "High", "Medium", "Low"
 
 
+class CAPECReference(BaseModel):
+    """CAPEC (Common Attack Pattern Enumeration and Classification) 引用
+
+    符合標準: MITRE CAPEC
+    """
+
+    capec_id: str = Field(description="CAPEC標識符", pattern=r"^CAPEC-\d+$")
+    name: str | None = Field(default=None, description="CAPEC名稱")
+    description: str | None = Field(default=None, description="攻擊模式描述")
+    related_cwes: list[str] = Field(default_factory=list, description="相關CWE列表")
+
+
 # ==================== SARIF 格式支持 (Static Analysis Results Interchange Format) ====================
 
 

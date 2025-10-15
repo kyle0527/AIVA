@@ -34,7 +34,7 @@ from ..aiva_common.enums import (
     Severity,
     TaskStatus,
 )
-from ..aiva_common.models import CVSSv3Metrics, CVEReference, CWEReference
+from ..aiva_common.schemas import CVSSv3Metrics, CVEReference, CWEReference
 
 
 # ==================== 發現和影響管理 ====================
