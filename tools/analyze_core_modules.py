@@ -25,7 +25,7 @@ def analyze_python_file(filepath):
 
         # 計算複雜度指標
         async_functions = [node for node in ast.walk(tree) if isinstance(node, ast.AsyncFunctionDef)]
-        decorators = [node for node in ast.walk(tree) if hasattr(node, 'decorator_list') and node.decorator_list]
+        decorators = [node for node in ast.walk(tree) if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef)) and node.decorator_list]
 
         # 計算行數
         lines = content.split('\n')
@@ -44,14 +44,14 @@ def analyze_python_file(filepath):
         # 計算函數平均長度
         function_lengths = []
         for func in functions + async_functions:
-            if hasattr(func, 'lineno') and hasattr(func, 'end_lineno'):
+            if hasattr(func, 'lineno') and hasattr(func, 'end_lineno') and func.end_lineno is not None:
                 length = func.end_lineno - func.lineno + 1
                 function_lengths.append(length)
 
         avg_function_length = sum(function_lengths) / len(function_lengths) if function_lengths else 0
 
         return {
-            'file': str(filepath.relative_to(Path('c:/AMD/AIVA'))),
+            'file': str(filepath.name),
             'total_lines': len(lines),
             'code_lines': len(code_lines),
             'comment_lines': len(comment_lines),
@@ -81,14 +81,21 @@ def _calculate_complexity_score(classes, functions, avg_func_len, imports):
 
 def analyze_core_modules():
     """分析 AIVA 核心模組"""
-    core_path = Path('c:/AMD/AIVA/services/core/aiva_core')
+    # 修正路徑為當前項目路徑
+    core_path = Path('./services/core/aiva_core')
     results = []
+
+    if not core_path.exists():
+        print(f"❌ 核心模組路徑不存在: {core_path.absolute()}")
+        return results
 
     for py_file in core_path.rglob('*.py'):
         if '__pycache__' not in str(py_file) and '.backup' not in str(py_file):
             result = analyze_python_file(py_file)
             if 'error' not in result:
                 results.append(result)
+            else:
+                print(f"⚠️  分析文件失敗: {py_file} - {result['error']}")
 
     return results
 
@@ -134,7 +141,10 @@ def generate_analysis_report(results):
     complexity_scores = [r.get('complexity_score', 0) for r in results]
     high_complexity = [r for r in results if r.get('complexity_score', 0) > 50]
 
-    print(f'平均複雜度: {sum(complexity_scores)/len(complexity_scores):.1f}')
+    if complexity_scores:
+        print(f'平均複雜度: {sum(complexity_scores)/len(complexity_scores):.1f}')
+    else:
+        print('平均複雜度: 0.0')
     print(f'高複雜度文件 (>50): {len(high_complexity)} 個')
 
     if high_complexity:
@@ -185,7 +195,7 @@ if __name__ == '__main__':
 
             # 計算複雜度指標
             async_functions = [node for node in ast.walk(tree) if isinstance(node, ast.AsyncFunctionDef)]
-            decorators = [node for node in ast.walk(tree) if hasattr(node, 'decorator_list') and node.decorator_list]
+            decorators = [node for node in ast.walk(tree) if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef)) and node.decorator_list]
 
             # 計算行數
             lines = content.split('\n')
@@ -205,13 +215,13 @@ if __name__ == '__main__':
             function_lengths = []
             for func in functions + async_functions:
                 if hasattr(func, 'lineno') and hasattr(func, 'end_lineno'):
-                    length = func.end_lineno - func.lineno + 1
+                    length = (func.end_lineno or func.lineno) - func.lineno + 1
                     function_lengths.append(length)
 
             avg_function_length = sum(function_lengths) / len(function_lengths) if function_lengths else 0
 
             return {
-                'file': str(filepath.relative_to(Path('c:/AMD/AIVA'))),
+                'file': str(filepath.name),
                 'total_lines': len(lines),
                 'code_lines': len(code_lines),
                 'comment_lines': len(comment_lines),
@@ -234,7 +244,7 @@ if __name__ == '__main__':
     generate_analysis_report(results)
 
     # 儲存詳細結果到 JSON
-    with open('c:/AMD/AIVA/_out/core_module_analysis_detailed.json', 'w', encoding='utf-8') as f:
+    with open('_out/core_module_analysis_detailed.json', 'w', encoding='utf-8') as f:
         json.dump(results, f, indent=2, ensure_ascii=False)
 
     print('\n📝 詳細分析結果已儲存到: _out/core_module_analysis_detailed.json')

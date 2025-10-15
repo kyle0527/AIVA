@@ -109,6 +109,31 @@ class InMemoryBroker(AbstractBroker):
             body = await q.get()
             yield MQMessage(body=body, routing_key=str(topic))
 
+    async def publish_message(
+        self,
+        exchange_name: str,
+        routing_key: str,
+        message: Any,
+        correlation_id: str | None = None,
+    ) -> None:
+        """統一的消息發布介面 - 與 TaskDispatcher 兼容"""
+        # 將 AivaMessage 對象轉換為 JSON 字節
+        if hasattr(message, 'model_dump'):
+            # Pydantic 模型
+            import json
+            body = json.dumps(message.model_dump(), default=str).encode()
+        elif isinstance(message, dict):
+            # 字典對象
+            import json
+            body = json.dumps(message, default=str).encode()
+        else:
+            # 直接使用字節
+            body = message if isinstance(message, bytes) else str(message).encode()
+
+        # 使用 routing_key 作為隊列名
+        q = self._queues.setdefault(routing_key, asyncio.Queue())
+        await q.put(body)
+
     async def close(self) -> None:
         self._queues.clear()
 

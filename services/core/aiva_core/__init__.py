@@ -26,7 +26,7 @@ from services.aiva_common.enums import (
     TaskStatus,
     Topic,
 )
-from aiva_common.schemas import CVEReference, CVSSv3Metrics, CWEReference
+from services.aiva_common.schemas import CVEReference, CVSSv3Metrics, CWEReference
 
 # 從 core.ai_models 導入 AI 系統相關模型
 from services.core.ai_models import (

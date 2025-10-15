@@ -77,15 +77,19 @@ class SqlResultDatabase(TestResultDatabase):
         self.database_url = database_url
         self.auto_migrate = auto_migrate
 
-        # 創建引擎
-        self.engine = create_engine(
-            database_url,
-            pool_size=pool_size,
-            max_overflow=max_overflow,
-            pool_timeout=pool_timeout,
-            pool_recycle=pool_recycle,
-            echo=False,  # 生產環境不輸出 SQL
-        )
+        # 創建引擎，處理不同資料庫類型的參數
+        engine_args: dict[str, Any] = {"echo": False}  # 生產環境不輸出 SQL
+
+        # 只為非 SQLite 資料庫添加連接池參數
+        if not database_url.startswith("sqlite://"):
+            engine_args.update({
+                "pool_size": pool_size,
+                "max_overflow": max_overflow,
+                "pool_timeout": pool_timeout,
+                "pool_recycle": pool_recycle,
+            })
+
+        self.engine = create_engine(database_url, **engine_args)
 
         # 創建 session factory
         self.SessionLocal = sessionmaker(

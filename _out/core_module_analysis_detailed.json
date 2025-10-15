@@ -1,15 +1,15 @@
 [
   {
-    "file": "services\\core\\aiva_core\\ai_commander.py",
-    "total_lines": 488,
-    "code_lines": 346,
-    "comment_lines": 37,
+    "file": "ai_commander.py",
+    "total_lines": 489,
+    "code_lines": 348,
+    "comment_lines": 35,
     "classes": 3,
     "functions": 3,
     "async_functions": 9,
     "imports": 15,
     "decorators": 0,
-    "avg_function_length": 32.8,
+    "avg_function_length": 32.9,
     "max_function_length": 82,
     "class_names": [
       "AITaskType",
@@ -22,26 +22,26 @@
       "save_state"
     ],
     "import_modules": [
-      "aiva_core.messaging.message_broker",
-      "enum",
-      "aiva_core.rag",
-      "aiva_core.multilang_coordinator",
-      "__future__",
-      "datetime",
-      "aiva_core.execution.plan_executor",
-      "aiva_core.training.scenario_manager",
-      "aiva_core.learning.experience_manager",
       "pathlib",
-      "aiva_core.ai_engine",
-      "aiva_core.learning.model_trainer",
-      "logging",
+      "aiva_core.training.training_orchestrator",
       "typing",
-      "aiva_core.training.training_orchestrator"
+      "aiva_core.ai_engine",
+      "aiva_core.messaging.message_broker",
+      "aiva_core.learning.experience_manager",
+      "aiva_core.learning.model_trainer",
+      "aiva_core.multilang_coordinator",
+      "aiva_core.rag",
+      "aiva_core.execution.plan_executor",
+      "enum",
+      "__future__",
+      "logging",
+      "aiva_core.training.scenario_manager",
+      "datetime"
     ],
-    "complexity_score": 48.833333333333336
+    "complexity_score": 48.916666666666664
   },
   {
-    "file": "services\\core\\aiva_core\\ai_controller.py",
+    "file": "ai_controller.py",
     "total_lines": 263,
     "code_lines": 185,
     "comment_lines": 23,
@@ -63,15 +63,15 @@
     ],
     "import_modules": [
       "asyncio",
-      "__future__",
-      "logging",
+      "typing",
       "ai_engine",
-      "typing"
+      "__future__",
+      "logging"
     ],
     "complexity_score": 20.8
   },
   {
-    "file": "services\\core\\aiva_core\\ai_integration_test.py",
+    "file": "ai_integration_test.py",
     "total_lines": 611,
     "code_lines": 476,
     "comment_lines": 25,
@@ -92,23 +92,23 @@
       "_generate_recommendations"
     ],
     "import_modules": [
-      "dataclasses",
+      "json",
+      "pathlib",
       "asyncio",
-      "ai_controller",
-      "ai_engine.bio_neuron_rag_agent",
-      "multilang_coordinator",
-      "time",
+      "dataclasses",
       "typing",
       "nlg_system",
-      "pathlib",
+      "multilang_coordinator",
+      "ai_controller",
       "sys",
-      "os",
-      "json"
+      "time",
+      "ai_engine.bio_neuron_rag_agent",
+      "os"
     ],
     "complexity_score": 50.84615384615385
   },
   {
-    "file": "services\\core\\aiva_core\\ai_ui_schemas.py",
+    "file": "ai_ui_schemas.py",
     "total_lines": 332,
     "code_lines": 249,
     "comment_lines": 10,
@@ -147,53 +147,54 @@
       "validate_score"
     ],
     "import_modules": [
+      "pydantic",
       "__future__",
-      "datetime",
       "typing",
-      "pydantic"
+      "datetime"
     ],
     "complexity_score": 100
   },
   {
-    "file": "services\\core\\aiva_core\\app.py",
-    "total_lines": 323,
-    "code_lines": 242,
-    "comment_lines": 30,
+    "file": "app.py",
+    "total_lines": 248,
+    "code_lines": 180,
+    "comment_lines": 21,
     "classes": 0,
     "functions": 1,
-    "async_functions": 6,
-    "imports": 18,
-    "decorators": 3,
-    "avg_function_length": 36.1,
-    "max_function_length": 170,
+    "async_functions": 7,
+    "imports": 19,
+    "decorators": 4,
+    "avg_function_length": 19.4,
+    "max_function_length": 53,
     "class_names": [],
     "function_names": [
       "_count_tasks_by_type"
     ],
     "import_modules": [
-      "services.aiva_common.utils",
-      "asyncio",
-      "services.aiva_common.enums",
-      "services.aiva_common.mq",
-      "__future__",
-      "services.core.aiva_core.analysis.dynamic_strategy_adjustment",
-      "collections",
       "services.core.aiva_core.execution.execution_status_monitor",
-      "services.core.aiva_core.analysis.initial_surface",
-      "services.core.aiva_core.output.to_functions",
-      "services.core.aiva_core.execution.task_queue_manager",
-      "fastapi",
-      "services.aiva_common.schemas",
-      "services.core.aiva_core.state.session_state_manager",
-      "typing",
       "services.core.aiva_core.ingestion.scan_module_interface",
+      "fastapi",
+      "typing",
+      "services.core.aiva_core.execution.task_queue_manager",
+      "tenacity",
+      "services.core.aiva_core.processing",
       "services.core.aiva_core.execution.task_generator",
-      "json"
+      "services.aiva_common.mq",
+      "services.aiva_common.utils",
+      "services.core.aiva_core.state.session_state_manager",
+      "__future__",
+      "services.aiva_common.schemas",
+      "collections",
+      "asyncio",
+      "services.aiva_common.config",
+      "services.core.aiva_core.analysis.dynamic_strategy_adjustment",
+      "services.core.aiva_core.analysis.initial_surface",
+      "services.aiva_common.enums"
     ],
-    "complexity_score": 36.142857142857146
+    "complexity_score": 21
   },
   {
-    "file": "services\\core\\aiva_core\\bio_neuron_master.py",
+    "file": "bio_neuron_master.py",
     "total_lines": 689,
     "code_lines": 488,
     "comment_lines": 57,
@@ -217,20 +218,19 @@
       "_get_system_status"
     ],
     "import_modules": [
-      "rag",
-      "enum",
-      "aiva_core.rag",
-      "__future__",
-      "datetime",
+      "typing",
+      "aiva_core.ai_engine",
       "collections.abc",
+      "aiva_core.rag",
+      "enum",
+      "__future__",
       "logging",
-      "ai_engine",
-      "typing"
+      "datetime"
     ],
     "complexity_score": 45.480000000000004
   },
   {
-    "file": "services\\core\\aiva_core\\business_schemas.py",
+    "file": "business_schemas.py",
     "total_lines": 342,
     "code_lines": 187,
     "comment_lines": 51,
@@ -258,17 +258,17 @@
       "validate_task_id"
     ],
     "import_modules": [
-      "__future__",
-      "aiva_common.enums",
-      "datetime",
-      "aiva_common.standards",
       "typing",
-      "pydantic"
+      "pydantic",
+      "aiva_common.enums",
+      "__future__",
+      "aiva_common.standards",
+      "datetime"
     ],
     "complexity_score": 63
   },
   {
-    "file": "services\\core\\aiva_core\\multilang_coordinator.py",
+    "file": "multilang_coordinator.py",
     "total_lines": 573,
     "code_lines": 435,
     "comment_lines": 37,
@@ -292,16 +292,16 @@
       "_distribute_ai_tasks"
     ],
     "import_modules": [
-      "dataclasses",
       "asyncio",
+      "dataclasses",
+      "typing",
       "__future__",
-      "logging",
-      "typing"
+      "logging"
     ],
     "complexity_score": 48.315789473684205
   },
   {
-    "file": "services\\core\\aiva_core\\nlg_system.py",
+    "file": "nlg_system.py",
     "total_lines": 442,
     "code_lines": 365,
     "comment_lines": 20,
@@ -323,15 +323,15 @@
       "generate_response"
     ],
     "import_modules": [
-      "__future__",
       "random",
       "re",
+      "__future__",
       "typing"
     ],
     "complexity_score": 46.3125
   },
   {
-    "file": "services\\core\\aiva_core\\optimized_core.py",
+    "file": "optimized_core.py",
     "total_lines": 640,
     "code_lines": 465,
     "comment_lines": 40,
@@ -359,25 +359,25 @@
       "__init__"
     ],
     "import_modules": [
-      "dataclasses",
       "asyncio",
+      "dataclasses",
+      "typing",
+      "numpy",
+      "gc",
+      "collections.abc",
       "weakref",
       "__future__",
-      "psutil",
-      "collections",
-      "tracemalloc",
       "contextlib",
       "time",
-      "collections.abc",
       "fastapi",
-      "gc",
-      "typing",
-      "numpy"
+      "collections",
+      "psutil",
+      "tracemalloc"
     ],
     "complexity_score": 100
   },
   {
-    "file": "services\\core\\aiva_core\\schemas.py",
+    "file": "schemas.py",
     "total_lines": 292,
     "code_lines": 213,
     "comment_lines": 20,
@@ -410,13 +410,13 @@
       "all_tasks"
     ],
     "import_modules": [
-      "typing",
-      "pydantic"
+      "pydantic",
+      "typing"
     ],
     "complexity_score": 72
   },
   {
-    "file": "services\\core\\aiva_core\\__init__.py",
+    "file": "__init__.py",
     "total_lines": 181,
     "code_lines": 166,
     "comment_lines": 6,
@@ -430,15 +430,15 @@
     "class_names": [],
     "function_names": [],
     "import_modules": [
-      "aiva_common.enums",
-      "aiva_common.models",
       "services.core.ai_models",
-      "services.core.models"
+      "services.aiva_common.enums",
+      "services.core.models",
+      "aiva_common.schemas"
     ],
     "complexity_score": 4
   },
   {
-    "file": "services\\core\\aiva_core\\ai_engine\\bio_neuron_core.py",
+    "file": "bio_neuron_core.py",
     "total_lines": 531,
     "code_lines": 400,
     "comment_lines": 34,
@@ -463,25 +463,25 @@
       "forward"
     ],
     "import_modules": [
+      "pathlib",
+      "aiva_integration.reception.experience_repository",
+      "numpy",
+      "typing",
+      "execution_tracer.task_executor",
+      "analysis.ast_trace_comparator",
       "planner.task_converter",
       "training.model_updater",
       "__future__",
-      "execution_tracer.execution_monitor",
+      "sys",
       "time",
-      "execution_tracer.task_executor",
-      "analysis.ast_trace_comparator",
-      "planner.orchestrator",
-      "pathlib",
-      "aiva_integration.reception.experience_repository",
+      "execution_tracer.execution_monitor",
       "logging",
-      "typing",
-      "numpy",
-      "sys"
+      "planner.orchestrator"
     ],
     "complexity_score": 74.58333333333334
   },
   {
-    "file": "services\\core\\aiva_core\\ai_engine\\bio_neuron_core_v2.py",
+    "file": "bio_neuron_core_v2.py",
     "total_lines": 299,
     "code_lines": 219,
     "comment_lines": 18,
@@ -506,18 +506,18 @@
       "__init__"
     ],
     "import_modules": [
+      "numpy",
+      "typing",
+      "tools",
       "__future__",
       "time",
-      "tools",
       "logging",
-      "knowledge_base",
-      "typing",
-      "numpy"
+      "knowledge_base"
     ],
     "complexity_score": 52.5
   },
   {
-    "file": "services\\core\\aiva_core\\ai_engine\\knowledge_base.py",
+    "file": "knowledge_base.py",
     "total_lines": 221,
     "code_lines": 171,
     "comment_lines": 12,
@@ -539,16 +539,16 @@
       "_extract_keywords"
     ],
     "import_modules": [
-      "__future__",
       "pathlib",
-      "ast",
+      "typing",
+      "__future__",
       "logging",
-      "typing"
+      "ast"
     ],
     "complexity_score": 30.0
   },
   {
-    "file": "services\\core\\aiva_core\\ai_engine\\tools.py",
+    "file": "tools.py",
     "total_lines": 436,
     "code_lines": 343,
     "comment_lines": 10,
@@ -576,17 +576,17 @@
       "__init__"
     ],
     "import_modules": [
+      "pathlib",
+      "typing",
       "abc",
       "__future__",
-      "pathlib",
-      "ast",
       "subprocess",
-      "typing"
+      "ast"
     ],
     "complexity_score": 80.05882352941177
   },
   {
-    "file": "services\\core\\aiva_core\\ai_engine\\__init__.py",
+    "file": "__init__.py",
     "total_lines": 42,
     "code_lines": 35,
     "comment_lines": 3,
@@ -600,15 +600,15 @@
     "class_names": [],
     "function_names": [],
     "import_modules": [
+      "tools",
       "__future__",
-      "knowledge_base",
       "bio_neuron_core_v2",
-      "tools"
+      "knowledge_base"
     ],
     "complexity_score": 4
   },
   {
-    "file": "services\\core\\aiva_core\\ai_engine_backup\\bio_neuron_core.py",
+    "file": "bio_neuron_core.py",
     "total_lines": 288,
     "code_lines": 209,
     "comment_lines": 18,
@@ -633,16 +633,16 @@
       "forward"
     ],
     "import_modules": [
+      "numpy",
+      "typing",
       "__future__",
       "time",
-      "logging",
-      "typing",
-      "numpy"
+      "logging"
     ],
     "complexity_score": 47.9
   },
   {
-    "file": "services\\core\\aiva_core\\ai_engine_backup\\bio_neuron_core_v2.py",
+    "file": "bio_neuron_core_v2.py",
     "total_lines": 299,
     "code_lines": 219,
     "comment_lines": 18,
@@ -667,18 +667,18 @@
       "__init__"
     ],
     "import_modules": [
+      "numpy",
+      "typing",
+      "tools",
       "__future__",
       "time",
-      "tools",
       "logging",
-      "knowledge_base",
-      "typing",
-      "numpy"
+      "knowledge_base"
     ],
     "complexity_score": 52.5
   },
   {
-    "file": "services\\core\\aiva_core\\ai_engine_backup\\knowledge_base.py",
+    "file": "knowledge_base.py",
     "total_lines": 221,
     "code_lines": 171,
     "comment_lines": 12,
@@ -700,16 +700,16 @@
       "_extract_keywords"
     ],
     "import_modules": [
-      "__future__",
       "pathlib",
-      "ast",
+      "typing",
+      "__future__",
       "logging",
-      "typing"
+      "ast"
     ],
     "complexity_score": 30.0
   },
   {
-    "file": "services\\core\\aiva_core\\ai_engine_backup\\tools.py",
+    "file": "tools.py",
     "total_lines": 436,
     "code_lines": 343,
     "comment_lines": 10,
@@ -737,17 +737,17 @@
       "__init__"
     ],
     "import_modules": [
+      "pathlib",
+      "typing",
       "abc",
       "__future__",
-      "pathlib",
-      "ast",
       "subprocess",
-      "typing"
+      "ast"
     ],
     "complexity_score": 80.05882352941177
   },
   {
-    "file": "services\\core\\aiva_core\\ai_engine_backup\\__init__.py",
+    "file": "__init__.py",
     "total_lines": 42,
     "code_lines": 35,
     "comment_lines": 3,
@@ -761,15 +761,15 @@
     "class_names": [],
     "function_names": [],
     "import_modules": [
+      "tools",
       "__future__",
-      "knowledge_base",
       "bio_neuron_core_v2",
-      "tools"
+      "knowledge_base"
     ],
     "complexity_score": 4
   },
   {
-    "file": "services\\core\\aiva_core\\ai_model\\train_classifier.py",
+    "file": "train_classifier.py",
     "total_lines": 81,
     "code_lines": 72,
     "comment_lines": 0,
@@ -787,19 +787,19 @@
       "train_and_save_model"
     ],
     "import_modules": [
-      "sqlite3",
-      "__future__",
       "sklearn.feature_extraction.text",
       "sklearn.linear_model",
       "sklearn.model_selection",
       "joblib",
-      "os",
-      "sklearn.metrics"
+      "sqlite3",
+      "sklearn.metrics",
+      "__future__",
+      "os"
     ],
     "complexity_score": 14
   },
   {
-    "file": "services\\core\\aiva_core\\analysis\\ast_trace_comparator.py",
+    "file": "ast_trace_comparator.py",
     "total_lines": 399,
     "code_lines": 287,
     "comment_lines": 21,
@@ -824,16 +824,16 @@
     ],
     "import_modules": [
       "dataclasses",
-      "__future__",
-      "planner.ast_parser",
-      "logging",
       "typing",
-      "execution_tracer.trace_recorder"
+      "planner.ast_parser",
+      "execution_tracer.trace_recorder",
+      "__future__",
+      "logging"
     ],
     "complexity_score": 51.38461538461539
   },
   {
-    "file": "services\\core\\aiva_core\\analysis\\dynamic_strategy_adjustment.py",
+    "file": "dynamic_strategy_adjustment.py",
     "total_lines": 189,
     "code_lines": 132,
     "comment_lines": 15,
@@ -855,14 +855,14 @@
       "_adjust_based_on_success_rate"
     ],
     "import_modules": [
+      "services.aiva_common.utils",
       "__future__",
-      "typing",
-      "services.aiva_common.utils"
+      "typing"
     ],
     "complexity_score": 25.571428571428573
   },
   {
-    "file": "services\\core\\aiva_core\\analysis\\initial_surface.py",
+    "file": "initial_surface.py",
     "total_lines": 324,
     "code_lines": 264,
     "comment_lines": 8,
@@ -884,24 +884,24 @@
       "_detect_sqli_candidates"
     ],
     "import_modules": [
-      "__future__",
       "services.core.aiva_core.schemas",
-      "typing",
-      "services.aiva_common.schemas"
+      "services.aiva_common.schemas",
+      "__future__",
+      "typing"
     ],
     "complexity_score": 34.875
   },
   {
-    "file": "services\\core\\aiva_core\\analysis\\plan_comparator.py",
-    "total_lines": 540,
-    "code_lines": 403,
+    "file": "plan_comparator.py",
+    "total_lines": 536,
+    "code_lines": 400,
     "comment_lines": 30,
     "classes": 2,
     "functions": 14,
     "async_functions": 0,
     "imports": 5,
     "decorators": 0,
-    "avg_function_length": 35.3,
+    "avg_function_length": 35.0,
     "max_function_length": 83,
     "class_names": [
       "StepMatch",
@@ -915,16 +915,16 @@
       "_calculate_step_similarity"
     ],
     "import_modules": [
-      "aiva_common.schemas",
+      "typing",
+      "services.aiva_common.schemas",
       "__future__",
-      "datetime",
       "logging",
-      "typing"
+      "datetime"
     ],
-    "complexity_score": 58.285714285714285
+    "complexity_score": 58.0
   },
   {
-    "file": "services\\core\\aiva_core\\analysis\\risk_assessment_engine.py",
+    "file": "risk_assessment_engine.py",
     "total_lines": 252,
     "code_lines": 186,
     "comment_lines": 13,
@@ -946,18 +946,18 @@
       "get_risk_level"
     ],
     "import_modules": [
-      "services.aiva_common.utils",
       "asyncio",
-      "services.aiva_common.enums",
-      "__future__",
+      "typing",
+      "services.aiva_common.utils",
       "services.integration.aiva_integration.threat_intel.intel_aggregator",
+      "__future__",
       "services.aiva_common.schemas",
-      "typing"
+      "services.aiva_common.enums"
     ],
     "complexity_score": 29.125
   },
   {
-    "file": "services\\core\\aiva_core\\analysis\\strategy_generator.py",
+    "file": "strategy_generator.py",
     "total_lines": 289,
     "code_lines": 231,
     "comment_lines": 10,
@@ -979,14 +979,14 @@
       "_generate_ssrf_tasks"
     ],
     "import_modules": [
-      "logging",
       "services.core.aiva_core.schemas",
+      "logging",
       "services.aiva_common.schemas"
     ],
     "complexity_score": 33.22222222222222
   },
   {
-    "file": "services\\core\\aiva_core\\analysis\\__init__.py",
+    "file": "__init__.py",
     "total_lines": 10,
     "code_lines": 6,
     "comment_lines": 0,
@@ -1005,7 +1005,7 @@
     "complexity_score": 1
   },
   {
-    "file": "services\\core\\aiva_core\\authz\\authz_mapper.py",
+    "file": "authz_mapper.py",
     "total_lines": 414,
     "code_lines": 304,
     "comment_lines": 25,
@@ -1028,14 +1028,14 @@
     ],
     "import_modules": [
       "permission_matrix",
-      "datetime",
+      "structlog",
       "typing",
-      "structlog"
+      "datetime"
     ],
     "complexity_score": 45.16666666666667
   },
   {
-    "file": "services\\core\\aiva_core\\authz\\matrix_visualizer.py",
+    "file": "matrix_visualizer.py",
     "total_lines": 501,
     "code_lines": 413,
     "comment_lines": 17,
@@ -1057,18 +1057,18 @@
       "generate_role_comparison_chart"
     ],
     "import_modules": [
-      "plotly.subplots",
-      "permission_matrix",
-      "datetime",
+      "pathlib",
       "plotly.graph_objects",
       "structlog",
-      "pathlib",
-      "jinja2"
+      "plotly.subplots",
+      "permission_matrix",
+      "jinja2",
+      "datetime"
     ],
     "complexity_score": 73.14285714285714
   },
   {
-    "file": "services\\core\\aiva_core\\authz\\permission_matrix.py",
+    "file": "permission_matrix.py",
     "total_lines": 457,
     "code_lines": 355,
     "comment_lines": 19,
@@ -1090,17 +1090,17 @@
       "add_permission"
     ],
     "import_modules": [
-      "services.aiva_common.enums",
-      "datetime",
+      "numpy",
+      "typing",
       "pandas",
       "structlog",
-      "typing",
-      "numpy"
+      "services.aiva_common.enums",
+      "datetime"
     ],
     "complexity_score": 48.6875
   },
   {
-    "file": "services\\core\\aiva_core\\authz\\__init__.py",
+    "file": "__init__.py",
     "total_lines": 18,
     "code_lines": 13,
     "comment_lines": 0,
@@ -1114,14 +1114,14 @@
     "class_names": [],
     "function_names": [],
     "import_modules": [
+      "matrix_visualizer",
       "authz_mapper",
-      "permission_matrix",
-      "matrix_visualizer"
+      "permission_matrix"
     ],
     "complexity_score": 3
   },
   {
-    "file": "services\\core\\aiva_core\\bizlogic\\finding_helper.py",
+    "file": "finding_helper.py",
     "total_lines": 71,
     "code_lines": 61,
     "comment_lines": 0,
@@ -1137,16 +1137,16 @@
       "create_bizlogic_finding"
     ],
     "import_modules": [
+      "typing",
       "services.aiva_common.utils",
-      "services.aiva_common.enums",
-      "__future__",
       "services.aiva_common.schemas",
-      "typing"
+      "__future__",
+      "services.aiva_common.enums"
     ],
     "complexity_score": 40.0
   },
   {
-    "file": "services\\core\\aiva_core\\bizlogic\\worker.py",
+    "file": "worker.py",
     "total_lines": 138,
     "code_lines": 104,
     "comment_lines": 6,
@@ -1160,20 +1160,20 @@
     "class_names": [],
     "function_names": [],
     "import_modules": [
-      "services.aiva_common.utils",
-      "services.aiva_common.mq",
-      "services.aiva_common.enums",
-      "__future__",
-      "race_condition_tester",
-      "price_manipulation_tester",
-      "services.aiva_common.schemas",
+      "json",
       "workflow_bypass_tester",
-      "json"
+      "price_manipulation_tester",
+      "services.aiva_common.mq",
+      "services.aiva_common.utils",
+      "race_condition_tester",
+      "__future__",
+      "services.aiva_common.schemas",
+      "services.aiva_common.enums"
     ],
     "complexity_score": 45.5
   },
   {
-    "file": "services\\core\\aiva_core\\bizlogic\\__init__.py",
+    "file": "__init__.py",
     "total_lines": 23,
     "code_lines": 17,
     "comment_lines": 0,
@@ -1192,7 +1192,7 @@
     "complexity_score": 1
   },
   {
-    "file": "services\\core\\aiva_core\\execution\\execution_status_monitor.py",
+    "file": "execution_status_monitor.py",
     "total_lines": 255,
     "code_lines": 200,
     "comment_lines": 11,
@@ -1214,25 +1214,25 @@
       "get_system_health"
     ],
     "import_modules": [
-      "services.aiva_common.utils",
       "asyncio",
+      "typing",
+      "services.aiva_common.utils",
       "__future__",
-      "datetime",
-      "typing"
+      "datetime"
     ],
     "complexity_score": 31.22222222222222
   },
   {
-    "file": "services\\core\\aiva_core\\execution\\plan_executor.py",
-    "total_lines": 619,
-    "code_lines": 482,
+    "file": "plan_executor.py",
+    "total_lines": 616,
+    "code_lines": 480,
     "comment_lines": 30,
     "classes": 1,
     "functions": 5,
     "async_functions": 10,
     "imports": 8,
     "decorators": 0,
-    "avg_function_length": 37.4,
+    "avg_function_length": 37.2,
     "max_function_length": 128,
     "class_names": [
       "PlanExecutor"
@@ -1245,19 +1245,19 @@
       "_generate_recommendations"
     ],
     "import_modules": [
-      "uuid",
-      "aiva_common.schemas",
-      "asyncio",
-      "__future__",
-      "datetime",
       "trace_logger",
+      "asyncio",
+      "typing",
+      "uuid",
+      "__future__",
+      "services.aiva_common.schemas",
       "logging",
-      "typing"
+      "datetime"
     ],
-    "complexity_score": 40.4
+    "complexity_score": 40.2
   },
   {
-    "file": "services\\core\\aiva_core\\execution\\task_generator.py",
+    "file": "task_generator.py",
     "total_lines": 72,
     "code_lines": 66,
     "comment_lines": 0,
@@ -1275,15 +1275,15 @@
       "from_strategy"
     ],
     "import_modules": [
-      "__future__",
       "services.aiva_common.schemas",
-      "collections.abc",
-      "services.aiva_common.enums"
+      "__future__",
+      "services.aiva_common.enums",
+      "collections.abc"
     ],
     "complexity_score": 47.0
   },
   {
-    "file": "services\\core\\aiva_core\\execution\\task_queue_manager.py",
+    "file": "task_queue_manager.py",
     "total_lines": 213,
     "code_lines": 167,
     "comment_lines": 8,
@@ -1305,19 +1305,19 @@
       "mark_task_completed"
     ],
     "import_modules": [
+      "typing",
       "services.aiva_common.utils",
-      "services.aiva_common.enums",
-      "__future__",
-      "collections",
-      "datetime",
-      "services.aiva_common.schemas",
       "queue",
-      "typing"
+      "__future__",
+      "services.aiva_common.schemas",
+      "collections",
+      "services.aiva_common.enums",
+      "datetime"
     ],
     "complexity_score": 31.22222222222222
   },
   {
-    "file": "services\\core\\aiva_core\\execution\\trace_logger.py",
+    "file": "trace_logger.py",
     "total_lines": 351,
     "code_lines": 279,
     "comment_lines": 6,
@@ -1339,17 +1339,17 @@
       "get_session"
     ],
     "import_modules": [
+      "typing",
       "uuid",
-      "aiva_common.schemas",
       "__future__",
-      "datetime",
+      "services.aiva_common.schemas",
       "logging",
-      "typing"
+      "datetime"
     ],
     "complexity_score": 31.142857142857142
   },
   {
-    "file": "services\\core\\aiva_core\\execution\\__init__.py",
+    "file": "__init__.py",
     "total_lines": 11,
     "code_lines": 7,
     "comment_lines": 0,
@@ -1369,7 +1369,7 @@
     "complexity_score": 2
   },
   {
-    "file": "services\\core\\aiva_core\\execution_tracer\\execution_monitor.py",
+    "file": "execution_monitor.py",
     "total_lines": 305,
     "code_lines": 250,
     "comment_lines": 4,
@@ -1392,20 +1392,20 @@
       "record_tool_invocation"
     ],
     "import_modules": [
-      "planner.task_converter",
       "dataclasses",
+      "typing",
+      "planner.task_converter",
       "planner.tool_selector",
-      "__future__",
-      "datetime",
-      "planner.orchestrator",
       "trace_recorder",
+      "__future__",
       "logging",
-      "typing"
+      "planner.orchestrator",
+      "datetime"
     ],
     "complexity_score": 43.72727272727273
   },
   {
-    "file": "services\\core\\aiva_core\\execution_tracer\\task_executor.py",
+    "file": "task_executor.py",
     "total_lines": 281,
     "code_lines": 216,
     "comment_lines": 11,
@@ -1424,18 +1424,18 @@
       "__init__"
     ],
     "import_modules": [
-      "planner.task_converter",
       "dataclasses",
+      "typing",
+      "planner.task_converter",
       "planner.tool_selector",
       "__future__",
       "logging",
-      "typing",
       "execution_monitor"
     ],
     "complexity_score": 32.714285714285715
   },
   {
-    "file": "services\\core\\aiva_core\\execution_tracer\\trace_recorder.py",
+    "file": "trace_recorder.py",
     "total_lines": 300,
     "code_lines": 253,
     "comment_lines": 0,
@@ -1460,19 +1460,19 @@
       "get_entries_by_type"
     ],
     "import_modules": [
+      "json",
+      "dataclasses",
+      "typing",
       "uuid",
       "enum",
-      "dataclasses",
       "__future__",
-      "datetime",
       "logging",
-      "typing",
-      "json"
+      "datetime"
     ],
     "complexity_score": 66
   },
   {
-    "file": "services\\core\\aiva_core\\execution_tracer\\__init__.py",
+    "file": "__init__.py",
     "total_lines": 20,
     "code_lines": 16,
     "comment_lines": 0,
@@ -1486,14 +1486,14 @@
     "class_names": [],
     "function_names": [],
     "import_modules": [
+      "trace_recorder",
       "task_executor",
-      "execution_monitor",
-      "trace_recorder"
+      "execution_monitor"
     ],
     "complexity_score": 3
   },
   {
-    "file": "services\\core\\aiva_core\\ingestion\\scan_module_interface.py",
+    "file": "scan_module_interface.py",
     "total_lines": 140,
     "code_lines": 107,
     "comment_lines": 2,
@@ -1514,14 +1514,14 @@
       "_categorize_asset"
     ],
     "import_modules": [
+      "services.aiva_common.schemas",
       "__future__",
-      "typing",
-      "services.aiva_common.schemas"
+      "typing"
     ],
     "complexity_score": 20.0
   },
   {
-    "file": "services\\core\\aiva_core\\ingestion\\__init__.py",
+    "file": "__init__.py",
     "total_lines": 1,
     "code_lines": 0,
     "comment_lines": 0,
@@ -1538,17 +1538,17 @@
     "complexity_score": 0
   },
   {
-    "file": "services\\core\\aiva_core\\learning\\experience_manager.py",
-    "total_lines": 287,
-    "code_lines": 227,
+    "file": "experience_manager.py",
+    "total_lines": 284,
+    "code_lines": 224,
     "comment_lines": 10,
     "classes": 1,
     "functions": 4,
     "async_functions": 5,
     "imports": 6,
     "decorators": 0,
-    "avg_function_length": 27.1,
-    "max_function_length": 52,
+    "avg_function_length": 26.8,
+    "max_function_length": 49,
     "class_names": [
       "ExperienceManager"
     ],
@@ -1559,17 +1559,17 @@
       "_calculate_quality_score"
     ],
     "import_modules": [
+      "typing",
       "uuid",
-      "aiva_common.schemas",
       "__future__",
-      "datetime",
+      "services.aiva_common.schemas",
       "logging",
-      "typing"
+      "datetime"
     ],
-    "complexity_score": 26.11111111111111
+    "complexity_score": 25.77777777777778
   },
   {
-    "file": "services\\core\\aiva_core\\learning\\model_trainer.py",
+    "file": "model_trainer.py",
     "total_lines": 608,
     "code_lines": 435,
     "comment_lines": 44,
@@ -1591,19 +1591,19 @@
       "_build_state_vector"
     ],
     "import_modules": [
-      "uuid",
-      "aiva_common.schemas",
-      "__future__",
-      "datetime",
       "pathlib",
-      "logging",
+      "numpy",
       "typing",
-      "numpy"
+      "uuid",
+      "__future__",
+      "services.aiva_common.schemas",
+      "logging",
+      "datetime"
     ],
     "complexity_score": 42.0
   },
   {
-    "file": "services\\core\\aiva_core\\learning\\__init__.py",
+    "file": "__init__.py",
     "total_lines": 11,
     "code_lines": 7,
     "comment_lines": 0,
@@ -1623,16 +1623,16 @@
     "complexity_score": 2
   },
   {
-    "file": "services\\core\\aiva_core\\messaging\\message_broker.py",
-    "total_lines": 340,
-    "code_lines": 258,
+    "file": "message_broker.py",
+    "total_lines": 338,
+    "code_lines": 255,
     "comment_lines": 17,
     "classes": 2,
     "functions": 2,
     "async_functions": 9,
-    "imports": 11,
+    "imports": 10,
     "decorators": 0,
-    "avg_function_length": 26.6,
+    "avg_function_length": 26.5,
     "max_function_length": 48,
     "class_names": [
       "MessageBroker",
@@ -1643,21 +1643,20 @@
       "__init__"
     ],
     "import_modules": [
-      "aiva_common.schemas",
+      "json",
       "asyncio",
-      "__future__",
-      "aiva_common.config",
+      "typing",
       "aio_pika",
       "collections.abc",
-      "logging",
-      "typing",
       "aio_pika.abc",
-      "json"
+      "__future__",
+      "contextlib",
+      "logging"
     ],
-    "complexity_score": 31.636363636363637
+    "complexity_score": 30.454545454545453
   },
   {
-    "file": "services\\core\\aiva_core\\messaging\\result_collector.py",
+    "file": "result_collector.py",
     "total_lines": 392,
     "code_lines": 297,
     "comment_lines": 17,
@@ -1678,21 +1677,21 @@
       "_set_pending_result"
     ],
     "import_modules": [
-      "message_broker",
-      "aiva_common.schemas",
+      "json",
       "asyncio",
-      "__future__",
-      "datetime",
-      "collections.abc",
-      "logging",
       "typing",
+      "collections.abc",
       "aio_pika.abc",
-      "json"
+      "__future__",
+      "services.aiva_common.schemas",
+      "logging",
+      "message_broker",
+      "datetime"
     ],
     "complexity_score": 23
   },
   {
-    "file": "services\\core\\aiva_core\\messaging\\task_dispatcher.py",
+    "file": "task_dispatcher.py",
     "total_lines": 516,
     "code_lines": 412,
     "comment_lines": 13,
@@ -1714,20 +1713,20 @@
       "register_callback"
     ],
     "import_modules": [
-      "uuid",
-      "message_broker",
-      "aiva_common.schemas",
       "asyncio",
-      "__future__",
-      "datetime",
+      "typing",
       "collections.abc",
+      "uuid",
+      "__future__",
+      "services.aiva_common.schemas",
       "logging",
-      "typing"
+      "message_broker",
+      "datetime"
     ],
     "complexity_score": 39.142857142857146
   },
   {
-    "file": "services\\core\\aiva_core\\messaging\\__init__.py",
+    "file": "__init__.py",
     "total_lines": 12,
     "code_lines": 8,
     "comment_lines": 0,
@@ -1741,14 +1740,14 @@
     "class_names": [],
     "function_names": [],
     "import_modules": [
-      "result_collector",
+      "task_dispatcher",
       "message_broker",
-      "task_dispatcher"
+      "result_collector"
     ],
     "complexity_score": 3
   },
   {
-    "file": "services\\core\\aiva_core\\output\\to_functions.py",
+    "file": "to_functions.py",
     "total_lines": 25,
     "code_lines": 21,
     "comment_lines": 0,
@@ -1764,15 +1763,15 @@
       "to_function_message"
     ],
     "import_modules": [
-      "__future__",
       "services.aiva_common.schemas",
-      "services.aiva_common.utils",
-      "services.aiva_common.enums"
+      "__future__",
+      "services.aiva_common.enums",
+      "services.aiva_common.utils"
     ],
     "complexity_score": 6
   },
   {
-    "file": "services\\core\\aiva_core\\output\\__init__.py",
+    "file": "__init__.py",
     "total_lines": 1,
     "code_lines": 0,
     "comment_lines": 0,
@@ -1789,7 +1788,7 @@
     "complexity_score": 0
   },
   {
-    "file": "services\\core\\aiva_core\\planner\\ast_parser.py",
+    "file": "ast_parser.py",
     "total_lines": 265,
     "code_lines": 201,
     "comment_lines": 9,
@@ -1815,16 +1814,16 @@
       "get_start_node"
     ],
     "import_modules": [
-      "enum",
       "dataclasses",
+      "typing",
+      "enum",
       "__future__",
-      "logging",
-      "typing"
+      "logging"
     ],
     "complexity_score": 52
   },
   {
-    "file": "services\\core\\aiva_core\\planner\\orchestrator.py",
+    "file": "orchestrator.py",
     "total_lines": 187,
     "code_lines": 144,
     "comment_lines": 4,
@@ -1847,19 +1846,19 @@
       "update_task_status"
     ],
     "import_modules": [
-      "uuid",
-      "ast_parser",
       "dataclasses",
+      "typing",
       "tool_selector",
+      "ast_parser",
+      "uuid",
       "__future__",
-      "task_converter",
       "logging",
-      "typing"
+      "task_converter"
     ],
     "complexity_score": 32
   },
   {
-    "file": "services\\core\\aiva_core\\planner\\task_converter.py",
+    "file": "task_converter.py",
     "total_lines": 248,
     "code_lines": 179,
     "comment_lines": 10,
@@ -1885,18 +1884,18 @@
       "get_runnable_tasks"
     ],
     "import_modules": [
-      "uuid",
-      "ast_parser",
-      "enum",
       "dataclasses",
+      "typing",
+      "ast_parser",
+      "uuid",
+      "enum",
       "__future__",
-      "logging",
-      "typing"
+      "logging"
     ],
     "complexity_score": 50
   },
   {
-    "file": "services\\core\\aiva_core\\planner\\tool_selector.py",
+    "file": "tool_selector.py",
     "total_lines": 222,
     "code_lines": 167,
     "comment_lines": 9,
@@ -1920,17 +1919,17 @@
       "_determine_endpoint_and_function"
     ],
     "import_modules": [
-      "enum",
       "dataclasses",
+      "typing",
+      "enum",
       "__future__",
-      "task_converter",
       "logging",
-      "typing"
+      "task_converter"
     ],
     "complexity_score": 38.285714285714285
   },
   {
-    "file": "services\\core\\aiva_core\\planner\\__init__.py",
+    "file": "__init__.py",
     "total_lines": 23,
     "code_lines": 19,
     "comment_lines": 0,
@@ -1944,16 +1943,71 @@
     "class_names": [],
     "function_names": [],
     "import_modules": [
+      "tool_selector",
       "ast_parser",
       "task_converter",
-      "tool_selector",
       "orchestrator"
     ],
     "complexity_score": 4
   },
   {
-    "file": "services\\core\\aiva_core\\rag\\demo_rag_integration.py",
-    "total_lines": 257,
+    "file": "scan_result_processor.py",
+    "total_lines": 359,
+    "code_lines": 291,
+    "comment_lines": 13,
+    "classes": 1,
+    "functions": 1,
+    "async_functions": 8,
+    "imports": 14,
+    "decorators": 0,
+    "avg_function_length": 33.7,
+    "max_function_length": 48,
+    "class_names": [
+      "ScanResultProcessor"
+    ],
+    "function_names": [
+      "__init__"
+    ],
+    "import_modules": [
+      "json",
+      "typing",
+      "services.core.aiva_core.execution.task_generator",
+      "collections",
+      "services.aiva_common.mq",
+      "services.aiva_common.utils",
+      "services.core.aiva_core.execution.task_queue_manager",
+      "services.core.aiva_core.analysis.dynamic_strategy_adjustment",
+      "services.core.aiva_core.ingestion.scan_module_interface",
+      "services.core.aiva_core.state.session_state_manager",
+      "services.aiva_common.schemas",
+      "__future__",
+      "services.core.aiva_core.output.to_functions",
+      "services.core.aiva_core.analysis.initial_surface"
+    ],
+    "complexity_score": 34.666666666666664
+  },
+  {
+    "file": "__init__.py",
+    "total_lines": 6,
+    "code_lines": 3,
+    "comment_lines": 0,
+    "classes": 0,
+    "functions": 0,
+    "async_functions": 0,
+    "imports": 1,
+    "decorators": 0,
+    "avg_function_length": 0,
+    "max_function_length": 0,
+    "class_names": [],
+    "function_names": [],
+    "import_modules": [
+      "scan_result_processor"
+    ],
+    "complexity_score": 1
+  },
+  {
+    "file": "demo_rag_integration.py",
+    "total_lines": 258,
     "code_lines": 193,
     "comment_lines": 19,
     "classes": 1,
@@ -1971,16 +2025,16 @@
       "_build_prompt_with_context"
     ],
     "import_modules": [
-      "aiva_common.schemas",
-      "aiva_core.rag",
       "asyncio",
+      "aiva_core.rag",
       "__future__",
+      "services.aiva_common.schemas",
       "logging"
     ],
     "complexity_score": 49.0
   },
   {
-    "file": "services\\core\\aiva_core\\rag\\knowledge_base.py",
+    "file": "knowledge_base.py",
     "total_lines": 417,
     "code_lines": 329,
     "comment_lines": 13,
@@ -2004,21 +2058,21 @@
       "save_knowledge_base"
     ],
     "import_modules": [
-      "enum",
-      "dataclasses",
-      "aiva_common.schemas",
-      "vector_store",
-      "__future__",
-      "datetime",
+      "json",
       "pathlib",
-      "logging",
+      "dataclasses",
       "typing",
-      "json"
+      "vector_store",
+      "enum",
+      "__future__",
+      "services.aiva_common.schemas",
+      "logging",
+      "datetime"
     ],
     "complexity_score": 57.38461538461539
   },
   {
-    "file": "services\\core\\aiva_core\\rag\\rag_engine.py",
+    "file": "rag_engine.py",
     "total_lines": 363,
     "code_lines": 285,
     "comment_lines": 19,
@@ -2040,16 +2094,16 @@
       "get_relevant_payloads"
     ],
     "import_modules": [
-      "aiva_common.schemas",
+      "typing",
       "__future__",
+      "services.aiva_common.schemas",
       "logging",
-      "knowledge_base",
-      "typing"
+      "knowledge_base"
     ],
     "complexity_score": 44.111111111111114
   },
   {
-    "file": "services\\core\\aiva_core\\rag\\vector_store.py",
+    "file": "vector_store.py",
     "total_lines": 339,
     "code_lines": 252,
     "comment_lines": 15,
@@ -2071,20 +2125,20 @@
       "add_document"
     ],
     "import_modules": [
-      "faiss",
-      "sentence_transformers",
-      "__future__",
+      "json",
       "pathlib",
-      "logging",
-      "chromadb",
-      "typing",
       "numpy",
-      "json"
+      "sentence_transformers",
+      "typing",
+      "chromadb",
+      "__future__",
+      "faiss",
+      "logging"
     ],
     "complexity_score": 42.83333333333333
   },
   {
-    "file": "services\\core\\aiva_core\\rag\\__init__.py",
+    "file": "__init__.py",
     "total_lines": 12,
     "code_lines": 8,
     "comment_lines": 0,
@@ -2098,14 +2152,14 @@
     "class_names": [],
     "function_names": [],
     "import_modules": [
-      "knowledge_base",
       "vector_store",
-      "rag_engine"
+      "rag_engine",
+      "knowledge_base"
     ],
     "complexity_score": 3
   },
   {
-    "file": "services\\core\\aiva_core\\state\\session_state_manager.py",
+    "file": "session_state_manager.py",
     "total_lines": 119,
     "code_lines": 94,
     "comment_lines": 3,
@@ -2127,16 +2181,16 @@
       "update_session_status"
     ],
     "import_modules": [
+      "typing",
       "services.aiva_common.utils",
-      "__future__",
-      "datetime",
       "services.aiva_common.schemas",
-      "typing"
+      "__future__",
+      "datetime"
     ],
     "complexity_score": 20
   },
   {
-    "file": "services\\core\\aiva_core\\state\\__init__.py",
+    "file": "__init__.py",
     "total_lines": 1,
     "code_lines": 0,
     "comment_lines": 0,
@@ -2153,17 +2207,17 @@
     "complexity_score": 0
   },
   {
-    "file": "services\\core\\aiva_core\\storage\\backends.py",
-    "total_lines": 444,
-    "code_lines": 362,
-    "comment_lines": 14,
+    "file": "backends.py",
+    "total_lines": 468,
+    "code_lines": 380,
+    "comment_lines": 18,
     "classes": 5,
     "functions": 4,
     "async_functions": 24,
-    "imports": 9,
+    "imports": 8,
     "decorators": 6,
-    "avg_function_length": 12.9,
-    "max_function_length": 42,
+    "avg_function_length": 13.8,
+    "max_function_length": 57,
     "class_names": [
       "StorageBackend",
       "SQLiteBackend",
@@ -2178,27 +2232,26 @@
       "__init__"
     ],
     "import_modules": [
-      "aiva_common.schemas",
-      "models",
-      "abc",
-      "datetime",
+      "json",
       "pathlib",
       "sqlalchemy",
+      "models",
       "typing",
+      "abc",
       "sqlalchemy.orm",
-      "json"
+      "datetime"
     ],
-    "complexity_score": 42
+    "complexity_score": 41
   },
   {
-    "file": "services\\core\\aiva_core\\storage\\config.py",
-    "total_lines": 111,
-    "code_lines": 85,
+    "file": "config.py",
+    "total_lines": 112,
+    "code_lines": 86,
     "comment_lines": 12,
     "classes": 0,
     "functions": 1,
     "async_functions": 0,
-    "imports": 2,
+    "imports": 3,
     "decorators": 0,
     "avg_function_length": 11.0,
     "max_function_length": 11,
@@ -2207,13 +2260,14 @@
       "get_storage_config"
     ],
     "import_modules": [
-      "os",
-      "pathlib"
+      "pathlib",
+      "typing",
+      "os"
     ],
-    "complexity_score": 4
+    "complexity_score": 5
   },
   {
-    "file": "services\\core\\aiva_core\\storage\\models.py",
+    "file": "models.py",
     "total_lines": 257,
     "code_lines": 150,
     "comment_lines": 36,
@@ -2234,23 +2288,23 @@
     ],
     "function_names": [],
     "import_modules": [
-      "datetime",
+      "sqlalchemy",
       "sqlalchemy.orm",
-      "sqlalchemy"
+      "datetime"
     ],
     "complexity_score": 33
   },
   {
-    "file": "services\\core\\aiva_core\\storage\\storage_manager.py",
-    "total_lines": 195,
-    "code_lines": 157,
+    "file": "storage_manager.py",
+    "total_lines": 206,
+    "code_lines": 168,
     "comment_lines": 6,
     "classes": 1,
     "functions": 5,
     "async_functions": 6,
     "imports": 4,
     "decorators": 0,
-    "avg_function_length": 15.5,
+    "avg_function_length": 16.5,
     "max_function_length": 58,
     "class_names": [
       "StorageManager"
@@ -2263,15 +2317,15 @@
       "get_dir_size"
     ],
     "import_modules": [
-      "logging",
+      "pathlib",
       "backends",
-      "typing",
-      "pathlib"
+      "logging",
+      "typing"
     ],
     "complexity_score": 19
   },
   {
-    "file": "services\\core\\aiva_core\\storage\\__init__.py",
+    "file": "__init__.py",
     "total_lines": 38,
     "code_lines": 34,
     "comment_lines": 0,
@@ -2285,14 +2339,14 @@
     "class_names": [],
     "function_names": [],
     "import_modules": [
+      "backends",
       "storage_manager",
-      "models",
-      "backends"
+      "models"
     ],
     "complexity_score": 3
   },
   {
-    "file": "services\\core\\aiva_core\\training\\scenario_manager.py",
+    "file": "scenario_manager.py",
     "total_lines": 975,
     "code_lines": 815,
     "comment_lines": 34,
@@ -2314,23 +2368,23 @@
       "_create_xss_plan_easy"
     ],
     "import_modules": [
+      "json",
+      "pathlib",
+      "typing",
       "uuid",
-      "aiva_common.schemas",
       "httpx",
       "__future__",
-      "aiva_common.enums",
-      "datetime",
-      "pathlib",
+      "services.aiva_common.schemas",
       "logging",
-      "typing",
-      "json"
+      "services.aiva_common.enums",
+      "datetime"
     ],
     "complexity_score": 56.55
   },
   {
-    "file": "services\\core\\aiva_core\\training\\training_orchestrator.py",
-    "total_lines": 376,
-    "code_lines": 287,
+    "file": "training_orchestrator.py",
+    "total_lines": 375,
+    "code_lines": 285,
     "comment_lines": 22,
     "classes": 1,
     "functions": 4,
@@ -2349,43 +2403,44 @@
       "_save_single_session"
     ],
     "import_modules": [
-      "aiva_common.schemas",
-      "aiva_core.rag",
-      "__future__",
-      "datetime",
-      "aiva_core.execution.plan_executor",
-      "aiva_core.training.scenario_manager",
-      "aiva_core.learning.experience_manager",
       "pathlib",
-      "aiva_core.learning.model_trainer",
-      "logging",
+      "json",
       "typing",
-      "json"
+      "aiva_core.learning.experience_manager",
+      "aiva_core.learning.model_trainer",
+      "aiva_core.rag",
+      "aiva_core.execution.plan_executor",
+      "__future__",
+      "services.aiva_common.schemas",
+      "logging",
+      "aiva_core.training.scenario_manager",
+      "datetime"
     ],
     "complexity_score": 45.875
   },
   {
-    "file": "services\\core\\aiva_core\\training\\__init__.py",
-    "total_lines": 16,
-    "code_lines": 12,
+    "file": "__init__.py",
+    "total_lines": 18,
+    "code_lines": 13,
     "comment_lines": 0,
     "classes": 0,
     "functions": 0,
     "async_functions": 0,
-    "imports": 2,
+    "imports": 3,
     "decorators": 0,
     "avg_function_length": 0,
     "max_function_length": 0,
     "class_names": [],
     "function_names": [],
     "import_modules": [
-      "training_orchestrator",
-      "scenario_manager"
+      "scenario_manager",
+      "services.aiva_common.schemas",
+      "training_orchestrator"
     ],
-    "complexity_score": 2
+    "complexity_score": 3
   },
   {
-    "file": "services\\core\\aiva_core\\ui_panel\\auto_server.py",
+    "file": "auto_server.py",
     "total_lines": 170,
     "code_lines": 134,
     "comment_lines": 7,
@@ -2403,19 +2458,19 @@
       "main"
     ],
     "import_modules": [
-      "socket",
+      "pathlib",
+      "uvicorn",
+      "sys",
       "__future__",
       "argparse",
-      "uvicorn",
-      "pathlib",
       "logging",
-      "improved_ui",
-      "sys"
+      "socket",
+      "improved_ui"
     ],
     "complexity_score": 41.0
   },
   {
-    "file": "services\\core\\aiva_core\\ui_panel\\dashboard.py",
+    "file": "dashboard.py",
     "total_lines": 287,
     "code_lines": 243,
     "comment_lines": 2,
@@ -2437,16 +2492,16 @@
       "detect_vulnerability"
     ],
     "import_modules": [
-      "__future__",
       "pathlib",
-      "logging",
+      "typing",
       "ai_engine",
-      "typing"
+      "__future__",
+      "logging"
     ],
     "complexity_score": 36.36363636363636
   },
   {
-    "file": "services\\core\\aiva_core\\ui_panel\\improved_ui.py",
+    "file": "improved_ui.py",
     "total_lines": 399,
     "code_lines": 345,
     "comment_lines": 16,
@@ -2463,17 +2518,17 @@
       "create_app"
     ],
     "import_modules": [
-      "__future__",
       "services.core.aiva_core.ui_panel.dashboard",
-      "fastapi",
-      "sys",
       "fastapi.responses",
-      "typing"
+      "typing",
+      "sys",
+      "__future__",
+      "fastapi"
     ],
     "complexity_score": 31.555555555555557
   },
   {
-    "file": "services\\core\\aiva_core\\ui_panel\\server.py",
+    "file": "server.py",
     "total_lines": 281,
     "code_lines": 244,
     "comment_lines": 4,
@@ -2490,19 +2545,19 @@
       "start_ui_server"
     ],
     "import_modules": [
-      "socket",
+      "uvicorn",
+      "fastapi.responses",
+      "typing",
       "dashboard",
       "__future__",
-      "uvicorn",
       "fastapi",
       "logging",
-      "fastapi.responses",
-      "typing"
+      "socket"
     ],
     "complexity_score": 30.0
   },
   {
-    "file": "services\\core\\aiva_core\\ui_panel\\__init__.py",
+    "file": "__init__.py",
     "total_lines": 15,
     "code_lines": 12,
     "comment_lines": 0,
@@ -2516,14 +2571,14 @@
     "class_names": [],
     "function_names": [],
     "import_modules": [
-      "server",
       "dashboard",
-      "auto_server"
+      "auto_server",
+      "server"
     ],
     "complexity_score": 3
   },
   {
-    "file": "services\\core\\aiva_core\\ai_engine\\training\\data_loader.py",
+    "file": "data_loader.py",
     "total_lines": 199,
     "code_lines": 141,
     "comment_lines": 12,
@@ -2545,15 +2600,15 @@
       "load_dataset_samples"
     ],
     "import_modules": [
+      "logging",
       "__future__",
       "typing",
-      "logging",
       "numpy"
     ],
     "complexity_score": 29.5
   },
   {
-    "file": "services\\core\\aiva_core\\ai_engine\\training\\model_updater.py",
+    "file": "model_updater.py",
     "total_lines": 242,
     "code_lines": 182,
     "comment_lines": 12,
@@ -2575,19 +2630,19 @@
       "load_model"
     ],
     "import_modules": [
-      "trainer",
+      "pathlib",
+      "typing",
+      "pickle",
       "data_loader",
       "__future__",
-      "datetime",
-      "pickle",
-      "pathlib",
       "logging",
-      "typing"
+      "trainer",
+      "datetime"
     ],
     "complexity_score": 40.0
   },
   {
-    "file": "services\\core\\aiva_core\\ai_engine\\training\\trainer.py",
+    "file": "trainer.py",
     "total_lines": 251,
     "code_lines": 188,
     "comment_lines": 15,
@@ -2610,16 +2665,16 @@
       "_forward_batch"
     ],
     "import_modules": [
+      "numpy",
       "dataclasses",
-      "__future__",
-      "logging",
       "typing",
-      "numpy"
+      "__future__",
+      "logging"
     ],
     "complexity_score": 38.85714285714286
   },
   {
-    "file": "services\\core\\aiva_core\\ai_engine\\training\\__init__.py",
+    "file": "__init__.py",
     "total_lines": 17,
     "code_lines": 13,
     "comment_lines": 0,

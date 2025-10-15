@@ -153,6 +153,7 @@ class TaskStatus(str, Enum):
 class TestStatus(str, Enum):
     """測試狀態枚舉 - 用於追蹤測試執行狀態"""
 
+    DRAFT = "draft"
     PENDING = "pending"
     RUNNING = "running"
     COMPLETED = "completed"

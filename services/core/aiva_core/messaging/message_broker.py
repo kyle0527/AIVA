@@ -14,9 +14,17 @@ import logging
 from typing import Any
 
 import aio_pika
-from aio_pika import Channel, Connection, Exchange, Queue
-from aio_pika.abc import AbstractIncomingMessage
+from aio_pika.abc import (
+    AbstractChannel,
+    AbstractExchange,
+    AbstractIncomingMessage,
+    AbstractQueue,
+    AbstractRobustConnection,
+)
 
+from services.aiva_common.config import get_settings
+from services.aiva_common.enums import ModuleName
+from services.aiva_common.schemas import AivaMessage
 
 logger = logging.getLogger(__name__)
 
@@ -35,10 +43,10 @@ class MessageBroker:
         """
         self.module_name = module_name
         self.config = get_settings()
-        self.connection: Connection | None = None
-        self.channel: Channel | None = None
-        self.exchanges: dict[str, Exchange] = {}
-        self.queues: dict[str, Queue] = {}
+        self.connection: AbstractRobustConnection | None = None
+        self.channel: AbstractChannel | None = None
+        self.exchanges: dict[str, AbstractExchange] = {}
+        self.queues: dict[str, AbstractQueue] = {}
         self.consumers: dict[str, asyncio.Task] = {}
 
         logger.info(f"MessageBroker initialized for module {module_name.value}")
@@ -51,9 +59,7 @@ class MessageBroker:
 
         try:
             # 從配置獲取 RabbitMQ 連接信息
-            rabbitmq_url = self.config.get(
-                "rabbitmq_url", "amqp://guest:guest@localhost:5672/"
-            )
+            rabbitmq_url = self.config.rabbitmq_url
 
             self.connection = await aio_pika.connect_robust(rabbitmq_url)
             self.channel = await self.connection.channel()
@@ -238,8 +244,8 @@ class RPCClient:
 
     def __init__(
         self,
-        channel: Channel,
-        exchange: Exchange,
+        channel: AbstractChannel,
+        exchange: AbstractExchange,
         timeout: float = 30.0,
     ) -> None:
         """初始化 RPC 客戶端
@@ -253,7 +259,7 @@ class RPCClient:
         self.exchange = exchange
         self.timeout = timeout
         self.futures: dict[str, asyncio.Future] = {}
-        self.callback_queue: Queue | None = None
+        self.callback_queue: AbstractQueue | None = None
 
     async def setup(self) -> None:
         """設置回調隊列"""

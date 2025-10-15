@@ -94,7 +94,7 @@ class EnhancedIDORWorker:
             "Enhanced IDOR Worker initialized",
             extra={
                 "smart_detection_enabled": True,
-                "module": "IDOR",
+                "worker_module": "IDOR",
                 "config": {
                     "max_vulnerabilities": self.config.max_vulnerabilities,
                     "timeout_base": self.config.timeout_base,
@@ -226,7 +226,7 @@ class EnhancedIDORWorker:
         """
         logger.info(
             "Processing IDOR task with smart detection",
-            extra={"task_id": task.task_id, "module": "IDOR"},
+            extra={"task_id": task.task_id, "worker_module": "IDOR"},
         )
 
         # 使用智能檢測器執行檢測
@@ -263,7 +263,7 @@ class EnhancedIDORWorker:
             "IDOR task completed with smart detection",
             extra={
                 "task_id": task.task_id,
-                "module": "IDOR",
+                "worker_module": "IDOR",
                 "findings": len(findings),
                 "attempts": telemetry.attempts,
                 "session_duration": telemetry.session_duration,
