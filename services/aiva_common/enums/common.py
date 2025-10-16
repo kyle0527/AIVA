@@ -88,3 +88,30 @@ class RemediationStatus(str, Enum):
     VERIFIED = "verified"
     FAILED = "failed"
     REJECTED = "rejected"
+
+
+class ErrorCategory(str, Enum):
+    """錯誤分類 - 用於統計和分析"""
+
+    NETWORK = "network"  # 網絡錯誤
+    TIMEOUT = "timeout"  # 超時錯誤
+    RATE_LIMIT = "rate_limit"  # 速率限制
+    VALIDATION = "validation"  # 驗證錯誤
+    PROTECTION = "protection"  # 保護機制檢測到
+    PARSING = "parsing"  # 解析錯誤
+    AUTHENTICATION = "authentication"  # 認證錯誤
+    AUTHORIZATION = "authorization"  # 授權錯誤
+    UNKNOWN = "unknown"  # 未知錯誤
+
+
+class StoppingReason(str, Enum):
+    """Early Stopping 原因 - 用於記錄檢測提前終止的原因"""
+
+    MAX_VULNERABILITIES = "max_vulnerabilities_reached"  # 達到最大漏洞數
+    TIME_LIMIT = "time_limit_exceeded"  # 超過時間限制
+    PROTECTION_DETECTED = "protection_detected"  # 檢測到防護
+    ERROR_THRESHOLD = "error_threshold_exceeded"  # 錯誤率過高
+    RATE_LIMITED = "rate_limited"  # 被速率限制
+    NO_RESPONSE = "no_response_timeout"  # 無響應超時
+    MANUAL_STOP = "manual_stop"  # 手動停止
+    RESOURCE_EXHAUSTED = "resource_exhausted"  # 資源耗盡

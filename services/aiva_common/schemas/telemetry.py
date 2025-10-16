@@ -11,7 +11,7 @@ from typing import Any
 
 from pydantic import BaseModel, Field, field_validator
 
-from ..enums import ModuleName, Severity
+from ..enums import ErrorCategory, ModuleName, Severity, StoppingReason
 
 
 class HeartbeatPayload(BaseModel):
@@ -67,6 +67,218 @@ class FunctionTelemetry(BaseModel):
             details["findings"] = findings_count
         if self.errors:
             details["errors"] = self.errors
+        return details
+
+
+# ============================================================================
+# Enhanced Function Telemetry (統一擴展版)
+# ============================================================================
+
+
+class ErrorRecord(BaseModel):
+    """錯誤記錄"""
+
+    category: ErrorCategory
+    message: str
+    timestamp: datetime = Field(default_factory=lambda: datetime.now(UTC))
+    details: dict[str, Any] = Field(default_factory=dict)
+
+
+class OastCallbackDetail(BaseModel):
+    """OAST 回調詳情"""
+
+    callback_type: str  # "http", "dns", "smtp" 等
+    token: str
+    source_ip: str
+    timestamp: datetime
+    protocol: str | None = None
+    raw_data: dict[str, Any] = Field(default_factory=dict)
+
+
+class EarlyStoppingInfo(BaseModel):
+    """提前停止信息"""
+
+    reason: StoppingReason
+    timestamp: datetime = Field(default_factory=lambda: datetime.now(UTC))
+    total_tests: int
+    completed_tests: int
+    remaining_tests: int
+    details: dict[str, Any] = Field(default_factory=dict)
+
+
+class AdaptiveBehaviorInfo(BaseModel):
+    """自適應行為信息"""
+
+    initial_batch_size: int = 10
+    final_batch_size: int = 10
+    rate_adjustments: int = 0
+    protection_detections: int = 0
+    bypass_attempts: int = 0
+    success_rate: float = 0.0
+    details: dict[str, Any] = Field(default_factory=dict)
+
+
+class EnhancedFunctionTelemetry(FunctionTelemetry):
+    """
+    增強版功能模組遙測 - 統一擴展所有 Worker 模組
+
+    繼承自 FunctionTelemetry，新增:
+    - 結構化錯誤記錄 (分類、時間戳、詳情)
+    - OAST 回調追蹤 (支持 HTTP/DNS/SMTP 等)
+    - 提前停止檢測 (8種原因，含剩餘測試數)
+    - 自適應行為監控 (批次大小、成功率、繞過嘗試)
+    """
+
+    # 結構化錯誤記錄
+    error_records: list[ErrorRecord] = Field(default_factory=list)
+
+    # OAST 回調追蹤
+    oast_callbacks: list[OastCallbackDetail] = Field(default_factory=list)
+
+    # 提前停止檢測
+    early_stopping: EarlyStoppingInfo | None = None
+
+    # 自適應行為
+    adaptive_behavior: AdaptiveBehaviorInfo | None = None
+
+    def record_error(
+        self,
+        category: ErrorCategory,
+        message: str,
+        details: dict[str, Any] | None = None,
+    ) -> None:
+        """記錄結構化錯誤"""
+        error = ErrorRecord(
+            category=category,
+            message=message,
+            details=details or {},
+        )
+        self.error_records.append(error)
+        # 保持向後兼容，也添加到 errors 列表
+        self.errors.append(f"[{category.value}] {message}")
+
+    def record_oast_callback(
+        self,
+        callback_type: str,
+        token: str,
+        source_ip: str,
+        timestamp: datetime,
+        protocol: str | None = None,
+        raw_data: dict[str, Any] | None = None,
+    ) -> None:
+        """記錄 OAST 回調"""
+        callback = OastCallbackDetail(
+            callback_type=callback_type,
+            token=token,
+            source_ip=source_ip,
+            timestamp=timestamp,
+            protocol=protocol,
+            raw_data=raw_data or {},
+        )
+        self.oast_callbacks.append(callback)
+
+    def record_early_stopping(
+        self,
+        reason: StoppingReason,
+        total_tests: int,
+        completed_tests: int,
+        details: dict[str, Any] | None = None,
+    ) -> None:
+        """記錄提前停止"""
+        self.early_stopping = EarlyStoppingInfo(
+            reason=reason,
+            total_tests=total_tests,
+            completed_tests=completed_tests,
+            remaining_tests=total_tests - completed_tests,
+            details=details or {},
+        )
+
+    def update_adaptive_behavior(
+        self,
+        initial_batch_size: int | None = None,
+        final_batch_size: int | None = None,
+        rate_adjustments: int | None = None,
+        protection_detections: int | None = None,
+        bypass_attempts: int | None = None,
+        success_rate: float | None = None,
+        details: dict[str, Any] | None = None,
+    ) -> None:
+        """更新自適應行為信息"""
+        if self.adaptive_behavior is None:
+            self.adaptive_behavior = AdaptiveBehaviorInfo()
+
+        if initial_batch_size is not None:
+            self.adaptive_behavior.initial_batch_size = initial_batch_size
+        if final_batch_size is not None:
+            self.adaptive_behavior.final_batch_size = final_batch_size
+        if rate_adjustments is not None:
+            self.adaptive_behavior.rate_adjustments = rate_adjustments
+        if protection_detections is not None:
+            self.adaptive_behavior.protection_detections = protection_detections
+        if bypass_attempts is not None:
+            self.adaptive_behavior.bypass_attempts = bypass_attempts
+        if success_rate is not None:
+            self.adaptive_behavior.success_rate = success_rate
+        if details:
+            self.adaptive_behavior.details.update(details)
+
+    def to_details(self, findings_count: int | None = None) -> dict[str, Any]:
+        """轉換為詳細報告格式 (擴展版)"""
+        details = super().to_details(findings_count)
+
+        # 添加結構化錯誤統計
+        if self.error_records:
+            error_summary: dict[str, int] = {}
+            for err in self.error_records:
+                category = err.category.value
+                error_summary[category] = error_summary.get(category, 0) + 1
+            details["error_categories"] = error_summary
+            details["error_details"] = [
+                {
+                    "category": err.category.value,
+                    "message": err.message,
+                    "timestamp": err.timestamp.isoformat(),
+                }
+                for err in self.error_records
+            ]
+
+        # 添加 OAST 回調統計
+        if self.oast_callbacks:
+            details["oast_callbacks_count"] = len(self.oast_callbacks)
+            callback_summary: dict[str, int] = {}
+            for cb in self.oast_callbacks:
+                callback_summary[cb.callback_type] = (
+                    callback_summary.get(cb.callback_type, 0) + 1
+                )
+            details["oast_callback_types"] = callback_summary
+
+        # 添加提前停止信息
+        if self.early_stopping:
+            details["early_stopping"] = {
+                "reason": self.early_stopping.reason.value,
+                "completed_tests": self.early_stopping.completed_tests,
+                "total_tests": self.early_stopping.total_tests,
+                "completion_rate": (
+                    self.early_stopping.completed_tests
+                    / self.early_stopping.total_tests
+                    if self.early_stopping.total_tests > 0
+                    else 0.0
+                ),
+            }
+
+        # 添加自適應行為信息
+        if self.adaptive_behavior:
+            details["adaptive_behavior"] = {
+                "batch_size_change": (
+                    self.adaptive_behavior.final_batch_size
+                    - self.adaptive_behavior.initial_batch_size
+                ),
+                "rate_adjustments": self.adaptive_behavior.rate_adjustments,
+                "protection_detections": self.adaptive_behavior.protection_detections,
+                "bypass_attempts": self.adaptive_behavior.bypass_attempts,
+                "success_rate": self.adaptive_behavior.success_rate,
+            }
+
         return details
 
 

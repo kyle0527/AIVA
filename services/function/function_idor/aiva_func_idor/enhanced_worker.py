@@ -19,6 +19,10 @@ from services.aiva_common.schemas import (
 )
 from services.aiva_common.utils import get_logger
 from services.function.common.detection_config import IDORConfig
+from services.function.common.worker_statistics import (
+    StatisticsCollector,
+    StoppingReason,
+)
 
 from .cross_user_tester import CrossUserTester
 from .resource_id_extractor import ResourceIdExtractor
@@ -229,6 +233,11 @@ class EnhancedIDORWorker:
             extra={"task_id": task.task_id, "worker_module": "IDOR"},
         )
 
+        # 創建統計數據收集器
+        stats_collector = StatisticsCollector(
+            task_id=task.task_id, worker_type="idor"
+        )
+
         # 使用智能檢測器執行檢測
         (
             findings_data,
@@ -241,22 +250,73 @@ class EnhancedIDORWorker:
             vertical_tester=vertical_tester,
         )
 
+        # 從檢測指標更新統計數據
+        stats_collector.stats.total_requests = detection_metrics.total_requests
+        stats_collector.stats.successful_requests = (
+            detection_metrics.total_requests - detection_metrics.failed_requests
+        )
+        stats_collector.stats.failed_requests = detection_metrics.failed_requests
+        stats_collector.stats.timeout_requests = detection_metrics.timeout_count
+        stats_collector.stats.rate_limited_requests = (
+            detection_metrics.rate_limited_count
+        )
+
+        # 從檢測上下文中提取水平和垂直測試計數
+        horizontal_tests = 0
+        vertical_tests = 0
+        for finding in findings_data:
+            vuln = finding.get("vulnerability", {})
+            escalation_type = vuln.get("escalation_type", "")
+            if "horizontal" in escalation_type.lower():
+                horizontal_tests += 1
+            elif "vertical" in escalation_type.lower():
+                vertical_tests += 1
+
+        # 設置 IDOR 特定統計數據
+        stats_collector.set_module_specific("horizontal_tests", horizontal_tests)
+        stats_collector.set_module_specific("vertical_tests", vertical_tests)
+        stats_collector.set_module_specific(
+            "id_extraction_attempts", 1
+        )  # 每個任務執行一次
+
         # 轉換為 FindingPayload 對象
         findings = self._convert_to_finding_payloads(findings_data, task)
 
-        # 創建增強版遙測數據
-        telemetry = EnhancedIdorTelemetry(
-            attempts=detection_metrics.total_requests,
-            findings=len(findings),
-            horizontal_tests=0,  # TODO: 從檢測上下文中提取
-            vertical_tests=0,  # TODO: 從檢測上下文中提取
-            id_extraction_attempts=1,  # 假設每個任務執行一次 ID 提取
-            errors=[],  # TODO: 從檢測過程中收集錯誤
-            adaptive_timeout_used=detection_metrics.timeout_count > 0,
-            early_stopping_triggered=False,  # TODO: 從智能管理器獲取
-            rate_limiting_applied=detection_metrics.rate_limited_count > 0,
-            session_duration=detection_metrics.total_time,
+        # 設置自適應行為標記
+        stats_collector.set_adaptive_behavior(
+            adaptive_timeout=detection_metrics.timeout_count > 0,
+            rate_limiting=detection_metrics.rate_limited_count > 0,
             protection_detected=detection_metrics.rate_limited_count > 0,
+        )
+
+        # 檢查是否觸發 early stopping
+        if len(findings) >= self.config.max_vulnerabilities:
+            stats_collector.record_early_stopping(
+                reason=StoppingReason.MAX_VULNERABILITIES,
+                details={
+                    "max_allowed": self.config.max_vulnerabilities,
+                    "found": len(findings),
+                },
+            )
+
+        # 完成統計數據收集
+        final_stats = stats_collector.finalize()
+
+        # 創建增強版遙測數據（保持向後兼容）
+        telemetry = EnhancedIdorTelemetry(
+            attempts=final_stats.total_requests,
+            findings=len(findings),
+            horizontal_tests=horizontal_tests,
+            vertical_tests=vertical_tests,
+            id_extraction_attempts=1,
+            errors=[
+                error["message"] for error in final_stats.error_details
+            ],  # 簡化錯誤列表
+            adaptive_timeout_used=final_stats.adaptive_timeout_used,
+            early_stopping_triggered=final_stats.early_stopping_triggered,
+            rate_limiting_applied=final_stats.rate_limiting_applied,
+            session_duration=final_stats.duration_seconds,
+            protection_detected=final_stats.protection_detected,
         )
 
         logger.info(
@@ -266,8 +326,11 @@ class EnhancedIDORWorker:
                 "worker_module": "IDOR",
                 "findings": len(findings),
                 "attempts": telemetry.attempts,
+                "horizontal_tests": telemetry.horizontal_tests,
+                "vertical_tests": telemetry.vertical_tests,
                 "session_duration": telemetry.session_duration,
                 "early_stopping": telemetry.early_stopping_triggered,
+                "statistics_summary": stats_collector.get_summary(),
             },
         )
 

@@ -27,7 +27,8 @@ AIVA/
 │   │   ├── DATA_STORAGE_GUIDE.md    # 資料存儲指南
 │   │   ├── DATA_STORAGE_PLAN.md     # 資料存儲計劃
 │   │   ├── ENHANCED_FEATURES_QUICKSTART.md # 增強功能指南
-│   │   └── UI_LAUNCH_GUIDE.md       # UI 啟動指南
+│   │   ├── UI_LAUNCH_GUIDE.md       # UI 啟動指南
+│   │   └── FUNCTION_MODULE_DESIGN_PRINCIPLES.md # ⭐ 功能模組設計原則
 │   │
 │   └── 🚀 DEPLOYMENT/             # 部署文檔
 │       └── (待建立)
@@ -49,10 +50,15 @@ AIVA/
 │   │   ├── PHASE2_PROGRESS_UPDATE.md
 │   │   └── ROADMAP_NEXT_10_WEEKS.md
 │   │
-│   └── 🔍 ANALYSIS_REPORTS/      # 分析報告
-│       ├── core_module_comprehensive_analysis.md
-│       ├── core_module_optimization_proposal.md
-│       └── core_optimization_recommendations.md
+│   ├── 🔍 ANALYSIS_REPORTS/      # 分析報告
+│   │   ├── core_module_comprehensive_analysis.md
+│   │   ├── core_module_optimization_proposal.md
+│   │   └── core_optimization_recommendations.md
+│   │
+│   ├── ⭐ FUNCTION_MODULE_DESIGN_PRINCIPLES_REVIEW.md # 功能模組設計原則審查
+│   ├── ⭐ DESIGN_PRINCIPLES_IMPLEMENTATION_SUMMARY.md # 設計原則實施總結
+│   ├── SCHEMAS_ENUMS_EXTENSION_COMPLETE.md # Schema/Enum 擴展完成
+│   └── ENHANCED_WORKER_STATISTICS_COMPLETE.md # Worker 統計數據完成
 │
 ├── 📂 _out/                      # 生成文件
 │   ├── analysis/                   # 程式碼分析結果
@@ -81,6 +87,7 @@ AIVA/
 1. [🧠 AI 架構](docs/ARCHITECTURE/AI_ARCHITECTURE.md) - AI 引擎設計
 2. [📋 Schema 指南](docs/DEVELOPMENT/SCHEMA_GUIDE.md) - 資料結構規範
 3. [💾 資料存儲](docs/DEVELOPMENT/DATA_STORAGE_GUIDE.md) - 資料庫使用
+4. [⭐ 功能模組設計原則](docs/DEVELOPMENT/FUNCTION_MODULE_DESIGN_PRINCIPLES.md) - 多語言模組開發指南
 
 ### 🔧 運維指南
 1. [🎮 UI 啟動](docs/DEVELOPMENT/UI_LAUNCH_GUIDE.md) - Web 介面操作
@@ -91,6 +98,7 @@ AIVA/
 1. [🌐 多語言策略](docs/ARCHITECTURE/MULTILANG_STRATEGY.md) - 多語言整合
 2. [📈 架構分析](reports/ANALYSIS_REPORTS/core_module_comprehensive_analysis.md) - 深度分析
 3. [🔄 遷移報告](reports/MIGRATION_REPORTS/GO_MIGRATION_REPORT.md) - 系統遷移
+4. [⭐ 功能模組審查](reports/FUNCTION_MODULE_DESIGN_PRINCIPLES_REVIEW.md) - 10個模組完整評估
 
 ---
 

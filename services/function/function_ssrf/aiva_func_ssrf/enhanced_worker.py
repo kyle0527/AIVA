@@ -19,6 +19,10 @@ from services.aiva_common.schemas import (
 )
 from services.aiva_common.utils import get_logger
 from services.function.common.detection_config import SSRFConfig
+from services.function.common.worker_statistics import (
+    StatisticsCollector,
+    StoppingReason,
+)
 
 from .internal_address_detector import InternalAddressDetector
 from .oast_dispatcher import OastDispatcher
@@ -196,6 +200,11 @@ class EnhancedSSRFWorker:
             extra={"task_id": task.task_id},
         )
 
+        # 創建統計數據收集器
+        stats_collector = StatisticsCollector(
+            task_id=task.task_id, worker_type="ssrf"
+        )
+
         # 使用智能檢測器執行檢測
         (
             findings_data,
@@ -208,20 +217,66 @@ class EnhancedSSRFWorker:
             dispatcher=dispatcher,
         )
 
+        # 從檢測指標更新統計數據
+        stats_collector.stats.total_requests = detection_metrics.total_requests
+        stats_collector.stats.successful_requests = (
+            detection_metrics.total_requests - detection_metrics.failed_requests
+        )
+        stats_collector.stats.failed_requests = detection_metrics.failed_requests
+        stats_collector.stats.timeout_requests = detection_metrics.timeout_count
+        stats_collector.stats.rate_limited_requests = (
+            detection_metrics.rate_limited_count
+        )
+
+        # 從 findings_data 中提取 OAST 回調數據
+        for finding in findings_data:
+            evidence = finding.get("evidence")
+            # 檢查證據中是否有 OAST 回調信息
+            if evidence and isinstance(evidence, dict) and evidence.get("oast_callback"):
+                callback_info = evidence.get("oast_callback", {})
+                stats_collector.record_oast_callback(
+                    probe_token=callback_info.get("token", "unknown"),
+                    callback_type=callback_info.get("type", "http"),
+                    source_ip=callback_info.get("source_ip", "unknown"),
+                    payload_info=callback_info.get("details", {}),
+                )
+
         # 轉換為 FindingPayload 對象
         findings = self._convert_to_finding_payloads(findings_data, task)
 
-        # 創建增強版遙測數據
-        telemetry = EnhancedSsrfTelemetry(
-            attempts=detection_metrics.total_requests,
-            findings=len(findings),
-            oast_callbacks=0,  # TODO: 從 findings_data 中提取 OAST 回調數據
-            errors=[],  # TODO: 從檢測過程中收集錯誤
-            adaptive_timeout_used=detection_metrics.timeout_count > 0,
-            early_stopping_triggered=False,  # TODO: 從智能管理器獲取
-            rate_limiting_applied=detection_metrics.rate_limited_count > 0,
-            session_duration=detection_metrics.total_time,
+        # 設置自適應行為標記
+        stats_collector.set_adaptive_behavior(
+            adaptive_timeout=detection_metrics.timeout_count > 0,
+            rate_limiting=detection_metrics.rate_limited_count > 0,
             protection_detected=detection_metrics.rate_limited_count > 0,
+        )
+
+        # 檢查是否觸發 early stopping
+        if len(findings) >= self.config.max_vulnerabilities:
+            stats_collector.record_early_stopping(
+                reason=StoppingReason.MAX_VULNERABILITIES,
+                details={
+                    "max_allowed": self.config.max_vulnerabilities,
+                    "found": len(findings),
+                },
+            )
+
+        # 完成統計數據收集
+        final_stats = stats_collector.finalize()
+
+        # 創建增強版遙測數據（保持向後兼容）
+        telemetry = EnhancedSsrfTelemetry(
+            attempts=final_stats.total_requests,
+            findings=len(findings),
+            oast_callbacks=final_stats.oast_callbacks_received,
+            errors=[
+                error["message"] for error in final_stats.error_details
+            ],  # 簡化錯誤列表
+            adaptive_timeout_used=final_stats.adaptive_timeout_used,
+            early_stopping_triggered=final_stats.early_stopping_triggered,
+            rate_limiting_applied=final_stats.rate_limiting_applied,
+            session_duration=final_stats.duration_seconds,
+            protection_detected=final_stats.protection_detected,
         )
 
         logger.info(
@@ -230,8 +285,10 @@ class EnhancedSSRFWorker:
                 "task_id": task.task_id,
                 "findings": len(findings),
                 "attempts": telemetry.attempts,
+                "oast_callbacks": telemetry.oast_callbacks,
                 "session_duration": telemetry.session_duration,
                 "early_stopping": telemetry.early_stopping_triggered,
+                "statistics_summary": stats_collector.get_summary(),
             },
         )
 

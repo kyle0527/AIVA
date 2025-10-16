@@ -14,55 +14,56 @@ AIVA Common Enums Package
 """
 
 # ==================== 通用枚舉 ====================
+# ==================== 資產管理 ====================
+from .assets import (
+    AssetExposure,
+    AssetStatus,
+    AssetType,
+    BusinessCriticality,
+    ComplianceFramework,
+    DataSensitivity,
+    Environment,
+)
 from .common import (
-    Severity,
     Confidence,
+    ErrorCategory,
+    RemediationStatus,
+    RiskLevel,
+    ScanStatus,
+    Severity,
+    StoppingReason,
     TaskStatus,
     TestStatus,
-    ScanStatus,
     ThreatLevel,
-    RiskLevel,
-    RemediationStatus,
 )
 
 # ==================== 模組相關 ====================
 from .modules import (
-    ProgrammingLanguage,
-    LanguageFramework,
     CodeQualityMetric,
+    LanguageFramework,
     ModuleName,
+    ProgrammingLanguage,
     Topic,
 )
 
 # ==================== 安全測試 ====================
 from .security import (
-    VulnerabilityByLanguage,
-    SecurityPattern,
-    VulnerabilityType,
-    VulnerabilityStatus,
-    Location,
-    SensitiveInfoType,
+    AccessDecision,
+    AttackPathEdgeType,
+    AttackPathNodeType,
+    Exploitability,
     IntelSource,
     IOCType,
-    RemediationType,
+    Location,
     Permission,
-    AccessDecision,
-    PostExTestType,
     PersistenceType,
-    Exploitability,
-    AttackPathNodeType,
-    AttackPathEdgeType,
-)
-
-# ==================== 資產管理 ====================
-from .assets import (
-    BusinessCriticality,
-    Environment,
-    AssetType,
-    AssetStatus,
-    DataSensitivity,
-    AssetExposure,
-    ComplianceFramework,
+    PostExTestType,
+    RemediationType,
+    SecurityPattern,
+    SensitiveInfoType,
+    VulnerabilityByLanguage,
+    VulnerabilityStatus,
+    VulnerabilityType,
 )
 
 # 為了保持向後相容，明確匯出所有公開介面
@@ -79,6 +80,7 @@ __all__ = [
     "Confidence",
     "DataSensitivity",
     "Environment",
+    "ErrorCategory",
     "Exploitability",
     "IOCType",
     "IntelSource",
@@ -96,6 +98,7 @@ __all__ = [
     "SecurityPattern",
     "SensitiveInfoType",
     "Severity",
+    "StoppingReason",
     "TaskStatus",
     "TestStatus",
     "ThreatLevel",
@@ -107,3 +110,4 @@ __all__ = [
 
 # 版本資訊
 __version__ = "2.1.0"
+
