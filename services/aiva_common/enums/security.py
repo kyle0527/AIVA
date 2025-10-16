@@ -7,6 +7,79 @@ from __future__ import annotations
 from enum import Enum
 
 
+class VulnerabilityByLanguage(str, Enum):
+    """按程式語言分類的漏洞類型"""
+
+    # 記憶體安全（C/C++）
+    BUFFER_OVERFLOW = "buffer_overflow"
+    USE_AFTER_FREE = "use_after_free"
+    MEMORY_LEAK = "memory_leak"
+    NULL_POINTER_DEREFERENCE = "null_pointer_dereference"
+
+    # 型別安全（動態語言）
+    TYPE_CONFUSION = "type_confusion"
+    PROTOTYPE_POLLUTION = "prototype_pollution"  # JavaScript
+
+    # 並發安全（Go, Rust, Java）
+    RACE_CONDITION = "race_condition"
+    DEADLOCK = "deadlock"
+    DATA_RACE = "data_race"
+
+    # 反序列化（Java, Python, C#）
+    DESERIALIZATION = "deserialization"
+    PICKLE_INJECTION = "pickle_injection"  # Python
+
+    # 程式碼注入
+    CODE_INJECTION = "code_injection"
+    EVAL_INJECTION = "eval_injection"
+    TEMPLATE_INJECTION = "template_injection"
+
+    # 特定語言漏洞
+    SQL_INJECTION = "sql_injection"
+    XSS = "xss"
+    XXE = "xxe"
+    LDAP_INJECTION = "ldap_injection"
+
+    # 配置和依賴
+    DEPENDENCY_CONFUSION = "dependency_confusion"
+    SUPPLY_CHAIN = "supply_chain"
+    MISCONFIGURATION = "misconfiguration"
+
+
+class SecurityPattern(str, Enum):
+    """安全模式枚舉 - 針對不同程式語言的安全實踐"""
+
+    # 輸入驗證
+    INPUT_VALIDATION = "input_validation"
+    SANITIZATION = "sanitization"
+    ENCODING = "encoding"
+
+    # 認證授權
+    AUTHENTICATION = "authentication"
+    AUTHORIZATION = "authorization"
+    JWT_VALIDATION = "jwt_validation"
+
+    # 加密
+    ENCRYPTION = "encryption"
+    HASHING = "hashing"
+    DIGITAL_SIGNATURE = "digital_signature"
+
+    # 安全編碼
+    SECURE_RANDOM = "secure_random"
+    SAFE_DESERIALIZATION = "safe_deserialization"
+    BOUNDS_CHECKING = "bounds_checking"
+
+    # 並發安全
+    THREAD_SAFETY = "thread_safety"
+    ATOMIC_OPERATIONS = "atomic_operations"
+    LOCK_FREE = "lock_free"
+
+    # 錯誤處理
+    ERROR_HANDLING = "error_handling"
+    FAIL_SECURE = "fail_secure"
+    LOGGING = "logging"
+
+
 class VulnerabilityType(str, Enum):
     XSS = "XSS"
     SQLI = "SQL Injection"
@@ -207,4 +280,3 @@ class AttackPathEdgeType(str, Enum):
     EXPOSES = "exposes"
     CONTAINS = "contains"
     CAN_ACCESS = "can_access"
-

@@ -1,0 +1,11 @@
+[build-system]
+requires = ["setuptools>=69", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "aiva-enums-plugin"
+version = "0.1.0"
+description = "Centralized enums plugin that re-exports aiva_common.enums and can generate TS enums"
+readme = "README.md"
+requires-python = ">=3.9"
+dependencies = []

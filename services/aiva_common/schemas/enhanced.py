@@ -9,13 +9,17 @@ from __future__ import annotations
 from datetime import UTC, datetime
 from typing import Any
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, HttpUrl, field_validator
 
-from ..enums import Confidence, ModuleName, Severity, TestStatus, VulnerabilityType
+from ..enums import ModuleName, Severity, TestStatus
+from .ai import CVSSv3Metrics, EnhancedVulnerability, SARIFLocation, SARIFResult
+from .base import RiskFactor, TaskDependency
+from .findings import FindingEvidence, FindingImpact, FindingRecommendation, Target
 
 # ============================================================================
 # Enhanced 版本
 # ============================================================================
+
 
 class EnhancedFindingPayload(BaseModel):
     """增強版漏洞發現 Payload - 集成所有業界標準
@@ -45,6 +49,7 @@ class EnhancedFindingPayload(BaseModel):
     updated_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
 
     @field_validator("finding_id")
+    @classmethod
     def validate_finding_id(cls, v: str) -> str:
         if not v.startswith("finding_"):
             raise ValueError("finding_id must start with 'finding_'")
@@ -65,7 +70,7 @@ class EnhancedFindingPayload(BaseModel):
             Severity.HIGH: "error",
             Severity.MEDIUM: "warning",
             Severity.LOW: "warning",
-            Severity.INFO: "note",
+            Severity.INFORMATIONAL: "note",
         }
 
         locations = []
@@ -84,7 +89,8 @@ class EnhancedFindingPayload(BaseModel):
                 else f"AIVA-{self.vulnerability.name.value}"
             ),
             level=level_mapping.get(self.vulnerability.severity, "warning"),
-            message=self.vulnerability.description or f"{self.vulnerability.name.value} detected",
+            message=self.vulnerability.description
+            or f"{self.vulnerability.name.value} detected",
             locations=locations,
             properties={
                 "finding_id": self.finding_id,
@@ -105,10 +111,14 @@ class EnhancedFindingPayload(BaseModel):
 class EnhancedScanScope(BaseModel):
     """增強掃描範圍定義"""
 
-    included_hosts: list[str] = Field(default_factory=list, description="包含的主機")
-    excluded_hosts: list[str] = Field(default_factory=list, description="排除的主機")
-    included_paths: list[str] = Field(default_factory=list, description="包含的路徑")
-    excluded_paths: list[str] = Field(default_factory=list, description="排除的路徑")
+    included_hosts: list[str] = Field(
+        default_factory=list, description="包含的主機")
+    excluded_hosts: list[str] = Field(
+        default_factory=list, description="排除的主機")
+    included_paths: list[str] = Field(
+        default_factory=list, description="包含的路徑")
+    excluded_paths: list[str] = Field(
+        default_factory=list, description="排除的路徑")
     max_depth: int = Field(default=5, ge=1, le=20, description="最大掃描深度")
 
 
@@ -147,7 +157,9 @@ class EnhancedIOCRecord(BaseModel):
     """增強威脅指標記錄 (Indicator of Compromise)"""
 
     ioc_id: str = Field(description="IOC唯一標識符")
-    ioc_type: str = Field(description="IOC類型")  # "ip", "domain", "url", "hash", "email"
+    ioc_type: str = Field(
+        description="IOC類型"
+    )  # "ip", "domain", "url", "hash", "email"
     value: str = Field(description="IOC值")
 
     # 威脅信息
@@ -167,7 +179,9 @@ class EnhancedIOCRecord(BaseModel):
 
     # 標籤和分類
     tags: list[str] = Field(default_factory=list, description="標籤")
-    mitre_techniques: list[str] = Field(default_factory=list, description="MITRE ATT&CK技術")
+    mitre_techniques: list[str] = Field(
+        default_factory=list, description="MITRE ATT&CK技術"
+    )
 
     metadata: dict[str, Any] = Field(default_factory=dict, description="元數據")
 
@@ -191,14 +205,18 @@ class EnhancedRiskAssessment(BaseModel):
     risk_factors: list[RiskFactor] = Field(description="風險因子列表")
 
     # CVSS 整合
-    cvss_metrics: CVSSv3Metrics | None = Field(default=None, description="CVSS評分")
+    cvss_metrics: CVSSv3Metrics | None = Field(
+        default=None, description="CVSS評分")
 
     # 業務影響
     business_impact: str | None = Field(default=None, description="業務影響描述")
-    affected_assets: list[str] = Field(default_factory=list, description="受影響資產")
+    affected_assets: list[str] = Field(
+        default_factory=list, description="受影響資產")
 
     # 緩解措施
-    mitigation_strategies: list[str] = Field(default_factory=list, description="緩解策略")
+    mitigation_strategies: list[str] = Field(
+        default_factory=list, description="緩解策略"
+    )
     residual_risk: float = Field(ge=0.0, le=10.0, description="殘餘風險")
 
     # 時間戳
@@ -212,7 +230,9 @@ class EnhancedAttackPathNode(BaseModel):
     """增強攻擊路徑節點"""
 
     node_id: str = Field(description="節點ID")
-    node_type: str = Field(description="節點類型")  # "asset", "vulnerability", "technique"
+    node_type: str = Field(
+        description="節點類型"
+    )  # "asset", "vulnerability", "technique"
     name: str = Field(description="節點名稱")
     description: str | None = Field(default=None, description="節點描述")
 
@@ -253,8 +273,10 @@ class EnhancedAttackPath(BaseModel):
     overall_risk: float = Field(ge=0.0, le=10.0, description="總體風險")
 
     # 緩解措施
-    blocking_controls: list[str] = Field(default_factory=list, description="阻斷控制")
-    detection_controls: list[str] = Field(default_factory=list, description="檢測控制")
+    blocking_controls: list[str] = Field(
+        default_factory=list, description="阻斷控制")
+    detection_controls: list[str] = Field(
+        default_factory=list, description="檢測控制")
 
     metadata: dict[str, Any] = Field(default_factory=dict, description="元數據")
 
@@ -272,14 +294,17 @@ class EnhancedTaskExecution(BaseModel):
     retry_count: int = Field(default=3, ge=0, description="重試次數")
 
     # 依賴關係
-    dependencies: list[TaskDependency] = Field(default_factory=list, description="任務依賴")
+    dependencies: list[TaskDependency] = Field(
+        default_factory=list, description="任務依賴"
+    )
 
     # 執行狀態
     status: TestStatus = Field(description="執行狀態")
     progress: float = Field(ge=0.0, le=1.0, description="執行進度")
 
     # 結果信息
-    result_data: dict[str, Any] = Field(default_factory=dict, description="結果數據")
+    result_data: dict[str, Any] = Field(
+        default_factory=dict, description="結果數據")
     error_message: str | None = Field(default=None, description="錯誤消息")
 
     # 資源使用
@@ -316,18 +341,24 @@ class EnhancedVulnerabilityCorrelation(BaseModel):
 
     # 組合影響
     combined_risk_score: float = Field(ge=0.0, le=10.0, description="組合風險評分")
-    exploitation_complexity: float = Field(ge=0.0, le=10.0, description="利用複雜度")
+    exploitation_complexity: float = Field(
+        ge=0.0, le=10.0, description="利用複雜度")
 
     # 攻擊場景
-    attack_scenarios: list[str] = Field(default_factory=list, description="攻擊場景")
-    recommended_order: list[str] = Field(default_factory=list, description="建議利用順序")
+    attack_scenarios: list[str] = Field(
+        default_factory=list, description="攻擊場景")
+    recommended_order: list[str] = Field(
+        default_factory=list, description="建議利用順序"
+    )
 
     # 緩解建議
-    coordinated_mitigation: list[str] = Field(default_factory=list, description="協調緩解措施")
-    priority_ranking: list[str] = Field(default_factory=list, description="優先級排序")
+    coordinated_mitigation: list[str] = Field(
+        default_factory=list, description="協調緩解措施"
+    )
+    priority_ranking: list[str] = Field(
+        default_factory=list, description="優先級排序")
 
     # 時間戳
     analyzed_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
 
     metadata: dict[str, Any] = Field(default_factory=dict, description="元數據")
-

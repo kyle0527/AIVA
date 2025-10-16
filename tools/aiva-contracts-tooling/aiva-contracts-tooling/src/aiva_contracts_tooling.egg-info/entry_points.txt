@@ -1,0 +1,2 @@
+[console_scripts]
+aiva-contracts = aiva_contracts_tooling.cli:main

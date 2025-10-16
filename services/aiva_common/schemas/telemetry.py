@@ -37,6 +37,7 @@ class ModuleStatus(BaseModel):
     uptime_seconds: float = 0.0
 
     @field_validator("status")
+    @classmethod
     def validate_status(cls, v: str) -> str:
         allowed = {"running", "stopped", "error", "initializing", "degraded"}
         if v not in allowed:
@@ -92,10 +93,12 @@ class OastEvent(BaseModel):
     raw_data: dict[str, Any] = Field(default_factory=dict)
 
     @field_validator("event_type")
+    @classmethod
     def validate_event_type(cls, v: str) -> str:
         allowed = {"http", "dns", "smtp", "ftp", "ldap", "other"}
         if v not in allowed:
-            raise ValueError(f"Invalid event_type: {v}. Must be one of {allowed}")
+            raise ValueError(
+                f"Invalid event_type: {v}. Must be one of {allowed}")
         return v
 
 
@@ -112,6 +115,7 @@ class OastProbe(BaseModel):
     status: str = "active"
 
     @field_validator("status")
+    @classmethod
     def validate_status(cls, v: str) -> str:
         allowed = {"active", "triggered", "expired", "cancelled"}
         if v not in allowed:
@@ -150,6 +154,7 @@ class NotificationPayload(BaseModel):
 # SIEM 事件 (詳細版)
 # ============================================================================
 
+
 class SIEMEvent(BaseModel):
     """SIEM事件記錄"""
 
@@ -182,8 +187,11 @@ class SIEMEvent(BaseModel):
     raw_log: str | None = Field(default=None, description="原始日誌")
 
     # 關聯分析
-    correlation_rules: list[str] = Field(default_factory=list, description="觸發的關聯規則")
-    related_events: list[str] = Field(default_factory=list, description="相關事件ID")
+    correlation_rules: list[str] = Field(
+        default_factory=list, description="觸發的關聯規則"
+    )
+    related_events: list[str] = Field(
+        default_factory=list, description="相關事件ID")
 
     # 處理狀態
     status: str = Field(

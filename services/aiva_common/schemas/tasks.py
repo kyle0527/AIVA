@@ -13,12 +13,9 @@ from typing import Any
 from pydantic import BaseModel, Field, HttpUrl, field_validator
 
 from ..enums import (
-    AuthType,
     Confidence,
-    CrawlingStrategy,
     IntelSource,
     IOCType,
-    ModuleName,
     PostExTestType,
     RemediationType,
     Severity,
@@ -26,8 +23,7 @@ from ..enums import (
     ThreatLevel,
     VulnerabilityType,
 )
-from .base import Authentication, RateLimit, ScanScope, Asset, Summary, Fingerprints
-
+from .base import Asset, Authentication, Fingerprints, RateLimit, ScanScope, Summary
 
 # ==================== 掃描任務 ====================
 
@@ -54,6 +50,7 @@ class ScanStartPayload(BaseModel):
         return v
 
     @field_validator("targets")
+    @classmethod
     def validate_targets(cls, v: list[HttpUrl]) -> list[HttpUrl]:
         if not v:
             raise ValueError("At least one target required")
@@ -62,10 +59,12 @@ class ScanStartPayload(BaseModel):
         return v
 
     @field_validator("strategy")
+    @classmethod
     def validate_strategy(cls, v: str) -> str:
         allowed = {"quick", "normal", "deep", "full", "custom"}
         if v not in allowed:
-            raise ValueError(f"Invalid strategy: {v}. Must be one of {allowed}")
+            raise ValueError(
+                f"Invalid strategy: {v}. Must be one of {allowed}")
         return v
 
 
@@ -125,21 +124,25 @@ class FunctionTaskPayload(BaseModel):
     context: FunctionTaskContext = Field(default_factory=FunctionTaskContext)
     strategy: str = "full"
     custom_payloads: list[str] | None = None
-    test_config: FunctionTaskTestConfig = Field(default_factory=FunctionTaskTestConfig)
+    test_config: FunctionTaskTestConfig = Field(
+        default_factory=FunctionTaskTestConfig)
 
     @field_validator("task_id")
+    @classmethod
     def validate_task_id(cls, v: str) -> str:
         if not v.startswith("task_"):
             raise ValueError("task_id must start with 'task_'")
         return v
 
     @field_validator("scan_id")
+    @classmethod
     def validate_scan_id(cls, v: str) -> str:
         if not v.startswith("scan_"):
             raise ValueError("scan_id must start with 'scan_'")
         return v
 
     @field_validator("priority")
+    @classmethod
     def validate_priority(cls, v: int) -> int:
         if not 1 <= v <= 10:
             raise ValueError("priority must be between 1 and 10")
@@ -386,6 +389,7 @@ class EASMDiscoveryResult(BaseModel):
 # 測試和漏洞利用
 # ============================================================================
 
+
 class StandardScenario(BaseModel):
     """標準靶場場景 - 用於訓練和測試"""
 
@@ -421,7 +425,9 @@ class ExploitPayload(BaseModel):
     """漏洞利用載荷"""
 
     payload_id: str = Field(description="載荷ID")
-    payload_type: str = Field(description="載荷類型")  # "xss", "sqli", "command_injection"
+    payload_type: str = Field(
+        description="載荷類型"
+    )  # "xss", "sqli", "command_injection"
     payload_content: str = Field(description="載荷內容")
 
     # 載荷屬性
@@ -430,8 +436,11 @@ class ExploitPayload(BaseModel):
     bypass_technique: str | None = Field(default=None, description="繞過技術")
 
     # 適用條件
-    target_technology: list[str] = Field(default_factory=list, description="目標技術")
-    required_context: dict[str, Any] = Field(default_factory=dict, description="所需上下文")
+    target_technology: list[str] = Field(
+        default_factory=list, description="目標技術")
+    required_context: dict[str, Any] = Field(
+        default_factory=dict, description="所需上下文"
+    )
 
     # 效果評估
     effectiveness_score: float = Field(ge=0.0, le=1.0, description="效果評分")
@@ -467,15 +476,18 @@ class TestExecution(BaseModel):
     confidence_level: Confidence = Field(description="結果置信度")
 
     # 詳細信息
-    request_data: dict[str, Any] = Field(default_factory=dict, description="請求數據")
-    response_data: dict[str, Any] = Field(default_factory=dict, description="響應數據")
+    request_data: dict[str, Any] = Field(
+        default_factory=dict, description="請求數據")
+    response_data: dict[str, Any] = Field(
+        default_factory=dict, description="響應數據")
     evidence: list[str] = Field(default_factory=list, description="證據列表")
     error_message: str | None = Field(default=None, description="錯誤消息")
 
     # 資源使用
     cpu_usage: float | None = Field(default=None, description="CPU使用率")
     memory_usage: int | None = Field(default=None, description="內存使用(MB)")
-    network_traffic: int | None = Field(default=None, description="網絡流量(bytes)")
+    network_traffic: int | None = Field(
+        default=None, description="網絡流量(bytes)")
 
     metadata: dict[str, Any] = Field(default_factory=dict, description="元數據")
 
@@ -490,7 +502,9 @@ class ExploitResult(BaseModel):
     # 利用狀態
     success: bool = Field(description="利用是否成功")
     severity: Severity = Field(description="嚴重程度")
-    impact_level: str = Field(description="影響級別")  # "critical", "high", "medium", "low"
+    impact_level: str = Field(
+        description="影響級別"
+    )  # "critical", "high", "medium", "low"
 
     # 利用細節
     exploit_technique: str = Field(description="利用技術")
@@ -498,13 +512,17 @@ class ExploitResult(BaseModel):
     execution_time: float = Field(ge=0.0, description="執行時間(秒)")
 
     # 獲得的訪問
-    access_gained: dict[str, Any] = Field(default_factory=dict, description="獲得的訪問權限")
-    data_extracted: list[str] = Field(default_factory=list, description="提取的數據")
+    access_gained: dict[str, Any] = Field(
+        default_factory=dict, description="獲得的訪問權限"
+    )
+    data_extracted: list[str] = Field(
+        default_factory=list, description="提取的數據")
     system_impact: str | None = Field(default=None, description="系統影響")
 
     # 檢測規避
     detection_bypassed: bool = Field(description="是否繞過檢測")
-    artifacts_left: list[str] = Field(default_factory=list, description="留下的痕跡")
+    artifacts_left: list[str] = Field(
+        default_factory=list, description="留下的痕跡")
 
     # 修復驗證
     remediation_verified: bool = Field(default=False, description="修復是否已驗證")
@@ -529,12 +547,18 @@ class TestStrategy(BaseModel):
     parallel_execution: bool = Field(default=False, description="是否並行執行")
 
     # 條件配置
-    trigger_conditions: list[str] = Field(default_factory=list, description="觸發條件")
-    stop_conditions: list[str] = Field(default_factory=list, description="停止條件")
+    trigger_conditions: list[str] = Field(
+        default_factory=list, description="觸發條件")
+    stop_conditions: list[str] = Field(
+        default_factory=list, description="停止條件")
 
     # 優先級和資源
-    priority_weights: dict[str, float] = Field(default_factory=dict, description="優先級權重")
-    resource_limits: dict[str, Any] = Field(default_factory=dict, description="資源限制")
+    priority_weights: dict[str, float] = Field(
+        default_factory=dict, description="優先級權重"
+    )
+    resource_limits: dict[str, Any] = Field(
+        default_factory=dict, description="資源限制"
+    )
 
     # 適應性配置
     learning_enabled: bool = Field(default=True, description="是否啟用學習")

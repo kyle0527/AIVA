@@ -1,7 +1,7 @@
 """
 漏洞發現相關 Schema
 
-此模組定義了所有與漏洞發現和報告相關的資料模型。
+此模組包含與漏洞發現、證據收集、影響評估等相關的資料模型。
 """
 
 from __future__ import annotations
@@ -12,7 +12,6 @@ from typing import Any
 from pydantic import BaseModel, Field, field_validator
 
 from ..enums import Confidence, Severity, VulnerabilityType
-
 
 # ==================== 漏洞基本資訊 ====================
 
@@ -121,24 +120,28 @@ class FindingPayload(BaseModel):
     updated_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
 
     @field_validator("finding_id")
+    @classmethod
     def validate_finding_id(cls, v: str) -> str:
         if not v.startswith("finding_"):
             raise ValueError("finding_id must start with 'finding_'")
         return v
 
     @field_validator("task_id")
+    @classmethod
     def validate_task_id(cls, v: str) -> str:
         if not v.startswith("task_"):
             raise ValueError("task_id must start with 'task_'")
         return v
 
     @field_validator("scan_id")
+    @classmethod
     def validate_scan_id(cls, v: str) -> str:
         if not v.startswith("scan_'"):
             raise ValueError("scan_id must start with 'scan_'")
         return v
 
     @field_validator("status")
+    @classmethod
     def validate_status(cls, v: str) -> str:
         allowed = {"confirmed", "potential", "false_positive", "needs_review"}
         if v not in allowed:
@@ -171,12 +174,16 @@ class JavaScriptAnalysisResult(BaseModel):
     source_size_bytes: int
 
     # 詳細分析結果
-    dangerous_functions: list[str] = Field(default_factory=list)  # eval, Function, setTimeout等
+    dangerous_functions: list[str] = Field(
+        default_factory=list
+    )  # eval, Function, setTimeout等
     external_resources: list[str] = Field(default_factory=list)  # 外部 URL
     data_leaks: list[dict[str, str]] = Field(default_factory=list)  # 數據洩漏信息
 
     # 通用欄位 (保持兼容)
-    findings: list[str] = Field(default_factory=list)  # e.g., ["uses_eval", "dom_manipulation"]
+    findings: list[str] = Field(
+        default_factory=list
+    )  # e.g., ["uses_eval", "dom_manipulation"]
     apis_called: list[str] = Field(default_factory=list)  # 發現的 API 端點
     ajax_endpoints: list[str] = Field(default_factory=list)  # AJAX 呼叫端點
     suspicious_patterns: list[str] = Field(default_factory=list)

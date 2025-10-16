@@ -1,0 +1,14 @@
+[build-system]
+requires = ["setuptools>=69", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "aiva-contracts-tooling"
+version = "0.1.0"
+description = "CLI to export JSON Schema & TS types from aiva_schemas_plugin (Pydantic v2)"
+readme = "README.md"
+requires-python = ">=3.9"
+dependencies = []
+
+[project.scripts]
+aiva-contracts = "aiva_contracts_tooling.cli:main"

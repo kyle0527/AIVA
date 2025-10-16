@@ -31,16 +31,16 @@ Example:
 
 from __future__ import annotations
 
-from collections.abc import Mapping
 import hashlib
 import json
 import logging
-from pathlib import Path
 import sqlite3
 import threading
 import time
-from typing import Any
 import weakref
+from collections.abc import Mapping
+from pathlib import Path
+from typing import Any
 
 logger = logging.getLogger(__name__)
 
@@ -253,7 +253,8 @@ class DeDup:
                 return True
 
             # Mark as seen
-            expires = (now + self._ttl_seconds) if self._ttl_seconds > 0 else None
+            expires = (
+                now + self._ttl_seconds) if self._ttl_seconds > 0 else None
             self._conn.execute(
                 "INSERT OR REPLACE INTO fingerprints (fingerprint, expires) VALUES (?, ?)",
                 (digest, expires),
@@ -299,7 +300,8 @@ class DeDup:
         """
         with self._lock:
             self._prune(time.time())
-            row = self._conn.execute("SELECT COUNT(*) FROM fingerprints").fetchone()
+            row = self._conn.execute(
+                "SELECT COUNT(*) FROM fingerprints").fetchone()
             return row[0] if row else 0
 
     def clear(self) -> None:

@@ -1,0 +1,11 @@
+LICENSE.txt
+README.md
+pyproject.toml
+setup.cfg
+src/aiva_schemas_plugin/__init__.py
+src/aiva_schemas_plugin/py.typed
+src/aiva_schemas_plugin.egg-info/PKG-INFO
+src/aiva_schemas_plugin.egg-info/SOURCES.txt
+src/aiva_schemas_plugin.egg-info/dependency_links.txt
+src/aiva_schemas_plugin.egg-info/top_level.txt
+tests/test_import.py

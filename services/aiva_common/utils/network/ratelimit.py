@@ -31,14 +31,14 @@ from __future__ import annotations
 
 import asyncio
 import contextlib
-from email.utils import parsedate_to_datetime
 import json
 import logging
 import os
-from pathlib import Path
 import re
 import threading
 import time
+from email.utils import parsedate_to_datetime
+from pathlib import Path
 from typing import Any
 
 logger = logging.getLogger(__name__)
@@ -116,9 +116,13 @@ class RateLimiter:
         self.config_lock = threading.Lock()
         self._host_usage_lock = threading.Lock()
         self.min_global_rps = 0.05
-        self.max_global_rps = max(self.global_rps * 10.0, self.global_rps + 10.0)
+        self.max_global_rps = max(
+            self.global_rps * 10.0,
+            self.global_rps + 10.0)
         self.min_per_host_rps = 0.05
-        self.max_per_host_rps = max(self.per_host_rps * 10.0, self.per_host_rps + 10.0)
+        self.max_per_host_rps = max(
+            self.per_host_rps * 10.0,
+            self.per_host_rps + 10.0)
         self._state_write_interval = 1.0
         self._next_state_write = 0.0
         try:
@@ -132,8 +136,8 @@ class RateLimiter:
             cleanup_val = 60.0
         self._cleanup_interval = cleanup_val if cleanup_val > 0 else 0.0
         self._next_cleanup = (
-            time.monotonic() + self._cleanup_interval if self._cleanup_interval else 0.0
-        )
+            time.monotonic() +
+            self._cleanup_interval if self._cleanup_interval else 0.0)
 
         # Initialize cooldown tracking and logging
         self._cooldown_until: dict[str, float] = {}
@@ -201,7 +205,8 @@ class RateLimiter:
         with b.lock:
             b.tokens = max(0.0, b.tokens - penalty)
         if status is not None or latency is not None:
-            self.update_from_response(host, status_code=status, latency=latency)
+            self.update_from_response(
+                host, status_code=status, latency=latency)
         self._write_state()
 
     def update_from_response(
@@ -240,8 +245,7 @@ class RateLimiter:
         try:
             if headers and any(k.lower() == "retry-after" for k in headers):
                 ra_val = next(
-                    (headers[k] for k in headers if k.lower() == "retry-after"), None
-                )
+                    (headers[k] for k in headers if k.lower() == "retry-after"), None)
                 if ra_val is not None:
                     ra_val = str(ra_val).strip()
                     # numeric seconds
@@ -329,15 +333,15 @@ class RateLimiter:
 
         # Cooldown cleanup: if success and latency is good, end cooldown early
         try:
-            if status_code and 200 <= int(status_code) < 300 and latency is not None:
+            if status_code and 200 <= int(
+                    status_code) < 300 and latency is not None:
                 until = self._cooldown_until.get(host)
                 if until:
                     now = time.monotonic()
                     if now + max(0.0, latency) * 2 < until:
                         self._cooldown_until.pop(host, None)
                         self._log.info(
-                            "ratelimiter.cooldown_end host=%s reason=success", host
-                        )
+                            "ratelimiter.cooldown_end host=%s reason=success", host)
         except Exception:
             pass
 
@@ -433,7 +437,8 @@ class RateLimiter:
                 saved_at_f = float(saved_at) if saved_at is not None else 0.0
             except (TypeError, ValueError):
                 saved_at_f = 0.0
-            base_elapsed = max(0.0, now_wall - saved_at_f) if saved_at_f else 0.0
+            base_elapsed = max(
+                0.0, now_wall - saved_at_f) if saved_at_f else 0.0
 
             # Restore global bucket
             global_state = data.get("global")
@@ -444,14 +449,16 @@ class RateLimiter:
                 except (TypeError, ValueError):
                     rate = self.global_rps
                 self._set_global_rate(rate)
-                tokens_val = global_state.get("tokens", self.global_bucket.tokens)
+                tokens_val = global_state.get(
+                    "tokens", self.global_bucket.tokens)
                 try:
                     tokens = float(tokens_val)
                 except (TypeError, ValueError):
                     tokens = self.global_bucket.tokens
                 updated_val = global_state.get("updated")
                 try:
-                    updated_at = float(updated_val) if updated_val is not None else None
+                    updated_at = float(
+                        updated_val) if updated_val is not None else None
                 except (TypeError, ValueError):
                     updated_at = None
                 elapsed = (
@@ -461,7 +468,8 @@ class RateLimiter:
                 )
                 with self.global_bucket.lock:
                     refill = tokens + elapsed * self.global_bucket.rate
-                    self.global_bucket.tokens = min(self.global_bucket.capacity, refill)
+                    self.global_bucket.tokens = min(
+                        self.global_bucket.capacity, refill)
                     self.global_bucket.updated = max(now_mono - elapsed, 0.0)
 
             # Clear host buckets
@@ -509,8 +517,7 @@ class RateLimiter:
                     updated_val = bucket_data.get("updated")
                     try:
                         updated_at = (
-                            float(updated_val) if updated_val is not None else None
-                        )
+                            float(updated_val) if updated_val is not None else None)
                     except (TypeError, ValueError):
                         updated_at = None
                     elapsed = (
@@ -561,7 +568,8 @@ class RateLimiter:
         with self.config_lock:
             self.per_host_rps = clamped
             self.default_host_burst = max(1, int(clamped))
-            unaffected = [h for h in self.host_buckets if h not in self.host_overrides]
+            unaffected = [
+                h for h in self.host_buckets if h not in self.host_overrides]
         for host in unaffected:
             self._apply_rate(self.host_buckets[host], clamped)
 
@@ -584,8 +592,8 @@ class RateLimiter:
         with self.config_lock:
             current = self.host_overrides.get(host, self.per_host_rps)
             new_rate = max(
-                self.min_per_host_rps, min(self.max_per_host_rps, current * factor)
-            )
+                self.min_per_host_rps, min(
+                    self.max_per_host_rps, current * factor))
             self.host_overrides[host] = new_rate
         bucket = self._bucket_for(host)
         self._apply_rate(bucket, new_rate)
@@ -645,8 +653,8 @@ class RateLimiter:
         cutoff = now_mono - ttl_val
         with self._host_usage_lock:
             stale_hosts = [
-                host for host, seen in self.host_last_used.items() if seen < cutoff
-            ]
+                host for host,
+                seen in self.host_last_used.items() if seen < cutoff]
         if not stale_hosts:
             return
         with self._host_usage_lock:

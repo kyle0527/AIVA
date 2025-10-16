@@ -51,22 +51,22 @@ from .enums import (
 
 # 從 schemas.py 導入所有類（統一來源）
 with contextlib.suppress(ImportError):
+    # 授權分析; 安全標準和評分; 增強型漏洞處理; 功能任務相關; 核心消息系統
+    # 模組狀態; OAST (Out-of-Band Application Security Testing); 後滲透測試
+    # 修復建議; SARIF 報告格式; 掃描相關; 任務管理和遙測; 威脅情報; 漏洞和發現
     from .schemas import (
         AivaMessage,
         Asset,
         Authentication,
         AuthZAnalysisPayload,
-        # 授權分析
         AuthZCheckPayload,
         AuthZResultPayload,
         CAPECReference,
         ConfigUpdatePayload,
         CVEReference,
-        # 安全標準和評分
         CVSSv3Metrics,
         CWEReference,
         EnhancedFindingPayload,
-        # 增強型漏洞處理
         EnhancedVulnerability,
         ExecutionError,
         FeedbackEventPayload,
@@ -78,27 +78,20 @@ with contextlib.suppress(ImportError):
         FunctionExecutionResult,
         FunctionTaskContext,
         FunctionTaskPayload,
-        # 功能任務相關
         FunctionTaskTarget,
         FunctionTaskTestConfig,
         FunctionTelemetry,
         HeartbeatPayload,
         JavaScriptAnalysisResult,
-        # 核心消息系統
         MessageHeader,
-        # 模組狀態
         ModuleStatus,
-        # OAST (Out-of-Band Application Security Testing)
         OastEvent,
         OastProbe,
         PostExResultPayload,
-        # 後滲透測試
         PostExTestPayload,
         RateLimit,
-        # 修復建議
         RemediationGeneratePayload,
         RemediationResultPayload,
-        # SARIF 報告格式
         SARIFLocation,
         SARIFReport,
         SARIFResult,
@@ -106,18 +99,14 @@ with contextlib.suppress(ImportError):
         SARIFRun,
         SARIFTool,
         ScanCompletedPayload,
-        # 掃描相關
         ScanScope,
         ScanStartPayload,
         SensitiveMatch,
         Summary,
         Target,
-        # 任務管理和遙測
         TaskUpdatePayload,
-        # 威脅情報
         ThreatIntelLookupPayload,
         ThreatIntelResultPayload,
-        # 漏洞和發現
         Vulnerability,
     )
 

@@ -1,0 +1,19 @@
+[build-system]
+requires = ["setuptools>=69", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "aiva-schemas-plugin"
+version = "0.1.0"
+description = "Centralized schemas plugin that re-exports aiva_common.schemas"
+readme = "README.md"
+requires-python = ">=3.9"
+authors = [{name = "Your Team"}]
+dependencies = []
+
+[project.urls]
+Homepage = "https://example.com/"
+
+
+[tool.setuptools.package-data]
+aiva_schemas_plugin = ["py.typed"]

@@ -7,11 +7,10 @@
 from __future__ import annotations
 
 from datetime import UTC, datetime
-from typing import Any
 
-from pydantic import BaseModel, Field, HttpUrl, field_validator
+from pydantic import BaseModel, Field, field_validator
 
-from ..enums import ModuleName, Severity, Topic
+from ..enums import ModuleName
 
 
 class MessageHeader(BaseModel):
@@ -107,7 +106,9 @@ class RiskFactor(BaseModel):
 class TaskDependency(BaseModel):
     """任務依賴"""
 
-    dependency_type: str = Field(description="依賴類型")  # "prerequisite", "blocker", "input"
+    dependency_type: str = Field(
+        description="依賴類型"
+    )  # "prerequisite", "blocker", "input"
     dependent_task_id: str = Field(description="依賴任務ID")
     condition: str | None = Field(default=None, description="依賴條件")
     required: bool = Field(default=True, description="是否必需")

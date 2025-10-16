@@ -88,4 +88,3 @@ class RemediationStatus(str, Enum):
     VERIFIED = "verified"
     FAILED = "failed"
     REJECTED = "rejected"
-

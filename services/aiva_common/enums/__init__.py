@@ -14,50 +14,54 @@ AIVA Common Enums Package
 """
 
 # ==================== 通用枚舉 ====================
+# ==================== 資產管理 ====================
+from .assets import (
+    AssetExposure,
+    AssetStatus,
+    AssetType,
+    BusinessCriticality,
+    ComplianceFramework,
+    DataSensitivity,
+    Environment,
+)
 from .common import (
-    Severity,
     Confidence,
+    RemediationStatus,
+    RiskLevel,
+    ScanStatus,
+    Severity,
     TaskStatus,
     TestStatus,
-    ScanStatus,
     ThreatLevel,
-    RiskLevel,
-    RemediationStatus,
 )
 
 # ==================== 模組相關 ====================
 from .modules import (
+    CodeQualityMetric,
+    LanguageFramework,
     ModuleName,
+    ProgrammingLanguage,
     Topic,
 )
 
 # ==================== 安全測試 ====================
 from .security import (
-    VulnerabilityType,
-    VulnerabilityStatus,
-    Location,
-    SensitiveInfoType,
+    AccessDecision,
+    AttackPathEdgeType,
+    AttackPathNodeType,
+    Exploitability,
     IntelSource,
     IOCType,
-    RemediationType,
+    Location,
     Permission,
-    AccessDecision,
-    PostExTestType,
     PersistenceType,
-    Exploitability,
-    AttackPathNodeType,
-    AttackPathEdgeType,
-)
-
-# ==================== 資產管理 ====================
-from .assets import (
-    BusinessCriticality,
-    Environment,
-    AssetType,
-    AssetStatus,
-    DataSensitivity,
-    AssetExposure,
-    ComplianceFramework,
+    PostExTestType,
+    RemediationType,
+    SecurityPattern,
+    SensitiveInfoType,
+    VulnerabilityByLanguage,
+    VulnerabilityStatus,
+    VulnerabilityType,
 )
 
 # 為了保持向後相容，明確匯出所有公開介面
@@ -69,6 +73,7 @@ __all__ = [
     "AttackPathEdgeType",
     "AttackPathNodeType",
     "BusinessCriticality",
+    "CodeQualityMetric",
     "ComplianceFramework",
     "Confidence",
     "DataSensitivity",
@@ -76,24 +81,28 @@ __all__ = [
     "Exploitability",
     "IOCType",
     "IntelSource",
+    "LanguageFramework",
     "Location",
     "ModuleName",
     "Permission",
     "PersistenceType",
     "PostExTestType",
+    "ProgrammingLanguage",
     "RemediationStatus",
     "RemediationType",
     "RiskLevel",
     "ScanStatus",
+    "SecurityPattern",
     "SensitiveInfoType",
     "Severity",
     "TaskStatus",
     "TestStatus",
     "ThreatLevel",
     "Topic",
+    "VulnerabilityByLanguage",
     "VulnerabilityStatus",
     "VulnerabilityType",
 ]
 
 # 版本資訊
-__version__ = "2.0.0"
+__version__ = "2.1.0"

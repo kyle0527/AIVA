@@ -13,7 +13,8 @@ AIVA Common Models - 共享基礎模型
 """
 
 from __future__ import annotations
-me
+
+from datetime import UTC, datetime
 from typing import Any
 
 from pydantic import BaseModel, Field, field_validator
@@ -58,7 +59,8 @@ class Authentication(BaseModel):
     """通用認證配置"""
 
     method: str = Field(default="none", description="認證方法")
-    credentials: dict[str, str] | None = Field(default=None, description="認證憑據")
+    credentials: dict[str, str] | None = Field(
+        default=None, description="認證憑據")
 
 
 class RateLimit(BaseModel):
@@ -100,11 +102,13 @@ class CVSSv3Metrics(BaseModel):
         pattern=r"^[NLH]$",
     )
     user_interaction: str = Field(
-        default="N", description="用戶交互: N(None), R(Required)", pattern=r"^[NR]$"
-    )
+        default="N",
+        description="用戶交互: N(None), R(Required)",
+        pattern=r"^[NR]$")
     scope: str = Field(
-        default="U", description="影響範圍: U(Unchanged), C(Changed)", pattern=r"^[UC]$"
-    )
+        default="U",
+        description="影響範圍: U(Unchanged), C(Changed)",
+        pattern=r"^[UC]$")
     confidentiality_impact: str = Field(
         default="N",
         description="機密性影響: N(None), L(Low), H(High)",
@@ -124,12 +128,18 @@ class CVSSv3Metrics(BaseModel):
     # Temporal Metrics (時間指標) - 可選
     exploit_code_maturity: str | None = Field(
         default=None,
-        description="利用代碼成熟度: X(Not Defined), U(Unproven), P(Proof-of-Concept), F(Functional), H(High)",
+        description=(
+            "利用代碼成熟度: X(Not Defined), U(Unproven), "
+            "P(Proof-of-Concept), F(Functional), H(High)"
+        ),
         pattern=r"^[XUPFH]$",
     )
     remediation_level: str | None = Field(
         default=None,
-        description="修復級別: X(Not Defined), O(Official Fix), T(Temporary Fix), W(Workaround), U(Unavailable)",
+        description=(
+            "修復級別: X(Not Defined), O(Official Fix), "
+            "T(Temporary Fix), W(Workaround), U(Unavailable)"
+        ),
         pattern=r"^[XOTWU]$",
     )
     report_confidence: str | None = Field(
@@ -168,7 +178,8 @@ class CVSSv3Metrics(BaseModel):
 
     # Vector String
     vector_string: str | None = Field(
-        default=None, description="CVSS向量字符串，如: CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H"
+        default=None,
+        description="CVSS向量字符串，如: CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
     )
 
 
@@ -185,7 +196,9 @@ class CVEReference(BaseModel):
     description: str | None = Field(default=None, description="CVE描述")
     published_date: datetime | None = Field(default=None, description="發布日期")
     last_modified: datetime | None = Field(default=None, description="最後修改日期")
-    cvss_score: float | None = Field(default=None, ge=0.0, le=10.0, description="CVSS評分")
+    cvss_score: float | None = Field(
+        default=None, ge=0.0, le=10.0, description="CVSS評分"
+    )
     references: list[str] = Field(default_factory=list, description="參考鏈接")
 
 
@@ -210,7 +223,9 @@ class CAPECReference(BaseModel):
     capec_id: str = Field(description="CAPEC標識符", pattern=r"^CAPEC-\d+$")
     name: str | None = Field(default=None, description="CAPEC名稱")
     description: str | None = Field(default=None, description="攻擊模式描述")
-    related_cwes: list[str] = Field(default_factory=list, description="相關CWE列表")
+    related_cwes: list[str] = Field(
+        default_factory=list,
+        description="相關CWE列表")
 
 
 # ==================== SARIF v2.1.0 官方標準 ====================
@@ -236,13 +251,16 @@ class SARIFResult(BaseModel):
     """
 
     rule_id: str = Field(description="規則ID")
-    level: str = Field(description="嚴重程度", pattern=r"^(error|warning|note|none)$")
+    level: str = Field(
+        description="嚴重程度",
+        pattern=r"^(error|warning|note|none)$")
     message: str = Field(description="消息內容")
     locations: list[SARIFLocation] = Field(description="位置列表")
 
     # 可選欄位
     kind: str = Field(default="fail", description="結果種類")
-    properties: dict[str, Any] = Field(default_factory=dict, description="自定義屬性")
+    properties: dict[str, Any] = Field(
+        default_factory=dict, description="自定義屬性")
 
 
 class SARIFRule(BaseModel):
@@ -256,7 +274,8 @@ class SARIFRule(BaseModel):
     short_description: str | None = Field(default=None, description="簡短描述")
     full_description: str | None = Field(default=None, description="完整描述")
     help_uri: str | None = Field(default=None, description="幫助鏈接")
-    properties: dict[str, Any] = Field(default_factory=dict, description="規則屬性")
+    properties: dict[str, Any] = Field(
+        default_factory=dict, description="規則屬性")
 
 
 class SARIFTool(BaseModel):
@@ -282,7 +301,8 @@ class SARIFRun(BaseModel):
 
     # 可選欄位
     invocations: list[dict] = Field(default_factory=list, description="調用信息")
-    properties: dict[str, Any] = Field(default_factory=dict, description="運行屬性")
+    properties: dict[str, Any] = Field(
+        default_factory=dict, description="運行屬性")
 
 
 class SARIFReport(BaseModel):
@@ -291,19 +311,17 @@ class SARIFReport(BaseModel):
     符合標準: SARIF v2.1.0 完整格式
     官方規範: https://docs.oasis-open.org/sarif/sarif/v2.1.0/sarif-v2.1.0.html
     """
-    
+
     model_config = {"protected_namespaces": ()}
 
     version: str = Field(default="2.1.0", description="SARIF版本")
     sarif_schema: str = Field(
         default="https://json.schemastore.org/sarif-2.1.0.json",
         description="JSON Schema URI",
-        alias="$schema"
+        alias="$schema",
     )
     runs: list[SARIFRun] = Field(description="運行列表")
 
     # 元數據
-    properties: dict[str, Any] = Field(default_factory=dict, description="報告屬性")
-
-
-
+    properties: dict[str, Any] = Field(
+        default_factory=dict, description="報告屬性")

@@ -19,94 +19,6 @@ AIVA Common Schemas Package
 """
 
 # ==================== 基礎模型 ====================
-from .base import (
-    Asset,
-    Authentication,
-    ExecutionError,
-    Fingerprints,
-    MessageHeader,
-    RateLimit,
-    RiskFactor,
-    ScanScope,
-    Summary,
-    TaskDependency,
-)
-
-# ==================== 訊息系統 ====================
-from .messaging import (
-    AIVACommand,
-    AIVAEvent,
-    AIVARequest,
-    AIVAResponse,
-    AivaMessage,
-)
-
-# ==================== 任務相關 ====================
-from .tasks import (
-    APISchemaPayload,
-    APISecurityTestPayload,
-    APITestCase,
-    AuthZAnalysisPayload,
-    AuthZCheckPayload,
-    AuthZResultPayload,
-    BizLogicResultPayload,
-    BizLogicTestPayload,
-    ConfigUpdatePayload,
-    EASMDiscoveryPayload,
-    EASMDiscoveryResult,
-    ExploitPayload,
-    ExploitResult,
-    FeedbackEventPayload,
-    FunctionTaskContext,
-    FunctionTaskPayload,
-    FunctionTaskTarget,
-    FunctionTaskTestConfig,
-    PostExResultPayload,
-    PostExTestPayload,
-    RemediationGeneratePayload,
-    RemediationResultPayload,
-    ScanCompletedPayload,
-    ScanStartPayload,
-    ScenarioTestResult,
-    StandardScenario,
-    TaskUpdatePayload,
-    TestExecution,
-    TestStrategy,
-    ThreatIntelLookupPayload,
-    ThreatIntelResultPayload,
-)
-
-# ==================== 漏洞發現 ====================
-from .findings import (
-    AIVerificationRequest,
-    AIVerificationResult,
-    CodeLevelRootCause,
-    FindingEvidence,
-    FindingImpact,
-    FindingPayload,
-    FindingRecommendation,
-    FindingTarget,
-    JavaScriptAnalysisResult,
-    SASTDASTCorrelation,
-    SensitiveMatch,
-    Target,
-    Vulnerability,
-    VulnerabilityCorrelation,
-)
-
-# ==================== 遙測與監控 ====================
-from .telemetry import (
-    FunctionExecutionResult,
-    FunctionTelemetry,
-    HeartbeatPayload,
-    ModuleStatus,
-    NotificationPayload,
-    OastEvent,
-    OastProbe,
-    SIEMEvent,
-    SIEMEventPayload,
-)
-
 # ==================== AI 相關 ====================
 from .ai import (
     AIExperienceCreatedEvent,
@@ -146,6 +58,79 @@ from .assets import (
     VulnerabilityLifecyclePayload,
     VulnerabilityUpdatePayload,
 )
+from .base import (
+    Asset,
+    Authentication,
+    ExecutionError,
+    Fingerprints,
+    MessageHeader,
+    RateLimit,
+    RiskFactor,
+    ScanScope,
+    Summary,
+    TaskDependency,
+)
+
+# ==================== Enhanced 版本 ====================
+from .enhanced import (
+    EnhancedAttackPath,
+    EnhancedAttackPathNode,
+    EnhancedFindingPayload,
+    EnhancedFunctionTaskTarget,
+    EnhancedIOCRecord,
+    EnhancedRiskAssessment,
+    EnhancedScanRequest,
+    EnhancedScanScope,
+    EnhancedTaskExecution,
+    EnhancedVulnerabilityCorrelation,
+)
+
+# ==================== 漏洞發現 ====================
+from .findings import (
+    AIVerificationRequest,
+    AIVerificationResult,
+    CodeLevelRootCause,
+    FindingEvidence,
+    FindingImpact,
+    FindingPayload,
+    FindingRecommendation,
+    FindingTarget,
+    JavaScriptAnalysisResult,
+    SASTDASTCorrelation,
+    SensitiveMatch,
+    Target,
+    Vulnerability,
+    VulnerabilityCorrelation,
+)
+
+# ==================== 程式語言支援 ====================
+from .languages import (
+    AILanguageModel,
+    CodeQualityReport,
+    CrossLanguageAnalysis,
+    LanguageDetectionResult,
+    LanguageInteroperability,
+    LanguageSpecificPayload,
+    LanguageSpecificScanConfig,
+    LanguageSpecificVulnerability,
+    MultiLanguageCodebase,
+)
+
+# ==================== 訊息系統 ====================
+from .messaging import (
+    AIVACommand,
+    AIVAEvent,
+    AivaMessage,
+    AIVARequest,
+    AIVAResponse,
+)
+
+# ==================== 參考資料 ====================
+from .references import (
+    CVEReference,
+    CWEReference,
+    VulnerabilityDiscovery,
+)
 
 # ==================== 風險評估 ====================
 from .risk import (
@@ -158,23 +143,9 @@ from .risk import (
     RiskTrendAnalysis,
 )
 
-# ==================== Enhanced 版本 ====================
-from .enhanced import (
-    EnhancedAttackPath,
-    EnhancedAttackPathNode,
-    EnhancedFindingPayload,
-    EnhancedFunctionTaskTarget,
-    EnhancedIOCRecord,
-    EnhancedModuleStatus,
-    EnhancedRiskAssessment,
-    EnhancedScanRequest,
-    EnhancedScanScope,
-    EnhancedTaskExecution,
-    EnhancedVulnerabilityCorrelation,
-)
-
 # ==================== 系統編排 ====================
 from .system import (
+    EnhancedModuleStatus,
     ModelTrainingResult,
     SessionState,
     SystemOrchestration,
@@ -182,11 +153,52 @@ from .system import (
     WebhookPayload,
 )
 
-# ==================== 參考資料 ====================
-from .references import (
-    CVEReference,
-    CWEReference,
-    VulnerabilityDiscovery,
+# ==================== 任務相關 ====================
+from .tasks import (
+    APISchemaPayload,
+    APISecurityTestPayload,
+    APITestCase,
+    AuthZAnalysisPayload,
+    AuthZCheckPayload,
+    AuthZResultPayload,
+    BizLogicResultPayload,
+    BizLogicTestPayload,
+    ConfigUpdatePayload,
+    EASMDiscoveryPayload,
+    EASMDiscoveryResult,
+    ExploitPayload,
+    ExploitResult,
+    FeedbackEventPayload,
+    FunctionTaskContext,
+    FunctionTaskPayload,
+    FunctionTaskTarget,
+    FunctionTaskTestConfig,
+    PostExResultPayload,
+    PostExTestPayload,
+    RemediationGeneratePayload,
+    RemediationResultPayload,
+    ScanCompletedPayload,
+    ScanStartPayload,
+    ScenarioTestResult,
+    StandardScenario,
+    TaskUpdatePayload,
+    TestExecution,
+    TestStrategy,
+    ThreatIntelLookupPayload,
+    ThreatIntelResultPayload,
+)
+
+# ==================== 遙測與監控 ====================
+from .telemetry import (
+    FunctionExecutionResult,
+    FunctionTelemetry,
+    HeartbeatPayload,
+    ModuleStatus,
+    NotificationPayload,
+    OastEvent,
+    OastProbe,
+    SIEMEvent,
+    SIEMEventPayload,
 )
 
 # 為了保持向後相容，明確匯出所有公開介面
@@ -329,8 +341,18 @@ __all__ = [
     "CVEReference",
     "CWEReference",
     "VulnerabilityDiscovery",
+    # 程式語言支援
+    "LanguageDetectionResult",
+    "LanguageSpecificVulnerability",
+    "MultiLanguageCodebase",
+    "LanguageSpecificScanConfig",
+    "CrossLanguageAnalysis",
+    "LanguageSpecificPayload",
+    "AILanguageModel",
+    "CodeQualityReport",
+    "LanguageInteroperability",
 ]
 
 # 版本資訊
-__version__ = "2.0.0"
+__version__ = "2.1.0"
 __schema_version__ = "1.0"

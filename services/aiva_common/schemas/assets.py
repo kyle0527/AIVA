@@ -24,6 +24,7 @@ from ..enums import (
     VulnerabilityStatus,
     VulnerabilityType,
 )
+from .references import TechnicalFingerprint  # 從 references 引用，避免重複定義
 
 
 class AssetLifecyclePayload(BaseModel):
@@ -90,25 +91,6 @@ class DiscoveredAsset(BaseModel):
 # 資產清單和 EASM
 # ============================================================================
 
-class TechnicalFingerprint(BaseModel):
-    """技術指紋識別 (從 references 引用)"""
-
-    technology: str = Field(description="技術名稱")
-    version: str | None = Field(default=None, description="版本信息")
-    confidence: float = Field(ge=0.0, le=1.0, description="置信度")
-    detection_method: str = Field(description="檢測方法")
-    evidence: list[str] = Field(default_factory=list, description="檢測證據")
-
-    # 技術分類
-    category: str = Field(description="技術分類")  # "web_server", "framework", "cms", "database"
-    subcategory: str | None = Field(default=None, description="子分類")
-
-    # 安全相關
-    known_vulnerabilities: list[str] = Field(default_factory=list, description="已知漏洞")
-    eol_status: bool | None = Field(default=None, description="是否已停止支持")
-
-    metadata: dict[str, Any] = Field(default_factory=dict, description="額外信息")
-
 
 class AssetInventoryItem(BaseModel):
     """資產清單項目"""
@@ -124,14 +106,18 @@ class AssetInventoryItem(BaseModel):
     ports: list[int] = Field(default_factory=list, description="開放端口")
 
     # 技術棧
-    fingerprints: list[TechnicalFingerprint] = Field(default_factory=list, description="技術指紋")
+    fingerprints: list[TechnicalFingerprint] = Field(
+        default_factory=list, description="技術指紋"
+    )
 
     # 業務信息
     business_criticality: str = Field(
         description="業務重要性"
     )  # "critical", "high", "medium", "low"
     owner: str | None = Field(default=None, description="負責人")
-    environment: str = Field(description="環境類型")  # "production", "staging", "development"
+    environment: str = Field(
+        description="環境類型"
+    )  # "production", "staging", "development"
 
     # 安全狀態
     last_scanned: datetime | None = Field(default=None, description="最後掃描時間")
@@ -161,26 +147,36 @@ class EASMAsset(BaseModel):
     last_seen: datetime = Field(description="最後發現時間")
 
     # 資產屬性
-    status: str = Field(description="資產狀態")  # "active", "inactive", "monitoring", "expired"
+    status: str = Field(
+        description="資產狀態"
+    )  # "active", "inactive", "monitoring", "expired"
     confidence: float = Field(ge=0.0, le=1.0, description="置信度")
 
     # 技術信息
     technologies: list[str] = Field(default_factory=list, description="檢測到的技術")
     services: list[dict] = Field(default_factory=list, description="運行的服務")
-    certificates: list[dict] = Field(default_factory=list, description="SSL證書信息")
+    certificates: list[dict] = Field(
+        default_factory=list, description="SSL證書信息")
 
     # 安全評估
     risk_score: float = Field(ge=0.0, le=10.0, description="風險評分")
     vulnerability_count: int = Field(ge=0, description="漏洞數量")
-    exposure_level: str = Field(description="暴露級別")  # "public", "internal", "restricted"
+    exposure_level: str = Field(
+        description="暴露級別"
+    )  # "public", "internal", "restricted"
 
     # 業務關聯
     business_unit: str | None = Field(default=None, description="業務單位")
     owner: str | None = Field(default=None, description="負責人")
-    criticality: str = Field(description="重要性")  # "critical", "high", "medium", "low"
+    criticality: str = Field(
+        description="重要性"
+    )  # "critical", "high", "medium", "low"
 
     # 合規性
-    compliance_status: dict[str, bool] = Field(default_factory=dict, description="合規狀態")
-    policy_violations: list[str] = Field(default_factory=list, description="政策違規")
+    compliance_status: dict[str, bool] = Field(
+        default_factory=dict, description="合規狀態"
+    )
+    policy_violations: list[str] = Field(
+        default_factory=list, description="政策違規")
 
     metadata: dict[str, Any] = Field(default_factory=dict, description="元數據")

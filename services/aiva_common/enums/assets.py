@@ -76,4 +76,3 @@ class ComplianceFramework(str, Enum):
     ISO27001 = "iso27001"
     NIST = "nist"
     CIS = "cis"
-

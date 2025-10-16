@@ -13,10 +13,10 @@ from pydantic import BaseModel, Field, field_validator
 
 from ..enums import ModuleName
 
-
 # ============================================================================
 # 會話管理
 # ============================================================================
+
 
 class SessionState(BaseModel):
     """會話狀態 - 多步驟攻擊鏈的會話管理"""
@@ -29,19 +29,23 @@ class SessionState(BaseModel):
     completed_steps: list[str] = Field(default_factory=list)  # step_ids
     pending_steps: list[str] = Field(default_factory=list)  # step_ids
     context: dict[str, Any] = Field(default_factory=dict)  # 動態上下文
-    variables: dict[str, Any] = Field(default_factory=dict)  # 會話變數（用於步驟間傳遞數據）
+    variables: dict[str, Any] = Field(
+        default_factory=dict
+    )  # 會話變數（用於步驟間傳遞數據）
     started_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
     updated_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
     timeout_at: datetime | None = None
     metadata: dict[str, Any] = Field(default_factory=dict)
 
     @field_validator("session_id")
+    @classmethod
     def validate_session_id(cls, v: str) -> str:
         if not v.startswith("session_"):
             raise ValueError("session_id must start with 'session_'")
         return v
 
     @field_validator("status")
+    @classmethod
     def validate_status(cls, v: str) -> str:
         allowed = {"active", "paused", "completed", "failed", "aborted"}
         if v not in allowed:
@@ -52,6 +56,7 @@ class SessionState(BaseModel):
 # ============================================================================
 # AI 訓練結果
 # ============================================================================
+
 
 class ModelTrainingResult(BaseModel):
     """模型訓練結果"""
@@ -80,6 +85,7 @@ class ModelTrainingResult(BaseModel):
 # 任務隊列
 # ============================================================================
 
+
 class TaskQueue(BaseModel):
     """任務隊列"""
 
@@ -93,7 +99,8 @@ class TaskQueue(BaseModel):
     # 隊列狀態
     pending_tasks: list[str] = Field(default_factory=list, description="等待任務")
     running_tasks: list[str] = Field(default_factory=list, description="運行任務")
-    completed_tasks: list[str] = Field(default_factory=list, description="完成任務")
+    completed_tasks: list[str] = Field(
+        default_factory=list, description="完成任務")
 
     # 統計信息
     total_processed: int = Field(ge=0, description="總處理數")
@@ -111,6 +118,7 @@ class TaskQueue(BaseModel):
 # 系統編排
 # ============================================================================
 
+
 class EnhancedModuleStatus(BaseModel):
     """增強模組狀態"""
 
@@ -118,7 +126,9 @@ class EnhancedModuleStatus(BaseModel):
     version: str = Field(description="模組版本")
 
     # 狀態信息
-    status: str = Field(description="運行狀態")  # "running", "stopped", "error", "maintenance"
+    status: str = Field(
+        description="運行狀態"
+    )  # "running", "stopped", "error", "maintenance"
     health_score: float = Field(ge=0.0, le=1.0, description="健康評分")
 
     # 性能指標
@@ -149,8 +159,12 @@ class SystemOrchestration(BaseModel):
     module_statuses: list[EnhancedModuleStatus] = Field(description="模組狀態列表")
 
     # 系統配置
-    scan_configuration: dict[str, Any] = Field(default_factory=dict, description="掃描配置")
-    resource_allocation: dict[str, Any] = Field(default_factory=dict, description="資源分配")
+    scan_configuration: dict[str, Any] = Field(
+        default_factory=dict, description="掃描配置"
+    )
+    resource_allocation: dict[str, Any] = Field(
+        default_factory=dict, description="資源分配"
+    )
 
     # 編排狀態
     overall_status: str = Field(description="整體狀態")
@@ -173,6 +187,7 @@ class SystemOrchestration(BaseModel):
 # Webhook
 # ============================================================================
 
+
 class WebhookPayload(BaseModel):
     """Webhook載荷"""
 
@@ -192,7 +207,9 @@ class WebhookPayload(BaseModel):
     max_retries: int = Field(default=3, ge=0, description="最大重試次數")
 
     # 狀態
-    status: str = Field(default="pending", description="狀態")  # pending, delivered, failed
+    status: str = Field(
+        default="pending", description="狀態"
+    )  # pending, delivered, failed
     delivered_at: datetime | None = Field(default=None, description="交付時間")
     error_message: str | None = Field(default=None, description="錯誤消息")
 

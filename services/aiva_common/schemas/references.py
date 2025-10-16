@@ -14,10 +14,10 @@ from pydantic import BaseModel, Field
 
 from ..enums import Confidence, Severity
 
-
 # ============================================================================
 # 安全標準參考
 # ============================================================================
+
 
 class CVEReference(BaseModel):
     """CVE 參考資訊
@@ -43,7 +43,9 @@ class CWEReference(BaseModel):
     符合標準: Common Weakness Enumeration (https://cwe.mitre.org/)
     """
 
-    cwe_id: str = Field(description="CWE ID (格式: CWE-XXX)", pattern=r"^CWE-\d+$")
+    cwe_id: str = Field(
+        description="CWE ID (格式: CWE-XXX)",
+        pattern=r"^CWE-\d+$")
     name: str | None = None
     description: str | None = None
     weakness_category: str | None = None  # "Class", "Base", "Variant", "Compound"
@@ -53,6 +55,7 @@ class CWEReference(BaseModel):
 # ============================================================================
 # 技術指紋
 # ============================================================================
+
 
 class TechnicalFingerprint(BaseModel):
     """技術指紋識別"""
@@ -64,11 +67,15 @@ class TechnicalFingerprint(BaseModel):
     evidence: list[str] = Field(default_factory=list, description="檢測證據")
 
     # 技術分類
-    category: str = Field(description="技術分類")  # "web_server", "framework", "cms", "database"
+    category: str = Field(
+        description="技術分類"
+    )  # "web_server", "framework", "cms", "database"
     subcategory: str | None = Field(default=None, description="子分類")
 
     # 安全相關
-    known_vulnerabilities: list[str] = Field(default_factory=list, description="已知漏洞")
+    known_vulnerabilities: list[str] = Field(
+        default_factory=list, description="已知漏洞"
+    )
     eol_status: bool | None = Field(default=None, description="是否已停止支持")
 
     metadata: dict[str, Any] = Field(default_factory=dict, description="額外信息")
@@ -77,6 +84,7 @@ class TechnicalFingerprint(BaseModel):
 # ============================================================================
 # 漏洞發現
 # ============================================================================
+
 
 class VulnerabilityDiscovery(BaseModel):
     """漏洞發現記錄"""
@@ -104,7 +112,8 @@ class VulnerabilityDiscovery(BaseModel):
     # 證據和驗證
     evidence: list[str] = Field(default_factory=list, description="漏洞證據")
     proof_of_concept: str | None = Field(default=None, description="概念驗證")
-    false_positive_likelihood: float = Field(ge=0.0, le=1.0, description="誤報可能性")
+    false_positive_likelihood: float = Field(
+        ge=0.0, le=1.0, description="誤報可能性")
 
     # 影響評估
     impact_assessment: str | None = Field(default=None, description="影響評估")
@@ -117,7 +126,9 @@ class VulnerabilityDiscovery(BaseModel):
     # 標準映射
     cve_ids: list[str] = Field(default_factory=list, description="CVE標識符")
     cwe_ids: list[str] = Field(default_factory=list, description="CWE標識符")
-    cvss_score: float | None = Field(default=None, ge=0.0, le=10.0, description="CVSS評分")
+    cvss_score: float | None = Field(
+        default=None, ge=0.0, le=10.0, description="CVSS評分"
+    )
 
     # 時間戳
     discovered_at: datetime = Field(default_factory=lambda: datetime.now(UTC))

@@ -6,8 +6,6 @@ API 安全測試相關 Schema
 
 from __future__ import annotations
 
-from pydantic import BaseModel, Field
-
 # API 測試相關的 Schema 已在 tasks.py 中定義
 # 此檔案保留作為擴展使用
 

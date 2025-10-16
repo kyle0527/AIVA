@@ -14,8 +14,7 @@ from typing import Any, Literal
 
 from pydantic import BaseModel, Field, field_validator
 
-from ..enums import RiskLevel, Severity, TestStatus, VulnerabilityType
-
+from ..enums import VulnerabilityType
 
 # ==================== CVSS v3.1 標準 ====================
 
@@ -39,8 +38,12 @@ class CVSSv3Metrics(BaseModel):
     exploit_code_maturity: Literal["X", "H", "F", "P", "U"] = Field(
         default="X", description="漏洞利用代碼成熟度"
     )
-    remediation_level: Literal["X", "U", "W", "T", "O"] = Field(default="X", description="修復級別")
-    report_confidence: Literal["X", "C", "R", "U"] = Field(default="X", description="報告置信度")
+    remediation_level: Literal["X", "U", "W", "T", "O"] = Field(
+        default="X", description="修復級別"
+    )
+    report_confidence: Literal["X", "C", "R", "U"] = Field(
+        default="X", description="報告置信度"
+    )
 
     # Environmental Metrics (Optional)
     confidentiality_requirement: Literal["X", "L", "M", "H"] = Field(
@@ -54,9 +57,15 @@ class CVSSv3Metrics(BaseModel):
     )
 
     # Calculated Scores
-    base_score: float | None = Field(default=None, ge=0.0, le=10.0, description="基本分數")
-    temporal_score: float | None = Field(default=None, ge=0.0, le=10.0, description="時間分數")
-    environmental_score: float | None = Field(default=None, ge=0.0, le=10.0, description="環境分數")
+    base_score: float | None = Field(
+        default=None, ge=0.0, le=10.0, description="基本分數"
+    )
+    temporal_score: float | None = Field(
+        default=None, ge=0.0, le=10.0, description="時間分數"
+    )
+    environmental_score: float | None = Field(
+        default=None, ge=0.0, le=10.0, description="環境分數"
+    )
     vector_string: str | None = Field(default=None, description="CVSS 向量字符串")
 
     def calculate_base_score(self) -> float:
@@ -70,12 +79,13 @@ class CVSSv3Metrics(BaseModel):
         ui_weights = {"N": 0.85, "R": 0.62}
         cia_weights = {"N": 0.0, "L": 0.22, "H": 0.56}
 
-        impact = 1 - (1 - cia_weights[self.confidentiality]) * (1 - cia_weights[self.integrity]) * (
-            1 - cia_weights[self.availability]
-        )
+        impact = 1 - (1 - cia_weights[self.confidentiality]) * (
+            1 - cia_weights[self.integrity]
+        ) * (1 - cia_weights[self.availability])
 
         if self.scope == "C":
-            impact_adjusted = 7.52 * (impact - 0.029) - 3.25 * pow(impact - 0.02, 15)
+            impact_adjusted = 7.52 * (impact - 0.029) - \
+                3.25 * pow(impact - 0.02, 15)
         else:
             impact_adjusted = 6.42 * impact
 
@@ -89,7 +99,8 @@ class CVSSv3Metrics(BaseModel):
 
         if impact_adjusted <= 0:
             return 0.0
-        elif self.scope == "U":
+
+        if self.scope == "U":
             base = impact_adjusted + exploitability
         else:
             base = 1.08 * (impact_adjusted + exploitability)
@@ -162,6 +173,7 @@ class TraceRecord(BaseModel):
     metadata: dict[str, Any] = Field(default_factory=dict)
 
     @field_validator("status")
+    @classmethod
     def validate_status(cls, v: str) -> str:
         allowed = {"success", "failed", "timeout", "skipped", "error"}
         if v not in allowed:
@@ -206,6 +218,7 @@ class PlanExecutionResult(BaseModel):
     metadata: dict[str, Any] = Field(default_factory=dict)
 
     @field_validator("status")
+    @classmethod
     def validate_status(cls, v: str) -> str:
         allowed = {"completed", "partial", "failed", "aborted"}
         if v not in allowed:
@@ -246,6 +259,7 @@ class AITrainingStartPayload(BaseModel):
     metadata: dict[str, Any] = Field(default_factory=dict)
 
     @field_validator("training_id")
+    @classmethod
     def validate_training_id(cls, v: str) -> str:
         if not v.startswith("training_"):
             raise ValueError("training_id must start with 'training_'")
@@ -302,6 +316,7 @@ class RAGQueryPayload(BaseModel):
 # 經驗學習
 # ============================================================================
 
+
 class ExperienceSample(BaseModel):
     """經驗樣本 (用於強化學習)"""
 
@@ -317,19 +332,23 @@ class ExperienceSample(BaseModel):
     # 獎勵信息
     reward: float = Field(description="獎勵值")
     reward_breakdown: dict[str, float] = Field(
-        default_factory=dict, description="獎勵分解 (completion, success, sequence, goal)"
+        default_factory=dict,
+        description="獎勵分解 (completion, success, sequence, goal)",
     )
 
     # 上下文信息
     context: dict[str, Any] = Field(default_factory=dict, description="環境上下文")
-    target_info: dict[str, Any] = Field(default_factory=dict, description="目標信息")
+    target_info: dict[str, Any] = Field(
+        default_factory=dict, description="目標信息")
 
     # 時間信息
     timestamp: datetime = Field(default_factory=lambda: datetime.now(UTC))
     duration_ms: int | None = Field(default=None, ge=0, description="執行時長")
 
     # 質量標記
-    quality_score: float | None = Field(default=None, ge=0.0, le=1.0, description="樣本質量分數")
+    quality_score: float | None = Field(
+        default=None, ge=0.0, le=1.0, description="樣本質量分數"
+    )
     is_positive: bool = Field(description="是否為正樣本")
     confidence: float = Field(default=1.0, ge=0.0, le=1.0, description="樣本置信度")
 
@@ -342,6 +361,7 @@ class ExperienceSample(BaseModel):
 # 增強漏洞
 # ============================================================================
 
+
 class EnhancedVulnerability(BaseModel):
     """增強漏洞信息 (整合 AI 分析結果)"""
 
@@ -351,7 +371,8 @@ class EnhancedVulnerability(BaseModel):
 
     # 基本信息
     vulnerability_type: str = Field(description="漏洞類型")
-    severity: Literal["low", "medium", "high", "critical"] = Field(description="嚴重性")
+    severity: Literal["low", "medium", "high",
+                      "critical"] = Field(description="嚴重性")
 
     # 位置信息
     url: str = Field(description="漏洞URL")
@@ -359,11 +380,15 @@ class EnhancedVulnerability(BaseModel):
     location: str = Field(description="參數位置")
 
     # CVSS 評分
-    cvss_metrics: CVSSv3Metrics | None = Field(default=None, description="CVSS v3.1 指標")
+    cvss_metrics: CVSSv3Metrics | None = Field(
+        default=None, description="CVSS v3.1 指標"
+    )
 
     # AI 分析結果
     ai_confidence: float = Field(ge=0.0, le=1.0, description="AI 置信度")
-    ai_risk_assessment: dict[str, Any] = Field(default_factory=dict, description="AI 風險評估")
+    ai_risk_assessment: dict[str, Any] = Field(
+        default_factory=dict, description="AI 風險評估"
+    )
     exploitability_score: float = Field(ge=0.0, le=1.0, description="可利用性分數")
 
     # 攻擊路徑
@@ -372,22 +397,29 @@ class EnhancedVulnerability(BaseModel):
     prerequisites: list[str] = Field(default_factory=list, description="利用前提")
 
     # 影響分析
-    business_impact: dict[str, Any] = Field(default_factory=dict, description="業務影響")
-    technical_impact: dict[str, Any] = Field(default_factory=dict, description="技術影響")
+    business_impact: dict[str, Any] = Field(
+        default_factory=dict, description="業務影響"
+    )
+    technical_impact: dict[str, Any] = Field(
+        default_factory=dict, description="技術影響"
+    )
 
     # 修復建議
     remediation_effort: str = Field(description="修復難度")
     remediation_priority: int = Field(ge=1, le=5, description="修復優先級")
-    fix_recommendations: list[str] = Field(default_factory=list, description="修復建議")
+    fix_recommendations: list[str] = Field(
+        default_factory=list, description="修復建議")
 
     # 驗證信息
     poc_available: bool = Field(default=False, description="是否有概念驗證")
     verified: bool = Field(default=False, description="是否已驗證")
-    false_positive_probability: float = Field(ge=0.0, le=1.0, description="誤報概率")
+    false_positive_probability: float = Field(
+        ge=0.0, le=1.0, description="誤報概率")
 
     # 時間信息
     discovered_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
-    last_verified_at: datetime | None = Field(default=None, description="最後驗證時間")
+    last_verified_at: datetime | None = Field(
+        default=None, description="最後驗證時間")
 
     # 元數據
     tags: list[str] = Field(default_factory=list, description="標籤")
@@ -398,6 +430,7 @@ class EnhancedVulnerability(BaseModel):
 # ============================================================================
 # SARIF 報告 (v2.1.0)
 # ============================================================================
+
 
 class SARIFLocation(BaseModel):
     """SARIF 位置信息"""
@@ -414,11 +447,14 @@ class SARIFResult(BaseModel):
 
     rule_id: str = Field(description="規則ID")
     message: str = Field(description="消息")
-    level: Literal["error", "warning", "info", "note"] = Field(description="級別")
+    level: Literal["error", "warning", "info",
+                   "note"] = Field(description="級別")
     locations: list[SARIFLocation] = Field(description="位置列表")
 
     # 可選字段
-    partial_fingerprints: dict[str, str] = Field(default_factory=dict, description="部分指紋")
+    partial_fingerprints: dict[str, str] = Field(
+        default_factory=dict, description="部分指紋"
+    )
     properties: dict[str, Any] = Field(default_factory=dict, description="屬性")
 
 
@@ -456,8 +492,12 @@ class SARIFRun(BaseModel):
     results: list[SARIFResult] = Field(description="結果列表")
 
     # 可選信息
-    invocations: list[dict[str, Any]] = Field(default_factory=list, description="調用信息")
-    artifacts: list[dict[str, Any]] = Field(default_factory=list, description="工件信息")
+    invocations: list[dict[str, Any]] = Field(
+        default_factory=list, description="調用信息"
+    )
+    artifacts: list[dict[str, Any]] = Field(
+        default_factory=list, description="工件信息"
+    )
     properties: dict[str, Any] = Field(default_factory=dict, description="屬性")
 
 
@@ -466,14 +506,13 @@ class SARIFReport(BaseModel):
 
     model_config = {
         "protected_namespaces": (),
-        "arbitrary_types_allowed": True
-    }
+        "arbitrary_types_allowed": True}
 
     version: str = Field(default="2.1.0", description="SARIF版本")
     sarif_schema: str = Field(
         default="https://json.schemastore.org/sarif-2.1.0.json",
         description="JSON Schema URL",
-        alias="$schema"
+        alias="$schema",
     )
     runs: list[SARIFRun] = Field(description="運行列表")
 
@@ -484,6 +523,7 @@ class SARIFReport(BaseModel):
 # ============================================================================
 # AI 訓練和事件
 # ============================================================================
+
 
 class AITrainingCompletedPayload(BaseModel):
     """AI 訓練完成報告 - 訓練會話完成時的最終報告"""
@@ -570,6 +610,7 @@ class AIModelDeployCommand(BaseModel):
 # ============================================================================
 # RAG 系統
 # ============================================================================
+
 
 class RAGResponsePayload(BaseModel):
     """RAG 查詢響應 - RAG 知識庫查詢的結果"""

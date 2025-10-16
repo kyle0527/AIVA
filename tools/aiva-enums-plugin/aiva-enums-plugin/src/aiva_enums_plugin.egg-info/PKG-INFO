@@ -1,0 +1,21 @@
+Metadata-Version: 2.4
+Name: aiva-enums-plugin
+Version: 0.1.0
+Summary: Centralized enums plugin that re-exports aiva_common.enums and can generate TS enums
+Requires-Python: >=3.9
+Description-Content-Type: text/markdown
+
+# aiva-enums-plugin
+
+集中管理 AIVA 所有列舉型別（enums）：
+- **Python 端**：`import aiva_enums_plugin as enums`，由本插件轉接 `aiva_common.enums`。
+- **TypeScript 端**：提供生成腳本 `gen_ts_enums.py`，輸出 `enums.ts` 以供前端使用。
+
+> 注意：本插件為 adapter；如需自含，亦可將 `aiva_common/enums.py` 內容複製進來。
+
+## 產出 TypeScript Enums
+
+```bash
+python scripts/gen_ts_enums.py --out ./schemas/enums.ts
+```
+

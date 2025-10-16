@@ -7,6 +7,128 @@ from __future__ import annotations
 from enum import Enum
 
 
+class ProgrammingLanguage(str, Enum):
+    """程式語言枚舉"""
+
+    # 系統程式語言
+    RUST = "rust"
+    GO = "go"
+    C = "c"
+    CPP = "cpp"
+    CSHARP = "csharp"
+
+    # 腳本語言
+    PYTHON = "python"
+    JAVASCRIPT = "javascript"
+    TYPESCRIPT = "typescript"
+    RUBY = "ruby"
+    PHP = "php"
+
+    # JVM 語言
+    JAVA = "java"
+    KOTLIN = "kotlin"
+    SCALA = "scala"
+
+    # 函數式語言
+    HASKELL = "haskell"
+    ERLANG = "erlang"
+    ELIXIR = "elixir"
+
+    # Web 語言
+    HTML = "html"
+    CSS = "css"
+    SASS = "sass"
+    LESS = "less"
+
+    # 查詢語言
+    SQL = "sql"
+    GRAPHQL = "graphql"
+
+    # 配置語言
+    YAML = "yaml"
+    JSON = "json"
+    TOML = "toml"
+    XML = "xml"
+
+    # Shell 腳本
+    BASH = "bash"
+    POWERSHELL = "powershell"
+    ZSH = "zsh"
+
+    # 其他
+    UNKNOWN = "unknown"
+
+
+class LanguageFramework(str, Enum):
+    """程式語言框架枚舉"""
+
+    # JavaScript/TypeScript 框架
+    REACT = "react"
+    VUE = "vue"
+    ANGULAR = "angular"
+    NODEJS = "nodejs"
+    EXPRESS = "express"
+    NEXTJS = "nextjs"
+    NUXTJS = "nuxtjs"
+
+    # Python 框架
+    DJANGO = "django"
+    FLASK = "flask"
+    FASTAPI = "fastapi"
+    TORNADO = "tornado"
+
+    # Go 框架
+    GIN = "gin"
+    ECHO = "echo"
+    FIBER = "fiber"
+    BEEGO = "beego"
+
+    # Rust 框架
+    ACTIX_WEB = "actix_web"
+    WARP = "warp"
+    ROCKET = "rocket"
+    AXUM = "axum"
+
+    # Java 框架
+    SPRING = "spring"
+    SPRING_BOOT = "spring_boot"
+    STRUTS = "struts"
+
+    # C# 框架
+    DOTNET = "dotnet"
+    ASPNET = "aspnet"
+
+    # 其他
+    UNKNOWN = "unknown"
+
+
+class CodeQualityMetric(str, Enum):
+    """程式碼品質指標"""
+
+    # 複雜度指標
+    CYCLOMATIC_COMPLEXITY = "cyclomatic_complexity"
+    COGNITIVE_COMPLEXITY = "cognitive_complexity"
+    HALSTEAD_COMPLEXITY = "halstead_complexity"
+
+    # 程式碼覆蓋率
+    LINE_COVERAGE = "line_coverage"
+    BRANCH_COVERAGE = "branch_coverage"
+    FUNCTION_COVERAGE = "function_coverage"
+
+    # 程式碼重複
+    CODE_DUPLICATION = "code_duplication"
+    CLONE_DETECTION = "clone_detection"
+
+    # 可維護性
+    MAINTAINABILITY_INDEX = "maintainability_index"
+    TECHNICAL_DEBT = "technical_debt"
+
+    # 效能指標
+    EXECUTION_TIME = "execution_time"
+    MEMORY_USAGE = "memory_usage"
+    CPU_USAGE = "cpu_usage"
+
+
 class ModuleName(str, Enum):
     API_GATEWAY = "ApiGateway"
     CORE = "CoreModule"
@@ -108,4 +230,3 @@ class Topic(str, Enum):
     # Remediation Topics
     TASK_REMEDIATION_GENERATE = "tasks.remediation.generate"
     RESULTS_REMEDIATION = "results.remediation"
-
