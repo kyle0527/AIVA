@@ -42,3 +42,15 @@ class XssPayloadGenerator:
             ordered.setdefault(blind_payload, None)
 
         return list(ordered.keys())
+
+    def generate_basic_payloads(self) -> list[str]:
+        """Generate basic XSS payloads for testing."""
+        return self.generate(payload_sets=["basic"])
+    
+    def generate_advanced_payloads(self) -> list[str]:
+        """Generate advanced XSS payloads for testing."""
+        return self.generate(payload_sets=["advanced"])
+    
+    def generate_all_payloads(self) -> list[str]:
+        """Generate all available XSS payloads."""
+        return self.generate(payload_sets=["basic", "advanced"])

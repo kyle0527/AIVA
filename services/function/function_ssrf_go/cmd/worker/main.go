@@ -12,7 +12,7 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/aiva/function-ssrf-go/internal/detector"
+	"github.com/kyle0527/aiva/services/function/function_ssrf_go/internal/detector"
 	amqp "github.com/rabbitmq/amqp091-go"
 	"go.uber.org/zap"
 )

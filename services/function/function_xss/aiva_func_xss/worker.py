@@ -18,6 +18,7 @@ from services.aiva_common.schemas import (
     FindingRecommendation,
     FindingTarget,
     FunctionTaskPayload,
+    MessageHeader,
     Vulnerability,
 )
 from services.aiva_common.utils import get_logger, new_id
