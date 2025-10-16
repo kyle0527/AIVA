@@ -15,9 +15,11 @@
 ### ⚙️ setup/ - 環境設置腳本
 - `setup_env.bat` - 環境設置（批次檔）
 - `setup_multilang.ps1` - 多語言環境設置
-- `init_go_common.ps1` - 初始化 Go 共用模組
-- `init_go_deps.ps1` - 初始化 Go 依賴
-- `migrate_sca_service.ps1` - 遷移 SCA 服務
+
+**已完成並歸檔的腳本** (位於 `_archive/scripts_completed/`)：
+- ✅ `init_go_common.ps1` - Go 共用模組初始化 (已完成)
+- ✅ `init_go_deps.ps1` - Go 依賴初始化 (已完成)
+- ✅ `migrate_sca_service.ps1` - SCA 服務遷移 (已完成)
 
 ### 🔍 maintenance/ - 維護腳本
 - `check_status.ps1` - 檢查系統狀態
@@ -34,10 +36,7 @@
 # 1. 設置環境
 .\scripts\setup\setup_multilang.ps1
 
-# 2. 初始化 Go 模組
-.\scripts\setup\init_go_common.ps1
-
-# 3. 啟動服務
+# 2. 啟動服務 (Go 模組已完成初始化)
 .\scripts\deployment\start_all_multilang.ps1
 ```
 
@@ -79,21 +78,40 @@
 2. **找不到命令**: 檢查 PATH 環境變數
 3. **Docker 錯誤**: 確認 Docker Desktop 已啟動
 
-## 🔄 腳本依賴關係
+## � 腳本清理狀況
+
+### 已完成的階段性任務腳本
+以下腳本對應的階段性任務已完成，已移至 `_archive/scripts_completed/`：
+
+| 腳本名稱 | 任務狀態 | 完成日期 | 歸檔位置 |
+|---------|---------|----------|----------|
+| `init_go_common.ps1` | ✅ Go 共用模組已建立並測試通過 | 2025-10-15 | `_archive/scripts_completed/` |
+| `init_go_deps.ps1` | ✅ Go 依賴初始化已完成 | 2025-10-15 | `_archive/scripts_completed/` |
+| `migrate_sca_service.ps1` | ✅ SCA 服務遷移至共用模組完成 | 2025-10-15 | `_archive/scripts_completed/` |
+
+### 歸檔機制
+- **已完成腳本** → `_archive/scripts_completed/`
+- **過時文檔** → `_archive/`
+- **舊版本報告** → `reports/` 下的歷史子目錄
+
+## �🔄 腳本依賴關係
 
 ```mermaid
 graph TD
     A[setup_env.bat] --> B[setup_multilang.ps1]
-    B --> C[init_go_common.ps1]
-    C --> D[start_all_multilang.ps1]
+    B --> D[start_all_multilang.ps1]
     
     E[check_status.ps1] --> F[diagnose_system.ps1]
     F --> G[health_check_multilang.ps1]
     
     H[generate_stats.ps1] --> I[generate_project_report.ps1]
+    
+    style C fill:#ddd,stroke:#999,stroke-dasharray: 5 5,color:#666
+    C[init_go_common.ps1] -.-> |已完成歸檔| J[_archive/scripts_completed/]
 ```
 
 ---
 
 **維護者**: DevOps Team  
-**最後更新**: 2025-10-16
+**最後更新**: 2025-10-16  
+**清理日期**: 2025-10-16

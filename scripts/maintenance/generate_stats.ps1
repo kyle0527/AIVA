@@ -1,7 +1,7 @@
 # AIVA 專案統計生成腳本
 # 用途: 生成專案文件統計和程式碼行數統計
 
-$projectRoot = "c:\D\E\AIVA\AIVA-main"
+$projectRoot = "c:\F\AIVA"
 $outputDir = Join-Path $projectRoot "_out"
 
 Write-Host "🔍 開始生成專案統計..." -ForegroundColor Cyan

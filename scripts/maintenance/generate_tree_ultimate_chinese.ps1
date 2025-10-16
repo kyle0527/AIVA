@@ -7,8 +7,8 @@
 # 5. 同時輸出純文字檔案和彩色終端機顯示
 
 param(
-    [string]$ProjectRoot = "C:\AMD\AIVA",
-    [string]$OutputDir = "C:\AMD\AIVA\_out",
+    [string]$ProjectRoot = "C:\F\AIVA",
+    [string]$OutputDir = "C:\F\AIVA\_out",
     [string]$PreviousTreeFile = "",  # 上一版樹狀圖檔案路徑（選填）
     [switch]$ShowColorInTerminal = $true,  # 是否在終端機顯示顏色
     [switch]$AddChineseComments = $true   # 是否添加中文檔名說明

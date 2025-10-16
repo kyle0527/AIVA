@@ -60,6 +60,8 @@ class SessionState(BaseModel):
 
 class ModelTrainingResult(BaseModel):
     """模型訓練結果"""
+    
+    model_config = {"protected_namespaces": ()}
 
     training_id: str
     config: dict[str, Any]  # 簡化避免循環引用

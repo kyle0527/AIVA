@@ -14,54 +14,55 @@ AIVA Common Enums Package
 """
 
 # ==================== 通用枚舉 ====================
-# ==================== 資產管理 ====================
-from .assets import (
-    AssetExposure,
-    AssetStatus,
-    AssetType,
-    BusinessCriticality,
-    ComplianceFramework,
-    DataSensitivity,
-    Environment,
-)
 from .common import (
-    Confidence,
-    RemediationStatus,
-    RiskLevel,
-    ScanStatus,
     Severity,
+    Confidence,
     TaskStatus,
     TestStatus,
+    ScanStatus,
     ThreatLevel,
+    RiskLevel,
+    RemediationStatus,
 )
 
 # ==================== 模組相關 ====================
 from .modules import (
-    CodeQualityMetric,
-    LanguageFramework,
-    ModuleName,
     ProgrammingLanguage,
+    LanguageFramework,
+    CodeQualityMetric,
+    ModuleName,
     Topic,
 )
 
 # ==================== 安全測試 ====================
 from .security import (
-    AccessDecision,
-    AttackPathEdgeType,
-    AttackPathNodeType,
-    Exploitability,
+    VulnerabilityByLanguage,
+    SecurityPattern,
+    VulnerabilityType,
+    VulnerabilityStatus,
+    Location,
+    SensitiveInfoType,
     IntelSource,
     IOCType,
-    Location,
-    Permission,
-    PersistenceType,
-    PostExTestType,
     RemediationType,
-    SecurityPattern,
-    SensitiveInfoType,
-    VulnerabilityByLanguage,
-    VulnerabilityStatus,
-    VulnerabilityType,
+    Permission,
+    AccessDecision,
+    PostExTestType,
+    PersistenceType,
+    Exploitability,
+    AttackPathNodeType,
+    AttackPathEdgeType,
+)
+
+# ==================== 資產管理 ====================
+from .assets import (
+    BusinessCriticality,
+    Environment,
+    AssetType,
+    AssetStatus,
+    DataSensitivity,
+    AssetExposure,
+    ComplianceFramework,
 )
 
 # 為了保持向後相容，明確匯出所有公開介面

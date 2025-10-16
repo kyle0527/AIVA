@@ -26,8 +26,7 @@ class LanguageDetectionResult(BaseModel):
     frameworks: list[LanguageFramework] = Field(
         default_factory=list, description="檢測到的框架"
     )
-    file_extensions: list[str] = Field(
-        default_factory=list, description="檔案副檔名")
+    file_extensions: list[str] = Field(default_factory=list, description="檔案副檔名")
     lines_of_code: int = Field(ge=0, description="程式碼行數")
 
 
@@ -97,10 +96,8 @@ class CrossLanguageAnalysis(BaseModel):
     integration_points: list[str] = Field(
         default_factory=list, description="語言整合點"
     )
-    security_boundaries: list[str] = Field(
-        default_factory=list, description="安全邊界")
-    data_flow_risks: list[str] = Field(
-        default_factory=list, description="資料流風險")
+    security_boundaries: list[str] = Field(default_factory=list, description="安全邊界")
+    data_flow_risks: list[str] = Field(default_factory=list, description="資料流風險")
     recommendations: list[str] = Field(default_factory=list, description="建議")
     risk_score: float = Field(ge=0.0, le=10.0, description="風險評分")
 
@@ -113,16 +110,15 @@ class LanguageSpecificPayload(BaseModel):
     payload_content: str = Field(description="載荷內容")
     encoding: str = Field(default="utf-8", description="編碼方式")
     expected_behavior: str | None = Field(default=None, description="預期行為")
-    bypass_techniques: list[str] = Field(
-        default_factory=list, description="繞過技術")
-    target_functions: list[str] = Field(
-        default_factory=list, description="目標函數")
-    success_indicators: list[str] = Field(
-        default_factory=list, description="成功指標")
+    bypass_techniques: list[str] = Field(default_factory=list, description="繞過技術")
+    target_functions: list[str] = Field(default_factory=list, description="目標函數")
+    success_indicators: list[str] = Field(default_factory=list, description="成功指標")
 
 
 class AILanguageModel(BaseModel):
     """AI 程式語言模型配置"""
+    
+    model_config = {"protected_namespaces": ()}
 
     model_name: str = Field(description="模型名稱")
     supported_languages: list[ProgrammingLanguage] = Field(description="支援的語言")
@@ -156,8 +152,7 @@ class LanguageInteroperability(BaseModel):
 
     source_language: ProgrammingLanguage = Field(description="來源語言")
     target_language: ProgrammingLanguage = Field(description="目標語言")
-    # FFI, JNI, WebAssembly, etc.
-    interop_method: str = Field(description="互操作方法")
+    interop_method: str = Field(description="互操作方法")  # FFI, JNI, WebAssembly, etc.
     security_considerations: list[str] = Field(
         default_factory=list, description="安全考量"
     )

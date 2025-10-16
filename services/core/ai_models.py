@@ -76,6 +76,8 @@ class AITrainingStartPayload(BaseModel):
 
 class AITrainingProgressPayload(BaseModel):
     """AI訓練進度載荷"""
+    
+    model_config = {"protected_namespaces": ()}
 
     training_id: str = Field(description="訓練ID")
     progress: float = Field(ge=0.0, le=1.0, description="進度")

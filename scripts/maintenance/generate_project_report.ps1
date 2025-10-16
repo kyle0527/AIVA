@@ -2,8 +2,8 @@
 # 整合樹狀圖、統計數據、程式碼分析
 
 param(
-    [string]$ProjectRoot = "c:\D\E\AIVA\AIVA-main",
-    [string]$OutputDir = "c:\D\E\AIVA\AIVA-main\_out"
+    [string]$ProjectRoot = "c:\F\AIVA",
+    [string]$OutputDir = "c:\F\AIVA\_out"
 )
 
 Write-Host "🚀 開始生成專案完整報告..." -ForegroundColor Cyan

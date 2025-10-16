@@ -258,9 +258,17 @@ class RateLimiter:
                             ra_until = time.monotonic() + max(
                                 0.0, (dt.timestamp() - time.time())
                             )
-                        except Exception:
+                        except (ValueError, TypeError, OverflowError) as e:
+                            self._log.debug(
+                                "Failed to parse HTTP-date in Retry-After header for host %s: %s", 
+                                host, str(e)
+                            )
                             ra_until = None
-        except Exception:
+        except (KeyError, AttributeError, ValueError) as e:
+            self._log.debug(
+                "Failed to process Retry-After header for host %s: %s",
+                host, str(e)
+            )
             ra_until = None
 
         if ra_until is not None:
@@ -342,8 +350,11 @@ class RateLimiter:
                         self._cooldown_until.pop(host, None)
                         self._log.info(
                             "ratelimiter.cooldown_end host=%s reason=success", host)
-        except Exception:
-            pass
+        except (KeyError, ValueError, TypeError) as e:
+            self._log.debug(
+                "Error processing response update for host %s: %s",
+                host, str(e)
+            )
 
     def should_send(self, host: str) -> bool:
         """

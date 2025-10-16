@@ -231,6 +231,8 @@ class PlanExecutionResult(BaseModel):
 
 class ModelTrainingConfig(BaseModel):
     """模型訓練配置"""
+    
+    model_config = {"protected_namespaces": ()}
 
     config_id: str
     model_type: str
@@ -268,6 +270,8 @@ class AITrainingStartPayload(BaseModel):
 
 class AITrainingProgressPayload(BaseModel):
     """AI 訓練進度報告"""
+    
+    model_config = {"protected_namespaces": ()}
 
     training_id: str
     episode_number: int
@@ -527,6 +531,8 @@ class SARIFReport(BaseModel):
 
 class AITrainingCompletedPayload(BaseModel):
     """AI 訓練完成報告 - 訓練會話完成時的最終報告"""
+    
+    model_config = {"protected_namespaces": ()}
 
     training_id: str
     status: str
@@ -581,6 +587,8 @@ class AITraceCompletedEvent(BaseModel):
 
 class AIModelUpdatedEvent(BaseModel):
     """AI 模型更新事件 - 當模型被訓練更新時發送"""
+    
+    model_config = {"protected_namespaces": ()}
 
     model_id: str
     model_version: str
@@ -596,6 +604,8 @@ class AIModelUpdatedEvent(BaseModel):
 
 class AIModelDeployCommand(BaseModel):
     """AI 模型部署命令 - 用於部署訓練好的模型到生產環境"""
+    
+    model_config = {"protected_namespaces": ()}
 
     model_id: str
     model_version: str

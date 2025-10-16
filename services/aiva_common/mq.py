@@ -7,6 +7,7 @@ supporting both RabbitMQ (production) and in-memory (testing) implementations.
 from __future__ import annotations
 
 import asyncio
+import logging
 from abc import ABC, abstractmethod
 from collections.abc import AsyncIterator
 from dataclasses import dataclass
@@ -23,6 +24,9 @@ else:
         import aio_pika  # type: ignore[no-redef]
     except ModuleNotFoundError:  # optional dependency
         aio_pika = None  # type: ignore[assignment]
+
+
+logger = logging.getLogger(__name__)
 
 
 @dataclass(slots=True)
@@ -291,8 +295,17 @@ async def get_broker() -> AbstractBroker:
             broker = RabbitBroker()
             await broker.connect()
             return broker
-        except Exception:  # pylint: disable=broad-exception-caught
+        except Exception as e:  # pylint: disable=broad-exception-caught
             # Intentionally catch all exceptions to fall back to InMemoryBroker
-            pass
+            logger.warning(
+                "Failed to connect to RabbitMQ broker, falling back to InMemoryBroker. "
+                "This may impact message persistence and scalability. Error: %s",
+                str(e)
+            )
+    else:
+        logger.warning(
+            "aio_pika module not available, using InMemoryBroker. "
+            "Install aio_pika for production message queue support."
+        )
     # fallback
     return InMemoryBroker()

@@ -408,6 +408,8 @@ class StandardScenario(BaseModel):
 
 class ScenarioTestResult(BaseModel):
     """場景測試結果 - 模型在標準場景上的表現"""
+    
+    model_config = {"protected_namespaces": ()}
 
     test_id: str
     scenario_id: str
