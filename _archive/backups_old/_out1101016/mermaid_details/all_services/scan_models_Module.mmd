@@ -1,0 +1,60 @@
+flowchart TB
+    n1([開始])
+    n2([結束])
+    n3[&amp;&#35;39;\nAIVA Scan Models - 掃描發現模組\n\n此文件包含與掃描、資產發現...]
+    n4[from __future__ import annotations]
+    n5[from datetime import UTC, datetime]
+    n6[from typing import Any]
+    n7[from pydantic import BaseModel, Field, HttpUrl, fi...]
+    n8[from ..aiva_common.enums import AssetType, Confide...]
+    n9[from ..aiva_common.schemas import Authentication, ...]
+    n10[class ScanScope&#40;...&#41;]
+    n11[class ScanStartPayload&#40;...&#41;]
+    n12[class EnhancedScanScope&#40;...&#41;]
+    n13[class EnhancedScanRequest&#40;...&#41;]
+    n14[class Asset&#40;...&#41;]
+    n15[class TechnicalFingerprint&#40;...&#41;]
+    n16[class Fingerprints&#40;...&#41;]
+    n17[class AssetInventoryItem&#40;...&#41;]
+    n18[class Summary&#40;...&#41;]
+    n19[class ScanCompletedPayload&#40;...&#41;]
+    n20[class Vulnerability&#40;...&#41;]
+    n21[class VulnerabilityDiscovery&#40;...&#41;]
+    n22[class VulnerabilityLifecyclePayload&#40;...&#41;]
+    n23[class VulnerabilityUpdatePayload&#40;...&#41;]
+    n24[class DiscoveredAsset&#40;...&#41;]
+    n25[class EASMDiscoveryPayload&#40;...&#41;]
+    n26[class EASMDiscoveryResult&#40;...&#41;]
+    n27[class EASMAsset&#40;...&#41;]
+    n28[class AssetLifecyclePayload&#40;...&#41;]
+    n29[class JavaScriptAnalysisResult&#40;...&#41;]
+    n30[__all__ = &#91;&amp;&#35;39;ScanScope&amp;&#35;39;, &amp;...]
+    n1 --> n3
+    n3 --> n4
+    n4 --> n5
+    n5 --> n6
+    n6 --> n7
+    n7 --> n8
+    n8 --> n9
+    n9 --> n10
+    n10 --> n11
+    n11 --> n12
+    n12 --> n13
+    n13 --> n14
+    n14 --> n15
+    n15 --> n16
+    n16 --> n17
+    n17 --> n18
+    n18 --> n19
+    n19 --> n20
+    n20 --> n21
+    n21 --> n22
+    n22 --> n23
+    n23 --> n24
+    n24 --> n25
+    n25 --> n26
+    n26 --> n27
+    n27 --> n28
+    n28 --> n29
+    n29 --> n30
+    n30 --> n2

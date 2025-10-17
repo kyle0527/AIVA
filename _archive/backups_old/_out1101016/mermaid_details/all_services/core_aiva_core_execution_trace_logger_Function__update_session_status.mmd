@@ -1,0 +1,17 @@
+flowchart TB
+    n1([開始])
+    n2([結束])
+    n3[&amp;&#35;39;更新會話狀態\n\n        Args:\n            session...]
+    n4{if session_id in self.active_s...}
+    n5[self.active_sessions&#91;session_id&#93;.status = status]
+    n6[self.active_sessions&#91;session_id&#93;.updated_at = dat...]
+    n7[logger.info&#40;f&amp;&#35;39;Updated session &#123;sessi...]
+    n8[]
+    n1 --> n3
+    n3 --> n4
+    n4 -->|Yes| n5
+    n4 -->|No| n8
+    n5 --> n6
+    n6 --> n7
+    n7 --> n8
+    n8 --> n2

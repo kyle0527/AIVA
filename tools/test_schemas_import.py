@@ -9,20 +9,20 @@ sys.path.insert(0, str(Path(__file__).parent.parent.parent))
 # 測試導入
 try:
     from aiva_common.schemas import MessageHeader, FindingPayload
-    print("✅ Base schemas working")
+    print("[OK] Base schemas working")
     
     from aiva_common.schemas.enhanced import EnhancedFindingPayload
-    print("✅ Enhanced schemas working")
+    print("[OK] Enhanced schemas working")
     
     from aiva_common.schemas.system import SessionState, TaskQueue
-    print("✅ System schemas working")
+    print("[OK] System schemas working")
     
     from aiva_common.schemas.references import CVEReference, CWEReference
-    print("✅ References schemas working")
+    print("[OK] References schemas working")
     
-    print("\n🎉 所有新模組導入成功!")
+    print("\n[SUCCESS] 所有新模組導入成功!")
     
 except Exception as e:
-    print(f"❌ 導入失敗: {e}")
+    print(f"[FAIL] 導入失敗: {e}")
     import traceback
     traceback.print_exc()

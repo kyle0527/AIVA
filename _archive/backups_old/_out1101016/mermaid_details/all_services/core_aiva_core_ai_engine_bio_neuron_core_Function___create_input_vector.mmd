@@ -1,0 +1,18 @@
+flowchart TB
+    n1([開始])
+    n2([結束])
+    n3[&amp;&#35;39;將任務和上下文轉換為輸入向量.\n\n        Args:\n          ...]
+    n4[task_hash = np.array&#40;&#91;ord&#40;c&#41; for...]
+    n5[context_hash = np.array&#40;&#91;ord&#40;c&#41; for...]
+    n6[task_vec = np.pad&#40;task_hash, &#40;0...]
+    n7[context_vec = np.pad&#40;context_hash,...]
+    n8[combined_vec = np.concatenate&#40;&#91;task...]
+    n9[return combined_vec / np.linalg.norm&#40;...]
+    n1 --> n3
+    n3 --> n4
+    n4 --> n5
+    n5 --> n6
+    n6 --> n7
+    n7 --> n8
+    n8 --> n9
+    n9 --> n2

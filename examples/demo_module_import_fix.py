@@ -29,7 +29,7 @@ print("2. models.py 重新導出 schemas.py 的類（向後兼容）")
 print("3. __init__.py 統一從 schemas.py 導入")
 print("4. 所有服務從 schemas.py 或 aiva_common 包導入")
 
-print("\n✅ 導入方式（推薦順序）:")
+print("\n[OK] 導入方式（推薦順序）:")
 print("-" * 70)
 print("1. 從 aiva_common 包導入（最佳）:")
 print("   from services.aiva_common import MessageHeader, CVSSv3Metrics")
@@ -40,12 +40,12 @@ print()
 print("3. 從 models.py 導入（向後兼容，但不推薦）:")
 print("   from services.aiva_common.models import MessageHeader, CVSSv3Metrics")
 
-print("\n🔄 向後兼容性:")
+print("\n[RELOAD] 向後兼容性:")
 print("-" * 70)
 print("舊代碼仍然可以工作，因為 models.py 現在重新導出 schemas.py 的類。")
 print("但建議逐步遷移到從 aiva_common 或 schemas.py 導入。")
 
-print("\n📊 統計信息:")
+print("\n[STATS] 統計信息:")
 print("-" * 70)
 
 # Count classes in schemas.py
@@ -68,7 +68,7 @@ try:
 except:
     print("models.py: 無法讀取")
 
-print("\n📝 修改的文件:")
+print("\n[NOTE] 修改的文件:")
 print("-" * 70)
 modified_files = [
     "services/aiva_common/__init__.py",
@@ -84,13 +84,13 @@ modified_files = [
 for f in modified_files:
     print(f"  - {f}")
 
-print("\n📚 新增文件:")
+print("\n[DOCS] 新增文件:")
 print("-" * 70)
 print("  - test_module_imports.py (綜合測試)")
 print("  - MODULE_IMPORT_FIX_REPORT.md (詳細報告)")
 
 print("\n" + "=" * 70)
-print("✨ 修復完成！")
+print("[SPARKLE] 修復完成！")
 print("=" * 70)
 print()
 print("下一步:")

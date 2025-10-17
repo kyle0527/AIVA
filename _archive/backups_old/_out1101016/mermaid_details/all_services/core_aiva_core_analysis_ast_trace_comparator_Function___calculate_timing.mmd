@@ -1,0 +1,21 @@
+flowchart TB
+    n1([開始])
+    n2([結束])
+    n3[&amp;&#35;39;計算時間指標\n\n        Args:\n            trace: ...]
+    n4{if not trace.end_time}
+    n5[return &#40;None, None&#41;]
+    n6[]
+    n7[duration = &#40;trace.end_time - tr...]
+    n8[task_starts = trace.get_entries_by...]
+    n9[avg_duration = duration / len&#40;task_...]
+    n10[return &#40;duration, avg_duration&#41;]
+    n1 --> n3
+    n3 --> n4
+    n4 -->|Yes| n5
+    n4 -->|No| n6
+    n5 --> n6
+    n6 --> n7
+    n7 --> n8
+    n8 --> n9
+    n9 --> n10
+    n10 --> n2

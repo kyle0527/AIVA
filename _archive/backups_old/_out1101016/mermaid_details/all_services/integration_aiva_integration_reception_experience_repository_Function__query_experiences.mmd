@@ -1,0 +1,43 @@
+flowchart TB
+    n1([開始])
+    n2([結束])
+    n3[&amp;&#35;39;查詢經驗記錄\n\n        Args:\n            attack_...]
+    n4[session = self.get_session&#40;&#41;]
+    n5[try]
+    n6[query = session.query&#40;Experi...]
+    n7{if attack_type}
+    n8[query = query.filter&#40;Experie...]
+    n9[]
+    n10{if min_score is not None}
+    n11[query = query.filter&#40;Experie...]
+    n12[]
+    n13{if max_score is not None}
+    n14[query = query.filter&#40;Experie...]
+    n15[]
+    n16[query = query.order_by&#40;desc&#40;...]
+    n17[return query.limit&#40;limit&#41;.offset&#40;offs...]
+    n18[]
+    n19[finally]
+    n20[session.close&#40;&#41;]
+    n1 --> n3
+    n3 --> n4
+    n4 --> n5
+    n5 --> n6
+    n6 --> n7
+    n7 -->|Yes| n8
+    n7 -->|No| n9
+    n8 --> n9
+    n9 --> n10
+    n10 -->|Yes| n11
+    n10 -->|No| n12
+    n11 --> n12
+    n12 --> n13
+    n13 -->|Yes| n14
+    n13 -->|No| n15
+    n14 --> n15
+    n15 --> n16
+    n16 --> n17
+    n17 --> n18
+    n18 --> n19
+    n19 --> n20
+    n20 --> n2

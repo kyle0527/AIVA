@@ -1,0 +1,48 @@
+flowchart TB
+    n1([開始])
+    n2([結束])
+    n3[&amp;&#35;39;對比不同上下文的風險評估&amp;&#35;39;]
+    n4[engine = EnhancedRiskAssessme...]
+    n5[findings = &#91;&#123;&amp;&#35;39;vulnerability_typ...]
+    n6[context_dev = &#123;&amp;&#35;39;environment&amp;&#35;39;...]
+    n7[context_prod = &#123;&amp;&#35;39;environment&amp;&#35;39...]
+    n8[result_dev = engine.assess_risk&#40;f...]
+    n9[result_prod = engine.assess_risk&#40;f...]
+    n10[print&#40;&amp;&#35;39;\n&amp;&#35;39; + &amp;&#35;39;=&a...]
+    n11[print&#40;&amp;&#35;39;上下文對風險評估的影響對比&amp;&#35;39;&#41;]
+    n12[print&#40;&amp;&#35;39;=&amp;&#35;39; * 80&#41;]
+    n13[print&#40;&amp;&#35;39;相同漏洞: SQL Injection &#40;HIGH&#41;...]
+    n14[print&#40;&amp;&#35;39;\n開發環境 &#40;非關鍵&#41;:&amp;&#35;39;...]
+    n15[print&#40;f&amp;quot;  業務風險分數: &#123;result_dev&#91;&amp;...]
+    n16[print&#40;f&amp;quot;  風險等級: &#123;result_dev&#91;&amp;&#...]
+    n17[print&#40;f&amp;quot;  上下文乘數: x&#123;result_dev&#91;&amp;...]
+    n18[print&#40;&amp;&#35;39;\n生產環境 &#40;關鍵&#41;:&amp;&#35;39;&...]
+    n19[print&#40;f&amp;quot;  業務風險分數: &#123;result_prod&#91;&amp...]
+    n20[print&#40;f&amp;quot;  風險等級: &#123;result_prod&#91;&amp;&...]
+    n21[print&#40;f&amp;quot;  上下文乘數: x&#123;result_prod&#91;&amp...]
+    n22[risk_multiplier = result_prod&#91;&amp;&#35;39;busines...]
+    n23[print&#40;f&amp;&#35;39;\n風險放大倍數: &#123;risk_multiplier:....]
+    n24[print&#40;&amp;&#35;39;💡 相同的技術漏洞在不同業務上下文中，風險評估可能相差數倍！&amp...]
+    n1 --> n3
+    n3 --> n4
+    n4 --> n5
+    n5 --> n6
+    n6 --> n7
+    n7 --> n8
+    n8 --> n9
+    n9 --> n10
+    n10 --> n11
+    n11 --> n12
+    n12 --> n13
+    n13 --> n14
+    n14 --> n15
+    n15 --> n16
+    n16 --> n17
+    n17 --> n18
+    n18 --> n19
+    n19 --> n20
+    n20 --> n21
+    n21 --> n22
+    n22 --> n23
+    n23 --> n24
+    n24 --> n2

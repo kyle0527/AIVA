@@ -50,7 +50,7 @@ class AIIntegrationTester:
         self.nlg_generator = AIVANaturalLanguageGenerator()
         self.multilang_coordinator = MultiLanguageAICoordinator()
 
-        print("🚀 AI 整合測試器初始化完成")
+        print("[START] AI 整合測試器初始化完成")
 
     async def run_all_tests(self) -> dict[str, Any]:
         """
@@ -59,7 +59,7 @@ class AIIntegrationTester:
         Returns:
             測試結果統計
         """
-        print("📋 開始執行 AI 整合測試套件...")
+        print("[LIST] 開始執行 AI 整合測試套件...")
         start_time = time.time()
 
         # 測試清單
@@ -75,12 +75,12 @@ class AIIntegrationTester:
         ]
 
         for test_name, test_func in tests:
-            print(f"\n🧪 執行測試: {test_name}")
+            print(f"\n[TEST] 執行測試: {test_name}")
             try:
                 await test_func()
-                print(f"✅ {test_name} - 通過")
+                print(f"[OK] {test_name} - 通過")
             except Exception as e:
-                print(f"❌ {test_name} - 失敗: {str(e)}")
+                print(f"[FAIL] {test_name} - 失敗: {str(e)}")
 
         total_time = time.time() - start_time
         return self._generate_test_report(total_time)
@@ -542,33 +542,33 @@ class AIIntegrationTester:
         recommendations = []
 
         if not failed_tests:
-            recommendations.append("🎉 所有測試都通過了！AI 整合系統運作良好。")
+            recommendations.append("[SUCCESS] 所有測試都通過了！AI 整合系統運作良好。")
             return recommendations
 
         for test in failed_tests:
             if "初始化" in test.test_name:
-                recommendations.append("🔧 建議檢查各 AI 組件的初始化配置和依賴項。")
+                recommendations.append("[CONFIG] 建議檢查各 AI 組件的初始化配置和依賴項。")
             elif "協調" in test.test_name:
-                recommendations.append("⚙️ 建議優化統一控制器的任務分配邏輯。")
+                recommendations.append("[U+2699][U+FE0F] 建議優化統一控制器的任務分配邏輯。")
             elif "自然語言" in test.test_name:
-                recommendations.append("📝 建議檢查 NLG 系統的模板配置和上下文處理。")
+                recommendations.append("[NOTE] 建議檢查 NLG 系統的模板配置和上下文處理。")
             elif "多語言" in test.test_name:
-                recommendations.append("🌐 建議檢查多語言協調器的語言模組註冊。")
+                recommendations.append("[U+1F310] 建議檢查多語言協調器的語言模組註冊。")
             elif "衝突" in test.test_name:
-                recommendations.append("⚠️ 建議增強 AI 衝突檢測和去重機制。")
+                recommendations.append("[WARN] 建議增強 AI 衝突檢測和去重機制。")
             elif "端到端" in test.test_name:
-                recommendations.append("🔄 建議檢查整個 AI 處理流程的各個環節。")
+                recommendations.append("[RELOAD] 建議檢查整個 AI 處理流程的各個環節。")
             elif "效能" in test.test_name:
-                recommendations.append("⚡ 建議優化系統效能和並發處理能力。")
+                recommendations.append("[FAST] 建議優化系統效能和並發處理能力。")
             elif "錯誤恢復" in test.test_name:
-                recommendations.append("🛡️ 建議增強錯誤處理和恢復機制。")
+                recommendations.append("[SHIELD] 建議增強錯誤處理和恢復機制。")
 
         return list(set(recommendations))  # 去除重複建議
 
 
 async def main():
     """主函數"""
-    print("🚀 AIVA AI 整合測試系統")
+    print("[START] AIVA AI 整合測試系統")
     print("=" * 50)
 
     # 初始化測試器
@@ -578,22 +578,22 @@ async def main():
     report = await tester.run_all_tests()
 
     # 輸出測試報告
-    print("\n📊 測試報告")
+    print("\n[STATS] 測試報告")
     print("=" * 50)
-    print(f"📋 總測試數: {report['summary']['total_tests']}")
-    print(f"✅ 成功測試: {report['summary']['successful_tests']}")
-    print(f"❌ 失敗測試: {report['summary']['failed_tests']}")
-    print(f"📈 成功率: {report['summary']['success_rate']:.1f}%")
-    print(f"⏱️ 總執行時間: {report['summary']['total_execution_time']:.2f}秒")
+    print(f"[LIST] 總測試數: {report['summary']['total_tests']}")
+    print(f"[OK] 成功測試: {report['summary']['successful_tests']}")
+    print(f"[FAIL] 失敗測試: {report['summary']['failed_tests']}")
+    print(f"[U+1F4C8] 成功率: {report['summary']['success_rate']:.1f}%")
+    print(f"[U+23F1][U+FE0F] 總執行時間: {report['summary']['total_execution_time']:.2f}秒")
 
-    print("\n📝 詳細結果:")
+    print("\n[NOTE] 詳細結果:")
     for result in report['test_results']:
-        status = "✅" if result['success'] else "❌"
+        status = "[OK]" if result['success'] else "[FAIL]"
         print(f"{status} {result['name']} ({result['execution_time']:.2f}s)")
         if result['error']:
             print(f"   錯誤: {result['error']}")
 
-    print("\n💡 改進建議:")
+    print("\n[TIP] 改進建議:")
     for recommendation in report['recommendations']:
         print(f"  {recommendation}")
 
@@ -603,7 +603,7 @@ async def main():
     with open(report_file, 'w', encoding='utf-8') as f:
         json.dump(report, f, ensure_ascii=False, indent=2)
 
-    print(f"\n📄 詳細報告已保存至: {report_file}")
+    print(f"\n[U+1F4C4] 詳細報告已保存至: {report_file}")
 
 
 if __name__ == "__main__":

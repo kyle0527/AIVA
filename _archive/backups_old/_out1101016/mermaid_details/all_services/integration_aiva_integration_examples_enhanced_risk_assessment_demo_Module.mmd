@@ -1,0 +1,35 @@
+flowchart TB
+    n1([開始])
+    n2([結束])
+    n3[&amp;&#35;39;\n增強版風險評估引擎使用範例\n\n展示如何使用業務上下文進行風險評估\n&amp;&...]
+    n4[from services.integration.aiva_integration.analysi...]
+    n5[def example_basic_assessment&#40;...&#41;]
+    n6[def example_production_critical_asset&#40;...&#41;]
+    n7[def example_comparison&#40;...&#41;]
+    n8[def example_trend_analysis&#40;...&#41;]
+    n9{if __name__ == &amp;&#35;39;__main__&amp;&#35;39;}
+    n10[example_basic_assessment&#40;&#41;]
+    n11[example_production_critical_asset&#40;&#41;]
+    n12[example_comparison&#40;&#41;]
+    n13[example_trend_analysis&#40;&#41;]
+    n14[print&#40;&amp;&#35;39;\n&amp;&#35;39; + &amp;&#35;39;=&a...]
+    n15[print&#40;&amp;&#35;39;✨ 增強版風險評估引擎示範完成&amp;&#35;39;&#41;]
+    n16[print&#40;&amp;&#35;39;=&amp;&#35;39; * 80&#41;]
+    n17[]
+    n1 --> n3
+    n3 --> n4
+    n4 --> n5
+    n5 --> n6
+    n6 --> n7
+    n7 --> n8
+    n8 --> n9
+    n9 -->|Yes| n10
+    n9 -->|No| n17
+    n10 --> n11
+    n11 --> n12
+    n12 --> n13
+    n13 --> n14
+    n14 --> n15
+    n15 --> n16
+    n16 --> n17
+    n17 --> n2

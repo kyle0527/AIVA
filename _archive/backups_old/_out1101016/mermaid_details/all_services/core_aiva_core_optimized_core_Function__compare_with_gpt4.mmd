@@ -1,0 +1,21 @@
+flowchart TB
+    n1([開始])
+    n2([結束])
+    n3[&amp;&#35;39;比較 AIVA vs GPT-4 在程式控制場景的適用性&amp;&#35;39;]
+    n4[print&#40;&amp;&#35;39;\n🆚 AIVA vs GPT-4 比較 &#40;程式控制場景&#...]
+    n5[comparison = &#123;&amp;&#35;39;離線運作&amp;&#35;39;: &#123;...]
+    n6{for &#40;aspect, scores&#41; in comparison.items&#40;&#41;}
+    n7[print&#40;f&amp;&#35;39;\n&#123;aspect&#125;:&amp;&#35;39...]
+    n8[print&#40;f&amp;quot;  AIVA:  &#123;scores&#91;&amp;&#35;...]
+    n9[print&#40;f&amp;quot;  GPT-4: &#123;scores&#91;&amp;&#35;...]
+    n10[]
+    n1 --> n3
+    n3 --> n4
+    n4 --> n5
+    n5 --> n6
+    n6 -->|Yes| n7
+    n6 -->|No| n10
+    n7 --> n8
+    n8 --> n9
+    n9 --> n6
+    n10 --> n2

@@ -1,0 +1,38 @@
+flowchart TB
+    n1([開始])
+    n2([結束])
+    n3[&amp;&#35;39;測試範例&amp;&#35;39;]
+    n4[print&#40;&amp;&#35;39;🔧 Patch Generator Demo&amp;&#35;39...]
+    n5[print&#40;&amp;&#35;39;=&amp;&#35;39; * 60&#41;]
+    n6[generator = PatchGenerator&#40;&#41;]
+    n7[sql_patch = generator.generate_s...]
+    n8[print&#40;&amp;&#35;39;\n📋 Generated SQL Injection Patch:...]
+    n9[print&#40;f&amp;quot;   Patch ID: &#123;sql_patch&#91;&am...]
+    n10[print&#40;f&amp;quot;   File: &#123;sql_patch&#91;&amp;&#...]
+    n11[print&#40;f&amp;quot;   Status: &#123;sql_patch&#91;&amp;...]
+    n12[xss_patch = generator.generate_x...]
+    n13[print&#40;&amp;&#35;39;\n📋 Generated XSS Patch:&amp;&#35;...]
+    n14[print&#40;f&amp;quot;   Patch ID: &#123;xss_patch&#91;&am...]
+    n15[print&#40;f&amp;quot;   File: &#123;xss_patch&#91;&amp;&#...]
+    n16[with tempfile....]
+    n17[result = generator.export_pat...]
+    n18[print&#40;f&amp;quot;\n💾 Exported &#123;result&#91;&amp;&...]
+    n19[print&#40;&amp;&#35;39;\n✅ Demo completed&amp;&#35;39;&#41;]
+    n1 --> n3
+    n3 --> n4
+    n4 --> n5
+    n5 --> n6
+    n6 --> n7
+    n7 --> n8
+    n8 --> n9
+    n9 --> n10
+    n10 --> n11
+    n11 --> n12
+    n12 --> n13
+    n13 --> n14
+    n14 --> n15
+    n15 --> n16
+    n16 --> n17
+    n17 --> n18
+    n18 --> n19
+    n19 --> n2

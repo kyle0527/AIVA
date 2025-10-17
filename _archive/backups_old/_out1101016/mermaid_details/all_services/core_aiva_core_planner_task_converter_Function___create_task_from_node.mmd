@@ -1,0 +1,20 @@
+flowchart TB
+    n1([開始])
+    n2([結束])
+    n3[&amp;&#35;39;從 AST 節點創建可執行任務\n\n        Args:\n          ...]
+    n4[task_id = f&amp;&#35;39;task_&#123;uuid4&#40;&#41;.hex&#9...]
+    n5[task_type_map = &#123;NodeType.SCAN: &amp;&#35;39;sca...]
+    n6[task_type = task_type_map.get&#40;no...]
+    n7[priority_map = &#123;NodeType.SCAN: Task...]
+    n8[priority = priority_map.get&#40;nod...]
+    n9[task = ExecutableTask&#40;task_...]
+    n10[return task]
+    n1 --> n3
+    n3 --> n4
+    n4 --> n5
+    n5 --> n6
+    n6 --> n7
+    n7 --> n8
+    n8 --> n9
+    n9 --> n10
+    n10 --> n2

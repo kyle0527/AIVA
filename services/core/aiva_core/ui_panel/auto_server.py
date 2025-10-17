@@ -99,11 +99,11 @@ def start_auto_server(
 
     # 啟動伺服器
     logger.info(f"\n{'='*60}")
-    logger.info("   🚀 啟動 AIVA UI 面板 (自動端口)")
+    logger.info("   [START] 啟動 AIVA UI 面板 (自動端口)")
     logger.info(f"{'='*60}")
-    logger.info(f"🌐 位址: http://{host}:{port}")
-    logger.info(f"📖 API 文檔: http://{host}:{port}/docs")
-    logger.info(f"🔧 模式: {mode}")
+    logger.info(f"[U+1F310] 位址: http://{host}:{port}")
+    logger.info(f"[U+1F4D6] API 文檔: http://{host}:{port}/docs")
+    logger.info(f"[CONFIG] 模式: {mode}")
     logger.info(f"{'='*60}\n")
 
     try:

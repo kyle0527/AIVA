@@ -1,0 +1,19 @@
+flowchart TB
+    n1([開始])
+    n2([結束])
+    n3[&amp;&#35;39;檢查關鍵步驟是否完成\n\n        Args:\n            pla...]
+    n4[critical_step_ids = &#123;step.step_id for st...]
+    n5{if not critical_step_ids}
+    n6[return True]
+    n7[]
+    n8[completed_critical = &#123;trace.step_id for t...]
+    n9[return len&#40;completed_critical&#41; == len...]
+    n1 --> n3
+    n3 --> n4
+    n4 --> n5
+    n5 -->|Yes| n6
+    n5 -->|No| n7
+    n6 --> n7
+    n7 --> n8
+    n8 --> n9
+    n9 --> n2

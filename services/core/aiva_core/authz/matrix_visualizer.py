@@ -347,10 +347,10 @@ class MatrixVisualizer:
 </head>
 <body>
     <div class="container">
-        <h1>🔐 Permission Matrix Report</h1>
+        <h1>[SECURE] Permission Matrix Report</h1>
         <p>Generated: {{ timestamp }}</p>
 
-        <h2>📊 Overview Statistics</h2>
+        <h2>[STATS] Overview Statistics</h2>
         <div class="stats">
             <div class="stat-card">
                 <div class="stat-value">{{ analysis.total_roles }}</div>
@@ -372,7 +372,7 @@ class MatrixVisualizer:
 
         {% if over_privileged %}
         <div class="alert">
-            <div class="alert-title">⚠️ Over-Privileged Roles Detected</div>
+            <div class="alert-title">[WARN] Over-Privileged Roles Detected</div>
             <p>The following roles have significantly more permissions than average:</p>
             <table>
                 <thead>
@@ -395,7 +395,7 @@ class MatrixVisualizer:
         </div>
         {% endif %}
 
-        <h2>📈 Visualizations</h2>
+        <h2>[U+1F4C8] Visualizations</h2>
 
         <div class="chart">
             <h3>Permission Heatmap</h3>
@@ -414,7 +414,7 @@ class MatrixVisualizer:
 
         <div class="footer">
             <p>AIVA Permission Matrix Visualizer v1.0.0</p>
-            <p>© 2025 AIVA Platform</p>
+            <p>[U+00A9] 2025 AIVA Platform</p>
         </div>
     </div>
 
@@ -489,11 +489,11 @@ def main():
 
     # 生成 HTML 報告
     visualizer.generate_html_report("permission_matrix_report.html")
-    print("✅ HTML report generated: permission_matrix_report.html")
+    print("[OK] HTML report generated: permission_matrix_report.html")
 
     # 匯出 CSV
     visualizer.export_to_csv("permission_matrix.csv")
-    print("✅ CSV exported: permission_matrix.csv")
+    print("[OK] CSV exported: permission_matrix.csv")
 
 
 if __name__ == "__main__":

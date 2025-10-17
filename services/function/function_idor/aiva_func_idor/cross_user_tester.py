@@ -147,7 +147,7 @@ class CrossUserTester:
                         break
             test_url = f"{parts[0]}?{'&'.join(params)}"
         else:
-            # URL 路径中的 ID
+            # URL 路[U+5F84]中的 ID
             test_url = re.sub(r'/\d+', f'/{resource_id}', url_str)
             if test_url == url_str:
                 test_url = f"{url_str.rstrip('/')}/{resource_id}"

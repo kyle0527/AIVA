@@ -365,7 +365,7 @@ class ConfigRecommender:
 
 def main():
     """測試範例"""
-    print("⚙️  Config Recommender Demo")
+    print("[U+2699][U+FE0F]  Config Recommender Demo")
     print("=" * 60)
 
     recommender = ConfigRecommender()
@@ -382,25 +382,25 @@ def main():
         config_type="web_server",
     )
 
-    print(f"\n📊 Analysis ID: {analysis['analysis_id']}")
-    print(f"🎯 Config Type: {analysis['config_type']}")
-    print(f"⚠️  Risk Level: {analysis['risk_level']}")
-    print(f"\n🔍 Issues Found: {len(analysis['issues'])}")
+    print(f"\n[STATS] Analysis ID: {analysis['analysis_id']}")
+    print(f"[TARGET] Config Type: {analysis['config_type']}")
+    print(f"[WARN]  Risk Level: {analysis['risk_level']}")
+    print(f"\n[SEARCH] Issues Found: {len(analysis['issues'])}")
 
     for issue in analysis["issues"]:
         print(f"   - [{issue['severity']}] {issue['issue']}")
 
-    print(f"\n💡 Recommendations: {len(analysis['recommendations'])}")
+    print(f"\n[TIP] Recommendations: {len(analysis['recommendations'])}")
     for rec in analysis["recommendations"][:3]:
         print(f"   - {rec['key']}: {rec.get('recommended')}")
         print(f"     Reason: {rec['reason']}")
 
     # 生成安全配置
     secure_config = recommender.generate_secure_config(web_config, analysis)
-    print("\n✅ Secure config generated")
+    print("\n[OK] Secure config generated")
     print(f"   HTTPS enabled: {secure_config['https']['enabled']}")
 
-    print("\n✅ Demo completed")
+    print("\n[OK] Demo completed")
 
 
 if __name__ == "__main__":

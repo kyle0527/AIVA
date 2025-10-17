@@ -1,0 +1,52 @@
+flowchart TB
+    n1([開始])
+    n2([結束])
+    n3[&amp;&#35;39;計算步驟獎勵\n\n        Args:\n            trace: ...]
+    n4[reward = 0.0]
+    n5{if trace.status == &amp;&#35;39;success&amp;&#35;39;}
+    n6[reward += 1.0]
+    n7{if trace.status == &amp;&#35;39;failed&amp;&#35;39;}
+    n8[reward -= 0.5]
+    n9[]
+    n10[]
+    n11{if step_index &amp;lt; len&#40;sample.pla...}
+    n12[expected_step = sample.plan.steps&#91;st...]
+    n13{if expected_step.step_id == tr...}
+    n14[reward += 0.5]
+    n15[]
+    n16[]
+    n17{if trace.output_data.get&#40;&amp;&#35;39;find...}
+    n18[reward += 2.0]
+    n19[]
+    n20{if trace.execution_time_second...}
+    n21[reward -= 0.2]
+    n22[]
+    n23[return reward]
+    n1 --> n3
+    n3 --> n4
+    n4 --> n5
+    n5 -->|Yes| n6
+    n5 -->|No| n7
+    n6 --> n10
+    n7 -->|Yes| n8
+    n7 -->|No| n9
+    n8 --> n9
+    n9 --> n10
+    n10 --> n11
+    n11 -->|Yes| n12
+    n11 -->|No| n16
+    n12 --> n13
+    n13 -->|Yes| n14
+    n13 -->|No| n15
+    n14 --> n15
+    n15 --> n16
+    n16 --> n17
+    n17 -->|Yes| n18
+    n17 -->|No| n19
+    n18 --> n19
+    n19 --> n20
+    n20 -->|Yes| n21
+    n20 -->|No| n22
+    n21 --> n22
+    n22 --> n23
+    n23 --> n2

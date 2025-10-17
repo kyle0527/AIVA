@@ -1,0 +1,77 @@
+{
+  "start_time": "2025-10-17T01:34:16.045665",
+  "sessions": [
+    {
+      "session_id": "train_20251017_013417",
+      "executions": [
+        {
+          "cli_command": "aiva scan start https://example.com",
+          "ai_task": "掃描目標網站 example.com",
+          "tool_used": "XSSDetector",
+          "tool_expected": "ScanTrigger",
+          "status": "success",
+          "confidence": 0.9859320979649758,
+          "matched": false,
+          "timestamp": "2025-10-17T01:34:17.139640"
+        },
+        {
+          "cli_command": "aiva detect sqli https://example.com/login --param username",
+          "ai_task": "檢測 SQL 注入漏洞在 login 頁面的 username 參數",
+          "tool_used": "XSSDetector",
+          "tool_expected": "SQLiDetector",
+          "status": "success",
+          "confidence": 0.9995227191329454,
+          "matched": false,
+          "timestamp": "2025-10-17T01:34:17.142857"
+        },
+        {
+          "cli_command": "aiva analyze code services/core/",
+          "ai_task": "分析 services/core 目錄的代碼結構",
+          "tool_used": null,
+          "tool_expected": "CodeAnalyzer",
+          "status": "uncertain",
+          "confidence": 0.6970031539195252,
+          "matched": false,
+          "timestamp": "2025-10-17T01:34:17.146014"
+        },
+        {
+          "cli_command": "aiva read config pyproject.toml",
+          "ai_task": "讀取 pyproject.toml 配置文件",
+          "tool_used": null,
+          "tool_expected": "CodeReader",
+          "status": "uncertain",
+          "confidence": 0.5660090888282706,
+          "matched": false,
+          "timestamp": "2025-10-17T01:34:17.149082"
+        },
+        {
+          "cli_command": "aiva detect xss https://example.com/search --param q",
+          "ai_task": "檢測 XSS 漏洞在 search 頁面的 q 參數",
+          "tool_used": "SQLiDetector",
+          "tool_expected": "XSSDetector",
+          "status": "success",
+          "confidence": 0.8752917175496026,
+          "matched": false,
+          "timestamp": "2025-10-17T01:34:17.151996"
+        }
+      ]
+    }
+  ],
+  "total_executions": 5,
+  "total_experiences": 0,
+  "end_time": "2025-10-17T01:34:17.154016",
+  "statistics": {
+    "total_tasks": 5,
+    "matched_tasks": 0,
+    "success_rate": "0.0%",
+    "total_sessions": 1
+  },
+  "neural_network": {
+    "total_params": 4201472,
+    "input_size": 1024,
+    "tools_count": 7
+  },
+  "memory": {
+    "history_count": 3
+  }
+}

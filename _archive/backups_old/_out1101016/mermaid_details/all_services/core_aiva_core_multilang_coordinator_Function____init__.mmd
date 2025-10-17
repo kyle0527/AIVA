@@ -1,0 +1,16 @@
+flowchart TB
+    n1([開始])
+    n2([結束])
+    n3[&amp;&#35;39;初始化多語言 AI 協調器&amp;&#35;39;]
+    n4[logger.info&#40;&amp;&#35;39;🌐 初始化多語言 AI 協調器...&amp;&#35;...]
+    n5[self.language_modules = self._register_langu...]
+    n6[self.coordination_history = &#91;&#93;]
+    n7[self.ai_workload_distribution = &#123;&#125;]
+    n8[logger.info&#40;f&amp;&#35;39;✅ 已註冊 &#123;len&#40;self.la...]
+    n1 --> n3
+    n3 --> n4
+    n4 --> n5
+    n5 --> n6
+    n6 --> n7
+    n7 --> n8
+    n8 --> n2

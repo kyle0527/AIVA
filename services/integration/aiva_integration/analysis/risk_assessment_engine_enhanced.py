@@ -345,42 +345,42 @@ class EnhancedRiskAssessmentEngine:
         # 嚴重性建議
         if severity_counts["critical"] > 0:
             recommendations.append(
-                f"🚨 立即處理 {severity_counts['critical']} 個關鍵級別漏洞"
+                f"[ALERT] 立即處理 {severity_counts['critical']} 個關鍵級別漏洞"
             )
 
         if severity_counts["high"] > 0:
-            recommendations.append(f"⚠️ 優先處理 {severity_counts['high']} 個高風險漏洞")
+            recommendations.append(f"[WARN] 優先處理 {severity_counts['high']} 個高風險漏洞")
 
         # 業務與環境特定建議
         if business_criticality == "critical" and environment == "production":
             if overall_risk_level in ["critical", "high"]:
                 recommendations.append(
-                    "💼 業務關鍵系統發現高風險漏洞，建議啟動緊急響應程序"
+                    "[U+1F4BC] 業務關鍵系統發現高風險漏洞，建議啟動緊急響應程序"
                 )
-                recommendations.append("🔒 考慮暫時下線受影響功能直至漏洞修復")
+                recommendations.append("[LOCK] 考慮暫時下線受影響功能直至漏洞修復")
 
         # 合規建議
         if compliance_tags:
             compliance_str = ", ".join(compliance_tags)
             recommendations.append(
-                f"📋 此資產受 {compliance_str} 合規要求約束，務必在規定時間內修復"
+                f"[LIST] 此資產受 {compliance_str} 合規要求約束，務必在規定時間內修復"
             )
 
         # 資料敏感度建議
         if len(priority_findings) > 0:
             top_vuln = priority_findings[0]
             recommendations.append(
-                f"🎯 最高優先級：{top_vuln.get('vulnerability_type', '未知')} "
+                f"[TARGET] 最高優先級：{top_vuln.get('vulnerability_type', '未知')} "
                 f"(業務風險分數: {top_vuln.get('calculated_business_risk_score', 0):.1f})"
             )
 
         # 一般建議
         if overall_risk_level == "critical":
-            recommendations.append("📞 建議立即通知相關利益相關者和管理層")
-            recommendations.append("🛡️ 考慮實施臨時緩解措施（WAF 規則、IP 限制等）")
+            recommendations.append("[U+1F4DE] 建議立即通知相關利益相關者和管理層")
+            recommendations.append("[SHIELD] 考慮實施臨時緩解措施（WAF 規則、IP 限制等）")
 
         if not recommendations:
-            recommendations.append("✅ 繼續保持良好的安全實踐")
+            recommendations.append("[OK] 繼續保持良好的安全實踐")
 
         return recommendations
 

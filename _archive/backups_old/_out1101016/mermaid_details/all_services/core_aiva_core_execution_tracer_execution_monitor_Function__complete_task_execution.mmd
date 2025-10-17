@@ -1,0 +1,19 @@
+flowchart TB
+    n1([開始])
+    n2([結束])
+    n3[&amp;&#35;39;完成任務執行\n\n        Args:\n            context...]
+    n4[self.trace_recorder.record_task_end&#40;trace_session_...]
+    n5{if context.task_id in self.act...}
+    n6[del self.active_contexts&#91;context.task_id&#93;]
+    n7[]
+    n8[status = &amp;&#35;39;successfully&amp;&#35;39; if su...]
+    n9[logger.info&#40;f&amp;&#35;39;Task &#123;context.task_id&...]
+    n1 --> n3
+    n3 --> n4
+    n4 --> n5
+    n5 -->|Yes| n6
+    n5 -->|No| n7
+    n6 --> n7
+    n7 --> n8
+    n8 --> n9
+    n9 --> n2

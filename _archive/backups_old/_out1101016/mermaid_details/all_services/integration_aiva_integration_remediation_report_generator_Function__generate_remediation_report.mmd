@@ -1,0 +1,38 @@
+flowchart TB
+    n1([開始])
+    n2([結束])
+    n3[&amp;&#35;39;\n        生成修復報告\n\n        Args:\n         ...]
+    n4[logger.info&#40;&amp;&#35;39;generating_remediation_repor...]
+    n5[report_id = hashlib.sha256&#40;f&amp;&#35;39;rem...]
+    n6[report = &#123;&amp;&#35;39;report_id&amp;&#35;39;: repor...]
+    n7{if format == &amp;&#35;39;html&amp;&#35;39;}
+    n8[output_file = self._generate_remed...]
+    n9{if format == &amp;&#35;39;markdown&amp;&#35;39;}
+    n10[output_file = self._generate_remed...]
+    n11[output_file = self._generate_remed...]
+    n12[]
+    n13[]
+    n14[report&#91;&amp;&#35;39;output_file&amp;&#35;39;&#93; = s...]
+    n15[report&#91;&amp;&#35;39;success&amp;&#35;39;&#93; = True]
+    n16[self.reports.append&#40;report&#41;]
+    n17[logger.info&#40;&amp;&#35;39;remediation_report_generated...]
+    n18[return report]
+    n1 --> n3
+    n3 --> n4
+    n4 --> n5
+    n5 --> n6
+    n6 --> n7
+    n7 -->|Yes| n8
+    n7 -->|No| n9
+    n8 --> n13
+    n9 -->|Yes| n10
+    n9 -->|No| n11
+    n10 --> n12
+    n11 --> n12
+    n12 --> n13
+    n13 --> n14
+    n14 --> n15
+    n15 --> n16
+    n16 --> n17
+    n17 --> n18
+    n18 --> n2

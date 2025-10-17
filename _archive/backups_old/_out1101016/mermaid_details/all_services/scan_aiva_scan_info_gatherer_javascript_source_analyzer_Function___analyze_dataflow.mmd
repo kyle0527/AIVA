@@ -1,0 +1,29 @@
+flowchart TB
+    n1([開始])
+    n2([結束])
+    n3[&amp;&#35;39;\n        分析數據流（簡化版）\n\n        檢測用戶輸入源是否流向危...]
+    n4[source_lines = &#123;p.line_number for p...]
+    n5{for sink in result.sinks}
+    n6[nearby_sources = &#91;line for line in so...]
+    n7{if nearby_sources}
+    n8[sink.tainted_source = f&amp;&#35;39;Potential taint fr...]
+    n9{if sink.severity == Severity.HIGH}
+    n10[sink.severity = Severity.HIGH]
+    n11[]
+    n12[]
+    n13[]
+    n1 --> n3
+    n3 --> n4
+    n4 --> n5
+    n5 -->|Yes| n6
+    n5 -->|No| n13
+    n6 --> n7
+    n7 -->|Yes| n8
+    n7 -->|No| n12
+    n8 --> n9
+    n9 -->|Yes| n10
+    n9 -->|No| n11
+    n10 --> n11
+    n11 --> n12
+    n12 --> n5
+    n13 --> n2

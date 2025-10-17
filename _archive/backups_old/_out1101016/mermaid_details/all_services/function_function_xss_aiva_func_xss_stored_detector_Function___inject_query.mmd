@@ -1,0 +1,53 @@
+flowchart TB
+    n1([開始])
+    n2([結束])
+    n3{if not parameter}
+    n4[return url]
+    n5[]
+    n6[parsed = urlparse&#40;url&#41;]
+    n7[query_items: dict&#91;str, str&#93; = &#123;&#125;]
+    n8{if parsed.query}
+    n9{for pair in parsed.query.spli...}
+    n10{if not pair}
+    n11[continue]
+    n12[]
+    n13{if &amp;&#35;39;=&amp;&#35;39; in pair}
+    n14[&#40;key, val&#41; = pair.split&#40;&amp;&#35;39;=&amp;&#...]
+    n15[query_items&#91;key&#93; = val]
+    n16[query_items&#91;pair&#93; = &amp;&#35;39;&amp;&#35;39;]
+    n17[]
+    n18[]
+    n19[]
+    n20[query_items&#91;parameter&#93; = value]
+    n21[parts = list&#40;parsed&#41;]
+    n22[from urllib.parse import urlencode]
+    n23[parts&#91;4&#93; = urlencode&#40;query_item...]
+    n24[return urlunparse&#40;parts&#41;]
+    n1 --> n3
+    n3 -->|Yes| n4
+    n3 -->|No| n5
+    n4 --> n5
+    n5 --> n6
+    n6 --> n7
+    n7 --> n8
+    n8 -->|Yes| n9
+    n8 -->|No| n19
+    n9 -->|Yes| n10
+    n9 -->|No| n18
+    n10 -->|Yes| n11
+    n10 -->|No| n12
+    n11 --> n12
+    n12 --> n13
+    n13 -->|Yes| n14
+    n13 -->|No| n16
+    n14 --> n15
+    n15 --> n17
+    n16 --> n17
+    n17 --> n9
+    n18 --> n19
+    n19 --> n20
+    n20 --> n21
+    n21 --> n22
+    n22 --> n23
+    n23 --> n24
+    n24 --> n2

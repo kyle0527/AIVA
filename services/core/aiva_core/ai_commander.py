@@ -91,7 +91,7 @@ class AICommander:
             codebase_path: 代碼庫路徑
             data_directory: 數據目錄
         """
-        logger.info("🎖️ Initializing AI Commander...")
+        logger.info("[U+1F396][U+FE0F] Initializing AI Commander...")
 
         self.data_directory = data_directory or Path("./data/ai_commander")
         self.data_directory.mkdir(parents=True, exist_ok=True)
@@ -155,7 +155,7 @@ class AICommander:
             component.value: True for component in AIComponent
         }
 
-        logger.info("✅ AI Commander initialized successfully")
+        logger.info("[OK] AI Commander initialized successfully")
         logger.info(f"   - BioNeuronRAGAgent: {self.bio_neuron_agent is not None}")
         logger.info(f"   - RAG Engine: {self.rag_engine is not None}")
         logger.info(f"   - Training System: {self.training_orchestrator is not None}")
@@ -177,7 +177,7 @@ class AICommander:
         Returns:
             執行結果
         """
-        logger.info(f"🎯 Executing AI Command: {task_type.value}")
+        logger.info(f"[TARGET] Executing AI Command: {task_type.value}")
 
         # 記錄指令
         command_id = f"cmd_{datetime.now().strftime('%Y%m%d_%H%M%S%f')}"
@@ -226,12 +226,12 @@ class AICommander:
             command_record["end_time"] = datetime.now().isoformat()
 
             logger.info(
-                f"✅ Command {command_id} completed: "
+                f"[OK] Command {command_id} completed: "
                 f"success={result.get('success', False)}"
             )
 
         except Exception as e:
-            logger.error(f"❌ Command {command_id} failed: {e}", exc_info=True)
+            logger.error(f"[FAIL] Command {command_id} failed: {e}", exc_info=True)
             command_record["status"] = "failed"
             command_record["error"] = str(e)
             result = {"success": False, "error": str(e)}
@@ -250,7 +250,7 @@ class AICommander:
         Returns:
             攻擊計畫結果
         """
-        logger.info("📋 Generating attack plan with RAG enhancement...")
+        logger.info("[LIST] Generating attack plan with RAG enhancement...")
 
         target = context.get("target")
         objective = context.get("objective", "Comprehensive security assessment")
@@ -290,7 +290,7 @@ class AICommander:
         Returns:
             決策結果
         """
-        logger.info("🤔 Making strategic decision...")
+        logger.info("[U+1F914] Making strategic decision...")
 
         # 使用 BioNeuronRAGAgent 的決策能力
         # TODO: 整合實際決策邏輯
@@ -311,7 +311,7 @@ class AICommander:
         Returns:
             檢測結果
         """
-        logger.info("🔍 Detecting vulnerabilities across languages...")
+        logger.info("[SEARCH] Detecting vulnerabilities across languages...")
 
         # 協調多語言 AI 模組
         target = context.get("target")
@@ -338,7 +338,7 @@ class AICommander:
         Returns:
             學習結果
         """
-        logger.info("📚 Learning from experience...")
+        logger.info("[DOCS] Learning from experience...")
 
         sample = context.get("experience_sample")
         if not sample:
@@ -365,7 +365,7 @@ class AICommander:
         Returns:
             訓練結果
         """
-        logger.info("🎓 Training AI model...")
+        logger.info("[U+1F393] Training AI model...")
 
         # 使用訓練編排器
         result = await self.training_orchestrator.train_model(
@@ -384,7 +384,7 @@ class AICommander:
         Returns:
             檢索結果
         """
-        logger.info("🔎 Retrieving knowledge from RAG...")
+        logger.info("[U+1F50E] Retrieving knowledge from RAG...")
 
         query = context.get("query", "")
         top_k = context.get("top_k", 5)
@@ -417,7 +417,7 @@ class AICommander:
         Returns:
             協調結果
         """
-        logger.info("🌐 Coordinating multi-language AI modules...")
+        logger.info("[U+1F310] Coordinating multi-language AI modules...")
 
         # 使用多語言協調器
         # TODO: 實際協調邏輯
@@ -442,7 +442,7 @@ class AICommander:
         Returns:
             訓練結果
         """
-        logger.info("🎓 Starting training session...")
+        logger.info("[U+1F393] Starting training session...")
 
         result = await self.training_orchestrator.run_training_batch(
             scenario_ids=scenario_ids,
@@ -472,7 +472,7 @@ class AICommander:
 
     def save_state(self) -> None:
         """保存 AI 指揮官狀態"""
-        logger.info("💾 Saving AI Commander state...")
+        logger.info("[SAVE] Saving AI Commander state...")
 
         # 保存 RAG 知識庫
         self.rag_engine.save_knowledge()
@@ -485,4 +485,4 @@ class AICommander:
         # 保存訓練會話
         self.training_orchestrator.save_session()
 
-        logger.info("✅ AI Commander state saved")
+        logger.info("[OK] AI Commander state saved")

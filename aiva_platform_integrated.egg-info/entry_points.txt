@@ -1,0 +1,2 @@
+[console_scripts]
+aiva = services.cli.aiva_cli:main

@@ -1,0 +1,39 @@
+flowchart TB
+    n1([開始])
+    n2([結束])
+    n3[&amp;&#35;39;分析應用程序配置&amp;&#35;39;]
+    n4{if config.get&#40;&amp;&#35;39;debug&amp;&#35;39;, False&...}
+    n5[analysis&#91;&amp;&#35;39;issues&amp;&#35;39;&#93;.append...]
+    n6[analysis&#91;&amp;&#35;39;recommendations&amp;&#35;39;&#9...]
+    n7[]
+    n8[secret_key = config.get&#40;&amp;&#35;39;secret_k...]
+    n9{if not secret_key or secret_ke...}
+    n10[analysis&#91;&amp;&#35;39;issues&amp;&#35;39;&#93;.append...]
+    n11[analysis&#91;&amp;&#35;39;recommendations&amp;&#35;39;&#9...]
+    n12[]
+    n13[cors_origins = config.get&#40;&amp;&#35;39;cors&amp;&#35;...]
+    n14{if &amp;&#35;39;*&amp;&#35;39; in cors_origins}
+    n15[analysis&#91;&amp;&#35;39;issues&amp;&#35;39;&#93;.append...]
+    n16[analysis&#91;&amp;&#35;39;recommendations&amp;&#35;39;&#9...]
+    n17[]
+    n18[return analysis]
+    n1 --> n3
+    n3 --> n4
+    n4 -->|Yes| n5
+    n4 -->|No| n7
+    n5 --> n6
+    n6 --> n7
+    n7 --> n8
+    n8 --> n9
+    n9 -->|Yes| n10
+    n9 -->|No| n12
+    n10 --> n11
+    n11 --> n12
+    n12 --> n13
+    n13 --> n14
+    n14 -->|Yes| n15
+    n14 -->|No| n17
+    n15 --> n16
+    n16 --> n17
+    n17 --> n18
+    n18 --> n2

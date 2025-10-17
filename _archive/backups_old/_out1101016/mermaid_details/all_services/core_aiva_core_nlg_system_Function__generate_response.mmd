@@ -1,0 +1,23 @@
+flowchart TB
+    n1([開始])
+    n2([結束])
+    n3[&amp;&#35;39;生成自然語言回應&amp;&#35;39;]
+    n4[analyzed_context = self._analyze_contex...]
+    n5{if response_type == &amp;&#35;39;auto&amp;&#35;39;}
+    n6[response_type = self._determine_resp...]
+    n7[]
+    n8[template = self._select_templat...]
+    n9[response = self._fill_template&#40;...]
+    n10[final_response = self._post_process_r...]
+    n11[return final_response]
+    n1 --> n3
+    n3 --> n4
+    n4 --> n5
+    n5 -->|Yes| n6
+    n5 -->|No| n7
+    n6 --> n7
+    n7 --> n8
+    n8 --> n9
+    n9 --> n10
+    n10 --> n11
+    n11 --> n2

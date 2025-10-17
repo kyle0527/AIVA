@@ -1,0 +1,24 @@
+flowchart TB
+    n1([開始])
+    n2([結束])
+    n3[&amp;&#35;39;從 AST 提取預期步驟\n\n        Args:\n            g...]
+    n4[steps = &#91;&#93;]
+    n5{for node in graph.nodes.values&#40;&#41;}
+    n6{if node.node_type in &#40;NodeType...}
+    n7[continue]
+    n8[]
+    n9[steps.append&#40;&#123;&amp;&#35;39;node_id&amp;&#35;39;:...]
+    n10[]
+    n11[return steps]
+    n1 --> n3
+    n3 --> n4
+    n4 --> n5
+    n5 -->|Yes| n6
+    n5 -->|No| n10
+    n6 -->|Yes| n7
+    n6 -->|No| n8
+    n7 --> n8
+    n8 --> n9
+    n9 --> n5
+    n10 --> n11
+    n11 --> n2

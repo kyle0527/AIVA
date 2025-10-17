@@ -1,0 +1,12 @@
+flowchart TB
+    n1([開始])
+    n2([結束])
+    n3[&amp;&#35;39;重置為默認配置&amp;&#35;39;]
+    n4[self._save_snapshot&#40;&#41;]
+    n5[self._config = ScanModuleConfig&#40;&#41;]
+    n6[logger.info&#40;&amp;&#35;39;Reset to default configurati...]
+    n1 --> n3
+    n3 --> n4
+    n4 --> n5
+    n5 --> n6
+    n6 --> n2

@@ -1,0 +1,10 @@
+flowchart TB
+    n1([開始])
+    n2([結束])
+    n3[&amp;&#35;39;記錄錯誤&amp;&#35;39;]
+    n4[error = ErrorRecord&#40;category...]
+    n5[self.stats.add_error&#40;error&#41;]
+    n1 --> n3
+    n3 --> n4
+    n4 --> n5
+    n5 --> n2

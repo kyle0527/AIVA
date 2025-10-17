@@ -1,0 +1,17 @@
+flowchart TB
+    n1([開始])
+    n2([結束])
+    n3[&amp;&#35;39;結束監控\n\n        Args:\n            trace_ses...]
+    n4[trace = self.trace_recorder....]
+    n5{if trace}
+    n6[logger.info&#40;f&amp;&#35;39;Monitoring completed for se...]
+    n7[]
+    n8[return trace]
+    n1 --> n3
+    n3 --> n4
+    n4 --> n5
+    n5 -->|Yes| n6
+    n5 -->|No| n7
+    n6 --> n7
+    n7 --> n8
+    n8 --> n2

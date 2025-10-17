@@ -1,0 +1,17 @@
+flowchart TB
+    n1([開始])
+    n2([結束])
+    n3[&amp;&#35;39;\n        記錄發現的敏感資料匹配\n\n        Args:\n    ...]
+    n4{if not hasattr&#40;self, &amp;&#35;39;sensitiv...}
+    n5[self.sensitive_matches: list&#91;SensitiveMatch&#93; = &#...]
+    n6[]
+    n7[self.sensitive_matches.append&#40;match&#41;]
+    n8[logger.info&#40;f&amp;quot;Sensitive match recorded: &#12...]
+    n1 --> n3
+    n3 --> n4
+    n4 -->|Yes| n5
+    n4 -->|No| n6
+    n5 --> n6
+    n6 --> n7
+    n7 --> n8
+    n8 --> n2

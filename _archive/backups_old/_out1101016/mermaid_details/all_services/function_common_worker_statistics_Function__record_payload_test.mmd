@@ -1,0 +1,15 @@
+flowchart TB
+    n1([開始])
+    n2([結束])
+    n3[&amp;&#35;39;記錄 Payload 測試&amp;&#35;39;]
+    n4[self.stats.payloads_tested += 1]
+    n5{if success}
+    n6[self.stats.payloads_succeeded += 1]
+    n7[]
+    n1 --> n3
+    n3 --> n4
+    n4 --> n5
+    n5 -->|Yes| n6
+    n5 -->|No| n7
+    n6 --> n7
+    n7 --> n2

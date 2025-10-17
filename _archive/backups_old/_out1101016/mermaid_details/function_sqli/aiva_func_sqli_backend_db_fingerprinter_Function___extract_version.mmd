@@ -1,0 +1,28 @@
+flowchart TB
+    n1([開始])
+    n2([結束])
+    n3[&amp;&#35;39;提取資料庫版本資訊&amp;&#35;39;]
+    n4[version_patterns = self._version_patter...]
+    n5{for pattern in version_patterns}
+    n6[match = re.search&#40;pattern, t...]
+    n7{if match}
+    n8[version = match.group&#40;1&#41;]
+    n9[logger.info&#40;f&amp;&#35;39;Version extracted for &#123...]
+    n10[return version]
+    n11[]
+    n12[]
+    n13[return None]
+    n1 --> n3
+    n3 --> n4
+    n4 --> n5
+    n5 -->|Yes| n6
+    n5 -->|No| n12
+    n6 --> n7
+    n7 -->|Yes| n8
+    n7 -->|No| n11
+    n8 --> n9
+    n9 --> n10
+    n10 --> n11
+    n11 --> n5
+    n12 --> n13
+    n13 --> n2

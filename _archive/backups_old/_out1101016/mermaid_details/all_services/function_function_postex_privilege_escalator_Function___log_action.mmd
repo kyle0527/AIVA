@@ -1,0 +1,15 @@
+flowchart TB
+    n1([開始])
+    n2([結束])
+    n3[&amp;&#35;39;記錄操作&amp;&#35;39;]
+    n4{if self.log_all_actions}
+    n5[log_entry = &#123;&amp;&#35;39;timestamp&amp;&#35;39;: da...]
+    n6[logger.info&#40;&amp;&#35;39;privilege_escalation_action&...]
+    n7[]
+    n1 --> n3
+    n3 --> n4
+    n4 -->|Yes| n5
+    n4 -->|No| n7
+    n5 --> n6
+    n6 --> n7
+    n7 --> n2

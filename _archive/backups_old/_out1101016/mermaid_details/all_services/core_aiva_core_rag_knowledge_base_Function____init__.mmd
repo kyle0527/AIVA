@@ -1,0 +1,18 @@
+flowchart TB
+    n1([開始])
+    n2([結束])
+    n3[&amp;&#35;39;初始化知識庫\n\n        Args:\n            vector_...]
+    n4[self.vector_store = vector_store or Vect...]
+    n5[self.data_directory = data_directory or Pa...]
+    n6[self.data_directory.mkdir&#40;parents=True, exist_ok=T...]
+    n7[self.entries: dict&#91;str, KnowledgeEntry&#93; = &#123;&...]
+    n8[self._load_knowledge_base&#40;&#41;]
+    n9[logger.info&#40;f&amp;&#35;39;KnowledgeBase initialized w...]
+    n1 --> n3
+    n3 --> n4
+    n4 --> n5
+    n5 --> n6
+    n6 --> n7
+    n7 --> n8
+    n8 --> n9
+    n9 --> n2

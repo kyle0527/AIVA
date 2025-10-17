@@ -1,0 +1,10 @@
+flowchart TB
+    n1([開始])
+    n2([結束])
+    n3[&amp;&#35;39;設置快取數據&amp;&#35;39;]
+    n4[self._cache&#91;cache_key&#93; = data]
+    n5[self._cache_timestamps&#91;cache_key&#93; = datetime.now&...]
+    n1 --> n3
+    n3 --> n4
+    n4 --> n5
+    n5 --> n2

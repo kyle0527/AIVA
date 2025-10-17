@@ -1,0 +1,66 @@
+flowchart TB
+    n1([開始])
+    n2([結束])
+    n3[from __future__ import annotations]
+    n4[from dataclasses import dataclass, field]
+    n5[import json]
+    n6[from typing import Any, Protocol, runtime_checkabl...]
+    n7[from urllib.parse import parse_qsl, urlparse, urlu...]
+    n8[import httpx]
+    n9[from services.aiva_common.enums import Confidence,...]
+    n10[from services.aiva_common.mq import get_broker]
+    n11[from services.aiva_common.schemas import AivaMessa...]
+    n12[from services.aiva_common.utils import get_logger,...]
+    n13[from .internal_address_detector import InternalAdd...]
+    n14[from .oast_dispatcher import OastDispatcher, OastE...]
+    n15[from .param_semantics_analyzer import OAST_PLACEHO...]
+    n16[from .result_publisher import SsrfResultPublisher]
+    n17[logger = get_logger&#40;__name__&#41;]
+    n18[DEFAULT_TIMEOUT_SECONDS = 15.0]
+    n19[class SsrfTelemetry&#40;...&#41;]
+    n20[class TaskExecutionResult&#40;...&#41;]
+    n21[def run&#40;...&#41;]
+    n22[def _execute_task&#40;...&#41;]
+    n23[def process_task&#40;...&#41;]
+    n24[def _resolve_payload&#40;...&#41;]
+    n25[def _issue_request&#40;...&#41;]
+    n26[def _build_internal_finding&#40;...&#41;]
+    n27[def _build_oast_finding&#40;...&#41;]
+    n28[def _format_request&#40;...&#41;]
+    n29[def _format_response&#40;...&#41;]
+    n30[def _safe_elapsed&#40;...&#41;]
+    n31[def _severity_from_summary&#40;...&#41;]
+    n32[def _extract_token&#40;...&#41;]
+    n33[class OastDispatcherLike&#40;...&#41;]
+    n1 --> n3
+    n3 --> n4
+    n4 --> n5
+    n5 --> n6
+    n6 --> n7
+    n7 --> n8
+    n8 --> n9
+    n9 --> n10
+    n10 --> n11
+    n11 --> n12
+    n12 --> n13
+    n13 --> n14
+    n14 --> n15
+    n15 --> n16
+    n16 --> n17
+    n17 --> n18
+    n18 --> n19
+    n19 --> n20
+    n20 --> n21
+    n21 --> n22
+    n22 --> n23
+    n23 --> n24
+    n24 --> n25
+    n25 --> n26
+    n26 --> n27
+    n27 --> n28
+    n28 --> n29
+    n29 --> n30
+    n30 --> n31
+    n31 --> n32
+    n32 --> n33
+    n33 --> n2

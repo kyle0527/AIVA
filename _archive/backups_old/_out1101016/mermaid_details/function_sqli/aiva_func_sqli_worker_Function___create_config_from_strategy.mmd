@@ -1,0 +1,40 @@
+flowchart TB
+    n1([開始])
+    n2([結束])
+    n3[&amp;&#35;39;\n        根據掃描策略動態創建引擎配置\n\n        Args:\n ...]
+    n4[strategy_upper = strategy.upper&#40;&#41;]
+    n5{if strategy_upper == &amp;&#35;39;FAST&amp;&#35;39;}
+    n6[return SqliEngineConfig&#40;timeout_secon...]
+    n7{if strategy_upper == &amp;&#35;39;NORMAL&amp;&#35;39;}
+    n8[return SqliEngineConfig&#40;timeout_secon...]
+    n9{if strategy_upper == &amp;&#35;39;DEEP&amp;&#35;39;}
+    n10[return SqliEngineConfig&#40;timeout_secon...]
+    n11{if strategy_upper == &amp;&#35;39;AGGRESSIVE&amp;&#35;39;}
+    n12[return SqliEngineConfig&#40;timeout_secon...]
+    n13[logger.warning&#40;f&amp;quot;Unknown strategy &amp;&#35;...]
+    n14[return SqliEngineConfig&#40;&#41;]
+    n15[]
+    n16[]
+    n17[]
+    n18[]
+    n1 --> n3
+    n3 --> n4
+    n4 --> n5
+    n5 -->|Yes| n6
+    n5 -->|No| n7
+    n6 --> n18
+    n7 -->|Yes| n8
+    n7 -->|No| n9
+    n8 --> n17
+    n9 -->|Yes| n10
+    n9 -->|No| n11
+    n10 --> n16
+    n11 -->|Yes| n12
+    n11 -->|No| n13
+    n12 --> n15
+    n13 --> n14
+    n14 --> n15
+    n15 --> n16
+    n16 --> n17
+    n17 --> n18
+    n18 --> n2

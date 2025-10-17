@@ -1,0 +1,10 @@
+flowchart TB
+    n1([開始])
+    n2([結束])
+    n3[&amp;&#35;39;為特定 AI 模組生成具體任務&amp;&#35;39;]
+    n4[task_mapping = &#123;&amp;&#35;39;SSRFDetector&amp;&#35;3...]
+    n5[return task_mapping.get&#40;module.module...]
+    n1 --> n3
+    n3 --> n4
+    n4 --> n5
+    n5 --> n2

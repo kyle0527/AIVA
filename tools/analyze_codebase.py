@@ -932,7 +932,7 @@ def main():
     print()
 
     # 執行 Python 分析
-    print("📊 階段 1: 分析 Python 程式碼")
+    print("[STATS] 階段 1: 分析 Python 程式碼")
     print("-" * 80)
     stats = analyze_directory(
         root_path=project_root / "services",
@@ -941,7 +941,7 @@ def main():
     )
 
     # 執行多語言分析
-    print("\n📊 階段 2: 分析多語言程式碼 (Go/Rust/TypeScript/JavaScript)")
+    print("\n[STATS] 階段 2: 分析多語言程式碼 (Go/Rust/TypeScript/JavaScript)")
     print("-" * 80)
     multilang_stats = analyze_multilang_files(
         root_path=project_root / "services",
@@ -950,7 +950,7 @@ def main():
 
     # 顯示 Python 摘要
     print("\n" + "=" * 80)
-    print("✅ Python 分析完成！摘要:")
+    print("[OK] Python 分析完成！摘要:")
     print("=" * 80)
     print(f"總檔案數: {stats['total_files']}")
     print(f"總行數: {stats['total_lines']:,}")
@@ -969,7 +969,7 @@ def main():
 
     # 顯示多語言摘要
     print("\n" + "=" * 80)
-    print("✅ 多語言分析完成！摘要:")
+    print("[OK] 多語言分析完成！摘要:")
     print("=" * 80)
     total_multilang_files = 0
     total_multilang_lines = 0
@@ -985,7 +985,7 @@ def main():
 
     # 總計
     print("\n" + "=" * 80)
-    print("📈 專案總計:")
+    print("[U+1F4C8] 專案總計:")
     print("=" * 80)
     grand_total_files = stats["total_files"] + total_multilang_files
     grand_total_lines = stats["total_lines"] + total_multilang_lines

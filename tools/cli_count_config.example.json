@@ -1,0 +1,16 @@
+{
+  "host_candidates": [
+    "127.0.0.1",
+    "0.0.0.0",
+    "localhost"
+  ],
+  "port_candidates": [
+    3000,
+    8000,
+    8080,
+    8888,
+    9000
+  ],
+  "scope": "services/core/**",
+  "description": "預設設定範例：包含常用的主機位址和端口候選"
+}

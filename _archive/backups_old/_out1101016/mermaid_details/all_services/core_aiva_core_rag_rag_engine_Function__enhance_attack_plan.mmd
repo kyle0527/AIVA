@@ -1,0 +1,20 @@
+flowchart TB
+    n1([開始])
+    n2([結束])
+    n3[&amp;&#35;39;增強攻擊計畫\n\n        使用 RAG 檢索相關經驗和技術，增強計畫生成\n\...]
+    n4[query = f&amp;&#35;39;&#123;objective&#125; &#123;targe...]
+    n5[attack_techniques = self.knowledge_base....]
+    n6[successful_experiences = self.knowledge_base....]
+    n7[best_practices = self.knowledge_base....]
+    n8[context = &#123;&amp;&#35;39;target&amp;&#35;39;: &#123;&...]
+    n9[logger.info&#40;f&amp;&#35;39;Enhanced attack plan with &...]
+    n10[return context]
+    n1 --> n3
+    n3 --> n4
+    n4 --> n5
+    n5 --> n6
+    n6 --> n7
+    n7 --> n8
+    n8 --> n9
+    n9 --> n10
+    n10 --> n2

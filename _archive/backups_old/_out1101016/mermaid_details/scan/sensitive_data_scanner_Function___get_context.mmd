@@ -1,0 +1,22 @@
+flowchart TB
+    n1([開始])
+    n2([結束])
+    n3[&amp;&#35;39;\n        獲取匹配的上下文\n\n        Args:\n       ...]
+    n4[context_start = max&#40;0, start - conte...]
+    n5[context_end = min&#40;len&#40;content&#41;, en...]
+    n6[context = content&#91;context_star...]
+    n7[match_length = end - start]
+    n8[match_in_context_start = start - context_star...]
+    n9[match_in_context_end = match_in_context_sta...]
+    n10[masked_context = context&#91;:match_in_co...]
+    n11[return masked_context.replace&#40;&amp;&#35;39;\n&amp;&#3...]
+    n1 --> n3
+    n3 --> n4
+    n4 --> n5
+    n5 --> n6
+    n6 --> n7
+    n7 --> n8
+    n8 --> n9
+    n9 --> n10
+    n10 --> n11
+    n11 --> n2

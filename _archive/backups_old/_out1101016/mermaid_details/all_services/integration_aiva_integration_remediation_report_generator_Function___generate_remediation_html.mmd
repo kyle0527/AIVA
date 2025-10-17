@@ -1,0 +1,31 @@
+flowchart TB
+    n1([開始])
+    n2([結束])
+    n3[&amp;&#35;39;生成修復報告 HTML&amp;&#35;39;]
+    n4[output_file = self.output_dir / f&amp;quot;...]
+    n5[stats = report&#91;&amp;&#35;39;statistics&amp;&#35;39;&#93;]
+    n6[fixes = report&#91;&amp;&#35;39;fixes&amp;&#35;39;&#93;]
+    n7[html = f&amp;quot;&amp;quot;&amp;quot;&amp;lt;!DOCTYPE ht...]
+    n8{for fix in fixes}
+    n9[fix_id = fix.get&#40;&amp;&#35;39;fix_id&amp;&#35;39;, &a...]
+    n10[status = fix.get&#40;&amp;&#35;39;status&amp;&#35;39;, &a...]
+    n11[html += f&amp;&#35;39;\n        &amp;lt;div class=&amp;qu...]
+    n12[]
+    n13[html += &amp;&#35;39;\n    &amp;lt;/div&amp;gt;\n&amp;lt;...]
+    n14[output_file.write_text&#40;html, encoding=&amp;&#35;39;ut...]
+    n15[return output_file]
+    n1 --> n3
+    n3 --> n4
+    n4 --> n5
+    n5 --> n6
+    n6 --> n7
+    n7 --> n8
+    n8 -->|Yes| n9
+    n8 -->|No| n12
+    n9 --> n10
+    n10 --> n11
+    n11 --> n8
+    n12 --> n13
+    n13 --> n14
+    n14 --> n15
+    n15 --> n2

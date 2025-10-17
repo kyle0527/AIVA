@@ -272,11 +272,11 @@ class ReportGenerator:
 </head>
 <body>
     <div class="container">
-        <h1>🔒 Vulnerability Report</h1>
+        <h1>[LOCK] Vulnerability Report</h1>
         <p><strong>Report ID:</strong> {report['report_id']}</p>
         <p><strong>Generated:</strong> {report['timestamp']}</p>
 
-        <h2>📊 Statistics</h2>
+        <h2>[STATS] Statistics</h2>
         <div class="stats">
             <div class="stat-card">
                 <div class="stat-number">{stats['total']}</div>
@@ -298,7 +298,7 @@ class ReportGenerator:
         html += """
         </div>
 
-        <h2>🔍 Vulnerabilities</h2>
+        <h2>[SEARCH] Vulnerabilities</h2>
 """
 
         # 列出所有漏洞
@@ -396,12 +396,12 @@ class ReportGenerator:
         stats = report["statistics"]
         vulns = report["vulnerabilities"]
 
-        md = f"""# 🔒 Vulnerability Report
+        md = f"""# [LOCK] Vulnerability Report
 
 **Report ID:** `{report['report_id']}`
 **Generated:** {report['timestamp']}
 
-## 📊 Statistics
+## [STATS] Statistics
 
 - **Total Vulnerabilities:** {stats['total']}
 """
@@ -409,7 +409,7 @@ class ReportGenerator:
         for severity, count in stats["by_severity"].items():
             md += f"- **{severity}:** {count}\n"
 
-        md += "\n## 🔍 Vulnerabilities\n\n"
+        md += "\n## [SEARCH] Vulnerabilities\n\n"
 
         for vuln in vulns:
             severity = vuln.get("severity", "UNKNOWN")
@@ -452,7 +452,7 @@ class ReportGenerator:
 </head>
 <body>
     <div class="container">
-        <h1>✅ Remediation Report</h1>
+        <h1>[OK] Remediation Report</h1>
         <p><strong>Report ID:</strong> {report['report_id']}</p>
 
         <h2>Statistics</h2>
@@ -498,7 +498,7 @@ class ReportGenerator:
         output_file = self.output_dir / f"{report['report_id']}_remediation.md"
 
         stats = report["statistics"]
-        md = f"""# ✅ Remediation Report
+        md = f"""# [OK] Remediation Report
 
 **Report ID:** `{report['report_id']}`
 
@@ -526,7 +526,7 @@ class ReportGenerator:
 
 def main():
     """測試範例"""
-    print("📄 Report Generator Demo")
+    print("[U+1F4C4] Report Generator Demo")
     print("=" * 60)
 
     generator = ReportGenerator(output_dir="./demo_reports")
@@ -559,12 +559,12 @@ def main():
         format="html",
     )
 
-    print("\n✅ Vulnerability report generated:")
+    print("\n[OK] Vulnerability report generated:")
     print(f"   Report ID: {report['report_id']}")
     print(f"   File: {report['output_file']}")
     print(f"   Total vulnerabilities: {report['statistics']['total']}")
 
-    print("\n✅ Demo completed")
+    print("\n[OK] Demo completed")
 
 
 if __name__ == "__main__":

@@ -1,0 +1,8 @@
+flowchart TB
+    n1([開始])
+    n2([結束])
+    n3[&amp;&#35;39;記錄 OAST 探針發送&amp;&#35;39;]
+    n4[self.stats.oast_probes_sent += 1]
+    n1 --> n3
+    n3 --> n4
+    n4 --> n2

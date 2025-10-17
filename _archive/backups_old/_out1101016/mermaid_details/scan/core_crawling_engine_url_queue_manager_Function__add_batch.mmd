@@ -1,0 +1,24 @@
+flowchart TB
+    n1([開始])
+    n2([結束])
+    n3[&amp;&#35;39;\n        批量添加 URL\n\n        Args:\n       ...]
+    n4[added_count = 0]
+    n5{for url in urls}
+    n6{if self.add&#40;url, parent_url, d...}
+    n7[added_count += 1]
+    n8[]
+    n9[]
+    n10[logger.debug&#40;f&amp;&#35;39;Batch add: &#123;added_cou...]
+    n11[return added_count]
+    n1 --> n3
+    n3 --> n4
+    n4 --> n5
+    n5 -->|Yes| n6
+    n5 -->|No| n9
+    n6 -->|Yes| n7
+    n6 -->|No| n8
+    n7 --> n8
+    n8 --> n5
+    n9 --> n10
+    n10 --> n11
+    n11 --> n2

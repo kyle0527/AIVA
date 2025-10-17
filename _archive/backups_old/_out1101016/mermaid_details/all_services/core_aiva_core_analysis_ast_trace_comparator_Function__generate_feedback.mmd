@@ -1,0 +1,42 @@
+flowchart TB
+    n1([開始])
+    n2([結束])
+    n3[&amp;&#35;39;生成回饋信號\n\n        用於強化學習的獎勵/懲罰信號\n\n        ...]
+    n4[reward = metrics.overall_scor...]
+    n5[suggestions = &#91;&#93;]
+    n6{if metrics.completion_rate &amp;lt; 0.8}
+    n7[suggestions.append&#40;&amp;&#35;39;增加步驟完成率&amp;&#35;39;&...]
+    n8[]
+    n9{if metrics.sequence_match_rate...}
+    n10[suggestions.append&#40;&amp;&#35;39;改善步驟執行順序&amp;&#35;39;...]
+    n11[]
+    n12{if metrics.error_count &amp;gt; 0}
+    n13[suggestions.append&#40;f&amp;&#35;39;減少錯誤（當前：&#123;metric...]
+    n14[]
+    n15{if metrics.failed_steps &amp;gt; 0}
+    n16[suggestions.append&#40;f&amp;&#35;39;提高步驟成功率（失敗：&#123;met...]
+    n17[]
+    n18[feedback = &#123;&amp;&#35;39;reward&amp;&#35;39;: reward...]
+    n19[return feedback]
+    n1 --> n3
+    n3 --> n4
+    n4 --> n5
+    n5 --> n6
+    n6 -->|Yes| n7
+    n6 -->|No| n8
+    n7 --> n8
+    n8 --> n9
+    n9 -->|Yes| n10
+    n9 -->|No| n11
+    n10 --> n11
+    n11 --> n12
+    n12 -->|Yes| n13
+    n12 -->|No| n14
+    n13 --> n14
+    n14 --> n15
+    n15 -->|Yes| n16
+    n15 -->|No| n17
+    n16 --> n17
+    n17 --> n18
+    n18 --> n19
+    n19 --> n2

@@ -1,0 +1,16 @@
+flowchart TB
+    n1([開始])
+    n2([結束])
+    n3[&amp;&#35;39;獲取節點描述&amp;&#35;39;]
+    n4[node_labels = node.get&#40;&amp;&#35;39;labels&amp;&#35;3...]
+    n5[node_type = node_labels&#91;0&#93; if no...]
+    n6[name = node.get&#40;&amp;&#35;39;name&amp;&#35;39;, nod...]
+    n7[type_name = self._node_descripti...]
+    n8[return f&amp;&#35;39;&#123;type_name&#125;: &#123;name&#1...]
+    n1 --> n3
+    n3 --> n4
+    n4 --> n5
+    n5 --> n6
+    n6 --> n7
+    n7 --> n8
+    n8 --> n2

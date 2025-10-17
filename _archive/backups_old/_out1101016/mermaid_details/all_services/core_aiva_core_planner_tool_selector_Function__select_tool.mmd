@@ -1,0 +1,22 @@
+flowchart TB
+    n1([開始])
+    n2([結束])
+    n3[&amp;&#35;39;選擇執行任務的工具\n\n        Args:\n            task...]
+    n4[logger.debug&#40;f&amp;&#35;39;Selecting tool for task &#...]
+    n5[service_type = self._select_service...]
+    n6[&#40;endpoint, function&#41; = self._determine_endp...]
+    n7[parameters = self._prepare_parame...]
+    n8[routing_key = self._determine_rout...]
+    n9[decision = ToolDecision&#40;task_id...]
+    n10[logger.info&#40;f&amp;&#35;39;Selected &#123;service_type...]
+    n11[return decision]
+    n1 --> n3
+    n3 --> n4
+    n4 --> n5
+    n5 --> n6
+    n6 --> n7
+    n7 --> n8
+    n8 --> n9
+    n9 --> n10
+    n10 --> n11
+    n11 --> n2

@@ -1,0 +1,64 @@
+flowchart TB
+    n1([開始])
+    n2([結束])
+    n3[&amp;&#35;39;檢測可疑模式&amp;&#35;39;]
+    n4[patterns: list&#91;PatternMatch&#93; = &#91;&#93;]
+    n5{for &#40;line_num, line&#41; in enumerate&#40;lines, ...}
+    n6[stripped = line.strip&#40;&#41;]
+    n7{if not stripped or stripped.st...}
+    n8[continue]
+    n9[]
+    n10{for &#40;source_type, pattern_info&#41; in self._source_p...}
+    n11[pattern = pattern_info&#91;&amp;&#35;39;patter...]
+    n12[severity = pattern_info&#91;&amp;&#35;39;severi...]
+    n13[description = pattern_info&#91;&amp;&#35;39;descri...]
+    n14[match = re.search&#40;pattern, l...]
+    n15{if match}
+    n16[patterns.append&#40;PatternMatch&#40;pattern_type=source_...]
+    n17[]
+    n18[]
+    n19{for &#40;security_type, pattern_info&#41; in self._securi...}
+    n20[pattern = pattern_info&#91;&amp;&#35;39;patter...]
+    n21[severity = pattern_info&#91;&amp;&#35;39;severi...]
+    n22[description = pattern_info&#91;&amp;&#35;39;descri...]
+    n23[match = re.search&#40;pattern, l...]
+    n24{if match}
+    n25[patterns.append&#40;PatternMatch&#40;pattern_type=securit...]
+    n26[]
+    n27[]
+    n28[]
+    n29[return patterns]
+    n1 --> n3
+    n3 --> n4
+    n4 --> n5
+    n5 -->|Yes| n6
+    n5 -->|No| n28
+    n6 --> n7
+    n7 -->|Yes| n8
+    n7 -->|No| n9
+    n8 --> n9
+    n9 --> n10
+    n10 -->|Yes| n11
+    n10 -->|No| n18
+    n11 --> n12
+    n12 --> n13
+    n13 --> n14
+    n14 --> n15
+    n15 -->|Yes| n16
+    n15 -->|No| n17
+    n16 --> n17
+    n17 --> n10
+    n18 --> n19
+    n19 -->|Yes| n20
+    n19 -->|No| n27
+    n20 --> n21
+    n21 --> n22
+    n22 --> n23
+    n23 --> n24
+    n24 -->|Yes| n25
+    n24 -->|No| n26
+    n25 --> n26
+    n26 --> n19
+    n27 --> n5
+    n28 --> n29
+    n29 --> n2

@@ -40,10 +40,10 @@ class Graph:
         self.end = self.add("end", "結束")
 
     def _validate_direction(self, direction: str) -> str:
-        # Valid Mermaid flowchart directions
-        valid = ["TD", "TB", "BT", "RL", "LR"]
-        direction = direction.upper()
+        # Valid Mermaid flowchart directions (Mermaid 11.11.0+)
         # TD is deprecated, use TB instead
+        valid = ["TB", "BT", "RL", "LR"]
+        direction = direction.upper()
         if direction == "TD":
             direction = "TB"
         return direction if direction in valid else "TB"
@@ -60,26 +60,26 @@ class Graph:
             a.nexts.append(b)
 
     def to_mermaid(self) -> str:
+        # Mermaid 11.11.0+ standard header
         lines = [f"flowchart {self.direction}"]
 
         def sanitize_text(text: str) -> str:
-            """Properly escape text for Mermaid syntax"""
+            """Properly escape text for Mermaid 11.11.0+ syntax"""
+            # Order matters: escape & first
+            text = text.replace("&", "&amp;")
+            
             # Basic character escaping for Mermaid
             text = (
                 text.replace('"', "&quot;")
                 .replace("'", "&#39;")
                 .replace("<", "&lt;")
                 .replace(">", "&gt;")
-                .replace("&", "&amp;")
                 .replace("#", "&#35;")
                 .replace("|", "&#124;")
-                .replace("(", "&#40;")
-                .replace(")", "&#41;")
-                .replace("[", "&#91;")
-                .replace("]", "&#93;")
-                .replace("{", "&#123;")
-                .replace("}", "&#125;")
             )
+            
+            # Don't escape parentheses and brackets in newer versions
+            # as they're handled better internally
 
             # Handle newlines and tabs
             text = text.replace("\n", "<br/>").replace("\t", "    ")
@@ -95,16 +95,17 @@ class Graph:
 
             if n.kind == "cond":
                 # Diamond shape for conditionals
-                return f"{n.id}{{{text}}}"
+                return f'{n.id}{{{text}}}'
             elif n.kind in ("end", "start"):
-                # Stadium/pill shape for start/end
-                return f"{n.id}([{text}])"
+                # Stadium/pill shape for start/end (Mermaid 11.11.0+)
+                return f'{n.id}([{text}])'
             elif n.kind == "subgraph":
-                # Trapezoid shape for subgraphs
-                return f"{n.id}[/{text}/]"
+                # Parallelogram shape for subgraphs
+                return f'{n.id}[/{text}/]'
             else:
-                # Rectangle shape for operations
-                return f"{n.id}[{text}]"
+                # Rectangle shape for operations (default)
+                # Using quotes to support special characters
+                return f'{n.id}["{text}"]'
 
         # Add node definitions
         for n in self.nodes:

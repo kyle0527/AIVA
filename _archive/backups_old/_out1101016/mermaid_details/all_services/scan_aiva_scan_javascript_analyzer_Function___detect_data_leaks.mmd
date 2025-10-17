@@ -1,0 +1,56 @@
+flowchart TB
+    n1([開始])
+    n2([結束])
+    n3[&amp;&#35;39;\n        檢測可能的數據洩漏\n\n        Args:\n      ...]
+    n4[leaks: list&#91;dict&#91;str, str&#93;&#93; = &#91;&#93;]
+    n5[console_pattern = &amp;&#35;39;console\\.&#40;log&#124;de...]
+    n6[console_matches = re.finditer&#40;console_...]
+    n7{if any&#40;console_matches&#41;}
+    n8[leaks.append&#40;&#123;&amp;&#35;39;type&amp;&#35;39;: &a...]
+    n9[]
+    n10[storage_pattern = &amp;&#35;39;&#40;localStorage&#124;ses...]
+    n11[storage_matches = re.finditer&#40;storage_...]
+    n12{if any&#40;storage_matches&#41;}
+    n13[leaks.append&#40;&#123;&amp;&#35;39;type&amp;&#35;39;: &a...]
+    n14[]
+    n15[url_param_pattern = &amp;&#35;39;&#91;?&amp;&#93;&#40;pas...]
+    n16[url_param_matches = re.finditer&#40;url_para...]
+    n17{if any&#40;url_param_matches&#41;}
+    n18[leaks.append&#40;&#123;&amp;&#35;39;type&amp;&#35;39;: &a...]
+    n19[]
+    n20[hardcoded_pattern = &amp;&#35;39;&#40;password&#124;apiKe...]
+    n21[hardcoded_matches = re.finditer&#40;hardcode...]
+    n22{if any&#40;hardcoded_matches&#41;}
+    n23[leaks.append&#40;&#123;&amp;&#35;39;type&amp;&#35;39;: &a...]
+    n24[]
+    n25[logger.debug&#40;f&amp;&#35;39;Detected &#123;len&#40;lea...]
+    n26[return leaks]
+    n1 --> n3
+    n3 --> n4
+    n4 --> n5
+    n5 --> n6
+    n6 --> n7
+    n7 -->|Yes| n8
+    n7 -->|No| n9
+    n8 --> n9
+    n9 --> n10
+    n10 --> n11
+    n11 --> n12
+    n12 -->|Yes| n13
+    n12 -->|No| n14
+    n13 --> n14
+    n14 --> n15
+    n15 --> n16
+    n16 --> n17
+    n17 -->|Yes| n18
+    n17 -->|No| n19
+    n18 --> n19
+    n19 --> n20
+    n20 --> n21
+    n21 --> n22
+    n22 -->|Yes| n23
+    n22 -->|No| n24
+    n23 --> n24
+    n24 --> n25
+    n25 --> n26
+    n26 --> n2

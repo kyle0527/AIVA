@@ -1,0 +1,46 @@
+flowchart TB
+    n1([開始])
+    n2([結束])
+    n3[&amp;&#35;39;\n進階檢測配置系統 - 功能增強和優化\n基於現有 detection_config....]
+    n4[from __future__ import annotations]
+    n5[import os]
+    n6[from dataclasses import dataclass, field]
+    n7[from enum import Enum]
+    n8[from typing import Any, Optional, Union]
+    n9[from datetime import datetime, timedelta]
+    n10[from .detection_config import BaseDetectionConfig,...]
+    n11[class DetectionMode&#40;...&#41;]
+    n12[class ReportLevel&#40;...&#41;]
+    n13[class SQLiConfig&#40;...&#41;]
+    n14[class AdvancedSSRFConfig&#40;...&#41;]
+    n15[class AdvancedXSSConfig&#40;...&#41;]
+    n16[class AdvancedIDORConfig&#40;...&#41;]
+    n17[class PerformanceConfig&#40;...&#41;]
+    n18[class SecurityConfig&#40;...&#41;]
+    n19[class EnvironmentConfig&#40;...&#41;]
+    n20[class UnifiedDetectionConfig&#40;...&#41;]
+    n21[class ConfigurationManager&#40;...&#41;]
+    n22[DEFAULT_CONFIG_MANAGER = ConfigurationManager...]
+    n23[DEFAULT_UNIFIED_CONFIG = UnifiedDetectionConf...]
+    n1 --> n3
+    n3 --> n4
+    n4 --> n5
+    n5 --> n6
+    n6 --> n7
+    n7 --> n8
+    n8 --> n9
+    n9 --> n10
+    n10 --> n11
+    n11 --> n12
+    n12 --> n13
+    n13 --> n14
+    n14 --> n15
+    n15 --> n16
+    n16 --> n17
+    n17 --> n18
+    n18 --> n19
+    n19 --> n20
+    n20 --> n21
+    n21 --> n22
+    n22 --> n23
+    n23 --> n2

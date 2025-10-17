@@ -1,0 +1,30 @@
+flowchart TB
+    n1([開始])
+    n2([結束])
+    n3[&amp;&#35;39;\n        提取 JavaScript 中引用的外部資源\n\n        ...]
+    n4[external_urls: list&#91;str&#93; = &#91;&#93;]
+    n5[url_pattern = &amp;&#35;39;https?://&#91;^\\s\\\&amp;&#35...]
+    n6[matches = re.finditer&#40;url_patt...]
+    n7{for match in matches}
+    n8[url = match.group&#40;0&#41;]
+    n9{if url not in external_urls}
+    n10[external_urls.append&#40;url&#41;]
+    n11[]
+    n12[]
+    n13[logger.debug&#40;f&amp;&#35;39;Found &#123;len&#40;extern...]
+    n14[return external_urls]
+    n1 --> n3
+    n3 --> n4
+    n4 --> n5
+    n5 --> n6
+    n6 --> n7
+    n7 -->|Yes| n8
+    n7 -->|No| n12
+    n8 --> n9
+    n9 -->|Yes| n10
+    n9 -->|No| n11
+    n10 --> n11
+    n11 --> n7
+    n12 --> n13
+    n13 --> n14
+    n14 --> n2

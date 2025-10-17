@@ -1,0 +1,10 @@
+flowchart TB
+    n1([開始])
+    n2([結束])
+    n3[&amp;&#35;39;字符串表示&amp;&#35;39;]
+    n4[payload_preview = self.payload&#91;:50&#93; + ...]
+    n5[return f&amp;&#35;39;&#91;&#123;self.engine_name&#125;&#9...]
+    n1 --> n3
+    n3 --> n4
+    n4 --> n5
+    n5 --> n2

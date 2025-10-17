@@ -1,0 +1,14 @@
+flowchart TB
+    n1([開始])
+    n2([結束])
+    n3[&amp;&#35;39;初始化資料庫連接\n\n        Args:\n            datab...]
+    n4[self.engine = create_engine&#40;databa...]
+    n5[self.SessionLocal = sessionmaker&#40;bind=se...]
+    n6[Base.metadata.create_all&#40;self.engine&#41;]
+    n7[logger.info&#40;f&amp;&#35;39;ExperienceRepository initia...]
+    n1 --> n3
+    n3 --> n4
+    n4 --> n5
+    n5 --> n6
+    n6 --> n7
+    n7 --> n2

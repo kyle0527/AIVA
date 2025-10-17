@@ -1,0 +1,18 @@
+flowchart TB
+    n1([開始])
+    n2([結束])
+    n3[&amp;&#35;39;加載模型\n\n        Args:\n            model_pat...]
+    n4[with open&#40;mode...]
+    n5[model_state = pickle.load&#40;f&#41;]
+    n6[self.model.fc1 = model_state&#91;&amp;&#35;39;fc1&amp;&#3...]
+    n7[self.model.fc2 = model_state&#91;&amp;&#35;39;fc2&amp;&#3...]
+    n8[self.model.spiking1.weights = model_state&#91;&amp;&#35;3...]
+    n9[logger.info&#40;f&amp;&#35;39;Model loaded from &#123;mod...]
+    n1 --> n3
+    n3 --> n4
+    n4 --> n5
+    n5 --> n6
+    n6 --> n7
+    n7 --> n8
+    n8 --> n9
+    n9 --> n2

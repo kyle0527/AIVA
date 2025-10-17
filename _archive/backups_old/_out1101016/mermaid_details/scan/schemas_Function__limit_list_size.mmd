@@ -1,0 +1,17 @@
+flowchart TB
+    n1([開始])
+    n2([結束])
+    n3[&amp;&#35;39;限制列表大小以防止過大的響應&amp;&#35;39;]
+    n4[max_items = 1000]
+    n5{if len&#40;v&#41; &amp;gt; max_items}
+    n6[raise ValueError&#40;f&amp;&#35;39;List too large &#40;ma...]
+    n7[]
+    n8[return v]
+    n1 --> n3
+    n3 --> n4
+    n4 --> n5
+    n5 -->|Yes| n6
+    n5 -->|No| n7
+    n6 --> n7
+    n7 --> n8
+    n8 --> n2

@@ -1,9 +1,14 @@
 from pathlib import Path
 import shutil
 
-root = Path(r"c:\D\E\AIVA\AIVA-main")
+# 使用當前腳本所在目錄作為基準
+script_dir = Path(__file__).parent
+root = script_dir.parent  # AIVA 根目錄
 backup_root = root / 'emoji_backups2'
 backup_root.mkdir(exist_ok=True)
+
+print(f"掃描目錄: {root}")
+print(f"備份目錄: {backup_root}")
 
 py_files = [p for p in root.rglob('*.py') if 'emoji_backups' not in str(p) and 'emoji_backups2' not in str(p)]
 modified = []
@@ -47,4 +52,5 @@ with out.open('w', encoding='utf-8') as f:
     for m in modified:
         f.write(m + '\n')
 
-print('wrote', out)
+print(f'已修正 {len(modified)} 個文件')
+print('報告已生成:', out)

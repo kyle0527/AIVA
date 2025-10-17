@@ -1,0 +1,82 @@
+flowchart TB
+    n1([開始])
+    n2([結束])
+    n3[&amp;&#35;39;更新訓練歷史\n\n        Args:\n            trainin...]
+    n4[session = self.get_session&#40;&#41;]
+    n5[try]
+    n6[history = session.query&#40;ModelT...]
+    n7{if not history}
+    n8[logger.warning&#40;f&amp;&#35;39;Training history &#123;t...]
+    n9[return]
+    n10[]
+    n11{if status}
+    n12[history.status = status]
+    n13[]
+    n14{if final_loss is not None}
+    n15[history.final_loss = final_loss]
+    n16[]
+    n17{if final_accuracy is not None}
+    n18[history.final_accuracy = final_accuracy]
+    n19[]
+    n20{if training_metrics}
+    n21[history.training_metrics = training_metrics]
+    n22[]
+    n23{if model_path}
+    n24[history.model_path = model_path]
+    n25[]
+    n26{if status in &#40;&amp;&#35;39;completed&amp;&#35;39;, &a...}
+    n27[history.completed_at = datetime.now&#40;&#41;]
+    n28[]
+    n29[session.commit&#40;&#41;]
+    n30[logger.info&#40;f&amp;&#35;39;Updated training history &#...]
+    n31[]
+    n32[except Exception]
+    n33[session.rollback&#40;&#41;]
+    n34[logger.error&#40;f&amp;&#35;39;Failed to update training ...]
+    n35[raise]
+    n36[finally]
+    n37[session.close&#40;&#41;]
+    n1 --> n3
+    n3 --> n4
+    n4 --> n5
+    n5 --> n6
+    n5 --> n32
+    n6 --> n7
+    n7 -->|Yes| n8
+    n7 -->|No| n10
+    n8 --> n9
+    n9 --> n10
+    n10 --> n11
+    n11 -->|Yes| n12
+    n11 -->|No| n13
+    n12 --> n13
+    n13 --> n14
+    n14 -->|Yes| n15
+    n14 -->|No| n16
+    n15 --> n16
+    n16 --> n17
+    n17 -->|Yes| n18
+    n17 -->|No| n19
+    n18 --> n19
+    n19 --> n20
+    n20 -->|Yes| n21
+    n20 -->|No| n22
+    n21 --> n22
+    n22 --> n23
+    n23 -->|Yes| n24
+    n23 -->|No| n25
+    n24 --> n25
+    n25 --> n26
+    n26 -->|Yes| n27
+    n26 -->|No| n28
+    n27 --> n28
+    n28 --> n29
+    n29 --> n30
+    n30 --> n31
+    n31 --> n36
+    n32 --> n33
+    n33 --> n34
+    n34 --> n35
+    n35 --> n31
+    n36 --> n37
+    n37 --> n2

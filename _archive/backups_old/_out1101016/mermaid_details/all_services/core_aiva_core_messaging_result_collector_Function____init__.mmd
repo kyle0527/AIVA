@@ -1,0 +1,16 @@
+flowchart TB
+    n1([開始])
+    n2([結束])
+    n3[&amp;&#35;39;初始化結果收集器\n\n        Args:\n            broke...]
+    n4[self.broker = broker]
+    n5[self.storage = storage_backend]
+    n6[self.result_handlers: dict&#91;str, list&#91;Callable&#93...]
+    n7[self.pending_results: dict&#91;str, dict&#91;str, Any&#93...]
+    n8[logger.info&#40;&amp;&#35;39;ResultCollector initialized&...]
+    n1 --> n3
+    n3 --> n4
+    n4 --> n5
+    n5 --> n6
+    n6 --> n7
+    n7 --> n8
+    n8 --> n2

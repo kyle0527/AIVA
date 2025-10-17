@@ -1,0 +1,36 @@
+flowchart TB
+    n1([開始])
+    n2([結束])
+    n3[&amp;&#35;39;\nMessage Broker - 消息代理\n\n統一管理 RabbitMQ 連接和...]
+    n4[from __future__ import annotations]
+    n5[import asyncio]
+    n6[from collections.abc import Callable]
+    n7[from contextlib import suppress]
+    n8[import json]
+    n9[import logging]
+    n10[from typing import Any]
+    n11[import aio_pika]
+    n12[from aio_pika.abc import AbstractChannel, Abstract...]
+    n13[from services.aiva_common.config import get_settin...]
+    n14[from services.aiva_common.enums import ModuleName]
+    n15[from services.aiva_common.schemas import AivaMessa...]
+    n16[logger = logging.getLogger&#40;__...]
+    n17[class MessageBroker&#40;...&#41;]
+    n18[class RPCClient&#40;...&#41;]
+    n1 --> n3
+    n3 --> n4
+    n4 --> n5
+    n5 --> n6
+    n6 --> n7
+    n7 --> n8
+    n8 --> n9
+    n9 --> n10
+    n10 --> n11
+    n11 --> n12
+    n12 --> n13
+    n13 --> n14
+    n14 --> n15
+    n15 --> n16
+    n16 --> n17
+    n17 --> n18
+    n18 --> n2

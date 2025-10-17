@@ -30,11 +30,8 @@ dependencies = [
   "tenacity>=8.3.0",
 ]
 
-[tool.setuptools]
-packages = ["services"]
-
-[tool.setuptools.package-data]
-"*" = ["*.json", "*.yml", "*.yaml"]
+[project.scripts]
+aiva = "services.cli.aiva_cli:main"
 
 [project.optional-dependencies]
 # 生產環境可選依賴
@@ -57,6 +54,9 @@ include-package-data = true
 
 [tool.setuptools.package-dir]
 services = "services"
+
+[tool.setuptools.package-data]
+"*" = ["*.json", "*.yml", "*.yaml"]
 
 [tool.black]
 line-length = 88

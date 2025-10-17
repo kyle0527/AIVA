@@ -1,0 +1,16 @@
+flowchart TB
+    n1([開始])
+    n2([結束])
+    n3[&amp;&#35;39;\nThreatIntel Module - 威脅情報聚合與分析模組\n\n提供整合多個...]
+    n4[from .intel_aggregator import IntelAggregator]
+    n5[from .ioc_enricher import IOCEnricher]
+    n6[from .mitre_mapper import MitreMapper]
+    n7[__all__ = &#91;&amp;&#35;39;IntelAggregator&amp;&#35;39;,...]
+    n8[__version__ = &amp;&#35;39;1.0.0&amp;&#35;39;]
+    n1 --> n3
+    n3 --> n4
+    n4 --> n5
+    n5 --> n6
+    n6 --> n7
+    n7 --> n8
+    n8 --> n2

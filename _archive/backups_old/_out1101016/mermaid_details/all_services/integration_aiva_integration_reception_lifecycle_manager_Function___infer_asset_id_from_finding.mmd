@@ -1,0 +1,10 @@
+flowchart TB
+    n1([開始])
+    n2([結束])
+    n3[&amp;&#35;39;從 Finding 推斷資產 ID&amp;&#35;39;]
+    n4[target_url = str&#40;finding.target.u...]
+    n5[return self._generate_asset_id&#40;&amp;&#35;39;url&amp;&...]
+    n1 --> n3
+    n3 --> n4
+    n4 --> n5
+    n5 --> n2

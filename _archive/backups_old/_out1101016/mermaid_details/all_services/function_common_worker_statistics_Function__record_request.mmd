@@ -1,0 +1,31 @@
+flowchart TB
+    n1([開始])
+    n2([結束])
+    n3[&amp;&#35;39;記錄請求&amp;&#35;39;]
+    n4[self.stats.total_requests += 1]
+    n5{if success}
+    n6[self.stats.successful_requests += 1]
+    n7[self.stats.failed_requests += 1]
+    n8[]
+    n9{if timeout}
+    n10[self.stats.timeout_requests += 1]
+    n11[]
+    n12{if rate_limited}
+    n13[self.stats.rate_limited_requests += 1]
+    n14[]
+    n1 --> n3
+    n3 --> n4
+    n4 --> n5
+    n5 -->|Yes| n6
+    n5 -->|No| n7
+    n6 --> n8
+    n7 --> n8
+    n8 --> n9
+    n9 -->|Yes| n10
+    n9 -->|No| n11
+    n10 --> n11
+    n11 --> n12
+    n12 -->|Yes| n13
+    n12 -->|No| n14
+    n13 --> n14
+    n14 --> n2

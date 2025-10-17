@@ -296,7 +296,7 @@ class EnhancedScanProcessor:
         if correlation_result.get("attack_chains"):
             chain_count = len(correlation_result["attack_chains"])
             insights.append(
-                f"🔗 識別出 {chain_count} 條攻擊鏈，攻擊者可能透過這些路徑達成進階攻擊目標"
+                f"[U+1F517] 識別出 {chain_count} 條攻擊鏈，攻擊者可能透過這些路徑達成進階攻擊目標"
             )
 
         # 根因洞察
@@ -304,7 +304,7 @@ class EnhancedScanProcessor:
             root_count = len(root_cause_result["root_causes"])
             affected = len(root_cause_result.get("derived_vulnerabilities", []))
             insights.append(
-                f"🎯 發現 {root_count} 個共用元件問題，影響 {affected} 個漏洞。"
+                f"[TARGET] 發現 {root_count} 個共用元件問題，影響 {affected} 個漏洞。"
                 f"建議優先修復這些根本原因以提高效率"
             )
 
@@ -313,7 +313,7 @@ class EnhancedScanProcessor:
             confirmed = len(sast_dast_result["confirmed_flows"])
             rate = sast_dast_result.get("summary", {}).get("confirmation_rate", 0)
             insights.append(
-                f"✅ {confirmed} 個 SAST 發現已被 DAST 驗證（確認率 {rate}%），"
+                f"[OK] {confirmed} 個 SAST 發現已被 DAST 驗證（確認率 {rate}%），"
                 f"這些是真實可利用的漏洞，應立即處理"
             )
 
@@ -321,7 +321,7 @@ class EnhancedScanProcessor:
         risk_amp = correlation_result.get("risk_amplification", 1.0)
         if risk_amp > 1.5:
             insights.append(
-                f"⚠️ 漏洞相關性導致風險放大 {risk_amp}x，"
+                f"[WARN] 漏洞相關性導致風險放大 {risk_amp}x，"
                 f"綜合風險遠高於單個漏洞的總和"
             )
 
@@ -439,7 +439,7 @@ async def example_vulnerability_management():
 
     # 4. 查詢逾期漏洞
     overdue_vulns = manager.get_overdue_vulnerabilities()
-    print(f"⚠️ 有 {len(overdue_vulns)} 個漏洞已逾期")
+    print(f"[WARN] 有 {len(overdue_vulns)} 個漏洞已逾期")
 
     # 5. 計算 MTTR
     mttr_high = manager.calculate_mttr(severity="HIGH", days=30)

@@ -1,0 +1,24 @@
+flowchart TB
+    n1([開始])
+    n2([結束])
+    n3[&amp;&#35;39;\n資產管理相關枚舉 - 資產類型、環境、合規等\n&amp;&#35;39;]
+    n4[from __future__ import annotations]
+    n5[from enum import Enum]
+    n6[class BusinessCriticality&#40;...&#41;]
+    n7[class Environment&#40;...&#41;]
+    n8[class AssetType&#40;...&#41;]
+    n9[class AssetStatus&#40;...&#41;]
+    n10[class DataSensitivity&#40;...&#41;]
+    n11[class AssetExposure&#40;...&#41;]
+    n12[class ComplianceFramework&#40;...&#41;]
+    n1 --> n3
+    n3 --> n4
+    n4 --> n5
+    n5 --> n6
+    n6 --> n7
+    n7 --> n8
+    n8 --> n9
+    n9 --> n10
+    n10 --> n11
+    n11 --> n12
+    n12 --> n2

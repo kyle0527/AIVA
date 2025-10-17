@@ -1,0 +1,78 @@
+flowchart TB
+    n1([開始])
+    n2([結束])
+    n3[&amp;&#35;39;基礎攻擊路徑分析示範&amp;&#35;39;]
+    n4[logger.info&#40;&amp;&#35;39;=== 基礎攻擊路徑分析 ===&amp;&#35;39...]
+    n5[engine = AttackPathEngine&#40;neo...]
+    n6[try]
+    n7[engine.clear_graph&#40;&#41;]
+    n8[engine.initialize_graph&#40;&#41;]
+    n9[assets = &#91;Asset&#40;asset_id=&amp;&#35;39;web...]
+    n10[findings = &#91;FindingPayload&#40;find...]
+    n11{for asset in assets}
+    n12[engine.add_asset&#40;asset&#41;]
+    n13[logger.info&#40;f&amp;&#35;39;Added asset: &#123;asset.as...]
+    n14[]
+    n15{for finding in findings}
+    n16[engine.add_finding&#40;finding&#41;]
+    n17[logger.info&#40;f&amp;&#35;39;Added finding: &#123;findin...]
+    n18[]
+    n19[logger.info&#40;&amp;&#35;39;\n=== 尋找到資料庫的攻擊路徑 ===&amp;&#...]
+    n20[db_paths = engine.find_attack_p...]
+    n21{for path in db_paths}
+    n22[logger.info&#40;f&amp;&#35;39;\n路徑 &#123;path.path_id&#12...]
+    n23[logger.info&#40;f&amp;&#35;39;  風險分數: &#123;path.total_ri...]
+    n24[logger.info&#40;f&amp;&#35;39;  路徑長度: &#123;path.length&#...]
+    n25[logger.info&#40;f&amp;&#35;39;  描述: &#123;path.descriptio...]
+    n26[]
+    n27[logger.info&#40;&amp;&#35;39;\n=== 尋找到內部網路的攻擊路徑 ===&amp;&...]
+    n28[internal_paths = engine.find_attack_p...]
+    n29{for path in internal_paths}
+    n30[logger.info&#40;f&amp;&#35;39;\n路徑 &#123;path.path_id&#12...]
+    n31[logger.info&#40;f&amp;&#35;39;  風險分數: &#123;path.total_ri...]
+    n32[logger.info&#40;f&amp;&#35;39;  路徑長度: &#123;path.length&#...]
+    n33[]
+    n34[return db_paths + internal_paths]
+    n35[]
+    n36[finally]
+    n37[engine.close&#40;&#41;]
+    n1 --> n3
+    n3 --> n4
+    n4 --> n5
+    n5 --> n6
+    n6 --> n7
+    n7 --> n8
+    n8 --> n9
+    n9 --> n10
+    n10 --> n11
+    n11 -->|Yes| n12
+    n11 -->|No| n14
+    n12 --> n13
+    n13 --> n11
+    n14 --> n15
+    n15 -->|Yes| n16
+    n15 -->|No| n18
+    n16 --> n17
+    n17 --> n15
+    n18 --> n19
+    n19 --> n20
+    n20 --> n21
+    n21 -->|Yes| n22
+    n21 -->|No| n26
+    n22 --> n23
+    n23 --> n24
+    n24 --> n25
+    n25 --> n21
+    n26 --> n27
+    n27 --> n28
+    n28 --> n29
+    n29 -->|Yes| n30
+    n29 -->|No| n33
+    n30 --> n31
+    n31 --> n32
+    n32 --> n29
+    n33 --> n34
+    n34 --> n35
+    n35 --> n36
+    n36 --> n37
+    n37 --> n2

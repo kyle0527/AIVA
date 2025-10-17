@@ -1,0 +1,95 @@
+flowchart TB
+    n1([開始])
+    n2([結束])
+    n3[&amp;&#35;39;\n        估算業務影響\n\n        Args:\n         ...]
+    n4[base_loss = 0.0]
+    n5{if severity_counts&#91;&amp;&#35;39;critical&amp;&#35;39;...}
+    n6[base_loss += asset_value * 0.1 * severity_counts&#91;&amp...]
+    n7[]
+    n8{if severity_counts&#91;&amp;&#35;39;high&amp;&#35;39;&#93...}
+    n9[base_loss += asset_value * 0.03 * severity_counts&#91;...]
+    n10[]
+    n11[affected_users = 0]
+    n12{if severity_counts&#91;&amp;&#35;39;critical&amp;&#35;39;...}
+    n13[affected_users = user_base]
+    n14{if severity_counts&#91;&amp;&#35;39;medium&amp;&#35;39;&#...}
+    n15[affected_users = int&#40;user_base * 0.3&#41;]
+    n16[]
+    n17[]
+    n18[disruption_risk = &amp;&#35;39;none&amp;&#35;39;]
+    n19{if severity_counts&#91;&amp;&#35;39;critical&amp;&#35;39;...}
+    n20[disruption_risk = &amp;&#35;39;high&amp;&#35;39;]
+    n21{if severity_counts&#91;&amp;&#35;39;critical&amp;&#35;39;...}
+    n22[disruption_risk = &amp;&#35;39;medium&amp;&#35;39;]
+    n23{if severity_counts&#91;&amp;&#35;39;high&amp;&#35;39;&#93...}
+    n24[disruption_risk = &amp;&#35;39;low&amp;&#35;39;]
+    n25[]
+    n26[]
+    n27[]
+    n28[reputation_impact = &amp;&#35;39;none&amp;&#35;39;]
+    n29{if severity_counts&#91;&amp;&#35;39;critical&amp;&#35;39;...}
+    n30[reputation_impact = &amp;&#35;39;high&amp;&#35;39;]
+    n31{if severity_counts&#91;&amp;&#35;39;high&amp;&#35;39;&#93...}
+    n32[reputation_impact = &amp;&#35;39;medium&amp;&#35;39;]
+    n33{if severity_counts&#91;&amp;&#35;39;high&amp;&#35;39;&#93...}
+    n34[reputation_impact = &amp;&#35;39;low&amp;&#35;39;]
+    n35[]
+    n36[]
+    n37[]
+    n38[compliance_risk = &amp;&#35;39;unknown&amp;&#35;39;]
+    n39{if severity_counts&#91;&amp;&#35;39;critical&amp;&#35;39;...}
+    n40[compliance_risk = &amp;&#35;39;potential_violation...]
+    n41[]
+    n42[return &#123;&amp;&#35;39;estimated_financial_loss&amp;&#...]
+    n1 --> n3
+    n3 --> n4
+    n4 --> n5
+    n5 -->|Yes| n6
+    n5 -->|No| n7
+    n6 --> n7
+    n7 --> n8
+    n8 -->|Yes| n9
+    n8 -->|No| n10
+    n9 --> n10
+    n10 --> n11
+    n11 --> n12
+    n12 -->|Yes| n13
+    n12 -->|No| n14
+    n13 --> n17
+    n14 -->|Yes| n15
+    n14 -->|No| n16
+    n15 --> n16
+    n16 --> n17
+    n17 --> n18
+    n18 --> n19
+    n19 -->|Yes| n20
+    n19 -->|No| n21
+    n20 --> n27
+    n21 -->|Yes| n22
+    n21 -->|No| n23
+    n22 --> n26
+    n23 -->|Yes| n24
+    n23 -->|No| n25
+    n24 --> n25
+    n25 --> n26
+    n26 --> n27
+    n27 --> n28
+    n28 --> n29
+    n29 -->|Yes| n30
+    n29 -->|No| n31
+    n30 --> n37
+    n31 -->|Yes| n32
+    n31 -->|No| n33
+    n32 --> n36
+    n33 -->|Yes| n34
+    n33 -->|No| n35
+    n34 --> n35
+    n35 --> n36
+    n36 --> n37
+    n37 --> n38
+    n38 --> n39
+    n39 -->|Yes| n40
+    n39 -->|No| n41
+    n40 --> n41
+    n41 --> n42
+    n42 --> n2

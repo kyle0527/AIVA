@@ -1,0 +1,29 @@
+flowchart TB
+    n1([開始])
+    n2([結束])
+    n3[&amp;&#35;39;\n        應用預設配置模板\n\n        Args:\n       ...]
+    n4[self._save_snapshot&#40;&#41;]
+    n5[presets = &#123;&amp;&#35;39;conservative&amp;&#35;39;: s...]
+    n6{if preset_name not in presets}
+    n7[logger.warning&#40;f&amp;&#35;39;Unknown preset: &#123;pr...]
+    n8[return False]
+    n9[]
+    n10[preset_config = presets&#91;preset_name&#93;...]
+    n11[self._config = preset_config]
+    n12[self._validate_config&#40;&#41;]
+    n13[logger.info&#40;f&amp;&#35;39;Applied preset: &#123;prese...]
+    n14[return True]
+    n1 --> n3
+    n3 --> n4
+    n4 --> n5
+    n5 --> n6
+    n6 -->|Yes| n7
+    n6 -->|No| n9
+    n7 --> n8
+    n8 --> n9
+    n9 --> n10
+    n10 --> n11
+    n11 --> n12
+    n12 --> n13
+    n13 --> n14
+    n14 --> n2

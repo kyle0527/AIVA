@@ -24,7 +24,7 @@ sys.path.insert(0, str(project_root / "services" / "core" / "aiva_core"))
 
 async def test_bio_neuron_agent():
     """測試 BioNeuronRAGAgent 基本功能"""
-    print("🧠 測試 BioNeuronRAGAgent...")
+    print("[BRAIN] 測試 BioNeuronRAGAgent...")
 
     try:
         from services.core.aiva_core.ai_engine.bio_neuron_core import BioNeuronRAGAgent
@@ -45,19 +45,19 @@ async def test_bio_neuron_agent():
         }
 
         print(
-            f"  ✅ BioNeuronRAGAgent - 知識庫: {result['details']['knowledge_chunks']} chunks"
+            f"  [OK] BioNeuronRAGAgent - 知識庫: {result['details']['knowledge_chunks']} chunks"
         )
-        print(f"  ✅ 內建工具: {result['details']['tools_count']} 個")
+        print(f"  [OK] 內建工具: {result['details']['tools_count']} 個")
         return result
 
     except Exception as e:
-        print(f"  ❌ BioNeuronRAGAgent 測試失敗: {str(e)}")
+        print(f"  [FAIL] BioNeuronRAGAgent 測試失敗: {str(e)}")
         return {"success": False, "error": str(e)}
 
 
 async def test_unified_controller():
     """測試統一控制器"""
-    print("🎮 測試統一 AI 控制器...")
+    print("[U+1F3AE] 測試統一 AI 控制器...")
 
     try:
         from services.core.aiva_core.ai_controller import UnifiedAIController
@@ -76,17 +76,17 @@ async def test_unified_controller():
             },
         }
 
-        print("  ✅ UnifiedAIController 初始化成功")
+        print("  [OK] UnifiedAIController 初始化成功")
         return result
 
     except Exception as e:
-        print(f"  ❌ UnifiedAIController 測試失敗: {str(e)}")
+        print(f"  [FAIL] UnifiedAIController 測試失敗: {str(e)}")
         return {"success": False, "error": str(e)}
 
 
 async def test_nlg_system():
     """測試自然語言生成系統"""
-    print("💬 測試自然語言生成系統...")
+    print("[CHAT] 測試自然語言生成系統...")
 
     try:
         from services.core.aiva_core.nlg_system import AIVANaturalLanguageGenerator
@@ -113,18 +113,18 @@ async def test_nlg_system():
             },
         }
 
-        print(f"  ✅ NLG 系統 - 生成 {result['details']['response_length']} 字符報告")
-        print(f"  📝 報告預覽: {result['details']['preview']}")
+        print(f"  [OK] NLG 系統 - 生成 {result['details']['response_length']} 字符報告")
+        print(f"  [NOTE] 報告預覽: {result['details']['preview']}")
         return result
 
     except Exception as e:
-        print(f"  ❌ NLG 系統測試失敗: {str(e)}")
+        print(f"  [FAIL] NLG 系統測試失敗: {str(e)}")
         return {"success": False, "error": str(e)}
 
 
 async def test_multilang_coordinator():
     """測試多語言協調器"""
-    print("🌐 測試多語言協調器...")
+    print("[U+1F310] 測試多語言協調器...")
 
     try:
         from services.core.aiva_core.multilang_coordinator import (
@@ -147,20 +147,20 @@ async def test_multilang_coordinator():
             },
         }
 
-        print(f"  ✅ MultiLanguageAICoordinator 支援 {len(language_modules)} 種語言")
+        print(f"  [OK] MultiLanguageAICoordinator 支援 {len(language_modules)} 種語言")
         print(
-            f"  🗣️ 支援語言: {', '.join([mod.language for mod in language_modules.values()]) if language_modules else '無'}"
+            f"  [U+1F5E3][U+FE0F] 支援語言: {', '.join([mod.language for mod in language_modules.values()]) if language_modules else '無'}"
         )
         return result
 
     except Exception as e:
-        print(f"  ❌ 多語言協調器測試失敗: {str(e)}")
+        print(f"  [FAIL] 多語言協調器測試失敗: {str(e)}")
         return {"success": False, "error": str(e)}
 
 
 async def test_ai_components_integration():
     """測試 AI 組件整合"""
-    print("🔗 測試 AI 組件整合...")
+    print("[U+1F517] 測試 AI 組件整合...")
 
     try:
         # 測試各組件能否同時存在且不衝突
@@ -201,22 +201,22 @@ async def test_ai_components_integration():
         }
 
         if all_initialized:
-            print(f"  ✅ 所有 {len(components)} 個 AI 組件整合成功")
+            print(f"  [OK] 所有 {len(components)} 個 AI 組件整合成功")
         else:
             print(
-                f"  ⚠️ {result['details']['initialized_components']}/{len(components)} 個組件初始化成功"
+                f"  [WARN] {result['details']['initialized_components']}/{len(components)} 個組件初始化成功"
             )
 
         return result
 
     except Exception as e:
-        print(f"  ❌ AI 組件整合測試失敗: {str(e)}")
+        print(f"  [FAIL] AI 組件整合測試失敗: {str(e)}")
         return {"success": False, "error": str(e)}
 
 
 async def test_autonomy_proof():
     """測試 AIVA 自主性證明"""
-    print("🤖 測試 AIVA 自主性...")
+    print("[AI] 測試 AIVA 自主性...")
 
     try:
         from services.core.aiva_core.optimized_core import AIVAAutonomyProof
@@ -239,20 +239,20 @@ async def test_autonomy_proof():
             },
         }
 
-        print(f"  ✅ AIVA 自主性得分: {result['details']['autonomy_score']}%")
-        print(f"  🆚 相對 GPT-4 優勢: {result['details']['vs_gpt4_advantages']} 項")
-        print(f"  🎯 結論: {result['details']['conclusion']}")
+        print(f"  [OK] AIVA 自主性得分: {result['details']['autonomy_score']}%")
+        print(f"  [U+1F19A] 相對 GPT-4 優勢: {result['details']['vs_gpt4_advantages']} 項")
+        print(f"  [TARGET] 結論: {result['details']['conclusion']}")
 
         return result
 
     except Exception as e:
-        print(f"  ❌ AIVA 自主性測試失敗: {str(e)}")
+        print(f"  [FAIL] AIVA 自主性測試失敗: {str(e)}")
         return {"success": False, "error": str(e)}
 
 
 async def run_integration_tests():
     """執行所有整合測試"""
-    print("🚀 AIVA AI 整合測試系統 - 簡化版")
+    print("[START] AIVA AI 整合測試系統 - 簡化版")
     print("=" * 60)
 
     start_time = time.time()
@@ -270,13 +270,13 @@ async def run_integration_tests():
     results = []
 
     for test_name, test_func in tests:
-        print(f"\n🧪 執行測試: {test_name}")
+        print(f"\n[TEST] 執行測試: {test_name}")
         try:
             result = await test_func()
             result["test_name"] = test_name
             results.append(result)
         except Exception as e:
-            print(f"❌ {test_name} 執行失敗: {str(e)}")
+            print(f"[FAIL] {test_name} 執行失敗: {str(e)}")
             results.append({"test_name": test_name, "success": False, "error": str(e)})
 
     # 生成測試報告
@@ -284,30 +284,30 @@ async def run_integration_tests():
     successful_tests = [r for r in results if r.get("success", False)]
     failed_tests = [r for r in results if not r.get("success", False)]
 
-    print("\n📊 測試報告")
+    print("\n[STATS] 測試報告")
     print("=" * 60)
-    print(f"📋 總測試數: {len(results)}")
-    print(f"✅ 成功測試: {len(successful_tests)}")
-    print(f"❌ 失敗測試: {len(failed_tests)}")
-    print(f"📈 成功率: {len(successful_tests) / len(results) * 100:.1f}%")
-    print(f"⏱️ 總執行時間: {total_time:.2f}秒")
+    print(f"[LIST] 總測試數: {len(results)}")
+    print(f"[OK] 成功測試: {len(successful_tests)}")
+    print(f"[FAIL] 失敗測試: {len(failed_tests)}")
+    print(f"[U+1F4C8] 成功率: {len(successful_tests) / len(results) * 100:.1f}%")
+    print(f"[U+23F1][U+FE0F] 總執行時間: {total_time:.2f}秒")
 
     # 詳細結果
-    print("\n📝 詳細結果:")
+    print("\n[NOTE] 詳細結果:")
     for result in results:
-        status = "✅" if result.get("success", False) else "❌"
+        status = "[OK]" if result.get("success", False) else "[FAIL]"
         print(f"{status} {result['test_name']}")
         if not result.get("success", False) and "error" in result:
             print(f"   錯誤: {result['error']}")
 
     # 生成建議
-    print("\n💡 建議:")
+    print("\n[TIP] 建議:")
     if len(failed_tests) == 0:
-        print("  🎉 所有測試都通過了！AIVA AI 整合系統運作良好。")
-        print("  🚀 可以進行下一階段的 RAG 系統增強。")
+        print("  [SUCCESS] 所有測試都通過了！AIVA AI 整合系統運作良好。")
+        print("  [START] 可以進行下一階段的 RAG 系統增強。")
     else:
-        print("  🔧 建議檢查失敗的組件並修復相關問題。")
-        print("  📚 檢查相關依賴項和配置檔案。")
+        print("  [CONFIG] 建議檢查失敗的組件並修復相關問題。")
+        print("  [DOCS] 檢查相關依賴項和配置檔案。")
 
     # 保存報告
     report = {
@@ -329,7 +329,7 @@ async def run_integration_tests():
     with open(report_file, "w", encoding="utf-8") as f:
         json.dump(report, f, ensure_ascii=False, indent=2)
 
-    print(f"\n📄 詳細報告已保存至: {report_file}")
+    print(f"\n[U+1F4C4] 詳細報告已保存至: {report_file}")
 
     return report
 

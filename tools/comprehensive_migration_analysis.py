@@ -15,7 +15,7 @@ def analyze_migration_completeness():
     aiva_common = project_root / "services" / "aiva_common"
     
     print("=" * 100)
-    print("🔍 AIVA COMMON 遷移完整性全面分析")
+    print("[SEARCH] AIVA COMMON 遷移完整性全面分析")
     print("=" * 100)
     
     results = {
@@ -29,7 +29,7 @@ def analyze_migration_completeness():
     # ========================================================================
     # 1. 分析舊檔案內容
     # ========================================================================
-    print("\n📄 步驟 1: 分析舊檔案內容")
+    print("\n[U+1F4C4] 步驟 1: 分析舊檔案內容")
     print("-" * 50)
     
     old_files = {
@@ -49,12 +49,12 @@ def analyze_migration_completeness():
                     "size": path.stat().st_size,
                     "lines": len(content.split('\n'))
                 }
-                print(f"✅ {name:15s}: {len(old_data[name]['classes']):3d} 類別, {old_data[name]['size']:>8,} bytes")
+                print(f"[OK] {name:15s}: {len(old_data[name]['classes']):3d} 類別, {old_data[name]['size']:>8,} bytes")
             except Exception as e:
-                print(f"❌ {name:15s}: 讀取失敗 - {e}")
+                print(f"[FAIL] {name:15s}: 讀取失敗 - {e}")
                 old_data[name] = {"classes": [], "size": 0, "lines": 0}
         else:
-            print(f"⚠️  {name:15s}: 檔案不存在")
+            print(f"[WARN]  {name:15s}: 檔案不存在")
             old_data[name] = {"classes": [], "size": 0, "lines": 0}
     
     # 合併所有舊類別
@@ -68,7 +68,7 @@ def analyze_migration_completeness():
     if old_data["enums.py"]["classes"]:
         all_old_enums.update(old_data["enums.py"]["classes"])
     
-    print(f"\n📊 舊檔案總計:")
+    print(f"\n[STATS] 舊檔案總計:")
     print(f"   Schemas: {len(all_old_schemas)} 個類別")
     print(f"   Enums: {len(all_old_enums)} 個類別")
     
@@ -82,7 +82,7 @@ def analyze_migration_completeness():
     # ========================================================================
     # 2. 分析新模組結構
     # ========================================================================
-    print("\n📁 步驟 2: 分析新模組結構")
+    print("\n[U+1F4C1] 步驟 2: 分析新模組結構")
     print("-" * 50)
     
     new_structure = {}
@@ -106,16 +106,16 @@ def analyze_migration_completeness():
                     "lines": len(content.split('\n'))
                 }
                 total_schema_classes.update(classes)
-                print(f"   📄 {py_file.name:20s}: {len(classes):3d} 類別, {py_file.stat().st_size:>8,} bytes")
+                print(f"   [U+1F4C4] {py_file.name:20s}: {len(classes):3d} 類別, {py_file.stat().st_size:>8,} bytes")
             except Exception as e:
-                print(f"   ❌ {py_file.name:20s}: 讀取失敗 - {e}")
+                print(f"   [FAIL] {py_file.name:20s}: 讀取失敗 - {e}")
         
         new_structure["schemas"] = {
             "modules": schema_modules,
             "total_classes": sorted(total_schema_classes),
             "count": len(total_schema_classes)
         }
-        print(f"   📊 Schemas 總計: {len(total_schema_classes)} 個類別")
+        print(f"   [STATS] Schemas 總計: {len(total_schema_classes)} 個類別")
     
     # 分析 enums/ 資料夾
     enums_dir = aiva_common / "enums"
@@ -136,23 +136,23 @@ def analyze_migration_completeness():
                     "lines": len(content.split('\n'))
                 }
                 total_enum_classes.update(classes)
-                print(f"   📄 {py_file.name:20s}: {len(classes):3d} 類別, {py_file.stat().st_size:>8,} bytes")
+                print(f"   [U+1F4C4] {py_file.name:20s}: {len(classes):3d} 類別, {py_file.stat().st_size:>8,} bytes")
             except Exception as e:
-                print(f"   ❌ {py_file.name:20s}: 讀取失敗 - {e}")
+                print(f"   [FAIL] {py_file.name:20s}: 讀取失敗 - {e}")
         
         new_structure["enums"] = {
             "modules": enum_modules,
             "total_classes": sorted(total_enum_classes),
             "count": len(total_enum_classes)
         }
-        print(f"   📊 Enums 總計: {len(total_enum_classes)} 個類別")
+        print(f"   [STATS] Enums 總計: {len(total_enum_classes)} 個類別")
     
     results["file_structure"] = new_structure
     
     # ========================================================================
     # 3. 對比分析 - 檢查遷移完整性
     # ========================================================================
-    print("\n🔄 步驟 3: 遷移完整性對比")
+    print("\n[RELOAD] 步驟 3: 遷移完整性對比")
     print("-" * 50)
     
     # Schemas 對比
@@ -161,24 +161,24 @@ def analyze_migration_completeness():
         missing_schemas = all_old_schemas - new_schemas
         extra_schemas = new_schemas - all_old_schemas
         
-        print(f"📋 Schemas 對比:")
+        print(f"[LIST] Schemas 對比:")
         print(f"   舊檔案: {len(all_old_schemas)} 個")
         print(f"   新模組: {len(new_schemas)} 個")
         
         if missing_schemas:
-            print(f"   ⚠️  缺失: {len(missing_schemas)} 個")
+            print(f"   [WARN]  缺失: {len(missing_schemas)} 個")
             for cls in sorted(missing_schemas)[:10]:  # 只顯示前10個
                 print(f"      - {cls}")
             if len(missing_schemas) > 10:
                 print(f"      ... 還有 {len(missing_schemas) - 10} 個")
         
         if extra_schemas:
-            print(f"   ➕ 新增: {len(extra_schemas)} 個")
+            print(f"   [U+2795] 新增: {len(extra_schemas)} 個")
             for cls in sorted(extra_schemas)[:5]:
                 print(f"      - {cls}")
         
         if not missing_schemas and not extra_schemas:
-            print(f"   ✅ 完全匹配！")
+            print(f"   [OK] 完全匹配！")
         
         results["migration_status"]["schemas"] = {
             "old_count": len(all_old_schemas),
@@ -194,22 +194,22 @@ def analyze_migration_completeness():
         missing_enums = all_old_enums - new_enums
         extra_enums = new_enums - all_old_enums
         
-        print(f"\n📋 Enums 對比:")
+        print(f"\n[LIST] Enums 對比:")
         print(f"   舊檔案: {len(all_old_enums)} 個")
         print(f"   新模組: {len(new_enums)} 個")
         
         if missing_enums:
-            print(f"   ⚠️  缺失: {len(missing_enums)} 個")
+            print(f"   [WARN]  缺失: {len(missing_enums)} 個")
             for cls in sorted(missing_enums):
                 print(f"      - {cls}")
         
         if extra_enums:
-            print(f"   ➕ 新增: {len(extra_enums)} 個")
+            print(f"   [U+2795] 新增: {len(extra_enums)} 個")
             for cls in sorted(extra_enums):
                 print(f"      - {cls}")
         
         if not missing_enums and not extra_enums:
-            print(f"   ✅ 完全匹配！")
+            print(f"   [OK] 完全匹配！")
         
         results["migration_status"]["enums"] = {
             "old_count": len(all_old_enums),
@@ -222,7 +222,7 @@ def analyze_migration_completeness():
     # ========================================================================
     # 4. 實際導入測試
     # ========================================================================
-    print("\n🧪 步驟 4: 實際導入測試")
+    print("\n[TEST] 步驟 4: 實際導入測試")
     print("-" * 50)
     
     import sys
@@ -238,20 +238,20 @@ def analyze_migration_completeness():
         
         import_tests.append({
             "test": "基本模組導入",
-            "status": "✅ PASS",
+            "status": "[OK] PASS",
             "detail": f"schemas: {schema_exported}, enums: {enum_exported}"
         })
-        print(f"✅ 基本模組導入成功")
+        print(f"[OK] 基本模組導入成功")
         print(f"   導出 schemas: {schema_exported} 個")  
         print(f"   導出 enums: {enum_exported} 個")
         
     except Exception as e:
         import_tests.append({
             "test": "基本模組導入", 
-            "status": "❌ FAIL",
+            "status": "[FAIL] FAIL",
             "detail": str(e)
         })
-        print(f"❌ 基本模組導入失敗: {e}")
+        print(f"[FAIL] 基本模組導入失敗: {e}")
     
     # 測試具體類別導入
     test_classes = [
@@ -270,24 +270,24 @@ def analyze_migration_completeness():
             exec(f"from {module} import {class_name}")
             import_tests.append({
                 "test": f"{module}.{class_name}",
-                "status": "✅ PASS", 
+                "status": "[OK] PASS", 
                 "detail": "導入成功"
             })
-            print(f"✅ {module}.{class_name}")
+            print(f"[OK] {module}.{class_name}")
         except Exception as e:
             import_tests.append({
                 "test": f"{module}.{class_name}",
-                "status": "❌ FAIL",
+                "status": "[FAIL] FAIL",
                 "detail": str(e)
             })
-            print(f"❌ {module}.{class_name}: {e}")
+            print(f"[FAIL] {module}.{class_name}: {e}")
     
     results["validation"]["import_tests"] = import_tests
     
     # ========================================================================
     # 5. 檔案大小和效率分析
     # ========================================================================
-    print("\n📊 步驟 5: 檔案大小和效率分析")
+    print("\n[STATS] 步驟 5: 檔案大小和效率分析")
     print("-" * 50)
     
     old_total_size = sum(data["size"] for data in old_data.values())
@@ -304,45 +304,45 @@ def analyze_migration_completeness():
     
     size_diff = new_total_size - old_total_size
     if size_diff > 0:
-        print(f"   📈 增加: {size_diff:>10,} bytes ({size_diff/1024:.1f} KB)")
+        print(f"   [U+1F4C8] 增加: {size_diff:>10,} bytes ({size_diff/1024:.1f} KB)")
     elif size_diff < 0:
-        print(f"   📉 減少: {abs(size_diff):>10,} bytes ({abs(size_diff)/1024:.1f} KB)")
+        print(f"   [U+1F4C9] 減少: {abs(size_diff):>10,} bytes ({abs(size_diff)/1024:.1f} KB)")
     else:
-        print(f"   📊 大小相同")
+        print(f"   [STATS] 大小相同")
     
     # ========================================================================
     # 6. 總結報告
     # ========================================================================
-    print("\n🎯 步驟 6: 遷移完整性總結")
+    print("\n[TARGET] 步驟 6: 遷移完整性總結")
     print("=" * 100)
     
     schemas_complete = results["migration_status"].get("schemas", {}).get("complete", False)
     enums_complete = results["migration_status"].get("enums", {}).get("complete", False)
     
-    passed_tests = len([t for t in import_tests if "✅" in t["status"]])
+    passed_tests = len([t for t in import_tests if "[OK]" in t["status"]])
     total_tests = len(import_tests)
     
     print(f"""
-🔍 遷移分析結果:
+[SEARCH] 遷移分析結果:
 
-📄 Schemas 遷移:
+[U+1F4C4] Schemas 遷移:
    - 舊檔案類別數: {len(all_old_schemas)}
    - 新模組類別數: {len(new_structure.get('schemas', {}).get('total_classes', []))}
-   - 遷移狀態: {'✅ 完整' if schemas_complete else '⚠️ 不完整'}
+   - 遷移狀態: {'[OK] 完整' if schemas_complete else '[WARN] 不完整'}
 
-📄 Enums 遷移:  
+[U+1F4C4] Enums 遷移:  
    - 舊檔案類別數: {len(all_old_enums)}
    - 新模組類別數: {len(new_structure.get('enums', {}).get('total_classes', []))}
-   - 遷移狀態: {'✅ 完整' if enums_complete else '⚠️ 不完整'}
+   - 遷移狀態: {'[OK] 完整' if enums_complete else '[WARN] 不完整'}
 
-🧪 導入測試:
+[TEST] 導入測試:
    - 通過: {passed_tests}/{total_tests}
-   - 狀態: {'✅ 全部通過' if passed_tests == total_tests else '⚠️ 部分失敗'}
+   - 狀態: {'[OK] 全部通過' if passed_tests == total_tests else '[WARN] 部分失敗'}
 
-📊 整體評估:
-   - 結構完整性: {'✅ 良好' if schemas_complete and enums_complete else '⚠️ 需要關注'}
-   - 功能可用性: {'✅ 良好' if passed_tests >= total_tests * 0.8 else '⚠️ 需要修復'}
-   - 建議行動: {'🎉 可以刪除舊檔案' if schemas_complete and enums_complete and passed_tests == total_tests else '🔧 需要進一步修復'}
+[STATS] 整體評估:
+   - 結構完整性: {'[OK] 良好' if schemas_complete and enums_complete else '[WARN] 需要關注'}
+   - 功能可用性: {'[OK] 良好' if passed_tests >= total_tests * 0.8 else '[WARN] 需要修復'}
+   - 建議行動: {'[SUCCESS] 可以刪除舊檔案' if schemas_complete and enums_complete and passed_tests == total_tests else '[CONFIG] 需要進一步修復'}
 """)
     
     # 儲存詳細報告
@@ -352,7 +352,7 @@ def analyze_migration_completeness():
     with open(report_file, "w", encoding="utf-8") as f:
         json.dump(results, f, indent=2, ensure_ascii=False)
     
-    print(f"📋 詳細報告已儲存至: {report_file}")
+    print(f"[LIST] 詳細報告已儲存至: {report_file}")
     print("=" * 100)
     
     return {

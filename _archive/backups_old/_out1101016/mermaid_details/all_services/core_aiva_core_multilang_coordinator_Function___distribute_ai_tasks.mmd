@@ -1,0 +1,24 @@
+flowchart TB
+    n1([開始])
+    n2([結束])
+    n3[&amp;&#35;39;分配任務給各 AI 模組&amp;&#35;39;]
+    n4[assignments = &#123;&#125;]
+    n5{for module in selected_modules}
+    n6{if module.status == &amp;&#35;39;master&amp;&#35;39;}
+    n7[assignments&#91;module.module_name&#93; = &#123;&amp;&#35...]
+    n8[assignments&#91;module.module_name&#93; = &#123;&amp;&#35...]
+    n9[]
+    n10[]
+    n11[return assignments]
+    n1 --> n3
+    n3 --> n4
+    n4 --> n5
+    n5 -->|Yes| n6
+    n5 -->|No| n10
+    n6 -->|Yes| n7
+    n6 -->|No| n8
+    n7 --> n9
+    n8 --> n9
+    n9 --> n5
+    n10 --> n11
+    n11 --> n2

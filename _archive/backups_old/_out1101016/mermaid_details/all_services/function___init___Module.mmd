@@ -1,0 +1,16 @@
+flowchart TB
+    n1([開始])
+    n2([結束])
+    n3[&amp;&#35;39;\nAIVA Function - 功能模組\n\n這是 AIVA 的功能模組包，包含各...]
+    n4[__version__ = &amp;&#35;39;1.0.0&amp;&#35;39;]
+    n5[from ..aiva_common.enums import Confidence, Severi...]
+    n6[from ..aiva_common.schemas import CVSSv3Metrics]
+    n7[from .models import APISchemaPayload, APISecurityT...]
+    n8[__all__ = &#91;&amp;&#35;39;Confidence&amp;&#35;39;, &amp...]
+    n1 --> n3
+    n3 --> n4
+    n4 --> n5
+    n5 --> n6
+    n6 --> n7
+    n7 --> n8
+    n8 --> n2

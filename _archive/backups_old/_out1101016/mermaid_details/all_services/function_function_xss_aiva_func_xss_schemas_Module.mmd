@@ -1,0 +1,28 @@
+flowchart TB
+    n1([開始])
+    n2([結束])
+    n3[&amp;&#35;39;\nXSS 模組專用數據合約\n定義 XSS 檢測相關的所有數據結構，基於 Pydant...]
+    n4[from __future__ import annotations]
+    n5[from typing import Any]
+    n6[from pydantic import BaseModel, Field, field_valid...]
+    n7[from services.aiva_common.schemas import FindingPa...]
+    n8[class XssDetectionResult&#40;...&#41;]
+    n9[class XssTelemetry&#40;...&#41;]
+    n10[class DomDetectionResult&#40;...&#41;]
+    n11[class StoredXssResult&#40;...&#41;]
+    n12[class XssExecutionError&#40;...&#41;]
+    n13[class TaskExecutionResult&#40;...&#41;]
+    n14[XssExecutionTelemetry = XssTelemetry]
+    n1 --> n3
+    n3 --> n4
+    n4 --> n5
+    n5 --> n6
+    n6 --> n7
+    n7 --> n8
+    n8 --> n9
+    n9 --> n10
+    n10 --> n11
+    n11 --> n12
+    n12 --> n13
+    n13 --> n14
+    n14 --> n2

@@ -1,0 +1,44 @@
+flowchart TB
+    n1([開始])
+    n2([結束])
+    n3[&amp;&#35;39;檢測危險 sinks&amp;&#35;39;]
+    n4[sinks: list&#91;SinkMatch&#93; = &#91;&#93;]
+    n5{for &#40;line_num, line&#41; in enumerate&#40;lines, ...}
+    n6[stripped = line.strip&#40;&#41;]
+    n7{if not stripped or stripped.st...}
+    n8[continue]
+    n9[]
+    n10{for &#40;sink_type, pattern_info&#41; in self._sink_patte...}
+    n11[pattern = pattern_info&#91;&amp;&#35;39;patter...]
+    n12[severity = pattern_info&#91;&amp;&#35;39;severi...]
+    n13[description = pattern_info&#91;&amp;&#35;39;descri...]
+    n14{if re.search&#40;pattern, line, re...}
+    n15[context = self._extract_contex...]
+    n16[sinks.append&#40;SinkMatch&#40;sink_type=sink_type, line_...]
+    n17[]
+    n18[]
+    n19[]
+    n20[return sinks]
+    n1 --> n3
+    n3 --> n4
+    n4 --> n5
+    n5 -->|Yes| n6
+    n5 -->|No| n19
+    n6 --> n7
+    n7 -->|Yes| n8
+    n7 -->|No| n9
+    n8 --> n9
+    n9 --> n10
+    n10 -->|Yes| n11
+    n10 -->|No| n18
+    n11 --> n12
+    n12 --> n13
+    n13 --> n14
+    n14 -->|Yes| n15
+    n14 -->|No| n17
+    n15 --> n16
+    n16 --> n17
+    n17 --> n10
+    n18 --> n5
+    n19 --> n20
+    n20 --> n2

@@ -1,0 +1,80 @@
+flowchart TB
+    n1([開始])
+    n2([結束])
+    n3[&amp;&#35;39;\n任務相關 Schema\n\n此模組定義了所有類型的任務負載 &#40;Payloa...]
+    n4[from __future__ import annotations]
+    n5[from datetime import UTC, datetime]
+    n6[from typing import Any]
+    n7[from pydantic import BaseModel, Field, HttpUrl, fi...]
+    n8[from ..enums import Confidence, IntelSource, IOCTy...]
+    n9[from .base import Asset, Authentication, Fingerpri...]
+    n10[class ScanStartPayload&#40;...&#41;]
+    n11[class ScanCompletedPayload&#40;...&#41;]
+    n12[class FunctionTaskTarget&#40;...&#41;]
+    n13[class FunctionTaskContext&#40;...&#41;]
+    n14[class FunctionTaskTestConfig&#40;...&#41;]
+    n15[class FunctionTaskPayload&#40;...&#41;]
+    n16[class FeedbackEventPayload&#40;...&#41;]
+    n17[class TaskUpdatePayload&#40;...&#41;]
+    n18[class ConfigUpdatePayload&#40;...&#41;]
+    n19[class ThreatIntelLookupPayload&#40;...&#41;]
+    n20[class ThreatIntelResultPayload&#40;...&#41;]
+    n21[class AuthZCheckPayload&#40;...&#41;]
+    n22[class AuthZAnalysisPayload&#40;...&#41;]
+    n23[class AuthZResultPayload&#40;...&#41;]
+    n24[class RemediationGeneratePayload&#40;...&#41;]
+    n25[class RemediationResultPayload&#40;...&#41;]
+    n26[class PostExTestPayload&#40;...&#41;]
+    n27[class PostExResultPayload&#40;...&#41;]
+    n28[class BizLogicTestPayload&#40;...&#41;]
+    n29[class BizLogicResultPayload&#40;...&#41;]
+    n30[class APISchemaPayload&#40;...&#41;]
+    n31[class APITestCase&#40;...&#41;]
+    n32[class APISecurityTestPayload&#40;...&#41;]
+    n33[class EASMDiscoveryPayload&#40;...&#41;]
+    n34[class EASMDiscoveryResult&#40;...&#41;]
+    n35[class StandardScenario&#40;...&#41;]
+    n36[class ScenarioTestResult&#40;...&#41;]
+    n37[class ExploitPayload&#40;...&#41;]
+    n38[class TestExecution&#40;...&#41;]
+    n39[class ExploitResult&#40;...&#41;]
+    n40[class TestStrategy&#40;...&#41;]
+    n1 --> n3
+    n3 --> n4
+    n4 --> n5
+    n5 --> n6
+    n6 --> n7
+    n7 --> n8
+    n8 --> n9
+    n9 --> n10
+    n10 --> n11
+    n11 --> n12
+    n12 --> n13
+    n13 --> n14
+    n14 --> n15
+    n15 --> n16
+    n16 --> n17
+    n17 --> n18
+    n18 --> n19
+    n19 --> n20
+    n20 --> n21
+    n21 --> n22
+    n22 --> n23
+    n23 --> n24
+    n24 --> n25
+    n25 --> n26
+    n26 --> n27
+    n27 --> n28
+    n28 --> n29
+    n29 --> n30
+    n30 --> n31
+    n31 --> n32
+    n32 --> n33
+    n33 --> n34
+    n34 --> n35
+    n35 --> n36
+    n36 --> n37
+    n37 --> n38
+    n38 --> n39
+    n39 --> n40
+    n40 --> n2

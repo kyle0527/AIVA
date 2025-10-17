@@ -1,0 +1,47 @@
+flowchart TB
+    n1([開始])
+    n2([結束])
+    n3[&amp;&#35;39;分析任務複雜度 - 決定處理策略&amp;&#35;39;]
+    n4[input_lower = user_input.lower&#40;&#41;]
+    n5[analysis = &#123;&amp;&#35;39;can_handle_directl...]
+    n6[simple_patterns = &#91;&amp;&#35;39;讀取&amp;&#35;39;, &amp...]
+    n7{if any&#40;&#40;pattern in input_lower...}
+    n8[analysis&#91;&amp;&#35;39;can_handle_directly&amp;&#35;39...]
+    n9[analysis&#91;&amp;&#35;39;complexity_score&amp;&#35;39;&#...]
+    n10[]
+    n11[fix_patterns = &#91;&amp;&#35;39;修復&amp;&#35;39;, &amp;&#...]
+    n12{if any&#40;&#40;pattern in input_lower...}
+    n13[analysis&#91;&amp;&#35;39;needs_code_fixing&amp;&#35;39;&...]
+    n14[analysis&#91;&amp;&#35;39;complexity_score&amp;&#35;39;&#...]
+    n15[]
+    n16[detection_patterns = &#91;&amp;&#35;39;掃描&amp;&#35;39;, &...]
+    n17{if any&#40;&#40;pattern in input_lower...}
+    n18[analysis&#91;&amp;&#35;39;needs_specialized_detection&amp...]
+    n19[analysis&#91;&amp;&#35;39;complexity_score&amp;&#35;39;&#...]
+    n20[]
+    n21[analysis&#91;&amp;&#35;39;confidence&amp;&#35;39;&#93; = ...]
+    n22[return analysis]
+    n1 --> n3
+    n3 --> n4
+    n4 --> n5
+    n5 --> n6
+    n6 --> n7
+    n7 -->|Yes| n8
+    n7 -->|No| n10
+    n8 --> n9
+    n9 --> n10
+    n10 --> n11
+    n11 --> n12
+    n12 -->|Yes| n13
+    n12 -->|No| n15
+    n13 --> n14
+    n14 --> n15
+    n15 --> n16
+    n16 --> n17
+    n17 -->|Yes| n18
+    n17 -->|No| n20
+    n18 --> n19
+    n19 --> n20
+    n20 --> n21
+    n21 --> n22
+    n22 --> n2

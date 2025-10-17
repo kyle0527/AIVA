@@ -1,0 +1,34 @@
+flowchart TB
+    n1([開始])
+    n2([結束])
+    n3[&amp;&#35;39;\nKnowledge Base - 知識庫管理\n\n管理漏洞知識、攻擊技術、最佳實踐...]
+    n4[from __future__ import annotations]
+    n5[from dataclasses import dataclass, field]
+    n6[from datetime import datetime]
+    n7[from enum import Enum]
+    n8[import json]
+    n9[import logging]
+    n10[from pathlib import Path]
+    n11[from typing import Any]
+    n12[from services.aiva_common.schemas import AttackPla...]
+    n13[from .vector_store import VectorStore]
+    n14[logger = logging.getLogger&#40;__...]
+    n15[class KnowledgeType&#40;...&#41;]
+    n16[class KnowledgeEntry&#40;...&#41;]
+    n17[class KnowledgeBase&#40;...&#41;]
+    n1 --> n3
+    n3 --> n4
+    n4 --> n5
+    n5 --> n6
+    n6 --> n7
+    n7 --> n8
+    n8 --> n9
+    n9 --> n10
+    n10 --> n11
+    n11 --> n12
+    n12 --> n13
+    n13 --> n14
+    n14 --> n15
+    n15 --> n16
+    n16 --> n17
+    n17 --> n2

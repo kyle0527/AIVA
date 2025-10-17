@@ -1,0 +1,50 @@
+flowchart TB
+    n1([開始])
+    n2([結束])
+    n3[&amp;&#35;39;生成最終建議&amp;&#35;39;]
+    n4[recommendations = &#91;&#93;]
+    n5{for &#40;module_name, result&#41; in execution_results...}
+    n6{if result&#91;&amp;&#35;39;result&amp;&#35;39;&#93;&#91;&...}
+    n7{if &amp;&#35;39;detection_results&amp;&#35;39; in resu...}
+    n8[recommendations.append&#40;f&amp;&#35;39;建議關注 &#123;modul...]
+    n9{if &amp;&#35;39;analysis_results&amp;&#35;39; in resul...}
+    n10[recommendations.append&#40;f&amp;&#35;39;參考 &#123;module_...]
+    n11{if &amp;&#35;39;frontend_analysis&amp;&#35;39; in resu...}
+    n12[recommendations.append&#40;f&amp;&#35;39;注意 &#123;module_...]
+    n13[]
+    n14[]
+    n15[]
+    n16[]
+    n17[]
+    n18{if len&#40;execution_results&#41; &amp;gt; 2}
+    n19[recommendations.append&#40;&amp;&#35;39;多語言 AI 協調良好，建議保持當...]
+    n20[]
+    n21[recommendations.append&#40;&amp;&#35;39;定期更新各語言 AI 模組以維持最...]
+    n22[return recommendations]
+    n1 --> n3
+    n3 --> n4
+    n4 --> n5
+    n5 -->|Yes| n6
+    n5 -->|No| n17
+    n6 -->|Yes| n7
+    n6 -->|No| n16
+    n7 -->|Yes| n8
+    n7 -->|No| n9
+    n8 --> n15
+    n9 -->|Yes| n10
+    n9 -->|No| n11
+    n10 --> n14
+    n11 -->|Yes| n12
+    n11 -->|No| n13
+    n12 --> n13
+    n13 --> n14
+    n14 --> n15
+    n15 --> n16
+    n16 --> n5
+    n17 --> n18
+    n18 -->|Yes| n19
+    n18 -->|No| n20
+    n19 --> n20
+    n20 --> n21
+    n21 --> n22
+    n22 --> n2

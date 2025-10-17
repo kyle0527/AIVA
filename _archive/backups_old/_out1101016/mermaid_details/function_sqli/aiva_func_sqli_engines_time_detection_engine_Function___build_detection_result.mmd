@@ -1,0 +1,26 @@
+flowchart TB
+    n1([開始])
+    n2([結束])
+    n3[&amp;&#35;39;構建檢測結果&amp;&#35;39;]
+    n4[from services.aiva_common.enums import Confidence,...]
+    n5[from services.aiva_common.schemas import FindingEv...]
+    n6[delay = payload_time - basel...]
+    n7[confidence = min&#40;0.9, delay / 5.0...]
+    n8[vulnerability = Vulnerability&#40;name=V...]
+    n9[evidence = FindingEvidence&#40;payl...]
+    n10[impact = FindingImpact&#40;descri...]
+    n11[recommendation = FindingRecommendatio...]
+    n12[target = FindingTarget&#40;url=ta...]
+    n13[return DetectionResult&#40;is_vulnerable=...]
+    n1 --> n3
+    n3 --> n4
+    n4 --> n5
+    n5 --> n6
+    n6 --> n7
+    n7 --> n8
+    n8 --> n9
+    n9 --> n10
+    n10 --> n11
+    n11 --> n12
+    n12 --> n13
+    n13 --> n2

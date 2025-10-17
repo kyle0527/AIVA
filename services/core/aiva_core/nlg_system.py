@@ -29,78 +29,78 @@ class AIVANaturalLanguageGenerator:
         return {
             "task_completion": {
                 "success": [
-                    "✅ 任務完成！{action}已成功執行，{result_detail}。",
-                    "🎯 操作成功！使用{tool_name}完成了{action}，結果：{result_detail}。",
-                    "✨ 處理完畢！{action}執行順利，{result_detail}。信心度：{confidence}%",
-                    "💯 已完成您的請求「{action}」，{result_detail}。AIVA 自主執行成功！",
+                    "[OK] 任務完成！{action}已成功執行，{result_detail}。",
+                    "[TARGET] 操作成功！使用{tool_name}完成了{action}，結果：{result_detail}。",
+                    "[SPARKLE] 處理完畢！{action}執行順利，{result_detail}。信心度：{confidence}%",
+                    "[U+1F4AF] 已完成您的請求「{action}」，{result_detail}。AIVA 自主執行成功！",
                 ],
                 "partial": [
-                    "⚠️ 部分完成：{action}已執行，但{issue}。建議：{suggestion}",
-                    "🔄 處理中：{action}進行順利，{progress}。預計{eta}完成",
-                    "📋 階段性成果：{action}完成 {percentage}%，{result_detail}",
+                    "[WARN] 部分完成：{action}已執行，但{issue}。建議：{suggestion}",
+                    "[RELOAD] 處理中：{action}進行順利，{progress}。預計{eta}完成",
+                    "[LIST] 階段性成果：{action}完成 {percentage}%，{result_detail}",
                 ],
                 "failed": [
-                    "❌ 執行遇到問題：{action}失敗，原因：{error_reason}。建議：{solution}",
-                    "⚡ 需要協助：{action}無法完成，{error_detail}。請{next_step}",
-                    "🔧 技術問題：{error_type}導致{action}中斷，正在{recovery_action}",
+                    "[FAIL] 執行遇到問題：{action}失敗，原因：{error_reason}。建議：{solution}",
+                    "[FAST] 需要協助：{action}無法完成，{error_detail}。請{next_step}",
+                    "[CONFIG] 技術問題：{error_type}導致{action}中斷，正在{recovery_action}",
                 ],
             },
             "code_operations": {
                 "reading": [
-                    "📖 程式碼讀取完成！共{lines}行，主要包含{content_summary}",
-                    "🔍 已分析{file_name}，發現{key_components}，程式碼品質{quality_rating}",
-                    "📋 檔案內容：{lines}行程式碼，{functions}個函數，{classes}個類別",
+                    "[U+1F4D6] 程式碼讀取完成！共{lines}行，主要包含{content_summary}",
+                    "[SEARCH] 已分析{file_name}，發現{key_components}，程式碼品質{quality_rating}",
+                    "[LIST] 檔案內容：{lines}行程式碼，{functions}個函數，{classes}個類別",
                 ],
                 "writing": [
-                    "✏️ 程式碼寫入成功！新增{bytes_written}位元組至{file_name}",
-                    "💾 檔案更新完成，{modification_type}，影響{scope}",
-                    "🚀 程式碼部署就緒，{file_name}已{action_type}，可立即使用",
+                    "[U+270F][U+FE0F] 程式碼寫入成功！新增{bytes_written}位元組至{file_name}",
+                    "[SAVE] 檔案更新完成，{modification_type}，影響{scope}",
+                    "[START] 程式碼部署就緒，{file_name}已{action_type}，可立即使用",
                 ],
                 "analysis": [
-                    "🧮 程式分析完成！架構{architecture_rating}，複雜度{complexity_level}",
-                    "📊 程式碼品質報告：{metrics}，建議{recommendations}",
-                    "🎯 分析結果：{findings}，優化建議：{optimizations}",
+                    "[U+1F9EE] 程式分析完成！架構{architecture_rating}，複雜度{complexity_level}",
+                    "[STATS] 程式碼品質報告：{metrics}，建議{recommendations}",
+                    "[TARGET] 分析結果：{findings}，優化建議：{optimizations}",
                 ],
             },
             "security_operations": {
                 "scanning": [
-                    "🛡️ 安全掃描完成！檢測{scan_coverage}，發現{findings_count}項問題",
-                    "🔒 漏洞檢測報告：{vuln_summary}，風險等級{risk_level}",
-                    "⚔️ 安全分析：{threat_analysis}，防護建議{security_recommendations}",
+                    "[SHIELD] 安全掃描完成！檢測{scan_coverage}，發現{findings_count}項問題",
+                    "[LOCK] 漏洞檢測報告：{vuln_summary}，風險等級{risk_level}",
+                    "[U+2694][U+FE0F] 安全分析：{threat_analysis}，防護建議{security_recommendations}",
                 ],
                 "detection": [
-                    "🚨 檢測到{vuln_type}漏洞！位置：{location}，嚴重度：{severity}",
-                    "⚠️ 安全警告：{security_issue}，建議立即{action_required}",
-                    "🎯 漏洞確認：{vulnerability_details}，修復方案：{fix_suggestion}",
+                    "[ALERT] 檢測到{vuln_type}漏洞！位置：{location}，嚴重度：{severity}",
+                    "[WARN] 安全警告：{security_issue}，建議立即{action_required}",
+                    "[TARGET] 漏洞確認：{vulnerability_details}，修復方案：{fix_suggestion}",
                 ],
             },
             "system_control": {
                 "coordination": [
-                    "🎮 系統協調完成！{language_modules}模組已同步，狀態正常",
-                    "🔄 多語言協調：Python主控✅，Go模組✅，Rust引擎✅，TS前端✅",
-                    "🌐 跨語言操作成功，{operation_summary}，效能提升{performance_gain}%",
+                    "[U+1F3AE] 系統協調完成！{language_modules}模組已同步，狀態正常",
+                    "[RELOAD] 多語言協調：Python主控[OK]，Go模組[OK]，Rust引擎[OK]，TS前端[OK]",
+                    "[U+1F310] 跨語言操作成功，{operation_summary}，效能提升{performance_gain}%",
                 ],
                 "execution": [
-                    "⚡ 系統指令執行完成！{command_summary}，輸出：{output_summary}",
-                    "🖥️ 執行結果：{execution_details}，狀態碼：{status_code}",
-                    "🔧 操作完成：{system_operation}，系統回應：{system_response}",
+                    "[FAST] 系統指令執行完成！{command_summary}，輸出：{output_summary}",
+                    "[UI] 執行結果：{execution_details}，狀態碼：{status_code}",
+                    "[CONFIG] 操作完成：{system_operation}，系統回應：{system_response}",
                 ],
             },
             "communication": {
                 "greeting": [
-                    "🤖 AIVA 自主 AI 為您服務！我具備完整的程式控制和分析能力",
-                    "👋 您好！我是 AIVA 智能助手，準備協助您進行程式管理和分析",
-                    "🎯 AIVA 已就緒，500萬參數生物神經網路隨時為您提供專業協助",
+                    "[AI] AIVA 自主 AI 為您服務！我具備完整的程式控制和分析能力",
+                    "[U+1F44B] 您好！我是 AIVA 智能助手，準備協助您進行程式管理和分析",
+                    "[TARGET] AIVA 已就緒，500萬參數生物神經網路隨時為您提供專業協助",
                 ],
                 "clarification": [
-                    "🤔 您是希望我{possible_action_1}還是{possible_action_2}？請提供更多細節",
-                    "📋 需要澄清：關於「{user_input}」，我可以{available_options}",
-                    "💡 建議：您可以說「{suggestion_1}」或「{suggestion_2}」來獲得更精確的協助",
+                    "[U+1F914] 您是希望我{possible_action_1}還是{possible_action_2}？請提供更多細節",
+                    "[LIST] 需要澄清：關於「{user_input}」，我可以{available_options}",
+                    "[TIP] 建議：您可以說「{suggestion_1}」或「{suggestion_2}」來獲得更精確的協助",
                 ],
                 "status": [
-                    "📊 AIVA 狀態：系統運作正常，AI 引擎活躍，知識庫已載入{kb_stats}",
-                    "🚀 當前狀態：所有模組協調良好，處理效能{performance_level}",
-                    "⚡ 系統健康度：{health_percentage}%，記憶體使用{memory_usage}，決策準確率{accuracy}%",
+                    "[STATS] AIVA 狀態：系統運作正常，AI 引擎活躍，知識庫已載入{kb_stats}",
+                    "[START] 當前狀態：所有模組協調良好，處理效能{performance_level}",
+                    "[FAST] 系統健康度：{health_percentage}%，記憶體使用{memory_usage}，決策準確率{accuracy}%",
                 ],
             },
         }
@@ -283,7 +283,7 @@ class AIVANaturalLanguageGenerator:
         templates = self.response_templates.get(category, {}).get(subcategory, [])
 
         if not templates:
-            return "✅ 任務已完成，結果：{result_summary}"
+            return "[OK] 任務已完成，結果：{result_summary}"
 
         # 基於上下文特徵選擇模板
         if context.get("sentiment", {}).get("urgent"):
@@ -395,7 +395,7 @@ class AIVANaturalLanguageGenerator:
         # 根據信心度調整語氣
         confidence = context.get("confidence", 0.0)
         if confidence < 0.5:
-            response = response.replace("✅", "⚠️").replace("成功", "嘗試")
+            response = response.replace("[OK]", "[WARN]").replace("成功", "嘗試")
         elif confidence > 0.9:
             response = response.replace("完成", "完美完成")
 
@@ -405,7 +405,7 @@ class AIVANaturalLanguageGenerator:
 # 使用示例和測試
 def test_nlg_system():
     """測試自然語言生成系統"""
-    print("🧠 AIVA 自然語言生成系統測試")
+    print("[BRAIN] AIVA 自然語言生成系統測試")
     print("=" * 40)
 
     nlg = AIVANaturalLanguageGenerator()
@@ -433,8 +433,8 @@ def test_nlg_system():
         response = nlg.generate_response(context)
         print(f"AIVA: {response}")
 
-    print("\n✅ 自然語言生成測試完成！")
-    print("💡 AIVA 無需 GPT-4 也能生成高品質中文回應")
+    print("\n[OK] 自然語言生成測試完成！")
+    print("[TIP] AIVA 無需 GPT-4 也能生成高品質中文回應")
 
 
 if __name__ == "__main__":

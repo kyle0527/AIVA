@@ -1,0 +1,27 @@
+flowchart TB
+    n1([開始])
+    n2([結束])
+    n3[&amp;&#35;39;\n        分析權限覆蓋率\n\n        Returns:\n     ...]
+    n4[total_possible = len&#40;self.roles&#41; * le...]
+    n5[total_defined = len&#40;self.matrix&#41;]
+    n6[coverage = total_defined / tota...]
+    n7[decision_stats = &#123;AccessDecision.ALLO...]
+    n8{for decision in self.matrix.values&#40;&#41;}
+    n9[decision_stats&#91;decision&#93; += 1]
+    n10[]
+    n11[analysis = &#123;&amp;&#35;39;total_roles&amp;&#35;39;: l...]
+    n12[logger.info&#40;&amp;&#35;39;coverage_analyzed&amp;&#35;3...]
+    n13[return analysis]
+    n1 --> n3
+    n3 --> n4
+    n4 --> n5
+    n5 --> n6
+    n6 --> n7
+    n7 --> n8
+    n8 -->|Yes| n9
+    n8 -->|No| n10
+    n9 --> n8
+    n10 --> n11
+    n11 --> n12
+    n12 --> n13
+    n13 --> n2

@@ -1,0 +1,23 @@
+flowchart TB
+    n1([開始])
+    n2([結束])
+    n3[&amp;&#35;39;\n        初始化配置建議器\n\n        Args:\n       ...]
+    n4[self.preserve_comments = preserve_comments]
+    n5[self.yaml = YAML&#40;&#41;]
+    n6{if preserve_comments}
+    n7[self.yaml.preserve_quotes = True]
+    n8[self.yaml.default_flow_style = False]
+    n9[]
+    n10[self.recommendations: list&#91;dict&#91;str, Any&#93;&#93...]
+    n11[logger.info&#40;&amp;&#35;39;config_recommender_initializ...]
+    n1 --> n3
+    n3 --> n4
+    n4 --> n5
+    n5 --> n6
+    n6 -->|Yes| n7
+    n6 -->|No| n9
+    n7 --> n8
+    n8 --> n9
+    n9 --> n10
+    n10 --> n11
+    n11 --> n2

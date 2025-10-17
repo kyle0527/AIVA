@@ -1,0 +1,29 @@
+flowchart TB
+    n1([開始])
+    n2([結束])
+    n3[&amp;&#35;39;測試自然語言生成系統&amp;&#35;39;]
+    n4[print&#40;&amp;&#35;39;🧠 AIVA 自然語言生成系統測試&amp;&#35;39;&#41;]
+    n5[print&#40;&amp;&#35;39;=&amp;&#35;39; * 40&#41;]
+    n6[nlg = AIVANaturalLanguageG...]
+    n7[test_contexts = &#91;&#123;&amp;&#35;39;user_input&amp;&#...]
+    n8{for &#40;i, context&#41; in enumerate&#40;test_co...}
+    n9[print&#40;f&amp;quot;\n測試 &#123;i&#125;: &#123;context&#9...]
+    n10[response = nlg.generate_respons...]
+    n11[print&#40;f&amp;&#35;39;AIVA: &#123;response&#125;&amp;&#...]
+    n12[]
+    n13[print&#40;&amp;&#35;39;\n✅ 自然語言生成測試完成！&amp;&#35;39;&#41;]
+    n14[print&#40;&amp;&#35;39;💡 AIVA 無需 GPT-4 也能生成高品質中文回應&amp;&#...]
+    n1 --> n3
+    n3 --> n4
+    n4 --> n5
+    n5 --> n6
+    n6 --> n7
+    n7 --> n8
+    n8 -->|Yes| n9
+    n8 -->|No| n12
+    n9 --> n10
+    n10 --> n11
+    n11 --> n8
+    n12 --> n13
+    n13 --> n14
+    n14 --> n2

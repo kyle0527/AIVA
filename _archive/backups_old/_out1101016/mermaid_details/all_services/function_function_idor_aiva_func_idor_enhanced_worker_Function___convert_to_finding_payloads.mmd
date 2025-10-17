@@ -1,0 +1,19 @@
+flowchart TB
+    n1([開始])
+    n2([結束])
+    n3[&amp;&#35;39;\n        轉換檢測結果為 FindingPayload 對象\n\n     ...]
+    n4[findings = &#91;&#93;]
+    n5{for finding_data in findings_data}
+    n6[finding_payload = FindingPayload&#40;findi...]
+    n7[findings.append&#40;finding_payload&#41;]
+    n8[]
+    n9[return findings]
+    n1 --> n3
+    n3 --> n4
+    n4 --> n5
+    n5 -->|Yes| n6
+    n5 -->|No| n8
+    n6 --> n7
+    n7 --> n5
+    n8 --> n9
+    n9 --> n2

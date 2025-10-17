@@ -1,0 +1,115 @@
+flowchart TB
+    n1([開始])
+    n2([結束])
+    n3[&amp;&#35;39;初始化 RAG 代理.\n\n        Args:\n            co...]
+    n4[logger.info&#40;&amp;&#35;39;正在初始化 BioNeuronRAGAgent...&a...]
+    n5[self.codebase_path = codebase_path]
+    n6[self.enable_planner = enable_planner]
+    n7[self.enable_tracer = enable_tracer]
+    n8[self.enable_experience = enable_experience]
+    n9[self.tools: list&#91;dict&#91;str, str&#93;&#93; = &#91;&...]
+    n10[self.tool_map: dict&#91;str, dict&#91;str, str&#93;&#93; ...]
+    n11[self.input_vector_size = 1024]
+    n12[self.decision_core = ScalableBioNet&#40;self....]
+    n13[self.anti_hallucination = AntiHallucinationMod...]
+    n14[self.history: list&#91;dict&#91;str, Any&#93;&#93; = &#91...]
+    n15{if enable_planner}
+    n16[from ..planner.orchestrator import AttackOrchestra...]
+    n17[self.orchestrator = AttackOrchestrator&#40;&#41;]
+    n18[logger.info&#40;&amp;&#35;39;✓ Planner/Orchestrator enabl...]
+    n19[self.orchestrator = None]
+    n20[]
+    n21{if enable_tracer}
+    n22[from ..execution_tracer.execution_monitor import E...]
+    n23[from ..execution_tracer.task_executor import TaskE...]
+    n24[self.execution_monitor = ExecutionMonitor&#40;&#41;]
+    n25[self.task_executor = TaskExecutor&#40;self.ex...]
+    n26[logger.info&#40;&amp;&#35;39;✓ Execution Tracer enabled&a...]
+    n27[self.execution_monitor = None]
+    n28[self.task_executor = None]
+    n29[]
+    n30{if enable_experience}
+    n31[try]
+    n32[from pathlib import Path]
+    n33[import sys]
+    n34[integration_path = Path&#40;__file__&#41;.paren...]
+    n35{if str&#40;integration_path&#41; not i...}
+    n36[sys.path.insert&#40;0, str&#40;integration_path&#41;&#41;]
+    n37[]
+    n38[from aiva_integration.reception.experience_reposit...]
+    n39[from ..analysis.ast_trace_comparator import ASTTra...]
+    n40[from .training.model_updater import ModelUpdater]
+    n41[self.experience_repo = ExperienceRepository...]
+    n42[self.comparator = ASTTraceComparator&#40;&#41;]
+    n43[self.model_updater = ModelUpdater&#40;self.de...]
+    n44[logger.info&#40;f&amp;&#35;39;✓ Experience learning enabl...]
+    n45[]
+    n46[except Exception]
+    n47[logger.warning&#40;f&amp;&#35;39;Failed to enable experie...]
+    n48[self.experience_repo = None]
+    n49[self.comparator = None]
+    n50[self.model_updater = None]
+    n51[self.experience_repo = None]
+    n52[self.comparator = None]
+    n53[self.model_updater = None]
+    n54[]
+    n55[logger.info&#40;&amp;&#35;39;BioNeuronRAGAgent 初始化完成 ✓&am...]
+    n1 --> n3
+    n3 --> n4
+    n4 --> n5
+    n5 --> n6
+    n6 --> n7
+    n7 --> n8
+    n8 --> n9
+    n9 --> n10
+    n10 --> n11
+    n11 --> n12
+    n12 --> n13
+    n13 --> n14
+    n14 --> n15
+    n15 -->|Yes| n16
+    n15 -->|No| n19
+    n16 --> n17
+    n17 --> n18
+    n18 --> n20
+    n19 --> n20
+    n20 --> n21
+    n21 -->|Yes| n22
+    n21 -->|No| n27
+    n22 --> n23
+    n23 --> n24
+    n24 --> n25
+    n25 --> n26
+    n26 --> n29
+    n27 --> n28
+    n28 --> n29
+    n29 --> n30
+    n30 -->|Yes| n31
+    n30 -->|No| n51
+    n31 --> n32
+    n31 --> n46
+    n32 --> n33
+    n33 --> n34
+    n34 --> n35
+    n35 -->|Yes| n36
+    n35 -->|No| n37
+    n36 --> n37
+    n37 --> n38
+    n38 --> n39
+    n39 --> n40
+    n40 --> n41
+    n41 --> n42
+    n42 --> n43
+    n43 --> n44
+    n44 --> n45
+    n45 --> n54
+    n46 --> n47
+    n47 --> n48
+    n48 --> n49
+    n49 --> n50
+    n50 --> n45
+    n51 --> n52
+    n52 --> n53
+    n53 --> n54
+    n54 --> n55
+    n55 --> n2

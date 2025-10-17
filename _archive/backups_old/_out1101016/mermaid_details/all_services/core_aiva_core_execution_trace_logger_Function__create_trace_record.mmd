@@ -1,0 +1,14 @@
+flowchart TB
+    n1([開始])
+    n2([結束])
+    n3[&amp;&#35;39;創建追蹤記錄\n\n        Args:\n            plan_id...]
+    n4[trace_id = f&amp;&#35;39;trace_&#123;uuid4&#40;&#41;.hex...]
+    n5[trace = TraceRecord&#40;trace_id...]
+    n6[logger.info&#40;f&amp;&#35;39;Created trace record &#123;...]
+    n7[return trace]
+    n1 --> n3
+    n3 --> n4
+    n4 --> n5
+    n5 --> n6
+    n6 --> n7
+    n7 --> n2

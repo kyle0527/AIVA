@@ -80,7 +80,7 @@ class ScanResultProcessor:
             payload: 掃描完成載荷
         """
         scan_id = payload.scan_id
-        logger.info(f"[🔍] [Stage 1/7] Processing scan results for {scan_id}")
+        logger.info(f"[[SEARCH]] [Stage 1/7] Processing scan results for {scan_id}")
 
         await self.scan_interface.process_scan_data(payload)
         self.session_state_manager.update_context(
@@ -113,7 +113,7 @@ class ScanResultProcessor:
             攻擊面分析結果
         """
         scan_id = payload.scan_id
-        logger.info(f"[🔍] [Stage 2/7] Analyzing attack surface for {scan_id}")
+        logger.info(f"[[SEARCH]] [Stage 2/7] Analyzing attack surface for {scan_id}")
 
         attack_surface = self.surface_analyzer.analyze(payload)
         self.session_state_manager.update_context(
@@ -232,7 +232,7 @@ class ScanResultProcessor:
             },
         )
         logger.info(
-            f"[📦] [Stage 5/7] Tasks generated - "
+            f"[[U+1F4E6]] [Stage 5/7] Tasks generated - "
             f"Total: {len(tasks)}, "
             f"Types: {tasks_by_type}"
         )
@@ -259,7 +259,7 @@ class ScanResultProcessor:
         """
         from services.core.aiva_core.output.to_functions import to_function_message
 
-        logger.info(f"[📤] [Stage 6/7] Dispatching tasks for {scan_id}")
+        logger.info(f"[[U+1F4E4]] [Stage 6/7] Dispatching tasks for {scan_id}")
 
         dispatched_count = 0
         for topic, task_payload in tasks:

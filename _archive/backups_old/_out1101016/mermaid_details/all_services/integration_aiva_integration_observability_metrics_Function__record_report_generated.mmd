@@ -1,0 +1,15 @@
+flowchart TB
+    n1([開始])
+    n2([結束])
+    n3[&amp;&#35;39;記錄生成的報告指標&amp;&#35;39;]
+    n4{if not self.enabled}
+    n5[return]
+    n6[]
+    n7[self.reports_generated_total.labels&#40;format=format_...]
+    n1 --> n3
+    n3 --> n4
+    n4 -->|Yes| n5
+    n4 -->|No| n6
+    n5 --> n6
+    n6 --> n7
+    n7 --> n2

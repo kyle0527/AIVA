@@ -1,0 +1,10 @@
+flowchart TB
+    n1([開始])
+    n2([結束])
+    n3[&amp;&#35;39;清空所有分析結果&amp;&#35;39;]
+    n4[self.analysis_results.clear&#40;&#41;]
+    n5[logger.debug&#40;&amp;&#35;39;Cleared all JavaScript anal...]
+    n1 --> n3
+    n3 --> n4
+    n4 --> n5
+    n5 --> n2

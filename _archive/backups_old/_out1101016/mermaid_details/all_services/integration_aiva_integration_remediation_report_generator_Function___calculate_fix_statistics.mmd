@@ -1,0 +1,33 @@
+flowchart TB
+    n1([開始])
+    n2([結束])
+    n3[&amp;&#35;39;計算修復統計&amp;&#35;39;]
+    n4[stats = &#123;&amp;&#35;39;total&amp;&#35;39;: len&#40;fi...]
+    n5{for fix in fixes}
+    n6[status = fix.get&#40;&amp;&#35;39;status&amp;&#35;39;, &a...]
+    n7{if status == &amp;&#35;39;completed&amp;&#35;39;}
+    n8[stats&#91;&amp;&#35;39;successful&amp;&#35;39;&#93; += 1]
+    n9{if status == &amp;&#35;39;failed&amp;&#35;39;}
+    n10[stats&#91;&amp;&#35;39;failed&amp;&#35;39;&#93; += 1]
+    n11[stats&#91;&amp;&#35;39;pending&amp;&#35;39;&#93; += 1]
+    n12[]
+    n13[]
+    n14[]
+    n15[return stats]
+    n1 --> n3
+    n3 --> n4
+    n4 --> n5
+    n5 -->|Yes| n6
+    n5 -->|No| n14
+    n6 --> n7
+    n7 -->|Yes| n8
+    n7 -->|No| n9
+    n8 --> n13
+    n9 -->|Yes| n10
+    n9 -->|No| n11
+    n10 --> n12
+    n11 --> n12
+    n12 --> n13
+    n13 --> n5
+    n14 --> n15
+    n15 --> n2

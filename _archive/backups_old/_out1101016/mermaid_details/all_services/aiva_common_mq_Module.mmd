@@ -1,0 +1,54 @@
+flowchart TB
+    n1([開始])
+    n2([結束])
+    n3[&amp;&#35;39;AIVA Message Queue &#40;MQ&#41; abstraction ...]
+    n4[from __future__ import annotations]
+    n5[import asyncio]
+    n6[import logging]
+    n7[from abc import ABC, abstractmethod]
+    n8[from collections.abc import AsyncIterator]
+    n9[from dataclasses import dataclass]
+    n10[from typing import TYPE_CHECKING, Any]
+    n11[from .config import get_settings]
+    n12[from .enums import Topic]
+    n13{if TYPE_CHECKING}
+    n14[import aio_pika]
+    n15[try]
+    n16[import aio_pika]
+    n17[]
+    n18[except ModuleNotFou...]
+    n19[aio_pika = None]
+    n20[]
+    n21[logger = logging.getLogger&#40;__...]
+    n22[class MQMessage&#40;...&#41;]
+    n23[class AbstractBroker&#40;...&#41;]
+    n24[class RabbitBroker&#40;...&#41;]
+    n25[class InMemoryBroker&#40;...&#41;]
+    n26[def get_broker&#40;...&#41;]
+    n1 --> n3
+    n3 --> n4
+    n4 --> n5
+    n5 --> n6
+    n6 --> n7
+    n7 --> n8
+    n8 --> n9
+    n9 --> n10
+    n10 --> n11
+    n11 --> n12
+    n12 --> n13
+    n13 -->|Yes| n14
+    n13 -->|No| n15
+    n14 --> n20
+    n15 --> n16
+    n15 --> n18
+    n16 --> n17
+    n17 --> n20
+    n18 --> n19
+    n19 --> n17
+    n20 --> n21
+    n21 --> n22
+    n22 --> n23
+    n23 --> n24
+    n24 --> n25
+    n25 --> n26
+    n26 --> n2

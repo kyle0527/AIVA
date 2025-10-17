@@ -1,0 +1,17 @@
+flowchart TB
+    n1([開始])
+    n2([結束])
+    n3[&amp;&#35;39;\n        設置用戶屬性\n\n        Args:\n         ...]
+    n4{if user_id not in self.user_at...}
+    n5[self.user_attributes&#91;user_id&#93; = &#123;&#125;]
+    n6[]
+    n7[self.user_attributes&#91;user_id&#93;&#91;attribute&#93; ...]
+    n8[logger.debug&#40;&amp;&#35;39;user_attribute_set&amp;&#35...]
+    n1 --> n3
+    n3 --> n4
+    n4 -->|Yes| n5
+    n4 -->|No| n6
+    n5 --> n6
+    n6 --> n7
+    n7 --> n8
+    n8 --> n2

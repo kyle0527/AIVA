@@ -1,0 +1,39 @@
+flowchart TB
+    n1([開始])
+    n2([結束])
+    n3[&amp;&#35;39;\n        根據建議生成安全配置\n\n        Args:\n     ...]
+    n4[logger.info&#40;&amp;&#35;39;generating_secure_config&amp...]
+    n5[secure_config = base_config.copy&#40;&#41;]
+    n6{for rec in analysis&#91;&amp;&#35;39;recomme...}
+    n7[keys = rec&#91;&amp;&#35;39;key&amp;&#35;39;&#93;.split&#...]
+    n8[current = secure_config]
+    n9{for key in keys&#91;:-1&#93;}
+    n10{if key not in current}
+    n11[current&#91;key&#93; = &#123;&#125;]
+    n12[]
+    n13[current = current&#91;key&#93;]
+    n14[]
+    n15[current&#91;keys&#91;-1&#93;&#93; = rec&#91;&amp;&#35;39;...]
+    n16[]
+    n17[logger.info&#40;&amp;&#35;39;secure_config_generated&amp;...]
+    n18[return secure_config]
+    n1 --> n3
+    n3 --> n4
+    n4 --> n5
+    n5 --> n6
+    n6 -->|Yes| n7
+    n6 -->|No| n16
+    n7 --> n8
+    n8 --> n9
+    n9 -->|Yes| n10
+    n9 -->|No| n14
+    n10 -->|Yes| n11
+    n10 -->|No| n12
+    n11 --> n12
+    n12 --> n13
+    n13 --> n9
+    n14 --> n15
+    n15 --> n6
+    n16 --> n17
+    n17 --> n18
+    n18 --> n2

@@ -20,7 +20,7 @@ from __future__ import annotations  # noqa: I001
 from datetime import UTC, datetime
 from typing import Any
 
-from pydantic import BaseModel, Field, HttpUrl, field_validator
+from pydantic import BaseModel, Field, field_validator
 
 from ..aiva_common.enums import (
     AttackPathEdgeType,
@@ -34,77 +34,25 @@ from ..aiva_common.enums import (
     Severity,
     TaskStatus,
 )
-from ..aiva_common.schemas import CVSSv3Metrics, CVEReference, CWEReference
+from ..aiva_common.schemas import (
+    CVEReference,
+    CVSSv3Metrics,
+    CWEReference,
+    EnhancedFindingPayload,
+)
 
 
 # ==================== 發現和影響管理 ====================
 
-
-class Target(BaseModel):
-    """目標信息"""
-
-    target_type: str = Field(description="目標類型")
-    url: HttpUrl | None = Field(default=None, description="目標URL")
-    ip_address: str | None = Field(default=None, description="IP地址")
-    hostname: str | None = Field(default=None, description="主機名")
-    port: int | None = Field(default=None, description="端口")
-    metadata: dict[str, Any] = Field(default_factory=dict, description="元數據")
-
-
-class FindingEvidence(BaseModel):
-    """發現證據"""
-
-    evidence_type: str = Field(description="證據類型")
-    description: str = Field(description="證據描述")
-    request: dict[str, Any] | None = Field(default=None, description="HTTP請求")
-    response: dict[str, Any] | None = Field(default=None, description="HTTP響應")
-    screenshot_url: str | None = Field(default=None, description="截圖URL")
-    metadata: dict[str, Any] = Field(default_factory=dict, description="元數據")
-
-
-class FindingImpact(BaseModel):
-    """發現影響"""
-
-    impact_type: str = Field(description="影響類型")
-    severity: Severity = Field(description="嚴重程度")
-    description: str = Field(description="影響描述")
-    affected_assets: list[str] = Field(default_factory=list, description="受影響資產")
-    business_impact: str | None = Field(default=None, description="業務影響")
-    metadata: dict[str, Any] = Field(default_factory=dict, description="元數據")
-
-
-class FindingRecommendation(BaseModel):
-    """發現建議"""
-
-    priority: int = Field(ge=1, le=10, description="優先級")
-    remediation_type: RemediationType = Field(description="修復類型")
-    description: str = Field(description="建議描述")
-    steps: list[str] = Field(default_factory=list, description="修復步驟")
-    estimated_effort: str | None = Field(default=None, description="預估工作量")
-    references: list[str] = Field(default_factory=list, description="參考資料")
-    metadata: dict[str, Any] = Field(default_factory=dict, description="元數據")
-
-
-class FindingPayload(BaseModel):
-    """發現載荷"""
-
-    finding_id: str = Field(description="發現ID")
-    title: str = Field(description="標題")
-    description: str = Field(description="描述")
-    severity: Severity = Field(description="嚴重程度")
-    confidence: Confidence = Field(description="置信度")
-    target: Target = Field(description="目標")
-    evidence: list[FindingEvidence] = Field(description="證據列表")
-    impact: FindingImpact = Field(description="影響")
-    recommendations: list[FindingRecommendation] = Field(description="建議列表")
-    cve_ids: list[str] = Field(default_factory=list, description="CVE標識符")
-    cwe_ids: list[str] = Field(default_factory=list, description="CWE標識符")
-    discovered_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
-    metadata: dict[str, Any] = Field(default_factory=dict, description="元數據")
+# NOTE: 以下類別已統一移至 aiva_common.schemas
+# - Target, FindingEvidence, FindingImpact, FindingRecommendation: from aiva_common.schemas.findings
+# - FindingPayload: from aiva_common.schemas.findings
+# - EnhancedFindingPayload: from aiva_common.schemas.enhanced
+# - EnhancedVulnerability: 以下定義為 Core 模組專用版本
 
 
 class EnhancedVulnerability(BaseModel):
-    """增強漏洞信息"""
+    """增強漏洞信息 - Core 模組專用版本"""
 
     vuln_id: str = Field(description="漏洞ID")
     title: str = Field(description="漏洞標題")
@@ -126,17 +74,8 @@ class EnhancedVulnerability(BaseModel):
     metadata: dict[str, Any] = Field(default_factory=dict, description="元數據")
 
 
-class EnhancedFindingPayload(BaseModel):
-    """增強發現載荷"""
-
-    finding_id: str = Field(description="發現ID")
-    vulnerability: EnhancedVulnerability = Field(description="漏洞信息")
-    target: Target = Field(description="目標")
-    evidence: list[FindingEvidence] = Field(description="證據")
-    impact: FindingImpact = Field(description="影響")
-    recommendations: list[FindingRecommendation] = Field(description="建議")
-    discovered_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
-    metadata: dict[str, Any] = Field(default_factory=dict, description="元數據")
+# NOTE: EnhancedFindingPayload 已移至 aiva_common.schemas.enhanced
+# 請使用: from services.aiva_common.schemas import EnhancedFindingPayload
 
 
 class FeedbackEventPayload(BaseModel):
@@ -659,12 +598,11 @@ class RemediationResultPayload(BaseModel):
 
 
 __all__ = [
-    # 發現和影響
-    "Target",
-    "FindingEvidence",
-    "FindingImpact",
-    "FindingRecommendation",
-    "FindingPayload",
+    # NOTE: 以下類別已從 aiva_common.schemas 導入，不在此模組定義
+    # "Target", "FindingEvidence", "FindingImpact", "FindingRecommendation"
+    # "FindingPayload" (已移至 aiva_common.schemas.findings)
+    
+    # 增強版發現
     "EnhancedVulnerability",
     "EnhancedFindingPayload",
     "FeedbackEventPayload",

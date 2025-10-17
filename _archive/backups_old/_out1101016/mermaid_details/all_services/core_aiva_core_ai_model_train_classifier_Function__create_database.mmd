@@ -1,0 +1,31 @@
+flowchart TB
+    n1([開始])
+    n2([結束])
+    n3[os.makedirs&#40;os.path.dirname&#40;db_path&#41;, exist_o...]
+    n4[conn = sqlite3.connect&#40;db_p...]
+    n5[cur = conn.cursor&#40;&#41;]
+    n6[cur.execute&#40;&amp;&#35;39;\n        CREATE TABLE IF NO...]
+    n7[conn.commit&#40;&#41;]
+    n8[cur.execute&#40;&amp;&#35;39;SELECT COUNT&#40;*&#41; FROM...]
+    n9[count = cur.fetchone&#40;&#41;&#91;0&#93;]
+    n10{if count == 0}
+    n11[samples = &#91;&#40;&amp;quot;&amp;lt;script&amp;gt;alert...]
+    n12[cur.executemany&#40;&amp;&#35;39;INSERT INTO vulnerabilit...]
+    n13[conn.commit&#40;&#41;]
+    n14[]
+    n15[conn.close&#40;&#41;]
+    n1 --> n3
+    n3 --> n4
+    n4 --> n5
+    n5 --> n6
+    n6 --> n7
+    n7 --> n8
+    n8 --> n9
+    n9 --> n10
+    n10 -->|Yes| n11
+    n10 -->|No| n14
+    n11 --> n12
+    n12 --> n13
+    n13 --> n14
+    n14 --> n15
+    n15 --> n2

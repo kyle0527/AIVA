@@ -1,0 +1,46 @@
+flowchart TB
+    n1([開始])
+    n2([結束])
+    n3[&amp;&#35;39;關鍵節點分析示範&amp;&#35;39;]
+    n4[logger.info&#40;&amp;&#35;39;\n=== 關鍵節點分析 ===&amp;&#35;39...]
+    n5[engine = AttackPathEngine&#40;neo...]
+    n6[try]
+    n7[critical_nodes = engine.find_critical...]
+    n8[logger.info&#40;f&amp;&#35;39;\n發現 &#123;len&#40;critical...]
+    n9{for &#40;i, node&#41; in enumerate&#40;critica...}
+    n10[node_name = node.get&#40;&amp;&#35;39;name&amp;&#35;39;, ...]
+    n11[node_degree = node.get&#40;&amp;&#35;39;degree&amp;&#35;3...]
+    n12[node_labels = node.get&#40;&amp;&#35;39;labels&amp;&#35;3...]
+    n13[logger.info&#40;f&amp;&#35;39;\n&#123;i&#125;. &#123;node...]
+    n14[logger.info&#40;f&amp;quot;   類型: &#123;&amp;&#35;39;, &a...]
+    n15[logger.info&#40;f&amp;&#35;39;   連接度: &#123;node_degree&#...]
+    n16{if node_degree &amp;gt;= 3}
+    n17[logger.info&#40;&amp;&#35;39;   ⚠️ 高連接度節點，建議加強監控和防護&amp;&...]
+    n18[]
+    n19[]
+    n20[]
+    n21[finally]
+    n22[engine.close&#40;&#41;]
+    n1 --> n3
+    n3 --> n4
+    n4 --> n5
+    n5 --> n6
+    n6 --> n7
+    n7 --> n8
+    n8 --> n9
+    n9 -->|Yes| n10
+    n9 -->|No| n19
+    n10 --> n11
+    n11 --> n12
+    n12 --> n13
+    n13 --> n14
+    n14 --> n15
+    n15 --> n16
+    n16 -->|Yes| n17
+    n16 -->|No| n18
+    n17 --> n18
+    n18 --> n9
+    n19 --> n20
+    n20 --> n21
+    n21 --> n22
+    n22 --> n2

@@ -1,0 +1,48 @@
+{
+  "timestamp": "2025-10-17 01:46:57",
+  "test_cases": 14,
+  "results": [
+    {
+      "method": "Random Baseline",
+      "accuracy": 0.07142857142857142,
+      "avg_latency_ms": 0.0010571425913700036,
+      "throughput_per_sec": 945946.1837632048,
+      "correct": 1,
+      "total": 14,
+      "综合分數": 0.3498867474343864
+    },
+    {
+      "method": "Simple Matcher",
+      "accuracy": 0.7857142857142857,
+      "avg_latency_ms": 0.013064284368218588,
+      "throughput_per_sec": 76544.56775548261,
+      "avg_confidence": 0.7357142857142857,
+      "correct": 11,
+      "total": 14,
+      "综合分數": 0.8486004123429665
+    },
+    {
+      "method": "BioNeuronCore AI",
+      "accuracy": 0.0,
+      "avg_latency_ms": 2.800314285975349,
+      "throughput_per_sec": 357.10277414511717,
+      "avg_confidence": 0.7432794901517698,
+      "neural_params": 4201472,
+      "correct": 0,
+      "total": 14,
+      "综合分數": 0.0
+    },
+    {
+      "method": "Hybrid (Matcher + Neural)",
+      "accuracy": 0.7857142857142857,
+      "avg_latency_ms": 0.5241357160100181,
+      "throughput_per_sec": 1907.9027997032863,
+      "avg_confidence": 0.8207291490263083,
+      "matcher_used": 12,
+      "neural_used": 2,
+      "correct": 11,
+      "total": 14,
+      "综合分數": 0.7938489045352854
+    }
+  ]
+}

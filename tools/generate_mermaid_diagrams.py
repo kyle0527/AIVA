@@ -13,48 +13,49 @@ from typing import Any
 
 
 def generate_multilang_architecture() -> str:
-    """生成多語言架構概覽圖."""
+    """生成多語言架構概覽圖 (Mermaid 11.11.0+)."""
     return """```mermaid
-graph TB
+%%{init: {'theme':'default', 'themeVariables': {'fontSize':'14px'}}}%%
+flowchart TB
     subgraph "🐍 Python Layer"
-        PY_API[FastAPI Web API]
-        PY_CORE[核心引擎]
-        PY_SCAN[掃描服務]
-        PY_INTG[整合層]
+        PY_API["FastAPI Web API"]
+        PY_CORE["核心引擎"]
+        PY_SCAN["掃描服務"]
+        PY_INTG["整合層"]
     end
 
     subgraph "🔷 Go Layer"
-        GO_AUTH[身份驗證檢測]
-        GO_CSPM[雲端安全]
-        GO_SCA[軟體組成分析]
-        GO_SSRF[SSRF 檢測]
+        GO_AUTH["身份驗證檢測"]
+        GO_CSPM["雲端安全"]
+        GO_SCA["軟體組成分析"]
+        GO_SSRF["SSRF 檢測"]
     end
 
     subgraph "🦀 Rust Layer"
-        RS_SAST[靜態分析引擎]
-        RS_INFO[資訊收集器]
+        RS_SAST["靜態分析引擎"]
+        RS_INFO["資訊收集器"]
     end
 
     subgraph "📘 TypeScript Layer"
-        TS_SCAN[Playwright 掃描]
+        TS_SCAN["Playwright 掃描"]
     end
 
     subgraph "🗄️ Data Layer"
-        DB[(PostgreSQL)]
-        MQ[RabbitMQ]
+        DB[("PostgreSQL")]
+        MQ["RabbitMQ"]
     end
 
     PY_API --> PY_CORE
     PY_CORE --> PY_SCAN
     PY_SCAN --> PY_INTG
 
-    PY_INTG -->|RPC| GO_AUTH
-    PY_INTG -->|RPC| GO_CSPM
-    PY_INTG -->|RPC| GO_SCA
-    PY_INTG -->|RPC| GO_SSRF
-    PY_INTG -->|RPC| RS_SAST
-    PY_INTG -->|RPC| RS_INFO
-    PY_INTG -->|RPC| TS_SCAN
+    PY_INTG -->|"RPC"| GO_AUTH
+    PY_INTG -->|"RPC"| GO_CSPM
+    PY_INTG -->|"RPC"| GO_SCA
+    PY_INTG -->|"RPC"| GO_SSRF
+    PY_INTG -->|"RPC"| RS_SAST
+    PY_INTG -->|"RPC"| RS_INFO
+    PY_INTG -->|"RPC"| TS_SCAN
 
     GO_AUTH --> MQ
     GO_CSPM --> MQ
@@ -67,10 +68,10 @@ graph TB
     MQ --> DB
     PY_CORE --> DB
 
-    style PY_API fill:#3776ab
-    style GO_AUTH fill:#00ADD8
-    style RS_SAST fill:#CE422B
-    style TS_SCAN fill:#3178C6
+    style PY_API fill:#3776ab,stroke:#2C5F8D,stroke-width:2px,color:#fff
+    style GO_AUTH fill:#00ADD8,stroke:#0099BF,stroke-width:2px,color:#fff
+    style RS_SAST fill:#CE422B,stroke:#A33520,stroke-width:2px,color:#fff
+    style TS_SCAN fill:#3178C6,stroke:#2768B3,stroke-width:2px,color:#fff
 ```"""
 
 
@@ -104,26 +105,27 @@ pie title 程式碼行數分布
 
 
 def generate_module_relationships() -> str:
-    """生成模組關係圖."""
+    """生成模組關係圖 (Mermaid 11.11.0+)."""
     return """```mermaid
-graph LR
+%%{init: {'theme':'default', 'flowchart': {'curve':'basis'}}}%%
+flowchart LR
     subgraph "services"
-        aiva_common[aiva_common<br/>共用模組]
-        core[core<br/>核心引擎]
-        function[function<br/>功能模組]
-        integration[integration<br/>整合層]
-        scan[scan<br/>掃描引擎]
+        aiva_common["aiva_common<br/>共用模組"]
+        core["core<br/>核心引擎"]
+        function["function<br/>功能模組"]
+        integration["integration<br/>整合層"]
+        scan["scan<br/>掃描引擎"]
     end
 
     subgraph "function 子模組"
-        func_py[Python 模組]
-        func_go[Go 模組<br/>authn/cspm/sca/ssrf]
-        func_rs[Rust 模組<br/>sast/info_gatherer]
+        func_py["Python 模組"]
+        func_go["Go 模組<br/>authn/cspm/sca/ssrf"]
+        func_rs["Rust 模組<br/>sast/info_gatherer"]
     end
 
     subgraph "scan 子模組"
-        scan_py[Python 掃描]
-        scan_ts[Node.js 掃描<br/>Playwright]
+        scan_py["Python 掃描"]
+        scan_ts["Node.js 掃描<br/>Playwright"]
     end
 
     core --> aiva_common
@@ -150,33 +152,34 @@ graph LR
 
 
 def generate_tech_stack_flowchart() -> str:
-    """生成技術棧選擇流程圖."""
+    """生成技術棧選擇流程圖 (Mermaid 11.11.0+)."""
     return """```mermaid
+%%{init: {'theme':'default', 'flowchart': {'htmlLabels': false}}}%%
 flowchart TD
-    Start([新功能需求]) --> Perf{需要高效能?}
-    Perf -->|是| Memory{需要記憶體安全?}
-    Perf -->|否| Web{是 Web API?}
+    Start(["新功能需求"]) --> Perf{"需要高效能?"}
+    Perf -->|"是"| Memory{"需要記憶體安全?"}
+    Perf -->|"否"| Web{"是 Web API?"}
 
-    Memory -->|是| Rust[使用 Rust<br/>靜態分析/資訊收集]
-    Memory -->|否| Go[使用 Go<br/>認證/雲端安全/SCA]
+    Memory -->|"是"| Rust["使用 Rust<br/>靜態分析/資訊收集"]
+    Memory -->|"否"| Go["使用 Go<br/>認證/雲端安全/SCA"]
 
-    Web -->|是| Python[使用 Python<br/>FastAPI/核心邏輯]
-    Web -->|否| Browser{需要瀏覽器?}
+    Web -->|"是"| Python["使用 Python<br/>FastAPI/核心邏輯"]
+    Web -->|"否"| Browser{"需要瀏覽器?"}
 
-    Browser -->|是| TS[使用 TypeScript<br/>Playwright 掃描]
-    Browser -->|否| Python
+    Browser -->|"是"| TS["使用 TypeScript<br/>Playwright 掃描"]
+    Browser -->|"否"| Python
 
-    Rust --> MQ[Message Queue]
+    Rust --> MQ["Message Queue"]
     Go --> MQ
     Python --> MQ
     TS --> MQ
 
-    MQ --> Deploy([部署模組])
+    MQ --> Deploy(["部署模組"])
 
-    style Rust fill:#CE422B
-    style Go fill:#00ADD8
-    style Python fill:#3776ab
-    style TS fill:#3178C6
+    style Rust fill:#CE422B,stroke:#A33520,stroke-width:2px,color:#fff
+    style Go fill:#00ADD8,stroke:#0099BF,stroke-width:2px,color:#fff
+    style Python fill:#3776ab,stroke:#2C5F8D,stroke-width:2px,color:#fff
+    style TS fill:#3178C6,stroke:#2768B3,stroke-width:2px,color:#fff
 ```"""
 
 
@@ -218,61 +221,63 @@ sequenceDiagram
 
 
 def generate_data_flow() -> str:
-    """生成資料流程圖."""
+    """生成資料流程圖 (Mermaid 11.11.0+)."""
     return """```mermaid
-graph TD
-    A[使用者輸入] --> B{驗證參數}
-    B -->|有效| C[建立掃描任務]
-    B -->|無效| Z[返回錯誤]
+%%{init: {'theme':'default'}}}%%
+flowchart TD
+    A["使用者輸入"] --> B{"驗證參數"}
+    B -->|"有效"| C["建立掃描任務"]
+    B -->|"無效"| Z["返回錯誤"]
 
-    C --> D[Task Queue]
-    D --> E{選擇掃描引擎}
+    C --> D["Task Queue"]
+    D --> E{"選擇掃描引擎"}
 
-    E -->|靜態分析| F[Rust SAST]
-    E -->|動態掃描| G[TS Playwright]
-    E -->|身份驗證| H[Go Auth]
-    E -->|雲端安全| I[Go CSPM]
+    E -->|"靜態分析"| F["Rust SAST"]
+    E -->|"動態掃描"| G["TS Playwright"]
+    E -->|"身份驗證"| H["Go Auth"]
+    E -->|"雲端安全"| I["Go CSPM"]
 
-    F --> J[RabbitMQ]
+    F --> J["RabbitMQ"]
     G --> J
     H --> J
     I --> J
 
-    J --> K[結果處理器]
-    K --> L[儲存至資料庫]
-    L --> M[生成報告]
-    M --> N[返回使用者]
+    J --> K["結果處理器"]
+    K --> L["儲存至資料庫"]
+    L --> M["生成報告"]
+    M --> N["返回使用者"]
 
-    style F fill:#CE422B
-    style G fill:#3178C6
-    style H fill:#00ADD8
-    style I fill:#00ADD8
+    style F fill:#CE422B,stroke:#A33520,stroke-width:2px,color:#fff
+    style G fill:#3178C6,stroke:#2768B3,stroke-width:2px,color:#fff
+    style H fill:#00ADD8,stroke:#0099BF,stroke-width:2px,color:#fff
+    style I fill:#00ADD8,stroke:#0099BF,stroke-width:2px,color:#fff
 ```"""
 
 
 def generate_deployment_diagram() -> str:
-    """生成部署架構圖."""
+    """生成部署架構圖 (Mermaid 11.11.0+)."""
     return """```mermaid
-graph TB
+%%{init: {'theme':'default', 'flowchart': {'rankSpacing': 50}}}%%
+flowchart TB
     subgraph "Docker 容器"
         subgraph "Web 層"
-            WEB[FastAPI<br/>Python 3.12]
+            WEB["FastAPI<br/>Python 3.12"]
         end
 
         subgraph "應用層"
-            PY[Python Services]
-            GO[Go Services]
-            RS[Rust Services]
-            TS[Node.js Services]
+            PY["Python Services"]
+            GO["Go Services"]
+            RS["Rust Services"]
+            TS["Node.js Services"]
         end
 
         subgraph "訊息層"
-            MQ[RabbitMQ]
+            MQ["RabbitMQ"]
         end
 
         subgraph "資料層"
-            DB[(PostgreSQL)]
-            CACHE[(Redis)]
+            DB[("PostgreSQL")]
+            CACHE[("Redis")]
         end
     end
 
@@ -289,10 +294,10 @@ graph TB
     PY --> DB
     PY --> CACHE
 
-    style WEB fill:#3776ab
-    style GO fill:#00ADD8
-    style RS fill:#CE422B
-    style TS fill:#3178C6
+    style WEB fill:#3776ab,stroke:#2C5F8D,stroke-width:2px,color:#fff
+    style GO fill:#00ADD8,stroke:#0099BF,stroke-width:2px,color:#fff
+    style RS fill:#CE422B,stroke:#A33520,stroke-width:2px,color:#fff
+    style TS fill:#3178C6,stroke:#2768B3,stroke-width:2px,color:#fff
 ```"""
 
 
@@ -317,7 +322,7 @@ def main():
         json_files = sorted(analysis_dir.glob("analysis_report_*.json"))
         if json_files:
             latest_report = json_files[-1]
-            print(f"📊 讀取分析報告: {latest_report.name}")
+            print(f"[STATS] 讀取分析報告: {latest_report.name}")
 
     stats = {}
     if latest_report:
@@ -325,7 +330,7 @@ def main():
             with open(latest_report, encoding="utf-8") as f:
                 stats = json.load(f)
         except Exception as e:
-            print(f"⚠️  無法讀取報告: {e}")
+            print(f"[WARN]  無法讀取報告: {e}")
 
     # 生成各種圖表
     output_dir.mkdir(parents=True, exist_ok=True)
@@ -398,8 +403,8 @@ python tools/generate_mermaid_diagrams.py
     with open(mermaid_file, "w", encoding="utf-8") as f:
         f.write(mermaid_content)
 
-    print("\n✅ 圖表已生成:")
-    print(f"  📊 {mermaid_file}")
+    print("\n[OK] 圖表已生成:")
+    print(f"  [STATS] {mermaid_file}")
     print("\n生成的圖表:")
     print("  1. 多語言架構概覽")
     print("  2. 程式碼分布統計")

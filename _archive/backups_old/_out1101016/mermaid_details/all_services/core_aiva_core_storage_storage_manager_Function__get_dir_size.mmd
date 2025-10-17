@@ -1,0 +1,15 @@
+flowchart TB
+    n1([開始])
+    n2([結束])
+    n3[&amp;&#35;39;計算目錄大小&amp;&#35;39;]
+    n4{if not path.exists&#40;&#41;}
+    n5[return 0]
+    n6[]
+    n7[return sum&#40;&#40;f.stat&#40;&#41;.st_size for f in...]
+    n1 --> n3
+    n3 --> n4
+    n4 -->|Yes| n5
+    n4 -->|No| n6
+    n5 --> n6
+    n6 --> n7
+    n7 --> n2

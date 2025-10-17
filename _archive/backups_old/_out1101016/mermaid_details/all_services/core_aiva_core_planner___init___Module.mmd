@@ -1,0 +1,16 @@
+flowchart TB
+    n1([開始])
+    n2([結束])
+    n3[&amp;&#35;39;\n攻擊計畫執行器 &#40;Planner/Orchestrator&#41;\n\n...]
+    n4[from .ast_parser import ASTParser, AttackFlowGraph...]
+    n5[from .orchestrator import AttackOrchestrator]
+    n6[from .task_converter import ExecutableTask, TaskCo...]
+    n7[from .tool_selector import ToolDecision, ToolSelec...]
+    n8[__all__ = &#91;&amp;&#35;39;ASTParser&amp;&#35;39;, &amp;...]
+    n1 --> n3
+    n3 --> n4
+    n4 --> n5
+    n5 --> n6
+    n6 --> n7
+    n7 --> n8
+    n8 --> n2

@@ -1,0 +1,38 @@
+flowchart TB
+    n1([開始])
+    n2([結束])
+    n3[&amp;&#35;39;\n        生成業務影響摘要\n\n        Args:\n       ...]
+    n4[summary_parts = &#91;&#93;]
+    n5{if financial_loss &amp;gt; 0}
+    n6[summary_parts.append&#40;f&amp;&#35;39;潛在財務損失 $&#123;fina...]
+    n7[]
+    n8{if affected_users &amp;gt; 0}
+    n9[summary_parts.append&#40;f&amp;&#35;39;可能影響 &#123;affecte...]
+    n10[]
+    n11{if disruption_risk in &#91;&amp;&#35;39;high&amp;&#35;39;...}
+    n12[summary_parts.append&#40;f&amp;&#35;39;業務中斷風險: &#123;disr...]
+    n13[]
+    n14{if reputation_impact in &#91;&amp;&#35;39;high...}
+    n15[summary_parts.append&#40;f&amp;&#35;39;聲譽影響: &#123;reputa...]
+    n16[]
+    n17[return &amp;&#35;39;；&amp;&#35;39;.join&#40;summary_parts...]
+    n1 --> n3
+    n3 --> n4
+    n4 --> n5
+    n5 -->|Yes| n6
+    n5 -->|No| n7
+    n6 --> n7
+    n7 --> n8
+    n8 -->|Yes| n9
+    n8 -->|No| n10
+    n9 --> n10
+    n10 --> n11
+    n11 -->|Yes| n12
+    n11 -->|No| n13
+    n12 --> n13
+    n13 --> n14
+    n14 -->|Yes| n15
+    n14 -->|No| n16
+    n15 --> n16
+    n16 --> n17
+    n17 --> n2

@@ -22,7 +22,7 @@ class DetectionDemo:
 
     async def simulate_sqli_detection(self) -> dict[str, Any]:
         """模擬 SQLi 檢測演示"""
-        print("🔍 SQLi Detection Demo - Multi-Engine Coordination")
+        print("[SEARCH] SQLi Detection Demo - Multi-Engine Coordination")
 
         # 模擬多引擎檢測結果
         engines_results = {
@@ -58,7 +58,7 @@ class DetectionDemo:
         # 模擬檢測過程
         for engine, result in engines_results.items():
             print(
-                f"  ✅ {engine:12} - Found {result['vulnerabilities_found']} vulns (Confidence: {result.get('confidence', 'N/A')}%)"
+                f"  [OK] {engine:12} - Found {result['vulnerabilities_found']} vulns (Confidence: {result.get('confidence', 'N/A')}%)"
             )
             await asyncio.sleep(0.1)  # 模擬檢測時間
 
@@ -75,17 +75,17 @@ class DetectionDemo:
             "scan_efficiency": "3x faster than single engine",
         }
 
-        print(f"  📊 Summary: {unique_vulns} unique vulnerabilities detected")
+        print(f"  [STATS] Summary: {unique_vulns} unique vulnerabilities detected")
         print(
-            f"  🛡️  WAF bypass: {'Success' if summary['waf_bypass_success'] else 'Failed'}"
+            f"  [SHIELD]  WAF bypass: {'Success' if summary['waf_bypass_success'] else 'Failed'}"
         )
-        print(f"  🎯 Accuracy: {summary['detection_accuracy']}")
+        print(f"  [TARGET] Accuracy: {summary['detection_accuracy']}")
 
         return summary
 
     async def simulate_ssrf_detection(self) -> dict[str, Any]:
         """模擬 SSRF 檢測演示"""
-        print("\n🌐 SSRF Detection Demo - Cloud Service & Bypass Techniques")
+        print("\n[U+1F310] SSRF Detection Demo - Cloud Service & Bypass Techniques")
 
         detection_results = {
             "cloud_metadata": {
@@ -131,19 +131,19 @@ class DetectionDemo:
             },
         }
 
-        print("  ☁️  Cloud Service Detection:")
+        print("  [CLOUD]  Cloud Service Detection:")
         for service, result in detection_results["cloud_metadata"].items():
-            status = "🚨" if result.get("vulnerable") else "✅"
+            status = "[ALERT]" if result.get("vulnerable") else "[OK]"
             print(f"    {status} {service}: {result}")
 
-        print("  🔍 Internal Service Scan:")
+        print("  [SEARCH] Internal Service Scan:")
         for service, result in detection_results["internal_services"].items():
-            status = "⚠️" if result.get("accessible") else "🔒"
+            status = "[WARN]" if result.get("accessible") else "[LOCK]"
             print(f"    {status} {service}:{result.get('port')} - {result}")
 
-        print("  🕵️  Bypass Techniques:")
+        print("  [SPY]  Bypass Techniques:")
         for technique, result in detection_results["bypass_techniques"].items():
-            print(f"    ✅ {technique}: {result}")
+            print(f"    [OK] {technique}: {result}")
 
         await asyncio.sleep(0.2)
 
@@ -157,14 +157,14 @@ class DetectionDemo:
         }
 
         print(
-            f"  📊 SSRF Summary: {summary['cloud_vulns_found']} cloud + {summary['internal_services_exposed']} internal services"
+            f"  [STATS] SSRF Summary: {summary['cloud_vulns_found']} cloud + {summary['internal_services_exposed']} internal services"
         )
 
         return summary
 
     async def simulate_xss_detection(self) -> dict[str, Any]:
         """模擬 XSS 檢測演示"""
-        print("\n⚡ XSS Detection Demo - Framework-Specific & CSP Bypass")
+        print("\n[FAST] XSS Detection Demo - Framework-Specific & CSP Bypass")
 
         detection_results = {
             "reflected_xss": {
@@ -202,25 +202,25 @@ class DetectionDemo:
             },
         }
 
-        print("  ⚡ Reflected XSS Results:")
+        print("  [FAST] Reflected XSS Results:")
         reflected = detection_results["reflected_xss"]
         print(
-            f"    ✅ Payloads: {reflected['successful_payloads']}/{reflected['basic_payloads']} successful"
+            f"    [OK] Payloads: {reflected['successful_payloads']}/{reflected['basic_payloads']} successful"
         )
-        print(f"    📍 Contexts: {', '.join(reflected['contexts'])}")
+        print(f"    [PIN] Contexts: {', '.join(reflected['contexts'])}")
 
-        print("  🖼️  Framework-Specific Detection:")
+        print("  [IMAGE]  Framework-Specific Detection:")
         for framework, result in detection_results["framework_specific"].items():
             vulns = sum(1 for v in result.values() if v is True)
             print(
-                f"    {'🚨' if vulns > 0 else '✅'} {framework}: {vulns} vulnerabilities"
+                f"    {'[ALERT]' if vulns > 0 else '[OK]'} {framework}: {vulns} vulnerabilities"
             )
 
-        print("  🛡️  CSP Bypass Analysis:")
+        print("  [SHIELD]  CSP Bypass Analysis:")
         csp = detection_results["csp_bypass"]
-        print(f"    🔍 Policy: {csp['policy']}")
+        print(f"    [SEARCH] Policy: {csp['policy']}")
         print(
-            f"    ⚡ Bypasses: {csp['bypasses_found']} techniques, {csp['success_rate']} success"
+            f"    [FAST] Bypasses: {csp['bypasses_found']} techniques, {csp['success_rate']} success"
         )
 
         await asyncio.sleep(0.15)
@@ -235,14 +235,14 @@ class DetectionDemo:
         }
 
         print(
-            f"  📊 XSS Summary: {summary['total_xss_vulns']} total vulnerabilities across all types"
+            f"  [STATS] XSS Summary: {summary['total_xss_vulns']} total vulnerabilities across all types"
         )
 
         return summary
 
     async def simulate_idor_detection(self) -> dict[str, Any]:
         """模擬 IDOR 檢測演示"""
-        print("\n🔐 IDOR Detection Demo - AI-Enhanced & Multi-Tenant Analysis")
+        print("\n[SECURE] IDOR Detection Demo - AI-Enhanced & Multi-Tenant Analysis")
 
         detection_results = {
             "intelligent_analysis": {
@@ -299,14 +299,14 @@ class DetectionDemo:
             },
         }
 
-        print("  🤖 AI-Enhanced Analysis:")
+        print("  [AI] AI-Enhanced Analysis:")
         intel = detection_results["intelligent_analysis"]
         print(
-            f"    📈 ML Predictions: {intel['successful_predictions']}/{intel['ml_predictions']} ({intel['prediction_accuracy']})"
+            f"    [U+1F4C8] ML Predictions: {intel['successful_predictions']}/{intel['ml_predictions']} ({intel['prediction_accuracy']})"
         )
-        print(f"    🧠 Patterns Learned: {len(intel['id_patterns_learned'])}")
+        print(f"    [BRAIN] Patterns Learned: {len(intel['id_patterns_learned'])}")
 
-        print("  🌐 API Comprehensive Testing:")
+        print("  [U+1F310] API Comprehensive Testing:")
         for api_type, result in detection_results["api_testing"].items():
             if (
                 isinstance(result, dict)
@@ -314,12 +314,12 @@ class DetectionDemo:
                 and "tested" in result
             ):
                 print(
-                    f"    {'⚠️' if result['vulnerable'] > 0 else '✅'} {api_type}: {result['vulnerable']}/{result['tested']} endpoints vulnerable"
+                    f"    {'[WARN]' if result['vulnerable'] > 0 else '[OK]'} {api_type}: {result['vulnerable']}/{result['tested']} endpoints vulnerable"
                 )
 
-        print("  🏢 Multi-Tenant Security:")
+        print("  [U+1F3E2] Multi-Tenant Security:")
         for tenant_type, result in detection_results["multi_tenant"].items():
-            status = "🚨" if result.get("breached", 0) > 0 else "✅"
+            status = "[ALERT]" if result.get("breached", 0) > 0 else "[OK]"
             breaches = result.get("breached", 0)
             print(f"    {status} {tenant_type}: {breaches} isolation breaches")
 
@@ -335,7 +335,7 @@ class DetectionDemo:
         }
 
         print(
-            f"  📊 IDOR Summary: {summary['total_idor_vulns']} vulnerabilities with AI assistance"
+            f"  [STATS] IDOR Summary: {summary['total_idor_vulns']} vulnerabilities with AI assistance"
         )
 
         return summary
@@ -343,9 +343,9 @@ class DetectionDemo:
     async def run_comprehensive_demo(self):
         """運行完整的檢測效果演示"""
         print("=" * 70)
-        print("🚀 AIVA Enhanced Function Module Detection Demo")
+        print("[START] AIVA Enhanced Function Module Detection Demo")
         print("=" * 70)
-        print(f"⏰ Started at: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+        print(f"[TIME] Started at: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
         print()
 
         start_time = time.time()
@@ -361,7 +361,7 @@ class DetectionDemo:
 
         # 綜合統計
         print("\n" + "=" * 70)
-        print("📈 COMPREHENSIVE DETECTION RESULTS SUMMARY")
+        print("[U+1F4C8] COMPREHENSIVE DETECTION RESULTS SUMMARY")
         print("=" * 70)
 
         total_vulns = (
@@ -372,8 +372,8 @@ class DetectionDemo:
             + idor_results.get("total_idor_vulns", 0)
         )
 
-        print(f"🎯 Total Vulnerabilities Detected: {total_vulns}")
-        print("📊 Module Breakdown:")
+        print(f"[TARGET] Total Vulnerabilities Detected: {total_vulns}")
+        print("[STATS] Module Breakdown:")
         print(
             f"   • SQLi:  {sqli_results.get('total_vulnerabilities', 0)} vulnerabilities"
         )
@@ -383,24 +383,24 @@ class DetectionDemo:
         print(f"   • XSS:   {xss_results.get('total_xss_vulns', 0)} vulnerabilities")
         print(f"   • IDOR:  {idor_results.get('total_idor_vulns', 0)} vulnerabilities")
 
-        print("\n🚀 Performance Metrics:")
-        print(f"   ⏱️  Total Scan Time: {duration:.2f} seconds")
-        print(f"   ⚡ Detection Rate: {total_vulns / duration:.1f} vulns/second")
-        print("   🎯 Overall Accuracy: 91.5% (weighted average)")
-        print("   📉 False Positive Reduction: 35%")
+        print("\n[START] Performance Metrics:")
+        print(f"   [U+23F1][U+FE0F]  Total Scan Time: {duration:.2f} seconds")
+        print(f"   [FAST] Detection Rate: {total_vulns / duration:.1f} vulns/second")
+        print("   [TARGET] Overall Accuracy: 91.5% (weighted average)")
+        print("   [U+1F4C9] False Positive Reduction: 35%")
 
-        print("\n✨ Enhancement Impact:")
-        print("   🔧 Multi-Engine Coordination: 3x faster SQLi detection")
-        print("   ☁️  Cloud-Native Detection: 40% more SSRF vulnerabilities found")
-        print("   🖼️  Framework-Specific XSS: 25% accuracy improvement")
-        print("   🤖 AI-Enhanced IDOR: 60% prediction accuracy")
+        print("\n[SPARKLE] Enhancement Impact:")
+        print("   [CONFIG] Multi-Engine Coordination: 3x faster SQLi detection")
+        print("   [CLOUD]  Cloud-Native Detection: 40% more SSRF vulnerabilities found")
+        print("   [IMAGE]  Framework-Specific XSS: 25% accuracy improvement")
+        print("   [AI] AI-Enhanced IDOR: 60% prediction accuracy")
 
-        print("\n🛡️  Security Value:")
+        print("\n[SHIELD]  Security Value:")
         critical_count = 2 + 1 + 1 + 5  # Critical from each module
         high_count = total_vulns - critical_count
-        print(f"   🚨 Critical Severity: {critical_count} vulnerabilities")
-        print(f"   ⚠️  High Severity: {high_count} vulnerabilities")
-        print("   💰 Risk Mitigation Value: ~$2.5M in potential breach costs")
+        print(f"   [ALERT] Critical Severity: {critical_count} vulnerabilities")
+        print(f"   [WARN]  High Severity: {high_count} vulnerabilities")
+        print("   [U+1F4B0] Risk Mitigation Value: ~$2.5M in potential breach costs")
 
         # 保存結果到文件
         demo_report = {
@@ -426,8 +426,8 @@ class DetectionDemo:
         async with aiofiles.open(output_path, "w", encoding="utf-8") as f:
             await f.write(json.dumps(demo_report, indent=2, ensure_ascii=False))
 
-        print("\n💾 Results saved to: _out/detection_demo_results.json")
-        print(f"🏁 Demo completed at: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+        print("\n[SAVE] Results saved to: _out/detection_demo_results.json")
+        print(f"[U+1F3C1] Demo completed at: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
         print("=" * 70)
 
 

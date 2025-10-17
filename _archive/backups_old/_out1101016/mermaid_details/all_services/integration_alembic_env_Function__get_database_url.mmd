@@ -1,0 +1,17 @@
+flowchart TB
+    n1([開始])
+    n2([結束])
+    n3[&amp;&#35;39;從環境變數獲取資料庫 URL&amp;&#35;39;]
+    n4[url = os.getenv&#40;&amp;&#35;39;AIVA_DATA...]
+    n5{if not url}
+    n6[raise ValueError&#40;&amp;&#35;39;AIVA_DATABASE_URL envir...]
+    n7[]
+    n8[return url]
+    n1 --> n3
+    n3 --> n4
+    n4 --> n5
+    n5 -->|Yes| n6
+    n5 -->|No| n7
+    n6 --> n7
+    n7 --> n8
+    n8 --> n2

@@ -73,6 +73,6 @@ with out.open('w', encoding='utf-8') as f:
             display_line = line_content[:60] + '...' if len(line_content) > 60 else line_content
             f.write(f'{path_str:<50} {line_num:>6} {display_line}\n')
     else:
-        f.write('🎉 所有文件都與 CP950 編碼兼容！\n')
+        f.write('[SUCCESS] 所有文件都與 CP950 編碼兼容！\n')
 
 print(f'報告已生成: {out}')

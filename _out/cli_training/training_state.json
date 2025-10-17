@@ -1,0 +1,663 @@
+{
+  "trained_count": 924,
+  "total": 978,
+  "current_batch": 15,
+  "training_history": [
+    {
+      "batch_idx": 0,
+      "commands_trained": 10,
+      "success_rate": 100.0,
+      "avg_reward": 1.0
+    },
+    {
+      "batch_idx": 1,
+      "commands_trained": 10,
+      "success_rate": 90.0,
+      "avg_reward": 0.93
+    },
+    {
+      "batch_idx": 2,
+      "commands_trained": 10,
+      "success_rate": 90.0,
+      "avg_reward": 0.93
+    },
+    {
+      "batch_idx": 3,
+      "commands_trained": 10,
+      "success_rate": 90.0,
+      "avg_reward": 0.93
+    },
+    {
+      "batch_idx": 4,
+      "commands_trained": 10,
+      "success_rate": 100.0,
+      "avg_reward": 1.0
+    },
+    {
+      "batch_idx": 5,
+      "commands_trained": 10,
+      "success_rate": 90.0,
+      "avg_reward": 0.93
+    },
+    {
+      "batch_idx": 6,
+      "commands_trained": 10,
+      "success_rate": 90.0,
+      "avg_reward": 0.93
+    },
+    {
+      "batch_idx": 7,
+      "commands_trained": 10,
+      "success_rate": 100.0,
+      "avg_reward": 1.0
+    },
+    {
+      "batch_idx": 8,
+      "commands_trained": 10,
+      "success_rate": 80.0,
+      "avg_reward": 0.86
+    },
+    {
+      "batch_idx": 9,
+      "commands_trained": 10,
+      "success_rate": 80.0,
+      "avg_reward": 0.86
+    },
+    {
+      "batch_idx": 10,
+      "commands_trained": 10,
+      "success_rate": 90.0,
+      "avg_reward": 0.93
+    },
+    {
+      "batch_idx": 11,
+      "commands_trained": 10,
+      "success_rate": 90.0,
+      "avg_reward": 0.93
+    },
+    {
+      "batch_idx": 12,
+      "commands_trained": 10,
+      "success_rate": 90.0,
+      "avg_reward": 0.93
+    },
+    {
+      "batch_idx": 13,
+      "commands_trained": 10,
+      "success_rate": 100.0,
+      "avg_reward": 1.0
+    },
+    {
+      "batch_idx": 14,
+      "commands_trained": 10,
+      "success_rate": 80.0,
+      "avg_reward": 0.86
+    },
+    {
+      "batch_idx": 15,
+      "commands_trained": 10,
+      "success_rate": 90.0,
+      "avg_reward": 0.93
+    },
+    {
+      "batch_idx": 16,
+      "commands_trained": 10,
+      "success_rate": 80.0,
+      "avg_reward": 0.86
+    },
+    {
+      "batch_idx": 17,
+      "commands_trained": 10,
+      "success_rate": 90.0,
+      "avg_reward": 0.93
+    },
+    {
+      "batch_idx": 18,
+      "commands_trained": 10,
+      "success_rate": 80.0,
+      "avg_reward": 0.86
+    },
+    {
+      "batch_idx": 19,
+      "commands_trained": 10,
+      "success_rate": 90.0,
+      "avg_reward": 0.93
+    },
+    {
+      "batch_idx": 20,
+      "commands_trained": 10,
+      "success_rate": 90.0,
+      "avg_reward": 0.93
+    },
+    {
+      "batch_idx": 21,
+      "commands_trained": 10,
+      "success_rate": 100.0,
+      "avg_reward": 1.0
+    },
+    {
+      "batch_idx": 22,
+      "commands_trained": 10,
+      "success_rate": 70.0,
+      "avg_reward": 0.79
+    },
+    {
+      "batch_idx": 23,
+      "commands_trained": 10,
+      "success_rate": 90.0,
+      "avg_reward": 0.93
+    },
+    {
+      "batch_idx": 24,
+      "commands_trained": 10,
+      "success_rate": 80.0,
+      "avg_reward": 0.86
+    },
+    {
+      "batch_idx": 25,
+      "commands_trained": 8,
+      "success_rate": 100.0,
+      "avg_reward": 1.0
+    },
+    {
+      "batch_idx": 0,
+      "commands_trained": 10,
+      "success_rate": 90.0,
+      "avg_reward": 0.93
+    },
+    {
+      "batch_idx": 1,
+      "commands_trained": 10,
+      "success_rate": 100.0,
+      "avg_reward": 1.0
+    },
+    {
+      "batch_idx": 2,
+      "commands_trained": 10,
+      "success_rate": 100.0,
+      "avg_reward": 1.0
+    },
+    {
+      "batch_idx": 3,
+      "commands_trained": 10,
+      "success_rate": 80.0,
+      "avg_reward": 0.86
+    },
+    {
+      "batch_idx": 4,
+      "commands_trained": 10,
+      "success_rate": 90.0,
+      "avg_reward": 0.93
+    },
+    {
+      "batch_idx": 5,
+      "commands_trained": 10,
+      "success_rate": 90.0,
+      "avg_reward": 0.93
+    },
+    {
+      "batch_idx": 6,
+      "commands_trained": 10,
+      "success_rate": 90.0,
+      "avg_reward": 0.93
+    },
+    {
+      "batch_idx": 7,
+      "commands_trained": 10,
+      "success_rate": 100.0,
+      "avg_reward": 1.0
+    },
+    {
+      "batch_idx": 8,
+      "commands_trained": 10,
+      "success_rate": 80.0,
+      "avg_reward": 0.86
+    },
+    {
+      "batch_idx": 9,
+      "commands_trained": 10,
+      "success_rate": 70.0,
+      "avg_reward": 0.79
+    },
+    {
+      "batch_idx": 10,
+      "commands_trained": 10,
+      "success_rate": 80.0,
+      "avg_reward": 0.86
+    },
+    {
+      "batch_idx": 11,
+      "commands_trained": 10,
+      "success_rate": 80.0,
+      "avg_reward": 0.86
+    },
+    {
+      "batch_idx": 12,
+      "commands_trained": 10,
+      "success_rate": 90.0,
+      "avg_reward": 0.93
+    },
+    {
+      "batch_idx": 13,
+      "commands_trained": 10,
+      "success_rate": 100.0,
+      "avg_reward": 1.0
+    },
+    {
+      "batch_idx": 14,
+      "commands_trained": 10,
+      "success_rate": 100.0,
+      "avg_reward": 1.0
+    },
+    {
+      "batch_idx": 15,
+      "commands_trained": 10,
+      "success_rate": 100.0,
+      "avg_reward": 1.0
+    },
+    {
+      "batch_idx": 16,
+      "commands_trained": 10,
+      "success_rate": 70.0,
+      "avg_reward": 0.79
+    },
+    {
+      "batch_idx": 17,
+      "commands_trained": 10,
+      "success_rate": 90.0,
+      "avg_reward": 0.93
+    },
+    {
+      "batch_idx": 18,
+      "commands_trained": 10,
+      "success_rate": 70.0,
+      "avg_reward": 0.79
+    },
+    {
+      "batch_idx": 19,
+      "commands_trained": 10,
+      "success_rate": 70.0,
+      "avg_reward": 0.79
+    },
+    {
+      "batch_idx": 20,
+      "commands_trained": 10,
+      "success_rate": 100.0,
+      "avg_reward": 1.0
+    },
+    {
+      "batch_idx": 21,
+      "commands_trained": 10,
+      "success_rate": 70.0,
+      "avg_reward": 0.79
+    },
+    {
+      "batch_idx": 22,
+      "commands_trained": 10,
+      "success_rate": 80.0,
+      "avg_reward": 0.86
+    },
+    {
+      "batch_idx": 23,
+      "commands_trained": 10,
+      "success_rate": 80.0,
+      "avg_reward": 0.86
+    },
+    {
+      "batch_idx": 24,
+      "commands_trained": 10,
+      "success_rate": 60.0,
+      "avg_reward": 0.72
+    },
+    {
+      "batch_idx": 25,
+      "commands_trained": 8,
+      "success_rate": 87.5,
+      "avg_reward": 0.9125
+    },
+    {
+      "batch_idx": 0,
+      "commands_trained": 10,
+      "success_rate": 100.0,
+      "avg_reward": 1.0
+    },
+    {
+      "batch_idx": 1,
+      "commands_trained": 10,
+      "success_rate": 100.0,
+      "avg_reward": 1.0
+    },
+    {
+      "batch_idx": 2,
+      "commands_trained": 10,
+      "success_rate": 90.0,
+      "avg_reward": 0.93
+    },
+    {
+      "batch_idx": 3,
+      "commands_trained": 10,
+      "success_rate": 90.0,
+      "avg_reward": 0.93
+    },
+    {
+      "batch_idx": 4,
+      "commands_trained": 10,
+      "success_rate": 90.0,
+      "avg_reward": 0.93
+    },
+    {
+      "batch_idx": 5,
+      "commands_trained": 10,
+      "success_rate": 100.0,
+      "avg_reward": 1.0
+    },
+    {
+      "batch_idx": 6,
+      "commands_trained": 10,
+      "success_rate": 100.0,
+      "avg_reward": 1.0
+    },
+    {
+      "batch_idx": 7,
+      "commands_trained": 10,
+      "success_rate": 100.0,
+      "avg_reward": 1.0
+    },
+    {
+      "batch_idx": 8,
+      "commands_trained": 10,
+      "success_rate": 90.0,
+      "avg_reward": 0.93
+    },
+    {
+      "batch_idx": 9,
+      "commands_trained": 10,
+      "success_rate": 100.0,
+      "avg_reward": 1.0
+    },
+    {
+      "batch_idx": 10,
+      "commands_trained": 10,
+      "success_rate": 80.0,
+      "avg_reward": 0.86
+    },
+    {
+      "batch_idx": 11,
+      "commands_trained": 10,
+      "success_rate": 80.0,
+      "avg_reward": 0.86
+    },
+    {
+      "batch_idx": 12,
+      "commands_trained": 10,
+      "success_rate": 90.0,
+      "avg_reward": 0.93
+    },
+    {
+      "batch_idx": 13,
+      "commands_trained": 10,
+      "success_rate": 80.0,
+      "avg_reward": 0.86
+    },
+    {
+      "batch_idx": 14,
+      "commands_trained": 10,
+      "success_rate": 80.0,
+      "avg_reward": 0.86
+    },
+    {
+      "batch_idx": 15,
+      "commands_trained": 10,
+      "success_rate": 90.0,
+      "avg_reward": 0.93
+    },
+    {
+      "batch_idx": 16,
+      "commands_trained": 10,
+      "success_rate": 70.0,
+      "avg_reward": 0.79
+    },
+    {
+      "batch_idx": 17,
+      "commands_trained": 10,
+      "success_rate": 100.0,
+      "avg_reward": 1.0
+    },
+    {
+      "batch_idx": 18,
+      "commands_trained": 10,
+      "success_rate": 80.0,
+      "avg_reward": 0.86
+    },
+    {
+      "batch_idx": 19,
+      "commands_trained": 10,
+      "success_rate": 80.0,
+      "avg_reward": 0.86
+    },
+    {
+      "batch_idx": 20,
+      "commands_trained": 10,
+      "success_rate": 90.0,
+      "avg_reward": 0.93
+    },
+    {
+      "batch_idx": 21,
+      "commands_trained": 10,
+      "success_rate": 80.0,
+      "avg_reward": 0.86
+    },
+    {
+      "batch_idx": 22,
+      "commands_trained": 10,
+      "success_rate": 90.0,
+      "avg_reward": 0.93
+    },
+    {
+      "batch_idx": 23,
+      "commands_trained": 10,
+      "success_rate": 100.0,
+      "avg_reward": 1.0
+    },
+    {
+      "batch_idx": 24,
+      "commands_trained": 10,
+      "success_rate": 80.0,
+      "avg_reward": 0.86
+    },
+    {
+      "batch_idx": 25,
+      "commands_trained": 8,
+      "success_rate": 62.5,
+      "avg_reward": 0.7375
+    },
+    {
+      "batch_idx": 0,
+      "commands_trained": 10,
+      "success_rate": 100.0,
+      "avg_reward": 1.0
+    },
+    {
+      "batch_idx": 1,
+      "commands_trained": 10,
+      "success_rate": 100.0,
+      "avg_reward": 1.0
+    },
+    {
+      "batch_idx": 2,
+      "commands_trained": 10,
+      "success_rate": 90.0,
+      "avg_reward": 0.93
+    },
+    {
+      "batch_idx": 3,
+      "commands_trained": 10,
+      "success_rate": 100.0,
+      "avg_reward": 1.0
+    },
+    {
+      "batch_idx": 4,
+      "commands_trained": 10,
+      "success_rate": 80.0,
+      "avg_reward": 0.86
+    },
+    {
+      "batch_idx": 5,
+      "commands_trained": 10,
+      "success_rate": 90.0,
+      "avg_reward": 0.93
+    },
+    {
+      "batch_idx": 6,
+      "commands_trained": 10,
+      "success_rate": 90.0,
+      "avg_reward": 0.93
+    },
+    {
+      "batch_idx": 7,
+      "commands_trained": 10,
+      "success_rate": 100.0,
+      "avg_reward": 1.0
+    },
+    {
+      "batch_idx": 8,
+      "commands_trained": 10,
+      "success_rate": 80.0,
+      "avg_reward": 0.86
+    },
+    {
+      "batch_idx": 9,
+      "commands_trained": 10,
+      "success_rate": 100.0,
+      "avg_reward": 1.0
+    },
+    {
+      "batch_idx": 10,
+      "commands_trained": 10,
+      "success_rate": 90.0,
+      "avg_reward": 0.93
+    },
+    {
+      "batch_idx": 11,
+      "commands_trained": 10,
+      "success_rate": 70.0,
+      "avg_reward": 0.79
+    },
+    {
+      "batch_idx": 12,
+      "commands_trained": 10,
+      "success_rate": 60.0,
+      "avg_reward": 0.72
+    },
+    {
+      "batch_idx": 13,
+      "commands_trained": 10,
+      "success_rate": 60.0,
+      "avg_reward": 0.72
+    },
+    {
+      "batch_idx": 14,
+      "commands_trained": 10,
+      "success_rate": 90.0,
+      "avg_reward": 0.93
+    }
+  ],
+  "learned_patterns": {
+    "ui_minimal": {
+      "count": 4,
+      "examples": [
+        "python -m services.core.aiva_core.ui_panel.auto_server --mode ui --host 127.0.0.1",
+        "python -m services.core.aiva_core.ui_panel.auto_server --mode ui --host 127.0.0.1",
+        "python -m services.core.aiva_core.ui_panel.auto_server --mode ui --host 127.0.0.1"
+      ]
+    },
+    "ai_minimal": {
+      "count": 4,
+      "examples": [
+        "python -m services.core.aiva_core.ui_panel.auto_server --mode ai --host 127.0.0.1",
+        "python -m services.core.aiva_core.ui_panel.auto_server --mode ai --host 127.0.0.1",
+        "python -m services.core.aiva_core.ui_panel.auto_server --mode ai --host 127.0.0.1"
+      ]
+    },
+    "hybrid_minimal": {
+      "count": 4,
+      "examples": [
+        "python -m services.core.aiva_core.ui_panel.auto_server --mode hybrid --host 127.0.0.1",
+        "python -m services.core.aiva_core.ui_panel.auto_server --mode hybrid --host 127.0.0.1",
+        "python -m services.core.aiva_core.ui_panel.auto_server --mode hybrid --host 127.0.0.1"
+      ]
+    },
+    "ui_single-port": {
+      "count": 19,
+      "examples": [
+        "python -m services.core.aiva_core.ui_panel.auto_server --mode ui --host 127.0.0.1 --ports 3000",
+        "python -m services.core.aiva_core.ui_panel.auto_server --mode ui --host 127.0.0.1 --ports 8000",
+        "python -m services.core.aiva_core.ui_panel.auto_server --mode ui --host 127.0.0.1 --ports 8080"
+      ]
+    },
+    "ai_single-port": {
+      "count": 19,
+      "examples": [
+        "python -m services.core.aiva_core.ui_panel.auto_server --mode ai --host 127.0.0.1 --ports 3000",
+        "python -m services.core.aiva_core.ui_panel.auto_server --mode ai --host 127.0.0.1 --ports 8000",
+        "python -m services.core.aiva_core.ui_panel.auto_server --mode ai --host 127.0.0.1 --ports 8888"
+      ]
+    },
+    "hybrid_single-port": {
+      "count": 20,
+      "examples": [
+        "python -m services.core.aiva_core.ui_panel.auto_server --mode hybrid --host 127.0.0.1 --ports 3000",
+        "python -m services.core.aiva_core.ui_panel.auto_server --mode hybrid --host 127.0.0.1 --ports 8000",
+        "python -m services.core.aiva_core.ui_panel.auto_server --mode hybrid --host 127.0.0.1 --ports 8080"
+      ]
+    },
+    "ui_dual-port": {
+      "count": 75,
+      "examples": [
+        "python -m services.core.aiva_core.ui_panel.auto_server --mode ui --host 127.0.0.1 --ports 3000 8000",
+        "python -m services.core.aiva_core.ui_panel.auto_server --mode ui --host 127.0.0.1 --ports 3000 8080",
+        "python -m services.core.aiva_core.ui_panel.auto_server --mode ui --host 127.0.0.1 --ports 3000 8888"
+      ]
+    },
+    "ai_dual-port": {
+      "count": 71,
+      "examples": [
+        "python -m services.core.aiva_core.ui_panel.auto_server --mode ai --host 127.0.0.1 --ports 3000 8000",
+        "python -m services.core.aiva_core.ui_panel.auto_server --mode ai --host 127.0.0.1 --ports 3000 8080",
+        "python -m services.core.aiva_core.ui_panel.auto_server --mode ai --host 127.0.0.1 --ports 3000 8888"
+      ]
+    },
+    "hybrid_dual-port": {
+      "count": 77,
+      "examples": [
+        "python -m services.core.aiva_core.ui_panel.auto_server --mode hybrid --host 127.0.0.1 --ports 3000 8000",
+        "python -m services.core.aiva_core.ui_panel.auto_server --mode hybrid --host 127.0.0.1 --ports 3000 8080",
+        "python -m services.core.aiva_core.ui_panel.auto_server --mode hybrid --host 127.0.0.1 --ports 3000 8888"
+      ]
+    },
+    "ui_triple-port": {
+      "count": 204,
+      "examples": [
+        "python -m services.core.aiva_core.ui_panel.auto_server --mode ui --host 127.0.0.1 --ports 3000 8000 8080",
+        "python -m services.core.aiva_core.ui_panel.auto_server --mode ui --host 127.0.0.1 --ports 3000 8000 8888",
+        "python -m services.core.aiva_core.ui_panel.auto_server --mode ui --host 127.0.0.1 --ports 3000 8000 9000"
+      ]
+    },
+    "ai_triple-port": {
+      "count": 160,
+      "examples": [
+        "python -m services.core.aiva_core.ui_panel.auto_server --mode ai --host 127.0.0.1 --ports 3000 8000 8080",
+        "python -m services.core.aiva_core.ui_panel.auto_server --mode ai --host 127.0.0.1 --ports 3000 8000 8888",
+        "python -m services.core.aiva_core.ui_panel.auto_server --mode ai --host 127.0.0.1 --ports 3000 8000 9000"
+      ]
+    },
+    "hybrid_triple-port": {
+      "count": 151,
+      "examples": [
+        "python -m services.core.aiva_core.ui_panel.auto_server --mode hybrid --host 127.0.0.1 --ports 3000 8000 8080",
+        "python -m services.core.aiva_core.ui_panel.auto_server --mode hybrid --host 127.0.0.1 --ports 3000 8000 8888",
+        "python -m services.core.aiva_core.ui_panel.auto_server --mode hybrid --host 127.0.0.1 --ports 3000 8000 9000"
+      ]
+    }
+  }
+}

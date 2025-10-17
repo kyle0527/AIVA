@@ -1,0 +1,173 @@
+{
+  "metadata": {
+    "source": "AI_OPTIMIZATION_REQUIREMENTS.txt",
+    "generated_at": "2025-10-17T12:25:01.229929",
+    "total_attacks": 646,
+    "attack_types": 8,
+    "success_rate": 0.2682163611980331
+  },
+  "attack_patterns": {
+    "Path Traversal": {
+      "count": 158,
+      "samples": [
+        "2025-10-09 06:13:34.872 | Error: Unexpected path: /api",
+        "2025-10-09 06:17:44.730 | Error: Unexpected path: /api/",
+        "2025-10-09 06:17:44.730 | Error: Unexpected path: /api/config.php"
+      ],
+      "frequency": 0.03531515422440769
+    },
+    "Error-Based Attack": {
+      "count": 2,
+      "samples": [
+        "2025-10-09 06:13:34.937 | info: Solved 1-star errorHandlingChallenge (Error Handling)",
+        "2025-10-09 06:13:34.946 | info: Cheat score for trivial errorHandlingChallenge solved in 6min (expected ~0min) with hints allowed: 0"
+      ],
+      "frequency": 0.0004470272686633885
+    },
+    "Blocked Activity": {
+      "count": 71,
+      "samples": [
+        "2025-10-09 06:13:35.011 | Error: Blocked illegal activity by ::ffff:172.17.0.1",
+        "2025-10-09 06:17:36.329 | Error: Blocked illegal activity by ::ffff:172.17.0.1",
+        "2025-10-09 06:17:36.386 | Error: Blocked illegal activity by ::ffff:172.17.0.1"
+      ],
+      "frequency": 0.01586946803755029
+    },
+    "Authentication Bypass": {
+      "count": 275,
+      "samples": [
+        "2025-10-09 06:17:34.769 | UnauthorizedError: No Authorization header was found",
+        "2025-10-09 06:17:34.770 | UnauthorizedError: No Authorization header was found",
+        "2025-10-09 06:17:34.770 | UnauthorizedError: No Authorization header was found"
+      ],
+      "frequency": 0.06146624944121591
+    },
+    "SQL Injection": {
+      "count": 84,
+      "samples": [
+        "2025-10-09 06:17:36.320 | Error: WHERE parameter \"captchaId\" has invalid \"undefined\" value",
+        "2025-10-09 06:17:36.375 | Error: WHERE parameter \"captchaId\" has invalid \"undefined\" value",
+        "2025-10-09 06:17:36.468 | Error: SQLITE_ERROR: incomplete input"
+      ],
+      "frequency": 0.018775145283862316
+    },
+    "Parameter Pollution": {
+      "count": 30,
+      "samples": [
+        "2025-10-09 06:17:36.320 | Error: WHERE parameter \"captchaId\" has invalid \"undefined\" value",
+        "2025-10-09 06:17:36.375 | Error: WHERE parameter \"captchaId\" has invalid \"undefined\" value",
+        "2025-10-09 06:17:36.490 | Error: WHERE parameter \"captchaId\" has invalid \"undefined\" value"
+      ],
+      "frequency": 0.006705409029950827
+    },
+    "XSS Attack": {
+      "count": 24,
+      "samples": [
+        "2025-10-09 06:17:39.807 | Error: SQLITE_ERROR: near \"XSS\": syntax error",
+        "2025-10-09 06:17:39.910 | Error: SQLITE_ERROR: near \"XSS\": syntax error",
+        "2025-10-09 06:17:39.945 | Error: SQLITE_ERROR: near \"XSS\": syntax error"
+      ],
+      "frequency": 0.005364327223960662
+    },
+    "File Upload Attack": {
+      "count": 2,
+      "samples": [
+        "2025-10-09 06:17:52.036 | info: Solved 3-star uploadTypeChallenge (Upload Type)",
+        "2025-10-09 06:17:52.037 | info: Cheat score for uploadTypeChallenge solved in 4min (expected ~6min) with hints allowed: 0.28585277777777784"
+      ],
+      "frequency": 0.0004470272686633885
+    }
+  },
+  "success_cases": [
+    {
+      "timestamp": "2025-10-09 06:13:34.937",
+      "content": "2025-10-09 06:13:34.937 | info: Solved 1-star errorHandlingChallenge (Error Handling)"
+    },
+    {
+      "timestamp": "2025-10-09 06:13:34.937",
+      "content": "2025-10-09 06:13:34.937 | info: Solved 1-star errorHandlingChallenge (Error Handling)"
+    },
+    {
+      "timestamp": "2025-10-09 06:13:34.946",
+      "content": "2025-10-09 06:13:34.946 | info: Cheat score for trivial errorHandlingChallenge solved in 6min (expected ~0min) with hints allowed: 0"
+    },
+    {
+      "timestamp": "2025-10-09 06:13:34.946",
+      "content": "2025-10-09 06:13:34.946 | info: Cheat score for trivial errorHandlingChallenge solved in 6min (expected ~0min) with hints allowed: 0"
+    },
+    {
+      "timestamp": "2025-10-09 06:17:52.036",
+      "content": "2025-10-09 06:17:52.036 | info: Solved 3-star uploadTypeChallenge (Upload Type)"
+    },
+    {
+      "timestamp": "2025-10-09 06:17:52.036",
+      "content": "2025-10-09 06:17:52.036 | info: Solved 3-star uploadTypeChallenge (Upload Type)"
+    },
+    {
+      "timestamp": "2025-10-09 06:17:52.037",
+      "content": "2025-10-09 06:17:52.037 | info: Cheat score for uploadTypeChallenge solved in 4min (expected ~6min) with hints allowed: 0.28585277777777784"
+    },
+    {
+      "timestamp": "2025-10-09 06:17:52.037",
+      "content": "2025-10-09 06:17:52.037 | info: Cheat score for uploadTypeChallenge solved in 4min (expected ~6min) with hints allowed: 0.28585277777777784"
+    },
+    {
+      "timestamp": "2025-10-09 06:34:31.163",
+      "content": "2025-10-09 06:34:31.163 | info: Solved 2-star loginAdminChallenge (Login Admin)"
+    },
+    {
+      "timestamp": "2025-10-09 06:34:31.163",
+      "content": "2025-10-09 06:34:31.163 | info: Solved 2-star loginAdminChallenge (Login Admin)"
+    },
+    {
+      "timestamp": "2025-10-09 06:34:31.166",
+      "content": "2025-10-09 06:34:31.166 | info: Cheat score for tutorial loginAdminChallenge solved in 17min (expected ~2min) with hints allowed: 0"
+    },
+    {
+      "timestamp": "2025-10-09 06:34:31.166",
+      "content": "2025-10-09 06:34:31.166 | info: Cheat score for tutorial loginAdminChallenge solved in 17min (expected ~2min) with hints allowed: 0"
+    }
+  ],
+  "feature_vectors": [
+    {
+      "label": "Path Traversal",
+      "count": 158,
+      "normalized_frequency": 0.03531515422440769
+    },
+    {
+      "label": "Error-Based Attack",
+      "count": 2,
+      "normalized_frequency": 0.0004470272686633885
+    },
+    {
+      "label": "Blocked Activity",
+      "count": 71,
+      "normalized_frequency": 0.01586946803755029
+    },
+    {
+      "label": "Authentication Bypass",
+      "count": 275,
+      "normalized_frequency": 0.06146624944121591
+    },
+    {
+      "label": "SQL Injection",
+      "count": 84,
+      "normalized_frequency": 0.018775145283862316
+    },
+    {
+      "label": "Parameter Pollution",
+      "count": 30,
+      "normalized_frequency": 0.006705409029950827
+    },
+    {
+      "label": "XSS Attack",
+      "count": 24,
+      "normalized_frequency": 0.005364327223960662
+    },
+    {
+      "label": "File Upload Attack",
+      "count": 2,
+      "normalized_frequency": 0.0004470272686633885
+    }
+  ]
+}

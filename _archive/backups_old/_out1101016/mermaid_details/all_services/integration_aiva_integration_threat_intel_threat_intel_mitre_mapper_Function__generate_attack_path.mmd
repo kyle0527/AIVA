@@ -1,0 +1,32 @@
+flowchart TB
+    n1([開始])
+    n2([結束])
+    n3[&amp;&#35;39;\n        生成攻擊路徑\n\n        Args:\n         ...]
+    n4[path = &#123;&amp;&#35;39;techniques&amp;&#35;39;: &#91;&...]
+    n5{for tech_id in techniques}
+    n6[technique = self.get_technique_b...]
+    n7{if technique}
+    n8[path&#91;&amp;&#35;39;techniques&amp;&#35;39;&#93;.append...]
+    n9[path&#91;&amp;&#35;39;tactics_coverage&amp;&#35;39;&#93;....]
+    n10[]
+    n11[]
+    n12[path&#91;&amp;&#35;39;tactics_coverage&amp;&#35;39;&#93; ...]
+    n13[path&#91;&amp;&#35;39;completeness_score&amp;&#35;39;&#93...]
+    n14[logger.info&#40;&amp;&#35;39;attack_path_generated&amp;&#...]
+    n15[return path]
+    n1 --> n3
+    n3 --> n4
+    n4 --> n5
+    n5 -->|Yes| n6
+    n5 -->|No| n11
+    n6 --> n7
+    n7 -->|Yes| n8
+    n7 -->|No| n10
+    n8 --> n9
+    n9 --> n10
+    n10 --> n5
+    n11 --> n12
+    n12 --> n13
+    n13 --> n14
+    n14 --> n15
+    n15 --> n2

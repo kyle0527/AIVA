@@ -71,7 +71,7 @@ class BioNeuronMasterController:
             codebase_path: 代碼庫路徑
             default_mode: 默認操作模式
         """
-        logger.info("🧠 Initializing BioNeuron Master Controller...")
+        logger.info("[BRAIN] Initializing BioNeuron Master Controller...")
 
         # === 核心 AI 主腦 ===
         self.bio_neuron_agent = BioNeuronRAGAgent(
@@ -107,7 +107,7 @@ class BioNeuronMasterController:
         self.task_queue: list[dict[str, Any]] = []
         self.active_tasks: dict[str, dict[str, Any]] = {}
 
-        logger.info(f"✅ Master Controller initialized in {default_mode.value} mode")
+        logger.info(f"[OK] Master Controller initialized in {default_mode.value} mode")
         logger.info(f"   - BioNeuronRAGAgent: {self.bio_neuron_agent is not None}")
         logger.info(f"   - RAG Engine: {self.rag_engine is not None}")
 
@@ -132,7 +132,7 @@ class BioNeuronMasterController:
         mode = mode or self.current_mode
         context = context or {}
 
-        logger.info(f"📥 Processing request in {mode.value} mode")
+        logger.info(f"[U+1F4E5] Processing request in {mode.value} mode")
 
         # 記錄到對話歷史
         self._record_interaction("user", request, context)
@@ -164,7 +164,7 @@ class BioNeuronMasterController:
         - 提供操作選項
         - 即時反饋
         """
-        logger.info("🖥️ Handling UI mode request")
+        logger.info("[UI] Handling UI mode request")
 
         # 解析 UI 命令
         if isinstance(request, dict):
@@ -232,7 +232,7 @@ class BioNeuronMasterController:
         Returns:
             確認結果
         """
-        logger.info(f"⏸️ Requesting UI confirmation for: {action}")
+        logger.info(f"[U+23F8][U+FE0F] Requesting UI confirmation for: {action}")
 
         # 觸發 UI 確認對話框
         if "request_confirmation" in self.ui_callbacks:
@@ -253,7 +253,7 @@ class BioNeuronMasterController:
         Returns:
             執行結果
         """
-        logger.info(f"▶️ Executing UI action: {action}")
+        logger.info(f"[U+25B6][U+FE0F] Executing UI action: {action}")
 
         # 映射到實際功能
         if action == "start_scan":
@@ -279,7 +279,7 @@ class BioNeuronMasterController:
         - 不等待確認
         - 自動執行
         """
-        logger.info("🤖 Handling AI autonomous mode request")
+        logger.info("[AI] Handling AI autonomous mode request")
 
         # 解析目標
         if isinstance(request, dict):
@@ -290,7 +290,7 @@ class BioNeuronMasterController:
             target = None
 
         # AI 自主分析和規劃
-        logger.info("🧠 BioNeuron analyzing objective...")
+        logger.info("[BRAIN] BioNeuron analyzing objective...")
 
         # 1. 使用 RAG 獲取相關知識
         if target:
@@ -326,7 +326,7 @@ class BioNeuronMasterController:
         Returns:
             決策結果
         """
-        logger.info("🧠 BioNeuron making decision...")
+        logger.info("[BRAIN] BioNeuron making decision...")
 
         # 使用 BioNeuronRAGAgent 的決策核心
         # TODO: 整合實際決策
@@ -353,7 +353,7 @@ class BioNeuronMasterController:
         Returns:
             執行結果
         """
-        logger.info("⚡ Auto-executing decision...")
+        logger.info("[FAST] Auto-executing decision...")
 
         action = decision.get("action")
 
@@ -375,7 +375,7 @@ class BioNeuronMasterController:
         - 上下文理解
         - 多輪對話
         """
-        logger.info("💬 Handling chat mode request")
+        logger.info("[CHAT] Handling chat mode request")
 
         if isinstance(request, dict):
             user_message = request.get("message", "")
@@ -504,7 +504,7 @@ class BioNeuronMasterController:
         - 關鍵操作需確認
         - 常規操作自動執行
         """
-        logger.info("🔀 Handling hybrid mode request")
+        logger.info("[MIX] Handling hybrid mode request")
 
         # 分析請求複雜度和風險
         risk_level = self._assess_risk(request)
@@ -575,7 +575,7 @@ class BioNeuronMasterController:
             decision: 決策
             result: 結果
         """
-        logger.info("📚 Learning from execution...")
+        logger.info("[DOCS] Learning from execution...")
 
         # 創建經驗樣本
         # TODO: 整合 ExperienceManager
@@ -624,7 +624,7 @@ class BioNeuronMasterController:
         Returns:
             結果
         """
-        logger.info("🔍 Starting scan task...")
+        logger.info("[SEARCH] Starting scan task...")
         # TODO: 實際掃描邏輯
         return {"success": True, "task_type": "scan", "status": "started"}
 
@@ -637,7 +637,7 @@ class BioNeuronMasterController:
         Returns:
             結果
         """
-        logger.info("⚔️ Starting attack task...")
+        logger.info("[U+2694][U+FE0F] Starting attack task...")
         # TODO: 實際攻擊邏輯
         return {"success": True, "task_type": "attack", "status": "started"}
 
@@ -650,7 +650,7 @@ class BioNeuronMasterController:
         Returns:
             結果
         """
-        logger.info("🎓 Starting training task...")
+        logger.info("[U+1F393] Starting training task...")
         # TODO: 實際訓練邏輯
         return {"success": True, "task_type": "training", "status": "started"}
 

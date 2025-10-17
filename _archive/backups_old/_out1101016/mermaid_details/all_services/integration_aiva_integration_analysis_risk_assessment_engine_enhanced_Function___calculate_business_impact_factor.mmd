@@ -1,0 +1,62 @@
+flowchart TB
+    n1([開始])
+    n2([結束])
+    n3[&amp;&#35;39;\n        計算業務影響因子\n\n        基於資產價值和使用者基數評估...]
+    n4[impact_factor = 1.0]
+    n5{if asset_value &amp;gt; 0}
+    n6{if asset_value &amp;gt;= 10000000}
+    n7[impact_factor += 0.5]
+    n8{if asset_value &amp;gt;= 1000000}
+    n9[impact_factor += 0.3]
+    n10{if asset_value &amp;gt;= 100000}
+    n11[impact_factor += 0.2]
+    n12[]
+    n13[]
+    n14[]
+    n15[]
+    n16{if user_base &amp;gt; 0}
+    n17{if user_base &amp;gt;= 1000000}
+    n18[impact_factor += 0.4]
+    n19{if user_base &amp;gt;= 100000}
+    n20[impact_factor += 0.3]
+    n21{if user_base &amp;gt;= 10000}
+    n22[impact_factor += 0.2]
+    n23[]
+    n24[]
+    n25[]
+    n26[]
+    n27[return min&#40;impact_factor, 2.5&#41;]
+    n1 --> n3
+    n3 --> n4
+    n4 --> n5
+    n5 -->|Yes| n6
+    n5 -->|No| n15
+    n6 -->|Yes| n7
+    n6 -->|No| n8
+    n7 --> n14
+    n8 -->|Yes| n9
+    n8 -->|No| n10
+    n9 --> n13
+    n10 -->|Yes| n11
+    n10 -->|No| n12
+    n11 --> n12
+    n12 --> n13
+    n13 --> n14
+    n14 --> n15
+    n15 --> n16
+    n16 -->|Yes| n17
+    n16 -->|No| n26
+    n17 -->|Yes| n18
+    n17 -->|No| n19
+    n18 --> n25
+    n19 -->|Yes| n20
+    n19 -->|No| n21
+    n20 --> n24
+    n21 -->|Yes| n22
+    n21 -->|No| n23
+    n22 --> n23
+    n23 --> n24
+    n24 --> n25
+    n25 --> n26
+    n26 --> n27
+    n27 --> n2

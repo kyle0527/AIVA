@@ -1,0 +1,17 @@
+flowchart TB
+    n1([開始])
+    n2([結束])
+    n3[&amp;&#35;39;\n        記錄 JavaScript 分析結果\n\n        Args...]
+    n4{if not hasattr&#40;self, &amp;&#35;39;js_analy...}
+    n5[self.js_analysis_results: list&#91;JavaScriptAnalysisR...]
+    n6[]
+    n7[self.js_analysis_results.append&#40;result&#41;]
+    n8[logger.debug&#40;f&amp;&#35;39;JS analysis result recorde...]
+    n1 --> n3
+    n3 --> n4
+    n4 -->|Yes| n5
+    n4 -->|No| n6
+    n5 --> n6
+    n6 --> n7
+    n7 --> n8
+    n8 --> n2

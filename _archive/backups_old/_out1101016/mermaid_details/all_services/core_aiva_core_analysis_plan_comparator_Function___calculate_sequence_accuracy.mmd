@@ -1,0 +1,23 @@
+flowchart TB
+    n1([開始])
+    n2([結束])
+    n3[&amp;&#35;39;計算順序準確度\n\n        使用最長公共子序列 &#40;LCS&#41; 算...]
+    n4[expected_order = &#91;step.step_id for st...]
+    n5[actual_order = &#91;trace.step_id for t...]
+    n6{if not expected_order or not a...}
+    n7[return 0.0]
+    n8[]
+    n9[lcs_length = self._lcs_length&#40;exp...]
+    n10[accuracy = lcs_length / len&#40;exp...]
+    n11[return accuracy]
+    n1 --> n3
+    n3 --> n4
+    n4 --> n5
+    n5 --> n6
+    n6 -->|Yes| n7
+    n6 -->|No| n8
+    n7 --> n8
+    n8 --> n9
+    n9 --> n10
+    n10 --> n11
+    n11 --> n2

@@ -1,0 +1,14 @@
+flowchart TB
+    n1([開始])
+    n2([結束])
+    n3[&amp;&#35;39;\n        克隆當前策略控制器\n\n        Returns:\n   ...]
+    n4[new_controller = StrategyController&#40;s...]
+    n5[new_controller._parameters = StrategyParameters&#40;*...]
+    n6[new_controller._customizations = self._customizations...]
+    n7[return new_controller]
+    n1 --> n3
+    n3 --> n4
+    n4 --> n5
+    n5 --> n6
+    n6 --> n7
+    n7 --> n2

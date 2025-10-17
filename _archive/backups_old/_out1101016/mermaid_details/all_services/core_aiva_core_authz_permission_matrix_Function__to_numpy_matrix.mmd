@@ -1,0 +1,49 @@
+flowchart TB
+    n1([開始])
+    n2([結束])
+    n3[&amp;&#35;39;\n        轉換為 NumPy 矩陣（用於數值分析）\n\n        Re...]
+    n4[roles_list = sorted&#40;self.roles&#41;]
+    n5[resources_list = sorted&#40;self.resource...]
+    n6[permissions_list = sorted&#40;self.permissi...]
+    n7[matrix = np.zeros&#40;&#40;len&#40;roles_...]
+    n8[role_idx = &#123;role: i for i, role...]
+    n9[resource_idx = &#123;res: i for i, res i...]
+    n10[permission_idx = &#123;perm: i for i, perm...]
+    n11{for &#40;&#40;role, resource, permission&#41;, decision&#...}
+    n12[r_idx = role_idx&#91;role&#93;]
+    n13[res_idx = resource_idx&#91;resourc...]
+    n14[p_idx = permission_idx&#91;permi...]
+    n15{if decision == AccessDecision....}
+    n16[matrix&#91;r_idx, res_idx, p_idx&#93; = 1]
+    n17{if decision == AccessDecision....}
+    n18[matrix&#91;r_idx, res_idx, p_idx&#93; = 2]
+    n19[]
+    n20[]
+    n21[]
+    n22[logger.debug&#40;&amp;&#35;39;matrix_converted_to_numpy&a...]
+    n23[return &#40;matrix, roles_list, resources...]
+    n1 --> n3
+    n3 --> n4
+    n4 --> n5
+    n5 --> n6
+    n6 --> n7
+    n7 --> n8
+    n8 --> n9
+    n9 --> n10
+    n10 --> n11
+    n11 -->|Yes| n12
+    n11 -->|No| n21
+    n12 --> n13
+    n13 --> n14
+    n14 --> n15
+    n15 -->|Yes| n16
+    n15 -->|No| n17
+    n16 --> n20
+    n17 -->|Yes| n18
+    n17 -->|No| n19
+    n18 --> n19
+    n19 --> n20
+    n20 --> n11
+    n21 --> n22
+    n22 --> n23
+    n23 --> n2

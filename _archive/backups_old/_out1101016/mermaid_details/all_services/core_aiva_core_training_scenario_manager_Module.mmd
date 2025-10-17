@@ -1,0 +1,28 @@
+flowchart TB
+    n1([開始])
+    n2([結束])
+    n3[&amp;&#35;39;\nStandard Scenario Manager - OWASP 靶場場景管理器\...]
+    n4[from __future__ import annotations]
+    n5[from datetime import UTC, datetime]
+    n6[import json]
+    n7[import logging]
+    n8[from pathlib import Path]
+    n9[from typing import Any]
+    n10[from uuid import uuid4]
+    n11[from services.aiva_common.enums import Vulnerabili...]
+    n12[from services.aiva_common.schemas import AttackPla...]
+    n13[logger = logging.getLogger&#40;__...]
+    n14[class ScenarioManager&#40;...&#41;]
+    n1 --> n3
+    n3 --> n4
+    n4 --> n5
+    n5 --> n6
+    n6 --> n7
+    n7 --> n8
+    n8 --> n9
+    n9 --> n10
+    n10 --> n11
+    n11 --> n12
+    n12 --> n13
+    n13 --> n14
+    n14 --> n2

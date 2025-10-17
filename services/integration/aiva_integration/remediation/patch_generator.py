@@ -317,7 +317,7 @@ Diff:
 
 def main():
     """測試範例"""
-    print("🔧 Patch Generator Demo")
+    print("[CONFIG] Patch Generator Demo")
     print("=" * 60)
 
     # 創建補丁生成器(不連接實際 repo)
@@ -330,7 +330,7 @@ def main():
         vulnerable_code='cursor.execute("SELECT * FROM users WHERE id=%s" % user_id)',
     )
 
-    print("\n📋 Generated SQL Injection Patch:")
+    print("\n[LIST] Generated SQL Injection Patch:")
     print(f"   Patch ID: {sql_patch['patch_id']}")
     print(f"   File: {sql_patch['file_path']}")
     print(f"   Status: {sql_patch['status']}")
@@ -342,16 +342,16 @@ def main():
         vulnerable_code="render(user_input)",
     )
 
-    print("\n📋 Generated XSS Patch:")
+    print("\n[LIST] Generated XSS Patch:")
     print(f"   Patch ID: {xss_patch['patch_id']}")
     print(f"   File: {xss_patch['file_path']}")
 
     # 導出補丁
     with tempfile.TemporaryDirectory() as tmpdir:
         result = generator.export_patches(tmpdir)
-        print(f"\n💾 Exported {result['exported_count']} patches to {result['output_dir']}")
+        print(f"\n[SAVE] Exported {result['exported_count']} patches to {result['output_dir']}")
 
-    print("\n✅ Demo completed")
+    print("\n[OK] Demo completed")
 
 
 if __name__ == "__main__":

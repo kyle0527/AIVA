@@ -1,0 +1,19 @@
+flowchart TB
+    n1([開始])
+    n2([結束])
+    n3[&amp;&#35;39;\n        判斷是否為有效的 API 端點\n\n        Args:\n...]
+    n4{if self.api_pattern_regex.sear...}
+    n5[return True]
+    n6[]
+    n7[static_extensions = &#91;&amp;&#35;39;.css&amp;&#35;39;, ...]
+    n8[parsed = urlparse&#40;url&#41;]
+    n9[return not any&#40;&#40;parsed.path.lower&#40;&#41;.e...]
+    n1 --> n3
+    n3 --> n4
+    n4 -->|Yes| n5
+    n4 -->|No| n6
+    n5 --> n6
+    n6 --> n7
+    n7 --> n8
+    n8 --> n9
+    n9 --> n2

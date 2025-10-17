@@ -19,7 +19,7 @@ class UnifiedAIController:
 
     def __init__(self, codebase_path: str = "c:/AMD/AIVA"):
         """初始化統一 AI 控制器"""
-        logger.info("🧠 初始化 AIVA 統一 AI 控制器...")
+        logger.info("[BRAIN] 初始化 AIVA 統一 AI 控制器...")
 
         # 主控 AI 系統
         self.master_ai = BioNeuronRAGAgent(codebase_path)
@@ -34,11 +34,11 @@ class UnifiedAIController:
         # AI 決策歷史
         self.decision_history = []
 
-        logger.info("✅ 統一 AI 控制器初始化完成")
+        logger.info("[OK] 統一 AI 控制器初始化完成")
 
     async def process_unified_request(self, user_input: str, **context) -> dict[str, Any]:
         """統一處理所有 AI 請求 - 避免 AI 衝突"""
-        logger.info(f"🎯 統一 AI 處理: {user_input}")
+        logger.info(f"[TARGET] 統一 AI 處理: {user_input}")
 
         # 1. 主控 AI 分析任務複雜度
         task_analysis = self._analyze_task_complexity(user_input, context)
@@ -97,7 +97,7 @@ class UnifiedAIController:
 
     async def _direct_processing(self, user_input: str, context: dict) -> dict[str, Any]:
         """主控 AI 直接處理"""
-        logger.info("📋 主控 AI 直接處理任務")
+        logger.info("[LIST] 主控 AI 直接處理任務")
 
         result = self.master_ai.invoke(user_input, **context)
 
@@ -111,7 +111,7 @@ class UnifiedAIController:
 
     async def _coordinated_code_fixing(self, user_input: str, context: dict) -> dict[str, Any]:
         """協調程式碼修復 - 主控 AI 監督下的修復"""
-        logger.info("🔧 協調程式碼修復 (主控 AI 監督)")
+        logger.info("[CONFIG] 協調程式碼修復 (主控 AI 監督)")
 
         # 主控 AI 預處理
         preprocessed = self.master_ai.invoke(f"分析修復需求: {user_input}", **context)
@@ -138,7 +138,7 @@ class UnifiedAIController:
 
     async def _coordinated_detection(self, user_input: str, context: dict) -> dict[str, Any]:
         """協調漏洞檢測 - 統一調度多檢測引擎"""
-        logger.info("🔍 協調漏洞檢測 (統一調度)")
+        logger.info("[SEARCH] 協調漏洞檢測 (統一調度)")
 
         # 主控 AI 分析檢測需求
         detection_plan = self.master_ai.invoke(f"規劃檢測策略: {user_input}", **context)
@@ -165,7 +165,7 @@ class UnifiedAIController:
 
     async def _multi_ai_coordination(self, user_input: str, context: dict) -> dict[str, Any]:
         """多 AI 協同 - 主控 AI 統籌"""
-        logger.info("🤝 多 AI 協同處理 (主控統籌)")
+        logger.info("[U+1F91D] 多 AI 協同處理 (主控統籌)")
 
         # 主控 AI 制定協同計畫
         coordination_plan = self.master_ai.invoke(f"制定協同計畫: {user_input}", **context)
@@ -231,7 +231,7 @@ class UnifiedAIController:
 # 使用示例
 async def demonstrate_unified_control():
     """展示統一 AI 控制的效果"""
-    print("🎯 AIVA 統一 AI 控制展示")
+    print("[TARGET] AIVA 統一 AI 控制展示")
     print("=" * 40)
 
     controller = UnifiedAIController()
@@ -245,13 +245,13 @@ async def demonstrate_unified_control():
     ]
 
     for request in test_requests:
-        print(f"\n👤 用戶請求: {request}")
+        print(f"\n[U+1F464] 用戶請求: {request}")
         result = await controller.process_unified_request(request)
-        print(f"🤖 處理方式: {result['processing_method']}")
-        print(f"✅ 統一控制: {result['unified_control']}")
-        print(f"🔄 AI 衝突: {result['ai_conflicts']}")
+        print(f"[AI] 處理方式: {result['processing_method']}")
+        print(f"[OK] 統一控制: {result['unified_control']}")
+        print(f"[RELOAD] AI 衝突: {result['ai_conflicts']}")
 
-    print("\n📊 統一控制統計:")
+    print("\n[STATS] 統一控制統計:")
     stats = controller.get_control_statistics()
     print(f"統一控制率: {stats['unified_control_rate']:.1%}")
     print(f"無衝突率: {stats['conflict_free_rate']:.1%}")

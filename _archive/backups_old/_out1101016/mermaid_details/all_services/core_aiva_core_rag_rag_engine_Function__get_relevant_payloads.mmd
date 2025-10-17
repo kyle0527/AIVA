@@ -1,0 +1,20 @@
+flowchart TB
+    n1([開始])
+    n2([結束])
+    n3[&amp;&#35;39;獲取相關有效載荷\n\n        Args:\n            vulne...]
+    n4[target_desc = &amp;&#35;39; &amp;&#35;39;.join&#40;&#91;t...]
+    n5[query = f&amp;&#35;39;&#123;vulnerability_typ...]
+    n6[payloads = self.knowledge_base....]
+    n7[sorted_payloads = sorted&#40;payloads, key...]
+    n8[results = &#91;&#123;&amp;&#35;39;payload&amp;&#35;39;: e...]
+    n9[logger.info&#40;f&amp;&#35;39;Retrieved &#123;len&#40;res...]
+    n10[return results]
+    n1 --> n3
+    n3 --> n4
+    n4 --> n5
+    n5 --> n6
+    n6 --> n7
+    n7 --> n8
+    n8 --> n9
+    n9 --> n10
+    n10 --> n2

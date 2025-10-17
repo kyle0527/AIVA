@@ -26,7 +26,7 @@ print("=" * 80)
 # 1. 結構分析
 # ============================================================================
 print("\n" + "=" * 80)
-print("1️⃣  目前結構分析")
+print("1[U+FE0F][U+20E3]  目前結構分析")
 print("=" * 80)
 
 structure = {
@@ -41,7 +41,7 @@ structure = {
 }
 
 for folder, info in structure.items():
-    print(f"\n📁 {folder}")
+    print(f"\n[U+1F4C1] {folder}")
     print(f"   用途: {info['purpose']}")
     print(f"   檔案數量: {len(info['files'])}")
     for f in info['files']:
@@ -52,7 +52,7 @@ for folder, info in structure.items():
 # 2. 導入測試 - 檢查向後相容性
 # ============================================================================
 print("\n" + "=" * 80)
-print("2️⃣  導入路徑相容性檢查")
+print("2[U+FE0F][U+20E3]  導入路徑相容性檢查")
 print("=" * 80)
 
 import_tests = {
@@ -83,26 +83,26 @@ import_tests = {
 results = {"passed": 0, "failed": 0, "details": []}
 
 for category, imports in import_tests.items():
-    print(f"\n🔍 測試類別: {category}")
+    print(f"\n[SEARCH] 測試類別: {category}")
     for import_stmt in imports:
         try:
             exec(import_stmt)
-            print(f"   ✅ {import_stmt}")
+            print(f"   [OK] {import_stmt}")
             results["passed"] += 1
-            results["details"].append({"test": import_stmt, "status": "✅ PASS"})
+            results["details"].append({"test": import_stmt, "status": "[OK] PASS"})
         except Exception as e:
-            print(f"   ❌ {import_stmt}")
+            print(f"   [FAIL] {import_stmt}")
             print(f"      錯誤: {str(e)[:60]}")
             results["failed"] += 1
-            results["details"].append({"test": import_stmt, "status": f"❌ FAIL: {str(e)[:60]}"})
+            results["details"].append({"test": import_stmt, "status": f"[FAIL] FAIL: {str(e)[:60]}"})
 
-print(f"\n📊 測試結果: {results['passed']} 通過, {results['failed']} 失敗")
+print(f"\n[STATS] 測試結果: {results['passed']} 通過, {results['failed']} 失敗")
 
 # ============================================================================
 # 3. 分析實際使用情況 - 檢查其他模組如何使用 aiva_common
 # ============================================================================
 print("\n" + "=" * 80)
-print("3️⃣  實際使用情況分析")
+print("3[U+FE0F][U+20E3]  實際使用情況分析")
 print("=" * 80)
 
 services_path = Path(__file__).parent.parent / "services"
@@ -140,7 +140,7 @@ for service_dir in services_path.iterdir():
 
 if usage_analysis:
     for service, data in sorted(usage_analysis.items()):
-        print(f"\n📦 {service}")
+        print(f"\n[U+1F4E6] {service}")
         print(f"   檔案數: {len(data['files'])}")
         if data['schemas']:
             print(f"   使用的 Schemas: {len(data['schemas'])} 個")
@@ -149,13 +149,13 @@ if usage_analysis:
             print(f"   使用的 Enums: {len(data['enums'])} 個")
             print(f"      {', '.join(sorted(list(data['enums']))[:5])}...")
 else:
-    print("\n⚠️  未在其他服務中找到 aiva_common 的使用")
+    print("\n[WARN]  未在其他服務中找到 aiva_common 的使用")
 
 # ============================================================================
 # 4. 檢查舊檔案狀態
 # ============================================================================
 print("\n" + "=" * 80)
-print("4️⃣  舊檔案狀態檢查")
+print("4[U+FE0F][U+20E3]  舊檔案狀態檢查")
 print("=" * 80)
 
 old_files_to_check = [
@@ -170,30 +170,30 @@ for old_file in old_files_to_check:
     if file_path.exists():
         size = file_path.stat().st_size
         old_files_found.append({"name": old_file, "size": size, "path": str(file_path)})
-        print(f"⚠️  {old_file:20s} 仍然存在 ({size:>10,} bytes)")
+        print(f"[WARN]  {old_file:20s} 仍然存在 ({size:>10,} bytes)")
     else:
-        print(f"✅ {old_file:20s} 已刪除")
+        print(f"[OK] {old_file:20s} 已刪除")
 
 # 檢查備份檔案
 backup_files = list(aiva_common_path.glob("*.backup*")) + list(aiva_common_path.glob("*_backup*"))
 if backup_files:
-    print(f"\n⚠️  發現 {len(backup_files)} 個備份檔案:")
+    print(f"\n[WARN]  發現 {len(backup_files)} 個備份檔案:")
     for bf in backup_files:
         print(f"   - {bf.name} ({bf.stat().st_size:>10,} bytes)")
 else:
-    print("\n✅ 沒有備份檔案")
+    print("\n[OK] 沒有備份檔案")
 
 # ============================================================================
 # 5. 潛在問題識別
 # ============================================================================
 print("\n" + "=" * 80)
-print("5️⃣  潛在問題識別")
+print("5[U+FE0F][U+20E3]  潛在問題識別")
 print("=" * 80)
 
 issues = []
 
 # 檢查是否有循環導入風險
-print("\n🔍 檢查循環導入風險...")
+print("\n[SEARCH] 檢查循環導入風險...")
 if (aiva_common_path / "schemas" / "__init__.py").exists():
     init_content = (aiva_common_path / "schemas" / "__init__.py").read_text(encoding="utf-8")
     if "from aiva_common.enums import" in init_content:
@@ -202,12 +202,12 @@ if (aiva_common_path / "schemas" / "__init__.py").exists():
             "severity": "MEDIUM",
             "detail": "schemas/__init__.py 可能導入 enums，需確認沒有循環依賴"
         })
-        print("   ⚠️  schemas 中導入了 enums")
+        print("   [WARN]  schemas 中導入了 enums")
     else:
-        print("   ✅ schemas 沒有導入 enums")
+        print("   [OK] schemas 沒有導入 enums")
 
 # 檢查 __all__ 列表完整性
-print("\n🔍 檢查 __all__ 列表...")
+print("\n[SEARCH] 檢查 __all__ 列表...")
 for module in ["schemas", "enums"]:
     init_file = aiva_common_path / module / "__init__.py"
     if init_file.exists():
@@ -218,9 +218,9 @@ for module in ["schemas", "enums"]:
                 "severity": "LOW",
                 "detail": f"{module}/__init__.py 缺少 __all__ 列表"
             })
-            print(f"   ⚠️  {module}/__init__.py 缺少 __all__")
+            print(f"   [WARN]  {module}/__init__.py 缺少 __all__")
         else:
-            print(f"   ✅ {module}/__init__.py 有 __all__")
+            print(f"   [OK] {module}/__init__.py 有 __all__")
 
 # 檢查舊檔案是否會造成衝突
 if old_files_found:
@@ -231,19 +231,19 @@ if old_files_found:
     })
 
 if issues:
-    print(f"\n⚠️  發現 {len(issues)} 個潛在問題:")
+    print(f"\n[WARN]  發現 {len(issues)} 個潛在問題:")
     for issue in issues:
-        severity_icon = {"HIGH": "🔴", "MEDIUM": "🟡", "LOW": "🟢"}
+        severity_icon = {"HIGH": "[RED]", "MEDIUM": "[YELLOW]", "LOW": "[U+1F7E2]"}
         print(f"   {severity_icon[issue['severity']]} [{issue['severity']}] {issue['type']}")
         print(f"      {issue['detail']}")
 else:
-    print("\n✅ 沒有發現潛在問題")
+    print("\n[OK] 沒有發現潛在問題")
 
 # ============================================================================
 # 6. 未來需求評估
 # ============================================================================
 print("\n" + "=" * 80)
-print("6️⃣  未來需求評估")
+print("6[U+FE0F][U+20E3]  未來需求評估")
 print("=" * 80)
 
 recommendations = []
@@ -295,7 +295,7 @@ recommendations.extend([
 
 priority_order = {"HIGH": 1, "MEDIUM": 2, "LOW": 3}
 for rec in sorted(recommendations, key=lambda x: priority_order[x["priority"]]):
-    priority_icon = {"HIGH": "🔴", "MEDIUM": "🟡", "LOW": "🟢"}
+    priority_icon = {"HIGH": "[RED]", "MEDIUM": "[YELLOW]", "LOW": "[U+1F7E2]"}
     print(f"\n{priority_icon[rec['priority']]} [{rec['priority']}] {rec['category']}: {rec['action']}")
     print(f"   理由: {rec['reason']}")
 
@@ -303,7 +303,7 @@ for rec in sorted(recommendations, key=lambda x: priority_order[x["priority"]]):
 # 7. 生成報告檔案
 # ============================================================================
 print("\n" + "=" * 80)
-print("7️⃣  生成詳細報告")
+print("7[U+FE0F][U+20E3]  生成詳細報告")
 print("=" * 80)
 
 report = {
@@ -325,21 +325,21 @@ report_file.parent.mkdir(exist_ok=True)
 with open(report_file, "w", encoding="utf-8") as f:
     json.dump(report, f, indent=2, ensure_ascii=False)
 
-print(f"\n✅ 詳細報告已儲存至: {report_file}")
+print(f"\n[OK] 詳細報告已儲存至: {report_file}")
 
 # ============================================================================
 # 總結
 # ============================================================================
 print("\n" + "=" * 80)
-print("📋 分析總結")
+print("[LIST] 分析總結")
 print("=" * 80)
 
 print(f"""
-✅ 結構完整性: {'通過' if len(structure['schemas/']['files']) > 0 and len(structure['enums/']['files']) > 0 else '失敗'}
-{'✅' if results['failed'] == 0 else '⚠️'} 導入測試: {results['passed']}/{results['passed'] + results['failed']} 通過
-{'⚠️' if old_files_found else '✅'} 舊檔案: {len(old_files_found)} 個需要處理
-{'⚠️' if issues else '✅'} 潛在問題: {len(issues)} 個
-🎯 建議行動: {len([r for r in recommendations if r['priority'] == 'HIGH'])} 個高優先級任務
+[OK] 結構完整性: {'通過' if len(structure['schemas/']['files']) > 0 and len(structure['enums/']['files']) > 0 else '失敗'}
+{'[OK]' if results['failed'] == 0 else '[WARN]'} 導入測試: {results['passed']}/{results['passed'] + results['failed']} 通過
+{'[WARN]' if old_files_found else '[OK]'} 舊檔案: {len(old_files_found)} 個需要處理
+{'[WARN]' if issues else '[OK]'} 潛在問題: {len(issues)} 個
+[TARGET] 建議行動: {len([r for r in recommendations if r['priority'] == 'HIGH'])} 個高優先級任務
 
 下一步建議:
 1. 執行整合測試確保所有服務正常

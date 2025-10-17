@@ -1,0 +1,50 @@
+flowchart TB
+    n1([開始])
+    n2([結束])
+    n3[&amp;&#35;39;從經驗記錄提取特徵向量\n\n        Args:\n            ex...]
+    n4[features = &#91;&#93;]
+    n5[ast_graph = experience.ast_graph]
+    n6[features.append&#40;len&#40;ast_graph.get&#40;&amp;&#35;3...]
+    n7[features.append&#40;len&#40;ast_graph.get&#40;&amp;&#35;3...]
+    n8[metrics = experience.metrics_d...]
+    n9[features.append&#40;metrics.get&#40;&amp;&#35;39;completi...]
+    n10[features.append&#40;metrics.get&#40;&amp;&#35;39;sequence...]
+    n11[features.append&#40;metrics.get&#40;&amp;&#35;39;success_...]
+    n12[features.append&#40;1.0 - metrics.get&#40;&amp;&#35;39;er...]
+    n13[attack_type_map = &#123;&amp;&#35;39;sqli&amp;&#35;39;: 0...]
+    n14[attack_type_idx = attack_type_map.get&#40;...]
+    n15{for i in range&#40;len&#40;attack_...}
+    n16[features.append&#40;1.0 if i == attack_type_idx else 0...]
+    n17[]
+    n18[target_size = 1024]
+    n19[current_size = len&#40;features&#41;]
+    n20{if current_size &amp;lt; target_size}
+    n21[features.extend&#40;&#91;0.0&#93; * &#40;target_size - cu...]
+    n22[features = features&#91;:target_siz...]
+    n23[]
+    n24[return np.array&#40;features, dtype=np.fl...]
+    n1 --> n3
+    n3 --> n4
+    n4 --> n5
+    n5 --> n6
+    n6 --> n7
+    n7 --> n8
+    n8 --> n9
+    n9 --> n10
+    n10 --> n11
+    n11 --> n12
+    n12 --> n13
+    n13 --> n14
+    n14 --> n15
+    n15 -->|Yes| n16
+    n15 -->|No| n17
+    n16 --> n15
+    n17 --> n18
+    n18 --> n19
+    n19 --> n20
+    n20 -->|Yes| n21
+    n20 -->|No| n22
+    n21 --> n23
+    n22 --> n23
+    n23 --> n24
+    n24 --> n2

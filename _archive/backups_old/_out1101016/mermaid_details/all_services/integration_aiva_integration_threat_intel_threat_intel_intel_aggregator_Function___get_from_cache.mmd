@@ -1,0 +1,28 @@
+flowchart TB
+    n1([開始])
+    n2([結束])
+    n3[&amp;&#35;39;從快取獲取數據&amp;&#35;39;]
+    n4{if cache_key not in self._cache}
+    n5[return None]
+    n6[]
+    n7[timestamp = self._cache_timestam...]
+    n8{if timestamp and datetime.now&#40;...}
+    n9[del self._cache&#91;cache_key&#93;]
+    n10[del self._cache_timestamps&#91;cache_key&#93;]
+    n11[return None]
+    n12[]
+    n13[return self._cache.get&#40;cache_key&#41;]
+    n1 --> n3
+    n3 --> n4
+    n4 -->|Yes| n5
+    n4 -->|No| n6
+    n5 --> n6
+    n6 --> n7
+    n7 --> n8
+    n8 -->|Yes| n9
+    n8 -->|No| n12
+    n9 --> n10
+    n10 --> n11
+    n11 --> n12
+    n12 --> n13
+    n13 --> n2

@@ -1,0 +1,73 @@
+flowchart TB
+    n1([開始])
+    n2([結束])
+    n3[&amp;&#35;39;格式化檢測報告&amp;&#35;39;]
+    n4[lines = &#91;&#93;]
+    n5[lines.append&#40;&amp;&#35;39;Sensitive Information Detec...]
+    n6[lines.append&#40;f&amp;&#35;39;URL: &#123;result.url&#125...]
+    n7[lines.append&#40;&amp;&#35;39;=&amp;&#35;39; * 70&#41;]
+    n8[stats = result.get_stats&#40;&#41;]
+    n9[lines.append&#40;&amp;&#35;39;\nStatistics:&amp;&#35;39;&...]
+    n10[lines.append&#40;f&amp;quot;  Total Matches: &#123;stats&...]
+    n11[lines.append&#40;f&amp;quot;  Critical Issues: &#123;stat...]
+    n12[lines.append&#40;f&amp;quot;  High Issues: &#123;stats&#9...]
+    n13{if stats&#91;&amp;&#35;39;matches_by_type&amp;&#35;39;&#93;}
+    n14[lines.append&#40;&amp;&#35;39;\n  Matches by Type:&amp;&#...]
+    n15{for &#40;info_type, count&#41; in stats&#91;&amp;&#35;39;...}
+    n16[lines.append&#40;f&amp;&#35;39;    - &#123;info_type&#125...]
+    n17[]
+    n18[]
+    n19{if result.matches}
+    n20[lines.append&#40;&amp;&#35;39;\n&amp;&#35;39; + &amp;&#35...]
+    n21[sorted_matches = sorted&#40;result.matche...]
+    n22{for match in sorted_matches}
+    n23[lines.append&#40;f&amp;&#35;39;\n&#91;&#123;match.severit...]
+    n24[lines.append&#40;f&amp;&#35;39;  Location: &#123;match.lo...]
+    n25{if match.line_number}
+    n26[lines.append&#40;f&amp;&#35;39;  Line: &#123;match.line_n...]
+    n27[]
+    n28[lines.append&#40;f&amp;&#35;39;  Value: &#123;match.value...]
+    n29[lines.append&#40;f&amp;&#35;39;  Context: &#123;match.con...]
+    n30[lines.append&#40;f&amp;&#35;39;  Description: &#123;match...]
+    n31[lines.append&#40;f&amp;&#35;39;  Recommendation: &#123;ma...]
+    n32[]
+    n33[]
+    n34[return &amp;&#35;39;\n&amp;&#35;39;.join&#40;lines&#41;]
+    n1 --> n3
+    n3 --> n4
+    n4 --> n5
+    n5 --> n6
+    n6 --> n7
+    n7 --> n8
+    n8 --> n9
+    n9 --> n10
+    n10 --> n11
+    n11 --> n12
+    n12 --> n13
+    n13 -->|Yes| n14
+    n13 -->|No| n18
+    n14 --> n15
+    n15 -->|Yes| n16
+    n15 -->|No| n17
+    n16 --> n15
+    n17 --> n18
+    n18 --> n19
+    n19 -->|Yes| n20
+    n19 -->|No| n33
+    n20 --> n21
+    n21 --> n22
+    n22 -->|Yes| n23
+    n22 -->|No| n32
+    n23 --> n24
+    n24 --> n25
+    n25 -->|Yes| n26
+    n25 -->|No| n27
+    n26 --> n27
+    n27 --> n28
+    n28 --> n29
+    n29 --> n30
+    n30 --> n31
+    n31 --> n22
+    n32 --> n33
+    n33 --> n34
+    n34 --> n2

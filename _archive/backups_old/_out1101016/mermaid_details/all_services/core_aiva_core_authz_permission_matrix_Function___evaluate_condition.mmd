@@ -1,0 +1,19 @@
+flowchart TB
+    n1([開始])
+    n2([結束])
+    n3[&amp;&#35;39;\n        評估條件表達式\n\n        Args:\n        ...]
+    n4[try]
+    n5[return eval&#40;condition, &#123;&amp;&#35;39;__builtins_...]
+    n6[]
+    n7[except Exception]
+    n8[logger.error&#40;&amp;&#35;39;condition_evaluation_failed...]
+    n9[return False]
+    n1 --> n3
+    n3 --> n4
+    n4 --> n5
+    n4 --> n7
+    n5 --> n6
+    n6 --> n2
+    n7 --> n8
+    n8 --> n9
+    n9 --> n6

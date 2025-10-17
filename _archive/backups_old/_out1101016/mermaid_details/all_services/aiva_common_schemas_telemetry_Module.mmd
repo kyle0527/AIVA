@@ -1,0 +1,44 @@
+flowchart TB
+    n1([開始])
+    n2([結束])
+    n3[&amp;&#35;39;\n遙測與監控相關 Schema\n\n此模組定義了模組狀態、心跳、性能指標等監控相關的...]
+    n4[from __future__ import annotations]
+    n5[from datetime import UTC, datetime]
+    n6[from typing import Any]
+    n7[from pydantic import BaseModel, Field, field_valid...]
+    n8[from ..enums import ErrorCategory, ModuleName, Sev...]
+    n9[class HeartbeatPayload&#40;...&#41;]
+    n10[class ModuleStatus&#40;...&#41;]
+    n11[class FunctionTelemetry&#40;...&#41;]
+    n12[class ErrorRecord&#40;...&#41;]
+    n13[class OastCallbackDetail&#40;...&#41;]
+    n14[class EarlyStoppingInfo&#40;...&#41;]
+    n15[class AdaptiveBehaviorInfo&#40;...&#41;]
+    n16[class EnhancedFunctionTelemetry&#40;...&#41;]
+    n17[class FunctionExecutionResult&#40;...&#41;]
+    n18[class OastEvent&#40;...&#41;]
+    n19[class OastProbe&#40;...&#41;]
+    n20[class SIEMEventPayload&#40;...&#41;]
+    n21[class NotificationPayload&#40;...&#41;]
+    n22[class SIEMEvent&#40;...&#41;]
+    n1 --> n3
+    n3 --> n4
+    n4 --> n5
+    n5 --> n6
+    n6 --> n7
+    n7 --> n8
+    n8 --> n9
+    n9 --> n10
+    n10 --> n11
+    n11 --> n12
+    n12 --> n13
+    n13 --> n14
+    n14 --> n15
+    n15 --> n16
+    n16 --> n17
+    n17 --> n18
+    n18 --> n19
+    n19 --> n20
+    n20 --> n21
+    n21 --> n22
+    n22 --> n2

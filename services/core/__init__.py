@@ -12,6 +12,12 @@ from ..aiva_common.enums import (
     Severity,
     TaskStatus,
 )
+from ..aiva_common.schemas import (
+    FindingEvidence,
+    FindingImpact,
+    FindingRecommendation,
+    Target,
+)
 
 # 從 AI 模型模組導入
 from .ai_models import (
@@ -41,10 +47,6 @@ from .models import (
     EnhancedVulnerability,
     EnhancedVulnerabilityCorrelation,
     FeedbackEventPayload,
-    FindingEvidence,
-    FindingImpact,
-    FindingPayload,
-    FindingRecommendation,
     HeartbeatPayload,
     ModuleStatus,
     RemediationGeneratePayload,
@@ -55,7 +57,6 @@ from .models import (
     RiskTrendAnalysis,
     SASTDASTCorrelation,
     SystemOrchestration,
-    Target,
     TaskDependency,
     TaskQueue,
     TaskUpdatePayload,
@@ -64,33 +65,11 @@ from .models import (
 )
 
 __all__ = [
-    # Core logic models
-    "ExecutionContext",
-    "ExecutionStep",
-    "ExecutionPipeline",
-    "ValidationResult",
-    "ProcessDefinition",
-    "ProcessInstance",
-    "ProcessStep",
-    "ConditionalStep",
-    "ParallelStep",
-    "LoopStep",
-    "ProcessState",
-    "StepState",
-    "ServiceInstanceInfo",
-    "ServiceHealthInfo",
-    "ServiceMetrics",
-    "ServiceLogs",
-    "ServiceConfiguration",
-    "SystemInfo",
-    "SystemHealth",
-    "HealthCheck",
-    "ResourceUsage",
-    "SystemMonitoring",
-    "SystemMetrics",
-    "ServiceStatus",
-    "Notification",
-    "NotificationHistory",
+    # From aiva_common.schemas (re-exported for convenience)
+    "Target",
+    "FindingEvidence",
+    "FindingImpact",
+    "FindingRecommendation",
     # AI models
     "ModelTrainingConfig",
     "ModelTrainingResult",

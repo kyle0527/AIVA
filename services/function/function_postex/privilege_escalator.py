@@ -1,7 +1,7 @@
 """
 Privilege Escalator - 權限提升測試器 (僅供授權測試使用)
 
-⚠️ 嚴格警告: 此模組用於測試權限提升漏洞
+[WARN] 嚴格警告: 此模組用於測試權限提升漏洞
 - 僅在獲得明確書面授權的環境中使用
 - 所有操作必須記錄並審計
 - 禁止在生產環境或未授權系統使用
@@ -33,7 +33,7 @@ class PrivilegeEscalator:
     """
     權限提升測試器
 
-    ⚠️ 僅用於安全測試和研究
+    [WARN] 僅用於安全測試和研究
     """
 
     def __init__(
@@ -253,7 +253,7 @@ class PrivilegeEscalator:
 
 def main():
     """測試範例 - 僅在安全模式下運行"""
-    print("⚠️  Privilege Escalation Tester - SAFE MODE DEMO")
+    print("[WARN]  Privilege Escalation Tester - SAFE MODE DEMO")
     print("=" * 60)
 
     # 僅在安全模式下測試
@@ -262,14 +262,14 @@ def main():
     # 執行評估
     assessment = escalator.run_full_assessment()
 
-    print(f"\n📊 Assessment ID: {assessment['assessment_id']}")
-    print(f"🔒 Safe Mode: {assessment['safe_mode']}")
-    print(f"💻 OS: {assessment['os']}")
-    print(f"\n📋 Tests Run: {assessment['summary']['total_tests']}")
-    print(f"🔍 Findings: {assessment['summary']['total_findings']}")
+    print(f"\n[STATS] Assessment ID: {assessment['assessment_id']}")
+    print(f"[LOCK] Safe Mode: {assessment['safe_mode']}")
+    print(f"[U+1F4BB] OS: {assessment['os']}")
+    print(f"\n[LIST] Tests Run: {assessment['summary']['total_tests']}")
+    print(f"[SEARCH] Findings: {assessment['summary']['total_findings']}")
 
-    print("\n✅ Safe mode demo completed")
-    print("⚠️  Remember: Never use this tool without explicit authorization!")
+    print("\n[OK] Safe mode demo completed")
+    print("[WARN]  Remember: Never use this tool without explicit authorization!")
 
 
 if __name__ == "__main__":

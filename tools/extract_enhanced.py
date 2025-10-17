@@ -69,5 +69,5 @@ for cls_name in enhanced_classes:
 output_file = Path('schemas/enhanced.py')
 output_file.write_text('\n'.join(output), encoding='utf-8')
 
-print(f'✅ 已創建 {output_file}')
-print(f'✅ 提取了 {len(enhanced_classes)} 個 Enhanced 類別')
+print(f'[OK] 已創建 {output_file}')
+print(f'[OK] 提取了 {len(enhanced_classes)} 個 Enhanced 類別')

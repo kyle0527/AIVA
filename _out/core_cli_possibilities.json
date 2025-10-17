@@ -1,0 +1,91 @@
+{
+  "scope": "services/core/**",
+  "scan_timestamp": null,
+  "configuration": {
+    "host_candidates": [
+      "127.0.0.1"
+    ],
+    "port_candidates": [
+      3000,
+      8000,
+      8080,
+      8888,
+      9000
+    ]
+  },
+  "summary": {
+    "cli_entry_count": 1,
+    "total_usage_possibilities": 978,
+    "note": "在核心模組樹內只找到一個 argparse CLI 入口點"
+  },
+  "cli_entries": [
+    {
+      "cli_entry": "services/core/aiva_core/ui_panel/auto_server.py",
+      "command_style": "single-command",
+      "parameters": {
+        "mode": {
+          "type": "enum",
+          "values": [
+            "ui",
+            "ai",
+            "hybrid"
+          ],
+          "count": 3,
+          "evidence": "parser.add_argument('--mode', choices=['ui', 'ai', 'hybrid'])"
+        },
+        "host": {
+          "type": "string",
+          "default": "127.0.0.1",
+          "candidates": [
+            "127.0.0.1"
+          ],
+          "count": 1,
+          "evidence": "parser.add_argument('--host', default='127.0.0.1')"
+        },
+        "ports": {
+          "type": "list[int]",
+          "nargs": "+",
+          "order_matters": true,
+          "optional": true,
+          "candidates": [
+            3000,
+            8000,
+            8080,
+            8888,
+            9000
+          ],
+          "candidate_count": 5,
+          "sequence_count": 325,
+          "evidence": "parser.add_argument('--ports', nargs='+', type=int)"
+        }
+      },
+      "counts": {
+        "lower_bound": 3,
+        "with_ports_specified": 975,
+        "without_ports_specified": 3,
+        "total": 978,
+        "by_mode": {
+          "ui": {
+            "with_ports": 325,
+            "without_ports": 1,
+            "total": 326
+          },
+          "ai": {
+            "with_ports": 325,
+            "without_ports": 1,
+            "total": 326
+          },
+          "hybrid": {
+            "with_ports": 325,
+            "without_ports": 1,
+            "total": 326
+          }
+        }
+      },
+      "formulas": {
+        "port_sequences": "Σ(k=1 to 5) P(5,k) = 325",
+        "total": "3 (modes) × 1 (hosts) × (325 (port sequences) + 1 (auto)) = 978"
+      }
+    }
+  ]
+}

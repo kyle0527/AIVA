@@ -1,0 +1,10 @@
+flowchart TB
+    n1([開始])
+    n2([結束])
+    n3[&amp;&#35;39;獲取會話狀態摘要&amp;&#35;39;]
+    n4[session = self._sessions.get&#40;s...]
+    n5[return &#123;&amp;&#35;39;scan_id&amp;&#35;39;: scan_id, ...]
+    n1 --> n3
+    n3 --> n4
+    n4 --> n5
+    n5 --> n2

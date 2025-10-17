@@ -1,0 +1,31 @@
+flowchart TB
+    n1([開始])
+    n2([結束])
+    n3[&amp;&#35;39;檢查 SAST 程式碼位置與 DAST URL 路徑是否相關&amp;&#35;39;]
+    n4[code_file = sast_location.get&#40;&amp;&#35;39;c...]
+    n5[url = dast_location.get&#40;&amp;&#35;39;u...]
+    n6{if not code_file or not url}
+    n7[return False]
+    n8[]
+    n9[from urllib.parse import urlparse]
+    n10[parsed_url = urlparse&#40;url&#41;]
+    n11[url_path = parsed_url.path]
+    n12[url_segments = &#91;seg for seg in url_...]
+    n13[code_segments = &#91;seg for seg in code...]
+    n14[common_segments = set&#40;url_segments&#41; &amp; ...]
+    n15[return len&#40;common_segments&#41; &amp;gt; 0]
+    n1 --> n3
+    n3 --> n4
+    n4 --> n5
+    n5 --> n6
+    n6 -->|Yes| n7
+    n6 -->|No| n8
+    n7 --> n8
+    n8 --> n9
+    n9 --> n10
+    n10 --> n11
+    n11 --> n12
+    n12 --> n13
+    n13 --> n14
+    n14 --> n15
+    n15 --> n2

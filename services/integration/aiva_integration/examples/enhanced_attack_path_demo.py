@@ -248,7 +248,7 @@ def demo_critical_nodes():
 
             # 這些是關鍵節點，應該優先加強防護
             if node_degree >= 3:
-                logger.info("   ⚠️ 高連接度節點，建議加強監控和防護")
+                logger.info("   [WARN] 高連接度節點，建議加強監控和防護")
 
     finally:
         engine.close()

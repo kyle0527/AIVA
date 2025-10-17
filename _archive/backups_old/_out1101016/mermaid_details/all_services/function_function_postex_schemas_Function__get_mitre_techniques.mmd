@@ -1,0 +1,38 @@
+flowchart TB
+    n1([開始])
+    n2([結束])
+    n3[&amp;&#35;39;獲取涉及的 MITRE ATT&amp;CK 技術&amp;&#35;39;]
+    n4[techniques = &#91;self.test_vector.te...]
+    n5{if self.privileges_escalated}
+    n6[techniques.extend&#40;&#91;&amp;&#35;39;T1055&amp;&#35;39...]
+    n7[]
+    n8{if self.lateral_movement_achieved}
+    n9[techniques.extend&#40;&#91;&amp;&#35;39;T1021&amp;&#35;39...]
+    n10[]
+    n11{if self.persistence_established}
+    n12[techniques.extend&#40;&#91;&amp;&#35;39;T1053&amp;&#35;39...]
+    n13[]
+    n14{if self.data_exfiltrated}
+    n15[techniques.extend&#40;&#91;&amp;&#35;39;T1041&amp;&#35;39...]
+    n16[]
+    n17[return list&#40;set&#40;techniques&#41;&#41;]
+    n1 --> n3
+    n3 --> n4
+    n4 --> n5
+    n5 -->|Yes| n6
+    n5 -->|No| n7
+    n6 --> n7
+    n7 --> n8
+    n8 -->|Yes| n9
+    n8 -->|No| n10
+    n9 --> n10
+    n10 --> n11
+    n11 -->|Yes| n12
+    n11 -->|No| n13
+    n12 --> n13
+    n13 --> n14
+    n14 -->|Yes| n15
+    n14 -->|No| n16
+    n15 --> n16
+    n16 --> n17
+    n17 --> n2

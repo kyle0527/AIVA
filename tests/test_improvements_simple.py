@@ -14,7 +14,7 @@ os.environ["AIVA_CORE_MONITOR_INTERVAL"] = "10"
 os.environ["AIVA_ENABLE_STRATEGY_GEN"] = "true"
 
 print("=" * 70)
-print("🚀 AIVA 架構改進測試")
+print("[START] AIVA 架構改進測試")
 print("=" * 70)
 print()
 
@@ -26,17 +26,17 @@ try:
     from services.aiva_common.config import get_settings
 
     settings = get_settings()
-    print(f"✓ Core Monitor Interval: {settings.core_monitor_interval}s")
-    print(f"✓ Enable Strategy Generator: {settings.enable_strategy_generator}")
+    print(f"[CHECK] Core Monitor Interval: {settings.core_monitor_interval}s")
+    print(f"[CHECK] Enable Strategy Generator: {settings.enable_strategy_generator}")
 
     assert settings.core_monitor_interval == 10, "配置讀取失敗"
     assert settings.enable_strategy_generator is True, "配置讀取失敗"
 
-    print("✅ 測試 1 通過 - 配置外部化正常工作")
+    print("[OK] 測試 1 通過 - 配置外部化正常工作")
     print()
 
 except Exception as e:
-    print(f"❌ 測試 1 失敗: {e}")
+    print(f"[FAIL] 測試 1 失敗: {e}")
     sys.exit(1)
 
 
@@ -70,11 +70,11 @@ try:
     deep_config = SqliWorkerService._create_config_from_strategy("DEEP")
     assert deep_config.enable_time_detection is True, "DEEP 應啟用所有檢測"
 
-    print("\n✅ 測試 2 通過 - SQLi 配置動態化正常工作")
+    print("\n[OK] 測試 2 通過 - SQLi 配置動態化正常工作")
     print()
 
 except Exception as e:
-    print(f"❌ 測試 2 失敗: {e}")
+    print(f"[FAIL] 測試 2 失敗: {e}")
     import traceback
 
     traceback.print_exc()
@@ -88,7 +88,7 @@ print("-" * 70)
 try:
     from tenacity import retry, stop_after_attempt, wait_exponential
 
-    print("✓ Tenacity 函式庫已安裝")
+    print("[CHECK] Tenacity 函式庫已安裝")
 
     # 驗證重試裝飾器可以使用
     @retry(
@@ -102,12 +102,12 @@ try:
     result = test_function()
     assert result == "success"
 
-    print("✓ 重試裝飾器正常工作")
-    print("✅ 測試 3 通過 - 重試機制可用")
+    print("[CHECK] 重試裝飾器正常工作")
+    print("[OK] 測試 3 通過 - 重試機制可用")
     print()
 
 except Exception as e:
-    print(f"❌ 測試 3 失敗: {e}")
+    print(f"[FAIL] 測試 3 失敗: {e}")
     sys.exit(1)
 
 
@@ -118,8 +118,8 @@ print("-" * 70)
 try:
     from services.core.aiva_core.processing import ScanResultProcessor
 
-    print("✓ ScanResultProcessor 類別已導入")
-    print("✓ 可用方法:")
+    print("[CHECK] ScanResultProcessor 類別已導入")
+    print("[CHECK] 可用方法:")
 
     methods = [
         "stage_1_ingest_data",
@@ -136,11 +136,11 @@ try:
         assert hasattr(ScanResultProcessor, method), f"缺少方法: {method}"
         print(f"  - {method}")
 
-    print("✅ 測試 4 通過 - 七階段處理器結構完整")
+    print("[OK] 測試 4 通過 - 七階段處理器結構完整")
     print()
 
 except Exception as e:
-    print(f"❌ 測試 4 失敗: {e}")
+    print(f"[FAIL] 測試 4 失敗: {e}")
     import traceback
 
     traceback.print_exc()
@@ -157,36 +157,36 @@ try:
         content = f.read()
 
     if "HTTPException" in content:
-        print("✓ HTTPException 已導入")
+        print("[CHECK] HTTPException 已導入")
     else:
-        print("⚠️  HTTPException 未導入 (可能使用其他錯誤處理)")
+        print("[WARN]  HTTPException 未導入 (可能使用其他錯誤處理)")
 
     if "raise HTTPException" in content:
-        print("✓ 使用 HTTPException 拋出錯誤")
-        print("✅ 測試 5 通過 - Integration API 錯誤處理改進")
+        print("[CHECK] 使用 HTTPException 拋出錯誤")
+        print("[OK] 測試 5 通過 - Integration API 錯誤處理改進")
     else:
-        print("⚠️  未找到 HTTPException 使用 (可能使用其他方式)")
-        print("✅ 測試 5 通過 (部分)")
+        print("[WARN]  未找到 HTTPException 使用 (可能使用其他方式)")
+        print("[OK] 測試 5 通過 (部分)")
 
     print()
 
 except Exception as e:
-    print(f"❌ 測試 5 失敗: {e}")
+    print(f"[FAIL] 測試 5 失敗: {e}")
     sys.exit(1)
 
 
 # 最終摘要
 print("=" * 70)
-print("📊 測試摘要")
+print("[STATS] 測試摘要")
 print("=" * 70)
-print("✅ 所有核心測試通過!")
+print("[OK] 所有核心測試通過!")
 print()
 print("已驗證的改進:")
-print("  1. ✅ 配置外部化 - 環境變數支援")
-print("  2. ✅ SQLi 引擎配置動態化 - 4 種策略")
-print("  3. ✅ 重試機制 - Tenacity 整合")
-print("  4. ✅ 七階段處理器 - 模組化架構")
-print("  5. ✅ Integration API - 錯誤處理改進")
+print("  1. [OK] 配置外部化 - 環境變數支援")
+print("  2. [OK] SQLi 引擎配置動態化 - 4 種策略")
+print("  3. [OK] 重試機制 - Tenacity 整合")
+print("  4. [OK] 七階段處理器 - 模組化架構")
+print("  5. [OK] Integration API - 錯誤處理改進")
 print()
-print("🎯 系統架構改進已完成,準備就緒!")
+print("[TARGET] 系統架構改進已完成,準備就緒!")
 print("=" * 70)

@@ -260,10 +260,10 @@ async def demo_statistics():
 
     stats = await storage.get_statistics()
 
-    print("\n📊 數據統計:")
+    print("\n[STATS] 數據統計:")
     print(f"  後端類型: {stats['backend']}")
     print(f"  數據根目錄: {stats['data_root']}")
-    print("\n📝 數據庫統計:")
+    print("\n[NOTE] 數據庫統計:")
     print(f"  總經驗樣本: {stats.get('total_experiences', 0)}")
     print(f"  高質量樣本: {stats.get('high_quality_experiences', 0)}")
     print(f"  追蹤記錄: {stats.get('total_traces', 0)}")
@@ -273,12 +273,12 @@ async def demo_statistics():
 
     # 按類型統計
     if "experiences_by_type" in stats:
-        print("\n📋 樣本類型分布:")
+        print("\n[LIST] 樣本類型分布:")
         for vtype, count in stats["experiences_by_type"].items():
             print(f"  {vtype}: {count}")
 
     # 存儲大小
-    print("\n💾 存儲大小:")
+    print("\n[SAVE] 存儲大小:")
     for key in [
         "database_size",
         "training_size",
@@ -293,7 +293,7 @@ async def demo_statistics():
 
 async def main():
     """主函數"""
-    logger.info("🚀 AIVA 存儲系統演示\n")
+    logger.info("[START] AIVA 存儲系統演示\n")
 
     # 1. 保存經驗樣本
     await demo_save_experience()
@@ -310,8 +310,8 @@ async def main():
     # 5. 查看統計
     await demo_statistics()
 
-    logger.info("\n✅ 演示完成!")
-    logger.info("\n💡 提示: 數據已保存到 /workspaces/AIVA/data/")
+    logger.info("\n[OK] 演示完成!")
+    logger.info("\n[TIP] 提示: 數據已保存到 /workspaces/AIVA/data/")
     logger.info("   - 數據庫: data/database/aiva.db")
     logger.info("   - JSONL: data/training/experiences/")
 

@@ -1,0 +1,10 @@
+flowchart TB
+    n1([開始])
+    n2([結束])
+    n3[&amp;&#35;39;設置等待中的結果\n\n        Args:\n            resul...]
+    n4[self.pending_results&#91;result_id&#93; = &#123;&amp;&#35...]
+    n5[logger.debug&#40;f&amp;&#35;39;Set pending result for &#1...]
+    n1 --> n3
+    n3 --> n4
+    n4 --> n5
+    n5 --> n2

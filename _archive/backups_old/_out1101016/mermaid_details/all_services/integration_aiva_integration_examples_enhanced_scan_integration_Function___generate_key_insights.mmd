@@ -1,0 +1,50 @@
+flowchart TB
+    n1([開始])
+    n2([結束])
+    n3[&amp;&#35;39;生成關鍵洞察&amp;&#35;39;]
+    n4[insights = &#91;&#93;]
+    n5{if correlation_result.get&#40;&amp;&#35;39;att...}
+    n6[chain_count = len&#40;correlation_resu...]
+    n7[insights.append&#40;f&amp;&#35;39;🔗 識別出 &#123;chain_count...]
+    n8[]
+    n9{if root_cause_result.get&#40;&amp;&#35;39;root...}
+    n10[root_count = len&#40;root_cause_resul...]
+    n11[affected = len&#40;root_cause_resul...]
+    n12[insights.append&#40;f&amp;&#35;39;🎯 發現 &#123;root_count&#...]
+    n13[]
+    n14{if sast_dast_result.get&#40;&amp;&#35;39;confi...}
+    n15[confirmed = len&#40;sast_dast_result...]
+    n16[rate = sast_dast_result.get...]
+    n17[insights.append&#40;f&amp;&#35;39;✅ &#123;confirmed&#125;...]
+    n18[]
+    n19[risk_amp = correlation_result.g...]
+    n20{if risk_amp &amp;gt; 1.5}
+    n21[insights.append&#40;f&amp;&#35;39;⚠️ 漏洞相關性導致風險放大 &#123;ri...]
+    n22[]
+    n23[return insights]
+    n1 --> n3
+    n3 --> n4
+    n4 --> n5
+    n5 -->|Yes| n6
+    n5 -->|No| n8
+    n6 --> n7
+    n7 --> n8
+    n8 --> n9
+    n9 -->|Yes| n10
+    n9 -->|No| n13
+    n10 --> n11
+    n11 --> n12
+    n12 --> n13
+    n13 --> n14
+    n14 -->|Yes| n15
+    n14 -->|No| n18
+    n15 --> n16
+    n16 --> n17
+    n17 --> n18
+    n18 --> n19
+    n19 --> n20
+    n20 -->|Yes| n21
+    n20 -->|No| n22
+    n21 --> n22
+    n22 --> n23
+    n23 --> n2

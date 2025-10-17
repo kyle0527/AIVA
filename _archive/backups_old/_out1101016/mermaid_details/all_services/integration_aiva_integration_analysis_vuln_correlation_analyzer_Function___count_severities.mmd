@@ -1,0 +1,19 @@
+flowchart TB
+    n1([開始])
+    n2([結束])
+    n3[&amp;&#35;39;統計嚴重程度分布&amp;&#35;39;]
+    n4[severity_counts = defaultdict&#40;int&#41;]
+    n5{for finding in findings}
+    n6[severity = finding.get&#40;&amp;&#35;39;severit...]
+    n7[severity_counts&#91;severity&#93; += 1]
+    n8[]
+    n9[return dict&#40;severity_counts&#41;]
+    n1 --> n3
+    n3 --> n4
+    n4 --> n5
+    n5 -->|Yes| n6
+    n5 -->|No| n8
+    n6 --> n7
+    n7 --> n5
+    n8 --> n9
+    n9 --> n2

@@ -1,0 +1,15 @@
+flowchart TB
+    n1([開始])
+    n2([結束])
+    n3[&amp;&#35;39;驗證置信度範圍&amp;&#35;39;]
+    n4{if not 0.0 &amp;lt;= v &amp;lt;= 1.0}
+    n5[raise ValueError&#40;&amp;&#35;39;Confidence must be betw...]
+    n6[]
+    n7[return v]
+    n1 --> n3
+    n3 --> n4
+    n4 -->|Yes| n5
+    n4 -->|No| n6
+    n5 --> n6
+    n6 --> n7
+    n7 --> n2

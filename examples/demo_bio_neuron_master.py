@@ -22,7 +22,7 @@ logger = logging.getLogger(__name__)
 async def demo_ui_mode(controller: BioNeuronMasterController):
     """演示 UI 模式"""
     print("\n" + "=" * 60)
-    print("🖥️  UI 模式演示 - 需要用戶確認")
+    print("[UI]  UI 模式演示 - 需要用戶確認")
     print("=" * 60)
 
     # 切換到 UI 模式
@@ -45,7 +45,7 @@ async def demo_ui_mode(controller: BioNeuronMasterController):
 async def demo_ai_mode(controller: BioNeuronMasterController):
     """演示 AI 自主模式"""
     print("\n" + "=" * 60)
-    print("🤖 AI 自主模式演示 - 完全自動")
+    print("[AI] AI 自主模式演示 - 完全自動")
     print("=" * 60)
 
     # 切換到 AI 模式
@@ -68,7 +68,7 @@ async def demo_ai_mode(controller: BioNeuronMasterController):
 async def demo_chat_mode(controller: BioNeuronMasterController):
     """演示對話模式"""
     print("\n" + "=" * 60)
-    print("💬 對話模式演示 - 自然語言交互")
+    print("[CHAT] 對話模式演示 - 自然語言交互")
     print("=" * 60)
 
     # 切換到對話模式
@@ -94,7 +94,7 @@ async def demo_chat_mode(controller: BioNeuronMasterController):
 async def demo_hybrid_mode(controller: BioNeuronMasterController):
     """演示混合模式"""
     print("\n" + "=" * 60)
-    print("🔀 混合模式演示 - 智能切換")
+    print("[MIX] 混合模式演示 - 智能切換")
     print("=" * 60)
 
     # 切換到混合模式
@@ -120,7 +120,7 @@ async def demo_hybrid_mode(controller: BioNeuronMasterController):
 async def main():
     """主程序"""
     print("=" * 60)
-    print("🧠 BioNeuron Master Controller 演示")
+    print("[BRAIN] BioNeuron Master Controller 演示")
     print("=" * 60)
     print("\n初始化 BioNeuronRAGAgent 主控系統...")
 
@@ -160,14 +160,14 @@ async def main():
 
         # 顯示系統狀態
         print("\n" + "=" * 60)
-        print("📊 系統狀態")
+        print("[STATS] 系統狀態")
         print("=" * 60)
         status = controller._get_system_status()
         print(controller._format_status_message(status))
 
         # 顯示對話歷史
         print("\n" + "=" * 60)
-        print("📜 對話歷史 (最近 5 條)")
+        print("[LOG] 對話歷史 (最近 5 條)")
         print("=" * 60)
         history = controller.get_conversation_history(limit=5)
         for i, entry in enumerate(history, 1):
@@ -180,7 +180,7 @@ async def main():
         logger.error(f"演示過程出錯: {e}", exc_info=True)
 
     print("\n" + "=" * 60)
-    print("✅ 演示完成")
+    print("[OK] 演示完成")
     print("=" * 60)
 
 

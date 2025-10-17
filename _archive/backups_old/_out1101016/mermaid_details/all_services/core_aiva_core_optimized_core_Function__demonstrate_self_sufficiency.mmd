@@ -1,0 +1,21 @@
+flowchart TB
+    n1([開始])
+    n2([結束])
+    n3[&amp;&#35;39;展示 AIVA 的自給自足能力&amp;&#35;39;]
+    n4[print&#40;&amp;&#35;39;\n🎯 AIVA 自給自足能力展示:&amp;&#35;39;&#41;]
+    n5[scenarios = &#91;&#123;&amp;&#35;39;場景&amp;&#35;39;: &amp...]
+    n6{for &#40;i, scenario&#41; in enumerate&#40;scenari...}
+    n7[print&#40;f&amp;quot;\n情境 &#123;i&#125;: &#123;scenario&#...]
+    n8[print&#40;f&amp;quot;  AIVA 處理流程: &#123;scenario&#91;&amp...]
+    n9[print&#40;f&amp;quot;  &#123;scenario&#91;&amp;&#35;39;需要...]
+    n10[]
+    n1 --> n3
+    n3 --> n4
+    n4 --> n5
+    n5 --> n6
+    n6 -->|Yes| n7
+    n6 -->|No| n10
+    n7 --> n8
+    n8 --> n9
+    n9 --> n6
+    n10 --> n2

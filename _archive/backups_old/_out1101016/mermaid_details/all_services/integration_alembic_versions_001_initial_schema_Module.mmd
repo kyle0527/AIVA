@@ -1,0 +1,24 @@
+flowchart TB
+    n1([開始])
+    n2([結束])
+    n3[&amp;&#35;39;\n資料庫初始化遷移\n\nRevision ID: 001\nRevises:\nCr...]
+    n4[from alembic import op]
+    n5[import sqlalchemy as sa]
+    n6[from sqlalchemy.dialects import postgresql]
+    n7[revision = &amp;&#35;39;001&amp;&#35;39;]
+    n8[down_revision = None]
+    n9[branch_labels = None]
+    n10[depends_on = None]
+    n11[def upgrade&#40;...&#41;]
+    n12[def downgrade&#40;...&#41;]
+    n1 --> n3
+    n3 --> n4
+    n4 --> n5
+    n5 --> n6
+    n6 --> n7
+    n7 --> n8
+    n8 --> n9
+    n9 --> n10
+    n10 --> n11
+    n11 --> n12
+    n12 --> n2

@@ -1,0 +1,65 @@
+{
+  "count": 10,
+  "examples": [
+    {
+      "rank": 1,
+      "category": "minimal",
+      "command": "python -m services.core.aiva_core.ui_panel.auto_server --mode ui",
+      "description": "使用 ui 模式，所有其他參數使用預設值"
+    },
+    {
+      "rank": 2,
+      "category": "minimal",
+      "command": "python -m services.core.aiva_core.ui_panel.auto_server --mode ai",
+      "description": "使用 ai 模式，所有其他參數使用預設值"
+    },
+    {
+      "rank": 3,
+      "category": "minimal",
+      "command": "python -m services.core.aiva_core.ui_panel.auto_server --mode hybrid",
+      "description": "使用 hybrid 模式，所有其他參數使用預設值"
+    },
+    {
+      "rank": 4,
+      "category": "single-port",
+      "command": "python -m services.core.aiva_core.ui_panel.auto_server --mode ui --ports 3000",
+      "description": "使用 ui 模式，偏好端口 3000"
+    },
+    {
+      "rank": 5,
+      "category": "single-port",
+      "command": "python -m services.core.aiva_core.ui_panel.auto_server --mode ui --ports 8000",
+      "description": "使用 ui 模式，偏好端口 8000"
+    },
+    {
+      "rank": 6,
+      "category": "single-port",
+      "command": "python -m services.core.aiva_core.ui_panel.auto_server --mode ui --ports 8080",
+      "description": "使用 ui 模式，偏好端口 8080"
+    },
+    {
+      "rank": 7,
+      "category": "single-port",
+      "command": "python -m services.core.aiva_core.ui_panel.auto_server --mode ai --ports 3000",
+      "description": "使用 ai 模式，偏好端口 3000"
+    },
+    {
+      "rank": 8,
+      "category": "single-port",
+      "command": "python -m services.core.aiva_core.ui_panel.auto_server --mode ai --ports 8000",
+      "description": "使用 ai 模式，偏好端口 8000"
+    },
+    {
+      "rank": 9,
+      "category": "single-port",
+      "command": "python -m services.core.aiva_core.ui_panel.auto_server --mode ai --ports 8080",
+      "description": "使用 ai 模式，偏好端口 8080"
+    },
+    {
+      "rank": 10,
+      "category": "multi-port",
+      "command": "python -m services.core.aiva_core.ui_panel.auto_server --mode ui --ports 3000 8000 8080",
+      "description": "使用 ui 模式，依序嘗試端口 [3000, 8000, 8080]"
+    }
+  ]
+}

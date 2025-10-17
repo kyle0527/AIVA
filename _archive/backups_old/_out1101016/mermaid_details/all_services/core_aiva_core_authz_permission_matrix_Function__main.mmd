@@ -1,0 +1,60 @@
+flowchart TB
+    n1([開始])
+    n2([結束])
+    n3[&amp;&#35;39;測試範例&amp;&#35;39;]
+    n4[matrix = PermissionMatrix&#40;&#41;]
+    n5[matrix.add_role&#40;&amp;&#35;39;admin&amp;&#35;39;&#41;]
+    n6[matrix.add_role&#40;&amp;&#35;39;user&amp;&#35;39;&#41;]
+    n7[matrix.add_role&#40;&amp;&#35;39;guest&amp;&#35;39;&#41;]
+    n8[matrix.add_role&#40;&amp;&#35;39;power_user&amp;&#35;39;,...]
+    n9[matrix.grant_permission&#40;&amp;&#35;39;admin&amp;&#35;3...]
+    n10[matrix.grant_permission&#40;&amp;&#35;39;admin&amp;&#35;3...]
+    n11[matrix.grant_permission&#40;&amp;&#35;39;admin&amp;&#35;3...]
+    n12[matrix.grant_permission&#40;&amp;&#35;39;user&amp;&#35;39...]
+    n13[matrix.grant_permission&#40;&amp;&#35;39;user&amp;&#35;39...]
+    n14[matrix.grant_permission&#40;&amp;&#35;39;guest&amp;&#35;3...]
+    n15[matrix.grant_permission&#40;&amp;&#35;39;guest&amp;&#35;3...]
+    n16[print&#40;&amp;&#35;39;=== Permission Checks ===&amp;&#35...]
+    n17[print&#40;f&amp;quot;Admin read database: &#123;matrix.ch...]
+    n18[print&#40;f&amp;quot;User write database &#40;without con...]
+    n19[print&#40;f&amp;quot;User write database &#40;with contex...]
+    n20[print&#40;f&amp;quot;Guest write database: &#123;matrix.c...]
+    n21[print&#40;f&amp;quot;Power user read database &#40;inheri...]
+    n22[print&#40;&amp;&#35;39;\n=== Coverage Analysis ===&amp;&#...]
+    n23[analysis = matrix.analyze_cover...]
+    n24[print&#40;f&amp;quot;Coverage: &#123;analysis&#91;&amp;&#...]
+    n25[print&#40;f&amp;quot;Allow: &#123;analysis&#91;&amp;&#35;...]
+    n26[print&#40;f&amp;quot;Deny: &#123;analysis&#91;&amp;&#35;3...]
+    n27[print&#40;f&amp;quot;Conditional: &#123;analysis&#91;&amp...]
+    n28[print&#40;&amp;&#35;39;\n=== DataFrame ===&amp;&#35;39;&#41;]
+    n29[df = matrix.to_dataframe&#40;...]
+    n30[print&#40;df&#41;]
+    n1 --> n3
+    n3 --> n4
+    n4 --> n5
+    n5 --> n6
+    n6 --> n7
+    n7 --> n8
+    n8 --> n9
+    n9 --> n10
+    n10 --> n11
+    n11 --> n12
+    n12 --> n13
+    n13 --> n14
+    n14 --> n15
+    n15 --> n16
+    n16 --> n17
+    n17 --> n18
+    n18 --> n19
+    n19 --> n20
+    n20 --> n21
+    n21 --> n22
+    n22 --> n23
+    n23 --> n24
+    n24 --> n25
+    n25 --> n26
+    n26 --> n27
+    n27 --> n28
+    n28 --> n29
+    n29 --> n30
+    n30 --> n2

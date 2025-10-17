@@ -1,0 +1,50 @@
+flowchart TB
+    n1([開始])
+    n2([結束])
+    n3[&amp;&#35;39;\nEnhanced Database Models for Asset and Vul...]
+    n4[from __future__ import annotations]
+    n5[from datetime import datetime]
+    n6[from enum import Enum]
+    n7[from typing import Any]
+    n8[from sqlalchemy import Column, DateTime, ForeignKe...]
+    n9[from sqlalchemy.dialects.postgresql import JSONB]
+    n10[from sqlalchemy.ext.declarative import declarative...]
+    n11[from sqlalchemy.orm import relationship]
+    n12[Base = declarative_base&#40;&#41;]
+    n13[class BusinessCriticality&#40;...&#41;]
+    n14[class Environment&#40;...&#41;]
+    n15[class AssetType&#40;...&#41;]
+    n16[class AssetStatus&#40;...&#41;]
+    n17[class VulnerabilityStatus&#40;...&#41;]
+    n18[class Severity&#40;...&#41;]
+    n19[class Confidence&#40;...&#41;]
+    n20[class Exploitability&#40;...&#41;]
+    n21[class Asset&#40;...&#41;]
+    n22[class Vulnerability&#40;...&#41;]
+    n23[class VulnerabilityHistory&#40;...&#41;]
+    n24[class VulnerabilityTag&#40;...&#41;]
+    n25[class FindingRecord&#40;...&#41;]
+    n1 --> n3
+    n3 --> n4
+    n4 --> n5
+    n5 --> n6
+    n6 --> n7
+    n7 --> n8
+    n8 --> n9
+    n9 --> n10
+    n10 --> n11
+    n11 --> n12
+    n12 --> n13
+    n13 --> n14
+    n14 --> n15
+    n15 --> n16
+    n16 --> n17
+    n17 --> n18
+    n18 --> n19
+    n19 --> n20
+    n20 --> n21
+    n21 --> n22
+    n22 --> n23
+    n23 --> n24
+    n24 --> n25
+    n25 --> n2

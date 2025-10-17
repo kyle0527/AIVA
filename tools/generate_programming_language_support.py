@@ -317,14 +317,14 @@ class AILanguageModel(BaseModel):
 '''
 
 print("程式語言支援擴展內容已準備完成！")
-print("\n🔧 新增枚舉:")
+print("\n[CONFIG] 新增枚舉:")
 print("- ProgrammingLanguage (34 種語言)")
 print("- LanguageFramework (20+ 框架)")
 print("- VulnerabilityByLanguage (語言特定漏洞)")
 print("- SecurityPattern (安全模式)")
 print("- CodeQualityMetric (程式碼品質指標)")
 
-print("\n📄 新增 Schema:")
+print("\n[U+1F4C4] 新增 Schema:")
 print("- LanguageDetectionResult")
 print("- LanguageSpecificVulnerability") 
 print("- MultiLanguageCodebase")

@@ -1,0 +1,55 @@
+flowchart TB
+    n1([開始])
+    n2([結束])
+    n3[&amp;&#35;39;識別快速修復項目（低工作量、高效益）&amp;&#35;39;]
+    n4[quick_wins = &#91;&#93;]
+    n5[vulnerabilities = &#91;node for node in pa...]
+    n6{for vuln in vulnerabilities}
+    n7[vuln_name = vuln.get&#40;&amp;&#35;39;name&amp;&#35;39;, ...]
+    n8{if vuln_name == &amp;&#35;39;XSS&amp;&#35;39;}
+    n9[quick_wins.append&#40;&amp;&#35;39;🚀 部署 Content Security ...]
+    n10[quick_wins.append&#40;&amp;&#35;39;🚀 啟用 HttpOnly 和 Secure...]
+    n11{if vuln_name == &amp;&#35;39;SSRF&amp;&#35;39;}
+    n12[quick_wins.append&#40;&amp;&#35;39;🚀 在防火牆層面阻擋內部 IP 存取 &#4...]
+    n13[quick_wins.append&#40;&amp;&#35;39;🚀 加入雲端元資料端點黑名單 &#40;30...]
+    n14{if vuln_name in &#91;&amp;&#35;39;IDOR&amp;&#35;39;, &amp...}
+    n15[quick_wins.append&#40;&amp;&#35;39;🚀 在中介軟體層面加入統一授權檢查 &#40...]
+    n16[quick_wins.append&#40;&amp;&#35;39;🚀 啟用詳細的存取日誌記錄 &#40;1小時...]
+    n17[]
+    n18[]
+    n19[]
+    n20[]
+    n21{if len&#40;vulnerabilities&#41; &amp;gt; 0}
+    n22[quick_wins.append&#40;&amp;&#35;39;🚀 部署 WAF 規則阻擋已知攻擊模式 &#...]
+    n23[quick_wins.append&#40;&amp;&#35;39;🚀 限制錯誤訊息中的敏感資訊洩露 &#40;...]
+    n24[]
+    n25[return list&#40;set&#40;quick_wins&#41;&#41;]
+    n1 --> n3
+    n3 --> n4
+    n4 --> n5
+    n5 --> n6
+    n6 -->|Yes| n7
+    n6 -->|No| n20
+    n7 --> n8
+    n8 -->|Yes| n9
+    n8 -->|No| n11
+    n9 --> n10
+    n10 --> n19
+    n11 -->|Yes| n12
+    n11 -->|No| n14
+    n12 --> n13
+    n13 --> n18
+    n14 -->|Yes| n15
+    n14 -->|No| n17
+    n15 --> n16
+    n16 --> n17
+    n17 --> n18
+    n18 --> n19
+    n19 --> n6
+    n20 --> n21
+    n21 -->|Yes| n22
+    n21 -->|No| n24
+    n22 --> n23
+    n23 --> n24
+    n24 --> n25
+    n25 --> n2

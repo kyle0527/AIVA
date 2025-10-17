@@ -1,0 +1,24 @@
+flowchart TB
+    n1([開始])
+    n2([結束])
+    n3[&amp;&#35;39;獲取經驗庫統計資訊\n\n        Returns:\n            統...]
+    n4[session = self.get_session&#40;&#41;]
+    n5[try]
+    n6[total_experiences = session.query&#40;func.c...]
+    n7[avg_score = session.query&#40;func.a...]
+    n8[attack_type_counts = session.query&#40;Experi...]
+    n9[return &#123;&amp;&#35;39;total_experiences&amp;&#35;39;:...]
+    n10[]
+    n11[finally]
+    n12[session.close&#40;&#41;]
+    n1 --> n3
+    n3 --> n4
+    n4 --> n5
+    n5 --> n6
+    n6 --> n7
+    n7 --> n8
+    n8 --> n9
+    n9 --> n10
+    n10 --> n11
+    n11 --> n12
+    n12 --> n2

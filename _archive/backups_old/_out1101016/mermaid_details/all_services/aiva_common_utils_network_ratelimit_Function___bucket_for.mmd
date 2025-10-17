@@ -1,0 +1,27 @@
+flowchart TB
+    n1([開始])
+    n2([結束])
+    n3[&amp;&#35;39;Get or create Token Bucket for a host.&amp;&...]
+    n4[self._maybe_cleanup_hosts&#40;&#41;]
+    n5[b = self.host_buckets.ge...]
+    n6{if b is None}
+    n7[rate = self._host_rate&#40;host...]
+    n8[burst = max&#40;1, int&#40;rate&#41;&#41;]
+    n9[b = TokenBucket&#40;rate, bu...]
+    n10[self.host_buckets&#91;host&#93; = b]
+    n11[]
+    n12[self._touch_host&#40;host&#41;]
+    n13[return b]
+    n1 --> n3
+    n3 --> n4
+    n4 --> n5
+    n5 --> n6
+    n6 -->|Yes| n7
+    n6 -->|No| n11
+    n7 --> n8
+    n8 --> n9
+    n9 --> n10
+    n10 --> n11
+    n11 --> n12
+    n12 --> n13
+    n13 --> n2

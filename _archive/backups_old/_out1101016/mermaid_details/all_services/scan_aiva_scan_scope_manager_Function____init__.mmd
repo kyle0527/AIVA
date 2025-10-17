@@ -1,0 +1,16 @@
+flowchart TB
+    n1([開始])
+    n2([結束])
+    n3[&amp;&#35;39;\n        初始化範圍管理器\n\n        Args:\n       ...]
+    n4[self.scope = scope]
+    n5[self._allowed_hosts_set = set&#40;scope.allowed_ho...]
+    n6[self._exclusion_patterns = self._compile_exclus...]
+    n7[self._stats = &#123;&amp;&#35;39;total_checked&amp;&#35;3...]
+    n8[logger.info&#40;f&amp;&#35;39;ScopeManager initialized: &...]
+    n1 --> n3
+    n3 --> n4
+    n4 --> n5
+    n5 --> n6
+    n6 --> n7
+    n7 --> n8
+    n8 --> n2

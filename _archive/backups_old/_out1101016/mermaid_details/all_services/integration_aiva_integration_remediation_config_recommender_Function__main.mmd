@@ -1,0 +1,50 @@
+flowchart TB
+    n1([開始])
+    n2([結束])
+    n3[&amp;&#35;39;測試範例&amp;&#35;39;]
+    n4[print&#40;&amp;&#35;39;⚙️  Config Recommender Demo&amp;&#...]
+    n5[print&#40;&amp;&#35;39;=&amp;&#35;39; * 60&#41;]
+    n6[recommender = ConfigRecommender&#40;&#41;]
+    n7[web_config = &#123;&amp;&#35;39;https&amp;&#35;39;: &#123...]
+    n8[analysis = recommender.analyze_...]
+    n9[print&#40;f&amp;quot;\n📊 Analysis ID: &#123;analysis&#91;...]
+    n10[print&#40;f&amp;quot;🎯 Config Type: &#123;analysis&#91;&a...]
+    n11[print&#40;f&amp;quot;⚠️  Risk Level: &#123;analysis&#91;&...]
+    n12[print&#40;f&amp;quot;\n🔍 Issues Found: &#123;len&#40;anal...]
+    n13{for issue in analysis&#91;&amp;&#35;39;issues&amp;&#35;39...}
+    n14[print&#40;f&amp;quot;   - &#91;&#123;issue&#91;&amp;&#35;...]
+    n15[]
+    n16[print&#40;f&amp;quot;\n💡 Recommendations: &#123;len&#40;a...]
+    n17{for rec in analysis&#91;&amp;&#35;39;recomme...}
+    n18[print&#40;f&amp;quot;   - &#123;rec&#91;&amp;&#35;39;key&...]
+    n19[print&#40;f&amp;quot;     Reason: &#123;rec&#91;&amp;&#35...]
+    n20[]
+    n21[secure_config = recommender.generate...]
+    n22[print&#40;&amp;&#35;39;\n✅ Secure config generated&amp;&#...]
+    n23[print&#40;f&amp;quot;   HTTPS enabled: &#123;secure_confi...]
+    n24[print&#40;&amp;&#35;39;\n✅ Demo completed&amp;&#35;39;&#41;]
+    n1 --> n3
+    n3 --> n4
+    n4 --> n5
+    n5 --> n6
+    n6 --> n7
+    n7 --> n8
+    n8 --> n9
+    n9 --> n10
+    n10 --> n11
+    n11 --> n12
+    n12 --> n13
+    n13 -->|Yes| n14
+    n13 -->|No| n15
+    n14 --> n13
+    n15 --> n16
+    n16 --> n17
+    n17 -->|Yes| n18
+    n17 -->|No| n20
+    n18 --> n19
+    n19 --> n17
+    n20 --> n21
+    n21 --> n22
+    n22 --> n23
+    n23 --> n24
+    n24 --> n2

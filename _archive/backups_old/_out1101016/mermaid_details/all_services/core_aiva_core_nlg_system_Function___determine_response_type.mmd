@@ -1,0 +1,58 @@
+flowchart TB
+    n1([開始])
+    n2([結束])
+    n3[&amp;&#35;39;確定回應類型&amp;&#35;39;]
+    n4[intent = analyzed_context&#91;&amp;&#35;39;in...]
+    n5[success = analyzed_context&#91;&amp;&#35;39;su...]
+    n6[tool = analyzed_context&#91;&amp;&#35;39;to...]
+    n7{if &amp;&#35;39;Reader&amp;&#35;39; in tool}
+    n8[return &amp;&#35;39;code_operations.reading&amp;&#35;39;]
+    n9{if &amp;&#35;39;Writer&amp;&#35;39; in tool}
+    n10[return &amp;&#35;39;code_operations.writing&amp;&#35;39;]
+    n11{if &amp;&#35;39;Analyzer&amp;&#35;39; in tool}
+    n12[return &amp;&#35;39;code_operations.analysis&amp;&#35;39;]
+    n13{if &amp;&#35;39;Detector&amp;&#35;39; in tool or inten...}
+    n14[return &amp;&#35;39;security_operations.scanning&amp;&#35...]
+    n15{if intent == &amp;&#35;39;coordinate&amp;&#35;39;}
+    n16[return &amp;&#35;39;system_control.coordination&amp;&#35;39;]
+    n17{if intent == &amp;&#35;39;status&amp;&#35;39;}
+    n18[return &amp;&#35;39;communication.status&amp;&#35;39;]
+    n19[status = &amp;&#35;39;success&amp;&#35;39; if success...]
+    n20[return f&amp;&#35;39;task_completion.&#123;status&#125;&a...]
+    n21[]
+    n22[]
+    n23[]
+    n24[]
+    n25[]
+    n26[]
+    n1 --> n3
+    n3 --> n4
+    n4 --> n5
+    n5 --> n6
+    n6 --> n7
+    n7 -->|Yes| n8
+    n7 -->|No| n9
+    n8 --> n26
+    n9 -->|Yes| n10
+    n9 -->|No| n11
+    n10 --> n25
+    n11 -->|Yes| n12
+    n11 -->|No| n13
+    n12 --> n24
+    n13 -->|Yes| n14
+    n13 -->|No| n15
+    n14 --> n23
+    n15 -->|Yes| n16
+    n15 -->|No| n17
+    n16 --> n22
+    n17 -->|Yes| n18
+    n17 -->|No| n19
+    n18 --> n21
+    n19 --> n20
+    n20 --> n21
+    n21 --> n22
+    n22 --> n23
+    n23 --> n24
+    n24 --> n25
+    n25 --> n26
+    n26 --> n2

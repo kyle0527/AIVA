@@ -1,0 +1,34 @@
+flowchart TB
+    n1([開始])
+    n2([結束])
+    n3[&amp;&#35;39;生成 HTML 報告&amp;&#35;39;]
+    n4[output_file = self.output_dir / f&amp;quot;...]
+    n5{if self.jinja_env}
+    n6[try]
+    n7[template = self.jinja_env.get_t...]
+    n8[html_content = template.render&#40;repo...]
+    n9[]
+    n10[except Exception]
+    n11[logger.warning&#40;&amp;&#35;39;template_load_failed&amp;...]
+    n12[html_content = self._generate_inlin...]
+    n13[html_content = self._generate_inlin...]
+    n14[]
+    n15[output_file.write_text&#40;html_content, encoding=&amp;&#...]
+    n16[return output_file]
+    n1 --> n3
+    n3 --> n4
+    n4 --> n5
+    n5 -->|Yes| n6
+    n5 -->|No| n13
+    n6 --> n7
+    n6 --> n10
+    n7 --> n8
+    n8 --> n9
+    n9 --> n14
+    n10 --> n11
+    n11 --> n12
+    n12 --> n9
+    n13 --> n14
+    n14 --> n15
+    n15 --> n16
+    n16 --> n2

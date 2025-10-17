@@ -69,17 +69,12 @@ from services.core.models import (
     ConfigUpdatePayload,
     EnhancedAttackPath,
     EnhancedAttackPathNode,
-    EnhancedFindingPayload,
     EnhancedModuleStatus,
     EnhancedRiskAssessment,
     EnhancedTaskExecution,
     EnhancedVulnerability,
     EnhancedVulnerabilityCorrelation,
     FeedbackEventPayload,
-    FindingEvidence,
-    FindingImpact,
-    FindingPayload,
-    FindingRecommendation,
     HeartbeatPayload,
     ModuleStatus,
     RemediationGeneratePayload,
@@ -90,12 +85,21 @@ from services.core.models import (
     RiskTrendAnalysis,
     SASTDASTCorrelation,
     SystemOrchestration,
-    Target,
     TaskDependency,
     TaskQueue,
     TaskUpdatePayload,
     TestStrategy,
     VulnerabilityCorrelation,
+)
+
+# 從 aiva_common.schemas 導入共用 schemas
+from services.aiva_common.schemas import (
+    EnhancedFindingPayload,
+    FindingEvidence,
+    FindingImpact,
+    FindingPayload,
+    FindingRecommendation,
+    Target,
 )
 
 __all__ = [

@@ -1,0 +1,78 @@
+flowchart TB
+    n1([開始])
+    n2([結束])
+    n3[from __future__ import annotations]
+    n4[import asyncio]
+    n5[from collections import Counter]
+    n6[from typing import Any]
+    n7[from fastapi import FastAPI]
+    n8[from tenacity import RetryError, retry, stop_after...]
+    n9[from services.aiva_common.config import get_settin...]
+    n10[from services.aiva_common.enums import Topic]
+    n11[from services.aiva_common.mq import get_broker]
+    n12[from services.aiva_common.schemas import AivaMessa...]
+    n13[from services.aiva_common.utils import get_logger]
+    n14[from services.core.aiva_core.analysis.dynamic_stra...]
+    n15[from services.core.aiva_core.analysis.initial_surf...]
+    n16[from services.core.aiva_core.execution.execution_s...]
+    n17[from services.core.aiva_core.execution.task_genera...]
+    n18[from services.core.aiva_core.execution.task_queue_...]
+    n19[from services.core.aiva_core.ingestion.scan_module...]
+    n20[from services.core.aiva_core.processing import Sca...]
+    n21[from services.core.aiva_core.state.session_state_m...]
+    n22[app = FastAPI&#40;title=&amp;&#35;39;AIVA ...]
+    n23[logger = get_logger&#40;__name__&#41;]
+    n24[def _count_tasks_by_type&#40;...&#41;]
+    n25[scan_interface = ScanModuleInterface&#40;...]
+    n26[surface_analyzer = InitialAttackSurface...]
+    n27[strategy_adjuster = StrategyAdjuster&#40;&#41;]
+    n28[task_generator = TaskGenerator&#40;&#41;]
+    n29[task_queue_manager = TaskQueueManager&#40;&#41;]
+    n30[execution_monitor = ExecutionStatusMonit...]
+    n31[session_state_manager = SessionStateManager&#40;...]
+    n32[scan_result_processor = ScanResultProcessor&#40;...]
+    n33[def startup&#40;...&#41;]
+    n34[def health_check&#40;...&#41;]
+    n35[def get_scan_status&#40;...&#41;]
+    n36[def _process_single_scan_with_retry&#40;...&#41;]
+    n37[def process_scan_results&#40;...&#41;]
+    n38[def process_function_results&#40;...&#41;]
+    n39[def monitor_execution_status&#40;...&#41;]
+    n1 --> n3
+    n3 --> n4
+    n4 --> n5
+    n5 --> n6
+    n6 --> n7
+    n7 --> n8
+    n8 --> n9
+    n9 --> n10
+    n10 --> n11
+    n11 --> n12
+    n12 --> n13
+    n13 --> n14
+    n14 --> n15
+    n15 --> n16
+    n16 --> n17
+    n17 --> n18
+    n18 --> n19
+    n19 --> n20
+    n20 --> n21
+    n21 --> n22
+    n22 --> n23
+    n23 --> n24
+    n24 --> n25
+    n25 --> n26
+    n26 --> n27
+    n27 --> n28
+    n28 --> n29
+    n29 --> n30
+    n30 --> n31
+    n31 --> n32
+    n32 --> n33
+    n33 --> n34
+    n34 --> n35
+    n35 --> n36
+    n36 --> n37
+    n37 --> n38
+    n38 --> n39
+    n39 --> n2

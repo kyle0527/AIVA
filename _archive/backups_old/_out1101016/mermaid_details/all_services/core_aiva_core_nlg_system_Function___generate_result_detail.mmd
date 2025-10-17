@@ -1,0 +1,40 @@
+flowchart TB
+    n1([開始])
+    n2([結束])
+    n3[&amp;&#35;39;生成結果詳情&amp;&#35;39;]
+    n4[tool_result = context.get&#40;&amp;&#35;39;tool_re...]
+    n5[tech_details = context.get&#40;&amp;&#35;39;technic...]
+    n6{if &amp;&#35;39;lines&amp;&#35;39; in tech_details}
+    n7[return f&amp;quot;讀取了 &#123;tech_details&#91;&amp;&#35;39...]
+    n8{if &amp;&#35;39;bytes_written&amp;&#35;39; in tech_det...}
+    n9[return f&amp;quot;成功寫入 &#123;tech_details&#91;&amp;&#35;3...]
+    n10{if &amp;&#35;39;analysis&amp;&#35;39; in tech_details}
+    n11[return f&amp;quot;分析結果：&#123;tech_details&#91;&amp;&#35;3...]
+    n12{if tool_result.get&#40;&amp;&#35;39;status&amp;&#35;39;&#...}
+    n13[return &amp;&#35;39;操作成功完成&amp;&#35;39;]
+    n14[return &amp;&#35;39;處理完成&amp;&#35;39;]
+    n15[]
+    n16[]
+    n17[]
+    n18[]
+    n1 --> n3
+    n3 --> n4
+    n4 --> n5
+    n5 --> n6
+    n6 -->|Yes| n7
+    n6 -->|No| n8
+    n7 --> n18
+    n8 -->|Yes| n9
+    n8 -->|No| n10
+    n9 --> n17
+    n10 -->|Yes| n11
+    n10 -->|No| n12
+    n11 --> n16
+    n12 -->|Yes| n13
+    n12 -->|No| n14
+    n13 --> n15
+    n14 --> n15
+    n15 --> n16
+    n16 --> n17
+    n17 --> n18
+    n18 --> n2

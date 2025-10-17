@@ -1,0 +1,31 @@
+flowchart TB
+    n1([開始])
+    n2([結束])
+    n3[&amp;&#35;39;\nTask Executor - 任務執行器\n\n實際執行任務並與各種服務整合\n&...]
+    n4[from __future__ import annotations]
+    n5[from dataclasses import dataclass]
+    n6[import logging]
+    n7[from typing import TYPE_CHECKING, Any]
+    n8{if TYPE_CHECKING}
+    n9[from ..planner.task_converter import ExecutableTas...]
+    n10[from ..planner.tool_selector import ToolDecision]
+    n11[]
+    n12[from .execution_monitor import ExecutionContext, E...]
+    n13[logger = logging.getLogger&#40;__...]
+    n14[class ExecutionResult&#40;...&#41;]
+    n15[class TaskExecutor&#40;...&#41;]
+    n1 --> n3
+    n3 --> n4
+    n4 --> n5
+    n5 --> n6
+    n6 --> n7
+    n7 --> n8
+    n8 -->|Yes| n9
+    n8 -->|No| n11
+    n9 --> n10
+    n10 --> n11
+    n11 --> n12
+    n12 --> n13
+    n13 --> n14
+    n14 --> n15
+    n15 --> n2

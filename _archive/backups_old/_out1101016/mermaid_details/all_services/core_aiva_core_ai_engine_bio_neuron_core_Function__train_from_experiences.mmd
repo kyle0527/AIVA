@@ -1,0 +1,30 @@
+flowchart TB
+    n1([開始])
+    n2([結束])
+    n3[&amp;&#35;39;從經驗庫訓練模型（新增方法）\n\n        Args:\n           ...]
+    n4{if not self.model_updater}
+    n5[return &#123;&amp;&#35;39;status&amp;&#35;39;: &amp;&#35;...]
+    n6[]
+    n7[logger.info&#40;&amp;&#35;39;開始從經驗庫訓練模型...&amp;&#35;39;&#41;]
+    n8[try]
+    n9[result = self.model_updater.u...]
+    n10[return result]
+    n11[]
+    n12[except Exception]
+    n13[logger.error&#40;f&amp;&#35;39;Training failed: &#123;e&#...]
+    n14[return &#123;&amp;&#35;39;status&amp;&#35;39;: &amp;&#35;...]
+    n1 --> n3
+    n3 --> n4
+    n4 -->|Yes| n5
+    n4 -->|No| n6
+    n5 --> n6
+    n6 --> n7
+    n7 --> n8
+    n8 --> n9
+    n8 --> n12
+    n9 --> n10
+    n10 --> n11
+    n11 --> n2
+    n12 --> n13
+    n13 --> n14
+    n14 --> n11

@@ -90,13 +90,13 @@ for filename, info in classifications.items():
             output.append('')
             enum_count += 1
         else:
-            print(f"⚠️  找不到 {enum_name}")
+            print(f"[WARN]  找不到 {enum_name}")
     
     # 寫入檔案
     output_file = enums_dir / filename
     output_file.write_text('\n'.join(output), encoding='utf-8')
     
-    print(f"✅ 創建 enums/{filename} ({enum_count} 個枚舉)")
+    print(f"[OK] 創建 enums/{filename} ({enum_count} 個枚舉)")
 
 # 創建 __init__.py
 print("\n" + "=" * 70)
@@ -169,7 +169,7 @@ init_content.append('__version__ = "2.0.0"')
 init_file = enums_dir / '__init__.py'
 init_file.write_text('\n'.join(init_content), encoding='utf-8')
 
-print(f"✅ 創建 enums/__init__.py (導出 {len(all_enums)} 個枚舉)")
+print(f"[OK] 創建 enums/__init__.py (導出 {len(all_enums)} 個枚舉)")
 
 print("\n" + "=" * 70)
 print("Enums 模組化結構創建完成!")

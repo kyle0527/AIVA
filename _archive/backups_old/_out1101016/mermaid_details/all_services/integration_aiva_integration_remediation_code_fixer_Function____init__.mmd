@@ -1,0 +1,45 @@
+flowchart TB
+    n1([開始])
+    n2([結束])
+    n3[&amp;&#35;39;\n        初始化代碼修復器\n\n        Args:\n       ...]
+    n4[self.api_key = api_key]
+    n5[self.model = model]
+    n6[self.use_litellm = use_litellm and LITE...]
+    n7[self.max_tokens = max_tokens]
+    n8[self.fix_history: list&#91;dict&#91;str, Any&#93;&#93; = ...]
+    n9{if self.use_litellm}
+    n10{if not LITELLM_AVAILABLE}
+    n11[logger.warning&#40;&amp;&#35;39;litellm_not_available&amp...]
+    n12[self.use_litellm = False]
+    n13[litellm.api_key = api_key]
+    n14[logger.info&#40;&amp;&#35;39;code_fixer_initialized&amp;&...]
+    n15[]
+    n16{if OPENAI_AVAILABLE and api_key}
+    n17[openai.api_key = api_key]
+    n18[logger.info&#40;&amp;&#35;39;code_fixer_initialized&amp;&...]
+    n19[logger.warning&#40;&amp;&#35;39;no_ai_api_available&amp;&...]
+    n20[]
+    n21[]
+    n1 --> n3
+    n3 --> n4
+    n4 --> n5
+    n5 --> n6
+    n6 --> n7
+    n7 --> n8
+    n8 --> n9
+    n9 -->|Yes| n10
+    n9 -->|No| n16
+    n10 -->|Yes| n11
+    n10 -->|No| n13
+    n11 --> n12
+    n12 --> n15
+    n13 --> n14
+    n14 --> n15
+    n15 --> n21
+    n16 -->|Yes| n17
+    n16 -->|No| n19
+    n17 --> n18
+    n18 --> n20
+    n19 --> n20
+    n20 --> n21
+    n21 --> n2

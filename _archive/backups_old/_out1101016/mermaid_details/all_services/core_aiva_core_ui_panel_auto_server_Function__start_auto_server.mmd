@@ -1,0 +1,125 @@
+flowchart TB
+    n1([開始])
+    n2([結束])
+    n3[&amp;&#35;39;啟動自動端口選擇的 UI 伺服器.\n\n    Args:\n        mode...]
+    n4[logging.basicConfig&#40;level=logging.INFO, format=&amp;&...]
+    n5[try]
+    n6[import uvicorn]
+    n7[from .improved_ui import create_app]
+    n8[]
+    n9[except ImportError]
+    n10[logger.error&#40;f&amp;&#35;39;匯入錯誤: &#123;e&#125;&amp;&#...]
+    n11[logger.error&#40;&amp;&#35;39;請確保已安裝所需套件: pip install fas...]
+    n12[return]
+    n13[app = create_app&#40;mode=mode...]
+    n14[port = None]
+    n15{if preferred_ports}
+    n16{for preferred_port in preferred_ports}
+    n17[try]
+    n18[with socket.so...]
+    n19[s.bind&#40;&#40;host, preferred_port&#41;&#41;]
+    n20[port = preferred_port]
+    n21[logger.info&#40;f&amp;&#35;39;使用偏好端口: &#123;port&#125;&am...]
+    n22[break]
+    n23[]
+    n24[except OSError]
+    n25[continue]
+    n26[]
+    n27[]
+    n28{if port is None}
+    n29[try]
+    n30[port = find_free_port&#40;&#41;]
+    n31[logger.info&#40;f&amp;&#35;39;自動選擇端口: &#123;port&#125;&am...]
+    n32[]
+    n33[except RuntimeError]
+    n34[logger.error&#40;f&amp;&#35;39;端口選擇失敗: &#123;e&#125;&amp;...]
+    n35[return]
+    n36[]
+    n37[logger.info&#40;f&amp;quot;\n&#123;&amp;&#35;39;=&amp;&#3...]
+    n38[logger.info&#40;&amp;&#35;39;   🚀 啟動 AIVA UI 面板 &#40;自動端口...]
+    n39[logger.info&#40;f&amp;quot;&#123;&amp;&#35;39;=&amp;&#35;...]
+    n40[logger.info&#40;f&amp;&#35;39;🌐 位址: http://&#123;host&#12...]
+    n41[logger.info&#40;f&amp;&#35;39;📖 API 文檔: http://&#123;host...]
+    n42[logger.info&#40;f&amp;&#35;39;🔧 模式: &#123;mode&#125;&amp;...]
+    n43[logger.info&#40;f&amp;quot;&#123;&amp;&#35;39;=&amp;&#35;...]
+    n44[try]
+    n45[uvicorn.run&#40;app, host=host, port=port, log_level=&amp...]
+    n46[]
+    n47[except OSError]
+    n48{if &amp;&#35;39;Address already in use&amp;&#35;39; in...}
+    n49[logger.error&#40;f&amp;&#35;39;端口 &#123;port&#125; 被佔用，嘗試...]
+    n50[try]
+    n51[new_port = find_free_port&#40;port ...]
+    n52[logger.info&#40;f&amp;&#35;39;使用新端口: &#123;new_port&#125;...]
+    n53[uvicorn.run&#40;app, host=host, port=new_port, log_lev...]
+    n54[]
+    n55[except RuntimeError]
+    n56[logger.error&#40;f&amp;&#35;39;重試失敗: &#123;retry_error&#1...]
+    n57[logger.error&#40;f&amp;&#35;39;伺服器啟動失敗: &#123;e&#125;&amp...]
+    n58[]
+    n1 --> n3
+    n3 --> n4
+    n4 --> n5
+    n5 --> n6
+    n5 --> n9
+    n6 --> n7
+    n7 --> n8
+    n8 --> n13
+    n9 --> n10
+    n10 --> n11
+    n11 --> n12
+    n12 --> n8
+    n13 --> n14
+    n14 --> n15
+    n15 -->|Yes| n16
+    n15 -->|No| n27
+    n16 -->|Yes| n17
+    n16 -->|No| n26
+    n17 --> n18
+    n17 --> n24
+    n18 --> n19
+    n19 --> n20
+    n20 --> n21
+    n21 --> n22
+    n22 --> n23
+    n23 --> n16
+    n24 --> n25
+    n25 --> n23
+    n26 --> n27
+    n27 --> n28
+    n28 -->|Yes| n29
+    n28 -->|No| n36
+    n29 --> n30
+    n29 --> n33
+    n30 --> n31
+    n31 --> n32
+    n32 --> n36
+    n33 --> n34
+    n34 --> n35
+    n35 --> n32
+    n36 --> n37
+    n37 --> n38
+    n38 --> n39
+    n39 --> n40
+    n40 --> n41
+    n41 --> n42
+    n42 --> n43
+    n43 --> n44
+    n44 --> n45
+    n44 --> n47
+    n45 --> n46
+    n46 --> n2
+    n47 --> n48
+    n48 -->|Yes| n49
+    n48 -->|No| n57
+    n49 --> n50
+    n50 --> n51
+    n50 --> n55
+    n51 --> n52
+    n52 --> n53
+    n53 --> n54
+    n54 --> n58
+    n55 --> n56
+    n56 --> n54
+    n57 --> n58
+    n58 --> n46

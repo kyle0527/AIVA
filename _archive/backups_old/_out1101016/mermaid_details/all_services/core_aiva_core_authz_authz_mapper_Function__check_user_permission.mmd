@@ -1,0 +1,65 @@
+flowchart TB
+    n1([開始])
+    n2([結束])
+    n3[&amp;&#35;39;\n        檢查用戶權限\n\n        Args:\n         ...]
+    n4[user_roles = self.get_user_roles&#40;...]
+    n5{if not user_roles}
+    n6[logger.debug&#40;&amp;&#35;39;user_has_no_roles&amp;&#35;...]
+    n7[return &#40;AccessDecision.DENY, &#91;&#93;&#41;]
+    n8[]
+    n9[full_context = context or &#123;&#125;]
+    n10{if user_id in self.user_attrib...}
+    n11[full_context.update&#40;self.user_attributes&#91;user_id&...]
+    n12[]
+    n13[full_context&#91;&amp;&#35;39;user_id&amp;&#35;39;&#93; =...]
+    n14[decisions: list&#91;tuple&#91;AccessDecision, str&#93;&#9...]
+    n15{for role in user_roles}
+    n16[decision = self.matrix.check_pe...]
+    n17[decisions.append&#40;&#40;decision, role&#41;&#41;]
+    n18[]
+    n19[allow_roles = &#91;role for dec, role ...]
+    n20{if allow_roles}
+    n21[logger.info&#40;&amp;&#35;39;user_permission_granted&amp;...]
+    n22[return &#40;AccessDecision.ALLOW, allow_r...]
+    n23[]
+    n24[conditional_roles = &#91;role for dec, role ...]
+    n25{if conditional_roles}
+    n26[logger.info&#40;&amp;&#35;39;user_permission_conditional&...]
+    n27[return &#40;AccessDecision.CONDITIONAL, c...]
+    n28[]
+    n29[logger.info&#40;&amp;&#35;39;user_permission_denied&amp;&...]
+    n30[return &#40;AccessDecision.DENY, &#91;&#93;&#41;]
+    n1 --> n3
+    n3 --> n4
+    n4 --> n5
+    n5 -->|Yes| n6
+    n5 -->|No| n8
+    n6 --> n7
+    n7 --> n8
+    n8 --> n9
+    n9 --> n10
+    n10 -->|Yes| n11
+    n10 -->|No| n12
+    n11 --> n12
+    n12 --> n13
+    n13 --> n14
+    n14 --> n15
+    n15 -->|Yes| n16
+    n15 -->|No| n18
+    n16 --> n17
+    n17 --> n15
+    n18 --> n19
+    n19 --> n20
+    n20 -->|Yes| n21
+    n20 -->|No| n23
+    n21 --> n22
+    n22 --> n23
+    n23 --> n24
+    n24 --> n25
+    n25 -->|Yes| n26
+    n25 -->|No| n28
+    n26 --> n27
+    n27 --> n28
+    n28 --> n29
+    n29 --> n30
+    n30 --> n2

@@ -1,0 +1,40 @@
+flowchart TB
+    n1([開始])
+    n2([結束])
+    n3[&amp;&#35;39;對比計畫與執行軌跡\n\n        Args:\n            plan...]
+    n4[logger.info&#40;f&amp;&#35;39;Comparing plan &#123;plan.p...]
+    n5[matches = self._match_steps&#40;pl...]
+    n6[expected_steps = len&#40;plan.steps&#41;]
+    n7[executed_steps = len&#40;trace_records&#41;]
+    n8[completed_steps = sum&#40;&#40;1 for t in trac...]
+    n9[failed_steps = sum&#40;&#40;1 for t in trac...]
+    n10[skipped_steps = sum&#40;&#40;1 for t in trac...]
+    n11[extra_actions = self._count_extra_ac...]
+    n12[completion_rate = completed_steps / ex...]
+    n13[success_rate = completed_steps / ex...]
+    n14[sequence_accuracy = self._calculate_sequ...]
+    n15[goal_achieved = self._evaluate_goal_...]
+    n16[reward_score = self._calculate_rewa...]
+    n17[total_execution_time = sum&#40;&#40;t.execution_tim...]
+    n18[metrics = PlanExecutionMetrics...]
+    n19[logger.info&#40;f&amp;&#35;39;Comparison complete: comple...]
+    n20[return metrics]
+    n1 --> n3
+    n3 --> n4
+    n4 --> n5
+    n5 --> n6
+    n6 --> n7
+    n7 --> n8
+    n8 --> n9
+    n9 --> n10
+    n10 --> n11
+    n11 --> n12
+    n12 --> n13
+    n13 --> n14
+    n14 --> n15
+    n15 --> n16
+    n16 --> n17
+    n17 --> n18
+    n18 --> n19
+    n19 --> n20
+    n20 --> n2

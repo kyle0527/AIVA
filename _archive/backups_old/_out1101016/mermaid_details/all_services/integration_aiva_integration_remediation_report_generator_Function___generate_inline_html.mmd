@@ -1,0 +1,47 @@
+flowchart TB
+    n1([開始])
+    n2([結束])
+    n3[&amp;&#35;39;生成內置 HTML 模板&amp;&#35;39;]
+    n4[stats = report&#91;&amp;&#35;39;statistics&amp;&#35;39;&#93;]
+    n5[vulns = report&#91;&amp;&#35;39;vulnerabilit...]
+    n6[html = f&amp;quot;&amp;quot;&amp;quot;&amp;lt;!DOCTYPE ht...]
+    n7{for severity in &#91;&amp;&#35;39;CRITICAL&amp;&#35;39;, ...}
+    n8[count = stats&#91;&amp;&#35;39;by_severity&amp;&#35;39;&#...]
+    n9{if count &amp;gt; 0}
+    n10[html += f&amp;&#35;39;\n            &amp;lt;div class=&am...]
+    n11[]
+    n12[]
+    n13[html += &amp;&#35;39;\n        &amp;lt;/div&amp;gt;\n\n  ...]
+    n14{for vuln in vulns}
+    n15[severity = vuln.get&#40;&amp;&#35;39;severity&amp;&#35;39...]
+    n16[title = vuln.get&#40;&amp;&#35;39;title&amp;&#35;39;, &am...]
+    n17[vuln_type = vuln.get&#40;&amp;&#35;39;type&amp;&#35;39;, ...]
+    n18[location = vuln.get&#40;&amp;&#35;39;location&amp;&#35;39...]
+    n19[html += f&amp;&#35;39;\n        &amp;lt;div class=&amp;qu...]
+    n20[]
+    n21[html += f&amp;quot;&amp;quot;&amp;quot;\n        &amp;lt;...]
+    n22[return html]
+    n1 --> n3
+    n3 --> n4
+    n4 --> n5
+    n5 --> n6
+    n6 --> n7
+    n7 -->|Yes| n8
+    n7 -->|No| n12
+    n8 --> n9
+    n9 -->|Yes| n10
+    n9 -->|No| n11
+    n10 --> n11
+    n11 --> n7
+    n12 --> n13
+    n13 --> n14
+    n14 -->|Yes| n15
+    n14 -->|No| n20
+    n15 --> n16
+    n16 --> n17
+    n17 --> n18
+    n18 --> n19
+    n19 --> n14
+    n20 --> n21
+    n21 --> n22
+    n22 --> n2

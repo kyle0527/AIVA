@@ -1,0 +1,22 @@
+flowchart TB
+    n1([開始])
+    n2([結束])
+    n3[&amp;&#35;39;\nAJAX 和 API 端點處理器\n擴展動態引擎以識別和處理 AJAX 請求和 AP...]
+    n4[from __future__ import annotations]
+    n5[import re]
+    n6[from typing import Any]
+    n7[from urllib.parse import urljoin, urlparse]
+    n8[from services.aiva_common.schemas import Asset]
+    n9[from services.aiva_common.utils import get_logger,...]
+    n10[logger = get_logger&#40;__name__&#41;]
+    n11[class AjaxApiHandler&#40;...&#41;]
+    n1 --> n3
+    n3 --> n4
+    n4 --> n5
+    n5 --> n6
+    n6 --> n7
+    n7 --> n8
+    n8 --> n9
+    n9 --> n10
+    n10 --> n11
+    n11 --> n2

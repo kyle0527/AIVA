@@ -1,0 +1,51 @@
+flowchart TB
+    n1([開始])
+    n2([結束])
+    n3[&amp;&#35;39;生成執行摘要（給管理層看的）&amp;&#35;39;]
+    n4[vuln_count = sum&#40;&#40;1 for node in p...]
+    n5[target_node = path.nodes&#91;-1&#93; if pa...]
+    n6[target_type = self._get_node_type_...]
+    n7[critical_vulns = &#91;node.get&#40;&amp;&#35;39;name&amp;...]
+    n8[risk_emoji = &#123;RiskLevel.CRITICAL:...]
+    n9[summary = f&amp;&#35;39;&#123;risk_emoji&#91;risk_l...]
+    n10{if risk_level in &#91;RiskLevel.CR...}
+    n11[summary += f&amp;&#35;39;發現一條高風險攻擊路徑，外部攻擊者可透過 &#123;vuln_...]
+    n12[summary += f&amp;&#35;39;最終到達 **&#123;target_type&#125;**...]
+    n13[summary += f&amp;&#35;39;發現一條潛在攻擊路徑，涉及 &#123;vuln_count&#...]
+    n14[summary += f&amp;&#35;39;可能影響 **&#123;target_type&#125;**...]
+    n15[]
+    n16{if critical_vulns}
+    n17[summary += f&amp;quot;\n\n**關鍵漏洞**: &#123;&amp;&#35;39;, ...]
+    n18{if len&#40;critical_vulns&#41; &amp;gt; 3}
+    n19[summary += f&amp;&#35;39; 及其他 &#123;len&#40;critical_vuln...]
+    n20[]
+    n21[]
+    n22[summary += f&amp;&#35;39;\n\n**路徑長度**: &#123;path.length&...]
+    n23[summary += f&amp;&#35;39; &#124; **風險評分**: &#123;path.tot...]
+    n24[return summary]
+    n1 --> n3
+    n3 --> n4
+    n4 --> n5
+    n5 --> n6
+    n6 --> n7
+    n7 --> n8
+    n8 --> n9
+    n9 --> n10
+    n10 -->|Yes| n11
+    n10 -->|No| n13
+    n11 --> n12
+    n12 --> n15
+    n13 --> n14
+    n14 --> n15
+    n15 --> n16
+    n16 -->|Yes| n17
+    n16 -->|No| n21
+    n17 --> n18
+    n18 -->|Yes| n19
+    n18 -->|No| n20
+    n19 --> n20
+    n20 --> n21
+    n21 --> n22
+    n22 --> n23
+    n23 --> n24
+    n24 --> n2

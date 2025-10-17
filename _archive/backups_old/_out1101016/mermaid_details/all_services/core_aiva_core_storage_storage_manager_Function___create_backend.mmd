@@ -1,0 +1,44 @@
+flowchart TB
+    n1([開始])
+    n2([結束])
+    n3[&amp;&#35;39;創建存儲後端&amp;&#35;39;]
+    n4{if self.db_type == &amp;&#35;39;sqlite&amp;&#35;39;}
+    n5[db_path = self.db_config.get&#40;&amp;&#35;39;...]
+    n6[return SQLiteBackend&#40;db_path=db_path&#41;]
+    n7{if self.db_type == &amp;&#35;39;postgres&amp;&#35;39;}
+    n8[return PostgreSQLBackend&#40;host=self.db...]
+    n9{if self.db_type == &amp;&#35;39;jsonl&amp;&#35;39;}
+    n10[experiences_dir = self.db_config.get&#40;&amp;&#35;39;...]
+    n11[return JSONLBackend&#40;data_dir=experien...]
+    n12{if self.db_type == &amp;&#35;39;hybrid&amp;&#35;39;}
+    n13[db_backend = SQLiteBackend&#40;db_pat...]
+    n14[jsonl_backend = JSONLBackend&#40;data_di...]
+    n15[return HybridBackend&#40;db_backend=db_ba...]
+    n16[raise ValueError&#40;f&amp;&#35;39;Unknown database type:...]
+    n17[]
+    n18[]
+    n19[]
+    n20[]
+    n1 --> n3
+    n3 --> n4
+    n4 -->|Yes| n5
+    n4 -->|No| n7
+    n5 --> n6
+    n6 --> n20
+    n7 -->|Yes| n8
+    n7 -->|No| n9
+    n8 --> n19
+    n9 -->|Yes| n10
+    n9 -->|No| n12
+    n10 --> n11
+    n11 --> n18
+    n12 -->|Yes| n13
+    n12 -->|No| n16
+    n13 --> n14
+    n14 --> n15
+    n15 --> n17
+    n16 --> n17
+    n17 --> n18
+    n18 --> n19
+    n19 --> n20
+    n20 --> n2

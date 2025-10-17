@@ -1,0 +1,17 @@
+flowchart TB
+    n1([開始])
+    n2([結束])
+    n3[&amp;&#35;39;驗證 ID 模式&amp;&#35;39;]
+    n4[allowed = &#123;&amp;&#35;39;numeric&amp;&#35;39;, &amp;&...]
+    n5{if v not in allowed}
+    n6[raise ValueError&#40;f&amp;&#35;39;Invalid ID pattern: &#...]
+    n7[]
+    n8[return v]
+    n1 --> n3
+    n3 --> n4
+    n4 --> n5
+    n5 -->|Yes| n6
+    n5 -->|No| n7
+    n6 --> n7
+    n7 --> n8
+    n8 --> n2

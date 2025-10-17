@@ -1,0 +1,39 @@
+flowchart TB
+    n1([開始])
+    n2([結束])
+    n3[&amp;&#35;39;\n        規範化 URL\n\n        Args:\n        ...]
+    n4[try]
+    n5[endpoint = re.sub&#40;&amp;&#35;39;\\$\\&#123;&#91;^&#125...]
+    n6[endpoint = re.sub&#40;&amp;&#35;39;\\&#123;&#91;^&#125;&#...]
+    n7{if not endpoint.startswith&#40;&#40;&amp;&#35;39;h...}
+    n8[endpoint = urljoin&#40;base_url, en...]
+    n9[]
+    n10[parsed = urlparse&#40;endpoint&#41;]
+    n11{if parsed.scheme and parsed.ne...}
+    n12[return endpoint]
+    n13[]
+    n14[return None]
+    n15[]
+    n16[except Exception]
+    n17[logger.warning&#40;f&amp;&#35;39;Failed to normalize URL ...]
+    n18[return None]
+    n1 --> n3
+    n3 --> n4
+    n4 --> n5
+    n4 --> n16
+    n5 --> n6
+    n6 --> n7
+    n7 -->|Yes| n8
+    n7 -->|No| n9
+    n8 --> n9
+    n9 --> n10
+    n10 --> n11
+    n11 -->|Yes| n12
+    n11 -->|No| n13
+    n12 --> n13
+    n13 --> n14
+    n14 --> n15
+    n15 --> n2
+    n16 --> n17
+    n17 --> n18
+    n18 --> n15

@@ -1,0 +1,10 @@
+flowchart TB
+    n1([開始])
+    n2([結束])
+    n3[&amp;&#35;39;\n        檢查 URL 是否已經見過\n\n        Args:\n  ...]
+    n4[normalized = self._normalize_url&#40;...]
+    n5[return normalized in self._seen if no...]
+    n1 --> n3
+    n3 --> n4
+    n4 --> n5
+    n5 --> n2

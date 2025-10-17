@@ -44,12 +44,12 @@ def test_configuration() -> None:
     logger.info("=" * 60)
 
     settings = get_settings()
-    logger.info(f"✓ Core Monitor Interval: {settings.core_monitor_interval}s")
-    logger.info(f"✓ Enable Strategy Generator: {settings.enable_strategy_generator}")
-    logger.info(f"✓ RabbitMQ URL: {settings.rabbitmq_url}")
+    logger.info(f"[CHECK] Core Monitor Interval: {settings.core_monitor_interval}s")
+    logger.info(f"[CHECK] Enable Strategy Generator: {settings.enable_strategy_generator}")
+    logger.info(f"[CHECK] RabbitMQ URL: {settings.rabbitmq_url}")
 
     assert settings.core_monitor_interval == 10, "配置未正確讀取"
-    logger.info("✅ 配置外部化測試通過\n")
+    logger.info("[OK] 配置外部化測試通過\n")
 
 
 def test_sqli_config_strategy() -> None:
@@ -83,7 +83,7 @@ def test_sqli_config_strategy() -> None:
     assert deep_config.enable_boolean_detection is True, "DEEP 應啟用所有檢測"
     assert deep_config.enable_time_detection is True, "DEEP 應啟用所有檢測"
 
-    logger.info("\n✅ SQLi 引擎配置動態化測試通過\n")
+    logger.info("\n[OK] SQLi 引擎配置動態化測試通過\n")
 
 
 def test_scan_result_processor() -> None:
@@ -110,9 +110,9 @@ def test_scan_result_processor() -> None:
         session_state_manager=session_state_manager,
     )
 
-    logger.info("✓ ScanResultProcessor 初始化成功")
-    logger.info(f"✓ 處理器類型: {type(processor).__name__}")
-    logger.info("✓ 可用方法:")
+    logger.info("[CHECK] ScanResultProcessor 初始化成功")
+    logger.info(f"[CHECK] 處理器類型: {type(processor).__name__}")
+    logger.info("[CHECK] 可用方法:")
     logger.info("  - stage_1_ingest_data")
     logger.info("  - stage_2_analyze_surface")
     logger.info("  - stage_3_generate_strategy")
@@ -122,7 +122,7 @@ def test_scan_result_processor() -> None:
     logger.info("  - stage_7_monitor_execution")
     logger.info("  - process (完整流程)")
 
-    logger.info("\n✅ 七階段處理器結構測試通過\n")
+    logger.info("\n[OK] 七階段處理器結構測試通過\n")
 
 
 async def test_scan_processing() -> None:
@@ -159,7 +159,7 @@ async def test_scan_processing() -> None:
         fingerprints={"server": "nginx", "framework": "flask"},
     )
 
-    logger.info("✓ 創建測試掃描數據:")
+    logger.info("[CHECK] 創建測試掃描數據:")
     logger.info(f"  - Scan ID: {scan_id}")
     logger.info(f"  - URLs: {test_payload.summary.urls_found}")
     logger.info(f"  - Forms: {test_payload.summary.forms_found}")
@@ -186,43 +186,43 @@ async def test_scan_processing() -> None:
     try:
         logger.info("\n執行階段 1: 資料接收與預處理...")
         await processor.stage_1_ingest_data(test_payload)
-        logger.info("✓ 階段 1 完成")
+        logger.info("[CHECK] 階段 1 完成")
 
         logger.info("\n執行階段 2: 攻擊面分析...")
         attack_surface = await processor.stage_2_analyze_surface(test_payload)
-        logger.info(f"✓ 階段 2 完成 - 發現風險點: {attack_surface}")
+        logger.info(f"[CHECK] 階段 2 完成 - 發現風險點: {attack_surface}")
 
         logger.info("\n執行階段 3: 策略生成...")
         base_strategy = await processor.stage_3_generate_strategy(scan_id)
-        logger.info(f"✓ 階段 3 完成 - 策略類型: {base_strategy.get('strategy_type')}")
+        logger.info(f"[CHECK] 階段 3 完成 - 策略類型: {base_strategy.get('strategy_type')}")
 
-        logger.info("\n✅ 掃描處理流程測試通過 (前 3 階段)\n")
+        logger.info("\n[OK] 掃描處理流程測試通過 (前 3 階段)\n")
 
     except Exception as e:
-        logger.error(f"❌ 測試失敗: {e}")
+        logger.error(f"[FAIL] 測試失敗: {e}")
         raise
 
 
 def print_summary() -> None:
     """打印測試摘要"""
     logger.info("=" * 60)
-    logger.info("📊 測試摘要")
+    logger.info("[STATS] 測試摘要")
     logger.info("=" * 60)
-    logger.info("✅ 所有測試通過!")
+    logger.info("[OK] 所有測試通過!")
     logger.info("")
     logger.info("已驗證的改進:")
-    logger.info("  1. ✅ 配置外部化 - 環境變數支援")
-    logger.info("  2. ✅ SQLi 引擎配置動態化 - 4 種策略")
-    logger.info("  3. ✅ 七階段處理器 - 模組化架構")
-    logger.info("  4. ✅ 掃描處理流程 - 前 3 階段測試")
+    logger.info("  1. [OK] 配置外部化 - 環境變數支援")
+    logger.info("  2. [OK] SQLi 引擎配置動態化 - 4 種策略")
+    logger.info("  3. [OK] 七階段處理器 - 模組化架構")
+    logger.info("  4. [OK] 掃描處理流程 - 前 3 階段測試")
     logger.info("")
-    logger.info("🎯 系統已準備就緒,可以開始實際測試!")
+    logger.info("[TARGET] 系統已準備就緒,可以開始實際測試!")
     logger.info("=" * 60)
 
 
 async def main() -> None:
     """主測試函數"""
-    logger.info("\n🚀 開始 AIVA 架構改進測試...\n")
+    logger.info("\n[START] 開始 AIVA 架構改進測試...\n")
 
     try:
         # 測試 1: 配置外部化
@@ -241,7 +241,7 @@ async def main() -> None:
         print_summary()
 
     except Exception as e:
-        logger.error(f"\n❌ 測試失敗: {e}", exc_info=True)
+        logger.error(f"\n[FAIL] 測試失敗: {e}", exc_info=True)
         raise
 
 

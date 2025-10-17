@@ -106,7 +106,7 @@ class TestResult(BaseModel):
     # 錯誤信息
     error_code: str | None = Field(default=None, description="錯誤代碼")
     error_message: str | None = Field(default=None, description="錯誤消息")
-    stack_trace: str | None = Field(default=None, description="堆棧跟踪")
+    stack_trace: str | None = Field(default=None, description="堆棧跟[U+8E2A]")
 
     # 時間戳
     started_at: datetime = Field(description="開始時間")

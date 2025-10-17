@@ -1,0 +1,61 @@
+flowchart TB
+    n1([開始])
+    n2([結束])
+    n3[&amp;&#35;39;初始化後端存儲&amp;&#35;39;]
+    n4{if self.backend == &amp;&#35;39;memory&amp;&#35;39;}
+    n5[logger.info&#40;&amp;&#35;39;Using in-memory vector store...]
+    n6{if self.backend == &amp;&#35;39;chroma&amp;&#35;39;}
+    n7[try]
+    n8[import chromadb]
+    n9[self.persist_directory.mkdir&#40;parents=True, exist_o...]
+    n10[self.client = chromadb.PersistentC...]
+    n11[logger.info&#40;f&amp;&#35;39;ChromaDB initialized at &#1...]
+    n12[]
+    n13[except ImportError]
+    n14[logger.warning&#40;&amp;&#35;39;ChromaDB not installed, f...]
+    n15[self.backend = &amp;&#35;39;memory&amp;&#35;39;]
+    n16{if self.backend == &amp;&#35;39;faiss&amp;&#35;39;}
+    n17[try]
+    n18[import faiss]
+    n19[self.persist_directory.mkdir&#40;parents=True, exist_o...]
+    n20[self.index = None]
+    n21[logger.info&#40;&amp;&#35;39;FAISS backend initialized&am...]
+    n22[]
+    n23[except ImportError]
+    n24[logger.warning&#40;&amp;&#35;39;FAISS not installed, fall...]
+    n25[self.backend = &amp;&#35;39;memory&amp;&#35;39;]
+    n26[]
+    n27[]
+    n28[]
+    n1 --> n3
+    n3 --> n4
+    n4 -->|Yes| n5
+    n4 -->|No| n6
+    n5 --> n28
+    n6 -->|Yes| n7
+    n6 -->|No| n16
+    n7 --> n8
+    n7 --> n13
+    n8 --> n9
+    n9 --> n10
+    n10 --> n11
+    n11 --> n12
+    n12 --> n27
+    n13 --> n14
+    n14 --> n15
+    n15 --> n12
+    n16 -->|Yes| n17
+    n16 -->|No| n26
+    n17 --> n18
+    n17 --> n23
+    n18 --> n19
+    n19 --> n20
+    n20 --> n21
+    n21 --> n22
+    n22 --> n26
+    n23 --> n24
+    n24 --> n25
+    n25 --> n22
+    n26 --> n27
+    n27 --> n28
+    n28 --> n2

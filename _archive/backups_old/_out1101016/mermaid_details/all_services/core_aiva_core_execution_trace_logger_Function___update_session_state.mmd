@@ -1,0 +1,37 @@
+flowchart TB
+    n1([開始])
+    n2([結束])
+    n3[&amp;&#35;39;更新會話狀態\n\n        Args:\n            session...]
+    n4{if session_id not in self.acti...}
+    n5[logger.warning&#40;f&amp;&#35;39;Session &#123;session_id...]
+    n6[return]
+    n7[]
+    n8[session = self.active_sessions...]
+    n9{if status == &amp;&#35;39;success&amp;&#35;39; and ste...}
+    n10[session.completed_steps.append&#40;step_id&#41;]
+    n11[]
+    n12{if step_id in session.pending_...}
+    n13[session.pending_steps.remove&#40;step_id&#41;]
+    n14[]
+    n15[session.current_step_index += 1]
+    n16[session.updated_at = datetime.now&#40;UTC&#41;]
+    n17[logger.debug&#40;f&amp;&#35;39;Updated session &#123;sess...]
+    n1 --> n3
+    n3 --> n4
+    n4 -->|Yes| n5
+    n4 -->|No| n7
+    n5 --> n6
+    n6 --> n7
+    n7 --> n8
+    n8 --> n9
+    n9 -->|Yes| n10
+    n9 -->|No| n11
+    n10 --> n11
+    n11 --> n12
+    n12 -->|Yes| n13
+    n12 -->|No| n14
+    n13 --> n14
+    n14 --> n15
+    n15 --> n16
+    n16 --> n17
+    n17 --> n2

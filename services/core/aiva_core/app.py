@@ -227,7 +227,7 @@ async def monitor_execution_status() -> None:
     """監控執行狀態與效能"""
     settings = get_settings()
     logger.info(
-        f"[📈] Starting execution status monitor "
+        f"[[U+1F4C8]] Starting execution status monitor "
         f"(interval: {settings.core_monitor_interval}s)..."
     )
 

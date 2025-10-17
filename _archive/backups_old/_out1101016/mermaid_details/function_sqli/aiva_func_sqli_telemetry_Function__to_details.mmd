@@ -1,0 +1,24 @@
+flowchart TB
+    n1([開始])
+    n2([結束])
+    n3[&amp;&#35;39;轉換為詳細的遙測報告格式&amp;&#35;39;]
+    n4[details: dict&#91;str, object&#93; = &#123;&amp;&#35;39;f...]
+    n5{if self.engines_run}
+    n6[details&#91;&amp;&#35;39;engines&amp;&#35;39;&#93; = list...]
+    n7[]
+    n8{if self.errors}
+    n9[details&#91;&amp;&#35;39;errors&amp;&#35;39;&#93; = self....]
+    n10[]
+    n11[return details]
+    n1 --> n3
+    n3 --> n4
+    n4 --> n5
+    n5 -->|Yes| n6
+    n5 -->|No| n7
+    n6 --> n7
+    n7 --> n8
+    n8 -->|Yes| n9
+    n8 -->|No| n10
+    n9 --> n10
+    n10 --> n11
+    n11 --> n2

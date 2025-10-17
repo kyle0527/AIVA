@@ -1,0 +1,15 @@
+flowchart TB
+    n1([開始])
+    n2([結束])
+    n3[&amp;&#35;39;Mock 路徑遍歷修復&amp;&#35;39;]
+    n4{if language == &amp;&#35;39;python&amp;&#35;39;}
+    n5[return f&amp;&#35;39;import os\nfrom pathlib impo...]
+    n6[]
+    n7[return f&amp;&#35;39;&#35; Fixed Path Traversal - Add...]
+    n1 --> n3
+    n3 --> n4
+    n4 -->|Yes| n5
+    n4 -->|No| n6
+    n5 --> n6
+    n6 --> n7
+    n7 --> n2

@@ -247,10 +247,10 @@ class AttackPathNLPRecommender:
         ]
 
         risk_emoji = {
-            RiskLevel.CRITICAL: "🔴",
-            RiskLevel.HIGH: "🟠",
-            RiskLevel.MEDIUM: "🟡",
-            RiskLevel.LOW: "🟢",
+            RiskLevel.CRITICAL: "[RED]",
+            RiskLevel.HIGH: "[U+1F7E0]",
+            RiskLevel.MEDIUM: "[YELLOW]",
+            RiskLevel.LOW: "[U+1F7E2]",
         }
 
         summary = f"{risk_emoji[risk_level]} **{risk_level.value.upper()} 風險攻擊路徑**\n\n"
@@ -347,7 +347,7 @@ class AttackPathNLPRecommender:
 
         # 根據風險等級給出不同的影響說明
         if risk_level == RiskLevel.CRITICAL:
-            impact += "### 🚨 嚴重業務影響\n\n"
+            impact += "### [ALERT] 嚴重業務影響\n\n"
             impact += "此攻擊路徑若被利用，可能導致:\n\n"
             impact += "- **資料洩露風險**: 極高，敏感資料可能完全洩露\n"
             impact += "- **服務中斷風險**: 高，可能導致服務完全停擺\n"
@@ -357,7 +357,7 @@ class AttackPathNLPRecommender:
             impact += "**建議行動**: 立即召集緊急會議，24小時內完成修復\n"
 
         elif risk_level == RiskLevel.HIGH:
-            impact += "### ⚠️ 高度業務影響\n\n"
+            impact += "### [WARN] 高度業務影響\n\n"
             impact += "此攻擊路徑具有顯著風險:\n\n"
             impact += "- **資料洩露風險**: 高，部分敏感資料可能洩露\n"
             impact += "- **服務中斷風險**: 中等，可能影響部分服務\n"
@@ -367,7 +367,7 @@ class AttackPathNLPRecommender:
             impact += "**建議行動**: 優先處理，一週內完成修復\n"
 
         elif risk_level == RiskLevel.MEDIUM:
-            impact += "### ⚡ 中度業務影響\n\n"
+            impact += "### [FAST] 中度業務影響\n\n"
             impact += "此攻擊路徑需要關注:\n\n"
             impact += "- **資料洩露風險**: 中等\n"
             impact += "- **服務中斷風險**: 低\n"
@@ -376,7 +376,7 @@ class AttackPathNLPRecommender:
             impact += "**建議行動**: 納入修復計劃，一個月內完成\n"
 
         else:
-            impact += "### ℹ️ 低度業務影響\n\n"
+            impact += "### [INFO] 低度業務影響\n\n"
             impact += "此攻擊路徑風險較低，但仍需注意。\n\n"
             impact += "**建議行動**: 常規維護週期內處理\n"
 
@@ -501,33 +501,33 @@ class AttackPathNLPRecommender:
             # 識別可以快速修復的項目
             if vuln_name == "XSS":
                 quick_wins.append(
-                    "🚀 部署 Content Security Policy (CSP) Header (1小時內可完成)"
+                    "[START] 部署 Content Security Policy (CSP) Header (1小時內可完成)"
                 )
                 quick_wins.append(
-                    "🚀 啟用 HttpOnly 和 Secure Cookie 標誌 (30分鐘內可完成)"
+                    "[START] 啟用 HttpOnly 和 Secure Cookie 標誌 (30分鐘內可完成)"
                 )
 
             elif vuln_name == "SSRF":
                 quick_wins.append(
-                    "🚀 在防火牆層面阻擋內部 IP 存取 (1小時內可完成)"
+                    "[START] 在防火牆層面阻擋內部 IP 存取 (1小時內可完成)"
                 )
                 quick_wins.append(
-                    "🚀 加入雲端元資料端點黑名單 (30分鐘內可完成)"
+                    "[START] 加入雲端元資料端點黑名單 (30分鐘內可完成)"
                 )
 
             elif vuln_name in ["IDOR", "BOLA"]:
                 quick_wins.append(
-                    "🚀 在中介軟體層面加入統一授權檢查 (半天可完成)"
+                    "[START] 在中介軟體層面加入統一授權檢查 (半天可完成)"
                 )
-                quick_wins.append("🚀 啟用詳細的存取日誌記錄 (1小時內可完成)")
+                quick_wins.append("[START] 啟用詳細的存取日誌記錄 (1小時內可完成)")
 
         # 通用快速修復
         if len(vulnerabilities) > 0:
             quick_wins.append(
-                "🚀 部署 WAF 規則阻擋已知攻擊模式 (當天可完成)"
+                "[START] 部署 WAF 規則阻擋已知攻擊模式 (當天可完成)"
             )
             quick_wins.append(
-                "🚀 限制錯誤訊息中的敏感資訊洩露 (半天可完成)"
+                "[START] 限制錯誤訊息中的敏感資訊洩露 (半天可完成)"
             )
 
         # 去重
@@ -639,7 +639,7 @@ class AttackPathNLPRecommender:
         report += "---\n\n"
 
         # 執行摘要
-        report += "## 📊 執行摘要\n\n"
+        report += "## [STATS] 執行摘要\n\n"
         report += f"本次分析發現 **{len(recommendations)}** 條需要關注的攻擊路徑。\n\n"
 
         # 風險等級統計
@@ -648,14 +648,14 @@ class AttackPathNLPRecommender:
             risk_counts[rec.risk_level] += 1
 
         report += "### 風險等級分布\n\n"
-        report += f"- 🔴 **CRITICAL**: {risk_counts[RiskLevel.CRITICAL]} 條\n"
-        report += f"- 🟠 **HIGH**: {risk_counts[RiskLevel.HIGH]} 條\n"
-        report += f"- 🟡 **MEDIUM**: {risk_counts[RiskLevel.MEDIUM]} 條\n"
-        report += f"- 🟢 **LOW**: {risk_counts[RiskLevel.LOW]} 條\n\n"
+        report += f"- [RED] **CRITICAL**: {risk_counts[RiskLevel.CRITICAL]} 條\n"
+        report += f"- [U+1F7E0] **HIGH**: {risk_counts[RiskLevel.HIGH]} 條\n"
+        report += f"- [YELLOW] **MEDIUM**: {risk_counts[RiskLevel.MEDIUM]} 條\n"
+        report += f"- [U+1F7E2] **LOW**: {risk_counts[RiskLevel.LOW]} 條\n\n"
 
         # 總體建議
         if risk_counts[RiskLevel.CRITICAL] > 0:
-            report += "### ⚠️ 緊急建議\n\n"
+            report += "### [WARN] 緊急建議\n\n"
             report += (
                 f"發現 {risk_counts[RiskLevel.CRITICAL]} 條 **CRITICAL** 風險攻擊路徑，"
             )
@@ -664,7 +664,7 @@ class AttackPathNLPRecommender:
         report += "---\n\n"
 
         # 詳細推薦
-        report += "## 🎯 詳細推薦\n\n"
+        report += "## [TARGET] 詳細推薦\n\n"
 
         for i, rec in enumerate(recommendations, 1):
             report += f"### 路徑 {i}: {rec.risk_level.value.upper()}\n\n"
@@ -680,25 +680,25 @@ class AttackPathNLPRecommender:
 
             # 快速修復
             if rec.quick_wins:
-                report += "### ⚡ 快速修復建議\n\n"
+                report += "### [FAST] 快速修復建議\n\n"
                 for quick_win in rec.quick_wins:
                     report += f"- {quick_win}\n"
                 report += "\n"
 
             # 修復步驟
-            report += "### 🔧 詳細修復步驟\n\n"
+            report += "### [CONFIG] 詳細修復步驟\n\n"
             for j, step in enumerate(rec.remediation_steps, 1):
                 report += f"{j}. {step}\n\n"
 
             # 受影響資產
             if rec.affected_assets:
-                report += "### 📦 受影響資產\n\n"
+                report += "### [U+1F4E6] 受影響資產\n\n"
                 for asset in rec.affected_assets:
                     report += f"- `{asset}`\n"
                 report += "\n"
 
             # 修復評估
-            report += "### 📈 修復評估\n\n"
+            report += "### [U+1F4C8] 修復評估\n\n"
             report += f"- **預估工作量**: {rec.estimated_effort}\n"
             report += (
                 f"- **預估風險降低**: {rec.estimated_risk_reduction:.0f}%\n"
@@ -708,7 +708,7 @@ class AttackPathNLPRecommender:
             report += "---\n\n"
 
         # 總結
-        report += "## 📝 總結與後續行動\n\n"
+        report += "## [NOTE] 總結與後續行動\n\n"
         report += "### 建議的行動優先順序\n\n"
 
         critical_recs = [r for r in recommendations if r.risk_level == RiskLevel.CRITICAL]

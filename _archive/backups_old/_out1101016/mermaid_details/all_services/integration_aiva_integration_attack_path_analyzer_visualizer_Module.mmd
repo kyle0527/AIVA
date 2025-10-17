@@ -1,0 +1,39 @@
+flowchart TB
+    n1([開始])
+    n2([結束])
+    n3[&amp;&#35;39;\nAttack Path Visualizer - 攻擊路徑視覺化\n\n將攻擊路徑匯...]
+    n4[import json]
+    n5[from .engine import AttackPath]
+    n6[class AttackPathVisualizer&#40;...&#41;]
+    n7{if __name__ == &amp;&#35;39;__main__&amp;&#35;39;}
+    n8[from .engine import AttackPathEngine]
+    n9[engine = AttackPathEngine&#40;&#41;]
+    n10[try]
+    n11[engine.initialize_graph&#40;&#41;]
+    n12[paths = engine.find_attack_p...]
+    n13[mermaid_code = AttackPathVisualizer...]
+    n14[print&#40;mermaid_code&#41;]
+    n15[AttackPathVisualizer.to_html&#40;paths&#41;]
+    n16[]
+    n17[finally]
+    n18[engine.close&#40;&#41;]
+    n19[]
+    n1 --> n3
+    n3 --> n4
+    n4 --> n5
+    n5 --> n6
+    n6 --> n7
+    n7 -->|Yes| n8
+    n7 -->|No| n19
+    n8 --> n9
+    n9 --> n10
+    n10 --> n11
+    n11 --> n12
+    n12 --> n13
+    n13 --> n14
+    n14 --> n15
+    n15 --> n16
+    n16 --> n17
+    n17 --> n18
+    n18 --> n19
+    n19 --> n2

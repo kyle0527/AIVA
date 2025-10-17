@@ -1,0 +1,18 @@
+flowchart TB
+    n1([開始])
+    n2([結束])
+    n3[&amp;&#35;39;\n存儲管理器\n\n統一的存儲接口，管理所有數據持久化\n&amp;&#35;39;]
+    n4[import logging]
+    n5[from pathlib import Path]
+    n6[from typing import Any]
+    n7[from .backends import HybridBackend, JSONLBackend,...]
+    n8[logger = logging.getLogger&#40;__...]
+    n9[class StorageManager&#40;...&#41;]
+    n1 --> n3
+    n3 --> n4
+    n4 --> n5
+    n5 --> n6
+    n6 --> n7
+    n7 --> n8
+    n8 --> n9
+    n9 --> n2

@@ -1,0 +1,10 @@
+flowchart TB
+    n1([開始])
+    n2([結束])
+    n3[&amp;&#35;39;獲取特定模組的有效配置&amp;&#35;39;]
+    n4[module_configs = &#123;&amp;&#35;39;sqli&amp;&#35;39;: se...]
+    n5[return module_configs.get&#40;module_name...]
+    n1 --> n3
+    n3 --> n4
+    n4 --> n5
+    n5 --> n2

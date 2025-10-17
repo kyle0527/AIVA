@@ -362,7 +362,7 @@ from pathlib import Path
 
 def main():
     """測試範例 - Mock 模式"""
-    print("🤖 Code Fixer Demo (Mock Mode)")
+    print("[AI] Code Fixer Demo (Mock Mode)")
     print("=" * 60)
 
     # 使用 Mock 模式(不需要 API key)
@@ -376,7 +376,7 @@ def main():
         language="python",
     )
 
-    print("\n📋 SQL Injection Fix:")
+    print("\n[LIST] SQL Injection Fix:")
     print(f"   Status: {result1['status']}")
     print(f"   Confidence: {result1['confidence']}")
     print(f"   Explanation: {result1['explanation']}")
@@ -389,12 +389,12 @@ def main():
         language="python",
     )
 
-    print("\n📋 XSS Fix:")
+    print("\n[LIST] XSS Fix:")
     print(f"   Status: {result2['status']}")
     print(f"   Confidence: {result2['confidence']}")
 
-    print("\n✅ Demo completed (Mock mode)")
-    print("💡 Provide API key to use real LLM fixes")
+    print("\n[OK] Demo completed (Mock mode)")
+    print("[TIP] Provide API key to use real LLM fixes")
 
 
 if __name__ == "__main__":

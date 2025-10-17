@@ -1,0 +1,25 @@
+flowchart TB
+    n1([開始])
+    n2([結束])
+    n3[&amp;&#35;39;簡單的嵌入函數（後備方案）\n\n        Args:\n            ...]
+    n4[hash_val = hash&#40;text&#41;]
+    n5[dim = 384]
+    n6[np.random.seed&#40;hash_val % 2 ** 32&#41;]
+    n7[embedding = np.random.randn&#40;dim&#41;...]
+    n8[norm = np.linalg.norm&#40;embed...]
+    n9{if norm &amp;gt; 0}
+    n10[embedding = embedding / norm]
+    n11[]
+    n12[return embedding]
+    n1 --> n3
+    n3 --> n4
+    n4 --> n5
+    n5 --> n6
+    n6 --> n7
+    n7 --> n8
+    n8 --> n9
+    n9 -->|Yes| n10
+    n9 -->|No| n11
+    n10 --> n11
+    n11 --> n12
+    n12 --> n2

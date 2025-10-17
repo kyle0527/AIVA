@@ -1,0 +1,37 @@
+flowchart TB
+    n1([開始])
+    n2([結束])
+    n3[&amp;&#35;39;獲取軌跡摘要\n\n        Args:\n            trace_s...]
+    n4[trace = self.trace_recorder....]
+    n5{if not trace}
+    n6[return None]
+    n7[]
+    n8[type_counts = &#123;&#125;]
+    n9{for entry in trace.entries}
+    n10[trace_type = entry.trace_type.val...]
+    n11[type_counts&#91;trace_type&#93; = type_counts.get&#40;tra...]
+    n12[]
+    n13[duration = None]
+    n14{if trace.end_time}
+    n15[duration = &#40;trace.end_time - tr...]
+    n16[]
+    n17[return &#123;&amp;&#35;39;trace_session_id&amp;&#35;39;: ...]
+    n1 --> n3
+    n3 --> n4
+    n4 --> n5
+    n5 -->|Yes| n6
+    n5 -->|No| n7
+    n6 --> n7
+    n7 --> n8
+    n8 --> n9
+    n9 -->|Yes| n10
+    n9 -->|No| n12
+    n10 --> n11
+    n11 --> n9
+    n12 --> n13
+    n13 --> n14
+    n14 -->|Yes| n15
+    n14 -->|No| n16
+    n15 --> n16
+    n16 --> n17
+    n17 --> n2

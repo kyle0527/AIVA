@@ -36,24 +36,24 @@ async def main():
         data_root=data_root, db_type=db_type, auto_create_dirs=True
     )
 
-    logger.info("✅ Storage initialized successfully!")
+    logger.info("[OK] Storage initialized successfully!")
 
     # 顯示目錄結構
-    print("\n📁 Data Directory Structure:")
+    print("\n[U+1F4C1] Data Directory Structure:")
     print(f"Root: {data_root}")
     for category, paths in storage.dirs.items():
         print(f"\n{category.upper()}:")
         if isinstance(paths, dict):
             for name, path in paths.items():
-                exists = "✅" if path.exists() else "❌"
+                exists = "[OK]" if path.exists() else "[FAIL]"
                 print(f"  {exists} {name}: {path}")
         else:
-            exists = "✅" if paths.exists() else "❌"
+            exists = "[OK]" if paths.exists() else "[FAIL]"
             print(f"  {exists} {paths}")
 
     # 獲取統計
     stats = await storage.get_statistics()
-    print("\n📊 Storage Statistics:")
+    print("\n[STATS] Storage Statistics:")
     for key, value in stats.items():
         if isinstance(value, int) and key.endswith("_size"):
             # 格式化大小

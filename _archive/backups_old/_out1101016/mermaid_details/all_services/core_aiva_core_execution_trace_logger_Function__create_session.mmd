@@ -1,0 +1,20 @@
+flowchart TB
+    n1([開始])
+    n2([結束])
+    n3[&amp;&#35;39;創建新的會話\n\n        Args:\n            plan_id...]
+    n4[session_id = f&amp;&#35;39;session_&#123;uuid4&#40;&#41;....]
+    n5[timeout_at = datetime.now&#40;UTC&#41;]
+    n6[timeout_at = timeout_at.replace&#40;m...]
+    n7[session = SessionState&#40;session...]
+    n8[self.active_sessions&#91;session_id&#93; = session]
+    n9[logger.info&#40;f&amp;&#35;39;Created session &#123;sessi...]
+    n10[return session]
+    n1 --> n3
+    n3 --> n4
+    n4 --> n5
+    n5 --> n6
+    n6 --> n7
+    n7 --> n8
+    n8 --> n9
+    n9 --> n10
+    n10 --> n2

@@ -1,0 +1,8 @@
+flowchart TB
+    n1([開始])
+    n2([結束])
+    n3[&amp;&#35;39;獲取支援的資料庫類型列表&amp;&#35;39;]
+    n4[return list&#40;self._db_patterns.keys&#40;&#41;&#41;]
+    n1 --> n3
+    n3 --> n4
+    n4 --> n2

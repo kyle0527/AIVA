@@ -63,7 +63,7 @@ class ArchitectureDiagramGenerator:
     def generate_all_diagrams(self) -> list[Path]:
         """生成所有圖表 | Generate all diagrams"""
         print(
-            "🚀 開始生成 AIVA 完整架構圖... | Starting AIVA complete architecture diagram generation..."
+            "[START] 開始生成 AIVA 完整架構圖... | Starting AIVA complete architecture diagram generation..."
         )
 
         diagrams = []
@@ -105,48 +105,48 @@ class ArchitectureDiagramGenerator:
         diagrams.append(self._generate_deployment_architecture())
 
         print(
-            f"✅ 完成！生成了 {len(diagrams)} 個圖表 | Completed! Generated {len(diagrams)} diagrams"
+            f"[OK] 完成！生成了 {len(diagrams)} 個圖表 | Completed! Generated {len(diagrams)} diagrams"
         )
         return diagrams
 
     def _generate_overall_architecture(self) -> Path:
         """生成整體系統架構圖 | Generate overall system architecture"""
-        print("  📊 生成整體系統架構... | Generating overall system architecture...")
+        print("  [STATS] 生成整體系統架構... | Generating overall system architecture...")
 
         mermaid_code = """graph TB
-    subgraph "🎨 前端層 Frontend Layer"
-        UI["🖥️ Web UI<br/>網頁介面<br/><i>FastAPI + React</i>"]
-        API["🔌 REST API<br/>REST 接口<br/><i>OpenAPI 3.0</i>"]
+    subgraph "[U+1F3A8] 前端層 Frontend Layer"
+        UI["[UI] Web UI<br/>網頁介面<br/><i>FastAPI + React</i>"]
+        API["[U+1F50C] REST API<br/>REST 接口<br/><i>OpenAPI 3.0</i>"]
     end
 
-    subgraph "🤖 核心層 Core Layer"
-        CORE["⚡ AI Core Engine<br/>AI 核心引擎<br/><i>Bio Neuron Network</i>"]
-        STRATEGY["📋 Strategy Generator<br/>策略生成器<br/><i>Dynamic Planning</i>"]
-        TASK["📦 Task Manager<br/>任務管理器<br/><i>Multi-threading</i>"]
+    subgraph "[AI] 核心層 Core Layer"
+        CORE["[FAST] AI Core Engine<br/>AI 核心引擎<br/><i>Bio Neuron Network</i>"]
+        STRATEGY["[LIST] Strategy Generator<br/>策略生成器<br/><i>Dynamic Planning</i>"]
+        TASK["[U+1F4E6] Task Manager<br/>任務管理器<br/><i>Multi-threading</i>"]
     end
 
-    subgraph "🔍 掃描層 Scan Layer"
-        SCAN_PY["🐍 Python Scanner<br/>Python 掃描器<br/><i>Requests + aiohttp</i>"]
-        SCAN_TS["📘 TypeScript Scanner<br/>TypeScript 掃描器<br/><i>Playwright</i>"]
-        SCAN_RS["🦀 Rust Info Gatherer<br/>Rust 資訊收集<br/><i>High Performance</i>"]
+    subgraph "[SEARCH] 掃描層 Scan Layer"
+        SCAN_PY["[U+1F40D] Python Scanner<br/>Python 掃描器<br/><i>Requests + aiohttp</i>"]
+        SCAN_TS["[U+1F4D8] TypeScript Scanner<br/>TypeScript 掃描器<br/><i>Playwright</i>"]
+        SCAN_RS["[U+1F980] Rust Info Gatherer<br/>Rust 資訊收集<br/><i>High Performance</i>"]
     end
 
-    subgraph "⚡ 檢測層 Detection Layer"
-        FUNC_PY["🐍 Python Functions<br/>Python 檢測模組<br/><i>SQLi, XSS, IDOR</i>"]
-        FUNC_GO["🔷 Go Functions<br/>Go 檢測模組<br/><i>AuthN, CSPM, SCA</i>"]
-        FUNC_RS["🦀 Rust Functions<br/>Rust 檢測模組<br/><i>SAST, Deserialization</i>"]
+    subgraph "[FAST] 檢測層 Detection Layer"
+        FUNC_PY["[U+1F40D] Python Functions<br/>Python 檢測模組<br/><i>SQLi, XSS, IDOR</i>"]
+        FUNC_GO["[U+1F537] Go Functions<br/>Go 檢測模組<br/><i>AuthN, CSPM, SCA</i>"]
+        FUNC_RS["[U+1F980] Rust Functions<br/>Rust 檢測模組<br/><i>SAST, Deserialization</i>"]
     end
 
-    subgraph "🔗 整合層 Integration Layer"
-        INTG["🔧 Integration Service<br/>整合服務<br/><i>Result Aggregation</i>"]
-        REPORT["📊 Report Generator<br/>報告生成器<br/><i>HTML/PDF/JSON</i>"]
-        ANALYSIS["🎯 Risk Analyzer<br/>風險分析器<br/><i>CVSS Scoring</i>"]
+    subgraph "[U+1F517] 整合層 Integration Layer"
+        INTG["[CONFIG] Integration Service<br/>整合服務<br/><i>Result Aggregation</i>"]
+        REPORT["[STATS] Report Generator<br/>報告生成器<br/><i>HTML/PDF/JSON</i>"]
+        ANALYSIS["[TARGET] Risk Analyzer<br/>風險分析器<br/><i>CVSS Scoring</i>"]
     end
 
-    subgraph "💾 資料層 Data Layer"
-        DB[("🗄️ PostgreSQL<br/>資料庫<br/><i>Primary Storage</i>")]
-        MQ["📨 RabbitMQ<br/>訊息佇列<br/><i>Task Distribution</i>"]
-        REDIS[("⚡ Redis<br/>快取<br/><i>Session & Cache</i>")]
+    subgraph "[SAVE] 資料層 Data Layer"
+        DB[("[U+1F5C4][U+FE0F] PostgreSQL<br/>資料庫<br/><i>Primary Storage</i>")]
+        MQ["[U+1F4E8] RabbitMQ<br/>訊息佇列<br/><i>Task Distribution</i>"]
+        REDIS[("[FAST] Redis<br/>快取<br/><i>Session & Cache</i>")]
     end
 
     UI -->|HTTP Request| API
@@ -207,7 +207,7 @@ class ArchitectureDiagramGenerator:
 
     def _generate_modules_overview(self) -> Path:
         """生成四大模組概覽 | Generate four core modules overview"""
-        print("  📊 生成四大模組概覽... | Generating four core modules overview...")
+        print("  [STATS] 生成四大模組概覽... | Generating four core modules overview...")
 
         mermaid_code = """graph LR
     subgraph "Module 1: Core Engine<br/>模組一：核心引擎"
@@ -263,7 +263,7 @@ class ArchitectureDiagramGenerator:
 
     def _generate_core_module(self) -> Path:
         """生成核心引擎模組 | Generate core engine module"""
-        print("  📊 生成核心引擎模組... | Generating core engine module...")
+        print("  [STATS] 生成核心引擎模組... | Generating core engine module...")
 
         mermaid_code = """graph TB
     subgraph "Core Module<br/>核心引擎模組"
@@ -326,7 +326,7 @@ class ArchitectureDiagramGenerator:
 
     def _generate_scan_module(self) -> Path:
         """生成掃描引擎模組 | Generate scan engine module"""
-        print("  📊 生成掃描引擎模組... | Generating scan engine module...")
+        print("  [STATS] 生成掃描引擎模組... | Generating scan engine module...")
 
         # 掃描模組的 Mermaid 代碼 (從之前的檔案複製)
         mermaid_code = """graph TB
@@ -368,7 +368,7 @@ class ArchitectureDiagramGenerator:
 
     def _generate_function_module(self) -> Path:
         """生成檢測功能模組 | Generate detection function module"""
-        print("  📊 生成檢測功能模組... | Generating detection function module...")
+        print("  [STATS] 生成檢測功能模組... | Generating detection function module...")
 
         mermaid_code = """graph TB
     subgraph "Function Module<br/>檢測功能模組"
@@ -408,7 +408,7 @@ class ArchitectureDiagramGenerator:
 
     def _generate_integration_module(self) -> Path:
         """生成整合服務模組 | Generate integration service module"""
-        print("  📊 生成整合服務模組... | Generating integration service module...")
+        print("  [STATS] 生成整合服務模組... | Generating integration service module...")
 
         mermaid_code = """graph TB
     subgraph "Integration Module<br/>整合服務模組"
@@ -451,7 +451,7 @@ class ArchitectureDiagramGenerator:
 
     def _generate_sqli_flow(self) -> Path:
         """生成 SQL 注入檢測流程 | Generate SQLi detection flow"""
-        print("  📊 生成 SQL 注入檢測流程... | Generating SQLi detection flow...")
+        print("  [STATS] 生成 SQL 注入檢測流程... | Generating SQLi detection flow...")
 
         mermaid_code = """flowchart TD
     START([Start SQLi Detection<br/>開始 SQL 注入檢測])
@@ -487,7 +487,7 @@ class ArchitectureDiagramGenerator:
 
     def _generate_xss_flow(self) -> Path:
         """生成 XSS 檢測流程 | Generate XSS detection flow"""
-        print("  📊 生成 XSS 檢測流程... | Generating XSS detection flow...")
+        print("  [STATS] 生成 XSS 檢測流程... | Generating XSS detection flow...")
 
         mermaid_code = """flowchart TD
     START([Start XSS Detection<br/>開始 XSS 檢測])
@@ -525,7 +525,7 @@ class ArchitectureDiagramGenerator:
 
     def _generate_ssrf_flow(self) -> Path:
         """生成 SSRF 檢測流程 | Generate SSRF detection flow"""
-        print("  📊 生成 SSRF 檢測流程... | Generating SSRF detection flow...")
+        print("  [STATS] 生成 SSRF 檢測流程... | Generating SSRF detection flow...")
 
         mermaid_code = """flowchart TD
     START([Start SSRF Detection<br/>開始 SSRF 檢測])
@@ -558,7 +558,7 @@ class ArchitectureDiagramGenerator:
 
     def _generate_idor_flow(self) -> Path:
         """生成 IDOR 檢測流程 | Generate IDOR detection flow"""
-        print("  📊 生成 IDOR 檢測流程... | Generating IDOR detection flow...")
+        print("  [STATS] 生成 IDOR 檢測流程... | Generating IDOR detection flow...")
 
         mermaid_code = """flowchart TD
     START([Start IDOR Detection<br/>開始 IDOR 檢測])
@@ -595,16 +595,16 @@ class ArchitectureDiagramGenerator:
 
     def _generate_complete_workflow(self) -> Path:
         """生成完整掃描工作流程 | Generate complete scan workflow"""
-        print("  📊 生成完整掃描工作流程... | Generating complete scan workflow...")
+        print("  [STATS] 生成完整掃描工作流程... | Generating complete scan workflow...")
 
         mermaid_code = """sequenceDiagram
-    participant User as 👤 User<br/>使用者
-    participant API as 🔌 API<br/>接口
-    participant Core as 🤖 Core<br/>核心
-    participant Scan as 🔍 Scanner<br/>掃描器
-    participant MQ as 📨 MQ<br/>佇列
-    participant Func as ⚡ Functions<br/>檢測
-    participant Intg as 🔗 Integration<br/>整合
+    participant User as [U+1F464] User<br/>使用者
+    participant API as [U+1F50C] API<br/>接口
+    participant Core as [AI] Core<br/>核心
+    participant Scan as [SEARCH] Scanner<br/>掃描器
+    participant MQ as [U+1F4E8] MQ<br/>佇列
+    participant Func as [FAST] Functions<br/>檢測
+    participant Intg as [U+1F517] Integration<br/>整合
 
     User->>API: Submit Request<br/>提交請求
     API->>Core: Create Task<br/>創建任務
@@ -626,7 +626,7 @@ class ArchitectureDiagramGenerator:
     def _generate_language_decision(self) -> Path:
         """生成多語言架構決策 | Generate multi-language architecture decision"""
         print(
-            "  📊 生成多語言架構決策... | Generating multi-language architecture decision..."
+            "  [STATS] 生成多語言架構決策... | Generating multi-language architecture decision..."
         )
 
         mermaid_code = """flowchart TD
@@ -668,7 +668,7 @@ class ArchitectureDiagramGenerator:
 
     def _generate_data_flow(self) -> Path:
         """生成資料流程圖 | Generate data flow diagram"""
-        print("  📊 生成資料流程圖... | Generating data flow diagram...")
+        print("  [STATS] 生成資料流程圖... | Generating data flow diagram...")
 
         mermaid_code = """graph TB
     INPUT[User Input<br/>用戶輸入]
@@ -697,7 +697,7 @@ class ArchitectureDiagramGenerator:
 
     def _generate_deployment_architecture(self) -> Path:
         """生成部署架構圖 | Generate deployment architecture"""
-        print("  📊 生成部署架構圖... | Generating deployment architecture...")
+        print("  [STATS] 生成部署架構圖... | Generating deployment architecture...")
 
         mermaid_code = """graph TB
     LB[Load Balancer<br/>負載均衡器]
@@ -754,7 +754,7 @@ class ArchitectureDiagramGenerator:
 **Timestamp**: {self._get_timestamp()}
 """
         output_file.write_text(content, encoding="utf-8")
-        print(f"    ✅ 已生成: {output_file.name}")
+        print(f"    [OK] 已生成: {output_file.name}")
 
     def _get_timestamp(self) -> str:
         """取得時間戳記 | Get timestamp"""
@@ -770,13 +770,13 @@ class ArchitectureDiagramGenerator:
         # 檢查是否安裝 mmdc
         if not self._check_mmdc_installed():
             print(
-                "⚠️  未安裝 mermaid-cli，無法匯出圖片 | mermaid-cli not installed, cannot export images"
+                "[WARN]  未安裝 mermaid-cli，無法匯出圖片 | mermaid-cli not installed, cannot export images"
             )
             print("   安裝方法 Install: npm install -g @mermaid-js/mermaid-cli")
             return
 
         print(
-            f"📤 開始匯出 {format.upper()} 格式... | Starting {format.upper()} export..."
+            f"[U+1F4E4] 開始匯出 {format.upper()} 格式... | Starting {format.upper()} export..."
         )
 
         for diagram in diagrams:
@@ -797,9 +797,9 @@ class ArchitectureDiagramGenerator:
                     check=True,
                     capture_output=True,
                 )
-                print(f"  ✅ 已匯出: {output_file.name}")
+                print(f"  [OK] 已匯出: {output_file.name}")
             except subprocess.CalledProcessError as e:
-                print(f"  ❌ 匯出失敗 Failed: {diagram.name} - {e}")
+                print(f"  [FAIL] 匯出失敗 Failed: {diagram.name} - {e}")
 
     def _check_mmdc_installed(self) -> bool:
         """檢查是否安裝 mermaid-cli | Check if mermaid-cli is installed"""
@@ -811,7 +811,7 @@ class ArchitectureDiagramGenerator:
 
     def create_index(self, diagrams: list[Path]):
         """創建索引檔案 | Create index file"""
-        print("📋 生成索引檔案... | Generating index file...")
+        print("[LIST] 生成索引檔案... | Generating index file...")
 
         index_content = f"""# AIVA 架構圖索引 | Architecture Diagrams Index
 
@@ -870,7 +870,7 @@ python tools/generate_complete_architecture.py --export png
 
         index_file = self.output_dir / "INDEX.md"
         index_file.write_text(index_content, encoding="utf-8")
-        print(f"  ✅ 已生成索引: {index_file}")
+        print(f"  [OK] 已生成索引: {index_file}")
 
 
 def main():
@@ -905,8 +905,8 @@ def main():
         generator.export_diagrams(format=args.export, diagrams=diagrams)
 
     print("\n" + "=" * 60)
-    print("✨ 完成！所有架構圖已生成 | Completed! All diagrams generated")
-    print(f"📁 輸出位置 Output: {generator.output_dir}")
+    print("[SPARKLE] 完成！所有架構圖已生成 | Completed! All diagrams generated")
+    print(f"[U+1F4C1] 輸出位置 Output: {generator.output_dir}")
     print("=" * 60)
 
 

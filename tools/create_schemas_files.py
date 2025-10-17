@@ -685,16 +685,16 @@ def create_file_safe(file_path: Path, content: str):
     """安全地創建檔案"""
     try:
         file_path.write_text(content, encoding='utf-8')
-        print(f"✅ 成功創建: {file_path.name}")
+        print(f"[OK] 成功創建: {file_path.name}")
         return True
     except Exception as e:
-        print(f"❌ 創建失敗 {file_path.name}: {e}")
+        print(f"[FAIL] 創建失敗 {file_path.name}: {e}")
         return False
 
 def main():
     """主函數"""
-    print(f"📁 目標目錄: {SCHEMAS_DIR}")
-    print(f"📝 準備創建 {len(REMAINING_FILES)} 個檔案\n")
+    print(f"[U+1F4C1] 目標目錄: {SCHEMAS_DIR}")
+    print(f"[NOTE] 準備創建 {len(REMAINING_FILES)} 個檔案\n")
     
     success_count = 0
     for filename, content in REMAINING_FILES.items():
@@ -702,7 +702,7 @@ def main():
         if create_file_safe(file_path, content):
             success_count += 1
     
-    print(f"\n✨ 完成! 成功創建 {success_count}/{len(REMAINING_FILES)} 個檔案")
+    print(f"\n[SPARKLE] 完成! 成功創建 {success_count}/{len(REMAINING_FILES)} 個檔案")
     return success_count == len(REMAINING_FILES)
 
 if __name__ == "__main__":

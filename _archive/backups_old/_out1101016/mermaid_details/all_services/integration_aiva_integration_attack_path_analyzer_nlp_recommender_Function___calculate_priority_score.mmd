@@ -1,0 +1,47 @@
+flowchart TB
+    n1([開始])
+    n2([結束])
+    n3[&amp;&#35;39;\n        計算優先級分數\n\n        考慮因素:\n        ...]
+    n4[base_risk = min&#40;path.total_risk_...]
+    n5{if path.length &amp;lt;= 3}
+    n6[length_score = 25]
+    n7{if path.length &amp;lt;= 6}
+    n8[length_score = 15]
+    n9[length_score = 5]
+    n10[]
+    n11[]
+    n12[target_node = path.nodes&#91;-1&#93; if pa...]
+    n13[target_labels = target_node.get&#40;&amp;&#35;39;lab...]
+    n14[sensitivity_scores = &#123;&amp;&#35;39;Database&amp;&#35...]
+    n15[sensitivity_score = 0]
+    n16{for label in target_labels}
+    n17[sensitivity_score = max&#40;sensitivity_scor...]
+    n18[]
+    n19[critical_vuln_count = sum&#40;&#40;1 for node in p...]
+    n20[vuln_score = min&#40;critical_vuln_co...]
+    n21[total_score = base_risk + length_s...]
+    n22[return min&#40;total_score, 100.0&#41;]
+    n1 --> n3
+    n3 --> n4
+    n4 --> n5
+    n5 -->|Yes| n6
+    n5 -->|No| n7
+    n6 --> n11
+    n7 -->|Yes| n8
+    n7 -->|No| n9
+    n8 --> n10
+    n9 --> n10
+    n10 --> n11
+    n11 --> n12
+    n12 --> n13
+    n13 --> n14
+    n14 --> n15
+    n15 --> n16
+    n16 -->|Yes| n17
+    n16 -->|No| n18
+    n17 --> n16
+    n18 --> n19
+    n19 --> n20
+    n20 --> n21
+    n21 --> n22
+    n22 --> n2

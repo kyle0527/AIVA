@@ -1,0 +1,16 @@
+flowchart TB
+    n1([開始])
+    n2([結束])
+    n3[&amp;&#35;39;\nAuthZ Module - 授權與權限分析模組\n\n提供權限矩陣分析、角色映射、...]
+    n4[from .authz_mapper import AuthZMapper]
+    n5[from .matrix_visualizer import MatrixVisualizer]
+    n6[from .permission_matrix import PermissionMatrix]
+    n7[__all__ = &#91;&amp;&#35;39;PermissionMatrix&amp;&#35;39;...]
+    n8[__version__ = &amp;&#35;39;1.0.0&amp;&#35;39;]
+    n1 --> n3
+    n3 --> n4
+    n4 --> n5
+    n5 --> n6
+    n6 --> n7
+    n7 --> n8
+    n8 --> n2

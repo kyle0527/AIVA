@@ -1,0 +1,43 @@
+flowchart TB
+    n1([開始])
+    n2([結束])
+    n3[&amp;&#35;39;\nAIVA 增強功能整合示例\n\n展示如何在實際掃描流程中使用新的資產與漏洞生命週期...]
+    n4[from __future__ import annotations]
+    n5[import asyncio]
+    n6[from typing import Any]
+    n7[from sqlalchemy import create_engine]
+    n8[from sqlalchemy.orm import sessionmaker]
+    n9[from services.aiva_common.schemas import FindingPa...]
+    n10[from services.aiva_common.utils import get_logger]
+    n11[from services.integration.aiva_integration.analysi...]
+    n12[from services.integration.aiva_integration.recepti...]
+    n13[from services.integration.aiva_integration.recepti...]
+    n14[logger = get_logger&#40;__name__&#41;]
+    n15[class EnhancedScanProcessor&#40;...&#41;]
+    n16[def example_scan_workflow&#40;...&#41;]
+    n17[def example_vulnerability_management&#40;...&#41;]
+    n18{if __name__ == &amp;&#35;39;__main__&amp;&#35;39;}
+    n19[asyncio.run&#40;example_scan_workflow&#40;&#41;&#41;]
+    n20[asyncio.run&#40;example_vulnerability_management&#40;&#41...]
+    n21[]
+    n1 --> n3
+    n3 --> n4
+    n4 --> n5
+    n5 --> n6
+    n6 --> n7
+    n7 --> n8
+    n8 --> n9
+    n9 --> n10
+    n10 --> n11
+    n11 --> n12
+    n12 --> n13
+    n13 --> n14
+    n14 --> n15
+    n15 --> n16
+    n16 --> n17
+    n17 --> n18
+    n18 -->|Yes| n19
+    n18 -->|No| n21
+    n19 --> n20
+    n20 --> n21
+    n21 --> n2

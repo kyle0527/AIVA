@@ -1,0 +1,32 @@
+flowchart TB
+    n1([開始])
+    n2([結束])
+    n3[&amp;&#35;39;\n        批量修復多個問題\n\n        Args:\n       ...]
+    n4[logger.info&#40;&amp;&#35;39;fixing_multiple_issues&amp;&...]
+    n5[results = &#123;&amp;&#35;39;timestamp&amp;&#35;39;: date...]
+    n6{for issue in issues}
+    n7[fix = self.fix_vulnerabili...]
+    n8[results&#91;&amp;&#35;39;fixes&amp;&#35;39;&#93;.append&#...]
+    n9{if fix&#91;&amp;&#35;39;status&amp;&#35;39;&#93; == &amp;...}
+    n10[results&#91;&amp;&#35;39;success_count&amp;&#35;39;&#93; ...]
+    n11[results&#91;&amp;&#35;39;failed_count&amp;&#35;39;&#93; += 1]
+    n12[]
+    n13[]
+    n14[logger.info&#40;&amp;&#35;39;multiple_issues_fixed&amp;&#...]
+    n15[return results]
+    n1 --> n3
+    n3 --> n4
+    n4 --> n5
+    n5 --> n6
+    n6 -->|Yes| n7
+    n6 -->|No| n13
+    n7 --> n8
+    n8 --> n9
+    n9 -->|Yes| n10
+    n9 -->|No| n11
+    n10 --> n12
+    n11 --> n12
+    n12 --> n6
+    n13 --> n14
+    n14 --> n15
+    n15 --> n2

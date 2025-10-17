@@ -1,0 +1,68 @@
+flowchart TB
+    n1([開始])
+    n2([結束])
+    n3[&amp;&#35;39;\nAIVA Function Models - 功能測試模組\n\n此文件包含與主動功...]
+    n4[from __future__ import annotations]
+    n5[from datetime import UTC, datetime]
+    n6[from typing import Any]
+    n7[from pydantic import BaseModel, Field, HttpUrl, fi...]
+    n8[from ..aiva_common.enums import Confidence, PostEx...]
+    n9[class FunctionTaskTarget&#40;...&#41;]
+    n10[class FunctionTaskContext&#40;...&#41;]
+    n11[class FunctionTaskTestConfig&#40;...&#41;]
+    n12[class FunctionTaskPayload&#40;...&#41;]
+    n13[class EnhancedFunctionTaskTarget&#40;...&#41;]
+    n14[class FunctionTelemetry&#40;...&#41;]
+    n15[class ExecutionError&#40;...&#41;]
+    n16[class FunctionExecutionResult&#40;...&#41;]
+    n17[class TestExecution&#40;...&#41;]
+    n18[class ExploitPayload&#40;...&#41;]
+    n19[class ExploitResult&#40;...&#41;]
+    n20[class PostExTestPayload&#40;...&#41;]
+    n21[class PostExResultPayload&#40;...&#41;]
+    n22[class APISchemaPayload&#40;...&#41;]
+    n23[class APITestCase&#40;...&#41;]
+    n24[class APISecurityTestPayload&#40;...&#41;]
+    n25[class OastEvent&#40;...&#41;]
+    n26[class OastProbe&#40;...&#41;]
+    n27[class BizLogicTestPayload&#40;...&#41;]
+    n28[class BizLogicResultPayload&#40;...&#41;]
+    n29[class AuthZCheckPayload&#40;...&#41;]
+    n30[class AuthZAnalysisPayload&#40;...&#41;]
+    n31[class AuthZResultPayload&#40;...&#41;]
+    n32[class SensitiveMatch&#40;...&#41;]
+    n33[class JavaScriptAnalysisResult&#40;...&#41;]
+    n34[__all__ = &#91;&amp;&#35;39;FunctionTaskTarget...]
+    n1 --> n3
+    n3 --> n4
+    n4 --> n5
+    n5 --> n6
+    n6 --> n7
+    n7 --> n8
+    n8 --> n9
+    n9 --> n10
+    n10 --> n11
+    n11 --> n12
+    n12 --> n13
+    n13 --> n14
+    n14 --> n15
+    n15 --> n16
+    n16 --> n17
+    n17 --> n18
+    n18 --> n19
+    n19 --> n20
+    n20 --> n21
+    n21 --> n22
+    n22 --> n23
+    n23 --> n24
+    n24 --> n25
+    n25 --> n26
+    n26 --> n27
+    n27 --> n28
+    n28 --> n29
+    n29 --> n30
+    n30 --> n31
+    n31 --> n32
+    n32 --> n33
+    n33 --> n34
+    n34 --> n2

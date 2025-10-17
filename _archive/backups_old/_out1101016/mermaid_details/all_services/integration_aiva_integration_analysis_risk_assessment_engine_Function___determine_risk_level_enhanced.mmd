@@ -1,0 +1,59 @@
+flowchart TB
+    n1([開始])
+    n2([結束])
+    n3[&amp;&#35;39;\n        增強版風險等級判定（考慮業務重要性和環境）\n\n        A...]
+    n4{if avg_risk_score &amp;gt;= 15}
+    n5[base_level = &amp;&#35;39;critical&amp;&#35;39;]
+    n6{if avg_risk_score &amp;gt;= 8}
+    n7[base_level = &amp;&#35;39;high&amp;&#35;39;]
+    n8{if avg_risk_score &amp;gt;= 3}
+    n9[base_level = &amp;&#35;39;medium&amp;&#35;39;]
+    n10[base_level = &amp;&#35;39;low&amp;&#35;39;]
+    n11[]
+    n12[]
+    n13[]
+    n14{if business_criticality == &amp;&#35;39;cr...}
+    n15{if base_level == &amp;&#35;39;high&amp;&#35;39;}
+    n16[base_level = &amp;&#35;39;critical&amp;&#35;39;]
+    n17{if base_level == &amp;&#35;39;medium&amp;&#35;39;}
+    n18[base_level = &amp;&#35;39;high&amp;&#35;39;]
+    n19[]
+    n20[]
+    n21[]
+    n22{if environment == &amp;&#35;39;production&amp;&#35;39;...}
+    n23[base_level = &amp;&#35;39;high&amp;&#35;39;]
+    n24[]
+    n25[logger.debug&#40;f&amp;&#35;39;Enhanced risk level: &#123...]
+    n26[return base_level]
+    n1 --> n3
+    n3 --> n4
+    n4 -->|Yes| n5
+    n4 -->|No| n6
+    n5 --> n13
+    n6 -->|Yes| n7
+    n6 -->|No| n8
+    n7 --> n12
+    n8 -->|Yes| n9
+    n8 -->|No| n10
+    n9 --> n11
+    n10 --> n11
+    n11 --> n12
+    n12 --> n13
+    n13 --> n14
+    n14 -->|Yes| n15
+    n14 -->|No| n21
+    n15 -->|Yes| n16
+    n15 -->|No| n17
+    n16 --> n20
+    n17 -->|Yes| n18
+    n17 -->|No| n19
+    n18 --> n19
+    n19 --> n20
+    n20 --> n21
+    n21 --> n22
+    n22 -->|Yes| n23
+    n22 -->|No| n24
+    n23 --> n24
+    n24 --> n25
+    n25 --> n26
+    n26 --> n2

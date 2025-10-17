@@ -1,0 +1,8 @@
+flowchart TB
+    n1([開始])
+    n2([結束])
+    n3[&amp;&#35;39;Force write state to disk immediately.&amp;&...]
+    n4[self._write_state&#40;force=True&#41;]
+    n1 --> n3
+    n3 --> n4
+    n4 --> n2

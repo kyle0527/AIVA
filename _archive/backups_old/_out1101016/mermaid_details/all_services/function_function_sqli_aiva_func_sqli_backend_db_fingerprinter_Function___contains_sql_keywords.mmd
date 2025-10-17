@@ -1,0 +1,26 @@
+flowchart TB
+    n1([開始])
+    n2([結束])
+    n3[&amp;&#35;39;檢測文本中的SQL關鍵字&amp;&#35;39;]
+    n4[sql_keywords = &#91;&amp;&#35;39;SELECT&amp;&#35;39;, &am...]
+    n5[found_keywords = &#91;&#93;]
+    n6[text_upper = text.upper&#40;&#41;]
+    n7{for keyword in sql_keywords}
+    n8{if keyword in text_upper}
+    n9[found_keywords.append&#40;keyword&#41;]
+    n10[]
+    n11[]
+    n12[return found_keywords]
+    n1 --> n3
+    n3 --> n4
+    n4 --> n5
+    n5 --> n6
+    n6 --> n7
+    n7 -->|Yes| n8
+    n7 -->|No| n11
+    n8 -->|Yes| n9
+    n8 -->|No| n10
+    n9 --> n10
+    n10 --> n7
+    n11 --> n12
+    n12 --> n2

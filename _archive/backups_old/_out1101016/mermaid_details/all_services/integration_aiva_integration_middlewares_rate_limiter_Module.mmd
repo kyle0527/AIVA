@@ -1,0 +1,20 @@
+flowchart TB
+    n1([開始])
+    n2([結束])
+    n3[from __future__ import annotations]
+    n4[import asyncio]
+    n5[from collections import defaultdict]
+    n6[import time]
+    n7[from fastapi import Request, Response]
+    n8[from starlette.middleware.base import BaseHTTPMidd...]
+    n9[class TokenBucket&#40;...&#41;]
+    n10[class RateLimiterMiddleware&#40;...&#41;]
+    n1 --> n3
+    n3 --> n4
+    n4 --> n5
+    n5 --> n6
+    n6 --> n7
+    n7 --> n8
+    n8 --> n9
+    n9 --> n10
+    n10 --> n2

@@ -1,0 +1,54 @@
+flowchart TB
+    n1([開始])
+    n2([結束])
+    n3[&amp;&#35;39;計算 CVSS v3.1 基本分數&amp;&#35;39;]
+    n4[av_weights = &#123;&amp;&#35;39;N&amp;&#35;39;: 0.85, &am...]
+    n5[ac_weights = &#123;&amp;&#35;39;L&amp;&#35;39;: 0.77, &am...]
+    n6{if self.scope == &amp;&#35;39;C&amp;&#35;39;}
+    n7[pr_weights = &#123;&amp;&#35;39;N&amp;&#35;39;: 0.85, &am...]
+    n8[pr_weights = &#123;&amp;&#35;39;N&amp;&#35;39;: 0.85, &am...]
+    n9[]
+    n10[ui_weights = &#123;&amp;&#35;39;N&amp;&#35;39;: 0.85, &am...]
+    n11[cia_weights = &#123;&amp;&#35;39;N&amp;&#35;39;: 0.0, &am...]
+    n12[impact = 1 - &#40;1 - cia_weights...]
+    n13{if self.scope == &amp;&#35;39;C&amp;&#35;39;}
+    n14[impact_adjusted = 7.52 * &#40;impact - 0.0...]
+    n15[impact_adjusted = 6.42 * impact]
+    n16[]
+    n17[exploitability = 8.22 * av_weights&#91;se...]
+    n18{if impact_adjusted &amp;lt;= 0}
+    n19[return 0.0]
+    n20[]
+    n21{if self.scope == &amp;&#35;39;U&amp;&#35;39;}
+    n22[base = impact_adjusted + ex...]
+    n23[base = 1.08 * &#40;impact_adjus...]
+    n24[]
+    n25[return min&#40;10.0, round&#40;base, 1&#41;&#41;]
+    n1 --> n3
+    n3 --> n4
+    n4 --> n5
+    n5 --> n6
+    n6 -->|Yes| n7
+    n6 -->|No| n8
+    n7 --> n9
+    n8 --> n9
+    n9 --> n10
+    n10 --> n11
+    n11 --> n12
+    n12 --> n13
+    n13 -->|Yes| n14
+    n13 -->|No| n15
+    n14 --> n16
+    n15 --> n16
+    n16 --> n17
+    n17 --> n18
+    n18 -->|Yes| n19
+    n18 -->|No| n20
+    n19 --> n20
+    n20 --> n21
+    n21 -->|Yes| n22
+    n21 -->|No| n23
+    n22 --> n24
+    n23 --> n24
+    n24 --> n25
+    n25 --> n2

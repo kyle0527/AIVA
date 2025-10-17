@@ -1,0 +1,17 @@
+flowchart TB
+    n1([開始])
+    n2([結束])
+    n3[&amp;&#35;39;註冊結果處理器\n\n        Args:\n            event_...]
+    n4{if event_type not in self.resu...}
+    n5[self.result_handlers&#91;event_type&#93; = &#91;&#93;]
+    n6[]
+    n7[self.result_handlers&#91;event_type&#93;.append&#40;handl...]
+    n8[logger.debug&#40;f&amp;&#35;39;Registered handler for &#1...]
+    n1 --> n3
+    n3 --> n4
+    n4 -->|Yes| n5
+    n4 -->|No| n6
+    n5 --> n6
+    n6 --> n7
+    n7 --> n8
+    n8 --> n2

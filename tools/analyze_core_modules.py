@@ -86,7 +86,7 @@ def analyze_core_modules():
     results = []
 
     if not core_path.exists():
-        print(f"❌ 核心模組路徑不存在: {core_path.absolute()}")
+        print(f"[FAIL] 核心模組路徑不存在: {core_path.absolute()}")
         return results
 
     for py_file in core_path.rglob('*.py'):
@@ -95,7 +95,7 @@ def analyze_core_modules():
             if 'error' not in result:
                 results.append(result)
             else:
-                print(f"⚠️  分析文件失敗: {py_file} - {result['error']}")
+                print(f"[WARN]  分析文件失敗: {py_file} - {result['error']}")
 
     return results
 
@@ -110,33 +110,33 @@ def generate_analysis_report(results):
     # 按代碼行數排序
     results_by_size = sorted(results, key=lambda x: x['code_lines'], reverse=True)
 
-    print('🔍 按代碼規模排序 (前10個最大文件):')
+    print('[SEARCH] 按代碼規模排序 (前10個最大文件):')
     print('-' * 80)
     for i, result in enumerate(results_by_size[:10]):
         complexity = int(result.get("complexity_score", 0))
         print(f'{i+1:2d}. {result["file"]:45s} | 代碼: {result["code_lines"]:4d} 行 | 複雜度: {complexity:3d}')
 
-    print('\n🧠 AI 相關核心模組分析:')
+    print('\n[BRAIN] AI 相關核心模組分析:')
     print('-' * 80)
     ai_files = [r for r in results if 'ai_' in r['file'] or 'bio_neuron' in r['file'] or 'nlg_' in r['file']]
     for result in sorted(ai_files, key=lambda x: x['code_lines'], reverse=True):
-        print(f'📁 {result["file"]}')
+        print(f'[U+1F4C1] {result["file"]}')
         print(f'   代碼行數: {result["code_lines"]}, 類別: {result["classes"]}, 函數: {result["functions"]}')
         if result['class_names']:
             print(f'   主要類別: {", ".join(result["class_names"][:3])}')
         print()
 
-    print('⚡ 性能關鍵模組分析:')
+    print('[FAST] 性能關鍵模組分析:')
     print('-' * 80)
     performance_files = [r for r in results if any(keyword in r['file'] for keyword in
                         ['optimized', 'parallel', 'execution', 'task_', 'cache'])]
     for result in sorted(performance_files, key=lambda x: x['code_lines'], reverse=True):
-        print(f'📁 {result["file"]}')
+        print(f'[U+1F4C1] {result["file"]}')
         print(f'   代碼行數: {result["code_lines"]}, 異步函數: {result["async_functions"]}, 複雜度: {result.get("complexity_score", 0)}')
         print()
 
     # 複雜度分析
-    print('📊 複雜度統計:')
+    print('[STATS] 複雜度統計:')
     print('-' * 80)
     complexity_scores = [r.get('complexity_score', 0) for r in results]
     high_complexity = [r for r in results if r.get('complexity_score', 0) > 50]
@@ -148,12 +148,12 @@ def generate_analysis_report(results):
     print(f'高複雜度文件 (>50): {len(high_complexity)} 個')
 
     if high_complexity:
-        print('\n🚨 需要重構的高複雜度文件:')
+        print('\n[ALERT] 需要重構的高複雜度文件:')
         for result in sorted(high_complexity, key=lambda x: x.get('complexity_score', 0), reverse=True):
             complexity = int(result.get("complexity_score", 0))
             max_func_len = int(result["max_function_length"])
             print(f'   {result["file"]:40s} | 複雜度: {complexity:3d} | 最長函數: {max_func_len:3d} 行')# 依賴分析
-    print('\n🔗 依賴關係分析:')
+    print('\n[U+1F517] 依賴關係分析:')
     print('-' * 80)
     all_imports = defaultdict(int)
     for result in results:
@@ -247,4 +247,4 @@ if __name__ == '__main__':
     with open('_out/core_module_analysis_detailed.json', 'w', encoding='utf-8') as f:
         json.dump(results, f, indent=2, ensure_ascii=False)
 
-    print('\n📝 詳細分析結果已儲存到: _out/core_module_analysis_detailed.json')
+    print('\n[NOTE] 詳細分析結果已儲存到: _out/core_module_analysis_detailed.json')

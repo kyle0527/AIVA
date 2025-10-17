@@ -45,7 +45,7 @@ def find_class_in_modules(class_name, schemas_dir):
 
 schemas_dir = aiva_common / "schemas"
 
-print("\n🔍 查找缺失類別的位置:")
+print("\n[SEARCH] 查找缺失類別的位置:")
 all_missing = set()
 for file_info in fixes.values():
     all_missing.update(file_info["missing_imports"])
@@ -59,10 +59,10 @@ for class_name in all_missing:
         class_locations[class_name] = location
         print(f"   {class_name:25s} -> {location}.py")
     else:
-        print(f"   {class_name:25s} -> ❌ 找不到")
+        print(f"   {class_name:25s} -> [FAIL] 找不到")
 
 # 修復 enhanced.py
-print(f"\n🔧 修復 enhanced.py...")
+print(f"\n[CONFIG] 修復 enhanced.py...")
 enhanced_file = schemas_dir / "enhanced.py"
 content = enhanced_file.read_text(encoding="utf-8")
 
@@ -81,10 +81,10 @@ from .references import SARIFLocation, SARIFResult"""
 
 content = content.replace(import_section, new_import_section)
 enhanced_file.write_text(content, encoding="utf-8")
-print("   ✅ enhanced.py 導入已修復")
+print("   [OK] enhanced.py 導入已修復")
 
 # 檢查其他可能有問題的檔案
-print(f"\n🔍 檢查其他檔案的導入問題:")
+print(f"\n[SEARCH] 檢查其他檔案的導入問題:")
 problem_files = []
 
 for py_file in schemas_dir.glob("*.py"):
@@ -106,10 +106,10 @@ for py_file in schemas_dir.glob("*.py"):
                 problem_files.append((py_file.name, "缺少 HttpUrl"))
                 
     except Exception as e:
-        print(f"   ⚠️ 檢查 {py_file.name} 時出錯: {e}")
+        print(f"   [WARN] 檢查 {py_file.name} 時出錯: {e}")
 
 for filename, issue in problem_files:
-    print(f"   ⚠️ {filename}: {issue}")
+    print(f"   [WARN] {filename}: {issue}")
 
 # 快速修復常見問題
 common_fixes = {
@@ -134,7 +134,7 @@ for filename, fix_info in common_fixes.items():
             content = content.replace(fix_info["old"], fix_info["new"])
             
         file_path.write_text(content, encoding="utf-8")
-        print(f"   ✅ {filename} 已修復")
+        print(f"   [OK] {filename} 已修復")
 
-print(f"\n✅ 所有已知問題已修復")
+print(f"\n[OK] 所有已知問題已修復")
 print("=" * 80)

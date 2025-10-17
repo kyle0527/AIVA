@@ -60,21 +60,21 @@ def main():
     for file_path in affected_files:
         fixes, methods = fix_field_validator(file_path)
         if fixes > 0:
-            print(f"✅ {Path(file_path).name}: 修正了 {fixes} 個方法")
+            print(f"[OK] {Path(file_path).name}: 修正了 {fixes} 個方法")
             for method in methods:
                 print(f"   - {method}")
             total_fixes += fixes
         else:
-            print(f"⚪ {Path(file_path).name}: 無需修正")
+            print(f"[U+26AA] {Path(file_path).name}: 無需修正")
     
     print(f"\n總計修正: {total_fixes} 個方法")
     
     if total_fixes > 0:
-        print("\n✅ 所有修正已完成！")
+        print("\n[OK] 所有修正已完成！")
         print("建議執行以下命令驗證：")
         print("  python -m pylint services/aiva_common/schemas/ | grep E0213")
     else:
-        print("\n⚪ 所有檔案已經符合規範")
+        print("\n[U+26AA] 所有檔案已經符合規範")
 
 if __name__ == "__main__":
     main()

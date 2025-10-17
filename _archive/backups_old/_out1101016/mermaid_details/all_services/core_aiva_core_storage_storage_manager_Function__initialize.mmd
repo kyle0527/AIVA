@@ -1,0 +1,41 @@
+flowchart TB
+    n1([開始])
+    n2([結束])
+    n3[&amp;&#35;39;創建所有必要的目錄&amp;&#35;39;]
+    n4{for &#40;_category, paths&#41; in self.dirs.items&#40;&#41;}
+    n5{if isinstance&#40;paths, dict&#41;}
+    n6{for path in paths.values&#40;&#41;}
+    n7{if isinstance&#40;path, Path&#41;}
+    n8[path.mkdir&#40;parents=True, exist_ok=True&#41;]
+    n9[logger.debug&#40;f&amp;&#35;39;Created directory: &#123;p...]
+    n10[]
+    n11[]
+    n12{if isinstance&#40;paths, Path&#41;}
+    n13[paths.mkdir&#40;parents=True, exist_ok=True&#41;]
+    n14[logger.debug&#40;f&amp;&#35;39;Created directory: &#123;p...]
+    n15[]
+    n16[]
+    n17[]
+    n18[logger.info&#40;&amp;&#35;39;All data directories initial...]
+    n1 --> n3
+    n3 --> n4
+    n4 -->|Yes| n5
+    n4 -->|No| n17
+    n5 -->|Yes| n6
+    n5 -->|No| n12
+    n6 -->|Yes| n7
+    n6 -->|No| n11
+    n7 -->|Yes| n8
+    n7 -->|No| n10
+    n8 --> n9
+    n9 --> n10
+    n10 --> n6
+    n11 --> n16
+    n12 -->|Yes| n13
+    n12 -->|No| n15
+    n13 --> n14
+    n14 --> n15
+    n15 --> n16
+    n16 --> n4
+    n17 --> n18
+    n18 --> n2

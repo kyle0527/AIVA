@@ -1,0 +1,33 @@
+flowchart TB
+    n1([開始])
+    n2([結束])
+    n3[&amp;&#35;39;\nAIVA 多語言 AI 協調架構\n統一協調 Python/Go/Rust/Type...]
+    n4[from __future__ import annotations]
+    n5[import asyncio]
+    n6[from dataclasses import dataclass]
+    n7[import logging]
+    n8[from typing import Any]
+    n9[logger = logging.getLogger&#40;__...]
+    n10[class LanguageModuleInfo&#40;...&#41;]
+    n11[class AICoordinationTask&#40;...&#41;]
+    n12[class MultiLanguageAICoordinator&#40;...&#41;]
+    n13[def demonstrate_multilang_ai_coordination&#40;...&#41;]
+    n14{if __name__ == &amp;&#35;39;__main__&amp;&#35;39;}
+    n15[asyncio.run&#40;demonstrate_multilang_ai_coordination&#40...]
+    n16[]
+    n1 --> n3
+    n3 --> n4
+    n4 --> n5
+    n5 --> n6
+    n6 --> n7
+    n7 --> n8
+    n8 --> n9
+    n9 --> n10
+    n10 --> n11
+    n11 --> n12
+    n12 --> n13
+    n13 --> n14
+    n14 -->|Yes| n15
+    n14 -->|No| n16
+    n15 --> n16
+    n16 --> n2

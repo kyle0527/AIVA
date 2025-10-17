@@ -40,9 +40,9 @@ for filename in files_to_delete:
         size = file_path.stat().st_size
         total_size += size
         existing_files.append((filename, size))
-        print(f"✓ {filename:50s} {size:>10,} bytes")
+        print(f"[CHECK] {filename:50s} {size:>10,} bytes")
     else:
-        print(f"✗ {filename:50s} (不存在)")
+        print(f"[U+2717] {filename:50s} (不存在)")
 
 print("=" * 70)
 print(f"總計: {len(existing_files)} 個檔案, {total_size:,} bytes ({total_size/1024/1024:.2f} MB)")
@@ -66,10 +66,10 @@ if response == 'yes':
             shutil.copy2(file_path, backup_path)
             # 刪除原檔案
             file_path.unlink()
-            print(f"✓ 已刪除: {filename}")
+            print(f"[CHECK] 已刪除: {filename}")
             deleted_count += 1
         except Exception as e:
-            print(f"✗ 刪除失敗 {filename}: {e}")
+            print(f"[U+2717] 刪除失敗 {filename}: {e}")
     
     print("\n" + "=" * 70)
     print(f"完成! 已刪除 {deleted_count} 個檔案")

@@ -45,34 +45,65 @@ class MermaidTheme:
 
 @dataclass
 class MermaidConfig:
-    """Mermaid 配置"""
+    """Mermaid 11.11.0+ 配置"""
 
-    theme: str = "default"  # default, forest, dark, neutral
+    theme: str = "default"  # default, forest, dark, neutral, base
     look: str = "classic"  # classic, handDrawn
     diagram_padding: int = 8
     use_max_width: bool = True
-    flow_curve: str = "basis"  # basis, linear, cardinal
+    flow_curve: str = "basis"  # basis, linear, cardinal, catmullRom, monotoneX, monotoneY, natural, step, stepBefore, stepAfter
     node_spacing: int = 50
     rank_spacing: int = 50
+    html_labels: bool = False  # Use HTML labels (recommended: false for markdown support)
+    markdown_auto_wrap: bool = True  # Auto wrap markdown text in nodes
 
 
 class MermaidOptimizer:
     """Mermaid 圖表優化器"""
 
-    # 節點形狀映射
+    # 節點形狀映射 (Mermaid 11.11.0+)
     NODE_SHAPES = {
-        "default": "[{text}]",  # 方形
+        # 傳統語法
+        "default": "[{text}]",  # 方形 (rectangle)
         "round": "({text})",  # 圓角
-        "stadium": "([{text}])",  # 體育場
-        "subroutine": "[[{text}]]",  # 子程序
-        "cylindrical": "[({text})]",  # 圓柱
+        "stadium": "([{text}])",  # 體育場/pill
+        "subroutine": "[[{text}]]",  # 子程序 (fr-rect)
+        "cylindrical": "[({text})]",  # 圓柱 (database)
         "circle": "(({text}))",  # 圓形
-        "asymmetric": ">{text}]",  # 不對稱
-        "rhombus": "{{{text}}}",  # 菱形
-        "hexagon": "{{{{{text}}}}}",  # 六角形
-        "parallelogram": "[/{text}/]",  # 平行四邊形
-        "trapezoid": "[\\{text}/]",  # 梯形
-        "double_circle": "((({text})))",  # 雙圓
+        "asymmetric": ">{text}]",  # 不對稱 (odd)
+        "rhombus": "{{{text}}}",  # 菱形 (diamond, decision)
+        "hexagon": "{{{{{text}}}}}",  # 六角形 (hex, prepare)
+        "parallelogram": "[/{text}/]",  # 平行四邊形 (lean-r)
+        "parallelogram_alt": "[\\{text}\\]",  # 反向平行四邊形 (lean-l)
+        "trapezoid": "[\\{text}/]",  # 梯形 (trap-t)
+        "trapezoid_alt": "[/{text}\\]",  # 反向梯形 (trap-b)
+        "double_circle": "((({text})))",  # 雙圓 (dbl-circ, stop)
+    }
+    
+    # Mermaid 11.3.0+ 新語法 (使用 @ 符號)
+    NEW_SHAPES = {
+        "rect": "rectangle",
+        "rounded": "event",
+        "stadium": "terminal, pill",
+        "fr-rect": "subprocess, subroutine, framed-rectangle",
+        "cyl": "database, cylinder",
+        "circle": "circ, start",
+        "odd": "asymmetric",
+        "diamond": "decision, diam",
+        "hex": "hexagon, prepare",
+        "lean-r": "parallelogram, in-out",
+        "lean-l": "parallelogram-alt, out-in",
+        "trap-b": "trapezoid-bottom, priority",
+        "trap-t": "trapezoid-top, manual",
+        "dbl-circ": "double-circle, stop",
+        "notch-rect": "card, notched-rectangle",
+        "lin-rect": "lined-rectangle, shaded-process",
+        "sm-circ": "small-circle, start",
+        "fork": "join",
+        "hourglass": "collate",
+        "bolt": "com-link, lightning-bolt",
+        "doc": "document",
+        "delay": "half-rounded-rectangle",
     }
 
     # 連線類型映射
@@ -105,9 +136,13 @@ class MermaidOptimizer:
     def __init__(self, config: MermaidConfig | None = None):
         self.config = config or MermaidConfig()
 
-    def generate_header(self, diagram_type: str = "graph TB") -> str:
-        """生成圖表頭部配置"""
-        config_str = f"""%%{{init: {{'theme':'{self.config.theme}', 'themeVariables': {{
+    def generate_header(self, diagram_type: str = "flowchart TB") -> str:
+        """生成圖表頭部配置 (Mermaid 11.11.0+)"""
+        # 使用 flowchart 替代 graph (推薦用法)
+        if diagram_type.startswith("graph"):
+            diagram_type = diagram_type.replace("graph", "flowchart", 1)
+        
+        config_str = f"""%%{{init: {{'theme':'{self.config.theme}', 'look':'{self.config.look}', 'themeVariables': {{
   'primaryColor': '#E3F2FD',
   'primaryTextColor': '#1976D2',
   'primaryBorderColor': '#1976D2',
@@ -116,6 +151,10 @@ class MermaidOptimizer:
   'tertiaryColor': '#C8E6C9',
   'fontFamily': 'arial, sans-serif',
   'fontSize': '14px'
+}}, 'flowchart': {{
+  'htmlLabels': {str(self.config.html_labels).lower()},
+  'curve': '{self.config.flow_curve}',
+  'useMaxWidth': {str(self.config.use_max_width).lower()}
 }}}}}}%%"""
         return f"{config_str}\n{diagram_type}"
 
@@ -128,7 +167,7 @@ class MermaidOptimizer:
         shape: str = "default",
         icon: str = "",
     ) -> str:
-        """創建優化的節點
+        """創建優化的節點 (Mermaid 11.11.0+)
 
         Args:
             node_id: 節點 ID
@@ -147,9 +186,46 @@ class MermaidOptimizer:
 
         # 應用形狀
         shape_template = self.NODE_SHAPES.get(shape, self.NODE_SHAPES["default"])
-        node_text = shape_template.format(text=full_label)
-
-        return f'{node_id}["{full_label}"]'
+        return shape_template.format(text=full_label)
+    
+    def create_node_new_syntax(
+        self,
+        node_id: str,
+        label: str,
+        shape: str = "rect",
+        icon: str = "",
+        img_url: str = "",
+        width: int = 0,
+        height: int = 0,
+    ) -> str:
+        """使用 Mermaid 11.3.0+ 新語法創建節點
+        
+        Args:
+            node_id: 節點 ID
+            label: 標籤文字
+            shape: 形狀名稱 (rect, circle, diamond, etc.)
+            icon: Font Awesome 圖示 (例如: "fa:user")
+            img_url: 圖片 URL
+            width: 圖片寬度
+            height: 圖片高度
+        """
+        if icon:
+            # Icon shape
+            params = [f'icon: "{icon}"', f'label: "{label}"']
+            if height:
+                params.append(f'h: {height}')
+            return f'{node_id}@{{ {", ".join(params)} }}'
+        elif img_url:
+            # Image shape
+            params = [f'img: "{img_url}"', f'label: "{label}"']
+            if width:
+                params.append(f'w: {width}')
+            if height:
+                params.append(f'h: {height}')
+            return f'{node_id}@{{ {", ".join(params)} }}'
+        else:
+            # Standard shape
+            return f'{node_id}@{{ shape: {shape}, label: "{label}" }}'
 
     def create_link(
         self, from_node: str, to_node: str, label: str = "", link_type: str = "solid"
@@ -345,7 +421,7 @@ if __name__ == "__main__":
 
     # 創建節點
     node = optimizer.create_node(
-        "CORE", "核心引擎", "Core Engine", "Bio Neuron Network", icon="🤖"
+        "CORE", "核心引擎", "Core Engine", "Bio Neuron Network", icon="[AI]"
     )
     print("Node:", node)
 

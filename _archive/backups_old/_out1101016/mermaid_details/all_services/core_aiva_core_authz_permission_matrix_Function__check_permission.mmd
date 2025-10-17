@@ -1,0 +1,54 @@
+flowchart TB
+    n1([開始])
+    n2([結束])
+    n3[&amp;&#35;39;\n        檢查權限\n\n        Args:\n           ...]
+    n4[key = &#40;role, resource, per...]
+    n5{if key in self.matrix}
+    n6[decision = self.matrix&#91;key&#93;]
+    n7{if key in self.conditions and ...}
+    n8[condition = self.conditions&#91;key&#93;]
+    n9{if self._evaluate_condition&#40;co...}
+    n10[return decision]
+    n11[return AccessDecision.DENY]
+    n12[]
+    n13[]
+    n14[return decision]
+    n15[]
+    n16{if role in self.role_inheritance}
+    n17{for parent_role in self.role_inherit...}
+    n18[parent_decision = self.check_permissio...]
+    n19{if parent_decision != AccessDe...}
+    n20[return parent_decision]
+    n21[]
+    n22[]
+    n23[]
+    n24[return AccessDecision.DENY]
+    n1 --> n3
+    n3 --> n4
+    n4 --> n5
+    n5 -->|Yes| n6
+    n5 -->|No| n15
+    n6 --> n7
+    n7 -->|Yes| n8
+    n7 -->|No| n13
+    n8 --> n9
+    n9 -->|Yes| n10
+    n9 -->|No| n11
+    n10 --> n12
+    n11 --> n12
+    n12 --> n13
+    n13 --> n14
+    n14 --> n15
+    n15 --> n16
+    n16 -->|Yes| n17
+    n16 -->|No| n23
+    n17 -->|Yes| n18
+    n17 -->|No| n22
+    n18 --> n19
+    n19 -->|Yes| n20
+    n19 -->|No| n21
+    n20 --> n21
+    n21 --> n17
+    n22 --> n23
+    n23 --> n24
+    n24 --> n2

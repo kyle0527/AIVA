@@ -39,13 +39,13 @@ class MultiLanguageAICoordinator:
 
     def __init__(self):
         """初始化多語言 AI 協調器"""
-        logger.info("🌐 初始化多語言 AI 協調器...")
+        logger.info("[U+1F310] 初始化多語言 AI 協調器...")
 
         self.language_modules = self._register_language_modules()
         self.coordination_history = []
         self.ai_workload_distribution = {}
 
-        logger.info(f"✅ 已註冊 {len(self.language_modules)} 個語言模組")
+        logger.info(f"[OK] 已註冊 {len(self.language_modules)} 個語言模組")
 
     def _register_language_modules(self) -> dict[str, LanguageModuleInfo]:
         """註冊各語言 AI 模組"""
@@ -143,7 +143,7 @@ class MultiLanguageAICoordinator:
 
     async def coordinate_multi_language_ai_task(self, task: AICoordinationTask) -> dict[str, Any]:
         """協調多語言 AI 任務執行"""
-        logger.info(f"🎯 協調任務: {task.description}")
+        logger.info(f"[TARGET] 協調任務: {task.description}")
 
         # 1. 分析任務需求
         task_analysis = self._analyze_task_requirements(task)
@@ -224,7 +224,7 @@ class MultiLanguageAICoordinator:
         if len(selected) == 1:  # 只有主控 AI
             selected.append(self.language_modules['python_detectors'])
 
-        logger.info(f"🤖 選擇了 {len(selected)} 個 AI 模組參與協調")
+        logger.info(f"[AI] 選擇了 {len(selected)} 個 AI 模組參與協調")
         for module in selected:
             logger.info(f"   {module.language}: {module.module_name}")
 
@@ -281,7 +281,7 @@ class MultiLanguageAICoordinator:
 
     async def _execute_parallel_ai_tasks(self, assignments: dict) -> dict[str, Any]:
         """並行執行各 AI 任務"""
-        logger.info("⚡ 開始並行執行 AI 任務...")
+        logger.info("[FAST] 開始並行執行 AI 任務...")
 
         async def execute_single_ai_task(module_name: str, assignment: dict) -> dict:
             """執行單個 AI 任務"""
@@ -328,7 +328,7 @@ class MultiLanguageAICoordinator:
             else:
                 execution_results[result['module_name']] = result
 
-        logger.info(f"✅ 完成 {len(execution_results)} 個 AI 任務執行")
+        logger.info(f"[OK] 完成 {len(execution_results)} 個 AI 任務執行")
         return execution_results
 
     async def _execute_python_ai(self, module_name: str, assignment: dict) -> dict:
@@ -376,7 +376,7 @@ class MultiLanguageAICoordinator:
                                    execution_results: dict,
                                    selected_modules: list[LanguageModuleInfo]) -> dict[str, Any]:
         """整合各 AI 模組結果"""
-        logger.info("🔄 整合多語言 AI 執行結果...")
+        logger.info("[RELOAD] 整合多語言 AI 執行結果...")
 
         integration = {
             'task_id': task.task_id,
@@ -424,7 +424,7 @@ class MultiLanguageAICoordinator:
             task, execution_results
         )
 
-        logger.info("✅ 多語言 AI 結果整合完成")
+        logger.info("[OK] 多語言 AI 結果整合完成")
         return integration
 
     def _generate_master_synthesis(self,
@@ -524,7 +524,7 @@ class MultiLanguageAICoordinator:
 # 測試和展示
 async def demonstrate_multilang_ai_coordination():
     """展示多語言 AI 協調"""
-    print("🌐 AIVA 多語言 AI 協調展示")
+    print("[U+1F310] AIVA 多語言 AI 協調展示")
     print("=" * 45)
 
     coordinator = MultiLanguageAICoordinator()
@@ -552,15 +552,15 @@ async def demonstrate_multilang_ai_coordination():
     ]
 
     for task in test_tasks:
-        print(f"\n🎯 執行任務: {task.description}")
+        print(f"\n[TARGET] 執行任務: {task.description}")
         result = await coordinator.coordinate_multi_language_ai_task(task)
 
-        print(f"✅ 協調效率: {result['coordination_summary']['coordination_efficiency']:.1%}")
-        print(f"🌍 協調語言: {', '.join(result['coordination_summary']['languages_coordinated'])}")
-        print(f"🤖 AI 模組數: {result['coordination_summary']['total_ai_modules']}")
-        print(f"💡 主控綜合: {result['master_ai_synthesis']}")
+        print(f"[OK] 協調效率: {result['coordination_summary']['coordination_efficiency']:.1%}")
+        print(f"[U+1F30D] 協調語言: {', '.join(result['coordination_summary']['languages_coordinated'])}")
+        print(f"[AI] AI 模組數: {result['coordination_summary']['total_ai_modules']}")
+        print(f"[TIP] 主控綜合: {result['master_ai_synthesis']}")
 
-    print("\n📊 協調統計:")
+    print("\n[STATS] 協調統計:")
     stats = coordinator.get_coordination_statistics()
     print(f"總協調次數: {stats['total_coordinations']}")
     print(f"平均效率: {stats['average_efficiency']:.1%}")

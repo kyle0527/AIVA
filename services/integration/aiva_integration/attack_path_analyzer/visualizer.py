@@ -185,7 +185,7 @@ class AttackPathVisualizer:
     </style>
 </head>
 <body>
-    <h1>🔍 AIVA Attack Path Visualization</h1>
+    <h1>[SEARCH] AIVA Attack Path Visualization</h1>
     <div class="info">
         <p><strong>Found {len(paths)} attack paths</strong></p>
         <p>節點: 紅色=攻擊者, 橙色=漏洞, 藍色=資料庫, 綠色=資產</p>

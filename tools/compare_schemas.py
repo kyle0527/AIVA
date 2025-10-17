@@ -16,11 +16,11 @@ def compare_files(old_path, new_path, name):
     new_file = Path(new_path)
     
     if not old_file.exists():
-        print(f"❌ {old_path} 不存在")
+        print(f"[FAIL] {old_path} 不存在")
         return False
     
     if not new_file.exists():
-        print(f"❌ {new_path} 不存在")
+        print(f"[FAIL] {new_path} 不存在")
         return False
     
     old_content = old_file.read_text(encoding='utf-8')
@@ -29,7 +29,7 @@ def compare_files(old_path, new_path, name):
     old_classes = extract_classes(old_content)
     new_classes = extract_classes(new_content)
     
-    print(f'\n📊 {name} 分析:')
+    print(f'\n[STATS] {name} 分析:')
     print(f'  舊檔案 ({old_path}):')
     print(f'    - 類別數量: {len(old_classes)}')
     
@@ -40,18 +40,18 @@ def compare_files(old_path, new_path, name):
     only_in_new = new_classes - old_classes
     common = old_classes & new_classes
     
-    print(f'\n  🔍 比對結果:')
+    print(f'\n  [SEARCH] 比對結果:')
     print(f'    - 共同類別: {len(common)}')
     
     if only_in_old:
-        print(f'    - ⚠️  僅在舊檔案: {len(only_in_old)} 個')
+        print(f'    - [WARN]  僅在舊檔案: {len(only_in_old)} 個')
         print(f'      {sorted(only_in_old)}')
         return False
     else:
-        print(f'    - ✅ 舊檔案的所有類別已遷移')
+        print(f'    - [OK] 舊檔案的所有類別已遷移')
     
     if only_in_new:
-        print(f'    - 📝 新增類別: {len(only_in_new)} 個')
+        print(f'    - [NOTE] 新增類別: {len(only_in_new)} 個')
         
     return True
 
@@ -85,19 +85,19 @@ for py_file in new_schemas_dir.glob('*.py'):
     content = py_file.read_text(encoding='utf-8')
     classes = extract_classes(content)
     all_new_classes.update(classes)
-    print(f'\n  📄 {py_file.name}: {len(classes)} 個類別')
+    print(f'\n  [U+1F4C4] {py_file.name}: {len(classes)} 個類別')
 
-print(f'\n📊 總計:')
+print(f'\n[STATS] 總計:')
 print(f'  - 原 schemas.py: {len(schemas_classes)} 個類別')
 print(f'  - 新 schemas/: {len(all_new_classes)} 個類別')
 
 missing = schemas_classes - all_new_classes
 if missing:
-    print(f'\n⚠️  尚未遷移的類別 ({len(missing)} 個):')
+    print(f'\n[WARN]  尚未遷移的類別 ({len(missing)} 個):')
     for cls in sorted(missing):
         print(f'    - {cls}')
 else:
-    print(f'\n✅ schemas.py 的所有類別已遷移')
+    print(f'\n[OK] schemas.py 的所有類別已遷移')
 
 # 可以刪除的檔案列表
 print("\n" + "=" * 60)

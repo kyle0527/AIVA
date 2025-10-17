@@ -1,0 +1,30 @@
+flowchart TB
+    n1([開始])
+    n2([結束])
+    n3[&amp;&#35;39;獲取當前應該使用的超時時間&amp;&#35;39;]
+    n4{if self.failure_count &amp;gt; 3}
+    n5[failure_multiplier = 1 + &#40;self.failure_co...]
+    n6[adaptive_timeout = min&#40;self.max_timeout...]
+    n7[return adaptive_timeout]
+    n8[]
+    n9{if len&#40;self.recent_response_ti...}
+    n10[avg_time = sum&#40;self.recent_resp...]
+    n11[adaptive_timeout = max&#40;self.base_timeou...]
+    n12[return adaptive_timeout]
+    n13[]
+    n14[return self.base_timeout]
+    n1 --> n3
+    n3 --> n4
+    n4 -->|Yes| n5
+    n4 -->|No| n8
+    n5 --> n6
+    n6 --> n7
+    n7 --> n8
+    n8 --> n9
+    n9 -->|Yes| n10
+    n9 -->|No| n13
+    n10 --> n11
+    n11 --> n12
+    n12 --> n13
+    n13 --> n14
+    n14 --> n2

@@ -16,7 +16,7 @@ def main():
     try:
         from services.core.aiva_core.ui_panel import start_auto_server
 
-        print("🚀 啟動 AIVA UI 面板 (自動端口選擇)")
+        print("[START] 啟動 AIVA UI 面板 (自動端口選擇)")
         print("=" * 50)
 
         # 啟動伺服器，自動選擇端口
@@ -27,15 +27,15 @@ def main():
         )
 
     except ImportError as e:
-        print(f"❌ 匯入錯誤: {e}")
+        print(f"[FAIL] 匯入錯誤: {e}")
         print("請確保在 AIVA 專案根目錄執行此腳本")
         print("並已安裝所需套件: pip install fastapi uvicorn")
         sys.exit(1)
     except KeyboardInterrupt:
-        print("\n👋 使用者中斷，正在關閉伺服器...")
+        print("\n[U+1F44B] 使用者中斷，正在關閉伺服器...")
         sys.exit(0)
     except Exception as e:
-        print(f"❌ 啟動失敗: {e}")
+        print(f"[FAIL] 啟動失敗: {e}")
         sys.exit(1)
 
 if __name__ == "__main__":

@@ -1,0 +1,26 @@
+flowchart TB
+    n1([開始])
+    n2([結束])
+    n3[&amp;&#35;39;測試範例&amp;&#35;39;]
+    n4[print&#40;&amp;&#35;39;📄 Report Generator Demo&amp;&#35;3...]
+    n5[print&#40;&amp;&#35;39;=&amp;&#35;39; * 60&#41;]
+    n6[generator = ReportGenerator&#40;outp...]
+    n7[test_vulns = &#91;&#123;&amp;&#35;39;title&amp;&#35;39;: ...]
+    n8[report = generator.generate_v...]
+    n9[print&#40;&amp;&#35;39;\n✅ Vulnerability report generated...]
+    n10[print&#40;f&amp;quot;   Report ID: &#123;report&#91;&amp;...]
+    n11[print&#40;f&amp;quot;   File: &#123;report&#91;&amp;&#35;...]
+    n12[print&#40;f&amp;quot;   Total vulnerabilities: &#123;repo...]
+    n13[print&#40;&amp;&#35;39;\n✅ Demo completed&amp;&#35;39;&#41;]
+    n1 --> n3
+    n3 --> n4
+    n4 --> n5
+    n5 --> n6
+    n6 --> n7
+    n7 --> n8
+    n8 --> n9
+    n9 --> n10
+    n10 --> n11
+    n11 --> n12
+    n12 --> n13
+    n13 --> n2

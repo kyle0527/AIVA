@@ -1,0 +1,36 @@
+flowchart TB
+    n1([開始])
+    n2([結束])
+    n3[&amp;&#35;39;\n        將風險分數轉換為威脅等級\n\n        Args:\n   ...]
+    n4{if risk_score &amp;gt;= 9.0}
+    n5[return ThreatLevel.CRITICAL]
+    n6{if risk_score &amp;gt;= 7.0}
+    n7[return ThreatLevel.HIGH]
+    n8{if risk_score &amp;gt;= 4.0}
+    n9[return ThreatLevel.MEDIUM]
+    n10{if risk_score &amp;gt;= 2.0}
+    n11[return ThreatLevel.LOW]
+    n12[return ThreatLevel.INFO]
+    n13[]
+    n14[]
+    n15[]
+    n16[]
+    n1 --> n3
+    n3 --> n4
+    n4 -->|Yes| n5
+    n4 -->|No| n6
+    n5 --> n16
+    n6 -->|Yes| n7
+    n6 -->|No| n8
+    n7 --> n15
+    n8 -->|Yes| n9
+    n8 -->|No| n10
+    n9 --> n14
+    n10 -->|Yes| n11
+    n10 -->|No| n12
+    n11 --> n13
+    n12 --> n13
+    n13 --> n14
+    n14 --> n15
+    n15 --> n16
+    n16 --> n2

@@ -1,0 +1,15 @@
+flowchart TB
+    n1([開始])
+    n2([結束])
+    n3[&amp;&#35;39;取消註冊回調\n\n        Args:\n            task_id...]
+    n4{if task_id in self.task_callbacks}
+    n5[del self.task_callbacks&#91;task_id&#93;]
+    n6[logger.debug&#40;f&amp;&#35;39;Unregistered callback for ...]
+    n7[]
+    n1 --> n3
+    n3 --> n4
+    n4 -->|Yes| n5
+    n4 -->|No| n7
+    n5 --> n6
+    n6 --> n7
+    n7 --> n2

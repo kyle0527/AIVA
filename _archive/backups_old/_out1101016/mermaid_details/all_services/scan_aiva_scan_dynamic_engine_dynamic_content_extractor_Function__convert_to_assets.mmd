@@ -1,0 +1,63 @@
+flowchart TB
+    n1([開始])
+    n2([結束])
+    n3[&amp;&#35;39;\n        將動態內容轉換為 Asset 對象\n\n        Args:...]
+    n4{if contents is None}
+    n5[contents = self._extracted_cont...]
+    n6[]
+    n7[assets: list&#91;Asset&#93; = &#91;&#93;]
+    n8{for content in contents}
+    n9[try]
+    n10{if content.content_type == Con...}
+    n11[params = &#91;&#93;]
+    n12{for input_data in content.attribute...}
+    n13{if input_data.get&#40;&amp;&#35;39;name&amp;&#35;39;&#41;}
+    n14[params.append&#40;input_data&#91;&amp;&#35;39;name&amp;&#...]
+    n15[]
+    n16[]
+    n17[asset = Asset&#40;asset_id=conte...]
+    n18[assets.append&#40;asset&#41;]
+    n19{if content.content_type == Con...}
+    n20[asset = Asset&#40;asset_id=conte...]
+    n21[assets.append&#40;asset&#41;]
+    n22[]
+    n23[]
+    n24[]
+    n25[except Exception]
+    n26[logger.debug&#40;f&amp;&#35;39;Failed to convert content ...]
+    n27[]
+    n28[return assets]
+    n1 --> n3
+    n3 --> n4
+    n4 -->|Yes| n5
+    n4 -->|No| n6
+    n5 --> n6
+    n6 --> n7
+    n7 --> n8
+    n8 -->|Yes| n9
+    n8 -->|No| n27
+    n9 --> n10
+    n9 --> n25
+    n10 -->|Yes| n11
+    n10 -->|No| n19
+    n11 --> n12
+    n12 -->|Yes| n13
+    n12 -->|No| n16
+    n13 -->|Yes| n14
+    n13 -->|No| n15
+    n14 --> n15
+    n15 --> n12
+    n16 --> n17
+    n17 --> n18
+    n18 --> n23
+    n19 -->|Yes| n20
+    n19 -->|No| n22
+    n20 --> n21
+    n21 --> n22
+    n22 --> n23
+    n23 --> n24
+    n24 --> n8
+    n25 --> n26
+    n26 --> n24
+    n27 --> n28
+    n28 --> n2

@@ -1,0 +1,10 @@
+flowchart TB
+    n1([開始])
+    n2([結束])
+    n3[self._learning_data: dict&#91;str, list&#91;dict&#91;str,...]
+    n4[self._waf_patterns: dict&#91;str, list&#91;str&#93;&#93; ...]
+    n5[self._success_patterns: dict&#91;str, list&#91;dict&#91;s...]
+    n1 --> n3
+    n3 --> n4
+    n4 --> n5
+    n5 --> n2

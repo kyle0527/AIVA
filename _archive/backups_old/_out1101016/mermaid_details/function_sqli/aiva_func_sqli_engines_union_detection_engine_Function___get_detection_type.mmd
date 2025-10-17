@@ -1,0 +1,29 @@
+flowchart TB
+    n1([開始])
+    n2([結束])
+    n3[&amp;&#35;39;確定檢測類型&amp;&#35;39;]
+    n4{if union_success}
+    n5[return &amp;&#35;39;union_success&amp;&#35;39;]
+    n6{if column_error}
+    n7[return &amp;&#35;39;column_count_error&amp;&#35;39;]
+    n8{if content_change}
+    n9[return &amp;&#35;39;content_change&amp;&#35;39;]
+    n10[return &amp;&#35;39;unknown&amp;&#35;39;]
+    n11[]
+    n12[]
+    n13[]
+    n1 --> n3
+    n3 --> n4
+    n4 -->|Yes| n5
+    n4 -->|No| n6
+    n5 --> n13
+    n6 -->|Yes| n7
+    n6 -->|No| n8
+    n7 --> n12
+    n8 -->|Yes| n9
+    n8 -->|No| n10
+    n9 --> n11
+    n10 --> n11
+    n11 --> n12
+    n12 --> n13
+    n13 --> n2

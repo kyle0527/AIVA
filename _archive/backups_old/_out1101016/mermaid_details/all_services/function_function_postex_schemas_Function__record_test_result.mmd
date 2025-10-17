@@ -1,0 +1,74 @@
+flowchart TB
+    n1([開始])
+    n2([結束])
+    n3[&amp;&#35;39;記錄測試結果&amp;&#35;39;]
+    n4[self.tests_executed += 1]
+    n5{if result.execution_successful}
+    n6[self.successful_executions += 1]
+    n7[]
+    n8{if result.privileges_escalated}
+    n9[self.privilege_escalations += 1]
+    n10[]
+    n11{if result.lateral_movement_ach...}
+    n12[self.lateral_movements += 1]
+    n13[]
+    n14{if result.persistence_established}
+    n15[self.persistence_attempts += 1]
+    n16[]
+    n17{if result.data_exfiltrated}
+    n18[self.data_exfiltrations += 1]
+    n19[]
+    n20{if result.detection_evaded}
+    n21[self.detection_evasions += 1]
+    n22[]
+    n23[technique_id = result.test_vector.t...]
+    n24[self.techniques_used&#91;technique_id&#93; = self.techniq...]
+    n25[tactic = result.test_vector.t...]
+    n26{if tactic not in self.tactics_...}
+    n27[self.tactics_covered.append&#40;tactic&#41;]
+    n28[]
+    n29[self.artifacts_left += len&#40;result.artifacts_create...]
+    n30{if self.tests_executed == 1}
+    n31[self.average_execution_time_ms = result.execution_tim...]
+    n32[self.average_execution_time_ms = &#40;self.average_execut...]
+    n33[]
+    n1 --> n3
+    n3 --> n4
+    n4 --> n5
+    n5 -->|Yes| n6
+    n5 -->|No| n7
+    n6 --> n7
+    n7 --> n8
+    n8 -->|Yes| n9
+    n8 -->|No| n10
+    n9 --> n10
+    n10 --> n11
+    n11 -->|Yes| n12
+    n11 -->|No| n13
+    n12 --> n13
+    n13 --> n14
+    n14 -->|Yes| n15
+    n14 -->|No| n16
+    n15 --> n16
+    n16 --> n17
+    n17 -->|Yes| n18
+    n17 -->|No| n19
+    n18 --> n19
+    n19 --> n20
+    n20 -->|Yes| n21
+    n20 -->|No| n22
+    n21 --> n22
+    n22 --> n23
+    n23 --> n24
+    n24 --> n25
+    n25 --> n26
+    n26 -->|Yes| n27
+    n26 -->|No| n28
+    n27 --> n28
+    n28 --> n29
+    n29 --> n30
+    n30 -->|Yes| n31
+    n30 -->|No| n32
+    n31 --> n33
+    n32 --> n33
+    n33 --> n2

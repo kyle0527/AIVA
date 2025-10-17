@@ -1,0 +1,23 @@
+flowchart TB
+    n1([開始])
+    n2([結束])
+    n3[&amp;&#35;39;準備任務 Payload\n\n        Args:\n            p...]
+    n4[task_id = f&amp;&#35;39;task_&#123;uuid4&#40;&#41;.hex&#9...]
+    n5[target = FunctionTaskTarget&#40;u...]
+    n6[payload = FunctionTaskPayload&#40;...]
+    n7{if not payload.metadata}
+    n8[payload.metadata = &#123;&#125;]
+    n9[]
+    n10[payload.metadata.update&#40;&#123;&amp;&#35;39;session_id...]
+    n11[return payload]
+    n1 --> n3
+    n3 --> n4
+    n4 --> n5
+    n5 --> n6
+    n6 --> n7
+    n7 -->|Yes| n8
+    n7 -->|No| n9
+    n8 --> n9
+    n9 --> n10
+    n10 --> n11
+    n11 --> n2
