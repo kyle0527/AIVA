@@ -1,0 +1,122 @@
+{
+  "target_url": "http://localhost:3000",
+  "enable_idor": true,
+  "enable_auth": true,
+  "enable_cors": true,
+  "enable_sca": false,
+  
+  "test_horizontal_escalation": true,
+  "test_vertical_escalation": true,
+  "test_enumeration": true,
+  "test_weak_password": true,
+  "test_brute_force": true,
+  "test_jwt": false,
+  "test_session_fixation": true,
+  "test_null_origin": true,
+  "test_wildcard_credentials": true,
+  "test_reflected_origin": true,
+  
+  "test_method": "GET",
+  
+  "horizontal_test_endpoints": [
+    "/api/user/profile?user_id={victim_id}",
+    "/api/user/orders?user_id={victim_id}",
+    "/api/user/settings?user_id={victim_id}"
+  ],
+  
+  "vertical_test_endpoints": [
+    "/admin/dashboard",
+    "/admin/users",
+    "/admin/settings",
+    "/api/admin/stats"
+  ],
+  
+  "enumeration_config": {
+    "endpoint": "/api/user/profile",
+    "id_param": "user_id",
+    "id_range": [1, 100]
+  },
+  
+  "register_endpoint": "/api/register",
+  "login_endpoint": "/api/login",
+  "jwt_test_endpoint": "/api/protected",
+  
+  "cors_test_endpoints": [
+    "/api/data",
+    "/api/user",
+    "/api/admin"
+  ],
+  
+  "test_origins": [
+    "https://evil.com",
+    "https://attacker.com",
+    "http://localhost:8000"
+  ],
+  
+  "test_users": [
+    {
+      "user_id": "123",
+      "username": "alice",
+      "role": "user",
+      "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+      "session": "session_id_alice",
+      "cookies": {
+        "session": "session_alice"
+      },
+      "headers": {
+        "Authorization": "Bearer token_alice"
+      }
+    },
+    {
+      "user_id": "456",
+      "username": "bob",
+      "role": "user",
+      "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+      "session": "session_id_bob",
+      "cookies": {
+        "session": "session_bob"
+      },
+      "headers": {
+        "Authorization": "Bearer token_bob"
+      }
+    },
+    {
+      "user_id": "789",
+      "username": "admin",
+      "role": "admin",
+      "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+      "session": "session_id_admin",
+      "cookies": {
+        "session": "session_admin"
+      },
+      "headers": {
+        "Authorization": "Bearer token_admin"
+      }
+    }
+  ],
+  
+  "test_username": "test_user",
+  "test_password": "test_password",
+  
+  "weak_passwords": [
+    "123456",
+    "password",
+    "12345678",
+    "qwerty",
+    "abc123",
+    "111111",
+    "admin",
+    "test",
+    "password123",
+    "123123"
+  ],
+  
+  "max_brute_force_attempts": 20,
+  
+  "jwt_token": null,
+  
+  "idor_report_path": "reports/idor_test_report.json",
+  "auth_report_path": "reports/auth_test_report.json",
+  "cors_report_path": "reports/cors_test_report.json",
+  "comprehensive_report_path": "reports/comprehensive_security_report.json"
+}

@@ -31,14 +31,14 @@ from __future__ import annotations
 
 import asyncio
 import contextlib
+from email.utils import parsedate_to_datetime
 import json
 import logging
 import os
+from pathlib import Path
 import re
 import threading
 import time
-from email.utils import parsedate_to_datetime
-from pathlib import Path
 from typing import Any
 
 logger = logging.getLogger(__name__)
@@ -260,7 +260,7 @@ class RateLimiter:
                             )
                         except (ValueError, TypeError, OverflowError) as e:
                             self._log.debug(
-                                "Failed to parse HTTP-date in Retry-After header for host %s: %s", 
+                                "Failed to parse HTTP-date in Retry-After header for host %s: %s",
                                 host, str(e)
                             )
                             ra_until = None

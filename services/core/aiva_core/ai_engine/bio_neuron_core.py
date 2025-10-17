@@ -118,7 +118,7 @@ class ScalableBioNet:
             enable_training: 是否啟用訓練功能
         """
         rng = np.random.default_rng(seed)
-        
+
         # 網路架構：輸入 -> 2048 -> 尖峰層(1024) -> 輸出
         self.fc1 = rng.standard_normal((input_size, 2048)).astype(np.float32) * np.sqrt(2.0 / input_size)
         self.spiking_layer = BiologicalSpikingLayer(2048, 1024, seed)
@@ -128,7 +128,7 @@ class ScalableBioNet:
         total_params = (
             input_size * 2048 + self.spiking_layer.params + 1024 * num_tools
         )
-        
+
         logger.info("=" * 60)
         logger.info("ScalableBioNet 初始化")
         logger.info("=" * 60)
@@ -137,7 +137,7 @@ class ScalableBioNet:
         logger.info("  FC2 參數: %s", f"{1024 * num_tools:,}")
         logger.info("  總參數: %s (%.2fM)", f"{total_params:,}", total_params / 1_000_000)
         logger.info("=" * 60)
-        
+
         # 訓練相關
         self.enable_training = enable_training
         if enable_training:
@@ -164,7 +164,7 @@ class ScalableBioNet:
         # 輸出層
         output = np.dot(h2, self.fc2)
         return output
-    
+
     def save_experience(
         self,
         input_vec: np.ndarray,
@@ -182,7 +182,7 @@ class ScalableBioNet:
         """
         if not self.enable_training:
             return
-            
+
         experience = {
             "input": input_vec.copy(),
             "decision": decision,
@@ -192,7 +192,7 @@ class ScalableBioNet:
         }
         self.experience_buffer.append(experience)
         logger.debug("保存經驗: 決策=%d, 獎勵=%.2f", decision, reward)
-    
+
     def train_from_buffer(self, learning_rate: float = 0.001) -> dict[str, Any]:
         """從經驗緩衝區訓練模型.
 
@@ -204,40 +204,40 @@ class ScalableBioNet:
         """
         if not self.enable_training or len(self.experience_buffer) == 0:
             return {"status": "skipped", "reason": "no experiences"}
-        
+
         logger.info("開始訓練: %d 個經驗樣本", len(self.experience_buffer))
-        
+
         total_loss = 0.0
         updated_samples = 0
-        
+
         for exp in self.experience_buffer:
             # 簡化的梯度更新（實際應該用完整反向傳播）
             input_vec = exp["input"]
             target_decision = exp["decision"]
             reward = exp["reward"]
-            
+
             # 前向傳播
             output = self.forward(input_vec)
-            
+
             # 計算損失（交叉熵）
             predicted_probs = np.exp(output) / np.sum(np.exp(output))
             target_vec = np.zeros_like(output)
             target_vec[target_decision] = reward
-            
+
             loss = -np.sum(target_vec * np.log(predicted_probs + 1e-8))
             total_loss += loss
-            
+
             # 簡化梯度更新（僅更新 FC2）
             grad = predicted_probs - target_vec
             self.fc2 -= learning_rate * np.outer(input_vec, grad)
-            
+
             updated_samples += 1
-        
+
         avg_loss = total_loss / updated_samples if updated_samples > 0 else 0
-        
+
         # 清空緩衝區
         self.experience_buffer.clear()
-        
+
         # 記錄訓練歷史
         training_record = {
             "timestamp": time.time(),
@@ -246,9 +246,9 @@ class ScalableBioNet:
             "learning_rate": learning_rate
         }
         self.training_history.append(training_record)
-        
+
         logger.info("訓練完成: 樣本=%d, 平均損失=%.4f", updated_samples, avg_loss)
-        
+
         return {
             "status": "success",
             "samples_trained": updated_samples,
@@ -282,7 +282,7 @@ class BioNeuronRAGAgent:
         logger.info("=" * 70)
         logger.info("BioNeuronRAGAgent 正在初始化...")
         logger.info("=" * 70)
-        
+
         self.codebase_path = codebase_path
         self.enable_planner = enable_planner
         self.enable_tracer = enable_tracer
@@ -352,10 +352,10 @@ class BioNeuronRAGAgent:
 
         # ===== 步驟 4: 初始化高級功能 =====
         logger.info("[4/4] 初始化高級功能...")
-        
+
         # 執行歷史
         self.history: list[dict[str, Any]] = []
-        
+
         # 計畫執行器
         if enable_planner:
             try:
@@ -444,7 +444,7 @@ class BioNeuronRAGAgent:
         logger.info("[4/5] 信心度檢查")
         passed, confidence = self.anti_hallucination.check(decision_logits)
         logger.info("  信心度: %.2f%%", confidence * 100)
-        
+
         if enable_confidence_check and not passed:
             logger.warning("  ✗ 信心度不足，終止執行")
             return {
@@ -531,12 +531,12 @@ class BioNeuronRAGAgent:
                 "total_keywords": len(self.knowledge_base.index),
             }
         return {"total_chunks": 0, "total_keywords": 0}
-    
+
     def get_training_stats(self) -> dict[str, Any]:
         """獲取訓練統計."""
         if not self.enable_training:
             return {"training_enabled": False}
-        
+
         return {
             "training_enabled": True,
             "buffer_size": len(self.decision_core.experience_buffer),

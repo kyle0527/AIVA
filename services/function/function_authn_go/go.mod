@@ -1,6 +1,6 @@
 module github.com/kyle0527/aiva/services/function/function_authn_go
 
-go 1.21
+go 1.25
 
 require (
 	github.com/kyle0527/aiva/services/function/common/go/aiva_common_go v0.0.0-00010101000000-000000000000

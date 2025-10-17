@@ -4,32 +4,32 @@ AIVA Tools CLI - 開發者工具包裝器
 
 提供對 aiva-contracts 工具的便捷訪問
 """
+from pathlib import Path
 import subprocess
 import sys
-from pathlib import Path
 
 from ._utils import EXIT_OK, EXIT_SYSTEM, echo
 
 
 def export_schemas(out: str = "./_out/aiva.schemas.json", fmt: str = "human") -> int:
     """導出 JSON Schema
-    
+
     Args:
         out: 輸出檔案路徑
         fmt: 輸出格式（human|json）
-        
+
     Returns:
         退出碼
     """
     try:
         Path(out).parent.mkdir(parents=True, exist_ok=True)
-        result = subprocess.run(
+        subprocess.run(
             ["python", "-m", "aiva_contracts_tooling.cli", "export-jsonschema", "--out", out],
             capture_output=True,
             text=True,
             check=True,
         )
-        
+
         msg = {
             "ok": True,
             "command": "export-schemas",
@@ -37,7 +37,7 @@ def export_schemas(out: str = "./_out/aiva.schemas.json", fmt: str = "human") ->
         }
         echo(msg, fmt=fmt)
         return EXIT_OK
-        
+
     except subprocess.CalledProcessError as e:
         echo({"error": str(e), "stderr": e.stderr}, fmt=fmt)
         return EXIT_SYSTEM
@@ -48,23 +48,23 @@ def export_schemas(out: str = "./_out/aiva.schemas.json", fmt: str = "human") ->
 
 def export_typescript(out: str = "./_out/aiva.d.ts", fmt: str = "human") -> int:
     """導出 TypeScript 型別定義
-    
+
     Args:
         out: 輸出檔案路徑
         fmt: 輸出格式（human|json）
-        
+
     Returns:
         退出碼
     """
     try:
         Path(out).parent.mkdir(parents=True, exist_ok=True)
-        result = subprocess.run(
+        subprocess.run(
             ["python", "-m", "aiva_contracts_tooling.cli", "export-dts", "--out", out],
             capture_output=True,
             text=True,
             check=True,
         )
-        
+
         msg = {
             "ok": True,
             "command": "export-typescript",
@@ -72,7 +72,7 @@ def export_typescript(out: str = "./_out/aiva.d.ts", fmt: str = "human") -> int:
         }
         echo(msg, fmt=fmt)
         return EXIT_OK
-        
+
     except subprocess.CalledProcessError as e:
         echo({"error": str(e), "stderr": e.stderr}, fmt=fmt)
         return EXIT_SYSTEM
@@ -83,10 +83,10 @@ def export_typescript(out: str = "./_out/aiva.d.ts", fmt: str = "human") -> int:
 
 def list_models(fmt: str = "human") -> int:
     """列出所有可用的 Pydantic 模型
-    
+
     Args:
         fmt: 輸出格式（human|json）
-        
+
     Returns:
         退出碼
     """
@@ -97,7 +97,7 @@ def list_models(fmt: str = "human") -> int:
             text=True,
             check=True,
         )
-        
+
         # 直接輸出原始結果
         if fmt == "json":
             # 嘗試解析為 JSON
@@ -109,9 +109,9 @@ def list_models(fmt: str = "human") -> int:
                 echo({"output": result.stdout}, fmt="json")
         else:
             sys.stdout.write(result.stdout)
-        
+
         return EXIT_OK
-        
+
     except subprocess.CalledProcessError as e:
         echo({"error": str(e), "stderr": e.stderr}, fmt=fmt)
         return EXIT_SYSTEM

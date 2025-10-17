@@ -5,19 +5,19 @@ edition = "2021"
 
 [dependencies]
 # 正則引擎
-regex = "1.10"
+regex = "1.11"
 aho-corasick = "1.1"
 
 # 並行處理
-rayon = "1.8"
+rayon = "1.10"
 
 # 序列化
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
 
 # RabbitMQ 客戶端
-lapin = "2.3"
-tokio = { version = "1.35", features = ["full"] }
+lapin = "2.5"
+tokio = { version = "1.42", features = ["full"] }
 futures = "0.3"
 futures-lite = "2.6"
 
@@ -26,16 +26,13 @@ tracing = "0.1"
 tracing-subscriber = { version = "0.3", features = ["env-filter"] }
 
 # Git 操作
-git2 = "0.18"
+git2 = "0.19"
 
 # 熵值計算（已使用內建 HashMap）
 
 [dev-dependencies]
 criterion = "0.5"
 tempfile = "3.8"
-
-[dev-dependencies]
-criterion = "0.5"
 
 [profile.release]
 opt-level = 3

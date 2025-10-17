@@ -6,11 +6,11 @@ supporting both RabbitMQ (production) and in-memory (testing) implementations.
 
 from __future__ import annotations
 
-import asyncio
-import logging
 from abc import ABC, abstractmethod
+import asyncio
 from collections.abc import AsyncIterator
 from dataclasses import dataclass
+import logging
 from typing import TYPE_CHECKING, Any
 
 from .config import get_settings

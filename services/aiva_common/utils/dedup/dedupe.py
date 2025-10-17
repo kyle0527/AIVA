@@ -31,16 +31,16 @@ Example:
 
 from __future__ import annotations
 
+from collections.abc import Mapping
 import hashlib
 import json
 import logging
+from pathlib import Path
 import sqlite3
 import threading
 import time
-import weakref
-from collections.abc import Mapping
-from pathlib import Path
 from typing import Any
+import weakref
 
 logger = logging.getLogger(__name__)
 

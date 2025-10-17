@@ -26,9 +26,9 @@ Example:
 from __future__ import annotations
 
 import asyncio
+from collections.abc import Callable, Sequence
 import logging
 import random
-from collections.abc import Callable, Sequence
 from typing import Any
 
 import httpx

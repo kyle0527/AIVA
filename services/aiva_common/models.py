@@ -21,6 +21,18 @@ from pydantic import BaseModel, Field, field_validator
 
 from .enums import ModuleName, Topic
 
+# ==================== 常量定義 ====================
+# CVSS v3.1 正則表達式模式常量
+_PATTERN_NLH = r"^[NLH]$"  # None, Low, High
+_PATTERN_XLMH = r"^[XLMH]$"  # Not Defined, Low, Medium, High
+_PATTERN_LH = r"^[LH]$"  # Low, High
+_PATTERN_NR = r"^[NR]$"  # None, Required
+_PATTERN_UC = r"^[UC]$"  # Unchanged, Changed
+_PATTERN_XUPFH = r"^[XUPFH]$"  # Exploit Code Maturity
+_PATTERN_XOTWU = r"^[XOTWU]$"  # Remediation Level
+_PATTERN_XURC = r"^[XURC]$"  # Report Confidence
+_PATTERN_NALP = r"^[NALP]$"  # Attack Vector
+
 # ==================== 核心消息協議 ====================
 
 
@@ -91,38 +103,38 @@ class CVSSv3Metrics(BaseModel):
     attack_vector: str = Field(
         default="N",
         description="攻擊向量: N(Network), A(Adjacent), L(Local), P(Physical)",
-        pattern=r"^[NALP]$",
+        pattern=_PATTERN_NALP,
     )
     attack_complexity: str = Field(
-        default="L", description="攻擊複雜度: L(Low), H(High)", pattern=r"^[LH]$"
+        default="L", description="攻擊複雜度: L(Low), H(High)", pattern=_PATTERN_LH
     )
     privileges_required: str = Field(
         default="N",
         description="所需權限: N(None), L(Low), H(High)",
-        pattern=r"^[NLH]$",
+        pattern=_PATTERN_NLH,
     )
     user_interaction: str = Field(
         default="N",
         description="用戶交互: N(None), R(Required)",
-        pattern=r"^[NR]$")
+        pattern=_PATTERN_NR)
     scope: str = Field(
         default="U",
         description="影響範圍: U(Unchanged), C(Changed)",
-        pattern=r"^[UC]$")
+        pattern=_PATTERN_UC)
     confidentiality_impact: str = Field(
         default="N",
         description="機密性影響: N(None), L(Low), H(High)",
-        pattern=r"^[NLH]$",
+        pattern=_PATTERN_NLH,
     )
     integrity_impact: str = Field(
         default="N",
         description="完整性影響: N(None), L(Low), H(High)",
-        pattern=r"^[NLH]$",
+        pattern=_PATTERN_NLH,
     )
     availability_impact: str = Field(
         default="N",
         description="可用性影響: N(None), L(Low), H(High)",
-        pattern=r"^[NLH]$",
+        pattern=_PATTERN_NLH,
     )
 
     # Temporal Metrics (時間指標) - 可選
@@ -132,7 +144,7 @@ class CVSSv3Metrics(BaseModel):
             "利用代碼成熟度: X(Not Defined), U(Unproven), "
             "P(Proof-of-Concept), F(Functional), H(High)"
         ),
-        pattern=r"^[XUPFH]$",
+        pattern=_PATTERN_XUPFH,
     )
     remediation_level: str | None = Field(
         default=None,
@@ -140,29 +152,29 @@ class CVSSv3Metrics(BaseModel):
             "修復級別: X(Not Defined), O(Official Fix), "
             "T(Temporary Fix), W(Workaround), U(Unavailable)"
         ),
-        pattern=r"^[XOTWU]$",
+        pattern=_PATTERN_XOTWU,
     )
     report_confidence: str | None = Field(
         default=None,
         description="報告可信度: X(Not Defined), U(Unknown), R(Reasonable), C(Confirmed)",
-        pattern=r"^[XURC]$",
+        pattern=_PATTERN_XURC,
     )
 
     # Environmental Metrics (環境指標) - 可選
     confidentiality_requirement: str | None = Field(
         default=None,
         description="機密性要求: X(Not Defined), L(Low), M(Medium), H(High)",
-        pattern=r"^[XLMH]$",
+        pattern=_PATTERN_XLMH,
     )
     integrity_requirement: str | None = Field(
         default=None,
         description="完整性要求: X(Not Defined), L(Low), M(Medium), H(High)",
-        pattern=r"^[XLMH]$",
+        pattern=_PATTERN_XLMH,
     )
     availability_requirement: str | None = Field(
         default=None,
         description="可用性要求: X(Not Defined), L(Low), M(Medium), H(High)",
-        pattern=r"^[XLMH]$",
+        pattern=_PATTERN_XLMH,
     )
 
     # Calculated Scores (計算得分)
