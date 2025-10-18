@@ -1,0 +1,71 @@
+{
+  "agent_info": {
+    "name": "Enhanced Decision Agent",
+    "version": "1.0",
+    "risk_threshold": 0.7,
+    "success_threshold": 3
+  },
+  "statistics": {
+    "total_decisions": 0
+  },
+  "decision_rules": [
+    {
+      "name": "high_risk_confirmation",
+      "description": "高風險操作需要用戶確認",
+      "priority": 100
+    },
+    {
+      "name": "sql_injection_found",
+      "description": "發現 SQL 注入，深入測試",
+      "priority": 90
+    },
+    {
+      "name": "multiple_failures",
+      "description": "多次失敗後改變策略",
+      "priority": 80
+    },
+    {
+      "name": "web_service_detected",
+      "description": "檢測到 Web 服務，執行 Web 攻擊",
+      "priority": 70
+    },
+    {
+      "name": "ssh_service_available",
+      "description": "SSH 服務可用，嘗試爆破",
+      "priority": 60
+    }
+  ],
+  "tool_preferences": {
+    "sql_injection": [
+      "sqlmap",
+      "havij",
+      "manual_test"
+    ],
+    "xss": [
+      "xsser",
+      "xsstrike",
+      "manual_test"
+    ],
+    "directory_traversal": [
+      "dirb",
+      "gobuster",
+      "manual_enum"
+    ],
+    "port_scan": [
+      "nmap",
+      "masscan",
+      "unicornscan"
+    ],
+    "web_scan": [
+      "nikto",
+      "dirb",
+      "wpscan"
+    ],
+    "brute_force": [
+      "hydra",
+      "medusa",
+      "john"
+    ]
+  },
+  "decision_history": []
+}
