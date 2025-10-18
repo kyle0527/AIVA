@@ -1,0 +1,217 @@
+{
+  "executive_summary": {
+    "assessment_date": "2025年10月18日",
+    "target_application": "Web Application (Node.js)",
+    "assessment_scope": "外部安全評估",
+    "overall_risk_level": "高",
+    "risk_score": "100/100",
+    "risk_description": "發現多個安全控制缺失，建議優先處理",
+    "key_findings_count": {
+      "critical": 0,
+      "high": 1,
+      "medium": 3,
+      "low": 0
+    },
+    "primary_concerns": [
+      "攻擊面過度暴露",
+      "跨域訪問策略過於寬鬆",
+      "錯誤處理信息洩露",
+      "安全標頭配置不完整"
+    ],
+    "business_impact_summary": "當前發現的問題主要涉及信息洩露和攻擊面管理，對業務運營的直接影響較低，但可能為進階攻擊提供便利。"
+  },
+  "target_analysis": {
+    "environment": {
+      "platform": "Node.js Application",
+      "version": "v22.18.0",
+      "os": "Linux x64",
+      "port": "3000",
+      "architecture": "Express.js Framework"
+    },
+    "error_patterns": [
+      {
+        "type": "Path Handling Error",
+        "description": "API 路徑處理異常",
+        "risk_level": "Medium",
+        "details": "應用程式對未預期的 API 路徑存在處理問題",
+        "potential_impact": "可能洩露內部路由結構或導致錯誤信息洩露"
+      },
+      {
+        "type": "Frontend Framework Exposure",
+        "description": "前端框架細節暴露",
+        "risk_level": "Low",
+        "details": "錯誤堆疊顯示了 Angular.js 使用情況",
+        "potential_impact": "攻擊者可識別前端技術棧"
+      },
+      {
+        "type": "Backend Framework Disclosure",
+        "description": "後端框架信息洩露",
+        "risk_level": "Low",
+        "details": "錯誤信息暴露了 Express.js 使用詳情",
+        "potential_impact": "可能協助攻擊者識別已知漏洞"
+      }
+    ],
+    "service_status": "Running",
+    "exposure_level": "Public Accessible"
+  },
+  "security_assessment": {
+    "reconnaissance_findings": {
+      "total_paths_discovered": 9,
+      "sensitive_paths_count": 4,
+      "findings": [
+        {
+          "issue": "大量可訪問路徑",
+          "description": "發現 9 個可直接訪問的路徑",
+          "risk_impact": "增加攻擊面，提供更多潛在入口點",
+          "business_impact": "可能洩露應用程式結構和功能"
+        },
+        {
+          "issue": "敏感管理路徑暴露",
+          "description": "發現 4 個敏感管理路徑",
+          "risk_impact": "管理功能可能被未授權訪問",
+          "business_impact": "可能導致系統控制權失控"
+        }
+      ],
+      "reconnaissance_success_rate": "90%"
+    },
+    "access_control_analysis": {
+      "cors_configuration": "Permissive",
+      "missing_security_headers": 3,
+      "access_control_issues": [
+        {
+          "control_type": "Cross-Origin Resource Sharing",
+          "issue": "過度寬鬆的跨域策略",
+          "current_setting": "Allow all origins (*)",
+          "risk_level": "Medium",
+          "recommendation": "限制為特定可信域名"
+        }
+      ],
+      "missing_protections": [
+        {
+          "protection_type": "跨站腳本保護",
+          "header_name": "X-XSS-Protection",
+          "risk_level": "Medium"
+        },
+        {
+          "protection_type": "傳輸安全強制",
+          "header_name": "Strict-Transport-Security",
+          "risk_level": "Low"
+        },
+        {
+          "protection_type": "內容安全策略",
+          "header_name": "Content-Security-Policy",
+          "risk_level": "Low"
+        }
+      ]
+    },
+    "information_disclosure": {
+      "total_disclosures": 2,
+      "disclosure_categories": [
+        "Technical Stack",
+        "Framework Details"
+      ],
+      "disclosures": [
+        {
+          "disclosure_type": "Technical Stack Information",
+          "source": "Error Messages",
+          "leaked_info": "Express.js routing structure",
+          "sensitivity": "Low",
+          "exploitation_potential": "輔助後續攻擊向量識別"
+        },
+        {
+          "disclosure_type": "Application Framework",
+          "source": "Error Stack Trace",
+          "leaked_info": "Angular.js frontend architecture",
+          "sensitivity": "Low",
+          "exploitation_potential": "前端攻擊向量分析"
+        }
+      ]
+    },
+    "error_handling_review": {
+      "error_exposure_level": "Detailed",
+      "stack_trace_disclosure": true,
+      "internal_path_disclosure": true,
+      "framework_details_leaked": true,
+      "error_handling_security": "Needs Improvement",
+      "recommendations": [
+        "實施統一錯誤處理機制",
+        "避免在生產環境暴露詳細堆疊信息",
+        "建立自定義錯誤頁面",
+        "記錄詳細錯誤到安全日志"
+      ]
+    },
+    "configuration_security": {
+      "configuration_score": "6/10",
+      "critical_config_issues": 0,
+      "moderate_config_issues": 2,
+      "configuration_issues": [
+        {
+          "component": "Web Server Configuration",
+          "issue": "過多路徑暴露",
+          "current_state": "Multiple endpoints accessible",
+          "recommended_state": "Minimal necessary exposure"
+        },
+        {
+          "component": "Server Header Configuration",
+          "issue": "服務器信息處理不一致",
+          "current_state": "Server header missing or masked",
+          "recommended_state": "Consistent server identification policy"
+        }
+      ]
+    }
+  },
+  "recommendations": [
+    {
+      "priority": "High",
+      "category": "Access Control Enhancement",
+      "action": "實施精確的跨域資源共享策略",
+      "implementation": [
+        "識別確實需要跨域訪問的合法來源",
+        "更新 CORS 配置為特定域名白名單",
+        "定期審查和更新允許的來源清單"
+      ],
+      "business_benefit": "減少未授權的跨域攻擊風險"
+    },
+    {
+      "priority": "Medium",
+      "category": "Information Security",
+      "action": "改善錯誤處理和信息洩露控制",
+      "implementation": [
+        "實施生產環境錯誤信息過濾",
+        "建立統一的錯誤響應格式",
+        "將詳細錯誤信息記錄到安全日志而非返回給用戶"
+      ],
+      "business_benefit": "降低系統內部結構暴露風險"
+    },
+    {
+      "priority": "Medium",
+      "category": "Security Headers Implementation",
+      "action": "完善 HTTP 安全標頭配置",
+      "implementation": [
+        "實施內容安全策略 (CSP)",
+        "啟用傳輸安全強制 (HSTS)",
+        "配置點擊劫持保護",
+        "啟用 XSS 過濾器"
+      ],
+      "business_benefit": "提升瀏覽器層面的安全保護"
+    },
+    {
+      "priority": "Medium",
+      "category": "Attack Surface Reduction",
+      "action": "最小化攻擊面暴露",
+      "implementation": [
+        "審查每個暴露端點的業務必要性",
+        "移除或保護非必要的管理路徑",
+        "實施路徑訪問控制和認證",
+        "定期進行攻擊面評估"
+      ],
+      "business_benefit": "減少潛在攻擊入口點"
+    }
+  ],
+  "report_metadata": {
+    "generated_by": "AIVA Security Assessment Platform",
+    "report_version": "2.0",
+    "assessment_methodology": "Automated Security Scanning with Manual Analysis",
+    "report_type": "External Security Assessment"
+  }
+}

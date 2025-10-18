@@ -68,14 +68,12 @@ class AIModelManager:
         self,
         input_size: int = 100,
         num_tools: int = 10,
-        knowledge_base_path: str | None = None,
     ) -> Dict[str, Any]:
         """初始化所有 AI 模型
         
         Args:
             input_size: 輸入維度
             num_tools: 工具數量
-            knowledge_base_path: 知識庫路徑
             
         Returns:
             初始化結果
@@ -90,16 +88,20 @@ class AIModelManager:
             )
             logger.info(f"ScalableBioNet initialized: {self.scalable_net.total_params:,} parameters")
             
-            # 2. 初始化 BioNeuronRAGAgent
-            kb_path = knowledge_base_path or self.knowledge_base_path
-            if kb_path:
+            # 2. 初始化 BioNeuronRAGAgent (可選)
+            # 注意：BioNeuronRAGAgent 需要 codebase_path 參數
+            codebase_path = str(Path.cwd())  # 使用當前目錄作為代碼庫路徑
+            try:
                 self.bio_agent = BioNeuronRAGAgent(
-                    knowledge_base_path=kb_path,
-                    model=self.scalable_net
+                    codebase_path=codebase_path,
+                    enable_planner=True,
+                    enable_tracer=True,
+                    enable_experience=True
                 )
-                logger.info(f"BioNeuronRAGAgent initialized with knowledge base: {kb_path}")
-            else:
-                logger.warning("No knowledge base path provided, BioNeuronRAGAgent not initialized")
+                logger.info(f"BioNeuronRAGAgent initialized with codebase: {codebase_path}")
+            except Exception as e:
+                logger.warning(f"BioNeuronRAGAgent initialization failed: {e}")
+                self.bio_agent = None
             
             # 3. 檢查模型狀態
             result = {
@@ -176,14 +178,30 @@ class AIModelManager:
             
             # 準備訓練數據格式 (簡化示例)
             import numpy as np
-            X_train = np.array([[s.context for s in samples[:800]] if hasattr(samples[0], 'context') 
-                               else np.random.randn(800, 10)])
-            y_train = np.array([[s.result for s in samples[:800]] if hasattr(samples[0], 'result')
-                               else np.random.randn(800, 10)])
-            X_val = np.array([[s.context for s in samples[800:]] if len(samples) > 800 and hasattr(samples[0], 'context')
-                             else np.random.randn(200, 10)])
-            y_val = np.array([[s.result for s in samples[800:]] if len(samples) > 800 and hasattr(samples[0], 'result')
-                             else np.random.randn(200, 10)])
+            
+            # 修正：避免不當的陣列創建，直接使用合適的形狀
+            if hasattr(samples[0], 'context') and hasattr(samples[0], 'result'):
+                # 如果 samples 有真實數據，需要適當的數據預處理
+                # 這裡假設 context 和 result 已經是數值格式
+                X_train = np.array([s.context for s in samples[:800]])
+                y_train = np.array([s.result for s in samples[:800]])
+                if len(samples) > 800:
+                    X_val = np.array([s.context for s in samples[800:]])
+                    y_val = np.array([s.result for s in samples[800:]])
+                else:
+                    # 沒有足夠數據做驗證，使用部分訓練數據
+                    X_val = X_train[-50:]
+                    y_val = y_train[-50:]
+            else:
+                # 如果沒有真實數據，生成假數據進行測試
+                # 確保維度正確：輸入維度應該與 ScalableBioNet 的 fc1 輸入維度匹配
+                input_dim = self.scalable_net.fc1.shape[0] if self.scalable_net else 10
+                output_dim = self.scalable_net.fc2.shape[1] if self.scalable_net else 3
+                
+                X_train = np.random.randn(800, input_dim)
+                y_train = np.random.randn(800, output_dim)
+                X_val = np.random.randn(200, input_dim)
+                y_val = np.random.randn(200, output_dim)
             
             # 執行訓練
             training_results = bio_trainer.train(X_train, y_train, X_val, y_val)
@@ -244,8 +262,9 @@ class AIModelManager:
                 # 直接使用 ScalableBioNet
                 import numpy as np
                 
-                # 簡化的輸入處理 (實際應用中需要更複雜的特徵工程)
-                input_vector = np.random.randn(1, self.scalable_net.fc1.shape[0])
+                # 修正：fc1.shape是(input_size, hidden_size)，所以應該用shape[0]作為輸入大小
+                input_size = self.scalable_net.fc1.shape[0]
+                input_vector = np.random.randn(input_size)  # 1D向量，不是2D
                 output = self.scalable_net.forward(input_vector)
                 
                 result = {

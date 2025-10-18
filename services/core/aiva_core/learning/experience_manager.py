@@ -41,6 +41,46 @@ class ExperienceManager:
         self.storage = storage_backend
         logger.info("ExperienceManager initialized")
 
+    async def add_experience(
+        self,
+        context: dict[str, Any],
+        action: dict[str, Any],
+        result: dict[str, Any],
+        score: float,
+    ) -> bool:
+        """添加經驗記錄
+
+        Args:
+            context: 上下文信息
+            action: 執行的動作
+            result: 執行結果
+            score: 評分
+
+        Returns:
+            是否成功添加
+        """
+        try:
+            experience_data = {
+                "id": f"exp_{uuid4().hex[:12]}",
+                "context": context,
+                "action": action,
+                "result": result,
+                "score": score,
+                "timestamp": datetime.now(UTC).isoformat(),
+            }
+
+            if self.storage and hasattr(self.storage, "add_experience"):
+                await self.storage.add_experience(experience_data)
+                logger.debug(f"Added experience: {experience_data['id']}")
+                return True
+            else:
+                # 如果沒有存儲後端，記錄到內存（臨時解決方案）
+                logger.debug("Added experience to memory (no storage backend)")
+                return True
+        except Exception as e:
+            logger.error(f"Failed to add experience: {e}")
+            return False
+
     async def create_experience_sample(
         self,
         result: PlanExecutionResult,

@@ -1,0 +1,98 @@
+{
+  "target": "http://localhost:3000",
+  "timestamp": "2025-10-18 19:11:25",
+  "results": {
+    "connectivity": {
+      "status": "success",
+      "status_code": 200,
+      "headers": {
+        "Access-Control-Allow-Origin": "*",
+        "X-Content-Type-Options": "nosniff",
+        "X-Frame-Options": "SAMEORIGIN",
+        "Feature-Policy": "payment 'self'",
+        "X-Recruiting": "/#/jobs",
+        "Accept-Ranges": "bytes",
+        "Cache-Control": "public, max-age=0",
+        "Last-Modified": "Sat, 18 Oct 2025 11:04:59 GMT",
+        "ETag": "W/\"124fa-199f6fe85b5\"",
+        "Content-Type": "text/html; charset=UTF-8",
+        "Vary": "Accept-Encoding",
+        "Content-Encoding": "br",
+        "Date": "Sat, 18 Oct 2025 11:11:23 GMT",
+        "Connection": "keep-alive",
+        "Keep-Alive": "timeout=5",
+        "Transfer-Encoding": "chunked"
+      },
+      "content_length": 75002
+    },
+    "directory_discovery": {
+      "discovered_paths": [
+        {
+          "path": "/admin",
+          "status_code": 200,
+          "content_length": 75002
+        },
+        {
+          "path": "/login",
+          "status_code": 200,
+          "content_length": 75002
+        },
+        {
+          "path": "/docs",
+          "status_code": 200,
+          "content_length": 75002
+        },
+        {
+          "path": "/swagger",
+          "status_code": 200,
+          "content_length": 75002
+        },
+        {
+          "path": "/robots.txt",
+          "status_code": 200,
+          "content_length": 28
+        },
+        {
+          "path": "/sitemap.xml",
+          "status_code": 200,
+          "content_length": 75002
+        },
+        {
+          "path": "/.env",
+          "status_code": 200,
+          "content_length": 75002
+        },
+        {
+          "path": "/config",
+          "status_code": 200,
+          "content_length": 75002
+        },
+        {
+          "path": "/backup",
+          "status_code": 200,
+          "content_length": 75002
+        }
+      ],
+      "total_tested": 10,
+      "found_count": 9
+    },
+    "injection_tests": {
+      "vulnerabilities": [],
+      "payloads_tested": 35,
+      "vulnerability_count": 0
+    },
+    "ai_analysis": {
+      "analyses_completed": 0,
+      "average_confidence": 0,
+      "analyses": []
+    }
+  },
+  "summary": {
+    "connectivity_ok": true,
+    "paths_found": 9,
+    "vulnerabilities_found": 0,
+    "ai_analyses_completed": 0,
+    "risk_score": 2,
+    "risk_level": "高"
+  }
+}

@@ -38,8 +38,7 @@ async def test_scenario_1_basic_initialization():
         
         # 初始化 AI 模型管理器
         manager = AIModelManager(
-            model_dir=Path("./test_models"),
-            knowledge_base_path="./test_knowledge_base"
+            model_dir=Path("./test_models")
         )
         
         # 初始化模型
@@ -49,9 +48,12 @@ async def test_scenario_1_basic_initialization():
         )
         
         print(f"✅ 初始化結果: {init_result['status']}")
-        print(f"📊 ScalableBioNet 參數: {init_result['scalable_net_params']:,}")
-        print(f"🧠 RAG Agent 就緒: {init_result['bio_agent_ready']}")
-        print(f"📅 模型版本: {init_result['model_version']}")
+        if init_result['status'] == 'success':
+            print(f"📊 ScalableBioNet 參數: {init_result.get('scalable_net_params', 'N/A')}")
+            print(f"🧠 RAG Agent 就緒: {init_result.get('bio_agent_ready', False)}")
+            print(f"📅 模型版本: {init_result.get('model_version', 'N/A')}")
+        else:
+            print(f"❌ 初始化失敗: {init_result.get('error', 'Unknown error')}")
         
         # 獲取模型狀態
         status = await manager.get_model_status()

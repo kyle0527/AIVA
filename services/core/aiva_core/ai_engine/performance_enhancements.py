@@ -196,7 +196,12 @@ class OptimizedScalableBioNet:
             h2 = self.spiking1.forward(h1, use_cache=use_cache)
             
             # 輸出層
-            output = np.softmax(np.dot(h2, self.fc2.astype(np.float32)))
+            # 使用自定義 softmax 函數
+            def softmax(x):
+                e_x = np.exp(x - np.max(x))
+                return e_x / e_x.sum(axis=0)
+            
+            output = softmax(np.dot(h2, self.fc2.astype(np.float32)))
             
             # 更新性能統計
             prediction_time = time.time() - start_time

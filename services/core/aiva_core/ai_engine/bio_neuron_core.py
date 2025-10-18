@@ -31,7 +31,7 @@ logger = logging.getLogger(__name__)
 
 
 class BiologicalSpikingLayer:
-    """模擬生物尖峰神經元行為的神經層 (整合 v2 改進)."""
+    """模擬生物尖峰神經元行為的神經層 (整合 v2 改進 + 優化版本)."""
 
     def __init__(self, input_size: int, output_size: int) -> None:
         """初始化尖峰神經層.
@@ -44,9 +44,14 @@ class BiologicalSpikingLayer:
             2.0 / input_size
         )
         self.threshold = 1.0  # 尖峰閾值
-        self.refractory_period = 0.1  # 不反應期
+        self.refractory_period = 0.05  # 優化: 減少不反應期，提升響應速度
         self.last_spike_time = np.zeros(output_size) - self.refractory_period
         self.params = input_size * output_size
+        
+        # 新增: 自適應閾值機制
+        self.adaptive_threshold = True
+        self.threshold_decay = 0.98
+        self.min_threshold = 0.3
 
     def forward(self, x: np.ndarray) -> np.ndarray:
         """前向傳播,產生尖峰訊號 (使用 v2 改進的向量化操作).
@@ -59,15 +64,46 @@ class BiologicalSpikingLayer:
         """
         current_time = time.time()
         potential = np.dot(x, self.weights)
+        
+        # 自適應閾值調整
+        if self.adaptive_threshold:
+            self.threshold = max(self.min_threshold, self.threshold * self.threshold_decay)
+        
         can_spike = (current_time - self.last_spike_time) > self.refractory_period
         spikes = (potential > self.threshold) & can_spike
 
         self.last_spike_time[spikes] = current_time
         return spikes.astype(np.float32)
+    
+    def forward_batch(self, x_batch: np.ndarray) -> np.ndarray:
+        """批次處理優化，提升並發能力.
+        
+        Args:
+            x_batch: 批次輸入 (batch_size, input_size)
+            
+        Returns:
+            批次尖峰輸出 (batch_size, output_size)
+        """
+        current_time = time.time()
+        potentials = np.dot(x_batch, self.weights)
+        
+        # 自適應閾值調整
+        if self.adaptive_threshold:
+            self.threshold = max(self.min_threshold, self.threshold * self.threshold_decay)
+            
+        # 向量化尖峰檢測
+        can_spike = (current_time - self.last_spike_time) > self.refractory_period
+        spikes = (potentials > self.threshold) & can_spike
+        
+        # 更新尖峰時間 (只更新有尖峰的神經元)
+        spike_mask = np.any(spikes, axis=0)
+        self.last_spike_time[spike_mask] = current_time
+            
+        return spikes.astype(np.float32)
 
 
 class AntiHallucinationModule:
-    """抗幻覺模組,用於評估決策的信心度 (整合 v2 改進)."""
+    """抗幻覺模組,用於評估決策的信心度 (整合 v2 改進 + 多層驗證)."""
 
     def __init__(self, confidence_threshold: float = 0.7) -> None:
         """初始化抗幻覺模組.
@@ -76,11 +112,15 @@ class AntiHallucinationModule:
             confidence_threshold: 信心度閾值
         """
         self.confidence_threshold = confidence_threshold
+        # 新增: 多層驗證機制
+        self.validation_layers = 3
+        self.consensus_threshold = 0.6
+        self.validation_history = []
 
     def check_confidence(
         self, decision_potential: np.ndarray, threshold: float = None
     ) -> tuple[bool, float]:
-        """檢查決策的信心度是否足夠.
+        """檢查決策的信心度是否足夠 (基礎版本，保持向後相容).
 
         Args:
             decision_potential: 決策潛力向量
@@ -101,6 +141,55 @@ class AntiHallucinationModule:
             )
         return is_confident, confidence
 
+    def multi_layer_validation(self, decision_potential: np.ndarray) -> tuple[bool, float, dict]:
+        """多層次信心度驗證 (新增優化功能).
+        
+        Args:
+            decision_potential: 決策潛力向量
+            
+        Returns:
+            (是否通過驗證, 最終信心度, 詳細分析)
+        """
+        validations = []
+        
+        # 第一層: 基本信心度
+        basic_confidence = float(np.max(decision_potential))
+        validations.append(basic_confidence)
+        
+        # 第二層: 穩定性檢查 (標準差相對於平均值)
+        mean_val = np.mean(decision_potential)
+        std_val = np.std(decision_potential)
+        stability = 1.0 - (std_val / max(mean_val, 0.001))  # 避免除零
+        stability = max(0.0, min(1.0, stability))  # 限制在 [0,1] 範圍
+        validations.append(stability)
+        
+        # 第三層: 一致性檢查 (高信心選項比例)
+        high_confidence_ratio = float(np.sum(decision_potential > 0.5) / len(decision_potential))
+        validations.append(high_confidence_ratio)
+        
+        # 綜合評估
+        final_confidence = np.mean(validations)
+        consensus_reached = sum(v > self.consensus_threshold for v in validations) >= 2
+        
+        # 記錄驗證歷史
+        validation_record = {
+            'basic_confidence': basic_confidence,
+            'stability': stability,
+            'consistency': high_confidence_ratio,
+            'final_confidence': final_confidence,
+            'consensus_reached': consensus_reached,
+            'timestamp': time.time()
+        }
+        self.validation_history.append(validation_record)
+        
+        # 保持歷史記錄在合理範圍內
+        if len(self.validation_history) > 100:
+            self.validation_history = self.validation_history[-50:]
+        
+        is_valid = consensus_reached and (final_confidence >= self.confidence_threshold)
+        
+        return is_valid, final_confidence, validation_record
+
     def check(self, decision_logits: np.ndarray) -> tuple[bool, float]:
         """檢查決策的信心度 (v2 相容方法).
 
@@ -111,6 +200,24 @@ class AntiHallucinationModule:
             (是否通過檢查, 信心度分數)
         """
         return self.check_confidence(decision_logits)
+    
+    def get_validation_stats(self) -> dict:
+        """獲取驗證統計信息.
+        
+        Returns:
+            驗證統計數據
+        """
+        if not self.validation_history:
+            return {'total_validations': 0}
+            
+        recent_validations = self.validation_history[-20:]  # 最近 20 次
+        
+        return {
+            'total_validations': len(self.validation_history),
+            'recent_average_confidence': np.mean([v['final_confidence'] for v in recent_validations]),
+            'recent_consensus_rate': np.mean([v['consensus_reached'] for v in recent_validations]),
+            'recent_stability_score': np.mean([v['stability'] for v in recent_validations])
+        }
 
 
 class ScalableBioNet:
