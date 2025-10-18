@@ -5,7 +5,7 @@ AI Engine - AIVA 的 AI 決策引擎
 
 from __future__ import annotations
 
-from .bio_neuron_core_v2 import (
+from .bio_neuron_core import (
     AntiHallucinationModule,
     BiologicalSpikingLayer,
     BioNeuronRAGAgent,

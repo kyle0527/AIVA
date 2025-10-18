@@ -31,7 +31,7 @@ logger = logging.getLogger(__name__)
 
 
 class BiologicalSpikingLayer:
-    """模擬生物尖峰神經元行為的神經層 (整合 v2 改進)."""
+    """一個模擬生物尖峰行為的簡化層."""
 
     def __init__(self, input_size: int, output_size: int) -> None:
         """初始化尖峰神經層.
@@ -49,7 +49,7 @@ class BiologicalSpikingLayer:
         self.params = input_size * output_size
 
     def forward(self, x: np.ndarray) -> np.ndarray:
-        """前向傳播,產生尖峰訊號 (使用 v2 改進的向量化操作).
+        """前向傳播,產生尖峰訊號.
 
         Args:
             x: 輸入訊號
@@ -58,40 +58,36 @@ class BiologicalSpikingLayer:
             尖峰輸出 (0 或 1)
         """
         current_time = time.time()
-        potential = np.dot(x, self.weights)
-        can_spike = (current_time - self.last_spike_time) > self.refractory_period
-        spikes = (potential > self.threshold) & can_spike
+        potential = x @ self.weights
+        spikes = (potential > self.threshold).astype(int)
 
-        self.last_spike_time[spikes] = current_time
-        return spikes.astype(np.float32)
+        # 實現不反應期
+        for i in range(len(spikes)):
+            if spikes[i] and (
+                current_time - self.last_spike_time[i] < self.refractory_period
+            ):
+                spikes[i] = 0  # 抑制尖峰
+            elif spikes[i]:
+                self.last_spike_time[i] = current_time
+
+        return spikes
 
 
 class AntiHallucinationModule:
-    """抗幻覺模組,用於評估決策的信心度 (整合 v2 改進)."""
-
-    def __init__(self, confidence_threshold: float = 0.7) -> None:
-        """初始化抗幻覺模組.
-
-        Args:
-            confidence_threshold: 信心度閾值
-        """
-        self.confidence_threshold = confidence_threshold
+    """抗幻覺模組,用於評估決策的信心度."""
 
     def check_confidence(
-        self, decision_potential: np.ndarray, threshold: float = None
+        self, decision_potential: np.ndarray, threshold: float = 0.7
     ) -> tuple[bool, float]:
         """檢查決策的信心度是否足夠.
 
         Args:
             decision_potential: 決策潛力向量
-            threshold: 信心度閾值 (可選，使用實例預設值)
+            threshold: 信心度閾值
 
         Returns:
             (是否有信心, 信心度分數)
         """
-        if threshold is None:
-            threshold = self.confidence_threshold
-            
         confidence = float(np.max(decision_potential))
         is_confident = confidence >= threshold
         if not is_confident:
@@ -100,17 +96,6 @@ class AntiHallucinationModule:
                 f"({confidence:.2f} < {threshold})，建議請求確認。"
             )
         return is_confident, confidence
-
-    def check(self, decision_logits: np.ndarray) -> tuple[bool, float]:
-        """檢查決策的信心度 (v2 相容方法).
-
-        Args:
-            decision_logits: 決策邏輯值
-
-        Returns:
-            (是否通過檢查, 信心度分數)
-        """
-        return self.check_confidence(decision_logits)
 
 
 class ScalableBioNet:
