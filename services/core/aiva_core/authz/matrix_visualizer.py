@@ -240,16 +240,35 @@ class MatrixVisualizer:
         output_path = Path(output_path)
 
         # 生成圖表
-        heatmap = self.generate_heatmap()
-        coverage = self.generate_coverage_chart()
-        comparison = self.generate_role_comparison_chart()
-
+        charts = self._generate_all_charts()
+        
         # 獲取分析數據
-        analysis = self.matrix.analyze_coverage()
-        over_privileged = self.matrix.find_over_privileged_roles()
+        analysis_data = self._get_analysis_data()
+        
+        # 生成 HTML 內容
+        html_content = self._render_html_template(charts, analysis_data)
+        
+        # 寫入文件
+        output_path.write_text(html_content, encoding="utf-8")
 
-        # HTML 模板
-        html_template = """
+    def _generate_all_charts(self) -> dict:
+        """生成所有圖表"""
+        return {
+            'heatmap': self.generate_heatmap(),
+            'coverage': self.generate_coverage_chart(),
+            'comparison': self.generate_role_comparison_chart()
+        }
+
+    def _get_analysis_data(self) -> dict:
+        """獲取分析數據"""
+        return {
+            'analysis': self.matrix.analyze_coverage(),
+            'over_privileged': self.matrix.find_over_privileged_roles()
+        }
+
+    def _get_html_template(self) -> str:
+        """獲取 HTML 模板"""
+        return """
 <!DOCTYPE html>
 <html lang="zh-TW">
 <head>
@@ -427,17 +446,20 @@ class MatrixVisualizer:
 </html>
         """
 
-        template = Template(html_template)
-        html_content = template.render(
+    def _render_html_template(self, charts: dict, analysis_data: dict) -> str:
+        """渲染 HTML 模板"""
+        from datetime import datetime
+        from jinja2 import Template
+        
+        template = Template(self._get_html_template())
+        return template.render(
             timestamp=datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-            analysis=analysis,
-            over_privileged=over_privileged,
-            heatmap_json=heatmap.to_json(),
-            coverage_json=coverage.to_json(),
-            comparison_json=comparison.to_json(),
+            analysis=analysis_data['analysis'],
+            over_privileged=analysis_data['over_privileged'],
+            heatmap_json=charts['heatmap'].to_json(),
+            coverage_json=charts['coverage'].to_json(),
+            comparison_json=charts['comparison'].to_json(),
         )
-
-        output_path.write_text(html_content, encoding="utf-8")
         logger.info("html_report_generated", output_path=str(output_path))
 
     def export_to_csv(self, output_path: str | Path) -> None:

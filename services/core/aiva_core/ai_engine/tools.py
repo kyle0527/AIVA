@@ -166,80 +166,98 @@ class CodeAnalyzer(Tool):
             content = full_path.read_text(encoding="utf-8")
 
             # 基本統計
-            lines = content.splitlines()
-            non_empty_lines = [line for line in lines if line.strip()]
-            comment_lines = [
-                line for line in lines
-                if line.strip().startswith("#") or line.strip().startswith('"""') or line.strip().startswith("'''")
-            ]
-
+            basic_stats = self._get_basic_stats(content)
             result = {
                 "status": "success",
                 "path": path,
-                "total_lines": len(lines),
-                "code_lines": len(non_empty_lines),
-                "comment_lines": len(comment_lines),
-                "blank_lines": len(lines) - len(non_empty_lines),
+                **basic_stats
             }
 
             # 如果要求詳細分析，使用 AST
             if detailed:
-                try:
-                    import ast
-                    tree = ast.parse(content)
-
-                    # 統計各種節點
-                    imports = []
-                    functions = []
-                    classes = []
-                    async_functions = []
-
-                    for node in ast.walk(tree):
-                        if isinstance(node, ast.Import):
-                            imports.extend(alias.name for alias in node.names)
-                        elif isinstance(node, ast.ImportFrom):
-                            module = node.module or ""
-                            imports.append(module)
-                        elif isinstance(node, ast.FunctionDef):
-                            functions.append(node.name)
-                        elif isinstance(node, ast.AsyncFunctionDef):
-                            async_functions.append(node.name)
-                        elif isinstance(node, ast.ClassDef):
-                            classes.append(node.name)
-
-                    # 計算複雜度指標
-                    complexity = self._calculate_complexity(tree)
-
-                    result.update({
-                        "imports": list(set(imports)),
-                        "import_count": len(set(imports)),
-                        "functions": functions,
-                        "function_count": len(functions),
-                        "async_functions": async_functions,
-                        "async_function_count": len(async_functions),
-                        "classes": classes,
-                        "class_count": len(classes),
-                        "cyclomatic_complexity": complexity,
-                        "has_type_hints": self._check_type_hints(tree),
-                        "has_docstrings": self._check_docstrings(tree),
-                    })
-                except SyntaxError as e:
-                    result["syntax_error"] = str(e)
+                detailed_stats = self._get_detailed_stats(content)
+                result.update(detailed_stats)
             else:
-                # 簡單統計（向後兼容）
-                import_count = sum(1 for line in lines if line.strip().startswith("import"))
-                function_count = sum(1 for line in lines if line.strip().startswith("def "))
-                class_count = sum(1 for line in lines if line.strip().startswith("class "))
-
-                result.update({
-                    "imports": import_count,
-                    "functions": function_count,
-                    "classes": class_count,
-                })
+                simple_stats = self._get_simple_stats(content)
+                result.update(simple_stats)
 
             return result
+
         except Exception as e:
-            return {"status": "error", "path": path, "error": str(e)}
+            return {"status": "error", "error": str(e)}
+
+    def _get_basic_stats(self, content: str) -> dict[str, Any]:
+        """獲取基本統計"""
+        lines = content.splitlines()
+        non_empty_lines = [line for line in lines if line.strip()]
+        comment_lines = [
+            line for line in lines
+            if line.strip().startswith("#") or line.strip().startswith('"""') or line.strip().startswith("'''")
+        ]
+
+        return {
+            "total_lines": len(lines),
+            "code_lines": len(non_empty_lines),
+            "comment_lines": len(comment_lines),
+            "blank_lines": len(lines) - len(non_empty_lines),
+        }
+
+    def _get_detailed_stats(self, content: str) -> dict[str, Any]:
+        """獲取詳細 AST 分析統計"""
+        try:
+            import ast
+            tree = ast.parse(content)
+
+            # 統計各種節點
+            imports = []
+            functions = []
+            classes = []
+            async_functions = []
+
+            for node in ast.walk(tree):
+                if isinstance(node, ast.Import):
+                    imports.extend(alias.name for alias in node.names)
+                elif isinstance(node, ast.ImportFrom):
+                    module = node.module or ""
+                    imports.append(module)
+                elif isinstance(node, ast.FunctionDef):
+                    functions.append(node.name)
+                elif isinstance(node, ast.AsyncFunctionDef):
+                    async_functions.append(node.name)
+                elif isinstance(node, ast.ClassDef):
+                    classes.append(node.name)
+
+            # 計算複雜度指標
+            complexity = self._calculate_complexity(tree)
+
+            return {
+                "imports": list(set(imports)),
+                "import_count": len(set(imports)),
+                "functions": functions,
+                "function_count": len(functions),
+                "async_functions": async_functions,
+                "async_function_count": len(async_functions),
+                "classes": classes,
+                "class_count": len(classes),
+                "cyclomatic_complexity": complexity,
+                "has_type_hints": self._check_type_hints(tree),
+                "has_docstrings": self._check_docstrings(tree),
+            }
+        except SyntaxError as e:
+            return {"syntax_error": str(e)}
+
+    def _get_simple_stats(self, content: str) -> dict[str, Any]:
+        """獲取簡單統計（向後兼容）"""
+        lines = content.splitlines()
+        import_count = sum(1 for line in lines if line.strip().startswith("import"))
+        function_count = sum(1 for line in lines if line.strip().startswith("def "))
+        class_count = sum(1 for line in lines if line.strip().startswith("class "))
+
+        return {
+            "imports": import_count,
+            "functions": function_count,
+            "classes": class_count,
+        }
 
     def _calculate_complexity(self, tree: Any) -> int:
         """計算循環複雜度.
