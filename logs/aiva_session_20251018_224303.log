@@ -867,3 +867,5 @@
 2025-10-18 23:12:07,529 - INFO - ✅ [TRAINING] environment_scan: 靶場環境檢測
 2025-10-18 23:12:07,530 - INFO - ✅ [TRAINING] plan_generation: 攻擊計畫生成與抗幻覺驗證
 2025-10-18 23:12:07,531 - INFO - ✅ [TRAINING] intelligent_decision: 增強決策代理分析
+2025-10-18 23:12:09,533 - INFO - ✅ [TRAINING] plan_execution: 攻擊計畫執行
+2025-10-18 23:12:09,533 - INFO - ✅ [TRAINING] experience_collection: 訓練經驗收集
