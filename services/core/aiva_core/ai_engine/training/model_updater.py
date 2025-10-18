@@ -12,7 +12,7 @@ import pickle
 from typing import Any
 
 from .data_loader import ExperienceDataLoader
-from .trainer import ModelTrainer, TrainingConfig
+from ...learning.scalable_bio_trainer import ScalableBioTrainer, ScalableBioTrainingConfig
 
 logger = logging.getLogger(__name__)
 
@@ -48,7 +48,7 @@ class ModelUpdater:
         self,
         min_score: float = 0.6,
         max_samples: int = 1000,
-        training_config: TrainingConfig | None = None,
+        training_config: ScalableBioTrainingConfig | None = None,
     ) -> dict[str, Any]:
         """從最近的經驗更新模型
 
@@ -78,7 +78,7 @@ class ModelUpdater:
         X_train, y_train, X_val, y_val = self.data_loader.create_validation_split(X, y)
 
         # 3. 訓練模型
-        trainer = ModelTrainer(self.model, config=training_config)
+        trainer = ScalableBioTrainer(self.model, config=training_config)
         training_results = trainer.train(X_train, y_train, X_val, y_val)
 
         # 4. 保存模型
@@ -121,7 +121,7 @@ class ModelUpdater:
         }
 
     def update_from_dataset(
-        self, dataset_id: str, training_config: TrainingConfig | None = None
+        self, dataset_id: str, training_config: ScalableBioTrainingConfig | None = None
     ) -> dict[str, Any]:
         """從特定資料集更新模型
 
@@ -145,7 +145,7 @@ class ModelUpdater:
         X_train, y_train, X_val, y_val = self.data_loader.create_validation_split(X, y)
 
         # 3. 訓練模型
-        trainer = ModelTrainer(self.model, config=training_config)
+        trainer = ScalableBioTrainer(self.model, config=training_config)
         training_results = trainer.train(X_train, y_train, X_val, y_val)
 
         # 4. 保存模型

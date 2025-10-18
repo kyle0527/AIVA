@@ -11,6 +11,14 @@ from .bio_neuron_core import (
     BioNeuronRAGAgent,
     ScalableBioNet,
 )
+from .ai_model_manager import AIModelManager
+from .performance_enhancements import (
+    OptimizedScalableBioNet,
+    OptimizedBioSpikingLayer,
+    PerformanceConfig,
+    MemoryManager,
+    ComponentPool,
+)
 from .knowledge_base import KnowledgeBase
 from .tools import (
     CodeAnalyzer,
@@ -28,6 +36,14 @@ __all__ = [
     "AntiHallucinationModule",
     "ScalableBioNet",
     "BioNeuronRAGAgent",
+    # AI Model Management
+    "AIModelManager",
+    # Performance Enhancements
+    "OptimizedScalableBioNet",
+    "OptimizedBioSpikingLayer",
+    "PerformanceConfig",
+    "MemoryManager",
+    "ComponentPool",
     # Knowledge Base
     "KnowledgeBase",
     # Tools

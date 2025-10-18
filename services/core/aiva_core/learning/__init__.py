@@ -6,5 +6,6 @@ Learning Module - 機器學習和經驗管理模組
 
 from .experience_manager import ExperienceManager
 from .model_trainer import ModelTrainer
+from .scalable_bio_trainer import ScalableBioTrainer, ScalableBioTrainingConfig
 
-__all__ = ["ExperienceManager", "ModelTrainer"]
+__all__ = ["ExperienceManager", "ModelTrainer", "ScalableBioTrainer", "ScalableBioTrainingConfig"]
