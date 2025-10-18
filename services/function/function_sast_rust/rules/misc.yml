@@ -1,0 +1,35 @@
+# Miscellaneous 規則
+
+- id: SAST-MISC-001
+  name: Debug mode enabled
+  cwe: CWE-200
+  severity: LOW
+  confidence: HIGH
+  pattern: '(DEBUG\s*=\s*True|app\.debug\s*=\s*True)'
+  description: Application running in debug mode
+  recommendation: Disable debug mode in production
+  languages:
+    - python
+
+- id: SAST-MISC-002
+  name: Print of secrets
+  cwe: CWE-200
+  severity: LOW
+  confidence: MEDIUM
+  pattern: 'print\s*\(.*(password|secret|token).*\)'
+  description: Printing secrets to logs
+  recommendation: Avoid logging sensitive data
+  languages:
+    - python
+
+- id: SAST-MISC-003
+  name: TODO left in code
+  cwe: CWE-759
+  severity: LOW
+  confidence: LOW
+  pattern: 'TODO|FIXME'
+  description: TODO comments left in codebase
+  recommendation: Resolve TODOs
+  languages:
+    - python
+    - javascript

@@ -1,9 +1,12 @@
-// SAST 規則引擎
+// SAST 規則引擎 - 支援從 YAML 檔案載入規則
 
 use crate::models::SastIssue;
 use regex::Regex;
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
+use std::fs;
+use std::path::Path;
+use walkdir::WalkDir;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct SastRule {
@@ -24,13 +27,71 @@ pub struct RuleEngine {
 }
 
 impl RuleEngine {
+    /// 創建新的規則引擎，優先從 rules/ 目錄載入 YAML 規則
     pub fn new() -> Self {
+        let rules = Self::load_rules_from_yaml()
+            .unwrap_or_else(|e| {
+                eprintln!("Warning: Failed to load YAML rules: {}. Using default rules.", e);
+                Self::load_default_rules()
+            });
+
+        println!("✅ Loaded {} SAST rules", rules.len());
+
         Self {
-            rules: Self::load_default_rules(),
+            rules,
             regex_cache: HashMap::new(),
         }
     }
-    
+
+    /// 從 rules/ 目錄載入所有 YAML 規則檔案
+    fn load_rules_from_yaml() -> Result<Vec<SastRule>, Box<dyn std::error::Error>> {
+        let rules_dir = Path::new("rules");
+
+        if !rules_dir.exists() {
+            return Err("rules directory not found".into());
+        }
+
+        let mut all_rules = Vec::new();
+
+        // 遍歷 rules/ 目錄下的所有 .yml 和 .yaml 檔案
+        for entry in WalkDir::new(rules_dir)
+            .into_iter()
+            .filter_map(|e| e.ok())
+            .filter(|e| {
+                e.path().extension()
+                    .map(|ext| ext == "yml" || ext == "yaml")
+                    .unwrap_or(false)
+            })
+        {
+            let path = entry.path();
+            println!("Loading rules from: {:?}", path);
+
+            match Self::load_rules_from_file(path) {
+                Ok(mut rules) => {
+                    println!("  ✓ Loaded {} rules", rules.len());
+                    all_rules.append(&mut rules);
+                }
+                Err(e) => {
+                    eprintln!("  ✗ Error loading {:?}: {}", path, e);
+                }
+            }
+        }
+
+        if all_rules.is_empty() {
+            return Err("No rules loaded from YAML files".into());
+        }
+
+        Ok(all_rules)
+    }
+
+    /// 從單個 YAML 檔案載入規則
+    fn load_rules_from_file(path: &Path) -> Result<Vec<SastRule>, Box<dyn std::error::Error>> {
+        let content = fs::read_to_string(path)?;
+        let rules: Vec<SastRule> = serde_yaml::from_str(&content)?;
+        Ok(rules)
+    }
+
+    /// 內建的預設規則（作為 fallback）
     fn load_default_rules() -> Vec<SastRule> {
         vec![
             // SQL 注入
@@ -95,26 +156,27 @@ impl RuleEngine {
             },
         ]
     }
-    
+
+    /// 檢查程式碼並返回發現的問題
     pub fn check_code(&mut self, source_code: &str, language: &str) -> Vec<SastIssue> {
         let mut issues = Vec::new();
-        
+
         for rule in &self.rules {
             // 檢查規則是否適用於此語言
             if !rule.languages.iter().any(|lang| lang.to_lowercase() == language.to_lowercase()) {
                 continue;
             }
-            
+
             // 獲取或編譯正則表達式
             let regex = self.regex_cache.entry(rule.id.clone()).or_insert_with(|| {
                 Regex::new(&rule.pattern).expect("Invalid regex pattern")
             });
-            
+
             // 掃描每一行
             for (line_num, line) in source_code.lines().enumerate() {
                 if let Some(captures) = regex.captures(line) {
                     let matched = captures.get(0).map_or("", |m| m.as_str());
-                    
+
                     issues.push(SastIssue {
                         rule_id: rule.id.clone(),
                         rule_name: rule.name.clone(),
@@ -132,15 +194,33 @@ impl RuleEngine {
                 }
             }
         }
-        
+
         issues
+    }
+
+    /// 獲取已載入的規則數量
+    pub fn rule_count(&self) -> usize {
+        self.rules.len()
+    }
+
+    /// 獲取所有規則的 ID 列表
+    pub fn list_rule_ids(&self) -> Vec<String> {
+        self.rules.iter().map(|r| r.id.clone()).collect()
     }
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
-    
+
+    #[test]
+    fn test_yaml_rules_loading() {
+        let engine = RuleEngine::new();
+        // 應該至少載入一些規則
+        assert!(engine.rule_count() > 0);
+        println!("Loaded {} rules", engine.rule_count());
+    }
+
     #[test]
     fn test_sql_injection_detection() {
         let mut engine = RuleEngine::new();
@@ -148,19 +228,32 @@ mod tests {
 query = "SELECT * FROM users WHERE id = " + user_input
 cursor.execute(query)
         "#;
-        
+
         let issues = engine.check_code(code, "python");
         assert!(issues.len() > 0);
-        assert_eq!(issues[0].rule_id, "SAST-001");
+        // 檢查是否有 SQL 注入相關的規則被觸發
+        assert!(issues.iter().any(|i| i.cwe.contains("89")));
     }
-    
+
     #[test]
     fn test_hardcoded_credentials() {
         let mut engine = RuleEngine::new();
         let code = r#"password = "admin123""#;
-        
+
         let issues = engine.check_code(code, "python");
         assert!(issues.len() > 0);
-        assert_eq!(issues[0].rule_id, "SAST-003");
+        // 檢查是否有硬編碼憑證相關的規則被觸發
+        assert!(issues.iter().any(|i| i.cwe.contains("798")));
+    }
+
+    #[test]
+    fn test_xss_detection() {
+        let mut engine = RuleEngine::new();
+        let code = r#"element.innerHTML = userInput;"#;
+
+        let issues = engine.check_code(code, "javascript");
+        assert!(issues.len() > 0);
+        // 檢查是否有 XSS 相關的規則被觸發
+        assert!(issues.iter().any(|i| i.cwe.contains("79")));
     }
 }

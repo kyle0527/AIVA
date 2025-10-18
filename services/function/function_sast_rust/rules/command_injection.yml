@@ -1,0 +1,115 @@
+- id: SAST-CMD-001
+  name: Command Injection via os.system
+  cwe: CWE-78
+  severity: CRITICAL
+  confidence: HIGH
+  pattern: os\.system\s*\([^)]*[\+%\$]
+  description: 檢測到使用 os.system 執行包含動態內容的命令
+  recommendation: 使用 subprocess 並傳遞參數列表，避免 shell=True
+  languages:
+    - python
+
+- id: SAST-CMD-002
+  name: subprocess with shell=True
+  cwe: CWE-78
+  severity: CRITICAL
+  confidence: HIGH
+  pattern: subprocess\.(call|run|Popen).*shell\s*=\s*True
+  description: 檢測到 subprocess 使用 shell=True
+  recommendation: 移除 shell=True 並使用參數列表
+  languages:
+    - python
+
+- id: SAST-CMD-003
+  name: Command Injection via eval
+  cwe: CWE-94
+  severity: CRITICAL
+  confidence: HIGH
+  pattern: eval\s*\([^)]*[\+%\$]
+  description: 檢測到使用 eval 執行動態代碼
+  recommendation: 完全避免使用 eval，尋找安全的替代方案
+  languages:
+    - python
+    - javascript
+    - php
+
+- id: SAST-CMD-004
+  name: Command Injection via exec
+  cwe: CWE-78
+  severity: CRITICAL
+  confidence: HIGH
+  pattern: exec\s*\([^)]*[\+%\$]
+  description: 檢測到使用 exec 執行動態代碼
+  recommendation: 避免使用 exec，使用安全的 API
+  languages:
+    - python
+    - php
+
+- id: SAST-CMD-005
+  name: Node.js child_process exec
+  cwe: CWE-78
+  severity: CRITICAL
+  confidence: HIGH
+  pattern: child_process\.(exec|execSync)\s*\([^)]*[\+\$]
+  description: 檢測到 Node.js 使用 exec 執行動態命令
+  recommendation: 使用 execFile 或 spawn 並傳遞參數陣列
+  languages:
+    - javascript
+    - typescript
+
+- id: SAST-CMD-006
+  name: Java Runtime.exec Injection
+  cwe: CWE-78
+  severity: CRITICAL
+  confidence: HIGH
+  pattern: Runtime\.getRuntime\(\)\.exec\s*\([^)]*[\+]
+  description: 檢測到 Java Runtime.exec 使用字串拼接
+  recommendation: 使用 ProcessBuilder 並傳遞命令陣列
+  languages:
+    - java
+
+- id: SAST-CMD-007
+  name: Shell Command in Backticks
+  cwe: CWE-78
+  severity: CRITICAL
+  confidence: HIGH
+  pattern: "`[^`]*\\$"
+  description: 檢測到使用反引號執行 shell 命令
+  recommendation: 避免使用反引號，使用安全的 API
+  languages:
+    - php
+    - perl
+
+- id: SAST-CMD-008
+  name: Unsafe Deserialization RCE
+  cwe: CWE-502
+  severity: CRITICAL
+  confidence: MEDIUM
+  pattern: (pickle\.loads|yaml\.load|unserialize)\s*\(
+  description: 檢測到不安全的反序列化操作
+  recommendation: 使用安全的序列化格式（JSON）或加入完整性檢查
+  languages:
+    - python
+    - php
+
+- id: SAST-CMD-009
+  name: Python compile() Code Injection
+  cwe: CWE-94
+  severity: CRITICAL
+  confidence: HIGH
+  pattern: compile\s*\([^)]*request\.
+  description: 檢測到使用 compile() 編譯用戶輸入
+  recommendation: 避免動態編譯用戶輸入的代碼
+  languages:
+    - python
+
+- id: SAST-CMD-010
+  name: Shell Injection via system()
+  cwe: CWE-78
+  severity: CRITICAL
+  confidence: HIGH
+  pattern: system\s*\([^)]*\$_(GET|POST|REQUEST)
+  description: 檢測到 PHP system() 使用用戶輸入
+  recommendation: 使用 escapeshellarg() 或避免執行外部命令
+  languages:
+    - php

@@ -1,0 +1,125 @@
+# Security Miscellaneous 其他安全問題
+
+- id: SAST-SEC-001
+  name: Debug Mode Enabled in Production
+  cwe: CWE-489
+  severity: MEDIUM
+  confidence: HIGH
+  pattern: '(?:DEBUG|debug)\s*=\s*True'
+  description: 檢測到啟用了 DEBUG 模式
+  recommendation: 在生產環境中禁用 DEBUG 模式
+  languages:
+    - python
+    - javascript
+
+- id: SAST-SEC-002
+  name: Sensitive Data in Log
+  cwe: CWE-532
+  severity: MEDIUM
+  confidence: MEDIUM
+  pattern: '(?:log|logger|console\.log)\s*\([^)]*(?:password|token|secret|key|credential)'
+  description: 檢測到可能記錄敏感資訊
+  recommendation: 避免記錄密碼、金鑰等敏感資訊
+  languages:
+    - python
+    - javascript
+    - java
+
+- id: SAST-SEC-003
+  name: Insecure Deserialization
+  cwe: CWE-502
+  severity: CRITICAL
+  confidence: HIGH
+  pattern: '(?:unserialize|yaml\.load|ObjectInputStream)(?!.*safe)'
+  description: 檢測到不安全的反序列化操作
+  recommendation: 使用安全的反序列化方法 (yaml.safe_load)
+  languages:
+    - python
+    - php
+    - java
+
+- id: SAST-SEC-004
+  name: Missing Rate Limiting
+  cwe: CWE-770
+  severity: MEDIUM
+  confidence: LOW
+  pattern: '@(?:app\.route|router\.post)[^)]*\)[^{]*\{(?:(?!rate_limit|throttle).){0,150}\}'
+  description: 檢測到 API 端點缺少速率限制
+  recommendation: 實施速率限制以防止濫用
+  languages:
+    - python
+    - javascript
+
+- id: SAST-SEC-005
+  name: Insecure File Permissions
+  cwe: CWE-732
+  severity: MEDIUM
+  confidence: MEDIUM
+  pattern: '(?:chmod|os\.chmod)\s*\([^)]*(?:0o777|777)'
+  description: 檢測到設定過於寬鬆的檔案權限
+  recommendation: 使用最小權限原則設定檔案權限
+  languages:
+    - python
+    - javascript
+
+- id: SAST-SEC-006
+  name: Use of eval() Function
+  cwe: CWE-95
+  severity: CRITICAL
+  confidence: HIGH
+  pattern: '(?:^|\s)eval\s*\('
+  description: 檢測到使用危險的 eval() 函數
+  recommendation: 避免使用 eval()，尋找更安全的替代方案
+  languages:
+    - python
+    - javascript
+
+- id: SAST-SEC-007
+  name: Missing HTTPS Enforcement
+  cwe: CWE-319
+  severity: MEDIUM
+  confidence: LOW
+  pattern: 'app\.run\s*\([^)]*(?:(?!ssl_context).)*\)'
+  description: 檢測到應用程式未強制使用 HTTPS
+  recommendation: 配置 SSL/TLS 並強制使用 HTTPS
+  languages:
+    - python
+
+- id: SAST-SEC-008
+  name: Weak TLS Version
+  cwe: CWE-327
+  severity: HIGH
+  confidence: HIGH
+  pattern: '(?:PROTOCOL_TLSv1|TLSv1\.0|TLSv1\.1)'
+  description: 檢測到使用已過時的 TLS 版本
+  recommendation: 使用 TLS 1.2 或 TLS 1.3
+  languages:
+    - python
+    - java
+    - javascript
+
+- id: SAST-SEC-009
+  name: SQL Comments in Query
+  cwe: CWE-89
+  severity: MEDIUM
+  confidence: MEDIUM
+  pattern: '(?:execute|query)\s*\([^)]*(?:--|/\*|\*/)'
+  description: 檢測到 SQL 查詢中包含註解符號
+  recommendation: 檢查是否為 SQL 注入嘗試，驗證輸入
+  languages:
+    - python
+    - java
+    - javascript
+
+- id: SAST-SEC-010
+  name: Unrestricted File Upload
+  cwe: CWE-434
+  severity: HIGH
+  confidence: MEDIUM
+  pattern: '(?:save|write|upload)[^)]*\([^)]*(?:filename|name)\s*\)'
+  description: 檢測到檔案上傳未驗證檔案類型
+  recommendation: 驗證檔案類型、大小，使用白名單
+  languages:
+    - python
+    - javascript
+    - php

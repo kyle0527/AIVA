@@ -1,0 +1,45 @@
+# XSS 規則
+
+- id: SAST-XSS-001
+  name: DOM-based XSS via innerHTML
+  cwe: CWE-79
+  severity: HIGH
+  confidence: MEDIUM
+  pattern: '(innerHTML|outerHTML)\s*=\s*'
+  description: Detect assignment to innerHTML/outerHTML which may cause DOM XSS
+  recommendation: Use textContent or proper sanitization
+  languages:
+    - javascript
+
+- id: SAST-XSS-002
+  name: XSS via document.write
+  cwe: CWE-79
+  severity: HIGH
+  confidence: HIGH
+  pattern: 'document\.write\s*\('
+  description: Use of document.write may lead to XSS if untrusted input is used
+  recommendation: Avoid document.write
+  languages:
+    - javascript
+
+- id: SAST-XSS-003
+  name: Reflected XSS in query parameters
+  cwe: CWE-79
+  severity: HIGH
+  confidence: MEDIUM
+  pattern: '(location\.search|location\.hash|document\.location)'
+  description: Using location-derived input directly in HTML context
+  recommendation: Validate and encode user-controlled data
+  languages:
+    - javascript
+
+- id: SAST-XSS-004
+  name: XSS via innerHTML with template
+  cwe: CWE-79
+  severity: HIGH
+  confidence: MEDIUM
+  pattern: 'innerHTML\s*=\s*`'
+  description: Template literals assigned to innerHTML may introduce XSS
+  recommendation: Use safe templating or sanitizers
+  languages:
+    - javascript

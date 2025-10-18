@@ -1,0 +1,37 @@
+# Cryptography 規則
+
+- id: SAST-CRYPTO-001
+  name: Use of MD5
+  cwe: CWE-327
+  severity: MEDIUM
+  confidence: HIGH
+  pattern: '(md5|hashlib\.md5|MD5)'
+  description: MD5 is insecure for cryptographic uses
+  recommendation: Use SHA-256 or stronger algorithms
+  languages:
+    - python
+    - javascript
+
+- id: SAST-CRYPTO-002
+  name: Use of insecure RNG
+  cwe: CWE-338
+  severity: MEDIUM
+  confidence: HIGH
+  pattern: '(random\.random|Math\.random)\s*\(\)'
+  description: Non-cryptographic RNG used in security context
+  recommendation: Use cryptographic RNGs
+  languages:
+    - python
+    - javascript
+
+- id: SAST-CRYPTO-003
+  name: Hardcoded encryption keys
+  cwe: CWE-798
+  severity: HIGH
+  confidence: MEDIUM
+  pattern: "(AES_KEY|ENCRYPTION_KEY|SECRET_KEY)\\s*=\\s*['\"].+['\"]"
+  description: Hardcoded encryption keys in source
+  recommendation: Use secrets manager
+  languages:
+    - python
+    - javascript

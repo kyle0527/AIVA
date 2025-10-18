@@ -1,0 +1,84 @@
+# Path Traversal 規則
+
+- id: SAST-PATH-001
+  name: Path Traversal via Direct File Access
+  cwe: CWE-22
+  severity: HIGH
+  confidence: HIGH
+  pattern: 'open\s*\([^)]*(?:request\.|params\.|query\.|input\()'
+  description: 檢測到直接使用使用者輸入打開檔案
+  recommendation: 驗證檔案路徑，使用白名單，或使用安全的檔案存取 API
+  languages:
+    - python
+    - javascript
+
+- id: SAST-PATH-002
+  name: Path Traversal via os.path.join()
+  cwe: CWE-22
+  severity: HIGH
+  confidence: MEDIUM
+  pattern: 'os\.path\.join\s*\([^)]*(?:request\.|params\.|query\.)'
+  description: 檢測到使用 os.path.join() 拼接使用者輸入的路徑
+  recommendation: 驗證路徑不包含 ../ 或使用 Path.resolve() 並檢查結果
+  languages:
+    - python
+
+- id: SAST-PATH-003
+  name: Path Traversal in File Read
+  cwe: CWE-22
+  severity: HIGH
+  confidence: HIGH
+  pattern: '(?:read|readFile|readFileSync)\s*\([^)]*(?:req\.query|req\.params|request\.)'
+  description: 檢測到讀取檔案時直接使用使用者輸入的路徑
+  recommendation: 使用白名單驗證檔案路徑
+  languages:
+    - javascript
+    - typescript
+
+- id: SAST-PATH-004
+  name: Path Traversal in File Write
+  cwe: CWE-22
+  severity: CRITICAL
+  confidence: HIGH
+  pattern: '(?:write|writeFile|writeFileSync)\s*\([^)]*(?:req\.query|req\.params|request\.)'
+  description: 檢測到寫入檔案時直接使用使用者輸入的路徑
+  recommendation: 嚴格驗證和限制可寫入的路徑
+  languages:
+    - javascript
+    - typescript
+    - python
+
+- id: SAST-PATH-005
+  name: Path Traversal via send_file() (Flask)
+  cwe: CWE-22
+  severity: HIGH
+  confidence: HIGH
+  pattern: 'send_file\s*\([^)]*(?:request\.args|request\.form|request\.values)'
+  description: 檢測到 Flask send_file() 使用使用者輸入的路徑
+  recommendation: 驗證檔案路徑在允許的目錄內
+  languages:
+    - python
+
+- id: SAST-PATH-006
+  name: Path Traversal with Directory Listing
+  cwe: CWE-22
+  severity: MEDIUM
+  confidence: MEDIUM
+  pattern: '(?:listdir|readdir|readdirSync)\s*\([^)]*(?:request\.|params\.|query\.)'
+  description: 檢測到列出目錄時使用使用者輸入
+  recommendation: 限制可列出的目錄範圍
+  languages:
+    - python
+    - javascript
+
+- id: SAST-PATH-007
+  name: Zip Slip Vulnerability
+  cwe: CWE-22
+  severity: HIGH
+  confidence: MEDIUM
+  pattern: '(?:extract|extractall)\s*\([^)]*(?:path|destination)'
+  description: 檢測到解壓縮檔案時可能存在 Zip Slip 漏洞
+  recommendation: 驗證解壓路徑不含 ../ 且在目標目錄內
+  languages:
+    - python
+    - java

@@ -1,0 +1,25 @@
+# CSRF 規則
+
+- id: SAST-CSRF-001
+  name: Missing CSRF token check
+  cwe: CWE-352
+  severity: HIGH
+  confidence: MEDIUM
+  pattern: '(csrf_token|csrfmiddlewaretoken|X-CSRF-Token)'
+  description: Missing CSRF validation in form handlers
+  recommendation: Implement CSRF tokens and server-side validation
+  languages:
+    - python
+    - javascript
+
+- id: SAST-CSRF-002
+  name: Unsafe CORS policy
+  cwe: CWE-346
+  severity: HIGH
+  confidence: MEDIUM
+  pattern: 'Access-Control-Allow-Origin\\s*:\\s*\\*'
+  description: Using wildcard CORS allows cross-site requests
+  recommendation: Restrict CORS origins
+  languages:
+    - javascript
+    - python

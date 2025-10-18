@@ -1,0 +1,24 @@
+# Auth 規則
+
+- id: SAST-AUTH-001
+  name: Insecure password comparison
+  cwe: CWE-287
+  severity: HIGH
+  confidence: MEDIUM
+  pattern: '(==\s*password|password\s*==)'
+  description: Plaintext password comparison
+  recommendation: Use constant-time comparison functions
+  languages:
+    - python
+
+- id: SAST-AUTH-002
+  name: Weak password policy detected
+  cwe: CWE-521
+  severity: MEDIUM
+  confidence: LOW
+  pattern: '(min_length\s*<\s*6|min_length\s*=\s*6)'
+  description: Weak password length policy
+  recommendation: Enforce stronger password policies
+  languages:
+    - python
+    - javascript
