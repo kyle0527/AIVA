@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 # AIVA 持續學習觸發腳本
 # 用途: 在 VS Code 中手動觸發 AI 持續攻擊學習
 
@@ -6,12 +7,19 @@ import sys
 import os
 from pathlib import Path
 
-# 添加 AIVA 模組路徑
-sys.path.append(str(Path(__file__).parent / "services"))
+# 設置標準輸出編碼為 UTF-8
+if sys.platform == 'win32':
+    import codecs
+    sys.stdout = codecs.getwriter('utf-8')(sys.stdout.buffer, 'strict')
+    sys.stderr = codecs.getwriter('utf-8')(sys.stderr.buffer, 'strict')
 
-from core.aiva_core.ai_commander import AICommander
-from core.aiva_core.training.training_orchestrator import TrainingOrchestrator
-from integration.aiva_integration.system_performance_monitor import SystemPerformanceMonitor
+# 添加 AIVA 模組路徑
+sys.path.insert(0, str(Path(__file__).parent / "services"))
+sys.path.insert(0, str(Path(__file__).parent))
+
+from services.core.aiva_core.ai_commander import AICommander
+from services.core.aiva_core.training.training_orchestrator import TrainingOrchestrator
+from services.integration.aiva_integration.system_performance_monitor import SystemPerformanceMonitor
 
 class ManualTrainService:
     """手動觸發的持續訓練服務"""

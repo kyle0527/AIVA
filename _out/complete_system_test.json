@@ -1,59 +1,59 @@
 {
-  "timestamp": "2025-10-15T01:09:12.584727",
+  "timestamp": "2025-10-19T05:22:42.917826",
   "tests": [
     {
-      "name": "Docker ç’°å¢ƒ",
-      "status": "PASS",
-      "details": "4/4 æœå‹™é‹è¡Œä¸­",
-      "timestamp": "2025-10-15T01:09:12.702830"
-    },
-    {
-      "name": "Python ä¾è³´",
-      "status": "PASS",
-      "details": "7 å¥—ä»¶å·²å®‰è£",
-      "timestamp": "2025-10-15T01:09:13.393588"
-    },
-    {
-      "name": "é…ç½®ç³»çµ±",
-      "status": "PASS",
-      "details": "æ‰€æœ‰é…ç½®æ­£å¸¸",
-      "timestamp": "2025-10-15T01:09:13.401480"
-    },
-    {
-      "name": "æ ¸å¿ƒæ¨¡çµ„",
+      "name": "Docker Àô¹Ò",
       "status": "FAIL",
-      "details": "No module named 'aiva_common'",
-      "timestamp": "2025-10-15T01:09:13.561809"
+      "details": "¯Ê¤ÖªA°È: {'postgres', 'rabbitmq', 'neo4j', 'redis'}",
+      "timestamp": "2025-10-19T05:22:43.001876"
     },
     {
-      "name": "SQLi æ¨¡çµ„",
+      "name": "Python ¨Ì¿à",
       "status": "PASS",
-      "details": "4 ç¨®ç­–ç•¥å¯ç”¨",
-      "timestamp": "2025-10-15T01:09:13.570346"
+      "details": "7 ®M¥ó¤w¦w¸Ë",
+      "timestamp": "2025-10-19T05:22:43.718259"
     },
     {
-      "name": "æ•´åˆå±¤",
+      "name": "°t¸m¨t²Î",
+      "status": "FAIL",
+      "details": "'UnifiedSettings' object has no attribute 'core_monitor_interval'",
+      "timestamp": "2025-10-19T05:22:43.718472"
+    },
+    {
+      "name": "®Ö¤ß¼Ò²Õ",
       "status": "PASS",
-      "details": "API éŒ¯èª¤è™•ç†æ­£ç¢º",
-      "timestamp": "2025-10-15T01:09:13.570464"
+      "details": "©Ò¦³®Ö¤ß²Õ¥ó¥i¥Î",
+      "timestamp": "2025-10-19T05:22:43.718564"
     },
     {
-      "name": "AI ç³»çµ±",
-      "status": "SKIP",
-      "details": "AI çµ„ä»¶ä¸å¯ç”¨",
-      "timestamp": "2025-10-15T01:09:13.570712"
+      "name": "SQLi ¼Ò²Õ",
+      "status": "FAIL",
+      "details": "No module named 'services.function'",
+      "timestamp": "2025-10-19T05:22:43.718815"
     },
     {
-      "name": "æƒæå¼•æ“",
+      "name": "¾ã¦X¼h",
+      "status": "FAIL",
+      "details": "[Errno 2] No such file or directory: '/workspaces/AIVA/services/integration/aiva_integration/app.py'",
+      "timestamp": "2025-10-19T05:22:43.718914"
+    },
+    {
+      "name": "AI ¨t²Î",
       "status": "PASS",
-      "details": "æƒæç·¨æ’å™¨å¯ç”¨",
-      "timestamp": "2025-10-15T01:09:13.803593"
+      "details": "2 ­Ó²Õ¥ó¥i¥Î",
+      "timestamp": "2025-10-19T05:22:43.718970"
+    },
+    {
+      "name": "±½´y¤ŞÀº",
+      "status": "PASS",
+      "details": "±½´y½s±Æ¾¹¥i¥Î",
+      "timestamp": "2025-10-19T05:22:43.959215"
     }
   ],
   "summary": {
     "total": 8,
-    "passed": 6,
-    "failed": 1,
-    "skipped": 1
+    "passed": 4,
+    "failed": 4,
+    "skipped": 0
   }
 }

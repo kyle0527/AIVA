@@ -390,6 +390,31 @@ class EASMDiscoveryResult(BaseModel):
 # ============================================================================
 
 
+class Scenario(BaseModel):
+    """訓練場景定義"""
+    
+    scenario_id: str
+    name: str
+    description: str
+    difficulty: str = "medium"
+    target_url: str
+    objectives: list[str] = Field(default_factory=list)
+    success_criteria: dict[str, Any] = Field(default_factory=dict)
+    metadata: dict[str, Any] = Field(default_factory=dict)
+
+
+class ScenarioResult(BaseModel):
+    """場景執行結果"""
+    
+    scenario_id: str
+    session_id: str
+    success: bool
+    score: float = 0.0
+    findings: list[dict[str, Any]] = Field(default_factory=list)
+    completed_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
+    metadata: dict[str, Any] = Field(default_factory=dict)
+
+
 class StandardScenario(BaseModel):
     """標準靶場場景 - 用於訓練和測試"""
 

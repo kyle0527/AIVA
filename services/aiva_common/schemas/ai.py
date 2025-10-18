@@ -130,6 +130,19 @@ class AttackStep(BaseModel):
     metadata: dict[str, Any] = Field(default_factory=dict)
 
 
+class AttackTarget(BaseModel):
+    """攻擊目標"""
+
+    target_id: str
+    target_url: str
+    target_ip: str | None = None
+    target_port: int | None = None
+    target_type: str = "web"
+    environment: str = "test"
+    description: str | None = None
+    metadata: dict[str, Any] = Field(default_factory=dict)
+
+
 class AttackPlan(BaseModel):
     """攻擊計畫"""
 
@@ -247,6 +260,46 @@ class ModelTrainingConfig(BaseModel):
     discount_factor: float = 0.99
     exploration_rate: float = 0.1
     hyperparameters: dict[str, Any] = Field(default_factory=dict)
+    metadata: dict[str, Any] = Field(default_factory=dict)
+
+
+class TrainingOrchestratorConfig(BaseModel):
+    """訓練編排器配置"""
+    
+    orchestrator_id: str
+    enabled_trainers: list[str] = Field(default_factory=list)
+    training_interval: int = 3600  # 秒
+    auto_deploy: bool = False
+    max_parallel_trainings: int = 3
+    priority_queue_enabled: bool = True
+    scenario_rotation: bool = True
+    metadata: dict[str, Any] = Field(default_factory=dict)
+
+
+class ExperienceManagerConfig(BaseModel):
+    """經驗管理器配置"""
+    
+    manager_id: str
+    storage_backend: str = "sqlite"
+    storage_path: str | None = None
+    max_experiences: int = 10000
+    retention_days: int = 90
+    auto_cleanup: bool = True
+    deduplication_enabled: bool = True
+    compression_enabled: bool = False
+    metadata: dict[str, Any] = Field(default_factory=dict)
+
+
+class PlanExecutorConfig(BaseModel):
+    """計劃執行器配置"""
+    
+    executor_id: str
+    max_concurrent_plans: int = 5
+    timeout_seconds: int = 300
+    retry_policy: dict[str, Any] = Field(default_factory=dict)
+    safety_checks_enabled: bool = True
+    dry_run_mode: bool = False
+    result_validation_enabled: bool = True
     metadata: dict[str, Any] = Field(default_factory=dict)
 
 

@@ -650,3 +650,224 @@ class BioNeuronRAGAgent:
         except Exception as e:
             logger.error(f"Training failed: {e}")
             return {"status": "error", "message": str(e)}
+
+
+class BioNeuronCore:
+    """
+    BioNeuron 核心決策引擎
+    
+    統一的 AI 決策核心，整合所有 BioNeuron 組件，
+    提供高層次的決策和推理能力。
+    """
+    
+    def __init__(self, 
+                 codebase_path: str = "c:/D/fold7/AIVA-git",
+                 enable_planner: bool = True,
+                 enable_tracer: bool = True, 
+                 enable_experience: bool = True,
+                 database_url: str = "sqlite:///aiva_experiences.db"):
+        """
+        初始化 BioNeuron 核心
+        
+        Args:
+            codebase_path: 代碼庫路徑
+            enable_planner: 是否啟用攻擊計畫器
+            enable_tracer: 是否啟用執行追蹤器
+            enable_experience: 是否啟用經驗學習
+            database_url: 數據庫連接字符串
+        """
+        logger.info("初始化 BioNeuronCore...")
+        
+        # 初始化核心 RAG 代理
+        self.rag_agent = BioNeuronRAGAgent(
+            codebase_path=codebase_path,
+            enable_planner=enable_planner,
+            enable_tracer=enable_tracer,
+            enable_experience=enable_experience,
+            database_url=database_url
+        )
+        
+        # 初始化決策網路 (使用預設參數)
+        self.decision_network = ScalableBioNet(
+            input_size=512,  # 預設輸入向量大小
+            num_tools=20     # 預設工具數量
+        )
+        
+        # 初始化抗幻覺模組
+        self.anti_hallucination = AntiHallucinationModule()
+        
+        logger.info("BioNeuronCore 初始化完成 ✓")
+    
+    def make_decision(self, 
+                     task_description: str, 
+                     context: dict = None,
+                     confidence_threshold: float = 0.7) -> dict:
+        """
+        核心決策方法
+        
+        Args:
+            task_description: 任務描述
+            context: 上下文信息
+            confidence_threshold: 信心閾值
+            
+        Returns:
+            決策結果
+        """
+        try:
+            # 使用 RAG 代理生成決策
+            context_str = str(context) if context else ""
+            decision = self.rag_agent.generate(task_description, context_str)
+            
+            # 檢查信心度
+            confidence = decision.get("confidence", 0.0)
+            
+            if confidence < confidence_threshold:
+                logger.warning(f"決策信心度過低: {confidence} < {confidence_threshold}")
+                decision["warning"] = "Low confidence decision"
+            
+            # 添加元數據
+            decision["core_metadata"] = {
+                "decision_engine": "BioNeuronCore",
+                "timestamp": time.time(),
+                "confidence_threshold": confidence_threshold,
+                "context_provided": context is not None
+            }
+            
+            return decision
+            
+        except Exception as e:
+            logger.error(f"決策生成失敗: {e}")
+            return {
+                "status": "error",
+                "message": str(e),
+                "timestamp": time.time()
+            }
+    
+    def execute_attack_plan(self, attack_plan: str, target_context: dict = None) -> dict:
+        """
+        執行攻擊計畫
+        
+        Args:
+            attack_plan: 攻擊計畫描述
+            target_context: 目標上下文
+            
+        Returns:
+            執行結果
+        """
+        try:
+            # 使用 RAG 代理執行攻擊計畫
+            context_str = str(target_context) if target_context else ""
+            result = self.rag_agent.execute_attack_plan(attack_plan, context_str)
+            
+            # 添加核心元數據
+            result["core_execution"] = {
+                "executor": "BioNeuronCore",
+                "timestamp": time.time(),
+                "plan_hash": hash(attack_plan)
+            }
+            
+            return result
+            
+        except Exception as e:
+            logger.error(f"攻擊計畫執行失敗: {e}")
+            return {
+                "status": "error", 
+                "message": str(e),
+                "timestamp": time.time()
+            }
+    
+    def learn_from_feedback(self, 
+                           task: str, 
+                           result: dict, 
+                           feedback_score: float,
+                           metadata: dict = None) -> dict:
+        """
+        從反饋中學習
+        
+        Args:
+            task: 原始任務
+            result: 執行結果
+            feedback_score: 反饋分數 (0.0-1.0)
+            metadata: 額外的元數據
+            
+        Returns:
+            學習結果
+        """
+        try:
+            # 記錄經驗
+            if hasattr(self.rag_agent, 'experience_repo') and self.rag_agent.experience_repo:
+                experience_data = {
+                    "task": task,
+                    "result": result,
+                    "feedback_score": feedback_score,
+                    "metadata": metadata or {},
+                    "timestamp": time.time(),
+                    "core_version": "BioNeuronCore_v1"
+                }
+                
+                # 保存經驗
+                self.rag_agent.experience_repo.save_experience(experience_data)
+                
+                return {
+                    "status": "success",
+                    "message": "經驗已記錄",
+                    "experience_id": experience_data.get("id"),
+                    "feedback_score": feedback_score
+                }
+            else:
+                return {
+                    "status": "warning",
+                    "message": "經驗學習系統未啟用"
+                }
+                
+        except Exception as e:
+            logger.error(f"學習過程失敗: {e}")
+            return {
+                "status": "error",
+                "message": str(e)
+            }
+    
+    def train_from_experiences(self, min_score: float = 0.6, max_samples: int = 1000) -> dict:
+        """
+        從歷史經驗訓練模型
+        
+        Args:
+            min_score: 最低分數閾值
+            max_samples: 最大樣本數
+            
+        Returns:
+            訓練結果
+        """
+        return self.rag_agent.train_from_experiences(min_score, max_samples)
+    
+    def get_system_status(self) -> dict:
+        """
+        獲取系統狀態
+        
+        Returns:
+            系統狀態信息
+        """
+        return {
+            "core_status": "active",
+            "rag_agent_status": "active" if self.rag_agent else "inactive",
+            "decision_network_status": "active" if self.decision_network else "inactive",
+            "anti_hallucination_status": "active" if self.anti_hallucination else "inactive",
+            "planner_enabled": hasattr(self.rag_agent, 'planner') and self.rag_agent.planner is not None,
+            "tracer_enabled": hasattr(self.rag_agent, 'execution_monitor') and self.rag_agent.execution_monitor is not None,
+            "experience_enabled": hasattr(self.rag_agent, 'experience_repo') and self.rag_agent.experience_repo is not None,
+            "timestamp": time.time()
+        }
+    
+    def shutdown(self):
+        """安全關閉核心系統"""
+        logger.info("正在關閉 BioNeuronCore...")
+        
+        # 可以在這裡添加清理邏輯
+        if hasattr(self.rag_agent, 'experience_repo') and self.rag_agent.experience_repo:
+            try:
+                # 關閉數據庫連接等
+                pass
+            except Exception as e:
+                logger.warning(f"關閉經驗庫時出錯: {e}")
+        
+        logger.info("BioNeuronCore 已安全關閉")

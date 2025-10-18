@@ -15,18 +15,33 @@ AIVA Core - 核心引擎模組
 __version__ = "1.0.0"
 
 # 從 aiva_common 導入共享基礎設施
-from services.aiva_common.enums import (
-    ComplianceFramework,
-    Confidence,
-    ModuleName,
-    RemediationStatus,
-    RemediationType,
-    RiskLevel,
-    Severity,
-    TaskStatus,
-    Topic,
-)
-from services.aiva_common.schemas import CVEReference, CVSSv3Metrics, CWEReference
+try:
+    from aiva_common.enums import (
+        ComplianceFramework,
+        Confidence,
+        ModuleName,
+        RemediationStatus,
+        RemediationType,
+        RiskLevel,
+        Severity,
+        TaskStatus,
+        Topic,
+    )
+    from aiva_common.schemas import CVEReference, CVSSv3Metrics, CWEReference
+except ImportError:
+    # 如果無法導入，使用相對導入作為後備
+    from services.aiva_common.enums import (
+        ComplianceFramework,
+        Confidence,
+        ModuleName,
+        RemediationStatus,
+        RemediationType,
+        RiskLevel,
+        Severity,
+        TaskStatus,
+        Topic,
+    )
+    from services.aiva_common.schemas import CVEReference, CVSSv3Metrics, CWEReference
 
 # 從 core.ai_models 導入 AI 系統相關模型
 from services.core.ai_models import (

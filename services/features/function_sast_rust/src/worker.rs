@@ -6,6 +6,7 @@ use anyhow::{Context, Result};
 use lapin::{
     options::*, types::FieldTable, Channel, Connection, ConnectionProperties,
 };
+use futures_lite::stream::StreamExt;
 use std::env;
 use uuid::Uuid;
 

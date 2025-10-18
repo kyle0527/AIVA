@@ -11,12 +11,19 @@ import logging
 from pathlib import Path
 from typing import Any
 
+try:
+    from ..execution.plan_executor import PlanExecutor
+    from ..learning.experience_manager import ExperienceManager
+    from ..learning.model_trainer import ModelTrainer
+    from ..rag import RAGEngine
+    from .scenario_manager import ScenarioManager
+except ImportError:
+    from services.core.aiva_core.execution.plan_executor import PlanExecutor
+    from services.core.aiva_core.learning.experience_manager import ExperienceManager
+    from services.core.aiva_core.learning.model_trainer import ModelTrainer
+    from services.core.aiva_core.rag import RAGEngine
+    from services.core.aiva_core.training.scenario_manager import ScenarioManager
 
-from aiva_core.execution.plan_executor import PlanExecutor
-from aiva_core.learning.experience_manager import ExperienceManager
-from aiva_core.learning.model_trainer import ModelTrainer
-from aiva_core.rag import RAGEngine
-from aiva_core.training.scenario_manager import ScenarioManager
 from services.aiva_common.schemas import (
     AttackPlan,
     ExperienceSample,
@@ -40,28 +47,38 @@ class TrainingOrchestrator:
 
     def __init__(
         self,
-        scenario_manager: ScenarioManager,
-        rag_engine: RAGEngine,
-        plan_executor: PlanExecutor,
-        experience_manager: ExperienceManager,
-        model_trainer: ModelTrainer,
+        scenario_manager: ScenarioManager | None = None,
+        rag_engine: RAGEngine | None = None,
+        plan_executor: PlanExecutor | None = None,
+        experience_manager: ExperienceManager | None = None,
+        model_trainer: ModelTrainer | None = None,
         data_directory: Path | None = None,
+        auto_initialize: bool = True,
     ) -> None:
         """初始化訓練編排器
 
         Args:
-            scenario_manager: 場景管理器
-            rag_engine: RAG 引擎
-            plan_executor: 計畫執行器
-            experience_manager: 經驗管理器
-            model_trainer: 模型訓練器
+            scenario_manager: 場景管理器（None 時自動創建）
+            rag_engine: RAG 引擎（None 時自動創建）
+            plan_executor: 計畫執行器（None 時自動創建）
+            experience_manager: 經驗管理器（None 時自動創建）
+            model_trainer: 模型訓練器（None 時自動創建）
             data_directory: 數據目錄
+            auto_initialize: 是否自動初始化缺失的組件
         """
-        self.scenario_manager = scenario_manager
-        self.rag_engine = rag_engine
-        self.plan_executor = plan_executor
-        self.experience_manager = experience_manager
-        self.model_trainer = model_trainer
+        # 自動初始化組件
+        if auto_initialize:
+            self.scenario_manager = scenario_manager or self._create_default_scenario_manager()
+            self.rag_engine = rag_engine or self._create_default_rag_engine()
+            self.plan_executor = plan_executor or self._create_default_plan_executor()
+            self.experience_manager = experience_manager or self._create_default_experience_manager()
+            self.model_trainer = model_trainer or self._create_default_model_trainer()
+        else:
+            self.scenario_manager = scenario_manager
+            self.rag_engine = rag_engine
+            self.plan_executor = plan_executor
+            self.experience_manager = experience_manager
+            self.model_trainer = model_trainer
 
         self.data_directory = data_directory or Path("./data/training")
         self.data_directory.mkdir(parents=True, exist_ok=True)
@@ -70,7 +87,38 @@ class TrainingOrchestrator:
         self.training_sessions: list[dict[str, Any]] = []
         self.current_session: dict[str, Any] | None = None
 
-        logger.info("TrainingOrchestrator initialized")
+        logger.info(
+            f"TrainingOrchestrator initialized (auto_initialize={auto_initialize})"
+        )
+    
+    def _create_default_scenario_manager(self) -> ScenarioManager:
+        """創建默認場景管理器"""
+        logger.debug("Creating default ScenarioManager")
+        return ScenarioManager()
+    
+    def _create_default_rag_engine(self) -> RAGEngine:
+        """創建默認 RAG 引擎"""
+        from ..rag import KnowledgeBase, VectorStore
+        logger.debug("Creating default RAGEngine")
+        # 創建簡單的內存知識庫
+        vector_store = VectorStore()
+        knowledge_base = KnowledgeBase(vector_store=vector_store)
+        return RAGEngine(knowledge_base=knowledge_base)
+    
+    def _create_default_plan_executor(self) -> PlanExecutor:
+        """創建默認計劃執行器"""
+        logger.debug("Creating default PlanExecutor")
+        return PlanExecutor()
+    
+    def _create_default_experience_manager(self) -> ExperienceManager:
+        """創建默認經驗管理器"""
+        logger.debug("Creating default ExperienceManager")
+        return ExperienceManager()
+    
+    def _create_default_model_trainer(self) -> ModelTrainer:
+        """創建默認模型訓練器"""
+        logger.debug("Creating default ModelTrainer")
+        return ModelTrainer()
 
     async def run_training_episode(
         self,
@@ -205,7 +253,7 @@ class TrainingOrchestrator:
         """
         # 獲取場景列表
         if scenario_ids is None:
-            scenarios = self.scenario_manager.list_scenarios()
+            scenarios = await self.scenario_manager.list_scenarios()
             scenario_ids = [s["id"] for s in scenarios]
 
         logger.info(

@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AIVA Security Platform - 管理控制台</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        :root {
+            --aiva-primary: #2563eb;
+            --aiva-secondary: #64748b;
+            --aiva-success: #059669;
+            --aiva-warning: #d97706;
+            --aiva-danger: #dc2626;
+            --aiva-dark: #1e293b;
+        }
+
+        body {
+            background-color: #f8fafc;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .navbar-brand {
+            font-weight: bold;
+            color: var(--aiva-primary) !important;
+        }
+
+        .stats-card {
+            border-radius: 12px;
+            border: none;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            transition: transform 0.2s;
+        }
+
+        .stats-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+        }
+
+        .scan-type-badge {
+            font-size: 0.8rem;
+            padding: 0.25rem 0.5rem;
+        }
+
+        .value-highlight {
+            color: var(--aiva-success);
+            font-weight: bold;
+        }
+
+        .btn-scan {
+            background: linear-gradient(135deg, var(--aiva-primary), #3b82f6);
+            border: none;
+            border-radius: 8px;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .btn-scan:hover {
+            background: linear-gradient(135deg, #1d4ed8, var(--aiva-primary));
+            transform: translateY(-1px);
+            color: white;
+        }
+
+        .loading-spinner {
+            display: none;
+        }
+
+        .loading .loading-spinner {
+            display: inline-block;
+        }
+
+        .status-online {
+            color: var(--aiva-success);
+        }
+
+        .status-offline {
+            color: var(--aiva-danger);
+        }
+
+        .feature-card {
+            border-left: 4px solid var(--aiva-primary);
+            background: white;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .feature-value {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: var(--aiva-success);
+        }
+
+        .scan-result {
+            background: white;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 0.5rem;
+            border-left: 4px solid #e2e8f0;
+        }
+
+        .scan-result.success {
+            border-left-color: var(--aiva-success);
+        }
+
+        .scan-result.warning {
+            border-left-color: var(--aiva-warning);
+        }
+
+        .scan-result.danger {
+            border-left-color: var(--aiva-danger);
+        }
+    </style>
+</head>
+<body>
+    <!-- 導航欄 -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+            <a class="navbar-brand" href="#">
+                <i class="bi bi-shield-check"></i>
+                AIVA Security Platform
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#dashboard">控制台</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#security">安全掃描</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#results">掃描結果</a>
+                    </li>
+                </ul>
+                <div class="navbar-nav">
+                    <span class="navbar-text" id="user-info">
+                        <i class="bi bi-person-circle"></i>
+                        載入中...
+                    </span>
+                    <button class="btn btn-outline-light btn-sm ms-2" onclick="logout()">
+                        <i class="bi bi-box-arrow-right"></i>
+                        登出
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        <!-- 登入模態框 -->
+        <div class="modal fade" id="loginModal" tabindex="-1" data-bs-backdrop="static">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">
+                            <i class="bi bi-shield-lock"></i>
+                            AIVA 登入
+                        </h5>
+                    </div>
+                    <div class="modal-body">
+                        <form id="loginForm">
+                            <div class="mb-3">
+                                <label for="username" class="form-label">用戶名</label>
+                                <input type="text" class="form-control" id="username" value="admin" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="password" class="form-label">密碼</label>
+                                <input type="password" class="form-control" id="password" value="aiva-admin-2025" required>
+                            </div>
+                            <div class="mb-3">
+                                <small class="text-muted">
+                                    默認帳戶: admin/aiva-admin-2025, user/aiva-user-2025
+                                </small>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary" onclick="login()">
+                            <span class="loading-spinner spinner-border spinner-border-sm me-2"></span>
+                            登入
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 主要內容 -->
+        <div id="main-content" style="display: none;">
+            <!-- 系統狀態 -->
+            <div class="row mb-4">
+                <div class="col-12">
+                    <div class="card stats-card">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h5 class="card-title mb-0">
+                                        <i class="bi bi-activity"></i>
+                                        系統狀態
+                                    </h5>
+                                    <small class="text-muted">AIVA Security Platform v1.0.0</small>
+                                </div>
+                                <div class="text-end">
+                                    <span id="system-status" class="badge bg-secondary">檢查中...</span>
+                                    <br>
+                                    <small class="text-muted" id="last-update">載入中...</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 統計數據 -->
+            <div class="row mb-4">
+                <div class="col-md-3">
+                    <div class="card stats-card text-center">
+                        <div class="card-body">
+                            <i class="bi bi-shield-check text-success" style="font-size: 2rem;"></i>
+                            <h4 class="mt-2" id="total-scans">-</h4>
+                            <small class="text-muted">總掃描次數</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card stats-card text-center">
+                        <div class="card-body">
+                            <i class="bi bi-gem text-primary" style="font-size: 2rem;"></i>
+                            <h4 class="mt-2 value-highlight">$41K+</h4>
+                            <small class="text-muted">潛在價值上限</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card stats-card text-center">
+                        <div class="card-body">
+                            <i class="bi bi-lightning-charge text-warning" style="font-size: 2rem;"></i>
+                            <h4 class="mt-2" id="active-scans">-</h4>
+                            <small class="text-muted">進行中掃描</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card stats-card text-center">
+                        <div class="card-body">
+                            <i class="bi bi-cpu text-info" style="font-size: 2rem;"></i>
+                            <h4 class="mt-2" id="system-load">-</h4>
+                            <small class="text-muted">系統負載</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 高價值功能模組 -->
+            <div class="row">
+                <div class="col-md-8">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0">
+                                <i class="bi bi-diamond"></i>
+                                高價值安全功能模組
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <div class="feature-card">
+                                        <h6>Mass Assignment</h6>
+                                        <p class="text-muted mb-2">權限提升檢測</p>
+                                        <div class="feature-value">$2.1K-$8.2K</div>
+                                        <button class="btn btn-scan btn-sm mt-2" onclick="startScan('mass-assignment')">
+                                            <i class="bi bi-play-circle"></i>
+                                            開始掃描
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <div class="feature-card">
+                                        <h6>JWT Confusion</h6>
+                                        <p class="text-muted mb-2">JWT 混淆攻擊</p>
+                                        <div class="feature-value">$1.8K-$7.5K</div>
+                                        <button class="btn btn-scan btn-sm mt-2" onclick="startScan('jwt-confusion')">
+                                            <i class="bi bi-play-circle"></i>
+                                            開始掃描
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <div class="feature-card">
+                                        <h6>OAuth Confusion</h6>
+                                        <p class="text-muted mb-2">OAuth 配置錯誤</p>
+                                        <div class="feature-value">$2.5K-$10.2K</div>
+                                        <button class="btn btn-scan btn-sm mt-2" onclick="startScan('oauth-confusion')">
+                                            <i class="bi bi-play-circle"></i>
+                                            開始掃描
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <div class="feature-card">
+                                        <h6>GraphQL AuthZ</h6>
+                                        <p class="text-muted mb-2">GraphQL 權限檢測</p>
+                                        <div class="feature-value">$1.9K-$7.8K</div>
+                                        <button class="btn btn-scan btn-sm mt-2" onclick="startScan('graphql-authz')">
+                                            <i class="bi bi-play-circle"></i>
+                                            開始掃描
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="col-12 mb-3">
+                                    <div class="feature-card">
+                                        <h6>SSRF OOB</h6>
+                                        <p class="text-muted mb-2">SSRF Out-of-Band 檢測</p>
+                                        <div class="feature-value">$2.2K-$8.7K</div>
+                                        <button class="btn btn-scan btn-sm mt-2" onclick="startScan('ssrf-oob')">
+                                            <i class="bi bi-play-circle"></i>
+                                            開始掃描
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 最近掃描結果 -->
+                <div class="col-md-4">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0">
+                                <i class="bi bi-clock-history"></i>
+                                最近掃描
+                            </h5>
+                        </div>
+                        <div class="card-body" style="max-height: 400px; overflow-y: auto;">
+                            <div id="recent-scans">
+                                <p class="text-muted text-center">載入中...</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 掃描配置模態框 -->
+    <div class="modal fade" id="scanModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="scanModalTitle">配置掃描</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="scanForm">
+                        <div class="mb-3">
+                            <label for="target" class="form-label">目標 URL *</label>
+                            <input type="url" class="form-control" id="target" placeholder="https://example.com" required>
+                        </div>
+                        <div id="additional-fields">
+                            <!-- 動態添加的額外字段 -->
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                    <button type="button" class="btn btn-primary" onclick="submitScan()">
+                        <span class="loading-spinner spinner-border spinner-border-sm me-2"></span>
+                        開始掃描
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/aiva-dashboard.js"></script>
+</body>
+</html>

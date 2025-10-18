@@ -321,3 +321,53 @@ class ExperienceManager:
         except Exception as e:
             logger.error(f"Failed to get statistics: {e}")
             return {}
+
+    async def export_to_jsonl(self, filepath: str) -> bool:
+        """導出經驗數據到 JSONL 文件
+        
+        Args:
+            filepath: 導出文件路徑
+            
+        Returns:
+            是否成功
+        """
+        try:
+            import json
+            from pathlib import Path
+            
+            # 如果沒有儲存後端，記錄警告但不報錯
+            if not self.storage:
+                logger.warning("No storage backend configured, skipping export")
+                return True
+            
+            # 檢查儲存後端是否支持導出
+            if not hasattr(self.storage, "get_all_experiences"):
+                logger.warning("Storage backend does not support export")
+                return True
+            
+            # 獲取所有經驗
+            experiences = await self.storage.get_all_experiences()
+            
+            # 寫入 JSONL 文件
+            output_path = Path(filepath)
+            output_path.parent.mkdir(parents=True, exist_ok=True)
+            
+            with open(output_path, 'w', encoding='utf-8') as f:
+                for exp in experiences:
+                    # 將經驗轉換為 dict 如果它是 Pydantic model
+                    if hasattr(exp, 'model_dump'):
+                        exp_dict = exp.model_dump()
+                    elif hasattr(exp, 'dict'):
+                        exp_dict = exp.dict()
+                    else:
+                        exp_dict = exp
+                    
+                    json.dump(exp_dict, f, ensure_ascii=False)
+                    f.write('\n')
+            
+            logger.info(f"Exported {len(experiences)} experiences to {filepath}")
+            return True
+            
+        except Exception as e:
+            logger.error(f"Failed to export experiences: {e}")
+            return False

@@ -22,12 +22,20 @@ import logging
 from pathlib import Path
 from typing import Any
 
-from aiva_core.ai_engine import BioNeuronRAGAgent
-from aiva_core.learning.experience_manager import ExperienceManager
-from aiva_core.learning.model_trainer import ModelTrainer
-from aiva_core.multilang_coordinator import MultiLanguageAICoordinator
-from aiva_core.rag import KnowledgeBase, RAGEngine, VectorStore
-from aiva_core.training.training_orchestrator import TrainingOrchestrator
+try:
+    from .ai_engine import BioNeuronRAGAgent
+    from .learning.experience_manager import ExperienceManager
+    from .learning.model_trainer import ModelTrainer
+    from .multilang_coordinator import MultiLanguageAICoordinator
+    from .rag import KnowledgeBase, RAGEngine, VectorStore
+    from .training.training_orchestrator import TrainingOrchestrator
+except ImportError:
+    from services.core.aiva_core.ai_engine import BioNeuronRAGAgent
+    from services.core.aiva_core.learning.experience_manager import ExperienceManager
+    from services.core.aiva_core.learning.model_trainer import ModelTrainer
+    from services.core.aiva_core.multilang_coordinator import MultiLanguageAICoordinator
+    from services.core.aiva_core.rag import KnowledgeBase, RAGEngine, VectorStore
+    from services.core.aiva_core.training.training_orchestrator import TrainingOrchestrator
 
 logger = logging.getLogger(__name__)
 
@@ -120,21 +128,28 @@ class AICommander:
             storage_backend=None,  # TODO: 整合資料庫
         )
         self.model_trainer = ModelTrainer(
-            model_config={
-                "model_type": "supervised",
-                "learning_rate": 1e-4,
-            }
+            # 移除 model_config 參數避免與 Pydantic 衝突
+            # 配置將在後續通過方法設置
         )
 
         # 4. 訓練編排器（整合 RAG 和訓練）
-        from aiva_core.training.scenario_manager import ScenarioManager
+        try:
+            from .training.scenario_manager import ScenarioManager
+            from .execution.plan_executor import PlanExecutor
+            from .messaging.message_broker import MessageBroker
+        except ImportError:
+            from services.core.aiva_core.training.scenario_manager import ScenarioManager
+            from services.core.aiva_core.execution.plan_executor import PlanExecutor
+            from services.core.aiva_core.messaging.message_broker import MessageBroker
 
         scenario_manager = ScenarioManager()
-        from aiva_core.execution.plan_executor import PlanExecutor
-        from aiva_core.messaging.message_broker import MessageBroker
 
-        message_broker = MessageBroker()
-        plan_executor = PlanExecutor(message_broker=message_broker)
+        try:
+            message_broker = MessageBroker()
+            plan_executor = PlanExecutor(message_broker=message_broker)
+        except TypeError:
+            # 如果 PlanExecutor 不接受 message_broker 參數，使用無參數初始化
+            plan_executor = PlanExecutor()
 
         self.training_orchestrator = TrainingOrchestrator(
             scenario_manager=scenario_manager,

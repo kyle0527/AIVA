@@ -46,14 +46,18 @@ dev = [
 ]
 
 [tool.setuptools]
-packages = ["services"]
+packages = ["services", "services.aiva_common", "services.core", "services.scan", "services.attack"]
 include-package-data = true
 
 [tool.setuptools.package-data]
-"*" = ["*.json", "*.yml", "*.yaml"]
+"*" = ["*.json", "*.yml", "*.yaml", "*.md", "*.txt"]
 
 [tool.setuptools.package-dir]
 services = "services"
+"services.aiva_common" = "services/aiva_common"
+"services.core" = "services/core"
+"services.scan" = "services/scan"
+"services.attack" = "services/attack"
 
 [tool.black]
 line-length = 88

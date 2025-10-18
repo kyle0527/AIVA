@@ -1,0 +1,186 @@
+{
+  "timestamp": "2025-10-19 03:46:22",
+  "test_results": {
+    "environment": {
+      "python_version": "3.13.9 (tags/v3.13.9:8183fa5, Oct 14 2025, 14:09:13) [MSC v.1944 64 bit (AMD64)]",
+      "platform": "win32",
+      "architecture": "64-bit",
+      "workspace_exists": true,
+      "files_available": {
+        "cross_language_bridge": true,
+        "wasm_integration": true,
+        "graalvm_integration": true,
+        "ffi_integration": true
+      }
+    },
+    "dependencies": {
+      "required": {
+        "asyncio": {
+          "available": true,
+          "error": null
+        },
+        "json": {
+          "available": true,
+          "error": null
+        },
+        "subprocess": {
+          "available": true,
+          "error": null
+        },
+        "pathlib": {
+          "available": true,
+          "error": null
+        },
+        "ctypes": {
+          "available": true,
+          "error": null
+        },
+        "cffi": {
+          "available": true,
+          "error": null
+        },
+        "websockets": {
+          "available": true,
+          "error": null
+        },
+        "zmq": {
+          "available": false,
+          "error": "No module named 'zmq'"
+        },
+        "wasmtime": {
+          "available": false,
+          "error": "No module named 'wasmtime'"
+        },
+        "wasmer": {
+          "available": false,
+          "error": "No module named 'wasmer'"
+        },
+        "grpcio": {
+          "available": true,
+          "error": null
+        },
+        "protobuf": {
+          "available": true,
+          "error": null
+        }
+      },
+      "optional": {
+        "polyglot": {
+          "available": false,
+          "error": "No module named 'polyglot'"
+        },
+        "numpy": {
+          "available": true,
+          "error": null
+        },
+        "pandas": {
+          "available": true,
+          "error": null
+        }
+      },
+      "external_tools": {
+        "cargo": {
+          "available": true,
+          "version": "cargo 1.90.0 (840b83a10 2025-07-30)",
+          "error": null
+        },
+        "go": {
+          "available": false,
+          "version": null,
+          "error": "flag provided but not defined: -version\nGo is a tool for managing Go source code.\n\nUsage:\n\n\tgo <command> [arguments]\n\nThe commands are:\n\n\tbug         start a bug report\n\tbuild       compile packages and dependencies\n\tclean       remove object files and cached files\n\tdoc         show documentation for package or symbol\n\tenv         print Go environment information\n\tfix         update packages to use new APIs\n\tfmt         gofmt (reformat) package sources\n\tgenerate    generate Go files by processing source\n\tget         add dependencies to current module and install them\n\tinstall     compile and install packages and dependencies\n\tlist        list packages or modules\n\tmod         module maintenance\n\twork        workspace maintenance\n\trun         compile and run Go program\n\ttelemetry   manage telemetry data and settings\n\ttest        test packages\n\ttool        run specified go tool\n\tversion     print Go version\n\tvet         report likely mistakes in packages\n\nUse \"go help <command>\" for more information about a command.\n\nAdditional help topics:\n\n\tbuildconstraint build constraints\n\tbuildjson       build -json encoding\n\tbuildmode       build modes\n\tc               calling between Go and C\n\tcache           build and test caching\n\tenvironment     environment variables\n\tfiletype        file types\n\tgoauth          GOAUTH environment variable\n\tgo.mod          the go.mod file\n\tgopath          GOPATH environment variable\n\tgoproxy         module proxy protocol\n\timportpath      import path syntax\n\tmodules         modules, module versions, and more\n\tmodule-auth     module authentication using go.sum\n\tpackages        package lists and patterns\n\tprivate         configuration for downloading non-public code\n\ttestflag        testing flags\n\ttestfunc        testing functions\n\tvcs             controlling version control with GOVCS\n\nUse \"go help <topic>\" for more information about that topic.\n\n"
+        },
+        "node": {
+          "available": true,
+          "version": "v22.19.0",
+          "error": null
+        },
+        "emcc": {
+          "available": false,
+          "version": null,
+          "error": "[WinError 2] 系統找不到指定的檔案。"
+        },
+        "wasm-opt": {
+          "available": false,
+          "version": null,
+          "error": "[WinError 2] 系統找不到指定的檔案。"
+        },
+        "protoc": {
+          "available": false,
+          "version": null,
+          "error": "[WinError 2] 系統找不到指定的檔案。"
+        }
+      }
+    },
+    "functionality": {
+      "cross_language_bridge": {
+        "module_loaded": false,
+        "manager_created": false,
+        "bridges": {},
+        "overall_success": false,
+        "error": "No module named 'zmq'"
+      },
+      "wasm_integration": {
+        "module_loaded": true,
+        "manager_created": true,
+        "wasmtime_available": false,
+        "wasmer_available": false,
+        "overall_success": false,
+        "note": "WASM 模組需要實際的 .wasm 檔案才能完全測試"
+      },
+      "graalvm_integration": {
+        "module_loaded": true,
+        "manager_created": true,
+        "graalvm_available": false,
+        "python_context": true,
+        "js_context": true,
+        "overall_success": true,
+        "note": "完整 GraalVM 功能需要安裝 GraalVM 環境"
+      },
+      "ffi_integration": {
+        "module_loaded": true,
+        "manager_created": true,
+        "cffi_available": true,
+        "ctypes_available": true,
+        "overall_success": true,
+        "note": "FFI 功能需要編譯的動態函式庫才能完全測試"
+      }
+    },
+    "performance": {
+      "file_io": {
+        "operations": 100,
+        "total_time": 1.1298589706420898,
+        "avg_time_per_op": 0.011298589706420899,
+        "ops_per_second": 88.50662126722843
+      }
+    },
+    "compatibility": {
+      "python_version_compatible": true,
+      "platform_supported": true,
+      "encoding_support": true,
+      "network_available": true,
+      "file_system_writable": true
+    }
+  },
+  "scores": {
+    "environment": 1.0,
+    "dependencies": 0.6249999999999999,
+    "functionality": 0.5,
+    "performance": 0.8850662126722842,
+    "compatibility": 1.0
+  },
+  "overall_score": 0.8020132425344568,
+  "available_methods": [
+    "graalvm_integration",
+    "ffi_integration"
+  ],
+  "recommendations": [
+    "安裝缺少的 Python 套件: zmq, wasmtime, wasmer",
+    "安裝缺少的外部工具: go, emcc, wasm-opt, protoc"
+  ],
+  "summary": {
+    "total_methods_tested": 4,
+    "successful_integrations": 2,
+    "success_rate": 50.0,
+    "status": "PASS"
+  }
+}
