@@ -12,6 +12,7 @@ import json
 import importlib.util
 from pathlib import Path
 from typing import Dict, Any, List, Tuple
+import aiofiles
 
 # 添加路徑
 current_dir = os.path.dirname(__file__)
@@ -551,7 +552,7 @@ class AIVASystemConnectivityChecker:
             print("❌ 系統通連性存在嚴重問題，需要全面檢修")
             recommendation = "NEEDS_COMPLETE_OVERHAUL"
         
-        # 保存檢查報告
+        # 保存檢查報告 (使用異步文件操作)
         report_data = {
             "timestamp": "2025-01-18",
             "overall_percentage": overall_percentage,
@@ -561,8 +562,8 @@ class AIVASystemConnectivityChecker:
         }
         
         report_file = self.aiva_root / "SYSTEM_CONNECTIVITY_REPORT.json"
-        with open(report_file, 'w', encoding='utf-8') as f:
-            json.dump(report_data, f, indent=2, ensure_ascii=False)
+        async with aiofiles.open(report_file, 'w', encoding='utf-8') as f:
+            await f.write(json.dumps(report_data, indent=2, ensure_ascii=False))
         
         print(f"\\n📄 詳細報告已保存: {report_file}")
         print("=" * 70)

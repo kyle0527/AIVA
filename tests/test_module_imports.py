@@ -51,10 +51,9 @@ def test_schemas_direct_import():
         assert CAPECReference is not None
         assert SARIFLocation is not None
         print("  ✅ 所有類驗證通過")
-        return True
     except ImportError as e:
         print(f"  ❌ 導入失敗: {e}")
-        return False
+        assert False, f"Schema 導入失敗: {e}"
 
 
 def test_models_backward_compatibility():
@@ -84,13 +83,12 @@ def test_models_backward_compatibility():
         assert MessageHeader is schemas.MessageHeader
         assert CVSSv3Metrics is schemas.CVSSv3Metrics
         print("  ✅ 確認類來自 schemas.py（非重複定義）")
-        return True
     except ImportError as e:
         print(f"  ❌ 導入失敗: {e}")
-        return False
-    except AssertionError:
+        assert False, f"Models backward compatibility 導入失敗: {e}"
+    except AssertionError as ae:
         print("  ❌ 類不是來自 schemas.py（可能存在重複定義）")
-        return False
+        assert False, "類不是來自 schemas.py（可能存在重複定義）"
 
 
 def test_aiva_common_package_exports():
@@ -122,10 +120,9 @@ def test_aiva_common_package_exports():
         assert ModuleName is not None
         assert Topic is not None
         print("  ✅ 枚舉和類都可用")
-        return True
     except ImportError as e:
         print(f"  ❌ 導入失敗: {e}")
-        return False
+        assert False, f"Package exports 導入失敗: {e}"
 
 
 def test_service_module_imports():
@@ -152,16 +149,19 @@ def test_service_module_imports():
         print(f"  ❌ services.core.aiva_core 導入失敗: {e}")
         results.append(False)
     
-    # 測試 function 模組
+    # 測試 features 模組 (修正路徑)
     try:
-        from services.function import CVSSv3Metrics
-        print("  ✅ services.function 導入成功")
+        from services.features import CVSSv3Metrics
+        print("  ✅ services.features 導入成功")
         results.append(True)
     except ImportError as e:
-        print(f"  ❌ services.function 導入失敗: {e}")
+        print(f"  ❌ services.features 導入失敗: {e}")
         results.append(False)
     
-    return all(results)
+    # 檢查所有結果
+    if not all(results):
+        failed_imports = [f"測試 {i+1}" for i, result in enumerate(results) if not result]
+        assert False, f"服務模組導入失敗: {failed_imports}"
 
 
 def test_no_circular_imports():
@@ -174,10 +174,9 @@ def test_no_circular_imports():
         import services.aiva_common.models
         import services.aiva_common.enums
         print("  ✅ 沒有檢測到循環導入")
-        return True
     except ImportError as e:
         print(f"  ❌ 可能存在循環導入: {e}")
-        return False
+        assert False, f"檢測到循環導入: {e}"
 
 
 def test_class_consistency():
@@ -198,14 +197,12 @@ def test_class_consistency():
         
         assert SchemaCVSS is ModelCVSS is PackageCVSS
         print("  ✅ CVSSv3Metrics 在所有導入位置保持一致")
-        
-        return True
     except ImportError as e:
         print(f"  ❌ 導入失敗: {e}")
-        return False
+        assert False, f"Class consistency 導入失敗: {e}"
     except AssertionError:
         print("  ❌ 類在不同位置不一致（可能存在重複定義）")
-        return False
+        assert False, "類在不同位置不一致（可能存在重複定義）"
 
 
 def main():

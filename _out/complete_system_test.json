@@ -1,53 +1,53 @@
 {
-  "timestamp": "2025-10-19T05:22:42.917826",
+  "timestamp": "2025-10-19T11:22:57.778316",
   "tests": [
     {
       "name": "Docker 環境",
       "status": "FAIL",
-      "details": "缺少服務: {'postgres', 'rabbitmq', 'neo4j', 'redis'}",
-      "timestamp": "2025-10-19T05:22:43.001876"
+      "details": "缺少服務: {'neo4j', 'postgres', 'redis', 'rabbitmq'}",
+      "timestamp": "2025-10-19T11:22:57.849162"
     },
     {
       "name": "Python 依賴",
       "status": "PASS",
       "details": "7 套件已安裝",
-      "timestamp": "2025-10-19T05:22:43.718259"
+      "timestamp": "2025-10-19T11:22:58.322485"
     },
     {
       "name": "配置系統",
       "status": "FAIL",
       "details": "'UnifiedSettings' object has no attribute 'core_monitor_interval'",
-      "timestamp": "2025-10-19T05:22:43.718472"
+      "timestamp": "2025-10-19T11:22:58.322732"
     },
     {
       "name": "核心模組",
       "status": "PASS",
       "details": "所有核心組件可用",
-      "timestamp": "2025-10-19T05:22:43.718564"
+      "timestamp": "2025-10-19T11:22:58.322820"
     },
     {
       "name": "SQLi 模組",
       "status": "FAIL",
       "details": "No module named 'services.function'",
-      "timestamp": "2025-10-19T05:22:43.718815"
+      "timestamp": "2025-10-19T11:22:58.323123"
     },
     {
       "name": "整合層",
       "status": "FAIL",
       "details": "[Errno 2] No such file or directory: '/workspaces/AIVA/services/integration/aiva_integration/app.py'",
-      "timestamp": "2025-10-19T05:22:43.718914"
+      "timestamp": "2025-10-19T11:22:58.323226"
     },
     {
       "name": "AI 系統",
       "status": "PASS",
       "details": "2 個組件可用",
-      "timestamp": "2025-10-19T05:22:43.718970"
+      "timestamp": "2025-10-19T11:22:58.323278"
     },
     {
       "name": "掃描引擎",
       "status": "PASS",
       "details": "掃描編排器可用",
-      "timestamp": "2025-10-19T05:22:43.959215"
+      "timestamp": "2025-10-19T11:22:58.649364"
     }
   ],
   "summary": {

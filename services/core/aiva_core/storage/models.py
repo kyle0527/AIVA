@@ -50,8 +50,8 @@ class ExperienceSampleModel(Base):
     )  # sqli, xss, etc
     scenario_id = Column(String(64), nullable=True, index=True)
 
-    # 元數據
-    metadata = Column(JSON, nullable=True)
+    # 元數據 (使用 extra_metadata 避免與 SQLAlchemy 的 metadata 衝突)
+    extra_metadata = Column("metadata", JSON, nullable=True)
 
     # 關聯
     trace = relationship("TraceRecordModel", back_populates="experiences")
@@ -92,7 +92,7 @@ class TraceRecordModel(Base):
     error_message = Column(Text, nullable=True)
 
     # 元數據
-    metadata = Column(JSON, nullable=True)
+    extra_metadata = Column("metadata", JSON, nullable=True)
 
     # 關聯
     session = relationship("TrainingSessionModel", back_populates="traces")
@@ -135,7 +135,7 @@ class TrainingSessionModel(Base):
     )  # running / completed / failed
 
     # 元數據
-    metadata = Column(JSON, nullable=True)
+    extra_metadata = Column("metadata", JSON, nullable=True)
 
     # 關聯
     traces = relationship("TraceRecordModel", back_populates="session")
@@ -176,7 +176,7 @@ class ModelCheckpointModel(Base):
     is_deployed = Column(Boolean, default=False, index=True)
 
     # 元數據
-    metadata = Column(JSON, nullable=True)
+    extra_metadata = Column("metadata", JSON, nullable=True)
 
     __table_args__ = (Index("idx_version_deployed", "model_version", "is_deployed"),)
 
@@ -215,7 +215,7 @@ class KnowledgeEntryModel(Base):
     success_rate = Column(Float, nullable=True)
 
     # 元數據
-    metadata = Column(JSON, nullable=True)
+    extra_metadata = Column("metadata", JSON, nullable=True)
 
     __table_args__ = (Index("idx_type_category", "knowledge_type", "category"),)
 
@@ -251,6 +251,6 @@ class ScenarioModel(Base):
     avg_success_rate = Column(Float, nullable=True)
 
     # 元數據
-    metadata = Column(JSON, nullable=True)
+    extra_metadata = Column("metadata", JSON, nullable=True)
 
     __table_args__ = (Index("idx_type_difficulty", "vulnerability_type", "difficulty"),)

@@ -22,6 +22,11 @@ from services.aiva_common.schemas import (
     Vulnerability,
 )
 from services.aiva_common.utils import get_logger, new_id
+from services.features.common.worker_statistics import (
+    StatisticsCollector,
+    ErrorCategory,
+    StoppingReason,
+)
 
 from .blind_xss_listener_validator import BlindXssEvent, BlindXssListenerValidator
 from .dom_xss_detector import DomDetectionResult, DomXssDetector
@@ -72,6 +77,7 @@ class XssExecutionTelemetry:
 class TaskExecutionResult:
     findings: list[FindingPayload]
     telemetry: XssExecutionTelemetry
+    statistics_summary: dict[str, Any] | None = None  # 新增統計摘要
 
 
 async def run() -> None:
@@ -119,6 +125,16 @@ async def _execute_task(queued: QueuedTask, publisher: XssResultPublisher) -> No
     for finding in result.findings:
         await publisher.publish_finding(finding, trace_id=trace_id)
 
+    # 記錄統計摘要
+    if result.statistics_summary:
+        logger.info(
+            "XSS task completed with statistics",
+            extra={
+                "task_id": task.task_id,
+                "statistics": result.statistics_summary
+            }
+        )
+
     await publisher.publish_status(
         task,
         "COMPLETED",
@@ -139,6 +155,12 @@ async def process_task(
     config = task.test_config
     timeout = config.timeout or DEFAULT_TIMEOUT_SECONDS
 
+    # 創建統計數據收集器
+    stats_collector = StatisticsCollector(
+        task_id=task.task_id,
+        worker_type="xss"
+    )
+
     generator = payload_generator or XssPayloadGenerator()
     validator = blind_validator
     blind_payload: str | None = None
@@ -146,10 +168,19 @@ async def process_task(
         validator = validator or BlindXssListenerValidator()
         try:
             blind_payload = await validator.provision_payload(task)
-        except Exception:  # pragma: no cover - defensive guard for OAST outages
+            # 記錄 OAST 探針 (Blind XSS)
+            if blind_payload:
+                stats_collector.record_oast_probe()
+        except Exception as exc:  # pragma: no cover - defensive guard for OAST outages
             logger.exception(
                 "Failed to provision blind XSS payload",
                 extra={"task_id": task.task_id},
+            )
+            # 記錄錯誤
+            stats_collector.record_error(
+                category=ErrorCategory.NETWORK,
+                message=f"Failed to provision blind XSS payload: {str(exc)}",
+                request_info={"task_id": task.task_id}
             )
             blind_payload = None
             validator = None
@@ -159,10 +190,25 @@ async def process_task(
 
     if not payloads:
         logger.debug("No payloads produced for task", extra={"task_id": task.task_id})
-        return TaskExecutionResult(findings=[], telemetry=telemetry)
+        # 完成統計
+        stats_collector.finalize()
+        return TaskExecutionResult(
+            findings=[], 
+            telemetry=telemetry,
+            statistics_summary=stats_collector.get_summary()
+        )
 
     detector = detector or TraditionalXssDetector(task, timeout=timeout)
+    
+    # 記錄 Payload 測試
+    for _ in payloads:
+        stats_collector.record_payload_test(success=False)
+    
     detections = await detector.execute(payloads)
+    
+    # 記錄請求統計 (成功的檢測)
+    stats_collector.stats.total_requests = len(payloads)
+    stats_collector.stats.successful_requests = len(detections)
 
     errors: list[XssExecutionError] = getattr(detector, "errors", [])
     if errors:
@@ -177,7 +223,18 @@ async def process_task(
                     "attempts": error.attempts,
                 },
             )
+            # 記錄錯誤
+            stats_collector.record_error(
+                category=ErrorCategory.NETWORK if "timeout" not in error.message.lower() else ErrorCategory.TIMEOUT,
+                message=error.message,
+                request_info={
+                    "payload": error.payload,
+                    "vector": error.vector,
+                    "attempts": error.attempts
+                }
+            )
         telemetry.errors = [error.to_detail() for error in errors]
+        stats_collector.stats.failed_requests = len(errors)
 
     findings: list[FindingPayload] = []
 
@@ -208,6 +265,10 @@ async def process_task(
                 dom_result=dom_result,
             )
         )
+        
+        # 記錄漏洞發現
+        stats_collector.record_vulnerability(false_positive=False)
+        stats_collector.record_payload_test(success=True)
 
     telemetry.reflections = len(findings)
 
@@ -252,10 +313,38 @@ async def process_task(
         blind_events = await validator.collect_events()
         for event in blind_events:
             findings.append(_build_blind_finding(task, event))
+            
+            # 記錄 OAST 回調 (Blind XSS)
+            stats_collector.record_oast_callback(
+                probe_token=event.token if hasattr(event, 'token') else "blind_xss",
+                callback_type="blind_xss",
+                source_ip=event.source_ip if hasattr(event, 'source_ip') else "unknown",
+                payload_info={
+                    "url": task.url,
+                    "event_type": event.event_type if hasattr(event, 'event_type') else "unknown"
+                }
+            )
+            
+            # 記錄漏洞發現 (Blind XSS)
+            stats_collector.record_vulnerability(false_positive=False)
 
         telemetry.blind_callbacks = len(blind_events)
 
-    return TaskExecutionResult(findings=findings, telemetry=telemetry)
+    # 設置 XSS 特定統計數據
+    stats_collector.set_module_specific("reflected_xss_tests", len(detections))
+    stats_collector.set_module_specific("dom_xss_escalations", telemetry.dom_escalations)
+    stats_collector.set_module_specific("blind_xss_enabled", config.blind_xss)
+    stats_collector.set_module_specific("dom_testing_enabled", config.dom_testing)
+    stats_collector.set_module_specific("stored_xss_tested", wants_stored or (not findings and hinted))
+    
+    # 完成統計數據收集
+    stats_collector.finalize()
+
+    return TaskExecutionResult(
+        findings=findings, 
+        telemetry=telemetry,
+        statistics_summary=stats_collector.get_summary()
+    )
 
 
 def _build_payloads(

@@ -12,6 +12,7 @@ import json
 import time
 from pathlib import Path
 from typing import Dict, Any, List
+import aiofiles
 
 # 添加路徑
 sys.path.append(os.path.join(os.path.dirname(__file__), 'services', 'core'))
@@ -84,10 +85,10 @@ async def test_scan_orchestrator():
                 findings = scan_result.get('findings', [])
                 print(f"  • 發現問題: {len(findings)}")
                 
-                # 保存結果
+                # 保存結果 (使用異步文件操作)
                 result_file = Path("aiva_orchestrator_scan_result.json")
-                with open(result_file, 'w', encoding='utf-8') as f:
-                    json.dump(scan_result, f, indent=2, ensure_ascii=False, default=str)
+                async with aiofiles.open(result_file, 'w', encoding='utf-8') as f:
+                    await f.write(json.dumps(scan_result, indent=2, ensure_ascii=False, default=str))
                 print(f"✅ 結果已保存: {result_file.absolute()}")
                 
             else:
@@ -259,8 +260,8 @@ async def test_vulnerability_detection():
             }
             
             vuln_file = Path("aiva_vulnerability_report.json")
-            with open(vuln_file, 'w', encoding='utf-8') as f:
-                json.dump(vuln_report, f, indent=2, ensure_ascii=False)
+            async with aiofiles.open(vuln_file, 'w', encoding='utf-8') as f:
+                await f.write(json.dumps(vuln_report, indent=2, ensure_ascii=False))
             print(f"✅ 漏洞報告已保存: {vuln_file.absolute()}")
         
         else:

@@ -16,6 +16,9 @@ __version__ = "1.0.0"
 # 從各模組中導出核心類別和枚舉
 import contextlib
 
+# 導入新增的通用模組
+from . import enums, utils, schemas as common_schemas
+
 from .enums import (
     AccessDecision,
     AssetExposure,

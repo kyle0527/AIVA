@@ -21,6 +21,11 @@ from services.aiva_common.schemas import (
     Vulnerability,
 )
 from services.aiva_common.utils import get_logger, new_id
+from services.features.common.worker_statistics import (
+    StatisticsCollector,
+    ErrorCategory,
+    StoppingReason,
+)
 
 from .internal_address_detector import InternalAddressDetector
 from .oast_dispatcher import OastDispatcher, OastEvent
@@ -59,6 +64,7 @@ class SsrfTelemetry:
 class TaskExecutionResult:
     findings: list[FindingPayload]
     telemetry: SsrfTelemetry
+    statistics_summary: dict[str, Any] | None = None  # 新增統計摘要
 
 
 async def run() -> None:
@@ -121,6 +127,16 @@ async def _execute_task(
     for finding in result.findings:
         await publisher.publish_finding(finding, trace_id=trace_id)
 
+    # 記錄統計摘要到日誌
+    if result.statistics_summary:
+        logger.info(
+            "SSRF task completed with statistics",
+            extra={
+                "task_id": task.task_id,
+                "statistics": result.statistics_summary
+            }
+        )
+
     await publisher.publish_status(
         task,
         "COMPLETED",
@@ -143,6 +159,12 @@ async def process_task(
     assert isinstance(detector, InternalAddressDetector)
     dispatcher = dispatcher or OastDispatcher()
 
+    # 創建統計數據收集器
+    stats_collector = StatisticsCollector(
+        task_id=task.task_id,
+        worker_type="ssrf"
+    )
+
     plan: AnalysisPlan = analyzer.analyze(task)
     telemetry = SsrfTelemetry()
     findings: list[FindingPayload] = []
@@ -151,25 +173,92 @@ async def process_task(
         logger.debug(
             "No SSRF payloads generated for task", extra={"task_id": task.task_id}
         )
-        return TaskExecutionResult(findings=findings, telemetry=telemetry)
+        # 完成統計收集（無測試）
+        final_stats = stats_collector.finalize()
+        return TaskExecutionResult(
+            findings=findings, 
+            telemetry=telemetry,
+            statistics_summary=stats_collector.get_summary()
+        )
 
     for vector in plan.vectors:
         telemetry.attempts += 1
+        
+        # 記錄 Payload 測試
+        stats_collector.record_payload_test(success=False)
+        
         payload = await _resolve_payload(vector, dispatcher, task)
+        
+        # 記錄 OAST 探針發送（如果適用）
+        if vector.requires_oast:
+            stats_collector.record_oast_probe()
 
         try:
             response = await _issue_request(client, task, vector, payload)
+            
+            # 記錄成功的請求
+            stats_collector.record_request(
+                success=True,
+                timeout=False,
+                rate_limited=False
+            )
+            
+        except httpx.TimeoutException as exc:
+            logger.warning(
+                "SSRF payload request timeout",
+                extra={"task_id": task.task_id, "payload": payload, "error": repr(exc)},
+            )
+            telemetry.errors.append(str(exc))
+            
+            # 記錄超時錯誤
+            stats_collector.record_request(success=False, timeout=True)
+            stats_collector.record_error(
+                category=ErrorCategory.TIMEOUT,
+                message=str(exc),
+                request_info={"url": task.url, "payload": payload}
+            )
+            continue
+            
+        except httpx.NetworkError as exc:
+            logger.warning(
+                "SSRF payload network error",
+                extra={"task_id": task.task_id, "payload": payload, "error": repr(exc)},
+            )
+            telemetry.errors.append(str(exc))
+            
+            # 記錄網絡錯誤
+            stats_collector.record_request(success=False)
+            stats_collector.record_error(
+                category=ErrorCategory.NETWORK,
+                message=str(exc),
+                request_info={"url": task.url, "payload": payload}
+            )
+            continue
+            
         except Exception as exc:
             logger.warning(
                 "Failed to execute SSRF payload",
                 extra={"task_id": task.task_id, "payload": payload, "error": repr(exc)},
             )
             telemetry.errors.append(str(exc))
+            
+            # 記錄未知錯誤
+            stats_collector.record_request(success=False)
+            stats_collector.record_error(
+                category=ErrorCategory.UNKNOWN,
+                message=str(exc),
+                request_info={"url": task.url, "payload": payload}
+            )
             continue
 
         detection: Any = detector.analyze(response)
         if detection.matched:
             telemetry.findings += 1
+            
+            # 記錄成功檢測到漏洞
+            stats_collector.record_vulnerability(false_positive=False)
+            stats_collector.record_payload_test(success=True)
+            
             findings.append(
                 _build_internal_finding(
                     task=task,
@@ -189,6 +278,24 @@ async def process_task(
             if events:
                 telemetry.findings += 1
                 telemetry.oast_callbacks += len(events)
+                
+                # 記錄 OAST 回調
+                for event in events:
+                    stats_collector.record_oast_callback(
+                        probe_token=_extract_token(payload),
+                        callback_type=event.event_type if hasattr(event, 'event_type') else "unknown",
+                        source_ip=event.source_ip if hasattr(event, 'source_ip') else "unknown",
+                        payload_info={
+                            "url": task.url,
+                            "parameter": vector.injection_point,
+                            "payload": payload
+                        }
+                    )
+                
+                # 記錄成功檢測到漏洞
+                stats_collector.record_vulnerability(false_positive=False)
+                stats_collector.record_payload_test(success=True)
+                
                 findings.append(
                     _build_oast_finding(
                         task=task,
@@ -197,8 +304,22 @@ async def process_task(
                         events=events,
                     )
                 )
+    
+    # 設置 SSRF 特定統計數據
+    stats_collector.set_module_specific("total_vectors_tested", len(plan.vectors))
+    stats_collector.set_module_specific("internal_detection_tests", 
+        sum(1 for v in plan.vectors if not v.requires_oast))
+    stats_collector.set_module_specific("oast_tests", 
+        sum(1 for v in plan.vectors if v.requires_oast))
+    
+    # 完成統計數據收集
+    final_stats = stats_collector.finalize()
 
-    return TaskExecutionResult(findings=findings, telemetry=telemetry)
+    return TaskExecutionResult(
+        findings=findings, 
+        telemetry=telemetry,
+        statistics_summary=stats_collector.get_summary()
+    )
 
 
 async def _resolve_payload(

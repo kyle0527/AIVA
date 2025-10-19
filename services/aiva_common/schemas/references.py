@@ -52,6 +52,26 @@ class CWEReference(BaseModel):
     likelihood_of_exploit: str | None = None  # "High", "Medium", "Low"
 
 
+class CAPECReference(BaseModel):
+    """CAPEC 參考資訊
+
+    符合標準: Common Attack Pattern Enumeration and Classification (https://capec.mitre.org/)
+    """
+
+    capec_id: str = Field(
+        description="CAPEC ID (格式: CAPEC-XXX)",
+        pattern=r"^CAPEC-\d+$")
+    name: str | None = None
+    description: str | None = None
+    attack_pattern_category: str | None = None  # "Meta", "Standard", "Detailed Atomic"
+    likelihood_of_attack: str | None = None  # "High", "Medium", "Low"
+    typical_severity: str | None = None  # "High", "Medium", "Low"
+    prerequisites: list[str] = Field(default_factory=list, description="攻擊前提條件")
+    consequences: list[str] = Field(default_factory=list, description="攻擊後果")
+    mitigations: list[str] = Field(default_factory=list, description="緩解措施")
+    related_cwe_ids: list[str] = Field(default_factory=list, description="相關 CWE ID")
+
+
 # ============================================================================
 # 技術指紋
 # ============================================================================

@@ -1,0 +1,38 @@
+{
+  "timestamp": "2025-10-19T11:23:38.019308",
+  "target": "http://localhost:3000",
+  "total_tests": 6,
+  "successful_tests": 0,
+  "success_rate": 0.0,
+  "results": {
+    "ssrf": {
+      "status": "failed",
+      "elapsed": 0.32990097999572754,
+      "error": "cannot import name 'Task' from 'aiva_common.schemas' (C:\\D\\fold7\\AIVA-git\\services\\aiva_common\\schemas\\__init__.py)"
+    },
+    "sqli": {
+      "status": "failed",
+      "elapsed": 0.0006380081176757812,
+      "error": "cannot import name 'Task' from 'aiva_common.schemas' (C:\\D\\fold7\\AIVA-git\\services\\aiva_common\\schemas\\__init__.py)"
+    },
+    "xss": {
+      "status": "failed",
+      "elapsed": 0.0004756450653076172,
+      "error": "cannot import name 'Task' from 'aiva_common.schemas' (C:\\D\\fold7\\AIVA-git\\services\\aiva_common\\schemas\\__init__.py)"
+    },
+    "idor": {
+      "status": "failed",
+      "elapsed": 0.0005006790161132812,
+      "error": "cannot import name 'Task' from 'aiva_common.schemas' (C:\\D\\fold7\\AIVA-git\\services\\aiva_common\\schemas\\__init__.py)"
+    },
+    "graphql_authz": {
+      "status": "failed",
+      "elapsed": 0.00041747093200683594,
+      "error": "cannot import name 'Task' from 'aiva_common.schemas' (C:\\D\\fold7\\AIVA-git\\services\\aiva_common\\schemas\\__init__.py)"
+    },
+    "ai_core": {
+      "status": "failed",
+      "error": "'AIModelManager' object has no attribute 'predict_batch'"
+    }
+  }
+}

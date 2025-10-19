@@ -1,0 +1,6632 @@
+{
+  "no_functionality": [
+    {
+      "file": "__init__.py",
+      "type": "Python",
+      "reason": "少於10行且無函數/類別",
+      "info": {
+        "total_lines": 14,
+        "code_lines": 9,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": false,
+        "has_main": false,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "tools\\aiva-enums-plugin\\aiva-enums-plugin\\src\\aiva_enums_plugin\\__init__.py",
+      "type": "Python",
+      "reason": "少於10行且無函數/類別",
+      "info": {
+        "total_lines": 16,
+        "code_lines": 8,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": false,
+        "has_main": false,
+        "has_docstring": false,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "tools\\aiva-contracts-tooling\\aiva-contracts-tooling\\src\\aiva_contracts_tooling\\__init__.py",
+      "type": "Python",
+      "reason": "少於10行且無函數/類別",
+      "info": {
+        "total_lines": 2,
+        "code_lines": 1,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": false,
+        "has_main": false,
+        "has_docstring": false,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\aiva_common\\config.py",
+      "type": "Python",
+      "reason": "少於10行且無函數/類別",
+      "info": {
+        "total_lines": 10,
+        "code_lines": 6,
+        "has_imports": false,
+        "has_functions": false,
+        "has_classes": false,
+        "has_main": false,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\aiva_common\\models.py",
+      "type": "Python",
+      "reason": "少於10行且無函數/類別",
+      "info": {
+        "total_lines": 4,
+        "code_lines": 2,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": false,
+        "has_main": false,
+        "has_docstring": false,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\scan\\aiva_scan\\__init__.py",
+      "type": "Python",
+      "reason": "空檔案或只有 pass",
+      "info": {
+        "total_lines": 1,
+        "code_lines": 0,
+        "has_imports": false,
+        "has_functions": false,
+        "has_classes": false,
+        "has_main": false,
+        "has_docstring": false,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\scan\\aiva_scan\\core_crawling_engine\\__init__.py",
+      "type": "Python",
+      "reason": "空檔案或只有 pass",
+      "info": {
+        "total_lines": 1,
+        "code_lines": 0,
+        "has_imports": false,
+        "has_functions": false,
+        "has_classes": false,
+        "has_main": false,
+        "has_docstring": false,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\scan\\aiva_scan\\info_gatherer\\__init__.py",
+      "type": "Python",
+      "reason": "空檔案或只有 pass",
+      "info": {
+        "total_lines": 1,
+        "code_lines": 0,
+        "has_imports": false,
+        "has_functions": false,
+        "has_classes": false,
+        "has_main": false,
+        "has_docstring": false,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\integration\\aiva_integration\\__init__.py",
+      "type": "Python",
+      "reason": "空檔案或只有 pass",
+      "info": {
+        "total_lines": 1,
+        "code_lines": 0,
+        "has_imports": false,
+        "has_functions": false,
+        "has_classes": false,
+        "has_main": false,
+        "has_docstring": false,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\integration\\aiva_integration\\analysis\\__init__.py",
+      "type": "Python",
+      "reason": "空檔案或只有 pass",
+      "info": {
+        "total_lines": 1,
+        "code_lines": 0,
+        "has_imports": false,
+        "has_functions": false,
+        "has_classes": false,
+        "has_main": false,
+        "has_docstring": false,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\integration\\aiva_integration\\config_template\\__init__.py",
+      "type": "Python",
+      "reason": "空檔案或只有 pass",
+      "info": {
+        "total_lines": 1,
+        "code_lines": 0,
+        "has_imports": false,
+        "has_functions": false,
+        "has_classes": false,
+        "has_main": false,
+        "has_docstring": false,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\integration\\aiva_integration\\middlewares\\__init__.py",
+      "type": "Python",
+      "reason": "少於10行且無函數/類別",
+      "info": {
+        "total_lines": 2,
+        "code_lines": 1,
+        "has_imports": false,
+        "has_functions": false,
+        "has_classes": false,
+        "has_main": false,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\integration\\aiva_integration\\observability\\__init__.py",
+      "type": "Python",
+      "reason": "少於10行且無函數/類別",
+      "info": {
+        "total_lines": 2,
+        "code_lines": 1,
+        "has_imports": false,
+        "has_functions": false,
+        "has_classes": false,
+        "has_main": false,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\integration\\aiva_integration\\perf_feedback\\__init__.py",
+      "type": "Python",
+      "reason": "空檔案或只有 pass",
+      "info": {
+        "total_lines": 1,
+        "code_lines": 0,
+        "has_imports": false,
+        "has_functions": false,
+        "has_classes": false,
+        "has_main": false,
+        "has_docstring": false,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\integration\\aiva_integration\\reception\\__init__.py",
+      "type": "Python",
+      "reason": "空檔案或只有 pass",
+      "info": {
+        "total_lines": 1,
+        "code_lines": 0,
+        "has_imports": false,
+        "has_functions": false,
+        "has_classes": false,
+        "has_main": false,
+        "has_docstring": false,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\integration\\aiva_integration\\reporting\\__init__.py",
+      "type": "Python",
+      "reason": "空檔案或只有 pass",
+      "info": {
+        "total_lines": 1,
+        "code_lines": 0,
+        "has_imports": false,
+        "has_functions": false,
+        "has_classes": false,
+        "has_main": false,
+        "has_docstring": false,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\integration\\aiva_integration\\security\\__init__.py",
+      "type": "Python",
+      "reason": "少於10行且無函數/類別",
+      "info": {
+        "total_lines": 2,
+        "code_lines": 1,
+        "has_imports": false,
+        "has_functions": false,
+        "has_classes": false,
+        "has_main": false,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\integration\\aiva_integration\\threat_intel\\__init__.py",
+      "type": "Python",
+      "reason": "少於10行且無函數/類別",
+      "info": {
+        "total_lines": 13,
+        "code_lines": 9,
+        "has_imports": false,
+        "has_functions": false,
+        "has_classes": false,
+        "has_main": false,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\features\\function_crypto\\schemas.py",
+      "type": "Python",
+      "reason": "空檔案或只有 pass",
+      "info": {
+        "total_lines": 1,
+        "code_lines": 0,
+        "has_imports": false,
+        "has_functions": false,
+        "has_classes": false,
+        "has_main": false,
+        "has_docstring": false,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\features\\function_crypto\\__init__.py",
+      "type": "Python",
+      "reason": "空檔案或只有 pass",
+      "info": {
+        "total_lines": 1,
+        "code_lines": 0,
+        "has_imports": false,
+        "has_functions": false,
+        "has_classes": false,
+        "has_main": false,
+        "has_docstring": false,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\features\\function_idor\\__init__.py",
+      "type": "Python",
+      "reason": "少於10行且無函數/類別",
+      "info": {
+        "total_lines": 12,
+        "code_lines": 9,
+        "has_imports": false,
+        "has_functions": false,
+        "has_classes": false,
+        "has_main": false,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\features\\function_sqli\\smart_detection_manager.py",
+      "type": "Python",
+      "reason": "空檔案或只有 pass",
+      "info": {
+        "total_lines": 1,
+        "code_lines": 0,
+        "has_imports": false,
+        "has_functions": false,
+        "has_classes": false,
+        "has_main": false,
+        "has_docstring": false,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\features\\function_sqli\\__init__.py",
+      "type": "Python",
+      "reason": "空檔案或只有 pass",
+      "info": {
+        "total_lines": 2,
+        "code_lines": 0,
+        "has_imports": false,
+        "has_functions": false,
+        "has_classes": false,
+        "has_main": false,
+        "has_docstring": false,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\features\\function_ssrf\\__init__.py",
+      "type": "Python",
+      "reason": "空檔案或只有 pass",
+      "info": {
+        "total_lines": 2,
+        "code_lines": 0,
+        "has_imports": false,
+        "has_functions": false,
+        "has_classes": false,
+        "has_main": false,
+        "has_docstring": false,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\features\\function_xss\\__init__.py",
+      "type": "Python",
+      "reason": "空檔案或只有 pass",
+      "info": {
+        "total_lines": 2,
+        "code_lines": 0,
+        "has_imports": false,
+        "has_functions": false,
+        "has_classes": false,
+        "has_main": false,
+        "has_docstring": false,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\core\\aiva_core\\analysis\\__init__.py",
+      "type": "Python",
+      "reason": "少於10行且無函數/類別",
+      "info": {
+        "total_lines": 10,
+        "code_lines": 6,
+        "has_imports": false,
+        "has_functions": false,
+        "has_classes": false,
+        "has_main": false,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\core\\aiva_core\\execution\\__init__.py",
+      "type": "Python",
+      "reason": "少於10行且無函數/類別",
+      "info": {
+        "total_lines": 11,
+        "code_lines": 7,
+        "has_imports": false,
+        "has_functions": false,
+        "has_classes": false,
+        "has_main": false,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\core\\aiva_core\\ingestion\\__init__.py",
+      "type": "Python",
+      "reason": "空檔案或只有 pass",
+      "info": {
+        "total_lines": 1,
+        "code_lines": 0,
+        "has_imports": false,
+        "has_functions": false,
+        "has_classes": false,
+        "has_main": false,
+        "has_docstring": false,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\core\\aiva_core\\learning\\__init__.py",
+      "type": "Python",
+      "reason": "少於10行且無函數/類別",
+      "info": {
+        "total_lines": 12,
+        "code_lines": 8,
+        "has_imports": false,
+        "has_functions": false,
+        "has_classes": false,
+        "has_main": false,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\core\\aiva_core\\messaging\\__init__.py",
+      "type": "Python",
+      "reason": "少於10行且無函數/類別",
+      "info": {
+        "total_lines": 12,
+        "code_lines": 8,
+        "has_imports": false,
+        "has_functions": false,
+        "has_classes": false,
+        "has_main": false,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\core\\aiva_core\\output\\__init__.py",
+      "type": "Python",
+      "reason": "空檔案或只有 pass",
+      "info": {
+        "total_lines": 1,
+        "code_lines": 0,
+        "has_imports": false,
+        "has_functions": false,
+        "has_classes": false,
+        "has_main": false,
+        "has_docstring": false,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\core\\aiva_core\\processing\\__init__.py",
+      "type": "Python",
+      "reason": "少於10行且無函數/類別",
+      "info": {
+        "total_lines": 6,
+        "code_lines": 3,
+        "has_imports": false,
+        "has_functions": false,
+        "has_classes": false,
+        "has_main": false,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\core\\aiva_core\\rag\\__init__.py",
+      "type": "Python",
+      "reason": "少於10行且無函數/類別",
+      "info": {
+        "total_lines": 12,
+        "code_lines": 8,
+        "has_imports": false,
+        "has_functions": false,
+        "has_classes": false,
+        "has_main": false,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\core\\aiva_core\\state\\__init__.py",
+      "type": "Python",
+      "reason": "空檔案或只有 pass",
+      "info": {
+        "total_lines": 1,
+        "code_lines": 0,
+        "has_imports": false,
+        "has_functions": false,
+        "has_classes": false,
+        "has_main": false,
+        "has_docstring": false,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\aiva_common\\schemas\\api_testing.py",
+      "type": "Python",
+      "reason": "少於10行且無函數/類別",
+      "info": {
+        "total_lines": 13,
+        "code_lines": 6,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": false,
+        "has_main": false,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\aiva_common\\utils\\__init__.py",
+      "type": "Python",
+      "reason": "少於10行且無函數/類別",
+      "info": {
+        "total_lines": 5,
+        "code_lines": 3,
+        "has_imports": false,
+        "has_functions": false,
+        "has_classes": false,
+        "has_main": false,
+        "has_docstring": false,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\aiva_common\\utils\\dedup\\__init__.py",
+      "type": "Python",
+      "reason": "少於10行且無函數/類別",
+      "info": {
+        "total_lines": 12,
+        "code_lines": 8,
+        "has_imports": false,
+        "has_functions": false,
+        "has_classes": false,
+        "has_main": false,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "api\\routers\\__init__.py",
+      "type": "Python",
+      "reason": "少於10行且無函數/類別",
+      "info": {
+        "total_lines": 12,
+        "code_lines": 8,
+        "has_imports": false,
+        "has_functions": false,
+        "has_classes": false,
+        "has_main": false,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    }
+  ],
+  "minimal_functionality": [
+    {
+      "file": "aiva_ai_testing_range.py",
+      "type": "Python",
+      "reason": "無函數或類別定義",
+      "info": {
+        "total_lines": 382,
+        "code_lines": 278,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": false,
+        "has_main": true,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "aiva_orchestrator_test.py",
+      "type": "Python",
+      "reason": "無函數或類別定義",
+      "info": {
+        "total_lines": 304,
+        "code_lines": 220,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": false,
+        "has_main": true,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "ai_system_connectivity_check.py",
+      "type": "Python",
+      "reason": "無函數或類別定義",
+      "info": {
+        "total_lines": 314,
+        "code_lines": 226,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": false,
+        "has_main": true,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "examples\\demo_bio_neuron_master.py",
+      "type": "Python",
+      "reason": "無函數或類別定義",
+      "info": {
+        "total_lines": 189,
+        "code_lines": 127,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": false,
+        "has_main": true,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "examples\\demo_module_import_fix.py",
+      "type": "Python",
+      "reason": "無函數或類別定義",
+      "info": {
+        "total_lines": 101,
+        "code_lines": 81,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": false,
+        "has_main": false,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "examples\\demo_storage.py",
+      "type": "Python",
+      "reason": "無函數或類別定義",
+      "info": {
+        "total_lines": 321,
+        "code_lines": 246,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": false,
+        "has_main": true,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "examples\\init_storage.py",
+      "type": "Python",
+      "reason": "無函數或類別定義",
+      "info": {
+        "total_lines": 70,
+        "code_lines": 46,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": false,
+        "has_main": true,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "tests\\ai_working_check.py",
+      "type": "Python",
+      "reason": "無函數或類別定義",
+      "info": {
+        "total_lines": 184,
+        "code_lines": 147,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": false,
+        "has_main": false,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "tests\\improvements_check.py",
+      "type": "Python",
+      "reason": "無函數或類別定義",
+      "info": {
+        "total_lines": 193,
+        "code_lines": 133,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": false,
+        "has_main": false,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "tests\\test_ai_integration.py",
+      "type": "Python",
+      "reason": "無函數或類別定義",
+      "info": {
+        "total_lines": 339,
+        "code_lines": 251,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": false,
+        "has_main": true,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "tools\\analyze_aiva_common_status.py",
+      "type": "Python",
+      "reason": "無函數或類別定義",
+      "info": {
+        "total_lines": 351,
+        "code_lines": 274,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": false,
+        "has_main": false,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "tools\\analyze_enums.py",
+      "type": "Python",
+      "reason": "無函數或類別定義",
+      "info": {
+        "total_lines": 113,
+        "code_lines": 98,
+        "has_imports": false,
+        "has_functions": false,
+        "has_classes": false,
+        "has_main": false,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "tools\\analyze_missing_schemas.py",
+      "type": "Python",
+      "reason": "無函數或類別定義",
+      "info": {
+        "total_lines": 107,
+        "code_lines": 91,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": false,
+        "has_main": false,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "tools\\delete_migrated_files.py",
+      "type": "Python",
+      "reason": "無函數或類別定義",
+      "info": {
+        "total_lines": 80,
+        "code_lines": 59,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": false,
+        "has_main": false,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "tools\\extract_enhanced.py",
+      "type": "Python",
+      "reason": "無函數或類別定義",
+      "info": {
+        "total_lines": 74,
+        "code_lines": 59,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": false,
+        "has_main": false,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "tools\\find_non_cp950_filtered.py",
+      "type": "Python",
+      "reason": "無函數或類別定義",
+      "info": {
+        "total_lines": 79,
+        "code_lines": 54,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": false,
+        "has_main": false,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "tools\\markdown_check.py",
+      "type": "Python",
+      "reason": "無函數或類別定義",
+      "info": {
+        "total_lines": 50,
+        "code_lines": 38,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": false,
+        "has_main": false,
+        "has_docstring": false,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "tools\\replace_emoji.py",
+      "type": "Python",
+      "reason": "無函數或類別定義",
+      "info": {
+        "total_lines": 64,
+        "code_lines": 56,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": false,
+        "has_main": false,
+        "has_docstring": false,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "tools\\replace_non_cp950.py",
+      "type": "Python",
+      "reason": "無函數或類別定義",
+      "info": {
+        "total_lines": 51,
+        "code_lines": 42,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": false,
+        "has_main": false,
+        "has_docstring": false,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "tools\\test_schemas_complete.py",
+      "type": "Python",
+      "reason": "無函數或類別定義",
+      "info": {
+        "total_lines": 138,
+        "code_lines": 106,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": false,
+        "has_main": false,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "tools\\test_schemas_import.py",
+      "type": "Python",
+      "reason": "無函數或類別定義",
+      "info": {
+        "total_lines": 29,
+        "code_lines": 18,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": false,
+        "has_main": false,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "tools\\verify_migration_completeness.py",
+      "type": "Python",
+      "reason": "無函數或類別定義",
+      "info": {
+        "total_lines": 273,
+        "code_lines": 197,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": false,
+        "has_main": false,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "tools\\aiva-schemas-plugin\\aiva-schemas-plugin\\tests\\test_import.py",
+      "type": "Python",
+      "reason": "程式碼少於30行",
+      "info": {
+        "total_lines": 8,
+        "code_lines": 5,
+        "has_imports": false,
+        "has_functions": true,
+        "has_classes": false,
+        "has_main": false,
+        "has_docstring": false,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "tools\\aiva-schemas-plugin\\aiva-schemas-plugin\\src\\aiva_schemas_plugin\\__init__.py",
+      "type": "Python",
+      "reason": "程式碼少於30行",
+      "info": {
+        "total_lines": 44,
+        "code_lines": 25,
+        "has_imports": true,
+        "has_functions": true,
+        "has_classes": false,
+        "has_main": false,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\aiva_common\\__init__.py",
+      "type": "Python",
+      "reason": "無函數或類別定義",
+      "info": {
+        "total_lines": 201,
+        "code_lines": 185,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": false,
+        "has_main": false,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\attack\\__init__.py",
+      "type": "Python",
+      "reason": "無函數或類別定義",
+      "info": {
+        "total_lines": 25,
+        "code_lines": 20,
+        "has_imports": false,
+        "has_functions": false,
+        "has_classes": false,
+        "has_main": false,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\core\\__init__.py",
+      "type": "Python",
+      "reason": "無函數或類別定義",
+      "info": {
+        "total_lines": 103,
+        "code_lines": 91,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": false,
+        "has_main": false,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\features\\__init__.py",
+      "type": "Python",
+      "reason": "無函數或類別定義",
+      "info": {
+        "total_lines": 215,
+        "code_lines": 170,
+        "has_imports": false,
+        "has_functions": false,
+        "has_classes": false,
+        "has_main": false,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\integration\\__init__.py",
+      "type": "Python",
+      "reason": "無函數或類別定義",
+      "info": {
+        "total_lines": 47,
+        "code_lines": 36,
+        "has_imports": false,
+        "has_functions": false,
+        "has_classes": false,
+        "has_main": false,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\scan\\__init__.py",
+      "type": "Python",
+      "reason": "無函數或類別定義",
+      "info": {
+        "total_lines": 79,
+        "code_lines": 68,
+        "has_imports": false,
+        "has_functions": false,
+        "has_classes": false,
+        "has_main": false,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\scan\\aiva_scan\\authentication_manager.py",
+      "type": "Python",
+      "reason": "程式碼少於30行",
+      "info": {
+        "total_lines": 11,
+        "code_lines": 6,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": true,
+        "has_main": false,
+        "has_docstring": false,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\scan\\aiva_scan\\worker.py",
+      "type": "Python",
+      "reason": "無函數或類別定義",
+      "info": {
+        "total_lines": 93,
+        "code_lines": 72,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": false,
+        "has_main": false,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\scan\\aiva_scan\\dynamic_engine\\__init__.py",
+      "type": "Python",
+      "reason": "無函數或類別定義",
+      "info": {
+        "total_lines": 60,
+        "code_lines": 51,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": false,
+        "has_main": false,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\scan\\aiva_scan\\examples\\example_browser_pool.py",
+      "type": "Python",
+      "reason": "無函數或類別定義",
+      "info": {
+        "total_lines": 264,
+        "code_lines": 177,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": false,
+        "has_main": true,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\scan\\aiva_scan\\examples\\example_extractor.py",
+      "type": "Python",
+      "reason": "無函數或類別定義",
+      "info": {
+        "total_lines": 259,
+        "code_lines": 160,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": false,
+        "has_main": true,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\scan\\aiva_scan\\examples\\example_usage.py",
+      "type": "Python",
+      "reason": "無函數或類別定義",
+      "info": {
+        "total_lines": 158,
+        "code_lines": 101,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": false,
+        "has_main": true,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\scan\\aiva_scan\\info_gatherer\\passive_fingerprinter.py",
+      "type": "Python",
+      "reason": "程式碼少於30行",
+      "info": {
+        "total_lines": 28,
+        "code_lines": 23,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": true,
+        "has_main": false,
+        "has_docstring": false,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\integration\\aiva_integration\\app.py",
+      "type": "Python",
+      "reason": "無函數或類別定義",
+      "info": {
+        "total_lines": 79,
+        "code_lines": 61,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": false,
+        "has_main": false,
+        "has_docstring": false,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\integration\\aiva_integration\\attack_path_analyzer\\__init__.py",
+      "type": "Python",
+      "reason": "無函數或類別定義",
+      "info": {
+        "total_lines": 20,
+        "code_lines": 16,
+        "has_imports": false,
+        "has_functions": false,
+        "has_classes": false,
+        "has_main": false,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\integration\\aiva_integration\\perf_feedback\\improvement_suggestion_generator.py",
+      "type": "Python",
+      "reason": "程式碼少於30行",
+      "info": {
+        "total_lines": 32,
+        "code_lines": 20,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": true,
+        "has_main": false,
+        "has_docstring": false,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\integration\\aiva_integration\\perf_feedback\\scan_metadata_analyzer.py",
+      "type": "Python",
+      "reason": "程式碼少於30行",
+      "info": {
+        "total_lines": 35,
+        "code_lines": 24,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": true,
+        "has_main": false,
+        "has_docstring": false,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\integration\\aiva_integration\\reception\\data_reception_layer.py",
+      "type": "Python",
+      "reason": "程式碼少於30行",
+      "info": {
+        "total_lines": 16,
+        "code_lines": 9,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": true,
+        "has_main": false,
+        "has_docstring": false,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\integration\\aiva_integration\\remediation\\__init__.py",
+      "type": "Python",
+      "reason": "無函數或類別定義",
+      "info": {
+        "total_lines": 20,
+        "code_lines": 15,
+        "has_imports": false,
+        "has_functions": false,
+        "has_classes": false,
+        "has_main": false,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\integration\\aiva_integration\\reporting\\report_template_selector.py",
+      "type": "Python",
+      "reason": "程式碼少於30行",
+      "info": {
+        "total_lines": 26,
+        "code_lines": 18,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": true,
+        "has_main": false,
+        "has_docstring": false,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\integration\\aiva_integration\\threat_intel\\threat_intel\\__init__.py",
+      "type": "Python",
+      "reason": "無函數或類別定義",
+      "info": {
+        "total_lines": 18,
+        "code_lines": 13,
+        "has_imports": false,
+        "has_functions": false,
+        "has_classes": false,
+        "has_main": false,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\features\\base\\__init__.py",
+      "type": "Python",
+      "reason": "無函數或類別定義",
+      "info": {
+        "total_lines": 17,
+        "code_lines": 12,
+        "has_imports": false,
+        "has_functions": false,
+        "has_classes": false,
+        "has_main": false,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\features\\common\\__init__.py",
+      "type": "Python",
+      "reason": "無函數或類別定義",
+      "info": {
+        "total_lines": 27,
+        "code_lines": 24,
+        "has_imports": false,
+        "has_functions": false,
+        "has_classes": false,
+        "has_main": false,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\features\\function_postex\\__init__.py",
+      "type": "Python",
+      "reason": "無函數或類別定義",
+      "info": {
+        "total_lines": 41,
+        "code_lines": 28,
+        "has_imports": false,
+        "has_functions": false,
+        "has_classes": false,
+        "has_main": false,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\features\\function_sqli\\task_queue.py",
+      "type": "Python",
+      "reason": "程式碼少於30行",
+      "info": {
+        "total_lines": 37,
+        "code_lines": 26,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": true,
+        "has_main": false,
+        "has_docstring": false,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\features\\function_sqli\\engines\\__init__.py",
+      "type": "Python",
+      "reason": "無函數或類別定義",
+      "info": {
+        "total_lines": 18,
+        "code_lines": 15,
+        "has_imports": false,
+        "has_functions": false,
+        "has_classes": false,
+        "has_main": false,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\core\\aiva_core\\__init__.py",
+      "type": "Python",
+      "reason": "無函數或類別定義",
+      "info": {
+        "total_lines": 196,
+        "code_lines": 180,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": false,
+        "has_main": false,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\core\\aiva_core\\ai_engine\\__init__.py",
+      "type": "Python",
+      "reason": "無函數或類別定義",
+      "info": {
+        "total_lines": 58,
+        "code_lines": 49,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": false,
+        "has_main": false,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\core\\aiva_core\\authz\\__init__.py",
+      "type": "Python",
+      "reason": "無函數或類別定義",
+      "info": {
+        "total_lines": 18,
+        "code_lines": 13,
+        "has_imports": false,
+        "has_functions": false,
+        "has_classes": false,
+        "has_main": false,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\core\\aiva_core\\bizlogic\\worker.py",
+      "type": "Python",
+      "reason": "無函數或類別定義",
+      "info": {
+        "total_lines": 138,
+        "code_lines": 104,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": false,
+        "has_main": false,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\core\\aiva_core\\bizlogic\\__init__.py",
+      "type": "Python",
+      "reason": "無函數或類別定義",
+      "info": {
+        "total_lines": 23,
+        "code_lines": 17,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": false,
+        "has_main": false,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\core\\aiva_core\\execution_tracer\\__init__.py",
+      "type": "Python",
+      "reason": "無函數或類別定義",
+      "info": {
+        "total_lines": 20,
+        "code_lines": 16,
+        "has_imports": false,
+        "has_functions": false,
+        "has_classes": false,
+        "has_main": false,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\core\\aiva_core\\output\\to_functions.py",
+      "type": "Python",
+      "reason": "程式碼少於30行",
+      "info": {
+        "total_lines": 25,
+        "code_lines": 21,
+        "has_imports": true,
+        "has_functions": true,
+        "has_classes": false,
+        "has_main": false,
+        "has_docstring": false,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\core\\aiva_core\\performance\\__init__.py",
+      "type": "Python",
+      "reason": "無函數或類別定義",
+      "info": {
+        "total_lines": 18,
+        "code_lines": 16,
+        "has_imports": false,
+        "has_functions": false,
+        "has_classes": false,
+        "has_main": false,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\core\\aiva_core\\planner\\__init__.py",
+      "type": "Python",
+      "reason": "無函數或類別定義",
+      "info": {
+        "total_lines": 23,
+        "code_lines": 19,
+        "has_imports": false,
+        "has_functions": false,
+        "has_classes": false,
+        "has_main": false,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\core\\aiva_core\\storage\\__init__.py",
+      "type": "Python",
+      "reason": "無函數或類別定義",
+      "info": {
+        "total_lines": 38,
+        "code_lines": 34,
+        "has_imports": false,
+        "has_functions": false,
+        "has_classes": false,
+        "has_main": false,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\core\\aiva_core\\training\\__init__.py",
+      "type": "Python",
+      "reason": "無函數或類別定義",
+      "info": {
+        "total_lines": 18,
+        "code_lines": 13,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": false,
+        "has_main": false,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\core\\aiva_core\\ui_panel\\__init__.py",
+      "type": "Python",
+      "reason": "無函數或類別定義",
+      "info": {
+        "total_lines": 15,
+        "code_lines": 12,
+        "has_imports": false,
+        "has_functions": false,
+        "has_classes": false,
+        "has_main": false,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\core\\aiva_core\\ai_engine\\training\\__init__.py",
+      "type": "Python",
+      "reason": "無函數或類別定義",
+      "info": {
+        "total_lines": 19,
+        "code_lines": 15,
+        "has_imports": false,
+        "has_functions": false,
+        "has_classes": false,
+        "has_main": false,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\attack\\aiva_attack\\__init__.py",
+      "type": "Python",
+      "reason": "無函數或類別定義",
+      "info": {
+        "total_lines": 31,
+        "code_lines": 25,
+        "has_imports": false,
+        "has_functions": false,
+        "has_classes": false,
+        "has_main": false,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\aiva_common\\config\\__init__.py",
+      "type": "Python",
+      "reason": "無函數或類別定義",
+      "info": {
+        "total_lines": 33,
+        "code_lines": 31,
+        "has_imports": false,
+        "has_functions": false,
+        "has_classes": false,
+        "has_main": false,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\aiva_common\\enums\\__init__.py",
+      "type": "Python",
+      "reason": "無函數或類別定義",
+      "info": {
+        "total_lines": 114,
+        "code_lines": 98,
+        "has_imports": false,
+        "has_functions": false,
+        "has_classes": false,
+        "has_main": false,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\aiva_common\\schemas\\__init__.py",
+      "type": "Python",
+      "reason": "無函數或類別定義",
+      "info": {
+        "total_lines": 375,
+        "code_lines": 332,
+        "has_imports": false,
+        "has_functions": false,
+        "has_classes": false,
+        "has_main": false,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\aiva_common\\utils\\ids.py",
+      "type": "Python",
+      "reason": "程式碼少於30行",
+      "info": {
+        "total_lines": 9,
+        "code_lines": 5,
+        "has_imports": true,
+        "has_functions": true,
+        "has_classes": false,
+        "has_main": false,
+        "has_docstring": false,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\aiva_common\\utils\\logging.py",
+      "type": "Python",
+      "reason": "程式碼少於30行",
+      "info": {
+        "total_lines": 20,
+        "code_lines": 16,
+        "has_imports": true,
+        "has_functions": true,
+        "has_classes": false,
+        "has_main": false,
+        "has_docstring": false,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\aiva_common\\utils\\network\\__init__.py",
+      "type": "Python",
+      "reason": "無函數或類別定義",
+      "info": {
+        "total_lines": 18,
+        "code_lines": 14,
+        "has_imports": false,
+        "has_functions": false,
+        "has_classes": false,
+        "has_main": false,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "scripts\\deployment\\stop_all.ps1",
+      "type": "PowerShell",
+      "reason": "程式碼少於30行",
+      "info": {
+        "total_lines": 42,
+        "code_lines": 29,
+        "has_functions": false,
+        "has_params": false,
+        "has_cmdlets": true,
+        "has_todo": false
+      }
+    }
+  ],
+  "partial_functionality": [
+    {
+      "file": "services\\__init__.py",
+      "type": "Python",
+      "reason": "程式碼少於100行且無主程式",
+      "info": {
+        "total_lines": 50,
+        "code_lines": 35,
+        "has_imports": true,
+        "has_functions": true,
+        "has_classes": false,
+        "has_main": false,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "tools\\compare_schemas.py",
+      "type": "Python",
+      "reason": "程式碼少於100行且無主程式",
+      "info": {
+        "total_lines": 136,
+        "code_lines": 99,
+        "has_imports": true,
+        "has_functions": true,
+        "has_classes": false,
+        "has_main": false,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "tools\\diagnose_missing_enums.py",
+      "type": "Python",
+      "reason": "程式碼少於100行且無主程式",
+      "info": {
+        "total_lines": 123,
+        "code_lines": 94,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": true,
+        "has_main": false,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\features\\migrate_all_go_services.ps1",
+      "type": "PowerShell",
+      "reason": "程式碼少於100行且無參數定義",
+      "info": {
+        "total_lines": 108,
+        "code_lines": 81,
+        "has_functions": false,
+        "has_params": false,
+        "has_cmdlets": true,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\features\\verify_go_builds.ps1",
+      "type": "PowerShell",
+      "reason": "程式碼少於100行且無參數定義",
+      "info": {
+        "total_lines": 84,
+        "code_lines": 61,
+        "has_functions": false,
+        "has_params": false,
+        "has_cmdlets": true,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\scan\\aiva_scan\\fingerprint_manager.py",
+      "type": "Python",
+      "reason": "程式碼少於100行且無主程式",
+      "info": {
+        "total_lines": 55,
+        "code_lines": 39,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": true,
+        "has_main": false,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\scan\\aiva_scan\\core_crawling_engine\\static_content_parser.py",
+      "type": "Python",
+      "reason": "程式碼少於100行且無主程式",
+      "info": {
+        "total_lines": 72,
+        "code_lines": 57,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": true,
+        "has_main": false,
+        "has_docstring": false,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\integration\\aiva_integration\\settings.py",
+      "type": "Python",
+      "reason": "程式碼少於100行且無主程式",
+      "info": {
+        "total_lines": 88,
+        "code_lines": 60,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": true,
+        "has_main": false,
+        "has_docstring": false,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\integration\\alembic\\env.py",
+      "type": "Python",
+      "reason": "程式碼少於100行且無主程式",
+      "info": {
+        "total_lines": 91,
+        "code_lines": 60,
+        "has_imports": true,
+        "has_functions": true,
+        "has_classes": false,
+        "has_main": false,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\integration\\api_gateway\\api_gateway\\app.py",
+      "type": "Python",
+      "reason": "程式碼少於100行且無主程式",
+      "info": {
+        "total_lines": 126,
+        "code_lines": 95,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": true,
+        "has_main": false,
+        "has_docstring": false,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\integration\\aiva_integration\\config_template\\config_template_manager.py",
+      "type": "Python",
+      "reason": "程式碼少於100行且無主程式",
+      "info": {
+        "total_lines": 47,
+        "code_lines": 37,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": true,
+        "has_main": false,
+        "has_docstring": false,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\integration\\aiva_integration\\middlewares\\rate_limiter.py",
+      "type": "Python",
+      "reason": "程式碼少於100行且無主程式",
+      "info": {
+        "total_lines": 124,
+        "code_lines": 87,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": true,
+        "has_main": false,
+        "has_docstring": false,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\integration\\aiva_integration\\reception\\test_result_database.py",
+      "type": "Python",
+      "reason": "程式碼少於100行且無主程式",
+      "info": {
+        "total_lines": 51,
+        "code_lines": 40,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": true,
+        "has_main": false,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\integration\\aiva_integration\\security\\auth.py",
+      "type": "Python",
+      "reason": "程式碼少於100行且無主程式",
+      "info": {
+        "total_lines": 62,
+        "code_lines": 41,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": true,
+        "has_main": false,
+        "has_docstring": false,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\features\\base\\feature_base.py",
+      "type": "Python",
+      "reason": "程式碼少於100行且無主程式",
+      "info": {
+        "total_lines": 61,
+        "code_lines": 52,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": true,
+        "has_main": false,
+        "has_docstring": false,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\features\\base\\feature_registry.py",
+      "type": "Python",
+      "reason": "程式碼少於100行且無主程式",
+      "info": {
+        "total_lines": 69,
+        "code_lines": 56,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": true,
+        "has_main": false,
+        "has_docstring": false,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\features\\function_sqli\\detection_models.py",
+      "type": "Python",
+      "reason": "程式碼少於100行且無主程式",
+      "info": {
+        "total_lines": 50,
+        "code_lines": 37,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": true,
+        "has_main": false,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\features\\function_sqli\\exceptions.py",
+      "type": "Python",
+      "reason": "程式碼少於100行且無主程式",
+      "info": {
+        "total_lines": 95,
+        "code_lines": 64,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": true,
+        "has_main": false,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\features\\function_sqli\\payload_wrapper_encoder.py",
+      "type": "Python",
+      "reason": "程式碼少於100行且無主程式",
+      "info": {
+        "total_lines": 106,
+        "code_lines": 90,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": true,
+        "has_main": false,
+        "has_docstring": false,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\features\\function_sqli\\result_binder_publisher.py",
+      "type": "Python",
+      "reason": "程式碼少於100行且無主程式",
+      "info": {
+        "total_lines": 73,
+        "code_lines": 62,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": true,
+        "has_main": false,
+        "has_docstring": false,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\features\\function_sqli\\telemetry.py",
+      "type": "Python",
+      "reason": "程式碼少於100行且無主程式",
+      "info": {
+        "total_lines": 55,
+        "code_lines": 42,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": true,
+        "has_main": false,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\features\\function_ssrf\\result_publisher.py",
+      "type": "Python",
+      "reason": "程式碼少於100行且無主程式",
+      "info": {
+        "total_lines": 99,
+        "code_lines": 88,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": true,
+        "has_main": false,
+        "has_docstring": false,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\features\\function_xss\\dom_xss_detector.py",
+      "type": "Python",
+      "reason": "程式碼少於100行且無主程式",
+      "info": {
+        "total_lines": 49,
+        "code_lines": 35,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": true,
+        "has_main": false,
+        "has_docstring": false,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\features\\function_xss\\payload_generator.py",
+      "type": "Python",
+      "reason": "程式碼少於100行且無主程式",
+      "info": {
+        "total_lines": 57,
+        "code_lines": 43,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": true,
+        "has_main": false,
+        "has_docstring": false,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\features\\function_xss\\result_publisher.py",
+      "type": "Python",
+      "reason": "程式碼少於100行且無主程式",
+      "info": {
+        "total_lines": 99,
+        "code_lines": 88,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": true,
+        "has_main": false,
+        "has_docstring": false,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\core\\aiva_core\\multilang_coordinator.py",
+      "type": "Python",
+      "reason": "程式碼少於100行且無主程式",
+      "info": {
+        "total_lines": 117,
+        "code_lines": 88,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": true,
+        "has_main": false,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\core\\aiva_core\\bizlogic\\finding_helper.py",
+      "type": "Python",
+      "reason": "程式碼少於100行且無主程式",
+      "info": {
+        "total_lines": 71,
+        "code_lines": 61,
+        "has_imports": true,
+        "has_functions": true,
+        "has_classes": false,
+        "has_main": false,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\core\\aiva_core\\execution\\task_generator.py",
+      "type": "Python",
+      "reason": "程式碼少於100行且無主程式",
+      "info": {
+        "total_lines": 72,
+        "code_lines": 66,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": true,
+        "has_main": false,
+        "has_docstring": false,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\core\\aiva_core\\performance\\monitoring.py",
+      "type": "Python",
+      "reason": "程式碼少於100行且無主程式",
+      "info": {
+        "total_lines": 127,
+        "code_lines": 95,
+        "has_imports": true,
+        "has_functions": true,
+        "has_classes": true,
+        "has_main": false,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\core\\aiva_core\\performance\\parallel_processor.py",
+      "type": "Python",
+      "reason": "程式碼少於100行且無主程式",
+      "info": {
+        "total_lines": 78,
+        "code_lines": 58,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": true,
+        "has_main": false,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\core\\aiva_core\\state\\session_state_manager.py",
+      "type": "Python",
+      "reason": "程式碼少於100行且無主程式",
+      "info": {
+        "total_lines": 119,
+        "code_lines": 94,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": true,
+        "has_main": false,
+        "has_docstring": false,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\core\\aiva_core\\storage\\config.py",
+      "type": "Python",
+      "reason": "程式碼少於100行且無主程式",
+      "info": {
+        "total_lines": 112,
+        "code_lines": 86,
+        "has_imports": true,
+        "has_functions": true,
+        "has_classes": false,
+        "has_main": false,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\aiva_common\\config\\unified_config.py",
+      "type": "Python",
+      "reason": "程式碼少於100行且無主程式",
+      "info": {
+        "total_lines": 120,
+        "code_lines": 86,
+        "has_imports": true,
+        "has_functions": true,
+        "has_classes": true,
+        "has_main": false,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\aiva_common\\enums\\assets.py",
+      "type": "Python",
+      "reason": "程式碼少於100行且無主程式",
+      "info": {
+        "total_lines": 79,
+        "code_lines": 55,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": true,
+        "has_main": false,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\aiva_common\\enums\\common.py",
+      "type": "Python",
+      "reason": "程式碼少於100行且無主程式",
+      "info": {
+        "total_lines": 118,
+        "code_lines": 84,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": true,
+        "has_main": false,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\aiva_common\\schemas\\base.py",
+      "type": "Python",
+      "reason": "程式碼少於100行且無主程式",
+      "info": {
+        "total_lines": 115,
+        "code_lines": 78,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": true,
+        "has_main": false,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\aiva_common\\schemas\\messaging.py",
+      "type": "Python",
+      "reason": "程式碼少於100行且無主程式",
+      "info": {
+        "total_lines": 80,
+        "code_lines": 56,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": true,
+        "has_main": false,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\aiva_common\\schemas\\references.py",
+      "type": "Python",
+      "reason": "程式碼少於100行且無主程式",
+      "info": {
+        "total_lines": 157,
+        "code_lines": 97,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": true,
+        "has_main": false,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\aiva_common\\schemas\\risk.py",
+      "type": "Python",
+      "reason": "程式碼少於100行且無主程式",
+      "info": {
+        "total_lines": 117,
+        "code_lines": 90,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": true,
+        "has_main": false,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "scripts\\deployment\\start_ui_auto.ps1",
+      "type": "PowerShell",
+      "reason": "程式碼少於100行且無參數定義",
+      "info": {
+        "total_lines": 49,
+        "code_lines": 38,
+        "has_functions": false,
+        "has_params": false,
+        "has_cmdlets": true,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "scripts\\deployment\\stop_all_multilang.ps1",
+      "type": "PowerShell",
+      "reason": "程式碼少於100行且無參數定義",
+      "info": {
+        "total_lines": 50,
+        "code_lines": 35,
+        "has_functions": false,
+        "has_params": false,
+        "has_cmdlets": true,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "scripts\\maintenance\\check_status.ps1",
+      "type": "PowerShell",
+      "reason": "程式碼少於100行且無參數定義",
+      "info": {
+        "total_lines": 105,
+        "code_lines": 79,
+        "has_functions": false,
+        "has_params": false,
+        "has_cmdlets": true,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "scripts\\maintenance\\health_check_multilang.ps1",
+      "type": "PowerShell",
+      "reason": "程式碼少於100行且無參數定義",
+      "info": {
+        "total_lines": 127,
+        "code_lines": 89,
+        "has_functions": false,
+        "has_params": false,
+        "has_cmdlets": true,
+        "has_todo": false
+      }
+    }
+  ],
+  "full_functionality": [
+    {
+      "file": "aiva_crosslang_unified.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 697,
+        "code_lines": 526,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": true,
+        "has_main": true,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "aiva_enterprise_security_report.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 419,
+        "code_lines": 341,
+        "has_imports": true,
+        "has_functions": true,
+        "has_classes": true,
+        "has_main": true,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "aiva_launcher.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 145,
+        "code_lines": 122,
+        "has_imports": true,
+        "has_functions": true,
+        "has_classes": false,
+        "has_main": true,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "aiva_module_status_checker.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 388,
+        "code_lines": 304,
+        "has_imports": true,
+        "has_functions": true,
+        "has_classes": true,
+        "has_main": true,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "aiva_range_security_test.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 336,
+        "code_lines": 262,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": true,
+        "has_main": true,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "aiva_system_connectivity_sop_check.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 584,
+        "code_lines": 439,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": true,
+        "has_main": true,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "cross_language_bridge.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 694,
+        "code_lines": 539,
+        "has_imports": true,
+        "has_functions": true,
+        "has_classes": true,
+        "has_main": true,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "docx_to_md_converter.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 276,
+        "code_lines": 192,
+        "has_imports": true,
+        "has_functions": true,
+        "has_classes": true,
+        "has_main": true,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "enhanced_real_ai_attack_system.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 500,
+        "code_lines": 366,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": true,
+        "has_main": true,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "ffi_integration.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 670,
+        "code_lines": 480,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": true,
+        "has_main": true,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": true
+      }
+    },
+    {
+      "file": "final_report.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 116,
+        "code_lines": 96,
+        "has_imports": false,
+        "has_functions": true,
+        "has_classes": false,
+        "has_main": true,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "graalvm_integration.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 675,
+        "code_lines": 523,
+        "has_imports": true,
+        "has_functions": true,
+        "has_classes": true,
+        "has_main": true,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "real_attack_executor.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 603,
+        "code_lines": 467,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": true,
+        "has_main": true,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "smart_communication_selector.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 763,
+        "code_lines": 626,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": true,
+        "has_main": true,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "start_ai_continuous_training.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 147,
+        "code_lines": 95,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": true,
+        "has_main": true,
+        "has_docstring": false,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "test_crosslang_integration.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 711,
+        "code_lines": 518,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": true,
+        "has_main": true,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "test_internal_communication.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 474,
+        "code_lines": 324,
+        "has_imports": true,
+        "has_functions": true,
+        "has_classes": false,
+        "has_main": true,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "test_message_system.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 378,
+        "code_lines": 265,
+        "has_imports": true,
+        "has_functions": true,
+        "has_classes": false,
+        "has_main": true,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "test_unified_trainers.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 120,
+        "code_lines": 81,
+        "has_imports": true,
+        "has_functions": true,
+        "has_classes": false,
+        "has_main": true,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "wasm_integration.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 489,
+        "code_lines": 365,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": true,
+        "has_main": true,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "api\\main.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 616,
+        "code_lines": 496,
+        "has_imports": true,
+        "has_functions": true,
+        "has_classes": false,
+        "has_main": true,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "api\\start_api.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 120,
+        "code_lines": 91,
+        "has_imports": true,
+        "has_functions": true,
+        "has_classes": false,
+        "has_main": true,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "api\\test_api.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 283,
+        "code_lines": 239,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": true,
+        "has_main": true,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "config\\api_keys.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 262,
+        "code_lines": 194,
+        "has_imports": true,
+        "has_functions": true,
+        "has_classes": true,
+        "has_main": false,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "config\\settings.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 335,
+        "code_lines": 257,
+        "has_imports": true,
+        "has_functions": true,
+        "has_classes": true,
+        "has_main": false,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "examples\\demo_bio_neuron_agent.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 121,
+        "code_lines": 96,
+        "has_imports": true,
+        "has_functions": true,
+        "has_classes": false,
+        "has_main": true,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "examples\\demo_ui_panel.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 170,
+        "code_lines": 123,
+        "has_imports": true,
+        "has_functions": true,
+        "has_classes": false,
+        "has_main": true,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "examples\\detection_effectiveness_demo.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 442,
+        "code_lines": 376,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": true,
+        "has_main": true,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "examples\\start_ui_auto.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 43,
+        "code_lines": 33,
+        "has_imports": true,
+        "has_functions": true,
+        "has_classes": false,
+        "has_main": true,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "tests\\complete_system_check.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 363,
+        "code_lines": 251,
+        "has_imports": true,
+        "has_functions": true,
+        "has_classes": false,
+        "has_main": true,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "tests\\test_architecture_improvements.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 283,
+        "code_lines": 216,
+        "has_imports": true,
+        "has_functions": true,
+        "has_classes": false,
+        "has_main": true,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "tests\\test_complete_system.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 363,
+        "code_lines": 251,
+        "has_imports": true,
+        "has_functions": true,
+        "has_classes": false,
+        "has_main": true,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "tests\\test_integration.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 92,
+        "code_lines": 62,
+        "has_imports": true,
+        "has_functions": true,
+        "has_classes": false,
+        "has_main": true,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "tests\\test_module_imports.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 252,
+        "code_lines": 195,
+        "has_imports": true,
+        "has_functions": true,
+        "has_classes": false,
+        "has_main": true,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "tests\\test_scan.ps1",
+      "type": "PowerShell",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 92,
+        "code_lines": 71,
+        "has_functions": false,
+        "has_params": true,
+        "has_cmdlets": true,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "tools\\analyze_codebase.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 1001,
+        "code_lines": 799,
+        "has_imports": true,
+        "has_functions": true,
+        "has_classes": true,
+        "has_main": true,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "tools\\analyze_core_modules.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 251,
+        "code_lines": 194,
+        "has_imports": true,
+        "has_functions": true,
+        "has_classes": false,
+        "has_main": true,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "tools\\analyze_cross_language_ai.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 295,
+        "code_lines": 238,
+        "has_imports": true,
+        "has_functions": true,
+        "has_classes": false,
+        "has_main": true,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "tools\\analyze_schema_impact.ps1",
+      "type": "PowerShell",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 368,
+        "code_lines": 275,
+        "has_functions": true,
+        "has_params": true,
+        "has_cmdlets": true,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "tools\\check_script_functionality.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 208,
+        "code_lines": 176,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": true,
+        "has_main": true,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": true
+      }
+    },
+    {
+      "file": "tools\\cleanup_deprecated_files.ps1",
+      "type": "PowerShell",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 200,
+        "code_lines": 152,
+        "has_functions": true,
+        "has_params": true,
+        "has_cmdlets": true,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "tools\\comprehensive_migration_analysis.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 366,
+        "code_lines": 277,
+        "has_imports": true,
+        "has_functions": true,
+        "has_classes": false,
+        "has_main": true,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "tools\\create_enums_structure.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 187,
+        "code_lines": 147,
+        "has_imports": true,
+        "has_functions": true,
+        "has_classes": false,
+        "has_main": false,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "tools\\create_schemas_files.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 710,
+        "code_lines": 546,
+        "has_imports": true,
+        "has_functions": true,
+        "has_classes": true,
+        "has_main": true,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "tools\\fix_all_schema_imports.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 140,
+        "code_lines": 106,
+        "has_imports": true,
+        "has_functions": true,
+        "has_classes": false,
+        "has_main": false,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "tools\\fix_field_validators.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 81,
+        "code_lines": 57,
+        "has_imports": true,
+        "has_functions": true,
+        "has_classes": false,
+        "has_main": true,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "tools\\generate-contracts.ps1",
+      "type": "PowerShell",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 154,
+        "code_lines": 127,
+        "has_functions": true,
+        "has_params": true,
+        "has_cmdlets": true,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "tools\\generate-official-contracts.ps1",
+      "type": "PowerShell",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 207,
+        "code_lines": 168,
+        "has_functions": true,
+        "has_params": true,
+        "has_cmdlets": true,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "tools\\generate_complete_architecture.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 915,
+        "code_lines": 716,
+        "has_imports": true,
+        "has_functions": true,
+        "has_classes": true,
+        "has_main": true,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "tools\\generate_mermaid_diagrams.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 418,
+        "code_lines": 308,
+        "has_imports": true,
+        "has_functions": true,
+        "has_classes": false,
+        "has_main": true,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "tools\\generate_official_schemas.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 280,
+        "code_lines": 194,
+        "has_imports": true,
+        "has_functions": true,
+        "has_classes": true,
+        "has_main": true,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "tools\\generate_programming_language_support.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 334,
+        "code_lines": 233,
+        "has_imports": false,
+        "has_functions": false,
+        "has_classes": true,
+        "has_main": false,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "tools\\generate_typescript_interfaces.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 141,
+        "code_lines": 100,
+        "has_imports": true,
+        "has_functions": true,
+        "has_classes": true,
+        "has_main": true,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "tools\\mermaid_optimizer.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 364,
+        "code_lines": 269,
+        "has_imports": true,
+        "has_functions": true,
+        "has_classes": true,
+        "has_main": true,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "tools\\py2mermaid.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 514,
+        "code_lines": 406,
+        "has_imports": true,
+        "has_functions": true,
+        "has_classes": true,
+        "has_main": true,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "tools\\schema_manager.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 547,
+        "code_lines": 383,
+        "has_imports": true,
+        "has_functions": true,
+        "has_classes": true,
+        "has_main": true,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": true
+      }
+    },
+    {
+      "file": "tools\\schema_validator.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 392,
+        "code_lines": 304,
+        "has_imports": true,
+        "has_functions": true,
+        "has_classes": true,
+        "has_main": true,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "tools\\system_health_check.ps1",
+      "type": "PowerShell",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 427,
+        "code_lines": 313,
+        "has_functions": true,
+        "has_params": true,
+        "has_cmdlets": true,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "tools\\update_imports.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 84,
+        "code_lines": 54,
+        "has_imports": true,
+        "has_functions": true,
+        "has_classes": false,
+        "has_main": true,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "tools\\aiva-schemas-plugin\\aiva-schemas-plugin\\scripts\\copy_into_plugin.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 46,
+        "code_lines": 33,
+        "has_imports": true,
+        "has_functions": true,
+        "has_classes": false,
+        "has_main": true,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "tools\\aiva-schemas-plugin\\aiva-schemas-plugin\\scripts\\refactor_imports_and_cleanup.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 153,
+        "code_lines": 113,
+        "has_imports": true,
+        "has_functions": true,
+        "has_classes": true,
+        "has_main": true,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "tools\\aiva-enums-plugin\\aiva-enums-plugin\\scripts\\gen_ts_enums.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 49,
+        "code_lines": 39,
+        "has_imports": true,
+        "has_functions": true,
+        "has_classes": false,
+        "has_main": true,
+        "has_docstring": false,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "tools\\aiva-contracts-tooling\\aiva-contracts-tooling\\src\\aiva_contracts_tooling\\cli.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 175,
+        "code_lines": 135,
+        "has_imports": true,
+        "has_functions": true,
+        "has_classes": false,
+        "has_main": false,
+        "has_docstring": false,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\aiva_common\\mq.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 312,
+        "code_lines": 226,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": true,
+        "has_main": false,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\core\\ai_models.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 557,
+        "code_lines": 344,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": true,
+        "has_main": false,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\core\\models.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 705,
+        "code_lines": 456,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": true,
+        "has_main": false,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\features\\example_config.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 260,
+        "code_lines": 221,
+        "has_imports": false,
+        "has_functions": true,
+        "has_classes": false,
+        "has_main": false,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\features\\feature_step_executor.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 305,
+        "code_lines": 247,
+        "has_imports": true,
+        "has_functions": true,
+        "has_classes": true,
+        "has_main": false,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\features\\high_value_guide.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 380,
+        "code_lines": 315,
+        "has_imports": true,
+        "has_functions": true,
+        "has_classes": true,
+        "has_main": true,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\features\\high_value_manager.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 366,
+        "code_lines": 296,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": true,
+        "has_main": false,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\features\\migrate_go_service.ps1",
+      "type": "PowerShell",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 160,
+        "code_lines": 118,
+        "has_functions": false,
+        "has_params": true,
+        "has_cmdlets": true,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\features\\models.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 485,
+        "code_lines": 335,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": true,
+        "has_main": false,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\features\\test_schemas.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 275,
+        "code_lines": 166,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": true,
+        "has_main": false,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\integration\\models.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 198,
+        "code_lines": 120,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": true,
+        "has_main": false,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\integration\\service_schemas.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 351,
+        "code_lines": 195,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": true,
+        "has_main": false,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\scan\\discovery_schemas.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 258,
+        "code_lines": 178,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": true,
+        "has_main": false,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\scan\\models.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 476,
+        "code_lines": 316,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": true,
+        "has_main": false,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\scan\\aiva_scan\\config_control_center.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 509,
+        "code_lines": 371,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": true,
+        "has_main": false,
+        "has_docstring": false,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\scan\\aiva_scan\\header_configuration.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 438,
+        "code_lines": 349,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": true,
+        "has_main": false,
+        "has_docstring": false,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\scan\\aiva_scan\\javascript_analyzer.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 252,
+        "code_lines": 190,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": true,
+        "has_main": false,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\scan\\aiva_scan\\optimized_security_scanner.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 448,
+        "code_lines": 324,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": true,
+        "has_main": true,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\scan\\aiva_scan\\scan_context.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 211,
+        "code_lines": 165,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": true,
+        "has_main": false,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\scan\\aiva_scan\\scan_orchestrator.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 373,
+        "code_lines": 274,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": true,
+        "has_main": false,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\scan\\aiva_scan\\schemas.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 183,
+        "code_lines": 150,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": true,
+        "has_main": false,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\scan\\aiva_scan\\scope_manager.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 406,
+        "code_lines": 303,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": true,
+        "has_main": false,
+        "has_docstring": false,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\scan\\aiva_scan\\sensitive_data_scanner.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 253,
+        "code_lines": 203,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": true,
+        "has_main": false,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\scan\\aiva_scan\\strategy_controller.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 507,
+        "code_lines": 395,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": true,
+        "has_main": false,
+        "has_docstring": false,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\scan\\aiva_scan\\target_environment_detector.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 406,
+        "code_lines": 299,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": true,
+        "has_main": true,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\scan\\aiva_scan\\core_crawling_engine\\http_client_hi.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 182,
+        "code_lines": 139,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": true,
+        "has_main": false,
+        "has_docstring": false,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\scan\\aiva_scan\\core_crawling_engine\\url_queue_manager.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 220,
+        "code_lines": 166,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": true,
+        "has_main": false,
+        "has_docstring": false,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\scan\\aiva_scan\\dynamic_engine\\ajax_api_handler.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 288,
+        "code_lines": 229,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": true,
+        "has_main": false,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\scan\\aiva_scan\\dynamic_engine\\dynamic_content_extractor.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 696,
+        "code_lines": 544,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": true,
+        "has_main": false,
+        "has_docstring": false,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\scan\\aiva_scan\\dynamic_engine\\headless_browser_pool.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 554,
+        "code_lines": 434,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": true,
+        "has_main": false,
+        "has_docstring": false,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\scan\\aiva_scan\\dynamic_engine\\js_interaction_simulator.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 348,
+        "code_lines": 271,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": true,
+        "has_main": false,
+        "has_docstring": false,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\scan\\aiva_scan\\info_gatherer\\javascript_source_analyzer.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 557,
+        "code_lines": 451,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": true,
+        "has_main": false,
+        "has_docstring": false,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\scan\\aiva_scan\\info_gatherer\\sensitive_info_detector.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 562,
+        "code_lines": 443,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": true,
+        "has_main": false,
+        "has_docstring": false,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\integration\\aiva_integration\\ai_operation_recorder.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 520,
+        "code_lines": 408,
+        "has_imports": true,
+        "has_functions": true,
+        "has_classes": true,
+        "has_main": true,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\integration\\aiva_integration\\integrated_ai_trainer.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 479,
+        "code_lines": 364,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": true,
+        "has_main": true,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\integration\\aiva_integration\\system_performance_monitor.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 582,
+        "code_lines": 424,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": true,
+        "has_main": true,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\integration\\aiva_integration\\trigger_ai_continuous_learning.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 200,
+        "code_lines": 144,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": true,
+        "has_main": true,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\integration\\alembic\\versions\\001_initial_schema.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 170,
+        "code_lines": 147,
+        "has_imports": true,
+        "has_functions": true,
+        "has_classes": false,
+        "has_main": false,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\integration\\aiva_integration\\analysis\\compliance_policy_checker.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 130,
+        "code_lines": 105,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": true,
+        "has_main": false,
+        "has_docstring": false,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\integration\\aiva_integration\\analysis\\risk_assessment_engine.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 677,
+        "code_lines": 518,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": true,
+        "has_main": false,
+        "has_docstring": false,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\integration\\aiva_integration\\analysis\\risk_assessment_engine_enhanced.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 493,
+        "code_lines": 384,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": true,
+        "has_main": false,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\integration\\aiva_integration\\analysis\\vuln_correlation_analyzer.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 668,
+        "code_lines": 524,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": true,
+        "has_main": false,
+        "has_docstring": false,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\integration\\aiva_integration\\attack_path_analyzer\\engine.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 469,
+        "code_lines": 378,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": true,
+        "has_main": true,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\integration\\aiva_integration\\attack_path_analyzer\\graph_builder.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 235,
+        "code_lines": 162,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": true,
+        "has_main": true,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\integration\\aiva_integration\\attack_path_analyzer\\nlp_recommender.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 742,
+        "code_lines": 557,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": true,
+        "has_main": false,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\integration\\aiva_integration\\attack_path_analyzer\\visualizer.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 294,
+        "code_lines": 242,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": true,
+        "has_main": true,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\integration\\aiva_integration\\examples\\enhanced_attack_path_demo.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 321,
+        "code_lines": 233,
+        "has_imports": true,
+        "has_functions": true,
+        "has_classes": false,
+        "has_main": true,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\integration\\aiva_integration\\examples\\enhanced_risk_assessment_demo.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 249,
+        "code_lines": 198,
+        "has_imports": true,
+        "has_functions": true,
+        "has_classes": false,
+        "has_main": true,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\integration\\aiva_integration\\examples\\enhanced_scan_integration.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 455,
+        "code_lines": 350,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": true,
+        "has_main": true,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\integration\\aiva_integration\\observability\\metrics.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 145,
+        "code_lines": 113,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": true,
+        "has_main": false,
+        "has_docstring": false,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\integration\\aiva_integration\\reception\\experience_models.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 202,
+        "code_lines": 123,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": true,
+        "has_main": false,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\integration\\aiva_integration\\reception\\experience_repository.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 435,
+        "code_lines": 361,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": true,
+        "has_main": false,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\integration\\aiva_integration\\reception\\lifecycle_manager.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 527,
+        "code_lines": 420,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": true,
+        "has_main": false,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\integration\\aiva_integration\\reception\\models_enhanced.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 405,
+        "code_lines": 292,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": true,
+        "has_main": false,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\integration\\aiva_integration\\reception\\sql_result_database.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 253,
+        "code_lines": 193,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": true,
+        "has_main": false,
+        "has_docstring": false,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\integration\\aiva_integration\\remediation\\code_fixer.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 402,
+        "code_lines": 324,
+        "has_imports": true,
+        "has_functions": true,
+        "has_classes": true,
+        "has_main": true,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": true
+      }
+    },
+    {
+      "file": "services\\integration\\aiva_integration\\remediation\\config_recommender.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 408,
+        "code_lines": 327,
+        "has_imports": true,
+        "has_functions": true,
+        "has_classes": true,
+        "has_main": true,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\integration\\aiva_integration\\remediation\\patch_generator.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 359,
+        "code_lines": 287,
+        "has_imports": true,
+        "has_functions": true,
+        "has_classes": true,
+        "has_main": true,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": true
+      }
+    },
+    {
+      "file": "services\\integration\\aiva_integration\\remediation\\report_generator.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 572,
+        "code_lines": 451,
+        "has_imports": true,
+        "has_functions": true,
+        "has_classes": true,
+        "has_main": true,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\integration\\aiva_integration\\reporting\\formatter_exporter.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 174,
+        "code_lines": 141,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": true,
+        "has_main": false,
+        "has_docstring": false,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\integration\\aiva_integration\\reporting\\report_content_generator.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 331,
+        "code_lines": 276,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": true,
+        "has_main": false,
+        "has_docstring": false,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\integration\\aiva_integration\\threat_intel\\threat_intel\\intel_aggregator.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 448,
+        "code_lines": 368,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": true,
+        "has_main": true,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\integration\\aiva_integration\\threat_intel\\threat_intel\\ioc_enricher.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 379,
+        "code_lines": 302,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": true,
+        "has_main": true,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\integration\\aiva_integration\\threat_intel\\threat_intel\\mitre_mapper.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 435,
+        "code_lines": 333,
+        "has_imports": true,
+        "has_functions": true,
+        "has_classes": true,
+        "has_main": true,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\features\\base\\http_client.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 130,
+        "code_lines": 105,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": true,
+        "has_main": false,
+        "has_docstring": false,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\features\\base\\result_schema.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 120,
+        "code_lines": 101,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": true,
+        "has_main": false,
+        "has_docstring": false,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\features\\common\\advanced_detection_config.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 491,
+        "code_lines": 337,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": true,
+        "has_main": false,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\features\\common\\detection_config.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 200,
+        "code_lines": 128,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": true,
+        "has_main": false,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\features\\common\\unified_smart_detection_manager.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 411,
+        "code_lines": 307,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": true,
+        "has_main": false,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\features\\common\\worker_statistics.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 376,
+        "code_lines": 311,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": true,
+        "has_main": false,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\features\\function_idor\\cross_user_tester.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 160,
+        "code_lines": 127,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": true,
+        "has_main": false,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\features\\function_idor\\enhanced_worker.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 421,
+        "code_lines": 339,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": true,
+        "has_main": false,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\features\\function_idor\\resource_id_extractor.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 255,
+        "code_lines": 193,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": true,
+        "has_main": false,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\features\\function_idor\\schemas.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 227,
+        "code_lines": 175,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": true,
+        "has_main": false,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\features\\function_idor\\smart_idor_detector.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 548,
+        "code_lines": 456,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": true,
+        "has_main": false,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\features\\function_idor\\vertical_escalation_tester.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 191,
+        "code_lines": 148,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": true,
+        "has_main": false,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\features\\function_idor\\worker.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 448,
+        "code_lines": 346,
+        "has_imports": true,
+        "has_functions": true,
+        "has_classes": true,
+        "has_main": false,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": true
+      }
+    },
+    {
+      "file": "services\\features\\function_postex\\lateral_movement.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 335,
+        "code_lines": 272,
+        "has_imports": true,
+        "has_functions": true,
+        "has_classes": true,
+        "has_main": true,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\features\\function_postex\\persistence_checker.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 376,
+        "code_lines": 310,
+        "has_imports": true,
+        "has_functions": true,
+        "has_classes": true,
+        "has_main": true,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\features\\function_postex\\privilege_escalator.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 277,
+        "code_lines": 215,
+        "has_imports": true,
+        "has_functions": true,
+        "has_classes": true,
+        "has_main": true,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\features\\function_postex\\schemas.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 306,
+        "code_lines": 240,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": true,
+        "has_main": false,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\features\\function_sqli\\backend_db_fingerprinter.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 254,
+        "code_lines": 207,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": true,
+        "has_main": false,
+        "has_docstring": false,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\features\\function_sqli\\config.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 141,
+        "code_lines": 109,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": true,
+        "has_main": false,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\features\\function_sqli\\schemas.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 199,
+        "code_lines": 155,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": true,
+        "has_main": false,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\features\\function_sqli\\worker.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 351,
+        "code_lines": 259,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": true,
+        "has_main": false,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\features\\function_ssrf\\internal_address_detector.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 340,
+        "code_lines": 285,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": true,
+        "has_main": false,
+        "has_docstring": false,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\features\\function_ssrf\\oast_dispatcher.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 144,
+        "code_lines": 117,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": true,
+        "has_main": false,
+        "has_docstring": false,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\features\\function_ssrf\\param_semantics_analyzer.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 226,
+        "code_lines": 189,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": true,
+        "has_main": false,
+        "has_docstring": false,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\features\\function_ssrf\\schemas.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 141,
+        "code_lines": 107,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": true,
+        "has_main": false,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\features\\function_ssrf\\smart_ssrf_detector.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 533,
+        "code_lines": 446,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": true,
+        "has_main": false,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\features\\function_ssrf\\worker.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 434,
+        "code_lines": 370,
+        "has_imports": true,
+        "has_functions": true,
+        "has_classes": true,
+        "has_main": false,
+        "has_docstring": false,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\features\\function_xss\\blind_xss_listener_validator.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 185,
+        "code_lines": 147,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": true,
+        "has_main": false,
+        "has_docstring": false,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\features\\function_xss\\schemas.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 179,
+        "code_lines": 141,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": true,
+        "has_main": false,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\features\\function_xss\\stored_detector.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 157,
+        "code_lines": 131,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": true,
+        "has_main": false,
+        "has_docstring": false,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\features\\function_xss\\task_queue.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 144,
+        "code_lines": 113,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": true,
+        "has_main": false,
+        "has_docstring": false,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\features\\function_xss\\traditional_detector.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 238,
+        "code_lines": 201,
+        "has_imports": true,
+        "has_functions": true,
+        "has_classes": true,
+        "has_main": false,
+        "has_docstring": false,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\features\\function_xss\\worker.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 446,
+        "code_lines": 370,
+        "has_imports": true,
+        "has_functions": true,
+        "has_classes": true,
+        "has_main": false,
+        "has_docstring": false,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\features\\graphql_authz\\worker.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 362,
+        "code_lines": 309,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": true,
+        "has_main": false,
+        "has_docstring": false,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\features\\jwt_confusion\\worker.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 368,
+        "code_lines": 314,
+        "has_imports": true,
+        "has_functions": true,
+        "has_classes": true,
+        "has_main": false,
+        "has_docstring": false,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\features\\mass_assignment\\worker.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 264,
+        "code_lines": 220,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": true,
+        "has_main": false,
+        "has_docstring": false,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\features\\oauth_confusion\\worker.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 308,
+        "code_lines": 265,
+        "has_imports": true,
+        "has_functions": true,
+        "has_classes": true,
+        "has_main": false,
+        "has_docstring": false,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\features\\ssrf_oob\\worker.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 350,
+        "code_lines": 286,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": true,
+        "has_main": false,
+        "has_docstring": false,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\features\\function_sqli\\engines\\boolean_detection_engine.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 255,
+        "code_lines": 207,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": true,
+        "has_main": false,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\features\\function_sqli\\engines\\error_detection_engine.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 174,
+        "code_lines": 143,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": true,
+        "has_main": false,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\features\\function_sqli\\engines\\oob_detection_engine.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 208,
+        "code_lines": 166,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": true,
+        "has_main": false,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\features\\function_sqli\\engines\\time_detection_engine.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 248,
+        "code_lines": 204,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": true,
+        "has_main": false,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\features\\function_sqli\\engines\\union_detection_engine.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 283,
+        "code_lines": 229,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": true,
+        "has_main": false,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\core\\aiva_core\\ai_commander.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 504,
+        "code_lines": 360,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": true,
+        "has_main": false,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": true
+      }
+    },
+    {
+      "file": "services\\core\\aiva_core\\ai_controller.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 813,
+        "code_lines": 621,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": true,
+        "has_main": true,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\core\\aiva_core\\ai_integration_test.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 611,
+        "code_lines": 476,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": true,
+        "has_main": true,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\core\\aiva_core\\ai_ui_schemas.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 332,
+        "code_lines": 249,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": true,
+        "has_main": false,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\core\\aiva_core\\app.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 248,
+        "code_lines": 180,
+        "has_imports": true,
+        "has_functions": true,
+        "has_classes": false,
+        "has_main": false,
+        "has_docstring": false,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\core\\aiva_core\\bio_neuron_master.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 689,
+        "code_lines": 488,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": true,
+        "has_main": false,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": true
+      }
+    },
+    {
+      "file": "services\\core\\aiva_core\\business_schemas.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 342,
+        "code_lines": 187,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": true,
+        "has_main": false,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\core\\aiva_core\\nlg_system.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 442,
+        "code_lines": 365,
+        "has_imports": true,
+        "has_functions": true,
+        "has_classes": true,
+        "has_main": true,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\core\\aiva_core\\optimized_core.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 342,
+        "code_lines": 248,
+        "has_imports": true,
+        "has_functions": true,
+        "has_classes": true,
+        "has_main": true,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\core\\aiva_core\\schemas.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 292,
+        "code_lines": 213,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": true,
+        "has_main": false,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\core\\aiva_core\\unified_function_caller.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 475,
+        "code_lines": 399,
+        "has_imports": true,
+        "has_functions": true,
+        "has_classes": true,
+        "has_main": true,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\core\\aiva_core\\ai_engine\\ai_model_manager.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 453,
+        "code_lines": 346,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": true,
+        "has_main": false,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\core\\aiva_core\\ai_engine\\anti_hallucination_module.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 331,
+        "code_lines": 244,
+        "has_imports": true,
+        "has_functions": true,
+        "has_classes": true,
+        "has_main": true,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\core\\aiva_core\\ai_engine\\bio_neuron_core.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 874,
+        "code_lines": 653,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": true,
+        "has_main": false,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": true
+      }
+    },
+    {
+      "file": "services\\core\\aiva_core\\ai_engine\\knowledge_base.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 221,
+        "code_lines": 171,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": true,
+        "has_main": false,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\core\\aiva_core\\ai_engine\\learning_engine.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 535,
+        "code_lines": 393,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": true,
+        "has_main": false,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\core\\aiva_core\\ai_engine\\memory_manager.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 363,
+        "code_lines": 259,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": true,
+        "has_main": false,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\core\\aiva_core\\ai_engine\\neural_network.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 386,
+        "code_lines": 269,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": true,
+        "has_main": false,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\core\\aiva_core\\ai_engine\\performance_enhancements.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 432,
+        "code_lines": 303,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": true,
+        "has_main": false,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\core\\aiva_core\\ai_engine\\tools.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 454,
+        "code_lines": 358,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": true,
+        "has_main": false,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": true
+      }
+    },
+    {
+      "file": "services\\core\\aiva_core\\ai_model\\train_classifier.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 81,
+        "code_lines": 72,
+        "has_imports": true,
+        "has_functions": true,
+        "has_classes": false,
+        "has_main": true,
+        "has_docstring": false,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\core\\aiva_core\\analysis\\ast_trace_comparator.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 399,
+        "code_lines": 287,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": true,
+        "has_main": false,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\core\\aiva_core\\analysis\\dynamic_strategy_adjustment.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 189,
+        "code_lines": 132,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": true,
+        "has_main": false,
+        "has_docstring": false,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\core\\aiva_core\\analysis\\initial_surface.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 324,
+        "code_lines": 264,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": true,
+        "has_main": false,
+        "has_docstring": false,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\core\\aiva_core\\analysis\\plan_comparator.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 536,
+        "code_lines": 400,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": true,
+        "has_main": false,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\core\\aiva_core\\analysis\\risk_assessment_engine.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 252,
+        "code_lines": 186,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": true,
+        "has_main": false,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\core\\aiva_core\\analysis\\strategy_generator.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 289,
+        "code_lines": 231,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": true,
+        "has_main": false,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\core\\aiva_core\\authz\\authz_mapper.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 414,
+        "code_lines": 304,
+        "has_imports": true,
+        "has_functions": true,
+        "has_classes": true,
+        "has_main": true,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\core\\aiva_core\\authz\\matrix_visualizer.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 523,
+        "code_lines": 430,
+        "has_imports": true,
+        "has_functions": true,
+        "has_classes": true,
+        "has_main": true,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\core\\aiva_core\\authz\\permission_matrix.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 457,
+        "code_lines": 355,
+        "has_imports": true,
+        "has_functions": true,
+        "has_classes": true,
+        "has_main": true,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\core\\aiva_core\\decision\\enhanced_decision_agent.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 542,
+        "code_lines": 415,
+        "has_imports": true,
+        "has_functions": true,
+        "has_classes": true,
+        "has_main": true,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\core\\aiva_core\\execution\\execution_status_monitor.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 255,
+        "code_lines": 200,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": true,
+        "has_main": false,
+        "has_docstring": false,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\core\\aiva_core\\execution\\plan_executor.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 616,
+        "code_lines": 480,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": true,
+        "has_main": false,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": true
+      }
+    },
+    {
+      "file": "services\\core\\aiva_core\\execution\\task_queue_manager.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 213,
+        "code_lines": 167,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": true,
+        "has_main": false,
+        "has_docstring": false,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\core\\aiva_core\\execution\\trace_logger.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 351,
+        "code_lines": 279,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": true,
+        "has_main": false,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\core\\aiva_core\\execution_tracer\\execution_monitor.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 305,
+        "code_lines": 250,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": true,
+        "has_main": false,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\core\\aiva_core\\execution_tracer\\task_executor.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 281,
+        "code_lines": 216,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": true,
+        "has_main": false,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": true
+      }
+    },
+    {
+      "file": "services\\core\\aiva_core\\execution_tracer\\trace_recorder.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 300,
+        "code_lines": 253,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": true,
+        "has_main": false,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\core\\aiva_core\\ingestion\\scan_module_interface.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 140,
+        "code_lines": 107,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": true,
+        "has_main": false,
+        "has_docstring": false,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\core\\aiva_core\\learning\\experience_manager.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 374,
+        "code_lines": 293,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": true,
+        "has_main": false,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\core\\aiva_core\\learning\\model_trainer.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 608,
+        "code_lines": 435,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": true,
+        "has_main": false,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": true
+      }
+    },
+    {
+      "file": "services\\core\\aiva_core\\learning\\scalable_bio_trainer.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 230,
+        "code_lines": 172,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": true,
+        "has_main": false,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\core\\aiva_core\\messaging\\message_broker.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 344,
+        "code_lines": 261,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": true,
+        "has_main": false,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\core\\aiva_core\\messaging\\result_collector.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 392,
+        "code_lines": 297,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": true,
+        "has_main": false,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\core\\aiva_core\\messaging\\task_dispatcher.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 516,
+        "code_lines": 412,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": true,
+        "has_main": false,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\core\\aiva_core\\performance\\memory_manager.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 138,
+        "code_lines": 103,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": true,
+        "has_main": false,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\core\\aiva_core\\planner\\ast_parser.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 265,
+        "code_lines": 201,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": true,
+        "has_main": false,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": true
+      }
+    },
+    {
+      "file": "services\\core\\aiva_core\\planner\\orchestrator.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 187,
+        "code_lines": 144,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": true,
+        "has_main": false,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\core\\aiva_core\\planner\\task_converter.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 248,
+        "code_lines": 179,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": true,
+        "has_main": false,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\core\\aiva_core\\planner\\tool_selector.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 222,
+        "code_lines": 167,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": true,
+        "has_main": false,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\core\\aiva_core\\plugins\\ai_summary_plugin.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 364,
+        "code_lines": 285,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": true,
+        "has_main": false,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\core\\aiva_core\\processing\\scan_result_processor.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 364,
+        "code_lines": 293,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": true,
+        "has_main": false,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\core\\aiva_core\\rag\\demo_rag_integration.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 258,
+        "code_lines": 193,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": true,
+        "has_main": true,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": true
+      }
+    },
+    {
+      "file": "services\\core\\aiva_core\\rag\\knowledge_base.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 417,
+        "code_lines": 329,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": true,
+        "has_main": false,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\core\\aiva_core\\rag\\rag_engine.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 363,
+        "code_lines": 285,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": true,
+        "has_main": false,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\core\\aiva_core\\rag\\vector_store.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 339,
+        "code_lines": 252,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": true,
+        "has_main": false,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\core\\aiva_core\\storage\\backends.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 468,
+        "code_lines": 380,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": true,
+        "has_main": false,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\core\\aiva_core\\storage\\models.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 257,
+        "code_lines": 150,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": true,
+        "has_main": false,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\core\\aiva_core\\storage\\storage_manager.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 206,
+        "code_lines": 168,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": true,
+        "has_main": false,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\core\\aiva_core\\training\\scenario_manager.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 975,
+        "code_lines": 815,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": true,
+        "has_main": false,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\core\\aiva_core\\training\\training_orchestrator.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 423,
+        "code_lines": 326,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": true,
+        "has_main": false,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": true
+      }
+    },
+    {
+      "file": "services\\core\\aiva_core\\ui_panel\\auto_server.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 170,
+        "code_lines": 134,
+        "has_imports": true,
+        "has_functions": true,
+        "has_classes": false,
+        "has_main": true,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\core\\aiva_core\\ui_panel\\dashboard.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 287,
+        "code_lines": 243,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": true,
+        "has_main": false,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\core\\aiva_core\\ui_panel\\improved_ui.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 399,
+        "code_lines": 345,
+        "has_imports": true,
+        "has_functions": true,
+        "has_classes": false,
+        "has_main": false,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\core\\aiva_core\\ui_panel\\server.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 281,
+        "code_lines": 244,
+        "has_imports": true,
+        "has_functions": true,
+        "has_classes": false,
+        "has_main": false,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\core\\aiva_core\\ai_engine\\training\\data_loader.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 199,
+        "code_lines": 141,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": true,
+        "has_main": false,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\core\\aiva_core\\ai_engine\\training\\model_updater.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 242,
+        "code_lines": 182,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": true,
+        "has_main": false,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": true
+      }
+    },
+    {
+      "file": "services\\attack\\aiva_attack\\attack_chain.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 178,
+        "code_lines": 139,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": true,
+        "has_main": false,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\attack\\aiva_attack\\attack_executor.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 380,
+        "code_lines": 292,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": true,
+        "has_main": false,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": true
+      }
+    },
+    {
+      "file": "services\\attack\\aiva_attack\\attack_validator.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 316,
+        "code_lines": 244,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": true,
+        "has_main": false,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\attack\\aiva_attack\\exploit_manager.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 205,
+        "code_lines": 161,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": true,
+        "has_main": false,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": true
+      }
+    },
+    {
+      "file": "services\\attack\\aiva_attack\\payload_generator.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 197,
+        "code_lines": 151,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": true,
+        "has_main": false,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\aiva_common\\enums\\modules.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 234,
+        "code_lines": 151,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": true,
+        "has_main": false,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\aiva_common\\enums\\security.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 284,
+        "code_lines": 198,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": true,
+        "has_main": false,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\aiva_common\\schemas\\ai.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 688,
+        "code_lines": 494,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": true,
+        "has_main": false,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\aiva_common\\schemas\\assets.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 183,
+        "code_lines": 130,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": true,
+        "has_main": false,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\aiva_common\\schemas\\enhanced.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 365,
+        "code_lines": 240,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": true,
+        "has_main": false,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\aiva_common\\schemas\\findings.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 265,
+        "code_lines": 194,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": true,
+        "has_main": false,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\aiva_common\\schemas\\languages.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 164,
+        "code_lines": 133,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": true,
+        "has_main": false,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\aiva_common\\schemas\\system.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 219,
+        "code_lines": 130,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": true,
+        "has_main": false,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\aiva_common\\schemas\\tasks.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 603,
+        "code_lines": 414,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": true,
+        "has_main": false,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\aiva_common\\schemas\\telemetry.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 415,
+        "code_lines": 314,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": true,
+        "has_main": false,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\aiva_common\\utils\\dedup\\dedupe.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 344,
+        "code_lines": 261,
+        "has_imports": true,
+        "has_functions": true,
+        "has_classes": true,
+        "has_main": false,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\aiva_common\\utils\\network\\backoff.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 214,
+        "code_lines": 175,
+        "has_imports": true,
+        "has_functions": true,
+        "has_classes": true,
+        "has_main": false,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\aiva_common\\utils\\network\\ratelimit.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 679,
+        "code_lines": 602,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": true,
+        "has_main": false,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "scripts\\deployment\\start_all.ps1",
+      "type": "PowerShell",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 146,
+        "code_lines": 115,
+        "has_functions": false,
+        "has_params": false,
+        "has_cmdlets": true,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "scripts\\deployment\\start_all_multilang.ps1",
+      "type": "PowerShell",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 228,
+        "code_lines": 173,
+        "has_functions": false,
+        "has_params": false,
+        "has_cmdlets": true,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "scripts\\maintenance\\diagnose_system.ps1",
+      "type": "PowerShell",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 177,
+        "code_lines": 130,
+        "has_functions": false,
+        "has_params": false,
+        "has_cmdlets": true,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "scripts\\maintenance\\generate_project_report.ps1",
+      "type": "PowerShell",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 455,
+        "code_lines": 342,
+        "has_functions": true,
+        "has_params": true,
+        "has_cmdlets": true,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "scripts\\maintenance\\generate_stats.ps1",
+      "type": "PowerShell",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 237,
+        "code_lines": 185,
+        "has_functions": true,
+        "has_params": true,
+        "has_cmdlets": true,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "scripts\\maintenance\\generate_tree_ultimate_chinese.ps1",
+      "type": "PowerShell",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 732,
+        "code_lines": 589,
+        "has_functions": true,
+        "has_params": true,
+        "has_cmdlets": true,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "scripts\\maintenance\\optimize_core_modules.ps1",
+      "type": "PowerShell",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 571,
+        "code_lines": 429,
+        "has_functions": true,
+        "has_params": true,
+        "has_cmdlets": true,
+        "has_todo": true
+      }
+    },
+    {
+      "file": "scripts\\setup\\setup_multilang.ps1",
+      "type": "PowerShell",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 159,
+        "code_lines": 108,
+        "has_functions": false,
+        "has_params": false,
+        "has_cmdlets": true,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "api\\routers\\admin.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 337,
+        "code_lines": 258,
+        "has_imports": true,
+        "has_functions": true,
+        "has_classes": false,
+        "has_main": false,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "api\\routers\\auth.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 303,
+        "code_lines": 250,
+        "has_imports": true,
+        "has_functions": true,
+        "has_classes": true,
+        "has_main": false,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "api\\routers\\security.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 444,
+        "code_lines": 354,
+        "has_imports": true,
+        "has_functions": true,
+        "has_classes": false,
+        "has_main": false,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    }
+  ]
+}

@@ -100,9 +100,9 @@ class CrossLanguageTestSuite:
             results["files_available"][config_name] = file_path.exists()
             
             if file_path.exists():
-                self.logger.info(f"✅ {config['file']} 找到")
+                self.logger.info(f"[OK] {config['file']} 找到")
             else:
-                self.logger.warning(f"❌ {config['file']} 未找到")
+                self.logger.warning(f"[FAIL] {config['file']} 未找到")
         
         return results
     
@@ -143,18 +143,18 @@ class CrossLanguageTestSuite:
                 elif package == "wasmer":
                     import wasmer
                 elif package == "grpcio":
-                    import grpc
+                    import grpc  # grpcio package imports as grpc
                 elif package == "protobuf":
                     import google.protobuf
                 else:
                     __import__(package)
                 
                 results["required"][package] = {"available": True, "error": None}
-                self.logger.info(f"✅ {package} 可用")
+                self.logger.info(f"[OK] {package} 可用")
                 
             except ImportError as e:
                 results["required"][package] = {"available": False, "error": str(e)}
-                self.logger.warning(f"❌ {package} 不可用: {e}")
+                self.logger.warning(f"[FAIL] {package} 不可用: {e}")
         
         # 檢查可選套件
         for package in optional_packages:
@@ -165,11 +165,11 @@ class CrossLanguageTestSuite:
                     __import__(package)
                 
                 results["optional"][package] = {"available": True, "error": None}
-                self.logger.info(f"✅ {package} (可選) 可用")
+                self.logger.info(f"[OK] {package} (可選) 可用")
                 
             except ImportError as e:
                 results["optional"][package] = {"available": False, "error": str(e)}
-                self.logger.info(f"ℹ️ {package} (可選) 不可用")
+                self.logger.info(f"[INFO] {package} (可選) 不可用")
         
         # 檢查外部工具
         external_tools = ["cargo", "go", "node", "emcc", "wasm-opt", "protoc"]
@@ -185,14 +185,14 @@ class CrossLanguageTestSuite:
                         "version": result.stdout.strip().split('\n')[0],
                         "error": None
                     }
-                    self.logger.info(f"✅ {tool} 可用")
+                    self.logger.info(f"[OK] {tool} 可用")
                 else:
                     results["external_tools"][tool] = {
                         "available": False,
                         "version": None, 
                         "error": result.stderr
                     }
-                    self.logger.warning(f"❌ {tool} 錯誤: {result.stderr}")
+                    self.logger.warning(f"[FAIL] {tool} 錯誤: {result.stderr}")
                     
             except (subprocess.TimeoutExpired, subprocess.CalledProcessError, FileNotFoundError) as e:
                 results["external_tools"][tool] = {
@@ -200,7 +200,7 @@ class CrossLanguageTestSuite:
                     "version": None,
                     "error": str(e)
                 }
-                self.logger.warning(f"❌ {tool} 不可用: {e}")
+                self.logger.warning(f"[FAIL] {tool} 不可用: {e}")
         
         return results
     
@@ -258,14 +258,14 @@ class CrossLanguageTestSuite:
                             "test_passed": result is not None,
                             "result": str(result)[:100] if result else None
                         }
-                        self.logger.info(f"✅ {bridge_type} 橋接測試通過")
+                        self.logger.info(f"[OK] {bridge_type} 橋接測試通過")
                     else:
                         bridge_results[bridge_type] = {
                             "available": False,
                             "test_passed": False,
                             "result": "Bridge not available"
                         }
-                        self.logger.warning(f"❌ {bridge_type} 橋接不可用")
+                        self.logger.warning(f"[FAIL] {bridge_type} 橋接不可用")
                         
                 except Exception as e:
                     bridge_results[bridge_type] = {
@@ -273,7 +273,7 @@ class CrossLanguageTestSuite:
                         "test_passed": False,
                         "result": f"Error: {e}"
                     }
-                    self.logger.error(f"❌ {bridge_type} 橋接測試失敗: {e}")
+                    self.logger.error(f"[FAIL] {bridge_type} 橋接測試失敗: {e}")
             
             return {
                 "module_loaded": True,
@@ -654,7 +654,7 @@ class CrossLanguageTestSuite:
 # 主要執行函數
 async def main():
     """主要執行函數"""
-    print("🚀 AIVA 跨語言方案綜合測試開始...")
+    print(">> AIVA 跨語言方案綜合測試開始...")
     print("=" * 60)
     
     # 建立測試套件
@@ -665,7 +665,7 @@ async def main():
         report = await test_suite.run_comprehensive_tests()
         
         # 顯示結果
-        print("\n📊 測試結果摘要:")
+        print("\n[REPORT] 測試結果摘要:")
         print("=" * 60)
         
         summary = report["summary"]
@@ -674,7 +674,7 @@ async def main():
         print(f"成功率: {summary['success_rate']:.1f}%")
         print(f"可用整合方案: {summary['successful_integrations']}/{summary['total_methods_tested']}")
         
-        print(f"\n✅ 可用的跨語言方法:")
+        print(f"\n[OK] 可用的跨語言方法:")
         for method in report["available_methods"]:
             print(f"  - {method}")
         
@@ -694,13 +694,13 @@ async def main():
         if summary["status"] == "PASS":
             print("\n🎉 測試通過！AIVA 跨語言系統已準備就緒。")
         elif summary["status"] == "PARTIAL":
-            print("\n⚠️ 部分功能可用，建議完善環境配置。")
+            print("\n[WARN] 部分功能可用，建議完善環境配置。")
         else:
-            print("\n❌ 測試失敗，需要修復環境配置。")
+            print("\n[FAIL] 測試失敗，需要修復環境配置。")
         
     except Exception as e:
         logger.error(f"測試過程發生錯誤: {e}")
-        print(f"\n❌ 測試過程發生錯誤: {e}")
+        print(f"\n[FAIL] 測試過程發生錯誤: {e}")
         return False
     
     return True

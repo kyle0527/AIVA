@@ -116,19 +116,24 @@ class ScanResultProcessor:
         logger.info(f"[🔍] [Stage 2/7] Analyzing attack surface for {scan_id}")
 
         attack_surface = self.surface_analyzer.analyze(payload)
+        
+        # 安全地訪問 AttackSurfaceAnalysis 的屬性
+        high_risk_count = getattr(attack_surface, 'high_risk_assets', 0)
+        medium_risk_count = getattr(attack_surface, 'medium_risk_assets', 0)
+        
         self.session_state_manager.update_context(
             scan_id,
             {
                 "stage": 2,
                 "attack_surface": attack_surface,
-                "high_risk_count": attack_surface.get("high_risk_assets", 0),
-                "medium_risk_count": attack_surface.get("medium_risk_assets", 0),
+                "high_risk_count": high_risk_count,
+                "medium_risk_count": medium_risk_count,
             },
         )
         logger.info(
             f"[列表] [Stage 2/7] Attack surface identified - "
-            f"High risk: {attack_surface.get('high_risk_assets', 0)}, "
-            f"Medium risk: {attack_surface.get('medium_risk_assets', 0)}"
+            f"High risk: {high_risk_count}, "
+            f"Medium risk: {medium_risk_count}"
         )
         return attack_surface
 

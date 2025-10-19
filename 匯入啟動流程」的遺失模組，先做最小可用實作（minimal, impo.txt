@@ -1,0 +1,332 @@
+匯入/啟動流程」的遺失模組，先做最小可用實作（minimal, import-safe stubs），以快速恢復專案可被 import / 測試的狀態，之後再逐步替換為完整實作。以下程式碼與放置說明會先還原 8 個高優先級缺失檔案（以能讓大多數 import 成功為目標），並附上簡易測試片段。
+
+我根據你上傳的樹狀檔做判斷（參考輸出）。
+
+tree_ultimate_chinese_20251019_…
+
+總結（直接回答）
+
+可以 — 我已準備 8 個關鍵缺失檔案的最小可用實作，請把它們貼回專案對應路徑，然後執行最後的測試指令（內文有說明）。這會先解掉大量 import 錯誤與模組缺失，讓你能跑測試套件 / 啟動器以逐步驗證下一波功能缺口。
+
+操作說明（簡短）
+
+在專案根目錄（AIVA-git）下，依每個檔案的 path: 把對應檔案建立並貼上我提供的程式碼。
+
+建好後，先在 repo 根目錄執行：
+
+# Windows PowerShell (或在 bash 下使用 python)
+python -c "import importlib, sys; importlib.import_module('services.aiva_common.config'); print('config OK')"
+
+
+或直接執行我在每個區塊後提供的簡易測試片段。
+
+若出現其他 import error，回報錯誤訊息（我會直接給補丁）。
+
+根據你先前要求：每次提供程式碼我會明確標示「貼到哪裡」與「如何貼」。下面每個檔案都遵守此規則。
+
+建議優先順序（我已按優先處理）
+
+services/aiva_common/config.py（必需）
+
+services/aiva_common/models.py（常被匯入）
+
+core/aiva_core/schemas.py（核心 AI schema）
+
+core/storage/config.py（存儲設定）
+
+core/storage/models.py（存儲資料模型）
+
+scan/schemas.py（掃描層 schema）
+
+core/session_state_manager.py（會話狀態管理）
+
+features/smart_detection_manager.py（智慧檢測管理器）
+
+檔案一：services/aiva_common/config.py
+
+path: services/aiva_common/config.py
+目的: 提供統一設定讀取（env / .env / defaults），供其他模組 from services.aiva_common.config import get_config 使用。
+
+貼上以下內容到 services/aiva_common/config.py：
+
+# services/aiva_common/config.py
+from pydantic import BaseSettings, Field
+from functools import lru_cache
+from typing import Optional
+
+class UnifiedConfig(BaseSettings):
+    # 基本設定（可擴充）
+    ENV: str = Field("development", description="environment name")
+    DEBUG: bool = Field(True, description="debug mode")
+    STORAGE_BACKEND: str = Field("filesystem", description="storage backend")
+    STORAGE_PATH: str = Field("./data/storage", description="local storage path")
+    DATABASE_URL: Optional[str] = Field(None, description="DB connection url")
+    # AI 相關
+    DEFAULT_AI_MODEL: str = Field("gpt-like-default", description="default AI model id")
+    MAX_CONCURRENCY: int = Field(4, description="最大併發數")
+
+    class Config:
+        env_file = ".env"
+        env_prefix = "AIVA_"
+
+@lru_cache()
+def get_config() -> UnifiedConfig:
+    return UnifiedConfig()
+
+
+如何測試（在 repo 根目錄執行）
+
+python - <<'PY'
+from services.aiva_common.config import get_config
+cfg = get_config()
+print("ENV:", cfg.ENV, "STORAGE_PATH:", cfg.STORAGE_PATH)
+PY
+
+檔案二：services/aiva_common/models.py
+
+path: services/aiva_common/models.py
+目的: 放置共用資料模型（小型 Pydantic 模型），許多模組會 from services.aiva_common.models import ...。
+
+貼上：
+
+# services/aiva_common/models.py
+from pydantic import BaseModel, Field
+from typing import Dict, Any, Optional
+
+class CommonMetadata(BaseModel):
+    created_by: Optional[str] = None
+    tags: Optional[Dict[str, Any]] = None
+
+class CommonModel(BaseModel):
+    id: str = Field(..., description="unique id")
+    name: str = Field(..., description="readable name")
+    metadata: Optional[CommonMetadata] = None
+
+
+測試：
+
+python - <<'PY'
+from services.aiva_common.models import CommonModel
+m = CommonModel(id="x1", name="test", metadata={"created_by":"kyle"})
+print(m.json())
+PY
+
+檔案三：core/aiva_core/schemas.py
+
+path: core/aiva_core/schemas.py
+目的: AI 引擎核心所需之 schema（避免 ai 模組啟動時找不到定義）。
+
+貼上：
+
+# core/aiva_core/schemas.py
+from pydantic import BaseModel, Field
+from typing import Optional, Dict, Any
+
+class AIModelConfig(BaseModel):
+    model_name: str = Field("bio-neuron-default", description="model id/name")
+    max_tokens: int = Field(2048)
+    temperature: float = Field(0.0)
+
+class AIRequest(BaseModel):
+    prompt: str
+    context: Optional[Dict[str, Any]] = None
+    config: Optional[AIModelConfig] = None
+
+class AIResponse(BaseModel):
+    text: str
+    metadata: Optional[Dict[str, Any]] = None
+
+
+測試：
+
+python - <<'PY'
+from core.aiva_core.schemas import AIRequest, AIResponse
+r = AIRequest(prompt="hello")
+print(r)
+PY
+
+檔案四：core/storage/config.py
+
+path: core/storage/config.py
+目的: 儲存系統設定（供 storage_manager, backends import）。
+
+貼上：
+
+# core/storage/config.py
+from pydantic import BaseModel, Field
+from typing import Optional
+
+class StorageConfig(BaseModel):
+    backend: str = Field("filesystem")
+    base_path: str = Field("./data/storage")
+    max_size_gb: Optional[int] = Field(None)
+    connection_url: Optional[str] = None
+
+
+測試：
+
+python - <<'PY'
+from core.storage.config import StorageConfig
+cfg = StorageConfig()
+print(cfg.dict())
+PY
+
+檔案五：core/storage/models.py
+
+path: core/storage/models.py
+目的: 儲存層資料模型（如紀錄 metadata）
+
+貼上：
+
+# core/storage/models.py
+from pydantic import BaseModel, Field
+from typing import Dict, Any, Optional
+from datetime import datetime
+
+class StorageRecord(BaseModel):
+    id: str
+    created_at: datetime = Field(default_factory=datetime.utcnow)
+    meta: Optional[Dict[str, Any]] = None
+    path: Optional[str] = None
+
+
+測試：
+
+python - <<'PY'
+from core.storage.models import StorageRecord
+r = StorageRecord(id="rec1", path="/tmp/x")
+print(r.json())
+PY
+
+檔案六：scan/schemas.py
+
+path: scan/schemas.py
+目的: 掃描模組常用的資料結構（scan context / target），避免 scan.* 匯入失敗。
+
+貼上：
+
+# scan/schemas.py
+from pydantic import BaseModel, Field
+from typing import Optional, Dict, Any, List
+
+class Target(BaseModel):
+    url: str
+    meta: Optional[Dict[str, Any]] = None
+
+class ScanContext(BaseModel):
+    targets: List[Target] = []
+    depth: int = Field(2)
+    options: Optional[Dict[str, Any]] = None
+
+
+測試：
+
+python - <<'PY'
+from scan.schemas import ScanContext, Target
+ctx = ScanContext(targets=[Target(url="https://example.com")])
+print(ctx)
+PY
+
+檔案七：core/session_state_manager.py
+
+path: core/session_state_manager.py
+目的: 提供最小會話狀態管理器，供多個模組（session_state_manager.py 所在位置）引用。
+
+貼上：
+
+# core/session_state_manager.py
+import threading
+from typing import Dict, Any, Optional
+from datetime import datetime, timedelta
+
+class SessionStateManager:
+    def __init__(self):
+        self._lock = threading.RLock()
+        self._sessions: Dict[str, Dict[str, Any]] = {}
+
+    def create(self, session_id: str, initial: Optional[Dict[str,Any]] = None):
+        with self._lock:
+            self._sessions[session_id] = {
+                "created_at": datetime.utcnow(),
+                "data": initial or {}
+            }
+            return self._sessions[session_id]
+
+    def get(self, session_id: str):
+        with self._lock:
+            return self._sessions.get(session_id)
+
+    def update(self, session_id: str, update: Dict[str,Any]):
+        with self._lock:
+            if session_id not in self._sessions:
+                return None
+            self._sessions[session_id]["data"].update(update)
+            return self._sessions[session_id]
+
+    def delete(self, session_id: str):
+        with self._lock:
+            return self._sessions.pop(session_id, None)
+
+# module-level singleton
+_global_session_manager = SessionStateManager()
+
+def get_session_manager() -> SessionStateManager:
+    return _global_session_manager
+
+
+測試：
+
+python - <<'PY'
+from core.session_state_manager import get_session_manager
+sm = get_session_manager()
+sm.create("s1", {"a":1})
+print(sm.get("s1"))
+PY
+
+檔案八：features/smart_detection_manager.py
+
+path: features/smart_detection_manager.py
+目的: 提供「智慧檢測管理器」的基本接口（register detector / run），供其他掃描流程呼叫。
+
+貼上：
+
+# features/smart_detection_manager.py
+from typing import Callable, Dict, Any, List
+
+DetectorFunc = Callable[[Dict[str,Any]], Dict[str,Any]]
+
+class SmartDetectionManager:
+    def __init__(self):
+        self._detectors: Dict[str, DetectorFunc] = {}
+
+    def register(self, name: str, fn: DetectorFunc):
+        self._detectors[name] = fn
+
+    def unregister(self, name: str):
+        return self._detectors.pop(name, None)
+
+    def run_all(self, input_data: Dict[str,Any]) -> List[Dict[str,Any]]:
+        results = []
+        for name, fn in self._detectors.items():
+            try:
+                res = fn(input_data)
+            except Exception as e:
+                res = {"detector": name, "error": str(e)}
+            results.append({"detector": name, "result": res})
+        return results
+
+# singleton
+_default_manager = SmartDetectionManager()
+
+def get_smart_detection_manager() -> SmartDetectionManager:
+    return _default_manager
+
+
+測試：
+
+python - <<'PY'
+from features.smart_detection_manager import get_smart_detection_manager
+m = get_smart_detection_manager()
+m.register("stub", lambda d: {"ok": True, "in": d})
+print(m.run_all({"t":123}))
+PY

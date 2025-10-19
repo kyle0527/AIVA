@@ -1,5 +1,5 @@
 {
-  "timestamp": "2025-10-19 03:46:22",
+  "timestamp": "2025-10-19 07:11:49",
   "test_results": {
     "environment": {
       "python_version": "3.13.9 (tags/v3.13.9:8183fa5, Oct 14 2025, 14:09:13) [MSC v.1944 64 bit (AMD64)]",
@@ -148,9 +148,9 @@
     "performance": {
       "file_io": {
         "operations": 100,
-        "total_time": 1.1298589706420898,
-        "avg_time_per_op": 0.011298589706420899,
-        "ops_per_second": 88.50662126722843
+        "total_time": 0.21541762351989746,
+        "avg_time_per_op": 0.0021541762351989747,
+        "ops_per_second": 464.214572447752
       }
     },
     "compatibility": {
@@ -165,10 +165,10 @@
     "environment": 1.0,
     "dependencies": 0.6249999999999999,
     "functionality": 0.5,
-    "performance": 0.8850662126722842,
+    "performance": 1.0,
     "compatibility": 1.0
   },
-  "overall_score": 0.8020132425344568,
+  "overall_score": 0.825,
   "available_methods": [
     "graalvm_integration",
     "ffi_integration"

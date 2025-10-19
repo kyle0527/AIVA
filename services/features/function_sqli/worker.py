@@ -19,6 +19,11 @@ from services.aiva_common.schemas import (
     FunctionTaskPayload,
 )
 from services.aiva_common.utils import get_logger, new_id
+from services.features.common.worker_statistics import (
+    StatisticsCollector,
+    ErrorCategory,
+    StoppingReason,
+)
 
 from .detection_models import DetectionResult
 from .engines import (
@@ -71,6 +76,7 @@ class SqliContext:
         default_factory=lambda: SqliExecutionTelemetry()
     )
     findings: list[FindingPayload] = field(default_factory=list)
+    statistics_collector: StatisticsCollector | None = None  # 新增統計收集器
 
 
 class SqliOrchestrator:
@@ -119,23 +125,83 @@ class SqliOrchestrator:
     ) -> SqliContext:
         """執行所有已註冊的檢測引擎"""
 
+        stats = context.statistics_collector
+
         for engine_name, engine in self._engines.items():
             try:
                 logger.debug(f"Executing engine: {engine_name}")
+                
+                # 記錄 Payload 測試
+                if stats:
+                    stats.record_payload_test(success=False)
+                
                 results = await engine.detect(context.task, client)
 
                 # 處理檢測結果
                 for result in results:
+                    # 記錄請求統計
+                    if stats:
+                        stats.record_request(success=True)
+                    
                     if result.is_vulnerable:
                         finding = await self._build_finding(result, context.task)
                         context.findings.append(finding)
+                        
+                        # 記錄漏洞發現
+                        if stats:
+                            stats.record_vulnerability(false_positive=False)
+                            stats.record_payload_test(success=True)
 
                 context.telemetry.add_engine(engine_name)
+                
+                # 記錄引擎執行統計
+                if stats:
+                    engine_key = f"{engine_name}_engine_executed"
+                    stats.set_module_specific(engine_key, True)
 
+            except httpx.TimeoutException as e:
+                error_msg = f"Engine {engine_name} timeout: {str(e)}"
+                logger.warning(error_msg)
+                context.telemetry.add_error(error_msg)
+                
+                # 記錄超時錯誤
+                if stats:
+                    stats.record_request(success=False, timeout=True)
+                    stats.record_error(
+                        category=ErrorCategory.TIMEOUT,
+                        message=error_msg,
+                        request_info={"engine": engine_name, "url": context.task.url}
+                    )
+                # 繼續執行其他引擎
+                
+            except httpx.NetworkError as e:
+                error_msg = f"Engine {engine_name} network error: {str(e)}"
+                logger.warning(error_msg)
+                context.telemetry.add_error(error_msg)
+                
+                # 記錄網絡錯誤
+                if stats:
+                    stats.record_request(success=False)
+                    stats.record_error(
+                        category=ErrorCategory.NETWORK,
+                        message=error_msg,
+                        request_info={"engine": engine_name, "url": context.task.url}
+                    )
+                # 繼續執行其他引擎
+                
             except Exception as e:
                 error_msg = f"Engine {engine_name} failed: {str(e)}"
                 logger.exception(error_msg)
                 context.telemetry.add_error(error_msg)
+                
+                # 記錄未知錯誤
+                if stats:
+                    stats.record_request(success=False)
+                    stats.record_error(
+                        category=ErrorCategory.UNKNOWN,
+                        message=error_msg,
+                        request_info={"engine": engine_name, "url": context.task.url}
+                    )
                 # 繼續執行其他引擎，不因單個引擎失敗而停止
 
         return context
@@ -249,8 +315,18 @@ class SqliWorkerService:
         # 使用任務特定的配置創建編排器
         orchestrator = SqliOrchestrator(task_config)
 
+        # 創建統計數據收集器
+        stats_collector = StatisticsCollector(
+            task_id=task.task_id,
+            worker_type="sqli"
+        )
+
         timeout = task.test_config.timeout or task_config.timeout_seconds
-        context = SqliContext(task=task, config=task_config)
+        context = SqliContext(
+            task=task, 
+            config=task_config,
+            statistics_collector=stats_collector
+        )
 
         if http_client is None:
             async with httpx.AsyncClient(
@@ -259,6 +335,18 @@ class SqliWorkerService:
                 context = await orchestrator.execute_detection(context, client)
         else:
             context = await orchestrator.execute_detection(context, http_client)
+
+        # 設置 SQLi 特定統計數據
+        if stats_collector:
+            stats_collector.set_module_specific("error_detection_enabled", task_config.enable_error_detection)
+            stats_collector.set_module_specific("boolean_detection_enabled", task_config.enable_boolean_detection)
+            stats_collector.set_module_specific("time_detection_enabled", task_config.enable_time_detection)
+            stats_collector.set_module_specific("union_detection_enabled", task_config.enable_union_detection)
+            stats_collector.set_module_specific("oob_detection_enabled", task_config.enable_oob_detection)
+            stats_collector.set_module_specific("strategy", task.strategy)
+            
+            # 完成統計數據收集
+            stats_collector.finalize()
 
         return context
 
@@ -307,6 +395,12 @@ async def _execute_task(
     trace_id = queued.trace_id
 
     await publisher.publish_status(task, "IN_PROGRESS", trace_id=trace_id)
+    
+    # 記錄任務開始
+    logger.info(
+        "SQLi task execution started",
+        extra={"task_id": task.task_id, "strategy": task.strategy}
+    )
 
     try:
         context = await service.process_task(task)
@@ -314,6 +408,17 @@ async def _execute_task(
         # 發布結果
         for finding in context.findings:
             await publisher.publish_finding(finding, trace_id=trace_id)
+
+        # 記錄統計摘要
+        if context.statistics_collector:
+            stats_summary = context.statistics_collector.get_summary()
+            logger.info(
+                "SQLi task completed with statistics",
+                extra={
+                    "task_id": task.task_id,
+                    "statistics": stats_summary
+                }
+            )
 
         await publisher.publish_status(
             task,
@@ -341,8 +446,17 @@ async def process_task(
     service = SqliWorkerService()
     context = await service.process_task(task, http_client)
 
-    # 返回與原始格式兼容的結果
-    return {"findings": context.findings, "telemetry": context.telemetry}
+    # 返回與原始格式兼容的結果，並添加統計摘要
+    result = {
+        "findings": context.findings, 
+        "telemetry": context.telemetry
+    }
+    
+    # 添加統計摘要（如果存在）
+    if context.statistics_collector:
+        result["statistics_summary"] = context.statistics_collector.get_summary()
+    
+    return result
 
 
 # 向後兼容的別名

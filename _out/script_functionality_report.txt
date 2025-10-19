@@ -1,0 +1,778 @@
+====================================================================================================
+AIVA 專案腳本功能性檢查報告
+檢查時間: 2025-10-19 08:50:01.580874
+====================================================================================================
+
+## 📊 統計摘要
+總腳本數: 418
+  ✅ 完整功能: 266 (63.6%)
+  ⚠️  部分功能: 43 (10.3%)
+  🔶 基本架構: 71 (17.0%)
+  ❌ 無功能: 38 (9.1%)
+
+====================================================================================================
+## ❌ 無基本功能的腳本 (需要實作)
+====================================================================================================
+
+📁 __init__.py
+   類型: Python
+   原因: 少於10行且無函數/類別
+   總行數: 14
+   程式碼行數: 9
+
+📁 api\routers\__init__.py
+   類型: Python
+   原因: 少於10行且無函數/類別
+   總行數: 12
+   程式碼行數: 8
+
+📁 services\aiva_common\config.py
+   類型: Python
+   原因: 少於10行且無函數/類別
+   總行數: 10
+   程式碼行數: 6
+
+📁 services\aiva_common\models.py
+   類型: Python
+   原因: 少於10行且無函數/類別
+   總行數: 4
+   程式碼行數: 2
+
+📁 services\aiva_common\schemas\api_testing.py
+   類型: Python
+   原因: 少於10行且無函數/類別
+   總行數: 13
+   程式碼行數: 6
+
+📁 services\aiva_common\utils\__init__.py
+   類型: Python
+   原因: 少於10行且無函數/類別
+   總行數: 5
+   程式碼行數: 3
+
+📁 services\aiva_common\utils\dedup\__init__.py
+   類型: Python
+   原因: 少於10行且無函數/類別
+   總行數: 12
+   程式碼行數: 8
+
+📁 services\core\aiva_core\analysis\__init__.py
+   類型: Python
+   原因: 少於10行且無函數/類別
+   總行數: 10
+   程式碼行數: 6
+
+📁 services\core\aiva_core\execution\__init__.py
+   類型: Python
+   原因: 少於10行且無函數/類別
+   總行數: 11
+   程式碼行數: 7
+
+📁 services\core\aiva_core\ingestion\__init__.py
+   類型: Python
+   原因: 空檔案或只有 pass
+   總行數: 1
+   程式碼行數: 0
+
+📁 services\core\aiva_core\learning\__init__.py
+   類型: Python
+   原因: 少於10行且無函數/類別
+   總行數: 12
+   程式碼行數: 8
+
+📁 services\core\aiva_core\messaging\__init__.py
+   類型: Python
+   原因: 少於10行且無函數/類別
+   總行數: 12
+   程式碼行數: 8
+
+📁 services\core\aiva_core\output\__init__.py
+   類型: Python
+   原因: 空檔案或只有 pass
+   總行數: 1
+   程式碼行數: 0
+
+📁 services\core\aiva_core\processing\__init__.py
+   類型: Python
+   原因: 少於10行且無函數/類別
+   總行數: 6
+   程式碼行數: 3
+
+📁 services\core\aiva_core\rag\__init__.py
+   類型: Python
+   原因: 少於10行且無函數/類別
+   總行數: 12
+   程式碼行數: 8
+
+📁 services\core\aiva_core\state\__init__.py
+   類型: Python
+   原因: 空檔案或只有 pass
+   總行數: 1
+   程式碼行數: 0
+
+📁 services\features\function_crypto\__init__.py
+   類型: Python
+   原因: 空檔案或只有 pass
+   總行數: 1
+   程式碼行數: 0
+
+📁 services\features\function_crypto\schemas.py
+   類型: Python
+   原因: 空檔案或只有 pass
+   總行數: 1
+   程式碼行數: 0
+
+📁 services\features\function_idor\__init__.py
+   類型: Python
+   原因: 少於10行且無函數/類別
+   總行數: 12
+   程式碼行數: 9
+
+📁 services\features\function_sqli\__init__.py
+   類型: Python
+   原因: 空檔案或只有 pass
+   總行數: 2
+   程式碼行數: 0
+
+📁 services\features\function_sqli\smart_detection_manager.py
+   類型: Python
+   原因: 空檔案或只有 pass
+   總行數: 1
+   程式碼行數: 0
+
+📁 services\features\function_ssrf\__init__.py
+   類型: Python
+   原因: 空檔案或只有 pass
+   總行數: 2
+   程式碼行數: 0
+
+📁 services\features\function_xss\__init__.py
+   類型: Python
+   原因: 空檔案或只有 pass
+   總行數: 2
+   程式碼行數: 0
+
+📁 services\integration\aiva_integration\__init__.py
+   類型: Python
+   原因: 空檔案或只有 pass
+   總行數: 1
+   程式碼行數: 0
+
+📁 services\integration\aiva_integration\analysis\__init__.py
+   類型: Python
+   原因: 空檔案或只有 pass
+   總行數: 1
+   程式碼行數: 0
+
+📁 services\integration\aiva_integration\config_template\__init__.py
+   類型: Python
+   原因: 空檔案或只有 pass
+   總行數: 1
+   程式碼行數: 0
+
+📁 services\integration\aiva_integration\middlewares\__init__.py
+   類型: Python
+   原因: 少於10行且無函數/類別
+   總行數: 2
+   程式碼行數: 1
+
+📁 services\integration\aiva_integration\observability\__init__.py
+   類型: Python
+   原因: 少於10行且無函數/類別
+   總行數: 2
+   程式碼行數: 1
+
+📁 services\integration\aiva_integration\perf_feedback\__init__.py
+   類型: Python
+   原因: 空檔案或只有 pass
+   總行數: 1
+   程式碼行數: 0
+
+📁 services\integration\aiva_integration\reception\__init__.py
+   類型: Python
+   原因: 空檔案或只有 pass
+   總行數: 1
+   程式碼行數: 0
+
+📁 services\integration\aiva_integration\reporting\__init__.py
+   類型: Python
+   原因: 空檔案或只有 pass
+   總行數: 1
+   程式碼行數: 0
+
+📁 services\integration\aiva_integration\security\__init__.py
+   類型: Python
+   原因: 少於10行且無函數/類別
+   總行數: 2
+   程式碼行數: 1
+
+📁 services\integration\aiva_integration\threat_intel\__init__.py
+   類型: Python
+   原因: 少於10行且無函數/類別
+   總行數: 13
+   程式碼行數: 9
+
+📁 services\scan\aiva_scan\__init__.py
+   類型: Python
+   原因: 空檔案或只有 pass
+   總行數: 1
+   程式碼行數: 0
+
+📁 services\scan\aiva_scan\core_crawling_engine\__init__.py
+   類型: Python
+   原因: 空檔案或只有 pass
+   總行數: 1
+   程式碼行數: 0
+
+📁 services\scan\aiva_scan\info_gatherer\__init__.py
+   類型: Python
+   原因: 空檔案或只有 pass
+   總行數: 1
+   程式碼行數: 0
+
+📁 tools\aiva-contracts-tooling\aiva-contracts-tooling\src\aiva_contracts_tooling\__init__.py
+   類型: Python
+   原因: 少於10行且無函數/類別
+   總行數: 2
+   程式碼行數: 1
+
+📁 tools\aiva-enums-plugin\aiva-enums-plugin\src\aiva_enums_plugin\__init__.py
+   類型: Python
+   原因: 少於10行且無函數/類別
+   總行數: 16
+   程式碼行數: 8
+
+====================================================================================================
+## 🔶 僅有基本架構的腳本 (需要補充)
+====================================================================================================
+
+📁 ai_system_connectivity_check.py
+   類型: Python
+   原因: 無函數或類別定義
+   程式碼行數: 226
+
+📁 aiva_ai_testing_range.py
+   類型: Python
+   原因: 無函數或類別定義
+   程式碼行數: 278
+
+📁 aiva_orchestrator_test.py
+   類型: Python
+   原因: 無函數或類別定義
+   程式碼行數: 220
+
+📁 examples\demo_bio_neuron_master.py
+   類型: Python
+   原因: 無函數或類別定義
+   程式碼行數: 127
+
+📁 examples\demo_module_import_fix.py
+   類型: Python
+   原因: 無函數或類別定義
+   程式碼行數: 81
+
+📁 examples\demo_storage.py
+   類型: Python
+   原因: 無函數或類別定義
+   程式碼行數: 246
+
+📁 examples\init_storage.py
+   類型: Python
+   原因: 無函數或類別定義
+   程式碼行數: 46
+
+📁 scripts\deployment\stop_all.ps1
+   類型: PowerShell
+   原因: 程式碼少於30行
+   程式碼行數: 29
+
+📁 services\aiva_common\__init__.py
+   類型: Python
+   原因: 無函數或類別定義
+   程式碼行數: 185
+
+📁 services\aiva_common\config\__init__.py
+   類型: Python
+   原因: 無函數或類別定義
+   程式碼行數: 31
+
+📁 services\aiva_common\enums\__init__.py
+   類型: Python
+   原因: 無函數或類別定義
+   程式碼行數: 98
+
+📁 services\aiva_common\schemas\__init__.py
+   類型: Python
+   原因: 無函數或類別定義
+   程式碼行數: 332
+
+📁 services\aiva_common\utils\ids.py
+   類型: Python
+   原因: 程式碼少於30行
+   程式碼行數: 5
+
+📁 services\aiva_common\utils\logging.py
+   類型: Python
+   原因: 程式碼少於30行
+   程式碼行數: 16
+
+📁 services\aiva_common\utils\network\__init__.py
+   類型: Python
+   原因: 無函數或類別定義
+   程式碼行數: 14
+
+📁 services\attack\__init__.py
+   類型: Python
+   原因: 無函數或類別定義
+   程式碼行數: 20
+
+📁 services\attack\aiva_attack\__init__.py
+   類型: Python
+   原因: 無函數或類別定義
+   程式碼行數: 25
+
+📁 services\core\__init__.py
+   類型: Python
+   原因: 無函數或類別定義
+   程式碼行數: 91
+
+📁 services\core\aiva_core\__init__.py
+   類型: Python
+   原因: 無函數或類別定義
+   程式碼行數: 180
+
+📁 services\core\aiva_core\ai_engine\__init__.py
+   類型: Python
+   原因: 無函數或類別定義
+   程式碼行數: 49
+
+📁 services\core\aiva_core\ai_engine\training\__init__.py
+   類型: Python
+   原因: 無函數或類別定義
+   程式碼行數: 15
+
+📁 services\core\aiva_core\authz\__init__.py
+   類型: Python
+   原因: 無函數或類別定義
+   程式碼行數: 13
+
+📁 services\core\aiva_core\bizlogic\__init__.py
+   類型: Python
+   原因: 無函數或類別定義
+   程式碼行數: 17
+
+📁 services\core\aiva_core\bizlogic\worker.py
+   類型: Python
+   原因: 無函數或類別定義
+   程式碼行數: 104
+
+📁 services\core\aiva_core\execution_tracer\__init__.py
+   類型: Python
+   原因: 無函數或類別定義
+   程式碼行數: 16
+
+📁 services\core\aiva_core\output\to_functions.py
+   類型: Python
+   原因: 程式碼少於30行
+   程式碼行數: 21
+
+📁 services\core\aiva_core\performance\__init__.py
+   類型: Python
+   原因: 無函數或類別定義
+   程式碼行數: 16
+
+📁 services\core\aiva_core\planner\__init__.py
+   類型: Python
+   原因: 無函數或類別定義
+   程式碼行數: 19
+
+📁 services\core\aiva_core\storage\__init__.py
+   類型: Python
+   原因: 無函數或類別定義
+   程式碼行數: 34
+
+📁 services\core\aiva_core\training\__init__.py
+   類型: Python
+   原因: 無函數或類別定義
+   程式碼行數: 13
+
+📁 services\core\aiva_core\ui_panel\__init__.py
+   類型: Python
+   原因: 無函數或類別定義
+   程式碼行數: 12
+
+📁 services\features\__init__.py
+   類型: Python
+   原因: 無函數或類別定義
+   程式碼行數: 170
+
+📁 services\features\base\__init__.py
+   類型: Python
+   原因: 無函數或類別定義
+   程式碼行數: 12
+
+📁 services\features\common\__init__.py
+   類型: Python
+   原因: 無函數或類別定義
+   程式碼行數: 24
+
+📁 services\features\function_postex\__init__.py
+   類型: Python
+   原因: 無函數或類別定義
+   程式碼行數: 28
+
+📁 services\features\function_sqli\engines\__init__.py
+   類型: Python
+   原因: 無函數或類別定義
+   程式碼行數: 15
+
+📁 services\features\function_sqli\task_queue.py
+   類型: Python
+   原因: 程式碼少於30行
+   程式碼行數: 26
+
+📁 services\integration\__init__.py
+   類型: Python
+   原因: 無函數或類別定義
+   程式碼行數: 36
+
+📁 services\integration\aiva_integration\app.py
+   類型: Python
+   原因: 無函數或類別定義
+   程式碼行數: 61
+
+📁 services\integration\aiva_integration\attack_path_analyzer\__init__.py
+   類型: Python
+   原因: 無函數或類別定義
+   程式碼行數: 16
+
+📁 services\integration\aiva_integration\perf_feedback\improvement_suggestion_generator.py
+   類型: Python
+   原因: 程式碼少於30行
+   程式碼行數: 20
+
+📁 services\integration\aiva_integration\perf_feedback\scan_metadata_analyzer.py
+   類型: Python
+   原因: 程式碼少於30行
+   程式碼行數: 24
+
+📁 services\integration\aiva_integration\reception\data_reception_layer.py
+   類型: Python
+   原因: 程式碼少於30行
+   程式碼行數: 9
+
+📁 services\integration\aiva_integration\remediation\__init__.py
+   類型: Python
+   原因: 無函數或類別定義
+   程式碼行數: 15
+
+📁 services\integration\aiva_integration\reporting\report_template_selector.py
+   類型: Python
+   原因: 程式碼少於30行
+   程式碼行數: 18
+
+📁 services\integration\aiva_integration\threat_intel\threat_intel\__init__.py
+   類型: Python
+   原因: 無函數或類別定義
+   程式碼行數: 13
+
+📁 services\scan\__init__.py
+   類型: Python
+   原因: 無函數或類別定義
+   程式碼行數: 68
+
+📁 services\scan\aiva_scan\authentication_manager.py
+   類型: Python
+   原因: 程式碼少於30行
+   程式碼行數: 6
+
+📁 services\scan\aiva_scan\dynamic_engine\__init__.py
+   類型: Python
+   原因: 無函數或類別定義
+   程式碼行數: 51
+
+📁 services\scan\aiva_scan\examples\example_browser_pool.py
+   類型: Python
+   原因: 無函數或類別定義
+   程式碼行數: 177
+
+📁 services\scan\aiva_scan\examples\example_extractor.py
+   類型: Python
+   原因: 無函數或類別定義
+   程式碼行數: 160
+
+📁 services\scan\aiva_scan\examples\example_usage.py
+   類型: Python
+   原因: 無函數或類別定義
+   程式碼行數: 101
+
+📁 services\scan\aiva_scan\info_gatherer\passive_fingerprinter.py
+   類型: Python
+   原因: 程式碼少於30行
+   程式碼行數: 23
+
+📁 services\scan\aiva_scan\worker.py
+   類型: Python
+   原因: 無函數或類別定義
+   程式碼行數: 72
+
+📁 tests\ai_working_check.py
+   類型: Python
+   原因: 無函數或類別定義
+   程式碼行數: 147
+
+📁 tests\improvements_check.py
+   類型: Python
+   原因: 無函數或類別定義
+   程式碼行數: 133
+
+📁 tests\test_ai_integration.py
+   類型: Python
+   原因: 無函數或類別定義
+   程式碼行數: 251
+
+📁 tools\aiva-schemas-plugin\aiva-schemas-plugin\src\aiva_schemas_plugin\__init__.py
+   類型: Python
+   原因: 程式碼少於30行
+   程式碼行數: 25
+
+📁 tools\aiva-schemas-plugin\aiva-schemas-plugin\tests\test_import.py
+   類型: Python
+   原因: 程式碼少於30行
+   程式碼行數: 5
+
+📁 tools\analyze_aiva_common_status.py
+   類型: Python
+   原因: 無函數或類別定義
+   程式碼行數: 274
+
+📁 tools\analyze_enums.py
+   類型: Python
+   原因: 無函數或類別定義
+   程式碼行數: 98
+
+📁 tools\analyze_missing_schemas.py
+   類型: Python
+   原因: 無函數或類別定義
+   程式碼行數: 91
+
+📁 tools\delete_migrated_files.py
+   類型: Python
+   原因: 無函數或類別定義
+   程式碼行數: 59
+
+📁 tools\extract_enhanced.py
+   類型: Python
+   原因: 無函數或類別定義
+   程式碼行數: 59
+
+📁 tools\find_non_cp950_filtered.py
+   類型: Python
+   原因: 無函數或類別定義
+   程式碼行數: 54
+
+📁 tools\markdown_check.py
+   類型: Python
+   原因: 無函數或類別定義
+   程式碼行數: 38
+
+📁 tools\replace_emoji.py
+   類型: Python
+   原因: 無函數或類別定義
+   程式碼行數: 56
+
+📁 tools\replace_non_cp950.py
+   類型: Python
+   原因: 無函數或類別定義
+   程式碼行數: 42
+
+📁 tools\test_schemas_complete.py
+   類型: Python
+   原因: 無函數或類別定義
+   程式碼行數: 106
+
+📁 tools\test_schemas_import.py
+   類型: Python
+   原因: 無函數或類別定義
+   程式碼行數: 18
+
+📁 tools\verify_migration_completeness.py
+   類型: Python
+   原因: 無函數或類別定義
+   程式碼行數: 197
+
+====================================================================================================
+## ⚠️  部分功能的腳本 (可以改進)
+====================================================================================================
+
+📁 scripts\deployment\start_ui_auto.ps1
+   類型: PowerShell
+   程式碼行數: 38
+
+📁 scripts\deployment\stop_all_multilang.ps1
+   類型: PowerShell
+   程式碼行數: 35
+
+📁 scripts\maintenance\check_status.ps1
+   類型: PowerShell
+   程式碼行數: 79
+
+📁 scripts\maintenance\health_check_multilang.ps1
+   類型: PowerShell
+   程式碼行數: 89
+
+📁 services\__init__.py
+   類型: Python
+   程式碼行數: 35
+
+📁 services\aiva_common\config\unified_config.py
+   類型: Python
+   程式碼行數: 86
+
+📁 services\aiva_common\enums\assets.py
+   類型: Python
+   程式碼行數: 55
+
+📁 services\aiva_common\enums\common.py
+   類型: Python
+   程式碼行數: 84
+
+📁 services\aiva_common\schemas\base.py
+   類型: Python
+   程式碼行數: 78
+
+📁 services\aiva_common\schemas\messaging.py
+   類型: Python
+   程式碼行數: 56
+
+📁 services\aiva_common\schemas\references.py
+   類型: Python
+   程式碼行數: 97
+
+📁 services\aiva_common\schemas\risk.py
+   類型: Python
+   程式碼行數: 90
+
+📁 services\core\aiva_core\bizlogic\finding_helper.py
+   類型: Python
+   程式碼行數: 61
+
+📁 services\core\aiva_core\execution\task_generator.py
+   類型: Python
+   程式碼行數: 66
+
+📁 services\core\aiva_core\multilang_coordinator.py
+   類型: Python
+   程式碼行數: 88
+
+📁 services\core\aiva_core\performance\monitoring.py
+   類型: Python
+   程式碼行數: 95
+
+📁 services\core\aiva_core\performance\parallel_processor.py
+   類型: Python
+   程式碼行數: 58
+
+📁 services\core\aiva_core\state\session_state_manager.py
+   類型: Python
+   程式碼行數: 94
+
+📁 services\core\aiva_core\storage\config.py
+   類型: Python
+   程式碼行數: 86
+
+📁 services\features\base\feature_base.py
+   類型: Python
+   程式碼行數: 52
+
+📁 services\features\base\feature_registry.py
+   類型: Python
+   程式碼行數: 56
+
+📁 services\features\function_sqli\detection_models.py
+   類型: Python
+   程式碼行數: 37
+
+📁 services\features\function_sqli\exceptions.py
+   類型: Python
+   程式碼行數: 64
+
+📁 services\features\function_sqli\payload_wrapper_encoder.py
+   類型: Python
+   程式碼行數: 90
+
+📁 services\features\function_sqli\result_binder_publisher.py
+   類型: Python
+   程式碼行數: 62
+
+📁 services\features\function_sqli\telemetry.py
+   類型: Python
+   程式碼行數: 42
+
+📁 services\features\function_ssrf\result_publisher.py
+   類型: Python
+   程式碼行數: 88
+
+📁 services\features\function_xss\dom_xss_detector.py
+   類型: Python
+   程式碼行數: 35
+
+📁 services\features\function_xss\payload_generator.py
+   類型: Python
+   程式碼行數: 43
+
+📁 services\features\function_xss\result_publisher.py
+   類型: Python
+   程式碼行數: 88
+
+📁 services\features\migrate_all_go_services.ps1
+   類型: PowerShell
+   程式碼行數: 81
+
+📁 services\features\verify_go_builds.ps1
+   類型: PowerShell
+   程式碼行數: 61
+
+📁 services\integration\aiva_integration\config_template\config_template_manager.py
+   類型: Python
+   程式碼行數: 37
+
+📁 services\integration\aiva_integration\middlewares\rate_limiter.py
+   類型: Python
+   程式碼行數: 87
+
+📁 services\integration\aiva_integration\reception\test_result_database.py
+   類型: Python
+   程式碼行數: 40
+
+📁 services\integration\aiva_integration\security\auth.py
+   類型: Python
+   程式碼行數: 41
+
+📁 services\integration\aiva_integration\settings.py
+   類型: Python
+   程式碼行數: 60
+
+📁 services\integration\alembic\env.py
+   類型: Python
+   程式碼行數: 60
+
+📁 services\integration\api_gateway\api_gateway\app.py
+   類型: Python
+   程式碼行數: 95
+
+📁 services\scan\aiva_scan\core_crawling_engine\static_content_parser.py
+   類型: Python
+   程式碼行數: 57
+
+📁 services\scan\aiva_scan\fingerprint_manager.py
+   類型: Python
+   程式碼行數: 39
+
+📁 tools\compare_schemas.py
+   類型: Python
+   程式碼行數: 99
+
+📁 tools\diagnose_missing_enums.py
+   類型: Python
+   程式碼行數: 94

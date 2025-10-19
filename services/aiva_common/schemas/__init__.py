@@ -131,6 +131,7 @@ from .messaging import (
 
 # ==================== 參考資料 ====================
 from .references import (
+    CAPECReference,
     CVEReference,
     CWEReference,
     VulnerabilityDiscovery,
@@ -352,6 +353,7 @@ __all__ = [
     "SystemOrchestration",
     "WebhookPayload",
     # 參考資料
+    "CAPECReference",
     "CVEReference",
     "CWEReference",
     "VulnerabilityDiscovery",

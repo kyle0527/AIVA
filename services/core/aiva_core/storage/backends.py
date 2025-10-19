@@ -27,6 +27,15 @@ from .models import (
     TrainingSessionModel,
 )
 
+# 匯入資料結構
+from services.core.ai_models import (
+    ExperienceSample,
+    TraceRecord,
+    AttackPlan,
+    PlanExecutionMetrics,
+    PlanExecutionResult,
+)
+
 
 class StorageBackend(ABC):
     """存儲後端抽象基類"""
