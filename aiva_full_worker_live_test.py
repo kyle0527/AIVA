@@ -46,12 +46,12 @@ async def test_ssrf_worker():
     start_time = time.time()
     
     try:
-        from aiva_common.schemas import Task, Target, ScanStrategy
-        from aiva_common.enums import TaskType, TaskStatus
+        from services.aiva_common.schemas import Task, Target, ScanStrategy
+        from services.aiva_common.enums import TaskType, TaskStatus
         
         # 導入 SSRF Worker
         sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'services', 'features', 'function_ssrf'))
-        from worker import SsrfWorkerService
+        from services.features.function_ssrf.worker import SsrfWorkerService
         
         print("✅ SSRF Worker 模組導入成功")
         
@@ -131,12 +131,12 @@ async def test_sqli_worker():
     start_time = time.time()
     
     try:
-        from aiva_common.schemas import Task, Target, ScanStrategy
-        from aiva_common.enums import TaskType
+        from services.aiva_common.schemas import Task, Target, ScanStrategy
+        from services.aiva_common.enums import TaskType
         
         # 導入 SQLi Worker
         sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'services', 'features', 'function_sqli'))
-        from worker import SqliWorkerService
+        from services.features.function_sqli.worker import SqliWorkerService
         
         print("✅ SQLi Worker 模組導入成功")
         
@@ -217,12 +217,12 @@ async def test_xss_worker():
     start_time = time.time()
     
     try:
-        from aiva_common.schemas import Task, Target, ScanStrategy
-        from aiva_common.enums import TaskType
+        from services.aiva_common.schemas import Task, Target, ScanStrategy
+        from services.aiva_common.enums import TaskType
         
         # 導入 XSS Worker
         sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'services', 'features', 'function_xss'))
-        from worker import XssWorkerService
+        from services.features.function_xss.worker import XssWorkerService
         
         print("✅ XSS Worker 模組導入成功")
         
@@ -303,12 +303,12 @@ async def test_idor_worker():
     start_time = time.time()
     
     try:
-        from aiva_common.schemas import Task, Target, ScanStrategy
-        from aiva_common.enums import TaskType
+        from services.aiva_common.schemas import Task, Target, ScanStrategy
+        from services.aiva_common.enums import TaskType
         
         # 導入 IDOR Worker
         sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'services', 'features', 'function_idor'))
-        from worker import IdorWorkerService
+        from services.features.function_idor.worker import IdorWorkerService
         
         print("✅ IDOR Worker 模組導入成功")
         
@@ -389,12 +389,12 @@ async def test_graphql_authz_worker():
     start_time = time.time()
     
     try:
-        from aiva_common.schemas import Task, Target, ScanStrategy
-        from aiva_common.enums import TaskType
+        from services.aiva_common.schemas import Task, Target, ScanStrategy
+        from services.aiva_common.enums import TaskType
         
         # 導入 GraphQL Worker
         sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'services', 'features', 'graphql_authz'))
-        from worker import GraphqlAuthzWorkerService
+        from services.features.graphql_authz.worker import GraphqlAuthzWorkerService
         
         print("✅ GraphQL AuthZ Worker 模組導入成功")
         
@@ -457,7 +457,7 @@ async def test_ai_core_system():
     print_section("AI 核心系統實戰測試")
     
     try:
-        from aiva_core.ai_engine import AIModelManager, PerformanceConfig
+        from services.core.aiva_core.ai_engine import AIModelManager, PerformanceConfig
         
         # 初始化
         config = PerformanceConfig(
@@ -612,3 +612,4 @@ async def main():
 
 if __name__ == "__main__":
     asyncio.run(main())
+

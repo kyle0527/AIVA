@@ -146,7 +146,7 @@ class AIVASystemConnectivityChecker:
         # 2.1 檢查 AI 引擎核心
         print("2.1 檢查 AI 引擎核心...")
         try:
-            from aiva_core.ai_engine import (
+            from services.core.aiva_core.ai_engine import (
                 BioNeuronRAGAgent, ScalableBioNet, 
                 AIModelManager, OptimizedScalableBioNet
             )
@@ -159,7 +159,7 @@ class AIVASystemConnectivityChecker:
         # 2.2 檢查統一訓練系統
         print("2.2 檢查統一訓練系統...")
         try:
-            from aiva_core.learning import (
+            from services.core.aiva_core.learning import (
                 ModelTrainer, ScalableBioTrainer, 
                 ScalableBioTrainingConfig, ExperienceManager
             )
@@ -172,7 +172,7 @@ class AIVASystemConnectivityChecker:
         # 2.3 檢查性能優化組件
         print("2.3 檢查性能優化組件...")
         try:
-            from aiva_core.ai_engine import (
+            from services.core.aiva_core.ai_engine import (
                 PerformanceConfig, MemoryManager, ComponentPool
             )
             print("✅ 性能優化組件載入成功")
@@ -187,7 +187,7 @@ class AIVASystemConnectivityChecker:
             # 初始化 AI 管理器
             manager_imported = False
             try:
-                from aiva_core.ai_engine import AIModelManager
+                from services.core.aiva_core.ai_engine import AIModelManager
                 manager = AIModelManager(model_dir=Path("./test_models"))
                 manager_imported = True
             except Exception as e:
@@ -222,7 +222,7 @@ class AIVASystemConnectivityChecker:
         # 3.1 檢查工具類別導入
         print("3.1 檢查工具類別導入...")
         try:
-            from aiva_core.ai_engine import (
+            from services.core.aiva_core.ai_engine import (
                 Tool, CodeReader, CodeWriter, CodeAnalyzer,
                 CommandExecutor, ScanTrigger, VulnerabilityDetector
             )
@@ -367,7 +367,7 @@ class AIVASystemConnectivityChecker:
             
             # 1. 模擬 AI 決策
             try:
-                from aiva_core.ai_engine import AIModelManager
+                from services.core.aiva_core.ai_engine import AIModelManager
                 manager = AIModelManager()
                 await manager.initialize_models(input_size=16, num_tools=3)
                 
