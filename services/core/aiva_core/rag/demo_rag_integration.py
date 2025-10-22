@@ -10,7 +10,7 @@ import asyncio
 import logging
 
 
-from aiva_core.rag import KnowledgeBase, RAGEngine, VectorStore
+from services.core.aiva_core.rag import KnowledgeBase, RAGEngine, VectorStore
 from services.aiva_common.schemas import AttackPlan, AttackTarget
 
 logger = logging.getLogger(__name__)

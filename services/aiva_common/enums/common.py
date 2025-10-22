@@ -30,6 +30,31 @@ class TaskStatus(str, Enum):
     COMPLETED = "completed"
     FAILED = "failed"
     CANCELLED = "cancelled"
+
+
+class TaskType(str, Enum):
+    """任務類型枚舉 - 定義不同的功能掃描類型"""
+    
+    FUNCTION_SSRF = "function_ssrf"
+    FUNCTION_SQLI = "function_sqli"
+    FUNCTION_XSS = "function_xss"
+    FUNCTION_IDOR = "function_idor"
+    FUNCTION_GRAPHQL_AUTHZ = "function_graphql_authz"
+    FUNCTION_API_TESTING = "function_api_testing"
+    FUNCTION_BUSINESS_LOGIC = "function_business_logic"
+    FUNCTION_POST_EXPLOITATION = "function_post_exploitation"
+    FUNCTION_EASM_DISCOVERY = "function_easm_discovery"
+    FUNCTION_THREAT_INTEL = "function_threat_intel"
+
+
+class ScanStrategy(str, Enum):
+    """掃描策略枚舉 - 定義掃描的深度和方法"""
+    
+    FAST = "fast"
+    NORMAL = "normal"
+    DEEP = "deep"
+    COMPREHENSIVE = "comprehensive"
+    CANCELLED = "cancelled"
     TIMEOUT = "timeout"
 
 

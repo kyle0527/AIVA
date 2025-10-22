@@ -10,8 +10,8 @@ from __future__ import annotations
 from datetime import UTC, datetime
 from typing import Any
 
-from aiva_common.enums import ModuleName, Severity, TestStatus
-from aiva_common.standards import CVSSv3Metrics
+from services.aiva_common.enums import ModuleName, Severity, TestStatus
+from services.aiva_common.schemas.ai import CVSSv3Metrics
 from pydantic import BaseModel, Field, field_validator
 
 # ==================== 風險評估 ====================

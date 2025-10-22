@@ -1,9 +1,8 @@
 # -*- coding: utf-8 -*-
-from typing import Dict, Any, List, Optional, Tuple
+from typing import Dict, Any, List
 import json
 from urllib.parse import urljoin
 from datetime import datetime
-import concurrent.futures
 from ..base.feature_base import FeatureBase
 from ..base.feature_registry import FeatureRegistry
 from ..base.result_schema import FeatureResult, Finding
@@ -697,3 +696,48 @@ class GraphQLAuthzWorker(FeatureBase):
                 "version": "2.5.0"  # v2.5
             }
         )
+
+
+class GraphqlAuthzWorkerService:
+    """GraphQL AuthZ Worker 服務類 - 提供統一的任務處理接口"""
+    
+    def __init__(self):
+        self.worker = GraphQLAuthzWorker()
+        
+    async def process_task(self, task) -> dict:
+        """處理 GraphQL AuthZ 檢測任務"""
+        if hasattr(task, 'target') and task.target:
+            # 構建參數字典
+            params = {
+                'target': str(task.target.url),
+                'endpoint': str(task.target.url),
+                'headers': task.target.headers or {},
+                'test_queries': [
+                    "query { users { id email } }",
+                    "query { adminUsers { id email password } }",
+                    "mutation { deleteUser(id: 1) { success } }"
+                ],
+                'headers_admin': {},
+                'options': {
+                    'timeout': 10,
+                    'max_queries': 50
+                }
+            }
+        else:
+            raise ValueError("Task must have a valid target")
+            
+        # 執行檢測
+        result = self.worker.run(params)
+        
+        # 轉換結果格式
+        return {
+            'findings': [f.__dict__ for f in result.findings],
+            'statistics_summary': {
+                'total_findings': len(result.findings),
+                'queries_tested': result.meta.get('queries_tested', 0),
+                'has_admin_comparison': result.meta.get('has_admin_comparison', False),
+                'total_duration_ms': result.meta.get('total_duration_ms', 0)
+            },
+            'ok': result.ok,
+            'meta': result.meta
+        }

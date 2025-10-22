@@ -25,8 +25,8 @@ async def check_ai_to_system_connectivity():
     # 1. 檢查 AI 核心組件載入
     print("\n1️⃣ 檢查 AI 核心組件載入...")
     try:
-        from aiva_core.ai_engine import AIModelManager, BioNeuronRAGAgent, ScalableBioNet
-        from aiva_core.ai_engine import OptimizedScalableBioNet, PerformanceConfig
+        from services.core.aiva_core.ai_engine import AIModelManager, BioNeuronRAGAgent, ScalableBioNet
+        from services.core.aiva_core.ai_engine import OptimizedScalableBioNet, PerformanceConfig
         print("✅ AI 核心組件載入成功")
         results['ai_core_loading'] = True
     except Exception as e:
@@ -37,7 +37,7 @@ async def check_ai_to_system_connectivity():
     # 2. 檢查 AI 工具系統連接
     print("\n2️⃣ 檢查 AI 工具系統連接...")
     try:
-        from aiva_core.ai_engine import (
+        from services.core.aiva_core.ai_engine import (
             Tool, CodeReader, CodeWriter, CodeAnalyzer, 
             CommandExecutor, ScanTrigger, VulnerabilityDetector
         )
@@ -81,25 +81,40 @@ async def check_ai_to_system_connectivity():
     # 4. 檢查工具 → 系統命令執行
     print("\n4️⃣ 檢查工具 → 系統命令執行...")
     try:
+        # 導入必要的工具
+        from services.core.aiva_core.ai_engine import CommandExecutor
+        
         # 測試 CommandExecutor
-        cmd_executor = CommandExecutor()
+        cmd_executor = CommandExecutor(codebase_path=".")
         
         # 測試簡單的系統命令
         test_commands = [
-            "echo 'AI system test'",
-            "dir" if os.name == 'nt' else "ls",
-            "python --version"
+            ("echo AI system test", True),  # (命令, 需要shell)
+            ("dir" if os.name == 'nt' else "ls", True),
+            ("python --version", False)
         ]
         
         successful_commands = 0
-        for cmd in test_commands:
+        for cmd_info in test_commands:
+            cmd, use_shell = cmd_info
             try:
-                result = subprocess.run(
-                    cmd.split(), 
-                    capture_output=True, 
-                    text=True, 
-                    timeout=10
-                )
+                if use_shell:
+                    # Windows 內建命令需要 shell=True
+                    result = subprocess.run(
+                        cmd, 
+                        shell=True,
+                        capture_output=True, 
+                        text=True, 
+                        timeout=10
+                    )
+                else:
+                    # 外部程式可以直接執行
+                    result = subprocess.run(
+                        cmd.split(), 
+                        capture_output=True, 
+                        text=True, 
+                        timeout=10
+                    )
                 if result.returncode == 0:
                     successful_commands += 1
                     print(f"  ✅ 命令成功: {cmd}")
@@ -122,9 +137,12 @@ async def check_ai_to_system_connectivity():
     # 5. 檢查文件系統訪問
     print("\n5️⃣ 檢查文件系統訪問...")
     try:
+        # 導入必要的工具
+        from services.core.aiva_core.ai_engine import CodeReader, CodeWriter
+        
         # 測試 CodeReader 和 CodeWriter
-        code_reader = CodeReader()
-        code_writer = CodeWriter()
+        code_reader = CodeReader(codebase_path=".")
+        code_writer = CodeWriter(codebase_path=".")
         
         # 創建測試文件
         test_file = Path("./test_ai_system_connectivity.tmp")
@@ -184,7 +202,7 @@ async def check_ai_to_system_connectivity():
     # 7. 檢查 AI 訓練系統與存儲的連接
     print("\n7️⃣ 檢查 AI 訓練系統與存儲連接...")
     try:
-        from aiva_core.learning import ModelTrainer, ScalableBioTrainer, ScalableBioTrainingConfig
+        from services.core.aiva_core.learning import ModelTrainer, ScalableBioTrainer, ScalableBioTrainingConfig
         
         # 測試模型創建和基本操作
         import numpy as np
@@ -226,6 +244,10 @@ async def check_command_execution_chain():
     print("=" * 60)
     
     try:
+        # 導入必要的組件
+        from services.core.aiva_core.ai_engine import AIModelManager, CommandExecutor
+        import subprocess
+        
         # 1. AI 決策
         print("1️⃣ AI 決策層...")
         manager = AIModelManager()
@@ -233,7 +255,6 @@ async def check_command_execution_chain():
         
         # 2. 工具選擇
         print("2️⃣ 工具選擇層...")
-        from aiva_core.ai_engine import CommandExecutor
         
         # 3. 命令構造
         print("3️⃣ 命令構造層...")

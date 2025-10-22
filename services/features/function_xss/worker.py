@@ -25,7 +25,6 @@ from services.aiva_common.utils import get_logger, new_id
 from services.features.common.worker_statistics import (
     StatisticsCollector,
     ErrorCategory,
-    StoppingReason,
 )
 
 from .blind_xss_listener_validator import BlindXssEvent, BlindXssListenerValidator
@@ -532,3 +531,37 @@ def _inject_query(url: str, parameter: str | None, value: str) -> str:
     query_pairs[parameter] = value
     parts[4] = urlencode(query_pairs, doseq=True)
     return urlunparse(parts)
+
+
+class XssWorkerService:
+    """XSS Worker 服務類 - 提供統一的任務處理接口"""
+    
+    def __init__(self):
+        self.payload_generator = None
+        self.detector = None
+        
+    async def process_task(self, task) -> dict:
+        """處理 XSS 檢測任務"""
+        # 將 Task 對象轉換為 FunctionTaskPayload
+        if hasattr(task, 'target') and task.target:
+            # 構建 FunctionTaskPayload
+            payload = FunctionTaskPayload(
+                header=MessageHeader(
+                    message_id=task.task_id,
+                    trace_id=task.task_id,
+                    source_module="function_xss"
+                ),
+                scan_id=getattr(task, 'scan_id', 'default'),
+                target=task.target,
+                strategy=getattr(task, 'strategy', 'normal'),
+                priority=getattr(task, 'priority', 5)
+            )
+        else:
+            raise ValueError("Task must have a valid target")
+            
+        # 使用現有的 process_task 函數
+        return await process_task(
+            payload,
+            payload_generator=self.payload_generator,
+            detector=self.detector
+        )

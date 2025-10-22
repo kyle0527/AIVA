@@ -46,8 +46,8 @@ async def test_ssrf_worker():
     start_time = time.time()
     
     try:
-        from services.aiva_common.schemas import Task, Target, ScanStrategy
-        from services.aiva_common.enums import TaskType, TaskStatus
+        from services.aiva_common.schemas import Task, Target
+        from services.aiva_common.enums import TaskType, TaskStatus, ScanStrategy
         
         # 導入 SSRF Worker
         sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'services', 'features', 'function_ssrf'))
@@ -131,8 +131,8 @@ async def test_sqli_worker():
     start_time = time.time()
     
     try:
-        from services.aiva_common.schemas import Task, Target, ScanStrategy
-        from services.aiva_common.enums import TaskType
+        from services.aiva_common.schemas import Task, Target
+        from services.aiva_common.enums import TaskType, ScanStrategy
         
         # 導入 SQLi Worker
         sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'services', 'features', 'function_sqli'))
@@ -163,7 +163,7 @@ async def test_sqli_worker():
         # 執行測試
         print("\n🔍 開始 SQL 注入檢測 (5 引擎)...")
         print("   引擎: Error-based, Boolean-based, Time-based, Union-based, OOB")
-        result = await worker.process_task(task)
+        result = await worker.process_task_dict(task)
         
         elapsed = time.time() - start_time
         
@@ -217,8 +217,8 @@ async def test_xss_worker():
     start_time = time.time()
     
     try:
-        from services.aiva_common.schemas import Task, Target, ScanStrategy
-        from services.aiva_common.enums import TaskType
+        from services.aiva_common.schemas import Task, Target
+        from services.aiva_common.enums import TaskType, ScanStrategy
         
         # 導入 XSS Worker
         sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'services', 'features', 'function_xss'))
@@ -303,8 +303,8 @@ async def test_idor_worker():
     start_time = time.time()
     
     try:
-        from services.aiva_common.schemas import Task, Target, ScanStrategy
-        from services.aiva_common.enums import TaskType
+        from services.aiva_common.schemas import Task, Target
+        from services.aiva_common.enums import TaskType, ScanStrategy
         
         # 導入 IDOR Worker
         sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'services', 'features', 'function_idor'))
@@ -389,8 +389,8 @@ async def test_graphql_authz_worker():
     start_time = time.time()
     
     try:
-        from services.aiva_common.schemas import Task, Target, ScanStrategy
-        from services.aiva_common.enums import TaskType
+        from services.aiva_common.schemas import Task, Target
+        from services.aiva_common.enums import TaskType, ScanStrategy
         
         # 導入 GraphQL Worker
         sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'services', 'features', 'graphql_authz'))

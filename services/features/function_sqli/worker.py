@@ -17,12 +17,12 @@ from services.aiva_common.schemas import (
     AivaMessage,
     FindingPayload,
     FunctionTaskPayload,
+    MessageHeader,
 )
 from services.aiva_common.utils import get_logger, new_id
 from services.features.common.worker_statistics import (
     StatisticsCollector,
     ErrorCategory,
-    StoppingReason,
 )
 
 from .detection_models import DetectionResult
@@ -349,6 +349,46 @@ class SqliWorkerService:
             stats_collector.finalize()
 
         return context
+
+    async def process_task_dict(self, task) -> dict:
+        """處理任務並返回字典格式結果（用於測試腳本兼容性）"""
+        # 將 Task 對象轉換為 FunctionTaskPayload
+        if hasattr(task, 'target') and task.target:
+            # 構建 FunctionTaskPayload
+            payload = FunctionTaskPayload(
+                header=MessageHeader(
+                    message_id=task.task_id,
+                    trace_id=task.task_id,
+                    source_module="function_sqli"
+                ),
+                scan_id=getattr(task, 'scan_id', 'default'),
+                target=task.target,
+                strategy=getattr(task, 'strategy', 'normal'),
+                priority=getattr(task, 'priority', 5)
+            )
+        else:
+            raise ValueError("Task must have a valid target")
+            
+        # 執行檢測
+        context = await self.process_task(payload)
+        
+        # 轉換為字典格式
+        findings = []
+        if hasattr(context, 'findings') and context.findings:
+            findings = [f.model_dump() if hasattr(f, 'model_dump') else f.__dict__ for f in context.findings]
+        
+        stats = {}
+        if hasattr(context, 'statistics_collector') and context.statistics_collector:
+            stats = context.statistics_collector.to_summary()
+            
+        return {
+            'findings': findings,
+            'statistics_summary': stats,
+            'context': {
+                'task_id': context.task.task_id if hasattr(context, 'task') else task.task_id,
+                'strategy': getattr(task, 'strategy', 'normal')
+            }
+        }
 
 
 # 為了向後兼容，保留原始接口

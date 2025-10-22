@@ -185,6 +185,7 @@ class AIVASystemConnectivityChecker:
         print("2.4 測試 AI 模型基本功能...")
         try:
             # 初始化 AI 管理器
+            manager = None
             manager_imported = False
             try:
                 from services.core.aiva_core.ai_engine import AIModelManager
@@ -193,7 +194,7 @@ class AIVASystemConnectivityChecker:
             except Exception as e:
                 print(f"  ⚠️  AIModelManager 導入問題: {e}")
             
-            if manager_imported:
+            if manager_imported and manager is not None:
                 # 測試模型初始化
                 init_result = await manager.initialize_models(input_size=32, num_tools=4)
                 if init_result.get('status') == 'success':
@@ -389,6 +390,7 @@ class AIVASystemConnectivityChecker:
             
             # 2. 系統命令執行
             try:
+                import subprocess
                 result = subprocess.run(
                     ["python", "-c", "print('AI-triggered system execution')"],
                     capture_output=True,

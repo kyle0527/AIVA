@@ -16,7 +16,7 @@ __version__ = "1.0.0"
 
 # 從 aiva_common 導入共享基礎設施
 try:
-    from aiva_common.enums import (
+    from services.aiva_common.enums import (
         ComplianceFramework,
         Confidence,
         ModuleName,
@@ -27,7 +27,7 @@ try:
         TaskStatus,
         Topic,
     )
-    from aiva_common.schemas import CVEReference, CVSSv3Metrics, CWEReference
+    from services.aiva_common.schemas import CVEReference, CVSSv3Metrics, CWEReference
 except ImportError:
     # 如果無法導入，使用相對導入作為後備
     from services.aiva_common.enums import (

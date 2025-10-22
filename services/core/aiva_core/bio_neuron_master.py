@@ -30,8 +30,8 @@ from enum import Enum
 import logging
 from typing import Any
 
-from aiva_core.ai_engine import BioNeuronRAGAgent
-from aiva_core.rag import RAGEngine
+from services.core.aiva_core.ai_engine import BioNeuronRAGAgent
+from services.core.aiva_core.rag import RAGEngine
 
 logger = logging.getLogger(__name__)
 
@@ -82,7 +82,7 @@ class BioNeuronMasterController:
         )
 
         # === RAG 增強（整合到主腦） ===
-        from aiva_core.rag import KnowledgeBase, VectorStore
+        from services.core.aiva_core.rag import KnowledgeBase, VectorStore
 
         vector_store = VectorStore(backend="memory")
         knowledge_base = KnowledgeBase(vector_store=vector_store)

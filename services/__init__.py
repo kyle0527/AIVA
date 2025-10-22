@@ -37,7 +37,7 @@ __author__ = "AIVA Development Team"
 
 # 匯出常用模組
 try:
-    import aiva_common
+    from . import aiva_common
     # 不使用 * 導入以避免屬性衝突
     __all__ = ['aiva_common']
 except ImportError:

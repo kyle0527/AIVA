@@ -24,7 +24,6 @@ from services.aiva_common.utils import get_logger, new_id
 from services.features.common.worker_statistics import (
     StatisticsCollector,
     ErrorCategory,
-    StoppingReason,
 )
 
 from .internal_address_detector import InternalAddressDetector
@@ -552,3 +551,37 @@ class OastDispatcherLike(Protocol):
     async def fetch_events(self, token: str) -> list[OastEvent]: ...
 
     async def close(self) -> None: ...
+
+
+class SsrfWorkerService:
+    """SSRF Worker 服務類 - 提供統一的任務處理接口"""
+    
+    def __init__(self):
+        self.oast_dispatcher = None
+        self.internal_detector = None
+        
+    async def process_task(self, task) -> dict:
+        """處理 SSRF 檢測任務"""
+        # 將 Task 對象轉換為 FunctionTaskPayload
+        if hasattr(task, 'target') and task.target:
+            # 構建 FunctionTaskPayload
+            payload = FunctionTaskPayload(
+                header=MessageHeader(
+                    message_id=task.task_id,
+                    trace_id=task.task_id,
+                    source_module="function_ssrf"
+                ),
+                scan_id=getattr(task, 'scan_id', 'default'),
+                target=task.target,
+                strategy=getattr(task, 'strategy', 'normal'),
+                priority=getattr(task, 'priority', 5)
+            )
+        else:
+            raise ValueError("Task must have a valid target")
+            
+        # 使用現有的 _execute_task 函數
+        return await _execute_task(
+            payload,
+            oast_dispatcher=self.oast_dispatcher,
+            internal_address_detector=self.internal_detector
+        )

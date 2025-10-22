@@ -445,3 +445,45 @@ class IdorWorker:
         # TODO: Implement proper multi-user testing
         # For now, test unauthenticated access
         return None
+
+
+class IdorWorkerService:
+    """IDOR Worker 服務類 - 提供統一的任務處理接口"""
+    
+    def __init__(self):
+        self.worker = IdorWorker()
+        
+    async def process_task(self, task) -> dict:
+        """處理 IDOR 檢測任務"""
+        # 將 Task 對象轉換為 FunctionTaskPayload
+        if hasattr(task, 'target') and task.target:
+            # 構建 FunctionTaskPayload
+            payload = FunctionTaskPayload(
+                header=MessageHeader(
+                    message_id=task.task_id,
+                    trace_id=task.task_id,
+                    source_module="function_idor"
+                ),
+                scan_id=getattr(task, 'scan_id', 'default'),
+                target=task.target,
+                strategy=getattr(task, 'strategy', 'normal'),
+                priority=getattr(task, 'priority', 5)
+            )
+        else:
+            raise ValueError("Task must have a valid target")
+            
+        # 執行檢測
+        horizontal_findings = await self.worker.detect_idor(payload)
+        vertical_findings = await self.worker.detect_vertical_escalation(payload)
+        
+        # 組合結果
+        all_findings = horizontal_findings + vertical_findings
+        
+        return {
+            'findings': [f.model_dump() for f in all_findings],
+            'statistics_summary': {
+                'total_findings': len(all_findings),
+                'horizontal_findings': len(horizontal_findings),
+                'vertical_findings': len(vertical_findings)
+            }
+        }

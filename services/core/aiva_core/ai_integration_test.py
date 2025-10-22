@@ -16,7 +16,7 @@ from typing import Any
 sys.path.append(os.path.join(os.path.dirname(__file__)))
 
 from ai_controller import UnifiedAIController
-from ai_engine.bio_neuron_rag_agent import BioNeuronRAGAgent
+from services.core.aiva_core.ai_engine.bio_neuron_rag_agent import BioNeuronRAGAgent
 from multilang_coordinator import MultiLanguageAICoordinator
 from nlg_system import AIVANaturalLanguageGenerator
 

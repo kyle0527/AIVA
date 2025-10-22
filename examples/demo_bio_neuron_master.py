@@ -7,7 +7,7 @@ BioNeuron Master - 三種操作模式演示
 import asyncio
 import logging
 
-from aiva_core.bio_neuron_master import (
+from services.core.aiva_core.bio_neuron_master import (
     BioNeuronMasterController,
     OperationMode,
 )
