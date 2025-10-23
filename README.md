@@ -9,7 +9,7 @@
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.104+-009688.svg)](https://fastapi.tiangolo.com)
 [![Status](https://img.shields.io/badge/Status-Production%20Ready-green.svg)]()
 
-**當前版本:** v2.5+ | **最後更新:** 2025年10月23日
+**當前版本:** v3.0+ | **最後更新:** 2025年10月23日
 
 ---
 
@@ -36,28 +36,36 @@ AIVA 採用**五大核心模組架構**，結合 BioNeuron AI 智能體實現全
 
 ## 📚 核心文檔
 
-### � 系統狀態和架構
-- [📊 **AIVA 系統整合狀態報告**](AIVA_SYSTEM_STATUS_UNIFIED.md) - 系統整體狀態、架構概況、維護記錄
-- [🧠 **AI 系統技術文檔**](AIVA_AI_TECHNICAL_DOCUMENTATION.md) - BioNeuron 架構、跨語言整合、經驗學習
+### 📖 完整文檔導航
+- [📚 **文檔索引中心**](docs/DOCUMENTATION_INDEX.md) - 所有文檔的導航入口和分類
+
+### 🎯 系統狀態和架構  
+- [📊 **系統整合狀態報告**](docs/reports/AIVA_SYSTEM_STATUS_UNIFIED.md) - 系統整體狀態、架構概況、維護記錄
+- [🧠 **AI 技術文檔**](docs/AIVA_AI_TECHNICAL_DOCUMENTATION.md) - BioNeuron 架構、跨語言整合、經驗學習
+- [📦 **實施包文檔**](docs/AIVA_IMPLEMENTATION_PACKAGE.md) - 系統實施和部署指南
 
 ### 🚀 快速開始
-- [⚡ **快速部署指南**](QUICK_DEPLOY.md) - 一鍵部署說明
-- [� **快速開始教程**](QUICK_START.md) - 基礎使用教程
+- [⚡ **快速開始指南**](docs/guides/QUICK_START.md) - 5分鐘快速部署
+- [🚀 **快速部署指南**](docs/guides/QUICK_DEPLOY.md) - 一鍵部署說明  
+- [🛠️ **開發快速入門**](docs/guides/DEVELOPMENT_QUICK_START.md) - 開發環境搭建
 
-### 🚀 快速開始
-- [⚡ 快速開始指南](QUICK_START.md) - 5分鐘快速部署
-- [🎮 UI 啟動指南](UI_LAUNCH_GUIDE.md) - Web UI 使用說明
-- [🔧 增強功能指南](ENHANCED_FEATURES_QUICKSTART.md) - 進階功能使用
+### � 開發計劃
+- [📅 **Phase I 開發計劃**](docs/plans/AIVA_PHASE_I_DEVELOPMENT_PLAN.md) - 第一階段詳細計劃
+- [🛤️ **階段路線圖**](docs/plans/AIVA_PHASE_0_COMPLETE_PHASE_I_ROADMAP.md) - 完整開發路線圖
+- [� **掃描整合計劃**](docs/plans/SCAN_INTEGRATION_IMPLEMENTATION_ROADMAP.md) - 掃描模組整合路線圖
 
-### 💻 開發文檔
-- [📊 資料存儲指南](docs/DEVELOPMENT/DATA_STORAGE_GUIDE.md) - 資料庫架構與使用
-- [🗄️ Schema 參考](docs/DEVELOPMENT/SCHEMA_QUICK_REFERENCE.md) - 資料結構定義
-- [🔨 工具使用說明](tools/README.md) - 開發工具集
+### 💻 開發工具和文檔
+- [✅ **開發任務檢查清單**](docs/guides/DEVELOPMENT_TASKS_CHECKLIST.md) - 開發流程和任務
+- [🎯 **Token 優化指南**](docs/guides/AIVA_TOKEN_OPTIMIZATION_GUIDE.md) - AI Token 使用優化
+- [� **資料存儲指南**](docs/DEVELOPMENT/DATA_STORAGE_GUIDE.md) - 資料庫架構與使用
+- [🔨 **工具使用說明**](tools/README.md) - 開發工具集
 
-### 📊 分析報告
-- [📈 實施進度報告](reports/IMPLEMENTATION_REPORTS/) - 專案實施狀況
-- [🔄 遷移報告](reports/MIGRATION_REPORTS/) - 系統遷移記錄  
-- [📅 進度追蹤](reports/PROGRESS_REPORTS/) - 開發進度儀表板
+### 📊 評估和報告  
+- [💼 **商業就緒性評估**](docs/assessments/COMMERCIAL_READINESS_ASSESSMENT.md) - 商業化評估結果
+- [💎 **高價值功能分析**](docs/assessments/HIGH_VALUE_FEATURES_ANALYSIS.md) - 核心功能價值分析
+- [📈 **實施進度報告**](reports/IMPLEMENTATION_REPORTS/) - 專案實施狀況
+- [🔄 **系統重組報告**](docs/reports/) - 系統重組和優化記錄
+- [📅 **進度追蹤**](reports/PROGRESS_REPORTS/) - 開發進度儀表板
 
 ---
 
@@ -347,6 +355,27 @@ npm install
 
 ---
 
-**最後更新**: 2025-10-16  
-**版本**: 2.0.0  
+**最後更新**: 2025-10-23  
+**版本**: 3.0.0  
 **維護團隊**: AIVA Development Team
+
+---
+
+## 📂 **最新更新 (v3.0.0 - 2025-10-23)**
+
+### ✅ **文檔結構重組完成**
+- **docs/** 目錄按功能分類 (guides/, plans/, assessments/, reports/)
+- **scripts/** 目錄按用途分類 (launcher/, testing/, validation/, integration/, reporting/, conversion/)
+- **tools/** 目錄按類型分類 (development/, schema/, automation/, monitoring/)
+- **reports/** 目錄按報告類型分類 (connectivity/, security/, analysis/, implementation/, etc.)
+
+### 📚 **文檔導航優化** 
+- 新增 [文檔索引中心](docs/DOCUMENTATION_INDEX.md) 提供完整導航
+- 所有文檔路徑更新至新結構
+- 分類清晰，查找便利，維護性大幅提升
+
+### 🔧 **腳本整合優化**
+- 26個輔助腳本重新分類整理
+- 保持向後兼容性的重定向機制
+- 核心功能腳本保留 (enhanced_real_ai_attack_system.py, real_attack_executor.py)
+- 五大模組架構完整維持

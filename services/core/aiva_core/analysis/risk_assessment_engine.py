@@ -110,7 +110,7 @@ class RiskAssessmentEngine:
 
         base_score = severity_scores.get(finding.vulnerability.severity, 5.0)
 
-        # 根據漏洞類型調整
+        # 根據漏洞類型調整 - 包含 Phase I 高價值漏洞
         vuln_type_multipliers = {
             VulnerabilityType.SQLI: 1.15,  # SQL Injection
             VulnerabilityType.XSS: 1.0,
@@ -122,11 +122,54 @@ class RiskAssessmentEngine:
             VulnerabilityType.PRICE_MANIPULATION: 1.2,
             VulnerabilityType.WORKFLOW_BYPASS: 1.1,
             VulnerabilityType.RACE_CONDITION: 1.15,
+            # Phase I 高價值漏洞類型
+            "Client-Side Authorization Bypass": 1.25,  # 客戶端授權繞過 - 高風險
+            "Advanced SSRF - Internal Services": 1.3,   # 進階 SSRF - 內部服務訪問
+            "Advanced SSRF - Cloud Metadata": 1.4,     # 進階 SSRF - 雲端元數據 (極高風險)
+            "JavaScript Authorization Bypass": 1.2,     # JS 授權繞過
+            "Local Storage Auth Manipulation": 1.15,    # 本地存儲授權操作
         }
 
-        multiplier = vuln_type_multipliers.get(finding.vulnerability.name, 1.0)
+        # 支援字串類型的漏洞類型名稱 (Phase I 格式)
+        vuln_name = finding.vulnerability.name
+        if hasattr(vuln_name, 'value'):
+            multiplier = vuln_type_multipliers.get(vuln_name.value, 1.0)
+        else:
+            # 處理字串格式的漏洞類型 (如 "Client-Side Authorization Bypass")
+            multiplier = vuln_type_multipliers.get(str(vuln_name), 1.0)
+            
         base_score *= multiplier
 
+        # Phase I 特殊評估邏輯
+        if isinstance(vuln_name, str):
+            base_score = self._assess_phase_i_specific_risk(base_score, vuln_name, finding)
+
+        return base_score
+    
+    def _assess_phase_i_specific_risk(self, base_score: float, vuln_type: str, finding: FindingPayload) -> float:
+        """Phase I 特定漏洞的風險評估增強"""
+        
+        # 客戶端授權繞過特殊邏輯
+        if "Client-Side Authorization Bypass" in vuln_type:
+            # 如果發現硬編碼管理員權限，風險極高
+            if finding.evidence and "hardcoded_admin" in str(finding.evidence):
+                base_score *= 1.5
+            # 如果涉及支付或關鍵業務流程
+            target_url = str(finding.target.url).lower()
+            if any(critical in target_url for critical in ['payment', 'admin', 'checkout', 'order']):
+                base_score *= 1.3
+                
+        # 進階 SSRF 特殊邏輯  
+        elif "Advanced SSRF" in vuln_type:
+            # 雲端元數據訪問風險極高
+            if "Cloud Metadata" in vuln_type:
+                base_score *= 1.6  # AWS IMDSv1/v2, GCP metadata 等
+            # 內部服務訪問
+            elif "Internal Services" in vuln_type:
+                if finding.evidence and any(service in str(finding.evidence) for service in 
+                    ['elasticsearch', 'redis', 'kubernetes', 'docker', 'consul']):
+                    base_score *= 1.4
+        
         return base_score
 
     async def _adjust_by_threat_intel(

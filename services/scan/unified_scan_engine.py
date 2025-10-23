@@ -61,17 +61,18 @@ class UnifiedScanEngine:
             self.logger.warning(f"掃描套件載入失敗: {e}")
     
     async def run_comprehensive_scan(self) -> Dict[str, Any]:
-        """執行綜合掃描"""
+        """執行綜合掃描 - 整合 Phase I 模組"""
         results = {
             "scan_id": f"unified_scan_{int(__import__('time').time())}",
             "targets": self.config.targets,
             "results": [],
-            "summary": {}
+            "summary": {},
+            "phase_i_findings": []
         }
         
-        # 使用掃描套件執行掃描
+        # 使用掃描套件執行基礎掃描
         if self.suite_scanner and self.suite_config_class:
-            self.logger.info("使用掃描套件執行掃描")
+            self.logger.info("使用掃描套件執行基礎掃描")
             suite_config = self.suite_config_class(
                 seeds=self.config.targets,
                 max_depth=self.config.max_depth,
@@ -85,7 +86,51 @@ class UnifiedScanEngine:
             results["suite_results"] = suite_results
             results["summary"]["suite_pages"] = suite_results.get("pages", 0)
         
+        # 整合 Phase I 高價值功能模組
+        phase_i_results = await self._execute_phase_i_modules()
+        results["phase_i_findings"].extend(phase_i_results)
+        results["summary"]["phase_i_findings_count"] = len(phase_i_results)
+        
         return results
+    
+    async def _execute_phase_i_modules(self) -> List[Dict[str, Any]]:
+        """執行 Phase I 高價值模組"""
+        findings = []
+        
+        try:
+            # 1. 客戶端授權繞過檢測
+            from services.features.client_side_auth_bypass.client_side_auth_bypass_worker import ClientSideAuthBypassWorker
+            from services.aiva_common.schemas.generated.tasks import FunctionTaskPayload, FunctionTaskTarget, FunctionTaskContext
+            
+            for target_url in self.config.targets:
+                self.logger.info(f"執行客戶端授權繞過檢測: {target_url}")
+                
+                # 構建任務 payload
+                task_payload = FunctionTaskPayload(
+                    task_id=f"csab_{int(__import__('time').time())}",
+                    module_name="FUNC_CLIENT_AUTH_BYPASS",
+                    target=FunctionTaskTarget(url=target_url),
+                    context=FunctionTaskContext(session_id=f"scan_{int(__import__('time').time())}")
+                )
+                
+                # 執行檢測
+                worker = ClientSideAuthBypassWorker()
+                result = await worker.execute_task(task_payload)
+                
+                if result.success and result.findings:
+                    findings.extend([{
+                        "module": "client_auth_bypass",
+                        "target": target_url,
+                        "finding": finding
+                    } for finding in result.findings])
+            
+            # 2. 進階 SSRF 檢測 (如果有 Go 模組可用)
+            # TODO: 整合 Go SSRF 模組
+            
+        except Exception as e:
+            self.logger.error(f"Phase I 模組執行錯誤: {e}")
+        
+        return findings
     
     def get_available_scanners(self) -> Dict[str, bool]:
         """獲取可用掃描器狀態"""

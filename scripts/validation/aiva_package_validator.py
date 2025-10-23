@@ -1,145 +1,31 @@
-#!/usr/bin/env python3#!/usr/bin/env python3#!/usr/bin/env python3#!/usr/bin/env python3#!/usr/bin/env python3
+#!/usr/bin/env python3
+"""
+AIVA 補包快速驗證工具
+====================
 
+此工具用於快速驗證補包的完整性和系統準備狀態
+
+使用方式:
+    python aiva_package_validator.py
+    python aiva_package_validator.py --detailed
+    python aiva_package_validator.py --export-report
 """
 
-重定向: aiva_package_validator.py -> scripts/validation/aiva_package_validator.py"""
-
-此檔案將在 2026年4月移除
-
-"""⚠️  重定向通知: aiva_package_validator.py 已移動"""
-
-import sys, subprocess
-
+import json
+import os
+import sys
+from datetime import datetime
 from pathlib import Path
 
 
-
-script_path = Path(__file__).parent / "scripts/validation/aiva_package_validator.py"新位置: scripts/validation/aiva_package_validator.py⚠️  重定向通知: 此檔案已移動到 scripts/validation/aiva_package_validator.py""""""
-
-if script_path.exists():
-
-    print("重定向到: scripts/validation/aiva_package_validator.py")請使用: python scripts/validation/aiva_package_validator.py
-
-    result = subprocess.run([sys.executable, str(script_path)] + sys.argv[1:])
-
-    sys.exit(result.returncode)    
-
-else:
-
-    print("錯誤: 找不到目標檔案")此重定向檔案將在 2026年4月移除
-
-    sys.exit(1)
-"""請使用新路徑: python scripts/validation/aiva_package_validator.py兼容性重定向檔案 - aiva_package_validator.pyAIVA 補包快速驗證工具
-
-
-
-import sys此重定向檔案將在 6 個月後移除 (2026年4月)
-
-import subprocess
-
-from pathlib import Path"""此檔案已移動到 scripts/validation/aiva_package_validator.py====================
-
-
-
-def main():
-
-    print("🔄 正在重定向到新位置...")
-
-    print("⚠️  aiva_package_validator.py 已移動到 scripts/validation/")import sys此重定向檔案將在未來版本中移除
-
-    print("   新指令: python scripts/validation/aiva_package_validator.py")
-
-    print("   此重定向將在 2026年4月移除")import subprocess
-
-    print("-" * 50)
-
-    from pathlib import Path"""此工具用於快速驗證補包的完整性和系統準備狀態
-
-    script_path = Path(__file__).parent / "scripts" / "validation" / "aiva_package_validator.py"
-
+class AIVAPackageValidator:
+    """AIVA補包驗證器"""
     
-
-    if script_path.exists():
-
-        try:def main():
-
-            result = subprocess.run([sys.executable, str(script_path)] + sys.argv[1:])
-
-            sys.exit(result.returncode)    # 顯示遷移警告
-
-        except Exception as e:
-
-            print(f"❌ 執行錯誤: {e}")    print("🔄 正在重定向到新位置...")import sys使用方式:
-
-            sys.exit(1)
-
-    else:    print("⚠️  警告: aiva_package_validator.py 已移動到 scripts/validation/")
-
-        print("❌ 找不到目標檔案")
-
-        sys.exit(1)    print("   請更新您的腳本引用: python scripts/validation/aiva_package_validator.py")import os    python aiva_package_validator.py
-
-
-
-if __name__ == "__main__":    print("   此重定向檔案將在 2026年4月移除")
-
-    main()
-    print("-" * 60)from pathlib import Path    python aiva_package_validator.py --detailed
-
-    
-
-    # 新的腳本路徑    python aiva_package_validator.py --export-report
-
-    script_path = Path(__file__).parent / "scripts" / "validation" / "aiva_package_validator.py"
-
-    # 添加新的腳本路徑"""
-
-    if script_path.exists():
-
-        # 執行新位置的腳本script_path = Path(__file__).parent / "scripts" / "validation" / "aiva_package_validator.py"
-
-        try:
-
-            result = subprocess.run([sys.executable, str(script_path)] + sys.argv[1:])import json
-
-            sys.exit(result.returncode)
-
-        except Exception as e:if script_path.exists():import os
-
-            print(f"❌ 執行新腳本時發生錯誤: {e}")
-
-            sys.exit(1)    print("⚠️  警告: aiva_package_validator.py 已移動到 scripts/validation/")import sys
-
-    else:
-
-        print("❌ 錯誤: 找不到 scripts/validation/aiva_package_validator.py")    print("   請更新您的腳本引用到新位置")from datetime import datetime
-
-        print("   請檢查檔案是否正確移動")
-
-        sys.exit(1)    print("   此重定向檔案將在未來版本中移除")from pathlib import Path
-
-
-
-if __name__ == "__main__":    print()
-
-    main()
-    
-
-    # 執行新位置的腳本class AIVAPackageValidator:
-
-    import subprocess    """AIVA補包驗證器"""
-
-    result = subprocess.run([sys.executable, str(script_path)] + sys.argv[1:])    
-
-    sys.exit(result.returncode)    def __init__(self):
-
-else:        self.project_root = Path(__file__).parent
-
-    print("❌ 錯誤: 找不到 scripts/validation/aiva_package_validator.py")        self.validation_results = {}
-
-    print("   請檢查檔案是否正確移動")        
-
-    sys.exit(1)    def validate_schema_system(self) -> dict:
+    def __init__(self):
+        self.project_root = Path(__file__).parent
+        self.validation_results = {}
+        
+    def validate_schema_system(self) -> dict:
         """驗證Schema自動化系統"""
         results = {
             'status': 'unknown',

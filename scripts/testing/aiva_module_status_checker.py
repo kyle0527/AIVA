@@ -12,8 +12,9 @@ from pathlib import Path
 from typing import Dict, List, Any, Optional
 from datetime import datetime
 
-# 添加 AIVA 模組路徑
-sys.path.append(str(Path(__file__).parent.parent.parent))
+# 添加 AIVA 模組路徑 - 從 scripts/testing/ 返回到專案根目錄
+project_root = Path(__file__).parent.parent.parent
+sys.path.insert(0, str(project_root))
 
 class AIVAModuleStatusChecker:
     """AIVA 模組狀態檢查器"""

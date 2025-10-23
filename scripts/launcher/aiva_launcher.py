@@ -1,108 +1,31 @@
-#!/usr/bin/env python3#!/usr/bin/env python3#!/usr/bin/env python3#!/usr/bin/env python3
-
+#!/usr/bin/env python3
+"""
+AIVA 統一啟動腳本
+用途: 在項目根目錄提供統一的 AI 持續學習啟動入口
+維持五大模組架構的組織方式
 """
 
-重定向: aiva_launcher.py -> scripts/launcher/aiva_launcher.py"""
-
-此檔案將在 2026年4月移除
-
-"""⚠️  重定向通知: aiva_launcher.py 已移動""""""
-
-import sys, subprocess
-
+import sys
+import asyncio
 from pathlib import Path
 
+# 添加服務路徑
+sys.path.append(str(Path(__file__).parent))
 
-
-script_path = Path(__file__).parent / "scripts/launcher/aiva_launcher.py"新位置: scripts/launcher/aiva_launcher.py  兼容性重定向檔案 - aiva_launcher.pyAIVA 統一啟動腳本
-
-if script_path.exists():
-
-    print("重定向到: scripts/launcher/aiva_launcher.py")請使用: python scripts/launcher/aiva_launcher.py
-
-    result = subprocess.run([sys.executable, str(script_path)] + sys.argv[1:])
-
-    sys.exit(result.returncode)此檔案已移動到 scripts/launcher/aiva_launcher.py用途: 在項目根目錄提供統一的 AI 持續學習啟動入口
-
-else:
-
-    print("錯誤: 找不到目標檔案")此重定向檔案將在 2026年4月移除
-
-    sys.exit(1)
-"""此重定向檔案將在未來版本中移除維持五大模組架構的組織方式
-
-
-
-import sys""""""
-
-import subprocess
-
-from pathlib import Path
-
-
-
-def main():import sysimport sys
-
-    print("🔄 正在重定向到新位置...")
-
-    print("⚠️  aiva_launcher.py 已移動到 scripts/launcher/")import osimport asyncio
-
-    print("   新指令: python scripts/launcher/aiva_launcher.py")
-
-    print("   此重定向將在 2026年4月移除")from pathlib import Pathfrom pathlib import Path
-
-    print("-" * 50)
-
-    
-
-    script_path = Path(__file__).parent / "scripts" / "launcher" / "aiva_launcher.py"
-
-    # 添加新的腳本路徑# 添加服務路徑
-
-    if script_path.exists():
-
-        try:script_path = Path(__file__).parent / "scripts" / "launcher" / "aiva_launcher.py"sys.path.append(str(Path(__file__).parent))
-
-            result = subprocess.run([sys.executable, str(script_path)] + sys.argv[1:])
-
-            sys.exit(result.returncode)
-
-        except Exception as e:
-
-            print(f"❌ 執行錯誤: {e}")if script_path.exists():def show_module_info():
-
-            sys.exit(1)
-
-    else:    print("⚠️  警告: aiva_launcher.py 已移動到 scripts/launcher/")    """顯示 AIVA 五大模組架構資訊"""
-
-        print("❌ 找不到目標檔案")
-
-        sys.exit(1)    print("   請更新您的腳本引用到新位置")    print("🏗️  AIVA 五大模組架構")
-
-
-
-if __name__ == "__main__":    print("   此重定向檔案將在未來版本中移除")    print("=" * 60)
-
-    main()
-    print()    print("1. 🧩 aiva_common - 通用基礎模組")
-
-        print("   └── 共享資料結構、枚舉、工具函數")
-
-    # 執行新位置的腳本    print()
-
-    import subprocess    print("2. 🧠 core - 核心業務模組")
-
-    result = subprocess.run([sys.executable, str(script_path)] + sys.argv[1:])    print("   ├── AI 引擎 (BioNeuron, 抗幻覺)")
-
-    sys.exit(result.returncode)    print("   ├── 決策代理 (風險評估, 經驗驅動)")
-
-else:    print("   └── 任務協調與狀態管理")
-
-    print("❌ 錯誤: 找不到 scripts/launcher/aiva_launcher.py")    print()
-
-    print("   請檢查檔案是否正確移動")    print("3. 🔍 scan - 掃描發現模組")
-
-    sys.exit(1)    print("   ├── 靶場環境檢測")
+def show_module_info():
+    """顯示 AIVA 五大模組架構資訊"""
+    print("🏗️  AIVA 五大模組架構")
+    print("=" * 60)
+    print("1. 🧩 aiva_common - 通用基礎模組")
+    print("   └── 共享資料結構、枚舉、工具函數")
+    print()
+    print("2. 🧠 core - 核心業務模組")
+    print("   ├── AI 引擎 (BioNeuron, 抗幻覺)")
+    print("   ├── 決策代理 (風險評估, 經驗驅動)")
+    print("   └── 任務協調與狀態管理")
+    print()
+    print("3. 🔍 scan - 掃描發現模組")
+    print("   ├── 靶場環境檢測")
     print("   ├── 漏洞掃描引擎")
     print("   └── 資產發現與指紋識別")
     print()

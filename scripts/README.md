@@ -4,6 +4,34 @@
 
 ## 📁 目錄結構
 
+### 🚀 launcher/ - 啟動器腳本 ⭐ 新增
+- `aiva_launcher.py` - AIVA 主啟動器
+- `start_ai_continuous_training.py` - AI 持續訓練啟動器  
+- `smart_communication_selector.py` - 智能通訊選擇器
+
+### 🧪 testing/ - 測試相關腳本 ⭐ 新增
+- `ai_system_connectivity_check.py` - AI 系統連接檢查
+- `aiva_full_worker_live_test.py` - 完整工作者實時測試
+- `aiva_module_status_checker.py` - 模組狀態檢查器
+- `aiva_system_connectivity_sop_check.py` - 系統連接 SOP 檢查
+
+### ✅ validation/ - 驗證相關腳本 ⭐ 新增
+- `aiva_package_validator.py` - 套件驗證器
+
+### 🔗 integration/ - 整合相關腳本 ⭐ 新增
+- `cross_language_bridge.py` - 跨語言橋接器
+- `ffi_integration.py` - 外部函數介面整合
+- `graalvm_integration.py` - GraalVM 整合
+- `wasm_integration.py` - WebAssembly 整合
+
+### 📊 reporting/ - 報告生成腳本 ⭐ 新增
+- `aiva_enterprise_security_report.py` - 企業安全報告生成器
+- `final_report.py` - 最終報告生成器
+- `aiva_crosslang_unified.py` - 跨語言統一報告工具
+
+### 🔄 conversion/ - 轉換工具腳本 ⭐ 新增
+- `docx_to_md_converter.py` - DOCX 轉 Markdown 轉換器
+
 ### 🚀 deployment/ - 部署腳本
 - `start_all.ps1` - 啟動所有服務
 - `start_all_multilang.ps1` - 啟動多語言服務
