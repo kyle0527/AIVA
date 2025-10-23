@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-AIVA 系統通連及定義檢查 (按照 SCHEMA_MANAGEMENT_SOP.md 標準)
+AIVA 系統通連及定義檢查 (按照 SCHEMA_MANAGEMENT_SOP.md 標準) - v1.1 (Import 修復)
 
 遵循單一真實來源原則和分層責任架構進行全面檢查
 """
@@ -13,11 +13,52 @@ import importlib.util
 from pathlib import Path
 from typing import Dict, Any, List, Tuple
 import aiofiles
+import logging
+import traceback
 
-# 添加路徑
-current_dir = os.path.dirname(__file__)
-sys.path.append(os.path.join(current_dir, 'services', 'core'))
-sys.path.append(os.path.join(current_dir, 'services'))  # 添加 aiva_common 路徑
+# ================== Import 修復 Start ==================
+# 計算專案根目錄 (AIVA-main) 的絕對路徑
+# __file__ 是目前腳本的路徑 (e.g., /path/to/AIVA-main/aiva_system_connectivity_sop_check.py)
+# .parent 會得到 /path/to/AIVA-main
+project_root = Path(__file__).parent.resolve()
+
+# 將專案根目錄添加到 sys.path 的最前面，優先於其他路徑
+if str(project_root) not in sys.path:
+    sys.path.insert(0, str(project_root))
+
+# 驗證是否添加成功 (可選)
+# print(f"[*] Project root added to sys.path: {project_root}")
+# print(f"[*] Current sys.path: {sys.path}")
+# ================== Import 修復 End ====================
+
+# 配置日誌
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+logger = logging.getLogger(__name__)
+
+# 現在可以嘗試導入 services 模組了
+try:
+    from services.core.aiva_core.ai_engine import (
+        BioNeuronRAGAgent, AIModelManager, Tool, CodeReader, CodeWriter,
+        CodeAnalyzer, CommandExecutor, ScanTrigger, VulnerabilityDetector
+    )
+    from services.core.aiva_core.learning import (
+        ModelTrainer, ScalableBioTrainer,
+        ScalableBioTrainingConfig, ExperienceManager
+    )
+    from services.core.aiva_core.ai_engine import PerformanceConfig, MemoryManager, ComponentPool
+    # 嘗試導入 aiva_common (如果前面 sys.path 設置正確，這裡應該能成功)
+    import services.aiva_common
+    IMPORT_SUCCESS = True
+    logger.info("✅ 核心 Python 模組導入成功")
+except ImportError as e:
+    logger.error(f"❌ 核心 Python 模組導入失敗: {e}")
+    logger.error("   請確認您的 Python 環境以及 AIVA-main 目錄結構是否正確。")
+    logger.error(f"   目前的 sys.path: {sys.path}")
+    IMPORT_SUCCESS = False
+except Exception as e:
+    logger.error(f"❌ 導入過程中發生非預期的錯誤: {e}")
+    logger.error(traceback.format_exc())
+    IMPORT_SUCCESS = False
 
 class AIVASystemConnectivityChecker:
     """AIVA 系統連通性檢查器 (遵循 SOP 標準)"""

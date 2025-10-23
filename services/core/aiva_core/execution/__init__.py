@@ -6,5 +6,6 @@ Execution Module - 攻擊計畫執行模組
 
 from .plan_executor import PlanExecutor
 from .trace_logger import TraceLogger
+from .attack_plan_mapper import AttackPlanMapper
 
-__all__ = ["PlanExecutor", "TraceLogger"]
+__all__ = ["PlanExecutor", "TraceLogger", "AttackPlanMapper"]

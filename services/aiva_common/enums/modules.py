@@ -139,6 +139,7 @@ class ModuleName(str, Enum):
     FUNC_SQLI = "FunctionSQLI"
     FUNC_SSRF = "FunctionSSRF"
     FUNC_IDOR = "FunctionIDOR"
+    FUNC_CLIENT_AUTH_BYPASS = "FunctionClientAuthBypass"
     OAST = "OASTService"
     THREAT_INTEL = "ThreatIntelModule"
     AUTHZ = "AuthZModule"
@@ -158,6 +159,7 @@ class Topic(str, Enum):
     TASK_FUNCTION_SQLI = "tasks.function.sqli"
     TASK_FUNCTION_SSRF = "tasks.function.ssrf"
     FUNCTION_IDOR_TASK = "tasks.function.idor"
+    TASK_FUNCTION_CLIENT_AUTH_BYPASS = "tasks.function.client_auth_bypass"
     RESULTS_FUNCTION_COMPLETED = "results.function.completed"
 
     # AI Training Topics
