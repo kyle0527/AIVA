@@ -1,0 +1,43 @@
+{
+  "timestamp": "2025-10-23T15:43:20.935245",
+  "test_summary": {},
+  "detailed_results": {
+    "schema_imports": {
+      "python_schemas": {},
+      "cross_module_imports": {},
+      "schema_consistency": false,
+      "errors": [
+        "Schema導入錯誤: No module named 'services'"
+      ]
+    },
+    "cross_module_messaging": {
+      "message_creation": false,
+      "schema_validation": false,
+      "serialization": false,
+      "errors": [
+        "跨模組消息測試錯誤: No module named 'services'"
+      ]
+    },
+    "module_integration": {
+      "ai_engine_integration": true,
+      "attack_engine_integration": true,
+      "scan_engine_integration": true,
+      "feature_detection_integration": true,
+      "integration_services": true,
+      "errors": []
+    },
+    "go_schema": {
+      "go_schema_exists": true,
+      "struct_count": 14,
+      "json_tags_valid": true,
+      "errors": []
+    }
+  },
+  "connectivity_score": 50,
+  "recommendations": [
+    "🔧 修復Schema導入錯誤，確保所有Schema模組正確生成",
+    "📡 實現統一的跨模組消息創建機制",
+    "🔄 加強消息序列化和反序列化處理"
+  ],
+  "error": "通連性測試執行錯誤: unsupported operand type(s) for +: 'int' and 'list'"
+}
