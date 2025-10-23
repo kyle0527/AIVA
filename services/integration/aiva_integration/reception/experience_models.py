@@ -10,8 +10,7 @@
 
 from datetime import datetime
 
-from sqlalchemy import Column, DateTime, Float, Integer, String, Text
-from sqlalchemy.dialects.postgresql import JSONB
+from sqlalchemy import Column, DateTime, Float, Integer, String, Text, JSON
 from sqlalchemy.ext.declarative import declarative_base
 
 Base = declarative_base()
@@ -38,24 +37,24 @@ class ExperienceRecord(Base):
     # 執行計畫資訊
     plan_id = Column(String(100), nullable=False, index=True)
     attack_type = Column(String(50), nullable=False, index=True)
-    target_info = Column(JSONB, nullable=True)  # 目標資訊
+    target_info = Column(JSON, nullable=True)  # 目標資訊
 
     # AST 攻擊計畫 (JSON 格式)
-    ast_graph = Column(JSONB, nullable=False)  # 完整的 AST 圖結構
+    ast_graph = Column(JSON, nullable=False)  # 完整的 AST 圖結構
 
     # 執行 Trace (JSON 格式)
     trace_session_id = Column(String(100), nullable=False, index=True)
-    execution_trace = Column(JSONB, nullable=False)  # 完整的執行軌跡
+    execution_trace = Column(JSON, nullable=False)  # 完整的執行軌跡
 
     # 比較指標
     completion_rate = Column(Float, nullable=True)  # 完成率
     sequence_match_rate = Column(Float, nullable=True)  # 順序匹配率
     overall_score = Column(Float, nullable=True, index=True)  # 綜合評分
-    metrics_detail = Column(JSONB, nullable=True)  # 詳細指標
+    metrics_detail = Column(JSON, nullable=True)  # 詳細指標
 
     # 回饋信號
     reward = Column(Float, nullable=True)  # 強化學習獎勵值
-    feedback_data = Column(JSONB, nullable=True)  # 完整回饋數據
+    feedback_data = Column(JSON, nullable=True)  # 完整回饋數據
 
     # 執行結果
     execution_success = Column(Integer, nullable=True)  # 成功步驟數
@@ -63,7 +62,7 @@ class ExperienceRecord(Base):
     error_count = Column(Integer, nullable=True)  # 錯誤數量
 
     # 額外元數據
-    metadata = Column(JSONB, nullable=True)
+    extra_metadata = Column(JSON, nullable=True)
     notes = Column(Text, nullable=True)  # 備註
 
     def __repr__(self) -> str:
@@ -93,19 +92,19 @@ class TrainingDataset(Base):
     created_at = Column(DateTime, default=datetime.now, nullable=False)
 
     # 資料集配置
-    attack_types = Column(JSONB, nullable=True)  # 包含的攻擊類型
+    attack_types = Column(JSON, nullable=True)  # 包含的攻擊類型
     min_score_threshold = Column(Float, nullable=True)  # 最低分數閾值
     max_samples = Column(Integer, nullable=True)  # 最大樣本數
 
     # 樣本選擇標準
-    selection_criteria = Column(JSONB, nullable=True)
+    selection_criteria = Column(JSON, nullable=True)
 
     # 統計資訊
     total_samples = Column(Integer, default=0)
     avg_score = Column(Float, nullable=True)
 
     # 元數據
-    metadata = Column(JSONB, nullable=True)
+    extra_metadata = Column(JSON, nullable=True)
 
     def __repr__(self) -> str:
         return (
@@ -141,7 +140,7 @@ class DatasetSample(Base):
     annotation_notes = Column(Text, nullable=True)
 
     # 元數據
-    metadata = Column(JSONB, nullable=True)
+    extra_metadata = Column(JSON, nullable=True)
 
     def __repr__(self) -> str:
         return (
@@ -171,25 +170,25 @@ class ModelTrainingHistory(Base):
 
     # 訓練配置
     dataset_id = Column(String(100), nullable=False)
-    training_config = Column(JSONB, nullable=True)  # 訓練參數
-    hyperparameters = Column(JSONB, nullable=True)  # 超參數
+    training_config = Column(JSON, nullable=True)  # 訓練參數
+    hyperparameters = Column(JSON, nullable=True)  # 超參數
 
     # 訓練結果
     status = Column(String(50), nullable=False)  # running/completed/failed
     final_loss = Column(Float, nullable=True)
     final_accuracy = Column(Float, nullable=True)
-    training_metrics = Column(JSONB, nullable=True)  # 完整訓練指標
+    training_metrics = Column(JSON, nullable=True)  # 完整訓練指標
 
     # 模型資訊
     model_path = Column(String(500), nullable=True)  # 模型儲存路徑
     model_size_mb = Column(Float, nullable=True)
 
     # 評估結果
-    validation_metrics = Column(JSONB, nullable=True)
-    test_metrics = Column(JSONB, nullable=True)
+    validation_metrics = Column(JSON, nullable=True)
+    test_metrics = Column(JSON, nullable=True)
 
     # 元數據
-    metadata = Column(JSONB, nullable=True)
+    extra_metadata = Column(JSON, nullable=True)
     notes = Column(Text, nullable=True)
 
     def __repr__(self) -> str:

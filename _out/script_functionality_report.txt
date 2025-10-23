@@ -1,14 +1,14 @@
 ====================================================================================================
 AIVA 專案腳本功能性檢查報告
-檢查時間: 2025-10-19 08:50:01.580874
+檢查時間: 2025-10-23 12:02:38.649000
 ====================================================================================================
 
 ## 📊 統計摘要
-總腳本數: 418
-  ✅ 完整功能: 266 (63.6%)
-  ⚠️  部分功能: 43 (10.3%)
-  🔶 基本架構: 71 (17.0%)
-  ❌ 無功能: 38 (9.1%)
+總腳本數: 419
+  ✅ 完整功能: 269 (64.2%)
+  ⚠️  部分功能: 41 (9.8%)
+  🔶 基本架構: 72 (17.2%)
+  ❌ 無功能: 37 (8.8%)
 
 ====================================================================================================
 ## ❌ 無基本功能的腳本 (需要實作)
@@ -25,24 +25,6 @@ AIVA 專案腳本功能性檢查報告
    原因: 少於10行且無函數/類別
    總行數: 12
    程式碼行數: 8
-
-📁 services\aiva_common\config.py
-   類型: Python
-   原因: 少於10行且無函數/類別
-   總行數: 10
-   程式碼行數: 6
-
-📁 services\aiva_common\models.py
-   類型: Python
-   原因: 少於10行且無函數/類別
-   總行數: 4
-   程式碼行數: 2
-
-📁 services\aiva_common\schemas\api_testing.py
-   類型: Python
-   原因: 少於10行且無函數/類別
-   總行數: 13
-   程式碼行數: 6
 
 📁 services\aiva_common\utils\__init__.py
    類型: Python
@@ -110,13 +92,13 @@ AIVA 專案腳本功能性檢查報告
    總行數: 1
    程式碼行數: 0
 
-📁 services\features\function_crypto\__init__.py
+📁 services\features\email_change_bypass\__init__.py
    類型: Python
-   原因: 空檔案或只有 pass
-   總行數: 1
-   程式碼行數: 0
+   原因: 少於10行且無函數/類別
+   總行數: 6
+   程式碼行數: 3
 
-📁 services\features\function_crypto\schemas.py
+📁 services\features\function_crypto\__init__.py
    類型: Python
    原因: 空檔案或只有 pass
    總行數: 1
@@ -151,6 +133,18 @@ AIVA 專案腳本功能性檢查報告
    原因: 空檔案或只有 pass
    總行數: 2
    程式碼行數: 0
+
+📁 services\features\oauth_openredirect_chain\__init__.py
+   類型: Python
+   原因: 少於10行且無函數/類別
+   總行數: 6
+   程式碼行數: 3
+
+📁 services\features\payment_logic_bypass\__init__.py
+   類型: Python
+   原因: 少於10行且無函數/類別
+   總行數: 6
+   程式碼行數: 3
 
 📁 services\integration\aiva_integration\__init__.py
    類型: Python
@@ -249,17 +243,7 @@ AIVA 專案腳本功能性檢查報告
 📁 ai_system_connectivity_check.py
    類型: Python
    原因: 無函數或類別定義
-   程式碼行數: 226
-
-📁 aiva_ai_testing_range.py
-   類型: Python
-   原因: 無函數或類別定義
-   程式碼行數: 278
-
-📁 aiva_orchestrator_test.py
-   類型: Python
-   原因: 無函數或類別定義
-   程式碼行數: 220
+   程式碼行數: 239
 
 📁 examples\demo_bio_neuron_master.py
    類型: Python
@@ -271,15 +255,10 @@ AIVA 專案腳本功能性檢查報告
    原因: 無函數或類別定義
    程式碼行數: 81
 
-📁 examples\demo_storage.py
-   類型: Python
-   原因: 無函數或類別定義
-   程式碼行數: 246
-
 📁 examples\init_storage.py
    類型: Python
    原因: 無函數或類別定義
-   程式碼行數: 46
+   程式碼行數: 31
 
 📁 scripts\deployment\stop_all.ps1
    類型: PowerShell
@@ -289,7 +268,7 @@ AIVA 專案腳本功能性檢查報告
 📁 services\aiva_common\__init__.py
    類型: Python
    原因: 無函數或類別定義
-   程式碼行數: 185
+   程式碼行數: 186
 
 📁 services\aiva_common\config\__init__.py
    類型: Python
@@ -299,12 +278,12 @@ AIVA 專案腳本功能性檢查報告
 📁 services\aiva_common\enums\__init__.py
    類型: Python
    原因: 無函數或類別定義
-   程式碼行數: 98
+   程式碼行數: 100
 
 📁 services\aiva_common\schemas\__init__.py
    類型: Python
    原因: 無函數或類別定義
-   程式碼行數: 332
+   程式碼行數: 334
 
 📁 services\aiva_common\utils\ids.py
    類型: Python
@@ -401,6 +380,11 @@ AIVA 專案腳本功能性檢查報告
    原因: 無函數或類別定義
    程式碼行數: 12
 
+📁 services\core\session_state_manager.py
+   類型: Python
+   原因: 程式碼少於30行
+   程式碼行數: 29
+
 📁 services\features\__init__.py
    類型: Python
    原因: 無函數或類別定義
@@ -430,6 +414,11 @@ AIVA 專案腳本功能性檢查報告
    類型: Python
    原因: 程式碼少於30行
    程式碼行數: 26
+
+📁 services\features\smart_detection_manager.py
+   類型: Python
+   原因: 程式碼少於30行
+   程式碼行數: 21
 
 📁 services\integration\__init__.py
    類型: Python
@@ -516,6 +505,11 @@ AIVA 專案腳本功能性檢查報告
    原因: 無函數或類別定義
    程式碼行數: 72
 
+📁 services\scan\schemas.py
+   類型: Python
+   原因: 程式碼少於30行
+   程式碼行數: 9
+
 📁 tests\ai_working_check.py
    類型: Python
    原因: 無函數或類別定義
@@ -525,11 +519,6 @@ AIVA 專案腳本功能性檢查報告
    類型: Python
    原因: 無函數或類別定義
    程式碼行數: 133
-
-📁 tests\test_ai_integration.py
-   類型: Python
-   原因: 無函數或類別定義
-   程式碼行數: 251
 
 📁 tools\aiva-schemas-plugin\aiva-schemas-plugin\src\aiva_schemas_plugin\__init__.py
    類型: Python
@@ -556,6 +545,11 @@ AIVA 專案腳本功能性檢查報告
    原因: 無函數或類別定義
    程式碼行數: 91
 
+📁 tools\apply_marks_to_tree.py
+   類型: Python
+   原因: 無函數或類別定義
+   程式碼行數: 41
+
 📁 tools\delete_migrated_files.py
    類型: Python
    原因: 無函數或類別定義
@@ -571,10 +565,25 @@ AIVA 專案腳本功能性檢查報告
    原因: 無函數或類別定義
    程式碼行數: 54
 
+📁 tools\fix_metadata_reserved.py
+   類型: Python
+   原因: 無函數或類別定義
+   程式碼行數: 17
+
+📁 tools\list_no_functionality_files.py
+   類型: Python
+   原因: 無函數或類別定義
+   程式碼行數: 20
+
 📁 tools\markdown_check.py
    類型: Python
    原因: 無函數或類別定義
    程式碼行數: 38
+
+📁 tools\remove_init_marks.py
+   類型: Python
+   原因: 無函數或類別定義
+   程式碼行數: 33
 
 📁 tools\replace_emoji.py
    類型: Python
@@ -585,16 +594,6 @@ AIVA 專案腳本功能性檢查報告
    類型: Python
    原因: 無函數或類別定義
    程式碼行數: 42
-
-📁 tools\test_schemas_complete.py
-   類型: Python
-   原因: 無函數或類別定義
-   程式碼行數: 106
-
-📁 tools\test_schemas_import.py
-   類型: Python
-   原因: 無函數或類別定義
-   程式碼行數: 18
 
 📁 tools\verify_migration_completeness.py
    類型: Python
@@ -632,14 +631,6 @@ AIVA 專案腳本功能性檢查報告
 📁 services\aiva_common\enums\assets.py
    類型: Python
    程式碼行數: 55
-
-📁 services\aiva_common\enums\common.py
-   類型: Python
-   程式碼行數: 84
-
-📁 services\aiva_common\schemas\base.py
-   類型: Python
-   程式碼行數: 78
 
 📁 services\aiva_common\schemas\messaging.py
    類型: Python

@@ -363,14 +363,8 @@ class BioNeuronRAGAgent:
                 from pathlib import Path
                 import sys
 
-                # 添加 integration 路徑
-                integration_path = (
-                    Path(__file__).parent.parent.parent.parent.parent / "integration"
-                )
-                if str(integration_path) not in sys.path:
-                    sys.path.insert(0, str(integration_path))
-
-                from aiva_integration.reception.experience_repository import (
+                # 使用正確的完整模組路徑導入
+                from services.integration.aiva_integration.reception.experience_repository import (
                     ExperienceRepository,
                 )
 

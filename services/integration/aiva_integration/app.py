@@ -19,7 +19,7 @@ from .perf_feedback.improvement_suggestion_generator import (
 )
 from .perf_feedback.scan_metadata_analyzer import ScanMetadataAnalyzer
 from .reception.data_reception_layer import DataReceptionLayer
-from .reception.test_result_database import TestResultDatabase
+from .reception.sql_result_database import SqlResultDatabase
 from .reporting.formatter_exporter import FormatterExporter
 from .reporting.report_content_generator import ReportContentGenerator
 from .reporting.report_template_selector import ReportTemplateSelector
@@ -27,7 +27,7 @@ from .reporting.report_template_selector import ReportTemplateSelector
 app = FastAPI(title="AIVA Integration Module")
 logger = get_logger(__name__)
 
-db = TestResultDatabase()
+db = SqlResultDatabase("sqlite:///aiva_integration.db")
 recv = DataReceptionLayer(db)
 corr = VulnerabilityCorrelationAnalyzer()
 risk = RiskAssessmentEngine()

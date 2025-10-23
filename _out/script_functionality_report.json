@@ -49,38 +49,6 @@
       }
     },
     {
-      "file": "services\\aiva_common\\config.py",
-      "type": "Python",
-      "reason": "少於10行且無函數/類別",
-      "info": {
-        "total_lines": 10,
-        "code_lines": 6,
-        "has_imports": false,
-        "has_functions": false,
-        "has_classes": false,
-        "has_main": false,
-        "has_docstring": true,
-        "has_pass_only": false,
-        "has_todo": false
-      }
-    },
-    {
-      "file": "services\\aiva_common\\models.py",
-      "type": "Python",
-      "reason": "少於10行且無函數/類別",
-      "info": {
-        "total_lines": 4,
-        "code_lines": 2,
-        "has_imports": true,
-        "has_functions": false,
-        "has_classes": false,
-        "has_main": false,
-        "has_docstring": false,
-        "has_pass_only": false,
-        "has_todo": false
-      }
-    },
-    {
       "file": "services\\scan\\aiva_scan\\__init__.py",
       "type": "Python",
       "reason": "空檔案或只有 pass",
@@ -289,17 +257,17 @@
       }
     },
     {
-      "file": "services\\features\\function_crypto\\schemas.py",
+      "file": "services\\features\\email_change_bypass\\__init__.py",
       "type": "Python",
-      "reason": "空檔案或只有 pass",
+      "reason": "少於10行且無函數/類別",
       "info": {
-        "total_lines": 1,
-        "code_lines": 0,
+        "total_lines": 6,
+        "code_lines": 3,
         "has_imports": false,
         "has_functions": false,
         "has_classes": false,
         "has_main": false,
-        "has_docstring": false,
+        "has_docstring": true,
         "has_pass_only": false,
         "has_todo": false
       }
@@ -396,6 +364,38 @@
         "has_classes": false,
         "has_main": false,
         "has_docstring": false,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\features\\oauth_openredirect_chain\\__init__.py",
+      "type": "Python",
+      "reason": "少於10行且無函數/類別",
+      "info": {
+        "total_lines": 6,
+        "code_lines": 3,
+        "has_imports": false,
+        "has_functions": false,
+        "has_classes": false,
+        "has_main": false,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\features\\payment_logic_bypass\\__init__.py",
+      "type": "Python",
+      "reason": "少於10行且無函數/類別",
+      "info": {
+        "total_lines": 6,
+        "code_lines": 3,
+        "has_imports": false,
+        "has_functions": false,
+        "has_classes": false,
+        "has_main": false,
+        "has_docstring": true,
         "has_pass_only": false,
         "has_todo": false
       }
@@ -545,22 +545,6 @@
       }
     },
     {
-      "file": "services\\aiva_common\\schemas\\api_testing.py",
-      "type": "Python",
-      "reason": "少於10行且無函數/類別",
-      "info": {
-        "total_lines": 13,
-        "code_lines": 6,
-        "has_imports": true,
-        "has_functions": false,
-        "has_classes": false,
-        "has_main": false,
-        "has_docstring": true,
-        "has_pass_only": false,
-        "has_todo": false
-      }
-    },
-    {
       "file": "services\\aiva_common\\utils\\__init__.py",
       "type": "Python",
       "reason": "少於10行且無函數/類別",
@@ -611,44 +595,12 @@
   ],
   "minimal_functionality": [
     {
-      "file": "aiva_ai_testing_range.py",
-      "type": "Python",
-      "reason": "無函數或類別定義",
-      "info": {
-        "total_lines": 382,
-        "code_lines": 278,
-        "has_imports": true,
-        "has_functions": false,
-        "has_classes": false,
-        "has_main": true,
-        "has_docstring": true,
-        "has_pass_only": false,
-        "has_todo": false
-      }
-    },
-    {
-      "file": "aiva_orchestrator_test.py",
-      "type": "Python",
-      "reason": "無函數或類別定義",
-      "info": {
-        "total_lines": 304,
-        "code_lines": 220,
-        "has_imports": true,
-        "has_functions": false,
-        "has_classes": false,
-        "has_main": true,
-        "has_docstring": true,
-        "has_pass_only": false,
-        "has_todo": false
-      }
-    },
-    {
       "file": "ai_system_connectivity_check.py",
       "type": "Python",
       "reason": "無函數或類別定義",
       "info": {
-        "total_lines": 314,
-        "code_lines": 226,
+        "total_lines": 335,
+        "code_lines": 239,
         "has_imports": true,
         "has_functions": false,
         "has_classes": false,
@@ -691,28 +643,12 @@
       }
     },
     {
-      "file": "examples\\demo_storage.py",
-      "type": "Python",
-      "reason": "無函數或類別定義",
-      "info": {
-        "total_lines": 321,
-        "code_lines": 246,
-        "has_imports": true,
-        "has_functions": false,
-        "has_classes": false,
-        "has_main": true,
-        "has_docstring": true,
-        "has_pass_only": false,
-        "has_todo": false
-      }
-    },
-    {
       "file": "examples\\init_storage.py",
       "type": "Python",
       "reason": "無函數或類別定義",
       "info": {
-        "total_lines": 70,
-        "code_lines": 46,
+        "total_lines": 51,
+        "code_lines": 31,
         "has_imports": true,
         "has_functions": false,
         "has_classes": false,
@@ -749,22 +685,6 @@
         "has_functions": false,
         "has_classes": false,
         "has_main": false,
-        "has_docstring": true,
-        "has_pass_only": false,
-        "has_todo": false
-      }
-    },
-    {
-      "file": "tests\\test_ai_integration.py",
-      "type": "Python",
-      "reason": "無函數或類別定義",
-      "info": {
-        "total_lines": 339,
-        "code_lines": 251,
-        "has_imports": true,
-        "has_functions": false,
-        "has_classes": false,
-        "has_main": true,
         "has_docstring": true,
         "has_pass_only": false,
         "has_todo": false
@@ -809,6 +729,22 @@
       "info": {
         "total_lines": 107,
         "code_lines": 91,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": false,
+        "has_main": false,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "tools\\apply_marks_to_tree.py",
+      "type": "Python",
+      "reason": "無函數或類別定義",
+      "info": {
+        "total_lines": 57,
+        "code_lines": 41,
         "has_imports": true,
         "has_functions": false,
         "has_classes": false,
@@ -867,6 +803,38 @@
       }
     },
     {
+      "file": "tools\\fix_metadata_reserved.py",
+      "type": "Python",
+      "reason": "無函數或類別定義",
+      "info": {
+        "total_lines": 27,
+        "code_lines": 17,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": false,
+        "has_main": false,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "tools\\list_no_functionality_files.py",
+      "type": "Python",
+      "reason": "無函數或類別定義",
+      "info": {
+        "total_lines": 26,
+        "code_lines": 20,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": false,
+        "has_main": false,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
       "file": "tools\\markdown_check.py",
       "type": "Python",
       "reason": "無函數或類別定義",
@@ -878,6 +846,22 @@
         "has_classes": false,
         "has_main": false,
         "has_docstring": false,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "tools\\remove_init_marks.py",
+      "type": "Python",
+      "reason": "無函數或類別定義",
+      "info": {
+        "total_lines": 49,
+        "code_lines": 33,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": false,
+        "has_main": false,
+        "has_docstring": true,
         "has_pass_only": false,
         "has_todo": false
       }
@@ -915,38 +899,6 @@
       }
     },
     {
-      "file": "tools\\test_schemas_complete.py",
-      "type": "Python",
-      "reason": "無函數或類別定義",
-      "info": {
-        "total_lines": 138,
-        "code_lines": 106,
-        "has_imports": true,
-        "has_functions": false,
-        "has_classes": false,
-        "has_main": false,
-        "has_docstring": true,
-        "has_pass_only": false,
-        "has_todo": false
-      }
-    },
-    {
-      "file": "tools\\test_schemas_import.py",
-      "type": "Python",
-      "reason": "無函數或類別定義",
-      "info": {
-        "total_lines": 29,
-        "code_lines": 18,
-        "has_imports": true,
-        "has_functions": false,
-        "has_classes": false,
-        "has_main": false,
-        "has_docstring": true,
-        "has_pass_only": false,
-        "has_todo": false
-      }
-    },
-    {
       "file": "tools\\verify_migration_completeness.py",
       "type": "Python",
       "reason": "無函數或類別定義",
@@ -967,7 +919,7 @@
       "type": "Python",
       "reason": "程式碼少於30行",
       "info": {
-        "total_lines": 8,
+        "total_lines": 9,
         "code_lines": 5,
         "has_imports": false,
         "has_functions": true,
@@ -999,8 +951,8 @@
       "type": "Python",
       "reason": "無函數或類別定義",
       "info": {
-        "total_lines": 201,
-        "code_lines": 185,
+        "total_lines": 204,
+        "code_lines": 186,
         "has_imports": true,
         "has_functions": false,
         "has_classes": false,
@@ -1027,6 +979,22 @@
       }
     },
     {
+      "file": "services\\core\\session_state_manager.py",
+      "type": "Python",
+      "reason": "程式碼少於30行",
+      "info": {
+        "total_lines": 39,
+        "code_lines": 29,
+        "has_imports": true,
+        "has_functions": true,
+        "has_classes": true,
+        "has_main": false,
+        "has_docstring": false,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
       "file": "services\\core\\__init__.py",
       "type": "Python",
       "reason": "無函數或類別定義",
@@ -1038,6 +1006,22 @@
         "has_classes": false,
         "has_main": false,
         "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\features\\smart_detection_manager.py",
+      "type": "Python",
+      "reason": "程式碼少於30行",
+      "info": {
+        "total_lines": 31,
+        "code_lines": 21,
+        "has_imports": true,
+        "has_functions": true,
+        "has_classes": true,
+        "has_main": false,
+        "has_docstring": false,
         "has_pass_only": false,
         "has_todo": false
       }
@@ -1070,6 +1054,22 @@
         "has_classes": false,
         "has_main": false,
         "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\scan\\schemas.py",
+      "type": "Python",
+      "reason": "程式碼少於30行",
+      "info": {
+        "total_lines": 13,
+        "code_lines": 9,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": true,
+        "has_main": false,
+        "has_docstring": false,
         "has_pass_only": false,
         "has_todo": false
       }
@@ -1655,8 +1655,8 @@
       "type": "Python",
       "reason": "無函數或類別定義",
       "info": {
-        "total_lines": 114,
-        "code_lines": 98,
+        "total_lines": 116,
+        "code_lines": 100,
         "has_imports": false,
         "has_functions": false,
         "has_classes": false,
@@ -1671,8 +1671,8 @@
       "type": "Python",
       "reason": "無函數或類別定義",
       "info": {
-        "total_lines": 375,
-        "code_lines": 332,
+        "total_lines": 377,
+        "code_lines": 334,
         "has_imports": false,
         "has_functions": false,
         "has_classes": false,
@@ -2284,38 +2284,6 @@
       }
     },
     {
-      "file": "services\\aiva_common\\enums\\common.py",
-      "type": "Python",
-      "reason": "程式碼少於100行且無主程式",
-      "info": {
-        "total_lines": 118,
-        "code_lines": 84,
-        "has_imports": true,
-        "has_functions": false,
-        "has_classes": true,
-        "has_main": false,
-        "has_docstring": true,
-        "has_pass_only": false,
-        "has_todo": false
-      }
-    },
-    {
-      "file": "services\\aiva_common\\schemas\\base.py",
-      "type": "Python",
-      "reason": "程式碼少於100行且無主程式",
-      "info": {
-        "total_lines": 115,
-        "code_lines": 78,
-        "has_imports": true,
-        "has_functions": false,
-        "has_classes": true,
-        "has_main": false,
-        "has_docstring": true,
-        "has_pass_only": false,
-        "has_todo": false
-      }
-    },
-    {
       "file": "services\\aiva_common\\schemas\\messaging.py",
       "type": "Python",
       "reason": "程式碼少於100行且無主程式",
@@ -2450,6 +2418,22 @@
       }
     },
     {
+      "file": "aiva_full_worker_live_test.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 616,
+        "code_lines": 456,
+        "has_imports": true,
+        "has_functions": true,
+        "has_classes": false,
+        "has_main": true,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
       "file": "aiva_launcher.py",
       "type": "Python",
       "reason": "具備完整功能",
@@ -2482,28 +2466,12 @@
       }
     },
     {
-      "file": "aiva_range_security_test.py",
-      "type": "Python",
-      "reason": "具備完整功能",
-      "info": {
-        "total_lines": 336,
-        "code_lines": 262,
-        "has_imports": true,
-        "has_functions": false,
-        "has_classes": true,
-        "has_main": true,
-        "has_docstring": true,
-        "has_pass_only": false,
-        "has_todo": false
-      }
-    },
-    {
       "file": "aiva_system_connectivity_sop_check.py",
       "type": "Python",
       "reason": "具備完整功能",
       "info": {
-        "total_lines": 584,
-        "code_lines": 439,
+        "total_lines": 588,
+        "code_lines": 442,
         "has_imports": true,
         "has_functions": false,
         "has_classes": true,
@@ -2658,70 +2626,6 @@
       }
     },
     {
-      "file": "test_crosslang_integration.py",
-      "type": "Python",
-      "reason": "具備完整功能",
-      "info": {
-        "total_lines": 711,
-        "code_lines": 518,
-        "has_imports": true,
-        "has_functions": false,
-        "has_classes": true,
-        "has_main": true,
-        "has_docstring": true,
-        "has_pass_only": false,
-        "has_todo": false
-      }
-    },
-    {
-      "file": "test_internal_communication.py",
-      "type": "Python",
-      "reason": "具備完整功能",
-      "info": {
-        "total_lines": 474,
-        "code_lines": 324,
-        "has_imports": true,
-        "has_functions": true,
-        "has_classes": false,
-        "has_main": true,
-        "has_docstring": true,
-        "has_pass_only": false,
-        "has_todo": false
-      }
-    },
-    {
-      "file": "test_message_system.py",
-      "type": "Python",
-      "reason": "具備完整功能",
-      "info": {
-        "total_lines": 378,
-        "code_lines": 265,
-        "has_imports": true,
-        "has_functions": true,
-        "has_classes": false,
-        "has_main": true,
-        "has_docstring": true,
-        "has_pass_only": false,
-        "has_todo": false
-      }
-    },
-    {
-      "file": "test_unified_trainers.py",
-      "type": "Python",
-      "reason": "具備完整功能",
-      "info": {
-        "total_lines": 120,
-        "code_lines": 81,
-        "has_imports": true,
-        "has_functions": true,
-        "has_classes": false,
-        "has_main": true,
-        "has_docstring": true,
-        "has_pass_only": false,
-        "has_todo": false
-      }
-    },
-    {
       "file": "wasm_integration.py",
       "type": "Python",
       "reason": "具備完整功能",
@@ -2822,11 +2726,27 @@
       "type": "Python",
       "reason": "具備完整功能",
       "info": {
-        "total_lines": 121,
-        "code_lines": 96,
+        "total_lines": 225,
+        "code_lines": 152,
         "has_imports": true,
-        "has_functions": true,
-        "has_classes": false,
+        "has_functions": false,
+        "has_classes": true,
+        "has_main": true,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "examples\\demo_storage.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 398,
+        "code_lines": 308,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": true,
         "has_main": true,
         "has_docstring": true,
         "has_pass_only": false,
@@ -2882,76 +2802,28 @@
       }
     },
     {
+      "file": "examples\\test_api_service.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 106,
+        "code_lines": 73,
+        "has_imports": true,
+        "has_functions": true,
+        "has_classes": false,
+        "has_main": true,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
       "file": "tests\\complete_system_check.py",
       "type": "Python",
       "reason": "具備完整功能",
       "info": {
         "total_lines": 363,
         "code_lines": 251,
-        "has_imports": true,
-        "has_functions": true,
-        "has_classes": false,
-        "has_main": true,
-        "has_docstring": true,
-        "has_pass_only": false,
-        "has_todo": false
-      }
-    },
-    {
-      "file": "tests\\test_architecture_improvements.py",
-      "type": "Python",
-      "reason": "具備完整功能",
-      "info": {
-        "total_lines": 283,
-        "code_lines": 216,
-        "has_imports": true,
-        "has_functions": true,
-        "has_classes": false,
-        "has_main": true,
-        "has_docstring": true,
-        "has_pass_only": false,
-        "has_todo": false
-      }
-    },
-    {
-      "file": "tests\\test_complete_system.py",
-      "type": "Python",
-      "reason": "具備完整功能",
-      "info": {
-        "total_lines": 363,
-        "code_lines": 251,
-        "has_imports": true,
-        "has_functions": true,
-        "has_classes": false,
-        "has_main": true,
-        "has_docstring": true,
-        "has_pass_only": false,
-        "has_todo": false
-      }
-    },
-    {
-      "file": "tests\\test_integration.py",
-      "type": "Python",
-      "reason": "具備完整功能",
-      "info": {
-        "total_lines": 92,
-        "code_lines": 62,
-        "has_imports": true,
-        "has_functions": true,
-        "has_classes": false,
-        "has_main": true,
-        "has_docstring": true,
-        "has_pass_only": false,
-        "has_todo": false
-      }
-    },
-    {
-      "file": "tests\\test_module_imports.py",
-      "type": "Python",
-      "reason": "具備完整功能",
-      "info": {
-        "total_lines": 252,
-        "code_lines": 195,
         "has_imports": true,
         "has_functions": true,
         "has_classes": false,
@@ -3244,6 +3116,38 @@
         "has_imports": true,
         "has_functions": true,
         "has_classes": true,
+        "has_main": true,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "tools\\import_path_checker.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 267,
+        "code_lines": 205,
+        "has_imports": true,
+        "has_functions": true,
+        "has_classes": true,
+        "has_main": true,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "tools\\mark_nonfunctional_scripts.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 83,
+        "code_lines": 52,
+        "has_imports": true,
+        "has_functions": true,
+        "has_classes": false,
         "has_main": true,
         "has_docstring": true,
         "has_pass_only": false,
@@ -4209,8 +4113,8 @@
       "type": "Python",
       "reason": "具備完整功能",
       "info": {
-        "total_lines": 202,
-        "code_lines": 123,
+        "total_lines": 201,
+        "code_lines": 122,
         "has_imports": true,
         "has_functions": false,
         "has_classes": true,
@@ -4525,6 +4429,22 @@
       }
     },
     {
+      "file": "services\\features\\email_change_bypass\\worker.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 449,
+        "code_lines": 373,
+        "has_imports": true,
+        "has_functions": true,
+        "has_classes": true,
+        "has_main": false,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
       "file": "services\\features\\function_idor\\cross_user_tester.py",
       "type": "Python",
       "reason": "具備完整功能",
@@ -4625,8 +4545,8 @@
       "type": "Python",
       "reason": "具備完整功能",
       "info": {
-        "total_lines": 448,
-        "code_lines": 346,
+        "total_lines": 490,
+        "code_lines": 377,
         "has_imports": true,
         "has_functions": true,
         "has_classes": true,
@@ -4753,8 +4673,8 @@
       "type": "Python",
       "reason": "具備完整功能",
       "info": {
-        "total_lines": 351,
-        "code_lines": 259,
+        "total_lines": 505,
+        "code_lines": 371,
         "has_imports": true,
         "has_functions": false,
         "has_classes": true,
@@ -4849,8 +4769,8 @@
       "type": "Python",
       "reason": "具備完整功能",
       "info": {
-        "total_lines": 434,
-        "code_lines": 370,
+        "total_lines": 588,
+        "code_lines": 483,
         "has_imports": true,
         "has_functions": true,
         "has_classes": true,
@@ -4945,8 +4865,8 @@
       "type": "Python",
       "reason": "具備完整功能",
       "info": {
-        "total_lines": 446,
-        "code_lines": 370,
+        "total_lines": 568,
+        "code_lines": 461,
         "has_imports": true,
         "has_functions": true,
         "has_classes": true,
@@ -4961,8 +4881,8 @@
       "type": "Python",
       "reason": "具備完整功能",
       "info": {
-        "total_lines": 362,
-        "code_lines": 309,
+        "total_lines": 756,
+        "code_lines": 633,
         "has_imports": true,
         "has_functions": false,
         "has_classes": true,
@@ -4977,8 +4897,8 @@
       "type": "Python",
       "reason": "具備完整功能",
       "info": {
-        "total_lines": 368,
-        "code_lines": 314,
+        "total_lines": 782,
+        "code_lines": 670,
         "has_imports": true,
         "has_functions": true,
         "has_classes": true,
@@ -4993,8 +4913,8 @@
       "type": "Python",
       "reason": "具備完整功能",
       "info": {
-        "total_lines": 264,
-        "code_lines": 220,
+        "total_lines": 471,
+        "code_lines": 400,
         "has_imports": true,
         "has_functions": false,
         "has_classes": true,
@@ -5009,8 +4929,8 @@
       "type": "Python",
       "reason": "具備完整功能",
       "info": {
-        "total_lines": 308,
-        "code_lines": 265,
+        "total_lines": 673,
+        "code_lines": 577,
         "has_imports": true,
         "has_functions": true,
         "has_classes": true,
@@ -5021,12 +4941,44 @@
       }
     },
     {
+      "file": "services\\features\\oauth_openredirect_chain\\worker.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 332,
+        "code_lines": 273,
+        "has_imports": true,
+        "has_functions": true,
+        "has_classes": true,
+        "has_main": false,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\features\\payment_logic_bypass\\worker.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 537,
+        "code_lines": 457,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": true,
+        "has_main": false,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
       "file": "services\\features\\ssrf_oob\\worker.py",
       "type": "Python",
       "reason": "具備完整功能",
       "info": {
-        "total_lines": 350,
-        "code_lines": 286,
+        "total_lines": 751,
+        "code_lines": 617,
         "has_imports": true,
         "has_functions": false,
         "has_classes": true,
@@ -5297,8 +5249,8 @@
       "type": "Python",
       "reason": "具備完整功能",
       "info": {
-        "total_lines": 453,
-        "code_lines": 346,
+        "total_lines": 485,
+        "code_lines": 370,
         "has_imports": true,
         "has_functions": false,
         "has_classes": true,
@@ -5329,8 +5281,8 @@
       "type": "Python",
       "reason": "具備完整功能",
       "info": {
-        "total_lines": 874,
-        "code_lines": 653,
+        "total_lines": 868,
+        "code_lines": 648,
         "has_imports": true,
         "has_functions": false,
         "has_classes": true,
@@ -6017,8 +5969,8 @@
       "type": "Python",
       "reason": "具備完整功能",
       "info": {
-        "total_lines": 468,
-        "code_lines": 380,
+        "total_lines": 477,
+        "code_lines": 387,
         "has_imports": true,
         "has_functions": false,
         "has_classes": true,
@@ -6157,6 +6109,38 @@
       }
     },
     {
+      "file": "services\\core\\aiva_core\\ai_engine\\tools\\shell_command_tool.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 281,
+        "code_lines": 209,
+        "has_imports": true,
+        "has_functions": true,
+        "has_classes": true,
+        "has_main": false,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\core\\aiva_core\\ai_engine\\tools\\system_status_tool.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 326,
+        "code_lines": 276,
+        "has_imports": true,
+        "has_functions": true,
+        "has_classes": true,
+        "has_main": false,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
       "file": "services\\core\\aiva_core\\ai_engine\\training\\data_loader.py",
       "type": "Python",
       "reason": "具備完整功能",
@@ -6269,6 +6253,22 @@
       }
     },
     {
+      "file": "services\\aiva_common\\enums\\common.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 143,
+        "code_lines": 103,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": true,
+        "has_main": false,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
       "file": "services\\aiva_common\\enums\\modules.py",
       "type": "Python",
       "reason": "具備完整功能",
@@ -6323,6 +6323,22 @@
       "info": {
         "total_lines": 183,
         "code_lines": 130,
+        "has_imports": true,
+        "has_functions": false,
+        "has_classes": true,
+        "has_main": false,
+        "has_docstring": true,
+        "has_pass_only": false,
+        "has_todo": false
+      }
+    },
+    {
+      "file": "services\\aiva_common\\schemas\\base.py",
+      "type": "Python",
+      "reason": "具備完整功能",
+      "info": {
+        "total_lines": 160,
+        "code_lines": 103,
         "has_imports": true,
         "has_functions": false,
         "has_classes": true,

@@ -96,7 +96,7 @@ class ExperienceRepository:
                 execution_success=metrics.get("success_steps"),
                 execution_failed=metrics.get("failed_steps"),
                 error_count=metrics.get("error_count"),
-                metadata=metadata,
+                extra_metadata=metadata,
             )
 
             session.add(record)
@@ -326,9 +326,9 @@ class ExperienceRepository:
                 model_version=model_version,
                 dataset_id=dataset_id,
                 training_config=training_config,
-                started_at=datetime.now(),
+                completed_at=datetime.now(),
                 status=status,
-                metadata=metadata,
+                extra_metadata=metadata,
             )
 
             session.add(history)
