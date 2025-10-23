@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 """
 初始化 AIVA 數據存儲
-
 創建所有必要的目錄和數據庫
 """
 
@@ -11,7 +10,8 @@ from pathlib import Path
 import sys
 
 # 添加項目路徑
-sys.path.insert(0, str(Path(__file__).parent.parent))
+project_root = Path(__file__).parent.parent
+sys.path.insert(0, str(project_root))
 
 from services.core.aiva_core.storage import StorageManager
 
@@ -22,10 +22,10 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 
-async def main():
-    """主函數"""
+async def initialize_storage():
+    """初始化 AIVA 數據存儲"""
     # 配置
-    data_root = Path("/workspaces/AIVA/data")
+    data_root = project_root / "data"  # 使用相對路徑
     db_type = "hybrid"  # 推薦：hybrid (SQLite + JSONL)
 
     logger.info(f"Initializing AIVA storage: {data_root}")
@@ -37,33 +37,14 @@ async def main():
     )
 
     logger.info("✅ Storage initialized successfully!")
-
-    # 顯示目錄結構
-    print("\n📁 Data Directory Structure:")
-    print(f"Root: {data_root}")
-    for category, paths in storage.dirs.items():
-        print(f"\n{category.upper()}:")
-        if isinstance(paths, dict):
-            for name, path in paths.items():
-                exists = "✅" if path.exists() else "❌"
-                print(f"  {exists} {name}: {path}")
-        else:
-            exists = "✅" if paths.exists() else "❌"
-            print(f"  {exists} {paths}")
-
-    # 獲取統計
+    
+    # 獲取統計資訊
     stats = await storage.get_statistics()
-    print("\n📊 Storage Statistics:")
-    for key, value in stats.items():
-        if isinstance(value, int) and key.endswith("_size"):
-            # 格式化大小
-            size_mb = value / (1024 * 1024)
-            print(f"  {key}: {size_mb:.2f} MB")
-        else:
-            print(f"  {key}: {value}")
+    logger.info(f"Storage statistics: {stats.get('backend')}, Total size: {stats.get('total_size', 0) / (1024*1024):.2f} MB")
 
-    logger.info("Initialization complete!")
+    return storage
 
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    logger.info("Running storage initialization directly...")
+    asyncio.run(initialize_storage())

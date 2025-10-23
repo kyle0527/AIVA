@@ -10,17 +10,94 @@ from datetime import datetime
 import logging
 from pathlib import Path
 import sys
+from typing import Any
 
-sys.path.insert(0, str(Path(__file__).parent.parent))
+# 添加項目路徑
+project_root = Path(__file__).parent.parent
+sys.path.insert(0, str(project_root))
 
 from services.aiva_common.schemas import (
     AttackPlan,
-    AttackResult,
+    AttackStep,
     ExperienceSample,
     TraceRecord,
-    TraceStep,
 )
-from services.core.aiva_core.storage import StorageManager
+from pydantic import BaseModel, Field
+
+
+# 定義缺失的模型類
+class AttackResult(BaseModel):
+    """攻擊結果"""
+    result_id: str
+    timestamp: datetime
+    success: bool
+    vulnerability_confirmed: bool
+    confidence: float
+    evidence: list[str] = Field(default_factory=list)
+    cvss_score: float | None = None
+    risk_level: str = "unknown"
+    metadata: dict[str, Any] = Field(default_factory=dict)
+
+
+class TraceStep(BaseModel):
+    """執行追蹤步驟"""
+    step_id: str
+    timestamp: datetime
+    action: str
+    payload: str | None = None
+    response_status: int | None = None
+    response_body: str | None = None
+    success: bool
+    duration_ms: float = 0.0
+    metadata: dict[str, Any] = Field(default_factory=dict)
+
+
+# 嘗試導入 StorageManager，如果失敗則創建 mock
+try:
+    from services.core.aiva_core.storage import StorageManager
+except ImportError:
+    logger = logging.getLogger(__name__)
+    logger.warning("StorageManager not available, creating mock implementation")
+    
+    class StorageManager:
+        """StorageManager 的 mock 實現"""
+        def __init__(self, data_root, db_type="hybrid", auto_create_dirs=True):
+            self.data_root = Path(data_root)
+            self.db_type = db_type
+            logger.info(f"Mock StorageManager initialized: {data_root}")
+            
+        async def save_experience_sample(self, sample):
+            logger.info(f"Mock: Would save experience sample {sample.sample_id}")
+            return True
+            
+        async def get_experience_samples(self, limit=100, min_quality=None, vulnerability_type=None):
+            logger.info(f"Mock: Would query experience samples (limit={limit})")
+            return []
+            
+        async def save_trace(self, trace):
+            logger.info(f"Mock: Would save trace {trace.trace_id}")
+            return True
+            
+        async def save_training_session(self, session_data):
+            logger.info(f"Mock: Would save training session {session_data.get('session_id')}")
+            return True
+            
+        async def get_statistics(self):
+            return {
+                'backend': 'mock',
+                'data_root': str(self.data_root),
+                'total_experiences': 0,
+                'high_quality_experiences': 0,
+                'total_traces': 0,
+                'total_sessions': 0,
+                'total_checkpoints': 0,
+                'total_knowledge': 0,
+                'database_size': 0,
+                'training_size': 0,
+                'models_size': 0,
+                'knowledge_size': 0,
+                'total_size': 0,
+            }
 
 logging.basicConfig(
     level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
