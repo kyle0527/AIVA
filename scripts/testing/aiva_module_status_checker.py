@@ -61,8 +61,8 @@ class AIVAModuleStatusChecker:
             
             # Function 功能模組
             "Function": {
-                "test_framework": "services.function.aiva_function.test_framework",
-                "validation_suite": "services.function.aiva_function.validation_suite"
+                "feature_executor": "services.features.feature_step_executor", 
+                "high_value_manager": "services.features.high_value_manager"
             },
             
             # Common 共用模組

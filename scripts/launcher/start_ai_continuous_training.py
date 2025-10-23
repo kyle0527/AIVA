@@ -15,7 +15,8 @@ if sys.platform == 'win32':
 
 # 添加 AIVA 模組路徑
 sys.path.insert(0, str(Path(__file__).parent / "services"))
-sys.path.insert(0, str(Path(__file__).parent))
+project_root = Path(__file__).parent.parent.parent
+sys.path.insert(0, str(project_root))
 
 from services.core.aiva_core.ai_commander import AICommander
 from services.core.aiva_core.training.training_orchestrator import TrainingOrchestrator

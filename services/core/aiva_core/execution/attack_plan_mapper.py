@@ -13,7 +13,7 @@ from typing import Dict, Any, List, Optional
 try:
     from services.aiva_common.schemas.generated.tasks import FunctionTaskPayload, FunctionTaskTarget, FunctionTaskContext
     from services.aiva_common.schemas.generated.messaging import AivaMessage  # AI 決策消息
-    from services.aiva_common.enums.modules import AivaModule
+    from services.aiva_common.enums.modules import ModuleName  # 使用正確的枚舉名稱
     # 可能需要導入其他 Schema 或工具
     IMPORT_SUCCESS = True
 except ImportError as e:
@@ -24,7 +24,7 @@ except ImportError as e:
     class FunctionTaskTarget: pass
     class FunctionTaskContext: pass
     class AivaMessage: pass
-    class AivaModule: pass
+    class ModuleName: pass
 
 
 logger = logging.getLogger(__name__)

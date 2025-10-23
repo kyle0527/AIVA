@@ -15,10 +15,11 @@ from datetime import datetime
 from typing import Dict, List, Any, Optional
 
 # 添加 AIVA 模組路徑
-sys.path.append(str(Path(__file__).parent.parent.parent))
+project_root = Path(__file__).parent.parent.parent
+sys.path.append(str(project_root))
 
 # 導入真實攻擊執行器
-from real_attack_executor import RealAttackExecutor
+from scripts.testing.real_attack_executor import RealAttackExecutor
 
 # 嘗試導入 AIVA 模組
 try:

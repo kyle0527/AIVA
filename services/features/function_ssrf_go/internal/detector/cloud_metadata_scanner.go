@@ -98,6 +98,7 @@ func (s *CloudMetadataScanner) ScanForMetadata(ctx context.Context, payloadURL s
 
 	// AWS IMDSv2 特殊處理：先嘗試獲取 Token
 	awsV2Token := ""
+	_ = awsV2Token // 防止未使用變數錯誤
 	for _, endpoint := range KnownMetadataEndpoints {
 		if endpoint.Provider == "AWS (IMDSv2 Token)" {
 			token, err := s.fetchAwsV2Token(ctx, endpoint, payloadURL)
