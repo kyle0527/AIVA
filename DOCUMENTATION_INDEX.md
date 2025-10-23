@@ -1,19 +1,32 @@
-# AIVA 項目文檔索引
+# AIVA 文檔導航中心
 
-## 📚 主要文檔
+**最後更新:** 2025年10月23日  
+**文檔版本:** v2.5  
+**整理狀態:** 已完成文檔統一和清理
 
-### 🎯 商用評估報告
-- [`COMMERCIAL_READINESS_ASSESSMENT.md`](./COMMERCIAL_READINESS_ASSESSMENT.md) - 商用準備度評估
-- [`HIGH_VALUE_FEATURES_ANALYSIS.md`](./HIGH_VALUE_FEATURES_ANALYSIS.md) - 高價值功能模組分析
-- [`SYSTEM_REPAIR_COMPLETION_REPORT.md`](./SYSTEM_REPAIR_COMPLETION_REPORT.md) - 系統修復完成報告
+這是 AIVA 系統的統一文檔索引，經過整理後提供清晰的導航結構。
 
-### 🔍 技術分析報告  
-- [`SYSTEM_SCAN_ANALYSIS.md`](./SYSTEM_SCAN_ANALYSIS.md) - 系統掃描分析報告
-- [`AIVA_系統現況分析與可參考部分.md`](./AIVA_系統現況分析與可參考部分.md) - 系統現況分析
-- [`ARCHITECTURE_CONTRACT_COMPLIANCE_REPORT.md`](./ARCHITECTURE_CONTRACT_COMPLIANCE_REPORT.md) - 架構合規報告
+---
 
-### 📋 實施計畫
-- [`AI_TRAINING_SOP.md`](./AI_TRAINING_SOP.md) - AI 訓練標準作業程序
+## � 核心文檔 (必讀)
+
+### 🎯 主要文檔
+- [📊 **AIVA 系統整合狀態報告**](AIVA_SYSTEM_STATUS_UNIFIED.md) - **系統整體狀態、架構概況、維護記錄**
+- [🧠 **AI 系統技術文檔**](AIVA_AI_TECHNICAL_DOCUMENTATION.md) - **BioNeuron 架構、跨語言整合、經驗學習**
+- [📖 **README 主入口**](README.md) - **項目概述和快速開始**
+- [⚔️ **攻擊模組重組報告**](ATTACK_MODULE_REORGANIZATION_REPORT.md) - **攻擊模組重組詳細記錄**
+
+### � 部署和使用
+- [⚡ **快速部署指南**](QUICK_DEPLOY.md) - 一鍵部署說明
+- [🏁 **快速開始教程**](QUICK_START.md) - 基礎使用教程
+
+### 📊 商業和評估
+- [💼 **商用準備度評估**](COMMERCIAL_READINESS_ASSESSMENT.md) - 商業化就緒狀態評估
+- [💎 **高價值功能分析**](HIGH_VALUE_FEATURES_ANALYSIS.md) - 核心功能價值分析
+
+### � 技術參考
+- [📋 **目錄結構說明**](SCHEMAS_DIRECTORIES_EXPLANATION.md) - 項目結構和Schema說明
+- [🧪 **測試檢查清單**](DENG_DENG_RANGE_TEST_CHECKLIST.md) - 測試範圍和檢查項目
 - [`SCHEMA_MANAGEMENT_SOP.md`](./SCHEMA_MANAGEMENT_SOP.md) - Schema 管理程序
 - [`QUICK_START.md`](./QUICK_START.md) - 快速開始指南
 

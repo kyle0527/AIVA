@@ -3,20 +3,46 @@
 > 🚀 **A**rtificial **I**ntelligence **V**ulnerability **A**ssessment Platform  
 > 基於 AI 的智能化應用程式安全測試解決方案
 
-[![Python](https://img.shields.io/badge/Python-3.11+-blue.svg)](https://python.org)
+[![Python](https://img.shields.io/badge/Python-3.13+-blue.svg)](https://python.org)
 [![Go](https://img.shields.io/badge/Go-1.21+-00ADD8.svg)](https://golang.org)
 [![Rust](https://img.shields.io/badge/Rust-1.70+-000000.svg)](https://rust-lang.org)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5.0+-3178C6.svg)](https://typescriptlang.org)
+[![FastAPI](https://img.shields.io/badge/FastAPI-0.104+-009688.svg)](https://fastapi.tiangolo.com)
+[![Status](https://img.shields.io/badge/Status-Production%20Ready-green.svg)]()
+
+**當前版本:** v2.5+ | **最後更新:** 2025年10月23日
 
 ---
 
-## 📋 目錄導航
+## 🏗️ 系統架構
 
-### 🏗️ 核心架構文檔
-- [📖 系統架構總覽](docs/ARCHITECTURE/AI_SYSTEM_OVERVIEW.md) - 完整的系統架構說明
-- [🧠 AI 架構設計](docs/ARCHITECTURE/AI_ARCHITECTURE.md) - AI 引擎核心設計
-- [✅ 組件檢查清單](docs/ARCHITECTURE/AI_COMPONENTS_CHECKLIST.md) - 所有組件狀態
-- [🌐 多語言架構](docs/ARCHITECTURE/MULTILANG_STRATEGY.md) - 多語言整合策略
+AIVA 採用**五大核心模組架構**，結合 BioNeuron AI 智能體實現全自動化安全測試：
+
+```
+🧠 AI核心引擎 (BioNeuron)    🔍 掃描引擎 (統一介面)
+    ↓                           ↓
+⚔️  攻擊執行引擎          � 整合服務 (經驗學習)
+    ↓                           ↓  
+🛠️  功能檢測模組    →    📊 統一報告和分析
+```
+
+### 核心能力
+- **🧠 BioNeuron AI**: 生物神經元啟發的 RAG 智能體，具備經驗學習和自適應能力
+- **🔍 智能掃描**: 統一掃描引擎，整合多種掃描技術和策略
+- **⚔️ 攻擊執行**: 自動化攻擊鏈編排、漏洞利用和結果驗證
+- **🔗 深度整合**: 跨語言技術棧整合 (Python/Rust/Go/Node.js/WASM)
+- **📚 經驗學習**: 持續學習攻擊模式，優化測試策略
+
+---
+
+## 📚 核心文檔
+
+### � 系統狀態和架構
+- [📊 **AIVA 系統整合狀態報告**](AIVA_SYSTEM_STATUS_UNIFIED.md) - 系統整體狀態、架構概況、維護記錄
+- [🧠 **AI 系統技術文檔**](AIVA_AI_TECHNICAL_DOCUMENTATION.md) - BioNeuron 架構、跨語言整合、經驗學習
+
+### 🚀 快速開始
+- [⚡ **快速部署指南**](QUICK_DEPLOY.md) - 一鍵部署說明
+- [� **快速開始教程**](QUICK_START.md) - 基礎使用教程
 
 ### 🚀 快速開始
 - [⚡ 快速開始指南](QUICK_START.md) - 5分鐘快速部署

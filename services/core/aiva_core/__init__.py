@@ -7,6 +7,7 @@ AIVA Core - 核心引擎模組
 核心功能:
 - bio_neuron_master: 生物神經網絡主控制器
 - ai_engine: AI 引擎和策略生成
+- attack: 攻擊執行和漏洞利用
 - storage: 數據存儲和持久化
 - analysis: 風險分析和評估
 - execution: 任務執行和調度
