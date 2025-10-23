@@ -1,0 +1,30 @@
+2025-10-23 15:35:37,570 - INFO - ✅ 成功載入 SOT 檔案: services\aiva_common\core_schema_sot.yaml
+2025-10-23 15:35:37,571 - INFO - 🔍 開始 Schema 驗證...
+2025-10-23 15:35:37,571 - INFO - ✅ Schema 驗證通過!
+2025-10-23 15:35:37,571 - INFO - 🚀 開始生成所有語言 Schema...
+2025-10-23 15:35:37,581 - INFO - ✅ 生成 Python 基礎類型: services\aiva_common\schemas\generated\base_types.py
+2025-10-23 15:35:37,591 - INFO - ✅ 生成 Python messaging Schema: services\aiva_common\schemas\generated\messaging.py
+2025-10-23 15:35:37,603 - ERROR - ❌ Python Schema 生成失敗: 'dict object' has no attribute 'fields'
+2025-10-23 15:35:37,614 - ERROR - ❌ Go Schema 生成失敗: 'dict object' has no attribute 'fields'
+2025-10-23 15:35:37,616 - INFO - ✅ 生成 Rust Schema: services\scan\info_gatherer_rust\src\schemas\generated\mod.rs
+2025-10-23 15:35:37,616 - INFO - ✅ Rust Schema 生成完成: 1 個檔案
+2025-10-23 15:35:37,616 - INFO - 🎉 所有語言 Schema 生成完成! 總計: 1 個檔案
+2025-10-23 15:37:15,588 - INFO - ✅ 成功載入 SOT 檔案: services\aiva_common\core_schema_sot.yaml
+2025-10-23 15:37:15,588 - INFO - 🔍 開始 Schema 驗證...
+2025-10-23 15:37:15,589 - INFO - ✅ Schema 驗證通過!
+2025-10-23 15:37:15,589 - INFO - 🚀 開始生成所有語言 Schema...
+2025-10-23 15:37:15,590 - INFO - ✅ 生成 Python 基礎類型: services\aiva_common\schemas\generated\base_types.py
+2025-10-23 15:37:15,591 - INFO - ✅ 生成 Python messaging Schema: services\aiva_common\schemas\generated\messaging.py
+2025-10-23 15:37:15,592 - INFO - ✅ 生成 Python tasks Schema: services\aiva_common\schemas\generated\tasks.py
+2025-10-23 15:37:15,593 - INFO - ✅ 生成 Python findings Schema: services\aiva_common\schemas\generated\findings.py
+2025-10-23 15:37:15,595 - INFO - ✅ Python Schema 生成完成: 5 個檔案
+2025-10-23 15:37:15,597 - INFO - ✅ 生成 Go Schema: services\features\common\go\aiva_common_go\schemas\generated\schemas.go
+2025-10-23 15:37:15,597 - INFO - ✅ Go Schema 生成完成: 1 個檔案
+2025-10-23 15:37:15,598 - INFO - ✅ 生成 Rust Schema: services\scan\info_gatherer_rust\src\schemas\generated\mod.rs
+2025-10-23 15:37:15,598 - INFO - ✅ Rust Schema 生成完成: 1 個檔案
+2025-10-23 15:37:15,598 - INFO - 🎉 所有語言 Schema 生成完成! 總計: 7 個檔案
+2025-10-23 15:38:29,425 - INFO - ✅ 成功載入 SOT 檔案: services\aiva_common\core_schema_sot.yaml
+2025-10-23 15:38:29,427 - INFO - ✅ 生成 Python 基礎類型: services\aiva_common\schemas\generated\base_types.py
+2025-10-23 15:38:29,428 - INFO - ✅ 生成 Python messaging Schema: services\aiva_common\schemas\generated\messaging.py
+2025-10-23 15:38:29,428 - INFO - ✅ 生成 Python tasks Schema: services\aiva_common\schemas\generated\tasks.py
+2025-10-23 15:38:29,429 - INFO - ✅ 生成 Python findings Schema: services\aiva_common\schemas\generated\findings.py
