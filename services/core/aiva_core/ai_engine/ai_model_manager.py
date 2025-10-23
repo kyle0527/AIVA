@@ -256,7 +256,7 @@ class AIModelManager:
         try:
             if use_rag and self.bio_agent:
                 # 使用 RAG 功能
-                result = await self.bio_agent.process_query(query, context or {})
+                result = self.bio_agent.invoke(query)
                 logger.info("Decision made using BioNeuronRAGAgent with RAG")
             else:
                 # 直接使用 ScalableBioNet
@@ -451,3 +451,35 @@ class AIModelManager:
                 "error": str(e),
                 "timestamp": datetime.now(UTC).isoformat(),
             }
+    
+    async def predict_batch(self, queries: List[str]) -> List[Dict[str, Any]]:
+        """批次預測功能
+        
+        Args:
+            queries: 查詢列表
+            
+        Returns:
+            預測結果列表
+        """
+        try:
+            results = []
+            
+            for query in queries:
+                # 使用現有的 make_decision 方法進行個別預測
+                result = await self.make_decision(query)
+                results.append(result)
+            
+            logger.info(f"Batch prediction completed for {len(queries)} queries")
+            return results
+            
+        except Exception as e:
+            logger.error(f"Batch prediction failed: {e}")
+            # 返回失敗結果列表
+            return [
+                {
+                    "success": False,
+                    "error": str(e),
+                    "timestamp": datetime.now(UTC).isoformat()
+                }
+                for _ in queries
+            ]

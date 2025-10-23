@@ -569,7 +569,7 @@ class SsrfWorkerService:
                 header=MessageHeader(
                     message_id=task.task_id,
                     trace_id=task.task_id,
-                    source_module="function_ssrf"
+                    source_module="FunctionSSRF"
                 ),
                 scan_id=getattr(task, 'scan_id', 'default'),
                 target=task.target,

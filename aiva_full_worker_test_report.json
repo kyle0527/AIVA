@@ -1,38 +1,39 @@
 {
-  "timestamp": "2025-10-19T11:23:38.019308",
+  "timestamp": "2025-10-23T08:30:57.791464",
   "target": "http://localhost:3000",
   "total_tests": 6,
-  "successful_tests": 0,
-  "success_rate": 0.0,
+  "successful_tests": 2,
+  "success_rate": 0.3333333333333333,
   "results": {
     "ssrf": {
       "status": "failed",
-      "elapsed": 0.32990097999572754,
-      "error": "cannot import name 'Task' from 'aiva_common.schemas' (C:\\D\\fold7\\AIVA-git\\services\\aiva_common\\schemas\\__init__.py)"
+      "elapsed": 0.7475173473358154,
+      "error": "2 validation errors for FunctionTaskPayload\ntask_id\n  Field required [type=missing, input_value={'header': MessageHeader(...: 'deep', 'priority': 1}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.12/v/missing\ntarget\n  Input should be a valid dictionary or instance of FunctionTaskTarget [type=model_type, input_value=Target(url='http://localh...}, params={}, body=None), input_type=Target]\n    For further information visit https://errors.pydantic.dev/2.12/v/model_type"
     },
     "sqli": {
       "status": "failed",
-      "elapsed": 0.0006380081176757812,
-      "error": "cannot import name 'Task' from 'aiva_common.schemas' (C:\\D\\fold7\\AIVA-git\\services\\aiva_common\\schemas\\__init__.py)"
+      "elapsed": 0.04304170608520508,
+      "error": "2 validation errors for FunctionTaskPayload\ntask_id\n  Field required [type=missing, input_value={'header': MessageHeader(...: 'deep', 'priority': 1}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.12/v/missing\ntarget\n  Input should be a valid dictionary or instance of FunctionTaskTarget [type=model_type, input_value=Target(url='http://localh...}, params={}, body=None), input_type=Target]\n    For further information visit https://errors.pydantic.dev/2.12/v/model_type"
     },
     "xss": {
       "status": "failed",
-      "elapsed": 0.0004756450653076172,
-      "error": "cannot import name 'Task' from 'aiva_common.schemas' (C:\\D\\fold7\\AIVA-git\\services\\aiva_common\\schemas\\__init__.py)"
+      "elapsed": 0.03976869583129883,
+      "error": "2 validation errors for FunctionTaskPayload\ntask_id\n  Field required [type=missing, input_value={'header': MessageHeader(...: 'deep', 'priority': 1}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.12/v/missing\ntarget\n  Input should be a valid dictionary or instance of FunctionTaskTarget [type=model_type, input_value=Target(url='http://localh...}, params={}, body=None), input_type=Target]\n    For further information visit https://errors.pydantic.dev/2.12/v/model_type"
     },
     "idor": {
       "status": "failed",
-      "elapsed": 0.0005006790161132812,
-      "error": "cannot import name 'Task' from 'aiva_common.schemas' (C:\\D\\fold7\\AIVA-git\\services\\aiva_common\\schemas\\__init__.py)"
+      "elapsed": 0.42008352279663086,
+      "error": "2 validation errors for FunctionTaskPayload\ntask_id\n  Field required [type=missing, input_value={'header': MessageHeader(...: 'deep', 'priority': 1}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.12/v/missing\ntarget\n  Input should be a valid dictionary or instance of FunctionTaskTarget [type=model_type, input_value=Target(url='http://localh...}, params={}, body=None), input_type=Target]\n    For further information visit https://errors.pydantic.dev/2.12/v/model_type"
     },
     "graphql_authz": {
-      "status": "failed",
-      "elapsed": 0.00041747093200683594,
-      "error": "cannot import name 'Task' from 'aiva_common.schemas' (C:\\D\\fold7\\AIVA-git\\services\\aiva_common\\schemas\\__init__.py)"
+      "status": "success",
+      "elapsed": 0.0010180473327636719,
+      "findings": 0
     },
     "ai_core": {
-      "status": "failed",
-      "error": "'AIModelManager' object has no attribute 'predict_batch'"
+      "status": "success",
+      "decision_success_rate": 0.0,
+      "model_params": 2238464
     }
   }
 }

@@ -713,9 +713,22 @@ class GraphqlAuthzWorkerService:
                 'endpoint': str(task.target.url),
                 'headers': task.target.headers or {},
                 'test_queries': [
-                    "query { users { id email } }",
-                    "query { adminUsers { id email password } }",
-                    "mutation { deleteUser(id: 1) { success } }"
+                    {
+                        "name": "usersList", 
+                        "query": "query { users { id email } }",
+                        "variables": {}
+                    },
+                    {
+                        "name": "adminUsers",
+                        "query": "query { adminUsers { id email password } }",
+                        "variables": {}
+                    },
+                    {
+                        "name": "deleteUser",
+                        "query": "mutation { deleteUser(id: 1) { success } }",
+                        "variables": {},
+                        "target_user_id": "1"
+                    }
                 ],
                 'headers_admin': {},
                 'options': {
