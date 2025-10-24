@@ -485,7 +485,7 @@ def main():
         return
     
     # 初始化管理器
-    aiva_root = Path(__file__).parent.parent
+    aiva_root = Path(__file__).parent.parent.parent.parent
     manager = SchemaManager(aiva_root)
     
     # 執行對應操作

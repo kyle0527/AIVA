@@ -10,7 +10,7 @@ from pathlib import Path
 
 # 使用當前腳本所在目錄作為基準
 script_dir = Path(__file__).parent
-root = script_dir.parent  # AIVA 根目錄
+root = script_dir.parent.parent.parent.parent  # AIVA 根目錄
 out = script_dir / "non_cp950_filtered_report.txt"
 
 print(f"掃描目錄: {root}")

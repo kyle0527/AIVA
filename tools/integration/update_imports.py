@@ -46,7 +46,7 @@ def update_import_in_file(file_path: Path) -> bool:
 
 def main():
     """主函數"""
-    project_root = Path(__file__).parent.parent
+    project_root = Path(__file__).parent.parent.parent
     services_dir = project_root / "services"
 
     # 需要更新的目錄

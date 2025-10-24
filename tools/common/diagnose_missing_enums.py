@@ -14,7 +14,7 @@
 import re
 from pathlib import Path
 
-aiva_common = Path(__file__).parent.parent / "services" / "aiva_common"
+aiva_common = Path(__file__).parent.parent.parent / "services" / "aiva_common"
 
 print("=" * 80)
 print("診斷 AuthType 和 CrawlingStrategy 使用情況")

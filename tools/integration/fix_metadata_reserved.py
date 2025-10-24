@@ -1,7 +1,10 @@
 """修復 storage/models.py 中的 metadata 保留字問題"""
 import re
+from pathlib import Path
 
-file_path = r'C:\D\fold7\AIVA-git\services\core\aiva_core\storage\models.py'
+# 使用相對路徑，從項目根目錄計算
+project_root = Path(__file__).parent.parent.parent
+file_path = project_root / 'services' / 'core' / 'aiva_core' / 'storage' / 'models.py'
 
 with open(file_path, 'r', encoding='utf-8') as f:
     content = f.read()

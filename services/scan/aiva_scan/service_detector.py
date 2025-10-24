@@ -21,7 +21,7 @@ class ServiceDetector:
         self.results = []
         self.service_signatures = self._load_service_signatures()
         
-    async def initialize(self, config: Dict[str, Any] = None) -> bool:
+    def initialize(self, config: Dict[str, Any] = None) -> bool:
         """初始化服務檢測器"""
         try:
             self.detection_config = config or {}
@@ -72,7 +72,7 @@ class ServiceDetector:
             
             # 進行深度服務分析
             if results["detected_services"]:
-                await self._perform_deep_analysis(results)
+                self._perform_deep_analysis(results)
             
             self.results.append(results)
             logger.info(f"服務檢測完成，發現 {len(results['detected_services'])} 個服務")
@@ -187,66 +187,138 @@ class ServiceDetector:
     def _analyze_banner(self, banner: str, port: int) -> Dict[str, Any]:
         """分析服務banner"""
         analysis = {"confidence": 50}
-        
         banner_lower = banner.lower()
         
-        # HTTP服務檢測
-        if "http/" in banner_lower:
-            analysis["service_name"] = "HTTP"
-            analysis["category"] = "web"
-            analysis["confidence"] = 95
-            
-            # 檢測Web服務器類型
-            if "apache" in banner_lower:
-                analysis["version"] = self._extract_version(banner, "apache")
-                analysis["server_software"] = "Apache"
-            elif "nginx" in banner_lower:
-                analysis["version"] = self._extract_version(banner, "nginx")
-                analysis["server_software"] = "Nginx"
-            elif "iis" in banner_lower or "microsoft" in banner_lower:
-                analysis["server_software"] = "IIS"
-                analysis["version"] = self._extract_version(banner, "iis")
-        
-        # SSH服務檢測
-        elif "ssh" in banner_lower:
-            analysis["service_name"] = "SSH"
-            analysis["category"] = "remote_access"
-            analysis["confidence"] = 95
-            
-            if "openssh" in banner_lower:
-                analysis["version"] = self._extract_version(banner, "openssh")
-                analysis["ssh_implementation"] = "OpenSSH"
-        
-        # FTP服務檢測
-        elif "ftp" in banner_lower or banner.startswith("220 "):
-            analysis["service_name"] = "FTP"
-            analysis["category"] = "file_transfer"
-            analysis["confidence"] = 90
-            
-            if "vsftpd" in banner_lower:
-                analysis["ftp_implementation"] = "vsftpd"
-            elif "proftpd" in banner_lower:
-                analysis["ftp_implementation"] = "ProFTPD"
-        
-        # SMTP服務檢測
-        elif banner.startswith("220 ") and ("mail" in banner_lower or "smtp" in banner_lower):
-            analysis["service_name"] = "SMTP"
-            analysis["category"] = "mail"
-            analysis["confidence"] = 90
-        
-        # 數據庫服務檢測
-        elif "mysql" in banner_lower:
-            analysis["service_name"] = "MySQL"
-            analysis["category"] = "database"
-            analysis["confidence"] = 95
-            analysis["version"] = self._extract_version(banner, "mysql")
-        
-        elif "postgresql" in banner_lower:
-            analysis["service_name"] = "PostgreSQL" 
-            analysis["category"] = "database"
-            analysis["confidence"] = 95
+        # 使用專門的檢測方法
+        if self._is_http_service(banner_lower):
+            return self._analyze_http_banner(banner, banner_lower, analysis)
+        elif self._is_ssh_service(banner_lower):
+            return self._analyze_ssh_banner(banner, banner_lower, analysis)
+        elif self._is_ftp_service(banner, banner_lower):
+            return self._analyze_ftp_banner(banner, banner_lower, analysis)
+        elif self._is_smtp_service(banner, banner_lower):
+            return self._analyze_smtp_banner(analysis)
+        elif self._is_database_service(banner_lower):
+            return self._analyze_database_banner(banner, banner_lower, analysis)
         
         return analysis
+    
+    def _is_http_service(self, banner_lower: str) -> bool:
+        """檢查是否為HTTP服務"""
+        return "http/" in banner_lower
+    
+    def _is_ssh_service(self, banner_lower: str) -> bool:
+        """檢查是否為SSH服務"""
+        return "ssh" in banner_lower
+    
+    def _is_ftp_service(self, banner: str, banner_lower: str) -> bool:
+        """檢查是否為FTP服務"""
+        return "ftp" in banner_lower or banner.startswith("220 ")
+    
+    def _is_smtp_service(self, banner: str, banner_lower: str) -> bool:
+        """檢查是否為SMTP服務"""
+        return banner.startswith("220 ") and ("mail" in banner_lower or "smtp" in banner_lower)
+    
+    def _is_database_service(self, banner_lower: str) -> bool:
+        """檢查是否為數據庫服務"""
+        return "mysql" in banner_lower or "postgresql" in banner_lower
+    
+    def _analyze_http_banner(self, banner: str, banner_lower: str, analysis: Dict[str, Any]) -> Dict[str, Any]:
+        """分析HTTP banner"""
+        analysis.update({
+            "service_name": "HTTP",
+            "category": "web", 
+            "confidence": 95
+        })
+        
+        # 檢測Web服務器類型
+        server_info = self._detect_web_server_type(banner, banner_lower)
+        analysis.update(server_info)
+        
+        return analysis
+    
+    def _analyze_ssh_banner(self, banner: str, banner_lower: str, analysis: Dict[str, Any]) -> Dict[str, Any]:
+        """分析SSH banner"""
+        analysis.update({
+            "service_name": "SSH",
+            "category": "remote_access",
+            "confidence": 95
+        })
+        
+        if "openssh" in banner_lower:
+            analysis["version"] = self._extract_version(banner, "openssh")
+            analysis["ssh_implementation"] = "OpenSSH"
+        
+        return analysis
+    
+    def _analyze_ftp_banner(self, banner: str, banner_lower: str, analysis: Dict[str, Any]) -> Dict[str, Any]:
+        """分析FTP banner"""
+        analysis.update({
+            "service_name": "FTP",
+            "category": "file_transfer",
+            "confidence": 90
+        })
+        
+        # 檢測FTP實現類型
+        ftp_impl = self._detect_ftp_implementation(banner_lower)
+        if ftp_impl:
+            analysis["ftp_implementation"] = ftp_impl
+        
+        return analysis
+    
+    def _analyze_smtp_banner(self, analysis: Dict[str, Any]) -> Dict[str, Any]:
+        """分析SMTP banner"""
+        analysis.update({
+            "service_name": "SMTP",
+            "category": "mail",
+            "confidence": 90
+        })
+        return analysis
+    
+    def _analyze_database_banner(self, banner: str, banner_lower: str, analysis: Dict[str, Any]) -> Dict[str, Any]:
+        """分析數據庫banner"""
+        if "mysql" in banner_lower:
+            analysis.update({
+                "service_name": "MySQL",
+                "category": "database",
+                "confidence": 95,
+                "version": self._extract_version(banner, "mysql")
+            })
+        elif "postgresql" in banner_lower:
+            analysis.update({
+                "service_name": "PostgreSQL",
+                "category": "database", 
+                "confidence": 95
+            })
+        
+        return analysis
+    
+    def _detect_web_server_type(self, banner: str, banner_lower: str) -> Dict[str, str]:
+        """檢測Web服務器類型"""
+        if "apache" in banner_lower:
+            return {
+                "version": self._extract_version(banner, "apache"),
+                "server_software": "Apache"
+            }
+        elif "nginx" in banner_lower:
+            return {
+                "version": self._extract_version(banner, "nginx"),
+                "server_software": "Nginx"
+            }
+        elif "iis" in banner_lower or "microsoft" in banner_lower:
+            return {
+                "server_software": "IIS",
+                "version": self._extract_version(banner, "iis")
+            }
+        return {}
+    
+    def _detect_ftp_implementation(self, banner_lower: str) -> str:
+        """檢測FTP實現類型"""
+        if "vsftpd" in banner_lower:
+            return "vsftpd"
+        elif "proftpd" in banner_lower:
+            return "ProFTPD"
+        return ""
     
     def _extract_version(self, banner: str, service: str) -> str:
         """從banner中提取版本信息"""
@@ -431,7 +503,7 @@ class ServiceDetector:
         
         return details
     
-    async def _perform_deep_analysis(self, results: Dict[str, Any]):
+    def _perform_deep_analysis(self, results: Dict[str, Any]):
         """執行深度服務分析"""
         try:
             analysis = {
@@ -516,7 +588,7 @@ def demo_service_detector():
         detector = ServiceDetector()
         
         # 初始化
-        await detector.initialize()
+        detector.initialize()
         
         # 檢測測試目標
         results = await detector.detect_services("localhost:3000")

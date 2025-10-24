@@ -78,7 +78,7 @@ export class InteractionSimulator {
         (window as any).domChanges = [];
         
         const observer = new MutationObserver((mutations) => {
-          mutations.forEach((mutation) => {
+          for (const mutation of mutations) {
             const change: any = {
               type: mutation.type as 'childList' | 'attributes' | 'subtree',
               target_node: mutation.target.nodeName,
@@ -94,7 +94,7 @@ export class InteractionSimulator {
             }
 
             (window as any).domChanges.push(change);
-          });
+          }
         });
 
         observer.observe(document.body || document.documentElement, {

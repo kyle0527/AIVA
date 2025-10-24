@@ -5,8 +5,8 @@
 import sys
 from pathlib import Path
 
-# 設定路徑
-SCHEMAS_DIR = Path("c:/F/AIVA/services/aiva_common/schemas")
+# 設定路徑 - 使用相對路徑計算
+SCHEMAS_DIR = Path(__file__).parent.parent.parent / "services" / "aiva_common" / "schemas"
 
 # 定義剩餘檔案的內容模板
 REMAINING_FILES = {

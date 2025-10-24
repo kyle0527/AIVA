@@ -1,7 +1,7 @@
 from pathlib import Path
 import shutil
 
-root = Path(r"c:\D\E\AIVA\AIVA-main")
+root = Path(__file__).parent.parent.parent.parent
 backup_root = root / 'emoji_backups2'
 backup_root.mkdir(exist_ok=True)
 
@@ -41,7 +41,8 @@ for p in py_files:
         p.write_text('\n'.join(new_lines) + ('\n' if text.endswith('\n') else ''), encoding='utf-8')
         modified.append(str(p))
 
-out = root / 'tools' / 'replace_non_cp950_out.txt'
+out = root / '_out' / 'replace_non_cp950_out.txt'
+out.parent.mkdir(exist_ok=True)
 with out.open('w', encoding='utf-8') as f:
     f.write(f'files_modified: {len(modified)}\n')
     for m in modified:

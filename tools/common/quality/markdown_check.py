@@ -1,7 +1,8 @@
 from pathlib import Path
 import re
 
-p = Path(r"c:\D\E\AIVA\AIVA-main\DATA_CONTRACT_UPDATE.md")
+root_dir = Path(__file__).parent.parent.parent.parent
+p = root_dir / "DATA_CONTRACT_UPDATE.md"
 s = p.read_text(encoding="utf-8")
 lines = s.splitlines()
 issues = []
@@ -39,7 +40,8 @@ for i, line in enumerate(lines, start=1):
             if i < len(lines) and lines[i].strip() != "":
                 issues.append((i, 'blanks-around-fences-below', lines[i].strip()))
 
-out_path = Path(r"c:\D\E\AIVA\AIVA-main\tools\markdown_check_out.txt")
+out_path = root_dir / "_out" / "markdown_check_out.txt"
+out_path.parent.mkdir(exist_ok=True)
 with out_path.open("w", encoding="utf-8") as f:
     f.write(f'found {len(issues)} issues\n')
     for it in issues:

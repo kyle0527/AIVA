@@ -82,7 +82,7 @@ def _calculate_complexity_score(classes, functions, avg_func_len, imports):
 def analyze_core_modules():
     """分析 AIVA 核心模組"""
     # 修正路徑為當前項目路徑
-    core_path = Path('./services/core/aiva_core')
+    core_path = Path(__file__).parent.parent.parent.parent / 'services' / 'core' / 'aiva_core'
     results = []
 
     if not core_path.exists():
@@ -244,7 +244,9 @@ if __name__ == '__main__':
     generate_analysis_report(results)
 
     # 儲存詳細結果到 JSON
-    with open('_out/core_module_analysis_detailed.json', 'w', encoding='utf-8') as f:
+    output_path = Path(__file__).parent.parent.parent.parent / '_out' / 'core_module_analysis_detailed.json'
+    output_path.parent.mkdir(exist_ok=True)
+    with open(output_path, 'w', encoding='utf-8') as f:
         json.dump(results, f, indent=2, ensure_ascii=False)
 
-    print('\n📝 詳細分析結果已儲存到: _out/core_module_analysis_detailed.json')
+    print(f'\n📝 詳細分析結果已儲存到: {output_path}')

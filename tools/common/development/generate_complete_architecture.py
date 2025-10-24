@@ -38,8 +38,11 @@ class DiagramConfig:
 class ArchitectureDiagramGenerator:
     """架構圖生成器 | Architecture Diagram Generator"""
 
-    def __init__(self, project_root: str = "/workspaces/AIVA"):
-        self.project_root = Path(project_root)
+    def __init__(self, project_root: str = None):
+        if project_root is None:
+            self.project_root = Path(__file__).parent.parent.parent.parent
+        else:
+            self.project_root = Path(project_root)
         self.output_dir = self.project_root / "_out" / "architecture_diagrams"
         self.output_dir.mkdir(parents=True, exist_ok=True)
 
@@ -886,7 +889,7 @@ def main():
         help="匯出圖表為指定格式 | Export diagrams to specified format",
     )
     parser.add_argument(
-        "--output", default="/workspaces/AIVA", help="輸出目錄 | Output directory"
+        "--output", help="輸出目錄 | Output directory (default: auto-detect)"
     )
 
     args = parser.parse_args()

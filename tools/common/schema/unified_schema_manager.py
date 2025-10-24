@@ -20,7 +20,7 @@ from datetime import datetime
 import traceback
 
 # 確保 services 目錄在 Python 路徑中
-sys.path.insert(0, str(Path(__file__).parent.parent.parent / "services"))
+sys.path.insert(0, str(Path(__file__).parent.parent.parent.parent / "services"))
 
 @dataclass
 class ValidationResult:
@@ -36,7 +36,7 @@ class UnifiedSchemaManager:
     
     def __init__(self, verbose: bool = False):
         self.verbose = verbose
-        self.project_root = Path(__file__).parent.parent.parent
+        self.project_root = Path(__file__).parent.parent.parent.parent
         self.results: List[ValidationResult] = []
         self.stats = {
             'total_enums': 0,

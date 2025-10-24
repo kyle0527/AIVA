@@ -19,6 +19,7 @@ import sys
 import argparse
 import logging
 import subprocess
+import shutil
 import time
 from pathlib import Path
 from dotenv import load_dotenv
@@ -39,10 +40,7 @@ else:
 
 # --- 載入核心模組 (延遲載入以避免過早的依賴問題) ---
 try:
-    from config import settings # 載入統一設定
-    # from services.core.aiva_core.app import AivaCoreApp # 假設的核心應用類別
-    # from services.aiva_common.utils.logging import setup_logging # 假設的日誌設定函數
-    # from services.aiva_common.mq import MessageQueueClient # 假設的消息隊列客戶端
+    from config import settings  # 載入統一設定
 except ImportError as e:
     print(f"錯誤：無法導入必要的 AIVA 模組: {e}")
     print("請確認您已在專案根目錄執行此腳本，且 Python 環境已安裝 requirements.txt 中的依賴。")
@@ -110,67 +108,113 @@ SERVICE_CONFIG = {
 
 def start_service(service_name: str) -> bool:
     """啟動指定的服務"""
+    if not _validate_service(service_name):
+        return False
+    
+    if _is_service_already_running(service_name):
+        return True
+    
+    config = SERVICE_CONFIG[service_name]
+    _log_service_start_info(service_name, config)
+    
+    if not _check_executable_exists(service_name, config):
+        return False
+        
+    return _start_service_process(service_name, config)
+
+
+def _validate_service(service_name: str) -> bool:
+    """驗證服務名稱是否有效"""
     if service_name not in SERVICE_CONFIG:
         logger.error(f"未知的服務名稱: {service_name}")
         return False
-    if SERVICE_CONFIG[service_name]["process"] is not None and SERVICE_CONFIG[service_name]["process"].poll() is None:
-        logger.warning(f"服務 {service_name} 似乎已在運行中。")
-        return True # 視為成功
+    return True
 
-    config = SERVICE_CONFIG[service_name]
+
+def _is_service_already_running(service_name: str) -> bool:
+    """檢查服務是否已在運行"""
+    service_process = SERVICE_CONFIG[service_name]["process"]
+    if service_process is not None and service_process.poll() is None:
+        logger.warning(f"服務 {service_name} 似乎已在運行中。")
+        return True
+    return False
+
+
+def _log_service_start_info(service_name: str, config: dict) -> None:
+    """記錄服務啟動資訊"""
     logger.info(f"正在啟動服務: {service_name}...")
     logger.debug(f"命令: {' '.join(config['command'])}")
     logger.debug(f"工作目錄: {config['cwd']}")
 
-    # 檢查可執行文件是否存在
-    executable_path = Path(config['command'][0])
-    if not executable_path.is_file() and not os.path.isabs(config['command'][0]) and shutil.which(config['command'][0]) is None:
-        # 如果不是絕對路徑且不在 PATH 中，嘗試相對於 CWD 檢查
-        if not (Path(config['cwd']) / config['command'][0]).is_file():
-             msg = f"找不到服務 '{service_name}' 的可執行文件: {config['command'][0]}"
-             if config.get("optional", False):
-                 logger.warning(f"{msg} (此服務為可選，跳過)")
-                 return True # 可選服務找不到不算失敗
-             else:
-                 logger.error(msg)
-                 return False
 
+def _check_executable_exists(service_name: str, config: dict) -> bool:
+    """檢查可執行文件是否存在"""
+    executable_path = Path(config['command'][0])
+    
+    # 檢查文件是否存在
+    if (executable_path.is_file() or 
+        os.path.isabs(config['command'][0]) or 
+        shutil.which(config['command'][0]) is not None):
+        return True
+        
+    # 檢查相對於工作目錄的路徑
+    if (Path(config['cwd']) / config['command'][0]).is_file():
+        return True
+        
+    # 文件不存在的處理
+    return _handle_missing_executable(service_name, config)
+
+
+def _handle_missing_executable(service_name: str, config: dict) -> bool:
+    """處理缺失的可執行文件"""
+    msg = f"找不到服務 '{service_name}' 的可執行文件: {config['command'][0]}"
+    
+    if config.get("optional", False):
+        logger.warning(f"{msg} (此服務為可選，跳過)")
+        return True  # 可選服務找不到不算失敗
+    else:
+        logger.error(msg)
+        return False
+
+
+def _start_service_process(service_name: str, config: dict) -> bool:
+    """啟動服務進程"""
     try:
-        # 使用 Popen 啟動非阻塞子進程
-        # 注意：stdout=subprocess.PIPE, stderr=subprocess.PIPE 會緩存輸出，可能導致阻塞
-        # 最好重定向到文件或直接顯示在終端
-        process = subprocess.Popen(
-            config['command'],
-            cwd=config['cwd'],
-            env=config['env'],
-            stdout=subprocess.PIPE, # 為了示範，捕捉輸出。生產環境建議重定向到日誌文件。
-            stderr=subprocess.PIPE,
-            text=True,
-            encoding='utf-8', errors='ignore' # 處理潛在的編碼問題
-        )
+        process = _create_service_process(config)
         SERVICE_CONFIG[service_name]["process"] = process
         logger.info(f"服務 {service_name} 已啟動 (PID: {process.pid})")
-        # 簡易健康檢查：等待一小段時間後檢查進程是否意外退出
-        time.sleep(2) # 等待 2 秒
-        if process.poll() is not None:
-            stdout, stderr = process.communicate()
-            logger.error(f"服務 {service_name} 啟動後立即退出，返回碼: {process.returncode}")
-            logger.error(f"stdout:\n{stdout}")
-            logger.error(f"stderr:\n{stderr}")
-            SERVICE_CONFIG[service_name]["process"] = None # 標記為未運行
-            return False
-        return True
-    except FileNotFoundError:
-        msg = f"啟動服務 {service_name} 失敗：找不到命令 {config['command'][0]}。請確保相關環境 (Python, Node, Go, Rust) 已正確安裝並加入 PATH，或提供了正確的可執行文件路徑。"
-        if config.get("optional", False):
-            logger.warning(f"{msg} (此服務為可選，跳過)")
-            return True
-        else:
-            logger.error(msg)
-            return False
+        
+        return _verify_service_health(service_name, process)
+        
     except Exception as e:
-        logger.error(f"啟動服務 {service_name} 時發生未預期錯誤: {e}", exc_info=True)
+        logger.error(f"啟動服務 {service_name} 時發生錯誤: {e}")
         return False
+
+
+def _create_service_process(config: dict):
+    """創建服務進程"""
+    return subprocess.Popen(
+        config['command'],
+        cwd=config['cwd'],
+        env=config['env'],
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        text=True,
+        encoding='utf-8', errors='ignore'
+    )
+
+
+def _verify_service_health(service_name: str, process) -> bool:
+    """驗證服務健康狀態"""
+    time.sleep(2)  # 等待 2 秒
+    if process.poll() is not None:
+        stdout, stderr = process.communicate()
+        logger.error(f"服務 {service_name} 啟動後立即退出，返回碼: {process.returncode}")
+        logger.error(f"stdout:\n{stdout}")
+        logger.error(f"stderr:\n{stderr}")
+        SERVICE_CONFIG[service_name]["process"] = None  # 標記為未運行
+        return False
+    return True
 
 def stop_service(service_name: str):
     """停止指定的服務"""
@@ -207,128 +251,170 @@ def stop_all_services():
 
 def monitor_services():
     """監控已啟動的服務狀態，並在主服務退出時停止其他服務"""
-    main_process = None
-    # 假設 'core' 是主服務，或者第一個成功啟動的服務
-    # 這裡以 core 為例，實際可能需要調整
+    main_process_info = _get_main_process()
+    
+    if not main_process_info:
+        _handle_no_main_process()
+        return
+    
+    main_process_name, main_process = main_process_info
+    _monitor_main_process(main_process_name, main_process)
+
+
+def _get_main_process():
+    """取得主進程資訊"""
     if "core" in SERVICE_CONFIG and SERVICE_CONFIG["core"]["process"]:
-         main_process_name = "core"
-         main_process = SERVICE_CONFIG[main_process_name]["process"]
-    # 如果 core 沒啟動，可以選擇第一個啟動的服務作為監控對象
-    # 或者讓啟動器保持運行直到手動停止
+        return "core", SERVICE_CONFIG["core"]["process"]
+    return None
 
-    if not main_process:
-        logger.warning("未找到核心服務進程進行監控，啟動器將保持運行。請按 Ctrl+C 退出。")
-        try:
-            while True:
-                time.sleep(60) # 保持運行
-        except KeyboardInterrupt:
-            logger.info("收到退出信號...")
-            return # 觸發 finally 中的 stop_all_services
 
-    logger.info(f"正在監控主服務 '{main_process_name}' (PID: {main_process.pid})... 按 Ctrl+C 退出。")
+def _handle_no_main_process():
+    """處理沒有主進程的情況"""
+    logger.warning("未找到核心服務進程進行監控，啟動器將保持運行。請按 Ctrl+C 退出。")
     try:
-        while main_process.poll() is None:
-            # 可以定期檢查其他服務的狀態
-            for name, config in SERVICE_CONFIG.items():
-                if config["process"] and config["process"].poll() is not None:
-                     logger.warning(f"檢測到服務 '{name}' 已意外退出 (返回碼: {config['process'].returncode})。")
-                     # 可以添加自動重啟邏輯
-                     SERVICE_CONFIG[name]["process"] = None # 標記為停止
-
-            time.sleep(5) # 每 5 秒檢查一次
-        logger.info(f"主服務 '{main_process_name}' 已退出 (返回碼: {main_process.returncode})。")
-
+        while True:
+            time.sleep(60)  # 保持運行
     except KeyboardInterrupt:
         logger.info("收到退出信號...")
-    except Exception as e:
-        logger.error(f"監控服務時發生錯誤: {e}", exc_info=True)
+
+
+def _monitor_main_process(main_process_name: str, main_process):
+    """監控主進程"""
+    logger.info(f"正在監控主服務 '{main_process_name}' (PID: {main_process.pid})... 按 Ctrl+C 退出。")
+    
+    try:
+        while main_process.poll() is None:
+            _check_service_health()
+            time.sleep(5)  # 每5秒檢查一次
+            
+        logger.info(f"主服務 '{main_process_name}' 已退出。")
+        
+    except KeyboardInterrupt:
+        logger.info("收到退出信號...")
+
+
+def _check_service_health():
+    """檢查所有服務的健康狀態"""
+    for name, config in SERVICE_CONFIG.items():
+        if config["process"] and config["process"].poll() is not None:
+            logger.warning(f"檢測到服務 '{name}' 已意外退出 (返回碼: {config['process'].returncode})。")
+            SERVICE_CONFIG[name]["process"] = None  # 標記為停止
 
 
 # --- 主邏輯 ---
 
 def main(args):
     """主執行函數"""
+    _log_startup_info(args)
+    
+    # 決定要啟動的服務
+    services_to_start = _determine_services_to_start(args.mode)
+    
+    # 啟動核心服務(如果需要)
+    core_started = _start_core_service_if_needed(args.mode)
+    
+    # 啟動其他服務
+    services_successfully_started = _start_additional_services(
+        services_to_start, args.mode, core_started
+    )
+    
+    # 監控服務或顯示警告
+    _monitor_or_warn_services(services_successfully_started)
+
+
+def _log_startup_info(args):
+    """記錄啟動資訊"""
     logger.info("AIVA 平台啟動器開始運行...")
     logger.info(f"啟動模式: {args.mode}")
     if args.target:
-        logger.info(f"掃描目標: {args.target}") # 這裡只是記錄，實際目標應傳遞給 Core 或 Scan 服務
+        logger.info(f"掃描目標: {args.target}")
 
-    core_started = False
-    services_to_start = []
 
-    # --- 根據模式決定啟動哪些服務 ---
-    if args.mode == "core_only":
-        services_to_start = ["core"] # 假設核心服務的 key 是 'core'
-    elif args.mode == "full":
-        # 依照可能的依賴順序啟動 (例如：MQ -> Core -> Integration -> Scan -> API -> Features)
-        # 這裡僅為範例順序，需依實際架構調整
-        services_to_start = [
-            # "message_queue", # 如果 MQ 是外部服務，則不在此啟動
-            "core",          # 假設的核心服務 key
-            "integration",
+def _determine_services_to_start(mode):
+    """根據模式決定要啟動的服務"""
+    service_configurations = {
+        "core_only": ["core"],
+        "full": [
+            "core",
+            "integration", 
             "scan_py",
             "scan_node",
             "api",
             "feature_sca_go",
             "feature_sast_rust",
-            # ... 其他 features ...
-        ]
-    elif args.mode == "scan_only": # 範例：僅啟動掃描相關服務
-        services_to_start = ["scan_py", "scan_node"]
-    else:
-        logger.error(f"未知的啟動模式: {args.mode}")
+        ],
+        "scan_only": ["scan_py", "scan_node"]
+    }
+    
+    if mode not in service_configurations:
+        logger.error(f"未知的啟動模式: {mode}")
+        sys.exit(1)
+        
+    return service_configurations[mode]
+
+
+def _start_core_service_if_needed(mode):
+    """啟動核心服務(如果需要)"""
+    if mode not in ["core_only", "full"]:
+        return False
+        
+    try:
+        logger.info("正在初始化 AIVA 核心服務...")
+        if not start_service("core"):
+            raise RuntimeError("核心服務啟動失敗")
+        
+        logger.info("AIVA 核心服務已作為子進程啟動。")
+        return True
+        
+    except Exception as e:
+        logger.critical(f"初始化或啟動 AIVA 核心服務失敗: {e}", exc_info=True)
         sys.exit(1)
 
-    # --- 啟動核心服務 (如果需要) ---
-    # 這裡假設 core 服務是直接在主進程中運行 AivaCoreApp 實例
-    # 如果 core 也是一個獨立進程，則使用 start_service('core')
-    if args.mode == "core_only" or args.mode == "full":
-        try:
-            logger.info("正在初始化 AIVA 核心服務...")
-            # 假設 AivaCoreApp 有一個 run() 方法
-            # aiva_core_app = AivaCoreApp(target=args.target)
-            # logger.info("AIVA 核心服務初始化完成。")
-            # 為了能管理其他子進程，Core 最好也作為獨立進程啟動
-            if not start_service("core"): # 使用 start_service 啟動
-                 raise RuntimeError("核心服務啟動失敗")
-            core_started = True
-            logger.info("AIVA 核心服務已作為子進程啟動。")
 
-        except Exception as e:
-            logger.critical(f"初始化或啟動 AIVA 核心服務失敗: {e}", exc_info=True)
-            # 確保即使核心啟動失敗，也要嘗試停止已啟動的其他服務
-            # finally 區塊會處理這個
-            # stop_all_services() # 移至 finally
-            sys.exit(1)
-
-    # --- 啟動其他微服務 (如果需要) ---
+def _start_additional_services(services_to_start, mode, core_started):
+    """啟動其他微服務"""
     services_successfully_started = []
-    if args.mode != "core_only":
-        for service_name in services_to_start:
-             # 跳過核心服務，因為它可能已在上面啟動
-            if service_name == "core" and core_started:
-                services_successfully_started.append(service_name)
-                continue
-            if start_service(service_name):
-                 services_successfully_started.append(service_name)
-            else:
-                 # 如果某個非可選服務啟動失敗，記錄錯誤但可以選擇是否中止
-                 if not SERVICE_CONFIG[service_name].get("optional", False):
-                     logger.error(f"必要服務 '{service_name}' 啟動失敗，中止啟動流程。")
-                     # stop_all_services() # 移至 finally
-                     sys.exit(1)
-
+    
+    if mode == "core_only":
+        return services_successfully_started
+    
+    for service_name in services_to_start:
+        if _should_skip_core_service(service_name, core_started):
+            services_successfully_started.append(service_name)
+            continue
+            
+        if _try_start_service(service_name):
+            services_successfully_started.append(service_name)
+        else:
+            _handle_service_start_failure(service_name)
+    
     logger.info(f"成功啟動的服務: {', '.join(services_successfully_started)}")
+    return services_successfully_started
 
-    # --- 監控服務或保持運行 ---
-    if services_successfully_started: # 只有成功啟動了服務才需要監控
+
+def _should_skip_core_service(service_name, core_started):
+    """檢查是否應該跳過核心服務"""
+    return service_name == "core" and core_started
+
+
+def _try_start_service(service_name):
+    """嘗試啟動服務"""
+    return start_service(service_name)
+
+
+def _handle_service_start_failure(service_name):
+    """處理服務啟動失敗"""
+    if not SERVICE_CONFIG[service_name].get("optional", False):
+        logger.error(f"必要服務 '{service_name}' 啟動失敗，中止啟動流程。")
+        sys.exit(1)
+
+
+def _monitor_or_warn_services(services_successfully_started):
+    """監控服務或顯示警告"""
+    if services_successfully_started:
         monitor_services()
     else:
         logger.warning("沒有成功啟動任何服務。")
-
-    # --- 清理 ---
-    # (monitor_services 函數結束後或異常退出時執行)
-    # stop_all_services() # 移至 finally
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="AIVA 平台啟動器")

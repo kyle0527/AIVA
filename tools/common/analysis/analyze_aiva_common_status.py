@@ -15,7 +15,7 @@ from collections import defaultdict
 import json
 
 # 設定路徑
-aiva_common_path = Path(__file__).parent.parent / "services" / "aiva_common"
+aiva_common_path = Path(__file__).parent.parent.parent.parent / "services" / "aiva_common"
 sys.path.insert(0, str(aiva_common_path.parent))
 
 print("=" * 80)
@@ -105,7 +105,7 @@ print("\n" + "=" * 80)
 print("3️⃣  實際使用情況分析")
 print("=" * 80)
 
-services_path = Path(__file__).parent.parent / "services"
+services_path = Path(__file__).parent.parent.parent.parent / "services"
 usage_analysis = defaultdict(lambda: {"schemas": set(), "enums": set(), "files": set()})
 
 print("\n掃描所有服務中的導入語句...")
@@ -320,7 +320,7 @@ report = {
     "recommendations": recommendations
 }
 
-report_file = Path(__file__).parent.parent / "_out" / "aiva_common_analysis_report.json"
+report_file = Path(__file__).parent.parent.parent.parent / "_out" / "aiva_common_analysis_report.json"
 report_file.parent.mkdir(exist_ok=True)
 with open(report_file, "w", encoding="utf-8") as f:
     json.dump(report, f, indent=2, ensure_ascii=False)

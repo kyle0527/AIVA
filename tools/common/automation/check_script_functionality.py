@@ -196,8 +196,8 @@ class ScriptChecker:
         print(f"JSON 數據已儲存至: {json_file}")
 
 if __name__ == '__main__':
-    project_root = r'C:\D\fold7\AIVA-git'
-    output_file = r'C:\D\fold7\AIVA-git\_out\script_functionality_report.txt'
+    project_root = Path(__file__).parent.parent.parent.parent
+    output_file = project_root / '_out' / 'script_functionality_report.txt'
     
     checker = ScriptChecker(project_root)
     print("開始掃描專案...")

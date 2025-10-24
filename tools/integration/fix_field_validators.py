@@ -16,14 +16,18 @@
 import re
 from pathlib import Path
 
+# 使用相對路徑，從項目根目錄計算
+project_root = Path(__file__).parent.parent.parent
+schemas_dir = project_root / "services" / "aiva_common" / "schemas"
+
 # 受影響的檔案列表
 affected_files = [
-    "C:/F/AIVA/services/aiva_common/schemas/ai.py",
-    "C:/F/AIVA/services/aiva_common/schemas/enhanced.py",
-    "C:/F/AIVA/services/aiva_common/schemas/findings.py",
-    "C:/F/AIVA/services/aiva_common/schemas/system.py",
-    "C:/F/AIVA/services/aiva_common/schemas/tasks.py",
-    "C:/F/AIVA/services/aiva_common/schemas/telemetry.py",
+    str(schemas_dir / "ai.py"),
+    str(schemas_dir / "enhanced.py"),
+    str(schemas_dir / "findings.py"),
+    str(schemas_dir / "system.py"),
+    str(schemas_dir / "tasks.py"),
+    str(schemas_dir / "telemetry.py"),
 ]
 
 def fix_field_validator(file_path: str) -> tuple[int, list[str]]:

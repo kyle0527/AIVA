@@ -921,7 +921,7 @@ def main():
     """主函數."""
     # 設定路徑
     script_dir = Path(__file__).parent
-    project_root = script_dir.parent
+    project_root = script_dir.parent.parent.parent.parent
     output_dir = project_root / "_out" / "analysis"
 
     print("AIVA 程式碼庫分析工具")

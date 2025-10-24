@@ -250,15 +250,15 @@ export class EnhancedContentExtractor {
 
         const foundApis: string[] = [];
         
-        scripts.forEach(script => {
+        for (const script of Array.from(scripts)) {
           const content = script.textContent || '';
-          apiPatterns.forEach(pattern => {
+          for (const pattern of apiPatterns) {
             let match;
             while ((match = pattern.exec(content)) !== null) {
               foundApis.push(match[1]);
             }
-          });
-        });
+          }
+        }
 
         return [...new Set(foundApis)]; // 去重
       });
@@ -298,15 +298,15 @@ export class EnhancedContentExtractor {
           /wss:\/\/[^\s'"`]+/g
         ];
 
-        scripts.forEach(script => {
+        for (const script of Array.from(scripts)) {
           const content = script.textContent || '';
-          wsPatterns.forEach(pattern => {
+          for (const pattern of wsPatterns) {
             let match;
             while ((match = pattern.exec(content)) !== null) {
               sockets.push(match[1] || match[0]);
             }
-          });
-        });
+          }
+        }
 
         return [...new Set(sockets)];
       });
@@ -340,7 +340,7 @@ export class EnhancedContentExtractor {
         const variables: JSVariable[] = [];
         
         // 獲取全域變數
-        Object.keys(window).forEach(key => {
+        for (const key of Object.keys(window)) {
           if (!key.startsWith('webkit') && 
               !key.startsWith('chrome') && 
               typeof (window as any)[key] !== 'function') {
@@ -353,11 +353,11 @@ export class EnhancedContentExtractor {
               scope: 'global'
             });
           }
-        });
+        }
 
         // 從 script 標籤分析變量聲明
         const scripts = document.querySelectorAll('script');
-        scripts.forEach(script => {
+        for (const script of Array.from(scripts)) {
           const content = script.textContent || '';
           const varPatterns = [
             /var\s+(\w+)\s*=\s*['"`]([^'"`]*)['"`]/g,
@@ -365,7 +365,7 @@ export class EnhancedContentExtractor {
             /const\s+(\w+)\s*=\s*['"`]([^'"`]*)['"`]/g
           ];
 
-          varPatterns.forEach(pattern => {
+          for (const pattern of varPatterns) {
             let match;
             while ((match = pattern.exec(content)) !== null) {
               variables.push({
@@ -375,8 +375,8 @@ export class EnhancedContentExtractor {
                 scope: 'local'
               });
             }
-          });
-        });
+          }
+        }
 
         return variables.slice(0, 50); // 限制數量
       });
@@ -413,7 +413,7 @@ export class EnhancedContentExtractor {
         const listeners: EventListener[] = [];
         const elements = document.querySelectorAll('*');
         
-        elements.forEach((element, index) => {
+        for (const [index, element] of Array.from(elements).entries()) {
           // 檢查內聯事件處理器
           const onclickHandler = element.getAttribute('onclick');
           if (onclickHandler) {
@@ -426,7 +426,7 @@ export class EnhancedContentExtractor {
 
           // 檢查其他內聯事件
           const eventAttrs = ['onmouseover', 'onmouseout', 'onload', 'onerror', 'onchange'];
-          eventAttrs.forEach(attr => {
+          for (const attr of eventAttrs) {
             const handler = element.getAttribute(attr);
             if (handler) {
               listeners.push({
@@ -435,8 +435,8 @@ export class EnhancedContentExtractor {
                 handler_code: handler
               });
             }
-          });
-        });
+          }
+        }
 
         return listeners.slice(0, 30); // 限制數量
       });
@@ -469,10 +469,10 @@ export class EnhancedContentExtractor {
   getExtractionStats(): Record<string, number> {
     const stats: Record<string, number> = {};
     
-    this.extractedContents.forEach(content => {
+    for (const content of this.extractedContents) {
       const type = content.content_type;
       stats[type] = (stats[type] || 0) + 1;
-    });
+    }
 
     return stats;
   }

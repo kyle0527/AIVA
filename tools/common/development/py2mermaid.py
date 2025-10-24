@@ -468,7 +468,7 @@ def main():
 
     # 設定預設路徑
     script_dir = Path(__file__).parent
-    project_root = script_dir.parent
+    project_root = script_dir.parent.parent.parent.parent
 
     input_path = args.input or (project_root / "services")
     output_path = args.output or (project_root / "docs" / "diagrams")

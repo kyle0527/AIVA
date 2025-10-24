@@ -4,9 +4,11 @@
  * 負責整合客戶端授權繞過檢測與動態掃描能力
  */
 
-import { InteractionSimulator } from './interaction-simulator.service';
-import { NetworkInterceptor } from './network-interceptor.service';
-import { ContentExtractor } from './content-extractor.service';
+import { NetworkInterceptor } from './src/services/network-interceptor.service';
+import { 
+  InteractionConfig, 
+  ExtractionConfig 
+} from './src/interfaces/dynamic-scan.interfaces';
 
 export interface PhaseIConfig {
   enableJSAnalysis: boolean;
@@ -29,29 +31,30 @@ export interface ClientSideAuthFinding {
 }
 
 export class PhaseIIntegrationService {
-  private interactionSimulator: InteractionSimulator;
   private networkInterceptor: NetworkInterceptor;
-  private contentExtractor: ContentExtractor;
+  private browser: any; // Browser instance will be passed or created
 
   constructor(private config: PhaseIConfig) {
-    this.interactionSimulator = new InteractionSimulator();
     this.networkInterceptor = new NetworkInterceptor();
-    this.contentExtractor = new ContentExtractor();
   }
 
   /**
    * 執行客戶端授權繞過檢測 (增強版本)
    */
-  async analyzeClientSideAuthBypass(url: string): Promise<ClientSideAuthFinding[]> {
+  async analyzeClientSideAuthBypass(url: string, browser?: any): Promise<ClientSideAuthFinding[]> {
     const findings: ClientSideAuthFinding[] = [];
 
     try {
-      // 1. 使用瀏覽器環境獲取完整的 JavaScript 上下文
-      const page = await this.interactionSimulator.createPage();
+      // 1. 創建頁面實例
+      if (!browser) {
+        throw new Error('Browser instance is required');
+      }
+      
+      const page = await browser.newPage();
       
       // 2. 啟用網路攔截來捕獲所有 API 呼叫
       if (this.config.enableNetworkInterception) {
-        await this.networkInterceptor.interceptPage(page);
+        await this.networkInterceptor.startInterception(page);
       }
 
       // 3. 導航到目標頁面
@@ -105,17 +108,17 @@ export class PhaseIIntegrationService {
 
       // 2. 遍歷所有已加載的腳本
       const scripts = Array.from(document.scripts);
-      scripts.forEach((script, index) => {
+      for (const [index, script] of scripts.entries()) {
         if (script.src) {
           // 外部腳本會被 content-extractor 處理
-          return;
+          continue;
         }
 
         const content = script.textContent || '';
-        if (content.length < 10) return;
+        if (content.length < 10) continue;
 
         // 檢查存儲授權模式
-        storageChecks.forEach(pattern => {
+        for (const pattern of storageChecks) {
           if (content.includes(pattern)) {
             results.push({
               type: pattern.includes('localStorage') ? 'localStorage_auth' : 'sessionStorage_auth',
@@ -130,7 +133,7 @@ export class PhaseIIntegrationService {
               }
             });
           }
-        });
+        }
 
         // 檢查硬編碼管理員權限
         const adminPatterns = [
@@ -140,10 +143,10 @@ export class PhaseIIntegrationService {
           /permissions\.includes\s*\(\s*["']admin["']\s*\)/gi
         ];
 
-        adminPatterns.forEach(pattern => {
+        for (const pattern of adminPatterns) {
           const matches = content.match(pattern);
           if (matches) {
-            matches.forEach(match => {
+            for (const match of matches) {
               results.push({
                 type: 'hardcoded_admin',
                 severity: 'high',
@@ -153,21 +156,21 @@ export class PhaseIIntegrationService {
                   codeSnippet: match
                 }
               });
-            });
+            }
           }
-        });
-      });
+        }
+      }
 
       return results;
     });
 
     // 轉換結果格式
-    analysisResult.forEach(result => {
+    for (const result of analysisResult) {
       findings.push({
         ...result,
         recommendations: this.generateRecommendations(result.type)
       });
-    });
+    }
 
     return findings;
   }
@@ -183,7 +186,7 @@ export class PhaseIIntegrationService {
 
       // 檢查隱藏的管理元素
       const hiddenElements = document.querySelectorAll('[style*="display:none"], [hidden], .admin-only, .hidden');
-      hiddenElements.forEach((element, index) => {
+      for (const [index, element] of Array.from(hiddenElements).entries()) {
         const text = element.textContent || '';
         if (text.toLowerCase().includes('admin') || 
             text.toLowerCase().includes('管理') ||
@@ -198,11 +201,11 @@ export class PhaseIIntegrationService {
             }
           });
         }
-      });
+      }
 
       // 檢查僅客戶端的表單驗證
       const forms = document.querySelectorAll('form');
-      forms.forEach(form => {
+      for (const form of Array.from(forms)) {
         const onsubmit = form.getAttribute('onsubmit') || '';
         if (onsubmit.includes('validate') || onsubmit.includes('check')) {
           results.push({
@@ -214,17 +217,17 @@ export class PhaseIIntegrationService {
             }
           });
         }
-      });
+      }
 
       return results;
     });
 
-    domAnalysis.forEach(result => {
+    for (const result of domAnalysis) {
       findings.push({
         ...result,
         recommendations: this.generateRecommendations(result.type)
       });
-    });
+    }
 
     return findings;
   }
@@ -281,10 +284,10 @@ export class PhaseIIntegrationService {
       // 4. 恢復原始值
       await page.evaluate((roles: string[]) => {
         localStorage.clear();
-        roles.forEach(roleEntry => {
+        for (const roleEntry of roles) {
           const [key, value] = roleEntry.split(':');
           localStorage.setItem(key, value);
-        });
+        }
       }, localStorageTest);
 
     } catch (error) {

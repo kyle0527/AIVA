@@ -1,7 +1,7 @@
 from pathlib import Path
 import shutil
 
-root = Path(r"c:\D\E\AIVA\AIVA-main")
+root = Path(__file__).parent.parent.parent.parent
 backup_root = root / 'emoji_backups'
 backup_root.mkdir(exist_ok=True)
 

@@ -68,7 +68,7 @@ class PhaseIPerformanceFeedbackLoop:
         if len(self.performance_history) > 1000:
             self.performance_history = self.performance_history[-1000:]
     
-    async def analyze_phase_i_performance(self) -> List[PhaseIOptimizationSuggestion]:
+    def analyze_phase_i_performance(self) -> List[PhaseIOptimizationSuggestion]:
         """分析 Phase I 模組效能並生成優化建議"""
         suggestions = []
         
@@ -80,16 +80,16 @@ class PhaseIPerformanceFeedbackLoop:
         ]
         
         for module in phase_i_modules:
-            module_suggestions = await self._analyze_module_performance(module)
+            module_suggestions = self._analyze_module_performance(module)
             suggestions.extend(module_suggestions)
         
         # 分析跨模組協作效能
-        cross_module_suggestions = await self._analyze_cross_module_efficiency()
+        cross_module_suggestions = self._analyze_cross_module_efficiency()
         suggestions.extend(cross_module_suggestions)
         
         return suggestions
     
-    async def _analyze_module_performance(self, module_name: str) -> List[PhaseIOptimizationSuggestion]:
+    def _analyze_module_performance(self, module_name: str) -> List[PhaseIOptimizationSuggestion]:
         """分析特定模組效能"""
         suggestions = []
         
@@ -152,7 +152,7 @@ class PhaseIPerformanceFeedbackLoop:
                     module_name=module_name,
                     current_strategy="BASIC_ENDPOINTS",
                     suggested_strategy="CLOUD_METADATA_FOCUS",
-                    reason=f"發現率偏低。建議增加雲端元數據端點檢測，"
+                    reason="發現率偏低。建議增加雲端元數據端點檢測，"
                            "包括 AWS IMDSv2 和 GCP metadata API。",
                     expected_improvement=0.5,
                     confidence=0.8
@@ -172,7 +172,7 @@ class PhaseIPerformanceFeedbackLoop:
         
         return suggestions
     
-    async def _analyze_cross_module_efficiency(self) -> List[PhaseIOptimizationSuggestion]:
+    def _analyze_cross_module_efficiency(self) -> List[PhaseIOptimizationSuggestion]:
         """分析跨模組協作效能"""
         suggestions = []
         
@@ -242,7 +242,7 @@ class PhaseIPerformanceFeedbackLoop:
         
         return report
     
-    async def apply_optimization_suggestions(self, suggestions: List[PhaseIOptimizationSuggestion]):
+    def apply_optimization_suggestions(self, suggestions: List[PhaseIOptimizationSuggestion]):
         """應用優化建議"""
         for suggestion in suggestions:
             logger.info(f"Applying optimization for {suggestion.module_name}: "
@@ -252,9 +252,9 @@ class PhaseIPerformanceFeedbackLoop:
             self.optimization_history.append(suggestion)
             
             # 實際應用邏輯（需要與各模組的配置系統整合）
-            await self._apply_module_optimization(suggestion)
+            self._apply_module_optimization(suggestion)
     
-    async def _apply_module_optimization(self, suggestion: PhaseIOptimizationSuggestion):
+    def _apply_module_optimization(self, suggestion: PhaseIOptimizationSuggestion):
         """應用特定模組的優化"""
         # 這裡需要與各模組的配置系統整合
         # 例如，更新 client_side_auth_bypass_worker 的掃描策略
@@ -322,7 +322,7 @@ async def main():
     
     # 生成報告
     report = feedback_loop.generate_performance_report()
-    print(f"\n=== 效能報告 ===")
+    print("\n=== 效能報告 ===")
     print(f"分析期間: {report['analysis_period']}")
     print(f"Phase I 模組數量: {len(report['phase_i_modules_performance'])}")
 

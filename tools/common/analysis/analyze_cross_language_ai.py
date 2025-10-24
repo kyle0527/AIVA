@@ -228,7 +228,7 @@ def analyze_ai_capabilities(ai_file):
 
 def analyze_cross_language_and_ai():
     """分析跨語言功能和AI模組完備性"""
-    project_root = Path(__file__).parent.parent
+    project_root = Path(__file__).parent.parent.parent.parent
     aiva_common = project_root / "services" / "aiva_common"
 
     print("=" * 100)

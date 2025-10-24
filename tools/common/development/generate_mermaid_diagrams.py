@@ -299,7 +299,7 @@ graph TB
 def main():
     """主函數."""
     script_dir = Path(__file__).parent
-    project_root = script_dir.parent
+    project_root = script_dir.parent.parent.parent.parent
     output_dir = project_root / "_out"
 
     print("AIVA Mermaid 圖表生成器")

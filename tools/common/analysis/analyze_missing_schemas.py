@@ -5,8 +5,12 @@
 import re
 from pathlib import Path
 
-schemas_file = Path('schemas.py')
-content = schemas_file.read_text(encoding='utf-8')
+schemas_file = Path(__file__).parent.parent.parent.parent / "services" / "aiva_common" / "schemas.py"
+if schemas_file.exists():
+    content = schemas_file.read_text(encoding='utf-8')
+else:
+    print(f"⚠️ Schemas 文件不存在: {schemas_file}")
+    content = ""
 
 # 提取所有類別定義和其上下文
 class_pattern = re.compile(r'^((?:# .*\n)*class\s+(\w+)\s*\([^)]+\):[^\n]*(?:\n    [^\n]*)*)', re.MULTILINE)

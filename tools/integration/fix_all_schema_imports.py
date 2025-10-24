@@ -5,7 +5,9 @@
 import re
 from pathlib import Path
 
-aiva_common = Path(__file__).parent.parent / "services" / "aiva_common"
+# 使用相對路徑，從項目根目錄計算
+project_root = Path(__file__).parent.parent.parent
+aiva_common = project_root / "services" / "aiva_common"
 
 print("=" * 80)
 print("修復所有 schemas 模組導入問題")
