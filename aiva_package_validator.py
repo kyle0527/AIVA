@@ -1,474 +1,306 @@
-#!/usr/bin/env python3#!/usr/bin/env python3#!/usr/bin/env python3#!/usr/bin/env python3#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+AIVA Package Validator (更詳盡版本)
 
+這個腳本用於驗證 AIVA 專案的完整結構和必要文件是否齊全，
+包含多語言模組、核心服務、工具和設定檔。
+它可以作為 CI/CD 流程的一部分，或在開發環境中手動運行以確保一致性。
+
+執行方式：
+在專案根目錄下執行 `python scripts/validation/aiva_package_validator.py`
 """
 
-重定向: aiva_package_validator.py -> scripts/validation/aiva_package_validator.py"""
-
-此檔案將在 2026年4月移除
-
-"""⚠️  重定向通知: aiva_package_validator.py 已移動"""
-
-import sys, subprocess
-
+import os
+import sys
 from pathlib import Path
+import configparser
+import json
+import yaml
+import subprocess # 用於檢查 Go/Rust/Node 環境 (可選)
 
+# --- 設定 ---
 
+# 將專案根目錄添加到 sys.path
+PROJECT_ROOT = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(PROJECT_ROOT))
 
-script_path = Path(__file__).parent / "scripts/validation/aiva_package_validator.py"新位置: scripts/validation/aiva_package_validator.py⚠️  重定向通知: 此檔案已移動到 scripts/validation/aiva_package_validator.py""""""
+# --- 需要檢查的核心目錄 (相對於 PROJECT_ROOT) ---
+# (加入了更細緻的 services 子目錄)
+REQUIRED_DIRS = [
+    Path("api"), Path("api/routers"),
+    Path("config"),
+    Path("data"), Path("data/ai_commander/knowledge"),
+    Path("docs"), Path("docs/ARCHITECTURE"), Path("docs/guides"), Path("docs/plans"),
+    Path("docker"), Path("docker/initdb"),
+    Path("examples"),
+    Path("logs"),
+    Path("reports"), Path("reports/security"), Path("reports/connectivity"),
+    Path("schemas"), Path("schemas/crosslang"),
+    Path("scripts"), Path("scripts/deployment"), Path("scripts/maintenance"), Path("scripts/setup"), Path("scripts/testing"), Path("scripts/validation"),
+    Path("services"),
+    Path("services/aiva_common"), Path("services/aiva_common/schemas"), Path("services/aiva_common/enums"), Path("services/aiva_common/tools"), Path("services/aiva_common/utils"),
+    Path("services/core"), Path("services/core/aiva_core"), Path("services/core/aiva_core/ai_engine"), Path("services/core/aiva_core/messaging"), Path("services/core/aiva_core/planner"), Path("services/core/aiva_core/storage"), Path("services/core/aiva_core/ui_panel"),
+    Path("services/scan"), Path("services/scan/aiva_scan"), Path("services/scan/aiva_scan_node"), Path("services/scan/info_gatherer_rust"),
+    Path("services/integration"), Path("services/integration/aiva_integration"), Path("services/integration/aiva_integration/analysis"), Path("services/integration/aiva_integration/attack_path_analyzer"), Path("services/integration/aiva_integration/reception"),
+    Path("services/features"), Path("services/features/base"), Path("services/features/common"), Path("services/features/function_sqli"), Path("services/features/function_xss"), Path("services/features/function_ssrf"), Path("services/features/function_idor"), Path("services/features/function_sca_go"), Path("services/features/function_sast_rust"), # ... 可根據實際情況添加更多 features
+    Path("tests"),
+    Path("test_data"), Path("test_data/database"),
+    Path("tools"), Path("tools/aiva-contracts-tooling"), Path("tools/aiva-enums-plugin"), Path("tools/aiva-schemas-plugin"), Path("tools/automation"), Path("tools/development"), Path("tools/schema"),
+    Path("web"), Path("web/js"),
+]
 
-if script_path.exists():
+# --- 需要檢查的核心文件 (相對於 PROJECT_ROOT) ---
+REQUIRED_FILES = [
+    Path("README.md"),
+    Path("pyproject.toml"),
+    Path("requirements.txt"),
+    Path("ruff.toml"),
+    Path(".gitignore"),
+    Path(".env.example"),
+    Path("aiva_launcher.py"),
+    Path("config/settings.py"),
+    Path("services/aiva_common/schemas/base.py"),
+    Path("services/aiva_common/enums/common.py"),
+    Path("services/aiva_common/mq.py"), # 核心消息隊列
+    Path("services/core/aiva_core/app.py"), # Core 服務入口
+    Path("services/core/aiva_core/ai_engine/bio_neuron_core.py"), # AI 核心
+    Path("services/scan/unified_scan_engine.py"), # Scan 服務核心
+    Path("services/integration/aiva_integration/app.py"), # Integration 服務入口
+    Path("services/features/feature_step_executor.py"), # Features 執行器
+    Path("docker/docker-compose.yml"),
+    Path("api/main.py"), # API 入口
+    Path("web/index.html"), # Web UI 入口
+]
 
-    print("重定向到: scripts/validation/aiva_package_validator.py")請使用: python scripts/validation/aiva_package_validator.py
+# --- 需要檢查的多語言建置產物 (相對於 PROJECT_ROOT) ---
+# (路徑根據實際情況可能需要調整)
+REQUIRED_BUILD_ARTIFACTS = [
+    Path("services/features/function_sca_go/worker.exe"),
+    Path("services/features/function_ssrf_go/worker.exe"),
+    Path("services/features/function_cspm_go/worker.exe"),
+    # Path("services/scan/info_gatherer_rust/target/release/info_gatherer_rust"), # Rust 範例，實際路徑依 build 指令而定
+    # Path("services/features/function_sast_rust/target/release/function_sast_rust"), # Rust 範例
+    Path("services/scan/aiva_scan_node/dist/index.js"), # TypeScript 編譯後範例
+]
 
-    result = subprocess.run([sys.executable, str(script_path)] + sys.argv[1:])
+# --- 需要檢查的 Schema 文件 (相對於 PROJECT_ROOT / schemas) ---
+REQUIRED_SCHEMA_FILES = [
+    Path("aiva_schemas.json"),
+    Path("aiva_schemas.go"),
+    Path("aiva_schemas.rs"),
+    Path("aiva_schemas.d.ts"),
+    Path("enums.ts"),
+    Path("crosslang/aiva_crosslang.proto"), # Protobuf 定義
+]
 
-    sys.exit(result.returncode)    
+# --- Python 包 __init__.py 檢查列表 ---
+# (遞迴檢查指定的 Python 包目錄)
+PYTHON_PACKAGE_DIRS = [
+    Path("api"),
+    Path("services"), # services 本身也需要
+    Path("services/aiva_common"),
+    Path("services/core"),
+    Path("services/scan"),
+    Path("services/integration"),
+    Path("services/features"),
+    Path("tests"),
+    Path("tools"), # 部分 tools 下的目錄也是 python 包
+]
 
-else:
+# --- 驗證函數 ---
 
-    print("錯誤: 找不到目標檔案")此重定向檔案將在 2026年4月移除
+def check_path(path_to_check: Path, is_dir: bool = False, optional: bool = False) -> bool:
+    """檢查指定路徑是否存在以及類型是否正確"""
+    full_path = PROJECT_ROOT / path_to_check
+    exists = full_path.exists()
+    correct_type = full_path.is_dir() if is_dir else full_path.is_file()
+    prefix = "[可選] " if optional else ""
 
-    sys.exit(1)
-"""請使用新路徑: python scripts/validation/aiva_package_validator.py兼容性重定向檔案 - aiva_package_validator.pyAIVA 補包快速驗證工具
-
-
-
-import sys此重定向檔案將在 6 個月後移除 (2026年4月)
-
-import subprocess
-
-from pathlib import Path"""此檔案已移動到 scripts/validation/aiva_package_validator.py====================
-
-
-
-def main():
-
-    print("🔄 正在重定向到新位置...")
-
-    print("⚠️  aiva_package_validator.py 已移動到 scripts/validation/")import sys此重定向檔案將在未來版本中移除
-
-    print("   新指令: python scripts/validation/aiva_package_validator.py")
-
-    print("   此重定向將在 2026年4月移除")import subprocess
-
-    print("-" * 50)
-
-    from pathlib import Path"""此工具用於快速驗證補包的完整性和系統準備狀態
-
-    script_path = Path(__file__).parent / "scripts" / "validation" / "aiva_package_validator.py"
-
-    
-
-    if script_path.exists():
-
-        try:def main():
-
-            result = subprocess.run([sys.executable, str(script_path)] + sys.argv[1:])
-
-            sys.exit(result.returncode)    # 顯示遷移警告
-
-        except Exception as e:
-
-            print(f"❌ 執行錯誤: {e}")    print("🔄 正在重定向到新位置...")import sys使用方式:
-
-            sys.exit(1)
-
-    else:    print("⚠️  警告: aiva_package_validator.py 已移動到 scripts/validation/")
-
-        print("❌ 找不到目標檔案")
-
-        sys.exit(1)    print("   請更新您的腳本引用: python scripts/validation/aiva_package_validator.py")import os    python aiva_package_validator.py
-
-
-
-if __name__ == "__main__":    print("   此重定向檔案將在 2026年4月移除")
-
-    main()
-    print("-" * 60)from pathlib import Path    python aiva_package_validator.py --detailed
-
-    
-
-    # 新的腳本路徑    python aiva_package_validator.py --export-report
-
-    script_path = Path(__file__).parent / "scripts" / "validation" / "aiva_package_validator.py"
-
-    # 添加新的腳本路徑"""
-
-    if script_path.exists():
-
-        # 執行新位置的腳本script_path = Path(__file__).parent / "scripts" / "validation" / "aiva_package_validator.py"
-
-        try:
-
-            result = subprocess.run([sys.executable, str(script_path)] + sys.argv[1:])import json
-
-            sys.exit(result.returncode)
-
-        except Exception as e:if script_path.exists():import os
-
-            print(f"❌ 執行新腳本時發生錯誤: {e}")
-
-            sys.exit(1)    print("⚠️  警告: aiva_package_validator.py 已移動到 scripts/validation/")import sys
-
+    if exists and correct_type:
+        print(f"✅ {prefix}[存在] {path_to_check}")
+        return True
+    elif not exists:
+        if optional:
+            print(f"⚠️ {prefix}[缺失] {path_to_check} (但不影響驗證結果)")
+            return True # 可選項目缺失不算失敗
+        else:
+            print(f"❌ {prefix}[缺失] {path_to_check}")
+            return False
     else:
+        type_str = "目錄" if is_dir else "文件"
+        actual_type = "文件" if full_path.is_file() else "目錄"
+        # 類型錯誤通常比缺失更嚴重，即使是可選的也標記為錯誤
+        print(f"❌ {prefix}[類型錯誤] 應為 {type_str}，但找到的是 {actual_type}: {path_to_check}")
+        return False
 
-        print("❌ 錯誤: 找不到 scripts/validation/aiva_package_validator.py")    print("   請更新您的腳本引用到新位置")from datetime import datetime
+def validate_pyproject() -> bool:
+    """驗證 pyproject.toml 是否包含必要的部分 (使用 tomli 增強)"""
+    pyproject_path = PROJECT_ROOT / "pyproject.toml"
+    if not pyproject_path.is_file():
+        print("❌ [配置錯誤] pyproject.toml 文件不存在")
+        return False
 
-        print("   請檢查檔案是否正確移動")
-
-        sys.exit(1)    print("   此重定向檔案將在未來版本中移除")from pathlib import Path
-
-
-
-if __name__ == "__main__":    print()
-
-    main()
-    
-
-    # 執行新位置的腳本class AIVAPackageValidator:
-
-    import subprocess    """AIVA補包驗證器"""
-
-    result = subprocess.run([sys.executable, str(script_path)] + sys.argv[1:])    
-
-    sys.exit(result.returncode)    def __init__(self):
-
-else:        self.project_root = Path(__file__).parent
-
-    print("❌ 錯誤: 找不到 scripts/validation/aiva_package_validator.py")        self.validation_results = {}
-
-    print("   請檢查檔案是否正確移動")        
-
-    sys.exit(1)    def validate_schema_system(self) -> dict:
-        """驗證Schema自動化系統"""
-        results = {
-            'status': 'unknown',
-            'details': {},
-            'errors': []
-        }
-        
+    try:
+        # 嘗試導入 tomli (Python 3.11+內建 tomllib)
         try:
-            # 檢查核心SOT檔案
-            sot_file = self.project_root / "services/aiva_common/core_schema_sot.yaml"
-            results['details']['sot_file'] = sot_file.exists()
-            
-            # 檢查工具檔案
-            tools = [
-                "services/aiva_common/tools/schema_codegen_tool.py",
-                "services/aiva_common/tools/schema_validator.py", 
-                "services/aiva_common/tools/module_connectivity_tester.py"
-            ]
-            
-            tool_status = {}
-            for tool in tools:
-                tool_path = self.project_root / tool
-                tool_status[Path(tool).name] = tool_path.exists()
-            
-            results['details']['tools'] = tool_status
-            
-            # 檢查生成的Schema
-            generated_py = self.project_root / "services/aiva_common/schemas/generated"
-            generated_go = self.project_root / "services/features/common/go/aiva_common_go/schemas/generated"
-            
-            py_schemas = list(generated_py.glob("*.py")) if generated_py.exists() else []
-            go_schemas = list(generated_go.glob("*.go")) if generated_go.exists() else []
-            
-            results['details']['generated_schemas'] = {
-                'python_count': len(py_schemas),
-                'go_count': len(go_schemas),
-                'python_files': [f.name for f in py_schemas],
-                'go_files': [f.name for f in go_schemas]
-            }
-            
-            # 判定整體狀態
-            if (results['details']['sot_file'] and 
-                all(tool_status.values()) and 
-                len(py_schemas) >= 4 and len(go_schemas) >= 1):
-                results['status'] = 'healthy'
-            else:
-                results['status'] = 'incomplete'
-                
-        except Exception as e:
-            results['status'] = 'error'
-            results['errors'].append(str(e))
-            
-        return results
-    
-    def validate_module_structure(self) -> dict:
-        """驗證五大模組結構"""
-        results = {
-            'status': 'unknown',
-            'modules': {},
-            'summary': {}
-        }
-        
-        modules = {
-            'AI核心引擎': 'services/core/aiva_core/ai_engine',
-            '攻擊執行引擎': 'services/core/aiva_core/attack',
-            '掃描引擎': 'services/scan',
-            '整合服務': 'services/integration', 
-            '功能檢測': 'services/features'
-        }
-        
-        total_modules = len(modules)
-        healthy_modules = 0
-        
-        for name, path in modules.items():
-            module_path = self.project_root / path
-            
-            if module_path.exists():
-                py_files = len(list(module_path.rglob("*.py")))
-                go_files = len(list(module_path.rglob("*.go")))
-                rs_files = len(list(module_path.rglob("*.rs")))
-                
-                results['modules'][name] = {
-                    'exists': True,
-                    'python_files': py_files,
-                    'go_files': go_files,
-                    'rust_files': rs_files,
-                    'healthy': py_files > 0
-                }
-                
-                if py_files > 0:
-                    healthy_modules += 1
-            else:
-                results['modules'][name] = {
-                    'exists': False,
-                    'healthy': False
-                }
-        
-        results['summary'] = {
-            'total': total_modules,
-            'healthy': healthy_modules,
-            'health_rate': (healthy_modules / total_modules) * 100
-        }
-        
-        results['status'] = 'healthy' if healthy_modules == total_modules else 'incomplete'
-        
-        return results
-    
-    def validate_phase_i_readiness(self) -> dict:
-        """驗證Phase I準備狀態"""
-        results = {
-            'status': 'unknown',
-            'readiness_factors': {},
-            'blockers': []
-        }
-        
-        # 檢查關鍵依賴
-        factors = {
-            'schema_system': self.validate_schema_system()['status'] == 'healthy',
-            'module_structure': self.validate_module_structure()['status'] == 'healthy',
-            'documentation': (self.project_root / "AIVA_PHASE_0_COMPLETE_PHASE_I_ROADMAP.md").exists(),
-            'tools_available': all([
-                (self.project_root / "services/aiva_common/tools/schema_codegen_tool.py").exists(),
-                (self.project_root / "services/aiva_common/tools/schema_validator.py").exists()
-            ])
-        }
-        
-        results['readiness_factors'] = factors
-        
-        # 識別阻塞因素
-        for factor, status in factors.items():
-            if not status:
-                results['blockers'].append(factor)
-        
-        # 判定整體準備狀態
-        ready_count = sum(factors.values())
-        total_count = len(factors)
-        
-        if ready_count == total_count:
-            results['status'] = 'ready'
-        elif ready_count >= total_count * 0.8:
-            results['status'] = 'mostly_ready'
-        else:
-            results['status'] = 'not_ready'
-            
-        return results
-    
-    def run_connectivity_test(self) -> dict:
-        """執行快速通連性測試"""
-        results = {
-            'status': 'unknown',
-            'test_results': {},
-            'errors': []
-        }
-        
-        try:
-            # 嘗試導入核心Schema
-            sys.path.insert(0, str(self.project_root))
-            
-            # 測試基礎Schema導入
+            import tomli as tomllib
+        except ImportError:
             try:
-                from services.aiva_common.schemas.generated.base_types import MessageHeader
-                results['test_results']['base_schema_import'] = True
-            except ImportError as e:
-                results['test_results']['base_schema_import'] = False
-                results['errors'].append(f"基礎Schema導入失敗: {e}")
-            
-            # 測試消息Schema導入  
-            try:
-                from services.aiva_common.schemas.generated.messaging import AivaMessage
-                results['test_results']['messaging_schema_import'] = True
-            except ImportError as e:
-                results['test_results']['messaging_schema_import'] = False
-                results['errors'].append(f"消息Schema導入失敗: {e}")
-            
-            # 判定狀態
-            passed_tests = sum(results['test_results'].values())
-            total_tests = len(results['test_results'])
-            
-            if passed_tests == total_tests:
-                results['status'] = 'passed'
-            elif passed_tests > 0:
-                results['status'] = 'partial'
-            else:
-                results['status'] = 'failed'
-                
-        except Exception as e:
-            results['status'] = 'error'  
-            results['errors'].append(f"測試執行錯誤: {e}")
-            
-        return results
-    
-    def generate_validation_report(self) -> dict:
-        """生成完整驗證報告"""
-        report = {
-            'validation_time': datetime.now().isoformat(),
-            'package_version': 'v2.5.1',
-            'overall_status': 'unknown',
-            'components': {}
-        }
-        
-        # 執行所有驗證
-        print("🔍 驗證Schema自動化系統...")
-        report['components']['schema_system'] = self.validate_schema_system()
-        
-        print("🏗️ 驗證模組結構...")
-        report['components']['module_structure'] = self.validate_module_structure()
-        
-        print("🚀 檢查Phase I準備狀態...")
-        report['components']['phase_i_readiness'] = self.validate_phase_i_readiness()
-        
-        print("📡 執行通連性測試...")
-        report['components']['connectivity_test'] = self.run_connectivity_test()
-        
-        # 計算整體狀態
-        component_scores = {
-            'schema_system': 1 if report['components']['schema_system']['status'] == 'healthy' else 0,
-            'module_structure': 1 if report['components']['module_structure']['status'] == 'healthy' else 0,
-            'phase_i_readiness': 1 if report['components']['phase_i_readiness']['status'] in ['ready', 'mostly_ready'] else 0,
-            'connectivity_test': 1 if report['components']['connectivity_test']['status'] == 'passed' else 0
-        }
-        
-        total_score = sum(component_scores.values())
-        max_score = len(component_scores)
-        
-        if total_score == max_score:
-            report['overall_status'] = 'excellent'
-        elif total_score >= max_score * 0.8:
-            report['overall_status'] = 'good'
-        elif total_score >= max_score * 0.6:
-            report['overall_status'] = 'acceptable'
-        else:
-            report['overall_status'] = 'needs_improvement'
-            
-        report['score'] = f"{total_score}/{max_score}"
-        
-        return report
-    
-    def print_summary_report(self, report: dict):
-        """印出摘要報告"""
-        print("\n" + "="*60)
-        print("📋 AIVA補包驗證報告摘要")
-        print("="*60)
-        
-        status_icons = {
-            'excellent': '🟢 優秀',
-            'good': '🟡 良好', 
-            'acceptable': '🟠 可接受',
-            'needs_improvement': '🔴 需改善'
-        }
-        
-        print(f"⏰ 驗證時間: {report['validation_time']}")
-        print(f"📦 補包版本: {report['package_version']}")
-        print(f"🎯 整體狀態: {status_icons.get(report['overall_status'], report['overall_status'])}")
-        print(f"📊 評分: {report['score']}")
-        
-        print("\n📋 組件狀態:")
-        
-        for component, details in report['components'].items():
-            status = details['status']
-            if status in ['healthy', 'ready', 'passed', 'excellent']:
-                icon = "✅"
-            elif status in ['mostly_ready', 'partial', 'good']:
-                icon = "⚠️"
-            else:
-                icon = "❌"
-                
-            component_names = {
-                'schema_system': 'Schema自動化系統',
-                'module_structure': '五大模組結構',
-                'phase_i_readiness': 'Phase I準備狀態',
-                'connectivity_test': '通連性測試'
-            }
-            
-            name = component_names.get(component, component)
-            print(f"  {icon} {name}: {status}")
-        
-        # 顯示關鍵統計
-        if 'module_structure' in report['components']:
-            module_summary = report['components']['module_structure']['summary']
-            print(f"\n📊 模組統計: {module_summary['healthy']}/{module_summary['total']} 模組健康")
-        
-        if 'schema_system' in report['components']:
-            schema_details = report['components']['schema_system']['details']
-            if 'generated_schemas' in schema_details:
-                py_count = schema_details['generated_schemas']['python_count']
-                go_count = schema_details['generated_schemas']['go_count']
-                print(f"📋 Schema統計: {py_count} Python + {go_count} Go 檔案")
-        
-        # 顯示準備狀態
-        if report['overall_status'] == 'excellent':
-            print(f"\n🎉 補包狀態完美！可立即開始Phase I開發")
-        elif report['overall_status'] == 'good':
-            print(f"\n✅ 補包狀態良好，建議解決小問題後開始Phase I")
-        else:
-            print(f"\n⚠️ 補包需要改善，請檢查問題項目")
+                import tomllib # Python 3.11+
+            except ImportError:
+                tomllib = None
 
+        if tomllib:
+            with open(pyproject_path, "rb") as f:
+                data = tomllib.load(f)
+            # 檢查關鍵部分
+            if "project" not in data:
+                print("❌ [配置錯誤] pyproject.toml 缺少 [project] 部分")
+                return False
+            if "tool" not in data or "ruff" not in data.get("tool", {}):
+                 print("❌ [配置錯誤] pyproject.toml 缺少 [tool.ruff] 部分")
+                 return False
+            # 可以根據需要添加更多檢查，例如 project.dependencies
+            print("✅ [配置] pyproject.toml 結構檢查通過 (使用 toml 解析)")
+            return True
+        else:
+            # Fallback 到簡易檢查
+            if pyproject_path.stat().st_size == 0:
+                 print("❌ [配置錯誤] pyproject.toml 文件為空")
+                 return False
+            print("⚠️ [配置] pyproject.toml 結構基本檢查通過 (簡易 - 建議安裝 tomli)")
+            return True
+
+    except Exception as e:
+        print(f"❌ [配置錯誤] 無法解析 pyproject.toml: {e}")
+        return False
+
+def validate_schemas_dir() -> bool:
+    """驗證根目錄下的 schemas 文件是否齊全"""
+    print("\n--- 正在檢查根目錄 Schema 文件 ---")
+    all_present = True
+    schema_dir = PROJECT_ROOT / "schemas"
+    if not schema_dir.is_dir():
+        print(f"❌ [缺失] 根目錄下找不到 'schemas' 目錄")
+        return False
+
+    for schema_file in REQUIRED_SCHEMA_FILES:
+        # schema_file 已經包含了可能的子目錄 (crosslang)
+        if not check_path(Path("schemas") / schema_file, is_dir=False):
+             all_present = False
+    return all_present
+
+def check_init_recursive(package_dir: Path) -> bool:
+    """遞迴檢查目錄及其子目錄是否包含 __init__.py"""
+    all_present = True
+    base_rel_path = package_dir.relative_to(PROJECT_ROOT)
+
+    # 檢查當前目錄
+    init_file = package_dir / "__init__.py"
+    if not init_file.is_file():
+        # 根目錄如 services 本身是需要的，子目錄如果沒有 .py 文件則可能不需要
+        has_py_files = any(f.suffix == '.py' for f in package_dir.glob('*.py'))
+        if package_dir in [PROJECT_ROOT / p for p in PYTHON_PACKAGE_DIRS] or has_py_files:
+             print(f"❌ [缺失] Python 包缺少 __init__.py: {base_rel_path}")
+             all_present = False
+        # else:
+        #    print(f"ℹ️ [跳過] 目錄不含 Python 文件，忽略 __init__.py 檢查: {base_rel_path}")
+    else:
+        print(f"✅ [存在] Python 包 __init__.py: {base_rel_path}")
+
+
+    # 遞迴檢查子目錄
+    for item in package_dir.iterdir():
+        # 排除隱藏目錄、特殊目錄 (__pycache__) 和非 Python 相關目錄
+        if (item.is_dir() and
+            not item.name.startswith(('.', '_')) and
+            "node_modules" not in item.parts and
+            "target" not in item.parts):
+            # 簡易判斷：如果子目錄包含 .py 文件，則遞迴檢查
+            # （更精確的判斷可能需要分析 import 關係）
+            if any(item.glob('**/*.py')):
+                if not check_init_recursive(item):
+                    all_present = False
+    return all_present
+
+
+def validate_python_packages() -> bool:
+    """檢查指定的 Python 包目錄結構是否正確"""
+    print("\n--- 正在遞迴檢查 Python 包 (__init__.py) ---")
+    all_valid = True
+    for pkg_path in PYTHON_PACKAGE_DIRS:
+        full_pkg_path = PROJECT_ROOT / pkg_path
+        if not full_pkg_path.is_dir():
+            print(f"❌ [嚴重錯誤] 必要的 Python 基礎目錄不存在: {pkg_path}")
+            all_valid = False
+            continue
+        if not check_init_recursive(full_pkg_path):
+            all_valid = False
+    return all_valid
+
+def check_executables() -> bool:
+    """檢查 Go/Rust/Node 等環境是否存在 (可選，但推薦)"""
+    print("\n--- 正在檢查外部執行環境 (可選) ---")
+    passed = True
+    executables = {"go": "version", "rustc": "--version", "node": "--version", "npm": "--version"}
+    for cmd, arg in executables.items():
+        try:
+            # 使用 shell=True 可能有安全風險，但在檢查環境時通常可接受
+            # timeout 避免卡住
+            result = subprocess.run([cmd, arg], capture_output=True, text=True, check=True, timeout=5, shell=True)
+            print(f"✅ [環境] 检测到 {cmd}: {result.stdout.strip().splitlines()[0]}")
+        except (FileNotFoundError, subprocess.CalledProcessError, subprocess.TimeoutExpired) as e:
+            print(f"⚠️ [環境] 未检测到或執行出錯: {cmd} ({e})")
+            # passed = False # 可以設為 False，如果希望強制檢查環境
+    return passed
+
+
+# --- 主函數 ---
 
 def main():
-    """主程式"""
-    import argparse
-    
-    parser = argparse.ArgumentParser(description="AIVA補包驗證工具")
-    parser.add_argument("--detailed", action="store_true", help="顯示詳細報告")
-    parser.add_argument("--export-report", action="store_true", help="匯出JSON報告")
-    
-    args = parser.parse_args()
-    
-    validator = AIVAPackageValidator()
-    report = validator.generate_validation_report()
-    
-    # 顯示摘要
-    validator.print_summary_report(report)
-    
-    # 顯示詳細資訊
-    if args.detailed:
-        print(f"\n📄 詳細報告:")
-        print(json.dumps(report, ensure_ascii=False, indent=2))
-    
-    # 匯出報告
-    if args.export_report:
-        report_file = f"aiva_package_validation_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json"
-        with open(report_file, 'w', encoding='utf-8') as f:
-            json.dump(report, f, ensure_ascii=False, indent=2, default=str)
-        print(f"\n📄 詳細報告已匯出: {report_file}")
-    
-    # 返回狀態碼
-    success = report['overall_status'] in ['excellent', 'good']
-    return 0 if success else 1
+    """執行所有驗證檢查"""
+    print(f"開始驗證 AIVA 專案結構於: {PROJECT_ROOT}")
+    results = {}
 
+    # 檢查外部環境 (可選)
+    results["executables"] = check_executables()
+
+    print("\n--- 正在檢查必要目錄 ---")
+    results["dirs"] = all(check_path(d, is_dir=True) for d in REQUIRED_DIRS)
+
+    print("\n--- 正在檢查必要文件 ---")
+    results["files"] = all(check_path(f, is_dir=False) for f in REQUIRED_FILES)
+
+    print("\n--- 正在檢查多語言建置產物 ---")
+    # 將建置產物設為可選，因為它們可能只在特定階段產生
+    results["build_artifacts"] = all(check_path(f, is_dir=False, optional=True) for f in REQUIRED_BUILD_ARTIFACTS)
+
+    print("\n--- 正在驗證 pyproject.toml ---")
+    results["pyproject"] = validate_pyproject()
+
+    print("\n--- 正在驗證根目錄 schemas 文件 ---")
+    results["root_schemas"] = validate_schemas_dir()
+
+    # 將 __init__.py 的檢查放在後面，因為前面檢查了目錄是否存在
+    results["python_packages"] = validate_python_packages()
+
+
+    # --- 總結 ---
+    print("\n--- 驗證總結 ---")
+    all_passed = True
+    for check_name, passed in results.items():
+        status = "✅ 通過" if passed else ("❌ 失敗" if check_name != "build_artifacts" else "⚠️ 部分缺失 (可選)") # 對 build_artifacts 給予不同提示
+        print(f"{check_name.ljust(15)}: {status}")
+        if not passed and check_name != "build_artifacts" and check_name != "executables": # 允許 build artifacts 和 executables 檢查失敗
+            all_passed = False
+
+    if all_passed:
+        print("\n🎉 AIVA 專案結構驗證通過！ (可能缺少可選的建置產物或外部環境)")
+        sys.exit(0)
+    else:
+        print("\n🔥 AIVA 專案結構驗證失敗。請檢查上面標記為 ❌ 的項目。")
+        sys.exit(1)
 
 if __name__ == "__main__":
-    sys.exit(main())
+    main()
+

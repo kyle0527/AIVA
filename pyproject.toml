@@ -8,7 +8,7 @@ name = "aiva-platform-integrated"
 version = "1.0.0"
 description = "AI-Assisted Vulnerability Analysis Platform — Enhanced Stability & Modern Architecture"
 readme = "README.md"
-requires-python = ">=3.12"
+requires-python = ">=3.13"
 
 dependencies = [
   "fastapi>=0.115.0",
@@ -46,7 +46,7 @@ dev = [
 ]
 
 [tool.setuptools]
-packages = ["services", "services.aiva_common", "services.core", "services.scan", "services.attack"]
+packages = ["services", "services.aiva_common", "services.core", "services.scan", "services.integration", "services.features"]
 include-package-data = true
 
 [tool.setuptools.package-data]
@@ -57,18 +57,19 @@ services = "services"
 "services.aiva_common" = "services/aiva_common"
 "services.core" = "services/core"
 "services.scan" = "services/scan"
-"services.attack" = "services/attack"
+"services.integration" = "services/integration"
+"services.features" = "services/features"
 
 [tool.black]
 line-length = 88
-target-version = ["py312"]
+target-version = ["py313"]
 
 [tool.ruff]
 line-length = 88
 select = ["E", "F", "I", "UP", "B", "SIM", "C4", "PIE"]
 ignore = ["E501"]                                       # handled by black
 fix = true
-target-version = "py312"
+target-version = "py313"
 
 [tool.ruff.isort]
 known-first-party = ["services"]
@@ -94,29 +95,17 @@ disallow_untyped_defs = false
 ignore_missing_imports = true
 exclude = "^(tests|services[\\/]scan)[\\/]"
 disable_error_code = [
-
     "no-any-return",
-    "assignment",
+    "assignment", 
     "type-arg",
     "valid-type",
     "override",
     "misc",
     "unused-ignore"
-
 ]
 
 [[tool.mypy.overrides]]
 module = [
-
-  "aio_pika.*",
-  "httpx.*",
-  "beautifulsoup4.*",
-  "lxml.*",
-  "redis.*",
-  "neo4j.*",
-  "reportlab.*",
-  "prometheus_client.*",
-
     "aio_pika.*",
     "httpx.*",
     "beautifulsoup4.*",
@@ -125,7 +114,6 @@ module = [
     "neo4j.*",
     "reportlab.*",
     "prometheus_client.*"
-
 ]
 ignore_missing_imports = true
 

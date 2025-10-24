@@ -1,9 +1,0 @@
-README.md
-pyproject.toml
-src/aiva_contracts_tooling/__init__.py
-src/aiva_contracts_tooling/cli.py
-src/aiva_contracts_tooling.egg-info/PKG-INFO
-src/aiva_contracts_tooling.egg-info/SOURCES.txt
-src/aiva_contracts_tooling.egg-info/dependency_links.txt
-src/aiva_contracts_tooling.egg-info/entry_points.txt
-src/aiva_contracts_tooling.egg-info/top_level.txt

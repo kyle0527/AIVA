@@ -9,7 +9,14 @@
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.104+-009688.svg)](https://fastapi.tiangolo.com)
 [![Status](https://img.shields.io/badge/Status-Production%20Ready-green.svg)]()
 
-**當前版本:** v3.0+ | **最後更新:** 2025年10月23日
+**當前版本:** v2.0 | **最後更新:** 2025年10月24日
+
+## 📚 文件導覽
+
+- 📖 [完整專案結構說明](REPOSITORY_STRUCTURE.md) - 詳細的目錄結構與模組說明
+- 🚀 [快速參考指南](QUICK_REFERENCE.md) - 常用命令與核心檔案快速查詢
+- 🛠️ [開發者指南](DEVELOPER_GUIDE.md) - 開發環境設置與編程規範
+- 🌐 [API 文件](api/README.md) - FastAPI 後端服務使用說明
 
 ---
 
