@@ -1,0 +1,21 @@
+graph TB
+    subgraph "名詞語義分析"
+        direction TB
+        
+        NounCenter["名詞語義中心"]
+        Entity["Entity<br/>名詞<br/>(46)"]
+        NounCenter --> Entity
+        Concept["Concept<br/>名詞<br/>(4)"]
+        NounCenter --> Concept
+        Resource["Resource<br/>名詞<br/>(2)"]
+        NounCenter --> Resource
+        Container["Container<br/>名詞<br/>(26)"]
+        NounCenter --> Container
+        Abstraction["Abstraction<br/>名詞<br/>(11)"]
+        NounCenter --> Abstraction
+    end
+    
+    classDef center fill:#f5f5f5,stroke:#757575,color:#000
+    classDef noun fill:#f3e5f5,stroke:#7b1fa2,color:#000
+    
+    class NounCenter center

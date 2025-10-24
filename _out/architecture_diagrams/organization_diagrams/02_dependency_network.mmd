@@ -1,0 +1,11 @@
+graph LR
+    subgraph "依賴關係網絡"
+        direction LR
+        Isolated["獨立組件<br/>(2410 個)"]
+        Isolated -.-> N0
+    end
+    
+    classDef connected fill:#ccffff,stroke:#0088cc,color:#000
+    classDef isolated fill:#ffeecc,stroke:#ff8800,color:#000
+    
+    class Isolated isolated

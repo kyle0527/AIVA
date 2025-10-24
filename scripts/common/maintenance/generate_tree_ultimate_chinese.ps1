@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 # AIVA 專案程式碼樹狀圖生成腳本（終極整合版）
 # 功能：
 # 1. 生成僅程式碼的樹狀架構圖
@@ -6,12 +7,15 @@
 # 4. 檔案名稱後面附加中文說明
 # 5. 同時輸出純文字檔案和彩色終端機顯示
 
+# 設定輸出編碼為 UTF-8
+$OutputEncoding = [Console]::OutputEncoding = [Text.Encoding]::UTF8
+
 param(
-    [string]$ProjectRoot = "C:\F\AIVA",
-    [string]$OutputDir = "C:\F\AIVA\_out",
-    [string]$PreviousTreeFile = "",  # 上一版樹狀圖檔案路徑（選填）
-    [switch]$ShowColorInTerminal = $true,  # 是否在終端機顯示顏色
-    [switch]$AddChineseComments = $true   # 是否添加中文檔名說明
+    [string]$ProjectRoot = "C:\D\AIVA",
+    [string]$OutputDir = "C:\D\AIVA\_out", 
+    [string]$PreviousTreeFile = "",
+    [switch]$ShowColorInTerminal,
+    [switch]$AddChineseComments
 )
 
 Write-Host "🚀 開始生成程式碼樹狀圖（終極整合版）..." -ForegroundColor Cyan

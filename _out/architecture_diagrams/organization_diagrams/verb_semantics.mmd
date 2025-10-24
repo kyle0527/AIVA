@@ -1,0 +1,21 @@
+graph LR
+    subgraph "動詞語義分析"
+        direction LR
+        
+        VerbCenter["動詞語義中心"]
+        Action[" Action<br/>動詞<br/>(34)"]
+        VerbCenter --> Action
+        Process[" Process<br/>動詞<br/>(19)"]
+        VerbCenter --> Process
+        Analysis[" Analysis<br/>動詞<br/>(111)"]
+        VerbCenter --> Analysis
+        Communication[" Communication<br/>動詞<br/>(7)"]
+        VerbCenter --> Communication
+        State[" State<br/>動詞<br/>(97)"]
+        VerbCenter --> State
+    end
+    
+    classDef center fill:#f5f5f5,stroke:#757575,color:#000
+    classDef verb fill:#e1f5fe,stroke:#0277bd,color:#000
+    
+    class VerbCenter center

@@ -1,0 +1,59 @@
+---
+title: 技術棧架構
+---
+flowchart TD
+    subgraph "AIVA Features - 技術棧架構"
+        direction TB
+        S1["Frontend Security Stack"]
+        S1 --> S1_DETAILS
+        subgraph S1_DETAILS["Frontend Security Stack Details"]
+            C2["Xss<br/>65 組件"]
+            C2 -.-> L3["python: 65"]
+            C4["Authentication<br/>5 組件"]
+            C4 -.-> L5["python: 5"]
+            C6["Bypass<br/>6 組件"]
+            C6 -.-> L7["python: 6"]
+        end
+        S8["Backend Security Stack"]
+        S8 --> S8_DETAILS
+        subgraph S8_DETAILS["Backend Security Stack Details"]
+            C9["Injection<br/>89 組件"]
+            C9 -.-> L10["python: 88"]
+            C11["Ssrf<br/>80 組件"]
+            C11 -.-> L12["python: 61"]
+            C13["Idor<br/>42 組件"]
+            C13 -.-> L14["python: 42"]
+            C15["Sast<br/>1798 組件"]
+            C15 -.-> L16["rust: 1798"]
+        end
+        S17["Authentication Stack"]
+        S17 --> S17_DETAILS
+        subgraph S17_DETAILS["Authentication Stack Details"]
+            C18["Oauth<br/>10 組件"]
+            C18 -.-> L19["python: 10"]
+            C20["Jwt<br/>10 組件"]
+            C20 -.-> L21["python: 9"]
+            C22["Authentication<br/>49 組件"]
+            C22 -.-> L23["python: 35"]
+        end
+        S24["Infrastructure Stack"]
+        S24 --> S24_DETAILS
+        subgraph S24_DETAILS["Infrastructure Stack Details"]
+            C25["Worker<br/>26 組件"]
+            C25 -.-> L26["python: 23"]
+            C27["Config<br/>38 組件"]
+            C27 -.-> L28["python: 29"]
+            C29["Schema<br/>4 組件"]
+            C29 -.-> L30["python: 3"]
+            C31["Statistics<br/>5 組件"]
+            C31 -.-> L32["python: 5"]
+            C33["Telemetry<br/>11 組件"]
+            C33 -.-> L34["python: 11"]
+        end
+
+    end
+
+    classDef stackStyle fill:#e1f5fe,stroke:#01579b,stroke-width:2px
+    classDef clusterStyle fill:#f3e5f5,stroke:#4a148c,stroke-width:2px  
+    classDef componentStyle fill:#e8f5e8,stroke:#1b5e20,stroke-width:2px
+    classDef languageStyle fill:#fff3e0,stroke:#e65100,stroke-width:2px

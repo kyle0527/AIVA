@@ -1,0 +1,35 @@
+---
+title: AIVA Features - 核心功能架構
+config:
+  theme: base
+  themeVariables:
+    primaryColor: "#7c3aed"
+    primaryTextColor: "#fff"
+    lineColor: "#6b7280"
+---
+flowchart TD
+    CORE_HUB["🎯 核心功能控制中心<br/>61 個核心組件"]
+    
+    High_Value_Target["High_Value_Target<br/>14 組件<br/>python: 14"]
+    CORE_HUB --> High_Value_Target
+    SSRF_Detection["SSRF_Detection<br/>1 組件<br/>python: 1"]
+    CORE_HUB --> SSRF_Detection
+    Software_Composition_SCA["Software_Composition_SCA<br/>1 組件<br/>python: 1"]
+    CORE_HUB --> Software_Composition_SCA
+    SQL_Injection_Detection["SQL_Injection_Detection<br/>7 組件<br/>python: 7"]
+    CORE_HUB --> SQL_Injection_Detection
+    Smart_Detection["Smart_Detection<br/>4 組件<br/>python: 4"]
+    CORE_HUB --> Smart_Detection
+    smart_detection_manager["smart_detection_manager<br/>2 組件<br/>python: 2"]
+    CORE_HUB --> smart_detection_manager
+    Feature_Management["Feature_Management<br/>1 組件<br/>python: 1"]
+    CORE_HUB --> Feature_Management
+    unified_smart_detection_manager["unified_smart_detection_manager<br/>20 組件<br/>python: 20"]
+    CORE_HUB --> unified_smart_detection_manager
+
+    %% 核心功能樣式
+    classDef coreStyle fill:#7c3aed,stroke:#6b21a8,stroke-width:3px,color:#fff
+    classDef hubStyle fill:#1f2937,stroke:#374151,stroke-width:4px,color:#fff
+    
+    class CORE_HUB hubStyle
+    class High_Value_Target,SSRF_Detection,Software_Composition_SCA,SQL_Injection_Detection,Smart_Detection,smart_detection_manager,Feature_Management,unified_smart_detection_manager coreStyle

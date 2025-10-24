@@ -1,0 +1,28 @@
+graph TD
+    subgraph "功能內聚聚類分析"
+        direction TD
+        
+        subgraph "安全功能聚類"
+            direction LR
+            S0["Authentication<br/>(56)"]
+            S1["Vulnerability Detection<br/>(7)"]
+            S2["Security Analysis<br/>(2)"]
+        end
+        
+        subgraph "數據處理聚類"
+            direction LR
+            D0["Data Validation<br/>(45)"]
+            D1["Data Transformation<br/>(3)"]
+        end
+        
+        subgraph "系統功能聚類"
+            direction LR
+            Sys0["Configuration Management<br/>(42)"]
+            Sys1["Error Handling<br/>(32)"]
+            Sys2["Resource Management<br/>(5)"]
+        end
+    end
+    
+    classDef security fill:#ffebee,stroke:#c62828,color:#000
+    classDef data fill:#e8f5e8,stroke:#2e7d32,color:#000
+    classDef system fill:#e3f2fd,stroke:#1565c0,color:#000

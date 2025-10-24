@@ -1,0 +1,35 @@
+graph TB
+    subgraph "命名模式聚類分析"
+        direction TB
+        
+        subgraph "角色模式"
+            direction LR
+            R0["Manager<br/>(9)"]
+            R1["Worker<br/>(31)"]
+            R2["Handler<br/>(3)"]
+            R3["Controller<br/>(1)"]
+            R4["Processor<br/>(1)"]
+        end
+        
+        subgraph "功能模式"
+            direction LR
+            F0["Config<br/>(38)"]
+            F1["Test<br/>(1819)"]
+            F2["Schema<br/>(4)"]
+            F3["Model<br/>(2)"]
+            F4["Payload<br/>(30)"]
+        end
+        
+        subgraph "設計模式"
+            direction LR
+            D0["Observer<br/>(2)"]
+            D1["Strategy<br/>(2)"]
+            D2["Decorator<br/>(2)"]
+            D3["Command<br/>(1)"]
+            D4["Template<br/>(1)"]
+        end
+    end
+    
+    classDef role fill:#e1f5fe,stroke:#01579b,color:#000
+    classDef function fill:#f3e5f5,stroke:#4a148c,color:#000
+    classDef design fill:#e8f5e8,stroke:#1b5e20,color:#000

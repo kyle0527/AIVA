@@ -1,0 +1,115 @@
+列出磁碟區 OS 的資料夾 PATH
+磁碟區序號為 AA21-0736
+C:.
+|   CODE_QUALITY_REPORT.md
+|   core_schema_sot.yaml
+|   mq.py
+|   py.typed
+|   __init__.py
+|   
++---config
+|   |   unified_config.py
+|   |   __init__.py
+|   |   
+|   \---__pycache__
+|           unified_config.cpython-313.pyc
+|           __init__.cpython-313.pyc
+|           
++---enums
+|   |   assets.py
+|   |   common.py
+|   |   modules.py
+|   |   security.py
+|   |   __init__.py
+|   |   
+|   \---__pycache__
+|           assets.cpython-313.pyc
+|           common.cpython-313.pyc
+|           modules.cpython-313.pyc
+|           security.cpython-313.pyc
+|           __init__.cpython-313.pyc
+|           
++---schemas
+|   |   ai.py
+|   |   assets.py
+|   |   base.py
+|   |   enhanced.py
+|   |   findings.py
+|   |   languages.py
+|   |   messaging.py
+|   |   references.py
+|   |   risk.py
+|   |   system.py
+|   |   tasks.py
+|   |   telemetry.py
+|   |   __init__.py
+|   |   
+|   +---generated
+|   |   |   base_types.py
+|   |   |   findings.py
+|   |   |   messaging.py
+|   |   |   tasks.py
+|   |   |   __init__.py
+|   |   |   
+|   |   \---__pycache__
+|   |           base_types.cpython-313.pyc
+|   |           findings.cpython-313.pyc
+|   |           messaging.cpython-313.pyc
+|   |           tasks.cpython-313.pyc
+|   |           __init__.cpython-313.pyc
+|   |           
+|   \---__pycache__
+|           ai.cpython-313.pyc
+|           api_testing.cpython-313.pyc
+|           assets.cpython-313.pyc
+|           base.cpython-313.pyc
+|           enhanced.cpython-313.pyc
+|           findings.cpython-313.pyc
+|           languages.cpython-313.pyc
+|           messaging.cpython-313.pyc
+|           references.cpython-313.pyc
+|           risk.cpython-313.pyc
+|           system.cpython-313.pyc
+|           tasks.cpython-313.pyc
+|           telemetry.cpython-313.pyc
+|           __init__.cpython-313.pyc
+|           
++---tools
+|       module_connectivity_tester.py
+|       schema_codegen_tool.py
+|       schema_validator.py
+|       
++---utils
+|   |   ids.py
+|   |   logging.py
+|   |   __init__.py
+|   |   
+|   +---dedup
+|   |   |   dedupe.py
+|   |   |   __init__.py
+|   |   |   
+|   |   \---__pycache__
+|   |           dedupe.cpython-313.pyc
+|   |           __init__.cpython-313.pyc
+|   |           
+|   +---network
+|   |   |   backoff.py
+|   |   |   ratelimit.py
+|   |   |   __init__.py
+|   |   |   
+|   |   \---__pycache__
+|   |           backoff.cpython-313.pyc
+|   |           ratelimit.cpython-313.pyc
+|   |           __init__.cpython-313.pyc
+|   |           
+|   \---__pycache__
+|           ids.cpython-313.pyc
+|           logging.cpython-313.pyc
+|           __init__.cpython-313.pyc
+|           
+\---__pycache__
+        config.cpython-313.pyc
+        models.cpython-313.pyc
+        mq.cpython-313.pyc
+        __init__.cpython-313.pyc
+        

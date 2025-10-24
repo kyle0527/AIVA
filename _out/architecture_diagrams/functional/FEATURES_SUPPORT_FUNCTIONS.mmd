@@ -1,0 +1,85 @@
+---
+title: AIVA Features - 支援功能架構
+config:
+  theme: base
+  themeVariables:
+    primaryColor: "#059669"
+    primaryTextColor: "#fff"
+    lineColor: "#6b7280"
+---
+flowchart TD
+    SUPPORT_HUB["🔧 支援功能控制中心<br/>346 個支援組件<br/>12.9% 基礎設施"]
+    
+    Feature_Management["🐍 Feature_Management<br/>12 組件<br/>主要: python"]
+    SUPPORT_HUB --> Feature_Management
+    example_config["🐍 example_config<br/>2 組件<br/>主要: python"]
+    SUPPORT_HUB --> example_config
+    Configuration_Models["🐍 Configuration_Models<br/>22 組件<br/>主要: python"]
+    SUPPORT_HUB --> Configuration_Models
+    feature_step_executor["🐍 feature_step_executor<br/>8 組件<br/>主要: python"]
+    SUPPORT_HUB --> feature_step_executor
+    schemas["🐍 schemas<br/>30 組件<br/>主要: python"]
+    SUPPORT_HUB --> schemas
+    models["🐍 models<br/>16 組件<br/>主要: python"]
+    SUPPORT_HUB --> models
+    test_schemas["🐍 test_schemas<br/>8 組件<br/>主要: python"]
+    SUPPORT_HUB --> test_schemas
+    feature_registry["🐍 feature_registry<br/>2 組件<br/>主要: python"]
+    SUPPORT_HUB --> feature_registry
+    Software_Composition_SCA["🐍 Software_Composition_SCA<br/>18 組件<br/>主要: python"]
+    SUPPORT_HUB --> Software_Composition_SCA
+    High_Value_Target["🐍 High_Value_Target<br/>1 組件<br/>主要: python"]
+    SUPPORT_HUB --> High_Value_Target
+    feature_base["🐍 feature_base<br/>1 組件<br/>主要: python"]
+    SUPPORT_HUB --> feature_base
+    http_client["🐍 http_client<br/>6 組件<br/>主要: python"]
+    SUPPORT_HUB --> http_client
+    result_schema["🐍 result_schema<br/>5 組件<br/>主要: python"]
+    SUPPORT_HUB --> result_schema
+    worker_statistics["🐍 worker_statistics<br/>20 組件<br/>主要: python"]
+    SUPPORT_HUB --> worker_statistics
+    Authentication_Security["🐍 Authentication_Security<br/>29 組件<br/>主要: python"]
+    SUPPORT_HUB --> Authentication_Security
+    Smart_Detection["🐍 Smart_Detection<br/>11 組件<br/>主要: python"]
+    SUPPORT_HUB --> Smart_Detection
+    advanced_detection_config["🐍 advanced_detection_config<br/>9 組件<br/>主要: python"]
+    SUPPORT_HUB --> advanced_detection_config
+    SQL_Injection_Detection["🐍 SQL_Injection_Detection<br/>1 組件<br/>主要: python"]
+    SUPPORT_HUB --> SQL_Injection_Detection
+    SSRF_Detection["🐍 SSRF_Detection<br/>2 組件<br/>主要: python"]
+    SUPPORT_HUB --> SSRF_Detection
+    XSS_Detection["🐍 XSS_Detection<br/>2 組件<br/>主要: python"]
+    SUPPORT_HUB --> XSS_Detection
+    worker["🐍 worker<br/>31 組件<br/>主要: python"]
+    SUPPORT_HUB --> worker
+    cross_user_tester["🐍 cross_user_tester<br/>3 組件<br/>主要: python"]
+    SUPPORT_HUB --> cross_user_tester
+    enhanced_worker["🐍 enhanced_worker<br/>5 組件<br/>主要: python"]
+    SUPPORT_HUB --> enhanced_worker
+    resource_id_extractor["🐍 resource_id_extractor<br/>6 組件<br/>主要: python"]
+    SUPPORT_HUB --> resource_id_extractor
+    smart_idor_detector["🐍 smart_idor_detector<br/>2 組件<br/>主要: python"]
+    SUPPORT_HUB --> smart_idor_detector
+    lateral_movement["🐍 lateral_movement<br/>6 組件<br/>主要: python"]
+    SUPPORT_HUB --> lateral_movement
+    persistence_checker["🐍 persistence_checker<br/>7 組件<br/>主要: python"]
+    SUPPORT_HUB --> persistence_checker
+    message_test["🐹 message_test<br/>11 組件<br/>主要: go"]
+    SUPPORT_HUB --> message_test
+    config["🐹 config<br/>1 組件<br/>主要: go"]
+    SUPPORT_HUB --> config
+    logger["🐹 logger<br/>3 組件<br/>主要: go"]
+    SUPPORT_HUB --> logger
+    client["🐹 client<br/>9 組件<br/>主要: go"]
+    SUPPORT_HUB --> client
+    client_test["🐹 client_test<br/>3 組件<br/>主要: go"]
+    SUPPORT_HUB --> client_test
+    message["🐹 message<br/>2 組件<br/>主要: go"]
+    SUPPORT_HUB --> message
+
+    %% 支援功能樣式
+    classDef supportStyle fill:#059669,stroke:#047857,stroke-width:3px,color:#fff
+    classDef hubStyle fill:#1f2937,stroke:#374151,stroke-width:4px,color:#fff
+    
+    class SUPPORT_HUB hubStyle
+    class Feature_Management,example_config,Configuration_Models,feature_step_executor,schemas,models,test_schemas,feature_registry,Software_Composition_SCA,High_Value_Target,feature_base,http_client,result_schema,worker_statistics,Authentication_Security,Smart_Detection,advanced_detection_config,SQL_Injection_Detection,SSRF_Detection,XSS_Detection,worker,cross_user_tester,enhanced_worker,resource_id_extractor,smart_idor_detector,lateral_movement,persistence_checker,message_test,config,logger,client,client_test,message supportStyle

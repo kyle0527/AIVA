@@ -1,263 +1,185 @@
-# AIVA 功能模組 | Function Module
+# AIVA Features 模組 - 多語言安全功能架構
 
-> **目錄**: `services/function/`  
-> **設計原則**: [功能模組設計原則](../../docs/DEVELOPMENT/FUNCTION_MODULE_DESIGN_PRINCIPLES.md)  
-> **設計哲學**: **功能為王，語言為器，通信為橋，質量為本**
-
----
-
-## 🎯 核心設計原則
-
-### 1. **功能性優先原則**
-- ✅ **以檢測效果為核心指標** - 模組的價值由其檢測能力決定
-- ✅ **實用性勝過架構一致性** - 優先確保功能正常運作
-- ✅ **快速迭代和部署** - 支持獨立開發和部署週期
-
-### 2. **語言特性最大化原則**
-- ✅ **充分利用語言優勢** - Python的靈活性、Go的並發性、Rust的安全性
-- ✅ **遵循語言最佳實踐** - 符合各語言的慣用法和規範
-- ✅ **不強制統一架構** - 允許不同語言採用不同的設計模式
-
-### 3. **模組間通信標準**
-- ✅ **統一消息格式** - 必須支持 `AivaMessage` + `MessageHeader` 協議
-- ✅ **標準主題命名** - 使用 `Topic` 枚舉中定義的標準主題
-- ✅ **錯誤處理一致性** - 統一的錯誤回報格式
+> **🎯 快速導航**: 選擇您的角色和需求，找到最適合的文件
+> 
+> - 👨‍💼 **架構師/PM**: 閱讀 [功能架構總覽](#功能架構總覽)
+> - 🐍 **Python 開發者**: 查看 [Python 開發指南](docs/README_PYTHON.md)
+> - 🐹 **Go 開發者**: 查看 [Go 開發指南](docs/README_GO.md)  
+> - 🦀 **Rust 開發者**: 查看 [Rust 開發指南](docs/README_RUST.md)
+> - 🛡️ **安全專家**: 查看 [安全功能詳解](docs/README_SECURITY.md)
+> - 🔧 **運維/DevOps**: 查看 [支援功能指南](docs/README_SUPPORT.md)
 
 ---
 
-## 📦 模組清單 | Module List
+## 📊 **模組規模一覽**
 
-### 🐍 Python 模組 (5個)
+### **🏗️ 整體統計**
+- **總組件數**: **2,692** 個組件
+- **檔案數量**: **114** 個檔案 (82 Python + 21 Go + 11 Rust)  
+- **功能模組**: **50** 個功能模組
+- **複雜度等級**: ⭐⭐⭐⭐⭐ (最高級別)
 
-| 模組 | 路徑 | 功能 | 狀態 |
-|------|------|------|------|
-| **SQLi** | `function_sqli/` | SQL 注入檢測（5引擎） | ✅ 穩定 |
-| **XSS** | `function_xss/` | XSS 檢測（Reflected/Stored/DOM） | ✅ 穩定 |
-| **IDOR** | `function_idor/` | IDOR 檢測（Horizontal/Vertical） | ✅ 強化中 |
-| **SSRF** | `function_ssrf/` | SSRF 檢測（OAST整合） | ✅ 強化中 |
-| **PostEx** | `function_postex/` | 後滲透測試 | ⚠️ 開發中 |
-
-#### Python 模組特點
-- **優勢**: 快速開發、豐富庫生態、AI/ML 整合
-- **適用場景**: 複雜邏輯檢測、機器學習驅動檢測、快速原型
-- **技術棧**: asyncio, Pydantic, aiohttp, httpx
-
-### 🔷 Go 模組 (4個)
-
-| 模組 | 路徑 | 功能 | 狀態 |
-|------|------|------|------|
-| **AuthN** | `function_authn_go/` | 身份認證漏洞檢測 | ✅ 穩定 |
-| **CSPM** | `function_cspm_go/` | 雲端安全態勢管理 | ✅ 穩定 |
-| **SCA** | `function_sca_go/` | 軟體成分分析 | ✅ 穩定 |
-| **SSRF (Go)** | `function_ssrf_go/` | SSRF 檢測（高並發版） | ✅ 穩定 |
-
-#### Go 模組特點
-- **優勢**: 高性能並發、快速編譯、記憶體安全
-- **適用場景**: 高吞吐量檢測、系統級掃描、網路相關檢測
-- **技術棧**: goroutines, channels, context, go-swagger
-
-### 🦀 Rust 模組 (1個)
-
-| 模組 | 路徑 | 功能 | 狀態 |
-|------|------|------|------|
-| **SAST** | `function_sast_rust/` | 靜態應用程式安全測試 | ✅ 穩定 |
-
-#### Rust 模組特點
-- **優勢**: 記憶體安全、零成本抽象、極致性能
-- **適用場景**: 安全關鍵檢測、底層分析、高性能處理
-- **技術棧**: tokio, serde, tree-sitter
-
----
-
-## 🔄 統一通信協議
-
-### 標準消息格式
-
-所有功能模組必須支持 AIVA 標準消息協議：
-
-```python
-from aiva_common.schemas import AivaMessage, MessageHeader, FunctionTaskPayload
-
-# 接收任務
-async def process_message(message: AivaMessage) -> AivaMessage:
-    """
-    處理標準 AIVA 消息
-    
-    Args:
-        message: 包含 header, topic, payload 的標準消息
-        
-    Returns:
-        包含檢測結果的標準消息
-    """
-    task = FunctionTaskPayload(**message.payload)
-    
-    # 執行檢測邏輯
-    findings = await detect_vulnerabilities(task)
-    
-    # 返回標準格式
-    return AivaMessage(
-        header=MessageHeader(
-            message_id=generate_id(),
-            source=ModuleName.FUNCTION_SQLI,
-            destination=ModuleName.CORE,
-            timestamp=datetime.now(UTC)
-        ),
-        topic=Topic.RESULTS_FUNCTION_COMPLETED,
-        payload=FindingPayload(findings=findings)
-    )
+### **📈 語言分佈**
+```
+🦀 Rust    │████████████████████████████████████████████████████████████████████ 67.0% (1,804)
+🐍 Python  │███████████████████████████████ 26.9% (723)
+🐹 Go      │███████ 6.1% (165)
 ```
 
-### 標準主題命名
-
-```yaml
-# 接收任務
-tasks.function.sqli
-tasks.function.xss
-tasks.function.idor
-tasks.function.ssrf
-
-# 返回結果
-results.function.completed
-results.function.error
-
-# 狀態更新
-events.function.progress
-events.function.heartbeat
+### **🎯 功能分佈**  
+```
+🛡️ Security │████████████████████████████████████████████████████████████████████████████████ 78.4% (2,111)
+🔧 Support  │████████████████ 12.9% (346)
+🏢 Business │███████ 6.5% (174)  
+🔴 Core     │███ 2.3% (61)
 ```
 
 ---
 
-## 📊 質量標準
+## 🏗️ **功能架構總覽**
 
-### 功能性指標
-- 🎯 **檢測準確率** > 95%
-- 🎯 **誤報率** < 5%
-- 🎯 **覆蓋率** > 90%
+### **四層功能架構**
 
-### 性能指標
-- ⚡ **響應時間** < 30秒 (標準檢測)
-- ⚡ **吞吐量** > 100 requests/minute
-- ⚡ **資源使用** < 512MB 記憶體
+```mermaid
+flowchart TD
+    AIVA["🎯 AIVA Features 模組<br/>2692 組件"]
+    
+    CORE["🔴 核心功能層<br/>61 組件 (2.3%)<br/>智能管理與協調"]
+    SECURITY["🛡️ 安全功能層<br/>2111 組件 (78.4%)<br/>主要業務邏輯"]  
+    BUSINESS["🏢 業務功能層<br/>174 組件 (6.5%)<br/>功能實現"]
+    SUPPORT["🔧 支援功能層<br/>346 組件 (12.9%)<br/>基礎設施"]
+    
+    AIVA --> CORE
+    AIVA --> SECURITY
+    AIVA --> BUSINESS  
+    AIVA --> SUPPORT
+    
+    classDef coreStyle fill:#7c3aed,color:#fff
+    classDef securityStyle fill:#dc2626,color:#fff
+    classDef businessStyle fill:#2563eb,color:#fff
+    classDef supportStyle fill:#059669,color:#fff
+    
+    class CORE coreStyle
+    class SECURITY securityStyle
+    class BUSINESS businessStyle
+    class SUPPORT supportStyle
+```
 
-### 可靠性指標
-- 🛡️ **可用性** > 99.5%
-- 🛡️ **錯誤恢復** < 60秒
-- 🛡️ **資料一致性** 100%
+### **🎯 各層核心職責**
+
+| 功能層 | 主要職責 | 關鍵模組 | 主要語言 |
+|--------|----------|----------|----------|
+| 🔴 **核心功能** | 智能管理、系統協調、決策引擎 | 統一智能檢測管理器、高價值目標識別 | 🐍 Python |
+| 🛡️ **安全功能** | 漏洞檢測、靜態分析、安全掃描 | SAST 引擎、SQL/XSS/SSRF 檢測 | 🦀 Rust + 🐍 Python |
+| 🏢 **業務功能** | 功能實現、服務提供、API 介面 | 軟體組件分析、雲端安全管理 | 🐹 Go + 🐍 Python |
+| 🔧 **支援功能** | 基礎設施、配置管理、工具支援 | Worker 系統、Schema 定義 | 🐍 Python |
 
 ---
 
-## 🚀 開發指南
+## 📚 **文件導航地圖**
 
-### 新增模組流程
+### **📁 按功能查看**
+- 📊 [**核心功能詳解**](docs/README_CORE.md) - 智能檢測管理、高價值目標識別
+- 🛡️ [**安全功能詳解**](docs/README_SECURITY.md) - SAST、漏洞檢測、安全掃描
+- 🏢 [**業務功能詳解**](docs/README_BUSINESS.md) - SCA、CSPM、認證服務  
+- 🔧 [**支援功能詳解**](docs/README_SUPPORT.md) - Worker、配置、工具
 
-1. **選擇語言** - 根據檢測需求選擇最合適的語言
-   - Python: 複雜邏輯、ML驅動
-   - Go: 高並發、系統級
-   - Rust: 安全關鍵、高性能
+### **💻 按語言查看**
+- 🐍 [**Python 開發指南**](docs/README_PYTHON.md) - 723 組件 | 核心協調與業務邏輯
+- 🐹 [**Go 開發指南**](docs/README_GO.md) - 165 組件 | 高效能服務與網路處理  
+- 🦀 [**Rust 開發指南**](docs/README_RUST.md) - 1,804 組件 | 安全分析與效能關鍵
 
-2. **實現標準接口**
-   ```python
-   # Python 模組必須實現
-   class FunctionWorker:
-       async def process_message(self, msg: AivaMessage) -> AivaMessage
-       def get_module_name(self) -> ModuleName
-   ```
+### **🎨 架構圖表**
+- 📊 [功能分層架構圖](../_out/architecture_diagrams/functional/FEATURES_INTEGRATED_FUNCTIONAL.mmd)
+- 🛡️ [安全功能架構圖](../_out/architecture_diagrams/functional/FEATURES_SECURITY_FUNCTIONS.mmd)
+- 🔴 [核心功能架構圖](../_out/architecture_diagrams/functional/FEATURES_CORE_FUNCTIONS.mmd)
+- 📈 [多語言協作架構圖](../_out/architecture_diagrams/FEATURES_MODULE_INTEGRATED_ARCHITECTURE.mmd)
 
-3. **遵循目錄結構**
-   ```
-   function_{name}/
-   ├── aiva_func_{name}/
-   │   ├── worker.py          # 核心檢測邏輯
-   │   ├── engines/           # 檢測引擎（如適用）
-   │   └── config.py          # 配置管理
-   ├── tests/                 # 單元測試
-   ├── README.md              # 模組文檔
-   └── requirements.txt       # 依賴（Python）
-   ```
+---
 
-4. **編寫測試** - 使用語言原生測試框架
-   - Python: pytest
-   - Go: go test
-   - Rust: cargo test
+## 🚀 **快速開始指南**
 
-5. **更新文檔** - 在模組 README 中記錄設計原則引用
+### **🔍 我需要什麼？**
 
-### 測試策略
+**場景 1: 了解整體架構** 👨‍💼  
+```
+→ 閱讀本文件的功能架構總覽
+→ 查看 docs/README_SECURITY.md (主要功能)
+→ 檢視架構圖表
+```
 
+**場景 2: 開發特定語言模組** 👨‍💻  
+```
+→ 選擇對應語言的 README (Python/Go/Rust)
+→ 跟隨語言特定的開發指南
+→ 參考最佳實踐和程式碼範例
+```
+
+**場景 3: 實現新的安全功能** 🛡️  
+```  
+→ 閱讀 docs/README_SECURITY.md
+→ 查看 SAST 或漏洞檢測模組範例
+→ 跟隨安全功能開發模式
+```
+
+**場景 4: 系統維護和部署** 🔧  
+```
+→ 閱讀 docs/README_SUPPORT.md  
+→ 查看跨語言整合指南
+→ 參考部署和監控最佳實踐
+```
+
+### **🛠️ 環境設定**
 ```bash
-# Python 模組
-cd function_sqli
-pytest tests/ -v --cov
+# 1. 克隆並進入 Features 模組
+cd services/features
 
-# Go 模組
-cd function_sca_go
-go test ./... -v -cover
+# 2. 設定各語言環境
+make setup-all  # 或手動設定各語言環境
 
-# Rust 模組
-cd function_sast_rust
-cargo test --verbose
+# 3. 執行測試確認環境
+make test-all
+
+# 4. 查看具體語言的設定指南
+make help
 ```
 
 ---
 
-## 🔗 相關文檔
+## ⚠️ **重要注意事項**
 
-- **設計原則**: [FUNCTION_MODULE_DESIGN_PRINCIPLES.md](../../docs/DEVELOPMENT/FUNCTION_MODULE_DESIGN_PRINCIPLES.md)
-- **架構圖**: [05_function_module.mmd](../../_out/architecture_diagrams/05_function_module.mmd)
-- **Schema 指南**: [SCHEMA_GUIDE.md](../../docs/DEVELOPMENT/SCHEMA_GUIDE.md)
-- **多語言架構**: [ARCHITECTURE_MULTILANG.md](../../docs/ARCHITECTURE_MULTILANG.md)
+### **🔴 關鍵架構原則**
+1. **安全優先**: 78.4% 的組件專注於安全功能
+2. **語言專業化**: 每種語言都有明確的職責範圍
+3. **分層清晰**: 四層架構職責分明，避免跨層直接調用  
+4. **統一介面**: 跨語言協作需要統一的資料格式和錯誤處理
 
----
-
-## 📈 統計資訊
-
-- **總模組數**: 10 個
-- **Python 模組**: 5 個
-- **Go 模組**: 4 個
-- **Rust 模組**: 1 個
-- **總程式碼行數**: ~15,000+ lines
-- **測試覆蓋率**: 平均 85%
+### **🚨 開發約束**
+- ✅ **必須**: 遵循對應語言的開發指南和最佳實踐
+- ✅ **必須**: 實現統一的錯誤處理和日誌格式
+- ⚠️ **避免**: 跨語言模組的直接依賴
+- ⚠️ **避免**: 繞過既定的資料交換協議
 
 ---
 
-## 🎯 最佳實踐
+## 📞 **支援與聯繫**
 
-### ✅ DO - 應該做的
+### **👥 團隊分工**
+- 🦀 **Rust 團隊**: 安全引擎、SAST、密碼學
+- 🐍 **Python 團隊**: 核心協調、業務邏輯、整合
+- 🐹 **Go 團隊**: 高效能服務、網路處理、認證
+- 🏗️ **架構團隊**: 跨語言設計、系統整合
 
-1. **充分利用語言特性**
-   - Python: 使用 asyncio, type hints, dataclasses
-   - Go: 使用 goroutines, channels, defer
-   - Rust: 使用 ownership, traits, async/await
-
-2. **遵循通信協議**
-   - 使用標準 `AivaMessage` 格式
-   - 遵循 `Topic` 枚舉命名
-   - 統一錯誤處理格式
-
-3. **獨立測試和部署**
-   - 每個模組可獨立開發
-   - 支持容器化部署
-   - 支持水平擴展
-
-### ❌ DON'T - 不應該做的
-
-1. **不要強制架構統一**
-   - 不要求所有模組使用相同設計模式
-   - 不要求統一依賴注入框架
-   - 允許語言特定的最佳實踐
-
-2. **不要破壞通信協議**
-   - 不要自定義消息格式
-   - 不要繞過標準主題命名
-   - 不要忽略錯誤處理標準
-
-3. **不要犧牲功能性**
-   - 不要為了架構美觀而降低檢測能力
-   - 不要過度設計
-   - 實用性優先於完美主義
+### **📊 相關報告**
+- 📈 [多語言架構分析](../../_out/FEATURES_MODULE_ARCHITECTURE_ANALYSIS.md)
+- 📋 [功能組織分析](../../_out/architecture_diagrams/functional/FUNCTIONAL_ORGANIZATION_REPORT.md)
+- 🔍 [組件分類資料](../../_out/architecture_diagrams/features_diagram_classification.json)
 
 ---
 
-**維護團隊**: AIVA 開發團隊  
-**最後更新**: 2025-10-16  
-**版本**: v1.0.0
+**📝 文件版本**: v2.0 - Multi-Layer Architecture  
+**🔄 最後更新**: {datetime.now().strftime('%Y-%m-%d')}  
+**📈 複雜度等級**: ⭐⭐⭐⭐⭐ (最高) - 多層次文件架構  
+**👥 維護團隊**: AIVA Multi-Language Architecture Team
+
+*這是 AIVA Features 模組的主要導航文件。根據您的角色和需求，選擇適合的專業文件深入了解。*

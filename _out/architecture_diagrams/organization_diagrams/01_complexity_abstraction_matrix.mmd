@@ -1,0 +1,22 @@
+graph TD
+    subgraph "複雜度與抽象層級矩陣"
+        direction TB
+        C0["LOW<br/>function<br/>(86 組件)"]
+        C0 --> LowComplexity[低複雜度]
+        C1["MEDIUM<br/>component<br/>(296 組件)"]
+        C1 --> MediumComplexity[中複雜度]
+        C2["MEDIUM<br/>service<br/>(5 組件)"]
+        C2 --> MediumComplexity[中複雜度]
+        C3["HIGH<br/>service<br/>(45 組件)"]
+        C3 --> HighComplexity[高複雜度]
+        C4["HIGH<br/>component<br/>(1978 組件)"]
+        C4 --> HighComplexity[高複雜度]
+    end
+    
+    classDef high fill:#ffcccc,stroke:#ff0000,color:#000
+    classDef medium fill:#ffffcc,stroke:#ffaa00,color:#000
+    classDef low fill:#ccffcc,stroke:#00aa00,color:#000
+    
+    class HighComplexity high
+    class MediumComplexity medium
+    class LowComplexity low

@@ -1,0 +1,28 @@
+{
+  "stability_metrics": {
+    "method_count": {
+      "mean": 54.0,
+      "variance": 0.0,
+      "stability_score": 1.0
+    },
+    "component_count": {
+      "mean": 2410.0,
+      "variance": 0.0,
+      "stability_score": 1.0
+    },
+    "confidence": {
+      "mean": 1.0,
+      "variance": 0.0,
+      "trend": "declining"
+    }
+  },
+  "recommendations": [
+    "需要更多歷史數據來分析穩定性"
+  ],
+  "last_comparison": {
+    "method_count_change": 0,
+    "confidence_change": 0.0,
+    "issues_change": 0,
+    "performance_change": -0.05835747718811035
+  }
+}

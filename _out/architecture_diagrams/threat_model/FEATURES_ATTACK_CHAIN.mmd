@@ -1,0 +1,34 @@
+---
+title: MITRE ATT&CK 攻擊鏈
+---
+flowchart TD
+    subgraph "AIVA Features - MITRE ATT&CK 攻擊鏈"
+        direction TB
+        ATK1["Reconnaissance<br/>Reconnaissance & Information Gathering<br/>39 組件"]:::attack_phase
+        ATK2["Initial Access<br/>Initial Access<br/>24 組件"]:::attack_phase
+        ATK3["Execution<br/>Execution<br/>45 組件"]:::attack_phase
+        ATK4["Persistence<br/>Persistence<br/>3 組件"]:::attack_phase
+        ATK5["Privilege Escalation<br/>Privilege Escalation<br/>8 組件"]:::attack_phase
+        ATK6["Credential Access<br/>Credential Access<br/>18 組件"]:::attack_phase
+        ATK7["Discovery<br/>Discovery<br/>11 組件"]:::attack_phase
+        ATK8["Lateral Movement<br/>Lateral Movement<br/>2 組件"]:::attack_phase
+        ATK9["Collection<br/>Collection<br/>1 組件"]:::attack_phase
+        ATK10["Impact<br/>Impact<br/>2 組件"]:::attack_phase
+        ATK1 --> ATK2
+        ATK2 --> ATK3
+        ATK3 --> ATK4
+        ATK4 --> ATK5
+        ATK5 --> ATK6
+        ATK6 --> ATK7
+        ATK7 --> ATK8
+        ATK8 --> ATK9
+        ATK9 --> ATK10
+
+    end
+
+    classDef critical fill:#ffebee,stroke:#c62828,stroke-width:3px
+    classDef high fill:#fff3e0,stroke:#ef6c00,stroke-width:2px
+    classDef language fill:#e8f5e8,stroke:#2e7d32,stroke-width:2px
+    classDef attack_phase fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px
+    classDef methodology fill:#e1f5fe,stroke:#0277bd,stroke-width:2px
+    classDef complexity fill:#f9fbe7,stroke:#689f38,stroke-width:2px

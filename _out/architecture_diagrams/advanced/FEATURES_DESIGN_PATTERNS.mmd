@@ -1,0 +1,31 @@
+---
+title: 設計模式架構
+---
+flowchart TD
+    subgraph "AIVA Features - 設計模式架構"
+        direction TB
+        PT1["Creational Patterns"]
+        PT2["Structural Patterns"]
+        R3["Adapters<br/>2 組件"]
+        PT4["Behavioral Patterns"]
+        R5["Strategies<br/>2 組件"]
+        R6["Observers<br/>2 組件"]
+        R7["Handlers<br/>3 組件"]
+        PT8["Concurrency Patterns"]
+        R9["Workers<br/>26 組件"]
+        R10["Executors<br/>17 組件"]
+        R11["Managers<br/>9 組件"]
+        PT2 --> R3
+        PT4 --> R5
+        PT4 --> R6
+        PT4 --> R7
+        PT8 --> R9
+        PT8 --> R10
+        PT8 --> R11
+
+    end
+
+    classDef stackStyle fill:#e1f5fe,stroke:#01579b,stroke-width:2px
+    classDef clusterStyle fill:#f3e5f5,stroke:#4a148c,stroke-width:2px  
+    classDef componentStyle fill:#e8f5e8,stroke:#1b5e20,stroke-width:2px
+    classDef languageStyle fill:#fff3e0,stroke:#e65100,stroke-width:2px
