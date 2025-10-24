@@ -261,20 +261,14 @@ class PhaseIPerformanceFeedbackLoop:
         
         if suggestion.module_name == "FUNC_CLIENT_AUTH_BYPASS":
             # 更新客戶端授權繞過的掃描配置
-            if suggestion.suggested_strategy == "TARGETED":
-                # 調整為目標化掃描，減少全面分析
-                pass
-            elif suggestion.suggested_strategy == "DYNAMIC_INTERACTION":
-                # 啟用動態交互測試
-                pass
+            if suggestion.suggested_strategy in ["TARGETED_SCAN", "DYNAMIC_INTERACTION"]:
+                # 調整為目標化掃描或啟用動態交互測試
+                logger.info(f"應用策略: {suggestion.suggested_strategy}")
                 
         elif "SSRF" in suggestion.module_name:
-            if suggestion.suggested_strategy == "SMART_PROBE":
-                # 調整為智能探測模式
-                pass
-            elif suggestion.suggested_strategy == "CLOUD_METADATA_FOCUS":
-                # 專注於雲端元數據檢測
-                pass
+            if suggestion.suggested_strategy in ["SMART_PROBE", "CLOUD_METADATA_FOCUS"]:
+                # 智能探測模式或專注於雲端元數據檢測
+                logger.info(f"應用 SSRF 策略: {suggestion.suggested_strategy}")
         
         logger.info(f"Applied optimization for {suggestion.module_name}")
 

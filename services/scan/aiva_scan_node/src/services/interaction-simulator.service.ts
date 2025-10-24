@@ -3,7 +3,7 @@
  * 用戶互動模擬服務
  */
 
-import { Page } from 'playwright';
+import { Page } from '../../types/playwright';
 import { logger } from '../utils/logger';
 import { 
   InteractionConfig, 

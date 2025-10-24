@@ -1,0 +1,108 @@
+---
+title: AIVA Integration Module Integrated Architecture
+---
+flowchart TB
+    %% External Services Layer
+    subgraph EXTERNAL["🌐 External Systems"]
+        SCAN_SVC["Scan Service"]
+        AI_SVC["AI Services"] 
+        DB_SVC[("Database Services")]
+        THREAT_INTEL["Threat Intelligence"]
+    end
+
+    %% API Gateway Layer  
+    subgraph API_LAYER["🚪 API Gateway Layer"]
+        API_GATEWAY["API Gateway"]
+        MIDDLEWARE["Request Middlewares"]
+        RATE_LIMITER["Rate Limiter"]
+    end
+
+    %% Core Integration Engine
+    subgraph CORE["🎯 Core Integration Engine"]
+        AI_RECORDER["AI Operation Recorder"]
+        SYS_MONITOR["System Performance Monitor"]
+        CONFIG_MGR["Configuration Manager"]
+    end
+
+    %% Service Integration Layer
+    subgraph SERVICES["🔄 Service Integration Layer"]
+        ANALYSIS_INT["Analysis Integration"]
+        RECEPTION_INT["Reception Integration"]
+        REPORTING_INT["Reporting Integration"]
+        PERF_FEEDBACK["Performance Feedback"]
+    end
+
+    %% Data Processing Layer
+    subgraph DATA_LAYER["📊 Data Processing Layer"]
+        DATA_RECEPTION["Data Reception Layer"]
+        EXPERIENCE_MODELS["Experience Models"]
+        LIFECYCLE_MGR["Lifecycle Manager"]
+    end
+
+    %% Security & Observability
+    subgraph SECURITY["🔒 Security & Observability"]
+        AUTH_SVC["Authentication Service"]
+        OBSERVABILITY["Observability Service"]
+        THREAT_ANALYZER["Threat Intelligence Processor"]
+        COMPLIANCE_CHECK["Compliance Policy Checker"]
+    end
+
+    %% Remediation & Response
+    subgraph REMEDIATION["🛡️ Remediation & Response"]
+        REMEDIATION_ENGINE["Remediation Engine"]
+        ATTACK_PATH["Attack Path Analyzer"]
+        RISK_ASSESSMENT["Risk Assessment Engine"]
+    end
+
+    %% ========== 主要資料流 ==========
+    %% 入口流程
+    EXTERNAL -.->|"Request"| API_LAYER
+    API_LAYER -->|"Processed Request"| CORE
+    
+    %% 核心處理流程
+    CORE -->|"Service Calls"| SERVICES
+    CORE -.->|"Monitor"| SECURITY
+    
+    %% 服務層分發
+    SERVICES -->|"Data Processing"| DATA_LAYER
+    SERVICES -.->|"Security Check"| SECURITY
+    SERVICES -->|"Risk Analysis"| REMEDIATION
+    
+    %% ========== 關鍵路徑 (粗線) ==========
+    SCAN_SVC ==>|"🔍 Scan Results"| API_GATEWAY
+    API_GATEWAY ==>|"📥 Ingest"| AI_RECORDER
+    AI_RECORDER ==>|"🧠 Process"| ANALYSIS_INT
+    ANALYSIS_INT ==>|"📊 Analyze"| RISK_ASSESSMENT
+    RISK_ASSESSMENT ==>|"⚡ Action"| REMEDIATION_ENGINE
+    
+    %% ========== 回饋迴路 ==========
+    SYS_MONITOR -.->|"Performance Data"| PERF_FEEDBACK
+    PERF_FEEDBACK -.->|"Optimization"| AI_RECORDER
+    THREAT_ANALYZER -.->|"Intel Update"| THREAT_INTEL
+    
+    %% ========== 橫向整合 ==========
+    DATA_RECEPTION <-->|"Data Exchange"| EXPERIENCE_MODELS
+    AUTH_SVC <-->|"Auth Check"| API_GATEWAY
+    OBSERVABILITY -.->|"Metrics"| SYS_MONITOR
+    
+    %% ========== 輸出流程 ==========
+    REPORTING_INT -.->|"Reports"| EXTERNAL
+    REMEDIATION_ENGINE -.->|"Remediation Actions"| EXTERNAL
+
+    %% ========== 樣式定義 ==========
+    classDef core fill:#e1f5fe,stroke:#01579b,stroke-width:3px,color:#000
+    classDef service fill:#f3e5f5,stroke:#4a148c,stroke-width:2px,color:#000
+    classDef data fill:#e8f5e8,stroke:#1b5e20,stroke-width:2px,color:#000
+    classDef security fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000
+    classDef api fill:#f1f8e9,stroke:#33691e,stroke-width:2px,color:#000
+    classDef external fill:#fce4ec,stroke:#880e4f,stroke-width:2px,color:#000
+    classDef remediation fill:#ffebee,stroke:#c62828,stroke-width:2px,color:#000
+
+    %% ========== 應用樣式 ==========
+    class AI_RECORDER,SYS_MONITOR,CONFIG_MGR core
+    class ANALYSIS_INT,RECEPTION_INT,REPORTING_INT,PERF_FEEDBACK service
+    class DATA_RECEPTION,EXPERIENCE_MODELS,LIFECYCLE_MGR data
+    class AUTH_SVC,OBSERVABILITY,THREAT_ANALYZER,COMPLIANCE_CHECK security
+    class API_GATEWAY,MIDDLEWARE,RATE_LIMITER api
+    class SCAN_SVC,AI_SVC,DB_SVC,THREAT_INTEL external
+    class REMEDIATION_ENGINE,ATTACK_PATH,RISK_ASSESSMENT remediation

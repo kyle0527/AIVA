@@ -3,7 +3,7 @@
  * 增強版動態內容提取器
  */
 
-import { Page } from 'playwright';
+import { Page } from '../../types/playwright';
 import { logger } from '../utils/logger';
 import { 
   DynamicContent,

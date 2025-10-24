@@ -1,0 +1,2399 @@
+{
+  "total_components": 265,
+  "generated_files": 265,
+  "classifications": [
+    {
+      "category": "core",
+      "priority": 1,
+      "complexity": "high",
+      "abstraction_level": "system",
+      "dependencies": [],
+      "file_path": "services\\integration\\aiva_integration\\ai_operation_recorder.py",
+      "integration_type": "ai_operation_recorder"
+    },
+    {
+      "category": "core",
+      "priority": 1,
+      "complexity": "high",
+      "abstraction_level": "system",
+      "dependencies": [],
+      "file_path": "services\\integration\\aiva_integration\\ai_operation_recorder.py",
+      "integration_type": "ai_operation_recorder"
+    },
+    {
+      "category": "core",
+      "priority": 1,
+      "complexity": "high",
+      "abstraction_level": "system",
+      "dependencies": [],
+      "file_path": "services\\integration\\aiva_integration\\ai_operation_recorder.py",
+      "integration_type": "ai_operation_recorder"
+    },
+    {
+      "category": "core",
+      "priority": 1,
+      "complexity": "high",
+      "abstraction_level": "system",
+      "dependencies": [],
+      "file_path": "services\\integration\\aiva_integration\\ai_operation_recorder.py",
+      "integration_type": "ai_operation_recorder"
+    },
+    {
+      "category": "core",
+      "priority": 1,
+      "complexity": "high",
+      "abstraction_level": "system",
+      "dependencies": [],
+      "file_path": "services\\integration\\aiva_integration\\ai_operation_recorder.py",
+      "integration_type": "ai_operation_recorder"
+    },
+    {
+      "category": "core",
+      "priority": 1,
+      "complexity": "high",
+      "abstraction_level": "system",
+      "dependencies": [],
+      "file_path": "services\\integration\\aiva_integration\\ai_operation_recorder.py",
+      "integration_type": "ai_operation_recorder"
+    },
+    {
+      "category": "core",
+      "priority": 1,
+      "complexity": "high",
+      "abstraction_level": "system",
+      "dependencies": [],
+      "file_path": "services\\integration\\aiva_integration\\ai_operation_recorder.py",
+      "integration_type": "ai_operation_recorder"
+    },
+    {
+      "category": "core",
+      "priority": 1,
+      "complexity": "high",
+      "abstraction_level": "system",
+      "dependencies": [],
+      "file_path": "services\\integration\\aiva_integration\\ai_operation_recorder.py",
+      "integration_type": "ai_operation_recorder"
+    },
+    {
+      "category": "core",
+      "priority": 1,
+      "complexity": "high",
+      "abstraction_level": "system",
+      "dependencies": [],
+      "file_path": "services\\integration\\aiva_integration\\ai_operation_recorder.py",
+      "integration_type": "ai_operation_recorder"
+    },
+    {
+      "category": "core",
+      "priority": 1,
+      "complexity": "high",
+      "abstraction_level": "system",
+      "dependencies": [],
+      "file_path": "services\\integration\\aiva_integration\\ai_operation_recorder.py",
+      "integration_type": "ai_operation_recorder"
+    },
+    {
+      "category": "core",
+      "priority": 1,
+      "complexity": "high",
+      "abstraction_level": "system",
+      "dependencies": [],
+      "file_path": "services\\integration\\aiva_integration\\ai_operation_recorder.py",
+      "integration_type": "ai_operation_recorder"
+    },
+    {
+      "category": "core",
+      "priority": 1,
+      "complexity": "high",
+      "abstraction_level": "system",
+      "dependencies": [],
+      "file_path": "services\\integration\\aiva_integration\\ai_operation_recorder.py",
+      "integration_type": "ai_operation_recorder"
+    },
+    {
+      "category": "core",
+      "priority": 1,
+      "complexity": "high",
+      "abstraction_level": "system",
+      "dependencies": [],
+      "file_path": "services\\integration\\aiva_integration\\ai_operation_recorder.py",
+      "integration_type": "ai_operation_recorder"
+    },
+    {
+      "category": "core",
+      "priority": 1,
+      "complexity": "high",
+      "abstraction_level": "system",
+      "dependencies": [],
+      "file_path": "services\\integration\\aiva_integration\\ai_operation_recorder.py",
+      "integration_type": "ai_operation_recorder"
+    },
+    {
+      "category": "core",
+      "priority": 1,
+      "complexity": "high",
+      "abstraction_level": "system",
+      "dependencies": [],
+      "file_path": "services\\integration\\aiva_integration\\ai_operation_recorder.py",
+      "integration_type": "ai_operation_recorder"
+    },
+    {
+      "category": "detail",
+      "priority": 6,
+      "complexity": "low",
+      "abstraction_level": "service",
+      "dependencies": [],
+      "file_path": "services\\integration\\aiva_integration\\app.py",
+      "integration_type": ""
+    },
+    {
+      "category": "detail",
+      "priority": 5,
+      "complexity": "medium",
+      "abstraction_level": "service",
+      "dependencies": [],
+      "file_path": "services\\integration\\aiva_integration\\integrated_ai_trainer.py",
+      "integration_type": ""
+    },
+    {
+      "category": "detail",
+      "priority": 4,
+      "complexity": "high",
+      "abstraction_level": "service",
+      "dependencies": [],
+      "file_path": "services\\integration\\aiva_integration\\integrated_ai_trainer.py",
+      "integration_type": ""
+    },
+    {
+      "category": "detail",
+      "priority": 4,
+      "complexity": "high",
+      "abstraction_level": "service",
+      "dependencies": [],
+      "file_path": "services\\integration\\aiva_integration\\integrated_ai_trainer.py",
+      "integration_type": ""
+    },
+    {
+      "category": "detail",
+      "priority": 5,
+      "complexity": "medium",
+      "abstraction_level": "service",
+      "dependencies": [],
+      "file_path": "services\\integration\\aiva_integration\\integrated_ai_trainer.py",
+      "integration_type": ""
+    },
+    {
+      "category": "detail",
+      "priority": 5,
+      "complexity": "medium",
+      "abstraction_level": "service",
+      "dependencies": [],
+      "file_path": "services\\integration\\aiva_integration\\settings.py",
+      "integration_type": ""
+    },
+    {
+      "category": "detail",
+      "priority": 4,
+      "complexity": "high",
+      "abstraction_level": "service",
+      "dependencies": [],
+      "file_path": "services\\integration\\aiva_integration\\settings.py",
+      "integration_type": ""
+    },
+    {
+      "category": "detail",
+      "priority": 4,
+      "complexity": "high",
+      "abstraction_level": "service",
+      "dependencies": [],
+      "file_path": "services\\integration\\aiva_integration\\settings.py",
+      "integration_type": ""
+    },
+    {
+      "category": "detail",
+      "priority": 4,
+      "complexity": "high",
+      "abstraction_level": "service",
+      "dependencies": [],
+      "file_path": "services\\integration\\aiva_integration\\settings.py",
+      "integration_type": ""
+    },
+    {
+      "category": "detail",
+      "priority": 5,
+      "complexity": "medium",
+      "abstraction_level": "service",
+      "dependencies": [],
+      "file_path": "services\\integration\\aiva_integration\\settings.py",
+      "integration_type": ""
+    },
+    {
+      "category": "detail",
+      "priority": 6,
+      "complexity": "low",
+      "abstraction_level": "service",
+      "dependencies": [],
+      "file_path": "services\\integration\\aiva_integration\\system_performance_monitor.py",
+      "integration_type": ""
+    },
+    {
+      "category": "detail",
+      "priority": 6,
+      "complexity": "low",
+      "abstraction_level": "service",
+      "dependencies": [],
+      "file_path": "services\\integration\\aiva_integration\\system_performance_monitor.py",
+      "integration_type": ""
+    },
+    {
+      "category": "detail",
+      "priority": 5,
+      "complexity": "medium",
+      "abstraction_level": "service",
+      "dependencies": [],
+      "file_path": "services\\integration\\aiva_integration\\system_performance_monitor.py",
+      "integration_type": ""
+    },
+    {
+      "category": "detail",
+      "priority": 4,
+      "complexity": "high",
+      "abstraction_level": "service",
+      "dependencies": [],
+      "file_path": "services\\integration\\aiva_integration\\system_performance_monitor.py",
+      "integration_type": ""
+    },
+    {
+      "category": "detail",
+      "priority": 4,
+      "complexity": "high",
+      "abstraction_level": "service",
+      "dependencies": [],
+      "file_path": "services\\integration\\aiva_integration\\system_performance_monitor.py",
+      "integration_type": ""
+    },
+    {
+      "category": "detail",
+      "priority": 4,
+      "complexity": "high",
+      "abstraction_level": "service",
+      "dependencies": [],
+      "file_path": "services\\integration\\aiva_integration\\system_performance_monitor.py",
+      "integration_type": ""
+    },
+    {
+      "category": "detail",
+      "priority": 4,
+      "complexity": "high",
+      "abstraction_level": "service",
+      "dependencies": [],
+      "file_path": "services\\integration\\aiva_integration\\system_performance_monitor.py",
+      "integration_type": ""
+    },
+    {
+      "category": "detail",
+      "priority": 4,
+      "complexity": "high",
+      "abstraction_level": "service",
+      "dependencies": [],
+      "file_path": "services\\integration\\aiva_integration\\system_performance_monitor.py",
+      "integration_type": ""
+    },
+    {
+      "category": "detail",
+      "priority": 5,
+      "complexity": "medium",
+      "abstraction_level": "service",
+      "dependencies": [],
+      "file_path": "services\\integration\\aiva_integration\\system_performance_monitor.py",
+      "integration_type": ""
+    },
+    {
+      "category": "detail",
+      "priority": 6,
+      "complexity": "low",
+      "abstraction_level": "service",
+      "dependencies": [],
+      "file_path": "services\\integration\\aiva_integration\\trigger_ai_continuous_learning.py",
+      "integration_type": ""
+    },
+    {
+      "category": "detail",
+      "priority": 4,
+      "complexity": "high",
+      "abstraction_level": "service",
+      "dependencies": [],
+      "file_path": "services\\integration\\aiva_integration\\trigger_ai_continuous_learning.py",
+      "integration_type": ""
+    },
+    {
+      "category": "detail",
+      "priority": 6,
+      "complexity": "low",
+      "abstraction_level": "service",
+      "dependencies": [],
+      "file_path": "services\\integration\\aiva_integration\\trigger_ai_continuous_learning.py",
+      "integration_type": ""
+    },
+    {
+      "category": "service",
+      "priority": 3,
+      "complexity": "medium",
+      "abstraction_level": "service",
+      "dependencies": [],
+      "file_path": "services\\integration\\aiva_integration\\analysis\\compliance_policy_checker.py",
+      "integration_type": "analysis"
+    },
+    {
+      "category": "service",
+      "priority": 2,
+      "complexity": "high",
+      "abstraction_level": "service",
+      "dependencies": [],
+      "file_path": "services\\integration\\aiva_integration\\analysis\\compliance_policy_checker.py",
+      "integration_type": "analysis"
+    },
+    {
+      "category": "service",
+      "priority": 2,
+      "complexity": "high",
+      "abstraction_level": "service",
+      "dependencies": [],
+      "file_path": "services\\integration\\aiva_integration\\analysis\\compliance_policy_checker.py",
+      "integration_type": "analysis"
+    },
+    {
+      "category": "service",
+      "priority": 2,
+      "complexity": "high",
+      "abstraction_level": "service",
+      "dependencies": [],
+      "file_path": "services\\integration\\aiva_integration\\analysis\\compliance_policy_checker.py",
+      "integration_type": "analysis"
+    },
+    {
+      "category": "service",
+      "priority": 3,
+      "complexity": "medium",
+      "abstraction_level": "service",
+      "dependencies": [],
+      "file_path": "services\\integration\\aiva_integration\\analysis\\compliance_policy_checker.py",
+      "integration_type": "analysis"
+    },
+    {
+      "category": "service",
+      "priority": 2,
+      "complexity": "high",
+      "abstraction_level": "service",
+      "dependencies": [],
+      "file_path": "services\\integration\\aiva_integration\\analysis\\risk_assessment_engine.py",
+      "integration_type": "analysis"
+    },
+    {
+      "category": "service",
+      "priority": 2,
+      "complexity": "high",
+      "abstraction_level": "service",
+      "dependencies": [],
+      "file_path": "services\\integration\\aiva_integration\\analysis\\risk_assessment_engine.py",
+      "integration_type": "analysis"
+    },
+    {
+      "category": "service",
+      "priority": 2,
+      "complexity": "high",
+      "abstraction_level": "service",
+      "dependencies": [],
+      "file_path": "services\\integration\\aiva_integration\\analysis\\risk_assessment_engine.py",
+      "integration_type": "analysis"
+    },
+    {
+      "category": "service",
+      "priority": 3,
+      "complexity": "medium",
+      "abstraction_level": "service",
+      "dependencies": [],
+      "file_path": "services\\integration\\aiva_integration\\analysis\\risk_assessment_engine.py",
+      "integration_type": "analysis"
+    },
+    {
+      "category": "service",
+      "priority": 3,
+      "complexity": "medium",
+      "abstraction_level": "service",
+      "dependencies": [],
+      "file_path": "services\\integration\\aiva_integration\\analysis\\risk_assessment_engine_enhanced.py",
+      "integration_type": "analysis"
+    },
+    {
+      "category": "service",
+      "priority": 2,
+      "complexity": "high",
+      "abstraction_level": "service",
+      "dependencies": [],
+      "file_path": "services\\integration\\aiva_integration\\analysis\\risk_assessment_engine_enhanced.py",
+      "integration_type": "analysis"
+    },
+    {
+      "category": "service",
+      "priority": 2,
+      "complexity": "high",
+      "abstraction_level": "service",
+      "dependencies": [],
+      "file_path": "services\\integration\\aiva_integration\\analysis\\risk_assessment_engine_enhanced.py",
+      "integration_type": "analysis"
+    },
+    {
+      "category": "service",
+      "priority": 3,
+      "complexity": "medium",
+      "abstraction_level": "service",
+      "dependencies": [],
+      "file_path": "services\\integration\\aiva_integration\\analysis\\risk_assessment_engine_enhanced.py",
+      "integration_type": "analysis"
+    },
+    {
+      "category": "service",
+      "priority": 2,
+      "complexity": "high",
+      "abstraction_level": "service",
+      "dependencies": [],
+      "file_path": "services\\integration\\aiva_integration\\analysis\\vuln_correlation_analyzer.py",
+      "integration_type": "analysis"
+    },
+    {
+      "category": "service",
+      "priority": 2,
+      "complexity": "high",
+      "abstraction_level": "service",
+      "dependencies": [],
+      "file_path": "services\\integration\\aiva_integration\\analysis\\vuln_correlation_analyzer.py",
+      "integration_type": "analysis"
+    },
+    {
+      "category": "service",
+      "priority": 2,
+      "complexity": "high",
+      "abstraction_level": "service",
+      "dependencies": [],
+      "file_path": "services\\integration\\aiva_integration\\analysis\\vuln_correlation_analyzer.py",
+      "integration_type": "analysis"
+    },
+    {
+      "category": "service",
+      "priority": 2,
+      "complexity": "high",
+      "abstraction_level": "service",
+      "dependencies": [],
+      "file_path": "services\\integration\\aiva_integration\\analysis\\vuln_correlation_analyzer.py",
+      "integration_type": "analysis"
+    },
+    {
+      "category": "service",
+      "priority": 3,
+      "complexity": "medium",
+      "abstraction_level": "service",
+      "dependencies": [],
+      "file_path": "services\\integration\\aiva_integration\\analysis\\vuln_correlation_analyzer.py",
+      "integration_type": "analysis"
+    },
+    {
+      "category": "detail",
+      "priority": 6,
+      "complexity": "low",
+      "abstraction_level": "service",
+      "dependencies": [],
+      "file_path": "services\\integration\\aiva_integration\\attack_path_analyzer\\engine.py",
+      "integration_type": ""
+    },
+    {
+      "category": "detail",
+      "priority": 6,
+      "complexity": "low",
+      "abstraction_level": "service",
+      "dependencies": [],
+      "file_path": "services\\integration\\aiva_integration\\attack_path_analyzer\\engine.py",
+      "integration_type": ""
+    },
+    {
+      "category": "detail",
+      "priority": 6,
+      "complexity": "low",
+      "abstraction_level": "service",
+      "dependencies": [],
+      "file_path": "services\\integration\\aiva_integration\\attack_path_analyzer\\engine.py",
+      "integration_type": ""
+    },
+    {
+      "category": "detail",
+      "priority": 4,
+      "complexity": "high",
+      "abstraction_level": "service",
+      "dependencies": [],
+      "file_path": "services\\integration\\aiva_integration\\attack_path_analyzer\\engine.py",
+      "integration_type": ""
+    },
+    {
+      "category": "detail",
+      "priority": 4,
+      "complexity": "high",
+      "abstraction_level": "service",
+      "dependencies": [],
+      "file_path": "services\\integration\\aiva_integration\\attack_path_analyzer\\engine.py",
+      "integration_type": ""
+    },
+    {
+      "category": "detail",
+      "priority": 4,
+      "complexity": "high",
+      "abstraction_level": "service",
+      "dependencies": [],
+      "file_path": "services\\integration\\aiva_integration\\attack_path_analyzer\\engine.py",
+      "integration_type": ""
+    },
+    {
+      "category": "detail",
+      "priority": 4,
+      "complexity": "high",
+      "abstraction_level": "service",
+      "dependencies": [],
+      "file_path": "services\\integration\\aiva_integration\\attack_path_analyzer\\engine.py",
+      "integration_type": ""
+    },
+    {
+      "category": "detail",
+      "priority": 4,
+      "complexity": "high",
+      "abstraction_level": "service",
+      "dependencies": [],
+      "file_path": "services\\integration\\aiva_integration\\attack_path_analyzer\\engine.py",
+      "integration_type": ""
+    },
+    {
+      "category": "detail",
+      "priority": 4,
+      "complexity": "high",
+      "abstraction_level": "service",
+      "dependencies": [],
+      "file_path": "services\\integration\\aiva_integration\\attack_path_analyzer\\engine.py",
+      "integration_type": ""
+    },
+    {
+      "category": "detail",
+      "priority": 4,
+      "complexity": "high",
+      "abstraction_level": "service",
+      "dependencies": [],
+      "file_path": "services\\integration\\aiva_integration\\attack_path_analyzer\\engine.py",
+      "integration_type": ""
+    },
+    {
+      "category": "detail",
+      "priority": 4,
+      "complexity": "high",
+      "abstraction_level": "service",
+      "dependencies": [],
+      "file_path": "services\\integration\\aiva_integration\\attack_path_analyzer\\engine.py",
+      "integration_type": ""
+    },
+    {
+      "category": "detail",
+      "priority": 4,
+      "complexity": "high",
+      "abstraction_level": "service",
+      "dependencies": [],
+      "file_path": "services\\integration\\aiva_integration\\attack_path_analyzer\\engine.py",
+      "integration_type": ""
+    },
+    {
+      "category": "detail",
+      "priority": 4,
+      "complexity": "high",
+      "abstraction_level": "service",
+      "dependencies": [],
+      "file_path": "services\\integration\\aiva_integration\\attack_path_analyzer\\engine.py",
+      "integration_type": ""
+    },
+    {
+      "category": "detail",
+      "priority": 5,
+      "complexity": "medium",
+      "abstraction_level": "service",
+      "dependencies": [],
+      "file_path": "services\\integration\\aiva_integration\\attack_path_analyzer\\graph_builder.py",
+      "integration_type": ""
+    },
+    {
+      "category": "detail",
+      "priority": 6,
+      "complexity": "low",
+      "abstraction_level": "service",
+      "dependencies": [],
+      "file_path": "services\\integration\\aiva_integration\\attack_path_analyzer\\graph_builder.py",
+      "integration_type": ""
+    },
+    {
+      "category": "detail",
+      "priority": 6,
+      "complexity": "low",
+      "abstraction_level": "service",
+      "dependencies": [],
+      "file_path": "services\\integration\\aiva_integration\\attack_path_analyzer\\nlp_recommender.py",
+      "integration_type": ""
+    },
+    {
+      "category": "detail",
+      "priority": 6,
+      "complexity": "low",
+      "abstraction_level": "service",
+      "dependencies": [],
+      "file_path": "services\\integration\\aiva_integration\\attack_path_analyzer\\nlp_recommender.py",
+      "integration_type": ""
+    },
+    {
+      "category": "detail",
+      "priority": 4,
+      "complexity": "high",
+      "abstraction_level": "service",
+      "dependencies": [],
+      "file_path": "services\\integration\\aiva_integration\\attack_path_analyzer\\nlp_recommender.py",
+      "integration_type": ""
+    },
+    {
+      "category": "detail",
+      "priority": 4,
+      "complexity": "high",
+      "abstraction_level": "service",
+      "dependencies": [],
+      "file_path": "services\\integration\\aiva_integration\\attack_path_analyzer\\nlp_recommender.py",
+      "integration_type": ""
+    },
+    {
+      "category": "detail",
+      "priority": 4,
+      "complexity": "high",
+      "abstraction_level": "service",
+      "dependencies": [],
+      "file_path": "services\\integration\\aiva_integration\\attack_path_analyzer\\nlp_recommender.py",
+      "integration_type": ""
+    },
+    {
+      "category": "detail",
+      "priority": 5,
+      "complexity": "medium",
+      "abstraction_level": "service",
+      "dependencies": [],
+      "file_path": "services\\integration\\aiva_integration\\attack_path_analyzer\\nlp_recommender.py",
+      "integration_type": ""
+    },
+    {
+      "category": "detail",
+      "priority": 5,
+      "complexity": "medium",
+      "abstraction_level": "service",
+      "dependencies": [],
+      "file_path": "services\\integration\\aiva_integration\\attack_path_analyzer\\visualizer.py",
+      "integration_type": ""
+    },
+    {
+      "category": "detail",
+      "priority": 4,
+      "complexity": "high",
+      "abstraction_level": "service",
+      "dependencies": [],
+      "file_path": "services\\integration\\aiva_integration\\attack_path_analyzer\\visualizer.py",
+      "integration_type": ""
+    },
+    {
+      "category": "detail",
+      "priority": 4,
+      "complexity": "high",
+      "abstraction_level": "service",
+      "dependencies": [],
+      "file_path": "services\\integration\\aiva_integration\\attack_path_analyzer\\visualizer.py",
+      "integration_type": ""
+    },
+    {
+      "category": "detail",
+      "priority": 4,
+      "complexity": "high",
+      "abstraction_level": "service",
+      "dependencies": [],
+      "file_path": "services\\integration\\aiva_integration\\attack_path_analyzer\\visualizer.py",
+      "integration_type": ""
+    },
+    {
+      "category": "detail",
+      "priority": 5,
+      "complexity": "medium",
+      "abstraction_level": "service",
+      "dependencies": [],
+      "file_path": "services\\integration\\aiva_integration\\attack_path_analyzer\\visualizer.py",
+      "integration_type": ""
+    },
+    {
+      "category": "detail",
+      "priority": 5,
+      "complexity": "medium",
+      "abstraction_level": "service",
+      "dependencies": [],
+      "file_path": "services\\integration\\aiva_integration\\config_template\\config_template_manager.py",
+      "integration_type": ""
+    },
+    {
+      "category": "detail",
+      "priority": 4,
+      "complexity": "high",
+      "abstraction_level": "service",
+      "dependencies": [],
+      "file_path": "services\\integration\\aiva_integration\\config_template\\config_template_manager.py",
+      "integration_type": ""
+    },
+    {
+      "category": "detail",
+      "priority": 4,
+      "complexity": "high",
+      "abstraction_level": "service",
+      "dependencies": [],
+      "file_path": "services\\integration\\aiva_integration\\config_template\\config_template_manager.py",
+      "integration_type": ""
+    },
+    {
+      "category": "detail",
+      "priority": 4,
+      "complexity": "high",
+      "abstraction_level": "service",
+      "dependencies": [],
+      "file_path": "services\\integration\\aiva_integration\\config_template\\config_template_manager.py",
+      "integration_type": ""
+    },
+    {
+      "category": "detail",
+      "priority": 5,
+      "complexity": "medium",
+      "abstraction_level": "service",
+      "dependencies": [],
+      "file_path": "services\\integration\\aiva_integration\\config_template\\config_template_manager.py",
+      "integration_type": ""
+    },
+    {
+      "category": "service",
+      "priority": 2,
+      "complexity": "high",
+      "abstraction_level": "service",
+      "dependencies": [],
+      "file_path": "services\\integration\\aiva_integration\\examples\\enhanced_attack_path_demo.py",
+      "integration_type": "analysis"
+    },
+    {
+      "category": "detail",
+      "priority": 9,
+      "complexity": "high",
+      "abstraction_level": "service",
+      "dependencies": [],
+      "file_path": "services\\integration\\aiva_integration\\examples\\enhanced_attack_path_demo.py",
+      "integration_type": "examples"
+    },
+    {
+      "category": "detail",
+      "priority": 9,
+      "complexity": "high",
+      "abstraction_level": "service",
+      "dependencies": [],
+      "file_path": "services\\integration\\aiva_integration\\examples\\enhanced_attack_path_demo.py",
+      "integration_type": "examples"
+    },
+    {
+      "category": "detail",
+      "priority": 9,
+      "complexity": "high",
+      "abstraction_level": "service",
+      "dependencies": [],
+      "file_path": "services\\integration\\aiva_integration\\examples\\enhanced_attack_path_demo.py",
+      "integration_type": "examples"
+    },
+    {
+      "category": "detail",
+      "priority": 9,
+      "complexity": "high",
+      "abstraction_level": "service",
+      "dependencies": [],
+      "file_path": "services\\integration\\aiva_integration\\examples\\enhanced_attack_path_demo.py",
+      "integration_type": "examples"
+    },
+    {
+      "category": "detail",
+      "priority": 9,
+      "complexity": "high",
+      "abstraction_level": "service",
+      "dependencies": [],
+      "file_path": "services\\integration\\aiva_integration\\examples\\enhanced_attack_path_demo.py",
+      "integration_type": "examples"
+    },
+    {
+      "category": "detail",
+      "priority": 10,
+      "complexity": "medium",
+      "abstraction_level": "service",
+      "dependencies": [],
+      "file_path": "services\\integration\\aiva_integration\\examples\\enhanced_attack_path_demo.py",
+      "integration_type": "examples"
+    },
+    {
+      "category": "detail",
+      "priority": 9,
+      "complexity": "high",
+      "abstraction_level": "service",
+      "dependencies": [],
+      "file_path": "services\\integration\\aiva_integration\\examples\\enhanced_risk_assessment_demo.py",
+      "integration_type": "examples"
+    },
+    {
+      "category": "detail",
+      "priority": 9,
+      "complexity": "high",
+      "abstraction_level": "service",
+      "dependencies": [],
+      "file_path": "services\\integration\\aiva_integration\\examples\\enhanced_risk_assessment_demo.py",
+      "integration_type": "examples"
+    },
+    {
+      "category": "detail",
+      "priority": 9,
+      "complexity": "high",
+      "abstraction_level": "service",
+      "dependencies": [],
+      "file_path": "services\\integration\\aiva_integration\\examples\\enhanced_risk_assessment_demo.py",
+      "integration_type": "examples"
+    },
+    {
+      "category": "service",
+      "priority": 2,
+      "complexity": "high",
+      "abstraction_level": "service",
+      "dependencies": [],
+      "file_path": "services\\integration\\aiva_integration\\examples\\enhanced_risk_assessment_demo.py",
+      "integration_type": "analysis"
+    },
+    {
+      "category": "detail",
+      "priority": 10,
+      "complexity": "medium",
+      "abstraction_level": "service",
+      "dependencies": [],
+      "file_path": "services\\integration\\aiva_integration\\examples\\enhanced_risk_assessment_demo.py",
+      "integration_type": "examples"
+    },
+    {
+      "category": "detail",
+      "priority": 10,
+      "complexity": "medium",
+      "abstraction_level": "service",
+      "dependencies": [],
+      "file_path": "services\\integration\\aiva_integration\\examples\\enhanced_scan_integration.py",
+      "integration_type": "examples"
+    },
+    {
+      "category": "detail",
+      "priority": 10,
+      "complexity": "low",
+      "abstraction_level": "service",
+      "dependencies": [],
+      "file_path": "services\\integration\\aiva_integration\\examples\\enhanced_scan_integration.py",
+      "integration_type": "examples"
+    },
+    {
+      "category": "detail",
+      "priority": 7,
+      "complexity": "low",
+      "abstraction_level": "service",
+      "dependencies": [],
+      "file_path": "services\\integration\\aiva_integration\\middlewares\\rate_limiter.py",
+      "integration_type": "middlewares"
+    },
+    {
+      "category": "detail",
+      "priority": 7,
+      "complexity": "low",
+      "abstraction_level": "service",
+      "dependencies": [],
+      "file_path": "services\\integration\\aiva_integration\\middlewares\\rate_limiter.py",
+      "integration_type": "middlewares"
+    },
+    {
+      "category": "detail",
+      "priority": 7,
+      "complexity": "low",
+      "abstraction_level": "service",
+      "dependencies": [],
+      "file_path": "services\\integration\\aiva_integration\\middlewares\\rate_limiter.py",
+      "integration_type": "middlewares"
+    },
+    {
+      "category": "service",
+      "priority": 4,
+      "complexity": "medium",
+      "abstraction_level": "component",
+      "dependencies": [],
+      "file_path": "services\\integration\\aiva_integration\\observability\\metrics.py",
+      "integration_type": "observability"
+    },
+    {
+      "category": "service",
+      "priority": 4,
+      "complexity": "medium",
+      "abstraction_level": "component",
+      "dependencies": [],
+      "file_path": "services\\integration\\aiva_integration\\observability\\metrics.py",
+      "integration_type": "observability"
+    },
+    {
+      "category": "service",
+      "priority": 3,
+      "complexity": "high",
+      "abstraction_level": "component",
+      "dependencies": [],
+      "file_path": "services\\integration\\aiva_integration\\observability\\metrics.py",
+      "integration_type": "observability"
+    },
+    {
+      "category": "service",
+      "priority": 3,
+      "complexity": "high",
+      "abstraction_level": "component",
+      "dependencies": [],
+      "file_path": "services\\integration\\aiva_integration\\observability\\metrics.py",
+      "integration_type": "observability"
+    },
+    {
+      "category": "service",
+      "priority": 3,
+      "complexity": "high",
+      "abstraction_level": "component",
+      "dependencies": [],
+      "file_path": "services\\integration\\aiva_integration\\observability\\metrics.py",
+      "integration_type": "observability"
+    },
+    {
+      "category": "service",
+      "priority": 3,
+      "complexity": "high",
+      "abstraction_level": "component",
+      "dependencies": [],
+      "file_path": "services\\integration\\aiva_integration\\observability\\metrics.py",
+      "integration_type": "observability"
+    },
+    {
+      "category": "service",
+      "priority": 3,
+      "complexity": "high",
+      "abstraction_level": "component",
+      "dependencies": [],
+      "file_path": "services\\integration\\aiva_integration\\observability\\metrics.py",
+      "integration_type": "observability"
+    },
+    {
+      "category": "service",
+      "priority": 3,
+      "complexity": "high",
+      "abstraction_level": "component",
+      "dependencies": [],
+      "file_path": "services\\integration\\aiva_integration\\observability\\metrics.py",
+      "integration_type": "observability"
+    },
+    {
+      "category": "service",
+      "priority": 3,
+      "complexity": "high",
+      "abstraction_level": "component",
+      "dependencies": [],
+      "file_path": "services\\integration\\aiva_integration\\observability\\metrics.py",
+      "integration_type": "observability"
+    },
+    {
+      "category": "service",
+      "priority": 4,
+      "complexity": "medium",
+      "abstraction_level": "component",
+      "dependencies": [],
+      "file_path": "services\\integration\\aiva_integration\\observability\\metrics.py",
+      "integration_type": "observability"
+    },
+    {
+      "category": "service",
+      "priority": 3,
+      "complexity": "low",
+      "abstraction_level": "component",
+      "dependencies": [],
+      "file_path": "services\\integration\\aiva_integration\\perf_feedback\\improvement_suggestion_generator.py",
+      "integration_type": "perf_feedback"
+    },
+    {
+      "category": "service",
+      "priority": 1,
+      "complexity": "high",
+      "abstraction_level": "component",
+      "dependencies": [],
+      "file_path": "services\\integration\\aiva_integration\\perf_feedback\\improvement_suggestion_generator.py",
+      "integration_type": "perf_feedback"
+    },
+    {
+      "category": "service",
+      "priority": 3,
+      "complexity": "low",
+      "abstraction_level": "component",
+      "dependencies": [],
+      "file_path": "services\\integration\\aiva_integration\\perf_feedback\\improvement_suggestion_generator.py",
+      "integration_type": "perf_feedback"
+    },
+    {
+      "category": "service",
+      "priority": 3,
+      "complexity": "low",
+      "abstraction_level": "component",
+      "dependencies": [],
+      "file_path": "services\\integration\\aiva_integration\\perf_feedback\\phase_i_performance_optimizer.py",
+      "integration_type": "perf_feedback"
+    },
+    {
+      "category": "service",
+      "priority": 3,
+      "complexity": "low",
+      "abstraction_level": "component",
+      "dependencies": [],
+      "file_path": "services\\integration\\aiva_integration\\perf_feedback\\phase_i_performance_optimizer.py",
+      "integration_type": "perf_feedback"
+    },
+    {
+      "category": "service",
+      "priority": 2,
+      "complexity": "medium",
+      "abstraction_level": "component",
+      "dependencies": [],
+      "file_path": "services\\integration\\aiva_integration\\perf_feedback\\phase_i_performance_optimizer.py",
+      "integration_type": "perf_feedback"
+    },
+    {
+      "category": "service",
+      "priority": 1,
+      "complexity": "high",
+      "abstraction_level": "component",
+      "dependencies": [],
+      "file_path": "services\\integration\\aiva_integration\\perf_feedback\\phase_i_performance_optimizer.py",
+      "integration_type": "perf_feedback"
+    },
+    {
+      "category": "service",
+      "priority": 1,
+      "complexity": "high",
+      "abstraction_level": "component",
+      "dependencies": [],
+      "file_path": "services\\integration\\aiva_integration\\perf_feedback\\phase_i_performance_optimizer.py",
+      "integration_type": "perf_feedback"
+    },
+    {
+      "category": "service",
+      "priority": 1,
+      "complexity": "high",
+      "abstraction_level": "component",
+      "dependencies": [],
+      "file_path": "services\\integration\\aiva_integration\\perf_feedback\\phase_i_performance_optimizer.py",
+      "integration_type": "perf_feedback"
+    },
+    {
+      "category": "service",
+      "priority": 1,
+      "complexity": "high",
+      "abstraction_level": "component",
+      "dependencies": [],
+      "file_path": "services\\integration\\aiva_integration\\perf_feedback\\phase_i_performance_optimizer.py",
+      "integration_type": "perf_feedback"
+    },
+    {
+      "category": "service",
+      "priority": 2,
+      "complexity": "medium",
+      "abstraction_level": "component",
+      "dependencies": [],
+      "file_path": "services\\integration\\aiva_integration\\perf_feedback\\phase_i_performance_optimizer.py",
+      "integration_type": "perf_feedback"
+    },
+    {
+      "category": "service",
+      "priority": 3,
+      "complexity": "low",
+      "abstraction_level": "component",
+      "dependencies": [],
+      "file_path": "services\\integration\\aiva_integration\\perf_feedback\\scan_metadata_analyzer.py",
+      "integration_type": "perf_feedback"
+    },
+    {
+      "category": "service",
+      "priority": 1,
+      "complexity": "high",
+      "abstraction_level": "component",
+      "dependencies": [],
+      "file_path": "services\\integration\\aiva_integration\\perf_feedback\\scan_metadata_analyzer.py",
+      "integration_type": "perf_feedback"
+    },
+    {
+      "category": "service",
+      "priority": 3,
+      "complexity": "low",
+      "abstraction_level": "component",
+      "dependencies": [],
+      "file_path": "services\\integration\\aiva_integration\\perf_feedback\\scan_metadata_analyzer.py",
+      "integration_type": "perf_feedback"
+    },
+    {
+      "category": "integration",
+      "priority": 4,
+      "complexity": "low",
+      "abstraction_level": "service",
+      "dependencies": [],
+      "file_path": "services\\integration\\aiva_integration\\reception\\data_reception_layer.py",
+      "integration_type": "reception"
+    },
+    {
+      "category": "integration",
+      "priority": 4,
+      "complexity": "low",
+      "abstraction_level": "service",
+      "dependencies": [],
+      "file_path": "services\\integration\\aiva_integration\\reception\\data_reception_layer.py",
+      "integration_type": "reception"
+    },
+    {
+      "category": "integration",
+      "priority": 4,
+      "complexity": "low",
+      "abstraction_level": "service",
+      "dependencies": [],
+      "file_path": "services\\integration\\aiva_integration\\reception\\experience_models.py",
+      "integration_type": "reception"
+    },
+    {
+      "category": "integration",
+      "priority": 4,
+      "complexity": "low",
+      "abstraction_level": "service",
+      "dependencies": [],
+      "file_path": "services\\integration\\aiva_integration\\reception\\experience_models.py",
+      "integration_type": "reception"
+    },
+    {
+      "category": "integration",
+      "priority": 4,
+      "complexity": "low",
+      "abstraction_level": "service",
+      "dependencies": [],
+      "file_path": "services\\integration\\aiva_integration\\reception\\experience_models.py",
+      "integration_type": "reception"
+    },
+    {
+      "category": "integration",
+      "priority": 4,
+      "complexity": "low",
+      "abstraction_level": "service",
+      "dependencies": [],
+      "file_path": "services\\integration\\aiva_integration\\reception\\experience_models.py",
+      "integration_type": "reception"
+    },
+    {
+      "category": "integration",
+      "priority": 3,
+      "complexity": "medium",
+      "abstraction_level": "service",
+      "dependencies": [],
+      "file_path": "services\\integration\\aiva_integration\\reception\\experience_models.py",
+      "integration_type": "reception"
+    },
+    {
+      "category": "integration",
+      "priority": 2,
+      "complexity": "high",
+      "abstraction_level": "service",
+      "dependencies": [],
+      "file_path": "services\\integration\\aiva_integration\\reception\\experience_repository.py",
+      "integration_type": "reception"
+    },
+    {
+      "category": "integration",
+      "priority": 2,
+      "complexity": "high",
+      "abstraction_level": "service",
+      "dependencies": [],
+      "file_path": "services\\integration\\aiva_integration\\reception\\experience_repository.py",
+      "integration_type": "reception"
+    },
+    {
+      "category": "integration",
+      "priority": 2,
+      "complexity": "high",
+      "abstraction_level": "service",
+      "dependencies": [],
+      "file_path": "services\\integration\\aiva_integration\\reception\\experience_repository.py",
+      "integration_type": "reception"
+    },
+    {
+      "category": "integration",
+      "priority": 2,
+      "complexity": "high",
+      "abstraction_level": "service",
+      "dependencies": [],
+      "file_path": "services\\integration\\aiva_integration\\reception\\experience_repository.py",
+      "integration_type": "reception"
+    },
+    {
+      "category": "integration",
+      "priority": 2,
+      "complexity": "high",
+      "abstraction_level": "service",
+      "dependencies": [],
+      "file_path": "services\\integration\\aiva_integration\\reception\\experience_repository.py",
+      "integration_type": "reception"
+    },
+    {
+      "category": "integration",
+      "priority": 2,
+      "complexity": "high",
+      "abstraction_level": "service",
+      "dependencies": [],
+      "file_path": "services\\integration\\aiva_integration\\reception\\experience_repository.py",
+      "integration_type": "reception"
+    },
+    {
+      "category": "integration",
+      "priority": 2,
+      "complexity": "high",
+      "abstraction_level": "service",
+      "dependencies": [],
+      "file_path": "services\\integration\\aiva_integration\\reception\\experience_repository.py",
+      "integration_type": "reception"
+    },
+    {
+      "category": "integration",
+      "priority": 2,
+      "complexity": "high",
+      "abstraction_level": "service",
+      "dependencies": [],
+      "file_path": "services\\integration\\aiva_integration\\reception\\experience_repository.py",
+      "integration_type": "reception"
+    },
+    {
+      "category": "integration",
+      "priority": 2,
+      "complexity": "high",
+      "abstraction_level": "service",
+      "dependencies": [],
+      "file_path": "services\\integration\\aiva_integration\\reception\\experience_repository.py",
+      "integration_type": "reception"
+    },
+    {
+      "category": "integration",
+      "priority": 2,
+      "complexity": "high",
+      "abstraction_level": "service",
+      "dependencies": [],
+      "file_path": "services\\integration\\aiva_integration\\reception\\experience_repository.py",
+      "integration_type": "reception"
+    },
+    {
+      "category": "integration",
+      "priority": 2,
+      "complexity": "high",
+      "abstraction_level": "service",
+      "dependencies": [],
+      "file_path": "services\\integration\\aiva_integration\\reception\\experience_repository.py",
+      "integration_type": "reception"
+    },
+    {
+      "category": "integration",
+      "priority": 2,
+      "complexity": "high",
+      "abstraction_level": "service",
+      "dependencies": [],
+      "file_path": "services\\integration\\aiva_integration\\reception\\experience_repository.py",
+      "integration_type": "reception"
+    },
+    {
+      "category": "integration",
+      "priority": 2,
+      "complexity": "high",
+      "abstraction_level": "service",
+      "dependencies": [],
+      "file_path": "services\\integration\\aiva_integration\\reception\\experience_repository.py",
+      "integration_type": "reception"
+    },
+    {
+      "category": "integration",
+      "priority": 2,
+      "complexity": "high",
+      "abstraction_level": "service",
+      "dependencies": [],
+      "file_path": "services\\integration\\aiva_integration\\reception\\lifecycle_manager.py",
+      "integration_type": "reception"
+    },
+    {
+      "category": "integration",
+      "priority": 2,
+      "complexity": "high",
+      "abstraction_level": "service",
+      "dependencies": [],
+      "file_path": "services\\integration\\aiva_integration\\reception\\lifecycle_manager.py",
+      "integration_type": "reception"
+    },
+    {
+      "category": "integration",
+      "priority": 2,
+      "complexity": "high",
+      "abstraction_level": "service",
+      "dependencies": [],
+      "file_path": "services\\integration\\aiva_integration\\reception\\lifecycle_manager.py",
+      "integration_type": "reception"
+    },
+    {
+      "category": "integration",
+      "priority": 2,
+      "complexity": "high",
+      "abstraction_level": "service",
+      "dependencies": [],
+      "file_path": "services\\integration\\aiva_integration\\reception\\lifecycle_manager.py",
+      "integration_type": "reception"
+    },
+    {
+      "category": "integration",
+      "priority": 2,
+      "complexity": "high",
+      "abstraction_level": "service",
+      "dependencies": [],
+      "file_path": "services\\integration\\aiva_integration\\reception\\lifecycle_manager.py",
+      "integration_type": "reception"
+    },
+    {
+      "category": "integration",
+      "priority": 2,
+      "complexity": "high",
+      "abstraction_level": "service",
+      "dependencies": [],
+      "file_path": "services\\integration\\aiva_integration\\reception\\lifecycle_manager.py",
+      "integration_type": "reception"
+    },
+    {
+      "category": "integration",
+      "priority": 2,
+      "complexity": "high",
+      "abstraction_level": "service",
+      "dependencies": [],
+      "file_path": "services\\integration\\aiva_integration\\reception\\lifecycle_manager.py",
+      "integration_type": "reception"
+    },
+    {
+      "category": "integration",
+      "priority": 2,
+      "complexity": "high",
+      "abstraction_level": "service",
+      "dependencies": [],
+      "file_path": "services\\integration\\aiva_integration\\reception\\lifecycle_manager.py",
+      "integration_type": "reception"
+    },
+    {
+      "category": "integration",
+      "priority": 2,
+      "complexity": "high",
+      "abstraction_level": "service",
+      "dependencies": [],
+      "file_path": "services\\integration\\aiva_integration\\reception\\lifecycle_manager.py",
+      "integration_type": "reception"
+    },
+    {
+      "category": "integration",
+      "priority": 3,
+      "complexity": "medium",
+      "abstraction_level": "service",
+      "dependencies": [],
+      "file_path": "services\\integration\\aiva_integration\\reception\\lifecycle_manager.py",
+      "integration_type": "reception"
+    },
+    {
+      "category": "integration",
+      "priority": 4,
+      "complexity": "low",
+      "abstraction_level": "service",
+      "dependencies": [],
+      "file_path": "services\\integration\\aiva_integration\\reception\\models_enhanced.py",
+      "integration_type": "reception"
+    },
+    {
+      "category": "integration",
+      "priority": 4,
+      "complexity": "low",
+      "abstraction_level": "service",
+      "dependencies": [],
+      "file_path": "services\\integration\\aiva_integration\\reception\\models_enhanced.py",
+      "integration_type": "reception"
+    },
+    {
+      "category": "integration",
+      "priority": 4,
+      "complexity": "low",
+      "abstraction_level": "service",
+      "dependencies": [],
+      "file_path": "services\\integration\\aiva_integration\\reception\\models_enhanced.py",
+      "integration_type": "reception"
+    },
+    {
+      "category": "integration",
+      "priority": 4,
+      "complexity": "low",
+      "abstraction_level": "service",
+      "dependencies": [],
+      "file_path": "services\\integration\\aiva_integration\\reception\\models_enhanced.py",
+      "integration_type": "reception"
+    },
+    {
+      "category": "integration",
+      "priority": 4,
+      "complexity": "low",
+      "abstraction_level": "service",
+      "dependencies": [],
+      "file_path": "services\\integration\\aiva_integration\\reception\\models_enhanced.py",
+      "integration_type": "reception"
+    },
+    {
+      "category": "integration",
+      "priority": 4,
+      "complexity": "low",
+      "abstraction_level": "service",
+      "dependencies": [],
+      "file_path": "services\\integration\\aiva_integration\\reception\\models_enhanced.py",
+      "integration_type": "reception"
+    },
+    {
+      "category": "integration",
+      "priority": 4,
+      "complexity": "low",
+      "abstraction_level": "service",
+      "dependencies": [],
+      "file_path": "services\\integration\\aiva_integration\\reception\\models_enhanced.py",
+      "integration_type": "reception"
+    },
+    {
+      "category": "integration",
+      "priority": 4,
+      "complexity": "low",
+      "abstraction_level": "service",
+      "dependencies": [],
+      "file_path": "services\\integration\\aiva_integration\\reception\\models_enhanced.py",
+      "integration_type": "reception"
+    },
+    {
+      "category": "integration",
+      "priority": 4,
+      "complexity": "low",
+      "abstraction_level": "service",
+      "dependencies": [],
+      "file_path": "services\\integration\\aiva_integration\\reception\\models_enhanced.py",
+      "integration_type": "reception"
+    },
+    {
+      "category": "integration",
+      "priority": 4,
+      "complexity": "low",
+      "abstraction_level": "service",
+      "dependencies": [],
+      "file_path": "services\\integration\\aiva_integration\\reception\\models_enhanced.py",
+      "integration_type": "reception"
+    },
+    {
+      "category": "integration",
+      "priority": 4,
+      "complexity": "low",
+      "abstraction_level": "service",
+      "dependencies": [],
+      "file_path": "services\\integration\\aiva_integration\\reception\\models_enhanced.py",
+      "integration_type": "reception"
+    },
+    {
+      "category": "integration",
+      "priority": 4,
+      "complexity": "low",
+      "abstraction_level": "service",
+      "dependencies": [],
+      "file_path": "services\\integration\\aiva_integration\\reception\\models_enhanced.py",
+      "integration_type": "reception"
+    },
+    {
+      "category": "integration",
+      "priority": 4,
+      "complexity": "low",
+      "abstraction_level": "service",
+      "dependencies": [],
+      "file_path": "services\\integration\\aiva_integration\\reception\\models_enhanced.py",
+      "integration_type": "reception"
+    },
+    {
+      "category": "integration",
+      "priority": 2,
+      "complexity": "high",
+      "abstraction_level": "service",
+      "dependencies": [],
+      "file_path": "services\\integration\\aiva_integration\\reception\\models_enhanced.py",
+      "integration_type": "reception"
+    },
+    {
+      "category": "integration",
+      "priority": 2,
+      "complexity": "high",
+      "abstraction_level": "service",
+      "dependencies": [],
+      "file_path": "services\\integration\\aiva_integration\\reception\\models_enhanced.py",
+      "integration_type": "reception"
+    },
+    {
+      "category": "integration",
+      "priority": 2,
+      "complexity": "high",
+      "abstraction_level": "service",
+      "dependencies": [],
+      "file_path": "services\\integration\\aiva_integration\\reception\\models_enhanced.py",
+      "integration_type": "reception"
+    },
+    {
+      "category": "integration",
+      "priority": 4,
+      "complexity": "low",
+      "abstraction_level": "service",
+      "dependencies": [],
+      "file_path": "services\\integration\\aiva_integration\\reception\\sql_result_database.py",
+      "integration_type": "reception"
+    },
+    {
+      "category": "integration",
+      "priority": 3,
+      "complexity": "medium",
+      "abstraction_level": "service",
+      "dependencies": [],
+      "file_path": "services\\integration\\aiva_integration\\reception\\sql_result_database.py",
+      "integration_type": "reception"
+    },
+    {
+      "category": "integration",
+      "priority": 2,
+      "complexity": "high",
+      "abstraction_level": "service",
+      "dependencies": [],
+      "file_path": "services\\integration\\aiva_integration\\reception\\sql_result_database.py",
+      "integration_type": "reception"
+    },
+    {
+      "category": "integration",
+      "priority": 3,
+      "complexity": "medium",
+      "abstraction_level": "service",
+      "dependencies": [],
+      "file_path": "services\\integration\\aiva_integration\\reception\\sql_result_database.py",
+      "integration_type": "reception"
+    },
+    {
+      "category": "integration",
+      "priority": 4,
+      "complexity": "low",
+      "abstraction_level": "service",
+      "dependencies": [],
+      "file_path": "services\\integration\\aiva_integration\\reception\\test_result_database.py",
+      "integration_type": "reception"
+    },
+    {
+      "category": "integration",
+      "priority": 4,
+      "complexity": "low",
+      "abstraction_level": "service",
+      "dependencies": [],
+      "file_path": "services\\integration\\aiva_integration\\reception\\test_result_database.py",
+      "integration_type": "reception"
+    },
+    {
+      "category": "service",
+      "priority": 3,
+      "complexity": "high",
+      "abstraction_level": "service",
+      "dependencies": [],
+      "file_path": "services\\integration\\aiva_integration\\remediation\\code_fixer.py",
+      "integration_type": "remediation"
+    },
+    {
+      "category": "service",
+      "priority": 3,
+      "complexity": "high",
+      "abstraction_level": "service",
+      "dependencies": [],
+      "file_path": "services\\integration\\aiva_integration\\remediation\\code_fixer.py",
+      "integration_type": "remediation"
+    },
+    {
+      "category": "service",
+      "priority": 3,
+      "complexity": "high",
+      "abstraction_level": "service",
+      "dependencies": [],
+      "file_path": "services\\integration\\aiva_integration\\remediation\\code_fixer.py",
+      "integration_type": "remediation"
+    },
+    {
+      "category": "service",
+      "priority": 3,
+      "complexity": "high",
+      "abstraction_level": "service",
+      "dependencies": [],
+      "file_path": "services\\integration\\aiva_integration\\remediation\\code_fixer.py",
+      "integration_type": "remediation"
+    },
+    {
+      "category": "service",
+      "priority": 3,
+      "complexity": "high",
+      "abstraction_level": "service",
+      "dependencies": [],
+      "file_path": "services\\integration\\aiva_integration\\remediation\\code_fixer.py",
+      "integration_type": "remediation"
+    },
+    {
+      "category": "service",
+      "priority": 4,
+      "complexity": "medium",
+      "abstraction_level": "service",
+      "dependencies": [],
+      "file_path": "services\\integration\\aiva_integration\\remediation\\code_fixer.py",
+      "integration_type": "remediation"
+    },
+    {
+      "category": "service",
+      "priority": 4,
+      "complexity": "medium",
+      "abstraction_level": "service",
+      "dependencies": [],
+      "file_path": "services\\integration\\aiva_integration\\remediation\\config_recommender.py",
+      "integration_type": "remediation"
+    },
+    {
+      "category": "service",
+      "priority": 3,
+      "complexity": "high",
+      "abstraction_level": "service",
+      "dependencies": [],
+      "file_path": "services\\integration\\aiva_integration\\remediation\\config_recommender.py",
+      "integration_type": "remediation"
+    },
+    {
+      "category": "service",
+      "priority": 3,
+      "complexity": "high",
+      "abstraction_level": "service",
+      "dependencies": [],
+      "file_path": "services\\integration\\aiva_integration\\remediation\\config_recommender.py",
+      "integration_type": "remediation"
+    },
+    {
+      "category": "service",
+      "priority": 3,
+      "complexity": "high",
+      "abstraction_level": "service",
+      "dependencies": [],
+      "file_path": "services\\integration\\aiva_integration\\remediation\\config_recommender.py",
+      "integration_type": "remediation"
+    },
+    {
+      "category": "service",
+      "priority": 3,
+      "complexity": "high",
+      "abstraction_level": "service",
+      "dependencies": [],
+      "file_path": "services\\integration\\aiva_integration\\remediation\\config_recommender.py",
+      "integration_type": "remediation"
+    },
+    {
+      "category": "service",
+      "priority": 3,
+      "complexity": "high",
+      "abstraction_level": "service",
+      "dependencies": [],
+      "file_path": "services\\integration\\aiva_integration\\remediation\\config_recommender.py",
+      "integration_type": "remediation"
+    },
+    {
+      "category": "service",
+      "priority": 4,
+      "complexity": "medium",
+      "abstraction_level": "service",
+      "dependencies": [],
+      "file_path": "services\\integration\\aiva_integration\\remediation\\config_recommender.py",
+      "integration_type": "remediation"
+    },
+    {
+      "category": "service",
+      "priority": 3,
+      "complexity": "high",
+      "abstraction_level": "service",
+      "dependencies": [],
+      "file_path": "services\\integration\\aiva_integration\\remediation\\patch_generator.py",
+      "integration_type": "remediation"
+    },
+    {
+      "category": "service",
+      "priority": 3,
+      "complexity": "high",
+      "abstraction_level": "service",
+      "dependencies": [],
+      "file_path": "services\\integration\\aiva_integration\\remediation\\patch_generator.py",
+      "integration_type": "remediation"
+    },
+    {
+      "category": "service",
+      "priority": 3,
+      "complexity": "high",
+      "abstraction_level": "service",
+      "dependencies": [],
+      "file_path": "services\\integration\\aiva_integration\\remediation\\patch_generator.py",
+      "integration_type": "remediation"
+    },
+    {
+      "category": "service",
+      "priority": 3,
+      "complexity": "high",
+      "abstraction_level": "service",
+      "dependencies": [],
+      "file_path": "services\\integration\\aiva_integration\\remediation\\patch_generator.py",
+      "integration_type": "remediation"
+    },
+    {
+      "category": "service",
+      "priority": 3,
+      "complexity": "high",
+      "abstraction_level": "service",
+      "dependencies": [],
+      "file_path": "services\\integration\\aiva_integration\\remediation\\patch_generator.py",
+      "integration_type": "remediation"
+    },
+    {
+      "category": "service",
+      "priority": 3,
+      "complexity": "high",
+      "abstraction_level": "service",
+      "dependencies": [],
+      "file_path": "services\\integration\\aiva_integration\\remediation\\patch_generator.py",
+      "integration_type": "remediation"
+    },
+    {
+      "category": "service",
+      "priority": 3,
+      "complexity": "high",
+      "abstraction_level": "service",
+      "dependencies": [],
+      "file_path": "services\\integration\\aiva_integration\\remediation\\patch_generator.py",
+      "integration_type": "remediation"
+    },
+    {
+      "category": "service",
+      "priority": 3,
+      "complexity": "high",
+      "abstraction_level": "service",
+      "dependencies": [],
+      "file_path": "services\\integration\\aiva_integration\\remediation\\patch_generator.py",
+      "integration_type": "remediation"
+    },
+    {
+      "category": "service",
+      "priority": 4,
+      "complexity": "medium",
+      "abstraction_level": "service",
+      "dependencies": [],
+      "file_path": "services\\integration\\aiva_integration\\remediation\\patch_generator.py",
+      "integration_type": "remediation"
+    },
+    {
+      "category": "service",
+      "priority": 3,
+      "complexity": "high",
+      "abstraction_level": "service",
+      "dependencies": [],
+      "file_path": "services\\integration\\aiva_integration\\remediation\\report_generator.py",
+      "integration_type": "remediation"
+    },
+    {
+      "category": "service",
+      "priority": 3,
+      "complexity": "high",
+      "abstraction_level": "service",
+      "dependencies": [],
+      "file_path": "services\\integration\\aiva_integration\\remediation\\report_generator.py",
+      "integration_type": "remediation"
+    },
+    {
+      "category": "service",
+      "priority": 3,
+      "complexity": "high",
+      "abstraction_level": "service",
+      "dependencies": [],
+      "file_path": "services\\integration\\aiva_integration\\remediation\\report_generator.py",
+      "integration_type": "remediation"
+    },
+    {
+      "category": "service",
+      "priority": 3,
+      "complexity": "high",
+      "abstraction_level": "service",
+      "dependencies": [],
+      "file_path": "services\\integration\\aiva_integration\\remediation\\report_generator.py",
+      "integration_type": "remediation"
+    },
+    {
+      "category": "service",
+      "priority": 3,
+      "complexity": "high",
+      "abstraction_level": "service",
+      "dependencies": [],
+      "file_path": "services\\integration\\aiva_integration\\remediation\\report_generator.py",
+      "integration_type": "remediation"
+    },
+    {
+      "category": "service",
+      "priority": 4,
+      "complexity": "medium",
+      "abstraction_level": "service",
+      "dependencies": [],
+      "file_path": "services\\integration\\aiva_integration\\remediation\\report_generator.py",
+      "integration_type": "remediation"
+    },
+    {
+      "category": "service",
+      "priority": 2,
+      "complexity": "medium",
+      "abstraction_level": "service",
+      "dependencies": [],
+      "file_path": "services\\integration\\aiva_integration\\reporting\\formatter_exporter.py",
+      "integration_type": "reporting"
+    },
+    {
+      "category": "service",
+      "priority": 1,
+      "complexity": "high",
+      "abstraction_level": "service",
+      "dependencies": [],
+      "file_path": "services\\integration\\aiva_integration\\reporting\\formatter_exporter.py",
+      "integration_type": "reporting"
+    },
+    {
+      "category": "service",
+      "priority": 1,
+      "complexity": "high",
+      "abstraction_level": "service",
+      "dependencies": [],
+      "file_path": "services\\integration\\aiva_integration\\reporting\\formatter_exporter.py",
+      "integration_type": "reporting"
+    },
+    {
+      "category": "service",
+      "priority": 2,
+      "complexity": "medium",
+      "abstraction_level": "service",
+      "dependencies": [],
+      "file_path": "services\\integration\\aiva_integration\\reporting\\formatter_exporter.py",
+      "integration_type": "reporting"
+    },
+    {
+      "category": "service",
+      "priority": 1,
+      "complexity": "high",
+      "abstraction_level": "service",
+      "dependencies": [],
+      "file_path": "services\\integration\\aiva_integration\\reporting\\report_content_generator.py",
+      "integration_type": "reporting"
+    },
+    {
+      "category": "service",
+      "priority": 1,
+      "complexity": "high",
+      "abstraction_level": "service",
+      "dependencies": [],
+      "file_path": "services\\integration\\aiva_integration\\reporting\\report_content_generator.py",
+      "integration_type": "reporting"
+    },
+    {
+      "category": "service",
+      "priority": 3,
+      "complexity": "low",
+      "abstraction_level": "service",
+      "dependencies": [],
+      "file_path": "services\\integration\\aiva_integration\\reporting\\report_content_generator.py",
+      "integration_type": "reporting"
+    },
+    {
+      "category": "service",
+      "priority": 2,
+      "complexity": "medium",
+      "abstraction_level": "service",
+      "dependencies": [],
+      "file_path": "services\\integration\\aiva_integration\\reporting\\report_template_selector.py",
+      "integration_type": "reporting"
+    },
+    {
+      "category": "service",
+      "priority": 1,
+      "complexity": "high",
+      "abstraction_level": "service",
+      "dependencies": [],
+      "file_path": "services\\integration\\aiva_integration\\reporting\\report_template_selector.py",
+      "integration_type": "reporting"
+    },
+    {
+      "category": "service",
+      "priority": 1,
+      "complexity": "high",
+      "abstraction_level": "service",
+      "dependencies": [],
+      "file_path": "services\\integration\\aiva_integration\\reporting\\report_template_selector.py",
+      "integration_type": "reporting"
+    },
+    {
+      "category": "service",
+      "priority": 2,
+      "complexity": "medium",
+      "abstraction_level": "service",
+      "dependencies": [],
+      "file_path": "services\\integration\\aiva_integration\\reporting\\report_template_selector.py",
+      "integration_type": "reporting"
+    },
+    {
+      "category": "security",
+      "priority": 4,
+      "complexity": "low",
+      "abstraction_level": "component",
+      "dependencies": [],
+      "file_path": "services\\integration\\aiva_integration\\security\\auth.py",
+      "integration_type": "security"
+    },
+    {
+      "category": "security",
+      "priority": 4,
+      "complexity": "low",
+      "abstraction_level": "component",
+      "dependencies": [],
+      "file_path": "services\\integration\\aiva_integration\\security\\auth.py",
+      "integration_type": "security"
+    },
+    {
+      "category": "service",
+      "priority": 5,
+      "complexity": "medium",
+      "abstraction_level": "component",
+      "dependencies": [],
+      "file_path": "services\\integration\\aiva_integration\\threat_intel\\threat_intel\\intel_aggregator.py",
+      "integration_type": "threat_intel"
+    },
+    {
+      "category": "service",
+      "priority": 4,
+      "complexity": "high",
+      "abstraction_level": "component",
+      "dependencies": [],
+      "file_path": "services\\integration\\aiva_integration\\threat_intel\\threat_intel\\intel_aggregator.py",
+      "integration_type": "threat_intel"
+    },
+    {
+      "category": "service",
+      "priority": 6,
+      "complexity": "low",
+      "abstraction_level": "component",
+      "dependencies": [],
+      "file_path": "services\\integration\\aiva_integration\\threat_intel\\threat_intel\\intel_aggregator.py",
+      "integration_type": "threat_intel"
+    },
+    {
+      "category": "service",
+      "priority": 5,
+      "complexity": "medium",
+      "abstraction_level": "component",
+      "dependencies": [],
+      "file_path": "services\\integration\\aiva_integration\\threat_intel\\threat_intel\\ioc_enricher.py",
+      "integration_type": "threat_intel"
+    },
+    {
+      "category": "service",
+      "priority": 6,
+      "complexity": "low",
+      "abstraction_level": "component",
+      "dependencies": [],
+      "file_path": "services\\integration\\aiva_integration\\threat_intel\\threat_intel\\ioc_enricher.py",
+      "integration_type": "threat_intel"
+    },
+    {
+      "category": "service",
+      "priority": 6,
+      "complexity": "low",
+      "abstraction_level": "component",
+      "dependencies": [],
+      "file_path": "services\\integration\\aiva_integration\\threat_intel\\threat_intel\\mitre_mapper.py",
+      "integration_type": "threat_intel"
+    },
+    {
+      "category": "service",
+      "priority": 5,
+      "complexity": "medium",
+      "abstraction_level": "component",
+      "dependencies": [],
+      "file_path": "services\\integration\\aiva_integration\\threat_intel\\threat_intel\\mitre_mapper.py",
+      "integration_type": "threat_intel"
+    },
+    {
+      "category": "service",
+      "priority": 4,
+      "complexity": "high",
+      "abstraction_level": "component",
+      "dependencies": [],
+      "file_path": "services\\integration\\aiva_integration\\threat_intel\\threat_intel\\mitre_mapper.py",
+      "integration_type": "threat_intel"
+    },
+    {
+      "category": "service",
+      "priority": 4,
+      "complexity": "high",
+      "abstraction_level": "component",
+      "dependencies": [],
+      "file_path": "services\\integration\\aiva_integration\\threat_intel\\threat_intel\\mitre_mapper.py",
+      "integration_type": "threat_intel"
+    },
+    {
+      "category": "service",
+      "priority": 4,
+      "complexity": "high",
+      "abstraction_level": "component",
+      "dependencies": [],
+      "file_path": "services\\integration\\aiva_integration\\threat_intel\\threat_intel\\mitre_mapper.py",
+      "integration_type": "threat_intel"
+    },
+    {
+      "category": "service",
+      "priority": 4,
+      "complexity": "high",
+      "abstraction_level": "component",
+      "dependencies": [],
+      "file_path": "services\\integration\\aiva_integration\\threat_intel\\threat_intel\\mitre_mapper.py",
+      "integration_type": "threat_intel"
+    },
+    {
+      "category": "service",
+      "priority": 4,
+      "complexity": "high",
+      "abstraction_level": "component",
+      "dependencies": [],
+      "file_path": "services\\integration\\aiva_integration\\threat_intel\\threat_intel\\mitre_mapper.py",
+      "integration_type": "threat_intel"
+    },
+    {
+      "category": "service",
+      "priority": 4,
+      "complexity": "high",
+      "abstraction_level": "component",
+      "dependencies": [],
+      "file_path": "services\\integration\\aiva_integration\\threat_intel\\threat_intel\\mitre_mapper.py",
+      "integration_type": "threat_intel"
+    },
+    {
+      "category": "service",
+      "priority": 4,
+      "complexity": "high",
+      "abstraction_level": "component",
+      "dependencies": [],
+      "file_path": "services\\integration\\aiva_integration\\threat_intel\\threat_intel\\mitre_mapper.py",
+      "integration_type": "threat_intel"
+    },
+    {
+      "category": "service",
+      "priority": 5,
+      "complexity": "medium",
+      "abstraction_level": "component",
+      "dependencies": [],
+      "file_path": "services\\integration\\aiva_integration\\threat_intel\\threat_intel\\mitre_mapper.py",
+      "integration_type": "threat_intel"
+    },
+    {
+      "category": "detail",
+      "priority": 6,
+      "complexity": "low",
+      "abstraction_level": "service",
+      "dependencies": [],
+      "file_path": "services\\integration\\models.py",
+      "integration_type": ""
+    },
+    {
+      "category": "detail",
+      "priority": 6,
+      "complexity": "low",
+      "abstraction_level": "service",
+      "dependencies": [],
+      "file_path": "services\\integration\\models.py",
+      "integration_type": ""
+    },
+    {
+      "category": "detail",
+      "priority": 6,
+      "complexity": "low",
+      "abstraction_level": "service",
+      "dependencies": [],
+      "file_path": "services\\integration\\models.py",
+      "integration_type": ""
+    },
+    {
+      "category": "detail",
+      "priority": 6,
+      "complexity": "low",
+      "abstraction_level": "service",
+      "dependencies": [],
+      "file_path": "services\\integration\\models.py",
+      "integration_type": ""
+    },
+    {
+      "category": "detail",
+      "priority": 6,
+      "complexity": "low",
+      "abstraction_level": "service",
+      "dependencies": [],
+      "file_path": "services\\integration\\models.py",
+      "integration_type": ""
+    },
+    {
+      "category": "detail",
+      "priority": 6,
+      "complexity": "low",
+      "abstraction_level": "service",
+      "dependencies": [],
+      "file_path": "services\\integration\\models.py",
+      "integration_type": ""
+    },
+    {
+      "category": "detail",
+      "priority": 6,
+      "complexity": "low",
+      "abstraction_level": "service",
+      "dependencies": [],
+      "file_path": "services\\integration\\models.py",
+      "integration_type": ""
+    },
+    {
+      "category": "detail",
+      "priority": 5,
+      "complexity": "medium",
+      "abstraction_level": "service",
+      "dependencies": [],
+      "file_path": "services\\integration\\models.py",
+      "integration_type": ""
+    },
+    {
+      "category": "detail",
+      "priority": 6,
+      "complexity": "low",
+      "abstraction_level": "service",
+      "dependencies": [],
+      "file_path": "services\\integration\\service_schemas.py",
+      "integration_type": ""
+    },
+    {
+      "category": "detail",
+      "priority": 6,
+      "complexity": "low",
+      "abstraction_level": "service",
+      "dependencies": [],
+      "file_path": "services\\integration\\service_schemas.py",
+      "integration_type": ""
+    },
+    {
+      "category": "detail",
+      "priority": 6,
+      "complexity": "low",
+      "abstraction_level": "service",
+      "dependencies": [],
+      "file_path": "services\\integration\\service_schemas.py",
+      "integration_type": ""
+    },
+    {
+      "category": "detail",
+      "priority": 6,
+      "complexity": "low",
+      "abstraction_level": "service",
+      "dependencies": [],
+      "file_path": "services\\integration\\service_schemas.py",
+      "integration_type": ""
+    },
+    {
+      "category": "detail",
+      "priority": 6,
+      "complexity": "low",
+      "abstraction_level": "service",
+      "dependencies": [],
+      "file_path": "services\\integration\\service_schemas.py",
+      "integration_type": ""
+    },
+    {
+      "category": "detail",
+      "priority": 6,
+      "complexity": "low",
+      "abstraction_level": "service",
+      "dependencies": [],
+      "file_path": "services\\integration\\service_schemas.py",
+      "integration_type": ""
+    },
+    {
+      "category": "detail",
+      "priority": 6,
+      "complexity": "low",
+      "abstraction_level": "service",
+      "dependencies": [],
+      "file_path": "services\\integration\\service_schemas.py",
+      "integration_type": ""
+    },
+    {
+      "category": "detail",
+      "priority": 6,
+      "complexity": "low",
+      "abstraction_level": "service",
+      "dependencies": [],
+      "file_path": "services\\integration\\service_schemas.py",
+      "integration_type": ""
+    },
+    {
+      "category": "detail",
+      "priority": 6,
+      "complexity": "low",
+      "abstraction_level": "service",
+      "dependencies": [],
+      "file_path": "services\\integration\\service_schemas.py",
+      "integration_type": ""
+    },
+    {
+      "category": "detail",
+      "priority": 6,
+      "complexity": "low",
+      "abstraction_level": "service",
+      "dependencies": [],
+      "file_path": "services\\integration\\service_schemas.py",
+      "integration_type": ""
+    },
+    {
+      "category": "detail",
+      "priority": 6,
+      "complexity": "low",
+      "abstraction_level": "service",
+      "dependencies": [],
+      "file_path": "services\\integration\\service_schemas.py",
+      "integration_type": ""
+    },
+    {
+      "category": "detail",
+      "priority": 4,
+      "complexity": "high",
+      "abstraction_level": "service",
+      "dependencies": [],
+      "file_path": "services\\integration\\service_schemas.py",
+      "integration_type": ""
+    },
+    {
+      "category": "detail",
+      "priority": 4,
+      "complexity": "high",
+      "abstraction_level": "service",
+      "dependencies": [],
+      "file_path": "services\\integration\\alembic\\env.py",
+      "integration_type": ""
+    },
+    {
+      "category": "detail",
+      "priority": 4,
+      "complexity": "high",
+      "abstraction_level": "service",
+      "dependencies": [],
+      "file_path": "services\\integration\\alembic\\env.py",
+      "integration_type": ""
+    },
+    {
+      "category": "detail",
+      "priority": 4,
+      "complexity": "high",
+      "abstraction_level": "service",
+      "dependencies": [],
+      "file_path": "services\\integration\\alembic\\env.py",
+      "integration_type": ""
+    },
+    {
+      "category": "detail",
+      "priority": 4,
+      "complexity": "high",
+      "abstraction_level": "service",
+      "dependencies": [],
+      "file_path": "services\\integration\\alembic\\env.py",
+      "integration_type": ""
+    },
+    {
+      "category": "detail",
+      "priority": 5,
+      "complexity": "medium",
+      "abstraction_level": "service",
+      "dependencies": [],
+      "file_path": "services\\integration\\alembic\\env.py",
+      "integration_type": ""
+    },
+    {
+      "category": "detail",
+      "priority": 6,
+      "complexity": "low",
+      "abstraction_level": "service",
+      "dependencies": [],
+      "file_path": "services\\integration\\api_gateway\\api_gateway\\app.py",
+      "integration_type": ""
+    },
+    {
+      "category": "detail",
+      "priority": 6,
+      "complexity": "low",
+      "abstraction_level": "service",
+      "dependencies": [],
+      "file_path": "services\\integration\\api_gateway\\api_gateway\\app.py",
+      "integration_type": ""
+    },
+    {
+      "category": "detail",
+      "priority": 4,
+      "complexity": "high",
+      "abstraction_level": "service",
+      "dependencies": [],
+      "file_path": "services\\integration\\alembic\\versions\\001_initial_schema.py",
+      "integration_type": ""
+    },
+    {
+      "category": "detail",
+      "priority": 4,
+      "complexity": "high",
+      "abstraction_level": "service",
+      "dependencies": [],
+      "file_path": "services\\integration\\alembic\\versions\\001_initial_schema.py",
+      "integration_type": ""
+    },
+    {
+      "category": "detail",
+      "priority": 6,
+      "complexity": "low",
+      "abstraction_level": "service",
+      "dependencies": [],
+      "file_path": "services\\integration\\alembic\\versions\\001_initial_schema.py",
+      "integration_type": ""
+    }
+  ],
+  "statistics": {
+    "core": 15,
+    "detail": 98,
+    "service": 98,
+    "integration": 52,
+    "security": 2
+  },
+  "analysis_timestamp": "2025-10-24"
+}

@@ -5,10 +5,6 @@
  */
 
 import { NetworkInterceptor } from './src/services/network-interceptor.service';
-import { 
-  InteractionConfig, 
-  ExtractionConfig 
-} from './src/interfaces/dynamic-scan.interfaces';
 
 export interface PhaseIConfig {
   enableJSAnalysis: boolean;
@@ -95,37 +91,36 @@ export class PhaseIIntegrationService {
     const analysisResult = await page.evaluate(() => {
       const results: any[] = [];
 
-      // 1. 檢查 localStorage/sessionStorage 授權模式
-      const storageChecks = [
-        'localStorage.getItem',
-        'sessionStorage.getItem',
-        'localStorage.token',
-        'localStorage.auth',
-        'user.role',
-        'isAdmin',
-        'hasPermission'
-      ];
+      // 檢查腳本中的授權繞過模式
+      function checkScriptPatterns() {
+        const storageChecks = [
+          'localStorage.getItem', 'sessionStorage.getItem',
+          'localStorage.token', 'localStorage.auth',
+          'user.role', 'isAdmin', 'hasPermission'
+        ];
 
-      // 2. 遍歷所有已加載的腳本
-      const scripts = Array.from(document.scripts);
-      for (const [index, script] of scripts.entries()) {
-        if (script.src) {
-          // 外部腳本會被 content-extractor 處理
-          continue;
+        const scripts = Array.from(document.scripts);
+        for (const [index, script] of scripts.entries()) {
+          if (script.src || !script.textContent) continue;
+          
+          const content = script.textContent;
+          if (content.length < 10) continue;
+
+          // 檢查存儲模式和管理員權限
+          checkStoragePatterns(content, index, storageChecks, results);
+          checkAdminPatterns(content, index, results);
         }
+      }
 
-        const content = script.textContent || '';
-        if (content.length < 10) continue;
-
-        // 檢查存儲授權模式
-        for (const pattern of storageChecks) {
+      function checkStoragePatterns(content: string, index: number, patterns: string[], results: any[]) {
+        for (const pattern of patterns) {
           if (content.includes(pattern)) {
             results.push({
               type: pattern.includes('localStorage') ? 'localStorage_auth' : 'sessionStorage_auth',
               severity: 'medium',
               description: `Client-side authorization check using ${pattern}`,
               evidence: {
-                scriptUrl: script.src || `inline-script-${index}`,
+                scriptUrl: `inline-script-${index}`,
                 codeSnippet: content.substring(
                   Math.max(0, content.indexOf(pattern) - 50),
                   content.indexOf(pattern) + 100
@@ -134,8 +129,9 @@ export class PhaseIIntegrationService {
             });
           }
         }
+      }
 
-        // 檢查硬編碼管理員權限
+      function checkAdminPatterns(content: string, index: number, results: any[]) {
         const adminPatterns = [
           /role\s*===?\s*["']admin["']/gi,
           /user\.type\s*===?\s*["']admin["']/gi,
@@ -152,7 +148,7 @@ export class PhaseIIntegrationService {
                 severity: 'high',
                 description: 'Hardcoded admin role check detected',
                 evidence: {
-                  scriptUrl: script.src || `inline-script-${index}`,
+                  scriptUrl: `inline-script-${index}`,
                   codeSnippet: match
                 }
               });
@@ -161,6 +157,7 @@ export class PhaseIIntegrationService {
         }
       }
 
+      checkScriptPatterns();
       return results;
     });
 
@@ -186,7 +183,7 @@ export class PhaseIIntegrationService {
 
       // 檢查隱藏的管理元素
       const hiddenElements = document.querySelectorAll('[style*="display:none"], [hidden], .admin-only, .hidden');
-      for (const [index, element] of Array.from(hiddenElements).entries()) {
+      for (const element of Array.from(hiddenElements)) {
         const text = element.textContent || '';
         if (text.toLowerCase().includes('admin') || 
             text.toLowerCase().includes('管理') ||

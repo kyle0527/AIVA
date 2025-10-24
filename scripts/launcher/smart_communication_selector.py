@@ -664,7 +664,7 @@ class CrossLanguageSelector:
     def _check_grpc_availability(self) -> bool:
         """檢查 gRPC 可用性"""
         try:
-            import grpc
+            import grpc  # type: ignore
             return True
         except ImportError:
             return False

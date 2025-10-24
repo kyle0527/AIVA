@@ -126,14 +126,14 @@ class ServiceDetector:
             logger.debug(f"服務檢測錯誤 {host}:{port}: {e}")
             return None
     
-    async def _is_port_open(self, host: str, port: int, timeout: float = 2.0) -> bool:
+    async def _is_port_open(self, host: str, port: int) -> bool:
         """檢查端口是否開放"""
         try:
-            future = asyncio.open_connection(host, port)
-            reader, writer = await asyncio.wait_for(future, timeout=timeout)
-            writer.close()
-            await writer.wait_closed()
-            return True
+            async with asyncio.timeout(2.0):  # 使用 timeout context manager
+                _, writer = await asyncio.open_connection(host, port)
+                writer.close()
+                await writer.wait_closed()
+                return True
         except Exception:
             return False
     
@@ -186,7 +186,7 @@ class ServiceDetector:
     
     def _analyze_banner(self, banner: str, port: int) -> Dict[str, Any]:
         """分析服務banner"""
-        analysis = {"confidence": 50}
+        analysis = {"confidence": 50, "port": port}  # 保留端口信息用於分析
         banner_lower = banner.lower()
         
         # 使用專門的檢測方法
@@ -462,7 +462,8 @@ class ServiceDetector:
                 writer.write(b"PASS anonymous@example.com\r\n")
                 await writer.drain()
                 
-                login_response = await asyncio.wait_for(reader.readline(), timeout=2.0)
+                async with asyncio.timeout(2.0):
+                    login_response = await reader.readline()
                 if b"230" in login_response:  # 登錄成功
                     details["anonymous_login"] = True
             
@@ -484,14 +485,15 @@ class ServiceDetector:
         
         # MySQL檢測邏輯（簡化版，實際需要MySQL協議解析）
         try:
-            future = asyncio.open_connection(host, port)
-            reader, writer = await asyncio.wait_for(future, timeout=3.0)
+            async with asyncio.timeout(3.0):
+                reader, writer = await asyncio.open_connection(host, port)
             
             # 讀取MySQL握手包
-            handshake = await asyncio.wait_for(reader.read(1024), timeout=2.0)
+            async with asyncio.timeout(2.0):
+                handshake = await reader.read(1024)
             
             # 簡單解析版本信息（實際需要更複雜的協議解析）
-            if len(handshake) > 5:
+            if len(handshake) >= 5:
                 # MySQL握手包格式解析（簡化）
                 details["mysql_version"] = "detected"
             
@@ -534,7 +536,7 @@ class ServiceDetector:
                 
                 # 檢查匿名訪問
                 if service.get("anonymous_login"):
-                    security_issues.append(f"FTP服務允許匿名登錄")
+                    security_issues.append("FTP服務允許匿名登錄")
                 
                 # 檢查缺少安全頭
                 if service["category"] == "web" and not service.get("security_headers"):
@@ -554,7 +556,7 @@ class ServiceDetector:
             target = target.split("://")[1]
         if "/" in target:
             target = target.split("/")[0]
-        if ":" in target and not target.count(":") > 1:
+        if ":" in target and target.count(":") <= 1:
             target = target.split(":")[0]
         return target
     
@@ -572,11 +574,11 @@ class ServiceDetector:
             ]
         }
     
-    async def get_detection_results(self) -> List[Dict[str, Any]]:
+    def get_detection_results(self) -> List[Dict[str, Any]]:
         """獲取所有檢測結果"""
         return self.results
     
-    async def cleanup(self):
+    def cleanup(self):
         """清理檢測器資源"""
         self.results.clear()
         logger.info(f"服務檢測器已清理，會話: {self.session_id}")

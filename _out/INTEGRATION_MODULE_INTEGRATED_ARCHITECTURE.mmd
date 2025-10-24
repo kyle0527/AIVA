@@ -1,0 +1,103 @@
+mermaid
+---
+title: AIVA Integration Module Integrated Architecture
+---
+flowchart TB
+    %% External Services Layer
+    subgraph EXTERNAL["External Systems"]
+        SCAN_SVC["Scan Service"]
+        AI_SVC["AI Services"] 
+        DB_SVC[("Database Services")]
+        THREAT_INTEL["Threat Intelligence"]
+    end
+
+    %% Core Integration Engine
+    subgraph CORE["Core Integration Engine"]
+        AI_RECORDER["AI Operation Recorder"]
+        SYS_MONITOR["System Performance Monitor"]
+        CONFIG_MGR["Configuration Manager"]
+    end
+
+    %% Service Integration Layer
+    subgraph SERVICES["Service Integration Layer"]
+        ANALYSIS_INT["Analysis Integration"]
+        RECEPTION_INT["Reception Integration"]
+        REPORTING_INT["Reporting Integration"]
+        PERF_FEEDBACK["Performance Feedback"]
+    end
+
+    %% Data Processing Layer
+    subgraph DATA_LAYER["Data Processing Layer"]
+        DATA_RECEPTION["Data Reception Layer"]
+        EXPERIENCE_MODELS["Experience Models"]
+        LIFECYCLE_MGR["Lifecycle Manager"]
+    end
+
+    %% Security & Observability
+    subgraph SECURITY["Security & Observability"]
+        AUTH_SVC["Authentication Service"]
+        OBSERVABILITY["Observability Service"]
+        THREAT_ANALYZER["Threat Intelligence Processor"]
+        COMPLIANCE_CHECK["Compliance Policy Checker"]
+    end
+
+    %% Remediation & Response
+    subgraph REMEDIATION["Remediation & Response"]
+        REMEDIATION_ENGINE["Remediation Engine"]
+        ATTACK_PATH["Attack Path Analyzer"]
+        RISK_ASSESSMENT["Risk Assessment Engine"]
+    end
+
+    %% API Gateway Layer
+    subgraph API_LAYER["API Gateway Layer"]
+        API_GATEWAY["API Gateway"]
+        MIDDLEWARE["Request Middlewares"]
+        RATE_LIMITER["Rate Limiter"]
+    end
+
+    %% Flow Connections - Data Ingestion
+    EXTERNAL --> API_LAYER
+    API_LAYER --> CORE
+    CORE --> SERVICES
+    
+    %% Service Layer Interactions
+    SERVICES --> DATA_LAYER
+    SERVICES --> SECURITY
+    SERVICES --> REMEDIATION
+    
+    %% Cross-cutting Concerns
+    SECURITY --> CORE
+    SECURITY --> DATA_LAYER
+    REMEDIATION --> CORE
+    
+    %% Data Flow
+    DATA_LAYER --> AI_RECORDER
+    AI_RECORDER --> SYS_MONITOR
+    SYS_MONITOR --> PERF_FEEDBACK
+    
+    %% External Integration
+    THREAT_ANALYZER --> THREAT_INTEL
+    REPORTING_INT --> EXTERNAL
+    
+    %% Critical Path Highlighting
+    SCAN_SVC ==>|"Critical Data Flow"| API_GATEWAY
+    API_GATEWAY ==>|"Critical Path"| AI_RECORDER
+    AI_RECORDER ==>|"Critical Path"| ANALYSIS_INT
+    ANALYSIS_INT ==>|"Critical Path"| RISK_ASSESSMENT
+    RISK_ASSESSMENT ==>|"Critical Path"| REMEDIATION_ENGINE
+
+    %% Styling for different layers
+    classDef core fill:#e1f5fe,stroke:#01579b,stroke-width:3px
+    classDef service fill:#f3e5f5,stroke:#4a148c,stroke-width:2px
+    classDef data fill:#e8f5e8,stroke:#1b5e20,stroke-width:2px
+    classDef security fill:#fff3e0,stroke:#e65100,stroke-width:2px
+    classDef api fill:#f1f8e9,stroke:#33691e,stroke-width:2px
+    classDef external fill:#fce4ec,stroke:#880e4f,stroke-width:2px
+
+    %% Apply styles
+    class AI_RECORDER,SYS_MONITOR,CONFIG_MGR core
+    class ANALYSIS_INT,RECEPTION_INT,REPORTING_INT,PERF_FEEDBACK service
+    class DATA_RECEPTION,EXPERIENCE_MODELS,LIFECYCLE_MGR data
+    class AUTH_SVC,OBSERVABILITY,THREAT_ANALYZER,COMPLIANCE_CHECK security
+    class API_GATEWAY,MIDDLEWARE,RATE_LIMITER api
+    class SCAN_SVC,AI_SVC,DB_SVC,THREAT_INTEL external

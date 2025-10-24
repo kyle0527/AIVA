@@ -1,0 +1,223 @@
+```mermaid
+flowchart TB
+    %% ========== 掃描模組完整工作流程圖 ==========
+    %% 基於現有圖表組合而成，展示實際的連結和流程
+    
+    subgraph "Entry Layer"
+        A["統一掃描引擎<br/>UnifiedScanEngine"] --> B["掃描編排器<br/>ScanOrchestrator"]
+        A1["快速掃描<br/>create_fast_scan"] --> A
+        A2["全面掃描<br/>create_comprehensive_scan"] --> A
+    end
+    
+    subgraph "Strategy Control Layer"
+        B --> C["策略控制器<br/>StrategyController"]
+        C --> C1["配置控制中心<br/>ConfigControlCenter"]
+        
+        %% 策略選擇
+        C --> D1["CONSERVATIVE<br/>保守策略"]
+        C --> D2["BALANCED<br/>平衡策略"] 
+        C --> D3["DEEP<br/>深度策略"]
+        C --> D4["FAST<br/>快速策略"]
+        C --> D5["AGGRESSIVE<br/>激進策略"]
+        C --> D6["STEALTH<br/>隱蔽策略"]
+    end
+    
+    subgraph "配置管理層 Configuration Layer"
+        C1 --> E1[爬蟲配置<br/>CrawlingConfig]
+        C1 --> E2[動態掃描配置<br/>DynamicScanConfig]
+        C1 --> E3[指紋配置<br/>FingerprintConfig]
+        C1 --> E4[安全配置<br/>SecurityConfig]
+        C1 --> E5[性能配置<br/>PerformanceConfig]
+    end
+    
+    subgraph "掃描上下文層 Context Layer"
+        B --> F[掃描上下文<br/>ScanContext]
+        F --> F1[添加資產<br/>add_asset]
+        F --> F2[增加URL計數<br/>increment_urls_found]
+        F --> F3[增加頁面計數<br/>increment_pages_crawled]
+        F --> F4[添加表單<br/>add_forms_found]
+        F --> F5[獲取統計<br/>get_statistics]
+    end
+    
+    subgraph "認證授權層 Authentication Layer"
+        B --> G[認證管理器<br/>AuthenticationManager]
+        G --> G1[HTTP標頭配置<br/>HeaderConfiguration]
+        G1 --> G11[設置用戶代理<br/>set_user_agent]
+        G1 --> G12[設置授權<br/>set_authorization]
+        G1 --> G13[設置Cookie<br/>set_cookie]
+        G1 --> G14[添加自定義標頭<br/>add_header]
+    end
+    
+    subgraph "靜態掃描引擎 Static Scan Engine"
+        E1 --> H[HTTP客戶端<br/>HiHttpClient]
+        H --> H1[URL隊列管理器<br/>UrlQueueManager]
+        H1 --> H11[添加URL<br/>add]
+        H1 --> H12[獲取下一個<br/>next]
+        H1 --> H13[檢查是否處理<br/>is_processed]
+        H1 --> H14[獲取統計<br/>get_statistics]
+        
+        H --> H2[靜態內容解析器<br/>StaticContentParser]
+        H2 --> H21[提取內容<br/>extract]
+    end
+    
+    subgraph "動態掃描引擎 Dynamic Scan Engine"
+        E2 --> I[無頭瀏覽器池<br/>HeadlessBrowserPool]
+        I --> I1[初始化<br/>initialize]
+        I --> I2[獲取瀏覽器信息<br/>get_browser_info]
+        I --> I3[列出瀏覽器<br/>list_browsers]
+        I --> I4[獲取統計<br/>get_stats]
+        
+        I --> J[動態內容提取器<br/>DynamicContentExtractor]
+        J --> J1[獲取提取內容<br/>get_extracted_contents]
+        J --> J2[轉換為資產<br/>convert_to_assets]
+        J --> J3[獲取網路請求<br/>get_network_requests]
+        J --> J4[清除<br/>clear]
+        
+        I --> K[JS交互模擬器<br/>JSInteractionSimulator]
+        K --> K1[添加點擊<br/>add_click]
+        K --> K2[添加輸入<br/>add_input]
+        K --> K3[添加提交<br/>add_submit]
+        K --> K4[獲取結果<br/>get_results]
+        
+        I --> L[AJAX API處理器<br/>AjaxApiHandler]
+        L --> L1[獲取發現的端點<br/>get_discovered_endpoints]
+        L --> L2[獲取統計<br/>get_statistics]
+    end
+    
+    subgraph "資訊收集層 Information Gathering Layer"
+        H --> M[敏感信息檢測器<br/>SensitiveInfoDetector]
+        M --> M1[在響應中檢測<br/>detect_in_response]
+        M --> M2[在HTML中檢測<br/>detect_in_html]
+        M --> M3[在JavaScript中檢測<br/>detect_in_javascript]
+        M --> M4[在標頭中檢測<br/>detect_in_headers]
+        M --> M5[獲取關鍵問題<br/>get_critical_issues]
+        
+        H --> N[JavaScript源碼分析器<br/>JavaScriptSourceAnalyzer]
+        N --> N1[分析<br/>analyze]
+        N --> N2[格式化報告<br/>format_report]
+        N --> N3[獲取高風險問題<br/>get_high_risk_issues]
+        N --> N4[獲取統計<br/>get_stats]
+        
+        H --> O[被動指紋識別器<br/>PassiveFingerprinter]
+        O --> O1[從標頭識別<br/>from_headers]
+        
+        H --> P[指紋管理器<br/>FingerprintCollector]
+        P --> P1[合併<br/>merge]
+        P --> P2[獲取最終指紋<br/>get_final_fingerprints]
+        P --> P3[重置<br/>reset]
+    end
+    
+    subgraph "網路掃描層 Network Scan Layer"
+        B --> Q[網路掃描器<br/>NetworkScanner]
+        Q --> Q1[演示網路掃描<br/>demo_network_scanner]
+        
+        B --> R[服務檢測器<br/>ServiceDetector]
+        R --> R1[初始化<br/>initialize]
+        R --> R2[獲取檢測結果<br/>get_detection_results]
+        R --> R3[清理<br/>cleanup]
+        R --> R4[演示服務檢測<br/>demo_service_detector]
+        
+        B --> S[漏洞掃描器<br/>VulnerabilityScanner]
+        S --> S1[演示漏洞掃描<br/>demo_vulnerability_scanner]
+        
+        B --> T[敏感數據掃描器<br/>SensitiveDataScanner]
+        T --> T1[掃描內容<br/>scan_content]
+        T --> T2[掃描標頭<br/>scan_headers]
+        T --> T3[獲取所有匹配<br/>get_all_matches]
+        T --> T4[獲取統計<br/>get_statistics]
+    end
+    
+    subgraph "範圍管理層 Scope Management Layer"
+        B --> U[範圍管理器<br/>ScopeManager]
+        U --> U1[添加允許主機<br/>add_allowed_host]
+        U --> U2[添加排除項<br/>add_exclusion]
+        U --> U3[檢查是否在範圍內<br/>is_in_scope]
+        U --> U4[過濾URL<br/>filter_urls]
+        U --> U5[驗證範圍<br/>validate_scope]
+        U --> U6[獲取範圍摘要<br/>get_scope_summary]
+    end
+    
+    subgraph "結果處理層 Result Processing Layer"
+        M --> V[掃描結果處理器<br/>ScanResultProcessor]
+        N --> V
+        P --> V
+        Q --> V
+        R --> V
+        S --> V
+        T --> V
+        
+        V --> W[AI操作記錄器<br/>AIOperationRecorder]
+        W --> W1[記錄掃描操作<br/>record_scan_operation]
+        
+        V --> X[增強掃描集成<br/>EnhancedScanIntegration]
+        X --> X1[應用分析結果<br/>apply_analysis_results]
+        X --> X2[按嚴重性計數<br/>count_by_severity]
+        X --> X3[生成關鍵洞察<br/>generate_key_insights]
+        X --> X4[生成摘要<br/>generate_summary]
+    end
+    
+    subgraph "輸出層 Output Layer"
+        V --> Y[掃描元數據分析器<br/>ScanMetadataAnalyzer]
+        Y --> Y1[分析元數據<br/>analyze_metadata]
+        Y --> Y2[計算性能分數<br/>calculate_performance_score]
+        
+        V --> Z[報告內容生成器<br/>ReportContentGenerator]
+        Z --> Z1[獲取掃描方法論<br/>get_scan_methodology]
+    end
+    
+    %% ========== 連接關係 ==========
+    %% 策略影響掃描引擎選擇
+    D1 -.-> H
+    D2 -.-> H
+    D2 -.-> I
+    D3 -.-> I
+    D4 -.-> H
+    D5 -.-> I
+    D6 -.-> H
+    
+    %% 上下文收集來自各層
+    H21 -.-> F1
+    J2 -.-> F1
+    L1 -.-> F1
+    M5 -.-> F1
+    N3 -.-> F1
+    
+    %% 指紋信息流向
+    O1 -.-> P1
+    H2 -.-> P1
+    
+    %% 掃描結果匯聚
+    F5 -.-> V
+    P2 -.-> V
+    U6 -.-> V
+    
+    %% 樣式定義
+    classDef entryClass fill:#e1f5fe,stroke:#0277bd,stroke-width:2px
+    classDef strategyClass fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px
+    classDef configClass fill:#e8f5e8,stroke:#2e7d32,stroke-width:2px
+    classDef engineClass fill:#fff3e0,stroke:#ef6c00,stroke-width:2px
+    classDef processingClass fill:#fce4ec,stroke:#c2185b,stroke-width:2px
+    classDef outputClass fill:#e0f2f1,stroke:#00695c,stroke-width:2px
+    
+    class A,A1,A2,B entryClass
+    class C,C1,D1,D2,D3,D4,D5,D6 strategyClass
+    class E1,E2,E3,E4,E5,F,G,G1,U configClass
+    class H,H1,H2,I,J,K,L,M,N,O,P,Q,R,S,T engineClass
+    class V,W,X,Y processingClass
+    class Z outputClass
+```
+
+---
+**🔧 AIVA掃描模組完整工作流程圖**
+
+此圖基於實際的程式碼結構和現有的架構圖表組合而成，展示了：
+
+1. **完整的掃描流程**: 從入口到輸出的完整鏈路
+2. **實際的程式連接**: 基於真實的類別和方法名稱
+3. **策略驅動的引擎選擇**: 不同策略如何影響掃描行為
+4. **多層次的架構設計**: 清晰的分層和職責劃分
+5. **完整的資料流向**: 展示資訊如何在各組件間流轉
+
+**生成時間**: 2025-10-24  
+**基於圖表數量**: 200+ 個現有架構圖表  
+**涵蓋模組**: services.scan 完整功能集合

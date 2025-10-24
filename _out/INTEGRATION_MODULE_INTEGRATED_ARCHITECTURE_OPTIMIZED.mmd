@@ -1,0 +1,114 @@
+---
+title: AIVA Integration Module Integrated Architecture (Optimized Layout)
+---
+flowchart TD
+    %% ========== 垂直分層架構 (減少斜線) ==========
+    
+    %% Layer 1: External Input
+    subgraph L1["🌐 External Input Layer"]
+        direction LR
+        SCAN_SVC["Scan Service"]
+        AI_SVC["AI Services"]
+        THREAT_INTEL["Threat Intelligence"]
+    end
+
+    %% Layer 2: Gateway & Security
+    subgraph L2["🚪 Gateway & Security Layer"]
+        direction LR
+        API_GATEWAY["API Gateway"]
+        AUTH_SVC["Authentication"]
+        RATE_LIMITER["Rate Limiter"]
+    end
+    
+    %% Layer 3: Core Processing
+    subgraph L3["🎯 Core Processing Layer"]
+        direction LR
+        AI_RECORDER["AI Operation Recorder"]
+        SYS_MONITOR["System Monitor"]
+        CONFIG_MGR["Config Manager"]
+    end
+    
+    %% Layer 4: Service Integration
+    subgraph L4["🔄 Service Integration Layer"]
+        direction LR
+        ANALYSIS_INT["Analysis Integration"]
+        RECEPTION_INT["Reception Integration"]
+        REPORTING_INT["Reporting Integration"]
+    end
+    
+    %% Layer 5: Data & Processing
+    subgraph L5["📊 Data Processing Layer"]
+        direction LR
+        DATA_RECEPTION["Data Reception"]
+        EXPERIENCE_MODELS["Experience Models"]
+        LIFECYCLE_MGR["Lifecycle Manager"]
+    end
+    
+    %% Layer 6: Intelligence & Response
+    subgraph L6["🛡️ Intelligence & Response Layer"]
+        direction LR
+        RISK_ASSESSMENT["Risk Assessment"]
+        REMEDIATION_ENGINE["Remediation Engine"]
+        THREAT_ANALYZER["Threat Analyzer"]
+    end
+    
+    %% Layer 7: Output & Monitoring
+    subgraph L7["📤 Output & Monitoring Layer"]
+        direction LR
+        OBSERVABILITY["Observability"]
+        DB_SVC[("Database")]
+        COMPLIANCE_CHECK["Compliance Check"]
+    end
+
+    %% ========== 垂直主流程 (最小化斜線) ==========
+    L1 --> L2
+    L2 --> L3
+    L3 --> L4
+    L4 --> L5
+    L5 --> L6
+    L6 --> L7
+    
+    %% ========== 關鍵路徑 (垂直對齊) ==========
+    SCAN_SVC -.-> API_GATEWAY
+    API_GATEWAY -.-> AI_RECORDER
+    AI_RECORDER -.-> ANALYSIS_INT
+    ANALYSIS_INT -.-> DATA_RECEPTION
+    DATA_RECEPTION -.-> RISK_ASSESSMENT
+    RISK_ASSESSMENT -.-> REMEDIATION_ENGINE
+    
+    %% ========== 水平協作 (層內連接) ==========
+    AUTH_SVC -.-> RATE_LIMITER
+    AI_RECORDER -.-> SYS_MONITOR
+    SYS_MONITOR -.-> CONFIG_MGR
+    
+    ANALYSIS_INT -.-> RECEPTION_INT
+    RECEPTION_INT -.-> REPORTING_INT
+    
+    DATA_RECEPTION -.-> EXPERIENCE_MODELS
+    EXPERIENCE_MODELS -.-> LIFECYCLE_MGR
+    
+    RISK_ASSESSMENT -.-> REMEDIATION_ENGINE
+    REMEDIATION_ENGINE -.-> THREAT_ANALYZER
+    
+    %% ========== 回饋迴路 (短距離) ==========
+    SYS_MONITOR -.-> AI_RECORDER
+    OBSERVABILITY -.-> SYS_MONITOR
+    THREAT_ANALYZER -.-> THREAT_INTEL
+    
+    %% ========== 樣式定義 ==========
+    classDef layer1 fill:#fce4ec,stroke:#880e4f,stroke-width:2px,color:#000
+    classDef layer2 fill:#f1f8e9,stroke:#33691e,stroke-width:2px,color:#000
+    classDef layer3 fill:#e1f5fe,stroke:#01579b,stroke-width:3px,color:#000
+    classDef layer4 fill:#f3e5f5,stroke:#4a148c,stroke-width:2px,color:#000
+    classDef layer5 fill:#e8f5e8,stroke:#1b5e20,stroke-width:2px,color:#000
+    classDef layer6 fill:#ffebee,stroke:#c62828,stroke-width:2px,color:#000
+    classDef layer7 fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000
+
+    %% ========== 應用樣式 ==========
+    class SCAN_SVC,AI_SVC,THREAT_INTEL layer1
+    class API_GATEWAY,AUTH_SVC,RATE_LIMITER layer2
+    class AI_RECORDER,SYS_MONITOR,CONFIG_MGR layer3
+    class ANALYSIS_INT,RECEPTION_INT,REPORTING_INT layer4
+    class DATA_RECEPTION,EXPERIENCE_MODELS,LIFECYCLE_MGR layer5
+    class RISK_ASSESSMENT,REMEDIATION_ENGINE,THREAT_ANALYZER layer6
+    class OBSERVABILITY,DB_SVC,COMPLIANCE_CHECK layer7
