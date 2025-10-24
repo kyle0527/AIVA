@@ -1,0 +1,3257 @@
+[
+  {
+    "file": "ai_commander.py",
+    "total_lines": 504,
+    "code_lines": 360,
+    "comment_lines": 38,
+    "classes": 3,
+    "functions": 3,
+    "async_functions": 9,
+    "imports": 24,
+    "decorators": 0,
+    "avg_function_length": 33.5,
+    "max_function_length": 89,
+    "class_names": [
+      "AITaskType",
+      "AIComponent",
+      "AICommander"
+    ],
+    "function_names": [
+      "__init__",
+      "get_status",
+      "save_state"
+    ],
+    "import_modules": [
+      "typing",
+      "services.core.aiva_core.multilang_coordinator",
+      "services.core.aiva_core.ai_engine",
+      "__future__",
+      "services.core.aiva_core.training.training_orchestrator",
+      "services.core.aiva_core.messaging.message_broker",
+      "training.scenario_manager",
+      "services.core.aiva_core.learning.model_trainer",
+      "datetime",
+      "messaging.message_broker",
+      "services.core.aiva_core.learning.experience_manager",
+      "enum",
+      "multilang_coordinator",
+      "services.core.aiva_core.training.scenario_manager",
+      "ai_engine",
+      "training.training_orchestrator",
+      "learning.model_trainer",
+      "logging",
+      "services.core.aiva_core.execution.plan_executor",
+      "execution.plan_executor",
+      "services.core.aiva_core.rag",
+      "rag",
+      "pathlib",
+      "learning.experience_manager"
+    ],
+    "complexity_score": 58.5
+  },
+  {
+    "file": "ai_controller.py",
+    "total_lines": 813,
+    "code_lines": 621,
+    "comment_lines": 43,
+    "classes": 1,
+    "functions": 32,
+    "async_functions": 7,
+    "imports": 8,
+    "decorators": 0,
+    "avg_function_length": 18.9,
+    "max_function_length": 61,
+    "class_names": [
+      "UnifiedAIController"
+    ],
+    "function_names": [
+      "__init__",
+      "_analyze_task_complexity",
+      "get_summary_plugin_status",
+      "enable_summary_plugin",
+      "disable_summary_plugin"
+    ],
+    "import_modules": [
+      "typing",
+      "logging",
+      "json",
+      "plugins.ai_summary_plugin",
+      "__future__",
+      "ai_engine",
+      "asyncio",
+      "datetime"
+    ],
+    "complexity_score": 77
+  },
+  {
+    "file": "ai_integration_test.py",
+    "total_lines": 611,
+    "code_lines": 476,
+    "comment_lines": 25,
+    "classes": 2,
+    "functions": 3,
+    "async_functions": 10,
+    "imports": 12,
+    "decorators": 1,
+    "avg_function_length": 42.8,
+    "max_function_length": 70,
+    "class_names": [
+      "TestResult",
+      "AIIntegrationTester"
+    ],
+    "function_names": [
+      "__init__",
+      "_generate_test_report",
+      "_generate_recommendations"
+    ],
+    "import_modules": [
+      "typing",
+      "nlg_system",
+      "os",
+      "services.core.aiva_core.ai_engine.bio_neuron_rag_agent",
+      "ai_controller",
+      "sys",
+      "multilang_coordinator",
+      "time",
+      "pathlib",
+      "asyncio",
+      "json",
+      "dataclasses"
+    ],
+    "complexity_score": 50.84615384615385
+  },
+  {
+    "file": "ai_ui_schemas.py",
+    "total_lines": 332,
+    "code_lines": 249,
+    "comment_lines": 10,
+    "classes": 18,
+    "functions": 9,
+    "async_functions": 0,
+    "imports": 4,
+    "decorators": 9,
+    "avg_function_length": 6.6,
+    "max_function_length": 16,
+    "class_names": [
+      "ToolExecutionRequest",
+      "ToolExecutionResult",
+      "AIAgentQuery",
+      "AIAgentResponse",
+      "RAGChunk",
+      "KnowledgeBaseStats",
+      "ScanTaskRequest",
+      "ScanTaskResponse",
+      "VulnerabilityDetectionRequest",
+      "VulnerabilityDetectionResponse",
+      "CodeOperationRequest",
+      "CodeOperationResponse",
+      "DashboardStats",
+      "UIServerConfig",
+      "CodeReadResult",
+      "CodeWriteResult",
+      "CodeAnalysisResult",
+      "CommandExecutionResult"
+    ],
+    "function_names": [
+      "validate_tool_name",
+      "validate_execution_time",
+      "validate_query",
+      "validate_confidence",
+      "validate_score"
+    ],
+    "import_modules": [
+      "typing",
+      "__future__",
+      "datetime",
+      "pydantic"
+    ],
+    "complexity_score": 100
+  },
+  {
+    "file": "app.py",
+    "total_lines": 248,
+    "code_lines": 180,
+    "comment_lines": 21,
+    "classes": 0,
+    "functions": 1,
+    "async_functions": 7,
+    "imports": 19,
+    "decorators": 4,
+    "avg_function_length": 19.4,
+    "max_function_length": 53,
+    "class_names": [],
+    "function_names": [
+      "_count_tasks_by_type"
+    ],
+    "import_modules": [
+      "typing",
+      "collections",
+      "services.core.aiva_core.state.session_state_manager",
+      "services.core.aiva_core.analysis.initial_surface",
+      "__future__",
+      "services.aiva_common.enums",
+      "fastapi",
+      "services.core.aiva_core.analysis.dynamic_strategy_adjustment",
+      "services.aiva_common.mq",
+      "services.core.aiva_core.execution.execution_status_monitor",
+      "services.core.aiva_core.execution.task_generator",
+      "asyncio",
+      "services.aiva_common.config",
+      "tenacity",
+      "services.aiva_common.utils",
+      "services.core.aiva_core.processing",
+      "services.core.aiva_core.ingestion.scan_module_interface",
+      "services.aiva_common.schemas",
+      "services.core.aiva_core.execution.task_queue_manager"
+    ],
+    "complexity_score": 21
+  },
+  {
+    "file": "bio_neuron_master.py",
+    "total_lines": 689,
+    "code_lines": 488,
+    "comment_lines": 57,
+    "classes": 3,
+    "functions": 9,
+    "async_functions": 16,
+    "imports": 9,
+    "decorators": 0,
+    "avg_function_length": 23.5,
+    "max_function_length": 50,
+    "class_names": [
+      "OperationMode",
+      "ConversationContext",
+      "BioNeuronMasterController"
+    ],
+    "function_names": [
+      "__init__",
+      "__init__",
+      "_assess_risk",
+      "_record_interaction",
+      "_get_system_status"
+    ],
+    "import_modules": [
+      "typing",
+      "logging",
+      "services.core.aiva_core.ai_engine",
+      "__future__",
+      "services.core.aiva_core.rag",
+      "collections.abc",
+      "enum",
+      "datetime"
+    ],
+    "complexity_score": 45.480000000000004
+  },
+  {
+    "file": "business_schemas.py",
+    "total_lines": 342,
+    "code_lines": 187,
+    "comment_lines": 51,
+    "classes": 11,
+    "functions": 1,
+    "async_functions": 0,
+    "imports": 6,
+    "decorators": 1,
+    "avg_function_length": 4.0,
+    "max_function_length": 4,
+    "class_names": [
+      "RiskFactor",
+      "RiskAssessment",
+      "AttackPathNode",
+      "AttackPath",
+      "TaskDependency",
+      "TaskExecution",
+      "TaskQueue",
+      "TestStrategy",
+      "ModuleStatus",
+      "SystemOrchestration",
+      "VulnerabilityCorrelation"
+    ],
+    "function_names": [
+      "validate_task_id"
+    ],
+    "import_modules": [
+      "typing",
+      "services.aiva_common.schemas.ai",
+      "pydantic",
+      "__future__",
+      "services.aiva_common.enums",
+      "datetime"
+    ],
+    "complexity_score": 63
+  },
+  {
+    "file": "multilang_coordinator.py",
+    "total_lines": 117,
+    "code_lines": 88,
+    "comment_lines": 7,
+    "classes": 2,
+    "functions": 7,
+    "async_functions": 0,
+    "imports": 3,
+    "decorators": 0,
+    "avg_function_length": 12.1,
+    "max_function_length": 27,
+    "class_names": [
+      "AILanguage",
+      "MultiLanguageAICoordinator"
+    ],
+    "function_names": [
+      "__init__",
+      "check_module_availability",
+      "execute_task",
+      "_select_best_language",
+      "get_status"
+    ],
+    "import_modules": [
+      "typing",
+      "logging",
+      "enum"
+    ],
+    "complexity_score": 27
+  },
+  {
+    "file": "nlg_system.py",
+    "total_lines": 442,
+    "code_lines": 365,
+    "comment_lines": 20,
+    "classes": 1,
+    "functions": 16,
+    "async_functions": 0,
+    "imports": 4,
+    "decorators": 0,
+    "avg_function_length": 25.3,
+    "max_function_length": 80,
+    "class_names": [
+      "AIVANaturalLanguageGenerator"
+    ],
+    "function_names": [
+      "test_nlg_system",
+      "__init__",
+      "_init_response_templates",
+      "_init_context_analyzers",
+      "generate_response"
+    ],
+    "import_modules": [
+      "typing",
+      "re",
+      "__future__",
+      "random"
+    ],
+    "complexity_score": 46.3125
+  },
+  {
+    "file": "optimized_core.py",
+    "total_lines": 342,
+    "code_lines": 248,
+    "comment_lines": 24,
+    "classes": 2,
+    "functions": 10,
+    "async_functions": 8,
+    "imports": 13,
+    "decorators": 5,
+    "avg_function_length": 13.0,
+    "max_function_length": 32,
+    "class_names": [
+      "OptimizedBioNet",
+      "AIVAAutonomyProof"
+    ],
+    "function_names": [
+      "prove_aiva_independence",
+      "__init__",
+      "_get_cache_key",
+      "clear_cache",
+      "get_cache_stats"
+    ],
+    "import_modules": [
+      "typing",
+      "collections",
+      "numpy",
+      "performance",
+      "contextlib",
+      "__future__",
+      "collections.abc",
+      "gc",
+      "weakref",
+      "time",
+      "fastapi",
+      "asyncio",
+      "dataclasses"
+    ],
+    "complexity_score": 43
+  },
+  {
+    "file": "schemas.py",
+    "total_lines": 292,
+    "code_lines": 213,
+    "comment_lines": 20,
+    "classes": 12,
+    "functions": 5,
+    "async_functions": 0,
+    "imports": 2,
+    "decorators": 5,
+    "avg_function_length": 5.8,
+    "max_function_length": 8,
+    "class_names": [
+      "AssetAnalysis",
+      "VulnerabilityCandidate",
+      "XssCandidate",
+      "SqliCandidate",
+      "SsrfCandidate",
+      "IdorCandidate",
+      "AttackSurfaceAnalysis",
+      "TestTask",
+      "TestStrategy",
+      "StrategyAdjustment",
+      "LearningFeedback",
+      "StrategyGenerationConfig"
+    ],
+    "function_names": [
+      "validate_risk_score",
+      "validate_confidence",
+      "total_candidates",
+      "total_tasks",
+      "all_tasks"
+    ],
+    "import_modules": [
+      "typing",
+      "pydantic"
+    ],
+    "complexity_score": 72
+  },
+  {
+    "file": "unified_function_caller.py",
+    "total_lines": 475,
+    "code_lines": 399,
+    "comment_lines": 19,
+    "classes": 3,
+    "functions": 5,
+    "async_functions": 12,
+    "imports": 12,
+    "decorators": 2,
+    "avg_function_length": 24.1,
+    "max_function_length": 99,
+    "class_names": [
+      "FunctionCallResult",
+      "ModuleEndpoint",
+      "UnifiedFunctionCaller"
+    ],
+    "function_names": [
+      "get_unified_caller",
+      "__init__",
+      "_init_endpoints",
+      "list_all_functions",
+      "get_module_info"
+    ],
+    "import_modules": [
+      "typing",
+      "logging",
+      "services.function.function_xss.aiva_func_xss.smart_xss_detector",
+      "services.function.function_idor.aiva_func_idor.smart_idor_detector",
+      "__future__",
+      "aiohttp",
+      "time",
+      "services.function.function_sqli.aiva_func_sqli.smart_sqli_detector",
+      "httpx",
+      "asyncio",
+      "json",
+      "dataclasses"
+    ],
+    "complexity_score": 41.11764705882353
+  },
+  {
+    "file": "__init__.py",
+    "total_lines": 197,
+    "code_lines": 181,
+    "comment_lines": 7,
+    "classes": 0,
+    "functions": 0,
+    "async_functions": 0,
+    "imports": 6,
+    "decorators": 0,
+    "avg_function_length": 0,
+    "max_function_length": 0,
+    "class_names": [],
+    "function_names": [],
+    "import_modules": [
+      "services.aiva_common.enums",
+      "services.core.ai_models",
+      "services.core.models",
+      "services.aiva_common.schemas"
+    ],
+    "complexity_score": 6
+  },
+  {
+    "file": "ai_model_manager.py",
+    "total_lines": 485,
+    "code_lines": 370,
+    "comment_lines": 34,
+    "classes": 1,
+    "functions": 1,
+    "async_functions": 8,
+    "imports": 13,
+    "decorators": 0,
+    "avg_function_length": 49.6,
+    "max_function_length": 110,
+    "class_names": [
+      "AIModelManager"
+    ],
+    "function_names": [
+      "__init__"
+    ],
+    "import_modules": [
+      "typing",
+      "logging",
+      "numpy",
+      "bio_neuron_core",
+      "__future__",
+      "pickle",
+      "learning.model_trainer",
+      "pathlib",
+      "learning.experience_manager",
+      "datetime",
+      "learning.scalable_bio_trainer"
+    ],
+    "complexity_score": 49.55555555555556
+  },
+  {
+    "file": "anti_hallucination_module.py",
+    "total_lines": 331,
+    "code_lines": 244,
+    "comment_lines": 23,
+    "classes": 1,
+    "functions": 10,
+    "async_functions": 0,
+    "imports": 6,
+    "decorators": 0,
+    "avg_function_length": 29.8,
+    "max_function_length": 59,
+    "class_names": [
+      "AntiHallucinationModule"
+    ],
+    "function_names": [
+      "demo_anti_hallucination",
+      "__init__",
+      "_setup_logger",
+      "validate_attack_plan",
+      "_validate_single_step"
+    ],
+    "import_modules": [
+      "typing",
+      "logging",
+      "sys",
+      "time",
+      "pathlib",
+      "json"
+    ],
+    "complexity_score": 40.8
+  },
+  {
+    "file": "bio_neuron_core.py",
+    "total_lines": 868,
+    "code_lines": 648,
+    "comment_lines": 57,
+    "classes": 5,
+    "functions": 23,
+    "async_functions": 1,
+    "imports": 14,
+    "decorators": 0,
+    "avg_function_length": 32.5,
+    "max_function_length": 118,
+    "class_names": [
+      "BiologicalSpikingLayer",
+      "AntiHallucinationModule",
+      "ScalableBioNet",
+      "BioNeuronRAGAgent",
+      "BioNeuronCore"
+    ],
+    "function_names": [
+      "__init__",
+      "forward",
+      "forward_batch",
+      "__init__",
+      "check_confidence"
+    ],
+    "import_modules": [
+      "typing",
+      "logging",
+      "numpy",
+      "pathlib",
+      "execution_tracer.execution_monitor",
+      "__future__",
+      "services.integration.aiva_integration.reception.experience_repository",
+      "execution_tracer.task_executor",
+      "analysis.ast_trace_comparator",
+      "sys",
+      "training.model_updater",
+      "time",
+      "planner.task_converter",
+      "planner.orchestrator"
+    ],
+    "complexity_score": 97.45833333333334
+  },
+  {
+    "file": "knowledge_base.py",
+    "total_lines": 221,
+    "code_lines": 171,
+    "comment_lines": 12,
+    "classes": 1,
+    "functions": 8,
+    "async_functions": 0,
+    "imports": 5,
+    "decorators": 0,
+    "avg_function_length": 24.0,
+    "max_function_length": 40,
+    "class_names": [
+      "KnowledgeBase"
+    ],
+    "function_names": [
+      "__init__",
+      "index_codebase",
+      "_index_file",
+      "_add_chunk",
+      "_extract_keywords"
+    ],
+    "import_modules": [
+      "typing",
+      "logging",
+      "__future__",
+      "pathlib",
+      "ast"
+    ],
+    "complexity_score": 30.0
+  },
+  {
+    "file": "learning_engine.py",
+    "total_lines": 535,
+    "code_lines": 393,
+    "comment_lines": 27,
+    "classes": 10,
+    "functions": 33,
+    "async_functions": 0,
+    "imports": 9,
+    "decorators": 3,
+    "avg_function_length": 12.6,
+    "max_function_length": 55,
+    "class_names": [
+      "LossFunction",
+      "Optimizer",
+      "SGDOptimizer",
+      "AdamOptimizer",
+      "ExperienceBuffer",
+      "SupervisedLearner",
+      "ReinforcementLearner",
+      "OnlineLearner",
+      "TransferLearner",
+      "LearningEngineManager"
+    ],
+    "function_names": [
+      "mean_squared_error",
+      "cross_entropy",
+      "binary_cross_entropy",
+      "__init__",
+      "update"
+    ],
+    "import_modules": [
+      "typing",
+      "logging",
+      "numpy",
+      "neural_network",
+      "__future__",
+      "time",
+      "uuid",
+      "datetime",
+      "json"
+    ],
+    "complexity_score": 100
+  },
+  {
+    "file": "memory_manager.py",
+    "total_lines": 363,
+    "code_lines": 259,
+    "comment_lines": 21,
+    "classes": 2,
+    "functions": 15,
+    "async_functions": 0,
+    "imports": 8,
+    "decorators": 0,
+    "avg_function_length": 21.7,
+    "max_function_length": 45,
+    "class_names": [
+      "AdvancedMemoryManager",
+      "BatchProcessor"
+    ],
+    "function_names": [
+      "__init__",
+      "_generate_cache_key",
+      "get_cached_prediction",
+      "cache_prediction",
+      "_evict_oldest_cache_entry"
+    ],
+    "import_modules": [
+      "typing",
+      "logging",
+      "numpy",
+      "gc",
+      "sys",
+      "time",
+      "psutil",
+      "hashlib"
+    ],
+    "complexity_score": 49.66666666666667
+  },
+  {
+    "file": "neural_network.py",
+    "total_lines": 386,
+    "code_lines": 269,
+    "comment_lines": 26,
+    "classes": 7,
+    "functions": 26,
+    "async_functions": 0,
+    "imports": 5,
+    "decorators": 9,
+    "avg_function_length": 11.1,
+    "max_function_length": 32,
+    "class_names": [
+      "ActivationFunctions",
+      "DenseLayer",
+      "FeedForwardNetwork",
+      "RecurrentLayer",
+      "LSTMLayer",
+      "AttentionMechanism",
+      "NeuralNetworkBuilder"
+    ],
+    "function_names": [
+      "relu",
+      "relu_derivative",
+      "sigmoid",
+      "sigmoid_derivative",
+      "tanh"
+    ],
+    "import_modules": [
+      "typing",
+      "logging",
+      "numpy",
+      "__future__",
+      "time"
+    ],
+    "complexity_score": 92
+  },
+  {
+    "file": "performance_enhancements.py",
+    "total_lines": 432,
+    "code_lines": 303,
+    "comment_lines": 38,
+    "classes": 5,
+    "functions": 19,
+    "async_functions": 5,
+    "imports": 15,
+    "decorators": 2,
+    "avg_function_length": 15.1,
+    "max_function_length": 48,
+    "class_names": [
+      "PerformanceConfig",
+      "OptimizedBioSpikingLayer",
+      "OptimizedScalableBioNet",
+      "MemoryManager",
+      "ComponentPool"
+    ],
+    "function_names": [
+      "__init__",
+      "forward",
+      "_compute_forward",
+      "_get_cache_key",
+      "clear_cache"
+    ],
+    "import_modules": [
+      "typing",
+      "logging",
+      "numpy",
+      "contextlib",
+      "__future__",
+      "gc",
+      "weakref",
+      "time",
+      "psutil",
+      "tracemalloc",
+      "asyncio",
+      "dataclasses"
+    ],
+    "complexity_score": 78
+  },
+  {
+    "file": "tools.py",
+    "total_lines": 454,
+    "code_lines": 358,
+    "comment_lines": 9,
+    "classes": 7,
+    "functions": 20,
+    "async_functions": 0,
+    "imports": 9,
+    "decorators": 1,
+    "avg_function_length": 19.5,
+    "max_function_length": 43,
+    "class_names": [
+      "Tool",
+      "CodeReader",
+      "CodeWriter",
+      "CodeAnalyzer",
+      "CommandExecutor",
+      "ScanTrigger",
+      "VulnerabilityDetector"
+    ],
+    "function_names": [
+      "__init__",
+      "execute",
+      "__init__",
+      "execute",
+      "__init__"
+    ],
+    "import_modules": [
+      "subprocess",
+      "typing",
+      "__future__",
+      "pathlib",
+      "ast",
+      "abc"
+    ],
+    "complexity_score": 84
+  },
+  {
+    "file": "__init__.py",
+    "total_lines": 58,
+    "code_lines": 49,
+    "comment_lines": 5,
+    "classes": 0,
+    "functions": 0,
+    "async_functions": 0,
+    "imports": 6,
+    "decorators": 0,
+    "avg_function_length": 0,
+    "max_function_length": 0,
+    "class_names": [],
+    "function_names": [],
+    "import_modules": [
+      "bio_neuron_core",
+      "performance_enhancements",
+      "__future__",
+      "knowledge_base",
+      "tools",
+      "ai_model_manager"
+    ],
+    "complexity_score": 6
+  },
+  {
+    "file": "train_classifier.py",
+    "total_lines": 81,
+    "code_lines": 72,
+    "comment_lines": 0,
+    "classes": 0,
+    "functions": 3,
+    "async_functions": 0,
+    "imports": 8,
+    "decorators": 0,
+    "avg_function_length": 20.0,
+    "max_function_length": 34,
+    "class_names": [],
+    "function_names": [
+      "create_database",
+      "load_data",
+      "train_and_save_model"
+    ],
+    "import_modules": [
+      "sklearn.metrics",
+      "os",
+      "sqlite3",
+      "__future__",
+      "joblib",
+      "sklearn.feature_extraction.text",
+      "sklearn.linear_model",
+      "sklearn.model_selection"
+    ],
+    "complexity_score": 14
+  },
+  {
+    "file": "ast_trace_comparator.py",
+    "total_lines": 399,
+    "code_lines": 287,
+    "comment_lines": 21,
+    "classes": 3,
+    "functions": 13,
+    "async_functions": 0,
+    "imports": 6,
+    "decorators": 2,
+    "avg_function_length": 24.4,
+    "max_function_length": 74,
+    "class_names": [
+      "ComparisonMetrics",
+      "StepComparison",
+      "ASTTraceComparator"
+    ],
+    "function_names": [
+      "to_dict",
+      "__init__",
+      "compare",
+      "_extract_expected_steps",
+      "_extract_actual_steps"
+    ],
+    "import_modules": [
+      "typing",
+      "logging",
+      "__future__",
+      "planner.ast_parser",
+      "execution_tracer.trace_recorder",
+      "dataclasses"
+    ],
+    "complexity_score": 51.38461538461539
+  },
+  {
+    "file": "dynamic_strategy_adjustment.py",
+    "total_lines": 189,
+    "code_lines": 132,
+    "comment_lines": 15,
+    "classes": 1,
+    "functions": 7,
+    "async_functions": 0,
+    "imports": 3,
+    "decorators": 0,
+    "avg_function_length": 23.6,
+    "max_function_length": 36,
+    "class_names": [
+      "StrategyAdjuster"
+    ],
+    "function_names": [
+      "__init__",
+      "adjust",
+      "learn_from_result",
+      "_adjust_for_waf",
+      "_adjust_based_on_success_rate"
+    ],
+    "import_modules": [
+      "typing",
+      "__future__",
+      "services.aiva_common.utils"
+    ],
+    "complexity_score": 25.571428571428573
+  },
+  {
+    "file": "initial_surface.py",
+    "total_lines": 324,
+    "code_lines": 264,
+    "comment_lines": 8,
+    "classes": 1,
+    "functions": 8,
+    "async_functions": 0,
+    "imports": 4,
+    "decorators": 0,
+    "avg_function_length": 29.9,
+    "max_function_length": 55,
+    "class_names": [
+      "InitialAttackSurface"
+    ],
+    "function_names": [
+      "analyze",
+      "_summarize_asset",
+      "_calculate_risk_score",
+      "_detect_xss_candidates",
+      "_detect_sqli_candidates"
+    ],
+    "import_modules": [
+      "typing",
+      "services.aiva_common.schemas",
+      "services.core.aiva_core.schemas",
+      "__future__"
+    ],
+    "complexity_score": 34.875
+  },
+  {
+    "file": "plan_comparator.py",
+    "total_lines": 536,
+    "code_lines": 400,
+    "comment_lines": 30,
+    "classes": 2,
+    "functions": 14,
+    "async_functions": 0,
+    "imports": 5,
+    "decorators": 0,
+    "avg_function_length": 35.0,
+    "max_function_length": 83,
+    "class_names": [
+      "StepMatch",
+      "PlanComparator"
+    ],
+    "function_names": [
+      "__init__",
+      "__init__",
+      "compare",
+      "_match_steps",
+      "_calculate_step_similarity"
+    ],
+    "import_modules": [
+      "typing",
+      "logging",
+      "__future__",
+      "services.aiva_common.schemas",
+      "datetime"
+    ],
+    "complexity_score": 58.0
+  },
+  {
+    "file": "risk_assessment_engine.py",
+    "total_lines": 295,
+    "code_lines": 213,
+    "comment_lines": 23,
+    "classes": 1,
+    "functions": 6,
+    "async_functions": 3,
+    "imports": 8,
+    "decorators": 0,
+    "avg_function_length": 27.9,
+    "max_function_length": 56,
+    "class_names": [
+      "RiskAssessmentEngine"
+    ],
+    "function_names": [
+      "__init__",
+      "_calculate_base_score",
+      "_assess_phase_i_specific_risk",
+      "_adjust_by_exploitability",
+      "_adjust_by_asset_criticality"
+    ],
+    "import_modules": [
+      "typing",
+      "services.aiva_common.utils",
+      "__future__",
+      "services.aiva_common.enums",
+      "services.integration.aiva_integration.threat_intel.intel_aggregator",
+      "services.aiva_common.schemas",
+      "asyncio"
+    ],
+    "complexity_score": 32.888888888888886
+  },
+  {
+    "file": "strategy_generator.py",
+    "total_lines": 289,
+    "code_lines": 231,
+    "comment_lines": 10,
+    "classes": 1,
+    "functions": 9,
+    "async_functions": 0,
+    "imports": 3,
+    "decorators": 0,
+    "avg_function_length": 27.2,
+    "max_function_length": 61,
+    "class_names": [
+      "RuleBasedStrategyGenerator"
+    ],
+    "function_names": [
+      "__init__",
+      "generate",
+      "_generate_xss_tasks",
+      "_generate_sqli_tasks",
+      "_generate_ssrf_tasks"
+    ],
+    "import_modules": [
+      "services.aiva_common.schemas",
+      "logging",
+      "services.core.aiva_core.schemas"
+    ],
+    "complexity_score": 33.22222222222222
+  },
+  {
+    "file": "__init__.py",
+    "total_lines": 10,
+    "code_lines": 6,
+    "comment_lines": 0,
+    "classes": 0,
+    "functions": 0,
+    "async_functions": 0,
+    "imports": 1,
+    "decorators": 0,
+    "avg_function_length": 0,
+    "max_function_length": 0,
+    "class_names": [],
+    "function_names": [],
+    "import_modules": [
+      "plan_comparator"
+    ],
+    "complexity_score": 1
+  },
+  {
+    "file": "attack_chain.py",
+    "total_lines": 178,
+    "code_lines": 139,
+    "comment_lines": 3,
+    "classes": 2,
+    "functions": 9,
+    "async_functions": 0,
+    "imports": 4,
+    "decorators": 0,
+    "avg_function_length": 14.8,
+    "max_function_length": 29,
+    "class_names": [
+      "ChainStatus",
+      "AttackChain"
+    ],
+    "function_names": [
+      "__init__",
+      "add_step",
+      "can_execute_step",
+      "get_next_steps",
+      "mark_step_completed"
+    ],
+    "import_modules": [
+      "typing",
+      "logging",
+      "__future__",
+      "enum"
+    ],
+    "complexity_score": 32
+  },
+  {
+    "file": "attack_executor.py",
+    "total_lines": 380,
+    "code_lines": 292,
+    "comment_lines": 19,
+    "classes": 2,
+    "functions": 4,
+    "async_functions": 5,
+    "imports": 11,
+    "decorators": 0,
+    "avg_function_length": 34.4,
+    "max_function_length": 100,
+    "class_names": [
+      "ExecutionMode",
+      "AttackExecutor"
+    ],
+    "function_names": [
+      "__init__",
+      "_create_aborted_result",
+      "_generate_recommendations",
+      "get_statistics"
+    ],
+    "import_modules": [
+      "typing",
+      "logging",
+      "__future__",
+      "enum",
+      "services.aiva_common.enums",
+      "services.aiva_common.schemas",
+      "asyncio",
+      "datetime"
+    ],
+    "complexity_score": 43.44444444444444
+  },
+  {
+    "file": "attack_validator.py",
+    "total_lines": 316,
+    "code_lines": 244,
+    "comment_lines": 13,
+    "classes": 2,
+    "functions": 11,
+    "async_functions": 0,
+    "imports": 5,
+    "decorators": 0,
+    "avg_function_length": 24.5,
+    "max_function_length": 53,
+    "class_names": [
+      "ValidationLevel",
+      "AttackValidator"
+    ],
+    "function_names": [
+      "__init__",
+      "_load_false_positive_patterns",
+      "validate_result",
+      "_basic_validation",
+      "_default_validation"
+    ],
+    "import_modules": [
+      "typing",
+      "logging",
+      "__future__",
+      "enum",
+      "re"
+    ],
+    "complexity_score": 41.54545454545455
+  },
+  {
+    "file": "exploit_manager.py",
+    "total_lines": 205,
+    "code_lines": 161,
+    "comment_lines": 7,
+    "classes": 2,
+    "functions": 8,
+    "async_functions": 0,
+    "imports": 4,
+    "decorators": 0,
+    "avg_function_length": 19.5,
+    "max_function_length": 62,
+    "class_names": [
+      "ExploitType",
+      "ExploitManager"
+    ],
+    "function_names": [
+      "__init__",
+      "_initialize_exploits",
+      "_register_exploit",
+      "get_exploits_by_type",
+      "get_exploit"
+    ],
+    "import_modules": [
+      "typing",
+      "logging",
+      "__future__",
+      "enum"
+    ],
+    "complexity_score": 30
+  },
+  {
+    "file": "payload_generator.py",
+    "total_lines": 197,
+    "code_lines": 151,
+    "comment_lines": 5,
+    "classes": 2,
+    "functions": 6,
+    "async_functions": 0,
+    "imports": 6,
+    "decorators": 0,
+    "avg_function_length": 26.0,
+    "max_function_length": 56,
+    "class_names": [
+      "EncodingType",
+      "PayloadGenerator"
+    ],
+    "function_names": [
+      "__init__",
+      "_load_templates",
+      "generate",
+      "_encode_payload",
+      "generate_fuzzing_payloads"
+    ],
+    "import_modules": [
+      "typing",
+      "logging",
+      "base64",
+      "__future__",
+      "urllib.parse",
+      "enum"
+    ],
+    "complexity_score": 34.0
+  },
+  {
+    "file": "__init__.py",
+    "total_lines": 31,
+    "code_lines": 25,
+    "comment_lines": 0,
+    "classes": 0,
+    "functions": 0,
+    "async_functions": 0,
+    "imports": 5,
+    "decorators": 0,
+    "avg_function_length": 0,
+    "max_function_length": 0,
+    "class_names": [],
+    "function_names": [],
+    "import_modules": [
+      "attack_validator",
+      "payload_generator",
+      "attack_executor",
+      "attack_chain",
+      "exploit_manager"
+    ],
+    "complexity_score": 5
+  },
+  {
+    "file": "authz_mapper.py",
+    "total_lines": 414,
+    "code_lines": 304,
+    "comment_lines": 25,
+    "classes": 1,
+    "functions": 12,
+    "async_functions": 0,
+    "imports": 5,
+    "decorators": 0,
+    "avg_function_length": 31.2,
+    "max_function_length": 72,
+    "class_names": [
+      "AuthZMapper"
+    ],
+    "function_names": [
+      "main",
+      "__init__",
+      "assign_role_to_user",
+      "revoke_role_from_user",
+      "set_user_attribute"
+    ],
+    "import_modules": [
+      "typing",
+      "permission_matrix",
+      "datetime",
+      "structlog"
+    ],
+    "complexity_score": 45.16666666666667
+  },
+  {
+    "file": "matrix_visualizer.py",
+    "total_lines": 523,
+    "code_lines": 430,
+    "comment_lines": 18,
+    "classes": 1,
+    "functions": 11,
+    "async_functions": 0,
+    "imports": 10,
+    "decorators": 0,
+    "avg_function_length": 43.7,
+    "max_function_length": 179,
+    "class_names": [
+      "MatrixVisualizer"
+    ],
+    "function_names": [
+      "main",
+      "__init__",
+      "generate_heatmap",
+      "generate_coverage_chart",
+      "generate_role_comparison_chart"
+    ],
+    "import_modules": [
+      "plotly.subplots",
+      "permission_matrix",
+      "jinja2",
+      "structlog",
+      "pathlib",
+      "datetime",
+      "plotly.graph_objects"
+    ],
+    "complexity_score": 60.72727272727273
+  },
+  {
+    "file": "permission_matrix.py",
+    "total_lines": 457,
+    "code_lines": 355,
+    "comment_lines": 19,
+    "classes": 1,
+    "functions": 16,
+    "async_functions": 0,
+    "imports": 6,
+    "decorators": 0,
+    "avg_function_length": 25.7,
+    "max_function_length": 45,
+    "class_names": [
+      "PermissionMatrix"
+    ],
+    "function_names": [
+      "main",
+      "__init__",
+      "add_role",
+      "add_resource",
+      "add_permission"
+    ],
+    "import_modules": [
+      "typing",
+      "numpy",
+      "pandas",
+      "services.aiva_common.enums",
+      "structlog",
+      "datetime"
+    ],
+    "complexity_score": 48.6875
+  },
+  {
+    "file": "__init__.py",
+    "total_lines": 18,
+    "code_lines": 13,
+    "comment_lines": 0,
+    "classes": 0,
+    "functions": 0,
+    "async_functions": 0,
+    "imports": 3,
+    "decorators": 0,
+    "avg_function_length": 0,
+    "max_function_length": 0,
+    "class_names": [],
+    "function_names": [],
+    "import_modules": [
+      "matrix_visualizer",
+      "authz_mapper",
+      "permission_matrix"
+    ],
+    "complexity_score": 3
+  },
+  {
+    "file": "finding_helper.py",
+    "total_lines": 71,
+    "code_lines": 61,
+    "comment_lines": 0,
+    "classes": 0,
+    "functions": 1,
+    "async_functions": 0,
+    "imports": 5,
+    "decorators": 0,
+    "avg_function_length": 53.0,
+    "max_function_length": 53,
+    "class_names": [],
+    "function_names": [
+      "create_bizlogic_finding"
+    ],
+    "import_modules": [
+      "typing",
+      "services.aiva_common.utils",
+      "__future__",
+      "services.aiva_common.enums",
+      "services.aiva_common.schemas"
+    ],
+    "complexity_score": 40.0
+  },
+  {
+    "file": "worker.py",
+    "total_lines": 138,
+    "code_lines": 104,
+    "comment_lines": 6,
+    "classes": 0,
+    "functions": 0,
+    "async_functions": 2,
+    "imports": 9,
+    "decorators": 0,
+    "avg_function_length": 56.5,
+    "max_function_length": 61,
+    "class_names": [],
+    "function_names": [],
+    "import_modules": [
+      "price_manipulation_tester",
+      "services.aiva_common.utils",
+      "services.aiva_common.mq",
+      "workflow_bypass_tester",
+      "__future__",
+      "services.aiva_common.enums",
+      "race_condition_tester",
+      "services.aiva_common.schemas",
+      "json"
+    ],
+    "complexity_score": 45.5
+  },
+  {
+    "file": "__init__.py",
+    "total_lines": 23,
+    "code_lines": 17,
+    "comment_lines": 0,
+    "classes": 0,
+    "functions": 0,
+    "async_functions": 0,
+    "imports": 1,
+    "decorators": 0,
+    "avg_function_length": 0,
+    "max_function_length": 0,
+    "class_names": [],
+    "function_names": [],
+    "import_modules": [
+      "__future__"
+    ],
+    "complexity_score": 1
+  },
+  {
+    "file": "enhanced_decision_agent.py",
+    "total_lines": 542,
+    "code_lines": 415,
+    "comment_lines": 30,
+    "classes": 5,
+    "functions": 19,
+    "async_functions": 0,
+    "imports": 7,
+    "decorators": 0,
+    "avg_function_length": 25.2,
+    "max_function_length": 56,
+    "class_names": [
+      "RiskLevel",
+      "OperationMode",
+      "DecisionContext",
+      "Decision",
+      "EnhancedDecisionAgent"
+    ],
+    "function_names": [
+      "demo_enhanced_decision_agent",
+      "__init__",
+      "__init__",
+      "__init__",
+      "_setup_logger"
+    ],
+    "import_modules": [
+      "typing",
+      "logging",
+      "enum",
+      "sys",
+      "pathlib",
+      "datetime",
+      "json"
+    ],
+    "complexity_score": 75.21052631578948
+  },
+  {
+    "file": "attack_plan_mapper.py",
+    "total_lines": 175,
+    "code_lines": 121,
+    "comment_lines": 23,
+    "classes": 6,
+    "functions": 2,
+    "async_functions": 4,
+    "imports": 5,
+    "decorators": 0,
+    "avg_function_length": 22.2,
+    "max_function_length": 77,
+    "class_names": [
+      "AttackPlanMapper",
+      "FunctionTaskPayload",
+      "FunctionTaskTarget",
+      "FunctionTaskContext",
+      "AivaMessage",
+      "ModuleName"
+    ],
+    "function_names": [
+      "__init__",
+      "_map_vulnerability_to_module"
+    ],
+    "import_modules": [
+      "typing",
+      "logging",
+      "services.aiva_common.schemas.generated.tasks",
+      "services.aiva_common.enums.modules",
+      "services.aiva_common.schemas.generated.messaging"
+    ],
+    "complexity_score": 41.16666666666667
+  },
+  {
+    "file": "execution_status_monitor.py",
+    "total_lines": 255,
+    "code_lines": 200,
+    "comment_lines": 11,
+    "classes": 1,
+    "functions": 8,
+    "async_functions": 1,
+    "imports": 5,
+    "decorators": 0,
+    "avg_function_length": 25.2,
+    "max_function_length": 56,
+    "class_names": [
+      "ExecutionStatusMonitor"
+    ],
+    "function_names": [
+      "__init__",
+      "record_worker_heartbeat",
+      "record_task_start",
+      "record_task_completion",
+      "get_system_health"
+    ],
+    "import_modules": [
+      "typing",
+      "services.aiva_common.utils",
+      "__future__",
+      "asyncio",
+      "datetime"
+    ],
+    "complexity_score": 31.22222222222222
+  },
+  {
+    "file": "plan_executor.py",
+    "total_lines": 616,
+    "code_lines": 480,
+    "comment_lines": 30,
+    "classes": 1,
+    "functions": 5,
+    "async_functions": 10,
+    "imports": 8,
+    "decorators": 0,
+    "avg_function_length": 37.2,
+    "max_function_length": 128,
+    "class_names": [
+      "PlanExecutor"
+    ],
+    "function_names": [
+      "__init__",
+      "_prepare_task_payload",
+      "_calculate_metrics",
+      "_calculate_sequence_accuracy",
+      "_generate_recommendations"
+    ],
+    "import_modules": [
+      "typing",
+      "logging",
+      "__future__",
+      "trace_logger",
+      "uuid",
+      "services.aiva_common.schemas",
+      "asyncio",
+      "datetime"
+    ],
+    "complexity_score": 40.2
+  },
+  {
+    "file": "task_generator.py",
+    "total_lines": 72,
+    "code_lines": 66,
+    "comment_lines": 0,
+    "classes": 1,
+    "functions": 1,
+    "async_functions": 0,
+    "imports": 4,
+    "decorators": 0,
+    "avg_function_length": 56.0,
+    "max_function_length": 56,
+    "class_names": [
+      "TaskGenerator"
+    ],
+    "function_names": [
+      "from_strategy"
+    ],
+    "import_modules": [
+      "services.aiva_common.enums",
+      "services.aiva_common.schemas",
+      "__future__",
+      "collections.abc"
+    ],
+    "complexity_score": 47.0
+  },
+  {
+    "file": "task_queue_manager.py",
+    "total_lines": 213,
+    "code_lines": 167,
+    "comment_lines": 8,
+    "classes": 1,
+    "functions": 9,
+    "async_functions": 0,
+    "imports": 8,
+    "decorators": 0,
+    "avg_function_length": 20.2,
+    "max_function_length": 39,
+    "class_names": [
+      "TaskQueueManager"
+    ],
+    "function_names": [
+      "__init__",
+      "enqueue_task",
+      "get_pending_tasks",
+      "mark_task_running",
+      "mark_task_completed"
+    ],
+    "import_modules": [
+      "typing",
+      "collections",
+      "services.aiva_common.utils",
+      "__future__",
+      "services.aiva_common.enums",
+      "queue",
+      "services.aiva_common.schemas",
+      "datetime"
+    ],
+    "complexity_score": 31.22222222222222
+  },
+  {
+    "file": "trace_logger.py",
+    "total_lines": 351,
+    "code_lines": 279,
+    "comment_lines": 6,
+    "classes": 1,
+    "functions": 9,
+    "async_functions": 5,
+    "imports": 6,
+    "decorators": 0,
+    "avg_function_length": 22.1,
+    "max_function_length": 53,
+    "class_names": [
+      "TraceLogger"
+    ],
+    "function_names": [
+      "__init__",
+      "create_trace_record",
+      "_update_session_state",
+      "create_session",
+      "get_session"
+    ],
+    "import_modules": [
+      "typing",
+      "logging",
+      "__future__",
+      "uuid",
+      "services.aiva_common.schemas",
+      "datetime"
+    ],
+    "complexity_score": 31.142857142857142
+  },
+  {
+    "file": "__init__.py",
+    "total_lines": 12,
+    "code_lines": 8,
+    "comment_lines": 0,
+    "classes": 0,
+    "functions": 0,
+    "async_functions": 0,
+    "imports": 3,
+    "decorators": 0,
+    "avg_function_length": 0,
+    "max_function_length": 0,
+    "class_names": [],
+    "function_names": [],
+    "import_modules": [
+      "attack_plan_mapper",
+      "plan_executor",
+      "trace_logger"
+    ],
+    "complexity_score": 3
+  },
+  {
+    "file": "execution_monitor.py",
+    "total_lines": 305,
+    "code_lines": 250,
+    "comment_lines": 4,
+    "classes": 2,
+    "functions": 11,
+    "async_functions": 0,
+    "imports": 9,
+    "decorators": 1,
+    "avg_function_length": 22.7,
+    "max_function_length": 43,
+    "class_names": [
+      "ExecutionContext",
+      "ExecutionMonitor"
+    ],
+    "function_names": [
+      "__init__",
+      "start_monitoring",
+      "start_task_execution",
+      "record_step",
+      "record_tool_invocation"
+    ],
+    "import_modules": [
+      "typing",
+      "logging",
+      "__future__",
+      "planner.tool_selector",
+      "planner.task_converter",
+      "planner.orchestrator",
+      "datetime",
+      "dataclasses",
+      "trace_recorder"
+    ],
+    "complexity_score": 43.72727272727273
+  },
+  {
+    "file": "task_executor.py",
+    "total_lines": 281,
+    "code_lines": 216,
+    "comment_lines": 11,
+    "classes": 2,
+    "functions": 1,
+    "async_functions": 6,
+    "imports": 7,
+    "decorators": 1,
+    "avg_function_length": 33.7,
+    "max_function_length": 52,
+    "class_names": [
+      "ExecutionResult",
+      "TaskExecutor"
+    ],
+    "function_names": [
+      "__init__"
+    ],
+    "import_modules": [
+      "typing",
+      "logging",
+      "__future__",
+      "planner.task_converter",
+      "dataclasses",
+      "execution_monitor",
+      "planner.tool_selector"
+    ],
+    "complexity_score": 32.714285714285715
+  },
+  {
+    "file": "trace_recorder.py",
+    "total_lines": 300,
+    "code_lines": 253,
+    "comment_lines": 0,
+    "classes": 4,
+    "functions": 19,
+    "async_functions": 0,
+    "imports": 8,
+    "decorators": 2,
+    "avg_function_length": 11.1,
+    "max_function_length": 40,
+    "class_names": [
+      "TraceType",
+      "TraceEntry",
+      "ExecutionTrace",
+      "TraceRecorder"
+    ],
+    "function_names": [
+      "to_dict",
+      "to_json",
+      "add_entry",
+      "get_entries_by_task",
+      "get_entries_by_type"
+    ],
+    "import_modules": [
+      "typing",
+      "logging",
+      "__future__",
+      "enum",
+      "uuid",
+      "datetime",
+      "json",
+      "dataclasses"
+    ],
+    "complexity_score": 66
+  },
+  {
+    "file": "__init__.py",
+    "total_lines": 20,
+    "code_lines": 16,
+    "comment_lines": 0,
+    "classes": 0,
+    "functions": 0,
+    "async_functions": 0,
+    "imports": 3,
+    "decorators": 0,
+    "avg_function_length": 0,
+    "max_function_length": 0,
+    "class_names": [],
+    "function_names": [],
+    "import_modules": [
+      "task_executor",
+      "execution_monitor",
+      "trace_recorder"
+    ],
+    "complexity_score": 3
+  },
+  {
+    "file": "scan_module_interface.py",
+    "total_lines": 140,
+    "code_lines": 107,
+    "comment_lines": 2,
+    "classes": 1,
+    "functions": 4,
+    "async_functions": 1,
+    "imports": 3,
+    "decorators": 0,
+    "avg_function_length": 24.0,
+    "max_function_length": 34,
+    "class_names": [
+      "ScanModuleInterface"
+    ],
+    "function_names": [
+      "_process_assets",
+      "_process_fingerprints",
+      "_calculate_risk_score",
+      "_categorize_asset"
+    ],
+    "import_modules": [
+      "typing",
+      "services.aiva_common.schemas",
+      "__future__"
+    ],
+    "complexity_score": 20.0
+  },
+  {
+    "file": "__init__.py",
+    "total_lines": 10,
+    "code_lines": 6,
+    "comment_lines": 1,
+    "classes": 0,
+    "functions": 0,
+    "async_functions": 0,
+    "imports": 0,
+    "decorators": 0,
+    "avg_function_length": 0,
+    "max_function_length": 0,
+    "class_names": [],
+    "function_names": [],
+    "import_modules": [],
+    "complexity_score": 0
+  },
+  {
+    "file": "experience_manager.py",
+    "total_lines": 374,
+    "code_lines": 293,
+    "comment_lines": 16,
+    "classes": 1,
+    "functions": 4,
+    "async_functions": 7,
+    "imports": 8,
+    "decorators": 0,
+    "avg_function_length": 29.9,
+    "max_function_length": 49,
+    "class_names": [
+      "ExperienceManager"
+    ],
+    "function_names": [
+      "__init__",
+      "_extract_context",
+      "_auto_label",
+      "_calculate_quality_score"
+    ],
+    "import_modules": [
+      "typing",
+      "logging",
+      "json",
+      "__future__",
+      "pathlib",
+      "uuid",
+      "services.aiva_common.schemas",
+      "datetime"
+    ],
+    "complexity_score": 30.90909090909091
+  },
+  {
+    "file": "model_trainer.py",
+    "total_lines": 608,
+    "code_lines": 435,
+    "comment_lines": 44,
+    "classes": 1,
+    "functions": 9,
+    "async_functions": 9,
+    "imports": 8,
+    "decorators": 0,
+    "avg_function_length": 31.0,
+    "max_function_length": 82,
+    "class_names": [
+      "ModelTrainer"
+    ],
+    "function_names": [
+      "__init__",
+      "_prepare_supervised_data",
+      "_extract_features",
+      "_prepare_rl_data",
+      "_build_state_vector"
+    ],
+    "import_modules": [
+      "typing",
+      "logging",
+      "numpy",
+      "__future__",
+      "pathlib",
+      "uuid",
+      "services.aiva_common.schemas",
+      "datetime"
+    ],
+    "complexity_score": 42.0
+  },
+  {
+    "file": "scalable_bio_trainer.py",
+    "total_lines": 230,
+    "code_lines": 172,
+    "comment_lines": 9,
+    "classes": 2,
+    "functions": 9,
+    "async_functions": 0,
+    "imports": 6,
+    "decorators": 1,
+    "avg_function_length": 20.7,
+    "max_function_length": 69,
+    "class_names": [
+      "ScalableBioTrainingConfig",
+      "ScalableBioTrainer"
+    ],
+    "function_names": [
+      "__init__",
+      "train",
+      "_train_epoch",
+      "_validate",
+      "_compute_loss"
+    ],
+    "import_modules": [
+      "typing",
+      "logging",
+      "numpy",
+      "model_trainer",
+      "__future__",
+      "dataclasses"
+    ],
+    "complexity_score": 34.66666666666667
+  },
+  {
+    "file": "__init__.py",
+    "total_lines": 12,
+    "code_lines": 8,
+    "comment_lines": 0,
+    "classes": 0,
+    "functions": 0,
+    "async_functions": 0,
+    "imports": 3,
+    "decorators": 0,
+    "avg_function_length": 0,
+    "max_function_length": 0,
+    "class_names": [],
+    "function_names": [],
+    "import_modules": [
+      "model_trainer",
+      "experience_manager",
+      "scalable_bio_trainer"
+    ],
+    "complexity_score": 3
+  },
+  {
+    "file": "message_broker.py",
+    "total_lines": 344,
+    "code_lines": 261,
+    "comment_lines": 17,
+    "classes": 2,
+    "functions": 2,
+    "async_functions": 9,
+    "imports": 12,
+    "decorators": 0,
+    "avg_function_length": 26.3,
+    "max_function_length": 48,
+    "class_names": [
+      "MessageBroker",
+      "RPCClient"
+    ],
+    "function_names": [
+      "__init__",
+      "__init__"
+    ],
+    "import_modules": [
+      "typing",
+      "logging",
+      "contextlib",
+      "services.aiva_common.config",
+      "__future__",
+      "collections.abc",
+      "services.aiva_common.enums",
+      "aio_pika",
+      "services.aiva_common.schemas",
+      "asyncio",
+      "json",
+      "aio_pika.abc"
+    ],
+    "complexity_score": 32.27272727272727
+  },
+  {
+    "file": "result_collector.py",
+    "total_lines": 392,
+    "code_lines": 297,
+    "comment_lines": 17,
+    "classes": 1,
+    "functions": 4,
+    "async_functions": 14,
+    "imports": 10,
+    "decorators": 0,
+    "avg_function_length": 18.9,
+    "max_function_length": 38,
+    "class_names": [
+      "ResultCollector"
+    ],
+    "function_names": [
+      "__init__",
+      "register_handler",
+      "unregister_handler",
+      "_set_pending_result"
+    ],
+    "import_modules": [
+      "typing",
+      "logging",
+      "json",
+      "__future__",
+      "collections.abc",
+      "message_broker",
+      "services.aiva_common.schemas",
+      "asyncio",
+      "datetime",
+      "aio_pika.abc"
+    ],
+    "complexity_score": 23
+  },
+  {
+    "file": "task_dispatcher.py",
+    "total_lines": 516,
+    "code_lines": 412,
+    "comment_lines": 13,
+    "classes": 1,
+    "functions": 6,
+    "async_functions": 8,
+    "imports": 9,
+    "decorators": 0,
+    "avg_function_length": 33.1,
+    "max_function_length": 60,
+    "class_names": [
+      "TaskDispatcher"
+    ],
+    "function_names": [
+      "__init__",
+      "_get_topic_for_tool",
+      "_build_task_payload",
+      "_build_message",
+      "register_callback"
+    ],
+    "import_modules": [
+      "typing",
+      "logging",
+      "__future__",
+      "collections.abc",
+      "message_broker",
+      "uuid",
+      "services.aiva_common.schemas",
+      "asyncio",
+      "datetime"
+    ],
+    "complexity_score": 39.142857142857146
+  },
+  {
+    "file": "__init__.py",
+    "total_lines": 12,
+    "code_lines": 8,
+    "comment_lines": 0,
+    "classes": 0,
+    "functions": 0,
+    "async_functions": 0,
+    "imports": 3,
+    "decorators": 0,
+    "avg_function_length": 0,
+    "max_function_length": 0,
+    "class_names": [],
+    "function_names": [],
+    "import_modules": [
+      "message_broker",
+      "result_collector",
+      "task_dispatcher"
+    ],
+    "complexity_score": 3
+  },
+  {
+    "file": "to_functions.py",
+    "total_lines": 25,
+    "code_lines": 21,
+    "comment_lines": 0,
+    "classes": 0,
+    "functions": 1,
+    "async_functions": 0,
+    "imports": 4,
+    "decorators": 0,
+    "avg_function_length": 17.0,
+    "max_function_length": 17,
+    "class_names": [],
+    "function_names": [
+      "to_function_message"
+    ],
+    "import_modules": [
+      "services.aiva_common.enums",
+      "services.aiva_common.schemas",
+      "__future__",
+      "services.aiva_common.utils"
+    ],
+    "complexity_score": 6
+  },
+  {
+    "file": "__init__.py",
+    "total_lines": 14,
+    "code_lines": 10,
+    "comment_lines": 1,
+    "classes": 0,
+    "functions": 0,
+    "async_functions": 0,
+    "imports": 1,
+    "decorators": 0,
+    "avg_function_length": 0,
+    "max_function_length": 0,
+    "class_names": [],
+    "function_names": [],
+    "import_modules": [
+      "to_functions"
+    ],
+    "complexity_score": 1
+  },
+  {
+    "file": "memory_manager.py",
+    "total_lines": 138,
+    "code_lines": 103,
+    "comment_lines": 7,
+    "classes": 2,
+    "functions": 7,
+    "async_functions": 4,
+    "imports": 9,
+    "decorators": 1,
+    "avg_function_length": 9.5,
+    "max_function_length": 17,
+    "class_names": [
+      "ComponentPool",
+      "MemoryManager"
+    ],
+    "function_names": [
+      "__init__",
+      "return_component",
+      "get_pool_stats",
+      "__init__",
+      "_get_memory_usage_mb"
+    ],
+    "import_modules": [
+      "typing",
+      "contextlib",
+      "__future__",
+      "gc",
+      "weakref",
+      "time",
+      "psutil",
+      "tracemalloc",
+      "asyncio"
+    ],
+    "complexity_score": 33
+  },
+  {
+    "file": "monitoring.py",
+    "total_lines": 127,
+    "code_lines": 95,
+    "comment_lines": 3,
+    "classes": 2,
+    "functions": 8,
+    "async_functions": 1,
+    "imports": 7,
+    "decorators": 1,
+    "avg_function_length": 18.0,
+    "max_function_length": 41,
+    "class_names": [
+      "Metric",
+      "MetricsCollector"
+    ],
+    "function_names": [
+      "monitor_performance",
+      "__init__",
+      "record_duration",
+      "increment_counter",
+      "set_gauge"
+    ],
+    "import_modules": [
+      "typing",
+      "collections",
+      "numpy",
+      "__future__",
+      "time",
+      "monitoring",
+      "dataclasses"
+    ],
+    "complexity_score": 33
+  },
+  {
+    "file": "parallel_processor.py",
+    "total_lines": 78,
+    "code_lines": 58,
+    "comment_lines": 5,
+    "classes": 1,
+    "functions": 2,
+    "async_functions": 3,
+    "imports": 4,
+    "decorators": 0,
+    "avg_function_length": 11.8,
+    "max_function_length": 15,
+    "class_names": [
+      "ParallelMessageProcessor"
+    ],
+    "function_names": [
+      "__init__",
+      "_update_avg_duration"
+    ],
+    "import_modules": [
+      "time",
+      "__future__",
+      "asyncio",
+      "collections.abc"
+    ],
+    "complexity_score": 13
+  },
+  {
+    "file": "__init__.py",
+    "total_lines": 18,
+    "code_lines": 16,
+    "comment_lines": 0,
+    "classes": 0,
+    "functions": 0,
+    "async_functions": 0,
+    "imports": 3,
+    "decorators": 0,
+    "avg_function_length": 0,
+    "max_function_length": 0,
+    "class_names": [],
+    "function_names": [],
+    "import_modules": [
+      "monitoring",
+      "parallel_processor",
+      "memory_manager"
+    ],
+    "complexity_score": 3
+  },
+  {
+    "file": "ast_parser.py",
+    "total_lines": 265,
+    "code_lines": 201,
+    "comment_lines": 9,
+    "classes": 5,
+    "functions": 11,
+    "async_functions": 0,
+    "imports": 5,
+    "decorators": 3,
+    "avg_function_length": 16.2,
+    "max_function_length": 57,
+    "class_names": [
+      "NodeType",
+      "AttackFlowNode",
+      "AttackFlowEdge",
+      "AttackFlowGraph",
+      "ASTParser"
+    ],
+    "function_names": [
+      "__repr__",
+      "__repr__",
+      "add_node",
+      "add_edge",
+      "get_start_node"
+    ],
+    "import_modules": [
+      "typing",
+      "logging",
+      "__future__",
+      "enum",
+      "dataclasses"
+    ],
+    "complexity_score": 52
+  },
+  {
+    "file": "orchestrator.py",
+    "total_lines": 187,
+    "code_lines": 144,
+    "comment_lines": 4,
+    "classes": 2,
+    "functions": 7,
+    "async_functions": 0,
+    "imports": 8,
+    "decorators": 1,
+    "avg_function_length": 20.0,
+    "max_function_length": 48,
+    "class_names": [
+      "ExecutionPlan",
+      "AttackOrchestrator"
+    ],
+    "function_names": [
+      "get_decision_for_task",
+      "__init__",
+      "create_execution_plan",
+      "get_next_executable_tasks",
+      "update_task_status"
+    ],
+    "import_modules": [
+      "typing",
+      "task_converter",
+      "logging",
+      "tool_selector",
+      "ast_parser",
+      "__future__",
+      "uuid",
+      "dataclasses"
+    ],
+    "complexity_score": 32
+  },
+  {
+    "file": "task_converter.py",
+    "total_lines": 248,
+    "code_lines": 179,
+    "comment_lines": 10,
+    "classes": 5,
+    "functions": 9,
+    "async_functions": 0,
+    "imports": 7,
+    "decorators": 2,
+    "avg_function_length": 17.9,
+    "max_function_length": 45,
+    "class_names": [
+      "TaskStatus",
+      "TaskPriority",
+      "ExecutableTask",
+      "TaskSequence",
+      "TaskConverter"
+    ],
+    "function_names": [
+      "__repr__",
+      "add_task",
+      "get_task",
+      "get_pending_tasks",
+      "get_runnable_tasks"
+    ],
+    "import_modules": [
+      "typing",
+      "logging",
+      "ast_parser",
+      "__future__",
+      "enum",
+      "uuid",
+      "dataclasses"
+    ],
+    "complexity_score": 50
+  },
+  {
+    "file": "tool_selector.py",
+    "total_lines": 222,
+    "code_lines": 167,
+    "comment_lines": 9,
+    "classes": 3,
+    "functions": 7,
+    "async_functions": 0,
+    "imports": 6,
+    "decorators": 1,
+    "avg_function_length": 23.3,
+    "max_function_length": 41,
+    "class_names": [
+      "ServiceType",
+      "ToolDecision",
+      "ToolSelector"
+    ],
+    "function_names": [
+      "__repr__",
+      "__init__",
+      "select_tool",
+      "_select_service_type",
+      "_determine_endpoint_and_function"
+    ],
+    "import_modules": [
+      "typing",
+      "task_converter",
+      "logging",
+      "__future__",
+      "enum",
+      "dataclasses"
+    ],
+    "complexity_score": 38.285714285714285
+  },
+  {
+    "file": "__init__.py",
+    "total_lines": 23,
+    "code_lines": 19,
+    "comment_lines": 0,
+    "classes": 0,
+    "functions": 0,
+    "async_functions": 0,
+    "imports": 4,
+    "decorators": 0,
+    "avg_function_length": 0,
+    "max_function_length": 0,
+    "class_names": [],
+    "function_names": [],
+    "import_modules": [
+      "task_converter",
+      "ast_parser",
+      "orchestrator",
+      "tool_selector"
+    ],
+    "complexity_score": 4
+  },
+  {
+    "file": "ai_summary_plugin.py",
+    "total_lines": 364,
+    "code_lines": 285,
+    "comment_lines": 14,
+    "classes": 1,
+    "functions": 21,
+    "async_functions": 1,
+    "imports": 5,
+    "decorators": 0,
+    "avg_function_length": 14.8,
+    "max_function_length": 73,
+    "class_names": [
+      "AISummaryPlugin"
+    ],
+    "function_names": [
+      "__init__",
+      "is_enabled",
+      "enable",
+      "disable",
+      "get_status"
+    ],
+    "import_modules": [
+      "typing",
+      "logging",
+      "json",
+      "__future__",
+      "datetime"
+    ],
+    "complexity_score": 52
+  },
+  {
+    "file": "scan_result_processor.py",
+    "total_lines": 364,
+    "code_lines": 293,
+    "comment_lines": 14,
+    "classes": 1,
+    "functions": 1,
+    "async_functions": 8,
+    "imports": 14,
+    "decorators": 0,
+    "avg_function_length": 34.2,
+    "max_function_length": 48,
+    "class_names": [
+      "ScanResultProcessor"
+    ],
+    "function_names": [
+      "__init__"
+    ],
+    "import_modules": [
+      "typing",
+      "collections",
+      "services.aiva_common.utils",
+      "services.core.aiva_core.analysis.dynamic_strategy_adjustment",
+      "services.core.aiva_core.output.to_functions",
+      "services.aiva_common.mq",
+      "services.core.aiva_core.state.session_state_manager",
+      "services.core.aiva_core.analysis.initial_surface",
+      "__future__",
+      "services.core.aiva_core.ingestion.scan_module_interface",
+      "services.aiva_common.schemas",
+      "services.core.aiva_core.execution.task_generator",
+      "json",
+      "services.core.aiva_core.execution.task_queue_manager"
+    ],
+    "complexity_score": 35.22222222222222
+  },
+  {
+    "file": "__init__.py",
+    "total_lines": 6,
+    "code_lines": 3,
+    "comment_lines": 0,
+    "classes": 0,
+    "functions": 0,
+    "async_functions": 0,
+    "imports": 1,
+    "decorators": 0,
+    "avg_function_length": 0,
+    "max_function_length": 0,
+    "class_names": [],
+    "function_names": [],
+    "import_modules": [
+      "scan_result_processor"
+    ],
+    "complexity_score": 1
+  },
+  {
+    "file": "demo_rag_integration.py",
+    "total_lines": 258,
+    "code_lines": 193,
+    "comment_lines": 19,
+    "classes": 1,
+    "functions": 2,
+    "async_functions": 2,
+    "imports": 5,
+    "decorators": 0,
+    "avg_function_length": 55.0,
+    "max_function_length": 105,
+    "class_names": [
+      "AIAgentWithRAG"
+    ],
+    "function_names": [
+      "__init__",
+      "_build_prompt_with_context"
+    ],
+    "import_modules": [
+      "logging",
+      "__future__",
+      "services.core.aiva_core.rag",
+      "services.aiva_common.schemas",
+      "asyncio"
+    ],
+    "complexity_score": 49.0
+  },
+  {
+    "file": "knowledge_base.py",
+    "total_lines": 417,
+    "code_lines": 329,
+    "comment_lines": 13,
+    "classes": 3,
+    "functions": 13,
+    "async_functions": 0,
+    "imports": 10,
+    "decorators": 2,
+    "avg_function_length": 26.4,
+    "max_function_length": 48,
+    "class_names": [
+      "KnowledgeType",
+      "KnowledgeEntry",
+      "KnowledgeBase"
+    ],
+    "function_names": [
+      "to_dict",
+      "from_dict",
+      "__init__",
+      "_load_knowledge_base",
+      "save_knowledge_base"
+    ],
+    "import_modules": [
+      "typing",
+      "services.aiva_common.schemas",
+      "logging",
+      "__future__",
+      "enum",
+      "vector_store",
+      "pathlib",
+      "datetime",
+      "json",
+      "dataclasses"
+    ],
+    "complexity_score": 57.38461538461539
+  },
+  {
+    "file": "rag_engine.py",
+    "total_lines": 363,
+    "code_lines": 285,
+    "comment_lines": 19,
+    "classes": 1,
+    "functions": 9,
+    "async_functions": 0,
+    "imports": 5,
+    "decorators": 0,
+    "avg_function_length": 36.1,
+    "max_function_length": 81,
+    "class_names": [
+      "RAGEngine"
+    ],
+    "function_names": [
+      "__init__",
+      "enhance_attack_plan",
+      "suggest_next_step",
+      "analyze_failure",
+      "get_relevant_payloads"
+    ],
+    "import_modules": [
+      "typing",
+      "logging",
+      "__future__",
+      "knowledge_base",
+      "services.aiva_common.schemas"
+    ],
+    "complexity_score": 44.111111111111114
+  },
+  {
+    "file": "vector_store.py",
+    "total_lines": 339,
+    "code_lines": 252,
+    "comment_lines": 15,
+    "classes": 1,
+    "functions": 12,
+    "async_functions": 0,
+    "imports": 9,
+    "decorators": 0,
+    "avg_function_length": 24.8,
+    "max_function_length": 50,
+    "class_names": [
+      "VectorStore"
+    ],
+    "function_names": [
+      "__init__",
+      "_initialize_backend",
+      "_get_embedding_model",
+      "_simple_embedding",
+      "add_document"
+    ],
+    "import_modules": [
+      "typing",
+      "logging",
+      "numpy",
+      "faiss",
+      "__future__",
+      "sentence_transformers",
+      "pathlib",
+      "json",
+      "chromadb"
+    ],
+    "complexity_score": 42.83333333333333
+  },
+  {
+    "file": "__init__.py",
+    "total_lines": 12,
+    "code_lines": 8,
+    "comment_lines": 0,
+    "classes": 0,
+    "functions": 0,
+    "async_functions": 0,
+    "imports": 3,
+    "decorators": 0,
+    "avg_function_length": 0,
+    "max_function_length": 0,
+    "class_names": [],
+    "function_names": [],
+    "import_modules": [
+      "vector_store",
+      "knowledge_base",
+      "rag_engine"
+    ],
+    "complexity_score": 3
+  },
+  {
+    "file": "session_state_manager.py",
+    "total_lines": 119,
+    "code_lines": 94,
+    "comment_lines": 3,
+    "classes": 1,
+    "functions": 5,
+    "async_functions": 2,
+    "imports": 5,
+    "decorators": 0,
+    "avg_function_length": 13.3,
+    "max_function_length": 33,
+    "class_names": [
+      "SessionStateManager"
+    ],
+    "function_names": [
+      "__init__",
+      "get_session_status",
+      "get_session_context",
+      "update_context",
+      "update_session_status"
+    ],
+    "import_modules": [
+      "typing",
+      "services.aiva_common.utils",
+      "__future__",
+      "services.aiva_common.schemas",
+      "datetime"
+    ],
+    "complexity_score": 20
+  },
+  {
+    "file": "__init__.py",
+    "total_lines": 14,
+    "code_lines": 10,
+    "comment_lines": 1,
+    "classes": 0,
+    "functions": 0,
+    "async_functions": 0,
+    "imports": 1,
+    "decorators": 0,
+    "avg_function_length": 0,
+    "max_function_length": 0,
+    "class_names": [],
+    "function_names": [],
+    "import_modules": [
+      "session_state_manager"
+    ],
+    "complexity_score": 1
+  },
+  {
+    "file": "backends.py",
+    "total_lines": 477,
+    "code_lines": 387,
+    "comment_lines": 19,
+    "classes": 5,
+    "functions": 4,
+    "async_functions": 24,
+    "imports": 9,
+    "decorators": 6,
+    "avg_function_length": 13.8,
+    "max_function_length": 57,
+    "class_names": [
+      "StorageBackend",
+      "SQLiteBackend",
+      "PostgreSQLBackend",
+      "JSONLBackend",
+      "HybridBackend"
+    ],
+    "function_names": [
+      "__init__",
+      "__init__",
+      "__init__",
+      "__init__"
+    ],
+    "import_modules": [
+      "typing",
+      "sqlalchemy",
+      "sqlalchemy.orm",
+      "services.core.ai_models",
+      "models",
+      "pathlib",
+      "datetime",
+      "json",
+      "abc"
+    ],
+    "complexity_score": 42
+  },
+  {
+    "file": "config.py",
+    "total_lines": 112,
+    "code_lines": 86,
+    "comment_lines": 12,
+    "classes": 0,
+    "functions": 1,
+    "async_functions": 0,
+    "imports": 3,
+    "decorators": 0,
+    "avg_function_length": 11.0,
+    "max_function_length": 11,
+    "class_names": [],
+    "function_names": [
+      "get_storage_config"
+    ],
+    "import_modules": [
+      "typing",
+      "os",
+      "pathlib"
+    ],
+    "complexity_score": 5
+  },
+  {
+    "file": "models.py",
+    "total_lines": 257,
+    "code_lines": 150,
+    "comment_lines": 36,
+    "classes": 6,
+    "functions": 0,
+    "async_functions": 0,
+    "imports": 3,
+    "decorators": 0,
+    "avg_function_length": 0,
+    "max_function_length": 0,
+    "class_names": [
+      "ExperienceSampleModel",
+      "TraceRecordModel",
+      "TrainingSessionModel",
+      "ModelCheckpointModel",
+      "KnowledgeEntryModel",
+      "ScenarioModel"
+    ],
+    "function_names": [],
+    "import_modules": [
+      "sqlalchemy.orm",
+      "sqlalchemy",
+      "datetime"
+    ],
+    "complexity_score": 33
+  },
+  {
+    "file": "storage_manager.py",
+    "total_lines": 206,
+    "code_lines": 168,
+    "comment_lines": 6,
+    "classes": 1,
+    "functions": 5,
+    "async_functions": 6,
+    "imports": 4,
+    "decorators": 0,
+    "avg_function_length": 16.5,
+    "max_function_length": 58,
+    "class_names": [
+      "StorageManager"
+    ],
+    "function_names": [
+      "__init__",
+      "initialize",
+      "_create_backend",
+      "get_path",
+      "get_dir_size"
+    ],
+    "import_modules": [
+      "typing",
+      "logging",
+      "backends",
+      "pathlib"
+    ],
+    "complexity_score": 19
+  },
+  {
+    "file": "__init__.py",
+    "total_lines": 38,
+    "code_lines": 34,
+    "comment_lines": 0,
+    "classes": 0,
+    "functions": 0,
+    "async_functions": 0,
+    "imports": 3,
+    "decorators": 0,
+    "avg_function_length": 0,
+    "max_function_length": 0,
+    "class_names": [],
+    "function_names": [],
+    "import_modules": [
+      "backends",
+      "models",
+      "storage_manager"
+    ],
+    "complexity_score": 3
+  },
+  {
+    "file": "scenario_manager.py",
+    "total_lines": 975,
+    "code_lines": 815,
+    "comment_lines": 34,
+    "classes": 1,
+    "functions": 8,
+    "async_functions": 12,
+    "imports": 10,
+    "decorators": 0,
+    "avg_function_length": 45.5,
+    "max_function_length": 110,
+    "class_names": [
+      "ScenarioManager"
+    ],
+    "function_names": [
+      "__init__",
+      "_estimate_duration",
+      "_create_sql_injection_plan_easy",
+      "_create_sql_injection_plan_medium",
+      "_create_xss_plan_easy"
+    ],
+    "import_modules": [
+      "typing",
+      "logging",
+      "json",
+      "__future__",
+      "services.aiva_common.enums",
+      "pathlib",
+      "uuid",
+      "services.aiva_common.schemas",
+      "httpx",
+      "datetime"
+    ],
+    "complexity_score": 56.55
+  },
+  {
+    "file": "training_orchestrator.py",
+    "total_lines": 423,
+    "code_lines": 326,
+    "comment_lines": 24,
+    "classes": 1,
+    "functions": 9,
+    "async_functions": 4,
+    "imports": 18,
+    "decorators": 0,
+    "avg_function_length": 27.9,
+    "max_function_length": 91,
+    "class_names": [
+      "TrainingOrchestrator"
+    ],
+    "function_names": [
+      "__init__",
+      "_create_default_scenario_manager",
+      "_create_default_rag_engine",
+      "_create_default_plan_executor",
+      "_create_default_experience_manager"
+    ],
+    "import_modules": [
+      "typing",
+      "logging",
+      "json",
+      "services.core.aiva_core.execution.plan_executor",
+      "services.core.aiva_core.learning.experience_manager",
+      "execution.plan_executor",
+      "__future__",
+      "scenario_manager",
+      "services.core.aiva_core.rag",
+      "rag",
+      "learning.model_trainer",
+      "services.core.aiva_core.training.scenario_manager",
+      "pathlib",
+      "services.aiva_common.schemas",
+      "services.core.aiva_core.learning.model_trainer",
+      "datetime",
+      "learning.experience_manager"
+    ],
+    "complexity_score": 48.92307692307692
+  },
+  {
+    "file": "__init__.py",
+    "total_lines": 18,
+    "code_lines": 13,
+    "comment_lines": 0,
+    "classes": 0,
+    "functions": 0,
+    "async_functions": 0,
+    "imports": 3,
+    "decorators": 0,
+    "avg_function_length": 0,
+    "max_function_length": 0,
+    "class_names": [],
+    "function_names": [],
+    "import_modules": [
+      "services.aiva_common.schemas",
+      "training_orchestrator",
+      "scenario_manager"
+    ],
+    "complexity_score": 3
+  },
+  {
+    "file": "auto_server.py",
+    "total_lines": 170,
+    "code_lines": 134,
+    "comment_lines": 7,
+    "classes": 0,
+    "functions": 3,
+    "async_functions": 0,
+    "imports": 8,
+    "decorators": 0,
+    "avg_function_length": 47.0,
+    "max_function_length": 88,
+    "class_names": [],
+    "function_names": [
+      "find_free_port",
+      "start_auto_server",
+      "main"
+    ],
+    "import_modules": [
+      "logging",
+      "argparse",
+      "__future__",
+      "improved_ui",
+      "sys",
+      "socket",
+      "pathlib",
+      "uvicorn"
+    ],
+    "complexity_score": 41.0
+  },
+  {
+    "file": "dashboard.py",
+    "total_lines": 287,
+    "code_lines": 243,
+    "comment_lines": 2,
+    "classes": 1,
+    "functions": 11,
+    "async_functions": 0,
+    "imports": 6,
+    "decorators": 0,
+    "avg_function_length": 23.4,
+    "max_function_length": 50,
+    "class_names": [
+      "Dashboard"
+    ],
+    "function_names": [
+      "__init__",
+      "_get_mode_display",
+      "_init_ai_agent",
+      "create_scan_task",
+      "detect_vulnerability"
+    ],
+    "import_modules": [
+      "typing",
+      "logging",
+      "__future__",
+      "pathlib",
+      "ai_engine"
+    ],
+    "complexity_score": 36.36363636363636
+  },
+  {
+    "file": "improved_ui.py",
+    "total_lines": 399,
+    "code_lines": 345,
+    "comment_lines": 16,
+    "classes": 0,
+    "functions": 2,
+    "async_functions": 7,
+    "imports": 6,
+    "decorators": 7,
+    "avg_function_length": 41.6,
+    "max_function_length": 312,
+    "class_names": [],
+    "function_names": [
+      "_build_index_html",
+      "create_app"
+    ],
+    "import_modules": [
+      "typing",
+      "__future__",
+      "services.core.aiva_core.ui_panel.dashboard",
+      "sys",
+      "fastapi",
+      "fastapi.responses"
+    ],
+    "complexity_score": 31.555555555555557
+  },
+  {
+    "file": "server.py",
+    "total_lines": 281,
+    "code_lines": 244,
+    "comment_lines": 4,
+    "classes": 0,
+    "functions": 2,
+    "async_functions": 9,
+    "imports": 8,
+    "decorators": 9,
+    "avg_function_length": 38.0,
+    "max_function_length": 238,
+    "class_names": [],
+    "function_names": [
+      "find_free_port",
+      "start_ui_server"
+    ],
+    "import_modules": [
+      "typing",
+      "logging",
+      "__future__",
+      "dashboard",
+      "socket",
+      "fastapi",
+      "fastapi.responses",
+      "uvicorn"
+    ],
+    "complexity_score": 30.0
+  },
+  {
+    "file": "__init__.py",
+    "total_lines": 15,
+    "code_lines": 12,
+    "comment_lines": 0,
+    "classes": 0,
+    "functions": 0,
+    "async_functions": 0,
+    "imports": 3,
+    "decorators": 0,
+    "avg_function_length": 0,
+    "max_function_length": 0,
+    "class_names": [],
+    "function_names": [],
+    "import_modules": [
+      "auto_server",
+      "dashboard",
+      "server"
+    ],
+    "complexity_score": 3
+  },
+  {
+    "file": "shell_command_tool.py",
+    "total_lines": 281,
+    "code_lines": 209,
+    "comment_lines": 19,
+    "classes": 1,
+    "functions": 7,
+    "async_functions": 0,
+    "imports": 4,
+    "decorators": 0,
+    "avg_function_length": 29.4,
+    "max_function_length": 105,
+    "class_names": [
+      "ShellCommandTool"
+    ],
+    "function_names": [
+      "run_command",
+      "__init__",
+      "build",
+      "is_safe_command",
+      "exec"
+    ],
+    "import_modules": [
+      "subprocess",
+      "shlex",
+      "os",
+      "typing"
+    ],
+    "complexity_score": 32.42857142857143
+  },
+  {
+    "file": "system_status_tool.py",
+    "total_lines": 326,
+    "code_lines": 276,
+    "comment_lines": 6,
+    "classes": 1,
+    "functions": 14,
+    "async_functions": 0,
+    "imports": 8,
+    "decorators": 0,
+    "avg_function_length": 19.2,
+    "max_function_length": 48,
+    "class_names": [
+      "SystemStatusTool"
+    ],
+    "function_names": [
+      "get_system_snapshot",
+      "check_system_health",
+      "__init__",
+      "snapshot",
+      "get_timestamp"
+    ],
+    "import_modules": [
+      "typing",
+      "os",
+      "platform",
+      "shutil",
+      "socket",
+      "time",
+      "psutil",
+      "datetime"
+    ],
+    "complexity_score": 41
+  },
+  {
+    "file": "data_loader.py",
+    "total_lines": 199,
+    "code_lines": 141,
+    "comment_lines": 12,
+    "classes": 1,
+    "functions": 6,
+    "async_functions": 0,
+    "imports": 4,
+    "decorators": 0,
+    "avg_function_length": 28.5,
+    "max_function_length": 44,
+    "class_names": [
+      "ExperienceDataLoader"
+    ],
+    "function_names": [
+      "__init__",
+      "load_training_batch",
+      "_prepare_training_data",
+      "_extract_features",
+      "load_dataset_samples"
+    ],
+    "import_modules": [
+      "typing",
+      "logging",
+      "__future__",
+      "numpy"
+    ],
+    "complexity_score": 29.5
+  },
+  {
+    "file": "model_updater.py",
+    "total_lines": 242,
+    "code_lines": 182,
+    "comment_lines": 12,
+    "classes": 1,
+    "functions": 6,
+    "async_functions": 0,
+    "imports": 8,
+    "decorators": 0,
+    "avg_function_length": 35.0,
+    "max_function_length": 75,
+    "class_names": [
+      "ModelUpdater"
+    ],
+    "function_names": [
+      "__init__",
+      "update_from_recent_experiences",
+      "update_from_dataset",
+      "_save_model",
+      "load_model"
+    ],
+    "import_modules": [
+      "typing",
+      "logging",
+      "learning.scalable_bio_trainer",
+      "__future__",
+      "data_loader",
+      "pathlib",
+      "datetime",
+      "pickle"
+    ],
+    "complexity_score": 40.0
+  },
+  {
+    "file": "__init__.py",
+    "total_lines": 19,
+    "code_lines": 15,
+    "comment_lines": 0,
+    "classes": 0,
+    "functions": 0,
+    "async_functions": 0,
+    "imports": 4,
+    "decorators": 0,
+    "avg_function_length": 0,
+    "max_function_length": 0,
+    "class_names": [],
+    "function_names": [],
+    "import_modules": [
+      "learning.model_trainer",
+      "model_updater",
+      "data_loader",
+      "learning.scalable_bio_trainer"
+    ],
+    "complexity_score": 4
+  }
+]
