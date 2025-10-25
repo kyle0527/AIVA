@@ -1037,7 +1037,159 @@ graph TB
 
 ---
 
-## 📞 **支援與聯繫**
+## � **開發規範與最佳實踐**
+
+### 📐 **Core 模組設計原則**
+
+作為 AIVA 的核心決策引擎，本模組必須遵循嚴格的數據標準和架構規範。
+
+#### 🎯 **使用 aiva_common 的核心原則**
+
+**✅ Core 模組的標準做法**（參考 `models.py` 正確實現）:
+
+```python
+# ✅ 正確 - Core 模組作為最佳示範
+from ..aiva_common.enums import (
+    AttackPathEdgeType,      # 攻擊路徑分析使用
+    AttackPathNodeType,
+    ComplianceFramework,     # 合規評估使用
+    Confidence,              # AI 決策信心度
+    ModuleName,              # 模組間通信
+    RemediationStatus,       # 修復狀態追蹤
+    RemediationType,         # 修復類型分類
+    RiskLevel,               # 風險評估核心枚舉
+    Severity,                # 嚴重程度評級
+    TaskStatus,              # 任務調度狀態
+)
+from ..aiva_common.schemas import (
+    CVSSv3Metrics,           # CVSS 評分標準
+    CVEReference,            # CVE 引用
+    CWEReference,            # CWE 分類
+)
+```
+
+#### ⚠️ **已發現需要修復的問題**
+
+**問題檔案**: `aiva_core/planner/task_converter.py`
+
+```python
+# ❌ 錯誤 - 重複定義 TaskStatus
+class TaskStatus(str, Enum):
+    PENDING = "pending"
+    RUNNING = "running"
+    SUCCESS = "success"
+    FAILED = "failed"
+    SKIPPED = "skipped"
+
+# ✅ 正確修復方式
+from aiva_common.enums import TaskStatus
+
+# 如果需要 SKIPPED 狀態，應該:
+# 1. 在 aiva_common/enums/common.py 中添加 SKIPPED
+# 2. 然後導入使用
+```
+
+#### 🆕 **新增或修改功能時的流程**
+
+##### **情境 1: 新增 AI 決策相關功能**
+
+```python
+# 步驟 1: 檢查 aiva_common 是否有適用的枚舉
+from aiva_common.enums import Confidence, RiskLevel
+
+# 步驟 2: 如果需要新的 AI 專屬概念，評估是否應加入 aiva_common
+# 問題: 這個枚舉會被其他模組使用嗎？
+# - 是 → 加入 aiva_common
+# - 否 → 可在 Core 內定義
+
+# ✅ 合理的 Core 專屬枚舉（AI 內部使用）
+class AIReasoningMode(str, Enum):
+    """AI 推理模式 - 僅用於 Core 內部的 AI 引擎"""
+    FAST_INFERENCE = "fast"          # 快速推理
+    DEEP_REASONING = "deep"          # 深度推理
+    HYBRID_ANALYSIS = "hybrid"       # 混合分析
+    # 這些是 AI 引擎內部的推理策略，不需要跨模組共享
+```
+
+##### **情境 2: 擴展任務管理功能**
+
+```python
+# ❌ 禁止 - 不要重新定義任務狀態
+class MyTaskStatus(str, Enum):
+    ...
+
+# ✅ 正確 - 使用 aiva_common 並擴展
+from aiva_common.enums import TaskStatus
+from aiva_common.schemas import TaskUpdatePayload
+
+# 如果 TaskStatus 缺少需要的狀態值:
+# 1. 在 aiva_common/enums/common.py 中新增
+# 2. 提交 PR 到 aiva_common
+# 3. 等待合併後使用
+
+# 如果是 Core 專屬的執行階段（不是狀態）:
+class ExecutionPhase(str, Enum):
+    """執行階段 - Core 任務執行器內部使用"""
+    PLANNING = "planning"
+    PREPARATION = "preparation"
+    EXECUTION = "execution"
+    VALIDATION = "validation"
+    COMPLETION = "completion"
+    # 這是執行流程的階段劃分，與 TaskStatus（狀態）概念不同
+```
+
+##### **情境 3: 新增風險評估功能**
+
+```python
+# ✅ 正確 - 使用標準化的風險評估
+from aiva_common.enums import RiskLevel, Severity
+from aiva_common.schemas import CVSSv3Metrics
+
+class RiskAssessment(BaseModel):
+    """風險評估結果"""
+    risk_level: RiskLevel              # 使用標準枚舉
+    severity: Severity                 # 使用標準嚴重程度
+    cvss_metrics: CVSSv3Metrics        # 使用 CVSS 標準
+    
+    # Core 專屬的評估細節
+    ai_confidence: float = Field(ge=0.0, le=1.0)
+    reasoning_chain: List[str] = Field(default_factory=list)
+    threat_vectors: List[str] = Field(default_factory=list)
+```
+
+#### 🔄 **修改現有功能的檢查清單**
+
+在修改 Core 模組任何涉及數據結構的代碼前:
+
+- [ ] **檢查 aiva_common**: 確認沒有重複定義已存在的枚舉或 Schema
+- [ ] **評估影響範圍**: 如果修改會影響其他模組，必須在 aiva_common 中進行
+- [ ] **保持向後兼容**: 新增欄位使用 `Optional` 或提供預設值
+- [ ] **更新相關文檔**: 同步更新 AI 決策邏輯相關文檔
+- [ ] **執行完整測試**: AI 引擎、執行引擎、學習系統的整合測試
+
+#### 🧪 **Core 模組特殊驗證**
+
+```bash
+# 1. 檢查是否有重複定義（Core 應該為 0）
+grep -r "class.*Status.*Enum" services/core --exclude-dir=__pycache__
+
+# 2. 驗證 AI 相關導入正確性
+python -c "
+from services.core.models import RiskAssessment, AttackPath
+from services.core.aiva_core.ai_commander import AICommander
+print('✅ Core 模組導入驗證成功')
+"
+
+# 3. 執行 AI 引擎集成測試
+pytest services/core/tests/integration/ -v
+
+# 4. 驗證決策鏈完整性
+python -m services.core.aiva_core.decision.enhanced_decision_agent --validate
+```
+
+---
+
+## �📞 **支援與聯繫**
 
 ### **👥 團隊分工**
 - 🤖 **AI 引擎團隊**: 神經網絡、模型管理
@@ -1048,11 +1200,12 @@ graph TB
 ### **📊 相關報告**
 - 📈 [核心模組代碼分析](_out/core_module_analysis_detailed.json)
 - 🔍 [架構優化建議](reports/ANALYSIS_REPORTS/core_module_comprehensive_analysis.md)
+- 📐 [aiva_common 使用規範](../aiva_common/README.md#開發指南)
 
 ---
 
-**📝 文件版本**: v1.0 - Core Module Multi-Layer Documentation  
-**🔄 最後更新**: 2025-10-24  
+**📝 文件版本**: v1.1 - Core Module Multi-Layer Documentation  
+**🔄 最後更新**: 2025-10-25  
 **📈 複雜度等級**: ⭐⭐⭐⭐⭐ (最高) - 核心引擎系統  
 **👥 維護團隊**: AIVA Core Architecture Team
 

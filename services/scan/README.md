@@ -625,8 +625,303 @@ custom_headers = {
 
 ---
 
-📝 **文檔版本**: v1.0.0  
-🔄 **最後更新**: 2025-10-24  
+## 🔧 **開發規範與最佳實踐**
+
+### 📐 **Scan 模組設計原則**
+
+作為 AIVA 的統一掃描引擎,本模組必須在 Python/TypeScript/Rust 間維持一致的漏洞表示和評分標準。
+
+#### 🎯 **使用 aiva_common 的核心原則**
+
+**✅ Scan 模組的標準做法**（參考 `models.py` 正確實現）:
+
+```python
+# ✅ 正確 - Scan 模組的標準導入
+from ..aiva_common.enums import (
+    AssetType,               # 掃描目標類型
+    Confidence,              # 檢測信心度
+    ModuleName,              # 模組識別
+    ScanProgress,            # 掃描進度狀態
+    Severity,                # CVSS 嚴重程度映射
+    VulnerabilityStatus,     # 漏洞生命週期狀態
+)
+from ..aiva_common.schemas import (
+    CVEReference,            # CVE 標準引用
+    CVSSv3Metrics,           # CVSS v3.x 評分
+    CWEReference,            # CWE 分類
+    SARIFResult,             # SARIF 2.1.0 格式
+)
+```
+
+#### 🆕 **新增或修改功能時的流程**
+
+##### **情境 1: 新增 Python 掃描引擎功能**
+
+```python
+# 步驟 1: 使用標準化的漏洞表示
+from aiva_common.schemas import SARIFResult, CVSSv3Metrics
+from aiva_common.enums import Severity, Confidence
+
+def generate_vulnerability_report(finding: dict) -> SARIFResult:
+    """生成符合 SARIF 標準的漏洞報告"""
+    
+    # ✅ 使用 CVSS 標準評分
+    cvss = CVSSv3Metrics(
+        base_score=7.5,
+        attack_vector="NETWORK",
+        attack_complexity="LOW",
+        # ... CVSS 標準欄位
+    )
+    
+    # ✅ 使用標準 Severity 映射
+    severity = Severity.HIGH  # 基於 CVSS 分數
+    
+    return SARIFResult(
+        ruleId=f"CWE-{finding['cwe_id']}",
+        level="error",  # SARIF 標準: error/warning/note
+        message=finding['description'],
+        # ...
+    )
+```
+
+##### **情境 2: 新增 TypeScript 掃描規則**
+
+```typescript
+// ✅ 正確 - TypeScript 中使用一致的枚舉值
+export enum Severity {
+    CRITICAL = "critical",  // 對應 Python Severity.CRITICAL
+    HIGH = "high",
+    MEDIUM = "medium",
+    LOW = "low",
+    INFO = "info"
+}
+
+// ✅ SARIF 標準結果格式
+export interface SARIFResult {
+    ruleId: string;
+    level: "error" | "warning" | "note";  // SARIF 標準級別
+    message: string;
+    locations?: SARIFLocation[];
+}
+
+// ❌ 禁止 - 不要使用自定義嚴重程度
+export enum CustomSeverity {
+    VeryBad = "very_bad",   // ❌ 與標準不一致
+    SoBad = "so_bad"        // ❌ 不符合 CVSS 映射
+}
+```
+
+##### **情境 3: 新增 Rust 掃描模組**
+
+```rust
+// ✅ 正確 - Rust 中使用 CVSS 標準
+use serde::{Deserialize, Serialize};
+
+#[derive(Serialize, Deserialize, Debug, Clone)]
+#[serde(rename_all = "lowercase")]
+pub enum Severity {
+    Critical,  // CVSS 9.0-10.0
+    High,      // CVSS 7.0-8.9
+    Medium,    // CVSS 4.0-6.9
+    Low,       // CVSS 0.1-3.9
+    Info,      // CVSS 0.0
+}
+
+// ✅ CVSS v3 標準結構
+#[derive(Serialize, Deserialize)]
+pub struct CVSSv3Metrics {
+    pub base_score: f32,
+    pub attack_vector: String,      // NETWORK/ADJACENT/LOCAL/PHYSICAL
+    pub attack_complexity: String,  // LOW/HIGH
+    pub privileges_required: String, // NONE/LOW/HIGH
+    // ... 其他 CVSS 標準欄位
+}
+
+// ❌ 禁止 - 不要使用非標準評分系統
+pub struct CustomScore {
+    pub danger_level: i32,  // ❌ 應使用 CVSS base_score
+}
+```
+
+#### 🌐 **多語言掃描引擎協作**
+
+**統一的漏洞報告格式**:
+
+```python
+# Python Engine（ZAP/Nuclei wrapper）
+from aiva_common.schemas import SARIFResult
+
+def wrap_zap_result(zap_alert: dict) -> SARIFResult:
+    """將 ZAP 結果轉換為 SARIF 標準"""
+    return SARIFResult(
+        ruleId=f"ZAP-{zap_alert['pluginId']}",
+        level=map_risk_to_sarif_level(zap_alert['risk']),
+        message=zap_alert['alert'],
+        locations=[{
+            "physicalLocation": {
+                "artifactLocation": {"uri": zap_alert['url']},
+                "region": {"startLine": 1}
+            }
+        }]
+    )
+```
+
+```typescript
+// TypeScript Engine（自定義規則）
+interface SARIFResult {
+    ruleId: string;
+    level: "error" | "warning" | "note";
+    message: string;
+    locations?: Array<{
+        physicalLocation: {
+            artifactLocation: { uri: string };
+            region?: { startLine: number; endLine?: number };
+        }
+    }>;
+}
+
+function generateSARIFResult(
+    vulnType: string,
+    severity: Severity,
+    location: string
+): SARIFResult {
+    return {
+        ruleId: `TS-${vulnType}`,
+        level: mapSeverityToSARIF(severity),
+        message: `Detected ${vulnType} vulnerability`,
+        locations: [/* ... */]
+    };
+}
+```
+
+```rust
+// Rust Engine（高性能掃描）
+use serde_json::json;
+
+pub fn create_sarif_result(
+    rule_id: &str,
+    severity: Severity,
+    message: &str,
+    uri: &str
+) -> serde_json::Value {
+    json!({
+        "ruleId": rule_id,
+        "level": map_severity_to_sarif(&severity),
+        "message": message,
+        "locations": [{
+            "physicalLocation": {
+                "artifactLocation": {"uri": uri},
+                "region": {"startLine": 1}
+            }
+        }]
+    })
+}
+```
+
+#### � **修改現有功能的檢查清單**
+
+在修改 Scan 模組任何掃描引擎前:
+
+- [ ] **CVSS 合規**: 確保使用 CVSSv3Metrics 進行評分
+- [ ] **SARIF 標準**: 輸出必須符合 SARIF 2.1.0 規範
+- [ ] **CWE/CVE 引用**: 使用標準 ID 格式（CWE-79, CVE-2024-1234）
+- [ ] **跨引擎一致性**: Python/TypeScript/Rust 產生的報告格式一致
+- [ ] **性能測試**: 驗證新功能不影響掃描性能指標
+
+#### 🧪 **Scan 模組特殊驗證**
+
+```bash
+# 1. 檢查是否有非標準 Severity 定義
+grep -r "class.*Severity.*Enum" services/scan --include="*.py" --exclude-dir=__pycache__
+
+# 2. 驗證 SARIF 輸出格式
+python -m services.scan.validators.sarif_validator \
+    --input test_output.sarif.json
+
+# 3. 驗證 TypeScript 掃描引擎
+cd services/scan/ts_engine
+npm test -- --grep "SARIF compliance"
+
+# 4. 驗證 Rust 掃描引擎
+cd services/scan/rust_scanner
+cargo test sarif_format_test
+
+# 5. 跨引擎報告一致性測試
+pytest services/scan/tests/integration/test_multi_engine_consistency.py -v
+
+# 6. CVSS 評分驗證
+python -c "
+from services.scan.models import VulnerabilityReport
+from services.aiva_common.schemas import CVSSv3Metrics
+# 測試 CVSS 計算邏輯
+"
+```
+
+#### 📊 **掃描結果標準化流程**
+
+```mermaid
+graph TD
+    A[原始掃描結果] --> B{掃描引擎類型}
+    B -->|Python/ZAP| C[ZAP Alert]
+    B -->|TypeScript| D[Custom Finding]
+    B -->|Rust| E[High-Perf Result]
+    
+    C --> F[轉換為 SARIF]
+    D --> F
+    E --> F
+    
+    F --> G[添加 CVSS 評分]
+    G --> H[映射到標準 Severity]
+    H --> I[添加 CWE/CVE 引用]
+    I --> J[統一 SARIF 輸出]
+    
+    J --> K{驗證}
+    K -->|通過| L[存入數據庫]
+    K -->|失敗| M[記錄錯誤]
+```
+
+#### 🎯 **Scan 專屬的合理擴展**
+
+```python
+# ✅ 合理的 Scan 專屬枚舉（掃描技術細節）
+class ScanTechnique(str, Enum):
+    """掃描技術類型 - Scan 模組內部使用"""
+    PASSIVE_CRAWL = "passive"           # 被動爬取
+    ACTIVE_INJECTION = "active"         # 主動注入測試
+    FUZZING = "fuzzing"                 # 模糊測試
+    STATIC_ANALYSIS = "static"          # 靜態分析
+    # 這些是掃描引擎的執行策略，不需要跨模組共享
+
+class ScanEngineType(str, Enum):
+    """掃描引擎類型識別"""
+    ZAP = "zap"
+    NUCLEI = "nuclei"
+    CUSTOM_TS = "typescript"
+    CUSTOM_RUST = "rust"
+    # 這是掃描引擎的技術分類，用於路由和調度
+```
+
+#### 📝 **引擎特定注意事項**
+
+**Python 開發者（ZAP/Nuclei wrapper）**:
+- ✅ 將第三方工具結果轉換為 SARIF 標準
+- ✅ 使用 CVSSv3Metrics 計算標準評分
+- ❌ 不要保留工具特定的評分系統
+
+**TypeScript 開發者（自定義規則）**:
+- ✅ 實現符合 SARIF 的 TypeScript 接口
+- ✅ 使用 `level: "error" | "warning" | "note"` 而非自定義級別
+- ❌ 避免使用數字代碼代替語義化嚴重程度
+
+**Rust 開發者（高性能掃描）**:
+- ✅ 使用 `serde_json` 生成標準 SARIF JSON
+- ✅ 確保序列化欄位名與 SARIF 規範一致
+- ❌ 不要為了性能犧牲標準合規性
+
+---
+
+�📝 **文檔版本**: v1.1.0  
+🔄 **最後更新**: 2025-10-25  
 👥 **維護者**: AIVA Development Team  
 
 有任何問題或建議，請提交 Issue 或 Pull Request！

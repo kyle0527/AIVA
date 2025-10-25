@@ -1,63 +1,58 @@
-# 🔧 AIVA 腳本集合
+# 🔧 AIVA 通用腳本集合 (Common Scripts)
 
-本目錄包含 AIVA 專案的各種自動化腳本和工具,支援系統的部署、測試、維護和監控等各項功能。
+本目錄是 AIVA 專案的通用腳本集合，包含系統層級的自動化腳本和工具，支援跨模組的部署、啟動、維護和驗證等功能。
 
-## 📁 目錄結構
+## 🎯 目錄定位
+
+`scripts/common/` 是 AIVA 五大模組架構中的 **通用系統腳本** 區域，提供：
+- 🏠 跨模組通用的系統級腳本
+- � 統一的系統啟動和部署工具
+- 🔍 系統維護和監控腳本
+- ✅ 項目驗證和質量保證工具
+
+## �📁 目錄結構
 
 ### 🚀 launcher/ - 啟動器腳本 (3個)
-- **aiva_launcher.py** ✅ - AIVA 統一啟動入口
-- **start_ai_continuous_training.py** ✅ - AI 持續訓練啟動器
-- **smart_communication_selector.py** ✅ - 智能通訊選擇器
+系統統一啟動入口，支援不同啟動模式和場景
 
-### 🧪 testing/ - 測試相關腳本 (8個)
-- **comprehensive_test.py** ✅ - 全功能測試腳本
-- **ai_system_connectivity_check.py** ✅ - AI 系統連接檢查
-- **aiva_full_worker_live_test.py** ✅ - 完整工作者實時測試
-- **aiva_module_status_checker.py** ✅ - 模組狀態檢查器
-- **aiva_system_connectivity_sop_check.py** ✅ - 系統連接 SOP 檢查
-- **enhanced_real_ai_attack_system.py** ✅ - 增強型 AI 攻擊測試
-- **juice_shop_real_attack_test.py** ✅ - Juice Shop 攻擊測試
-- **real_attack_executor.py** ✅ - 真實攻擊執行器
+- **aiva_launcher.py** ✅ - AIVA 五大模組統一啟動器
+- **start_ai_continuous_training.py** ✅ - AI 持續學習系統啟動器
+- **smart_communication_selector.py** ✅ - 智能通訊模式選擇器
 
-### ✅ validation/ - 驗證相關腳本 (1個)
-- **aiva_package_validator.py** ✅ - 套件驗證器
+### � deployment/ - 部署腳本 (6個)
+自動化系統部署和服務管理腳本
 
-### 🔗 integration/ - 整合相關腳本 (4個)
-- **cross_language_bridge.py** ✅ - 跨語言橋接器
-- **ffi_integration.py** ✅ - FFI 整合
-- **graalvm_integration.py** ✅ - GraalVM 整合
-- **wasm_integration.py** ✅ - WebAssembly 整合
-
-### 📊 reporting/ - 報告生成腳本 (3個)
-- **aiva_enterprise_security_report.py** ✅ - 企業安全報告生成器
-- **final_report.py** ✅ - 最終報告生成器
-- **aiva_crosslang_unified.py** ✅ - 跨語言統一報告工具
-
-### 🔄 conversion/ - 轉換工具腳本 (1個)
-- **docx_to_md_converter.py** ✅ - DOCX 轉 Markdown 轉換器
-
-### 🚀 deployment/ - 部署腳本 (6個)
-- **start_all.ps1** ✅ - 啟動所有服務
-- **start_all_multilang.ps1** ✅ - 啟動多語言服務
-- **start_dev.bat** ✅ - 開發環境啟動
-- **start_ui_auto.ps1** ✅ - 自動啟動 UI
-- **stop_all.ps1** ✅ - 停止所有服務
+- **start_all.ps1** ✅ - 一鍵啟動所有 AIVA 服務
+- **start_all_multilang.ps1** ✅ - 啟動多語言支援服務
+- **start_dev.bat** ✅ - 開發環境快速啟動
+- **start_ui_auto.ps1** ✅ - 自動啟動 Web UI 介面
+- **stop_all.ps1** ✅ - 停止所有運行服務
 - **stop_all_multilang.ps1** ✅ - 停止多語言服務
 
 ### ⚙️ setup/ - 環境設置腳本 (2個)
-- **setup_env.bat** ✅ - 環境設置
-- **setup_multilang.ps1** ✅ - 多語言環境設置
+初始化和配置開發環境
 
-### 🔍 maintenance/ - 維護腳本 (9個)
-- **check_status.ps1** ✅ - 檢查系統狀態
-- **diagnose_system.ps1** ✅ - 系統診斷
-- **health_check_multilang.ps1** ✅ - 多語言健康檢查
-- **generate_project_report.ps1** ✅ - 生成專案報告
-- **generate_stats.ps1** ✅ - 生成統計資料
-- **generate_tree_ultimate_chinese.ps1** ✅ - 生成專案樹狀圖
-- **fix_import_paths.py** ✅ - 修復導入路徑
-- **optimize_core_modules.ps1** ✅ - 優化核心模組
-- **system_repair_tool.py** ✅ - 系統修復工具
+- **setup_env.bat** ✅ - Python 環境和依賴包設置
+- **setup_multilang.ps1** ✅ - 多語言環境配置 (Go, Rust, Node.js)
+
+### 🔍 maintenance/ - 維護腳本 (10個)
+系統監控、診斷和維護工具
+
+- **check_status.ps1** ✅ - 系統服務狀態檢查
+- **diagnose_system.ps1** ✅ - 系統診斷和問題檢測
+- **health_check_multilang.ps1** ✅ - 多語言服務健康檢查
+- **generate_project_report.ps1** ✅ - 生成項目狀態報告
+- **generate_stats.ps1** ✅ - 生成項目統計數據
+- **generate_tree_ultimate_chinese.ps1** ✅ - 生成中文項目樹狀圖
+- **generate_tree_ultimate_chinese_backup.ps1** ✅ - 樹狀圖生成備份版本
+- **fix_import_paths.py** ✅ - Python 導入路徑自動修復
+- **optimize_core_modules.ps1** ✅ - 核心模組性能優化
+- **system_repair_tool.py** ✅ - 系統自動修復工具
+
+### ✅ validation/ - 驗證腳本 (1個)
+項目完整性和質量驗證工具
+
+- **aiva_package_validator.py** ✅ - AIVA 補包完整性驗證器
 
 ---
 

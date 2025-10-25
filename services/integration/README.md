@@ -1429,7 +1429,316 @@ Copyright (c) 2025 AIVA Development Team
 
 ---
 
-## 📈 版本歷史與路線圖
+## � **開發規範與最佳實踐**
+
+### 📐 **Integration 模組設計原則**
+
+作為 AIVA 的企業整合中樞,本模組必須維持嚴格的數據一致性,特別是在資料庫模型與外部服務整合層。
+
+#### 🎯 **使用 aiva_common 的核心原則**
+
+**✅ Integration 模組的標準做法**（參考 `models.py` 正確實現）:
+
+```python
+# ✅ 正確 - Integration 模組的標準導入
+from ..aiva_common.enums import (
+    AssetStatus,             # 資產生命週期管理
+    AssetType,               # 跨系統資產分類
+    ComplianceFramework,     # 合規框架整合
+    Confidence,              # 數據信心度
+    ModuleName,              # 跨模組路由
+    Severity,                # 風險評級統一
+    TaskStatus,              # 任務調度狀態
+    VulnerabilityStatus,     # 漏洞追蹤
+)
+from ..aiva_common.schemas import (
+    CVEReference,            # CVE 標準引用
+    CVSSv3Metrics,           # CVSS 標準評分
+    CWEReference,            # CWE 分類
+    SARIFResult,             # SARIF 報告整合
+)
+```
+
+#### ⚠️ **已發現需要修復的問題（P0 最高優先級）**
+
+**問題檔案**: `reception/models_enhanced.py` - **265 行重複定義**
+
+```python
+# ❌ 錯誤 - 嚴重的重複定義（第 74-265 行）
+class AssetType(str, Enum):
+    """資產類型"""
+    WEB_APP = "web_app"
+    API = "api"
+    # ... 19 行重複
+
+class AssetStatus(str, Enum):
+    """資產狀態"""
+    ACTIVE = "active"
+    # ... 14 行重複
+
+class VulnerabilityStatus(str, Enum):
+    """漏洞狀態"""
+    OPEN = "open"
+    # ... 23 行重複
+
+class Severity(str, Enum):
+    """嚴重程度"""
+    CRITICAL = "critical"
+    # ... 17 行重複
+
+class Confidence(str, Enum):
+    """信心度"""
+    HIGH = "high"
+    # ... 12 行重複
+
+# ✅ 正確修復方式（立即執行）
+from aiva_common.enums import (
+    AssetType,
+    AssetStatus,
+    VulnerabilityStatus,
+    Severity,
+    Confidence
+)
+
+# 刪除第 74-265 行的所有重複定義
+# 保留其他 reception 專屬的模型類別
+```
+
+**修復影響分析**:
+- **風險**: 低（models_enhanced.py 是增強模型,應該直接導入）
+- **範圍**: 僅影響 reception 層的數據接收邏輯
+- **優先級**: **P0** - 這是項目中最嚴重的重複定義問題
+
+#### 🆕 **新增或修改功能時的流程**
+
+##### **情境 1: 新增外部系統整合（如 JIRA, ServiceNow）**
+
+```python
+# 步驟 1: 使用 aiva_common 的標準枚舉進行數據映射
+from aiva_common.enums import Severity, TaskStatus, AssetType
+from aiva_common.schemas import CVEReference
+
+def map_jira_to_aiva(jira_issue: dict) -> dict:
+    """將 JIRA Issue 映射為 AIVA 標準格式"""
+    
+    # ✅ 使用標準 Severity 映射
+    severity_map = {
+        "Blocker": Severity.CRITICAL,
+        "Critical": Severity.CRITICAL,
+        "Major": Severity.HIGH,
+        "Minor": Severity.MEDIUM,
+        "Trivial": Severity.LOW,
+    }
+    
+    # ✅ 使用標準 TaskStatus
+    status_map = {
+        "To Do": TaskStatus.PENDING,
+        "In Progress": TaskStatus.IN_PROGRESS,
+        "Done": TaskStatus.COMPLETED,
+        "Cancelled": TaskStatus.CANCELLED,
+    }
+    
+    return {
+        "severity": severity_map.get(jira_issue["priority"], Severity.MEDIUM),
+        "status": status_map.get(jira_issue["status"], TaskStatus.PENDING),
+        # ...
+    }
+```
+
+##### **情境 2: 新增資料庫模型（SQLAlchemy/Alembic）**
+
+```python
+# ✅ 正確 - 在資料庫模型中使用 aiva_common 枚舉
+from sqlalchemy import Column, Integer, String, Enum as SQLEnum
+from aiva_common.enums import AssetType, Severity, TaskStatus
+
+class Asset(Base):
+    """資產資料庫模型"""
+    __tablename__ = "assets"
+    
+    id = Column(Integer, primary_key=True)
+    name = Column(String(255), nullable=False)
+    
+    # ✅ 使用 aiva_common 枚舉定義資料庫欄位
+    asset_type = Column(
+        SQLEnum(AssetType),
+        nullable=False,
+        default=AssetType.WEB_APP
+    )
+    
+    # ❌ 禁止 - 不要在資料庫模型中重新定義枚舉
+    # status = Column(SQLEnum("active", "inactive", name="asset_status"))
+    
+    # ✅ 正確 - 使用 aiva_common 枚舉
+    status = Column(
+        SQLEnum(AssetStatus),
+        nullable=False,
+        default=AssetStatus.ACTIVE
+    )
+```
+
+##### **情境 3: 新增 API Gateway 路由**
+
+```python
+# ✅ 正確 - API Gateway 使用標準化響應
+from fastapi import APIRouter, HTTPException
+from aiva_common.schemas import SARIFResult
+from aiva_common.enums import Severity, Confidence
+
+router = APIRouter(prefix="/api/v1/vulnerabilities")
+
+@router.get("/")
+async def list_vulnerabilities(
+    min_severity: Severity = Severity.MEDIUM
+) -> List[SARIFResult]:
+    """
+    列出漏洞清單
+    
+    Args:
+        min_severity: 最小嚴重程度（使用 aiva_common 標準）
+    """
+    # ✅ 使用 Pydantic 模型進行驗證
+    # Severity 枚舉會自動驗證輸入值
+    
+    vulnerabilities = await db.query_vulnerabilities(
+        min_severity=min_severity.value
+    )
+    
+    # ✅ 返回符合 SARIF 標準的結果
+    return [SARIFResult.model_validate(v) for v in vulnerabilities]
+```
+
+#### 🗄️ **資料庫遷移最佳實踐（Alembic）**
+
+```python
+# ✅ 正確 - Alembic 遷移腳本使用 aiva_common 枚舉
+from alembic import op
+import sqlalchemy as sa
+from aiva_common.enums import AssetType, Severity
+
+def upgrade():
+    """新增資產表"""
+    op.create_table(
+        'assets',
+        sa.Column('id', sa.Integer(), primary_key=True),
+        sa.Column('name', sa.String(255), nullable=False),
+        
+        # ✅ 使用 aiva_common 枚舉生成資料庫 ENUM 類型
+        sa.Column(
+            'asset_type',
+            sa.Enum(AssetType),
+            nullable=False
+        ),
+        sa.Column(
+            'severity',
+            sa.Enum(Severity),
+            nullable=False
+        ),
+    )
+
+def downgrade():
+    """回滾資產表"""
+    op.drop_table('assets')
+    
+    # ⚠️ 注意: PostgreSQL 需要顯式刪除 ENUM 類型
+    # op.execute("DROP TYPE assettype")
+    # op.execute("DROP TYPE severity")
+```
+
+#### 🔄 **修改現有功能的檢查清單**
+
+在修改 Integration 模組任何代碼前:
+
+- [ ] **Reception 層檢查**: **立即修復** models_enhanced.py 的重複定義
+- [ ] **資料庫模型檢查**: 確認 SQLAlchemy 模型使用 aiva_common 枚舉
+- [ ] **API Gateway 檢查**: 確認所有 API 端點使用標準 Pydantic 模型
+- [ ] **外部整合檢查**: 確認數據映射邏輯使用 aiva_common 標準
+- [ ] **Alembic 遷移檢查**: 確認遷移腳本引用正確的枚舉類型
+
+#### 🧪 **Integration 模組特殊驗證**
+
+```bash
+# 1. 檢查 reception 層重複定義（應該為 0）
+grep -r "class.*Severity.*Enum" services/integration/reception --include="*.py"
+grep -r "class AssetType.*Enum" services/integration/reception --include="*.py"
+
+# 2. 驗證資料庫模型一致性
+python -c "
+from services.integration.models import Asset, Vulnerability
+from services.aiva_common.enums import AssetType, Severity
+# 檢查欄位類型是否使用 aiva_common 枚舉
+"
+
+# 3. 驗證 Alembic 遷移腳本
+cd services/integration
+alembic check
+
+# 4. 驗證 API Gateway 響應格式
+pytest services/integration/tests/api/test_sarif_compliance.py -v
+
+# 5. 驗證外部系統整合映射
+pytest services/integration/tests/integration/test_jira_mapping.py -v
+pytest services/integration/tests/integration/test_servicenow_mapping.py -v
+```
+
+#### 📊 **Integration 層數據流標準化**
+
+```mermaid
+graph LR
+    A[外部系統] -->|原始數據| B[Reception 層]
+    B -->|使用 aiva_common 標準化| C[資料庫層]
+    C -->|SQLAlchemy ORM| D[API Gateway]
+    D -->|SARIF/JSON 響應| E[前端/其他模組]
+    
+    B -.->|必須使用| F[aiva_common.enums]
+    C -.->|SQLEnum 綁定| F
+    D -.->|Pydantic 驗證| F
+    
+    style F fill:#ff6b6b,stroke:#c92a2a,color:#fff
+    style B fill:#ffd43b,stroke:#f59f00
+```
+
+#### 🎯 **Integration 專屬的合理擴展**
+
+```python
+# ✅ 合理的 Integration 專屬枚舉（整合技術細節）
+class IntegrationType(str, Enum):
+    """整合類型 - Integration 模組內部使用"""
+    REST_API = "rest_api"
+    WEBHOOK = "webhook"
+    MESSAGE_QUEUE = "message_queue"
+    DATABASE_SYNC = "database_sync"
+    # 這些是整合技術的分類，不需要跨模組共享
+
+class SyncStrategy(str, Enum):
+    """數據同步策略"""
+    REAL_TIME = "real_time"           # 即時同步
+    BATCH_HOURLY = "batch_hourly"     # 每小時批次
+    BATCH_DAILY = "batch_daily"       # 每日批次
+    ON_DEMAND = "on_demand"           # 手動觸發
+    # 這是整合層的執行策略，不需要其他模組知道
+```
+
+#### 📝 **層級特定注意事項**
+
+**Reception 層開發者**:
+- ✅ **立即執行**: 修復 models_enhanced.py 的 265 行重複定義
+- ✅ 使用 aiva_common 進行外部數據標準化
+- ❌ 絕對禁止重新定義 AssetType, Severity, Confidence 等
+
+**資料庫層開發者**:
+- ✅ SQLAlchemy 模型使用 `SQLEnum(aiva_common.enums.XXX)`
+- ✅ Alembic 遷移腳本引用 aiva_common 枚舉
+- ⚠️ PostgreSQL 需要手動管理 ENUM 類型的建立/刪除
+
+**API Gateway 開發者**:
+- ✅ FastAPI 路由使用 aiva_common.schemas 作為響應模型
+- ✅ 查詢參數使用 aiva_common.enums 進行類型驗證
+- ❌ 不要使用字符串字面值代替枚舉類型
+
+---
+
+## �📈 版本歷史與路線圖
 
 ### **版本歷史**
 - **v2.0.0** (2025-10-24): 7 層架構重構，AI Operation Recorder 中樞化
