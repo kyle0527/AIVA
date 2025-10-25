@@ -1,20 +1,37 @@
-# Core dependencies
+# ==================== Core Framework ====================
 fastapi>=0.115.0
 uvicorn[standard]>=0.30.0
 pydantic>=2.7.0
-aio-pika>=9.4.0
-httpx>=0.27.0
+
+# ==================== Message Queue ====================
+aio-pika>=9.4.0  # Async RabbitMQ client (use for all Workers)
+
+# ==================== HTTP Clients ====================
+httpx>=0.27.0  # Async HTTP client (preferred)
+requests>=2.31.0  # Sync HTTP client (already installed via dependencies)
+
+# ==================== Web Scraping & Parsing ====================
 beautifulsoup4>=4.12.2
 lxml>=5.0.0
+
+# ==================== Logging ====================
 structlog>=24.1.0
+
+# ==================== Data Storage ====================
 redis>=5.0.0
-python-dotenv>=1.0.1
-orjson>=3.10.0
+neo4j>=5.23.0
+
+# ==================== Database (SQL) ====================
 sqlalchemy>=2.0.31
 asyncpg>=0.29.0
 psycopg2-binary>=2.9.0
 alembic>=1.13.2
-neo4j>=5.23.0
+
+# ==================== Configuration ====================
+python-dotenv>=1.0.1
+orjson>=3.10.0
+
+# ==================== Resilience ====================
 tenacity>=8.3.0
 aiofiles>=23.2.1
 
@@ -26,12 +43,13 @@ grpcio>=1.60.0
 grpcio-tools>=1.60.0
 protobuf>=4.25.0
 
-# Security
+# ==================== Security & Authentication ====================
+PyJWT>=2.8.0  # JWT handling (already installed: 2.10.1)
 python-jose[cryptography]>=3.3.0
 passlib[bcrypt]>=1.7.4
 cryptography>=42.0.0
 
-# Development
+# ==================== Development Tools ====================
 pytest>=8.0.0
 pytest-cov>=4.0.0
 pytest-asyncio>=0.23.0
@@ -39,3 +57,6 @@ black>=24.0.0
 ruff>=0.3.0
 mypy>=1.8.0
 pre-commit>=3.6.0
+
+# Type stubs for installed packages
+types-requests>=2.31.0

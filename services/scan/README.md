@@ -655,6 +655,132 @@ from ..aiva_common.schemas import (
 
 #### 🆕 **新增或修改功能時的流程**
 
+##### **⚙️ 執行前的準備工作 (必讀)**
+
+**核心原則**: 充分利用現有資源，避免重複造輪子
+
+在開始任何修改或新增掃描引擎功能前，務必執行以下檢查：
+
+1. **檢查本機現有工具與插件**
+   ```bash
+   # 檢查專案內的輔助工具
+   ls scripts/scan/                  # 查看 Scan 專用腳本
+   ls tools/scan/                    # 查看掃描工具
+   ls testing/scan/                  # 查看測試腳本
+   
+   # 常用工具和現有掃描引擎:
+   # - services/scan/aiva_scan/vulnerability_scanner.py (漏洞掃描器)
+   # - services/scan/aiva_scan/network_scanner.py (網路掃描)
+   # - services/scan/aiva_scan/service_detector.py (服務探測)
+   # - testing/scan/comprehensive_test.py (完整測試)
+   # - testing/scan/juice_shop_real_attack_test.py (實戰測試)
+   ```
+
+2. **利用 VS Code 擴展功能**
+   ```python
+   # Pylance MCP 工具:
+   # - pylanceFileSyntaxErrors: 檢查語法錯誤
+   # - pylanceRunCodeSnippet: 測試掃描邏輯
+   # - pylanceImports: 分析依賴關係
+   
+   # SonarQube 工具:
+   # - sonarqube_analyze_file: 代碼質量檢查
+   # - sonarqube_list_potential_security_issues: 安全問題檢測
+   ```
+
+3. **參考現有掃描引擎和工具**
+   ```bash
+   # 查看已實現的掃描功能
+   ls services/scan/aiva_scan/*/
+   
+   # 參考專業掃描工具的實現:
+   # Python 工具: ZAP (OWASP), Nuclei, Nikto
+   # TypeScript 工具: Retire.js, ESLint Security
+   # Rust 工具: Rustscan, Feroxbuster
+   # Go 工具: Subfinder, Httpx, Katana
+   ```
+
+4. **功能不確定時，立即查詢最佳實踐**
+   - 🌐 **掃描技術**: 查詢 OWASP Testing Guide, NIST 標準
+   - 📚 **工具文檔**: 參考 Nmap, Masscan, ZAP 等工具的掃描技術
+   - 🔍 **開源項目**: 使用 `github_repo` 搜索成熟的掃描引擎
+   - 📊 **SARIF 標準**: 查詢 SARIF 2.1.0 規範文檔
+   - 🛡️ **CVE 數據**: 使用 `fetch_webpage` 查詢 CVE 漏洞庫
+
+5. **選擇最佳方案的判斷標準**
+   - ✅ 優先使用 SARIF 2.1.0 標準輸出格式
+   - ✅ 優先使用 CVSS v3.1 進行風險評分
+   - ✅ 優先參考成熟工具（Nmap, ZAP, Nuclei）的掃描邏輯
+   - ✅ 多語言引擎保持一致的數據格式（使用 aiva_common）
+   - ⚠️ 避免自創掃描規則，參考 CWE/CAPEC 標準
+   - ⚠️ 新掃描技術不確定時，先查詢業界實踐
+
+**示例工作流程**:
+```python
+# 錯誤做法 ❌
+# 直接開始寫掃描代碼，自己定義輸出格式
+
+# 正確做法 ✅
+# 步驟 1: 查找是否有類似掃描功能
+ls services/scan/aiva_scan/
+cat services/scan/aiva_scan/vulnerability_scanner.py  # 參考現有實現
+
+# 步驟 2: 查詢專業工具的實現方式
+# - Nmap 的端口掃描技術
+# - ZAP 的主動/被動掃描
+# - Nuclei 的模板引擎
+
+# 步驟 3: 使用標準化格式
+from aiva_common.schemas import SARIFResult, CVSSv3Metrics
+from aiva_common.enums import Severity, Confidence
+
+# 步驟 4: 參考 SARIF 規範
+fetch_webpage("https://docs.oasis-open.org/sarif/sarif/v2.1.0/")
+
+# 步驟 5: 使用工具檢查
+pylance_analyze_file("new_scanner.py")
+sonarqube_analyze_file("new_scanner.py")
+
+# 步驟 6: 運行測試
+python testing/scan/comprehensive_test.py
+```
+
+**多語言引擎開發參考**:
+```python
+# Python 引擎 - 參考工具
+references_python = {
+    "zap": "OWASP ZAP Python API",
+    "nuclei": "Nuclei Template Engine",
+    "nikto": "Nikto Web Scanner",
+    "docs": "https://python-security.readthedocs.io/"
+}
+
+# TypeScript 引擎 - 參考工具
+references_typescript = {
+    "retire": "Retire.js (依賴漏洞掃描)",
+    "eslint_security": "ESLint Security Plugin",
+    "docs": "https://cheatsheetseries.owasp.org/cheatsheets/Nodejs_Security_Cheat_Sheet.html"
+}
+
+# Rust 引擎 - 參考工具
+references_rust = {
+    "rustscan": "高性能端口掃描",
+    "feroxbuster": "Web 目錄爆破",
+    "docs": "https://github.com/OWASP/crAPI (Rust 安全測試)"
+}
+
+# Go 引擎 - 參考工具
+references_go = {
+    "subfinder": "子域名發現",
+    "httpx": "HTTP 探測",
+    "katana": "網站爬蟲",
+    "nuclei": "漏洞掃描",
+    "docs": "https://github.com/projectdiscovery/"
+}
+```
+
+---
+
 ##### **情境 1: 新增 Python 掃描引擎功能**
 
 ```python

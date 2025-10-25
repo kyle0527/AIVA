@@ -213,6 +213,128 @@ from aiva_common.enums import Severity, Confidence
 
 #### 🆕 **新增或修改功能時的流程**
 
+##### **⚙️ 執行前的準備工作 (必讀)**
+
+**核心原則**: 充分利用現有資源，避免重複造輪子
+
+在開始任何修改或新增安全檢測功能前，務必執行以下檢查：
+
+1. **檢查本機現有工具與插件**
+   ```bash
+   # 檢查專案內的輔助工具
+   ls scripts/features/              # 查看 Features 專用腳本
+   ls testing/                       # 查看測試工具
+   ls services/features/base/        # 查看基礎類和通用功能
+   
+   # 常用工具和基礎組件:
+   # - services/features/base/feature_base.py (功能基類)
+   # - services/features/base/http_client.py (HTTP 客戶端封裝)
+   # - services/features/common/unified_smart_detection_manager.py (智能檢測管理器)
+   # - testing/features/ (各種功能測試腳本)
+   ```
+
+2. **利用 VS Code 擴展功能**
+   ```python
+   # Pylance MCP 工具 (推薦優先使用):
+   # - pylanceFileSyntaxErrors: 檢查語法錯誤
+   # - pylanceRunCodeSnippet: 測試 Payload 生成邏輯
+   # - pylanceInvokeRefactoring: 移除未使用的導入
+   
+   # SonarQube 工具 (安全檢測必備):
+   # - sonarqube_analyze_file: 檢查代碼安全問題
+   # - sonarqube_list_potential_security_issues: 列出潛在漏洞
+   ```
+
+3. **參考現有安全檢測功能實現**
+   ```bash
+   # 查找類似的檢測邏輯
+   ls services/features/function_*/    # 查看各功能實現
+   
+   # 參考完善的功能實現案例:
+   # - function_sqli/: SQL 注入檢測 (包含多引擎、智能檢測)
+   # - function_xss/: XSS 檢測 (包含 DOM/Stored/Reflected)
+   # - function_idor/: IDOR 檢測 (包含垂直/水平越權)
+   # - payment_logic_bypass/: 支付邏輯繞過 (包含增強功能)
+   ```
+
+4. **功能不確定時，立即查詢最佳實踐**
+   - 🌐 **安全規範**: 查詢 OWASP Top 10, CWE, CAPEC 等安全標準
+   - 📚 **工具文檔**: 參考 Burp Suite, ZAP, SQLMap 等工具的檢測邏輯
+   - 🔍 **PoC 參考**: 使用 `github_repo` 搜索公開的漏洞 PoC
+   - 🛡️ **CVE 數據**: 使用 `fetch_webpage` 查詢 CVE 詳情和利用方式
+   - 📖 **編碼技巧**: 查詢 WAF 繞過技術和 Payload 混淆方法
+
+5. **選擇最佳方案的判斷標準**
+   - ✅ 優先繼承 `FeatureBase` 基類，複用通用邏輯
+   - ✅ 優先使用 `unified_smart_detection_manager` 進行智能檢測
+   - ✅ 優先參考 OWASP 和業界公認的檢測方法
+   - ✅ Payload 設計參考知名安全工具（SQLMap, XSStrike 等）
+   - ⚠️ 避免自創檢測邏輯，容易產生誤報
+   - ⚠️ 新漏洞檢測方法不確定時，先查詢 CVE 和安全公告
+
+**示例工作流程**:
+```python
+# 錯誤做法 ❌
+# 直接開始寫檢測代碼，自己設計 Payload
+
+# 正確做法 ✅
+# 步驟 1: 查找是否有類似功能可參考
+ls services/features/function_*/
+cat services/features/function_sqli/worker.py  # 參考 SQL 注入實現
+
+# 步驟 2: 繼承基類，複用通用功能
+from services.features.base.feature_base import FeatureBase
+from services.features.base.http_client import HttpClient
+
+# 步驟 3: 查詢漏洞相關資料
+# - OWASP 測試指南
+# - CVE 詳情
+# - 已知的 Payload 變種
+
+# 步驟 4: 使用工具檢查代碼質量
+pylance_analyze_file("new_feature_worker.py")
+sonarqube_list_potential_security_issues("new_feature_worker.py")
+
+# 步驟 5: 參考業界工具實現
+# 例如: SQLMap 的布爾盲注檢測、XSStrike 的 DOM XSS 檢測
+
+# 步驟 6: 實現時使用標準枚舉
+from aiva_common.enums import Severity, Confidence
+from aiva_common.schemas import FindingPayload
+
+# 步驟 7: 編寫測試案例
+# 參考 testing/features/ 下的測試腳本
+```
+
+**常見檢測功能的參考資源**:
+```python
+# SQL 注入檢測
+reference = {
+    "tool": "SQLMap",
+    "docs": "OWASP SQL Injection Testing Guide",
+    "cwe": "CWE-89",
+    "example": "services/features/function_sqli/"
+}
+
+# XSS 檢測
+reference = {
+    "tool": "XSStrike, DOMPurify",
+    "docs": "OWASP XSS Prevention Cheat Sheet",
+    "cwe": "CWE-79, CWE-80",
+    "example": "services/features/function_xss/"
+}
+
+# SSRF 檢測
+reference = {
+    "tool": "SSRFmap",
+    "docs": "PortSwigger SSRF Academy",
+    "cwe": "CWE-918",
+    "example": "services/features/function_ssrf/"
+}
+```
+
+---
+
 ##### **🏗️ Features 架構靈活性原則**
 
 **核心理念**: Features 模組由眾多獨立的安全檢測功能組成，每個子功能可以採用最適合其特性的內部架構。

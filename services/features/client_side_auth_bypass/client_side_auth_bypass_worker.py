@@ -1,6 +1,11 @@
 # services/features/client_side_auth_bypass/client_side_auth_bypass_worker.py
 """
 客戶端授權繞過檢測 Worker
+
+Compliance Note (遵循 aiva_common 設計原則):
+- 移除 fallback 導入機制，確保使用 aiva_common 標準
+- Severity, Confidence 從 aiva_common.enums 導入
+- 修正日期: 2025-10-25
 """
 
 import logging
@@ -9,37 +14,12 @@ import asyncio
 import re
 from urllib.parse import urljoin
 
-# 假設 Schema 和基礎 Worker 類已可正確導入
-try:
-    from services.aiva_common.schemas.generated.tasks import FunctionTaskPayload, FunctionTaskResult
-    from services.aiva_common.schemas.generated.findings import FindingPayload, Severity, Confidence
-    from services.features.base.feature_base import FeatureBaseWorker
-    from .js_analysis_engine import JavaScriptAnalysisEngine
-    IMPORT_SUCCESS = True
-except ImportError as e:
-    logging.getLogger(__name__).error(f"Failed to import schemas/base in client_side_auth_bypass_worker: {e}")
-    IMPORT_SUCCESS = False
-    # Define dummy classes
-    class FunctionTaskPayload: pass
-    class FunctionTaskResult: 
-        def __init__(self, **kwargs): 
-            for k, v in kwargs.items(): setattr(self, k, v)
-    class FindingPayload:
-        def __init__(self, **kwargs):
-            for k, v in kwargs.items(): setattr(self, k, v)
-    class Severity: HIGH = "High"; MEDIUM = "Medium"; LOW = "Low"
-    class Confidence: HIGH = "High"; MEDIUM = "Medium"; LOW = "Low"
-    class FeatureBaseWorker: 
-        def __init__(self, *args, **kwargs): 
-            self.http_client = kwargs.get('http_client')
-            self.config = kwargs.get('config', {})
-        async def run(self, payload: Any) -> Any: 
-            return FunctionTaskResult(success=False, error="Import failed")
-    class JavaScriptAnalysisEngine: 
-        def __init__(self, **kwargs): pass
-        async def analyze(self, url: str, scripts: List[str]) -> List[Dict]: return []
-        async def analyze_dom_manipulation(self, html: str) -> List[Dict]: return []
-        def get_recommendations(self, issues: List[Dict]) -> List[str]: return []
+# 直接導入，不使用 fallback（確保 aiva_common 可用）
+from services.aiva_common.schemas.generated.tasks import FunctionTaskPayload, FunctionTaskResult
+from services.aiva_common.schemas.generated.findings import FindingPayload
+from services.aiva_common.enums import Severity, Confidence
+from services.features.base.feature_base import FeatureBaseWorker
+from .js_analysis_engine import JavaScriptAnalysisEngine
 
 
 logger = logging.getLogger(__name__)
@@ -51,8 +31,6 @@ class ClientSideAuthBypassWorker(FeatureBaseWorker):
 
     def __init__(self, mq_channel=None, http_client=None, config: Optional[Dict[str, Any]] = None):
         super().__init__(mq_channel, http_client, config)
-        if not IMPORT_SUCCESS:
-            logger.error("ClientSideAuthBypassWorker initialized with failed imports!")
         
         self.js_analyzer = JavaScriptAnalysisEngine(http_client=self.http_client)
         self.timeout = self.config.get('timeout', 30) if self.config else 30

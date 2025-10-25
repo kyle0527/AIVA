@@ -3,6 +3,11 @@
 AIVA 決策代理增強模組
 用途: 整合風險評估和經驗驅動決策，提升 AI 決策的智能化水平
 基於: BioNeuron_模型_AI核心大腦.md 中的決策代理分析
+
+Compliance Note:
+- 修正日期: 2025-10-25
+- 修正項目: 移除重複定義的 RiskLevel，改用 aiva_common.enums.RiskLevel
+- 符合架構原則: 使用 aiva_common 統一枚舉定義
 """
 
 import sys
@@ -16,12 +21,8 @@ from pathlib import Path
 # 添加 AIVA 模組路徑
 sys.path.append(str(Path(__file__).parent.parent.parent.parent.parent))
 
-class RiskLevel(Enum):
-    """風險等級枚舉"""
-    LOW = "LOW"
-    MEDIUM = "MEDIUM"
-    HIGH = "HIGH"
-    CRITICAL = "CRITICAL"
+# 使用 aiva_common 的統一枚舉定義
+from services.aiva_common.enums import RiskLevel
 
 class OperationMode(Enum):
     """操作模式枚舉"""

@@ -1,0 +1,190 @@
+python核心依賴
+# --- 核心框架與異步 ---
+fastapi>=0.115.0         # Web 框架 (已存在)
+uvicorn[standard]>=0.30.0 # ASGI 伺服器 (已存在)
+httpx>=0.27.0            # 異步 HTTP 客戶端 (已存在)
+aiofiles>=23.2.1         # 異步文件操作 (已存在)
+tenacity>=8.3.0          # 重試機制 (已存在)
+
+# --- 資料庫與 ORM ---
+sqlalchemy>=2.0.31       # ORM 框架 (已存在)
+asyncpg>=0.29.0          # PostgreSQL 異步驅動 (已存在)
+psycopg2-binary>=2.9.0   # PostgreSQL 同步驅動 (已存在，主要供 Alembic 使用)
+alembic>=1.13.2          # 資料庫遷移工具 (已存在)
+redis>=5.0.0             # Redis 客戶端 (已存在)
+neo4j>=5.23.0            # Neo4j 圖資料庫客戶端 (已存在)
+
+# --- 消息佇列 ---
+aio-pika>=9.4.0          # RabbitMQ 異步客戶端 (已存在)
+
+# --- 資料驗證與序列化 ---
+pydantic>=2.7.0          # 資料驗證 (已存在)
+orjson>=3.10.0           # 高效能 JSON 處理 (已存在)
+
+# --- AI 與 RAG 核心 (根據 AI_SYSTEM_OVERVIEW.md 補充) ---
+# 注意：以下套件可能未在原始 requirements.txt 中明確列出，但基於 RAG 和 BioNeuron 設計是必要的
+sentence-transformers>=2.2.0 # 用於 RAG 引擎的文本嵌入模型 (VectorStore 需要)
+# chromadb>=0.4.0            # (可選) 如果 VectorStore 使用 ChromaDB 後端
+# faiss-cpu>=1.7.0           # (可選) 如果 VectorStore 使用 FAISS 後端 (CPU 版本)
+# faiss-gpu>=1.7.0           # (可選) 如果 VectorStore 使用 FAISS 後端 (GPU 版本)
+# torch>=2.0.0               # (可選) 許多 embedding 模型依賴 PyTorch
+# tensorflow>=2.10.0         # (可選) 部分 embedding 模型可能依賴 TensorFlow
+
+# --- 安全性 ---
+python-jose[cryptography]>=3.3.0 # JWT 處理 (已存在)
+passlib[bcrypt]>=1.7.4   # 密碼雜湊 (已存在)
+cryptography>=42.0.0     # 加密函式庫 (已存在)
+
+# --- 網頁解析與處理 ---
+beautifulsoup4>=4.12.2   # HTML/XML 解析 (已存在)
+lxml>=5.0.0            # 高效能 XML/HTML 解析器 (已存在)
+
+# --- 系統與監控 ---
+psutil>=5.9.6            # 系統資源監控 (已存在)
+structlog>=24.1.0        # 結構化日誌 (已存在)
+
+# --- 設定與工具 ---
+python-dotenv>=1.0.1     # .env 文件讀取 (已存在)
+
+# --- gRPC (可選，根據架構圖) ---
+grpcio>=1.60.0           # gRPC 核心 (已存在)
+grpcio-tools>=1.60.0     # gRPC 工具 (已存在)
+protobuf>=4.25.0         # Protocol Buffers (已存在)
+
+# --- 開發與測試 ---
+pytest>=8.0.0            # 測試框架 (已存在)
+pytest-cov>=4.0.0        # 測試覆蓋率 (已存在)
+pytest-asyncio>=0.23.0   # 異步測試支援 (已存在)
+black>=24.0.0            # 程式碼格式化 (已存在)
+ruff>=0.3.0              # Linter 與格式化 (已存在)
+mypy>=1.8.0              # 型別檢查 (已存在)
+pre-commit>=3.6.0        # Git 預提交鉤子 (已存在)
+
+go 需要依賴
+
+# 這個檔案總結了 Go 服務可能需要的核心依賴。
+# 實際的依賴管理應透過各服務目錄下的 go.mod 檔案進行。
+
+# --- aiva_common_go (services/features/common/go/aiva_common_go/go.mod) ---
+[dependencies.aiva_common_go]
+"github.com/rabbitmq/amqp091-go" = "v1.9.0"  # RabbitMQ 客戶端
+"go.uber.org/zap" = "v1.26.0"               # 結構化日誌
+# 其他通用依賴...
+
+# --- function_sca_go (services/features/function_sca_go/go.mod) ---
+[dependencies.function_sca_go]
+# 這裡應列出 SCA 功能所需的特定依賴，例如：
+# "github.com/google/uuid" = "v1.3.0"        # 如果需要 UUID
+# "github.com/package-url/packageurl-go" = "v0.1.1" # Package URL 處理
+# "aiva.com/path/to/aiva_common_go" = "v1.0.0" # 引用內部通用模組
+# 其他 SCA 特定依賴...
+
+# --- function_ssrf_go (services/features/function_ssrf_go/go.mod) ---
+[dependencies.function_ssrf_go]
+# 這裡應列出 SSRF 功能所需的特定依賴，例如：
+# "net/http" = "stdlib"                      # 標準庫 HTTP 客戶端
+# "aiva.com/path/to/aiva_common_go" = "v1.0.0" # 引用內部通用模組
+# 其他 SSRF 特定依賴...
+
+# --- function_authn_go (services/features/function_authn_go/go.mod) ---
+[dependencies.function_authn_go]
+# 這裡應列出 AuthN 功能所需的特定依賴，例如：
+# "golang.org/x/crypto/bcrypt" = "v0.14.0"    # 密碼雜湊
+# "github.com/golang-jwt/jwt/v5" = "v5.0.0"   # JWT 處理
+# "aiva.com/path/to/aiva_common_go" = "v1.0.0" # 引用內部通用模組
+# 其他 AuthN 特定依賴...
+
+# --- function_cspm_go (services/features/function_cspm_go/go.mod) ---
+[dependencies.function_cspm_go]
+# 這裡應列出 CSPM 功能所需的特定依賴，例如：
+# "cloud.google.com/go/..."                  # GCP SDK
+# "github.com/aws/aws-sdk-go-v2/..."         # AWS SDK v2
+# "github.com/Azure/azure-sdk-for-go/..."    # Azure SDK
+# "aiva.com/path/to/aiva_common_go" = "v1.0.0" # 引用內部通用模組
+# 其他 CSPM 特定依賴...
+
+# 注意：版本號僅為範例，應使用 go mod tidy 來管理實際版本。
+# 注意：內部模組引用路徑 "aiva.com/path/to/aiva_common_go" 需替換為您實際的 Go 模組路徑。
+
+rust需要依賴
+
+# 這個檔案總結了 Rust 服務可能需要的核心依賴。
+# 實際的依賴管理應透過各服務目錄下的 Cargo.toml 檔案進行。
+
+# --- info_gatherer_rust (services/scan/info_gatherer_rust/Cargo.toml) ---
+[dependencies.info_gatherer_rust]
+git2 = "0.18"           # 用於 Git 歷史掃描
+regex = "1.10"          # 正則表達式，用於秘密檢測
+serde = { version = "1.0", features = ["derive"] } # 序列化/反序列化
+serde_json = "1.0"      # JSON 處理
+tokio = { version = "1", features = ["full"] } # 異步執行環境 (如果需要)
+# 其他資訊收集特定依賴...
+
+# --- function_sast_rust (services/features/function_sast_rust/Cargo.toml) ---
+[dependencies.function_sast_rust]
+serde = { version = "1.0", features = ["derive"] } # 序列化/反序列化
+serde_json = "1.0"      # JSON 處理
+clap = { version = "4.4", features = ["derive"] } # 命令列參數解析
+walkdir = "2.4"         # 目錄遍歷
+tree-sitter = "0.20"    # 程式碼解析 (SAST 核心)
+# 根據支援的語言，可能需要對應的 tree-sitter-language crates，例如：
+# tree-sitter-python = "0.20"
+# tree-sitter-javascript = "0.20"
+# tree-sitter-java = "0.20"
+tokio = { version = "1", features = ["full"] } # 異步執行環境
+# 其他 SAST 特定依賴...
+
+# 注意：版本號僅為範例，應使用 cargo update 來管理實際版本。
+
+TypeScript/Node.js 依賴建議 (基於 package.json)
+
+{
+  "_comment": "這個檔案總結了 TypeScript/Node.js 服務可能需要的核心依賴。實際的依賴管理應透過 services/scan/aiva_scan_node/package.json 進行。",
+  "dependencies": {
+    "@types/node": "^20.0.0",
+    "typescript": "^5.0.0",
+    "winston": "^3.8.0",
+    "axios": "^1.0.0",
+    "amqplib": "^0.10.0",
+    "@types/amqplib": "^0.10.0"
+  },
+  "optionalDependencies": {
+    "playwright": "^1.30.0"
+  },
+  "devDependencies": {
+    "ts-node": "^10.9.0",
+    "nodemon": "^3.0.0",
+    "@typescript-eslint/eslint-plugin": "^6.0.0",
+    "@typescript-eslint/parser": "^6.0.0",
+    "eslint": "^8.0.0",
+    "jest": "^29.0.0",
+    "@types/jest": "^29.0.0",
+    "ts-jest": "^29.0.0"
+  },
+  "_explanations": {
+    "dependencies": {
+      "@types/node": "Node.js 類型定義",
+      "typescript": "TypeScript 編譯器",
+      "winston": "日誌函式庫 (根據 logger.ts 推斷)",
+      "axios": "(可能需要) 用於發送 HTTP 請求進行掃描或與其他服務通訊",
+      "amqplib": "(可能需要) 用於與 RabbitMQ 通訊",
+      "@types/amqplib": "amqplib 的類型定義"
+    },
+    "optionalDependencies": {
+      "playwright": "(非常可能需要) 基於架構描述，用於瀏覽器自動化、動態掃描和 JS 模擬"
+    },
+    "devDependencies": {
+      "ts-node": "直接執行 TypeScript",
+      "nodemon": "開發時自動重啟服務",
+      "@typescript-eslint/*": "ESLint 的 TypeScript 插件",
+      "eslint": "程式碼風格檢查",
+      "jest": "測試框架",
+      "@types/jest": "Jest 類型定義",
+      "ts-jest": "Jest 的 TypeScript 預處理器"
+    }
+  },
+  "_note": "版本號僅為範例，應使用 npm install 或 yarn add 來安裝並由 package-lock.json 或 yarn.lock 鎖定。"
+}
+
+
+AIVA 系統級與建置依賴除了各個語言的套件依賴外，要成功建置和執行 AIVA 平台，還需要確保以下系統級的工具和環境已安裝：Python:版本：根據 README.md 和 requirements.txt 推斷，建議使用 Python 3.11 或更高版本 以獲得最佳異步支援和性能。pip: Python 套件安裝程式。(建議) poetry 或 pdm: 用於管理 Python 依賴和鎖定版本。Go:版本：根據 README.md，需要 Go 1.21 或更高版本。Go 工具鏈：用於編譯 Go 原始碼 (go build)。Rust:版本：根據 README.md，需要 Rust 1.70 或更高版本。cargo: Rust 的建置工具和套件管理器 (cargo build --release)。建置工具鏈：可能需要 C/C++ 編譯器 (如 GCC 或 Clang) 來編譯某些 Rust crate 的 C 依賴。Node.js:版本：根據 README.md，需要 Node.js 20 或更高版本。npm 或 yarn: JavaScript 套件管理器。Docker & Docker Compose:用於容器化、管理多服務的開發環境以及生產環境部署的基礎。docker-compose.yml 和 docker-compose.production.yml 都已存在。資料庫與消息佇列服務:PostgreSQL: 需要一個運行的 PostgreSQL 伺服器實例。Redis: 需要一個運行的 Redis 伺服器實例。RabbitMQ: 需要一個運行的 RabbitMQ 伺服器實例。Neo4j: (如果圖資料庫功能被積極使用) 需要一個運行的 Neo4j 伺服器實例。(注意: 這些服務可以透過 Docker Compose 輕鬆啟動，docker/initdb/ 下的 SQL 檔案用於初始化 PostgreSQL)。建置工具

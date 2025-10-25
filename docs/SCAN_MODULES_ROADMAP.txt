@@ -1,0 +1,73 @@
+# --- 1. 深度 API 安全掃描 ---
+
+# REST API 掃描增強
+openapi-spec-validator>=0.5.0  # 驗證 OpenAPI (Swagger) 規格文件
+prance>=23.6.21.0              # 解析和處理 OpenAPI 規格文件
+requests-toolbelt>=1.0.0       # 提供更多 HTTP 工具，例如處理 multipart/form-data
+# (可選) schemathesis>=3.20.0     # 根據 OpenAPI/GraphQL 規格自動生成測試案例 (功能強大)
+
+# GraphQL 掃描
+python-graphql-client>=0.4.0   # 發送 GraphQL 請求 (包括內省查詢)
+
+# gRPC 掃描 (Python 實現 gRPC 掃描可能較複雜，Go 是更常見的選擇)
+# 如果堅持用 Python
+grpcio-reflection>=1.60.0    # gRPC Reflection Protocol 客戶端 (嘗試發現服務)
+# (注意: gRPC 掃描通常需要 .proto 文件或 Reflection，純動態發現較困難)
+
+
+# --- 2. 外部攻擊面管理 (EASM) 強化 ---
+
+# 子網域枚舉
+# (可選) aiodns>=3.0.0            # 異步 DNS 解析 (用於主動爆破)
+# (可選) httpx[http2]>=0.27.0     # 確保 httpx 支援 HTTP/2 (部分子網域發現技術可能需要)
+# (建議) 整合外部工具: 可以透過 subprocess 調用如 subfinder, amass 等優秀的 Go 工具
+
+# 公開儲存桶掃描
+boto3>=1.28.0            # AWS SDK (用於掃描 S3)
+azure-storage-blob>=12.14.0 # Azure Blob Storage SDK
+google-cloud-storage>=2.7.0 # Google Cloud Storage SDK
+
+
+# --- 3. 軟體供應鏈掃描擴充 ---
+
+# 容器映像掃描 (Python 主要負責解包和協調)
+docker>=6.1.0            # Python Docker SDK (用於拉取、檢查和解包映像)
+# (注意: 實際的漏洞掃描通常交給專用工具如 Trivy, Grype，可以透過 subprocess 調用)
+
+# 基礎設施即代碼 (IaC) 掃描 (Python 負責解析和協調)
+python-hcl2>=4.3.0       # 解析 Terraform HCL 檔案
+pyyaml>=6.0              # 解析 Kubernetes YAML 檔案
+# (注意: 實際的配置錯誤掃描可整合 Checkov, tfsec, kics 等工具)
+
+
+# --- 4. 行動應用程式掃描 (MAS) ---
+
+# APK / IPA 檔案分析 (Python 負責反編譯和提取資訊)
+# (注意: 反編譯工具通常是外部 Java 或獨立工具)
+# (建議) 使用 subprocess 調用以下工具:
+# - apktool (反編譯 APK)
+# - dex2jar (轉換 dex 為 jar)
+# - jd-gui (查看 jar 原始碼)
+# - mobsf (Mobile Security Framework, 一個完整的框架，可考慮整合)
+androguard>=3.4.0a1      # (可選) 純 Python 的 Android 分析工具 (功能可能不如 Java 工具全面)
+
+
+# --- 5. AI 驅動的智能掃描 ---
+# 這部分主要依賴您現有的 AI 核心 (`services/core/aiva_core`)
+# 可能需要加強與 AI 模組的互動介面，但未必需要新的外部套件。
+# 如果需要更複雜的頁面相似度比較或內容理解：
+scikit-learn>=1.3.0      # 用於機器學習任務，例如判斷頁面相似性
+nltk>=3.8                # 自然語言處理工具包 (如果 AI 需要理解頁面內容來決定爬取優先級)
+
+
+# --- 通用工具 (可能已存在或需要補充) ---
+beautifulsoup4           # (已存在) HTML 解析
+lxml                     # (已存在) 高效能 HTML/XML 解析
+httpx                    # (已存在) 異步 HTTP 客戶端
+asyncio                  # (標準庫) 異步基礎
+# ---
+
+# 注意：這是一個補充建議清單，您需要將其與現有的 `requirements.txt` 合併。
+# 建議使用 Poetry 或 PDM 來管理依賴，而不是手動維護 requirements.txt。
+# 對於需要調用外部工具的功能 (如子網域枚舉、容器掃描、APK反編譯)，
+# 需確保這些工具在執行環境中可用 (例如 Docker 映像檔中已安裝)。

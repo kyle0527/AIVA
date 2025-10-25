@@ -1227,6 +1227,124 @@ python services/aiva_common/tools/schema_validator.py
 
 ### 開發流程
 
+#### **⚙️ 執行前的準備工作 (必讀)**
+
+**核心原則**: 充分利用現有資源，避免重複造輪子
+
+在開始任何 aiva_common 的修改或擴展前，務必執行以下檢查：
+
+1. **檢查本機現有工具與插件**
+   ```bash
+   # 檢查 aiva_common 內建工具
+   ls services/aiva_common/tools/     # 查看開發工具
+   
+   # 重要工具:
+   # - schema_codegen_tool.py: Schema 自動生成工具
+   # - schema_validator.py: Schema 驗證工具
+   # - module_connectivity_tester.py: 模組連通性測試
+   
+   # 檢查現有定義
+   ls services/aiva_common/enums/     # 查看已定義枚舉
+   ls services/aiva_common/schemas/   # 查看已定義 Schema
+   ```
+
+2. **利用 VS Code 擴展功能**
+   ```python
+   # Pylance MCP 工具 (強烈推薦):
+   # - pylanceFileSyntaxErrors: 檢查 Pydantic 語法
+   # - pylanceImports: 分析導入關係，避免循環依賴
+   # - pylanceInvokeRefactoring: 自動重構和優化
+   
+   # SonarQube 工具:
+   # - sonarqube_analyze_file: 代碼質量檢查
+   ```
+
+3. **搜索現有定義避免重複**
+   ```bash
+   # 檢查枚舉是否已存在
+   grep -r "class YourEnumName" services/aiva_common/enums/
+   
+   # 檢查 Schema 是否已存在
+   grep -r "class YourSchemaName" services/aiva_common/schemas/
+   
+   # 使用工具搜索
+   # - semantic_search: 語義搜索相關定義
+   # - grep_search: 精確搜索類別名稱
+   ```
+
+4. **功能不確定時，立即查詢最佳實踐**
+   - 📚 **Pydantic 文檔**: 使用 `fetch_webpage` 查詢 Pydantic v2 官方文檔
+   - 🌐 **標準規範**: 查詢 CVSS, SARIF, MITRE ATT&CK 等標準文檔
+   - 🔍 **開源參考**: 使用 `github_repo` 搜索類似的標準化項目
+   - 📖 **Python 規範**: 參考 PEP 8, PEP 484 (類型標註), PEP 257 (Docstring)
+
+5. **選擇最佳方案的判斷標準**
+   - ✅ 優先使用國際標準（CVSS, MITRE, SARIF, CWE, CVE）
+   - ✅ 優先參考官方文檔和規範
+   - ✅ 枚舉命名使用大寫蛇形（UPPER_SNAKE_CASE）
+   - ✅ 枚舉值使用小寫蛇形（lower_snake_case）
+   - ✅ Schema 必須繼承 `BaseModel` 並使用 `Field()` 添加描述
+   - ⚠️ 避免自創標準，優先對接現有標準
+   - ⚠️ 新標準不確定時，先查詢官方規範
+
+**示例工作流程**:
+```python
+# 錯誤做法 ❌
+# 直接開始定義枚舉或 Schema，自己設計格式
+
+# 正確做法 ✅
+# 步驟 1: 檢查是否已有類似定義
+grep -r "Severity" services/aiva_common/enums/
+# 發現: services/aiva_common/enums/common.py 已有 Severity
+
+# 步驟 2: 如需新增，查詢國際標準
+fetch_webpage("https://www.first.org/cvss/v3.1/specification-document")
+# CVSS v3.1 標準定義了嚴重等級
+
+# 步驟 3: 參考 Pydantic v2 文檔
+fetch_webpage("https://docs.pydantic.dev/latest/")
+
+# 步驟 4: 使用工具生成和驗證
+python services/aiva_common/tools/schema_codegen_tool.py
+python services/aiva_common/tools/schema_validator.py
+
+# 步驟 5: 使用 Pylance 檢查
+pylance_analyze_file("services/aiva_common/enums/new_enum.py")
+
+# 步驟 6: 運行連通性測試
+python services/aiva_common/tools/module_connectivity_tester.py
+```
+
+**常見場景參考資源**:
+```python
+# 新增枚舉
+references_enum = {
+    "standard": "國際標準 (CVSS, MITRE, OWASP)",
+    "naming": "PEP 8 命名規範",
+    "example": "services/aiva_common/enums/common.py"
+}
+
+# 新增 Schema
+references_schema = {
+    "framework": "Pydantic v2",
+    "docs": "https://docs.pydantic.dev/",
+    "validation": "services/aiva_common/tools/schema_validator.py",
+    "example": "services/aiva_common/schemas/findings.py"
+}
+
+# 新增標準支援
+references_standard = {
+    "cvss": "https://www.first.org/cvss/",
+    "sarif": "https://docs.oasis-open.org/sarif/sarif/v2.1.0/",
+    "mitre": "https://attack.mitre.org/",
+    "cwe": "https://cwe.mitre.org/"
+}
+```
+
+---
+
+#### **標準開發步驟**
+
 1. **Fork 專案** 並創建功能分支
 2. **添加功能** 並確保符合編碼規範
 3. **運行測試** 確保所有測試通過

@@ -2,12 +2,18 @@
 Enhanced Database Models for Asset and Vulnerability Lifecycle Management
 
 這個模組包含增強的資料庫模型，支援資產與漏洞的完整生命週期管理。
+
+Compliance Note (遵循 aiva_common 設計原則):
+- 所有 enum 定義已移除,改為從 aiva_common.enums import (4-layer priority 原則)
+- BusinessCriticality, Environment, AssetType, AssetStatus → aiva_common.enums.assets
+- VulnerabilityStatus, Exploitability → aiva_common.enums.security
+- Severity, Confidence → aiva_common.enums.common
+- 修正日期: 2025-10-25
 """
 
 from __future__ import annotations
 
 from datetime import datetime
-from enum import Enum
 from typing import Any
 
 from sqlalchemy import (  # type: ignore[import-not-found]
@@ -26,82 +32,17 @@ from sqlalchemy.ext.declarative import (  # type: ignore[import-not-found]
 )
 from sqlalchemy.orm import relationship  # type: ignore[import-not-found]
 
+# Import enums from aiva_common (Single Source of Truth)
+from services.aiva_common.enums.assets import (
+    AssetStatus,
+    AssetType,
+    BusinessCriticality,
+    Environment,
+)
+from services.aiva_common.enums.common import Confidence, Severity
+from services.aiva_common.enums.security import Exploitability, VulnerabilityStatus
+
 Base = declarative_base()  # type: ignore[misc]
-
-
-class BusinessCriticality(str, Enum):
-    """業務重要性等級"""
-
-    CRITICAL = "critical"
-    HIGH = "high"
-    MEDIUM = "medium"
-    LOW = "low"
-
-
-class Environment(str, Enum):
-    """環境類型"""
-
-    PRODUCTION = "production"
-    STAGING = "staging"
-    DEVELOPMENT = "development"
-    TESTING = "testing"
-
-
-class AssetType(str, Enum):
-    """資產類型"""
-
-    URL = "url"
-    REPOSITORY = "repository"
-    HOST = "host"
-    CONTAINER = "container"
-    API_ENDPOINT = "api_endpoint"
-    MOBILE_APP = "mobile_app"
-
-
-class AssetStatus(str, Enum):
-    """資產狀態"""
-
-    ACTIVE = "active"
-    ARCHIVED = "archived"
-    DELETED = "deleted"
-
-
-class VulnerabilityStatus(str, Enum):
-    """漏洞狀態"""
-
-    NEW = "new"
-    OPEN = "open"
-    IN_PROGRESS = "in_progress"
-    FIXED = "fixed"
-    RISK_ACCEPTED = "risk_accepted"
-    FALSE_POSITIVE = "false_positive"
-    WONT_FIX = "wont_fix"
-
-
-class Severity(str, Enum):
-    """嚴重程度"""
-
-    CRITICAL = "critical"
-    HIGH = "high"
-    MEDIUM = "medium"
-    LOW = "low"
-    INFO = "info"
-
-
-class Confidence(str, Enum):
-    """信心度"""
-
-    HIGH = "high"
-    MEDIUM = "medium"
-    LOW = "low"
-
-
-class Exploitability(str, Enum):
-    """可利用性"""
-
-    HIGH = "high"
-    MEDIUM = "medium"
-    LOW = "low"
 
 
 class Asset(Base):  # type: ignore[misc, valid-type]
