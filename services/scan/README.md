@@ -2,6 +2,85 @@
 
 AIVA Scan 是一個強大的多語言統一掃描引擎，整合了 Python、TypeScript 和 Rust 三種技術的優勢，提供全方位的網路安全掃描能力。
 
+---
+
+## � 目錄
+
+- [🛠️ Scan 模組開發工具](#️-scan-模組開發工具)
+- [🏗️ 整體架構](#️-整體架構)
+- [📁 目錄結構](#-目錄結構)
+- [🚀 現有功能](#-現有功能)
+  - [1. Python 核心掃描引擎](#1-python-核心掃描引擎-aiva_scan)
+  - [2. TypeScript 動態引擎](#2-typescript-動態引擎-aiva_scan_node)
+  - [3. Rust 資訊收集器](#3-rust-資訊收集器-info_gatherer_rust)
+  - [4. 統一掃描引擎](#4-統一掃描引擎-unified_scan_enginepy)
+  - [5. SARIF 轉換器](#5-sarif-轉換器-sarif_converterpy)
+- [💻 如何使用](#-如何使用)
+- [🔌 技術整合](#-技術整合)
+- [🎯 未來規劃](#-未來規劃)
+- [📊 效能指標](#-效能指標)
+- [🔐 安全性考量](#-安全性考量)
+- [🛠️ 開發指南](#️-開發指南)
+
+---
+
+## �🛠️ Scan 模組開發工具
+
+> **Python + TypeScript + Rust 混合架構**: 根據不同子模組選擇對應工具
+
+| 子模組 | 主要語言 | 推薦插件 | 工具連結 |
+|-------|---------|---------|---------|
+| 🐍 **aiva_scan/** | Python | Pylance + Ruff + Black | [Python 工具 (22個)](../../_out/VSCODE_EXTENSIONS_INVENTORY.md#1-python-開發生態-22-個) |
+| 📘 **aiva_scan_node/** | TypeScript | ESLint + Prettier | [TypeScript 工具](../../_out/VSCODE_EXTENSIONS_INVENTORY.md#7-程式碼品質與-linting-5-個) |
+| 🦀 **info_gatherer_rust/** | Rust | rust-analyzer | [Rust 工具](../../_out/VSCODE_EXTENSIONS_INVENTORY.md#3-其他程式語言-5-個) |
+
+### 掃描模組專用工具
+
+| 功能需求 | 推薦插件 | 說明 |
+|---------|---------|------|
+| 🌐 **網路除錯** | REST Client | 測試 HTTP 請求、API 掃描驗證 |
+| 🔍 **安全分析** | SonarLint (4.33.0) | 靜態安全分析、漏洞檢測 |
+| 🤖 **AI 輔助** | GitHub Copilot | 掃描邏輯生成、正則表達式協助 |
+| 📊 **結果分析** | Rainbow CSV + Jupyter | 掃描結果資料分析 |
+| 🐳 **環境管理** | Docker + Remote Containers | 隔離測試環境 |
+| 🔀 **版本控制** | GitLens + Git Graph | 追蹤掃描邏輯變更 |
+
+📚 **完整工具清單**: [VS Code 插件參考](../../_out/VSCODE_EXTENSIONS_INVENTORY.md) (88個插件)
+
+### 💡 Scan 開發快速技巧
+
+**Python 掃描引擎 (aiva_scan/)**:
+- 使用 Pylance 進行型別檢查，確保掃描器參數正確
+- Ruff 快速檢測常見錯誤（如未處理的異常）
+- autoDocstring 生成掃描器說明文檔
+
+**TypeScript 動態引擎 (aiva_scan_node/)**:
+- ESLint 檢查異步程式碼問題
+- Prettier 統一格式化
+- 使用 Code Runner 快速測試 Playwright 腳本
+
+**Rust 資訊收集器 (info_gatherer_rust/)**:
+- rust-analyzer 提供即時編譯檢查
+- Cargo 任務整合測試與建構
+- ErrorLens 即時顯示編譯錯誤
+
+**掃描測試**:
+```bash
+# 使用 REST Client 測試掃描 API
+# 建立 scan.http 檔案
+POST http://localhost:8000/scan/start
+Content-Type: application/json
+
+{
+  "target": "https://example.com",
+  "scan_type": "vulnerability"
+}
+```
+
+**除錯技巧**: [多語言除錯指南](../../_out/VSCODE_EXTENSIONS_INVENTORY.md#-問題排查流程) | [掃描器最佳實踐](../../_out/VSCODE_EXTENSIONS_INVENTORY.md#-實際使用案例)
+
+---
+
 ## 🏗️ 整體架構
 
 ```mermaid

@@ -23,6 +23,18 @@ import numpy as np
 
 logger = logging.getLogger(__name__)
 
+# 動態導入深度學習模組（可選）
+try:
+    import torch
+    from .rl_trainers import DQNTrainer, PPOTrainer
+    TORCH_AVAILABLE = True
+except ImportError:
+    TORCH_AVAILABLE = False
+    logger.warning(
+        "PyTorch not available. DQN/PPO training will be disabled. "
+        "Install with: pip install torch"
+    )
+
 
 class ModelTrainer:
     """模型訓練器
@@ -46,6 +58,11 @@ class ModelTrainer:
         self.storage = storage_backend
         self.current_model: Any | None = None
         self.model_version = "v0.0.0"
+        self.training_history: list[dict[str, Any]] = []
+        
+        # 深度強化學習訓練器（延遲初始化）
+        self.dqn_trainer: DQNTrainer | None = None
+        self.ppo_trainer: PPOTrainer | None = None
 
         logger.info(f"ModelTrainer initialized with model_dir={self.model_dir}")
 
@@ -194,6 +211,288 @@ class ModelTrainer:
         )
 
         self.model_version = new_version
+        return result
+
+    async def train_dqn(
+        self,
+        samples: list[ExperienceSample],
+        config: ModelTrainingConfig,
+        state_dim: int = 12,
+        action_dim: int = 5,
+    ) -> ModelTrainingResult:
+        """DQN 深度強化學習訓練
+        
+        Args:
+            samples: 訓練樣本
+            config: 訓練配置
+            state_dim: 狀態維度
+            action_dim: 動作維度
+        
+        Returns:
+            訓練結果
+        """
+        if not TORCH_AVAILABLE:
+            raise RuntimeError(
+                "PyTorch is not installed. Please install with: pip install torch"
+            )
+        
+        logger.info(
+            f"Starting DQN training with {len(samples)} samples "
+            f"(state_dim={state_dim}, action_dim={action_dim})"
+        )
+        
+        training_id = f"training_dqn_{uuid4().hex[:12]}"
+        started_at = datetime.now(UTC)
+        
+        # 1. 初始化 DQN 訓練器
+        if self.dqn_trainer is None:
+            self.dqn_trainer = DQNTrainer(
+                state_dim=state_dim,
+                action_dim=action_dim,
+                learning_rate=config.learning_rate if hasattr(config, "learning_rate") else 0.001,
+                gamma=0.99,
+                epsilon_start=1.0,
+                epsilon_end=0.01,
+                epsilon_decay=0.995,
+                buffer_capacity=10000,
+                batch_size=config.batch_size if hasattr(config, "batch_size") else 64,
+            )
+        
+        # 2. 準備訓練數據
+        episodes = self._prepare_rl_data(samples)
+        
+        logger.info(f"Prepared {len(episodes)} episodes for DQN training")
+        
+        # 3. 訓練 DQN
+        total_rewards = []
+        losses = []
+        
+        for episode_idx, episode in enumerate(episodes):
+            states = episode["states"]
+            actions = episode["actions"]
+            rewards = episode["rewards"]
+            
+            episode_reward = 0.0
+            
+            for t in range(len(states) - 1):
+                state = states[t]
+                action = int(actions[t])
+                reward = float(rewards[t])
+                next_state = states[t + 1]
+                done = (t == len(states) - 2)
+                
+                # 訓練一步
+                loss = self.dqn_trainer.train_step(
+                    state, action, reward, next_state, done
+                )
+                
+                if loss is not None:
+                    losses.append(loss)
+                
+                episode_reward += reward
+            
+            total_rewards.append(episode_reward)
+            
+            if (episode_idx + 1) % 10 == 0:
+                avg_reward = np.mean(total_rewards[-10:])
+                avg_loss = np.mean(losses[-100:]) if losses else 0.0
+                logger.debug(
+                    f"DQN Episode {episode_idx + 1}/{len(episodes)}: "
+                    f"avg_reward={avg_reward:.2f}, avg_loss={avg_loss:.4f}"
+                )
+        
+        # 4. 保存模型
+        new_version = self._increment_version(self.model_version)
+        model_path = self.model_dir / f"model_dqn_{new_version}.pt"
+        self.dqn_trainer.save(str(model_path))
+        
+        # 5. 收集指標
+        dqn_metrics = self.dqn_trainer.get_metrics()
+        
+        completed_at = datetime.now(UTC)
+        duration = (completed_at - started_at).total_seconds()
+        
+        result = ModelTrainingResult(
+            training_id=training_id,
+            config=config,
+            model_version=new_version,
+            training_samples=len(samples),
+            validation_samples=0,
+            training_loss=dqn_metrics.get("avg_loss", 0.0),
+            validation_loss=0.0,
+            average_reward=float(np.mean(total_rewards)) if total_rewards else 0.0,
+            training_duration_seconds=duration,
+            started_at=started_at,
+            completed_at=completed_at,
+            metrics={
+                **dqn_metrics,
+                "total_episodes": len(episodes),
+                "avg_episode_reward": float(np.mean(total_rewards)) if total_rewards else 0.0,
+                "max_episode_reward": float(np.max(total_rewards)) if total_rewards else 0.0,
+                "min_episode_reward": float(np.min(total_rewards)) if total_rewards else 0.0,
+                "algorithm": "DQN",
+            },
+            model_path=str(model_path),
+        )
+        
+        if self.storage:
+            await self._persist_training_result(result)
+        
+        logger.info(
+            f"DQN training completed: version={new_version}, "
+            f"avg_reward={result.average_reward:.3f}, "
+            f"episodes={len(episodes)}, duration={duration:.1f}s"
+        )
+        
+        self.model_version = new_version
+        self.current_model = self.dqn_trainer
+        return result
+    
+    async def train_ppo(
+        self,
+        samples: list[ExperienceSample],
+        config: ModelTrainingConfig,
+        state_dim: int = 12,
+        action_dim: int = 5,
+        rollout_steps: int = 2048,
+    ) -> ModelTrainingResult:
+        """PPO 深度強化學習訓練
+        
+        Args:
+            samples: 訓練樣本
+            config: 訓練配置
+            state_dim: 狀態維度
+            action_dim: 動作維度
+            rollout_steps: Rollout 步數
+        
+        Returns:
+            訓練結果
+        """
+        if not TORCH_AVAILABLE:
+            raise RuntimeError(
+                "PyTorch is not installed. Please install with: pip install torch"
+            )
+        
+        logger.info(
+            f"Starting PPO training with {len(samples)} samples "
+            f"(state_dim={state_dim}, action_dim={action_dim})"
+        )
+        
+        training_id = f"training_ppo_{uuid4().hex[:12]}"
+        started_at = datetime.now(UTC)
+        
+        # 1. 初始化 PPO 訓練器
+        if self.ppo_trainer is None:
+            self.ppo_trainer = PPOTrainer(
+                state_dim=state_dim,
+                action_dim=action_dim,
+                learning_rate=config.learning_rate if hasattr(config, "learning_rate") else 3e-4,
+                gamma=0.99,
+                gae_lambda=0.95,
+                clip_epsilon=0.2,
+                value_coef=0.5,
+                entropy_coef=0.01,
+                ppo_epochs=4,
+                mini_batch_size=config.batch_size if hasattr(config, "batch_size") else 64,
+            )
+        
+        # 2. 準備訓練數據
+        episodes = self._prepare_rl_data(samples)
+        
+        logger.info(f"Prepared {len(episodes)} episodes for PPO training")
+        
+        # 3. 訓練 PPO
+        total_rewards = []
+        update_metrics_history: list[dict[str, float]] = []
+        
+        for episode_idx, episode in enumerate(episodes):
+            states = episode["states"]
+            actions = episode["actions"]
+            rewards = episode["rewards"]
+            
+            episode_reward = 0.0
+            
+            # 收集 rollout
+            for t in range(len(states)):
+                state = states[t]
+                action, log_prob, value = self.ppo_trainer.select_action(state)
+                reward = float(rewards[t])
+                done = (t == len(states) - 1)
+                
+                self.ppo_trainer.store_transition(
+                    state, action, reward, log_prob, value, done
+                )
+                
+                episode_reward += reward
+                
+                # 達到 rollout steps 或 episode 結束時更新
+                if len(self.ppo_trainer.rollout_buffer) >= rollout_steps or done:
+                    update_metrics = self.ppo_trainer.update()
+                    if update_metrics:
+                        update_metrics_history.append(update_metrics)
+            
+            total_rewards.append(episode_reward)
+            
+            if (episode_idx + 1) % 10 == 0:
+                avg_reward = np.mean(total_rewards[-10:])
+                recent_metrics = update_metrics_history[-10:] if update_metrics_history else []
+                avg_policy_loss = (
+                    np.mean([m["policy_loss"] for m in recent_metrics])
+                    if recent_metrics else 0.0
+                )
+                logger.debug(
+                    f"PPO Episode {episode_idx + 1}/{len(episodes)}: "
+                    f"avg_reward={avg_reward:.2f}, "
+                    f"avg_policy_loss={avg_policy_loss:.4f}"
+                )
+        
+        # 4. 保存模型
+        new_version = self._increment_version(self.model_version)
+        model_path = self.model_dir / f"model_ppo_{new_version}.pt"
+        self.ppo_trainer.save(str(model_path))
+        
+        # 5. 收集指標
+        ppo_metrics = self.ppo_trainer.get_metrics()
+        
+        completed_at = datetime.now(UTC)
+        duration = (completed_at - started_at).total_seconds()
+        
+        result = ModelTrainingResult(
+            training_id=training_id,
+            config=config,
+            model_version=new_version,
+            training_samples=len(samples),
+            validation_samples=0,
+            training_loss=ppo_metrics.get("avg_policy_loss", 0.0),
+            validation_loss=ppo_metrics.get("avg_value_loss", 0.0),
+            average_reward=float(np.mean(total_rewards)) if total_rewards else 0.0,
+            training_duration_seconds=duration,
+            started_at=started_at,
+            completed_at=completed_at,
+            metrics={
+                **ppo_metrics,
+                "total_episodes": len(episodes),
+                "total_updates": len(update_metrics_history),
+                "avg_episode_reward": float(np.mean(total_rewards)) if total_rewards else 0.0,
+                "max_episode_reward": float(np.max(total_rewards)) if total_rewards else 0.0,
+                "min_episode_reward": float(np.min(total_rewards)) if total_rewards else 0.0,
+                "algorithm": "PPO",
+            },
+            model_path=str(model_path),
+        )
+        
+        if self.storage:
+            await self._persist_training_result(result)
+        
+        logger.info(
+            f"PPO training completed: version={new_version}, "
+            f"avg_reward={result.average_reward:.3f}, "
+            f"episodes={len(episodes)}, updates={len(update_metrics_history)}, "
+            f"duration={duration:.1f}s"
+        )
+        
+        self.model_version = new_version
+        self.current_model = self.ppo_trainer
         return result
 
     def _prepare_supervised_data(
@@ -422,7 +721,7 @@ class ModelTrainer:
         y_val: np.ndarray,
         config: ModelTrainingConfig,
     ) -> dict[str, Any]:
-        """執行監督學習訓練
+        """執行監督學習訓練 (實際實現)
 
         Args:
             X_train: 訓練特徵
@@ -434,26 +733,79 @@ class ModelTrainer:
         Returns:
             訓練指標
         """
-        # TODO: 實現實際的模型訓練邏輯
-        # 這裡需要整合實際的機器學習框架（如 PyTorch, TensorFlow, sklearn）
+        logger.info("Training supervised model with scikit-learn")
 
-        logger.info("Training supervised model (placeholder implementation)")
-
-        # 模擬訓練過程
-        epochs = config.epochs
-        for epoch in range(epochs):
-            # 模擬訓練迭代
-            logger.debug(f"Epoch {epoch+1}/{epochs}")
-
-        return {
-            "loss": 0.15,  # 模擬損失
-            "final_epoch": epochs,
-        }
+        try:
+            # 根據配置選擇模型
+            from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier
+            from sklearn.neural_network import MLPClassifier
+            from sklearn.metrics import accuracy_score
+            
+            model_type = config.model_type if hasattr(config, 'model_type') else "random_forest"
+            
+            # 初始化模型
+            if model_type == "random_forest":
+                self.current_model = RandomForestClassifier(
+                    n_estimators=config.epochs * 10,
+                    max_depth=10,
+                    random_state=42,
+                    n_jobs=-1
+                )
+            elif model_type == "gradient_boosting":
+                self.current_model = GradientBoostingClassifier(
+                    n_estimators=config.epochs * 10,
+                    learning_rate=0.1,
+                    max_depth=5,
+                    random_state=42
+                )
+            elif model_type == "neural_network":
+                self.current_model = MLPClassifier(
+                    hidden_layer_sizes=(128, 64, 32),
+                    max_iter=config.epochs,
+                    learning_rate_init=0.001,
+                    random_state=42
+                )
+            else:
+                self.current_model = RandomForestClassifier(
+                    n_estimators=100,
+                    random_state=42
+                )
+            
+            # 訓練模型
+            logger.info(f"Training {model_type} model...")
+            self.current_model.fit(X_train, y_train)
+            
+            # 計算訓練集指標
+            y_train_pred = self.current_model.predict(X_train)
+            train_accuracy = accuracy_score(y_train, y_train_pred)
+            
+            # 特徵重要性
+            feature_importance = None
+            if hasattr(self.current_model, 'feature_importances_'):
+                feature_importance = self.current_model.feature_importances_.tolist()
+            
+            logger.info(f"✅ Model trained (accuracy: {train_accuracy:.4f})")
+            
+            return {
+                "model_type": model_type,
+                "train_accuracy": float(train_accuracy),
+                "n_samples": len(X_train),
+                "n_features": X_train.shape[1] if len(X_train.shape) > 1 else 1,
+                "feature_importance": feature_importance,
+                "final_epoch": config.epochs,
+            }
+        
+        except Exception as e:
+            logger.error(f"Supervised training failed: {e}", exc_info=True)
+            return {
+                "error": str(e),
+                "final_epoch": 0,
+            }
 
     async def _train_model_rl(
         self, episodes: list[dict[str, Any]], config: ModelTrainingConfig
     ) -> dict[str, Any]:
-        """執行強化學習訓練
+        """執行強化學習訓練 (實際實現)
 
         Args:
             episodes: 訓練 episodes
@@ -462,26 +814,107 @@ class ModelTrainer:
         Returns:
             訓練指標
         """
-        # TODO: 實現實際的強化學習訓練
-        # 可以整合 Stable Baselines3, RLlib 等框架
+        logger.info("Training RL model with Q-learning approach")
 
-        logger.info("Training RL model (placeholder implementation)")
-
-        total_rewards = [ep["total_reward"] for ep in episodes]
-        average_reward = np.mean(total_rewards) if total_rewards else 0.0
-
-        return {
-            "average_reward": float(average_reward),
-            "max_reward": float(max(total_rewards)) if total_rewards else 0.0,
-            "min_reward": float(min(total_rewards)) if total_rewards else 0.0,
-            "episodes": len(episodes),
-            "loss": 0.1,
-        }
+        try:
+            # 提取獎勵數據
+            total_rewards = [ep.get("total_reward", 0.0) for ep in episodes]
+            
+            if not total_rewards:
+                logger.warning("No episodes with rewards found")
+                return {
+                    "average_reward": 0.0,
+                    "episodes": 0,
+                    "error": "No valid episodes"
+                }
+            
+            # 簡單的 Q-learning 實現（可擴展為 DQN、PPO 等）
+            # 這裡使用基於經驗的價值估計
+            
+            # 計算統計數據
+            average_reward = float(np.mean(total_rewards))
+            max_reward = float(np.max(total_rewards))
+            min_reward = float(np.min(total_rewards))
+            std_reward = float(np.std(total_rewards))
+            
+            # 計算改進率（比較前後半段）
+            mid_point = len(total_rewards) // 2
+            if mid_point > 0:
+                early_avg = np.mean(total_rewards[:mid_point])
+                late_avg = np.mean(total_rewards[mid_point:])
+                improvement_rate = ((late_avg - early_avg) / abs(early_avg)) if early_avg != 0 else 0.0
+            else:
+                improvement_rate = 0.0
+            
+            # 構建簡單的 Q-table（狀態-動作價值表）
+            q_table = {}
+            for episode in episodes:
+                states = episode.get("states", [])
+                actions = episode.get("actions", [])
+                rewards = episode.get("rewards", [])
+                
+                # 更新 Q 值（簡化版）
+                for i, (state, action, reward) in enumerate(zip(states, actions, rewards)):
+                    state_key = str(state)  # 簡化的狀態表示
+                    if state_key not in q_table:
+                        q_table[state_key] = {}
+                    
+                    # Q-learning 更新
+                    learning_rate = 0.1
+                    discount_factor = 0.95
+                    
+                    current_q = q_table[state_key].get(action, 0.0)
+                    
+                    # 獲取下一狀態的最大 Q 值
+                    next_max_q = 0.0
+                    if i + 1 < len(states):
+                        next_state_key = str(states[i + 1])
+                        if next_state_key in q_table and q_table[next_state_key]:
+                            next_max_q = max(q_table[next_state_key].values())
+                    
+                    # Q-learning 更新公式
+                    new_q = current_q + learning_rate * (reward + discount_factor * next_max_q - current_q)
+                    q_table[state_key][action] = new_q
+            
+            # 保存 Q-table 作為模型
+            self.current_model = {
+                "type": "q_learning",
+                "q_table": q_table,
+                "episodes_trained": len(episodes),
+                "config": {
+                    "learning_rate": 0.1,
+                    "discount_factor": 0.95
+                }
+            }
+            
+            logger.info(
+                f"✅ RL model trained: {len(episodes)} episodes, "
+                f"avg_reward={average_reward:.2f}, "
+                f"improvement={improvement_rate:.2%}"
+            )
+            
+            return {
+                "average_reward": average_reward,
+                "max_reward": max_reward,
+                "min_reward": min_reward,
+                "std_reward": std_reward,
+                "improvement_rate": float(improvement_rate),
+                "episodes": len(episodes),
+                "q_table_size": len(q_table),
+            }
+        
+        except Exception as e:
+            logger.error(f"RL training failed: {e}", exc_info=True)
+            return {
+                "error": str(e),
+                "episodes": len(episodes),
+                "average_reward": 0.0,
+            }
 
     async def _evaluate_model(
         self, X_val: np.ndarray, y_val: np.ndarray
     ) -> dict[str, Any]:
-        """評估模型
+        """評估模型 (實際實現)
 
         Args:
             X_val: 驗證特徵
@@ -490,31 +923,107 @@ class ModelTrainer:
         Returns:
             評估指標
         """
-        # TODO: 實現實際的模型評估
-        logger.info("Evaluating model (placeholder implementation)")
+        if self.current_model is None:
+            logger.error("Cannot evaluate: no trained model available")
+            return {
+                "error": "No trained model",
+                "accuracy": 0.0,
+                "precision": 0.0,
+                "recall": 0.0,
+                "f1_score": 0.0,
+            }
 
-        return {
-            "loss": 0.12,
-            "accuracy": 0.85,
-            "precision": 0.83,
-            "recall": 0.87,
-            "f1_score": 0.85,
-        }
+        try:
+            from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, confusion_matrix
+
+            # 檢查模型類型
+            if isinstance(self.current_model, dict):
+                # 強化學習模型（Q-learning）
+                logger.warning("RL model evaluation not fully implemented, returning placeholder")
+                return {
+                    "model_type": "rl",
+                    "q_table_size": len(self.current_model.get("q_table", {})),
+                    "episodes_trained": self.current_model.get("episodes_trained", 0),
+                }
+            
+            # 監督學習模型（scikit-learn）
+            y_pred = self.current_model.predict(X_val)
+
+            # 計算評估指標
+            accuracy = accuracy_score(y_val, y_pred)
+            
+            # 處理多類別問題（使用 weighted average）
+            precision = precision_score(y_val, y_pred, average='weighted', zero_division=0)
+            recall = recall_score(y_val, y_pred, average='weighted', zero_division=0)
+            f1 = f1_score(y_val, y_pred, average='weighted', zero_division=0)
+            
+            # 計算混淆矩陣
+            cm = confusion_matrix(y_val, y_pred)
+            
+            logger.info(
+                f"✅ Model evaluation: accuracy={accuracy:.2%}, "
+                f"precision={precision:.2%}, recall={recall:.2%}, f1={f1:.2%}"
+            )
+
+            return {
+                "accuracy": float(accuracy),
+                "precision": float(precision),
+                "recall": float(recall),
+                "f1_score": float(f1),
+                "confusion_matrix": cm.tolist(),
+                "test_samples": len(y_val),
+            }
+        
+        except Exception as e:
+            logger.error(f"Model evaluation failed: {e}", exc_info=True)
+            return {
+                "error": str(e),
+                "accuracy": 0.0,
+                "precision": 0.0,
+                "recall": 0.0,
+                "f1_score": 0.0,
+            }
 
     async def _save_model(self, path: Path) -> None:
-        """保存模型
+        """保存模型 (實際實現)
 
         Args:
             path: 保存路徑
         """
-        # TODO: 實現實際的模型保存邏輯
-        logger.info(f"Saving model to {path} (placeholder)")
+        if self.current_model is None:
+            logger.warning("No model to save")
+            return
 
-        # 創建占位文件
-        path.write_text(f"Model version: {self.model_version}\n")
+        try:
+            import pickle
+            
+            # 確保目錄存在
+            path.parent.mkdir(parents=True, exist_ok=True)
+            
+            # 構建保存數據
+            model_data = {
+                "model": self.current_model,
+                "version": self.model_version,
+                "training_history": self.training_history,
+                "metadata": {
+                    "saved_at": datetime.now(UTC).isoformat(),
+                    "model_type": "q_learning" if isinstance(self.current_model, dict) else "supervised",
+                }
+            }
+            
+            # 保存模型
+            with open(path, 'wb') as f:
+                pickle.dump(model_data, f)
+            
+            logger.info(f"✅ Model saved successfully to {path}")
+            logger.info(f"   Model version: {self.model_version}")
+            logger.info(f"   Training history entries: {len(self.training_history)}")
+        
+        except Exception as e:
+            logger.error(f"Failed to save model: {e}", exc_info=True)
 
     async def load_model(self, version: str) -> bool:
-        """加載模型
+        """加載模型 (實際實現)
 
         Args:
             version: 模型版本
@@ -528,11 +1037,35 @@ class ModelTrainer:
             logger.error(f"Model {version} not found at {model_path}")
             return False
 
-        # TODO: 實現實際的模型加載邏輯
-        logger.info(f"Loading model {version} (placeholder)")
-
-        self.model_version = version
-        return True
+        try:
+            import pickle
+            
+            # 載入模型數據
+            with open(model_path, 'rb') as f:
+                model_data = pickle.load(f)
+            
+            # 恢復模型狀態
+            self.current_model = model_data.get("model")
+            self.model_version = model_data.get("version", version)
+            self.training_history = model_data.get("training_history", [])
+            
+            # 驗證模型完整性
+            if self.current_model is None:
+                logger.error(f"Loaded model data is invalid")
+                return False
+            
+            metadata = model_data.get("metadata", {})
+            logger.info(f"✅ Model loaded successfully from {model_path}")
+            logger.info(f"   Model version: {self.model_version}")
+            logger.info(f"   Model type: {metadata.get('model_type', 'unknown')}")
+            logger.info(f"   Saved at: {metadata.get('saved_at', 'unknown')}")
+            logger.info(f"   Training history entries: {len(self.training_history)}")
+            
+            return True
+        
+        except Exception as e:
+            logger.error(f"Failed to load model: {e}", exc_info=True)
+            return False
 
     async def test_on_scenario(
         self, scenario: StandardScenario, model_version: str | None = None

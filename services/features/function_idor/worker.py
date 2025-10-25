@@ -426,14 +426,12 @@ class IdorWorker:
 
     def _get_test_user_auth(self, task: FunctionTaskPayload) -> dict[str, str] | None:
         """
-        Get test user authentication credentials.
+        Get test user authentication credentials for multi-user testing.
 
-        In a real implementation, this should:
-        1. Create a second test user account
-        2. Authenticate as that user
-        3. Return credentials
-
-        For now, returns None to test unauthenticated access.
+        實現多用戶憑證管理，支援以下功能:
+        1. 從任務配置中提取第二用戶憑證
+        2. 支援多種認證方式 (Bearer Token, Cookie, API Key, Basic Auth)
+        3. 如無配置則返回 None 測試未認證訪問
 
         Args:
             task: Function task payload
@@ -441,9 +439,41 @@ class IdorWorker:
         Returns:
             Test user authentication dictionary or None
         """
-        _ = task  # Mark as used
-        # TODO: Implement proper multi-user testing
-        # For now, test unauthenticated access
+        # 從任務配置中提取第二用戶憑證設定
+        if hasattr(task, 'config') and task.config:
+            auth_config = task.config.get('second_user_auth', {})
+            
+            if auth_config:
+                # 支援多種認證方式
+                auth_type = auth_config.get('type', 'bearer')
+                
+                if auth_type == 'bearer':
+                    token = auth_config.get('token')
+                    if token:
+                        return {'Authorization': f'Bearer {token}'}
+                
+                elif auth_type == 'cookie':
+                    cookie = auth_config.get('cookie')
+                    if cookie:
+                        return {'Cookie': cookie}
+                
+                elif auth_type == 'api_key':
+                    api_key = auth_config.get('api_key')
+                    key_name = auth_config.get('key_name', 'X-API-Key')
+                    if api_key:
+                        return {key_name: api_key}
+                
+                elif auth_type == 'basic':
+                    username = auth_config.get('username')
+                    password = auth_config.get('password')
+                    if username and password:
+                        import base64
+                        credentials = base64.b64encode(
+                            f"{username}:{password}".encode()
+                        ).decode()
+                        return {'Authorization': f'Basic {credentials}'}
+        
+        # 無配置時測試未認證訪問
         return None
 
 

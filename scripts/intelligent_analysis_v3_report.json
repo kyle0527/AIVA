@@ -4,7 +4,7 @@
     "total_methods": 54,
     "total_components": 2410,
     "average_confidence": 1.0,
-    "total_analysis_time": 0.18817806243896484,
+    "total_analysis_time": 0.0701751708984375,
     "issues_found": 3
   },
   "quality_distribution": {
@@ -19,7 +19,7 @@
       "quality_level": "expert",
       "component_count": 2410,
       "confidence_score": 1.0,
-      "analysis_time": 0.06921029090881348,
+      "analysis_time": 0.024302005767822266,
       "groups": {
         "六邊形_基礎設施": [
           "get_config_for_feature",
@@ -7303,7 +7303,7 @@
       "quality_level": "standard",
       "component_count": 2410,
       "confidence_score": 1.0,
-      "analysis_time": 0.029213666915893555,
+      "analysis_time": 0.0164034366607666,
       "groups": {
         "可維護性_中等可維護性": [
           "get_config_for_feature",
@@ -19400,7 +19400,7 @@
       "quality_level": "deep",
       "component_count": 2410,
       "confidence_score": 1.0,
-      "analysis_time": 0.08975410461425781,
+      "analysis_time": 0.029469728469848633,
       "groups": {
         "詞性_混合型_複合概念": [
           "get_config_for_feature",

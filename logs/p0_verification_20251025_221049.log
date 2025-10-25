@@ -1,0 +1,178 @@
+2025-10-25 22:10:49,609 - INFO - ================================================================================
+2025-10-25 22:10:49,609 - INFO - 開始 P0 缺陷修復驗證測試（標準版）
+2025-10-25 22:10:49,610 - INFO - ================================================================================
+2025-10-25 22:10:49,610 - INFO - 
+================================================================================
+2025-10-25 22:10:49,610 - INFO - 測試 1: IDOR Worker 多帳戶測試
+2025-10-25 22:10:49,610 - INFO - ================================================================================
+2025-10-25 22:10:50,675 - INFO - [OK] 成功導入 IdorWorker
+2025-10-25 22:10:51,163 - INFO - [OK] 成功創建 IdorWorker 實例
+2025-10-25 22:10:51,163 - INFO -   [OK] Bearer Token: 通過
+2025-10-25 22:10:51,163 - INFO -   [OK] Cookie: 通過
+2025-10-25 22:10:51,164 - INFO -   [OK] API Key: 通過
+2025-10-25 22:10:51,164 - INFO -   [OK] Basic Auth: 通過
+2025-10-25 22:10:51,164 - INFO -   [OK] 無配置測試: 通過
+2025-10-25 22:10:51,164 - INFO - [結果] IDOR Worker: PASSED (5/5)
+2025-10-25 22:10:51,165 - INFO - 
+================================================================================
+2025-10-25 22:10:51,165 - INFO - 測試 2: AI Commander 核心功能
+2025-10-25 22:10:51,165 - INFO - ================================================================================
+2025-10-25 22:10:51,335 - INFO - [OK] 成功導入 AICommander
+2025-10-25 22:10:51,335 - INFO - 🎖️ Initializing AI Commander...
+2025-10-25 22:10:51,335 - INFO -   Loading BioNeuronRAGAgent...
+2025-10-25 22:10:51,336 - INFO - 正在初始化 BioNeuronRAGAgent...
+2025-10-25 22:10:51,427 - INFO - --- ScalableBioNet (決策核心) 初始化 ---
+2025-10-25 22:10:51,427 - INFO -   - FC1 參數: 2,097,152
+2025-10-25 22:10:51,427 - INFO -   - Spiking1 參數: 2,097,152
+2025-10-25 22:10:51,427 - INFO -   - FC2 參數: 2,048
+2025-10-25 22:10:51,427 - INFO -   - 總參數約: 4.20M
+2025-10-25 22:10:51,427 - INFO - -----------------------------------------
+2025-10-25 22:10:51,434 - INFO - ASTParser initialized
+2025-10-25 22:10:51,434 - INFO - TaskConverter initialized
+2025-10-25 22:10:51,434 - INFO - ToolSelector initialized with mapping rules
+2025-10-25 22:10:51,434 - INFO - AttackOrchestrator initialized
+2025-10-25 22:10:51,434 - INFO - ✓ Planner/Orchestrator enabled
+2025-10-25 22:10:51,438 - INFO - TraceRecorder initialized
+2025-10-25 22:10:51,439 - INFO - ExecutionMonitor initialized
+2025-10-25 22:10:51,439 - INFO - TaskExecutor initialized
+2025-10-25 22:10:51,439 - INFO - ✓ Execution Tracer enabled
+2025-10-25 22:10:51,877 - INFO - ExperienceRepository initialized with DB: sqlite:///./aiva_experience.db
+2025-10-25 22:10:51,877 - INFO - ASTTraceComparator initialized
+2025-10-25 22:10:51,877 - INFO - ExperienceDataLoader initialized
+2025-10-25 22:10:51,878 - INFO - ModelUpdater initialized, save path: ./models
+2025-10-25 22:10:51,878 - INFO - ✓ Experience learning enabled (DB: sqlite:///./aiva_experience.db)
+2025-10-25 22:10:51,878 - INFO - BioNeuronRAGAgent 初始化完成 ✓
+2025-10-25 22:10:51,878 - INFO -   Loading RAG Engine...
+2025-10-25 22:10:51,878 - INFO - Using in-memory vector store
+2025-10-25 22:10:51,879 - INFO - VectorStore initialized with memory backend, model=sentence-transformers/all-MiniLM-L6-v2
+2025-10-25 22:10:51,880 - INFO - Loaded 0 documents from data\ai_commander\knowledge\vectors
+2025-10-25 22:10:51,880 - INFO - Loaded 0 knowledge entries
+2025-10-25 22:10:51,880 - INFO - KnowledgeBase initialized with 0 entries
+2025-10-25 22:10:51,880 - INFO - RAG Engine initialized
+2025-10-25 22:10:51,880 - INFO -   Loading Training System...
+2025-10-25 22:10:51,881 - INFO - ExperienceManager initialized
+2025-10-25 22:10:51,881 - INFO - ModelTrainer initialized with model_dir=models
+2025-10-25 22:10:51,884 - INFO - ScenarioManager initialized with scenarios_dir=data\scenarios
+2025-10-25 22:10:51,884 - INFO - MessageBroker initialized for module CoreModule
+2025-10-25 22:10:51,884 - INFO - TraceLogger initialized
+2025-10-25 22:10:51,884 - INFO - PlanExecutor initialized
+2025-10-25 22:10:51,885 - INFO - TrainingOrchestrator initialized (auto_initialize=True)
+2025-10-25 22:10:51,885 - INFO -   Loading Multi-Language Coordinator...
+2025-10-25 22:10:51,885 - INFO - ✅ AI Commander initialized successfully
+2025-10-25 22:10:51,885 - INFO -    - BioNeuronRAGAgent: True
+2025-10-25 22:10:51,885 - INFO -    - RAG Engine: True
+2025-10-25 22:10:51,885 - INFO -    - Training System: True
+2025-10-25 22:10:51,886 - INFO -    - Multi-Language Coordinator: True
+2025-10-25 22:10:51,886 - INFO - [OK] 成功創建 AICommander 實例
+2025-10-25 22:10:51,886 - INFO -   [OK] ExperienceManager: 已整合
+2025-10-25 22:10:51,886 - INFO -   [OK] StorageBackend: 已配置
+2025-10-25 22:10:51,886 - INFO -   [OK] BioNeuronRAGAgent: 已接入
+2025-10-25 22:10:51,886 - INFO -   [OK] _plan_attack: 已實現
+2025-10-25 22:10:51,886 - INFO -   [OK] _make_strategy_decision: 已實現
+2025-10-25 22:10:51,886 - INFO - [結果] AI Commander: PASSED (5/5)
+2025-10-25 22:10:51,888 - INFO - 
+================================================================================
+2025-10-25 22:10:51,888 - INFO - 測試 3: BioNeuron Master 邏輯
+2025-10-25 22:10:51,888 - INFO - ================================================================================
+2025-10-25 22:10:51,889 - INFO - [OK] 成功導入 BioNeuronMasterController
+2025-10-25 22:10:51,889 - INFO - 🧠 Initializing BioNeuron Master Controller...
+2025-10-25 22:10:51,889 - INFO - 正在初始化 BioNeuronRAGAgent...
+2025-10-25 22:10:51,971 - INFO - --- ScalableBioNet (決策核心) 初始化 ---
+2025-10-25 22:10:51,971 - INFO -   - FC1 參數: 2,097,152
+2025-10-25 22:10:51,972 - INFO -   - Spiking1 參數: 2,097,152
+2025-10-25 22:10:51,972 - INFO -   - FC2 參數: 2,048
+2025-10-25 22:10:51,972 - INFO -   - 總參數約: 4.20M
+2025-10-25 22:10:51,972 - INFO - -----------------------------------------
+2025-10-25 22:10:51,973 - INFO - ASTParser initialized
+2025-10-25 22:10:51,973 - INFO - TaskConverter initialized
+2025-10-25 22:10:51,973 - INFO - ToolSelector initialized with mapping rules
+2025-10-25 22:10:51,973 - INFO - AttackOrchestrator initialized
+2025-10-25 22:10:51,973 - INFO - ✓ Planner/Orchestrator enabled
+2025-10-25 22:10:51,973 - INFO - TraceRecorder initialized
+2025-10-25 22:10:51,974 - INFO - ExecutionMonitor initialized
+2025-10-25 22:10:51,974 - INFO - TaskExecutor initialized
+2025-10-25 22:10:51,974 - INFO - ✓ Execution Tracer enabled
+2025-10-25 22:10:51,976 - INFO - ExperienceRepository initialized with DB: sqlite:///./aiva_experience.db
+2025-10-25 22:10:51,976 - INFO - ASTTraceComparator initialized
+2025-10-25 22:10:51,976 - INFO - ExperienceDataLoader initialized
+2025-10-25 22:10:51,976 - INFO - ModelUpdater initialized, save path: ./models
+2025-10-25 22:10:51,977 - INFO - ✓ Experience learning enabled (DB: sqlite:///./aiva_experience.db)
+2025-10-25 22:10:51,977 - INFO - BioNeuronRAGAgent 初始化完成 ✓
+2025-10-25 22:10:51,977 - INFO - Using in-memory vector store
+2025-10-25 22:10:51,977 - INFO - VectorStore initialized with memory backend, model=sentence-transformers/all-MiniLM-L6-v2
+2025-10-25 22:10:51,977 - INFO - Loaded 0 documents from data\knowledge\vectors
+2025-10-25 22:10:51,977 - INFO - Loaded 0 knowledge entries
+2025-10-25 22:10:51,978 - INFO - KnowledgeBase initialized with 0 entries
+2025-10-25 22:10:51,978 - INFO - RAG Engine initialized
+2025-10-25 22:10:51,978 - INFO - ✅ Master Controller initialized in hybrid mode
+2025-10-25 22:10:51,978 - INFO -    - BioNeuronRAGAgent: True
+2025-10-25 22:10:51,978 - INFO -    - RAG Engine: True
+2025-10-25 22:10:51,978 - INFO - [OK] 成功創建 BioNeuronMasterController 實例
+2025-10-25 22:10:51,978 - INFO -   [OK] NLU 功能: 已實現
+2025-10-25 22:10:51,978 - INFO -   [OK] AI 決策: 已實現
+2025-10-25 22:10:51,978 - INFO -   [OK] 經驗學習: 已實現
+2025-10-25 22:10:51,978 - INFO -   [OK] 所有任務啟動功能: 已實現
+2025-10-25 22:10:51,979 - INFO -   [OK] RAG Engine: 已整合
+2025-10-25 22:10:51,979 - INFO - [結果] BioNeuron Master: PASSED (5/5)
+2025-10-25 22:10:51,979 - INFO - 
+================================================================================
+2025-10-25 22:10:51,979 - INFO - 測試 4: ModelTrainer 功能
+2025-10-25 22:10:51,979 - INFO - ================================================================================
+2025-10-25 22:10:51,979 - INFO - [OK] 成功導入 ModelTrainer
+2025-10-25 22:10:51,979 - INFO - ModelTrainer initialized with model_dir=models
+2025-10-25 22:10:51,980 - INFO - [OK] 成功創建 ModelTrainer 實例
+2025-10-25 22:10:51,980 - INFO -   [OK] 監督學習訓練: 已實現
+2025-10-25 22:10:51,980 - INFO -   [OK] 強化學習訓練: 已實現
+2025-10-25 22:10:51,980 - INFO -   [OK] 模型評估: 已實現
+2025-10-25 22:10:51,980 - INFO -   [OK] 模型保存: 已實現
+2025-10-25 22:10:51,980 - INFO -   [OK] 模型載入: 已實現
+2025-10-25 22:10:51,980 - INFO - [結果] ModelTrainer: PASSED (5/5)
+2025-10-25 22:10:51,980 - INFO - 
+================================================================================
+2025-10-25 22:10:51,980 - INFO - 測試報告
+2025-10-25 22:10:51,980 - INFO - ================================================================================
+2025-10-25 22:10:51,981 - INFO - 
+總測試數: 4
+2025-10-25 22:10:51,981 - INFO - [OK] 完全通過: 4
+2025-10-25 22:10:51,981 - INFO - [PARTIAL] 部分通過: 0
+2025-10-25 22:10:51,981 - INFO - [FAILED] 未通過: 0
+2025-10-25 22:10:51,981 - INFO - [ERROR] 錯誤: 0
+2025-10-25 22:10:51,981 - INFO - 
+--------------------------------------------------------------------------------
+2025-10-25 22:10:51,981 - INFO - 
+[OK] IDOR Worker 多帳戶測試: PASSED
+2025-10-25 22:10:51,981 - INFO -   - 模組導入成功
+2025-10-25 22:10:51,981 - INFO -   - Bearer Token: 通過
+2025-10-25 22:10:51,981 - INFO -   - Cookie: 通過
+2025-10-25 22:10:51,982 - INFO -   - API Key: 通過
+2025-10-25 22:10:51,982 - INFO -   - Basic Auth: 通過
+2025-10-25 22:10:51,982 - INFO - 
+[OK] AI Commander 核心功能: PASSED
+2025-10-25 22:10:51,982 - INFO -   - 模組導入成功
+2025-10-25 22:10:51,982 - INFO -   - ExperienceManager 已整合
+2025-10-25 22:10:51,982 - INFO -   - StorageBackend 已配置
+2025-10-25 22:10:51,982 - INFO -   - BioNeuronRAGAgent 已接入
+2025-10-25 22:10:51,982 - INFO -   - _plan_attack 已實現
+2025-10-25 22:10:51,983 - INFO -   - _make_strategy_decision 已實現
+2025-10-25 22:10:51,983 - INFO - 
+[OK] BioNeuron Master 邏輯: PASSED
+2025-10-25 22:10:51,983 - INFO -   - 模組導入成功
+2025-10-25 22:10:51,983 - INFO -   - NLU 功能已實現
+2025-10-25 22:10:51,983 - INFO -   - AI 決策已實現
+2025-10-25 22:10:51,983 - INFO -   - 經驗學習已實現
+2025-10-25 22:10:51,983 - INFO -   - 任務啟動功能已實現
+2025-10-25 22:10:51,983 - INFO -   - RAG Engine 已整合
+2025-10-25 22:10:51,983 - INFO - 
+[OK] ModelTrainer 功能: PASSED
+2025-10-25 22:10:51,983 - INFO -   - 模組導入成功
+2025-10-25 22:10:51,984 - INFO -   - 監督學習訓練: 已實現
+2025-10-25 22:10:51,984 - INFO -   - 強化學習訓練: 已實現
+2025-10-25 22:10:51,984 - INFO -   - 模型評估: 已實現
+2025-10-25 22:10:51,984 - INFO -   - 模型保存: 已實現
+2025-10-25 22:10:51,984 - INFO -   - 模型載入: 已實現
+2025-10-25 22:10:51,985 - INFO - 
+[OK] 詳細報告已保存: C:\D\fold7\AIVA-git\_out\p0_verification_20251025_221051.json
+2025-10-25 22:10:51,985 - INFO - 
+================================================================================
+2025-10-25 22:10:51,985 - INFO - [成功] 所有 P0 修復驗證測試全部通過！
+2025-10-25 22:10:51,986 - INFO - ================================================================================

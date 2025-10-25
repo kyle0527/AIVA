@@ -10,6 +10,47 @@
 
 ---
 
+## � 目錄
+
+- [🛠️ Core 模組開發工具](#️-core-模組開發工具)
+- [📊 模組規模一覽](#-模組規模一覽)
+- [🏗️ 核心架構總覽](#️-核心架構總覽)
+  - [五層核心架構](#五層核心架構)
+  - [🎯 各層核心職責](#-各層核心職責)
+- [📚 文件導航地圖](#-文件導航地圖)
+- [🚀 快速開始指南](#-快速開始指南)
+- [🧠 AI 系統運作機制詳解](#-ai-系統運作機制詳解)
+- [⚡ 執行引擎架構](#-執行引擎架構)
+- [🧠 學習系統架構](#-學習系統架構)
+- [📊 分析決策系統](#-分析決策系統)
+- [💾 存儲與狀態管理](#-存儲與狀態管理)
+
+---
+
+## �🛠️ Core 模組開發工具
+
+> **Python 開發必備工具**: 本模組使用 Python 3.11+，推薦以下 VS Code 插件提升開發效率
+
+| 工作場景 | 推薦插件 | 用途 |
+|---------|---------|------|
+| 🐍 **Python 開發** | Pylance + Python | 型別檢查、IntelliSense、即時錯誤檢測 |
+| ⚡ **快速 Linting** | Ruff (2025.28.0) | 超快速 Python linter，取代 flake8/pylint |
+| 🎨 **程式碼格式化** | Black + isort + autopep8 | 自動格式化、import 排序、PEP 8 合規 |
+| 🧪 **測試執行** | Python Test Adapter + Test Explorer | 執行與除錯 pytest 測試 |
+| 🤖 **AI 輔助** | GitHub Copilot + Copilot Chat | AI 程式碼生成、問題診斷 |
+| 📝 **文檔生成** | autoDocstring | 自動生成 Python docstring |
+| 🔍 **程式碼品質** | SonarLint + ErrorLens | 靜態分析、安全檢測、即時錯誤提示 |
+
+📚 **完整工具清單**: [VS Code 插件參考](../../_out/VSCODE_EXTENSIONS_INVENTORY.md) | [Python 專屬工具 (22個)](../../_out/VSCODE_EXTENSIONS_INVENTORY.md#1-python-開發生態-22-個)
+
+💡 **快速開始**: 
+- 安裝推薦插件後，開啟專案會自動啟用型別檢查
+- 使用 `Ctrl+Shift+I` 格式化程式碼（Black）
+- 使用 `Ctrl+Shift+P` → "Python: Run Tests" 執行測試
+- 遇到問題？查看 [問題排查流程](../../_out/VSCODE_EXTENSIONS_INVENTORY.md#-問題排查流程)
+
+---
+
 ## 📊 **模組規模一覽**
 
 ### **🏗️ 整體統計**

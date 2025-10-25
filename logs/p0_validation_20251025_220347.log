@@ -1,0 +1,64 @@
+2025-10-25 22:03:47,827 - P0_Validation - INFO - ================================================================================
+2025-10-25 22:03:47,827 - P0_Validation - INFO - 
+================================================================================
+2025-10-25 22:03:47,829 - P0_Validation - INFO - ================================================================================
+2025-10-25 22:03:49,451 - P0_Validation - INFO - 
+================================================================================
+2025-10-25 22:03:49,453 - P0_Validation - INFO - ================================================================================
+2025-10-25 22:03:50,509 - P0_Validation - INFO - 
+================================================================================
+2025-10-25 22:03:50,510 - P0_Validation - INFO - ================================================================================
+2025-10-25 22:03:50,523 - services.core.aiva_core.ai_engine.bio_neuron_core - INFO - タ﹍て BioNeuronRAGAgent...
+2025-10-25 22:03:50,895 - services.core.aiva_core.ai_engine.bio_neuron_core - INFO - --- ScalableBioNet (∕郸み) ﹍て ---
+2025-10-25 22:03:50,895 - services.core.aiva_core.ai_engine.bio_neuron_core - INFO -   - FC1 把计: 2,097,152
+2025-10-25 22:03:50,895 - services.core.aiva_core.ai_engine.bio_neuron_core - INFO -   - Spiking1 把计: 2,097,152
+2025-10-25 22:03:50,896 - services.core.aiva_core.ai_engine.bio_neuron_core - INFO -   - FC2 把计: 2,048
+2025-10-25 22:03:50,896 - services.core.aiva_core.ai_engine.bio_neuron_core - INFO -   - 羆把计: 4.20M
+2025-10-25 22:03:50,896 - services.core.aiva_core.ai_engine.bio_neuron_core - INFO - -----------------------------------------
+2025-10-25 22:03:50,907 - services.core.aiva_core.planner.ast_parser - INFO - ASTParser initialized
+2025-10-25 22:03:50,907 - services.core.aiva_core.planner.task_converter - INFO - TaskConverter initialized
+2025-10-25 22:03:50,907 - services.core.aiva_core.planner.tool_selector - INFO - ToolSelector initialized with mapping rules
+2025-10-25 22:03:50,907 - services.core.aiva_core.planner.orchestrator - INFO - AttackOrchestrator initialized
+2025-10-25 22:03:50,916 - services.core.aiva_core.execution_tracer.trace_recorder - INFO - TraceRecorder initialized
+2025-10-25 22:03:50,917 - services.core.aiva_core.execution_tracer.execution_monitor - INFO - ExecutionMonitor initialized
+2025-10-25 22:03:50,917 - services.core.aiva_core.execution_tracer.task_executor - INFO - TaskExecutor initialized
+2025-10-25 22:03:51,814 - services.integration.aiva_integration.reception.experience_repository - INFO - ExperienceRepository initialized with DB: sqlite:///./aiva_experience.db
+2025-10-25 22:03:51,815 - services.core.aiva_core.analysis.ast_trace_comparator - INFO - ASTTraceComparator initialized
+2025-10-25 22:03:51,815 - services.core.aiva_core.ai_engine.training.data_loader - INFO - ExperienceDataLoader initialized
+2025-10-25 22:03:51,816 - services.core.aiva_core.ai_engine.training.model_updater - INFO - ModelUpdater initialized, save path: ./models
+2025-10-25 22:03:51,819 - services.core.aiva_core.rag.vector_store - INFO - Using in-memory vector store
+2025-10-25 22:03:51,820 - services.core.aiva_core.rag.vector_store - INFO - VectorStore initialized with memory backend, model=sentence-transformers/all-MiniLM-L6-v2
+2025-10-25 22:03:51,820 - services.core.aiva_core.rag.vector_store - INFO - Loaded 0 documents from data\knowledge\vectors
+2025-10-25 22:03:51,820 - services.core.aiva_core.rag.knowledge_base - INFO - Loaded 0 knowledge entries
+2025-10-25 22:03:51,820 - services.core.aiva_core.rag.knowledge_base - INFO - KnowledgeBase initialized with 0 entries
+2025-10-25 22:03:51,821 - services.core.aiva_core.rag.rag_engine - INFO - RAG Engine initialized
+2025-10-25 22:03:51,824 - P0_Validation - INFO - 
+================================================================================
+2025-10-25 22:03:51,826 - P0_Validation - INFO - ================================================================================
+2025-10-25 22:03:51,827 - services.core.aiva_core.learning.model_trainer - INFO - ModelTrainer initialized with model_dir=models
+2025-10-25 22:03:51,879 - P0_Validation - INFO - 
+================================================================================
+2025-10-25 22:03:51,881 - P0_Validation - INFO - ================================================================================
+2025-10-25 22:03:51,881 - P0_Validation - INFO - 
+羆代刚计: 4
+2025-10-25 22:03:51,887 - P0_Validation - INFO - 
+--------------------------------------------------------------------------------
+2025-10-25 22:03:51,889 - P0_Validation - INFO -   岿粇:
+2025-10-25 22:03:51,889 - P0_Validation - INFO -     - cannot import name 'IDORWorker' from 'services.features.function_idor.worker' (C:\D\fold7\AIVA-git\services\features\function_idor\worker.py)
+2025-10-25 22:03:51,891 - P0_Validation - INFO -   - 家舱旧Θ
+2025-10-25 22:03:51,891 - P0_Validation - INFO -   岿粇:
+2025-10-25 22:03:51,891 - P0_Validation - INFO -     - cannot access local variable 'Path' where it is not associated with a value
+2025-10-25 22:03:51,893 - P0_Validation - INFO -   - 家舱旧Θ
+2025-10-25 22:03:51,893 - P0_Validation - INFO -   岿粇:
+2025-10-25 22:03:51,893 - P0_Validation - INFO -     - 'str' object has no attribute 'value'
+2025-10-25 22:03:51,894 - P0_Validation - INFO -   - 家舱旧Θ
+2025-10-25 22:03:51,895 - P0_Validation - INFO -   - 菏服厩策癡絤: 龟瞷
+2025-10-25 22:03:51,895 - P0_Validation - INFO -   - 眏て厩策癡絤: 龟瞷
+2025-10-25 22:03:51,895 - P0_Validation - INFO -   - 家蝶︳: 龟瞷
+2025-10-25 22:03:51,895 - P0_Validation - INFO -   - 家玂: 龟瞷
+2025-10-25 22:03:51,895 - P0_Validation - INFO -   - 家更: 龟瞷
+2025-10-25 22:03:51,895 - P0_Validation - INFO -   - 菏服厩策代刚: 铬筁 (2 validation errors for ModelTrainingConfig
+config)
+2025-10-25 22:03:51,898 - P0_Validation - INFO - 
+================================================================================
+2025-10-25 22:03:51,900 - P0_Validation - INFO - ================================================================================

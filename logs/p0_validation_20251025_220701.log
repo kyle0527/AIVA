@@ -1,0 +1,123 @@
+2025-10-25 22:07:01,796 - P0_Validation - INFO - ================================================================================
+2025-10-25 22:07:01,797 - P0_Validation - INFO - 
+================================================================================
+2025-10-25 22:07:01,798 - P0_Validation - INFO - ================================================================================
+2025-10-25 22:07:03,401 - P0_Validation - INFO -      返回: {'Authorization': 'Bearer test_token_user2'}
+2025-10-25 22:07:03,402 - P0_Validation - INFO -      返回: {'Cookie': 'session=user2_session'}
+2025-10-25 22:07:03,407 - P0_Validation - INFO -      返回: {'X-API-Key': 'test_api_key_user2'}
+2025-10-25 22:07:03,409 - P0_Validation - INFO -      返回: {'Authorization': 'Basic dXNlcjI6cGFzczI='}
+2025-10-25 22:07:03,413 - P0_Validation - INFO - 
+================================================================================
+2025-10-25 22:07:03,414 - P0_Validation - INFO - ================================================================================
+2025-10-25 22:07:03,599 - services.core.aiva_core.ai_commander - INFO -   Loading BioNeuronRAGAgent...
+2025-10-25 22:07:03,600 - services.core.aiva_core.ai_engine.bio_neuron_core - INFO - 正在初始化 BioNeuronRAGAgent...
+2025-10-25 22:07:03,690 - services.core.aiva_core.ai_engine.bio_neuron_core - INFO - --- ScalableBioNet (決策核心) 初始化 ---
+2025-10-25 22:07:03,690 - services.core.aiva_core.ai_engine.bio_neuron_core - INFO -   - FC1 參數: 2,097,152
+2025-10-25 22:07:03,690 - services.core.aiva_core.ai_engine.bio_neuron_core - INFO -   - Spiking1 參數: 2,097,152
+2025-10-25 22:07:03,690 - services.core.aiva_core.ai_engine.bio_neuron_core - INFO -   - FC2 參數: 2,048
+2025-10-25 22:07:03,691 - services.core.aiva_core.ai_engine.bio_neuron_core - INFO -   - 總參數約: 4.20M
+2025-10-25 22:07:03,691 - services.core.aiva_core.ai_engine.bio_neuron_core - INFO - -----------------------------------------
+2025-10-25 22:07:03,697 - services.core.aiva_core.planner.ast_parser - INFO - ASTParser initialized
+2025-10-25 22:07:03,697 - services.core.aiva_core.planner.task_converter - INFO - TaskConverter initialized
+2025-10-25 22:07:03,697 - services.core.aiva_core.planner.tool_selector - INFO - ToolSelector initialized with mapping rules
+2025-10-25 22:07:03,698 - services.core.aiva_core.planner.orchestrator - INFO - AttackOrchestrator initialized
+2025-10-25 22:07:03,705 - services.core.aiva_core.execution_tracer.trace_recorder - INFO - TraceRecorder initialized
+2025-10-25 22:07:03,705 - services.core.aiva_core.execution_tracer.execution_monitor - INFO - ExecutionMonitor initialized
+2025-10-25 22:07:03,705 - services.core.aiva_core.execution_tracer.task_executor - INFO - TaskExecutor initialized
+2025-10-25 22:07:04,161 - services.integration.aiva_integration.reception.experience_repository - INFO - ExperienceRepository initialized with DB: sqlite:///./aiva_experience.db
+2025-10-25 22:07:04,161 - services.core.aiva_core.analysis.ast_trace_comparator - INFO - ASTTraceComparator initialized
+2025-10-25 22:07:04,161 - services.core.aiva_core.ai_engine.training.data_loader - INFO - ExperienceDataLoader initialized
+2025-10-25 22:07:04,162 - services.core.aiva_core.ai_engine.training.model_updater - INFO - ModelUpdater initialized, save path: ./models
+2025-10-25 22:07:04,165 - services.core.aiva_core.ai_commander - INFO -   Loading RAG Engine...
+2025-10-25 22:07:04,166 - services.core.aiva_core.rag.vector_store - INFO - Using in-memory vector store
+2025-10-25 22:07:04,166 - services.core.aiva_core.rag.vector_store - INFO - VectorStore initialized with memory backend, model=sentence-transformers/all-MiniLM-L6-v2
+2025-10-25 22:07:04,170 - services.core.aiva_core.rag.vector_store - INFO - Loaded 0 documents from data\ai_commander\knowledge\vectors
+2025-10-25 22:07:04,171 - services.core.aiva_core.rag.knowledge_base - INFO - Loaded 0 knowledge entries
+2025-10-25 22:07:04,171 - services.core.aiva_core.rag.knowledge_base - INFO - KnowledgeBase initialized with 0 entries
+2025-10-25 22:07:04,171 - services.core.aiva_core.rag.rag_engine - INFO - RAG Engine initialized
+2025-10-25 22:07:04,171 - services.core.aiva_core.ai_commander - INFO -   Loading Training System...
+2025-10-25 22:07:04,173 - services.core.aiva_core.learning.experience_manager - INFO - ExperienceManager initialized
+2025-10-25 22:07:04,173 - services.core.aiva_core.learning.model_trainer - INFO - ModelTrainer initialized with model_dir=models
+2025-10-25 22:07:04,177 - services.core.aiva_core.training.scenario_manager - INFO - ScenarioManager initialized with scenarios_dir=data\scenarios
+2025-10-25 22:07:04,178 - services.core.aiva_core.messaging.message_broker - INFO - MessageBroker initialized for module CoreModule
+2025-10-25 22:07:04,178 - services.core.aiva_core.execution.trace_logger - INFO - TraceLogger initialized
+2025-10-25 22:07:04,178 - services.core.aiva_core.execution.plan_executor - INFO - PlanExecutor initialized
+2025-10-25 22:07:04,179 - services.core.aiva_core.training.training_orchestrator - INFO - TrainingOrchestrator initialized (auto_initialize=True)
+2025-10-25 22:07:04,179 - services.core.aiva_core.ai_commander - INFO -   Loading Multi-Language Coordinator...
+2025-10-25 22:07:04,180 - services.core.aiva_core.ai_commander - INFO -    - BioNeuronRAGAgent: True
+2025-10-25 22:07:04,180 - services.core.aiva_core.ai_commander - INFO -    - RAG Engine: True
+2025-10-25 22:07:04,180 - services.core.aiva_core.ai_commander - INFO -    - Training System: True
+2025-10-25 22:07:04,181 - services.core.aiva_core.ai_commander - INFO -    - Multi-Language Coordinator: True
+2025-10-25 22:07:04,188 - P0_Validation - INFO -      函式簽名: (context: 'dict[str, Any]') -> 'dict[str, Any]'
+2025-10-25 22:07:04,193 - P0_Validation - INFO - 
+================================================================================
+2025-10-25 22:07:04,195 - P0_Validation - INFO - ================================================================================
+2025-10-25 22:07:04,207 - services.core.aiva_core.ai_engine.bio_neuron_core - INFO - 正在初始化 BioNeuronRAGAgent...
+2025-10-25 22:07:04,287 - services.core.aiva_core.ai_engine.bio_neuron_core - INFO - --- ScalableBioNet (決策核心) 初始化 ---
+2025-10-25 22:07:04,287 - services.core.aiva_core.ai_engine.bio_neuron_core - INFO -   - FC1 參數: 2,097,152
+2025-10-25 22:07:04,287 - services.core.aiva_core.ai_engine.bio_neuron_core - INFO -   - Spiking1 參數: 2,097,152
+2025-10-25 22:07:04,287 - services.core.aiva_core.ai_engine.bio_neuron_core - INFO -   - FC2 參數: 2,048
+2025-10-25 22:07:04,288 - services.core.aiva_core.ai_engine.bio_neuron_core - INFO -   - 總參數約: 4.20M
+2025-10-25 22:07:04,288 - services.core.aiva_core.ai_engine.bio_neuron_core - INFO - -----------------------------------------
+2025-10-25 22:07:04,288 - services.core.aiva_core.planner.ast_parser - INFO - ASTParser initialized
+2025-10-25 22:07:04,288 - services.core.aiva_core.planner.task_converter - INFO - TaskConverter initialized
+2025-10-25 22:07:04,288 - services.core.aiva_core.planner.tool_selector - INFO - ToolSelector initialized with mapping rules
+2025-10-25 22:07:04,288 - services.core.aiva_core.planner.orchestrator - INFO - AttackOrchestrator initialized
+2025-10-25 22:07:04,290 - services.core.aiva_core.execution_tracer.trace_recorder - INFO - TraceRecorder initialized
+2025-10-25 22:07:04,290 - services.core.aiva_core.execution_tracer.execution_monitor - INFO - ExecutionMonitor initialized
+2025-10-25 22:07:04,290 - services.core.aiva_core.execution_tracer.task_executor - INFO - TaskExecutor initialized
+2025-10-25 22:07:04,294 - services.integration.aiva_integration.reception.experience_repository - INFO - ExperienceRepository initialized with DB: sqlite:///./aiva_experience.db
+2025-10-25 22:07:04,294 - services.core.aiva_core.analysis.ast_trace_comparator - INFO - ASTTraceComparator initialized
+2025-10-25 22:07:04,295 - services.core.aiva_core.ai_engine.training.data_loader - INFO - ExperienceDataLoader initialized
+2025-10-25 22:07:04,295 - services.core.aiva_core.ai_engine.training.model_updater - INFO - ModelUpdater initialized, save path: ./models
+2025-10-25 22:07:04,299 - services.core.aiva_core.rag.vector_store - INFO - Using in-memory vector store
+2025-10-25 22:07:04,299 - services.core.aiva_core.rag.vector_store - INFO - VectorStore initialized with memory backend, model=sentence-transformers/all-MiniLM-L6-v2
+2025-10-25 22:07:04,299 - services.core.aiva_core.rag.vector_store - INFO - Loaded 0 documents from data\knowledge\vectors
+2025-10-25 22:07:04,300 - services.core.aiva_core.rag.knowledge_base - INFO - Loaded 0 knowledge entries
+2025-10-25 22:07:04,300 - services.core.aiva_core.rag.knowledge_base - INFO - KnowledgeBase initialized with 0 entries
+2025-10-25 22:07:04,300 - services.core.aiva_core.rag.rag_engine - INFO - RAG Engine initialized
+2025-10-25 22:07:04,301 - services.core.aiva_core.bio_neuron_master - INFO -    - BioNeuronRAGAgent: True
+2025-10-25 22:07:04,301 - services.core.aiva_core.bio_neuron_master - INFO -    - RAG Engine: True
+2025-10-25 22:07:04,305 - services.core.aiva_core.bio_neuron_master - WARNING - NLU processing failed, falling back to keyword matching: 'BioNeuronRAGAgent' object has no attribute 'generate_structured_output'
+2025-10-25 22:07:04,306 - P0_Validation - INFO -      NLU 測試結果: ('start_scan', {'target': 'http://localhost:3000'})
+2025-10-25 22:07:04,306 - P0_Validation - WARNING -      NLU 測試警告: 'tuple' object has no attribute 'get'
+2025-10-25 22:07:04,316 - P0_Validation - INFO - 
+================================================================================
+2025-10-25 22:07:04,317 - P0_Validation - INFO - ================================================================================
+2025-10-25 22:07:04,319 - services.core.aiva_core.learning.model_trainer - INFO - ModelTrainer initialized with model_dir=models
+2025-10-25 22:07:04,344 - P0_Validation - INFO - 
+================================================================================
+2025-10-25 22:07:04,346 - P0_Validation - INFO - ================================================================================
+2025-10-25 22:07:04,346 - P0_Validation - INFO - 
+總測試數: 4
+2025-10-25 22:07:04,352 - P0_Validation - INFO - 
+--------------------------------------------------------------------------------
+2025-10-25 22:07:04,353 - P0_Validation - INFO -   - 模組導入成功
+2025-10-25 22:07:04,353 - P0_Validation - INFO -   - Bearer Token 認證: 通過
+2025-10-25 22:07:04,353 - P0_Validation - INFO -   - Cookie 認證: 通過
+2025-10-25 22:07:04,353 - P0_Validation - INFO -   - API Key 認證: 通過
+2025-10-25 22:07:04,354 - P0_Validation - INFO -   - Basic Auth 認證: 通過
+2025-10-25 22:07:04,354 - P0_Validation - INFO -   - 無配置測試: 通過
+2025-10-25 22:07:04,355 - P0_Validation - INFO -   - 模組導入成功
+2025-10-25 22:07:04,356 - P0_Validation - INFO -   - ExperienceManager 已整合
+2025-10-25 22:07:04,356 - P0_Validation - INFO -   - StorageBackend 已配置
+2025-10-25 22:07:04,356 - P0_Validation - INFO -   - BioNeuronRAGAgent 已接入
+2025-10-25 22:07:04,356 - P0_Validation - INFO -   - _plan_attack 已實現
+2025-10-25 22:07:04,356 - P0_Validation - INFO -   - _make_strategy_decision 已實現
+2025-10-25 22:07:04,358 - P0_Validation - INFO -   - 模組導入成功
+2025-10-25 22:07:04,358 - P0_Validation - INFO -   - NLU 功能已實現
+2025-10-25 22:07:04,358 - P0_Validation - INFO -   - AI 決策功能已實現
+2025-10-25 22:07:04,358 - P0_Validation - INFO -   - 經驗學習已實現
+2025-10-25 22:07:04,358 - P0_Validation - INFO -   - 所有任務啟動功能已實現
+2025-10-25 22:07:04,358 - P0_Validation - INFO -   - RAG Engine 已整合
+2025-10-25 22:07:04,360 - P0_Validation - INFO -   - 模組導入成功
+2025-10-25 22:07:04,360 - P0_Validation - INFO -   - 監督學習訓練: 已實現
+2025-10-25 22:07:04,360 - P0_Validation - INFO -   - 強化學習訓練: 已實現
+2025-10-25 22:07:04,360 - P0_Validation - INFO -   - 模型評估: 已實現
+2025-10-25 22:07:04,360 - P0_Validation - INFO -   - 模型保存: 已實現
+2025-10-25 22:07:04,360 - P0_Validation - INFO -   - 模型載入: 已實現
+2025-10-25 22:07:04,360 - P0_Validation - INFO -   - 監督學習測試: 跳過 (2 validation errors for ModelTrainingConfig
+config)
+2025-10-25 22:07:04,364 - P0_Validation - INFO - 
+================================================================================
+2025-10-25 22:07:04,365 - P0_Validation - INFO - ================================================================================

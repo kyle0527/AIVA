@@ -1,4 +1,3 @@
-````markdown
 # AIVA 整合模組 - 企業級安全整合中樞
 
 ![AIVA Integration Module](https://img.shields.io/badge/AIVA-Integration%20Module-purple?style=for-the-badge)
@@ -12,6 +11,73 @@
 ---
 
 ## 📑 目錄
+
+- [🛠️ Integration 模組開發工具](#️-integration-模組開發工具)
+- [🌟 核心價值](#-核心價值)
+- [🏗️ 整合架構圖](#️-整合架構圖)
+- [🔍 架構深度分析](#-架構深度分析)
+- [⚠️ 架構風險與解決方案](#️-發現的架構風險與解決方案)
+- [📊 效能基準與監控](#-效能基準與監控)
+- [💡 使用方式與最佳實踐](#-使用方式與最佳實踐)
+- [🚀 發展方向與路線圖](#-發展方向與路線圖)
+- [🔒 安全性與合規](#️-安全性與合規)
+- [🛠️ 故障排除與維護](#-故障排除與維護)
+- [📚 API 參考](#-api-參考)
+- [👨‍💻 開發規範與最佳實踐](#-開發規範與最佳實踐)
+- [🤝 貢獻指南](#-貢獻指南)
+- [📄 授權與支援](#-授權與支援)
+
+---
+
+## 🛠️ Integration 模組開發工具
+
+> **Python + FastAPI + 資料庫**: 本模組使用 Python 3.11+ FastAPI 框架，搭配 PostgreSQL 與 Redis
+
+| 開發場景 | 推薦插件 | 用途說明 |
+|---------|---------|---------|
+| 🐍 **Python/FastAPI** | Pylance + Ruff | 型別檢查、API 開發、快速 linting |
+| 🗄️ **資料庫管理** | SQLTools + PostgreSQL Driver + Redis Client | PostgreSQL 查詢、Redis 資料操作 |
+| 🌐 **API 測試** | REST Client (0.25.1) | HTTP 請求測試、API 除錯 |
+| 📊 **資料分析** | Jupyter + Rainbow CSV | 效能數據分析、CSV 處理 |
+| 🤖 **AI 輔助** | GitHub Copilot + Sourcery | 程式碼生成、品質改進建議 |
+| 🐳 **容器開發** | Docker + Dev Containers | 完整開發環境容器化 |
+| 🔍 **監控除錯** | ErrorLens + Code Runner | 即時錯誤提示、快速測試 |
+
+### 資料庫工具特別說明
+
+本模組有 **4 個資料庫相關插件**可用：
+
+| 插件 | 版本 | 適用場景 |
+|------|------|---------|
+| **SQLTools** | 0.28.5 | ⚡ 輕量級 SQL 查詢工具（推薦日常使用） |
+| **SQLTools PostgreSQL Driver** | 0.5.7 | PostgreSQL 連接驅動 |
+| **DB Client JDBC** | 1.4.6 | 🔥 功能完整的資料庫客戶端（支援多種資料庫） |
+| **Redis Client** | 8.4.2 | Redis 資料瀏覽與操作 |
+
+📚 **完整工具清單**: [VS Code 插件參考](../../_out/VSCODE_EXTENSIONS_INVENTORY.md) | [資料庫工具詳解](../../_out/VSCODE_EXTENSIONS_INVENTORY.md#9-資料庫工具-4-個)
+
+### 💡 Integration 開發快速技巧
+
+**API 開發**:
+```bash
+# 使用 REST Client 測試 API
+# 建立 test.http 檔案，撰寫請求後點擊 "Send Request"
+GET http://localhost:8000/api/v1/status
+```
+
+**資料庫查詢**:
+- 使用 SQLTools 連接 PostgreSQL（點擊左側 SQL 圖示）
+- 使用 Redis Client 瀏覽 Redis 鍵值（支援視覺化）
+
+**效能監控**:
+- Jupyter Notebook 分析效能數據
+- Rainbow CSV 處理大型 CSV 日誌
+
+**問題排查**: [Integration 常見問題](../../_out/VSCODE_EXTENSIONS_INVENTORY.md#-問題排查流程) | [API 測試技巧](../../_out/VSCODE_EXTENSIONS_INVENTORY.md#10-api-測試與執行-2-個)
+
+---
+
+## �📑 目錄
 
 - [核心價值](#-核心價值)
   - [智能中樞架構](#智能中樞架構)

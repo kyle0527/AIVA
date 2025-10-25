@@ -12,7 +12,44 @@
 
 ---
 
-## 📖 完整多層文檔架構
+## 📑 目錄
+
+- [🛠️ 開發工具箱](#️-開發工具箱)
+- [📖 完整多層文檔架構](#-完整多層文檔架構)
+  - [🎯 按角色導航](#-按角色導航)
+  - [🏗️ 按模組導航](#️-按模組導航)
+- [🚀 快速開始](#-快速開始)
+- [📊 系統概覽](#-系統概覽)
+- [🎯 核心特性](#-核心特性)
+- [📚 文檔索引](#-文檔索引)
+- [🛠️ 開發工具](#️-開發工具)
+- [📈 路線圖](#-路線圖)
+- [🤝 貢獻](#-貢獻)
+- [📄 授權](#-授權)
+- [📞 聯絡](#-聯絡)
+
+---
+
+## 🛠️ 開發工具箱
+
+> **快速找到適合的開發工具**: [VS Code 插件完整清單](_out/VSCODE_EXTENSIONS_INVENTORY.md) (88 個已安裝插件)
+
+| 開發需求 | 推薦工具 | 快速連結 |
+|---------|---------|---------|
+| 🐍 **Python 開發** | Pylance + Ruff + Black | [Python 工具 (22個)](_out/VSCODE_EXTENSIONS_INVENTORY.md#1-python-開發生態-22-個) |
+| 🦀 **Rust 開發** | rust-analyzer | [Rust 工具](_out/VSCODE_EXTENSIONS_INVENTORY.md#3-其他程式語言-5-個) |
+| 🐹 **Go 開發** | golang.go | [Go 工具](_out/VSCODE_EXTENSIONS_INVENTORY.md#3-其他程式語言-5-個) |
+| 🔍 **程式碼品質** | SonarLint + ESLint + ErrorLens | [品質工具 (5個)](_out/VSCODE_EXTENSIONS_INVENTORY.md#7-程式碼品質與-linting-5-個) |
+| 🤖 **AI 輔助** | GitHub Copilot + ChatGPT | [AI 工具 (5個)](_out/VSCODE_EXTENSIONS_INVENTORY.md#5-github-整合與-ai-5-個) |
+| 🐳 **容器開發** | Docker + Dev Containers | [容器工具 (7個)](_out/VSCODE_EXTENSIONS_INVENTORY.md#6-容器與遠端開發-7-個) |
+| 📊 **資料科學** | Jupyter + Rainbow CSV | [資料工具 (6個)](_out/VSCODE_EXTENSIONS_INVENTORY.md#2-資料科學與-jupyter-6-個) |
+| 🔀 **版本控制** | GitLens + Git Graph | [Git 工具 (6個)](_out/VSCODE_EXTENSIONS_INVENTORY.md#4-git-版本控制-6-個) |
+
+💡 **實用功能**: [核心插件速查表](_out/VSCODE_EXTENSIONS_INVENTORY.md#-核心插件速查表) | [問題排查流程](_out/VSCODE_EXTENSIONS_INVENTORY.md#-問題排查流程) | [維護指南](_out/VSCODE_EXTENSIONS_INVENTORY.md#-維護流程)
+
+---
+
+## �📖 完整多層文檔架構
 
 根據您的角色選擇最適合的文檔層級:
 

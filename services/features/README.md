@@ -11,6 +11,67 @@
 
 ---
 
+## � 目錄
+
+- [🛠️ Features 模組開發工具](#️-features-模組開發工具)
+- [📊 模組規模一覽](#-模組規模一覽)
+- [🏗️ 功能架構總覽](#️-功能架構總覽)
+  - [四層功能架構](#四層功能架構)
+  - [🎯 各層核心職責](#-各層核心職責)
+- [📚 文件導航地圖](#-文件導航地圖)
+- [🚀 快速開始指南](#-快速開始指南)
+- [⚠️ 重要注意事項](#️-重要注意事項)
+- [🔧 開發規範與最佳實踐](#-開發規範與最佳實踐)
+- [🔴 核心功能層](#-核心功能層)
+- [🛡️ 安全功能層](#️-安全功能層)
+- [🏢 業務功能層](#-業務功能層)
+- [🔧 支援功能層](#-支援功能層)
+
+---
+
+## �🛠️ Features 模組開發工具
+
+> **多語言開發環境**: 本模組整合 Python, Go, Rust 三種語言，需要對應的開發工具
+
+| 語言 | 必備插件 | 開發用途 | 工具連結 |
+|------|---------|---------|---------|
+| 🐍 **Python** | Pylance + Ruff + Black | 型別檢查、快速 linting、格式化 | [Python 工具 (22個)](../../_out/VSCODE_EXTENSIONS_INVENTORY.md#1-python-開發生態-22-個) |
+| 🐹 **Go** | golang.go (0.50.0) | gopls、除錯、測試、格式化 | [Go 工具](../../_out/VSCODE_EXTENSIONS_INVENTORY.md#3-其他程式語言-5-個) |
+| 🦀 **Rust** | rust-analyzer (0.3.2593) | 語言伺服器、Cargo 整合、除錯 | [Rust 工具](../../_out/VSCODE_EXTENSIONS_INVENTORY.md#3-其他程式語言-5-個) |
+
+### 跨語言開發推薦工具
+
+| 功能需求 | 推薦插件 | 說明 |
+|---------|---------|------|
+| 🛡️ **安全掃描** | SonarLint (4.33.0) | 支援 Python/Go，靜態安全分析 |
+| 🤖 **AI 程式碼助手** | GitHub Copilot + ChatGPT | 多語言程式碼生成與解釋 |
+| 🔍 **程式碼品質** | ErrorLens + Code Spell Checker | 即時錯誤提示、拼寫檢查 |
+| 🐳 **容器開發** | Docker + Dev Containers | Rust/Go 編譯環境容器化 |
+| 📊 **效能分析** | Code Runner | 快速執行程式碼片段測試 |
+
+📚 **完整工具清單**: [VS Code 插件參考](../../_out/VSCODE_EXTENSIONS_INVENTORY.md) (88個插件)
+
+### 💡 語言特定快速技巧
+
+**Python (26.9% 組件)**:
+- 使用 Ruff 進行超快速 linting（比 pylint 快 10-100 倍）
+- Black 自動格式化：`Ctrl+Shift+I`
+- 查看 [Python 最佳實踐](../../_out/VSCODE_EXTENSIONS_INVENTORY.md#案例-2-修復-python-未定義函數錯誤)
+
+**Go (6.1% 組件)**:
+- gopls 提供完整的語言支援
+- 使用 `Go: Test Package` 執行測試
+- 格式化自動使用 gofmt
+
+**Rust (67.0% 組件)**:
+- rust-analyzer 提供即時編譯檢查
+- Cargo 任務整合，支援 build/test/run
+- 錯誤訊息詳細且實用
+
+🔧 **遇到問題？**: [多語言問題排查](../../_out/VSCODE_EXTENSIONS_INVENTORY.md#-問題排查流程)
+
+---
+
 ## 📊 **模組規模一覽**
 
 ### **🏗️ 整體統計**

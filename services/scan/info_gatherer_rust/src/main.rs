@@ -14,9 +14,11 @@ use tracing_subscriber;
 mod scanner;
 mod secret_detector;
 mod git_history_scanner;
+mod verifier;
 use scanner::SensitiveInfoScanner;
 use secret_detector::SecretDetector;
 use git_history_scanner::GitHistoryScanner;
+use verifier::Verifier;
 
 const RABBITMQ_URL: &str = "amqp://aiva:dev_password@localhost:5672";
 const TASK_QUEUE: &str = "task.scan.sensitive_info";
@@ -36,9 +38,12 @@ struct Finding {
     value: String,
     confidence: f32,
     location: String,
-    severity: Option<String>,      // 新增：密鑰嚴重性
-    entropy: Option<f64>,          // 新增：熵值
-    rule_name: Option<String>,     // 新增：觸發的規則名稱
+    severity: Option<String>,           // 密鑰嚴重性
+    entropy: Option<f64>,               // 熵值
+    rule_name: Option<String>,          // 觸發的規則名稱
+    verified: Option<bool>,             // 驗證狀態: true=有效, false=無效, None=未驗證
+    verification_message: Option<String>, // 驗證訊息
+    verification_metadata: Option<std::collections::HashMap<String, String>>, // 驗證元數據
 }
 
 #[tokio::main]
@@ -81,6 +86,9 @@ async fn main() -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
 
     // 初始化掃描器
     let scanner = Arc::new(SensitiveInfoScanner::new());
+    
+    // 初始化驗證器
+    let verifier = Arc::new(Verifier::new());
 
     // 消費訊息
     let mut consumer = channel
@@ -95,10 +103,11 @@ async fn main() -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
     while let Some(delivery) = consumer.next().await {
         let delivery = delivery?;
         let scanner = Arc::clone(&scanner);
+        let verifier = Arc::clone(&verifier);
         let channel = channel.clone();
 
         tokio::spawn(async move {
-            match process_task(&delivery.data, scanner, &channel).await {
+            match process_task(&delivery.data, scanner, verifier, &channel).await {
                 Ok(_) => {
                     delivery
                         .ack(BasicAckOptions::default())
@@ -125,6 +134,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
 async fn process_task(
     data: &[u8],
     scanner: Arc<SensitiveInfoScanner>,
+    verifier: Arc<Verifier>,
     channel: &lapin::Channel,
 ) -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
     let task: ScanTask = serde_json::from_slice(data)?;
@@ -146,6 +156,9 @@ async fn process_task(
             severity: None,
             entropy: None,
             rule_name: None,
+            verified: None,
+            verification_message: None,
+            verification_metadata: None,
         });
     }
 
@@ -154,7 +167,30 @@ async fn process_task(
     let secret_findings = secret_detector.scan_content(&task.content, &task.source_url);
     info!("  🔐 密鑰檢測掃描: 發現 {} 個密鑰", secret_findings.len());
     
+    // 驗證檢測到的密鑰
     for finding in secret_findings {
+        // 僅對高優先級密鑰進行驗證
+        let should_verify = matches!(
+            finding.severity.as_str(),
+            "CRITICAL" | "HIGH"
+        );
+        
+        let (verified, verification_message, verification_metadata) = if should_verify {
+            info!("  🔍 驗證密鑰: {} ...", finding.rule_name);
+            let result = verifier.verify(&finding.rule_name, &finding.matched_text).await;
+            
+            use verifier::VerificationStatus;
+            let verified = match result.status {
+                VerificationStatus::Valid => Some(true),
+                VerificationStatus::Invalid => Some(false),
+                _ => None,
+            };
+            
+            (verified, Some(result.message), Some(result.metadata))
+        } else {
+            (None, None, None)
+        };
+        
         all_findings.push(Finding {
             task_id: task.task_id.clone(),
             info_type: "secret".to_string(),
@@ -164,6 +200,9 @@ async fn process_task(
             severity: Some(finding.severity),
             entropy: finding.entropy,
             rule_name: Some(finding.rule_name),
+            verified,
+            verification_message,
+            verification_metadata,
         });
     }
 
@@ -194,6 +233,9 @@ async fn process_task(
                     severity: Some(finding.finding.severity),
                     entropy: finding.finding.entropy,
                     rule_name: Some(finding.finding.rule_name),
+                    verified: None, // Git 歷史密鑰暫不驗證（可能已失效）
+                    verification_message: None,
+                    verification_metadata: None,
                 });
             }
         } else {
