@@ -456,13 +456,161 @@ print(f"Severity: {cvss.severity}")      # CRITICAL
 
 ---
 
-## 🔧 開發指南
+## 🏗️ 跨語言 Schema 架構
+
+### � AIVA 統一 Schema 管理架構
+
+AIVA 採用 **YAML SOT (Single Source of Truth) + 代碼生成** 的架構,確保 Python、Go、Rust 三種語言之間的數據結構完全一致。
+
+#### 架構關係圖
+
+```
+core_schema_sot.yaml (唯一來源)
+         │
+         ↓
+ schema_codegen_tool.py (生成工具)
+         │
+    ┌────┴────┬─────────────┐
+    ↓         ↓             ↓
+Python      Go           Rust
+schemas   schemas      schemas
+    │         │             │
+    ↓         ↓             ↓
+Python     Go 服務     Rust 模組
+模組    (Features)    (Scan/Features)
+```
+
+#### 各語言 Schema 存放位置
+
+| 語言 | 生成路徑 | 用途 | 引用模組 |
+|------|---------|------|----------|
+| **Python** | `services/aiva_common/schemas/generated/` | Python 模組共用 | Core, Features, Scan, Integration |
+| **Go** | `services/features/common/go/aiva_common_go/schemas/generated/` | Go 服務共用 | function_sca_go, function_ssrf_go, function_cspm_go, function_authn_go |
+| **Rust** | `services/scan/info_gatherer_rust/src/schemas/generated/` | Rust 模組共用 | info_gatherer_rust, function_sast_rust (需配置) |
+
+#### ✅ 無衝突設計
+
+**重要**: `services/aiva_common` 和 `services/features/common/go` **沒有衝突**,它們服務不同的語言:
+
+- **services/aiva_common**: Python 專用共用模組
+  - 包含 Python 的 schemas、enums、utils
+  - 被所有 Python 模組引用
+  - 包含代碼生成工具和 YAML SOT
+
+- **services/features/common/go/aiva_common_go**: Go 專用共用模組
+  - 包含 Go 的 schemas、config、logger、mq
+  - 被所有 Go 微服務引用
+  - 從 YAML SOT 生成
+
+#### 正確的引用方式
+
+##### Python 模組引用
+
+```python
+# ✅ 正確 - 引用 aiva_common
+from aiva_common.enums import Severity, Confidence
+from aiva_common.schemas import FindingPayload, SARIFResult
+
+# 使用
+finding = FindingPayload(
+    finding_id="F001",
+    severity=Severity.CRITICAL,
+    confidence=Confidence.HIGH
+)
+
+# ❌ 錯誤 - 重複定義
+class FindingPayload(BaseModel):  # 不要這樣做!
+    finding_id: str
+    # ...
+```
+
+##### Go 服務引用
+
+```go
+// ✅ 正確 - 引用生成的 schemas
+import "github.com/kyle0527/aiva/services/function/common/go/aiva_common_go/schemas/generated"
+
+func processTask(payload schemas.FunctionTaskPayload) {
+    // 使用生成的類型
+}
+
+// ❌ 錯誤 - 重複定義
+type FunctionTaskPayload struct {  // 不要這樣做!
+    TaskID string `json:"task_id"`
+    // ...
+}
+```
+
+##### Rust 模組引用
+
+```rust
+// ✅ 正確 - 引用生成的 schemas
+use crate::schemas::generated::{FunctionTaskPayload, FindingPayload};
+
+// ❌ 錯誤 - 重複定義
+pub struct FunctionTaskPayload {  // 不要這樣做!
+    pub task_id: String,
+    // ...
+}
+```
+
+#### ⚠️ 已發現的架構違規
+
+**問題 1**: `services/features/function_sca_go/pkg/models/models.go`
+- 重複定義了 9 個已生成的類型
+- 應該: 移除重複定義,使用 `aiva_common_go/schemas/generated`
+
+**問題 2**: `services/features/function_sast_rust/src/models.rs`
+- 重複定義了 5 個已生成的類型
+- 應該: 配置 Rust schemas 生成或從 info_gatherer_rust 引用
+
+詳細分析請參閱: [`_out/SCHEMA_ARCHITECTURE_ANALYSIS.md`](../../_out/SCHEMA_ARCHITECTURE_ANALYSIS.md)
+
+#### 代碼生成工作流程
+
+```bash
+# 1. 編輯 YAML SOT
+vim services/aiva_common/core_schema_sot.yaml
+
+# 2. 生成所有語言的 schemas
+python services/aiva_common/tools/schema_codegen_tool.py
+
+# 3. 驗證生成結果
+python services/aiva_common/tools/schema_validator.py
+
+# 4. 檢查語法正確性
+# Python:
+python -c "from aiva_common.schemas.generated import *"
+
+# Go:
+cd services/features/common/go/aiva_common_go/schemas/generated
+go fmt schemas.go
+
+# Rust:
+cd services/scan/info_gatherer_rust
+cargo check
+```
+
+#### 架構規範檢查清單
+
+在新增或修改功能時,確保:
+
+- [ ] **Python**: 從 `aiva_common` 導入,無重複定義
+- [ ] **Go**: 從 `aiva_common_go/schemas/generated` 導入,無重複定義
+- [ ] **Rust**: 從生成的 schemas 引用,無重複定義
+- [ ] **跨語言**: JSON 序列化/反序列化測試通過
+- [ ] **代碼生成**: 運行 `schema_codegen_tool.py` 更新所有語言
+- [ ] **驗證**: 運行 `schema_validator.py` 確保一致性
+
+---
+
+## �🔧 開發指南
 
 ### 🎯 核心設計原則
 
 **aiva_common 作為單一數據來源（Single Source of Truth）**
 
-在開始任何開發前，請理解以下核心原則：
+在開始任何開發前,請理解以下核心原則:
 
 #### 原則 1️⃣: 官方標準優先
 

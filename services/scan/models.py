@@ -28,61 +28,22 @@ from ..aiva_common.enums import (
     VulnerabilityType,
 )
 from ..aiva_common.schemas import (
+    Asset,
     Authentication,
+    CVEReference,
+    CVSSv3Metrics,
+    CWEReference,
+    Fingerprints,
     RateLimit,
+    ScanCompletedPayload,
+    ScanStartPayload,
+    Summary,
+    Vulnerability,
 )
 
 # ==================== 掃描配置和控制 ====================
-
-
-class ScanScope(BaseModel):
-    """掃描範圍定義"""
-
-    exclusions: list[str] = Field(default_factory=list, description="排除列表")
-    include_subdomains: bool = Field(default=True, description="是否包含子域名")
-    allowed_hosts: list[str] = Field(default_factory=list, description="允許的主機")
-
-
-class ScanStartPayload(BaseModel):
-    """掃描啟動載荷"""
-
-    scan_id: str = Field(description="掃描ID")
-    targets: list[HttpUrl] = Field(description="目標URL列表")
-    scope: ScanScope = Field(default_factory=ScanScope, description="掃描範圍")
-    authentication: Authentication = Field(default_factory=Authentication, description="認證配置")
-    strategy: str = Field(default="deep", description="掃描策略")
-    rate_limit: RateLimit = Field(default_factory=RateLimit, description="速率限制")
-    custom_headers: dict[str, str] = Field(default_factory=dict, description="自定義HTTP標頭")
-    x_forwarded_for: str | None = Field(default=None, description="X-Forwarded-For標頭")
-
-    @field_validator("scan_id")
-    @classmethod
-    def validate_scan_id(cls, v: str) -> str:
-        """驗證掃描 ID 格式"""
-        if not v.startswith("scan_"):
-            raise ValueError("scan_id must start with 'scan_'")
-        if len(v) < 10:
-            raise ValueError("scan_id too short (minimum 10 characters)")
-        return v
-
-    @field_validator("targets")
-    @classmethod
-    def validate_targets(cls, v: list[HttpUrl]) -> list[HttpUrl]:
-        """驗證目標列表"""
-        if not v:
-            raise ValueError("At least one target required")
-        if len(v) > 100:
-            raise ValueError("Too many targets (maximum 100)")
-        return v
-
-    @field_validator("strategy")
-    @classmethod
-    def validate_strategy(cls, v: str) -> str:
-        """驗證掃描策略"""
-        allowed = {"quick", "normal", "deep", "stealth"}
-        if v not in allowed:
-            raise ValueError(f"strategy must be one of {allowed}")
-        return v
+# 注意：ScanStartPayload 和 ScanCompletedPayload 已從 aiva_common.schemas 導入
+# 此處僅保留 Scan 模組特定的增強配置
 
 
 class EnhancedScanScope(BaseModel):
@@ -115,16 +76,7 @@ class EnhancedScanRequest(BaseModel):
 
 
 # ==================== 資產管理 ====================
-
-
-class Asset(BaseModel):
-    """資產基本信息"""
-
-    asset_type: AssetType = Field(description="資產類型")
-    url: HttpUrl = Field(description="資產URL")
-    discovery_method: str = Field(description="發現方法")
-    confidence: Confidence = Field(description="置信度")
-    metadata: dict[str, Any] = Field(default_factory=dict, description="元數據")
+# 注意：Asset 已從 aiva_common.schemas.base 導入
 
 
 class TechnicalFingerprint(BaseModel):
@@ -147,14 +99,9 @@ class TechnicalFingerprint(BaseModel):
     metadata: dict[str, Any] = Field(default_factory=dict, description="額外信息")
 
 
-class Fingerprints(BaseModel):
-    """指紋集合"""
-
-    server: str | None = Field(default=None, description="服務器信息")
-    technologies: list[str] = Field(default_factory=list, description="檢測到的技術")
-    frameworks: list[str] = Field(default_factory=list, description="框架列表")
-    cms: str | None = Field(default=None, description="內容管理系統")
-    metadata: dict[str, Any] = Field(default_factory=dict, description="其他指紋信息")
+# ==================== 資產管理 ====================
+# 注意：Asset, Fingerprints, Summary 已從 aiva_common.schemas 導入
+# 此處僅保留 Scan 模組特定的擴展模型
 
 
 class AssetInventoryItem(BaseModel):
@@ -193,63 +140,13 @@ class AssetInventoryItem(BaseModel):
 # ==================== 掃描結果 ====================
 
 
-class Summary(BaseModel):
-    """掃描結果摘要"""
-
-    total_requests: int = Field(ge=0, description="總請求數")
-    total_assets: int = Field(ge=0, description="總資產數")
-    total_vulnerabilities: int = Field(ge=0, description="總漏洞數")
-    duration_seconds: float = Field(ge=0, description="掃描時長(秒)")
-    metadata: dict[str, Any] = Field(default_factory=dict, description="其他統計信息")
-
-
-class ScanCompletedPayload(BaseModel):
-    """掃描完成載荷"""
-
-    scan_id: str = Field(description="掃描ID")
-    status: str = Field(description="掃描狀態")
-    summary: Summary = Field(description="掃描摘要")
-    assets: list[Asset] = Field(description="發現的資產")
-    fingerprints: Fingerprints = Field(description="技術指紋")
-    completed_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
-    metadata: dict[str, Any] = Field(default_factory=dict, description="元數據")
+# ==================== 掃描結果 ====================
+# 注意：ScanCompletedPayload 已從 aiva_common.schemas 導入
 
 
 # ==================== 漏洞管理 ====================
-
-
-class Vulnerability(BaseModel):
-    """漏洞基本信息"""
-
-    vuln_id: str = Field(description="漏洞ID")
-    title: str = Field(description="漏洞標題")
-    description: str = Field(description="漏洞描述")
-    severity: Severity = Field(description="嚴重程度")
-    confidence: Confidence = Field(description="置信度")
-    vuln_type: VulnerabilityType = Field(description="漏洞類型")
-
-    # 位置信息
-    url: HttpUrl = Field(description="漏洞URL")
-    parameter: str | None = Field(default=None, description="受影響參數")
-    method: str = Field(default="GET", description="HTTP方法")
-
-    # 技術細節
-    evidence: list[str] = Field(default_factory=list, description="證據列表")
-    payload: str | None = Field(default=None, description="測試載荷")
-    cwe_ids: list[str] = Field(default_factory=list, description="CWE標識符")
-    cve_ids: list[str] = Field(default_factory=list, description="CVE標識符")
-
-    # CVSS評分
-    cvss_score: float | None = Field(default=None, ge=0.0, le=10.0, description="CVSS評分")
-    cvss_vector: str | None = Field(default=None, description="CVSS向量")
-
-    # 修復建議
-    remediation: str | None = Field(default=None, description="修復建議")
-    references: list[str] = Field(default_factory=list, description="參考鏈接")
-
-    # 元數據
-    discovered_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
-    metadata: dict[str, Any] = Field(default_factory=dict, description="其他信息")
+# 注意：Vulnerability 基礎定義已從 aiva_common.schemas 導入
+# 此處僅保留 Scan 模組特定的擴展模型
 
 
 class VulnerabilityDiscovery(BaseModel):
@@ -291,7 +188,12 @@ class VulnerabilityDiscovery(BaseModel):
     # 標準映射
     cve_ids: list[str] = Field(default_factory=list, description="CVE標識符")
     cwe_ids: list[str] = Field(default_factory=list, description="CWE標識符")
-    cvss_score: float | None = Field(default=None, ge=0.0, le=10.0, description="CVSS評分")
+    
+    # CVSS 評分 - 使用標準化結構
+    cvss_metrics: CVSSv3Metrics | None = Field(default=None, description="CVSS v3 評分")
+    
+    # 為了向後兼容保留舊欄位，但標記為廢棄
+    cvss_score: float | None = Field(default=None, ge=0.0, le=10.0, description="CVSS評分 (已廢棄，請使用 cvss_metrics)")
 
     # 時間戳
     discovered_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
@@ -447,29 +349,38 @@ class JavaScriptAnalysisResult(BaseModel):
 
 
 __all__ = [
-    # 掃描控制
-    "ScanScope",
-    "ScanStartPayload",
+    # 掃描控制 - 從 aiva_common 導入
+    # "ScanStartPayload",  # 從 aiva_common.schemas.tasks 導入
+    # "ScanCompletedPayload",  # 從 aiva_common.schemas.tasks 導入
+    # "Summary",  # 從 aiva_common.schemas.base 導入
+    
+    # 掃描控制 - 本地擴展
     "EnhancedScanScope",
     "EnhancedScanRequest",
-    "ScanCompletedPayload",
-    "Summary",
-    # 資產管理
-    "Asset",
+    
+    # 資產管理 - 從 aiva_common 導入
+    # "Asset",  # 從 aiva_common.schemas.base 導入
+    # "Fingerprints",  # 從 aiva_common.schemas.base 導入
+    
+    # 資產管理 - 本地定義
     "TechnicalFingerprint",
     "AssetInventoryItem",
     "AssetLifecyclePayload",
     "DiscoveredAsset",
-    # 漏洞發現
-    "Vulnerability",
+    
+    # 漏洞發現 - 從 aiva_common 導入
+    # "Vulnerability",  # 從 aiva_common.schemas.findings 導入
+    
+    # 漏洞發現 - 本地擴展
     "VulnerabilityDiscovery",
     "VulnerabilityLifecyclePayload",
     "VulnerabilityUpdatePayload",
+    
     # EASM 集成
     "EASMAsset",
     "EASMDiscoveryPayload",
     "EASMDiscoveryResult",
-    # 指紋和分析
-    "Fingerprints",
+    
+    # 分析
     "JavaScriptAnalysisResult",
 ]

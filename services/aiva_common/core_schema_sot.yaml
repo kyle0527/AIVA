@@ -340,6 +340,46 @@ tasks:
           minimum: 0.1
           maximum: 60.0
 
+  ScanTaskPayload:
+    description: "掃描任務載荷 - 用於SCA/SAST等需要項目URL的掃描任務"
+    fields:
+      task_id:
+        type: "str"
+        required: true
+        description: "任務識別碼"
+      scan_id:
+        type: "str"
+        required: true
+        description: "掃描識別碼"
+      priority:
+        type: "int"
+        required: true
+        description: "任務優先級"
+        validation:
+          minimum: 0
+          maximum: 10
+      target:
+        type: "Target"
+        required: true
+        description: "掃描目標 (包含URL)"
+      scan_type:
+        type: "str"
+        required: true
+        description: "掃描類型"
+        validation:
+          enum: ["sca", "sast", "secret", "license", "dependency"]
+      repository_info:
+        type: "Optional[Dict[str, Any]]"
+        required: false
+        description: "代碼倉庫資訊 (分支、commit等)"
+      timeout:
+        type: "Optional[int]"
+        required: false
+        description: "掃描逾時(秒)"
+        validation:
+          minimum: 60
+          maximum: 3600
+
 # ==================== 發現結果Schema ====================
 findings:
   FindingPayload:
@@ -512,6 +552,7 @@ generation_config:
       "float": "float64" 
       "bool": "bool"
       "datetime": "time.Time"
+      "Any": "interface{}"
       "Dict[str, Any]": "map[string]interface{}"
       "Dict[str, str]": "map[string]string"
       "List[str]": "[]string"

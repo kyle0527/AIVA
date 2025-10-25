@@ -7,7 +7,62 @@
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-15+-orange?style=flat-square)
 ![Redis](https://img.shields.io/badge/Redis-7.0+-red?style=flat-square)
 
-AIVA 整合模組是企業級安全平台的**智能中樞**，採用**7 層分層整合架構**，以 **AI Operation Recorder** 為核心協調器，整合掃描、分析、修復等各個安全服務，提供統一的安全操作協調、效能監控和智能決策能力。
+> AIVA 整合模組是企業級安全平台的**智能中樞**，採用**7 層分層整合架構**，以 **AI Operation Recorder** 為核心協調器，整合掃描、分析、修復等各個安全服務，提供統一的安全操作協調、效能監控和智能決策能力。
+
+---
+
+## 📑 目錄
+
+- [核心價值](#-核心價值)
+  - [智能中樞架構](#智能中樞架構)
+  - [企業級可靠性](#企業級可靠性)
+  - [自適應智能化](#自適應智能化)
+- [整合架構圖](#️-整合架構圖)
+- [架構深度分析](#-架構深度分析)
+  - [7 層分層整合架構](#-7-層分層整合架構)
+  - [AI Operation Recorder 核心中樞模式](#-ai-operation-recorder-核心中樞模式)
+  - [4 種服務整合模式](#-4-種服務整合模式)
+- [架構風險與解決方案](#️-發現的架構風險與解決方案)
+  - [高優先級風險](#-高優先級風險)
+  - [中優先級改進](#-中優先級改進)
+- [效能基準與監控](#-效能基準與監控)
+  - [當前效能表現](#當前效能表現)
+  - [監控儀表板關鍵指標](#監控儀表板關鍵指標)
+  - [效能優化配置](#效能優化配置)
+- [使用方式與最佳實踐](#-使用方式與最佳實踐)
+  - [基本使用](#基本使用)
+  - [進階配置](#進階配置)
+  - [企業級分散式部署](#企業級分散式部署)
+  - [AI 增強整合](#ai-增強整合)
+- [發展方向與路線圖](#-發展方向與路線圖)
+  - [短期目標 (3個月)](#短期目標-3個月)
+  - [中期願景 (6-12個月)](#中期願景-6-12個月)
+  - [長期展望 (1-2年)](#長期展望-1-2年)
+- [安全性與合規](#️-安全性與合規)
+  - [零信任架構](#零信任架構)
+  - [合規性自動化](#合規性自動化)
+- [故障排除與維護](#-故障排除與維護)
+  - [智能故障診斷](#智能故障診斷)
+  - [自動修復機制](#自動修復機制)
+- [API 參考](#-api-參考)
+  - [核心 API](#核心-api)
+  - [整合服務 API](#整合服務-api)
+- [開發規範與最佳實踐](#-開發規範與最佳實踐)
+  - [使用 aiva_common 的核心原則](#-使用-aiva_common-的核心原則)
+  - [執行前的準備工作](#️-執行前的準備工作-必讀)
+  - [新增或修改功能的流程](#-新增或修改功能時的流程)
+  - [資料庫遷移最佳實踐](#️-資料庫遷移最佳實踐alembic)
+  - [修改現有功能的檢查清單](#-修改現有功能的檢查清單)
+- [貢獻指南](#-貢獻指南)
+  - [開發環境設定](#開發環境設定)
+  - [程式碼品質標準](#程式碼品質標準)
+  - [測試規範](#測試規範)
+  - [提交規範](#提交規範)
+- [授權與支援](#-授權與支援)
+  - [開源授權](#開源授權)
+  - [技術支援通道](#技術支援通道)
+  - [企業支援服務](#企業支援服務)
+- [版本歷史與路線圖](#-版本歷史與路線圖)
 
 ---
 
@@ -1459,55 +1514,57 @@ from ..aiva_common.schemas import (
 )
 ```
 
-#### ⚠️ **已發現需要修復的問題（P0 最高優先級）**
+#### ✅ **已修復的問題記錄**
 
-**問題檔案**: `reception/models_enhanced.py` - **265 行重複定義**
+##### **P0 優先級問題 - 已於 2025-10-25 修復**
+
+**問題 1**: `reception/models_enhanced.py` - **265 行重複 enum 定義** ✅
 
 ```python
-# ❌ 錯誤 - 嚴重的重複定義（第 74-265 行）
-class AssetType(str, Enum):
-    """資產類型"""
-    WEB_APP = "web_app"
-    API = "api"
-    # ... 19 行重複
+# ✅ 已修復 (2025-10-25)
+# 移除了第 74-265 行的重複 enum 定義
+# 現已正確從 aiva_common.enums 導入
 
-class AssetStatus(str, Enum):
-    """資產狀態"""
-    ACTIVE = "active"
-    # ... 14 行重複
-
-class VulnerabilityStatus(str, Enum):
-    """漏洞狀態"""
-    OPEN = "open"
-    # ... 23 行重複
-
-class Severity(str, Enum):
-    """嚴重程度"""
-    CRITICAL = "critical"
-    # ... 17 行重複
-
-class Confidence(str, Enum):
-    """信心度"""
-    HIGH = "high"
-    # ... 12 行重複
-
-# ✅ 正確修復方式（立即執行）
-from aiva_common.enums import (
-    AssetType,
+from services.aiva_common.enums.assets import (
     AssetStatus,
-    VulnerabilityStatus,
-    Severity,
-    Confidence
+    AssetType,
+    BusinessCriticality,
+    Environment,
 )
+from services.aiva_common.enums.common import Confidence, Severity
+from services.aiva_common.enums.security import Exploitability, VulnerabilityStatus
 
-# 刪除第 74-265 行的所有重複定義
-# 保留其他 reception 專屬的模型類別
+# 文件頭部包含 Compliance Note 記錄修復日期
 ```
 
-**修復影響分析**:
-- **風險**: 低（models_enhanced.py 是增強模型,應該直接導入）
-- **範圍**: 僅影響 reception 層的數據接收邏輯
-- **優先級**: **P0** - 這是項目中最嚴重的重複定義問題
+**問題 2**: `attack_path_analyzer/engine.py` - **重複 NodeType/EdgeType 定義** ✅
+
+```python
+# ✅ 已修復 (2025-10-25)
+# 移除了 NodeType, EdgeType 的重複定義
+# 現已從 aiva_common.enums.security 導入
+
+from services.aiva_common.enums.security import (
+    AttackPathNodeType as NodeType,
+    AttackPathEdgeType as EdgeType,
+)
+```
+
+**問題 3**: `attack_path_analyzer/nlp_recommender.py` - **重複 RiskLevel 定義** ✅
+
+```python
+# ✅ 已修復 (2025-10-25)
+# 移除了 RiskLevel 的重複定義
+# 現已從 aiva_common.enums.common 導入
+
+from services.aiva_common.enums.common import RiskLevel
+```
+
+**修復總結**:
+- ✅ **3 個文件**的 enum 重複定義已全部移除
+- ✅ 所有導入已統一使用 `aiva_common.enums` (遵循 4-layer priority 原則)
+- ✅ 所有文件已通過 Pylance 語法檢查,無錯誤
+- ✅ 文件頭部已添加 Compliance Note 記錄修復日期
 
 #### 🆕 **新增或修改功能時的流程**
 
@@ -1819,24 +1876,60 @@ class SyncStrategy(str, Enum):
 
 ---
 
-## �📈 版本歷史與路線圖
+## 📈 版本歷史與路線圖
 
-### **版本歷史**
-- **v2.0.0** (2025-10-24): 7 層架構重構，AI Operation Recorder 中樞化
-- **v1.5.0** (2025-09-15): 新增智能負載均衡與自動擴縮容
-- **v1.0.0** (2025-06-01): 首次正式發布，基礎整合功能
+### **當前版本**
+- **v2.0.0** (2025-10-25) - 7 層架構重構，AI Operation Recorder 中樞化
+  - ✅ 實現 7 層分層整合架構
+  - ✅ AI Operation Recorder 作為核心協調器
+  - ✅ 4 種服務整合模式完整實現
+  - ✅ 智能負載均衡與自動擴縮容
+  - ✅ 完整的目錄結構和文檔重構
+
+### **歷史版本**
+- **v1.5.0** (2025-09-15) - 智能負載均衡與自動擴縮容
+- **v1.0.0** (2025-06-01) - 首次正式發布，基礎整合功能
 
 ### **即將發布**
-- **v2.1.0** (2025-12-01): 零信任安全架構與量子安全準備
-- **v2.2.0** (2026-03-01): 自主威脅響應與自適應優化
-- **v3.0.0** (2026-09-01): 下世代整合架構與量子計算整合
+- **v2.1.0** (2025-12-01) - 零信任安全架構與量子安全準備
+- **v2.2.0** (2026-03-01) - 自主威脅響應與自適應優化
+- **v3.0.0** (2026-09-01) - 下世代整合架構與量子計算整合
 
 ---
 
-**📝 文檔版本**: v2.0.0  
-**🔄 最後更新**: 2025-10-24  
-**👥 維護團隊**: AIVA Integration Architecture Team  
-**📊 分析基礎**: 基於 265 個整合模組組件的完整架構分析
+## 📊 文檔元數據
 
-*本 README 採用「完整產出 + 智能篩選」方法論，基於實際架構分析結果編寫，包含完整的架構設計、風險評估、使用指南、效能基準與發展規劃。*
+| 屬性 | 值 |
+|------|-----|
+| **文檔版本** | v2.0.0 (重構版) |
+| **最後更新** | 2025-10-25 |
+| **維護團隊** | AIVA Integration Architecture Team |
+| **分析基礎** | 基於 265 個整合模組組件的完整架構分析 |
+| **架構層級** | 7 層分層整合架構 |
+| **核心組件** | AI Operation Recorder |
+| **整合模式** | 4 種（Analysis/Reception/Reporting/Feedback） |
+| **文檔結構** | ✅ 完整目錄導航 |
+
+---
+
+## 🔗 相關資源
+
+- 📖 [AIVA 主項目文檔](../../README.md)
+- 🏗️ [Features 模組](../features/README.md)
+- 🔍 [SAST 引擎](../sast/README.md)
+- 🛡️ [Common 模組](../aiva_common/README.md)
+- 📊 [架構分析報告](../../_out/INTEGRATION_MODULE_ARCHITECTURE_ANALYSIS.md)
+
+---
+
+<div align="center">
+
+**Built with ❤️ by AIVA Team**
+
+*本 README 採用「完整產出 + 智能篩選」方法論，基於實際架構分析結果編寫*
+
+[⬆ 返回頂部](#aiva-整合模組---企業級安全整合中樞)
+
+</div>
+````
 ````

@@ -11,7 +11,7 @@ from datetime import UTC, datetime
 from typing import Any
 
 from services.aiva_common.enums import AssetType, Confidence, ScanStatus, Severity
-from services.aiva_common.standards import CVEReference, CVSSv3Metrics, CWEReference
+from services.aiva_common.schemas import CVEReference, CVSSv3Metrics, CWEReference
 from pydantic import BaseModel, Field, HttpUrl, field_validator
 
 # ==================== 掃描請求和結果 ====================

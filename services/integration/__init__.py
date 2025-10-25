@@ -14,33 +14,37 @@ AIVA Integration - 整合模組
 
 __version__ = "1.0.0"
 
-# 從 aiva_common 導入共享基礎設施
+# ==================== 從 aiva_common 導入共享基礎設施 ====================
 from ..aiva_common.enums import (
     IntelSource,
     Severity,
 )
-
-# 從本模組導入集成相關模型
-from .models import (
-    EnhancedIOCRecord,
+from ..aiva_common.schemas import (
     NotificationPayload,
-    SIEMEvent,
     SIEMEventPayload,
     ThreatIntelLookupPayload,
     ThreatIntelResultPayload,
     WebhookPayload,
 )
 
+# ==================== 從本模組導入 Integration 專屬類 ====================
+from .models import (
+    EnhancedIOCRecord,
+    SIEMEvent,
+)
+
 __all__ = [
-    # 來自 aiva_common
+    # ==================== 來自 aiva_common ====================
+    # 枚舉類
     "IntelSource",
     "Severity",
-    # 來自本模組
-    "EnhancedIOCRecord",
-    "NotificationPayload",
-    "SIEMEvent",
-    "SIEMEventPayload",
+    # 共享 Schema
     "ThreatIntelLookupPayload",
     "ThreatIntelResultPayload",
+    "SIEMEventPayload",
+    "NotificationPayload",
     "WebhookPayload",
+    # ==================== 來自本模組 (Integration 專屬) ====================
+    "EnhancedIOCRecord",
+    "SIEMEvent",
 ]

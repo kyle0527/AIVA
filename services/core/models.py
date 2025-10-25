@@ -34,73 +34,35 @@ from ..aiva_common.enums import (
     Severity,
     TaskStatus,
 )
-from ..aiva_common.schemas import CVSSv3Metrics, CVEReference, CWEReference
+from ..aiva_common.schemas import (
+    ConfigUpdatePayload,
+    CVEReference,
+    CVSSv3Metrics,
+    CWEReference,
+    FeedbackEventPayload,
+    FindingEvidence,
+    FindingImpact,
+    FindingPayload,
+    FindingRecommendation,
+    HeartbeatPayload,
+    ModuleStatus,
+    RemediationGeneratePayload,
+    RemediationResultPayload,
+    Target,
+    TaskUpdatePayload,
+)
 
 
 # ==================== 發現和影響管理 ====================
+# 注意：以下類別已從 aiva_common.schemas.findings 導入：
+# - Target
+# - FindingEvidence
+# - FindingImpact
+# - FindingRecommendation
+# - FindingPayload
 
 
-class Target(BaseModel):
-    """目標信息"""
-
-    target_type: str = Field(description="目標類型")
-    url: HttpUrl | None = Field(default=None, description="目標URL")
-    ip_address: str | None = Field(default=None, description="IP地址")
-    hostname: str | None = Field(default=None, description="主機名")
-    port: int | None = Field(default=None, description="端口")
-    metadata: dict[str, Any] = Field(default_factory=dict, description="元數據")
-
-
-class FindingEvidence(BaseModel):
-    """發現證據"""
-
-    evidence_type: str = Field(description="證據類型")
-    description: str = Field(description="證據描述")
-    request: dict[str, Any] | None = Field(default=None, description="HTTP請求")
-    response: dict[str, Any] | None = Field(default=None, description="HTTP響應")
-    screenshot_url: str | None = Field(default=None, description="截圖URL")
-    metadata: dict[str, Any] = Field(default_factory=dict, description="元數據")
-
-
-class FindingImpact(BaseModel):
-    """發現影響"""
-
-    impact_type: str = Field(description="影響類型")
-    severity: Severity = Field(description="嚴重程度")
-    description: str = Field(description="影響描述")
-    affected_assets: list[str] = Field(default_factory=list, description="受影響資產")
-    business_impact: str | None = Field(default=None, description="業務影響")
-    metadata: dict[str, Any] = Field(default_factory=dict, description="元數據")
-
-
-class FindingRecommendation(BaseModel):
-    """發現建議"""
-
-    priority: int = Field(ge=1, le=10, description="優先級")
-    remediation_type: RemediationType = Field(description="修復類型")
-    description: str = Field(description="建議描述")
-    steps: list[str] = Field(default_factory=list, description="修復步驟")
-    estimated_effort: str | None = Field(default=None, description="預估工作量")
-    references: list[str] = Field(default_factory=list, description="參考資料")
-    metadata: dict[str, Any] = Field(default_factory=dict, description="元數據")
-
-
-class FindingPayload(BaseModel):
-    """發現載荷"""
-
-    finding_id: str = Field(description="發現ID")
-    title: str = Field(description="標題")
-    description: str = Field(description="描述")
-    severity: Severity = Field(description="嚴重程度")
-    confidence: Confidence = Field(description="置信度")
-    target: Target = Field(description="目標")
-    evidence: list[FindingEvidence] = Field(description="證據列表")
-    impact: FindingImpact = Field(description="影響")
-    recommendations: list[FindingRecommendation] = Field(description="建議列表")
-    cve_ids: list[str] = Field(default_factory=list, description="CVE標識符")
-    cwe_ids: list[str] = Field(default_factory=list, description="CWE標識符")
-    discovered_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
-    metadata: dict[str, Any] = Field(default_factory=dict, description="元數據")
+# ==================== 增強漏洞信息 ====================
 
 
 class EnhancedVulnerability(BaseModel):
@@ -139,15 +101,7 @@ class EnhancedFindingPayload(BaseModel):
     metadata: dict[str, Any] = Field(default_factory=dict, description="元數據")
 
 
-class FeedbackEventPayload(BaseModel):
-    """反饋事件載荷"""
-
-    feedback_id: str = Field(description="反饋ID")
-    event_type: str = Field(description="事件類型")
-    source_module: ModuleName = Field(description="來源模組")
-    feedback_data: dict[str, Any] = Field(description="反饋數據")
-    timestamp: datetime = Field(default_factory=lambda: datetime.now(UTC))
-    metadata: dict[str, Any] = Field(default_factory=dict, description="元數據")
+# 注意：FeedbackEventPayload 已從 aiva_common.schemas.tasks 導入
 
 
 # ==================== 風險評估 ====================
@@ -413,18 +367,7 @@ class SASTDASTCorrelation(BaseModel):
 
 
 # ==================== 任務管理和編排 ====================
-
-
-class TaskUpdatePayload(BaseModel):
-    """任務更新載荷"""
-
-    task_id: str = Field(description="任務ID")
-    status: TaskStatus = Field(description="任務狀態")
-    progress: float = Field(ge=0.0, le=1.0, description="進度")
-    message: str | None = Field(default=None, description="狀態消息")
-    result_data: dict[str, Any] = Field(default_factory=dict, description="結果數據")
-    timestamp: datetime = Field(default_factory=lambda: datetime.now(UTC))
-    metadata: dict[str, Any] = Field(default_factory=dict, description="元數據")
+# 注意：TaskUpdatePayload 已從 aiva_common.schemas.tasks 導入
 
 
 class TaskDependency(BaseModel):
@@ -542,17 +485,7 @@ class TestStrategy(BaseModel):
 
 
 # ==================== 系統協調和監控 ====================
-
-
-class ModuleStatus(BaseModel):
-    """模組狀態"""
-
-    module_name: ModuleName = Field(description="模組名稱")
-    status: str = Field(description="狀態")  # "running", "stopped", "error"
-    version: str = Field(description="版本")
-    uptime_seconds: int = Field(ge=0, description="運行時間(秒)")
-    last_heartbeat: datetime = Field(description="最後心跳")
-    metadata: dict[str, Any] = Field(default_factory=dict, description="元數據")
+# 注意：ModuleStatus, HeartbeatPayload, ConfigUpdatePayload 已從 aiva_common.schemas 導入
 
 
 class EnhancedModuleStatus(BaseModel):
@@ -583,24 +516,8 @@ class EnhancedModuleStatus(BaseModel):
     metadata: dict[str, Any] = Field(default_factory=dict, description="元數據")
 
 
-class HeartbeatPayload(BaseModel):
-    """心跳載荷"""
-
-    module_name: ModuleName = Field(description="模組名稱")
-    timestamp: datetime = Field(default_factory=lambda: datetime.now(UTC))
-    status: str = Field(description="狀態")
-    metrics: dict[str, Any] = Field(default_factory=dict, description="指標")
-    metadata: dict[str, Any] = Field(default_factory=dict, description="元數據")
-
-
-class ConfigUpdatePayload(BaseModel):
-    """配置更新載荷"""
-
-    config_id: str = Field(description="配置ID")
-    target_module: ModuleName = Field(description="目標模組")
-    config_updates: dict[str, Any] = Field(description="配置更新")
-    apply_immediately: bool = Field(default=True, description="是否立即應用")
-    metadata: dict[str, Any] = Field(default_factory=dict, description="元數據")
+# 注意：HeartbeatPayload 已從 aiva_common.schemas.telemetry 導入
+# 注意：ConfigUpdatePayload 已從 aiva_common.schemas.tasks 導入
 
 
 class SystemOrchestration(BaseModel):
@@ -631,49 +548,41 @@ class SystemOrchestration(BaseModel):
 
 
 # ==================== 修復建議 ====================
-
-
-class RemediationGeneratePayload(BaseModel):
-    """修復建議生成載荷"""
-
-    request_id: str = Field(description="請求ID")
-    vulnerability_id: str = Field(description="漏洞ID")
-    context: dict[str, Any] = Field(description="上下文信息")
-    priority: int = Field(default=5, ge=1, le=10, description="優先級")
-    metadata: dict[str, Any] = Field(default_factory=dict, description="元數據")
-
-
-class RemediationResultPayload(BaseModel):
-    """修復建議結果載荷"""
-
-    request_id: str = Field(description="請求ID")
-    vulnerability_id: str = Field(description="漏洞ID")
-    remediation_type: RemediationType = Field(description="修復類型")
-    remediation_steps: list[str] = Field(description="修復步驟")
-    estimated_effort: str | None = Field(default=None, description="預估工作量")
-    priority: int = Field(ge=1, le=10, description="優先級")
-    status: RemediationStatus = Field(description="狀態")
-    references: list[str] = Field(default_factory=list, description="參考資料")
-    generated_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
-    metadata: dict[str, Any] = Field(default_factory=dict, description="元數據")
+# 注意：RemediationGeneratePayload, RemediationResultPayload 已從 aiva_common.schemas.tasks 導入
 
 
 __all__ = [
-    # 發現和影響
-    "Target",
-    "FindingEvidence",
-    "FindingImpact",
-    "FindingRecommendation",
-    "FindingPayload",
+    # ========== 從 aiva_common 導入（共享標準） ==========
+    # 已從 aiva_common.schemas.findings 導入：
+    # - Target
+    # - FindingEvidence
+    # - FindingImpact
+    # - FindingRecommendation
+    # - FindingPayload
+    
+    # 已從 aiva_common.schemas.tasks 導入：
+    # - FeedbackEventPayload
+    # - TaskUpdatePayload
+    # - ConfigUpdatePayload
+    # - RemediationGeneratePayload
+    # - RemediationResultPayload
+    
+    # 已從 aiva_common.schemas.telemetry 導入：
+    # - ModuleStatus
+    # - HeartbeatPayload
+    
+    # ========== Core 模組特定擴展 ==========
+    # 漏洞增強
     "EnhancedVulnerability",
     "EnhancedFindingPayload",
-    "FeedbackEventPayload",
+    
     # 風險評估
     "RiskFactor",
     "RiskAssessmentContext",
     "RiskAssessmentResult",
     "EnhancedRiskAssessment",
     "RiskTrendAnalysis",
+    
     # 攻擊路徑
     "AttackPathNode",
     "AttackPathEdge",
@@ -681,24 +590,20 @@ __all__ = [
     "AttackPathRecommendation",
     "EnhancedAttackPathNode",
     "EnhancedAttackPath",
+    
     # 漏洞關聯
     "VulnerabilityCorrelation",
     "EnhancedVulnerabilityCorrelation",
     "CodeLevelRootCause",
     "SASTDASTCorrelation",
-    # 任務管理
-    "TaskUpdatePayload",
+    
+    # 任務管理擴展
     "TaskDependency",
     "EnhancedTaskExecution",
     "TaskQueue",
     "TestStrategy",
-    # 系統協調
-    "ModuleStatus",
+    
+    # 系統協調擴展
     "EnhancedModuleStatus",
-    "HeartbeatPayload",
-    "ConfigUpdatePayload",
     "SystemOrchestration",
-    # 修復建議
-    "RemediationGeneratePayload",
-    "RemediationResultPayload",
 ]

@@ -12,7 +12,7 @@ import (
 
 	"go.uber.org/zap"
 
-	"github.com/kyle0527/aiva/services/function/function_sca_go/pkg/models"
+	schemas "github.com/kyle0527/aiva/services/function/common/go/aiva_common_go/schemas/generated"
 )
 
 // SCAScanner 軟體組成分析掃描器
@@ -28,11 +28,14 @@ func NewSCAScanner(logger *zap.Logger) *SCAScanner {
 }
 
 // Scan 執行 SCA 掃描
-func (s *SCAScanner) Scan(ctx context.Context, task models.FunctionTaskPayload) ([]models.FindingPayload, error) {
-	s.logger.Info("Starting SCA scan", zap.String("task_id", task.TaskID))
+func (s *SCAScanner) Scan(ctx context.Context, task schemas.ScanTaskPayload) ([]schemas.FindingPayload, error) {
+	s.logger.Info("Starting SCA scan",
+		zap.String("task_id", task.TaskId),
+		zap.String("target_url", task.Target.Url),
+	)
 
 	// 1. 下載或克隆目標專案（如果是 Git URL）
-	projectPath, cleanup, err := s.prepareProject(ctx, task.Target.URL)
+	projectPath, cleanup, err := s.prepareProject(ctx, task.Target.Url)
 	if err != nil {
 		return nil, fmt.Errorf("failed to prepare project: %w", err)
 	}
@@ -45,7 +48,7 @@ func (s *SCAScanner) Scan(ctx context.Context, task models.FunctionTaskPayload) 
 	}
 
 	s.logger.Info("Detected package files",
-		zap.String("task_id", task.TaskID),
+		zap.String("task_id", task.TaskId),
 		zap.Int("count", len(packageFiles)),
 	)
 
@@ -56,7 +59,7 @@ func (s *SCAScanner) Scan(ctx context.Context, task models.FunctionTaskPayload) 
 	}
 
 	// 4. 轉換為 FindingPayload
-	findings := s.convertToFindings(vulnerabilities, task.TaskID, packageFiles)
+	findings := s.convertToFindings(vulnerabilities, task.TaskId, task.ScanId, packageFiles)
 
 	return findings, nil
 }
@@ -211,15 +214,17 @@ func (s *SCAScanner) scanWithOSV(ctx context.Context, projectPath string) (*OSVR
 func (s *SCAScanner) convertToFindings(
 	osvResult *OSVResult,
 	taskID string,
+	scanID string,
 	packageFiles []string,
-) []models.FindingPayload {
-	findings := []models.FindingPayload{}
+) []schemas.FindingPayload {
+	findings := []schemas.FindingPayload{}
 
 	for _, result := range osvResult.Results {
 		for _, pkg := range result.Packages {
 			for _, vuln := range pkg.Vulnerabilities {
 				finding := s.createFinding(
 					taskID,
+					scanID,
 					pkg.Package.Name,
 					pkg.Package.Version,
 					pkg.Package.Ecosystem,
@@ -237,12 +242,13 @@ func (s *SCAScanner) convertToFindings(
 // createFinding 建立單一 Finding
 func (s *SCAScanner) createFinding(
 	taskID string,
+	scanID string,
 	packageName string,
 	packageVersion string,
 	ecosystem string,
 	vuln OSVVulnerability,
 	sourceFile string,
-) models.FindingPayload {
+) schemas.FindingPayload {
 	// 生成 Finding ID
 	findingID := fmt.Sprintf("finding_sca_%d", time.Now().UnixNano())
 
@@ -266,76 +272,107 @@ func (s *SCAScanner) createFinding(
 	// 判斷嚴重性
 	severity := determineSeverity(vuln.Severity)
 
-	// 建立漏洞物件
-	vulnerability := models.Vulnerability{
-		Type:        "SCA",
-		Name:        fmt.Sprintf("%s in %s@%s", vuln.ID, packageName, packageVersion),
-		Description: vuln.Summary,
-		CVEID:       cveID,
-		GHSAID:      ghsaID,
-		CWEIDs:      []string{}, // OSV 通常不提供 CWE
+	// 組合完整描述（包含 CVE/GHSA 資訊）
+	description := vuln.Summary
+	if cveID != "" || ghsaID != "" {
+		ids := []string{}
+		if cveID != "" {
+			ids = append(ids, cveID)
+		}
+		if ghsaID != "" {
+			ids = append(ids, ghsaID)
+		}
+		description = fmt.Sprintf("%s [%s]", description, strings.Join(ids, ", "))
 	}
 
-	// 建立目標
-	target := models.FindingTarget{
-		URL:       sourceFile,
-		Parameter: fmt.Sprintf("%s@%s", packageName, packageVersion),
+	// 建立漏洞物件 - 使用生成的 schema 結構
+	vulnerability := schemas.Vulnerability{
+		Name:        fmt.Sprintf("%s in %s@%s", vuln.ID, packageName, packageVersion),
+		Cwe:         nil, // OSV 通常不提供 CWE
+		Severity:    severity,
+		Confidence:  "HIGH", // SCA 掃描通常有高信心度
+		Description: &description,
+	}
+
+	// 建立目標資訊
+	target := schemas.Target{
+		Url: sourceFile,
 	}
 
 	// 提取修復建議（從 references 中尋找）
-	fixVersion := ""
 	references := []string{}
 	for _, ref := range vuln.References {
 		references = append(references, ref.URL)
 	}
 
-	// 建立證據
-	evidence := models.FindingEvidence{
-		Request:        sourceFile,
-		Response:       fmt.Sprintf("Package: %s@%s\nEcosystem: %s", packageName, packageVersion, ecosystem),
-		Payload:        vuln.ID,
-		ProofOfConcept: vuln.Details,
+	// 組合證據資訊
+	request := sourceFile
+	response := fmt.Sprintf("Package: %s@%s\nEcosystem: %s", packageName, packageVersion, ecosystem)
+	payload := vuln.ID
+	proof := vuln.Details
+
+	// 建立證據 - 使用生成的 schema 結構
+	evidence := schemas.FindingEvidence{
+		Request:  &request,
+		Response: &response,
+		Payload:  &payload,
+		Proof:    &proof,
 	}
 
-	// 建立影響
-	impact := models.FindingImpact{
-		Confidentiality: "HIGH",
-		Integrity:       "HIGH",
-		Availability:    "MEDIUM",
-		BusinessImpact: fmt.Sprintf(
-			"應用程式使用了存在已知漏洞的第三方套件 %s (版本 %s)，可能被攻擊者利用",
-			packageName, packageVersion,
-		),
+	// 組合影響描述
+	businessImpact := fmt.Sprintf(
+		"應用程式使用了存在已知漏洞的第三方套件 %s (版本 %s)，可能被攻擊者利用",
+		packageName, packageVersion,
+	)
+	technicalImpact := fmt.Sprintf(
+		"漏洞嚴重性: %s; 建議立即更新到安全版本",
+		severity,
+	)
+
+	// 建立影響 - 使用生成的 schema 結構
+	impact := schemas.FindingImpact{
+		BusinessImpact:  &businessImpact,
+		TechnicalImpact: &technicalImpact,
 	}
 
 	// 建立修復建議
-	remediation := fmt.Sprintf(
-		"1. 更新套件 %s 到安全版本%s\n2. 檢查相依性樹，確認是否有其他套件依賴此漏洞版本\n3. 執行安全測試驗證修復",
+	fixDescription := fmt.Sprintf(
+		"更新套件 %s 到安全版本，並檢查相依性樹確認無其他套件依賴此漏洞版本",
 		packageName,
-		func() string {
-			if fixVersion != "" {
-				return fmt.Sprintf(" (%s 或更高版本)", fixVersion)
-			}
-			return ""
-		}(),
 	)
+	remediationSteps := []string{
+		fmt.Sprintf("更新套件 %s 到安全版本", packageName),
+		"檢查相依性樹，確認是否有其他套件依賴此漏洞版本",
+		"執行安全測試驗證修復",
+	}
+	priority := "HIGH"
 
-	recommendation := models.FindingRecommendation{
-		Remediation: remediation,
-		References:  references,
+	recommendation := schemas.FindingRecommendation{
+		Fix:              &fixDescription,
+		Priority:         &priority,
+		RemediationSteps: remediationSteps,
+		References:       references,
 	}
 
-	return models.FindingPayload{
-		FindingID:      findingID,
-		TaskID:         taskID,
+	// 建立最終的 FindingPayload - 注意字段名稱和類型（駝峰命名，指針類型）
+	return schemas.FindingPayload{
+		FindingId:      findingID, // 駝峰命名：FindingId 不是 FindingID
+		TaskId:         taskID,    // 駝峰命名：TaskId 不是 TaskID
+		ScanId:         scanID,
+		Status:         "DETECTED",
 		Vulnerability:  vulnerability,
-		Severity:       severity,
-		Confidence:     "FIRM",
 		Target:         target,
-		Evidence:       evidence,
-		Impact:         impact,
-		Recommendation: recommendation,
-		Tags:           []string{"SCA", "Dependency", ecosystem, vuln.ID},
+		Evidence:       &evidence,       // 指針類型：&evidence
+		Impact:         &impact,         // 指針類型：&impact
+		Recommendation: &recommendation, // 指針類型：&recommendation
+		Metadata: map[string]interface{}{
+			"ecosystem":  ecosystem,
+			"vuln_id":    vuln.ID,
+			"scan_type":  "SCA",
+			"dependency": true,
+		},
+		CreatedAt: time.Now(),
+		UpdatedAt: time.Now(),
 	}
 }
 

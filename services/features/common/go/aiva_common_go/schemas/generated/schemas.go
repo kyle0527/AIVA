@@ -69,7 +69,7 @@ type AIVAResponse struct {
     RequestId            string                    `json:"request_id"`  // 對應的請求識別碼
     ResponseType         string                    `json:"response_type"`  // 響應類型
     Success              bool                      `json:"success"`  // 執行是否成功
-    Payload              Optional[Dict[str, Any]]  `json:"payload,omitempty"`  // 響應載荷
+    Payload              map[string]interface{}    `json:"payload,omitempty"`  // 響應載荷
     ErrorCode            *string                   `json:"error_code,omitempty"`  // 錯誤代碼
     ErrorMessage         *string                   `json:"error_message,omitempty"`  // 錯誤訊息
     Metadata             map[string]interface{}    `json:"metadata,omitempty"`  // 中繼資料
@@ -95,7 +95,7 @@ type FunctionTaskTarget struct {
     ParameterLocation    string                    `json:"parameter_location"`  // 參數位置
     Cookies              map[string]string         `json:"cookies,omitempty"`  // Cookie資料
     FormData             map[string]interface{}    `json:"form_data,omitempty"`  // 表單資料
-    JsonData             Optional[Dict[str, Any]]  `json:"json_data,omitempty"`  // JSON資料
+    JsonData             map[string]interface{}    `json:"json_data,omitempty"`  // JSON資料
 }
 
 // FunctionTaskContext 功能任務上下文
@@ -111,7 +111,18 @@ type FunctionTaskTestConfig struct {
     CustomPayloads       []string                  `json:"custom_payloads,omitempty"`  // 自訂載荷列表
     BlindXss             bool                      `json:"blind_xss"`  // 是否進行Blind XSS測試
     DomTesting           bool                      `json:"dom_testing"`  // 是否進行DOM測試
-    Timeout              Optional[float]           `json:"timeout,omitempty"`  // 請求逾時(秒)
+    Timeout              *float64                  `json:"timeout,omitempty"`  // 請求逾時(秒)
+}
+
+// ScanTaskPayload 掃描任務載荷 - 用於SCA/SAST等需要項目URL的掃描任務
+type ScanTaskPayload struct {
+    TaskId               string                    `json:"task_id"`  // 任務識別碼
+    ScanId               string                    `json:"scan_id"`  // 掃描識別碼
+    Priority             int                       `json:"priority"`  // 任務優先級
+    Target               Target                    `json:"target"`  // 掃描目標 (包含URL)
+    ScanType             string                    `json:"scan_type"`  // 掃描類型
+    RepositoryInfo       map[string]interface{}    `json:"repository_info,omitempty"`  // 代碼倉庫資訊 (分支、commit等)
+    Timeout              *int                      `json:"timeout,omitempty"`  // 掃描逾時(秒)
 }
 
 // ==================== 發現結果 ====================
@@ -125,9 +136,9 @@ type FindingPayload struct {
     Vulnerability        Vulnerability             `json:"vulnerability"`  // 漏洞資訊
     Target               Target                    `json:"target"`  // 目標資訊
     Strategy             *string                   `json:"strategy,omitempty"`  // 使用的策略
-    Evidence             Optional[FindingEvidence] `json:"evidence,omitempty"`  // 證據資料
-    Impact               Optional[FindingImpact]   `json:"impact,omitempty"`  // 影響評估
-    Recommendation       Optional[FindingRecommendation] `json:"recommendation,omitempty"`  // 修復建議
+    Evidence             *FindingEvidence          `json:"evidence,omitempty"`  // 證據資料
+    Impact               *FindingImpact            `json:"impact,omitempty"`  // 影響評估
+    Recommendation       *FindingRecommendation    `json:"recommendation,omitempty"`  // 修復建議
     Metadata             map[string]interface{}    `json:"metadata,omitempty"`  // 中繼資料
     CreatedAt            time.Time                 `json:"created_at"`  // 建立時間
     UpdatedAt            time.Time                 `json:"updated_at"`  // 更新時間
@@ -136,7 +147,7 @@ type FindingPayload struct {
 // FindingEvidence 漏洞證據
 type FindingEvidence struct {
     Payload              *string                   `json:"payload,omitempty"`  // 攻擊載荷
-    ResponseTimeDelta    Optional[float]           `json:"response_time_delta,omitempty"`  // 響應時間差異
+    ResponseTimeDelta    *float64                  `json:"response_time_delta,omitempty"`  // 響應時間差異
     DbVersion            *string                   `json:"db_version,omitempty"`  // 資料庫版本
     Request              *string                   `json:"request,omitempty"`  // HTTP請求
     Response             *string                   `json:"response,omitempty"`  // HTTP響應
@@ -148,8 +159,8 @@ type FindingImpact struct {
     Description          *string                   `json:"description,omitempty"`  // 影響描述
     BusinessImpact       *string                   `json:"business_impact,omitempty"`  // 業務影響
     TechnicalImpact      *string                   `json:"technical_impact,omitempty"`  // 技術影響
-    AffectedUsers        Optional[int]             `json:"affected_users,omitempty"`  // 受影響用戶數
-    EstimatedCost        Optional[float]           `json:"estimated_cost,omitempty"`  // 估計成本
+    AffectedUsers        *int                      `json:"affected_users,omitempty"`  // 受影響用戶數
+    EstimatedCost        *float64                  `json:"estimated_cost,omitempty"`  // 估計成本
 }
 
 // FindingRecommendation 漏洞修復建議

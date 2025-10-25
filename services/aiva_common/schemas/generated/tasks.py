@@ -94,3 +94,28 @@ class FunctionTaskTestConfig(BaseModel):
     timeout: Optional[float] = Field(ge=0.1, le=60.0, default=None)
     """請求逾時(秒)"""
 
+
+class ScanTaskPayload(BaseModel):
+    """掃描任務載荷 - 用於SCA/SAST等需要項目URL的掃描任務"""
+
+    task_id: str
+    """任務識別碼"""
+
+    scan_id: str
+    """掃描識別碼"""
+
+    priority: int = Field(ge=0, le=10)
+    """任務優先級"""
+
+    target: Target
+    """掃描目標 (包含URL)"""
+
+    scan_type: str = Field(values=['sca', 'sast', 'secret', 'license', 'dependency'])
+    """掃描類型"""
+
+    repository_info: Optional[Dict[str, Any]] = None
+    """代碼倉庫資訊 (分支、commit等)"""
+
+    timeout: Optional[int] = Field(ge=60, le=3600, default=None)
+    """掃描逾時(秒)"""
+

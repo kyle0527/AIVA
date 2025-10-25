@@ -7,12 +7,19 @@
 
 這個薄層讓 Orchestrator 能夠無縫整合高價值功能模組，
 實現從攻擊步驟到具體功能執行的自動化流程。
+
+遵循 README 規範：
+- 完整的類型標註
+- 結構化的錯誤處理
+- 詳細的文檔字符串
 """
 
 import time
-from typing import Dict, Any, Optional, Callable
+from typing import Any, Callable, Dict, List, Optional, Set
+
 from .base.feature_registry import FeatureRegistry
 from .base.result_schema import FeatureResult
+
 
 class FeatureStepExecutor:
     """
@@ -28,12 +35,20 @@ class FeatureStepExecutor:
     - 錯誤隔離：單個功能模組的失敗不影響整體流程
     - 可觀測性：完整的執行追蹤和性能監控
     - 可擴展性：輕鬆添加新的回調和處理邏輯
+    
+    Attributes:
+        on_trace: 追蹤回調函數
+        on_experience: 經驗庫回調函數
+        on_emit: 面板發送回調函數
+        execution_stats: 執行統計資訊
     """
     
-    def __init__(self, 
-                 on_trace: Optional[Callable[[Dict[str, Any]], None]] = None,
-                 on_experience: Optional[Callable[[Dict[str, Any]], None]] = None,
-                 on_emit: Optional[Callable[[Dict[str, Any]], None]] = None):
+    def __init__(
+        self, 
+        on_trace: Optional[Callable[[Dict[str, Any]], None]] = None,
+        on_experience: Optional[Callable[[Dict[str, Any]], None]] = None,
+        on_emit: Optional[Callable[[Dict[str, Any]], None]] = None
+    ) -> None:
         """
         初始化功能步驟執行器
         
@@ -45,7 +60,7 @@ class FeatureStepExecutor:
         self.on_trace = on_trace or (lambda _: None)
         self.on_experience = on_experience or (lambda _: None)
         self.on_emit = on_emit or (lambda _: None)
-        self.execution_stats = {
+        self.execution_stats: Dict[str, Any] = {
             "total_executions": 0,
             "successful_executions": 0,
             "failed_executions": 0,
@@ -158,7 +173,12 @@ class FeatureStepExecutor:
             self._handle_error(step, error_result)
             return error_result
     
-    def _distribute_result(self, step: Dict[str, Any], result: FeatureResult, result_dict: Dict[str, Any]):
+    def _distribute_result(
+        self, 
+        step: Dict[str, Any], 
+        result: FeatureResult, 
+        result_dict: Dict[str, Any]
+    ) -> None:
         """
         將結果分發到各個系統組件
         
@@ -206,7 +226,7 @@ class FeatureStepExecutor:
             # 分發失敗不應該影響主要執行流程
             print(f"結果分發失敗: {e}")
     
-    def _handle_error(self, step: Dict[str, Any], error_result: Dict[str, Any]):
+    def _handle_error(self, step: Dict[str, Any], error_result: Dict[str, Any]) -> None:
         """
         處理執行錯誤
         
@@ -255,7 +275,7 @@ class FeatureStepExecutor:
         )
         return stats
     
-    def reset_stats(self):
+    def reset_stats(self) -> None:
         """重置執行統計"""
         self.execution_stats = {
             "total_executions": 0,
@@ -265,8 +285,13 @@ class FeatureStepExecutor:
             "total_findings": 0
         }
 
+
 # 便利函數：快速創建執行器
-def create_executor(trace_callback=None, experience_callback=None, emit_callback=None) -> FeatureStepExecutor:
+def create_executor(
+    trace_callback: Optional[Callable[[Dict[str, Any]], None]] = None, 
+    experience_callback: Optional[Callable[[Dict[str, Any]], None]] = None, 
+    emit_callback: Optional[Callable[[Dict[str, Any]], None]] = None
+) -> FeatureStepExecutor:
     """
     快速創建功能步驟執行器
     
@@ -285,7 +310,8 @@ def create_executor(trace_callback=None, experience_callback=None, emit_callback
     )
 
 # 全域執行器實例（可選使用）
-_global_executor = None
+_global_executor: Optional[FeatureStepExecutor] = None
+
 
 def get_global_executor() -> FeatureStepExecutor:
     """取得全域執行器實例"""
@@ -294,7 +320,12 @@ def get_global_executor() -> FeatureStepExecutor:
         _global_executor = FeatureStepExecutor()
     return _global_executor
 
-def set_global_callbacks(trace_callback=None, experience_callback=None, emit_callback=None):
+
+def set_global_callbacks(
+    trace_callback: Optional[Callable[[Dict[str, Any]], None]] = None,
+    experience_callback: Optional[Callable[[Dict[str, Any]], None]] = None,
+    emit_callback: Optional[Callable[[Dict[str, Any]], None]] = None
+) -> None:
     """設定全域執行器的回調函數"""
     executor = get_global_executor()
     if trace_callback:

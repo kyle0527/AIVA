@@ -13,8 +13,8 @@ import (
 	"github.com/kyle0527/aiva/services/function/common/go/aiva_common_go/config"
 	"github.com/kyle0527/aiva/services/function/common/go/aiva_common_go/logger"
 	"github.com/kyle0527/aiva/services/function/common/go/aiva_common_go/mq"
+	schemas "github.com/kyle0527/aiva/services/function/common/go/aiva_common_go/schemas/generated"
 	"github.com/kyle0527/aiva/services/function/function_sca_go/internal/scanner"
-	"github.com/kyle0527/aiva/services/function/function_sca_go/pkg/models"
 )
 
 func main() {
@@ -82,14 +82,18 @@ func processMessage(
 	mqClient *mq.MQClient,
 	log *zap.Logger,
 ) error {
-	// 解析任務
-	var task models.FunctionTaskPayload
+	// 解析任務 - 使用 ScanTaskPayload (包含 URL)
+	var task schemas.ScanTaskPayload
 	if err := json.Unmarshal(body, &task); err != nil {
 		log.Error("Failed to parse task", zap.Error(err))
 		return err
 	}
 
-	log.Info("Received task", zap.String("task_id", task.TaskID))
+	log.Info("Received scan task",
+		zap.String("task_id", task.TaskId),
+		zap.String("scan_type", task.ScanType),
+		zap.String("target_url", task.Target.Url),
+	)
 
 	// 執行掃描
 	startTime := time.Now()
@@ -98,14 +102,14 @@ func processMessage(
 
 	if err != nil {
 		log.Error("Scan failed",
-			zap.String("task_id", task.TaskID),
+			zap.String("task_id", task.TaskId),
 			zap.Error(err),
 		)
 		return err
 	}
 
 	log.Info("Scan completed",
-		zap.String("task_id", task.TaskID),
+		zap.String("task_id", task.TaskId),
 		zap.Int("findings_count", len(findings)),
 		zap.Duration("duration", duration),
 	)
@@ -114,15 +118,15 @@ func processMessage(
 	for _, finding := range findings {
 		if err := mqClient.Publish("results.finding", finding); err != nil {
 			log.Error("Failed to publish finding",
-				zap.String("finding_id", finding.FindingID),
+				zap.String("finding_id", finding.FindingId),
 				zap.Error(err),
 			)
 			continue
 		}
 
 		log.Info("Published finding",
-			zap.String("finding_id", finding.FindingID),
-			zap.String("severity", finding.Severity),
+			zap.String("finding_id", finding.FindingId),
+			zap.String("severity", finding.Vulnerability.Severity),
 		)
 	}
 

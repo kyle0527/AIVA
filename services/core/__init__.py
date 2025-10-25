@@ -12,6 +12,20 @@ from ..aiva_common.enums import (
     Severity,
     TaskStatus,
 )
+from ..aiva_common.schemas import (
+    ConfigUpdatePayload,
+    FeedbackEventPayload,
+    FindingEvidence,
+    FindingImpact,
+    FindingPayload,
+    FindingRecommendation,
+    HeartbeatPayload,
+    ModuleStatus,
+    RemediationGeneratePayload,
+    RemediationResultPayload,
+    Target,
+    TaskUpdatePayload,
+)
 
 # 從 AI 模型模組導入
 from .ai_models import (
@@ -24,14 +38,13 @@ from .ai_models import (
     ScenarioTestResult,
 )
 
-# 從本模組導入核心邏輯模型
+# 從本模組導入核心邏輯模型（僅本地特定擴展）
 from .models import (
     AttackPathEdge,
     AttackPathNode,
     AttackPathPayload,
     AttackPathRecommendation,
     CodeLevelRootCause,
-    ConfigUpdatePayload,
     EnhancedAttackPath,
     EnhancedAttackPathNode,
     EnhancedFindingPayload,
@@ -40,25 +53,14 @@ from .models import (
     EnhancedTaskExecution,
     EnhancedVulnerability,
     EnhancedVulnerabilityCorrelation,
-    FeedbackEventPayload,
-    FindingEvidence,
-    FindingImpact,
-    FindingPayload,
-    FindingRecommendation,
-    HeartbeatPayload,
-    ModuleStatus,
-    RemediationGeneratePayload,
-    RemediationResultPayload,
     RiskAssessmentContext,
     RiskAssessmentResult,
     RiskFactor,
     RiskTrendAnalysis,
     SASTDASTCorrelation,
     SystemOrchestration,
-    Target,
     TaskDependency,
     TaskQueue,
-    TaskUpdatePayload,
     TestStrategy,
     VulnerabilityCorrelation,
 )

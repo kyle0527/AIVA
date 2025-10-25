@@ -198,6 +198,23 @@ services/scan/
 - **Phase-I 整合**: 高價值功能模組整合
 - **策略配置**: 彈性的掃描策略配置
 - **結果聚合**: 統一的結果格式和匯報
+- **SARIF 2.1.0 輸出**: 支援業界標準的安全報告格式
+
+### 5. SARIF 轉換器 (sarif_converter.py)
+
+#### SARIF 2.1.0 標準支援
+AIVA Scan 完全支援 SARIF (Static Analysis Results Interchange Format) 2.1.0 標準，可與以下工具整合：
+- **GitHub Security**: 自動顯示在 GitHub Security Code Scanning
+- **Azure DevOps**: 整合至 Azure Pipelines 安全掃描
+- **VS Code**: 直接在編輯器中顯示漏洞
+- **其他 SARIF 相容工具**: SonarQube、Checkmarx 等
+
+#### 功能特性
+- **自動映射嚴重程度**: 將 CVSS 評分映射到 SARIF level (error/warning/note)
+- **完整證據鏈**: 包含請求、響應、載荷等完整證據
+- **標準化規則**: 支援 CWE/CVE 引用和 OWASP 分類
+- **修復建議**: 包含短期和長期修復建議
+- **位置信息**: 精確定位漏洞位置（URL、參數、行號）
 
 ## 💻 如何使用
 
@@ -268,6 +285,31 @@ from services.scan.aiva_scan.worker import run
 
 # 監聽掃描任務
 await run()
+```
+
+### 6. 生成 SARIF 報告
+
+```python
+from services.scan import SARIFConverter, Vulnerability
+
+# 假設你已經有漏洞列表
+vulnerabilities: list[Vulnerability] = [...]
+
+# 轉換為 SARIF 格式
+sarif_json = SARIFConverter.to_json(
+    vulnerabilities=vulnerabilities,
+    scan_id="scan_001"
+)
+
+# 保存為文件
+with open("scan_results.sarif.json", "w") as f:
+    f.write(sarif_json)
+
+# 或者獲取 Python 對象
+sarif_report = SARIFConverter.vulnerabilities_to_sarif(
+    vulnerabilities=vulnerabilities,
+    scan_id="scan_001"
+)
 ```
 
 ## 📋 新增/刪減功能 SOP
@@ -650,6 +692,41 @@ from ..aiva_common.schemas import (
     CVSSv3Metrics,           # CVSS v3.x 評分
     CWEReference,            # CWE 分類
     SARIFResult,             # SARIF 2.1.0 格式
+)
+
+# ✅ 正確 - 使用標準化的 CVSS 結構
+from services.scan.models import Vulnerability
+
+vulnerability = Vulnerability(
+    vuln_id="vuln_001",
+    title="SQL Injection",
+    description="SQL injection vulnerability found",
+    severity=Severity.HIGH,
+    confidence=Confidence.HIGH,
+    vuln_type=VulnerabilityType.SQL_INJECTION,
+    url="https://example.com/api/users",
+    parameter="id",
+    cvss_metrics=CVSSv3Metrics(
+        base_score=8.5,
+        attack_vector="NETWORK",
+        attack_complexity="LOW",
+        privileges_required="NONE",
+        user_interaction="NONE",
+        scope="UNCHANGED",
+        confidentiality_impact="HIGH",
+        integrity_impact="HIGH",
+        availability_impact="NONE"
+    ),
+    cwe_ids=["CWE-89"],
+    evidence=["Payload: ' OR 1=1--"]
+)
+
+# ✅ 正確 - 生成 SARIF 報告
+from services.scan import SARIFConverter
+
+sarif_report = SARIFConverter.vulnerabilities_to_sarif(
+    vulnerabilities=[vulnerability],
+    scan_id="scan_001"
 )
 ```
 

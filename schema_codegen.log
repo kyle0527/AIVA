@@ -28,3 +28,33 @@
 2025-10-23 15:38:29,428 - INFO - ✅ 生成 Python messaging Schema: services\aiva_common\schemas\generated\messaging.py
 2025-10-23 15:38:29,428 - INFO - ✅ 生成 Python tasks Schema: services\aiva_common\schemas\generated\tasks.py
 2025-10-23 15:38:29,429 - INFO - ✅ 生成 Python findings Schema: services\aiva_common\schemas\generated\findings.py
+2025-10-25 17:27:42,582 - INFO - ✅ 成功載入 SOT 檔案: services\aiva_common\core_schema_sot.yaml
+2025-10-25 17:27:42,582 - INFO - 🔍 開始 Schema 驗證...
+2025-10-25 17:27:42,583 - INFO - ✅ Schema 驗證通過!
+2025-10-25 17:27:42,583 - INFO - 🚀 開始生成所有語言 Schema...
+2025-10-25 17:27:42,584 - INFO - ✅ 生成 Python 基礎類型: services\aiva_common\schemas\generated\base_types.py
+2025-10-25 17:27:42,585 - INFO - ✅ 生成 Python messaging Schema: services\aiva_common\schemas\generated\messaging.py
+2025-10-25 17:27:42,587 - INFO - ✅ 生成 Python tasks Schema: services\aiva_common\schemas\generated\tasks.py
+2025-10-25 17:27:42,588 - INFO - ✅ 生成 Python findings Schema: services\aiva_common\schemas\generated\findings.py
+2025-10-25 17:27:42,594 - INFO - ✅ Python Schema 生成完成: 5 個檔案
+2025-10-25 17:27:42,596 - INFO - ✅ 生成 Go Schema: services\features\common\go\aiva_common_go\schemas\generated\schemas.go
+2025-10-25 17:27:42,597 - INFO - ✅ Go Schema 生成完成: 1 個檔案
+2025-10-25 17:27:42,598 - INFO - ✅ 生成 Rust Schema: services\scan\info_gatherer_rust\src\schemas\generated\mod.rs
+2025-10-25 17:27:42,598 - INFO - ✅ Rust Schema 生成完成: 1 個檔案
+2025-10-25 17:27:42,598 - INFO - 🎉 所有語言 Schema 生成完成! 總計: 7 個檔案
+2025-10-25 17:28:39,281 - INFO - ✅ 成功載入 SOT 檔案: services\aiva_common\core_schema_sot.yaml
+2025-10-25 17:28:39,283 - INFO - ✅ 生成 Go Schema: services\features\common\go\aiva_common_go\schemas\generated\schemas.go
+2025-10-25 17:51:24,963 - INFO - ✅ 成功載入 SOT 檔案: services\aiva_common\core_schema_sot.yaml
+2025-10-25 17:51:24,964 - INFO - 🔍 開始 Schema 驗證...
+2025-10-25 17:51:24,964 - INFO - ✅ Schema 驗證通過!
+2025-10-25 17:51:24,965 - INFO - 🚀 開始生成所有語言 Schema...
+2025-10-25 17:51:24,966 - INFO - ✅ 生成 Python 基礎類型: services\aiva_common\schemas\generated\base_types.py
+2025-10-25 17:51:24,967 - INFO - ✅ 生成 Python messaging Schema: services\aiva_common\schemas\generated\messaging.py
+2025-10-25 17:51:24,968 - INFO - ✅ 生成 Python tasks Schema: services\aiva_common\schemas\generated\tasks.py
+2025-10-25 17:51:24,969 - INFO - ✅ 生成 Python findings Schema: services\aiva_common\schemas\generated\findings.py
+2025-10-25 17:51:24,973 - INFO - ✅ Python Schema 生成完成: 5 個檔案
+2025-10-25 17:51:24,975 - INFO - ✅ 生成 Go Schema: services\features\common\go\aiva_common_go\schemas\generated\schemas.go
+2025-10-25 17:51:24,976 - INFO - ✅ Go Schema 生成完成: 1 個檔案
+2025-10-25 17:51:24,977 - INFO - ✅ 生成 Rust Schema: services\scan\info_gatherer_rust\src\schemas\generated\mod.rs
+2025-10-25 17:51:24,977 - INFO - ✅ Rust Schema 生成完成: 1 個檔案
+2025-10-25 17:51:24,977 - INFO - 🎉 所有語言 Schema 生成完成! 總計: 7 個檔案

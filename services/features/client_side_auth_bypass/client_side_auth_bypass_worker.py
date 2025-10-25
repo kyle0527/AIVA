@@ -27,13 +27,25 @@ logger = logging.getLogger(__name__)
 class ClientSideAuthBypassWorker(FeatureBaseWorker):
     """
     執行客戶端授權繞過檢測的 Worker。
+    
+    Constants:
+        DEFAULT_TIMEOUT: 默認 HTTP 請求超時時間（秒）
+        MIN_SCRIPT_LENGTH: 最小腳本長度，低於此長度的腳本將被忽略
+        SCRIPT_SRC_PATTERN: 提取外部腳本 URL 的正則表達式
+        SCRIPT_INLINE_PATTERN: 提取內聯腳本的正則表達式
     """
+    
+    # 類級別常量定義
+    DEFAULT_TIMEOUT = 30
+    MIN_SCRIPT_LENGTH = 10
+    SCRIPT_SRC_PATTERN = r'<script[^>]*src=["\'](.*?)["\'][^>]*>'
+    SCRIPT_INLINE_PATTERN = r'<script[^>]*>(.*?)</script>'
 
     def __init__(self, mq_channel=None, http_client=None, config: Optional[Dict[str, Any]] = None):
         super().__init__(mq_channel, http_client, config)
         
         self.js_analyzer = JavaScriptAnalysisEngine(http_client=self.http_client)
-        self.timeout = self.config.get('timeout', 30) if self.config else 30
+        self.timeout = self.config.get('timeout', self.DEFAULT_TIMEOUT) if self.config else self.DEFAULT_TIMEOUT
         logger.info("ClientSideAuthBypassWorker initialized.")
 
     async def execute_task(self, payload: FunctionTaskPayload) -> FunctionTaskResult:
@@ -159,8 +171,7 @@ class ClientSideAuthBypassWorker(FeatureBaseWorker):
             html_content = response.text
 
             # 提取外部腳本 URL
-            src_pattern = r'<script[^>]*src=["\'](.*?)["\'][^>]*>'
-            src_matches = re.findall(src_pattern, html_content, re.IGNORECASE)
+            src_matches = re.findall(self.SCRIPT_SRC_PATTERN, html_content, re.IGNORECASE)
             
             # 獲取外部腳本內容
             for src in src_matches:
@@ -181,16 +192,15 @@ class ClientSideAuthBypassWorker(FeatureBaseWorker):
                     logger.warning(f"Failed to fetch external script {src}: {e}")
 
             # 提取內聯腳本
-            inline_pattern = r'<script[^>]*>(.*?)</script>'
             inline_matches = re.findall(
-                inline_pattern, 
+                self.SCRIPT_INLINE_PATTERN, 
                 html_content, 
                 re.IGNORECASE | re.DOTALL
             )
             
             for inline_script in inline_matches:
                 cleaned_script = inline_script.strip()
-                if cleaned_script and len(cleaned_script) > 10:  # 忽略很短的腳本
+                if cleaned_script and len(cleaned_script) > self.MIN_SCRIPT_LENGTH:
                     scripts.append(cleaned_script)
                     logger.debug("Found inline script.")
 

@@ -2,25 +2,20 @@
 Attack Path NLP Recommender - 攻擊路徑自然語言推薦系統
 
 為攻擊路徑分析結果提供自然語言解釋和優先修復建議
+
+Compliance Note (遵循 aiva_common 設計原則):
+- RiskLevel 已移除,改為從 aiva_common.enums.common import (4-layer priority 原則)
+- 修正日期: 2025-10-25
 """
 
 from dataclasses import dataclass
-from enum import Enum
 from typing import Any
 
+from services.aiva_common.enums.common import RiskLevel
 from services.integration.aiva_integration.attack_path_analyzer.engine import (
     AttackPath,
     NodeType,
 )
-
-
-class RiskLevel(str, Enum):
-    """風險等級"""
-
-    CRITICAL = "critical"
-    HIGH = "high"
-    MEDIUM = "medium"
-    LOW = "low"
 
 
 @dataclass

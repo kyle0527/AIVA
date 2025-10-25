@@ -3,41 +3,28 @@ Attack Path Analyzer - 攻擊路徑分析引擎
 
 使用 Neo4j 圖資料庫建立資產與漏洞的關聯圖,
 計算從外部攻擊者到核心資產的攻擊路徑。
+
+Compliance Note (遵循 aiva_common 設計原則):
+- NodeType, EdgeType 已移除,改為從 aiva_common.enums.security import (4-layer priority 原則)
+- AttackPathNodeType → 節點類型枚舉
+- AttackPathEdgeType → 邊類型枚舉
+- 修正日期: 2025-10-25
 """
 
 from dataclasses import dataclass
-from enum import Enum
 import logging
 from typing import Any
 
 from neo4j import GraphDatabase
 
 from services.aiva_common.enums import Severity
+from services.aiva_common.enums.security import (
+    AttackPathNodeType as NodeType,
+    AttackPathEdgeType as EdgeType,
+)
 from services.aiva_common.schemas import Asset, FindingPayload
 
 logger = logging.getLogger(__name__)
-
-
-class NodeType(str, Enum):
-    """節點類型"""
-
-    ATTACKER = "Attacker"
-    ASSET = "Asset"
-    VULNERABILITY = "Vulnerability"
-    CREDENTIAL = "Credential"
-    DATABASE = "Database"
-    API_ENDPOINT = "APIEndpoint"
-    INTERNAL_NETWORK = "InternalNetwork"
-
-
-class EdgeType(str, Enum):
-    """邊類型"""
-
-    EXPLOITS = "EXPLOITS"
-    LEADS_TO = "LEADS_TO"
-    GRANTS_ACCESS = "GRANTS_ACCESS"
-    EXPOSES = "EXPOSES"
-    CONTAINS = "CONTAINS"
 
 
 @dataclass

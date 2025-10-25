@@ -20,11 +20,20 @@ from ..aiva_common.enums import (
     ScanStatus,
     Severity,
 )
-from ..aiva_common.schemas import CVEReference, CVSSv3Metrics, CWEReference
-
-# 從本模組導入掃描相關模型
-from .models import (
+from ..aiva_common.schemas import (
     Asset,
+    CVEReference,
+    CVSSv3Metrics,
+    CWEReference,
+    Fingerprints,
+    ScanCompletedPayload,
+    ScanStartPayload,
+    Summary,
+    Vulnerability,
+)
+
+# 從本模組導入掃描相關模型（僅本地特定擴展）
+from .models import (
     AssetInventoryItem,
     AssetLifecyclePayload,
     DiscoveredAsset,
@@ -33,46 +42,55 @@ from .models import (
     EASMDiscoveryResult,
     EnhancedScanRequest,
     EnhancedScanScope,
-    Fingerprints,
     JavaScriptAnalysisResult,
-    ScanCompletedPayload,
-    ScanScope,
-    ScanStartPayload,
-    Summary,
     TechnicalFingerprint,
-    Vulnerability,
     VulnerabilityDiscovery,
     VulnerabilityLifecyclePayload,
     VulnerabilityUpdatePayload,
 )
 
+# 導入 SARIF 轉換器
+from .sarif_converter import SARIFConverter
+
 __all__ = [
-    # 來自 aiva_common
+    # ========== 從 aiva_common 導入（共享標準） ==========
+    # 枚舉
     "AssetType",
+    "ScanStatus",
+    "Severity",
+    # Schema - 基礎模型
+    "Asset",
+    "Fingerprints",
+    "Summary",
+    # Schema - 掃描任務
+    "ScanStartPayload",
+    "ScanCompletedPayload",
+    # Schema - 漏洞
+    "Vulnerability",
+    # Schema - 標準引用
     "CVEReference",
     "CVSSv3Metrics",
     "CWEReference",
-    "ScanStatus",
-    "Severity",
-    # 來自本模組
-    "Asset",
+    
+    # ========== 本模組特定擴展 ==========
+    # 掃描配置擴展
+    "EnhancedScanScope",
+    "EnhancedScanRequest",
+    # 資產管理擴展
     "AssetInventoryItem",
     "AssetLifecyclePayload",
     "DiscoveredAsset",
-    "EASMAsset",
-    "EASMDiscoveryPayload",
-    "EASMDiscoveryResult",
-    "EnhancedScanScope",
-    "EnhancedScanRequest",
-    "Fingerprints",
-    "JavaScriptAnalysisResult",
-    "ScanCompletedPayload",
-    "ScanScope",
-    "ScanStartPayload",
-    "Summary",
     "TechnicalFingerprint",
-    "Vulnerability",
+    # 漏洞管理擴展
     "VulnerabilityDiscovery",
     "VulnerabilityLifecyclePayload",
     "VulnerabilityUpdatePayload",
+    # EASM 功能
+    "EASMAsset",
+    "EASMDiscoveryPayload",
+    "EASMDiscoveryResult",
+    # 分析功能
+    "JavaScriptAnalysisResult",
+    # SARIF 支援
+    "SARIFConverter",
 ]

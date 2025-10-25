@@ -303,6 +303,7 @@ __all__ = [
     "FunctionTaskTarget", 
     "FunctionTaskContext",
     "FunctionTaskTestConfig",
+    "ScanTaskPayload",
     
     # 發現結果
     "FindingPayload",
@@ -471,7 +472,34 @@ __all__ = [
         return ''.join(parts)
     
     def _get_go_type(self, type_str: str) -> str:
-        """轉換為 Go 類型"""
+        """轉換為 Go 類型 - 支援嵌套類型映射"""
+        import re
+        
+        # 處理 Optional[T] - 轉換為 *T
+        if type_str.startswith('Optional['):
+            inner = type_str[9:-1]  # 提取內部類型
+            mapped = self._get_go_type(inner)  # 遞歸映射
+            # 如果內部類型已經是指針或map/slice,不再添加*
+            if mapped.startswith('*') or mapped.startswith('map[') or mapped.startswith('[]'):
+                return mapped
+            return f'*{mapped}'
+        
+        # 處理 Dict[K, V] - 轉換為 map[K]V
+        dict_match = re.match(r'Dict\[(.+?),\s*(.+)\]', type_str)
+        if dict_match:
+            key_type_raw = dict_match.group(1).strip()
+            val_type_raw = dict_match.group(2).strip()
+            key_type = self._get_go_type(key_type_raw)
+            val_type = self._get_go_type(val_type_raw)
+            return f'map[{key_type}]{val_type}'
+        
+        # 處理 List[T] - 轉換為 []T
+        if type_str.startswith('List['):
+            inner = type_str[5:-1]
+            mapped = self._get_go_type(inner)
+            return f'[]{mapped}'
+        
+        # 基本類型映射
         mapping = self.sot_data['generation_config']['go']['field_mapping']
         return mapping.get(type_str, type_str)
     

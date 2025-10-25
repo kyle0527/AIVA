@@ -21,7 +21,7 @@ from .tasks import *
 from .findings import *
 
 __version__ = "1.0.0"
-__generated_at__ = "2025-10-23T15:38:29.431264"
+__generated_at__ = "2025-10-25T17:51:24.972695"
 
 __all__ = [
     # 基礎類型
@@ -39,6 +39,7 @@ __all__ = [
     "FunctionTaskTarget", 
     "FunctionTaskContext",
     "FunctionTaskTestConfig",
+    "ScanTaskPayload",
     
     # 發現結果
     "FindingPayload",
