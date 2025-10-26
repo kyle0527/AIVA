@@ -107,10 +107,10 @@ class AIVAModuleConnectivityTest:
             from ..schemas.generated.base_types import MessageHeader
             from ..schemas.generated.messaging import AivaMessage
             
-            # 創建消息標頭
+            # 創建消息標頭 (使用符合 pattern 的 trace_id)
             header = MessageHeader(
                 message_id="test_msg_001",
-                trace_id="trace_001", 
+                trace_id="1a2b3c4d-5e6f-7890-abcd-ef1234567890", 
                 source_module="ai_engine",
                 timestamp=datetime.now(),
                 version="1.0"
