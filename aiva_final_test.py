@@ -151,7 +151,7 @@ except Exception as e:
 
 # 6. 功能完整性測試（模擬實戰）
 try:
-    if tests["XSS_Scanner"] and tests["Schema_System"]:
+    if tests["XSS_Scanner"] and tests["Schema_System"] and _IMPORTS_SUCCESS:
         # 模擬一個完整的漏洞發現流程
         generator = XssPayloadGenerator()
         detector = DomXssDetector() 

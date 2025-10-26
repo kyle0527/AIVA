@@ -7,6 +7,9 @@ python scripts/launcher/aiva_launcher.py
 
 # API 服務
 python api/start_api.py
+
+# Schema 合規性檢查 (重要)
+python tools/schema_compliance_validator.py --workspace . --language all --format console
 ```
 
 ## 📂 核心目錄
@@ -26,6 +29,11 @@ python api/start_api.py
 ### 啟動器
 - `scripts/launcher/aiva_launcher.py` - 主啟動器
 - `api/start_api.py` - API 服務啟動
+
+### Schema 驗證 (v3.1 新增)
+- `tools/schema_compliance_validator.py` - 合規性驗證工具
+- `services/function/common/go/aiva_common_go/schemas/generated/` - Go 標準 schema
+- `schemas/aiva_schemas.d.ts` - TypeScript 標準 schema
 
 ### AI 核心
 - `services/core/aiva_core/bio_neuron_master.py` - BioNeuron 主控

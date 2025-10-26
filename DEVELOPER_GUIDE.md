@@ -32,6 +32,41 @@ cp .env.example .env
 - 使用 `mypy` 進行型別檢查
 - 遵循 PEP 8 規範
 
+### 🎯 Schema 使用規範 (必讀)
+**重要**: AIVA 已實現 100% Schema 標準化，必須遵循以下規範：
+
+#### Go 模組
+```go
+// ✅ 正確做法 - 使用標準 schema
+import schemas "github.com/kyle0527/aiva/services/function/common/go/aiva_common_go/schemas/generated"
+
+// 使用標準結構
+result := schemas.FindingPayload{...}
+
+// ❌ 禁止做法 - 不要自定義
+type FindingPayload struct {...}  // 禁止
+```
+
+#### Rust 模組
+```rust
+// ✅ 正確做法 - 使用生成的 schema
+use crate::schemas::generated::FindingPayload;
+
+// ❌ 禁止做法 - 不要自定義
+struct FindingPayload {...}  // 禁止
+```
+
+#### TypeScript 模組
+```typescript
+// ✅ 正確做法 - 使用標準定義
+import { FindingPayload } from '../schemas/aiva_schemas';
+
+// ❌ 禁止做法 - 不要自定義
+interface FindingPayload {...}  // 禁止
+```
+
+**驗證工具**: 使用 `python tools/schema_compliance_validator.py` 檢查合規性
+
 ### 提交規範
 ```bash
 # 執行預提交檢查

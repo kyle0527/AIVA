@@ -10,16 +10,8 @@ import json
 import time
 from datetime import datetime
 from typing import Dict, Any, Optional
-from enum import Enum
 
-
-class LogLevel(str, Enum):
-    """日誌級別枚舉"""
-    DEBUG = "DEBUG"
-    INFO = "INFO" 
-    WARNING = "WARNING"
-    ERROR = "ERROR"
-    CRITICAL = "CRITICAL"
+from services.aiva_common.observability import LogLevel
 
 
 class AIVALogFormatter(logging.Formatter):

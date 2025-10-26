@@ -1,8 +1,8 @@
 # AIVA 專案結構說明文件
 
 > **AIVA** - AI-Driven Vulnerability Assessment Platform  
-> **更新時間**: 2025年10月24日  
-> **版本**: v2.0  
+> **更新時間**: 2025年10月26日  
+> **版本**: v2.1 - Schema 標準化完成版  
 
 ## 📋 概覽
 

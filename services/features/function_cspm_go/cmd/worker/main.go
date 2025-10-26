@@ -10,7 +10,7 @@ import (
 	"github.com/kyle0527/aiva/services/function/common/go/aiva_common_go/config"
 	"github.com/kyle0527/aiva/services/function/common/go/aiva_common_go/logger"
 	"github.com/kyle0527/aiva/services/function/common/go/aiva_common_go/mq"
-	"github.com/kyle0527/aiva/services/function/common/go/aiva_common_go/schemas"
+	schemas "github.com/kyle0527/aiva/services/function/common/go/aiva_common_go/schemas/generated"
 	"github.com/kyle0527/aiva/services/function/function_cspm_go/internal/scanner"
 	"go.uber.org/zap"
 )
@@ -75,16 +75,17 @@ func handleTask(
 	mqClient *mq.MQClient,
 	log *zap.Logger,
 ) error {
-	// 解析任務
-	var task schemas.FunctionTaskPayload
+	// 解析任務 - 使用 ScanTaskPayload 因為 CSPM 需要項目 URL
+	var task schemas.ScanTaskPayload
 	if err := json.Unmarshal(taskData, &task); err != nil {
 		log.Error("Failed to parse task", zap.Error(err))
 		return err
 	}
 
 	log.Info("Processing CSPM task",
-		zap.String("task_id", task.TaskID),
-		zap.String("scan_id", task.ScanID))
+		zap.String("task_id", task.TaskId),
+		zap.String("scan_id", task.ScanId),
+		zap.String("target_url", task.Target.Url))
 
 	// 執行 CSPM 掃描
 	findings, err := scanner.Scan(ctx, &task)
@@ -94,7 +95,7 @@ func handleTask(
 	}
 
 	log.Info("CSPM scan completed",
-		zap.String("task_id", task.TaskID),
+		zap.String("task_id", task.TaskId),
 		zap.Int("findings_count", len(findings)))
 
 	// 發布 Findings

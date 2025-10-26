@@ -1,4 +1,4 @@
-// AIVA Rust Schema - 自動生成
+// AIVA Rust Schema for function_sast_rust - 自動生成
 // 版本: 1.0.0
 // 基於 Python aiva_common 作為單一事實來源
 // 此文件與 services/aiva_common/schemas/ 保持完全一致性
@@ -15,7 +15,7 @@ pub enum Severity {
     Critical,
     #[serde(rename = "High")]
     High,
-    #[serde(rename = "Medium")]  
+    #[serde(rename = "Medium")]
     Medium,
     #[serde(rename = "Low")]
     Low,
@@ -63,6 +63,8 @@ pub enum VulnerabilityType {
     ForcedBrowsing,
     #[serde(rename = "State Manipulation")]
     StateManipulation,
+    #[serde(rename = "SAST")]
+    Sast,
 }
 
 // ==================== 核心結構定義 ====================
@@ -99,6 +101,16 @@ pub struct Target {
     pub params: HashMap<String, serde_json::Value>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub body: Option<String>,
+
+    // SAST 特定欄位
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub file_path: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub line_number: Option<u32>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub function_name: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub code_snippet: Option<String>,
 }
 
 // 向後相容別名
@@ -118,6 +130,16 @@ pub struct FindingEvidence {
     pub response: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub proof: Option<String>,
+
+    // SAST 特定欄位
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub rule_id: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub pattern: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub matched_code: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub context: Option<String>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -132,6 +154,8 @@ pub struct FindingImpact {
     pub affected_users: Option<i64>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub estimated_cost: Option<f64>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub exploitability: Option<String>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -188,7 +212,7 @@ impl FindingPayload {
             status,
             vulnerability,
             target,
-            strategy: None,
+            strategy: Some("SAST".to_string()),
             evidence: None,
             impact: None,
             recommendation: None,

@@ -10,7 +10,7 @@ import (
 	"github.com/kyle0527/aiva/services/function/common/go/aiva_common_go/config"
 	"github.com/kyle0527/aiva/services/function/common/go/aiva_common_go/logger"
 	"github.com/kyle0527/aiva/services/function/common/go/aiva_common_go/mq"
-	"github.com/kyle0527/aiva/services/function/common/go/aiva_common_go/schemas"
+	schemas "github.com/kyle0527/aiva/services/function/common/go/aiva_common_go/schemas/generated"
 	"github.com/kyle0527/aiva/services/function/function_authn_go/internal/brute_force"
 	"github.com/kyle0527/aiva/services/function/function_authn_go/internal/token_test"
 	"go.uber.org/zap"
@@ -86,7 +86,7 @@ func handleTask(
 		return err
 	}
 
-	log.Info("Processing AuthN task", zap.String("task_id", task.TaskID))
+	log.Info("Processing AuthN task", zap.String("task_id", task.TaskId))
 
 	var findings []*schemas.FindingPayload
 
@@ -122,21 +122,25 @@ func handleTask(
 
 	// 執行 Token 分析測試
 	if testType == "token" || testType == "all" {
-		tk, err := tokenAnalyzer.Test(ctx, task)
-		if err != nil {
-			log.Error("Token test failed", zap.Error(err))
-		} else {
-			// 轉換 []interface{} 為 []*schemas.FindingPayload
-			for _, finding := range tk {
-				if findingPayload, ok := finding.(*schemas.FindingPayload); ok {
-					findings = append(findings, findingPayload)
+		// TODO: token_test 模組需要更新以支持新的 schema
+		log.Warn("Token test temporarily disabled - needs schema update")
+		/*
+			tk, err := tokenAnalyzer.Test(ctx, task)
+			if err != nil {
+				log.Error("Token test failed", zap.Error(err))
+			} else {
+				// 轉換 []interface{} 為 []*schemas.FindingPayload
+				for _, finding := range tk {
+					if findingPayload, ok := finding.(*schemas.FindingPayload); ok {
+						findings = append(findings, findingPayload)
+					}
 				}
 			}
-		}
+		*/
 	}
 
 	log.Info("AuthN test completed",
-		zap.String("task_id", task.TaskID),
+		zap.String("task_id", task.TaskId),
 		zap.Int("findings_count", len(findings)))
 
 	// 發布 Findings

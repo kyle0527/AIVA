@@ -5,6 +5,7 @@ go 1.21
 require (
 	github.com/rabbitmq/amqp091-go v1.10.0
 	go.uber.org/zap v1.26.0
+	github.com/kyle0527/aiva/services/function/common/go/aiva_common_go v0.0.0
 )
 
 require (

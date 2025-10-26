@@ -1,0 +1,90 @@
+# Schema 合規性驗證配置
+# ================================
+
+# 標準 Schema 來源配置
+[schema_sources]
+go_schema_package = "github.com/kyle0527/aiva/services/function/common/go/aiva_common_go/schemas/generated"
+rust_schema_module = "schemas::generated"
+typescript_schema_path = "../../../schemas/aiva_schemas"
+
+# 合規性閾值設定
+[compliance_thresholds]
+minimum_score = 80.0
+ci_failure_threshold = 70.0
+warning_threshold = 90.0
+
+# 掃描規則配置
+[scan_rules]
+# 強制使用標準 schema 的模組路徑模式
+enforce_standard_schema = [
+    "services/features/function_*_go",
+    "services/features/function_*_rust", 
+    "services/scan/*_rust",
+    "services/scan/*_node"
+]
+
+# 排除掃描的路徑模式
+exclude_patterns = [
+    "**/node_modules/**",
+    "**/target/**",
+    "**/build/**",
+    "**/_archive/**",
+    "**/backup/**"
+]
+
+# 允許例外的檔案（暫時性）
+temporary_exceptions = [
+    # 格式: "file_path:reason:deadline"
+    # "services/legacy/old_module.go:遺留系統，計劃重構:2025-12-31"
+]
+
+# 自定義 Schema 檢測規則
+[detection_rules]
+# Go 語言禁止模式
+go_forbidden_patterns = [
+    "type\\s+FindingPayload\\s+struct",
+    "type\\s+Finding\\s+struct.*\\{[^}]*finding_id",
+    "type\\s+Vulnerability\\s+struct.*\\{[^}]*severity",
+    "type\\s+Target\\s+struct.*\\{[^}]*host",
+    "type\\s+Evidence\\s+struct.*\\{[^}]*description"
+]
+
+# Rust 語言禁止模式
+rust_forbidden_patterns = [
+    "struct\\s+FindingPayload\\s*\\{",
+    "struct\\s+Finding\\s*\\{[^}]*finding_id",
+    "struct\\s+Vulnerability\\s*\\{[^}]*severity",
+    "struct\\s+Target\\s*\\{[^}]*host",
+    "struct\\s+Evidence\\s*\\{[^}]*description"
+]
+
+# TypeScript 語言禁止模式
+typescript_forbidden_patterns = [
+    "interface\\s+\\w*Finding\\w*.*\\{[^}]*finding_id",
+    "interface\\s+\\w*Vulnerability\\w*.*\\{[^}]*severity", 
+    "interface\\s+\\w*Target\\w*.*\\{[^}]*host",
+    "type\\s+\\w*Finding\\w*\\s*=",
+    "type\\s+\\w*Payload\\w*\\s*="
+]
+
+# 報告配置
+[reporting]
+default_format = "console"
+include_suggestions = true
+show_compliance_score = true
+group_by_language = true
+max_issues_per_module = 10
+
+# CI/CD 集成配置
+[ci_integration]
+fail_on_non_compliant = true
+generate_junit_xml = false
+post_github_comment = false
+slack_webhook_url = ""
+
+# 自動修復配置（實驗性功能）
+[auto_fix]
+enabled = false
+backup_original = true
+fix_import_paths = true
+remove_custom_schemas = false  # 危險操作，需要人工確認

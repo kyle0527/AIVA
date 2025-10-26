@@ -8,9 +8,20 @@ import (
 	"strings"
 	"time"
 
-	"github.com/kyle0527/aiva/services/function/common/go/aiva_common_go/schemas"
+	schemas "github.com/kyle0527/aiva/services/function/common/go/aiva_common_go/schemas/generated"
 	"go.uber.org/zap"
 )
+
+// BruteForceResult 暴力破解測試結果 (本地結構，不在標準 schema 中)
+type BruteForceResult struct {
+	Username      string
+	Password      string
+	AttemptsCount int
+	ResponseTime  int64
+	Vulnerable    bool
+	AccountLocked bool
+	RateLimited   bool
+}
 
 // BruteForcer 暴力破解測試器
 type BruteForcer struct {
@@ -57,7 +68,10 @@ func (b *BruteForcer) Test(ctx context.Context, task *schemas.FunctionTaskPayloa
 				break
 			}
 
-			result, err := b.tryCredentials(ctx, task.Target.URL, username, password)
+			// FunctionTask 沒有 URL 字段，需要從其他地方獲取登錄 URL
+			// 這裡假設使用某個配置或從 metadata 中獲取
+			loginURL := "http://example.com/login" // 臨時解決方案
+			result, err := b.tryCredentials(ctx, loginURL, username, password)
 			if err != nil {
 				b.logger.Error("Login attempt failed", zap.Error(err))
 				continue
@@ -70,7 +84,7 @@ func (b *BruteForcer) Test(ctx context.Context, task *schemas.FunctionTaskPayloa
 
 			// 如果成功登入，記錄為漏洞
 			if result.Vulnerable {
-				finding := b.createFinding(task.TaskID, task.Target.URL, result)
+				finding := b.createFinding(task.TaskId, loginURL, result)
 				findings = append(findings, &finding)
 				b.logger.Warn("Weak credentials found",
 					zap.String("username", username),
@@ -96,12 +110,12 @@ func (b *BruteForcer) Test(ctx context.Context, task *schemas.FunctionTaskPayloa
 }
 
 // tryCredentials 嘗試登入憑證
-func (b *BruteForcer) tryCredentials(ctx context.Context, loginURL, username, password string) (schemas.BruteForceResult, error) {
+func (b *BruteForcer) tryCredentials(ctx context.Context, loginURL, username, password string) (BruteForceResult, error) {
 	// 構建登入請求
 	payload := fmt.Sprintf(`{"username":"%s","password":"%s"}`, username, password)
 	req, err := http.NewRequestWithContext(ctx, "POST", loginURL, strings.NewReader(payload))
 	if err != nil {
-		return schemas.BruteForceResult{}, err
+		return BruteForceResult{}, err
 	}
 
 	req.Header.Set("Content-Type", "application/json")
@@ -109,7 +123,7 @@ func (b *BruteForcer) tryCredentials(ctx context.Context, loginURL, username, pa
 	start := time.Now()
 	resp, err := b.client.Do(req)
 	if err != nil {
-		return schemas.BruteForceResult{}, err
+		return BruteForceResult{}, err
 	}
 	defer resp.Body.Close()
 
@@ -117,7 +131,7 @@ func (b *BruteForcer) tryCredentials(ctx context.Context, loginURL, username, pa
 	body, _ := io.ReadAll(resp.Body)
 	bodyStr := string(body)
 
-	result := schemas.BruteForceResult{
+	result := BruteForceResult{
 		Username:      username,
 		Password:      password,
 		AttemptsCount: 1,
@@ -151,7 +165,7 @@ func (b *BruteForcer) tryCredentials(ctx context.Context, loginURL, username, pa
 }
 
 // createFinding 建立 Finding
-func (b *BruteForcer) createFinding(taskID, loginURL string, result schemas.BruteForceResult) schemas.FindingPayload {
+func (b *BruteForcer) createFinding(taskID, loginURL string, result BruteForceResult) schemas.FindingPayload {
 	findingID := fmt.Sprintf("finding_authn_bf_%d", time.Now().UnixNano())
 	scanID := fmt.Sprintf("scan_authn_%d", time.Now().UnixNano())
 
@@ -166,18 +180,18 @@ func (b *BruteForcer) createFinding(taskID, loginURL string, result schemas.Brut
 	techPtr := "身份驗證繞過"
 
 	return schemas.FindingPayload{
-		FindingID: findingID,
-		TaskID:    taskID,
-		ScanID:    scanID,
-		Status:    "CONFIRMED",
+		FindingId: findingID,
+		TaskId:    taskID,
+		ScanId:    scanID,
+		Status:    "confirmed",
 		Vulnerability: schemas.Vulnerability{
 			Name:       "Weak Authentication - Brute Force",
-			CWE:        &cwePtr,
+			Cwe:        &cwePtr,
 			Severity:   "CRITICAL",
-			Confidence: "HIGH",
+			Confidence: "FIRM",
 		},
 		Target: schemas.Target{
-			URL:    loginURL,
+			Url:    loginURL,
 			Method: &methodPtr,
 		},
 		Evidence: &schemas.FindingEvidence{

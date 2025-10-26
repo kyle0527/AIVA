@@ -1,7 +1,8 @@
-// SAST 數據模型
+// SAST 數據模型 - 使用標準 schema
 
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
+use crate::schemas::generated::{FindingPayload, Vulnerability, Target, FindingEvidence, FindingImpact, FindingRecommendation, VulnerabilityType, Severity, Confidence};
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct FunctionTaskPayload {
@@ -26,50 +27,6 @@ pub struct TaskOptions {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct FindingPayload {
-    pub finding_id: String,
-    pub task_id: String,
-    pub scan_id: String,
-    pub status: String,
-    pub vulnerability: Vulnerability,
-    pub target: FindingTarget,
-    pub evidence: FindingEvidence,
-    pub impact: FindingImpact,
-    pub recommendation: String,
-}
-
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct Vulnerability {
-    pub name: String,
-    pub cwe: String,
-    pub severity: String,
-    pub confidence: String,
-}
-
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct FindingTarget {
-    pub file_path: String,
-    pub line_number: u32,
-    pub function_name: Option<String>,
-    pub code_snippet: String,
-}
-
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct FindingEvidence {
-    pub rule_id: String,
-    pub pattern: String,
-    pub matched_code: String,
-    pub context: String,
-}
-
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct FindingImpact {
-    pub description: String,
-    pub business_impact: String,
-    pub exploitability: String,
-}
-
-#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct SastIssue {
     pub rule_id: String,
     pub rule_name: String,
@@ -87,40 +44,92 @@ pub struct SastIssue {
 
 impl SastIssue {
     pub fn to_finding(&self, task_id: &str, scan_id: &str) -> FindingPayload {
+        // 解析嚴重性
+        let severity = match self.severity.to_uppercase().as_str() {
+            "CRITICAL" => Severity::Critical,
+            "HIGH" => Severity::High,
+            "MEDIUM" => Severity::Medium,
+            "LOW" => Severity::Low,
+            _ => Severity::Informational,
+        };
+
+        // 解析可信度
+        let confidence = match self.confidence.to_uppercase().as_str() {
+            "CERTAIN" => Confidence::Certain,
+            "FIRM" => Confidence::Firm,
+            _ => Confidence::Possible,
+        };
+
         FindingPayload {
             finding_id: format!("finding_sast_{}", Uuid::new_v4()),
             task_id: task_id.to_string(),
             scan_id: scan_id.to_string(),
-            status: "CONFIRMED".to_string(),
+            status: "confirmed".to_string(),
             vulnerability: Vulnerability {
-                name: self.rule_name.clone(),
-                cwe: self.cwe.clone(),
-                severity: self.severity.clone(),
-                confidence: self.confidence.clone(),
+                name: VulnerabilityType::Sast,
+                cwe: Some(self.cwe.clone()),
+                cve: None,
+                severity,
+                confidence,
+                description: Some(self.description.clone()),
+                cvss_score: None,
+                cvss_vector: None,
+                owasp_category: None,
             },
-            target: FindingTarget {
-                file_path: self.file_path.clone(),
-                line_number: self.line_number,
+            target: Target {
+                url: serde_json::Value::String(format!("file://{}", self.file_path)),
+                parameter: None,
+                method: None,
+                headers: std::collections::HashMap::new(),
+                params: std::collections::HashMap::new(),
+                body: None,
+                file_path: Some(self.file_path.clone()),
+                line_number: Some(self.line_number),
                 function_name: self.function_name.clone(),
-                code_snippet: self.code_snippet.clone(),
+                code_snippet: Some(self.code_snippet.clone()),
             },
-            evidence: FindingEvidence {
-                rule_id: self.rule_id.clone(),
-                pattern: self.matched_pattern.clone(),
-                matched_code: self.code_snippet.clone(),
-                context: format!("Line {}: {}", self.line_number, self.code_snippet),
-            },
-            impact: FindingImpact {
-                description: self.description.clone(),
-                business_impact: format!("{} 級漏洞可能導致嚴重安全問題", self.severity),
-                exploitability: match self.severity.as_str() {
-                    "CRITICAL" => "極高".to_string(),
-                    "HIGH" => "高".to_string(),
-                    "MEDIUM" => "中".to_string(),
+            strategy: Some("SAST".to_string()),
+            evidence: Some(FindingEvidence {
+                payload: None,
+                response_time_delta: None,
+                db_version: None,
+                request: None,
+                response: None,
+                proof: None,
+                rule_id: Some(self.rule_id.clone()),
+                pattern: Some(self.matched_pattern.clone()),
+                matched_code: Some(self.code_snippet.clone()),
+                context: Some(format!("Line {}: {}", self.line_number, self.code_snippet)),
+            }),
+            impact: Some(FindingImpact {
+                description: Some(self.description.clone()),
+                business_impact: Some(format!("{:?} 級漏洞可能導致嚴重安全問題", severity)),
+                technical_impact: None,
+                affected_users: None,
+                estimated_cost: None,
+                exploitability: Some(match severity {
+                    Severity::Critical => "極高".to_string(),
+                    Severity::High => "高".to_string(),
+                    Severity::Medium => "中".to_string(),
                     _ => "低".to_string(),
-                },
+                }),
+            }),
+            recommendation: Some(FindingRecommendation {
+                fix: Some(self.recommendation.clone()),
+                priority: Some(format!("{:?}", severity)),
+                remediation_steps: vec![self.recommendation.clone()],
+                references: vec![],
+            }),
+            metadata: {
+                let mut metadata = std::collections::HashMap::new();
+                metadata.insert("rule_id".to_string(), serde_json::Value::String(self.rule_id.clone()));
+                metadata.insert("file_path".to_string(), serde_json::Value::String(self.file_path.clone()));
+                metadata.insert("line_number".to_string(), serde_json::Value::Number(serde_json::Number::from(self.line_number)));
+                metadata.insert("rule_name".to_string(), serde_json::Value::String(self.rule_name.clone()));
+                metadata
             },
-            recommendation: self.recommendation.clone(),
+            created_at: chrono::Utc::now(),
+            updated_at: chrono::Utc::now(),
         }
     }
 }

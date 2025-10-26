@@ -2,6 +2,41 @@
 
 > **目標**: 確保代碼在不同環境、平台間的可移植性
 
+## 🎯 重要更新 (v3.1)
+
+**⚠️ Schema 標準化完成**: AIVA 已實現 100% 跨語言 Schema 標準化！
+
+### 🔥 必須遵循的新規範
+
+#### Go 模組
+```go
+// ✅ 必須使用 - 標準 schema 導入
+import schemas "github.com/kyle0527/aiva/services/function/common/go/aiva_common_go/schemas/generated"
+
+// ❌ 嚴格禁止 - 自定義 FindingPayload
+type FindingPayload struct {...}  // 會被 CI 拒絕
+```
+
+#### Rust 模組  
+```rust
+// ✅ 必須使用 - 生成的 schema
+use crate::schemas::generated::FindingPayload;
+
+// ❌ 嚴格禁止 - 自定義結構
+struct FindingPayload {...}  // 會被 CI 拒絕
+```
+
+#### TypeScript 模組
+```typescript
+// ✅ 必須使用 - 標準定義
+import { FindingPayload } from '../schemas/aiva_schemas';
+
+// ❌ 嚴格禁止 - 自定義接口
+interface FindingPayload {...}  // 會被 CI 拒絕
+```
+
+**驗證命令**: `python tools/schema_compliance_validator.py --workspace . --language all`
+
 ## 📋 導入規範總覽
 
 ### ✅ 推薦做法

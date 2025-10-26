@@ -5,6 +5,7 @@ mod analyzers;
 mod models;
 mod parsers;
 mod rules;
+mod schemas;
 mod worker;
 
 use anyhow::Result;

@@ -8,7 +8,10 @@
 [![Rust](https://img.shields.io/badge/Rust-1.70+-000000.svg)](https://rust-lang.org)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.0+-3178C6.svg)](https://typescriptlang.org)
 
-**當前版本:** v3.0 | **最後更新:** 2025年10月24日
+**當前版本:** v3.1 | **最後更新:** 2025年10月26日 | **Schema 標準化:** ✅ 100% 完成 | **文檔同步:** ✅ 最新狀態
+
+> 🎉 **重大里程碑 (v3.1)**: Schema 跨語言標準化完成！所有 7 個模組已達到 100% 合規性，建立了完整的自動化驗證基礎設施。  
+> 📚 **開發者請注意**: 新的 [Schema 使用規範](IMPORT_GUIDELINES.md) 現已生效，所有新代碼必須遵循統一標準。
 
 ---
 
@@ -112,11 +115,12 @@ asyncio.run(AIVADialogAssistant().process_user_input('現在系統會什麼？')
 ### 整體規模 (2025-10-26)
 
 ```
-📦 總代碼:      103,727+ 行
-🔧 總模組:      3,161+ 個組件  
+📦 總代碼:      105,000+ 行
+🔧 文件組成:    Python(4,864) + Go(22) + Rust(32) + TypeScript(988)
 ⚙️ 函數:        1,850+ 個
 📝 類別:        1,340+ 個
-🌍 語言:        Python(94%) + Go(3%) + Rust(2%) + TS(2%)
+🌍 語言分布:    Python(83%) + TypeScript(17%) + Go/Rust(<1%)
+🎯 Schema標準:  100% 跨語言統一 (7/7 模組合規)
 ```
 
 ### 🎯 當前運行狀態
@@ -144,12 +148,13 @@ asyncio.run(AIVADialogAssistant().process_user_input('現在系統會什麼？')
 ## 🎯 核心特性
 
 ### 🔍 全面安全檢測 (10 個掃描器)
-- **SAST**: 靜態分析 (Crypto, IDOR, PostEx)
+- **SAST**: 靜態分析 (Crypto, IDOR, PostEx, Function SCA)
 - **DAST**: 動態掃描 (SQLi, XSS, SSRF) 
 - **SCA**: 組成分析 (Go 版本)
 - **認證測試**: Authentication 掃描
 - **雲安全**: CSPM (Cloud Security Posture Management)
 - **資訊收集**: Rust 版 Info Gatherer
+- **Schema 驗證**: 跨語言一致性檢查 (Python/Go/Rust/TypeScript)
 
 ### 🧠 AI 驅動核心
 - ✅ 自然語言對話界面 (完全可用)
@@ -163,7 +168,9 @@ asyncio.run(AIVADialogAssistant().process_user_input('現在系統會什麼？')
 - **Python (5 掃描器)**: AI 引擎、對話助理、核心邏輯
 - **Go (4 掃描器)**: 高性能安全服務 
 - **Rust (1 掃描器)**: 安全關鍵資訊收集
+- **TypeScript**: 前端整合與 Schema 定義
 - **FastAPI**: 現代異步 API 架構
+- **Schema 統一**: 100% 跨語言標準化完成
 
 ---
 
@@ -173,17 +180,22 @@ asyncio.run(AIVADialogAssistant().process_user_input('現在系統會什麼？')
 - [五大模組架構](docs/README_MODULES.md)
 - [AI 系統詳解](docs/README_AI_SYSTEM.md)
 - [完整架構圖集](docs/ARCHITECTURE/COMPLETE_ARCHITECTURE_DIAGRAMS.md)
+- [Schema 標準化完成報告](reports/SCHEMA_STANDARDIZATION_COMPLETION_REPORT.md) ⭐
 
 ### 開發指南
 - [開發環境設置](docs/README_DEVELOPMENT.md)
 - [📦 依賴管理完整指南](docs/README_DEPENDENCY_DOCS.md) ⭐
 - [工具集說明](tools/README.md)
 - [測試指南](testing/README.md)
+- [Schema 使用規範](IMPORT_GUIDELINES.md) - **必讀**
+- [快速參考](QUICK_REFERENCE.md)
 
 ### 運維部署
 - [部署指南](docs/README_DEPLOYMENT.md)
 - [監控告警](docs/OPERATIONS/MONITORING.md)
 - [故障排除](docs/OPERATIONS/TROUBLESHOOTING.md)
+- [項目狀態總覽](_out/PROJECT_STATUS_OVERVIEW.md)
+- [版本變更記錄](_out/CHANGELOG.md)
 
 ---
 
@@ -210,11 +222,14 @@ from services.integration.capability.registry import global_registry
 asyncio.run(global_registry.discover_capabilities())
 "
 
-# Schema 管理 (如可用)
-python tools/schema_manager.py list
+# Schema 合規性驗證
+python tools/schema_compliance_validator.py --mode=detailed
 
-# 代碼分析 (如可用)
-python tools/analyze_codebase.py
+# 跨語言一致性檢查
+python tools/schema_compliance_validator.py --languages=go,rust,typescript
+
+# 完整項目分析
+python full_validation_test.py
 ```
 
 📖 更多工具: [工具集文檔](tools/README.md) | [使用者指南](AI_USER_GUIDE.md)
@@ -291,20 +306,26 @@ asyncio.run(AIVADialogAssistant().process_user_input('現在系統會什麼？')
 "
 ```
 
-**開發狀態指標** ✅：
-- 核心服務：生產就緒 (FastAPI + Uvicorn)
-- AI 對話：完全功能性
-- 能力發現：自動化 (10 個掃描器)
-- 健康監控：實時狀態
-- 跨語言：Python/Go/Rust 支持
+**開發狀態指標** ✅：  
+- 核心服務：生產就緒 (FastAPI + Uvicorn)  
+- AI 對話：完全功能性  
+- 能力發現：自動化 (10 個掃描器)  
+- 健康監控：實時狀態  
+- 跨語言：Python/Go/Rust/TypeScript 統一架構  
+- Schema 標準化：100% 完成 (7/7 模組合規)  
+- 驗證工具：自動化 CI/CD 整合
 
 ---
 
 **維護團隊**: AIVA Development Team  
 **最後更新**: 2025-10-26  
-**版本**: 3.0.0 (生產就緒)
+**版本**: v3.1 (Schema 標準化完成版)
+**技術狀態**: 生產就緒 + 跨語言統一架構
 
 <p align="center">
-  <b>🚀 AI 驅動的下一代安全測試平台 | AIVA - The Future of Security Testing</b><br>
-  <small>✅ 現已生產就緒 - 10 個跨語言掃描器 - 完整 AI 對話能力</small>
+  <b>🚀 AI 驱动的下一代安全测试平台 | AIVA - The Future of Security Testing</b><br>
+  <small>✅ 现已生产就绪 - 10 个跨语言扫描器 - 完整 AI 对话能力 - Schema 标准化完成</small><br>
+  <br>
+  <b>🏆 里程碑成就 v3.1:</b><br>
+  <small>🎯 跨语言标准化 100% 完成 | 🛡️ 自动化验证基础设施 | 📚 完整文档体系</small>
 </p>

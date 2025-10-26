@@ -15,6 +15,12 @@ rayon = "1.8"
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
 
+# UUID 生成
+uuid = { version = "1.6", features = ["v4"] }
+
+# 時間處理
+chrono = { version = "0.4", features = ["serde"] }
+
 # HTTP 客戶端 (用於 API 驗證)
 reqwest = { version = "0.11", features = ["json"] }
 

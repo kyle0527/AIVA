@@ -13,8 +13,14 @@ export interface PhaseIConfig {
   maxScriptAnalysis: number;
 }
 
-export interface ClientSideAuthFinding {
-  type: 'localStorage_auth' | 'sessionStorage_auth' | 'hardcoded_admin' | 'client_validation' | 'hidden_elements';
+import { FindingPayload } from '../../../schemas/aiva_schemas';
+
+// 定義 client-side auth 專用的發現類型
+type ClientSideAuthType = 'localStorage_auth' | 'sessionStorage_auth' | 'hardcoded_admin' | 'client_validation' | 'hidden_elements';
+
+// 為了向後兼容，保留原始接口但基於標準 FindingPayload
+interface ClientSideAuthFinding {
+  type: ClientSideAuthType;
   severity: 'high' | 'medium' | 'low';
   description: string;
   evidence: {
@@ -24,6 +30,59 @@ export interface ClientSideAuthFinding {
     domElement?: string;
   };
   recommendations: string[];
+}
+
+// 輔助函數：將 ClientSideAuthFinding 轉換為標準 FindingPayload
+function toStandardFinding(
+  finding: ClientSideAuthFinding, 
+  taskId: string, 
+  scanId: string, 
+  url: string
+): FindingPayload {
+  return {
+    finding_id: `client-auth-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+    task_id: taskId,
+    scan_id: scanId,
+    status: 'confirmed',
+    vulnerability: {
+      name: finding.type as any, // 映射到適當的 VulnerabilityType
+      severity: finding.severity as any,
+      confidence: 'high' as any,
+      description: finding.description,
+      cwe: finding.type === 'client_validation' ? 'CWE-20' : 
+           finding.type === 'localStorage_auth' ? 'CWE-922' :
+           finding.type === 'sessionStorage_auth' ? 'CWE-922' :
+           finding.type === 'hardcoded_admin' ? 'CWE-798' :
+           finding.type === 'hidden_elements' ? 'CWE-602' : undefined
+    },
+    target: {
+      url: url,
+      method: 'GET',
+      headers: {},
+      params: {},
+      body: null
+    },
+    strategy: 'client_side_auth_bypass',
+    evidence: {
+      payload: finding.evidence.codeSnippet || null,
+      request: finding.evidence.scriptUrl || null,
+      response: finding.evidence.domElement || null,
+      proof: `${finding.type} detected at line ${finding.evidence.lineNumber || 'unknown'}`
+    },
+    recommendation: {
+      fix: finding.recommendations.join('; '),
+      priority: finding.severity === 'high' ? 'high' : 
+                finding.severity === 'medium' ? 'medium' : 'low',
+      remediation_steps: finding.recommendations,
+      references: []
+    },
+    metadata: {
+      detection_method: 'client_side_analysis',
+      auth_type: finding.type
+    },
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString()
+  };
 }
 
 export class PhaseIIntegrationService {
@@ -328,5 +387,19 @@ export class PhaseIIntegrationService {
     };
 
     return recommendationMap[type] || ['實施適當的服務端授權檢查'];
+  }
+
+  /**
+   * 分析客戶端認證繞過並返回標準 FindingPayload 格式
+   * 遵循單一事實來源原則
+   */
+  async analyzeClientSideAuthBypassStandard(
+    url: string, 
+    taskId: string, 
+    scanId: string, 
+    browser?: any
+  ): Promise<FindingPayload[]> {
+    const legacyFindings = await this.analyzeClientSideAuthBypass(url, browser);
+    return legacyFindings.map(finding => toStandardFinding(finding, taskId, scanId, url));
   }
 }

@@ -49,3 +49,15 @@ repos:
     hooks:
       - id: prettier
         files: "\.(json|md|yaml|yml)$"
+
+  # AIVA 專案特定檢查
+  - repo: local
+    hooks:
+      # Schema 合規性檢查
+      - id: aiva-schema-compliance
+        name: AIVA Schema Compliance Check
+        entry: python tools/git-hooks/pre-commit-schema-check.py
+        language: python
+        files: '\.(go|rs|ts)$'
+        pass_filenames: false
+        stages: [commit]

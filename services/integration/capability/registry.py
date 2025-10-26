@@ -50,7 +50,12 @@ from .models import (
 )
 
 # 設定結構化日誌
-logger = get_logger(__name__)
+import logging
+logger = logging.getLogger(__name__)
+
+# 定義程式語言枚舉
+# 遵循 aiva_common 單一事實來源原則
+from services.aiva_common.enums.modules import ProgrammingLanguage
 
 
 class CapabilityRegistry:
@@ -176,11 +181,24 @@ class CapabilityRegistry:
     
     async def _validate_capability(self, capability: CapabilityRecord) -> None:
         """驗證能力記錄的有效性"""
+        import asyncio
         
-        # 檢查ID格式 (category.module.function)
-        id_parts = capability.id.split('.')
-        if len(id_parts) < 2:
-            raise ValueError(f"能力ID格式錯誤: {capability.id}，應為 category.module.function")
+        def basic_validation():
+            # 檢查ID格式 (category.module.function)
+            id_parts = capability.id.split('.')
+            if len(id_parts) < 2:
+                raise ValueError(f"能力ID格式錯誤: {capability.id}，應為 category.module.function")
+            
+            # 檢查依賴關係
+            for dep_id in capability.dependencies:
+                if dep_id not in self._capabilities:
+                    logger.warning(
+                        "依賴的能力尚未註冊",
+                        capability_id=capability.id,
+                        dependency=dep_id
+                    )
+        
+        await asyncio.to_thread(basic_validation)
         
         # 檢查入口點可達性（根據語言類型）
         if capability.language == ProgrammingLanguage.PYTHON:
@@ -189,74 +207,85 @@ class CapabilityRegistry:
             await self._validate_go_entrypoint(capability.entrypoint)
         elif capability.language == ProgrammingLanguage.RUST:
             await self._validate_rust_entrypoint(capability.entrypoint)
-        
-        # 檢查依賴關係
-        for dep_id in capability.dependencies:
-            if dep_id not in self._capabilities:
-                logger.warning(
-                    "依賴的能力尚未註冊",
-                    capability_id=capability.id,
-                    dependency=dep_id
-                )
     
     async def _validate_python_entrypoint(self, entrypoint: str) -> None:
         """驗證 Python 入口點"""
-        try:
-            module_path, function_name = entrypoint.rsplit(':', 1)
-            # 這裡可以添加更複雜的驗證邏輯
-            logger.debug(f"Python 入口點驗證通過: {entrypoint}")
-        except ValueError:
-            raise ValueError(f"Python 入口點格式錯誤: {entrypoint}")
+        import asyncio
+        
+        def validate():
+            try:
+                _, _ = entrypoint.rsplit(':', 1)
+                # 這裡可以添加更複雜的驗證邏輯
+                logger.debug(f"Python 入口點驗證通過: {entrypoint}")
+            except ValueError:
+                raise ValueError(f"Python 入口點格式錯誤: {entrypoint}")
+        
+        await asyncio.to_thread(validate)
     
     async def _validate_go_entrypoint(self, entrypoint: str) -> None:
         """驗證 Go 入口點"""
-        # Go 服務通常是 HTTP 端點或 gRPC 服務
-        if not (entrypoint.startswith('http://') or entrypoint.startswith('grpc://')):
-            logger.warning(f"Go 入口點可能不是標準格式: {entrypoint}")
+        import asyncio
+        
+        def validate():
+            # Go 服務通常是 HTTP 端點或 gRPC 服務
+            if not (entrypoint.startswith('http://') or entrypoint.startswith('grpc://')):
+                logger.warning(f"Go 入口點可能不是標準格式: {entrypoint}")
+        
+        await asyncio.to_thread(validate)
     
     async def _validate_rust_entrypoint(self, entrypoint: str) -> None:
         """驗證 Rust 入口點"""
-        # Rust 模組的驗證邏輯
-        logger.debug(f"Rust 入口點驗證: {entrypoint}")
+        import asyncio
+        
+        def validate():
+            # Rust 模組的驗證邏輯
+            logger.debug(f"Rust 入口點驗證: {entrypoint}")
+        
+        await asyncio.to_thread(validate)
     
     async def _store_capability_to_db(self, capability: CapabilityRecord) -> None:
         """將能力記錄存儲到數據庫"""
-        conn = sqlite3.connect(self.db_path)
-        cursor = conn.cursor()
+        import asyncio
         
-        cursor.execute("""
-            INSERT OR REPLACE INTO capabilities 
-            (id, name, description, version, module, language, entrypoint, 
-             capability_type, status, created_at, updated_at, config, metadata)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-        """, (
-            capability.id,
-            capability.name,
-            capability.description,
-            capability.version,
-            capability.module,
-            capability.language if isinstance(capability.language, str) else capability.language.value,
-            capability.entrypoint,
-            capability.capability_type if isinstance(capability.capability_type, str) else capability.capability_type.value,
-            capability.status if isinstance(capability.status, str) else capability.status.value,
-            capability.created_at.isoformat(),
-            capability.updated_at.isoformat(),
-            json.dumps(capability.config) if capability.config else None,
-            json.dumps({
-                "tags": capability.tags,
-                "category": capability.category,
-                "priority": capability.priority,
-                "prerequisites": capability.prerequisites,
-                "dependencies": capability.dependencies
-            })
-        ))
+        def store():
+            conn = sqlite3.connect(self.db_path)
+            cursor = conn.cursor()
+            
+            cursor.execute("""
+                INSERT OR REPLACE INTO capabilities 
+                (id, name, description, version, module, language, entrypoint, 
+                 capability_type, status, created_at, updated_at, config, metadata)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            """, (
+                capability.id,
+                capability.name,
+                capability.description,
+                capability.version,
+                capability.module,
+                capability.language if isinstance(capability.language, str) else capability.language.value,
+                capability.entrypoint,
+                capability.capability_type if isinstance(capability.capability_type, str) else capability.capability_type.value,
+                capability.status if isinstance(capability.status, str) else capability.status.value,
+                capability.created_at.isoformat(),
+                capability.updated_at.isoformat(),
+                json.dumps(capability.config) if capability.config else None,
+                json.dumps({
+                    "tags": capability.tags,
+                    "category": capability.category,
+                    "priority": capability.priority,
+                    "prerequisites": capability.prerequisites,
+                    "dependencies": capability.dependencies
+                })
+            ))
+            
+            conn.commit()
+            conn.close()
         
-        conn.commit()
-        conn.close()
+        await asyncio.to_thread(store)
     
     async def get_capability(self, capability_id: str) -> Optional[CapabilityRecord]:
         """獲取指定的能力記錄"""
-        return self._capabilities.get(capability_id)
+        return await asyncio.to_thread(self._capabilities.get, capability_id)
     
     async def list_capabilities(
         self,
@@ -279,29 +308,34 @@ class CapabilityRegistry:
         Returns:
             符合條件的能力列表
         """
-        capabilities = list(self._capabilities.values())
+        import asyncio
         
-        # 應用篩選條件
-        if language:
-            capabilities = [c for c in capabilities if c.language == language]
+        def filter_capabilities():
+            capabilities = list(self._capabilities.values())
+            
+            # 應用篩選條件
+            if language:
+                capabilities = [c for c in capabilities if c.language == language]
+            
+            if capability_type:
+                capabilities = [c for c in capabilities if c.capability_type == capability_type]
+            
+            if status:
+                capabilities = [c for c in capabilities if c.status == status]
+            
+            if tags:
+                capabilities = [
+                    c for c in capabilities 
+                    if any(tag in c.tags for tag in tags)
+                ]
+            
+            # 應用數量限制
+            if limit and limit > 0:
+                capabilities = capabilities[:limit]
+            
+            return capabilities
         
-        if capability_type:
-            capabilities = [c for c in capabilities if c.capability_type == capability_type]
-        
-        if status:
-            capabilities = [c for c in capabilities if c.status == status]
-        
-        if tags:
-            capabilities = [
-                c for c in capabilities 
-                if any(tag in c.tags for tag in tags)
-            ]
-        
-        # 應用數量限制
-        if limit and limit > 0:
-            capabilities = capabilities[:limit]
-        
-        return capabilities
+        return await asyncio.to_thread(filter_capabilities)
     
     async def discover_capabilities(self) -> Dict[str, Any]:
         """
@@ -369,166 +403,196 @@ class CapabilityRegistry:
     
     async def _discover_python_capabilities(self) -> List[CapabilityRecord]:
         """發現 Python 模組中的能力"""
-        discovered = []
+        import asyncio
         
-        # 掃描 services/features 目錄
-        features_dir = Path("services/features")
-        if features_dir.exists():
-            for module_dir in features_dir.iterdir():
-                if module_dir.is_dir() and module_dir.name.startswith("function_"):
-                    try:
-                        capability = await self._analyze_python_module(module_dir)
-                        if capability:
-                            discovered.append(capability)
-                    except Exception as e:
-                        logger.warning(
-                            f"分析 Python 模組失敗: {module_dir.name}",
-                            error=str(e)
-                        )
+        async def discover():
+            discovered = []
+            
+            # 掃描 services/features 目錄
+            features_dir = Path("services/features")
+            if features_dir.exists():
+                for module_dir in features_dir.iterdir():
+                    if module_dir.is_dir() and module_dir.name.startswith("function_"):
+                        try:
+                            capability = await self._analyze_python_module(module_dir)
+                            if capability:
+                                discovered.append(capability)
+                        except Exception as e:
+                            logger.warning(
+                                f"分析 Python 模組失敗: {module_dir.name}",
+                                error=str(e)
+                            )
+            
+            return discovered
         
-        return discovered
+        return await asyncio.to_thread(discover)
     
     async def _analyze_python_module(self, module_dir: Path) -> Optional[CapabilityRecord]:
         """分析單個 Python 模組"""
+        import asyncio
         
-        # 查找主要工作檔案
-        worker_files = list(module_dir.glob("*worker.py"))
-        if not worker_files:
-            worker_files = list(module_dir.glob("*.py"))
+        def analyze():
+            # 查找主要工作檔案
+            worker_files = list(module_dir.glob("*worker.py"))
+            if not worker_files:
+                worker_files = list(module_dir.glob("*.py"))
+            
+            if not worker_files:
+                return None
+            
+            main_file = worker_files[0]
+            
+            # 提取模組資訊
+            module_name = module_dir.name
+            capability_id = f"security.{module_name}.scan"
+            
+            # 基本能力記錄
+            capability = CapabilityRecord(
+                id=capability_id,
+                name=f"{module_name.replace('_', ' ').title()} Scanner",
+                description=f"自動發現的 {module_name} 掃描能力",
+                module=module_name,
+                language=ProgrammingLanguage.PYTHON,
+                entrypoint=f"services.features.{module_name}.{main_file.stem}:main",
+                capability_type=CapabilityType.SCANNER,
+                tags=["security", "auto-discovered", "python"],
+                status=CapabilityStatus.UNKNOWN
+            )
+            
+            return capability
         
-        if not worker_files:
-            return None
-        
-        main_file = worker_files[0]
-        
-        # 提取模組資訊
-        module_name = module_dir.name
-        capability_id = f"security.{module_name}.scan"
-        
-        # 基本能力記錄
-        capability = CapabilityRecord(
-            id=capability_id,
-            name=f"{module_name.replace('_', ' ').title()} Scanner",
-            description=f"自動發現的 {module_name} 掃描能力",
-            module=module_name,
-            language=ProgrammingLanguage.PYTHON,
-            entrypoint=f"services.features.{module_name}.{main_file.stem}:main",
-            capability_type=CapabilityType.SCANNER,
-            tags=["security", "auto-discovered", "python"],
-            status=CapabilityStatus.UNKNOWN
-        )
-        
-        return capability
+        return await asyncio.to_thread(analyze)
     
     async def _discover_go_capabilities(self) -> List[CapabilityRecord]:
         """發現 Go 服務中的能力"""
-        discovered = []
+        import asyncio
         
-        # 掃描 Go 服務目錄
-        go_services_dir = Path("services/features")
-        if go_services_dir.exists():
-            for service_dir in go_services_dir.iterdir():
-                if service_dir.is_dir() and service_dir.name.endswith("_go"):
-                    try:
-                        capability = await self._analyze_go_service(service_dir)
-                        if capability:
-                            discovered.append(capability)
-                    except Exception as e:
-                        logger.warning(
-                            f"分析 Go 服務失敗: {service_dir.name}",
-                            error=str(e)
-                        )
+        async def discover():
+            discovered = []
+            
+            # 掃描 Go 服務目錄
+            go_services_dir = Path("services/features")
+            if go_services_dir.exists():
+                for service_dir in go_services_dir.iterdir():
+                    if service_dir.is_dir() and service_dir.name.endswith("_go"):
+                        try:
+                            capability = await self._analyze_go_service(service_dir)
+                            if capability:
+                                discovered.append(capability)
+                        except Exception as e:
+                            logger.warning(
+                                f"分析 Go 服務失敗: {service_dir.name}",
+                                error=str(e)
+                            )
+            
+            return discovered
         
-        return discovered
+        return await asyncio.to_thread(discover)
     
     async def _analyze_go_service(self, service_dir: Path) -> Optional[CapabilityRecord]:
         """分析單個 Go 服務"""
+        import asyncio
         
-        # 查找 main.go 或 cmd 目錄
-        main_files = list(service_dir.glob("main.go"))
-        if not main_files:
-            main_files = list(service_dir.glob("cmd/*/main.go"))
+        def analyze():
+            # 查找 main.go 或 cmd 目錄
+            main_files = list(service_dir.glob("main.go"))
+            if not main_files:
+                main_files = list(service_dir.glob("cmd/*/main.go"))
+            
+            if not main_files:
+                return None
+            
+            service_name = service_dir.name.replace("_go", "")
+            capability_id = f"security.{service_name}.scan"
+            
+            capability = CapabilityRecord(
+                id=capability_id,
+                name=f"{service_name.replace('_', ' ').title()} Go Service",
+                description=f"自動發現的 {service_name} Go 掃描服務",
+                module=service_dir.name,
+                language=ProgrammingLanguage.GO,
+                entrypoint=f"http://localhost:8080/{service_name}",  # 預設端點
+                capability_type=CapabilityType.SCANNER,
+                tags=["security", "auto-discovered", "go", "microservice"],
+                status=CapabilityStatus.UNKNOWN
+            )
+            
+            return capability
         
-        if not main_files:
-            return None
-        
-        service_name = service_dir.name.replace("_go", "")
-        capability_id = f"security.{service_name}.scan"
-        
-        capability = CapabilityRecord(
-            id=capability_id,
-            name=f"{service_name.replace('_', ' ').title()} Go Service",
-            description=f"自動發現的 {service_name} Go 掃描服務",
-            module=service_dir.name,
-            language=ProgrammingLanguage.GO,
-            entrypoint=f"http://localhost:8080/{service_name}",  # 預設端點
-            capability_type=CapabilityType.SCANNER,
-            tags=["security", "auto-discovered", "go", "microservice"],
-            status=CapabilityStatus.UNKNOWN
-        )
-        
-        return capability
+        return await asyncio.to_thread(analyze)
     
     async def _discover_rust_capabilities(self) -> List[CapabilityRecord]:
         """發現 Rust 模組中的能力"""
-        discovered = []
+        import asyncio
         
-        # 掃描 Rust 模組目錄
-        rust_modules_dir = Path("services/scan")
-        if rust_modules_dir.exists():
-            for module_dir in rust_modules_dir.iterdir():
-                if module_dir.is_dir() and module_dir.name.endswith("_rust"):
-                    try:
-                        capability = await self._analyze_rust_module(module_dir)
-                        if capability:
-                            discovered.append(capability)
-                    except Exception as e:
-                        logger.warning(
-                            f"分析 Rust 模組失敗: {module_dir.name}",
-                            error=str(e)
-                        )
+        async def discover():
+            discovered = []
+            
+            # 掃描 Rust 模組目錄
+            rust_modules_dir = Path("services/scan")
+            if rust_modules_dir.exists():
+                for module_dir in rust_modules_dir.iterdir():
+                    if module_dir.is_dir() and module_dir.name.endswith("_rust"):
+                        try:
+                            capability = await self._analyze_rust_module(module_dir)
+                            if capability:
+                                discovered.append(capability)
+                        except Exception as e:
+                            logger.warning(
+                                f"分析 Rust 模組失敗: {module_dir.name}",
+                                error=str(e)
+                            )
+            
+            return discovered
         
-        return discovered
+        return await asyncio.to_thread(discover)
     
     async def _analyze_rust_module(self, module_dir: Path) -> Optional[CapabilityRecord]:
         """分析單個 Rust 模組"""
+        import asyncio
         
-        # 查找 Cargo.toml
-        cargo_file = module_dir / "Cargo.toml"
-        if not cargo_file.exists():
-            return None
+        def analyze():
+            # 查找 Cargo.toml
+            cargo_file = module_dir / "Cargo.toml"
+            if not cargo_file.exists():
+                return None
+            
+            module_name = module_dir.name.replace("_rust", "")
+            capability_id = f"security.{module_name}.scan"
+            
+            capability = CapabilityRecord(
+                id=capability_id,
+                name=f"{module_name.replace('_', ' ').title()} Rust Module",
+                description=f"自動發現的 {module_name} Rust 掃描模組",
+                module=module_dir.name,
+                language=ProgrammingLanguage.RUST,
+                entrypoint=f"target/release/{module_dir.name}",
+                capability_type=CapabilityType.SCANNER,
+                tags=["security", "auto-discovered", "rust", "performance"],
+                status=CapabilityStatus.UNKNOWN
+            )
+            
+            return capability
         
-        module_name = module_dir.name.replace("_rust", "")
-        capability_id = f"security.{module_name}.scan"
-        
-        capability = CapabilityRecord(
-            id=capability_id,
-            name=f"{module_name.replace('_', ' ').title()} Rust Module",
-            description=f"自動發現的 {module_name} Rust 掃描模組",
-            module=module_dir.name,
-            language=ProgrammingLanguage.RUST,
-            entrypoint=f"target/release/{module_dir.name}",
-            capability_type=CapabilityType.SCANNER,
-            tags=["security", "auto-discovered", "rust", "performance"],
-            status=CapabilityStatus.UNKNOWN
-        )
-        
-        return capability
+        return await asyncio.to_thread(analyze)
     
     async def get_capability_stats(self) -> Dict[str, Any]:
         """獲取能力統計資訊"""
-        stats = {
-            "total_capabilities": len(self._capabilities),
-            "by_language": {},
-            "by_type": {},
-            "by_status": {},
-            "health_summary": {
-                "healthy": 0,
-                "degraded": 0,
-                "failed": 0,
-                "unknown": 0
+        def _compute_stats():
+            return {
+                "total_capabilities": len(self._capabilities),
+                "by_language": {},
+                "by_type": {},
+                "by_status": {},
+                "health_summary": {
+                    "healthy": 0,
+                    "degraded": 0,
+                    "failed": 0,
+                    "unknown": 0
+                }
             }
-        }
+        
+        stats = await asyncio.to_thread(_compute_stats)
         
         for capability in self._capabilities.values():
             # 語言統計
@@ -556,34 +620,38 @@ class CapabilityRegistry:
         Returns:
             匹配的能力列表
         """
-        if not search_term:
-            return []
+        import asyncio
         
-        search_term = search_term.lower()
-        matched_capabilities = []
+        def search():
+            if not search_term:
+                return list(self._capabilities.values())
+            
+            search_term_lower = search_term.lower()
+            matched_capabilities = []
+            
+            for capability in self._capabilities.values():
+                # 檢查名稱匹配
+                if search_term_lower in capability.name.lower():
+                    matched_capabilities.append(capability)
+                    continue
+                
+                # 檢查描述匹配
+                if capability.description and search_term_lower in capability.description.lower():
+                    matched_capabilities.append(capability)
+                    continue
+                
+                # 檢查標籤匹配
+                if any(search_term_lower in tag.lower() for tag in capability.tags):
+                    matched_capabilities.append(capability)
+                    continue
+                
+                # 檢查ID匹配
+                if search_term_lower in capability.id.lower():
+                    matched_capabilities.append(capability)
+            
+            return matched_capabilities
         
-        for capability in self._capabilities.values():
-            # 檢查名稱匹配
-            if search_term in capability.name.lower():
-                matched_capabilities.append(capability)
-                continue
-            
-            # 檢查描述匹配
-            if capability.description and search_term in capability.description.lower():
-                matched_capabilities.append(capability)
-                continue
-            
-            # 檢查標籤匹配
-            if any(search_term in tag.lower() for tag in capability.tags):
-                matched_capabilities.append(capability)
-                continue
-            
-            # 檢查ID匹配
-            if search_term in capability.id.lower():
-                matched_capabilities.append(capability)
-                continue
-        
-        return matched_capabilities
+        return await asyncio.to_thread(search)
     
     async def get_capability_scorecard(self, capability_id: str) -> Optional[CapabilityScorecard]:
         """
@@ -596,7 +664,7 @@ class CapabilityRegistry:
             評分卡數據或None
         """
         # 從數據庫查詢評分卡
-        conn = sqlite3.connect(self.db_path)
+        conn = await asyncio.to_thread(sqlite3.connect, self.db_path)
         cursor = conn.cursor()
         
         cursor.execute("""

@@ -15,10 +15,13 @@ mod scanner;
 mod secret_detector;
 mod git_history_scanner;
 mod verifier;
+mod schemas;
+
 use scanner::SensitiveInfoScanner;
 use secret_detector::SecretDetector;
 use git_history_scanner::GitHistoryScanner;
 use verifier::Verifier;
+use schemas::generated::{FindingPayload, Vulnerability, VulnerabilityType, Severity, Confidence, Target, FindingEvidence};
 
 const RABBITMQ_URL: &str = "amqp://aiva:dev_password@localhost:5672";
 const TASK_QUEUE: &str = "task.scan.sensitive_info";
@@ -31,19 +34,75 @@ struct ScanTask {
     source_url: String,
 }
 
-#[derive(Debug, Serialize)]
-struct Finding {
-    task_id: String,
-    info_type: String,
-    value: String,
-    confidence: f32,
-    location: String,
-    severity: Option<String>,           // 密鑰嚴重性
-    entropy: Option<f64>,               // 熵值
-    rule_name: Option<String>,          // 觸發的規則名稱
-    verified: Option<bool>,             // 驗證狀態: true=有效, false=無效, None=未驗證
-    verification_message: Option<String>, // 驗證訊息
-    verification_metadata: Option<std::collections::HashMap<String, String>>, // 驗證元數據
+// 移除自定義 Finding 結構，使用標準 FindingPayload
+// 保持向後兼容的輔助函數
+fn create_finding_payload(
+    task_id: &str,
+    scan_id: &str,
+    info_type: &str,
+    value: &str,
+    location: &str,
+    severity: Option<&str>,
+    confidence_level: Confidence,
+) -> FindingPayload {
+    let finding_id = format!("finding_{}_{}", task_id, uuid::Uuid::new_v4().to_string());
+    
+    let vulnerability_type = match info_type {
+        "secret" | "git_secret" => VulnerabilityType::WeakAuthentication,
+        "sensitive_info" => VulnerabilityType::InformationLeak,
+        _ => VulnerabilityType::InformationLeak,
+    };
+    
+    let severity_enum = match severity.unwrap_or("medium") {
+        "CRITICAL" => Severity::Critical,
+        "HIGH" => Severity::High,
+        "MEDIUM" => Severity::Medium,
+        "LOW" => Severity::Low,
+        _ => Severity::Medium,
+    };
+    
+    let vulnerability = Vulnerability {
+        name: vulnerability_type,
+        cwe: Some("CWE-200".to_string()), // Information Exposure
+        cve: None,
+        severity: severity_enum,
+        confidence: confidence_level,
+        description: Some(format!("Sensitive information detected: {}", info_type)),
+        cvss_score: None,
+        cvss_vector: None,
+        owasp_category: None,
+    };
+    
+    let target = Target {
+        url: serde_json::Value::String(location.to_string()),
+        parameter: None,
+        method: None,
+        headers: std::collections::HashMap::new(),
+        params: std::collections::HashMap::new(),
+        body: None,
+    };
+    
+    let evidence = FindingEvidence {
+        payload: Some(value.to_string()),
+        response_time_delta: None,
+        db_version: None,
+        request: None,
+        response: None,
+        proof: Some(format!("Found {} at {}", info_type, location)),
+    };
+    
+    let mut finding = FindingPayload::new(
+        finding_id,
+        task_id.to_string(),
+        scan_id.to_string(),
+        "confirmed".to_string(),
+        vulnerability,
+        target,
+    );
+    
+    finding.evidence = Some(evidence);
+    finding.strategy = Some("sensitive_info_detection".to_string());
+    finding
 }
 
 #[tokio::main]
@@ -140,26 +199,33 @@ async fn process_task(
     let task: ScanTask = serde_json::from_slice(data)?;
     info!("📥 收到敏感資訊掃描任務: {}", task.task_id);
 
-    let mut all_findings = Vec::new();
+    let scan_id = format!("scan_{}", uuid::Uuid::new_v4().to_string());
+    let mut all_findings = Vec::<FindingPayload>::new();
 
     // 1. 原有的敏感資訊掃描
     let sensitive_findings = scanner.scan(&task.content, &task.source_url);
     info!("  📊 敏感資訊掃描: 發現 {} 個結果", sensitive_findings.len());
     
     for finding in sensitive_findings {
-        all_findings.push(Finding {
-            task_id: task.task_id.clone(),
-            info_type: finding.info_type,
-            value: finding.value,
-            confidence: finding.confidence,
-            location: finding.location,
-            severity: None,
-            entropy: None,
-            rule_name: None,
-            verified: None,
-            verification_message: None,
-            verification_metadata: None,
-        });
+        let confidence_level = if finding.confidence >= 0.8 {
+            Confidence::Certain
+        } else if finding.confidence >= 0.6 {
+            Confidence::Firm
+        } else {
+            Confidence::Possible
+        };
+        
+        let finding_payload = create_finding_payload(
+            &task.task_id,
+            &scan_id,
+            "sensitive_info",
+            &finding.value,
+            &finding.location,
+            None,
+            confidence_level,
+        );
+        
+        all_findings.push(finding_payload);
     }
 
     // 2. 密鑰檢測掃描
@@ -191,19 +257,44 @@ async fn process_task(
             (None, None, None)
         };
         
-        all_findings.push(Finding {
-            task_id: task.task_id.clone(),
-            info_type: "secret".to_string(),
-            value: finding.matched_text.clone(),
-            confidence: 0.9, // 密鑰匹配高信心度
-            location: format!("{}:{}", finding.file_path, finding.line_number),
-            severity: Some(finding.severity),
-            entropy: finding.entropy,
-            rule_name: Some(finding.rule_name),
-            verified,
-            verification_message,
-            verification_metadata,
-        });
+        let mut finding_payload = create_finding_payload(
+            &task.task_id,
+            &scan_id,
+            "secret",
+            &finding.matched_text,
+            &format!("{}:{}", finding.file_path, finding.line_number),
+            Some(&finding.severity),
+            Confidence::Firm, // 密鑰匹配高信心度
+        );
+        
+        // 添加密鑰檢測專用的元數據
+        finding_payload.metadata.insert(
+            "entropy".to_string(),
+            serde_json::Value::Number(
+                serde_json::Number::from_f64(finding.entropy.unwrap_or(0.0))
+                    .unwrap_or(serde_json::Number::from(0))
+            )
+        );
+        finding_payload.metadata.insert(
+            "rule_name".to_string(),
+            serde_json::Value::String(finding.rule_name)
+        );
+        
+        if let Some(verified) = verified {
+            finding_payload.metadata.insert(
+                "verified".to_string(),
+                serde_json::Value::Bool(verified)
+            );
+        }
+        
+        if let Some(msg) = verification_message {
+            finding_payload.metadata.insert(
+                "verification_message".to_string(),
+                serde_json::Value::String(msg)
+            );
+        }
+        
+        all_findings.push(finding_payload);
     }
 
     // 3. Git 歷史掃描（僅當 source_url 看起來像 Git 倉庫時）
@@ -220,23 +311,44 @@ async fn process_task(
             info!("  🔍 Git 歷史掃描: 發現 {} 個密鑰", git_findings.len());
             
             for finding in git_findings {
-                all_findings.push(Finding {
-                    task_id: task.task_id.clone(),
-                    info_type: "git_secret".to_string(),
-                    value: finding.finding.matched_text.clone(),
-                    confidence: 0.85, // Git 歷史匹配稍低信心度
-                    location: format!("commit:{} {}:{}", 
-                        &finding.commit_hash[..8], 
-                        finding.finding.file_path, 
-                        finding.finding.line_number
-                    ),
-                    severity: Some(finding.finding.severity),
-                    entropy: finding.finding.entropy,
-                    rule_name: Some(finding.finding.rule_name),
-                    verified: None, // Git 歷史密鑰暫不驗證（可能已失效）
-                    verification_message: None,
-                    verification_metadata: None,
-                });
+                let location = format!("commit:{} {}:{}", 
+                    &finding.commit_hash[..8], 
+                    finding.finding.file_path, 
+                    finding.finding.line_number
+                );
+                
+                let mut finding_payload = create_finding_payload(
+                    &task.task_id,
+                    &scan_id,
+                    "git_secret",
+                    &finding.finding.matched_text,
+                    &location,
+                    Some(&finding.finding.severity),
+                    Confidence::Possible, // Git 歷史匹配稍低信心度
+                );
+                
+                // 添加 Git 專用元數據
+                finding_payload.metadata.insert(
+                    "commit_hash".to_string(),
+                    serde_json::Value::String(finding.commit_hash)
+                );
+                finding_payload.metadata.insert(
+                    "entropy".to_string(),
+                    serde_json::Value::Number(
+                        serde_json::Number::from_f64(finding.finding.entropy.unwrap_or(0.0))
+                            .unwrap_or(serde_json::Number::from(0))
+                    )
+                );
+                finding_payload.metadata.insert(
+                    "rule_name".to_string(),
+                    serde_json::Value::String(finding.finding.rule_name)
+                );
+                finding_payload.metadata.insert(
+                    "git_historical".to_string(),
+                    serde_json::Value::Bool(true)
+                );
+                
+                all_findings.push(finding_payload);
             }
         } else {
             info!("  ⚠️  Git 歷史掃描跳過（可能不是有效的 Git 倉庫）");

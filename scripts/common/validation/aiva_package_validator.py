@@ -186,7 +186,7 @@ class AIVAPackageValidator:
             
             # 測試基礎Schema導入
             try:
-                from services.aiva_common.schemas.generated.base_types import MessageHeader
+                from services.aiva_common.schemas.base_types import MessageHeader
                 results['test_results']['base_schema_import'] = True
             except ImportError as e:
                 results['test_results']['base_schema_import'] = False
@@ -194,7 +194,7 @@ class AIVAPackageValidator:
             
             # 測試消息Schema導入  
             try:
-                from services.aiva_common.schemas.generated.messaging import AivaMessage
+                from services.aiva_common.schemas.messaging import AivaMessage
                 results['test_results']['messaging_schema_import'] = True
             except ImportError as e:
                 results['test_results']['messaging_schema_import'] = False

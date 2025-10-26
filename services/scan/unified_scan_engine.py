@@ -100,7 +100,7 @@ class UnifiedScanEngine:
         try:
             # 1. 客戶端授權繞過檢測
             from services.features.client_side_auth_bypass.client_side_auth_bypass_worker import ClientSideAuthBypassWorker
-            from services.aiva_common.schemas.generated.tasks import FunctionTaskPayload, FunctionTaskTarget, FunctionTaskContext
+            from services.aiva_common.schemas.tasks import FunctionTaskPayload, FunctionTaskTarget, FunctionTaskContext
             
             for target_url in self.config.targets:
                 self.logger.info(f"執行客戶端授權繞過檢測: {target_url}")

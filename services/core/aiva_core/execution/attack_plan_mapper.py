@@ -9,22 +9,10 @@ AI 攻擊計畫映射器
 import logging
 from typing import Dict, Any, List, Optional
 
-# 假設 Schema 已可正確導入
-try:
-    from services.aiva_common.schemas.generated.tasks import FunctionTaskPayload, FunctionTaskTarget, FunctionTaskContext
-    from services.aiva_common.schemas.generated.messaging import AivaMessage  # AI 決策消息
-    from services.aiva_common.enums.modules import ModuleName  # 使用正確的枚舉名稱
-    # 可能需要導入其他 Schema 或工具
-    IMPORT_SUCCESS = True
-except ImportError as e:
-    logging.getLogger(__name__).error(f"Failed to import schemas in attack_plan_mapper: {e}")
-    IMPORT_SUCCESS = False
-    # Define dummy classes if import fails to allow file loading
-    class FunctionTaskPayload: pass
-    class FunctionTaskTarget: pass
-    class FunctionTaskContext: pass
-    class AivaMessage: pass
-    class ModuleName: pass
+# 遵循 aiva_common 單一事實來源原則 - 統一使用標準模組
+from services.aiva_common.schemas.tasks import FunctionTaskPayload, FunctionTaskTarget, FunctionTaskContext
+from services.aiva_common.schemas import AivaMessage
+from services.aiva_common.enums.modules import ModuleName
 
 
 logger = logging.getLogger(__name__)
@@ -35,8 +23,6 @@ class AttackPlanMapper:
     """
 
     def __init__(self):
-        if not IMPORT_SUCCESS:
-            logger.error("AttackPlanMapper initialized with failed schema imports!")
         logger.info("AttackPlanMapper initialized.")
         # 可能需要初始化資源，例如工具註冊表、目標信息等
 

@@ -11,6 +11,9 @@ import (
 	"time"
 
 	"go.uber.org/zap"
+
+	// 使用標準 schema 定義
+	schemas "github.com/kyle0527/aiva/services/function/common/go/aiva_common_go/schemas/generated"
 )
 
 type ScanTask struct {
@@ -20,15 +23,9 @@ type ScanTask struct {
 	Metadata map[string]string `json:"metadata"`
 }
 
-type Finding struct {
-	TaskID   string   `json:"task_id"`
-	Module   string   `json:"module"`
-	Severity string   `json:"severity"`
-	Title    string   `json:"title"`
-	Summary  string   `json:"summary"`
-	Evidence string   `json:"evidence"`
-	CWEIDs   []string `json:"cwe_ids"`
-}
+// 使用標準 FindingPayload 替代自定義 Finding 結構
+// 這確保與 Python aiva_common 的一致性
+type Finding = schemas.FindingPayload
 
 type SSRFDetector struct {
 	logger        *zap.Logger
@@ -147,23 +144,41 @@ func (d *SSRFDetector) Scan(ctx context.Context, task *ScanTask) ([]*Finding, er
 			// 檢查回應內容是否包含敏感資訊
 			bodyStr := string(body)
 			if d.containsSensitiveInfo(bodyStr, payload) {
+				// 創建符合標準 FindingPayload 格式的發現
+				evidence := &schemas.FindingEvidence{
+					Request:  &testURL,
+					Response: &bodyStr,
+					Proof: func() *string {
+						s := fmt.Sprintf("Status: %d, Body (前100字): %s", resp.StatusCode, truncate(bodyStr, 100))
+						return &s
+					}(),
+				}
+
+				vulnerability := schemas.Vulnerability{
+					Name:       "SSRF",
+					Cwe:        func() *string { s := "CWE-918"; return &s }(),
+					Severity:   "HIGH",
+					Confidence: "FIRM",
+					Description: func() *string {
+						s := "Server-Side Request Forgery vulnerability detected"
+						return &s
+					}(),
+				}
+
+				target := schemas.Target{
+					Url: task.Target,
+				}
+
 				finding := &Finding{
-					TaskID:   task.TaskID,
-					Module:   "ssrf",
-					Severity: "HIGH",
-					Title:    "SSRF Vulnerability Detected",
-					Summary: fmt.Sprintf(
-						"成功訪問內網資源: %s (Status: %d)",
-						payload,
-						resp.StatusCode,
-					),
-					Evidence: fmt.Sprintf(
-						"URL: %s\nStatus: %d\nBody (前100字): %s",
-						testURL,
-						resp.StatusCode,
-						truncate(bodyStr, 100),
-					),
-					CWEIDs: []string{"CWE-918"},
+					FindingId:     fmt.Sprintf("finding_%s_%d", task.TaskID, time.Now().Unix()),
+					TaskId:        task.TaskID,
+					ScanId:        "ssrf_scan",
+					Status:        "confirmed",
+					Vulnerability: vulnerability,
+					Target:        target,
+					Evidence:      evidence,
+					CreatedAt:     time.Now(),
+					UpdatedAt:     time.Now(),
 				}
 				findings = append(findings, finding)
 

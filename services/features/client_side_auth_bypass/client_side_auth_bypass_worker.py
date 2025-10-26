@@ -15,9 +15,9 @@ import re
 from urllib.parse import urljoin
 
 # 直接導入，不使用 fallback（確保 aiva_common 可用）
-from services.aiva_common.schemas.generated.tasks import FunctionTaskPayload
+from services.aiva_common.schemas.tasks import FunctionTaskPayload
 from services.aiva_common.schemas.telemetry import FunctionExecutionResult
-from services.aiva_common.schemas.generated.findings import FindingPayload
+from services.aiva_common.schemas.findings import FindingPayload
 from services.aiva_common.enums.common import Severity, Confidence
 from services.features.base.feature_base import FeatureBase
 from .js_analysis_engine import JavaScriptAnalysisEngine

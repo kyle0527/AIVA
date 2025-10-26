@@ -7,7 +7,7 @@ import (
 	"os/exec"
 	"time"
 
-	"github.com/kyle0527/aiva/services/function/common/go/aiva_common_go/schemas"
+	schemas "github.com/kyle0527/aiva/services/function/common/go/aiva_common_go/schemas/generated"
 	"go.uber.org/zap"
 )
 
@@ -35,7 +35,7 @@ func NewCSPMScanner(logger *zap.Logger) *CSPMScanner {
 }
 
 // Scan 執行 CSPM 掃描
-func (s *CSPMScanner) Scan(ctx context.Context, task *schemas.FunctionTaskPayload) ([]*schemas.FindingPayload, error) {
+func (s *CSPMScanner) Scan(ctx context.Context, task *schemas.ScanTaskPayload) ([]*schemas.FindingPayload, error) {
 	var findings []*schemas.FindingPayload
 
 	// 從 task metadata 或 URL 中提取 provider 信息
@@ -44,7 +44,7 @@ func (s *CSPMScanner) Scan(ctx context.Context, task *schemas.FunctionTaskPayloa
 
 	s.logger.Info("Starting CSPM scan",
 		zap.String("provider", provider),
-		zap.String("task_id", task.TaskID))
+		zap.String("task_id", task.TaskId))
 
 	// 根據提供商選擇掃描方法
 	var misconfigs []CSPMMisconfig
@@ -70,7 +70,7 @@ func (s *CSPMScanner) Scan(ctx context.Context, task *schemas.FunctionTaskPayloa
 	// 轉換為 FindingPayload
 	scanID := fmt.Sprintf("scan_cspm_%d", time.Now().UnixNano())
 	for _, misconfig := range misconfigs {
-		finding := s.createFinding(task.TaskID, scanID, provider, misconfig)
+		finding := s.createFinding(task.TaskId, scanID, provider, misconfig)
 		findings = append(findings, &finding)
 	}
 
@@ -78,24 +78,24 @@ func (s *CSPMScanner) Scan(ctx context.Context, task *schemas.FunctionTaskPayloa
 }
 
 // scanAWS 掃描 AWS 配置
-func (s *CSPMScanner) scanAWS(ctx context.Context, task *schemas.FunctionTaskPayload) ([]CSPMMisconfig, error) {
+func (s *CSPMScanner) scanAWS(ctx context.Context, task *schemas.ScanTaskPayload) ([]CSPMMisconfig, error) {
 	return s.scanWithTrivy(ctx, task, "aws")
 }
 
 // scanAzure 掃描 Azure 配置
-func (s *CSPMScanner) scanAzure(ctx context.Context, task *schemas.FunctionTaskPayload) ([]CSPMMisconfig, error) {
+func (s *CSPMScanner) scanAzure(ctx context.Context, task *schemas.ScanTaskPayload) ([]CSPMMisconfig, error) {
 	return s.scanWithTrivy(ctx, task, "azure")
 }
 
 // scanGCP 掃描 GCP 配置
-func (s *CSPMScanner) scanGCP(ctx context.Context, task *schemas.FunctionTaskPayload) ([]CSPMMisconfig, error) {
+func (s *CSPMScanner) scanGCP(ctx context.Context, task *schemas.ScanTaskPayload) ([]CSPMMisconfig, error) {
 	return s.scanWithTrivy(ctx, task, "gcp")
 }
 
 // scanKubernetes 掃描 Kubernetes 配置
-func (s *CSPMScanner) scanKubernetes(ctx context.Context, task *schemas.FunctionTaskPayload) ([]CSPMMisconfig, error) {
-	// 從 URL 中提取配置路徑
-	configPath := task.Target.URL
+func (s *CSPMScanner) scanKubernetes(ctx context.Context, task *schemas.ScanTaskPayload) ([]CSPMMisconfig, error) {
+	// 從 Target.Url 中提取配置路徑
+	configPath := task.Target.Url
 	if configPath == "" {
 		return nil, fmt.Errorf("kubernetes config path is required")
 	}
@@ -112,9 +112,9 @@ func (s *CSPMScanner) scanKubernetes(ctx context.Context, task *schemas.Function
 }
 
 // scanGeneric 掃描通用配置文件
-func (s *CSPMScanner) scanGeneric(ctx context.Context, task *schemas.FunctionTaskPayload) ([]CSPMMisconfig, error) {
-	// 從 URL 中提取配置路徑
-	configPath := task.Target.URL
+func (s *CSPMScanner) scanGeneric(ctx context.Context, task *schemas.ScanTaskPayload) ([]CSPMMisconfig, error) {
+	// 從 Target.Url 中提取配置路徑
+	configPath := task.Target.Url
 	if configPath == "" {
 		configPath = "."
 	}
@@ -129,7 +129,7 @@ func (s *CSPMScanner) scanGeneric(ctx context.Context, task *schemas.FunctionTas
 }
 
 // scanWithTrivy 使用 Trivy 掃描雲端配置
-func (s *CSPMScanner) scanWithTrivy(ctx context.Context, _ *schemas.FunctionTaskPayload, provider string) ([]CSPMMisconfig, error) {
+func (s *CSPMScanner) scanWithTrivy(ctx context.Context, _ *schemas.ScanTaskPayload, provider string) ([]CSPMMisconfig, error) {
 	// Trivy 雲端掃描命令
 	cmd := exec.CommandContext(ctx, "trivy", provider, "--format", "json")
 
@@ -206,28 +206,26 @@ func (s *CSPMScanner) createFinding(
 	// 映射嚴重性
 	severity := mapSeverity(misconfig.Severity)
 	businessImpact := fmt.Sprintf("%s 級別的雲端配置錯誤可能導致安全風險", severity)
-	description := misconfig.Description
 
 	return schemas.FindingPayload{
-		FindingID: findingID,
-		TaskID:    taskID,
-		ScanID:    scanID,
-		Status:    "CONFIRMED",
+		FindingId: findingID,
+		TaskId:    taskID,
+		ScanId:    scanID,
+		Status:    "confirmed",
 		Vulnerability: schemas.Vulnerability{
 			Name:        misconfig.Title,
-			CWE:         stringPtr(misconfig.ID),
+			Cwe:         stringPtr(misconfig.ID),
 			Severity:    severity,
-			Confidence:  "HIGH",
+			Confidence:  "FIRM",
 			Description: stringPtr(misconfig.Description),
 		},
-		Target: schemas.FindingTarget{
-			URL: misconfig.FilePath,
+		Target: schemas.Target{
+			Url: misconfig.FilePath,
 		},
 		Evidence: &schemas.FindingEvidence{
 			Proof: stringPtr(fmt.Sprintf("Rule ID: %s, Provider: %s", misconfig.ID, provider)),
 		},
 		Impact: &schemas.FindingImpact{
-			Description:    stringPtr(description),
 			BusinessImpact: stringPtr(businessImpact),
 		},
 		Recommendation: &schemas.FindingRecommendation{
@@ -239,6 +237,8 @@ func (s *CSPMScanner) createFinding(
 			"file_path":   misconfig.FilePath,
 			"resource_id": misconfig.ResourceID,
 		},
+		CreatedAt: time.Now(),
+		UpdatedAt: time.Now(),
 	}
 }
 
