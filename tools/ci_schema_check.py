@@ -84,13 +84,27 @@ class CISchemaChecker:
                 cmd, 
                 capture_output=True, 
                 text=True, 
-                encoding='utf-8'
+                encoding='utf-8',
+                errors='ignore'  # 忽略編碼錯誤
             )
             
             # 解析結果
             if result.stdout:
                 try:
-                    data = json.loads(result.stdout.split('\\n')[-2])  # 取 JSON 輸出
+                    # 嘗試從輸出中找到 JSON 數據
+                    lines = result.stdout.strip().split('\n')
+                    json_line = None
+                    for line in reversed(lines):
+                        line = line.strip()
+                        if line.startswith('{') and line.endswith('}'):
+                            json_line = line
+                            break
+                    
+                    if not json_line:
+                        # 如果沒找到 JSON，嘗試最後一行
+                        json_line = lines[-1] if lines else "{}"
+                    
+                    data = json.loads(json_line)
                     metrics = data.get('summary', {})
                     modules = data.get('modules', [])
                     
