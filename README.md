@@ -153,6 +153,7 @@ python scripts/check_system_status.py
 
 ### 開發指南
 - [開發環境設置](docs/README_DEVELOPMENT.md)
+- [📦 依賴管理完整指南](docs/README_DEPENDENCY_DOCS.md) ⭐
 - [工具集說明](tools/README.md)
 - [測試指南](testing/README.md)
 

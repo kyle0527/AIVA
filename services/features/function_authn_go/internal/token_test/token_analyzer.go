@@ -9,7 +9,7 @@ import (
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
-	"github.com/kyle0527/aiva/services/function/function_authn_go/pkg/models"
+	"github.com/kyle0527/aiva/services/function/common/go/aiva_common_go/schemas"
 	"go.uber.org/zap"
 )
 
@@ -26,23 +26,26 @@ func NewTokenAnalyzer(logger *zap.Logger) *TokenAnalyzer {
 }
 
 // Test 執行 Token 測試
-func (t *TokenAnalyzer) Test(ctx context.Context, task models.FunctionTaskPayload) ([]interface{}, error) {
+func (t *TokenAnalyzer) Test(ctx context.Context, task schemas.FunctionTaskPayload) ([]interface{}, error) {
 	var findings []interface{}
 
-	jwtToken := task.Options.JWTToken
-	if jwtToken != "" {
-		t.logger.Info("Analyzing JWT token")
-		results := t.analyzeJWT(jwtToken)
-		for _, result := range results {
-			if result.Vulnerable {
-				finding := t.createFinding(task.TaskID, task.Target.URL, result)
-				findings = append(findings, finding)
+	// 從請求頭中獲取 JWT Token
+	if authHeader, exists := task.Target.Headers["Authorization"]; exists {
+		if strings.HasPrefix(authHeader, "Bearer ") {
+			jwtToken := strings.TrimPrefix(authHeader, "Bearer ")
+			t.logger.Info("Analyzing JWT token")
+			results := t.analyzeJWT(jwtToken)
+			for _, result := range results {
+				if result.Vulnerable {
+					finding := t.createFinding(task.TaskID, task.Target.URL, result)
+					findings = append(findings, finding)
+				}
 			}
 		}
 	}
 
-	sessionToken := task.Options.SessionToken
-	if sessionToken != "" {
+	// 從 Cookie 中獲取 Session Token
+	if sessionToken, exists := task.Target.Cookies["session"]; exists {
 		t.logger.Info("Analyzing session token")
 		result := t.analyzeSessionToken(sessionToken)
 		if result.Vulnerable {
@@ -55,8 +58,8 @@ func (t *TokenAnalyzer) Test(ctx context.Context, task models.FunctionTaskPayloa
 }
 
 // analyzeJWT 分析 JWT
-func (t *TokenAnalyzer) analyzeJWT(tokenString string) []models.TokenTestResult {
-	var results []models.TokenTestResult
+func (t *TokenAnalyzer) analyzeJWT(tokenString string) []schemas.TokenTestResult {
+	var results []schemas.TokenTestResult
 
 	// 解析 JWT（不驗證簽名）
 	token, _, err := new(jwt.Parser).ParseUnverified(tokenString, jwt.MapClaims{})
@@ -72,7 +75,7 @@ func (t *TokenAnalyzer) analyzeJWT(tokenString string) []models.TokenTestResult 
 
 	// 測試 1: 檢查簽名演算法
 	if token.Method.Alg() == "none" {
-		results = append(results, models.TokenTestResult{
+		results = append(results, schemas.TokenTestResult{
 			Vulnerable:     true,
 			TokenType:      "jwt",
 			Issue:          "None Algorithm",
@@ -90,7 +93,7 @@ func (t *TokenAnalyzer) analyzeJWT(tokenString string) []models.TokenTestResult 
 				return []byte(secret), nil
 			})
 			if err == nil {
-				results = append(results, models.TokenTestResult{
+				results = append(results, schemas.TokenTestResult{
 					Vulnerable:     true,
 					TokenType:      "jwt",
 					Issue:          "Weak Secret",
@@ -106,15 +109,15 @@ func (t *TokenAnalyzer) analyzeJWT(tokenString string) []models.TokenTestResult 
 	if exp, ok := claims["exp"].(float64); ok {
 		expTime := time.Unix(int64(exp), 0)
 		if time.Since(expTime) > 0 {
-			results = append(results, models.TokenTestResult{
+			results = append(results, schemas.TokenTestResult{
 				Vulnerable:     true,
 				TokenType:      "jwt",
 				Issue:          "Expired Token",
 				Details:        fmt.Sprintf("Token 已過期於 %s", expTime.Format(time.RFC3339)),
 				DecodedPayload: claims,
 			})
-		} else if expTime.Sub(time.Now()) > 24*time.Hour {
-			results = append(results, models.TokenTestResult{
+		} else if time.Until(expTime) > 24*time.Hour {
+			results = append(results, schemas.TokenTestResult{
 				Vulnerable:     true,
 				TokenType:      "jwt",
 				Issue:          "Long Expiration",
@@ -124,7 +127,7 @@ func (t *TokenAnalyzer) analyzeJWT(tokenString string) []models.TokenTestResult 
 		}
 	} else {
 		// 沒有過期時間
-		results = append(results, models.TokenTestResult{
+		results = append(results, schemas.TokenTestResult{
 			Vulnerable:     true,
 			TokenType:      "jwt",
 			Issue:          "No Expiration",
@@ -137,7 +140,7 @@ func (t *TokenAnalyzer) analyzeJWT(tokenString string) []models.TokenTestResult 
 	sensitiveFields := []string{"password", "secret", "api_key", "private_key"}
 	for _, field := range sensitiveFields {
 		if _, ok := claims[field]; ok {
-			results = append(results, models.TokenTestResult{
+			results = append(results, schemas.TokenTestResult{
 				Vulnerable:     true,
 				TokenType:      "jwt",
 				Issue:          "Sensitive Data Leak",
@@ -150,7 +153,7 @@ func (t *TokenAnalyzer) analyzeJWT(tokenString string) []models.TokenTestResult 
 	// 測試 5: 檢查用戶權限提升
 	if role, ok := claims["role"].(string); ok {
 		if strings.ToLower(role) == "admin" || strings.ToLower(role) == "root" {
-			results = append(results, models.TokenTestResult{
+			results = append(results, schemas.TokenTestResult{
 				Vulnerable:     true,
 				TokenType:      "jwt",
 				Issue:          "Privilege Escalation Risk",
@@ -164,10 +167,10 @@ func (t *TokenAnalyzer) analyzeJWT(tokenString string) []models.TokenTestResult 
 }
 
 // analyzeSessionToken 分析 Session Token
-func (t *TokenAnalyzer) analyzeSessionToken(token string) models.TokenTestResult {
+func (t *TokenAnalyzer) analyzeSessionToken(token string) schemas.TokenTestResult {
 	// 檢查 token 長度
 	if len(token) < 16 {
-		return models.TokenTestResult{
+		return schemas.TokenTestResult{
 			Vulnerable: true,
 			TokenType:  "session",
 			Issue:      "Weak Session Token",
@@ -185,7 +188,7 @@ func (t *TokenAnalyzer) analyzeSessionToken(token string) models.TokenTestResult
 	}
 
 	if isNumeric {
-		return models.TokenTestResult{
+		return schemas.TokenTestResult{
 			Vulnerable: true,
 			TokenType:  "session",
 			Issue:      "Predictable Session Token",
@@ -198,7 +201,7 @@ func (t *TokenAnalyzer) analyzeSessionToken(token string) models.TokenTestResult
 		var jsonData map[string]interface{}
 		if json.Unmarshal(decoded, &jsonData) == nil {
 			// Token 是 Base64 編碼的 JSON
-			return models.TokenTestResult{
+			return schemas.TokenTestResult{
 				Vulnerable:     true,
 				TokenType:      "session",
 				Issue:          "Unencrypted Session Data",
@@ -208,65 +211,68 @@ func (t *TokenAnalyzer) analyzeSessionToken(token string) models.TokenTestResult
 		}
 	}
 
-	return models.TokenTestResult{
+	return schemas.TokenTestResult{
 		Vulnerable: false,
 		TokenType:  "session",
 	}
 }
 
 // createFinding 建立 Finding
-func (t *TokenAnalyzer) createFinding(taskID, url string, result models.TokenTestResult) models.FindingPayload {
+func (t *TokenAnalyzer) createFinding(taskID, url string, result schemas.TokenTestResult) schemas.FindingPayload {
 	findingID := fmt.Sprintf("finding_authn_token_%d", time.Now().UnixNano())
 	scanID := fmt.Sprintf("scan_authn_%d", time.Now().UnixNano())
 
-	severityMap := map[string]string{
-		"None Algorithm":            "CRITICAL",
-		"Weak Secret":               "CRITICAL",
-		"Expired Token":             "MEDIUM",
-		"Long Expiration":           "MEDIUM",
-		"No Expiration":             "HIGH",
-		"Sensitive Data Leak":       "HIGH",
-		"Privilege Escalation Risk": "HIGH",
-		"Weak Session Token":        "HIGH",
-		"Predictable Session Token": "HIGH",
-		"Unencrypted Session Data":  "HIGH",
-	}
-
-	severity := severityMap[result.Issue]
+	severity := result.Severity
 	if severity == "" {
 		severity = "MEDIUM"
 	}
 
-	payloadJSON, _ := json.Marshal(result.DecodedPayload)
+	payloadJSON, _ := json.Marshal(map[string]interface{}{
+		"token_type": result.TokenType,
+		"test_type":  result.TestType,
+		"details":    result.Details,
+	})
 
-	return models.FindingPayload{
+	cwePtr := "CWE-287"
+	methodPtr := "GET"
+	requestPtr := fmt.Sprintf("Analyzed %s token", result.TokenType)
+	responsePtr := result.Details
+	payloadPtr := string(payloadJSON)
+	proofPtr := fmt.Sprintf("Token 類型: %s\n問題: %s\n詳情: %s", result.TokenType, result.TestType, result.Details)
+	descPtr := result.Details
+	businessPtr := "Token 漏洞可能導致身份竊取、未授權存取或權限提升"
+	techPtr := "身份驗證繞過"
+
+	return schemas.FindingPayload{
 		FindingID: findingID,
 		TaskID:    taskID,
 		ScanID:    scanID,
 		Status:    "CONFIRMED",
-		Vulnerability: models.Vulnerability{
-			Name:       fmt.Sprintf("Token Vulnerability - %s", result.Issue),
-			CWE:        "CWE-287",
-			Severity:   severity,
-			Confidence: "HIGH",
+		Vulnerability: schemas.Vulnerability{
+			Name:        fmt.Sprintf("Token Vulnerability - %s", result.TestType),
+			CWE:         &cwePtr,
+			Severity:    severity,
+			Confidence:  "HIGH",
+			Description: &result.Description,
 		},
-		Target: models.FindingTarget{
-			URL:      url,
-			Endpoint: url,
-			Method:   "GET",
+		Target: schemas.Target{
+			URL:    url,
+			Method: &methodPtr,
 		},
-		Evidence: models.FindingEvidence{
-			Request:        fmt.Sprintf("Analyzed %s token", result.TokenType),
-			Response:       result.Details,
-			Payload:        string(payloadJSON),
-			ProofOfConcept: fmt.Sprintf("Token 類型: %s\n問題: %s\n詳情: %s", result.TokenType, result.Issue, result.Details),
+		Evidence: &schemas.FindingEvidence{
+			Request:  &requestPtr,
+			Response: &responsePtr,
+			Payload:  &payloadPtr,
+			Proof:    &proofPtr,
 		},
-		Impact: models.FindingImpact{
-			Description:    result.Details,
-			BusinessImpact: "Token 漏洞可能導致身份竊取、未授權存取或權限提升",
-			Exploitability: "高",
+		Impact: &schemas.FindingImpact{
+			Description:     &descPtr,
+			BusinessImpact:  &businessPtr,
+			TechnicalImpact: &techPtr,
 		},
-		Recommendation: t.getRecommendation(result.Issue),
+		Recommendation: t.getRecommendationStruct(result.TestType),
+		CreatedAt:      time.Now(),
+		UpdatedAt:      time.Now(),
 	}
 }
 
@@ -289,4 +295,28 @@ func (t *TokenAnalyzer) getRecommendation(issue string) string {
 		return rec
 	}
 	return "請參考 OWASP Authentication Cheat Sheet"
+}
+
+// getRecommendationStruct 獲取修復建議結構
+func (t *TokenAnalyzer) getRecommendationStruct(testType string) *schemas.FindingRecommendation {
+	recommendationText := t.getRecommendation(testType)
+	priority := "HIGH"
+
+	steps := []string{
+		"檢查並修復認證機制",
+		"實施適當的 token 驗證",
+		"確保遵循安全最佳實踐",
+	}
+
+	refs := []string{
+		"https://owasp.org/www-project-cheat-sheets/cheatsheets/Authentication_Cheat_Sheet.html",
+		"https://tools.ietf.org/html/rfc7519",
+	}
+
+	return &schemas.FindingRecommendation{
+		Fix:              &recommendationText,
+		Priority:         &priority,
+		RemediationSteps: steps,
+		References:       refs,
+	}
 }

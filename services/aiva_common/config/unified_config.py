@@ -81,6 +81,22 @@ class UnifiedSettings(BaseModel):
     performance: PerformanceConfig = PerformanceConfig()
     ai: AIConfig = AIConfig()
     scan: ScanConfig = ScanConfig()
+    
+    # 核心監控配置
+    core_monitor_interval: int = int(os.getenv("AIVA_CORE_MONITOR_INTERVAL", "30"))
+    
+    # 功能開關
+    enable_strategy_generator: bool = os.getenv("AIVA_ENABLE_STRATEGY_GEN", "true").lower() == "true"
+    
+    # 向後相容屬性
+    @property
+    def rabbitmq_url(self) -> str:
+        return self.message_queue.rabbitmq_url
+    
+    @property  
+    def postgres_dsn(self) -> str:
+        db = self.database
+        return f"postgresql+asyncpg://{db.postgres_user}:{db.postgres_password}@{db.postgres_host}:{db.postgres_port}/{db.postgres_db}"
 
 
 @lru_cache

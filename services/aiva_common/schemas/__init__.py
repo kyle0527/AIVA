@@ -19,6 +19,28 @@ AIVA Common Schemas Package
 """
 
 # ==================== 基礎模型 ====================
+from .base import (
+    Asset,
+    Authentication,
+    ExecutionError,
+    Fingerprints,
+    MessageHeader,
+    RateLimit,
+    RiskFactor,
+    ScanScope,
+    Summary,
+    Task,
+    TaskDependency,
+)
+
+# ==================== 能力管理 ====================
+from .capability import (
+    CapabilityInfo,
+    CapabilityScorecard,
+    InputParameter,
+    OutputParameter,
+)
+
 # ==================== AI 相關 ====================
 from .ai import (
     AIExperienceCreatedEvent,
@@ -227,6 +249,11 @@ __all__ = [
     "RiskFactor",
     "Task",
     "TaskDependency",
+    # 能力管理
+    "CapabilityInfo",
+    "CapabilityScorecard",
+    "InputParameter",
+    "OutputParameter",
     # 訊息系統
     "AivaMessage",
     "AIVARequest",

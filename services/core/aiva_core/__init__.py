@@ -11,6 +11,11 @@ AIVA Core - 核心引擎模組
 - storage: 數據存儲和持久化
 - analysis: 風險分析和評估
 - execution: 任務執行和調度
+
+新增核心組件 (附件要求實現):
+- dialog: 對話助理 - AI 對話層，支援自然語言問答和一鍵執行
+- decision: 技能圖 - 能力關係映射和決策支援
+- learning: 能力評估器 - 訓練探索和學習反饋機制
 """
 
 __version__ = "1.0.0"
@@ -60,6 +65,11 @@ from services.core.ai_models import (
     TraceRecord,
 )
 
+# 從新增核心組件導入 (附件要求實現)
+from .dialog.assistant import AIVADialogAssistant, dialog_assistant
+from .decision.skill_graph import AIVASkillGraph, skill_graph
+from .learning.capability_evaluator import AIVACapabilityEvaluator, capability_evaluator
+
 # 從 core.models 導入核心業務邏輯模型
 from services.core.models import (
     AttackPathEdge,
@@ -100,6 +110,13 @@ from services.core.models import (
 )
 
 __all__ = [
+    # 新增核心組件 (附件要求實現)
+    "AIVADialogAssistant",
+    "dialog_assistant",
+    "AIVASkillGraph", 
+    "skill_graph",
+    "AIVACapabilityEvaluator",
+    "capability_evaluator",
     # 來自 aiva_common
     "CVEReference",
     "CVSSv3Metrics",
