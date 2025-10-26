@@ -146,6 +146,7 @@ class ModuleName(str, Enum):
     POSTEX = "PostExModule"
     REMEDIATION = "RemediationModule"
     BIZLOGIC = "BizLogicModule"
+    COMMON = "CommonModule"
 
 
 class Topic(str, Enum):

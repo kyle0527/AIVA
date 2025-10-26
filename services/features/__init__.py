@@ -156,7 +156,7 @@ try:
         
         # 從 FeatureRegistry 獲取實際註冊的功能列表
         registered = list(FeatureRegistry.list_features().keys())
-        print(f"✅ 已註冊 {len(registered)} 個高價值功能模組: {', '.join(registered)}")
+        print(f"[OK] 已註冊 {len(registered)} 個高價值功能模組: {', '.join(registered)}")
         
         return registered
     
@@ -187,6 +187,6 @@ try:
 except ImportError as e:
     # 遵循 README 原則：不使用 fallback，讓錯誤明確顯示
     import sys
-    print(f"❌ 高價值功能模組導入失敗: {e}", file=sys.stderr)
+    print(f"[FAIL] 高價值功能模組導入失敗: {e}", file=sys.stderr)
     print(f"   請確保 aiva_common 和所有依賴已正確安裝", file=sys.stderr)
     raise  # 重新拋出異常，不要靜默處理

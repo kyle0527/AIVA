@@ -22,6 +22,7 @@ from services.aiva_common.schemas import (
 )
 from services.aiva_common.utils.logging import get_logger
 from services.integration.capability import CapabilityRegistry
+from services.integration.capability.registry import registry as global_registry
 
 logger = get_logger(__name__)
 
@@ -83,10 +84,19 @@ class AIVADialogAssistant:
     """
     
     def __init__(self, capability_registry: Optional[CapabilityRegistry] = None):
-        self.capability_registry = capability_registry or CapabilityRegistry()
+        # 優先使用全局registry實例，確保數據一致性
+        self.capability_registry = capability_registry or global_registry
         self.conversation_history: List[Dict[str, Any]] = []
+        self._initialized = False
         
         logger.info("AIVA 對話助理已初始化")
+    
+    async def _ensure_initialized(self):
+        """確保能力註冊表已初始化"""
+        if not self._initialized:
+            # 觸發能力發現
+            await self.capability_registry.discover_capabilities()
+            self._initialized = True
     
     async def process_user_input(self, user_input: str, user_id: str = "default") -> Dict[str, Any]:
         """處理使用者輸入並產生回應"""
@@ -169,6 +179,9 @@ class AIVADialogAssistant:
     async def _handle_list_capabilities(self) -> Dict[str, Any]:
         """處理能力清單查詢"""
         try:
+            # 確保能力註冊表已初始化
+            await self._ensure_initialized()
+            
             # 獲取能力統計
             stats = await self.capability_registry.get_capability_stats()
             capabilities = await self.capability_registry.list_capabilities(limit=10)
@@ -180,8 +193,10 @@ class AIVADialogAssistant:
             
             message += "🎯 主要功能模組:\n"
             for cap in capabilities[:5]:
-                status_icon = "✅" if cap.status.value == "healthy" else "⚠️"
-                message += f"  {status_icon} {cap.name} ({cap.language.value})\n"
+                status_value = cap.status if isinstance(cap.status, str) else cap.status.value
+                language_value = cap.language if isinstance(cap.language, str) else cap.language.value
+                status_icon = "✅" if status_value == "healthy" else "⚠️"
+                message += f"  {status_icon} {cap.name} ({language_value})\n"
                 message += f"     入口: {cap.entrypoint}\n"
                 if cap.tags:
                     message += f"     標籤: {', '.join(cap.tags[:3])}\n"

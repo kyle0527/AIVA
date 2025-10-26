@@ -11,12 +11,12 @@ Cross-Site Scripting (XSS) Detection Module
 __version__ = "1.0.0"
 
 # 導入核心組件 - 遵循 README 規範，不使用 try/except fallback
-from .dom_xss_detector import DOMXSSDetector
-from .payload_generator import PayloadGenerator
-from .result_publisher import ResultPublisher
+from .dom_xss_detector import DomXssDetector
+from .payload_generator import XssPayloadGenerator
+from .result_publisher import XssResultPublisher
 
 __all__ = [
-    "DOMXSSDetector",
-    "PayloadGenerator", 
-    "ResultPublisher",
+    "DomXssDetector",
+    "XssPayloadGenerator", 
+    "XssResultPublisher",
 ]

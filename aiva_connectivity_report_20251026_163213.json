@@ -1,0 +1,61 @@
+{
+  "timestamp": "2025-10-26T16:32:13.108014",
+  "test_summary": {
+    "schema_system_health": true,
+    "cross_module_communication": true,
+    "module_integration_health": true,
+    "go_schema_health": true,
+    "overall_health": true
+  },
+  "detailed_results": {
+    "schema_imports": {
+      "python_schemas": {
+        "base_types": {
+          "MessageHeader": true,
+          "Target": true,
+          "Vulnerability": true
+        },
+        "messaging": {
+          "AivaMessage": true,
+          "AIVARequest": true,
+          "AIVAResponse": true
+        },
+        "tasks": {
+          "FunctionTaskPayload": true,
+          "FunctionTaskTarget": true
+        },
+        "findings": {
+          "FindingPayload": true,
+          "FindingEvidence": true
+        }
+      },
+      "cross_module_imports": {},
+      "schema_consistency": true,
+      "errors": []
+    },
+    "cross_module_messaging": {
+      "message_creation": true,
+      "schema_validation": true,
+      "serialization": true,
+      "errors": []
+    },
+    "module_integration": {
+      "ai_engine_integration": true,
+      "attack_engine_integration": true,
+      "scan_engine_integration": true,
+      "feature_detection_integration": true,
+      "integration_services": true,
+      "errors": []
+    },
+    "go_schema": {
+      "go_schema_exists": true,
+      "struct_count": 15,
+      "json_tags_valid": true,
+      "errors": []
+    }
+  },
+  "connectivity_score": 100,
+  "recommendations": [
+    "✨ 通連性良好！建議定期執行此測試以維持系統健康"
+  ]
+}

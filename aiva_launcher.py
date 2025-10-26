@@ -40,7 +40,8 @@ else:
 
 # --- 載入核心模組 (延遲載入以避免過早的依賴問題) ---
 try:
-    from config import settings  # 載入統一設定
+    from config.settings import get_config  # 載入統一設定
+    settings = get_config()
 except ImportError as e:
     print(f"錯誤：無法導入必要的 AIVA 模組: {e}")
     print("請確認您已在專案根目錄執行此腳本，且 Python 環境已安裝 requirements.txt 中的依賴。")
@@ -48,8 +49,9 @@ except ImportError as e:
 
 # --- 全域日誌設定 (範例，應使用 aiva_common 中的函數) ---
 # (實際應調用 setup_logging())
+log_level = settings.get("logging", "level", "INFO").upper()
 logging.basicConfig(
-    level=settings.LOG_LEVEL.upper() if hasattr(settings, 'LOG_LEVEL') else logging.INFO,
+    level=getattr(logging, log_level, logging.INFO),
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
     handlers=[
         logging.StreamHandler(sys.stdout)
@@ -83,6 +85,13 @@ SERVICE_CONFIG = {
     "api": { # Python API 服務
         "command": ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"], # 假設使用 FastAPI/Uvicorn
         "cwd": str(PROJECT_ROOT / "api"),
+        "env": os.environ.copy(),
+        "process": None,
+    },
+    # --- Core AI Engine Service ---
+    "core": {
+        "command": [sys.executable, "-m", "uvicorn", "services.core.aiva_core.app:app", "--host", "0.0.0.0", "--port", "8001"], # Core AI Engine with FastAPI
+        "cwd": str(PROJECT_ROOT),  # 改為項目根目錄以解決模組導入問題
         "env": os.environ.copy(),
         "process": None,
     },
@@ -375,12 +384,16 @@ def _start_additional_services(services_to_start, mode, core_started):
     """啟動其他微服務"""
     services_successfully_started = []
     
+    # 如果核心服務已啟動，添加到成功列表中
+    if core_started:
+        services_successfully_started.append("core")
+    
     if mode == "core_only":
         return services_successfully_started
     
     for service_name in services_to_start:
         if _should_skip_core_service(service_name, core_started):
-            services_successfully_started.append(service_name)
+            # 核心服務已經在上面處理了，跳過
             continue
             
         if _try_start_service(service_name):

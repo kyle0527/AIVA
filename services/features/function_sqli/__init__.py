@@ -12,16 +12,17 @@ __version__ = "1.0.0"
 
 # 導入核心組件 - 遵循 README 規範，不使用 try/except fallback
 from .smart_detection_manager import SmartDetectionManager
-from .task_queue import TaskQueue
+from .task_queue import SqliTaskQueue, QueuedTask
 from .detection_models import DetectionModels
 from .exceptions import SQLiException
 from .payload_wrapper_encoder import PayloadWrapperEncoder
-from .result_binder_publisher import ResultBinderPublisher
+from .result_binder_publisher import SqliResultBinderPublisher as ResultBinderPublisher
 from .telemetry import Telemetry
 
 __all__ = [
     "SmartDetectionManager",
-    "TaskQueue", 
+    "SqliTaskQueue",
+    "QueuedTask",
     "DetectionModels",
     "SQLiException",
     "PayloadWrapperEncoder",

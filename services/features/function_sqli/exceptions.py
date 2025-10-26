@@ -92,3 +92,4 @@ class DetectionResultError(SqliError):
 
 # 向後兼容的別名
 SqliDetectionError = SqliError
+SQLiException = SqliError  # 匹配 __init__.py 中的導入

@@ -22,23 +22,21 @@ from fastapi import FastAPI, HTTPException, BackgroundTasks, Depends
 from pydantic import BaseModel, Field
 import aiofiles
 
-# 遵循 aiva_common 規範
-from aiva_common.enums import (
-    ProgrammingLanguage,
+# 遵循 aiva_common 規範 - 修復 import 路徑
+from services.aiva_common.enums import (
     Severity,
     Confidence,
     TaskStatus,
     ModuleName,
     Topic
 )
-from aiva_common.schemas import (
+from services.aiva_common.schemas import (
     AivaMessage,
     MessageHeader,
     FunctionTaskPayload,
     FindingPayload
 )
-from aiva_common.utils.logging import get_logger
-from aiva_common.utils.ids import new_id
+from services.aiva_common.utils import new_id
 
 from .models import (
     CapabilityRecord,
@@ -150,8 +148,7 @@ class CapabilityRegistry:
             # 檢查ID唯一性
             if capability.id in self._capabilities:
                 logger.warning(
-                    "能力ID已存在，將更新現有記錄",
-                    capability_id=capability.id
+                    f"能力ID已存在，將更新現有記錄: {capability.id}"
                 )
             
             # 驗證必要欄位
@@ -163,20 +160,16 @@ class CapabilityRegistry:
             # 持久化到數據庫
             await self._store_capability_to_db(capability)
             
+            language_value = capability.language.value if hasattr(capability.language, 'value') else str(capability.language)
             logger.info(
-                "成功註冊能力",
-                capability_id=capability.id,
-                module=capability.module,
-                language=capability.language.value
+                f"成功註冊能力: {capability.id} ({capability.module}/{language_value})"
             )
             
             return True
             
         except Exception as e:
             logger.error(
-                "能力註冊失敗",
-                capability_id=capability.id,
-                error=str(e),
+                f"能力註冊失敗: {capability.id} - {str(e)}",
                 exc_info=True
             )
             return False
@@ -242,10 +235,10 @@ class CapabilityRegistry:
             capability.description,
             capability.version,
             capability.module,
-            capability.language.value,
+            capability.language if isinstance(capability.language, str) else capability.language.value,
             capability.entrypoint,
-            capability.capability_type.value,
-            capability.status.value,
+            capability.capability_type if isinstance(capability.capability_type, str) else capability.capability_type.value,
+            capability.status if isinstance(capability.status, str) else capability.status.value,
             capability.created_at.isoformat(),
             capability.updated_at.isoformat(),
             json.dumps(capability.config) if capability.config else None,
@@ -270,7 +263,8 @@ class CapabilityRegistry:
         language: Optional[ProgrammingLanguage] = None,
         capability_type: Optional[CapabilityType] = None,
         status: Optional[CapabilityStatus] = None,
-        tags: Optional[List[str]] = None
+        tags: Optional[List[str]] = None,
+        limit: Optional[int] = None
     ) -> List[CapabilityRecord]:
         """
         列出符合條件的能力
@@ -280,6 +274,7 @@ class CapabilityRegistry:
             capability_type: 能力類型篩選
             status: 狀態篩選
             tags: 標籤篩選
+            limit: 限制返回數量
             
         Returns:
             符合條件的能力列表
@@ -301,6 +296,10 @@ class CapabilityRegistry:
                 c for c in capabilities 
                 if any(tag in c.tags for tag in tags)
             ]
+        
+        # 應用數量限制
+        if limit and limit > 0:
+            capabilities = capabilities[:limit]
         
         return capabilities
     
@@ -334,18 +333,31 @@ class CapabilityRegistry:
             discovery_stats["discovered_count"] += len(rust_discovered)
             discovery_stats["languages"]["rust"] = len(rust_discovered)
             
-            # 統計模組分布
+            # 統計模組分布並註冊發現的能力
             all_discovered = python_discovered + go_discovered + rust_discovered
+            registered_count = 0
+            
             for capability in all_discovered:
                 module_name = capability.module
                 if module_name not in discovery_stats["modules"]:
                     discovery_stats["modules"][module_name] = 0
                 discovery_stats["modules"][module_name] += 1
+                
+                # 註冊發現的能力
+                try:
+                    await self.register_capability(capability)
+                    registered_count += 1
+                except Exception as e:
+                    error_msg = f"註冊能力失敗: {capability.name} - {str(e)}"
+                    discovery_stats["errors"].append(error_msg)
+                    logger.warning(error_msg)
+            
+            discovery_stats["registered_count"] = registered_count
             
             logger.info(
-                "能力發現完成",
-                total_discovered=discovery_stats["discovered_count"],
-                by_language=discovery_stats["languages"]
+                f"能力發現完成: 總計 {discovery_stats['discovered_count']} 個，"
+                f"成功註冊 {registered_count} 個，"
+                f"語言分布 {discovery_stats['languages']}"
             )
             
         except Exception as e:
@@ -520,23 +532,110 @@ class CapabilityRegistry:
         
         for capability in self._capabilities.values():
             # 語言統計
-            lang = capability.language.value
+            lang = capability.language if isinstance(capability.language, str) else capability.language.value
             stats["by_language"][lang] = stats["by_language"].get(lang, 0) + 1
             
             # 類型統計
-            cap_type = capability.capability_type.value
+            cap_type = capability.capability_type if isinstance(capability.capability_type, str) else capability.capability_type.value
             stats["by_type"][cap_type] = stats["by_type"].get(cap_type, 0) + 1
             
             # 狀態統計
-            status = capability.status.value
+            status = capability.status if isinstance(capability.status, str) else capability.status.value
             stats["by_status"][status] = stats["by_status"].get(status, 0) + 1
             stats["health_summary"][status] = stats["health_summary"].get(status, 0) + 1
         
         return stats
+    
+    async def search_capabilities(self, search_term: str) -> List[CapabilityRecord]:
+        """
+        根據搜索詞查找能力
+        
+        Args:
+            search_term: 搜索關鍵詞
+            
+        Returns:
+            匹配的能力列表
+        """
+        if not search_term:
+            return []
+        
+        search_term = search_term.lower()
+        matched_capabilities = []
+        
+        for capability in self._capabilities.values():
+            # 檢查名稱匹配
+            if search_term in capability.name.lower():
+                matched_capabilities.append(capability)
+                continue
+            
+            # 檢查描述匹配
+            if capability.description and search_term in capability.description.lower():
+                matched_capabilities.append(capability)
+                continue
+            
+            # 檢查標籤匹配
+            if any(search_term in tag.lower() for tag in capability.tags):
+                matched_capabilities.append(capability)
+                continue
+            
+            # 檢查ID匹配
+            if search_term in capability.id.lower():
+                matched_capabilities.append(capability)
+                continue
+        
+        return matched_capabilities
+    
+    async def get_capability_scorecard(self, capability_id: str) -> Optional[CapabilityScorecard]:
+        """
+        獲取能力評分卡
+        
+        Args:
+            capability_id: 能力ID
+            
+        Returns:
+            評分卡數據或None
+        """
+        # 從數據庫查詢評分卡
+        conn = sqlite3.connect(self.db_path)
+        cursor = conn.cursor()
+        
+        cursor.execute("""
+            SELECT * FROM capability_scorecards 
+            WHERE capability_id = ?
+        """, (capability_id,))
+        
+        row = cursor.fetchone()
+        conn.close()
+        
+        if not row:
+            return None
+        
+        # 構造評分卡對象（簡化版本）
+        from datetime import datetime
+        
+        scorecard = CapabilityScorecard(
+            capability_id=row[0],
+            evaluation_period=row[1],
+            availability_percent=row[2],
+            success_rate_percent=row[3],
+            avg_latency_ms=row[4],
+            p95_latency_ms=row[5],
+            reliability_score=row[6],
+            last_updated=datetime.fromisoformat(row[7])
+        )
+        
+        # 添加7天統計的兼容性屬性
+        scorecard.availability_7d = scorecard.availability_percent / 100.0
+        scorecard.success_rate_7d = scorecard.success_rate_percent / 100.0
+        
+        return scorecard
 
 
 # 創建全局註冊中心實例
 registry = CapabilityRegistry()
+
+# 導出全局註冊表供其他模組使用
+global_registry = registry
 
 
 # FastAPI 應用程式

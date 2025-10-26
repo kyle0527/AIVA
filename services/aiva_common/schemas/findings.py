@@ -136,7 +136,7 @@ class FindingPayload(BaseModel):
     @field_validator("scan_id")
     @classmethod
     def validate_scan_id(cls, v: str) -> str:
-        if not v.startswith("scan_'"):
+        if not v.startswith("scan_"):
             raise ValueError("scan_id must start with 'scan_'")
         return v
 
