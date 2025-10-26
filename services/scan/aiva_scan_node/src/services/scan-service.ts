@@ -2,7 +2,7 @@
  * Scan Service - Playwright 掃描核心邏輯
  */
 
-import { Browser, Page, BrowserContext } from 'playwright';
+import { Browser, Page, BrowserContext } from 'playwright-core';
 import { logger } from '../utils/logger';
 
 interface ScanTask {

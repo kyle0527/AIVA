@@ -9,8 +9,8 @@ from services.aiva_common.utils import get_logger
 logger = get_logger(__name__)
 
 
-class ScanStrategy(Enum):
-    """掃描策略類型"""
+class ScanStrategyType(Enum):  # 重命名避免與 aiva_common.enums.ScanStrategy 衝突
+    """掃描策略類型 - Scan模組專用的詳細策略定義"""
 
     # 保守策略：快速、淺層、低負載
     CONSERVATIVE = "conservative"
@@ -96,7 +96,7 @@ class StrategyController:
 
     # 預定義的策略參數
     _STRATEGY_PRESETS: dict[str, StrategyParameters] = {
-        ScanStrategy.CONSERVATIVE.value: StrategyParameters(
+        ScanStrategyType.CONSERVATIVE.value: StrategyParameters(
             max_depth=2,
             max_pages=50,
             max_forms=20,
@@ -112,7 +112,7 @@ class StrategyController:
             skip_static_resources=True,
             follow_redirects=True,
         ),
-        ScanStrategy.BALANCED.value: StrategyParameters(
+        ScanStrategyType.BALANCED.value: StrategyParameters(
             max_depth=3,
             max_pages=100,
             max_forms=50,
@@ -128,7 +128,7 @@ class StrategyController:
             skip_static_resources=True,
             follow_redirects=True,
         ),
-        ScanStrategy.DEEP.value: StrategyParameters(
+        ScanStrategyType.DEEP.value: StrategyParameters(
             max_depth=10,
             max_pages=1000,
             max_forms=200,
@@ -144,7 +144,7 @@ class StrategyController:
             skip_static_resources=False,
             follow_redirects=True,
         ),
-        ScanStrategy.FAST.value: StrategyParameters(
+        ScanStrategyType.FAST.value: StrategyParameters(
             max_depth=1,
             max_pages=50,
             max_forms=20,
@@ -160,7 +160,7 @@ class StrategyController:
             skip_static_resources=True,
             follow_redirects=False,
         ),
-        ScanStrategy.AGGRESSIVE.value: StrategyParameters(
+        ScanStrategyType.AGGRESSIVE.value: StrategyParameters(
             max_depth=5,
             max_pages=500,
             max_forms=100,
@@ -176,7 +176,7 @@ class StrategyController:
             skip_static_resources=True,
             follow_redirects=True,
         ),
-        ScanStrategy.STEALTH.value: StrategyParameters(
+        ScanStrategyType.STEALTH.value: StrategyParameters(
             max_depth=3,
             max_pages=100,
             max_forms=30,
@@ -192,7 +192,7 @@ class StrategyController:
             skip_static_resources=True,
             follow_redirects=True,
         ),
-        ScanStrategy.TARGETED.value: StrategyParameters(
+        ScanStrategyType.TARGETED.value: StrategyParameters(
             max_depth=5,
             max_pages=200,
             max_forms=50,
@@ -261,13 +261,13 @@ class StrategyController:
     def is_aggressive(self) -> bool:
         """是否為激進策略"""
         return self.strategy in [
-            ScanStrategy.AGGRESSIVE.value,
-            ScanStrategy.DEEP.value,
+            ScanStrategyType.AGGRESSIVE.value,
+            ScanStrategyType.DEEP.value,
         ]
 
     def is_stealth(self) -> bool:
         """是否為隱秘策略"""
-        return self.strategy == ScanStrategy.STEALTH.value
+        return self.strategy == ScanStrategyType.STEALTH.value
 
     def customize(self, **kwargs) -> None:
         """
@@ -422,22 +422,22 @@ class StrategyController:
             str: 推薦的策略名稱
         """
         recommendations = {
-            ("small", "web_app"): ScanStrategy.BALANCED.value,
-            ("small", "api"): ScanStrategy.FAST.value,
-            ("small", "static_site"): ScanStrategy.CONSERVATIVE.value,
-            ("small", "spa"): ScanStrategy.TARGETED.value,
-            ("medium", "web_app"): ScanStrategy.DEEP.value,
-            ("medium", "api"): ScanStrategy.BALANCED.value,
-            ("medium", "static_site"): ScanStrategy.BALANCED.value,
-            ("medium", "spa"): ScanStrategy.AGGRESSIVE.value,
-            ("large", "web_app"): ScanStrategy.AGGRESSIVE.value,
-            ("large", "api"): ScanStrategy.AGGRESSIVE.value,
-            ("large", "static_site"): ScanStrategy.DEEP.value,
-            ("large", "spa"): ScanStrategy.AGGRESSIVE.value,
+            ("small", "web_app"): ScanStrategyType.BALANCED.value,
+            ("small", "api"): ScanStrategyType.FAST.value,
+            ("small", "static_site"): ScanStrategyType.CONSERVATIVE.value,
+            ("small", "spa"): ScanStrategyType.TARGETED.value,
+            ("medium", "web_app"): ScanStrategyType.DEEP.value,
+            ("medium", "api"): ScanStrategyType.BALANCED.value,
+            ("medium", "static_site"): ScanStrategyType.BALANCED.value,
+            ("medium", "spa"): ScanStrategyType.AGGRESSIVE.value,
+            ("large", "web_app"): ScanStrategyType.AGGRESSIVE.value,
+            ("large", "api"): ScanStrategyType.AGGRESSIVE.value,
+            ("large", "static_site"): ScanStrategyType.DEEP.value,
+            ("large", "spa"): ScanStrategyType.AGGRESSIVE.value,
         }
 
         key = (target_size.lower(), target_type.lower())
-        recommended = recommendations.get(key, ScanStrategy.BALANCED.value)
+        recommended = recommendations.get(key, ScanStrategyType.BALANCED.value)
 
         logger.info(
             f"Recommended strategy for {target_type} ({target_size}): {recommended}"
@@ -458,7 +458,7 @@ class StrategyController:
         logger.warning(
             f"Unknown strategy '{self.strategy}', using 'balanced' as default"
         )
-        return self._STRATEGY_PRESETS[ScanStrategy.BALANCED.value]
+        return self._STRATEGY_PRESETS[ScanStrategyType.BALANCED.value]
 
     @classmethod
     def get_available_strategies(cls) -> list[str]:
@@ -477,13 +477,13 @@ class StrategyController:
             str: 策略描述
         """
         descriptions = {
-            ScanStrategy.CONSERVATIVE.value: "快速、淺層、低負載 - 適合初步探索",
-            ScanStrategy.BALANCED.value: "中等深度和速度 - 適合大多數情況",
-            ScanStrategy.DEEP.value: "深入爬取、全面覆蓋 - 適合徹底掃描",
-            ScanStrategy.FAST.value: "快速淺掃、僅基本檢查 - 適合快速評估",
-            ScanStrategy.AGGRESSIVE.value: "完整掃描、高負載 - 適合專業滲透測試",
-            ScanStrategy.STEALTH.value: "慢速、低調、避免檢測 - 適合規避 WAF",
-            ScanStrategy.TARGETED.value: "專注於特定目標 - 適合已知漏洞驗證",
+            ScanStrategyType.CONSERVATIVE.value: "快速、淺層、低負載 - 適合初步探索",
+            ScanStrategyType.BALANCED.value: "中等深度和速度 - 適合大多數情況",
+            ScanStrategyType.DEEP.value: "深入爬取、全面覆蓋 - 適合徹底掃描",
+            ScanStrategyType.FAST.value: "快速淺掃、僅基本檢查 - 適合快速評估",
+            ScanStrategyType.AGGRESSIVE.value: "完整掃描、高負載 - 適合專業滲透測試",
+            ScanStrategyType.STEALTH.value: "慢速、低調、避免檢測 - 適合規避 WAF",
+            ScanStrategyType.TARGETED.value: "專注於特定目標 - 適合已知漏洞驗證",
         }
         return descriptions.get(strategy, "未知策略")
 

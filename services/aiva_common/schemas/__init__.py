@@ -4,7 +4,7 @@ AIVA Common Schemas Package
 此套件提供了 AIVA 微服務生態系統中所有資料合約的統一介面。
 
 使用方式:
-    from services.aiva_common.schemas import FindingPayload, ScanStartPayload, MessageHeader
+    from aiva_common.schemas import FindingPayload, ScanStartPayload, MessageHeader
 
 架構說明:
     - base.py: 基礎模型和通用類別

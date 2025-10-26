@@ -23,7 +23,7 @@ func main() {
 	}
 
 	// 初始化日誌
-	log, err := logger.NewLogger(cfg.ServiceName)
+	log, err := logger.NewLogger(cfg.ServiceName, "cspm_worker")
 	if err != nil {
 		panic(err)
 	}

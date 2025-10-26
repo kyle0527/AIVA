@@ -338,29 +338,21 @@ async def handle_scan_task(self, message: AivaMessage):
 
 ### 🔴 問題: client_side_auth_bypass 模組重複定義
 
-**位置**: `services/features/client_side_auth_bypass/client_side_auth_bypass_worker.py`
+**位置**: ~~`services/features/client_side_auth_bypass/client_side_auth_bypass_worker.py`~~ **已修復 (2025-10-25)**
 
-**問題代碼**:
+**修復狀態**: ✅ **完成**
 ```python
-# ❌ 在 fallback 中重複定義
-class Severity: HIGH = "High"; MEDIUM = "Medium"; LOW = "Low"
-class Confidence: HIGH = "High"; MEDIUM = "Medium"; LOW = "Low"
+# ✅ 修正後的導入 (2025-10-25)
+from services.aiva_common.schemas.generated.tasks import FunctionTaskPayload, FunctionTaskResult
+from services.aiva_common.schemas.generated.findings import FindingPayload
+from services.aiva_common.enums import Severity, Confidence
+
+# ✅ 已移除不安全的 fallback 重複定義
+# ✅ 直接使用 aiva_common 標準枚舉
+# ✅ 包含 Compliance Note 記錄修復日期
 ```
 
-**修復方案**:
-```python
-# ✅ 修正導入路徑
-from aiva_common import (
-    FindingPayload,
-    Severity,
-    Confidence,
-    FunctionTaskPayload,
-)
-from aiva_common.schemas import FunctionTaskResult
-
-# 移除 fallback 中的重複定義
-# 如果導入失敗,應該直接拋出異常
-```
+**驗證結果**: ✅ 通過 - 無重複定義，正確導入 aiva_common
 
 ---
 

@@ -10,7 +10,7 @@ from datetime import UTC, datetime
 
 from pydantic import BaseModel, Field, field_validator
 
-from services.aiva_common.enums import ModuleName
+from ..enums import ModuleName
 
 # 前向聲明用於避免循環導入
 from typing import TYPE_CHECKING
@@ -155,5 +155,5 @@ class Task(BaseModel):
 
 
 # 解決前向引用
-from services.aiva_common.schemas.findings import Target
+from .findings import Target
 Task.model_rebuild()

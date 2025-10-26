@@ -13,10 +13,6 @@ import (
 	"github.com/kyle0527/aiva/services/function/common/go/aiva_common_go/schemas"
 	"github.com/kyle0527/aiva/services/function/function_authn_go/internal/brute_force"
 	"github.com/kyle0527/aiva/services/function/function_authn_go/internal/token_test"
-
-	// TODO: 需要更新 internal 測試器使用 schemas 而不是 models
-	// "github.com/kyle0527/aiva/services/function/function_authn_go/internal/brute_force"
-	// "github.com/kyle0527/aiva/services/function/function_authn_go/internal/token_test"
 	"go.uber.org/zap"
 )
 
@@ -28,7 +24,7 @@ func main() {
 	}
 
 	// 初始化日誌
-	log, err := logger.NewLogger(cfg.ServiceName)
+	log, err := logger.NewLogger(cfg.ServiceName, "authn_worker")
 	if err != nil {
 		panic(err)
 	}
@@ -47,7 +43,6 @@ func main() {
 
 	// 建立測試器
 	bruteForcer := brute_force.NewBruteForcer(log)
-	// weakConfigTester := weak_config.NewWeakConfigTester(log) // TODO: weak_config 不存在
 	tokenAnalyzer := token_test.NewTokenAnalyzer(log)
 
 	// 啟動消費循環
@@ -127,11 +122,16 @@ func handleTask(
 
 	// 執行 Token 分析測試
 	if testType == "token" || testType == "all" {
-		tk, err := tokenAnalyzer.Test(ctx, &task)
+		tk, err := tokenAnalyzer.Test(ctx, task)
 		if err != nil {
 			log.Error("Token test failed", zap.Error(err))
 		} else {
-			findings = append(findings, tk...)
+			// 轉換 []interface{} 為 []*schemas.FindingPayload
+			for _, finding := range tk {
+				if findingPayload, ok := finding.(*schemas.FindingPayload); ok {
+					findings = append(findings, findingPayload)
+				}
+			}
 		}
 	}
 

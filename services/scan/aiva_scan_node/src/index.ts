@@ -4,7 +4,7 @@
  * 功能: 使用 Playwright 進行動態網頁掃描
  */
 
-import { chromium, Browser } from 'playwright';
+import { chromium, Browser } from 'playwright-core';
 import * as amqp from 'amqplib';
 import { logger } from './utils/logger';
 import { ScanService } from './services/scan-service';

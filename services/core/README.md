@@ -1089,7 +1089,7 @@ graph TB
 **✅ Core 模組的標準做法**（參考 `models.py` 正確實現）:
 
 ```python
-# ✅ 正確 - Core 模組作為最佳示範
+# ✅ 正確 - Core 模組作為最佳示範 (跨平台可移植)
 from ..aiva_common.enums import (
     AttackPathEdgeType,      # 攻擊路徑分析使用
     AttackPathNodeType,
@@ -1107,6 +1107,11 @@ from ..aiva_common.schemas import (
     CVEReference,            # CVE 引用
     CWEReference,            # CWE 分類
 )
+
+# 💡 可移植性說明:
+# - 使用相對路徑 (..aiva_common) 確保跨平台/跨環境可移植性
+# - 避免絕對路徑 (services.aiva_common) 造成路徑依賴
+# - 如需要包級導入，先執行: pip install -e .
 ```
 
 #### ✅ **已修復的問題記錄**
@@ -1221,7 +1226,7 @@ implement_with_confidence()
 
 ```python
 # 步驟 1: 檢查 aiva_common 是否有適用的枚舉
-from aiva_common.enums import Confidence, RiskLevel
+from services.aiva_common.enums import Confidence, RiskLevel
 
 # 步驟 2: 如果需要新的 AI 專屬概念，評估是否應加入 aiva_common
 # 問題: 這個枚舉會被其他模組使用嗎？
@@ -1245,8 +1250,8 @@ class MyTaskStatus(str, Enum):
     ...
 
 # ✅ 正確 - 使用 aiva_common 並擴展
-from aiva_common.enums import TaskStatus
-from aiva_common.schemas import TaskUpdatePayload
+from services.aiva_common.enums import TaskStatus
+from services.aiva_common.schemas import TaskUpdatePayload
 
 # 如果 TaskStatus 缺少需要的狀態值:
 # 1. 在 aiva_common/enums/common.py 中新增

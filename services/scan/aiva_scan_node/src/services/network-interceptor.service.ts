@@ -3,7 +3,7 @@
  * 網路請求攔截與分析服務
  */
 
-import { Page } from 'playwright';
+import { Page } from 'playwright-core';
 import { logger } from '../utils/logger';
 import { NetworkRequest } from '../interfaces/dynamic-scan.interfaces';
 

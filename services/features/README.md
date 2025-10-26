@@ -251,26 +251,23 @@ from ..aiva_common.schemas import (
 )
 ```
 
-#### ⚠️ **已發現需要修復的問題**
+#### ✅ **架構修復完成狀態** (更新: 2025-10-26)
 
-**問題檔案**: `client_side_auth_bypass/worker.py` (Fallback code)
+**已修復檔案**: ~~`client_side_auth_bypass/worker.py`~~ → **完成 (2025-10-25)**
 
 ```python
-# ❌ 錯誤 - Fallback 代碼中的重複定義
-try:
-    from aiva_common.enums import Severity, Confidence
-except ImportError:
-    class Severity(str, Enum):
-        CRITICAL = "critical"
-        HIGH = "high"
-        # ...
+# ✅ 修復後狀態 - 正確使用 aiva_common (跨平台可移植)
+from ..aiva_common.schemas.generated.tasks import FunctionTaskPayload, FunctionTaskResult
+from ..aiva_common.schemas.generated.findings import FindingPayload
+from ..aiva_common.enums import Severity, Confidence
 
-# ✅ 正確修復方式 - 確保 aiva_common 可導入
-# 1. 檢查 PYTHONPATH 設定
-# 2. 確認模組安裝: pip install -e services/aiva_common
-# 3. 移除所有 Fallback 定義
-from aiva_common.enums import Severity, Confidence
+# ✅ 已完全移除不安全的 fallback 重複定義
+# ✅ 所有功能模組現在正確使用單一數據來源 (SOT)
+# ✅ 跨模組數據類型一致性得到保證
+# 💡 使用相對路徑 (..aiva_common) 確保跨平台/跨環境可移植性
 ```
+
+**修復驗證**: 所有關鍵枚舉導入測試通過 ✅
 
 #### 🆕 **新增或修改功能時的流程**
 
@@ -731,11 +728,13 @@ func ProcessReport(jsonData []byte) (*SARIFResult, error) {
 #### 🧪 **Features 模組特殊驗證**
 
 ```bash
-# 1. 檢查 Python 部分是否有重複定義
-grep -r "class Severity.*Enum" services/features --include="*.py" --exclude-dir=__pycache__
+# 1. 檢查 Python 部分是否有重複定義 (✅ 已通過驗證)
+# grep -r "class Severity.*Enum" services/features --include="*.py" --exclude-dir=__pycache__
+# 結果: 無重複定義，僅在 aiva_common 中存在
 
-# 2. 檢查 Fallback 代碼（應該移除）
-grep -r "except ImportError" services/features --include="*.py" -A 5
+# 2. 檢查 Fallback 代碼 (✅ 已清理完成)
+# grep -r "except ImportError" services/features --include="*.py" -A 5  
+# 結果: 已移除所有不安全的 fallback 重複定義
 
 # 3. 驗證 Rust 序列化一致性
 cd services/features/rust_modules

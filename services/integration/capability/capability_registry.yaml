@@ -1,0 +1,84 @@
+# AIVA 能力註冊中心配置檔案
+# 此檔案定義了系統的核心配置參數
+
+# 系統基本資訊
+name: "AIVA Capability Registry"
+version: "1.0.0"
+environment: "development"  # development, staging, production
+
+# 資料庫配置
+database:
+  path: "capability_registry.db"
+  backup_enabled: true
+  backup_interval_hours: 24
+  max_backups: 7
+
+# 能力發現配置
+discovery:
+  auto_discovery_enabled: true
+  discovery_interval_minutes: 60
+  scan_directories:
+    - "services/features"
+    - "services/scan"
+    - "services/analysis"
+    - "tools"
+  exclude_patterns:
+    - "__pycache__"
+    - "*.pyc"
+    - ".git"
+    - "node_modules"
+    - "target/debug"
+    - "*.log"
+
+# 監控配置
+monitoring:
+  health_check_enabled: true
+  health_check_interval_minutes: 15
+  performance_monitoring_enabled: true
+  alert_thresholds:
+    max_latency_ms: 5000
+    min_success_rate: 95.0
+    max_error_rate: 5.0
+
+# API 配置
+api:
+  host: "0.0.0.0"
+  port: 8000
+  debug: false
+  docs_enabled: true
+  cors_enabled: true
+  rate_limit_enabled: true
+  max_requests_per_minute: 100
+
+# 日誌配置
+logging:
+  level: "INFO"
+  format: "structured"
+  output_file: "logs/capability_registry.log"
+  rotate_enabled: true
+  max_file_size_mb: 100
+  max_files: 10
+
+# 安全配置
+security:
+  authentication_enabled: false
+  api_key_required: false
+  allowed_origins:
+    - "*"
+  ssl_enabled: false
+  ssl_cert_path: null
+  ssl_key_path: null
+
+# AIVA 整合配置
+aiva_common_path: "services/aiva_common"
+tools_enabled:
+  - "schema_validator"
+  - "schema_codegen_tool"
+  - "module_connectivity_tester"
+
+# 支援的程式語言
+supported_languages:
+  - "python"
+  - "go"
+  - "rust"
+  - "typescript"

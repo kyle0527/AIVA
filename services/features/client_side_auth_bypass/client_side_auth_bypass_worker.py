@@ -15,16 +15,17 @@ import re
 from urllib.parse import urljoin
 
 # 直接導入，不使用 fallback（確保 aiva_common 可用）
-from services.aiva_common.schemas.generated.tasks import FunctionTaskPayload, FunctionTaskResult
+from services.aiva_common.schemas.generated.tasks import FunctionTaskPayload
+from services.aiva_common.schemas.telemetry import FunctionExecutionResult
 from services.aiva_common.schemas.generated.findings import FindingPayload
-from services.aiva_common.enums import Severity, Confidence
-from services.features.base.feature_base import FeatureBaseWorker
+from services.aiva_common.enums.common import Severity, Confidence
+from services.features.base.feature_base import FeatureBase
 from .js_analysis_engine import JavaScriptAnalysisEngine
 
 
 logger = logging.getLogger(__name__)
 
-class ClientSideAuthBypassWorker(FeatureBaseWorker):
+class ClientSideAuthBypassWorker(FeatureBase):
     """
     執行客戶端授權繞過檢測的 Worker。
     
@@ -48,7 +49,7 @@ class ClientSideAuthBypassWorker(FeatureBaseWorker):
         self.timeout = self.config.get('timeout', self.DEFAULT_TIMEOUT) if self.config else self.DEFAULT_TIMEOUT
         logger.info("ClientSideAuthBypassWorker initialized.")
 
-    async def execute_task(self, payload: FunctionTaskPayload) -> FunctionTaskResult:
+    async def execute_task(self, payload: FunctionTaskPayload) -> FunctionExecutionResult:
         """
         執行單個客戶端授權繞過檢測任務。
 
@@ -56,14 +57,14 @@ class ClientSideAuthBypassWorker(FeatureBaseWorker):
             payload: 包含目標、上下文和策略的任務 Payload。
 
         Returns:
-            包含檢測結果的 FunctionTaskResult。
+            包含檢測結果的 FunctionExecutionResult。
         """
         target_url = payload.target.url if payload.target else None
         if not target_url:
-            return FunctionTaskResult(
-                task_id=payload.task_id, 
-                success=False, 
-                error="Target URL is missing."
+            return FunctionExecutionResult(
+                findings=[],
+                telemetry={"error": "Target URL is missing."},
+                errors=[{"message": "Target URL is missing."}]
             )
 
         findings: List[FindingPayload] = []
@@ -76,11 +77,9 @@ class ClientSideAuthBypassWorker(FeatureBaseWorker):
             
             if not scripts_on_page:
                 logger.warning(f"No JavaScript found on {target_url}")
-                return FunctionTaskResult(
-                    task_id=payload.task_id,
-                    success=True,
+                return FunctionExecutionResult(
                     findings=[],
-                    metrics={"scripts_analyzed": 0, "potential_issues": 0}
+                    telemetry={"scripts_analyzed": 0, "potential_issues": 0}
                 )
 
             # 步驟 2: 使用 JavaScript 分析引擎進行靜態分析
@@ -133,17 +132,15 @@ class ClientSideAuthBypassWorker(FeatureBaseWorker):
 
         except Exception as e:
             logger.error(f"Error during client-side auth bypass check for {target_url}: {e}", exc_info=True)
-            return FunctionTaskResult(
-                task_id=payload.task_id,
-                success=False,
-                error=f"An unexpected error occurred: {e}"
+            return FunctionExecutionResult(
+                findings=[],
+                telemetry={"error": str(e)},
+                errors=[{"message": f"An unexpected error occurred: {e}"}]
             )
 
-        return FunctionTaskResult(
-            task_id=payload.task_id,
-            success=True,
-            findings=findings,
-            metrics={
+        return FunctionExecutionResult(
+            findings=[finding.dict() for finding in findings],
+            telemetry={
                 "scripts_analyzed": len(scripts_on_page),
                 "potential_issues": len(all_issues),
                 "findings_generated": len(findings)

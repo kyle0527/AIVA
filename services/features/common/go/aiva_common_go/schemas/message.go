@@ -133,6 +133,36 @@ type FindingRecommendation struct {
 	References       []string `json:"references,omitempty"`
 }
 
+// ==================== 認證測試相關 ====================
+
+// TokenTestResult Token 測試結果
+type TokenTestResult struct {
+	TokenType      string                 `json:"token_type"`
+	TestType       string                 `json:"test_type"`
+	Vulnerable     bool                   `json:"vulnerable"`
+	Description    string                 `json:"description"`
+	Details        string                 `json:"details"`
+	Severity       string                 `json:"severity"`
+	Issue          string                 `json:"issue"`           // 兼容舊代碼
+	DecodedPayload map[string]interface{} `json:"decoded_payload"` // 兼容舊代碼
+}
+
+// BruteForceResult 暴力破解測試結果
+type BruteForceResult struct {
+	Success       bool   `json:"success"`
+	Username      string `json:"username"`
+	Password      string `json:"password"`
+	ResponseTime  int64  `json:"response_time"`
+	StatusCode    int    `json:"status_code"`
+	ResponseBody  string `json:"response_body"`
+	ContentLength int64  `json:"content_length"`
+	IsSuccessful  bool   `json:"is_successful"`
+	Vulnerable    bool   `json:"vulnerable"`     // 是否發現漏洞
+	AccountLocked bool   `json:"account_locked"` // 帳戶是否被鎖定
+	RateLimited   bool   `json:"rate_limited"`   // 是否遇到限流
+	AttemptsCount int    `json:"attempts_count"` // 嘗試次數
+}
+
 // ==================== 通用輔助結構 ====================
 
 // LocationInfo 位置資訊 (保留用於舊版相容)

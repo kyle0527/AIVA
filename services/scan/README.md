@@ -315,7 +315,7 @@ print(f"掃描完成: {results['scan_id']}")
 
 ```python
 from services.scan.aiva_scan import ScanOrchestrator
-from services.aiva_common.schemas import ScanStartPayload
+from ..aiva_common.schemas import ScanStartPayload
 
 # 創建掃描請求
 request = ScanStartPayload(
@@ -628,7 +628,57 @@ logger.info(
 )
 ```
 
-## 🔧 故障排除
+## � 問題處理標準流程
+
+### 🎯 問題分類與處理原則
+
+#### **P0 - 阻塞性問題** (24小時內解決)
+- 掃描引擎無法啟動或崩潰
+- 關鍵安全漏洞檢測失敗
+- 多語言整合通信中斷
+
+#### **P1 - 功能性問題** (3天內解決)  
+- 特定目標掃描失敗
+- 掃描結果不準確或遺漏
+- 效能顯著下降
+
+#### **P2 - 改善性問題** (1週內解決)
+- UI/UX 改善需求
+- 新功能請求
+- 文檔更新需求
+
+### 🔧 標準修復流程
+
+1. **問題確認階段**
+   ```bash
+   # 1. 驗證問題重現
+   python scripts/launcher/aiva_launcher.py --scan-test
+   
+   # 2. 收集系統狀態
+   python testing/integration/aiva_module_status_checker.py
+   
+   # 3. 檢查相關日誌
+   tail -f logs/scan_engine.log
+   ```
+
+2. **根因分析階段**
+   - 使用調試工具定位問題
+   - 檢查相關模組依賴
+   - 驗證數據流完整性
+
+3. **解決方案實施**
+   - 編寫針對性修復代碼
+   - 執行單元測試驗證
+   - 進行集成測試確認
+
+4. **結果驗證與文檔更新**
+   - 確認問題完全解決
+   - 更新相關文檔說明
+   - 記錄修復過程供參考
+
+---
+
+## �🔧 故障排除
 
 ### 常見問題
 
@@ -1134,7 +1184,7 @@ pytest services/scan/tests/integration/test_multi_engine_consistency.py -v
 # 6. CVSS 評分驗證
 python -c "
 from services.scan.models import VulnerabilityReport
-from services.aiva_common.schemas import CVSSv3Metrics
+from ..aiva_common.schemas import CVSSv3Metrics
 # 測試 CVSS 計算邏輯
 "
 ```

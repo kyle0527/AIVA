@@ -71,7 +71,7 @@ func (b *BruteForcer) Test(ctx context.Context, task *schemas.FunctionTaskPayloa
 			// 如果成功登入，記錄為漏洞
 			if result.Vulnerable {
 				finding := b.createFinding(task.TaskID, task.Target.URL, result)
-				findings = append(findings, finding)
+				findings = append(findings, &finding)
 				b.logger.Warn("Weak credentials found",
 					zap.String("username", username),
 					zap.String("password", password))
@@ -96,12 +96,12 @@ func (b *BruteForcer) Test(ctx context.Context, task *schemas.FunctionTaskPayloa
 }
 
 // tryCredentials 嘗試登入憑證
-func (b *BruteForcer) tryCredentials(ctx context.Context, loginURL, username, password string) (models.BruteForceResult, error) {
+func (b *BruteForcer) tryCredentials(ctx context.Context, loginURL, username, password string) (schemas.BruteForceResult, error) {
 	// 構建登入請求
 	payload := fmt.Sprintf(`{"username":"%s","password":"%s"}`, username, password)
 	req, err := http.NewRequestWithContext(ctx, "POST", loginURL, strings.NewReader(payload))
 	if err != nil {
-		return models.BruteForceResult{}, err
+		return schemas.BruteForceResult{}, err
 	}
 
 	req.Header.Set("Content-Type", "application/json")
@@ -109,7 +109,7 @@ func (b *BruteForcer) tryCredentials(ctx context.Context, loginURL, username, pa
 	start := time.Now()
 	resp, err := b.client.Do(req)
 	if err != nil {
-		return models.BruteForceResult{}, err
+		return schemas.BruteForceResult{}, err
 	}
 	defer resp.Body.Close()
 
@@ -117,7 +117,7 @@ func (b *BruteForcer) tryCredentials(ctx context.Context, loginURL, username, pa
 	body, _ := io.ReadAll(resp.Body)
 	bodyStr := string(body)
 
-	result := models.BruteForceResult{
+	result := schemas.BruteForceResult{
 		Username:      username,
 		Password:      password,
 		AttemptsCount: 1,
@@ -151,44 +151,54 @@ func (b *BruteForcer) tryCredentials(ctx context.Context, loginURL, username, pa
 }
 
 // createFinding 建立 Finding
-func (b *BruteForcer) createFinding(taskID, loginURL string, result models.BruteForceResult) models.FindingPayload {
+func (b *BruteForcer) createFinding(taskID, loginURL string, result schemas.BruteForceResult) schemas.FindingPayload {
 	findingID := fmt.Sprintf("finding_authn_bf_%d", time.Now().UnixNano())
 	scanID := fmt.Sprintf("scan_authn_%d", time.Now().UnixNano())
 
-	return models.FindingPayload{
+	cwePtr := "CWE-307"
+	methodPtr := "POST"
+	requestPtr := fmt.Sprintf("POST %s\n{\"username\":\"%s\",\"password\":\"%s\"}", loginURL, result.Username, result.Password)
+	responsePtr := "200 OK - Authentication successful"
+	payloadPtr := fmt.Sprintf("{\"username\":\"%s\",\"password\":\"%s\"}", result.Username, result.Password)
+	proofPtr := fmt.Sprintf("使用憑證 %s:%s 成功登入", result.Username, result.Password)
+	descPtr := "系統存在弱憑證，攻擊者可透過暴力破解獲得存取權限"
+	businessPtr := "未授權存取可能導致資料洩漏或系統入侵"
+	techPtr := "身份驗證繞過"
+
+	return schemas.FindingPayload{
 		FindingID: findingID,
 		TaskID:    taskID,
 		ScanID:    scanID,
 		Status:    "CONFIRMED",
-		Vulnerability: models.Vulnerability{
+		Vulnerability: schemas.Vulnerability{
 			Name:       "Weak Authentication - Brute Force",
-			CWE:        "CWE-307",
+			CWE:        &cwePtr,
 			Severity:   "CRITICAL",
 			Confidence: "HIGH",
 		},
-		Target: models.FindingTarget{
-			URL:      loginURL,
-			Endpoint: loginURL,
-			Method:   "POST",
+		Target: schemas.Target{
+			URL:    loginURL,
+			Method: &methodPtr,
 		},
-		Evidence: models.FindingEvidence{
-			Request:        fmt.Sprintf("POST %s\n{\"username\":\"%s\",\"password\":\"%s\"}", loginURL, result.Username, result.Password),
-			Response:       "200 OK - Authentication successful",
-			Payload:        fmt.Sprintf("{\"username\":\"%s\",\"password\":\"%s\"}", result.Username, result.Password),
-			ProofOfConcept: fmt.Sprintf("使用憑證 %s:%s 成功登入", result.Username, result.Password),
-			Details: map[string]string{
-				"username":      result.Username,
-				"password":      result.Password,
-				"attempts":      fmt.Sprintf("%d", result.AttemptsCount),
-				"response_time": fmt.Sprintf("%dms", result.ResponseTime),
-			},
+		Evidence: &schemas.FindingEvidence{
+			Request:  &requestPtr,
+			Response: &responsePtr,
+			Payload:  &payloadPtr,
+			Proof:    &proofPtr,
 		},
-		Impact: models.FindingImpact{
-			Description:    "系統存在弱憑證，攻擊者可透過暴力破解獲得存取權限",
-			BusinessImpact: "攻擊者可完全控制帳戶，竊取敏感資料",
-			Exploitability: "極高",
+		Impact: &schemas.FindingImpact{
+			Description:     &descPtr,
+			BusinessImpact:  &businessPtr,
+			TechnicalImpact: &techPtr,
 		},
-		Recommendation: "1. 強制執行強密碼政策\n2. 實施帳戶鎖定機制\n3. 啟用多因素認證(MFA)\n4. 限制登入嘗試次數\n5. 實施 IP 限速",
+		Metadata: map[string]interface{}{
+			"username":      result.Username,
+			"password":      result.Password,
+			"attempts":      fmt.Sprintf("%d", result.AttemptsCount),
+			"response_time": fmt.Sprintf("%dms", result.ResponseTime),
+		},
+		CreatedAt: time.Now(),
+		UpdatedAt: time.Now(),
 	}
 }
 

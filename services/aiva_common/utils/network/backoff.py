@@ -12,7 +12,7 @@ Features:
 - Custom backoff strategies
 
 Example:
-    from services.aiva_common.utils.network import RetryingAsyncClient, jitter_backoff
+    from aiva_common.utils.network import RetryingAsyncClient, jitter_backoff
 
     client = RetryingAsyncClient(
         retries=3,

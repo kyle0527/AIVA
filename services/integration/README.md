@@ -1107,6 +1107,39 @@ class SOXComplianceEngine:
 
 ## 🔧 故障排除與維護
 
+### 📋 問題處理標準流程
+
+#### **問題嚴重程度分級**
+
+| 等級 | 定義 | 處理時間 | 責任人 |
+|------|------|---------|--------|
+| **P0 - 阻塞性** | 整合服務完全中斷、數據丟失 | 2小時內 | 架構師 + DevOps |
+| **P1 - 嚴重** | 核心功能故障、性能顯著下降 | 24小時內 | 模組負責人 |
+| **P2 - 一般** | 部分功能異常、用戶體驗問題 | 3天內 | 開發團隊 |
+| **P3 - 輕微** | 文檔錯誤、非關鍵功能優化 | 1週內 | 維護團隊 |
+
+#### **標準問題處理程序**
+
+1. **問題識別與報告** (0-30分鐘)
+   - 自動監控系統告警
+   - 用戶反饋問題收集
+   - 系統健康檢查異常
+
+2. **問題分類與分派** (30分鐘內)
+   - 確定嚴重程度等級
+   - 分派給對應責任人
+   - 建立問題追蹤記錄
+
+3. **根因分析與修復** (依等級時限)
+   - 收集相關日誌和數據
+   - 進行系統診斷分析
+   - 實施修復方案
+
+4. **驗證與文檔更新**
+   - 功能回歸測試
+   - 問題修復確認
+   - 更新相關文檔
+
 ### **智能故障診斷**
 
 ```bash
@@ -1591,14 +1624,16 @@ from ..aiva_common.schemas import (
 # 移除了第 74-265 行的重複 enum 定義
 # 現已正確從 aiva_common.enums 導入
 
-from services.aiva_common.enums.assets import (
+from ..aiva_common.enums.assets import (
     AssetStatus,
     AssetType,
     BusinessCriticality,
     Environment,
 )
-from services.aiva_common.enums.common import Confidence, Severity
-from services.aiva_common.enums.security import Exploitability, VulnerabilityStatus
+from ..aiva_common.enums.common import Confidence, Severity
+from ..aiva_common.enums.security import Exploitability, VulnerabilityStatus
+
+# 💡 導入規範: 使用相對路徑 (..aiva_common) 確保跨平台可移植性
 
 # 文件頭部包含 Compliance Note 記錄修復日期
 ```
@@ -1610,7 +1645,7 @@ from services.aiva_common.enums.security import Exploitability, VulnerabilitySta
 # 移除了 NodeType, EdgeType 的重複定義
 # 現已從 aiva_common.enums.security 導入
 
-from services.aiva_common.enums.security import (
+from ..aiva_common.enums.security import (
     AttackPathNodeType as NodeType,
     AttackPathEdgeType as EdgeType,
 )
@@ -1623,7 +1658,7 @@ from services.aiva_common.enums.security import (
 # 移除了 RiskLevel 的重複定義
 # 現已從 aiva_common.enums.common 導入
 
-from services.aiva_common.enums.common import RiskLevel
+from ..aiva_common.enums.common import RiskLevel
 ```
 
 **修復總結**:
@@ -1849,11 +1884,11 @@ def downgrade():
     # op.execute("DROP TYPE severity")
 ```
 
-#### 🔄 **修改現有功能的檢查清單**
+#### ✅ **修改現有功能的檢查清單** (已更新 2025-10-26)
 
 在修改 Integration 模組任何代碼前:
 
-- [ ] **Reception 層檢查**: **立即修復** models_enhanced.py 的重複定義
+- [✅] **Reception 層檢查**: ~~**立即修復** models_enhanced.py 的重複定義~~ **已完成 (2025-10-25)**
 - [ ] **資料庫模型檢查**: 確認 SQLAlchemy 模型使用 aiva_common 枚舉
 - [ ] **API Gateway 檢查**: 確認所有 API 端點使用標準 Pydantic 模型
 - [ ] **外部整合檢查**: 確認數據映射邏輯使用 aiva_common 標準
@@ -1869,7 +1904,7 @@ grep -r "class AssetType.*Enum" services/integration/reception --include="*.py"
 # 2. 驗證資料庫模型一致性
 python -c "
 from services.integration.models import Asset, Vulnerability
-from services.aiva_common.enums import AssetType, Severity
+from ..aiva_common.enums import AssetType, Severity
 # 檢查欄位類型是否使用 aiva_common 枚舉
 "
 
@@ -1926,7 +1961,7 @@ class SyncStrategy(str, Enum):
 #### 📝 **層級特定注意事項**
 
 **Reception 層開發者**:
-- ✅ **立即執行**: 修復 models_enhanced.py 的 265 行重複定義
+- [✅] ~~**立即執行**: 修復 models_enhanced.py 的 265 行重複定義~~ **已完成 (2025-10-25)**
 - ✅ 使用 aiva_common 進行外部數據標準化
 - ❌ 絕對禁止重新定義 AssetType, Severity, Confidence 等
 

@@ -14,7 +14,7 @@ Features:
 - Smart fingerprinting algorithm
 
 Example:
-    from services.aiva_common.utils.dedup import DeDup
+    from aiva_common.utils.dedup import DeDup
 
     dedupe = DeDup(
         db_path="data/findings.db",

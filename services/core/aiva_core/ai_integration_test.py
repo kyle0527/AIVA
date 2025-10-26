@@ -13,16 +13,16 @@ import sys
 import time
 from typing import Any
 
-sys.path.append(os.path.join(os.path.dirname(__file__)))
+sys.path.append(str(Path(__file__).parent.parent.parent))
 
-from ai_controller import UnifiedAIController
-from services.core.aiva_core.ai_engine.bio_neuron_rag_agent import BioNeuronRAGAgent
-from multilang_coordinator import MultiLanguageAICoordinator
-from nlg_system import AIVANaturalLanguageGenerator
+from services.core.aiva_core.ai_controller import UnifiedAIController
+from services.core.aiva_core.ai_engine.bio_neuron_core import BioNeuronRAGAgent
+from services.core.aiva_core.multilang_coordinator import MultiLanguageAICoordinator
+from services.core.aiva_core.nlg_system import AIVANaturalLanguageGenerator
 
 
 @dataclass
-class TestResult:
+class IntegrationTestResult:
     """測試結果數據類"""
     test_name: str
     success: bool
@@ -42,7 +42,7 @@ class AIIntegrationTester:
             aiva_root: AIVA 根目錄路徑
         """
         self.aiva_root = Path(aiva_root)
-        self.test_results: list[TestResult] = []
+        self.test_results: list[IntegrationTestResult] = []
 
         # 初始化各 AI 組件
         self.bio_agent = BioNeuronRAGAgent(str(self.aiva_root))
@@ -113,7 +113,7 @@ class AIIntegrationTester:
 
         all_ready = all(detail["ready"] for detail in details.values())
 
-        self.test_results.append(TestResult(
+        self.test_results.append(IntegrationTestResult(
             test_name="基礎組件初始化測試",
             success=all_ready,
             execution_time=execution_time,
@@ -162,7 +162,7 @@ class AIIntegrationTester:
         execution_time = time.time() - start_time
         success = success_count == len(test_requests)
 
-        self.test_results.append(TestResult(
+        self.test_results.append(IntegrationTestResult(
             test_name="統一控制器協調測試",
             success=success,
             execution_time=execution_time,
@@ -211,7 +211,7 @@ class AIIntegrationTester:
         execution_time = time.time() - start_time
         success = success_count == len(test_contexts)
 
-        self.test_results.append(TestResult(
+        self.test_results.append(IntegrationTestResult(
             test_name="自然語言生成測試",
             success=success,
             execution_time=execution_time,
@@ -252,7 +252,7 @@ class AIIntegrationTester:
 
         execution_time = time.time() - start_time
 
-        self.test_results.append(TestResult(
+        self.test_results.append(IntegrationTestResult(
             test_name="多語言協調測試",
             success=success,
             execution_time=execution_time,
@@ -304,7 +304,7 @@ class AIIntegrationTester:
 
         execution_time = time.time() - start_time
 
-        self.test_results.append(TestResult(
+        self.test_results.append(IntegrationTestResult(
             test_name="AI 衝突檢測測試",
             success=success,
             execution_time=execution_time,
@@ -375,7 +375,7 @@ class AIIntegrationTester:
 
         execution_time = time.time() - start_time
 
-        self.test_results.append(TestResult(
+        self.test_results.append(IntegrationTestResult(
             test_name="端到端整合測試",
             success=success,
             execution_time=execution_time,
@@ -437,7 +437,7 @@ class AIIntegrationTester:
 
         execution_time = time.time() - start_time
 
-        self.test_results.append(TestResult(
+        self.test_results.append(IntegrationTestResult(
             test_name="效能壓力測試",
             success=success,
             execution_time=execution_time,
@@ -487,7 +487,7 @@ class AIIntegrationTester:
         execution_time = time.time() - start_time
         success = recovery_count >= len(error_scenarios) * 0.7  # 70% 恢復率
 
-        self.test_results.append(TestResult(
+        self.test_results.append(IntegrationTestResult(
             test_name="錯誤恢復測試",
             success=success,
             execution_time=execution_time,
@@ -529,7 +529,7 @@ class AIIntegrationTester:
 
         return report
 
-    def _generate_recommendations(self, failed_tests: list[TestResult]) -> list[str]:
+    def _generate_recommendations(self, failed_tests: list[IntegrationTestResult]) -> list[str]:
         """
         根據失敗的測試生成建議
 

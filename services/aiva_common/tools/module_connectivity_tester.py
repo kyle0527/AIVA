@@ -50,7 +50,7 @@ class AIVAModuleConnectivityTest:
         # 測試生成的Python Schema
         try:
             # 測試基礎類型
-            from services.aiva_common.schemas.generated.base_types import MessageHeader, Target, Vulnerability
+            from ..schemas.generated.base_types import MessageHeader, Target, Vulnerability
             results['python_schemas']['base_types'] = {
                 'MessageHeader': True,
                 'Target': True, 
@@ -59,7 +59,7 @@ class AIVAModuleConnectivityTest:
             logger.info("  ✅ 基礎類型Schema導入成功")
             
             # 測試消息Schema
-            from services.aiva_common.schemas.generated.messaging import AivaMessage, AIVARequest, AIVAResponse
+            from ..schemas.generated.messaging import AivaMessage, AIVARequest, AIVAResponse
             results['python_schemas']['messaging'] = {
                 'AivaMessage': True,
                 'AIVARequest': True,
@@ -68,7 +68,7 @@ class AIVAModuleConnectivityTest:
             logger.info("  ✅ 消息Schema導入成功")
             
             # 測試任務Schema  
-            from services.aiva_common.schemas.generated.tasks import FunctionTaskPayload, FunctionTaskTarget
+            from ..schemas.generated.tasks import FunctionTaskPayload, FunctionTaskTarget
             results['python_schemas']['tasks'] = {
                 'FunctionTaskPayload': True,
                 'FunctionTaskTarget': True
@@ -76,7 +76,7 @@ class AIVAModuleConnectivityTest:
             logger.info("  ✅ 任務Schema導入成功")
             
             # 測試發現Schema
-            from services.aiva_common.schemas.generated.findings import FindingPayload, FindingEvidence
+            from ..schemas.generated.findings import FindingPayload, FindingEvidence
             results['python_schemas']['findings'] = {
                 'FindingPayload': True,
                 'FindingEvidence': True
@@ -104,8 +104,8 @@ class AIVAModuleConnectivityTest:
         
         try:
             # 使用新Schema創建消息
-            from services.aiva_common.schemas.generated.base_types import MessageHeader
-            from services.aiva_common.schemas.generated.messaging import AivaMessage
+            from ..schemas.generated.base_types import MessageHeader
+            from ..schemas.generated.messaging import AivaMessage
             
             # 創建消息標頭
             header = MessageHeader(

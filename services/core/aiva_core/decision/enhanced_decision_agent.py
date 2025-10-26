@@ -24,12 +24,8 @@ sys.path.append(str(Path(__file__).parent.parent.parent.parent.parent))
 # 使用 aiva_common 的統一枚舉定義
 from services.aiva_common.enums import RiskLevel
 
-class OperationMode(Enum):
-    """操作模式枚舉"""
-    UI = "UI"          # 用戶介面模式
-    AI = "AI"          # AI 自主模式
-    CHAT = "CHAT"      # 對話模式
-    HYBRID = "HYBRID"  # 混合模式
+# Compliance Note: 2025-10-26 - 移除重複定義，統一使用 bio_neuron_master.py 中的 OperationMode
+from ..bio_neuron_master import OperationMode
 
 class DecisionContext:
     """決策上下文"""
@@ -185,7 +181,7 @@ class EnhancedDecisionAgent:
         if context.risk_level == RiskLevel.HIGH:
             decision = Decision(
                 action="SWITCH_MODE",
-                params={"mode": OperationMode.UI.value},
+                params={"mode": OperationMode.UI.value},  # 現在使用統一的小寫值 "ui"
                 confidence=0.9
             )
             decision.reasoning = "高風險操作，切換至 UI 模式要求用戶確認"
@@ -308,7 +304,7 @@ class EnhancedDecisionAgent:
         if action == "REQUIRE_CONFIRMATION":
             return Decision(
                 action="SWITCH_MODE",
-                params={"mode": OperationMode.UI.value, "message": "需要用戶確認"},
+                params={"mode": OperationMode.UI.value, "message": "需要用戶確認"},  # 統一使用小寫值
                 confidence=0.95
             )
         

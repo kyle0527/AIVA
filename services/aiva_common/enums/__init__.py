@@ -4,7 +4,7 @@ AIVA Common Enums Package
 此套件提供了 AIVA 微服務生態系統中所有枚舉類型的統一介面。
 
 使用方式:
-    from services.aiva_common.enums import ModuleName, Severity, VulnerabilityType
+    from aiva_common.enums import ModuleName, Severity, VulnerabilityType
 
 架構說明:
     - common.py: 通用枚舉 (狀態、級別等)

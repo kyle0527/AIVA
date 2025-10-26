@@ -3,7 +3,7 @@
  * 增強版動態掃描服務 - 整合所有功能模組
  */
 
-import { Browser, Page, BrowserContext } from 'playwright';
+import { Browser, Page, BrowserContext } from 'playwright-core';
 import { logger } from '../utils/logger';
 import { NetworkInterceptor } from './network-interceptor.service';
 import { InteractionSimulator } from './interaction-simulator.service';

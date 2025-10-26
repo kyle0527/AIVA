@@ -33,3 +33,35 @@ package-lock.json
 test_data/
 *.db
 aiva_experience.db
+
+# Security - 敏感資訊和測試資料
+**/SECRET_DETECTOR_RULES.md
+**/secret_detector_rules.*
+**/*secret*test*
+**/*token*test*
+**/*key*test*
+**/test_secrets.*
+**/example_secrets.*
+**/*credential*test*
+secrets/
+test_credentials/
+.env.local
+.env.production
+*.pem
+*.key
+*.crt
+
+# 大型日誌文件
+logs/*.log
+logs/**/*.log
+*.log
+
+# 暫存和緩存文件
+tmp/
+temp/
+cache/
+.cache/
+*.tmp
+*.temp
+*.bak
+*.backup
