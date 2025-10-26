@@ -2,49 +2,49 @@
   "timestamp": "2025-10-26T16:32:04.667362",
   "tests": [
     {
-      "name": "Docker Àô¹Ò",
+      "name": "Docker å®¹å™¨",
       "status": "PASS",
-      "details": "4/4 ªA°È¹B¦æ¤¤",
+      "details": "4/4 å€‹å®¹å™¨é‹è¡Œæ­£å¸¸",
       "timestamp": "2025-10-26T16:32:04.762602"
     },
     {
-      "name": "Python ¨Ì¿à",
+      "name": "Python ç’°å¢ƒ",
       "status": "PASS",
-      "details": "7 ®M¥ó¤w¦w¸Ë",
+      "details": "7 å€‹æ¨¡çµ„å·²å®‰è£",
       "timestamp": "2025-10-26T16:32:05.985711"
     },
     {
-      "name": "°t¸m¨t²Î",
+      "name": "æƒæç³»çµ±",
       "status": "FAIL",
       "details": "No module named 'services'",
       "timestamp": "2025-10-26T16:32:05.986607"
     },
     {
-      "name": "®Ö¤ß¼Ò²Õ",
+      "name": "åŠŸèƒ½æ¨¡çµ„",
       "status": "FAIL",
       "details": "No module named 'services'",
       "timestamp": "2025-10-26T16:32:05.987322"
     },
     {
-      "name": "SQLi ¼Ò²Õ",
+      "name": "SQLi æ¨¡çµ„",
       "status": "FAIL",
       "details": "No module named 'services'",
       "timestamp": "2025-10-26T16:32:05.987807"
     },
     {
-      "name": "¾ã¦X¼h",
+      "name": "æ•´åˆæœå‹™",
       "status": "FAIL",
       "details": "[Errno 2] No such file or directory: '/workspaces/AIVA/services/integration/aiva_integration/app.py'",
       "timestamp": "2025-10-26T16:32:05.988088"
     },
     {
-      "name": "AI ¨t²Î",
+      "name": "AI ç³»çµ±",
       "status": "PASS",
-      "details": "2 ­Ó²Õ¥ó¥i¥Î",
+      "details": "2 å€‹çµ„ä»¶å¯ç”¨",
       "timestamp": "2025-10-26T16:32:05.988350"
     },
     {
-      "name": "±½´y¤ŞÀº",
+      "name": "å ±å‘Šç”Ÿæˆ",
       "status": "FAIL",
       "details": "No module named 'services'",
       "timestamp": "2025-10-26T16:32:05.989097"
