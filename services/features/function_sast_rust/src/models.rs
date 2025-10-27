@@ -2,7 +2,7 @@
 
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
-use crate::schemas::generated::{FindingPayload, Vulnerability, Target, FindingEvidence, FindingImpact, FindingRecommendation, VulnerabilityType, Severity, Confidence};
+use crate::schemas::generated::{FindingPayload, Vulnerability, Target, FindingEvidence, FindingImpact, FindingRecommendation, Severity, Confidence, FindingStatus};
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct FunctionTaskPayload {

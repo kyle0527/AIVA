@@ -1,7 +1,10 @@
 // AIVA Rust Schema - 自動生成
 // 版本: 1.0.0
-// 基於 Python aiva_common 作為單一事實來源
-// 此文件與 services/aiva_common/schemas/ 保持完全一致性
+// 基於 core_schema_sot.yaml 作為單一事實來源
+// 此文件與 Python aiva_common 保持完全一致性
+//
+// ⚠️  此檔案自動生成，請勿手動修改
+// 📅 最後更新: 2025-10-27T08:15:28.157056
 
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
@@ -11,88 +14,82 @@ use chrono::{DateTime, Utc};
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 pub enum Severity {
-    #[serde(rename = "Critical")]
+    #[serde(rename = "critical")]
     Critical,
-    #[serde(rename = "High")]
+    #[serde(rename = "high")]
     High,
-    #[serde(rename = "Medium")]  
+    #[serde(rename = "medium")]
     Medium,
-    #[serde(rename = "Low")]
+    #[serde(rename = "low")]
     Low,
-    #[serde(rename = "Informational")]
-    Informational,
+    #[serde(rename = "info")]
+    Info,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 pub enum Confidence {
-    #[serde(rename = "Certain")]
-    Certain,
-    #[serde(rename = "Firm")]
+    #[serde(rename = "confirmed")]
+    Confirmed,
+    #[serde(rename = "firm")]
     Firm,
-    #[serde(rename = "Possible")]
-    Possible,
+    #[serde(rename = "tentative")]
+    Tentative,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
-pub enum VulnerabilityType {
-    #[serde(rename = "XSS")]
-    Xss,
-    #[serde(rename = "SQL Injection")]
-    SqlInjection,
-    #[serde(rename = "SSRF")]
-    Ssrf,
-    #[serde(rename = "IDOR")]
-    Idor,
-    #[serde(rename = "BOLA")]
-    Bola,
-    #[serde(rename = "Information Leak")]
-    InformationLeak,
-    #[serde(rename = "Weak Authentication")]
-    WeakAuthentication,
-    #[serde(rename = "Remote Code Execution")]
-    RemoteCodeExecution,
-    #[serde(rename = "Authentication Bypass")]
-    AuthenticationBypass,
-    #[serde(rename = "Price Manipulation")]
-    PriceManipulation,
-    #[serde(rename = "Workflow Bypass")]
-    WorkflowBypass,
-    #[serde(rename = "Race Condition")]
-    RaceCondition,
-    #[serde(rename = "Forced Browsing")]
-    ForcedBrowsing,
-    #[serde(rename = "State Manipulation")]
-    StateManipulation,
+pub enum FindingStatus {
+    #[serde(rename = "new")]
+    New,
+    #[serde(rename = "confirmed")]
+    Confirmed,
+    #[serde(rename = "false_positive")]
+    FalsePositive,
+    #[serde(rename = "fixed")]
+    Fixed,
+    #[serde(rename = "ignored")]
+    Ignored,
 }
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub enum HttpMethod {
+    #[serde(rename = "GET")]
+    Get,
+    #[serde(rename = "POST")]
+    Post,
+    #[serde(rename = "PUT")]
+    Put,
+    #[serde(rename = "DELETE")]
+    Delete,
+    #[serde(rename = "PATCH")]
+    Patch,
+    #[serde(rename = "HEAD")]
+    Head,
+    #[serde(rename = "OPTIONS")]
+    Options,
+}
+
 
 // ==================== 核心結構定義 ====================
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct Vulnerability {
-    pub name: VulnerabilityType,
+pub struct MessageHeader {
+    pub message_id: String,
+    pub trace_id: String,
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub cwe: Option<String>,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub cve: Option<String>,
-    pub severity: Severity,
-    pub confidence: Confidence,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub description: Option<String>,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub cvss_score: Option<f64>,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub cvss_vector: Option<String>,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub owasp_category: Option<String>,
+    pub correlation_id: Option<String>,
+    pub source_module: String,
+    pub timestamp: DateTime<Utc>,
+    #[serde(default = "default_version")]
+    pub version: String,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Target {
-    pub url: serde_json::Value, // Accept arbitrary URL-like values
+    pub url: String,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub parameter: Option<String>,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub method: Option<String>,
+    #[serde(default = "default_get_method")]
+    pub method: String,
     #[serde(default)]
     pub headers: HashMap<String, String>,
     #[serde(default)]
@@ -101,8 +98,16 @@ pub struct Target {
     pub body: Option<String>,
 }
 
-// 向後相容別名
-pub type FindingTarget = Target;
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct Vulnerability {
+    pub name: String,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub cwe: Option<String>,
+    pub severity: Severity,
+    pub confidence: Confidence,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub description: Option<String>,
+}
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct FindingEvidence {
@@ -129,7 +134,7 @@ pub struct FindingImpact {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub technical_impact: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub affected_users: Option<i64>,
+    pub affected_users: Option<i32>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub estimated_cost: Option<f64>,
 }
@@ -146,14 +151,14 @@ pub struct FindingRecommendation {
     pub references: Vec<String>,
 }
 
-// ==================== FindingPayload - 主要結構 ====================
+// ==================== 主要 Payload 結構 ====================
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct FindingPayload {
     pub finding_id: String,
     pub task_id: String,
     pub scan_id: String,
-    pub status: String,
+    pub status: FindingStatus,
     pub vulnerability: Vulnerability,
     pub target: Target,
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -170,13 +175,23 @@ pub struct FindingPayload {
     pub updated_at: DateTime<Utc>,
 }
 
+// ==================== 輔助函數 ====================
+
+fn default_version() -> String {
+    "1.0".to_string()
+}
+
+fn default_get_method() -> String {
+    "GET".to_string()
+}
+
 impl FindingPayload {
     /// 創建新的 FindingPayload 實例
     pub fn new(
         finding_id: String,
         task_id: String,
         scan_id: String,
-        status: String,
+        status: FindingStatus,
         vulnerability: Vulnerability,
         target: Target,
     ) -> Self {
@@ -198,53 +213,40 @@ impl FindingPayload {
         }
     }
 
-    /// 驗證 finding_id 格式
-    pub fn validate_finding_id(&self) -> Result<(), String> {
+    /// 驗證必要字段格式
+    pub fn validate(&self) -> Result<(), String> {
         if !self.finding_id.starts_with("finding_") {
             return Err("finding_id must start with 'finding_'".to_string());
         }
-        Ok(())
-    }
-
-    /// 驗證 task_id 格式
-    pub fn validate_task_id(&self) -> Result<(), String> {
         if !self.task_id.starts_with("task_") {
             return Err("task_id must start with 'task_'".to_string());
         }
-        Ok(())
-    }
-
-    /// 驗證 scan_id 格式
-    pub fn validate_scan_id(&self) -> Result<(), String> {
         if !self.scan_id.starts_with("scan_") {
             return Err("scan_id must start with 'scan_'".to_string());
         }
         Ok(())
     }
 
-    /// 驗證 status 值
-    pub fn validate_status(&self) -> Result<(), String> {
-        let allowed = ["confirmed", "potential", "false_positive", "needs_review"];
-        if !allowed.contains(&self.status.as_str()) {
-            return Err(format!(
-                "Invalid status: {}. Must be one of {:?}",
-                self.status, allowed
-            ));
-        }
-        Ok(())
-    }
-
-    /// 完整驗證
-    pub fn validate(&self) -> Result<(), String> {
-        self.validate_finding_id()?;
-        self.validate_task_id()?;
-        self.validate_scan_id()?;
-        self.validate_status()?;
-        Ok(())
-    }
-
     /// 更新時間戳
     pub fn touch(&mut self) {
         self.updated_at = Utc::now();
+    }
+}
+
+impl Default for FindingStatus {
+    fn default() -> Self {
+        FindingStatus::New
+    }
+}
+
+impl Default for Severity {
+    fn default() -> Self {
+        Severity::Medium
+    }
+}
+
+impl Default for Confidence {
+    fn default() -> Self {
+        Confidence::Tentative
     }
 }

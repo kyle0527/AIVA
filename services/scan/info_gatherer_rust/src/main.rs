@@ -1,15 +1,26 @@
 // AIVA Info Gatherer - Rust Implementation
 // 日期: 2025-10-13
-// 功能: 高性能敏感資訊掃描器
+// 功能: 高性能敏感資訊掃描器，整合統一統計收集系統
 
 use futures_lite::stream::StreamExt;
 use lapin::{
     options::*, types::FieldTable, Connection, ConnectionProperties,
+    message::Delivery,
 };
 use serde::{Deserialize, Serialize};
 use std::sync::Arc;
-use tracing::{info, error};
+use std::env;
+use std::time::Duration;
+use tracing::{info, error, warn};
 use tracing_subscriber;
+
+// 引入統一統計收集模組
+use aiva_common_rust::metrics::{
+    initialize_metrics, cleanup_metrics,
+    record_task_received, record_task_completed, record_task_failed,
+    record_vulnerability_found, SeverityLevel,
+    update_system_metrics,
+};
 
 mod scanner;
 mod secret_detector;
@@ -21,11 +32,46 @@ use scanner::SensitiveInfoScanner;
 use secret_detector::SecretDetector;
 use git_history_scanner::GitHistoryScanner;
 use verifier::Verifier;
-use schemas::generated::{FindingPayload, Vulnerability, VulnerabilityType, Severity, Confidence, Target, FindingEvidence};
+use schemas::generated::{FindingPayload, Vulnerability, Severity, Confidence, Target, FindingEvidence, FindingStatus};
 
-const RABBITMQ_URL: &str = "amqp://aiva:dev_password@localhost:5672";
-const TASK_QUEUE: &str = "task.scan.sensitive_info";
-const RESULT_QUEUE: &str = "results.scan.sensitive_info";
+const TASK_QUEUE: &str = "tasks.scan.sensitive_info";
+const RESULT_QUEUE: &str = "findings.new";
+
+/// 檢查消息是否應該重試
+/// 實施統一的重試策略，防止 poison pill 消息無限循環
+fn should_retry_message(delivery: &Delivery, _error: &dyn std::error::Error) -> bool {
+    const MAX_RETRY_ATTEMPTS: i32 = 3;
+    
+    // 檢查消息頭部中的重試次數
+    let retry_count = delivery
+        .properties
+        .headers()
+        .as_ref()
+        .and_then(|headers| headers.inner().get("x-aiva-retry-count"))
+        .and_then(|val| {
+            if let lapin::types::AMQPValue::LongInt(count) = val {
+                Some(*count)
+            } else {
+                None
+            }
+        })
+        .unwrap_or(0);
+    
+    if retry_count >= MAX_RETRY_ATTEMPTS {
+        error!(
+            "消息已達到最大重試次數 {}, 發送到死信隊列",
+            MAX_RETRY_ATTEMPTS
+        );
+        false
+    } else {
+        warn!(
+            "消息重試 {}/{}: 錯誤處理中",
+            retry_count + 1,
+            MAX_RETRY_ATTEMPTS
+        );
+        true
+    }
+}
 
 #[derive(Debug, Deserialize)]
 struct ScanTask {
@@ -47,36 +93,33 @@ fn create_finding_payload(
 ) -> FindingPayload {
     let finding_id = format!("finding_{}_{}", task_id, uuid::Uuid::new_v4().to_string());
     
-    let vulnerability_type = match info_type {
-        "secret" | "git_secret" => VulnerabilityType::WeakAuthentication,
-        "sensitive_info" => VulnerabilityType::InformationLeak,
-        _ => VulnerabilityType::InformationLeak,
+    // 使用統一的字符串類型漏洞名稱
+    let vulnerability_name = match info_type {
+        "secret" | "git_secret" => "Weak Authentication",
+        "sensitive_info" => "Information Leak", 
+        _ => "Information Leak",
     };
     
     let severity_enum = match severity.unwrap_or("medium") {
-        "CRITICAL" => Severity::Critical,
-        "HIGH" => Severity::High,
-        "MEDIUM" => Severity::Medium,
-        "LOW" => Severity::Low,
+        "CRITICAL" | "critical" => Severity::Critical,
+        "HIGH" | "high" => Severity::High,
+        "MEDIUM" | "medium" => Severity::Medium,
+        "LOW" | "low" => Severity::Low,
         _ => Severity::Medium,
     };
     
     let vulnerability = Vulnerability {
-        name: vulnerability_type,
+        name: vulnerability_name.to_string(),
         cwe: Some("CWE-200".to_string()), // Information Exposure
-        cve: None,
         severity: severity_enum,
         confidence: confidence_level,
         description: Some(format!("Sensitive information detected: {}", info_type)),
-        cvss_score: None,
-        cvss_vector: None,
-        owasp_category: None,
     };
     
     let target = Target {
-        url: serde_json::Value::String(location.to_string()),
+        url: location.to_string(),
         parameter: None,
-        method: None,
+        method: "GET".to_string(),
         headers: std::collections::HashMap::new(),
         params: std::collections::HashMap::new(),
         body: None,
@@ -95,7 +138,7 @@ fn create_finding_payload(
         finding_id,
         task_id.to_string(),
         scan_id.to_string(),
-        "confirmed".to_string(),
+        FindingStatus::Confirmed,
         vulnerability,
         target,
     );
@@ -103,6 +146,23 @@ fn create_finding_payload(
     finding.evidence = Some(evidence);
     finding.strategy = Some("sensitive_info_detection".to_string());
     finding
+}
+
+// get_rabbitmq_url 獲取 RabbitMQ 連接 URL，遵循 12-factor app 原則
+fn get_rabbitmq_url() -> Option<String> {
+    // 優先使用完整 URL
+    if let Ok(url) = env::var("AIVA_RABBITMQ_URL") {
+        return Some(url);
+    }
+    
+    // 組合式配置
+    let host = env::var("AIVA_RABBITMQ_HOST").unwrap_or_else(|_| "localhost".to_string());
+    let port = env::var("AIVA_RABBITMQ_PORT").unwrap_or_else(|_| "5672".to_string());
+    let user = env::var("AIVA_RABBITMQ_USER").ok()?;
+    let password = env::var("AIVA_RABBITMQ_PASSWORD").ok()?;
+    let vhost = env::var("AIVA_RABBITMQ_VHOST").unwrap_or_else(|_| "/".to_string());
+    
+    Some(format!("amqp://{}:{}@{}:{}{}", user, password, host, port, vhost))
 }
 
 #[tokio::main]
@@ -114,10 +174,38 @@ async fn main() -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
 
     info!("🚀 AIVA Sensitive Info Gatherer 啟動中...");
 
-    // 連接 RabbitMQ
+    // 初始化統一統計收集系統
+    let worker_id = "info_gatherer_rust".to_string();
+    let metrics_file = env::var("AIVA_METRICS_OUTPUT_FILE")
+        .ok()
+        .or_else(|| Some("/var/log/aiva/metrics/info_gatherer_rust.jsonl".to_string()));
+    
+    if let Err(e) = initialize_metrics(
+        worker_id,
+        Duration::from_secs(
+            env::var("AIVA_METRICS_INTERVAL")
+                .unwrap_or_else(|_| "60".to_string())
+                .parse()
+                .unwrap_or(60)
+        ),
+        metrics_file,
+        true, // 啟動後台統計導出
+    ) {
+        warn!("Failed to initialize metrics: {}", e);
+    } else {
+        info!("📊 統計收集系統已初始化");
+    }
+
+    // 確保程序結束時清理統計收集器
+    let _cleanup_guard = CleanupGuard;
+
+    // 連接 RabbitMQ - 遵循 12-factor app 原則
     info!("📡 連接 RabbitMQ...");
+    let rabbitmq_url = get_rabbitmq_url()
+        .ok_or("AIVA_RABBITMQ_URL or AIVA_RABBITMQ_USER/AIVA_RABBITMQ_PASSWORD must be set")?;
+    
     let conn = Connection::connect(
-        RABBITMQ_URL,
+        &rabbitmq_url,
         ConnectionProperties::default(),
     )
     .await?;
@@ -175,13 +263,35 @@ async fn main() -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
                 }
                 Err(e) => {
                     error!("處理任務失敗: {:?}", e);
-                    delivery
-                        .nack(BasicNackOptions {
-                            requeue: true,
-                            ..Default::default()
-                        })
-                        .await
-                        .expect("Failed to nack");
+                    
+                    // 嘗試從消息中提取任務ID用於統計
+                    if let Ok(task_data) = serde_json::from_slice::<ScanTask>(&delivery.data) {
+                        // 實施重試邏輯，防止 poison pill 消息無限循環
+                        let should_requeue = should_retry_message(&delivery, &e);
+                        record_task_failed(task_data.task_id, should_requeue);
+                    }
+                    
+                    let should_requeue = should_retry_message(&delivery, &e);
+                    
+                    if should_requeue {
+                        warn!("重新入隊消息進行重試");
+                        delivery
+                            .nack(BasicNackOptions {
+                                requeue: true,
+                                ..Default::default()
+                            })
+                            .await
+                            .expect("Failed to nack for retry");
+                    } else {
+                        error!("達到最大重試次數，丟棄消息到死信隊列");
+                        delivery
+                            .nack(BasicNackOptions {
+                                requeue: false,  // 不重新入隊，發送到死信隊列
+                                ..Default::default()
+                            })
+                            .await
+                            .expect("Failed to nack to dead letter");
+                    }
                 }
             }
         });
@@ -198,6 +308,9 @@ async fn process_task(
 ) -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
     let task: ScanTask = serde_json::from_slice(data)?;
     info!("📥 收到敏感資訊掃描任務: {}", task.task_id);
+
+    // 記錄任務開始統計
+    record_task_received(task.task_id.clone());
 
     let scan_id = format!("scan_{}", uuid::Uuid::new_v4().to_string());
     let mut all_findings = Vec::<FindingPayload>::new();
@@ -361,8 +474,20 @@ async fn process_task(
         all_findings.len()
     );
 
+    // 記錄漏洞發現統計
+    for finding in &all_findings {
+        let severity_level = match finding.vulnerability.severity {
+            Severity::Critical => SeverityLevel::Critical,
+            Severity::High => SeverityLevel::High,
+            Severity::Medium => SeverityLevel::Medium,
+            Severity::Low => SeverityLevel::Low,
+            Severity::Info => SeverityLevel::Info,
+        };
+        record_vulnerability_found(severity_level);
+    }
+
     // 發送結果
-    for finding in all_findings {
+    for finding in all_findings.iter() {
         let payload = serde_json::to_vec(&finding)?;
 
         // 聲明結果隊列
@@ -388,5 +513,18 @@ async fn process_task(
             .await?;
     }
 
+    // 記錄任務完成統計
+    record_task_completed(task.task_id.clone(), all_findings.len() as u64);
+
     Ok(())
+}
+
+/// 清理保護結構 - 確保程序結束時清理統計收集器
+struct CleanupGuard;
+
+impl Drop for CleanupGuard {
+    fn drop(&mut self) {
+        info!("📊 清理統計收集器...");
+        cleanup_metrics();
+    }
 }

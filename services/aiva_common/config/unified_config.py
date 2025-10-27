@@ -27,10 +27,33 @@ class DatabaseConfig(BaseModel):
 
 
 class MessageQueueConfig(BaseModel):
-    """訊息佇列配置"""
-    rabbitmq_url: str = os.getenv("AIVA_RABBITMQ_URL", "amqp://guest:guest@localhost:5672/")
+    """訊息佇列配置 - 遵循 12-factor app 原則"""
+    def _get_rabbitmq_url(self) -> str:
+        """獲取 RabbitMQ URL，優先完整 URL，其次組合配置"""
+        url = os.getenv("AIVA_RABBITMQ_URL")
+        if url:
+            return url
+            
+        # 組合式配置
+        host = os.getenv("AIVA_RABBITMQ_HOST", "localhost")
+        port = os.getenv("AIVA_RABBITMQ_PORT", "5672")
+        user = os.getenv("AIVA_RABBITMQ_USER")
+        password = os.getenv("AIVA_RABBITMQ_PASSWORD")
+        vhost = os.getenv("AIVA_RABBITMQ_VHOST", "/")
+        
+        if not user or not password:
+            raise ValueError("AIVA_RABBITMQ_URL or AIVA_RABBITMQ_USER/AIVA_RABBITMQ_PASSWORD must be set")
+            
+        return f"amqp://{user}:{password}@{host}:{port}{vhost}"
+    
+    rabbitmq_url: str = ""  # 將在 __post_init__ 中設置
     exchange_name: str = os.getenv("AIVA_MQ_EXCHANGE", "aiva.topic")
     dlx_name: str = os.getenv("AIVA_MQ_DLX", "aiva.dlx")
+    
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        if not self.rabbitmq_url:
+            self.rabbitmq_url = self._get_rabbitmq_url()
 
 
 class CacheConfig(BaseModel):
@@ -109,9 +132,28 @@ def get_settings() -> UnifiedSettings:
 class Settings(BaseModel):
     """Runtime configuration for AIVA platform."""
 
-    rabbitmq_url: str = os.getenv(
-        "AIVA_RABBITMQ_URL", "amqp://guest:guest@localhost:5672/"
-    )
+    def _get_rabbitmq_url_legacy(self) -> str:
+        """獲取 RabbitMQ URL (向後相容版本)"""
+        url = os.getenv("AIVA_RABBITMQ_URL")
+        if url:
+            return url
+            
+        user = os.getenv("AIVA_RABBITMQ_USER")
+        password = os.getenv("AIVA_RABBITMQ_PASSWORD")
+        if user and password:
+            host = os.getenv("AIVA_RABBITMQ_HOST", "localhost")
+            port = os.getenv("AIVA_RABBITMQ_PORT", "5672")
+            vhost = os.getenv("AIVA_RABBITMQ_VHOST", "/")
+            return f"amqp://{user}:{password}@{host}:{port}{vhost}"
+            
+        raise ValueError("AIVA_RABBITMQ_URL or AIVA_RABBITMQ_USER/AIVA_RABBITMQ_PASSWORD must be set")
+    
+    rabbitmq_url: str = ""  # 將在初始化時設置
+    
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        if not self.rabbitmq_url:
+            self.rabbitmq_url = self._get_rabbitmq_url_legacy()
     exchange_name: str = os.getenv("AIVA_MQ_EXCHANGE", "aiva.topic")
     dlx_name: str = os.getenv("AIVA_MQ_DLX", "aiva.dlx")
 

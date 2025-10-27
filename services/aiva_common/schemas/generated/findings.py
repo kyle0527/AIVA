@@ -5,7 +5,7 @@ AIVA Findings Schema - 自動生成
 AIVA跨語言Schema統一定義
 
 ⚠️  此檔案由core_schema_sot.yaml自動生成，請勿手動修改
-📅 最後更新: 2025-10-23T00:00:00Z
+📅 最後更新: 2025-10-27T08:15:28.157056
 🔄 Schema 版本: 1.0.0
 """
 
@@ -29,7 +29,7 @@ class FindingPayload(BaseModel):
     scan_id: str
     """掃描識別碼"""
 
-    status: str = Field(values=['new', 'confirmed', 'false_positive', 'fixed', 'ignored'])
+    status: str = Field(choices=['new', 'confirmed', 'false_positive', 'fixed', 'ignored'])
     """發現狀態"""
 
     vulnerability: Vulnerability
@@ -50,7 +50,7 @@ class FindingPayload(BaseModel):
     recommendation: Optional[FindingRecommendation] = None
     """修復建議"""
 
-    metadata: Dict[str, Any] = Field(default_factory=dict)
+    metadata: Optional[Dict[str, Any]] = Field(default_factory=dict)
     """中繼資料"""
 
     created_at: datetime
@@ -58,6 +58,7 @@ class FindingPayload(BaseModel):
 
     updated_at: datetime
     """更新時間"""
+
 
 
 class FindingEvidence(BaseModel):
@@ -82,6 +83,7 @@ class FindingEvidence(BaseModel):
     """證明資料"""
 
 
+
 class FindingImpact(BaseModel):
     """漏洞影響評估"""
 
@@ -94,11 +96,12 @@ class FindingImpact(BaseModel):
     technical_impact: Optional[str] = None
     """技術影響"""
 
-    affected_users: Optional[int] = Field(ge=0, default=None)
+    affected_users: Optional[int] = None
     """受影響用戶數"""
 
-    estimated_cost: Optional[float] = Field(ge=0.0, default=None)
+    estimated_cost: Optional[float] = None
     """估計成本"""
+
 
 
 class FindingRecommendation(BaseModel):
@@ -107,12 +110,14 @@ class FindingRecommendation(BaseModel):
     fix: Optional[str] = None
     """修復方法"""
 
-    priority: Optional[str] = Field(values=['critical', 'high', 'medium', 'low'], default=None)
+    priority: Optional[str] = None
     """修復優先級"""
 
-    remediation_steps: List[str] = Field(default_factory=list)
+    remediation_steps: Optional[List[str]] = Field(default_factory=list)
     """修復步驟"""
 
-    references: List[str] = Field(default_factory=list)
+    references: Optional[List[str]] = Field(default_factory=list)
     """參考資料"""
+
+
 

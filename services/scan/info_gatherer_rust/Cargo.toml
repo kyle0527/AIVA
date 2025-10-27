@@ -37,6 +37,9 @@ tracing-subscriber = { version = "0.3", features = ["env-filter"] }
 # Git 操作
 git2 = "0.18"
 
+# AIVA 共用模組 (統計收集)
+aiva_common_rust = { path = "../../features/common/rust/aiva_common_rust" }
+
 # 熵值計算（已使用內建 HashMap）
 
 [dev-dependencies]

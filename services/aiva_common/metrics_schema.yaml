@@ -1,0 +1,219 @@
+# metrics_schema.yaml - 統一統計收集機制的 Schema 定義
+# 日期: 2025-01-07
+# 目的: 定義跨語言的性能監控和統計收集規範
+
+version: "1.0"
+description: "AIVA 跨語言統計收集機制統一定義"
+
+# 基礎統計類型
+base_types:
+  timestamp:
+    type: integer
+    format: unix_timestamp
+    description: "Unix 時間戳"
+  
+  duration:
+    type: integer
+    format: milliseconds
+    description: "持續時間 (毫秒)"
+  
+  counter:
+    type: integer
+    minimum: 0
+    description: "計數器 (只增不減)"
+  
+  gauge:
+    type: number
+    description: "瞬時值 (可增可減)"
+
+# Worker 統計指標
+worker_metrics:
+  # 任務處理統計
+  task_metrics:
+    tasks_received:
+      type: counter
+      description: "接收到的任務總數"
+    
+    tasks_processed:
+      type: counter
+      description: "成功處理的任務數"
+    
+    tasks_failed:
+      type: counter
+      description: "處理失敗的任務數"
+    
+    tasks_retried:
+      type: counter
+      description: "重試的任務數"
+    
+    processing_time:
+      type: duration
+      description: "任務處理時間"
+    
+    queue_wait_time:
+      type: duration
+      description: "任務在隊列中等待時間"
+  
+  # 系統資源統計
+  system_metrics:
+    memory_usage:
+      type: gauge
+      unit: bytes
+      description: "記憶體使用量"
+    
+    cpu_usage:
+      type: gauge
+      unit: percentage
+      description: "CPU 使用率"
+    
+    active_connections:
+      type: gauge
+      description: "活動連接數"
+  
+  # 檢測結果統計
+  detection_metrics:
+    findings_created:
+      type: counter
+      description: "創建的發現數量"
+    
+    vulnerabilities_found:
+      type: counter
+      description: "發現的漏洞數量"
+    
+    false_positives:
+      type: counter
+      description: "誤報數量"
+    
+    severity_distribution:
+      type: object
+      properties:
+        critical:
+          type: counter
+          description: "嚴重漏洞數"
+        high:
+          type: counter
+          description: "高危漏洞數"
+        medium:
+          type: counter
+          description: "中危漏洞數"
+        low:
+          type: counter
+          description: "低危漏洞數"
+        info:
+          type: counter
+          description: "信息級別數"
+
+# 標準指標消息格式
+metric_message:
+  type: object
+  required:
+    - worker_id
+    - timestamp
+    - metrics
+  properties:
+    worker_id:
+      type: string
+      pattern: "^[a-z0-9_]+$"
+      description: "Worker 標識符"
+    
+    timestamp:
+      $ref: "#/base_types/timestamp"
+    
+    metrics:
+      type: object
+      description: "具體的指標數據"
+      oneOf:
+        - $ref: "#/worker_metrics/task_metrics"
+        - $ref: "#/worker_metrics/system_metrics"
+        - $ref: "#/worker_metrics/detection_metrics"
+    
+    metadata:
+      type: object
+      description: "額外的元數據"
+      properties:
+        worker_version:
+          type: string
+          description: "Worker 版本"
+        
+        environment:
+          type: string
+          enum: ["development", "staging", "production"]
+          description: "運行環境"
+        
+        instance_id:
+          type: string
+          description: "實例標識符"
+
+# 聚合統計報告格式
+aggregated_report:
+  type: object
+  required:
+    - report_id
+    - time_range
+    - aggregated_metrics
+  properties:
+    report_id:
+      type: string
+      description: "報告唯一標識符"
+    
+    time_range:
+      type: object
+      required:
+        - start_time
+        - end_time
+      properties:
+        start_time:
+          $ref: "#/base_types/timestamp"
+        end_time:
+          $ref: "#/base_types/timestamp"
+    
+    aggregated_metrics:
+      type: object
+      description: "聚合後的統計數據"
+      properties:
+        total_tasks:
+          type: integer
+          description: "總任務數"
+        
+        success_rate:
+          type: number
+          minimum: 0
+          maximum: 1
+          description: "成功率"
+        
+        average_processing_time:
+          $ref: "#/base_types/duration"
+        
+        peak_memory_usage:
+          type: integer
+          unit: bytes
+          description: "峰值記憶體使用"
+        
+        total_findings:
+          type: integer
+          description: "總發現數"
+
+# 配置模板
+metrics_config:
+  collection_interval:
+    type: integer
+    default: 60
+    description: "收集間隔 (秒)"
+  
+  batch_size:
+    type: integer
+    default: 100
+    description: "批次大小"
+  
+  retention_days:
+    type: integer
+    default: 30
+    description: "數據保留天數"
+  
+  export_formats:
+    type: array
+    items:
+      type: string
+      enum: ["prometheus", "statsd", "json", "influxdb"]
+    default: ["json"]
+    description: "導出格式"

@@ -7,6 +7,7 @@ package main
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"os"
 	"os/signal"
 	"syscall"
@@ -18,12 +19,70 @@ import (
 )
 
 const (
-	rabbitmqURL = "amqp://aiva:dev_password@localhost:5672/"
-	taskQueue   = "task.function.ssrf"
-	resultQueue = "results.function.finding"
+	taskQueue   = "tasks.function.ssrf"
+	resultQueue = "findings.new"
 )
 
 var logger *zap.Logger
+
+// getRabbitMQURL 獲取 RabbitMQ 連接 URL，遵循 12-factor app 原則
+func getRabbitMQURL() string {
+	// 優先使用完整 URL
+	if url := os.Getenv("AIVA_RABBITMQ_URL"); url != "" {
+		return url
+	}
+
+	// 組合式配置
+	host := getEnv("AIVA_RABBITMQ_HOST", "localhost")
+	port := getEnv("AIVA_RABBITMQ_PORT", "5672")
+	user := os.Getenv("AIVA_RABBITMQ_USER")
+	password := os.Getenv("AIVA_RABBITMQ_PASSWORD")
+	vhost := getEnv("AIVA_RABBITMQ_VHOST", "/")
+
+	if user == "" || password == "" {
+		return ""
+	}
+
+	return fmt.Sprintf("amqp://%s:%s@%s:%s%s", user, password, host, port, vhost)
+}
+
+// getEnv 獲取環境變數，提供預設值
+func getEnv(key, defaultValue string) string {
+	if value := os.Getenv(key); value != "" {
+		return value
+	}
+	return defaultValue
+}
+
+// shouldRetryMessage 檢查消息是否應該重試
+// 實施統一的重試策略，防止 poison pill 消息無限循環
+func shouldRetryMessage(delivery amqp.Delivery, err error) bool {
+	const maxRetryAttempts = 3
+
+	// 檢查消息頭部中的重試次數
+	retryCount := 0
+	if delivery.Headers != nil {
+		if count, ok := delivery.Headers["x-aiva-retry-count"]; ok {
+			if val, isInt := count.(int32); isInt {
+				retryCount = int(val)
+			}
+		}
+	}
+
+	if retryCount >= maxRetryAttempts {
+		logger.Error("消息已達到最大重試次數，發送到死信隊列",
+			zap.Int("retry_count", retryCount),
+			zap.Int("max_attempts", maxRetryAttempts),
+			zap.Error(err))
+		return false
+	}
+
+	logger.Warn("消息重試",
+		zap.Int("attempt", retryCount+1),
+		zap.Int("max_attempts", maxRetryAttempts),
+		zap.Error(err))
+	return true
+}
 
 func main() {
 	// 初始化 Logger
@@ -36,8 +95,13 @@ func main() {
 
 	logger.Info("🚀 AIVA SSRF Detector 啟動中...")
 
-	// 連接 RabbitMQ
+	// 連接 RabbitMQ - 遵循 12-factor app 原則
 	logger.Info("📡 連接 RabbitMQ...")
+	rabbitmqURL := getRabbitMQURL()
+	if rabbitmqURL == "" {
+		logger.Fatal("AIVA_RABBITMQ_URL or AIVA_RABBITMQ_USER/AIVA_RABBITMQ_PASSWORD must be set")
+	}
+
 	conn, err := amqp.Dial(rabbitmqURL)
 	if err != nil {
 		logger.Fatal("無法連接 RabbitMQ", zap.Error(err))
@@ -120,7 +184,17 @@ func main() {
 
 			if err != nil {
 				logger.Error("檢測失敗", zap.Error(err))
-				d.Nack(false, true) // 拒絕並重新排隊
+
+				// 實施重試邏輯，防止 poison pill 消息無限循環
+				shouldRequeue := shouldRetryMessage(d, err)
+
+				if shouldRequeue {
+					logger.Warn("重新入隊消息進行重試")
+					d.Nack(false, true) // 拒絕並重新排隊
+				} else {
+					logger.Error("達到最大重試次數，發送到死信隊列")
+					d.Nack(false, false) // 拒絕並發送到死信隊列
+				}
 				continue
 			}
 

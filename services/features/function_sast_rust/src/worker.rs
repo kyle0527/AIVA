@@ -5,13 +5,50 @@ use crate::models::{FindingPayload, FunctionTaskPayload};
 use anyhow::{Context, Result};
 use lapin::{
     options::*, types::FieldTable, Channel, Connection, ConnectionProperties,
+    message::Delivery,
 };
 use futures_lite::stream::StreamExt;
 use std::env;
 use uuid::Uuid;
 
 const TASK_QUEUE: &str = "tasks.function.sast";
-const FINDING_QUEUE: &str = "findings";
+const FINDING_QUEUE: &str = "findings.new";
+
+/// 檢查消息是否應該重試
+/// 實施統一的重試策略，防止 poison pill 消息無限循環
+fn should_retry_message(delivery: &Delivery, _error: &dyn std::error::Error) -> bool {
+    const MAX_RETRY_ATTEMPTS: i32 = 3;
+    
+    // 檢查消息頭部中的重試次數
+    let retry_count = delivery
+        .properties
+        .headers()
+        .as_ref()
+        .and_then(|headers| headers.inner().get("x-aiva-retry-count"))
+        .and_then(|val| {
+            if let lapin::types::AMQPValue::LongInt(count) = val {
+                Some(*count)
+            } else {
+                None
+            }
+        })
+        .unwrap_or(0);
+    
+    if retry_count >= MAX_RETRY_ATTEMPTS {
+        tracing::error!(
+            "消息已達到最大重試次數 {}, 發送到死信隊列",
+            MAX_RETRY_ATTEMPTS
+        );
+        false
+    } else {
+        tracing::warn!(
+            "消息重試 {}/{}: 錯誤處理中",
+            retry_count + 1,
+            MAX_RETRY_ATTEMPTS
+        );
+        true
+    }
+}
 
 pub struct SastWorker {
     connection: Connection,
@@ -20,8 +57,19 @@ pub struct SastWorker {
 
 impl SastWorker {
     pub async fn new() -> Result<Self> {
-        let rabbitmq_url = env::var("RABBITMQ_URL")
-            .unwrap_or_else(|_| "amqp://guest:guest@localhost:5672/%2f".to_string());
+        // 遵循 12-factor app 原則和 aiva_common 配置標準
+        let rabbitmq_url = env::var("AIVA_RABBITMQ_URL")
+            .or_else(|_| {
+                // 若未設定完整 URL，嘗試組合式配置
+                let host = env::var("AIVA_RABBITMQ_HOST").unwrap_or_else(|_| "localhost".to_string());
+                let port = env::var("AIVA_RABBITMQ_PORT").unwrap_or_else(|_| "5672".to_string());
+                let user = env::var("AIVA_RABBITMQ_USER")?;
+                let password = env::var("AIVA_RABBITMQ_PASSWORD")?;
+                let vhost = env::var("AIVA_RABBITMQ_VHOST").unwrap_or_else(|_| "/".to_string());
+                
+                Ok(format!("amqp://{}:{}@{}:{}{}", user, password, host, port, vhost))
+            })
+            .context("AIVA_RABBITMQ_URL or AIVA_RABBITMQ_USER/AIVA_RABBITMQ_PASSWORD must be set")?;
         
         let connection = Connection::connect(&rabbitmq_url, ConnectionProperties::default())
             .await
@@ -69,10 +117,29 @@ impl SastWorker {
                 }
                 Err(e) => {
                     tracing::error!("Task failed: {}", e);
-                    delivery
-                        .nack(BasicNackOptions::default())
-                        .await
-                        .context("Failed to nack message")?;
+                    
+                    // 實施重試邏輯，防止 poison pill 消息無限循環
+                    let should_requeue = should_retry_message(&delivery, &e);
+                    
+                    if should_requeue {
+                        tracing::warn!("重新入隊消息進行重試");
+                        delivery
+                            .nack(BasicNackOptions {
+                                requeue: true,
+                                ..Default::default()
+                            })
+                            .await
+                            .context("Failed to nack for retry")?;
+                    } else {
+                        tracing::error!("達到最大重試次數，發送到死信隊列");
+                        delivery
+                            .nack(BasicNackOptions {
+                                requeue: false,  // 不重新入隊，發送到死信隊列
+                                ..Default::default()
+                            })
+                            .await
+                            .context("Failed to nack to dead letter")?;
+                    }
                 }
             }
         }

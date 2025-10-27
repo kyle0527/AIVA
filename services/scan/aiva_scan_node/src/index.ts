@@ -11,8 +11,29 @@ import { ScanService } from './services/scan-service';
 // import { EnhancedDynamicScanService } from './services/enhanced-dynamic-scan.service';
 // import { DynamicScanTask, DynamicScanResult } from './interfaces/dynamic-scan.interfaces';
 
-const RABBITMQ_URL = process.env.RABBITMQ_URL || 'amqp://aiva:dev_password@localhost:5672/';
-const TASK_QUEUE = 'task.scan.dynamic';
+// 遵循 12-factor app 原則獲取 RabbitMQ URL
+function getRabbitMQURL(): string {
+    // 優先使用完整 URL
+    const url = process.env.AIVA_RABBITMQ_URL;
+    if (url) return url;
+    
+    // 組合式配置
+    const host = process.env.AIVA_RABBITMQ_HOST || 'localhost';
+    const port = process.env.AIVA_RABBITMQ_PORT || '5672';
+    const user = process.env.AIVA_RABBITMQ_USER;
+    const password = process.env.AIVA_RABBITMQ_PASSWORD;
+    const vhost = process.env.AIVA_RABBITMQ_VHOST || '/';
+    
+    if (!user || !password) {
+        throw new Error('AIVA_RABBITMQ_URL or AIVA_RABBITMQ_USER/AIVA_RABBITMQ_PASSWORD must be set');
+    }
+    
+    return `amqp://${user}:${password}@${host}:${port}${vhost}`;
+}
+
+const RABBITMQ_URL = getRabbitMQURL();
+const TASK_QUEUE = process.env.AIVA_TASK_QUEUE || 'task.scan.dynamic';
+const RESULT_QUEUE = process.env.AIVA_RESULT_QUEUE || 'findings.new';
 // const ENHANCED_TASK_QUEUE = 'task.scan.dynamic.enhanced';
 
 interface ScanTask {
@@ -75,11 +96,10 @@ async function consumeTasks(): Promise<void> {
         '✅ 掃描完成'
       );
 
-      // 發送結果到 RabbitMQ
-      const resultQueue = 'results.scan.completed';
-      await connection.assertQueue(resultQueue, { durable: true });
+      // 發送結果到 RabbitMQ (統一隊列命名標準)
+      await connection.assertQueue(RESULT_QUEUE, { durable: true });
       await connection.sendToQueue(
-        resultQueue,
+        RESULT_QUEUE,
         Buffer.from(JSON.stringify(result)),
         { persistent: true }
       );

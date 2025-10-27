@@ -111,8 +111,17 @@ func (c *MQClient) Consume(queueName string, handler func([]byte) error) error {
 			c.logger.Error("處理訊息失敗",
 				zap.Error(err),
 				zap.String("queue", queueName))
-			// Nack 訊息,重新放回隊列
-			msg.Nack(false, true)
+
+			// 實施重試邏輯，防止 poison pill 消息無限循環
+			shouldRequeue := c.shouldRetryMessage(msg, err)
+
+			if shouldRequeue {
+				c.logger.Warn("重新入隊消息進行重試")
+				msg.Nack(false, true) // Nack 訊息,重新放回隊列
+			} else {
+				c.logger.Error("達到最大重試次數，發送到死信隊列")
+				msg.Nack(false, false) // Nack 訊息，發送到死信隊列
+			}
 		} else {
 			// Ack 訊息
 			msg.Ack(false)
@@ -185,4 +194,34 @@ func maskPassword(rawURL string) string {
 	// 重建 URL,保留使用者名稱但遮蔽密碼
 	u.User = url.UserPassword(username, "***")
 	return u.String()
+}
+
+// shouldRetryMessage 檢查消息是否應該重試
+// 實施統一的重試策略，防止 poison pill 消息無限循環
+func (c *MQClient) shouldRetryMessage(delivery amqp.Delivery, err error) bool {
+	const maxRetryAttempts = 3
+
+	// 檢查消息頭部中的重試次數
+	retryCount := 0
+	if delivery.Headers != nil {
+		if count, ok := delivery.Headers["x-aiva-retry-count"]; ok {
+			if val, isInt := count.(int32); isInt {
+				retryCount = int(val)
+			}
+		}
+	}
+
+	if retryCount >= maxRetryAttempts {
+		c.logger.Error("消息已達到最大重試次數，發送到死信隊列",
+			zap.Int("retry_count", retryCount),
+			zap.Int("max_attempts", maxRetryAttempts),
+			zap.Error(err))
+		return false
+	}
+
+	c.logger.Warn("消息重試",
+		zap.Int("attempt", retryCount+1),
+		zap.Int("max_attempts", maxRetryAttempts),
+		zap.Error(err))
+	return true
 }
