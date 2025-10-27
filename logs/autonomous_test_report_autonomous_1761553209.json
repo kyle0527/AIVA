@@ -1,0 +1,18 @@
+{
+  "session_id": "autonomous_1761553209",
+  "runtime": "0:00:45.858417",
+  "total_tests": 0,
+  "total_vulnerabilities": 0,
+  "success_rate": 0,
+  "targets_discovered": 1,
+  "optimization_suggestions": 0,
+  "applied_optimizations": 0,
+  "performance_trend": [],
+  "by_test_type": {},
+  "current_strategies": {
+    "aggressive": 0.3,
+    "stealth": 0.4,
+    "comprehensive": 0.3
+  },
+  "learning_rate": 0.1
+}

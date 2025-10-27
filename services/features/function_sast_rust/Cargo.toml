@@ -25,14 +25,12 @@ chrono = { version = "0.4", features = ["serde"] }
 tree-sitter = "0.20"
 tree-sitter-python = "0.20"
 tree-sitter-javascript = "0.20"
-tree-sitter-go = "0.20"
+tree-sitter-go = "0.20" 
 tree-sitter-java = "0.20"
 # 正則表達式
 regex = "1.10"
 # UUID 生成
 uuid = { version = "1.6", features = ["v4", "serde"] }
-# 時間處理
-chrono = { version = "0.4", features = ["serde"] }
 # 文件處理
 walkdir = "2.4"
 

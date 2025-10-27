@@ -17,7 +17,7 @@ from .detection_models import DetectionModels
 from .exceptions import SQLiException
 from .payload_wrapper_encoder import PayloadWrapperEncoder
 from .result_binder_publisher import SqliResultBinderPublisher as ResultBinderPublisher
-from .telemetry import Telemetry
+from .telemetry import SqliExecutionTelemetry
 
 __all__ = [
     "SmartDetectionManager",
@@ -27,5 +27,5 @@ __all__ = [
     "SQLiException",
     "PayloadWrapperEncoder",
     "ResultBinderPublisher",
-    "Telemetry",
+    "SqliExecutionTelemetry",
 ]

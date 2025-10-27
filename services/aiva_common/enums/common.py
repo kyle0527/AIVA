@@ -8,17 +8,17 @@ from enum import Enum
 
 
 class Severity(str, Enum):
-    CRITICAL = "Critical"
-    HIGH = "High"
-    MEDIUM = "Medium"
-    LOW = "Low"
-    INFORMATIONAL = "Informational"
+    CRITICAL = "critical"
+    HIGH = "high"
+    MEDIUM = "medium"
+    LOW = "low"
+    INFORMATIONAL = "info"
 
 
 class Confidence(str, Enum):
-    CERTAIN = "Certain"
-    FIRM = "Firm"
-    POSSIBLE = "Possible"
+    CERTAIN = "certain"
+    FIRM = "firm"
+    POSSIBLE = "possible"
 
 
 class TaskStatus(str, Enum):

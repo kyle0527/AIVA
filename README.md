@@ -3,15 +3,15 @@
 > 🚀 **A**rtificial **I**ntelligence **V**ulnerability **A**ssessment Platform  
 > 基於 BioNeuron AI 的智能化應用程式安全測試解決方案
 
-[![Python](https://img.shields.io/badge/Python-3.11+-blue.svg)](https://python.org)
+[![Python](https://img.shields.io/badge/Python-3.13+-blue.svg)](https://python.org)
 [![Go](https://img.shields.io/badge/Go-1.21+-00ADD8.svg)](https://golang.org)
 [![Rust](https://img.shields.io/badge/Rust-1.70+-000000.svg)](https://rust-lang.org)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.0+-3178C6.svg)](https://typescriptlang.org)
 
-**當前版本:** v3.1 | **最後更新:** 2025年10月26日 | **Schema 標準化:** ✅ 100% 完成 | **文檔同步:** ✅ 最新狀態
+**當前版本:** v4.0 | **最後更新:** 2025年10月27日 | **AI 自主化:** ✅ 完全實現 | **文檔同步:** ✅ 最新狀態
 
-> 🎉 **重大里程碑 (v3.1)**: Schema 跨語言標準化完成！所有 7 個模組已達到 100% 合規性，建立了完整的自動化驗證基礎設施。  
-> 📚 **開發者請注意**: 新的 [Schema 使用規範](IMPORT_GUIDELINES.md) 現已生效，所有新代碼必須遵循統一標準。
+> 🎉 **重大里程碑 (v4.0)**: AI 自主化時代來臨！實現完全自主的安全測試閉環系統，包含智能學習、動態優化和持續改進能力。  
+> 🤖 **AI 能力突破**: 新增 [AI 自主測試系統](ai_autonomous_testing_loop.py) 和 [AI 實戰安全測試](ai_security_test.py)，實現零人工介入的智能安全測試。
 
 ---
 
@@ -52,7 +52,19 @@
 
 ---
 
-## �📖 完整多層文檔架構
+## 🔧 修復原則
+
+**保留未使用函數原則**: 在程式碼修復過程中，若發現有定義但尚未使用的函數或方法，只要不影響程式正常運作，建議予以保留。這些函數可能是：
+- 預留的 API 端點或介面
+- 未來功能的基礎架構
+- 測試或除錯用途的輔助函數
+- 向下相容性考量的舊版介面
+
+說不定未來會用到，保持程式碼的擴展性和靈活性。
+
+---
+
+## 📖 完整多層文檔架構
 
 根據您的角色選擇最適合的文檔層級:
 

@@ -151,6 +151,7 @@ class ModuleName(str, Enum):
 
 class Topic(str, Enum):
     # Scan Topics
+    SCAN_START = "tasks.scan.start"  # 別名，向後兼容
     TASK_SCAN_START = "tasks.scan.start"
     RESULTS_SCAN_COMPLETED = "results.scan.completed"
 

@@ -75,7 +75,8 @@ func handleTask(
 	mqClient *mq.MQClient,
 	log *zap.Logger,
 ) error {
-	// 解析任務 - 使用 ScanTaskPayload 因為 CSPM 需要項目 URL
+	// 解析任務 - CSPM 使用 ScanTaskPayload (基礎設施配置掃描)
+	// 這符合微服務最佳實踐，因為 CSPM 掃描雲配置類似於 SCA 掃描代碼
 	var task schemas.ScanTaskPayload
 	if err := json.Unmarshal(taskData, &task); err != nil {
 		log.Error("Failed to parse task", zap.Error(err))

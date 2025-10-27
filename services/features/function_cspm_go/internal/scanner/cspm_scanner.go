@@ -40,9 +40,9 @@ func (s *CSPMScanner) Scan(ctx context.Context, task *schemas.ScanTaskPayload) (
 
 	// 從 task metadata 或 URL 中提取 provider 信息
 	provider := "generic"
-	// 可以從 URL scheme 提取，例如 "aws://..." 或從 FunctionTaskPayload 的 Metadata 中提取
+	// 可以從 URL scheme 提取，例如 "aws://..." 或從 ScanTaskPayload 的 RepositoryInfo 中提取
 
-	s.logger.Info("Starting CSPM scan",
+	s.logger.Info("Starting CSMP scan",
 		zap.String("provider", provider),
 		zap.String("task_id", task.TaskId))
 
@@ -216,7 +216,7 @@ func (s *CSPMScanner) createFinding(
 			Name:        misconfig.Title,
 			Cwe:         stringPtr(misconfig.ID),
 			Severity:    severity,
-			Confidence:  "FIRM",
+			Confidence:  "firm",
 			Description: stringPtr(misconfig.Description),
 		},
 		Target: schemas.Target{

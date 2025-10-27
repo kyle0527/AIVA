@@ -2,29 +2,11 @@
 
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
-use crate::schemas::generated::{FindingPayload, Vulnerability, Target, FindingEvidence, FindingImpact, FindingRecommendation, Severity, Confidence, FindingStatus};
+use crate::schemas::generated::{FindingPayload, Vulnerability, Target, FindingEvidence, FindingImpact, FindingRecommendation, Severity, Confidence, FindingStatus, ScanTaskPayload};
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct FunctionTaskPayload {
-    pub task_id: String,
-    pub function_type: String,
-    pub target: TaskTarget,
-    pub options: Option<TaskOptions>,
-}
+// 現在使用標準的 ScanTaskPayload，因為 SAST 是掃描類型的服務
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct TaskTarget {
-    pub url: Option<String>,
-    pub file_path: Option<String>,
-    pub repository: Option<String>,
-}
-
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct TaskOptions {
-    pub language: Option<String>,
-    pub rules: Option<Vec<String>>,
-    pub severity_threshold: Option<String>,
-}
+// 不再需要自訂TaskTarget和TaskOptions，使用標準ScanTaskPayload中的Target
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct SastIssue {
@@ -46,18 +28,18 @@ impl SastIssue {
     pub fn to_finding(&self, task_id: &str, scan_id: &str) -> FindingPayload {
         // 解析嚴重性
         let severity = match self.severity.to_uppercase().as_str() {
-            "CRITICAL" => Severity::Critical,
-            "HIGH" => Severity::High,
-            "MEDIUM" => Severity::Medium,
-            "LOW" => Severity::Low,
-            _ => Severity::Informational,
+            "CRITICAL" => Severity::CRITICAL,
+            "HIGH" => Severity::HIGH,
+            "MEDIUM" => Severity::MEDIUM,
+            "LOW" => Severity::LOW,
+            _ => Severity::INFO,
         };
 
         // 解析可信度
         let confidence = match self.confidence.to_uppercase().as_str() {
-            "CERTAIN" => Confidence::Certain,
-            "FIRM" => Confidence::Firm,
-            _ => Confidence::Possible,
+            "CONFIRMED" => Confidence::CONFIRMED,
+            "FIRM" => Confidence::FIRM,
+            _ => Confidence::TENTATIVE,
         };
 
         FindingPayload {
@@ -66,27 +48,19 @@ impl SastIssue {
             scan_id: scan_id.to_string(),
             status: "confirmed".to_string(),
             vulnerability: Vulnerability {
-                name: VulnerabilityType::Sast,
+                name: "SAST".to_string(),  // 使用字符串而不是枚舉
                 cwe: Some(self.cwe.clone()),
-                cve: None,
-                severity,
-                confidence,
+                severity: format!("{}", severity),  // 轉換為字符串
+                confidence: format!("{}", confidence),  // 轉換為字符串
                 description: Some(self.description.clone()),
-                cvss_score: None,
-                cvss_vector: None,
-                owasp_category: None,
             },
             target: Target {
-                url: serde_json::Value::String(format!("file://{}", self.file_path)),
+                url: format!("file://{}", self.file_path),
                 parameter: None,
                 method: None,
-                headers: std::collections::HashMap::new(),
-                params: std::collections::HashMap::new(),
+                headers: Some(std::collections::HashMap::new()),
+                params: Some(std::collections::HashMap::new()),
                 body: None,
-                file_path: Some(self.file_path.clone()),
-                line_number: Some(self.line_number),
-                function_name: self.function_name.clone(),
-                code_snippet: Some(self.code_snippet.clone()),
             },
             strategy: Some("SAST".to_string()),
             evidence: Some(FindingEvidence {
@@ -95,39 +69,29 @@ impl SastIssue {
                 db_version: None,
                 request: None,
                 response: None,
-                proof: None,
-                rule_id: Some(self.rule_id.clone()),
-                pattern: Some(self.matched_pattern.clone()),
-                matched_code: Some(self.code_snippet.clone()),
-                context: Some(format!("Line {}: {}", self.line_number, self.code_snippet)),
+                proof: Some(format!("SAST rule {} matched at line {}: {}", self.rule_id, self.line_number, self.code_snippet)),
             }),
             impact: Some(FindingImpact {
                 description: Some(self.description.clone()),
-                business_impact: Some(format!("{:?} 級漏洞可能導致嚴重安全問題", severity)),
-                technical_impact: None,
+                business_impact: Some(format!("SAST 級漏洞可能導致嚴重安全問題")),
+                technical_impact: Some(format!("代碼安全漏洞，可能被攻擊者利用")),
                 affected_users: None,
                 estimated_cost: None,
-                exploitability: Some(match severity {
-                    Severity::Critical => "極高".to_string(),
-                    Severity::High => "高".to_string(),
-                    Severity::Medium => "中".to_string(),
-                    _ => "低".to_string(),
-                }),
             }),
             recommendation: Some(FindingRecommendation {
                 fix: Some(self.recommendation.clone()),
-                priority: Some(format!("{:?}", severity)),
-                remediation_steps: vec![self.recommendation.clone()],
-                references: vec![],
+                priority: Some(format!("{}", severity)),
+                remediation_steps: Some(vec![self.recommendation.clone()]),
+                references: Some(vec![]),
             }),
-            metadata: {
+            metadata: Some({
                 let mut metadata = std::collections::HashMap::new();
                 metadata.insert("rule_id".to_string(), serde_json::Value::String(self.rule_id.clone()));
                 metadata.insert("file_path".to_string(), serde_json::Value::String(self.file_path.clone()));
                 metadata.insert("line_number".to_string(), serde_json::Value::Number(serde_json::Number::from(self.line_number)));
                 metadata.insert("rule_name".to_string(), serde_json::Value::String(self.rule_name.clone()));
                 metadata
-            },
+            }),
             created_at: chrono::Utc::now(),
             updated_at: chrono::Utc::now(),
         }

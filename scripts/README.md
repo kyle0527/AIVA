@@ -1,29 +1,26 @@
-# 📜 AIVA Scripts - 按五大模組重組# 🔧 AIVA 腳本集合
+# 📜 AIVA Scripts - 按五大模組重組
 
+本目錄包含 AIVA 專案的各種自動化腳本和工具，支援系統的部署、測試、維護和監控等各項功能。
 
+## 🔧 修復原則
 
-## 🎯 新組織結構本目錄包含 AIVA 專案的各種自動化腳本和工具,支援系統的部署、測試、維護和監控等各項功能。
+**保留未使用函數原則**: 在程式碼修復過程中，若發現有定義但尚未使用的函數或方法，只要不影響程式正常運作，建議予以保留。這些函數可能是：
+- 預留的 API 端點或介面
+- 未來功能的基礎架構
+- 測試或除錯用途的輔助函數
+- 向下相容性考量的舊版介面
 
+說不定未來會用到，保持程式碼的擴展性和靈活性。
 
+## 📁 目錄結構
 
-### 🏠 **common/** - 通用系統腳本## 📁 目錄結構
+### 🚀 launcher/ - 啟動器腳本 (3個)
+- **aiva_launcher.py** ✅ - AIVA 統一啟動入口
+- **start_ai_continuous_training.py** ✅ - AI 持續訓練啟動器
+- **smart_communication_selector.py** ✅ - 智能通訊選擇器
 
-- **launcher/** - 系統啟動器
-
-- **deployment/** - 部署腳本  ### 🚀 launcher/ - 啟動器腳本 (3個)
-
-- **setup/** - 環境設置- **aiva_launcher.py** ✅ - AIVA 統一啟動入口
-
-- **maintenance/** - 系統維護- **start_ai_continuous_training.py** ✅ - AI 持續訓練啟動器
-
-- **validation/** - 套件驗證- **smart_communication_selector.py** ✅ - 智能通訊選擇器
-
-
-
-### 🧠 **core/** - 核心模組腳本### 🧪 testing/ - 測試相關腳本 (8個)
-
-- **reporting/** - 核心業務報告- **comprehensive_test.py** ✅ - 全功能測試腳本
-
+### 🧪 testing/ - 測試相關腳本 (8個)
+- **comprehensive_test.py** ✅ - 全功能測試腳本
 - **ai_system_connectivity_check.py** ✅ - AI 系統連接檢查
 
 ### 🔍 **scan/** - 掃描模組腳本  - **aiva_full_worker_live_test.py** ✅ - 完整工作者實時測試

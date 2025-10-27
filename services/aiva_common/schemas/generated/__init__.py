@@ -6,6 +6,8 @@ AIVA Schema 統一導出模組
 """
 
 from .base_types import *
+from .messaging import *
+from .tasks import *
 from .findings import *
 
 __all__ = [
@@ -13,6 +15,18 @@ __all__ = [
     "MessageHeader",
     "Target", 
     "Vulnerability",
+    
+    # 訊息通訊
+    "AivaMessage",
+    "AIVARequest",
+    "AIVAResponse",
+    
+    # 任務管理
+    "FunctionTaskPayload",
+    "FunctionTaskTarget",
+    "FunctionTaskContext", 
+    "FunctionTaskTestConfig",
+    "ScanTaskPayload",
     
     # 發現相關
     "FindingPayload",

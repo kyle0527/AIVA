@@ -1,7 +1,8 @@
 // SAST Worker - RabbitMQ 消費者
 
 use crate::analyzers::StaticAnalyzer;
-use crate::models::{FindingPayload, FunctionTaskPayload};
+use crate::schemas::generated::FindingPayload;
+use crate::schemas::generated::ScanTaskPayload;
 use anyhow::{Context, Result};
 use lapin::{
     options::*, types::FieldTable, Channel, Connection, ConnectionProperties,
@@ -67,7 +68,7 @@ impl SastWorker {
                 let password = env::var("AIVA_RABBITMQ_PASSWORD")?;
                 let vhost = env::var("AIVA_RABBITMQ_VHOST").unwrap_or_else(|_| "/".to_string());
                 
-                Ok(format!("amqp://{}:{}@{}:{}{}", user, password, host, port, vhost))
+                Ok::<String, anyhow::Error>(format!("amqp://{}:{}@{}:{}{}", user, password, host, port, vhost))
             })
             .context("AIVA_RABBITMQ_URL or AIVA_RABBITMQ_USER/AIVA_RABBITMQ_PASSWORD must be set")?;
         
@@ -119,7 +120,7 @@ impl SastWorker {
                     tracing::error!("Task failed: {}", e);
                     
                     // 實施重試邏輯，防止 poison pill 消息無限循環
-                    let should_requeue = should_retry_message(&delivery, &e);
+                    let should_requeue = should_retry_message(&delivery, e.as_ref());
                     
                     if should_requeue {
                         tracing::warn!("重新入隊消息進行重試");
@@ -148,14 +149,17 @@ impl SastWorker {
     }
     
     async fn handle_task(&self, channel: &Channel, data: &[u8]) -> Result<()> {
-        let task: FunctionTaskPayload = serde_json::from_slice(data)
+        let task: ScanTaskPayload = serde_json::from_slice(data)
             .context("Failed to deserialize task")?;
         
-        tracing::info!("🔍 Processing SAST task: {}", task.task_id);
+        let task_id = &task.task_id;
+        tracing::info!("🔍 Processing SAST task: {}", task_id);
         
-        let target_path = task.target.file_path
-            .or(task.target.repository.clone())
-            .context("No target path provided")?;
+        let target_url = &task.target.url;
+        tracing::info!("🎯 Target: {}", target_url);
+        
+        // 從 URL 中提取路徑（假設是 file:// URL）
+        let target_path = target_url.strip_prefix("file://").unwrap_or(target_url);
         
         // 執行靜態分析
         let mut analyzer = StaticAnalyzer::new();
@@ -170,7 +174,7 @@ impl SastWorker {
         // 發布 Findings
         let scan_id = format!("scan_sast_{}", Uuid::new_v4());
         for issue in issues {
-            let finding = issue.to_finding(&task.task_id, &scan_id);
+            let finding = issue.to_finding(task_id, &scan_id);
             self.publish_finding(channel, finding).await?;
         }
         

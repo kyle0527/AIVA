@@ -383,18 +383,332 @@ __all__ = [
         return '\n'.join(content)
     
     def _render_rust_schemas(self) -> str:
-        """渲染 Rust Schema"""
-        # Rust 生成邏輯（簡化版本）
-        return f'''// AIVA Rust Schema - 自動生成
+        """
+        渲染完整的 Rust Schema
+        
+        生成包含所有結構體、枚舉和序列化支持的 Rust 代碼
+        """
+        rust_code = f'''// AIVA Rust Schema - 自動生成
 // 版本: {self.sot_data['version']}
+// 生成時間: {self.sot_data.get('generated_at', 'N/A')}
 // 
-// TODO: 實現完整的 Rust Schema 生成
-// 此功能將在後續版本中完善
+// 完整的 Rust Schema 實現，包含序列化/反序列化支持
 
-{chr(10).join(self.sot_data['generation_config']['rust']['base_imports'])}
+use serde::{{Serialize, Deserialize}};
+use std::collections::HashMap;
+use chrono::{{DateTime, Utc}};
 
-// 基礎結構定義將在此處生成...
+// 可選依賴 - 根據實際使用情況啟用
+#[cfg(feature = "uuid")]
+use uuid::Uuid;
+
+#[cfg(feature = "url")]
+use url::Url;
+
 '''
+        
+        # 生成枚舉
+        for enum_name, enum_data in self.sot_data.get('enums', {}).items():
+            rust_code += self._render_rust_enum(enum_name, enum_data)
+            rust_code += "\n\n"
+            
+        # 生成結構體 - 處理所有頂層分類
+        all_schemas = {}
+        
+        # 收集所有schema定義 - 使用 AIVA 的分類結構
+        for category in ['base_types', 'messaging', 'tasks', 'findings']:
+            category_schemas = self.sot_data.get(category, {})
+            if isinstance(category_schemas, dict):
+                all_schemas.update(category_schemas)
+        
+        for schema_name, schema_data in all_schemas.items():
+            rust_code += self._render_rust_struct(schema_name, schema_data)
+            rust_code += "\n\n"
+            
+        return rust_code
+    
+    def _render_rust_enum(self, enum_name: str, enum_data: dict) -> str:
+        """渲染 Rust 枚舉"""
+        description = enum_data.get('description', f'{enum_name} 枚舉')
+        values = enum_data.get('values', {})
+        
+        rust_enum = f'''/// {description}
+#[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
+#[serde(rename_all = "SCREAMING_SNAKE_CASE")]
+pub enum {enum_name} {{'''
+        
+        for value, desc in values.items():
+            rust_enum += f'''
+    /// {desc}
+    {value.replace('-', '_').upper()},'''
+            
+        rust_enum += '''
+}
+
+impl std::fmt::Display for ''' + enum_name + ''' {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {'''
+        
+        for value in values.keys():
+            rust_value = value.replace('-', '_').upper()
+            rust_enum += f'''
+            {enum_name}::{rust_value} => write!(f, "{value}"),'''
+            
+        rust_enum += '''
+        }
+    }
+}
+
+impl std::str::FromStr for ''' + enum_name + ''' {
+    type Err = String;
+    
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        match s.to_uppercase().as_str() {'''
+        
+        for value in values.keys():
+            rust_value = value.replace('-', '_').upper()
+            rust_enum += f'''
+            "{value.upper()}" => Ok({enum_name}::{rust_value}),'''
+            
+        rust_enum += f'''
+            _ => Err(format!("Invalid {enum_name}: {{}}", s)),
+        }}
+    }}
+}}'''
+        
+        return rust_enum
+    
+    def _render_rust_struct(self, struct_name: str, struct_data: dict) -> str:
+        """渲染 Rust 結構體"""
+        description = struct_data.get('description', f'{struct_name} 結構體')
+        # 支持兩種字段定義格式：properties (標準) 和 fields (AIVA特有)
+        properties = struct_data.get('properties', struct_data.get('fields', {}))
+        required = struct_data.get('required', [])
+        
+        rust_struct = f'''/// {description}
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[serde(rename_all = "snake_case")]
+pub struct {struct_name} {{'''
+        
+        for field_name, field_data in properties.items():
+            field_desc = field_data.get('description', f'{field_name} 欄位')
+            original_type = field_data.get('type')
+            field_required = field_data.get('required', True)  # AIVA schema 中 required 可能在 field 級別
+            is_required_in_struct = field_name in required or field_required
+            
+            # 如果類型已經是 Optional，不需要再包裝
+            if original_type and original_type.startswith('Optional['):
+                field_type = self._convert_to_rust_type(original_type, field_data)
+                is_optional = True
+            elif not is_required_in_struct:
+                # 非必填欄位，包裝為 Option
+                base_type = self._convert_to_rust_type(original_type, field_data)
+                field_type = f"Option<{base_type}>"
+                is_optional = True
+            else:
+                # 必填欄位
+                field_type = self._convert_to_rust_type(original_type, field_data)
+                is_optional = False
+            
+            rust_struct += f'''
+    /// {field_desc}'''
+            
+            if is_optional:
+                rust_struct += f'''
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub {field_name}: {field_type},'''
+            else:
+                rust_struct += f'''
+    pub {field_name}: {field_type},'''
+                
+        rust_struct += '''
+}
+
+impl ''' + struct_name + ''' {
+    /// 創建新的實例
+    pub fn new() -> Self {
+        Self {'''
+        
+        for field_name, field_data in properties.items():
+            original_type = field_data.get('type')
+            field_required = field_data.get('required', True)
+            is_required_in_struct = field_name in required or field_required
+            
+            if original_type and original_type.startswith('Optional['):
+                rust_struct += f'''
+            {field_name}: None,'''
+            elif not is_required_in_struct:
+                rust_struct += f'''
+            {field_name}: None,'''
+            else:
+                # 需要重新計算 field_type 以獲得正確的預設值
+                if original_type and original_type.startswith('Optional['):
+                    converted_type = self._convert_to_rust_type(original_type, field_data)
+                elif not is_required_in_struct:
+                    base_type = self._convert_to_rust_type(original_type, field_data)
+                    converted_type = f"Option<{base_type}>"
+                else:
+                    converted_type = self._convert_to_rust_type(original_type, field_data)
+                
+                default_value = self._get_rust_default_value(converted_type, field_data)
+                rust_struct += f'''
+            {field_name}: {default_value},'''
+                
+        rust_struct += '''
+        }
+    }
+    
+    /// 驗證結構體數據
+    pub fn validate(&self) -> Result<(), String> {'''
+        
+        # 添加必填欄位驗證
+        for field_name in required:
+            if field_name in properties:
+                field_type = properties[field_name].get('type')
+                if field_type == 'string':
+                    rust_struct += f'''
+        if self.{field_name}.is_empty() {{
+            return Err("Field '{field_name}' is required and cannot be empty".to_string());
+        }}'''
+                    
+        rust_struct += '''
+        Ok(())
+    }
+}
+
+impl Default for ''' + struct_name + ''' {
+    fn default() -> Self {
+        Self::new()
+    }
+}'''
+        
+        return rust_struct
+    
+    def _convert_to_rust_type(self, json_type: str, field_data: dict = None) -> str:
+        """將 JSON Schema 類型轉換為 Rust 類型"""
+        if field_data is None:
+            field_data = {}
+            
+        # 處理 Optional 類型
+        if json_type and json_type.startswith('Optional['):
+            inner_type = json_type[9:-1]  # 移除 'Optional[' 和 ']'
+            return f"Option<{self._convert_to_rust_type(inner_type, field_data)}>"
+        
+        # 處理 List 類型
+        if json_type and json_type.startswith('List['):
+            inner_type = json_type[5:-1]  # 移除 'List[' 和 ']'
+            return f"Vec<{self._convert_to_rust_type(inner_type, field_data)}>"
+        
+        # 處理 Dict 類型
+        if json_type and json_type.startswith('Dict['):
+            # Dict[str, str] -> HashMap<String, String>
+            # Dict[str, Any] -> HashMap<String, serde_json::Value>
+            dict_content = json_type[5:-1]  # 移除 'Dict[' 和 ']'
+            if dict_content == 'str, str':
+                return 'std::collections::HashMap<String, String>'
+            elif dict_content == 'str, Any':
+                return 'std::collections::HashMap<String, serde_json::Value>'
+            else:
+                return 'std::collections::HashMap<String, serde_json::Value>'
+        
+        # 基本類型映射
+        type_mapping = {
+            'str': 'String',
+            'string': 'String',
+            'int': 'i32',
+            'integer': 'i32',
+            'float': 'f64',
+            'number': 'f64',
+            'bool': 'bool',
+            'boolean': 'bool',
+            'datetime': 'chrono::DateTime<chrono::Utc>',
+            'Any': 'serde_json::Value',
+        }
+        
+        # 檢查是否為自定義類型（存在於 SOT 中的結構體）
+        all_types = set()
+        for category in ['base_types', 'messaging', 'tasks', 'findings']:
+            if category in self.sot_data:
+                all_types.update(self.sot_data[category].keys())
+        
+        if json_type in all_types:
+            return json_type  # 自定義類型保持原名
+        
+        # 處理枚舉類型
+        if 'enum' in field_data:
+            return 'String'  # Serde 會處理枚舉驗證
+            
+        # 處理格式化類型
+        format_type = field_data.get('format')
+        if format_type == 'date-time':
+            return 'chrono::DateTime<chrono::Utc>'
+        elif format_type == 'uuid':
+            return 'uuid::Uuid'
+        elif format_type == 'uri' or format_type == 'url':
+            return 'url::Url'
+            
+        return type_mapping.get(json_type, 'String')
+    
+    def _get_rust_default_value(self, json_type: str, field_data: dict = None) -> str:
+        """獲取 Rust 類型的默認值"""
+        if field_data is None:
+            field_data = {}
+        
+        # 檢查是否有預設值定義
+        if 'default' in field_data:
+            default_val = field_data['default']
+            if isinstance(default_val, str):
+                return f'"{default_val}".to_string()'
+            elif isinstance(default_val, bool):
+                return str(default_val).lower()
+            elif isinstance(default_val, (int, float)):
+                return str(default_val)
+            elif isinstance(default_val, list):
+                return 'Vec::new()'
+            elif isinstance(default_val, dict):
+                return 'std::collections::HashMap::new()'
+        
+        # 處理 Optional 類型 (已經由上層處理為 Option<T>)
+        if json_type and json_type.startswith('Option<'):
+            return 'None'
+        
+        # 處理 Vec 類型
+        if json_type and json_type.startswith('Vec<'):
+            return 'Vec::new()'
+        
+        # 處理 HashMap 類型
+        if json_type and json_type.startswith('std::collections::HashMap<'):
+            return 'std::collections::HashMap::new()'
+        
+        # 基本類型預設值
+        defaults = {
+            'String': 'String::new()',
+            'str': 'String::new()',
+            'string': 'String::new()',
+            'i32': '0',
+            'int': '0',
+            'integer': '0',
+            'f64': '0.0',
+            'float': '0.0',
+            'number': '0.0',
+            'bool': 'false',
+            'boolean': 'false',
+            'chrono::DateTime<chrono::Utc>': 'chrono::Utc::now()',
+            'serde_json::Value': 'serde_json::Value::Null',
+            'uuid::Uuid': 'uuid::Uuid::new_v4()',
+            'url::Url': 'url::Url::parse("https://example.com").unwrap()',
+        }
+        
+        # 檢查是否為自定義類型
+        all_types = set()
+        for category in ['base_types', 'messaging', 'tasks', 'findings']:
+            if category in self.sot_data:
+                all_types.update(self.sot_data[category].keys())
+        
+        if json_type in all_types:
+            return f'{json_type}::default()'
+        
+        return defaults.get(json_type, 'String::new()')
     
     def _get_python_type(self, type_str: str) -> str:
         """轉換為 Python 類型"""

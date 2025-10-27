@@ -574,3 +574,29 @@ generation_config:
       "Dict[str, str]": "HashMap<String, String>"
       "List[str]": "Vec<String>"
       "Optional[str]": "Option<String>"
+
+# ==================== 枚舉定義 ====================
+enums:
+  Severity:
+    description: "漏洞嚴重程度枚舉"
+    values:
+      "critical": "嚴重漏洞"
+      "high": "高風險漏洞" 
+      "medium": "中等風險漏洞"
+      "low": "低風險漏洞"
+      "info": "資訊性發現"
+      
+  Confidence:
+    description: "漏洞信心度枚舉"
+    values:
+      "confirmed": "已確認"
+      "firm": "確實"
+      "tentative": "暫定"
+      
+  FindingStatus:
+    description: "發現狀態枚舉"
+    values:
+      "new": "新發現"
+      "confirmed": "已確認"
+      "resolved": "已解決"
+      "false_positive": "誤報"

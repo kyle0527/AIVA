@@ -13,6 +13,8 @@ from typing import Dict, Any, List, Optional
 from services.aiva_common.schemas.tasks import FunctionTaskPayload, FunctionTaskTarget, FunctionTaskContext
 from services.aiva_common.schemas import AivaMessage
 from services.aiva_common.enums.modules import ModuleName
+import uuid
+from urllib.parse import urlparse
 
 
 logger = logging.getLogger(__name__)
@@ -118,17 +120,267 @@ class AttackPlanMapper:
         return mapping.get(vuln_type, 'FUNC_GENERAL_SCAN')
 
     async def _create_info_gathering_tasks(self, ai_decision: AivaMessage, scan_context: Dict[str, Any]) -> List[FunctionTaskPayload]:
-        """創建信息收集任務"""
+        """
+        創建信息收集任務
+        
+        基於 OWASP WSTG 4.1 Information Gathering 和 MITRE ATT&CK TA0007 Discovery 實現
+        包含：Web指紋識別、目錄枚舉、技術堆疊探測、端點發現等
+        """
         tasks = []
-        # TODO: 實現信息收集任務創建邏輯
-        logger.debug("Creating information gathering tasks")
+        target_url = scan_context.get("target_url", "")
+        
+        logger.info(f"Creating information gathering tasks for {target_url}")
+        
+        # 1. Web Server Fingerprinting (WSTG-INFO-02)
+        if target_url:
+            fingerprint_task = FunctionTaskPayload(
+                task_id=self._generate_task_id("info_fingerprint"),
+                function_name="web_fingerprinting",
+                target=FunctionTaskTarget(
+                    url=target_url,
+                    method="GET"
+                ),
+                strategy="comprehensive",
+                config={
+                    "techniques": ["headers", "error_pages", "default_files"],
+                    "timeout": 30,
+                    "follow_redirects": True
+                }
+            )
+            tasks.append(fingerprint_task)
+            
+        # 2. Directory and File Enumeration (WSTG-INFO-04)
+        if target_url:
+            directory_task = FunctionTaskPayload(
+                task_id=self._generate_task_id("info_directory"),
+                function_name="directory_enumeration", 
+                target=FunctionTaskTarget(
+                    url=target_url,
+                    method="GET"
+                ),
+                strategy="discovery",
+                config={
+                    "wordlists": ["common", "admin", "backup"],
+                    "extensions": [".php", ".asp", ".aspx", ".jsp", ".html"],
+                    "max_depth": 3,
+                    "threads": 10
+                }
+            )
+            tasks.append(directory_task)
+            
+        # 3. Technology Stack Detection (WSTG-INFO-08/09)
+        if target_url:
+            tech_stack_task = FunctionTaskPayload(
+                task_id=self._generate_task_id("info_techstack"),
+                function_name="technology_detection",
+                target=FunctionTaskTarget(
+                    url=target_url,
+                    method="GET"
+                ),
+                strategy="passive",
+                config={
+                    "detect": ["framework", "cms", "javascript", "server", "database"],
+                    "passive_only": True,
+                    "include_versions": True
+                }
+            )
+            tasks.append(tech_stack_task)
+            
+        # 4. Entry Points Identification (WSTG-INFO-06)
+        if target_url:
+            entry_points_task = FunctionTaskPayload(
+                task_id=self._generate_task_id("info_entrypoints"),
+                function_name="entry_point_discovery",
+                target=FunctionTaskTarget(
+                    url=target_url,
+                    method="GET"
+                ),
+                strategy="comprehensive",
+                config={
+                    "scan_forms": True,
+                    "scan_parameters": True,
+                    "scan_cookies": True,
+                    "scan_headers": True,
+                    "spider_depth": 2
+                }
+            )
+            tasks.append(entry_points_task)
+            
+        # 5. Subdomain Enumeration (MITRE ATT&CK T1583.001)
+        domain = self._extract_domain(target_url)
+        if domain:
+            subdomain_task = FunctionTaskPayload(
+                task_id=self._generate_task_id("info_subdomains"),
+                function_name="subdomain_enumeration",
+                target=FunctionTaskTarget(
+                    url=domain,
+                    method="DNS"
+                ),
+                strategy="passive",
+                config={
+                    "techniques": ["certificate_transparency", "dns_brute", "search_engines"],
+                    "wordlist_size": "medium",
+                    "include_wildcards": True
+                }
+            )
+            tasks.append(subdomain_task)
+            
+        logger.info(f"Created {len(tasks)} information gathering tasks")
         return tasks
 
     async def _create_exploitation_tasks(self, ai_decision: AivaMessage, scan_context: Dict[str, Any]) -> List[FunctionTaskPayload]:
-        """創建漏洞利用任務"""
+        """
+        創建漏洞利用任務
+        
+        基於已發現的漏洞信息，創建對應的利用任務
+        遵循 OWASP 測試指南和負責任披露原則
+        """
         tasks = []
-        # TODO: 實現漏洞利用任務創建邏輯
-        logger.debug("Creating exploitation tasks")
+        target_url = scan_context.get("target_url", "")
+        findings = scan_context.get("findings", [])
+        
+        logger.info(f"Creating exploitation tasks for {len(findings)} findings")
+        
+        for finding in findings:
+            vuln_type = finding.get("vulnerability_type", "").lower()
+            severity = finding.get("severity", "medium").lower()
+            
+            # 僅對高危和中危漏洞創建利用任務
+            if severity not in ["high", "critical", "medium"]:
+                continue
+                
+            # 1. IDOR 漏洞利用
+            if "idor" in vuln_type or "direct_object" in vuln_type:
+                idor_task = FunctionTaskPayload(
+                    task_id=self._generate_task_id("exploit_idor"),
+                    function_name="function_idor",
+                    target=FunctionTaskTarget(
+                        url=finding.get("url", target_url),
+                        method=finding.get("method", "GET")
+                    ),
+                    strategy="exploit",
+                    config={
+                        "resource_id": finding.get("resource_id"),
+                        "test_variations": 5,
+                        "multi_user_test": True,
+                        "privilege_escalation": True
+                    }
+                )
+                tasks.append(idor_task)
+                
+            # 2. SQL Injection 利用
+            elif "sql" in vuln_type or "injection" in vuln_type:
+                sqli_task = FunctionTaskPayload(
+                    task_id=self._generate_task_id("exploit_sqli"),
+                    function_name="sql_injection",
+                    target=FunctionTaskTarget(
+                        url=finding.get("url", target_url),
+                        method=finding.get("method", "POST")
+                    ),
+                    strategy="exploit",
+                    config={
+                        "parameter": finding.get("parameter"),
+                        "injection_type": finding.get("injection_type", "boolean"),
+                        "database_type": finding.get("database", "mysql"),
+                        "payload_level": 2  # 中等侵入性
+                    }
+                )
+                tasks.append(sqli_task)
+                
+            # 3. XSS 利用
+            elif "xss" in vuln_type or "script" in vuln_type:
+                xss_task = FunctionTaskPayload(
+                    task_id=self._generate_task_id("exploit_xss"),
+                    function_name="xss_exploitation",
+                    target=FunctionTaskTarget(
+                        url=finding.get("url", target_url),
+                        method=finding.get("method", "GET")
+                    ),
+                    strategy="proof_of_concept",
+                    config={
+                        "xss_type": finding.get("xss_type", "reflected"),
+                        "parameter": finding.get("parameter"),
+                        "context": finding.get("context", "html"),
+                        "payload_complexity": "medium"
+                    }
+                )
+                tasks.append(xss_task)
+                
+            # 4. 認證繞過利用
+            elif "auth" in vuln_type or "bypass" in vuln_type:
+                auth_task = FunctionTaskPayload(
+                    task_id=self._generate_task_id("exploit_auth"),
+                    function_name="function_authn_go",
+                    target=FunctionTaskTarget(
+                        url=finding.get("url", target_url),
+                        method="POST"
+                    ),
+                    strategy="bypass",
+                    config={
+                        "techniques": ["brute_force", "weak_credentials", "token_manipulation"],
+                        "credential_lists": ["common", "default"],
+                        "rate_limit_bypass": True
+                    }
+                )
+                tasks.append(auth_task)
+                
+            # 5. JWT 相關漏洞利用
+            elif "jwt" in vuln_type or "token" in vuln_type:
+                jwt_task = FunctionTaskPayload(
+                    task_id=self._generate_task_id("exploit_jwt"),
+                    function_name="jwt_confusion",
+                    target=FunctionTaskTarget(
+                        url=finding.get("url", target_url),
+                        method="GET"
+                    ),
+                    strategy="token_manipulation",
+                    config={
+                        "attacks": ["none_algorithm", "weak_secret", "key_confusion"],
+                        "token": finding.get("token"),
+                        "target_claims": ["sub", "role", "admin"]
+                    }
+                )
+                tasks.append(jwt_task)
+                
+            # 6. GraphQL 授權繞過
+            elif "graphql" in vuln_type:
+                graphql_task = FunctionTaskPayload(
+                    task_id=self._generate_task_id("exploit_graphql"),
+                    function_name="graphql_authz",
+                    target=FunctionTaskTarget(
+                        url=finding.get("url", target_url),
+                        method="POST"
+                    ),
+                    strategy="authorization_bypass",
+                    config={
+                        "query_depth": 5,
+                        "introspection": True,
+                        "field_suggestions": True,
+                        "batch_queries": True
+                    }
+                )
+                tasks.append(graphql_task)
+                
+        # 7. 通用漏洞掃描 (如果沒有具體發現)
+        if not findings and target_url:
+            comprehensive_task = FunctionTaskPayload(
+                task_id=self._generate_task_id("exploit_comprehensive"),
+                function_name="comprehensive_scan",
+                target=FunctionTaskTarget(
+                    url=target_url,
+                    method="GET"
+                ),
+                strategy="safe_exploitation",
+                config={
+                    "modules": ["idor", "xss", "sqli", "auth", "jwt"],
+                    "intensity": "medium",
+                    "safe_mode": True,
+                    "proof_of_concept_only": True
+                }
+            )
+            tasks.append(comprehensive_task)
+            
+        logger.info(f"Created {len(tasks)} exploitation tasks")
         return tasks
 
     async def map_entire_plan(self, attack_plan: List[AivaMessage], initial_context: Dict[str, Any]) -> List[FunctionTaskPayload]:
@@ -159,3 +411,16 @@ class AttackPlanMapper:
 
         logger.info(f"Generated {len(all_tasks)} tasks from the attack plan.")
         return all_tasks
+    
+    def _generate_task_id(self, prefix: str) -> str:
+        """生成唯一的任務 ID"""
+        return f"{prefix}_{uuid.uuid4().hex[:8]}"
+    
+    def _extract_domain(self, url: str) -> Optional[str]:
+        """從 URL 中提取域名"""
+        try:
+            parsed = urlparse(url)
+            return parsed.netloc or parsed.path
+        except Exception as e:
+            logger.warning(f"Failed to extract domain from {url}: {e}")
+            return None

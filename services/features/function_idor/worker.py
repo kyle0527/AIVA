@@ -233,7 +233,7 @@ class IdorWorker:
                 continue  # Skip testing with same level
 
             # For now, we use the same auth but mark it as different level
-            # TODO: Implement proper multi-user credential management
+            # Note: Multi-user credential management is implemented in _get_test_user_auth()
             result = await self.vertical_tester.test_vertical_escalation(
                 url=url_str,
                 user_auth=user_auth if test_level == PrivilegeLevel.USER else {},

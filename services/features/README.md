@@ -1,5 +1,27 @@
 # AIVA Features 模組 - 多語言安全功能架構
 
+## 🔗 **L2 功能分類導航** (AI 優先搜尋區域)
+
+> **⚡ 快速定位**: 根據功能需求直接跳轉到相應的詳細文檔
+
+### 📚 **核心功能分類文檔**
+- 💎 **[高價值功能](docs/README_HIGH_VALUE.md)** - 5個商業級安全功能 ($1,800-$10,200 賞金等級)
+- 🛡️ **[安全核心引擎](docs/README_SECURITY_CORE.md)** - 8個核心檢測引擎 (OWASP Top 10 全覆蓋)
+- 🏢 **[業務邏輯檢測](docs/README_BUSINESS_LOGIC.md)** - 6個業務邏輯漏洞檢測系統
+- 🏗️ **[基礎設施支援](docs/README_INFRASTRUCTURE.md)** - 31個基礎架構與工具框架
+- 🌐 **[多語言實現](docs/README_LANGUAGES.md)** - Python/Go/Rust 三語言統一架構
+
+### 📈 **文檔架構統計**
+```
+📊 L2 分類文檔: 5 個詳細指南
+🎯 覆蓋功能模組: 50 個完整覆蓋  
+📝 文檔總規模: 30,000+ 行技術文檔
+💻 程式碼範例: 200+ 個實作案例
+🌍 多語言支援: Python + Go + Rust
+```
+
+---
+
 > **🎯 快速導航**: 選擇您的角色和需求，找到最適合的文件
 > 
 > - 👨‍💼 **架構師/PM**: 閱讀 [功能架構總覽](#功能架構總覽)
@@ -139,7 +161,14 @@ flowchart TD
 
 ## 📚 **文件導航地圖**
 
-### **📁 按功能查看**
+### **🎯 L2 功能分類文檔** (推薦優先閱讀)
+- 💎 [**高價值功能**](docs/README_HIGH_VALUE.md) - Mass Assignment、JWT 混淆、OAuth 混淆、GraphQL AuthZ、SSRF OOB
+- 🛡️ [**安全核心引擎**](docs/README_SECURITY_CORE.md) - SQL 注入、XSS、SSRF、IDOR、SAST、SCA、CSPM、Auth Testing
+- 🏢 [**業務邏輯檢測**](docs/README_BUSINESS_LOGIC.md) - 支付繞過、認證繞過、郵件變更、OAuth 重定向、滲透後利用
+- 🏗️ [**基礎設施支援**](docs/README_INFRASTRUCTURE.md) - 框架基類、工具集、跨語言橋接、配置管理、測試支援
+- 🌐 [**多語言實現**](docs/README_LANGUAGES.md) - Python 協調、Go 高併發、Rust 極致效능、跨語言整合
+
+### **📁 按功能查看** (傳統分類)
 - 📊 [**核心功能詳解**](docs/README_CORE.md) - 智能檢測管理、高價值目標識別
 - 🛡️ [**安全功能詳解**](docs/README_SECURITY.md) - SAST、漏洞檢測、安全掃描
 - 🏢 [**業務功能詳解**](docs/README_BUSINESS.md) - SCA、CSPM、認證服務  
@@ -748,7 +777,11 @@ go test ./... -run TestEnumConsistency
 pytest services/features/tests/integration/test_multi_language.py -v
 ```
 
-#### 📝 **語言特定注意事項**
+#### � **修復與維護原則**
+
+> **保留未使用函數原則**: 在程式碼修復過程中，若發現有定義但尚未使用的函數或方法，只要不影響程式正常運作，建議予以保留。這些函數可能為未來功能預留，或作為API的擴展接口，刪除可能影響系統的擴展性和向前兼容性。
+
+#### �📝 **語言特定注意事項**
 
 **Python 開發者**:
 - ✅ 始終從 `aiva_common` 導入標準枚舉

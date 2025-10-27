@@ -7,6 +7,26 @@ from __future__ import annotations
 from enum import Enum
 
 
+class ExploitType(str, Enum):
+    """漏洞利用類型枚舉"""
+    
+    IDOR = "idor"
+    SQL_INJECTION = "sql_injection"
+    XSS = "xss"
+    AUTH_BYPASS = "auth_bypass"
+    JWT_ATTACK = "jwt_attack"
+    GRAPHQL_INJECTION = "graphql_injection"
+    CSRF = "csrf"
+    XXE = "xxe"
+    SSRF = "ssrf"
+    LFI = "lfi"
+    RFI = "rfi"
+    COMMAND_INJECTION = "command_injection"
+    PATH_TRAVERSAL = "path_traversal"
+    DESERIALIZATION = "deserialization"
+    LDAP_INJECTION = "ldap_injection"
+
+
 class VulnerabilityByLanguage(str, Enum):
     """按程式語言分類的漏洞類型"""
 

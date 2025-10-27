@@ -10,9 +10,10 @@ import (
 	"github.com/kyle0527/aiva/services/function/common/go/aiva_common_go/config"
 	"github.com/kyle0527/aiva/services/function/common/go/aiva_common_go/logger"
 	"github.com/kyle0527/aiva/services/function/common/go/aiva_common_go/mq"
-	schemas "github.com/kyle0527/aiva/services/function/common/go/aiva_common_go/schemas/generated"
+	"github.com/kyle0527/aiva/services/function/common/go/aiva_common_go/schemas"
 	"github.com/kyle0527/aiva/services/function/function_authn_go/internal/brute_force"
 	"github.com/kyle0527/aiva/services/function/function_authn_go/internal/token_test"
+	"github.com/kyle0527/aiva/services/function/function_authn_go/internal/weak_config"
 	"go.uber.org/zap"
 )
 
@@ -43,6 +44,7 @@ func main() {
 
 	// 建立測試器
 	bruteForcer := brute_force.NewBruteForcer(log)
+	weakConfigTester := weak_config.NewWeakConfigTester(log)
 	tokenAnalyzer := token_test.NewTokenAnalyzer(log)
 
 	// 啟動消費循環
@@ -62,7 +64,7 @@ func main() {
 	// 開始消費任務
 	queueName := "tasks.function.authn"
 	err = mqClient.Consume(queueName, func(body []byte) error {
-		return handleTask(ctx, body, bruteForcer, tokenAnalyzer, mqClient, log)
+		return handleTask(ctx, body, bruteForcer, weakConfigTester, tokenAnalyzer, mqClient, log)
 	})
 
 	if err != nil {
@@ -74,7 +76,7 @@ func handleTask(
 	ctx context.Context,
 	taskData []byte,
 	bruteForcer *brute_force.BruteForcer,
-	// weakConfigTester *weak_config.WeakConfigTester, // TODO: weak_config 不存在
+	weakConfigTester *weak_config.WeakConfigTester,
 	tokenAnalyzer *token_test.TokenAnalyzer,
 	mqClient *mq.MQClient,
 	log *zap.Logger,
@@ -86,7 +88,7 @@ func handleTask(
 		return err
 	}
 
-	log.Info("Processing AuthN task", zap.String("task_id", task.TaskId))
+	log.Info("Processing AuthN task", zap.String("task_id", task.TaskID))
 
 	var findings []*schemas.FindingPayload
 
@@ -108,39 +110,31 @@ func handleTask(
 
 	// 執行弱配置測試
 	if testType == "weak_config" || testType == "all" {
-		// TODO: weak_config 測試器不存在，需要實現
-		log.Warn("Weak config test not implemented yet")
-		/*
-			wc, err := weakConfigTester.Test(ctx, &task)
-			if err != nil {
-				log.Error("Weak config test failed", zap.Error(err))
-			} else {
-				findings = append(findings, wc...)
-			}
-		*/
+		wc, err := weakConfigTester.Test(ctx, &task)
+		if err != nil {
+			log.Error("Weak config test failed", zap.Error(err))
+		} else {
+			findings = append(findings, wc...)
+		}
 	}
 
 	// 執行 Token 分析測試
 	if testType == "token" || testType == "all" {
-		// TODO: token_test 模組需要更新以支持新的 schema
-		log.Warn("Token test temporarily disabled - needs schema update")
-		/*
-			tk, err := tokenAnalyzer.Test(ctx, task)
-			if err != nil {
-				log.Error("Token test failed", zap.Error(err))
-			} else {
-				// 轉換 []interface{} 為 []*schemas.FindingPayload
-				for _, finding := range tk {
-					if findingPayload, ok := finding.(*schemas.FindingPayload); ok {
-						findings = append(findings, findingPayload)
-					}
+		tk, err := tokenAnalyzer.Test(ctx, task)
+		if err != nil {
+			log.Error("Token test failed", zap.Error(err))
+		} else {
+			// 轉換 []interface{} 為 []*schemas.FindingPayload
+			for _, finding := range tk {
+				if findingPayload, ok := finding.(*schemas.FindingPayload); ok {
+					findings = append(findings, findingPayload)
 				}
 			}
-		*/
+		}
 	}
 
 	log.Info("AuthN test completed",
-		zap.String("task_id", task.TaskId),
+		zap.String("task_id", task.TaskID),
 		zap.Int("findings_count", len(findings)))
 
 	// 發布 Findings
