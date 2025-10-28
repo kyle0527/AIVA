@@ -40,7 +40,7 @@ $codeExtensions = @(
 
 # 中文檔名說明對照表
 $chineseComments = @{
-    # Python 檔案
+    # Python 檔案 - 基礎架構
     '__init__.py' = '模組初始化'
     'models.py' = '資料模型'
     'schemas.py' = '資料結構定義'
@@ -65,6 +65,31 @@ $chineseComments = @{
     'exceptions.py' = '例外處理'
     'enums.py' = '列舉定義'
     'types.py' = '型別定義'
+    'base.py' = '基礎模組'
+    'core.py' = '核心模組'
+    'common.py' = '通用模組'
+    'shared.py' = '共享模組'
+    'interface.py' = '介面模組'
+    'abstract.py' = '抽象類別'
+    'factory.py' = '工廠模式'
+    'singleton.py' = '單例模式'
+    'decorator.py' = '裝飾器'
+    'middleware.py' = '中介軟體'
+    'plugin.py' = '插件模組'
+    'extension.py' = '擴展模組'
+    'adapter.py' = '適配器'
+    'bridge.py' = '橋接器'
+    'proxy.py' = '代理模組'
+    'facade.py' = '外觀模式'
+    'strategy.py' = '策略模式'
+    'observer.py' = '觀察者模式'
+    'command.py' = '命令模式'
+    'state.py' = '狀態模式'
+    'template.py' = '模板模式'
+    'visitor.py' = '訪問者模式'
+    'iterator.py' = '迭代器模式'
+    'builder.py' = '建造者模式'
+    'prototype.py' = '原型模式'
     
     # 特定檔案
     'bio_neuron_core.py' = '生物神經元核心'
@@ -80,6 +105,32 @@ $chineseComments = @{
     'optimized_core.py' = '最佳化核心'
     'business_schemas.py' = '業務資料結構'
     
+    # 新增更多檔案識別
+    'aiva_launcher.py' = 'AIVA 啟動器'
+    'comprehensive_pentest_runner.py' = '全面滲透測試執行器'
+    'pentest_runner.py' = '滲透測試執行器'
+    'live_pentest_runner.py' = '即時滲透測試執行器'
+    'fixed_pentest_runner.py' = '修復版滲透測試執行器'
+    'comprehensive_system_validation.py' = '全面系統驗證'
+    'ai_autonomous_testing_loop.py' = 'AI 自主測試循環'
+    'ai_component_explorer.py' = 'AI 元件探索器'
+    'ai_functionality_validator.py' = 'AI 功能驗證器'
+    'ai_security_test.py' = 'AI 安全測試'
+    'ai_system_explorer.py' = 'AI 系統探索器'
+    'health_check.py' = '健康檢查'
+    'final_validation.py' = '最終驗證'
+    'full_validation_test.py' = '完整驗證測試'
+    'features_ai_cli.py' = '功能 AI 命令列介面'
+    'core_scan_integration_cli.py' = '核心掃描整合 CLI'
+    'scanner_statistics.py' = '掃描器統計'
+    'launch_offline_mode.py' = '離線模式啟動器'
+    'fix_environment_dependencies.py' = '環境依賴修復'
+    'fix_offline_dependencies.py' = '離線依賴修復'
+    'check_documentation_errors.py' = '文件錯誤檢查'
+    'analyze_ai_performance.py' = 'AI 效能分析'
+    'apply_performance_optimizations.py' = '效能優化應用'
+    'aiva_package_validator.py' = 'AIVA 套件驗證器'
+    
     # 功能模組
     'smart_detection_manager.py' = '智慧檢測管理器'
     'smart_idor_detector.py' = '智慧 IDOR 檢測器'
@@ -90,6 +141,85 @@ $chineseComments = @{
     'result_publisher.py' = '結果發布器'
     'task_queue.py' = '任務佇列'
     'telemetry.py' = '遙測'
+    
+    # 資料庫相關
+    'database.py' = '資料庫操作'
+    'db.py' = '資料庫連接'
+    'orm.py' = '物件關聯映射'
+    'migration.py' = '資料庫遷移'
+    'seed.py' = '資料種子'
+    'backup.py' = '備份模組'
+    'restore.py' = '還原模組'
+    'connection.py' = '連接管理'
+    'session.py' = '會話管理'
+    'transaction.py' = '交易管理'
+    'query.py' = '查詢建構器'
+    'repository.py' = '資料存取層'
+    'dao.py' = '資料存取物件'
+    
+    # 網路相關
+    'network.py' = '網路模組'
+    'http.py' = 'HTTP 模組'
+    'https.py' = 'HTTPS 模組'
+    'websocket.py' = 'WebSocket 模組'
+    'tcp.py' = 'TCP 模組'
+    'udp.py' = 'UDP 模組'
+    'socket.py' = 'Socket 模組'
+    'request.py' = '請求處理'
+    'response.py' = '回應處理'
+    'router.py' = '路由器'
+    'routing.py' = '路由管理'
+    'url.py' = 'URL 處理'
+    'endpoint.py' = '端點定義'
+    'filter.py' = '過濾器'
+    'interceptor.py' = '攔截器'
+    
+    # 安全相關
+    'security.py' = '安全模組'
+    'auth.py' = '身份驗證'
+    'authentication.py' = '身份驗證'
+    'authorization.py' = '授權管理'
+    'permission.py' = '權限管理'
+    'role.py' = '角色管理'
+    'token.py' = '令牌管理'
+    'jwt.py' = 'JWT 令牌'
+    'oauth.py' = 'OAuth 認證'
+    'crypto.py' = '加密模組'
+    'encryption.py' = '加密處理'
+    'decryption.py' = '解密處理'
+    'hash.py' = '雜湊處理'
+    'ssl.py' = 'SSL 模組'
+    'tls.py' = 'TLS 模組'
+    'certificate.py' = '憑證管理'
+    'signature.py' = '數位簽章'
+    'validation.py' = '驗證模組'
+    'sanitization.py' = '資料清理'
+    'firewall.py' = '防火牆'
+    'antivirus.py' = '防毒模組'
+    
+    # 快取相關
+    'cache.py' = '快取模組'
+    'memory.py' = '記憶體管理'
+    'redis.py' = 'Redis 快取'
+    'memcached.py' = 'Memcached 快取'
+    'storage.py' = '儲存模組'
+    'filesystem.py' = '檔案系統'
+    'file.py' = '檔案處理'
+    'upload.py' = '檔案上傳'
+    'download.py' = '檔案下載'
+    'stream.py' = '串流處理'
+    
+    # 日誌相關
+    'logger.py' = '日誌記錄器'
+    'logging.py' = '日誌模組'
+    'log.py' = '日誌處理'
+    'audit.py' = '稽核日誌'
+    'monitoring.py' = '監控模組'
+    'metrics.py' = '指標收集'
+    'analytics.py' = '分析模組'
+    'statistics.py' = '統計模組'
+    'report.py' = '報告生成'
+    'dashboard.py' = '儀表板'
     
     # 引擎類
     'boolean_detection_engine.py' = '布林檢測引擎'
@@ -296,42 +426,121 @@ function Get-ChineseComment {
             }
         }
         
-        # 根據副檔名推測
+        # 根據副檔名和檔名模式進行智慧推測
         if (-not $comment) {
             $ext = [System.IO.Path]::GetExtension($FileName).ToLower()
             switch ($ext) {
                 '.py' { 
-                    if ($fullName -match "test") { $comment = "測試程式" }
-                    elseif ($fullName -match "demo") { $comment = "示範程式" }
-                    elseif ($fullName -match "example") { $comment = "範例程式" }
-                    elseif ($fullName -match "worker") { $comment = "工作器" }
-                    elseif ($fullName -match "manager") { $comment = "管理器" }
-                    elseif ($fullName -match "handler") { $comment = "處理器" }
-                    elseif ($fullName -match "detector") { $comment = "檢測器" }
-                    elseif ($fullName -match "analyzer") { $comment = "分析器" }
-                    elseif ($fullName -match "scanner") { $comment = "掃描器" }
-                    elseif ($fullName -match "engine") { $comment = "引擎" }
+                    if ($fullName -match "(test|spec).*\.py$") { $comment = "測試程式" }
+                    elseif ($fullName -match "(demo|example).*\.py$") { $comment = "示範程式" }
+                    elseif ($fullName -match "(validation|validator).*\.py$") { $comment = "驗證程式" }
+                    elseif ($fullName -match "(check|checker).*\.py$") { $comment = "檢查程式" }
+                    elseif ($fullName -match "(fix|fixer|repair).*\.py$") { $comment = "修復程式" }
+                    elseif ($fullName -match "(worker|executor).*\.py$") { $comment = "工作器" }
+                    elseif ($fullName -match "(manager|coordinator).*\.py$") { $comment = "管理器" }
+                    elseif ($fullName -match "(handler|processor).*\.py$") { $comment = "處理器" }
+                    elseif ($fullName -match "(detector|finder).*\.py$") { $comment = "檢測器" }
+                    elseif ($fullName -match "(analyzer|parser).*\.py$") { $comment = "分析器" }
+                    elseif ($fullName -match "(scanner|crawler).*\.py$") { $comment = "掃描器" }
+                    elseif ($fullName -match "(engine|core).*\.py$") { $comment = "引擎" }
+                    elseif ($fullName -match "(generator|builder).*\.py$") { $comment = "生成器" }
+                    elseif ($fullName -match "(launcher|starter).*\.py$") { $comment = "啟動器" }
+                    elseif ($fullName -match "(runner|executor).*\.py$") { $comment = "執行器" }
+                    elseif ($fullName -match "(monitor|watcher|observer).*\.py$") { $comment = "監控器" }
+                    elseif ($fullName -match "(optimizer|enhancer).*\.py$") { $comment = "優化器" }
+                    elseif ($fullName -match "(trainer|learning).*\.py$") { $comment = "訓練器" }
+                    elseif ($fullName -match "(simulator|emulator).*\.py$") { $comment = "模擬器" }
+                    elseif ($fullName -match "pentest.*\.py$") { $comment = "滲透測試" }
+                    elseif ($fullName -match "ai.*\.py$") { $comment = "AI 模組" }
+                    elseif ($fullName -match "neuron.*\.py$") { $comment = "神經網路" }
+                    # 更多智慧推測
+                    elseif ($fullName -match "(api|endpoint|route).*\.py$") { $comment = "API 介面" }
+                    elseif ($fullName -match "(model|entity|schema).*\.py$") { $comment = "資料模型" }
+                    elseif ($fullName -match "(service|business|logic).*\.py$") { $comment = "業務邏輯" }
+                    elseif ($fullName -match "(util|helper|tool).*\.py$") { $comment = "工具函數" }
+                    elseif ($fullName -match "(auth|security|permission).*\.py$") { $comment = "安全模組" }
+                    elseif ($fullName -match "(cache|redis|memory).*\.py$") { $comment = "快取模組" }
+                    elseif ($fullName -match "(db|database|sql).*\.py$") { $comment = "資料庫" }
+                    elseif ($fullName -match "(log|audit|monitor).*\.py$") { $comment = "日誌監控" }
+                    elseif ($fullName -match "(config|setting|env).*\.py$") { $comment = "配置管理" }
+                    elseif ($fullName -match "(client|http|request).*\.py$") { $comment = "客戶端" }
+                    elseif ($fullName -match "(server|app|web).*\.py$") { $comment = "伺服器" }
+                    elseif ($fullName -match "(queue|task|job).*\.py$") { $comment = "任務佇列" }
+                    elseif ($fullName -match "(plugin|extension|addon).*\.py$") { $comment = "插件模組" }
+                    elseif ($fullName -match "(migration|upgrade|patch).*\.py$") { $comment = "遷移腳本" }
+                    elseif ($fullName -match "(seed|fixture|sample).*\.py$") { $comment = "資料種子" }
+                    elseif ($fullName -match "(backup|restore|archive).*\.py$") { $comment = "備份還原" }
+                    elseif ($fullName -match "(deploy|install|setup).*\.py$") { $comment = "部署安裝" }
+                    elseif ($fullName -match "(clean|clear|reset).*\.py$") { $comment = "清理重置" }
+                    elseif ($fullName -match "(export|import|convert).*\.py$") { $comment = "資料轉換" }
+                    elseif ($fullName -match "(notify|alert|message).*\.py$") { $comment = "通知系統" }
+                    elseif ($fullName -match "(schedule|cron|timer).*\.py$") { $comment = "排程任務" }
+                    elseif ($fullName -match "(report|summary|stats).*\.py$") { $comment = "報告統計" }
+                    elseif ($fullName -match "(interface|abstract|base).*\.py$") { $comment = "介面定義" }
+                    elseif ($fullName -match "(factory|builder|creator).*\.py$") { $comment = "工廠模式" }
+                    elseif ($fullName -match "(singleton|global|shared).*\.py$") { $comment = "單例模式" }
+                    elseif ($fullName -match "(decorator|wrapper|proxy).*\.py$") { $comment = "裝飾器" }
+                    elseif ($fullName -match "(middleware|filter|guard).*\.py$") { $comment = "中介軟體" }
+                    elseif ($fullName -match "(error|exception|fault).*\.py$") { $comment = "錯誤處理" }
+                    elseif ($fullName -match "(constant|enum|type).*\.py$") { $comment = "常數定義" }
+                    elseif ($fullName -match "(crypto|encrypt|hash).*\.py$") { $comment = "加密模組" }
+                    elseif ($fullName -match "(stream|pipe|flow).*\.py$") { $comment = "串流處理" }
+                    elseif ($fullName -match "(socket|tcp|udp).*\.py$") { $comment = "網路通訊" }
+                    elseif ($fullName -match "(thread|async|concurrent).*\.py$") { $comment = "並發處理" }
+                    elseif ($fullName -match "(serialize|json|xml).*\.py$") { $comment = "序列化" }
                     else { $comment = "Python 模組" }
                 }
                 '.go' { 
-                    if ($fullName -match "test") { $comment = "測試程式" }
-                    elseif ($fullName -match "main") { $comment = "主程式" }
+                    if ($fullName -match "test.*\.go$") { $comment = "測試程式" }
+                    elseif ($fullName -match "main\.go$") { $comment = "主程式" }
+                    elseif ($fullName -match "(server|client).*\.go$") { $comment = "服務程式" }
+                    elseif ($fullName -match "(worker|handler).*\.go$") { $comment = "工作器" }
+                    elseif ($fullName -match "(scanner|detector).*\.go$") { $comment = "掃描器" }
                     else { $comment = "Go 模組" }
                 }
                 '.rs' { 
-                    if ($fullName -match "main") { $comment = "主程式" }
-                    elseif ($fullName -match "lib") { $comment = "程式庫" }
+                    if ($fullName -match "main\.rs$") { $comment = "主程式" }
+                    elseif ($fullName -match "lib\.rs$") { $comment = "程式庫" }
+                    elseif ($fullName -match "mod\.rs$") { $comment = "模組" }
+                    elseif ($fullName -match "(scanner|detector).*\.rs$") { $comment = "掃描器" }
+                    elseif ($fullName -match "(analyzer|parser).*\.rs$") { $comment = "分析器" }
                     else { $comment = "Rust 模組" }
                 }
                 '.ts' { 
-                    if ($fullName -match "interface") { $comment = "介面定義" }
-                    elseif ($fullName -match "service") { $comment = "服務" }
+                    if ($fullName -match "interface.*\.ts$") { $comment = "介面定義" }
+                    elseif ($fullName -match "service.*\.ts$") { $comment = "服務模組" }
+                    elseif ($fullName -match "index\.ts$") { $comment = "入口檔案" }
+                    elseif ($fullName -match "types.*\.ts$") { $comment = "型別定義" }
+                    elseif ($fullName -match "config.*\.ts$") { $comment = "配置模組" }
                     else { $comment = "TypeScript 模組" }
                 }
-                '.js' { $comment = "JavaScript 模組" }
-                '.sql' { $comment = "資料庫腳本" }
-                '.html' { $comment = "網頁" }
-                '.css' { $comment = "樣式表" }
+                '.js' { 
+                    if ($fullName -match "index\.js$") { $comment = "入口檔案" }
+                    else { $comment = "JavaScript 模組" }
+                }
+                '.sql' { 
+                    if ($fullName -match "schema.*\.sql$") { $comment = "資料庫結構" }
+                    elseif ($fullName -match "init.*\.sql$") { $comment = "初始化腳本" }
+                    else { $comment = "資料庫腳本" }
+                }
+                '.html' { 
+                    if ($fullName -match "index\.html$") { $comment = "首頁" }
+                    else { $comment = "網頁檔案" }
+                }
+                '.css' { 
+                    if ($fullName -match "main.*\.css$") { $comment = "主樣式表" }
+                    else { $comment = "樣式表" }
+                }
+                '.vue' { $comment = "Vue 元件" }
+                '.jsx' { $comment = "React 元件" }
+                '.tsx' { $comment = "React TypeScript 元件" }
+                '.c' { $comment = "C 程式" }
+                '.cpp' { $comment = "C++ 程式" }
+                '.h' { $comment = "標頭檔案" }
+                '.hpp' { $comment = "C++ 標頭檔案" }
+                '.java' { $comment = "Java 程式" }
+                '.cs' { $comment = "C# 程式" }
+                '.scss' { $comment = "Sass 樣式表" }
                 default { return "" }
             }
         }
@@ -402,9 +611,9 @@ function Get-CodeTree {
                 $status = "added"
             }
             
-            # 添加中文註解 - 計算對齊位置
+            # 添加中文註解 - 動態對齊計算
             $linePrefix = "$Prefix$connector"
-            $alignPosition = 60  # 中文註解對齊位置
+            $alignPosition = 65  # 基準對齊位置
             $currentLength = $linePrefix.Length + $item.Name.Length
             $spacesNeeded = [Math]::Max(1, $alignPosition - $currentLength)
             $chineseComment = Get-ChineseComment -FileName $item.Name -IsDirectory $item.PSIsContainer -AlignPosition $spacesNeeded

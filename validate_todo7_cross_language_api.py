@@ -1,25 +1,31 @@
 #!/usr/bin/env python3
 """
-TODO 7 - 跨語言 API 整合驗證
+TODO 7 - 跨語言 API 整合驗證 (架構統一版)
 驗證 TypeScript 和 Python 之間的 API 兼容性
+架構統一後的驗證：統一AI組件、數據結構標準化、性能配置
+
+更新日期: 2025年10月29日
+版本: v5.0 架構統一版
 """
 
 import sys
 import json
 from pathlib import Path
+from datetime import datetime
 
 # 添加 AIVA 模組路徑  
 project_root = Path(__file__).parent
 sys.path.insert(0, str(project_root / "services"))
 
 def test_python_schemas():
-    """測試 Python schemas 導入和基本功能"""
-    print("🐍 測試 Python Schemas...")
+    """測試 Python schemas 導入和基本功能 - 架構統一版"""
+    print("🐍 測試 Python Schemas (統一架構)...")
     
     try:
-        from aiva_common.schemas.findings import FindingPayload, Vulnerability, Target
-        from aiva_common.enums.security import VulnerabilityType
-        from aiva_common.enums.common import Severity, Confidence
+        # 使用架構統一後的正確導入路徑
+        from services.aiva_common.schemas.findings import FindingPayload, Vulnerability, Target
+        from services.aiva_common.enums.security import VulnerabilityType
+        from services.aiva_common.enums.common import Severity, Confidence
         
         # 創建測試數據
         vulnerability = Vulnerability(
@@ -56,12 +62,46 @@ def test_python_schemas():
         print(f"  ❌ Python schemas 測試失敗: {e}")
         return False
 
+def test_python_ai_components():
+    """測試架構統一後的 Python AI 組件"""
+    print("\n🧠 測試統一 AI 組件...")
+    
+    try:
+        # 測試統一的 AI 組件導入
+        from services.aiva_common.ai.capability_evaluator import AIVACapabilityEvaluator
+        from services.aiva_common.ai.experience_manager import AIVAExperienceManager
+        from services.aiva_common.ai.performance_config import PerformanceOptimizer
+        
+        # 測試工廠函數
+        from services.aiva_common.ai import (
+            get_capability_evaluator,
+            get_experience_manager
+        )
+        
+        print("  ✅ 統一 AI 組件導入成功")
+        print("  ✅ 工廠函數可用")
+        
+        # 測試實例創建
+        evaluator = get_capability_evaluator()
+        manager = get_experience_manager()
+        optimizer = PerformanceOptimizer()
+        
+        print(f"  ✅ AI 組件實例創建成功")
+        print(f"     - CapabilityEvaluator: {type(evaluator).__name__}")
+        print(f"     - ExperienceManager: {type(manager).__name__}")
+        print(f"     - PerformanceOptimizer: {type(optimizer).__name__}")
+        
+        return True
+        
+    except Exception as e:
+        print(f"  ❌ 統一 AI 組件測試失敗: {e}")
+        return False
+
 def test_typescript_schemas():
     """測試 TypeScript schemas 編譯和類型定義"""
     print("\n🔷 測試 TypeScript Schemas...")
     
     import subprocess
-    import os
     
     typescript_dir = project_root / "services/features/common/typescript/aiva_common_ts"
     
@@ -198,6 +238,7 @@ def generate_report():
     
     tests = [
         ("Python Schemas", test_python_schemas),
+        ("Python AI 組件", test_python_ai_components),
         ("TypeScript Schemas", test_typescript_schemas), 
         ("跨語言兼容性", test_cross_language_compatibility),
         ("API 整合", test_api_integration)

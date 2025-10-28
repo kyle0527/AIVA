@@ -1,8 +1,43 @@
 {
-  "include": ["services"],
-  "exclude": ["**/__pycache__", "**/.venv"],
-  "reportMissingImports": "none",
-  "reportMissingTypeStubs": "none",
-  "reportImportCycles": "none",
-  "typeCheckingMode": "off"
+  "include": [
+    "services",
+    "testing",
+    "ai_*.py",
+    "health_check.py",
+    "validate_*.py"
+  ],
+  "exclude": [
+    "**/__pycache__",
+    "**/.venv",
+    "**/node_modules",
+    "**/dist",
+    "**/.git",
+    "_archive/**",
+    "_out/**"
+  ],
+  "reportMissingImports": "warning",
+  "reportMissingTypeStubs": "none", 
+  "reportImportCycles": "warning",
+  "reportUnusedImport": "warning",
+  "reportUnusedVariable": "warning",
+  "typeCheckingMode": "basic",
+  "pythonVersion": "3.13",
+  "pythonPlatform": "All",
+  "executionEnvironments": [
+    {
+      "root": "services/aiva_common",
+      "extraPaths": ["../../"]
+    },
+    {
+      "root": "services/core", 
+      "extraPaths": ["../../"]
+    },
+    {
+      "root": "testing",
+      "extraPaths": ["../"]
+    }
+  ],
+  "strict": ["services/aiva_common/ai/**"],
+  "venvPath": ".",
+  "venv": ".venv"
 }

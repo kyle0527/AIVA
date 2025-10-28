@@ -1,18 +1,41 @@
 line-length = 88
-target-version = "py311"
+target-version = "py313"
 fix = true
+src = ["services", "testing"]
 
 [lint]
-select = ["E", "F", "I", "UP", "B", "SIM", "C4", "PIE", "W"]
-ignore = ["E501"]  # handled by black
+select = ["E", "F", "I", "UP", "B", "SIM", "C4", "PIE", "W", "N", "D"]
+ignore = [
+    "E501",     # handled by black
+    "D100",     # missing docstring in public module
+    "D101",     # missing docstring in public class
+    "D102",     # missing docstring in public method
+    "D103",     # missing docstring in public function
+    "D104",     # missing docstring in public package
+    "D105",     # missing docstring in magic method
+]
 
 [lint.isort]
-known-first-party = ["services"]
+known-first-party = ["services", "aiva_common", "aiva_core", "testing"]
 force-sort-within-sections = true
+split-on-trailing-comma = true
 
 [lint.per-file-ignores]
-"tests/*" = ["F401", "F811"]  # allow unused imports in tests
-"__init__.py" = ["F401"]  # allow unused imports in __init__.py
+"tests/*" = ["F401", "F811", "D"]           # allow unused imports in tests, skip docstrings
+"testing/*" = ["F401", "F811", "D"]         # allow unused imports in testing, skip docstrings
+"__init__.py" = ["F401", "D"]               # allow unused imports and skip docstrings in __init__.py
+"ai_*.py" = ["D"]                           # skip docstring requirements for AI scripts
+"**/schemas/*" = ["D"]                      # skip docstring requirements for schemas
+"validate_*.py" = ["D", "F401"]             # validation scripts can be more flexible
+"health_check.py" = ["D"]                   # utility scripts
+"*_test.py" = ["D", "F401", "F811"]         # test files
+"comprehensive_integration_test_suite.py" = ["D", "F401", "F811"] # integration tests
 
 [lint.flake8-bugbear]
 extend-immutable-calls = ["fastapi.Depends", "fastapi.Query", "fastapi.Path"]
+
+[lint.pydocstyle]
+convention = "google"
+
+[lint.pycodestyle]
+max-doc-length = 88
