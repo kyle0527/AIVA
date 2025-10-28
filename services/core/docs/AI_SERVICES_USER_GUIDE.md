@@ -1,70 +1,62 @@
-# AIVA AI 服務使用指南
+# AIVA AI 智能安全平台使用者指南
 
-> **📖 閱讀對象**: HackerOne 漏洞獵人、滲透測試人員、安全研究員  
-> **🎯 使用場景**: Bug Bounty 漏洞挖掘、安全測試、自動化攻擊編排  
-> **⏱️ 預計閱讀時間**: 15 分鐘
-
----
-
-## 📚 目錄
-
-1. [🚀 快速開始](#-快速開始)
-2. [🧠 AI 核心能力概覽](#-ai-核心能力概覽)
-3. [💡 四種使用模式詳解](#-四種使用模式詳解)
-4. [🎯 實戰場景範例](#-實戰場景範例)
-5. [🔧 進階配置](#-進階配置)
-6. [⚠️ 安全注意事項](#️-安全注意事項)
-7. [📊 效能與限制](#-效能與限制)
-8. [🆘 常見問題](#-常見問題)
+> **📖 閱讀對象**: 滲透測試人員、安全研究員、Bug Bounty獵人、企業安全團隊  
+> **🎯 使用場景**: 基於統一Schema的智能化安全測試、AI驅動漏洞發現、標準化報告生成  
+> **⏱️ 預計閱讀時間**: 15 分鐘  
+> **🚀 版本**: v5.0 跨語言統一版本 (2025.10.28)  
+> **� 核心突破**: 100% Schema標準化 + AI智能協同 + 企業級數據治理
 
 ---
 
-## 🚀 快速開始
+## 📚 使用者指南目錄
 
-### 第一次使用 AIVA AI 服務？三步驟上手！
+1. [🚀 3分鐘快速上手](#-3分鐘快速上手)
+2. [⚡ CLI智能指令系統](#-cli智能指令系統)
+3. [🎯 六大掃描策略詳解](#-六大掃描策略詳解)
+4. [📊 實戰案例與結果解讀](#-實戰案例與結果解讀)
+5. [🔧 進階使用技巧](#-進階使用技巧)
+6. [⚠️ 使用注意事項與限制](#️-使用注意事項與限制)
+7. [🆘 常見問題與解決方案](#-常見問題與解決方案)
+8. [� 最佳實踐指南](#-最佳實踐指南)
 
-#### **Step 1: 啟動 AI 系統**
+---
+
+## 🚀 3分鐘快速上手
+
+### 🎯 超簡單！三步驟開始使用AIVA
+
+#### **Step 1: 環境準備** (1分鐘)
 
 ```bash
-# 進入 AIVA 專案目錄
-cd /path/to/AIVA
+# 1. 確保您已在AIVA專案目錄中
+cd /path/to/AIVA-git
 
-# 啟動 AI 核心服務
-python -m services.core.aiva_core.bio_neuron_master
+# 2. 檢查環境是否準備就緒 (可選)
+python health_check.py
 
-# 或使用快速啟動腳本
-python aiva_launcher.py --mode ai --target example.com
+# 3. 啟動靶場環境 (OWASP Juice Shop)
+# 注意：靶場由您自行啟動，AIVA不會自動啟動
+docker run -d -p 3000:3000 bkimminich/juice-shop
 ```
 
-#### **Step 2: 選擇您的操作模式**
+#### **Step 2: 選擇您的第一個指令** (30秒)
 
-AIVA 提供四種操作模式,適應不同的測試場景:
+**新手推薦指令**:
+```bash
+# 快速掃描 - 最適合第一次使用
+python core_scan_integration_cli.py quick-scan http://localhost:3000
 
-| 模式 | 適用場景 | 自動化程度 | 安全等級 |
-|------|---------|-----------|---------|
-| 🖥️ **UI 模式** | 學習階段、高風險目標 | ⭐ 低 | ⭐⭐⭐⭐⭐ 最高 |
-| 🤖 **AI 模式** | 已知場景、批量測試 | ⭐⭐⭐⭐⭐ 最高 | ⭐⭐ 低 |
-| 💬 **Chat 模式** | 探索性測試、學習新技術 | ⭐⭐⭐ 中高 | ⭐⭐⭐ 中 |
-| 🔄 **混合模式** | 日常工作、實際 Bug Bounty | ⭐⭐⭐⭐ 高 | ⭐⭐⭐⭐ 高 |
+# 如果您想看詳細的JSON結果
+python core_scan_integration_cli.py quick-scan http://localhost:3000 --output json
+```
 
-```python
-# Python API 示例 - 啟動不同模式
-from services.core.aiva_core.bio_neuron_master import (
-    BioNeuronMasterController,
-    OperationMode
-)
+**經驗用戶指令**:
+```bash
+# 深度綜合掃描
+python core_scan_integration_cli.py deep-scan https://target.com --comprehensive
 
-# 混合模式 (推薦用於 Bug Bounty)
-controller = BioNeuronMasterController(
-    codebase_path="/workspaces/AIVA",
-    default_mode=OperationMode.HYBRID
-)
-
-# 處理您的第一個請求
-result = await controller.process_request(
-    request="測試 example.com 的 XSS 漏洞",
-    context={"target": "example.com", "scope": "in-scope"}
-)
+# 隱匿情報收集
+python core_scan_integration_cli.py intel https://target.com --stealth
 ```
 
 #### **Step 3: 查看 AI 執行結果**
@@ -89,6 +81,44 @@ print(result)
 #     'ai_summary': '檢測到 3 個 XSS 注入點...'
 # }
 ```
+
+#### **Step 3: 執行您的第一次掃描** (1分鐘)
+
+**基本使用流程**:
+
+1. **設定目標** (必填):
+   ```bash
+   python core_scan_integration_cli.py quick-scan [您的目標URL]
+   ```
+
+2. **可選參數設定**:
+   ```bash
+   # 指定輸出格式
+   --output [text|json|markdown|xml]
+   
+   # 增加詳細度
+   --verbose
+   
+   # 全面掃描模式
+   --comprehensive
+   
+   # 隱匿模式
+   --stealth
+   ```
+
+3. **實際執行範例**:
+   ```bash
+   # 新手範例
+   python core_scan_integration_cli.py quick-scan http://testfire.net
+   
+   # 進階範例
+   python core_scan_integration_cli.py deep-scan https://target.com --output json --verbose
+   ```
+
+**執行時間預估**:
+- quick-scan: ~1.7秒
+- deep-scan: ~3.7秒
+- intel/discovery: ~2.5秒
 
 ---
 
@@ -150,34 +180,323 @@ print(result)
 
 ---
 
-## 💡 四種使用模式詳解
+## 🎯 六種指令完整使用指南
 
-### 🖥️ **模式 1: UI 模式** (適合新手和高風險場景)
+### **CLI指令系統架構**
 
-**什麼時候用?**
-- ✅ 第一次使用 AIVA
-- ✅ 測試高價值目標 (如 Google、Facebook)
-- ✅ 生產環境測試
-- ✅ 需要逐步確認每個操作
-
-**操作流程:**
-```python
-controller = BioNeuronMasterController(default_mode="ui")
-
-# 提交請求
-result = await controller.process_request(
-    request="測試 https://example.com 的 SQL 注入",
-    context={"manual_approval": True}
-)
-
-# UI 模式會在關鍵步驟暫停，等待您確認:
-# 1. ⏸️ 掃描開始前確認
-# 2. ⏸️ 發現潛在注入點時確認
-# 3. ⏸️ 執行 Payload 前確認
-# 4. ⏸️ 提交報告前確認
+```
+CLI Command System v5.0
+├── quick-scan    │ 快速掃描 (1.7s)
+├── deep-scan     │ 深度掃描 (3.7s) 
+├── intel         │ 情報收集 (2.5s)
+├── discovery     │ 服務發現 (2.8s)
+├── vuln          │ 漏洞掃描 (3.2s)
+└── audit         │ 全面稽核 (3.6s)
 ```
 
-**優點:**
+### **指令分類與使用場景**
+
+#### 🚀 **基礎掃描指令**
+
+##### 1. `quick-scan` - 快速掃描
+```bash
+# 基本語法
+python core_scan_integration_cli.py quick-scan [目標URL]
+
+# 範例
+python core_scan_integration_cli.py quick-scan http://localhost:3000
+python core_scan_integration_cli.py quick-scan https://example.com --output json
+```
+
+**適用場景:**
+- ✅ 第一次掃描目標
+- ✅ Bug Bounty 初步偵察
+- ✅ 快速檢查網站狀態
+- ✅ 預算有限的時間內進行基本檢測
+
+**執行時間:** ~1.65秒
+
+##### 2. `deep-scan` - 深度掃描
+```bash
+# 基本語法  
+python core_scan_integration_cli.py deep-scan [目標URL] [選項]
+
+# 範例
+python core_scan_integration_cli.py deep-scan https://target.com --comprehensive
+python core_scan_integration_cli.py deep-scan https://example.com --stealth --output markdown
+```
+
+**適用場景:**
+- ✅ 全面漏洞評估
+- ✅ 紅隊演練
+- ✅ 企業安全稽核
+- ✅ 高價值目標深度分析
+
+**執行時間:** ~3.69秒
+
+#### 🕵️ **情報收集指令**
+
+##### 3. `intel` - 隱匿情報收集
+```bash
+# 基本語法
+python core_scan_integration_cli.py intel [目標URL] [選項]
+
+# 範例  
+python core_scan_integration_cli.py intel https://target.com --stealth
+python core_scan_integration_cli.py intel https://example.com --output json --verbose
+```
+
+**適用場景:**
+- ✅ 被動信息收集
+- ✅ OSINT 調查
+- ✅ 隱匿模式偵察
+- ✅ 法規合規的初步調查
+
+**執行時間:** ~2.53秒
+
+##### 4. `discovery` - 服務發現
+```bash
+# 基本語法
+python core_scan_integration_cli.py discovery [目標URL] [選項]
+
+# 範例
+python core_scan_integration_cli.py discovery https://target.com
+python core_scan_integration_cli.py discovery https://example.com --comprehensive --output xml
+```
+
+**適用場景:**
+- ✅ 網路拓撲分析
+- ✅ 服務埠掃描
+- ✅ 技術棧識別
+- ✅ 攻擊面分析
+
+**執行時間:** ~2.87秒
+
+#### 🔍 **專業評估指令**
+
+##### 5. `vuln` - 漏洞掃描
+```bash
+# 基本語法
+python core_scan_integration_cli.py vuln [目標URL] [選項]
+
+# 範例
+python core_scan_integration_cli.py vuln https://target.com --comprehensive
+python core_scan_integration_cli.py vuln https://example.com --stealth --output json
+```
+
+**適用場景:**
+- ✅ 專業漏洞評估
+- ✅ CVE 檢測
+- ✅ 配置錯誤發現
+- ✅ 合規性檢查
+
+**執行時間:** ~3.21秒
+
+##### 6. `audit` - 全面稽核
+```bash
+# 基本語法
+python core_scan_integration_cli.py audit [目標URL] [選項]
+
+# 範例
+python core_scan_integration_cli.py audit https://target.com --comprehensive --verbose
+python core_scan_integration_cli.py audit https://example.com --output markdown
+```
+
+**適用場景:**
+- ✅ 企業安全審計
+- ✅ 合規性報告
+- ✅ 全方位安全評估
+- ✅ 最終安全檢查
+
+**執行時間:** ~3.65秒
+
+---
+
+## 💡 傳統模式參考 (已整合至CLI系統)
+
+### 🎨 **CLI 輸出格式選項**
+
+AIVA v5.0 支援多種輸出格式，滿足不同使用場景:
+
+```bash
+# 文本格式 (預設) - 適合終端閱讀
+python core_scan_integration_cli.py quick-scan https://example.com
+
+# JSON 格式 - 適合程式處理
+python core_scan_integration_cli.py quick-scan https://example.com --output json
+
+# Markdown 格式 - 適合文檔整合
+python core_scan_integration_cli.py quick-scan https://example.com --output markdown
+
+# XML 格式 - 適合企業報告
+python core_scan_integration_cli.py quick-scan https://example.com --output xml
+```
+
+### 🔧 **進階選項參數**
+
+```bash
+# 詳細模式 - 顯示更多診斷信息
+--verbose
+
+# 全面模式 - 啟動深度分析
+--comprehensive  
+
+# 隱匿模式 - 降低檢測機率
+--stealth
+
+# 組合使用範例
+python core_scan_integration_cli.py deep-scan https://target.com \
+  --comprehensive --stealth --output json --verbose
+```
+
+---
+
+## 🧠 AI功能模組專業檢測系統
+
+### **AIVA Features AI-Driven CLI 系統**
+
+除了基礎掃描指令外，AIVA v5.0 還提供專業的AI驅動功能模組檢測系統，專門針對特定漏洞類型進行深度分析。
+
+#### **🎯 功能模組檢測指令**
+
+```bash
+# 功能模組檢測語法
+python features_ai_cli.py [檢測類型] [目標URL] [AI選項]
+```
+
+##### **核心功能檢測類型**
+
+| 檢測指令 | 功能模組 | 檢測重點 | Bug Bounty價值 |
+|----------|---------|---------|---------------|
+| `sqli-detect` | SQL注入檢測 | 資料庫注入漏洞 | High |
+| `xss-detect` | XSS檢測 | 跨站腳本攻擊 | Medium-High |
+| `ssrf-detect` | SSRF檢測 | 服務端請求偽造 | High |
+| `idor-detect` | IDOR檢測 | 直接對象引用 | Medium |
+| `authn-test` | 認證測試 | 身份認證繞過 | High |
+| `authz-test` | 授權測試 | 授權檢查繞過 | High |
+| `jwt-bypass` | JWT攻擊 | JWT混淆攻擊 | Medium-High |
+| `oauth-confuse` | OAuth混淆 | OAuth流程攻擊 | High |
+| `payment-bypass` | 支付繞過 | 支付邏輯漏洞 | Critical |
+| `high-value-scan` | 高價值掃描 | Bug Bounty熱門 | Critical |
+| `comp-features` | 全功能檢測 | 全面功能分析 | 綜合 |
+
+##### **AI分析模式**
+
+| AI模式 | 適用場景 | 執行策略 | 平均時間 |
+|--------|---------|---------|---------|
+| `intelligent` | 日常測試 | 智能學習 | 3.22s |
+| `rapid` | 快速檢測 | 高速掃描 | 2.47s |
+| `expert` | 深度分析 | 專家策略 | 6.16s |
+| `guided` | 學習模式 | 引導探索 | 4.5s |
+
+##### **實戰使用範例**
+
+```bash
+# SQL注入智能檢測
+python features_ai_cli.py sqli-detect https://example.com --ai-mode intelligent
+
+# 高價值漏洞專家分析
+python features_ai_cli.py high-value-scan https://target.com --ai-mode expert --output json
+
+# 全功能快速掃描
+python features_ai_cli.py comp-features https://webapp.test --ai-mode rapid --output markdown
+
+# 認證繞過隱匿測試
+python features_ai_cli.py authn-test https://app.com --stealth --comprehensive
+```
+
+---
+
+## 💡 效能與執行統計
+
+### **基礎掃描指令執行時間**
+
+基於 AIVA v5.0 實際測試結果:
+
+| 指令 | 平均執行時間 | 適用場景 | 輸出項目數 |
+|------|-------------|---------|-----------|
+| `quick-scan` | 1.65秒 | 快速檢測 | 5-8項 |
+| `deep-scan` | 3.69秒 | 全面分析 | 12-15項 |
+| `intel` | 2.53秒 | 情報收集 | 8-10項 |
+| `discovery` | 2.87秒 | 服務發現 | 10-12項 |
+| `vuln` | 3.21秒 | 漏洞評估 | 10-14項 |
+| `audit` | 3.65秒 | 全面稽核 | 15-18項 |
+
+### **AI功能模組檢測效能**
+
+| AI模式 | 平均執行時間 | 功能模組數 | AI信心度 | 記憶體使用 |
+|--------|-------------|-----------|---------|----------|
+| `rapid` | 2.47秒 | 6個 | 86.73% | ~80MB |
+| `intelligent` | 3.22秒 | 3個 | 85.71% | ~95MB |
+| `expert` | 6.16秒 | 4個 | 88.58% | ~120MB |
+| `guided` | ~4.5秒 | 5個 | ~87.2% | ~105MB |
+
+### **系統資源使用**
+
+- **CPU使用率**: 10-25% (單核心)
+- **記憶體消耗**: 50-120MB (基礎) / 80-120MB (AI功能)
+- **網路頻寬**: 最小化 (隱匿模式 <100KB/s)
+- **同時連線數**: 可調整 (預設 5個連線)
+- **AI並行處理**: 支援異步執行，最多6個功能模組並行
+
+---
+
+### 🎯 **AI功能模組檢測深度指南**
+
+#### **Step 1: 選擇合適的檢測類型**
+
+根據您的目標和需求選擇最適合的功能模組：
+
+**🔴 高價值Bug Bounty漏洞:**
+```bash
+# 專門針對高價值漏洞
+python features_ai_cli.py high-value-scan https://target.com --ai-mode expert
+
+# 支付邏輯漏洞 (Critical級)
+python features_ai_cli.py payment-bypass https://shop.example.com --comprehensive
+```
+
+**🟡 常見Web應用漏洞:**
+```bash
+# SQL注入深度檢測
+python features_ai_cli.py sqli-detect https://webapp.com --ai-mode intelligent
+
+# XSS全面掃描
+python features_ai_cli.py xss-detect https://site.com --output json
+```
+
+**� 認證授權漏洞:**
+```bash
+# 認證繞過測試
+python features_ai_cli.py authn-test https://api.example.com --stealth
+
+# JWT攻擊檢測
+python features_ai_cli.py jwt-bypass https://app.com --ai-mode expert
+```
+
+#### **Step 2: AI模式選擇指南**
+
+| 使用場景 | 推薦AI模式 | 理由 |
+|---------|----------|------|
+| **Bug Bounty獵人** | `expert` | 深度分析，高信心度結果 |
+| **企業安全團隊** | `intelligent` | 平衡效率與準確性 |
+| **CI/CD整合** | `rapid` | 快速檢測，適合自動化 |
+| **學習研究** | `guided` | 提供詳細分析過程 |
+
+#### **Step 3: 結果解讀與行動**
+
+**AI信心度解讀:**
+- **90%+**: 高可信度，建議立即處理
+- **80-90%**: 較高可信度，建議手動驗證
+- **70-80%**: 中等可信度，需要進一步測試
+- **<70%**: 低可信度，可能為誤報
+
+**Bug Bounty價值評估:**
+- **Critical**: $5000-$15000+ (支付邏輯、業務邏輯)
+- **High**: $1000-$5000 (SQL注入、SSRF、認證繞過)
+- **Medium**: $300-$1000 (XSS、IDOR)
+
+### �🖥️ **傳統 UI 模式** (適合新手學習)
 - 🛡️ **最安全**: 每步都可控
 - 📚 **適合學習**: 看到 AI 的決策過程
 - 🎓 **逐步指導**: 理解每個攻擊步驟的意義

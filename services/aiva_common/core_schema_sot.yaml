@@ -21,9 +21,9 @@ base_types:
         required: false
         description: ''
       source_module:
-        type: ModuleName
+        type: str
         required: true
-        description: ''
+        description: '來源模組名稱'
       timestamp:
         type: datetime
         required: false
@@ -61,18 +61,7 @@ base_types:
         required: false
         description: ''
   Vulnerability:
-    description: '漏洞基本資訊 - 用於 Finding 中的漏洞描述
-
-
-      符合標準：
-
-      - CWE: Common Weakness Enumeration (MITRE)
-
-      - CVE: Common Vulnerabilities and Exposures
-
-      - CVSS: Common Vulnerability Scoring System v3.1/v4.0
-
-      - OWASP: Open Web Application Security Project'
+    description: '漏洞基本資訊 - 用於 Finding 中的漏洞描述。符合標準：CWE、CVE、CVSS v3.1/v4.0、OWASP'
     fields:
       name:
         type: Any

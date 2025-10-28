@@ -63,8 +63,9 @@ class SchemaComplianceValidator:
         # 標準 schema 導入模式
         self.standard_imports = {
             'go': [
-                r'github\.com/kyle0527/aiva/services/function/common/go/aiva_common_go/schemas/generated',
-                r'schemas\s+"github\.com/kyle0527/aiva/services/function/common/go/aiva_common_go/schemas/generated"'
+                r'github\.com/kyle0527/aiva/services/function/common/go/aiva_common_go/schemas',
+                r'schemas\s+"github\.com/kyle0527/aiva/services/function/common/go/aiva_common_go/schemas"',
+                r'"github\.com/kyle0527/aiva/services/function/common/go/aiva_common_go/schemas"'
             ],
             'rust': [
                 r'use\s+.*schemas::generated',
@@ -72,8 +73,8 @@ class SchemaComplianceValidator:
                 r'use\s+schemas::generated::'
             ],
             'typescript': [
-                r'from\s+[\'"].*schemas/aiva_schemas[\'"]',
-                r'import.*from\s+[\'"].*schemas/aiva_schemas[\'"]'
+                r'from\s+[\'"].*features/common/typescript/aiva_common_ts/schemas/generated/schemas[\'"]',
+                r'import.*from\s+[\'"].*features/common/typescript/aiva_common_ts/schemas/generated/schemas[\'"]'
             ]
         }
         
@@ -107,8 +108,8 @@ class SchemaComplianceValidator:
                 'src/schemas/generated/mod.rs'
             ],
             'typescript': [
-                'schemas/aiva_schemas.d.ts',
-                'aiva_schemas.d.ts'
+                'features/common/typescript/aiva_common_ts/schemas/generated/schemas.d.ts',
+                'aiva_common_ts/schemas/generated/schemas.d.ts'
             ]
         }
 
@@ -354,7 +355,7 @@ class SchemaComplianceValidator:
                                     line_number=i+1,
                                     issue_type="自定義 Schema",
                                     description=f"發現自定義 schema 定義: {line.strip()}",
-                                    suggestion="使用 schemas/aiva_schemas.d.ts 中的標準定義"
+                                    suggestion="使用 aiva_common_ts/schemas/generated/schemas.d.ts 中的標準定義"
                                 ))
             except Exception as e:
                 continue

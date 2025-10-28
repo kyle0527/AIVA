@@ -1,0 +1,172 @@
+{
+  "timestamp": "2025-10-28T12:46:03.946772",
+  "analysis_summary": {
+    "scripts_analyzed": 6,
+    "executable_scripts": 6,
+    "functionality_understood": 6,
+    "cli_commands_generated": 6
+  },
+  "cli_validation": {
+    "total_commands": 6,
+    "help_works": 3,
+    "syntax_valid": 6,
+    "success_rate": 50.0
+  },
+  "detailed_analyses": [
+    {
+      "script": "ai_security_test.py",
+      "purpose": "AIVA AI 實戰安全測試腳本 對 Juice Shop 靶場進行真實的 AI 驅動安全測試",
+      "functions": [
+        "generate_security_report"
+      ],
+      "cli_command": "python ai_security_test.py --comprehensive",
+      "executable": true,
+      "parameters": [
+        "--target",
+        "--config"
+      ],
+      "dependencies": [
+        "requests",
+        "asyncio",
+        "services.core.aiva_core.ai_commander"
+      ]
+    },
+    {
+      "script": "ai_autonomous_testing_loop.py",
+      "purpose": "AIVA AI 自主測試與優化閉環系統 實現 AI 完全自主的測試、學習、優化循環  功能特點： 1. 自主發現和測試靶場 2. 動態調整測試策略 3. 實時學習和優化 4. 自動化改進建議 5. 持續性能監控",
+      "functions": [
+        "get_successful_patterns",
+        "analyze_sqli_response",
+        "identify_successful_patterns"
+      ],
+      "cli_command": "python ai_autonomous_testing_loop.py --comprehensive",
+      "executable": true,
+      "parameters": [
+        "--target"
+      ],
+      "dependencies": [
+        "asyncio"
+      ]
+    },
+    {
+      "script": "ai_system_explorer_v3.py",
+      "purpose": "AIVA AI 系統探索器 v3.0 - 混合架構版本 基於 aiva_common 跨語言架構的專業分析系統  主要特點: 1. 分層分析策略 (快速掃描 + 深度分析 + 跨語言整合) 2. 利用 AIVA 現有的 Schema SOT 系統 3. 整合專業分析工具 (Go AST, Rust ",
+      "functions": [],
+      "cli_command": "python ai_system_explorer_v3.py --detailed --output=json",
+      "executable": true,
+      "parameters": [
+        "--detailed",
+        "--target",
+        "--config",
+        "--force-professional",
+        "--output"
+      ],
+      "dependencies": [
+        "aiva_common.schemas.findings",
+        "aiva_common.schemas.base",
+        "asyncio"
+      ]
+    },
+    {
+      "script": "health_check.py",
+      "purpose": "檢查 AIVA Common Schemas 可用性 try: from aiva_common.schemas.base import MessageHeader from aiva_common.schemas.findings import Target, Vulnerability from",
+      "functions": [
+        "check_tools",
+        "check_directories"
+      ],
+      "cli_command": "python health_check.py",
+      "executable": true,
+      "parameters": [
+        "--output",
+        "--target"
+      ],
+      "dependencies": [
+        "aiva_common.schemas.findings",
+        "aiva_common.schemas.base",
+        "aiva_common.enums"
+      ]
+    },
+    {
+      "script": "schema_version_checker.py",
+      "purpose": "AIVA Schema 版本一致性檢查工具 防止意外混用手動維護版本和自動生成版本的 Schema  使用方式: python schema_version_checker.py python schema_version_checker.py --fix  # 自動修復不一致的導入",
+      "functions": [
+        "scan_files",
+        "check_file",
+        "generate_fixes",
+        "run_check",
+        "apply_fixes"
+      ],
+      "cli_command": "python schema_version_checker.py",
+      "executable": true,
+      "parameters": [
+        "--fix",
+        "--help",
+        "--dir"
+      ],
+      "dependencies": []
+    },
+    {
+      "script": "comprehensive_pentest_runner.py",
+      "purpose": "AIVA 綜合實戰滲透測試執行器  修復所有依賴問題後的完整滲透測試工具 遵循 aiva_common 規範，使用標準化的編碼和導入",
+      "functions": [
+        "test_sqli_scanner",
+        "test_xss_scanner",
+        "test_ai_dialogue_assistant",
+        "validate_system_health"
+      ],
+      "cli_command": "python comprehensive_pentest_runner.py --comprehensive",
+      "executable": true,
+      "parameters": [
+        "--target"
+      ],
+      "dependencies": [
+        "services.aiva_common.enums",
+        "asyncio"
+      ]
+    }
+  ],
+  "command_test_results": [
+    {
+      "script": "ai_security_test.py",
+      "command": "python ai_security_test.py --comprehensive",
+      "help_works": false,
+      "syntax_valid": true,
+      "purpose": "AIVA AI 實戰安全測試腳本 對 Juice Shop 靶場進行真實的 AI 驅動安全測試"
+    },
+    {
+      "script": "ai_autonomous_testing_loop.py",
+      "command": "python ai_autonomous_testing_loop.py --comprehensive",
+      "help_works": false,
+      "syntax_valid": true,
+      "purpose": "AIVA AI 自主測試與優化閉環系統 實現 AI 完全自主的測試、學習、優化循環  功能特點： 1"
+    },
+    {
+      "script": "ai_system_explorer_v3.py",
+      "command": "python ai_system_explorer_v3.py --detailed --output=json",
+      "help_works": true,
+      "syntax_valid": true,
+      "purpose": "AIVA AI 系統探索器 v3.0 - 混合架構版本 基於 aiva_common 跨語言架構的專"
+    },
+    {
+      "script": "health_check.py",
+      "command": "python health_check.py",
+      "help_works": false,
+      "syntax_valid": true,
+      "purpose": "檢查 AIVA Common Schemas 可用性 try: from aiva_common.s"
+    },
+    {
+      "script": "schema_version_checker.py",
+      "command": "python schema_version_checker.py",
+      "help_works": true,
+      "syntax_valid": true,
+      "purpose": "AIVA Schema 版本一致性檢查工具 防止意外混用手動維護版本和自動生成版本的 Schema "
+    },
+    {
+      "script": "comprehensive_pentest_runner.py",
+      "command": "python comprehensive_pentest_runner.py --comprehensive",
+      "help_works": true,
+      "syntax_valid": true,
+      "purpose": "AIVA 綜合實戰滲透測試執行器  修復所有依賴問題後的完整滲透測試工具 遵循 aiva_commo"
+    }
+  ]
+}

@@ -1,56 +1,121 @@
 """
-AIVA 任務管理 Schema - 自動生成 (相容版本)
-====================================
+AIVA Tasks Schema - 自動生成
+=====================================
 
-此檔案基於手動維護的 Schema 定義自動生成，確保完全相容
+AIVA跨語言Schema統一定義 - 以手動維護版本為準
 
-⚠️  此檔案由 core_schema_sot.yaml 自動生成，請勿手動修改
-📅 最後更新: 2025-10-28T10:55:40.862313
+⚠️  此配置已同步手動維護的Schema定義，確保單一事實原則
+📅 最後更新: 2025-10-28T10:24:34.374262
 🔄 Schema 版本: 1.0.0
-🎯 相容性: 完全相容手動維護版本
 """
 
 from __future__ import annotations
 from typing import Any, Dict, List, Optional
-from datetime import datetime, UTC
+from datetime import datetime
 from pydantic import BaseModel, Field
-from enum import Enum
 
-class TaskStatus(str, Enum):
-    """任務狀態枚舉"""
-    PENDING = "pending"
-    RUNNING = "running"
-    COMPLETED = "completed"
-    FAILED = "failed"
-    CANCELLED = "cancelled"
+from .base_types import *
 
-class TaskPriority(str, Enum):
-    """任務優先級枚舉"""
-    LOW = "low"
-    MEDIUM = "medium"
-    HIGH = "high"
-    CRITICAL = "critical"
 
-class TaskPayload(BaseModel):
-    """任務負載 - 統一的任務定義格式"""
-    
+class FunctionTaskPayload(BaseModel):
+    """功能任務載荷 - 掃描任務的標準格式"""
+
     task_id: str
-    task_type: str
-    status: TaskStatus = TaskStatus.PENDING
-    priority: TaskPriority = TaskPriority.MEDIUM
-    target: Optional[str] = None
-    config: Dict[str, Any] = Field(default_factory=dict)
-    dependencies: List[str] = Field(default_factory=list)
-    created_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
-    updated_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
-    completed_at: Optional[datetime] = None
+    """任務識別碼"""
 
-class TaskResult(BaseModel):
-    """任務結果格式"""
-    
+    scan_id: str
+    """掃描識別碼"""
+
+    priority: int = Field(ge=0, le=10)
+    """任務優先級"""
+
+    target: FunctionTaskTarget
+    """掃描目標"""
+
+    context: FunctionTaskContext
+    """任務上下文"""
+
+    strategy: str = Field(values=['fast', 'deep', 'aggressive', 'stealth'])
+    """掃描策略"""
+
+    custom_payloads: List[str] = Field(default_factory=list)
+    """自訂載荷"""
+
+    test_config: FunctionTaskTestConfig
+    """測試配置"""
+
+
+class FunctionTaskTarget(BaseModel):
+    """功能任務目標"""
+
+    # 繼承自: Target
+
+    parameter_location: str = Field(values=['url', 'query', 'form', 'json', 'header', 'cookie'])
+    """參數位置"""
+
+    cookies: Dict[str, str] = Field(default_factory=dict)
+    """Cookie資料"""
+
+    form_data: Dict[str, Any] = Field(default_factory=dict)
+    """表單資料"""
+
+    json_data: Optional[Dict[str, Any]] = None
+    """JSON資料"""
+
+
+class FunctionTaskContext(BaseModel):
+    """功能任務上下文"""
+
+    db_type_hint: Optional[str] = Field(values=['mysql', 'postgresql', 'mssql', 'oracle', 'sqlite', 'mongodb'], default=None)
+    """資料庫類型提示"""
+
+    waf_detected: bool = Field(default=False)
+    """是否檢測到WAF"""
+
+    related_findings: List[str] = Field(default_factory=list)
+    """相關發現"""
+
+
+class FunctionTaskTestConfig(BaseModel):
+    """功能任務測試配置"""
+
+    payloads: List[str]
+    """標準載荷列表"""
+
+    custom_payloads: List[str] = Field(default_factory=list)
+    """自訂載荷列表"""
+
+    blind_xss: bool = Field(default=False)
+    """是否進行Blind XSS測試"""
+
+    dom_testing: bool = Field(default=False)
+    """是否進行DOM測試"""
+
+    timeout: Optional[float] = Field(ge=0.1, le=60.0, default=None)
+    """請求逾時(秒)"""
+
+
+class ScanTaskPayload(BaseModel):
+    """掃描任務載荷 - 用於SCA/SAST等需要項目URL的掃描任務"""
+
     task_id: str
-    status: TaskStatus
-    result_data: Optional[Dict[str, Any]] = None
-    error_message: Optional[str] = None
-    execution_time_seconds: Optional[float] = None
-    completed_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
+    """任務識別碼"""
+
+    scan_id: str
+    """掃描識別碼"""
+
+    priority: int = Field(ge=0, le=10)
+    """任務優先級"""
+
+    target: Target
+    """掃描目標 (包含URL)"""
+
+    scan_type: str = Field(values=['sca', 'sast', 'secret', 'license', 'dependency'])
+    """掃描類型"""
+
+    repository_info: Optional[Dict[str, Any]] = None
+    """代碼倉庫資訊 (分支、commit等)"""
+
+    timeout: Optional[int] = Field(ge=60, le=3600, default=None)
+    """掃描逾時(秒)"""
+

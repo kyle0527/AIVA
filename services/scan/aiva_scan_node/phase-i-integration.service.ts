@@ -13,7 +13,7 @@ export interface PhaseIConfig {
   maxScriptAnalysis: number;
 }
 
-import { FindingPayload } from '../../../schemas/aiva_schemas';
+import { FindingPayload } from '../../features/common/typescript/aiva_common_ts/schemas/generated/schemas';
 
 // 定義 client-side auth 專用的發現類型
 type ClientSideAuthType = 'localStorage_auth' | 'sessionStorage_auth' | 'hardcoded_admin' | 'client_validation' | 'hidden_elements';

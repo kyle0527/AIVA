@@ -1,14 +1,55 @@
-# 文件整理計劃
+# AIVA 文件清理和更新計劃
 
-## 執行日期：2025-10-25
+## 執行日期：2025-10-28 (更新)
 
 ## 🎯 整理目標
-1. 刪除過時/重複的報告文件
-2. 合併同類型文檔
-3. 統一文件命名規範
-4. 清理臨時/測試文件
+1. 清理過時的Schema工具和文件 (新增 - 最高優先級)
+2. 刪除過時/重複的報告文件
+3. 合併同類型文檔
+4. 統一文件命名規範
+5. 清理臨時/測試文件
 
-## 📊 當前文件分析
+## �️ Schema標準化清理 (最高優先級)
+
+### 根目錄過時Schema工具 (已被 aiva_common 取代)
+```
+❌ schema_version_checker.py         # 258行 - 版本檢查工具 (已不需要)
+❌ schema_unification_tool.py        # 382行 - 統一整合工具 (已完成統一)  
+❌ compatible_schema_generator.py    # 相容性生成器 (已整合到 aiva_common)
+❌ generate_compatible_schemas.py    # 相容性生成 (重複功能)
+❌ generate_rust_schemas.py          # Rust生成 (已整合到 aiva_common)
+```
+
+### 根目錄重複Schema定義 (已統一到 aiva_common)
+```
+❌ schemas/ 整個目錄               # 包含 aiva_schemas.go (3477行) 等重複文件
+   ├── aiva_schemas.go             # 3477行重複定義
+   ├── aiva_schemas.json           # JSON版本重複  
+   ├── aiva_schemas.d.ts           # TypeScript版本重複
+   └── aiva_schemas.rs             # Rust版本重複
+```
+
+### tools/ 目錄過時Schema工具
+```
+❌ tools/schema_generator.py        # 已被 aiva_common/tools/schema_codegen_tool.py 取代
+❌ tools/ci_schema_check.py         # 已被 tools/schema_compliance_validator.py 取代
+❌ tools/common/create_schemas_files.py      # 功能重複
+❌ tools/common/generate_official_schemas.py # 功能重複
+❌ tools/core/compare_schemas.py             # 已被 schema_compliance_validator.py 取代
+```
+
+### ✅ 保留的核心Schema檔案
+```
+✅ services/aiva_common/tools/schema_codegen_tool.py    # 主要生成工具
+✅ services/aiva_common/core_schema_sot.yaml            # 單一真實來源
+✅ tools/schema_compliance_validator.py                 # 合規檢查工具
+✅ tools/schema_compliance.toml                         # 合規配置
+✅ services/aiva_common/schemas/generated/              # Python生成檔案
+✅ services/features/common/go/aiva_common_go/schemas/generated/    # Go生成檔案
+✅ services/features/common/rust/aiva_common_rust/src/schemas/      # Rust生成檔案
+```
+
+## �📊 其他文件分析
 
 ### 根目錄 (需清理)
 ```
@@ -176,6 +217,41 @@
 
 ## 🗂️ 整理操作
 
+### Phase 0: Schema標準化清理 (優先執行)
+
+#### 0.1 安全檢查 - 確認無引用
+```powershell
+# 檢查是否有其他代碼引用這些過時文件
+grep -r "schema_version_checker" services/
+grep -r "schema_unification_tool" services/
+grep -r "compatible_schema_generator" services/
+grep -r "schemas/aiva_schemas" services/
+grep -r "tools/schema_generator" services/
+```
+
+#### 0.2 移動過時Schema工具到archive (而非直接刪除)
+- [ ] 創建 `_archive/deprecated_schema_tools/`
+- [ ] 移動 `schema_version_checker.py`
+- [ ] 移動 `schema_unification_tool.py`  
+- [ ] 移動 `compatible_schema_generator.py`
+- [ ] 移動 `generate_compatible_schemas.py`
+- [ ] 移動 `generate_rust_schemas.py`
+- [ ] 移動整個 `schemas/` 目錄
+- [ ] 移動 `tools/schema_generator.py`
+- [ ] 移動 `tools/ci_schema_check.py`
+- [ ] 移動 `tools/common/create_schemas_files.py`
+- [ ] 移動 `tools/common/generate_official_schemas.py`
+- [ ] 移動 `tools/core/compare_schemas.py`
+
+#### 0.3 更新相關報告文件
+- [ ] 更新 `SCHEMA_STANDARDIZATION_COMPLETION_REPORT.md` - 加入清理記錄
+- [ ] 創建 `SCHEMA_PROJECT_FINAL_REPORT.md` - 整合所有schema工作
+
+#### 0.4 驗證清理效果
+- [ ] 運行 `tools/schema_compliance_validator.py` 確保仍100%合規
+- [ ] 測試 `services/aiva_common/tools/schema_codegen_tool.py` 仍正常運作
+- [ ] 編譯測試所有語言模組 (Go/Rust/TypeScript)
+
 ### Phase 1: 刪除過時/重複文件
 
 #### 1.1 根目錄清理
@@ -248,22 +324,31 @@ _archive/
 ## 📈 預期效果
 
 ### 刪除文件統計
+- **Schema相關**: 11個過時工具 + 整個schemas/目錄 ⚠️ **最重要**
 - 根目錄: 6 個文件
-- docs/: 5 個文件
+- docs/: 5 個文件  
 - reports/: ~40 個文件
 - _out/: ~50 個文件
-- **總計: ~100 個文件**
+- **總計: ~112 個檔案和目錄**
 
 ### 文件大小節省
 預估節省: ~50-100 MB
 
-### 最終結構
+### 最終結構 
 ```
 AIVA-git/
 ├── README.md
 ├── DEVELOPER_GUIDE.md
-├── QUICK_REFERENCE.md
+├── QUICK_REFERENCE.md  
 ├── REPOSITORY_STRUCTURE.md
+├── SCHEMA_PROJECT_FINAL_REPORT.md       # 新增 - 整合所有schema工作
+├── services/
+│   └── aiva_common/                     # 唯一的schema管理中心
+│       ├── tools/schema_codegen_tool.py # 唯一生成工具
+│       ├── core_schema_sot.yaml         # 單一真實來源
+│       └── schemas/generated/           # Python生成檔案
+├── tools/
+│   └── schema_compliance_validator.py   # 唯一合規檢查
 ├── docs/
 │   ├── INDEX.md
 │   ├── DEVELOPMENT_HISTORY.md          # 新整合
@@ -280,6 +365,11 @@ AIVA-git/
 │   ├── import_path_check_report.md
 │   └── SOP_DEBUGGING_REPORT.md
 ├── _archive/                            # 歸檔
+│   ├── deprecated_schema_tools/         # 新增 - 過時schema工具
+│   │   ├── schema_version_checker.py
+│   │   ├── schema_unification_tool.py
+│   │   ├── schemas/                     # 整個舊schemas目錄
+│   │   └── ...                          # 其他過時工具
 │   ├── 2024_reports/
 │   ├── completed_tasks/
 │   └── historical_analysis/
@@ -291,14 +381,26 @@ AIVA-git/
 
 ## ✅ 執行檢查清單
 
+### 🔥 優先級別1 - Schema標準化清理 
+- [ ] Phase 0.1: 安全檢查 - 確認無引用
+- [ ] Phase 0.2: 移動過時Schema工具到archive (11個文件/目錄)
+- [ ] Phase 0.3: 更新schema相關報告文件
+- [ ] Phase 0.4: 驗證清理效果 - 確保100%合規和功能正常
+
+### 📋 優先級別2 - 一般文件清理
 - [ ] Phase 1: 刪除過時文件 (100+ 文件)
 - [ ] Phase 2: 創建歸檔目錄
 - [ ] Phase 3: 整合文檔 (3 個新文件)
 - [ ] Phase 4: 重命名文件
+
+### ✔️ 最終驗證
 - [ ] 驗證所有連結仍然有效
 - [ ] 更新 README.md 和 INDEX.md
 - [ ] Git commit 歸檔變更
 
-## 🚀 開始執行？
+## 🚀 開始執行Schema清理？
 
-請確認是否開始執行此清理計劃。
+⚠️ **立即執行優先級1 - Schema標準化清理**
+這是最重要的清理，可以避免未來混淆和重複工作。
+
+請確認是否開始執行Phase 0的Schema清理？
