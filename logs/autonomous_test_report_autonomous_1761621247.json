@@ -1,0 +1,35 @@
+{
+  "session_id": "autonomous_1761621247",
+  "runtime": "0:02:38.577362",
+  "total_tests": 35,
+  "total_vulnerabilities": 9,
+  "success_rate": 0.2571428571428571,
+  "targets_discovered": 1,
+  "optimization_suggestions": 6,
+  "applied_optimizations": 8,
+  "performance_trend": [
+    0.2727272727272727,
+    0.25,
+    0.25
+  ],
+  "by_test_type": {
+    "sqli": {
+      "total": 14,
+      "vulns": 3
+    },
+    "xss": {
+      "total": 12,
+      "vulns": 0
+    },
+    "auth_bypass": {
+      "total": 9,
+      "vulns": 6
+    }
+  },
+  "current_strategies": {
+    "aggressive": 0.3,
+    "stealth": 0.4,
+    "comprehensive": 0.3
+  },
+  "learning_rate": 0.08100000000000002
+}

@@ -1,93 +1,41 @@
 """
-AIVA Messaging Schema - 自動生成
-=====================================
+AIVA 訊息傳遞 Schema - 自動生成 (相容版本)
+====================================
 
-AIVA跨語言Schema統一定義
+此檔案基於手動維護的 Schema 定義自動生成，確保完全相容
 
-⚠️  此檔案由core_schema_sot.yaml自動生成，請勿手動修改
-📅 最後更新: 2025-10-23T00:00:00Z
+⚠️  此檔案由 core_schema_sot.yaml 自動生成，請勿手動修改
+📅 最後更新: 2025-10-28T10:55:40.860463
 🔄 Schema 版本: 1.0.0
+🎯 相容性: 完全相容手動維護版本
 """
 
 from __future__ import annotations
 from typing import Any, Dict, List, Optional
-from datetime import datetime
+from datetime import datetime, UTC
 from pydantic import BaseModel, Field
 
-from .base_types import *
+# 導入基礎類型以保持相容性
+try:
+    from .base_types import MessageHeader
+except ImportError:
+from services.aiva_common.schemas.base import MessageHeader
 
-
-class AivaMessage(BaseModel):
-    """AIVA統一訊息格式 - 所有跨服務通訊的標準信封"""
-
+class MessagePayload(BaseModel):
+    """訊息負載 - 統一的訊息傳遞格式"""
+    
     header: MessageHeader
-    """訊息標頭"""
+    payload_type: str
+    data: Dict[str, Any]
+    metadata: Optional[Dict[str, Any]] = None
+    created_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
 
-    topic: str = Field(values=['tasks', 'findings', 'events', 'commands', 'responses'])
-    """訊息主題"""
-
-    schema_version: str = Field(default="1.0")
-    """Schema版本"""
-
-    payload: Dict[str, Any]
-    """訊息載荷"""
-
-
-class AIVARequest(BaseModel):
-    """統一請求格式 - 模組間請求通訊"""
-
-    request_id: str
-    """請求識別碼"""
-
-    source_module: str
-    """來源模組"""
-
-    target_module: str
-    """目標模組"""
-
-    request_type: str
-    """請求類型"""
-
-    payload: Dict[str, Any]
-    """請求載荷"""
-
-    trace_id: Optional[str] = None
-    """追蹤識別碼"""
-
-    timeout_seconds: int = Field(ge=1, le=300, default=30)
-    """逾時秒數"""
-
-    metadata: Dict[str, Any] = Field(default_factory=dict)
-    """中繼資料"""
-
-    timestamp: str
-    """時間戳"""
-
-
-class AIVAResponse(BaseModel):
-    """統一響應格式 - 模組間響應通訊"""
-
-    request_id: str
-    """對應的請求識別碼"""
-
-    response_type: str
-    """響應類型"""
-
-    success: bool
-    """執行是否成功"""
-
-    payload: Optional[Dict[str, Any]] = None
-    """響應載荷"""
-
-    error_code: Optional[str] = None
-    """錯誤代碼"""
-
-    error_message: Optional[str] = None
-    """錯誤訊息"""
-
-    metadata: Dict[str, Any] = Field(default_factory=dict)
-    """中繼資料"""
-
-    timestamp: str
-    """時間戳"""
-
+class MessageResponse(BaseModel):
+    """訊息回應格式"""
+    
+    response_id: str
+    original_message_id: str
+    status: str = "success"
+    data: Optional[Dict[str, Any]] = None
+    error: Optional[str] = None
+    timestamp: datetime = Field(default_factory=lambda: datetime.now(UTC))

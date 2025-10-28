@@ -1,5 +1,5 @@
 {
-  "timestamp": "2025-10-28T08:13:40.716158",
+  "timestamp": "2025-10-28T11:14:00.111095",
   "target": "http://localhost:3000",
   "summary": {
     "total_tests": 20,
@@ -10,56 +10,56 @@
       {
         "payload": "' OR '1'='1",
         "status_code": 401,
-        "response_time": 0.0407,
+        "response_time": 0.046464,
         "response_length": 26,
         "detected_vulnerability": false
       },
       {
         "payload": "' OR 1=1 --",
         "status_code": 200,
-        "response_time": 0.038876,
+        "response_time": 0.028332,
         "response_length": 799,
         "detected_vulnerability": false
       },
       {
         "payload": "' UNION SELECT NULL, NULL, NULL --",
         "status_code": 500,
-        "response_time": 0.03365,
+        "response_time": 0.041756,
         "response_length": 1449,
         "detected_vulnerability": true
       },
       {
         "payload": "'; DROP TABLE users; --",
         "status_code": 401,
-        "response_time": 0.015151,
+        "response_time": 0.014652,
         "response_length": 26,
         "detected_vulnerability": false
       },
       {
         "payload": "' OR SLEEP(5) --",
         "status_code": 500,
-        "response_time": 0.028084,
+        "response_time": 0.029128,
         "response_length": 1449,
         "detected_vulnerability": true
       },
       {
         "payload": "admin'--",
         "status_code": 401,
-        "response_time": 0.03123,
+        "response_time": 0.015392,
         "response_length": 26,
         "detected_vulnerability": false
       },
       {
         "payload": "' OR 'x'='x",
         "status_code": 401,
-        "response_time": 0.029518,
+        "response_time": 0.029709,
         "response_length": 26,
         "detected_vulnerability": false
       },
       {
         "payload": "1' AND SLEEP(5)#",
         "status_code": 500,
-        "response_time": 0.014398,
+        "response_time": 0.020802,
         "response_length": 1449,
         "detected_vulnerability": true
       }

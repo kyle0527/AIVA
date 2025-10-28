@@ -15,10 +15,10 @@
    - ✅ 熵值檢測器（threshold=4.5, min_length=20）
    - ✅ 正則表達式匹配引擎
 
-2. **GitHistoryScanner** - Git 歷史掃描器
-   - ✅ 掃描最近 N 個提交（可配置）
-   - ✅ 自動檢測 Git 倉庫
-   - ✅ 包含提交哈希、作者、日期資訊
+2. **~~GitHistoryScanner~~ - 已移除** ❌
+   - ❌ 已移除 Git 歷史掃描器
+   - 📝 原因：專注 Bug Bounty 黑盒測試，Git 歷史在實戰中不適用
+   - 🎯 重點轉向：提升密鑰檢測精確度和自我診斷能力
 
 3. **SensitiveInfoScanner** - 原有敏感資訊掃描器
    - ✅ 保留原有功能
@@ -35,7 +35,7 @@
 ```rust
 // 新增導入
 use secret_detector::SecretDetector;
-use git_history_scanner::GitHistoryScanner;
+// 已移除: use git_history_scanner::GitHistoryScanner;
 
 // 擴展 Finding 結構體
 struct Finding {
@@ -54,14 +54,11 @@ async fn process_task(...) {
     let secret_detector = SecretDetector::new();
     let secret_findings = secret_detector.scan_content(&task.content, &task.source_url);
     
-    // 3. Git 歷史掃描（自動檢測 .git 倉庫）
-    if task.source_url.contains(".git") || task.source_url.starts_with("http") {
-        let git_scanner = GitHistoryScanner::new(1000);
-        let git_findings = git_scanner.scan_repository(...);
-    }
+    // 3. 已移除 Git 歷史掃描 - 專注 Bug Bounty 實戰
+    // 重點：提升現有掃描器的精確度和自我診斷能力
     
     // 合併所有結果
-    all_findings.extend([sensitive_findings, secret_findings, git_findings]);
+    all_findings.extend([sensitive_findings, secret_findings]);
 }
 ```
 
