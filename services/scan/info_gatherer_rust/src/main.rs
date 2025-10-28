@@ -24,13 +24,11 @@ use aiva_common_rust::metrics::{
 
 mod scanner;
 mod secret_detector;
-mod git_history_scanner;
 mod verifier;
 mod schemas;
 
 use scanner::SensitiveInfoScanner;
 use secret_detector::SecretDetector;
-use git_history_scanner::GitHistoryScanner;
 use verifier::Verifier;
 use schemas::generated::{FindingPayload, Vulnerability, Severity, Confidence, Target, FindingEvidence, FindingStatus};
 
@@ -410,63 +408,8 @@ async fn process_task(
         all_findings.push(finding_payload);
     }
 
-    // 3. Git 歷史掃描（僅當 source_url 看起來像 Git 倉庫時）
-    if task.source_url.contains(".git") || 
-       task.source_url.starts_with("http") || 
-       task.source_url.starts_with("git@") {
-        
-        info!("  📜 檢測到 Git 倉庫，啟動歷史掃描...");
-        let git_scanner = GitHistoryScanner::new(1000); // 掃描最近 1000 個提交
-        
-        // 注意：這裡假設 source_url 是本地路徑或已克隆的倉庫
-        // 實際使用時可能需要先克隆遠程倉庫
-        if let Ok(git_findings) = git_scanner.scan_repository(std::path::Path::new(&task.source_url)) {
-            info!("  🔍 Git 歷史掃描: 發現 {} 個密鑰", git_findings.len());
-            
-            for finding in git_findings {
-                let location = format!("commit:{} {}:{}", 
-                    &finding.commit_hash[..8], 
-                    finding.finding.file_path, 
-                    finding.finding.line_number
-                );
-                
-                let mut finding_payload = create_finding_payload(
-                    &task.task_id,
-                    &scan_id,
-                    "git_secret",
-                    &finding.finding.matched_text,
-                    &location,
-                    Some(&finding.finding.severity),
-                    Confidence::Possible, // Git 歷史匹配稍低信心度
-                );
-                
-                // 添加 Git 專用元數據
-                finding_payload.metadata.insert(
-                    "commit_hash".to_string(),
-                    serde_json::Value::String(finding.commit_hash)
-                );
-                finding_payload.metadata.insert(
-                    "entropy".to_string(),
-                    serde_json::Value::Number(
-                        serde_json::Number::from_f64(finding.finding.entropy.unwrap_or(0.0))
-                            .unwrap_or(serde_json::Number::from(0))
-                    )
-                );
-                finding_payload.metadata.insert(
-                    "rule_name".to_string(),
-                    serde_json::Value::String(finding.finding.rule_name)
-                );
-                finding_payload.metadata.insert(
-                    "git_historical".to_string(),
-                    serde_json::Value::Bool(true)
-                );
-                
-                all_findings.push(finding_payload);
-            }
-        } else {
-            info!("  ⚠️  Git 歷史掃描跳過（可能不是有效的 Git 倉庫）");
-        }
-    }
+    // 移除 Git 歷史掃描功能
+    // 專注於實戰 Bug Bounty 測試，Git 歷史掃描在黑盒測試中不適用
 
     info!(
         "✅ 掃描完成: {} (總計發現 {} 個結果)",

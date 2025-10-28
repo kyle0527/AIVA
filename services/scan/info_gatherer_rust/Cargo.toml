@@ -34,8 +34,7 @@ futures-lite = "2.6"
 tracing = "0.1"
 tracing-subscriber = { version = "0.3", features = ["env-filter"] }
 
-# Git 操作
-git2 = "0.18"
+# Git 依賴已移除 - 專注於實戰 Bug Bounty 測試
 
 # AIVA 共用模組 (統計收集)
 aiva_common_rust = { path = "../../features/common/rust/aiva_common_rust" }

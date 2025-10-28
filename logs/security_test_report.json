@@ -1,5 +1,5 @@
 {
-  "timestamp": "2025-10-27T16:10:45.459860",
+  "timestamp": "2025-10-28T08:13:40.716158",
   "target": "http://localhost:3000",
   "summary": {
     "total_tests": 20,
@@ -10,56 +10,56 @@
       {
         "payload": "' OR '1'='1",
         "status_code": 401,
-        "response_time": 0.069678,
+        "response_time": 0.0407,
         "response_length": 26,
         "detected_vulnerability": false
       },
       {
         "payload": "' OR 1=1 --",
         "status_code": 200,
-        "response_time": 0.067624,
+        "response_time": 0.038876,
         "response_length": 799,
         "detected_vulnerability": false
       },
       {
         "payload": "' UNION SELECT NULL, NULL, NULL --",
         "status_code": 500,
-        "response_time": 0.031079,
+        "response_time": 0.03365,
         "response_length": 1449,
         "detected_vulnerability": true
       },
       {
         "payload": "'; DROP TABLE users; --",
         "status_code": 401,
-        "response_time": 0.013988,
+        "response_time": 0.015151,
         "response_length": 26,
         "detected_vulnerability": false
       },
       {
         "payload": "' OR SLEEP(5) --",
         "status_code": 500,
-        "response_time": 0.03932,
+        "response_time": 0.028084,
         "response_length": 1449,
         "detected_vulnerability": true
       },
       {
         "payload": "admin'--",
         "status_code": 401,
-        "response_time": 0.027425,
+        "response_time": 0.03123,
         "response_length": 26,
         "detected_vulnerability": false
       },
       {
         "payload": "' OR 'x'='x",
         "status_code": 401,
-        "response_time": 0.013783,
+        "response_time": 0.029518,
         "response_length": 26,
         "detected_vulnerability": false
       },
       {
         "payload": "1' AND SLEEP(5)#",
         "status_code": 500,
-        "response_time": 0.026056,
+        "response_time": 0.014398,
         "response_length": 1449,
         "detected_vulnerability": true
       }
