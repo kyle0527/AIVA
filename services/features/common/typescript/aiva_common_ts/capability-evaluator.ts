@@ -11,8 +11,62 @@
 import { EventEmitter } from 'events';
 
 // ============================================================================
-// 基礎類型定義 (對應 Python 的 dataclass)
+// 基礎類型定義 (對應 Python 的 dataclass) - 與 aiva_common.schemas.capability.CapabilityInfo 一致
 // ============================================================================
+
+export interface CapabilityInfo {
+  // 基本信息
+  id: string;
+  name: string;
+  description?: string;
+  version: string;
+  
+  // 技術信息
+  language: string; // 對應 ProgrammingLanguage enum
+  entrypoint: string;
+  topic: string;
+  
+  // 接口定義
+  inputs?: Array<{
+    name: string;
+    type: string;
+    required: boolean;
+    description?: string;
+  }>;
+  outputs?: Array<{
+    name: string;
+    type: string;
+    description?: string;
+  }>;
+  
+  // 依賴與前置條件
+  prerequisites?: string[];
+  dependencies?: string[];
+  
+  // 元數據
+  tags?: string[];
+  status: string; // 對應 TaskStatus enum
+  
+  // 時間戳
+  created_at?: Date;
+  updated_at?: Date;
+}
+
+export interface CapabilityScorecard {
+  capability_id: string;
+  
+  // 7日性能指標
+  success_rate_7d: number;
+  avg_latency_ms: number;
+  availability_7d: number;
+  usage_count_7d: number;
+  
+  // 其他指標
+  overall_score: number;
+  dimension_scores: Record<string, number>;
+  last_updated_at?: Date;
+  recommendations: string[];
+}
 
 export interface CapabilityEvidence {
   evidenceId: string;

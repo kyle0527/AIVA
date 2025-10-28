@@ -1,11 +1,11 @@
 /**
- * AIVA Common TypeScript - 統一 TypeScript AI 組件庫
+ * AIVA Common TypeScript - 統一 TypeScript AI 組件庫和 Schema 定義
  * 
  * 提供與 Python aiva_common 對應的 TypeScript 實現
- * 支持 AIVA 系統中 TypeScript 模組的 AI 功能需求
+ * 支持 AIVA 系統中 TypeScript 模組的 AI 功能需求和數據結構標準化
  * 
  * 架構位置: services/features/common/typescript/aiva_common_ts/
- * 用途: TypeScript 模組的 AI 能力評估和經驗管理
+ * 用途: TypeScript 模組的 AI 能力評估、經驗管理和統一數據結構
  */
 
 // ============================================================================
@@ -20,7 +20,6 @@ export {
   type EvaluationMetric,
   type BenchmarkTest,
   type CapabilityAssessment,
-  type CapabilityEvaluatorConfig,
   EvidenceType,
   MetricType,
   BenchmarkType,
@@ -35,7 +34,6 @@ export {
   type LearningSession,
   type ExperienceFilter,
   type ExperienceStatistics,
-  type ExperienceManagerConfig,
   SessionType,
   SessionStatus,
   SortBy,
@@ -43,11 +41,80 @@ export {
 } from './experience-manager';
 
 // ============================================================================
+// 統一 Schema 定義導出 (對應 Python aiva_common.schemas)
+// ============================================================================
+
+// 枚舉類型
+export {
+  Severity,
+  Confidence,
+  VulnerabilityType,
+  VulnerabilityStatus,
+  TaskStatus,
+  ScanStatus,
+  
+  // 工具函數
+  validateFindingId,
+  validateTaskId,
+  validateScanId,
+  validateFindingStatus,
+  createFindingPayload,
+  generateFindingId,
+  generateTaskId,
+  generateScanId,
+  
+  // 類型守衛
+  isFindingPayload,
+  isVulnerability,
+  isTarget
+} from './schemas';
+
+// ============================================================================
+// 性能優化配置導出 (對應 Python performance_config.py)
+// ============================================================================
+
+export {
+  CacheStrategy,
+  ProcessingMode,
+  PerformanceOptimizer,
+  OPTIMIZED_CAPABILITY_EVALUATOR_CONFIG,
+  OPTIMIZED_EXPERIENCE_MANAGER_CONFIG,
+  PERFORMANCE_BENCHMARKS,
+  createOptimizedConfigs,
+  performanceMonitor,
+  batchProcessor,
+  cached
+} from './performance-config';
+
+// Schema 類型定義
+export type {
+  FindingPayload,
+  Vulnerability,
+  Target,
+  FindingEvidence,
+  FindingImpact,
+  FindingRecommendation,
+  SensitiveMatch,
+  JavaScriptAnalysisResult,
+  VulnerabilityCorrelation,
+  AIVerificationRequest,
+  AIVerificationResult
+} from './schemas';
+
+// 性能配置類型定義
+export type {
+  PerformanceConfig,
+  CapabilityEvaluatorConfig,
+  ExperienceManagerConfig,
+  PerformanceMetric
+} from './performance-config';
+
+// ============================================================================
 // 版本和元數據
 // ============================================================================
 
 export const VERSION = '1.0.0';
-export const DESCRIPTION = 'AIVA Common TypeScript AI Components';
+export const DESCRIPTION = 'AIVA Common TypeScript AI Components & Schemas';
 export const COMPATIBLE_WITH_PYTHON_VERSION = '1.0.0';
 
 // ============================================================================
@@ -71,7 +138,8 @@ export function getComponentInfo(): Record<string, any> {
     description: DESCRIPTION,
     components: [
       'AIVACapabilityEvaluator',
-      'AIVAExperienceManager'
+      'AIVAExperienceManager',
+      'UnifiedSchemas'
     ],
     compatibleWithPython: COMPATIBLE_WITH_PYTHON_VERSION,
     features: [
@@ -80,7 +148,9 @@ export function getComponentInfo(): Record<string, any> {
       '強化學習支持',
       '連續監控',
       '質量評估',
-      '統計分析'
+      '統計分析',
+      '統一數據結構',
+      '跨語言 API 兼容'
     ]
   };
 }
@@ -107,4 +177,4 @@ export function createDefaultAIConfig(): {
   };
 }
 
-console.log(`[AIVA Common TypeScript] Loaded version ${VERSION}`);
+console.log(`[AIVA Common TypeScript] Loaded version ${VERSION} with unified schemas`);

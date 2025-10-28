@@ -215,7 +215,7 @@ class MemoryExperienceStorage implements ExperienceStorage {
           comparison = a.timestamp.getTime() - b.timestamp.getTime();
           break;
         case SortBy.QUALITY_SCORE:
-          comparison = (a.qualityScore || 0) - (b.qualityScore || 0);
+          comparison = (a.quality_score || 0) - (b.quality_score || 0);
           break;
         case SortBy.REWARD:
           comparison = a.reward - b.reward;
@@ -245,13 +245,13 @@ class MemoryExperienceStorage implements ExperienceStorage {
     const stats: ExperienceStatistics = {
       totalSamples: this.experiences.length,
       totalSessions: this.sessions.size,
-      totalPlans: new Set(this.experiences.map(exp => exp.planId)).size,
+      totalPlans: new Set(this.experiences.map(exp => exp.plan_id)).size,
       highQualitySamples: 0,
       mediumQualitySamples: 0,
       lowQualitySamples: 0,
       avgQualityScore: 0,
-      positiveSamples: this.experiences.filter(exp => exp.isPositive).length,
-      negativeSamples: this.experiences.filter(exp => !exp.isPositive).length,
+      positiveSamples: this.experiences.filter(exp => exp.is_positive).length,
+      negativeSamples: this.experiences.filter(exp => !exp.is_positive).length,
       successRate: 0,
       avgReward: 0,
       maxReward: 0,
@@ -264,14 +264,14 @@ class MemoryExperienceStorage implements ExperienceStorage {
     if (this.experiences.length > 0) {
       // 質量統計
       this.experiences.forEach(exp => {
-        const quality = exp.qualityScore || 0;
+        const quality = exp.quality_score || 0;
         if (quality >= 0.8) stats.highQualitySamples++;
         else if (quality >= 0.6) stats.mediumQualitySamples++;
         else stats.lowQualitySamples++;
       });
 
       // 質量分數平均
-      const qualityScores = this.experiences.map(exp => exp.qualityScore || 0);
+      const qualityScores = this.experiences.map(exp => exp.quality_score || 0);
       stats.avgQualityScore = qualityScores.reduce((sum, score) => sum + score, 0) / qualityScores.length;
 
       // 成功率
@@ -291,15 +291,15 @@ class MemoryExperienceStorage implements ExperienceStorage {
       // 分佈統計
       this.experiences.forEach(exp => {
         // 漏洞類型分佈
-        const vulnType = exp.targetInfo.vulnerabilityType || 'unknown';
+        const vulnType = exp.target_info.vulnerabilityType || 'unknown';
         stats.vulnerabilityTypeDistribution[vulnType] = (stats.vulnerabilityTypeDistribution[vulnType] || 0) + 1;
 
         // 計劃類型分佈
-        const planType = exp.planId.split('_')[0] || 'unknown';
+        const planType = exp.plan_id.split('_')[0] || 'unknown';
         stats.planTypeDistribution[planType] = (stats.planTypeDistribution[planType] || 0) + 1;
 
         // 難度分佈
-        const difficulty = exp.difficultyLevel.toString();
+        const difficulty = exp.difficulty_level.toString();
         stats.difficultyDistribution[difficulty] = (stats.difficultyDistribution[difficulty] || 0) + 1;
       });
     }
@@ -460,15 +460,15 @@ export class AIVAExperienceManager extends EventEmitter {
       if (this.config.deduplicationEnabled) {
         const sampleHash = this.calculateSampleHash(sample);
         if (this.dedupCache.has(sampleHash)) {
-          console.debug(`[ExperienceManager] Duplicate sample detected, skipping: ${sample.sampleId}`);
+          console.debug(`[ExperienceManager] Duplicate sample detected, skipping: ${sample.sample_id}`);
           return false;
         }
         this.dedupCache.add(sampleHash);
       }
 
       // 質量評估
-      if (sample.qualityScore === undefined) {
-        sample.qualityScore = await this.evaluateSampleQuality(sample);
+      if (sample.quality_score === undefined) {
+        sample.quality_score = await this.evaluateSampleQuality(sample);
       }
 
       // 存儲樣本
@@ -478,15 +478,15 @@ export class AIVAExperienceManager extends EventEmitter {
         this.totalSamplesStored++;
 
         // 更新會話統計
-        if (this.activeSessions.has(sample.sessionId)) {
-          const session = this.activeSessions.get(sample.sessionId)!;
+        if (this.activeSessions.has(sample.session_id)) {
+          const session = this.activeSessions.get(sample.session_id)!;
           this.updateSessionStatistics(session, sample);
           await this.storage.storeSession(session);
         }
 
         // 發送事件
         this.emit('experience_stored', sample);
-        console.log(`[ExperienceManager] Experience sample stored: ${sample.sampleId}`);
+        console.log(`[ExperienceManager] Experience sample stored: ${sample.sample_id}`);
       }
 
       return success;
@@ -538,14 +538,14 @@ export class AIVAExperienceManager extends EventEmitter {
 
     // 基於獎勵的質量評估 (40%)
     const rewardFactor = Math.min(Math.abs(sample.reward) / 10.0, 1.0);
-    qualityScore += (sample.isPositive ? Math.min(rewardFactor + 0.2, 1.0) : rewardFactor) * 0.4;
+    qualityScore += (sample.is_positive ? Math.min(rewardFactor + 0.2, 1.0) : rewardFactor) * 0.4;
 
     // 基於置信度的質量評估 (25%)
     qualityScore += sample.confidence * 0.25;
 
     // 基於執行時長的質量評估 (15%)
-    if (sample.durationMs) {
-      const durationSeconds = sample.durationMs / 1000.0;
+    if (sample.duration_ms) {
+      const durationSeconds = sample.duration_ms / 1000.0;
       let durationFactor = 1.0;
       
       if (durationSeconds >= 0.1 && durationSeconds <= 30.0) {
@@ -562,13 +562,13 @@ export class AIVAExperienceManager extends EventEmitter {
     }
 
     // 基於難度級別的質量評估 (10%)
-    const difficultyFactor = Math.min(sample.difficultyLevel / 5.0, 1.0);
+    const difficultyFactor = Math.min(sample.difficulty_level / 5.0, 1.0);
     qualityScore += difficultyFactor * 0.1;
 
     // 基於狀態複雜度的質量評估 (10%)
     const stateComplexity = (
-      JSON.stringify(sample.stateBefore).length + 
-      JSON.stringify(sample.stateAfter).length
+      JSON.stringify(sample.state_before).length +
+      JSON.stringify(sample.state_after).length
     ) / 2000.0;
     const complexityFactor = Math.min(stateComplexity, 1.0);
     qualityScore += complexityFactor * 0.1;
@@ -688,10 +688,10 @@ export class AIVAExperienceManager extends EventEmitter {
 
   private calculateSampleHash(sample: ExperienceSample): string {
     const hashContent = {
-      planId: sample.planId,
-      stateBefore: sample.stateBefore,
-      actionTaken: sample.actionTaken,
-      targetInfo: sample.targetInfo
+      planId: sample.plan_id,
+      stateBefore: sample.state_before,
+      actionTaken: sample.action_taken,
+      targetInfo: sample.target_info
     };
 
     const contentStr = JSON.stringify(hashContent, Object.keys(hashContent).sort());
@@ -702,17 +702,17 @@ export class AIVAExperienceManager extends EventEmitter {
     session.totalSamples++;
 
     // 根據質量分數分類
-    if (sample.qualityScore) {
-      if (sample.qualityScore >= 0.8) {
+    if (sample.quality_score) {
+      if (sample.quality_score >= 0.8) {
         session.highQualitySamples++;
-      } else if (sample.qualityScore >= 0.6) {
+      } else if (sample.quality_score >= 0.6) {
         session.mediumQualitySamples++;
       } else {
         session.lowQualitySamples++;
       }
     } else {
       // 根據成功率估算質量
-      if (sample.isPositive && sample.confidence >= 0.8) {
+      if (sample.is_positive && sample.confidence >= 0.8) {
         session.highQualitySamples++;
       } else {
         session.mediumQualitySamples++;
@@ -720,9 +720,9 @@ export class AIVAExperienceManager extends EventEmitter {
     }
 
     // 更新唯一標識集合
-    session.uniquePlans.add(sample.planId);
-    if (sample.targetInfo.vulnerabilityType) {
-      session.vulnerabilityTypes.add(sample.targetInfo.vulnerabilityType);
+    session.uniquePlans.add(sample.plan_id);
+    if (sample.target_info.vulnerabilityType) {
+      session.vulnerabilityTypes.add(sample.target_info.vulnerabilityType);
     }
   }
 

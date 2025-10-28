@@ -23,12 +23,54 @@
 
 ## 🚀 快速開始
 
-### ⚡ 5分鐘上手AIVA
+### ⚡ 5分鐘上手AIVA (架構統一版)
 ```bash
-# 1. 環境檢查
-python tools/schema_compliance_validator.py  # 應顯示 8/8 模組 100% 合規
+# 1. 驗證架構統一狀態
+python -c "from services.aiva_common.ai import *; print('✅ 架構統一: AI組件正常導入')"
 
-# 2. 生成標準Schema (如需要)
+# 2. 檢查跨語言統一
+cd services/features/common/typescript/aiva_common_ts
+npm run build  # 應顯示 0 錯誤
+
+# 3. 驗證性能優化配置
+python -c "from services.aiva_common.ai.performance_config import *; print('✅ 性能配置: 優化組件正常')"
+
+# 4. 檢查統一數據結構
+python -c "from services.aiva_common.schemas.ai import *; print('✅ 數據結構: Schema統一正常')"
+```
+
+### 🏗️ 架構統一後的核心變更
+
+**✅ 重要**: AIVA v5.0 完成了史上最大規模的架構統一，所有開發工作都基於新的統一架構：
+
+#### 🔧 統一AI組件API
+```python
+# ✅ 正確的導入方式 (v5.0+)
+from services.aiva_common.ai.capability_evaluator import AIVACapabilityEvaluator
+from services.aiva_common.ai.experience_manager import AIVAExperienceManager
+
+# ✅ 推薦的工廠函數方式
+from services.aiva_common.ai import get_capability_evaluator, get_experience_manager
+
+# ❌ 已廢棄 (請勿使用)
+# from services.core.aiva_core.learning import *  # 已移除
+```
+
+#### 🌍 跨語言統一結構
+```bash
+services/
+├── aiva_common/                    # 🎯 Python 統一AI組件來源
+│   ├── ai/
+│   │   ├── capability_evaluator.py  # 1200+ 行完整實現
+│   │   ├── experience_manager.py    # 800+ 行完整實現
+│   │   └── performance_config.py    # 性能優化配置
+│   └── schemas/                    # 🎯 統一數據結構來源
+├── features/common/typescript/aiva_common_ts/  # 🎯 TypeScript 對應實現
+│   ├── capability-evaluator.ts    # 600+ 行對應實現
+│   ├── experience-manager.ts      # 800+ 行對應實現
+│   └── performance-config.ts      # TS 性能配置對應
+└── (Go/Rust 模組已部分統一)
+```
 python services/aiva_common/tools/schema_codegen_tool.py --lang all
 
 # 3. 運行測試確保一切正常

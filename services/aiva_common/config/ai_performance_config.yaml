@@ -1,0 +1,65 @@
+capability_evaluator:
+  batch_size: 50
+  benchmark_cache_enabled: true
+  benchmark_timeout_seconds: 8.0
+  cache_strategy: hybrid
+  cache_ttl_seconds: 1800
+  connection_pool_size: 20
+  connection_pool_timeout: 5.0
+  enable_performance_monitoring: true
+  evaluation_cache_enabled: true
+  evidence_batch_processing: true
+  lightweight_monitoring: true
+  max_cache_size: 2000
+  max_concurrent_operations: 8
+  max_evaluation_workers: 6
+  metrics_sampling_rate: 0.05
+  monitoring_batch_size: 100
+  monitoring_interval_seconds: 120.0
+  operation_timeout_seconds: 15.0
+  parallel_evaluation_enabled: true
+  skip_redundant_benchmarks: true
+experience_manager:
+  async_storage_enabled: true
+  auto_cleanup_enabled: true
+  batch_insert_enabled: true
+  batch_size: 200
+  cache_strategy: hybrid
+  cache_ttl_seconds: 7200
+  cleanup_interval_hours: 12
+  compression_enabled: true
+  connection_pool_size: 30
+  connection_pool_timeout: 3.0
+  enable_performance_monitoring: true
+  index_optimization_enabled: true
+  max_cache_size: 5000
+  max_concurrent_operations: 12
+  max_query_results: 500
+  metrics_sampling_rate: 0.02
+  operation_timeout_seconds: 20.0
+  query_planning_enabled: true
+  query_result_cache_enabled: true
+  retention_policy_days: 60
+  session_cache_size: 200
+  session_pooling_enabled: true
+  session_timeout_minutes: 60
+  storage_backend: hybrid
+  storage_buffer_size: 2000
+global_settings:
+  async_mode_enabled: true
+  cache_warming_enabled: true
+  optimization_level: high
+  performance_monitoring_enabled: true
+  resource_pooling_enabled: true
+performance_benchmarks:
+  capability_evaluator:
+    cache_hit_rate_percentage: 80.0
+    evaluation_time_ms: 500.0
+    initialization_time_ms: 1.0
+    monitoring_overhead_percentage: 5.0
+  experience_manager:
+    batch_throughput_samples_per_second: 1000
+    cache_hit_rate_percentage: 85.0
+    initialization_time_ms: 2.0
+    query_time_ms: 100.0
+    sample_storage_time_ms: 10.0

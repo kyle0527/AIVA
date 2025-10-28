@@ -1,0 +1,22 @@
+{
+  "cache_strategy": "hybrid",
+  "cache_ttl_seconds": 1800,
+  "max_cache_size": 2000,
+  "max_concurrent_operations": 8,
+  "operation_timeout_seconds": 15.0,
+  "batch_size": 50,
+  "connection_pool_size": 20,
+  "connection_pool_timeout": 5.0,
+  "enable_performance_monitoring": true,
+  "metrics_sampling_rate": 0.05,
+  "evaluation_cache_enabled": true,
+  "evidence_batch_processing": true,
+  "parallel_evaluation_enabled": true,
+  "max_evaluation_workers": 6,
+  "monitoring_interval_seconds": 120.0,
+  "lightweight_monitoring": true,
+  "monitoring_batch_size": 100,
+  "benchmark_cache_enabled": true,
+  "benchmark_timeout_seconds": 8.0,
+  "skip_redundant_benchmarks": true
+}

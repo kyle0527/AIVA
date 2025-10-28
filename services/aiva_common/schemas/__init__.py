@@ -128,6 +128,7 @@ from .findings import (
     Target,
     Vulnerability,
     VulnerabilityCorrelation,
+    VulnerabilityScorecard,
 )
 
 # ==================== 程式語言支援 ====================
@@ -303,6 +304,7 @@ __all__ = [
     "SensitiveMatch",
     "JavaScriptAnalysisResult",
     "VulnerabilityCorrelation",
+    "VulnerabilityScorecard",
     "CodeLevelRootCause",
     "SASTDASTCorrelation",
     "AIVerificationRequest",

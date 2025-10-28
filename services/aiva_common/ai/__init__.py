@@ -152,10 +152,16 @@ if _has_plan_executor:
     __all__.extend(["AIVAPlanExecutor", "ExecutionConfig"])
 
 if _has_experience_manager:
-    __all__.extend(["AIVAExperienceManager", "LearningSession", "create_experience_manager"])
+    __all__.extend([
+        "AIVAExperienceManager", "LearningSession", 
+        "create_default_experience_manager", "get_default_experience_manager"
+    ])
 
 if _has_capability_evaluator:
-    __all__.extend(["AIVACapabilityEvaluator", "CapabilityEvidence", "create_capability_evaluator"])
+    __all__.extend([
+        "AIVACapabilityEvaluator", "CapabilityEvidence",
+        "create_default_capability_evaluator", "get_default_capability_evaluator"
+    ])
 
 if _has_cross_language_bridge:
     __all__.extend(["AIVACrossLanguageBridge", "BridgeConfig"])
@@ -196,6 +202,49 @@ def get_ai_module_info() -> dict[str, str]:
         "available_components": str(sum(get_available_components().values())),
         "total_components": "7",
     }
+
+# 工廠函數 (便利創建函數)
+def create_default_capability_evaluator(config=None):
+    """創建預設能力評估器實例 (工廠函數)"""
+    if _has_capability_evaluator:
+        from .capability_evaluator import AIVACapabilityEvaluator
+        if config:
+            return AIVACapabilityEvaluator(config=config)
+        return AIVACapabilityEvaluator()
+    raise ImportError("CapabilityEvaluator not available")
+
+def create_default_experience_manager(config=None):
+    """創建預設經驗管理器實例 (工廠函數)"""
+    if _has_experience_manager:
+        from .experience_manager import AIVAExperienceManager
+        if config:
+            return AIVAExperienceManager(config=config)
+        return AIVAExperienceManager()
+    raise ImportError("ExperienceManager not available")
+
+def create_default_dialog_assistant(config=None):
+    """創建預設對話助手實例 (工廠函數)"""
+    if _has_dialog:
+        from .dialog_assistant import AIVADialogAssistant
+        if config:
+            return AIVADialogAssistant(config=config)
+        return AIVADialogAssistant()
+    raise ImportError("DialogAssistant not available")
+
+# 全域實例管理
+_default_instances = {}
+
+def get_default_capability_evaluator():
+    """獲取預設的能力評估器實例 (單例)"""
+    if "capability_evaluator" not in _default_instances:
+        _default_instances["capability_evaluator"] = create_default_capability_evaluator()
+    return _default_instances["capability_evaluator"]
+
+def get_default_experience_manager():
+    """獲取預設的經驗管理器實例 (單例)"""
+    if "experience_manager" not in _default_instances:
+        _default_instances["experience_manager"] = create_default_experience_manager()
+    return _default_instances["experience_manager"]
 
 # 類型檢查時的導入
 if TYPE_CHECKING:
