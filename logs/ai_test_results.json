@@ -2,8 +2,8 @@
   "ai_commander": true,
   "modules": {
     "sqli": true,
-    "unified_detection": false,
+    "unified_detection": true,
     "feature_base": true
   },
-  "timestamp": "2025-10-27T16:08:56.898716"
+  "timestamp": "2025-10-28T16:32:37.954024"
 }

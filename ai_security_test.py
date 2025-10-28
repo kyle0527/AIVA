@@ -14,6 +14,14 @@ from pathlib import Path
 from datetime import datetime
 from typing import Dict, List, Any
 
+# 設置離線模式環境變數
+if not os.getenv("AIVA_OFFLINE_MODE"):
+    os.environ["AIVA_OFFLINE_MODE"] = "true"
+    os.environ["AIVA_RABBITMQ_URL"] = "memory://localhost"
+    os.environ["AIVA_RABBITMQ_USER"] = "offline"
+    os.environ["AIVA_RABBITMQ_PASSWORD"] = "offline"
+    os.environ["AIVA_ENVIRONMENT"] = "offline"
+
 # 確保路徑正確
 sys.path.insert(0, str(Path(__file__).parent))
 

@@ -946,7 +946,13 @@ class AIVACapabilityEvaluator(ICapabilityEvaluator):
     def _start_evaluation_task(self) -> None:
         """啟動評估任務"""
         if self.config.continuous_monitoring and (self._evaluation_task is None or self._evaluation_task.done()):
-            self._evaluation_task = asyncio.create_task(self._continuous_evaluation())
+            try:
+                # 檢查是否有事件循環在運行
+                loop = asyncio.get_running_loop()
+                self._evaluation_task = loop.create_task(self._continuous_evaluation())
+            except RuntimeError:
+                # 沒有事件循環在運行，跳過任務創建
+                logger.info("No running event loop, skipping continuous evaluation task creation")
 
     async def _continuous_evaluation(self) -> None:
         """持續評估任務"""
@@ -971,6 +977,102 @@ class AIVACapabilityEvaluator(ICapabilityEvaluator):
                 
             except Exception as e:
                 logger.error(f"Error in continuous evaluation: {e}")
+
+    # ============================================================================
+    # Abstract Methods Implementation (抽象方法實現)
+    # ============================================================================
+    
+    async def collect_capability_evidence(
+        self,
+        capability_id: str,
+        time_window_days: int = 7
+    ) -> List[Dict[str, Any]]:
+        """收集能力證據
+        
+        Args:
+            capability_id: 能力ID
+            time_window_days: 時間窗口天數
+            
+        Returns:
+            證據列表
+        """
+        try:
+            if capability_id not in self.evidences:
+                return []
+            
+            # 計算時間窗口
+            cutoff_time = datetime.now(UTC) - timedelta(days=time_window_days)
+            
+            # 過濾時間窗口內的證據
+            filtered_evidences = []
+            for evidence in self.evidences[capability_id]:
+                if evidence.timestamp >= cutoff_time:
+                    evidence_dict = {
+                        "evidence_id": evidence.evidence_id,
+                        "capability_id": evidence.capability_id,
+                        "evidence_type": evidence.evidence_type.value,
+                        "source": evidence.source,
+                        "data": evidence.data,
+                        "confidence": evidence.confidence,
+                        "timestamp": evidence.timestamp.isoformat(),
+                        "quality_score": evidence.quality_score
+                    }
+                    filtered_evidences.append(evidence_dict)
+            
+            logger.info(f"Collected {len(filtered_evidences)} evidence items for capability {capability_id}")
+            return filtered_evidences
+            
+        except Exception as e:
+            logger.error(f"Error collecting capability evidence: {e}")
+            return []
+
+    async def update_capability_scorecard(
+        self,
+        capability_id: str,
+        metrics: Dict[str, float]
+    ) -> bool:
+        """更新能力記分卡
+        
+        Args:
+            capability_id: 能力ID
+            metrics: 指標數據
+            
+        Returns:
+            更新是否成功
+        """
+        try:
+            if capability_id not in self.capabilities:
+                logger.warning(f"Capability {capability_id} not found, cannot update scorecard")
+                return False
+            
+            # 獲取或創建記分卡
+            if capability_id not in self.scorecards:
+                self.scorecards[capability_id] = CapabilityScorecard(
+                    capability_id=capability_id,
+                    overall_score=0.0,
+                    dimension_scores={},
+                    last_updated_at=datetime.now(UTC),
+                    recommendations=[]
+                )
+            
+            scorecard = self.scorecards[capability_id]
+            
+            # 更新維度分數
+            scorecard.dimension_scores.update(metrics)
+            
+            # 計算總體分數 (所有維度的平均)
+            if scorecard.dimension_scores:
+                scorecard.overall_score = sum(scorecard.dimension_scores.values()) / len(scorecard.dimension_scores)
+            
+            # 更新時間戳
+            scorecard.last_updated_at = datetime.now(UTC)
+            
+            logger.info(f"Updated scorecard for capability {capability_id}, overall score: {scorecard.overall_score:.2f}")
+            return True
+            
+        except Exception as e:
+            logger.error(f"Error updating capability scorecard: {e}")
+            return False
 
     async def cleanup(self) -> None:
         """清理資源"""
@@ -1027,3 +1129,11 @@ def create_capability_evaluator(
         能力評估器實例
     """
     return AIVACapabilityEvaluator(config=config)
+
+
+# ============================================================================
+# 全域實例 (Global Instance)
+# ============================================================================
+
+# 創建全域能力評估器實例
+capability_evaluator = create_capability_evaluator()

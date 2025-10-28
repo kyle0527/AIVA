@@ -19,7 +19,7 @@ sys.path.insert(0, str(project_root))
 try:
     from services.core.aiva_core.dialog.assistant import dialog_assistant
     from services.core.aiva_core.decision.skill_graph import skill_graph
-    from services.core.aiva_core.learning.capability_evaluator import capability_evaluator
+    from services.aiva_common.ai.capability_evaluator import capability_evaluator
     from services.integration.capability import CapabilityRegistry
 except ImportError as e:
     print(f"⚠️ 導入錯誤: {e}")

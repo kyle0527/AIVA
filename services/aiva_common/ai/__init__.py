@@ -71,12 +71,12 @@ with contextlib.suppress(ImportError):
 
 # 嘗試導入經驗管理器
 with contextlib.suppress(ImportError):
-    from .experience_manager import AIVAExperienceManager, LearningSession
+    from .experience_manager import AIVAExperienceManager, LearningSession, create_experience_manager
     _has_experience_manager = True
 
 # 嘗試導入能力評估器
 with contextlib.suppress(ImportError):
-    from .capability_evaluator import AIVACapabilityEvaluator, CapabilityEvidence
+    from .capability_evaluator import AIVACapabilityEvaluator, CapabilityEvidence, create_capability_evaluator
     _has_capability_evaluator = True
 
 # 嘗試導入跨語言橋接器
@@ -152,10 +152,10 @@ if _has_plan_executor:
     __all__.extend(["AIVAPlanExecutor", "ExecutionConfig"])
 
 if _has_experience_manager:
-    __all__.extend(["AIVAExperienceManager", "LearningSession"])
+    __all__.extend(["AIVAExperienceManager", "LearningSession", "create_experience_manager"])
 
 if _has_capability_evaluator:
-    __all__.extend(["AIVACapabilityEvaluator", "CapabilityEvidence"])
+    __all__.extend(["AIVACapabilityEvaluator", "CapabilityEvidence", "create_capability_evaluator"])
 
 if _has_cross_language_bridge:
     __all__.extend(["AIVACrossLanguageBridge", "BridgeConfig"])

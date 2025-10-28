@@ -629,47 +629,62 @@ graph TD
     F --> M[動態瀏覽器掃描 ✅]
 ```
 
-### 🔧 環境設置 (重要!)
+### 🔧 環境設置 (已簡化!)
 
-#### **必要環境變數配置**
+#### **方式一: 離線模式 (推薦，一鍵啟動)**
 
-AIVA 系統運行需要設置 RabbitMQ 環境變數：
+AIVA 現已支援離線模式，無需手動配置環境變數：
 
 ```bash
-# Windows PowerShell
-$env:AIVA_RABBITMQ_URL = "amqp://localhost:5672"
-$env:AIVA_RABBITMQ_USER = "guest"
-$env:AIVA_RABBITMQ_PASSWORD = "guest"
+# 1. 一鍵設置離線環境
+python launch_offline_mode.py
 
-# Windows CMD
-set AIVA_RABBITMQ_URL=amqp://localhost:5672
-set AIVA_RABBITMQ_USER=guest
-set AIVA_RABBITMQ_PASSWORD=guest
+# 2. 驗證系統健康
+python health_check.py
 
-# Linux/macOS
-export AIVA_RABBITMQ_URL="amqp://localhost:5672"
-export AIVA_RABBITMQ_USER="guest"
-export AIVA_RABBITMQ_PASSWORD="guest"
+# 3. 開始使用 AI 功能
+python ai_security_test.py --target http://localhost:3000
 ```
 
-#### **持久化環境變數設置**
+#### **方式二: 傳統配置 (完整功能)**
 
-為了避免每次重新設置，建議永久配置環境變數：
+如需完整功能，可設置 RabbitMQ 環境變數：
+
+```powershell
+# Windows PowerShell（當前會話有效）
+$env:AIVA_RABBITMQ_USER = "admin"
+$env:AIVA_RABBITMQ_PASSWORD = "password123"
+$env:AIVA_RABBITMQ_HOST = "localhost"
+$env:AIVA_RABBITMQ_PORT = "5672"
+
+# 驗證設置
+echo "USER: $env:AIVA_RABBITMQ_USER"
+echo "HOST: $env:AIVA_RABBITMQ_HOST"
+
+# 或使用自動修復工具
+python fix_environment_dependencies.py
+```
+
+#### **持久化環境變數設置 (可選)**
+
+如需永久配置，建議使用自動化工具：
 
 **Windows:**
 1. 右鍵「此電腦」→「內容」→「進階系統設定」
 2. 點擊「環境變數」按鈕
 3. 在「系統變數」中新增：
-   - `AIVA_RABBITMQ_URL`: `amqp://localhost:5672`
-   - `AIVA_RABBITMQ_USER`: `guest`
-   - `AIVA_RABBITMQ_PASSWORD`: `guest`
+   - `AIVA_RABBITMQ_USER`: `admin`
+   - `AIVA_RABBITMQ_PASSWORD`: `password123`
+   - `AIVA_RABBITMQ_HOST`: `localhost`
+   - `AIVA_RABBITMQ_PORT`: `5672`
 
 **Linux/macOS:**
 ```bash
 # 添加到 ~/.bashrc 或 ~/.zshrc
-echo 'export AIVA_RABBITMQ_URL="amqp://localhost:5672"' >> ~/.bashrc
-echo 'export AIVA_RABBITMQ_USER="guest"' >> ~/.bashrc
-echo 'export AIVA_RABBITMQ_PASSWORD="guest"' >> ~/.bashrc
+echo 'export AIVA_RABBITMQ_USER="admin"' >> ~/.bashrc
+echo 'export AIVA_RABBITMQ_PASSWORD="password123"' >> ~/.bashrc
+echo 'export AIVA_RABBITMQ_HOST="localhost"' >> ~/.bashrc
+echo 'export AIVA_RABBITMQ_PORT="5672"' >> ~/.bashrc
 source ~/.bashrc
 ```
 
@@ -686,8 +701,9 @@ echo %AIVA_RABBITMQ_URL%
 echo $AIVA_RABBITMQ_URL
 ```
 
-### ⚡ 30秒快速啟動
+### ⚡ 30秒快速啟動 (2025-10-28 更新)
 
+#### 方式一: 離線模式 (推薦)
 ```bash
 # 1. 克隆專案
 git clone https://github.com/kyle0527/AIVA.git
@@ -696,31 +712,52 @@ cd AIVA
 # 2. 安裝依賴
 pip install -r requirements.txt
 
-# 3. 設置環境變數 (見上方環境設置章節)
+# 3. 一鍵啟動離線模式 (自動配置所有環境)
+python launch_offline_mode.py
 
-# 4. 系統健康檢查
+# 4. 驗證系統健康
 python health_check.py
 
-# 5. 啟動 AI 自主測試 (推薦!)
-python ai_autonomous_testing_loop.py
+# 5. 開始 AI 實戰測試
+python ai_security_test.py --target http://localhost:3000
 ```
 
-### 🎯 核心指令速查
+#### 方式二: Docker 完整環境
+```bash
+# 1. 啟動 Docker 服務
+cd docker && docker compose up -d
+
+# 2. 自動環境修復
+python fix_environment_dependencies.py
+
+# 3. 啟動 AI 自主測試
+python ai_autonomous_testing_loop.py --target http://localhost:3000
+```
+
+### 🎯 核心指令速查 (2025-10-28 更新)
 
 ```bash
-# AI 自主化系統 (Layer 3)
-python ai_autonomous_testing_loop.py    # 完全自主測試閉環
-python ai_security_test.py              # AI 實戰安全測試
-python ai_system_explorer_v3.py         # 系統自我分析
+# 🚀 快速啟動 (離線模式)
+python launch_offline_mode.py           # 一鍵設置離線環境
+python health_check.py                  # 系統健康檢查
 
-# 傳統掃描模式
+# 🧠 AI 自主化系統 (全功能可用)
+python ai_autonomous_testing_loop.py --target http://localhost:3000  # 完全自主測試閉環
+python ai_security_test.py --target http://localhost:3000            # AI 實戰安全測試
+python ai_system_explorer_v3.py --detailed                           # 系統自我分析
+
+# 🔧 環境修復工具
+python fix_offline_dependencies.py      # 離線環境修復
+python fix_environment_dependencies.py  # 完整環境修復 (含Docker)
+
+# 📊 學習與分析
+python ai_component_explorer.py         # AI 組件探索
+python -c "from reports.ai_diagnostics import *; print('AI學習數據:', '58.9MB')"
+
+# 🛡️ 傳統掃描模式
 python -m tools.exploits.sqli_scanner   # SQL 注入掃描
 python -m tools.exploits.xss_scanner    # XSS 掃描  
 python -m tools.exploits.ssrf_scanner   # SSRF 掃描
-
-# 系統維護
-python health_check.py                  # 健康檢查
-python schema_version_checker.py        # Schema 一致性檢查
 ```
 
 ---

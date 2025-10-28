@@ -41,15 +41,66 @@ from typing import Any, Dict, List, Optional, Tuple
 from dataclasses import dataclass, asdict
 import random
 
+# 遵循 aiva_common 規範，使用標準枚舉
+try:
+    from services.aiva_common.enums.common import Severity, Confidence, TaskStatus
+    from services.aiva_common.enums.security import VulnerabilityType
+    from services.aiva_common.schemas.findings import FindingPayload
+    AIVA_COMMON_AVAILABLE = True
+except ImportError:
+    print("⚠️  aiva_common 不可用，使用模擬枚舉")
+    AIVA_COMMON_AVAILABLE = False
+    
+    # 模擬枚舉以保證程式運行
+    class Severity:
+        CRITICAL = "critical"
+        HIGH = "high"
+        MEDIUM = "medium"
+        LOW = "low"
+        INFORMATIONAL = "informational"
+    
+    class Confidence:
+        CERTAIN = "certain"
+        FIRM = "firm"
+        POSSIBLE = "possible"
+    
+    class TaskStatus:
+        PENDING = "pending"
+        RUNNING = "running"
+        COMPLETED = "completed"
+        FAILED = "failed"
+
+# 設置離線環境變數
+import os
+os.environ.setdefault('AIVA_ENVIRONMENT', 'offline')
+os.environ.setdefault('AIVA_RABBITMQ_URL', 'memory://localhost')
+os.environ.setdefault('AIVA_RABBITMQ_USER', 'offline')
+os.environ.setdefault('AIVA_RABBITMQ_PASSWORD', 'offline')
+
 # 模擬AI組件導入
 try:
     from services.core.aiva_core.ai_commander import AICommander, AITaskType, AIComponent
-    from services.core.aiva_core.bio_neuron_master import BioNeuronMasterController
+    from services.core.aiva_core.bio_neuron_master import BioNeuronMasterController  
     from services.core.aiva_core.ai_engine import BioNeuronRAGAgent
     from services.features import FeatureBase, FeatureRegistry
     from services.integration.models import AIOperationRecord
-except ImportError:
+    AI_COMPONENTS_AVAILABLE = True
+except ImportError as e:
     print("⚠️  實際AI組件未完全載入，使用模擬模式運行")
+    print(f"   導入錯誤: {e}")
+    AI_COMPONENTS_AVAILABLE = False
+    
+    # 創建模擬類別以保證程式運行
+    class AICommander:
+        def __init__(self): pass
+        def dispatch_task(self, task): return {"status": "simulated"}
+    
+    class AITaskType:
+        FEATURE_DETECTION = "feature_detection"
+        INTELLIGENCE_ANALYSIS = "intelligence_analysis"
+    
+    class AIComponent:
+        BIO_NEURON_AGENT = "bio_neuron_agent"
 
 # 設置日誌
 logging.basicConfig(
@@ -405,32 +456,32 @@ AI模式: {command.ai_mode.value}
             mock_vulnerabilities = [
                 {
                     "type": "SQL Injection",
-                    "severity": "High",
+                    "severity": Severity.HIGH,  # 使用 aiva_common 標準枚舉
                     "location": "/api/login",
                     "parameter": "username",
                     "payload": "' OR '1'='1",
-                    "confidence": 0.92
+                    "confidence": Confidence.FIRM  # 使用標準信心度枚舉
                 }
             ]
         elif task.feature_type == "function_xss":
             mock_vulnerabilities = [
                 {
                     "type": "Reflected XSS",
-                    "severity": "Medium",
+                    "severity": Severity.MEDIUM,  # 使用 aiva_common 標準枚舉
                     "location": "/search",
                     "parameter": "q",
                     "payload": "<script>alert(1)</script>",
-                    "confidence": 0.88
+                    "confidence": Confidence.FIRM  # 使用標準信心度枚舉
                 }
             ]
         elif task.feature_type == "high_value_manager":
             mock_vulnerabilities = [
                 {
                     "type": "Critical Business Logic Bypass",
-                    "severity": "Critical",
+                    "severity": Severity.CRITICAL,  # 使用 aiva_common 標準枚舉
                     "location": "/payment/process",
                     "description": "Price manipulation vulnerability",
-                    "confidence": 0.95,
+                    "confidence": Confidence.CERTAIN,  # 使用標準信心度枚舉
                     "bug_bounty_value": "$5000-$15000"
                 }
             ]

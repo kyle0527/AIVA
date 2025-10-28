@@ -68,7 +68,7 @@ from services.core.ai_models import (
 # 從新增核心組件導入 (附件要求實現)
 from .dialog.assistant import AIVADialogAssistant, dialog_assistant
 from .decision.skill_graph import AIVASkillGraph, skill_graph
-from .learning.capability_evaluator import AIVACapabilityEvaluator, capability_evaluator
+# capability_evaluator 現在使用 aiva_common.ai.capability_evaluator 統一實現
 
 # 從 core.models 導入核心業務邏輯模型
 from services.core.models import (
@@ -115,8 +115,7 @@ __all__ = [
     "dialog_assistant",
     "AIVASkillGraph", 
     "skill_graph",
-    "AIVACapabilityEvaluator",
-    "capability_evaluator",
+    # capability_evaluator 已移至 aiva_common.ai
     # 來自 aiva_common
     "CVEReference",
     "CVSSv3Metrics",

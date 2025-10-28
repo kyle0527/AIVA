@@ -678,6 +678,40 @@ class AIVAExperienceManager(IExperienceManager):
             logger.error(f"Error retrieving experiences: {e}")
             return []
 
+    async def retrieve_experiences(
+        self,
+        query_context: Dict[str, Any],
+        limit: int = 10,
+        similarity_threshold: float = 0.7
+    ) -> List[ExperienceSample]:
+        """檢索相關經驗 (抽象方法實現)
+        
+        Args:
+            query_context: 查詢上下文
+            limit: 返回數量限制
+            similarity_threshold: 相似度閾值
+            
+        Returns:
+            相關經驗樣本列表
+        """
+        try:
+            # 從查詢上下文中提取參數
+            session_id = query_context.get('session_id')
+            plan_id = query_context.get('plan_id')
+            quality_threshold = query_context.get('quality_threshold', similarity_threshold)
+            
+            # 使用現有的 get_experiences 方法
+            return await self.get_experiences(
+                session_id=session_id,
+                plan_id=plan_id,
+                quality_threshold=quality_threshold,
+                limit=limit
+            )
+            
+        except Exception as e:
+            logger.error(f"Error in retrieve_experiences: {e}")
+            return []
+
     async def evaluate_sample_quality(
         self,
         sample: ExperienceSample
@@ -888,7 +922,13 @@ class AIVAExperienceManager(IExperienceManager):
     def _start_cleanup_task(self) -> None:
         """啟動清理任務"""
         if self.config.auto_cleanup and (self._cleanup_task is None or self._cleanup_task.done()):
-            self._cleanup_task = asyncio.create_task(self._periodic_cleanup())
+            try:
+                # 檢查是否有事件循環在運行
+                loop = asyncio.get_running_loop()
+                self._cleanup_task = loop.create_task(self._periodic_cleanup())
+            except RuntimeError:
+                # 沒有事件循環在運行，跳過任務創建
+                logger.info("No running event loop, skipping periodic cleanup task creation")
 
     async def _periodic_cleanup(self) -> None:
         """定期清理任務"""
@@ -954,12 +994,20 @@ def create_experience_manager(
     **kwargs
 ) -> AIVAExperienceManager:
     """創建經驗管理器實例
-    
+
     Args:
         config: 經驗管理器配置
         **kwargs: 其他參數
-        
+
     Returns:
         經驗管理器實例
     """
     return AIVAExperienceManager(config=config)
+
+
+# ============================================================================
+# 全域實例 (Global Instance)
+# ============================================================================
+
+# 創建全域經驗管理器實例
+experience_manager = create_experience_manager()

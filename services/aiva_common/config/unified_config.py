@@ -28,8 +28,12 @@ class DatabaseConfig(BaseModel):
 
 class MessageQueueConfig(BaseModel):
     """訊息佇列配置 - 遵循 12-factor app 原則"""
-    def _get_rabbitmq_url(self) -> str:
-        """獲取 RabbitMQ URL，優先完整 URL，其次組合配置"""
+    def _get_rabbitmq_url(self):
+        """獲取 RabbitMQ URL"""
+        # 檢查是否為離線模式
+        if os.getenv("AIVA_OFFLINE_MODE", "false").lower() == "true":
+            return "memory://localhost"
+            
         url = os.getenv("AIVA_RABBITMQ_URL")
         if url:
             return url
@@ -42,6 +46,9 @@ class MessageQueueConfig(BaseModel):
         vhost = os.getenv("AIVA_RABBITMQ_VHOST", "/")
         
         if not user or not password:
+            # 離線模式回退
+            if os.getenv("AIVA_ENVIRONMENT") == "offline":
+                return "memory://localhost"
             raise ValueError("AIVA_RABBITMQ_URL or AIVA_RABBITMQ_USER/AIVA_RABBITMQ_PASSWORD must be set")
             
         return f"amqp://{user}:{password}@{host}:{port}{vhost}"

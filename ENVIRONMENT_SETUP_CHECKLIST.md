@@ -6,19 +6,36 @@
 
 ---
 
-## 🚀 快速設置 (5分鐘完成)
+## � 目錄
+
+- [🚀 快速設置 (5分鐘完成)](#-快速設置-5分鐘完成)
+- [🔍 環境驗證](#-環境驗證)
+- [🛠️ 常見問題解決](#️-常見問題解決)
+- [📊 檢查清單總覽](#-檢查清單總覽)
+- [🎯 進階配置](#-進階配置)
+
+---
+
+## �🚀 快速設置 (5分鐘完成)
 
 ### 1️⃣ 環境變數設置 (必須!)
 
-**Windows PowerShell**:
+**Windows PowerShell** (當前會話):
 ```powershell
-$env:AIVA_RABBITMQ_URL = "amqp://localhost:5672"
-$env:AIVA_RABBITMQ_USER = "guest"
-$env:AIVA_RABBITMQ_PASSWORD = "guest"
+# AIVA 系統經過實測，需要以下環境變數配置
+$env:AIVA_RABBITMQ_USER = "admin"
+$env:AIVA_RABBITMQ_PASSWORD = "password123"
+$env:AIVA_RABBITMQ_HOST = "localhost"
+$env:AIVA_RABBITMQ_PORT = "5672"
 
 # 驗證設置
-echo $env:AIVA_RABBITMQ_URL
+echo "USER: $env:AIVA_RABBITMQ_USER"
+echo "PASSWORD: $env:AIVA_RABBITMQ_PASSWORD"
+echo "HOST: $env:AIVA_RABBITMQ_HOST"
+echo "PORT: $env:AIVA_RABBITMQ_PORT"
 ```
+
+**重要說明**: 上述設置僅在當前 PowerShell 會話中有效。如需永久設置，請參考下方「永久環境變數設置」章節。
 
 **Windows CMD**:
 ```cmd
@@ -68,10 +85,11 @@ python health_check.py
 
 ### ✅ 環境變數配置
 
-- [ ] **設置 RABBITMQ_URL**: `$env:AIVA_RABBITMQ_URL = "amqp://localhost:5672"`
-- [ ] **設置 RABBITMQ_USER**: `$env:AIVA_RABBITMQ_USER = "guest"`
-- [ ] **設置 RABBITMQ_PASSWORD**: `$env:AIVA_RABBITMQ_PASSWORD = "guest"`
-- [ ] **驗證環境變數**: `echo $env:AIVA_RABBITMQ_URL`
+- [ ] **設置 RABBITMQ_USER**: `$env:AIVA_RABBITMQ_USER = "admin"`
+- [ ] **設置 RABBITMQ_PASSWORD**: `$env:AIVA_RABBITMQ_PASSWORD = "password123"`
+- [ ] **設置 RABBITMQ_HOST**: `$env:AIVA_RABBITMQ_HOST = "localhost"`
+- [ ] **設置 RABBITMQ_PORT**: `$env:AIVA_RABBITMQ_PORT = "5672"`
+- [ ] **驗證環境變數**: `echo "USER: $env:AIVA_RABBITMQ_USER"; echo "HOST: $env:AIVA_RABBITMQ_HOST"`
 
 ### ✅ 系統驗證
 
@@ -98,32 +116,44 @@ python health_check.py
 
 | 變數名稱 | 變數值 |
 |---------|--------|
-| `AIVA_RABBITMQ_URL` | `amqp://localhost:5672` |
-| `AIVA_RABBITMQ_USER` | `guest` |
-| `AIVA_RABBITMQ_PASSWORD` | `guest` |
+| `AIVA_RABBITMQ_USER` | `admin` |
+| `AIVA_RABBITMQ_PASSWORD` | `password123` |
+| `AIVA_RABBITMQ_HOST` | `localhost` |
+| `AIVA_RABBITMQ_PORT` | `5672` |
 
 2. **PowerShell 方式** (需管理員權限):
 ```powershell
-[System.Environment]::SetEnvironmentVariable("AIVA_RABBITMQ_URL", "amqp://localhost:5672", "Machine")
-[System.Environment]::SetEnvironmentVariable("AIVA_RABBITMQ_USER", "guest", "Machine")
-[System.Environment]::SetEnvironmentVariable("AIVA_RABBITMQ_PASSWORD", "guest", "Machine")
+# 設置系統級環境變數（永久有效）
+[System.Environment]::SetEnvironmentVariable("AIVA_RABBITMQ_USER", "admin", "Machine")
+[System.Environment]::SetEnvironmentVariable("AIVA_RABBITMQ_PASSWORD", "password123", "Machine")
+[System.Environment]::SetEnvironmentVariable("AIVA_RABBITMQ_HOST", "localhost", "Machine")
+[System.Environment]::SetEnvironmentVariable("AIVA_RABBITMQ_PORT", "5672", "Machine")
 
 # 重啟 PowerShell 後生效
+# 或者立即在當前會話生效：
+$env:AIVA_RABBITMQ_USER = "admin"
+$env:AIVA_RABBITMQ_PASSWORD = "password123"
+$env:AIVA_RABBITMQ_HOST = "localhost"
+$env:AIVA_RABBITMQ_PORT = "5672"
 ```
 
 ### Linux/macOS 永久設置
 
 ```bash
 # 添加到 shell 配置文件
-echo 'export AIVA_RABBITMQ_URL="amqp://localhost:5672"' >> ~/.bashrc
-echo 'export AIVA_RABBITMQ_USER="guest"' >> ~/.bashrc
-echo 'export AIVA_RABBITMQ_PASSWORD="guest"' >> ~/.bashrc
+echo 'export AIVA_RABBITMQ_USER="admin"' >> ~/.bashrc
+echo 'export AIVA_RABBITMQ_PASSWORD="password123"' >> ~/.bashrc
+echo 'export AIVA_RABBITMQ_HOST="localhost"' >> ~/.bashrc
+echo 'export AIVA_RABBITMQ_PORT="5672"' >> ~/.bashrc
 
 # 重新載入配置
 source ~/.bashrc
 
 # 或者添加到 ~/.zshrc (如果使用 zsh)
-echo 'export AIVA_RABBITMQ_URL="amqp://localhost:5672"' >> ~/.zshrc
+echo 'export AIVA_RABBITMQ_USER="admin"' >> ~/.zshrc
+echo 'export AIVA_RABBITMQ_PASSWORD="password123"' >> ~/.zshrc
+echo 'export AIVA_RABBITMQ_HOST="localhost"' >> ~/.zshrc
+echo 'export AIVA_RABBITMQ_PORT="5672"' >> ~/.zshrc
 source ~/.zshrc
 ```
 
@@ -138,10 +168,29 @@ source ~/.zshrc
 ValueError: AIVA_RABBITMQ_URL or AIVA_RABBITMQ_USER/AIVA_RABBITMQ_PASSWORD must be set
 ```
 
+**原因分析**:
+1. **會話範圍限制**: PowerShell 中的 `$env:變數名` 只在當前會話有效
+2. **背景處理隔離**: 使用 `isBackground=true` 的命令在新進程中運行，不繼承環境變數
+3. **進程間不共享**: 每次執行 Python 腳本都是新進程，需要重新繼承環境變數
+
 **解決方案**:
-1. 重新啟動終端/PowerShell
-2. 重新設置環境變數
-3. 使用 `echo` 命令驗證變數值
+1. **立即解決**（當前會話）:
+   ```powershell
+   $env:AIVA_RABBITMQ_USER = "admin"
+   $env:AIVA_RABBITMQ_PASSWORD = "password123"
+   $env:AIVA_RABBITMQ_HOST = "localhost"
+   $env:AIVA_RABBITMQ_PORT = "5672"
+   ```
+
+2. **驗證設置**:
+   ```powershell
+   echo "USER: $env:AIVA_RABBITMQ_USER"
+   echo "PASSWORD: $env:AIVA_RABBITMQ_PASSWORD"
+   echo "HOST: $env:AIVA_RABBITMQ_HOST"
+   echo "PORT: $env:AIVA_RABBITMQ_PORT"
+   ```
+
+3. **永久解決**: 使用系統環境變數設置（見上方「永久環境變數設置」章節）
 
 ### 問題 2: Schema 載入失敗
 

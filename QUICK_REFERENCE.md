@@ -1,15 +1,48 @@
-# AIVA 專案快速參考
+# AIVA 專案快速參考 (2025-10-28 更新)
+
+---
+
+## 📋 目錄
+
+- [🚀 快速啟動](#-快速啟動)
+- [🔍 系統探索](#-系統探索)
+- [🛡️ 安全測試](#️-安全測試)
+- [🔧 環境工具](#-環境工具)
+- [📊 檢查指令](#-檢查指令)
+- [⚠️ 疑難排解](#️-疑難排解)
+
+---
 
 ## 🚀 快速啟動
+
+### 方式一: 離線模式 (推薦)
 ```bash
+# 一鍵啟動離線環境
+python launch_offline_mode.py
+
+# 系統健康檢查
+python health_check.py
+
+# AI 實戰安全測試
+python ai_security_test.py --target http://localhost:3000
+
+# AI 自主學習測試
+python ai_autonomous_testing_loop.py --target http://localhost:3000
+```
+
+### 方式二: 完整環境
+```bash
+# Docker 環境啟動
+cd docker && docker compose up -d
+
+# 環境自動修復
+python fix_environment_dependencies.py
+
 # 統一啟動介面
 python scripts/launcher/aiva_launcher.py
 
 # API 服務
 python api/start_api.py
-
-# Schema 合規性檢查 (重要)
-python tools/schema_compliance_validator.py --workspace . --language all --format console
 ```
 
 ## 📂 核心目錄
@@ -26,26 +59,29 @@ python tools/schema_compliance_validator.py --workspace . --language all --forma
 
 ## 🔧 關鍵檔案
 
-### 啟動器
-- `scripts/launcher/aiva_launcher.py` - 主啟動器
-- `api/start_api.py` - API 服務啟動
+### 啟動器與環境
+- `launch_offline_mode.py` - 離線模式啟動器 (推薦)
+- `fix_offline_dependencies.py` - 離線環境修復
+- `fix_environment_dependencies.py` - 完整環境修復
+- `health_check.py` - 系統健康檢查
 
-### Schema 驗證 (v3.1 新增)
-- `tools/schema_compliance_validator.py` - 合規性驗證工具
-- `services/function/common/go/aiva_common_go/schemas/generated/` - Go 標準 schema
-- `schemas/aiva_schemas.d.ts` - TypeScript 標準 schema
+### AI 實戰工具 (新增)
+- `ai_security_test.py` - AI 實戰安全測試
+- `ai_autonomous_testing_loop.py` - AI 自主學習循環
+- `ai_component_explorer.py` - AI 組件探索
+- `ai_system_explorer_v3.py` - 系統自我分析
+
+### 環境配置
+- `.env` - 環境變數配置 (自動生成)
+- `services/aiva_common/config/unified_config.py` - 統一配置 (已修補)
 
 ### AI 核心
 - `services/core/aiva_core/bio_neuron_master.py` - BioNeuron 主控
 - `services/core/aiva_core/ai_engine/anti_hallucination_module.py` - 抗幻覺
 
-### 整合服務
-- `services/integration/aiva_integration/trigger_ai_continuous_learning.py` - AI 學習
-- `services/integration/aiva_integration/integrated_ai_trainer.py` - AI 訓練
-
-### 檢測功能
-- `services/features/smart_detection_manager.py` - 檢測管理
-- `services/features/high_value_manager.py` - 高價值管理
+### 學習數據
+- `reports/ai_diagnostics/exploration.db` - 學習數據庫 (58.9MB)
+- `reports/ai_diagnostics/` - AI 診斷報告目錄
 
 ## 🎯 模組功能
 

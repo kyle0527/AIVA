@@ -3,6 +3,14 @@ import sys
 import os
 sys.path.insert(0, "services")
 
+# 設置離線模式環境變數
+if not os.getenv("AIVA_OFFLINE_MODE"):
+    os.environ["AIVA_OFFLINE_MODE"] = "true"
+    os.environ["AIVA_RABBITMQ_URL"] = "memory://localhost"
+    os.environ["AIVA_RABBITMQ_USER"] = "offline"
+    os.environ["AIVA_RABBITMQ_PASSWORD"] = "offline"
+    os.environ["AIVA_ENVIRONMENT"] = "offline"
+
 def check_schemas():
     """檢查 AIVA Common Schemas 可用性"""
     try:

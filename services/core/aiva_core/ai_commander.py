@@ -31,7 +31,7 @@ try:
     from .training.training_orchestrator import TrainingOrchestrator
 except ImportError:
     from services.core.aiva_core.ai_engine import BioNeuronRAGAgent
-    from services.core.aiva_core.learning.experience_manager import ExperienceManager
+    from services.aiva_common.ai.experience_manager import create_experience_manager
     from services.core.aiva_core.learning.model_trainer import ModelTrainer
     from services.core.aiva_core.multilang_coordinator import MultiLanguageAICoordinator
     from services.core.aiva_core.rag import KnowledgeBase, RAGEngine, VectorStore

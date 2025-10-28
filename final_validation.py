@@ -89,7 +89,11 @@ async def test_feature_modules():
     # 測試統一智能檢測管理器
     try:
         from services.features.common.unified_smart_detection_manager import UnifiedSmartDetectionManager
-        unified_manager = UnifiedSmartDetectionManager()
+        from services.features.common.detection_config import BaseDetectionConfig
+        
+        # 創建基本配置
+        config = BaseDetectionConfig()
+        unified_manager = UnifiedSmartDetectionManager("test_module", config)
         print('✅ 統一智能檢測管理器載入成功')
         test_results['unified_detection'] = True
     except Exception as e:
@@ -152,11 +156,12 @@ async def test_message_queue_system():
     try:
         from services.aiva_common.enums.modules import Topic
         
-        # 測試主題定義
+        # 測試主題定義 - 使用實際存在的主題
         topics = [
-            Topic.SCAN_START,
-            Topic.RESULT_READY,
-            Topic.ERROR_OCCURRED
+            Topic.TASK_SCAN_START,
+            Topic.RESULTS_SCAN_COMPLETED,
+            Topic.RESULTS_SCAN_FAILED,
+            Topic.FINDING_DETECTED
         ]
         
         print(f'✅ 訊息主題定義: {len(topics)} 個主題可用')

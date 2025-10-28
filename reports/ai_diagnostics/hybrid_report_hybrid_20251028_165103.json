@@ -1,0 +1,213 @@
+{
+  "report_id": "hybrid_20251028_165103",
+  "timestamp": "2025-10-28T16:51:03.159982",
+  "version": "3.0.0",
+  "analysis_type": "hybrid_architecture",
+  "duration_seconds": 68.263181,
+  "layer1_quick_scan": {
+    "overall_health": 1.0,
+    "total_files": 3998,
+    "total_lines": 1410377,
+    "language_distribution": {
+      "Python": 85961,
+      "TypeScript": 1249255,
+      "Rust": 69981,
+      "Unknown": 287,
+      "Go": 4893
+    },
+    "modules_analyzed": 4
+  },
+  "layer2_professional_analysis": {
+    "tools_used": {
+      "go_ast": true,
+      "rust_syn": true,
+      "typescript_api": true
+    },
+    "professional_results": {}
+  },
+  "layer3_integration": {
+    "cross_language_dependencies": {
+      "python_to_go": [],
+      "python_to_rust": [],
+      "python_to_typescript": [],
+      "go_to_python": [],
+      "rust_to_python": [],
+      "typescript_to_python": [],
+      "ffi_calls": [],
+      "subprocess_calls": [],
+      "schema_mappings": []
+    },
+    "aiva_findings": [
+      {
+        "header": {
+          "message_id": "exploration_ai_core_20251028_165103",
+          "trace_id": "trace_bf1efb4d",
+          "correlation_id": null,
+          "source_module": "CoreModule",
+          "timestamp": "2025-10-28 16:51:03.158732",
+          "version": "1.0"
+        },
+        "module_id": "ai_core",
+        "module_name": "AI 核心引擎",
+        "health_score": 1.0,
+        "analysis_type": "system_exploration",
+        "professional_analysis": {},
+        "findings": {
+          "language_distribution": {
+            "Python": 36318
+          },
+          "complexity_metrics": {},
+          "cross_language_calls": [
+            "Process integration: subprocess",
+            "Process integration: subprocess"
+          ],
+          "issues": [],
+          "warnings": []
+        },
+        "recommendations": []
+      },
+      {
+        "header": {
+          "message_id": "exploration_scan_engine_20251028_165103",
+          "trace_id": "trace_9eacc997",
+          "correlation_id": null,
+          "source_module": "CoreModule",
+          "timestamp": "2025-10-28 16:51:03.159343",
+          "version": "1.0"
+        },
+        "module_id": "scan_engine",
+        "module_name": "掃描引擎",
+        "health_score": 1.0,
+        "analysis_type": "system_exploration",
+        "professional_analysis": {},
+        "findings": {
+          "language_distribution": {
+            "Python": 11679,
+            "TypeScript": 1249255,
+            "Rust": 45923,
+            "Unknown": 287
+          },
+          "complexity_metrics": {},
+          "cross_language_calls": [
+            "Process integration: subprocess",
+            "Process integration: subprocess",
+            "Process integration: child_process",
+            "Process integration: child_process",
+            "Process integration: node:child_process",
+            "Process integration: node:child_process",
+            "Process integration: node:child_process",
+            "Process integration: child_process",
+            "Process integration: child_process",
+            "Process integration: child_process",
+            "Process integration: child_process",
+            "Process integration: node:child_process",
+            "Process integration: child_process",
+            "Process integration: child_process",
+            "Process integration: child_process",
+            "Process integration: child_process",
+            "Process integration: child_process",
+            "Process integration: child_process",
+            "Process integration: node:child_process",
+            "Process integration: child_process",
+            "Process integration: child_process",
+            "Process integration: child_process",
+            "Process integration: child_process",
+            "Process integration: node:child_process",
+            "Process integration: child_process",
+            "Process integration: child_process",
+            "Process integration: child_process",
+            "Process integration: child_process",
+            "Process integration: child_process",
+            "Process integration: child_process",
+            "Process integration: child_process",
+            "Process integration: child_process",
+            "Process integration: child_process",
+            "Process integration: child_process",
+            "Process integration: child_process",
+            "Process integration: child_process",
+            "Process integration: child_process",
+            "Process integration: child_process",
+            "Process integration: child_process",
+            "Process integration: child_process",
+            "Process integration: child_process",
+            "Process integration: child_process",
+            "Process integration: child_process",
+            "Process integration: child_process",
+            "Process integration: node:child_process",
+            "Process integration: node:child_process",
+            "Process integration: child_process",
+            "Process integration: node:child_process"
+          ],
+          "issues": [],
+          "warnings": []
+        },
+        "recommendations": [
+          "跨語言調用較多，建議檢查整合複雜度",
+          "使用多種程式語言，建議統一技術棧"
+        ]
+      },
+      {
+        "header": {
+          "message_id": "exploration_integration_service_20251028_165103",
+          "trace_id": "trace_de4c5cc3",
+          "correlation_id": null,
+          "source_module": "CoreModule",
+          "timestamp": "2025-10-28 16:51:03.159906",
+          "version": "1.0"
+        },
+        "module_id": "integration_service",
+        "module_name": "整合服務",
+        "health_score": 1.0,
+        "analysis_type": "system_exploration",
+        "professional_analysis": {},
+        "findings": {
+          "language_distribution": {
+            "Python": 17384
+          },
+          "complexity_metrics": {},
+          "cross_language_calls": [
+            "Process integration: subprocess"
+          ],
+          "issues": [],
+          "warnings": []
+        },
+        "recommendations": []
+      },
+      {
+        "header": {
+          "message_id": "exploration_feature_detection_20251028_165103",
+          "trace_id": "trace_665ecf15",
+          "correlation_id": null,
+          "source_module": "CoreModule",
+          "timestamp": "2025-10-28 16:51:03.159935",
+          "version": "1.0"
+        },
+        "module_id": "feature_detection",
+        "module_name": "功能檢測",
+        "health_score": 1.0,
+        "analysis_type": "system_exploration",
+        "professional_analysis": {},
+        "findings": {
+          "language_distribution": {
+            "Python": 20580,
+            "Go": 4893,
+            "Rust": 24058
+          },
+          "complexity_metrics": {},
+          "cross_language_calls": [],
+          "issues": [],
+          "warnings": []
+        },
+        "recommendations": []
+      }
+    ],
+    "schema_compliance": true,
+    "integration_health": 1.0
+  },
+  "recommendations": [],
+  "aiva_compatibility": {
+    "schemas_available": true,
+    "follows_aiva_patterns": true,
+    "integration_ready": true
+  }
+}

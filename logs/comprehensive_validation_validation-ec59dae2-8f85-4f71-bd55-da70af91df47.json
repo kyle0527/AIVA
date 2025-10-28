@@ -1,0 +1,105 @@
+{
+  "validation_id": "validation-ec59dae2-8f85-4f71-bd55-da70af91df47",
+  "start_time": "2025-10-28T16:25:30.814663",
+  "tests": {
+    "aiva_common_compliance": {
+      "status": "FAILED",
+      "message": "aiva_common 規範驗證失敗: type object 'VulnerabilityType' has no attribute 'SQL_INJECTION'",
+      "details": {
+        "error": "type object 'VulnerabilityType' has no attribute 'SQL_INJECTION'"
+      },
+      "timestamp": "2025-10-28T16:25:30.815677"
+    },
+    "cross_language_schema_unity": {
+      "status": "FAILED",
+      "message": "跨語言 Schema 統一性驗證失敗: cannot import name 'ScanStartPayload' from 'services.aiva_common.schemas.generated.tasks' (C:\\D\\fold7\\AIVA-git\\services\\aiva_common\\schemas\\generated\\tasks.py)",
+      "details": {
+        "error": "cannot import name 'ScanStartPayload' from 'services.aiva_common.schemas.generated.tasks' (C:\\D\\fold7\\AIVA-git\\services\\aiva_common\\schemas\\generated\\tasks.py)"
+      },
+      "timestamp": "2025-10-28T16:25:31.372391"
+    },
+    "target_environment_validation": {
+      "status": "PASSED",
+      "message": "靶場環境健康度: 60.0% (3/5)",
+      "details": {
+        "Juice Shop": "✅ 運行正常",
+        "Neo4j": "✅ 運行正常",
+        "PostgreSQL": "⚠️ 需要專用測試工具",
+        "Redis": "⚠️ 需要專用測試工具",
+        "RabbitMQ": "✅ 運行正常"
+      },
+      "timestamp": "2025-10-28T16:25:32.406951"
+    },
+    "ai_system_functionality": {
+      "status": "PASSED",
+      "message": "AI 系統功能驗證完成，成功率: 100.0%",
+      "details": {
+        "ai_commander": "✅ 初始化成功",
+        "dialog_assistant": "✅ 初始化成功",
+        "query_results": {
+          "系統當前狀態如何？": {
+            "intent": "unknown",
+            "executable": false,
+            "status": "✅ 成功"
+          },
+          "列出可用的掃描功能": {
+            "intent": "unknown",
+            "executable": false,
+            "status": "✅ 成功"
+          },
+          "解釋 SQL 注入檢測能力": {
+            "intent": "explain_capability",
+            "executable": false,
+            "status": "✅ 成功"
+          },
+          "生成快速掃描指令": {
+            "intent": "unknown",
+            "executable": false,
+            "status": "✅ 成功"
+          }
+        },
+        "success_rate": "100.0%"
+      },
+      "timestamp": "2025-10-28T16:25:44.828614"
+    },
+    "feature_modules_validation": {
+      "status": "PASSED",
+      "message": "功能模組驗證成功，4 個組件測試通過",
+      "details": {
+        "feature_base": "✅ 基礎架構可用",
+        "unified_detection_manager": "✅ 統一檢測管理器可用",
+        "sqli_module": "✅ SQL 注入模組可用",
+        "capability_discovery": "✅ 發現 5 個能力"
+      },
+      "timestamp": "2025-10-28T16:25:45.442902"
+    },
+    "international_standards_compliance": {
+      "status": "FAILED",
+      "message": "國際標準合規性驗證失敗: cannot import name 'CVSSv3Metrics' from 'services.aiva_common.schemas.risk' (C:\\D\\fold7\\AIVA-git\\services\\aiva_common\\schemas\\risk.py)",
+      "details": {
+        "error": "cannot import name 'CVSSv3Metrics' from 'services.aiva_common.schemas.risk' (C:\\D\\fold7\\AIVA-git\\services\\aiva_common\\schemas\\risk.py)"
+      },
+      "timestamp": "2025-10-28T16:25:45.960147"
+    }
+  },
+  "summary": {
+    "total_tests": 6,
+    "passed_tests": 3,
+    "failed_tests": 3,
+    "warnings": 0,
+    "success_rate": 50.0,
+    "overall_status": "NEEDS_IMPROVEMENT"
+  },
+  "end_time": "2025-10-28T16:25:46.461067",
+  "duration_seconds": 15.646404,
+  "validation_metadata": {
+    "aiva_common_version": "v1.0.0",
+    "schema_sot_used": "core_schema_sot.yaml",
+    "validation_standards": [
+      "services/aiva_common README.md 規範",
+      "四層優先級原則",
+      "單一數據來源 (SOT) 原則",
+      "國際標準合規性 (CVSS、CVE、CWE、SARIF)"
+    ]
+  }
+}

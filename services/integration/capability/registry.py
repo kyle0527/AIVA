@@ -354,18 +354,21 @@ class CapabilityRegistry:
         try:
             # Python 模組發現
             python_discovered = await self._discover_python_capabilities()
-            discovery_stats["discovered_count"] += len(python_discovered)
-            discovery_stats["languages"]["python"] = len(python_discovered)
+            python_count = len(python_discovered) if isinstance(python_discovered, list) else 0
+            discovery_stats["discovered_count"] += python_count
+            discovery_stats["languages"]["python"] = python_count
             
             # Go 服務發現
             go_discovered = await self._discover_go_capabilities()
-            discovery_stats["discovered_count"] += len(go_discovered)
-            discovery_stats["languages"]["go"] = len(go_discovered)
+            go_count = len(go_discovered) if isinstance(go_discovered, list) else 0
+            discovery_stats["discovered_count"] += go_count
+            discovery_stats["languages"]["go"] = go_count
             
             # Rust 模組發現
             rust_discovered = await self._discover_rust_capabilities()
-            discovery_stats["discovered_count"] += len(rust_discovered)
-            discovery_stats["languages"]["rust"] = len(rust_discovered)
+            rust_count = len(rust_discovered) if isinstance(rust_discovered, list) else 0
+            discovery_stats["discovered_count"] += rust_count
+            discovery_stats["languages"]["rust"] = rust_count
             
             # 統計模組分布並註冊發現的能力
             all_discovered = python_discovered + go_discovered + rust_discovered
@@ -403,178 +406,148 @@ class CapabilityRegistry:
     
     async def _discover_python_capabilities(self) -> List[CapabilityRecord]:
         """發現 Python 模組中的能力"""
-        import asyncio
+        discovered = []
         
-        async def discover():
-            discovered = []
-            
-            # 掃描 services/features 目錄
-            features_dir = Path("services/features")
-            if features_dir.exists():
-                for module_dir in features_dir.iterdir():
-                    if module_dir.is_dir() and module_dir.name.startswith("function_"):
-                        try:
-                            capability = await self._analyze_python_module(module_dir)
-                            if capability:
-                                discovered.append(capability)
-                        except Exception as e:
-                            logger.warning(
-                                f"分析 Python 模組失敗: {module_dir.name}",
-                                error=str(e)
-                            )
-            
-            return discovered
+        # 掃描 services/features 目錄
+        features_dir = Path("services/features")
+        if features_dir.exists():
+            for module_dir in features_dir.iterdir():
+                if module_dir.is_dir() and module_dir.name.startswith("function_"):
+                    try:
+                        capability = await self._analyze_python_module(module_dir)
+                        if capability:
+                            discovered.append(capability)
+                    except Exception as e:
+                        logger.warning(
+                            f"分析 Python 模組失敗: {module_dir.name}",
+                            error=str(e)
+                        )
         
-        return await asyncio.to_thread(discover)
+        return discovered
     
     async def _analyze_python_module(self, module_dir: Path) -> Optional[CapabilityRecord]:
         """分析單個 Python 模組"""
-        import asyncio
+        # 查找主要工作檔案
+        worker_files = list(module_dir.glob("*worker.py"))
+        if not worker_files:
+            worker_files = list(module_dir.glob("*.py"))
         
-        def analyze():
-            # 查找主要工作檔案
-            worker_files = list(module_dir.glob("*worker.py"))
-            if not worker_files:
-                worker_files = list(module_dir.glob("*.py"))
-            
-            if not worker_files:
-                return None
-            
-            main_file = worker_files[0]
-            
-            # 提取模組資訊
-            module_name = module_dir.name
-            capability_id = f"security.{module_name}.scan"
-            
-            # 基本能力記錄
-            capability = CapabilityRecord(
-                id=capability_id,
-                name=f"{module_name.replace('_', ' ').title()} Scanner",
-                description=f"自動發現的 {module_name} 掃描能力",
-                module=module_name,
-                language=ProgrammingLanguage.PYTHON,
-                entrypoint=f"services.features.{module_name}.{main_file.stem}:main",
-                capability_type=CapabilityType.SCANNER,
-                tags=["security", "auto-discovered", "python"],
-                status=CapabilityStatus.UNKNOWN
-            )
-            
-            return capability
+        if not worker_files:
+            return None
         
-        return await asyncio.to_thread(analyze)
+        main_file = worker_files[0]
+        
+        # 提取模組資訊
+        module_name = module_dir.name
+        capability_id = f"security.{module_name}.scan"
+        
+        # 基本能力記錄  
+        capability = CapabilityRecord(
+            id=capability_id,
+            name=f"{module_name.replace('function_', '').title()} Scanner",
+            description=f"Auto-discovered security scanner: {module_name}",
+            module=module_name,
+            language=ProgrammingLanguage.PYTHON,
+            entrypoint=f"services.features.{module_name}.{main_file.stem}:main",
+            capability_type=CapabilityType.SCANNER,
+            tags=["security", "auto-discovered", "python"],
+            status=CapabilityStatus.UNKNOWN
+        )
+        
+        return capability
     
     async def _discover_go_capabilities(self) -> List[CapabilityRecord]:
         """發現 Go 服務中的能力"""
-        import asyncio
+        discovered = []
         
-        async def discover():
-            discovered = []
-            
-            # 掃描 Go 服務目錄
-            go_services_dir = Path("services/features")
-            if go_services_dir.exists():
-                for service_dir in go_services_dir.iterdir():
-                    if service_dir.is_dir() and service_dir.name.endswith("_go"):
-                        try:
-                            capability = await self._analyze_go_service(service_dir)
-                            if capability:
-                                discovered.append(capability)
-                        except Exception as e:
-                            logger.warning(
-                                f"分析 Go 服務失敗: {service_dir.name}",
-                                error=str(e)
-                            )
-            
-            return discovered
+        # 掃描 Go 服務目錄
+        go_services_dir = Path("services/features")
+        if go_services_dir.exists():
+            for service_dir in go_services_dir.iterdir():
+                if service_dir.is_dir() and service_dir.name.endswith("_go"):
+                    try:
+                        capability = await self._analyze_go_service(service_dir)
+                        if capability:
+                            discovered.append(capability)
+                    except Exception as e:
+                        logger.warning(
+                            f"分析 Go 服務失敗: {service_dir.name}",
+                            error=str(e)
+                        )
         
-        return await asyncio.to_thread(discover)
+        return discovered
     
     async def _analyze_go_service(self, service_dir: Path) -> Optional[CapabilityRecord]:
         """分析單個 Go 服務"""
-        import asyncio
+        # 查找 main.go 或 cmd 目錄
+        main_files = list(service_dir.glob("main.go"))
+        if not main_files:
+            main_files = list(service_dir.glob("cmd/*/main.go"))
         
-        def analyze():
-            # 查找 main.go 或 cmd 目錄
-            main_files = list(service_dir.glob("main.go"))
-            if not main_files:
-                main_files = list(service_dir.glob("cmd/*/main.go"))
-            
-            if not main_files:
-                return None
-            
-            service_name = service_dir.name.replace("_go", "")
-            capability_id = f"security.{service_name}.scan"
-            
-            capability = CapabilityRecord(
-                id=capability_id,
-                name=f"{service_name.replace('_', ' ').title()} Go Service",
-                description=f"自動發現的 {service_name} Go 掃描服務",
-                module=service_dir.name,
-                language=ProgrammingLanguage.GO,
-                entrypoint=f"http://localhost:8080/{service_name}",  # 預設端點
-                capability_type=CapabilityType.SCANNER,
-                tags=["security", "auto-discovered", "go", "microservice"],
-                status=CapabilityStatus.UNKNOWN
-            )
-            
-            return capability
+        if not main_files:
+            return None
         
-        return await asyncio.to_thread(analyze)
+        service_name = service_dir.name.replace("_go", "")
+        capability_id = f"security.{service_name}.scan"
+        
+        capability = CapabilityRecord(
+            id=capability_id,
+            name=f"{service_name.replace('_', ' ').title()} Go Service",
+            description=f"自動發現的 {service_name} Go 掃描服務",
+            module=service_dir.name,
+            language=ProgrammingLanguage.GO,
+            entrypoint=f"http://localhost:8080/{service_name}",  # 預設端點
+            capability_type=CapabilityType.SCANNER,
+            tags=["security", "auto-discovered", "go", "microservice"],
+            status=CapabilityStatus.UNKNOWN
+        )
+        
+        return capability
     
     async def _discover_rust_capabilities(self) -> List[CapabilityRecord]:
         """發現 Rust 模組中的能力"""
-        import asyncio
+        discovered = []
         
-        async def discover():
-            discovered = []
-            
-            # 掃描 Rust 模組目錄
-            rust_modules_dir = Path("services/scan")
-            if rust_modules_dir.exists():
-                for module_dir in rust_modules_dir.iterdir():
-                    if module_dir.is_dir() and module_dir.name.endswith("_rust"):
-                        try:
-                            capability = await self._analyze_rust_module(module_dir)
-                            if capability:
-                                discovered.append(capability)
-                        except Exception as e:
-                            logger.warning(
-                                f"分析 Rust 模組失敗: {module_dir.name}",
-                                error=str(e)
-                            )
-            
-            return discovered
+        # 掃描 Rust 模組目錄
+        rust_modules_dir = Path("services/scan")
+        if rust_modules_dir.exists():
+            for module_dir in rust_modules_dir.iterdir():
+                if module_dir.is_dir() and module_dir.name.endswith("_rust"):
+                    try:
+                        capability = await self._analyze_rust_module(module_dir)
+                        if capability:
+                            discovered.append(capability)
+                    except Exception as e:
+                        logger.warning(
+                            f"分析 Rust 模組失敗: {module_dir.name}",
+                            error=str(e)
+                        )
         
-        return await asyncio.to_thread(discover)
+        return discovered
     
     async def _analyze_rust_module(self, module_dir: Path) -> Optional[CapabilityRecord]:
         """分析單個 Rust 模組"""
-        import asyncio
+        # 查找 Cargo.toml
+        cargo_file = module_dir / "Cargo.toml"
+        if not cargo_file.exists():
+            return None
         
-        def analyze():
-            # 查找 Cargo.toml
-            cargo_file = module_dir / "Cargo.toml"
-            if not cargo_file.exists():
-                return None
-            
-            module_name = module_dir.name.replace("_rust", "")
-            capability_id = f"security.{module_name}.scan"
-            
-            capability = CapabilityRecord(
-                id=capability_id,
-                name=f"{module_name.replace('_', ' ').title()} Rust Module",
-                description=f"自動發現的 {module_name} Rust 掃描模組",
-                module=module_dir.name,
-                language=ProgrammingLanguage.RUST,
-                entrypoint=f"target/release/{module_dir.name}",
-                capability_type=CapabilityType.SCANNER,
-                tags=["security", "auto-discovered", "rust", "performance"],
-                status=CapabilityStatus.UNKNOWN
-            )
-            
-            return capability
+        module_name = module_dir.name.replace("_rust", "")
+        capability_id = f"security.{module_name}.scan"
         
-        return await asyncio.to_thread(analyze)
+        capability = CapabilityRecord(
+            id=capability_id,
+            name=f"{module_name.replace('_', ' ').title()} Rust Module",
+            description=f"自動發現的 {module_name} Rust 掃描模組",
+            module=module_dir.name,
+            language=ProgrammingLanguage.RUST,
+            entrypoint=f"target/release/{module_dir.name}",
+            capability_type=CapabilityType.SCANNER,
+            tags=["security", "auto-discovered", "rust", "performance"],
+            status=CapabilityStatus.UNKNOWN
+        )
+        
+        return capability
     
     async def get_capability_stats(self) -> Dict[str, Any]:
         """獲取能力統計資訊"""

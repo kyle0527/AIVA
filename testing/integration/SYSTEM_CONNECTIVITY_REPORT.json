@@ -1,0 +1,45 @@
+{
+  "timestamp": "2025-01-18",
+  "overall_percentage": 16.666666666666664,
+  "recommendation": "NEEDS_COMPLETE_OVERHAUL",
+  "module_stats": {
+    "schema_definitions": [
+      0,
+      3
+    ],
+    "ai_core_modules": [
+      0,
+      4
+    ],
+    "command_execution": [
+      1,
+      2
+    ],
+    "multilang_generation": [
+      1,
+      3
+    ]
+  },
+  "detailed_results": {
+    "schema_definitions": {
+      "authority_source": false,
+      "enum_definitions": false,
+      "import_export": false
+    },
+    "ai_core_modules": {
+      "ai_engine_core": false,
+      "training_system": false,
+      "performance_optimization": false,
+      "ai_basic_function": false
+    },
+    "command_execution": {
+      "basic_command_execution": true,
+      "ai_system_chain": false
+    },
+    "multilang_generation": {
+      "powershell_available": true,
+      "generate_script_exists": false,
+      "multilang_files": false
+    }
+  }
+}

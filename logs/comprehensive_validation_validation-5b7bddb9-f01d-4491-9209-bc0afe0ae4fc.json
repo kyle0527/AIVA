@@ -1,0 +1,164 @@
+{
+  "validation_id": "validation-5b7bddb9-f01d-4491-9209-bc0afe0ae4fc",
+  "start_time": "2025-10-28T16:38:57.872094",
+  "tests": {
+    "aiva_common_enums_import": {
+      "status": "PASSED",
+      "message": "成功導入並驗證 5 個標準枚舉",
+      "details": {
+        "Severity": [
+          "Severity.CRITICAL",
+          "Severity.HIGH",
+          "Severity.MEDIUM",
+          "Severity.LOW"
+        ],
+        "Confidence": [
+          "Confidence.CERTAIN",
+          "Confidence.FIRM",
+          "Confidence.POSSIBLE"
+        ],
+        "TaskStatus": [
+          "TaskStatus.PENDING",
+          "TaskStatus.RUNNING",
+          "TaskStatus.COMPLETED"
+        ],
+        "VulnerabilityType": [
+          "VulnerabilityType.SQLI",
+          "VulnerabilityType.XSS"
+        ],
+        "AssetType": [
+          "AssetType.URL",
+          "AssetType.HOST",
+          "AssetType.REPOSITORY"
+        ]
+      },
+      "timestamp": "2025-10-28T16:38:57.873303"
+    },
+    "aiva_common_compliance": {
+      "status": "FAILED",
+      "message": "aiva_common 規範驗證失敗: type object 'Topic' has no attribute 'SYSTEM_STATUS'",
+      "details": {
+        "error": "type object 'Topic' has no attribute 'SYSTEM_STATUS'"
+      },
+      "timestamp": "2025-10-28T16:38:57.873490"
+    },
+    "cross_language_schema_unity": {
+      "status": "PASSED",
+      "message": "跨語言 Schema 統一性驗證成功",
+      "details": {
+        "manual_schema": "✅ 手動 Schema 可用",
+        "generated_schema": "✅ 生成 Schema 可用",
+        "serialization_test": "✅ JSON 序列化成功",
+        "schema_types": [
+          "MessageHeader",
+          "FindingPayload",
+          "ScanStartPayload"
+        ]
+      },
+      "timestamp": "2025-10-28T16:38:58.409666"
+    },
+    "target_environment_validation": {
+      "status": "PASSED",
+      "message": "靶場環境健康度: 60.0% (3/5)",
+      "details": {
+        "Juice Shop": "✅ 運行正常",
+        "Neo4j": "✅ 運行正常",
+        "PostgreSQL": "⚠️ 需要專用測試工具",
+        "Redis": "⚠️ 需要專用測試工具",
+        "RabbitMQ": "✅ 運行正常"
+      },
+      "timestamp": "2025-10-28T16:38:59.428945"
+    },
+    "ai_system_functionality": {
+      "status": "PASSED",
+      "message": "AI 系統功能驗證完成，成功率: 100.0%",
+      "details": {
+        "ai_commander": "✅ 初始化成功",
+        "dialog_assistant": "✅ 初始化成功",
+        "query_results": {
+          "系統當前狀態如何？": {
+            "intent": "unknown",
+            "executable": false,
+            "status": "✅ 成功"
+          },
+          "列出可用的掃描功能": {
+            "intent": "unknown",
+            "executable": false,
+            "status": "✅ 成功"
+          },
+          "解釋 SQL 注入檢測能力": {
+            "intent": "explain_capability",
+            "executable": false,
+            "status": "✅ 成功"
+          },
+          "生成快速掃描指令": {
+            "intent": "unknown",
+            "executable": false,
+            "status": "✅ 成功"
+          }
+        },
+        "success_rate": "100.0%"
+      },
+      "timestamp": "2025-10-28T16:39:11.230596"
+    },
+    "feature_modules_validation": {
+      "status": "PASSED",
+      "message": "功能模組驗證成功，4 個組件測試通過",
+      "details": {
+        "feature_base": "✅ 基礎架構可用",
+        "unified_detection_manager": "✅ 統一檢測管理器可用",
+        "sqli_module": "✅ SQL 注入模組可用",
+        "capability_discovery": "✅ 發現 5 個能力"
+      },
+      "timestamp": "2025-10-28T16:39:11.852206"
+    },
+    "international_standards_compliance": {
+      "status": "PASSED",
+      "message": "國際標準合規性驗證通過，符合 CVSS、CVE、CWE、SARIF 標準",
+      "details": {
+        "CVSS_v3.1": {
+          "status": "✅ 完全支援",
+          "cvss_score": 8.5,
+          "cvss_vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H"
+        },
+        "CVE_standard": {
+          "status": "✅ 完全支援",
+          "test_cve": "CVE-2024-1234"
+        },
+        "CWE_standard": {
+          "status": "✅ 完全支援",
+          "test_cwe": "CWE-89"
+        },
+        "OWASP_standard": {
+          "status": "✅ 完全支援",
+          "owasp_category": "A03:2021-Injection"
+        },
+        "SARIF_v2.1.0": {
+          "status": "✅ Schema 支援",
+          "format": "SARIF 2.1.0"
+        }
+      },
+      "timestamp": "2025-10-28T16:39:12.362405"
+    }
+  },
+  "summary": {
+    "total_tests": 7,
+    "passed_tests": 6,
+    "failed_tests": 1,
+    "warnings": 0,
+    "success_rate": 85.71428571428571,
+    "overall_status": "GOOD"
+  },
+  "end_time": "2025-10-28T16:39:12.863133",
+  "duration_seconds": 14.991039,
+  "validation_metadata": {
+    "aiva_common_version": "v1.0.0",
+    "schema_sot_used": "core_schema_sot.yaml",
+    "validation_standards": [
+      "services/aiva_common README.md 規範",
+      "四層優先級原則",
+      "單一數據來源 (SOT) 原則",
+      "國際標準合規性 (CVSS、CVE、CWE、SARIF)"
+    ]
+  }
+}
