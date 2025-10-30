@@ -1,0 +1,32 @@
+# Rust 延遲檢查配置
+# 減少 cargo check 和 rust-analyzer 的即時檢查頻率
+
+[workspace]
+members = [
+    "services/scan/info_gatherer_rust",
+    "services/features/function_sast_rust",
+    "services/features/common/rust/aiva_common_rust"
+]
+
+[workspace.dependencies]
+# 共用依賴版本管理
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+tokio = { version = "1.35", features = ["full"] }
+uuid = { version = "1.6", features = ["v4"] }
+chrono = { version = "0.4", features = ["serde"] }
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+
+[profile.dev]
+# 開發模式優化 - 減少編譯時間
+opt-level = 0
+debug = true
+incremental = true
+
+[profile.release]
+# 發佈模式優化
+opt-level = 3
+lto = true
+codegen-units = 1
+strip = true

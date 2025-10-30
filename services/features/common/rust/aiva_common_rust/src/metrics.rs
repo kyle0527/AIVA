@@ -220,6 +220,7 @@ impl MetricsExporter for JSONMetricsExporter {
 
 /// 統一指標收集器
 pub struct MetricsCollector {
+    #[allow(dead_code)] // Used for future metrics identification
     worker_id: String,
     collection_interval: Duration,
     exporters: Vec<Box<dyn MetricsExporter>>,

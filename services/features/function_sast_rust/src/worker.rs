@@ -53,24 +53,25 @@ fn should_retry_message(delivery: &Delivery, _error: &dyn std::error::Error) -> 
 
 pub struct SastWorker {
     connection: Connection,
+    #[allow(dead_code)] // Analyzer reserved for future static analysis features
     analyzer: StaticAnalyzer,
 }
 
 impl SastWorker {
     pub async fn new() -> Result<Self> {
         // 遵循 12-factor app 原則和 aiva_common 配置標準
-        let rabbitmq_url = env::var("AIVA_RABBITMQ_URL")
+        let rabbitmq_url = env::var("RABBITMQ_URL")
             .or_else(|_| {
-                // 若未設定完整 URL，嘗試組合式配置
-                let host = env::var("AIVA_RABBITMQ_HOST").unwrap_or_else(|_| "localhost".to_string());
-                let port = env::var("AIVA_RABBITMQ_PORT").unwrap_or_else(|_| "5672".to_string());
-                let user = env::var("AIVA_RABBITMQ_USER")?;
-                let password = env::var("AIVA_RABBITMQ_PASSWORD")?;
-                let vhost = env::var("AIVA_RABBITMQ_VHOST").unwrap_or_else(|_| "/".to_string());
+                // 如果沒有 URL，則組合各個部件
+                let host = env::var("RABBITMQ_HOST").unwrap_or_else(|_| "localhost".to_string());
+                let port = env::var("RABBITMQ_PORT").unwrap_or_else(|_| "5672".to_string());
+                let user = env::var("RABBITMQ_USER")?;
+                let password = env::var("RABBITMQ_PASSWORD")?;
+                let vhost = env::var("RABBITMQ_VHOST").unwrap_or_else(|_| "/".to_string());
                 
                 Ok::<String, anyhow::Error>(format!("amqp://{}:{}@{}:{}{}", user, password, host, port, vhost))
             })
-            .context("AIVA_RABBITMQ_URL or AIVA_RABBITMQ_USER/AIVA_RABBITMQ_PASSWORD must be set")?;
+            .context("RABBITMQ_URL or RABBITMQ_USER/RABBITMQ_PASSWORD must be set")?;
         
         let connection = Connection::connect(&rabbitmq_url, ConnectionProperties::default())
             .await

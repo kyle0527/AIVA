@@ -2,7 +2,8 @@
 
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
-use crate::schemas::generated::{FindingPayload, Vulnerability, Target, FindingEvidence, FindingImpact, FindingRecommendation, Severity, Confidence, FindingStatus, ScanTaskPayload};
+use crate::schemas::generated::{FindingPayload, Vulnerability, Target, FindingEvidence, FindingImpact, FindingRecommendation, Severity, Confidence};
+// FindingStatus and ScanTaskPayload are reserved for future use
 
 // 現在使用標準的 ScanTaskPayload，因為 SAST 是掃描類型的服務
 

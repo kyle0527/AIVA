@@ -1,0 +1,19 @@
+node_modules/
+dist/
+*.log
+.env
+.env.local
+.DS_Store
+Thumbs.db
+
+# 測試覆蓋報告
+coverage/
+.nyc_output/
+
+# 編輯器配置
+.vscode/
+.idea/
+
+# Playwright 測試結果
+test-results/
+playwright-report/

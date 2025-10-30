@@ -1,7 +1,7 @@
 // 靜態分析器
 
 use crate::models::SastIssue;
-use crate::parsers::CodeParser;
+// use crate::parsers::CodeParser; // Reserved for future AST-based analysis
 use crate::rules::RuleEngine;
 use anyhow::Result;
 use std::fs;

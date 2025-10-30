@@ -1,0 +1,243 @@
+version: '3.8'
+
+name: aiva-complete-platform
+
+services:
+  # =====================================
+  # 基礎設施服務
+  # =====================================
+  
+  postgres:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: aiva
+      POSTGRES_PASSWORD: aiva_secure_password
+      POSTGRES_DB: aiva
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./initdb:/docker-entrypoint-initdb.d
+    networks:
+      - aiva-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U aiva -d aiva"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    command: redis-server --appendonly yes --requirepass aiva_redis_password
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - aiva-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "--raw", "incr", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+
+  rabbitmq:
+    image: rabbitmq:3.13-management-alpine
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: aiva
+      RABBITMQ_DEFAULT_PASS: aiva_mq_password
+      RABBITMQ_DEFAULT_VHOST: aiva
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    networks:
+      - aiva-network
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "check_port_connectivity"]
+      interval: 30s
+      timeout: 30s
+      retries: 3
+
+  neo4j:
+    image: neo4j:5-community
+    environment:
+      NEO4J_AUTH: neo4j/password
+      NEO4J_PLUGINS: '["apoc"]'
+      NEO4J_dbms_security_procedures_unrestricted: apoc.*
+    ports:
+      - "7474:7474"
+      - "7687:7687"
+    volumes:
+      - neo4j_data:/data
+      - neo4j_logs:/logs
+    networks:
+      - aiva-network
+    healthcheck:
+      test: ["CMD", "cypher-shell", "-u", "neo4j", "-p", "password", "RETURN 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  # =====================================
+  # AIVA 完整平台服務
+  # =====================================
+
+  aiva-complete:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.complete
+    ports:
+      - "8000:8000"   # 主 API
+      - "8001:8001"   # 管理 API
+      - "8002:8002"   # WebSocket
+      - "8080:8080"   # 儀表板
+    environment:
+      # 資料庫配置
+      DATABASE_URL: postgresql://aiva:aiva_secure_password@postgres:5432/aiva
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: 5432
+      POSTGRES_DB: aiva
+      POSTGRES_USER: aiva
+      POSTGRES_PASSWORD: aiva_secure_password
+      
+      # RabbitMQ 配置
+      RABBITMQ_URL: amqp://aiva:aiva_mq_password@rabbitmq:5672/aiva
+      RABBITMQ_HOST: rabbitmq
+      RABBITMQ_PORT: 5672
+      RABBITMQ_USER: aiva
+      RABBITMQ_PASSWORD: aiva_mq_password
+      RABBITMQ_VHOST: aiva
+      
+      # Redis 配置
+      REDIS_URL: redis://:aiva_redis_password@redis:6379/0
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      
+      # Neo4j 配置
+      NEO4J_URL: bolt://neo4j:password@neo4j:7687
+      NEO4J_HOST: neo4j
+      NEO4J_PORT: 7687
+      NEO4J_USER: neo4j
+      NEO4J_PASSWORD: password
+      
+      # 應用配置
+      LOG_LEVEL: INFO
+      DEBUG: false
+      AUTO_MIGRATE: 1
+      ENVIRONMENT: docker
+      
+      # 消息隊列配置
+      MQ_EXCHANGE: aiva.topic
+      MQ_DLX: aiva.dlx
+      
+      # API 配置
+      API_KEY: docker_api_key_secure_2024
+      INTEGRATION_TOKEN: docker_integration_token_secure
+      
+      # CORS 配置
+      CORS_ORIGINS: "*"
+      
+      # 監控配置
+      ENABLE_PROM: 1
+      RATE_LIMIT_RPS: 50
+      RATE_LIMIT_BURST: 100
+      
+    volumes:
+      - aiva_logs:/app/logs
+      - aiva_data:/app/data
+      - aiva_reports:/app/reports
+      - aiva_models:/app/models
+      - aiva_backup:/app/backup
+    networks:
+      - aiva-network
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy  
+      rabbitmq:
+        condition: service_healthy
+      neo4j:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 120s
+    restart: unless-stopped
+
+  # =====================================
+  # 監控服務 (可選)
+  # =====================================
+
+  prometheus:
+    image: prom/prometheus:latest
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus_data:/prometheus
+    networks:
+      - aiva-network
+    profiles:
+      - monitoring
+
+  grafana:
+    image: grafana/grafana:latest
+    ports:
+      - "3000:3000"
+    environment:
+      GF_SECURITY_ADMIN_PASSWORD: aiva_grafana_admin
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./monitoring/grafana:/etc/grafana/provisioning
+    networks:
+      - aiva-network
+    profiles:
+      - monitoring
+    depends_on:
+      - prometheus
+
+# =====================================
+# 網路配置
+# =====================================
+
+networks:
+  aiva-network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16
+
+# =====================================
+# 資料卷配置
+# =====================================
+
+volumes:
+  postgres_data:
+    driver: local
+  redis_data:
+    driver: local
+  rabbitmq_data:
+    driver: local
+  neo4j_data:
+    driver: local
+  neo4j_logs:
+    driver: local
+  aiva_logs:
+    driver: local
+  aiva_data:
+    driver: local
+  aiva_reports:
+    driver: local
+  aiva_models:
+    driver: local
+  aiva_backup:
+    driver: local
+  prometheus_data:
+    driver: local
+  grafana_data:
+    driver: local

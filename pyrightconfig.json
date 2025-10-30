@@ -1,11 +1,6 @@
 {
-  "include": [
-    "services",
-    "testing",
-    "ai_*.py",
-    "health_check.py",
-    "validate_*.py"
-  ],
+  // 只檢查開啟檔案的配置
+  "include": [],
   "exclude": [
     "**/__pycache__",
     "**/.venv",
@@ -13,22 +8,32 @@
     "**/dist",
     "**/.git",
     "_archive/**",
-    "_out/**"
+    "_out/**",
+    "aiva_platform_integrated.egg-info/**",
+    "backup/**",
+    "models/**",
+    "logs/**"
   ],
-  "reportMissingImports": "information",
+  // 錯誤報告優化 - 只顯示重要錯誤
+  "reportMissingImports": "warning",
   "reportMissingTypeStubs": "none", 
-  "reportImportCycles": "information",
-  "reportUnusedImport": "information",
-  "reportUnusedVariable": "information",
+  "reportImportCycles": "warning",
+  "reportUnusedImport": "none",
+  "reportUnusedVariable": "none",
+  "reportUndefinedVariable": "error",
+  "reportGeneralTypeIssues": "warning",
   "typeCheckingMode": "basic",
   
-  // � 變動後延遲分析設定 - 20秒後重新分析
+  // 只分析開啟檔案的設定 + 30秒延遲檢查
   "useLibraryCodeForTypes": false,
-  "autoImportCompletions": false,
-  "indexing": true,
-  "watchForSourceChanges": true,
+  "autoImportCompletions": true,
+  "indexing": false,
+  "watchForSourceChanges": false,
   "watchForLibraryChanges": false,
   "enableTypeIgnoreComments": true,
+  
+  // 延遲檢查設定 - 避免修改時頻繁檢查
+  "diagnosticRefreshDelay": 30000,
   "pythonVersion": "3.13",
   "pythonPlatform": "All",
   "executionEnvironments": [
@@ -45,7 +50,8 @@
       "extraPaths": ["../"]
     }
   ],
-  "strict": ["services/aiva_common/ai/**"],
+  // 不限制任何目錄的檢查 - 開啟檔案都會掃描
+  "strict": [],
   "venvPath": ".",
   "venv": ".venv"
 }

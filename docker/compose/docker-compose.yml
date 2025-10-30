@@ -4,18 +4,20 @@ services:
     image: rabbitmq:3.13-management
     ports: ["5672:5672", "15672:15672"]
     environment:
-      RABBITMQ_DEFAULT_USER: guest
-      RABBITMQ_DEFAULT_PASS: guest
+      RABBITMQ_DEFAULT_USER: aiva
+      RABBITMQ_DEFAULT_PASS: aiva_mq_password
+      RABBITMQ_DEFAULT_VHOST: aiva
 
   redis:
     image: redis:7
+    command: redis-server --appendonly yes --requirepass aiva_redis_password
     ports: ["6379:6379"]
 
   postgres:
     image: postgres:16
     environment:
       POSTGRES_USER: aiva
-      POSTGRES_PASSWORD: aiva
+      POSTGRES_PASSWORD: aiva_secure_password
       POSTGRES_DB: aiva
     ports: ["5432:5432"]
     volumes:

@@ -7,7 +7,7 @@ use lapin::{
     options::*, types::FieldTable, Connection, ConnectionProperties,
     message::Delivery,
 };
-use serde::{Deserialize, Serialize};
+use serde::Deserialize;
 use std::sync::Arc;
 use std::env;
 use std::time::Duration;
@@ -19,7 +19,7 @@ use aiva_common_rust::metrics::{
     initialize_metrics, cleanup_metrics,
     record_task_received, record_task_completed, record_task_failed,
     record_vulnerability_found, SeverityLevel,
-    update_system_metrics,
+    // update_system_metrics, // Reserved for future system monitoring
 };
 
 mod scanner;
@@ -152,18 +152,16 @@ fn create_finding_payload(
 // get_rabbitmq_url 獲取 RabbitMQ 連接 URL，遵循 12-factor app 原則
 fn get_rabbitmq_url() -> Option<String> {
     // 優先使用完整 URL
-    if let Ok(url) = env::var("AIVA_RABBITMQ_URL") {
+    if let Ok(url) = env::var("RABBITMQ_URL") {
         return Some(url);
     }
-    
+
     // 組合式配置
-    let host = env::var("AIVA_RABBITMQ_HOST").unwrap_or_else(|_| "localhost".to_string());
-    let port = env::var("AIVA_RABBITMQ_PORT").unwrap_or_else(|_| "5672".to_string());
-    let user = env::var("AIVA_RABBITMQ_USER").ok()?;
-    let password = env::var("AIVA_RABBITMQ_PASSWORD").ok()?;
-    let vhost = env::var("AIVA_RABBITMQ_VHOST").unwrap_or_else(|_| "/".to_string());
-    
-    Some(format!("amqp://{}:{}@{}:{}{}", user, password, host, port, vhost))
+    let host = env::var("RABBITMQ_HOST").unwrap_or_else(|_| "localhost".to_string());
+    let port = env::var("RABBITMQ_PORT").unwrap_or_else(|_| "5672".to_string());
+    let user = env::var("RABBITMQ_USER").ok()?;
+    let password = env::var("RABBITMQ_PASSWORD").ok()?;
+    let vhost = env::var("RABBITMQ_VHOST").unwrap_or_else(|_| "/".to_string());    Some(format!("amqp://{}:{}@{}:{}{}", user, password, host, port, vhost))
 }
 
 #[tokio::main]
@@ -203,7 +201,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
     // 連接 RabbitMQ - 遵循 12-factor app 原則
     info!("📡 連接 RabbitMQ...");
     let rabbitmq_url = get_rabbitmq_url()
-        .ok_or("AIVA_RABBITMQ_URL or AIVA_RABBITMQ_USER/AIVA_RABBITMQ_PASSWORD must be set")?;
+        .ok_or("RABBITMQ_URL or RABBITMQ_USER/RABBITMQ_PASSWORD must be set")?;
     
     let conn = Connection::connect(
         &rabbitmq_url,
@@ -355,7 +353,7 @@ async fn process_task(
             "CRITICAL" | "HIGH"
         );
         
-        let (verified, verification_message, verification_metadata) = if should_verify {
+        let (verified, verification_message, _verification_metadata) = if should_verify {
             info!("  🔍 驗證密鑰: {} ...", finding.rule_name);
             let result = verifier.verify(&finding.rule_name, &finding.matched_text).await;
             

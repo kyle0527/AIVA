@@ -4,16 +4,13 @@
 // 
 // 完整的 Rust Schema 實現，包含序列化/反序列化支持
 
+#![allow(dead_code)] // Generated schemas for future cross-service communication
+#![allow(unused_imports)] // Standard imports for generated code
+
 use serde::{Serialize, Deserialize};
 use std::collections::HashMap;
 use chrono::{DateTime, Utc};
-
-// 可選依賴 - 根據實際使用情況啟用
-#[cfg(feature = "uuid")]
-use uuid::Uuid;
-
-#[cfg(feature = "url")]
-use url::Url;
+// Note: uuid::Uuid and other imports will be used by generated schemas
 
 /// 漏洞嚴重程度枚舉
 #[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
@@ -96,6 +93,7 @@ impl std::str::FromStr for Confidence {
 /// 發現狀態枚舉
 #[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
 #[serde(rename_all = "SCREAMING_SNAKE_CASE")]
+#[allow(dead_code)] // Generated schema for future use
 pub enum FindingStatus {
     /// 新發現
     NEW,
@@ -104,7 +102,7 @@ pub enum FindingStatus {
     /// 已解決
     RESOLVED,
     /// 誤報
-    FALSE_POSITIVE,
+    FalsePositive,
 }
 
 impl std::fmt::Display for FindingStatus {
@@ -113,7 +111,7 @@ impl std::fmt::Display for FindingStatus {
             FindingStatus::NEW => write!(f, "new"),
             FindingStatus::CONFIRMED => write!(f, "confirmed"),
             FindingStatus::RESOLVED => write!(f, "resolved"),
-            FindingStatus::FALSE_POSITIVE => write!(f, "false_positive"),
+            FindingStatus::FalsePositive => write!(f, "false_positive"),
         }
     }
 }
@@ -126,7 +124,7 @@ impl std::str::FromStr for FindingStatus {
             "NEW" => Ok(FindingStatus::NEW),
             "CONFIRMED" => Ok(FindingStatus::CONFIRMED),
             "RESOLVED" => Ok(FindingStatus::RESOLVED),
-            "FALSE_POSITIVE" => Ok(FindingStatus::FALSE_POSITIVE),
+            "FALSE_POSITIVE" => Ok(FindingStatus::FalsePositive),
             _ => Err(format!("Invalid FindingStatus: {}", s)),
         }
     }
@@ -135,6 +133,7 @@ impl std::str::FromStr for FindingStatus {
 /// 統一訊息標頭 - 所有跨服務通訊的基礎
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "snake_case")]
+#[allow(dead_code)] // Generated schema for cross-service communication
 pub struct MessageHeader {
     /// 唯一訊息識別碼
     pub message_id: String,

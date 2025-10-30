@@ -1,12 +1,14 @@
 // 語法解析器模組
 
 use anyhow::{Context, Result};
-use tree_sitter::{Language, Parser, Tree};
+use tree_sitter::{Parser, Tree};
 
+#[allow(dead_code)] // Reserved for future AST-based analysis
 pub struct CodeParser {
     parser: Parser,
 }
 
+#[allow(dead_code)] // Methods reserved for future AST-based analysis
 impl CodeParser {
     pub fn new(language: &str) -> Result<Self> {
         let mut parser = Parser::new();

@@ -1,0 +1,94 @@
+{
+  "timestamp": "2025-10-30T23:01:26.241363",
+  "analysis_summary": {
+    "scripts_analyzed": 3,
+    "executable_scripts": 3,
+    "functionality_understood": 3,
+    "cli_commands_generated": 3
+  },
+  "cli_validation": {
+    "total_commands": 3,
+    "help_works": 1,
+    "syntax_valid": 3,
+    "success_rate": 33.33333333333333
+  },
+  "detailed_analyses": [
+    {
+      "script": "ai_security_test.py",
+      "purpose": "AIVA AI 實戰安全測試腳本 對 Juice Shop 靶場進行真實的 AI 驅動安全測試",
+      "functions": [
+        "generate_security_report"
+      ],
+      "cli_command": "python ai_security_test.py --comprehensive",
+      "executable": true,
+      "parameters": [
+        "--target",
+        "--config"
+      ],
+      "dependencies": [
+        "services.core.aiva_core.ai_commander",
+        "asyncio",
+        "requests"
+      ]
+    },
+    {
+      "script": "ai_autonomous_testing_loop.py",
+      "purpose": "AIVA AI 自主測試與優化閉環系統 實現 AI 完全自主的測試、學習、優化循環  功能特點： 1. 自主發現和測試靶場 2. 動態調整測試策略 3. 實時學習和優化 4. 自動化改進建議 5. 持續性能監控",
+      "functions": [
+        "get_successful_patterns",
+        "analyze_sqli_response",
+        "identify_successful_patterns"
+      ],
+      "cli_command": "python ai_autonomous_testing_loop.py --comprehensive",
+      "executable": true,
+      "parameters": [
+        "--target"
+      ],
+      "dependencies": [
+        "asyncio"
+      ]
+    },
+    {
+      "script": "ai_system_explorer_v3.py",
+      "purpose": "AIVA AI 系統探索器 v3.0 - 混合架構版本 基於 aiva_common 跨語言架構的專業分析系統  主要特點: 1. 分層分析策略 (快速掃描 + 深度分析 + 跨語言整合) 2. 利用 AIVA 現有的 Schema SOT 系統 3. 整合專業分析工具 (Go AST, Rust ",
+      "functions": [],
+      "cli_command": "python ai_system_explorer_v3.py --detailed",
+      "executable": true,
+      "parameters": [
+        "--workspace",
+        "--target",
+        "--detailed",
+        "--config",
+        "--help"
+      ],
+      "dependencies": [
+        "aiva_common.enums",
+        "asyncio",
+        "aiva_common.schemas.findings"
+      ]
+    }
+  ],
+  "command_test_results": [
+    {
+      "script": "ai_security_test.py",
+      "command": "python ai_security_test.py --comprehensive",
+      "help_works": false,
+      "syntax_valid": true,
+      "purpose": "AIVA AI 實戰安全測試腳本 對 Juice Shop 靶場進行真實的 AI 驅動安全測試"
+    },
+    {
+      "script": "ai_autonomous_testing_loop.py",
+      "command": "python ai_autonomous_testing_loop.py --comprehensive",
+      "help_works": false,
+      "syntax_valid": true,
+      "purpose": "AIVA AI 自主測試與優化閉環系統 實現 AI 完全自主的測試、學習、優化循環  功能特點： 1"
+    },
+    {
+      "script": "ai_system_explorer_v3.py",
+      "command": "python ai_system_explorer_v3.py --detailed",
+      "help_works": true,
+      "syntax_valid": true,
+      "purpose": "AIVA AI 系統探索器 v3.0 - 混合架構版本 基於 aiva_common 跨語言架構的專"
+    }
+  ]
+}
