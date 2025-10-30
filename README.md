@@ -29,6 +29,7 @@
 - [🎯 核心特性](#-核心特性)
 - [📚 文檔索引](#-文檔索引)
 - [🛠️ 開發工具](#️-開發工具)
+- [⚠️ 跨語言警告管理原則](#️-跨語言警告管理原則)
 - [📈 路線圖](#-路線圖)
 - [🤝 貢獻](#-貢獻)
 - [📄 授權](#-授權)
@@ -100,6 +101,17 @@ python schema_version_checker.py
 ---
 
 ## 🔧 修復原則
+
+### 📋 開發與修復指南
+
+| 修復類型 | 指南文件 | 適用場景 |
+|---------|---------|---------|
+| 🔗 **向前引用問題** | [向前引用發現與修復指南](./FORWARD_REFERENCE_REPAIR_GUIDE.md) | Pydantic 模型前向引用錯誤 |
+| ⚡ **批量處理安全** | [批量處理安全原則](./services/aiva_common/README.md#️-批量處理修復原則) | 大量錯誤修復時的安全協議 |
+| 📝 **修復完成報告** | [向前引用修復報告](./FORWARD_REFERENCE_REPAIR_COMPLETION_REPORT.md) | 修復成果與最佳實踐記錄 |
+| 📖 **AIVA Common 標準** | [開發規範](./services/aiva_common/README.md#🔧-開發指南) | 所有 Python 代碼必須遵循的標準 |
+
+### 🛡️ 基本修復原則
 
 **保留未使用函數原則**: 在程式碼修復過程中，若發現有定義但尚未使用的函數或方法，只要不影響程式正常運作，建議予以保留。這些函數可能是：
 - 預留的 API 端點或介面
@@ -285,25 +297,49 @@ curl http://localhost:8001/health
 
 ## 🛠️ 開發工具
 
+### 📁 新的檔案組織結構 (2025-10-30 整理完成)
+
+```
+├── scripts/                    # 所有執行腳本
+│   ├── ai_analysis/           # AI 分析相關腳本
+│   ├── testing/               # 測試相關腳本  
+│   ├── analysis/              # 代碼分析工具
+│   ├── utilities/             # 系統工具腳本
+│   └── misc/                  # 其他腳本
+├── reports/                   # 所有報告文件 (已加時間戳)
+│   ├── ai_analysis/           # AI 分析報告
+│   ├── architecture/          # 架構相關報告
+│   ├── schema/                # Schema 相關報告
+│   ├── testing/               # 測試報告
+│   ├── documentation/         # 文檔相關報告
+│   ├── project_status/        # 專案狀態報告
+│   └── data/                  # JSON 數據報告
+└── logs/                      # 日誌檔案
+```
+
+### 🚀 常用命令 (更新路徑)
+
 ```bash
 # 啟動系統
-python aiva_launcher.py --mode core_only
+python scripts/utilities/aiva_launcher.py --mode core_only
 
 # 服務健康檢查
 curl http://localhost:8001/health
+
+# 跨語言警告分析 (NEW!)
+python scripts/analysis/analyze_cross_language_warnings.py
+
+# 系統驗證測試
+python scripts/testing/comprehensive_system_validation.py
+
+# Schema 測試
+python scripts/testing/comprehensive_schema_test.py
 
 # AI 對話測試
 python -c "
 from services.core.aiva_core.dialog.assistant import AIVADialogAssistant
 import asyncio
 asyncio.run(AIVADialogAssistant().process_user_input('系統狀況如何？'))
-"
-
-# 能力發現測試
-python -c "
-import asyncio
-from services.integration.capability.registry import global_registry
-asyncio.run(global_registry.discover_capabilities())
 "
 
 # Schema 合規性驗證
@@ -341,15 +377,39 @@ python full_validation_test.py
 
 ---
 
+## 🔧 開發規範與最佳實踐
+
+> **⚠️ 重要**: 所有 AIVA 模組開發必須嚴格遵循 [aiva_common 修護規範](services/aiva_common/README.md#🔧-開發指南)，確保定義跟枚舉引用及修復都在同一套標準之下。
+
+### 📐 **統一開發標準**
+
+- ✅ **優先使用國際標準**: CVSS v3.1、SARIF v2.1.0、MITRE ATT&CK、CVE/CWE/CAPEC
+- ✅ **統一數據來源**: 所有枚舉和 Schema 從 `aiva_common` 導入
+- ✅ **禁止重複定義**: 不允許在各模組中重複定義已存在的標準結構
+- ✅ **跨語言一致**: Python/Go/Rust/TypeScript 使用相同的數據結構
+
+### 🎯 **各模組規範連結**
+
+| 模組 | 開發規範文檔 | 合規狀態 |
+|------|-------------|---------|
+| [Integration](services/integration/README.md#開發規範與最佳實踐) | 企業級整合標準 | 🟢 完全合規 |
+| [Core](services/core/README.md#開發規範與最佳實踐) | AI 決策引擎標準 | 🟢 已更新 |
+| [Scan](services/scan/README.md#開發規範與最佳實踐) | 多語言掃描標準 | 🟢 已更新 |
+| [Features](services/features/README.md#開發規範與最佳實踐) | 安全功能標準 | 🟢 已更新 |
+| [aiva_common](services/aiva_common/README.md#🔧-開發指南) | **主要規範來源** | 🟢 標準制定 |
+
+---
+
 ## 🤝 貢獻
 
-歡迎貢獻！請遵循 [開發規範](docs/README_DEVELOPMENT.md#編程規範)
+歡迎貢獻！請遵循 [aiva_common 開發規範](services/aiva_common/README.md#🔧-開發指南)
 
-1. Fork 專案
+1. Fork 專案並閱讀開發規範
 2. 創建分支 (`git checkout -b feature/amazing`)
-3. 提交變更 (`git commit -m 'Add feature'`)
-4. 推送分支 (`git push origin feature/amazing`)
-5. 創建 PR
+3. 確保代碼符合統一標準（使用 aiva_common 枚舉和 Schema）
+4. 提交變更 (`git commit -m 'Add feature'`)
+5. 推送分支 (`git push origin feature/amazing`)
+6. 創建 PR
 
 ---
 
@@ -401,10 +461,71 @@ asyncio.run(AIVADialogAssistant().process_user_input('現在系統會什麼？')
 
 ---
 
+## ⚠️ 跨語言警告管理原則
+
+### 🎯 警告評估標準 (AIVA 開發標準)
+
+基於業界最佳實踐 (Martin Fowler, Microsoft 國際化標準)，AIVA 採用以下原則：
+
+#### **核心原則**
+1. **功能完整性優先** - 重點關注 `critical` 和 `error` 級別問題
+2. **警告分類管理** - 詳細記錄分類，避免「只看數字不知道怎改」
+3. **實用性評估** - 區分功能問題 vs 正常跨語言差異  
+4. **持續改進追蹤** - 建立警告監控機制
+
+#### **評估標準**
+- ✅ **零嚴重問題** (critical/error) = 系統功能完整
+- ⚠️ **警告** = 正常跨語言語法差異，不影響功能
+- 🎯 **改進目標** = 警告數量 < 500 個
+
+### 📊 當前狀況 (2025-10-30)
+
+```
+總警告: 763 個 (功能正常 ✅)
+├── 類型映射缺失: 337 個 (Optional[T], Dict[K,V] 等映射)
+├── 可選字段標記: 352 個 (Python Optional vs Go *T vs Rust Option)  
+└── 其他不匹配: 74 個 (命名約定、格式化等)
+```
+
+### 🔧 工具使用
+
+```bash
+# 分析跨語言警告
+python analyze_cross_language_warnings.py
+
+# 查看詳細分類  
+cat detailed_warning_analysis.json | jq '.detailed_issues'
+
+# 查看改進計劃
+cat CROSS_LANGUAGE_WARNING_ANALYSIS.md
+```
+
+> **重要原則**: 遵循「實際問題」導向，不為數字好看而修改評估標準
+
+---
+
+## 📁 檔案組織管理
+
+### 🗂️ 自動化檔案整理 (2025-10-30)
+
+為提升專案維護效率，AIVA 已實施檔案自動化分類管理：
+
+- **📋 報告管理**: 所有報告已分類到 `reports/` 目錄，並自動添加時間戳
+- **🔧 腳本整理**: 所有腳本按功能分類到 `scripts/` 子目錄
+- **📅 時間追蹤**: 所有文檔包含 `Created` 和 `Last Modified` 時間
+- **🔄 定期維護**: 建議每月運行 `python scripts/misc/organize_aiva_files.py`
+
+### 📊 整理統計
+- **處理檔案**: 148 個
+- **成功整理**: 130 個
+- **添加時間戳**: 73 個報告
+
+---
+
 **維護團隊**: AIVA Development Team  
-**最後更新**: 2025-10-26  
-**版本**: v3.1 (Schema 標準化完成版)
-**技術狀態**: 生產就緒 + 跨語言統一架構
+**最後更新**: 2025-10-30  
+**版本**: v5.0 (檔案組織自動化 + 跨語言警告管理完善版)
+**技術狀態**: 生產就緒 + 完整檔案管理系統
 
 <p align="center">
   <b>🚀 AI 驱动的下一代安全测试平台 | AIVA - The Future of Security Testing</b><br>

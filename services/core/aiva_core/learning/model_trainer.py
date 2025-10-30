@@ -4,7 +4,7 @@ Model Trainer - 強化學習模型訓練器
 負責模型的訓練、評估、微調和部署，支持監督學習和強化學習
 """
 
-from __future__ import annotations
+
 
 from datetime import UTC, datetime
 import logging
@@ -19,7 +19,7 @@ from services.aiva_common.schemas import (
     ScenarioTestResult,
     StandardScenario,
 )
-import numpy as np
+
 
 logger = logging.getLogger(__name__)
 

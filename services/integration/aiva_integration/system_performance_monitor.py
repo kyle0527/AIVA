@@ -87,7 +87,7 @@ class SystemPerformanceMonitor:
         
         # 監控狀態
         self.is_monitoring = False
-        self.monitoring_task: Optional[asyncio.Task] = None
+        self.monitoring_task: Optional[asyncio.Task[Any]] = None
         
         # 性能統計
         self.stats = {
@@ -220,7 +220,7 @@ class SystemPerformanceMonitor:
         """收集 Core 模組指標"""
         try:
             # 嘗試導入 AI 引擎並收集指標
-            from services.core.aiva_core.ai_engine.memory_manager import AdvancedMemoryManager
+
             
             # 模擬 AI 核心性能指標
             self._record_metric('core', 'ai_decision_rate', 1341.1, 'tasks/s', timestamp)
@@ -236,7 +236,7 @@ class SystemPerformanceMonitor:
         """收集 Scan 模組指標"""
         try:
             # 嘗試收集掃描器性能指標
-            from services.scan.aiva_scan.optimized_security_scanner import OptimizedSecurityScanner
+
             
             # 模擬掃描性能指標
             self._record_metric('scan', 'scan_completion_time', 0.95, 's', timestamp)

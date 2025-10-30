@@ -44,7 +44,7 @@ func (s *CSPMScanner) Scan(ctx context.Context, task *schemas.ScanTaskPayload) (
 
 	s.logger.Info("Starting CSMP scan",
 		zap.String("provider", provider),
-		zap.String("task_id", task.TaskId))
+		zap.String("task_id", task.TaskID))
 
 	// 根據提供商選擇掃描方法
 	var misconfigs []CSPMMisconfig
@@ -70,7 +70,7 @@ func (s *CSPMScanner) Scan(ctx context.Context, task *schemas.ScanTaskPayload) (
 	// 轉換為 FindingPayload
 	scanID := fmt.Sprintf("scan_cspm_%d", time.Now().UnixNano())
 	for _, misconfig := range misconfigs {
-		finding := s.createFinding(task.TaskId, scanID, provider, misconfig)
+		finding := s.createFinding(task.TaskID, scanID, provider, misconfig)
 		findings = append(findings, &finding)
 	}
 
@@ -94,8 +94,8 @@ func (s *CSPMScanner) scanGCP(ctx context.Context, task *schemas.ScanTaskPayload
 
 // scanKubernetes 掃描 Kubernetes 配置
 func (s *CSPMScanner) scanKubernetes(ctx context.Context, task *schemas.ScanTaskPayload) ([]CSPMMisconfig, error) {
-	// 從 Target.Url 中提取配置路徑
-	configPath := task.Target.Url
+	// 從 Target.URL 中提取配置路徑
+	configPath := task.Target.URL.(string)
 	if configPath == "" {
 		return nil, fmt.Errorf("kubernetes config path is required")
 	}
@@ -113,8 +113,8 @@ func (s *CSPMScanner) scanKubernetes(ctx context.Context, task *schemas.ScanTask
 
 // scanGeneric 掃描通用配置文件
 func (s *CSPMScanner) scanGeneric(ctx context.Context, task *schemas.ScanTaskPayload) ([]CSPMMisconfig, error) {
-	// 從 Target.Url 中提取配置路徑
-	configPath := task.Target.Url
+	// 從 Target.URL 中提取配置路徑
+	configPath := task.Target.URL.(string)
 	if configPath == "" {
 		configPath = "."
 	}
@@ -208,19 +208,19 @@ func (s *CSPMScanner) createFinding(
 	businessImpact := fmt.Sprintf("%s 級別的雲端配置錯誤可能導致安全風險", severity)
 
 	return schemas.FindingPayload{
-		FindingId: findingID,
-		TaskId:    taskID,
-		ScanId:    scanID,
+		FindingID: findingID,
+		TaskID:    taskID,
+		ScanID:    scanID,
 		Status:    "confirmed",
 		Vulnerability: schemas.Vulnerability{
 			Name:        misconfig.Title,
-			Cwe:         stringPtr(misconfig.ID),
+			CWE:         stringPtr(misconfig.ID),
 			Severity:    severity,
 			Confidence:  "firm",
 			Description: stringPtr(misconfig.Description),
 		},
 		Target: schemas.Target{
-			Url: misconfig.FilePath,
+			URL: misconfig.FilePath,
 		},
 		Evidence: &schemas.FindingEvidence{
 			Proof: stringPtr(fmt.Sprintf("Rule ID: %s, Provider: %s", misconfig.ID, provider)),

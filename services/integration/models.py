@@ -12,14 +12,14 @@ AIVA Integration Models - 整合服務模組
 - WebhookPayload
 """
 
-from __future__ import annotations
+
 
 from datetime import UTC, datetime
-from typing import Any
+from typing import Any, Dict, List, Optional
 
 from pydantic import BaseModel, Field
 
-from ..aiva_common.enums import IntelSource, IOCType, Severity, ThreatLevel
+from ..aiva_common.enums import Severity
 from ..aiva_common.schemas import (
     NotificationPayload,
     SIEMEventPayload,
@@ -43,9 +43,9 @@ class EnhancedIOCRecord(BaseModel):
     value: str = Field(description="IOC值")
 
     # 威脅信息
-    threat_type: str | None = Field(default=None, description="威脅類型")
-    malware_family: str | None = Field(default=None, description="惡意軟體家族")
-    campaign: str | None = Field(default=None, description="攻擊活動")
+    threat_type: Optional[str] = Field(default=None, description="威脅類型")
+    malware_family: Optional[str] = Field(default=None, description="惡意軟體家族")
+    campaign: Optional[str] = Field(default=None, description="攻擊活動")
 
     # 評級信息
     severity: Severity = Field(description="嚴重程度")
@@ -53,15 +53,15 @@ class EnhancedIOCRecord(BaseModel):
     reputation_score: int = Field(ge=0, le=100, description="聲譽分數")
 
     # 時間信息
-    first_seen: datetime | None = Field(default=None, description="首次發現時間")
-    last_seen: datetime | None = Field(default=None, description="最後發現時間")
-    expires_at: datetime | None = Field(default=None, description="過期時間")
+    first_seen: Optional[datetime] = Field(default=None, description="首次發現時間")
+    last_seen: Optional[datetime] = Field(default=None, description="最後發現時間")
+    expires_at: Optional[datetime] = Field(default=None, description="過期時間")
 
     # 標籤和分類
-    tags: list[str] = Field(default_factory=list, description="標籤")
-    mitre_techniques: list[str] = Field(default_factory=list, description="MITRE ATT&CK技術")
+    tags: List[str] = Field(default_factory=list, description="標籤")
+    mitre_techniques: List[str] = Field(default_factory=list, description="MITRE ATT&CK技術")
 
-    metadata: dict[str, Any] = Field(default_factory=dict, description="元數據")
+    metadata: Dict[str, Any] = Field(default_factory=dict, description="元數據")
 
 
 class SIEMEvent(BaseModel):
@@ -83,32 +83,32 @@ class SIEMEvent(BaseModel):
     # 事件屬性
     severity: Severity = Field(description="嚴重程度")
     category: str = Field(description="事件分類")
-    subcategory: str | None = Field(default=None, description="事件子分類")
+    subcategory: Optional[str] = Field(default=None, description="事件子分類")
 
     # 來源信息
-    source_ip: str | None = Field(default=None, description="來源IP")
-    source_port: int | None = Field(default=None, description="來源端口")
-    destination_ip: str | None = Field(default=None, description="目標IP")
-    destination_port: int | None = Field(default=None, description="目標端口")
+    source_ip: Optional[str] = Field(default=None, description="來源IP")
+    source_port: Optional[int] = Field(default=None, description="來源端口")
+    destination_ip: Optional[str] = Field(default=None, description="目標IP")
+    destination_port: Optional[int] = Field(default=None, description="目標端口")
 
     # 用戶和資產
-    username: str | None = Field(default=None, description="用戶名")
-    asset_id: str | None = Field(default=None, description="資產ID")
-    hostname: str | None = Field(default=None, description="主機名")
+    username: Optional[str] = Field(default=None, description="用戶名")
+    asset_id: Optional[str] = Field(default=None, description="資產ID")
+    hostname: Optional[str] = Field(default=None, description="主機名")
 
     # 事件詳情
     description: str = Field(description="事件描述")
-    raw_log: str | None = Field(default=None, description="原始日誌")
+    raw_log: Optional[str] = Field(default=None, description="原始日誌")
 
     # 關聯分析
-    correlation_rules: list[str] = Field(default_factory=list, description="觸發的關聯規則")
-    related_events: list[str] = Field(default_factory=list, description="相關事件ID")
+    correlation_rules: List[str] = Field(default_factory=list, description="觸發的關聯規則")
+    related_events: List[str] = Field(default_factory=list, description="相關事件ID")
 
     # 處理狀態
     status: str = Field(default="new", description="處理狀態")  # "new", "investigating", "resolved", "false_positive"
-    assigned_to: str | None = Field(default=None, description="分配給")
+    assigned_to: Optional[str] = Field(default=None, description="分配給")
 
-    metadata: dict[str, Any] = Field(default_factory=dict, description="元數據")
+    metadata: Dict[str, Any] = Field(default_factory=dict, description="元數據")
 
 
 __all__ = [

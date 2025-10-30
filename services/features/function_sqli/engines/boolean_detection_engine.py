@@ -2,7 +2,7 @@
 布林檢測引擎 - 基於布林邏輯的SQL注入檢測
 """
 
-from __future__ import annotations
+
 
 import asyncio
 from typing import cast

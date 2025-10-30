@@ -2,7 +2,7 @@
 指紋管理器 - 負責收集、合併和管理掃描過程中的指紋信息
 """
 
-from __future__ import annotations
+
 
 import httpx
 

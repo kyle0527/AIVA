@@ -3,7 +3,7 @@ Knowledge Base - RAG 知識庫
 提供程式碼索引、檢索和上下文增強功能
 """
 
-from __future__ import annotations
+
 
 import ast
 import logging

@@ -11,12 +11,12 @@ SARIF 是業界標準的靜態分析結果格式，支援：
 參考: https://docs.oasis-open.org/sarif/sarif/v2.1.0/
 """
 
-from __future__ import annotations
+
 
 from datetime import UTC, datetime
-from typing import Any
 
-from pydantic import BaseModel, Field
+
+
 
 from ..aiva_common.enums import Severity
 from ..aiva_common.schemas import (

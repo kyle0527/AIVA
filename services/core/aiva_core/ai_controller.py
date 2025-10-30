@@ -4,7 +4,7 @@ AIVA 統一 AI 控制器 - 整合所有 AI 組件
 支援插件化的智能分析系統
 """
 
-from __future__ import annotations
+
 
 import asyncio
 import logging

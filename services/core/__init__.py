@@ -5,7 +5,7 @@ This module contains core business logic, process orchestration,
 and AI system models.
 """
 
-from __future__ import annotations
+
 
 # 從共通模組導入
 from ..aiva_common.enums import (

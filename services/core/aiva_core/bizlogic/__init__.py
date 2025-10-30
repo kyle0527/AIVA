@@ -11,7 +11,7 @@ BizLogic Module - 業務邏輯漏洞測試模組
 - 投票/評分系統操縱 (Voting Manipulation)
 """
 
-from __future__ import annotations
+
 
 __version__ = "1.0.0"
 

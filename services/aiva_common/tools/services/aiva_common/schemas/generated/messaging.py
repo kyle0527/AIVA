@@ -9,12 +9,12 @@ AIVA跨語言Schema統一定義
 🔄 Schema 版本: 1.0.0
 """
 
-from __future__ import annotations
+
 from typing import Any, Dict, List, Optional
 from datetime import datetime
 from pydantic import BaseModel, Field
 
-from .base_types import *
+
 
 
 class AivaMessage(BaseModel):

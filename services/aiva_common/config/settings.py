@@ -3,11 +3,8 @@
 基於 Pydantic Settings v2 的最佳實踐
 """
 
-from __future__ import annotations
-
-import os
 from functools import lru_cache
-from typing import Any, Dict, List, Optional, Union
+from typing import Optional, List
 
 from pydantic import Field, field_validator, model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
@@ -32,8 +29,7 @@ class DatabaseSettings(BaseAIVASettings):
     
     url: str = Field(
         default="sqlite:///aiva.db",
-        description="資料庫連接 URL",
-        env="DATABASE_URL"
+        description="資料庫連接 URL"
     )
     pool_size: int = Field(
         default=5,
@@ -71,8 +67,7 @@ class RedisSettings(BaseAIVASettings):
     
     url: str = Field(
         default="redis://localhost:6379/0",
-        description="Redis 連接 URL",
-        env="REDIS_URL"
+        description="Redis 連接 URL"
     )
     timeout: float = Field(
         default=5.0,
@@ -95,13 +90,11 @@ class MessageQueueSettings(BaseAIVASettings):
     
     broker_url: str = Field(
         default="amqp://guest:guest@localhost:5672//",
-        description="消息代理 URL",
-        env="MQ_BROKER_URL"
+        description="消息代理 URL"
     )
     result_backend: Optional[str] = Field(
         default=None,
-        description="結果後端 URL",
-        env="MQ_RESULT_BACKEND"
+        description="結果後端 URL"
     )
     task_serializer: str = Field(
         default="json",
@@ -125,8 +118,7 @@ class SecuritySettings(BaseAIVASettings):
     """安全配置"""
     
     secret_key: str = Field(
-        description="應用程式密鑰",
-        env="SECRET_KEY"
+        description="應用程式密鑰"
     )
     algorithm: str = Field(
         default="HS256",
@@ -172,8 +164,7 @@ class LoggingSettings(BaseAIVASettings):
     
     level: str = Field(
         default="INFO",
-        description="日誌級別",
-        env="LOG_LEVEL"
+        description="日誌級別"
     )
     format: str = Field(
         default="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
@@ -181,8 +172,7 @@ class LoggingSettings(BaseAIVASettings):
     )
     file_path: Optional[str] = Field(
         default=None,
-        description="日誌文件路徑",
-        env="LOG_FILE"
+        description="日誌文件路徑"
     )
     max_file_size: int = Field(
         default=10 * 1024 * 1024,  # 10MB
@@ -219,13 +209,11 @@ class AISettings(BaseAIVASettings):
     )
     api_key: Optional[str] = Field(
         default=None,
-        description="AI 服務 API 密鑰",
-        env="AI_API_KEY"
+        description="AI 服務 API 密鑰"
     )
     api_base: Optional[str] = Field(
         default=None,
-        description="AI 服務 API 基礎 URL",
-        env="AI_API_BASE"
+        description="AI 服務 API 基礎 URL"
     )
     temperature: float = Field(
         default=0.7,
@@ -294,20 +282,18 @@ class AIVASettings(BaseAIVASettings):
     )
     debug: bool = Field(
         default=False,
-        description="偵錯模式",
-        env="DEBUG"
+        description="偵錯模式"
     )
     environment: str = Field(
         default="production",
-        description="環境設定",
-        env="ENVIRONMENT"
+        description="環境設定"
     )
     
     # 子配置
     database: DatabaseSettings = Field(default_factory=DatabaseSettings)
     redis: RedisSettings = Field(default_factory=RedisSettings)
     mq: MessageQueueSettings = Field(default_factory=MessageQueueSettings)
-    security: SecuritySettings = Field(default_factory=SecuritySettings)
+    security: SecuritySettings = SecuritySettings(secret_key="change-me-in-production")
     logging: LoggingSettings = Field(default_factory=LoggingSettings)
     ai: AISettings = Field(default_factory=AISettings)
     performance: PerformanceSettings = Field(default_factory=PerformanceSettings)

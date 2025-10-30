@@ -3,7 +3,7 @@ Smart IDOR Detector - 智能 IDOR 檢測器
 整合統一檢測管理器，提供自適應超時、速率限制和早期停止功能
 """
 
-from __future__ import annotations
+
 
 from dataclasses import dataclass, field
 import time

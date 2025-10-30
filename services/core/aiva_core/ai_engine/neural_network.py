@@ -9,13 +9,13 @@ Neural Network - 神經網路基礎架構
 - 注意力機制
 """
 
-from __future__ import annotations
+
 
 import logging
-import time
+
 from typing import TYPE_CHECKING, Any, Dict, List, Optional, Tuple, Union
 
-import numpy as np
+
 
 if TYPE_CHECKING:
     pass

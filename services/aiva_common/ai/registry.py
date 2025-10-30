@@ -12,14 +12,14 @@ AIVA AI 組件註冊表 - 可插拔 AI 架構的核心管理器
 - 線程安全的組件管理
 """
 
-from __future__ import annotations
+
 
 import asyncio
 import inspect
 import logging
-from typing import Any, Dict, List, Optional, Type, Union
-from datetime import datetime
-from concurrent.futures import ThreadPoolExecutor
+from typing import Any, Dict, List, Optional, Type
+from datetime import datetime, timezone
+
 from contextlib import asynccontextmanager
 
 from .interfaces import (
@@ -62,7 +62,7 @@ class AIVAComponentRegistry(IAIComponentRegistry):
         self,
         component_type: str,
         component_name: str,
-        component_class: Type,
+        component_class: Type[Any],
         config: Optional[Dict[str, Any]] = None,
         is_default: bool = False
     ) -> bool:
@@ -96,7 +96,7 @@ class AIVAComponentRegistry(IAIComponentRegistry):
             self._components[component_type][component_name] = {
                 "class": component_class,
                 "config": config or {},
-                "registered_at": datetime.utcnow().isoformat(),
+                "registered_at": datetime.now(timezone.utc).isoformat(),
                 "is_default": is_default
             }
 
@@ -292,7 +292,7 @@ class AIVAComponentRegistry(IAIComponentRegistry):
     def _validate_component_interface(
         self, 
         component_type: str, 
-        component_class: Type
+        component_class: Type[Any]
     ) -> bool:
         """驗證組件是否實現了正確的介面
         
@@ -358,72 +358,93 @@ class AIVAComponentFactory(IAIComponentFactory):
     def create_dialog_assistant(
         self, 
         config: Optional[Dict[str, Any]] = None
-    ) -> Optional[IDialogAssistant]:
+    ) -> IDialogAssistant:
         """創建對話助手實例"""
-        return self.registry.get_component(
+        component = self.registry.get_component(
             "dialog_assistant", 
             config_override=config
         )
+        if component is None:
+            raise RuntimeError("Failed to create dialog_assistant component")
+        return component
 
     def create_plan_executor(
         self, 
         config: Optional[Dict[str, Any]] = None
-    ) -> Optional[IPlanExecutor]:
+    ) -> IPlanExecutor:
         """創建計劃執行器實例"""
-        return self.registry.get_component(
+        component = self.registry.get_component(
             "plan_executor", 
             config_override=config
         )
+        if component is None:
+            raise RuntimeError("Failed to create plan_executor component")
+        return component
 
     def create_experience_manager(
         self, 
         config: Optional[Dict[str, Any]] = None
-    ) -> Optional[IExperienceManager]:
+    ) -> IExperienceManager:
         """創建經驗管理器實例"""
-        return self.registry.get_component(
+        component = self.registry.get_component(
             "experience_manager", 
             config_override=config
         )
+        if component is None:
+            raise RuntimeError("Failed to create experience_manager component")
+        return component
 
     def create_capability_evaluator(
         self, 
         config: Optional[Dict[str, Any]] = None
-    ) -> Optional[ICapabilityEvaluator]:
+    ) -> ICapabilityEvaluator:
         """創建能力評估器實例"""
-        return self.registry.get_component(
+        component = self.registry.get_component(
             "capability_evaluator", 
             config_override=config
         )
+        if component is None:
+            raise RuntimeError("Failed to create capability_evaluator component")
+        return component
 
     def create_cross_language_bridge(
         self, 
         config: Optional[Dict[str, Any]] = None
-    ) -> Optional[ICrossLanguageBridge]:
+    ) -> ICrossLanguageBridge:
         """創建跨語言橋接器實例"""
-        return self.registry.get_component(
+        component = self.registry.get_component(
             "cross_language_bridge", 
             config_override=config
         )
+        if component is None:
+            raise RuntimeError("Failed to create cross_language_bridge component")
+        return component
 
     def create_rag_agent(
         self, 
         config: Optional[Dict[str, Any]] = None
-    ) -> Optional[IRAGAgent]:
+    ) -> IRAGAgent:
         """創建 RAG 代理實例"""
-        return self.registry.get_component(
+        component = self.registry.get_component(
             "rag_agent", 
             config_override=config
         )
+        if component is None:
+            raise RuntimeError("Failed to create rag_agent component")
+        return component
 
     def create_skill_graph_analyzer(
         self, 
         config: Optional[Dict[str, Any]] = None
-    ) -> Optional[ISkillGraphAnalyzer]:
+    ) -> ISkillGraphAnalyzer:
         """創建技能圖分析器實例"""
-        return self.registry.get_component(
+        component = self.registry.get_component(
             "skill_graph_analyzer", 
             config_override=config
         )
+        if component is None:
+            raise RuntimeError("Failed to create skill_graph_analyzer component")
+        return component
 
 
 class AIVAContext(IAIContext):
@@ -447,12 +468,12 @@ class AIVAContext(IAIContext):
         
         logger.info("AIVAContext initialized")
 
-    async def __aenter__(self):
+    async def __aenter__(self) -> 'AIVAContext':
         """進入上下文管理器"""
         await self.initialize()
         return self
 
-    async def __aexit__(self, exc_type, exc_val, exc_tb):
+    async def __aexit__(self, exc_type: Any, exc_val: Any, exc_tb: Any):
         """退出上下文管理器"""
         await self.cleanup()
 
@@ -603,17 +624,21 @@ def register_builtin_components() -> None:
     
     # 嘗試註冊來自 services.core.aiva_core 的組件
     try:
-        from services.core.aiva_core.dialog.assistant import dialog_assistant
-        if hasattr(dialog_assistant, '__class__'):
+        from services.core.aiva_core.dialog.assistant import dialog_assistant  # type: ignore
+        from typing import cast, Type, Any
+        if dialog_assistant is not None:
+            # 明確轉換動態導入的組件類型
+            dialog_assistant_typed = cast(Any, dialog_assistant)
+            component_class = cast(Type[Any], type(dialog_assistant_typed))
             registry.register_component(
                 "dialog_assistant",
                 "aiva_core_dialog",
-                dialog_assistant.__class__,
+                component_class,
                 is_default=True
             )
             logger.info("Registered aiva_core dialog assistant")
-    except ImportError:
-        logger.debug("aiva_core dialog assistant not available")
+    except (ImportError, AttributeError) as e:
+        logger.debug(f"aiva_core dialog assistant not available: {e}")
 
     # 嘗試註冊其他內建組件...
     # (這裡可以添加更多內建組件的註冊邏輯)

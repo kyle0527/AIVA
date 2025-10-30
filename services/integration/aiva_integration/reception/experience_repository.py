@@ -4,7 +4,7 @@
 提供統一的介面來存取和管理經驗記錄
 """
 
-from __future__ import annotations
+
 
 from datetime import datetime
 import logging

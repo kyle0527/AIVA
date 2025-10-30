@@ -1,0 +1,204 @@
+# AIVA Helm Chart - 默認配置值
+# 可以通過 helm install 時覆蓋這些值
+
+# 全局配置
+global:
+  imageRegistry: docker.io
+  imagePullSecrets: []
+  storageClass: standard
+
+# 核心 AI 服務配置
+core:
+  enabled: true
+  replicaCount: 1
+  image:
+    repository: aiva/core
+    tag: latest
+    pullPolicy: Always
+  
+  service:
+    type: ClusterIP
+    api:
+      port: 8000
+    admin:
+      port: 8001
+    websocket:
+      port: 8002
+  
+  resources:
+    requests:
+      memory: 512Mi
+      cpu: 500m
+    limits:
+      memory: 2Gi
+      cpu: 2000m
+  
+  # 外部訪問配置
+  ingress:
+    enabled: false
+    className: nginx
+    annotations: {}
+    hosts:
+      - host: aiva.local
+        paths:
+          - path: /
+            pathType: Prefix
+    tls: []
+
+# 組件配置
+components:
+  # 組件鏡像配置
+  image:
+    repository: aiva/component
+    tag: latest
+    pullPolicy: Always
+  
+  # 掃描器組件
+  scanners:
+    sqli:
+      enabled: true
+      resources:
+        requests:
+          memory: 256Mi
+          cpu: 200m
+        limits:
+          memory: 512Mi
+          cpu: 500m
+    
+    xss:
+      enabled: true
+      resources:
+        requests:
+          memory: 256Mi
+          cpu: 200m
+        limits:
+          memory: 512Mi
+          cpu: 500m
+  
+  # 測試組件
+  testing:
+    autonomous:
+      enabled: true
+      schedule: "0 */6 * * *"  # 每 6 小時
+      resources:
+        requests:
+          memory: 512Mi
+          cpu: 500m
+        limits:
+          memory: 1Gi
+          cpu: 1000m
+  
+  # 探索器組件
+  explorers:
+    system:
+      enabled: true
+      resources:
+        requests:
+          memory: 256Mi
+          cpu: 200m
+        limits:
+          memory: 512Mi
+          cpu: 500m
+  
+  # 驗證器組件
+  validators:
+    functionality:
+      enabled: true
+      resources:
+        requests:
+          memory: 256Mi
+          cpu: 200m
+        limits:
+          memory: 512Mi
+          cpu: 500m
+  
+  # 滲透測試組件
+  pentest:
+    comprehensive:
+      enabled: true
+      resources:
+        requests:
+          memory: 512Mi
+          cpu: 500m
+        limits:
+          memory: 1Gi
+          cpu: 1000m
+
+# PostgreSQL 配置
+postgresql:
+  enabled: true
+  auth:
+    username: postgres
+    password: aiva123
+    database: aiva_db
+  primary:
+    persistence:
+      enabled: true
+      size: 10Gi
+
+# Redis 配置
+redis:
+  enabled: true
+  auth:
+    enabled: false
+  master:
+    persistence:
+      enabled: true
+      size: 5Gi
+
+# RabbitMQ 配置
+rabbitmq:
+  enabled: true
+  auth:
+    username: guest
+    password: guest
+  persistence:
+    enabled: true
+    size: 5Gi
+
+# Neo4j 配置
+neo4j:
+  enabled: true
+  auth:
+    username: neo4j
+    password: aiva123
+  persistence:
+    enabled: true
+    size: 10Gi
+
+# 存儲配置
+persistence:
+  reports:
+    enabled: true
+    size: 10Gi
+    accessMode: ReadWriteMany
+  
+  logs:
+    enabled: true
+    size: 5Gi
+    accessMode: ReadWriteMany
+
+# 環境變數配置
+env:
+  mode: production
+  environment: kubernetes
+
+# 安全配置
+securityContext:
+  runAsNonRoot: true
+  runAsUser: 1000
+  fsGroup: 1000
+
+# 服務帳號
+serviceAccount:
+  create: true
+  annotations: {}
+  name: aiva-sa
+
+# 監控配置
+monitoring:
+  enabled: false
+  prometheus:
+    enabled: false
+  grafana:
+    enabled: false

@@ -3,7 +3,7 @@ SQLi 模組專用數據合約
 定義 SQLi 檢測相關的所有數據結構，基於 Pydantic v2.12.0
 """
 
-from __future__ import annotations
+
 
 from typing import Any
 

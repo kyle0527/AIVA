@@ -9,7 +9,7 @@ Risk Assessment Engine - 風險評估引擎
 - 業務影響分析
 """
 
-from __future__ import annotations
+
 
 import asyncio
 from typing import TYPE_CHECKING

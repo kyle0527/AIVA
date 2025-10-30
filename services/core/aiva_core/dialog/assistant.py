@@ -3,7 +3,7 @@ AIVA 對話助理模組
 實現 AI 對話層，支援自然語言問答和一鍵執行
 """
 
-from __future__ import annotations
+
 
 import re
 from typing import Dict, List, Optional, Any, Tuple

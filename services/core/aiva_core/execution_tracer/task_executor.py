@@ -4,7 +4,7 @@ Task Executor - 任務執行器
 實際執行任務並與各種服務整合
 """
 
-from __future__ import annotations
+
 
 from dataclasses import dataclass
 import logging

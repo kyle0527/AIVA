@@ -3,7 +3,7 @@ Smart SSRF Detector - 智能 SSRF 檢測器
 整合統一檢測管理器，提供自適應超時、速率限制和早期停止功能
 """
 
-from __future__ import annotations
+
 
 import asyncio
 from dataclasses import dataclass, field

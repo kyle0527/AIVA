@@ -4,7 +4,7 @@
 此模組定義了模組狀態、心跳、性能指標等監控相關的資料模型。
 """
 
-from __future__ import annotations
+
 
 from datetime import UTC, datetime
 from typing import Any

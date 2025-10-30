@@ -2,7 +2,7 @@
 AJAX 和 API 端點處理器
 擴展動態引擎以識別和處理 AJAX 請求和 API 端點
 """
-from __future__ import annotations
+
 
 import re
 from typing import Any

@@ -8,7 +8,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/kyle0527/aiva/services/function/common/go/aiva_common_go/schemas"
+	schemas "github.com/kyle0527/aiva/services/function/common/go/aiva_common_go/schemas/generated"
 	"go.uber.org/zap"
 )
 
@@ -74,7 +74,7 @@ func (b *BruteForcer) Test(ctx context.Context, task *schemas.FunctionTaskPayloa
 			}
 
 			// 從任務目標獲取URL
-			loginURL := task.Target.URL
+			loginURL := fmt.Sprintf("%v", task.Target.URL)
 			result, err := b.tryCredentials(ctx, loginURL, username, password)
 			if err != nil {
 				b.logger.Error("Login attempt failed", zap.Error(err))
@@ -86,7 +86,7 @@ func (b *BruteForcer) Test(ctx context.Context, task *schemas.FunctionTaskPayloa
 
 			// 如果成功登入，記錄為漏洞
 			if result.Vulnerable {
-				finding := b.createFinding(task.TaskID, loginURL, result)
+				finding := b.createFinding(task.TaskID, fmt.Sprintf("%v", loginURL), result)
 				findings = append(findings, &finding)
 				b.logger.Warn("Weak credentials found",
 					zap.String("username", username),
@@ -214,7 +214,7 @@ func (b *BruteForcer) createFinding(taskID, loginURL string, result *BruteForceR
 		Target: schemas.Target{
 			URL:    loginURL,
 			Method: &methodStr,
-			Headers: map[string]string{
+			Headers: map[string]interface{}{
 				"Content-Type": "application/x-www-form-urlencoded",
 			},
 			Params: map[string]interface{}{

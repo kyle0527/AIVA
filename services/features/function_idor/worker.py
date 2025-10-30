@@ -6,7 +6,7 @@ Consumes tasks from message queue and performs horizontal/vertical privilege
 escalation testing.
 """
 
-from __future__ import annotations
+
 
 import json
 

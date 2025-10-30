@@ -19,8 +19,8 @@ import sqlite3
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI, HTTPException, BackgroundTasks, Depends
-from pydantic import BaseModel, Field
-import aiofiles
+
+
 
 # 遵循 aiva_common 規範 - 修復 import 路徑
 from services.aiva_common.enums import (
@@ -36,7 +36,7 @@ from services.aiva_common.schemas import (
     FunctionTaskPayload,
     FindingPayload
 )
-from services.aiva_common.utils import new_id
+
 
 from .models import (
     CapabilityRecord,

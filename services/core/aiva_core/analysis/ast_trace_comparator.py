@@ -5,7 +5,7 @@ AST 與 Trace 對比分析模組
 計算差異指標作為強化學習回饋信號。
 """
 
-from __future__ import annotations
+
 
 from dataclasses import asdict, dataclass, field
 import logging

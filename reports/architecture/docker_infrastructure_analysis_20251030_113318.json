@@ -1,0 +1,427 @@
+{
+  "timestamp": "2025-10-30T11:33:17.882230",
+  "repo_path": "C:\\D\\fold7\\AIVA-git",
+  "docker_files": {
+    "Dockerfile.component": {
+      "size": 1220,
+      "created": "2025-10-29T15:11:05.888720",
+      "last_modified": "2025-10-29T20:45:02.275871",
+      "age_days": 0,
+      "directory": ".",
+      "extension": ".component",
+      "type": "dockerfile_component",
+      "content_analysis": {
+        "lines": 45,
+        "size_chars": 881,
+        "from_image": "python:3.11-slim",
+        "exposed_ports": [],
+        "copy_commands": 6,
+        "run_commands": 2,
+        "env_vars": 1,
+        "workdir": "/app",
+        "maintainer": null,
+        "labels": {
+          "maintainer": "AIVA Team",
+          "description": "AIVA Component Service - 功能組件（掃描、測試、報告等）",
+          "version": "1.0.0"
+        }
+      }
+    },
+    "Dockerfile.core": {
+      "size": 1646,
+      "created": "2025-10-29T15:10:56.458196",
+      "last_modified": "2025-10-29T17:00:26.782491",
+      "age_days": 0,
+      "directory": ".",
+      "extension": ".core",
+      "type": "dockerfile_core",
+      "content_analysis": {
+        "lines": 48,
+        "size_chars": 1404,
+        "from_image": "python:3.11-slim",
+        "exposed_ports": [
+          "8000",
+          "8001",
+          "8002"
+        ],
+        "copy_commands": 7,
+        "run_commands": 2,
+        "env_vars": 1,
+        "workdir": "/app",
+        "maintainer": null,
+        "labels": {
+          "maintainer": "AIVA Team",
+          "description": "AIVA Core AI Service - 對話助理、經驗管理器、AI引擎",
+          "version": "1.0.0"
+        }
+      }
+    },
+    "Dockerfile.core.minimal": {
+      "size": 879,
+      "created": "2025-10-29T16:15:05.416461",
+      "last_modified": "2025-10-29T16:29:20.032565",
+      "age_days": 0,
+      "directory": ".",
+      "extension": ".minimal",
+      "type": "dockerfile_core",
+      "content_analysis": {
+        "lines": 29,
+        "size_chars": 751,
+        "from_image": "python:3.11-slim",
+        "exposed_ports": [
+          "8000"
+        ],
+        "copy_commands": 1,
+        "run_commands": 3,
+        "env_vars": 1,
+        "workdir": "/app",
+        "maintainer": null,
+        "labels": {}
+      }
+    },
+    "Dockerfile.patch": {
+      "size": 830,
+      "created": "2025-10-29T20:29:49.400630",
+      "last_modified": "2025-10-29T20:45:02.548662",
+      "age_days": 0,
+      "directory": ".",
+      "extension": ".patch",
+      "type": "dockerfile_patch",
+      "content_analysis": {
+        "lines": 33,
+        "size_chars": 670,
+        "from_image": "aiva-git-testing-autonomous:latest",
+        "exposed_ports": [],
+        "copy_commands": 2,
+        "run_commands": 2,
+        "env_vars": 0,
+        "workdir": "/app",
+        "maintainer": null,
+        "labels": {
+          "version": "12.9GB-patched",
+          "description": "AIVA Component Service - 增量更新版本"
+        }
+      }
+    },
+    "docker-compose.yml": {
+      "size": 7613,
+      "created": "2025-10-29T15:11:40.255608",
+      "last_modified": "2025-10-29T19:44:05.057735",
+      "age_days": 0,
+      "directory": ".",
+      "extension": ".yml",
+      "type": "docker_compose",
+      "content_analysis": {
+        "lines": 291,
+        "size_chars": 6774,
+        "version": "3.8",
+        "services_count": 0,
+        "networks_count": 0,
+        "volumes_count": 1,
+        "services": []
+      }
+    },
+    "docker\\docker-compose.production.yml": {
+      "size": 5463,
+      "created": "2025-10-18T15:20:27.400868",
+      "last_modified": "2025-10-18T15:20:27.400868",
+      "age_days": 11,
+      "directory": "docker",
+      "extension": ".yml",
+      "type": "docker_compose",
+      "content_analysis": {
+        "lines": 204,
+        "size_chars": 5230,
+        "version": "3.9",
+        "services_count": 0,
+        "networks_count": 1,
+        "volumes_count": 3,
+        "services": []
+      }
+    },
+    "docker\\docker-compose.yml": {
+      "size": 601,
+      "created": "2025-10-18T15:20:27.400868",
+      "last_modified": "2025-10-18T15:20:27.401876",
+      "age_days": 11,
+      "directory": "docker",
+      "extension": ".yml",
+      "type": "docker_compose",
+      "content_analysis": {
+        "lines": 28,
+        "size_chars": 573,
+        "version": null,
+        "services_count": 0,
+        "networks_count": 0,
+        "volumes_count": 1,
+        "services": []
+      }
+    },
+    "docker\\Dockerfile.integration": {
+      "size": 1125,
+      "created": "2025-10-18T15:20:27.400868",
+      "last_modified": "2025-10-18T15:20:27.400868",
+      "age_days": 11,
+      "directory": "docker",
+      "extension": ".integration",
+      "type": "dockerfile_generic",
+      "content_analysis": {
+        "lines": 49,
+        "size_chars": 943,
+        "from_image": "python:3.11-slim",
+        "exposed_ports": [
+          "8083"
+        ],
+        "copy_commands": 2,
+        "run_commands": 4,
+        "env_vars": 1,
+        "workdir": "/app",
+        "maintainer": null,
+        "labels": {}
+      }
+    },
+    "docker\\entrypoint.integration.sh": {
+      "size": 2107,
+      "created": "2025-10-18T15:20:27.401876",
+      "last_modified": "2025-10-18T15:20:27.401876",
+      "age_days": 11,
+      "directory": "docker",
+      "extension": ".sh",
+      "type": "docker_related",
+      "content_analysis": {
+        "lines": 73,
+        "size_chars": 1957
+      }
+    },
+    "docker\\initdb\\001_schema.sql": {
+      "size": 7223,
+      "created": "2025-10-18T15:20:27.402869",
+      "last_modified": "2025-10-18T15:20:27.402869",
+      "age_days": 11,
+      "directory": "docker\\initdb",
+      "extension": ".sql",
+      "type": "docker_related",
+      "content_analysis": {
+        "lines": 192,
+        "size_chars": 6511
+      }
+    },
+    "docker\\initdb\\002_enhanced_schema.sql": {
+      "size": 16654,
+      "created": "2025-10-18T15:20:27.402869",
+      "last_modified": "2025-10-18T15:20:27.402869",
+      "age_days": 11,
+      "directory": "docker\\initdb",
+      "extension": ".sql",
+      "type": "docker_related",
+      "content_analysis": {
+        "lines": 374,
+        "size_chars": 14976
+      }
+    },
+    "k8s\\00-namespace.yaml": {
+      "size": 175,
+      "created": "2025-10-29T15:11:51.088283",
+      "last_modified": "2025-10-29T15:18:50.183189",
+      "age_days": 0,
+      "directory": "k8s",
+      "extension": ".yaml",
+      "type": "kubernetes_manifest",
+      "content_analysis": {
+        "lines": 9,
+        "size_chars": 158,
+        "api_version": "v1",
+        "kind": "Namespace",
+        "namespace": null,
+        "name": "aiva-system"
+      }
+    },
+    "k8s\\01-configmap.yaml": {
+      "size": 1100,
+      "created": "2025-10-29T15:12:01.485842",
+      "last_modified": "2025-10-29T15:18:50.288326",
+      "age_days": 0,
+      "directory": "k8s",
+      "extension": ".yaml",
+      "type": "kubernetes_manifest",
+      "content_analysis": {
+        "lines": 49,
+        "size_chars": 987,
+        "api_version": "v1",
+        "kind": "Secret",
+        "namespace": "aiva-system",
+        "name": "aiva-core-config"
+      }
+    },
+    "k8s\\02-storage.yaml": {
+      "size": 704,
+      "created": "2025-10-29T15:12:50.085785",
+      "last_modified": "2025-10-29T15:18:50.594907",
+      "age_days": 0,
+      "directory": "k8s",
+      "extension": ".yaml",
+      "type": "kubernetes_manifest",
+      "content_analysis": {
+        "lines": 37,
+        "size_chars": 613,
+        "api_version": "v1",
+        "kind": "PersistentVolumeClaim",
+        "namespace": "aiva-system",
+        "name": "aiva-reports-pvc"
+      }
+    },
+    "k8s\\10-core-deployment.yaml": {
+      "size": 3157,
+      "created": "2025-10-29T15:12:17.101272",
+      "last_modified": "2025-10-29T15:18:50.373274",
+      "age_days": 0,
+      "directory": "k8s",
+      "extension": ".yaml",
+      "type": "kubernetes_manifest",
+      "content_analysis": {
+        "lines": 141,
+        "size_chars": 2884,
+        "api_version": "v1",
+        "kind": "Service",
+        "namespace": "aiva-system",
+        "name": "aiva-core"
+      }
+    },
+    "k8s\\20-components-jobs.yaml": {
+      "size": 6075,
+      "created": "2025-10-29T15:12:41.173582",
+      "last_modified": "2025-10-29T15:18:50.485666",
+      "age_days": 0,
+      "directory": "k8s",
+      "extension": ".yaml",
+      "type": "kubernetes_manifest",
+      "content_analysis": {
+        "lines": 245,
+        "size_chars": 5658,
+        "api_version": "batch/v1",
+        "kind": "Job",
+        "namespace": "aiva-system",
+        "name": "aiva-scanner-sqli"
+      }
+    },
+    "helm\\aiva\\Chart.yaml": {
+      "size": 435,
+      "created": "2025-10-29T15:13:04.045546",
+      "last_modified": "2025-10-29T15:18:50.732809",
+      "age_days": 0,
+      "directory": "helm\\aiva",
+      "extension": ".yaml",
+      "type": "helm_chart",
+      "content_analysis": {
+        "lines": 20,
+        "size_chars": 389
+      }
+    },
+    "helm\\aiva\\values.yaml": {
+      "size": 3482,
+      "created": "2025-10-29T15:13:23.609757",
+      "last_modified": "2025-10-29T15:18:50.845210",
+      "age_days": 0,
+      "directory": "helm\\aiva",
+      "extension": ".yaml",
+      "type": "helm_chart",
+      "content_analysis": {
+        "lines": 204,
+        "size_chars": 3080
+      }
+    }
+  },
+  "architecture_analysis": {
+    "service_architecture": {
+      "core_services": [
+        "aiva_common",
+        "core"
+      ],
+      "feature_components": [
+        "features",
+        "integration",
+        "scan",
+        "__pycache__"
+      ],
+      "total_services": 6
+    },
+    "containerization_strategy": {
+      "dockerfile_count": 4,
+      "dockerfile_types": {
+        "dockerfile_component": 1,
+        "dockerfile_core": 2,
+        "dockerfile_patch": 1
+      },
+      "multi_stage_builds": 0,
+      "base_images": [
+        "python:3.11-slim",
+        "aiva-git-testing-autonomous:latest"
+      ],
+      "specialized_containers": [
+        "Dockerfile.component",
+        "Dockerfile.core",
+        "Dockerfile.core.minimal",
+        "Dockerfile.patch"
+      ]
+    },
+    "deployment_patterns": {
+      "has_docker_compose": true,
+      "has_kubernetes": false,
+      "has_helm": false,
+      "deployment_environments": [
+        "docker-compose"
+      ]
+    },
+    "file_distribution": {
+      "root_level_files": 18,
+      "docker_subdir_files": 0,
+      "k8s_files": 0,
+      "helm_files": 0,
+      "other_locations": 0
+    }
+  },
+  "growth_prediction": {
+    "growth_factors": [
+      "多服務架構 (6 個服務)",
+      "多種特化容器 (4 個)"
+    ],
+    "expected_dockerfile_growth": "高",
+    "recommended_organization_threshold": 8,
+    "current_complexity_score": 35,
+    "projected_complexity_score": 52.5
+  },
+  "organization_recommendations": [
+    {
+      "priority": "高",
+      "category": "文件組織",
+      "title": "整理根目錄 Docker 文件",
+      "description": "根目錄有 18 個 Docker 文件，建議移至專門目錄",
+      "action": "創建 docker/ 子目錄並移動文件",
+      "estimated_effort": "1-2 小時"
+    },
+    {
+      "priority": "中",
+      "category": "架構準備",
+      "title": "準備容器化架構擴展",
+      "description": "系統複雜度較高，建議建立容器化治理框架",
+      "action": "建立 Docker 文件模板和最佳實踐文檔",
+      "estimated_effort": "4-6 小時"
+    },
+    {
+      "priority": "低",
+      "category": "自動化",
+      "title": "建立容器構建自動化",
+      "description": "Docker 文件數量較多，建議自動化構建流程",
+      "action": "設置 CI/CD 管道自動構建和推送容器",
+      "estimated_effort": "6-8 小時"
+    },
+    {
+      "priority": "中",
+      "category": "文檔",
+      "title": "更新容器化文檔",
+      "description": "確保所有 Docker 文件都有適當的文檔說明",
+      "action": "為每個 Dockerfile 添加詳細註釋和使用說明",
+      "estimated_effort": "2-3 小時"
+    }
+  ]
+}

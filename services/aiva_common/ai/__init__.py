@@ -40,7 +40,7 @@ AIVA Common AI Module - AI 共享組件模組 (可插拔設計)
 - 現代化 Python 架構
 """
 
-from __future__ import annotations
+
 
 import contextlib
 from typing import TYPE_CHECKING

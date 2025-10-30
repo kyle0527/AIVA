@@ -1,0 +1,245 @@
+# AIVA 功能組件 - Job 模式部署
+# 這些組件按需啟動，完成任務後自動清理
+
+---
+# 組件 1: SQL 注入掃描器 - Job
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: aiva-scanner-sqli
+  namespace: aiva-system
+  labels:
+    app: aiva
+    component: scanner
+    scanner-type: sqli
+spec:
+  ttlSecondsAfterFinished: 3600  # 1小時後清理
+  template:
+    metadata:
+      labels:
+        app: aiva
+        component: scanner
+        scanner-type: sqli
+    spec:
+      restartPolicy: OnFailure
+      containers:
+      - name: sqli-scanner
+        image: aiva/component:latest
+        command: ["python", "-m", "services.core.aiva_core.scanner.sqli_scanner"]
+        envFrom:
+        - configMapRef:
+            name: aiva-core-config
+        - secretRef:
+            name: aiva-core-secret
+        env:
+        - name: AIVA_CORE_URL
+          value: "http://aiva-core-service:8000"
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "200m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+
+---
+# 組件 2: XSS 掃描器 - Job
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: aiva-scanner-xss
+  namespace: aiva-system
+  labels:
+    app: aiva
+    component: scanner
+    scanner-type: xss
+spec:
+  ttlSecondsAfterFinished: 3600
+  template:
+    metadata:
+      labels:
+        app: aiva
+        component: scanner
+        scanner-type: xss
+    spec:
+      restartPolicy: OnFailure
+      containers:
+      - name: xss-scanner
+        image: aiva/component:latest
+        command: ["python", "-m", "services.core.aiva_core.scanner.xss_scanner"]
+        envFrom:
+        - configMapRef:
+            name: aiva-core-config
+        - secretRef:
+            name: aiva-core-secret
+        env:
+        - name: AIVA_CORE_URL
+          value: "http://aiva-core-service:8000"
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "200m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+
+---
+# 組件 3: 自主測試循環 - CronJob（定期執行）
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: aiva-testing-autonomous
+  namespace: aiva-system
+  labels:
+    app: aiva
+    component: testing
+spec:
+  schedule: "0 */6 * * *"  # 每 6 小時執行一次
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 3
+  jobTemplate:
+    metadata:
+      labels:
+        app: aiva
+        component: testing
+    spec:
+      ttlSecondsAfterFinished: 7200
+      template:
+        metadata:
+          labels:
+            app: aiva
+            component: testing
+        spec:
+          restartPolicy: OnFailure
+          containers:
+          - name: autonomous-testing
+            image: aiva/component:latest
+            command: ["python", "ai_autonomous_testing_loop.py"]
+            envFrom:
+            - configMapRef:
+                name: aiva-core-config
+            - secretRef:
+                name: aiva-core-secret
+            env:
+            - name: AIVA_CORE_URL
+              value: "http://aiva-core-service:8000"
+            resources:
+              requests:
+                memory: "512Mi"
+                cpu: "500m"
+              limits:
+                memory: "1Gi"
+                cpu: "1000m"
+
+---
+# 組件 4: 系統探索器 - Job
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: aiva-explorer-system
+  namespace: aiva-system
+  labels:
+    app: aiva
+    component: explorer
+spec:
+  ttlSecondsAfterFinished: 3600
+  template:
+    metadata:
+      labels:
+        app: aiva
+        component: explorer
+    spec:
+      restartPolicy: OnFailure
+      containers:
+      - name: system-explorer
+        image: aiva/component:latest
+        command: ["python", "ai_system_explorer_v3.py", "--workspace", "/app", "--detailed"]
+        envFrom:
+        - configMapRef:
+            name: aiva-core-config
+        env:
+        - name: AIVA_CORE_URL
+          value: "http://aiva-core-service:8000"
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "200m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+
+---
+# 組件 5: 功能驗證器 - Job
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: aiva-validator-functionality
+  namespace: aiva-system
+  labels:
+    app: aiva
+    component: validator
+spec:
+  ttlSecondsAfterFinished: 3600
+  template:
+    metadata:
+      labels:
+        app: aiva
+        component: validator
+    spec:
+      restartPolicy: OnFailure
+      containers:
+      - name: functionality-validator
+        image: aiva/component:latest
+        command: ["python", "ai_functionality_validator.py"]
+        envFrom:
+        - configMapRef:
+            name: aiva-core-config
+        env:
+        - name: AIVA_CORE_URL
+          value: "http://aiva-core-service:8000"
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "200m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+
+---
+# 組件 6: 綜合滲透測試 - Job
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: aiva-pentest-comprehensive
+  namespace: aiva-system
+  labels:
+    app: aiva
+    component: pentest
+spec:
+  ttlSecondsAfterFinished: 3600
+  template:
+    metadata:
+      labels:
+        app: aiva
+        component: pentest
+    spec:
+      restartPolicy: OnFailure
+      containers:
+      - name: comprehensive-pentest
+        image: aiva/component:latest
+        command: ["python", "comprehensive_pentest_runner.py", "--comprehensive"]
+        envFrom:
+        - configMapRef:
+            name: aiva-core-config
+        - secretRef:
+            name: aiva-core-secret
+        env:
+        - name: AIVA_CORE_URL
+          value: "http://aiva-core-service:8000"
+        resources:
+          requests:
+            memory: "512Mi"
+            cpu: "500m"
+          limits:
+            memory: "1Gi"
+            cpu: "1000m"

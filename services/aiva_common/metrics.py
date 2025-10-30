@@ -9,21 +9,18 @@ import logging
 import threading
 import time
 from abc import ABC, abstractmethod
-from collections import defaultdict, deque
+from collections import deque
 from dataclasses import dataclass, field
 from enum import Enum
 from typing import Any, Dict, List, Optional, Union
-from datetime import datetime, timedelta
+from datetime import datetime
 
 logger = logging.getLogger(__name__)
 
 
-class MetricType(Enum):
-    """指標類型枚舉"""
-    COUNTER = "counter"
-    GAUGE = "gauge"
-    HISTOGRAM = "histogram"
-    DURATION = "duration"
+# MetricType 已移至 aiva_common.observability 模組統一管理
+# 遵循修復原則：避免重複定義，使用官方標準版本
+from .observability import MetricType
 
 
 class SeverityLevel(Enum):

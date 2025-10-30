@@ -1,13 +1,20 @@
 """
 Scan 模組專用數據合約
 定義掃描引擎相關的所有數據結構，基於 Pydantic v2.12.0
+
+修復記錄 (2025-10-29):
+- 使用 aiva_common.enums.HttpMethod 替代硬編碼 HTTP 方法驗證
+- 遵循統一枚舉原則，提升代碼一致性
 """
 
-from __future__ import annotations
+
 
 from typing import Any
 
 from pydantic import BaseModel, Field, field_validator
+
+# 使用 aiva_common 統一的 HTTP 方法枚舉
+from ...aiva_common.enums import HttpMethod
 
 from services.aiva_common.enums import Location, SensitiveInfoType, Severity
 
@@ -110,10 +117,11 @@ class NetworkRequest(BaseModel):
 
     @field_validator("method")
     def validate_method(cls, v: str) -> str:
-        """驗證 HTTP 方法"""
-        allowed = {"GET", "POST", "PUT", "DELETE", "PATCH", "HEAD", "OPTIONS"}
+        """驗證 HTTP 方法 - 使用統一枚舉"""
+        # 使用 aiva_common.HttpMethod 枚舉值進行驗證
+        allowed = {method.value for method in HttpMethod}
         if v.upper() not in allowed:
-            raise ValueError(f"Invalid HTTP method: {v}")
+            raise ValueError(f"Invalid HTTP method: {v}. Must be one of {sorted(allowed)}")
         return v.upper()
 
     @field_validator("request_type")

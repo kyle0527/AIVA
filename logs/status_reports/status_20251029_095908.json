@@ -1,0 +1,57 @@
+{
+  "timestamp": "2025-10-29T09:59:08.919031",
+  "uptime_hours": 0.0022429786111111114,
+  "total_components": 4,
+  "component_status": {
+    "error": 4
+  },
+  "total_restarts": 0,
+  "error_count": 0,
+  "system_metrics": null,
+  "component_details": {
+    "autonomous_testing": {
+      "name": "autonomous_testing",
+      "status": "ComponentStatus.ERROR",
+      "pid": 12548,
+      "cpu_percent": 0.0,
+      "memory_mb": 0.0,
+      "uptime_seconds": 0.0,
+      "restart_count": 0,
+      "last_error": "進程退出，返回碼: 1",
+      "timestamp": "2025-10-29 09:59:00.851156"
+    },
+    "system_explorer": {
+      "name": "system_explorer",
+      "status": "ComponentStatus.ERROR",
+      "pid": 24452,
+      "cpu_percent": 0.0,
+      "memory_mb": 0.0,
+      "uptime_seconds": 0.0,
+      "restart_count": 0,
+      "last_error": "啟動失敗: None",
+      "timestamp": "2025-10-29 09:59:02.869304"
+    },
+    "security_monitor": {
+      "name": "security_monitor",
+      "status": "ComponentStatus.ERROR",
+      "pid": 16480,
+      "cpu_percent": 0.0,
+      "memory_mb": 0.0,
+      "uptime_seconds": 0.0,
+      "restart_count": 0,
+      "last_error": "啟動失敗: None",
+      "timestamp": "2025-10-29 09:59:04.885322"
+    },
+    "functionality_validator": {
+      "name": "functionality_validator",
+      "status": "ComponentStatus.ERROR",
+      "pid": 25132,
+      "cpu_percent": 0.0,
+      "memory_mb": 0.0,
+      "uptime_seconds": 0.0,
+      "restart_count": 0,
+      "last_error": "啟動失敗: None",
+      "timestamp": "2025-10-29 09:59:06.909933"
+    }
+  }
+}

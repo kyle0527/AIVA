@@ -30,12 +30,12 @@ func NewSCAScanner(logger *zap.Logger) *SCAScanner {
 // Scan 執行 SCA 掃描
 func (s *SCAScanner) Scan(ctx context.Context, task schemas.ScanTaskPayload) ([]schemas.FindingPayload, error) {
 	s.logger.Info("Starting SCA scan",
-		zap.String("task_id", task.TaskId),
-		zap.String("target_url", task.Target.Url),
+		zap.String("task_id", task.TaskID),
+		zap.String("target_url", task.Target.URL.(string)),
 	)
 
 	// 1. 下載或克隆目標專案（如果是 Git URL）
-	projectPath, cleanup, err := s.prepareProject(ctx, task.Target.Url)
+	projectPath, cleanup, err := s.prepareProject(ctx, task.Target.URL.(string))
 	if err != nil {
 		return nil, fmt.Errorf("failed to prepare project: %w", err)
 	}
@@ -48,7 +48,7 @@ func (s *SCAScanner) Scan(ctx context.Context, task schemas.ScanTaskPayload) ([]
 	}
 
 	s.logger.Info("Detected package files",
-		zap.String("task_id", task.TaskId),
+		zap.String("task_id", task.TaskID),
 		zap.Int("count", len(packageFiles)),
 	)
 
@@ -58,8 +58,8 @@ func (s *SCAScanner) Scan(ctx context.Context, task schemas.ScanTaskPayload) ([]
 		return nil, fmt.Errorf("OSV scan failed: %w", err)
 	}
 
-	// 4. 轉換為 FindingPayload
-	findings := s.convertToFindings(vulnerabilities, task.TaskId, task.ScanId, packageFiles)
+	// 4. 轉換為 AIVA Finding 格式
+	findings := s.convertToFindings(vulnerabilities, task.TaskID, task.ScanID, packageFiles)
 
 	return findings, nil
 }
@@ -288,7 +288,7 @@ func (s *SCAScanner) createFinding(
 	// 建立漏洞物件 - 使用生成的 schema 結構
 	vulnerability := schemas.Vulnerability{
 		Name:        fmt.Sprintf("%s in %s@%s", vuln.ID, packageName, packageVersion),
-		Cwe:         nil, // OSV 通常不提供 CWE
+		CWE:         nil, // OSV 通常不提供 CWE
 		Severity:    severity,
 		Confidence:  "HIGH", // SCA 掃描通常有高信心度
 		Description: &description,
@@ -296,7 +296,7 @@ func (s *SCAScanner) createFinding(
 
 	// 建立目標資訊
 	target := schemas.Target{
-		Url: sourceFile,
+		URL: sourceFile,
 	}
 
 	// 提取修復建議（從 references 中尋找）
@@ -356,9 +356,9 @@ func (s *SCAScanner) createFinding(
 
 	// 建立最終的 FindingPayload - 注意字段名稱和類型（駝峰命名，指針類型）
 	return schemas.FindingPayload{
-		FindingId:      findingID, // 駝峰命名：FindingId 不是 FindingID
-		TaskId:         taskID,    // 駝峰命名：TaskId 不是 TaskID
-		ScanId:         scanID,
+		FindingID:      findingID, // Go Initialisms: FindingID not FindingId
+		TaskID:         taskID,    // Go Initialisms: TaskID not TaskId
+		ScanID:         scanID,
 		Status:         "DETECTED",
 		Vulnerability:  vulnerability,
 		Target:         target,

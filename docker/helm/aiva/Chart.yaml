@@ -1,0 +1,20 @@
+# AIVA Helm Chart
+apiVersion: v2
+name: aiva
+description: AIVA AI 安全測試平台 - 智能微服務架構
+type: application
+version: 1.0.0
+appVersion: "1.0.0"
+keywords:
+  - aiva
+  - ai
+  - security
+  - pentesting
+  - vulnerability-scanning
+home: https://github.com/kyle0527/AIVA
+sources:
+  - https://github.com/kyle0527/AIVA
+maintainers:
+  - name: AIVA Team
+    email: team@aiva.io
+icon: https://aiva.io/logo.png

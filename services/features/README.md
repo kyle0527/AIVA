@@ -296,6 +296,41 @@ from ..aiva_common.enums import Severity, Confidence
 # 💡 使用相對路徑 (..aiva_common) 確保跨平台/跨環境可移植性
 ```
 
+#### 🚨 **嚴格禁止的做法**
+
+```python
+# ❌ 禁止 - 重複定義通用枚舉
+class Severity(str, Enum):  # 錯誤!使用 aiva_common.Severity
+    HIGH = "high"
+
+# ❌ 禁止 - 重複定義標準結構
+class VulnResult(BaseModel):  # 錯誤!使用 aiva_common.FindingPayload
+    finding_id: str
+
+# ❌ 禁止 - 自創功能評分
+class CustomRisk(BaseModel):  # 錯誤!使用 aiva_common.CVSSv3Metrics
+    feature_score: int
+```
+
+#### 🔍 **多語言功能實現統一標準**
+
+Features 模組跨 Python/Go/Rust 三語言實現，必須保持數據結構一致：
+
+```python
+# ✅ Python 實現 - 標準格式
+from ..aiva_common.schemas import FunctionTaskPayload, FindingPayload
+```
+
+```go
+// ✅ Go 實現 - 對應相同結構
+import "services/features/common/go/aiva_common_go"
+```
+
+```rust
+// ✅ Rust 實現 - 對應相同結構  
+use aiva_common::schemas::{FunctionTaskPayload, FindingPayload};
+```
+
 **修復驗證**: 所有關鍵枚舉導入測試通過 ✅
 
 #### 🆕 **新增或修改功能時的流程**

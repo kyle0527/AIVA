@@ -3,7 +3,7 @@ AI Engine - AIVA 的 AI 決策引擎
 整合生物啟發式神經網路、RAG 知識檢索與工具執行系統
 """
 
-from __future__ import annotations
+
 
 from .bio_neuron_core import (
     AntiHallucinationModule,

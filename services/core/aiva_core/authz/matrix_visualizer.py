@@ -8,7 +8,7 @@ from datetime import datetime
 from pathlib import Path
 
 from jinja2 import Template
-import plotly.graph_objects as go
+
 from plotly.subplots import make_subplots
 import structlog
 

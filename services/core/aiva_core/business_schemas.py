@@ -5,7 +5,7 @@ AIVA 核心業務模式定義
 屬於 core 模組的業務特定定義。
 """
 
-from __future__ import annotations
+
 
 from datetime import UTC, datetime
 from typing import Any

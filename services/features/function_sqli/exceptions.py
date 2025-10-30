@@ -3,7 +3,7 @@ SQLi 檢測專用異常類別
 提供具體的錯誤類型和詳細的錯誤信息
 """
 
-from __future__ import annotations
+
 
 
 class SqliError(Exception):

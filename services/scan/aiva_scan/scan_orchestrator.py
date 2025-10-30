@@ -2,7 +2,7 @@
 掃描編排器 - 統一管理掃描流程的核心邏輯
 """
 
-from __future__ import annotations
+
 
 from typing import TYPE_CHECKING, Any
 

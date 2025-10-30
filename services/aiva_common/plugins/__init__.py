@@ -3,7 +3,7 @@
 基於 entry_points 和動態加載的最佳實踐
 """
 
-from __future__ import annotations
+
 
 import importlib
 import inspect
@@ -155,6 +155,7 @@ class PluginManager:
             import tomllib
         except ImportError:
             import tomli as tomllib
+
         
         with open(plugin_file, 'rb') as f:
             data = tomllib.load(f)
@@ -174,6 +175,14 @@ class PluginManager:
             return PluginMetadata(
                 name=entry_point.name,
                 version="1.0.0",
+                description="Auto-generated plugin",
+                author="AIVA",
+                license="MIT",
+                category="general",
+                min_aiva_version="1.0.0",
+                max_aiva_version="2.0.0",
+                enabled=True,
+                priority=0,
                 entry_point=f"{plugin_class.__module__}:{plugin_class.__name__}"
             )
     
@@ -292,7 +301,7 @@ class PluginManager:
             # 按優先級排序
             hooks = sorted(
                 self._hooks[hook_name],
-                key=lambda h: getattr(h.__self__.metadata, 'priority', 0),
+                key=lambda h: getattr(getattr(h, "metadata", None), "priority", 0),
                 reverse=True
             )
             

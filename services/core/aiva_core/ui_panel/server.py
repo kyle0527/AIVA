@@ -3,7 +3,7 @@ Server - AIVA UI 面板 Web 伺服器
 使用 FastAPI 提供 RESTful API 和 Web 介面
 """
 
-from __future__ import annotations
+
 
 import logging
 import socket

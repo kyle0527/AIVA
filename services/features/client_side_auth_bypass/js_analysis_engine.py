@@ -8,7 +8,7 @@ JavaScript 靜態分析引擎
 import logging
 import re
 from typing import Dict, Any, List, Optional
-import asyncio
+
 
 logger = logging.getLogger(__name__)
 

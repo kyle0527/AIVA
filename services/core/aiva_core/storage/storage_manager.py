@@ -34,7 +34,9 @@ class StorageManager:
         """
         self.data_root = Path(data_root)
         self.db_type = db_type
-        self.db_config = db_config or {}
+        
+        # 從環境變數讀取數據庫配置，優先使用傳入的配置
+        self.db_config = self._get_database_config(db_config)
 
         # 目錄結構
         self.dirs: dict[str, Any] = {
@@ -89,6 +91,41 @@ class StorageManager:
 
         logger.info("All data directories initialized")
 
+    def _get_database_config(self, provided_config: dict[str, Any] | None = None) -> dict[str, Any]:
+        """從環境變數讀取數據庫配置"""
+        import os
+        
+        config = provided_config or {}
+        
+        # PostgreSQL 配置（支援多種環境變數名稱）
+        config.setdefault("host", 
+            os.getenv("AIVA_POSTGRES_HOST") or 
+            os.getenv("POSTGRES_HOST") or 
+            "localhost"
+        )
+        config.setdefault("port", int(
+            os.getenv("AIVA_POSTGRES_PORT") or 
+            os.getenv("POSTGRES_PORT") or 
+            "5432"
+        ))
+        config.setdefault("database", 
+            os.getenv("AIVA_POSTGRES_DB") or 
+            os.getenv("POSTGRES_DB") or 
+            "aiva_db"
+        )
+        config.setdefault("user", 
+            os.getenv("AIVA_POSTGRES_USER") or 
+            os.getenv("POSTGRES_USER") or 
+            "postgres"
+        )
+        config.setdefault("password", 
+            os.getenv("AIVA_POSTGRES_PASSWORD") or 
+            os.getenv("POSTGRES_PASSWORD") or 
+            "aiva123"
+        )
+        
+        return config
+
     def _create_backend(self) -> Any:
         """創建存儲後端"""
         if self.db_type == "sqlite":
@@ -99,11 +136,11 @@ class StorageManager:
 
         elif self.db_type == "postgres":
             return PostgreSQLBackend(
-                host=self.db_config.get("host", "localhost"),
-                port=self.db_config.get("port", 5432),
-                database=self.db_config.get("database", "aiva"),
-                user=self.db_config.get("user", "aiva"),
-                password=self.db_config.get("password", "aiva"),
+                host=self.db_config["host"],
+                port=self.db_config["port"],
+                database=self.db_config["database"],
+                user=self.db_config["user"],
+                password=self.db_config["password"],
             )
 
         elif self.db_type == "jsonl":
@@ -180,6 +217,10 @@ class StorageManager:
     async def save_experience_sample(self, sample: Any) -> bool:
         """保存經驗樣本"""
         return await self.backend.save_experience_sample(sample)
+
+    async def save_unified_experience_sample(self, sample: Any) -> bool:
+        """保存統一格式的經驗樣本"""
+        return await self.backend.save_unified_experience_sample(sample)
 
     async def get_experience_samples(
         self,

@@ -7,9 +7,9 @@ Payment Logic Bypass 攻擊檢測模組
 """
 from typing import Dict, Any, List, Optional
 from urllib.parse import urljoin
-import random
+
 import json
-import decimal
+
 import asyncio
 from ..base.feature_base import FeatureBase
 from ..base.feature_registry import FeatureRegistry

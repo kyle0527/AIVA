@@ -1,4 +1,4 @@
-from __future__ import annotations
+
 
 from fastapi import HTTPException, Request, status
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer

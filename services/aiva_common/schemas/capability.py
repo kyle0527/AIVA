@@ -5,7 +5,7 @@ AIVA 能力管理相關 Schema
 包含能力定義、評分卡、執行記錄等核心結構。
 """
 
-from __future__ import annotations
+
 
 from datetime import datetime
 from typing import List, Optional, Any, Dict

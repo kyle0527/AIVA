@@ -1,0 +1,111 @@
+---
+Created: 2025-10-30
+Last Modified: 2025-10-30
+Document Type: Data
+---
+
+{
+  "analysis_timestamp": 1761663898.3263686,
+  "metrics": [
+    {
+      "component": "AIVACapabilityEvaluator",
+      "operation": "initialization",
+      "execution_time": 4.57763671875e-05,
+      "throughput": null,
+      "error_count": 0,
+      "optimization_potential": "low"
+    },
+    {
+      "component": "AIVACapabilityEvaluator",
+      "operation": "evaluate_capability",
+      "execution_time": 0,
+      "throughput": null,
+      "error_count": 1,
+      "optimization_potential": "high"
+    },
+    {
+      "component": "AIVAExperienceManager",
+      "operation": "initialization",
+      "execution_time": 0.001291513442993164,
+      "throughput": null,
+      "error_count": 0,
+      "optimization_potential": "low"
+    },
+    {
+      "component": "AsyncOperations",
+      "operation": "concurrent_execution",
+      "execution_time": 0.018132925033569336,
+      "throughput": null,
+      "error_count": 0,
+      "optimization_potential": "low"
+    }
+  ],
+  "recommendations": {
+    "high_priority": [],
+    "medium_priority": [],
+    "low_priority": [],
+    "performance_summary": {
+      "AIVACapabilityEvaluator": {
+        "average_execution_time": 2.288818359375e-05,
+        "total_operations": 2,
+        "error_count": 1,
+        "high_optimization_potential": 1
+      },
+      "AIVAExperienceManager": {
+        "average_execution_time": 0.001291513442993164,
+        "total_operations": 1,
+        "error_count": 0,
+        "high_optimization_potential": 0
+      },
+      "AsyncOperations": {
+        "average_execution_time": 0.018132925033569336,
+        "total_operations": 1,
+        "error_count": 0,
+        "high_optimization_potential": 0
+      }
+    },
+    "optimization_strategies": {
+      "caching": {
+        "description": "實施多層緩存策略",
+        "targets": [
+          "評估結果",
+          "經驗查詢",
+          "配置數據"
+        ],
+        "implementation": "Redis + 內存緩存",
+        "priority": "high"
+      },
+      "async_processing": {
+        "description": "增強異步處理能力",
+        "targets": [
+          "批量操作",
+          "I/O 密集任務",
+          "並發評估"
+        ],
+        "implementation": "asyncio + 工作隊列",
+        "priority": "high"
+      },
+      "resource_pooling": {
+        "description": "實施資源池化管理",
+        "targets": [
+          "數據庫連接",
+          "計算資源",
+          "臨時對象"
+        ],
+        "implementation": "連接池 + 對象池",
+        "priority": "medium"
+      },
+      "monitoring_optimization": {
+        "description": "優化性能監控開銷",
+        "targets": [
+          "連續監控",
+          "指標收集",
+          "日誌記錄"
+        ],
+        "implementation": "採樣監控 + 輕量級指標",
+        "priority": "medium"
+      }
+    }
+  },
+  "profiler_stats": "         1163 function calls in 0.025 seconds\n\n   Ordered by: cumulative time\n   List reduced from 252 to 20 due to restriction <20>\n\n   ncalls  tottime  percall  cumtime  percall filename:lineno(function)\n        1    0.000    0.000    0.020    0.020 C:\\D\\fold7\\AIVA-git\\analyze_ai_performance.py:225(analyze_async_performance)\n        1    0.000    0.000    0.018    0.018 C:\\Users\\User\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\asyncio\\base_events.py:689(run_until_complete)\n        1    0.000    0.000    0.018    0.018 C:\\Users\\User\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\asyncio\\base_events.py:678(run_forever)\n        6    0.000    0.000    0.017    0.003 C:\\Users\\User\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\asyncio\\base_events.py:1970(_run_once)\n        7    0.000    0.000    0.015    0.002 C:\\Users\\User\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\asyncio\\windows_events.py:762(_poll)\n        6    0.000    0.000    0.015    0.002 C:\\Users\\User\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\asyncio\\windows_events.py:444(select)\n        8    0.015    0.002    0.015    0.002 {built-in method _overlapped.GetQueuedCompletionStatus}\n        2    0.000    0.000    0.003    0.001 C:\\Users\\User\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\asyncio\\events.py:728(new_event_loop)\n        2    0.000    0.000    0.003    0.001 C:\\Users\\User\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\asyncio\\windows_events.py:313(__init__)\n        2    0.000    0.000    0.003    0.001 C:\\Users\\User\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\asyncio\\proactor_events.py:631(__init__)\n        2    0.000    0.000    0.003    0.001 C:\\D\\fold7\\AIVA-git\\services\\aiva_common\\ai\\experience_manager.py:513(__init__)\n       10    0.000    0.000    0.002    0.000 C:\\Users\\User\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\asyncio\\events.py:87(_run)\n       10    0.000    0.000    0.002    0.000 {method 'run' of '_contextvars.Context' objects}\n        2    0.000    0.000    0.002    0.001 C:\\D\\fold7\\AIVA-git\\services\\aiva_common\\ai\\experience_manager.py:185(__init__)\n        3    0.000    0.000    0.002    0.001 {built-in method _asyncio.get_event_loop}\n        1    0.000    0.000    0.002    0.002 C:\\D\\fold7\\AIVA-git\\services\\aiva_common\\ai\\capability_evaluator.py:1102(__del__)\n        2    0.000    0.000    0.002    0.001 C:\\Users\\User\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\asyncio\\proactor_events.py:784(_make_self_pipe)\n        2    0.000    0.000    0.002    0.001 C:\\Users\\User\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\socket.py:598(_fallback_socketpair)\n        3    0.000    0.000    0.002    0.001 C:\\Users\\User\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\asyncio\\events.py:688(get_event_loop)\n        2    0.000    0.000    0.002    0.001 C:\\D\\fold7\\AIVA-git\\services\\aiva_common\\ai\\experience_manager.py:190(_init_database)\n\n\n"
+}

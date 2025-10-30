@@ -3,7 +3,7 @@
 為所有功能模組提供統一的配置管理
 """
 
-from __future__ import annotations
+
 
 from dataclasses import dataclass, field
 

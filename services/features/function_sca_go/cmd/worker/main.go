@@ -90,9 +90,9 @@ func processMessage(
 	}
 
 	log.Info("Received scan task",
-		zap.String("task_id", task.TaskId),
+		zap.String("task_id", task.TaskID),
 		zap.String("scan_type", task.ScanType),
-		zap.String("target_url", task.Target.Url),
+		zap.String("target_url", task.Target.URL.(string)),
 	)
 
 	// 執行掃描
@@ -102,14 +102,14 @@ func processMessage(
 
 	if err != nil {
 		log.Error("Scan failed",
-			zap.String("task_id", task.TaskId),
+			zap.String("task_id", task.TaskID),
 			zap.Error(err),
 		)
 		return err
 	}
 
 	log.Info("Scan completed",
-		zap.String("task_id", task.TaskId),
+		zap.String("task_id", task.TaskID),
 		zap.Int("findings_count", len(findings)),
 		zap.Duration("duration", duration),
 	)
@@ -118,15 +118,15 @@ func processMessage(
 	for _, finding := range findings {
 		if err := mqClient.Publish("results.finding", finding); err != nil {
 			log.Error("Failed to publish finding",
-				zap.String("finding_id", finding.FindingId),
+				zap.String("finding_id", finding.FindingID),
 				zap.Error(err),
 			)
 			continue
 		}
 
 		log.Info("Published finding",
-			zap.String("finding_id", finding.FindingId),
-			zap.String("severity", finding.Vulnerability.Severity),
+			zap.String("finding_id", finding.FindingID),
+			zap.String("severity", finding.Vulnerability.Severity.(string)),
 		)
 	}
 

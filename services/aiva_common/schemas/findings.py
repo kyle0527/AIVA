@@ -4,7 +4,7 @@
 此模組包含與漏洞發現、證據收集、影響評估等相關的資料模型。
 """
 
-from __future__ import annotations
+
 
 from datetime import UTC, datetime
 from typing import Any

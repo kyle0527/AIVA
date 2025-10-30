@@ -1,0 +1,49 @@
+# AIVA 核心配置 - ConfigMap
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: aiva-core-config
+  namespace: aiva-system
+data:
+  # 應用配置
+  AIVA_MODE: "production"
+  AIVA_ENVIRONMENT: "kubernetes"
+  
+  # 數據庫配置
+  AIVA_POSTGRES_HOST: "postgres-service"
+  AIVA_POSTGRES_PORT: "5432"
+  AIVA_POSTGRES_DB: "aiva_db"
+  
+  # Redis 配置
+  AIVA_REDIS_HOST: "redis-service"
+  AIVA_REDIS_PORT: "6379"
+  
+  # RabbitMQ 配置
+  AIVA_RABBITMQ_HOST: "rabbitmq-service"
+  AIVA_RABBITMQ_PORT: "5672"
+  AIVA_RABBITMQ_URL: "amqp://guest:guest@rabbitmq-service:5672/"
+  
+  # Neo4j 配置
+  AIVA_NEO4J_HOST: "neo4j-service"
+  AIVA_NEO4J_PORT: "7687"
+
+---
+# AIVA 敏感配置 - Secret
+apiVersion: v1
+kind: Secret
+metadata:
+  name: aiva-core-secret
+  namespace: aiva-system
+type: Opaque
+stringData:
+  # 數據庫憑證
+  AIVA_POSTGRES_USER: "postgres"
+  AIVA_POSTGRES_PASSWORD: "aiva123"
+  
+  # RabbitMQ 憑證
+  AIVA_RABBITMQ_USER: "guest"
+  AIVA_RABBITMQ_PASSWORD: "guest"
+  
+  # Neo4j 憑證
+  AIVA_NEO4J_USER: "neo4j"
+  AIVA_NEO4J_PASSWORD: "aiva123"

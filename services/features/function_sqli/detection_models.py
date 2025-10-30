@@ -3,7 +3,7 @@ SQLi 檢測結果模型
 統一的檢測結果和錯誤模型，與實際引擎使用保持一致
 """
 
-from __future__ import annotations
+
 
 from dataclasses import dataclass
 

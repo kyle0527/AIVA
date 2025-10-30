@@ -8,12 +8,12 @@ AIVA 靶場環境檢測器
 import asyncio
 import socket
 import requests
-import subprocess
+
 import json
 import time
 from typing import Dict, List, Any, Optional, Tuple
 from datetime import datetime
-from pathlib import Path
+
 
 class TargetEnvironmentDetector:
     """靶場環境檢測器"""

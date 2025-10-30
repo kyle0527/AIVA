@@ -3,7 +3,7 @@ Auto Server - AIVA UI 自動端口伺服器
 自動選擇可用端口啟動 UI 面板
 """
 
-from __future__ import annotations
+
 
 import logging
 from pathlib import Path

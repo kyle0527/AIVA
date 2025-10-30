@@ -4,7 +4,7 @@ Attack Validator - 攻擊結果驗證器
 驗證攻擊執行結果的真實性和有效性
 """
 
-from __future__ import annotations
+
 
 import logging
 import re

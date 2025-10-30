@@ -6,7 +6,7 @@ Tests for horizontal privilege escalation by attempting to access resources
 belonging to other users.
 """
 
-from __future__ import annotations
+
 
 from dataclasses import dataclass
 import re

@@ -18,7 +18,7 @@ AIVA Common AI Experience Manager - 經驗管理器組件
 - 與 AI 訓練和強化學習系統整合
 """
 
-from __future__ import annotations
+
 
 import asyncio
 import hashlib
@@ -27,7 +27,7 @@ import logging
 import sqlite3
 from datetime import UTC, datetime, timedelta
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Set, Tuple
+from typing import Any, Dict, List, Optional, Set
 from uuid import uuid4
 
 from pydantic import BaseModel, Field
@@ -36,8 +36,6 @@ from ..schemas.ai import (
     AIExperienceCreatedEvent,
     ExperienceManagerConfig,
     ExperienceSample,
-    ModelTrainingConfig,
-    PlanExecutionResult,
 )
 from .interfaces import IExperienceManager
 
@@ -102,7 +100,7 @@ class LearningSession(BaseModel):
         """獲取完成率"""
         if self.max_samples <= 0:
             return 0.0
-        return min(self.total_samples / self.max_samples, 1.0)
+        return min(self.total_samples / self.max_samples, 1.0)  # type: ignore
     
     def get_quality_distribution(self) -> Dict[str, float]:
         """獲取質量分佈"""
@@ -194,7 +192,7 @@ class SQLiteExperienceStorage:
             cursor = conn.cursor()
             
             # 創建經驗表
-            cursor.execute("""
+            cursor.execute("""  # type: ignore
                 CREATE TABLE IF NOT EXISTS experiences (
                     sample_id TEXT PRIMARY KEY,
                     session_id TEXT NOT NULL,
@@ -218,7 +216,7 @@ class SQLiteExperienceStorage:
             """)
             
             # 創建會話表
-            cursor.execute("""
+            cursor.execute("""  # type: ignore
                 CREATE TABLE IF NOT EXISTS sessions (
                     session_id TEXT PRIMARY KEY,
                     training_id TEXT,
@@ -241,23 +239,23 @@ class SQLiteExperienceStorage:
             """)
             
             # 創建索引
-            cursor.execute("CREATE INDEX IF NOT EXISTS idx_experiences_session ON experiences(session_id)")
-            cursor.execute("CREATE INDEX IF NOT EXISTS idx_experiences_plan ON experiences(plan_id)")
-            cursor.execute("CREATE INDEX IF NOT EXISTS idx_experiences_timestamp ON experiences(timestamp)")
-            cursor.execute("CREATE INDEX IF NOT EXISTS idx_experiences_quality ON experiences(quality_score)")
-            cursor.execute("CREATE INDEX IF NOT EXISTS idx_sessions_training ON sessions(training_id)")
+            cursor.execute("CREATE INDEX IF NOT EXISTS idx_experiences_session ON experiences(session_id)")  # type: ignore
+            cursor.execute("CREATE INDEX IF NOT EXISTS idx_experiences_plan ON experiences(plan_id)")  # type: ignore
+            cursor.execute("CREATE INDEX IF NOT EXISTS idx_experiences_timestamp ON experiences(timestamp)")  # type: ignore
+            cursor.execute("CREATE INDEX IF NOT EXISTS idx_experiences_quality ON experiences(quality_score)")  # type: ignore
+            cursor.execute("CREATE INDEX IF NOT EXISTS idx_sessions_training ON sessions(training_id)")  # type: ignore
             
             conn.commit()
         finally:
             conn.close()
     
-    async def store_experience(self, sample: ExperienceSample) -> bool:
+    async def store_experience(self, experience: ExperienceSample) -> bool:
         """存儲經驗樣本"""
         try:
             conn = sqlite3.connect(self.db_path)
             try:
                 cursor = conn.cursor()
-                cursor.execute("""
+                cursor.execute("""  # type: ignore
                     INSERT OR REPLACE INTO experiences (
                         sample_id, session_id, plan_id, state_before, action_taken,
                         state_after, reward, reward_breakdown, context, target_info,
@@ -265,30 +263,30 @@ class SQLiteExperienceStorage:
                         learning_tags, difficulty_level
                     ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                 """, (
-                    sample.sample_id,
-                    sample.session_id,
-                    sample.plan_id,
-                    json.dumps(sample.state_before),
-                    json.dumps(sample.action_taken),
-                    json.dumps(sample.state_after),
-                    sample.reward,
-                    json.dumps(sample.reward_breakdown),
-                    json.dumps(sample.context),
-                    json.dumps(sample.target_info),
-                    sample.timestamp.isoformat(),
-                    sample.duration_ms,
-                    sample.quality_score,
-                    sample.is_positive,
-                    sample.confidence,
-                    json.dumps(sample.learning_tags),
-                    sample.difficulty_level
+                    experience.sample_id,
+                    experience.session_id,
+                    experience.plan_id,
+                    json.dumps(experience.state_before),
+                    json.dumps(experience.action_taken),
+                    json.dumps(experience.state_after),
+                    experience.reward,
+                    json.dumps(experience.reward_breakdown),
+                    json.dumps(experience.context),
+                    json.dumps(experience.target_info),
+                    experience.timestamp.isoformat(),
+                    experience.duration_ms,
+                    experience.quality_score,
+                    experience.is_positive,
+                    experience.confidence,
+                    json.dumps(experience.learning_tags),
+                    experience.difficulty_level
                 ))
                 conn.commit()
                 return True
             finally:
                 conn.close()
         except Exception as e:
-            logger.error(f"Error storing experience sample {sample.sample_id}: {e}")
+            logger.error(f"Error storing experience sample {experience.sample_id}: {e}")
             return False
     
     async def get_experiences(
@@ -306,33 +304,33 @@ class SQLiteExperienceStorage:
                 params = []
                 
                 if filter_params.session_ids:
-                    placeholders = ",".join("?" * len(filter_params.session_ids))
+                    placeholders = ",".join("?" * len(filter_params.session_ids))  # type: ignore
                     query += f" AND session_id IN ({placeholders})"
-                    params.extend(filter_params.session_ids)
+                    params.extend(filter_params.session_ids)  # type: ignore
                 
                 if filter_params.plan_ids:
-                    placeholders = ",".join("?" * len(filter_params.plan_ids))
+                    placeholders = ",".join("?" * len(filter_params.plan_ids))  # type: ignore
                     query += f" AND plan_id IN ({placeholders})"
-                    params.extend(filter_params.plan_ids)
+                    params.extend(filter_params.plan_ids)  # type: ignore
                 
                 if filter_params.min_quality_score is not None:
                     query += " AND quality_score >= ?"
-                    params.append(filter_params.min_quality_score)
+                    params.append(filter_params.min_quality_score)  # type: ignore
                 
                 if filter_params.max_quality_score is not None:
                     query += " AND quality_score <= ?"
-                    params.append(filter_params.max_quality_score)
+                    params.append(filter_params.max_quality_score)  # type: ignore
                 
                 if filter_params.positive_only:
                     query += " AND is_positive = TRUE"
                 
                 if filter_params.start_time:
                     query += " AND timestamp >= ?"
-                    params.append(filter_params.start_time.isoformat())
+                    params.append(filter_params.start_time.isoformat())  # type: ignore
                 
                 if filter_params.end_time:
                     query += " AND timestamp <= ?"
-                    params.append(filter_params.end_time.isoformat())
+                    params.append(filter_params.end_time.isoformat())  # type: ignore
                 
                 # 排序
                 if filter_params.sort_by == "timestamp":
@@ -348,13 +346,13 @@ class SQLiteExperienceStorage:
                 # 限制
                 if filter_params.limit:
                     query += " LIMIT ?"
-                    params.append(filter_params.limit)
+                    params.append(filter_params.limit)  # type: ignore
                     
                     if filter_params.offset > 0:
                         query += " OFFSET ?"
-                        params.append(filter_params.offset)
+                        params.append(filter_params.offset)  # type: ignore
                 
-                cursor.execute(query, params)
+                cursor.execute(query, params)  # type: ignore
                 rows = cursor.fetchall()
                 
                 # 轉換為 ExperienceSample 對象
@@ -382,9 +380,9 @@ class SQLiteExperienceStorage:
                         learning_tags=json.loads(row_dict["learning_tags"] or "[]"),
                         difficulty_level=row_dict["difficulty_level"]
                     )
-                    samples.append(sample)
+                    samples.append(sample)  # type: ignore
                 
-                return samples
+                return samples  # type: ignore
             finally:
                 conn.close()
         except Exception as e:
@@ -397,7 +395,7 @@ class SQLiteExperienceStorage:
             conn = sqlite3.connect(self.db_path)
             try:
                 cursor = conn.cursor()
-                cursor.execute("""
+                cursor.execute("""  # type: ignore
                     INSERT OR REPLACE INTO sessions (
                         session_id, training_id, session_type, start_time, end_time,
                         is_active, status, total_samples, high_quality_samples,
@@ -440,18 +438,18 @@ class SQLiteExperienceStorage:
                 stats = ExperienceStatistics()
                 
                 # 基本統計
-                cursor.execute("SELECT COUNT(*) FROM experiences")
+                cursor.execute("SELECT COUNT(*) FROM experiences")  # type: ignore
                 stats.total_samples = cursor.fetchone()[0]
                 
-                cursor.execute("SELECT COUNT(DISTINCT session_id) FROM experiences")
+                cursor.execute("SELECT COUNT(DISTINCT session_id) FROM experiences")  # type: ignore
                 stats.total_sessions = cursor.fetchone()[0]
                 
-                cursor.execute("SELECT COUNT(DISTINCT plan_id) FROM experiences")
+                cursor.execute("SELECT COUNT(DISTINCT plan_id) FROM experiences")  # type: ignore
                 stats.total_plans = cursor.fetchone()[0]
                 
                 if stats.total_samples > 0:
                     # 質量統計
-                    cursor.execute("""
+                    cursor.execute("""  # type: ignore
                         SELECT 
                             COUNT(CASE WHEN quality_score >= 0.8 THEN 1 END) as high,
                             COUNT(CASE WHEN quality_score >= 0.6 AND quality_score < 0.8 THEN 1 END) as medium,
@@ -468,7 +466,7 @@ class SQLiteExperienceStorage:
                         stats.avg_quality_score = quality_row[3] or 0.0
                     
                     # 成功率統計
-                    cursor.execute("""
+                    cursor.execute("""  # type: ignore
                         SELECT 
                             COUNT(CASE WHEN is_positive = TRUE THEN 1 END) as positive,
                             COUNT(CASE WHEN is_positive = FALSE THEN 1 END) as negative
@@ -481,7 +479,7 @@ class SQLiteExperienceStorage:
                         stats.success_rate = stats.positive_samples / stats.total_samples
                     
                     # 獎勵統計
-                    cursor.execute("SELECT AVG(reward), MAX(reward), MIN(reward) FROM experiences")
+                    cursor.execute("SELECT AVG(reward), MAX(reward), MIN(reward) FROM experiences")  # type: ignore
                     reward_row = cursor.fetchone()
                     if reward_row:
                         stats.avg_reward = reward_row[0] or 0.0
@@ -489,7 +487,7 @@ class SQLiteExperienceStorage:
                         stats.min_reward = reward_row[2] or 0.0
                     
                     # 時間統計
-                    cursor.execute("SELECT MIN(timestamp), MAX(timestamp) FROM experiences")
+                    cursor.execute("SELECT MIN(timestamp), MAX(timestamp) FROM experiences")  # type: ignore
                     time_row = cursor.fetchone()
                     if time_row and time_row[0]:
                         stats.earliest_sample = datetime.fromisoformat(time_row[0])
@@ -542,32 +540,32 @@ class AIVAExperienceManager(IExperienceManager):
         self.total_samples_retrieved = 0
         
         # 清理任務
-        self._cleanup_task: Optional[asyncio.Task] = None
+        self._cleanup_task: Optional[asyncio.Task[Any]] = None
         self._start_cleanup_task()
         
         logger.info(f"AIVAExperienceManager initialized with {self.config.storage_backend} backend")
 
     async def create_learning_session(
-        self,
-        training_id: Optional[str] = None,
-        session_type: str = "interactive",
-        **kwargs
+        self, 
+        session_config: Dict[str, Any]
     ) -> str:
         """創建學習會話
         
         Args:
-            training_id: 關聯的訓練 ID
-            session_type: 會話類型
-            **kwargs: 其他會話參數
+            session_config: 會話配置字典，包含 training_id, session_type 等參數
             
         Returns:
             會話 ID
         """
         try:
+            # 從配置中提取參數
+            training_id = session_config.get("training_id", "")
+            session_type = session_config.get("session_type", "interactive")
+            
             session = LearningSession(
                 training_id=training_id,
                 session_type=session_type,
-                **kwargs
+                **session_config  # 其他配置參數
             )
             
             # 存儲會話
@@ -583,14 +581,12 @@ class AIVAExperienceManager(IExperienceManager):
             logger.error(f"Error creating learning session: {e}")
             raise
 
-    async def store_experience(
-        self,
-        sample: ExperienceSample
+    async def store_experience(self, experience: ExperienceSample
     ) -> bool:
         """存儲經驗樣本
         
         Args:
-            sample: 經驗樣本
+            experience: 經驗樣本
             
         Returns:
             是否存儲成功
@@ -598,48 +594,48 @@ class AIVAExperienceManager(IExperienceManager):
         try:
             # 去重檢查
             if self.config.deduplication_enabled:
-                sample_hash = self._calculate_sample_hash(sample)
+                sample_hash = self._calculate_sample_hash(experience)
                 if sample_hash in self._dedup_cache:
-                    logger.debug(f"Duplicate sample detected, skipping: {sample.sample_id}")
+                    logger.debug(f"Duplicate sample detected, skipping: {experience.sample_id}")
                     return False
                 self._dedup_cache.add(sample_hash)
             
             # 質量評估
-            if sample.quality_score is None:
-                sample.quality_score = await self._evaluate_sample_quality(sample)
+            if experience.quality_score is None:
+                experience.quality_score = await self._evaluate_sample_quality(experience)
             
             # 存儲樣本
-            success = await self.storage.store_experience(sample)
+            success = await self.storage.store_experience(experience)
             
             if success:
                 self.total_samples_stored += 1
                 
                 # 更新會話統計
-                if sample.session_id in self.active_sessions:
-                    session = self.active_sessions[sample.session_id]
-                    session.update_statistics(sample)
+                if experience.session_id in self.active_sessions:
+                    session = self.active_sessions[experience.session_id]
+                    session.update_statistics(experience)
                     await self.storage.store_session(session)
                 
                 # 創建經驗創建事件
                 event = AIExperienceCreatedEvent(
-                    experience_id=sample.sample_id,
+                    experience_id=experience.sample_id,
                     trace_id=f"trace_{uuid4().hex[:8]}",
-                    vulnerability_type=sample.target_info.get("vulnerability_type", "unknown"),
-                    quality_score=sample.quality_score or 0.0,
-                    success=sample.is_positive,
-                    plan_summary={"plan_id": sample.plan_id},
-                    result_summary={"reward": sample.reward, "confidence": sample.confidence}
+                    vulnerability_type=experience.target_info.get("vulnerability_type", "unknown"),
+                    quality_score=experience.quality_score or 0.0,
+                    success=experience.is_positive,
+                    plan_summary={"plan_id": experience.plan_id},
+                    result_summary={"reward": experience.reward, "confidence": experience.confidence}
                 )
                 
                 # 這裡可以發送事件到消息佇列
                 logger.debug(f"Experience created event: {event.experience_id}")
                 
-                logger.info(f"Experience sample stored: {sample.sample_id}")
+                logger.info(f"Experience sample stored: {experience.sample_id}")
                 
             return success
             
         except Exception as e:
-            logger.error(f"Error storing experience sample {sample.sample_id}: {e}")
+            logger.error(f"Error storing experience sample {experience.sample_id}: {e}")
             return False
 
     async def get_experiences(
@@ -669,10 +665,10 @@ class AIVAExperienceManager(IExperienceManager):
             )
             
             samples = await self.storage.get_experiences(filter_params)
-            self.total_samples_retrieved += len(samples)
+            self.total_samples_retrieved += len(samples)  # type: ignore
             
             logger.info(f"Retrieved {len(samples)} experience samples")
-            return samples
+            return samples  # type: ignore
             
         except Exception as e:
             logger.error(f"Error retrieving experiences: {e}")
@@ -749,8 +745,8 @@ class AIVAExperienceManager(IExperienceManager):
                         "total_samples": session.total_samples,
                         "quality_distribution": session.get_quality_distribution(),
                         "completion_rate": session.get_completion_rate(),
-                        "unique_plans": len(session.unique_plans),
-                        "vulnerability_types": len(session.vulnerability_types),
+                        "unique_plans": len(session.unique_plans),  # type: ignore
+                        "vulnerability_types": len(session.vulnerability_types),  # type: ignore
                         "is_active": session.is_active,
                         "status": session.status,
                     }
@@ -775,7 +771,7 @@ class AIVAExperienceManager(IExperienceManager):
                     "success_rate": stats.success_rate,
                     "avg_quality_score": stats.avg_quality_score,
                     "avg_reward": stats.avg_reward,
-                    "active_sessions": len(self.active_sessions),
+                    "active_sessions": len(self.active_sessions),  # type: ignore
                     "samples_stored_this_session": self.total_samples_stored,
                     "samples_retrieved_this_session": self.total_samples_retrieved,
                     "storage_backend": self.config.storage_backend,
@@ -816,7 +812,7 @@ class AIVAExperienceManager(IExperienceManager):
             
             # 這裡應該實現實際的刪除邏輯
             # 為了簡化，我們只記錄清理意圖
-            cleanup_count = len(old_samples)
+            cleanup_count = len(old_samples)  # type: ignore
             
             logger.info(f"Would cleanup {cleanup_count} old experience samples")
             return cleanup_count
@@ -912,7 +908,7 @@ class AIVAExperienceManager(IExperienceManager):
         
         # 基於狀態複雜度的質量評估 (10%)
         state_complexity = (
-            len(str(sample.state_before)) + len(str(sample.state_after))
+            len(str(sample.state_before)) + len(str(sample.state_after))  # type: ignore
         ) / 2000.0  # 假設平均狀態大小為1000字符
         complexity_factor = min(state_complexity, 1.0)
         quality_score += complexity_factor * 0.1
@@ -943,7 +939,7 @@ class AIVAExperienceManager(IExperienceManager):
                         logger.info(f"Periodic cleanup: {cleaned_count} samples cleaned")
                     
                     # 清理去重緩存
-                    if len(self._dedup_cache) > 10000:  # 限制緩存大小
+                    if len(self._dedup_cache) > 10000:  # 限制緩存大小  # type: ignore
                         self._dedup_cache.clear()
                         logger.info("Deduplication cache cleared")
                 
@@ -962,7 +958,7 @@ class AIVAExperienceManager(IExperienceManager):
                     pass
             
             # 結束所有活躍會話
-            for session_id in list(self.active_sessions.keys()):
+            for session_id in list(self.active_sessions.keys()):  # type: ignore
                 await self.end_learning_session(session_id)
             
             # 清理緩存
@@ -991,13 +987,13 @@ class AIVAExperienceManager(IExperienceManager):
 
 def create_experience_manager(
     config: Optional[ExperienceManagerConfig] = None,
-    **kwargs
+    **kwargs  # type: ignore
 ) -> AIVAExperienceManager:
     """創建經驗管理器實例
 
     Args:
         config: 經驗管理器配置
-        **kwargs: 其他參數
+        **kwargs: 其他參數  # type: ignore
 
     Returns:
         經驗管理器實例

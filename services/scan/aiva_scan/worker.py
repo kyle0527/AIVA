@@ -2,7 +2,7 @@
 重構的 Scan Worker
 使用 ScanOrchestrator 進行統一的掃描編排
 """
-from __future__ import annotations
+
 
 import json
 

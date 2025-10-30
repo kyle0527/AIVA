@@ -5,7 +5,7 @@ AIVA 能力註冊中心 - 簡化測試版本
 """
 
 import sys
-import json
+
 from pathlib import Path
 from datetime import datetime
 

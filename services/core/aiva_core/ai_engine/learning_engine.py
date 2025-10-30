@@ -10,19 +10,20 @@ Learning Engine - 學習引擎
 - 遷移學習支援
 """
 
-from __future__ import annotations
+
 
 import logging
-import time
-import json
-from typing import TYPE_CHECKING, Any, Dict, List, Optional, Tuple, Union
+import numpy as np
+
+from typing import TYPE_CHECKING, Any, Dict, List, Optional, Tuple
 from datetime import datetime, timezone
 from uuid import uuid4
 
-import numpy as np
+
 
 if TYPE_CHECKING:
-    from .neural_network import FeedForwardNetwork
+    pass
+
 
 logger = logging.getLogger(__name__)
 
@@ -33,21 +34,21 @@ class LossFunction:
     @staticmethod
     def mean_squared_error(y_true: np.ndarray, y_pred: np.ndarray) -> float:
         """均方誤差"""
-        return np.mean((y_true - y_pred) ** 2)
+        return float(np.mean((y_true - y_pred)) ** 2)
     
     @staticmethod
     def cross_entropy(y_true: np.ndarray, y_pred: np.ndarray) -> float:
         """交叉熵損失"""
         epsilon = 1e-15
         y_pred = np.clip(y_pred, epsilon, 1 - epsilon)
-        return -np.mean(y_true * np.log(y_pred))
+        return float(-np.mean(y_true * np.log(y_pred)))
     
     @staticmethod
     def binary_cross_entropy(y_true: np.ndarray, y_pred: np.ndarray) -> float:
         """二元交叉熵損失"""
         epsilon = 1e-15
         y_pred = np.clip(y_pred, epsilon, 1 - epsilon)
-        return -np.mean(y_true * np.log(y_pred) + (1 - y_true) * np.log(1 - y_pred))
+        return float(-np.mean(y_true * np.log(y_pred)) + (1 - y_true) * np.log(1 - y_pred))
 
 
 class Optimizer:
@@ -265,6 +266,7 @@ class SupervisedLearner:
             if x_val is not None and y_val is not None:
                 val_predictions = self.network.predict(x_val)
                 val_loss = self.loss_function(y_val, val_predictions)
+                self.training_history.setdefault('val_loss', []).append(val_loss)
                 
                 # 計算準確率（分類任務）
                 if len(y_val.shape) > 1:
@@ -313,7 +315,7 @@ class ReinforcementLearner:
             return np.random.randint(num_actions)
         else:
             q_values = self.network.predict(state.reshape(1, -1))
-            return np.argmax(q_values[0])
+            return int(np.argmax(q_values[0]))
     
     def remember(self, state: np.ndarray, action: int, reward: float, next_state: np.ndarray, done: bool):
         """存儲經驗"""

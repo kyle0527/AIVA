@@ -1,5 +1,5 @@
 // AIVA Rust Schema - 自動生成
-// 版本: 1.0.0
+// 版本: 1.1.0
 // 生成時間: N/A
 // 
 // 完整的 Rust Schema 實現，包含序列化/反序列化支持
@@ -128,6 +128,143 @@ impl std::str::FromStr for FindingStatus {
             "RESOLVED" => Ok(FindingStatus::RESOLVED),
             "FALSE_POSITIVE" => Ok(FindingStatus::FALSE_POSITIVE),
             _ => Err(format!("Invalid FindingStatus: {}", s)),
+        }
+    }
+}
+
+/// 異步任務狀態枚舉
+#[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
+#[serde(rename_all = "SCREAMING_SNAKE_CASE")]
+pub enum AsyncTaskStatus {
+    /// 等待中
+    PENDING,
+    /// 執行中
+    RUNNING,
+    /// 已完成
+    COMPLETED,
+    /// 執行失敗
+    FAILED,
+    /// 已取消
+    CANCELLED,
+    /// 執行超時
+    TIMEOUT,
+    /// 重試中
+    RETRYING,
+}
+
+impl std::fmt::Display for AsyncTaskStatus {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            AsyncTaskStatus::PENDING => write!(f, "pending"),
+            AsyncTaskStatus::RUNNING => write!(f, "running"),
+            AsyncTaskStatus::COMPLETED => write!(f, "completed"),
+            AsyncTaskStatus::FAILED => write!(f, "failed"),
+            AsyncTaskStatus::CANCELLED => write!(f, "cancelled"),
+            AsyncTaskStatus::TIMEOUT => write!(f, "timeout"),
+            AsyncTaskStatus::RETRYING => write!(f, "retrying"),
+        }
+    }
+}
+
+impl std::str::FromStr for AsyncTaskStatus {
+    type Err = String;
+    
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        match s.to_uppercase().as_str() {
+            "PENDING" => Ok(AsyncTaskStatus::PENDING),
+            "RUNNING" => Ok(AsyncTaskStatus::RUNNING),
+            "COMPLETED" => Ok(AsyncTaskStatus::COMPLETED),
+            "FAILED" => Ok(AsyncTaskStatus::FAILED),
+            "CANCELLED" => Ok(AsyncTaskStatus::CANCELLED),
+            "TIMEOUT" => Ok(AsyncTaskStatus::TIMEOUT),
+            "RETRYING" => Ok(AsyncTaskStatus::RETRYING),
+            _ => Err(format!("Invalid AsyncTaskStatus: {}", s)),
+        }
+    }
+}
+
+/// 插件狀態枚舉
+#[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
+#[serde(rename_all = "SCREAMING_SNAKE_CASE")]
+pub enum PluginStatus {
+    /// 未啟用
+    INACTIVE,
+    /// 已啟用
+    ACTIVE,
+    /// 載入中
+    LOADING,
+    /// 錯誤狀態
+    ERROR,
+    /// 更新中
+    UPDATING,
+}
+
+impl std::fmt::Display for PluginStatus {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            PluginStatus::INACTIVE => write!(f, "inactive"),
+            PluginStatus::ACTIVE => write!(f, "active"),
+            PluginStatus::LOADING => write!(f, "loading"),
+            PluginStatus::ERROR => write!(f, "error"),
+            PluginStatus::UPDATING => write!(f, "updating"),
+        }
+    }
+}
+
+impl std::str::FromStr for PluginStatus {
+    type Err = String;
+    
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        match s.to_uppercase().as_str() {
+            "INACTIVE" => Ok(PluginStatus::INACTIVE),
+            "ACTIVE" => Ok(PluginStatus::ACTIVE),
+            "LOADING" => Ok(PluginStatus::LOADING),
+            "ERROR" => Ok(PluginStatus::ERROR),
+            "UPDATING" => Ok(PluginStatus::UPDATING),
+            _ => Err(format!("Invalid PluginStatus: {}", s)),
+        }
+    }
+}
+
+/// 插件類型枚舉
+#[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
+#[serde(rename_all = "SCREAMING_SNAKE_CASE")]
+pub enum PluginType {
+    /// 掃描器插件
+    SCANNER,
+    /// 過濾器插件
+    FILTER,
+    /// 報告器插件
+    REPORTER,
+    /// 整合插件
+    INTEGRATION,
+    /// 工具插件
+    UTILITY,
+}
+
+impl std::fmt::Display for PluginType {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            PluginType::SCANNER => write!(f, "scanner"),
+            PluginType::FILTER => write!(f, "filter"),
+            PluginType::REPORTER => write!(f, "reporter"),
+            PluginType::INTEGRATION => write!(f, "integration"),
+            PluginType::UTILITY => write!(f, "utility"),
+        }
+    }
+}
+
+impl std::str::FromStr for PluginType {
+    type Err = String;
+    
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        match s.to_uppercase().as_str() {
+            "SCANNER" => Ok(PluginType::SCANNER),
+            "FILTER" => Ok(PluginType::FILTER),
+            "REPORTER" => Ok(PluginType::REPORTER),
+            "INTEGRATION" => Ok(PluginType::INTEGRATION),
+            "UTILITY" => Ok(PluginType::UTILITY),
+            _ => Err(format!("Invalid PluginType: {}", s)),
         }
     }
 }
@@ -291,7 +428,8 @@ pub struct Asset {
     /// 
     pub asset_id: String,
     /// 
-    pub type: String,
+    #[serde(rename = "type")]
+    pub r#type: String,
     /// 
     pub value: String,
     /// 
@@ -307,7 +445,7 @@ impl Asset {
     pub fn new() -> Self {
         Self {
             asset_id: String::new(),
-            type: String::new(),
+            r#type: String::new(),
             value: String::new(),
             parameters: None,
             has_form: None,
@@ -1617,6 +1755,1049 @@ impl ScanTaskPayload {
 }
 
 impl Default for ScanTaskPayload {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
+/// 重試配置
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[serde(rename_all = "snake_case")]
+pub struct RetryConfig {
+    /// 最大重試次數
+    pub max_attempts: i32,
+    /// 退避基礎時間(秒)
+    pub backoff_base: f64,
+    /// 退避倍數
+    pub backoff_factor: f64,
+    /// 最大退避時間(秒)
+    pub max_backoff: f64,
+    /// 是否使用指數退避
+    pub exponential_backoff: bool,
+}
+
+impl RetryConfig {
+    /// 創建新的實例
+    pub fn new() -> Self {
+        Self {
+            max_attempts: 3,
+            backoff_base: 1.0,
+            backoff_factor: 2.0,
+            max_backoff: 60.0,
+            exponential_backoff: true,
+        }
+    }
+    
+    /// 驗證結構體數據
+    pub fn validate(&self) -> Result<(), String> {
+        Ok(())
+    }
+}
+
+impl Default for RetryConfig {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
+/// 資源限制配置
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[serde(rename_all = "snake_case")]
+pub struct ResourceLimits {
+    /// 最大內存限制(MB)
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub max_memory_mb: Option<i32>,
+    /// 最大CPU使用率(%)
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub max_cpu_percent: Option<f64>,
+    /// 最大執行時間(秒)
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub max_execution_time: Option<i32>,
+    /// 最大並發任務數
+    pub max_concurrent_tasks: i32,
+}
+
+impl ResourceLimits {
+    /// 創建新的實例
+    pub fn new() -> Self {
+        Self {
+            max_memory_mb: None,
+            max_cpu_percent: None,
+            max_execution_time: None,
+            max_concurrent_tasks: 10,
+        }
+    }
+    
+    /// 驗證結構體數據
+    pub fn validate(&self) -> Result<(), String> {
+        Ok(())
+    }
+}
+
+impl Default for ResourceLimits {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
+/// 異步任務配置
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[serde(rename_all = "snake_case")]
+pub struct AsyncTaskConfig {
+    /// 任務名稱
+    pub task_name: String,
+    /// 超時時間(秒)
+    pub timeout_seconds: i32,
+    /// 重試配置
+    pub retry_config: String,
+    /// 任務優先級
+    pub priority: i32,
+    /// 資源限制
+    pub resource_limits: String,
+    /// 任務標籤
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub tags: Option<Vec<String>>,
+    /// 任務元數據
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub metadata: Option<std::collections::HashMap<String, serde_json::Value>>,
+}
+
+impl AsyncTaskConfig {
+    /// 創建新的實例
+    pub fn new() -> Self {
+        Self {
+            task_name: String::new(),
+            timeout_seconds: 30,
+            retry_config: String::new(),
+            priority: 5,
+            resource_limits: String::new(),
+            tags: None,
+            metadata: None,
+        }
+    }
+    
+    /// 驗證結構體數據
+    pub fn validate(&self) -> Result<(), String> {
+        Ok(())
+    }
+}
+
+impl Default for AsyncTaskConfig {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
+/// 異步任務結果
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[serde(rename_all = "snake_case")]
+pub struct AsyncTaskResult {
+    /// 任務ID
+    pub task_id: String,
+    /// 任務名稱
+    pub task_name: String,
+    /// 任務狀態
+    pub status: String,
+    /// 執行結果
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub result: Option<std::collections::HashMap<String, serde_json::Value>>,
+    /// 錯誤信息
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub error_message: Option<String>,
+    /// 執行時間(毫秒)
+    pub execution_time_ms: f64,
+    /// 開始時間
+    pub start_time: chrono::DateTime<chrono::Utc>,
+    /// 結束時間
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub end_time: Option<chrono::DateTime<chrono::Utc>>,
+    /// 重試次數
+    pub retry_count: i32,
+    /// 資源使用情況
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub resource_usage: Option<std::collections::HashMap<String, serde_json::Value>>,
+    /// 結果元數據
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub metadata: Option<std::collections::HashMap<String, serde_json::Value>>,
+}
+
+impl AsyncTaskResult {
+    /// 創建新的實例
+    pub fn new() -> Self {
+        Self {
+            task_id: String::new(),
+            task_name: String::new(),
+            status: String::new(),
+            result: None,
+            error_message: None,
+            execution_time_ms: 0.0,
+            start_time: chrono::Utc::now(),
+            end_time: None,
+            retry_count: 0,
+            resource_usage: None,
+            metadata: None,
+        }
+    }
+    
+    /// 驗證結構體數據
+    pub fn validate(&self) -> Result<(), String> {
+        Ok(())
+    }
+}
+
+impl Default for AsyncTaskResult {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
+/// 異步批次任務配置
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[serde(rename_all = "snake_case")]
+pub struct AsyncBatchConfig {
+    /// 批次ID
+    pub batch_id: String,
+    /// 批次名稱
+    pub batch_name: String,
+    /// 任務列表
+    pub tasks: Vec<String>,
+    /// 最大並發數
+    pub max_concurrent: i32,
+    /// 遇到第一個錯誤時停止
+    pub stop_on_first_error: bool,
+    /// 批次超時時間(秒)
+    pub batch_timeout_seconds: i32,
+}
+
+impl AsyncBatchConfig {
+    /// 創建新的實例
+    pub fn new() -> Self {
+        Self {
+            batch_id: String::new(),
+            batch_name: String::new(),
+            tasks: Vec::new(),
+            max_concurrent: 5,
+            stop_on_first_error: false,
+            batch_timeout_seconds: 3600,
+        }
+    }
+    
+    /// 驗證結構體數據
+    pub fn validate(&self) -> Result<(), String> {
+        Ok(())
+    }
+}
+
+impl Default for AsyncBatchConfig {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
+/// 異步批次任務結果
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[serde(rename_all = "snake_case")]
+pub struct AsyncBatchResult {
+    /// 批次ID
+    pub batch_id: String,
+    /// 批次名稱
+    pub batch_name: String,
+    /// 總任務數
+    pub total_tasks: i32,
+    /// 已完成任務數
+    pub completed_tasks: i32,
+    /// 失敗任務數
+    pub failed_tasks: i32,
+    /// 任務結果列表
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub task_results: Option<Vec<String>>,
+    /// 批次狀態
+    pub batch_status: String,
+    /// 開始時間
+    pub start_time: chrono::DateTime<chrono::Utc>,
+    /// 結束時間
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub end_time: Option<chrono::DateTime<chrono::Utc>>,
+    /// 總執行時間(毫秒)
+    pub total_execution_time_ms: f64,
+}
+
+impl AsyncBatchResult {
+    /// 創建新的實例
+    pub fn new() -> Self {
+        Self {
+            batch_id: String::new(),
+            batch_name: String::new(),
+            total_tasks: 0,
+            completed_tasks: 0,
+            failed_tasks: 0,
+            task_results: None,
+            batch_status: String::new(),
+            start_time: chrono::Utc::now(),
+            end_time: None,
+            total_execution_time_ms: 0.0,
+        }
+    }
+    
+    /// 驗證結構體數據
+    pub fn validate(&self) -> Result<(), String> {
+        Ok(())
+    }
+}
+
+impl Default for AsyncBatchResult {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
+/// 插件清單
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[serde(rename_all = "snake_case")]
+pub struct PluginManifest {
+    /// 插件唯一標識符
+    pub plugin_id: String,
+    /// 插件名稱
+    pub name: String,
+    /// 插件版本
+    pub version: String,
+    /// 插件作者
+    pub author: String,
+    /// 插件描述
+    pub description: String,
+    /// 插件類型
+    pub plugin_type: String,
+    /// 依賴插件列表
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub dependencies: Option<Vec<String>>,
+    /// 所需權限列表
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub permissions: Option<Vec<String>>,
+    /// 配置 Schema
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub config_schema: Option<std::collections::HashMap<String, serde_json::Value>>,
+    /// 最低AIVA版本要求
+    pub min_aiva_version: String,
+    /// 最高AIVA版本要求
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub max_aiva_version: Option<String>,
+    /// 插件入口點
+    pub entry_point: String,
+    /// 插件主頁
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub homepage: Option<String>,
+    /// 源碼倉庫
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub repository: Option<String>,
+    /// 許可證
+    pub license: String,
+    /// 關鍵詞
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub keywords: Option<Vec<String>>,
+    /// 創建時間
+    pub created_at: chrono::DateTime<chrono::Utc>,
+    /// 更新時間
+    pub updated_at: chrono::DateTime<chrono::Utc>,
+}
+
+impl PluginManifest {
+    /// 創建新的實例
+    pub fn new() -> Self {
+        Self {
+            plugin_id: String::new(),
+            name: String::new(),
+            version: String::new(),
+            author: String::new(),
+            description: String::new(),
+            plugin_type: String::new(),
+            dependencies: None,
+            permissions: None,
+            config_schema: None,
+            min_aiva_version: String::new(),
+            max_aiva_version: None,
+            entry_point: String::new(),
+            homepage: None,
+            repository: None,
+            license: "MIT".to_string(),
+            keywords: None,
+            created_at: chrono::Utc::now(),
+            updated_at: chrono::Utc::now(),
+        }
+    }
+    
+    /// 驗證結構體數據
+    pub fn validate(&self) -> Result<(), String> {
+        Ok(())
+    }
+}
+
+impl Default for PluginManifest {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
+/// 插件執行上下文
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[serde(rename_all = "snake_case")]
+pub struct PluginExecutionContext {
+    /// 插件ID
+    pub plugin_id: String,
+    /// 執行ID
+    pub execution_id: String,
+    /// 輸入數據
+    pub input_data: std::collections::HashMap<String, serde_json::Value>,
+    /// 執行上下文
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub context: Option<std::collections::HashMap<String, serde_json::Value>>,
+    /// 執行超時時間(秒)
+    pub timeout_seconds: i32,
+    /// 環境變數
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub environment: Option<std::collections::HashMap<String, String>>,
+    /// 工作目錄
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub working_directory: Option<String>,
+    /// 執行用戶ID
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub user_id: Option<String>,
+    /// 會話ID
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub session_id: Option<String>,
+    /// 追蹤ID
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub trace_id: Option<String>,
+    /// 元數據
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub metadata: Option<std::collections::HashMap<String, serde_json::Value>>,
+    /// 創建時間
+    pub created_at: chrono::DateTime<chrono::Utc>,
+}
+
+impl PluginExecutionContext {
+    /// 創建新的實例
+    pub fn new() -> Self {
+        Self {
+            plugin_id: String::new(),
+            execution_id: String::new(),
+            input_data: std::collections::HashMap::new(),
+            context: None,
+            timeout_seconds: 60,
+            environment: None,
+            working_directory: None,
+            user_id: None,
+            session_id: None,
+            trace_id: None,
+            metadata: None,
+            created_at: chrono::Utc::now(),
+        }
+    }
+    
+    /// 驗證結構體數據
+    pub fn validate(&self) -> Result<(), String> {
+        Ok(())
+    }
+}
+
+impl Default for PluginExecutionContext {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
+/// 插件執行結果
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[serde(rename_all = "snake_case")]
+pub struct PluginExecutionResult {
+    /// 執行ID
+    pub execution_id: String,
+    /// 插件ID
+    pub plugin_id: String,
+    /// 執行是否成功
+    pub success: bool,
+    /// 結果數據
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub result_data: Option<std::collections::HashMap<String, serde_json::Value>>,
+    /// 錯誤信息
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub error_message: Option<String>,
+    /// 錯誤代碼
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub error_code: Option<String>,
+    /// 執行時間(毫秒)
+    pub execution_time_ms: f64,
+    /// 內存使用量(MB)
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub memory_usage_mb: Option<f64>,
+    /// 輸出日誌
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub output_logs: Option<Vec<String>>,
+    /// 警告信息
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub warnings: Option<Vec<String>>,
+    /// 結果元數據
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub metadata: Option<std::collections::HashMap<String, serde_json::Value>>,
+    /// 創建時間
+    pub created_at: chrono::DateTime<chrono::Utc>,
+}
+
+impl PluginExecutionResult {
+    /// 創建新的實例
+    pub fn new() -> Self {
+        Self {
+            execution_id: String::new(),
+            plugin_id: String::new(),
+            success: false,
+            result_data: None,
+            error_message: None,
+            error_code: None,
+            execution_time_ms: 0.0,
+            memory_usage_mb: None,
+            output_logs: None,
+            warnings: None,
+            metadata: None,
+            created_at: chrono::Utc::now(),
+        }
+    }
+    
+    /// 驗證結構體數據
+    pub fn validate(&self) -> Result<(), String> {
+        Ok(())
+    }
+}
+
+impl Default for PluginExecutionResult {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
+/// 插件配置
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[serde(rename_all = "snake_case")]
+pub struct PluginConfig {
+    /// 插件ID
+    pub plugin_id: String,
+    /// 是否啟用
+    pub enabled: bool,
+    /// 配置參數
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub configuration: Option<std::collections::HashMap<String, serde_json::Value>>,
+    /// 執行優先級
+    pub priority: i32,
+    /// 是否自動啟動
+    pub auto_start: bool,
+    /// 最大實例數
+    pub max_instances: i32,
+    /// 資源限制
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub resource_limits: Option<std::collections::HashMap<String, serde_json::Value>>,
+    /// 環境變數
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub environment_variables: Option<std::collections::HashMap<String, String>>,
+    /// 創建時間
+    pub created_at: chrono::DateTime<chrono::Utc>,
+    /// 更新時間
+    pub updated_at: chrono::DateTime<chrono::Utc>,
+}
+
+impl PluginConfig {
+    /// 創建新的實例
+    pub fn new() -> Self {
+        Self {
+            plugin_id: String::new(),
+            enabled: true,
+            configuration: None,
+            priority: 5,
+            auto_start: false,
+            max_instances: 1,
+            resource_limits: None,
+            environment_variables: None,
+            created_at: chrono::Utc::now(),
+            updated_at: chrono::Utc::now(),
+        }
+    }
+    
+    /// 驗證結構體數據
+    pub fn validate(&self) -> Result<(), String> {
+        Ok(())
+    }
+}
+
+impl Default for PluginConfig {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
+/// 插件註冊表
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[serde(rename_all = "snake_case")]
+pub struct PluginRegistry {
+    /// 註冊表ID
+    pub registry_id: String,
+    /// 註冊表名稱
+    pub name: String,
+    /// 已註冊插件
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub plugins: Option<std::collections::HashMap<String, serde_json::Value>>,
+    /// 插件總數
+    pub total_plugins: i32,
+    /// 活躍插件數
+    pub active_plugins: i32,
+    /// 註冊表版本
+    pub registry_version: String,
+    /// 創建時間
+    pub created_at: chrono::DateTime<chrono::Utc>,
+    /// 更新時間
+    pub updated_at: chrono::DateTime<chrono::Utc>,
+}
+
+impl PluginRegistry {
+    /// 創建新的實例
+    pub fn new() -> Self {
+        Self {
+            registry_id: String::new(),
+            name: String::new(),
+            plugins: None,
+            total_plugins: 0,
+            active_plugins: 0,
+            registry_version: String::new(),
+            created_at: chrono::Utc::now(),
+            updated_at: chrono::Utc::now(),
+        }
+    }
+    
+    /// 驗證結構體數據
+    pub fn validate(&self) -> Result<(), String> {
+        Ok(())
+    }
+}
+
+impl Default for PluginRegistry {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
+/// 插件健康檢查
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[serde(rename_all = "snake_case")]
+pub struct PluginHealthCheck {
+    /// 插件ID
+    pub plugin_id: String,
+    /// 插件狀態
+    pub status: String,
+    /// 最後檢查時間
+    pub last_check_time: chrono::DateTime<chrono::Utc>,
+    /// 響應時間(毫秒)
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub response_time_ms: Option<f64>,
+    /// 錯誤信息
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub error_message: Option<String>,
+    /// 健康分數
+    pub health_score: f64,
+    /// 運行時間百分比
+    pub uptime_percentage: f64,
+    /// 健康檢查元數據
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub metadata: Option<std::collections::HashMap<String, serde_json::Value>>,
+}
+
+impl PluginHealthCheck {
+    /// 創建新的實例
+    pub fn new() -> Self {
+        Self {
+            plugin_id: String::new(),
+            status: String::new(),
+            last_check_time: chrono::Utc::now(),
+            response_time_ms: None,
+            error_message: None,
+            health_score: 100.0,
+            uptime_percentage: 100.0,
+            metadata: None,
+        }
+    }
+    
+    /// 驗證結構體數據
+    pub fn validate(&self) -> Result<(), String> {
+        Ok(())
+    }
+}
+
+impl Default for PluginHealthCheck {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
+/// CLI 參數定義
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[serde(rename_all = "snake_case")]
+pub struct CLIParameter {
+    /// 參數名稱
+    pub name: String,
+    /// 參數類型
+    #[serde(rename = "type")]
+    pub r#type: String,
+    /// 參數描述
+    pub description: String,
+    /// 是否必需
+    pub required: bool,
+    /// 默認值
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub default_value: Option<serde_json::Value>,
+    /// 可選值列表
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub choices: Option<Vec<String>>,
+    /// 最小值
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub min_value: Option<f64>,
+    /// 最大值
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub max_value: Option<f64>,
+    /// 正則表達式模式
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub pattern: Option<String>,
+    /// 幫助文本
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub help_text: Option<String>,
+}
+
+impl CLIParameter {
+    /// 創建新的實例
+    pub fn new() -> Self {
+        Self {
+            name: String::new(),
+            r#type: String::new(),
+            description: String::new(),
+            required: false,
+            default_value: None,
+            choices: None,
+            min_value: None,
+            max_value: None,
+            pattern: None,
+            help_text: None,
+        }
+    }
+    
+    /// 驗證結構體數據
+    pub fn validate(&self) -> Result<(), String> {
+        Ok(())
+    }
+}
+
+impl Default for CLIParameter {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
+/// CLI 命令定義
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[serde(rename_all = "snake_case")]
+pub struct CLICommand {
+    /// 命令名稱
+    pub command_name: String,
+    /// 命令描述
+    pub description: String,
+    /// 命令分類
+    pub category: String,
+    /// 命令參數列表
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub parameters: Option<Vec<String>>,
+    /// 使用示例
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub examples: Option<Vec<String>>,
+    /// 命令別名
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub aliases: Option<Vec<String>>,
+    /// 是否已棄用
+    pub deprecated: bool,
+    /// 最少參數數量
+    pub min_args: i32,
+    /// 最多參數數量
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub max_args: Option<i32>,
+    /// 是否需要認證
+    pub requires_auth: bool,
+    /// 所需權限
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub permissions: Option<Vec<String>>,
+    /// 標籤
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub tags: Option<Vec<String>>,
+    /// 創建時間
+    pub created_at: chrono::DateTime<chrono::Utc>,
+    /// 更新時間
+    pub updated_at: chrono::DateTime<chrono::Utc>,
+}
+
+impl CLICommand {
+    /// 創建新的實例
+    pub fn new() -> Self {
+        Self {
+            command_name: String::new(),
+            description: String::new(),
+            category: "general".to_string(),
+            parameters: None,
+            examples: None,
+            aliases: None,
+            deprecated: false,
+            min_args: 0,
+            max_args: None,
+            requires_auth: false,
+            permissions: None,
+            tags: None,
+            created_at: chrono::Utc::now(),
+            updated_at: chrono::Utc::now(),
+        }
+    }
+    
+    /// 驗證結構體數據
+    pub fn validate(&self) -> Result<(), String> {
+        Ok(())
+    }
+}
+
+impl Default for CLICommand {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
+/// CLI 執行結果
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[serde(rename_all = "snake_case")]
+pub struct CLIExecutionResult {
+    /// 執行的命令
+    pub command: String,
+    /// 命令參數
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub arguments: Option<Vec<String>>,
+    /// 退出代碼
+    pub exit_code: i32,
+    /// 標準輸出
+    pub stdout: String,
+    /// 標準錯誤
+    pub stderr: String,
+    /// 執行時間(毫秒)
+    pub execution_time_ms: f64,
+    /// 開始時間
+    pub start_time: chrono::DateTime<chrono::Utc>,
+    /// 結束時間
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub end_time: Option<chrono::DateTime<chrono::Utc>>,
+    /// 執行用戶ID
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub user_id: Option<String>,
+    /// 會話ID
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub session_id: Option<String>,
+    /// 執行元數據
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub metadata: Option<std::collections::HashMap<String, serde_json::Value>>,
+}
+
+impl CLIExecutionResult {
+    /// 創建新的實例
+    pub fn new() -> Self {
+        Self {
+            command: String::new(),
+            arguments: None,
+            exit_code: 0,
+            stdout: "".to_string(),
+            stderr: "".to_string(),
+            execution_time_ms: 0.0,
+            start_time: chrono::Utc::now(),
+            end_time: None,
+            user_id: None,
+            session_id: None,
+            metadata: None,
+        }
+    }
+    
+    /// 驗證結構體數據
+    pub fn validate(&self) -> Result<(), String> {
+        Ok(())
+    }
+}
+
+impl Default for CLIExecutionResult {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
+/// CLI 會話
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[serde(rename_all = "snake_case")]
+pub struct CLISession {
+    /// 會話ID
+    pub session_id: String,
+    /// 用戶ID
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub user_id: Option<String>,
+    /// 開始時間
+    pub start_time: chrono::DateTime<chrono::Utc>,
+    /// 結束時間
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub end_time: Option<chrono::DateTime<chrono::Utc>>,
+    /// 命令歷史
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub command_history: Option<Vec<String>>,
+    /// 環境變數
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub environment: Option<std::collections::HashMap<String, String>>,
+    /// 工作目錄
+    pub working_directory: String,
+    /// 會話是否活躍
+    pub active: bool,
+    /// 會話元數據
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub metadata: Option<std::collections::HashMap<String, serde_json::Value>>,
+}
+
+impl CLISession {
+    /// 創建新的實例
+    pub fn new() -> Self {
+        Self {
+            session_id: String::new(),
+            user_id: None,
+            start_time: chrono::Utc::now(),
+            end_time: None,
+            command_history: None,
+            environment: None,
+            working_directory: String::new(),
+            active: true,
+            metadata: None,
+        }
+    }
+    
+    /// 驗證結構體數據
+    pub fn validate(&self) -> Result<(), String> {
+        Ok(())
+    }
+}
+
+impl Default for CLISession {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
+/// CLI 配置
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[serde(rename_all = "snake_case")]
+pub struct CLIConfiguration {
+    /// 配置ID
+    pub config_id: String,
+    /// 配置名稱
+    pub name: String,
+    /// 配置設定
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub settings: Option<std::collections::HashMap<String, serde_json::Value>>,
+    /// 是否啟用自動完成
+    pub auto_completion: bool,
+    /// 歷史記錄大小
+    pub history_size: i32,
+    /// 提示符樣式
+    pub prompt_style: String,
+    /// 顏色方案
+    pub color_scheme: String,
+    /// 命令超時時間(秒)
+    pub timeout_seconds: i32,
+    /// 創建時間
+    pub created_at: chrono::DateTime<chrono::Utc>,
+    /// 更新時間
+    pub updated_at: chrono::DateTime<chrono::Utc>,
+}
+
+impl CLIConfiguration {
+    /// 創建新的實例
+    pub fn new() -> Self {
+        Self {
+            config_id: String::new(),
+            name: String::new(),
+            settings: None,
+            auto_completion: true,
+            history_size: 1000,
+            prompt_style: "default".to_string(),
+            color_scheme: "default".to_string(),
+            timeout_seconds: 300,
+            created_at: chrono::Utc::now(),
+            updated_at: chrono::Utc::now(),
+        }
+    }
+    
+    /// 驗證結構體數據
+    pub fn validate(&self) -> Result<(), String> {
+        Ok(())
+    }
+}
+
+impl Default for CLIConfiguration {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
+/// CLI 使用指標
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[serde(rename_all = "snake_case")]
+pub struct CLIMetrics {
+    /// 指標ID
+    pub metric_id: String,
+    /// 命令執行總數
+    pub command_count: i32,
+    /// 成功執行的命令數
+    pub successful_commands: i32,
+    /// 失敗的命令數
+    pub failed_commands: i32,
+    /// 平均執行時間(毫秒)
+    pub average_execution_time_ms: f64,
+    /// 最常用命令列表
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub most_used_commands: Option<Vec<String>>,
+    /// 峰值使用時間
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub peak_usage_time: Option<chrono::DateTime<chrono::Utc>>,
+    /// 統計開始時間
+    pub collection_period_start: chrono::DateTime<chrono::Utc>,
+    /// 統計結束時間
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub collection_period_end: Option<chrono::DateTime<chrono::Utc>>,
+    /// 統計元數據
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub metadata: Option<std::collections::HashMap<String, serde_json::Value>>,
+}
+
+impl CLIMetrics {
+    /// 創建新的實例
+    pub fn new() -> Self {
+        Self {
+            metric_id: String::new(),
+            command_count: 0,
+            successful_commands: 0,
+            failed_commands: 0,
+            average_execution_time_ms: 0.0,
+            most_used_commands: None,
+            peak_usage_time: None,
+            collection_period_start: chrono::Utc::now(),
+            collection_period_end: None,
+            metadata: None,
+        }
+    }
+    
+    /// 驗證結構體數據
+    pub fn validate(&self) -> Result<(), String> {
+        Ok(())
+    }
+}
+
+impl Default for CLIMetrics {
     fn default() -> Self {
         Self::new()
     }

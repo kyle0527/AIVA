@@ -4,7 +4,7 @@ Attack Executor - 攻擊執行器
 負責執行實際的安全測試攻擊操作
 """
 
-from __future__ import annotations
+
 
 import asyncio
 import logging
@@ -36,7 +36,7 @@ except ImportError:
             PlanExecutionMetrics,
             TraceRecord,
         )
-        from services.aiva_common.enums import AttackStatus
+
 
 logger = logging.getLogger(__name__)
 

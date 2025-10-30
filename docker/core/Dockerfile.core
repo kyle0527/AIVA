@@ -1,0 +1,48 @@
+# AIVA 核心 AI 服務 Dockerfile
+# 這是系統的"大腦"，必須永遠運行
+FROM python:3.11-slim
+
+LABEL maintainer="AIVA Team"
+LABEL description="AIVA Core AI Service - 對話助理、經驗管理器、AI引擎"
+LABEL version="1.0.0"
+
+# 設置工作目錄
+WORKDIR /app
+
+# 安裝系統依賴
+RUN apt-get update && apt-get install -y \
+    gcc \
+    g++ \
+    git \
+    curl \
+    wget \
+    libpq-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+# 複製依賴文件並安裝（分層緩存優化）
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+# 複製核心 AI 服務所需的代碼
+COPY services/aiva_common/ ./services/aiva_common/
+COPY services/core/ ./services/core/
+COPY services/features/ ./services/features/
+COPY scripts/launcher/aiva_launcher.py ./aiva_launcher.py
+COPY __init__.py .
+COPY .env .
+
+# 設置環境變數
+ENV PYTHONPATH=/app \
+    PYTHONUNBUFFERED=1 \
+    AIVA_MODE=production \
+    AIVA_ENVIRONMENT=docker
+
+# 暴露端口
+EXPOSE 8000 8001 8002
+
+# 健康檢查
+HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
+    CMD curl -f http://localhost:8000/health || exit 1
+
+# 啟動核心服務（永遠運行）
+CMD ["python", "-c", "from fastapi import FastAPI; import uvicorn; from services.features.function_sqli.worker import SqliWorkerService; app = FastAPI(); @app.get('/health'); def health(): return {'status': 'healthy', 'service': 'aiva-core', 'sqli_ready': True}; @app.post('/scan/sqli'); async def scan_sqli(request: dict): service = SqliWorkerService(); return await service.process_request(request); uvicorn.run(app, host='0.0.0.0', port=8000)"]

@@ -4,7 +4,7 @@ DynamicContentExtractor 使用範例
 展示如何使用 DynamicContentExtractor 提取動態內容
 """
 
-from __future__ import annotations
+
 
 import asyncio
 

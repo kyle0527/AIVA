@@ -1,4 +1,4 @@
-from __future__ import annotations
+
 
 from services.aiva_common.schemas import Authentication
 

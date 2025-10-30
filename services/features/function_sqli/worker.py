@@ -3,7 +3,7 @@
 這是原始 worker.py 的重構版本，解決複雜度過高的問題
 """
 
-from __future__ import annotations
+
 
 import asyncio
 from dataclasses import dataclass, field

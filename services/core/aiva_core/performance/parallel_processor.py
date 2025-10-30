@@ -3,7 +3,7 @@
 拆分自 optimized_core.py 的並行訊息處理部分
 """
 
-from __future__ import annotations
+
 
 import asyncio
 import time

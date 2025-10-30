@@ -4,7 +4,7 @@
 此模組包含所有基礎的資料模型，這些模型會被其他 Schema 模組所繼承或引用。
 """
 
-from __future__ import annotations
+
 
 from datetime import UTC, datetime
 

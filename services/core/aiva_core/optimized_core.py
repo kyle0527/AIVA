@@ -17,20 +17,20 @@ AIVA 自主 AI 核心 - 無需外部 LLM 依賴
 ✅ AIVA 自身就具備完整 AI 能力！
 """
 
-from __future__ import annotations
+
 
 import asyncio
-from collections import defaultdict
-from collections.abc import Callable
-from contextlib import asynccontextmanager
-from dataclasses import dataclass
+
+
+
+
 import gc
-import time
-from typing import Any
-import weakref
+
+
+
 
 from fastapi import FastAPI
-import numpy as np
+
 
 # 導入拆分的性能模組
 from .performance import (

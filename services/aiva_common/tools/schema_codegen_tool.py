@@ -20,19 +20,18 @@ AIVA Schema Code Generation Tool
 
 import argparse
 import logging
-import os
 import sys
 from datetime import datetime
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Set
+from typing import Any, Dict, List, Optional
 
 import yaml
 from jinja2 import Environment, FileSystemLoader, Template
 
 # 設定日誌 - 支援 Unicode
 import sys
-sys.stdout.reconfigure(encoding='utf-8')
-sys.stderr.reconfigure(encoding='utf-8')
+# sys.stdout.reconfigure(encoding='utf-8')  # 僅在支持的 Python 版本中可用
+# sys.stderr.reconfigure(encoding='utf-8')  # 僅在支持的 Python 版本中可用
 
 logging.basicConfig(
     level=logging.INFO,
@@ -99,17 +98,18 @@ class SchemaCodeGenerator:
             content = self._render_python_base_types()
             with open(base_file, 'w', encoding='utf-8') as f:
                 f.write(content)
-            generated_files.append(str(base_file))
+            generated_files.append(str(base_file))  # type: ignore
             logger.info(f"✅ 生成 Python 基礎類型: {base_file}")
         
-        # 生成各模組 Schema
-        for category in ['messaging', 'tasks', 'findings']:
+        # 生成各模組 Schema - 包含所有新增的分類
+        categories = ['messaging', 'tasks', 'findings', 'async_utils', 'plugins', 'cli']
+        for category in categories:
             if category in self.sot_data:
                 module_file = target_dir / f"{category}.py"
                 content = self._render_python_category(category)
                 with open(module_file, 'w', encoding='utf-8') as f:
                     f.write(content)
-                generated_files.append(str(module_file))
+                generated_files.append(str(module_file))  # type: ignore
                 logger.info(f"✅ 生成 Python {category} Schema: {module_file}")
         
         # 生成 __init__.py
@@ -117,7 +117,7 @@ class SchemaCodeGenerator:
         content = self._render_python_init()
         with open(init_file, 'w', encoding='utf-8') as f:
             f.write(content)
-        generated_files.append(str(init_file))
+        generated_files.append(str(init_file))  # type: ignore
         
         return generated_files
     
@@ -141,7 +141,7 @@ class SchemaCodeGenerator:
         content = self._render_go_schemas()
         with open(schema_file, 'w', encoding='utf-8') as f:
             f.write(content)
-        generated_files.append(str(schema_file))
+        generated_files.append(str(schema_file))  # type: ignore
         logger.info(f"✅ 生成 Go Schema: {schema_file}")
         
         return generated_files
@@ -166,7 +166,7 @@ class SchemaCodeGenerator:
         content = self._render_rust_schemas()
         with open(mod_file, 'w', encoding='utf-8') as f:
             f.write(content)
-        generated_files.append(str(mod_file))
+        generated_files.append(str(mod_file))  # type: ignore
         logger.info(f"✅ 生成 Rust Schema: {mod_file}")
         
         return generated_files
@@ -174,89 +174,89 @@ class SchemaCodeGenerator:
     def _render_python_base_types(self) -> str:
         """渲染 Python 基礎類型"""
         content = []
-        content.append('"""')
-        content.append('AIVA 基礎類型 Schema - 自動生成')
-        content.append('=====================================')
-        content.append('')
-        content.append(self.sot_data['metadata']['description'])
-        content.append('')
-        content.append(f"⚠️  {self.sot_data['metadata']['generated_note']}")
-        content.append(f"📅 最後更新: {self.sot_data['metadata']['last_updated']}")
-        content.append(f"🔄 Schema 版本: {self.sot_data['version']}")
-        content.append('"""')
-        content.append('')
+        content.append('"""')  # type: ignore
+        content.append('AIVA 基礎類型 Schema - 自動生成')  # type: ignore
+        content.append('=====================================')  # type: ignore
+        content.append('')  # type: ignore
+        content.append(self.sot_data['metadata']['description'])  # type: ignore
+        content.append('')  # type: ignore
+        content.append(f"⚠️  {self.sot_data['metadata']['generated_note']}")  # type: ignore
+        content.append(f"📅 最後更新: {self.sot_data['metadata']['last_updated']}")  # type: ignore
+        content.append(f"🔄 Schema 版本: {self.sot_data['version']}")  # type: ignore
+        content.append('"""')  # type: ignore
+        content.append('')  # type: ignore
         
         # 添加imports
         for imp in self.sot_data['generation_config']['python']['base_imports']:
-            content.append(imp)
-        content.append('')
-        content.append('')
+            content.append(imp)  # type: ignore
+        content.append('')  # type: ignore
+        content.append('')  # type: ignore
         
         # 生成類別
         for class_name, class_info in self.sot_data['base_types'].items():
-            content.append(f'class {class_name}(BaseModel):')
-            content.append(f'    """{class_info["description"]}"""')
-            content.append('')
+            content.append(f'class {class_name}(BaseModel):')  # type: ignore
+            content.append(f'    """{class_info["description"]}"""')  # type: ignore
+            content.append('')  # type: ignore
             
             for field_name, field_info in class_info['fields'].items():
                 field_line = self._generate_python_field(field_name, field_info)
-                content.append(f'    {field_line}')
-                content.append(f'    """{field_info["description"]}"""')
-                content.append('')
+                content.append(f'    {field_line}')  # type: ignore
+                content.append(f'    """{field_info["description"]}"""')  # type: ignore
+                content.append('')  # type: ignore
             
-            content.append('')
+            content.append('')  # type: ignore
         
         return '\n'.join(content)
     
     def _render_python_category(self, category: str) -> str:
         """渲染 Python 分類 Schema"""
         content = []
-        content.append('"""')
-        content.append(f'AIVA {category.title()} Schema - 自動生成')
-        content.append('=====================================')
-        content.append('')
-        content.append(self.sot_data['metadata']['description'])
-        content.append('')
-        content.append(f"⚠️  {self.sot_data['metadata']['generated_note']}")
-        content.append(f"📅 最後更新: {self.sot_data['metadata']['last_updated']}")
-        content.append(f"🔄 Schema 版本: {self.sot_data['version']}")
-        content.append('"""')
-        content.append('')
+        content.append('"""')  # type: ignore
+        content.append(f'AIVA {category.title()} Schema - 自動生成')  # type: ignore
+        content.append('=====================================')  # type: ignore
+        content.append('')  # type: ignore
+        content.append(self.sot_data['metadata']['description'])  # type: ignore
+        content.append('')  # type: ignore
+        content.append(f"⚠️  {self.sot_data['metadata']['generated_note']}")  # type: ignore
+        content.append(f"📅 最後更新: {self.sot_data['metadata']['last_updated']}")  # type: ignore
+        content.append(f"🔄 Schema 版本: {self.sot_data['version']}")  # type: ignore
+        content.append('"""')  # type: ignore
+        content.append('')  # type: ignore
         
         # 添加imports
         for imp in self.sot_data['generation_config']['python']['base_imports']:
-            content.append(imp)
-        content.append('')
-        content.append('from .base_types import *')
-        content.append('')
-        content.append('')
+            content.append(imp)  # type: ignore
+        content.append('')  # type: ignore
+        content.append('from .base_types import *')  # type: ignore
+        content.append('')  # type: ignore
+        content.append('')  # type: ignore
         
         # 生成類別
         for class_name, class_info in self.sot_data[category].items():
-            content.append(f'class {class_name}(BaseModel):')
-            content.append(f'    """{class_info["description"]}"""')
-            content.append('')
+            content.append(f'class {class_name}(BaseModel):')  # type: ignore
+            content.append(f'    """{class_info["description"]}"""')  # type: ignore
+            content.append('')  # type: ignore
             
             # 檢查是否有extends
             if 'extends' in class_info:
-                content.append(f'    # 繼承自: {class_info["extends"]}')
-                content.append('')
+                content.append(f'    # 繼承自: {class_info["extends"]}')  # type: ignore
+                content.append('')  # type: ignore
             
             # 處理fields
             for field_name, field_info in class_info.get('fields', {}).items():
                 field_line = self._generate_python_field(field_name, field_info)
-                content.append(f'    {field_line}')
-                content.append(f'    """{field_info["description"]}"""')
-                content.append('')
+                content.append(f'    {field_line}')  # type: ignore
+                content.append(f'    """{field_info["description"]}"""')  # type: ignore
+                content.append('')  # type: ignore
             
             # 處理additional_fields
             for field_name, field_info in class_info.get('additional_fields', {}).items():
                 field_line = self._generate_python_field(field_name, field_info)
-                content.append(f'    {field_line}')
-                content.append(f'    """{field_info["description"]}"""')
-                content.append('')
+                content.append(f'    {field_line}')  # type: ignore
+                content.append(f'    """{field_info["description"]}"""')  # type: ignore
+                content.append('')  # type: ignore
             
-            content.append('')
+            content.append('')  # type: ignore
         
         return '\n'.join(content)
     
@@ -321,64 +321,87 @@ __all__ = [
     def _render_go_schemas(self) -> str:
         """渲染 Go 統一 Schema"""
         content = []
-        content.append('// AIVA Go Schema - 自動生成')
-        content.append('// ===========================')
-        content.append('//')
-        content.append(f'// {self.sot_data["metadata"]["description"]}')
-        content.append('//')
-        content.append(f'// ⚠️  {self.sot_data["metadata"]["generated_note"]}')
-        content.append(f'// 📅 最後更新: {self.sot_data["metadata"]["last_updated"]}')
-        content.append(f'// 🔄 Schema 版本: {self.sot_data["version"]}')
-        content.append('')
+        content.append('// AIVA Go Schema - 自動生成')  # type: ignore
+        content.append('// ===========================')  # type: ignore
+        content.append('//')  # type: ignore
+        content.append(f'// {self.sot_data["metadata"]["description"]}')  # type: ignore
+        content.append('//')  # type: ignore
+        content.append(f'// ⚠️  {self.sot_data["metadata"]["generated_note"]}')  # type: ignore
+        content.append(f'// 📅 最後更新: {self.sot_data["metadata"]["last_updated"]}')  # type: ignore
+        content.append(f'// 🔄 Schema 版本: {self.sot_data["version"]}')  # type: ignore
+        content.append('')  # type: ignore
         
         # 添加imports
         for imp in self.sot_data['generation_config']['go']['base_imports']:
-            content.append(imp)
-        content.append('')
+            content.append(imp)  # type: ignore
+        content.append('')  # type: ignore
+        
+        # 枚舉類型
+        if 'enums' in self.sot_data:
+            content.append('// ==================== 枚舉類型 ====================')  # type: ignore
+            content.append('')  # type: ignore
+            
+            for enum_name, enum_info in self.sot_data['enums'].items():
+                content.append(f'// {enum_name} {enum_info.get("description", "")}')  # type: ignore
+                content.append(f'type {enum_name} string')  # type: ignore
+                content.append('')  # type: ignore
+                content.append('const (')  # type: ignore
+                
+                for value_key, value_desc in enum_info.get('values', {}).items():
+                    const_name = f'{enum_name}{value_key.title()}'
+                    content.append(f'    {const_name:<30} {enum_name} = "{value_key}"  // {value_desc}')  # type: ignore
+                
+                content.append(')')  # type: ignore
+                content.append('')  # type: ignore
         
         # 基礎類型
-        content.append('// ==================== 基礎類型 ====================')
-        content.append('')
+        content.append('// ==================== 基礎類型 ====================')  # type: ignore
+        content.append('')  # type: ignore
         
         for class_name, class_info in self.sot_data['base_types'].items():
-            content.append(f'// {class_name} {class_info["description"]}')
-            content.append(f'type {class_name} struct {{')
+            content.append(f'// {class_name} {class_info["description"]}')  # type: ignore
+            content.append(f'type {class_name} struct {{')  # type: ignore
             
             for field_name, field_info in class_info['fields'].items():
                 go_name = self._to_go_field_name(field_name)
                 go_type = self._get_go_type(field_info['type'])
                 json_tag = self._get_go_json_tag(field_info.get('required', True))
-                content.append(f'    {go_name:<20} {go_type:<25} `json:"{field_name}{json_tag}"`  // {field_info["description"]}')
+                content.append(f'    {go_name:<20} {go_type:<25} `json:"{field_name}{json_tag}"`  // {field_info["description"]}')  # type: ignore
             
-            content.append('}')
-            content.append('')
+            content.append('}')  # type: ignore
+            content.append('')  # type: ignore
         
-        # 其他類別
-        for section, title in [('messaging', '訊息通訊'), ('tasks', '任務管理'), ('findings', '發現結果')]:
+        # 其他類別 - 包含所有新增的 Schema 分類
+        sections = [
+            ('messaging', '訊息通訊'), 
+            ('tasks', '任務管理'), 
+            ('findings', '發現結果'),
+            ('async_utils', '異步工具'),
+            ('plugins', '插件管理'),
+            ('cli', 'CLI 界面')
+        ]
+        
+        for section, title in sections:
             if section in self.sot_data:
-                content.append(f'// ==================== {title} ====================')
-                content.append('')
+                content.append(f'// ==================== {title} ====================')  # type: ignore
+                content.append('')  # type: ignore
                 
                 for class_name, class_info in self.sot_data[section].items():
-                    content.append(f'// {class_name} {class_info["description"]}')
-                    content.append(f'type {class_name} struct {{')
+                    content.append(f'// {class_name} {class_info["description"]}')  # type: ignore
+                    content.append(f'type {class_name} struct {{')  # type: ignore
                     
-                    # 主要字段
-                    for field_name, field_info in class_info.get('fields', {}).items():
+                    # 獲取所有字段（包括繼承的字段）
+                    all_fields = self._get_all_fields(class_info, section)
+                    
+                    # 生成所有字段
+                    for field_name, field_info in all_fields.items():
                         go_name = self._to_go_field_name(field_name)
                         go_type = self._get_go_type(field_info['type'])
                         json_tag = self._get_go_json_tag(field_info.get('required', True))
-                        content.append(f'    {go_name:<20} {go_type:<25} `json:"{field_name}{json_tag}"`  // {field_info["description"]}')
+                        content.append(f'    {go_name:<20} {go_type:<25} `json:"{field_name}{json_tag}"`  // {field_info["description"]}')  # type: ignore
                     
-                    # 額外字段
-                    for field_name, field_info in class_info.get('additional_fields', {}).items():
-                        go_name = self._to_go_field_name(field_name)
-                        go_type = self._get_go_type(field_info['type'])
-                        json_tag = self._get_go_json_tag(field_info.get('required', True))
-                        content.append(f'    {go_name:<20} {go_type:<25} `json:"{field_name}{json_tag}"`  // {field_info["description"]}')
-                    
-                    content.append('}')
-                    content.append('')
+                    content.append('}')  # type: ignore
+                    content.append('')  # type: ignore
         
         return '\n'.join(content)
     
@@ -415,8 +438,9 @@ use url::Url;
         # 生成結構體 - 處理所有頂層分類
         all_schemas = {}
         
-        # 收集所有schema定義 - 使用 AIVA 的分類結構
-        for category in ['base_types', 'messaging', 'tasks', 'findings']:
+        # 收集所有schema定義 - 包含所有新增的分類
+        categories = ['base_types', 'messaging', 'tasks', 'findings', 'async_utils', 'plugins', 'cli']
+        for category in categories:
             category_schemas = self.sot_data.get(category, {})
             if isinstance(category_schemas, dict):
                 all_schemas.update(category_schemas)
@@ -584,7 +608,7 @@ impl Default for ''' + struct_name + ''' {
         
         return rust_struct
     
-    def _convert_to_rust_type(self, json_type: str, field_data: dict = None) -> str:
+    def _convert_to_rust_type(self, json_type: str, field_data: Optional[Dict[str, Any]] = None) -> str:
         """將 JSON Schema 類型轉換為 Rust 類型"""
         if field_data is None:
             field_data = {}
@@ -649,7 +673,7 @@ impl Default for ''' + struct_name + ''' {
             
         return type_mapping.get(json_type, 'String')
     
-    def _get_rust_default_value(self, json_type: str, field_data: dict = None) -> str:
+    def _get_rust_default_value(self, json_type: str, field_data: Optional[Dict[str, Any]] = None) -> str:
         """獲取 Rust 類型的默認值"""
         if field_data is None:
             field_data = {}
@@ -747,41 +771,41 @@ impl Default for ''' + struct_name + ''' {
         if 'validation' in field_info:
             for key, value in field_info['validation'].items():
                 if key == 'enum':
-                    field_params.append(f'values={value}')
+                    field_params.append(f'values={value}')  # type: ignore
                 elif key == 'pattern':
-                    field_params.append(f'pattern=r"{value}"')
+                    field_params.append(f'pattern=r"{value}"')  # type: ignore
                 elif key == 'format':
                     # Pydantic v2 format handling
                     if value == 'url':
-                        field_params.append('url=True')
+                        field_params.append('url=True')  # type: ignore
                 elif key == 'max_length':
-                    field_params.append(f'max_length={value}')
+                    field_params.append(f'max_length={value}')  # type: ignore
                 elif key == 'minimum':
-                    field_params.append(f'ge={value}')
+                    field_params.append(f'ge={value}')  # type: ignore
                 elif key == 'maximum':
-                    field_params.append(f'le={value}')
+                    field_params.append(f'le={value}')  # type: ignore
         
         # 處理預設值
         if not field_info.get('required', True):
             if 'default' in field_info:
                 default_val = self._get_python_default(field_info['default'], field_info['type'])
                 if field_params:
-                    field_params.append(f'default={default_val}')
-                    parts.append(f" = Field({', '.join(field_params)})")
+                    field_params.append(f'default={default_val}')  # type: ignore
+                    parts.append(f" = Field({', '.join(field_params)})")  # type: ignore
                 else:
-                    parts.append(f" = {default_val}")
+                    parts.append(f" = {default_val}")  # type: ignore
             else:
                 if field_params:
-                    field_params.append('default=None')
-                    parts.append(f" = Field({', '.join(field_params)})")
+                    field_params.append('default=None')  # type: ignore
+                    parts.append(f" = Field({', '.join(field_params)})")  # type: ignore
                 else:
-                    parts.append(" = None")
+                    parts.append(" = None")  # type: ignore
         elif 'default' in field_info:
             default_val = self._get_python_default(field_info['default'], field_info['type'])
-            field_params.append(f'default={default_val}')
-            parts.append(f" = Field({', '.join(field_params)})")
+            field_params.append(f'default={default_val}')  # type: ignore
+            parts.append(f" = Field({', '.join(field_params)})")  # type: ignore
         elif field_params:
-            parts.append(f" = Field({', '.join(field_params)})")
+            parts.append(f" = Field({', '.join(field_params)})")  # type: ignore
             
         return ''.join(parts)
     
@@ -818,12 +842,94 @@ impl Default for ''' + struct_name + ''' {
         return mapping.get(type_str, type_str)
     
     def _to_go_field_name(self, field_name: str) -> str:
-        """轉換為 Go 欄位名稱（PascalCase）"""
-        return ''.join(word.capitalize() for word in field_name.split('_'))
+        """
+        轉換為 Go 欄位名稱（PascalCase），符合 Go Initialisms 標準
+        參考: https://go.dev/wiki/CodeReviewComments#initialisms
+        """
+        # Go 官方縮寫標準 - 必須統一大小寫
+        initialisms = {
+            'url': 'URL',
+            'http': 'HTTP', 
+            'https': 'HTTPS',
+            'id': 'ID',
+            'api': 'API',
+            'json': 'JSON',
+            'xml': 'XML',
+            'html': 'HTML',
+            'css': 'CSS',
+            'js': 'JS',
+            'sql': 'SQL',
+            'cwe': 'CWE',
+            'cve': 'CVE',
+            'owasp': 'OWASP',
+            'uuid': 'UUID',
+            'uri': 'URI',
+            'tcp': 'TCP',
+            'udp': 'UDP',
+            'ip': 'IP',
+            'os': 'OS',
+            'cpu': 'CPU',
+            'ram': 'RAM',
+            'db': 'DB'
+        }
+        
+        # 分割字段名並處理每個部分
+        parts = field_name.split('_')
+        go_parts = []
+        
+        for part in parts:
+            lower_part = part.lower()
+            if lower_part in initialisms:
+                go_parts.append(initialisms[lower_part])
+            else:
+                go_parts.append(part.capitalize())
+        
+        return ''.join(go_parts)
     
     def _get_go_json_tag(self, required: bool) -> str:
         """獲取 Go JSON 標籤"""
         return "" if required else ",omitempty"
+    
+    def _get_all_fields(self, class_info: dict, current_section: str) -> dict:
+        """
+        獲取類的所有字段，包括繼承的字段
+        
+        Args:
+            class_info: 類定義信息
+            current_section: 當前所在的 section (base_types, findings, etc.)
+            
+        Returns:
+            包含所有字段的字典
+        """
+        all_fields = {}
+        
+        # 首先處理繼承
+        if 'extends' in class_info:
+            base_class_name = class_info['extends']
+            base_class_info = None
+            
+            # 在所有可能的 section 中查找基類
+            for section_name in ['base_types', 'findings', 'messaging', 'tasks', 'plugins', 'cli']:
+                if section_name in self.sot_data and base_class_name in self.sot_data[section_name]:
+                    base_class_info = self.sot_data[section_name][base_class_name]
+                    break
+            
+            if base_class_info:
+                # 遞歸獲取基類的所有字段
+                base_fields = self._get_all_fields(base_class_info, current_section)
+                all_fields.update(base_fields)
+            else:
+                logger.warning(f"找不到基類: {base_class_name}")
+        
+        # 添加當前類的直接字段
+        if 'fields' in class_info:
+            all_fields.update(class_info['fields'])
+        
+        # 添加當前類的額外字段
+        if 'additional_fields' in class_info:
+            all_fields.update(class_info['additional_fields'])
+        
+        return all_fields
     
     def validate_schemas(self) -> bool:
         """驗證 Schema 定義的一致性"""
@@ -835,12 +941,12 @@ impl Default for ''' + struct_name + ''' {
         required_keys = ['version', 'metadata', 'base_types', 'generation_config']
         for key in required_keys:
             if key not in self.sot_data:
-                errors.append(f"缺少必要的頂層鍵: {key}")
+                errors.append(f"缺少必要的頂層鍵: {key}")  # type: ignore
         
         # 檢查版本格式
         version = self.sot_data.get('version', '')
         if not version or not version.replace('.', '').isdigit():
-            errors.append(f"版本格式無效: {version}")
+            errors.append(f"版本格式無效: {version}")  # type: ignore
         
         # 檢查類型引用
         defined_types = set(self.sot_data.get('base_types', {}).keys())
@@ -860,7 +966,7 @@ impl Default for ''' + struct_name + ''' {
                 if core_type in ['str', 'int', 'float', 'bool', 'datetime', 'Any']:
                     continue
                 if core_type not in defined_types:
-                    errors.append(f"在 {schema_name}.{field_name} 中引用了未定義的類型: {core_type}")
+                    errors.append(f"在 {schema_name}.{field_name} 中引用了未定義的類型: {core_type}")  # type: ignore
         
         if errors:
             logger.error("❌ Schema 驗證失敗:")

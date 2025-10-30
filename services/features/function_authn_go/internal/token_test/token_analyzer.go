@@ -9,7 +9,7 @@ import (
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
-	"github.com/kyle0527/aiva/services/function/common/go/aiva_common_go/schemas"
+	schemas "github.com/kyle0527/aiva/services/function/common/go/aiva_common_go/schemas/generated"
 	"go.uber.org/zap"
 )
 
@@ -31,13 +31,21 @@ func (t *TokenAnalyzer) Test(ctx context.Context, task schemas.FunctionTaskPaylo
 
 	// 從請求頭中獲取 JWT Token
 	if authHeader, exists := task.Target.Headers["Authorization"]; exists {
-		if strings.HasPrefix(authHeader, "Bearer ") {
-			jwtToken := strings.TrimPrefix(authHeader, "Bearer ")
+		authHeaderStr, ok := authHeader.(string)
+		if !ok {
+			t.logger.Error("Authorization header is not a string", zap.Any("header", authHeader))
+		} else if strings.HasPrefix(authHeaderStr, "Bearer ") {
+			jwtToken := strings.TrimPrefix(authHeaderStr, "Bearer ")
 			t.logger.Info("Analyzing JWT token")
 			results := t.analyzeJWT(jwtToken)
 			for _, result := range results {
 				if result.Vulnerable {
-					finding := t.createFinding(task.TaskID, task.Target.URL, result)
+					targetURL, ok := task.Target.URL.(string)
+					if !ok {
+						t.logger.Error("Task target URL is not a string", zap.Any("url", task.Target.URL))
+						continue
+					}
+					finding := t.createFinding(task.TaskID, targetURL, result)
 					findings = append(findings, finding)
 				}
 			}
@@ -49,7 +57,12 @@ func (t *TokenAnalyzer) Test(ctx context.Context, task schemas.FunctionTaskPaylo
 		t.logger.Info("Analyzing session token")
 		result := t.analyzeSessionToken(sessionToken)
 		if result.Vulnerable {
-			finding := t.createFinding(task.TaskID, task.Target.URL, result)
+			targetURL, ok := task.Target.URL.(string)
+			if !ok {
+				t.logger.Error("Task target URL is not a string", zap.Any("url", task.Target.URL))
+				return findings, nil
+			}
+			finding := t.createFinding(task.TaskID, targetURL, result)
 			findings = append(findings, finding)
 		}
 	}
@@ -253,7 +266,7 @@ func (t *TokenAnalyzer) createFinding(taskID, url string, result schemas.TokenTe
 			CWE:         &cwePtr,
 			Severity:    severity,
 			Confidence:  "HIGH",
-			Description: &result.Description,
+			Description: &descPtr,
 		},
 		Target: schemas.Target{
 			URL:    url,

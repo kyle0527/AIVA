@@ -11,11 +11,10 @@ AIVA AI 介面定義 - 可插拔 AI 組件介面
 - 介面分離原則 (Interface Segregation)
 """
 
-from __future__ import annotations
+
 
 from abc import ABC, abstractmethod
 from typing import Any, Dict, List, Optional, AsyncContextManager
-from datetime import datetime
 
 from ..schemas.ai import (
     AttackPlan,
@@ -565,7 +564,7 @@ class IAIComponentRegistry(ABC):
 # ============================================================================
 
 
-class IAIContext(AsyncContextManager):
+class IAIContext(AsyncContextManager['IAIContext']):
     """AI 上下文管理器介面 - 管理 AI 組件的生命週期"""
 
     @abstractmethod

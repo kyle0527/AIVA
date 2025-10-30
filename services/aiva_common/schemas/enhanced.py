@@ -4,10 +4,10 @@ Enhanced 版本 Schemas
 此模組定義了各種增強版本的資料模型,提供更詳細的字段和擴展功能。
 """
 
-from __future__ import annotations
+
 
 from datetime import UTC, datetime
-from typing import Any
+from typing import Any, Literal, cast
 
 from pydantic import BaseModel, Field, HttpUrl, field_validator
 
@@ -66,41 +66,40 @@ class EnhancedFindingPayload(BaseModel):
 
         # 構建 SARIF 結果
         level_mapping = {
-            Severity.CRITICAL: "error",
-            Severity.HIGH: "error",
-            Severity.MEDIUM: "warning",
-            Severity.LOW: "warning",
-            Severity.INFORMATIONAL: "note",
+            "critical": "error",
+            "high": "error", 
+            "medium": "warning",
+            "low": "warning",
+            "informational": "note",
         }
 
         locations = []
         if self.target.url:
             locations.append(
                 SARIFLocation(
-                    uri=str(self.target.url),
-                    snippet=self.evidence.payload if self.evidence else None,
+                    uri=str(self.target.url)
                 )
             )
 
         return SARIFResult(
             rule_id=(
-                self.vulnerability.cwe.cwe_id
-                if self.vulnerability.cwe
-                else f"AIVA-{self.vulnerability.name.value}"
+                self.vulnerability.vulnerability_id
+                if self.vulnerability.vulnerability_id
+                else f"AIVA-{self.vulnerability.title}"
             ),
-            level=level_mapping.get(self.vulnerability.severity, "warning"),
+            level=cast(Literal["error", "warning", "info", "note"], level_mapping.get(self.vulnerability.severity.lower() if self.vulnerability.severity else "medium", "warning")),
             message=self.vulnerability.description
-            or f"{self.vulnerability.name.value} detected",
+            or f"{self.vulnerability.title} detected",
             locations=locations,
             properties={
                 "finding_id": self.finding_id,
-                "confidence": self.vulnerability.confidence.value,
+                "confidence": self.vulnerability.ai_confidence,
                 "cvss_score": (
-                    self.vulnerability.cvss.calculate_base_score()
-                    if self.vulnerability.cvss
+                    getattr(self.vulnerability.cvss_metrics, 'base_score', None)
+                    if self.vulnerability.cvss_metrics
                     else None
                 ),
-                "mitre_techniques": self.vulnerability.mitre_techniques,
+                "exploitability_score": self.vulnerability.exploitability_score,
             },
         )
 

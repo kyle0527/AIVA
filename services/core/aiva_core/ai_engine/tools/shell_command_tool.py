@@ -8,7 +8,7 @@ Shell 命令執行工具
 from subprocess import Popen, PIPE, STDOUT, TimeoutExpired
 from typing import Dict, Any, List, Optional
 import os
-import shlex
+
 
 
 class ShellCommandTool:

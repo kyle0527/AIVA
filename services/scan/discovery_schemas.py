@@ -5,7 +5,7 @@ AIVA 掃描發現模式定義
 屬於 scan 模組的業務特定定義。
 """
 
-from __future__ import annotations
+
 
 from datetime import UTC, datetime
 from typing import Any

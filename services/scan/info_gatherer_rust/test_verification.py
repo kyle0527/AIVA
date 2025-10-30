@@ -4,7 +4,7 @@ API 驗證功能測試腳本
 測試從 Rust 服務返回的帶有驗證資訊的結果
 """
 
-import json
+
 from typing import Dict, Any, List
 
 def format_verification_result(finding: Dict[str, Any]) -> str:

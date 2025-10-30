@@ -4,7 +4,7 @@ Model Updater - 模型更新器
 負責定期從經驗庫提取樣本並更新模型
 """
 
-from __future__ import annotations
+
 
 import logging
 from pathlib import Path

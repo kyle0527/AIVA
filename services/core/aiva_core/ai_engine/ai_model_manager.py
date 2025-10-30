@@ -4,7 +4,7 @@ AI Model Manager - AI 模型管理器
 統一管理 bio_neuron_core.py 和訓練系統，提供完整的 AI 核心協調功能
 """
 
-from __future__ import annotations
+
 
 import logging
 from pathlib import Path
@@ -14,7 +14,7 @@ from datetime import datetime, UTC
 from .bio_neuron_core import BioNeuronRAGAgent, ScalableBioNet
 from ..learning.model_trainer import ModelTrainer
 from ..learning.scalable_bio_trainer import ScalableBioTrainer, ScalableBioTrainingConfig
-from ..learning.experience_manager import ExperienceManager
+
 
 logger = logging.getLogger(__name__)
 
@@ -260,7 +260,7 @@ class AIModelManager:
                 logger.info("Decision made using BioNeuronRAGAgent with RAG")
             else:
                 # 直接使用 ScalableBioNet
-                import numpy as np
+
                 
                 # 修正：fc1.shape是(input_size, hidden_size)，所以應該用shape[0]作為輸入大小
                 input_size = self.scalable_net.fc1.shape[0]

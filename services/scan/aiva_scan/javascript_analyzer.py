@@ -2,7 +2,7 @@
 JavaScript 代碼分析器
 靜態分析 JavaScript 代碼以識別潛在的安全問題
 """
-from __future__ import annotations
+
 
 import re
 from typing import Any

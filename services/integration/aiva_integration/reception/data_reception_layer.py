@@ -1,8 +1,8 @@
-from __future__ import annotations
+
 
 from services.aiva_common.schemas import FindingPayload
 
-from .sql_result_database import SqlResultDatabase as TestResultDatabase
+from .test_result_database import TestResultDatabase
 
 
 class DataReceptionLayer:

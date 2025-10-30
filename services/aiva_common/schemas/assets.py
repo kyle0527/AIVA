@@ -4,7 +4,7 @@
 此模組定義了資產探索、資產生命週期管理、EASM 等相關的資料模型。
 """
 
-from __future__ import annotations
+
 
 from datetime import UTC, datetime
 from typing import Any

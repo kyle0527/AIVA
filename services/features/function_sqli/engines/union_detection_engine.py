@@ -2,7 +2,7 @@
 聯合檢測引擎 - 基於UNION查詢的SQL注入檢測
 """
 
-from __future__ import annotations
+
 
 import re
 

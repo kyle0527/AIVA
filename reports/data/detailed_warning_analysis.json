@@ -1,0 +1,253 @@
+---
+Created: 2025-10-30
+Last Modified: 2025-10-30
+Document Type: Data
+---
+
+{
+  "analysis_metadata": {
+    "analysis_date": "2025-10-30T10:43:20.825271",
+    "report_file": "cross_language_validation_report.json",
+    "total_warnings": 763
+  },
+  "summary": {
+    "total_warnings": 763,
+    "by_category": {
+      "mismatch": 689,
+      "missing": 74
+    },
+    "by_language": {
+      "python": 351,
+      "go": 196,
+      "rust": 216
+    },
+    "by_message_pattern": {
+      "類型映射缺失": 337,
+      "可選字段標記": 352,
+      "其他不匹配": 74
+    }
+  },
+  "top_problematic_schemas": {
+    "type_mapping": 74,
+    "FindingPayload": 60,
+    "JavaScriptAnalysisResult": 38,
+    "CLICommand": 29,
+    "FindingImpact": 26,
+    "PluginManifest": 25,
+    "PluginExecutionResult": 25,
+    "AsyncTaskResult": 23,
+    "CLIParameter": 22,
+    "FindingEvidence": 20
+  },
+  "detailed_issues": {
+    "類型映射缺失": {
+      "count": 337,
+      "affected_schemas": [
+        "AIVARequest",
+        "AIVAResponse",
+        "AIVerificationRequest",
+        "AIVerificationResult",
+        "AivaMessage",
+        "Asset",
+        "AsyncBatchConfig",
+        "AsyncBatchResult",
+        "AsyncTaskConfig",
+        "AsyncTaskResult",
+        "Authentication",
+        "CLICommand",
+        "CLIConfiguration",
+        "CLIExecutionResult",
+        "CLIMetrics",
+        "CLIParameter",
+        "CLISession",
+        "CodeLevelRootCause",
+        "ExecutionError",
+        "FindingEvidence",
+        "FindingImpact",
+        "FindingPayload",
+        "FindingRecommendation",
+        "FindingTarget",
+        "Fingerprints",
+        "FunctionTaskContext",
+        "FunctionTaskPayload",
+        "FunctionTaskTestConfig",
+        "JavaScriptAnalysisResult",
+        "MessageHeader",
+        "PluginConfig",
+        "PluginExecutionContext",
+        "PluginExecutionResult",
+        "PluginHealthCheck",
+        "PluginManifest",
+        "PluginRegistry",
+        "ResourceLimits",
+        "RiskFactor",
+        "SASTDASTCorrelation",
+        "ScanScope",
+        "ScanTaskPayload",
+        "SensitiveMatch",
+        "Target",
+        "TaskDependency",
+        "Vulnerability",
+        "VulnerabilityCorrelation"
+      ],
+      "affected_languages": [
+        "go",
+        "python",
+        "rust"
+      ],
+      "sample_messages": [
+        "類型 'Optional[str]' 在 python 語言中沒有映射",
+        "類型 'datetime' 在 python 語言中沒有映射",
+        "類型 'Any' 在 python 語言中沒有映射"
+      ],
+      "improvement_suggestions": [
+        "在 cross_language_interface.py 中補充完整的類型映射配置",
+        "為複合類型 (如 Optional[T], List[T], Dict[K,V]) 添加映射規則",
+        "實現動態類型映射生成機制",
+        "添加類型映射完整性驗證"
+      ],
+      "missing_types": {
+        "'Optional[str]": 67,
+        "'Any": 38,
+        "'List[str]": 37,
+        "'Dict[str, Any]": 30,
+        "'datetime": 27,
+        "'Optional[float]": 24,
+        "'Optional[datetime]": 18,
+        "'Optional[Dict[str, Any]]": 15,
+        "'Optional[int]": 15,
+        "'Target": 6
+      }
+    },
+    "可選字段標記": {
+      "count": 352,
+      "affected_schemas": [
+        "AIVARequest",
+        "AIVAResponse",
+        "AIVerificationRequest",
+        "AIVerificationResult",
+        "Asset",
+        "AsyncBatchResult",
+        "AsyncTaskConfig",
+        "AsyncTaskResult",
+        "Authentication",
+        "CLICommand",
+        "CLIConfiguration",
+        "CLIExecutionResult",
+        "CLIMetrics",
+        "CLIParameter",
+        "CLISession",
+        "ExecutionError",
+        "FindingEvidence",
+        "FindingImpact",
+        "FindingPayload",
+        "FindingRecommendation",
+        "FindingTarget",
+        "Fingerprints",
+        "FunctionTaskContext",
+        "FunctionTaskPayload",
+        "FunctionTaskTestConfig",
+        "JavaScriptAnalysisResult",
+        "MessageHeader",
+        "PluginConfig",
+        "PluginExecutionContext",
+        "PluginExecutionResult",
+        "PluginHealthCheck",
+        "PluginManifest",
+        "PluginRegistry",
+        "RateLimit",
+        "ResourceLimits",
+        "ScanScope",
+        "ScanTaskPayload",
+        "SensitiveMatch",
+        "Summary",
+        "Target",
+        "TaskDependency",
+        "Vulnerability",
+        "VulnerabilityCorrelation"
+      ],
+      "affected_languages": [
+        "go",
+        "python",
+        "rust"
+      ],
+      "sample_messages": [
+        "可選字段 'timestamp' 在 python 中類型標記不正確",
+        "可選字段 'timestamp' 在 go 中類型標記不正確",
+        "可選字段 'timestamp' 在 rust 中類型標記不正確"
+      ],
+      "improvement_suggestions": [
+        "統一 YAML Schema 中可選字段的定義格式",
+        "改進代碼生成器對可選類型的處理邏輯",
+        "建立跨語言可選類型轉換規則",
+        "添加可選字段標記驗證機制"
+      ],
+      "problematic_fields": {
+        "FindingPayload.metadata": 6,
+        "FindingRecommendation.remediation_steps": 6,
+        "FindingRecommendation.references": 6,
+        "FindingEvidence.response_time_delta": 5,
+        "FindingImpact.affected_users": 5,
+        "FindingImpact.estimated_cost": 5,
+        "FindingPayload.evidence": 5,
+        "FindingPayload.impact": 5,
+        "FindingPayload.recommendation": 5,
+        "MessageHeader.timestamp": 3
+      }
+    },
+    "其他不匹配": {
+      "count": 74,
+      "affected_schemas": [
+        "type_mapping"
+      ],
+      "affected_languages": [
+        "go",
+        "python",
+        "rust"
+      ],
+      "sample_messages": [
+        "類型 'RetryConfig' 缺少 python 語言映射",
+        "類型 'List[AsyncTaskConfig]' 缺少 python 語言映射",
+        "類型 'FunctionTaskTarget' 缺少 python 語言映射"
+      ],
+      "improvement_suggestions": [
+        "統一命名約定處理 (snake_case vs camelCase)",
+        "改進註解和文檔生成格式",
+        "優化預設值處理機制",
+        "建立代碼風格一致性檢查"
+      ]
+    }
+  },
+  "improvement_roadmap": {
+    "Phase 1: 類型映射完善 (高優先級)": {
+      "description": "補充缺失的類型映射，解決 337 個類型映射警告",
+      "tasks": [
+        "補充 Python 語言的完整類型映射",
+        "添加複合類型映射規則 (Dict[str, Any], List[T] 等)",
+        "實現動態類型映射生成",
+        "建立類型映射驗證機制"
+      ],
+      "expected_impact": "減少 ~300 個警告"
+    },
+    "Phase 2: 可選字段標準化 (中優先級)": {
+      "description": "統一可選字段處理，解決 352 個可選字段警告",
+      "tasks": [
+        "建立統一的可選字段 YAML 定義標準",
+        "改進代碼生成器的可選類型處理邏輯",
+        "添加跨語言可選類型驗證",
+        "建立可選字段最佳實踐文檔"
+      ],
+      "expected_impact": "減少 ~300 個警告"
+    },
+    "Phase 3: 代碼品質提升 (低優先級)": {
+      "description": "提升整體代碼品質和一致性",
+      "tasks": [
+        "統一命名約定處理",
+        "改進註解和文檔生成",
+        "優化預設值處理機制",
+        "建立持續監控機制"
+      ],
+      "expected_impact": "減少剩餘警告，提升系統品質"
+    }
+  }
+}

@@ -10,7 +10,7 @@ import (
 	"github.com/kyle0527/aiva/services/function/common/go/aiva_common_go/config"
 	"github.com/kyle0527/aiva/services/function/common/go/aiva_common_go/logger"
 	"github.com/kyle0527/aiva/services/function/common/go/aiva_common_go/mq"
-	"github.com/kyle0527/aiva/services/function/common/go/aiva_common_go/schemas"
+	schemas "github.com/kyle0527/aiva/services/function/common/go/aiva_common_go/schemas/generated"
 	"github.com/kyle0527/aiva/services/function/function_authn_go/internal/brute_force"
 	"github.com/kyle0527/aiva/services/function/function_authn_go/internal/token_test"
 	"github.com/kyle0527/aiva/services/function/function_authn_go/internal/weak_config"

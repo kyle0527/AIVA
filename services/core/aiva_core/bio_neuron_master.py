@@ -22,7 +22,7 @@ BioNeuron Master Controller - BioNeuronRAGAgent 主控系統
 └───────┘   └─────────┘   └────────┘
 """
 
-from __future__ import annotations
+
 
 from collections.abc import Callable
 from datetime import datetime

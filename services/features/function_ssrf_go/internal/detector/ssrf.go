@@ -156,7 +156,7 @@ func (d *SSRFDetector) Scan(ctx context.Context, task *ScanTask) ([]*Finding, er
 
 				vulnerability := schemas.Vulnerability{
 					Name:       "SSRF",
-					Cwe:        func() *string { s := "CWE-918"; return &s }(),
+					CWE:        func() *string { s := "CWE-918"; return &s }(),
 					Severity:   "HIGH",
 					Confidence: "FIRM",
 					Description: func() *string {
@@ -166,13 +166,13 @@ func (d *SSRFDetector) Scan(ctx context.Context, task *ScanTask) ([]*Finding, er
 				}
 
 				target := schemas.Target{
-					Url: task.Target,
+					URL: task.Target,
 				}
 
 				finding := &Finding{
-					FindingId:     fmt.Sprintf("finding_%s_%d", task.TaskID, time.Now().Unix()),
-					TaskId:        task.TaskID,
-					ScanId:        "ssrf_scan",
+					FindingID:     fmt.Sprintf("finding_%s_%d", task.TaskID, time.Now().Unix()),
+					TaskID:        task.TaskID,
+					ScanID:        "ssrf_scan",
 					Status:        "confirmed",
 					Vulnerability: vulnerability,
 					Target:        target,

@@ -1,0 +1,141 @@
+# AIVA 核心 AI 服務 - Deployment
+# 這是系統的"大腦"，永遠運行，確保至少有 1 個副本
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: aiva-core
+  namespace: aiva-system
+  labels:
+    app: aiva
+    component: core
+    tier: ai-service
+spec:
+  replicas: 1  # 核心服務，保持單實例
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 0  # 確保零停機
+      maxSurge: 1
+  selector:
+    matchLabels:
+      app: aiva
+      component: core
+  template:
+    metadata:
+      labels:
+        app: aiva
+        component: core
+        tier: ai-service
+    spec:
+      containers:
+      - name: aiva-core
+        image: aiva/core:latest  # 替換為你的鏡像倉庫
+        imagePullPolicy: Always
+        ports:
+        - name: api
+          containerPort: 8000
+          protocol: TCP
+        - name: admin
+          containerPort: 8001
+          protocol: TCP
+        - name: websocket
+          containerPort: 8002
+          protocol: TCP
+        env:
+        - name: PYTHONUNBUFFERED
+          value: "1"
+        envFrom:
+        - configMapRef:
+            name: aiva-core-config
+        - secretRef:
+            name: aiva-core-secret
+        resources:
+          requests:
+            memory: "512Mi"
+            cpu: "500m"
+          limits:
+            memory: "2Gi"
+            cpu: "2000m"
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8000
+          initialDelaySeconds: 60
+          periodSeconds: 30
+          timeoutSeconds: 10
+          failureThreshold: 3
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 8000
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          timeoutSeconds: 5
+          failureThreshold: 3
+        volumeMounts:
+        - name: reports
+          mountPath: /app/reports
+        - name: logs
+          mountPath: /app/logs
+      volumes:
+      - name: reports
+        persistentVolumeClaim:
+          claimName: aiva-reports-pvc
+      - name: logs
+        persistentVolumeClaim:
+          claimName: aiva-logs-pvc
+      restartPolicy: Always
+
+---
+# AIVA 核心服務 - Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: aiva-core-service
+  namespace: aiva-system
+  labels:
+    app: aiva
+    component: core
+spec:
+  type: ClusterIP
+  ports:
+  - name: api
+    port: 8000
+    targetPort: 8000
+    protocol: TCP
+  - name: admin
+    port: 8001
+    targetPort: 8001
+    protocol: TCP
+  - name: websocket
+    port: 8002
+    targetPort: 8002
+    protocol: TCP
+  selector:
+    app: aiva
+    component: core
+
+---
+# AIVA 核心服務 - 對外暴露（可選）
+apiVersion: v1
+kind: Service
+metadata:
+  name: aiva-core-external
+  namespace: aiva-system
+  labels:
+    app: aiva
+    component: core
+spec:
+  type: LoadBalancer  # 或 NodePort
+  ports:
+  - name: api
+    port: 8000
+    targetPort: 8000
+    protocol: TCP
+  - name: admin
+    port: 8001
+    targetPort: 8001
+    protocol: TCP
+  selector:
+    app: aiva
+    component: core

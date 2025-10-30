@@ -2,7 +2,7 @@
 模組相關枚舉 - 模組名稱、主題等
 """
 
-from __future__ import annotations
+
 
 from enum import Enum
 
@@ -10,12 +10,12 @@ from enum import Enum
 class ProgrammingLanguage(str, Enum):
     """程式語言枚舉"""
 
-    # 系統程式語言
-    RUST = "rust"
-    GO = "go"
-    C = "c"
-    CPP = "cpp"
-    CSHARP = "csharp"
+    # 系統程式語言 - 使用官方正式名稱
+    RUST = "rust"              # 官方名稱: Rust
+    GO = "go"                  # 官方名稱: Go (不是 Golang)
+    C = "c"                    # 官方名稱: C
+    CPP = "c++"                # 官方名稱: C++ (不是 cpp) - ISO/IEC 14882 標準
+    CSHARP = "c#"              # 官方名稱: C# (不是 csharp) - Microsoft 官方標準
 
     # 腳本語言
     PYTHON = "python"
@@ -28,6 +28,104 @@ class ProgrammingLanguage(str, Enum):
     JAVA = "java"
     KOTLIN = "kotlin"
     SCALA = "scala"
+
+
+class ECMAScriptVersion(str, Enum):
+    """ECMAScript 版本枚舉（包含最新標準，基於 ECMA-262 官方標準）"""
+    ES3 = "ES3"  # 1999
+    ES5 = "ES5"  # 2009
+    ES5_1 = "ES5.1"  # 2011
+    ES2015 = "ES2015"  # ES6, 2015
+    ES2016 = "ES2016"  # ES7, 2016
+    ES2017 = "ES2017"  # ES8, 2017
+    ES2018 = "ES2018"  # ES9, 2018
+    ES2019 = "ES2019"  # ES10, 2019
+    ES2020 = "ES2020"  # ES11, 2020
+    ES2021 = "ES2021"  # ES12, 2021
+    ES2022 = "ES2022"  # ES13, 2022
+    ES2023 = "ES2023"  # ES14, 2023
+    ES2024 = "ES2024"  # ES15, 2024
+    ES2025 = "ES2025"  # ES16, 2025
+    ES2026 = "ES2026"  # ES17, 2026 (預期)
+
+
+class JavaScriptFeature(str, Enum):
+    """JavaScript 特性枚舉（基於 ECMA-262 官方規範）"""
+    # ES2015+ Features
+    ARROW_FUNCTIONS = "arrow_functions"
+    CLASSES = "classes"
+    TEMPLATE_LITERALS = "template_literals"
+    DESTRUCTURING = "destructuring"
+    DEFAULT_PARAMETERS = "default_parameters"
+    REST_PARAMETERS = "rest_parameters"
+    SPREAD_OPERATOR = "spread_operator"
+    LET_CONST = "let_const"
+    FOR_OF = "for_of"
+    PROMISES = "promises"
+    MODULES = "modules"
+    MAP_SET = "map_set"
+    SYMBOLS = "symbols"
+    ITERATORS = "iterators"
+    GENERATORS = "generators"
+    
+    # ES2017+
+    ASYNC_AWAIT = "async_await"
+    OBJECT_VALUES_ENTRIES = "object_values_entries"
+    STRING_PADDING = "string_padding"
+    TRAILING_COMMAS = "trailing_commas"
+    
+    # ES2018+
+    REST_SPREAD_PROPERTIES = "rest_spread_properties"
+    ASYNC_ITERATION = "async_iteration"
+    PROMISE_FINALLY = "promise_finally"
+    REGEXP_FEATURES = "regexp_features"
+    
+    # ES2019+
+    ARRAY_FLAT = "array_flat"
+    OBJECT_FROM_ENTRIES = "object_from_entries"
+    STRING_TRIM_START_END = "string_trim_start_end"
+    OPTIONAL_CATCH_BINDING = "optional_catch_binding"
+    JSON_SUPERSET = "json_superset"
+    
+    # ES2020+
+    BIGINT = "bigint"
+    DYNAMIC_IMPORT = "dynamic_import"
+    NULLISH_COALESCING = "nullish_coalescing"
+    OPTIONAL_CHAINING = "optional_chaining"
+    PROMISE_ALL_SETTLED = "promise_all_settled"
+    GLOBAL_THIS = "global_this"
+    
+    # ES2021+
+    LOGICAL_ASSIGNMENT = "logical_assignment"
+    NUMERIC_SEPARATORS = "numeric_separators"
+    PROMISE_ANY = "promise_any"
+    STRING_REPLACE_ALL = "string_replace_all"
+    WEAK_REFS = "weak_refs"
+    
+    # ES2022+
+    CLASS_FIELDS = "class_fields"
+    PRIVATE_METHODS = "private_methods"
+    STATIC_CLASS_FIELDS = "static_class_fields"
+    REGEXP_MATCH_INDICES = "regexp_match_indices"
+    TOP_LEVEL_AWAIT = "top_level_await"
+    ARRAY_AT = "array_at"
+    ERROR_CAUSE = "error_cause"
+    
+    # ES2023+
+    ARRAY_FIND_LAST = "array_find_last"
+    HASHBANG_GRAMMAR = "hashbang_grammar"
+    SYMBOLS_AS_WEAK_MAP_KEYS = "symbols_as_weak_map_keys"
+    
+    # ES2024+
+    ARRAY_BUFFER_RESIZE = "array_buffer_resize"
+    REGEXP_V_FLAG = "regexp_v_flag"
+    PROMISE_WITH_RESOLVERS = "promise_with_resolvers"
+    
+    # ES2025+ (预期特性)
+    TEMPORAL = "temporal"
+    RECORDS_TUPLES = "records_tuples"
+    PATTERN_MATCHING = "pattern_matching"
+    DECIMAL = "decimal"
 
     # 函數式語言
     HASKELL = "haskell"

@@ -15,7 +15,7 @@ AIVA Core Models - 核心業務模組
 9. 修復建議生成
 """
 
-from __future__ import annotations  # noqa: I001
+
 
 from datetime import UTC, datetime
 from typing import Any

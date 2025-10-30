@@ -1,0 +1,280 @@
+{
+  "metadata": {
+    "version": "1.0.0",
+    "description": "AIVA 持續運作 AI 組件配置 - 單一事實來源(SOT)",
+    "created": "2025-10-29T00:00:00Z",
+    "last_updated": "2025-10-29T00:00:00Z",
+    "author": "AIVA AI System",
+    "note": "此配置檔案是所有AI組件持續運作的唯一權威定義"
+  },
+  "ai_components": {
+    "autonomous_testing": {
+      "display_name": "AI 自主測試循環",
+      "description": "執行完全自主的測試、學習、優化循環",
+      "command": ["python", "AI_AUTONOMOUS_TESTING_LOOP.py"],
+      "cwd": ".",
+      "enabled": true,
+      "priority": 1,
+      "restart_policy": "always",
+      "max_restarts": 5,
+      "restart_delay": 30,
+      "health_check_interval": 60,
+      "startup_delay": 10,
+      "resource_limits": {
+        "max_cpu_percent": 80,
+        "max_memory_mb": 2048,
+        "max_disk_io_mb": 100
+      },
+      "environment": {
+        "AIVA_COMPONENT_MODE": "continuous",
+        "AIVA_MAX_ITERATIONS": "unlimited",
+        "AIVA_LEARNING_RATE": "0.1"
+      },
+      "dependencies": ["docker", "靶場服務"]
+    },
+    "system_explorer": {
+      "display_name": "AI 系統探索器", 
+      "description": "持續探索和分析系統架構與組件",
+      "command": ["python", "ai_system_explorer_v3.py", "--detailed"],
+      "cwd": ".",
+      "enabled": true,
+      "priority": 2,
+      "restart_policy": "on-failure",
+      "max_restarts": 3,
+      "restart_delay": 60,
+      "health_check_interval": 120,
+      "startup_delay": 15,
+      "resource_limits": {
+        "max_cpu_percent": 60,
+        "max_memory_mb": 1024,
+        "max_disk_io_mb": 50
+      },
+      "environment": {
+        "AIVA_COMPONENT_MODE": "explorer",
+        "AIVA_SCAN_DEPTH": "deep",
+        "AIVA_UPDATE_INTERVAL": "300"
+      },
+      "dependencies": ["檔案系統訪問權限"]
+    },
+    "security_monitor": {
+      "display_name": "AI 安全監控器",
+      "description": "持續監控安全狀態和威脅檢測", 
+      "command": ["python", "ai_security_test.py"],
+      "cwd": ".",
+      "enabled": true,
+      "priority": 3,
+      "restart_policy": "always",
+      "max_restarts": 10,
+      "restart_delay": 15,
+      "health_check_interval": 30,
+      "startup_delay": 5,
+      "resource_limits": {
+        "max_cpu_percent": 70,
+        "max_memory_mb": 1536,
+        "max_disk_io_mb": 75
+      },
+      "environment": {
+        "AIVA_COMPONENT_MODE": "security_monitor",
+        "AIVA_ALERT_THRESHOLD": "medium",
+        "AIVA_SCAN_INTERVAL": "60"
+      },
+      "dependencies": ["網路訪問", "安全工具鏈"]
+    },
+    "functionality_validator": {
+      "display_name": "AI 功能驗證器",
+      "description": "持續驗證系統功能完整性和可用性",
+      "command": ["python", "ai_functionality_validator.py", "--continuous"],
+      "cwd": ".",
+      "enabled": true,
+      "priority": 4,
+      "restart_policy": "on-failure",
+      "max_restarts": 3,
+      "restart_delay": 45,
+      "health_check_interval": 90,
+      "startup_delay": 20,
+      "resource_limits": {
+        "max_cpu_percent": 50,
+        "max_memory_mb": 768,
+        "max_disk_io_mb": 25
+      },
+      "environment": {
+        "AIVA_COMPONENT_MODE": "validator",
+        "AIVA_TEST_COVERAGE": "comprehensive",
+        "AIVA_VALIDATION_INTERVAL": "600"
+      },
+      "dependencies": ["測試環境", "所有AIVA模組"]
+    },
+    "performance_analyzer": {
+      "display_name": "AI 性能分析器",
+      "description": "持續分析系統性能並提供優化建議",
+      "command": ["python", "analyze_ai_performance.py", "--continuous"],
+      "cwd": ".",
+      "enabled": false,
+      "priority": 5,
+      "restart_policy": "on-failure",
+      "max_restarts": 2,
+      "restart_delay": 120,
+      "health_check_interval": 180,
+      "startup_delay": 30,
+      "resource_limits": {
+        "max_cpu_percent": 40,
+        "max_memory_mb": 512,
+        "max_disk_io_mb": 30
+      },
+      "environment": {
+        "AIVA_COMPONENT_MODE": "performance",
+        "AIVA_METRICS_DETAIL": "high",
+        "AIVA_ANALYSIS_INTERVAL": "1800"
+      },
+      "dependencies": ["性能監控工具"]
+    }
+  },
+  "system_settings": {
+    "global_settings": {
+      "global_restart_delay": 10,
+      "health_check_timeout": 30,
+      "max_concurrent_restarts": 2,
+      "startup_sequence_delay": 5,
+      "shutdown_timeout": 60,
+      "log_level": "INFO",
+      "debug_mode": false
+    },
+    "resource_management": {
+      "system_resource_threshold": {
+        "cpu_percent": 90,
+        "memory_percent": 85,
+        "disk_percent": 95,
+        "network_io_threshold": 1000000
+      },
+      "component_resource_monitoring": {
+        "enable_cpu_throttling": true,
+        "enable_memory_limiting": true,
+        "resource_check_interval": 30,
+        "resource_alert_threshold": 0.8
+      }
+    },
+    "logging_and_monitoring": {
+      "log_retention_days": 7,
+      "metrics_collection_interval": 60,
+      "status_report_interval": 300,
+      "enable_detailed_logging": true,
+      "log_rotation_size_mb": 100,
+      "centralized_logging": true
+    },
+    "fault_tolerance": {
+      "enable_circuit_breaker": true,
+      "circuit_breaker_threshold": 5,
+      "circuit_breaker_timeout": 300,
+      "enable_health_checks": true,
+      "health_check_failure_threshold": 3,
+      "cascading_failure_prevention": true
+    },
+    "security": {
+      "enable_component_isolation": false,
+      "secure_communication": false,
+      "audit_logging": true,
+      "component_authentication": false
+    }
+  },
+  "integration_points": {
+    "docker_integration": {
+      "enabled": true,
+      "docker_socket": "/var/run/docker.sock",
+      "container_health_check": true,
+      "auto_container_restart": true,
+      "config_directory": "docker/",
+      "compose_files": {
+        "development": "docker/compose/docker-compose.yml",
+        "production": "docker/compose/docker-compose.production.yml"
+      },
+      "k8s_directory": "docker/k8s/",
+      "helm_chart": "docker/helm/aiva/",
+      "dockerfile_locations": {
+        "core": "docker/core/",
+        "components": "docker/components/",
+        "infrastructure": "docker/infrastructure/"
+      },
+      "last_reorganized": "2025-10-30T11:41:00+08:00",
+      "organization_status": "completed"
+    },
+    "message_queue": {
+      "enabled": true,
+      "provider": "rabbitmq",
+      "connection_check_interval": 60,
+      "auto_reconnect": true
+    },
+    "database": {
+      "enabled": false,
+      "health_check_query": "SELECT 1",
+      "connection_pool_monitoring": false
+    },
+    "external_services": {
+      "靶場服務": {
+        "health_check_url": "http://localhost:8080/health",
+        "check_interval": 120,
+        "required_for": ["autonomous_testing", "security_monitor"]
+      }
+    }
+  },
+  "alerts_and_notifications": {
+    "alert_channels": {
+      "console": {
+        "enabled": true,
+        "log_level": "WARNING"
+      },
+      "file": {
+        "enabled": true,
+        "alert_file": "logs/alerts.log",
+        "log_level": "ERROR"
+      },
+      "email": {
+        "enabled": false,
+        "smtp_server": "",
+        "recipients": []
+      }
+    },
+    "alert_rules": {
+      "component_failure": {
+        "enabled": true,
+        "severity": "HIGH",
+        "action": "restart_component"
+      },
+      "resource_exhaustion": {
+        "enabled": true,  
+        "severity": "MEDIUM",
+        "action": "throttle_components"
+      },
+      "system_overload": {
+        "enabled": true,
+        "severity": "HIGH", 
+        "action": "graceful_degradation"
+      }
+    }
+  },
+  "operational_modes": {
+    "development": {
+      "description": "開發模式 - 較寬鬆的資源限制和更詳細的日誌",
+      "overrides": {
+        "system_settings.logging_and_monitoring.log_level": "DEBUG",
+        "system_settings.resource_management.system_resource_threshold.cpu_percent": 95,
+        "ai_components.*.restart_delay": 10
+      }
+    },
+    "production": {
+      "description": "生產模式 - 嚴格的資源管理和高可用性",
+      "overrides": {
+        "system_settings.logging_and_monitoring.log_level": "INFO",
+        "system_settings.fault_tolerance.enable_circuit_breaker": true,
+        "ai_components.*.max_restarts": 10
+      }
+    },
+    "testing": {
+      "description": "測試模式 - 快速重啟和詳細監控",
+      "overrides": {
+        "system_settings.logging_and_monitoring.log_level": "DEBUG",
+        "ai_components.*.restart_delay": 5,
+        "ai_components.*.health_check_interval": 30
+      }
+    }
+  }
+}

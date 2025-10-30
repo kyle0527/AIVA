@@ -4,7 +4,7 @@ Performance Enhancements for BioNeuron Core
 從 optimized_core.py 整合性能優化功能到核心 AI 模組
 """
 
-from __future__ import annotations
+
 
 import asyncio
 import time
@@ -13,7 +13,7 @@ from contextlib import asynccontextmanager
 from typing import Any, Dict, List, Optional, Callable
 from dataclasses import dataclass
 
-import numpy as np
+
 
 
 @dataclass

@@ -3,7 +3,7 @@ AIVA 自然語言生成增強系統
 基於規則和模板的高品質中文回應生成，無需外部 LLM
 """
 
-from __future__ import annotations
+
 
 import random
 import re

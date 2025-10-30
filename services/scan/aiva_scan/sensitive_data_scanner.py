@@ -2,7 +2,7 @@
 敏感資料掃描器
 檢測響應中的敏感資訊（API Keys, Secrets, PII 等）
 """
-from __future__ import annotations
+
 
 import re
 from typing import Any

@@ -15,9 +15,9 @@ from typing import Dict, Any, List, Optional, Tuple
 from urllib.parse import urljoin, urlencode, urlparse, parse_qs, quote
 import random
 import string
-import time
+
 from datetime import datetime
-import concurrent.futures
+
 from ..base.feature_base import FeatureBase
 from ..base.feature_registry import FeatureRegistry
 from ..base.result_schema import FeatureResult, Finding

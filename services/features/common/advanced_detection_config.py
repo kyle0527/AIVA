@@ -3,7 +3,7 @@
 基於現有 detection_config.py，提供更靈活的配置選項
 """
 
-from __future__ import annotations
+
 
 import os
 from dataclasses import dataclass, field

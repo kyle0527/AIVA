@@ -15,7 +15,7 @@ import sys
 import argparse
 import signal
 from pathlib import Path
-from typing import Optional
+
 
 # 加入 AIVA 路徑
 sys.path.insert(0, str(Path(__file__).parent.parent.parent))

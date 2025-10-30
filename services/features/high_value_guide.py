@@ -19,7 +19,7 @@ import os
 from typing import Dict, Any, List
 
 # 導入所有功能模組
-from .base.feature_registry import FeatureRegistry
+
 from .feature_step_executor import FeatureStepExecutor
 
 # 導入具體的功能模組以觸發註冊
@@ -27,7 +27,7 @@ from .mass_assignment import worker as mass_assignment_worker
 from .jwt_confusion import worker as jwt_confusion_worker
 from .oauth_confusion import worker as oauth_confusion_worker
 from .graphql_authz import worker as graphql_authz_worker
-from .ssrf_oob import worker as ssrf_oob_worker
+
 
 class HighValueFeatureManager:
     """

@@ -12,9 +12,16 @@ import (
 	"strings"
 	"time"
 
-	"github.com/kyle0527/aiva/services/function/common/go/aiva_common_go/schemas"
+	schemas "github.com/kyle0527/aiva/services/function/common/go/aiva_common_go/schemas/generated"
 	"go.uber.org/zap"
 )
+
+// TaskTargetAdapter 適配器類型 - 解決跨語言Schema不一致問題
+// 根據AIVA跨語言同步指南的適配器模式
+type TaskTargetAdapter struct {
+	schemas.FunctionTaskPayload
+	TargetURL string `json:"target_url"` // 臨時解決方案，直到Schema同步修復
+}
 
 // WeakConfigResult 弱配置測試結果
 type WeakConfigResult struct {
@@ -67,7 +74,11 @@ func (w *WeakConfigTester) Test(ctx context.Context, task *schemas.FunctionTaskP
 	var results []WeakConfigResult
 
 	// 解析目標URL
-	targetURL, err := url.Parse(task.Target.URL)
+	targetURLStr, ok := task.Target.URL.(string)
+	if !ok {
+		return nil, fmt.Errorf("task target URL is not a string: %v", task.Target.URL)
+	}
+	targetURL, err := url.Parse(targetURLStr)
 	if err != nil {
 		return nil, fmt.Errorf("invalid target URL: %w", err)
 	}
@@ -104,8 +115,7 @@ func (w *WeakConfigTester) Test(ctx context.Context, task *schemas.FunctionTaskP
 
 	w.logger.Info("Weak configuration tests completed",
 		zap.String("task_id", task.TaskID),
-		zap.Int("total_tests", len(results)),
-		zap.Int("vulnerabilities_found", len(findings)))
+		zap.Int("findings_count", len(findings)))
 
 	return findings, nil
 }

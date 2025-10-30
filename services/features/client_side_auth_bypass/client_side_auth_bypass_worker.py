@@ -10,7 +10,7 @@ Compliance Note (遵循 aiva_common 設計原則):
 
 import logging
 from typing import Dict, Any, List, Optional
-import asyncio
+
 import re
 from urllib.parse import urljoin
 

@@ -732,7 +732,7 @@ cargo update
 #### 4. 整合問題
 ```bash
 # RabbitMQ 連線問題
-docker-compose up -d rabbitmq
+docker compose up -d rabbitmq
 
 # 權限問題
 sudo chown -R $USER:$USER services/scan/
@@ -834,6 +834,42 @@ from ..aiva_common.schemas import (
     CWEReference,            # CWE 分類
     SARIFResult,             # SARIF 2.1.0 格式
 )
+```
+
+#### 🚨 **嚴格禁止的做法**
+
+```python
+# ❌ 禁止 - 重複定義通用枚舉
+class Severity(str, Enum):  # 錯誤!使用 aiva_common.Severity
+    CRITICAL = "critical"
+
+# ❌ 禁止 - 重複定義標準結構
+class SARIFResult(BaseModel):  # 錯誤!使用 aiva_common.SARIFResult
+    tool_name: str
+
+# ❌ 禁止 - 自創評分標準
+class CustomVuln(BaseModel):  # 錯誤!使用 aiva_common.CVSSv3Metrics
+    custom_score: float
+```
+
+#### 🔍 **多語言引擎統一標準**
+
+Scan 模組作為多語言統一引擎，所有語言實現都必須使用相同的數據結構：
+
+```python
+# ✅ Python 端 - 標準實現
+from ..aiva_common.schemas import FindingPayload, CVSSv3Metrics
+```
+
+```typescript
+// ✅ TypeScript 端 - 必須對應相同結構
+import { FindingPayload, CVSSv3Metrics } from '../aiva_common/schemas'
+```
+
+```rust
+// ✅ Rust 端 - 必須對應相同結構
+use aiva_common::schemas::{FindingPayload, CVSSv3Metrics};
+```
 
 # ✅ 正確 - 使用標準化的 CVSS 結構
 from services.scan.models import Vulnerability

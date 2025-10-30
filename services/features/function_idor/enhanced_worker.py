@@ -3,7 +3,7 @@ Enhanced IDOR Worker - 增強版 IDOR 工作器
 整合智能檢測器，提供自適應超時和性能優化
 """
 
-from __future__ import annotations
+
 
 from dataclasses import dataclass, field
 from typing import Any

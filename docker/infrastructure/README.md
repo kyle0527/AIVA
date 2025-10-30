@@ -1,0 +1,21 @@
+# Helm Docker 配置
+
+Helm Charts
+
+## 文件說明
+
+此目錄包含 helm charts 的相關配置文件。
+
+## 使用方式
+
+```bash
+# 建構映像
+docker build -f helm/Dockerfile.xxx .
+
+# 使用 docker-compose
+docker-compose -f helm/docker-compose.xxx.yml up
+```
+
+---
+Created: 2025-10-30
+Last Modified: 2025-10-30

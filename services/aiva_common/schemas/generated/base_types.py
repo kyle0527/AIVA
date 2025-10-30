@@ -5,11 +5,11 @@ AIVA 基礎類型 Schema - 自動生成
 AIVA跨語言Schema統一定義 - 以手動維護版本為準
 
 ⚠️  此配置已同步手動維護的Schema定義，確保單一事實原則
-📅 最後更新: 2025-10-28T10:24:34.374262
-🔄 Schema 版本: 1.0.0
+📅 最後更新: 2025-10-30T00:00:00.000000
+🔄 Schema 版本: 1.1.0
 """
 
-from __future__ import annotations
+
 from typing import Any, Dict, List, Optional
 from datetime import datetime
 from pydantic import BaseModel, Field

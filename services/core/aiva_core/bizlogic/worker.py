@@ -4,7 +4,7 @@ BizLogic Worker - 業務邏輯漏洞測試 Worker
 監聽業務邏輯測試任務,執行測試並回報結果
 """
 
-from __future__ import annotations
+
 
 import json
 

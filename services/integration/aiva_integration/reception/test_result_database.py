@@ -4,7 +4,7 @@ Test Result Database Interface
 Abstract base class for test result database implementations.
 """
 
-from __future__ import annotations
+
 
 from abc import ABC, abstractmethod
 from typing import Any

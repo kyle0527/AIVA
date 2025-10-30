@@ -18,10 +18,10 @@ from .messaging import *
 from .tasks import *
 
 # 發現結果
-from .findings import *
 
-__version__ = "1.0.0"
-__generated_at__ = "2025-10-28T14:59:14.817811"
+
+__version__ = "1.1.0"
+__generated_at__ = "2025-10-30T10:04:37.356325"
 
 __all__ = [
     # 基礎類型

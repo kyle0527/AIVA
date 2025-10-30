@@ -4,7 +4,7 @@
 此模組定義了系統編排、會話管理、任務隊列、Webhook 等系統級別的資料模型。
 """
 
-from __future__ import annotations
+
 
 from datetime import UTC, datetime
 from typing import Any

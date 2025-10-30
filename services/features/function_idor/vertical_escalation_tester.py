@@ -6,7 +6,7 @@ Tests for privilege escalation by attempting to access higher-privilege function
 with lower-privilege credentials.
 """
 
-from __future__ import annotations
+
 
 from dataclasses import dataclass
 from enum import Enum

@@ -1,0 +1,37 @@
+# AIVA 持久化存儲 - PersistentVolumeClaim
+
+---
+# 報告存儲
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: aiva-reports-pvc
+  namespace: aiva-system
+  labels:
+    app: aiva
+    type: storage
+spec:
+  accessModes:
+    - ReadWriteMany  # 多個 Pod 可以讀寫
+  resources:
+    requests:
+      storage: 10Gi
+  storageClassName: standard  # 根據你的 K8s 集群調整
+
+---
+# 日誌存儲
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: aiva-logs-pvc
+  namespace: aiva-system
+  labels:
+    app: aiva
+    type: storage
+spec:
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 5Gi
+  storageClassName: standard

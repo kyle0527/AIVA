@@ -2,7 +2,7 @@
 時間檢測引擎 - 基於時間延遲的SQL注入檢測
 """
 
-from __future__ import annotations
+
 
 import asyncio
 import time

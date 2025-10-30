@@ -5,7 +5,7 @@
 遵循 AIVA 架構模式和 12-factor app 原則
 """
 
-from __future__ import annotations
+
 
 import json
 import logging

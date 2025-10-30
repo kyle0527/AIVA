@@ -4,7 +4,7 @@ AI Engine 與 UI Panel 數據合約
 定義 AI 代理、工具系統、UI 控制面板的標準數據結構
 """
 
-from __future__ import annotations
+
 
 from datetime import datetime
 from typing import Literal

@@ -5,7 +5,7 @@ Extracts resource identifiers from URLs and generates test variations.
 Supports multiple ID patterns: numeric, UUID, hash, mixed.
 """
 
-from __future__ import annotations
+
 
 from dataclasses import dataclass
 import re

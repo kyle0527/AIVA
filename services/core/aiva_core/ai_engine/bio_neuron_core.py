@@ -13,18 +13,18 @@ BioNeuron Core - 生物啟發式神經網路決策核心
 - 經驗學習機制
 """
 
-from __future__ import annotations
+
 
 import logging
 import time
 from typing import TYPE_CHECKING, Any, Dict, List
 
-import numpy as np
+
 
 if TYPE_CHECKING:
     pass
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger(__name__, Optional)
 
 
 # --- 核心神經網路元件 ---
@@ -360,7 +360,7 @@ class BioNeuronRAGAgent:
         if enable_experience:
             try:
                 # 延遲導入以避免循環依賴
-                from pathlib import Path
+
                 import sys
 
                 # 使用正確的完整模組路徑導入
@@ -655,10 +655,10 @@ class BioNeuronRAGAgent:
             相關的上下文字串
         """
         try:
-            import asyncio
+
             from typing import List, Dict
             
-            logger.debug(f"開始 RAG 檢索，任務: {task}")
+            logger.debug(f"開始 RAG 檢索，任務: {task}", Optional)
             
             # 1. 任務關鍵字提取
             keywords = self._extract_keywords(task)
@@ -922,7 +922,7 @@ class BioNeuronCore:
     
     def make_decision(self, 
                      task_description: str, 
-                     context: dict = None,
+                     context: Optional[Dict[str, Any]] = None,
                      confidence_threshold: float = 0.7) -> dict:
         """
         核心決策方法
@@ -965,7 +965,7 @@ class BioNeuronCore:
                 "timestamp": time.time()
             }
     
-    def execute_attack_plan(self, attack_plan: str, target_context: dict = None) -> dict:
+    def execute_attack_plan(self, attack_plan: str, target_context: Optional[Dict[str, Any]] = None) -> dict:
         """
         執行攻擊計畫
         
@@ -1002,7 +1002,7 @@ class BioNeuronCore:
                            task: str, 
                            result: dict, 
                            feedback_score: float,
-                           metadata: dict = None) -> dict:
+                           metadata: Optional[Dict[str, Any]] = None) -> dict:
         """
         從反饋中學習
         

@@ -8,14 +8,14 @@ AIVA 功能測試模式定義
 features 模組專屬的測試配置類。
 """
 
-from __future__ import annotations
+
 
 from datetime import UTC, datetime
 from typing import Any
 
 from pydantic import BaseModel, Field, field_validator
 
-from services.aiva_common.enums import Confidence, Severity, TestStatus, VulnerabilityType
+
 from services.aiva_common.schemas import (
     CVSSv3Metrics,
     ExploitPayload,

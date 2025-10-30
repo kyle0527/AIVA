@@ -5,7 +5,7 @@ AST Parser - 攻擊流程圖解析器
 將其轉換為結構化的圖形表示。
 """
 
-from __future__ import annotations
+
 
 from dataclasses import dataclass, field
 from enum import Enum

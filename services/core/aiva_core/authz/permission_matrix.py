@@ -8,7 +8,7 @@ from datetime import datetime
 from typing import Any
 
 import numpy as np
-import pandas as pd
+
 import structlog
 
 from services.aiva_common.enums import AccessDecision

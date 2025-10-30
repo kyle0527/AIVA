@@ -3,12 +3,12 @@ AIVA 統一配置管理
 整合所有服務的配置項目
 """
 
-from __future__ import annotations
+
 
 import os
 from functools import lru_cache
 from pathlib import Path
-from typing import Any
+
 
 from pydantic import BaseModel
 

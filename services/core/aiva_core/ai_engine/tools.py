@@ -3,7 +3,7 @@ Tools - AI 代理工具系統
 提供程式碼讀取、編輯、執行等操作能力
 """
 
-from __future__ import annotations
+
 
 from abc import ABC, abstractmethod
 from pathlib import Path

@@ -14,7 +14,7 @@ AI Commander - AIVA 中央 AI 指揮系統
 - Training 提供持續學習
 """
 
-from __future__ import annotations
+
 
 from datetime import datetime
 from enum import Enum
@@ -24,14 +24,14 @@ from typing import Any
 
 try:
     from .ai_engine import BioNeuronRAGAgent
-    from .learning.experience_manager import ExperienceManager
     from .learning.model_trainer import ModelTrainer
     from .multilang_coordinator import MultiLanguageAICoordinator
     from .rag import KnowledgeBase, RAGEngine, VectorStore
     from .training.training_orchestrator import TrainingOrchestrator
+    from services.aiva_common.ai.experience_manager import AIVAExperienceManager as ExperienceManager
 except ImportError:
     from services.core.aiva_core.ai_engine import BioNeuronRAGAgent
-    from services.aiva_common.ai.experience_manager import create_experience_manager
+
     from services.core.aiva_core.learning.model_trainer import ModelTrainer
     from services.core.aiva_core.multilang_coordinator import MultiLanguageAICoordinator
     from services.core.aiva_core.rag import KnowledgeBase, RAGEngine, VectorStore

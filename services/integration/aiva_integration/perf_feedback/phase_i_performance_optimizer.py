@@ -13,7 +13,7 @@ from dataclasses import dataclass
 import statistics
 
 from services.aiva_common.utils import get_logger
-from services.aiva_common.schemas.findings import FindingPayload
+
 
 logger = get_logger(__name__)
 

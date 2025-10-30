@@ -4,7 +4,7 @@ Message Broker - 消息代理
 統一管理 RabbitMQ 連接和消息路由
 """
 
-from __future__ import annotations
+
 
 import asyncio
 from collections.abc import Callable
@@ -47,7 +47,7 @@ class MessageBroker:
         self.channel: AbstractChannel | None = None
         self.exchanges: dict[str, AbstractExchange] = {}
         self.queues: dict[str, AbstractQueue] = {}
-        self.consumers: dict[str, asyncio.Task] = {}
+        self.consumers: dict[str, asyncio.Task[Any]] = {}
 
         logger.info(f"MessageBroker initialized for module {module_name.value}")
 

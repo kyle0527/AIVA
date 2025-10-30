@@ -18,7 +18,7 @@ AIVA Function Models - 功能測試模組
 - AuthZCheckPayload, AuthZAnalysisPayload, AuthZResultPayload
 """
 
-from __future__ import annotations
+
 
 from datetime import UTC, datetime
 from typing import Any

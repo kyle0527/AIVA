@@ -17,11 +17,11 @@ AIVA Common AI Plan Executor - 可插拔計劃執行器
 - 支援跨模組的計劃執行需求
 """
 
-from __future__ import annotations
+
 
 import asyncio
 import logging
-from datetime import UTC, datetime, timedelta
+from datetime import UTC, datetime
 from typing import Any, Dict, List, Optional
 from uuid import uuid4
 
@@ -86,11 +86,11 @@ class AIVAPlanExecutor(IPlanExecutor):
         
         # 執行狀態管理
         self.active_executions: Dict[str, Dict[str, Any]] = {}
-        self.pending_results: Dict[str, asyncio.Future] = {}
+        self.pending_results: Dict[str, asyncio.Future[Any]] = {}
         self.execution_metrics: Dict[str, Dict[str, Any]] = {}
         
         # 結果訂閱機制
-        self._result_subscribers: Dict[str, List[asyncio.Queue]] = {}
+        self._result_subscribers: Dict[str, List[asyncio.Queue[Any]]] = {}
         self._subscription_lock = asyncio.Lock()
         
         logger.info("AIVAPlanExecutor initialized with pluggable architecture")
@@ -252,6 +252,9 @@ class AIVAPlanExecutor(IPlanExecutor):
         
         start_time = asyncio.get_event_loop().time()
         end_time = start_time + timeout
+        
+        # 初始化result_queue為None
+        result_queue: Optional[asyncio.Queue[Any]] = None
 
         try:
             # 1. 檢查是否已有結果
@@ -299,14 +302,15 @@ class AIVAPlanExecutor(IPlanExecutor):
 
         finally:
             # 清理訂閱
-            async with self._subscription_lock:
-                if task_id in self._result_subscribers:
-                    try:
-                        self._result_subscribers[task_id].remove(result_queue)
-                        if not self._result_subscribers[task_id]:
-                            del self._result_subscribers[task_id]
-                    except ValueError:
-                        pass  # 隊列已被移除
+            if result_queue is not None:
+                async with self._subscription_lock:
+                    if task_id in self._result_subscribers:
+                        try:
+                            self._result_subscribers[task_id].remove(result_queue)
+                            if not self._result_subscribers[task_id]:
+                                del self._result_subscribers[task_id]
+                        except ValueError:
+                            pass  # 隊列已被移除
 
     async def get_execution_status(
         self, 
@@ -595,7 +599,7 @@ class AIVAPlanExecutor(IPlanExecutor):
         trace_records: List[TraceRecord]
     ) -> List[str]:
         """生成改進建議"""
-        recommendations = []
+        recommendations: List[str] = []
 
         if metrics.success_rate < 0.5:
             recommendations.append("成功率過低，建議檢查工具配置和目標可達性")
@@ -696,7 +700,7 @@ class AIVAPlanExecutor(IPlanExecutor):
 
 def create_plan_executor(
     config: Optional[ExecutionConfig] = None,
-    **kwargs
+    **kwargs: Any
 ) -> AIVAPlanExecutor:
     """創建計劃執行器實例
     

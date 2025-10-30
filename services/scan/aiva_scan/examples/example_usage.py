@@ -4,7 +4,7 @@ JsInteractionSimulator 使用範例
 展示如何使用 JsInteractionSimulator 來模擬 JavaScript 互動
 """
 
-from __future__ import annotations
+
 
 import asyncio
 import logging

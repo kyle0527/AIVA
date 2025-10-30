@@ -3,7 +3,7 @@ SQLi 檢測配置管理
 統一的配置類別和驗證邏輯
 """
 
-from __future__ import annotations
+
 
 from dataclasses import dataclass, field
 from typing import Any

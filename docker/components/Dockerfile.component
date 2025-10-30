@@ -1,0 +1,45 @@
+# AIVA 功能組件通用 Dockerfile
+# 用於 22 個功能組件（掃描、測試、報告等）
+FROM python:3.11-slim
+
+LABEL maintainer="AIVA Team"
+LABEL description="AIVA Component Service - 功能組件（掃描、測試、報告等）"
+LABEL version="1.0.0"
+
+WORKDIR /app
+
+# 安裝系統依賴
+RUN apt-get update && apt-get install -y \
+    gcc \
+    g++ \
+    git \
+    curl \
+    wget \
+    libpq-dev \
+    nmap \
+    && rm -rf /var/lib/apt/lists/*
+
+# 複製依賴文件並安裝（分層緩存優化）
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+# 複製核心目錄（使用 .dockerignore 過濾）
+COPY services/ ./services/
+COPY config/ ./config/
+COPY api/ ./api/
+
+# 複製根目錄所有運行時 Python 腳本（.dockerignore 已排除文檔、工具、測試框架）
+# 這樣可以自動包含所有 *.py 檔案（約 50 個運行時腳本）
+COPY *.py ./
+
+# 複製 __init__.py 確保模組可導入
+COPY __init__.py ./
+
+# 設置環境變數
+ENV PYTHONPATH=/app \
+    PYTHONUNBUFFERED=1 \
+    AIVA_MODE=production \
+    AIVA_ENVIRONMENT=docker
+
+# 默認命令（由 docker-compose 或 k8s 覆蓋）
+CMD ["python", "--version"]

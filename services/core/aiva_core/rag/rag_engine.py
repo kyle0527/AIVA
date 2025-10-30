@@ -4,7 +4,7 @@ RAG Engine - 檢索增強生成引擎
 將知識庫檢索與 AI 決策結合，增強攻擊計畫生成
 """
 
-from __future__ import annotations
+
 
 import logging
 from typing import Any

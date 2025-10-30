@@ -8,7 +8,7 @@ Enhanced Worker 統計數據收集模組
 - 檢測效率分析
 """
 
-from __future__ import annotations
+
 
 from dataclasses import dataclass, field
 from datetime import UTC, datetime

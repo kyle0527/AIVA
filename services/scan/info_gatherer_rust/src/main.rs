@@ -99,27 +99,31 @@ fn create_finding_payload(
     };
     
     let severity_enum = match severity.unwrap_or("medium") {
-        "CRITICAL" | "critical" => Severity::Critical,
-        "HIGH" | "high" => Severity::High,
-        "MEDIUM" | "medium" => Severity::Medium,
-        "LOW" | "low" => Severity::Low,
-        _ => Severity::Medium,
+        "CRITICAL" | "critical" => Severity::CRITICAL,
+        "HIGH" | "high" => Severity::HIGH,
+        "MEDIUM" | "medium" => Severity::MEDIUM,
+        "LOW" | "low" => Severity::LOW,
+        _ => Severity::MEDIUM,
     };
     
     let vulnerability = Vulnerability {
-        name: vulnerability_name.to_string(),
+        name: serde_json::Value::String(vulnerability_name.to_string()),
         cwe: Some("CWE-200".to_string()), // Information Exposure
-        severity: severity_enum,
-        confidence: confidence_level,
+        cve: None,
+        severity: serde_json::Value::String(severity_enum.to_string()),
+        confidence: serde_json::Value::String(confidence_level.to_string()),
         description: Some(format!("Sensitive information detected: {}", info_type)),
+        cvss_score: None,
+        cvss_vector: None,
+        owasp_category: None,
     };
     
     let target = Target {
-        url: location.to_string(),
+        url: serde_json::Value::String(location.to_string()),
         parameter: None,
-        method: "GET".to_string(),
-        headers: std::collections::HashMap::new(),
-        params: std::collections::HashMap::new(),
+        method: Some("GET".to_string()),
+        headers: Some(std::collections::HashMap::new()),
+        params: Some(std::collections::HashMap::new()),
         body: None,
     };
     
@@ -132,14 +136,13 @@ fn create_finding_payload(
         proof: Some(format!("Found {} at {}", info_type, location)),
     };
     
-    let mut finding = FindingPayload::new(
-        finding_id,
-        task_id.to_string(),
-        scan_id.to_string(),
-        FindingStatus::Confirmed,
-        vulnerability,
-        target,
-    );
+    let mut finding = FindingPayload::new();
+    finding.finding_id = finding_id;
+    finding.task_id = task_id.to_string();
+    finding.scan_id = scan_id.to_string();
+    finding.status = FindingStatus::CONFIRMED.to_string();
+    finding.vulnerability = vulnerability;
+    finding.target = target;
     
     finding.evidence = Some(evidence);
     finding.strategy = Some("sensitive_info_detection".to_string());
@@ -265,11 +268,11 @@ async fn main() -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
                     // 嘗試從消息中提取任務ID用於統計
                     if let Ok(task_data) = serde_json::from_slice::<ScanTask>(&delivery.data) {
                         // 實施重試邏輯，防止 poison pill 消息無限循環
-                        let should_requeue = should_retry_message(&delivery, &e);
+                        let should_requeue = should_retry_message(&delivery, e.as_ref());
                         record_task_failed(task_data.task_id, should_requeue);
                     }
                     
-                    let should_requeue = should_retry_message(&delivery, &e);
+                    let should_requeue = should_retry_message(&delivery, e.as_ref());
                     
                     if should_requeue {
                         warn!("重新入隊消息進行重試");
@@ -319,11 +322,11 @@ async fn process_task(
     
     for finding in sensitive_findings {
         let confidence_level = if finding.confidence >= 0.8 {
-            Confidence::Certain
+            Confidence::CONFIRMED
         } else if finding.confidence >= 0.6 {
-            Confidence::Firm
+            Confidence::FIRM
         } else {
-            Confidence::Possible
+            Confidence::TENTATIVE
         };
         
         let finding_payload = create_finding_payload(
@@ -375,34 +378,36 @@ async fn process_task(
             &finding.matched_text,
             &format!("{}:{}", finding.file_path, finding.line_number),
             Some(&finding.severity),
-            Confidence::Firm, // 密鑰匹配高信心度
+            Confidence::FIRM, // 密鑰匹配高信心度
         );
         
         // 添加密鑰檢測專用的元數據
-        finding_payload.metadata.insert(
-            "entropy".to_string(),
-            serde_json::Value::Number(
-                serde_json::Number::from_f64(finding.entropy.unwrap_or(0.0))
-                    .unwrap_or(serde_json::Number::from(0))
-            )
-        );
-        finding_payload.metadata.insert(
-            "rule_name".to_string(),
-            serde_json::Value::String(finding.rule_name)
-        );
-        
-        if let Some(verified) = verified {
-            finding_payload.metadata.insert(
-                "verified".to_string(),
-                serde_json::Value::Bool(verified)
+        if let Some(ref mut metadata) = finding_payload.metadata {
+            metadata.insert(
+                "entropy".to_string(),
+                serde_json::Value::Number(
+                    serde_json::Number::from_f64(finding.entropy.unwrap_or(0.0))
+                        .unwrap_or(serde_json::Number::from(0))
+                )
             );
-        }
-        
-        if let Some(msg) = verification_message {
-            finding_payload.metadata.insert(
-                "verification_message".to_string(),
-                serde_json::Value::String(msg)
+            metadata.insert(
+                "rule_name".to_string(),
+                serde_json::Value::String(finding.rule_name)
             );
+            
+            if let Some(verified) = verified {
+                metadata.insert(
+                    "verified".to_string(),
+                    serde_json::Value::Bool(verified)
+                );
+            }
+            
+            if let Some(msg) = verification_message {
+                metadata.insert(
+                    "verification_message".to_string(),
+                    serde_json::Value::String(msg)
+                );
+            }
         }
         
         all_findings.push(finding_payload);
@@ -419,12 +424,15 @@ async fn process_task(
 
     // 記錄漏洞發現統計
     for finding in &all_findings {
-        let severity_level = match finding.vulnerability.severity {
-            Severity::Critical => SeverityLevel::Critical,
-            Severity::High => SeverityLevel::High,
-            Severity::Medium => SeverityLevel::Medium,
-            Severity::Low => SeverityLevel::Low,
-            Severity::Info => SeverityLevel::Info,
+        // 從 serde_json::Value 中提取嚴重性字符串
+        let severity_str = finding.vulnerability.severity.as_str().unwrap_or("medium");
+        let severity_level = match severity_str {
+            "critical" => SeverityLevel::Critical,
+            "high" => SeverityLevel::High,
+            "medium" => SeverityLevel::Medium,
+            "low" => SeverityLevel::Low,
+            "info" => SeverityLevel::Info,
+            _ => SeverityLevel::Medium,
         };
         record_vulnerability_found(severity_level);
     }

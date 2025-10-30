@@ -1,0 +1,33 @@
+# 增量更新現有 12.9GB 映像檔
+# 添加缺失的關鍵執行腳本
+FROM aiva-git-testing-autonomous:latest
+
+WORKDIR /app
+
+# 複製缺失的關鍵測試和掃描腳本
+COPY autonomous_test.py \
+     data_persistence_test.py \
+     message_queue_test.py \
+     sqli_scanner.py \
+     sqli_test.py \
+     system_explorer.py \
+     xss_scanner.py \
+     test_intelligent_logic.py \
+     ./
+
+# 複製可能缺失的 AI 管理器腳本
+COPY aiva_ai_coordinator.py \
+     aiva_continuous_ai_manager.py \
+     enterprise_ai_manager.py \
+     intelligent_ai_manager.py \
+     production_ai_manager_v2.py \
+     ./
+
+# 確保執行權限
+RUN chmod +x *.py
+
+# 驗證檔案存在
+RUN ls -la /app/*.py | wc -l
+
+LABEL version="12.9GB-patched"
+LABEL description="AIVA Component Service - 增量更新版本"

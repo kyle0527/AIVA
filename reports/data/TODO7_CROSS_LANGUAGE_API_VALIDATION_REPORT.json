@@ -1,0 +1,19 @@
+---
+Created: 2025-10-30
+Last Modified: 2025-10-30
+Document Type: Data
+---
+
+{
+  "status": "PARTIAL",
+  "total_tests": 4,
+  "passed_tests": 3,
+  "pass_rate": "75.0%",
+  "results": {
+    "Python Schemas": true,
+    "TypeScript Schemas": false,
+    "跨語言兼容性": true,
+    "API 整合": true
+  },
+  "summary": "TODO 7 需要進一步修復"
+}

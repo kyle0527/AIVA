@@ -4,7 +4,7 @@ HeadlessBrowserPool 使用範例
 展示如何使用 HeadlessBrowserPool 管理無頭瀏覽器實例
 """
 
-from __future__ import annotations
+
 
 import asyncio
 

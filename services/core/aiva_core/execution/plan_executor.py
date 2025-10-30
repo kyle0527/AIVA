@@ -10,7 +10,7 @@ Plan Executor - 攻擊計畫執行器
 - 管理會話生命週期
 """
 
-from __future__ import annotations
+
 
 import asyncio
 from datetime import UTC, datetime

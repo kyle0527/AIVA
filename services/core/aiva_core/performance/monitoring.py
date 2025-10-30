@@ -3,14 +3,14 @@
 拆分自 optimized_core.py 的監控系統部分
 """
 
-from __future__ import annotations
+
 
 import time
 from collections import defaultdict
 from dataclasses import dataclass
 from typing import Any
 
-import numpy as np
+
 
 
 @dataclass

@@ -5,7 +5,7 @@
 技術指紋和漏洞發現記錄等。
 """
 
-from __future__ import annotations
+
 
 from datetime import UTC, datetime
 from typing import Any

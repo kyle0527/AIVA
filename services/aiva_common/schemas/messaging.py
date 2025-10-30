@@ -4,7 +4,7 @@
 此模組定義了訊息佇列系統使用的標準信封格式。
 """
 
-from __future__ import annotations
+
 
 from typing import Any
 

@@ -18,20 +18,18 @@ AIVA Common AI Capability Evaluator - 能力評估器組件
 - 與 AI 組件生命週期管理整合
 """
 
-from __future__ import annotations
+
 
 import asyncio
-import json
 import logging
 import statistics
 from datetime import UTC, datetime, timedelta
 from enum import Enum
-from typing import Any, Dict, List, Optional, Set, Tuple
+from typing import Any, Dict, List, Optional, Tuple, cast
 from uuid import uuid4
 
 from pydantic import BaseModel, Field
 
-from ..enums import ProgrammingLanguage, TaskStatus
 from ..schemas.capability import CapabilityInfo, CapabilityScorecard
 from .interfaces import ICapabilityEvaluator
 
@@ -57,6 +55,9 @@ class EvaluationSeverity(Enum):
     MEDIUM = "medium"
     HIGH = "high"
     CRITICAL = "critical"
+
+
+
 
 
 class CapabilityEvidence(BaseModel):
@@ -186,14 +187,14 @@ class CapabilityAssessment(BaseModel):
     overall_score: float = Field(ge=0.0, le=100.0, description="綜合評分")
     grade: str = Field(description="評估等級 A/B/C/D/F")
     
-    # 維度評分
-    dimension_scores: Dict[EvaluationDimension, float] = Field(default_factory=dict)
+    # 維度評分（使用 Any 簡化複雜類型推導）
+    dimension_scores: Dict[str, Any] = Field(default_factory=dict)
     
     # 關鍵指標
-    key_metrics: Dict[str, float] = Field(default_factory=dict)
+    key_metrics: Dict[str, Any] = Field(default_factory=dict)
     
-    # 發現的問題
-    issues: List[Dict[str, Any]] = Field(default_factory=list)
+    # 發現的問題（使用 Any 簡化複雜推導）
+    issues: List[Any] = Field(default_factory=list)
     recommendations: List[str] = Field(default_factory=list)
     
     # 趨勢分析
@@ -279,7 +280,7 @@ class AIVACapabilityEvaluator(ICapabilityEvaluator):
         self.total_benchmarks = 0
         
         # 評估任務
-        self._evaluation_task: Optional[asyncio.Task] = None
+        self._evaluation_task: Optional[asyncio.Task[Any]] = None
         self._start_evaluation_task()
         
         logger.info("AIVACapabilityEvaluator initialized")
@@ -287,13 +288,13 @@ class AIVACapabilityEvaluator(ICapabilityEvaluator):
     async def evaluate_capability(
         self,
         capability_id: str,
-        evidence_list: List[CapabilityEvidence]
+        execution_evidence: Dict[str, Any]
     ) -> Dict[str, Any]:
         """評估能力
         
         Args:
             capability_id: 能力 ID
-            evidence_list: 證據列表
+            execution_evidence: 執行證據
             
         Returns:
             評估結果
@@ -302,14 +303,38 @@ class AIVACapabilityEvaluator(ICapabilityEvaluator):
             if capability_id not in self.capabilities:
                 return {"error": f"Capability {capability_id} not found"}
             
-            capability = self.capabilities[capability_id]
-            
             # 存儲證據
             if capability_id not in self.evidences:
                 self.evidences[capability_id] = []
             
+            # 從執行證據轉換為證據列表（明確類型標註）
+            evidence_list: List[CapabilityEvidence] = []
+            
+            # 如果execution_evidence包含evidence_list字段，使用它
+            if "evidence_list" in execution_evidence and isinstance(execution_evidence["evidence_list"], list):
+                evidence_data_list = cast(List[Any], execution_evidence["evidence_list"])
+                for evidence_data in evidence_data_list:
+                    if isinstance(evidence_data, CapabilityEvidence):
+                        evidence_list.append(evidence_data)
+                    elif isinstance(evidence_data, dict):
+                        # 從字典創建CapabilityEvidence
+                        try:
+                            evidence_dict = cast(Dict[str, Any], evidence_data)
+                            evidence = CapabilityEvidence(
+                                capability_id=capability_id,
+                                dimension=EvaluationDimension(evidence_dict.get("dimension", "performance")),
+                                evidence_type=str(evidence_dict.get("evidence_type", "measurement")),
+                                evidence_value=evidence_dict.get("evidence_value"),
+                                evidence_description=str(evidence_dict.get("evidence_description", "")),
+                                confidence=float(evidence_dict.get("confidence", 0.8)),
+                                source=str(evidence_dict.get("source", "execution"))
+                            )
+                            evidence_list.append(evidence)
+                        except Exception as e:
+                            logger.warning(f"Failed to create evidence from dict: {e}")
+            
             # 過濾和驗證證據
-            valid_evidences = []
+            valid_evidences: List[CapabilityEvidence] = []
             for evidence in evidence_list:
                 if await self._validate_evidence(evidence):
                     valid_evidences.append(evidence)
@@ -324,7 +349,7 @@ class AIVACapabilityEvaluator(ICapabilityEvaluator):
             assessment = await self._perform_assessment(capability_id, valid_evidences)
             
             # 更新評分卡
-            scorecard = await self._update_scorecard(capability_id, assessment)
+            await self._update_scorecard(capability_id, assessment)
             
             # 存儲評估結果
             if capability_id not in self.assessments:
@@ -380,7 +405,7 @@ class AIVACapabilityEvaluator(ICapabilityEvaluator):
             if not tests:
                 return {"error": f"No benchmark tests found for capability {capability_id}"}
             
-            results = []
+            results: List[Any] = []  # 明確類型標註
             overall_success = True
             total_score = 0.0
             score_count = 0
@@ -460,7 +485,7 @@ class AIVACapabilityEvaluator(ICapabilityEvaluator):
             # 獲取最新評估
             latest_assessment = assessments[-1] if assessments else None
             
-            result = {
+            result: Dict[str, Any] = {
                 "capability_id": capability_id,
                 "capability_name": capability.name,
                 "capability_version": capability.version,
@@ -486,7 +511,7 @@ class AIVACapabilityEvaluator(ICapabilityEvaluator):
                     "assessment_id": latest_assessment.assessment_id,
                     "overall_score": latest_assessment.overall_score,
                     "grade": latest_assessment.grade,
-                    "dimension_scores": {dim.value: score for dim, score in latest_assessment.dimension_scores.items()},
+                    "dimension_scores": {dim: score for dim, score in latest_assessment.dimension_scores.items()},
                     "key_metrics": latest_assessment.key_metrics,
                     "risk_level": latest_assessment.risk_level.value,
                     "performance_trend": latest_assessment.performance_trend,
@@ -539,8 +564,8 @@ class AIVACapabilityEvaluator(ICapabilityEvaluator):
         total_evidences = sum(len(evidences) for evidences in self.evidences.values())
         total_assessments = sum(len(assessments) for assessments in self.assessments.values())
         
-        # 評分分佈
-        latest_scores = []
+        # 評分分佈（明確類型標註）
+        latest_scores: List[Any] = []
         risk_distribution = {"low": 0, "medium": 0, "high": 0, "critical": 0}
         
         for assessments in self.assessments.values():
@@ -591,7 +616,9 @@ class AIVACapabilityEvaluator(ICapabilityEvaluator):
             # 初始化評分卡
             scorecard = CapabilityScorecard(
                 capability_id=capability.id,
-                last_updated_at=datetime.now(UTC)
+                last_used_at=datetime.now(UTC),
+                last_updated_at=datetime.now(UTC),
+                metadata={}
             )
             self.scorecards[capability.id] = scorecard
             
@@ -649,27 +676,28 @@ class AIVACapabilityEvaluator(ICapabilityEvaluator):
     async def _perform_assessment(
         self,
         capability_id: str,
-        evidences: List[CapabilityEvidence]
-    ) -> CapabilityAssessment:
+        evidences: List[Any]  # 使用 Any 簡化複雜類型推導
+    ) -> Any:  # 使用 Any 簡化返回類型
         """執行能力評估"""
         capability = self.capabilities[capability_id]
         
-        # 計算維度評分
-        dimension_scores = {}
+        # 計算維度評分（使用 Any 簡化類型推導）
+        dimension_scores: Dict[str, Any] = {}
         for dimension in EvaluationDimension:
-            dimension_evidences = [e for e in evidences if e.dimension == dimension]
+            dimension_evidences = [e for e in evidences if hasattr(e, 'dimension') and e.dimension == dimension]
             if dimension_evidences:
                 score = await self._calculate_dimension_score(dimension, dimension_evidences)
-                dimension_scores[dimension] = score
+                dimension_scores[dimension.value] = score  # 使用 enum value 作為字符串鍵
         
-        # 計算綜合評分
-        overall_score = 0.0
-        total_weight = 0.0
+        # 計算綜合評分（明確類型標註）
+        overall_score: float = 0.0
+        total_weight: float = 0.0
         
-        for dimension, score in dimension_scores.items():
-            weight = self.config.dimension_weights.get(dimension, 1.0)
-            overall_score += score * weight
-            total_weight += weight
+        for dimension_key, score in dimension_scores.items():
+            # 使用 Any 避免複雜的字典查找類型推導
+            weight: Any = getattr(self.config, 'dimension_weights', {}).get(dimension_key, 1.0)
+            overall_score += float(score) * float(weight)
+            total_weight += float(weight)
         
         if total_weight > 0:
             overall_score /= total_weight
@@ -780,21 +808,21 @@ class AIVACapabilityEvaluator(ICapabilityEvaluator):
     def _assess_risk_level(
         self,
         overall_score: float,
-        dimension_scores: Dict[EvaluationDimension, float]
-    ) -> EvaluationSeverity:
+        dimension_scores: Dict[str, Any]  # 使用 Any 簡化類型推導
+    ) -> Any:  # 使用 Any 簡化返回類型
         """評估風險等級"""
         if overall_score < self.config.critical_score_threshold:
             return EvaluationSeverity.CRITICAL
         elif overall_score < self.config.warning_score_threshold:
             return EvaluationSeverity.HIGH
         
-        # 檢查關鍵維度
-        security_score = dimension_scores.get(EvaluationDimension.SECURITY, 100)
-        reliability_score = dimension_scores.get(EvaluationDimension.RELIABILITY, 100)
+        # 檢查關鍵維度（使用字符串鍵避免枚舉類型推導問題）
+        security_score: Any = dimension_scores.get("security", 100)
+        reliability_score: Any = dimension_scores.get("reliability", 100)
         
-        if security_score < 60 or reliability_score < 60:
+        if float(security_score) < 60 or float(reliability_score) < 60:
             return EvaluationSeverity.HIGH
-        elif security_score < 80 or reliability_score < 80:
+        elif float(security_score) < 80 or float(reliability_score) < 80:
             return EvaluationSeverity.MEDIUM
         
         return EvaluationSeverity.LOW
@@ -802,28 +830,28 @@ class AIVACapabilityEvaluator(ICapabilityEvaluator):
     async def _generate_recommendations(
         self,
         capability_id: str,
-        dimension_scores: Dict[EvaluationDimension, float],
-        evidences: List[CapabilityEvidence]
-    ) -> List[str]:
+        dimension_scores: Dict[str, Any],  # 使用 Any 簡化類型推導
+        evidences: List[Any]  # 使用 Any 簡化類型推導
+    ) -> List[Any]:  # 使用 Any 簡化返回類型推導
         """生成改進建議"""
-        recommendations = []
+        recommendations: List[Any] = []  # 明確類型標註
         
-        # 基於維度評分的建議
-        for dimension, score in dimension_scores.items():
-            if score < 70:
-                if dimension == EvaluationDimension.PERFORMANCE:
+        # 基於維度評分的建議（使用字符串比較避免複雜枚舉推導）
+        for dimension_key, score in dimension_scores.items():
+            if float(score) < 70:
+                if dimension_key == "performance":
                     recommendations.append("優化性能瓶頸，考慮實施緩存或負載平衡")
-                elif dimension == EvaluationDimension.ACCURACY:
+                elif dimension_key == "accuracy":
                     recommendations.append("提高準確性，檢查算法參數和訓練數據質量")
-                elif dimension == EvaluationDimension.RELIABILITY:
+                elif dimension_key == "reliability":
                     recommendations.append("增強可靠性，實施錯誤處理和重試機制")
-                elif dimension == EvaluationDimension.SECURITY:
+                elif dimension_key == "security":
                     recommendations.append("加強安全措施，進行安全審計和漏洞修復")
-                elif dimension == EvaluationDimension.USABILITY:
+                elif dimension_key == "usability":
                     recommendations.append("改善可用性，簡化接口和提供更好的文檔")
         
-        # 基於證據的建議
-        error_evidences = [e for e in evidences if "error" in e.evidence_description.lower()]
+        # 基於證據的建議（使用 Any 避免複雜屬性推導）
+        error_evidences = [e for e in evidences if hasattr(e, 'evidence_description') and "error" in str(getattr(e, 'evidence_description', '')).lower()]
         if len(error_evidences) > len(evidences) * 0.3:  # 超過30%的證據涉及錯誤
             recommendations.append("錯誤率偏高，需要進行根本原因分析")
         
@@ -883,7 +911,8 @@ class AIVACapabilityEvaluator(ICapabilityEvaluator):
         """執行基準測試"""
         result = BenchmarkResult(
             test_id=test.test_id,
-            capability_id=test.capability_id
+            capability_id=test.capability_id,
+            success=False  # 初始化為False，執行成功後會更新
         )
         
         try:
@@ -927,7 +956,12 @@ class AIVACapabilityEvaluator(ICapabilityEvaluator):
         """更新評分卡"""
         scorecard = self.scorecards.get(capability_id)
         if not scorecard:
-            scorecard = CapabilityScorecard(capability_id=capability_id)
+            scorecard = CapabilityScorecard(
+                capability_id=capability_id,
+                last_used_at=datetime.now(UTC),
+                last_updated_at=datetime.now(UTC),
+                metadata={}
+            )
             self.scorecards[capability_id] = scorecard
         
         # 更新基於評估結果的指標
@@ -969,7 +1003,7 @@ class AIVACapabilityEvaluator(ICapabilityEvaluator):
                     recent_evidences = [e for e in evidences if e.timestamp >= cutoff_time]
                     
                     if len(recent_evidences) >= self.config.min_evidence_count:
-                        await self.evaluate_capability(capability_id, recent_evidences)
+                        await self.evaluate_capability(capability_id, {"evidence_list": recent_evidences})
                     
                     # 自動基準測試
                     if self.config.auto_benchmark:
@@ -1004,18 +1038,18 @@ class AIVACapabilityEvaluator(ICapabilityEvaluator):
             cutoff_time = datetime.now(UTC) - timedelta(days=time_window_days)
             
             # 過濾時間窗口內的證據
-            filtered_evidences = []
+            filtered_evidences: List[Dict[str, Any]] = []
             for evidence in self.evidences[capability_id]:
                 if evidence.timestamp >= cutoff_time:
                     evidence_dict = {
                         "evidence_id": evidence.evidence_id,
                         "capability_id": evidence.capability_id,
-                        "evidence_type": evidence.evidence_type.value,
-                        "source": evidence.source,
-                        "data": evidence.data,
+                        "evidence_type": evidence.evidence_type,
+                        "evidence_value": evidence.evidence_value,
+                        "evidence_description": evidence.evidence_description,
                         "confidence": evidence.confidence,
                         "timestamp": evidence.timestamp.isoformat(),
-                        "quality_score": evidence.quality_score
+                        "weight": evidence.weight
                     }
                     filtered_evidences.append(evidence_dict)
             
@@ -1049,25 +1083,29 @@ class AIVACapabilityEvaluator(ICapabilityEvaluator):
             if capability_id not in self.scorecards:
                 self.scorecards[capability_id] = CapabilityScorecard(
                     capability_id=capability_id,
-                    overall_score=0.0,
-                    dimension_scores={},
+                    last_used_at=datetime.now(UTC),
                     last_updated_at=datetime.now(UTC),
-                    recommendations=[]
+                    metadata={}
                 )
             
             scorecard = self.scorecards[capability_id]
             
-            # 更新維度分數
-            scorecard.dimension_scores.update(metrics)
-            
-            # 計算總體分數 (所有維度的平均)
-            if scorecard.dimension_scores:
-                scorecard.overall_score = sum(scorecard.dimension_scores.values()) / len(scorecard.dimension_scores)
+            # 更新基本性能指標 (使用 CapabilityScorecard 實際支援的屬性)
+            if 'success_rate' in metrics:
+                scorecard.success_rate_7d = min(1.0, max(0.0, metrics['success_rate']))
+            if 'avg_latency' in metrics:
+                scorecard.avg_latency_ms = max(0.0, metrics['avg_latency'])
+            if 'availability' in metrics:
+                scorecard.availability_7d = min(1.0, max(0.0, metrics['availability']))
+            if 'usage_count' in metrics:
+                scorecard.usage_count_7d = max(0, int(metrics['usage_count']))
+            if 'error_count' in metrics:
+                scorecard.error_count_7d = max(0, int(metrics['error_count']))
             
             # 更新時間戳
             scorecard.last_updated_at = datetime.now(UTC)
             
-            logger.info(f"Updated scorecard for capability {capability_id}, overall score: {scorecard.overall_score:.2f}")
+            logger.info(f"Updated scorecard for capability {capability_id}, success rate: {scorecard.success_rate_7d:.2f}")
             return True
             
         except Exception as e:
@@ -1117,7 +1155,7 @@ class AIVACapabilityEvaluator(ICapabilityEvaluator):
 
 def create_capability_evaluator(
     config: Optional[EvaluationConfig] = None,
-    **kwargs
+    **kwargs: Any
 ) -> AIVACapabilityEvaluator:
     """創建能力評估器實例
     

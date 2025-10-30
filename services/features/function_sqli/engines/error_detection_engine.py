@@ -2,7 +2,7 @@
 錯誤檢測引擎 - 重構後的模組化版本
 """
 
-from __future__ import annotations
+
 
 import re
 

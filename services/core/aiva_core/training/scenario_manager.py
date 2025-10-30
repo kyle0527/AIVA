@@ -17,7 +17,7 @@ Standard Scenario Manager - OWASP 靶場場景管理器
 5. 訓練數據集構建
 """
 
-from __future__ import annotations
+
 
 from datetime import UTC, datetime
 import json

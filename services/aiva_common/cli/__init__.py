@@ -3,7 +3,7 @@
 基於 Click 和 Rich 的最佳實踐
 """
 
-from __future__ import annotations
+
 
 import json
 import sys

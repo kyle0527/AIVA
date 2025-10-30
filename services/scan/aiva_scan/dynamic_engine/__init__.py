@@ -8,7 +8,7 @@ Dynamic Engine Module
 - AJAX/API 端點處理
 """
 
-from __future__ import annotations
+
 
 from .ajax_api_handler import AjaxApiHandler
 from .dynamic_content_extractor import (

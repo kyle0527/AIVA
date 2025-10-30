@@ -3,7 +3,7 @@
 基於 asyncio 和 contextvar 的最佳實踐
 """
 
-from __future__ import annotations
+
 
 import asyncio
 import functools
@@ -39,7 +39,7 @@ class AsyncTaskManager:
     """異步任務管理器"""
     
     def __init__(self):
-        self._tasks: Dict[str, asyncio.Task] = {}
+        self._tasks: Dict[str, asyncio.Task[Any]] = {}
         self._results: Dict[str, Any] = {}
     
     async def submit_task(

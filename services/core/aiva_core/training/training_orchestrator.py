@@ -4,7 +4,7 @@ Training Orchestrator - 訓練編排器
 整合 RAG、場景管理、模型訓練，實現完整的自動化訓練流程
 """
 
-from __future__ import annotations
+
 
 from datetime import datetime, UTC
 import logging
@@ -13,13 +13,13 @@ from typing import Any, Dict, List
 
 try:
     from ..execution.plan_executor import PlanExecutor
-    from ..learning.experience_manager import ExperienceManager
+
     from ..learning.model_trainer import ModelTrainer
     from ..rag import RAGEngine
     from .scenario_manager import ScenarioManager
 except ImportError:
     from services.core.aiva_core.execution.plan_executor import PlanExecutor
-    from services.aiva_common.ai.experience_manager import create_experience_manager
+
     from services.core.aiva_core.learning.model_trainer import ModelTrainer
     from services.core.aiva_core.rag import RAGEngine
     from services.core.aiva_core.training.scenario_manager import ScenarioManager

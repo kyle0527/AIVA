@@ -4,7 +4,7 @@ Payload Generator - Payload 生成器
 根據漏洞類型和目標環境生成測試 Payload
 """
 
-from __future__ import annotations
+
 
 import base64
 import logging

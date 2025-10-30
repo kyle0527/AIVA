@@ -60,6 +60,18 @@ torchvision>=0.16.0  # Computer vision tools (optional)
 # Reinforcement Learning Utilities
 gymnasium>=0.29.0  # RL environment interface (formerly gym)
 
+# ==================== Advanced AI ====================
+transformers>=4.30.0  # Hugging Face transformers
+sentence-transformers>=2.2.0  # Semantic text embeddings
+openai>=1.0.0  # OpenAI API client
+
+# Natural Language Processing
+nltk>=3.8.0  # Natural Language Toolkit
+spacy>=3.6.0  # Industrial-strength NLP
+
+# Data Science
+pandas>=2.0.0  # Data manipulation and analysis
+
 # ==================== Development Tools ====================
 pytest>=8.0.0
 pytest-cov>=4.0.0

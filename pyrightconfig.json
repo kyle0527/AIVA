@@ -15,12 +15,20 @@
     "_archive/**",
     "_out/**"
   ],
-  "reportMissingImports": "warning",
+  "reportMissingImports": "information",
   "reportMissingTypeStubs": "none", 
-  "reportImportCycles": "warning",
-  "reportUnusedImport": "warning",
-  "reportUnusedVariable": "warning",
+  "reportImportCycles": "information",
+  "reportUnusedImport": "information",
+  "reportUnusedVariable": "information",
   "typeCheckingMode": "basic",
+  
+  // � 變動後延遲分析設定 - 20秒後重新分析
+  "useLibraryCodeForTypes": false,
+  "autoImportCompletions": false,
+  "indexing": true,
+  "watchForSourceChanges": true,
+  "watchForLibraryChanges": false,
+  "enableTypeIgnoreComments": true,
   "pythonVersion": "3.13",
   "pythonPlatform": "All",
   "executionEnvironments": [

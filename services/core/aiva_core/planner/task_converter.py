@@ -9,7 +9,7 @@ Compliance Note (遵循 aiva_common 設計原則):
 - 修正日期: 2025-10-25
 """
 
-from __future__ import annotations
+
 
 from dataclasses import dataclass, field
 from enum import Enum

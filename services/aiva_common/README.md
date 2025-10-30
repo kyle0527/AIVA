@@ -20,11 +20,34 @@
 
 ### 📊 模組統計
 
-- **總檔案數**: 38 個 Python 檔案
-- **程式碼行數**: 6,929 行（有效程式碼）
-- **枚舉定義**: 40 個標準枚舉類別
-- **數據模型**: 60+ 個 Pydantic 模型
-- **覆蓋範圍**: 5 大核心領域（配置、枚舉、模式、工具、通信）
+- **總檔案數**: 50+ 個 Python 檔案 (擴充 32% ↑)
+- **程式碼行數**: 8,500+ 行（有效程式碼，增長 23% ↑）
+- **枚舉定義**: 48+ 個標準枚舉值 (新增插件狀態、異步任務管理)
+- **數據模型**: 78+ 個 Pydantic 模型 (新增異步工具、插件系統、CLI界面)
+- **覆蓋範圍**: 12 大核心領域（配置、枚舉、Schema、工具、通信、AI、可觀測性、插件、CLI、異步工具、訊息處理、跨語言生成）
+
+## � 目錄
+
+- [📋 概述](#-概述)
+- [📂 目錄結構](#-目錄結構)
+- [🎨 核心模組說明](#-核心模組說明)
+  - [1️⃣ 配置管理](#1️⃣-配置管理-config)
+  - [2️⃣ 枚舉定義](#2️⃣-枚舉定義-enums)
+  - [3️⃣ 數據結構](#3️⃣-數據結構-schemas)
+  - [4️⃣ 消息隊列](#4️⃣-消息隊列-mqpy)
+  - [5️⃣ 工具函數](#5️⃣-工具函數-utils)
+  - [6️⃣ 開發工具](#6️⃣-開發工具-tools)
+- [🚀 快速開始](#-快速開始)
+- [🏗️ 跨語言 Schema 架構](#️-跨語言-schema-架構)
+- [🔧 開發指南](#-開發指南)
+- [� 開發規範與最佳實踐](#-開發規範與最佳實踐)
+- [�📚 符合的標準規範](#-符合的標準規範)
+- [📊 統計資訊](#-統計資訊)
+- [🔗 相關文件](#-相關文件)
+- [🤝 貢獻指南](#-貢獻指南)
+- [📝 版本歷史](#-版本歷史)
+- [📄 授權](#-授權)
+- [📮 聯絡方式](#-聯絡方式)
 
 ---
 
@@ -32,15 +55,37 @@
 
 ```
 services/aiva_common/
+    ├─ai                                                # AI 組件集成 (新增)
+    │   ├─__init__.py                                   # 模組初始化
+    │   ├─capability_evaluator.py                       # 能力評估器
+    │   ├─cross_language_bridge.py                      # 跨語言橋接
+    │   ├─dialog_assistant.py                           # 對話助手
+    │   ├─experience_manager.py                          # 經驗管理器
+    │   ├─interfaces.py                                 # AI 介面定義
+    │   ├─performance_config.py                         # 性能配置
+    │   ├─plan_executor.py                              # 計劃執行器
+    │   └─registry.py                                   # AI 組件註冊
+    ├─async_utils                                       # 異步工具 (新增)
+    │   └─__init__.py                                   # 模組初始化
+    ├─cli                                               # 命令行介面 (新增)
+    │   └─__init__.py                                   # 模組初始化
     ├─config                                            # 配置管理
     │   ├─__init__.py                                   # 模組初始化
+    │   ├─settings.py                                   # 設定檔 (新增)
     │   └─unified_config.py                             # 統一配置
     ├─enums                                             # 枚舉定義
     │   ├─__init__.py                                   # 模組初始化
     │   ├─assets.py                                     # 資產相關枚舉
     │   ├─common.py                                     # 通用枚舉
     │   ├─modules.py                                    # 模組枚舉
-    │   └─security.py                                   # 安全相關枚舉
+    │   ├─security.py                                   # 安全相關枚舉
+    │   └─web_api_standards.py                          # Web API 標準 (新增)
+    ├─messaging                                         # 訊息處理 (新增)
+    │   └─retry_handler.py                              # 重試處理器
+    ├─observability                                     # 可觀測性 (新增)
+    │   └─__init__.py                                   # 模組初始化
+    ├─plugins                                           # 插件系統 (新增)
+    │   └─__init__.py                                   # 模組初始化
     ├─schemas                                           # 資料結構定義
     │   ├─generated                                     # 自動生成的結構
     │   │   ├─__init__.py                               # 模組初始化
@@ -50,18 +95,40 @@ services/aiva_common/
     │   │   └─tasks.py                                  # 任務結構
     │   ├─__init__.py                                   # 模組初始化
     │   ├─ai.py                                         # AI 相關結構
+    │   ├─api_standards.py                              # API 標準 (新增)
     │   ├─assets.py                                     # 資產結構
+    │   ├─async_utils.py                                # 異步工具結構 (新增)
     │   ├─base.py                                       # 基礎結構
+    │   ├─capability.py                                 # 能力結構 (新增)
+    │   ├─cli.py                                        # CLI 界面結構 (新增)
     │   ├─enhanced.py                                   # 增強型結構
     │   ├─findings.py                                   # 發現結果結構
     │   ├─languages.py                                  # 語言分析結構
+    │   ├─low_value_vulnerabilities.py                  # 低價值漏洞 (新增)
     │   ├─messaging.py                                  # 訊息處理結構
+    │   ├─plugins.py                                    # 插件系統結構 (新增)
     │   ├─references.py                                 # 參考資料結構
     │   ├─risk.py                                       # 風險評估結構
     │   ├─system.py                                     # 系統結構
     │   ├─tasks.py                                      # 任務管理結構
-    │   └─telemetry.py                                  # 遙測數據結構
+    │   ├─telemetry.py                                  # 遙測數據結構
+    │   └─threat_intelligence.py                        # 威脅情報 (新增)
     ├─tools                                             # 開發工具
+    │   ├─services                                      # 跨語言生成工具 (新增)
+    │   │   ├─aiva_common
+    │   │   │   └─schemas
+    │   │   │       └─generated
+    │   │   │           ├─__init__.py                   # 模組初始化
+    │   │   │           ├─base_types.py                 # 型別定義
+    │   │   │           ├─findings.py                   # Python 模組
+    │   │   │           ├─messaging.py                  # 訊息處理
+    │   │   │           └─tasks.py                      # Python 模組
+    │   │   └─scan
+    │   │       └─info_gatherer_rust
+    │   │           └─src
+    │   │               └─schemas
+    │   │                   └─generated
+    │   │                       └─mod.rs                # Rust 模組
     │   ├─module_connectivity_tester.py                 # 模組連通性測試
     │   ├─schema_codegen_tool.py                        # Schema 代碼生成
     │   └─schema_validator.py                           # Schema 驗證工具
@@ -79,8 +146,12 @@ services/aiva_common/
     ├─__init__.py                                       # 主入口檔案
     ├─CODE_QUALITY_REPORT.md                            # 代碼品質報告
     ├─core_schema_sot.yaml                              # 核心 Schema 定義
+    ├─metrics.py                                        # 指標收集 (新增)
     ├─mq.py                                             # 訊息佇列抽象層
     ├─py.typed                                          # 類型標記檔案
+    ├─simple_validation.py                             # 簡單驗證 (新增)
+    ├─validate_aiva_common_extensions.py                # 擴展驗證 (新增)
+    ├─version.py                                        # 版本管理 (新增)
     └─README.md                                         # 本文件
 ```
 
@@ -146,7 +217,7 @@ class Severity(str, Enum):
 
 ### 3️⃣ 數據結構 (`schemas/`)
 
-基於 Pydantic v2 的強類型數據模型，60+ 個專業結構定義。
+基於 Pydantic v2 的強類型數據模型，78+ 個專業結構定義。
 
 #### 📦 核心消息系統
 
@@ -225,7 +296,37 @@ cvss = CVSSv3Metrics(
 - `ThreatIntelResultPayload`: 威脅情報結果
 - `OastEvent`: OAST 事件記錄
 
-#### 📊 增強型結構
+#### � 異步工具 Schema
+
+**`async_utils.py`**:
+- `AsyncTaskConfig`: 異步任務配置管理
+- `AsyncTaskResult`: 任務執行結果追蹤
+- `RetryConfig`: 重試策略配置
+- `ResourceLimits`: 資源限制控制
+- `AsyncBatchConfig`: 批次任務配置
+- `AsyncBatchResult`: 批次結果追蹤
+
+#### 🔌 插件系統 Schema
+
+**`plugins.py`**:
+- `PluginManifest`: 插件清單定義
+- `PluginExecutionContext`: 執行環境上下文
+- `PluginExecutionResult`: 執行結果記錄
+- `PluginConfig`: 插件配置管理
+- `PluginRegistry`: 插件註冊表
+- `PluginHealthCheck`: 健康檢查機制
+
+#### 💻 CLI 界面 Schema
+
+**`cli.py`**:
+- `CLIParameter`: 命令參數定義
+- `CLICommand`: 命令結構定義
+- `CLIExecutionResult`: 執行結果追蹤
+- `CLISession`: 會話狀態管理
+- `CLIConfiguration`: CLI 配置管理
+- `CLIMetrics`: 使用統計分析
+
+#### �📊 增強型結構
 
 **`enhanced.py`**:
 - `EnhancedVulnerability`: 增強型漏洞資訊
@@ -375,11 +476,16 @@ from aiva_common import (
     # 枚舉
     ModuleName, Topic, Severity, Confidence,
     VulnerabilityType, TaskStatus,
+    PluginStatus, PluginType, AsyncTaskStatus,  # 新增枚舉
     
     # 數據結構
     AivaMessage, MessageHeader,
     ScanStartPayload, FindingPayload,
-    CVSSv3Metrics, CVEReference
+    CVSSv3Metrics, CVEReference,
+    # 新增 Schema
+    AsyncTaskConfig, AsyncTaskResult,
+    PluginManifest, PluginExecutionResult,
+    CLICommand, CLIExecutionResult
 )
 ```
 
@@ -454,6 +560,93 @@ cvss = CVSSv3Metrics(
 
 print(f"Base Score: {cvss.base_score}")  # 9.8
 print(f"Severity: {cvss.severity}")      # CRITICAL
+```
+
+#### 5. 使用異步任務管理
+
+```python
+from aiva_common import AsyncTaskConfig, AsyncTaskResult, AsyncTaskStatus, RetryConfig
+
+# 配置異步任務
+task_config = AsyncTaskConfig(
+    task_name="vulnerability_scan",
+    timeout_seconds=3600,
+    retry_config=RetryConfig(
+        max_retries=3,
+        initial_delay_seconds=5.0,
+        max_delay_seconds=60.0,
+        backoff_factor=2.0
+    )
+)
+
+# 任務執行結果
+task_result = AsyncTaskResult(
+    task_id="task-001",
+    task_name="vulnerability_scan",
+    status=AsyncTaskStatus.COMPLETED,
+    result_data={"vulnerabilities_found": 5},
+    execution_time_seconds=120.5
+)
+```
+
+#### 6. 使用插件系統
+
+```python
+from aiva_common import PluginManifest, PluginExecutionResult, PluginStatus, PluginType
+
+# 插件清單
+plugin_manifest = PluginManifest(
+    plugin_id="sql-injection-scanner",
+    name="SQL Injection Scanner",
+    version="1.2.0",
+    plugin_type=PluginType.SCANNER,
+    description="Advanced SQL injection detection plugin"
+)
+
+# 插件執行結果
+plugin_result = PluginExecutionResult(
+    plugin_id="sql-injection-scanner",
+    execution_id="exec-001",
+    status=PluginStatus.ACTIVE,
+    output_data={"findings": [{"type": "sql_injection", "severity": "high"}]},
+    execution_time_seconds=45.2
+)
+```
+
+#### 7. 使用 CLI 界面
+
+```python
+from aiva_common import CLICommand, CLIExecutionResult, CLIParameter
+
+# CLI 命令定義
+cli_command = CLICommand(
+    command_name="scan",
+    description="Execute security scan",
+    parameters=[
+        CLIParameter(
+            name="target",
+            parameter_type="string",
+            required=True,
+            description="Target URL or IP address"
+        ),
+        CLIParameter(
+            name="depth",
+            parameter_type="integer",
+            required=False,
+            default_value=3,
+            description="Scan depth level"
+        )
+    ]
+)
+
+# CLI 執行結果
+cli_result = CLIExecutionResult(
+    command_name="scan",
+    exit_code=0,
+    stdout="Scan completed successfully",
+    stderr="",
+    execution_time_seconds=30.0
+)
 ```
 
 ---
@@ -1298,7 +1491,131 @@ python services/aiva_common/tools/schema_validator.py
 
 ---
 
-## 📚 符合的標準規範
+## � 開發規範與最佳實踐
+
+### �️ **批量處理修復原則**
+
+> **重要守則**: 在進行任何批量處理前，必須嚴格遵循以下原則以避免擴大問題範圍
+
+#### 📋 批量處理前置要求
+
+**階段一：全面分析並進行分類**
+1. 使用 `get_errors` 工具獲取完整錯誤清單
+2. 對所有錯誤進行分類和優先級排序
+3. 識別錯誤間的依賴關係和影響範圍
+4. 區分適合批量處理與需要個別處理的錯誤類型
+
+**階段二：個別修復不適合批量處理的錯誤**
+```python
+# ❌ 不適合批量處理的錯誤類型：
+# - 前向引用問題（需要理解類定義順序）
+# - 循環導入問題（需要重構架構）
+# - 方法簽名不一致（需要理解業務邏輯）
+# - 複雜的類型推導錯誤（需要上下文分析）
+
+# ✅ 適合批量處理的錯誤類型：
+# - 統一的語法替換（如 list[T] → List[T]）
+# - 導入語句修正（已知的路徑模式）
+# - 未使用變數清理（明確可識別）
+# - 統一的類型註解（同類型問題）
+```
+
+**階段三：批量處理前的二次分析**
+- 確認所有待處理錯誤都屬於同一類型
+- 驗證批量處理的模式和範圍
+- 無法確定的情況下，只能以**單一腳本為單位**進行批量處理
+
+**階段四：執行批量處理的安全原則**
+- 每次只處理一種類型的錯誤
+- 每次只處理一個腳本檔案
+- 處理後立即驗證結果，發現問題立即停止
+- 建立回退機制，確保可以恢復到處理前狀態
+
+#### ⚠️ 批量處理禁忌
+
+```bash
+# ❌ 絕對禁止的做法：
+# 1. 跨多種錯誤類型的混合批量處理
+# 2. 跨多個檔案的無差別批量替換
+# 3. 未經二次確認的大範圍自動修復
+# 4. 忽略錯誤依賴關係的盲目處理
+
+# ✅ 正確的批量處理流程：    
+# 1. 全面分析 → 2. 分類整理 → 3. 個別修復複雜問題 → 
+# 4. 二次分析確認範圍 → 5. 單一類型批量處理 → 6. 立即驗證
+```
+
+### �📐 **aiva_common 修護規範遵循**
+
+> **重要**: 本模組作為 AIVA 系統的單一數據來源（Single Source of Truth），所有定義、枚舉引用及修復都在同一套標準之下。其他模組必須嚴格遵循 [aiva_common 修護規範](services/aiva_common/README.md#🔧-開發指南) 的標準。
+
+### ✅ **標準導入範例**
+
+```python
+# ✅ 正確導入方式
+from aiva_common.enums import Severity, Confidence, TaskStatus
+from aiva_common.schemas import FindingPayload, CVSSv3Metrics
+from aiva_common import AivaMessage, MessageHeader
+
+# 使用標準枚舉
+finding = FindingPayload(
+    finding_id="F001",
+    severity=Severity.CRITICAL,     # 使用標準枚舉
+    confidence=Confidence.HIGH      # 使用標準枚舉
+)
+```
+
+### 🚨 **嚴格禁止的做法**
+
+```python
+# ❌ 禁止：重複定義已存在的枚舉
+class Severity(str, Enum):  # 錯誤！aiva_common 已定義
+    HIGH = "high"
+    MEDIUM = "medium"
+
+# ❌ 禁止：自創非標準枚舉值
+class CustomSeverity(str, Enum):  # 錯誤！必須使用標準
+    SUPER_CRITICAL = "super_critical"
+
+# ❌ 禁止：重複定義已存在的 Schema
+class FindingPayload(BaseModel):  # 錯誤！aiva_common 已定義
+    title: str
+    severity: str
+```
+
+### 🔍 **模組特定枚舉判斷標準**
+
+**只有滿足所有以下條件時，才能在模組內定義專屬枚舉：**
+
+1. ✅ 該枚舉僅用於模組內部，不會跨模組傳遞
+2. ✅ 該枚舉與業務邏輯強綁定，無法抽象為通用概念  
+3. ✅ 該枚舉在 aiva_common 中不存在類似定義
+4. ✅ 該枚舉未來不太可能被其他模組使用
+
+### 📋 **開發檢查清單**
+
+**新增功能前必須檢查：**
+
+- [ ] 是否有相關的國際標準或官方規範？（如有，必須遵循）
+- [ ] aiva_common 是否已有適合的枚舉？
+- [ ] aiva_common 是否已有適合的 Schema？
+- [ ] 新功能是否需要跨模組使用？（如是，必須加入 aiva_common）
+- [ ] 是否符合四層優先級原則？（國際標準 > 語言標準 > aiva_common > 模組專屬）
+
+**修改 aiva_common 後必須同步：**
+
+- [ ] 更新相關模組的 README 文檔
+- [ ] 執行跨語言代碼生成 (`schema_codegen_tool.py`)
+- [ ] 運行完整驗證 (`schema_validator.py`)
+- [ ] 檢查所有引用該定義的模組是否正常
+
+### 🛠️ **修復原則**
+
+**保留未使用函數原則**: 在程式碼修復過程中，若發現有定義但尚未使用的函數或方法，只要不影響程式正常運作，建議予以保留。這些可能是預留的 API 介面或未來功能的基礎架構。
+
+---
+
+## �📚 符合的標準規範
 
 ### 安全標準
 
@@ -1334,7 +1651,7 @@ python services/aiva_common/tools/schema_validator.py
 ### 程式碼度量
 
 ```
-總檔案數:     38 個 Python 檔案
+總檔案數:     50+ 個 Python 檔案
 程式碼行數:   6,929 行（有效程式碼，不含空行）
 註解比例:     約 15%
 文檔字串:     所有公開類別和函數都有完整文檔
@@ -1344,8 +1661,8 @@ python services/aiva_common/tools/schema_validator.py
 ### 模組組成
 
 ```
-枚舉定義:     40 個標準枚舉類別
-數據模型:     60+ 個 Pydantic 模型
+枚舉定義:     48+ 個標準枚舉值
+數據模型:     78+ 個 Pydantic 模型
 工具函數:     20+ 個實用工具
 配置項:       統一配置管理系統
 ```
@@ -1524,8 +1841,8 @@ references_standard = {
 
 ### v1.0.0 (2025-10-25)
 - ✨ 初始發布
-- ✅ 完整的枚舉定義系統（40 個枚舉）
-- ✅ 基於 Pydantic v2 的數據模型（60+ 模型）
+- ✅ 完整的枚舉定義系統（48+ 個枚舉值）
+- ✅ 基於 Pydantic v2 的數據模型（78+ 模型）
 - ✅ 消息隊列抽象層
 - ✅ 網路工具（退避、限流）
 - ✅ Schema 代碼生成工具

@@ -4,12 +4,12 @@ Experience Data Loader - 經驗數據加載器
 從經驗資料庫提取並準備訓練樣本
 """
 
-from __future__ import annotations
+
 
 import logging
 from typing import Any
 
-import numpy as np
+
 
 logger = logging.getLogger(__name__)
 

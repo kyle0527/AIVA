@@ -4,7 +4,7 @@ AIVA Services Module
 根據 SCHEMA_MANAGEMENT_SOP.md 的硬導入問題排除指南實作
 """
 
-from __future__ import annotations
+
 import os
 import sys
 from pathlib import Path

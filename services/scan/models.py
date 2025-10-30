@@ -13,7 +13,7 @@ AIVA Scan Models - 掃描發現模組
 7. 資產和漏洞生命週期管理
 """
 
-from __future__ import annotations
+
 
 from datetime import UTC, datetime
 from typing import Any

@@ -5,7 +5,7 @@
 提高了程式碼的可讀性和可維護性。
 """
 
-from __future__ import annotations
+
 
 import json
 from typing import TYPE_CHECKING

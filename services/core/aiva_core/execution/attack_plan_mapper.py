@@ -12,7 +12,7 @@ from typing import Dict, Any, List, Optional
 # 遵循 aiva_common 單一事實來源原則 - 統一使用標準模組
 from services.aiva_common.schemas.tasks import FunctionTaskPayload, FunctionTaskTarget, FunctionTaskContext
 from services.aiva_common.schemas import AivaMessage
-from services.aiva_common.enums.modules import ModuleName
+
 import uuid
 from urllib.parse import urlparse
 

@@ -1,0 +1,335 @@
+---
+Created: 2025-10-30
+Last Modified: 2025-10-30
+Document Type: Data
+---
+
+{
+  "timestamp": "2025-10-29T00:02:44.969663",
+  "summary": {
+    "total_tests": 7,
+    "successful_tests": 2,
+    "failed_tests": 5,
+    "success_rate": 28.57142857142857,
+    "total_execution_time": 1.1402339935302734,
+    "recommendation": "NEEDS_IMPROVEMENT",
+    "timeout_reached": false,
+    "max_duration_minutes": 5
+  },
+  "test_results": [
+    {
+      "test_name": "Python AI 組件整合測試",
+      "success": false,
+      "execution_time": 0.4599452018737793,
+      "timestamp": "2025-10-29T00:02:44.286878",
+      "details": {
+        "ai_imports": {
+          "success": false,
+          "error": "AIVA_RABBITMQ_URL or AIVA_RABBITMQ_USER/AIVA_RABBITMQ_PASSWORD must be set"
+        },
+        "ai_instantiation": {
+          "success": false,
+          "error": "cannot access local variable 'create_default_capability_evaluator' where it is not associated with a value"
+        },
+        "ai_functionality": {
+          "success": false,
+          "error": "AIVA_RABBITMQ_URL or AIVA_RABBITMQ_USER/AIVA_RABBITMQ_PASSWORD must be set"
+        }
+      },
+      "error": null
+    },
+    {
+      "test_name": "TypeScript AI 組件測試",
+      "success": true,
+      "execution_time": 0.004612922668457031,
+      "timestamp": "2025-10-29T00:02:44.291687",
+      "details": {
+        "typescript_files": {
+          "success": true,
+          "existing_files": [
+            "capability-evaluator.ts",
+            "experience-manager.ts",
+            "performance-config.ts",
+            "schemas.ts",
+            "index.ts"
+          ],
+          "missing_files": [],
+          "total_required": 5
+        },
+        "typescript_config": {
+          "success": true,
+          "tsconfig_exists": true,
+          "package_exists": true,
+          "compiler_options": {
+            "target": "ES2020",
+            "module": "commonjs",
+            "lib": [
+              "ES2020",
+              "DOM"
+            ],
+            "outDir": "./dist",
+            "rootDir": "./",
+            "strict": true,
+            "types": [
+              "node"
+            ],
+            "esModuleInterop": true,
+            "skipLibCheck": true,
+            "forceConsistentCasingInFileNames": true,
+            "declaration": true,
+            "declarationMap": true,
+            "sourceMap": true,
+            "removeComments": false,
+            "noImplicitAny": true,
+            "strictNullChecks": true,
+            "strictFunctionTypes": true,
+            "strictBindCallApply": true,
+            "strictPropertyInitialization": true,
+            "noImplicitThis": true,
+            "alwaysStrict": true,
+            "noUnusedLocals": true,
+            "noUnusedParameters": true,
+            "exactOptionalPropertyTypes": false,
+            "noImplicitReturns": true,
+            "noFallthroughCasesInSwitch": true,
+            "noUncheckedIndexedAccess": true,
+            "noImplicitOverride": true,
+            "useUnknownInCatchVariables": true,
+            "moduleResolution": "node",
+            "baseUrl": "./",
+            "paths": {
+              "@/*": [
+                "./*"
+              ]
+            },
+            "resolveJsonModule": true,
+            "experimentalDecorators": true,
+            "emitDecoratorMetadata": true
+          },
+          "package_name": "@aiva/common-ts"
+        },
+        "typescript_compilation": {
+          "success": false,
+          "error": "[WinError 2] 系統找不到指定的檔案。"
+        }
+      },
+      "error": null
+    },
+    {
+      "test_name": "跨語言相容性測試",
+      "success": false,
+      "execution_time": 0.017595291137695312,
+      "timestamp": "2025-10-29T00:02:44.309494",
+      "details": {
+        "data_structure_mapping": {
+          "success": true,
+          "found_interfaces": [
+            "interface ExperienceSample",
+            "interface CapabilityInfo",
+            "interface CapabilityScorecard",
+            "interface FindingPayload",
+            "interface VulnerabilityScorecard"
+          ],
+          "missing_interfaces": [],
+          "schema_file_size": 11196
+        },
+        "config_consistency": {
+          "success": false,
+          "error": "AIVA_RABBITMQ_URL or AIVA_RABBITMQ_USER/AIVA_RABBITMQ_PASSWORD must be set"
+        },
+        "api_compatibility": {
+          "success": false,
+          "error": "AIVA_RABBITMQ_URL or AIVA_RABBITMQ_USER/AIVA_RABBITMQ_PASSWORD must be set"
+        }
+      },
+      "error": null
+    },
+    {
+      "test_name": "性能優化配置效果驗證",
+      "success": false,
+      "execution_time": 0.016233444213867188,
+      "timestamp": "2025-10-29T00:02:44.325934",
+      "details": {
+        "config_loading": {
+          "success": false,
+          "error": "AIVA_RABBITMQ_URL or AIVA_RABBITMQ_USER/AIVA_RABBITMQ_PASSWORD must be set"
+        },
+        "optimizer_functionality": {
+          "success": false,
+          "error": "cannot access local variable 'PerformanceOptimizer' where it is not associated with a value"
+        },
+        "performance_benchmarks": {
+          "success": false,
+          "error": "AIVA_RABBITMQ_URL or AIVA_RABBITMQ_USER/AIVA_RABBITMQ_PASSWORD must be set"
+        }
+      },
+      "error": null
+    },
+    {
+      "test_name": "統一導入引用驗證",
+      "success": false,
+      "execution_time": 0.03349113464355469,
+      "timestamp": "2025-10-29T00:02:44.359642",
+      "details": {
+        "old_references_cleanup": {
+          "success": true,
+          "properly_removed": [
+            "services/core/aiva_core/learning/capability_evaluator.py",
+            "services/core/aiva_core/learning/experience_manager.py"
+          ],
+          "still_existing": []
+        },
+        "unified_imports": {
+          "success": false,
+          "successful_imports": [
+            [
+              "services.aiva_common.schemas",
+              "ExperienceSample"
+            ],
+            [
+              "services.aiva_common.schemas",
+              "CapabilityInfo"
+            ],
+            [
+              "services.aiva_common.enums",
+              "ProgrammingLanguage"
+            ],
+            [
+              "services.aiva_common.enums",
+              "Severity"
+            ]
+          ],
+          "failed_imports": [
+            [
+              "services.aiva_common.ai",
+              "AIVACapabilityEvaluator",
+              "AIVA_RABBITMQ_URL or AIVA_RABBITMQ_USER/AIVA_RABBITMQ_PASSWORD must be set"
+            ],
+            [
+              "services.aiva_common.ai",
+              "AIVAExperienceManager",
+              "AIVA_RABBITMQ_URL or AIVA_RABBITMQ_USER/AIVA_RABBITMQ_PASSWORD must be set"
+            ],
+            [
+              "services.aiva_common.ai",
+              "create_default_capability_evaluator",
+              "AIVA_RABBITMQ_URL or AIVA_RABBITMQ_USER/AIVA_RABBITMQ_PASSWORD must be set"
+            ],
+            [
+              "services.aiva_common.ai",
+              "create_default_experience_manager",
+              "AIVA_RABBITMQ_URL or AIVA_RABBITMQ_USER/AIVA_RABBITMQ_PASSWORD must be set"
+            ]
+          ],
+          "total_tested": 8
+        },
+        "cross_module_references": {
+          "success": true,
+          "clean_references": [
+            "services/core/aiva_core/__init__.py",
+            "services/core/aiva_core/ai_commander.py",
+            "services/integration/capability/examples.py"
+          ],
+          "reference_issues": [],
+          "files_checked": 3
+        }
+      },
+      "error": null
+    },
+    {
+      "test_name": "架構一致性驗證",
+      "success": true,
+      "execution_time": 0.6048364639282227,
+      "timestamp": "2025-10-29T00:02:44.964652",
+      "details": {
+        "single_source_of_truth": {
+          "success": true,
+          "authority_status": {
+            "services/aiva_common/ai/capability_evaluator.py": {
+              "exists": true,
+              "size": 44111,
+              "is_substantial": true
+            },
+            "services/aiva_common/ai/experience_manager.py": {
+              "exists": true,
+              "size": 39509,
+              "is_substantial": true
+            },
+            "services/aiva_common/schemas/__init__.py": {
+              "exists": true,
+              "size": 9901,
+              "is_substantial": true
+            },
+            "services/aiva_common/enums/__init__.py": {
+              "exists": true,
+              "size": 2611,
+              "is_substantial": true
+            }
+          },
+          "substantial_modules": 4
+        },
+        "layered_architecture": {
+          "success": true,
+          "layer_status": {
+            "schemas": {
+              "exists": true,
+              "python_files": 19,
+              "path": "C:\\D\\fold7\\AIVA-git\\services\\aiva_common\\schemas"
+            },
+            "enums": {
+              "exists": true,
+              "python_files": 5,
+              "path": "C:\\D\\fold7\\AIVA-git\\services\\aiva_common\\enums"
+            },
+            "ai_components": {
+              "exists": true,
+              "python_files": 9,
+              "path": "C:\\D\\fold7\\AIVA-git\\services\\aiva_common\\ai"
+            },
+            "core_services": {
+              "exists": true,
+              "python_files": 109,
+              "path": "C:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core"
+            },
+            "features": {
+              "exists": true,
+              "python_files": 84,
+              "path": "C:\\D\\fold7\\AIVA-git\\services\\features"
+            },
+            "integration": {
+              "exists": true,
+              "python_files": 69,
+              "path": "C:\\D\\fold7\\AIVA-git\\services\\integration"
+            }
+          },
+          "existing_layers": 6,
+          "total_layers": 6
+        }
+      },
+      "error": null
+    },
+    {
+      "test_name": "資料結構一致性測試",
+      "success": false,
+      "execution_time": 0.0035195350646972656,
+      "timestamp": "2025-10-29T00:02:44.968360",
+      "details": {
+        "python_data_structures": {
+          "success": false,
+          "error": "4 validation errors for CapabilityInfo\nid\n  Field required [type=missing, input_value={'capability_id': 'test_c...'python', 'typescript']}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.11/v/missing\nlanguage\n  Field required [type=missing, input_value={'capability_id': 'test_c...'python', 'typescript']}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.11/v/missing\nentrypoint\n  Field required [type=missing, input_value={'capability_id': 'test_c...'python', 'typescript']}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.11/v/missing\ntopic\n  Field required [type=missing, input_value={'capability_id': 'test_c...'python', 'typescript']}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.11/v/missing"
+        },
+        "naming_consistency": {
+          "success": true,
+          "total_fields": 17,
+          "violations": []
+        }
+      },
+      "error": null
+    }
+  ],
+  "environment_info": {
+    "python_version": "3.13.9 (tags/v3.13.9:8183fa5, Oct 14 2025, 14:09:13) [MSC v.1944 64 bit (AMD64)]",
+    "platform": "win32",
+    "aiva_root": "C:\\D\\fold7\\AIVA-git"
+  }
+}

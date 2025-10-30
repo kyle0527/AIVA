@@ -1,7 +1,7 @@
 """
 BizLogic Finding 創建輔助函數
 """
-from __future__ import annotations
+
 
 from typing import Any
 

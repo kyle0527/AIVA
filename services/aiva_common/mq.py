@@ -4,7 +4,7 @@ This module provides a unified interface for message broker operations,
 supporting both RabbitMQ (production) and in-memory (testing) implementations.
 """
 
-from __future__ import annotations
+
 
 import asyncio
 import logging

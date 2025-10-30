@@ -84,9 +84,9 @@ func handleTask(
 	}
 
 	log.Info("Processing CSPM task",
-		zap.String("task_id", task.TaskId),
-		zap.String("scan_id", task.ScanId),
-		zap.String("target_url", task.Target.Url))
+		zap.String("task_id", task.TaskID),
+		zap.String("scan_id", task.ScanID),
+		zap.String("target_url", task.Target.URL.(string)))
 
 	// 執行 CSPM 掃描
 	findings, err := scanner.Scan(ctx, &task)
@@ -96,7 +96,7 @@ func handleTask(
 	}
 
 	log.Info("CSPM scan completed",
-		zap.String("task_id", task.TaskId),
+		zap.String("task_id", task.TaskID),
 		zap.Int("findings_count", len(findings)))
 
 	// 發布 Findings

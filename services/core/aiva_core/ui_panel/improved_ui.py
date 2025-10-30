@@ -10,7 +10,7 @@ The script can be executed directly (e.g. via ``uvicorn improved_ui:app``)
 or imported as a module.
 """
 
-from __future__ import annotations
+
 
 import sys
 from typing import Any

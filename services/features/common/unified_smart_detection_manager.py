@@ -3,7 +3,7 @@
 為所有功能模組提供統一的智能檢測能力
 """
 
-from __future__ import annotations
+
 
 import asyncio
 from collections.abc import Callable

@@ -4,7 +4,7 @@ Plan Comparator - 攻擊計畫對比分析器
 負責對比 AST 預期計畫與實際執行 Trace，計算差異指標和獎勵分數
 """
 
-from __future__ import annotations
+
 
 from datetime import UTC, datetime
 import logging

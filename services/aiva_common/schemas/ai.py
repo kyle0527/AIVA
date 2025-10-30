@@ -7,7 +7,7 @@ AI 相關 Schema
 注意: 此檔案整合了原 ai_schemas.py 的內容
 """
 
-from __future__ import annotations
+
 
 from datetime import UTC, datetime
 from typing import Any, Literal

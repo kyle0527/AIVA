@@ -4,7 +4,7 @@ AIVA 增強功能整合示例
 展示如何在實際掃描流程中使用新的資產與漏洞生命週期管理功能
 """
 
-from __future__ import annotations
+
 
 import asyncio
 from typing import Any

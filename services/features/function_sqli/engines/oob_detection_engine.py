@@ -2,7 +2,7 @@
 Out-of-Band (OOB) 檢測引擎 - 基於外帶通道的SQL注入檢測
 """
 
-from __future__ import annotations
+
 
 import re
 import uuid

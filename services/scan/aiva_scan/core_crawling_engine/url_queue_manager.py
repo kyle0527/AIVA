@@ -1,4 +1,4 @@
-from __future__ import annotations
+
 
 from collections import deque
 from urllib.parse import urljoin, urlparse

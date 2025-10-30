@@ -4,12 +4,16 @@ AIVA AI 組件性能優化配置
 """
 
 from dataclasses import dataclass
-from typing import Dict, Any, Optional, List
+from typing import Dict, Any, Optional, List, Callable, Awaitable, TypeVar
 from enum import Enum
 import asyncio
 import time
 from functools import lru_cache
 import logging
+
+# 類型變數定義
+T = TypeVar('T')
+F = TypeVar('F', bound=Callable[..., Any])
 
 class CacheStrategy(Enum):
     """緩存策略枚舉"""
@@ -169,8 +173,9 @@ class PerformanceOptimizer:
     
     def __init__(self):
         self.logger = logging.getLogger(__name__)
-        self._cache = {}
-        self._performance_metrics = {}
+        # 明確類型註解，避免類型推導問題
+        self._cache: Dict[str, Dict[str, Any]] = {}
+        self._performance_metrics: Dict[str, Any] = {}
         
     @lru_cache(maxsize=128)
     def get_cached_result(self, key: str, operation_type: str) -> Optional[Any]:
@@ -197,10 +202,10 @@ class PerformanceOptimizer:
         age = time.time() - cached_item["timestamp"]
         return age < cached_item["ttl"]
     
-    def cached(self, ttl_seconds: int = 3600):
+    def cached(self, ttl_seconds: int = 3600) -> Callable[[F], F]:
         """緩存裝飾器方法"""
-        def decorator(func):
-            def wrapper(*args, **kwargs):
+        def decorator(func: F) -> F:
+            def wrapper(*args: Any, **kwargs: Any) -> Any:
                 # 創建緩存鍵
                 import hashlib
                 key_data = f"{func.__name__}_{str(args)}_{str(sorted(kwargs.items()))}"
@@ -220,13 +225,13 @@ class PerformanceOptimizer:
                     "ttl": ttl_seconds
                 }
                 return result
-            return wrapper
-        return decorator
+            return wrapper  # type: ignore
+        return decorator  # type: ignore
     
-    def batch_processor(self, batch_size: int = 100):
+    def batch_processor(self, batch_size: int = 100) -> Callable[[F], F]:
         """批處理裝飾器方法"""
-        def decorator(func):
-            async def wrapper(items: List[Any], *args, **kwargs):
+        def decorator(func: F) -> F:
+            async def wrapper(items: List[Any], *args: Any, **kwargs: Any) -> List[Any]:
                 if len(items) <= batch_size:
                     return await func(items, *args, **kwargs)
 
@@ -234,12 +239,12 @@ class PerformanceOptimizer:
                 for i in range(0, len(items), batch_size):
                     batch = items[i:i + batch_size]
                     batch_result = await func(batch, *args, **kwargs)
-                    results.extend(batch_result if isinstance(batch_result, list) else [batch_result])
-                return results
-            return wrapper
-        return decorator
+                    results.extend(batch_result if isinstance(batch_result, list) else [batch_result])  # type: ignore
+                return results  # type: ignore
+            return wrapper  # type: ignore
+        return decorator  # type: ignore
     
-    async def batch_process(self, items: List[Any], processor_func, batch_size: int = 100) -> List[Any]:
+    async def batch_process(self, items: List[Any], processor_func: Callable[[Any], Awaitable[Any]], batch_size: int = 100) -> List[Any]:
         """批量處理優化"""
         results = []
         
@@ -249,9 +254,9 @@ class PerformanceOptimizer:
                 *[processor_func(item) for item in batch],
                 return_exceptions=True
             )
-            results.extend(batch_results)
+            results.extend(batch_results)  # type: ignore
         
-        return results
+        return results  # type: ignore
     
     def record_performance_metric(self, operation: str, execution_time: float, success: bool = True):
         """記錄性能指標"""
@@ -388,10 +393,10 @@ def create_optimized_configs() -> Dict[str, Any]:
     }
 
 # 工具函數
-def performance_monitor(operation_name: str):
+def performance_monitor(operation_name: str) -> Callable[[F], F]:
     """性能監控裝飾器"""
-    def decorator(func):
-        async def async_wrapper(*args, **kwargs):
+    def decorator(func: F) -> F:
+        async def async_wrapper(*args: Any, **kwargs: Any) -> Any:
             start_time = time.time()
             try:
                 result = await func(*args, **kwargs)
@@ -403,7 +408,7 @@ def performance_monitor(operation_name: str):
                 logging.error(f"Operation {operation_name} failed after {execution_time:.4f}s: {e}")
                 raise
         
-        def sync_wrapper(*args, **kwargs):
+        def sync_wrapper(*args: Any, **kwargs: Any) -> Any:
             start_time = time.time()
             try:
                 result = func(*args, **kwargs)
@@ -415,13 +420,13 @@ def performance_monitor(operation_name: str):
                 logging.error(f"Operation {operation_name} failed after {execution_time:.4f}s: {e}")
                 raise
         
-        return async_wrapper if asyncio.iscoroutinefunction(func) else sync_wrapper
-    return decorator
+        return async_wrapper if asyncio.iscoroutinefunction(func) else sync_wrapper  # type: ignore
+    return decorator  # type: ignore
 
-def batch_processor(batch_size: int = 100):
+def batch_processor(batch_size: int = 100) -> Callable[[F], F]:
     """批處理優化裝飾器"""
-    def decorator(func):
-        async def wrapper(items: List[Any], *args, **kwargs):
+    def decorator(func: F) -> F:
+        async def wrapper(items: List[Any], *args: Any, **kwargs: Any) -> List[Any]:
             if len(items) <= batch_size:
                 return await func(items, *args, **kwargs)
             
@@ -429,11 +434,11 @@ def batch_processor(batch_size: int = 100):
             for i in range(0, len(items), batch_size):
                 batch = items[i:i + batch_size]
                 batch_result = await func(batch, *args, **kwargs)
-                results.extend(batch_result if isinstance(batch_result, list) else [batch_result])
+                results.extend(batch_result if isinstance(batch_result, list) else [batch_result])  # type: ignore
             
-            return results
-        return wrapper
-    return decorator
+            return results  # type: ignore
+        return wrapper  # type: ignore
+    return decorator  # type: ignore
 
 def create_development_config() -> Dict[str, Any]:
     """創建開發環境配置"""

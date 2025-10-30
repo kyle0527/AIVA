@@ -1,0 +1,29 @@
+# AIVA 核心 AI 服務 - 最小化版本
+FROM python:3.11-slim
+
+WORKDIR /app
+
+# 安裝基本系統依賴
+RUN apt-get update && apt-get install -y \
+    curl \
+    && rm -rf /var/lib/apt/lists/*
+
+# 複製並安裝基本 Python 依賴
+COPY requirements.txt .
+RUN pip install --no-cache-dir fastapi uvicorn psutil
+
+# 創建最小啟動腳本
+RUN echo 'from fastapi import FastAPI\nimport uvicorn\napp = FastAPI()\n@app.get("/health")\ndef health():\n    return {"status": "healthy", "service": "aiva-core"}\nif __name__ == "__main__":\n    uvicorn.run(app, host="0.0.0.0", port=8000)' > /app/main.py
+
+# 環境變量
+ENV PYTHONUNBUFFERED=1
+
+# 暴露端口
+EXPOSE 8000
+
+# 健康檢查
+HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
+    CMD curl -f http://localhost:8000/health || exit 1
+
+# 啟動服務
+CMD ["python", "main.py"]

@@ -7,7 +7,7 @@ AIVA 增強型 AI 持續學習觸發器
 
 import asyncio
 import sys
-import json
+
 import time
 import logging
 from pathlib import Path

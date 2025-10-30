@@ -8,7 +8,7 @@ Create Date: 2025-01-01 00:00:00.000000
 """
 
 from alembic import op  # type: ignore[import-not-found]
-import sqlalchemy as sa  # type: ignore[import-not-found]
+
 from sqlalchemy.dialects import postgresql  # type: ignore[import-not-found]
 
 # revision identifiers

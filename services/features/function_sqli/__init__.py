@@ -16,7 +16,7 @@ from .task_queue import SqliTaskQueue, QueuedTask
 from .detection_models import DetectionModels
 from .exceptions import SQLiException
 from .payload_wrapper_encoder import PayloadWrapperEncoder
-from .result_binder_publisher import SqliResultBinderPublisher as ResultBinderPublisher
+
 from .telemetry import SqliExecutionTelemetry
 
 __all__ = [

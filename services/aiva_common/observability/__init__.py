@@ -3,7 +3,7 @@
 基於 OpenTelemetry 和結構化日誌的最佳實踐
 """
 
-from __future__ import annotations
+
 
 import logging
 import time

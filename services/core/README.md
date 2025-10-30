@@ -1124,6 +1124,22 @@ from ..aiva_common.schemas import (
 # - 如需要包級導入，先執行: pip install -e .
 ```
 
+#### 🚨 **嚴格禁止的做法**
+
+```python
+# ❌ 禁止 - 重複定義通用枚舉
+class TaskStatus(str, Enum):  # 錯誤!使用 aiva_common.TaskStatus
+    PENDING = "pending"
+
+# ❌ 禁止 - 重複定義標準結構
+class RiskAssessment(BaseModel):  # 錯誤!使用 aiva_common.RiskLevel
+    custom_risk: str
+
+# ❌ 禁止 - 自創決策標準
+class CustomConfidence(BaseModel):  # 錯誤!使用 aiva_common.Confidence
+    certainty: float
+```
+
 #### ✅ **已修復的問題記錄**
 
 **修復日期**: 2025-10-25

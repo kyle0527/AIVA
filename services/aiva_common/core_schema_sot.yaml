@@ -1,9 +1,14 @@
-version: 1.0.0
+version: 1.1.0
 metadata:
   description: AIVA跨語言Schema統一定義 - 以手動維護版本為準
   generated_note: 此配置已同步手動維護的Schema定義，確保單一事實原則
-  last_updated: '2025-10-28T10:24:34.374262'
-  sync_source: 手動維護Schema (base.py, findings.py)
+  last_updated: '2025-10-30T00:00:00.000000'
+  sync_source: 手動維護Schema (base.py, findings.py, async_utils.py, plugins.py, cli.py)
+  new_schemas_added: 
+    - async_utils (6 classes)
+    - plugins (6 classes) 
+    - cli (6 classes)
+  total_schemas: 72
 base_types:
   MessageHeader:
     description: 訊息標頭 - 用於所有訊息的統一標頭格式
@@ -382,130 +387,6 @@ base_types:
         description: ''
       fix_recommendation:
         type: Optional[str]
-        required: false
-        description: ''
-  FindingEvidence:
-    description: 漏洞證據
-    fields:
-      payload:
-        type: Optional[str]
-        required: false
-        description: ''
-      response_time_delta:
-        type: Any
-        required: false
-        description: ''
-      db_version:
-        type: Optional[str]
-        required: false
-        description: ''
-      request:
-        type: Optional[str]
-        required: false
-        description: ''
-      response:
-        type: Optional[str]
-        required: false
-        description: ''
-      proof:
-        type: Optional[str]
-        required: false
-        description: ''
-  FindingImpact:
-    description: 漏洞影響描述
-    fields:
-      description:
-        type: Optional[str]
-        required: false
-        description: ''
-      business_impact:
-        type: Optional[str]
-        required: false
-        description: ''
-      technical_impact:
-        type: Optional[str]
-        required: false
-        description: ''
-      affected_users:
-        type: Any
-        required: false
-        description: ''
-      estimated_cost:
-        type: Any
-        required: false
-        description: ''
-  FindingPayload:
-    description: 漏洞發現 Payload - 統一的漏洞報告格式
-    fields:
-      finding_id:
-        type: str
-        required: true
-        description: ''
-      task_id:
-        type: str
-        required: true
-        description: ''
-      scan_id:
-        type: str
-        required: true
-        description: ''
-      status:
-        type: str
-        required: true
-        description: ''
-      vulnerability:
-        type: Any
-        required: true
-        description: ''
-      target:
-        type: Any
-        required: true
-        description: ''
-      strategy:
-        type: Optional[str]
-        required: false
-        description: ''
-      evidence:
-        type: Any
-        required: false
-        description: ''
-      impact:
-        type: Any
-        required: false
-        description: ''
-      recommendation:
-        type: Any
-        required: false
-        description: ''
-      metadata:
-        type: Dict[str, Any]
-        required: false
-        description: ''
-      created_at:
-        type: datetime
-        required: false
-        description: ''
-      updated_at:
-        type: datetime
-        required: false
-        description: ''
-  FindingRecommendation:
-    description: 漏洞修復建議
-    fields:
-      fix:
-        type: Optional[str]
-        required: false
-        description: ''
-      priority:
-        type: Optional[str]
-        required: false
-        description: ''
-      remediation_steps:
-        type: List[str]
-        required: false
-        description: ''
-      references:
-        type: List[str]
         required: false
         description: ''
   FindingTarget:
@@ -1125,6 +1006,320 @@ findings:
         required: false
         default: []
         description: 參考資料
+  TokenTestResult:
+    description: Token 測試結果
+    fields:
+      vulnerable:
+        type: bool
+        required: true
+        description: 是否存在漏洞
+      token_type:
+        type: str
+        required: true
+        description: Token 類型 (jwt, session, api, etc.)
+        validation:
+          enum:
+          - jwt
+          - session
+          - api
+          - bearer
+          - oauth
+          - custom
+      issue:
+        type: str
+        required: true
+        description: 發現的問題
+      details:
+        type: str
+        required: true
+        description: 詳細描述
+      decoded_payload:
+        type: Optional[Dict[str, Any]]
+        required: false
+        description: 解碼後的載荷內容
+      severity:
+        type: str
+        required: false
+        default: "MEDIUM"
+        description: 漏洞嚴重程度
+        validation:
+          enum:
+          - HIGH
+          - MEDIUM
+          - LOW
+          - INFO
+      test_type:
+        type: str
+        required: true
+        description: 測試類型
+        validation:
+          enum:
+          - weak_token
+          - expired_token
+          - malformed_token
+          - privilege_escalation
+          - session_fixation
+async_utils:
+  RetryConfig:
+    description: 重試配置
+    fields:
+      max_attempts:
+        type: int
+        required: true
+        default: 3
+        description: 最大重試次數
+        validation:
+          minimum: 1
+          maximum: 10
+      backoff_base:
+        type: float
+        required: true
+        default: 1.0
+        description: 退避基礎時間(秒)
+        validation:
+          minimum: 0.1
+      backoff_factor:
+        type: float
+        required: true
+        default: 2.0
+        description: 退避倍數
+        validation:
+          minimum: 1.0
+      max_backoff:
+        type: float
+        required: true
+        default: 60.0
+        description: 最大退避時間(秒)
+        validation:
+          minimum: 1.0
+      exponential_backoff:
+        type: bool
+        required: true
+        default: true
+        description: 是否使用指數退避
+  ResourceLimits:
+    description: 資源限制配置
+    fields:
+      max_memory_mb:
+        type: Optional[int]
+        required: false
+        description: 最大內存限制(MB)
+        validation:
+          minimum: 1
+      max_cpu_percent:
+        type: Optional[float]
+        required: false
+        description: 最大CPU使用率(%)
+        validation:
+          minimum: 0.1
+          maximum: 100.0
+      max_execution_time:
+        type: Optional[int]
+        required: false
+        description: 最大執行時間(秒)
+        validation:
+          minimum: 1
+      max_concurrent_tasks:
+        type: int
+        required: true
+        default: 10
+        description: 最大並發任務數
+        validation:
+          minimum: 1
+          maximum: 100
+  AsyncTaskConfig:
+    description: 異步任務配置
+    fields:
+      task_name:
+        type: str
+        required: true
+        description: 任務名稱
+      timeout_seconds:
+        type: int
+        required: true
+        default: 30
+        description: 超時時間(秒)
+        validation:
+          minimum: 1
+          maximum: 3600
+      retry_config:
+        type: RetryConfig
+        required: true
+        description: 重試配置
+      priority:
+        type: int
+        required: true
+        default: 5
+        description: 任務優先級
+        validation:
+          minimum: 1
+          maximum: 10
+      resource_limits:
+        type: ResourceLimits
+        required: true
+        description: 資源限制
+      tags:
+        type: List[str]
+        required: false
+        default: []
+        description: 任務標籤
+      metadata:
+        type: Dict[str, Any]
+        required: false
+        default: {}
+        description: 任務元數據
+  AsyncTaskResult:
+    description: 異步任務結果
+    fields:
+      task_id:
+        type: str
+        required: true
+        description: 任務ID
+      task_name:
+        type: str
+        required: true
+        description: 任務名稱
+      status:
+        type: AsyncTaskStatus
+        required: true
+        description: 任務狀態
+      result:
+        type: Optional[Dict[str, Any]]
+        required: false
+        description: 執行結果
+      error_message:
+        type: Optional[str]
+        required: false
+        description: 錯誤信息
+      execution_time_ms:
+        type: float
+        required: true
+        description: 執行時間(毫秒)
+        validation:
+          minimum: 0
+      start_time:
+        type: datetime
+        required: true
+        description: 開始時間
+      end_time:
+        type: Optional[datetime]
+        required: false
+        description: 結束時間
+      retry_count:
+        type: int
+        required: true
+        default: 0
+        description: 重試次數
+        validation:
+          minimum: 0
+      resource_usage:
+        type: Dict[str, Any]
+        required: false
+        default: {}
+        description: 資源使用情況
+      metadata:
+        type: Dict[str, Any]
+        required: false
+        default: {}
+        description: 結果元數據
+  AsyncBatchConfig:
+    description: 異步批次任務配置
+    fields:
+      batch_id:
+        type: str
+        required: true
+        description: 批次ID
+      batch_name:
+        type: str
+        required: true
+        description: 批次名稱
+      tasks:
+        type: List[AsyncTaskConfig]
+        required: true
+        description: 任務列表
+      max_concurrent:
+        type: int
+        required: true
+        default: 5
+        description: 最大並發數
+        validation:
+          minimum: 1
+          maximum: 50
+      stop_on_first_error:
+        type: bool
+        required: true
+        default: false
+        description: 遇到第一個錯誤時停止
+      batch_timeout_seconds:
+        type: int
+        required: true
+        default: 3600
+        description: 批次超時時間(秒)
+        validation:
+          minimum: 1
+  AsyncBatchResult:
+    description: 異步批次任務結果
+    fields:
+      batch_id:
+        type: str
+        required: true
+        description: 批次ID
+      batch_name:
+        type: str
+        required: true
+        description: 批次名稱
+      total_tasks:
+        type: int
+        required: true
+        description: 總任務數
+        validation:
+          minimum: 0
+      completed_tasks:
+        type: int
+        required: true
+        default: 0
+        description: 已完成任務數
+        validation:
+          minimum: 0
+      failed_tasks:
+        type: int
+        required: true
+        default: 0
+        description: 失敗任務數
+        validation:
+          minimum: 0
+      task_results:
+        type: List[AsyncTaskResult]
+        required: false
+        default: []
+        description: 任務結果列表
+      batch_status:
+        type: str
+        required: true
+        description: 批次狀態
+        validation:
+          enum:
+          - pending
+          - running
+          - completed
+          - failed
+          - cancelled
+          - partial
+      start_time:
+        type: datetime
+        required: true
+        description: 開始時間
+      end_time:
+        type: Optional[datetime]
+        required: false
+        description: 結束時間
+      total_execution_time_ms:
+        type: float
+        required: true
+        default: 0
+        description: 總執行時間(毫秒)
+        validation:
+          minimum: 0
 generation_config:
   python:
     target_dir: services/aiva_common/schemas/generated
@@ -1197,3 +1392,711 @@ enums:
       confirmed: 已確認
       resolved: 已解決
       false_positive: 誤報
+  AsyncTaskStatus:
+    description: 異步任務狀態枚舉
+    values:
+      pending: 等待中
+      running: 執行中
+      completed: 已完成
+      failed: 執行失敗
+      cancelled: 已取消
+      timeout: 執行超時
+      retrying: 重試中
+  PluginStatus:
+    description: 插件狀態枚舉
+    values:
+      inactive: 未啟用
+      active: 已啟用
+      loading: 載入中
+      error: 錯誤狀態
+      updating: 更新中
+  PluginType:
+    description: 插件類型枚舉
+    values:
+      scanner: 掃描器插件
+      filter: 過濾器插件
+      reporter: 報告器插件
+      integration: 整合插件
+      utility: 工具插件
+plugins:
+  PluginManifest:
+    description: 插件清單
+    fields:
+      plugin_id:
+        type: str
+        required: true
+        description: 插件唯一標識符
+      name:
+        type: str
+        required: true
+        description: 插件名稱
+      version:
+        type: str
+        required: true
+        description: 插件版本
+      author:
+        type: str
+        required: true
+        description: 插件作者
+      description:
+        type: str
+        required: true
+        description: 插件描述
+      plugin_type:
+        type: PluginType
+        required: true
+        description: 插件類型
+      dependencies:
+        type: List[str]
+        required: false
+        default: []
+        description: 依賴插件列表
+      permissions:
+        type: List[str]
+        required: false
+        default: []
+        description: 所需權限列表
+      config_schema:
+        type: Optional[Dict[str, Any]]
+        required: false
+        description: 配置 Schema
+      min_aiva_version:
+        type: str
+        required: true
+        description: 最低AIVA版本要求
+      max_aiva_version:
+        type: Optional[str]
+        required: false
+        description: 最高AIVA版本要求
+      entry_point:
+        type: str
+        required: true
+        description: 插件入口點
+      homepage:
+        type: Optional[str]
+        required: false
+        description: 插件主頁
+      repository:
+        type: Optional[str]
+        required: false
+        description: 源碼倉庫
+      license:
+        type: str
+        required: true
+        default: MIT
+        description: 許可證
+      keywords:
+        type: List[str]
+        required: false
+        default: []
+        description: 關鍵詞
+      created_at:
+        type: datetime
+        required: true
+        description: 創建時間
+      updated_at:
+        type: datetime
+        required: true
+        description: 更新時間
+  PluginExecutionContext:
+    description: 插件執行上下文
+    fields:
+      plugin_id:
+        type: str
+        required: true
+        description: 插件ID
+      execution_id:
+        type: str
+        required: true
+        description: 執行ID
+      input_data:
+        type: Dict[str, Any]
+        required: true
+        description: 輸入數據
+      context:
+        type: Dict[str, Any]
+        required: false
+        default: {}
+        description: 執行上下文
+      timeout_seconds:
+        type: int
+        required: true
+        default: 60
+        description: 執行超時時間(秒)
+        validation:
+          minimum: 1
+          maximum: 600
+      environment:
+        type: Dict[str, str]
+        required: false
+        default: {}
+        description: 環境變數
+      working_directory:
+        type: Optional[str]
+        required: false
+        description: 工作目錄
+      user_id:
+        type: Optional[str]
+        required: false
+        description: 執行用戶ID
+      session_id:
+        type: Optional[str]
+        required: false
+        description: 會話ID
+      trace_id:
+        type: Optional[str]
+        required: false
+        description: 追蹤ID
+      metadata:
+        type: Dict[str, Any]
+        required: false
+        default: {}
+        description: 元數據
+      created_at:
+        type: datetime
+        required: true
+        description: 創建時間
+  PluginExecutionResult:
+    description: 插件執行結果
+    fields:
+      execution_id:
+        type: str
+        required: true
+        description: 執行ID
+      plugin_id:
+        type: str
+        required: true
+        description: 插件ID
+      success:
+        type: bool
+        required: true
+        description: 執行是否成功
+      result_data:
+        type: Optional[Dict[str, Any]]
+        required: false
+        description: 結果數據
+      error_message:
+        type: Optional[str]
+        required: false
+        description: 錯誤信息
+      error_code:
+        type: Optional[str]
+        required: false
+        description: 錯誤代碼
+      execution_time_ms:
+        type: float
+        required: true
+        description: 執行時間(毫秒)
+        validation:
+          minimum: 0
+      memory_usage_mb:
+        type: Optional[float]
+        required: false
+        description: 內存使用量(MB)
+      output_logs:
+        type: List[str]
+        required: false
+        default: []
+        description: 輸出日誌
+      warnings:
+        type: List[str]
+        required: false
+        default: []
+        description: 警告信息
+      metadata:
+        type: Dict[str, Any]
+        required: false
+        default: {}
+        description: 結果元數據
+      created_at:
+        type: datetime
+        required: true
+        description: 創建時間
+  PluginConfig:
+    description: 插件配置
+    fields:
+      plugin_id:
+        type: str
+        required: true
+        description: 插件ID
+      enabled:
+        type: bool
+        required: true
+        default: true
+        description: 是否啟用
+      configuration:
+        type: Dict[str, Any]
+        required: false
+        default: {}
+        description: 配置參數
+      priority:
+        type: int
+        required: true
+        default: 5
+        description: 執行優先級
+        validation:
+          minimum: 1
+          maximum: 10
+      auto_start:
+        type: bool
+        required: true
+        default: false
+        description: 是否自動啟動
+      max_instances:
+        type: int
+        required: true
+        default: 1
+        description: 最大實例數
+        validation:
+          minimum: 1
+          maximum: 10
+      resource_limits:
+        type: Dict[str, Any]
+        required: false
+        default: {}
+        description: 資源限制
+      environment_variables:
+        type: Dict[str, str]
+        required: false
+        default: {}
+        description: 環境變數
+      created_at:
+        type: datetime
+        required: true
+        description: 創建時間
+      updated_at:
+        type: datetime
+        required: true
+        description: 更新時間
+  PluginRegistry:
+    description: 插件註冊表
+    fields:
+      registry_id:
+        type: str
+        required: true
+        description: 註冊表ID
+      name:
+        type: str
+        required: true
+        description: 註冊表名稱
+      plugins:
+        type: Dict[str, PluginManifest]
+        required: false
+        default: {}
+        description: 已註冊插件
+      total_plugins:
+        type: int
+        required: true
+        default: 0
+        description: 插件總數
+        validation:
+          minimum: 0
+      active_plugins:
+        type: int
+        required: true
+        default: 0
+        description: 活躍插件數
+        validation:
+          minimum: 0
+      registry_version:
+        type: str
+        required: true
+        description: 註冊表版本
+      created_at:
+        type: datetime
+        required: true
+        description: 創建時間
+      updated_at:
+        type: datetime
+        required: true
+        description: 更新時間
+  PluginHealthCheck:
+    description: 插件健康檢查
+    fields:
+      plugin_id:
+        type: str
+        required: true
+        description: 插件ID
+      status:
+        type: PluginStatus
+        required: true
+        description: 插件狀態
+      last_check_time:
+        type: datetime
+        required: true
+        description: 最後檢查時間
+      response_time_ms:
+        type: Optional[float]
+        required: false
+        description: 響應時間(毫秒)
+      error_message:
+        type: Optional[str]
+        required: false
+        description: 錯誤信息
+      health_score:
+        type: float
+        required: true
+        default: 100.0
+        description: 健康分數
+        validation:
+          minimum: 0.0
+          maximum: 100.0
+      uptime_percentage:
+        type: float
+        required: true
+        default: 100.0
+        description: 運行時間百分比
+        validation:
+          minimum: 0.0
+          maximum: 100.0
+      metadata:
+        type: Dict[str, Any]
+        required: false
+        default: {}
+        description: 健康檢查元數據
+cli:
+  CLIParameter:
+    description: CLI 參數定義
+    fields:
+      name:
+        type: str
+        required: true
+        description: 參數名稱
+      type:
+        type: str
+        required: true
+        description: 參數類型
+        validation:
+          enum:
+          - string
+          - integer
+          - float
+          - boolean
+          - choice
+          - file
+          - directory
+      description:
+        type: str
+        required: true
+        description: 參數描述
+      required:
+        type: bool
+        required: true
+        default: false
+        description: 是否必需
+      default_value:
+        type: Optional[Any]
+        required: false
+        description: 默認值
+      choices:
+        type: Optional[List[str]]
+        required: false
+        description: 可選值列表
+      min_value:
+        type: Optional[float]
+        required: false
+        description: 最小值
+      max_value:
+        type: Optional[float]
+        required: false
+        description: 最大值
+      pattern:
+        type: Optional[str]
+        required: false
+        description: 正則表達式模式
+      help_text:
+        type: Optional[str]
+        required: false
+        description: 幫助文本
+  CLICommand:
+    description: CLI 命令定義
+    fields:
+      command_name:
+        type: str
+        required: true
+        description: 命令名稱
+      description:
+        type: str
+        required: true
+        description: 命令描述
+      category:
+        type: str
+        required: true
+        default: general
+        description: 命令分類
+        validation:
+          enum:
+          - general
+          - scan
+          - security
+          - analysis
+          - reporting
+          - config
+          - admin
+          - debug
+          - plugin
+          - utility
+      parameters:
+        type: List[CLIParameter]
+        required: false
+        default: []
+        description: 命令參數列表
+      examples:
+        type: List[str]
+        required: false
+        default: []
+        description: 使用示例
+      aliases:
+        type: List[str]
+        required: false
+        default: []
+        description: 命令別名
+      deprecated:
+        type: bool
+        required: true
+        default: false
+        description: 是否已棄用
+      min_args:
+        type: int
+        required: true
+        default: 0
+        description: 最少參數數量
+        validation:
+          minimum: 0
+      max_args:
+        type: Optional[int]
+        required: false
+        description: 最多參數數量
+        validation:
+          minimum: 0
+      requires_auth:
+        type: bool
+        required: true
+        default: false
+        description: 是否需要認證
+      permissions:
+        type: List[str]
+        required: false
+        default: []
+        description: 所需權限
+      tags:
+        type: List[str]
+        required: false
+        default: []
+        description: 標籤
+      created_at:
+        type: datetime
+        required: true
+        description: 創建時間
+      updated_at:
+        type: datetime
+        required: true
+        description: 更新時間
+  CLIExecutionResult:
+    description: CLI 執行結果
+    fields:
+      command:
+        type: str
+        required: true
+        description: 執行的命令
+      arguments:
+        type: List[str]
+        required: false
+        default: []
+        description: 命令參數
+      exit_code:
+        type: int
+        required: true
+        description: 退出代碼
+      stdout:
+        type: str
+        required: true
+        default: ""
+        description: 標準輸出
+      stderr:
+        type: str
+        required: true
+        default: ""
+        description: 標準錯誤
+      execution_time_ms:
+        type: float
+        required: true
+        description: 執行時間(毫秒)
+        validation:
+          minimum: 0
+      start_time:
+        type: datetime
+        required: true
+        description: 開始時間
+      end_time:
+        type: Optional[datetime]
+        required: false
+        description: 結束時間
+      user_id:
+        type: Optional[str]
+        required: false
+        description: 執行用戶ID
+      session_id:
+        type: Optional[str]
+        required: false
+        description: 會話ID
+      metadata:
+        type: Dict[str, Any]
+        required: false
+        default: {}
+        description: 執行元數據
+  CLISession:
+    description: CLI 會話
+    fields:
+      session_id:
+        type: str
+        required: true
+        description: 會話ID
+      user_id:
+        type: Optional[str]
+        required: false
+        description: 用戶ID
+      start_time:
+        type: datetime
+        required: true
+        description: 開始時間
+      end_time:
+        type: Optional[datetime]
+        required: false
+        description: 結束時間
+      command_history:
+        type: List[str]
+        required: false
+        default: []
+        description: 命令歷史
+      environment:
+        type: Dict[str, str]
+        required: false
+        default: {}
+        description: 環境變數
+      working_directory:
+        type: str
+        required: true
+        description: 工作目錄
+      active:
+        type: bool
+        required: true
+        default: true
+        description: 會話是否活躍
+      metadata:
+        type: Dict[str, Any]
+        required: false
+        default: {}
+        description: 會話元數據
+  CLIConfiguration:
+    description: CLI 配置
+    fields:
+      config_id:
+        type: str
+        required: true
+        description: 配置ID
+      name:
+        type: str
+        required: true
+        description: 配置名稱
+      settings:
+        type: Dict[str, Any]
+        required: false
+        default: {}
+        description: 配置設定
+      auto_completion:
+        type: bool
+        required: true
+        default: true
+        description: 是否啟用自動完成
+      history_size:
+        type: int
+        required: true
+        default: 1000
+        description: 歷史記錄大小
+        validation:
+          minimum: 1
+          maximum: 10000
+      prompt_style:
+        type: str
+        required: true
+        default: default
+        description: 提示符樣式
+      color_scheme:
+        type: str
+        required: true
+        default: default
+        description: 顏色方案
+      timeout_seconds:
+        type: int
+        required: true
+        default: 300
+        description: 命令超時時間(秒)
+        validation:
+          minimum: 1
+          maximum: 3600
+      created_at:
+        type: datetime
+        required: true
+        description: 創建時間
+      updated_at:
+        type: datetime
+        required: true
+        description: 更新時間
+  CLIMetrics:
+    description: CLI 使用指標
+    fields:
+      metric_id:
+        type: str
+        required: true
+        description: 指標ID
+      command_count:
+        type: int
+        required: true
+        default: 0
+        description: 命令執行總數
+        validation:
+          minimum: 0
+      successful_commands:
+        type: int
+        required: true
+        default: 0
+        description: 成功執行的命令數
+        validation:
+          minimum: 0
+      failed_commands:
+        type: int
+        required: true
+        default: 0
+        description: 失敗的命令數
+        validation:
+          minimum: 0
+      average_execution_time_ms:
+        type: float
+        required: true
+        default: 0.0
+        description: 平均執行時間(毫秒)
+        validation:
+          minimum: 0
+      most_used_commands:
+        type: List[str]
+        required: false
+        default: []
+        description: 最常用命令列表
+      peak_usage_time:
+        type: Optional[datetime]
+        required: false
+        description: 峰值使用時間
+      collection_period_start:
+        type: datetime
+        required: true
+        description: 統計開始時間
+      collection_period_end:
+        type: Optional[datetime]
+        required: false
+        description: 統計結束時間
+      metadata:
+        type: Dict[str, Any]
+        required: false
+        default: {}
+        description: 統計元數據

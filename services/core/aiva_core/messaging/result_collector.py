@@ -4,7 +4,7 @@ Result Collector - 結果收集器
 接收並處理各功能模組傳回的執行結果
 """
 
-from __future__ import annotations
+
 
 import asyncio
 from collections.abc import Callable

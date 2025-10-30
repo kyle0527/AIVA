@@ -3,7 +3,7 @@ AI 摘要插件 - 可插拔的智能分析模組
 獨立的摘要生成和分析系統，可隨時啟用或禁用
 """
 
-from __future__ import annotations
+
 
 import logging
 from typing import Any, Optional

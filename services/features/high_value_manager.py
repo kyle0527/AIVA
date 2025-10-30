@@ -15,10 +15,10 @@
 import os
 import time
 from typing import Dict, Any, List, Optional
-from .base.feature_registry import FeatureRegistry
+
 from .base.result_schema import FeatureResult, Finding
 from .feature_step_executor import FeatureStepExecutor
-from .example_config import get_config_for_feature, get_attack_route, get_report_template
+
 
 class HighValueFeatureManager:
     """

@@ -3,7 +3,7 @@ AIVA 技能圖 (Skill Graph) 模組
 實現能力關係映射和決策支援
 """
 
-from __future__ import annotations
+
 
 import asyncio
 from typing import Dict, List, Optional, Set, Tuple, Any

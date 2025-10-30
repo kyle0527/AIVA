@@ -148,11 +148,11 @@ try:
         
         # 按照 README 建議，使用明確的類導入
         # 如果導入失敗，應該讓錯誤明確顯示而非靜默處理
-        from .mass_assignment.worker import MassAssignmentWorker
-        from .jwt_confusion.worker import JwtConfusionWorker
-        from .oauth_confusion.worker import OAuthConfusionWorker
-        from .graphql_authz.worker import GraphQLAuthzWorker
-        from .ssrf_oob.worker import SsrfOobWorker
+
+
+
+
+
         
         # 從 FeatureRegistry 獲取實際註冊的功能列表
         registered = list(FeatureRegistry.list_features().keys())

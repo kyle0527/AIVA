@@ -4,13 +4,13 @@ ScalableBio Trainer - ScalableBioNet 專用訓練器
 整合 ai_engine/training/trainer.py 的 ScalableBioNet 特定功能到統一的訓練框架中
 """
 
-from __future__ import annotations
+
 
 from dataclasses import dataclass
 import logging
 from typing import Any
 
-import numpy as np
+
 from .model_trainer import ModelTrainer
 
 logger = logging.getLogger(__name__)

@@ -2,7 +2,7 @@
 掃描上下文 - 管理掃描過程中的狀態和數據收集
 """
 
-from __future__ import annotations
+
 
 import time
 from typing import TYPE_CHECKING

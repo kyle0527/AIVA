@@ -8,7 +8,7 @@ Asset and Vulnerability Lifecycle Manager
 - 風險評分計算
 """
 
-from __future__ import annotations
+
 
 from datetime import datetime, timedelta
 import hashlib
