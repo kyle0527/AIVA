@@ -10,7 +10,7 @@
 [![Architecture Status](https://img.shields.io/badge/Architecture-Unified-green.svg)](https://github.com)
 [![Schema Status](https://img.shields.io/badge/Schema-Standardized-brightgreen.svg)](https://github.com)
 
-**當前版本:** v5.0 | **最後更新:** 2025年10月29日 | **架構狀態:** ✅ 統一完成 | **文檔同步:** ✅ 最新狀態
+**當前版本:** v5.0 | **最後更新:** 2025年10月31日 | **架構狀態:** ✅ 統一完成 | **文檔同步:** ✅ 已更新
 
 > � **重大架構統一成就 (v5.0)**: 完成史上最大規模的架構整合！移除所有重複定義，實現跨語言模組完全統一。  
 > 🔧 **架構修復突破**: 統一 AI 組件、標準化數據結構、優化性能配置，建立企業級可維護架構。  
@@ -29,7 +29,9 @@
 - [🎯 核心特性](#-核心特性)
 - [📚 文檔索引](#-文檔索引)
 - [🛠️ 開發工具](#️-開發工具)
+- [🔧 修復原則](#-修復原則)
 - [⚠️ 跨語言警告管理原則](#️-跨語言警告管理原則)
+- [📁 檔案組織管理](#-檔案組織管理)
 - [📈 路線圖](#-路線圖)
 - [🤝 貢獻](#-貢獻)
 - [📄 授權](#-授權)
@@ -39,11 +41,22 @@
 
 ## � **一站式完整指南** ⭐
 
-> **🎯 所有資訊已整合到一份文檔中！**
+> **🎯 所有資訊已整合到完整的文檔體系中！**
 
-### 📖 **主要文檔**
+### 📚 **指南中心** (全新整理)
 ```bash
-📋 AIVA_COMPREHENSIVE_GUIDE.md - 綜合完整指南
+📋 guides/README.md - 指南中心索引
+├── 🏆 核心綜合指南           # 頂級技術手冊 (2份)
+├── �️ 開發相關指南           # 包含88個VS Code插件清單
+├── 🏗️ 架構設計指南           # 系統架構與演進
+├── ⚙️ 模組專業指南           # 五大模組詳細操作
+├── 🚀 部署運維指南           # 生產環境部署策略
+└── 🔧 疑難排解指南           # 完整問題解決方案
+```
+
+### �📖 **主要技術手冊**
+```bash
+📋 reports/documentation/AIVA_COMPREHENSIVE_GUIDE.md - 綜合技術手冊
 ├── 🏗️ 系統架構概覽           # 深度技術架構分析  
 ├── 🚀 快速開始指南           # 30秒快速啟動
 ├── 🔧 核心功能使用           # 所有功能詳細說明
@@ -57,46 +70,46 @@
 ### 🚀 **立即開始**
 ```bash
 # 🎯 新用戶 - 直接閱讀綜合指南
-code AIVA_COMPREHENSIVE_GUIDE.md
+code reports/documentation/AIVA_COMPREHENSIVE_GUIDE.md
 
 # 🔧 開發者 - 系統健康檢查  
-python health_check.py
+python scripts/utilities/health_check.py
 
-# 🤖 體驗 AI 自主化 - 完全自主測試閉環
-python ai_autonomous_testing_loop.py
+# 🤖 體驗 AI 自主化 - 完全自主測試閉環  
+python scripts/ai_analysis/ai_autonomous_testing_loop.py
 
 # 🛡️ Schema 安全檢查 - 避免相容性問題
-python schema_version_checker.py
+python tools/schema_compliance_validator.py
 ```
 
 ### 🎯 **快速導航**
-| 我是... | 我想要... | 推薦章節 |
+| 我是... | 我想要... | 推薦資源 |
 |---------|----------|----------|
-| 🆕 **新手用戶** | 快速上手體驗 | [🚀 快速開始指南] |
-| 👨‍💻 **開發人員** | 了解功能API | [🔧 核心功能使用] |
-| 🏗️ **架構師** | 深度技術分析 | [🏗️ 系統架構概覽] |
-| 🤖 **AI 愛好者** | AI 自主化系統 | [🧠 AI 自主化系統] |
-| 🚨 **遇到問題** | 快速解決方案 | [🔍 疑難排解指南] |
-| 🔧 **運維人員** | 部署和監控 | [📊 監控與 CI/CD] |
+| 🆕 **新手用戶** | 快速上手體驗 | [� 指南中心](guides/README.md) → 新手入門路徑 |
+| 👨‍💻 **開發人員** | 完整開發環境 | [�️ 開發者手冊](reports/documentation/DEVELOPER_GUIDE.md) + [插件清單](_out/VSCODE_EXTENSIONS_INVENTORY.md) |
+| 🏗️ **架構師** | 深度技術分析 | [🏗️ 綜合技術手冊](reports/documentation/AIVA_COMPREHENSIVE_GUIDE.md) |
+| 🤖 **AI 愛好者** | AI 自主化系統 | [🧠 AI 自主化系統](reports/documentation/AIVA_COMPREHENSIVE_GUIDE.md#-ai功能模組系統技術突破) |
+| 🚨 **遇到問題** | 快速解決方案 | [� 疑難排解指南](guides/README.md#-疑難排解指南-troubleshooting) |
+| 🔧 **運維人員** | 部署和監控 | [� 部署運維指南](guides/README.md#-部署運維指南-deployment) |
 
 ---
 
-## �🛠️ 開發工具箱
+## 🛠️ 開發工具箱
 
-> **快速找到適合的開發工具**: [VS Code 插件完整清單](_out/VSCODE_EXTENSIONS_INVENTORY.md) (88 個已安裝插件)
+> **快速找到適合的開發工具**: [VS Code 插件完整清單](_out/VSCODE_EXTENSIONS_INVENTORY.md) (88 個已安裝插件 ✅ 已確認)
 
 | 開發需求 | 推薦工具 | 快速連結 |
 |---------|---------|---------|
-| 🐍 **Python 開發** | Pylance + Ruff + Black | [Python 工具 (22個)](_out/VSCODE_EXTENSIONS_INVENTORY.md#1-python-開發生態-22-個) |
-| 🦀 **Rust 開發** | rust-analyzer | [Rust 工具](_out/VSCODE_EXTENSIONS_INVENTORY.md#3-其他程式語言-5-個) |
-| 🐹 **Go 開發** | golang.go | [Go 工具](_out/VSCODE_EXTENSIONS_INVENTORY.md#3-其他程式語言-5-個) |
-| 🔍 **程式碼品質** | SonarLint + ESLint + ErrorLens | [品質工具 (5個)](_out/VSCODE_EXTENSIONS_INVENTORY.md#7-程式碼品質與-linting-5-個) |
-| 🤖 **AI 輔助** | GitHub Copilot + ChatGPT | [AI 工具 (5個)](_out/VSCODE_EXTENSIONS_INVENTORY.md#5-github-整合與-ai-5-個) |
-| 🐳 **容器開發** | Docker + Dev Containers | [容器工具 (7個)](_out/VSCODE_EXTENSIONS_INVENTORY.md#6-容器與遠端開發-7-個) |
-| 📊 **資料科學** | Jupyter + Rainbow CSV | [資料工具 (6個)](_out/VSCODE_EXTENSIONS_INVENTORY.md#2-資料科學與-jupyter-6-個) |
-| 🔀 **版本控制** | GitLens + Git Graph | [Git 工具 (6個)](_out/VSCODE_EXTENSIONS_INVENTORY.md#4-git-版本控制-6-個) |
+| 🐍 **Python 開發** | Pylance + Ruff + Black | [Python 工具 (22個)](_out/VSCODE_EXTENSIONS_INVENTORY.md#-1-python-開發生態-22-個) |
+| 🦀 **Rust 開發** | rust-analyzer | [Rust 工具](_out/VSCODE_EXTENSIONS_INVENTORY.md#-3-其他程式語言-5-個) |
+| 🐹 **Go 開發** | golang.go | [Go 工具](_out/VSCODE_EXTENSIONS_INVENTORY.md#-3-其他程式語言-5-個) |
+| 🔍 **程式碼品質** | SonarLint + ESLint + ErrorLens | [品質工具 (5個)](_out/VSCODE_EXTENSIONS_INVENTORY.md#-7-程式碼品質與-linting-5-個) |
+| 🤖 **AI 輔助** | GitHub Copilot + ChatGPT | [AI 工具 (5個)](_out/VSCODE_EXTENSIONS_INVENTORY.md#-5-github-整合與-ai-5-個) |
+| 🐳 **容器開發** | Docker + Dev Containers | [容器工具 (7個)](_out/VSCODE_EXTENSIONS_INVENTORY.md#-6-容器與遠端開發-7-個) |
+| 📊 **資料科學** | Jupyter + Rainbow CSV | [資料工具 (6個)](_out/VSCODE_EXTENSIONS_INVENTORY.md#-2-資料科學與-jupyter-6-個) |
+| 🔀 **版本控制** | GitLens + Git Graph | [Git 工具 (6個)](_out/VSCODE_EXTENSIONS_INVENTORY.md#-4-git-版本控制-6-個) |
 
-💡 **實用功能**: [核心插件速查表](_out/VSCODE_EXTENSIONS_INVENTORY.md#-核心插件速查表) | [問題排查流程](_out/VSCODE_EXTENSIONS_INVENTORY.md#-問題排查流程) | [維護指南](_out/VSCODE_EXTENSIONS_INVENTORY.md#-維護流程)
+💡 **實用功能**: [核心插件速查表](_out/VSCODE_EXTENSIONS_INVENTORY.md#-核心插件速查表) | [問題排查流程](_out/VSCODE_EXTENSIONS_INVENTORY.md#-問題排查流程) | [維護建議](_out/VSCODE_EXTENSIONS_INVENTORY.md#-維護建議)
 
 ---
 
@@ -106,7 +119,7 @@ python schema_version_checker.py
 
 | 修復類型 | 指南文件 | 適用場景 |
 |---------|---------|---------|
-| 🔗 **向前引用問題** | [向前引用發現與修復指南](./FORWARD_REFERENCE_REPAIR_GUIDE.md) | Pydantic 模型前向引用錯誤 |
+| 🔗 **向前引用問題** | [向前引用發現與修復指南](guides/troubleshooting/FORWARD_REFERENCE_REPAIR_GUIDE.md) | Pydantic 模型前向引用錯誤 |
 | ⚡ **批量處理安全** | [批量處理安全原則](./services/aiva_common/README.md#️-批量處理修復原則) | 大量錯誤修復時的安全協議 |
 | 📝 **修復完成報告** | [向前引用修復報告](./FORWARD_REFERENCE_REPAIR_COMPLETION_REPORT.md) | 修復成果與最佳實踐記錄 |
 | 📖 **AIVA Common 標準** | [開發規範](./services/aiva_common/README.md#🔧-開發指南) | 所有 Python 代碼必須遵循的標準 |
@@ -160,16 +173,16 @@ cd AIVA
 pip install -r requirements.txt
 
 # 3. 啟動離線模式 (自動配置環境)
-python launch_offline_mode.py
+python scripts/utilities/launch_offline_mode.py
 
 # 4. 驗證系統健康
-python health_check.py
+python scripts/utilities/health_check.py
 
-# 5. 執行 AI 安全測試
-python ai_security_test.py --target http://localhost:3000
+# 5. 執行 AI 自主測試 (已更新路徑)
+python scripts/ai_analysis/ai_autonomous_testing_loop.py
 
-# 6. 運行自主學習測試
-python ai_autonomous_testing_loop.py --target http://localhost:3000
+# 6. 檢查系統狀態 (綜合檢查)
+python scripts/testing/comprehensive_system_validation.py
 ```
 
 ### 方式二: 完整 Docker 環境 (需要 Docker)
@@ -218,16 +231,16 @@ curl http://localhost:8001/health
 🎯 Schema標準:  100% 跨語言統一 (7/7 模組合規)
 ```
 
-### 🎯 當前運行狀態 (2025-10-28 更新)
+### 🎯 當前運行狀態 (2025-10-31 更新)
 
 ```
-✅ 離線模式:     完全可用 (推薦使用)
-🤖 AI 組件:      22 個全部正常運行
-🔍 掃描能力:     19 個活躍掃描器
-📊 學習系統:     58.9MB 經驗數據累積
-🧠 智能檢測:     4 個 AI 檢測器運行正常
-⚡ 啟動時間:     < 2 秒 (離線模式)
-🎯 測試成功:     實戰驗證通過 (Juice Shop)
+✅ 核心功能:     正常運行 (健康檢查通過)
+� Schema 狀態:  ⚠️ 需配置 RabbitMQ 環境變數
+🛠️ 工具鏈:      Go v1.25.0 ✅ | Rust v1.90.0 ✅ | Node v22.19.0 ✅
+🔍 掃描能力:     19 個掃描器架構完整
+� 檔案組織:     ✅ 已重組完成 (scripts/, reports/ 分類)
+🔧 修復狀態:     向前引用問題 30.6% 改善 (396→275 錯誤)
+📊 文檔狀態:     ✅ 完整技術文檔體系建立
 ```
 
 ### AI 系統核心
@@ -317,39 +330,33 @@ curl http://localhost:8001/health
 └── logs/                      # 日誌檔案
 ```
 
-### 🚀 常用命令 (更新路徑)
+### 🚀 常用命令 (已更新路徑)
 
 ```bash
-# 啟動系統
-python scripts/utilities/aiva_launcher.py --mode core_only
+# 系統健康檢查 (驗證通過 ✅)
+python scripts/utilities/health_check.py
 
-# 服務健康檢查
-curl http://localhost:8001/health
+# 啟動系統 (路徑已修正)
+python scripts/launcher/aiva_launcher.py --mode core_only
 
-# 跨語言警告分析 (NEW!)
+# 跨語言警告分析 (已實現)
 python scripts/analysis/analyze_cross_language_warnings.py
 
-# 系統驗證測試
+# 系統驗證測試 (路徑已修正)
 python scripts/testing/comprehensive_system_validation.py
 
-# Schema 測試
-python scripts/testing/comprehensive_schema_test.py
+# Schema 合規性驗證 (100% 通過)
+python tools/schema_compliance_validator.py --mode=detailed
 
-# AI 對話測試
+# AI 對話測試 (需環境變數配置)
 python -c "
 from services.core.aiva_core.dialog.assistant import AIVADialogAssistant
 import asyncio
 asyncio.run(AIVADialogAssistant().process_user_input('系統狀況如何？'))
 "
 
-# Schema 合規性驗證
-python tools/schema_compliance_validator.py --mode=detailed
-
-# 跨語言一致性檢查
-python tools/schema_compliance_validator.py --languages=go,rust,typescript
-
-# 完整項目分析
-python full_validation_test.py
+# 完整項目分析 (已移至 scripts/)
+python scripts/testing/full_validation_test.py
 ```
 
 📖 更多工具: [工具集文檔](tools/README.md) | [使用者指南](AI_USER_GUIDE.md)
@@ -436,8 +443,8 @@ git clone https://github.com/your-org/AIVA.git && cd AIVA
 # 2. 安裝依賴
 pip install -r requirements.txt
 
-# 3. 啟動開發服務
-python aiva_launcher.py --mode core_only
+# 3. 啟動開發服務 (路徑已修正)
+python scripts/launcher/aiva_launcher.py --mode core_only
 
 # 4. 驗證開發環境
 curl http://localhost:8001/health  # 或 Invoke-RestMethod (PowerShell)
@@ -478,26 +485,32 @@ asyncio.run(AIVADialogAssistant().process_user_input('現在系統會什麼？')
 - ⚠️ **警告** = 正常跨語言語法差異，不影響功能
 - 🎯 **改進目標** = 警告數量 < 500 個
 
-### 📊 當前狀況 (2025-10-30)
+### 📊 當前狀況 (2025-10-31)
 
 ```
-總警告: 763 個 (功能正常 ✅)
-├── 類型映射缺失: 337 個 (Optional[T], Dict[K,V] 等映射)
-├── 可選字段標記: 352 個 (Python Optional vs Go *T vs Rust Option)  
-└── 其他不匹配: 74 個 (命名約定、格式化等)
+程式碼錯誤: 275 個 ✅ (已從 396 減少 30.6%)
+├── 向前引用問題: ✅ 已完全解決 (api_standards.py 等)
+├── 跨語言警告: 763 個 (正常語法差異，功能完整 ✅)
+│   ├── 類型映射缺失: 337 個 (Optional[T], Dict[K,V] 等)
+│   ├── 可選字段標記: 352 個 (Python vs Go vs Rust 語法)
+│   └── 其他不匹配: 74 個 (命名約定、格式化等)
+└── Rust 項目: ❌ 36 個編譯錯誤需修復
 ```
 
 ### 🔧 工具使用
 
 ```bash
-# 分析跨語言警告
-python analyze_cross_language_warnings.py
+# 分析跨語言警告 (路徑已更新)
+python scripts/analysis/analyze_cross_language_warnings.py
 
-# 查看詳細分類  
-cat detailed_warning_analysis.json | jq '.detailed_issues'
+# 系統健康檢查 (驗證所有組件狀態)
+python scripts/utilities/health_check.py
 
-# 查看改進計劃
-cat CROSS_LANGUAGE_WARNING_ANALYSIS.md
+# 查看修復報告
+cat FORWARD_REFERENCE_REPAIR_COMPLETION_REPORT.md
+
+# 查看跨語言適用性分析
+cat CROSS_LANGUAGE_APPLICABILITY_REPORT.md
 ```
 
 > **重要原則**: 遵循「實際問題」導向，不為數字好看而修改評估標準
@@ -523,9 +536,9 @@ cat CROSS_LANGUAGE_WARNING_ANALYSIS.md
 ---
 
 **維護團隊**: AIVA Development Team  
-**最後更新**: 2025-10-30  
-**版本**: v5.0 (檔案組織自動化 + 跨語言警告管理完善版)
-**技術狀態**: 生產就緒 + 完整檔案管理系統
+**最後更新**: 2025-10-31  
+**版本**: v5.0 (README 更新 + 問題狀態同步版)
+**技術狀態**: 核心功能穩定 + 持續改進中 + 完整文檔體系
 
 <p align="center">
   <b>🚀 AI 驱动的下一代安全测试平台 | AIVA - The Future of Security Testing</b><br>

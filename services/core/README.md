@@ -10,7 +10,7 @@
 
 ---
 
-## � 目錄
+## 📑 目錄
 
 - [🛠️ Core 模組開發工具](#️-core-模組開發工具)
 - [📊 模組規模一覽](#-模組規模一覽)
@@ -41,7 +41,7 @@
 | 📝 **文檔生成** | autoDocstring | 自動生成 Python docstring |
 | 🔍 **程式碼品質** | SonarLint + ErrorLens | 靜態分析、安全檢測、即時錯誤提示 |
 
-📚 **完整工具清單**: [VS Code 插件參考](../../_out/VSCODE_EXTENSIONS_INVENTORY.md) | [Python 專屬工具 (22個)](../../_out/VSCODE_EXTENSIONS_INVENTORY.md#1-python-開發生態-22-個)
+📚 **完整工具清單**: [VS Code 插件參考](../../_out/VSCODE_EXTENSIONS_INVENTORY.md) | [Python 專屬工具 (22個)](../../_out/VSCODE_EXTENSIONS_INVENTORY.md#-1-python-開發生態-22-個)
 
 💡 **快速開始**: 
 - 安裝推薦插件後，開啟專案會自動啟用型別檢查

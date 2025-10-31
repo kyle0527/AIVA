@@ -163,13 +163,16 @@ UnifiedStorageAdapter initialized with PostgreSQL backend: localhost:5432/aiva_d
 
 ### 推薦開發環境
 
-| 開發場景 | 推薦工具 | 用途說明 |
+| 開發場景 | 推薦工具 | 快速連結 |
 |---------|---------|---------|
-| 🐍 **Python/FastAPI** | Pylance + Ruff | 型別檢查、API 開發、快速 linting |
-| 🗄️ **資料庫管理** | SQLTools + PostgreSQL Driver | PostgreSQL 查詢、資料操作 |
-| 🌐 **API 測試** | REST Client | HTTP 請求測試、API 除錯 |
-| 🔍 **監控除錯** | ErrorLens + Code Runner | 即時錯誤提示、快速測試 |
-| 🐳 **容器開發** | Docker + Dev Containers | 完整開發環境容器化 |
+| 🐍 **Python/FastAPI** | Pylance + Ruff + Black | [Python 工具 (22個)](../../_out/VSCODE_EXTENSIONS_INVENTORY.md#-1-python-開發生態-22-個) |
+| 🗄️ **資料庫管理** | SQLTools + PostgreSQL Driver | [資料庫工具 (4個)](../../_out/VSCODE_EXTENSIONS_INVENTORY.md#-11-資料庫與連線-3-個) |
+| 🌐 **API 測試** | REST Client | [開發工具 (7個)](../../_out/VSCODE_EXTENSIONS_INVENTORY.md#-10-開發工具與測試-7-個) |
+| 🔍 **監控除錯** | ErrorLens + Code Runner | [品質工具 (5個)](../../_out/VSCODE_EXTENSIONS_INVENTORY.md#-7-程式碼品質與-linting-5-個) |
+| 🐳 **容器開發** | Docker + Dev Containers | [容器工具 (7個)](../../_out/VSCODE_EXTENSIONS_INVENTORY.md#-6-容器與遠端開發-7-個) |
+| 🤖 **AI 輔助開發** | GitHub Copilot + ChatGPT | [AI 工具 (5個)](../../_out/VSCODE_EXTENSIONS_INVENTORY.md#-5-github-整合與-ai-5-個) |
+
+📚 **完整工具清單**: [VS Code 插件參考](../../_out/VSCODE_EXTENSIONS_INVENTORY.md) (88個插件) | **核心推薦**: [必裝插件速查表](../../_out/VSCODE_EXTENSIONS_INVENTORY.md#-核心插件速查表)
 
 ### 開發快速技巧
 

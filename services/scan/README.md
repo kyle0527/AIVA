@@ -16,7 +16,7 @@ AIVA Scan 是一個強大的多語言統一掃描引擎，整合了 Python、Typ
 
 ---
 
-## � 目錄
+## 📑 目錄
 
 - [🛠️ Scan 模組開發工具](#️-scan-模組開發工具)
 - [🏗️ 整體架構](#️-整體架構)
@@ -42,9 +42,9 @@ AIVA Scan 是一個強大的多語言統一掃描引擎，整合了 Python、Typ
 
 | 子模組 | 主要語言 | 推薦插件 | 工具連結 |
 |-------|---------|---------|---------|
-| 🐍 **aiva_scan/** | Python | Pylance + Ruff + Black | [Python 工具 (22個)](../../_out/VSCODE_EXTENSIONS_INVENTORY.md#1-python-開發生態-22-個) |
-| 📘 **aiva_scan_node/** | TypeScript | ESLint + Prettier | [TypeScript 工具](../../_out/VSCODE_EXTENSIONS_INVENTORY.md#7-程式碼品質與-linting-5-個) |
-| 🦀 **info_gatherer_rust/** | Rust | rust-analyzer | [Rust 工具](../../_out/VSCODE_EXTENSIONS_INVENTORY.md#3-其他程式語言-5-個) |
+| 🐍 **aiva_scan/** | Python | Pylance + Ruff + Black | [Python 工具 (22個)](../../_out/VSCODE_EXTENSIONS_INVENTORY.md#-1-python-開發生態-22-個) |
+| 📘 **aiva_scan_node/** | TypeScript | ESLint + Prettier | [TypeScript 工具](../../_out/VSCODE_EXTENSIONS_INVENTORY.md#-3-其他程式語言-5-個) |
+| 🦀 **info_gatherer_rust/** | Rust | rust-analyzer | [Rust 工具](../../_out/VSCODE_EXTENSIONS_INVENTORY.md#-3-其他程式語言-5-個) |
 
 ### 掃描模組專用工具
 

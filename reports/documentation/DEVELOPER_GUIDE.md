@@ -92,7 +92,31 @@ python -m pytest tests/ -v
 - Git
 - VS Code (推薦)
 
-### 2. 專案設置
+### 2. 開發工具配置
+
+#### VS Code 擴展插件完整清單
+AIVA 開發團隊精選了 88 個 VS Code 擴展插件來提升開發效率，涵蓋多語言開發、代碼品質分析、除錯工具等：
+
+📋 **完整插件清單**: [VS Code 擴展插件完整指南](../../_out/VSCODE_EXTENSIONS_INVENTORY.md)
+
+**主要分類包含**：
+- 🐍 **Python 開發生態系統** (22個插件) - Pylance、Python、Python Debugger等
+- 🌐 **多語言支援** - Go、Rust、TypeScript 開發工具
+- 🔧 **開發工具與除錯** - Remote SSH、Docker、GitHub Copilot
+- 📊 **代碼品質與效能分析** - SonarLint、Error Lens、Code Spell Checker
+- 🎨 **主題與使用者介面優化** - Material Icon Theme、Bracket Pair Colorizer
+- 🛠️ **系統整合工具** - REST Client、Thunder Client、Postman
+
+**快速設置**：
+```bash
+# 查看當前已安裝插件數量
+code --list-extensions | Measure-Object | Select-Object -ExpandProperty Count
+
+# 批量安裝推薦插件 (可選)
+# 請參考插件清單中的安裝指令
+```
+
+### 3. 專案設置
 ```bash
 # 克隆專案
 git clone <repository-url>

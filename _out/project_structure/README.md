@@ -1,14 +1,21 @@
-# 專案結構檔案目錄
+# Project Structure Documentation
 
-> **用途**: 存放各種格式的專案目錄樹狀圖和結構說明
+**目錄用途**: 專案架構文檔管理  
+**建立日期**: 2025-10-31  
+**維護目標**: 統一管理 AIVA 專案的架構文檔
 
-## 📋 檔案說明
+---
 
-### ⭐ 主要結構檔案
-- **project_structure_with_descriptions.md** - 帶詳細說明的專案結構（推薦）
-- **project_tree_latest.txt** - 最新的專案樹狀圖（純文字）
-- **tree_ultimate_chinese_FINAL.txt** - 中文版完整專案樹（最終版）
-- **tree.html** - 互動式專案樹狀圖（瀏覽器開啟）
+## � 檔案結構說明
+
+### 🎯 主要檔案
+
+| 檔案名稱 | 用途 | 維護狀態 |
+|---------|------|---------|
+| **tree_ultimate_chinese_MAIN.txt** | 🔴 **主版本**<br/>最新的專案架構樹狀圖（中文版） | ✅ 自動更新 |
+| **tree_ultimate_chinese_FINAL.txt** | 🟡 **官方版本**<br/>官方認可的最終架構版本 | 📝 手動維護 |
+| **tree.html** | 🔵 **視覺化版本**<br/>Mermaid 圖表的 HTML 展示 | ✅ 定期更新 |
+| **project_structure_with_descriptions.md** | 📖 **詳細說明**<br/>帶詳細說明的專案結構 | 📝 手動維護 |
 
 ### 📚 歷史版本
 - **tree_ultimate_chinese_20251019_081519.txt** - 歷史版本 1

@@ -26,9 +26,10 @@
 - **數據模型**: 78+ 個 Pydantic 模型 (新增異步工具、插件系統、CLI界面)
 - **覆蓋範圍**: 12 大核心領域（配置、枚舉、Schema、工具、通信、AI、可觀測性、插件、CLI、異步工具、訊息處理、跨語言生成）
 
-## � 目錄
+## 📑 目錄
 
 - [📋 概述](#-概述)
+- [🛠️ 開發工具建議](#️-開發工具建議)
 - [📂 目錄結構](#-目錄結構)
 - [🎨 核心模組說明](#-核心模組說明)
   - [1️⃣ 配置管理](#1️⃣-配置管理-config)
@@ -40,8 +41,8 @@
 - [🚀 快速開始](#-快速開始)
 - [🏗️ 跨語言 Schema 架構](#️-跨語言-schema-架構)
 - [🔧 開發指南](#-開發指南)
-- [� 開發規範與最佳實踐](#-開發規範與最佳實踐)
-- [�📚 符合的標準規範](#-符合的標準規範)
+- [📝 開發規範與最佳實踐](#-開發規範與最佳實踐)
+- [📚 符合的標準規範](#-符合的標準規範)
 - [📊 統計資訊](#-統計資訊)
 - [🔗 相關文件](#-相關文件)
 - [🤝 貢獻指南](#-貢獻指南)
@@ -458,7 +459,23 @@ python -m aiva_common.tools.schema_codegen_tool \
 
 ---
 
-## 🚀 快速開始
+## �️ 開發工具建議
+
+### 推薦 VS Code 擴展
+
+| 開發需求 | 推薦工具 | 快速連結 |
+|---------|---------|---------|
+| 🐍 **Python 核心開發** | Pylance + Ruff + Black | [Python 工具 (22個)](../../_out/VSCODE_EXTENSIONS_INVENTORY.md#-1-python-開發生態-22-個) |
+| 🔍 **型別檢查增強** | Pylance + Python Type Hint | [核心插件速查表](../../_out/VSCODE_EXTENSIONS_INVENTORY.md#-核心插件速查表) |
+| 📝 **文檔編寫** | Markdown All-in-One + AutoDocstring | [文檔工具 (8個)](../../_out/VSCODE_EXTENSIONS_INVENTORY.md#-8-文檔與標記語言-8-個) |
+| 🔧 **程式碼品質** | SonarLint + ErrorLens | [品質工具 (5個)](../../_out/VSCODE_EXTENSIONS_INVENTORY.md#-7-程式碼品質與-linting-5-個) |
+| 🤖 **AI 輔助** | GitHub Copilot + ChatGPT | [AI 工具 (5個)](../../_out/VSCODE_EXTENSIONS_INVENTORY.md#-5-github-整合與-ai-5-個) |
+
+📚 **完整清單**: [VS Code 插件參考](../../_out/VSCODE_EXTENSIONS_INVENTORY.md) (88個插件) | **問題排查**: [開發環境問題解決](../../_out/VSCODE_EXTENSIONS_INVENTORY.md#-問題排查流程)
+
+---
+
+## �🚀 快速開始
 
 ### 安裝
 

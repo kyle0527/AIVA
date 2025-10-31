@@ -33,7 +33,7 @@
 
 ---
 
-## � 目錄
+## 📑 目錄
 
 - [🛠️ Features 模組開發工具](#️-features-模組開發工具)
 - [📊 模組規模一覽](#-模組規模一覽)
@@ -57,9 +57,9 @@
 
 | 語言 | 必備插件 | 開發用途 | 工具連結 |
 |------|---------|---------|---------|
-| 🐍 **Python** | Pylance + Ruff + Black | 型別檢查、快速 linting、格式化 | [Python 工具 (22個)](../../_out/VSCODE_EXTENSIONS_INVENTORY.md#1-python-開發生態-22-個) |
-| 🐹 **Go** | golang.go (0.50.0) | gopls、除錯、測試、格式化 | [Go 工具](../../_out/VSCODE_EXTENSIONS_INVENTORY.md#3-其他程式語言-5-個) |
-| 🦀 **Rust** | rust-analyzer (0.3.2593) | 語言伺服器、Cargo 整合、除錯 | [Rust 工具](../../_out/VSCODE_EXTENSIONS_INVENTORY.md#3-其他程式語言-5-個) |
+| 🐍 **Python** | Pylance + Ruff + Black | 型別檢查、快速 linting、格式化 | [Python 工具 (22個)](../../_out/VSCODE_EXTENSIONS_INVENTORY.md#-1-python-開發生態-22-個) |
+| 🐹 **Go** | golang.go (0.50.0) | gopls、除錯、測試、格式化 | [Go 工具](../../_out/VSCODE_EXTENSIONS_INVENTORY.md#-3-其他程式語言-5-個) |
+| 🦀 **Rust** | rust-analyzer (0.3.2593) | 語言伺服器、Cargo 整合、除錯 | [Rust 工具](../../_out/VSCODE_EXTENSIONS_INVENTORY.md#-3-其他程式語言-5-個) |
 
 ### 跨語言開發推薦工具
 
