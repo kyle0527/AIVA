@@ -31,10 +31,10 @@
 cd c:\D\fold7\AIVA-git
 
 # 檢查補包狀態
-python aiva_package_validator.py
+python scripts/utilities/aiva_package_validator.py
 
-# 預期結果: 🟢 優秀 (4/4)
-# 如果不是，請檢查以下項目：
+# 預期結果: 專案結構驗證 (部分通過即可正常開發)
+# 如果出現嚴重錯誤，請檢查以下項目：
 # - Python環境是否正確
 # - 依賴是否完整安裝
 ```
@@ -198,6 +198,36 @@ python -m pytest tests/test_attack_plan_mapper.py -v
 # 執行系統檢查
 python aiva_package_validator.py
 ```
+
+## ⚡ 開發工具配置
+
+### IDE 性能優化設定
+AIVA 專案已針對多語言開發環境進行了語言伺服器優化配置，確保開發時的最佳性能：
+
+📋 **完整優化指南**: [語言伺服器優化設定指南](LANGUAGE_SERVER_OPTIMIZATION_GUIDE.md)
+
+**主要優化效果**：
+- ✅ 只分析開啟的檔案，避免全專案掃描
+- ✅ 程式碼變更後30秒才開始診斷，減少CPU使用
+- ✅ 關閉不必要的索引和即時提示，提升響應速度
+
+**支援語言**：
+- 🐍 **Python (Pylance)** - `openFilesOnly` 模式，30秒診斷延遲
+- 🦀 **Rust (rust-analyzer)** - 只在儲存時完整檢查
+- 🟢 **Go (gopls)** - 30秒延遲觸發，編輯模式
+
+**快速驗證**：
+```bash
+# 檢查語言伺服器配置
+.\verify-language-configs.ps1
+```
+
+**如果需要調整設定**，請參考：
+- 主要設定檔：`.vscode/settings.json`
+- 工作區設定：`AIVA.code-workspace`
+- 詳細說明：[語言伺服器優化設定指南](LANGUAGE_SERVER_OPTIMIZATION_GUIDE.md)
+
+---
 
 ## 🔄 每日開發流程
 

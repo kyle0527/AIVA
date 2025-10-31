@@ -9,10 +9,10 @@ AIVA跨語言Schema統一定義 - 以手動維護版本為準
 🔄 Schema 版本: 1.1.0
 """
 
-
-from typing import Any, Dict, List, Optional
 from datetime import datetime
-from pydantic import BaseModel, Field
+from typing import Any
+
+from pydantic import BaseModel
 
 
 class MessageHeader(BaseModel):
@@ -24,7 +24,7 @@ class MessageHeader(BaseModel):
     trace_id: str
     """"""
 
-    correlation_id: Optional[str] = None
+    correlation_id: str | None = None
     """"""
 
     source_module: str
@@ -43,19 +43,19 @@ class Target(BaseModel):
     url: Any
     """"""
 
-    parameter: Optional[str] = None
+    parameter: str | None = None
     """"""
 
-    method: Optional[str] = None
+    method: str | None = None
     """"""
 
-    headers: Dict[str, Any] = None
+    headers: dict[str, Any] = None
     """"""
 
-    params: Dict[str, Any] = None
+    params: dict[str, Any] = None
     """"""
 
-    body: Optional[str] = None
+    body: str | None = None
     """"""
 
 
@@ -65,10 +65,10 @@ class Vulnerability(BaseModel):
     name: Any
     """"""
 
-    cwe: Optional[str] = None
+    cwe: str | None = None
     """CWE ID (格式: CWE-XXX)，參考 https://cwe.mitre.org/"""
 
-    cve: Optional[str] = None
+    cve: str | None = None
     """CVE ID (格式: CVE-YYYY-NNNNN)，參考 https://cve.mitre.org/"""
 
     severity: Any
@@ -77,16 +77,16 @@ class Vulnerability(BaseModel):
     confidence: Any
     """"""
 
-    description: Optional[str] = None
+    description: str | None = None
     """"""
 
     cvss_score: Any = None
     """CVSS v3.1 Base Score (0.0-10.0)，參考 https://www.first.org/cvss/"""
 
-    cvss_vector: Optional[str] = None
+    cvss_vector: str | None = None
     """CVSS v3.1 Vector String，例如: CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H"""
 
-    owasp_category: Optional[str] = None
+    owasp_category: str | None = None
     """OWASP Top 10 分類，例如: A03:2021-Injection"""
 
 
@@ -102,7 +102,7 @@ class Asset(BaseModel):
     value: str
     """"""
 
-    parameters: List[str] = None
+    parameters: list[str] = None
     """"""
 
     has_form: bool = False
@@ -115,7 +115,7 @@ class Authentication(BaseModel):
     method: str = "none"
     """"""
 
-    credentials: Dict[str, Any] = None
+    credentials: dict[str, Any] = None
     """"""
 
 
@@ -131,10 +131,10 @@ class ExecutionError(BaseModel):
     message: str
     """"""
 
-    payload: Optional[str] = None
+    payload: str | None = None
     """"""
 
-    vector: Optional[str] = None
+    vector: str | None = None
     """"""
 
     timestamp: datetime = None
@@ -147,19 +147,19 @@ class ExecutionError(BaseModel):
 class Fingerprints(BaseModel):
     """技術指紋"""
 
-    web_server: Dict[str, Any] = None
+    web_server: dict[str, Any] = None
     """"""
 
-    framework: Dict[str, Any] = None
+    framework: dict[str, Any] = None
     """"""
 
-    language: Dict[str, Any] = None
+    language: dict[str, Any] = None
     """"""
 
     waf_detected: bool = False
     """"""
 
-    waf_vendor: Optional[str] = None
+    waf_vendor: str | None = None
     """"""
 
 
@@ -185,20 +185,20 @@ class RiskFactor(BaseModel):
     value: float
     """因子值"""
 
-    description: Optional[str] = None
+    description: str | None = None
     """因子描述"""
 
 
 class ScanScope(BaseModel):
     """掃描範圍"""
 
-    exclusions: List[str] = None
+    exclusions: list[str] = None
     """"""
 
     include_subdomains: bool = True
     """"""
 
-    allowed_hosts: List[str] = None
+    allowed_hosts: list[str] = None
     """"""
 
 
@@ -227,7 +227,7 @@ class TaskDependency(BaseModel):
     dependent_task_id: str
     """依賴任務ID"""
 
-    condition: Optional[str] = None
+    condition: str | None = None
     """依賴條件"""
 
     required: bool = True
@@ -258,7 +258,7 @@ class AIVerificationRequest(BaseModel):
     verification_mode: str = "non_destructive"
     """"""
 
-    context: Dict[str, Any] = None
+    context: dict[str, Any] = None
     """"""
 
 
@@ -280,13 +280,13 @@ class AIVerificationResult(BaseModel):
     verification_method: str
     """"""
 
-    test_steps: List[str] = None
+    test_steps: list[str] = None
     """"""
 
-    observations: List[str] = None
+    observations: list[str] = None
     """"""
 
-    recommendations: List[str] = None
+    recommendations: list[str] = None
     """"""
 
     timestamp: datetime = None
@@ -302,51 +302,51 @@ class CodeLevelRootCause(BaseModel):
     vulnerable_component: str
     """"""
 
-    affected_findings: List[str]
+    affected_findings: list[str]
     """"""
 
-    code_location: Optional[str] = None
+    code_location: str | None = None
     """"""
 
-    vulnerability_pattern: Optional[str] = None
+    vulnerability_pattern: str | None = None
     """"""
 
-    fix_recommendation: Optional[str] = None
+    fix_recommendation: str | None = None
     """"""
 
 
 class FindingEvidence(BaseModel):
     """漏洞證據"""
 
-    payload: Optional[str] = None
+    payload: str | None = None
     """"""
 
     response_time_delta: Any = None
     """"""
 
-    db_version: Optional[str] = None
+    db_version: str | None = None
     """"""
 
-    request: Optional[str] = None
+    request: str | None = None
     """"""
 
-    response: Optional[str] = None
+    response: str | None = None
     """"""
 
-    proof: Optional[str] = None
+    proof: str | None = None
     """"""
 
 
 class FindingImpact(BaseModel):
     """漏洞影響描述"""
 
-    description: Optional[str] = None
+    description: str | None = None
     """"""
 
-    business_impact: Optional[str] = None
+    business_impact: str | None = None
     """"""
 
-    technical_impact: Optional[str] = None
+    technical_impact: str | None = None
     """"""
 
     affected_users: Any = None
@@ -377,7 +377,7 @@ class FindingPayload(BaseModel):
     target: Any
     """"""
 
-    strategy: Optional[str] = None
+    strategy: str | None = None
     """"""
 
     evidence: Any = None
@@ -389,7 +389,7 @@ class FindingPayload(BaseModel):
     recommendation: Any = None
     """"""
 
-    metadata: Dict[str, Any] = None
+    metadata: dict[str, Any] = None
     """"""
 
     created_at: datetime = None
@@ -402,16 +402,16 @@ class FindingPayload(BaseModel):
 class FindingRecommendation(BaseModel):
     """漏洞修復建議"""
 
-    fix: Optional[str] = None
+    fix: str | None = None
     """"""
 
-    priority: Optional[str] = None
+    priority: str | None = None
     """"""
 
-    remediation_steps: List[str] = None
+    remediation_steps: list[str] = None
     """"""
 
-    references: List[str] = None
+    references: list[str] = None
     """"""
 
 
@@ -421,19 +421,19 @@ class FindingTarget(BaseModel):
     url: Any
     """"""
 
-    parameter: Optional[str] = None
+    parameter: str | None = None
     """"""
 
-    method: Optional[str] = None
+    method: str | None = None
     """"""
 
-    headers: Dict[str, Any] = None
+    headers: dict[str, Any] = None
     """"""
 
-    params: Dict[str, Any] = None
+    params: dict[str, Any] = None
     """"""
 
-    body: Optional[str] = None
+    body: str | None = None
     """"""
 
 
@@ -449,25 +449,25 @@ class JavaScriptAnalysisResult(BaseModel):
     source_size_bytes: int
     """"""
 
-    dangerous_functions: List[str] = None
+    dangerous_functions: list[str] = None
     """"""
 
-    external_resources: List[str] = None
+    external_resources: list[str] = None
     """"""
 
-    data_leaks: Dict[str, Any] = None
+    data_leaks: dict[str, Any] = None
     """"""
 
-    findings: List[str] = None
+    findings: list[str] = None
     """"""
 
-    apis_called: List[str] = None
+    apis_called: list[str] = None
     """"""
 
-    ajax_endpoints: List[str] = None
+    ajax_endpoints: list[str] = None
     """"""
 
-    suspicious_patterns: List[str] = None
+    suspicious_patterns: list[str] = None
     """"""
 
     risk_score: float = 0.0
@@ -492,7 +492,7 @@ class SASTDASTCorrelation(BaseModel):
     dast_finding_id: str
     """"""
 
-    data_flow_path: List[str]
+    data_flow_path: list[str]
     """"""
 
     verification_status: str
@@ -501,7 +501,7 @@ class SASTDASTCorrelation(BaseModel):
     confidence_score: float
     """"""
 
-    explanation: Optional[str] = None
+    explanation: str | None = None
     """"""
 
 
@@ -526,10 +526,10 @@ class SensitiveMatch(BaseModel):
     line_number: Any = None
     """"""
 
-    file_path: Optional[str] = None
+    file_path: str | None = None
     """"""
 
-    url: Optional[str] = None
+    url: str | None = None
     """"""
 
     severity: Any = "medium"
@@ -545,21 +545,20 @@ class VulnerabilityCorrelation(BaseModel):
     correlation_type: str
     """"""
 
-    related_findings: List[str]
+    related_findings: list[str]
     """"""
 
     confidence_score: float
     """"""
 
-    root_cause: Optional[str] = None
+    root_cause: str | None = None
     """"""
 
-    common_components: List[str] = None
+    common_components: list[str] = None
     """"""
 
-    explanation: Optional[str] = None
+    explanation: str | None = None
     """"""
 
     timestamp: datetime = None
     """"""
-

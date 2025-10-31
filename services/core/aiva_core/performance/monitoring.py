@@ -1,21 +1,17 @@
-"""
-監控系統模組
+"""監控系統模組
 拆分自 optimized_core.py 的監控系統部分
 """
 
-
-
-import time
 from collections import defaultdict
 from dataclasses import dataclass
+import time
 from typing import Any
-
-
 
 
 @dataclass
 class Metric:
     """監控指標"""
+
     name: str
     value: float
     timestamp: float
@@ -30,7 +26,9 @@ class MetricsCollector:
         self.counters = defaultdict(int)
         self.gauges = {}
 
-    def record_duration(self, name: str, duration: float, labels: dict[str, str] = None):
+    def record_duration(
+        self, name: str, duration: float, labels: dict[str, str] = None
+    ):
         """記錄執行時間"""
         metric = Metric(name, duration, time.time(), labels or {})
         self.metrics[f"{name}_duration"].append(metric)
@@ -62,7 +60,7 @@ class MetricsCollector:
         summary = {
             "counters": dict(self.counters),
             "gauges": {k: v.value for k, v in self.gauges.items()},
-            "durations": {}
+            "durations": {},
         }
 
         # 計算持續時間的統計資訊
@@ -74,7 +72,11 @@ class MetricsCollector:
                     "avg": sum(durations) / len(durations),
                     "min": min(durations),
                     "max": max(durations),
-                    "p95": np.percentile(durations, 95) if len(durations) > 1 else durations[0]
+                    "p95": (
+                        np.percentile(durations, 95)
+                        if len(durations) > 1
+                        else durations[0]
+                    ),
                 }
 
         return summary
@@ -82,10 +84,11 @@ class MetricsCollector:
 
 def monitor_performance(metric_name: str):
     """效能監控裝飾器"""
+
     def decorator(func):
         async def wrapper(*args, **kwargs):
             from .monitoring import metrics_collector  # 延遲導入避免循環
-            
+
             start_time = time.time()
 
             try:
@@ -93,13 +96,10 @@ def monitor_performance(metric_name: str):
                 duration = time.time() - start_time
 
                 metrics_collector.record_duration(
-                    metric_name,
-                    duration,
-                    {"status": "success"}
+                    metric_name, duration, {"status": "success"}
                 )
                 metrics_collector.increment_counter(
-                    f"{metric_name}_total",
-                    {"status": "success"}
+                    f"{metric_name}_total", {"status": "success"}
                 )
 
                 return result
@@ -110,16 +110,17 @@ def monitor_performance(metric_name: str):
                 metrics_collector.record_duration(
                     metric_name,
                     duration,
-                    {"status": "error", "error_type": type(e).__name__}
+                    {"status": "error", "error_type": type(e).__name__},
                 )
                 metrics_collector.increment_counter(
                     f"{metric_name}_total",
-                    {"status": "error", "error_type": type(e).__name__}
+                    {"status": "error", "error_type": type(e).__name__},
                 )
 
                 raise
 
         return wrapper
+
     return decorator
 
 

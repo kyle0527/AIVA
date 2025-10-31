@@ -1325,51 +1325,190 @@ generation_config:
     target_dir: services/aiva_common/schemas/generated
     base_imports:
     - from __future__ import annotations
-    - from typing import Any, Dict, List, Optional
+    - from typing import Any, Dict, List, Optional, Union
     - from datetime import datetime
     - from pydantic import BaseModel, Field
     field_mapping:
+      # 基礎類型
       str: str
       int: int
       float: float
       bool: bool
       datetime: datetime
+      Any: Any
+      # Optional 系列 (基於 OpenAPI 3.1.1 nullable 標準)
+      Optional[str]: Optional[str]
+      Optional[int]: Optional[int]
+      Optional[float]: Optional[float]
+      Optional[bool]: Optional[bool]
+      Optional[datetime]: Optional[datetime]
+      Optional[Any]: Optional[Any]
+      # 字典類型 (基於 JSON Schema additionalProperties)
       Dict[str, Any]: Dict[str, Any]
       Dict[str, str]: Dict[str, str]
+      Optional[Dict[str, Any]]: Optional[Dict[str, Any]]
+      Optional[Dict[str, str]]: Optional[Dict[str, str]]
+      # 列表類型 (基於 JSON Schema arrays)
       List[str]: List[str]
-      Optional[str]: Optional[str]
+      List[int]: List[int]
+      List[float]: List[float]
+      List[Any]: List[Any]
+      Optional[List[str]]: Optional[List[str]]
+      Optional[List[int]]: Optional[List[int]]
+      Optional[List[Any]]: Optional[List[Any]]
+      # 枚舉類型
+      Severity: Severity
+      Confidence: Confidence
+      FindingStatus: FindingStatus
+      AsyncTaskStatus: AsyncTaskStatus
+      PluginStatus: PluginStatus
+      PluginType: PluginType
+      # 自定義 Schema 類型
+      MessageHeader: MessageHeader
+      Target: Target
+      Vulnerability: Vulnerability
+      Asset: Asset
+      RetryConfig: RetryConfig
+      ResourceLimits: ResourceLimits
+      AsyncTaskConfig: AsyncTaskConfig
+      PluginManifest: PluginManifest
+      CLIParameter: CLIParameter
+      # 補齊缺失的類型映射
+      FunctionTaskContext: FunctionTaskContext
+      FunctionTaskTarget: FunctionTaskTarget
+      FunctionTaskTestConfig: FunctionTaskTestConfig
+      List[AsyncTaskConfig]: List[AsyncTaskConfig]
+      List[AsyncTaskResult]: List[AsyncTaskResult]
+      List[CLIParameter]: List[CLIParameter]
+      Dict[str, PluginManifest]: Dict[str, PluginManifest]
+      Optional[FindingEvidence]: Optional[FindingEvidence]
+      Optional[FindingImpact]: Optional[FindingImpact]
+      Optional[FindingRecommendation]: Optional[FindingRecommendation]
   go:
     target_dir: services/features/common/go/aiva_common_go/schemas/generated
     base_imports:
     - package schemas
     - import "time"
+    - import "encoding/json"
     field_mapping:
+      # 基礎類型
       str: string
       int: int
       float: float64
       bool: bool
       datetime: time.Time
       Any: interface{}
-      Dict[str, Any]: map[string]interface{}
-      Dict[str, str]: map[string]string
-      List[str]: '[]string'
+      # Optional 系列 (Go 指針語義)
       Optional[str]: '*string'
+      Optional[int]: '*int'
+      Optional[float]: '*float64'
+      Optional[bool]: '*bool'
+      Optional[datetime]: '*time.Time'
+      Optional[Any]: 'interface{}'
+      # 字典類型
+      Dict[str, Any]: 'map[string]interface{}'
+      Dict[str, str]: 'map[string]string'
+      Optional[Dict[str, Any]]: 'map[string]interface{}'
+      Optional[Dict[str, str]]: 'map[string]string'
+      # 列表類型
+      List[str]: '[]string'
+      List[int]: '[]int'
+      List[float]: '[]float64'
+      List[Any]: '[]interface{}'
+      Optional[List[str]]: '[]string'
+      Optional[List[int]]: '[]int'
+      Optional[List[Any]]: '[]interface{}'
+      # 枚舉類型
+      Severity: string
+      Confidence: string
+      FindingStatus: string
+      AsyncTaskStatus: string
+      PluginStatus: string
+      PluginType: string
+      # 自定義 Schema 類型
+      MessageHeader: MessageHeader
+      Target: Target
+      Vulnerability: Vulnerability
+      Asset: Asset
+      RetryConfig: RetryConfig
+      ResourceLimits: ResourceLimits
+      AsyncTaskConfig: AsyncTaskConfig
+      PluginManifest: PluginManifest
+      CLIParameter: CLIParameter
+      # 補齊缺失的類型映射
+      FunctionTaskContext: FunctionTaskContext
+      FunctionTaskTarget: FunctionTaskTarget
+      FunctionTaskTestConfig: FunctionTaskTestConfig
+      'List[AsyncTaskConfig]': '[]AsyncTaskConfig'
+      'List[AsyncTaskResult]': '[]AsyncTaskResult'
+      'List[CLIParameter]': '[]CLIParameter'
+      'Dict[str, PluginManifest]': 'map[string]PluginManifest'
+      'Optional[FindingEvidence]': '*FindingEvidence'
+      'Optional[FindingImpact]': '*FindingImpact'
+      'Optional[FindingRecommendation]': '*FindingRecommendation'
   rust:
     target_dir: services/scan/info_gatherer_rust/src/schemas/generated
     base_imports:
     - use serde::{Deserialize, Serialize};
     - use std::collections::HashMap;
     - use chrono::{DateTime, Utc};
+    - use serde_json::Value;
     field_mapping:
+      # 基礎類型
       str: String
       int: i32
       float: f64
       bool: bool
-      datetime: DateTime<Utc>
-      Dict[str, Any]: HashMap<String, serde_json::Value>
-      Dict[str, str]: HashMap<String, String>
-      List[str]: Vec<String>
-      Optional[str]: Option<String>
+      datetime: 'DateTime<Utc>'
+      Any: Value
+      # Optional 系列 (Rust Option<T>)
+      Optional[str]: 'Option<String>'
+      Optional[int]: 'Option<i32>'
+      Optional[float]: 'Option<f64>'
+      Optional[bool]: 'Option<bool>'
+      Optional[datetime]: 'Option<DateTime<Utc>>'
+      Optional[Any]: 'Option<Value>'
+      # 字典類型
+      Dict[str, Any]: 'HashMap<String, Value>'
+      Dict[str, str]: 'HashMap<String, String>'
+      Optional[Dict[str, Any]]: 'Option<HashMap<String, Value>>'
+      Optional[Dict[str, str]]: 'Option<HashMap<String, String>>'
+      # 列表類型
+      List[str]: 'Vec<String>'
+      List[int]: 'Vec<i32>'
+      List[float]: 'Vec<f64>'
+      List[Any]: 'Vec<Value>'
+      Optional[List[str]]: 'Option<Vec<String>>'
+      Optional[List[int]]: 'Option<Vec<i32>>'
+      Optional[List[Any]]: 'Option<Vec<Value>>'
+      # 枚舉類型 (Rust enum)
+      Severity: Severity
+      Confidence: Confidence
+      FindingStatus: FindingStatus
+      AsyncTaskStatus: AsyncTaskStatus
+      PluginStatus: PluginStatus
+      PluginType: PluginType
+      # 自定義 Schema 類型
+      MessageHeader: MessageHeader
+      Target: Target
+      Vulnerability: Vulnerability
+      Asset: Asset
+      RetryConfig: RetryConfig
+      ResourceLimits: ResourceLimits
+      AsyncTaskConfig: AsyncTaskConfig
+      PluginManifest: PluginManifest
+      CLIParameter: CLIParameter
+      # 補齊缺失的類型映射
+      FunctionTaskContext: FunctionTaskContext
+      FunctionTaskTarget: FunctionTaskTarget
+      FunctionTaskTestConfig: FunctionTaskTestConfig
+      'List[AsyncTaskConfig]': 'Vec<AsyncTaskConfig>'
+      'List[AsyncTaskResult]': 'Vec<AsyncTaskResult>'
+      'List[CLIParameter]': 'Vec<CLIParameter>'
+      'Dict[str, PluginManifest]': 'HashMap<String, PluginManifest>'
+      'Optional[FindingEvidence]': 'Option<FindingEvidence>'
+      'Optional[FindingImpact]': 'Option<FindingImpact>'
+      'Optional[FindingRecommendation]': 'Option<FindingRecommendation>'
 enums:
   Severity:
     description: 漏洞嚴重程度枚舉

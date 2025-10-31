@@ -1,10 +1,7 @@
-"""
-Trace Recorder - 軌跡記錄器
+"""Trace Recorder - 軌跡記錄器
 
 記錄任務執行過程中的所有詳細信息
 """
-
-
 
 from dataclasses import asdict, dataclass, field
 from datetime import datetime

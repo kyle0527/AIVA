@@ -1,5 +1,3 @@
-
-
 from datetime import UTC, datetime
 from typing import Any
 
@@ -10,8 +8,7 @@ logger = get_logger(__name__)
 
 
 class SessionStateManager:
-    """
-    會話狀態管理器 - 測試會話狀態管理
+    """會話狀態管理器 - 測試會話狀態管理
 
     負責管理測試會話的狀態，包括進度追蹤、任務狀態、
     歷史記錄等。生產環境建議使用資料庫實作。

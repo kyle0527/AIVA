@@ -1,5 +1,4 @@
-"""
-AIVA Core Models - 核心業務模組
+"""AIVA Core Models - 核心業務模組
 
 此文件包含AIVA系統核心業務邏輯相關的所有數據模型。
 
@@ -15,12 +14,10 @@ AIVA Core Models - 核心業務模組
 9. 修復建議生成
 """
 
-
-
 from datetime import UTC, datetime
 from typing import Any
 
-from pydantic import BaseModel, Field, HttpUrl, field_validator
+from pydantic import BaseModel, Field, field_validator
 
 from ..aiva_common.enums import (
     AttackPathEdgeType,
@@ -28,30 +25,19 @@ from ..aiva_common.enums import (
     ComplianceFramework,
     Confidence,
     ModuleName,
-    RemediationStatus,
-    RemediationType,
     RiskLevel,
     Severity,
     TaskStatus,
 )
 from ..aiva_common.schemas import (
-    ConfigUpdatePayload,
     CVEReference,
     CVSSv3Metrics,
     CWEReference,
-    FeedbackEventPayload,
     FindingEvidence,
     FindingImpact,
-    FindingPayload,
     FindingRecommendation,
-    HeartbeatPayload,
-    ModuleStatus,
-    RemediationGeneratePayload,
-    RemediationResultPayload,
     Target,
-    TaskUpdatePayload,
 )
-
 
 # ==================== 發現和影響管理 ====================
 # 注意：以下類別已從 aiva_common.schemas.findings 導入：
@@ -77,8 +63,12 @@ class EnhancedVulnerability(BaseModel):
     cvss_metrics: CVSSv3Metrics | None = Field(default=None, description="CVSS評分")
 
     # 標準引用
-    cve_references: list[CVEReference] = Field(default_factory=list, description="CVE引用")
-    cwe_references: list[CWEReference] = Field(default_factory=list, description="CWE引用")
+    cve_references: list[CVEReference] = Field(
+        default_factory=list, description="CVE引用"
+    )
+    cwe_references: list[CWEReference] = Field(
+        default_factory=list, description="CWE引用"
+    )
 
     # 詳細信息
     exploit_available: bool = Field(default=False, description="是否有可用利用")
@@ -168,7 +158,9 @@ class EnhancedRiskAssessment(BaseModel):
     affected_assets: list[str] = Field(default_factory=list, description="受影響資產")
 
     # 緩解措施
-    mitigation_strategies: list[str] = Field(default_factory=list, description="緩解策略")
+    mitigation_strategies: list[str] = Field(
+        default_factory=list, description="緩解策略"
+    )
     residual_risk: float = Field(ge=0.0, le=10.0, description="殘餘風險")
 
     # 時間戳
@@ -185,7 +177,9 @@ class RiskTrendAnalysis(BaseModel):
     asset_id: str = Field(description="資產ID")
     time_period: str = Field(description="時間周期")
     historical_scores: list[dict[str, Any]] = Field(description="歷史評分")
-    trend_direction: str = Field(description="趨勢方向")  # "increasing", "decreasing", "stable"
+    trend_direction: str = Field(
+        description="趨勢方向"
+    )  # "increasing", "decreasing", "stable"
     forecast: dict[str, Any] = Field(default_factory=dict, description="預測")
     analyzed_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
     metadata: dict[str, Any] = Field(default_factory=dict, description="元數據")
@@ -244,7 +238,9 @@ class EnhancedAttackPathNode(BaseModel):
     """增強攻擊路徑節點"""
 
     node_id: str = Field(description="節點ID")
-    node_type: str = Field(description="節點類型")  # "asset", "vulnerability", "technique"
+    node_type: str = Field(
+        description="節點類型"
+    )  # "asset", "vulnerability", "technique"
     name: str = Field(description="節點名稱")
     description: str | None = Field(default=None, description="節點描述")
 
@@ -303,7 +299,9 @@ class VulnerabilityCorrelation(BaseModel):
     correlation_type: str = Field(description="關聯類型")
     correlation_strength: float = Field(ge=0.0, le=1.0, description="關聯強度")
     combined_risk: float = Field(ge=0.0, le=10.0, description="組合風險")
-    analysis_details: dict[str, Any] = Field(default_factory=dict, description="分析詳情")
+    analysis_details: dict[str, Any] = Field(
+        default_factory=dict, description="分析詳情"
+    )
     analyzed_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
     metadata: dict[str, Any] = Field(default_factory=dict, description="元數據")
 
@@ -327,10 +325,14 @@ class EnhancedVulnerabilityCorrelation(BaseModel):
 
     # 攻擊場景
     attack_scenarios: list[str] = Field(default_factory=list, description="攻擊場景")
-    recommended_order: list[str] = Field(default_factory=list, description="建議利用順序")
+    recommended_order: list[str] = Field(
+        default_factory=list, description="建議利用順序"
+    )
 
     # 緩解建議
-    coordinated_mitigation: list[str] = Field(default_factory=list, description="協調緩解措施")
+    coordinated_mitigation: list[str] = Field(
+        default_factory=list, description="協調緩解措施"
+    )
     priority_ranking: list[str] = Field(default_factory=list, description="優先級排序")
 
     # 時間戳
@@ -373,7 +375,9 @@ class SASTDASTCorrelation(BaseModel):
 class TaskDependency(BaseModel):
     """任務依賴"""
 
-    dependency_type: str = Field(description="依賴類型")  # "prerequisite", "blocker", "input"
+    dependency_type: str = Field(
+        description="依賴類型"
+    )  # "prerequisite", "blocker", "input"
     dependent_task_id: str = Field(description="依賴任務ID")
     condition: str | None = Field(default=None, description="依賴條件")
     required: bool = Field(default=True, description="是否必需")
@@ -392,7 +396,9 @@ class EnhancedTaskExecution(BaseModel):
     retry_count: int = Field(default=3, ge=0, description="重試次數")
 
     # 依賴關係
-    dependencies: list[TaskDependency] = Field(default_factory=list, description="任務依賴")
+    dependencies: list[TaskDependency] = Field(
+        default_factory=list, description="任務依賴"
+    )
 
     # 執行狀態
     status: TaskStatus = Field(description="執行狀態")
@@ -465,8 +471,12 @@ class TestStrategy(BaseModel):
     stop_conditions: list[str] = Field(default_factory=list, description="停止條件")
 
     # 優先級和資源
-    priority_weights: dict[str, float] = Field(default_factory=dict, description="優先級權重")
-    resource_limits: dict[str, Any] = Field(default_factory=dict, description="資源限制")
+    priority_weights: dict[str, float] = Field(
+        default_factory=dict, description="優先級權重"
+    )
+    resource_limits: dict[str, Any] = Field(
+        default_factory=dict, description="資源限制"
+    )
 
     # 適應性配置
     learning_enabled: bool = Field(default=True, description="是否啟用學習")
@@ -495,7 +505,9 @@ class EnhancedModuleStatus(BaseModel):
     version: str = Field(description="模組版本")
 
     # 狀態信息
-    status: str = Field(description="運行狀態")  # "running", "stopped", "error", "maintenance"
+    status: str = Field(
+        description="運行狀態"
+    )  # "running", "stopped", "error", "maintenance"
     health_score: float = Field(ge=0.0, le=1.0, description="健康評分")
 
     # 性能指標
@@ -530,8 +542,12 @@ class SystemOrchestration(BaseModel):
     module_statuses: list[EnhancedModuleStatus] = Field(description="模組狀態列表")
 
     # 系統配置
-    load_balancing: dict[str, Any] = Field(default_factory=dict, description="負載均衡配置")
-    failover_rules: dict[str, Any] = Field(default_factory=dict, description="故障轉移規則")
+    load_balancing: dict[str, Any] = Field(
+        default_factory=dict, description="負載均衡配置"
+    )
+    failover_rules: dict[str, Any] = Field(
+        default_factory=dict, description="故障轉移規則"
+    )
 
     # 整體狀態
     overall_health: float = Field(ge=0.0, le=1.0, description="整體健康度")
@@ -539,7 +555,9 @@ class SystemOrchestration(BaseModel):
 
     # 事件處理
     active_incidents: list[str] = Field(default_factory=list, description="活躍事件")
-    maintenance_windows: list[dict] = Field(default_factory=list, description="維護時段")
+    maintenance_windows: list[dict] = Field(
+        default_factory=list, description="維護時段"
+    )
 
     # 時間戳
     status_updated_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
@@ -559,30 +577,25 @@ __all__ = [
     # - FindingImpact
     # - FindingRecommendation
     # - FindingPayload
-    
     # 已從 aiva_common.schemas.tasks 導入：
     # - FeedbackEventPayload
     # - TaskUpdatePayload
     # - ConfigUpdatePayload
     # - RemediationGeneratePayload
     # - RemediationResultPayload
-    
     # 已從 aiva_common.schemas.telemetry 導入：
     # - ModuleStatus
     # - HeartbeatPayload
-    
     # ========== Core 模組特定擴展 ==========
     # 漏洞增強
     "EnhancedVulnerability",
     "EnhancedFindingPayload",
-    
     # 風險評估
     "RiskFactor",
     "RiskAssessmentContext",
     "RiskAssessmentResult",
     "EnhancedRiskAssessment",
     "RiskTrendAnalysis",
-    
     # 攻擊路徑
     "AttackPathNode",
     "AttackPathEdge",
@@ -590,19 +603,16 @@ __all__ = [
     "AttackPathRecommendation",
     "EnhancedAttackPathNode",
     "EnhancedAttackPath",
-    
     # 漏洞關聯
     "VulnerabilityCorrelation",
     "EnhancedVulnerabilityCorrelation",
     "CodeLevelRootCause",
     "SASTDASTCorrelation",
-    
     # 任務管理擴展
     "TaskDependency",
     "EnhancedTaskExecution",
     "TaskQueue",
     "TestStrategy",
-    
     # 系統協調擴展
     "EnhancedModuleStatus",
     "SystemOrchestration",

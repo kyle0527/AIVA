@@ -1,9 +1,6 @@
-"""
-AIVA 自然語言生成增強系統
+"""AIVA 自然語言生成增強系統
 基於規則和模板的高品質中文回應生成，無需外部 LLM
 """
-
-
 
 import random
 import re
@@ -159,7 +156,6 @@ class AIVANaturalLanguageGenerator:
         self, context: dict[str, Any], response_type: str = "auto"
     ) -> str:
         """生成自然語言回應"""
-
         # 1. 分析上下文
         analyzed_context = self._analyze_context(context)
 
@@ -381,9 +377,11 @@ class AIVANaturalLanguageGenerator:
 
     def _post_process_response(self, response: str, context: dict) -> str:
         """後處理優化回應"""
-
         # 添加 AIVA 特色
-        if not any(marker in response for marker in ["AIVA", "生物神經網路", "自主"]) and random.random() < 0.3:
+        if (
+            not any(marker in response for marker in ["AIVA", "生物神經網路", "自主"])
+            and random.random() < 0.3
+        ):
             aiva_signatures = [
                 "(AIVA 自主執行)",
                 "(基於生物神經網路決策)",

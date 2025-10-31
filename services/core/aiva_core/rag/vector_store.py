@@ -1,10 +1,7 @@
-"""
-Vector Store - 向量數據庫
+"""Vector Store - 向量數據庫
 
 負責向量化和存儲攻擊模式、經驗樣本、知識文檔
 """
-
-
 
 import json
 import logging

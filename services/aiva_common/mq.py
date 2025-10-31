@@ -4,8 +4,6 @@ This module provides a unified interface for message broker operations,
 supporting both RabbitMQ (production) and in-memory (testing) implementations.
 """
 
-
-
 import asyncio
 import logging
 from abc import ABC, abstractmethod
@@ -156,8 +154,7 @@ class RabbitBroker(AbstractBroker):
 
         """
         assert aio_pika is not None and self._exchange is not None
-        msg = aio_pika.Message(
-            body, delivery_mode=aio_pika.DeliveryMode.PERSISTENT)
+        msg = aio_pika.Message(body, delivery_mode=aio_pika.DeliveryMode.PERSISTENT)
         await self._exchange.publish(msg, routing_key=str(topic))
 
     async def subscribe(self, topic: Topic) -> AsyncIterator[MQMessage]:
@@ -269,8 +266,7 @@ class InMemoryBroker(AbstractBroker):
             body = json.dumps(message, default=str).encode()
         else:
             # 直接使用字節
-            body = message if isinstance(
-                message, bytes) else str(message).encode()
+            body = message if isinstance(message, bytes) else str(message).encode()
 
         # 使用 routing_key 作為隊列名
         q = self._queues.setdefault(routing_key, asyncio.Queue())
@@ -300,7 +296,7 @@ async def get_broker() -> AbstractBroker:
             logger.warning(
                 "Failed to connect to RabbitMQ broker, falling back to InMemoryBroker. "
                 "This may impact message persistence and scalability. Error: %s",
-                str(e)
+                str(e),
             )
     else:
         logger.warning(

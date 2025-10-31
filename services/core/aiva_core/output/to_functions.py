@@ -1,5 +1,3 @@
-
-
 from services.aiva_common.enums import ModuleName, Topic
 from services.aiva_common.schemas import AivaMessage, FunctionTaskPayload, MessageHeader
 from services.aiva_common.utils import new_id

@@ -1,5 +1,4 @@
-"""
-Improved UI for AIVA Control Panel.
+"""Improved UI for AIVA Control Panel.
 
 This module defines a FastAPI application that provides a polished
 dashboard for monitoring scan tasks and vulnerability detections.  The
@@ -9,8 +8,6 @@ panel while adding searchable tables for tasks and detection results.
 The script can be executed directly (e.g. via ``uvicorn improved_ui:app``)
 or imported as a module.
 """
-
-
 
 import sys
 from typing import Any
@@ -110,14 +107,10 @@ def _build_index_html(dashboard: Dashboard) -> str:
         # Truncate result for brevity
         result_str = str(result)
         result_preview = result_str[:50] + ("..." if len(result_str) > 50 else "")
-        history_rows += (
-            f"<tr><td>{status}</td><td>{tool_used}</td><td>{conf_display}</td><td>{result_preview}</td></tr>"
-        )
+        history_rows += f"<tr><td>{status}</td><td>{tool_used}</td><td>{conf_display}</td><td>{result_preview}</td></tr>"
 
     if not history_rows:
-        history_rows = (
-            "<tr><td colspan=4 style='text-align:center; color:#888;'>無 AI 歷史紀錄</td></tr>"
-        )
+        history_rows = "<tr><td colspan=4 style='text-align:center; color:#888;'>無 AI 歷史紀錄</td></tr>"
 
     # Build the full HTML page
     # Optionally include AI card only when AI is enabled.  Avoid nested f-strings
@@ -353,6 +346,7 @@ def create_app(mode: str = "hybrid") -> FastAPI:
 
     Args:
         mode: Operational mode for the Dashboard (ui/ai/hybrid).
+
     Returns:
         FastAPI instance ready for serving the UI and API endpoints.
     """

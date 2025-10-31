@@ -4,8 +4,6 @@
 此模組定義了訊息佇列系統使用的標準信封格式。
 """
 
-
-
 from typing import Any
 
 from pydantic import BaseModel, Field

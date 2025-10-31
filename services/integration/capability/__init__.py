@@ -26,6 +26,20 @@ from .models import (
     create_capability_id
 )
 from .toolkit import CapabilityToolkit, toolkit
+from .lifecycle import ToolLifecycleManager, ToolLifecycleEvent, InstallationResult
+from .lifecycle_cli import LifecycleCLI
+from .function_recon import (
+    FunctionReconManager,
+    NetworkScanner,
+    DNSRecon,
+    WebRecon,
+    OSINTRecon,
+    ReconCLI,
+    ReconTarget,
+    ReconTargetType,
+    ReconStatus,
+    register_recon_capabilities
+)
 
 __version__ = "1.0.0"
 __author__ = "AIVA Development Team"
@@ -39,6 +53,24 @@ __all__ = [
     "registry",
     "toolkit",
     "app",
+    
+    # 生命週期管理
+    "ToolLifecycleManager",
+    "ToolLifecycleEvent",
+    "InstallationResult",
+    "LifecycleCLI",
+    
+    # 功能偵察模組
+    "FunctionReconManager",
+    "NetworkScanner", 
+    "DNSRecon",
+    "WebRecon",
+    "OSINTRecon",
+    "ReconCLI",
+    "ReconTarget",
+    "ReconTargetType",
+    "ReconStatus",
+    "register_recon_capabilities",
     
     # 資料模型
     "CapabilityRecord",

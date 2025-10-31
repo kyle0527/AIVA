@@ -29,8 +29,6 @@ Example:
         pass
 """
 
-
-
 import hashlib
 import json
 import logging
@@ -253,8 +251,7 @@ class DeDup:
                 return True
 
             # Mark as seen
-            expires = (
-                now + self._ttl_seconds) if self._ttl_seconds > 0 else None
+            expires = (now + self._ttl_seconds) if self._ttl_seconds > 0 else None
             self._conn.execute(
                 "INSERT OR REPLACE INTO fingerprints (fingerprint, expires) VALUES (?, ?)",
                 (digest, expires),
@@ -300,8 +297,7 @@ class DeDup:
         """
         with self._lock:
             self._prune(time.time())
-            row = self._conn.execute(
-                "SELECT COUNT(*) FROM fingerprints").fetchone()
+            row = self._conn.execute("SELECT COUNT(*) FROM fingerprints").fetchone()
             return row[0] if row else 0
 
     def clear(self) -> None:

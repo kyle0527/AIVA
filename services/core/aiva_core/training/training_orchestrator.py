@@ -1,25 +1,20 @@
-"""
-Training Orchestrator - 訓練編排器
+"""Training Orchestrator - 訓練編排器
 
 整合 RAG、場景管理、模型訓練，實現完整的自動化訓練流程
 """
 
-
-
-from datetime import datetime, UTC
+from datetime import UTC, datetime
 import logging
 from pathlib import Path
-from typing import Any, Dict, List
+from typing import Any
 
 try:
     from ..execution.plan_executor import PlanExecutor
-
     from ..learning.model_trainer import ModelTrainer
     from ..rag import RAGEngine
     from .scenario_manager import ScenarioManager
 except ImportError:
     from services.core.aiva_core.execution.plan_executor import PlanExecutor
-
     from services.core.aiva_core.learning.model_trainer import ModelTrainer
     from services.core.aiva_core.rag import RAGEngine
     from services.core.aiva_core.training.scenario_manager import ScenarioManager
@@ -68,10 +63,14 @@ class TrainingOrchestrator:
         """
         # 自動初始化組件
         if auto_initialize:
-            self.scenario_manager = scenario_manager or self._create_default_scenario_manager()
+            self.scenario_manager = (
+                scenario_manager or self._create_default_scenario_manager()
+            )
             self.rag_engine = rag_engine or self._create_default_rag_engine()
             self.plan_executor = plan_executor or self._create_default_plan_executor()
-            self.experience_manager = experience_manager or self._create_default_experience_manager()
+            self.experience_manager = (
+                experience_manager or self._create_default_experience_manager()
+            )
             self.model_trainer = model_trainer or self._create_default_model_trainer()
         else:
             self.scenario_manager = scenario_manager
@@ -90,31 +89,32 @@ class TrainingOrchestrator:
         logger.info(
             f"TrainingOrchestrator initialized (auto_initialize={auto_initialize})"
         )
-    
+
     def _create_default_scenario_manager(self) -> ScenarioManager:
         """創建默認場景管理器"""
         logger.debug("Creating default ScenarioManager")
         return ScenarioManager()
-    
+
     def _create_default_rag_engine(self) -> RAGEngine:
         """創建默認 RAG 引擎"""
         from ..rag import KnowledgeBase, VectorStore
+
         logger.debug("Creating default RAGEngine")
         # 創建簡單的內存知識庫
         vector_store = VectorStore()
         knowledge_base = KnowledgeBase(vector_store=vector_store)
         return RAGEngine(knowledge_base=knowledge_base)
-    
+
     def _create_default_plan_executor(self) -> PlanExecutor:
         """創建默認計劃執行器"""
         logger.debug("Creating default PlanExecutor")
         return PlanExecutor()
-    
+
     def _create_default_experience_manager(self) -> ExperienceManager:
         """創建默認經驗管理器"""
         logger.debug("Creating default ExperienceManager")
         return ExperienceManager()
-    
+
     def _create_default_model_trainer(self) -> ModelTrainer:
         """創建默認模型訓練器"""
         logger.debug("Creating default ModelTrainer")
@@ -154,8 +154,7 @@ class TrainingOrchestrator:
 
             # 使用 AI 模型生成計畫（基於 MITRE ATT&CK 和 RAG 增強）
             attack_plan = await self._generate_ai_attack_plan(
-                scenario=scenario,
-                rag_context=rag_context
+                scenario=scenario, rag_context=rag_context
             )
 
             logger.info(
@@ -237,7 +236,7 @@ class TrainingOrchestrator:
             經驗樣本列表
         """
         samples: list[ExperienceSample] = []
-        
+
         # 檢查執行結果是否包含trace_records
         trace_records = execution_result.get("trace_records", [])
         if not trace_records:
@@ -246,12 +245,12 @@ class TrainingOrchestrator:
 
         # 使用 PlanComparator 分析執行計畫與預期結果的差異
         plan_comparison = None
-        if hasattr(self, 'plan_comparator') and self.plan_comparator:
+        if hasattr(self, "plan_comparator") and self.plan_comparator:
             try:
                 plan_comparison = await self.plan_comparator.compare_plans(
                     expected_plan=scenario.expected_plan,
                     actual_plan=attack_plan,
-                    execution_traces=trace_records
+                    execution_traces=trace_records,
                 )
             except Exception as e:
                 logger.warning(f"Plan comparison failed: {e}")
@@ -259,7 +258,9 @@ class TrainingOrchestrator:
         # 計算整體成功率和獎勵基準
         overall_success = execution_result.get("overall_success", False)
         total_steps = len(trace_records)
-        successful_steps = sum(1 for trace in trace_records if trace.get("success", False))
+        successful_steps = sum(
+            1 for trace in trace_records if trace.get("success", False)
+        )
         success_rate = successful_steps / total_steps if total_steps > 0 else 0.0
 
         # 為每個執行步驟創建經驗樣本
@@ -271,14 +272,22 @@ class TrainingOrchestrator:
                     "vulnerability_type": scenario.vulnerability_type.value,
                     "step_index": step_index,
                     "previous_success_rate": (
-                        sum(1 for t in trace_records[:step_index] if t.get("success", False)) / max(1, step_index)
-                        if step_index > 0 else 0.0
+                        sum(
+                            1
+                            for t in trace_records[:step_index]
+                            if t.get("success", False)
+                        )
+                        / max(1, step_index)
+                        if step_index > 0
+                        else 0.0
                     ),
                     "scenario_context": {
                         "difficulty_level": scenario.difficulty_level,
                         "tags": scenario.tags,
-                        "expected_outcome": scenario.success_criteria.get("main_indicator", "unknown")
-                    }
+                        "expected_outcome": scenario.success_criteria.get(
+                            "main_indicator", "unknown"
+                        ),
+                    },
                 }
 
                 # 動作提取
@@ -288,7 +297,7 @@ class TrainingOrchestrator:
                     "parameters": trace_record.get("parameters", {}),
                     "payload": trace_record.get("payload", ""),
                     "headers": trace_record.get("headers", {}),
-                    "step_type": trace_record.get("step_type", "unknown")
+                    "step_type": trace_record.get("step_type", "unknown"),
                 }
 
                 # 狀態提取 (執行後)
@@ -299,7 +308,7 @@ class TrainingOrchestrator:
                     "success": trace_record.get("success", False),
                     "findings_count": len(trace_record.get("findings", [])),
                     "error_message": trace_record.get("error_message", ""),
-                    "final_state": trace_record.get("final_state", {})
+                    "final_state": trace_record.get("final_state", {}),
                 }
 
                 # 獎勵計算 (基於多個因素)
@@ -308,17 +317,34 @@ class TrainingOrchestrator:
                     step_index=step_index,
                     total_steps=total_steps,
                     overall_success=overall_success,
-                    plan_comparison=plan_comparison
+                    plan_comparison=plan_comparison,
                 )
 
                 # 獎勵分解 (用於分析和調試)
                 reward_breakdown = {
-                    "completion": min(1.0, (step_index + 1) / total_steps),  # 完成度獎勵
-                    "success": 1.0 if trace_record.get("success", False) else -0.5,  # 成功/失敗獎勵
-                    "sequence": 0.1 if step_index == 0 or trace_records[step_index-1].get("success", False) else -0.1,  # 序列連貫性
-                    "goal": 1.0 if overall_success and step_index == total_steps - 1 else 0.0,  # 目標達成獎勵
-                    "efficiency": max(0.0, 1.0 - (trace_record.get("response_time", 1000) / 5000.0)),  # 效率獎勵
-                    "quality": self._assess_finding_quality(trace_record.get("findings", []))  # 發現品質獎勵
+                    "completion": min(
+                        1.0, (step_index + 1) / total_steps
+                    ),  # 完成度獎勵
+                    "success": (
+                        1.0 if trace_record.get("success", False) else -0.5
+                    ),  # 成功/失敗獎勵
+                    "sequence": (
+                        0.1
+                        if step_index == 0
+                        or trace_records[step_index - 1].get("success", False)
+                        else -0.1
+                    ),  # 序列連貫性
+                    "goal": (
+                        1.0
+                        if overall_success and step_index == total_steps - 1
+                        else 0.0
+                    ),  # 目標達成獎勵
+                    "efficiency": max(
+                        0.0, 1.0 - (trace_record.get("response_time", 1000) / 5000.0)
+                    ),  # 效率獎勵
+                    "quality": self._assess_finding_quality(
+                        trace_record.get("findings", [])
+                    ),  # 發現品質獎勵
                 }
 
                 # 品質評分計算
@@ -326,7 +352,7 @@ class TrainingOrchestrator:
                     trace_record=trace_record,
                     reward_breakdown=reward_breakdown,
                     step_index=step_index,
-                    total_steps=total_steps
+                    total_steps=total_steps,
                 )
 
                 # 學習標籤生成 (用於平衡學習資料集)
@@ -334,7 +360,7 @@ class TrainingOrchestrator:
                     trace_record=trace_record,
                     scenario=scenario,
                     step_index=step_index,
-                    success_rate=success_rate
+                    success_rate=success_rate,
                 )
 
                 # 創建經驗樣本
@@ -350,12 +376,12 @@ class TrainingOrchestrator:
                     context={
                         "scenario_id": scenario.scenario_id,
                         "target_info": execution_result.get("target_info", {}),
-                        "execution_metadata": execution_result.get("metadata", {})
+                        "execution_metadata": execution_result.get("metadata", {}),
                     },
                     target_info={
                         "base_url": trace_record.get("target_url", ""),
                         "vulnerability_type": scenario.vulnerability_type.value,
-                        "difficulty": scenario.difficulty_level
+                        "difficulty": scenario.difficulty_level,
                     },
                     timestamp=datetime.now(UTC),
                     duration_ms=trace_record.get("response_time", 0),
@@ -363,17 +389,23 @@ class TrainingOrchestrator:
                     is_positive=step_reward > 0.0,
                     confidence=min(1.0, quality_score + 0.2),  # 置信度基於品質分數
                     learning_tags=learning_tags,
-                    difficulty_level=scenario.difficulty_level
+                    difficulty_level=scenario.difficulty_level,
                 )
 
                 samples.append(sample)
-                logger.debug(f"Created experience sample {sample.sample_id} with reward {step_reward:.3f}")
+                logger.debug(
+                    f"Created experience sample {sample.sample_id} with reward {step_reward:.3f}"
+                )
 
             except Exception as e:
-                logger.error(f"Failed to create experience sample for step {step_index}: {e}")
+                logger.error(
+                    f"Failed to create experience sample for step {step_index}: {e}"
+                )
                 continue
 
-        logger.info(f"Extracted {len(samples)} experience samples from {total_steps} execution steps")
+        logger.info(
+            f"Extracted {len(samples)} experience samples from {total_steps} execution steps"
+        )
         return samples
 
     def _calculate_step_reward(
@@ -466,11 +498,18 @@ class TrainingOrchestrator:
         for finding in findings:
             # 嚴重程度權重
             severity = finding.get("severity", "low").lower()
-            severity_weight = {"critical": 1.0, "high": 0.8, "medium": 0.6, "low": 0.4}.get(severity, 0.2)
+            severity_weight = {
+                "critical": 1.0,
+                "high": 0.8,
+                "medium": 0.6,
+                "low": 0.4,
+            }.get(severity, 0.2)
 
             # 置信度權重
             confidence = finding.get("confidence", "medium").lower()
-            confidence_weight = {"high": 1.0, "medium": 0.7, "low": 0.4}.get(confidence, 0.5)
+            confidence_weight = {"high": 1.0, "medium": 0.7, "low": 0.4}.get(
+                confidence, 0.5
+            )
 
             # 證據完整性
             evidence_weight = 1.0 if finding.get("evidence") else 0.5
@@ -504,12 +543,16 @@ class TrainingOrchestrator:
         quality_factors = []
 
         # 1. 獎勵一致性 (正獎勵表示高質量)
-        reward_quality = max(0.0, sum(reward_breakdown.values()) / len(reward_breakdown))
+        reward_quality = max(
+            0.0, sum(reward_breakdown.values()) / len(reward_breakdown)
+        )
         quality_factors.append(min(1.0, reward_quality))
 
         # 2. 數據完整性 (更完整的數據更有價值)
         required_fields = ["tool_used", "method", "response_code", "response_time"]
-        completeness = sum(1 for field in required_fields if trace_record.get(field)) / len(required_fields)
+        completeness = sum(
+            1 for field in required_fields if trace_record.get(field)
+        ) / len(required_fields)
         quality_factors.append(completeness)
 
         # 3. 響應有效性 (有效HTTP響應)
@@ -522,9 +565,7 @@ class TrainingOrchestrator:
         quality_factors.append(finding_quality)
 
         # 5. 時序位置價值 (關鍵步驟更有價值)
-        if step_index == 0:  # 首步驟
-            position_value = 0.9
-        elif step_index == total_steps - 1:  # 最後步驟
+        if step_index == 0 or step_index == total_steps - 1:  # 首步驟
             position_value = 0.9
         else:  # 中間步驟
             position_value = 0.7
@@ -532,7 +573,9 @@ class TrainingOrchestrator:
 
         # 加權平均計算最終品質分數
         weights = [0.3, 0.2, 0.2, 0.2, 0.1]  # 各因子權重
-        quality_score = sum(factor * weight for factor, weight in zip(quality_factors, weights))
+        quality_score = sum(
+            factor * weight for factor, weight in zip(quality_factors, weights, strict=False)
+        )
 
         return min(1.0, max(0.0, quality_score))
 
@@ -606,7 +649,9 @@ class TrainingOrchestrator:
         if findings:
             tags.append("has_findings")
             # 添加嚴重程度標籤
-            severities = {finding.get("severity", "low").lower() for finding in findings}
+            severities = {
+                finding.get("severity", "low").lower() for finding in findings
+            }
             for severity in severities:
                 tags.append(f"severity_{severity}")
         else:
@@ -806,237 +851,221 @@ class TrainingOrchestrator:
             json.dump(session, f, indent=2)
 
         logger.info(f"Session saved: {session_file}")
-    
-    async def _generate_ai_attack_plan(
-        self, 
-        scenario,
-        rag_context: Dict[str, Any]
-    ):
-        """
-        使用 AI 模型生成攻擊計劃
-        
+
+    async def _generate_ai_attack_plan(self, scenario, rag_context: dict[str, Any]):
+        """使用 AI 模型生成攻擊計劃
+
         基於 MITRE ATT&CK 框架和 RAG 增強上下文，
         生成針對性的攻擊計劃
-        
+
         Args:
             scenario: 訓練場景
             rag_context: RAG 增強上下文
-            
+
         Returns:
             生成的攻擊計劃
         """
-        import time
-        
         try:
             # 1. 初始化 AI 引擎（如果尚未初始化）
-            if not hasattr(self, '_ai_engine'):
-                from ..ai_engine import BioNeuronRAGAgent, AIModelManager
-                
-                self._ai_engine = BioNeuronRAGAgent(
-                    codebase_path=str(Path.cwd())
-                )
-                
+            if not hasattr(self, "_ai_engine"):
+                from ..ai_engine import AIModelManager, BioNeuronRAGAgent
+
+                self._ai_engine = BioNeuronRAGAgent(codebase_path=str(Path.cwd()))
+
                 self._ai_model_manager = AIModelManager()
-                
+
                 logger.info("AI 引擎已初始化用於攻擊計劃生成")
-            
+
             # 2. 分析目標和上下文
             target_analysis = await self._analyze_target_context(scenario, rag_context)
-            
+
             # 3. 基於 MITRE ATT&CK 選擇戰術技術
             tactics_and_techniques = await self._select_attack_tactics(
-                target_analysis, 
-                scenario.objective
+                target_analysis, scenario.objective
             )
-            
+
             # 4. 生成具體的攻擊計劃
             attack_plan = await self._build_attack_plan(
-                tactics_and_techniques,
-                target_analysis,
-                rag_context
+                tactics_and_techniques, target_analysis, rag_context
             )
-            
+
             logger.info(f"AI 生成攻擊計劃: {len(attack_plan.get('steps', []))} 個步驟")
-            
+
             return attack_plan
-            
+
         except Exception as e:
             logger.error(f"AI 攻擊計劃生成失敗: {e}")
-            
+
             # 降級到預定義計劃
             logger.info("降級使用預定義攻擊計劃")
             return scenario.attack_plan
-    
+
     async def _analyze_target_context(
-        self, 
-        scenario, 
-        rag_context: Dict[str, Any]
-    ) -> Dict[str, Any]:
+        self, scenario, rag_context: dict[str, Any]
+    ) -> dict[str, Any]:
         """分析目標上下文"""
-        
         target = scenario.target
         objective = scenario.objective
-        
+
         # 提取目標特徵
         target_features = {
-            "target_type": getattr(target, 'type', 'web_application'),
-            "target_url": getattr(target, 'url', 'http://localhost:3000'),
-            "target_technologies": getattr(target, 'technologies', ['web', 'javascript']),
+            "target_type": getattr(target, "type", "web_application"),
+            "target_url": getattr(target, "url", "http://localhost:3000"),
+            "target_technologies": getattr(
+                target, "technologies", ["web", "javascript"]
+            ),
             "objective": objective,
-            "similar_techniques": rag_context.get('similar_techniques', []),
-            "successful_experiences": rag_context.get('successful_experiences', []),
+            "similar_techniques": rag_context.get("similar_techniques", []),
+            "successful_experiences": rag_context.get("successful_experiences", []),
         }
-        
+
         logger.debug(f"目標分析完成: {target_features}")
-        
+
         return target_features
-    
+
     async def _select_attack_tactics(
-        self, 
-        target_analysis: Dict[str, Any], 
-        objective: str
-    ) -> Dict[str, List[Dict[str, Any]]]:
-        """
-        基於 MITRE ATT&CK 框架選擇攻擊戰術和技術
-        
+        self, target_analysis: dict[str, Any], objective: str
+    ) -> dict[str, list[dict[str, Any]]]:
+        """基於 MITRE ATT&CK 框架選擇攻擊戰術和技術
+
         根據目標分析結果選擇最適合的 ATT&CK 技術組合
         """
-        
         # MITRE ATT&CK 戰術映射（基於我們已實現的漏洞利用能力）
         tactics_mapping = {
             "reconnaissance": {
                 "T1595": {  # Active Scanning
                     "name": "主動掃描",
-                    "techniques": ["port_scan", "service_discovery", "web_fingerprinting"],
-                    "priority": 1
+                    "techniques": [
+                        "port_scan",
+                        "service_discovery",
+                        "web_fingerprinting",
+                    ],
+                    "priority": 1,
                 },
                 "T1592": {  # Gather Victim Host Information
                     "name": "收集主機信息",
                     "techniques": ["technology_stack_detection", "endpoint_discovery"],
-                    "priority": 2
-                }
+                    "priority": 2,
+                },
             },
             "initial_access": {
                 "T1190": {  # Exploit Public-Facing Application
                     "name": "利用面向公眾的應用程序",
                     "techniques": ["sql_injection", "xss", "idor"],
-                    "priority": 1
+                    "priority": 1,
                 },
                 "T1078": {  # Valid Accounts
                     "name": "有效帳戶",
                     "techniques": ["auth_bypass", "weak_credentials"],
-                    "priority": 2
-                }
+                    "priority": 2,
+                },
             },
             "execution": {
                 "T1203": {  # Exploitation for Client Execution
                     "name": "客戶端執行利用",
                     "techniques": ["xss_payload_execution", "csrf_execution"],
-                    "priority": 1
+                    "priority": 1,
                 }
             },
             "persistence": {
                 "T1078": {  # Valid Accounts
                     "name": "持久化有效賬戶",
                     "techniques": ["jwt_manipulation", "session_persistence"],
-                    "priority": 1
+                    "priority": 1,
                 }
             },
             "credential_access": {
                 "T1110": {  # Brute Force
                     "name": "暴力破解",
                     "techniques": ["password_brute_force", "jwt_weak_secret"],
-                    "priority": 2
+                    "priority": 2,
                 },
                 "T1212": {  # Exploitation for Credential Access
                     "name": "憑證訪問利用",
                     "techniques": ["sql_injection_credentials", "idor_user_data"],
-                    "priority": 1
-                }
-            }
+                    "priority": 1,
+                },
+            },
         }
-        
+
         # 根據目標類型和目標選擇相關戰術
         selected_tactics = {}
-        
+
         target_type = target_analysis.get("target_type", "web_application")
-        
+
         if target_type == "web_application":
             # Web 應用程序攻擊鏈
             selected_tactics["reconnaissance"] = [
                 tactics_mapping["reconnaissance"]["T1595"],
-                tactics_mapping["reconnaissance"]["T1592"]
+                tactics_mapping["reconnaissance"]["T1592"],
             ]
-            
+
             selected_tactics["initial_access"] = [
                 tactics_mapping["initial_access"]["T1190"]
             ]
-            
+
             selected_tactics["credential_access"] = [
                 tactics_mapping["credential_access"]["T1212"]
             ]
-            
+
             # 根據歷史成功經驗調整優先級
             successful_techniques = [
-                exp.get('technique', '') 
-                for exp in target_analysis.get('successful_experiences', [])
+                exp.get("technique", "")
+                for exp in target_analysis.get("successful_experiences", [])
             ]
-            
-            if 'sql_injection' in successful_techniques:
+
+            if "sql_injection" in successful_techniques:
                 selected_tactics["initial_access"][0]["priority"] = 0  # 最高優先級
-            
-            if 'idor' in successful_techniques:
+
+            if "idor" in successful_techniques:
                 selected_tactics["credential_access"][0]["priority"] = 0
-        
+
         logger.info(f"選擇的 ATT&CK 戰術: {list(selected_tactics.keys())}")
-        
+
         return selected_tactics
-    
+
     async def _build_attack_plan(
         self,
-        tactics_and_techniques: Dict[str, List[Dict[str, Any]]],
-        target_analysis: Dict[str, Any],
-        rag_context: Dict[str, Any]
-    ) -> Dict[str, Any]:
-        """
-        構建具體的攻擊計劃
-        
+        tactics_and_techniques: dict[str, list[dict[str, Any]]],
+        target_analysis: dict[str, Any],
+        rag_context: dict[str, Any],
+    ) -> dict[str, Any]:
+        """構建具體的攻擊計劃
+
         將 ATT&CK 戰術技術翻譯成可執行的攻擊步驟
         """
         import time
-        
+
         attack_steps = []
         step_id = 1
-        
+
         # 按照 kill chain 順序執行戰術
         kill_chain_order = [
-            "reconnaissance", 
-            "initial_access", 
-            "execution", 
-            "persistence", 
-            "credential_access"
+            "reconnaissance",
+            "initial_access",
+            "execution",
+            "persistence",
+            "credential_access",
         ]
-        
+
         for tactic in kill_chain_order:
             if tactic not in tactics_and_techniques:
                 continue
-                
+
             techniques = tactics_and_techniques[tactic]
-            
+
             # 按優先級排序技術
             techniques.sort(key=lambda x: x.get("priority", 999))
-            
+
             for technique in techniques:
                 # 將技術轉換為具體步驟
                 steps = await self._technique_to_steps(
-                    technique, 
-                    target_analysis, 
-                    step_id
+                    technique, target_analysis, step_id
                 )
-                
+
                 attack_steps.extend(steps)
                 step_id += len(steps)
-        
+
         # 構建完整的攻擊計劃
         attack_plan = {
             "plan_id": f"ai_generated_{int(time.time())}",
@@ -1049,55 +1078,49 @@ class TrainingOrchestrator:
                 "generation_method": "AI + MITRE ATT&CK",
                 "rag_enhanced": True,
                 "techniques_count": len(attack_steps),
-                "generation_timestamp": int(time.time())
-            }
+                "generation_timestamp": int(time.time()),
+            },
         }
-        
+
         logger.info(f"攻擊計劃構建完成: {len(attack_steps)} 個步驟")
-        
+
         return attack_plan
-    
+
     async def _technique_to_steps(
         self,
-        technique: Dict[str, Any],
-        target_analysis: Dict[str, Any],
-        start_step_id: int
-    ) -> List[Dict[str, Any]]:
+        technique: dict[str, Any],
+        target_analysis: dict[str, Any],
+        start_step_id: int,
+    ) -> list[dict[str, Any]]:
+        """將 ATT&CK 技術轉換為具體的執行步驟
         """
-        將 ATT&CK 技術轉換為具體的執行步驟
-        """
-        
         steps = []
         technique_methods = technique.get("techniques", [])
         target_url = target_analysis.get("target_url", "http://localhost:3000")
-        
+
         for i, method in enumerate(technique_methods):
             step = {
                 "step_id": start_step_id + i,
                 "name": f"{technique['name']} - {method}",
                 "technique_id": method,
                 "type": self._map_method_to_type(method),
-                "target": {
-                    "url": target_url,
-                    "method": method
-                },
+                "target": {"url": target_url, "method": method},
                 "payload": self._generate_payload_for_method(method),
                 "expected_outcome": self._get_expected_outcome(method),
                 "success_criteria": self._get_success_criteria(method),
                 "timeout": 30,
-                "retry_count": 2
+                "retry_count": 2,
             }
-            
+
             steps.append(step)
-        
+
         return steps
-    
+
     def _map_method_to_type(self, method: str) -> str:
         """將攻擊方法映射到類型"""
-        
         method_type_mapping = {
             "port_scan": "reconnaissance",
-            "service_discovery": "reconnaissance", 
+            "service_discovery": "reconnaissance",
             "web_fingerprinting": "reconnaissance",
             "technology_stack_detection": "reconnaissance",
             "endpoint_discovery": "reconnaissance",
@@ -1109,74 +1132,66 @@ class TrainingOrchestrator:
             "jwt_manipulation": "exploitation",
             "csrf_execution": "exploitation",
         }
-        
+
         return method_type_mapping.get(method, "exploitation")
-    
-    def _generate_payload_for_method(self, method: str) -> Dict[str, Any]:
+
+    def _generate_payload_for_method(self, method: str) -> dict[str, Any]:
         """為攻擊方法生成載荷"""
-        
         payload_templates = {
             "sql_injection": {
                 "payloads": ["' OR 1=1--", "admin'--", "' UNION SELECT null--"],
-                "endpoints": ["/rest/user/login", "/rest/products/search"]
+                "endpoints": ["/rest/user/login", "/rest/products/search"],
             },
             "xss": {
-                "payloads": ["<script>alert('XSS')</script>", "<img src=x onerror=alert(1)>"],
-                "endpoints": ["/rest/products/search", "/api/Feedbacks"]
+                "payloads": [
+                    "<script>alert('XSS')</script>",
+                    "<img src=x onerror=alert(1)>",
+                ],
+                "endpoints": ["/rest/products/search", "/api/Feedbacks"],
             },
             "idor": {
                 "payloads": ["user_id_1", "user_id_2", "admin_data"],
-                "endpoints": ["/api/Users", "/rest/user/whoami", "/api/Feedbacks"]
+                "endpoints": ["/api/Users", "/rest/user/whoami", "/api/Feedbacks"],
             },
             "auth_bypass": {
-                "payloads": [("admin", "admin"), ("admin", "password"), ("root", "root")],
-                "endpoints": ["/rest/user/login", "/administration"]
+                "payloads": [
+                    ("admin", "admin"),
+                    ("admin", "password"),
+                    ("root", "root"),
+                ],
+                "endpoints": ["/rest/user/login", "/administration"],
             },
             "jwt_manipulation": {
                 "payloads": ["none_algorithm", "weak_secret", "algorithm_confusion"],
-                "endpoints": ["/rest/user/whoami", "/rest/user/authentication-details"]
-            }
+                "endpoints": ["/rest/user/whoami", "/rest/user/authentication-details"],
+            },
         }
-        
+
         return payload_templates.get(method, {"payloads": ["test"], "endpoints": ["/"]})
-    
+
     def _get_expected_outcome(self, method: str) -> str:
         """獲取攻擊方法的預期結果"""
-        
         outcomes = {
             "sql_injection": "成功繞過登入驗證或洩露數據庫信息",
-            "xss": "成功執行跨站腳本或注入惡意內容", 
+            "xss": "成功執行跨站腳本或注入惡意內容",
             "idor": "成功訪問未授權數據或枚舉用戶信息",
             "auth_bypass": "成功繞過認證機制或訪問管理功能",
-            "jwt_manipulation": "成功操縱 JWT token 或提升權限"
+            "jwt_manipulation": "成功操縱 JWT token 或提升權限",
         }
-        
+
         return outcomes.get(method, f"成功執行 {method} 攻擊")
-    
-    def _get_success_criteria(self, method: str) -> List[str]:
+
+    def _get_success_criteria(self, method: str) -> list[str]:
         """獲取攻擊方法的成功標準"""
-        
         criteria = {
             "sql_injection": [
                 "HTTP 200 響應包含認證 token",
                 "數據庫錯誤信息洩露",
-                "SQL 查詢結果返回"
+                "SQL 查詢結果返回",
             ],
-            "xss": [
-                "惡意腳本成功反射",
-                "JavaScript 代碼執行",
-                "內容成功注入頁面"
-            ],
-            "idor": [
-                "訪問其他用戶數據",
-                "枚舉用戶 ID 成功",
-                "未授權數據洩露"
-            ],
-            "auth_bypass": [
-                "成功登入管理帳戶",
-                "訪問受保護資源",
-                "繞過認證檢查"
-            ]
+            "xss": ["惡意腳本成功反射", "JavaScript 代碼執行", "內容成功注入頁面"],
+            "idor": ["訪問其他用戶數據", "枚舉用戶 ID 成功", "未授權數據洩露"],
+            "auth_bypass": ["成功登入管理帳戶", "訪問受保護資源", "繞過認證檢查"],
         }
-        
+
         return criteria.get(method, [f"{method} 攻擊成功執行"])

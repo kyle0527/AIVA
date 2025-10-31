@@ -1,13 +1,10 @@
-"""
-並行訊息處理器模組
+"""並行訊息處理器模組
 拆分自 optimized_core.py 的並行訊息處理部分
 """
 
-
-
 import asyncio
-import time
 from collections.abc import Callable
+import time
 
 
 class ParallelMessageProcessor:
@@ -18,11 +15,7 @@ class ParallelMessageProcessor:
         self.batch_size = batch_size
         self.semaphore = asyncio.Semaphore(max_concurrent)
         self.message_buffer = []
-        self.processing_stats = {
-            "processed": 0,
-            "errors": 0,
-            "avg_duration": 0.0
-        }
+        self.processing_stats = {"processed": 0, "errors": 0, "avg_duration": 0.0}
 
     async def process_messages(self, broker, topic: str, handler: Callable):
         """並行處理訊息流"""
@@ -31,18 +24,15 @@ class ParallelMessageProcessor:
 
             # 當累積到批次大小或超時時處理
             if len(self.message_buffer) >= self.batch_size:
-                batch = self.message_buffer[:self.batch_size]
-                self.message_buffer = self.message_buffer[self.batch_size:]
+                batch = self.message_buffer[: self.batch_size]
+                self.message_buffer = self.message_buffer[self.batch_size :]
 
                 # 並行處理批次
                 asyncio.create_task(self._process_batch(batch, handler))
 
     async def _process_batch(self, messages: list, handler: Callable):
         """並行處理一個批次的訊息"""
-        tasks = [
-            self._process_single_message(msg, handler)
-            for msg in messages
-        ]
+        tasks = [self._process_single_message(msg, handler) for msg in messages]
         results = await asyncio.gather(*tasks, return_exceptions=True)
 
         # 統計處理結果

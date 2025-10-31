@@ -1,5 +1,4 @@
-"""
-存儲管理器
+"""存儲管理器
 
 統一的存儲接口，管理所有數據持久化
 """
@@ -23,8 +22,7 @@ class StorageManager:
         db_config: dict[str, Any] | None = None,
         auto_create_dirs: bool = True,
     ):
-        """
-        初始化存儲管理器
+        """初始化存儲管理器
 
         Args:
             data_root: 數據根目錄
@@ -34,7 +32,7 @@ class StorageManager:
         """
         self.data_root = Path(data_root)
         self.db_type = db_type
-        
+
         # 從環境變數讀取數據庫配置，優先使用傳入的配置
         self.db_config = self._get_database_config(db_config)
 
@@ -91,39 +89,42 @@ class StorageManager:
 
         logger.info("All data directories initialized")
 
-    def _get_database_config(self, provided_config: dict[str, Any] | None = None) -> dict[str, Any]:
+    def _get_database_config(
+        self, provided_config: dict[str, Any] | None = None
+    ) -> dict[str, Any]:
         """從環境變數讀取數據庫配置"""
         import os
-        
+
         config = provided_config or {}
-        
+
         # PostgreSQL 配置（支援多種環境變數名稱）
-        config.setdefault("host", 
-            os.getenv("AIVA_POSTGRES_HOST") or 
-            os.getenv("POSTGRES_HOST") or 
-            "localhost"
+        config.setdefault(
+            "host",
+            os.getenv("AIVA_POSTGRES_HOST")
+            or os.getenv("POSTGRES_HOST")
+            or "localhost",
         )
-        config.setdefault("port", int(
-            os.getenv("AIVA_POSTGRES_PORT") or 
-            os.getenv("POSTGRES_PORT") or 
-            "5432"
-        ))
-        config.setdefault("database", 
-            os.getenv("AIVA_POSTGRES_DB") or 
-            os.getenv("POSTGRES_DB") or 
-            "aiva_db"
+        config.setdefault(
+            "port",
+            int(
+                os.getenv("AIVA_POSTGRES_PORT") or os.getenv("POSTGRES_PORT") or "5432"
+            ),
         )
-        config.setdefault("user", 
-            os.getenv("AIVA_POSTGRES_USER") or 
-            os.getenv("POSTGRES_USER") or 
-            "postgres"
+        config.setdefault(
+            "database",
+            os.getenv("AIVA_POSTGRES_DB") or os.getenv("POSTGRES_DB") or "aiva_db",
         )
-        config.setdefault("password", 
-            os.getenv("AIVA_POSTGRES_PASSWORD") or 
-            os.getenv("POSTGRES_PASSWORD") or 
-            "aiva123"
+        config.setdefault(
+            "user",
+            os.getenv("AIVA_POSTGRES_USER") or os.getenv("POSTGRES_USER") or "postgres",
         )
-        
+        config.setdefault(
+            "password",
+            os.getenv("AIVA_POSTGRES_PASSWORD")
+            or os.getenv("POSTGRES_PASSWORD")
+            or "aiva123",
+        )
+
         return config
 
     def _create_backend(self) -> Any:

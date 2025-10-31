@@ -1,16 +1,106 @@
-"""
-Matrix Visualizer - 權限矩陣視覺化
+"""Matrix Visualizer - 權限矩陣視覺化
 
 生成權限矩陣的 HTML 互動視覺化和圖表。
 """
 
 from datetime import datetime
 from pathlib import Path
+from typing import TYPE_CHECKING, Any
 
 from jinja2 import Template
-
-from plotly.subplots import make_subplots
 import structlog
+
+# 使用統一的可選依賴管理框架
+from utilities.optional_deps import deps
+
+# 型別檢查時的導入
+if TYPE_CHECKING:
+    try:
+        import plotly.graph_objects as go
+        PlotlyFigure = go.Figure
+    except ImportError:
+        PlotlyFigure = Any
+
+# 註冊 plotly 依賴
+deps.register("plotly", ["plotly"])
+
+# 使用統一的 optional dependency 處理
+if deps.is_available("plotly"):
+    from plotly.subplots import make_subplots
+    import plotly.graph_objects as go
+else:
+    # 統一的 Mock 實現
+    class MockFigure:
+        def __init__(self, *args, **kwargs):
+            self.data = []
+            self.layout = {}
+        
+        def add_trace(self, trace, row=None, col=None):
+            """添加圖表追蹤"""
+            self.data.append(trace)
+            return self
+            
+        def update_layout(self, **kwargs):
+            """更新佈局"""
+            self.layout.update(kwargs)
+            return self
+            
+        def to_html(self, *args, **kwargs):
+            """生成 HTML（Mock 版本）"""
+            return """
+            <div style="border: 2px dashed #ccc; padding: 20px; text-align: center; background: #f9f9f9;">
+                <h3>📊 Plotly 圖表區域</h3>
+                <p>此處應顯示互動式權限矩陣圖表</p>
+                <p><small>需要安裝 plotly: pip install plotly</small></p>
+            </div>
+            """
+            
+        def write_html(self, file, *args, **kwargs):
+            """寫入 HTML 檔案"""
+            with open(file, 'w', encoding='utf-8') as f:
+                f.write(self.to_html())
+    
+    class MockTrace:
+        """Mock 追蹤物件基類"""
+        def __init__(self, *args, **kwargs):
+            self.x = kwargs.get('x', [])
+            self.y = kwargs.get('y', [])
+            self.z = kwargs.get('z', [])
+            self.text = kwargs.get('text', [])
+            self.name = kwargs.get('name', '')
+            self.colorscale = kwargs.get('colorscale', 'Viridis')
+    
+    class MockHeatmap(MockTrace):
+        """Mock Heatmap 追蹤"""
+        def __init__(self, *args, **kwargs):
+            super().__init__(*args, **kwargs)
+            self.type = 'heatmap'
+    
+    class MockBar(MockTrace):
+        """Mock Bar 追蹤"""
+        def __init__(self, *args, **kwargs):
+            super().__init__(*args, **kwargs)
+            self.type = 'bar'
+    
+    class MockScatter(MockTrace):
+        """Mock Scatter 追蹤"""
+        def __init__(self, *args, **kwargs):
+            super().__init__(*args, **kwargs)
+            self.type = 'scatter'
+            self.mode = kwargs.get('mode', 'markers')
+    
+    class MockGraphObjects:
+        """Mock plotly.graph_objects 模組"""
+        Figure = MockFigure
+        Heatmap = MockHeatmap
+        Bar = MockBar
+        Scatter = MockScatter
+    
+    go = MockGraphObjects()
+    
+    def make_subplots(*args, **kwargs):
+        """Mock make_subplots 函數"""
+        return MockFigure()
 
 from .permission_matrix import AccessDecision, PermissionMatrix
 
@@ -18,15 +108,13 @@ logger = structlog.get_logger(__name__)
 
 
 class MatrixVisualizer:
-    """
-    權限矩陣視覺化器
+    """權限矩陣視覺化器
 
     提供多種視覺化方式展示權限矩陣。
     """
 
     def __init__(self, permission_matrix: PermissionMatrix):
-        """
-        初始化視覺化器
+        """初始化視覺化器
 
         Args:
             permission_matrix: 權限矩陣實例
@@ -34,9 +122,8 @@ class MatrixVisualizer:
         self.matrix = permission_matrix
         logger.info("matrix_visualizer_initialized")
 
-    def generate_heatmap(self, permission_type: str | None = None) -> go.Figure:
-        """
-        生成權限熱力圖
+    def generate_heatmap(self, permission_type: str | None = None) -> Any:
+        """生成權限熱力圖
 
         Args:
             permission_type: 指定權限類型，None 表示所有權限
@@ -76,23 +163,31 @@ class MatrixVisualizer:
             pivot_data.append(row)
 
         # 創建熱力圖
-        fig = go.Figure(data=go.Heatmap(
-            z=pivot_data,
-            x=roles,
-            y=resources,
-            colorscale=[
-                [0, "rgb(220,220,220)"],      # DENY - 灰色
-                [0.5, "rgb(255,200,100)"],    # CONDITIONAL - 橙色
-                [1, "rgb(100,200,100)"],      # ALLOW - 綠色
-            ],
-            text=[[
-                f"{df[(df['role']==r) & (df['resource']==res)]['decision'].iloc[0]}"
-                if not df[(df['role']==r) & (df['resource']==res)].empty else "N/A"
-                for r in roles
-            ] for res in resources],
-            texttemplate="%{text}",
-            hovertemplate="Role: %{x}<br>Resource: %{y}<br>Decision: %{text}<extra></extra>",
-        ))
+        fig = go.Figure(
+            data=go.Heatmap(
+                z=pivot_data,
+                x=roles,
+                y=resources,
+                colorscale=[
+                    [0, "rgb(220,220,220)"],  # DENY - 灰色
+                    [0.5, "rgb(255,200,100)"],  # CONDITIONAL - 橙色
+                    [1, "rgb(100,200,100)"],  # ALLOW - 綠色
+                ],
+                text=[
+                    [
+                        (
+                            f"{df[(df['role']==r) & (df['resource']==res)]['decision'].iloc[0]}"
+                            if not df[(df["role"] == r) & (df["resource"] == res)].empty
+                            else "N/A"
+                        )
+                        for r in roles
+                    ]
+                    for res in resources
+                ],
+                texttemplate="%{text}",
+                hovertemplate="Role: %{x}<br>Resource: %{y}<br>Decision: %{text}<extra></extra>",
+            )
+        )
 
         fig.update_layout(
             title=f"Permission Matrix Heatmap{f' - {permission_type}' if permission_type else ''}",
@@ -105,9 +200,8 @@ class MatrixVisualizer:
         logger.info("heatmap_generated", permission_type=permission_type)
         return fig
 
-    def generate_coverage_chart(self) -> go.Figure:
-        """
-        生成權限覆蓋率圖表
+    def generate_coverage_chart(self) -> Any:
+        """生成權限覆蓋率圖表
 
         Returns:
             Plotly 圖表對象
@@ -169,9 +263,8 @@ class MatrixVisualizer:
         logger.info("coverage_chart_generated")
         return fig
 
-    def generate_role_comparison_chart(self) -> go.Figure:
-        """
-        生成角色權限比較圖表
+    def generate_role_comparison_chart(self) -> Any:
+        """生成角色權限比較圖表
 
         Returns:
             Plotly 圖表對象
@@ -190,7 +283,9 @@ class MatrixVisualizer:
                 "total": len(perms),
                 "allow": sum(1 for p in perms if p["decision"] == AccessDecision.ALLOW),
                 "deny": sum(1 for p in perms if p["decision"] == AccessDecision.DENY),
-                "conditional": sum(1 for p in perms if p["decision"] == AccessDecision.CONDITIONAL),
+                "conditional": sum(
+                    1 for p in perms if p["decision"] == AccessDecision.CONDITIONAL
+                ),
             }
 
         roles = list(role_stats.keys())
@@ -198,26 +293,32 @@ class MatrixVisualizer:
         # 創建堆疊柱狀圖
         fig = go.Figure()
 
-        fig.add_trace(go.Bar(
-            name="Allow",
-            x=roles,
-            y=[stats["allow"] for stats in role_stats.values()],
-            marker_color="#66bb6a",
-        ))
+        fig.add_trace(
+            go.Bar(
+                name="Allow",
+                x=roles,
+                y=[stats["allow"] for stats in role_stats.values()],
+                marker_color="#66bb6a",
+            )
+        )
 
-        fig.add_trace(go.Bar(
-            name="Conditional",
-            x=roles,
-            y=[stats["conditional"] for stats in role_stats.values()],
-            marker_color="#ffa726",
-        ))
+        fig.add_trace(
+            go.Bar(
+                name="Conditional",
+                x=roles,
+                y=[stats["conditional"] for stats in role_stats.values()],
+                marker_color="#ffa726",
+            )
+        )
 
-        fig.add_trace(go.Bar(
-            name="Deny",
-            x=roles,
-            y=[stats["deny"] for stats in role_stats.values()],
-            marker_color="#ef5350",
-        ))
+        fig.add_trace(
+            go.Bar(
+                name="Deny",
+                x=roles,
+                y=[stats["deny"] for stats in role_stats.values()],
+                marker_color="#ef5350",
+            )
+        )
 
         fig.update_layout(
             title="Role Permission Comparison",
@@ -231,8 +332,7 @@ class MatrixVisualizer:
         return fig
 
     def generate_html_report(self, output_path: str | Path) -> None:
-        """
-        生成 HTML 報告
+        """生成 HTML 報告
 
         Args:
             output_path: 輸出文件路徑
@@ -241,29 +341,29 @@ class MatrixVisualizer:
 
         # 生成圖表
         charts = self._generate_all_charts()
-        
+
         # 獲取分析數據
         analysis_data = self._get_analysis_data()
-        
+
         # 生成 HTML 內容
         html_content = self._render_html_template(charts, analysis_data)
-        
+
         # 寫入文件
         output_path.write_text(html_content, encoding="utf-8")
 
     def _generate_all_charts(self) -> dict:
         """生成所有圖表"""
         return {
-            'heatmap': self.generate_heatmap(),
-            'coverage': self.generate_coverage_chart(),
-            'comparison': self.generate_role_comparison_chart()
+            "heatmap": self.generate_heatmap(),
+            "coverage": self.generate_coverage_chart(),
+            "comparison": self.generate_role_comparison_chart(),
         }
 
     def _get_analysis_data(self) -> dict:
         """獲取分析數據"""
         return {
-            'analysis': self.matrix.analyze_coverage(),
-            'over_privileged': self.matrix.find_over_privileged_roles()
+            "analysis": self.matrix.analyze_coverage(),
+            "over_privileged": self.matrix.find_over_privileged_roles(),
         }
 
     def _get_html_template(self) -> str:
@@ -448,23 +548,19 @@ class MatrixVisualizer:
 
     def _render_html_template(self, charts: dict, analysis_data: dict) -> str:
         """渲染 HTML 模板"""
-        from datetime import datetime
-        from jinja2 import Template
-        
         template = Template(self._get_html_template())
         return template.render(
             timestamp=datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-            analysis=analysis_data['analysis'],
-            over_privileged=analysis_data['over_privileged'],
-            heatmap_json=charts['heatmap'].to_json(),
-            coverage_json=charts['coverage'].to_json(),
-            comparison_json=charts['comparison'].to_json(),
+            analysis=analysis_data["analysis"],
+            over_privileged=analysis_data["over_privileged"],
+            heatmap_json=charts["heatmap"].to_json(),
+            coverage_json=charts["coverage"].to_json(),
+            comparison_json=charts["comparison"].to_json(),
         )
         logger.info("html_report_generated", output_path=str(output_path))
 
     def export_to_csv(self, output_path: str | Path) -> None:
-        """
-        匯出為 CSV
+        """匯出為 CSV
 
         Args:
             output_path: 輸出文件路徑

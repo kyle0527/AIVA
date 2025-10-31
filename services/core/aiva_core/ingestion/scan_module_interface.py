@@ -1,21 +1,17 @@
-
-
 from typing import Any
 
 from services.aiva_common.schemas import ScanCompletedPayload
 
 
 class ScanModuleInterface:
-    """
-    掃描模組介面 - 資料接收與預處理
+    """掃描模組介面 - 資料接收與預處理
 
     負責接收掃描模組的原始數據並進行標準化處理，
     包含格式檢測、資料清理、去重、豐富化等功能。
     """
 
     async def process_scan_data(self, payload: ScanCompletedPayload) -> dict[str, Any]:
-        """
-        處理掃描模組回傳的原始數據
+        """處理掃描模組回傳的原始數據
 
         Args:
             payload: 掃描完成的負載數據
@@ -34,8 +30,7 @@ class ScanModuleInterface:
         return processed_data
 
     def _process_assets(self, assets: list[Any]) -> list[dict[str, Any]]:
-        """
-        處理資產清單，進行分類與標準化
+        """處理資產清單，進行分類與標準化
 
         Args:
             assets: 原始資產清單
@@ -60,8 +55,7 @@ class ScanModuleInterface:
         return processed_assets
 
     def _process_fingerprints(self, fingerprints: Any) -> dict[str, Any]:
-        """
-        處理技術指紋資料
+        """處理技術指紋資料
 
         Args:
             fingerprints: 原始指紋資料
@@ -81,8 +75,7 @@ class ScanModuleInterface:
         }
 
     def _calculate_risk_score(self, asset: Any) -> int:
-        """
-        計算資產風險分數
+        """計算資產風險分數
 
         Args:
             asset: 資產物件
@@ -104,8 +97,7 @@ class ScanModuleInterface:
         return min(risk_score, 10)  # 最高10分
 
     def _categorize_asset(self, asset: Any) -> list[str]:
-        """
-        資產分類
+        """資產分類
 
         Args:
             asset: 資產物件

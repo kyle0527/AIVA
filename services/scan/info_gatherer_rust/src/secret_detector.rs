@@ -1,8 +1,6 @@
 use regex::Regex;
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
-use std::path::Path;
-use tracing::{info, warn};
 
 /// 憑證洩漏檢測器
 pub struct SecretDetector {
@@ -18,6 +16,7 @@ pub struct SecretRule {
     pub name: String,
     pub regex: Regex,
     pub severity: String,
+    #[allow(dead_code)] // Reserved for future detailed reporting
     pub description: String,
 }
 
@@ -70,7 +69,7 @@ impl SecretDetector {
                 severity: "CRITICAL".to_string(),
                 description: "AWS Session Token detected".to_string(),
             },
-            
+
             // ==================== Azure ====================
             SecretRule {
                 name: "Azure Storage Account Key".to_string(),
@@ -96,7 +95,7 @@ impl SecretDetector {
                 severity: "CRITICAL".to_string(),
                 description: "Azure AD Application Client Secret detected".to_string(),
             },
-            
+
             // ==================== GitHub ====================
             SecretRule {
                 name: "GitHub Personal Access Token".to_string(),
@@ -122,7 +121,7 @@ impl SecretDetector {
                 severity: "HIGH".to_string(),
                 description: "GitHub Refresh Token detected".to_string(),
             },
-            
+
             // ==================== GitLab ====================
             SecretRule {
                 name: "GitLab Personal Access Token".to_string(),
@@ -142,7 +141,7 @@ impl SecretDetector {
                 severity: "HIGH".to_string(),
                 description: "GitLab CI Runner Registration Token detected".to_string(),
             },
-            
+
             // ==================== Slack ====================
             SecretRule {
                 name: "Slack Token".to_string(),
@@ -156,7 +155,7 @@ impl SecretDetector {
                 severity: "MEDIUM".to_string(),
                 description: "Slack Webhook URL detected".to_string(),
             },
-            
+
             // ==================== Google ====================
             SecretRule {
                 name: "Google API Key".to_string(),
@@ -176,7 +175,7 @@ impl SecretDetector {
                 severity: "CRITICAL".to_string(),
                 description: "Google Cloud Service Account JSON detected".to_string(),
             },
-            
+
             // ==================== Stripe ====================
             SecretRule {
                 name: "Stripe Live Secret Key".to_string(),
@@ -196,7 +195,7 @@ impl SecretDetector {
                 severity: "HIGH".to_string(),
                 description: "Stripe Restricted API Key detected".to_string(),
             },
-            
+
             // ==================== Twilio ====================
             SecretRule {
                 name: "Twilio API Key".to_string(),
@@ -210,7 +209,7 @@ impl SecretDetector {
                 severity: "MEDIUM".to_string(),
                 description: "Twilio Account SID detected".to_string(),
             },
-            
+
             // ==================== SendGrid ====================
             SecretRule {
                 name: "SendGrid API Key".to_string(),
@@ -218,7 +217,7 @@ impl SecretDetector {
                 severity: "HIGH".to_string(),
                 description: "SendGrid API Key detected".to_string(),
             },
-            
+
             // ==================== Mailgun ====================
             SecretRule {
                 name: "Mailgun API Key".to_string(),
@@ -226,7 +225,7 @@ impl SecretDetector {
                 severity: "HIGH".to_string(),
                 description: "Mailgun API Key detected".to_string(),
             },
-            
+
             // ==================== Firebase ====================
             SecretRule {
                 name: "Firebase API Key".to_string(),
@@ -240,7 +239,7 @@ impl SecretDetector {
                 severity: "MEDIUM".to_string(),
                 description: "Firebase Cloud Messaging Token detected".to_string(),
             },
-            
+
             // ==================== Heroku ====================
             SecretRule {
                 name: "Heroku API Key".to_string(),
@@ -248,7 +247,7 @@ impl SecretDetector {
                 severity: "HIGH".to_string(),
                 description: "Heroku API Key (UUID format) detected".to_string(),
             },
-            
+
             // ==================== NPM ====================
             SecretRule {
                 name: "NPM Access Token".to_string(),
@@ -256,7 +255,7 @@ impl SecretDetector {
                 severity: "HIGH".to_string(),
                 description: "NPM access token detected".to_string(),
             },
-            
+
             // ==================== PyPI ====================
             SecretRule {
                 name: "PyPI Upload Token".to_string(),
@@ -264,7 +263,7 @@ impl SecretDetector {
                 severity: "HIGH".to_string(),
                 description: "PyPI Upload Token detected".to_string(),
             },
-            
+
             // ==================== Docker Hub ====================
             SecretRule {
                 name: "Docker Hub Access Token".to_string(),
@@ -278,7 +277,7 @@ impl SecretDetector {
                 severity: "HIGH".to_string(),
                 description: "Docker authentication config detected".to_string(),
             },
-            
+
             // ==================== CI/CD Platforms ====================
             SecretRule {
                 name: "CircleCI Personal Token".to_string(),
@@ -298,7 +297,7 @@ impl SecretDetector {
                 severity: "HIGH".to_string(),
                 description: "Jenkins API Token detected".to_string(),
             },
-            
+
             // ==================== Bitbucket ====================
             SecretRule {
                 name: "Bitbucket Personal Access Token".to_string(),
@@ -306,7 +305,7 @@ impl SecretDetector {
                 severity: "HIGH".to_string(),
                 description: "Bitbucket Personal Access Token detected".to_string(),
             },
-            
+
             // ==================== Dropbox ====================
             SecretRule {
                 name: "Dropbox Access Token".to_string(),
@@ -320,7 +319,7 @@ impl SecretDetector {
                 severity: "HIGH".to_string(),
                 description: "Dropbox API Key detected".to_string(),
             },
-            
+
             // ==================== DigitalOcean ====================
             SecretRule {
                 name: "DigitalOcean Personal Access Token".to_string(),
@@ -334,7 +333,7 @@ impl SecretDetector {
                 severity: "HIGH".to_string(),
                 description: "DigitalOcean OAuth Token detected".to_string(),
             },
-            
+
             // ==================== Cloudflare ====================
             SecretRule {
                 name: "Cloudflare API Key".to_string(),
@@ -348,7 +347,7 @@ impl SecretDetector {
                 severity: "HIGH".to_string(),
                 description: "Cloudflare API Token detected".to_string(),
             },
-            
+
             // ==================== Datadog ====================
             SecretRule {
                 name: "Datadog API Key".to_string(),
@@ -362,7 +361,7 @@ impl SecretDetector {
                 severity: "HIGH".to_string(),
                 description: "Datadog Application Key detected".to_string(),
             },
-            
+
             // ==================== MongoDB ====================
             SecretRule {
                 name: "MongoDB Connection String".to_string(),
@@ -376,7 +375,7 @@ impl SecretDetector {
                 severity: "HIGH".to_string(),
                 description: "MongoDB Atlas API Key detected".to_string(),
             },
-            
+
             // ==================== Redis ====================
             SecretRule {
                 name: "Redis Connection String".to_string(),
@@ -384,7 +383,7 @@ impl SecretDetector {
                 severity: "HIGH".to_string(),
                 description: "Redis connection string with password detected".to_string(),
             },
-            
+
             // ==================== PostgreSQL / MySQL ====================
             SecretRule {
                 name: "PostgreSQL Connection String".to_string(),
@@ -398,7 +397,7 @@ impl SecretDetector {
                 severity: "CRITICAL".to_string(),
                 description: "MySQL connection string with credentials detected".to_string(),
             },
-            
+
             // ==================== Private Keys ====================
             SecretRule {
                 name: "RSA Private Key".to_string(),
@@ -412,7 +411,7 @@ impl SecretDetector {
                 severity: "CRITICAL".to_string(),
                 description: "PGP Private Key Block detected".to_string(),
             },
-            
+
             // ==================== JWT ====================
             SecretRule {
                 name: "JWT Token".to_string(),
@@ -420,7 +419,7 @@ impl SecretDetector {
                 severity: "MEDIUM".to_string(),
                 description: "JWT Token detected".to_string(),
             },
-            
+
             // ==================== Generic Patterns ====================
             SecretRule {
                 name: "Generic API Key".to_string(),
@@ -458,7 +457,7 @@ impl SecretDetector {
             for rule in &self.rule_matchers {
                 if let Some(captures) = rule.regex.captures(line) {
                     let matched_text = captures.get(0).map(|m| m.as_str()).unwrap_or("");
-                    
+
                     // 提取上下文（前後各 50 字元）
                     let context = Self::extract_context(line, matched_text, 50);
 
@@ -478,7 +477,7 @@ impl SecretDetector {
             if let Some(high_entropy_strings) = self.entropy_detector.detect_line(line) {
                 for (text, entropy) in high_entropy_strings {
                     let context = Self::extract_context(line, &text, 50);
-                    
+
                     findings.push(SecretFinding {
                         rule_name: "High Entropy String".to_string(),
                         matched_text: Self::redact_secret(&text),
@@ -511,7 +510,7 @@ impl SecretDetector {
         if text.len() <= 8 {
             "*".repeat(text.len())
         } else {
-            format!("{}***{}", &text[..4], &text[text.len()-4..])
+            format!("{}***{}", &text[..4], &text[text.len() - 4..])
         }
     }
 }
@@ -533,7 +532,8 @@ impl EntropyDetector {
         let token_regex = Regex::new(r#"['"]([^'"]{20,})['"]|=\s*([^\s'"]{20,})"#).unwrap();
 
         for captures in token_regex.captures_iter(line) {
-            let token = captures.get(1)
+            let token = captures
+                .get(1)
                 .or_else(|| captures.get(2))
                 .map(|m| m.as_str())
                 .unwrap_or("");
@@ -556,7 +556,7 @@ impl EntropyDetector {
     /// 計算 Shannon 熵
     pub fn calculate_entropy(&self, text: &str) -> f64 {
         let mut char_counts: HashMap<char, usize> = HashMap::new();
-        
+
         for c in text.chars() {
             *char_counts.entry(c).or_insert(0) += 1;
         }
@@ -587,9 +587,15 @@ mod tests {
     fn test_rule_count() {
         let detector = SecretDetector::new();
         // 驗證已擴展到 50+ 規則
-        assert!(detector.rule_matchers.len() >= 50, 
-            "Expected 50+ rules, got {}", detector.rule_matchers.len());
-        println!("✅ Total secret detection rules: {}", detector.rule_matchers.len());
+        assert!(
+            detector.rule_matchers.len() >= 50,
+            "Expected 50+ rules, got {}",
+            detector.rule_matchers.len()
+        );
+        println!(
+            "✅ Total secret detection rules: {}",
+            detector.rule_matchers.len()
+        );
     }
 
     #[test]
@@ -667,7 +673,8 @@ mod tests {
     #[test]
     fn test_pypi_token() {
         let detector = SecretDetector::new();
-        let content = "PYPI_TOKEN=pypi-AgEIcHlwaS5vcmcCJGFiY2RlZi0xMjM0LTU2NzgtOTBhYi1jZGVmMTIzNDU2Nzg";
+        let content =
+            "PYPI_TOKEN=pypi-AgEIcHlwaS5vcmcCJGFiY2RlZi0xMjM0LTU2NzgtOTBhYi1jZGVmMTIzNDU2Nzg";
 
         let findings = detector.scan_content(content, ".pypirc");
         assert!(findings.iter().any(|f| f.rule_name.contains("PyPI")));
@@ -679,7 +686,9 @@ mod tests {
         let content = "DO_TOKEN=dop_v1_TEST_fake_digitalocean_token_for_testing_purposes_only";
 
         let findings = detector.scan_content(content, "infra.tf");
-        assert!(findings.iter().any(|f| f.rule_name.contains("DigitalOcean")));
+        assert!(findings
+            .iter()
+            .any(|f| f.rule_name.contains("DigitalOcean")));
     }
 
     #[test]
@@ -697,7 +706,7 @@ mod tests {
     #[test]
     fn test_entropy_calculation() {
         let detector = EntropyDetector::new(4.0, 10);
-        
+
         // 低熵字串（重複字元）
         let low_entropy = detector.calculate_entropy("aaaaaaaaaa");
         assert!(low_entropy < 2.0);
@@ -737,7 +746,8 @@ mod tests {
     #[test]
     fn test_slack_webhook() {
         let detector = SecretDetector::new();
-        let content = "WEBHOOK=https://hooks.slack.com/services/TEST/FAKE/TEST_WEBHOOK_FOR_TESTING_ONLY";
+        let content =
+            "WEBHOOK=https://hooks.slack.com/services/TEST/FAKE/TEST_WEBHOOK_FOR_TESTING_ONLY";
 
         let findings = detector.scan_content(content, "notifications.js");
         assert!(findings.iter().any(|f| f.rule_name.contains("Slack")));
@@ -755,16 +765,22 @@ mod tests {
         "#;
 
         let findings = detector.scan_content(content, "secrets.env");
-        
+
         // 應該檢測到至少 4 個不同的密鑰
-        assert!(findings.len() >= 4, "Expected at least 4 secrets, found {}", findings.len());
-        
+        assert!(
+            findings.len() >= 4,
+            "Expected at least 4 secrets, found {}",
+            findings.len()
+        );
+
         // 驗證不同類型都被檢測到
         let rule_names: Vec<String> = findings.iter().map(|f| f.rule_name.clone()).collect();
         assert!(rule_names.iter().any(|name| name.contains("AWS")));
         assert!(rule_names.iter().any(|name| name.contains("GitHub")));
         assert!(rule_names.iter().any(|name| name.contains("Stripe")));
-        assert!(rule_names.iter().any(|name| name.contains("Google") || name.contains("API Key")));
+        assert!(rule_names
+            .iter()
+            .any(|name| name.contains("Google") || name.contains("API Key")));
     }
 
     #[test]
@@ -772,7 +788,7 @@ mod tests {
         let text = "AKIAIOSFODNN7EXAMPLE";
         let redacted = SecretDetector::redact_secret(text);
         assert_eq!(redacted, "AKIA***MPLE");
-        
+
         let short_text = "abc123";
         let redacted_short = SecretDetector::redact_secret(short_text);
         assert_eq!(redacted_short, "******");
@@ -781,23 +797,29 @@ mod tests {
     #[test]
     fn test_severity_levels() {
         let detector = SecretDetector::new();
-        
+
         // 統計不同嚴重程度的規則
-        let critical_count = detector.rule_matchers.iter()
+        let critical_count = detector
+            .rule_matchers
+            .iter()
             .filter(|r| r.severity == "CRITICAL")
             .count();
-        let high_count = detector.rule_matchers.iter()
+        let high_count = detector
+            .rule_matchers
+            .iter()
             .filter(|r| r.severity == "HIGH")
             .count();
-        let medium_count = detector.rule_matchers.iter()
+        let medium_count = detector
+            .rule_matchers
+            .iter()
             .filter(|r| r.severity == "MEDIUM")
             .count();
-        
+
         println!("Severity distribution:");
         println!("  CRITICAL: {}", critical_count);
         println!("  HIGH: {}", high_count);
         println!("  MEDIUM: {}", medium_count);
-        
+
         assert!(critical_count > 0, "Should have CRITICAL rules");
         assert!(high_count > 0, "Should have HIGH rules");
         assert!(medium_count > 0, "Should have MEDIUM rules");

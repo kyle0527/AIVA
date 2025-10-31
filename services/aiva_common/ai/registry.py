@@ -6,31 +6,28 @@ AIVA AI 組件註冊表 - 可插拔 AI 架構的核心管理器
 
 設計特點:
 - 支援動態組件註冊和替換
-- 自動依賴解析和組件初始化  
+- 自動依賴解析和組件初始化
 - 組件生命週期管理
 - 配置驗證和預設值處理
 - 線程安全的組件管理
 """
 
-
-
 import asyncio
 import inspect
 import logging
-from typing import Any, Dict, List, Optional, Type
-from datetime import datetime, timezone
-
 from contextlib import asynccontextmanager
+from datetime import UTC, datetime
+from typing import Any
 
 from .interfaces import (
     IAIComponentFactory,
     IAIComponentRegistry,
     IAIContext,
-    IDialogAssistant,
-    IPlanExecutor,
-    IExperienceManager,
     ICapabilityEvaluator,
     ICrossLanguageBridge,
+    IDialogAssistant,
+    IExperienceManager,
+    IPlanExecutor,
     IRAGAgent,
     ISkillGraphAnalyzer,
 )
@@ -43,7 +40,7 @@ class AIVAComponentRegistry(IAIComponentRegistry):
 
     def __init__(self):
         """初始化註冊表"""
-        self._components: Dict[str, Dict[str, Dict[str, Any]]] = {
+        self._components: dict[str, dict[str, dict[str, Any]]] = {
             "dialog_assistant": {},
             "plan_executor": {},
             "experience_manager": {},
@@ -52,29 +49,29 @@ class AIVAComponentRegistry(IAIComponentRegistry):
             "rag_agent": {},
             "skill_graph_analyzer": {},
         }
-        self._instances: Dict[str, Any] = {}
-        self._default_components: Dict[str, str] = {}
+        self._instances: dict[str, Any] = {}
+        self._default_components: dict[str, str] = {}
         self._lock = asyncio.Lock()
-        
+
         logger.info("AIVAComponentRegistry initialized")
 
     def register_component(
         self,
         component_type: str,
         component_name: str,
-        component_class: Type[Any],
-        config: Optional[Dict[str, Any]] = None,
-        is_default: bool = False
+        component_class: type[Any],
+        config: dict[str, Any] | None = None,
+        is_default: bool = False,
     ) -> bool:
         """註冊 AI 組件
-        
+
         Args:
             component_type: 組件類型
             component_name: 組件名稱
             component_class: 組件類別
             config: 預設配置
             is_default: 是否設為預設組件
-            
+
         Returns:
             是否註冊成功
         """
@@ -96,8 +93,8 @@ class AIVAComponentRegistry(IAIComponentRegistry):
             self._components[component_type][component_name] = {
                 "class": component_class,
                 "config": config or {},
-                "registered_at": datetime.now(timezone.utc).isoformat(),
-                "is_default": is_default
+                "registered_at": datetime.now(UTC).isoformat(),
+                "is_default": is_default,
             }
 
             # 設置為預設組件
@@ -117,16 +114,16 @@ class AIVAComponentRegistry(IAIComponentRegistry):
     def get_component(
         self,
         component_type: str,
-        component_name: Optional[str] = None,
-        config_override: Optional[Dict[str, Any]] = None
-    ) -> Optional[Any]:
+        component_name: str | None = None,
+        config_override: dict[str, Any] | None = None,
+    ) -> Any | None:
         """獲取 AI 組件實例
-        
+
         Args:
             component_type: 組件類型
             component_name: 組件名稱 (None 表示使用預設)
             config_override: 覆蓋配置
-            
+
         Returns:
             組件實例
         """
@@ -139,11 +136,11 @@ class AIVAComponentRegistry(IAIComponentRegistry):
                     return None
 
             # 檢查組件是否已註冊
-            if (component_type not in self._components or 
-                component_name not in self._components[component_type]):
-                logger.error(
-                    f"Component not found: {component_type}.{component_name}"
-                )
+            if (
+                component_type not in self._components
+                or component_name not in self._components[component_type]
+            ):
+                logger.error(f"Component not found: {component_type}.{component_name}")
                 return None
 
             # 檢查是否已有實例 (單例模式)
@@ -155,7 +152,7 @@ class AIVAComponentRegistry(IAIComponentRegistry):
             # 創建新實例
             component_info = self._components[component_type][component_name]
             component_class = component_info["class"]
-            
+
             # 合併配置
             final_config = component_info["config"].copy()
             if config_override:
@@ -169,7 +166,7 @@ class AIVAComponentRegistry(IAIComponentRegistry):
 
             # 快取實例
             self._instances[instance_key] = instance
-            
+
             logger.info(f"Created new instance: {instance_key}")
             return instance
 
@@ -178,14 +175,13 @@ class AIVAComponentRegistry(IAIComponentRegistry):
             return None
 
     def list_components(
-        self, 
-        component_type: Optional[str] = None
-    ) -> Dict[str, List[str]]:
+        self, component_type: str | None = None
+    ) -> dict[str, list[str]]:
         """列出可用組件
-        
+
         Args:
             component_type: 組件類型 (None 表示所有類型)
-            
+
         Returns:
             組件類型到組件名稱列表的映射
         """
@@ -194,29 +190,27 @@ class AIVAComponentRegistry(IAIComponentRegistry):
                 return {component_type: list(self._components[component_type].keys())}
             else:
                 return {}
-        
+
         return {
             comp_type: list(comp_dict.keys())
             for comp_type, comp_dict in self._components.items()
         }
 
-    def unregister_component(
-        self,
-        component_type: str,
-        component_name: str
-    ) -> bool:
+    def unregister_component(self, component_type: str, component_name: str) -> bool:
         """取消註冊組件
-        
+
         Args:
             component_type: 組件類型
             component_name: 組件名稱
-            
+
         Returns:
             是否取消成功
         """
         try:
-            if (component_type not in self._components or 
-                component_name not in self._components[component_type]):
+            if (
+                component_type not in self._components
+                or component_name not in self._components[component_type]
+            ):
                 logger.warning(
                     f"Component not found for unregistration: "
                     f"{component_type}.{component_name}"
@@ -225,15 +219,17 @@ class AIVAComponentRegistry(IAIComponentRegistry):
 
             # 移除註冊信息
             del self._components[component_type][component_name]
-            
+
             # 移除實例快取
             instance_key = f"{component_type}.{component_name}"
             if instance_key in self._instances:
                 del self._instances[instance_key]
 
             # 如果是預設組件，需要重新設置預設
-            if (component_type in self._default_components and 
-                self._default_components[component_type] == component_name):
+            if (
+                component_type in self._default_components
+                and self._default_components[component_type] == component_name
+            ):
                 remaining_components = list(self._components[component_type].keys())
                 if remaining_components:
                     self._default_components[component_type] = remaining_components[0]
@@ -248,30 +244,32 @@ class AIVAComponentRegistry(IAIComponentRegistry):
             return False
 
     def get_component_info(
-        self,
-        component_type: str,
-        component_name: str
-    ) -> Optional[Dict[str, Any]]:
+        self, component_type: str, component_name: str
+    ) -> dict[str, Any] | None:
         """獲取組件信息
-        
+
         Args:
             component_type: 組件類型
             component_name: 組件名稱
-            
+
         Returns:
             組件信息字典
         """
-        if (component_type not in self._components or 
-            component_name not in self._components[component_type]):
+        if (
+            component_type not in self._components
+            or component_name not in self._components[component_type]
+        ):
             return None
-            
+
         info = self._components[component_type][component_name].copy()
-        info["is_instantiated"] = f"{component_type}.{component_name}" in self._instances
+        info["is_instantiated"] = (
+            f"{component_type}.{component_name}" in self._instances
+        )
         return info
 
-    def get_registry_stats(self) -> Dict[str, Any]:
+    def get_registry_stats(self) -> dict[str, Any]:
         """獲取註冊表統計信息
-        
+
         Returns:
             統計信息字典
         """
@@ -290,16 +288,14 @@ class AIVAComponentRegistry(IAIComponentRegistry):
         return stats
 
     def _validate_component_interface(
-        self, 
-        component_type: str, 
-        component_class: Type[Any]
+        self, component_type: str, component_class: type[Any]
     ) -> bool:
         """驗證組件是否實現了正確的介面
-        
+
         Args:
             component_type: 組件類型
             component_class: 組件類別
-            
+
         Returns:
             是否實現了正確的介面
         """
@@ -320,9 +316,9 @@ class AIVAComponentRegistry(IAIComponentRegistry):
         # 檢查是否繼承自正確的介面
         return issubclass(component_class, expected_interface)
 
-    async def clear_instances(self, component_type: Optional[str] = None) -> None:
+    async def clear_instances(self, component_type: str | None = None) -> None:
         """清理組件實例快取
-        
+
         Args:
             component_type: 組件類型 (None 表示清理所有)
         """
@@ -330,12 +326,15 @@ class AIVAComponentRegistry(IAIComponentRegistry):
             if component_type:
                 # 清理特定類型的實例
                 keys_to_remove = [
-                    key for key in self._instances.keys()
+                    key
+                    for key in self._instances.keys()
                     if key.startswith(f"{component_type}.")
                 ]
                 for key in keys_to_remove:
                     del self._instances[key]
-                logger.info(f"Cleared {len(keys_to_remove)} instances for {component_type}")
+                logger.info(
+                    f"Cleared {len(keys_to_remove)} instances for {component_type}"
+                )
             else:
                 # 清理所有實例
                 instance_count = len(self._instances)
@@ -346,9 +345,9 @@ class AIVAComponentRegistry(IAIComponentRegistry):
 class AIVAComponentFactory(IAIComponentFactory):
     """AIVA AI 組件工廠實現"""
 
-    def __init__(self, registry: Optional[AIVAComponentRegistry] = None):
+    def __init__(self, registry: AIVAComponentRegistry | None = None):
         """初始化工廠
-        
+
         Args:
             registry: 組件註冊表 (None 表示使用全域註冊表)
         """
@@ -356,91 +355,71 @@ class AIVAComponentFactory(IAIComponentFactory):
         logger.info("AIVAComponentFactory initialized")
 
     def create_dialog_assistant(
-        self, 
-        config: Optional[Dict[str, Any]] = None
+        self, config: dict[str, Any] | None = None
     ) -> IDialogAssistant:
         """創建對話助手實例"""
         component = self.registry.get_component(
-            "dialog_assistant", 
-            config_override=config
+            "dialog_assistant", config_override=config
         )
         if component is None:
             raise RuntimeError("Failed to create dialog_assistant component")
         return component
 
     def create_plan_executor(
-        self, 
-        config: Optional[Dict[str, Any]] = None
+        self, config: dict[str, Any] | None = None
     ) -> IPlanExecutor:
         """創建計劃執行器實例"""
-        component = self.registry.get_component(
-            "plan_executor", 
-            config_override=config
-        )
+        component = self.registry.get_component("plan_executor", config_override=config)
         if component is None:
             raise RuntimeError("Failed to create plan_executor component")
         return component
 
     def create_experience_manager(
-        self, 
-        config: Optional[Dict[str, Any]] = None
+        self, config: dict[str, Any] | None = None
     ) -> IExperienceManager:
         """創建經驗管理器實例"""
         component = self.registry.get_component(
-            "experience_manager", 
-            config_override=config
+            "experience_manager", config_override=config
         )
         if component is None:
             raise RuntimeError("Failed to create experience_manager component")
         return component
 
     def create_capability_evaluator(
-        self, 
-        config: Optional[Dict[str, Any]] = None
+        self, config: dict[str, Any] | None = None
     ) -> ICapabilityEvaluator:
         """創建能力評估器實例"""
         component = self.registry.get_component(
-            "capability_evaluator", 
-            config_override=config
+            "capability_evaluator", config_override=config
         )
         if component is None:
             raise RuntimeError("Failed to create capability_evaluator component")
         return component
 
     def create_cross_language_bridge(
-        self, 
-        config: Optional[Dict[str, Any]] = None
+        self, config: dict[str, Any] | None = None
     ) -> ICrossLanguageBridge:
         """創建跨語言橋接器實例"""
         component = self.registry.get_component(
-            "cross_language_bridge", 
-            config_override=config
+            "cross_language_bridge", config_override=config
         )
         if component is None:
             raise RuntimeError("Failed to create cross_language_bridge component")
         return component
 
-    def create_rag_agent(
-        self, 
-        config: Optional[Dict[str, Any]] = None
-    ) -> IRAGAgent:
+    def create_rag_agent(self, config: dict[str, Any] | None = None) -> IRAGAgent:
         """創建 RAG 代理實例"""
-        component = self.registry.get_component(
-            "rag_agent", 
-            config_override=config
-        )
+        component = self.registry.get_component("rag_agent", config_override=config)
         if component is None:
             raise RuntimeError("Failed to create rag_agent component")
         return component
 
     def create_skill_graph_analyzer(
-        self, 
-        config: Optional[Dict[str, Any]] = None
+        self, config: dict[str, Any] | None = None
     ) -> ISkillGraphAnalyzer:
         """創建技能圖分析器實例"""
         component = self.registry.get_component(
-            "skill_graph_analyzer", 
-            config_override=config
+            "skill_graph_analyzer", config_override=config
         )
         if component is None:
             raise RuntimeError("Failed to create skill_graph_analyzer component")
@@ -451,24 +430,24 @@ class AIVAContext(IAIContext):
     """AIVA AI 上下文管理器實現"""
 
     def __init__(
-        self, 
-        factory: Optional[AIVAComponentFactory] = None,
-        auto_init_components: bool = True
+        self,
+        factory: AIVAComponentFactory | None = None,
+        auto_init_components: bool = True,
     ):
         """初始化上下文
-        
+
         Args:
             factory: 組件工廠
             auto_init_components: 是否自動初始化組件
         """
         self.factory = factory or AIVAComponentFactory()
         self.auto_init_components = auto_init_components
-        self._components: Dict[str, Any] = {}
+        self._components: dict[str, Any] = {}
         self._initialized = False
-        
+
         logger.info("AIVAContext initialized")
 
-    async def __aenter__(self) -> 'AIVAContext':
+    async def __aenter__(self) -> "AIVAContext":
         """進入上下文管理器"""
         await self.initialize()
         return self
@@ -488,12 +467,12 @@ class AIVAContext(IAIContext):
                 # 自動初始化所有可用組件
                 component_types = [
                     "dialog_assistant",
-                    "plan_executor", 
+                    "plan_executor",
                     "experience_manager",
                     "capability_evaluator",
                     "cross_language_bridge",
                     "rag_agent",
-                    "skill_graph_analyzer"
+                    "skill_graph_analyzer",
                 ]
 
                 for comp_type in component_types:
@@ -506,7 +485,9 @@ class AIVAContext(IAIContext):
                         logger.warning(f"Failed to initialize {comp_type}: {e}")
 
             self._initialized = True
-            logger.info(f"AIVAContext initialized with {len(self._components)} components")
+            logger.info(
+                f"AIVAContext initialized with {len(self._components)} components"
+            )
 
         except Exception as e:
             logger.error(f"Failed to initialize AIVAContext: {e}")
@@ -522,7 +503,7 @@ class AIVAContext(IAIContext):
             for comp_type, component in self._components.items():
                 try:
                     # 如果組件有清理方法，調用它
-                    if hasattr(component, 'cleanup') and callable(component.cleanup):
+                    if hasattr(component, "cleanup") and callable(component.cleanup):
                         if inspect.iscoroutinefunction(component.cleanup):
                             await component.cleanup()
                         else:
@@ -539,7 +520,7 @@ class AIVAContext(IAIContext):
             logger.error(f"Failed to cleanup AIVAContext: {e}")
             raise
 
-    def get_component(self, component_type: str) -> Optional[Any]:
+    def get_component(self, component_type: str) -> Any | None:
         """從上下文中獲取組件"""
         return self._components.get(component_type)
 
@@ -552,7 +533,7 @@ class AIVAContext(IAIContext):
         """檢查上下文是否已初始化"""
         return self._initialized
 
-    def get_available_components(self) -> List[str]:
+    def get_available_components(self) -> list[str]:
         """獲取可用組件列表"""
         return list(self._components.keys())
 
@@ -561,12 +542,12 @@ class AIVAContext(IAIContext):
 # Global Registry (全域註冊表)
 # ============================================================================
 
-_global_registry: Optional[AIVAComponentRegistry] = None
+_global_registry: AIVAComponentRegistry | None = None
 
 
 def get_global_registry() -> AIVAComponentRegistry:
     """獲取全域組件註冊表
-    
+
     Returns:
         全域註冊表實例
     """
@@ -578,7 +559,7 @@ def get_global_registry() -> AIVAComponentRegistry:
 
 def set_global_registry(registry: AIVAComponentRegistry) -> None:
     """設置全域組件註冊表
-    
+
     Args:
         registry: 註冊表實例
     """
@@ -588,18 +569,17 @@ def set_global_registry(registry: AIVAComponentRegistry) -> None:
 
 @asynccontextmanager
 async def aiva_ai_context(
-    factory: Optional[AIVAComponentFactory] = None,
-    auto_init_components: bool = True
+    factory: AIVAComponentFactory | None = None, auto_init_components: bool = True
 ):
     """AIVA AI 上下文管理器的便捷函數
-    
+
     Args:
         factory: 組件工廠
         auto_init_components: 是否自動初始化組件
-        
+
     Yields:
         AIVAContext 實例
-        
+
     Example:
         async with aiva_ai_context() as ai_ctx:
             dialog = ai_ctx.get_component("dialog_assistant")
@@ -621,20 +601,21 @@ async def aiva_ai_context(
 def register_builtin_components() -> None:
     """註冊內建的 AI 組件 (如果可用)"""
     registry = get_global_registry()
-    
+
     # 嘗試註冊來自 services.core.aiva_core 的組件
     try:
-        from services.core.aiva_core.dialog.assistant import dialog_assistant  # type: ignore
-        from typing import cast, Type, Any
+        from typing import Any, Type, cast
+
+        from services.core.aiva_core.dialog.assistant import (
+            dialog_assistant,  # type: ignore
+        )
+
         if dialog_assistant is not None:
             # 明確轉換動態導入的組件類型
             dialog_assistant_typed = cast(Any, dialog_assistant)
-            component_class = cast(Type[Any], type(dialog_assistant_typed))
+            component_class = cast(type[Any], type(dialog_assistant_typed))
             registry.register_component(
-                "dialog_assistant",
-                "aiva_core_dialog",
-                component_class,
-                is_default=True
+                "dialog_assistant", "aiva_core_dialog", component_class, is_default=True
             )
             logger.info("Registered aiva_core dialog assistant")
     except (ImportError, AttributeError) as e:

@@ -1,9 +1,6 @@
-"""
-Tools - AI 代理工具系統
+"""Tools - AI 代理工具系統
 提供程式碼讀取、編輯、執行等操作能力
 """
-
-
 
 from abc import ABC, abstractmethod
 from pathlib import Path
@@ -167,11 +164,7 @@ class CodeAnalyzer(Tool):
 
             # 基本統計
             basic_stats = self._get_basic_stats(content)
-            result = {
-                "status": "success",
-                "path": path,
-                **basic_stats
-            }
+            result = {"status": "success", "path": path, **basic_stats}
 
             # 如果要求詳細分析，使用 AST
             if detailed:
@@ -191,8 +184,11 @@ class CodeAnalyzer(Tool):
         lines = content.splitlines()
         non_empty_lines = [line for line in lines if line.strip()]
         comment_lines = [
-            line for line in lines
-            if line.strip().startswith("#") or line.strip().startswith('"""') or line.strip().startswith("'''")
+            line
+            for line in lines
+            if line.strip().startswith("#")
+            or line.strip().startswith('"""')
+            or line.strip().startswith("'''")
         ]
 
         return {
@@ -206,6 +202,7 @@ class CodeAnalyzer(Tool):
         """獲取詳細 AST 分析統計"""
         try:
             import ast
+
             tree = ast.parse(content)
 
             # 統計各種節點
@@ -269,6 +266,7 @@ class CodeAnalyzer(Tool):
             複雜度分數
         """
         import ast
+
         complexity = 1  # 基礎複雜度
 
         for node in ast.walk(tree):
@@ -315,7 +313,9 @@ class CodeAnalyzer(Tool):
         import ast
 
         for node in ast.walk(tree):
-            if isinstance(node, ast.FunctionDef | ast.AsyncFunctionDef | ast.ClassDef | ast.Module):
+            if isinstance(
+                node, ast.FunctionDef | ast.AsyncFunctionDef | ast.ClassDef | ast.Module
+            ):
                 docstring = ast.get_docstring(node)
                 if docstring:
                     return True

@@ -1,0 +1,64 @@
+{
+  "timestamp": "2025-10-31T22:16:31.928272",
+  "test_summary": {
+    "schema_system_health": true,
+    "cross_module_communication": false,
+    "module_integration_health": true,
+    "go_schema_health": true,
+    "overall_health": true
+  },
+  "detailed_results": {
+    "schema_imports": {
+      "python_schemas": {
+        "base_types": {
+          "MessageHeader": true,
+          "Target": true,
+          "Vulnerability": true
+        },
+        "messaging": {
+          "AivaMessage": true,
+          "AIVARequest": true,
+          "AIVAResponse": true
+        },
+        "tasks": {
+          "FunctionTaskPayload": true,
+          "FunctionTaskTarget": true
+        },
+        "findings": {
+          "FindingPayload": true,
+          "FindingEvidence": true
+        }
+      },
+      "cross_module_imports": {},
+      "schema_consistency": true,
+      "errors": []
+    },
+    "cross_module_messaging": {
+      "message_creation": false,
+      "schema_validation": false,
+      "serialization": false,
+      "errors": [
+        "跨模組消息測試錯誤: attempted relative import with no known parent package"
+      ]
+    },
+    "module_integration": {
+      "ai_engine_integration": true,
+      "attack_engine_integration": true,
+      "scan_engine_integration": true,
+      "feature_detection_integration": true,
+      "integration_services": true,
+      "errors": []
+    },
+    "go_schema": {
+      "go_schema_exists": true,
+      "struct_count": 57,
+      "json_tags_valid": true,
+      "errors": []
+    }
+  },
+  "connectivity_score": 78,
+  "recommendations": [
+    "📡 實現統一的跨模組消息創建機制",
+    "🔄 加強消息序列化和反序列化處理"
+  ]
+}

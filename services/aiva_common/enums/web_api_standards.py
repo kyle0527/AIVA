@@ -2,19 +2,18 @@
 Web API 標準枚舉 - OpenAPI, JSON Schema, JWT 等官方標準
 """
 
-
-
 from enum import Enum, IntEnum
 
 
 class HTTPStatusCode(IntEnum):
     """完整的 HTTP 狀態碼枚舉（基於 RFC 7231 等官方標準）"""
+
     # 1xx Informational
     CONTINUE = 100
     SWITCHING_PROTOCOLS = 101
     PROCESSING = 102  # RFC 2518
     EARLY_HINTS = 103  # RFC 8297
-    
+
     # 2xx Success
     OK = 200
     CREATED = 201
@@ -26,7 +25,7 @@ class HTTPStatusCode(IntEnum):
     MULTI_STATUS = 207  # RFC 4918
     ALREADY_REPORTED = 208  # RFC 5842
     IM_USED = 226  # RFC 3229
-    
+
     # 3xx Redirection
     MULTIPLE_CHOICES = 300
     MOVED_PERMANENTLY = 301
@@ -36,7 +35,7 @@ class HTTPStatusCode(IntEnum):
     USE_PROXY = 305
     TEMPORARY_REDIRECT = 307
     PERMANENT_REDIRECT = 308  # RFC 7538
-    
+
     # 4xx Client Error
     BAD_REQUEST = 400
     UNAUTHORIZED = 401
@@ -67,7 +66,7 @@ class HTTPStatusCode(IntEnum):
     TOO_MANY_REQUESTS = 429  # RFC 6585
     REQUEST_HEADER_FIELDS_TOO_LARGE = 431  # RFC 6585
     UNAVAILABLE_FOR_LEGAL_REASONS = 451  # RFC 7725
-    
+
     # 5xx Server Error
     INTERNAL_SERVER_ERROR = 500
     NOT_IMPLEMENTED = 501
@@ -84,6 +83,7 @@ class HTTPStatusCode(IntEnum):
 
 class OpenAPISchemaType(str, Enum):
     """OpenAPI 3.1 Schema 類型枚舉（基於 OpenAPI 官方規範）"""
+
     STRING = "string"
     NUMBER = "number"
     INTEGER = "integer"
@@ -95,6 +95,7 @@ class OpenAPISchemaType(str, Enum):
 
 class OpenAPIFormat(str, Enum):
     """OpenAPI 格式枚舉（基於 OpenAPI 官方規範）"""
+
     # String formats
     DATE = "date"
     DATE_TIME = "date-time"
@@ -107,11 +108,11 @@ class OpenAPIFormat(str, Enum):
     HOSTNAME = "hostname"
     IPV4 = "ipv4"
     IPV6 = "ipv6"
-    
+
     # Number formats
     FLOAT = "float"
     DOUBLE = "double"
-    
+
     # Integer formats
     INT32 = "int32"
     INT64 = "int64"
@@ -119,6 +120,7 @@ class OpenAPIFormat(str, Enum):
 
 class OpenAPIParameterLocation(str, Enum):
     """OpenAPI 參數位置枚舉"""
+
     PATH = "path"
     QUERY = "query"
     HEADER = "header"
@@ -127,6 +129,7 @@ class OpenAPIParameterLocation(str, Enum):
 
 class OpenAPISecuritySchemeType(str, Enum):
     """OpenAPI 安全方案類型枚舉"""
+
     API_KEY = "apiKey"
     HTTP = "http"
     OAUTH2 = "oauth2"
@@ -136,31 +139,32 @@ class OpenAPISecuritySchemeType(str, Enum):
 
 class JSONSchemaKeyword(str, Enum):
     """JSON Schema 關鍵字枚舉（Draft 2020-12 官方標準）"""
+
     # Core keywords
     SCHEMA = "$schema"
     ID = "$id"
     REF = "$ref"
     DEFS = "$defs"
     COMMENT = "$comment"
-    
+
     # Type keywords
     TYPE = "type"
     ENUM = "enum"
     CONST = "const"
-    
+
     # String keywords
     MAX_LENGTH = "maxLength"
     MIN_LENGTH = "minLength"
     PATTERN = "pattern"
     FORMAT = "format"
-    
+
     # Number keywords
     MULTIPLE_OF = "multipleOf"
     MAXIMUM = "maximum"
     EXCLUSIVE_MAXIMUM = "exclusiveMaximum"
     MINIMUM = "minimum"
     EXCLUSIVE_MINIMUM = "exclusiveMinimum"
-    
+
     # Object keywords
     PROPERTIES = "properties"
     PATTERN_PROPERTIES = "patternProperties"
@@ -172,7 +176,7 @@ class JSONSchemaKeyword(str, Enum):
     MIN_PROPERTIES = "minProperties"
     DEPENDENT_REQUIRED = "dependentRequired"
     DEPENDENT_SCHEMAS = "dependentSchemas"
-    
+
     # Array keywords
     PREFIX_ITEMS = "prefixItems"
     ITEMS = "items"
@@ -183,18 +187,18 @@ class JSONSchemaKeyword(str, Enum):
     MAX_ITEMS = "maxItems"
     MIN_ITEMS = "minItems"
     UNIQUE_ITEMS = "uniqueItems"
-    
+
     # Validation keywords
     ALL_OF = "allOf"
     ANY_OF = "anyOf"
     ONE_OF = "oneOf"
     NOT = "not"
-    
+
     # Conditional keywords
     IF = "if"
     THEN = "then"
     ELSE = "else"
-    
+
     # Annotation keywords
     TITLE = "title"
     DESCRIPTION = "description"
@@ -207,6 +211,7 @@ class JSONSchemaKeyword(str, Enum):
 
 class JWTClaim(str, Enum):
     """JWT 聲明枚舉（基於 RFC 7519 官方標準）"""
+
     # Registered Claims
     ISSUER = "iss"
     SUBJECT = "sub"
@@ -215,7 +220,7 @@ class JWTClaim(str, Enum):
     NOT_BEFORE = "nbf"
     ISSUED_AT = "iat"
     JWT_ID = "jti"
-    
+
     # Common Custom Claims
     SCOPE = "scope"
     ROLES = "roles"
@@ -236,42 +241,44 @@ class JWTClaim(str, Enum):
 
 class JWTAlgorithm(str, Enum):
     """JWT 演算法枚舉（基於 RFC 7518 官方標準）"""
+
     # HMAC
     HS256 = "HS256"
     HS384 = "HS384"
     HS512 = "HS512"
-    
+
     # RSA
     RS256 = "RS256"
     RS384 = "RS384"
     RS512 = "RS512"
-    
+
     # ECDSA
     ES256 = "ES256"
     ES384 = "ES384"
     ES512 = "ES512"
-    
+
     # RSA-PSS
     PS256 = "PS256"
     PS384 = "PS384"
     PS512 = "PS512"
-    
+
     # EdDSA
     EDDSA = "EdDSA"
-    
+
     # None
     NONE = "none"
 
 
 class WebStandard(str, Enum):
     """Web 標準枚舉（基於 W3C 官方標準）"""
+
     # Core Web Technologies
     HTML5 = "html5"
     CSS3 = "css3"
     SVG = "svg"
     XML = "xml"
     MATHML = "mathml"
-    
+
     # Web APIs
     WEB_RTC = "webrtc"
     WEB_SOCKETS = "websockets"
@@ -280,23 +287,23 @@ class WebStandard(str, Enum):
     PAYMENT_REQUEST_API = "payment_request_api"
     WEB_AUTHENTICATION = "web_authentication"
     CREDENTIAL_MANAGEMENT = "credential_management"
-    
+
     # Progressive Web Apps
     WEB_APP_MANIFEST = "web_app_manifest"
     PUSH_API = "push_api"
     NOTIFICATIONS_API = "notifications_api"
     BACKGROUND_SYNC = "background_sync"
-    
+
     # Performance & Security
     CONTENT_SECURITY_POLICY = "content_security_policy"
     HTTP_STRICT_TRANSPORT_SECURITY = "hsts"
     SUBRESOURCE_INTEGRITY = "subresource_integrity"
     CORS = "cors"
-    
+
     # Accessibility
     ARIA = "aria"
     WCAG = "wcag"
-    
+
     # Internationalization
     INTERNATIONALIZATION_TAG_SET = "i18n_tag_set"
     LANGUAGE_TAG_REGISTRY = "language_tag_registry"
@@ -304,14 +311,16 @@ class WebStandard(str, Enum):
 
 class SARIFLevel(str, Enum):
     """SARIF（Static Analysis Results Interchange Format）層級枚舉（基於 SARIF v2.1.0 官方標準）"""
+
     ERROR = "error"
-    WARNING = "warning" 
+    WARNING = "warning"
     INFO = "info"
     NOTE = "note"
 
 
 class SARIFResultKind(str, Enum):
     """SARIF 結果類別枚舉"""
+
     FAIL = "fail"
     PASS = "pass"
     REVIEW = "review"
@@ -322,6 +331,7 @@ class SARIFResultKind(str, Enum):
 
 class SARIFArtifactRoles(str, Enum):
     """SARIF 工件角色枚舉"""
+
     ANALYSIS_TARGET = "analysisTarget"
     ATTACHMENT = "attachment"
     RESPONSE_FILE = "responseFile"

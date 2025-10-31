@@ -1,11 +1,8 @@
-"""
-統一向量存儲管理器
+"""統一向量存儲管理器
 
 將現有的 VectorStore 接口與 PostgreSQL + pgvector 後端整合
 遵循 aiva_common 規範，實現統一的向量存儲管理
 """
-
-
 
 import logging
 from pathlib import Path
@@ -20,9 +17,8 @@ logger = logging.getLogger(__name__)
 
 
 class UnifiedVectorStore:
-    """
-    統一向量存儲管理器
-    
+    """統一向量存儲管理器
+
     功能：
     1. 保持現有 VectorStore 接口的兼容性
     2. 底層使用 PostgreSQL + pgvector 實現統一存儲
@@ -38,8 +34,7 @@ class UnifiedVectorStore:
         embedding_model: str = "sentence-transformers/all-MiniLM-L6-v2",
         legacy_persist_directory: Path | None = None,
     ):
-        """
-        初始化統一向量存儲
+        """初始化統一向量存儲
 
         Args:
             database_url: PostgreSQL 數據庫連接字符串
@@ -48,7 +43,9 @@ class UnifiedVectorStore:
             embedding_model: 嵌入模型名稱
             legacy_persist_directory: 舊的文件存儲目錄（用於遷移）
         """
-        self.database_url = database_url or "postgresql://postgres:aiva123@postgres:5432/aiva_db"
+        self.database_url = (
+            database_url or "postgresql://postgres:aiva123@postgres:5432/aiva_db"
+        )
         self.table_name = table_name
         self.embedding_dimension = embedding_dimension
         self.embedding_model_name = embedding_model
@@ -84,7 +81,7 @@ class UnifiedVectorStore:
         """初始化統一向量存儲"""
         # 初始化 PostgreSQL 後端
         await self.pg_store.initialize()
-        
+
         # 如果有舊數據，執行遷移
         if self.legacy_store:
             await self._migrate_from_legacy()
@@ -101,7 +98,7 @@ class UnifiedVectorStore:
         try:
             # 加載舊數據
             self.legacy_store.load()
-            
+
             migrated_count = 0
             for doc_id in self.legacy_store.vectors.keys():
                 # 檢查是否已經存在於 PostgreSQL 中
@@ -137,6 +134,7 @@ class UnifiedVectorStore:
             try:
                 # 動態導入避免編譯時錯誤
                 import importlib
+
                 st_module = importlib.import_module("sentence_transformers")
                 SentenceTransformer = st_module.SentenceTransformer
 
@@ -173,9 +171,8 @@ class UnifiedVectorStore:
         text: str,
         metadata: dict[str, Any] | None = None,
     ) -> None:
-        """
-        添加文檔到統一向量存儲
-        
+        """添加文檔到統一向量存儲
+
         兼容原有 VectorStore 接口
         """
         # 生成嵌入
@@ -206,9 +203,8 @@ class UnifiedVectorStore:
         texts: list[str],
         metadatas: list[dict[str, Any]] | None = None,
     ) -> None:
-        """
-        批量添加文檔
-        
+        """批量添加文檔
+
         兼容原有 VectorStore 接口
         """
         if metadatas is None:
@@ -225,9 +221,8 @@ class UnifiedVectorStore:
         top_k: int = 5,
         filter_metadata: dict[str, Any] | None = None,
     ) -> list[dict[str, Any]]:
-        """
-        搜索相似文檔
-        
+        """搜索相似文檔
+
         兼容原有 VectorStore 接口
         """
         # 生成查詢嵌入
@@ -252,31 +247,31 @@ class UnifiedVectorStore:
         # 格式化結果以兼容原有接口
         formatted_results = []
         for result in results:
-            formatted_results.append({
-                "doc_id": result["doc_id"],
-                "text": result["text"],
-                "metadata": result["metadata"],
-                "score": float(result["similarity_score"]),
-            })
+            formatted_results.append(
+                {
+                    "doc_id": result["doc_id"],
+                    "text": result["text"],
+                    "metadata": result["metadata"],
+                    "score": float(result["similarity_score"]),
+                }
+            )
 
         return formatted_results
 
     async def delete_document(self, doc_id: str) -> bool:
-        """
-        刪除文檔
-        
+        """刪除文檔
+
         兼容原有 VectorStore 接口
         """
         return await self.pg_store.delete_document(doc_id)
 
     async def get_document(self, doc_id: str) -> dict[str, Any] | None:
-        """
-        獲取文檔
-        
+        """獲取文檔
+
         兼容原有 VectorStore 接口
         """
         result = await self.pg_store.get_document(doc_id)
-        
+
         if result:
             return {
                 "doc_id": result["doc_id"],
@@ -288,13 +283,12 @@ class UnifiedVectorStore:
         return None
 
     async def get_statistics(self) -> dict[str, Any]:
-        """
-        獲取統計信息
-        
+        """獲取統計信息
+
         兼容原有 VectorStore 接口
         """
         pg_stats = await self.pg_store.get_statistics()
-        
+
         return {
             "total_documents": pg_stats["total_documents"],
             "backend": "postgresql+pgvector",
@@ -317,15 +311,14 @@ async def create_unified_vector_store(
     embedding_model: str = "sentence-transformers/all-MiniLM-L6-v2",
     auto_migrate_from: Path | None = None,
 ) -> UnifiedVectorStore:
-    """
-    創建並初始化統一向量存儲
-    
+    """創建並初始化統一向量存儲
+
     Args:
         database_url: PostgreSQL 連接字符串
         table_name: 向量表名稱
         embedding_model: 嵌入模型名稱
         auto_migrate_from: 自動從該目錄遷移舊數據
-    
+
     Returns:
         初始化完成的統一向量存儲實例
     """
@@ -335,6 +328,6 @@ async def create_unified_vector_store(
         embedding_model=embedding_model,
         legacy_persist_directory=auto_migrate_from,
     )
-    
+
     await store.initialize()
     return store

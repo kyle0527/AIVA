@@ -26,24 +26,21 @@ __generated_at__ = "2025-10-30T10:04:37.356325"
 __all__ = [
     # 基礎類型
     "MessageHeader",
-    "Target", 
+    "Target",
     "Vulnerability",
-    
     # 訊息通訊
     "AivaMessage",
     "AIVARequest",
     "AIVAResponse",
-    
     # 任務管理
     "FunctionTaskPayload",
-    "FunctionTaskTarget", 
+    "FunctionTaskTarget",
     "FunctionTaskContext",
     "FunctionTaskTestConfig",
     "ScanTaskPayload",
-    
     # 發現結果
     "FindingPayload",
     "FindingEvidence",
-    "FindingImpact", 
+    "FindingImpact",
     "FindingRecommendation",
 ]

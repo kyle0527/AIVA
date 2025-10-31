@@ -1,9 +1,6 @@
-"""
-Dashboard - AIVA 主控制面板
+"""Dashboard - AIVA 主控制面板
 提供 Web UI 來管理掃描、AI 代理、漏洞檢測等功能
 """
-
-
 
 import logging
 from typing import TYPE_CHECKING, Any

@@ -1,17 +1,13 @@
-"""
-RAG 與 AI Agent 集成示例
+"""RAG 與 AI Agent 集成示例
 
 展示如何將 RAG 引擎與 BioNeuronRAGAgent 結合使用
 """
 
-
-
 import asyncio
 import logging
 
-
-from services.core.aiva_core.rag import KnowledgeBase, RAGEngine, VectorStore
 from services.aiva_common.schemas import AttackPlan, AttackTarget
+from services.core.aiva_core.rag import KnowledgeBase, RAGEngine, VectorStore
 
 logger = logging.getLogger(__name__)
 

@@ -1,5 +1,3 @@
-
-
 from typing import Any
 
 from services.aiva_common.schemas import Asset, ScanCompletedPayload

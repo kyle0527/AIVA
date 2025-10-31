@@ -65,27 +65,10 @@ from services.core.ai_models import (
     TraceRecord,
 )
 
-# 從新增核心組件導入 (附件要求實現)
-from .dialog.assistant import AIVADialogAssistant, dialog_assistant
-from .decision.skill_graph import AIVASkillGraph, skill_graph
-# capability_evaluator 現在使用 aiva_common.ai.capability_evaluator 統一實現
-
 # 從 core.models 導入核心業務邏輯模型
-from services.core.models import (
-    AttackPathEdge,
-    AttackPathNode,
-    AttackPathPayload,
-    AttackPathRecommendation,
-    CodeLevelRootCause,
+# 從 aiva_common.schemas 導入共享標準模型
+from services.aiva_common.schemas import (
     ConfigUpdatePayload,
-    EnhancedAttackPath,
-    EnhancedAttackPathNode,
-    EnhancedFindingPayload,
-    EnhancedModuleStatus,
-    EnhancedRiskAssessment,
-    EnhancedTaskExecution,
-    EnhancedVulnerability,
-    EnhancedVulnerabilityCorrelation,
     FeedbackEventPayload,
     FindingEvidence,
     FindingImpact,
@@ -95,27 +78,90 @@ from services.core.models import (
     ModuleStatus,
     RemediationGeneratePayload,
     RemediationResultPayload,
+    Target,
+    TaskUpdatePayload,
+)
+
+# 從 services.core.models 導入核心擴展模型
+from services.core.models import (
+    AttackPathEdge,
+    AttackPathNode,
+    AttackPathPayload,
+    AttackPathRecommendation,
+    CodeLevelRootCause,
+    EnhancedAttackPath,
+    EnhancedAttackPathNode,
+    EnhancedFindingPayload,
+    EnhancedModuleStatus,
+    EnhancedRiskAssessment,
+    EnhancedTaskExecution,
+    EnhancedVulnerability,
+    EnhancedVulnerabilityCorrelation,
     RiskAssessmentContext,
     RiskAssessmentResult,
     RiskFactor,
     RiskTrendAnalysis,
     SASTDASTCorrelation,
     SystemOrchestration,
-    Target,
     TaskDependency,
     TaskQueue,
-    TaskUpdatePayload,
     TestStrategy,
     VulnerabilityCorrelation,
 )
+
+# 從新遷移的核心服務組件導入 (從 aiva_core_v2 遷移而來)
+from .command_router import (
+    CommandContext,
+    CommandRouter,
+    CommandType,
+    ExecutionMode,
+    ExecutionResult,
+    get_command_router,
+)
+from .context_manager import ContextManager, get_context_manager
+from .core_service_coordinator import (
+    AIVACoreServiceCoordinator,
+    get_core_service_coordinator,
+    initialize_core_module,
+    process_command,
+    shutdown_core_module,
+)
+from .decision.skill_graph import AIVASkillGraph, skill_graph
+
+# 從新增核心組件導入 (附件要求實現)
+from .dialog.assistant import AIVADialogAssistant, dialog_assistant
+from .execution_planner import ExecutionPlanner, get_execution_planner
+
+# capability_evaluator 現在使用 aiva_common.ai.capability_evaluator 統一實現
+
+
+
+
+
 
 __all__ = [
     # 新增核心組件 (附件要求實現)
     "AIVADialogAssistant",
     "dialog_assistant",
-    "AIVASkillGraph", 
+    "AIVASkillGraph",
     "skill_graph",
     # capability_evaluator 已移至 aiva_common.ai
+    # 從 aiva_core_v2 遷移的核心服務組件
+    "CommandRouter",
+    "get_command_router",
+    "CommandType",
+    "ExecutionMode",
+    "CommandContext",
+    "ExecutionResult",
+    "ContextManager",
+    "get_context_manager",
+    "ExecutionPlanner",
+    "get_execution_planner",
+    "AIVACoreServiceCoordinator",
+    "get_core_service_coordinator",
+    "process_command",
+    "initialize_core_module",
+    "shutdown_core_module",
     # 來自 aiva_common
     "CVEReference",
     "CVSSv3Metrics",
@@ -194,4 +240,3 @@ __all__ = [
     "TestStrategy",
     "VulnerabilityCorrelation",
 ]
-

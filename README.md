@@ -111,6 +111,8 @@ python tools/schema_compliance_validator.py
 
 💡 **實用功能**: [核心插件速查表](_out/VSCODE_EXTENSIONS_INVENTORY.md#-核心插件速查表) | [問題排查流程](_out/VSCODE_EXTENSIONS_INVENTORY.md#-問題排查流程) | [維護建議](_out/VSCODE_EXTENSIONS_INVENTORY.md#-維護建議)
 
+⚡ **性能優化**: [語言伺服器優化指南](guides/development/LANGUAGE_SERVER_OPTIMIZATION_GUIDE.md) | [性能優化配置](guides/troubleshooting/PERFORMANCE_OPTIMIZATION_GUIDE.md)
+
 ---
 
 ## 🔧 修復原則
@@ -122,7 +124,31 @@ python tools/schema_compliance_validator.py
 | 🔗 **向前引用問題** | [向前引用發現與修復指南](guides/troubleshooting/FORWARD_REFERENCE_REPAIR_GUIDE.md) | Pydantic 模型前向引用錯誤 |
 | ⚡ **批量處理安全** | [批量處理安全原則](./services/aiva_common/README.md#️-批量處理修復原則) | 大量錯誤修復時的安全協議 |
 | 📝 **修復完成報告** | [向前引用修復報告](./FORWARD_REFERENCE_REPAIR_COMPLETION_REPORT.md) | 修復成果與最佳實踐記錄 |
+| 🧪 **ML 依賴管理** | [依賴管理指南](guides/development/DEPENDENCY_MANAGEMENT_GUIDE.md) | 機器學習庫可選依賴最佳實踐 |
+| 📊 **ML 狀態報告** | [混合狀態報告](ML_DEPENDENCY_STATUS_REPORT.md) | 詳細分析與建議策略 |
 | 📖 **AIVA Common 標準** | [開發規範](./services/aiva_common/README.md#🔧-開發指南) | 所有 Python 代碼必須遵循的標準 |
+
+### 🤖 ML 依賴混合狀態說明
+
+> ⚠️ **當前狀態 (2025年10月31日)**: 系統中 ML 依賴處於混合修復狀態
+
+**已修復檔案 (使用統一可選依賴框架)**:
+- ✅ `services/core/aiva_core/ai_engine/bio_neuron_core.py` - 使用 `NDArray` 型別注解
+- ✅ `services/core/aiva_core/ai_engine/neural_network.py` - 使用統一依賴管理
+
+**未修復檔案 (傳統直接導入)**:
+- ⚠️ 其餘 16 個檔案仍使用 `import numpy as np` 和 `np.ndarray` 型別注解
+
+**相容性確認**:
+- ✅ **技術上完全相容**: `NDArray` 本質上是 `np.ndarray` 的別名
+- ✅ **運行時無問題**: 混合使用不會造成功能錯誤
+- ✅ **型別檢查通過**: 型別檢查器認為兩者相同
+- ⚠️ **程式碼風格**: 存在不一致性，但不影響功能
+
+**建議**:
+- 新開發的 ML 相關程式碼建議使用統一可選依賴框架
+- 既有程式碼如無問題可暫時保持現狀
+- 詳細指南請參考 [依賴管理指南](guides/development/DEPENDENCY_MANAGEMENT_GUIDE.md)
 
 ### 🛡️ 基本修復原則
 

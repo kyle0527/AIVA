@@ -1,0 +1,312 @@
+syntax = "proto3";
+
+package aiva.services;
+
+option go_package = "github.com/kyle0527/aiva/services/aiva_common/protocols";
+
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/struct.proto";
+import "google/protobuf/any.proto";
+
+// =============================================
+// 基礎消息類型
+// =============================================
+
+// 消息標頭 - 所有服務間通信的統一標頭
+message MessageHeader {
+  string message_id = 1;           // 消息唯一ID
+  string trace_id = 2;             // 追蹤ID
+  string source_service = 3;       // 來源服務
+  string target_service = 4;       // 目標服務
+  string topic = 5;                // 消息主題
+  google.protobuf.Timestamp timestamp = 6;  // 時間戳
+  int32 priority = 7;              // 優先級 (0-9)
+  map<string, string> metadata = 8; // 元數據
+}
+
+// 統一響應狀態
+message ResponseStatus {
+  int32 code = 1;                  // 狀態碼
+  string message = 2;              // 狀態消息
+  repeated string details = 3;     // 詳細信息
+  string error_code = 4;           // 錯誤代碼
+}
+
+// 統一請求包裝
+message AIVARequest {
+  MessageHeader header = 1;
+  google.protobuf.Any payload = 2;
+}
+
+// 統一響應包裝
+message AIVAResponse {
+  MessageHeader header = 1;
+  ResponseStatus status = 2;
+  google.protobuf.Any payload = 3;
+}
+
+// =============================================
+// AI 服務接口
+// =============================================
+
+// AI 命令分析請求
+message CommandAnalysisRequest {
+  string command = 1;              // 原始命令
+  string session_id = 2;           // 會話ID
+  map<string, string> context = 3; // 上下文信息
+  string user_id = 4;              // 用戶ID
+}
+
+// AI 命令分析響應
+message CommandAnalysisResponse {
+  string intent = 1;               // 識別的意圖
+  string recommended_service = 2;   // 推薦的服務
+  map<string, string> parameters = 3; // 提取的參數
+  float confidence = 4;            // 信心度 (0.0-1.0)
+  repeated string suggestions = 5; // 建議
+}
+
+// AI 推理請求
+message ReasoningRequest {
+  string query = 1;                // 查詢內容
+  string session_id = 2;           // 會話ID
+  repeated string context_items = 3; // 上下文項目
+  map<string, string> constraints = 4; // 約束條件
+}
+
+// AI 推理響應
+message ReasoningResponse {
+  string response = 1;             // 推理結果
+  float confidence = 2;            // 信心度
+  repeated string reasoning_steps = 3; // 推理步驟
+  map<string, float> scores = 4;   // 各項評分
+}
+
+// =============================================
+// 安全掃描服務接口
+// =============================================
+
+// 掃描請求
+message ScanRequest {
+  string scan_id = 1;              // 掃描ID
+  string target = 2;               // 掃描目標
+  string scan_type = 3;            // 掃描類型
+  ScanConfig config = 4;           // 掃描配置
+  map<string, string> options = 5; // 額外選項
+}
+
+// 掃描配置
+message ScanConfig {
+  int32 max_depth = 1;             // 最大深度
+  int32 timeout_seconds = 2;       // 超時時間
+  repeated string included_paths = 3; // 包含路徑
+  repeated string excluded_paths = 4; // 排除路徑
+  bool aggressive_mode = 5;        // 激進模式
+}
+
+// 掃描結果
+message ScanResult {
+  string scan_id = 1;              // 掃描ID
+  string status = 2;               // 掃描狀態
+  repeated Finding findings = 3;   // 發現結果
+  ScanMetrics metrics = 4;         // 掃描指標
+  google.protobuf.Timestamp start_time = 5; // 開始時間
+  google.protobuf.Timestamp end_time = 6;   // 結束時間
+}
+
+// 發現結果
+message Finding {
+  string finding_id = 1;           // 發現ID
+  string title = 2;                // 標題
+  string description = 3;          // 描述
+  string severity = 4;             // 嚴重程度
+  string confidence = 5;           // 信心度
+  string vulnerability_type = 6;   // 漏洞類型
+  string affected_url = 7;         // 受影響的URL
+  map<string, string> evidence = 8; // 證據
+  string recommendation = 9;       // 修復建議
+  CVSSMetrics cvss = 10;          // CVSS 評分
+}
+
+// CVSS 指標
+message CVSSMetrics {
+  string attack_vector = 1;        // 攻擊向量
+  string attack_complexity = 2;    // 攻擊複雜度
+  string privileges_required = 3;  // 所需權限
+  string user_interaction = 4;     // 用戶交互
+  string scope = 5;                // 影響範圍
+  string confidentiality_impact = 6; // 機密性影響
+  string integrity_impact = 7;     // 完整性影響
+  string availability_impact = 8;  // 可用性影響
+  float base_score = 9;           // 基礎評分
+  string severity_level = 10;     // 嚴重等級
+}
+
+// 掃描指標
+message ScanMetrics {
+  int32 total_requests = 1;        // 總請求數
+  int32 total_findings = 2;        // 總發現數
+  int32 critical_findings = 3;     // 嚴重發現數
+  int32 high_findings = 4;         // 高危發現數
+  int32 medium_findings = 5;       // 中危發現數
+  int32 low_findings = 6;          // 低危發現數
+  float scan_duration_seconds = 7; // 掃描時長
+}
+
+// =============================================
+// 數據分析服務接口
+// =============================================
+
+// 數據分析請求
+message DataAnalysisRequest {
+  string analysis_id = 1;          // 分析ID
+  string data_source = 2;          // 數據源
+  string analysis_type = 3;        // 分析類型
+  repeated string data_files = 4;  // 數據文件
+  AnalysisConfig config = 5;       // 分析配置
+}
+
+// 分析配置
+message AnalysisConfig {
+  string output_format = 1;        // 輸出格式
+  bool include_statistics = 2;     // 包含統計信息
+  bool generate_charts = 3;        // 生成圖表
+  map<string, string> parameters = 4; // 分析參數
+}
+
+// 數據分析結果
+message DataAnalysisResult {
+  string analysis_id = 1;          // 分析ID
+  string status = 2;               // 分析狀態
+  repeated AnalysisInsight insights = 3; // 洞察結果
+  map<string, float> metrics = 4;  // 指標數據
+  repeated string charts = 5;      // 圖表路徑
+  string summary = 6;              // 分析摘要
+}
+
+// 分析洞察
+message AnalysisInsight {
+  string insight_id = 1;           // 洞察ID
+  string category = 2;             // 類別
+  string title = 3;                // 標題
+  string description = 4;          // 描述
+  float impact_score = 5;          // 影響評分
+  repeated string recommendations = 6; // 建議
+}
+
+// =============================================
+// 代碼生成服務接口
+// =============================================
+
+// 代碼生成請求
+message CodeGenerationRequest {
+  string generation_id = 1;        // 生成ID
+  string template_type = 2;        // 模板類型
+  string target_language = 3;      // 目標語言
+  map<string, string> parameters = 4; // 生成參數
+  string specification = 5;        // 規格說明
+}
+
+// 代碼生成結果
+message CodeGenerationResult {
+  string generation_id = 1;        // 生成ID
+  string status = 2;               // 生成狀態
+  repeated GeneratedFile files = 3; // 生成的文件
+  repeated string warnings = 4;    // 警告信息
+  string summary = 5;              // 生成摘要
+}
+
+// 生成的文件
+message GeneratedFile {
+  string file_path = 1;            // 文件路徑
+  string content = 2;              // 文件內容
+  string file_type = 3;            // 文件類型
+  int32 lines_of_code = 4;         // 代碼行數
+}
+
+// =============================================
+// Web 服務接口
+// =============================================
+
+// HTTP 請求信息
+message HttpRequestInfo {
+  string method = 1;               // HTTP 方法
+  string url = 2;                  // 請求URL
+  map<string, string> headers = 3; // 請求標頭
+  string body = 4;                 // 請求體
+  string user_agent = 5;           // User Agent
+  string remote_addr = 6;          // 遠程地址
+}
+
+// HTTP 響應信息
+message HttpResponseInfo {
+  int32 status_code = 1;           // 狀態碼
+  map<string, string> headers = 2; // 響應標頭
+  string body = 3;                 // 響應體
+  int64 content_length = 4;        // 內容長度
+  float response_time_ms = 5;      // 響應時間(毫秒)
+}
+
+// Web 掃描結果
+message WebScanResult {
+  string scan_id = 1;              // 掃描ID
+  HttpRequestInfo request = 2;     // 請求信息
+  HttpResponseInfo response = 3;   // 響應信息
+  repeated Finding findings = 4;   // 發現結果
+  map<string, string> metadata = 5; // 元數據
+}
+
+// =============================================
+// 服務定義
+// =============================================
+
+// AI 服務
+service AIService {
+  // 分析命令意圖
+  rpc AnalyzeCommand(CommandAnalysisRequest) returns (CommandAnalysisResponse);
+  
+  // 執行推理
+  rpc ExecuteReasoning(ReasoningRequest) returns (ReasoningResponse);
+  
+  // 流式推理（支援長時間推理）
+  rpc StreamReasoning(ReasoningRequest) returns (stream ReasoningResponse);
+}
+
+// 安全掃描服務
+service SecurityScanner {
+  // 啟動掃描
+  rpc StartScan(ScanRequest) returns (ScanResult);
+  
+  // 獲取掃描狀態
+  rpc GetScanStatus(ScanRequest) returns (ScanResult);
+  
+  // 流式掃描結果
+  rpc StreamScanResults(ScanRequest) returns (stream Finding);
+}
+
+// 數據分析服務
+service DataAnalyzer {
+  // 執行數據分析
+  rpc AnalyzeData(DataAnalysisRequest) returns (DataAnalysisResult);
+  
+  // 流式分析結果
+  rpc StreamAnalysis(DataAnalysisRequest) returns (stream AnalysisInsight);
+}
+
+// 代碼生成服務
+service CodeGenerator {
+  // 生成代碼
+  rpc GenerateCode(CodeGenerationRequest) returns (CodeGenerationResult);
+  
+  // 驗證生成的代碼
+  rpc ValidateCode(CodeGenerationRequest) returns (ResponseStatus);
+}
+
+// Web 服務
+service WebService {
+  // 處理 HTTP 請求
+  rpc HandleRequest(HttpRequestInfo) returns (HttpResponseInfo);
+  
+  // 執行 Web 掃描
+  rpc ScanWebsite(ScanRequest) returns (stream WebScanResult);
+}

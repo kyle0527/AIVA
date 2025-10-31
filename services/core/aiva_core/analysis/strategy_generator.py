@@ -1,5 +1,4 @@
-"""
-基於規則的測試策略生成器
+"""基於規則的測試策略生成器
 
 從攻擊面分析結果生成測試策略，包括：
 - XSS 測試任務生成
@@ -26,16 +25,14 @@ logger = logging.getLogger(__name__)
 
 
 class RuleBasedStrategyGenerator:
-    """
-    基於規則的策略生成器
+    """基於規則的策略生成器
 
     根據攻擊面分析結果和配置規則，生成針對性的測試策略。
     使用啟發式規則判斷每個資產的測試優先級。
     """
 
     def __init__(self, config: StrategyGenerationConfig | None = None) -> None:
-        """
-        初始化策略生成器
+        """初始化策略生成器
 
         Args:
             config: 策略生成配置，如果為 None 則使用默認配置
@@ -48,8 +45,7 @@ class RuleBasedStrategyGenerator:
         attack_surface: AttackSurfaceAnalysis,
         scan_payload: ScanCompletedPayload,
     ) -> TestStrategy:
-        """
-        從攻擊面分析生成測試策略
+        """從攻擊面分析生成測試策略
 
         Args:
             attack_surface: 攻擊面分析結果
@@ -58,7 +54,9 @@ class RuleBasedStrategyGenerator:
         Returns:
             完整的測試策略
         """
-        logger.info(f"[目標] Generating test strategy for scan {attack_surface.scan_id}")
+        logger.info(
+            f"[目標] Generating test strategy for scan {attack_surface.scan_id}"
+        )
         logger.info(f"   - Total candidates: {attack_surface.total_candidates}")
 
         # 生成各類型任務
@@ -215,8 +213,7 @@ class RuleBasedStrategyGenerator:
         return tasks
 
     def _calculate_priority(self, confidence: float, risk_level: str) -> int:
-        """
-        計算任務優先級
+        """計算任務優先級
 
         Args:
             confidence: 候選置信度 (0.0-1.0)
@@ -241,8 +238,7 @@ class RuleBasedStrategyGenerator:
         return base_priority
 
     def _prioritize_tasks(self, tasks: list[TestTask]) -> list[TestTask]:
-        """
-        按優先級和置信度排序任務，保留最重要的部分
+        """按優先級和置信度排序任務，保留最重要的部分
 
         Args:
             tasks: 任務列表
@@ -264,8 +260,7 @@ class RuleBasedStrategyGenerator:
     def _estimate_duration(
         self, xss_count: int, sqli_count: int, ssrf_count: int, idor_count: int
     ) -> int:
-        """
-        預估總執行時間（秒）
+        """預估總執行時間（秒）
 
         Args:
             xss_count: XSS 任務數量

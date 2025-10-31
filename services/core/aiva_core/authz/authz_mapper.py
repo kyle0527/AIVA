@@ -1,5 +1,4 @@
-"""
-AuthZ Mapper - 權限映射器
+"""AuthZ Mapper - 權限映射器
 
 測試多角色權限、映射用戶到角色、分析權限衝突。
 """
@@ -9,21 +8,20 @@ from typing import Any
 
 import structlog
 
-from .permission_matrix import AccessDecision, PermissionMatrix
+from services.aiva_common.enums import AccessDecision
+from .permission_matrix import PermissionMatrix
 
 logger = structlog.get_logger(__name__)
 
 
 class AuthZMapper:
-    """
-    權限映射器
+    """權限映射器
 
     管理用戶到角色的映射，提供權限查詢和衝突檢測。
     """
 
     def __init__(self, permission_matrix: PermissionMatrix):
-        """
-        初始化權限映射器
+        """初始化權限映射器
 
         Args:
             permission_matrix: 權限矩陣實例
@@ -39,8 +37,7 @@ class AuthZMapper:
         logger.info("authz_mapper_initialized")
 
     def assign_role_to_user(self, user_id: str, role: str) -> None:
-        """
-        分配角色給用戶
+        """分配角色給用戶
 
         Args:
             user_id: 用戶 ID
@@ -54,8 +51,7 @@ class AuthZMapper:
             logger.info("role_assigned_to_user", user_id=user_id, role=role)
 
     def revoke_role_from_user(self, user_id: str, role: str) -> None:
-        """
-        撤銷用戶的角色
+        """撤銷用戶的角色
 
         Args:
             user_id: 用戶 ID
@@ -66,8 +62,7 @@ class AuthZMapper:
             logger.info("role_revoked_from_user", user_id=user_id, role=role)
 
     def set_user_attribute(self, user_id: str, attribute: str, value: Any) -> None:
-        """
-        設置用戶屬性
+        """設置用戶屬性
 
         Args:
             user_id: 用戶 ID
@@ -81,8 +76,7 @@ class AuthZMapper:
         logger.debug("user_attribute_set", user_id=user_id, attribute=attribute)
 
     def get_user_roles(self, user_id: str) -> list[str]:
-        """
-        獲取用戶的所有角色
+        """獲取用戶的所有角色
 
         Args:
             user_id: 用戶 ID
@@ -99,8 +93,7 @@ class AuthZMapper:
         permission: str,
         context: dict[str, Any] | None = None,
     ) -> tuple[AccessDecision, list[str]]:
-        """
-        檢查用戶權限
+        """檢查用戶權限
 
         Args:
             user_id: 用戶 ID
@@ -127,7 +120,9 @@ class AuthZMapper:
         decisions: list[tuple[AccessDecision, str]] = []
 
         for role in user_roles:
-            decision = self.matrix.check_permission(role, resource, permission, full_context)
+            decision = self.matrix.check_permission(
+                role, resource, permission, full_context
+            )
             decisions.append((decision, role))
 
         # 決策邏輯：
@@ -146,7 +141,9 @@ class AuthZMapper:
             )
             return AccessDecision.ALLOW, allow_roles
 
-        conditional_roles = [role for dec, role in decisions if dec == AccessDecision.CONDITIONAL]
+        conditional_roles = [
+            role for dec, role in decisions if dec == AccessDecision.CONDITIONAL
+        ]
         if conditional_roles:
             logger.info(
                 "user_permission_conditional",
@@ -166,8 +163,7 @@ class AuthZMapper:
         return AccessDecision.DENY, []
 
     def get_user_all_permissions(self, user_id: str) -> list[dict[str, Any]]:
-        """
-        獲取用戶的所有權限
+        """獲取用戶的所有權限
 
         Args:
             user_id: 用戶 ID
@@ -181,17 +177,22 @@ class AuthZMapper:
         for role in user_roles:
             role_permissions = self.matrix.get_role_permissions(role)
             for perm in role_permissions:
-                all_permissions.append({
-                    **perm,
-                    "via_role": role,
-                })
+                all_permissions.append(
+                    {
+                        **perm,
+                        "via_role": role,
+                    }
+                )
 
-        logger.debug("user_all_permissions_retrieved", user_id=user_id, count=len(all_permissions))
+        logger.debug(
+            "user_all_permissions_retrieved",
+            user_id=user_id,
+            count=len(all_permissions),
+        )
         return all_permissions
 
     def detect_permission_conflicts(self, user_id: str) -> list[dict[str, Any]]:
-        """
-        檢測用戶的權限衝突
+        """檢測用戶的權限衝突
 
         Args:
             user_id: 用戶 ID
@@ -218,20 +219,26 @@ class AuthZMapper:
             if len(role_decisions) > 1:
                 decisions = [dec for _, dec in role_decisions]
                 # 如果有 ALLOW 和 DENY 同時存在，視為衝突
-                if AccessDecision.ALLOW in decisions and AccessDecision.DENY in decisions:
-                    conflicts.append({
-                        "resource": resource,
-                        "permission": permission,
-                        "conflicting_roles": role_decisions,
-                        "resolution": "ALLOW takes precedence",
-                    })
+                if (
+                    AccessDecision.ALLOW in decisions
+                    and AccessDecision.DENY in decisions
+                ):
+                    conflicts.append(
+                        {
+                            "resource": resource,
+                            "permission": permission,
+                            "conflicting_roles": role_decisions,
+                            "resolution": "ALLOW takes precedence",
+                        }
+                    )
 
-        logger.info("permission_conflicts_detected", user_id=user_id, count=len(conflicts))
+        logger.info(
+            "permission_conflicts_detected", user_id=user_id, count=len(conflicts)
+        )
         return conflicts
 
     def analyze_role_overlap(self) -> list[dict[str, Any]]:
-        """
-        分析角色重疊情況
+        """分析角色重疊情況
 
         Returns:
             角色重疊分析結果
@@ -240,7 +247,7 @@ class AuthZMapper:
         roles = list(self.matrix.roles)
 
         for i, role1 in enumerate(roles):
-            for role2 in roles[i + 1:]:
+            for role2 in roles[i + 1 :]:
                 role1_perms = {
                     (p["resource"], p["permission"])
                     for p in self.matrix.get_role_permissions(role1)
@@ -252,21 +259,24 @@ class AuthZMapper:
 
                 common_perms = role1_perms & role2_perms
                 if common_perms:
-                    overlap_ratio = len(common_perms) / max(len(role1_perms), len(role2_perms))
-                    overlaps.append({
-                        "role1": role1,
-                        "role2": role2,
-                        "common_permissions": len(common_perms),
-                        "overlap_ratio": overlap_ratio,
-                        "common_items": list(common_perms),
-                    })
+                    overlap_ratio = len(common_perms) / max(
+                        len(role1_perms), len(role2_perms)
+                    )
+                    overlaps.append(
+                        {
+                            "role1": role1,
+                            "role2": role2,
+                            "common_permissions": len(common_perms),
+                            "overlap_ratio": overlap_ratio,
+                            "common_items": list(common_perms),
+                        }
+                    )
 
         logger.info("role_overlap_analyzed", overlaps_count=len(overlaps))
         return overlaps
 
     def simulate_role_removal(self, user_id: str, role: str) -> dict[str, Any]:
-        """
-        模擬移除角色的影響
+        """模擬移除角色的影響
 
         Args:
             user_id: 用戶 ID
@@ -305,7 +315,9 @@ class AuthZMapper:
             "current_permission_count": current_count,
             "after_permission_count": after_count,
             "lost_permissions": lost_permissions,
-            "impact_percentage": (lost_permissions / current_count * 100) if current_count > 0 else 0,
+            "impact_percentage": (
+                (lost_permissions / current_count * 100) if current_count > 0 else 0
+            ),
             "timestamp": datetime.now().isoformat(),
         }
 
@@ -313,8 +325,7 @@ class AuthZMapper:
         return impact
 
     def recommend_role_consolidation(self, user_id: str) -> list[dict[str, Any]]:
-        """
-        推薦角色整合
+        """推薦角色整合
 
         Args:
             user_id: 用戶 ID
@@ -331,7 +342,7 @@ class AuthZMapper:
         # 分析角色重疊
         overlaps = []
         for i, role1 in enumerate(user_roles):
-            for role2 in user_roles[i + 1:]:
+            for role2 in user_roles[i + 1 :]:
                 role1_perms = self.matrix.get_role_permissions(role1)
                 role2_perms = self.matrix.get_role_permissions(role2)
 
@@ -341,24 +352,32 @@ class AuthZMapper:
                 overlap = role1_set & role2_set
                 if overlap:
                     overlap_ratio = len(overlap) / min(len(role1_set), len(role2_set))
-                    overlaps.append({
-                        "role1": role1,
-                        "role2": role2,
-                        "overlap_ratio": overlap_ratio,
-                        "overlap_count": len(overlap),
-                    })
+                    overlaps.append(
+                        {
+                            "role1": role1,
+                            "role2": role2,
+                            "overlap_ratio": overlap_ratio,
+                            "overlap_count": len(overlap),
+                        }
+                    )
 
         # 推薦高重疊的角色整合
         for overlap in overlaps:
             if overlap["overlap_ratio"] > 0.7:  # 70% 重疊
-                recommendations.append({
-                    "type": "consolidation",
-                    "roles": [overlap["role1"], overlap["role2"]],
-                    "reason": f"High overlap ({overlap['overlap_ratio']:.1%})",
-                    "suggestion": f"Consider consolidating {overlap['role1']} and {overlap['role2']}",
-                })
+                recommendations.append(
+                    {
+                        "type": "consolidation",
+                        "roles": [overlap["role1"], overlap["role2"]],
+                        "reason": f"High overlap ({overlap['overlap_ratio']:.1%})",
+                        "suggestion": f"Consider consolidating {overlap['role1']} and {overlap['role2']}",
+                    }
+                )
 
-        logger.info("role_consolidation_recommended", user_id=user_id, count=len(recommendations))
+        logger.info(
+            "role_consolidation_recommended",
+            user_id=user_id,
+            count=len(recommendations),
+        )
         return recommendations
 
 
@@ -375,7 +394,13 @@ def main():
     matrix.grant_permission("admin", "database", "delete", AccessDecision.ALLOW)
 
     matrix.grant_permission("user", "database", "read", AccessDecision.ALLOW)
-    matrix.grant_permission("user", "database", "write", AccessDecision.CONDITIONAL, condition="user_id == owner_id")
+    matrix.grant_permission(
+        "user",
+        "database",
+        "write",
+        AccessDecision.CONDITIONAL,
+        condition="user_id == owner_id",
+    )
     matrix.grant_permission("user", "database", "delete", AccessDecision.DENY)
 
     matrix.grant_permission("guest", "database", "read", AccessDecision.ALLOW)
@@ -394,7 +419,9 @@ def main():
     decision, roles = mapper.check_user_permission("alice", "database", "delete")
     print(f"Alice delete database: {decision} (via {roles})")
 
-    decision, roles = mapper.check_user_permission("bob", "database", "write", {"owner_id": 123})
+    decision, roles = mapper.check_user_permission(
+        "bob", "database", "write", {"owner_id": 123}
+    )
     print(f"Bob write database: {decision} (via {roles})")
 
     # 檢測衝突

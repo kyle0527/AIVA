@@ -1,5 +1,3 @@
-
-
 from collections import defaultdict
 from datetime import UTC, datetime
 from queue import PriorityQueue
@@ -13,8 +11,7 @@ logger = get_logger(__name__)
 
 
 class TaskQueueManager:
-    """
-    任務佇列管理器
+    """任務佇列管理器
 
     負責管理功能模組的任務佇列、優先級排序、執行狀態追蹤等。
     實現智慧化的任務調度與負載平衡。
@@ -37,8 +34,7 @@ class TaskQueueManager:
         )
 
     def enqueue_task(self, topic: Topic, task_payload: FunctionTaskPayload) -> None:
-        """
-        將任務加入佇列
+        """將任務加入佇列
 
         Args:
             topic: 任務主題
@@ -77,8 +73,7 @@ class TaskQueueManager:
         )
 
     def get_pending_tasks(self, scan_id: str) -> list[dict[str, Any]]:
-        """
-        獲取待執行任務列表
+        """獲取待執行任務列表
 
         Args:
             scan_id: 掃描ID
@@ -155,8 +150,7 @@ class TaskQueueManager:
             logger.warning(f"Task {task_id} failed: {error}")
 
     def get_scan_progress(self, scan_id: str) -> dict[str, Any]:
-        """
-        獲取掃描進度
+        """獲取掃描進度
 
         Args:
             scan_id: 掃描ID
@@ -183,8 +177,7 @@ class TaskQueueManager:
     def update_task_queue(
         self, scan_id: str, updated_tasks: list[dict[str, Any]]
     ) -> None:
-        """
-        更新任務佇列
+        """更新任務佇列
 
         Args:
             scan_id: 掃描ID

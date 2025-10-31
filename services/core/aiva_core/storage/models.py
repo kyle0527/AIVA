@@ -1,5 +1,4 @@
-"""
-SQLAlchemy ORM 模型定義
+"""SQLAlchemy ORM 模型定義
 
 所有訓練數據的數據庫模型
 """

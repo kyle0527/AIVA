@@ -1,18 +1,18 @@
-"""
-Model Updater - 模型更新器
+"""Model Updater - 模型更新器
 
 負責定期從經驗庫提取樣本並更新模型
 """
-
-
 
 import logging
 from pathlib import Path
 import pickle
 from typing import Any
 
+from ...learning.scalable_bio_trainer import (
+    ScalableBioTrainer,
+    ScalableBioTrainingConfig,
+)
 from .data_loader import ExperienceDataLoader
-from ...learning.scalable_bio_trainer import ScalableBioTrainer, ScalableBioTrainingConfig
 
 logger = logging.getLogger(__name__)
 

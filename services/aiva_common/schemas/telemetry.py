@@ -4,8 +4,6 @@
 此模組定義了模組狀態、心跳、性能指標等監控相關的資料模型。
 """
 
-
-
 from datetime import UTC, datetime
 from typing import Any
 
@@ -309,8 +307,7 @@ class OastEvent(BaseModel):
     def validate_event_type(cls, v: str) -> str:
         allowed = {"http", "dns", "smtp", "ftp", "ldap", "other"}
         if v not in allowed:
-            raise ValueError(
-                f"Invalid event_type: {v}. Must be one of {allowed}")
+            raise ValueError(f"Invalid event_type: {v}. Must be one of {allowed}")
         return v
 
 
@@ -402,8 +399,7 @@ class SIEMEvent(BaseModel):
     correlation_rules: list[str] = Field(
         default_factory=list, description="觸發的關聯規則"
     )
-    related_events: list[str] = Field(
-        default_factory=list, description="相關事件ID")
+    related_events: list[str] = Field(default_factory=list, description="相關事件ID")
 
     # 處理狀態
     status: str = Field(

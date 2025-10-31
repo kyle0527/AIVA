@@ -1,0 +1,66 @@
+{
+  "report_id": "report_cmd_1761918658",
+  "target": "https://example.com",
+  "scan_date": "2025-10-31T21:51:01.384822",
+  "executive_summary": {
+    "total_findings": 7,
+    "critical_issues": 1,
+    "high_issues": 1,
+    "risk_score": 28.0
+  },
+  "detailed_findings": {
+    "critical": [
+      {
+        "type": "auth_bypass",
+        "severity": "critical",
+        "method": "jwt_none_alg",
+        "location": "/api/auth"
+      }
+    ],
+    "high": [
+      {
+        "type": "sql_injection",
+        "severity": "high",
+        "location": "/api/users",
+        "confidence": 0.9
+      }
+    ],
+    "medium": [
+      {
+        "type": "service_version",
+        "severity": "medium",
+        "service": "apache",
+        "version": "2.4.29"
+      },
+      {
+        "type": "xss",
+        "severity": "medium",
+        "location": "/search",
+        "confidence": 0.8
+      }
+    ],
+    "low": [],
+    "info": [
+      {
+        "type": "subdomain",
+        "severity": "info",
+        "value": "api.example.com"
+      },
+      {
+        "type": "subdomain",
+        "severity": "info",
+        "value": "admin.example.com"
+      },
+      {
+        "type": "technology",
+        "severity": "info",
+        "tech": "react",
+        "version": "17.0.2"
+      }
+    ]
+  },
+  "recommendations": [
+    "🚨 立即修復所有Critical等級漏洞，這些漏洞可能導致系統完全妥協",
+    "⚠️ 優先處理High等級漏洞，建議在48小時內完成修復"
+  ]
+}

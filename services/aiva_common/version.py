@@ -17,12 +17,14 @@ SUPPORTED_PYTHON_VERSIONS = ["3.11", "3.12", "3.13"]
 API_VERSION = "v1"
 SCHEMA_VERSION = "1.0"
 
+
 def get_version() -> str:
     """獲取完整版本字符串"""
     version = __version__
     if __build__ != "main":
         version += f"+{__build__}"
     return version
+
 
 def get_version_info() -> dict:
     """獲取版本信息字典"""

@@ -1,5 +1,4 @@
-"""
-Plan Executor - 攻擊計畫執行器
+"""Plan Executor - 攻擊計畫執行器
 
 負責執行攻擊計畫，管理會話狀態，協調任務分發和結果收集
 
@@ -9,8 +8,6 @@ Plan Executor - 攻擊計畫執行器
 - 使用 TraceLogger 記錄執行過程
 - 管理會話生命週期
 """
-
-
 
 import asyncio
 from datetime import UTC, datetime
@@ -58,11 +55,11 @@ class PlanExecutor:
         self.trace_logger = trace_logger or TraceLogger(storage_backend)
         self.storage = storage_backend
         self.active_sessions: dict[str, SessionState] = {}
-        
+
         # 任務管理
         self.running_tasks: dict[str, dict[str, Any]] = {}
         self.completed_tasks: dict[str, dict[str, Any]] = {}
-        
+
         logger.info("PlanExecutor initialized")
 
     async def execute_plan(
@@ -384,27 +381,28 @@ class PlanExecutor:
         Raises:
             asyncio.TimeoutError: 超時
         """
-        import asyncio
         from datetime import datetime, timedelta
-        
+
         logger.info(f"等待任務 {task_id} 結果，超時時間: {timeout}s")
-        
+
         start_time = datetime.now()
         end_time = start_time + timedelta(seconds=timeout)
-        
+
         # 實際的結果等待邏輯
         try:
             # 1. 檢查任務是否在執行佇列中
             if task_id in self.running_tasks:
                 logger.debug(f"任務 {task_id} 正在執行中...")
-                
+
                 # 2. 輪詢等待結果（實際應用中會使用 MQ 或其他異步機制）
                 while datetime.now() < end_time:
                     # 檢查任務是否完成
                     if task_id in self.completed_tasks:
                         result = self.completed_tasks.pop(task_id)
-                        logger.info(f"任務 {task_id} 完成，狀態: {result.get('status')}")
-                        
+                        logger.info(
+                            f"任務 {task_id} 完成，狀態: {result.get('status')}"
+                        )
+
                         # 確保返回結果包含 success 字段
                         return {
                             "task_id": task_id,
@@ -414,12 +412,12 @@ class PlanExecutor:
                             "metadata": result.get("metadata", {}),
                             "execution_time": result.get("execution_time", 0),
                             "error": result.get("error"),
-                            "timestamp": datetime.now().isoformat()
+                            "timestamp": datetime.now().isoformat(),
                         }
-                    
+
                     # 短暫等待後重試
                     await asyncio.sleep(0.1)
-                
+
                 # 超時處理
                 logger.warning(f"任務 {task_id} 執行超時")
                 return {
@@ -429,9 +427,9 @@ class PlanExecutor:
                     "findings": [],
                     "metadata": {},
                     "error": f"Task execution timeout after {timeout}s",
-                    "timestamp": datetime.now().isoformat()
+                    "timestamp": datetime.now().isoformat(),
                 }
-            
+
             else:
                 # 3. 任務不在執行佇列中，可能已完成或不存在
                 if task_id in self.completed_tasks:
@@ -443,20 +441,21 @@ class PlanExecutor:
                         "findings": result.get("findings", []),
                         "metadata": result.get("metadata", {}),
                         "execution_time": result.get("execution_time", 0),
-                        "timestamp": datetime.now().isoformat()
+                        "timestamp": datetime.now().isoformat(),
                     }
                 else:
                     # 4. 模擬執行（在沒有實際任務系統時的降級方案）
                     logger.info(f"模擬執行任務 {task_id}")
-                    
+
                     # 模擬執行時間
                     simulation_time = min(2.0, timeout * 0.1)
                     await asyncio.sleep(simulation_time)
-                    
+
                     # 模擬成功結果（80% 成功率）
                     import random
+
                     is_successful = random.random() > 0.2
-                    
+
                     if is_successful:
                         mock_findings = self._generate_mock_findings(task_id)
                         return {
@@ -467,10 +466,10 @@ class PlanExecutor:
                             "metadata": {
                                 "simulated": True,
                                 "execution_mode": "mock",
-                                "simulation_time": simulation_time
+                                "simulation_time": simulation_time,
                             },
                             "execution_time": simulation_time,
-                            "timestamp": datetime.now().isoformat()
+                            "timestamp": datetime.now().isoformat(),
                         }
                     else:
                         return {
@@ -481,10 +480,10 @@ class PlanExecutor:
                             "metadata": {"simulated": True, "execution_mode": "mock"},
                             "error": "Simulated execution failure",
                             "execution_time": simulation_time,
-                            "timestamp": datetime.now().isoformat()
+                            "timestamp": datetime.now().isoformat(),
                         }
-        
-        except asyncio.TimeoutError:
+
+        except TimeoutError:
             logger.error(f"任務 {task_id} 等待結果超時")
             return {
                 "task_id": task_id,
@@ -493,9 +492,9 @@ class PlanExecutor:
                 "findings": [],
                 "metadata": {},
                 "error": f"Result waiting timeout after {timeout}s",
-                "timestamp": datetime.now().isoformat()
+                "timestamp": datetime.now().isoformat(),
             }
-        
+
         except Exception as e:
             logger.error(f"等待任務 {task_id} 結果時發生異常: {e}")
             return {
@@ -505,46 +504,46 @@ class PlanExecutor:
                 "findings": [],
                 "metadata": {},
                 "error": str(e),
-                "timestamp": datetime.now().isoformat()
+                "timestamp": datetime.now().isoformat(),
             }
-    
+
     def _generate_mock_findings(self, task_id: str) -> list[dict[str, Any]]:
         """生成模擬發現結果"""
         import random
-        
+
         mock_findings = [
             {
                 "type": "sql_injection",
                 "severity": "high",
                 "location": "/api/user/login",
                 "description": "Potential SQL injection vulnerability in login form",
-                "confidence": 0.85
+                "confidence": 0.85,
             },
             {
                 "type": "xss",
-                "severity": "medium", 
+                "severity": "medium",
                 "location": "/search",
                 "description": "Reflected XSS in search parameter",
-                "confidence": 0.72
+                "confidence": 0.72,
             },
             {
                 "type": "csrf",
                 "severity": "low",
                 "location": "/profile/update",
                 "description": "Missing CSRF protection on profile update",
-                "confidence": 0.65
-            }
+                "confidence": 0.65,
+            },
         ]
-        
+
         # 隨機選擇 1-3 個發現
         num_findings = random.randint(1, 3)
         selected_findings = random.sample(mock_findings, num_findings)
-        
+
         # 添加任務特定信息
         for finding in selected_findings:
             finding["task_id"] = task_id
             finding["finding_id"] = f"finding_{task_id}_{random.randint(1000, 9999)}"
-        
+
         return selected_findings
 
     async def _check_dependencies(

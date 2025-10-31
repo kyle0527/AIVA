@@ -4,8 +4,6 @@ Enhanced 版本 Schemas
 此模組定義了各種增強版本的資料模型,提供更詳細的字段和擴展功能。
 """
 
-
-
 from datetime import UTC, datetime
 from typing import Any, Literal, cast
 
@@ -67,7 +65,7 @@ class EnhancedFindingPayload(BaseModel):
         # 構建 SARIF 結果
         level_mapping = {
             "critical": "error",
-            "high": "error", 
+            "high": "error",
             "medium": "warning",
             "low": "warning",
             "informational": "note",
@@ -75,11 +73,7 @@ class EnhancedFindingPayload(BaseModel):
 
         locations = []
         if self.target.url:
-            locations.append(
-                SARIFLocation(
-                    uri=str(self.target.url)
-                )
-            )
+            locations.append(SARIFLocation(uri=str(self.target.url)))
 
         return SARIFResult(
             rule_id=(
@@ -87,7 +81,17 @@ class EnhancedFindingPayload(BaseModel):
                 if self.vulnerability.vulnerability_id
                 else f"AIVA-{self.vulnerability.title}"
             ),
-            level=cast(Literal["error", "warning", "info", "note"], level_mapping.get(self.vulnerability.severity.lower() if self.vulnerability.severity else "medium", "warning")),
+            level=cast(
+                Literal["error", "warning", "info", "note"],
+                level_mapping.get(
+                    (
+                        self.vulnerability.severity.lower()
+                        if self.vulnerability.severity
+                        else "medium"
+                    ),
+                    "warning",
+                ),
+            ),
             message=self.vulnerability.description
             or f"{self.vulnerability.title} detected",
             locations=locations,
@@ -95,7 +99,7 @@ class EnhancedFindingPayload(BaseModel):
                 "finding_id": self.finding_id,
                 "confidence": self.vulnerability.ai_confidence,
                 "cvss_score": (
-                    getattr(self.vulnerability.cvss_metrics, 'base_score', None)
+                    getattr(self.vulnerability.cvss_metrics, "base_score", None)
                     if self.vulnerability.cvss_metrics
                     else None
                 ),
@@ -110,14 +114,10 @@ class EnhancedFindingPayload(BaseModel):
 class EnhancedScanScope(BaseModel):
     """增強掃描範圍定義"""
 
-    included_hosts: list[str] = Field(
-        default_factory=list, description="包含的主機")
-    excluded_hosts: list[str] = Field(
-        default_factory=list, description="排除的主機")
-    included_paths: list[str] = Field(
-        default_factory=list, description="包含的路徑")
-    excluded_paths: list[str] = Field(
-        default_factory=list, description="排除的路徑")
+    included_hosts: list[str] = Field(default_factory=list, description="包含的主機")
+    excluded_hosts: list[str] = Field(default_factory=list, description="排除的主機")
+    included_paths: list[str] = Field(default_factory=list, description="包含的路徑")
+    excluded_paths: list[str] = Field(default_factory=list, description="排除的路徑")
     max_depth: int = Field(default=5, ge=1, le=20, description="最大掃描深度")
 
 
@@ -204,13 +204,11 @@ class EnhancedRiskAssessment(BaseModel):
     risk_factors: list[RiskFactor] = Field(description="風險因子列表")
 
     # CVSS 整合
-    cvss_metrics: CVSSv3Metrics | None = Field(
-        default=None, description="CVSS評分")
+    cvss_metrics: CVSSv3Metrics | None = Field(default=None, description="CVSS評分")
 
     # 業務影響
     business_impact: str | None = Field(default=None, description="業務影響描述")
-    affected_assets: list[str] = Field(
-        default_factory=list, description="受影響資產")
+    affected_assets: list[str] = Field(default_factory=list, description="受影響資產")
 
     # 緩解措施
     mitigation_strategies: list[str] = Field(
@@ -272,10 +270,8 @@ class EnhancedAttackPath(BaseModel):
     overall_risk: float = Field(ge=0.0, le=10.0, description="總體風險")
 
     # 緩解措施
-    blocking_controls: list[str] = Field(
-        default_factory=list, description="阻斷控制")
-    detection_controls: list[str] = Field(
-        default_factory=list, description="檢測控制")
+    blocking_controls: list[str] = Field(default_factory=list, description="阻斷控制")
+    detection_controls: list[str] = Field(default_factory=list, description="檢測控制")
 
     metadata: dict[str, Any] = Field(default_factory=dict, description="元數據")
 
@@ -302,8 +298,7 @@ class EnhancedTaskExecution(BaseModel):
     progress: float = Field(ge=0.0, le=1.0, description="執行進度")
 
     # 結果信息
-    result_data: dict[str, Any] = Field(
-        default_factory=dict, description="結果數據")
+    result_data: dict[str, Any] = Field(default_factory=dict, description="結果數據")
     error_message: str | None = Field(default=None, description="錯誤消息")
 
     # 資源使用
@@ -340,12 +335,10 @@ class EnhancedVulnerabilityCorrelation(BaseModel):
 
     # 組合影響
     combined_risk_score: float = Field(ge=0.0, le=10.0, description="組合風險評分")
-    exploitation_complexity: float = Field(
-        ge=0.0, le=10.0, description="利用複雜度")
+    exploitation_complexity: float = Field(ge=0.0, le=10.0, description="利用複雜度")
 
     # 攻擊場景
-    attack_scenarios: list[str] = Field(
-        default_factory=list, description="攻擊場景")
+    attack_scenarios: list[str] = Field(default_factory=list, description="攻擊場景")
     recommended_order: list[str] = Field(
         default_factory=list, description="建議利用順序"
     )
@@ -354,8 +347,7 @@ class EnhancedVulnerabilityCorrelation(BaseModel):
     coordinated_mitigation: list[str] = Field(
         default_factory=list, description="協調緩解措施"
     )
-    priority_ranking: list[str] = Field(
-        default_factory=list, description="優先級排序")
+    priority_ranking: list[str] = Field(default_factory=list, description="優先級排序")
 
     # 時間戳
     analyzed_at: datetime = Field(default_factory=lambda: datetime.now(UTC))

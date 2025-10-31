@@ -1,5 +1,3 @@
-
-
 import asyncio
 from datetime import UTC, datetime, timedelta
 from typing import Any
@@ -10,8 +8,7 @@ logger = get_logger(__name__)
 
 
 class ExecutionStatusMonitor:
-    """
-    執行狀態監控器
+    """執行狀態監控器
 
     監控任務執行狀態、Worker心跳檢測、SLA追蹤等，
     提供系統健康狀態評估與異常警報。
@@ -30,8 +27,7 @@ class ExecutionStatusMonitor:
         self._alerts: list[dict[str, Any]] = []
 
     def record_worker_heartbeat(self, worker_id: str, status: str = "healthy") -> None:
-        """
-        記錄Worker心跳
+        """記錄Worker心跳
 
         Args:
             worker_id: Worker標識符
@@ -41,8 +37,7 @@ class ExecutionStatusMonitor:
         logger.debug(f"Heartbeat received from worker {worker_id}: {status}")
 
     def record_task_start(self, task_id: str, worker_id: str) -> None:
-        """
-        記錄任務開始執行
+        """記錄任務開始執行
 
         Args:
             task_id: 任務ID
@@ -58,8 +53,7 @@ class ExecutionStatusMonitor:
     def record_task_completion(
         self, task_id: str, success: bool, duration_seconds: float | None = None
     ) -> None:
-        """
-        記錄任務完成
+        """記錄任務完成
 
         Args:
             task_id: 任務ID
@@ -102,8 +96,7 @@ class ExecutionStatusMonitor:
         )
 
     def get_system_health(self) -> dict[str, Any]:
-        """
-        獲取系統健康狀態
+        """獲取系統健康狀態
 
         Returns:
             系統健康狀態資訊
@@ -159,8 +152,7 @@ class ExecutionStatusMonitor:
         }
 
     def check_sla_violations(self) -> list[dict[str, Any]]:
-        """
-        檢查SLA違規
+        """檢查SLA違規
 
         Returns:
             SLA違規列表
@@ -200,8 +192,7 @@ class ExecutionStatusMonitor:
     def add_alert(
         self, level: str, message: str, details: dict[str, Any] | None = None
     ) -> None:
-        """
-        新增警報
+        """新增警報
 
         Args:
             level: 警報級別 (info, warning, error, critical)

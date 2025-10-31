@@ -1,5 +1,4 @@
-"""
-Permission Matrix - 權限矩陣數據結構與分析
+"""Permission Matrix - 權限矩陣數據結構與分析
 
 提供權限矩陣的數據結構、存儲、查詢與分析功能。
 """
@@ -8,17 +7,48 @@ from datetime import datetime
 from typing import Any
 
 import numpy as np
-
 import structlog
 
+# 使用統一的可選依賴管理框架
+from utilities.optional_deps import deps
+
 from services.aiva_common.enums import AccessDecision
+
+# 註冊 pandas 依賴
+deps.register("pandas", ["pandas"])
+
+# 可選 pandas 導入
+if deps.is_available("pandas"):
+    import pandas as pd
+else:
+    # Mock pandas DataFrame
+    class MockDataFrame:
+        def __init__(self, data=None):
+            self.data = data or []
+            
+        def __len__(self):
+            return len(self.data)
+            
+        def to_dict(self, orient='records'):
+            return self.data
+            
+        def to_json(self, *args, **kwargs):
+            import json
+            return json.dumps(self.data)
+            
+        def empty(self):
+            return len(self.data) == 0
+    
+    class MockPandas:
+        DataFrame = MockDataFrame
+    
+    pd = MockPandas()
 
 logger = structlog.get_logger(__name__)
 
 
 class PermissionMatrix:
-    """
-    權限矩陣
+    """權限矩陣
 
     管理角色-資源-權限的三維矩陣。
     """
@@ -41,8 +71,7 @@ class PermissionMatrix:
         logger.info("permission_matrix_initialized")
 
     def add_role(self, role: str, inherits_from: list[str] | None = None) -> None:
-        """
-        添加角色
+        """添加角色
 
         Args:
             role: 角色名稱
@@ -56,8 +85,7 @@ class PermissionMatrix:
             logger.info("role_added", role=role)
 
     def add_resource(self, resource: str) -> None:
-        """
-        添加資源
+        """添加資源
 
         Args:
             resource: 資源名稱
@@ -66,8 +94,7 @@ class PermissionMatrix:
         logger.debug("resource_added", resource=resource)
 
     def add_permission(self, permission: str) -> None:
-        """
-        添加權限
+        """添加權限
 
         Args:
             permission: 權限名稱
@@ -83,8 +110,7 @@ class PermissionMatrix:
         decision: AccessDecision = AccessDecision.ALLOW,
         condition: str | None = None,
     ) -> None:
-        """
-        授予權限
+        """授予權限
 
         Args:
             role: 角色
@@ -122,8 +148,7 @@ class PermissionMatrix:
             )
 
     def revoke_permission(self, role: str, resource: str, permission: str) -> None:
-        """
-        撤銷權限
+        """撤銷權限
 
         Args:
             role: 角色
@@ -143,10 +168,13 @@ class PermissionMatrix:
             )
 
     def check_permission(
-        self, role: str, resource: str, permission: str, context: dict[str, Any] | None = None
+        self,
+        role: str,
+        resource: str,
+        permission: str,
+        context: dict[str, Any] | None = None,
     ) -> AccessDecision:
-        """
-        檢查權限
+        """檢查權限
 
         Args:
             role: 角色
@@ -176,15 +204,16 @@ class PermissionMatrix:
         # 檢查角色繼承
         if role in self.role_inheritance:
             for parent_role in self.role_inheritance[role]:
-                parent_decision = self.check_permission(parent_role, resource, permission, context)
+                parent_decision = self.check_permission(
+                    parent_role, resource, permission, context
+                )
                 if parent_decision != AccessDecision.DENY:
                     return parent_decision
 
         return AccessDecision.DENY
 
     def _evaluate_condition(self, condition: str, context: dict[str, Any]) -> bool:
-        """
-        評估條件表達式
+        """評估條件表達式
 
         Args:
             condition: 條件表達式
@@ -197,12 +226,13 @@ class PermissionMatrix:
             # 簡單的條件評估（生產環境應使用更安全的方式）
             return eval(condition, {"__builtins__": {}}, context)
         except Exception as e:
-            logger.error("condition_evaluation_failed", condition=condition, error=str(e))
+            logger.error(
+                "condition_evaluation_failed", condition=condition, error=str(e)
+            )
             return False
 
     def get_role_permissions(self, role: str) -> list[dict[str, Any]]:
-        """
-        獲取角色的所有權限
+        """獲取角色的所有權限
 
         Args:
             role: 角色名稱
@@ -213,19 +243,20 @@ class PermissionMatrix:
         permissions = []
         for (r, resource, permission), decision in self.matrix.items():
             if r == role:
-                permissions.append({
-                    "resource": resource,
-                    "permission": permission,
-                    "decision": decision,
-                    "has_condition": (r, resource, permission) in self.conditions,
-                })
+                permissions.append(
+                    {
+                        "resource": resource,
+                        "permission": permission,
+                        "decision": decision,
+                        "has_condition": (r, resource, permission) in self.conditions,
+                    }
+                )
 
         logger.debug("role_permissions_retrieved", role=role, count=len(permissions))
         return permissions
 
     def get_resource_permissions(self, resource: str) -> list[dict[str, Any]]:
-        """
-        獲取資源的所有權限
+        """獲取資源的所有權限
 
         Args:
             resource: 資源名稱
@@ -236,18 +267,21 @@ class PermissionMatrix:
         permissions = []
         for (role, res, permission), decision in self.matrix.items():
             if res == resource:
-                permissions.append({
-                    "role": role,
-                    "permission": permission,
-                    "decision": decision,
-                })
+                permissions.append(
+                    {
+                        "role": role,
+                        "permission": permission,
+                        "decision": decision,
+                    }
+                )
 
-        logger.debug("resource_permissions_retrieved", resource=resource, count=len(permissions))
+        logger.debug(
+            "resource_permissions_retrieved", resource=resource, count=len(permissions)
+        )
         return permissions
 
-    def to_dataframe(self) -> pd.DataFrame:
-        """
-        轉換為 Pandas DataFrame
+    def to_dataframe(self) -> Any:
+        """轉換為 Pandas DataFrame
 
         Returns:
             DataFrame 表示
@@ -255,21 +289,22 @@ class PermissionMatrix:
         data = []
         for (role, resource, permission), decision in self.matrix.items():
             has_condition = (role, resource, permission) in self.conditions
-            data.append({
-                "role": role,
-                "resource": resource,
-                "permission": permission,
-                "decision": decision,
-                "conditional": has_condition,
-            })
+            data.append(
+                {
+                    "role": role,
+                    "resource": resource,
+                    "permission": permission,
+                    "decision": decision,
+                    "conditional": has_condition,
+                }
+            )
 
         df = pd.DataFrame(data)
         logger.debug("matrix_converted_to_dataframe", rows=len(df))
         return df
 
     def to_numpy_matrix(self) -> tuple[np.ndarray, list[str], list[str], list[str]]:
-        """
-        轉換為 NumPy 矩陣（用於數值分析）
+        """轉換為 NumPy 矩陣（用於數值分析）
 
         Returns:
             (矩陣, 角色列表, 資源列表, 權限列表)
@@ -303,8 +338,7 @@ class PermissionMatrix:
         return matrix, roles_list, resources_list, permissions_list
 
     def analyze_coverage(self) -> dict[str, Any]:
-        """
-        分析權限覆蓋率
+        """分析權限覆蓋率
 
         Returns:
             覆蓋率分析結果
@@ -345,8 +379,7 @@ class PermissionMatrix:
         return analysis
 
     def find_over_privileged_roles(self) -> list[dict[str, Any]]:
-        """
-        查找過度授權的角色
+        """查找過度授權的角色
 
         Returns:
             過度授權角色列表
@@ -355,7 +388,9 @@ class PermissionMatrix:
 
         for role in self.roles:
             permissions = self.get_role_permissions(role)
-            allow_count = sum(1 for p in permissions if p["decision"] == AccessDecision.ALLOW)
+            allow_count = sum(
+                1 for p in permissions if p["decision"] == AccessDecision.ALLOW
+            )
             role_permission_counts[role] = allow_count
 
         # 計算平均值和標準差
@@ -372,20 +407,21 @@ class PermissionMatrix:
         over_privileged = []
         for role, count in role_permission_counts.items():
             if count > threshold:
-                over_privileged.append({
-                    "role": role,
-                    "permission_count": count,
-                    "average": mean,
-                    "threshold": threshold,
-                    "excess_permissions": count - threshold,
-                })
+                over_privileged.append(
+                    {
+                        "role": role,
+                        "permission_count": count,
+                        "average": mean,
+                        "threshold": threshold,
+                        "excess_permissions": count - threshold,
+                    }
+                )
 
         logger.info("over_privileged_roles_found", count=len(over_privileged))
         return over_privileged
 
     def export_to_dict(self) -> dict[str, Any]:
-        """
-        匯出為字典格式
+        """匯出為字典格式
 
         Returns:
             字典表示
@@ -425,18 +461,34 @@ def main():
     matrix.grant_permission("admin", "database", "delete", AccessDecision.ALLOW)
 
     matrix.grant_permission("user", "database", "read", AccessDecision.ALLOW)
-    matrix.grant_permission("user", "database", "write", AccessDecision.CONDITIONAL, condition="user_id == owner_id")
+    matrix.grant_permission(
+        "user",
+        "database",
+        "write",
+        AccessDecision.CONDITIONAL,
+        condition="user_id == owner_id",
+    )
 
     matrix.grant_permission("guest", "database", "read", AccessDecision.ALLOW)
     matrix.grant_permission("guest", "database", "write", AccessDecision.DENY)
 
     # 檢查權限
     print("=== Permission Checks ===")
-    print(f"Admin read database: {matrix.check_permission('admin', 'database', 'read')}")
-    print(f"User write database (without context): {matrix.check_permission('user', 'database', 'write')}")
-    print(f"User write database (with context): {matrix.check_permission('user', 'database', 'write', {'user_id': 123, 'owner_id': 123})}")
-    print(f"Guest write database: {matrix.check_permission('guest', 'database', 'write')}")
-    print(f"Power user read database (inherited): {matrix.check_permission('power_user', 'database', 'read')}")
+    print(
+        f"Admin read database: {matrix.check_permission('admin', 'database', 'read')}"
+    )
+    print(
+        f"User write database (without context): {matrix.check_permission('user', 'database', 'write')}"
+    )
+    print(
+        f"User write database (with context): {matrix.check_permission('user', 'database', 'write', {'user_id': 123, 'owner_id': 123})}"
+    )
+    print(
+        f"Guest write database: {matrix.check_permission('guest', 'database', 'write')}"
+    )
+    print(
+        f"Power user read database (inherited): {matrix.check_permission('power_user', 'database', 'read')}"
+    )
 
     # 分析覆蓋率
     print("\n=== Coverage Analysis ===")

@@ -4,8 +4,6 @@ AI Engine 與 UI Panel 數據合約
 定義 AI 代理、工具系統、UI 控制面板的標準數據結構
 """
 
-
-
 from datetime import datetime
 from typing import Literal
 
@@ -117,9 +115,7 @@ class RAGChunk(BaseModel):
 
     path: str = Field(description="檔案路徑")
     content: str = Field(description="程式碼內容", max_length=5000)
-    type: Literal["FunctionDef", "ClassDef", "Module"] = Field(
-        description="程式碼類型"
-    )
+    type: Literal["FunctionDef", "ClassDef", "Module"] = Field(description="程式碼類型")
     name: str = Field(description="函式/類別名稱")
     score: int = Field(ge=0, description="檢索相關度分數")
 
@@ -179,7 +175,9 @@ class ScanTaskResponse(BaseModel):
         description="任務狀態"
     )
     created_by: Literal["ui", "ai"] = Field(description="建立方式")
-    created_at: datetime = Field(default_factory=datetime.utcnow, description="建立時間")
+    created_at: datetime = Field(
+        default_factory=datetime.utcnow, description="建立時間"
+    )
     ai_result: AIAgentResponse | None = Field(default=None, description="AI 執行結果")
 
 

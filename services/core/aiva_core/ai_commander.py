@@ -14,8 +14,6 @@ AI Commander - AIVA 中央 AI 指揮系統
 - Training 提供持續學習
 """
 
-
-
 from datetime import datetime
 from enum import Enum
 import logging
@@ -23,19 +21,23 @@ from pathlib import Path
 from typing import Any
 
 try:
+    from services.aiva_common.ai.experience_manager import (
+        AIVAExperienceManager as ExperienceManager,
+    )
+
     from .ai_engine import BioNeuronRAGAgent
     from .learning.model_trainer import ModelTrainer
     from .multilang_coordinator import MultiLanguageAICoordinator
     from .rag import KnowledgeBase, RAGEngine, VectorStore
     from .training.training_orchestrator import TrainingOrchestrator
-    from services.aiva_common.ai.experience_manager import AIVAExperienceManager as ExperienceManager
 except ImportError:
     from services.core.aiva_core.ai_engine import BioNeuronRAGAgent
-
     from services.core.aiva_core.learning.model_trainer import ModelTrainer
     from services.core.aiva_core.multilang_coordinator import MultiLanguageAICoordinator
     from services.core.aiva_core.rag import KnowledgeBase, RAGEngine, VectorStore
-    from services.core.aiva_core.training.training_orchestrator import TrainingOrchestrator
+    from services.core.aiva_core.training.training_orchestrator import (
+        TrainingOrchestrator,
+    )
 
 logger = logging.getLogger(__name__)
 
@@ -124,45 +126,49 @@ class AICommander:
 
         # 3. 經驗管理和模型訓練
         logger.info("  Loading Training System...")
-        
+
         # 整合 ExperienceManager 與資料庫後端
         experience_db_path = self.data_directory / "experience_db"
         experience_db_path.mkdir(parents=True, exist_ok=True)
-        
+
         # 使用簡單的 JSON 檔案儲存後端（可擴展為資料庫）
         class SimpleStorageBackend:
             """簡單的檔案儲存後端"""
+
             def __init__(self, storage_path: Path):
                 self.storage_path = storage_path
                 self.experiences_file = storage_path / "experiences.json"
                 if not self.experiences_file.exists():
                     import json
-                    with open(self.experiences_file, 'w', encoding='utf-8') as f:
+
+                    with open(self.experiences_file, "w", encoding="utf-8") as f:
                         json.dump([], f)
-            
+
             async def add_experience(self, experience_data: dict):
                 """添加經驗記錄"""
                 import json
+
                 try:
-                    with open(self.experiences_file, 'r', encoding='utf-8') as f:
+                    with open(self.experiences_file, encoding="utf-8") as f:
                         experiences = json.load(f)
                     experiences.append(experience_data)
-                    with open(self.experiences_file, 'w', encoding='utf-8') as f:
+                    with open(self.experiences_file, "w", encoding="utf-8") as f:
                         json.dump(experiences, f, indent=2, ensure_ascii=False)
                 except Exception as e:
                     logger.error(f"Failed to save experience: {e}")
-            
+
             async def get_experiences(self, limit: int = 100) -> list[dict]:
                 """獲取經驗記錄"""
                 import json
+
                 try:
-                    with open(self.experiences_file, 'r', encoding='utf-8') as f:
+                    with open(self.experiences_file, encoding="utf-8") as f:
                         experiences = json.load(f)
                     return experiences[-limit:]  # 返回最近的記錄
                 except Exception as e:
                     logger.error(f"Failed to load experiences: {e}")
                     return []
-        
+
         storage_backend = SimpleStorageBackend(experience_db_path)
         self.experience_manager = ExperienceManager(
             storage_backend=storage_backend,
@@ -174,13 +180,15 @@ class AICommander:
 
         # 4. 訓練編排器（整合 RAG 和訓練）
         try:
-            from .training.scenario_manager import ScenarioManager
             from .execution.plan_executor import PlanExecutor
             from .messaging.message_broker import MessageBroker
+            from .training.scenario_manager import ScenarioManager
         except ImportError:
-            from services.core.aiva_core.training.scenario_manager import ScenarioManager
             from services.core.aiva_core.execution.plan_executor import PlanExecutor
             from services.core.aiva_core.messaging.message_broker import MessageBroker
+            from services.core.aiva_core.training.scenario_manager import (
+                ScenarioManager,
+            )
 
         scenario_manager = ScenarioManager()
 
@@ -322,17 +330,21 @@ class AICommander:
             )
 
             # 2. 從經驗庫獲取歷史成功案例
-            historical_experiences = await self.experience_manager.storage.get_experiences(limit=50) if self.experience_manager.storage else []
-            
+            historical_experiences = (
+                await self.experience_manager.storage.get_experiences(limit=50)
+                if self.experience_manager.storage
+                else []
+            )
+
             # 3. 使用 BioNeuronRAGAgent 生成計畫
             plan_prompt = self._build_plan_generation_prompt(
                 target=target,
                 objective=objective,
                 rag_context=rag_context,
                 historical_experiences=historical_experiences,
-                constraints=constraints
+                constraints=constraints,
             )
-            
+
             # 調用 BioNeuron 生成計畫
             plan_response = await self.bio_neuron_agent.generate_structured_output(
                 prompt=plan_prompt,
@@ -349,21 +361,28 @@ class AICommander:
                                 "properties": {
                                     "name": {"type": "string"},
                                     "description": {"type": "string"},
-                                    "steps": {"type": "array", "items": {"type": "string"}},
-                                    "expected_duration": {"type": "string"}
-                                }
-                            }
+                                    "steps": {
+                                        "type": "array",
+                                        "items": {"type": "string"},
+                                    },
+                                    "expected_duration": {"type": "string"},
+                                },
+                            },
                         },
                         "risk_assessment": {"type": "string"},
-                        "success_criteria": {"type": "array", "items": {"type": "string"}}
-                    }
-                }
+                        "success_criteria": {
+                            "type": "array",
+                            "items": {"type": "string"},
+                        },
+                    },
+                },
             )
-            
+
             # 4. 構建完整的攻擊計畫
             from uuid import uuid4
+
             plan_id = f"plan_{uuid4().hex[:12]}"
-            
+
             attack_plan = {
                 "plan_id": plan_id,
                 "target": target,
@@ -372,10 +391,12 @@ class AICommander:
                 "risk_assessment": plan_response.get("risk_assessment", ""),
                 "success_criteria": plan_response.get("success_criteria", []),
                 "rag_context": {
-                    "similar_techniques": rag_context.get('similar_techniques', []),
+                    "similar_techniques": rag_context.get("similar_techniques", []),
                     "successful_experiences_count": len(historical_experiences),
                 },
-                "confidence": self._calculate_plan_confidence(rag_context, historical_experiences),
+                "confidence": self._calculate_plan_confidence(
+                    rag_context, historical_experiences
+                ),
                 "created_at": datetime.now().isoformat(),
             }
 
@@ -389,25 +410,25 @@ class AICommander:
                 "plan": attack_plan,
                 "confidence": attack_plan["confidence"],
             }
-            
+
         except Exception as e:
             logger.error(f"Failed to generate attack plan: {e}", exc_info=True)
             return {
                 "success": False,
                 "error": str(e),
-                "fallback_message": "Plan generation failed, using basic strategy"
+                "fallback_message": "Plan generation failed, using basic strategy",
             }
-    
+
     def _build_plan_generation_prompt(
         self,
         target: str,
         objective: str,
         rag_context: dict[str, Any],
         historical_experiences: list[dict],
-        constraints: dict[str, Any]
+        constraints: dict[str, Any],
     ) -> str:
         """構建計畫生成提示詞 (優化版)
-        
+
         優化重點:
         - 更詳細的技術描述
         - 成功案例引用
@@ -421,56 +442,60 @@ class AICommander:
 📋 Objective: {objective}
 
 """
-        
+
         # 2. RAG 知識庫相似技術 (詳細版)
-        similar_techs = rag_context.get('similar_techniques', [])
+        similar_techs = rag_context.get("similar_techniques", [])
         if similar_techs:
             prompt += "🔍 Similar Techniques from Knowledge Base:\n"
             for idx, tech in enumerate(similar_techs[:5], 1):  # 增加到 5 個
                 prompt += f"{idx}. {tech.get('name', 'N/A')}\n"
                 prompt += f"   - Description: {tech.get('description', 'N/A')}\n"
                 prompt += f"   - Relevance Score: {tech.get('score', 0):.2f}\n"
-                if tech.get('tags'):
+                if tech.get("tags"):
                     prompt += f"   - Tags: {', '.join(tech.get('tags', []))}\n"
             prompt += "\n"
-        
+
         # 3. 歷史經驗統計
         if historical_experiences:
-            success_exps = [e for e in historical_experiences if e.get('score', 0) > 0.7]
-            medium_exps = [e for e in historical_experiences if 0.4 <= e.get('score', 0) <= 0.7]
-            failed_exps = [e for e in historical_experiences if e.get('score', 0) < 0.4]
-            
-            prompt += f"📊 Historical Performance Analysis:\n"
+            success_exps = [
+                e for e in historical_experiences if e.get("score", 0) > 0.7
+            ]
+            medium_exps = [
+                e for e in historical_experiences if 0.4 <= e.get("score", 0) <= 0.7
+            ]
+            failed_exps = [e for e in historical_experiences if e.get("score", 0) < 0.4]
+
+            prompt += "📊 Historical Performance Analysis:\n"
             prompt += f"   - Total Experiences: {len(historical_experiences)}\n"
             prompt += f"   - ✅ Success Rate: {len(success_exps)/len(historical_experiences)*100:.1f}%\n"
             prompt += f"   - ⚠️ Partial Success: {len(medium_exps)/len(historical_experiences)*100:.1f}%\n"
             prompt += f"   - ❌ Failure Rate: {len(failed_exps)/len(historical_experiences)*100:.1f}%\n"
-            
+
             # 引用成功案例
             if success_exps:
                 prompt += "\n🌟 Top Successful Cases:\n"
                 for exp in success_exps[:2]:
-                    context = exp.get('context', {})
-                    action = exp.get('action', {})
+                    context = exp.get("context", {})
+                    action = exp.get("action", {})
                     prompt += f"   - Strategy: {action.get('decision', 'N/A')}\n"
                     prompt += f"     Score: {exp.get('score', 0):.2f}, Type: {context.get('objective', 'N/A')}\n"
-            
+
             # 警示失敗經驗
             if failed_exps:
                 prompt += "\n⚠️ Lessons from Failed Attempts:\n"
                 for exp in failed_exps[:2]:
-                    result = exp.get('result', {})
+                    result = exp.get("result", {})
                     prompt += f"   - Avoid: {result.get('error', 'Unknown error')}\n"
-            
+
             prompt += "\n"
-        
+
         # 4. 約束條件
         if constraints:
             prompt += "🚧 Constraints:\n"
             for key, value in constraints.items():
                 prompt += f"   - {key}: {value}\n"
             prompt += "\n"
-        
+
         # 5. 動態策略建議
         prompt += """🎯 Required Output Structure:
 1. **Multi-Phase Plan**:
@@ -498,82 +523,92 @@ class AICommander:
 🔒 Ensure: Compliance with ethical hacking standards and legal boundaries.
 """
         return prompt
-    
+
     def _calculate_plan_confidence(
-        self, 
-        rag_context: dict[str, Any],
-        historical_experiences: list[dict]
+        self, rag_context: dict[str, Any], historical_experiences: list[dict]
     ) -> float:
         """計算計畫信心度 (優化版)
-        
+
         考慮因素:
         - RAG 相似技術數量和分數
         - 歷史成功率
         - 經驗數量充足度
         - 時間新鮮度
-        
+
         Returns:
             信心度分數 (0.3-0.95 範圍)
         """
         confidence = 0.3  # 最低基礎信心度
-        
+
         # 1. RAG 相似技術加成 (最高 +0.25)
-        similar_techs = rag_context.get('similar_techniques', [])
+        similar_techs = rag_context.get("similar_techniques", [])
         if similar_techs:
             # 考慮技術數量
             tech_count_bonus = min(len(similar_techs) * 0.03, 0.15)
-            
+
             # 考慮技術相關性分數
-            avg_score = sum(t.get('score', 0) for t in similar_techs) / len(similar_techs) if similar_techs else 0
+            avg_score = (
+                sum(t.get("score", 0) for t in similar_techs) / len(similar_techs)
+                if similar_techs
+                else 0
+            )
             score_bonus = avg_score * 0.1
-            
+
             confidence += tech_count_bonus + score_bonus
-        
+
         # 2. 歷史經驗加成 (最高 +0.35)
         if historical_experiences:
             # 經驗數量充足度 (至少 10 個經驗才有充分參考價值)
             exp_count = len(historical_experiences)
             count_factor = min(exp_count / 10, 1.0)
-            
+
             # 成功率計算
-            success_exps = [e for e in historical_experiences if e.get('score', 0) > 0.7]
+            success_exps = [
+                e for e in historical_experiences if e.get("score", 0) > 0.7
+            ]
             success_rate = len(success_exps) / exp_count if exp_count > 0 else 0
-            
+
             # 時間新鮮度 (最近的經驗權重更高)
             recent_bonus = 0
             if exp_count > 0:
                 # 檢查最近 7 天內的經驗
                 from datetime import timedelta
+
                 recent_threshold = (datetime.now() - timedelta(days=7)).isoformat()
-                recent_count = len([
-                    e for e in historical_experiences 
-                    if e.get('timestamp', '') > recent_threshold
-                ])
+                recent_count = len(
+                    [
+                        e
+                        for e in historical_experiences
+                        if e.get("timestamp", "") > recent_threshold
+                    ]
+                )
                 recent_bonus = min(recent_count / exp_count * 0.05, 0.05)
-            
+
             # 綜合歷史因素
             historical_bonus = (success_rate * count_factor * 0.3) + recent_bonus
             confidence += historical_bonus
-        
+
         # 3. 組合效應加成 (RAG + 歷史都強時額外獎勵)
         if len(similar_techs) >= 3 and len(historical_experiences) >= 5:
-            success_rate = len([e for e in historical_experiences if e.get('score', 0) > 0.7]) / len(historical_experiences)
+            success_rate = len(
+                [e for e in historical_experiences if e.get("score", 0) > 0.7]
+            ) / len(historical_experiences)
             if success_rate > 0.7:
                 confidence += 0.05  # 高質量知識庫加成
-        
+
         # 4. 確保範圍在 0.3-0.95 之間
         confidence = max(0.3, min(confidence, 0.95))
-        
+
         logger.debug(
             f"Plan confidence calculated: {confidence:.3f} "
             f"(techs={len(similar_techs)}, exps={len(historical_experiences)})"
         )
-        
+
         return confidence
 
     async def _make_strategy_decision(self, context: dict[str, Any]) -> dict[str, Any]:
         """策略決策 (優化版)
-        
+
         增強功能:
         - 更詳細的風險評估
         - 多維度信心度計算
@@ -592,19 +627,18 @@ class AICommander:
             situation = context.get("situation", {})
             options = context.get("options", [])
             constraints = context.get("constraints", {})
-            
+
             # 1. 從經驗庫獲取相似情況的歷史決策
             historical_decisions = await self._get_similar_decisions(situation)
-            
+
             # 2. 風險預評估
             risk_factors = self._assess_risk_factors(situation, constraints)
-            
+
             # 3. 構建增強型決策提示詞
             decision_prompt = self._build_strategy_decision_prompt(
-                situation, options, constraints, 
-                historical_decisions, risk_factors
+                situation, options, constraints, historical_decisions, risk_factors
             )
-            
+
             # 4. 使用 BioNeuronRAGAgent 進行決策
             decision_response = await self.bio_neuron_agent.generate_structured_output(
                 prompt=decision_prompt,
@@ -614,32 +648,40 @@ class AICommander:
                         "decision": {"type": "string"},
                         "reasoning": {"type": "string"},
                         "confidence": {"type": "number"},
-                        "alternative_options": {"type": "array", "items": {"type": "string"}},
+                        "alternative_options": {
+                            "type": "array",
+                            "items": {"type": "string"},
+                        },
                         "risks": {
-                            "type": "array", 
+                            "type": "array",
                             "items": {
                                 "type": "object",
                                 "properties": {
                                     "description": {"type": "string"},
                                     "severity": {"type": "string"},
-                                    "mitigation": {"type": "string"}
-                                }
-                            }
+                                    "mitigation": {"type": "string"},
+                                },
+                            },
                         },
-                        "success_indicators": {"type": "array", "items": {"type": "string"}},
-                        "fallback_plan": {"type": "string"}
-                    }
-                }
+                        "success_indicators": {
+                            "type": "array",
+                            "items": {"type": "string"},
+                        },
+                        "fallback_plan": {"type": "string"},
+                    },
+                },
             )
-            
+
             # 5. 多維度信心度計算
             ai_confidence = decision_response.get("confidence", 0.5)
-            historical_confidence = self._calculate_historical_confidence(historical_decisions)
+            historical_confidence = self._calculate_historical_confidence(
+                historical_decisions
+            )
             risk_adjusted_confidence = self._adjust_confidence_by_risk(
                 base_confidence=(ai_confidence * 0.6) + (historical_confidence * 0.4),
-                risk_factors=risk_factors
+                risk_factors=risk_factors,
             )
-            
+
             # 6. 構建完整決策結果
             result = {
                 "success": True,
@@ -649,29 +691,34 @@ class AICommander:
                 "alternative_options": decision_response.get("alternative_options", []),
                 "risks": decision_response.get("risks", []),
                 "success_indicators": decision_response.get("success_indicators", []),
-                "fallback_plan": decision_response.get("fallback_plan", "Abort and reassess"),
+                "fallback_plan": decision_response.get(
+                    "fallback_plan", "Abort and reassess"
+                ),
                 "risk_assessment": {
                     "overall_risk": risk_factors.get("overall_risk", "medium"),
                     "key_factors": risk_factors.get("factors", []),
-                    "mitigation_required": risk_factors.get("mitigation_required", False)
+                    "mitigation_required": risk_factors.get(
+                        "mitigation_required", False
+                    ),
                 },
                 "historical_reference_count": len(historical_decisions),
                 "decision_metadata": {
                     "ai_confidence": ai_confidence,
                     "historical_confidence": historical_confidence,
-                    "risk_adjustment": risk_adjusted_confidence - ((ai_confidence * 0.6) + (historical_confidence * 0.4)),
-                    "timestamp": datetime.now().isoformat()
-                }
+                    "risk_adjustment": risk_adjusted_confidence
+                    - ((ai_confidence * 0.6) + (historical_confidence * 0.4)),
+                    "timestamp": datetime.now().isoformat(),
+                },
             }
-            
+
             logger.info(
                 f"✅ Decision made: {result['decision']} "
                 f"(confidence: {result['confidence']:.2f}, "
                 f"risk: {risk_factors.get('overall_risk', 'unknown')})"
             )
-            
+
             return result
-            
+
         except Exception as e:
             logger.error(f"❌ Decision making failed: {e}", exc_info=True)
             return {
@@ -680,18 +727,20 @@ class AICommander:
                 "decision": "abort",
                 "confidence": 0.0,
                 "reasoning": "Decision process encountered an error. Aborting for safety.",
-                "fallback_plan": "Manual review required"
+                "fallback_plan": "Manual review required",
             }
-    
-    def _assess_risk_factors(self, situation: dict[str, Any], constraints: dict[str, Any]) -> dict[str, Any]:
+
+    def _assess_risk_factors(
+        self, situation: dict[str, Any], constraints: dict[str, Any]
+    ) -> dict[str, Any]:
         """評估風險因素
-        
+
         Returns:
             風險評估結果
         """
         factors = []
         risk_score = 0
-        
+
         # 1. 目標環境風險
         if situation.get("target_type") == "production":
             factors.append("Production environment - High impact potential")
@@ -699,27 +748,27 @@ class AICommander:
         elif situation.get("target_type") == "staging":
             factors.append("Staging environment - Medium impact")
             risk_score += 1
-        
+
         # 2. 時間約束風險
         if constraints.get("time_limit"):
             factors.append("Time-constrained operation - Reduced testing window")
             risk_score += 2
-        
+
         # 3. 授權範圍風險
         if not constraints.get("authorized"):
             factors.append("⚠️ CRITICAL: Unauthorized testing - Legal risk")
             risk_score += 5
-        
+
         # 4. 資料敏感度風險
         if situation.get("contains_sensitive_data"):
             factors.append("Sensitive data present - Privacy concerns")
             risk_score += 2
-        
+
         # 5. 系統關鍵度風險
         if situation.get("system_criticality") == "high":
             factors.append("Critical system - Service disruption risk")
             risk_score += 3
-        
+
         # 計算總體風險等級
         if risk_score >= 7:
             overall_risk = "critical"
@@ -733,21 +782,21 @@ class AICommander:
         else:
             overall_risk = "low"
             mitigation_required = False
-        
+
         return {
             "overall_risk": overall_risk,
             "risk_score": risk_score,
             "factors": factors,
-            "mitigation_required": mitigation_required
+            "mitigation_required": mitigation_required,
         }
-    
+
     def _build_strategy_decision_prompt(
         self,
         situation: dict[str, Any],
         options: list[str],
         constraints: dict[str, Any],
         historical_decisions: list[dict],
-        risk_factors: dict[str, Any]
+        risk_factors: dict[str, Any],
     ) -> str:
         """構建策略決策提示詞"""
         prompt = f"""Analyze the following situation and make a strategic decision:
@@ -759,32 +808,36 @@ class AICommander:
 """
         for idx, option in enumerate(options, 1):
             prompt += f"{idx}. {option}\n"
-        
+
         if constraints:
-            prompt += f"\n🚧 **Constraints**:\n"
+            prompt += "\n🚧 **Constraints**:\n"
             for key, value in constraints.items():
                 prompt += f"   - {key}: {value}\n"
-        
+
         # 風險評估
-        prompt += f"\n⚠️ **Risk Assessment**:\n"
+        prompt += "\n⚠️ **Risk Assessment**:\n"
         prompt += f"   - Overall Risk Level: {risk_factors.get('overall_risk', 'unknown').upper()}\n"
         prompt += f"   - Risk Score: {risk_factors.get('risk_score', 0)}/10\n"
-        if risk_factors.get('factors'):
+        if risk_factors.get("factors"):
             prompt += "   - Key Risk Factors:\n"
-            for factor in risk_factors['factors']:
+            for factor in risk_factors["factors"]:
                 prompt += f"     • {factor}\n"
-        
+
         # 歷史決策
         if historical_decisions:
-            success_rate = len([d for d in historical_decisions if d.get('score', 0) > 0.7]) / len(historical_decisions) * 100
-            prompt += f"\n📊 **Historical Decisions** (similar situations):\n"
+            success_rate = (
+                len([d for d in historical_decisions if d.get("score", 0) > 0.7])
+                / len(historical_decisions)
+                * 100
+            )
+            prompt += "\n📊 **Historical Decisions** (similar situations):\n"
             prompt += f"   - Total References: {len(historical_decisions)}\n"
             prompt += f"   - Success Rate: {success_rate:.1f}%\n"
             prompt += "   - Top Cases:\n"
             for hist in historical_decisions[:2]:
                 prompt += f"     • Decision: {hist.get('action', {}).get('decision', 'N/A')}\n"
                 prompt += f"       Outcome: {'✅ Success' if hist.get('score', 0) > 0.7 else '⚠️ Partial'}\n"
-        
+
         prompt += """
 🎯 **Required Output**:
 Please provide a comprehensive decision包含:
@@ -803,14 +856,16 @@ Please provide a comprehensive decision包含:
 - Learn from historical outcomes
 """
         return prompt
-    
-    def _adjust_confidence_by_risk(self, base_confidence: float, risk_factors: dict[str, Any]) -> float:
+
+    def _adjust_confidence_by_risk(
+        self, base_confidence: float, risk_factors: dict[str, Any]
+    ) -> float:
         """根據風險因素調整信心度
-        
+
         高風險情況下降低信心度,確保謹慎決策
         """
         overall_risk = risk_factors.get("overall_risk", "medium")
-        
+
         if overall_risk == "critical":
             # 關鍵風險：大幅降低信心度
             adjustment = -0.2
@@ -823,35 +878,44 @@ Please provide a comprehensive decision包含:
         else:
             # 低風險：不調整或略微提升
             adjustment = 0.0
-        
+
         adjusted = base_confidence + adjustment
         return max(0.1, min(adjusted, 0.95))  # 確保在合理範圍內
-    
+
     async def _get_similar_decisions(self, situation: dict[str, Any]) -> list[dict]:
         """獲取相似情況的歷史決策"""
         if not self.experience_manager.storage:
             return []
-        
+
         try:
-            all_experiences = await self.experience_manager.storage.get_experiences(limit=100)
+            all_experiences = await self.experience_manager.storage.get_experiences(
+                limit=100
+            )
             # 簡單的相似度匹配（可以使用更複雜的語義相似度）
             similar_decisions = [
-                exp for exp in all_experiences
-                if exp.get('context', {}).get('type') == situation.get('type')
+                exp
+                for exp in all_experiences
+                if exp.get("context", {}).get("type") == situation.get("type")
             ]
             return similar_decisions[:10]  # 返回前 10 個最相似的
         except Exception as e:
             logger.error(f"Failed to retrieve similar decisions: {e}")
             return []
-    
-    def _calculate_historical_confidence(self, historical_decisions: list[dict]) -> float:
+
+    def _calculate_historical_confidence(
+        self, historical_decisions: list[dict]
+    ) -> float:
         """根據歷史決策計算信心度"""
         if not historical_decisions:
             return 0.5  # 無歷史數據時的基準值
-        
+
         # 計算歷史決策的平均成功率
-        success_count = len([d for d in historical_decisions if d.get('score', 0) > 0.7])
-        return success_count / len(historical_decisions) if historical_decisions else 0.5
+        success_count = len(
+            [d for d in historical_decisions if d.get("score", 0) > 0.7]
+        )
+        return (
+            success_count / len(historical_decisions) if historical_decisions else 0.5
+        )
 
     async def _detect_vulnerabilities(self, context: dict[str, Any]) -> dict[str, Any]:
         """檢測漏洞（協調多語言模組）

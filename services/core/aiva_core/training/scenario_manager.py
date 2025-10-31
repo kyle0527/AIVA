@@ -1,5 +1,4 @@
-"""
-Standard Scenario Manager - OWASP 靶場場景管理器
+"""Standard Scenario Manager - OWASP 靶場場景管理器
 
 負責管理標準靶場場景的定義、加載、驗證和執行，用於 AI 模型訓練和測試
 
@@ -16,8 +15,6 @@ Standard Scenario Manager - OWASP 靶場場景管理器
 4. 場景難度評估和分級
 5. 訓練數據集構建
 """
-
-
 
 from datetime import UTC, datetime
 import json

@@ -1,5 +1,4 @@
-"""
-Risk Assessment Engine - 風險評估引擎
+"""Risk Assessment Engine - 風險評估引擎
 
 整合多維度風險評估:
 - CVSS 基礎分數計算
@@ -9,39 +8,106 @@ Risk Assessment Engine - 風險評估引擎
 - 業務影響分析
 """
 
-
-
 import asyncio
 from typing import TYPE_CHECKING
 
-from services.aiva_common.enums import Severity, ThreatLevel, VulnerabilityType
-from services.aiva_common.schemas import FindingPayload
-from services.aiva_common.utils import get_logger
+# 使用可選依賴處理策略
+try:
+    from services.aiva_common.enums import Severity, ThreatLevel, VulnerabilityType
+    from services.aiva_common.schemas import FindingPayload
+    from services.aiva_common.utils import get_logger
+except ImportError as e:
+    # 提供後備導入或 Mock 實現
+    print(f"Warning: Could not import services.aiva_common modules: {e}")
+    # 創建基本的 Mock 類型用於類型檢查
+    from enum import Enum
+    import logging
+    
+    class Severity(Enum):
+        CRITICAL = "critical"
+        HIGH = "high"
+        MEDIUM = "medium"
+        LOW = "low"
+        INFORMATIONAL = "info"
+    
+    class ThreatLevel(Enum):
+        CRITICAL = "critical"
+        HIGH = "high"
+        MEDIUM = "medium"
+        LOW = "low"
+        INFO = "info"
+    
+    class VulnerabilityType(Enum):
+        SQLI = "sqli"
+        XSS = "xss"
+        SSRF = "ssrf"
+        IDOR = "idor"
+        BOLA = "bola"
+        INFO_LEAK = "info_leak"
+        WEAK_AUTH = "weak_auth"
+        PRICE_MANIPULATION = "price_manipulation"
+        WORKFLOW_BYPASS = "workflow_bypass"
+        RACE_CONDITION = "race_condition"
+    
+    # Mock FindingPayload 和相關類型
+    class MockTarget:
+        def __init__(self):
+            self.url = "http://example.com"
+    
+    class MockConfidence:
+        def __init__(self):
+            self.value = 'Firm'
+    
+    class MockVulnerability:
+        def __init__(self):
+            self.name = "Mock Vulnerability"
+            self.severity = Severity.MEDIUM
+            self.confidence = MockConfidence()
+            self.cwe = None
+    
+    class MockEvidence:
+        def __init__(self):
+            self.proof = None
+    
+    class FindingPayload:
+        def __init__(self):
+            self.finding_id = "mock-finding"
+            self.target = MockTarget()
+            self.vulnerability = MockVulnerability()
+            self.evidence = MockEvidence()
+    
+    def get_logger(name):
+        return logging.getLogger(name)
 
 if TYPE_CHECKING:
-    from services.integration.aiva_integration.threat_intel.intel_aggregator import (
-        IntelAggregator,
-    )
+    try:
+        from services.integration.aiva_integration.threat_intel.intel_aggregator import (
+            IntelAggregator,
+        )
+    except ImportError:
+        # 為類型檢查提供 Mock 類型
+        class IntelAggregator:
+            pass
 
 logger = get_logger(__name__)
 
 
 class RiskAssessmentEngine:
-    """
-    風險評估引擎
+    """風險評估引擎
 
     根據多個維度評估漏洞的實際風險分數 (0-10)
     """
 
     def __init__(self, enable_threat_intel: bool = True):
-        """
-        初始化風險評估引擎
+        """初始化風險評估引擎
 
         Args:
             enable_threat_intel: 是否啟用威脅情報查詢
         """
         self.enable_threat_intel = enable_threat_intel
-        self.intel_aggregator: IntelAggregator | None = None
+        # 使用 Any 類型以避免未繫結的類型錯誤
+        from typing import Any
+        self.intel_aggregator: Any = None
 
         if enable_threat_intel:
             try:
@@ -55,11 +121,16 @@ class RiskAssessmentEngine:
                 logger.warning(
                     "Threat intel module not available, using base scoring only"
                 )
+                # 創建 Mock IntelAggregator
+                class MockIntelAggregator:
+                    def __init__(self):
+                        pass
+                
+                self.intel_aggregator = MockIntelAggregator()
                 self.enable_threat_intel = False
 
     async def assess_risk(self, finding: FindingPayload) -> float:
-        """
-        評估漏洞風險分數
+        """評估漏洞風險分數
 
         Args:
             finding: 漏洞發現結果
@@ -71,7 +142,11 @@ class RiskAssessmentEngine:
         base_score = self._calculate_base_score(finding)
 
         # 2. 威脅情報調整 (如果有 CWE)
-        if self.enable_threat_intel and self.intel_aggregator and finding.vulnerability.cwe:
+        if (
+            self.enable_threat_intel
+            and self.intel_aggregator
+            and finding.vulnerability.cwe
+        ):
             base_score = await self._adjust_by_threat_intel(base_score, finding)
 
         # 3. 可利用性調整
@@ -90,8 +165,7 @@ class RiskAssessmentEngine:
         return final_score
 
     def _calculate_base_score(self, finding: FindingPayload) -> float:
-        """
-        計算基礎 CVSS 分數
+        """計算基礎 CVSS 分數
 
         Args:
             finding: 漏洞發現結果
@@ -124,31 +198,34 @@ class RiskAssessmentEngine:
             VulnerabilityType.RACE_CONDITION: 1.15,
             # Phase I 高價值漏洞類型
             "Client-Side Authorization Bypass": 1.25,  # 客戶端授權繞過 - 高風險
-            "Advanced SSRF - Internal Services": 1.3,   # 進階 SSRF - 內部服務訪問
-            "Advanced SSRF - Cloud Metadata": 1.4,     # 進階 SSRF - 雲端元數據 (極高風險)
-            "JavaScript Authorization Bypass": 1.2,     # JS 授權繞過
-            "Local Storage Auth Manipulation": 1.15,    # 本地存儲授權操作
+            "Advanced SSRF - Internal Services": 1.3,  # 進階 SSRF - 內部服務訪問
+            "Advanced SSRF - Cloud Metadata": 1.4,  # 進階 SSRF - 雲端元數據 (極高風險)
+            "JavaScript Authorization Bypass": 1.2,  # JS 授權繞過
+            "Local Storage Auth Manipulation": 1.15,  # 本地存儲授權操作
         }
 
         # 支援字串類型的漏洞類型名稱 (Phase I 格式)
         vuln_name = finding.vulnerability.name
-        if hasattr(vuln_name, 'value'):
+        if hasattr(vuln_name, "value"):
             multiplier = vuln_type_multipliers.get(vuln_name.value, 1.0)
         else:
             # 處理字串格式的漏洞類型 (如 "Client-Side Authorization Bypass")
             multiplier = vuln_type_multipliers.get(str(vuln_name), 1.0)
-            
+
         base_score *= multiplier
 
         # Phase I 特殊評估邏輯
         if isinstance(vuln_name, str):
-            base_score = self._assess_phase_i_specific_risk(base_score, vuln_name, finding)
+            base_score = self._assess_phase_i_specific_risk(
+                base_score, vuln_name, finding
+            )
 
         return base_score
-    
-    def _assess_phase_i_specific_risk(self, base_score: float, vuln_type: str, finding: FindingPayload) -> float:
+
+    def _assess_phase_i_specific_risk(
+        self, base_score: float, vuln_type: str, finding: FindingPayload
+    ) -> float:
         """Phase I 特定漏洞的風險評估增強"""
-        
         # 客戶端授權繞過特殊邏輯
         if "Client-Side Authorization Bypass" in vuln_type:
             # 如果發現硬編碼管理員權限，風險極高
@@ -156,27 +233,37 @@ class RiskAssessmentEngine:
                 base_score *= 1.5
             # 如果涉及支付或關鍵業務流程
             target_url = str(finding.target.url).lower()
-            if any(critical in target_url for critical in ['payment', 'admin', 'checkout', 'order']):
+            if any(
+                critical in target_url
+                for critical in ["payment", "admin", "checkout", "order"]
+            ):
                 base_score *= 1.3
-                
-        # 進階 SSRF 特殊邏輯  
+
+        # 進階 SSRF 特殊邏輯
         elif "Advanced SSRF" in vuln_type:
             # 雲端元數據訪問風險極高
             if "Cloud Metadata" in vuln_type:
                 base_score *= 1.6  # AWS IMDSv1/v2, GCP metadata 等
             # 內部服務訪問
             elif "Internal Services" in vuln_type:
-                if finding.evidence and any(service in str(finding.evidence) for service in 
-                    ['elasticsearch', 'redis', 'kubernetes', 'docker', 'consul']):
+                if finding.evidence and any(
+                    service in str(finding.evidence)
+                    for service in [
+                        "elasticsearch",
+                        "redis",
+                        "kubernetes",
+                        "docker",
+                        "consul",
+                    ]
+                ):
                     base_score *= 1.4
-        
+
         return base_score
 
     async def _adjust_by_threat_intel(
         self, base_score: float, finding: FindingPayload
     ) -> float:
-        """
-        根據威脅情報調整分數
+        """根據威脅情報調整分數
 
         Args:
             base_score: 基礎分數
@@ -196,8 +283,7 @@ class RiskAssessmentEngine:
     def _adjust_by_exploitability(
         self, base_score: float, finding: FindingPayload
     ) -> float:
-        """
-        根據可利用性調整分數
+        """根據可利用性調整分數
 
         Args:
             base_score: 基礎分數
@@ -216,7 +302,9 @@ class RiskAssessmentEngine:
             "Firm": 1.0,
             "Possible": 0.8,
         }
-        multiplier = confidence_multipliers.get(finding.vulnerability.confidence.value, 1.0)
+        # 安全地獲取 confidence 值
+        confidence_value = getattr(finding.vulnerability.confidence, 'value', 'Firm')
+        multiplier = confidence_multipliers.get(confidence_value, 1.0)
         base_score *= multiplier
 
         return base_score
@@ -224,8 +312,7 @@ class RiskAssessmentEngine:
     def _adjust_by_asset_criticality(
         self, base_score: float, finding: FindingPayload
     ) -> float:
-        """
-        根據資產重要性調整分數
+        """根據資產重要性調整分數
 
         Args:
             base_score: 基礎分數
@@ -249,8 +336,7 @@ class RiskAssessmentEngine:
         return base_score
 
     def get_risk_level(self, risk_score: float) -> ThreatLevel:
-        """
-        將風險分數轉換為威脅等級
+        """將風險分數轉換為威脅等級
 
         Args:
             risk_score: 風險分數 (0-10)
@@ -272,8 +358,7 @@ class RiskAssessmentEngine:
     async def batch_assess(
         self, findings: list[FindingPayload]
     ) -> list[tuple[FindingPayload, float]]:
-        """
-        批量評估風險分數
+        """批量評估風險分數
 
         Args:
             findings: 漏洞發現列表

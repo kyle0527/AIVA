@@ -1,5 +1,3 @@
-
-
 from typing import Any
 
 from services.aiva_common.utils import get_logger
@@ -8,8 +6,7 @@ logger = get_logger(__name__)
 
 
 class StrategyAdjuster:
-    """
-    動態策略調整器
+    """動態策略調整器
 
     基於回饋結果、指紋識別、WAF檢測等資訊進行策略調整，
     實現自適應測試策略優化。
@@ -21,8 +18,7 @@ class StrategyAdjuster:
         self._success_patterns: dict[str, list[dict[str, Any]]] = {}
 
     def adjust(self, plan: dict[str, Any], context: dict[str, Any]) -> dict[str, Any]:
-        """
-        動態調整測試策略
+        """動態調整測試策略
 
         Args:
             plan: 基礎測試計劃
@@ -54,8 +50,7 @@ class StrategyAdjuster:
         return adjusted_plan
 
     def learn_from_result(self, feedback_data: dict[str, Any]) -> None:
-        """
-        從測試結果中學習，更新策略知識庫
+        """從測試結果中學習，更新策略知識庫
 
         Args:
             feedback_data: 回饋數據

@@ -193,9 +193,7 @@ class CapabilityRegistry:
             for dep_id in capability.dependencies:
                 if dep_id not in self._capabilities:
                     logger.warning(
-                        "依賴的能力尚未註冊",
-                        capability_id=capability.id,
-                        dependency=dep_id
+                        f"依賴的能力尚未註冊: {dep_id} (capability_id: {capability.id})"
                     )
         
         await asyncio.to_thread(basic_validation)

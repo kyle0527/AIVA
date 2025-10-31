@@ -1,7 +1,5 @@
+"""BizLogic Finding 創建輔助函數
 """
-BizLogic Finding 創建輔助函數
-"""
-
 
 from typing import Any
 
@@ -25,8 +23,7 @@ def create_bizlogic_finding(
     scan_id: str = "scan_bizlogic",
     parameter: str | None = None,
 ) -> FindingPayload:
-    """
-    創建業務邏輯漏洞 Finding
+    """創建業務邏輯漏洞 Finding
 
     Args:
         vuln_type: 漏洞類型

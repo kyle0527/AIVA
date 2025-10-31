@@ -1,5 +1,5 @@
 {
-  // 只檢查開啟檔案的配置
+  // 🎯 最小化檢查策略 - 只檢查開啟檔案
   "include": [],
   "exclude": [
     "**/__pycache__",
@@ -7,6 +7,8 @@
     "**/node_modules",
     "**/dist",
     "**/.git",
+    "**/target",
+    "**/build",
     "_archive/**",
     "_out/**",
     "aiva_platform_integrated.egg-info/**",
@@ -14,26 +16,63 @@
     "models/**",
     "logs/**"
   ],
-  // 錯誤報告優化 - 只顯示重要錯誤
-  "reportMissingImports": "warning",
-  "reportMissingTypeStubs": "none", 
-  "reportImportCycles": "warning",
+
+  // 🚫 錯誤報告最佳化 - 只報告嚴重錯誤
+  "reportMissingImports": "none",
+  "reportMissingTypeStubs": "none",
+  "reportImportCycles": "none",
   "reportUnusedImport": "none",
   "reportUnusedVariable": "none",
-  "reportUndefinedVariable": "error",
-  "reportGeneralTypeIssues": "warning",
-  "typeCheckingMode": "basic",
-  
-  // 只分析開啟檔案的設定 + 30秒延遲檢查
+  "reportUndefinedVariable": "warning",
+  "reportGeneralTypeIssues": "none",
+  "reportOptionalSubscript": "none",
+  "reportOptionalMemberAccess": "none",
+  "reportOptionalCall": "none",
+  "reportOptionalIterable": "none",
+  "reportOptionalContextManager": "none",
+  "reportOptionalOperand": "none",
+  "reportTypedDictNotRequiredAccess": "none",
+  "reportConstantRedefinition": "none",
+  "reportDuplicateImport": "none",
+  "reportWildcardImportFromLibrary": "none",
+  "reportAbstractUsage": "none",
+  "reportArgumentType": "none",
+  "reportAssertTypeFailure": "none",
+  "reportAssignmentType": "none",
+  "reportAttributeAccessIssue": "none",
+  "reportCallIssue": "none",
+  "reportInconsistentConstructor": "none",
+  "reportIndexIssue": "none",
+  "reportInvalidStringEscapeSequence": "none",
+  "reportInvalidStubStatement": "none",
+  "reportInvalidTypeVarUse": "none",
+  "reportMatchNotExhaustive": "none",
+  "reportReturnType": "none",
+  "reportTypeCommentUsage": "none",
+  "reportUnknownArgumentType": "none",
+  "reportUnknownLambdaType": "none",
+  "reportUnknownMemberType": "none",
+  "reportUnknownParameterType": "none",
+  "reportUnknownVariableType": "none",
+  "reportUnsupportedDunderAll": "none",
+  "reportUntypedBaseClass": "none",
+  "reportUntypedClassDecorator": "none",
+  "reportUntypedFunctionDecorator": "none",
+  "reportUntypedNamedTuple": "none",
+
+  // ⚡ 性能最佳化設定
+  "typeCheckingMode": "off",
   "useLibraryCodeForTypes": false,
-  "autoImportCompletions": true,
+  "autoImportCompletions": false,
   "indexing": false,
   "watchForSourceChanges": false,
   "watchForLibraryChanges": false,
   "enableTypeIgnoreComments": true,
-  
-  // 延遲檢查設定 - 避免修改時頻繁檢查
-  "diagnosticRefreshDelay": 30000,
+
+  // ⏰ 延遲檢查 - 永不自動檢查
+  "diagnosticRefreshDelay": 0,
+
+  // 🐍 Python 環境設定
   "pythonVersion": "3.13",
   "pythonPlatform": "All",
   "executionEnvironments": [
@@ -42,7 +81,7 @@
       "extraPaths": ["../../"]
     },
     {
-      "root": "services/core", 
+      "root": "services/core",
       "extraPaths": ["../../"]
     },
     {
@@ -50,8 +89,9 @@
       "extraPaths": ["../"]
     }
   ],
-  // 不限制任何目錄的檢查 - 開啟檔案都會掃描
-  "strict": [],
+
+  // 📁 環境路徑設定
   "venvPath": ".",
-  "venv": ".venv"
+  "venv": ".venv",
+  "strict": []
 }

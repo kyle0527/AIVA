@@ -7,8 +7,6 @@ AI 相關 Schema
 注意: 此檔案整合了原 ai_schemas.py 的內容
 """
 
-
-
 from datetime import UTC, datetime
 from typing import Any, Literal
 
@@ -84,8 +82,7 @@ class CVSSv3Metrics(BaseModel):
         ) * (1 - cia_weights[self.availability])
 
         if self.scope == "C":
-            impact_adjusted = 7.52 * (impact - 0.029) - \
-                3.25 * pow(impact - 0.02, 15)
+            impact_adjusted = 7.52 * (impact - 0.029) - 3.25 * pow(impact - 0.02, 15)
         else:
             impact_adjusted = 6.42 * impact
 
@@ -244,7 +241,7 @@ class PlanExecutionResult(BaseModel):
 
 class ModelTrainingConfig(BaseModel):
     """模型訓練配置"""
-    
+
     model_config = {"protected_namespaces": ()}
 
     config_id: str
@@ -265,7 +262,7 @@ class ModelTrainingConfig(BaseModel):
 
 class TrainingOrchestratorConfig(BaseModel):
     """訓練編排器配置"""
-    
+
     orchestrator_id: str
     enabled_trainers: list[str] = Field(default_factory=list)
     training_interval: int = 3600  # 秒
@@ -278,7 +275,7 @@ class TrainingOrchestratorConfig(BaseModel):
 
 class ExperienceManagerConfig(BaseModel):
     """經驗管理器配置"""
-    
+
     manager_id: str
     storage_backend: str = "sqlite"
     storage_path: str | None = None
@@ -292,7 +289,7 @@ class ExperienceManagerConfig(BaseModel):
 
 class PlanExecutorConfig(BaseModel):
     """計劃執行器配置"""
-    
+
     executor_id: str
     max_concurrent_plans: int = 5
     timeout_seconds: int = 300
@@ -323,7 +320,7 @@ class AITrainingStartPayload(BaseModel):
 
 class AITrainingProgressPayload(BaseModel):
     """AI 訓練進度報告"""
-    
+
     model_config = {"protected_namespaces": ()}
 
     training_id: str
@@ -395,8 +392,7 @@ class ExperienceSample(BaseModel):
 
     # 上下文信息
     context: dict[str, Any] = Field(default_factory=dict, description="環境上下文")
-    target_info: dict[str, Any] = Field(
-        default_factory=dict, description="目標信息")
+    target_info: dict[str, Any] = Field(default_factory=dict, description="目標信息")
 
     # 時間信息
     timestamp: datetime = Field(default_factory=lambda: datetime.now(UTC))
@@ -428,8 +424,7 @@ class EnhancedVulnerability(BaseModel):
 
     # 基本信息
     vulnerability_type: str = Field(description="漏洞類型")
-    severity: Literal["low", "medium", "high",
-                      "critical"] = Field(description="嚴重性")
+    severity: Literal["low", "medium", "high", "critical"] = Field(description="嚴重性")
 
     # 位置信息
     url: str = Field(description="漏洞URL")
@@ -464,19 +459,16 @@ class EnhancedVulnerability(BaseModel):
     # 修復建議
     remediation_effort: str = Field(description="修復難度")
     remediation_priority: int = Field(ge=1, le=5, description="修復優先級")
-    fix_recommendations: list[str] = Field(
-        default_factory=list, description="修復建議")
+    fix_recommendations: list[str] = Field(default_factory=list, description="修復建議")
 
     # 驗證信息
     poc_available: bool = Field(default=False, description="是否有概念驗證")
     verified: bool = Field(default=False, description="是否已驗證")
-    false_positive_probability: float = Field(
-        ge=0.0, le=1.0, description="誤報概率")
+    false_positive_probability: float = Field(ge=0.0, le=1.0, description="誤報概率")
 
     # 時間信息
     discovered_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
-    last_verified_at: datetime | None = Field(
-        default=None, description="最後驗證時間")
+    last_verified_at: datetime | None = Field(default=None, description="最後驗證時間")
 
     # 元數據
     tags: list[str] = Field(default_factory=list, description="標籤")
@@ -504,8 +496,7 @@ class SARIFResult(BaseModel):
 
     rule_id: str = Field(description="規則ID")
     message: str = Field(description="消息")
-    level: Literal["error", "warning", "info",
-                   "note"] = Field(description="級別")
+    level: Literal["error", "warning", "info", "note"] = Field(description="級別")
     locations: list[SARIFLocation] = Field(description="位置列表")
 
     # 可選字段
@@ -561,9 +552,7 @@ class SARIFRun(BaseModel):
 class SARIFReport(BaseModel):
     """SARIF v2.1.0 報告"""
 
-    model_config = {
-        "protected_namespaces": (),
-        "arbitrary_types_allowed": True}
+    model_config = {"protected_namespaces": (), "arbitrary_types_allowed": True}
 
     version: str = Field(default="2.1.0", description="SARIF版本")
     sarif_schema: str = Field(
@@ -584,7 +573,7 @@ class SARIFReport(BaseModel):
 
 class AITrainingCompletedPayload(BaseModel):
     """AI 訓練完成報告 - 訓練會話完成時的最終報告"""
-    
+
     model_config = {"protected_namespaces": ()}
 
     training_id: str
@@ -640,7 +629,7 @@ class AITraceCompletedEvent(BaseModel):
 
 class AIModelUpdatedEvent(BaseModel):
     """AI 模型更新事件 - 當模型被訓練更新時發送"""
-    
+
     model_config = {"protected_namespaces": ()}
 
     model_id: str
@@ -657,7 +646,7 @@ class AIModelUpdatedEvent(BaseModel):
 
 class AIModelDeployCommand(BaseModel):
     """AI 模型部署命令 - 用於部署訓練好的模型到生產環境"""
-    
+
     model_config = {"protected_namespaces": ()}
 
     model_id: str

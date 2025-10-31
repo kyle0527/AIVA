@@ -32,7 +32,7 @@
 cd /path/to/AIVA-git
 
 # 2. 檢查環境是否準備就緒 (可選)
-python health_check.py
+python scripts/utilities/health_check.py
 
 # 3. 啟動靶場環境 (OWASP Juice Shop)
 # 注意：靶場由您自行啟動，AIVA不會自動啟動
@@ -44,19 +44,19 @@ docker run -d -p 3000:3000 bkimminich/juice-shop
 **新手推薦指令**:
 ```bash
 # 快速掃描 - 最適合第一次使用
-python core_scan_integration_cli.py quick-scan http://localhost:3000
+python scripts/misc/core_scan_integration_cli.py quick-scan http://localhost:3000
 
 # 如果您想看詳細的JSON結果
-python core_scan_integration_cli.py quick-scan http://localhost:3000 --output json
+python scripts/misc/core_scan_integration_cli.py quick-scan http://localhost:3000 --output json
 ```
 
 **經驗用戶指令**:
 ```bash
 # 深度綜合掃描
-python core_scan_integration_cli.py deep-scan https://target.com --comprehensive
+python scripts/misc/core_scan_integration_cli.py deep-scan https://target.com --comprehensive
 
 # 隱匿情報收集
-python core_scan_integration_cli.py intel https://target.com --stealth
+python scripts/misc/core_scan_integration_cli.py intel https://target.com --stealth
 ```
 
 #### **Step 3: 查看 AI 執行結果**
@@ -88,7 +88,7 @@ print(result)
 
 1. **設定目標** (必填):
    ```bash
-   python core_scan_integration_cli.py quick-scan [您的目標URL]
+   python scripts/misc/core_scan_integration_cli.py quick-scan [您的目標URL]
    ```
 
 2. **可選參數設定**:
@@ -109,10 +109,10 @@ print(result)
 3. **實際執行範例**:
    ```bash
    # 新手範例
-   python core_scan_integration_cli.py quick-scan http://testfire.net
+   python scripts/misc/core_scan_integration_cli.py quick-scan http://testfire.net
    
    # 進階範例
-   python core_scan_integration_cli.py deep-scan https://target.com --output json --verbose
+   python scripts/misc/core_scan_integration_cli.py deep-scan https://target.com --output json --verbose
    ```
 
 **執行時間預估**:
@@ -201,11 +201,11 @@ CLI Command System v5.0
 ##### 1. `quick-scan` - 快速掃描
 ```bash
 # 基本語法
-python core_scan_integration_cli.py quick-scan [目標URL]
+python scripts/misc/core_scan_integration_cli.py quick-scan [目標URL]
 
 # 範例
-python core_scan_integration_cli.py quick-scan http://localhost:3000
-python core_scan_integration_cli.py quick-scan https://example.com --output json
+python scripts/misc/core_scan_integration_cli.py quick-scan http://localhost:3000
+python scripts/misc/core_scan_integration_cli.py quick-scan https://example.com --output json
 ```
 
 **適用場景:**
@@ -219,11 +219,11 @@ python core_scan_integration_cli.py quick-scan https://example.com --output json
 ##### 2. `deep-scan` - 深度掃描
 ```bash
 # 基本語法  
-python core_scan_integration_cli.py deep-scan [目標URL] [選項]
+python scripts/misc/core_scan_integration_cli.py deep-scan [目標URL] [選項]
 
 # 範例
-python core_scan_integration_cli.py deep-scan https://target.com --comprehensive
-python core_scan_integration_cli.py deep-scan https://example.com --stealth --output markdown
+python scripts/misc/core_scan_integration_cli.py deep-scan https://target.com --comprehensive
+python scripts/misc/core_scan_integration_cli.py deep-scan https://example.com --stealth --output markdown
 ```
 
 **適用場景:**

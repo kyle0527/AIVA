@@ -1,9 +1,6 @@
-"""
-Auto Server - AIVA UI 自動端口伺服器
+"""Auto Server - AIVA UI 自動端口伺服器
 自動選擇可用端口啟動 UI 面板
 """
-
-
 
 import logging
 from pathlib import Path
@@ -34,7 +31,7 @@ def find_free_port(start_port: int = 8080, max_attempts: int = 100) -> int:
     for port in range(start_port, start_port + max_attempts):
         try:
             with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-                s.bind(('127.0.0.1', port))
+                s.bind(("127.0.0.1", port))
                 return port
         except OSError:
             continue
@@ -58,7 +55,7 @@ def start_auto_server(
     # 設定日誌
     logging.basicConfig(
         level=logging.INFO,
-        format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+        format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
     )
 
     try:
@@ -107,13 +104,7 @@ def start_auto_server(
     logger.info(f"{'='*60}\n")
 
     try:
-        uvicorn.run(
-            app,
-            host=host,
-            port=port,
-            log_level="info",
-            access_log=True
-        )
+        uvicorn.run(app, host=host, port=port, log_level="info", access_log=True)
     except OSError as e:
         if "Address already in use" in str(e):
             logger.error(f"端口 {port} 被佔用，嘗試其他端口...")
@@ -121,11 +112,7 @@ def start_auto_server(
                 new_port = find_free_port(port + 1)
                 logger.info(f"使用新端口: {new_port}")
                 uvicorn.run(
-                    app,
-                    host=host,
-                    port=new_port,
-                    log_level="info",
-                    access_log=True
+                    app, host=host, port=new_port, log_level="info", access_log=True
                 )
             except RuntimeError as retry_error:
                 logger.error(f"重試失敗: {retry_error}")
@@ -137,32 +124,26 @@ def main() -> None:
     """主程式進入點."""
     import argparse
 
-    parser = argparse.ArgumentParser(description='AIVA UI 自動端口伺服器')
+    parser = argparse.ArgumentParser(description="AIVA UI 自動端口伺服器")
     parser.add_argument(
-        '--mode',
-        default='hybrid',
-        choices=['ui', 'ai', 'hybrid'],
-        help='運作模式 (預設: hybrid)'
+        "--mode",
+        default="hybrid",
+        choices=["ui", "ai", "hybrid"],
+        help="運作模式 (預設: hybrid)",
     )
     parser.add_argument(
-        '--host',
-        default='127.0.0.1',
-        help='綁定的主機位址 (預設: 127.0.0.1)'
+        "--host", default="127.0.0.1", help="綁定的主機位址 (預設: 127.0.0.1)"
     )
     parser.add_argument(
-        '--ports',
-        nargs='+',
+        "--ports",
+        nargs="+",
         type=int,
-        help='偏好的端口列表 (例如: --ports 8080 8081 3000)'
+        help="偏好的端口列表 (例如: --ports 8080 8081 3000)",
     )
 
     args = parser.parse_args()
 
-    start_auto_server(
-        mode=args.mode,
-        host=args.host,
-        preferred_ports=args.ports
-    )
+    start_auto_server(mode=args.mode, host=args.host, preferred_ports=args.ports)
 
 
 if __name__ == "__main__":

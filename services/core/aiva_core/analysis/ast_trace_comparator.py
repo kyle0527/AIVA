@@ -1,11 +1,8 @@
-"""
-AST 與 Trace 對比分析模組
+"""AST 與 Trace 對比分析模組
 
 比較預期的攻擊流程圖 (AST) 與實際執行 trace，
 計算差異指標作為強化學習回饋信號。
 """
-
-
 
 from dataclasses import asdict, dataclass, field
 import logging

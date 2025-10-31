@@ -24,6 +24,7 @@ from services.core.aiva_core.nlg_system import AIVANaturalLanguageGenerator
 @dataclass
 class IntegrationTestResult:
     """測試結果數據類"""
+
     test_name: str
     success: bool
     execution_time: float
@@ -71,7 +72,7 @@ class AIIntegrationTester:
             ("AI 衝突檢測測試", self._test_ai_conflict_detection),
             ("端到端整合測試", self._test_end_to_end_integration),
             ("效能壓力測試", self._test_performance_stress),
-            ("錯誤恢復測試", self._test_error_recovery)
+            ("錯誤恢復測試", self._test_error_recovery),
         ]
 
         for test_name, test_func in tests:
@@ -94,32 +95,31 @@ class AIIntegrationTester:
             "BioNeuronRAGAgent": self.bio_agent,
             "UnifiedAIController": self.unified_controller,
             "AIVANaturalLanguageGenerator": self.nlg_generator,
-            "MultiLanguageAICoordinator": self.multilang_coordinator
+            "MultiLanguageAICoordinator": self.multilang_coordinator,
         }
 
         details = {}
         for name, component in components.items():
-            if hasattr(component, 'is_ready'):
+            if hasattr(component, "is_ready"):
                 is_ready = component.is_ready()
             else:
                 is_ready = component is not None
 
-            details[name] = {
-                "initialized": component is not None,
-                "ready": is_ready
-            }
+            details[name] = {"initialized": component is not None, "ready": is_ready}
 
         execution_time = time.time() - start_time
 
         all_ready = all(detail["ready"] for detail in details.values())
 
-        self.test_results.append(IntegrationTestResult(
-            test_name="基礎組件初始化測試",
-            success=all_ready,
-            execution_time=execution_time,
-            details=details,
-            error_message=None if all_ready else "部分組件未準備就緒"
-        ))
+        self.test_results.append(
+            IntegrationTestResult(
+                test_name="基礎組件初始化測試",
+                success=all_ready,
+                execution_time=execution_time,
+                details=details,
+                error_message=None if all_ready else "部分組件未準備就緒",
+            )
+        )
 
     async def _test_unified_controller(self):
         """測試統一控制器協調能力"""
@@ -131,14 +131,14 @@ class AIIntegrationTester:
                 "type": "security_analysis",
                 "content": "分析這段代碼的 SQL 注入漏洞",
                 "priority": "high",
-                "language": "python"
+                "language": "python",
             },
             {
                 "type": "vulnerability_scan",
                 "content": "掃描 SSRF 漏洞",
                 "priority": "medium",
-                "language": "go"
-            }
+                "language": "go",
+            },
         ]
 
         details = {}
@@ -146,28 +146,29 @@ class AIIntegrationTester:
 
         for i, request in enumerate(test_requests):
             try:
-                response = await self.unified_controller.process_unified_request(request)
+                response = await self.unified_controller.process_unified_request(
+                    request
+                )
                 details[f"request_{i+1}"] = {
                     "success": True,
                     "response_type": type(response).__name__,
-                    "has_result": response is not None
+                    "has_result": response is not None,
                 }
                 success_count += 1
             except Exception as e:
-                details[f"request_{i+1}"] = {
-                    "success": False,
-                    "error": str(e)
-                }
+                details[f"request_{i+1}"] = {"success": False, "error": str(e)}
 
         execution_time = time.time() - start_time
         success = success_count == len(test_requests)
 
-        self.test_results.append(IntegrationTestResult(
-            test_name="統一控制器協調測試",
-            success=success,
-            execution_time=execution_time,
-            details=details
-        ))
+        self.test_results.append(
+            IntegrationTestResult(
+                test_name="統一控制器協調測試",
+                success=success,
+                execution_time=execution_time,
+                details=details,
+            )
+        )
 
     async def _test_nlg_system(self):
         """測試自然語言生成系統"""
@@ -179,14 +180,14 @@ class AIIntegrationTester:
                 "type": "vulnerability_report",
                 "severity": "high",
                 "vulnerability_type": "SQL注入",
-                "affected_files": ["user_controller.py", "database.py"]
+                "affected_files": ["user_controller.py", "database.py"],
             },
             {
                 "type": "scan_summary",
                 "total_files": 156,
                 "vulnerabilities_found": 3,
-                "scan_duration": 45.2
-            }
+                "scan_duration": 45.2,
+            },
         ]
 
         details = {}
@@ -198,25 +199,26 @@ class AIIntegrationTester:
                 details[f"generation_{i+1}"] = {
                     "success": True,
                     "response_length": len(response),
-                    "has_chinese": any('\u4e00' <= char <= '\u9fff' for char in response),
-                    "template_type": context["type"]
+                    "has_chinese": any(
+                        "\u4e00" <= char <= "\u9fff" for char in response
+                    ),
+                    "template_type": context["type"],
                 }
                 success_count += 1
             except Exception as e:
-                details[f"generation_{i+1}"] = {
-                    "success": False,
-                    "error": str(e)
-                }
+                details[f"generation_{i+1}"] = {"success": False, "error": str(e)}
 
         execution_time = time.time() - start_time
         success = success_count == len(test_contexts)
 
-        self.test_results.append(IntegrationTestResult(
-            test_name="自然語言生成測試",
-            success=success,
-            execution_time=execution_time,
-            details=details
-        ))
+        self.test_results.append(
+            IntegrationTestResult(
+                test_name="自然語言生成測試",
+                success=success,
+                execution_time=execution_time,
+                details=details,
+            )
+        )
 
     async def _test_multilang_coordination(self):
         """測試多語言協調系統"""
@@ -227,37 +229,42 @@ class AIIntegrationTester:
             "task_id": "test_multilang_001",
             "description": "跨語言漏洞檢測任務",
             "target_languages": ["python", "go", "rust"],
-            "priority": "medium"
+            "priority": "medium",
         }
 
         details = {}
 
         try:
             # 測試任務分配
-            coordination_result = await self.multilang_coordinator.coordinate_multi_language_ai_task(test_task)
+            coordination_result = (
+                await self.multilang_coordinator.coordinate_multi_language_ai_task(
+                    test_task
+                )
+            )
 
             details["task_distribution"] = {
                 "success": True,
-                "languages_coordinated": len(coordination_result.get("language_results", {})),
-                "execution_successful": coordination_result.get("success", False)
+                "languages_coordinated": len(
+                    coordination_result.get("language_results", {})
+                ),
+                "execution_successful": coordination_result.get("success", False),
             }
 
             success = True
         except Exception as e:
-            details["task_distribution"] = {
-                "success": False,
-                "error": str(e)
-            }
+            details["task_distribution"] = {"success": False, "error": str(e)}
             success = False
 
         execution_time = time.time() - start_time
 
-        self.test_results.append(IntegrationTestResult(
-            test_name="多語言協調測試",
-            success=success,
-            execution_time=execution_time,
-            details=details
-        ))
+        self.test_results.append(
+            IntegrationTestResult(
+                test_name="多語言協調測試",
+                success=success,
+                execution_time=execution_time,
+                details=details,
+            )
+        )
 
     async def _test_ai_conflict_detection(self):
         """測試 AI 衝突檢測"""
@@ -284,32 +291,37 @@ class AIIntegrationTester:
             responses = await asyncio.gather(*tasks, return_exceptions=True)
 
             # 分析衝突處理結果
-            successful_responses = [r for r in responses if not isinstance(r, Exception)]
+            successful_responses = [
+                r for r in responses if not isinstance(r, Exception)
+            ]
 
             details["conflict_handling"] = {
                 "total_requests": len(concurrent_requests),
                 "successful_responses": len(successful_responses),
-                "conflicts_detected": len(concurrent_requests) - len(successful_responses),
-                "deduplication_working": len({str(r) for r in successful_responses if r}) < len(concurrent_requests)
+                "conflicts_detected": len(concurrent_requests)
+                - len(successful_responses),
+                "deduplication_working": len(
+                    {str(r) for r in successful_responses if r}
+                )
+                < len(concurrent_requests),
             }
 
             success = len(successful_responses) > 0
 
         except Exception as e:
-            details["conflict_handling"] = {
-                "success": False,
-                "error": str(e)
-            }
+            details["conflict_handling"] = {"success": False, "error": str(e)}
             success = False
 
         execution_time = time.time() - start_time
 
-        self.test_results.append(IntegrationTestResult(
-            test_name="AI 衝突檢測測試",
-            success=success,
-            execution_time=execution_time,
-            details=details
-        ))
+        self.test_results.append(
+            IntegrationTestResult(
+                test_name="AI 衝突檢測測試",
+                success=success,
+                execution_time=execution_time,
+                details=details,
+            )
+        )
 
     async def _test_end_to_end_integration(self):
         """測試端到端整合"""
@@ -323,8 +335,8 @@ class AIIntegrationTester:
                 "AI 協調",
                 "漏洞檢測",
                 "結果整合",
-                "中文報告生成"
-            ]
+                "中文報告生成",
+            ],
         }
 
         details = {}
@@ -335,17 +347,19 @@ class AIIntegrationTester:
                 "type": "comprehensive_security_analysis",
                 "content": test_scenario["input"],
                 "output_format": "chinese_report",
-                "include_recommendations": True
+                "include_recommendations": True,
             }
 
-            controller_response = await self.unified_controller.process_unified_request(complex_request)
+            controller_response = await self.unified_controller.process_unified_request(
+                complex_request
+            )
 
             # 2. 使用 NLG 系統生成最終報告
             if controller_response:
                 nlg_context = {
                     "type": "comprehensive_report",
                     "analysis_result": controller_response,
-                    "language": "chinese"
+                    "language": "chinese",
                 }
 
                 final_report = self.nlg_generator.generate_response(nlg_context)
@@ -354,7 +368,11 @@ class AIIntegrationTester:
                     "controller_success": True,
                     "nlg_success": True,
                     "final_report_generated": len(final_report) > 0,
-                    "report_preview": final_report[:200] + "..." if len(final_report) > 200 else final_report
+                    "report_preview": (
+                        final_report[:200] + "..."
+                        if len(final_report) > 200
+                        else final_report
+                    ),
                 }
 
                 success = True
@@ -362,25 +380,24 @@ class AIIntegrationTester:
                 details["end_to_end_flow"] = {
                     "controller_success": False,
                     "nlg_success": False,
-                    "error": "控制器未返回有效結果"
+                    "error": "控制器未返回有效結果",
                 }
                 success = False
 
         except Exception as e:
-            details["end_to_end_flow"] = {
-                "success": False,
-                "error": str(e)
-            }
+            details["end_to_end_flow"] = {"success": False, "error": str(e)}
             success = False
 
         execution_time = time.time() - start_time
 
-        self.test_results.append(IntegrationTestResult(
-            test_name="端到端整合測試",
-            success=success,
-            execution_time=execution_time,
-            details=details
-        ))
+        self.test_results.append(
+            IntegrationTestResult(
+                test_name="端到端整合測試",
+                success=success,
+                execution_time=execution_time,
+                details=details,
+            )
+        )
 
     async def _test_performance_stress(self):
         """測試效能壓力"""
@@ -399,19 +416,21 @@ class AIIntegrationTester:
                 request = {
                     "type": "quick_analysis",
                     "content": f"測試請求 {i+1}",
-                    "priority": "low"
+                    "priority": "low",
                 }
                 requests.append(request)
 
             # 分批並發執行
             results = []
             for i in range(0, len(requests), concurrent_limit):
-                batch = requests[i:i+concurrent_limit]
+                batch = requests[i : i + concurrent_limit]
                 batch_tasks = [
                     self.unified_controller.process_unified_request(req)
                     for req in batch
                 ]
-                batch_results = await asyncio.gather(*batch_tasks, return_exceptions=True)
+                batch_results = await asyncio.gather(
+                    *batch_tasks, return_exceptions=True
+                )
                 results.extend(batch_results)
 
             # 統計效能結果
@@ -423,26 +442,25 @@ class AIIntegrationTester:
                 "successful_requests": len(successful_results),
                 "failed_requests": len(failed_results),
                 "success_rate": len(successful_results) / stress_requests * 100,
-                "average_response_time": (time.time() - start_time) / stress_requests
+                "average_response_time": (time.time() - start_time) / stress_requests,
             }
 
             success = len(successful_results) >= stress_requests * 0.8  # 80% 成功率
 
         except Exception as e:
-            details["performance_stats"] = {
-                "success": False,
-                "error": str(e)
-            }
+            details["performance_stats"] = {"success": False, "error": str(e)}
             success = False
 
         execution_time = time.time() - start_time
 
-        self.test_results.append(IntegrationTestResult(
-            test_name="效能壓力測試",
-            success=success,
-            execution_time=execution_time,
-            details=details
-        ))
+        self.test_results.append(
+            IntegrationTestResult(
+                test_name="效能壓力測試",
+                success=success,
+                execution_time=execution_time,
+                details=details,
+            )
+        )
 
     async def _test_error_recovery(self):
         """測試錯誤恢復機制"""
@@ -451,8 +469,14 @@ class AIIntegrationTester:
         # 測試各種錯誤情況的恢復能力
         error_scenarios = [
             {"type": "invalid_request", "data": {"invalid": "格式錯誤的請求"}},
-            {"type": "missing_parameters", "data": {"type": "analysis"}},  # 缺少必要參數
-            {"type": "timeout_simulation", "data": {"type": "long_running_task", "timeout": 0.1}}
+            {
+                "type": "missing_parameters",
+                "data": {"type": "analysis"},
+            },  # 缺少必要參數
+            {
+                "type": "timeout_simulation",
+                "data": {"type": "long_running_task", "timeout": 0.1},
+            },
         ]
 
         details = {}
@@ -460,25 +484,29 @@ class AIIntegrationTester:
 
         for i, scenario in enumerate(error_scenarios):
             try:
-                response = await self.unified_controller.process_unified_request(scenario["data"])
+                response = await self.unified_controller.process_unified_request(
+                    scenario["data"]
+                )
 
                 # 檢查是否有適當的錯誤處理
                 details[f"scenario_{i+1}"] = {
                     "scenario_type": scenario["type"],
                     "handled_gracefully": True,
-                    "response_received": response is not None
+                    "response_received": response is not None,
                 }
                 recovery_count += 1
 
             except Exception as e:
                 # 預期的錯誤，檢查是否有適當的錯誤訊息
                 error_msg = str(e)
-                is_handled = len(error_msg) > 0 and "unexpected" not in error_msg.lower()
+                is_handled = (
+                    len(error_msg) > 0 and "unexpected" not in error_msg.lower()
+                )
 
                 details[f"scenario_{i+1}"] = {
                     "scenario_type": scenario["type"],
                     "handled_gracefully": is_handled,
-                    "error_message": error_msg[:100]
+                    "error_message": error_msg[:100],
                 }
 
                 if is_handled:
@@ -487,12 +515,14 @@ class AIIntegrationTester:
         execution_time = time.time() - start_time
         success = recovery_count >= len(error_scenarios) * 0.7  # 70% 恢復率
 
-        self.test_results.append(IntegrationTestResult(
-            test_name="錯誤恢復測試",
-            success=success,
-            execution_time=execution_time,
-            details=details
-        ))
+        self.test_results.append(
+            IntegrationTestResult(
+                test_name="錯誤恢復測試",
+                success=success,
+                execution_time=execution_time,
+                details=details,
+            )
+        )
 
     def _generate_test_report(self, total_time: float) -> dict[str, Any]:
         """
@@ -513,23 +543,25 @@ class AIIntegrationTester:
                 "successful_tests": len(successful_tests),
                 "failed_tests": len(failed_tests),
                 "success_rate": len(successful_tests) / len(self.test_results) * 100,
-                "total_execution_time": total_time
+                "total_execution_time": total_time,
             },
             "test_results": [
                 {
                     "name": result.test_name,
                     "success": result.success,
                     "execution_time": result.execution_time,
-                    "error": result.error_message
+                    "error": result.error_message,
                 }
                 for result in self.test_results
             ],
-            "recommendations": self._generate_recommendations(failed_tests)
+            "recommendations": self._generate_recommendations(failed_tests),
         }
 
         return report
 
-    def _generate_recommendations(self, failed_tests: list[IntegrationTestResult]) -> list[str]:
+    def _generate_recommendations(
+        self, failed_tests: list[IntegrationTestResult]
+    ) -> list[str]:
         """
         根據失敗的測試生成建議
 
@@ -587,20 +619,20 @@ async def main():
     print(f"⏱️ 總執行時間: {report['summary']['total_execution_time']:.2f}秒")
 
     print("\n📝 詳細結果:")
-    for result in report['test_results']:
-        status = "✅" if result['success'] else "❌"
+    for result in report["test_results"]:
+        status = "✅" if result["success"] else "❌"
         print(f"{status} {result['name']} ({result['execution_time']:.2f}s)")
-        if result['error']:
+        if result["error"]:
             print(f"   錯誤: {result['error']}")
 
     print("\n💡 改進建議:")
-    for recommendation in report['recommendations']:
+    for recommendation in report["recommendations"]:
         print(f"  {recommendation}")
 
     # 保存詳細報告
     report_file = Path("c:/AMD/AIVA/_out/ai_integration_test_report.json")
     report_file.parent.mkdir(exist_ok=True)
-    with open(report_file, 'w', encoding='utf-8') as f:
+    with open(report_file, "w", encoding="utf-8") as f:
         json.dump(report, f, ensure_ascii=False, indent=2)
 
     print(f"\n📄 詳細報告已保存至: {report_file}")

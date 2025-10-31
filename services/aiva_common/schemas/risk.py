@@ -4,8 +4,6 @@
 此模組定義了風險評估、攻擊路徑分析等相關的資料模型。
 """
 
-
-
 from datetime import UTC, datetime
 from typing import Any
 

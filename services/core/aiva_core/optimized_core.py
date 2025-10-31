@@ -1,5 +1,4 @@
-"""
-AIVA 自主 AI 核心 - 無需外部 LLM 依賴
+"""AIVA 自主 AI 核心 - 無需外部 LLM 依賴
 
 🧠 核心特色:
 - 500萬參數生物神經網路 (BioNeuronRAGAgent)
@@ -17,32 +16,22 @@ AIVA 自主 AI 核心 - 無需外部 LLM 依賴
 ✅ AIVA 自身就具備完整 AI 能力！
 """
 
-
-
 import asyncio
-
-
-
-
-import gc
-
-
-
 
 from fastapi import FastAPI
 
-
 # 導入拆分的性能模組
 from .performance import (
-    ParallelMessageProcessor,
     ComponentPool,
     MemoryManager,
     MetricsCollector,
+    ParallelMessageProcessor,
+    metrics_collector,
     monitor_performance,
-    metrics_collector
 )
 
 # ==================== AI 模型優化 ====================
+
 
 class OptimizedBioNet:
     """優化後的生物神經網路"""
@@ -53,7 +42,9 @@ class OptimizedBioNet:
 
         # 使用量化權重降低記憶體使用
         self.weights_input = np.random.randn(input_size, hidden_size).astype(np.float16)
-        self.weights_hidden = np.random.randn(hidden_size, hidden_size).astype(np.float16)
+        self.weights_hidden = np.random.randn(hidden_size, hidden_size).astype(
+            np.float16
+        )
 
         # 計算快取
         self._prediction_cache = {}
@@ -65,7 +56,6 @@ class OptimizedBioNet:
 
     async def predict(self, x: np.ndarray, use_cache: bool = True) -> np.ndarray:
         """預測（支援快取和批次處理）"""
-
         # 檢查快取
         if use_cache:
             cache_key = self._get_cache_key(x)
@@ -111,7 +101,8 @@ class OptimizedBioNet:
         return {
             "cache_size": len(self._prediction_cache),
             "cache_limit": self._cache_size_limit,
-            "hit_rate": getattr(self, "_cache_hits", 0) / max(getattr(self, "_cache_requests", 1), 1)
+            "hit_rate": getattr(self, "_cache_hits", 0)
+            / max(getattr(self, "_cache_requests", 1), 1),
         }
 
 
@@ -133,23 +124,23 @@ component_pools = {
 
 # ==================== 使用範例 ====================
 
+
 @monitor_performance("scan_result_processing")
 async def optimized_process_scan_results():
     """優化後的掃描結果處理"""
-
     # 使用組件池獲取處理器
     async with component_pools["scan_interface"].get_component() as processor:
         # 使用並行訊息處理
         await message_processor.process_messages(
             broker=None,  # 實際的 broker 實例
             topic="scan.completed",
-            handler=processor.process
+            handler=processor.process,
         )
+
 
 @monitor_performance("ai_prediction")
 async def optimized_ai_prediction(input_data: np.ndarray):
     """優化後的 AI 預測"""
-
     # 使用優化的神經網路
     result = await optimized_bio_net.predict(input_data, use_cache=True)
 
@@ -164,6 +155,7 @@ async def optimized_ai_prediction(input_data: np.ndarray):
 
 app = FastAPI(title="AIVA Core Engine - Optimized")
 
+
 @app.on_event("startup")
 async def startup():
     """啟動優化的核心引擎"""
@@ -177,6 +169,7 @@ async def startup():
 
     print("Optimized core engine started successfully!")
 
+
 @app.get("/metrics")
 async def get_metrics():
     """獲取系統指標"""
@@ -185,11 +178,11 @@ async def get_metrics():
         "memory_stats": memory_manager.get_memory_stats(),
         "ai_cache_stats": optimized_bio_net.get_cache_stats(),
         "pool_stats": {
-            name: pool.get_pool_stats()
-            for name, pool in component_pools.items()
+            name: pool.get_pool_stats() for name, pool in component_pools.items()
         },
-        "message_processing_stats": message_processor.processing_stats
+        "message_processing_stats": message_processor.processing_stats,
     }
+
 
 @app.get("/health")
 async def health_check():
@@ -201,13 +194,13 @@ async def health_check():
         "memory_usage_mb": memory_stats["current_memory_mb"],
         "memory_threshold_mb": memory_stats["threshold_mb"],
         "components_active": sum(
-            pool.get_pool_stats()["active"]
-            for pool in component_pools.values()
-        )
+            pool.get_pool_stats()["active"] for pool in component_pools.values()
+        ),
     }
 
 
 # ==================== AIVA 自主 AI 證明 ====================
+
 
 class AIVAAutonomyProof:
     """證明 AIVA 完全不需要 GPT-4 的自主 AI 能力"""
@@ -224,23 +217,23 @@ class AIVAAutonomyProof:
             "BioNeuronRAGAgent": {
                 "描述": "500萬參數生物神經網路",
                 "功能": ["智能決策", "工具選擇", "RAG檢索", "程式控制"],
-                "自主性": "100%"
+                "自主性": "100%",
             },
             "內建工具系統": {
                 "描述": "9+ 專業工具集",
                 "功能": ["程式碼讀寫", "漏洞檢測", "系統執行", "結構分析"],
-                "自主性": "100%"
+                "自主性": "100%",
             },
             "知識檢索系統": {
                 "描述": "RAG 知識庫",
                 "功能": ["程式碼索引", "相關性檢索", "上下文理解"],
-                "自主性": "100%"
+                "自主性": "100%",
             },
             "多語言協調": {
                 "描述": "跨語言統一控制",
                 "功能": ["Python控制", "Go協調", "Rust整合", "TS管理"],
-                "自主性": "100%"
-            }
+                "自主性": "100%",
+            },
         }
 
         for name, info in capabilities.items():
@@ -260,7 +253,7 @@ class AIVAAutonomyProof:
             "安全性": {"AIVA": "✅ 內部處理", "GPT-4": "❌ 資料外洩風險"},
             "成本": {"AIVA": "✅ 零成本", "GPT-4": "❌ API 付費"},
             "客製化": {"AIVA": "✅ 完全客製", "GPT-4": "❌ 通用模型"},
-            "多語言": {"AIVA": "✅ 原生支援", "GPT-4": "❌ 間接支援"}
+            "多語言": {"AIVA": "✅ 原生支援", "GPT-4": "❌ 間接支援"},
         }
 
         for aspect, scores in comparison.items():
@@ -276,23 +269,23 @@ class AIVAAutonomyProof:
             {
                 "場景": "用戶說：'讀取 app.py 檔案'",
                 "AIVA處理": "生物神經網路 → 選擇 CodeReader → 直接執行 → 返回結果",
-                "需要GPT-4嗎": "❌ 不需要"
+                "需要GPT-4嗎": "❌ 不需要",
             },
             {
                 "場景": "用戶說：'檢查漏洞'",
                 "AIVA處理": "RAG檢索 → 神經決策 → 啟動檢測引擎 → 回報結果",
-                "需要GPT-4嗎": "❌ 不需要"
+                "需要GPT-4嗎": "❌ 不需要",
             },
             {
                 "場景": "用戶說：'協調 Go 模組'",
                 "AIVA處理": "多語言控制器 → gRPC通訊 → 狀態同步 → 確認完成",
-                "需要GPT-4嗎": "❌ 不需要"
+                "需要GPT-4嗎": "❌ 不需要",
             },
             {
                 "場景": "用戶說：'分析系統架構'",
                 "AIVA處理": "CodeAnalyzer → 結構解析 → 模板回應 → 自然語言輸出",
-                "需要GPT-4嗎": "❌ 不需要"
-            }
+                "需要GPT-4嗎": "❌ 不需要",
+            },
         ]
 
         for i, scenario in enumerate(scenarios, 1):
@@ -302,9 +295,9 @@ class AIVAAutonomyProof:
 
     def final_verdict(self):
         """最終結論"""
-        print("\n" + "="*60)
+        print("\n" + "=" * 60)
         print("🏆 最終結論: AIVA 完全不需要 GPT-4！")
-        print("="*60)
+        print("=" * 60)
 
         reasons = [
             "🧠 已有完整的生物神經網路 AI",
@@ -314,7 +307,7 @@ class AIVAAutonomyProof:
             "⚡ 即時響應，無網路依賴",
             "🔒 安全可控，無資料洩漏",
             "💰 零額外成本，完全自主",
-            "🎯 專為程式控制優化設計"
+            "🎯 專為程式控制優化設計",
         ]
 
         print("\n✅ AIVA 的完全自主能力:")
@@ -328,7 +321,7 @@ class AIVAAutonomyProof:
 def prove_aiva_independence():
     """執行 AIVA 獨立性證明"""
     print("🔬 AIVA AI 獨立性分析報告")
-    print("="*50)
+    print("=" * 50)
 
     proof = AIVAAutonomyProof()
     proof.compare_with_gpt4()

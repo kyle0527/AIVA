@@ -1,9 +1,6 @@
-"""
-Server - AIVA UI 面板 Web 伺服器
+"""Server - AIVA UI 面板 Web 伺服器
 使用 FastAPI 提供 RESTful API 和 Web 介面
 """
-
-
 
 import logging
 import socket
@@ -31,7 +28,7 @@ def find_free_port(start_port: int = 8080, max_attempts: int = 100) -> int:
     for port in range(start_port, start_port + max_attempts):
         try:
             with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-                s.bind(('127.0.0.1', port))
+                s.bind(("127.0.0.1", port))
                 return port
         except OSError:
             continue

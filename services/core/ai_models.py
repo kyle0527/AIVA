@@ -15,8 +15,6 @@ AIVA AI System Models - AI智能系統模組
 9. 場景測試 (Scenario Testing)
 """
 
-
-
 from datetime import UTC, datetime
 from typing import Any
 
@@ -63,7 +61,7 @@ class AIVerificationResult(BaseModel):
 
 class AITrainingStartPayload(BaseModel):
     """AI訓練開始載荷"""
-    
+
     model_config = {"protected_namespaces": ()}
 
     training_id: str = Field(description="訓練ID")
@@ -76,7 +74,7 @@ class AITrainingStartPayload(BaseModel):
 
 class AITrainingProgressPayload(BaseModel):
     """AI訓練進度載荷"""
-    
+
     model_config = {"protected_namespaces": ()}
 
     training_id: str = Field(description="訓練ID")
@@ -90,7 +88,7 @@ class AITrainingProgressPayload(BaseModel):
 
 class AITrainingCompletedPayload(BaseModel):
     """AI訓練完成載荷"""
-    
+
     model_config = {"protected_namespaces": ()}
 
     training_id: str = Field(description="訓練ID")
@@ -128,7 +126,7 @@ class AITraceCompletedEvent(BaseModel):
 
 class AIModelUpdatedEvent(BaseModel):
     """AI模型更新事件"""
-    
+
     model_config = {"protected_namespaces": ()}
 
     model_id: str = Field(description="模型ID")
@@ -142,7 +140,7 @@ class AIModelUpdatedEvent(BaseModel):
 
 class AIModelDeployCommand(BaseModel):
     """AI模型部署命令"""
-    
+
     model_config = {"protected_namespaces": ()}
 
     model_id: str = Field(description="模型ID")
@@ -233,7 +231,9 @@ class TraceRecord(BaseModel):
     # 性能數據
     duration_ms: int = Field(ge=0, description="持續時間(毫秒)")
     cpu_time_ms: int | None = Field(default=None, ge=0, description="CPU時間(毫秒)")
-    memory_used_mb: float | None = Field(default=None, ge=0.0, description="內存使用(MB)")
+    memory_used_mb: float | None = Field(
+        default=None, ge=0.0, description="內存使用(MB)"
+    )
 
     # 結果狀態
     status: TestStatus = Field(description="狀態")
@@ -287,7 +287,9 @@ class SessionState(BaseModel):
 
     # 會話上下文
     context: dict[str, Any] = Field(default_factory=dict, description="上下文")
-    accumulated_data: dict[str, Any] = Field(default_factory=dict, description="累積數據")
+    accumulated_data: dict[str, Any] = Field(
+        default_factory=dict, description="累積數據"
+    )
 
     # 會話統計
     operation_count: int = Field(ge=0, description="操作次數")
@@ -302,7 +304,7 @@ class SessionState(BaseModel):
 
 class ModelTrainingConfig(BaseModel):
     """模型訓練配置"""
-    
+
     model_config = {"protected_namespaces": ()}
 
     config_id: str = Field(description="配置ID")
@@ -335,7 +337,7 @@ class ModelTrainingConfig(BaseModel):
 
 class ModelTrainingResult(BaseModel):
     """模型訓練結果"""
-    
+
     model_config = {"protected_namespaces": ()}
 
     training_id: str = Field(description="訓練ID")
@@ -347,7 +349,9 @@ class ModelTrainingResult(BaseModel):
 
     # 性能指標
     final_loss: float = Field(description="最終損失")
-    final_accuracy: float | None = Field(default=None, ge=0.0, le=1.0, description="最終準確率")
+    final_accuracy: float | None = Field(
+        default=None, ge=0.0, le=1.0, description="最終準確率"
+    )
     best_epoch: int | None = Field(default=None, ge=0, description="最佳輪數")
 
     # 驗證指標
@@ -358,7 +362,9 @@ class ModelTrainingResult(BaseModel):
 
     # 模型信息
     model_path: str | None = Field(default=None, description="模型保存路徑")
-    model_size_mb: float | None = Field(default=None, ge=0.0, description="模型大小(MB)")
+    model_size_mb: float | None = Field(
+        default=None, ge=0.0, description="模型大小(MB)"
+    )
 
     # 時間信息
     started_at: datetime = Field(description="開始時間")
@@ -404,7 +410,7 @@ class StandardScenario(BaseModel):
 
 class ScenarioTestResult(BaseModel):
     """場景測試結果"""
-    
+
     model_config = {"protected_namespaces": ()}
 
     test_id: str = Field(description="測試ID")

@@ -59,7 +59,7 @@ def check_tools():
 def check_ai_explorer():
     """檢查 AI 系統探索器可用性"""
     try:
-        if os.path.exists("ai_system_explorer_v3.py"):
+        if os.path.exists("scripts/ai_analysis/ai_system_explorer_v3.py"):
             return "✅ ai_system_explorer_v3.py 存在"
         else:
             return "❌ ai_system_explorer_v3.py 不存在"

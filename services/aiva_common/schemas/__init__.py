@@ -18,29 +18,6 @@ AIVA Common Schemas Package
     - telemetry.py: 監控、心跳與遙測
 """
 
-# ==================== 基礎模型 ====================
-from .base import (
-    Asset,
-    Authentication,
-    ExecutionError,
-    Fingerprints,
-    MessageHeader,
-    RateLimit,
-    RiskFactor,
-    ScanScope,
-    Summary,
-    Task,
-    TaskDependency,
-)
-
-# ==================== 能力管理 ====================
-from .capability import (
-    CapabilityInfo,
-    CapabilityScorecard,
-    InputParameter,
-    OutputParameter,
-)
-
 # ==================== AI 相關 ====================
 from .ai import (
     AIExperienceCreatedEvent,
@@ -70,6 +47,34 @@ from .ai import (
     TraceRecord,
 )
 
+# ==================== API 標準 (OpenAPI/AsyncAPI/GraphQL) ====================
+from .api_standards import (
+    APISecurityTest,
+    APIVulnerabilityFinding,
+    AsyncAPIChannel,
+    AsyncAPIDocument,
+    AsyncAPIInfo,
+    AsyncAPIMessage,
+    GraphQLDirectiveDefinition,
+    GraphQLFieldDefinition,
+    GraphQLSchema,
+    GraphQLTypeDefinition,
+    OpenAPIComponents,
+    OpenAPIDocument,
+    OpenAPIInfo,
+    OpenAPIOperation,
+    OpenAPIParameter,
+    OpenAPIPathItem,
+    OpenAPISchema,
+    OpenAPISecurityScheme,
+    OpenAPIServer,
+)
+from .api_standards import (
+    AsyncAPIComponents as AsyncComponents,  # OpenAPI 3.1; AsyncAPI 3.0; GraphQL; API 安全測試
+)
+from .api_standards import AsyncAPIOperation as AsyncOperation
+from .api_standards import AsyncAPIServer as AsyncServer
+
 # ==================== 資產管理 ====================
 from .assets import (
     AssetInventoryItem,
@@ -80,6 +85,18 @@ from .assets import (
     VulnerabilityLifecyclePayload,
     VulnerabilityUpdatePayload,
 )
+
+# ==================== 異步工具 ====================
+from .async_utils import (
+    AsyncBatchConfig,
+    AsyncBatchResult,
+    AsyncTaskConfig,
+    AsyncTaskResult,
+    ResourceLimits,
+    RetryConfig,
+)
+
+# ==================== 基礎模型 ====================
 from .base import (
     Asset,
     Authentication,
@@ -92,6 +109,24 @@ from .base import (
     Summary,
     Task,
     TaskDependency,
+)
+
+# ==================== 能力管理 ====================
+from .capability import (
+    CapabilityInfo,
+    CapabilityScorecard,
+    InputParameter,
+    OutputParameter,
+)
+
+# ==================== CLI 界面 ====================
+from .cli import (
+    CLICommand,
+    CLIConfiguration,
+    CLIExecutionResult,
+    CLIMetrics,
+    CLIParameter,
+    CLISession,
 )
 
 # ==================== Enhanced 版本 ====================
@@ -140,6 +175,33 @@ from .languages import (
     MultiLanguageCodebase,
 )
 
+# ==================== 低價值高概率漏洞 ====================
+from .low_value_vulnerabilities import (  # 基礎模型; 具體漏洞模式; 測試和策略
+    BountyPrediction,
+    BugBountyStrategy,
+    ClickjackingPattern,
+    CORSMisconfigurationPattern,
+    CSRFJSONBypass,
+    CSRFMissingToken,
+    CSRFPattern,
+    DebugInfoDisclosure,
+    DOMXSSSimple,
+    ErrorMessageDisclosure,
+    HostHeaderInjectionPattern,
+    IDORPattern,
+    IDORSimpleID,
+    IDORUserData,
+    InfoDisclosurePattern,
+    LowValueVulnerabilityResult,
+    LowValueVulnerabilityTest,
+    LowValueVulnerabilityType,
+    OpenRedirectPattern,
+    ReflectedXSSBasic,
+    ROIAnalysis,
+    VulnerabilityPattern,
+    XSSPattern,
+)
+
 # ==================== 訊息系統 ====================
 from .messaging import (
     AIVACommand,
@@ -147,6 +209,16 @@ from .messaging import (
     AivaMessage,
     AIVARequest,
     AIVAResponse,
+)
+
+# ==================== 插件系統 ====================
+from .plugins import (
+    PluginConfig,
+    PluginExecutionContext,
+    PluginExecutionResult,
+    PluginHealthCheck,
+    PluginManifest,
+    PluginRegistry,
 )
 
 # ==================== 參考資料 ====================
@@ -232,6 +304,7 @@ from .telemetry import (
 # ==================== 威脅情報 (STIX/TAXII) ====================
 from .threat_intelligence import (
     AttackPattern,
+    BugBountyIntelligence,
     Bundle,
     Campaign,
     CourseOfAction,
@@ -241,6 +314,7 @@ from .threat_intelligence import (
     IntrusionSet,
     IOCEnrichment,
     KillChainPhase,
+    LowValueVulnerabilityPattern,
     Malware,
     ObservedData,
     Relationship,
@@ -256,100 +330,9 @@ from .threat_intelligence import (
     ThreatActor,
     ThreatIntelligenceReport,
     Tool,
-    Vulnerability as STIXVulnerability,
-    # HackerOne 優化相關
-    BugBountyIntelligence,
-    LowValueVulnerabilityPattern,
 )
-
-# ==================== API 標準 (OpenAPI/AsyncAPI/GraphQL) ====================
-from .api_standards import (
-    # OpenAPI 3.1
-    OpenAPIComponents,
-    OpenAPIDocument,
-    OpenAPIInfo,
-    OpenAPIOperation,
-    OpenAPIParameter,
-    OpenAPIPathItem,
-    OpenAPISchema,
-    OpenAPISecurityScheme,
-    OpenAPIServer,
-    # AsyncAPI 3.0
-    AsyncAPIChannel,
-    AsyncAPIComponents as AsyncComponents,
-    AsyncAPIDocument,
-    AsyncAPIInfo,
-    AsyncAPIMessage,
-    AsyncAPIOperation as AsyncOperation,
-    AsyncAPIServer as AsyncServer,
-    # GraphQL
-    GraphQLSchema,
-    GraphQLTypeDefinition,
-    GraphQLFieldDefinition,
-    GraphQLDirectiveDefinition,
-    # API 安全測試
-    APISecurityTest,
-    APIVulnerabilityFinding,
-)
-
-# ==================== 異步工具 ====================
-from .async_utils import (
-    AsyncTaskConfig,
-    AsyncTaskResult,
-    RetryConfig,
-    ResourceLimits,
-    AsyncBatchConfig,
-    AsyncBatchResult,
-)
-
-# ==================== 插件系統 ====================
-from .plugins import (
-    PluginManifest,
-    PluginExecutionContext,
-    PluginExecutionResult,
-    PluginConfig,
-    PluginRegistry,
-    PluginHealthCheck,
-)
-
-# ==================== CLI 界面 ====================
-from .cli import (
-    CLIParameter,
-    CLICommand,
-    CLIExecutionResult,
-    CLISession,
-    CLIConfiguration,
-    CLIMetrics,
-)
-
-# ==================== 低價值高概率漏洞 ====================
-from .low_value_vulnerabilities import (
-    # 基礎模型
-    VulnerabilityPattern,
-    LowValueVulnerabilityType,
-    # 具體漏洞模式
-    InfoDisclosurePattern,
-    ErrorMessageDisclosure,
-    DebugInfoDisclosure,
-    XSSPattern,
-    ReflectedXSSBasic,
-    DOMXSSSimple,
-    CSRFPattern,
-    CSRFMissingToken,
-    CSRFJSONBypass,
-    IDORPattern,
-    IDORSimpleID,
-    IDORUserData,
-    OpenRedirectPattern,
-    HostHeaderInjectionPattern,
-    CORSMisconfigurationPattern,
-    ClickjackingPattern,
-    # 測試和策略
-    LowValueVulnerabilityTest,
-    LowValueVulnerabilityResult,
-    BugBountyStrategy,
-    BountyPrediction,
-    ROIAnalysis,
+from .threat_intelligence import (
+    Vulnerability as STIXVulnerability,  # HackerOne 優化相關
 )
 
 # 為了保持向後相容，明確匯出所有公開介面

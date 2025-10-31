@@ -4,8 +4,6 @@
 此模組定義了系統編排、會話管理、任務隊列、Webhook 等系統級別的資料模型。
 """
 
-
-
 from datetime import UTC, datetime
 from typing import Any
 
@@ -60,7 +58,7 @@ class SessionState(BaseModel):
 
 class ModelTrainingResult(BaseModel):
     """模型訓練結果"""
-    
+
     model_config = {"protected_namespaces": ()}
 
     training_id: str
@@ -101,8 +99,7 @@ class TaskQueue(BaseModel):
     # 隊列狀態
     pending_tasks: list[str] = Field(default_factory=list, description="等待任務")
     running_tasks: list[str] = Field(default_factory=list, description="運行任務")
-    completed_tasks: list[str] = Field(
-        default_factory=list, description="完成任務")
+    completed_tasks: list[str] = Field(default_factory=list, description="完成任務")
 
     # 統計信息
     total_processed: int = Field(ge=0, description="總處理數")

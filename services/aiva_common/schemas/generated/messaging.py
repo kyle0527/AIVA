@@ -9,12 +9,9 @@ AIVA跨語言Schema統一定義 - 以手動維護版本為準
 🔄 Schema 版本: 1.1.0
 """
 
+from typing import Any
 
-from typing import Any, Dict, List, Optional
-from datetime import datetime
 from pydantic import BaseModel, Field
-
-
 
 
 class AivaMessage(BaseModel):
@@ -23,13 +20,13 @@ class AivaMessage(BaseModel):
     header: MessageHeader
     """訊息標頭"""
 
-    topic: str = Field(values=['tasks', 'findings', 'events', 'commands', 'responses'])
+    topic: str = Field(values=["tasks", "findings", "events", "commands", "responses"])
     """訊息主題"""
 
     schema_version: str = Field(default="1.0")
     """Schema版本"""
 
-    payload: Dict[str, Any]
+    payload: dict[str, Any]
     """訊息載荷"""
 
 
@@ -48,16 +45,16 @@ class AIVARequest(BaseModel):
     request_type: str
     """請求類型"""
 
-    payload: Dict[str, Any]
+    payload: dict[str, Any]
     """請求載荷"""
 
-    trace_id: Optional[str] = None
+    trace_id: str | None = None
     """追蹤識別碼"""
 
     timeout_seconds: int = Field(ge=1, le=300, default=30)
     """逾時秒數"""
 
-    metadata: Dict[str, Any] = Field(default_factory=dict)
+    metadata: dict[str, Any] = Field(default_factory=dict)
     """中繼資料"""
 
     timestamp: str
@@ -76,18 +73,17 @@ class AIVAResponse(BaseModel):
     success: bool
     """執行是否成功"""
 
-    payload: Optional[Dict[str, Any]] = None
+    payload: dict[str, Any] | None = None
     """響應載荷"""
 
-    error_code: Optional[str] = None
+    error_code: str | None = None
     """錯誤代碼"""
 
-    error_message: Optional[str] = None
+    error_message: str | None = None
     """錯誤訊息"""
 
-    metadata: Dict[str, Any] = Field(default_factory=dict)
+    metadata: dict[str, Any] = Field(default_factory=dict)
     """中繼資料"""
 
     timestamp: str
     """時間戳"""
-

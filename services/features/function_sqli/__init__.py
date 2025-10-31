@@ -16,8 +16,16 @@ from .task_queue import SqliTaskQueue, QueuedTask
 from .detection_models import DetectionModels
 from .exceptions import SQLiException
 from .payload_wrapper_encoder import PayloadWrapperEncoder
-
 from .telemetry import SqliExecutionTelemetry
+
+# HackingTool 整合組件
+from .hackingtool_config import (
+    HACKINGTOOL_SQL_CONFIGS, 
+    HackingToolSQLIntegrator,
+    sql_integrator
+)
+from .hackingtool_manager import sql_tool_manager
+from .engines.hackingtool_engine import HackingToolDetectionEngine
 
 __all__ = [
     "SmartDetectionManager",
@@ -26,6 +34,11 @@ __all__ = [
     "DetectionModels",
     "SQLiException",
     "PayloadWrapperEncoder",
-    "ResultBinderPublisher",
     "SqliExecutionTelemetry",
+    # HackingTool 整合組件
+    "HACKINGTOOL_SQL_CONFIGS",
+    "HackingToolSQLIntegrator",
+    "sql_integrator",
+    "sql_tool_manager",
+    "HackingToolDetectionEngine",
 ]

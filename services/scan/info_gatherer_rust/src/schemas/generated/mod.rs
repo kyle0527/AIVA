@@ -1,19 +1,17 @@
 // AIVA Rust Schema - 自動生成
 // 版本: 1.1.0
 // 生成時間: N/A
-// 
+//
 // 完整的 Rust Schema 實現，包含序列化/反序列化支持
+// 
+// 注意：這些結構體為 future-proof 設計而保留，支援跨語言 schema 一致性
+// 許多結構體暫時未使用，但為維護與 Python/Go 的 SOT 一致性而保留
 
-use serde::{Serialize, Deserialize};
-use std::collections::HashMap;
-use chrono::{DateTime, Utc};
+#![allow(dead_code)] // Generated schemas for future-proof design
+
+use serde::{Deserialize, Serialize};
 
 // 可選依賴 - 根據實際使用情況啟用
-#[cfg(feature = "uuid")]
-use uuid::Uuid;
-
-#[cfg(feature = "url")]
-use url::Url;
 
 /// 漏洞嚴重程度枚舉
 #[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
@@ -45,7 +43,7 @@ impl std::fmt::Display for Severity {
 
 impl std::str::FromStr for Severity {
     type Err = String;
-    
+
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         match s.to_uppercase().as_str() {
             "CRITICAL" => Ok(Severity::CRITICAL),
@@ -82,7 +80,7 @@ impl std::fmt::Display for Confidence {
 
 impl std::str::FromStr for Confidence {
     type Err = String;
-    
+
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         match s.to_uppercase().as_str() {
             "CONFIRMED" => Ok(Confidence::CONFIRMED),
@@ -104,7 +102,7 @@ pub enum FindingStatus {
     /// 已解決
     RESOLVED,
     /// 誤報
-    FALSE_POSITIVE,
+    FalsePositive,
 }
 
 impl std::fmt::Display for FindingStatus {
@@ -113,20 +111,20 @@ impl std::fmt::Display for FindingStatus {
             FindingStatus::NEW => write!(f, "new"),
             FindingStatus::CONFIRMED => write!(f, "confirmed"),
             FindingStatus::RESOLVED => write!(f, "resolved"),
-            FindingStatus::FALSE_POSITIVE => write!(f, "false_positive"),
+            FindingStatus::FalsePositive => write!(f, "false_positive"),
         }
     }
 }
 
 impl std::str::FromStr for FindingStatus {
     type Err = String;
-    
+
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         match s.to_uppercase().as_str() {
             "NEW" => Ok(FindingStatus::NEW),
             "CONFIRMED" => Ok(FindingStatus::CONFIRMED),
             "RESOLVED" => Ok(FindingStatus::RESOLVED),
-            "FALSE_POSITIVE" => Ok(FindingStatus::FALSE_POSITIVE),
+            "FALSE_POSITIVE" => Ok(FindingStatus::FalsePositive),
             _ => Err(format!("Invalid FindingStatus: {}", s)),
         }
     }
@@ -168,7 +166,7 @@ impl std::fmt::Display for AsyncTaskStatus {
 
 impl std::str::FromStr for AsyncTaskStatus {
     type Err = String;
-    
+
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         match s.to_uppercase().as_str() {
             "PENDING" => Ok(AsyncTaskStatus::PENDING),
@@ -213,7 +211,7 @@ impl std::fmt::Display for PluginStatus {
 
 impl std::str::FromStr for PluginStatus {
     type Err = String;
-    
+
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         match s.to_uppercase().as_str() {
             "INACTIVE" => Ok(PluginStatus::INACTIVE),
@@ -256,7 +254,7 @@ impl std::fmt::Display for PluginType {
 
 impl std::str::FromStr for PluginType {
     type Err = String;
-    
+
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         match s.to_uppercase().as_str() {
             "SCANNER" => Ok(PluginType::SCANNER),
@@ -273,19 +271,19 @@ impl std::str::FromStr for PluginType {
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "snake_case")]
 pub struct MessageHeader {
-    /// 
+    ///
     pub message_id: String,
-    /// 
+    ///
     pub trace_id: String,
-    /// 
+    ///
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub correlation_id: Option<String>,
     /// 來源模組名稱
     pub source_module: String,
-    /// 
+    ///
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub timestamp: Option<chrono::DateTime<chrono::Utc>>,
-    /// 
+    ///
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub version: Option<String>,
 }
@@ -302,7 +300,7 @@ impl MessageHeader {
             version: None,
         }
     }
-    
+
     /// 驗證結構體數據
     pub fn validate(&self) -> Result<(), String> {
         Ok(())
@@ -319,21 +317,21 @@ impl Default for MessageHeader {
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "snake_case")]
 pub struct Target {
-    /// 
+    ///
     pub url: serde_json::Value,
-    /// 
+    ///
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub parameter: Option<String>,
-    /// 
+    ///
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub method: Option<String>,
-    /// 
+    ///
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub headers: Option<std::collections::HashMap<String, serde_json::Value>>,
-    /// 
+    ///
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub params: Option<std::collections::HashMap<String, serde_json::Value>>,
-    /// 
+    ///
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub body: Option<String>,
 }
@@ -350,7 +348,7 @@ impl Target {
             body: None,
         }
     }
-    
+
     /// 驗證結構體數據
     pub fn validate(&self) -> Result<(), String> {
         Ok(())
@@ -367,7 +365,7 @@ impl Default for Target {
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "snake_case")]
 pub struct Vulnerability {
-    /// 
+    ///
     pub name: serde_json::Value,
     /// CWE ID (格式: CWE-XXX)，參考 https://cwe.mitre.org/
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -375,11 +373,11 @@ pub struct Vulnerability {
     /// CVE ID (格式: CVE-YYYY-NNNNN)，參考 https://cve.mitre.org/
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub cve: Option<String>,
-    /// 
+    ///
     pub severity: serde_json::Value,
-    /// 
+    ///
     pub confidence: serde_json::Value,
-    /// 
+    ///
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub description: Option<String>,
     /// CVSS v3.1 Base Score (0.0-10.0)，參考 https://www.first.org/cvss/
@@ -408,7 +406,7 @@ impl Vulnerability {
             owasp_category: None,
         }
     }
-    
+
     /// 驗證結構體數據
     pub fn validate(&self) -> Result<(), String> {
         Ok(())
@@ -425,17 +423,17 @@ impl Default for Vulnerability {
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "snake_case")]
 pub struct Asset {
-    /// 
+    ///
     pub asset_id: String,
-    /// 
+    ///
     #[serde(rename = "type")]
     pub r#type: String,
-    /// 
+    ///
     pub value: String,
-    /// 
+    ///
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub parameters: Option<Vec<String>>,
-    /// 
+    ///
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub has_form: Option<bool>,
 }
@@ -451,7 +449,7 @@ impl Asset {
             has_form: None,
         }
     }
-    
+
     /// 驗證結構體數據
     pub fn validate(&self) -> Result<(), String> {
         Ok(())
@@ -468,10 +466,10 @@ impl Default for Asset {
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "snake_case")]
 pub struct Authentication {
-    /// 
+    ///
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub method: Option<String>,
-    /// 
+    ///
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub credentials: Option<std::collections::HashMap<String, serde_json::Value>>,
 }
@@ -484,7 +482,7 @@ impl Authentication {
             credentials: None,
         }
     }
-    
+
     /// 驗證結構體數據
     pub fn validate(&self) -> Result<(), String> {
         Ok(())
@@ -501,22 +499,22 @@ impl Default for Authentication {
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "snake_case")]
 pub struct ExecutionError {
-    /// 
+    ///
     pub error_id: String,
-    /// 
+    ///
     pub error_type: String,
-    /// 
+    ///
     pub message: String,
-    /// 
+    ///
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub payload: Option<String>,
-    /// 
+    ///
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub vector: Option<String>,
-    /// 
+    ///
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub timestamp: Option<chrono::DateTime<chrono::Utc>>,
-    /// 
+    ///
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub attempts: Option<i32>,
 }
@@ -534,7 +532,7 @@ impl ExecutionError {
             attempts: None,
         }
     }
-    
+
     /// 驗證結構體數據
     pub fn validate(&self) -> Result<(), String> {
         Ok(())
@@ -551,19 +549,19 @@ impl Default for ExecutionError {
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "snake_case")]
 pub struct Fingerprints {
-    /// 
+    ///
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub web_server: Option<std::collections::HashMap<String, serde_json::Value>>,
-    /// 
+    ///
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub framework: Option<std::collections::HashMap<String, serde_json::Value>>,
-    /// 
+    ///
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub language: Option<std::collections::HashMap<String, serde_json::Value>>,
-    /// 
+    ///
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub waf_detected: Option<bool>,
-    /// 
+    ///
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub waf_vendor: Option<String>,
 }
@@ -579,7 +577,7 @@ impl Fingerprints {
             waf_vendor: None,
         }
     }
-    
+
     /// 驗證結構體數據
     pub fn validate(&self) -> Result<(), String> {
         Ok(())
@@ -596,10 +594,10 @@ impl Default for Fingerprints {
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "snake_case")]
 pub struct RateLimit {
-    /// 
+    ///
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub requests_per_second: Option<i32>,
-    /// 
+    ///
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub burst: Option<i32>,
 }
@@ -612,7 +610,7 @@ impl RateLimit {
             burst: None,
         }
     }
-    
+
     /// 驗證結構體數據
     pub fn validate(&self) -> Result<(), String> {
         Ok(())
@@ -650,7 +648,7 @@ impl RiskFactor {
             description: None,
         }
     }
-    
+
     /// 驗證結構體數據
     pub fn validate(&self) -> Result<(), String> {
         Ok(())
@@ -667,13 +665,13 @@ impl Default for RiskFactor {
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "snake_case")]
 pub struct ScanScope {
-    /// 
+    ///
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub exclusions: Option<Vec<String>>,
-    /// 
+    ///
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub include_subdomains: Option<bool>,
-    /// 
+    ///
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub allowed_hosts: Option<Vec<String>>,
 }
@@ -687,7 +685,7 @@ impl ScanScope {
             allowed_hosts: None,
         }
     }
-    
+
     /// 驗證結構體數據
     pub fn validate(&self) -> Result<(), String> {
         Ok(())
@@ -704,16 +702,16 @@ impl Default for ScanScope {
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "snake_case")]
 pub struct Summary {
-    /// 
+    ///
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub urls_found: Option<i32>,
-    /// 
+    ///
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub forms_found: Option<i32>,
-    /// 
+    ///
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub apis_found: Option<i32>,
-    /// 
+    ///
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub scan_duration_seconds: Option<i32>,
 }
@@ -728,7 +726,7 @@ impl Summary {
             scan_duration_seconds: None,
         }
     }
-    
+
     /// 驗證結構體數據
     pub fn validate(&self) -> Result<(), String> {
         Ok(())
@@ -767,7 +765,7 @@ impl TaskDependency {
             required: None,
         }
     }
-    
+
     /// 驗證結構體數據
     pub fn validate(&self) -> Result<(), String> {
         Ok(())
@@ -784,22 +782,22 @@ impl Default for TaskDependency {
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "snake_case")]
 pub struct AIVerificationRequest {
-    /// 
+    ///
     pub verification_id: String,
-    /// 
+    ///
     pub finding_id: String,
-    /// 
+    ///
     pub scan_id: String,
-    /// 
+    ///
     pub vulnerability_type: serde_json::Value,
-    /// 
+    ///
     pub target: serde_json::Value,
-    /// 
+    ///
     pub evidence: serde_json::Value,
-    /// 
+    ///
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub verification_mode: Option<String>,
-    /// 
+    ///
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub context: Option<std::collections::HashMap<String, serde_json::Value>>,
 }
@@ -818,7 +816,7 @@ impl AIVerificationRequest {
             context: None,
         }
     }
-    
+
     /// 驗證結構體數據
     pub fn validate(&self) -> Result<(), String> {
         Ok(())
@@ -835,26 +833,26 @@ impl Default for AIVerificationRequest {
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "snake_case")]
 pub struct AIVerificationResult {
-    /// 
+    ///
     pub verification_id: String,
-    /// 
+    ///
     pub finding_id: String,
-    /// 
+    ///
     pub verification_status: String,
-    /// 
+    ///
     pub confidence_score: f64,
-    /// 
+    ///
     pub verification_method: String,
-    /// 
+    ///
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub test_steps: Option<Vec<String>>,
-    /// 
+    ///
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub observations: Option<Vec<String>>,
-    /// 
+    ///
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub recommendations: Option<Vec<String>>,
-    /// 
+    ///
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub timestamp: Option<chrono::DateTime<chrono::Utc>>,
 }
@@ -874,7 +872,7 @@ impl AIVerificationResult {
             timestamp: None,
         }
     }
-    
+
     /// 驗證結構體數據
     pub fn validate(&self) -> Result<(), String> {
         Ok(())
@@ -891,19 +889,19 @@ impl Default for AIVerificationResult {
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "snake_case")]
 pub struct CodeLevelRootCause {
-    /// 
+    ///
     pub analysis_id: String,
-    /// 
+    ///
     pub vulnerable_component: String,
-    /// 
+    ///
     pub affected_findings: Vec<String>,
-    /// 
+    ///
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub code_location: Option<String>,
-    /// 
+    ///
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub vulnerability_pattern: Option<String>,
-    /// 
+    ///
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub fix_recommendation: Option<String>,
 }
@@ -920,7 +918,7 @@ impl CodeLevelRootCause {
             fix_recommendation: None,
         }
     }
-    
+
     /// 驗證結構體數據
     pub fn validate(&self) -> Result<(), String> {
         Ok(())
@@ -969,7 +967,7 @@ impl FindingEvidence {
             proof: None,
         }
     }
-    
+
     /// 驗證結構體數據
     pub fn validate(&self) -> Result<(), String> {
         Ok(())
@@ -1014,7 +1012,7 @@ impl FindingImpact {
             estimated_cost: None,
         }
     }
-    
+
     /// 驗證結構體數據
     pub fn validate(&self) -> Result<(), String> {
         Ok(())
@@ -1083,7 +1081,7 @@ impl FindingPayload {
             updated_at: chrono::Utc::now(),
         }
     }
-    
+
     /// 驗證結構體數據
     pub fn validate(&self) -> Result<(), String> {
         Ok(())
@@ -1124,7 +1122,7 @@ impl FindingRecommendation {
             references: None,
         }
     }
-    
+
     /// 驗證結構體數據
     pub fn validate(&self) -> Result<(), String> {
         Ok(())
@@ -1141,21 +1139,21 @@ impl Default for FindingRecommendation {
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "snake_case")]
 pub struct FindingTarget {
-    /// 
+    ///
     pub url: serde_json::Value,
-    /// 
+    ///
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub parameter: Option<String>,
-    /// 
+    ///
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub method: Option<String>,
-    /// 
+    ///
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub headers: Option<std::collections::HashMap<String, serde_json::Value>>,
-    /// 
+    ///
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub params: Option<std::collections::HashMap<String, serde_json::Value>>,
-    /// 
+    ///
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub body: Option<String>,
 }
@@ -1172,7 +1170,7 @@ impl FindingTarget {
             body: None,
         }
     }
-    
+
     /// 驗證結構體數據
     pub fn validate(&self) -> Result<(), String> {
         Ok(())
@@ -1189,40 +1187,40 @@ impl Default for FindingTarget {
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "snake_case")]
 pub struct JavaScriptAnalysisResult {
-    /// 
+    ///
     pub analysis_id: String,
-    /// 
+    ///
     pub url: String,
-    /// 
+    ///
     pub source_size_bytes: i32,
-    /// 
+    ///
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub dangerous_functions: Option<Vec<String>>,
-    /// 
+    ///
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub external_resources: Option<Vec<String>>,
-    /// 
+    ///
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub data_leaks: Option<std::collections::HashMap<String, serde_json::Value>>,
-    /// 
+    ///
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub findings: Option<Vec<String>>,
-    /// 
+    ///
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub apis_called: Option<Vec<String>>,
-    /// 
+    ///
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub ajax_endpoints: Option<Vec<String>>,
-    /// 
+    ///
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub suspicious_patterns: Option<Vec<String>>,
-    /// 
+    ///
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub risk_score: Option<f64>,
-    /// 
+    ///
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub security_score: Option<i32>,
-    /// 
+    ///
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub timestamp: Option<chrono::DateTime<chrono::Utc>>,
 }
@@ -1246,7 +1244,7 @@ impl JavaScriptAnalysisResult {
             timestamp: None,
         }
     }
-    
+
     /// 驗證結構體數據
     pub fn validate(&self) -> Result<(), String> {
         Ok(())
@@ -1263,19 +1261,19 @@ impl Default for JavaScriptAnalysisResult {
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "snake_case")]
 pub struct SASTDASTCorrelation {
-    /// 
+    ///
     pub correlation_id: String,
-    /// 
+    ///
     pub sast_finding_id: String,
-    /// 
+    ///
     pub dast_finding_id: String,
-    /// 
+    ///
     pub data_flow_path: Vec<String>,
-    /// 
+    ///
     pub verification_status: String,
-    /// 
+    ///
     pub confidence_score: f64,
-    /// 
+    ///
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub explanation: Option<String>,
 }
@@ -1293,7 +1291,7 @@ impl SASTDASTCorrelation {
             explanation: None,
         }
     }
-    
+
     /// 驗證結構體數據
     pub fn validate(&self) -> Result<(), String> {
         Ok(())
@@ -1310,26 +1308,26 @@ impl Default for SASTDASTCorrelation {
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "snake_case")]
 pub struct SensitiveMatch {
-    /// 
+    ///
     pub match_id: String,
-    /// 
+    ///
     pub pattern_name: String,
-    /// 
+    ///
     pub matched_text: String,
-    /// 
+    ///
     pub context: String,
-    /// 
+    ///
     pub confidence: f64,
-    /// 
+    ///
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub line_number: Option<serde_json::Value>,
-    /// 
+    ///
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub file_path: Option<String>,
-    /// 
+    ///
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub url: Option<String>,
-    /// 
+    ///
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub severity: Option<serde_json::Value>,
 }
@@ -1349,7 +1347,7 @@ impl SensitiveMatch {
             severity: None,
         }
     }
-    
+
     /// 驗證結構體數據
     pub fn validate(&self) -> Result<(), String> {
         Ok(())
@@ -1366,24 +1364,24 @@ impl Default for SensitiveMatch {
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "snake_case")]
 pub struct VulnerabilityCorrelation {
-    /// 
+    ///
     pub correlation_id: String,
-    /// 
+    ///
     pub correlation_type: String,
-    /// 
+    ///
     pub related_findings: Vec<String>,
-    /// 
+    ///
     pub confidence_score: f64,
-    /// 
+    ///
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub root_cause: Option<String>,
-    /// 
+    ///
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub common_components: Option<Vec<String>>,
-    /// 
+    ///
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub explanation: Option<String>,
-    /// 
+    ///
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub timestamp: Option<chrono::DateTime<chrono::Utc>>,
 }
@@ -1402,7 +1400,7 @@ impl VulnerabilityCorrelation {
             timestamp: None,
         }
     }
-    
+
     /// 驗證結構體數據
     pub fn validate(&self) -> Result<(), String> {
         Ok(())
@@ -1439,7 +1437,7 @@ impl AivaMessage {
             payload: std::collections::HashMap::new(),
         }
     }
-    
+
     /// 驗證結構體數據
     pub fn validate(&self) -> Result<(), String> {
         Ok(())
@@ -1493,7 +1491,7 @@ impl AIVARequest {
             timestamp: String::new(),
         }
     }
-    
+
     /// 驗證結構體數據
     pub fn validate(&self) -> Result<(), String> {
         Ok(())
@@ -1546,7 +1544,7 @@ impl AIVAResponse {
             timestamp: String::new(),
         }
     }
-    
+
     /// 驗證結構體數據
     pub fn validate(&self) -> Result<(), String> {
         Ok(())
@@ -1596,7 +1594,7 @@ impl FunctionTaskPayload {
             test_config: FunctionTaskTestConfig::default(),
         }
     }
-    
+
     /// 驗證結構體數據
     pub fn validate(&self) -> Result<(), String> {
         Ok(())
@@ -1612,16 +1610,14 @@ impl Default for FunctionTaskPayload {
 /// 功能任務目標
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "snake_case")]
-pub struct FunctionTaskTarget {
-}
+pub struct FunctionTaskTarget {}
 
 impl FunctionTaskTarget {
     /// 創建新的實例
     pub fn new() -> Self {
-        Self {
-        }
+        Self {}
     }
-    
+
     /// 驗證結構體數據
     pub fn validate(&self) -> Result<(), String> {
         Ok(())
@@ -1657,7 +1653,7 @@ impl FunctionTaskContext {
             related_findings: None,
         }
     }
-    
+
     /// 驗證結構體數據
     pub fn validate(&self) -> Result<(), String> {
         Ok(())
@@ -1699,7 +1695,7 @@ impl FunctionTaskTestConfig {
             timeout: None,
         }
     }
-    
+
     /// 驗證結構體數據
     pub fn validate(&self) -> Result<(), String> {
         Ok(())
@@ -1747,7 +1743,7 @@ impl ScanTaskPayload {
             timeout: None,
         }
     }
-    
+
     /// 驗證結構體數據
     pub fn validate(&self) -> Result<(), String> {
         Ok(())
@@ -1787,7 +1783,7 @@ impl RetryConfig {
             exponential_backoff: true,
         }
     }
-    
+
     /// 驗證結構體數據
     pub fn validate(&self) -> Result<(), String> {
         Ok(())
@@ -1827,7 +1823,7 @@ impl ResourceLimits {
             max_concurrent_tasks: 10,
         }
     }
-    
+
     /// 驗證結構體數據
     pub fn validate(&self) -> Result<(), String> {
         Ok(())
@@ -1875,7 +1871,7 @@ impl AsyncTaskConfig {
             metadata: None,
         }
     }
-    
+
     /// 驗證結構體數據
     pub fn validate(&self) -> Result<(), String> {
         Ok(())
@@ -1938,7 +1934,7 @@ impl AsyncTaskResult {
             metadata: None,
         }
     }
-    
+
     /// 驗證結構體數據
     pub fn validate(&self) -> Result<(), String> {
         Ok(())
@@ -1981,7 +1977,7 @@ impl AsyncBatchConfig {
             batch_timeout_seconds: 3600,
         }
     }
-    
+
     /// 驗證結構體數據
     pub fn validate(&self) -> Result<(), String> {
         Ok(())
@@ -2038,7 +2034,7 @@ impl AsyncBatchResult {
             total_execution_time_ms: 0.0,
         }
     }
-    
+
     /// 驗證結構體數據
     pub fn validate(&self) -> Result<(), String> {
         Ok(())
@@ -2124,7 +2120,7 @@ impl PluginManifest {
             updated_at: chrono::Utc::now(),
         }
     }
-    
+
     /// 驗證結構體數據
     pub fn validate(&self) -> Result<(), String> {
         Ok(())
@@ -2192,7 +2188,7 @@ impl PluginExecutionContext {
             created_at: chrono::Utc::now(),
         }
     }
-    
+
     /// 驗證結構體數據
     pub fn validate(&self) -> Result<(), String> {
         Ok(())
@@ -2260,7 +2256,7 @@ impl PluginExecutionResult {
             created_at: chrono::Utc::now(),
         }
     }
-    
+
     /// 驗證結構體數據
     pub fn validate(&self) -> Result<(), String> {
         Ok(())
@@ -2318,7 +2314,7 @@ impl PluginConfig {
             updated_at: chrono::Utc::now(),
         }
     }
-    
+
     /// 驗證結構體數據
     pub fn validate(&self) -> Result<(), String> {
         Ok(())
@@ -2368,7 +2364,7 @@ impl PluginRegistry {
             updated_at: chrono::Utc::now(),
         }
     }
-    
+
     /// 驗證結構體數據
     pub fn validate(&self) -> Result<(), String> {
         Ok(())
@@ -2420,7 +2416,7 @@ impl PluginHealthCheck {
             metadata: None,
         }
     }
-    
+
     /// 驗證結構體數據
     pub fn validate(&self) -> Result<(), String> {
         Ok(())
@@ -2482,7 +2478,7 @@ impl CLIParameter {
             help_text: None,
         }
     }
-    
+
     /// 驗證結構體數據
     pub fn validate(&self) -> Result<(), String> {
         Ok(())
@@ -2555,7 +2551,7 @@ impl CLICommand {
             updated_at: chrono::Utc::now(),
         }
     }
-    
+
     /// 驗證結構體數據
     pub fn validate(&self) -> Result<(), String> {
         Ok(())
@@ -2618,7 +2614,7 @@ impl CLIExecutionResult {
             metadata: None,
         }
     }
-    
+
     /// 驗證結構體數據
     pub fn validate(&self) -> Result<(), String> {
         Ok(())
@@ -2675,7 +2671,7 @@ impl CLISession {
             metadata: None,
         }
     }
-    
+
     /// 驗證結構體數據
     pub fn validate(&self) -> Result<(), String> {
         Ok(())
@@ -2731,7 +2727,7 @@ impl CLIConfiguration {
             updated_at: chrono::Utc::now(),
         }
     }
-    
+
     /// 驗證結構體數據
     pub fn validate(&self) -> Result<(), String> {
         Ok(())
@@ -2790,7 +2786,7 @@ impl CLIMetrics {
             metadata: None,
         }
     }
-    
+
     /// 驗證結構體數據
     pub fn validate(&self) -> Result<(), String> {
         Ok(())
@@ -2802,4 +2798,3 @@ impl Default for CLIMetrics {
         Self::new()
     }
 }
-

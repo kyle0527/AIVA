@@ -1,5 +1,3 @@
-
-
 import asyncio
 from collections import Counter
 from typing import Any
@@ -115,8 +113,7 @@ async def get_scan_status(scan_id: str) -> dict[str, str]:
 async def _process_single_scan_with_retry(
     payload: ScanCompletedPayload, trace_id: str
 ) -> None:
-    """
-    可重試的掃描處理邏輯
+    """可重試的掃描處理邏輯
 
     Args:
         payload: 掃描完成載荷
@@ -130,8 +127,7 @@ async def _process_single_scan_with_retry(
 
 
 async def process_scan_results() -> None:
-    """
-    處理掃描模組回傳的結果 - 核心分析與策略生成
+    """處理掃描模組回傳的結果 - 核心分析與策略生成
     這是第3階段: 核心分析與建議的主要邏輯
     """
     logger.info("[API] Starting scan results processor...")
@@ -185,8 +181,7 @@ async def process_scan_results() -> None:
 
 
 async def process_function_results() -> None:
-    """
-    處理功能模組回傳的結果 - 用於下一輪優化
+    """處理功能模組回傳的結果 - 用於下一輪優化
     實現動態學習與策略調整
     """
     logger.info("[循環] Starting function results processor...")

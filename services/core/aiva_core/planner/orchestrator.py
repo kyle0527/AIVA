@@ -1,10 +1,7 @@
-"""
-Attack Orchestrator - 攻擊編排器
+"""Attack Orchestrator - 攻擊編排器
 
 統籌整個攻擊計畫的執行，協調 AST 解析、任務轉換和工具選擇
 """
-
-
 
 from dataclasses import dataclass, field
 import logging

@@ -23,8 +23,6 @@ Example:
     response = await client.get("https://example.com/api")
 """
 
-
-
 import asyncio
 import logging
 import random
@@ -90,10 +88,8 @@ def _resolve_backoff(backoff: BackoffCallable | None, attempt: int) -> float:
         delay = backoff(attempt)
     except Exception as exc:  # pragma: no cover - defensive guard
         logger.warning(
-            "Backoff callable %r failed on attempt %s: %s",
-            backoff,
-            attempt,
-            exc)
+            "Backoff callable %r failed on attempt %s: %s", backoff, attempt, exc
+        )
         return 0.0
 
     try:
@@ -161,8 +157,7 @@ class RetryingAsyncClient(httpx.AsyncClient):
             retry_excs: Sequence[type[BaseException]] = (httpx.RequestError,)
         else:
             retry_excs = tuple(retry_on)
-        self._retry_exceptions: tuple[type[BaseException], ...] = tuple(
-            retry_excs)
+        self._retry_exceptions: tuple[type[BaseException], ...] = tuple(retry_excs)
 
     async def request(
         self, method: str, url: httpx.URL | str, **kwargs: Any

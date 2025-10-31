@@ -1,16 +1,13 @@
-"""
-記憶體管理模組
+"""記憶體管理模組
 拆分自 optimized_core.py 的記憶體管理部分
 """
 
-
-
 import asyncio
+from contextlib import asynccontextmanager
 import gc
 import time
-import weakref
-from contextlib import asynccontextmanager
 from typing import Any
+import weakref
 
 
 class ComponentPool:
@@ -37,7 +34,7 @@ class ComponentPool:
             yield component
         finally:
             # 重置組件狀態
-            if hasattr(component, 'reset'):
+            if hasattr(component, "reset"):
                 component.reset()
 
             self.active_components.discard(id(component))
@@ -49,7 +46,7 @@ class ComponentPool:
 
     def return_component(self, component):
         """歸還組件到池中"""
-        if hasattr(component, 'reset'):
+        if hasattr(component, "reset"):
             component.reset()
 
         try:
@@ -65,7 +62,7 @@ class ComponentPool:
             "pool_size": self.pool_size,
             "available": self.pool.qsize(),
             "active": len(self.active_components),
-            "utilization": len(self.active_components) / self.pool_size
+            "utilization": len(self.active_components) / self.pool_size,
         }
 
 
@@ -78,7 +75,7 @@ class MemoryManager:
         self.gc_stats = {
             "collections": 0,
             "objects_collected": 0,
-            "last_collection": time.time()
+            "last_collection": time.time(),
         }
 
     async def start_monitoring(self):
@@ -105,20 +102,24 @@ class MemoryManager:
 
         # 更新統計
         self.gc_stats["collections"] += 1
-        self.gc_stats["objects_collected"] += (before_count - after_count)
+        self.gc_stats["objects_collected"] += before_count - after_count
         self.gc_stats["last_collection"] = time.time()
 
-        print(f"GC completed: {collected} cycles, {before_count - after_count} objects freed")
+        print(
+            f"GC completed: {collected} cycles, {before_count - after_count} objects freed"
+        )
 
     def _get_memory_usage_mb(self) -> float:
         """獲取當前記憶體使用量（MB）"""
         try:
             import psutil
+
             process = psutil.Process()
             return process.memory_info().rss / 1024 / 1024
         except ImportError:
             # 如果沒有 psutil，使用 tracemalloc
             import tracemalloc
+
             if tracemalloc.is_tracing():
                 current, peak = tracemalloc.get_traced_memory()
                 return current / 1024 / 1024
@@ -134,5 +135,5 @@ class MemoryManager:
             "current_memory_mb": self._get_memory_usage_mb(),
             "threshold_mb": self.gc_threshold_mb,
             "weak_refs_count": len(self.weak_refs),
-            "gc_stats": self.gc_stats.copy()
+            "gc_stats": self.gc_stats.copy(),
         }

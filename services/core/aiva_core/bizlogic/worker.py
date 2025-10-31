@@ -1,10 +1,7 @@
-"""
-BizLogic Worker - 業務邏輯漏洞測試 Worker
+"""BizLogic Worker - 業務邏輯漏洞測試 Worker
 
 監聽業務邏輯測試任務,執行測試並回報結果
 """
-
-
 
 import json
 
@@ -21,8 +18,7 @@ logger = get_logger(__name__)
 
 
 async def run() -> None:
-    """
-    啟動 BizLogic Worker
+    """啟動 BizLogic Worker
 
     監聽 tasks.function.bizlogic Topic
     """
@@ -66,17 +62,14 @@ async def run() -> None:
                 json.dumps(result_msg.model_dump()).encode("utf-8"),
             )
 
-            logger.info(
-                f"BizLogic test completed: {len(findings)} findings reported"
-            )
+            logger.info(f"BizLogic test completed: {len(findings)} findings reported")
 
         except Exception as e:
             logger.exception(f"BizLogic worker error: {e}")
 
 
 async def _perform_test(payload: dict) -> list:
-    """
-    執行業務邏輯測試
+    """執行業務邏輯測試
 
     Args:
         payload: 任務 Payload
@@ -97,10 +90,7 @@ async def _perform_test(payload: dict) -> list:
         try:
             product_id = payload.get("product_id")
             findings = await tester.run_all_tests(
-                target_urls,
-                task_id=task_id,
-                scan_id=scan_id,
-                product_id=product_id
+                target_urls, task_id=task_id, scan_id=scan_id, product_id=product_id
             )
         finally:
             await tester.close()
@@ -111,9 +101,7 @@ async def _perform_test(payload: dict) -> list:
         try:
             workflow_steps = payload.get("workflow_steps", [])
             findings = await tester.test_step_skip(
-                workflow_steps,
-                task_id=task_id,
-                scan_id=scan_id
+                workflow_steps, task_id=task_id, scan_id=scan_id
             )
         finally:
             await tester.close()
@@ -129,7 +117,7 @@ async def _perform_test(payload: dict) -> list:
                     purchase_api=api,
                     product_id=product_id,
                     task_id=task_id,
-                    scan_id=scan_id
+                    scan_id=scan_id,
                 )
         finally:
             await tester.close()

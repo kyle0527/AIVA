@@ -5,8 +5,6 @@ This module contains core business logic, process orchestration,
 and AI system models.
 """
 
-
-
 # 從共通模組導入
 from ..aiva_common.enums import (
     Severity,

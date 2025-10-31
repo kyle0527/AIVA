@@ -33,6 +33,7 @@ from .engines import (
     TimeDetectionEngine,
     UnionDetectionEngine,
 )
+from .engines.hackingtool_engine import HackingToolDetectionEngine
 from .result_binder_publisher import SqliResultBinderPublisher
 from .task_queue import QueuedTask, SqliTaskQueue
 from .telemetry import SqliExecutionTelemetry
@@ -64,6 +65,7 @@ class SqliEngineConfig:
     enable_time_detection: bool = True
     enable_union_detection: bool = True
     enable_oob_detection: bool = True
+    enable_hackingtool_detection: bool = True  # 新增 HackingTool 檢測開關
 
 
 @dataclass
@@ -119,6 +121,12 @@ class SqliOrchestrator:
         # OOB檢測引擎
         if self.config.enable_oob_detection:
             self.register_engine("oob", OOBDetectionEngine())
+        
+        # HackingTool 檢測引擎
+        if self.config.enable_hackingtool_detection:
+            from .config import SqliConfig
+            hackingtool_config = SqliConfig()  # 使用預設配置
+            self.register_engine("hackingtool", HackingToolDetectionEngine(hackingtool_config))
 
     async def execute_detection(
         self, context: SqliContext, client: httpx.AsyncClient

@@ -2,10 +2,41 @@
 	"folders": [
 		{
 			"path": "."
+		},
+		{
+			"path": "../../../Users/User/Downloads/hackingtool-master"
 		}
 	],
 	"settings": {
-		"python.analysis.typeCheckingMode": "standard",
-		"powershell.cwd": "AIVA-git"
+		// 🎯 工作區級別最佳化 - 關閉所有語言服務的即時檢查
+		"python.analysis.diagnosticMode": "openFilesOnly",
+		"python.analysis.typeCheckingMode": "off",
+		"python.analysis.indexing": false,
+		"python.analysis.backgroundAnalysis": "off",
+		
+		"typescript.validate.enable": false,
+		"typescript.suggest.autoImports": false,
+		
+		"rust-analyzer.checkOnSave.enable": false,
+		"rust-analyzer.diagnostics.enable": false,
+		
+		"gopls": {
+			"diagnosticsTrigger": "Save"
+		},
+		
+		// 🔧 終端設定
+		"powershell.cwd": "AIVA-git",
+		
+		// ⚡ 工作區性能設定
+		"files.watcherExclude": {
+			"**/.git/**": true,
+			"**/node_modules/**": true,
+			"**/.venv/**": true,
+			"**/__pycache__/**": true,
+			"**/target/**": true,
+			"**/dist/**": true,
+			"**/logs/**": true,
+			"**/models/**": true
+		}
 	}
 }

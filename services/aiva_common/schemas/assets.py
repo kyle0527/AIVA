@@ -4,8 +4,6 @@
 此模組定義了資產探索、資產生命週期管理、EASM 等相關的資料模型。
 """
 
-
-
 from datetime import UTC, datetime
 from typing import Any
 
@@ -155,8 +153,7 @@ class EASMAsset(BaseModel):
     # 技術信息
     technologies: list[str] = Field(default_factory=list, description="檢測到的技術")
     services: list[dict] = Field(default_factory=list, description="運行的服務")
-    certificates: list[dict] = Field(
-        default_factory=list, description="SSL證書信息")
+    certificates: list[dict] = Field(default_factory=list, description="SSL證書信息")
 
     # 安全評估
     risk_score: float = Field(ge=0.0, le=10.0, description="風險評分")
@@ -176,7 +173,6 @@ class EASMAsset(BaseModel):
     compliance_status: dict[str, bool] = Field(
         default_factory=dict, description="合規狀態"
     )
-    policy_violations: list[str] = Field(
-        default_factory=list, description="政策違規")
+    policy_violations: list[str] = Field(default_factory=list, description="政策違規")
 
     metadata: dict[str, Any] = Field(default_factory=dict, description="元數據")

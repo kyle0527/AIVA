@@ -9,12 +9,10 @@ AIVA跨語言Schema統一定義 - 以手動維護版本為準
 🔄 Schema 版本: 1.1.0
 """
 
-
-from typing import Any, Dict, List, Optional
 from datetime import datetime
+from typing import Any
+
 from pydantic import BaseModel, Field
-
-
 
 
 class PluginManifest(BaseModel):
@@ -38,34 +36,34 @@ class PluginManifest(BaseModel):
     plugin_type: PluginType
     """插件類型"""
 
-    dependencies: List[str] = Field(default_factory=list)
+    dependencies: list[str] = Field(default_factory=list)
     """依賴插件列表"""
 
-    permissions: List[str] = Field(default_factory=list)
+    permissions: list[str] = Field(default_factory=list)
     """所需權限列表"""
 
-    config_schema: Optional[Dict[str, Any]] = None
+    config_schema: dict[str, Any] | None = None
     """配置 Schema"""
 
     min_aiva_version: str
     """最低AIVA版本要求"""
 
-    max_aiva_version: Optional[str] = None
+    max_aiva_version: str | None = None
     """最高AIVA版本要求"""
 
     entry_point: str
     """插件入口點"""
 
-    homepage: Optional[str] = None
+    homepage: str | None = None
     """插件主頁"""
 
-    repository: Optional[str] = None
+    repository: str | None = None
     """源碼倉庫"""
 
     license: str = Field(default="MIT")
     """許可證"""
 
-    keywords: List[str] = Field(default_factory=list)
+    keywords: list[str] = Field(default_factory=list)
     """關鍵詞"""
 
     created_at: datetime
@@ -84,31 +82,31 @@ class PluginExecutionContext(BaseModel):
     execution_id: str
     """執行ID"""
 
-    input_data: Dict[str, Any]
+    input_data: dict[str, Any]
     """輸入數據"""
 
-    context: Dict[str, Any] = Field(default_factory=dict)
+    context: dict[str, Any] = Field(default_factory=dict)
     """執行上下文"""
 
     timeout_seconds: int = Field(ge=1, le=600, default=60)
     """執行超時時間(秒)"""
 
-    environment: Dict[str, str] = Field(default_factory=dict)
+    environment: dict[str, str] = Field(default_factory=dict)
     """環境變數"""
 
-    working_directory: Optional[str] = None
+    working_directory: str | None = None
     """工作目錄"""
 
-    user_id: Optional[str] = None
+    user_id: str | None = None
     """執行用戶ID"""
 
-    session_id: Optional[str] = None
+    session_id: str | None = None
     """會話ID"""
 
-    trace_id: Optional[str] = None
+    trace_id: str | None = None
     """追蹤ID"""
 
-    metadata: Dict[str, Any] = Field(default_factory=dict)
+    metadata: dict[str, Any] = Field(default_factory=dict)
     """元數據"""
 
     created_at: datetime
@@ -127,28 +125,28 @@ class PluginExecutionResult(BaseModel):
     success: bool
     """執行是否成功"""
 
-    result_data: Optional[Dict[str, Any]] = None
+    result_data: dict[str, Any] | None = None
     """結果數據"""
 
-    error_message: Optional[str] = None
+    error_message: str | None = None
     """錯誤信息"""
 
-    error_code: Optional[str] = None
+    error_code: str | None = None
     """錯誤代碼"""
 
     execution_time_ms: float = Field(ge=0)
     """執行時間(毫秒)"""
 
-    memory_usage_mb: Optional[float] = None
+    memory_usage_mb: float | None = None
     """內存使用量(MB)"""
 
-    output_logs: List[str] = Field(default_factory=list)
+    output_logs: list[str] = Field(default_factory=list)
     """輸出日誌"""
 
-    warnings: List[str] = Field(default_factory=list)
+    warnings: list[str] = Field(default_factory=list)
     """警告信息"""
 
-    metadata: Dict[str, Any] = Field(default_factory=dict)
+    metadata: dict[str, Any] = Field(default_factory=dict)
     """結果元數據"""
 
     created_at: datetime
@@ -164,7 +162,7 @@ class PluginConfig(BaseModel):
     enabled: bool = Field(default=True)
     """是否啟用"""
 
-    configuration: Dict[str, Any] = Field(default_factory=dict)
+    configuration: dict[str, Any] = Field(default_factory=dict)
     """配置參數"""
 
     priority: int = Field(ge=1, le=10, default=5)
@@ -176,10 +174,10 @@ class PluginConfig(BaseModel):
     max_instances: int = Field(ge=1, le=10, default=1)
     """最大實例數"""
 
-    resource_limits: Dict[str, Any] = Field(default_factory=dict)
+    resource_limits: dict[str, Any] = Field(default_factory=dict)
     """資源限制"""
 
-    environment_variables: Dict[str, str] = Field(default_factory=dict)
+    environment_variables: dict[str, str] = Field(default_factory=dict)
     """環境變數"""
 
     created_at: datetime
@@ -198,7 +196,7 @@ class PluginRegistry(BaseModel):
     name: str
     """註冊表名稱"""
 
-    plugins: Dict[str, PluginManifest] = Field(default_factory=dict)
+    plugins: dict[str, PluginManifest] = Field(default_factory=dict)
     """已註冊插件"""
 
     total_plugins: int = Field(ge=0, default=0)
@@ -229,10 +227,10 @@ class PluginHealthCheck(BaseModel):
     last_check_time: datetime
     """最後檢查時間"""
 
-    response_time_ms: Optional[float] = None
+    response_time_ms: float | None = None
     """響應時間(毫秒)"""
 
-    error_message: Optional[str] = None
+    error_message: str | None = None
     """錯誤信息"""
 
     health_score: float = Field(ge=0.0, le=100.0, default=100.0)
@@ -241,6 +239,5 @@ class PluginHealthCheck(BaseModel):
     uptime_percentage: float = Field(ge=0.0, le=100.0, default=100.0)
     """運行時間百分比"""
 
-    metadata: Dict[str, Any] = Field(default_factory=dict)
+    metadata: dict[str, Any] = Field(default_factory=dict)
     """健康檢查元數據"""
-

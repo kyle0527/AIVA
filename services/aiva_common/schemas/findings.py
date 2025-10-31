@@ -4,8 +4,6 @@
 此模組包含與漏洞發現、證據收集、影響評估等相關的資料模型。
 """
 
-
-
 from datetime import UTC, datetime
 from typing import Any
 
@@ -266,57 +264,36 @@ class AIVerificationResult(BaseModel):
 
 class VulnerabilityScorecard(BaseModel):
     """漏洞評分卡 - 綜合漏洞評估報告"""
-    
+
     vulnerability_id: str = Field(description="漏洞唯一標識")
     name: str = Field(description="漏洞名稱")
     severity: Severity = Field(description="嚴重程度")
     confidence: Confidence = Field(description="信心度")
     cvss_score: float | None = Field(
-        default=None,
-        ge=0.0,
-        le=10.0,
-        description="CVSS 基礎分數"
+        default=None, ge=0.0, le=10.0, description="CVSS 基礎分數"
     )
-    
+
     # 影響評估
-    impact_score: float = Field(
-        ge=0.0,
-        le=10.0,
-        description="影響評分 (0-10)"
-    )
+    impact_score: float = Field(ge=0.0, le=10.0, description="影響評分 (0-10)")
     exploitability_score: float = Field(
-        ge=0.0,
-        le=10.0,
-        description="可利用性評分 (0-10)"
+        ge=0.0, le=10.0, description="可利用性評分 (0-10)"
     )
-    
+
     # 風險評估
     risk_level: str = Field(description="風險等級 (Critical/High/Medium/Low)")
-    business_impact: str | None = Field(
-        default=None,
-        description="業務影響描述"
-    )
-    
+    business_impact: str | None = Field(default=None, description="業務影響描述")
+
     # 修復建議
     remediation_effort: str | None = Field(
-        default=None,
-        description="修復工作量 (High/Medium/Low)"
+        default=None, description="修復工作量 (High/Medium/Low)"
     )
     recommended_actions: list[str] = Field(
-        default_factory=list,
-        description="建議修復動作"
+        default_factory=list, description="建議修復動作"
     )
-    
+
     # 元數據
     created_at: datetime = Field(
-        default_factory=lambda: datetime.now(UTC),
-        description="評分卡創建時間"
+        default_factory=lambda: datetime.now(UTC), description="評分卡創建時間"
     )
-    updated_at: datetime | None = Field(
-        default=None,
-        description="最後更新時間"
-    )
-    evaluator_version: str | None = Field(
-        default=None,
-        description="評估器版本"
-    )
+    updated_at: datetime | None = Field(default=None, description="最後更新時間")
+    evaluator_version: str | None = Field(default=None, description="評估器版本")

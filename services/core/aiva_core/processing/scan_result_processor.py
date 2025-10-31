@@ -1,11 +1,8 @@
-"""
-掃描結果處理器 - 七階段處理流程
+"""掃描結果處理器 - 七階段處理流程
 
 此模組封裝了核心引擎處理掃描結果的完整七階段流程,
 提高了程式碼的可讀性和可維護性。
 """
-
-
 
 import json
 from typing import TYPE_CHECKING
@@ -32,8 +29,7 @@ logger = get_logger(__name__)
 
 
 class ScanResultProcessor:
-    """
-    掃描結果處理器 - 負責執行七階段處理流程
+    """掃描結果處理器 - 負責執行七階段處理流程
 
     七個階段:
     1. 資料接收與預處理 (Data Ingestion)
@@ -54,8 +50,7 @@ class ScanResultProcessor:
         task_queue_manager: TaskQueueManager,
         session_state_manager: SessionStateManager,
     ):
-        """
-        初始化處理器
+        """初始化處理器
 
         Args:
             scan_interface: 掃描模組介面
@@ -73,8 +68,7 @@ class ScanResultProcessor:
         self.session_state_manager = session_state_manager
 
     async def stage_1_ingest_data(self, payload: ScanCompletedPayload) -> None:
-        """
-        階段1: 資料接收與預處理 (Data Ingestion)
+        """階段1: 資料接收與預處理 (Data Ingestion)
 
         Args:
             payload: 掃描完成載荷
@@ -103,8 +97,7 @@ class ScanResultProcessor:
     async def stage_2_analyze_surface(
         self, payload: ScanCompletedPayload
     ) -> dict[str, int]:
-        """
-        階段2: 初步攻擊面分析 (Initial Attack Surface Analysis)
+        """階段2: 初步攻擊面分析 (Initial Attack Surface Analysis)
 
         Args:
             payload: 掃描完成載荷
@@ -116,11 +109,11 @@ class ScanResultProcessor:
         logger.info(f"[🔍] [Stage 2/7] Analyzing attack surface for {scan_id}")
 
         attack_surface = self.surface_analyzer.analyze(payload)
-        
+
         # 安全地訪問 AttackSurfaceAnalysis 的屬性
-        high_risk_count = getattr(attack_surface, 'high_risk_assets', 0)
-        medium_risk_count = getattr(attack_surface, 'medium_risk_assets', 0)
-        
+        high_risk_count = getattr(attack_surface, "high_risk_assets", 0)
+        medium_risk_count = getattr(attack_surface, "medium_risk_assets", 0)
+
         self.session_state_manager.update_context(
             scan_id,
             {
@@ -138,8 +131,7 @@ class ScanResultProcessor:
         return attack_surface
 
     async def stage_3_generate_strategy(self, scan_id: str) -> dict:
-        """
-        階段3: 測試策略生成 (Test Strategy Generation)
+        """階段3: 測試策略生成 (Test Strategy Generation)
 
         Args:
             scan_id: 掃描 ID
@@ -168,8 +160,7 @@ class ScanResultProcessor:
     async def stage_4_adjust_strategy(
         self, scan_id: str, base_strategy: dict, payload: ScanCompletedPayload
     ) -> dict:
-        """
-        階段4: 動態策略調整 (Dynamic Strategy Adjustment)
+        """階段4: 動態策略調整 (Dynamic Strategy Adjustment)
 
         Args:
             scan_id: 掃描 ID
@@ -207,8 +198,7 @@ class ScanResultProcessor:
     async def stage_5_generate_tasks(
         self, scan_id: str, adjusted_strategy: dict, payload: ScanCompletedPayload
     ) -> list:
-        """
-        階段5: 任務生成 (Task Generation)
+        """階段5: 任務生成 (Task Generation)
 
         Args:
             scan_id: 掃描 ID
@@ -250,8 +240,7 @@ class ScanResultProcessor:
         broker: Broker,
         trace_id: str,
     ) -> int:
-        """
-        階段6: 任務佇列管理與分發 (Task Queue Management & Distribution)
+        """階段6: 任務佇列管理與分發 (Task Queue Management & Distribution)
 
         Args:
             scan_id: 掃描 ID
@@ -295,8 +284,7 @@ class ScanResultProcessor:
     async def stage_7_monitor_execution(
         self, scan_id: str, payload: ScanCompletedPayload, dispatched_count: int
     ) -> None:
-        """
-        階段7: 執行狀態監控 (Execution Status Monitoring)
+        """階段7: 執行狀態監控 (Execution Status Monitoring)
 
         Args:
             scan_id: 掃描 ID
@@ -327,8 +315,7 @@ class ScanResultProcessor:
     async def process(
         self, payload: ScanCompletedPayload, broker: Broker, trace_id: str
     ) -> None:
-        """
-        執行完整的七階段處理流程
+        """執行完整的七階段處理流程
 
         Args:
             payload: 掃描完成載荷

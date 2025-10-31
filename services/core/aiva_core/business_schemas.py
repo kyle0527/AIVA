@@ -1,18 +1,16 @@
-"""
-AIVA 核心業務模式定義
+"""AIVA 核心業務模式定義
 
 包含風險評估、任務管理、策略生成、系統協調等核心業務邏輯相關的數據模式。
 屬於 core 模組的業務特定定義。
 """
 
-
-
 from datetime import UTC, datetime
 from typing import Any
 
+from pydantic import BaseModel, Field, field_validator
+
 from services.aiva_common.enums import ModuleName, Severity, TestStatus
 from services.aiva_common.schemas.ai import CVSSv3Metrics
-from pydantic import BaseModel, Field, field_validator
 
 # ==================== 風險評估 ====================
 
@@ -52,7 +50,9 @@ class RiskAssessment(BaseModel):
     affected_assets: list[str] = Field(default_factory=list, description="受影響資產")
 
     # 緩解措施
-    mitigation_strategies: list[str] = Field(default_factory=list, description="緩解策略")
+    mitigation_strategies: list[str] = Field(
+        default_factory=list, description="緩解策略"
+    )
     residual_risk: float = Field(ge=0.0, le=10.0, description="殘餘風險")
 
     # 時間戳
@@ -66,7 +66,9 @@ class AttackPathNode(BaseModel):
     """攻擊路徑節點"""
 
     node_id: str = Field(description="節點ID")
-    node_type: str = Field(description="節點類型")  # "asset", "vulnerability", "technique"
+    node_type: str = Field(
+        description="節點類型"
+    )  # "asset", "vulnerability", "technique"
     name: str = Field(description="節點名稱")
     description: str | None = Field(default=None, description="節點描述")
 
@@ -94,12 +96,16 @@ class AttackPath(BaseModel):
 
     # 路徑信息
     nodes: list[AttackPathNode] = Field(description="路徑節點")
-    edges: list[dict[str, str]] = Field(description="邊關係")  # {"from": "node1", "to": "node2", "condition": "..."}
+    edges: list[dict[str, str]] = Field(
+        description="邊關係"
+    )  # {"from": "node1", "to": "node2", "condition": "..."}
 
     # 路徑評估
     path_feasibility: float = Field(ge=0.0, le=1.0, description="路徑可行性")
     estimated_time: int = Field(ge=0, description="估計時間(分鐘)")
-    skill_level_required: str = Field(description="所需技能等級")  # "low", "medium", "high", "expert"
+    skill_level_required: str = Field(
+        description="所需技能等級"
+    )  # "low", "medium", "high", "expert"
 
     # 風險評估
     success_probability: float = Field(ge=0.0, le=1.0, description="成功概率")
@@ -119,7 +125,9 @@ class AttackPath(BaseModel):
 class TaskDependency(BaseModel):
     """任務依賴"""
 
-    dependency_type: str = Field(description="依賴類型")  # "prerequisite", "blocker", "input"
+    dependency_type: str = Field(
+        description="依賴類型"
+    )  # "prerequisite", "blocker", "input"
     dependent_task_id: str = Field(description="依賴任務ID")
     condition: str | None = Field(default=None, description="依賴條件")
     required: bool = Field(default=True, description="是否必需")
@@ -138,7 +146,9 @@ class TaskExecution(BaseModel):
     retry_count: int = Field(default=3, ge=0, description="重試次數")
 
     # 依賴關係
-    dependencies: list[TaskDependency] = Field(default_factory=list, description="任務依賴")
+    dependencies: list[TaskDependency] = Field(
+        default_factory=list, description="任務依賴"
+    )
 
     # 執行狀態
     status: TestStatus = Field(description="執行狀態")
@@ -214,8 +224,12 @@ class TestStrategy(BaseModel):
     stop_conditions: list[str] = Field(default_factory=list, description="停止條件")
 
     # 優先級和資源
-    priority_weights: dict[str, float] = Field(default_factory=dict, description="優先級權重")
-    resource_limits: dict[str, Any] = Field(default_factory=dict, description="資源限制")
+    priority_weights: dict[str, float] = Field(
+        default_factory=dict, description="優先級權重"
+    )
+    resource_limits: dict[str, Any] = Field(
+        default_factory=dict, description="資源限制"
+    )
 
     # 適應性配置
     learning_enabled: bool = Field(default=True, description="是否啟用學習")
@@ -243,7 +257,9 @@ class ModuleStatus(BaseModel):
     version: str = Field(description="模組版本")
 
     # 狀態信息
-    status: str = Field(description="運行狀態")  # "running", "stopped", "error", "maintenance"
+    status: str = Field(
+        description="運行狀態"
+    )  # "running", "stopped", "error", "maintenance"
     health_score: float = Field(ge=0.0, le=1.0, description="健康評分")
 
     # 性能指標
@@ -274,8 +290,12 @@ class SystemOrchestration(BaseModel):
     module_statuses: list[ModuleStatus] = Field(description="模組狀態列表")
 
     # 系統配置
-    load_balancing: dict[str, Any] = Field(default_factory=dict, description="負載均衡配置")
-    failover_rules: dict[str, Any] = Field(default_factory=dict, description="故障轉移規則")
+    load_balancing: dict[str, Any] = Field(
+        default_factory=dict, description="負載均衡配置"
+    )
+    failover_rules: dict[str, Any] = Field(
+        default_factory=dict, description="故障轉移規則"
+    )
 
     # 整體狀態
     overall_health: float = Field(ge=0.0, le=1.0, description="整體健康度")
@@ -283,7 +303,9 @@ class SystemOrchestration(BaseModel):
 
     # 事件處理
     active_incidents: list[str] = Field(default_factory=list, description="活躍事件")
-    maintenance_windows: list[dict] = Field(default_factory=list, description="維護時段")
+    maintenance_windows: list[dict] = Field(
+        default_factory=list, description="維護時段"
+    )
 
     # 時間戳
     status_updated_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
@@ -314,10 +336,14 @@ class VulnerabilityCorrelation(BaseModel):
 
     # 攻擊場景
     attack_scenarios: list[str] = Field(default_factory=list, description="攻擊場景")
-    recommended_order: list[str] = Field(default_factory=list, description="建議利用順序")
+    recommended_order: list[str] = Field(
+        default_factory=list, description="建議利用順序"
+    )
 
     # 緩解建議
-    coordinated_mitigation: list[str] = Field(default_factory=list, description="協調緩解措施")
+    coordinated_mitigation: list[str] = Field(
+        default_factory=list, description="協調緩解措施"
+    )
     priority_ranking: list[str] = Field(default_factory=list, description="優先級排序")
 
     # 時間戳

@@ -3,34 +3,36 @@
 // 功能: 高性能敏感資訊掃描器，整合統一統計收集系統
 
 use futures_lite::stream::StreamExt;
-use lapin::{
-    options::*, types::FieldTable, Connection, ConnectionProperties,
-    message::Delivery,
-};
+use lapin::{message::Delivery, options::*, types::FieldTable, Connection, ConnectionProperties};
 use serde::Deserialize;
-use std::sync::Arc;
 use std::env;
+use std::sync::Arc;
 use std::time::Duration;
-use tracing::{info, error, warn};
-use tracing_subscriber;
+use tracing::{error, info, warn};
 
 // 引入統一統計收集模組
 use aiva_common_rust::metrics::{
-    initialize_metrics, cleanup_metrics,
-    record_task_received, record_task_completed, record_task_failed,
-    record_vulnerability_found, SeverityLevel,
+    cleanup_metrics,
+    initialize_metrics,
+    record_task_completed,
+    record_task_failed,
+    record_task_received,
+    record_vulnerability_found,
+    SeverityLevel,
     // update_system_metrics, // Reserved for future system monitoring
 };
 
 mod scanner;
+mod schemas;
 mod secret_detector;
 mod verifier;
-mod schemas;
 
 use scanner::SensitiveInfoScanner;
+use schemas::generated::{
+    Confidence, FindingEvidence, FindingPayload, FindingStatus, Severity, Target, Vulnerability,
+};
 use secret_detector::SecretDetector;
 use verifier::Verifier;
-use schemas::generated::{FindingPayload, Vulnerability, Severity, Confidence, Target, FindingEvidence, FindingStatus};
 
 const TASK_QUEUE: &str = "tasks.scan.sensitive_info";
 const RESULT_QUEUE: &str = "findings.new";
@@ -39,7 +41,7 @@ const RESULT_QUEUE: &str = "findings.new";
 /// 實施統一的重試策略，防止 poison pill 消息無限循環
 fn should_retry_message(delivery: &Delivery, _error: &dyn std::error::Error) -> bool {
     const MAX_RETRY_ATTEMPTS: i32 = 3;
-    
+
     // 檢查消息頭部中的重試次數
     let retry_count = delivery
         .properties
@@ -54,7 +56,7 @@ fn should_retry_message(delivery: &Delivery, _error: &dyn std::error::Error) -> 
             }
         })
         .unwrap_or(0);
-    
+
     if retry_count >= MAX_RETRY_ATTEMPTS {
         error!(
             "消息已達到最大重試次數 {}, 發送到死信隊列",
@@ -89,15 +91,15 @@ fn create_finding_payload(
     severity: Option<&str>,
     confidence_level: Confidence,
 ) -> FindingPayload {
-    let finding_id = format!("finding_{}_{}", task_id, uuid::Uuid::new_v4().to_string());
-    
+    let finding_id = format!("finding_{}_{}", task_id, uuid::Uuid::new_v4());
+
     // 使用統一的字符串類型漏洞名稱
     let vulnerability_name = match info_type {
         "secret" | "git_secret" => "Weak Authentication",
-        "sensitive_info" => "Information Leak", 
+        "sensitive_info" => "Information Leak",
         _ => "Information Leak",
     };
-    
+
     let severity_enum = match severity.unwrap_or("medium") {
         "CRITICAL" | "critical" => Severity::CRITICAL,
         "HIGH" | "high" => Severity::HIGH,
@@ -105,7 +107,7 @@ fn create_finding_payload(
         "LOW" | "low" => Severity::LOW,
         _ => Severity::MEDIUM,
     };
-    
+
     let vulnerability = Vulnerability {
         name: serde_json::Value::String(vulnerability_name.to_string()),
         cwe: Some("CWE-200".to_string()), // Information Exposure
@@ -117,7 +119,7 @@ fn create_finding_payload(
         cvss_vector: None,
         owasp_category: None,
     };
-    
+
     let target = Target {
         url: serde_json::Value::String(location.to_string()),
         parameter: None,
@@ -126,7 +128,7 @@ fn create_finding_payload(
         params: Some(std::collections::HashMap::new()),
         body: None,
     };
-    
+
     let evidence = FindingEvidence {
         payload: Some(value.to_string()),
         response_time_delta: None,
@@ -135,7 +137,7 @@ fn create_finding_payload(
         response: None,
         proof: Some(format!("Found {} at {}", info_type, location)),
     };
-    
+
     let mut finding = FindingPayload::new();
     finding.finding_id = finding_id;
     finding.task_id = task_id.to_string();
@@ -143,7 +145,7 @@ fn create_finding_payload(
     finding.status = FindingStatus::CONFIRMED.to_string();
     finding.vulnerability = vulnerability;
     finding.target = target;
-    
+
     finding.evidence = Some(evidence);
     finding.strategy = Some("sensitive_info_detection".to_string());
     finding
@@ -161,7 +163,11 @@ fn get_rabbitmq_url() -> Option<String> {
     let port = env::var("RABBITMQ_PORT").unwrap_or_else(|_| "5672".to_string());
     let user = env::var("RABBITMQ_USER").ok()?;
     let password = env::var("RABBITMQ_PASSWORD").ok()?;
-    let vhost = env::var("RABBITMQ_VHOST").unwrap_or_else(|_| "/".to_string());    Some(format!("amqp://{}:{}@{}:{}{}", user, password, host, port, vhost))
+    let vhost = env::var("RABBITMQ_VHOST").unwrap_or_else(|_| "/".to_string());
+    Some(format!(
+        "amqp://{}:{}@{}:{}{}",
+        user, password, host, port, vhost
+    ))
 }
 
 #[tokio::main]
@@ -178,14 +184,14 @@ async fn main() -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
     let metrics_file = env::var("AIVA_METRICS_OUTPUT_FILE")
         .ok()
         .or_else(|| Some("/var/log/aiva/metrics/info_gatherer_rust.jsonl".to_string()));
-    
+
     if let Err(e) = initialize_metrics(
         worker_id,
         Duration::from_secs(
             env::var("AIVA_METRICS_INTERVAL")
                 .unwrap_or_else(|_| "60".to_string())
                 .parse()
-                .unwrap_or(60)
+                .unwrap_or(60),
         ),
         metrics_file,
         true, // 啟動後台統計導出
@@ -200,14 +206,10 @@ async fn main() -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
 
     // 連接 RabbitMQ - 遵循 12-factor app 原則
     info!("📡 連接 RabbitMQ...");
-    let rabbitmq_url = get_rabbitmq_url()
-        .ok_or("RABBITMQ_URL or RABBITMQ_USER/RABBITMQ_PASSWORD must be set")?;
-    
-    let conn = Connection::connect(
-        &rabbitmq_url,
-        ConnectionProperties::default(),
-    )
-    .await?;
+    let rabbitmq_url =
+        get_rabbitmq_url().ok_or("RABBITMQ_URL or RABBITMQ_USER/RABBITMQ_PASSWORD must be set")?;
+
+    let conn = Connection::connect(&rabbitmq_url, ConnectionProperties::default()).await?;
 
     let channel = conn.create_channel().await?;
 
@@ -224,15 +226,13 @@ async fn main() -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
         .await?;
 
     // 設置 prefetch
-    channel
-        .basic_qos(1, BasicQosOptions::default())
-        .await?;
+    channel.basic_qos(1, BasicQosOptions::default()).await?;
 
     info!("✅ 初始化完成,開始監聽任務...");
 
     // 初始化掃描器
     let scanner = Arc::new(SensitiveInfoScanner::new());
-    
+
     // 初始化驗證器
     let verifier = Arc::new(Verifier::new());
 
@@ -262,16 +262,16 @@ async fn main() -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
                 }
                 Err(e) => {
                     error!("處理任務失敗: {:?}", e);
-                    
+
                     // 嘗試從消息中提取任務ID用於統計
                     if let Ok(task_data) = serde_json::from_slice::<ScanTask>(&delivery.data) {
                         // 實施重試邏輯，防止 poison pill 消息無限循環
                         let should_requeue = should_retry_message(&delivery, e.as_ref());
                         record_task_failed(task_data.task_id, should_requeue);
                     }
-                    
+
                     let should_requeue = should_retry_message(&delivery, e.as_ref());
-                    
+
                     if should_requeue {
                         warn!("重新入隊消息進行重試");
                         delivery
@@ -285,7 +285,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
                         error!("達到最大重試次數，丟棄消息到死信隊列");
                         delivery
                             .nack(BasicNackOptions {
-                                requeue: false,  // 不重新入隊，發送到死信隊列
+                                requeue: false, // 不重新入隊，發送到死信隊列
                                 ..Default::default()
                             })
                             .await
@@ -311,13 +311,16 @@ async fn process_task(
     // 記錄任務開始統計
     record_task_received(task.task_id.clone());
 
-    let scan_id = format!("scan_{}", uuid::Uuid::new_v4().to_string());
+    let scan_id = format!("scan_{}", uuid::Uuid::new_v4());
     let mut all_findings = Vec::<FindingPayload>::new();
 
     // 1. 原有的敏感資訊掃描
     let sensitive_findings = scanner.scan(&task.content, &task.source_url);
-    info!("  📊 敏感資訊掃描: 發現 {} 個結果", sensitive_findings.len());
-    
+    info!(
+        "  📊 敏感資訊掃描: 發現 {} 個結果",
+        sensitive_findings.len()
+    );
+
     for finding in sensitive_findings {
         let confidence_level = if finding.confidence >= 0.8 {
             Confidence::CONFIRMED
@@ -326,7 +329,7 @@ async fn process_task(
         } else {
             Confidence::TENTATIVE
         };
-        
+
         let finding_payload = create_finding_payload(
             &task.task_id,
             &scan_id,
@@ -336,7 +339,7 @@ async fn process_task(
             None,
             confidence_level,
         );
-        
+
         all_findings.push(finding_payload);
     }
 
@@ -344,31 +347,30 @@ async fn process_task(
     let secret_detector = SecretDetector::new();
     let secret_findings = secret_detector.scan_content(&task.content, &task.source_url);
     info!("  🔐 密鑰檢測掃描: 發現 {} 個密鑰", secret_findings.len());
-    
+
     // 驗證檢測到的密鑰
     for finding in secret_findings {
         // 僅對高優先級密鑰進行驗證
-        let should_verify = matches!(
-            finding.severity.as_str(),
-            "CRITICAL" | "HIGH"
-        );
-        
+        let should_verify = matches!(finding.severity.as_str(), "CRITICAL" | "HIGH");
+
         let (verified, verification_message, _verification_metadata) = if should_verify {
             info!("  🔍 驗證密鑰: {} ...", finding.rule_name);
-            let result = verifier.verify(&finding.rule_name, &finding.matched_text).await;
-            
+            let result = verifier
+                .verify(&finding.rule_name, &finding.matched_text)
+                .await;
+
             use verifier::VerificationStatus;
             let verified = match result.status {
                 VerificationStatus::Valid => Some(true),
                 VerificationStatus::Invalid => Some(false),
                 _ => None,
             };
-            
+
             (verified, Some(result.message), Some(result.metadata))
         } else {
             (None, None, None)
         };
-        
+
         let mut finding_payload = create_finding_payload(
             &task.task_id,
             &scan_id,
@@ -378,36 +380,33 @@ async fn process_task(
             Some(&finding.severity),
             Confidence::FIRM, // 密鑰匹配高信心度
         );
-        
+
         // 添加密鑰檢測專用的元數據
         if let Some(ref mut metadata) = finding_payload.metadata {
             metadata.insert(
                 "entropy".to_string(),
                 serde_json::Value::Number(
                     serde_json::Number::from_f64(finding.entropy.unwrap_or(0.0))
-                        .unwrap_or(serde_json::Number::from(0))
-                )
+                        .unwrap_or(serde_json::Number::from(0)),
+                ),
             );
             metadata.insert(
                 "rule_name".to_string(),
-                serde_json::Value::String(finding.rule_name)
+                serde_json::Value::String(finding.rule_name),
             );
-            
+
             if let Some(verified) = verified {
-                metadata.insert(
-                    "verified".to_string(),
-                    serde_json::Value::Bool(verified)
-                );
+                metadata.insert("verified".to_string(), serde_json::Value::Bool(verified));
             }
-            
+
             if let Some(msg) = verification_message {
                 metadata.insert(
                     "verification_message".to_string(),
-                    serde_json::Value::String(msg)
+                    serde_json::Value::String(msg),
                 );
             }
         }
-        
+
         all_findings.push(finding_payload);
     }
 

@@ -1,10 +1,7 @@
-"""
-Result Collector - 結果收集器
+"""Result Collector - 結果收集器
 
 接收並處理各功能模組傳回的執行結果
 """
-
-
 
 import asyncio
 from collections.abc import Callable
@@ -14,6 +11,7 @@ import logging
 from typing import Any
 
 from aio_pika.abc import AbstractIncomingMessage
+
 from services.aiva_common.schemas import (
     FindingPayload,
     ScanCompletedPayload,

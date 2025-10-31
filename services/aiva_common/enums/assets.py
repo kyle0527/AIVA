@@ -2,8 +2,6 @@
 資產管理相關枚舉 - 資產類型、環境、合規等
 """
 
-
-
 from enum import Enum
 
 

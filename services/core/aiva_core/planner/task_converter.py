@@ -1,5 +1,4 @@
-"""
-Task Converter - 任務轉換器
+"""Task Converter - 任務轉換器
 
 將 AST 節點轉換為可執行的任務序列
 
@@ -8,8 +7,6 @@ Compliance Note (遵循 aiva_common 設計原則):
 - TaskPriority 保留為模組特定 enum (AI 規劃器專用優先級)
 - 修正日期: 2025-10-25
 """
-
-
 
 from dataclasses import dataclass, field
 from enum import Enum
@@ -26,7 +23,7 @@ logger = logging.getLogger(__name__)
 
 class TaskPriority(str, Enum):
     """任務優先級 (AI 規劃器專用)
-    
+
     Note: 此為模組特定 enum,用於 AI 規劃器的任務優先級排程。
     與通用的 TaskStatus 不同,TaskPriority 是 AI 引擎內部使用的排程策略。
     """

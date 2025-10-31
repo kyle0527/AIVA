@@ -1,4 +1,4 @@
-# AIVA 構建流程操作指南
+# AIVA 構建流程操作指南 (10/31實測驗證)
 
 > **📋 適用對象**: DevOps工程師、部署人員、容器化專家  
 > **🎯 使用場景**: Docker映像建立、微服務部署、生產環境構建  
@@ -45,7 +45,7 @@ cd "c:\D\fold7\AIVA-git"
 docker compose -f docker/compose/docker-compose.yml build
 
 # 或者使用 PowerShell 腳本
-.\docker\build-all-images.ps1
+.\docker\build-docker-images.ps1
 ```
 
 ### 2. 個別建立映像檔

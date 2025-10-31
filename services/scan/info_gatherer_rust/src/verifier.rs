@@ -82,6 +82,7 @@ impl Verifier {
     }
 
     /// 設置緩存過期時間
+    #[allow(dead_code)] // Reserved for future cache configuration
     pub fn with_cache_ttl(mut self, ttl: Duration) -> Self {
         self.cache_ttl = ttl;
         self
@@ -91,7 +92,7 @@ impl Verifier {
     fn hash_secret(&self, secret_type: &str, secret: &str) -> String {
         use std::collections::hash_map::DefaultHasher;
         use std::hash::{Hash, Hasher};
-        
+
         let mut hasher = DefaultHasher::new();
         secret_type.hash(&mut hasher);
         secret.hash(&mut hasher);
@@ -102,7 +103,7 @@ impl Verifier {
     fn get_cached(&self, secret_type: &str, secret: &str) -> Option<VerificationResult> {
         let hash = self.hash_secret(secret_type, secret);
         let cache = self.cache.lock().unwrap();
-        
+
         if let Some(entry) = cache.get(&hash) {
             if entry.expires_at > SystemTime::now() {
                 return Some(entry.result.clone());
@@ -115,7 +116,7 @@ impl Verifier {
     fn cache_result(&self, secret_type: &str, secret: &str, result: VerificationResult) {
         let hash = self.hash_secret(secret_type, secret);
         let mut cache = self.cache.lock().unwrap();
-        
+
         cache.insert(
             hash,
             CacheEntry {
@@ -126,6 +127,7 @@ impl Verifier {
     }
 
     /// 清理過期的緩存條目
+    #[allow(dead_code)] // Reserved for future cache management
     pub fn cleanup_cache(&self) {
         let mut cache = self.cache.lock().unwrap();
         let now = SystemTime::now();
@@ -141,36 +143,20 @@ impl Verifier {
 
         // 根據密鑰類型選擇驗證方法
         let result = match secret_type {
-            "AWS Access Key ID" | "AWS Secret Access Key" => {
-                self.verify_aws(secret).await
-            }
+            "AWS Access Key ID" | "AWS Secret Access Key" => self.verify_aws(secret).await,
             "GitHub Personal Access Token" | "GitHub OAuth Access Token" => {
                 self.verify_github(secret).await
             }
             "Slack Token" | "Slack Bot Token" | "Slack Webhook URL" => {
                 self.verify_slack(secret).await
             }
-            "Stripe API Key" | "Stripe Restricted API Key" => {
-                self.verify_stripe(secret).await
-            }
-            "Twilio API Key" => {
-                self.verify_twilio(secret).await
-            }
-            "SendGrid API Token" => {
-                self.verify_sendgrid(secret).await
-            }
-            "Mailgun API Key" => {
-                self.verify_mailgun(secret).await
-            }
-            "DigitalOcean Access Token" => {
-                self.verify_digitalocean(secret).await
-            }
-            "Cloudflare API Token" => {
-                self.verify_cloudflare(secret).await
-            }
-            "Datadog API Key" => {
-                self.verify_datadog(secret).await
-            }
+            "Stripe API Key" | "Stripe Restricted API Key" => self.verify_stripe(secret).await,
+            "Twilio API Key" => self.verify_twilio(secret).await,
+            "SendGrid API Token" => self.verify_sendgrid(secret).await,
+            "Mailgun API Key" => self.verify_mailgun(secret).await,
+            "DigitalOcean Access Token" => self.verify_digitalocean(secret).await,
+            "Cloudflare API Token" => self.verify_cloudflare(secret).await,
+            "Datadog API Key" => self.verify_datadog(secret).await,
             _ => {
                 // 不支持的密鑰類型
                 VerificationResult::new(
@@ -186,11 +172,11 @@ impl Verifier {
     }
 
     /// 驗證 AWS 憑證
-    async fn verify_aws(&self, secret: &str) -> VerificationResult {
+    async fn verify_aws(&self, _secret: &str) -> VerificationResult {
         // AWS STS GetCallerIdentity API
         // 注意: 這需要同時有 Access Key ID 和 Secret Access Key
         // 這裡簡化處理,實際應該傳入完整憑證
-        
+
         VerificationResult::new(
             VerificationStatus::NotVerified,
             "AWS verification requires both Access Key ID and Secret Access Key".to_string(),
@@ -200,8 +186,9 @@ impl Verifier {
     /// 驗證 GitHub Token
     async fn verify_github(&self, token: &str) -> VerificationResult {
         let url = "https://api.github.com/user";
-        
-        match self.client
+
+        match self
+            .client
             .get(url)
             .header("Authorization", format!("token {}", token))
             .header("User-Agent", "AIVA-Security-Scanner")
@@ -246,8 +233,9 @@ impl Verifier {
     /// 驗證 Slack Token
     async fn verify_slack(&self, token: &str) -> VerificationResult {
         let url = "https://slack.com/api/auth.test";
-        
-        match self.client
+
+        match self
+            .client
             .post(url)
             .header("Authorization", format!("Bearer {}", token))
             .send()
@@ -289,13 +277,8 @@ impl Verifier {
     /// 驗證 Stripe API Key
     async fn verify_stripe(&self, key: &str) -> VerificationResult {
         let url = "https://api.stripe.com/v1/balance";
-        
-        match self.client
-            .get(url)
-            .basic_auth(key, Some(""))
-            .send()
-            .await
-        {
+
+        match self.client.get(url).basic_auth(key, Some("")).send().await {
             Ok(response) => {
                 if response.status().is_success() {
                     VerificationResult::new(
@@ -322,7 +305,7 @@ impl Verifier {
     }
 
     /// 驗證 Twilio API Key
-    async fn verify_twilio(&self, key: &str) -> VerificationResult {
+    async fn verify_twilio(&self, _key: &str) -> VerificationResult {
         // Twilio 需要 Account SID 和 Auth Token
         // 這裡簡化處理
         VerificationResult::new(
@@ -334,8 +317,9 @@ impl Verifier {
     /// 驗證 SendGrid API Token
     async fn verify_sendgrid(&self, token: &str) -> VerificationResult {
         let url = "https://api.sendgrid.com/v3/scopes";
-        
-        match self.client
+
+        match self
+            .client
             .get(url)
             .header("Authorization", format!("Bearer {}", token))
             .send()
@@ -344,9 +328,7 @@ impl Verifier {
             Ok(response) => {
                 if response.status().is_success() {
                     if let Ok(body) = response.json::<serde_json::Value>().await {
-                        let scopes = body["scopes"].as_array()
-                            .map(|arr| arr.len())
-                            .unwrap_or(0);
+                        let scopes = body["scopes"].as_array().map(|arr| arr.len()).unwrap_or(0);
                         VerificationResult::new(
                             VerificationStatus::Valid,
                             format!("Valid SendGrid token with {} scopes", scopes),
@@ -377,7 +359,7 @@ impl Verifier {
     }
 
     /// 驗證 Mailgun API Key
-    async fn verify_mailgun(&self, key: &str) -> VerificationResult {
+    async fn verify_mailgun(&self, _key: &str) -> VerificationResult {
         // Mailgun 需要域名資訊
         // 這裡簡化處理
         VerificationResult::new(
@@ -389,8 +371,9 @@ impl Verifier {
     /// 驗證 DigitalOcean Access Token
     async fn verify_digitalocean(&self, token: &str) -> VerificationResult {
         let url = "https://api.digitalocean.com/v2/account";
-        
-        match self.client
+
+        match self
+            .client
             .get(url)
             .header("Authorization", format!("Bearer {}", token))
             .send()
@@ -433,8 +416,9 @@ impl Verifier {
     /// 驗證 Cloudflare API Token
     async fn verify_cloudflare(&self, token: &str) -> VerificationResult {
         let url = "https://api.cloudflare.com/client/v4/user/tokens/verify";
-        
-        match self.client
+
+        match self
+            .client
             .get(url)
             .header("Authorization", format!("Bearer {}", token))
             .send()
@@ -472,13 +456,8 @@ impl Verifier {
     /// 驗證 Datadog API Key
     async fn verify_datadog(&self, key: &str) -> VerificationResult {
         let url = "https://api.datadoghq.com/api/v1/validate";
-        
-        match self.client
-            .get(url)
-            .header("DD-API-KEY", key)
-            .send()
-            .await
-        {
+
+        match self.client.get(url).header("DD-API-KEY", key).send().await {
             Ok(response) => {
                 if let Ok(body) = response.json::<serde_json::Value>().await {
                     let valid = body["valid"].as_bool().unwrap_or(false);
@@ -520,10 +499,7 @@ mod tests {
 
     #[test]
     fn test_verification_result_creation() {
-        let result = VerificationResult::new(
-            VerificationStatus::Valid,
-            "Test message".to_string(),
-        );
+        let result = VerificationResult::new(VerificationStatus::Valid, "Test message".to_string());
         assert_eq!(result.status, VerificationStatus::Valid);
         assert_eq!(result.message, "Test message");
         assert!(result.verified_at > 0);
@@ -531,13 +507,10 @@ mod tests {
 
     #[test]
     fn test_verification_result_with_metadata() {
-        let result = VerificationResult::new(
-            VerificationStatus::Valid,
-            "Test".to_string(),
-        )
-        .with_metadata("key1".to_string(), "value1".to_string())
-        .with_metadata("key2".to_string(), "value2".to_string());
-        
+        let result = VerificationResult::new(VerificationStatus::Valid, "Test".to_string())
+            .with_metadata("key1".to_string(), "value1".to_string())
+            .with_metadata("key2".to_string(), "value2".to_string());
+
         assert_eq!(result.metadata.get("key1"), Some(&"value1".to_string()));
         assert_eq!(result.metadata.get("key2"), Some(&"value2".to_string()));
     }
@@ -548,7 +521,7 @@ mod tests {
         let hash1 = verifier.hash_secret("GitHub", "token123");
         let hash2 = verifier.hash_secret("GitHub", "token123");
         let hash3 = verifier.hash_secret("GitHub", "token456");
-        
+
         // 相同輸入應產生相同哈希
         assert_eq!(hash1, hash2);
         // 不同輸入應產生不同哈希
@@ -558,17 +531,15 @@ mod tests {
     #[test]
     fn test_cache_operations() {
         let verifier = Verifier::new();
-        let result = VerificationResult::new(
-            VerificationStatus::Valid,
-            "Cached result".to_string(),
-        );
-        
+        let result =
+            VerificationResult::new(VerificationStatus::Valid, "Cached result".to_string());
+
         // 初始應該沒有緩存
         assert!(verifier.get_cached("GitHub", "token123").is_none());
-        
+
         // 存入緩存
         verifier.cache_result("GitHub", "token123", result.clone());
-        
+
         // 應該能取得緩存
         let cached = verifier.get_cached("GitHub", "token123");
         assert!(cached.is_some());
@@ -586,13 +557,13 @@ mod tests {
     #[tokio::test]
     async fn test_verify_with_cache() {
         let verifier = Verifier::new();
-        
+
         // 第一次驗證 (不支援的類型,會被緩存)
         let result1 = verifier.verify("Unknown", "secret123").await;
-        
+
         // 第二次驗證應該從緩存取得
         let result2 = verifier.verify("Unknown", "secret123").await;
-        
+
         // 時間戳應該相同 (來自緩存)
         assert_eq!(result1.verified_at, result2.verified_at);
     }

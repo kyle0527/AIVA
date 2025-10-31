@@ -1,10 +1,7 @@
-"""
-Message Broker - 消息代理
+"""Message Broker - 消息代理
 
 統一管理 RabbitMQ 連接和消息路由
 """
-
-
 
 import asyncio
 from collections.abc import Callable

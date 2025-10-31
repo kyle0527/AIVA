@@ -1,5 +1,3 @@
-
-
 from collections.abc import Iterable
 
 from services.aiva_common.enums import Topic

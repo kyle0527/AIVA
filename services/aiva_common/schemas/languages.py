@@ -117,7 +117,7 @@ class LanguageSpecificPayload(BaseModel):
 
 class AILanguageModel(BaseModel):
     """AI 程式語言模型配置"""
-    
+
     model_config = {"protected_namespaces": ()}
 
     model_name: str = Field(description="模型名稱")

@@ -1,7 +1,7 @@
 // Sensitive Info Scanner - 核心掃描邏輯
 use aho_corasick::AhoCorasick;
-use regex::Regex;
 use rayon::prelude::*;
+use regex::Regex;
 use serde::Serialize;
 
 #[derive(Debug, Clone, Serialize)]
@@ -44,7 +44,8 @@ impl SensitiveInfoScanner {
             },
             Pattern {
                 name: "Generic API Key",
-                regex: Regex::new(r#"(?i)api[_-]?key['"]?\s*[:=]\s*['"]?([0-9a-zA-Z\-_]{20,})"#).unwrap(),
+                regex: Regex::new(r#"(?i)api[_-]?key['"]?\s*[:=]\s*['"]?([0-9a-zA-Z\-_]{20,})"#)
+                    .unwrap(),
                 confidence: 0.75,
             },
             Pattern {
@@ -64,7 +65,8 @@ impl SensitiveInfoScanner {
             },
             Pattern {
                 name: "JWT Token",
-                regex: Regex::new(r"eyJ[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{10,}").unwrap(),
+                regex: Regex::new(r"eyJ[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{10,}")
+                    .unwrap(),
                 confidence: 0.95,
             },
             Pattern {

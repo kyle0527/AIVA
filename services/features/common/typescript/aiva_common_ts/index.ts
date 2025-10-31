@@ -44,14 +44,21 @@ export {
 // 統一 Schema 定義導出 (對應 Python aiva_common.schemas)
 // ============================================================================
 
-// 枚舉類型
+// 從標準生成的 schemas 導入
 export {
+  // 枚舉類型
   Severity,
   Confidence,
   VulnerabilityType,
-  VulnerabilityStatus,
-  TaskStatus,
-  ScanStatus,
+  
+  // 基礎介面
+  MessageHeader,
+  Target,
+  Vulnerability,
+  FindingEvidence,
+  FindingImpact,
+  FindingRecommendation,
+  FindingPayload,
   
   // 工具函數
   validateFindingId,
@@ -66,8 +73,12 @@ export {
   // 類型守衛
   isFindingPayload,
   isVulnerability,
-  isTarget
-} from './schemas';
+  isTarget,
+  
+  // 版本信息
+  SCHEMA_VERSION,
+  GENERATED_AT
+} from './schemas/generated';
 
 // ============================================================================
 // 性能優化配置導出 (對應 Python performance_config.py)
@@ -86,20 +97,7 @@ export {
   cached
 } from './performance-config';
 
-// Schema 類型定義
-export type {
-  FindingPayload,
-  Vulnerability,
-  Target,
-  FindingEvidence,
-  FindingImpact,
-  FindingRecommendation,
-  SensitiveMatch,
-  JavaScriptAnalysisResult,
-  VulnerabilityCorrelation,
-  AIVerificationRequest,
-  AIVerificationResult
-} from './schemas';
+// 注意：上面已經導出了具體的 schemas，這裡不需要重複類型導出
 
 // 性能配置類型定義
 export type {

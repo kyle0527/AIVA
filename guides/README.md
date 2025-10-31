@@ -34,17 +34,21 @@ guides/
 
 | 指南類型 | 文檔路徑 | 專業領域 | 狀態 |
 |---------|----------|----------|------|
-| 開發環境快速設置 | [`development/DEVELOPMENT_QUICK_START_GUIDE.md`](development/DEVELOPMENT_QUICK_START_GUIDE.md) | 🚀 環境初始化 | ✅ 完整 |
-| 開發任務流程手冊 | [`development/DEVELOPMENT_TASKS_GUIDE.md`](development/DEVELOPMENT_TASKS_GUIDE.md) | ✅ 日常開發流程 | ✅ 完整 |
-| 依賴管理操作手冊 | [`development/DEPENDENCY_MANAGEMENT_GUIDE.md`](development/DEPENDENCY_MANAGEMENT_GUIDE.md) | 📦 深度依賴管理策略 | ✅ 完整 |
-| API 驗證操作手冊 | [`development/API_VERIFICATION_GUIDE.md`](development/API_VERIFICATION_GUIDE.md) | 🔐 密鑰驗證功能配置 | ✅ 完整 |
-| AI 服務使用手冊 | [`development/AI_SERVICES_USER_GUIDE.md`](development/AI_SERVICES_USER_GUIDE.md) | 🤖 AI 功能使用實戰 | ✅ 完整 |
-| Schema 導入規範 | [`development/SCHEMA_IMPORT_GUIDE.md`](development/SCHEMA_IMPORT_GUIDE.md) | 📝 Schema 使用規範 | ✅ 必讀 |
+| 開發環境快速設置 | [`development/DEVELOPMENT_QUICK_START_GUIDE.md`](development/DEVELOPMENT_QUICK_START_GUIDE.md) | 🚀 環境初始化 | ✅ 完整 (10/31實測驗證) |
+| 開發任務流程手冊 | [`development/DEVELOPMENT_TASKS_GUIDE.md`](development/DEVELOPMENT_TASKS_GUIDE.md) | ✅ 日常開發流程 | ✅ 完整 (10/31實測驗證) |
+| 依賴管理操作手冊 | [`development/DEPENDENCY_MANAGEMENT_GUIDE.md`](development/DEPENDENCY_MANAGEMENT_GUIDE.md) | 📦 深度依賴管理策略 + **ML依賴混合狀態** | ✅ 完整 (10/31實測驗證) |
+| API 驗證操作手冊 | [`development/API_VERIFICATION_GUIDE.md`](development/API_VERIFICATION_GUIDE.md) | 🔐 密鑰驗證功能配置 | ✅ 完整 (10/31實測驗證) |
+| AI 服務使用手冊 | [`development/AI_SERVICES_USER_GUIDE.md`](development/AI_SERVICES_USER_GUIDE.md) | 🤖 AI 功能使用實戰 | ✅ 完整 (10/31實測驗證) |
+| Schema 導入規範 | [`development/SCHEMA_IMPORT_GUIDE.md`](development/SCHEMA_IMPORT_GUIDE.md) | 📝 Schema 使用規範 | ✅ 必讀 (10/31實測驗證) |
 | **Token 最佳化指南** | [`development/TOKEN_OPTIMIZATION_GUIDE.md`](development/TOKEN_OPTIMIZATION_GUIDE.md) | 🎯 開發效率最佳化 | ✅ **新增** |
 | **統計收集系統** | [`development/METRICS_USAGE_GUIDE.md`](development/METRICS_USAGE_GUIDE.md) | 📊 系統監控與統計 | ✅ **新增** |
 | **數據存儲指南** | [`development/DATA_STORAGE_GUIDE.md`](development/DATA_STORAGE_GUIDE.md) | 💾 數據存儲架構 | ✅ **新增** |
 | **UI 啟動指南** | [`development/UI_LAUNCH_GUIDE.md`](development/UI_LAUNCH_GUIDE.md) | 🖥️ 界面管理 | ✅ **新增** |
 | **擴充功能安裝** | [`development/EXTENSIONS_INSTALL_GUIDE.md`](development/EXTENSIONS_INSTALL_GUIDE.md) | 🔌 開發工具配置 | ✅ **新增** |
+| **多語言環境標準** | [`development/MULTI_LANGUAGE_ENVIRONMENT_STANDARD.md`](development/MULTI_LANGUAGE_ENVIRONMENT_STANDARD.md) | 🌐 Python/TS/Go/Rust 統一配置 | ✅ **新增** (10/31驗證) |
+| **VS Code 配置最佳化** | [`development/VSCODE_CONFIGURATION_OPTIMIZATION.md`](development/VSCODE_CONFIGURATION_OPTIMIZATION.md) | ⚙️ IDE 性能優化詳解 | ✅ **新增** (10/31驗證) |
+| **語言轉換指南** | [`development/LANGUAGE_CONVERSION_GUIDE.md`](development/LANGUAGE_CONVERSION_GUIDE.md) | 🔄 跨語言代碼轉換完整指南 | ✅ **新增** (10/31驗證) |
+| **語言伺服器優化** | [`development/LANGUAGE_SERVER_OPTIMIZATION_GUIDE.md`](development/LANGUAGE_SERVER_OPTIMIZATION_GUIDE.md) | ⚡ IDE 性能優化配置 | ✅ **新增** |
 | **Git 推送規範** | [`development/GIT_PUSH_GUIDELINES.md`](development/GIT_PUSH_GUIDELINES.md) | 🔒 代碼安全推送 | ✅ **新增** |
 | VS Code 插件完整清單 | [`../_out/VSCODE_EXTENSIONS_INVENTORY.md`](../_out/VSCODE_EXTENSIONS_INVENTORY.md) | 🛠️ 開發工具配置 (88個插件) | ✅ 完整 |
 
@@ -63,40 +67,43 @@ guides/
 ### ⚙️ **模組專業指南** (`modules/`)
 
 #### 🎯 **核心模組** (Core)
-| 指南類型 | 文檔路徑 | 內容重點 |
-|---------|----------|----------|
-| 開發規範手冊 | [`../services/core/docs/README_DEVELOPMENT.md`](../services/core/docs/README_DEVELOPMENT.md) | 🐍 Python 開發最佳實踐 |
-| AI 引擎操作手冊 | [`../services/core/docs/README_AI_ENGINE.md`](../services/core/docs/README_AI_ENGINE.md) | 🤖 AI 配置與優化 |
-| 執行引擎操作手冊 | [`../services/core/docs/README_EXECUTION.md`](../services/core/docs/README_EXECUTION.md) | ⚡ 性能優化策略 |
-| 學習系統操作手冊 | [`../services/core/docs/README_LEARNING.md`](../services/core/docs/README_LEARNING.md) | 🧠 ML 工程實踐 |
-| 測試策略手冊 | [`../services/core/docs/README_TESTING.md`](../services/core/docs/README_TESTING.md) | 🧪 測試框架使用 |
-
-#### 🎯 **核心模組** (Core)
-| 指南類型 | 文檔路徑 | 內容重點 |
-|---------|----------|----------|
-| AI 引擎操作指南 | [`modules/AI_ENGINE_GUIDE.md`](modules/AI_ENGINE_GUIDE.md) | 🤖 AI 配置與優化 |
+| 指南類型 | 文檔路徑 | 內容重點 | 狀態 |
+|---------|----------|----------|------|
+| 開發規範手冊 | [`../services/core/docs/README_DEVELOPMENT.md`](../services/core/docs/README_DEVELOPMENT.md) | 🐍 Python 開發最佳實踐 | ✅ 完整 |
+| AI 引擎操作手冊 | [`../services/core/docs/README_AI_ENGINE.md`](../services/core/docs/README_AI_ENGINE.md) | 🤖 AI 配置與優化 | ✅ 完整 |
+| 執行引擎操作手冊 | [`../services/core/docs/README_EXECUTION.md`](../services/core/docs/README_EXECUTION.md) | ⚡ 性能優化策略 | ✅ 完整 |
+| 學習系統操作手冊 | [`../services/core/docs/README_LEARNING.md`](../services/core/docs/README_LEARNING.md) | 🧠 ML 工程實踐 | ✅ 完整 |
+| 測試策略手冊 | [`../services/core/docs/README_TESTING.md`](../services/core/docs/README_TESTING.md) | 🧪 測試框架使用 | ✅ 完整 |
+| AI 引擎操作指南 | [`modules/AI_ENGINE_GUIDE.md`](modules/AI_ENGINE_GUIDE.md) | 🤖 AI 配置與優化 | ✅ 完整 |
 
 #### ⚙️ **功能模組** (Features)
-| 指南類型 | 文檔路徑 | 語言專精 |
-|---------|----------|----------|
-| Python 開發指南 | [`modules/PYTHON_DEVELOPMENT_GUIDE.md`](modules/PYTHON_DEVELOPMENT_GUIDE.md) | 🐍 723 組件的核心業務邏輯 |
-| Go 開發指南 | [`modules/GO_DEVELOPMENT_GUIDE.md`](modules/GO_DEVELOPMENT_GUIDE.md) | 🐹 165 組件的高效能服務 |
-| Rust 開發指南 | [`modules/RUST_DEVELOPMENT_GUIDE.md`](modules/RUST_DEVELOPMENT_GUIDE.md) | 🦀 1,804 組件的安全分析 |
-| 支援功能操作指南 | [`modules/SUPPORT_FUNCTIONS_GUIDE.md`](modules/SUPPORT_FUNCTIONS_GUIDE.md) | 🔧 運維工具集 |
+| 指南類型 | 文檔路徑 | 語言專精 | 狀態 |
+|---------|----------|----------|------|
+| Python 開發指南 | [`modules/PYTHON_DEVELOPMENT_GUIDE.md`](modules/PYTHON_DEVELOPMENT_GUIDE.md) | 🐍 723 組件的核心業務邏輯 | ✅ 完整 |
+| Go 開發指南 | [`modules/GO_DEVELOPMENT_GUIDE.md`](modules/GO_DEVELOPMENT_GUIDE.md) | 🐹 165 組件的高效能服務 | ✅ 完整 |
+| Rust 開發指南 | [`modules/RUST_DEVELOPMENT_GUIDE.md`](modules/RUST_DEVELOPMENT_GUIDE.md) | 🦀 1,804 組件的安全分析 | ✅ 完整 |
+| 支援功能操作指南 | [`modules/SUPPORT_FUNCTIONS_GUIDE.md`](modules/SUPPORT_FUNCTIONS_GUIDE.md) | 🔧 運維工具集 | ✅ 完整 |
 
 #### 🔗 **整合模組** (Integration)
-- 透過 [`../services/integration/README.md`](../services/integration/README.md) 查看完整整合操作手冊
+- 透過 [`../services/integration/README.md`](../services/integration/README.md) 查看完整整合操作手冊 ✅
 
 #### 🏗️ **共用模組** (AIVA Common)
-- 透過 [`../services/aiva_common/README.md`](../services/aiva_common/README.md) 查看標準化開發規範
+- 透過 [`../services/aiva_common/README.md`](../services/aiva_common/README.md) 查看標準化開發規範 ✅
 
 #### 📋 **模組專用指南**
-| 指南類型 | 文檔路徑 | 適用模組 |
-|---------|----------|----------|
-| 模組遷移操作指南 | [`modules/MODULE_MIGRATION_GUIDE.md`](modules/MODULE_MIGRATION_GUIDE.md) | 🔄 Features 模組升級 |
-| 分析功能架構指南 | [`modules/ANALYSIS_FUNCTIONS_GUIDE.md`](modules/ANALYSIS_FUNCTIONS_GUIDE.md) | 🔍 分析功能架構 |
+| 指南類型 | 文檔路徑 | 適用模組 | 狀態 |
+|---------|----------|----------|------|
+| 模組遷移操作指南 | [`modules/MODULE_MIGRATION_GUIDE.md`](modules/MODULE_MIGRATION_GUIDE.md) | 🔄 Features 模組升級 | ✅ 完整 |
+| 分析功能架構指南 | [`modules/ANALYSIS_FUNCTIONS_GUIDE.md`](modules/ANALYSIS_FUNCTIONS_GUIDE.md) | 🔍 分析功能架構 | ✅ 完整 |
 
 ### 🚀 **部署運維指南** (`deployment/`)
+
+| 指南類型 | 文檔路徑 | 部署重點 | 狀態 |
+|---------|----------|----------|------|
+| 構建流程操作指南 | [`deployment/BUILD_GUIDE.md`](deployment/BUILD_GUIDE.md) | 🔨 多語言構建自動化 | ✅ 完整 |
+| Docker 基礎設施指南 | [`deployment/DOCKER_GUIDE.md`](deployment/DOCKER_GUIDE.md) | 🐳 容器化部署實踐 | ✅ 完整 (10/31實測驗證) |
+| Docker & Kubernetes 部署 | [`deployment/DOCKER_KUBERNETES_GUIDE.md`](deployment/DOCKER_KUBERNETES_GUIDE.md) | ☸️ 微服務編排方案 | ✅ 完整 |
+| 環境變數配置指南 | [`deployment/ENVIRONMENT_CONFIG_GUIDE.md`](deployment/ENVIRONMENT_CONFIG_GUIDE.md) | ⚙️ 環境配置管理 | ✅ 完整 |
 
 | 指南類型 | 文檔路徑 | 部署場景 |
 |---------|----------|----------|
@@ -108,26 +115,27 @@ guides/
 
 ### 🔧 **疑難排解指南** (`troubleshooting/`)
 
-| 指南類型 | 文檔路徑 | 解決領域 |
-|---------|----------|----------|
-| 向前引用修復指南 | [`troubleshooting/FORWARD_REFERENCE_REPAIR_GUIDE.md`](troubleshooting/FORWARD_REFERENCE_REPAIR_GUIDE.md) | 🔗 Pydantic 模型修復 |
-| 性能優化配置指南 | [`troubleshooting/PERFORMANCE_OPTIMIZATION_GUIDE.md`](troubleshooting/PERFORMANCE_OPTIMIZATION_GUIDE.md) | ⚡ 性能優化配置 |
+| 指南類型 | 文檔路徑 | 解決領域 | 驗證狀態 |
+|---------|----------|----------|----------|
+| **開發環境配置故障排除** | [`troubleshooting/DEVELOPMENT_ENVIRONMENT_TROUBLESHOOTING.md`](troubleshooting/DEVELOPMENT_ENVIRONMENT_TROUBLESHOOTING.md) | 🚨 多語言環境快速診斷 | ✅ **新增** (10/31驗證) |
+| 向前引用修復指南 | [`troubleshooting/FORWARD_REFERENCE_REPAIR_GUIDE.md`](troubleshooting/FORWARD_REFERENCE_REPAIR_GUIDE.md) | 🔗 Pydantic 模型修復 | |
+| 性能優化配置指南 | [`troubleshooting/PERFORMANCE_OPTIMIZATION_GUIDE.md`](troubleshooting/PERFORMANCE_OPTIMIZATION_GUIDE.md) | ⚡ 性能優化配置 | |
 | **測試重現指南** | [`troubleshooting/TESTING_REPRODUCTION_GUIDE.md`](troubleshooting/TESTING_REPRODUCTION_GUIDE.md) | 🧪 測試環境快速重現 | ✅ **新增** |
 
 ### 🤖 **AI 與功能手冊**
 
-| 指南類型 | 文檔路徑 | 功能重點 |
-|---------|----------|----------|
-| **22 個 AI 組件詳細說明** | [`../reports/ai_analysis/AIVA_22_AI_COMPONENTS_DETAILED_GUIDE.md`](../reports/ai_analysis/AIVA_22_AI_COMPONENTS_DETAILED_GUIDE.md) | 🤖 完整 AI 組件架構說明 |
-| AI 用戶操作手冊 | [`../AI_USER_GUIDE.md`](../AI_USER_GUIDE.md) | 🧠 AI 功能實戰案例 |
-| API 驗證操作手冊 | [`../API_VERIFICATION_GUIDE.md`](../API_VERIFICATION_GUIDE.md) | 🔐 密鑰驗證功能 |
+| 指南類型 | 文檔路徑 | 功能重點 | 驗證狀態 |
+|---------|----------|----------|----------|
+| **22 個 AI 組件詳細說明** | [`../reports/ai_analysis/AIVA_22_AI_COMPONENTS_DETAILED_GUIDE.md`](../reports/ai_analysis/AIVA_22_AI_COMPONENTS_DETAILED_GUIDE.md) | 🤖 完整 AI 組件架構說明 | |
+| AI 用戶操作手冊 | [`../AI_USER_GUIDE.md`](../AI_USER_GUIDE.md) | 🧠 AI 功能實戰案例 | |
+| API 驗證操作手冊 | [`../API_VERIFICATION_GUIDE.md`](../API_VERIFICATION_GUIDE.md) | 🔐 密鑰驗證功能 | (10/31驗證) |
 
 ### 🛠️ **工具與測試手冊**
 
-| 指南類型 | 文檔路徑 | 工具類型 |
-|---------|----------|----------|
-| 工具集使用手冊 | [`../tools/README.md`](../tools/README.md) | 🔧 專業工具操作 |
-| 測試框架手冊 | [`../testing/README.md`](../testing/README.md) | 🧪 測試策略與實踐 |
+| 指南類型 | 文檔路徑 | 工具類型 | 驗證狀態 |
+|---------|----------|----------|----------|
+| 工具集使用手冊 | [`../tools/README.md`](../tools/README.md) | 🔧 專業工具操作 | |
+| 測試框架手冊 | [`../testing/README.md`](../testing/README.md) | 🧪 測試策略與實踐 | |
 
 ---
 

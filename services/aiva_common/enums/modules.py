@@ -2,8 +2,6 @@
 模組相關枚舉 - 模組名稱、主題等
 """
 
-
-
 from enum import Enum
 
 
@@ -11,11 +9,11 @@ class ProgrammingLanguage(str, Enum):
     """程式語言枚舉"""
 
     # 系統程式語言 - 使用官方正式名稱
-    RUST = "rust"              # 官方名稱: Rust
-    GO = "go"                  # 官方名稱: Go (不是 Golang)
-    C = "c"                    # 官方名稱: C
-    CPP = "c++"                # 官方名稱: C++ (不是 cpp) - ISO/IEC 14882 標準
-    CSHARP = "c#"              # 官方名稱: C# (不是 csharp) - Microsoft 官方標準
+    RUST = "rust"  # 官方名稱: Rust
+    GO = "go"  # 官方名稱: Go (不是 Golang)
+    C = "c"  # 官方名稱: C
+    CPP = "c++"  # 官方名稱: C++ (不是 cpp) - ISO/IEC 14882 標準
+    CSHARP = "c#"  # 官方名稱: C# (不是 csharp) - Microsoft 官方標準
 
     # 腳本語言
     PYTHON = "python"
@@ -32,6 +30,7 @@ class ProgrammingLanguage(str, Enum):
 
 class ECMAScriptVersion(str, Enum):
     """ECMAScript 版本枚舉（包含最新標準，基於 ECMA-262 官方標準）"""
+
     ES3 = "ES3"  # 1999
     ES5 = "ES5"  # 2009
     ES5_1 = "ES5.1"  # 2011
@@ -51,6 +50,7 @@ class ECMAScriptVersion(str, Enum):
 
 class JavaScriptFeature(str, Enum):
     """JavaScript 特性枚舉（基於 ECMA-262 官方規範）"""
+
     # ES2015+ Features
     ARROW_FUNCTIONS = "arrow_functions"
     CLASSES = "classes"
@@ -67,26 +67,26 @@ class JavaScriptFeature(str, Enum):
     SYMBOLS = "symbols"
     ITERATORS = "iterators"
     GENERATORS = "generators"
-    
+
     # ES2017+
     ASYNC_AWAIT = "async_await"
     OBJECT_VALUES_ENTRIES = "object_values_entries"
     STRING_PADDING = "string_padding"
     TRAILING_COMMAS = "trailing_commas"
-    
+
     # ES2018+
     REST_SPREAD_PROPERTIES = "rest_spread_properties"
     ASYNC_ITERATION = "async_iteration"
     PROMISE_FINALLY = "promise_finally"
     REGEXP_FEATURES = "regexp_features"
-    
+
     # ES2019+
     ARRAY_FLAT = "array_flat"
     OBJECT_FROM_ENTRIES = "object_from_entries"
     STRING_TRIM_START_END = "string_trim_start_end"
     OPTIONAL_CATCH_BINDING = "optional_catch_binding"
     JSON_SUPERSET = "json_superset"
-    
+
     # ES2020+
     BIGINT = "bigint"
     DYNAMIC_IMPORT = "dynamic_import"
@@ -94,14 +94,14 @@ class JavaScriptFeature(str, Enum):
     OPTIONAL_CHAINING = "optional_chaining"
     PROMISE_ALL_SETTLED = "promise_all_settled"
     GLOBAL_THIS = "global_this"
-    
+
     # ES2021+
     LOGICAL_ASSIGNMENT = "logical_assignment"
     NUMERIC_SEPARATORS = "numeric_separators"
     PROMISE_ANY = "promise_any"
     STRING_REPLACE_ALL = "string_replace_all"
     WEAK_REFS = "weak_refs"
-    
+
     # ES2022+
     CLASS_FIELDS = "class_fields"
     PRIVATE_METHODS = "private_methods"
@@ -110,17 +110,17 @@ class JavaScriptFeature(str, Enum):
     TOP_LEVEL_AWAIT = "top_level_await"
     ARRAY_AT = "array_at"
     ERROR_CAUSE = "error_cause"
-    
+
     # ES2023+
     ARRAY_FIND_LAST = "array_find_last"
     HASHBANG_GRAMMAR = "hashbang_grammar"
     SYMBOLS_AS_WEAK_MAP_KEYS = "symbols_as_weak_map_keys"
-    
+
     # ES2024+
     ARRAY_BUFFER_RESIZE = "array_buffer_resize"
     REGEXP_V_FLAG = "regexp_v_flag"
     PROMISE_WITH_RESOLVERS = "promise_with_resolvers"
-    
+
     # ES2025+ (预期特性)
     TEMPORAL = "temporal"
     RECORDS_TUPLES = "records_tuples"
@@ -332,4 +332,3 @@ class Topic(str, Enum):
     # Remediation Topics
     TASK_REMEDIATION_GENERATE = "tasks.remediation.generate"
     RESULTS_REMEDIATION = "results.remediation"
-

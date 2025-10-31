@@ -5,8 +5,6 @@
 技術指紋和漏洞發現記錄等。
 """
 
-
-
 from datetime import UTC, datetime
 from typing import Any
 
@@ -43,9 +41,7 @@ class CWEReference(BaseModel):
     符合標準: Common Weakness Enumeration (https://cwe.mitre.org/)
     """
 
-    cwe_id: str = Field(
-        description="CWE ID (格式: CWE-XXX)",
-        pattern=r"^CWE-\d+$")
+    cwe_id: str = Field(description="CWE ID (格式: CWE-XXX)", pattern=r"^CWE-\d+$")
     name: str | None = None
     description: str | None = None
     weakness_category: str | None = None  # "Class", "Base", "Variant", "Compound"
@@ -59,8 +55,8 @@ class CAPECReference(BaseModel):
     """
 
     capec_id: str = Field(
-        description="CAPEC ID (格式: CAPEC-XXX)",
-        pattern=r"^CAPEC-\d+$")
+        description="CAPEC ID (格式: CAPEC-XXX)", pattern=r"^CAPEC-\d+$"
+    )
     name: str | None = None
     description: str | None = None
     attack_pattern_category: str | None = None  # "Meta", "Standard", "Detailed Atomic"
@@ -132,8 +128,7 @@ class VulnerabilityDiscovery(BaseModel):
     # 證據和驗證
     evidence: list[str] = Field(default_factory=list, description="漏洞證據")
     proof_of_concept: str | None = Field(default=None, description="概念驗證")
-    false_positive_likelihood: float = Field(
-        ge=0.0, le=1.0, description="誤報可能性")
+    false_positive_likelihood: float = Field(ge=0.0, le=1.0, description="誤報可能性")
 
     # 影響評估
     impact_assessment: str | None = Field(default=None, description="影響評估")

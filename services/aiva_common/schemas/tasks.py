@@ -5,8 +5,6 @@
 威脅情報查詢任務等。
 """
 
-
-
 from datetime import UTC, datetime
 from typing import Any
 
@@ -63,8 +61,7 @@ class ScanStartPayload(BaseModel):
     def validate_strategy(cls, v: str) -> str:
         allowed = {"quick", "normal", "deep", "full", "custom"}
         if v not in allowed:
-            raise ValueError(
-                f"Invalid strategy: {v}. Must be one of {allowed}")
+            raise ValueError(f"Invalid strategy: {v}. Must be one of {allowed}")
         return v
 
 
@@ -124,8 +121,7 @@ class FunctionTaskPayload(BaseModel):
     context: FunctionTaskContext = Field(default_factory=FunctionTaskContext)
     strategy: str = "full"
     custom_payloads: list[str] | None = None
-    test_config: FunctionTaskTestConfig = Field(
-        default_factory=FunctionTaskTestConfig)
+    test_config: FunctionTaskTestConfig = Field(default_factory=FunctionTaskTestConfig)
 
     @field_validator("task_id")
     @classmethod
@@ -392,7 +388,7 @@ class EASMDiscoveryResult(BaseModel):
 
 class Scenario(BaseModel):
     """訓練場景定義"""
-    
+
     scenario_id: str
     name: str
     description: str
@@ -405,7 +401,7 @@ class Scenario(BaseModel):
 
 class ScenarioResult(BaseModel):
     """場景執行結果"""
-    
+
     scenario_id: str
     session_id: str
     success: bool
@@ -433,7 +429,7 @@ class StandardScenario(BaseModel):
 
 class ScenarioTestResult(BaseModel):
     """場景測試結果 - 模型在標準場景上的表現"""
-    
+
     model_config = {"protected_namespaces": ()}
 
     test_id: str
@@ -463,8 +459,7 @@ class ExploitPayload(BaseModel):
     bypass_technique: str | None = Field(default=None, description="繞過技術")
 
     # 適用條件
-    target_technology: list[str] = Field(
-        default_factory=list, description="目標技術")
+    target_technology: list[str] = Field(default_factory=list, description="目標技術")
     required_context: dict[str, Any] = Field(
         default_factory=dict, description="所需上下文"
     )
@@ -503,18 +498,15 @@ class TestExecution(BaseModel):
     confidence_level: Confidence = Field(description="結果置信度")
 
     # 詳細信息
-    request_data: dict[str, Any] = Field(
-        default_factory=dict, description="請求數據")
-    response_data: dict[str, Any] = Field(
-        default_factory=dict, description="響應數據")
+    request_data: dict[str, Any] = Field(default_factory=dict, description="請求數據")
+    response_data: dict[str, Any] = Field(default_factory=dict, description="響應數據")
     evidence: list[str] = Field(default_factory=list, description="證據列表")
     error_message: str | None = Field(default=None, description="錯誤消息")
 
     # 資源使用
     cpu_usage: float | None = Field(default=None, description="CPU使用率")
     memory_usage: int | None = Field(default=None, description="內存使用(MB)")
-    network_traffic: int | None = Field(
-        default=None, description="網絡流量(bytes)")
+    network_traffic: int | None = Field(default=None, description="網絡流量(bytes)")
 
     metadata: dict[str, Any] = Field(default_factory=dict, description="元數據")
 
@@ -542,14 +534,12 @@ class ExploitResult(BaseModel):
     access_gained: dict[str, Any] = Field(
         default_factory=dict, description="獲得的訪問權限"
     )
-    data_extracted: list[str] = Field(
-        default_factory=list, description="提取的數據")
+    data_extracted: list[str] = Field(default_factory=list, description="提取的數據")
     system_impact: str | None = Field(default=None, description="系統影響")
 
     # 檢測規避
     detection_bypassed: bool = Field(description="是否繞過檢測")
-    artifacts_left: list[str] = Field(
-        default_factory=list, description="留下的痕跡")
+    artifacts_left: list[str] = Field(default_factory=list, description="留下的痕跡")
 
     # 修復驗證
     remediation_verified: bool = Field(default=False, description="修復是否已驗證")
@@ -574,10 +564,8 @@ class TestStrategy(BaseModel):
     parallel_execution: bool = Field(default=False, description="是否並行執行")
 
     # 條件配置
-    trigger_conditions: list[str] = Field(
-        default_factory=list, description="觸發條件")
-    stop_conditions: list[str] = Field(
-        default_factory=list, description="停止條件")
+    trigger_conditions: list[str] = Field(default_factory=list, description="觸發條件")
+    stop_conditions: list[str] = Field(default_factory=list, description="停止條件")
 
     # 優先級和資源
     priority_weights: dict[str, float] = Field(

@@ -6,12 +6,12 @@ RAG Module - 檢索增強生成模組
 
 from .knowledge_base import KnowledgeBase
 from .rag_engine import RAGEngine
-from .vector_store import VectorStore
 from .unified_vector_store import UnifiedVectorStore, create_unified_vector_store
+from .vector_store import VectorStore
 
 __all__ = [
-    "KnowledgeBase", 
-    "RAGEngine", 
+    "KnowledgeBase",
+    "RAGEngine",
     "VectorStore",
     "UnifiedVectorStore",
     "create_unified_vector_store",

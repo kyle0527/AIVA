@@ -17,19 +17,17 @@ AIVA Common AI Plan Executor - 可插拔計劃執行器
 - 支援跨模組的計劃執行需求
 """
 
-
-
 import asyncio
 import logging
 from datetime import UTC, datetime
-from typing import Any, Dict, List, Optional
+from typing import Any
 from uuid import uuid4
 
-from ..schemas.ai import (
+from ..schemas import (
     AttackPlan,
     AttackStep,
-    PlanExecutionResult,
     PlanExecutionMetrics,
+    PlanExecutionResult,
     TraceRecord,
 )
 from .interfaces import IPlanExecutor
@@ -39,7 +37,7 @@ logger = logging.getLogger(__name__)
 
 class ExecutionConfig:
     """執行配置類"""
-    
+
     def __init__(
         self,
         default_timeout: float = 30.0,
@@ -47,7 +45,7 @@ class ExecutionConfig:
         retry_delay: float = 1.0,
         enable_sandbox: bool = True,
         enable_tracing: bool = True,
-        result_subscription_timeout: float = 60.0
+        result_subscription_timeout: float = 60.0,
     ):
         self.default_timeout = default_timeout
         self.max_retries = max_retries
@@ -59,20 +57,20 @@ class ExecutionConfig:
 
 class AIVAPlanExecutor(IPlanExecutor):
     """AIVA 可插拔計劃執行器實現
-    
+
     此類提供符合 aiva_common 規範的計劃執行功能，
     支援可插拔架構並與五大模組架構相容。
     """
 
     def __init__(
         self,
-        config: Optional[ExecutionConfig] = None,
-        message_queue_client: Optional[Any] = None,
-        storage_backend: Optional[Any] = None,
-        trace_logger: Optional[Any] = None
+        config: ExecutionConfig | None = None,
+        message_queue_client: Any | None = None,
+        storage_backend: Any | None = None,
+        trace_logger: Any | None = None,
     ):
         """初始化計劃執行器
-        
+
         Args:
             config: 執行配置
             message_queue_client: 訊息佇列客戶端 (可插拔)
@@ -83,16 +81,16 @@ class AIVAPlanExecutor(IPlanExecutor):
         self.mq_client = message_queue_client
         self.storage = storage_backend
         self.trace_logger = trace_logger
-        
+
         # 執行狀態管理
-        self.active_executions: Dict[str, Dict[str, Any]] = {}
-        self.pending_results: Dict[str, asyncio.Future[Any]] = {}
-        self.execution_metrics: Dict[str, Dict[str, Any]] = {}
-        
+        self.active_executions: dict[str, dict[str, Any]] = {}
+        self.pending_results: dict[str, asyncio.Future[Any]] = {}
+        self.execution_metrics: dict[str, dict[str, Any]] = {}
+
         # 結果訂閱機制
-        self._result_subscribers: Dict[str, List[asyncio.Queue[Any]]] = {}
+        self._result_subscribers: dict[str, list[asyncio.Queue[Any]]] = {}
         self._subscription_lock = asyncio.Lock()
-        
+
         logger.info("AIVAPlanExecutor initialized with pluggable architecture")
 
     async def execute_plan(
@@ -102,18 +100,18 @@ class AIVAPlanExecutor(IPlanExecutor):
         timeout_minutes: int = 30,
     ) -> PlanExecutionResult:
         """執行攻擊計劃
-        
+
         Args:
             plan: 攻擊計劃
             sandbox_mode: 沙箱模式
             timeout_minutes: 超時分鐘數
-            
+
         Returns:
             執行結果
         """
         execution_id = f"exec_{uuid4().hex[:12]}"
         start_time = datetime.now(UTC)
-        
+
         logger.info(
             f"Starting plan execution {execution_id} for plan {plan.plan_id} "
             f"(sandbox: {sandbox_mode}, timeout: {timeout_minutes}min)"
@@ -129,16 +127,16 @@ class AIVAPlanExecutor(IPlanExecutor):
             "sandbox_mode": sandbox_mode,
         }
 
-        trace_records: List[TraceRecord] = []
-        findings: List[Dict[str, Any]] = []
-        anomalies: List[str] = []
+        trace_records: list[TraceRecord] = []
+        findings: list[dict[str, Any]] = []
+        anomalies: list[str] = []
 
         try:
             # 執行計劃步驟
             for step_index, step in enumerate(plan.steps):
                 # 更新執行狀態
                 self.active_executions[execution_id]["current_step"] = step_index + 1
-                
+
                 logger.info(
                     f"Executing step {step_index + 1}/{len(plan.steps)}: "
                     f"{step.step_id} ({step.action})"
@@ -146,7 +144,9 @@ class AIVAPlanExecutor(IPlanExecutor):
 
                 # 檢查依賴關係
                 if not await self._check_step_dependencies(step, plan, trace_records):
-                    logger.warning(f"Step {step.step_id} dependencies not met, skipping")
+                    logger.warning(
+                        f"Step {step.step_id} dependencies not met, skipping"
+                    )
                     continue
 
                 # 執行步驟
@@ -160,7 +160,9 @@ class AIVAPlanExecutor(IPlanExecutor):
                     findings.extend(trace.output_data["findings"])
 
                 if trace.status == "failed":
-                    anomalies.append(f"Step {step.step_id} failed: {trace.error_message}")
+                    anomalies.append(
+                        f"Step {step.step_id} failed: {trace.error_message}"
+                    )
 
                 # 檢查是否應該繼續
                 if not await self._should_continue_execution(step, trace, plan):
@@ -205,18 +207,18 @@ class AIVAPlanExecutor(IPlanExecutor):
 
         except Exception as e:
             logger.error(f"Plan execution {execution_id} failed: {e}", exc_info=True)
-            
+
             # 更新執行狀態
             self.active_executions[execution_id]["status"] = "failed"
             self.active_executions[execution_id]["error"] = str(e)
-            
+
             anomalies.append(f"Execution error: {str(e)}")
 
             # 返回失敗結果
             metrics = self._calculate_execution_metrics(
                 execution_id, plan, trace_records, start_time
             )
-            
+
             return PlanExecutionResult(
                 result_id=f"result_{execution_id}",
                 plan_id=plan.plan_id,
@@ -232,41 +234,43 @@ class AIVAPlanExecutor(IPlanExecutor):
             )
 
     async def wait_for_result(
-        self, 
-        task_id: str, 
-        timeout: float = 30.0
-    ) -> Dict[str, Any]:
+        self, task_id: str, timeout: float = 30.0
+    ) -> dict[str, Any]:
         """等待任務結果 (實現結果訂閱機制)
-        
+
         此方法實現了報告中要求的 _wait_for_result() 功能，
         支援異步結果訂閱和超時處理。
-        
+
         Args:
             task_id: 任務ID
             timeout: 超時秒數
-            
+
         Returns:
             任務執行結果
         """
         logger.info(f"Waiting for result of task {task_id} (timeout: {timeout}s)")
-        
+
         start_time = asyncio.get_event_loop().time()
         end_time = start_time + timeout
-        
+
         # 初始化result_queue為None
-        result_queue: Optional[asyncio.Queue[Any]] = None
+        result_queue: asyncio.Queue[Any] | None = None
 
         try:
             # 1. 檢查是否已有結果
             if task_id in self.pending_results:
                 future = self.pending_results[task_id]
                 try:
-                    remaining_timeout = max(0, end_time - asyncio.get_event_loop().time())
+                    remaining_timeout = max(
+                        0, end_time - asyncio.get_event_loop().time()
+                    )
                     result = await asyncio.wait_for(future, timeout=remaining_timeout)
                     logger.info(f"Retrieved cached result for task {task_id}")
                     return result
-                except asyncio.TimeoutError:
-                    logger.warning(f"Timeout waiting for cached result of task {task_id}")
+                except TimeoutError:
+                    logger.warning(
+                        f"Timeout waiting for cached result of task {task_id}"
+                    )
                     return self._create_timeout_result(task_id, timeout)
 
             # 2. 創建結果訂閱
@@ -286,14 +290,15 @@ class AIVAPlanExecutor(IPlanExecutor):
             try:
                 remaining_timeout = max(0, end_time - asyncio.get_event_loop().time())
                 result = await asyncio.wait_for(
-                    result_queue.get(), 
-                    timeout=remaining_timeout
+                    result_queue.get(), timeout=remaining_timeout
                 )
                 logger.info(f"Received subscribed result for task {task_id}")
                 return result
-                
-            except asyncio.TimeoutError:
-                logger.warning(f"Timeout waiting for subscribed result of task {task_id}")
+
+            except TimeoutError:
+                logger.warning(
+                    f"Timeout waiting for subscribed result of task {task_id}"
+                )
                 return self._create_timeout_result(task_id, timeout)
 
         except Exception as e:
@@ -312,15 +317,12 @@ class AIVAPlanExecutor(IPlanExecutor):
                         except ValueError:
                             pass  # 隊列已被移除
 
-    async def get_execution_status(
-        self, 
-        plan_id: str
-    ) -> Dict[str, Any]:
+    async def get_execution_status(self, plan_id: str) -> dict[str, Any]:
         """獲取執行狀態
-        
+
         Args:
             plan_id: 計劃ID
-            
+
         Returns:
             執行狀態信息
         """
@@ -339,30 +341,30 @@ class AIVAPlanExecutor(IPlanExecutor):
                         datetime.now(UTC) - exec_info["start_time"]
                     ).total_seconds(),
                 }
-                
+
                 if "error" in exec_info:
                     status["error"] = exec_info["error"]
-                    
+
                 if exec_id in self.execution_metrics:
                     status["metrics"] = self.execution_metrics[exec_id]
-                
+
                 return status
 
         return {
             "plan_id": plan_id,
             "status": "not_found",
-            "message": f"No active execution found for plan {plan_id}"
+            "message": f"No active execution found for plan {plan_id}",
         }
 
-    async def notify_result(self, task_id: str, result: Dict[str, Any]) -> None:
+    async def notify_result(self, task_id: str, result: dict[str, Any]) -> None:
         """通知任務結果 (供外部系統調用)
-        
+
         Args:
             task_id: 任務ID
             result: 任務結果
         """
         logger.info(f"Received result notification for task {task_id}")
-        
+
         # 通知所有訂閱者
         async with self._subscription_lock:
             if task_id in self._result_subscribers:
@@ -371,8 +373,10 @@ class AIVAPlanExecutor(IPlanExecutor):
                     try:
                         await queue.put(result)
                     except Exception as e:
-                        logger.warning(f"Failed to notify subscriber for task {task_id}: {e}")
-                
+                        logger.warning(
+                            f"Failed to notify subscriber for task {task_id}: {e}"
+                        )
+
                 # 清理訂閱者
                 del self._result_subscribers[task_id]
 
@@ -383,20 +387,16 @@ class AIVAPlanExecutor(IPlanExecutor):
                 future.set_result(result)
 
     async def _execute_single_step(
-        self,
-        execution_id: str,
-        plan: AttackPlan,
-        step: AttackStep,
-        sandbox_mode: bool
+        self, execution_id: str, plan: AttackPlan, step: AttackStep, sandbox_mode: bool
     ) -> TraceRecord:
         """執行單個步驟
-        
+
         Args:
             execution_id: 執行ID
             plan: 攻擊計劃
             step: 攻擊步驟
             sandbox_mode: 沙箱模式
-            
+
         Returns:
             追蹤記錄
         """
@@ -418,10 +418,7 @@ class AIVAPlanExecutor(IPlanExecutor):
             task_id = f"task_{step.step_id}_{uuid4().hex[:8]}"
 
             # 等待步驟結果
-            result = await self.wait_for_result(
-                task_id, 
-                timeout=step.timeout_seconds
-            )
+            result = await self.wait_for_result(task_id, timeout=step.timeout_seconds)
 
             execution_time = (datetime.now(UTC) - step_start_time).total_seconds()
 
@@ -443,7 +440,7 @@ class AIVAPlanExecutor(IPlanExecutor):
                     "execution_id": execution_id,
                     "sandbox_mode": sandbox_mode,
                     "task_id": task_id,
-                }
+                },
             )
 
             # 記錄追蹤 (如果有追蹤記錄器)
@@ -455,7 +452,7 @@ class AIVAPlanExecutor(IPlanExecutor):
         except Exception as e:
             execution_time = (datetime.now(UTC) - step_start_time).total_seconds()
             error_msg = f"Step execution error: {str(e)}"
-            
+
             logger.error(f"Step {step.step_id} execution failed: {e}", exc_info=True)
 
             return TraceRecord(
@@ -470,22 +467,19 @@ class AIVAPlanExecutor(IPlanExecutor):
                 error_message=error_msg,
                 execution_time_seconds=execution_time,
                 timestamp=step_start_time,
-                metadata={"execution_id": execution_id, "exception": str(e)}
+                metadata={"execution_id": execution_id, "exception": str(e)},
             )
 
     async def _check_step_dependencies(
-        self,
-        step: AttackStep,
-        plan: AttackPlan,
-        completed_traces: List[TraceRecord]
+        self, step: AttackStep, plan: AttackPlan, completed_traces: list[TraceRecord]
     ) -> bool:
         """檢查步驟依賴關係
-        
+
         Args:
             step: 攻擊步驟
             plan: 攻擊計劃
             completed_traces: 已完成的追蹤記錄
-            
+
         Returns:
             依賴是否滿足
         """
@@ -494,25 +488,21 @@ class AIVAPlanExecutor(IPlanExecutor):
 
         required_steps = plan.dependencies[step.step_id]
         completed_steps = {
-            trace.step_id for trace in completed_traces 
-            if trace.status == "success"
+            trace.step_id for trace in completed_traces if trace.status == "success"
         }
 
         return all(dep_step in completed_steps for dep_step in required_steps)
 
     async def _should_continue_execution(
-        self,
-        step: AttackStep,
-        trace: TraceRecord,
-        plan: AttackPlan
+        self, step: AttackStep, trace: TraceRecord, plan: AttackPlan
     ) -> bool:
         """判斷是否應該繼續執行
-        
+
         Args:
             step: 當前步驟
             trace: 追蹤記錄
             plan: 攻擊計劃
-            
+
         Returns:
             是否繼續執行
         """
@@ -530,17 +520,17 @@ class AIVAPlanExecutor(IPlanExecutor):
         self,
         execution_id: str,
         plan: AttackPlan,
-        trace_records: List[TraceRecord],
-        start_time: datetime
+        trace_records: list[TraceRecord],
+        start_time: datetime,
     ) -> PlanExecutionMetrics:
         """計算執行指標
-        
+
         Args:
             execution_id: 執行ID
             plan: 攻擊計劃
             trace_records: 追蹤記錄
             start_time: 開始時間
-            
+
         Returns:
             執行指標
         """
@@ -550,12 +540,16 @@ class AIVAPlanExecutor(IPlanExecutor):
         failed_steps = sum(1 for t in trace_records if t.status in ["failed", "error"])
         skipped_steps = expected_steps - executed_steps
 
-        completion_rate = completed_steps / expected_steps if expected_steps > 0 else 0.0
+        completion_rate = (
+            completed_steps / expected_steps if expected_steps > 0 else 0.0
+        )
         success_rate = completed_steps / executed_steps if executed_steps > 0 else 0.0
         sequence_accuracy = self._calculate_sequence_accuracy(plan, trace_records)
 
         goal_achieved = completion_rate >= 0.8 and success_rate >= 0.9
-        reward_score = completion_rate * 0.4 + success_rate * 0.4 + sequence_accuracy * 0.2
+        reward_score = (
+            completion_rate * 0.4 + success_rate * 0.4 + sequence_accuracy * 0.2
+        )
 
         total_execution_time = (datetime.now(UTC) - start_time).total_seconds()
 
@@ -577,7 +571,7 @@ class AIVAPlanExecutor(IPlanExecutor):
         )
 
     def _calculate_sequence_accuracy(
-        self, plan: AttackPlan, trace_records: List[TraceRecord]
+        self, plan: AttackPlan, trace_records: list[TraceRecord]
     ) -> float:
         """計算順序準確度"""
         if not trace_records:
@@ -587,19 +581,18 @@ class AIVAPlanExecutor(IPlanExecutor):
         actual_order = [trace.step_id for trace in trace_records]
 
         matches = sum(
-            1 for i, step_id in enumerate(actual_order)
+            1
+            for i, step_id in enumerate(actual_order)
             if i < len(expected_order) and step_id == expected_order[i]
         )
 
         return matches / len(expected_order) if expected_order else 0.0
 
     def _generate_recommendations(
-        self,
-        metrics: PlanExecutionMetrics,
-        trace_records: List[TraceRecord]
-    ) -> List[str]:
+        self, metrics: PlanExecutionMetrics, trace_records: list[TraceRecord]
+    ) -> list[str]:
         """生成改進建議"""
-        recommendations: List[str] = []
+        recommendations: list[str] = []
 
         if metrics.success_rate < 0.5:
             recommendations.append("成功率過低，建議檢查工具配置和目標可達性")
@@ -612,7 +605,9 @@ class AIVAPlanExecutor(IPlanExecutor):
 
         failed_traces = [t for t in trace_records if t.status in ["failed", "error"]]
         if failed_traces:
-            recommendations.append(f"有 {len(failed_traces)} 個步驟失敗，建議增加重試機制")
+            recommendations.append(
+                f"有 {len(failed_traces)} 個步驟失敗，建議增加重試機制"
+            )
 
         return recommendations
 
@@ -644,7 +639,7 @@ class AIVAPlanExecutor(IPlanExecutor):
         except Exception as e:
             logger.error(f"Failed to persist execution result: {e}")
 
-    def _create_timeout_result(self, task_id: str, timeout: float) -> Dict[str, Any]:
+    def _create_timeout_result(self, task_id: str, timeout: float) -> dict[str, Any]:
         """創建超時結果"""
         return {
             "task_id": task_id,
@@ -656,7 +651,7 @@ class AIVAPlanExecutor(IPlanExecutor):
             "timestamp": datetime.now(UTC).isoformat(),
         }
 
-    def _create_error_result(self, task_id: str, error: str) -> Dict[str, Any]:
+    def _create_error_result(self, task_id: str, error: str) -> dict[str, Any]:
         """創建錯誤結果"""
         return {
             "task_id": task_id,
@@ -673,22 +668,22 @@ class AIVAPlanExecutor(IPlanExecutor):
         try:
             # 清理活躍執行
             self.active_executions.clear()
-            
+
             # 清理待處理結果
             for future in self.pending_results.values():
                 if not future.done():
                     future.cancel()
             self.pending_results.clear()
-            
+
             # 清理訂閱者
             async with self._subscription_lock:
                 self._result_subscribers.clear()
-            
+
             # 清理指標
             self.execution_metrics.clear()
-            
+
             logger.info("AIVAPlanExecutor cleaned up")
-            
+
         except Exception as e:
             logger.error(f"Error during cleanup: {e}")
 
@@ -699,15 +694,14 @@ class AIVAPlanExecutor(IPlanExecutor):
 
 
 def create_plan_executor(
-    config: Optional[ExecutionConfig] = None,
-    **kwargs: Any
+    config: ExecutionConfig | None = None, **kwargs: Any
 ) -> AIVAPlanExecutor:
     """創建計劃執行器實例
-    
+
     Args:
         config: 執行配置
         **kwargs: 其他參數 (mq_client, storage, trace_logger)
-        
+
     Returns:
         計劃執行器實例
     """

@@ -45,16 +45,19 @@
 ### 🟢 Go (gopls)
 - 配置檔案: `.vscode/settings.json`
 - 主要設定:
+  - `gopls.diagnosticsDelay: "30s"` (編輯後延遲30秒診斷)
+  - `gopls.diagnosticsTrigger: "Edit"` (編輯觸發模式)
+  - `go.toolsManagement.autoUpdate: false` (防止自動更新干擾)
   - `go.lintOnSave: "off"`
   - `go.vetOnSave: "off"`
   - `go.formatOnSave: false`
-  - 關閉unused參數/變數警告
 
 ### 🦀 Rust (rust-analyzer)
 - 配置檔案: `.vscode/settings.json`, `Cargo.toml`
 - 主要設定:
-  - `rust-analyzer.checkOnSave.enable: false`
-  - `rust-analyzer.diagnostics.refresh.delay: 30000`
+  - `rust-analyzer.checkOnSave.enable: true` (只在儲存時完整檢查)
+  - `rust-analyzer.checkOnSave.command: "check"` (使用cargo check)
+  - `rust-analyzer.diagnostics.enable: true` (保持基本診斷)
   - `rust-analyzer.cargo.runBuildScripts: false`
 
 ## 🔧 VS Code 編輯器層級設定
@@ -71,7 +74,47 @@
 - `editor.wordBasedSuggestions: "off"`
 - `editor.inlineSuggest.enabled: false`
 
-## 📁 檔案監控優化
+## � 語言伺服器詳細設定
+
+### Python (Pylance) 完整配置
+```json
+{
+    "python.analysis.diagnosticMode": "openFilesOnly",
+    "python.analysis.typeCheckingMode": "basic",
+    "python.analysis.indexing": false,
+    "python.analysis.userFileIndexingLimit": -1,
+    "python.analysis.diagnosticRefreshDelay": 30000,
+    "python.analysis.autoSearchPaths": false,
+    "python.analysis.useLibraryCodeForTypes": false
+}
+```
+
+### Go (gopls) 完整配置
+```json
+{
+    "go.toolsManagement.autoUpdate": false,
+    "gopls": {
+        "diagnosticsDelay": "30s",
+        "diagnosticsTrigger": "Edit"
+    },
+    "go.lintOnSave": "off",
+    "go.vetOnSave": "off",
+    "go.formatOnSave": false
+}
+```
+
+### Rust (rust-analyzer) 完整配置
+```json
+{
+    "rust-analyzer.checkOnSave.enable": true,
+    "rust-analyzer.checkOnSave.command": "check",
+    "rust-analyzer.diagnostics.enable": true,
+    "rust-analyzer.cargo.runBuildScripts": false,
+    "rust-analyzer.procMacro.enable": false
+}
+```
+
+## �📁 檔案監控優化
 
 ### 排除目錄
 - Python: `__pycache__`, `.venv`
@@ -94,12 +137,25 @@
 - 快捷鍵: `Ctrl+Shift+P`
 - 命令: `Developer: Reload Window`
 
+## 📖 詳細設定指南
+
+如需了解語言伺服器的詳細優化原理和完整設定步驟，請參考：
+
+📋 **完整指南**: [語言伺服器優化設定指南](../development/LANGUAGE_SERVER_OPTIMIZATION_GUIDE.md)
+
+該指南包含：
+- 🔧 各語言伺服器的詳細設定說明
+- ⚡ 完整的JSON配置範例  
+- 📊 效果驗證和故障排除
+- 💡 個人化調整建議
+
 ## ✅ 驗證設定生效
 
 ### Python
 ```bash
 # 檢查Pylance設定
-mcp_pylance_mcp_s_pylanceSettings
+# 確認 diagnosticMode 為 "openFilesOnly"
+# 確認 indexing 為 false
 ```
 
 ### TypeScript

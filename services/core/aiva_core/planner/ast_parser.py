@@ -1,11 +1,8 @@
-"""
-AST Parser - 攻擊流程圖解析器
+"""AST Parser - 攻擊流程圖解析器
 
 負責解析 AI 引擎生成的攻擊流程 AST (Abstract Syntax Tree)，
 將其轉換為結構化的圖形表示。
 """
-
-
 
 from dataclasses import dataclass, field
 from enum import Enum

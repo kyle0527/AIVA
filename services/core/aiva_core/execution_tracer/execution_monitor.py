@@ -1,10 +1,7 @@
-"""
-Execution Monitor - 執行監控器
+"""Execution Monitor - 執行監控器
 
 監控任務執行狀態並協調 Trace 記錄
 """
-
-
 
 from dataclasses import dataclass, field
 from datetime import datetime

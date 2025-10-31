@@ -1,10 +1,7 @@
-"""
-Knowledge Base - 知識庫管理
+"""Knowledge Base - 知識庫管理
 
 管理漏洞知識、攻擊技術、最佳實踐等知識
 """
-
-
 
 from dataclasses import dataclass, field
 from datetime import datetime
