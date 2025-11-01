@@ -1,0 +1,1735 @@
+{
+  "analysis_summary": {
+    "total_files": 677,
+    "files_with_standard_contracts": 109,
+    "files_with_local_models": 67,
+    "standard_contract_coverage": 16.100443131462335,
+    "local_model_coverage": 9.896602658788774,
+    "most_used_contracts": [
+      [
+        "Fi",
+        51
+      ],
+      [
+        "Fu",
+        23
+      ],
+      [
+        "AivaMessage",
+        19
+      ],
+      [
+        "Sca",
+        12
+      ],
+      [
+        "AttackPla",
+        12
+      ],
+      [
+        "Experie",
+        8
+      ],
+      [
+        "MessageHeader",
+        5
+      ],
+      [
+        "Task",
+        5
+      ],
+      [
+        "Target\n        from services.aiva_commo",
+        5
+      ],
+      [
+        "Asset",
+        5
+      ]
+    ],
+    "local_model_candidates": [
+      [
+        "AIVA",
+        8
+      ],
+      [
+        "JavaScriptAnalysisResult",
+        5
+      ],
+      [
+        "FindingEvidence",
+        5
+      ],
+      [
+        "FindingImpact",
+        5
+      ],
+      [
+        "FindingRecommendation",
+        5
+      ],
+      [
+        "Finding",
+        5
+      ],
+      [
+        "FindingPayload",
+        5
+      ],
+      [
+        "SIEMEvent",
+        4
+      ],
+      [
+        "AttackPath",
+        4
+      ],
+      [
+        "AttackPathNode",
+        4
+      ]
+    ],
+    "module_usage": {
+      "check_schema_fix.py": {
+        "files": 1,
+        "standard_contracts": 0,
+        "local_models": 0,
+        "api_endpoints": 0
+      },
+      "contract_health_checker_standard.py": {
+        "files": 1,
+        "standard_contracts": 5,
+        "local_models": 0,
+        "api_endpoints": 0
+      },
+      "fix_forward_refs.py": {
+        "files": 1,
+        "standard_contracts": 0,
+        "local_models": 0,
+        "api_endpoints": 0
+      },
+      "start_rich_cli.py": {
+        "files": 1,
+        "standard_contracts": 0,
+        "local_models": 0,
+        "api_endpoints": 0
+      },
+      "start_ui_auto.py": {
+        "files": 1,
+        "standard_contracts": 0,
+        "local_models": 0,
+        "api_endpoints": 0
+      },
+      "temp_contract_health_check.py": {
+        "files": 1,
+        "standard_contracts": 1,
+        "local_models": 0,
+        "api_endpoints": 0
+      },
+      "api": {
+        "files": 7,
+        "standard_contracts": 0,
+        "local_models": 0,
+        "api_endpoints": 0
+      },
+      "config": {
+        "files": 2,
+        "standard_contracts": 0,
+        "local_models": 0,
+        "api_endpoints": 0
+      },
+      "examples": {
+        "files": 10,
+        "standard_contracts": 0,
+        "local_models": 0,
+        "api_endpoints": 0
+      },
+      "scripts": {
+        "files": 100,
+        "standard_contracts": 0,
+        "local_models": 0,
+        "api_endpoints": 0
+      },
+      "services": {
+        "files": 472,
+        "standard_contracts": 0,
+        "local_models": 0,
+        "api_endpoints": 0
+      },
+      "testing": {
+        "files": 14,
+        "standard_contracts": 0,
+        "local_models": 0,
+        "api_endpoints": 0
+      },
+      "tests": {
+        "files": 1,
+        "standard_contracts": 0,
+        "local_models": 0,
+        "api_endpoints": 0
+      },
+      "tools": {
+        "files": 52,
+        "standard_contracts": 0,
+        "local_models": 0,
+        "api_endpoints": 0
+      },
+      "utilities": {
+        "files": 2,
+        "standard_contracts": 0,
+        "local_models": 0,
+        "api_endpoints": 0
+      },
+      "_archive": {
+        "files": 11,
+        "standard_contracts": 0,
+        "local_models": 0,
+        "api_endpoints": 0
+      }
+    },
+    "improvement_opportunities": [
+      {
+        "type": "add_standard_response",
+        "description": "API 端點建議使用 APIResponse 標準格式",
+        "priority": "high",
+        "effort": "medium",
+        "file_path": "api\\main.py"
+      },
+      {
+        "type": "add_standard_response",
+        "description": "API 端點建議使用 APIResponse 標準格式",
+        "priority": "high",
+        "effort": "medium",
+        "file_path": "examples\\demo_bio_neuron_agent.py"
+      },
+      {
+        "type": "standardize_local_model",
+        "description": "本地模型 InvokeRequest 可能可以使用標準合約",
+        "model_name": "InvokeRequest",
+        "priority": "medium",
+        "effort": "high",
+        "file_path": "examples\\demo_bio_neuron_agent.py"
+      },
+      {
+        "type": "standardize_local_model",
+        "description": "本地模型 InvokeResponse 可能可以使用標準合約",
+        "model_name": "InvokeResponse",
+        "priority": "medium",
+        "effort": "high",
+        "file_path": "examples\\demo_bio_neuron_agent.py"
+      },
+      {
+        "type": "standardize_local_model",
+        "description": "本地模型 StatsResponse 可能可以使用標準合約",
+        "model_name": "StatsResponse",
+        "priority": "medium",
+        "effort": "high",
+        "file_path": "examples\\demo_bio_neuron_agent.py"
+      },
+      {
+        "type": "standardize_local_model",
+        "description": "本地模型 HistoryResponse 可能可以使用標準合約",
+        "model_name": "HistoryResponse",
+        "priority": "medium",
+        "effort": "high",
+        "file_path": "examples\\demo_bio_neuron_agent.py"
+      },
+      {
+        "type": "standardize_local_model",
+        "description": "本地模型 HeartbeatPayload 可能可以使用標準合約",
+        "model_name": "HeartbeatPayload",
+        "priority": "medium",
+        "effort": "high",
+        "file_path": "_archive\\deprecated_schema_tools\\create_schemas_files.py"
+      },
+      {
+        "type": "standardize_local_model",
+        "description": "本地模型 SIEMEventPayload 可能可以使用標準合約",
+        "model_name": "SIEMEventPayload",
+        "priority": "medium",
+        "effort": "high",
+        "file_path": "_archive\\deprecated_schema_tools\\create_schemas_files.py"
+      },
+      {
+        "type": "standardize_local_model",
+        "description": "本地模型 NotificationPayload 可能可以使用標準合約",
+        "model_name": "NotificationPayload",
+        "priority": "medium",
+        "effort": "high",
+        "file_path": "_archive\\deprecated_schema_tools\\create_schemas_files.py"
+      },
+      {
+        "type": "standardize_local_model",
+        "description": "本地模型 AITrainingStartPayload 可能可以使用標準合約",
+        "model_name": "AITrainingStartPayload",
+        "priority": "medium",
+        "effort": "high",
+        "file_path": "_archive\\deprecated_schema_tools\\create_schemas_files.py"
+      },
+      {
+        "type": "standardize_local_model",
+        "description": "本地模型 AITrainingProgressPayload 可能可以使用標準合約",
+        "model_name": "AITrainingProgressPayload",
+        "priority": "medium",
+        "effort": "high",
+        "file_path": "_archive\\deprecated_schema_tools\\create_schemas_files.py"
+      },
+      {
+        "type": "standardize_local_model",
+        "description": "本地模型 RAGKnowledgeUpdatePayload 可能可以使用標準合約",
+        "model_name": "RAGKnowledgeUpdatePayload",
+        "priority": "medium",
+        "effort": "high",
+        "file_path": "_archive\\deprecated_schema_tools\\create_schemas_files.py"
+      },
+      {
+        "type": "standardize_local_model",
+        "description": "本地模型 RAGQueryPayload 可能可以使用標準合約",
+        "model_name": "RAGQueryPayload",
+        "priority": "medium",
+        "effort": "high",
+        "file_path": "_archive\\deprecated_schema_tools\\create_schemas_files.py"
+      },
+      {
+        "type": "standardize_local_model",
+        "description": "本地模型 AssetLifecyclePayload 可能可以使用標準合約",
+        "model_name": "AssetLifecyclePayload",
+        "priority": "medium",
+        "effort": "high",
+        "file_path": "_archive\\deprecated_schema_tools\\create_schemas_files.py"
+      },
+      {
+        "type": "standardize_local_model",
+        "description": "本地模型 VulnerabilityLifecyclePayload 可能可以使用標準合約",
+        "model_name": "VulnerabilityLifecyclePayload",
+        "priority": "medium",
+        "effort": "high",
+        "file_path": "_archive\\deprecated_schema_tools\\create_schemas_files.py"
+      },
+      {
+        "type": "standardize_local_model",
+        "description": "本地模型 VulnerabilityUpdatePayload 可能可以使用標準合約",
+        "model_name": "VulnerabilityUpdatePayload",
+        "priority": "medium",
+        "effort": "high",
+        "file_path": "_archive\\deprecated_schema_tools\\create_schemas_files.py"
+      },
+      {
+        "type": "standardize_local_model",
+        "description": "本地模型 AttackPathPayload 可能可以使用標準合約",
+        "model_name": "AttackPathPayload",
+        "priority": "medium",
+        "effort": "high",
+        "file_path": "_archive\\deprecated_schema_tools\\create_schemas_files.py"
+      },
+      {
+        "type": "standardize_local_model",
+        "description": "本地模型 LanguageSpecificPayload 可能可以使用標準合約",
+        "model_name": "LanguageSpecificPayload",
+        "priority": "medium",
+        "effort": "high",
+        "file_path": "tools\\common\\generate_programming_language_support.py"
+      },
+      {
+        "type": "upgrade_response_format",
+        "description": "響應格式可以升級為 APIResponse 標準",
+        "priority": "medium",
+        "effort": "low",
+        "file_path": "testing\\scan\\juice_shop_real_attack_test.py"
+      },
+      {
+        "type": "standardize_local_model",
+        "description": "本地模型 RAGResponse 可能可以使用標準合約",
+        "model_name": "RAGResponse",
+        "priority": "medium",
+        "effort": "high",
+        "file_path": "services\\core\\ai_models.py"
+      },
+      {
+        "type": "standardize_local_model",
+        "description": "本地模型 AIVerificationRequest 可能可以使用標準合約",
+        "model_name": "AIVerificationRequest",
+        "priority": "medium",
+        "effort": "high",
+        "file_path": "services\\core\\ai_models.py"
+      },
+      {
+        "type": "standardize_local_model",
+        "description": "本地模型 AITrainingStartPayload 可能可以使用標準合約",
+        "model_name": "AITrainingStartPayload",
+        "priority": "medium",
+        "effort": "high",
+        "file_path": "services\\core\\ai_models.py"
+      },
+      {
+        "type": "standardize_local_model",
+        "description": "本地模型 AITrainingProgressPayload 可能可以使用標準合約",
+        "model_name": "AITrainingProgressPayload",
+        "priority": "medium",
+        "effort": "high",
+        "file_path": "services\\core\\ai_models.py"
+      },
+      {
+        "type": "standardize_local_model",
+        "description": "本地模型 AITrainingCompletedPayload 可能可以使用標準合約",
+        "model_name": "AITrainingCompletedPayload",
+        "priority": "medium",
+        "effort": "high",
+        "file_path": "services\\core\\ai_models.py"
+      },
+      {
+        "type": "standardize_local_model",
+        "description": "本地模型 RAGKnowledgeUpdatePayload 可能可以使用標準合約",
+        "model_name": "RAGKnowledgeUpdatePayload",
+        "priority": "medium",
+        "effort": "high",
+        "file_path": "services\\core\\ai_models.py"
+      },
+      {
+        "type": "standardize_local_model",
+        "description": "本地模型 RAGQueryPayload 可能可以使用標準合約",
+        "model_name": "RAGQueryPayload",
+        "priority": "medium",
+        "effort": "high",
+        "file_path": "services\\core\\ai_models.py"
+      },
+      {
+        "type": "standardize_local_model",
+        "description": "本地模型 RAGResponsePayload 可能可以使用標準合約",
+        "model_name": "RAGResponsePayload",
+        "priority": "medium",
+        "effort": "high",
+        "file_path": "services\\core\\ai_models.py"
+      },
+      {
+        "type": "standardize_local_model",
+        "description": "本地模型 AIVARequest 可能可以使用標準合約",
+        "model_name": "AIVARequest",
+        "priority": "medium",
+        "effort": "high",
+        "file_path": "services\\core\\ai_models.py"
+      },
+      {
+        "type": "standardize_local_model",
+        "description": "本地模型 AIVAResponse 可能可以使用標準合約",
+        "model_name": "AIVAResponse",
+        "priority": "medium",
+        "effort": "high",
+        "file_path": "services\\core\\ai_models.py"
+      },
+      {
+        "type": "standardize_local_model",
+        "description": "本地模型 EnhancedFindingPayload 可能可以使用標準合約",
+        "model_name": "EnhancedFindingPayload",
+        "priority": "medium",
+        "effort": "high",
+        "file_path": "services\\core\\models.py"
+      },
+      {
+        "type": "standardize_local_model",
+        "description": "本地模型 AttackPathPayload 可能可以使用標準合約",
+        "model_name": "AttackPathPayload",
+        "priority": "medium",
+        "effort": "high",
+        "file_path": "services\\core\\models.py"
+      },
+      {
+        "type": "standardize_local_model",
+        "description": "本地模型 PostExTestPayload 可能可以使用標準合約",
+        "model_name": "PostExTestPayload",
+        "priority": "medium",
+        "effort": "high",
+        "file_path": "services\\features\\models.py"
+      },
+      {
+        "type": "standardize_local_model",
+        "description": "本地模型 PostExResultPayload 可能可以使用標準合約",
+        "model_name": "PostExResultPayload",
+        "priority": "medium",
+        "effort": "high",
+        "file_path": "services\\features\\models.py"
+      },
+      {
+        "type": "standardize_local_model",
+        "description": "本地模型 APISchemaPayload 可能可以使用標準合約",
+        "model_name": "APISchemaPayload",
+        "priority": "medium",
+        "effort": "high",
+        "file_path": "services\\features\\models.py"
+      },
+      {
+        "type": "standardize_local_model",
+        "description": "本地模型 APISecurityTestPayload 可能可以使用標準合約",
+        "model_name": "APISecurityTestPayload",
+        "priority": "medium",
+        "effort": "high",
+        "file_path": "services\\features\\models.py"
+      },
+      {
+        "type": "standardize_local_model",
+        "description": "本地模型 BizLogicTestPayload 可能可以使用標準合約",
+        "model_name": "BizLogicTestPayload",
+        "priority": "medium",
+        "effort": "high",
+        "file_path": "services\\features\\models.py"
+      },
+      {
+        "type": "standardize_local_model",
+        "description": "本地模型 BizLogicResultPayload 可能可以使用標準合約",
+        "model_name": "BizLogicResultPayload",
+        "priority": "medium",
+        "effort": "high",
+        "file_path": "services\\features\\models.py"
+      },
+      {
+        "type": "standardize_local_model",
+        "description": "本地模型 AuthZTestPayload 可能可以使用標準合約",
+        "model_name": "AuthZTestPayload",
+        "priority": "medium",
+        "effort": "high",
+        "file_path": "services\\features\\test_schemas.py"
+      },
+      {
+        "type": "standardize_local_model",
+        "description": "本地模型 APISecurityTestPayload 可能可以使用標準合約",
+        "model_name": "APISecurityTestPayload",
+        "priority": "medium",
+        "effort": "high",
+        "file_path": "services\\features\\test_schemas.py"
+      },
+      {
+        "type": "standardize_local_model",
+        "description": "本地模型 PostExTestPayload 可能可以使用標準合約",
+        "model_name": "PostExTestPayload",
+        "priority": "medium",
+        "effort": "high",
+        "file_path": "services\\features\\test_schemas.py"
+      },
+      {
+        "type": "standardize_local_model",
+        "description": "本地模型 ScanRequest 可能可以使用標準合約",
+        "model_name": "ScanRequest",
+        "priority": "medium",
+        "effort": "high",
+        "file_path": "services\\scan\\discovery_schemas.py"
+      },
+      {
+        "type": "standardize_local_model",
+        "description": "本地模型 EnhancedScanRequest 可能可以使用標準合約",
+        "model_name": "EnhancedScanRequest",
+        "priority": "medium",
+        "effort": "high",
+        "file_path": "services\\scan\\models.py"
+      },
+      {
+        "type": "standardize_local_model",
+        "description": "本地模型 VulnerabilityLifecyclePayload 可能可以使用標準合約",
+        "model_name": "VulnerabilityLifecyclePayload",
+        "priority": "medium",
+        "effort": "high",
+        "file_path": "services\\scan\\models.py"
+      },
+      {
+        "type": "standardize_local_model",
+        "description": "本地模型 VulnerabilityUpdatePayload 可能可以使用標準合約",
+        "model_name": "VulnerabilityUpdatePayload",
+        "priority": "medium",
+        "effort": "high",
+        "file_path": "services\\scan\\models.py"
+      },
+      {
+        "type": "standardize_local_model",
+        "description": "本地模型 EASMDiscoveryPayload 可能可以使用標準合約",
+        "model_name": "EASMDiscoveryPayload",
+        "priority": "medium",
+        "effort": "high",
+        "file_path": "services\\scan\\models.py"
+      },
+      {
+        "type": "standardize_local_model",
+        "description": "本地模型 AssetLifecyclePayload 可能可以使用標準合約",
+        "model_name": "AssetLifecyclePayload",
+        "priority": "medium",
+        "effort": "high",
+        "file_path": "services\\scan\\models.py"
+      },
+      {
+        "type": "standardize_local_model",
+        "description": "本地模型 NetworkRequest 可能可以使用標準合約",
+        "model_name": "NetworkRequest",
+        "priority": "medium",
+        "effort": "high",
+        "file_path": "services\\scan\\aiva_scan\\schemas.py"
+      },
+      {
+        "type": "upgrade_response_format",
+        "description": "響應格式可以升級為 APIResponse 標準",
+        "priority": "medium",
+        "effort": "low",
+        "file_path": "services\\scan\\info_gatherer_rust\\python_bridge\\__init__.py"
+      },
+      {
+        "type": "upgrade_response_format",
+        "description": "響應格式可以升級為 APIResponse 標準",
+        "priority": "medium",
+        "effort": "low",
+        "file_path": "services\\integration\\capability\\bug_bounty_reporting.py"
+      },
+      {
+        "type": "upgrade_response_format",
+        "description": "響應格式可以升級為 APIResponse 標準",
+        "priority": "medium",
+        "effort": "low",
+        "file_path": "services\\integration\\capability\\ddos_attack_tools.py"
+      },
+      {
+        "type": "upgrade_response_format",
+        "description": "響應格式可以升級為 APIResponse 標準",
+        "priority": "medium",
+        "effort": "low",
+        "file_path": "services\\integration\\capability\\ddos_attack_tools_backup.py"
+      },
+      {
+        "type": "upgrade_response_format",
+        "description": "響應格式可以升級為 APIResponse 標準",
+        "priority": "medium",
+        "effort": "low",
+        "file_path": "services\\integration\\capability\\forensic_tools.py"
+      },
+      {
+        "type": "upgrade_response_format",
+        "description": "響應格式可以升級為 APIResponse 標準",
+        "priority": "medium",
+        "effort": "low",
+        "file_path": "services\\integration\\capability\\lifecycle.py"
+      },
+      {
+        "type": "standardize_local_model",
+        "description": "本地模型 ExecutionRequest 可能可以使用標準合約",
+        "model_name": "ExecutionRequest",
+        "priority": "medium",
+        "effort": "high",
+        "file_path": "services\\integration\\capability\\models.py"
+      },
+      {
+        "type": "upgrade_response_format",
+        "description": "響應格式可以升級為 APIResponse 標準",
+        "priority": "medium",
+        "effort": "low",
+        "file_path": "services\\integration\\capability\\reverse_engineering_tools.py"
+      },
+      {
+        "type": "upgrade_response_format",
+        "description": "響應格式可以升級為 APIResponse 標準",
+        "priority": "medium",
+        "effort": "low",
+        "file_path": "services\\integration\\capability\\sql_injection_bounty_hunter.py"
+      },
+      {
+        "type": "upgrade_response_format",
+        "description": "響應格式可以升級為 APIResponse 標準",
+        "priority": "medium",
+        "effort": "low",
+        "file_path": "services\\integration\\capability\\sql_injection_tools.py"
+      },
+      {
+        "type": "upgrade_response_format",
+        "description": "響應格式可以升級為 APIResponse 標準",
+        "priority": "medium",
+        "effort": "low",
+        "file_path": "services\\integration\\capability\\steganography_tools.py"
+      },
+      {
+        "type": "upgrade_response_format",
+        "description": "響應格式可以升級為 APIResponse 標準",
+        "priority": "medium",
+        "effort": "low",
+        "file_path": "services\\integration\\capability\\toolkit.py"
+      },
+      {
+        "type": "upgrade_response_format",
+        "description": "響應格式可以升級為 APIResponse 標準",
+        "priority": "medium",
+        "effort": "low",
+        "file_path": "services\\integration\\capability\\web_attack.py"
+      },
+      {
+        "type": "upgrade_response_format",
+        "description": "響應格式可以升級為 APIResponse 標準",
+        "priority": "medium",
+        "effort": "low",
+        "file_path": "services\\integration\\capability\\wireless_attack_tools.py"
+      },
+      {
+        "type": "upgrade_response_format",
+        "description": "響應格式可以升級為 APIResponse 標準",
+        "priority": "medium",
+        "effort": "low",
+        "file_path": "services\\integration\\capability\\wireless_attack_tools_backup.py"
+      },
+      {
+        "type": "upgrade_response_format",
+        "description": "響應格式可以升級為 APIResponse 標準",
+        "priority": "medium",
+        "effort": "low",
+        "file_path": "services\\integration\\capability\\xss_attack_tools.py"
+      },
+      {
+        "type": "upgrade_response_format",
+        "description": "響應格式可以升級為 APIResponse 標準",
+        "priority": "medium",
+        "effort": "low",
+        "file_path": "services\\integration\\aiva_integration\\remediation\\config_recommender.py"
+      },
+      {
+        "type": "upgrade_response_format",
+        "description": "響應格式可以升級為 APIResponse 標準",
+        "priority": "medium",
+        "effort": "low",
+        "file_path": "services\\integration\\aiva_integration\\remediation\\patch_generator.py"
+      },
+      {
+        "type": "upgrade_response_format",
+        "description": "響應格式可以升級為 APIResponse 標準",
+        "priority": "medium",
+        "effort": "low",
+        "file_path": "services\\integration\\aiva_integration\\remediation\\report_generator.py"
+      },
+      {
+        "type": "upgrade_response_format",
+        "description": "響應格式可以升級為 APIResponse 標準",
+        "priority": "medium",
+        "effort": "low",
+        "file_path": "services\\features\\function_sqli\\hackingtool_config.py"
+      },
+      {
+        "type": "upgrade_response_format",
+        "description": "響應格式可以升級為 APIResponse 標準",
+        "priority": "medium",
+        "effort": "low",
+        "file_path": "services\\features\\function_sqli\\hackingtool_manager.py"
+      },
+      {
+        "type": "standardize_local_model",
+        "description": "本地模型 EncodedPayload 可能可以使用標準合約",
+        "model_name": "EncodedPayload",
+        "priority": "medium",
+        "effort": "high",
+        "file_path": "services\\features\\function_sqli\\schemas.py"
+      },
+      {
+        "type": "upgrade_response_format",
+        "description": "響應格式可以升級為 APIResponse 標準",
+        "priority": "medium",
+        "effort": "low",
+        "file_path": "services\\features\\function_sqli\\engines\\hackingtool_engine.py"
+      },
+      {
+        "type": "upgrade_response_format",
+        "description": "響應格式可以升級為 APIResponse 標準",
+        "priority": "medium",
+        "effort": "low",
+        "file_path": "services\\core\\aiva_core\\ai_commander.py"
+      },
+      {
+        "type": "standardize_local_model",
+        "description": "本地模型 ToolExecutionRequest 可能可以使用標準合約",
+        "model_name": "ToolExecutionRequest",
+        "priority": "medium",
+        "effort": "high",
+        "file_path": "services\\core\\aiva_core\\ai_ui_schemas.py"
+      },
+      {
+        "type": "standardize_local_model",
+        "description": "本地模型 AIAgentResponse 可能可以使用標準合約",
+        "model_name": "AIAgentResponse",
+        "priority": "medium",
+        "effort": "high",
+        "file_path": "services\\core\\aiva_core\\ai_ui_schemas.py"
+      },
+      {
+        "type": "standardize_local_model",
+        "description": "本地模型 ScanTaskRequest 可能可以使用標準合約",
+        "model_name": "ScanTaskRequest",
+        "priority": "medium",
+        "effort": "high",
+        "file_path": "services\\core\\aiva_core\\ai_ui_schemas.py"
+      },
+      {
+        "type": "standardize_local_model",
+        "description": "本地模型 ScanTaskResponse 可能可以使用標準合約",
+        "model_name": "ScanTaskResponse",
+        "priority": "medium",
+        "effort": "high",
+        "file_path": "services\\core\\aiva_core\\ai_ui_schemas.py"
+      },
+      {
+        "type": "standardize_local_model",
+        "description": "本地模型 VulnerabilityDetectionRequest 可能可以使用標準合約",
+        "model_name": "VulnerabilityDetectionRequest",
+        "priority": "medium",
+        "effort": "high",
+        "file_path": "services\\core\\aiva_core\\ai_ui_schemas.py"
+      },
+      {
+        "type": "standardize_local_model",
+        "description": "本地模型 VulnerabilityDetectionResponse 可能可以使用標準合約",
+        "model_name": "VulnerabilityDetectionResponse",
+        "priority": "medium",
+        "effort": "high",
+        "file_path": "services\\core\\aiva_core\\ai_ui_schemas.py"
+      },
+      {
+        "type": "standardize_local_model",
+        "description": "本地模型 CodeOperationRequest 可能可以使用標準合約",
+        "model_name": "CodeOperationRequest",
+        "priority": "medium",
+        "effort": "high",
+        "file_path": "services\\core\\aiva_core\\ai_ui_schemas.py"
+      },
+      {
+        "type": "standardize_local_model",
+        "description": "本地模型 CodeOperationResponse 可能可以使用標準合約",
+        "model_name": "CodeOperationResponse",
+        "priority": "medium",
+        "effort": "high",
+        "file_path": "services\\core\\aiva_core\\ai_ui_schemas.py"
+      },
+      {
+        "type": "upgrade_response_format",
+        "description": "響應格式可以升級為 APIResponse 標準",
+        "priority": "medium",
+        "effort": "low",
+        "file_path": "services\\core\\aiva_core\\bio_neuron_master.py"
+      },
+      {
+        "type": "upgrade_response_format",
+        "description": "響應格式可以升級為 APIResponse 標準",
+        "priority": "medium",
+        "effort": "low",
+        "file_path": "services\\core\\aiva_core\\multilang_coordinator.py"
+      },
+      {
+        "type": "add_standard_response",
+        "description": "API 端點建議使用 APIResponse 標準格式",
+        "priority": "high",
+        "effort": "medium",
+        "file_path": "services\\core\\aiva_core\\optimized_core.py"
+      },
+      {
+        "type": "upgrade_response_format",
+        "description": "響應格式可以升級為 APIResponse 標準",
+        "priority": "medium",
+        "effort": "low",
+        "file_path": "services\\core\\aiva_core\\attack\\attack_executor.py"
+      },
+      {
+        "type": "upgrade_response_format",
+        "description": "響應格式可以升級為 APIResponse 標準",
+        "priority": "medium",
+        "effort": "low",
+        "file_path": "services\\core\\aiva_core\\attack\\exploit_manager.py"
+      },
+      {
+        "type": "upgrade_response_format",
+        "description": "響應格式可以升級為 APIResponse 標準",
+        "priority": "medium",
+        "effort": "low",
+        "file_path": "services\\core\\aiva_core\\training\\training_orchestrator.py"
+      },
+      {
+        "type": "add_standard_response",
+        "description": "API 端點建議使用 APIResponse 標準格式",
+        "priority": "high",
+        "effort": "medium",
+        "file_path": "services\\core\\aiva_core\\ui_panel\\improved_ui.py"
+      },
+      {
+        "type": "add_standard_response",
+        "description": "API 端點建議使用 APIResponse 標準格式",
+        "priority": "high",
+        "effort": "medium",
+        "file_path": "services\\core\\aiva_core\\ui_panel\\server.py"
+      },
+      {
+        "type": "standardize_local_model",
+        "description": "本地模型 MessageQueue 可能可以使用標準合約",
+        "model_name": "MessageQueue",
+        "priority": "medium",
+        "effort": "high",
+        "file_path": "services\\aiva_common\\config\\unified_config.py"
+      },
+      {
+        "type": "standardize_local_model",
+        "description": "本地模型 MessageQueueConfig 可能可以使用標準合約",
+        "model_name": "MessageQueueConfig",
+        "priority": "medium",
+        "effort": "high",
+        "file_path": "services\\aiva_common\\config\\unified_config.py"
+      },
+      {
+        "type": "standardize_local_model",
+        "description": "本地模型 MessageMetadata 可能可以使用標準合約",
+        "model_name": "MessageMetadata",
+        "priority": "medium",
+        "effort": "high",
+        "file_path": "services\\aiva_common\\messaging\\retry_handler.py"
+      },
+      {
+        "type": "standardize_local_model",
+        "description": "本地模型 RAGResponse 可能可以使用標準合約",
+        "model_name": "RAGResponse",
+        "priority": "medium",
+        "effort": "high",
+        "file_path": "services\\aiva_common\\schemas\\ai.py"
+      },
+      {
+        "type": "standardize_local_model",
+        "description": "本地模型 AITrainingStartPayload 可能可以使用標準合約",
+        "model_name": "AITrainingStartPayload",
+        "priority": "medium",
+        "effort": "high",
+        "file_path": "services\\aiva_common\\schemas\\ai.py"
+      },
+      {
+        "type": "standardize_local_model",
+        "description": "本地模型 AITrainingProgressPayload 可能可以使用標準合約",
+        "model_name": "AITrainingProgressPayload",
+        "priority": "medium",
+        "effort": "high",
+        "file_path": "services\\aiva_common\\schemas\\ai.py"
+      },
+      {
+        "type": "standardize_local_model",
+        "description": "本地模型 RAGKnowledgeUpdatePayload 可能可以使用標準合約",
+        "model_name": "RAGKnowledgeUpdatePayload",
+        "priority": "medium",
+        "effort": "high",
+        "file_path": "services\\aiva_common\\schemas\\ai.py"
+      },
+      {
+        "type": "standardize_local_model",
+        "description": "本地模型 RAGQueryPayload 可能可以使用標準合約",
+        "model_name": "RAGQueryPayload",
+        "priority": "medium",
+        "effort": "high",
+        "file_path": "services\\aiva_common\\schemas\\ai.py"
+      },
+      {
+        "type": "standardize_local_model",
+        "description": "本地模型 AITrainingCompletedPayload 可能可以使用標準合約",
+        "model_name": "AITrainingCompletedPayload",
+        "priority": "medium",
+        "effort": "high",
+        "file_path": "services\\aiva_common\\schemas\\ai.py"
+      },
+      {
+        "type": "standardize_local_model",
+        "description": "本地模型 RAGResponsePayload 可能可以使用標準合約",
+        "model_name": "RAGResponsePayload",
+        "priority": "medium",
+        "effort": "high",
+        "file_path": "services\\aiva_common\\schemas\\ai.py"
+      },
+      {
+        "type": "standardize_local_model",
+        "description": "本地模型 OpenAPIRequestBody 可能可以使用標準合約",
+        "model_name": "OpenAPIRequestBody",
+        "priority": "medium",
+        "effort": "high",
+        "file_path": "services\\aiva_common\\schemas\\api_standards.py"
+      },
+      {
+        "type": "standardize_local_model",
+        "description": "本地模型 OpenAPIResponse 可能可以使用標準合約",
+        "model_name": "OpenAPIResponse",
+        "priority": "medium",
+        "effort": "high",
+        "file_path": "services\\aiva_common\\schemas\\api_standards.py"
+      },
+      {
+        "type": "standardize_local_model",
+        "description": "本地模型 AsyncAPIMessage 可能可以使用標準合約",
+        "model_name": "AsyncAPIMessage",
+        "priority": "medium",
+        "effort": "high",
+        "file_path": "services\\aiva_common\\schemas\\api_standards.py"
+      },
+      {
+        "type": "standardize_local_model",
+        "description": "本地模型 AsyncAPIMessageTrait 可能可以使用標準合約",
+        "model_name": "AsyncAPIMessageTrait",
+        "priority": "medium",
+        "effort": "high",
+        "file_path": "services\\aiva_common\\schemas\\api_standards.py"
+      },
+      {
+        "type": "standardize_local_model",
+        "description": "本地模型 AssetLifecyclePayload 可能可以使用標準合約",
+        "model_name": "AssetLifecyclePayload",
+        "priority": "medium",
+        "effort": "high",
+        "file_path": "services\\aiva_common\\schemas\\assets.py"
+      },
+      {
+        "type": "standardize_local_model",
+        "description": "本地模型 VulnerabilityLifecyclePayload 可能可以使用標準合約",
+        "model_name": "VulnerabilityLifecyclePayload",
+        "priority": "medium",
+        "effort": "high",
+        "file_path": "services\\aiva_common\\schemas\\assets.py"
+      },
+      {
+        "type": "standardize_local_model",
+        "description": "本地模型 VulnerabilityUpdatePayload 可能可以使用標準合約",
+        "model_name": "VulnerabilityUpdatePayload",
+        "priority": "medium",
+        "effort": "high",
+        "file_path": "services\\aiva_common\\schemas\\assets.py"
+      },
+      {
+        "type": "standardize_local_model",
+        "description": "本地模型 MessageHeader 可能可以使用標準合約",
+        "model_name": "MessageHeader",
+        "priority": "medium",
+        "effort": "high",
+        "file_path": "services\\aiva_common\\schemas\\base.py"
+      },
+      {
+        "type": "standardize_local_model",
+        "description": "本地模型 EnhancedFindingPayload 可能可以使用標準合約",
+        "model_name": "EnhancedFindingPayload",
+        "priority": "medium",
+        "effort": "high",
+        "file_path": "services\\aiva_common\\schemas\\enhanced.py"
+      },
+      {
+        "type": "standardize_local_model",
+        "description": "本地模型 EnhancedScanRequest 可能可以使用標準合約",
+        "model_name": "EnhancedScanRequest",
+        "priority": "medium",
+        "effort": "high",
+        "file_path": "services\\aiva_common\\schemas\\enhanced.py"
+      },
+      {
+        "type": "standardize_local_model",
+        "description": "本地模型 FindingPayload 可能可以使用標準合約",
+        "model_name": "FindingPayload",
+        "priority": "medium",
+        "effort": "high",
+        "file_path": "services\\aiva_common\\schemas\\findings.py"
+      },
+      {
+        "type": "standardize_local_model",
+        "description": "本地模型 AIVerificationRequest 可能可以使用標準合約",
+        "model_name": "AIVerificationRequest",
+        "priority": "medium",
+        "effort": "high",
+        "file_path": "services\\aiva_common\\schemas\\findings.py"
+      },
+      {
+        "type": "standardize_local_model",
+        "description": "本地模型 LanguageSpecificPayload 可能可以使用標準合約",
+        "model_name": "LanguageSpecificPayload",
+        "priority": "medium",
+        "effort": "high",
+        "file_path": "services\\aiva_common\\schemas\\languages.py"
+      },
+      {
+        "type": "standardize_local_model",
+        "description": "本地模型 AivaMessage 可能可以使用標準合約",
+        "model_name": "AivaMessage",
+        "priority": "medium",
+        "effort": "high",
+        "file_path": "services\\aiva_common\\schemas\\messaging.py"
+      },
+      {
+        "type": "standardize_local_model",
+        "description": "本地模型 AIVARequest 可能可以使用標準合約",
+        "model_name": "AIVARequest",
+        "priority": "medium",
+        "effort": "high",
+        "file_path": "services\\aiva_common\\schemas\\messaging.py"
+      },
+      {
+        "type": "standardize_local_model",
+        "description": "本地模型 AIVAResponse 可能可以使用標準合約",
+        "model_name": "AIVAResponse",
+        "priority": "medium",
+        "effort": "high",
+        "file_path": "services\\aiva_common\\schemas\\messaging.py"
+      },
+      {
+        "type": "standardize_local_model",
+        "description": "本地模型 AttackPathPayload 可能可以使用標準合約",
+        "model_name": "AttackPathPayload",
+        "priority": "medium",
+        "effort": "high",
+        "file_path": "services\\aiva_common\\schemas\\risk.py"
+      },
+      {
+        "type": "standardize_local_model",
+        "description": "本地模型 WebhookPayload 可能可以使用標準合約",
+        "model_name": "WebhookPayload",
+        "priority": "medium",
+        "effort": "high",
+        "file_path": "services\\aiva_common\\schemas\\system.py"
+      },
+      {
+        "type": "standardize_local_model",
+        "description": "本地模型 ScanStartPayload 可能可以使用標準合約",
+        "model_name": "ScanStartPayload",
+        "priority": "medium",
+        "effort": "high",
+        "file_path": "services\\aiva_common\\schemas\\tasks.py"
+      },
+      {
+        "type": "standardize_local_model",
+        "description": "本地模型 ScanCompletedPayload 可能可以使用標準合約",
+        "model_name": "ScanCompletedPayload",
+        "priority": "medium",
+        "effort": "high",
+        "file_path": "services\\aiva_common\\schemas\\tasks.py"
+      },
+      {
+        "type": "standardize_local_model",
+        "description": "本地模型 FunctionTaskPayload 可能可以使用標準合約",
+        "model_name": "FunctionTaskPayload",
+        "priority": "medium",
+        "effort": "high",
+        "file_path": "services\\aiva_common\\schemas\\tasks.py"
+      },
+      {
+        "type": "standardize_local_model",
+        "description": "本地模型 FeedbackEventPayload 可能可以使用標準合約",
+        "model_name": "FeedbackEventPayload",
+        "priority": "medium",
+        "effort": "high",
+        "file_path": "services\\aiva_common\\schemas\\tasks.py"
+      },
+      {
+        "type": "standardize_local_model",
+        "description": "本地模型 TaskUpdatePayload 可能可以使用標準合約",
+        "model_name": "TaskUpdatePayload",
+        "priority": "medium",
+        "effort": "high",
+        "file_path": "services\\aiva_common\\schemas\\tasks.py"
+      },
+      {
+        "type": "standardize_local_model",
+        "description": "本地模型 ConfigUpdatePayload 可能可以使用標準合約",
+        "model_name": "ConfigUpdatePayload",
+        "priority": "medium",
+        "effort": "high",
+        "file_path": "services\\aiva_common\\schemas\\tasks.py"
+      },
+      {
+        "type": "standardize_local_model",
+        "description": "本地模型 ThreatIntelLookupPayload 可能可以使用標準合約",
+        "model_name": "ThreatIntelLookupPayload",
+        "priority": "medium",
+        "effort": "high",
+        "file_path": "services\\aiva_common\\schemas\\tasks.py"
+      },
+      {
+        "type": "standardize_local_model",
+        "description": "本地模型 ThreatIntelResultPayload 可能可以使用標準合約",
+        "model_name": "ThreatIntelResultPayload",
+        "priority": "medium",
+        "effort": "high",
+        "file_path": "services\\aiva_common\\schemas\\tasks.py"
+      },
+      {
+        "type": "standardize_local_model",
+        "description": "本地模型 AuthZCheckPayload 可能可以使用標準合約",
+        "model_name": "AuthZCheckPayload",
+        "priority": "medium",
+        "effort": "high",
+        "file_path": "services\\aiva_common\\schemas\\tasks.py"
+      },
+      {
+        "type": "standardize_local_model",
+        "description": "本地模型 AuthZAnalysisPayload 可能可以使用標準合約",
+        "model_name": "AuthZAnalysisPayload",
+        "priority": "medium",
+        "effort": "high",
+        "file_path": "services\\aiva_common\\schemas\\tasks.py"
+      },
+      {
+        "type": "standardize_local_model",
+        "description": "本地模型 AuthZResultPayload 可能可以使用標準合約",
+        "model_name": "AuthZResultPayload",
+        "priority": "medium",
+        "effort": "high",
+        "file_path": "services\\aiva_common\\schemas\\tasks.py"
+      },
+      {
+        "type": "standardize_local_model",
+        "description": "本地模型 RemediationGeneratePayload 可能可以使用標準合約",
+        "model_name": "RemediationGeneratePayload",
+        "priority": "medium",
+        "effort": "high",
+        "file_path": "services\\aiva_common\\schemas\\tasks.py"
+      },
+      {
+        "type": "standardize_local_model",
+        "description": "本地模型 RemediationResultPayload 可能可以使用標準合約",
+        "model_name": "RemediationResultPayload",
+        "priority": "medium",
+        "effort": "high",
+        "file_path": "services\\aiva_common\\schemas\\tasks.py"
+      },
+      {
+        "type": "standardize_local_model",
+        "description": "本地模型 PostExTestPayload 可能可以使用標準合約",
+        "model_name": "PostExTestPayload",
+        "priority": "medium",
+        "effort": "high",
+        "file_path": "services\\aiva_common\\schemas\\tasks.py"
+      },
+      {
+        "type": "standardize_local_model",
+        "description": "本地模型 PostExResultPayload 可能可以使用標準合約",
+        "model_name": "PostExResultPayload",
+        "priority": "medium",
+        "effort": "high",
+        "file_path": "services\\aiva_common\\schemas\\tasks.py"
+      },
+      {
+        "type": "standardize_local_model",
+        "description": "本地模型 BizLogicTestPayload 可能可以使用標準合約",
+        "model_name": "BizLogicTestPayload",
+        "priority": "medium",
+        "effort": "high",
+        "file_path": "services\\aiva_common\\schemas\\tasks.py"
+      },
+      {
+        "type": "standardize_local_model",
+        "description": "本地模型 BizLogicResultPayload 可能可以使用標準合約",
+        "model_name": "BizLogicResultPayload",
+        "priority": "medium",
+        "effort": "high",
+        "file_path": "services\\aiva_common\\schemas\\tasks.py"
+      },
+      {
+        "type": "standardize_local_model",
+        "description": "本地模型 APISchemaPayload 可能可以使用標準合約",
+        "model_name": "APISchemaPayload",
+        "priority": "medium",
+        "effort": "high",
+        "file_path": "services\\aiva_common\\schemas\\tasks.py"
+      },
+      {
+        "type": "standardize_local_model",
+        "description": "本地模型 APISecurityTestPayload 可能可以使用標準合約",
+        "model_name": "APISecurityTestPayload",
+        "priority": "medium",
+        "effort": "high",
+        "file_path": "services\\aiva_common\\schemas\\tasks.py"
+      },
+      {
+        "type": "standardize_local_model",
+        "description": "本地模型 EASMDiscoveryPayload 可能可以使用標準合約",
+        "model_name": "EASMDiscoveryPayload",
+        "priority": "medium",
+        "effort": "high",
+        "file_path": "services\\aiva_common\\schemas\\tasks.py"
+      },
+      {
+        "type": "standardize_local_model",
+        "description": "本地模型 ExploitPayload 可能可以使用標準合約",
+        "model_name": "ExploitPayload",
+        "priority": "medium",
+        "effort": "high",
+        "file_path": "services\\aiva_common\\schemas\\tasks.py"
+      },
+      {
+        "type": "standardize_local_model",
+        "description": "本地模型 HeartbeatPayload 可能可以使用標準合約",
+        "model_name": "HeartbeatPayload",
+        "priority": "medium",
+        "effort": "high",
+        "file_path": "services\\aiva_common\\schemas\\telemetry.py"
+      },
+      {
+        "type": "standardize_local_model",
+        "description": "本地模型 SIEMEventPayload 可能可以使用標準合約",
+        "model_name": "SIEMEventPayload",
+        "priority": "medium",
+        "effort": "high",
+        "file_path": "services\\aiva_common\\schemas\\telemetry.py"
+      },
+      {
+        "type": "standardize_local_model",
+        "description": "本地模型 NotificationPayload 可能可以使用標準合約",
+        "model_name": "NotificationPayload",
+        "priority": "medium",
+        "effort": "high",
+        "file_path": "services\\aiva_common\\schemas\\telemetry.py"
+      },
+      {
+        "type": "standardize_local_model",
+        "description": "本地模型 TAXIIErrorMessage 可能可以使用標準合約",
+        "model_name": "TAXIIErrorMessage",
+        "priority": "medium",
+        "effort": "high",
+        "file_path": "services\\aiva_common\\schemas\\threat_intelligence.py"
+      },
+      {
+        "type": "standardize_local_model",
+        "description": "本地模型 MessageHeader 可能可以使用標準合約",
+        "model_name": "MessageHeader",
+        "priority": "medium",
+        "effort": "high",
+        "file_path": "services\\aiva_common\\tools\\services\\aiva_common\\schemas\\generated\\base_types.py"
+      },
+      {
+        "type": "standardize_local_model",
+        "description": "本地模型 FindingPayload 可能可以使用標準合約",
+        "model_name": "FindingPayload",
+        "priority": "medium",
+        "effort": "high",
+        "file_path": "services\\aiva_common\\tools\\services\\aiva_common\\schemas\\generated\\findings.py"
+      },
+      {
+        "type": "standardize_local_model",
+        "description": "本地模型 AivaMessage 可能可以使用標準合約",
+        "model_name": "AivaMessage",
+        "priority": "medium",
+        "effort": "high",
+        "file_path": "services\\aiva_common\\tools\\services\\aiva_common\\schemas\\generated\\messaging.py"
+      },
+      {
+        "type": "standardize_local_model",
+        "description": "本地模型 AIVARequest 可能可以使用標準合約",
+        "model_name": "AIVARequest",
+        "priority": "medium",
+        "effort": "high",
+        "file_path": "services\\aiva_common\\tools\\services\\aiva_common\\schemas\\generated\\messaging.py"
+      },
+      {
+        "type": "standardize_local_model",
+        "description": "本地模型 AIVAResponse 可能可以使用標準合約",
+        "model_name": "AIVAResponse",
+        "priority": "medium",
+        "effort": "high",
+        "file_path": "services\\aiva_common\\tools\\services\\aiva_common\\schemas\\generated\\messaging.py"
+      },
+      {
+        "type": "standardize_local_model",
+        "description": "本地模型 FunctionTaskPayload 可能可以使用標準合約",
+        "model_name": "FunctionTaskPayload",
+        "priority": "medium",
+        "effort": "high",
+        "file_path": "services\\aiva_common\\tools\\services\\aiva_common\\schemas\\generated\\tasks.py"
+      },
+      {
+        "type": "standardize_local_model",
+        "description": "本地模型 ScanTaskPayload 可能可以使用標準合約",
+        "model_name": "ScanTaskPayload",
+        "priority": "medium",
+        "effort": "high",
+        "file_path": "services\\aiva_common\\tools\\services\\aiva_common\\schemas\\generated\\tasks.py"
+      },
+      {
+        "type": "standardize_local_model",
+        "description": "本地模型 MessageHeader 可能可以使用標準合約",
+        "model_name": "MessageHeader",
+        "priority": "medium",
+        "effort": "high",
+        "file_path": "services\\aiva_common\\schemas\\generated\\base_types.py"
+      },
+      {
+        "type": "standardize_local_model",
+        "description": "本地模型 AIVerificationRequest 可能可以使用標準合約",
+        "model_name": "AIVerificationRequest",
+        "priority": "medium",
+        "effort": "high",
+        "file_path": "services\\aiva_common\\schemas\\generated\\base_types.py"
+      },
+      {
+        "type": "standardize_local_model",
+        "description": "本地模型 FindingPayload 可能可以使用標準合約",
+        "model_name": "FindingPayload",
+        "priority": "medium",
+        "effort": "high",
+        "file_path": "services\\aiva_common\\schemas\\generated\\base_types.py"
+      },
+      {
+        "type": "standardize_local_model",
+        "description": "本地模型 FindingPayload 可能可以使用標準合約",
+        "model_name": "FindingPayload",
+        "priority": "medium",
+        "effort": "high",
+        "file_path": "services\\aiva_common\\schemas\\generated\\findings.py"
+      },
+      {
+        "type": "standardize_local_model",
+        "description": "本地模型 AivaMessage 可能可以使用標準合約",
+        "model_name": "AivaMessage",
+        "priority": "medium",
+        "effort": "high",
+        "file_path": "services\\aiva_common\\schemas\\generated\\messaging.py"
+      },
+      {
+        "type": "standardize_local_model",
+        "description": "本地模型 AIVARequest 可能可以使用標準合約",
+        "model_name": "AIVARequest",
+        "priority": "medium",
+        "effort": "high",
+        "file_path": "services\\aiva_common\\schemas\\generated\\messaging.py"
+      },
+      {
+        "type": "standardize_local_model",
+        "description": "本地模型 AIVAResponse 可能可以使用標準合約",
+        "model_name": "AIVAResponse",
+        "priority": "medium",
+        "effort": "high",
+        "file_path": "services\\aiva_common\\schemas\\generated\\messaging.py"
+      },
+      {
+        "type": "standardize_local_model",
+        "description": "本地模型 FunctionTaskPayload 可能可以使用標準合約",
+        "model_name": "FunctionTaskPayload",
+        "priority": "medium",
+        "effort": "high",
+        "file_path": "services\\aiva_common\\schemas\\generated\\tasks.py"
+      },
+      {
+        "type": "standardize_local_model",
+        "description": "本地模型 ScanTaskPayload 可能可以使用標準合約",
+        "model_name": "ScanTaskPayload",
+        "priority": "medium",
+        "effort": "high",
+        "file_path": "services\\aiva_common\\schemas\\generated\\tasks.py"
+      },
+      {
+        "type": "standardize_local_model",
+        "description": "本地模型 FindingPayload 可能可以使用標準合約",
+        "model_name": "FindingPayload",
+        "priority": "medium",
+        "effort": "high",
+        "file_path": "scripts\\analysis\\check_readme_compliance.py"
+      },
+      {
+        "type": "standardize_local_model",
+        "description": "本地模型 APIResponse 可能可以使用標準合約",
+        "model_name": "APIResponse",
+        "priority": "medium",
+        "effort": "high",
+        "file_path": "api\\routers\\auth.py"
+      },
+      {
+        "type": "standardize_local_model",
+        "description": "本地模型 LoginRequest 可能可以使用標準合約",
+        "model_name": "LoginRequest",
+        "priority": "medium",
+        "effort": "high",
+        "file_path": "api\\routers\\auth.py"
+      },
+      {
+        "type": "standardize_local_model",
+        "description": "本地模型 TokenResponse 可能可以使用標準合約",
+        "model_name": "TokenResponse",
+        "priority": "medium",
+        "effort": "high",
+        "file_path": "api\\routers\\auth.py"
+      }
+    ]
+  },
+  "improvement_plan": {
+    "current_status": {
+      "coverage_rate": 16.100443131462335,
+      "status": "fair"
+    },
+    "quick_wins": [
+      "重構現有 API 端點使用標準響應格式",
+      "標準化錯誤處理使用 ExecutionError",
+      "統一訊息格式使用 AivaMessage"
+    ],
+    "medium_term_goals": [
+      "達成 25%+ 標準合約覆蓋率",
+      "清理和標準化本地合約定義",
+      "建立 CI/CD 覆蓋率檢查",
+      "完善開發者培訓體系"
+    ],
+    "long_term_objectives": [
+      "實現 35%+ 標準合約覆蓋率",
+      "建立智能合約推薦系統",
+      "實現跨語言合約同步",
+      "完善合約版本管理體系"
+    ],
+    "priority_modules": [],
+    "automation_opportunities": []
+  },
+  "refactoring_tasks": [
+    {
+      "file_path": "api\\main.py",
+      "task_type": "add_standard_import",
+      "description": "添加 APIResponse 標準導入",
+      "old_code": null,
+      "new_code": "from services.aiva_common.schemas import APIResponse",
+      "confidence": 0.9
+    },
+    {
+      "file_path": "examples\\demo_bio_neuron_agent.py",
+      "task_type": "add_standard_import",
+      "description": "添加 APIResponse 標準導入",
+      "old_code": null,
+      "new_code": "from services.aiva_common.schemas import APIResponse",
+      "confidence": 0.9
+    },
+    {
+      "file_path": "testing\\scan\\juice_shop_real_attack_test.py",
+      "task_type": "standardize_response",
+      "description": "升級響應格式為 APIResponse 標準",
+      "old_code": null,
+      "new_code": null,
+      "confidence": 0.7
+    },
+    {
+      "file_path": "services\\scan\\info_gatherer_rust\\python_bridge\\__init__.py",
+      "task_type": "standardize_response",
+      "description": "升級響應格式為 APIResponse 標準",
+      "old_code": null,
+      "new_code": null,
+      "confidence": 0.7
+    },
+    {
+      "file_path": "services\\integration\\capability\\bug_bounty_reporting.py",
+      "task_type": "standardize_response",
+      "description": "升級響應格式為 APIResponse 標準",
+      "old_code": null,
+      "new_code": null,
+      "confidence": 0.7
+    },
+    {
+      "file_path": "services\\integration\\capability\\ddos_attack_tools.py",
+      "task_type": "standardize_response",
+      "description": "升級響應格式為 APIResponse 標準",
+      "old_code": null,
+      "new_code": null,
+      "confidence": 0.7
+    },
+    {
+      "file_path": "services\\integration\\capability\\ddos_attack_tools_backup.py",
+      "task_type": "standardize_response",
+      "description": "升級響應格式為 APIResponse 標準",
+      "old_code": null,
+      "new_code": null,
+      "confidence": 0.7
+    },
+    {
+      "file_path": "services\\integration\\capability\\forensic_tools.py",
+      "task_type": "standardize_response",
+      "description": "升級響應格式為 APIResponse 標準",
+      "old_code": null,
+      "new_code": null,
+      "confidence": 0.7
+    },
+    {
+      "file_path": "services\\integration\\capability\\lifecycle.py",
+      "task_type": "standardize_response",
+      "description": "升級響應格式為 APIResponse 標準",
+      "old_code": null,
+      "new_code": null,
+      "confidence": 0.7
+    },
+    {
+      "file_path": "services\\integration\\capability\\reverse_engineering_tools.py",
+      "task_type": "standardize_response",
+      "description": "升級響應格式為 APIResponse 標準",
+      "old_code": null,
+      "new_code": null,
+      "confidence": 0.7
+    },
+    {
+      "file_path": "services\\integration\\capability\\sql_injection_bounty_hunter.py",
+      "task_type": "standardize_response",
+      "description": "升級響應格式為 APIResponse 標準",
+      "old_code": null,
+      "new_code": null,
+      "confidence": 0.7
+    },
+    {
+      "file_path": "services\\integration\\capability\\sql_injection_tools.py",
+      "task_type": "standardize_response",
+      "description": "升級響應格式為 APIResponse 標準",
+      "old_code": null,
+      "new_code": null,
+      "confidence": 0.7
+    },
+    {
+      "file_path": "services\\integration\\capability\\steganography_tools.py",
+      "task_type": "standardize_response",
+      "description": "升級響應格式為 APIResponse 標準",
+      "old_code": null,
+      "new_code": null,
+      "confidence": 0.7
+    },
+    {
+      "file_path": "services\\integration\\capability\\toolkit.py",
+      "task_type": "standardize_response",
+      "description": "升級響應格式為 APIResponse 標準",
+      "old_code": null,
+      "new_code": null,
+      "confidence": 0.7
+    },
+    {
+      "file_path": "services\\integration\\capability\\web_attack.py",
+      "task_type": "standardize_response",
+      "description": "升級響應格式為 APIResponse 標準",
+      "old_code": null,
+      "new_code": null,
+      "confidence": 0.7
+    },
+    {
+      "file_path": "services\\integration\\capability\\wireless_attack_tools.py",
+      "task_type": "standardize_response",
+      "description": "升級響應格式為 APIResponse 標準",
+      "old_code": null,
+      "new_code": null,
+      "confidence": 0.7
+    },
+    {
+      "file_path": "services\\integration\\capability\\wireless_attack_tools_backup.py",
+      "task_type": "standardize_response",
+      "description": "升級響應格式為 APIResponse 標準",
+      "old_code": null,
+      "new_code": null,
+      "confidence": 0.7
+    },
+    {
+      "file_path": "services\\integration\\capability\\xss_attack_tools.py",
+      "task_type": "standardize_response",
+      "description": "升級響應格式為 APIResponse 標準",
+      "old_code": null,
+      "new_code": null,
+      "confidence": 0.7
+    },
+    {
+      "file_path": "services\\integration\\aiva_integration\\remediation\\config_recommender.py",
+      "task_type": "standardize_response",
+      "description": "升級響應格式為 APIResponse 標準",
+      "old_code": null,
+      "new_code": null,
+      "confidence": 0.7
+    },
+    {
+      "file_path": "services\\integration\\aiva_integration\\remediation\\patch_generator.py",
+      "task_type": "standardize_response",
+      "description": "升級響應格式為 APIResponse 標準",
+      "old_code": null,
+      "new_code": null,
+      "confidence": 0.7
+    },
+    {
+      "file_path": "services\\integration\\aiva_integration\\remediation\\report_generator.py",
+      "task_type": "standardize_response",
+      "description": "升級響應格式為 APIResponse 標準",
+      "old_code": null,
+      "new_code": null,
+      "confidence": 0.7
+    },
+    {
+      "file_path": "services\\features\\function_sqli\\hackingtool_config.py",
+      "task_type": "standardize_response",
+      "description": "升級響應格式為 APIResponse 標準",
+      "old_code": null,
+      "new_code": null,
+      "confidence": 0.7
+    },
+    {
+      "file_path": "services\\features\\function_sqli\\hackingtool_manager.py",
+      "task_type": "standardize_response",
+      "description": "升級響應格式為 APIResponse 標準",
+      "old_code": null,
+      "new_code": null,
+      "confidence": 0.7
+    },
+    {
+      "file_path": "services\\features\\function_sqli\\engines\\hackingtool_engine.py",
+      "task_type": "standardize_response",
+      "description": "升級響應格式為 APIResponse 標準",
+      "old_code": null,
+      "new_code": null,
+      "confidence": 0.7
+    },
+    {
+      "file_path": "services\\core\\aiva_core\\ai_commander.py",
+      "task_type": "standardize_response",
+      "description": "升級響應格式為 APIResponse 標準",
+      "old_code": null,
+      "new_code": null,
+      "confidence": 0.7
+    },
+    {
+      "file_path": "services\\core\\aiva_core\\bio_neuron_master.py",
+      "task_type": "standardize_response",
+      "description": "升級響應格式為 APIResponse 標準",
+      "old_code": null,
+      "new_code": null,
+      "confidence": 0.7
+    },
+    {
+      "file_path": "services\\core\\aiva_core\\multilang_coordinator.py",
+      "task_type": "standardize_response",
+      "description": "升級響應格式為 APIResponse 標準",
+      "old_code": null,
+      "new_code": null,
+      "confidence": 0.7
+    },
+    {
+      "file_path": "services\\core\\aiva_core\\optimized_core.py",
+      "task_type": "add_standard_import",
+      "description": "添加 APIResponse 標準導入",
+      "old_code": null,
+      "new_code": "from services.aiva_common.schemas import APIResponse",
+      "confidence": 0.9
+    },
+    {
+      "file_path": "services\\core\\aiva_core\\attack\\attack_executor.py",
+      "task_type": "standardize_response",
+      "description": "升級響應格式為 APIResponse 標準",
+      "old_code": null,
+      "new_code": null,
+      "confidence": 0.7
+    },
+    {
+      "file_path": "services\\core\\aiva_core\\attack\\exploit_manager.py",
+      "task_type": "standardize_response",
+      "description": "升級響應格式為 APIResponse 標準",
+      "old_code": null,
+      "new_code": null,
+      "confidence": 0.7
+    },
+    {
+      "file_path": "services\\core\\aiva_core\\training\\training_orchestrator.py",
+      "task_type": "standardize_response",
+      "description": "升級響應格式為 APIResponse 標準",
+      "old_code": null,
+      "new_code": null,
+      "confidence": 0.7
+    },
+    {
+      "file_path": "services\\core\\aiva_core\\ui_panel\\improved_ui.py",
+      "task_type": "add_standard_import",
+      "description": "添加 APIResponse 標準導入",
+      "old_code": null,
+      "new_code": "from services.aiva_common.schemas import APIResponse",
+      "confidence": 0.9
+    },
+    {
+      "file_path": "services\\core\\aiva_core\\ui_panel\\server.py",
+      "task_type": "add_standard_import",
+      "description": "添加 APIResponse 標準導入",
+      "old_code": null,
+      "new_code": "from services.aiva_common.schemas import APIResponse",
+      "confidence": 0.9
+    }
+  ],
+  "generated_at": "C:\\D\\fold7\\AIVA-git",
+  "recommendations": [
+    "考慮將高頻本地合約 \"AIVA\" (使用8次) 標準化"
+  ]
+}

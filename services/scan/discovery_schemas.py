@@ -11,7 +11,14 @@ from datetime import UTC, datetime
 from typing import Any
 
 from services.aiva_common.enums import AssetType, Confidence, ScanStatus, Severity
-from services.aiva_common.schemas import CVEReference, CVSSv3Metrics, CWEReference
+from services.aiva_common.schemas import (
+    CVEReference, 
+    CVSSv3Metrics, 
+    CWEReference,
+    FindingEvidence,
+    FindingImpact, 
+    FindingRecommendation
+)
 from pydantic import BaseModel, Field, HttpUrl, field_validator
 
 # ==================== 掃描請求和結果 ====================
@@ -138,31 +145,8 @@ class TargetInfo(BaseModel):
     body: str | None = Field(default=None, description="請求體")
 
 
-class FindingEvidence(BaseModel):
-    """漏洞證據"""
-
-    request: str | None = Field(default=None, description="原始請求")
-    response: str | None = Field(default=None, description="原始響應")
-    payload: str | None = Field(default=None, description="測試載荷")
-    screenshot: str | None = Field(default=None, description="截圖(base64)")
-    additional_data: dict[str, Any] = Field(default_factory=dict, description="額外數據")
-
-
-class FindingImpact(BaseModel):
-    """漏洞影響"""
-
-    description: str = Field(description="影響描述")
-    affected_assets: list[str] = Field(default_factory=list, description="受影響資產")
-    business_impact: str | None = Field(default=None, description="業務影響")
-    technical_impact: str | None = Field(default=None, description="技術影響")
-
-
-class FindingRecommendation(BaseModel):
-    """修復建議"""
-
-    short_term: list[str] = Field(default_factory=list, description="短期建議")
-    long_term: list[str] = Field(default_factory=list, description="長期建議")
-    references: list[str] = Field(default_factory=list, description="參考資料")
+# FindingEvidence, FindingImpact, FindingRecommendation 已使用標準合約
+# 定義於 services.aiva_common.schemas.findings
     effort_estimate: str | None = Field(default=None, description="修復工作量估計")
 
 

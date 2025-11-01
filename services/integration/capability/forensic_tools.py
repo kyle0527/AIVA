@@ -23,6 +23,7 @@ from rich.text import Text
 # Local imports
 from ...core.base_capability import BaseCapability
 from ...core.registry import CapabilityRegistry
+from ...aiva_common.schemas import APIResponse
 
 # Setup theme and console
 _theme = Theme({"purple": "#7B61FF"})

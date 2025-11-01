@@ -17,6 +17,7 @@ import logging
 from contextlib import asynccontextmanager
 
 from services.core.aiva_core.ai_engine import BioNeuronRAGAgent
+from services.aiva_common.schemas import APIResponse
 
 # 設置日誌
 logging.basicConfig(level=logging.INFO)
@@ -96,9 +97,9 @@ app = FastAPI(
 )
 
 
-# 請求資料模型
-class InvokeRequest(BaseModel):
-    """代理呼叫請求"""
+# 請求資料模型 - 使用標準合約
+class AIAgentRequest(BaseModel):
+    """AI代理請求 - 統一代理呼叫格式"""
     query: str = Field(..., description="要執行的查詢或指令")
     path: Optional[str] = Field(None, description="檔案路徑 (用於程式碼讀取/寫入/分析)")
     target_url: Optional[str] = Field(None, description="目標 URL (用於掃描)")
@@ -106,41 +107,28 @@ class InvokeRequest(BaseModel):
     command: Optional[str] = Field(None, description="系統命令 (用於命令執行)")
     content: Optional[str] = Field(None, description="檔案內容 (用於檔案寫入)")
 
-
-class InvokeResponse(BaseModel):
-    """代理呼叫回應"""
-    status: str = Field(..., description="執行狀態")
-    tool_used: Optional[str] = Field(None, description="使用的工具")
-    confidence: Optional[float] = Field(None, description="信心度")
-    tool_result: Optional[Dict[str, Any]] = Field(None, description="工具執行結果")
-    message: Optional[str] = Field(None, description="錯誤訊息或其他資訊")
-
-
-class StatsResponse(BaseModel):
-    """知識庫統計回應"""
-    total_chunks: int = Field(..., description="程式碼片段總數")
-    total_keywords: int = Field(..., description="關鍵字總數")
-
-
-class HistoryResponse(BaseModel):
-    """執行歷史回應"""
-    history: list = Field(..., description="執行歷史記錄")
+# 使用標準 APIResponse 替代本地響應模型
+# InvokeResponse, StatsResponse, HistoryResponse 已標準化為 APIResponse
 
 
 # API 端點
 @app.get("/")
 async def root():
     """根端點 - 服務狀態檢查"""
-    return {
-        "service": "AIVA BioNeuronRAGAgent API",
-        "status": "running",
-        "description": "AIVA 核心 AI 代理服務已啟動並運行中"
-    }
+    response = APIResponse(
+        success=True,
+        message="AIVA 核心 AI 代理服務已啟動並運行中",
+        data={
+            "service": "AIVA BioNeuronRAGAgent API",
+            "status": "running"
+        }
+    )
+    return response.model_dump()
 
 
-@app.post("/invoke", response_model=InvokeResponse)
-async def invoke_agent(request: InvokeRequest):
-    """呼叫 AI 代理執行任務"""
+@app.post("/invoke")
+async def invoke_agent(request: AIAgentRequest):
+    """呼叫 AI 代理執行任務 - 使用標準APIResponse"""
     if agent is None:
         raise HTTPException(status_code=503, detail="AI 代理尚未初始化")
     
@@ -155,39 +143,70 @@ async def invoke_agent(request: InvokeRequest):
         
         logger.info(f"✅ 請求處理完成，使用工具: {result.get('tool_used', 'unknown')}")
         
-        return InvokeResponse(**result)
+        # 使用標準 APIResponse
+        response = APIResponse(
+            success=True,
+            message="AI代理執行成功",
+            data=result
+        )
+        return response.model_dump()
         
     except Exception as e:
         logger.error(f"❌ 處理請求時發生錯誤: {e}")
-        raise HTTPException(status_code=500, detail=f"處理請求時發生錯誤: {str(e)}")
+        response = APIResponse(
+            success=False,
+            message="AI代理執行失敗",
+            errors=[str(e)]
+        )
+        return response.model_dump()
 
 
-@app.get("/stats", response_model=StatsResponse)
+@app.get("/stats")
 async def get_knowledge_stats():
-    """取得知識庫統計資訊"""
+    """取得知識庫統計資訊 - 使用標準APIResponse"""
     if agent is None:
         raise HTTPException(status_code=503, detail="AI 代理尚未初始化")
     
     try:
         stats = agent.get_knowledge_stats()
-        return StatsResponse(**stats)
+        response = APIResponse(
+            success=True,
+            message="知識庫統計資訊檢索成功",
+            data=stats
+        )
+        return response.model_dump()
     except Exception as e:
         logger.error(f"❌ 取得統計資訊時發生錯誤: {e}")
-        raise HTTPException(status_code=500, detail=f"取得統計資訊時發生錯誤: {str(e)}")
+        response = APIResponse(
+            success=False,
+            message="取得統計資訊失敗",
+            errors=[str(e)]
+        )
+        return response.model_dump()
 
 
-@app.get("/history", response_model=HistoryResponse)
+@app.get("/history")
 async def get_execution_history():
-    """取得執行歷史"""
+    """取得執行歷史 - 使用標準APIResponse"""
     if agent is None:
         raise HTTPException(status_code=503, detail="AI 代理尚未初始化")
     
     try:
         history = agent.get_history()
-        return HistoryResponse(history=history)
+        response = APIResponse(
+            success=True,
+            message="執行歷史檢索成功",
+            data={"history": history}
+        )
+        return response.model_dump()
     except Exception as e:
         logger.error(f"❌ 取得執行歷史時發生錯誤: {e}")
-        raise HTTPException(status_code=500, detail=f"取得執行歷史時發生錯誤: {str(e)}")
+        response = APIResponse(
+            success=False,
+            message="取得執行歷史失敗",
+            errors=[str(e)]
+        )
+        return response.model_dump()
 
 
 # 健康檢查端點

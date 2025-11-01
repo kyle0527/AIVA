@@ -24,6 +24,7 @@ if PROJECT_ROOT not in sys.path:
 
 try:
     from services.core.aiva_core.ui_panel.dashboard import Dashboard  # type: ignore
+    from services.aiva_common.schemas import APIResponse  # type: ignore
 except Exception as exc:  # pragma: no cover
     raise ImportError(
         "Unable to import Dashboard from AIVA project. Ensure the PROJECT_ROOT"

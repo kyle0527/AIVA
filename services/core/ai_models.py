@@ -27,6 +27,15 @@ from ..aiva_common.enums import (
     Severity,
     TestStatus,
 )
+from ..aiva_common.schemas import (
+    RAGResponsePayload,
+    AIVerificationRequest,
+    AITrainingStartPayload,
+    AITrainingProgressPayload,
+    AITrainingCompletedPayload,
+    RAGKnowledgeUpdatePayload,
+    RAGQueryPayload
+)
 
 # ==================== AI 驗證系統 ====================
 

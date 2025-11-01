@@ -29,6 +29,7 @@ from rich.columns import Columns
 
 # Local imports
 from ...core.base_capability import BaseCapability
+from ...aiva_common.schemas import APIResponse
 from ...core.registry import CapabilityRegistry
 
 # Setup theme and console
@@ -443,14 +444,29 @@ class BugBountyCapability(BaseCapability):
             
             elif command == "bounty_estimate":
                 estimate = self.tracker.get_bounty_estimate()
-                return {"success": True, "data": estimate}
+                response = APIResponse(
+                    success=True,
+                    message="Bounty estimate retrieved successfully",
+                    data=estimate
+                )
+                return response.model_dump()
             
             else:
-                return {"success": False, "error": f"Unknown command: {command}"}
+                response = APIResponse(
+                    success=False,
+                    message=f"Unknown command: {command}",
+                    errors=[f"Command '{command}' is not recognized"]
+                )
+                return response.model_dump()
                 
         except Exception as e:
             logger.error(f"Command execution failed: {e}")
-            return {"success": False, "error": str(e)}
+            response = APIResponse(
+                success=False,
+                message="Command execution failed",
+                errors=[str(e)]
+            )
+            return response.model_dump()
     
     def _show_main_menu(self):
         """顯示主選單"""

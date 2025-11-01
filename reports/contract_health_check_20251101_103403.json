@@ -1,0 +1,64 @@
+{
+  "timestamp": "2025-11-01T10:34:03.121854",
+  "summary": {
+    "total_tests": 4,
+    "passed_tests": 4,
+    "failed_tests": 0,
+    "health_percentage": 100.0
+  },
+  "test_results": {
+    "contract_imports": {
+      "status": "PASS",
+      "data": {
+        "contracts": [
+          "FindingPayload",
+          "AivaMessage",
+          "AttackPlan",
+          "ScanStartPayload"
+        ],
+        "enums": [
+          "Severity",
+          "Confidence",
+          "VulnerabilityType",
+          "Topic",
+          "ModuleName"
+        ],
+        "utils": [
+          "new_id"
+        ]
+      }
+    },
+    "finding_payload": {
+      "status": "PASS",
+      "data": {
+        "finding_id": "finding_716dc5d74e28",
+        "vulnerability_type": "VulnerabilityType.XSS",
+        "severity": "Severity.HIGH",
+        "serialization_size": 649
+      }
+    },
+    "scan_start_payload": {
+      "status": "PASS",
+      "data": {
+        "scan_id": "scan_36d9c7f9c65a",
+        "target_count": 2,
+        "strategy": "deep"
+      }
+    },
+    "aiva_message": {
+      "status": "PASS",
+      "data": {
+        "message_id": "msg-3ea24415-96a1-4ff9-98d5-3caa8a4acdd5",
+        "topic": "Topic.SCAN_START",
+        "trace_id": "trace-fc8a8c67-d8d8-4f53-a497-e940f2f02a41",
+        "payload_size": 93
+      }
+    }
+  },
+  "recommendations": [
+    "✅ 所有核心合約運作正常",
+    "🚀 已覆蓋區塊品質優秀，可以安全擴張覆蓋率",
+    "📈 建議目標：將覆蓋率從 15.9% 提升至 25%",
+    "🔄 可啟動自動化覆蓋率提升流程"
+  ]
+}

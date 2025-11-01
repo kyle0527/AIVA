@@ -3,6 +3,9 @@
 > 🚀 **A**rtificial **I**ntelligence **V**ulnerability **A**ssessment Platform  
 > 基於 BioNeuron AI 的智能化應用程式安全測試解決方案
 
+> 🧠 **跨語言 AI 協作架構**  
+> AIVA 採用創新的 **模型上下文協議 (MCP)** 架構，AI (Python) 無需學會 Go 或 Rust，各語言工具也無需理解 AI。通過統一協議，AI 專注規劃，專家模組專注執行，實現真正的智能化跨語言協作。
+
 [![Python](https://img.shields.io/badge/Python-3.13+-blue.svg)](https://python.org)
 [![Go](https://img.shields.io/badge/Go-1.21+-00ADD8.svg)](https://golang.org)
 [![Rust](https://img.shields.io/badge/Rust-1.70+-000000.svg)](https://rust-lang.org)
@@ -46,9 +49,10 @@
 ### 📚 **指南中心** (全新整理)
 ```bash
 📋 guides/README.md - 指南中心索引
-├── 🏆 核心綜合指南           # 頂級技術手冊 (2份)
-├── �️ 開發相關指南           # 包含88個VS Code插件清單
+├── 🏆 核心綜合指南           # 頂級技術手冊 (2份)  
+├── 💻 開發相關指南           # 包含88個VS Code插件清單
 ├── 🏗️ 架構設計指南           # 系統架構與演進
+├── 📋 AIVA合約開發指南      # 🆕 資料合約系統完整指導
 ├── ⚙️ 模組專業指南           # 五大模組詳細操作
 ├── 🚀 部署運維指南           # 生產環境部署策略
 └── 🔧 疑難排解指南           # 完整問題解決方案

@@ -22,6 +22,7 @@ from rich.theme import Theme
 
 # Local imports
 from ...core.base_capability import BaseCapability
+from ...aiva_common.schemas import APIResponse
 from ...core.registry import CapabilityRegistry
 
 # Setup theme and console

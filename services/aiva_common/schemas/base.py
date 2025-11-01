@@ -28,6 +28,18 @@ class MessageHeader(BaseModel):
     version: str = "1.0"
 
 
+class APIResponse(BaseModel):
+    """標準API響應格式 - 統一所有API端點的響應結構"""
+    
+    success: bool = Field(description="請求是否成功")
+    message: str = Field(description="響應消息")
+    data: dict | list | None = Field(None, description="響應數據")
+    timestamp: datetime = Field(default_factory=lambda: datetime.now(UTC), description="響應時間戳")
+    trace_id: str | None = Field(None, description="追蹤ID")
+    errors: list[str] | None = Field(None, description="錯誤列表")
+    metadata: dict | None = Field(None, description="額外的元數據")
+
+
 class Authentication(BaseModel):
     """認證資訊"""
 

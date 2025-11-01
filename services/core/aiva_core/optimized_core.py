@@ -29,6 +29,7 @@ from .performance import (
     metrics_collector,
     monitor_performance,
 )
+from ...aiva_common.schemas import APIResponse
 
 # ==================== AI 模型優化 ====================
 
@@ -173,15 +174,20 @@ async def startup():
 @app.get("/metrics")
 async def get_metrics():
     """獲取系統指標"""
-    return {
-        "performance_metrics": metrics_collector.get_metrics_summary(),
-        "memory_stats": memory_manager.get_memory_stats(),
-        "ai_cache_stats": optimized_bio_net.get_cache_stats(),
-        "pool_stats": {
-            name: pool.get_pool_stats() for name, pool in component_pools.items()
-        },
-        "message_processing_stats": message_processor.processing_stats,
-    }
+    response = APIResponse(
+        success=True,
+        message="系統指標檢索成功",
+        data={
+            "performance_metrics": metrics_collector.get_metrics_summary(),
+            "memory_stats": memory_manager.get_memory_stats(),
+            "ai_cache_stats": optimized_bio_net.get_cache_stats(),
+            "pool_stats": {
+                name: pool.get_pool_stats() for name, pool in component_pools.items()
+            },
+            "message_processing_stats": message_processor.processing_stats,
+        }
+    )
+    return response.model_dump()
 
 
 @app.get("/health")
@@ -189,14 +195,19 @@ async def health_check():
     """健康檢查"""
     memory_stats = memory_manager.get_memory_stats()
 
-    return {
-        "status": "healthy",
-        "memory_usage_mb": memory_stats["current_memory_mb"],
-        "memory_threshold_mb": memory_stats["threshold_mb"],
-        "components_active": sum(
-            pool.get_pool_stats()["active"] for pool in component_pools.values()
-        ),
-    }
+    response = APIResponse(
+        success=True,
+        message="服務運行健康",
+        data={
+            "status": "healthy",
+            "memory_usage_mb": memory_stats["current_memory_mb"],
+            "memory_threshold_mb": memory_stats["threshold_mb"],
+            "components_active": sum(
+                pool.get_pool_stats()["active"] for pool in component_pools.values()
+            ),
+        }
+    )
+    return response.model_dump()
 
 
 # ==================== AIVA 自主 AI 證明 ====================

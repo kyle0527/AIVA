@@ -1,52 +1,31 @@
-#!/usr/bin/env python3#!/usr/bin/env python3#!/usr/bin/env python3#!/usr/bin/env python3
-
+#!/usr/bin/env python3
 """
+AIVA Wireless Attack Tools - Task 15 (Direct Port from HackingTool)
 
-AIVA Wireless Attack Tools - Task 15 (Direct Port from HackingTool)"""
+無線攻擊工具集 - WiFi滲透、藍牙攻擊、無線網絡安全測試
 
-Wireless attack capabilities ported from HackingTool project
-
-For authorized security testing and educational purposes onlyAIVA Wireless Attack Tools - Task 15 (Direct Port from HackingTool)""""""
-
+⚠️ 僅用於授權的安全測試和教育目的 ⚠️
 """
-
-Direct port from HackingTool for wireless attack capabilities
 
 import asyncio
-
-import loggingFor authorized security testing and educational purposes onlyAIVA Wireless Attack Tools - Task 15 (Direct Port)AIVA Wireless Attack Tools - Task 15 (Clean Version)
-
+import json
+import logging
 import os
-
-import subprocess"""
-
+import subprocess
 from dataclasses import dataclass, asdict
-
-from datetime import datetime直接移植自 HackingTool 的無線攻擊工具集無線攻擊工具集 - WiFi滲透、藍牙攻擊、無線網絡安全測試
-
+from datetime import datetime
 from typing import Dict, List, Optional, Any
 
-import asyncio
-
 from rich.console import Console
-
-from rich.panel import Panelimport json⚠️ 僅用於授權的安全測試和教育目的 ⚠️⚠️ 僅用於授權的安全測試和教育目的 ⚠️
-
+from rich.panel import Panel
 from rich.prompt import Prompt, Confirm, IntPrompt
-
-from rich.table import Tableimport logging
-
+from rich.table import Table
 from rich.theme import Theme
 
-import os""""""
-
 # Local imports
-
-from ...core.base_capability import BaseCapabilityimport subprocess
-
+from ...core.base_capability import BaseCapability
+from ...aiva_common.schemas import APIResponse
 from ...core.registry import CapabilityRegistry
-
-from dataclasses import dataclass, asdict
 
 # Setup theme and console
 
@@ -90,7 +69,8 @@ class WirelessTool:# Local importsimport subprocessimport subprocess
 
     """Base wireless tool class - equivalent to HackingTool"""
 
-    from ...core.base_capability import BaseCapability
+    from ...core.base_capability import BaseCapabilityfrom ...aiva_common.schemas import APIResponse
+
 
     def __init__(self):
 
@@ -182,7 +162,8 @@ class WirelessTool:# Local importsimport subprocessimport subprocess
 
                     text=True
 
-                )from ...core.base_capability import BaseCapability
+                )from ...core.base_capability import BaseCapabilityfrom ...aiva_common.schemas import APIResponse
+
 
                 
 
@@ -198,7 +179,8 @@ class WirelessTool:# Local importsimport subprocessimport subprocess
 
             except subprocess.TimeoutExpired:
 
-                console.print(f"[red]Install timeout: {cmd}[/red]")    from ...core.base_capability import BaseCapability
+                console.print(f"[red]Install timeout: {cmd}[/red]")    from ...core.base_capability import BaseCapabilityfrom ...aiva_common.schemas import APIResponse
+
 
                 success = False
 

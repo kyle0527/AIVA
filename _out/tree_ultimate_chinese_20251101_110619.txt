@@ -1,0 +1,1213 @@
+================================================================================
+AIVA 專案程式碼樹狀架構圖（終極整合版 - 含中文檔名說明）
+================================================================================
+生成日期: 2025年11月01日 11:06:17
+專案路徑: C:\D\fold7\AIVA-git
+
+📊 程式碼統計
+────────────────────────────────────────────────────────────────────────────────
+總檔案數: 755
+總程式碼行數: 240079
+
+💻 語言分布:
+   • .py: 680 檔案, 207778 行 (86.5%)
+   • .rs: 21 檔案, 13909 行 (5.8%)
+   • .ts: 26 檔案, 8509 行 (3.5%)
+   • .go: 22 檔案, 8311 行 (3.5%)
+   • .js: 3 檔案, 688 行 (0.3%)
+   • .sql: 2 檔案, 524 行 (0.2%)
+   • .html: 1 檔案, 360 行 (0.1%)
+
+🔧 排除項目
+────────────────────────────────────────────────────────────────────────────────
+已排除：
+• 虛擬環境: .venv, venv, env
+• 快取: __pycache__, .mypy_cache, .ruff_cache
+• 建置產物: dist, build, target, bin, obj
+• 文件: .md, .txt
+• 配置檔: .json, .yaml, .toml, .ini
+• 腳本: .ps1, .sh, .bat
+
+💡 說明
+────────────────────────────────────────────────────────────────────────────────
+「行」(Line) = 程式碼的一行，以換行符號 (\n) 結束
+「字」(Character) = 單一字元（含中文、英文、符號）
+「檔案數」= 符合條件的程式碼檔案總數
+「程式碼行數」= 所有程式碼檔案的總行數（包含空行和註解）
+
+🎨 差異標記說明
+────────────────────────────────────────────────────────────────────────────────
+[+] = 🟢 新增的檔案或目錄（綠色顯示於終端機）
+[-] = 🔴 已刪除的檔案或目錄（紅色顯示於終端機）
+    = ⚪ 保持不變（白色顯示於終端機）
+
+🌏 中文檔名說明
+────────────────────────────────────────────────────────────────────────────────
+每個檔案名稱後面會自動添加中文說明，格式：檔案名 # 中文說明
+• 根據檔案名稱和目錄結構智慧推測功能
+• 涵蓋 Python、Go、Rust、TypeScript 等多語言
+• 包含 AIVA 專案特定的模組和功能說明
+
+注意：文字檔案輸出含 [+]/[-] 標記和中文說明
+終端機執行時會顯示對應顏色但不含 [+]/[-] 標記
+下一版本更新時，[-] 項目將被移除，[+] 項目將變為不變（空格）
+
+================================================================================
+程式碼結構樹狀圖（含中文檔名說明）
+================================================================================
+
+AIVA-git
+    ├─_archive
+    │   ├─completed_projects
+    │   │   ├─architecture_fixes
+    │   │   ├─file_cleanup
+    │   │   └─schema_restructuring
+    │   ├─deprecated_schema_tools                               # 工具集
+    │   │   ├─schemas                                           # 資料結構
+    │   │   │   ├─crosslang
+    │   │   │   ├─aiva_schemas.d.ts                             # 資料結構
+    │   │   │   ├─aiva_schemas.go                               # 資料結構
+    │   │   │   ├─aiva_schemas.rs                               # 資料結構
+    │   │   │   └─enums.ts                                      # TypeScript 模組
+    │   │   ├─ci_schema_check.py                                # Python 模組
+    │   │   ├─compare_schemas.py                                # 資料結構定義
+    │   │   ├─compatible_schema_generator.py                    # Python 模組
+    │   │   ├─create_schemas_files.py                           # 資料結構
+    │   │   ├─generate_compatible_schemas.py                    # 資料結構定義
+    │   │   ├─generate_official_schemas.py                      # 資料結構定義
+    │   │   ├─generate_rust_schemas.py                          # 資料結構定義
+    │   │   ├─schema_generator.py                               # Python 模組
+    │   │   ├─schema_unification_tool.py                        # Python 模組
+    │   │   └─schema_version_checker.py                         # Python 模組
+    │   ├─legacy_components
+    │   │   └─trainer_legacy.py                                 # Python 模組
+    │   └─scripts_completed
+    ├─.cache
+    ├─.github
+    │   └─workflows
+    ├─api
+    │   ├─routers
+    │   │   ├─__init__.py                                       # 模組初始化
+    │   │   ├─admin.py                                          # Python 模組
+    │   │   ├─auth.py                                           # Python 模組
+    │   │   └─security.py                                       # 安全模組
+    │   ├─main.py                                               # 主程式
+    │   ├─start_api.py                                          # API 介面
+    │   └─test_api.py                                           # API 介面
+    ├─backup
+    ├─cli_generated
+    │   ├─index.ts                                              # 入口檔案
+    │   └─schemas.ts                                            # 資料結構
+    ├─config                                                    # 配置
+    │   ├─api_keys.py                                           # Python 模組
+    │   └─settings.py                                           # 設定檔
+    ├─data
+    │   ├─ai_commander
+    │   │   ├─experience_db
+    │   │   └─knowledge
+    │   │       └─vectors
+    │   ├─database
+    │   ├─integration
+    │   │   ├─database
+    │   │   ├─knowledge
+    │   │   │   ├─payloads
+    │   │   │   └─vectors
+    │   │   ├─logs
+    │   │   ├─models                                            # 資料模型
+    │   │   │   ├─checkpoints
+    │   │   │   ├─metadata
+    │   │   │   └─production
+    │   │   ├─scenarios
+    │   │   │   ├─custom
+    │   │   │   └─owasp
+    │   │   └─training                                          # 訓練模組
+    │   │       ├─experiences
+    │   │       ├─metrics
+    │   │       ├─sessions
+    │   │       └─traces
+    │   ├─integration_test
+    │   │   ├─database
+    │   │   ├─knowledge
+    │   │   │   ├─payloads
+    │   │   │   └─vectors
+    │   │   ├─logs
+    │   │   ├─models                                            # 資料模型
+    │   │   │   ├─checkpoints
+    │   │   │   ├─metadata
+    │   │   │   └─production
+    │   │   ├─scenarios
+    │   │   │   ├─custom
+    │   │   │   └─owasp
+    │   │   └─training                                          # 訓練模組
+    │   │       ├─experiences
+    │   │       ├─metrics
+    │   │       ├─sessions
+    │   │       └─traces
+    │   ├─knowledge
+    │   │   ├─payloads
+    │   │   └─vectors
+    │   ├─learning                                              # 學習模組
+    │   │   ├─performance
+    │   │   └─training                                          # 訓練模組
+    │   ├─logs
+    │   ├─models                                                # 資料模型
+    │   │   ├─checkpoints
+    │   │   ├─metadata
+    │   │   └─production
+    │   ├─scenarios
+    │   │   ├─custom
+    │   │   └─owasp
+    │   ├─storage_test                                          # 儲存模組
+    │   │   ├─database
+    │   │   ├─knowledge
+    │   │   │   ├─payloads
+    │   │   │   └─vectors
+    │   │   ├─logs
+    │   │   ├─models                                            # 資料模型
+    │   │   │   ├─checkpoints
+    │   │   │   ├─metadata
+    │   │   │   └─production
+    │   │   ├─scenarios
+    │   │   │   ├─custom
+    │   │   │   └─owasp
+    │   │   └─training                                          # 訓練模組
+    │   │       ├─experiences
+    │   │       ├─metrics
+    │   │       ├─sessions
+    │   │       └─traces
+    │   └─training                                              # 訓練模組
+    │       ├─experiences
+    │       ├─metrics
+    │       ├─sessions
+    │       └─traces
+    ├─docker                                                    # Docker 容器
+    │   ├─components
+    │   ├─compose
+    │   ├─core
+    │   ├─helm
+    │   │   └─aiva
+    │   ├─image
+    │   │   └─DOCKER_GUIDE                                      # Docker 容器
+    │   ├─infrastructure
+    │   │   └─initdb                                            # 資料庫初始化
+    │   │       ├─001_schema.sql                                # 資料庫結構初始化
+    │   │       └─002_enhanced_schema.sql                       # 增強資料庫結構
+    │   ├─initdb                                                # 資料庫初始化
+    │   └─k8s
+    ├─docs                                                      # 文件
+    │   ├─ARCHITECTURE
+    │   ├─assessments
+    │   ├─deprecated
+    │   ├─DEVELOPMENT
+    │   ├─guides
+    │   ├─plans
+    │   └─reports
+    ├─examples                                                  # 範例程式
+    │   ├─core_integration_demo.py                              # 示範程式
+    │   ├─demo_bio_neuron_agent.py                              # 示範程式
+    │   ├─demo_bio_neuron_master.py                             # 生物神經元主控
+    │   ├─demo_module_import_fix.py                             # 示範程式
+    │   ├─demo_storage.py                                       # 儲存模組
+    │   ├─demo_ui_panel.py                                      # UI 面板
+    │   ├─detection_effectiveness_demo.py                       # 示範程式
+    │   ├─init_storage.py                                       # 儲存模組
+    │   ├─start_ui_auto.py                                      # Python 模組
+    │   └─test_api_service.py                                   # 服務層
+    ├─guides
+    │   ├─architecture
+    │   ├─deployment
+    │   ├─development
+    │   │   └─image
+    │   │       └─TOKEN_OPTIMIZATION_GUIDE
+    │   ├─modules
+    │   └─troubleshooting
+    ├─image
+    │   ├─ENVIRONMENT_SETUP_CHECKLIST
+    │   ├─SCHEMA_CROSS_LANGUAGE_FIXES_COMPLETION_REPORT
+    │   └─SCHEMA_PROJECT_FINAL_REPORT
+    ├─logs
+    │   ├─archive
+    │   ├─misc
+    │   └─status_reports
+    │       └─archive
+    ├─models                                                    # 資料模型
+    ├─reports
+    │   ├─ai_analysis                                           # 分析模組
+    │   ├─ai_diagnostics
+    │   ├─ai_sessions
+    │   ├─architecture
+    │   ├─archive
+    │   ├─connectivity
+    │   ├─data
+    │   │   └─archive
+    │   ├─debugging
+    │   ├─documentation
+    │   │   └─image
+    │   │       └─DEVELOPER_GUIDE
+    │   ├─misc
+    │   ├─project_status
+    │   ├─scanner_statistics                                    # 掃描器
+    │   ├─schema
+    │   ├─security                                              # 安全模組
+    │   └─testing
+    ├─scripts
+    │   ├─ai_analysis                                           # 分析模組
+    │   │   ├─ai_autonomous_testing_loop.py                     # 測試程式
+    │   │   ├─ai_component_explorer.py                          # Python 模組
+    │   │   ├─ai_functionality_validator.py                     # Python 模組
+    │   │   ├─ai_security_test.py                               # 測試程式
+    │   │   ├─ai_system_explorer_v2.py                          # Python 模組
+    │   │   ├─ai_system_explorer_v3.py                          # Python 模組
+    │   │   ├─ai_system_explorer.py                             # Python 模組
+    │   │   ├─aiva_continuous_ai_manager.py                     # 管理器
+    │   │   ├─analyze_ai_performance.py                         # Python 模組
+    │   │   ├─enterprise_ai_manager.py                          # 管理器
+    │   │   ├─intelligent_ai_manager.py                         # 管理器
+    │   │   └─production_ai_manager_v2.py                       # 管理器
+    │   ├─analysis                                              # 分析模組
+    │   │   ├─analyze_cross_language_warnings.py                # Python 模組
+    │   │   ├─check_documentation_errors.py                     # Python 模組
+    │   │   ├─check_readme_compliance.py                        # Python 模組
+    │   │   ├─scanner_statistics.py                             # 掃描器
+    │   │   ├─validate_todo7_cross_language_api.py              # API 介面
+    │   │   └─verify_p0_fixes.py                                # Python 模組
+    │   ├─common
+    │   │   ├─deployment
+    │   │   ├─launcher
+    │   │   │   ├─aiva_launcher.py                              # Python 模組
+    │   │   │   ├─smart_communication_selector.py               # Python 模組
+    │   │   │   └─start_ai_continuous_training.py               # 訓練模組
+    │   │   ├─maintenance
+    │   │   │   ├─fix_import_paths.py                           # Python 模組
+    │   │   │   └─system_repair_tool.py                         # Python 模組
+    │   │   ├─setup
+    │   │   └─validation
+    │   │       └─aiva_package_validator.py                     # Python 模組
+    │   ├─core
+    │   │   └─reporting                                         # 報告生成
+    │   │       └─aiva_enterprise_security_report.py            # 安全模組
+    │   ├─features
+    │   │   └─conversion
+    │   │       └─docx_to_md_converter.py                       # Python 模組
+    │   ├─integration
+    │   │   ├─reporting                                         # 報告生成
+    │   │   │   └─aiva_crosslang_unified.py                     # Python 模組
+    │   │   ├─cross_language_bridge.py                          # Python 模組
+    │   │   ├─ffi_integration.py                                # Python 模組
+    │   │   ├─graalvm_integration.py                            # Python 模組
+    │   │   └─wasm_integration.py                               # Python 模組
+    │   ├─launcher
+    │   │   ├─aiva_launcher.py                                  # Python 模組
+    │   │   └─smart_communication_selector.py                   # Python 模組
+    │   ├─migration
+    │   │   └─database_migration_plan.py                        # Python 模組
+    │   ├─misc
+    │   │   ├─__init__.py                                       # 模組初始化
+    │   │   ├─aiva_ai_coordinator.py                            # Python 模組
+    │   │   ├─cleanup_old_reports.py                            # Python 模組
+    │   │   ├─comprehensive_system_validation.py                # Python 模組
+    │   │   ├─core_scan_integration_cli.py                      # Python 模組
+    │   │   ├─features_ai_cli.py                                # Python 模組
+    │   │   ├─final_validation.py                               # Python 模組
+    │   │   ├─fixed_pentest_runner.py                           # 測試程式
+    │   │   ├─live_pentest_runner.py                            # 測試程式
+    │   │   ├─organize_aiva_files.py                            # Python 模組
+    │   │   ├─sqli_scanner.py                                   # 掃描器
+    │   │   ├─system_explorer.py                                # Python 模組
+    │   │   └─xss_scanner.py                                    # 掃描器
+    │   ├─scan
+    │   │   └─reporting                                         # 報告生成
+    │   │       └─final_report.py                               # Python 模組
+    │   ├─testing
+    │   │   ├─aiva_final_test.py                                # 測試程式
+    │   │   ├─autonomous_test.py                                # 測試程式
+    │   │   ├─comprehensive_pentest_runner.py                   # 測試程式
+    │   │   ├─comprehensive_schema_test.py                      # 測試程式
+    │   │   ├─data_persistence_test.py                          # 測試程式
+    │   │   ├─full_validation_test.py                           # 測試程式
+    │   │   ├─message_queue_test.py                             # 測試程式
+    │   │   ├─pentest_runner.py                                 # 測試程式
+    │   │   ├─sqli_test.py                                      # 測試程式
+    │   │   ├─test_ai_components.py                             # 測試程式
+    │   │   ├─test_cross_language_validation.py                 # 測試程式
+    │   │   ├─test_exploit_functionality.py                     # 測試程式
+    │   │   ├─test_intelligent_logic.py                         # 測試程式
+    │   │   ├─test_schema_codegen.py                            # 測試程式
+    │   │   ├─test_unified_storage_config.py                    # 配置
+    │   │   └─test_vector_storage.py                            # 儲存模組
+    │   ├─utilities
+    │   │   ├─advanced_debug_fixer.py                           # Python 模組
+    │   │   ├─aiva_debug_fixer.py                               # Python 模組
+    │   │   ├─aiva_launcher.py                                  # Python 模組
+    │   │   ├─aiva_package_validator.py                         # Python 模組
+    │   │   ├─apply_performance_optimizations.py                # Python 模組
+    │   │   ├─deep_debug_analyzer.py                            # 分析器
+    │   │   ├─final_debug_fixer.py                              # Python 模組
+    │   │   ├─fix_environment_dependencies.py                   # Python 模組
+    │   │   ├─fix_offline_dependencies.py                       # Python 模組
+    │   │   ├─health_check.py                                   # Python 模組
+    │   │   ├─import_fixer.py                                   # Python 模組
+    │   │   ├─launch_offline_mode.py                            # Python 模組
+    │   │   ├─migrate_vector_storage.py                         # 儲存模組
+    │   │   ├─precise_debug_fixer.py                            # Python 模組
+    │   │   └─validate_environment_variables.py                 # Python 模組
+    │   ├─advanced_architecture_analyzer.py                     # 分析器
+    │   ├─analyze_features_module.py                            # Python 模組
+    │   ├─analyze_integration_module.py                         # Python 模組
+    │   ├─cleanup_diagram_output.py                             # 輸出模組
+    │   ├─demo_cross_language_ai.py                             # 示範程式
+    │   ├─diagram_auto_composer.py                              # Python 模組
+    │   ├─docker_infrastructure_analysis.py                     # 分析模組
+    │   ├─docker_infrastructure_updater.py                      # Docker 容器
+    │   ├─generate_advanced_diagrams.py                         # Python 模組
+    │   ├─generate_complete_readme_architecture.py              # Python 模組
+    │   ├─generate_core_multilayer_readme.py                    # Python 模組
+    │   ├─generate_multilayer_readme.py                         # Python 模組
+    │   ├─generate_organization_diagrams.py                     # Python 模組
+    │   ├─generate_threat_model_diagrams.py                     # Python 模組
+    │   ├─intelligent_analysis_framework_v3.py                  # 分析模組
+    │   ├─organize_features_by_function.py                      # Python 模組
+    │   ├─potential_capability_analyzer.py                      # 分析器
+    │   ├─practical_organization_discovery.py                   # Python 模組
+    │   ├─ultimate_organization_discovery_v2.py                 # Python 模組
+    │   ├─ultra_deep_organization_discovery.py                  # Python 模組
+    │   └─v3_improvements_preview.py                            # Python 模組
+    ├─services                                                  # 服務模組
+    │   ├─aiva_common                                           # AIVA 共用模組
+    │   │   ├─ai
+    │   │   │   ├─__init__.py                                   # 模組初始化
+    │   │   │   ├─capability_evaluator.py                       # Python 模組
+    │   │   │   ├─cross_language_bridge.py                      # Python 模組
+    │   │   │   ├─dialog_assistant.py                           # Python 模組
+    │   │   │   ├─experience_manager.py                         # 管理器
+    │   │   │   ├─integration_manager.py                        # 管理器
+    │   │   │   ├─interfaces.py                                 # 介面定義
+    │   │   │   ├─performance_config.py                         # 配置
+    │   │   │   ├─plan_executor.py                              # Python 模組
+    │   │   │   ├─rag_agent.py                                  # RAG 檢索增強
+    │   │   │   ├─registry.py                                   # Python 模組
+    │   │   │   └─skill_graph_analyzer.py                       # 分析器
+    │   │   ├─aiva_common.egg-info                              # AIVA 共用模組
+    │   │   ├─async_utils                                       # 工具函數
+    │   │   │   └─__init__.py                                   # 模組初始化
+    │   │   ├─cli
+    │   │   │   └─__init__.py                                   # 模組初始化
+    │   │   ├─config                                            # 配置
+    │   │   │   ├─__init__.py                                   # 模組初始化
+    │   │   │   ├─settings.py                                   # 設定檔
+    │   │   │   └─unified_config.py                             # 配置
+    │   │   ├─cross_language
+    │   │   │   ├─adapters
+    │   │   │   │   ├─__init__.py                               # 模組初始化
+    │   │   │   │   ├─go_adapter.py                             # Python 模組
+    │   │   │   │   └─rust_adapter.py                           # Python 模組
+    │   │   │   ├─__init__.py                                   # 模組初始化
+    │   │   │   ├─core.py                                       # Python 模組
+    │   │   │   └─errors.py                                     # Python 模組
+    │   │   ├─enums
+    │   │   │   ├─__init__.py                                   # 模組初始化
+    │   │   │   ├─academic.py                                   # Python 模組
+    │   │   │   ├─ai.py                                         # Python 模組
+    │   │   │   ├─assets.py                                     # Python 模組
+    │   │   │   ├─business.py                                   # Python 模組
+    │   │   │   ├─common.py                                     # Python 模組
+    │   │   │   ├─data_models.py                                # 資料模型
+    │   │   │   ├─infrastructure.py                             # Python 模組
+    │   │   │   ├─modules.py                                    # Python 模組
+    │   │   │   ├─operations.py                                 # Python 模組
+    │   │   │   ├─pentest.py                                    # 測試程式
+    │   │   │   ├─security.py                                   # 安全模組
+    │   │   │   ├─ui_ux.py                                      # Python 模組
+    │   │   │   └─web_api_standards.py                          # 標準規範
+    │   │   ├─messaging                                         # 訊息處理
+    │   │   │   └─retry_handler.py                              # 處理器
+    │   │   ├─observability                                     # 可觀測性
+    │   │   │   └─__init__.py                                   # 模組初始化
+    │   │   ├─plugins
+    │   │   │   └─__init__.py                                   # 模組初始化
+    │   │   ├─protocols
+    │   │   ├─schemas                                           # 資料結構
+    │   │   │   ├─generated
+    │   │   │   │   ├─__init__.py                               # 模組初始化
+    │   │   │   │   ├─async_utils.py                            # 工具函數
+    │   │   │   │   ├─base_types.py                             # 型別定義
+    │   │   │   │   ├─cli.py                                    # Python 模組
+    │   │   │   │   ├─findings.py                               # Python 模組
+    │   │   │   │   ├─messaging.py                              # 訊息處理
+    │   │   │   │   ├─plugins.py                                # Python 模組
+    │   │   │   │   └─tasks.py                                  # Python 模組
+    │   │   │   ├─__init__.py                                   # 模組初始化
+    │   │   │   ├─ai.py                                         # Python 模組
+    │   │   │   ├─analysis.py                                   # 分析模組
+    │   │   │   ├─api_standards.py                              # 標準規範
+    │   │   │   ├─assets.py                                     # Python 模組
+    │   │   │   ├─async_utils.py                                # 工具函數
+    │   │   │   ├─base.py                                       # Python 模組
+    │   │   │   ├─capability.py                                 # Python 模組
+    │   │   │   ├─cli.py                                        # Python 模組
+    │   │   │   ├─enhanced.py                                   # Python 模組
+    │   │   │   ├─findings.py                                   # Python 模組
+    │   │   │   ├─languages.py                                  # Python 模組
+    │   │   │   ├─low_value_vulnerabilities.py                  # Python 模組
+    │   │   │   ├─messaging.py                                  # 訊息處理
+    │   │   │   ├─plugins.py                                    # Python 模組
+    │   │   │   ├─references.py                                 # Python 模組
+    │   │   │   ├─risk.py                                       # Python 模組
+    │   │   │   ├─security_events.py                            # 安全模組
+    │   │   │   ├─system.py                                     # Python 模組
+    │   │   │   ├─tasks.py                                      # Python 模組
+    │   │   │   ├─telemetry.py                                  # 遙測
+    │   │   │   └─threat_intelligence.py                        # 威脅情報
+    │   │   ├─services                                          # 服務模組
+    │   │   │   └─features
+    │   │   │       └─common
+    │   │   │           └─typescript                            # 型別定義
+    │   │   │               └─aiva_common_ts                    # AIVA 共用模組
+    │   │   │                   └─schemas                       # 資料結構
+    │   │   │                       └─generated
+    │   │   │                           ├─index.ts              # 入口檔案
+    │   │   │                           └─schemas.ts            # 資料結構
+    │   │   ├─tools                                             # 工具集
+    │   │   │   ├─services                                      # 服務模組
+    │   │   │   │   ├─aiva_common                               # AIVA 共用模組
+    │   │   │   │   │   └─schemas                               # 資料結構
+    │   │   │   │   │       └─generated
+    │   │   │   │   │           ├─__init__.py                   # 模組初始化
+    │   │   │   │   │           ├─base_types.py                 # 型別定義
+    │   │   │   │   │           ├─findings.py                   # Python 模組
+    │   │   │   │   │           ├─messaging.py                  # 訊息處理
+    │   │   │   │   │           └─tasks.py                      # Python 模組
+    │   │   │   │   └─scan
+    │   │   │   │       └─info_gatherer_rust                    # Rust 資訊收集器
+    │   │   │   │           └─src                               # 原始碼
+    │   │   │   │               └─schemas                       # 資料結構
+    │   │   │   │                   └─generated
+    │   │   │   │                       └─mod.rs                # Rust 模組
+    │   │   │   ├─cross_language_interface.py                   # Python 模組
+    │   │   │   ├─cross_language_validator.py                   # Python 模組
+    │   │   │   ├─module_connectivity_tester.py                 # 測試程式
+    │   │   │   ├─schema_codegen_tool.py                        # Python 模組
+    │   │   │   └─schema_validator.py                           # Python 模組
+    │   │   ├─utils                                             # 工具函數
+    │   │   │   ├─dedup                                         # 去重複
+    │   │   │   │   ├─__init__.py                               # 模組初始化
+    │   │   │   │   └─dedupe.py                                 # 去重複
+    │   │   │   ├─network                                       # 網路模組
+    │   │   │   │   ├─__init__.py                               # 模組初始化
+    │   │   │   │   ├─backoff.py                                # Python 模組
+    │   │   │   │   └─ratelimit.py                              # Python 模組
+    │   │   │   ├─__init__.py                                   # 模組初始化
+    │   │   │   ├─ids.py                                        # Python 模組
+    │   │   │   ├─logging.py                                    # Python 模組
+    │   │   │   └─retry.py                                      # Python 模組
+    │   │   ├─__init__.py                                       # 模組初始化
+    │   │   ├─config_manager.py                                 # 配置
+    │   │   ├─data_pipeline.py                                  # Python 模組
+    │   │   ├─error_handling.py                                 # Python 模組
+    │   │   ├─metrics.py                                        # Python 模組
+    │   │   ├─monitoring_log_handler.py                         # 處理器
+    │   │   ├─monitoring.py                                     # Python 模組
+    │   │   ├─mq.py                                             # 訊息佇列
+    │   │   ├─security_config.py                                # 配置
+    │   │   ├─security_middleware.py                            # 安全模組
+    │   │   ├─security_test.py                                  # 測試程式
+    │   │   ├─security.py                                       # 安全模組
+    │   │   ├─service_discovery.py                              # Python 模組
+    │   │   ├─simple_validation.py                              # Python 模組
+    │   │   ├─stream_processor.py                               # Python 模組
+    │   │   ├─validate_aiva_common_extensions.py                # AIVA 共用模組
+    │   │   └─version.py                                        # Python 模組
+    │   ├─core
+    │   │   ├─aiva_core                                         # AIVA 核心模組
+    │   │   │   ├─ai_engine                                     # AI 引擎
+    │   │   │   │   ├─tools                                     # 工具集
+    │   │   │   │   │   ├─shell_command_tool.py                 # Python 模組
+    │   │   │   │   │   └─system_status_tool.py                 # Python 模組
+    │   │   │   │   ├─training                                  # 訓練模組
+    │   │   │   │   │   ├─__init__.py                           # 模組初始化
+    │   │   │   │   │   ├─data_loader.py                        # Python 模組
+    │   │   │   │   │   └─model_updater.py                      # Python 模組
+    │   │   │   │   ├─__init__.py                               # 模組初始化
+    │   │   │   │   ├─ai_model_manager.py                       # AI 模型
+    │   │   │   │   ├─anti_hallucination_module.py              # Python 模組
+    │   │   │   │   ├─bio_neuron_core.py                        # 生物神經元核心
+    │   │   │   │   ├─knowledge_base.py                         # Python 模組
+    │   │   │   │   ├─learning_engine.py                        # 學習模組
+    │   │   │   │   ├─memory_manager.py                         # 管理器
+    │   │   │   │   ├─neural_network.py                         # 網路模組
+    │   │   │   │   ├─performance_enhancements.py               # Python 模組
+    │   │   │   │   └─tools.py                                  # 工具集
+    │   │   │   ├─ai_model                                      # AI 模型
+    │   │   │   │   └─train_classifier.py                       # Python 模組
+    │   │   │   ├─analysis                                      # 分析模組
+    │   │   │   │   ├─__init__.py                               # 模組初始化
+    │   │   │   │   ├─ast_trace_comparator.py                   # Python 模組
+    │   │   │   │   ├─dynamic_strategy_adjustment.py            # Python 模組
+    │   │   │   │   ├─initial_surface.py                        # Python 模組
+    │   │   │   │   ├─plan_comparator.py                        # Python 模組
+    │   │   │   │   ├─risk_assessment_engine.py                 # 引擎
+    │   │   │   │   └─strategy_generator.py                     # Python 模組
+    │   │   │   ├─attack
+    │   │   │   │   ├─__init__.py                               # 模組初始化
+    │   │   │   │   ├─attack_chain.py                           # Python 模組
+    │   │   │   │   ├─attack_executor.py                        # Python 模組
+    │   │   │   │   ├─attack_validator.py                       # Python 模組
+    │   │   │   │   ├─exploit_manager.py                        # 管理器
+    │   │   │   │   └─payload_generator.py                      # 攻擊載荷生成器
+    │   │   │   ├─authz                                         # 授權模組
+    │   │   │   │   ├─__init__.py                               # 模組初始化
+    │   │   │   │   ├─authz_mapper.py                           # 授權模組
+    │   │   │   │   ├─matrix_visualizer.py                      # Python 模組
+    │   │   │   │   └─permission_matrix.py                      # Python 模組
+    │   │   │   ├─bizlogic                                      # 業務邏輯
+    │   │   │   │   ├─__init__.py                               # 模組初始化
+    │   │   │   │   ├─finding_helper.py                         # 輔助函數
+    │   │   │   │   └─worker.py                                 # 工作執行器
+    │   │   │   ├─decision
+    │   │   │   │   ├─enhanced_decision_agent.py                # Python 模組
+    │   │   │   │   └─skill_graph.py                            # Python 模組
+    │   │   │   ├─dialog
+    │   │   │   │   └─assistant.py                              # Python 模組
+    │   │   │   ├─execution                                     # 執行模組
+    │   │   │   │   ├─__init__.py                               # 模組初始化
+    │   │   │   │   ├─attack_plan_mapper.py                     # Python 模組
+    │   │   │   │   ├─execution_status_monitor.py               # 執行模組
+    │   │   │   │   ├─plan_executor.py                          # Python 模組
+    │   │   │   │   ├─task_generator.py                         # Python 模組
+    │   │   │   │   ├─task_queue_manager.py                     # 管理器
+    │   │   │   │   └─trace_logger.py                           # 日誌
+    │   │   │   ├─execution_tracer                              # 執行追蹤器
+    │   │   │   │   ├─__init__.py                               # 模組初始化
+    │   │   │   │   ├─execution_monitor.py                      # 執行模組
+    │   │   │   │   ├─task_executor.py                          # Python 模組
+    │   │   │   │   └─trace_recorder.py                         # Python 模組
+    │   │   │   ├─ingestion                                     # 資料接收
+    │   │   │   │   ├─__init__.py                               # 模組初始化
+    │   │   │   │   └─scan_module_interface.py                  # Python 模組
+    │   │   │   ├─learning                                      # 學習模組
+    │   │   │   │   ├─__init__.py                               # 模組初始化
+    │   │   │   │   ├─model_trainer.py                          # Python 模組
+    │   │   │   │   ├─rl_models.py                              # 資料模型
+    │   │   │   │   ├─rl_trainers.py                            # Python 模組
+    │   │   │   │   └─scalable_bio_trainer.py                   # Python 模組
+    │   │   │   ├─messaging                                     # 訊息處理
+    │   │   │   │   ├─__init__.py                               # 模組初始化
+    │   │   │   │   ├─message_broker.py                         # Python 模組
+    │   │   │   │   ├─result_collector.py                       # Python 模組
+    │   │   │   │   └─task_dispatcher.py                        # Python 模組
+    │   │   │   ├─output                                        # 輸出模組
+    │   │   │   │   ├─__init__.py                               # 模組初始化
+    │   │   │   │   └─to_functions.py                           # Python 模組
+    │   │   │   ├─performance
+    │   │   │   │   ├─__init__.py                               # 模組初始化
+    │   │   │   │   ├─memory_manager.py                         # 管理器
+    │   │   │   │   ├─monitoring.py                             # Python 模組
+    │   │   │   │   └─parallel_processor.py                     # Python 模組
+    │   │   │   ├─planner                                       # 規劃器
+    │   │   │   │   ├─__init__.py                               # 模組初始化
+    │   │   │   │   ├─ast_parser.py                             # Python 模組
+    │   │   │   │   ├─orchestrator.py                           # Python 模組
+    │   │   │   │   ├─task_converter.py                         # Python 模組
+    │   │   │   │   └─tool_selector.py                          # Python 模組
+    │   │   │   ├─plugins
+    │   │   │   │   └─ai_summary_plugin.py                      # Python 模組
+    │   │   │   ├─processing
+    │   │   │   │   ├─__init__.py                               # 模組初始化
+    │   │   │   │   └─scan_result_processor.py                  # Python 模組
+    │   │   │   ├─rag                                           # RAG 檢索增強
+    │   │   │   │   ├─__init__.py                               # 模組初始化
+    │   │   │   │   ├─demo_rag_integration.py                   # RAG 檢索增強
+    │   │   │   │   ├─knowledge_base.py                         # Python 模組
+    │   │   │   │   ├─postgresql_vector_store.py                # Python 模組
+    │   │   │   │   ├─rag_engine.py                             # RAG 檢索增強
+    │   │   │   │   ├─unified_vector_store.py                   # Python 模組
+    │   │   │   │   └─vector_store.py                           # Python 模組
+    │   │   │   ├─state                                         # 狀態管理
+    │   │   │   │   ├─__init__.py                               # 模組初始化
+    │   │   │   │   └─session_state_manager.py                  # 狀態管理
+    │   │   │   ├─storage                                       # 儲存模組
+    │   │   │   │   ├─__init__.py                               # 模組初始化
+    │   │   │   │   ├─backends.py                               # Python 模組
+    │   │   │   │   ├─config.py                                 # 配置管理
+    │   │   │   │   ├─models.py                                 # 資料模型
+    │   │   │   │   └─storage_manager.py                        # 儲存模組
+    │   │   │   ├─training                                      # 訓練模組
+    │   │   │   │   ├─__init__.py                               # 模組初始化
+    │   │   │   │   ├─scenario_manager.py                       # 管理器
+    │   │   │   │   └─training_orchestrator.py                  # 訓練模組
+    │   │   │   ├─ui_panel                                      # UI 面板
+    │   │   │   │   ├─__init__.py                               # 模組初始化
+    │   │   │   │   ├─auto_server.py                            # 伺服器
+    │   │   │   │   ├─dashboard.py                              # Python 模組
+    │   │   │   │   ├─improved_ui.py                            # Python 模組
+    │   │   │   │   ├─rich_cli_config.py                        # 配置
+    │   │   │   │   ├─rich_cli.py                               # Python 模組
+    │   │   │   │   └─server.py                                 # 伺服器
+    │   │   │   ├─utils                                         # 工具函數
+    │   │   │   │   └─logging_formatter.py                      # Python 模組
+    │   │   │   ├─__init__.py                                   # 模組初始化
+    │   │   │   ├─ai_commander.py                               # AI 指揮官
+    │   │   │   ├─ai_controller.py                              # AI 控制器
+    │   │   │   ├─ai_integration_test.py                        # AI 整合測試
+    │   │   │   ├─ai_ui_schemas.py                              # AI UI 資料結構
+    │   │   │   ├─app.py                                        # 應用程式入口
+    │   │   │   ├─bio_neuron_master.py                          # 生物神經元主控
+    │   │   │   ├─business_schemas.py                           # 業務資料結構
+    │   │   │   ├─command_router.py                             # Python 模組
+    │   │   │   ├─context_manager.py                            # 管理器
+    │   │   │   ├─core_service_coordinator.py                   # Python 模組
+    │   │   │   ├─execution_planner.py                          # 執行模組
+    │   │   │   ├─multilang_coordinator.py                      # 多語言協調器
+    │   │   │   ├─nlg_system.py                                 # 自然語言生成系統
+    │   │   │   ├─optimized_core.py                             # 最佳化核心
+    │   │   │   ├─schemas.py                                    # 資料結構定義
+    │   │   │   └─unified_function_caller.py                    # Python 模組
+    │   │   ├─docs                                              # 文件
+    │   │   ├─__init__.py                                       # 模組初始化
+    │   │   ├─ai_models.py                                      # AI 模型
+    │   │   ├─models.py                                         # 資料模型
+    │   │   └─session_state_manager.py                          # 狀態管理
+    │   ├─features
+    │   │   ├─base
+    │   │   │   ├─__init__.py                                   # 模組初始化
+    │   │   │   ├─feature_base.py                               # Python 模組
+    │   │   │   ├─feature_registry.py                           # Python 模組
+    │   │   │   ├─http_client.py                                # 客戶端
+    │   │   │   └─result_schema.py                              # Python 模組
+    │   │   ├─client_side_auth_bypass
+    │   │   │   ├─__init__.py                                   # 模組初始化
+    │   │   │   ├─client_side_auth_bypass_worker.py             # 工作執行器
+    │   │   │   └─js_analysis_engine.py                         # 分析模組
+    │   │   ├─common
+    │   │   │   ├─go
+    │   │   │   │   └─aiva_common_go                            # Go 共用模組
+    │   │   │   │       ├─config                                # 配置
+    │   │   │   │       │   ├─config_test.go                    # 配置
+    │   │   │   │       │   └─config.go                         # 配置管理
+    │   │   │   │       ├─logger                                # 日誌
+    │   │   │   │       │   └─logger.go                         # 日誌記錄器
+    │   │   │   │       ├─metrics
+    │   │   │   │       │   └─metrics.go                        # Go 模組
+    │   │   │   │       ├─mq                                    # 訊息佇列
+    │   │   │   │       │   ├─client_test.go                    # 測試程式
+    │   │   │   │       │   └─client.go                         # 客戶端
+    │   │   │   │       └─schemas                               # 資料結構
+    │   │   │   │           └─generated
+    │   │   │   │               └─schemas.go                    # 資料結構
+    │   │   │   ├─rust
+    │   │   │   │   └─aiva_common_rust                          # AIVA 共用模組
+    │   │   │   │       └─src                                   # 原始碼
+    │   │   │   │           ├─schemas                           # 資料結構
+    │   │   │   │           │   ├─generated
+    │   │   │   │           │   │   └─mod.rs                    # Rust 模組
+    │   │   │   │           │   └─mod.rs                        # Rust 模組
+    │   │   │   │           ├─lib.rs                            # 程式庫
+    │   │   │   │           └─metrics.rs                        # Rust 模組
+    │   │   │   ├─typescript                                    # 型別定義
+    │   │   │   │   └─aiva_common_ts                            # AIVA 共用模組
+    │   │   │   │       ├─config                                # 配置
+    │   │   │   │       │   └─index.ts                          # 入口檔案
+    │   │   │   │       ├─schemas                               # 資料結構
+    │   │   │   │       │   └─generated
+    │   │   │   │       │       ├─index.ts                      # 入口檔案
+    │   │   │   │       │       └─schemas.ts                    # 資料結構
+    │   │   │   │       ├─.eslintrc.js                          # JavaScript 模組
+    │   │   │   │       ├─capability-evaluator.ts               # TypeScript 模組
+    │   │   │   │       ├─experience-manager.ts                 # TypeScript 模組
+    │   │   │   │       ├─index.ts                              # 入口檔案
+    │   │   │   │       └─performance-config.ts                 # 配置管理
+    │   │   │   ├─__init__.py                                   # 模組初始化
+    │   │   │   ├─advanced_detection_config.py                  # 配置
+    │   │   │   ├─detection_config.py                           # 配置
+    │   │   │   ├─unified_smart_detection_manager.py            # 智慧檢測管理器
+    │   │   │   └─worker_statistics.py                          # 工作器
+    │   │   ├─docs                                              # 文件
+    │   │   │   ├─archive
+    │   │   │   └─issues
+    │   │   ├─email_change_bypass
+    │   │   │   ├─__init__.py                                   # 模組初始化
+    │   │   │   └─worker.py                                     # 工作執行器
+    │   │   ├─function_authn_go                                 # Go 身份驗證功能
+    │   │   │   ├─cmd                                           # 命令列工具
+    │   │   │   │   └─worker
+    │   │   │   │       └─main.go                               # 主程式
+    │   │   │   └─internal                                      # 內部模組
+    │   │   │       ├─brute_force                               # 暴力破解
+    │   │   │       │   └─brute_forcer.go                       # 暴力破解器
+    │   │   │       ├─token_test                                # Token 測試
+    │   │   │       │   └─token_analyzer.go                     # Token 分析器
+    │   │   │       └─weak_config                               # 配置
+    │   │   │           └─weak_config_tester.go                 # 配置
+    │   │   ├─function_crypto
+    │   │   │   └─__init__.py                                   # 模組初始化
+    │   │   ├─function_cspm_go                                  # Go CSPM 功能
+    │   │   │   ├─cmd                                           # 命令列工具
+    │   │   │   │   └─worker
+    │   │   │   │       └─main.go                               # 主程式
+    │   │   │   └─internal                                      # 內部模組
+    │   │   │       └─scanner                                   # 掃描器
+    │   │   │           └─cspm_scanner.go                       # CSPM 掃描器
+    │   │   ├─function_idor                                     # IDOR 功能
+    │   │   │   ├─__init__.py                                   # 模組初始化
+    │   │   │   ├─cross_user_tester.py                          # 測試程式
+    │   │   │   ├─enhanced_worker.py                            # 增強型工作器
+    │   │   │   ├─resource_id_extractor.py                      # Python 模組
+    │   │   │   ├─schemas.py                                    # 資料結構定義
+    │   │   │   ├─smart_idor_detector.py                        # 智慧 IDOR 檢測器
+    │   │   │   ├─vertical_escalation_tester.py                 # 測試程式
+    │   │   │   └─worker.py                                     # 工作執行器
+    │   │   ├─function_postex                                   # 後滲透功能
+    │   │   │   ├─__init__.py                                   # 模組初始化
+    │   │   │   ├─lateral_movement.py                           # Python 模組
+    │   │   │   ├─persistence_checker.py                        # Python 模組
+    │   │   │   ├─privilege_escalator.py                        # Python 模組
+    │   │   │   └─schemas.py                                    # 資料結構定義
+    │   │   ├─function_sast_rust                                # Rust SAST 功能
+    │   │   │   └─src                                           # 原始碼
+    │   │   │       ├─schemas                                   # 資料結構
+    │   │   │       │   ├─generated
+    │   │   │       │   │   └─mod.rs                            # Rust 模組
+    │   │   │       │   └─mod.rs                                # Rust 模組
+    │   │   │       ├─analyzers.rs                              # 分析器
+    │   │   │       ├─main.rs                                   # 主程式
+    │   │   │       ├─models.rs                                 # 資料模型
+    │   │   │       ├─parsers.rs                                # 解析器
+    │   │   │       ├─rules.rs                                  # 規則引擎
+    │   │   │       └─worker.rs                                 # 工作器
+    │   │   ├─function_sca_go                                   # Go SCA 功能
+    │   │   │   ├─cmd                                           # 命令列工具
+    │   │   │   │   └─worker
+    │   │   │   │       └─main.go                               # 主程式
+    │   │   │   ├─internal                                      # 內部模組
+    │   │   │   │   ├─analyzer                                  # 分析器
+    │   │   │   │   └─scanner                                   # 掃描器
+    │   │   │   │       └─sca_scanner.go                        # SCA 掃描器
+    │   │   │   └─pkg                                           # 套件
+    │   │   │       └─models                                    # 資料模型
+    │   │   │           └─models.go                             # 資料模型
+    │   │   ├─function_sqli                                     # SQL 注入功能
+    │   │   │   ├─engines                                       # 檢測引擎
+    │   │   │   │   ├─__init__.py                               # 模組初始化
+    │   │   │   │   ├─boolean_detection_engine.py               # 布林檢測引擎
+    │   │   │   │   ├─error_detection_engine.py                 # 錯誤檢測引擎
+    │   │   │   │   ├─hackingtool_engine.py                     # 引擎
+    │   │   │   │   ├─oob_detection_engine.py                   # 帶外檢測引擎
+    │   │   │   │   ├─time_detection_engine.py                  # 時間檢測引擎
+    │   │   │   │   └─union_detection_engine.py                 # 聯合檢測引擎
+    │   │   │   ├─__init__.py                                   # 模組初始化
+    │   │   │   ├─backend_db_fingerprinter.py                   # Python 模組
+    │   │   │   ├─config.py                                     # 配置管理
+    │   │   │   ├─detection_models.py                           # 檢測模型
+    │   │   │   ├─exceptions.py                                 # 例外處理
+    │   │   │   ├─hackingtool_config.py                         # 配置
+    │   │   │   ├─hackingtool_manager.py                        # 管理器
+    │   │   │   ├─hackingtool_sql_cli.py                        # Python 模組
+    │   │   │   ├─payload_wrapper_encoder.py                    # Python 模組
+    │   │   │   ├─result_binder_publisher.py                    # Python 模組
+    │   │   │   ├─schemas.py                                    # 資料結構定義
+    │   │   │   ├─smart_detection_manager.py                    # 智慧檢測管理器
+    │   │   │   ├─task_queue.py                                 # 任務佇列
+    │   │   │   ├─telemetry.py                                  # 遙測
+    │   │   │   └─worker.py                                     # 工作執行器
+    │   │   ├─function_ssrf                                     # SSRF 功能
+    │   │   │   ├─__init__.py                                   # 模組初始化
+    │   │   │   ├─internal_address_detector.py                  # 內部模組
+    │   │   │   ├─oast_dispatcher.py                            # Python 模組
+    │   │   │   ├─param_semantics_analyzer.py                   # 分析器
+    │   │   │   ├─result_publisher.py                           # 結果發布器
+    │   │   │   ├─schemas.py                                    # 資料結構定義
+    │   │   │   ├─smart_ssrf_detector.py                        # 智慧 SSRF 檢測器
+    │   │   │   └─worker.py                                     # 工作執行器
+    │   │   ├─function_ssrf_go                                  # Go SSRF 功能
+    │   │   │   ├─cmd                                           # 命令列工具
+    │   │   │   │   └─worker
+    │   │   │   │       └─main.go                               # 主程式
+    │   │   │   └─internal                                      # 內部模組
+    │   │   │       └─detector                                  # 檢測器
+    │   │   │           ├─cloud_metadata_scanner.go             # 掃描器
+    │   │   │           ├─internal_microservice_probe.go        # 內部模組
+    │   │   │           └─ssrf.go                               # SSRF 檢測
+    │   │   ├─function_xss                                      # XSS 功能
+    │   │   │   ├─engines                                       # 檢測引擎
+    │   │   │   │   └─hackingtool_engine.py                     # 引擎
+    │   │   │   ├─__init__.py                                   # 模組初始化
+    │   │   │   ├─blind_xss_listener_validator.py               # Python 模組
+    │   │   │   ├─dom_xss_detector.py                           # 檢測器
+    │   │   │   ├─hackingtool_config.py                         # 配置
+    │   │   │   ├─payload_generator.py                          # 攻擊載荷生成器
+    │   │   │   ├─result_publisher.py                           # 結果發布器
+    │   │   │   ├─schemas.py                                    # 資料結構定義
+    │   │   │   ├─stored_detector.py                            # 檢測器
+    │   │   │   ├─task_queue.py                                 # 任務佇列
+    │   │   │   ├─traditional_detector.py                       # 檢測器
+    │   │   │   └─worker.py                                     # 工作執行器
+    │   │   ├─graphql_authz                                     # 授權模組
+    │   │   │   └─worker.py                                     # 工作執行器
+    │   │   ├─jwt_confusion
+    │   │   │   └─worker.py                                     # 工作執行器
+    │   │   ├─mass_assignment
+    │   │   │   └─worker.py                                     # 工作執行器
+    │   │   ├─oauth_confusion
+    │   │   │   └─worker.py                                     # 工作執行器
+    │   │   ├─oauth_openredirect_chain
+    │   │   │   ├─__init__.py                                   # 模組初始化
+    │   │   │   └─worker.py                                     # 工作執行器
+    │   │   ├─payment_logic_bypass
+    │   │   │   ├─__init__.py                                   # 模組初始化
+    │   │   │   ├─test_enhanced_features.py                     # 測試程式
+    │   │   │   └─worker.py                                     # 工作執行器
+    │   │   ├─ssrf_oob
+    │   │   │   └─worker.py                                     # 工作執行器
+    │   │   ├─__init__.py                                       # 模組初始化
+    │   │   ├─android_attack.py                                 # Python 模組
+    │   │   ├─anonsurf.py                                       # Python 模組
+    │   │   ├─email_verifier.py                                 # Python 模組
+    │   │   ├─example_config.py                                 # 配置
+    │   │   ├─exploit_frameworks.py                             # Python 模組
+    │   │   ├─feature_step_executor.py                          # Python 模組
+    │   │   ├─forensic_tools.py                                 # 工具集
+    │   │   ├─hash_crack.py                                     # Python 模組
+    │   │   ├─high_value_guide.py                               # Python 模組
+    │   │   ├─high_value_manager.py                             # 管理器
+    │   │   ├─homograph_attacks.py                              # Python 模組
+    │   │   ├─mix_tools.py                                      # 工具集
+    │   │   ├─models.py                                         # 資料模型
+    │   │   ├─other_tools.py                                    # 工具集
+    │   │   ├─payload_injection.py                              # Python 模組
+    │   │   ├─post_exploitation.py                              # Python 模組
+    │   │   ├─remote_administration.py                          # Python 模組
+    │   │   ├─reverse_engineering.py                            # 引擎
+    │   │   ├─smart_detection_manager.py                        # 智慧檢測管理器
+    │   │   ├─socialmedia_finder.py                             # Python 模組
+    │   │   ├─socialmedia.py                                    # Python 模組
+    │   │   ├─steganography.py                                  # Python 模組
+    │   │   ├─test_schemas.py                                   # 資料結構定義
+    │   │   ├─web_crawling.py                                   # Python 模組
+    │   │   └─wifi_jamming.py                                   # Python 模組
+    │   ├─integration
+    │   │   ├─aiva_integration                                  # AIVA 整合模組
+    │   │   │   ├─analysis                                      # 分析模組
+    │   │   │   │   ├─__init__.py                               # 模組初始化
+    │   │   │   │   ├─compliance_policy_checker.py              # Python 模組
+    │   │   │   │   ├─risk_assessment_engine_enhanced.py        # 引擎
+    │   │   │   │   ├─risk_assessment_engine.py                 # 引擎
+    │   │   │   │   └─vuln_correlation_analyzer.py              # 分析器
+    │   │   │   ├─attack_path_analyzer                          # 攻擊路徑分析器
+    │   │   │   │   ├─__init__.py                               # 模組初始化
+    │   │   │   │   ├─engine.py                                 # 引擎
+    │   │   │   │   ├─graph_builder.py                          # Python 模組
+    │   │   │   │   ├─nlp_recommender.py                        # Python 模組
+    │   │   │   │   └─visualizer.py                             # Python 模組
+    │   │   │   ├─config_template                               # 配置範本
+    │   │   │   │   ├─__init__.py                               # 模組初始化
+    │   │   │   │   └─config_template_manager.py                # 配置
+    │   │   │   ├─examples                                      # 範例程式
+    │   │   │   │   ├─enhanced_attack_path_demo.py              # 示範程式
+    │   │   │   │   ├─enhanced_risk_assessment_demo.py          # 示範程式
+    │   │   │   │   └─enhanced_scan_integration.py              # Python 模組
+    │   │   │   ├─middlewares                                   # 中介軟體
+    │   │   │   │   ├─__init__.py                               # 模組初始化
+    │   │   │   │   └─rate_limiter.py                           # Python 模組
+    │   │   │   ├─observability                                 # 可觀測性
+    │   │   │   │   ├─__init__.py                               # 模組初始化
+    │   │   │   │   └─metrics.py                                # Python 模組
+    │   │   │   ├─perf_feedback                                 # 效能回饋
+    │   │   │   │   ├─__init__.py                               # 模組初始化
+    │   │   │   │   ├─improvement_suggestion_generator.py       # Python 模組
+    │   │   │   │   ├─phase_i_performance_optimizer.py          # Python 模組
+    │   │   │   │   └─scan_metadata_analyzer.py                 # 分析器
+    │   │   │   ├─reception                                     # 接收模組
+    │   │   │   │   ├─__init__.py                               # 模組初始化
+    │   │   │   │   ├─data_reception_layer.py                   # 接收模組
+    │   │   │   │   ├─experience_models.py                      # 資料模型
+    │   │   │   │   ├─experience_repository.py                  # Python 模組
+    │   │   │   │   ├─lifecycle_manager.py                      # 管理器
+    │   │   │   │   ├─models_enhanced.py                        # 資料模型
+    │   │   │   │   ├─sql_result_database.py                    # Python 模組
+    │   │   │   │   ├─test_result_database.py                   # 測試程式
+    │   │   │   │   └─unified_storage_adapter.py                # 儲存模組
+    │   │   │   ├─remediation                                   # 修復建議
+    │   │   │   │   ├─__init__.py                               # 模組初始化
+    │   │   │   │   ├─code_fixer.py                             # Python 模組
+    │   │   │   │   ├─config_recommender.py                     # 配置
+    │   │   │   │   ├─patch_generator.py                        # Python 模組
+    │   │   │   │   └─report_generator.py                       # Python 模組
+    │   │   │   ├─reporting                                     # 報告生成
+    │   │   │   │   ├─__init__.py                               # 模組初始化
+    │   │   │   │   ├─formatter_exporter.py                     # Python 模組
+    │   │   │   │   ├─report_content_generator.py               # Python 模組
+    │   │   │   │   └─report_template_selector.py               # Python 模組
+    │   │   │   ├─security                                      # 安全模組
+    │   │   │   │   ├─__init__.py                               # 模組初始化
+    │   │   │   │   └─auth.py                                   # Python 模組
+    │   │   │   ├─threat_intel                                  # 威脅情報
+    │   │   │   │   ├─threat_intel                              # 威脅情報
+    │   │   │   │   │   ├─__init__.py                           # 模組初始化
+    │   │   │   │   │   ├─intel_aggregator.py                   # Python 模組
+    │   │   │   │   │   ├─ioc_enricher.py                       # Python 模組
+    │   │   │   │   │   └─mitre_mapper.py                       # Python 模組
+    │   │   │   │   └─__init__.py                               # 模組初始化
+    │   │   │   ├─__init__.py                                   # 模組初始化
+    │   │   │   ├─ai_operation_recorder.py                      # Python 模組
+    │   │   │   ├─app.py                                        # 應用程式入口
+    │   │   │   ├─integrated_ai_trainer.py                      # Python 模組
+    │   │   │   ├─settings.py                                   # 設定檔
+    │   │   │   ├─system_performance_monitor.py                 # Python 模組
+    │   │   │   └─trigger_ai_continuous_learning.py             # 學習模組
+    │   │   ├─alembic                                           # 資料庫遷移
+    │   │   │   ├─versions                                      # 版本管理
+    │   │   │   │   └─001_initial_schema.py                     # 初始資料庫遷移
+    │   │   │   └─env.py                                        # Python 模組
+    │   │   ├─api_gateway                                       # API 閘道
+    │   │   │   └─api_gateway                                   # API 閘道
+    │   │   │       └─app.py                                    # 應用程式入口
+    │   │   ├─capability
+    │   │   │   ├─adapters
+    │   │   │   │   ├─__init__.py                               # 模組初始化
+    │   │   │   │   └─hackingtool_adapter.py                    # Python 模組
+    │   │   │   ├─__init__.py                                   # 模組初始化
+    │   │   │   ├─bug_bounty_reporting.py                       # 報告生成
+    │   │   │   ├─cli.py                                        # Python 模組
+    │   │   │   ├─config.py                                     # 配置管理
+    │   │   │   ├─ddos_attack_tools_backup.py                   # 工具集
+    │   │   │   ├─ddos_attack_tools.py                          # 工具集
+    │   │   │   ├─demo_bounty_hunter.py                         # 示範程式
+    │   │   │   ├─demo_function_recon.py                        # 示範程式
+    │   │   │   ├─demo_sql_injection_tools.py                   # 工具集
+    │   │   │   ├─examples.py                                   # 範例程式
+    │   │   │   ├─forensic_tools.py                             # 工具集
+    │   │   │   ├─function_recon.py                             # Python 模組
+    │   │   │   ├─lifecycle_cli.py                              # Python 模組
+    │   │   │   ├─lifecycle.py                                  # Python 模組
+    │   │   │   ├─models.py                                     # 資料模型
+    │   │   │   ├─payload_generator.py                          # 攻擊載荷生成器
+    │   │   │   ├─registry.py                                   # Python 模組
+    │   │   │   ├─reverse_engineering_tools.py                  # 工具集
+    │   │   │   ├─sql_injection_bounty_hunter.py                # Python 模組
+    │   │   │   ├─sql_injection_tools.py                        # 工具集
+    │   │   │   ├─start_registry.py                             # Python 模組
+    │   │   │   ├─steganography_tools.py                        # 工具集
+    │   │   │   ├─task11_demo.py                                # 示範程式
+    │   │   │   ├─task9_demo.py                                 # 示範程式
+    │   │   │   ├─test_basic.py                                 # 測試程式
+    │   │   │   ├─test_function_recon.py                        # 測試程式
+    │   │   │   ├─test_lifecycle.py                             # 測試程式
+    │   │   │   ├─test_payload_generator.py                     # 攻擊載荷生成器
+    │   │   │   ├─test_sql_injection_tools.py                   # 工具集
+    │   │   │   ├─test_web_attack.py                            # 測試程式
+    │   │   │   ├─toolkit.py                                    # Python 模組
+    │   │   │   ├─web_attack.py                                 # Python 模組
+    │   │   │   ├─wireless_attack_tools_backup.py               # 工具集
+    │   │   │   ├─wireless_attack_tools.py                      # 工具集
+    │   │   │   └─xss_attack_tools.py                           # 工具集
+    │   │   ├─__init__.py                                       # 模組初始化
+    │   │   ├─models.py                                         # 資料模型
+    │   │   └─service_schemas.py                                # 資料結構定義
+    │   ├─scan
+    │   │   ├─aiva_scan                                         # AIVA 掃描模組
+    │   │   │   ├─core_crawling_engine                          # 核心爬蟲引擎
+    │   │   │   │   ├─__init__.py                               # 模組初始化
+    │   │   │   │   ├─http_client_hi.py                         # Python 模組
+    │   │   │   │   ├─static_content_parser.py                  # Python 模組
+    │   │   │   │   └─url_queue_manager.py                      # 管理器
+    │   │   │   ├─dynamic_engine                                # 動態引擎
+    │   │   │   │   ├─__init__.py                               # 模組初始化
+    │   │   │   │   ├─ajax_api_handler.py                       # 處理器
+    │   │   │   │   ├─dynamic_content_extractor.py              # Python 模組
+    │   │   │   │   ├─headless_browser_pool.py                  # Python 模組
+    │   │   │   │   └─js_interaction_simulator.py               # Python 模組
+    │   │   │   ├─examples                                      # 範例程式
+    │   │   │   │   ├─example_browser_pool.py                   # 範例程式
+    │   │   │   │   ├─example_extractor.py                      # 範例程式
+    │   │   │   │   └─example_usage.py                          # 範例程式
+    │   │   │   ├─info_gatherer                                 # 資訊收集器
+    │   │   │   │   ├─__init__.py                               # 模組初始化
+    │   │   │   │   ├─javascript_source_analyzer.py             # 分析器
+    │   │   │   │   ├─passive_fingerprinter.py                  # Python 模組
+    │   │   │   │   └─sensitive_info_detector.py                # 檢測器
+    │   │   │   ├─__init__.py                                   # 模組初始化
+    │   │   │   ├─authentication_manager.py                     # 管理器
+    │   │   │   ├─config_control_center.py                      # 配置
+    │   │   │   ├─fingerprint_manager.py                        # 管理器
+    │   │   │   ├─header_configuration.py                       # 配置
+    │   │   │   ├─javascript_analyzer.py                        # 分析器
+    │   │   │   ├─network_scanner.py                            # 網路模組
+    │   │   │   ├─optimized_security_scanner.py                 # 掃描器
+    │   │   │   ├─scan_context.py                               # Python 模組
+    │   │   │   ├─scan_orchestrator.py                          # Python 模組
+    │   │   │   ├─schemas.py                                    # 資料結構定義
+    │   │   │   ├─scope_manager.py                              # 管理器
+    │   │   │   ├─sensitive_data_scanner.py                     # 掃描器
+    │   │   │   ├─service_detector.py                           # 檢測器
+    │   │   │   ├─strategy_controller.py                        # 控制器
+    │   │   │   ├─target_environment_detector.py                # 檢測器
+    │   │   │   ├─vulnerability_scanner.py                      # 掃描器
+    │   │   │   └─worker.py                                     # 工作執行器
+    │   │   ├─aiva_scan_node                                    # AIVA Node.js 掃描模組
+    │   │   │   ├─src                                           # 原始碼
+    │   │   │   │   ├─interfaces                                # 介面定義
+    │   │   │   │   │   └─dynamic-scan.interfaces.ts            # 動態掃描介面
+    │   │   │   │   ├─services                                  # 服務模組
+    │   │   │   │   │   ├─enhanced-content-extractor.service.ts # 增強內容提取服務
+    │   │   │   │   │   ├─enhanced-dynamic-scan.service.ts      # 增強動態掃描服務
+    │   │   │   │   │   ├─interaction-simulator.service.ts      # 互動模擬服務
+    │   │   │   │   │   ├─network-interceptor.service.ts        # 網路攔截服務
+    │   │   │   │   │   └─scan-service.ts                       # 掃描服務
+    │   │   │   │   ├─utils                                     # 工具函數
+    │   │   │   │   │   └─logger.ts                             # 日誌記錄器
+    │   │   │   │   └─index.ts                                  # 入口檔案
+    │   │   │   ├─types                                         # 型別定義
+    │   │   │   │   └─playwright.d.ts                           # TypeScript 模組
+    │   │   │   └─phase-i-integration.service.ts                # 服務
+    │   │   ├─info_gatherer_rust                                # Rust 資訊收集器
+    │   │   │   ├─python_bridge
+    │   │   │   │   └─__init__.py                               # 模組初始化
+    │   │   │   ├─src                                           # 原始碼
+    │   │   │   │   ├─schemas                                   # 資料結構
+    │   │   │   │   │   ├─generated
+    │   │   │   │   │   │   └─mod.rs                            # Rust 模組
+    │   │   │   │   │   └─mod.rs                                # Rust 模組
+    │   │   │   │   ├─main.rs                                   # 主程式
+    │   │   │   │   ├─scanner.rs                                # 掃描器
+    │   │   │   │   ├─secret_detector.rs                        # 機密檢測器
+    │   │   │   │   └─verifier.rs                               # Rust 模組
+    │   │   │   └─test_verification.py                          # 測試程式
+    │   │   ├─__init__.py                                       # 模組初始化
+    │   │   ├─discovery_schemas.py                              # 資料結構定義
+    │   │   ├─models.py                                         # 資料模型
+    │   │   ├─sarif_converter.py                                # Python 模組
+    │   │   ├─schemas.py                                        # 資料結構定義
+    │   │   └─unified_scan_engine.py                            # 引擎
+    │   └─__init__.py                                           # 模組初始化
+    ├─temp_generated
+    │   ├─index.ts                                              # 入口檔案
+    │   ├─mod.rs                                                # Rust 模組
+    │   ├─schemas.go                                            # 資料結構
+    │   └─schemas.ts                                            # 資料結構
+    ├─testing
+    │   ├─common
+    │   │   ├─complete_system_check.py                          # Python 模組
+    │   │   └─improvements_check.py                             # Python 模組
+    │   ├─core
+    │   │   ├─ai_system_connectivity_check.py                   # Python 模組
+    │   │   ├─ai_working_check.py                               # Python 模組
+    │   │   └─enhanced_real_ai_attack_system.py                 # Python 模組
+    │   ├─features
+    │   │   └─real_attack_executor.py                           # Python 模組
+    │   ├─integration
+    │   │   ├─aiva_full_worker_live_test.py                     # 測試程式
+    │   │   ├─aiva_module_status_checker.py                     # Python 模組
+    │   │   ├─aiva_system_connectivity_sop_check.py             # Python 模組
+    │   │   └─comprehensive_integration_test_suite.py           # 測試程式
+    │   ├─scan
+    │   │   ├─comprehensive_test.py                             # 測試程式
+    │   │   └─juice_shop_real_attack_test.py                    # 測試程式
+    │   ├─__init__.py                                           # 模組初始化
+    │   └─p0_fixes_validation_test.py                           # 測試程式
+    ├─tests
+    │   └─test_attack_plan_mapper.py                            # 測試程式
+    ├─tools                                                     # 工具集
+    │   ├─common
+    │   │   ├─analysis                                          # 分析模組
+    │   │   │   ├─analyze_aiva_common_status.py                 # AIVA 共用模組
+    │   │   │   ├─analyze_core_modules.py                       # Python 模組
+    │   │   │   ├─analyze_cross_language_ai.py                  # Python 模組
+    │   │   │   ├─analyze_enums.py                              # 列舉定義
+    │   │   │   └─analyze_missing_schemas.py                    # 資料結構定義
+    │   │   ├─automation
+    │   │   │   └─check_script_functionality.py                 # Python 模組
+    │   │   ├─development
+    │   │   │   ├─analyze_codebase.py                           # Python 模組
+    │   │   │   ├─generate_complete_architecture.py             # Python 模組
+    │   │   │   ├─generate_mermaid_diagrams.py                  # Python 模組
+    │   │   │   └─py2mermaid.py                                 # Python 模組
+    │   │   ├─monitoring
+    │   │   ├─quality
+    │   │   │   ├─find_non_cp950_filtered.py                    # Python 模組
+    │   │   │   ├─markdown_check.py                             # Python 模組
+    │   │   │   ├─replace_emoji.py                              # Python 模組
+    │   │   │   └─replace_non_cp950.py                          # Python 模組
+    │   │   ├─schema
+    │   │   │   ├─schema_manager.py                             # 管理器
+    │   │   │   ├─schema_validator.py                           # Python 模組
+    │   │   │   └─unified_schema_manager.py                     # 管理器
+    │   │   ├─create_enums_structure.py                         # Python 模組
+    │   │   ├─diagnose_missing_enums.py                         # 列舉定義
+    │   │   ├─generate_programming_language_support.py          # Python 模組
+    │   │   ├─generate_typescript_interfaces.py                 # 型別定義
+    │   │   └─import_path_checker.py                            # Python 模組
+    │   ├─core
+    │   │   ├─comprehensive_migration_analysis.py               # 分析模組
+    │   │   ├─delete_migrated_files.py                          # Python 模組
+    │   │   └─verify_migration_completeness.py                  # Python 模組
+    │   ├─features
+    │   │   ├─mermaid_optimizer.py                              # Python 模組
+    │   │   └─remove_init_marks.py                              # Python 模組
+    │   ├─integration
+    │   │   ├─aiva-contracts-tooling
+    │   │   │   └─aiva-contracts-tooling
+    │   │   │       └─src                                       # 原始碼
+    │   │   │           ├─aiva_contracts_tooling
+    │   │   │           │   ├─__init__.py                       # 模組初始化
+    │   │   │           │   └─cli.py                            # Python 模組
+    │   │   │           └─aiva_contracts_tooling.egg-info
+    │   │   ├─aiva-enums-plugin
+    │   │   │   └─aiva-enums-plugin
+    │   │   │       ├─scripts
+    │   │   │       │   └─gen_ts_enums.py                       # 列舉定義
+    │   │   │       └─src                                       # 原始碼
+    │   │   │           ├─aiva_enums_plugin
+    │   │   │           │   └─__init__.py                       # 模組初始化
+    │   │   │           └─aiva_enums_plugin.egg-info
+    │   │   ├─aiva-go-plugin
+    │   │   │   └─aiva-go-plugin
+    │   │   ├─aiva-schemas-plugin                               # 資料結構
+    │   │   │   └─aiva-schemas-plugin                           # 資料結構
+    │   │   │       ├─scripts
+    │   │   │       │   ├─copy_into_plugin.py                   # Python 模組
+    │   │   │       │   └─refactor_imports_and_cleanup.py       # Python 模組
+    │   │   │       ├─src                                       # 原始碼
+    │   │   │       │   ├─aiva_schemas_plugin                   # 資料結構
+    │   │   │       │   │   └─__init__.py                       # 模組初始化
+    │   │   │       │   └─aiva_schemas_plugin.egg-info          # 資料結構
+    │   │   │       └─tests
+    │   │   │           └─test_import.py                        # 測試程式
+    │   │   ├─fix_all_schema_imports.py                         # Python 模組
+    │   │   ├─fix_field_validators.py                           # Python 模組
+    │   │   ├─fix_metadata_reserved.py                          # Python 模組
+    │   │   └─update_imports.py                                 # Python 模組
+    │   ├─scan
+    │   │   ├─apply_marks_to_tree.py                            # Python 模組
+    │   │   ├─extract_enhanced.py                               # Python 模組
+    │   │   ├─list_no_functionality_files.py                    # Python 模組
+    │   │   └─mark_nonfunctional_scripts.py                     # Python 模組
+    │   ├─aiva_cross_language_cli.py                            # Python 模組
+    │   ├─aiva_mcp_architecture_validator.py                    # Python 模組
+    │   ├─analyze_contract_coverage.py                          # RAG 檢索增強
+    │   ├─contract_coverage_booster.py                          # RAG 檢索增強
+    │   ├─contract_health_monitor.py                            # Python 模組
+    │   ├─queue_naming_validator.py                             # Python 模組
+    │   ├─schema_compliance_validator.py                        # Python 模組
+    │   ├─simple_ci_check.py                                    # Python 模組
+    │   └─validate_queue_naming_simplified.py                   # Python 模組
+    ├─utilities
+    │   ├─common
+    │   ├─core
+    │   ├─features
+    │   ├─integration
+    │   ├─scan
+    │   ├─__init__.py                                           # 模組初始化
+    │   └─optional_deps.py                                      # Python 模組
+    ├─web
+    │   ├─contracts
+    │   │   └─aiva-web-contracts.ts                             # TypeScript 模組
+    │   ├─js
+    │   │   └─aiva-dashboard.js                                 # JavaScript 模組
+    │   └─index.html                                            # 首頁
+    ├─check_schema_fix.py                                       # Python 模組
+    ├─contract_health_checker_standard.py                       # Python 模組
+    ├─fix_forward_refs.py                                       # Python 模組
+    ├─start_rich_cli.py                                         # Python 模組
+    ├─start_ui_auto.py                                          # Python 模組
+    ├─temp_contract_health_check.py                             # Python 模組
+    └─temp_ts_analyzer.js                                       # 分析器

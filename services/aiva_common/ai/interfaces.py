@@ -11,16 +11,18 @@ AIVA AI 介面定義 - 可插拔 AI 組件介面
 - 介面分離原則 (Interface Segregation)
 """
 
+from __future__ import annotations
 from abc import ABC, abstractmethod
-from typing import Any, AsyncContextManager
+from typing import Any, AsyncContextManager, TYPE_CHECKING
 
-from ..schemas import (
-    AttackPlan,
-    ExperienceSample,
-    PlanExecutionResult,
-    RAGQueryPayload,
-    RAGResponsePayload,
-)
+if TYPE_CHECKING:
+    from ..schemas import (
+        AttackPlan,
+        ExperienceSample,
+        PlanExecutionResult,
+        RAGQueryPayload,
+        RAGResponsePayload,
+    )
 
 # ============================================================================
 # Core AI Interfaces (核心 AI 介面)

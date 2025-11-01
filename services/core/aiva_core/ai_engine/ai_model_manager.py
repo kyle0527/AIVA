@@ -15,6 +15,7 @@ from ..learning.scalable_bio_trainer import (
     ScalableBioTrainingConfig,
 )
 from .bio_neuron_core import BioNeuronRAGAgent, ScalableBioNet
+from ...aiva_common.schemas import AttackPlan, AttackStep, ExperienceSample
 
 logger = logging.getLogger(__name__)
 

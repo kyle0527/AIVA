@@ -30,6 +30,7 @@ from rich.tree import Tree
 
 # 本地導入
 from ...core.base_capability import BaseCapability
+from ...aiva_common.schemas import APIResponse
 from ...core.registry import CapabilityRegistry
 
 console = Console()

@@ -29,6 +29,7 @@ from rich.table import Table
 # 本地導入
 from ...core.base_capability import BaseCapability
 from ...core.registry import CapabilityRegistry
+from ...aiva_common.schemas import APIResponse
 
 console = Console()
 logger = logging.getLogger(__name__)
@@ -597,12 +598,26 @@ class DDoSCapability(BaseCapability):
                 result = await self.manager.execute_attack('udp', target)
             elif command == "generate_report":
                 report = self.manager.generate_report()
-                return {"success": True, "data": {"report": report}}
+                response = APIResponse(
+                    success=True,
+                    message="DDoS attack report generated successfully",
+                    data={"report": report}
+                )
+                return response.model_dump()
             elif command == "show_statistics":
                 self.manager.show_attack_statistics()
-                return {"success": True, "message": "Statistics displayed"}
+                response = APIResponse(
+                    success=True,
+                    message="Attack statistics displayed successfully"
+                )
+                return response.model_dump()
             else:
-                return {"success": False, "error": f"Unknown command: {command}"}
+                response = APIResponse(
+                    success=False,
+                    message=f"Unknown command: {command}",
+                    errors=[f"Command '{command}' is not recognized"]
+                )
+                return response.model_dump()
             
             if result:
                 return {"success": True, "data": asdict(result)}

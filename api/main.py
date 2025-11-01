@@ -28,6 +28,7 @@ from config.settings import get_config
 from config.api_keys import get_api_key, has_api_key
 from services.features.high_value_manager import HighValueFeatureManager
 from services.features.base.result_schema import FeatureResult
+from services.aiva_common.schemas import APIResponse
 
 # 初始化配置
 config = get_config()
@@ -120,25 +121,33 @@ async def health_check():
                 os.environ["ALLOWLIST_DOMAINS"] = ",".join(allowlist_domains)
             high_value_manager = HighValueFeatureManager()
         except Exception as e:
-            return JSONResponse(
-                status_code=503,
-                content={
+            response = APIResponse(
+                success=False,
+                message=f"Failed to initialize high value manager: {str(e)}",
+                data={
                     "status": "unhealthy",
-                    "error": f"Failed to initialize high value manager: {str(e)}",
-                    "timestamp": datetime.utcnow().isoformat()
+                    "services": {}
                 }
             )
+            return JSONResponse(
+                status_code=503,
+                content=response.model_dump()
+            )
     
-    return {
-        "status": "healthy",
-        "timestamp": datetime.utcnow().isoformat(),
-        "services": {
-            "high_value_manager": "operational",
-            "api_gateway": "operational",
-            "authentication": "operational"
-        },
-        "active_scans": len(active_scans)
-    }
+    response = APIResponse(
+        success=True,
+        message="All services operational",
+        data={
+            "status": "healthy",
+            "services": {
+                "high_value_manager": "operational",
+                "api_gateway": "operational",
+                "authentication": "operational"
+            },
+            "active_scans": len(active_scans)
+        }
+    )
+    return response.model_dump()
 
 # === 認證端點 ===
 

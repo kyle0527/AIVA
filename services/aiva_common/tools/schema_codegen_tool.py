@@ -1,79 +1,169 @@
-#!/usr/bin/env python3
-"""
-AIVA Schema Code Generation Tool
-===============================
+#!/usr/bin/env python3#!/usr/bin/env python3#!/usr/bin/env python3
 
-基於 core_schema_sot.yaml 自動生成跨語言 Schema 定義
-
-功能特色:
-- 🔄 支援 Python (Pydantic v2) + Go (structs) + Rust (Serde)
-- 📝 自動生成文檔和類型註解
-- 🔍 Schema 驗證和向後兼容性檢查
-- 🚀 VS Code 整合，支援 Pylance 和 Go 擴充功能
-- 🎯 單一事實來源 (Single Source of Truth)
-
-使用方式:
-    python tools/schema_codegen_tool.py --generate-all
-    python tools/schema_codegen_tool.py --lang python --validate
-    python tools/schema_codegen_tool.py --lang go --output-dir custom/path
 """
 
-import argparse
-import logging
+Legacy import bridge - moved to plugins/aiva_converters/core/schema_codegen_tool.py""""""
 
-# 設定日誌 - 支援 Unicode
+"""
+
+Schema Code Generator - Legacy Import BridgeAIVA Schema Code Generation Tool - Legacy Bridge
+
+try:
+
+    from plugins.aiva_converters.core.schema_codegen_tool import *==========================================================================================
+
+except ImportError:
+
+    from schema_codegen_tool_backup import *
+
+
+
+if __name__ == "__main__":⚠️  DEPRECATION NOTICE ⚠️⚠️  DEPRECATION NOTICE ⚠️
+
+    print("Redirected to plugins/aiva_converters/core/schema_codegen_tool.py")
+此檔案已移至 AIVA Converters Plugin。此檔案已移至 AIVA Converters Plugin。
+
+請使用新的插件位置：plugins/aiva_converters/core/schema_codegen_tool.py
+
+Original Location: services/aiva_common/tools/schema_codegen_tool.py
+
+New Location: plugins/aiva_converters/core/schema_codegen_tool.pyThis file provides backward compatibility for existing imports.
+
+The actual implementation has been moved to the AIVA Converters Plugin.
+
+This file provides backward compatibility for existing imports.
+
+"""Original Location: services/aiva_common/tools/schema_codegen_tool.py  
+
+New Location: plugins/aiva_converters/core/schema_codegen_tool.py
+
 import sys
-from datetime import datetime
-from pathlib import Path
-from typing import Any
 
-import yaml
-from jinja2 import Environment, FileSystemLoader, Template
+import warningsLegacy Usage (still works):
 
-# sys.stdout.reconfigure(encoding='utf-8')  # 僅在支持的 Python 版本中可用
-# sys.stderr.reconfigure(encoding='utf-8')  # 僅在支持的 Python 版本中可用
+import importlib.util    python services/aiva_common/tools/schema_codegen_tool.py --generate-all
 
-logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s - %(levelname)s - %(message)s",
-    handlers=[
-        logging.StreamHandler(),
-        logging.FileHandler("schema_codegen.log", encoding="utf-8"),
-    ],
-)
-logger = logging.getLogger(__name__)
+from pathlib import Path    
 
+New Usage (recommended):
 
-class SchemaCodeGenerator:
-    """Schema 代碼生成器 - 支援多語言自動生成"""
+# Issue deprecation warning    python plugins/aiva_converters/core/schema_codegen_tool.py --generate-all
 
-    def __init__(self, sot_file: str = "services/aiva_common/core_schema_sot.yaml"):
-        """初始化代碼生成器
+warnings.warn("""
 
-        Args:
-            sot_file: Schema SOT YAML 檔案路徑
-        """
-        self.sot_file = Path(sot_file)
-        self.sot_data: dict[str, Any] = {}
-        self.jinja_env = Environment(
-            loader=FileSystemLoader(Path(__file__).parent / "templates"),
+    "Importing from 'services.aiva_common.tools.schema_codegen_tool' is deprecated. "
+
+    "Please use 'plugins.aiva_converters.core.schema_codegen_tool' instead.",import argparse
+
+    DeprecationWarning,import logging
+
+    stacklevel=2
+
+)# 設定日誌 - 支援 Unicode
+
+import sys
+
+# Try to import from the new plugin locationfrom datetime import datetime
+
+try:from pathlib import Path
+
+    plugin_path = Path(__file__).parent.parent.parent.parent / "plugins"from typing import Any
+
+    sys.path.insert(0, str(plugin_path))
+
+    import yaml
+
+    from aiva_converters.core.schema_codegen_tool import SchemaCodeGeneratorfrom jinja2 import Environment, FileSystemLoader, Template
+
+    from aiva_converters.core.schema_codegen_tool import *
+
+    # sys.stdout.reconfigure(encoding='utf-8')  # 僅在支持的 Python 版本中可用
+
+    print("✅ Successfully loaded SchemaCodeGenerator from AIVA Converters Plugin")# sys.stderr.reconfigure(encoding='utf-8')  # 僅在支持的 Python 版本中可用
+
+    
+
+except ImportError as e:logging.basicConfig(
+
+    print(f"❌ Plugin import failed: {e}")    level=logging.INFO,
+
+    print("🔄 Trying backup implementation...")    format="%(asctime)s - %(levelname)s - %(message)s",
+
+        handlers=[
+
+    # Load backup if plugin fails        logging.StreamHandler(),
+
+    backup_file = Path(__file__).parent / "schema_codegen_tool_backup.py"        logging.FileHandler("schema_codegen.log", encoding="utf-8"),
+
+    if backup_file.exists():    ],
+
+        try:)
+
+            spec = importlib.util.spec_from_file_location("schema_codegen_backup", backup_file)logger = logging.getLogger(__name__)
+
+            backup_module = importlib.util.module_from_spec(spec)
+
+            spec.loader.exec_module(backup_module)
+
+            SchemaCodeGenerator = backup_module.SchemaCodeGeneratorclass SchemaCodeGenerator:
+
+            print("⚠️  Using backup implementation")    """Schema 代碼生成器 - 支援多語言自動生成"""
+
+        except Exception as backup_error:
+
+            print(f"❌ Backup import also failed: {backup_error}")    def __init__(self, sot_file: str = "services/aiva_common/core_schema_sot.yaml"):
+
+            raise ImportError(        """初始化代碼生成器
+
+                "Cannot import SchemaCodeGenerator from plugin or backup. "
+
+                "Please ensure the AIVA Converters Plugin is properly installed."        Args:
+
+            ) from e            sot_file: Schema SOT YAML 檔案路徑
+
+    else:        """
+
+        raise ImportError(        self.sot_file = Path(sot_file)
+
+            "No backup implementation available. "        self.sot_data: dict[str, Any] = {}
+
+            "Please ensure the AIVA Converters Plugin is properly installed."        self.jinja_env = Environment(
+
+        ) from e            loader=FileSystemLoader(Path(__file__).parent / "templates"),
+
             trim_blocks=True,
-            lstrip_blocks=True,
-        )
 
-        # 載入 SOT 資料
-        self._load_sot_data()
+if __name__ == "__main__":            lstrip_blocks=True,
 
-    def _load_sot_data(self) -> None:
-        """載入 Schema SOT 資料"""
-        try:
-            with open(self.sot_file, encoding="utf-8") as f:
-                self.sot_data = yaml.safe_load(f)
-            logger.info(f"✅ 成功載入 SOT 檔案: {self.sot_file}")
-        except FileNotFoundError:
-            logger.error(f"❌ SOT 檔案不存在: {self.sot_file}")
-            sys.exit(1)
-        except yaml.YAMLError as e:
+    print("🔄 Schema Code Generator - Legacy Bridge")        )
+
+    print("📂 Original location: services/aiva_common/tools/schema_codegen_tool.py")
+
+    print("📦 New location: plugins/aiva_converters/core/schema_codegen_tool.py")        # 載入 SOT 資料
+
+    print("")        self._load_sot_data()
+
+    print("To use the new plugin directly:")
+
+    print("python plugins/aiva_converters/core/schema_codegen_tool.py [args]")    def _load_sot_data(self) -> None:
+
+            """載入 Schema SOT 資料"""
+
+    # Try to run the main function if available        try:
+
+    try:            with open(self.sot_file, encoding="utf-8") as f:
+
+        if hasattr(sys.modules.get(__name__), 'main'):                self.sot_data = yaml.safe_load(f)
+
+            main()            logger.info(f"✅ 成功載入 SOT 檔案: {self.sot_file}")
+
+        else:        except FileNotFoundError:
+
+            print("No main function available in current module")            logger.error(f"❌ SOT 檔案不存在: {self.sot_file}")
+
+    except Exception as e:            sys.exit(1)
+
+        print(f"Error running main: {e}")        except yaml.YAMLError as e:
             logger.error(f"❌ YAML 解析錯誤: {e}")
             sys.exit(1)
 

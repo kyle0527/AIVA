@@ -1,0 +1,27 @@
+{
+  "email_enabled": true,
+  "slack_enabled": false,
+  "webhook_url": null,
+  "email_recipients": ["aiva-dev@example.com"],
+  "smtp_server": "smtp.example.com",
+  "smtp_port": 587,
+  "smtp_username": "monitor@example.com",
+  "smtp_password": "${SMTP_PASSWORD}",
+  "monitoring_interval": 3600,
+  "thresholds": {
+    "coverage_warning": 0.15,
+    "coverage_critical": 0.10,
+    "error_warning": 5,
+    "error_critical": 20,
+    "performance_warning": 0.7,
+    "performance_critical": 0.5
+  },
+  "database": {
+    "path": "logs/contract_metrics.db",
+    "retention_days": 30
+  },
+  "alerts": {
+    "cooldown_hours": 1,
+    "max_per_hour": 5
+  }
+}

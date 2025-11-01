@@ -11,13 +11,21 @@
 
 ```
 guides/
-├── README.md                    # 📋 本索引文件
-├── development/                 # 🛠️ 開發相關指南
-├── architecture/                # 🏗️ 架構設計指南  
-├── modules/                     # ⚙️ 模組專業指南
-├── deployment/                  # 🚀 部署運維指南
-└── troubleshooting/            # 🔧 疑難排解指南
+├── README.md                    # 📋 本索引文件 (Contract-Integrated)
+├── AIVA_CONTRACT_ARCHITECTURE_INTEGRATION_REPORT.md  # 🎯 契約架構整合報告
+├── development/                 # 🛠️ 開發相關指南 (Contract-First Development)
+├── architecture/                # 🏗️ 架構設計指南 (Contract-Driven Architecture Hub)
+├── modules/                     # ⚙️ 模組專業指南 (Module-Specific Contract Implementation)
+├── deployment/                  # 🚀 部署運維指南 (Contract-Aware Deployment)
+└── troubleshooting/            # 🔧 疑難排解指南 (Contract System Problem Resolution)
 ```
+
+### 📊 **Contract System Health Status**
+- **Overall Contract Completion**: 58.3% (Target: 75% by Q2 2025)
+- **Performance Advantage**: 6.7x faster than Protocol Buffers (8,536 vs 1,280 ops/s)
+- **Cross-Language Integration**: Operational without converters
+- **Database Health**: 0% (Critical improvement area)
+- **Schema Definitions**: 100% (Excellent foundation)
 
 ---
 
@@ -27,8 +35,17 @@ guides/
 
 | 文檔名稱 | 路徑 | 適用對象 | 完整度 |
 |---------|------|----------|--------|
+| **AIVA 契約架構整合報告** | [`AIVA_CONTRACT_ARCHITECTURE_INTEGRATION_REPORT.md`](AIVA_CONTRACT_ARCHITECTURE_INTEGRATION_REPORT.md) | 🎯 架構師、核心開發者、性能工程師 | ✅ **最新整合** |
+| **AIVA 合約開發指南** | [`AIVA_合約開發指南.md`](AIVA_合約開發指南.md) | 🛠️ 合約開發者、跨語言工程師 | ✅ 完整 (63KB) |
 | **AIVA 綜合技術手冊** | [`../reports/documentation/AIVA_COMPREHENSIVE_GUIDE.md`](../reports/documentation/AIVA_COMPREHENSIVE_GUIDE.md) | 🎯 AI工程師、系統架構師、核心開發者 | ✅ 完整 |
 | **開發者指南** | [`../reports/documentation/DEVELOPER_GUIDE.md`](../reports/documentation/DEVELOPER_GUIDE.md) | 🛠️ 開發者、貢獻者、新手入門 | ✅ 完整 |
+
+### 🔗 **契約系統工具** (實用工具)
+
+| 工具名稱 | 路徑 | 功能 | 用途 |
+|---------|------|------|------|
+| **性能基準測試** | [`../aiva_performance_comparison.py`](../aiva_performance_comparison.py) | 驗證AIVA 6.7x性能優勢 | 架構決策驗證 |
+| **合約完成度分析** | [`../analyze_contract_completion.py`](../analyze_contract_completion.py) | 追蹤58.3%完成度狀態 | 系統健康監控 |
 
 ### 🛠️ **開發相關指南** (`development/`)
 

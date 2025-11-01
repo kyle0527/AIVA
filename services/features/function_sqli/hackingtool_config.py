@@ -14,6 +14,7 @@ import shutil
 from pathlib import Path
 
 from services.aiva_common.enums import ProgrammingLanguage, Severity, Confidence
+from services.aiva_common.schemas import APIResponse
 from services.integration.capability.models import CapabilityRecord, CapabilityType, CapabilityStatus
 
 
@@ -400,18 +401,32 @@ class HackingToolSQLIntegrator:
                 timeout=config.timeout_seconds
             )
             
-            return {
-                "success": result.returncode == 0,
-                "stdout": result.stdout,
-                "stderr": result.stderr,
-                "returncode": result.returncode,
-                "command": cmd
-            }
+            response = APIResponse(
+                success=result.returncode == 0,
+                message=f"SQL tool executed {'successfully' if result.returncode == 0 else 'with errors'}",
+                data={
+                    "stdout": result.stdout,
+                    "stderr": result.stderr,
+                    "returncode": result.returncode,
+                    "command": cmd
+                }
+            )
+            return response.model_dump()
             
         except subprocess.TimeoutExpired:
-            return {"success": False, "error": f"Execution timeout after {config.timeout_seconds}s"}
+            response = APIResponse(
+                success=False,
+                message=f"Execution timeout after {config.timeout_seconds}s",
+                errors=[f"Command timed out after {config.timeout_seconds} seconds"]
+            )
+            return response.model_dump()
         except Exception as e:
-            return {"success": False, "error": str(e)}
+            response = APIResponse(
+                success=False,
+                message="SQL tool execution failed",
+                errors=[str(e)]
+            )
+            return response.model_dump()
 
 
 # 全域整合器實例
