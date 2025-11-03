@@ -249,7 +249,7 @@ class ModuleName(str, Enum):
 
 class Topic(str, Enum):
     # Scan Topics
-    SCAN_START = "tasks.scan.start"  # 別名，向後兼容
+    # SCAN_START 別名已於 2024-12-19 移除，統一使用 TASK_SCAN_START
     TASK_SCAN_START = "tasks.scan.start"
     RESULTS_SCAN_COMPLETED = "results.scan.completed"
 

@@ -242,17 +242,12 @@ class DataType(Enum):
     REFERENCE = "REFERENCE"  # 參考數據
 
 
-class DataFormat(Enum):
-    """研究數據格式"""
+# DataFormat 已移除重複定義，統一使用 services.aiva_common.enums.common.DataFormat
+# 原 academic.py 中的 DataFormat 於 2024-12-19 移除，避免與 common.DataFormat 衝突
+# 如需學術研究專用格式，請使用 AcademicDataFormat 或繼承 common.DataFormat
 
-    CSV = "CSV"
-    JSON = "JSON"
-    XML = "XML"
-    RDF_XML = "RDF_XML"
-    TURTLE = "TURTLE"
-    N3 = "N3"
-    HDF5 = "HDF5"
-    NETCDF = "NETCDF"
+
+class ResearchMethodology(Enum):
     FITS = "FITS"  # Flexible Image Transport System
     DICOM = "DICOM"  # Digital Imaging and Communications in Medicine
     TIFF = "TIFF"

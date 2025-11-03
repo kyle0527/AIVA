@@ -1,50 +1,27 @@
-#!/usr/bin/env python3# coding=utf-8
+# coding=utf-8
+import os
+import sys
 
-"""import os
-
-Forensic Tools 重定向模組import sys
-
-原 services/features/forensic_tools.py 於 2024-12-19 移動到歸檔目錄
-
-統一使用 services/integration/capability/forensic_tools.py (AIVA標準實現)# Fetching parent directory for importing core.py
-
+# Fetching parent directory for importing core.py
 current_dir = os.path.dirname(__file__)
+parent_dir = os.path.dirname(current_dir)
+sys.path.append(parent_dir)
 
-此文件提供向後相容性重定向parent_dir = os.path.dirname(current_dir)
+from core import HackingTool
+from core import HackingToolsCollection
 
-"""sys.path.append(parent_dir)
+from rich.console import Console
+from rich.panel import Panel
+from rich.text import Text
+from rich.table import Table
+from rich.prompt import Prompt
 
-
-
-import warningsfrom core import HackingTool
-
-from services.integration.capability.forensic_tools import *from core import HackingToolsCollection
-
-
-
-# 發出棄用警告from rich.console import Console
-
-warnings.warn(from rich.panel import Panel
-
-    "services.features.forensic_tools 已被棄用。"from rich.text import Text
-
-    "請使用 services.integration.capability.forensic_tools",from rich.table import Table
-
-    DeprecationWarning,from rich.prompt import Prompt
-
-    stacklevel=2
-
-)console = Console()
-
+console = Console()
 PURPLE_STYLE = "bold magenta"
 
-__all__ = [
 
-    # 重新導出所有來自新模組的符號
-
-    # 具體符號列表需要根據實際使用情況調整class Autopsy(HackingTool):
-
-]    TITLE = "Autopsy"
+class Autopsy(HackingTool):
+    TITLE = "Autopsy"
     DESCRIPTION = "Autopsy is a platform that is used by Cyber Investigators.\n" \
                   "[!] Works in any OS\n" \
                   "[!] Recover Deleted Files from any OS & Media \n" \

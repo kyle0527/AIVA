@@ -437,15 +437,9 @@ class RiskCategory(Enum):
     MARKET = "MARKET"  # 市場風險
 
 
-class RiskLevel(Enum):
-    """風險級別"""
-
-    VERY_LOW = "VERY_LOW"  # 1
-    LOW = "LOW"  # 2
-    MEDIUM = "MEDIUM"  # 3
-    HIGH = "HIGH"  # 4
-    VERY_HIGH = "VERY_HIGH"  # 5
-    CRITICAL = "CRITICAL"  # 6
+# RiskLevel 已移除重複定義，統一使用 services.aiva_common.enums.common.RiskLevel
+# 原 business.py 中的 RiskLevel 於 2024-12-19 移除，避免與 common.py 衝突
+# 如需業務專用風險等級，請使用 BusinessRiskRating 或繼承 common.RiskLevel
 
 
 class RiskStatus(Enum):

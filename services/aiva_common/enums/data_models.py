@@ -21,29 +21,9 @@ from enum import Enum
 # 數據格式和序列化
 # ============================================================================
 
-
-class DataFormat(str, Enum):
-    """數據格式"""
-
-    JSON = "json"
-    XML = "xml"
-    YAML = "yaml"
-    CSV = "csv"
-    TSV = "tsv"
-    PARQUET = "parquet"
-    AVRO = "avro"
-    PROTOBUF = "protobuf"
-    MESSAGEPACK = "messagepack"
-    BSON = "bson"
-    TOML = "toml"
-    INI = "ini"
-    PROPERTIES = "properties"
-    HDF5 = "hdf5"
-    PICKLE = "pickle"
-    ARROW = "arrow"
-    ORC = "orc"
-    JSONL = "jsonl"  # JSON Lines
-    NDJSON = "ndjson"  # Newline Delimited JSON
+# DataFormat 已移除重複定義，統一使用 services.aiva_common.enums.common.DataFormat
+# 原 data_models.py 中的 DataFormat 於 2024-12-19 移除，避免重複定義
+# 如需檔案格式名稱，請使用 common.DataFormat 或創建 FileExtension 枚舉
 
 
 class SerializationFormat(str, Enum):
@@ -61,18 +41,9 @@ class SerializationFormat(str, Enum):
     SNAPPY_COMPRESSED = "snappy_compressed"
 
 
-class EncodingType(str, Enum):
-    """編碼類型"""
-
-    UTF8 = "utf-8"
-    UTF16 = "utf-16"
-    UTF32 = "utf-32"
-    ASCII = "ascii"
-    LATIN1 = "latin-1"
-    ISO_8859_1 = "iso-8859-1"
-    WINDOWS_1252 = "windows-1252"
-    BIG5 = "big5"
-    GBK = "gbk"
+# EncodingType 已移除重複定義，統一使用 services.aiva_common.enums.common.EncodingType
+# 原 data_models.py 中的 EncodingType 於 2024-12-19 移除，避免與 common.EncodingType 衝突
+# 如需字符編碼相關功能，請使用 common.EncodingType (包含官方標準註釋)
     SHIFT_JIS = "shift_jis"
     EUC_JP = "euc-jp"
     KOI8_R = "koi8-r"

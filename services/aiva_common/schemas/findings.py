@@ -55,18 +55,12 @@ class Vulnerability(BaseModel):
     )
 
 
-class Target(BaseModel):
-    """目標資訊 - 漏洞所在位置"""
-
-    url: Any  # Accept arbitrary URL-like values
-    parameter: str | None = None
-    method: str | None = None
-    headers: dict[str, str] = Field(default_factory=dict)
-    params: dict[str, Any] = Field(default_factory=dict)
-    body: str | None = None
-
+# Target 模型已移除重複定義，統一使用 services.aiva_common.schemas.security.findings.Target
+# 原 findings.py 中的 Target 於 2024-12-19 移除，避免與 security/findings.py 衝突
+# 請使用: from services.aiva_common.schemas.security.findings import Target
 
 # 保持向後相容的別名
+from .security.findings import Target
 FindingTarget = Target
 
 
