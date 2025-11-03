@@ -82,39 +82,27 @@ class VulnerabilityCategory(Enum):
         self.emoji = emoji
 
 
-@dataclass
-class VulnerabilityFinding:
-    """漏洞發現記錄"""
-    id: str
-    title: str
-    severity: VulnerabilitySeverity
-    category: VulnerabilityCategory
-    target_url: str
-    description: str
-    impact: str
-    reproduction_steps: List[str]
+# VulnerabilityFinding 已移除重複定義，統一使用 aiva_common.schemas.vulnerability_finding
+# 原 bug_bounty_reporting.py 中的 VulnerabilityFinding 於 2024-12-19 移除
+# 請使用: from services.aiva_common.schemas.vulnerability_finding import VulnerabilityFinding
+
+from services.aiva_common.schemas.vulnerability_finding import VulnerabilityFinding
+
+
+@dataclass 
+class BugBountyExtendedFinding:
+    """Bug Bounty 專用的擴展發現模型"""
+    base_finding: VulnerabilityFinding
     poc_code: Optional[str] = None
     screenshot_paths: Optional[List[str]] = None
     discovered_by_tool: str = ""
-    discovery_time: str = ""
     cvss_score: float = 0.0
     estimated_bounty: str = ""
     status: str = "New"  # New, Reported, Accepted, Duplicate, N/A
     
     def __post_init__(self):
-        if not self.discovery_time:
-            self.discovery_time = datetime.now().isoformat()
-        if not self.id:
-            self.id = self._generate_id()
-        if not self.estimated_bounty:
-            self.estimated_bounty = self.severity.bounty_range
         if self.screenshot_paths is None:
             self.screenshot_paths = []
-    
-    def _generate_id(self) -> str:
-        """生成唯一ID"""
-        content = f"{self.title}{self.target_url}{self.discovery_time}"
-        return hashlib.md5(content.encode()).hexdigest()[:8].upper()
 
 
 class BugBountyReportGenerator:

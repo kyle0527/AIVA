@@ -910,41 +910,11 @@ class APISecurityTest(BaseModel):
     created_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
 
 
-class APIVulnerabilityFinding(BaseModel):
-    """API 漏洞發現結果"""
+# APIVulnerabilityFinding 已移除重複定義，統一使用 aiva_common.schemas.vulnerability_finding
+# 原 api_standards.py 中的 APIVulnerabilityFinding 於 2024-12-19 移除
+# 請使用: from services.aiva_common.schemas.vulnerability_finding import APIVulnerabilityFinding
 
-    finding_id: str = Field(description="發現唯一標識符")
-    test_id: str = Field(description="關聯測試 ID")
-
-    # 漏洞資訊
-    vulnerability_type: str = Field(description="漏洞類型")
-    severity: str = Field(description="嚴重程度")
-    confidence: int = Field(ge=0, le=100, description="置信度")
-
-    # 位置資訊
-    endpoint: str = Field(description="漏洞端點")
-    method: str = Field(description="HTTP 方法")
-    parameter: str | None = Field(default=None, description="參數名稱")
-    location: str = Field(description="漏洞位置")
-
-    # 測試資訊
-    payload: str = Field(description="測試負載")
-    response: str = Field(description="伺服器回應")
-    request_details: dict[str, Any] = Field(description="請求詳細資訊")
-
-    # HackerOne 相關
-    estimated_bounty: int = Field(description="預估獎金（美元）")
-    bounty_category: str = Field(description="獎金類別")
-    success_probability: float = Field(ge=0.0, le=1.0, description="成功概率")
-
-    # 報告資訊
-    title: str = Field(description="漏洞標題")
-    description: str = Field(description="漏洞描述")
-    impact: str = Field(description="影響分析")
-    reproduction_steps: list[str] = Field(description="重現步驟")
-    mitigation: str = Field(description="緩解建議")
-
-    discovered_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
+from services.aiva_common.schemas.vulnerability_finding import APIVulnerabilityFinding
 
 
 # 前向引用解決

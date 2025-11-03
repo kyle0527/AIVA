@@ -24,25 +24,7 @@ AIVA Common Schemas Package - Domain-Driven Design (DDD) Architecture
 """
 
 # ==================== 核心基礎設施 ====================
-from ._base import (
-    APIResponse,
-    MessageHeader,
-    Authentication,
-    RateLimit,
-    ScanScope,
-    Asset,
-    Summary,
-    Fingerprints,
-    ExecutionError,
-    RiskFactor,
-    Task,
-    TaskDependency,
-    AivaMessage,
-    AIVARequest,
-    AIVAResponse,
-    AIVAEvent,
-    AIVACommand,
-)
+# 注意：_base/common.py 已移除重複，統一使用 base.py 中的定義
 
 # ==================== 分析引擎領域 ====================
 from .analysis import (
@@ -231,19 +213,29 @@ from .async_utils import (
 )
 
 # ==================== 基礎模型 ====================
+# ==================== 核心基礎設施（統一來源）====================
 from .base import (
     APIResponse,
-    Asset,
-    Authentication,
-    ExecutionError,
-    Fingerprints,
     MessageHeader,
+    Authentication,
     RateLimit,
-    RiskFactor,
     ScanScope,
+    Asset,
     Summary,
+    Fingerprints,
+    ExecutionError,
+    RiskFactor,
     Task,
     TaskDependency,
+)
+
+# ==================== 訊息處理 ====================
+from .messaging import (
+    AivaMessage,
+    AIVARequest,
+    AIVAResponse,
+    AIVAEvent,
+    AIVACommand,
 )
 
 # ==================== 能力管理 ====================

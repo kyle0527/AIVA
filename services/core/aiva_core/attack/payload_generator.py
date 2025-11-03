@@ -12,8 +12,8 @@ import urllib.parse
 logger = logging.getLogger(__name__)
 
 
-class EncodingType(str, Enum):
-    """編碼類型"""
+class PayloadEncodingType(str, Enum):
+    """有效載荷編碼類型 - 與 aiva_common.enums.EncodingType (字符編碼) 區分"""
 
     NONE = "none"
     URL = "url"
@@ -71,7 +71,7 @@ class PayloadGenerator:
         self,
         vuln_type: str,
         target_info: dict[str, Any],
-        encoding: EncodingType = EncodingType.NONE,
+        encoding: PayloadEncodingType = PayloadEncodingType.NONE,
         custom_params: dict[str, Any] | None = None,
     ) -> list[str]:
         """生成 Payload
@@ -108,7 +108,7 @@ class PayloadGenerator:
                 payload = template.format(**params)
 
                 # 應用編碼
-                if encoding != EncodingType.NONE:
+                if encoding != PayloadEncodingType.NONE:
                     payload = self._encode_payload(payload, encoding)
 
                 payloads.append(payload)
@@ -123,15 +123,15 @@ class PayloadGenerator:
 
         return payloads
 
-    def _encode_payload(self, payload: str, encoding: EncodingType) -> str:
+    def _encode_payload(self, payload: str, encoding: PayloadEncodingType) -> str:
         """編碼 Payload"""
-        if encoding == EncodingType.URL:
+        if encoding == PayloadEncodingType.URL:
             return urllib.parse.quote(payload)
 
-        elif encoding == EncodingType.BASE64:
+        elif encoding == PayloadEncodingType.BASE64:
             return base64.b64encode(payload.encode()).decode()
 
-        elif encoding == EncodingType.HTML:
+        elif encoding == PayloadEncodingType.HTML:
             return (
                 payload.replace("&", "&amp;")
                 .replace("<", "&lt;")
@@ -140,10 +140,10 @@ class PayloadGenerator:
                 .replace("'", "&#x27;")
             )
 
-        elif encoding == EncodingType.UNICODE:
+        elif encoding == PayloadEncodingType.UNICODE:
             return "".join(f"\\u{ord(c):04x}" for c in payload)
 
-        elif encoding == EncodingType.DOUBLE_URL:
+        elif encoding == PayloadEncodingType.DOUBLE_URL:
             return urllib.parse.quote(urllib.parse.quote(payload))
 
         return payload

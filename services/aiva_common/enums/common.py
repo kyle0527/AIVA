@@ -89,14 +89,25 @@ class ThreatLevel(str, Enum):
     UNKNOWN = "unknown"
 
 
-class RiskLevel(str, Enum):
-    """風險等級 - 用於風險評估"""
+class VulnerabilityRiskLevel(str, Enum):
+    """漏洞風險等級 - 用於整體風險評估和攻擊路徑分析
+    
+    與 Severity 的區別：
+    - Severity: 單個漏洞的嚴重程度 (技術層面)
+    - VulnerabilityRiskLevel: 整體業務風險等級 (業務層面)
+    
+    遵循 AIVA Common 開發規範 - 明確語義區分原則
+    """
 
     CRITICAL = "critical"
-    HIGH = "high"
+    HIGH = "high"  
     MEDIUM = "medium"
     LOW = "low"
     INFO = "info"
+
+
+# 向後相容別名，將於下一版本移除
+RiskLevel = VulnerabilityRiskLevel
 
 
 # ============================================================================

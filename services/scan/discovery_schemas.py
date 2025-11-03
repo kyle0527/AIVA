@@ -17,22 +17,18 @@ from services.aiva_common.schemas import (
     CWEReference,
     FindingEvidence,
     FindingImpact, 
-    FindingRecommendation
+    FindingRecommendation,
+    ScanScope,  # 導入權威定義
+    Asset,      # 導入權威定義
+    Fingerprints  # 導入權威定義
 )
 from pydantic import BaseModel, Field, HttpUrl, field_validator
 
 # ==================== 掃描請求和結果 ====================
 
 
-class ScanScope(BaseModel):
-    """掃描範圍定義"""
-
-    included_hosts: list[str] = Field(default_factory=list, description="包含的主機")
-    excluded_hosts: list[str] = Field(default_factory=list, description="排除的主機")
-    included_paths: list[str] = Field(default_factory=list, description="包含的路徑")
-    excluded_paths: list[str] = Field(default_factory=list, description="排除的路徑")
-    max_depth: int = Field(default=5, ge=1, le=20, description="最大掃描深度")
-
+# ScanScope 重複定義已移除 - 統一使用 aiva_common.schemas.base.ScanScope
+# 如需使用請導入: from services.aiva_common.schemas import ScanScope
 
 class ScanRequest(BaseModel):
     """掃描請求"""
@@ -68,15 +64,8 @@ class ScanRequest(BaseModel):
         return v
 
 
-class Asset(BaseModel):
-    """資產信息"""
-
-    url: str = Field(description="資產URL")
-    asset_type: AssetType = Field(description="資產類型")
-    title: str | None = Field(default=None, description="頁面標題")
-    status_code: int = Field(description="HTTP狀態碼")
-    content_type: str | None = Field(default=None, description="內容類型")
-    content_length: int | None = Field(default=None, description="內容長度")
+# Asset 重複定義已移除 - 統一使用 aiva_common.schemas.base.Asset
+# 如需使用請導入: from services.aiva_common.schemas import Asset
 
 
 class TechStackInfo(BaseModel):
@@ -100,13 +89,8 @@ class ServiceInfo(BaseModel):
     is_ssl: bool = Field(default=False, description="是否使用SSL")
 
 
-class Fingerprints(BaseModel):
-    """指紋信息集合"""
-
-    tech_stack: list[TechStackInfo] = Field(default_factory=list, description="技術棧")
-    services: list[ServiceInfo] = Field(default_factory=list, description="服務列表")
-    headers: dict[str, str] = Field(default_factory=dict, description="HTTP標頭")
-    cookies: dict[str, str] = Field(default_factory=dict, description="Cookie信息")
+# Fingerprints 重複定義已移除 - 統一使用 aiva_common.schemas.base.Fingerprints
+# 如需使用請導入: from services.aiva_common.schemas import Fingerprints
 
 
 class AssetInventory(BaseModel):
@@ -150,47 +134,11 @@ class TargetInfo(BaseModel):
     effort_estimate: str | None = Field(default=None, description="修復工作量估計")
 
 
-class VulnerabilityFinding(BaseModel):
-    """漏洞發現 - 掃描模組的核心數據結構"""
+# VulnerabilityFinding 已移除重複定義，統一使用 aiva_common.schemas.vulnerability_finding
+# 原 discovery_schemas.py 中的 VulnerabilityFinding 於 2024-12-19 移除
+# 請使用: from services.aiva_common.schemas.vulnerability_finding import VulnerabilityFinding
 
-    finding_id: str = Field(description="發現ID", pattern=r"^finding_[a-zA-Z0-9_]+$")
-    scan_id: str = Field(description="關聯的掃描ID")
-
-    # 漏洞基本信息
-    name: str = Field(description="漏洞名稱")
-    description: str = Field(description="漏洞描述")
-    severity: Severity = Field(description="嚴重程度")
-    confidence: Confidence = Field(description="置信度")
-
-    # 目標和證據
-    target: TargetInfo = Field(description="目標信息")
-    evidence: FindingEvidence | None = Field(default=None, description="漏洞證據")
-    impact: FindingImpact | None = Field(default=None, description="影響評估")
-    recommendation: FindingRecommendation | None = Field(default=None, description="修復建議")
-
-    # 標準化引用
-    cve: CVEReference | None = Field(default=None, description="CVE引用")
-    cwe: CWEReference | None = Field(default=None, description="CWE引用")
-    cvss: CVSSv3Metrics | None = Field(default=None, description="CVSS評分")
-
-    # 分類和標籤
-    category: str | None = Field(default=None, description="漏洞分類")
-    tags: list[str] = Field(default_factory=list, description="標籤")
-    owasp_category: str | None = Field(default=None, description="OWASP分類")
-
-    # 時間戳
-    discovered_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
-    verified_at: datetime | None = Field(default=None, description="驗證時間")
-
-    # 元數據
-    metadata: dict[str, Any] = Field(default_factory=dict, description="額外元數據")
-
-    @field_validator("finding_id")
-    @classmethod
-    def validate_finding_id(cls, v: str) -> str:
-        if not v.startswith("finding_"):
-            raise ValueError("finding_id must start with 'finding_'")
-        return v
+from services.aiva_common.schemas.vulnerability_finding import VulnerabilityFinding
 
 
 class ScopeDefinition(BaseModel):
@@ -224,18 +172,20 @@ class ScopeDefinition(BaseModel):
 
 
 __all__ = [
-    "ScanScope",
+    # 業務特定類（非重複）
     "ScanRequest",
-    "Asset",
-    "TechStackInfo",
+    "TechStackInfo", 
     "ServiceInfo",
-    "Fingerprints",
     "AssetInventory",
     "ScanResult",
-    "TargetInfo",
-    "FindingEvidence",
-    "FindingImpact",
-    "FindingRecommendation",
-    "VulnerabilityFinding",
+    "TargetInfo", 
     "ScopeDefinition",
+    # 權威定義重新導出
+    "ScanScope",          # 來自 aiva_common.schemas
+    "Asset",              # 來自 aiva_common.schemas  
+    "Fingerprints",       # 來自 aiva_common.schemas
+    "FindingEvidence",    # 來自 aiva_common.schemas
+    "FindingImpact",      # 來自 aiva_common.schemas
+    "FindingRecommendation",  # 來自 aiva_common.schemas
+    "VulnerabilityFinding",   # 來自 aiva_common.schemas
 ]

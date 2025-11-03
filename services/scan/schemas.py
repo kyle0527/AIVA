@@ -13,13 +13,10 @@
 from pydantic import BaseModel, Field
 from typing import Optional, Dict, Any, List
 
-# 已棄用：請使用 services.aiva_common.schemas.Target
-class Target(BaseModel):
-    url: str
-    meta: Optional[Dict[str, Any]] = None
+# 重複定義已移除 - 請使用權威來源
+# Target: from services.aiva_common.schemas.security.findings import Target
+# ScanContext: from services.scan.models import ScanConfiguration
 
-# 已棄用：請使用 services.scan.models 中的配置類
-class ScanContext(BaseModel):
-    targets: List[Target] = []
-    depth: int = Field(2)
-    options: Optional[Dict[str, Any]] = None
+from services.aiva_common.schemas.security.findings import Target
+# 為保持向後相容性提供別名
+DeprecatedTarget = Target

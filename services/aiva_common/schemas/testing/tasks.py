@@ -21,7 +21,7 @@ from ...enums import (
     ThreatLevel,
     VulnerabilityType,
 )
-from .._base.common import Asset, Authentication, Fingerprints, RateLimit, ScanScope, Summary
+from ..base import Asset, Authentication, Fingerprints, RateLimit, ScanScope, Summary
 
 # ==================== 掃描任務 ====================
 

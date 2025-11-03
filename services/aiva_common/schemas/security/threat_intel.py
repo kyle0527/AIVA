@@ -16,7 +16,7 @@ from uuid import uuid4
 from pydantic import BaseModel, Field, field_validator
 
 from ...enums.security import AttackTactic, AttackTechnique, IntelSource, IOCType
-from .._base.common import MessageHeader
+from ..base import MessageHeader
 
 # ==================== STIX 基礎類型 ====================
 

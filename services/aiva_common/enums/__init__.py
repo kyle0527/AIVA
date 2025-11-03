@@ -21,7 +21,7 @@ from .academic import (  # 學術研究領域; 學術出版和同行評議; 知�
     ConferenceRank,
     ConferenceType,
     ConsentType,
-    DataFormat,
+    # DataFormat 已統一到 common.py 避免重複
     DataType,
     EthicsApprovalStatus,
     FundingType,
@@ -139,7 +139,7 @@ from .business import (  # 業務流程和工作流; 客戶關係管理; 銷售�
     QualityMetric,
     QualityStandard,
     RiskCategory,
-    RiskLevel,
+    # RiskLevel 已統一到 common.py 避免重複
     RiskStatus,
     SalesStage,
     ServiceLevel,
@@ -185,11 +185,11 @@ from .data_models import (  # 數據格式; JSON Schema; 數據庫模型; API �
     CompressionType,
     ConsistencyLevel,
     ConstraintType,
-    DataFormat,
+    # DataFormat 已統一到 common.py 避免重複
     DataQualityDimension,
     DataType,
     DeliveryMode,
-    EncodingType,
+    # EncodingType 已統一到 common.py 避免重複
     ErrorSeverity,
     EventType,
     FileFormat,
