@@ -124,14 +124,14 @@ class AIVADuplicationFixTool:
         
         return fixes
     
-    async def _merge_risk_level_enums(self) -> Optional[Dict]:
+    def _merge_risk_level_enums(self) -> Optional[Dict]:
         """合併 RiskLevel 枚舉定義"""
         try:
             common_path = self.base_path / "services/aiva_common/enums/common.py"
             business_path = self.base_path / "services/aiva_common/enums/business.py"
             
             if not common_path.exists() or not business_path.exists():
-                self.logger.warning(f"⚠️  枚舉檔案不存在，跳過 RiskLevel 修復")
+                self.logger.warning("⚠️  枚舉檔案不存在，跳過 RiskLevel 修復")
                 return None
             
             if self.dry_run:
@@ -157,7 +157,7 @@ class AIVADuplicationFixTool:
             self.logger.error(f"❌ RiskLevel 枚舉修復失敗: {e}")
             return None
     
-    async def _rename_data_format_enums(self) -> Optional[Dict]:
+    def _rename_data_format_enums(self) -> Optional[Dict]:
         """重命名 DataFormat 枚舉以區分用途"""
         try:
             if self.dry_run:
@@ -182,7 +182,7 @@ class AIVADuplicationFixTool:
             self.logger.error(f"❌ DataFormat 枚舉修復失敗: {e}")
             return None
     
-    async def _merge_encoding_type_enums(self) -> Optional[Dict]:
+    def _merge_encoding_type_enums(self) -> Optional[Dict]:
         """合併 EncodingType 枚舉定義"""
         try:
             if self.dry_run:
@@ -225,11 +225,9 @@ class AIVADuplicationFixTool:
         
         return fixes
     
-    async def _fix_target_model_duplication(self) -> Optional[Dict]:
+    def _fix_target_model_duplication(self) -> Optional[Dict]:
         """修復 Target 模型重複定義"""
-        try:
-            scan_schemas_path = self.base_path / "services/scan/schemas.py"
-            
+        try:            
             if self.dry_run:
                 self.logger.info("🔍 [試運行] 將移除掃描模組中廢棄的 Target 定義")
                 return {
@@ -252,7 +250,7 @@ class AIVADuplicationFixTool:
             self.logger.error(f"❌ Target 模型修復失敗: {e}")
             return None
     
-    async def _fix_finding_model_duplication(self) -> Optional[Dict]:
+    def _fix_finding_model_duplication(self) -> Optional[Dict]:
         """修復 Finding 模型重複定義"""
         try:
             if self.dry_run:
@@ -345,7 +343,7 @@ class AIVADuplicationFixTool:
                 trace_id=f"verify_error_{int(time.time())}"
             )
     
-    async def _verify_imports(self) -> Dict:
+    def _verify_imports(self) -> Dict:
         """驗證導入測試"""
         try:
             # 測試關鍵模組導入
@@ -382,7 +380,7 @@ class AIVADuplicationFixTool:
                 "error": str(e)
             }
     
-    async def _verify_schema_consistency(self) -> Dict:
+    def _verify_schema_consistency(self) -> Dict:
         """驗證 Schema 一致性"""
         try:
             # 這裡可以調用現有的 schema_compliance_validator.py
@@ -400,7 +398,7 @@ class AIVADuplicationFixTool:
                 "error": str(e)
             }
     
-    async def _verify_system_health(self) -> Dict:
+    def _verify_system_health(self) -> Dict:
         """驗證系統健康狀態"""
         try:
             # 這裡可以調用現有的 health_check.py
@@ -419,9 +417,9 @@ class AIVADuplicationFixTool:
             }
 
 
-async def main():
-    """主執行函數"""
-    parser = argparse.ArgumentParser(
+def _create_argument_parser() -> argparse.ArgumentParser:
+    """創建命令行參數解析器"""
+    return argparse.ArgumentParser(
         description="AIVA 重複定義問題自動化修復工具",
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
@@ -437,7 +435,10 @@ async def main():
   階段四: 完整驗證與文檔更新 (開發中)
         """
     )
-    
+
+
+def _add_command_arguments(parser: argparse.ArgumentParser) -> None:
+    """添加命令行參數"""
     parser.add_argument(
         "--phase", 
         type=int, 
@@ -459,81 +460,98 @@ async def main():
         action="store_true",
         help="詳細輸出模式"
     )
+
+
+def _setup_logging(verbose: bool) -> None:
+    """設置日誌級別"""
+    if verbose:
+        logging.getLogger().setLevel(logging.DEBUG)
+
+
+async def _handle_verification(tool: 'AIVADuplicationFixTool') -> None:
+    """處理驗證命令"""
+    print("🔍 開始驗證修復結果...")
+    result = await tool.verify_fixes()
     
+    print(f"\n📊 驗證結果: {result.message}")
+    if result.success:
+        print("✅ 所有驗證測試通過！")
+        data = result.data or {}
+        for test_type, test_result in data.items():
+            status = "通過" if (isinstance(test_result, dict) and test_result.get("success")) else "失敗"
+            icon = "✅" if status == "通過" else "❌"
+            print(f"  {icon} {test_type}: {status}")
+    else:
+        print("❌ 驗證發現問題：")
+        for error in result.errors or []:
+            print(f"  - {error}")
+        exit(1)
+
+
+async def _handle_phase_1(tool: 'AIVADuplicationFixTool', dry_run: bool) -> None:
+    """處理階段一修復"""
+    print("🚀 開始執行階段一修復...")
+    print("📋 階段一內容：枚舉重複定義修復 + 核心模型統一")
+    
+    if dry_run:
+        print("🔍 試運行模式：將顯示修復計劃但不實際修改檔案")
+    
+    result = await tool.execute_phase_1_fixes()
+    
+    print(f"\n📊 修復結果: {result.message}")
+    if result.success:
+        print("✅ 階段一修復成功完成！")
+        
+        data = result.data or {}
+        total_fixes = data.get("total_fixes", 0)
+        fixes_by_type = data.get("fixes_by_type", {})
+        
+        print("\n📈 修復統計:")
+        print(f"  總修復項目: {total_fixes}")
+        for fix_type, count in fixes_by_type.items():
+            print(f"  {fix_type}: {count} 項")
+        
+        if not dry_run:
+            print("\n🎯 下一步建議:")
+            print("  1. 執行驗證: python scripts/analysis/duplication_fix_tool.py --verify")
+            print("  2. 運行健康檢查: python scripts/utilities/health_check.py")
+            print("  3. 提交變更: git add . && git commit -m '🔧 Phase 1 duplicate definitions fix'")
+        
+    else:
+        print("❌ 階段一修復失敗：")
+        for error in result.errors or []:
+            print(f"  - {error}")
+        exit(1)
+
+
+def _show_help_message(parser: argparse.ArgumentParser) -> None:
+    """顯示幫助訊息"""
+    print("❓ 請指定執行動作:")
+    print("  --phase 1   執行階段一修復")
+    print("  --verify    驗證修復結果")  
+    print("  --help      顯示完整說明")
+    parser.print_help()
+
+
+async def main():
+    """主執行函數"""
+    parser = _create_argument_parser()
+    _add_command_arguments(parser)
     args = parser.parse_args()
     
-    # 設置日誌級別
-    if args.verbose:
-        logging.getLogger().setLevel(logging.DEBUG)
-    
-    # 創建修復工具實例
+    _setup_logging(args.verbose)
     tool = AIVADuplicationFixTool(dry_run=args.dry_run)
     
     try:
         if args.verify:
-            print("🔍 開始驗證修復結果...")
-            result = await tool.verify_fixes()
-            
-            print(f"\n📊 驗證結果: {result.message}")
-            if result.success:
-                print("✅ 所有驗證測試通過！")
-                data = result.data or {}
-                for test_type, test_result in data.items():
-                    if isinstance(test_result, dict) and test_result.get("success"):
-                        print(f"  ✅ {test_type}: 通過")
-                    else:
-                        print(f"  ❌ {test_type}: 失敗")
-            else:
-                print("❌ 驗證發現問題：")
-                for error in result.errors or []:
-                    print(f"  - {error}")
-                exit(1)
-                
+            await _handle_verification(tool)
         elif args.phase == 1:
-            print("🚀 開始執行階段一修復...")
-            print("📋 階段一內容：枚舉重複定義修復 + 核心模型統一")
-            
-            if args.dry_run:
-                print("🔍 試運行模式：將顯示修復計劃但不實際修改檔案")
-            
-            result = await tool.execute_phase_1_fixes()
-            
-            print(f"\n📊 修復結果: {result.message}")
-            if result.success:
-                print("✅ 階段一修復成功完成！")
-                
-                # 顯示修復詳情
-                data = result.data or {}
-                total_fixes = data.get("total_fixes", 0)
-                fixes_by_type = data.get("fixes_by_type", {})
-                
-                print(f"\n📈 修復統計:")
-                print(f"  總修復項目: {total_fixes}")
-                for fix_type, count in fixes_by_type.items():
-                    print(f"  {fix_type}: {count} 項")
-                
-                if not args.dry_run:
-                    print("\n🎯 下一步建議:")
-                    print("  1. 執行驗證: python scripts/analysis/duplication_fix_tool.py --verify")
-                    print("  2. 運行健康檢查: python scripts/utilities/health_check.py")
-                    print("  3. 提交變更: git add . && git commit -m '🔧 Phase 1 duplicate definitions fix'")
-                
-            else:
-                print("❌ 階段一修復失敗：")
-                for error in result.errors or []:
-                    print(f"  - {error}")
-                exit(1)
-                
+            await _handle_phase_1(tool, args.dry_run)
         elif args.phase and args.phase > 1:
             print(f"⚠️  階段 {args.phase} 尚未實現，目前支援階段一")
             print("請使用 --phase 1 執行階段一修復")
-            
         else:
-            print("❓ 請指定執行動作:")
-            print("  --phase 1   執行階段一修復")
-            print("  --verify    驗證修復結果")  
-            print("  --help      顯示完整說明")
-            parser.print_help()
+            _show_help_message(parser)
             
     except KeyboardInterrupt:
         print("\n⚠️  用戶中斷執行")

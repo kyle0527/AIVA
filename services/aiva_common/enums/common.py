@@ -4,6 +4,9 @@
 
 from enum import Enum
 
+# 常用 MIME 類型常量
+HTML_MIME_TYPE = "text/html"
+
 
 class Severity(str, Enum):
     CRITICAL = "critical"
@@ -455,7 +458,7 @@ class ContentType(str, Enum):
 
     JSON = "application/json"
     XML = "application/xml"
-    HTML = "text/html"
+    HTML = HTML_MIME_TYPE
     PLAIN_TEXT = "text/plain"
     CSV = "text/csv"
     YAML = "application/yaml"
@@ -757,7 +760,7 @@ class DataFormat(str, Enum):
     XML = "application/xml"  # RFC 7303 官方標準
     YAML = "application/yaml"  # IANA 註冊的官方 MIME type
     CSV = "text/csv"  # RFC 4180 官方標準
-    HTML = "text/html"  # RFC 2854 官方標準
+    HTML = HTML_MIME_TYPE  # RFC 2854 官方標準
     PLAIN_TEXT = "text/plain"  # RFC 2046 官方標準
 
     # 專業格式（使用官方定義的擴展）
@@ -776,7 +779,7 @@ class EncodingType(str, Enum):
     # 傳輸編碼 (HTTP 標準)
     BASE64 = "base64"  # RFC 4648
     URL_ENCODED = "application/x-www-form-urlencoded"  # HTML 4.01
-    HTML_ENCODED = "text/html"  # RFC 2854
+    HTML_ENCODED = HTML_MIME_TYPE  # RFC 2854
 
 
 # ==================== 網路協議相關枚舉 ====================

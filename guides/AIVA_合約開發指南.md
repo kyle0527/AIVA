@@ -991,19 +991,93 @@ class DeveloperEngagementProgram:
 - [ ] 通過所有自動化檢查
 - [ ] 更新相關文檔
 
-## 🔍 代碼審查標準
+## �️ 程式碼品質要求
+
+> **重要**: 所有合約代碼必須符合 AIVA 企業級品質標準
+
+### 🎯 認知複雜度標準
+- **函數複雜度上限**: ≤15 (SonarQube 標準)
+- **重構觸發點**: 複雜度 >10 建議重構
+- **強制重構點**: 複雜度 >15 必須重構
+
+#### 複雜度控制策略
+```python
+# ✅ 正確示例：使用 Extract Method 降低複雜度
+def process_finding(data: dict) -> FindingPayload:
+    """主處理函數保持簡潔"""
+    validated_data = _validate_input_data(data)
+    processed_data = _apply_business_rules(validated_data)
+    return _create_finding_payload(processed_data)
+
+def _validate_input_data(data: dict) -> dict:
+    """輔助函數：專注單一職責"""
+    # 驗證邏輯
+    
+def _apply_business_rules(data: dict) -> dict:
+    """輔助函數：專注業務邏輯"""
+    # 業務規則處理
+```
+
+### 🔧 SonarQube 合規性
+- **錯誤級別**: 0 個錯誤 (強制要求)
+- **警告控制**: 儘量減少，記錄合理原因
+- **程式碼異味**: 積極修復
+
+#### 常見品質問題避免
+```python
+# ❌ 避免：字符串常量重複使用
+def process_data(data):
+    if data.type == "optional":  # 重複字符串
+        return f"Optional[{data.name}]"  # 重複字符串
+    
+# ✅ 正確：提取字符串常量
+OPTIONAL_PREFIX = "optional"
+OPTIONAL_TEMPLATE = "Optional[{}]"
+
+def process_data(data):
+    if data.type == OPTIONAL_PREFIX:
+        return OPTIONAL_TEMPLATE.format(data.name)
+```
+
+### 📊 品質檢查工具
+- **主要工具**: SonarQube + Pylance
+- **檢查頻率**: 每次提交前
+- **自動化**: CI/CD 整合
+
+#### 推薦檢查命令
+```bash
+# SonarQube 本地檢查
+python -m sonarqube_analyze_file <file_path>
+
+# Pylance 語法檢查  
+python -m py_compile <file_path>
+
+# 複雜度檢查 (使用 radon)
+radon cc <file_path> -s
+```
+
+### 🏆 品質里程碑參考
+> 基於 AIVA v5.1 品質保證成果
+
+- **重構成功案例**: 7 個核心函數從 15+ 複雜度降至 ≤15
+- **工具穩定性**: Schema 代碼生成工具品質提升
+- **維護性提升**: 45+ 輔助函數提取，職責明確分離
+
+## �🔍 代碼審查標準
 
 合約提交將根據以下標準進行審查：
-- 技術正確性和最佳實踐遵循
-- 文檔完整性和清晰度
-- 與現有系統的兼容性
-- 性能影響評估
-- 安全性考慮
+- **程式碼品質**: 符合認知複雜度和 SonarQube 標準
+- **技術正確性**: 最佳實踐遵循和架構一致性  
+- **文檔完整性**: 清晰的技術文檔和使用範例
+- **系統兼容性**: 與現有統一通信架構的兼容性
+- **性能考量**: 性能影響評估和優化建議
+- **安全性**: 安全性考慮和風險評估
 ```
 
 ---
 
 **指南維護**: AIVA 架構團隊  
-**最後更新**: 2025-11-01  
-**版本**: 2.0.0  
-**適用範圍**: 全項目開發團隊
+**最後更新**: 2025-11-03  
+**版本**: 2.1.0 (新增程式碼品質標準)  
+**適用範圍**: 全項目開發團隊  
+**品質基準**: 基於 v5.1 認知複雜度修復成果

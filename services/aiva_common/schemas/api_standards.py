@@ -15,6 +15,10 @@ from datetime import UTC, datetime
 from enum import Enum
 from typing import Any, Literal, Optional, Union
 
+# 常用描述字串常量
+DEPRECATED_DESCRIPTION = "是否已棄用"
+SERVER_LIST_DESCRIPTION = "伺服器列表"
+
 from pydantic import BaseModel, Field, HttpUrl
 
 from ..enums.web_api_standards import (
@@ -147,7 +151,7 @@ class OpenAPISchema(BaseModel):
     description: str | None = Field(default=None, description="描述")
     default: Any | None = Field(default=None, description="預設值")
     examples: list[Any] | None = Field(default=None, description="範例值")
-    deprecated: bool | None = Field(default=None, description="是否已棄用")
+    deprecated: bool | None = Field(default=None, description=DEPRECATED_DESCRIPTION)
     read_only: bool | None = Field(default=None, description="是否唯讀")
     write_only: bool | None = Field(default=None, description="是否唯寫")
 
@@ -193,7 +197,7 @@ class OpenAPIParameter(BaseModel):
     in_: OpenAPIParameterLocation = Field(alias="in", description="參數位置")
     description: str | None = Field(default=None, description="參數描述")
     required: bool | None = Field(default=None, description="是否必需")
-    deprecated: bool | None = Field(default=None, description="是否已棄用")
+    deprecated: bool | None = Field(default=None, description=DEPRECATED_DESCRIPTION)
     allow_empty_value: bool | None = Field(default=None, description="是否允許空值")
 
     # Parameter Serialization
@@ -316,12 +320,12 @@ class OpenAPIOperation(BaseModel):
     callbacks: dict[str, Union["OpenAPICallback", "OpenAPIReference"]] | None = (
         Field(default=None, description="回調")
     )
-    deprecated: bool | None = Field(default=None, description="是否已棄用")
+    deprecated: bool | None = Field(default=None, description=DEPRECATED_DESCRIPTION)
     security: list[dict[str, list[str]]] | None = Field(
         default=None, description="安全需求"
     )
     servers: list[OpenAPIServer] | None = Field(
-        default=None, description="伺服器列表"
+        default=None, description=SERVER_LIST_DESCRIPTION
     )
 
 
@@ -348,7 +352,7 @@ class OpenAPIPathItem(BaseModel):
     patch: OpenAPIOperation | None = Field(default=None, description="PATCH 操作")
     trace: OpenAPIOperation | None = Field(default=None, description="TRACE 操作")
     servers: list[OpenAPIServer] | None = Field(
-        default=None, description="伺服器列表"
+        default=None, description=SERVER_LIST_DESCRIPTION
     )
     parameters: list[Union["OpenAPIParameter", "OpenAPIReference"]] | None = Field(
         default=None, description="參數列表"
@@ -450,7 +454,7 @@ class OpenAPIDocument(BaseModel):
         default=None, description="JSON Schema 方言"
     )
     servers: list["OpenAPIServer"] | None = Field(
-        default=None, description="伺服器列表"
+        default=None, description=SERVER_LIST_DESCRIPTION
     )
     paths: dict[str, "OpenAPIPathItem"] | None = Field(
         default=None, description="路徑對應"
@@ -814,7 +818,7 @@ class GraphQLFieldDefinition(BaseModel):
         default_factory=list, description="參數定義"
     )
     type: "GraphQLTypeReference" = Field(description="欄位類型")
-    is_deprecated: bool = Field(default=False, description="是否已棄用")
+    is_deprecated: bool = Field(default=False, description=DEPRECATED_DESCRIPTION)
     deprecation_reason: str | None = Field(default=None, description="棄用原因")
 
 
@@ -832,7 +836,7 @@ class GraphQLEnumValueDefinition(BaseModel):
 
     name: str = Field(description="枚舉值名稱")
     description: str | None = Field(default=None, description="枚舉值描述")
-    is_deprecated: bool = Field(default=False, description="是否已棄用")
+    is_deprecated: bool = Field(default=False, description=DEPRECATED_DESCRIPTION)
     deprecation_reason: str | None = Field(default=None, description="棄用原因")
 
 

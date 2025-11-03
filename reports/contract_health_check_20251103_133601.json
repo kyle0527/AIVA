@@ -1,0 +1,22 @@
+{
+  "timestamp": "2025-11-03T13:36:01.828894",
+  "summary": {
+    "total_tests": 1,
+    "passed_tests": 0,
+    "failed_tests": 1,
+    "health_percentage": 0.0
+  },
+  "test_results": {
+    "contract_imports": {
+      "status": "FAIL",
+      "data": {
+        "error": "cannot import name 'AttackPlan' from 'services.aiva_common.schemas' (C:\\D\\fold7\\AIVA-git\\services\\aiva_common\\schemas\\__init__.py)"
+      }
+    }
+  },
+  "recommendations": [
+    "❌ 合約系統需要重大修復",
+    "🛠️ 建議：暫停擴張計劃，專注修復現有問題",
+    "🚨 優先修復核心合約的健康問題"
+  ]
+}

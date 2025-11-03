@@ -9,6 +9,7 @@
 
 package schemas
 import "time"
+import "encoding/json"
 
 // ==================== 枚舉類型 ====================
 
@@ -463,7 +464,7 @@ type AsyncTaskConfig struct {
 type AsyncTaskResult struct {
     TaskID               string                    `json:"task_id"`  // 任務ID
     TaskName             string                    `json:"task_name"`  // 任務名稱
-    Status               AsyncTaskStatus           `json:"status"`  // 任務狀態
+    Status               string                    `json:"status"`  // 任務狀態
     Result               map[string]interface{}    `json:"result,omitempty"`  // 執行結果
     ErrorMessage         *string                   `json:"error_message,omitempty"`  // 錯誤信息
     ExecutionTimeMs      float64                   `json:"execution_time_ms"`  // 執行時間(毫秒)
@@ -507,7 +508,7 @@ type PluginManifest struct {
     Version              string                    `json:"version"`  // 插件版本
     Author               string                    `json:"author"`  // 插件作者
     Description          string                    `json:"description"`  // 插件描述
-    PluginType           PluginType                `json:"plugin_type"`  // 插件類型
+    PluginType           string                    `json:"plugin_type"`  // 插件類型
     Dependencies         []string                  `json:"dependencies,omitempty"`  // 依賴插件列表
     Permissions          []string                  `json:"permissions,omitempty"`  // 所需權限列表
     ConfigSchema         map[string]interface{}    `json:"config_schema,omitempty"`  // 配置 Schema
@@ -583,7 +584,7 @@ type PluginRegistry struct {
 // PluginHealthCheck 插件健康檢查
 type PluginHealthCheck struct {
     PluginID             string                    `json:"plugin_id"`  // 插件ID
-    Status               PluginStatus              `json:"status"`  // 插件狀態
+    Status               string                    `json:"status"`  // 插件狀態
     LastCheckTime        time.Time                 `json:"last_check_time"`  // 最後檢查時間
     ResponseTimeMs       *float64                  `json:"response_time_ms,omitempty"`  // 響應時間(毫秒)
     ErrorMessage         *string                   `json:"error_message,omitempty"`  // 錯誤信息

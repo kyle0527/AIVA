@@ -11,28 +11,45 @@ metadata:
   total_schemas: 72
 base_types:
   MessageHeader:
-    description: 訊息標頭 - 用於所有訊息的統一標頭格式
+    description: 訊息標頭 - V2統一架構增強版，支援分散式追蹤與路由
     fields:
       message_id:
         type: str
         required: true
-        description: ''
+        description: 唯一訊息識別碼（UUID格式）
       trace_id:
         type: str
         required: true
-        description: ''
+        description: 分散式追蹤識別碼（用於跨服務追蹤）
       correlation_id:
         type: Optional[str]
         required: false
-        description: ''
+        description: 關聯識別碼（用於請求響應配對）
       source_module:
         type: str
         required: true
-        description: '來源模組名稱'
+        description: 來源模組名稱（發送者識別）
+      target_module:
+        type: Optional[str]
+        required: false
+        description: 目標模組名稱（接收者識別）
       timestamp:
         type: datetime
+        required: true
+        description: 訊息創建時間戳（ISO 8601格式）
+      version:
+        type: str
+        required: true
+        default: '1.1'
+        description: 訊息格式版本（V2統一架構）
+      session_id:
+        type: Optional[str]
         required: false
-        description: ''
+        description: 會話識別碼（用於會話相關訊息群組）
+      user_context:
+        type: Optional[str]
+        required: false
+        description: 使用者上下文（用於權限與審計）
       version:
         type: str
         required: false
@@ -581,7 +598,7 @@ base_types:
         description: ''
 messaging:
   AivaMessage:
-    description: AIVA統一訊息格式 - 所有跨服務通訊的標準信封
+    description: AIVA統一訊息格式 - 所有跨服務通訊的標準信封 - V2增強版
     fields:
       header:
         type: MessageHeader
@@ -590,23 +607,70 @@ messaging:
       topic:
         type: str
         required: true
-        description: 訊息主題
+        description: 訊息主題（枚舉化Topic管理）
         validation:
           enum:
-          - tasks
-          - findings
-          - events
-          - commands
-          - responses
+          - tasks.scan.start
+          - tasks.function.start
+          - tasks.ai.training.start
+          - results.scan.completed
+          - results.function.completed
+          - findings.detected
+          - events.ai.experience.created
+          - commands.task.cancel
+          - responses.task.status
       schema_version:
         type: str
         required: true
-        default: '1.0'
-        description: Schema版本
+        default: '1.1'
+        description: Schema版本（V2統一架構）
+      source_module:
+        type: str
+        required: true
+        description: 來源模組識別（發送者）
+      target_module:
+        type: Optional[str]
+        required: false
+        description: 目標模組識別（接收者，廣播時可為空）
+      trace_id:
+        type: str
+        required: true
+        description: 分散式追蹤識別碼
+      correlation_id:
+        type: Optional[str]
+        required: false
+        description: 關聯識別碼（用於請求響應配對）
+      routing_strategy:
+        type: str
+        required: true
+        default: 'broadcast'
+        description: 路由策略
+        validation:
+          enum:
+          - broadcast
+          - direct
+          - fanout
+          - round_robin
+      priority:
+        type: int
+        required: true
+        default: 5
+        description: 訊息優先級（1-10，10最高）
+        validation:
+          min: 1
+          max: 10
+      ttl_seconds:
+        type: Optional[int]
+        required: false
+        description: 訊息存活時間（秒）
       payload:
         type: Dict[str, Any]
         required: true
         description: 訊息載荷
+      metadata:
+        type: Optional[Dict[str, Any]]
+        required: false
+        description: 額外中繼資料
   AIVARequest:
     description: 統一請求格式 - 模組間請求通訊
     fields:

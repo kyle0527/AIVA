@@ -1,17 +1,19 @@
 // AIVA Rust Schema - 自動生成
 // 版本: 1.1.0
 // 生成時間: N/A
-//
-// 完整的 Rust Schema 實現，包含序列化/反序列化支持
 // 
-// 注意：這些結構體為 future-proof 設計而保留，支援跨語言 schema 一致性
-// 許多結構體暫時未使用，但為維護與 Python/Go 的 SOT 一致性而保留
+// 完整的 Rust Schema 實現，包含序列化/反序列化支持
 
-#![allow(dead_code)] // Generated schemas for future-proof design
-
-use serde::{Deserialize, Serialize};
+use serde::{Serialize, Deserialize};
+use std::collections::HashMap;
+use chrono::{DateTime, Utc};
 
 // 可選依賴 - 根據實際使用情況啟用
+#[cfg(feature = "uuid")]
+use uuid::Uuid;
+
+#[cfg(feature = "url")]
+use url::Url;
 
 /// 漏洞嚴重程度枚舉
 #[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
@@ -43,7 +45,7 @@ impl std::fmt::Display for Severity {
 
 impl std::str::FromStr for Severity {
     type Err = String;
-
+    
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         match s.to_uppercase().as_str() {
             "CRITICAL" => Ok(Severity::CRITICAL),
@@ -80,7 +82,7 @@ impl std::fmt::Display for Confidence {
 
 impl std::str::FromStr for Confidence {
     type Err = String;
-
+    
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         match s.to_uppercase().as_str() {
             "CONFIRMED" => Ok(Confidence::CONFIRMED),
@@ -102,7 +104,7 @@ pub enum FindingStatus {
     /// 已解決
     RESOLVED,
     /// 誤報
-    FalsePositive,
+    FALSE_POSITIVE,
 }
 
 impl std::fmt::Display for FindingStatus {
@@ -111,20 +113,20 @@ impl std::fmt::Display for FindingStatus {
             FindingStatus::NEW => write!(f, "new"),
             FindingStatus::CONFIRMED => write!(f, "confirmed"),
             FindingStatus::RESOLVED => write!(f, "resolved"),
-            FindingStatus::FalsePositive => write!(f, "false_positive"),
+            FindingStatus::FALSE_POSITIVE => write!(f, "false_positive"),
         }
     }
 }
 
 impl std::str::FromStr for FindingStatus {
     type Err = String;
-
+    
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         match s.to_uppercase().as_str() {
             "NEW" => Ok(FindingStatus::NEW),
             "CONFIRMED" => Ok(FindingStatus::CONFIRMED),
             "RESOLVED" => Ok(FindingStatus::RESOLVED),
-            "FALSE_POSITIVE" => Ok(FindingStatus::FalsePositive),
+            "FALSE_POSITIVE" => Ok(FindingStatus::FALSE_POSITIVE),
             _ => Err(format!("Invalid FindingStatus: {}", s)),
         }
     }
@@ -166,7 +168,7 @@ impl std::fmt::Display for AsyncTaskStatus {
 
 impl std::str::FromStr for AsyncTaskStatus {
     type Err = String;
-
+    
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         match s.to_uppercase().as_str() {
             "PENDING" => Ok(AsyncTaskStatus::PENDING),
@@ -211,7 +213,7 @@ impl std::fmt::Display for PluginStatus {
 
 impl std::str::FromStr for PluginStatus {
     type Err = String;
-
+    
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         match s.to_uppercase().as_str() {
             "INACTIVE" => Ok(PluginStatus::INACTIVE),
@@ -254,7 +256,7 @@ impl std::fmt::Display for PluginType {
 
 impl std::str::FromStr for PluginType {
     type Err = String;
-
+    
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         match s.to_uppercase().as_str() {
             "SCANNER" => Ok(PluginType::SCANNER),
@@ -271,19 +273,19 @@ impl std::str::FromStr for PluginType {
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "snake_case")]
 pub struct MessageHeader {
-    ///
+    /// 
     pub message_id: String,
-    ///
+    /// 
     pub trace_id: String,
-    ///
+    /// 
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub correlation_id: Option<String>,
     /// 來源模組名稱
     pub source_module: String,
-    ///
+    /// 
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub timestamp: Option<chrono::DateTime<chrono::Utc>>,
-    ///
+    /// 
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub version: Option<String>,
 }
@@ -300,7 +302,7 @@ impl MessageHeader {
             version: None,
         }
     }
-
+    
     /// 驗證結構體數據
     pub fn validate(&self) -> Result<(), String> {
         Ok(())
@@ -317,21 +319,21 @@ impl Default for MessageHeader {
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "snake_case")]
 pub struct Target {
-    ///
+    /// 
     pub url: serde_json::Value,
-    ///
+    /// 
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub parameter: Option<String>,
-    ///
+    /// 
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub method: Option<String>,
-    ///
+    /// 
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub headers: Option<std::collections::HashMap<String, serde_json::Value>>,
-    ///
+    /// 
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub params: Option<std::collections::HashMap<String, serde_json::Value>>,
-    ///
+    /// 
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub body: Option<String>,
 }
@@ -348,7 +350,7 @@ impl Target {
             body: None,
         }
     }
-
+    
     /// 驗證結構體數據
     pub fn validate(&self) -> Result<(), String> {
         Ok(())
@@ -365,7 +367,7 @@ impl Default for Target {
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "snake_case")]
 pub struct Vulnerability {
-    ///
+    /// 
     pub name: serde_json::Value,
     /// CWE ID (格式: CWE-XXX)，參考 https://cwe.mitre.org/
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -373,11 +375,11 @@ pub struct Vulnerability {
     /// CVE ID (格式: CVE-YYYY-NNNNN)，參考 https://cve.mitre.org/
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub cve: Option<String>,
-    ///
+    /// 
     pub severity: serde_json::Value,
-    ///
+    /// 
     pub confidence: serde_json::Value,
-    ///
+    /// 
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub description: Option<String>,
     /// CVSS v3.1 Base Score (0.0-10.0)，參考 https://www.first.org/cvss/
@@ -406,7 +408,7 @@ impl Vulnerability {
             owasp_category: None,
         }
     }
-
+    
     /// 驗證結構體數據
     pub fn validate(&self) -> Result<(), String> {
         Ok(())
@@ -423,17 +425,16 @@ impl Default for Vulnerability {
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "snake_case")]
 pub struct Asset {
-    ///
+    /// 
     pub asset_id: String,
-    ///
-    #[serde(rename = "type")]
-    pub r#type: String,
-    ///
+    /// 
+    pub type: String,
+    /// 
     pub value: String,
-    ///
+    /// 
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub parameters: Option<Vec<String>>,
-    ///
+    /// 
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub has_form: Option<bool>,
 }
@@ -443,13 +444,13 @@ impl Asset {
     pub fn new() -> Self {
         Self {
             asset_id: String::new(),
-            r#type: String::new(),
+            type: String::new(),
             value: String::new(),
             parameters: None,
             has_form: None,
         }
     }
-
+    
     /// 驗證結構體數據
     pub fn validate(&self) -> Result<(), String> {
         Ok(())
@@ -466,10 +467,10 @@ impl Default for Asset {
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "snake_case")]
 pub struct Authentication {
-    ///
+    /// 
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub method: Option<String>,
-    ///
+    /// 
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub credentials: Option<std::collections::HashMap<String, serde_json::Value>>,
 }
@@ -482,7 +483,7 @@ impl Authentication {
             credentials: None,
         }
     }
-
+    
     /// 驗證結構體數據
     pub fn validate(&self) -> Result<(), String> {
         Ok(())
@@ -499,22 +500,22 @@ impl Default for Authentication {
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "snake_case")]
 pub struct ExecutionError {
-    ///
+    /// 
     pub error_id: String,
-    ///
+    /// 
     pub error_type: String,
-    ///
+    /// 
     pub message: String,
-    ///
+    /// 
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub payload: Option<String>,
-    ///
+    /// 
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub vector: Option<String>,
-    ///
+    /// 
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub timestamp: Option<chrono::DateTime<chrono::Utc>>,
-    ///
+    /// 
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub attempts: Option<i32>,
 }
@@ -532,7 +533,7 @@ impl ExecutionError {
             attempts: None,
         }
     }
-
+    
     /// 驗證結構體數據
     pub fn validate(&self) -> Result<(), String> {
         Ok(())
@@ -549,19 +550,19 @@ impl Default for ExecutionError {
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "snake_case")]
 pub struct Fingerprints {
-    ///
+    /// 
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub web_server: Option<std::collections::HashMap<String, serde_json::Value>>,
-    ///
+    /// 
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub framework: Option<std::collections::HashMap<String, serde_json::Value>>,
-    ///
+    /// 
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub language: Option<std::collections::HashMap<String, serde_json::Value>>,
-    ///
+    /// 
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub waf_detected: Option<bool>,
-    ///
+    /// 
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub waf_vendor: Option<String>,
 }
@@ -577,7 +578,7 @@ impl Fingerprints {
             waf_vendor: None,
         }
     }
-
+    
     /// 驗證結構體數據
     pub fn validate(&self) -> Result<(), String> {
         Ok(())
@@ -594,10 +595,10 @@ impl Default for Fingerprints {
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "snake_case")]
 pub struct RateLimit {
-    ///
+    /// 
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub requests_per_second: Option<i32>,
-    ///
+    /// 
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub burst: Option<i32>,
 }
@@ -610,7 +611,7 @@ impl RateLimit {
             burst: None,
         }
     }
-
+    
     /// 驗證結構體數據
     pub fn validate(&self) -> Result<(), String> {
         Ok(())
@@ -648,7 +649,7 @@ impl RiskFactor {
             description: None,
         }
     }
-
+    
     /// 驗證結構體數據
     pub fn validate(&self) -> Result<(), String> {
         Ok(())
@@ -665,13 +666,13 @@ impl Default for RiskFactor {
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "snake_case")]
 pub struct ScanScope {
-    ///
+    /// 
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub exclusions: Option<Vec<String>>,
-    ///
+    /// 
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub include_subdomains: Option<bool>,
-    ///
+    /// 
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub allowed_hosts: Option<Vec<String>>,
 }
@@ -685,7 +686,7 @@ impl ScanScope {
             allowed_hosts: None,
         }
     }
-
+    
     /// 驗證結構體數據
     pub fn validate(&self) -> Result<(), String> {
         Ok(())
@@ -702,16 +703,16 @@ impl Default for ScanScope {
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "snake_case")]
 pub struct Summary {
-    ///
+    /// 
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub urls_found: Option<i32>,
-    ///
+    /// 
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub forms_found: Option<i32>,
-    ///
+    /// 
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub apis_found: Option<i32>,
-    ///
+    /// 
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub scan_duration_seconds: Option<i32>,
 }
@@ -726,7 +727,7 @@ impl Summary {
             scan_duration_seconds: None,
         }
     }
-
+    
     /// 驗證結構體數據
     pub fn validate(&self) -> Result<(), String> {
         Ok(())
@@ -765,7 +766,7 @@ impl TaskDependency {
             required: None,
         }
     }
-
+    
     /// 驗證結構體數據
     pub fn validate(&self) -> Result<(), String> {
         Ok(())
@@ -782,22 +783,22 @@ impl Default for TaskDependency {
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "snake_case")]
 pub struct AIVerificationRequest {
-    ///
+    /// 
     pub verification_id: String,
-    ///
+    /// 
     pub finding_id: String,
-    ///
+    /// 
     pub scan_id: String,
-    ///
+    /// 
     pub vulnerability_type: serde_json::Value,
-    ///
+    /// 
     pub target: serde_json::Value,
-    ///
+    /// 
     pub evidence: serde_json::Value,
-    ///
+    /// 
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub verification_mode: Option<String>,
-    ///
+    /// 
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub context: Option<std::collections::HashMap<String, serde_json::Value>>,
 }
@@ -816,7 +817,7 @@ impl AIVerificationRequest {
             context: None,
         }
     }
-
+    
     /// 驗證結構體數據
     pub fn validate(&self) -> Result<(), String> {
         Ok(())
@@ -833,26 +834,26 @@ impl Default for AIVerificationRequest {
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "snake_case")]
 pub struct AIVerificationResult {
-    ///
+    /// 
     pub verification_id: String,
-    ///
+    /// 
     pub finding_id: String,
-    ///
+    /// 
     pub verification_status: String,
-    ///
+    /// 
     pub confidence_score: f64,
-    ///
+    /// 
     pub verification_method: String,
-    ///
+    /// 
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub test_steps: Option<Vec<String>>,
-    ///
+    /// 
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub observations: Option<Vec<String>>,
-    ///
+    /// 
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub recommendations: Option<Vec<String>>,
-    ///
+    /// 
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub timestamp: Option<chrono::DateTime<chrono::Utc>>,
 }
@@ -872,7 +873,7 @@ impl AIVerificationResult {
             timestamp: None,
         }
     }
-
+    
     /// 驗證結構體數據
     pub fn validate(&self) -> Result<(), String> {
         Ok(())
@@ -889,19 +890,19 @@ impl Default for AIVerificationResult {
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "snake_case")]
 pub struct CodeLevelRootCause {
-    ///
+    /// 
     pub analysis_id: String,
-    ///
+    /// 
     pub vulnerable_component: String,
-    ///
+    /// 
     pub affected_findings: Vec<String>,
-    ///
+    /// 
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub code_location: Option<String>,
-    ///
+    /// 
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub vulnerability_pattern: Option<String>,
-    ///
+    /// 
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub fix_recommendation: Option<String>,
 }
@@ -918,7 +919,7 @@ impl CodeLevelRootCause {
             fix_recommendation: None,
         }
     }
-
+    
     /// 驗證結構體數據
     pub fn validate(&self) -> Result<(), String> {
         Ok(())
@@ -931,95 +932,624 @@ impl Default for CodeLevelRootCause {
     }
 }
 
-/// 漏洞證據
+/// 目標資訊 - 漏洞所在位置
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "snake_case")]
-pub struct FindingEvidence {
-    /// 攻擊載荷
+pub struct FindingTarget {
+    /// 
+    pub url: serde_json::Value,
+    /// 
     #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub payload: Option<String>,
-    /// 響應時間差異
+    pub parameter: Option<String>,
+    /// 
     #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub response_time_delta: Option<f64>,
-    /// 資料庫版本
+    pub method: Option<String>,
+    /// 
     #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub db_version: Option<String>,
-    /// HTTP請求
+    pub headers: Option<std::collections::HashMap<String, serde_json::Value>>,
+    /// 
     #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub request: Option<String>,
-    /// HTTP響應
+    pub params: Option<std::collections::HashMap<String, serde_json::Value>>,
+    /// 
     #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub response: Option<String>,
-    /// 證明資料
-    #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub proof: Option<String>,
+    pub body: Option<String>,
 }
 
-impl FindingEvidence {
+impl FindingTarget {
     /// 創建新的實例
     pub fn new() -> Self {
         Self {
-            payload: None,
-            response_time_delta: None,
-            db_version: None,
-            request: None,
-            response: None,
-            proof: None,
+            url: serde_json::Value::Null,
+            parameter: None,
+            method: None,
+            headers: None,
+            params: None,
+            body: None,
         }
     }
-
+    
     /// 驗證結構體數據
     pub fn validate(&self) -> Result<(), String> {
         Ok(())
     }
 }
 
-impl Default for FindingEvidence {
+impl Default for FindingTarget {
     fn default() -> Self {
         Self::new()
     }
 }
 
-/// 漏洞影響評估
+/// JavaScript 分析結果
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "snake_case")]
-pub struct FindingImpact {
-    /// 影響描述
+pub struct JavaScriptAnalysisResult {
+    /// 
+    pub analysis_id: String,
+    /// 
+    pub url: String,
+    /// 
+    pub source_size_bytes: i32,
+    /// 
     #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub description: Option<String>,
-    /// 業務影響
+    pub dangerous_functions: Option<Vec<String>>,
+    /// 
     #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub business_impact: Option<String>,
-    /// 技術影響
+    pub external_resources: Option<Vec<String>>,
+    /// 
     #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub technical_impact: Option<String>,
-    /// 受影響用戶數
+    pub data_leaks: Option<std::collections::HashMap<String, serde_json::Value>>,
+    /// 
     #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub affected_users: Option<i32>,
-    /// 估計成本
+    pub findings: Option<Vec<String>>,
+    /// 
     #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub estimated_cost: Option<f64>,
+    pub apis_called: Option<Vec<String>>,
+    /// 
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub ajax_endpoints: Option<Vec<String>>,
+    /// 
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub suspicious_patterns: Option<Vec<String>>,
+    /// 
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub risk_score: Option<f64>,
+    /// 
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub security_score: Option<i32>,
+    /// 
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub timestamp: Option<chrono::DateTime<chrono::Utc>>,
 }
 
-impl FindingImpact {
+impl JavaScriptAnalysisResult {
     /// 創建新的實例
     pub fn new() -> Self {
         Self {
-            description: None,
-            business_impact: None,
-            technical_impact: None,
-            affected_users: None,
-            estimated_cost: None,
+            analysis_id: String::new(),
+            url: String::new(),
+            source_size_bytes: 0,
+            dangerous_functions: None,
+            external_resources: None,
+            data_leaks: None,
+            findings: None,
+            apis_called: None,
+            ajax_endpoints: None,
+            suspicious_patterns: None,
+            risk_score: None,
+            security_score: None,
+            timestamp: None,
         }
     }
-
+    
     /// 驗證結構體數據
     pub fn validate(&self) -> Result<(), String> {
         Ok(())
     }
 }
 
-impl Default for FindingImpact {
+impl Default for JavaScriptAnalysisResult {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
+/// SAST-DAST 資料流關聯結果
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[serde(rename_all = "snake_case")]
+pub struct SASTDASTCorrelation {
+    /// 
+    pub correlation_id: String,
+    /// 
+    pub sast_finding_id: String,
+    /// 
+    pub dast_finding_id: String,
+    /// 
+    pub data_flow_path: Vec<String>,
+    /// 
+    pub verification_status: String,
+    /// 
+    pub confidence_score: f64,
+    /// 
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub explanation: Option<String>,
+}
+
+impl SASTDASTCorrelation {
+    /// 創建新的實例
+    pub fn new() -> Self {
+        Self {
+            correlation_id: String::new(),
+            sast_finding_id: String::new(),
+            dast_finding_id: String::new(),
+            data_flow_path: Vec::new(),
+            verification_status: String::new(),
+            confidence_score: 0.0,
+            explanation: None,
+        }
+    }
+    
+    /// 驗證結構體數據
+    pub fn validate(&self) -> Result<(), String> {
+        Ok(())
+    }
+}
+
+impl Default for SASTDASTCorrelation {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
+/// 敏感資訊匹配結果
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[serde(rename_all = "snake_case")]
+pub struct SensitiveMatch {
+    /// 
+    pub match_id: String,
+    /// 
+    pub pattern_name: String,
+    /// 
+    pub matched_text: String,
+    /// 
+    pub context: String,
+    /// 
+    pub confidence: f64,
+    /// 
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub line_number: Option<serde_json::Value>,
+    /// 
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub file_path: Option<String>,
+    /// 
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub url: Option<String>,
+    /// 
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub severity: Option<serde_json::Value>,
+}
+
+impl SensitiveMatch {
+    /// 創建新的實例
+    pub fn new() -> Self {
+        Self {
+            match_id: String::new(),
+            pattern_name: String::new(),
+            matched_text: String::new(),
+            context: String::new(),
+            confidence: 0.0,
+            line_number: None,
+            file_path: None,
+            url: None,
+            severity: None,
+        }
+    }
+    
+    /// 驗證結構體數據
+    pub fn validate(&self) -> Result<(), String> {
+        Ok(())
+    }
+}
+
+impl Default for SensitiveMatch {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
+/// 漏洞關聯分析結果
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[serde(rename_all = "snake_case")]
+pub struct VulnerabilityCorrelation {
+    /// 
+    pub correlation_id: String,
+    /// 
+    pub correlation_type: String,
+    /// 
+    pub related_findings: Vec<String>,
+    /// 
+    pub confidence_score: f64,
+    /// 
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub root_cause: Option<String>,
+    /// 
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub common_components: Option<Vec<String>>,
+    /// 
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub explanation: Option<String>,
+    /// 
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub timestamp: Option<chrono::DateTime<chrono::Utc>>,
+}
+
+impl VulnerabilityCorrelation {
+    /// 創建新的實例
+    pub fn new() -> Self {
+        Self {
+            correlation_id: String::new(),
+            correlation_type: String::new(),
+            related_findings: Vec::new(),
+            confidence_score: 0.0,
+            root_cause: None,
+            common_components: None,
+            explanation: None,
+            timestamp: None,
+        }
+    }
+    
+    /// 驗證結構體數據
+    pub fn validate(&self) -> Result<(), String> {
+        Ok(())
+    }
+}
+
+impl Default for VulnerabilityCorrelation {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
+/// AIVA統一訊息格式 - 所有跨服務通訊的標準信封
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[serde(rename_all = "snake_case")]
+pub struct AivaMessage {
+    /// 訊息標頭
+    pub header: MessageHeader,
+    /// 訊息主題
+    pub topic: String,
+    /// Schema版本
+    pub schema_version: String,
+    /// 訊息載荷
+    pub payload: std::collections::HashMap<String, serde_json::Value>,
+}
+
+impl AivaMessage {
+    /// 創建新的實例
+    pub fn new() -> Self {
+        Self {
+            header: MessageHeader::default(),
+            topic: String::new(),
+            schema_version: "1.0".to_string(),
+            payload: std::collections::HashMap::new(),
+        }
+    }
+    
+    /// 驗證結構體數據
+    pub fn validate(&self) -> Result<(), String> {
+        Ok(())
+    }
+}
+
+impl Default for AivaMessage {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
+/// 統一請求格式 - 模組間請求通訊
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[serde(rename_all = "snake_case")]
+pub struct AIVARequest {
+    /// 請求識別碼
+    pub request_id: String,
+    /// 來源模組
+    pub source_module: String,
+    /// 目標模組
+    pub target_module: String,
+    /// 請求類型
+    pub request_type: String,
+    /// 請求載荷
+    pub payload: std::collections::HashMap<String, serde_json::Value>,
+    /// 追蹤識別碼
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub trace_id: Option<String>,
+    /// 逾時秒數
+    pub timeout_seconds: i32,
+    /// 中繼資料
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub metadata: Option<std::collections::HashMap<String, serde_json::Value>>,
+    /// 時間戳
+    pub timestamp: String,
+}
+
+impl AIVARequest {
+    /// 創建新的實例
+    pub fn new() -> Self {
+        Self {
+            request_id: String::new(),
+            source_module: String::new(),
+            target_module: String::new(),
+            request_type: String::new(),
+            payload: std::collections::HashMap::new(),
+            trace_id: None,
+            timeout_seconds: 30,
+            metadata: None,
+            timestamp: String::new(),
+        }
+    }
+    
+    /// 驗證結構體數據
+    pub fn validate(&self) -> Result<(), String> {
+        Ok(())
+    }
+}
+
+impl Default for AIVARequest {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
+/// 統一響應格式 - 模組間響應通訊
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[serde(rename_all = "snake_case")]
+pub struct AIVAResponse {
+    /// 對應的請求識別碼
+    pub request_id: String,
+    /// 響應類型
+    pub response_type: String,
+    /// 執行是否成功
+    pub success: bool,
+    /// 響應載荷
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub payload: Option<std::collections::HashMap<String, serde_json::Value>>,
+    /// 錯誤代碼
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub error_code: Option<String>,
+    /// 錯誤訊息
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub error_message: Option<String>,
+    /// 中繼資料
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub metadata: Option<std::collections::HashMap<String, serde_json::Value>>,
+    /// 時間戳
+    pub timestamp: String,
+}
+
+impl AIVAResponse {
+    /// 創建新的實例
+    pub fn new() -> Self {
+        Self {
+            request_id: String::new(),
+            response_type: String::new(),
+            success: false,
+            payload: None,
+            error_code: None,
+            error_message: None,
+            metadata: None,
+            timestamp: String::new(),
+        }
+    }
+    
+    /// 驗證結構體數據
+    pub fn validate(&self) -> Result<(), String> {
+        Ok(())
+    }
+}
+
+impl Default for AIVAResponse {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
+/// 功能任務載荷 - 掃描任務的標準格式
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[serde(rename_all = "snake_case")]
+pub struct FunctionTaskPayload {
+    /// 任務識別碼
+    pub task_id: String,
+    /// 掃描識別碼
+    pub scan_id: String,
+    /// 任務優先級
+    pub priority: i32,
+    /// 掃描目標
+    pub target: FunctionTaskTarget,
+    /// 任務上下文
+    pub context: FunctionTaskContext,
+    /// 掃描策略
+    pub strategy: String,
+    /// 自訂載荷
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub custom_payloads: Option<Vec<String>>,
+    /// 測試配置
+    pub test_config: FunctionTaskTestConfig,
+}
+
+impl FunctionTaskPayload {
+    /// 創建新的實例
+    pub fn new() -> Self {
+        Self {
+            task_id: String::new(),
+            scan_id: String::new(),
+            priority: 0,
+            target: FunctionTaskTarget::default(),
+            context: FunctionTaskContext::default(),
+            strategy: String::new(),
+            custom_payloads: None,
+            test_config: FunctionTaskTestConfig::default(),
+        }
+    }
+    
+    /// 驗證結構體數據
+    pub fn validate(&self) -> Result<(), String> {
+        Ok(())
+    }
+}
+
+impl Default for FunctionTaskPayload {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
+/// 功能任務目標
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[serde(rename_all = "snake_case")]
+pub struct FunctionTaskTarget {
+}
+
+impl FunctionTaskTarget {
+    /// 創建新的實例
+    pub fn new() -> Self {
+        Self {
+        }
+    }
+    
+    /// 驗證結構體數據
+    pub fn validate(&self) -> Result<(), String> {
+        Ok(())
+    }
+}
+
+impl Default for FunctionTaskTarget {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
+/// 功能任務上下文
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[serde(rename_all = "snake_case")]
+pub struct FunctionTaskContext {
+    /// 資料庫類型提示
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub db_type_hint: Option<String>,
+    /// 是否檢測到WAF
+    pub waf_detected: bool,
+    /// 相關發現
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub related_findings: Option<Vec<String>>,
+}
+
+impl FunctionTaskContext {
+    /// 創建新的實例
+    pub fn new() -> Self {
+        Self {
+            db_type_hint: None,
+            waf_detected: false,
+            related_findings: None,
+        }
+    }
+    
+    /// 驗證結構體數據
+    pub fn validate(&self) -> Result<(), String> {
+        Ok(())
+    }
+}
+
+impl Default for FunctionTaskContext {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
+/// 功能任務測試配置
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[serde(rename_all = "snake_case")]
+pub struct FunctionTaskTestConfig {
+    /// 標準載荷列表
+    pub payloads: Vec<String>,
+    /// 自訂載荷列表
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub custom_payloads: Option<Vec<String>>,
+    /// 是否進行Blind XSS測試
+    pub blind_xss: bool,
+    /// 是否進行DOM測試
+    pub dom_testing: bool,
+    /// 請求逾時(秒)
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub timeout: Option<f64>,
+}
+
+impl FunctionTaskTestConfig {
+    /// 創建新的實例
+    pub fn new() -> Self {
+        Self {
+            payloads: Vec::new(),
+            custom_payloads: None,
+            blind_xss: false,
+            dom_testing: false,
+            timeout: None,
+        }
+    }
+    
+    /// 驗證結構體數據
+    pub fn validate(&self) -> Result<(), String> {
+        Ok(())
+    }
+}
+
+impl Default for FunctionTaskTestConfig {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
+/// 掃描任務載荷 - 用於SCA/SAST等需要項目URL的掃描任務
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[serde(rename_all = "snake_case")]
+pub struct ScanTaskPayload {
+    /// 任務識別碼
+    pub task_id: String,
+    /// 掃描識別碼
+    pub scan_id: String,
+    /// 任務優先級
+    pub priority: i32,
+    /// 掃描目標 (包含URL)
+    pub target: Target,
+    /// 掃描類型
+    pub scan_type: String,
+    /// 代碼倉庫資訊 (分支、commit等)
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub repository_info: Option<std::collections::HashMap<String, serde_json::Value>>,
+    /// 掃描逾時(秒)
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub timeout: Option<i32>,
+}
+
+impl ScanTaskPayload {
+    /// 創建新的實例
+    pub fn new() -> Self {
+        Self {
+            task_id: String::new(),
+            scan_id: String::new(),
+            priority: 0,
+            target: Target::default(),
+            scan_type: String::new(),
+            repository_info: None,
+            timeout: None,
+        }
+    }
+    
+    /// 驗證結構體數據
+    pub fn validate(&self) -> Result<(), String> {
+        Ok(())
+    }
+}
+
+impl Default for ScanTaskPayload {
     fn default() -> Self {
         Self::new()
     }
@@ -1081,7 +1611,7 @@ impl FindingPayload {
             updated_at: chrono::Utc::now(),
         }
     }
-
+    
     /// 驗證結構體數據
     pub fn validate(&self) -> Result<(), String> {
         Ok(())
@@ -1089,6 +1619,100 @@ impl FindingPayload {
 }
 
 impl Default for FindingPayload {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
+/// 漏洞證據
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[serde(rename_all = "snake_case")]
+pub struct FindingEvidence {
+    /// 攻擊載荷
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub payload: Option<String>,
+    /// 響應時間差異
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub response_time_delta: Option<f64>,
+    /// 資料庫版本
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub db_version: Option<String>,
+    /// HTTP請求
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub request: Option<String>,
+    /// HTTP響應
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub response: Option<String>,
+    /// 證明資料
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub proof: Option<String>,
+}
+
+impl FindingEvidence {
+    /// 創建新的實例
+    pub fn new() -> Self {
+        Self {
+            payload: None,
+            response_time_delta: None,
+            db_version: None,
+            request: None,
+            response: None,
+            proof: None,
+        }
+    }
+    
+    /// 驗證結構體數據
+    pub fn validate(&self) -> Result<(), String> {
+        Ok(())
+    }
+}
+
+impl Default for FindingEvidence {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
+/// 漏洞影響評估
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[serde(rename_all = "snake_case")]
+pub struct FindingImpact {
+    /// 影響描述
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub description: Option<String>,
+    /// 業務影響
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub business_impact: Option<String>,
+    /// 技術影響
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub technical_impact: Option<String>,
+    /// 受影響用戶數
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub affected_users: Option<i32>,
+    /// 估計成本
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub estimated_cost: Option<f64>,
+}
+
+impl FindingImpact {
+    /// 創建新的實例
+    pub fn new() -> Self {
+        Self {
+            description: None,
+            business_impact: None,
+            technical_impact: None,
+            affected_users: None,
+            estimated_cost: None,
+        }
+    }
+    
+    /// 驗證結構體數據
+    pub fn validate(&self) -> Result<(), String> {
+        Ok(())
+    }
+}
+
+impl Default for FindingImpact {
     fn default() -> Self {
         Self::new()
     }
@@ -1122,7 +1746,7 @@ impl FindingRecommendation {
             references: None,
         }
     }
-
+    
     /// 驗證結構體數據
     pub fn validate(&self) -> Result<(), String> {
         Ok(())
@@ -1135,622 +1759,49 @@ impl Default for FindingRecommendation {
     }
 }
 
-/// 目標資訊 - 漏洞所在位置
+/// Token 測試結果
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "snake_case")]
-pub struct FindingTarget {
-    ///
-    pub url: serde_json::Value,
-    ///
+pub struct TokenTestResult {
+    /// 是否存在漏洞
+    pub vulnerable: bool,
+    /// Token 類型 (jwt, session, api, etc.)
+    pub token_type: String,
+    /// 發現的問題
+    pub issue: String,
+    /// 詳細描述
+    pub details: String,
+    /// 解碼後的載荷內容
     #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub parameter: Option<String>,
-    ///
+    pub decoded_payload: Option<std::collections::HashMap<String, serde_json::Value>>,
+    /// 漏洞嚴重程度
     #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub method: Option<String>,
-    ///
-    #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub headers: Option<std::collections::HashMap<String, serde_json::Value>>,
-    ///
-    #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub params: Option<std::collections::HashMap<String, serde_json::Value>>,
-    ///
-    #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub body: Option<String>,
+    pub severity: Option<String>,
+    /// 測試類型
+    pub test_type: String,
 }
 
-impl FindingTarget {
+impl TokenTestResult {
     /// 創建新的實例
     pub fn new() -> Self {
         Self {
-            url: serde_json::Value::Null,
-            parameter: None,
-            method: None,
-            headers: None,
-            params: None,
-            body: None,
-        }
-    }
-
-    /// 驗證結構體數據
-    pub fn validate(&self) -> Result<(), String> {
-        Ok(())
-    }
-}
-
-impl Default for FindingTarget {
-    fn default() -> Self {
-        Self::new()
-    }
-}
-
-/// JavaScript 分析結果
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
-#[serde(rename_all = "snake_case")]
-pub struct JavaScriptAnalysisResult {
-    ///
-    pub analysis_id: String,
-    ///
-    pub url: String,
-    ///
-    pub source_size_bytes: i32,
-    ///
-    #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub dangerous_functions: Option<Vec<String>>,
-    ///
-    #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub external_resources: Option<Vec<String>>,
-    ///
-    #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub data_leaks: Option<std::collections::HashMap<String, serde_json::Value>>,
-    ///
-    #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub findings: Option<Vec<String>>,
-    ///
-    #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub apis_called: Option<Vec<String>>,
-    ///
-    #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub ajax_endpoints: Option<Vec<String>>,
-    ///
-    #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub suspicious_patterns: Option<Vec<String>>,
-    ///
-    #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub risk_score: Option<f64>,
-    ///
-    #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub security_score: Option<i32>,
-    ///
-    #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub timestamp: Option<chrono::DateTime<chrono::Utc>>,
-}
-
-impl JavaScriptAnalysisResult {
-    /// 創建新的實例
-    pub fn new() -> Self {
-        Self {
-            analysis_id: String::new(),
-            url: String::new(),
-            source_size_bytes: 0,
-            dangerous_functions: None,
-            external_resources: None,
-            data_leaks: None,
-            findings: None,
-            apis_called: None,
-            ajax_endpoints: None,
-            suspicious_patterns: None,
-            risk_score: None,
-            security_score: None,
-            timestamp: None,
-        }
-    }
-
-    /// 驗證結構體數據
-    pub fn validate(&self) -> Result<(), String> {
-        Ok(())
-    }
-}
-
-impl Default for JavaScriptAnalysisResult {
-    fn default() -> Self {
-        Self::new()
-    }
-}
-
-/// SAST-DAST 資料流關聯結果
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
-#[serde(rename_all = "snake_case")]
-pub struct SASTDASTCorrelation {
-    ///
-    pub correlation_id: String,
-    ///
-    pub sast_finding_id: String,
-    ///
-    pub dast_finding_id: String,
-    ///
-    pub data_flow_path: Vec<String>,
-    ///
-    pub verification_status: String,
-    ///
-    pub confidence_score: f64,
-    ///
-    #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub explanation: Option<String>,
-}
-
-impl SASTDASTCorrelation {
-    /// 創建新的實例
-    pub fn new() -> Self {
-        Self {
-            correlation_id: String::new(),
-            sast_finding_id: String::new(),
-            dast_finding_id: String::new(),
-            data_flow_path: Vec::new(),
-            verification_status: String::new(),
-            confidence_score: 0.0,
-            explanation: None,
-        }
-    }
-
-    /// 驗證結構體數據
-    pub fn validate(&self) -> Result<(), String> {
-        Ok(())
-    }
-}
-
-impl Default for SASTDASTCorrelation {
-    fn default() -> Self {
-        Self::new()
-    }
-}
-
-/// 敏感資訊匹配結果
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
-#[serde(rename_all = "snake_case")]
-pub struct SensitiveMatch {
-    ///
-    pub match_id: String,
-    ///
-    pub pattern_name: String,
-    ///
-    pub matched_text: String,
-    ///
-    pub context: String,
-    ///
-    pub confidence: f64,
-    ///
-    #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub line_number: Option<serde_json::Value>,
-    ///
-    #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub file_path: Option<String>,
-    ///
-    #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub url: Option<String>,
-    ///
-    #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub severity: Option<serde_json::Value>,
-}
-
-impl SensitiveMatch {
-    /// 創建新的實例
-    pub fn new() -> Self {
-        Self {
-            match_id: String::new(),
-            pattern_name: String::new(),
-            matched_text: String::new(),
-            context: String::new(),
-            confidence: 0.0,
-            line_number: None,
-            file_path: None,
-            url: None,
+            vulnerable: false,
+            token_type: String::new(),
+            issue: String::new(),
+            details: String::new(),
+            decoded_payload: None,
             severity: None,
+            test_type: String::new(),
         }
     }
-
+    
     /// 驗證結構體數據
     pub fn validate(&self) -> Result<(), String> {
         Ok(())
     }
 }
 
-impl Default for SensitiveMatch {
-    fn default() -> Self {
-        Self::new()
-    }
-}
-
-/// 漏洞關聯分析結果
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
-#[serde(rename_all = "snake_case")]
-pub struct VulnerabilityCorrelation {
-    ///
-    pub correlation_id: String,
-    ///
-    pub correlation_type: String,
-    ///
-    pub related_findings: Vec<String>,
-    ///
-    pub confidence_score: f64,
-    ///
-    #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub root_cause: Option<String>,
-    ///
-    #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub common_components: Option<Vec<String>>,
-    ///
-    #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub explanation: Option<String>,
-    ///
-    #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub timestamp: Option<chrono::DateTime<chrono::Utc>>,
-}
-
-impl VulnerabilityCorrelation {
-    /// 創建新的實例
-    pub fn new() -> Self {
-        Self {
-            correlation_id: String::new(),
-            correlation_type: String::new(),
-            related_findings: Vec::new(),
-            confidence_score: 0.0,
-            root_cause: None,
-            common_components: None,
-            explanation: None,
-            timestamp: None,
-        }
-    }
-
-    /// 驗證結構體數據
-    pub fn validate(&self) -> Result<(), String> {
-        Ok(())
-    }
-}
-
-impl Default for VulnerabilityCorrelation {
-    fn default() -> Self {
-        Self::new()
-    }
-}
-
-/// AIVA統一訊息格式 - 所有跨服務通訊的標準信封
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
-#[serde(rename_all = "snake_case")]
-pub struct AivaMessage {
-    /// 訊息標頭
-    pub header: MessageHeader,
-    /// 訊息主題
-    pub topic: String,
-    /// Schema版本
-    pub schema_version: String,
-    /// 訊息載荷
-    pub payload: std::collections::HashMap<String, serde_json::Value>,
-}
-
-impl AivaMessage {
-    /// 創建新的實例
-    pub fn new() -> Self {
-        Self {
-            header: MessageHeader::default(),
-            topic: String::new(),
-            schema_version: "1.0".to_string(),
-            payload: std::collections::HashMap::new(),
-        }
-    }
-
-    /// 驗證結構體數據
-    pub fn validate(&self) -> Result<(), String> {
-        Ok(())
-    }
-}
-
-impl Default for AivaMessage {
-    fn default() -> Self {
-        Self::new()
-    }
-}
-
-/// 統一請求格式 - 模組間請求通訊
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
-#[serde(rename_all = "snake_case")]
-pub struct AIVARequest {
-    /// 請求識別碼
-    pub request_id: String,
-    /// 來源模組
-    pub source_module: String,
-    /// 目標模組
-    pub target_module: String,
-    /// 請求類型
-    pub request_type: String,
-    /// 請求載荷
-    pub payload: std::collections::HashMap<String, serde_json::Value>,
-    /// 追蹤識別碼
-    #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub trace_id: Option<String>,
-    /// 逾時秒數
-    pub timeout_seconds: i32,
-    /// 中繼資料
-    #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub metadata: Option<std::collections::HashMap<String, serde_json::Value>>,
-    /// 時間戳
-    pub timestamp: String,
-}
-
-impl AIVARequest {
-    /// 創建新的實例
-    pub fn new() -> Self {
-        Self {
-            request_id: String::new(),
-            source_module: String::new(),
-            target_module: String::new(),
-            request_type: String::new(),
-            payload: std::collections::HashMap::new(),
-            trace_id: None,
-            timeout_seconds: 30,
-            metadata: None,
-            timestamp: String::new(),
-        }
-    }
-
-    /// 驗證結構體數據
-    pub fn validate(&self) -> Result<(), String> {
-        Ok(())
-    }
-}
-
-impl Default for AIVARequest {
-    fn default() -> Self {
-        Self::new()
-    }
-}
-
-/// 統一響應格式 - 模組間響應通訊
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
-#[serde(rename_all = "snake_case")]
-pub struct AIVAResponse {
-    /// 對應的請求識別碼
-    pub request_id: String,
-    /// 響應類型
-    pub response_type: String,
-    /// 執行是否成功
-    pub success: bool,
-    /// 響應載荷
-    #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub payload: Option<std::collections::HashMap<String, serde_json::Value>>,
-    /// 錯誤代碼
-    #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub error_code: Option<String>,
-    /// 錯誤訊息
-    #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub error_message: Option<String>,
-    /// 中繼資料
-    #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub metadata: Option<std::collections::HashMap<String, serde_json::Value>>,
-    /// 時間戳
-    pub timestamp: String,
-}
-
-impl AIVAResponse {
-    /// 創建新的實例
-    pub fn new() -> Self {
-        Self {
-            request_id: String::new(),
-            response_type: String::new(),
-            success: false,
-            payload: None,
-            error_code: None,
-            error_message: None,
-            metadata: None,
-            timestamp: String::new(),
-        }
-    }
-
-    /// 驗證結構體數據
-    pub fn validate(&self) -> Result<(), String> {
-        Ok(())
-    }
-}
-
-impl Default for AIVAResponse {
-    fn default() -> Self {
-        Self::new()
-    }
-}
-
-/// 功能任務載荷 - 掃描任務的標準格式
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
-#[serde(rename_all = "snake_case")]
-pub struct FunctionTaskPayload {
-    /// 任務識別碼
-    pub task_id: String,
-    /// 掃描識別碼
-    pub scan_id: String,
-    /// 任務優先級
-    pub priority: i32,
-    /// 掃描目標
-    pub target: FunctionTaskTarget,
-    /// 任務上下文
-    pub context: FunctionTaskContext,
-    /// 掃描策略
-    pub strategy: String,
-    /// 自訂載荷
-    #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub custom_payloads: Option<Vec<String>>,
-    /// 測試配置
-    pub test_config: FunctionTaskTestConfig,
-}
-
-impl FunctionTaskPayload {
-    /// 創建新的實例
-    pub fn new() -> Self {
-        Self {
-            task_id: String::new(),
-            scan_id: String::new(),
-            priority: 0,
-            target: FunctionTaskTarget::default(),
-            context: FunctionTaskContext::default(),
-            strategy: String::new(),
-            custom_payloads: None,
-            test_config: FunctionTaskTestConfig::default(),
-        }
-    }
-
-    /// 驗證結構體數據
-    pub fn validate(&self) -> Result<(), String> {
-        Ok(())
-    }
-}
-
-impl Default for FunctionTaskPayload {
-    fn default() -> Self {
-        Self::new()
-    }
-}
-
-/// 功能任務目標
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
-#[serde(rename_all = "snake_case")]
-pub struct FunctionTaskTarget {}
-
-impl FunctionTaskTarget {
-    /// 創建新的實例
-    pub fn new() -> Self {
-        Self {}
-    }
-
-    /// 驗證結構體數據
-    pub fn validate(&self) -> Result<(), String> {
-        Ok(())
-    }
-}
-
-impl Default for FunctionTaskTarget {
-    fn default() -> Self {
-        Self::new()
-    }
-}
-
-/// 功能任務上下文
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
-#[serde(rename_all = "snake_case")]
-pub struct FunctionTaskContext {
-    /// 資料庫類型提示
-    #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub db_type_hint: Option<String>,
-    /// 是否檢測到WAF
-    pub waf_detected: bool,
-    /// 相關發現
-    #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub related_findings: Option<Vec<String>>,
-}
-
-impl FunctionTaskContext {
-    /// 創建新的實例
-    pub fn new() -> Self {
-        Self {
-            db_type_hint: None,
-            waf_detected: false,
-            related_findings: None,
-        }
-    }
-
-    /// 驗證結構體數據
-    pub fn validate(&self) -> Result<(), String> {
-        Ok(())
-    }
-}
-
-impl Default for FunctionTaskContext {
-    fn default() -> Self {
-        Self::new()
-    }
-}
-
-/// 功能任務測試配置
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
-#[serde(rename_all = "snake_case")]
-pub struct FunctionTaskTestConfig {
-    /// 標準載荷列表
-    pub payloads: Vec<String>,
-    /// 自訂載荷列表
-    #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub custom_payloads: Option<Vec<String>>,
-    /// 是否進行Blind XSS測試
-    pub blind_xss: bool,
-    /// 是否進行DOM測試
-    pub dom_testing: bool,
-    /// 請求逾時(秒)
-    #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub timeout: Option<f64>,
-}
-
-impl FunctionTaskTestConfig {
-    /// 創建新的實例
-    pub fn new() -> Self {
-        Self {
-            payloads: Vec::new(),
-            custom_payloads: None,
-            blind_xss: false,
-            dom_testing: false,
-            timeout: None,
-        }
-    }
-
-    /// 驗證結構體數據
-    pub fn validate(&self) -> Result<(), String> {
-        Ok(())
-    }
-}
-
-impl Default for FunctionTaskTestConfig {
-    fn default() -> Self {
-        Self::new()
-    }
-}
-
-/// 掃描任務載荷 - 用於SCA/SAST等需要項目URL的掃描任務
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
-#[serde(rename_all = "snake_case")]
-pub struct ScanTaskPayload {
-    /// 任務識別碼
-    pub task_id: String,
-    /// 掃描識別碼
-    pub scan_id: String,
-    /// 任務優先級
-    pub priority: i32,
-    /// 掃描目標 (包含URL)
-    pub target: Target,
-    /// 掃描類型
-    pub scan_type: String,
-    /// 代碼倉庫資訊 (分支、commit等)
-    #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub repository_info: Option<std::collections::HashMap<String, serde_json::Value>>,
-    /// 掃描逾時(秒)
-    #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub timeout: Option<i32>,
-}
-
-impl ScanTaskPayload {
-    /// 創建新的實例
-    pub fn new() -> Self {
-        Self {
-            task_id: String::new(),
-            scan_id: String::new(),
-            priority: 0,
-            target: Target::default(),
-            scan_type: String::new(),
-            repository_info: None,
-            timeout: None,
-        }
-    }
-
-    /// 驗證結構體數據
-    pub fn validate(&self) -> Result<(), String> {
-        Ok(())
-    }
-}
-
-impl Default for ScanTaskPayload {
+impl Default for TokenTestResult {
     fn default() -> Self {
         Self::new()
     }
@@ -1783,7 +1834,7 @@ impl RetryConfig {
             exponential_backoff: true,
         }
     }
-
+    
     /// 驗證結構體數據
     pub fn validate(&self) -> Result<(), String> {
         Ok(())
@@ -1823,7 +1874,7 @@ impl ResourceLimits {
             max_concurrent_tasks: 10,
         }
     }
-
+    
     /// 驗證結構體數據
     pub fn validate(&self) -> Result<(), String> {
         Ok(())
@@ -1871,7 +1922,7 @@ impl AsyncTaskConfig {
             metadata: None,
         }
     }
-
+    
     /// 驗證結構體數據
     pub fn validate(&self) -> Result<(), String> {
         Ok(())
@@ -1934,7 +1985,7 @@ impl AsyncTaskResult {
             metadata: None,
         }
     }
-
+    
     /// 驗證結構體數據
     pub fn validate(&self) -> Result<(), String> {
         Ok(())
@@ -1977,7 +2028,7 @@ impl AsyncBatchConfig {
             batch_timeout_seconds: 3600,
         }
     }
-
+    
     /// 驗證結構體數據
     pub fn validate(&self) -> Result<(), String> {
         Ok(())
@@ -2031,10 +2082,10 @@ impl AsyncBatchResult {
             batch_status: String::new(),
             start_time: chrono::Utc::now(),
             end_time: None,
-            total_execution_time_ms: 0.0,
+            total_execution_time_ms: 0,
         }
     }
-
+    
     /// 驗證結構體數據
     pub fn validate(&self) -> Result<(), String> {
         Ok(())
@@ -2120,7 +2171,7 @@ impl PluginManifest {
             updated_at: chrono::Utc::now(),
         }
     }
-
+    
     /// 驗證結構體數據
     pub fn validate(&self) -> Result<(), String> {
         Ok(())
@@ -2188,7 +2239,7 @@ impl PluginExecutionContext {
             created_at: chrono::Utc::now(),
         }
     }
-
+    
     /// 驗證結構體數據
     pub fn validate(&self) -> Result<(), String> {
         Ok(())
@@ -2256,7 +2307,7 @@ impl PluginExecutionResult {
             created_at: chrono::Utc::now(),
         }
     }
-
+    
     /// 驗證結構體數據
     pub fn validate(&self) -> Result<(), String> {
         Ok(())
@@ -2314,7 +2365,7 @@ impl PluginConfig {
             updated_at: chrono::Utc::now(),
         }
     }
-
+    
     /// 驗證結構體數據
     pub fn validate(&self) -> Result<(), String> {
         Ok(())
@@ -2364,7 +2415,7 @@ impl PluginRegistry {
             updated_at: chrono::Utc::now(),
         }
     }
-
+    
     /// 驗證結構體數據
     pub fn validate(&self) -> Result<(), String> {
         Ok(())
@@ -2416,7 +2467,7 @@ impl PluginHealthCheck {
             metadata: None,
         }
     }
-
+    
     /// 驗證結構體數據
     pub fn validate(&self) -> Result<(), String> {
         Ok(())
@@ -2436,8 +2487,7 @@ pub struct CLIParameter {
     /// 參數名稱
     pub name: String,
     /// 參數類型
-    #[serde(rename = "type")]
-    pub r#type: String,
+    pub type: String,
     /// 參數描述
     pub description: String,
     /// 是否必需
@@ -2467,7 +2517,7 @@ impl CLIParameter {
     pub fn new() -> Self {
         Self {
             name: String::new(),
-            r#type: String::new(),
+            type: String::new(),
             description: String::new(),
             required: false,
             default_value: None,
@@ -2478,7 +2528,7 @@ impl CLIParameter {
             help_text: None,
         }
     }
-
+    
     /// 驗證結構體數據
     pub fn validate(&self) -> Result<(), String> {
         Ok(())
@@ -2551,7 +2601,7 @@ impl CLICommand {
             updated_at: chrono::Utc::now(),
         }
     }
-
+    
     /// 驗證結構體數據
     pub fn validate(&self) -> Result<(), String> {
         Ok(())
@@ -2614,7 +2664,7 @@ impl CLIExecutionResult {
             metadata: None,
         }
     }
-
+    
     /// 驗證結構體數據
     pub fn validate(&self) -> Result<(), String> {
         Ok(())
@@ -2671,7 +2721,7 @@ impl CLISession {
             metadata: None,
         }
     }
-
+    
     /// 驗證結構體數據
     pub fn validate(&self) -> Result<(), String> {
         Ok(())
@@ -2727,7 +2777,7 @@ impl CLIConfiguration {
             updated_at: chrono::Utc::now(),
         }
     }
-
+    
     /// 驗證結構體數據
     pub fn validate(&self) -> Result<(), String> {
         Ok(())
@@ -2786,7 +2836,7 @@ impl CLIMetrics {
             metadata: None,
         }
     }
-
+    
     /// 驗證結構體數據
     pub fn validate(&self) -> Result<(), String> {
         Ok(())
@@ -2798,3 +2848,4 @@ impl Default for CLIMetrics {
         Self::new()
     }
 }
+

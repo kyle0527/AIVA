@@ -1,7 +1,12 @@
 # AIVA 系統健康檢查腳本
 import sys
 import os
-sys.path.insert(0, "services")
+NOT_AVAILABLE = "❌ 未安裝或不可用"
+
+# 確保正確的路徑設置
+current_dir = os.path.dirname(os.path.abspath(__file__))
+project_root = os.path.join(current_dir, "..", "..")
+sys.path.insert(0, project_root)
 
 # 設置離線模式環境變數
 if not os.getenv("AIVA_OFFLINE_MODE"):
@@ -14,12 +19,12 @@ if not os.getenv("AIVA_OFFLINE_MODE"):
 def check_schemas():
     """檢查 AIVA Common Schemas 可用性"""
     try:
-        from aiva_common.schemas.base import MessageHeader
-        from aiva_common.schemas.findings import Target, Vulnerability
-        from aiva_common.enums import ModuleName
+        from services.aiva_common.schemas.base import MessageHeader
+        from services.aiva_common.schemas.security.findings import Target, Vulnerability
+        from services.aiva_common.enums import ModuleName
         
         # 測試建立實例
-        header = MessageHeader(
+        MessageHeader(
             message_id="health_check_001",
             trace_id="trace_001", 
             source_module=ModuleName.CORE
@@ -38,21 +43,21 @@ def check_tools():
     try:
         result = subprocess.run(["go", "version"], capture_output=True, check=True, text=True)
         tools["Go"] = f"✅ {result.stdout.strip().split()[2]}"
-    except:
-        tools["Go"] = "❌ 未安裝或不可用"
+    except Exception:
+        tools["Go"] = NOT_AVAILABLE
     
     try:
         result = subprocess.run(["rustc", "--version"], capture_output=True, check=True, text=True)
         version = result.stdout.strip().split()[1]
         tools["Rust"] = f"✅ {version}"
-    except:
-        tools["Rust"] = "❌ 未安裝或不可用"
+    except Exception:
+        tools["Rust"] = NOT_AVAILABLE
         
     try:
         result = subprocess.run(["node", "--version"], capture_output=True, check=True, text=True)
         tools["Node.js"] = f"✅ {result.stdout.strip()}"
-    except:
-        tools["Node.js"] = "❌ 未安裝或不可用"
+    except Exception:
+        tools["Node.js"] = NOT_AVAILABLE
     
     return tools
 
@@ -84,7 +89,7 @@ def check_directories():
             try:
                 os.makedirs(dir_path, exist_ok=True)
                 status[dir_path] = "✅ 已建立"
-            except:
+            except Exception:
                 status[dir_path] = "❌ 建立失敗"
     
     return status

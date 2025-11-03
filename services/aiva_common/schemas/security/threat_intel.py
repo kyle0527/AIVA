@@ -9,6 +9,11 @@
 - TAXII v2.1 (https://docs.oasis-open.org/cti/taxii/v2.1/taxii-v2.1.html)
 """
 
+# ==================== 常數定義 ====================
+KILL_CHAIN_DESC = "Kill Chain 階段"
+FIRST_SEEN_DESC = "首次發現時間"
+LAST_SEEN_DESC = "最後活動時間"
+
 from datetime import UTC, datetime
 from typing import Any, ClassVar, Literal
 from uuid import uuid4
@@ -119,7 +124,7 @@ class AttackPattern(STIXDomainObject):
     description: str | None = Field(default=None, description="攻擊模式描述")
     aliases: list[str] = Field(default_factory=list, description="別名列表")
     kill_chain_phases: list[KillChainPhase] = Field(
-        default_factory=list, description="Kill Chain 階段"
+        default_factory=list, description=KILL_CHAIN_DESC
     )
 
     # MITRE ATT&CK 支援
@@ -142,9 +147,9 @@ class Malware(STIXDomainObject):
     is_family: bool = Field(default=False, description="是否為惡意軟體家族")
     aliases: list[str] = Field(default_factory=list, description="別名列表")
     kill_chain_phases: list[KillChainPhase] = Field(
-        default_factory=list, description="Kill Chain 階段"
+        default_factory=list, description=KILL_CHAIN_DESC
     )
-    first_seen: datetime | None = Field(default=None, description="首次發現時間")
+    first_seen: datetime | None = Field(default=None, description=FIRST_SEEN_DESC)
     last_seen: datetime | None = Field(default=None, description="最後發現時間")
     operating_system_refs: list[str] = Field(
         default_factory=list, description="作業系統引用"
@@ -172,7 +177,7 @@ class Indicator(STIXDomainObject):
     )
     valid_until: datetime | None = Field(default=None, description="有效結束時間")
     kill_chain_phases: list[KillChainPhase] = Field(
-        default_factory=list, description="Kill Chain 階段"
+        default_factory=list, description=KILL_CHAIN_DESC
     )
 
     # IOC 相關欄位
@@ -188,8 +193,8 @@ class ThreatActor(STIXDomainObject):
     description: str | None = Field(default=None, description="威脅行為者描述")
     threat_actor_types: list[str] = Field(description="威脅行為者類型")
     aliases: list[str] = Field(default_factory=list, description="別名列表")
-    first_seen: datetime | None = Field(default=None, description="首次發現時間")
-    last_seen: datetime | None = Field(default=None, description="最後活動時間")
+    first_seen: datetime | None = Field(default=None, description=FIRST_SEEN_DESC)
+    last_seen: datetime | None = Field(default=None, description=LAST_SEEN_DESC)
     roles: list[str] = Field(default_factory=list, description="角色列表")
     goals: list[str] = Field(default_factory=list, description="目標列表")
     sophistication: str | None = Field(default=None, description="複雜度")
@@ -210,8 +215,8 @@ class IntrusionSet(STIXDomainObject):
     name: str = Field(description="入侵集合名稱")
     description: str | None = Field(default=None, description="入侵集合描述")
     aliases: list[str] = Field(default_factory=list, description="別名列表")
-    first_seen: datetime | None = Field(default=None, description="首次發現時間")
-    last_seen: datetime | None = Field(default=None, description="最後活動時間")
+    first_seen: datetime | None = Field(default=None, description=FIRST_SEEN_DESC)
+    last_seen: datetime | None = Field(default=None, description=LAST_SEEN_DESC)
     goals: list[str] = Field(default_factory=list, description="目標列表")
     resource_level: str | None = Field(default=None, description="資源水平")
     primary_motivation: str | None = Field(default=None, description="主要動機")
@@ -227,8 +232,8 @@ class Campaign(STIXDomainObject):
     name: str = Field(description="攻擊活動名稱")
     description: str | None = Field(default=None, description="攻擊活動描述")
     aliases: list[str] = Field(default_factory=list, description="別名列表")
-    first_seen: datetime | None = Field(default=None, description="首次發現時間")
-    last_seen: datetime | None = Field(default=None, description="最後活動時間")
+    first_seen: datetime | None = Field(default=None, description=FIRST_SEEN_DESC)
+    last_seen: datetime | None = Field(default=None, description=LAST_SEEN_DESC)
     objective: str | None = Field(default=None, description="目標")
 
 
@@ -281,7 +286,7 @@ class Tool(STIXDomainObject):
     aliases: list[str] = Field(default_factory=list, description="別名列表")
     tool_version: str | None = Field(default=None, description="工具版本")
     kill_chain_phases: list[KillChainPhase] = Field(
-        default_factory=list, description="Kill Chain 階段"
+        default_factory=list, description=KILL_CHAIN_DESC
     )
 
 

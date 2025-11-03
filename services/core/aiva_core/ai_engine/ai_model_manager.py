@@ -8,6 +8,7 @@ from datetime import UTC, datetime
 import logging
 from pathlib import Path
 from typing import Any
+import numpy as np
 
 from ..learning.model_trainer import ModelTrainer
 from ..learning.scalable_bio_trainer import (
@@ -16,6 +17,7 @@ from ..learning.scalable_bio_trainer import (
 )
 from .bio_neuron_core import BioNeuronRAGAgent, ScalableBioNet
 from ...aiva_common.schemas import AttackPlan, AttackStep, ExperienceSample
+from ...aiva_common.ai.experience_manager import ExperienceManager
 
 logger = logging.getLogger(__name__)
 
@@ -67,7 +69,7 @@ class AIModelManager:
 
         logger.info(f"AIModelManager initialized with model_dir={self.model_dir}")
 
-    async def initialize_models(
+    def initialize_models(
         self,
         input_size: int = 100,
         num_tools: int = 10,
@@ -154,98 +156,139 @@ class AIModelManager:
             logger.info("Starting AI model training...")
 
             # 1. 準備訓練數據
-            if training_data is None and use_experience_samples:
-                # 從經驗管理器獲取訓練樣本
-                samples = await self.experience_manager.get_training_samples(
-                    min_score=0.6, max_samples=1000
-                )
-                logger.info(
-                    f"Retrieved {len(samples)} training samples from experience"
-                )
-            else:
-                samples = training_data or []
-
+            samples = await self._prepare_training_data(training_data, use_experience_samples)
             if not samples:
-                logger.warning("No training data available")
-                return {
-                    "status": "skipped",
-                    "reason": "no_training_data",
-                    "timestamp": datetime.now(UTC).isoformat(),
-                }
+                return self._create_no_data_result()
 
-            # 2. 配置訓練參數
-            if config is None:
-                config = ScalableBioTrainingConfig(
-                    learning_rate=0.001,
-                    epochs=10,
-                    batch_size=32,
-                    early_stopping_patience=3,
-                )
+            # 2. 配置訓練參數並執行訓練
+            config = self._setup_training_config(config)
+            training_results = self._execute_training(samples, config)
 
-            # 3. 執行 ScalableBioNet 專用訓練
-            bio_trainer = ScalableBioTrainer(self.scalable_net, config)
-
-            # 準備訓練數據格式 (簡化示例)
-            import numpy as np
-
-            # 修正：避免不當的陣列創建，直接使用合適的形狀
-            if hasattr(samples[0], "context") and hasattr(samples[0], "result"):
-                # 如果 samples 有真實數據，需要適當的數據預處理
-                # 這裡假設 context 和 result 已經是數值格式
-                X_train = np.array([s.context for s in samples[:800]])
-                y_train = np.array([s.result for s in samples[:800]])
-                if len(samples) > 800:
-                    X_val = np.array([s.context for s in samples[800:]])
-                    y_val = np.array([s.result for s in samples[800:]])
-                else:
-                    # 沒有足夠數據做驗證，使用部分訓練數據
-                    X_val = X_train[-50:]
-                    y_val = y_train[-50:]
-            else:
-                # 如果沒有真實數據，生成假數據進行測試
-                # 確保維度正確：輸入維度應該與 ScalableBioNet 的 fc1 輸入維度匹配
-                input_dim = self.scalable_net.fc1.shape[0] if self.scalable_net else 10
-                output_dim = self.scalable_net.fc2.shape[1] if self.scalable_net else 3
-
-                X_train = np.random.randn(800, input_dim)
-                y_train = np.random.randn(800, output_dim)
-                X_val = np.random.randn(200, input_dim)
-                y_val = np.random.randn(200, output_dim)
-
-            # 執行訓練
-            training_results = bio_trainer.train(X_train, y_train, X_val, y_val)
-
-            # 4. 更新模型狀態
-            self.is_trained = True
-            self.last_update = datetime.now(UTC)
-            self.current_version = (
-                f"v1.{int(self.current_version.split('.')[-1]) + 1}.0"
-            )
-
-            # 5. 保存模型
+            # 3. 更新模型狀態並保存
+            self._update_model_state()
             model_path = await self._save_model()
 
-            result = {
-                "status": "success",
-                "training_results": training_results,
-                "model_version": self.current_version,
-                "model_path": str(model_path),
-                "samples_used": len(samples),
-                "trained_at": self.last_update.isoformat(),
-            }
-
-            logger.info(
-                f"Training completed successfully: version={self.current_version}"
-            )
-            return result
+            # 4. 返回訓練結果
+            return self._create_success_result(training_results, model_path, samples)
 
         except Exception as e:
             logger.error(f"Training failed: {e}")
-            return {
-                "status": "failed",
-                "error": str(e),
-                "timestamp": datetime.now(UTC).isoformat(),
-            }
+            return self._create_failure_result(e)
+
+    async def _prepare_training_data(
+        self, 
+        training_data: list[Any] | None, 
+        use_experience_samples: bool
+    ) -> list[Any]:
+        """準備訓練數據"""
+        if training_data is None and use_experience_samples:
+            samples = await self.experience_manager.get_training_samples(
+                min_score=0.6, max_samples=1000
+            )
+            logger.info(f"Retrieved {len(samples)} training samples from experience")
+            return samples
+        return training_data or []
+
+    def _create_no_data_result(self) -> dict[str, Any]:
+        """創建無訓練數據的結果"""
+        logger.warning("No training data available")
+        return {
+            "status": "skipped",
+            "reason": "no_training_data",
+            "timestamp": datetime.now(UTC).isoformat(),
+        }
+
+    def _setup_training_config(
+        self, config: ScalableBioTrainingConfig | None
+    ) -> ScalableBioTrainingConfig:
+        """設置訓練配置"""
+        if config is None:
+            config = ScalableBioTrainingConfig(
+                learning_rate=0.001,
+                epochs=10,
+                batch_size=32,
+                early_stopping_patience=3,
+            )
+        return config
+
+    def _execute_training(
+        self, samples: list[Any], config: ScalableBioTrainingConfig
+    ) -> dict[str, Any]:
+        """執行訓練過程"""
+        bio_trainer = ScalableBioTrainer(self.scalable_net, config)
+        x_train, y_train, x_val, y_val = self._prepare_training_arrays(samples)
+        return bio_trainer.train(x_train, y_train, x_val, y_val)
+
+    def _prepare_training_arrays(self, samples: list[Any]) -> tuple:
+        """準備訓練數據陣列"""
+        import numpy as np
+        
+        if self._has_real_sample_data(samples):
+            return self._extract_real_data_arrays(samples, np)
+        else:
+            return self._generate_synthetic_data_arrays(np)
+
+    def _has_real_sample_data(self, samples: list[Any]) -> bool:
+        """檢查是否有真實的樣本數據"""
+        return (samples and 
+                hasattr(samples[0], "context") and 
+                hasattr(samples[0], "result"))
+
+    def _extract_real_data_arrays(self, samples: list[Any], np) -> tuple:
+        """從真實樣本中提取數據陣列"""
+        x_train = np.array([s.context for s in samples[:800]])
+        y_train = np.array([s.result for s in samples[:800]])
+        
+        if len(samples) > 800:
+            x_val = np.array([s.context for s in samples[800:]])
+            y_val = np.array([s.result for s in samples[800:]])
+        else:
+            x_val = x_train[-50:]
+            y_val = y_train[-50:]
+        
+        return x_train, y_train, x_val, y_val
+
+    def _generate_synthetic_data_arrays(self, np) -> tuple:
+        """生成合成數據陣列"""
+        input_dim = self.scalable_net.fc1.shape[0] if self.scalable_net else 10
+        output_dim = self.scalable_net.fc2.shape[1] if self.scalable_net else 3
+
+        rng = np.random.default_rng(42)
+        x_train = rng.normal(size=(800, input_dim))
+        y_train = rng.normal(size=(800, output_dim))
+        x_val = rng.normal(size=(200, input_dim))
+        y_val = rng.normal(size=(200, output_dim))
+        
+        return x_train, y_train, x_val, y_val
+
+    def _update_model_state(self) -> None:
+        """更新模型狀態"""
+        self.is_trained = True
+        self.last_update = datetime.now(UTC)
+        self.current_version = f"v1.{int(self.current_version.split('.')[-1]) + 1}.0"
+
+    def _create_success_result(
+        self, training_results: dict[str, Any], model_path, samples: list[Any]
+    ) -> dict[str, Any]:
+        """創建成功訓練的結果"""
+        result = {
+            "status": "success",
+            "training_results": training_results,
+            "model_version": self.current_version,
+            "model_path": str(model_path),
+            "samples_used": len(samples),
+            "trained_at": self.last_update.isoformat(),
+        }
+        logger.info(f"Training completed successfully: version={self.current_version}")
+        return result
+
+    def _create_failure_result(self, error: Exception) -> dict[str, Any]:
+        """創建訓練失敗的結果"""
+        return {
+            "status": "failed",
+            "error": str(error),
+            "timestamp": datetime.now(UTC).isoformat(),
+        }
 
     async def make_decision(
         self,
@@ -276,7 +319,8 @@ class AIModelManager:
 
                 # 修正：fc1.shape是(input_size, hidden_size)，所以應該用shape[0]作為輸入大小
                 input_size = self.scalable_net.fc1.shape[0]
-                input_vector = np.random.randn(input_size)  # 1D向量，不是2D
+                rng = np.random.default_rng(42)
+                input_vector = rng.normal(size=input_size)  # 1D向量，不是2D
                 output = self.scalable_net.forward(input_vector)
 
                 result = {
@@ -309,7 +353,7 @@ class AIModelManager:
                 "timestamp": datetime.now(UTC).isoformat(),
             }
 
-    async def get_model_status(self) -> dict[str, Any]:
+    def get_model_status(self) -> dict[str, Any]:
         """獲取模型狀態
 
         Returns:
@@ -384,7 +428,7 @@ class AIModelManager:
                 "timestamp": datetime.now(UTC).isoformat(),
             }
 
-    async def _save_model(self) -> Path:
+    def _save_model(self) -> Path:
         """保存模型狀態
 
         Returns:
@@ -421,7 +465,7 @@ class AIModelManager:
         logger.info(f"Model saved to {model_path}")
         return model_path
 
-    async def load_model(self, model_path: Path | str) -> dict[str, Any]:
+    def load_model(self, model_path: Path | str) -> dict[str, Any]:
         """載入模型狀態
 
         Args:

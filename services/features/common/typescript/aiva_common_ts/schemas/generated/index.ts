@@ -11,4 +11,4 @@ export * from './schemas';
 
 // 版本信息
 export const SCHEMA_VERSION = '1.1.0';
-export const GENERATED_AT = '2025-10-31T22:01:00.000Z';
+export const GENERATED_AT = '2025-11-03T20:15:42.975102';

@@ -70,7 +70,6 @@ class PayloadGenerator:
     def generate(
         self,
         vuln_type: str,
-        target_info: dict[str, Any],
         encoding: PayloadEncodingType = PayloadEncodingType.NONE,
         custom_params: dict[str, Any] | None = None,
     ) -> list[str]:
