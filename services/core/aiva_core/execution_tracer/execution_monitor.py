@@ -9,9 +9,12 @@ import logging
 from typing import TYPE_CHECKING, Any
 
 if TYPE_CHECKING:
-    from ..planner.orchestrator import ExecutionPlan
-    from ..planner.task_converter import ExecutableTask
-    from ..planner.tool_selector import ToolDecision
+    pass
+
+# Import classes directly since they're used in dataclass definitions and method signatures
+from ..planner.orchestrator import ExecutionPlan
+from ..planner.task_converter import ExecutableTask
+from ..planner.tool_selector import ToolDecision
 
 from .trace_recorder import ExecutionTrace, TraceRecorder, TraceType
 

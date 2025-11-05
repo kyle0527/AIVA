@@ -329,7 +329,6 @@ $chineseComments = @{
     'function_cspm_go' = 'Go CSPM 功能'
     'function_idor' = 'IDOR 功能'
     'function_postex' = '後滲透功能'
-    'function_sast_rust' = 'Rust SAST 功能'
     'function_sca_go' = 'Go SCA 功能'
     'function_sqli' = 'SQL 注入功能'
     'function_ssrf' = 'SSRF 功能'
@@ -570,8 +569,10 @@ function Get-CodeTree {
         [hashtable]$PreviousTree = @{}
     )
 
-    if ($Level -ge $MaxLevel) { return }
+    if ($Level -ge $MaxLevel) { return @() }
 
+    $results = @()
+    
     try {
         $items = Get-ChildItem -Path $Path -Force -ErrorAction Stop |
             Where-Object {
@@ -635,58 +636,91 @@ function Get-CodeTree {
                 }
             }
             
-            # 輸出純文字行（帶標記）
-            Write-Output $markedLine
+            # 添加到結果集
+            $results += $markedLine
 
             if ($item.PSIsContainer) {
-                Get-CodeTree -Path $item.FullName -Prefix "$Prefix$extension" -RelativePath $itemRelPath -Level ($Level + 1) -MaxLevel $MaxLevel -FileCount $FileCount -DirCount $DirCount -PreviousTree $PreviousTree
+                $subTreeResults = Get-CodeTree -Path $item.FullName -Prefix "$Prefix$extension" -RelativePath $itemRelPath -Level ($Level + 1) -MaxLevel $MaxLevel -FileCount $FileCount -DirCount $DirCount -PreviousTree $PreviousTree
+                $results += $subTreeResults
             }
         }
     } catch {
         # 忽略無法存取的目錄
+        Write-Verbose "無法存取目錄: $Path - $_"
     }
+    
+    return $results
 }
+
+# 驗證專案根目錄
+if (-not (Test-Path $ProjectRoot)) {
+    Write-Error "專案根目錄不存在: $ProjectRoot"
+    return
+}
+
+Write-Host "📂 專案路徑: $ProjectRoot" -ForegroundColor Cyan
+Write-Host "📁 輸出目錄: $OutputDir" -ForegroundColor Cyan
 
 # 收集統計資料
 Write-Host "📊 收集統計資料..." -ForegroundColor Yellow
 
 # 統計各語言檔案數和行數
-$allCodeFiles = Get-ChildItem -Path $ProjectRoot -Recurse -File -ErrorAction SilentlyContinue |
-    Where-Object {
-        $path = $_.FullName
-        $shouldExclude = $false
-        foreach ($dir in $excludeDirs) {
-            if ($path -like "*\$dir\*") {
-                $shouldExclude = $true
-                break
+$allCodeFiles = @()
+try {
+    $allCodeFiles = Get-ChildItem -Path $ProjectRoot -Recurse -File -ErrorAction SilentlyContinue |
+        Where-Object {
+            $path = $_.FullName
+            $shouldExclude = $false
+            foreach ($dir in $excludeDirs) {
+                if ($path -like "*\$dir\*") {
+                    $shouldExclude = $true
+                    break
+                }
             }
+            if ($shouldExclude) { return $false }
+            Test-ShouldIncludeFile -FileName $_.Name
         }
-        if ($shouldExclude) { return $false }
-        Test-ShouldIncludeFile -FileName $_.Name
-    }
+    
+    Write-Host "✅ 找到 $($allCodeFiles.Count) 個程式碼檔案" -ForegroundColor Green
+} catch {
+    Write-Error "掃描檔案時發生錯誤: $_"
+    return
+}
 
-$langStats = $allCodeFiles | 
-    Group-Object Extension |
-    ForEach-Object {
-        $ext = $_.Name
-        $files = $_.Group
-        $totalLines = 0
-        foreach ($file in $files) {
-            $lines = (Get-Content $file.FullName -ErrorAction SilentlyContinue | Measure-Object -Line).Lines
-            $totalLines += $lines
-        }
-        [PSCustomObject]@{
-            Extension = $ext
-            FileCount = $files.Count
-            TotalLines = $totalLines
-            AvgLines = [math]::Round($totalLines / $files.Count, 1)
-        }
-    } |
-    Sort-Object TotalLines -Descending
+$langStats = @()
+$totalFiles = 0
+$totalLines = 0
 
-# 計算總計
-$totalFiles = ($langStats | Measure-Object -Property FileCount -Sum).Sum
-$totalLines = ($langStats | Measure-Object -Property TotalLines -Sum).Sum
+if ($allCodeFiles.Count -gt 0) {
+    $langStats = $allCodeFiles | 
+        Group-Object Extension |
+        ForEach-Object {
+            $ext = $_.Name
+            $files = $_.Group
+            $totalLinesForExt = 0
+            foreach ($file in $files) {
+                try {
+                    $lines = (Get-Content $file.FullName -ErrorAction SilentlyContinue | Measure-Object -Line).Lines
+                    $totalLinesForExt += $lines
+                } catch {
+                    Write-Verbose "無法讀取檔案 $($file.FullName): $_"
+                }
+            }
+            [PSCustomObject]@{
+                Extension = $ext
+                FileCount = $files.Count
+                TotalLines = $totalLinesForExt
+                AvgLines = if ($files.Count -gt 0) { [math]::Round($totalLinesForExt / $files.Count, 1) } else { 0 }
+            }
+        } |
+        Sort-Object TotalLines -Descending
+
+    # 計算總計
+    $totalFiles = ($langStats | Measure-Object -Property FileCount -Sum).Sum
+    $totalLines = ($langStats | Measure-Object -Property TotalLines -Sum).Sum
+}
+
+Write-Host "📈 統計完成: $totalFiles 個檔案，共 $totalLines 行程式碼" -ForegroundColor Green
 
 # 讀取上一版統計和樹狀結構
 $previousStats = $null
@@ -867,7 +901,11 @@ $output += "$rootName$rootComment"
 
 # 生成樹狀結構
 $treeOutput = Get-CodeTree -Path $ProjectRoot -FileCount $fileCountRef -DirCount $dirCountRef -PreviousTree $previousTree
-$output += ($treeOutput -join "`n")
+if ($treeOutput -and $treeOutput.Count -gt 0) {
+    $output += $treeOutput
+} else {
+    $output += "    (空目錄或無符合的程式碼檔案)"
+}
 
 # 如果有刪除的項目，在最後列出
 if ($deletedItems.Count -gt 0) {
@@ -893,10 +931,20 @@ if ($deletedItems.Count -gt 0) {
     }
 }
 
+# 確保輸出目錄存在
+if (-not (Test-Path $OutputDir)) {
+    New-Item -Path $OutputDir -ItemType Directory -Force | Out-Null
+}
+
 # 儲存到檔案
 $timestamp = Get-Date -Format 'yyyyMMdd_HHmmss'
 $outputFile = Join-Path $OutputDir "tree_ultimate_chinese_$timestamp.txt"
-$output | Out-File $outputFile -Encoding utf8
+try {
+    $output | Out-File $outputFile -Encoding utf8 -ErrorAction Stop
+} catch {
+    Write-Error "無法寫入檔案 $outputFile : $_"
+    return
+}
 
 # 統計
 $lineCount = $output.Count

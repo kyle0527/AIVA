@@ -131,19 +131,7 @@ class UnifiedFunctionCaller:
                 port=50054,
                 available_functions=["analyze_auth", "test_bypass", "check_tokens"],
             ),
-            # Rust 模組 (gRPC)
-            "SASTEngine": ModuleEndpoint(
-                name="SASTEngine",
-                language="Rust",
-                protocol="grpc",
-                host="localhost",
-                port=50055,
-                available_functions=[
-                    "analyze_code",
-                    "scan_vulnerabilities",
-                    "performance_check",
-                ],
-            ),
+            # Note: External SAST engine removed - only internal code analysis retained for AIVA self-monitoring
             "InfoGatherer": ModuleEndpoint(
                 name="InfoGatherer",
                 language="Rust",
@@ -421,37 +409,9 @@ class UnifiedFunctionCaller:
     ) -> Any:
         """調用 gRPC 模組 (Rust)"""
         try:
-            # 模擬 gRPC 調用（實際部署時會使用 grpcio）
-            if endpoint.name == "SASTEngine" and function_name == "analyze_code":
-                return {
-                    "code_path": parameters.get("code_path", ""),
-                    "analyzed_files": 156,
-                    "total_lines": 45280,
-                    "security_issues": [
-                        {
-                            "type": "buffer_overflow",
-                            "severity": "critical",
-                            "file": "main.rs",
-                            "line": 42,
-                        },
-                        {
-                            "type": "memory_leak",
-                            "severity": "high",
-                            "file": "parser.rs",
-                            "line": 128,
-                        },
-                        {
-                            "type": "unsafe_block",
-                            "severity": "medium",
-                            "file": "network.rs",
-                            "line": 89,
-                        },
-                    ],
-                    "performance_score": 9.2,
-                    "memory_safety_score": 8.7,
-                    "analysis_time_ms": 3420,
-                }
-            elif endpoint.name == "InfoGatherer" and function_name == "gather_info":
+            # External SAST engine functionality removed - not applicable for Bug Bounty hunting
+            # Only internal AIVA code analysis retained for self-monitoring purposes
+            if endpoint.name == "InfoGatherer" and function_name == "gather_info":
                 return {
                     "target": parameters.get("target", ""),
                     "open_ports": [22, 80, 443, 8080, 3000],
@@ -538,9 +498,7 @@ async def call_go_ssrf_detection(target_url: str) -> FunctionCallResult:
     return await call_any_function("SSRFDetector", "detect_ssrf", target_url=target_url)
 
 
-async def call_rust_sast_analysis(code_path: str) -> FunctionCallResult:
-    """Rust 靜態代碼分析"""
-    return await call_any_function("SASTEngine", "analyze_code", code_path=code_path)
+# Note: External SAST analysis removed - only internal AIVA code monitoring retained
 
 
 async def call_typescript_frontend_scan(target_url: str) -> FunctionCallResult:
@@ -578,11 +536,7 @@ if __name__ == "__main__":
             f"SSRF 檢測: {result.success} | {result.language} | 耗時: {result.execution_time:.3f}s"
         )
 
-        # 測試 Rust SAST 分析
-        result = await call_rust_sast_analysis("/path/to/code")
-        print(
-            f"SAST 分析: {result.success} | {result.language} | 耗時: {result.execution_time:.3f}s"
-        )
+        # Note: External SAST analysis test removed
 
         # 測試 TypeScript 前端掃描
         result = await call_typescript_frontend_scan("https://webapp.com")

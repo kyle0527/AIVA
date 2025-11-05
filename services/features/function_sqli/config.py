@@ -72,7 +72,7 @@ class SqliConfig:
                 raise ValueError(f"Unknown engine: {engine}")
 
     @classmethod
-    def create_safe_config(cls) -> SqliConfig:
+    def create_safe_config(cls) -> 'SqliConfig':
         """創建安全的預設配置（用於生產環境）"""
         return cls(
             engines={
@@ -91,7 +91,7 @@ class SqliConfig:
         )
 
     @classmethod
-    def create_aggressive_config(cls) -> SqliConfig:
+    def create_aggressive_config(cls) -> 'SqliConfig':
         """創建積極的檢測配置（用於專業測試）"""
         return cls(
             engines={

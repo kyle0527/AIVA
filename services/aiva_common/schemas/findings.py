@@ -214,16 +214,7 @@ class CodeLevelRootCause(BaseModel):
     fix_recommendation: str | None = None
 
 
-class SASTDASTCorrelation(BaseModel):
-    """SAST-DAST 資料流關聯結果"""
-
-    correlation_id: str
-    sast_finding_id: str
-    dast_finding_id: str
-    data_flow_path: list[str]  # Source -> Sink path
-    verification_status: str  # "verified", "partial", "unverified"
-    confidence_score: float  # 0.0 - 1.0
-    explanation: str | None = None
+# Note: SASTDASTCorrelation removed - external SAST functionality not needed for Bug Bounty hunting
 
 
 # ==================== AI 驅動漏洞驗證 ====================

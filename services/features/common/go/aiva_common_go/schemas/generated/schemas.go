@@ -8,8 +8,8 @@
 // 🔄 Schema 版本: 1.1.0
 
 package schemas
+
 import "time"
-import "encoding/json"
 
 // ==================== 枚舉類型 ====================
 

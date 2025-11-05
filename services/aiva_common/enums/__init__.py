@@ -168,9 +168,30 @@ from .modules import (
 # )
 
 # ==================== 安全測試 ====================
-# from .security import (
-#     # 安全測試相關枚舉暫時註釋
-# )
+from .security import (
+    AccessDecision,
+    AttackPathEdgeType,
+    AttackPathNodeType,
+    AttackTactic,
+    AttackTechnique,
+    CVSSMetric,
+    CWECategory,
+    ExploitType,
+    Exploitability,
+    IntelSource,
+    IOCType,
+    Location,
+    LowValueVulnerabilityType,
+    PersistenceType,
+    Permission,
+    PostExTestType,
+    RemediationType,
+    SecurityPattern,
+    SensitiveInfoType,
+    VulnerabilityByLanguage,
+    VulnerabilityStatus,
+    VulnerabilityType,
+)
 
 # ==================== 用戶界面和用戶體驗 ====================
 # from .ui_ux import (

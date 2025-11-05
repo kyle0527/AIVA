@@ -356,16 +356,7 @@ class CodeLevelRootCause(BaseModel):
     metadata: dict[str, Any] = Field(default_factory=dict, description="元數據")
 
 
-class SASTDASTCorrelation(BaseModel):
-    """SAST-DAST關聯分析"""
-
-    correlation_id: str = Field(description="關聯ID")
-    sast_finding_id: str = Field(description="SAST發現ID")
-    dast_finding_id: str = Field(description="DAST發現ID")
-    correlation_confidence: float = Field(ge=0.0, le=1.0, description="關聯置信度")
-    combined_severity: Severity = Field(description="組合嚴重程度")
-    verification_status: str = Field(description="驗證狀態")
-    metadata: dict[str, Any] = Field(default_factory=dict, description="元數據")
+# Note: SASTDASTCorrelation removed - external SAST functionality not needed for Bug Bounty hunting
 
 
 # ==================== 任務管理和編排 ====================
@@ -607,7 +598,7 @@ __all__ = [
     "VulnerabilityCorrelation",
     "EnhancedVulnerabilityCorrelation",
     "CodeLevelRootCause",
-    "SASTDASTCorrelation",
+
     # 任務管理擴展
     "TaskDependency",
     "EnhancedTaskExecution",

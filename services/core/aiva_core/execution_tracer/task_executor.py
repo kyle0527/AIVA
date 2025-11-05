@@ -8,9 +8,10 @@ import logging
 from typing import TYPE_CHECKING, Any
 
 if TYPE_CHECKING:
-    from ..planner.task_converter import ExecutableTask
-    from ..planner.tool_selector import ToolDecision
+    pass
 
+from ..planner.task_converter import ExecutableTask
+from ..planner.tool_selector import ToolDecision
 from .execution_monitor import ExecutionContext, ExecutionMonitor
 
 logger = logging.getLogger(__name__)

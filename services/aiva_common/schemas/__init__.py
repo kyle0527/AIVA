@@ -51,7 +51,7 @@ from .analysis import (
     # TraceRecord,
     # RAGKnowledgeUpdatePayload,
     # RAGQueryPayload,
-    # RAGResponsePayload,
+    # RAGResponsePayload,  # Moved to ai.py import section
 )
 
 # ==================== 安全檢測領域 ====================
@@ -78,7 +78,7 @@ from .security import (
     VulnerabilityCorrelation,
     VulnerabilityScorecard,
     CodeLevelRootCause,
-    SASTDASTCorrelation,
+    # SASTDASTCorrelation,  # Removed - external SAST not needed
     AIVerificationRequest,
     AIVerificationResult,
     LowValueVulnerabilityType,
@@ -135,25 +135,25 @@ from .security import (
 
 # ==================== AI 相關 ====================
 # AI模組導入已重構為使用TYPE_CHECKING模式，遵循PEP-484標準
-# from .ai import (
+from .ai import (
 #     AIExperienceCreatedEvent,
 #     AIModelDeployCommand,
 #     AIModelUpdatedEvent,
 #     AITraceCompletedEvent,
-#     AITrainingCompletedPayload,
-#     AITrainingProgressPayload,
-#     AITrainingStartPayload,
+    AITrainingCompletedPayload,
+    AITrainingProgressPayload,
+    AITrainingStartPayload,
 #     AttackPlan,
 #     AttackStep,
-#     CVSSv3Metrics,
+    CVSSv3Metrics,
 #     EnhancedVulnerability,
 #     ExperienceSample,
 #     ModelTrainingConfig,
 #     PlanExecutionMetrics,
 #     PlanExecutionResult,
-#     RAGKnowledgeUpdatePayload,
-#     RAGQueryPayload,
-#     RAGResponsePayload,
+    RAGKnowledgeUpdatePayload,
+    RAGQueryPayload,
+    RAGResponsePayload,
 #     SARIFLocation,
 #     SARIFReport,
 #     SARIFResult,
@@ -161,7 +161,7 @@ from .security import (
 #     SARIFRun,
 #     SARIFTool,
 #     TraceRecord,
-# )
+)
 
 # ==================== API 標準 (OpenAPI/AsyncAPI/GraphQL) ====================
 from .api_standards import (
@@ -280,7 +280,7 @@ from .findings import (
     FindingPayload,
     FindingRecommendation,
     FindingTarget,
-    SASTDASTCorrelation,
+    # SASTDASTCorrelation,  # Removed - external SAST not needed
     SensitiveMatch,
     Target,
     Vulnerability,
@@ -530,7 +530,7 @@ __all__ = [
     "VulnerabilityCorrelation",
     "VulnerabilityScorecard",
     "CodeLevelRootCause",
-    "SASTDASTCorrelation",
+    # "SASTDASTCorrelation",  # Removed - external SAST not needed
     "AIVerificationRequest",
     "AIVerificationResult",
     # 遙測與監控
@@ -565,8 +565,8 @@ __all__ = [
     # "AIModelDeployCommand",
     # "RAGKnowledgeUpdatePayload",
     # "RAGQueryPayload",
-    # "RAGResponsePayload",
-    # "ExperienceSample",
+    "RAGResponsePayload",
+
     # "EnhancedVulnerability",
     # "SARIFLocation",
     # "SARIFResult",

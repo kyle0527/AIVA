@@ -1,0 +1,21 @@
+{
+  "timestamp": "2025-11-05T09:45:14.287238+00:00",
+  "environment": "development",
+  "total_duration": 2.0530951023101807,
+  "modules_tested": 1,
+  "overall_success_rate": 100.0,
+  "metrics": [
+    {
+      "module_name": "function_sqli",
+      "test_duration": 2.0526349544525146,
+      "requests_per_second": 48.71786860254083,
+      "peak_memory_mb": 27.25390625,
+      "avg_cpu_percent": 0.0,
+      "concurrent_connections": 10,
+      "response_time_p95": 21.11579179763794,
+      "success_rate": 100.0,
+      "error_count": 0,
+      "throughput_mb_s": 24.358934301270416
+    }
+  ]
+}

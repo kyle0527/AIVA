@@ -1,0 +1,129 @@
+{
+  "timestamp": "2025-11-05T09:45:32.128234+00:00",
+  "environment": "development",
+  "total_duration": 14.3047616481781,
+  "modules_tested": 10,
+  "overall_success_rate": 95.0,
+  "metrics": [
+    {
+      "module_name": "function_sqli",
+      "test_duration": 2.051190137863159,
+      "requests_per_second": 48.75218447772748,
+      "peak_memory_mb": 27.25,
+      "avg_cpu_percent": 0.0,
+      "concurrent_connections": 10,
+      "response_time_p95": 20.841479301452637,
+      "success_rate": 100.0,
+      "error_count": 0,
+      "throughput_mb_s": 24.37609223886374
+    },
+    {
+      "module_name": "function_xss",
+      "test_duration": 1.5541222095489502,
+      "requests_per_second": 64.34500413517853,
+      "peak_memory_mb": 27.28515625,
+      "avg_cpu_percent": 0.5,
+      "concurrent_connections": 10,
+      "response_time_p95": 15.906798839569092,
+      "success_rate": 100.0,
+      "error_count": 0,
+      "throughput_mb_s": 32.172502067589264
+    },
+    {
+      "module_name": "function_ssrf",
+      "test_duration": 2.5519468784332275,
+      "requests_per_second": 39.18576865573126,
+      "peak_memory_mb": 27.30859375,
+      "avg_cpu_percent": 0.0,
+      "concurrent_connections": 10,
+      "response_time_p95": 25.875496864318848,
+      "success_rate": 100.0,
+      "error_count": 0,
+      "throughput_mb_s": 19.59288432786563
+    },
+    {
+      "module_name": "function_idor",
+      "test_duration": 1.8355262279510498,
+      "requests_per_second": 54.48028934548508,
+      "peak_memory_mb": 27.33203125,
+      "avg_cpu_percent": 0.0,
+      "concurrent_connections": 10,
+      "response_time_p95": 18.638992309570312,
+      "success_rate": 100.0,
+      "error_count": 0,
+      "throughput_mb_s": 27.24014467274254
+    },
+    {
+      "module_name": "function_sca_go",
+      "test_duration": 1.8558762073516846,
+      "requests_per_second": 290.0,
+      "peak_memory_mb": 27.53125,
+      "avg_cpu_percent": 0.0,
+      "concurrent_connections": 50,
+      "response_time_p95": 800.0,
+      "success_rate": 95.0,
+      "error_count": 0,
+      "throughput_mb_s": 232.0
+    },
+    {
+      "module_name": "function_cspm_go",
+      "test_duration": 1.235457181930542,
+      "requests_per_second": 290.0,
+      "peak_memory_mb": 27.5703125,
+      "avg_cpu_percent": 0.0,
+      "concurrent_connections": 50,
+      "response_time_p95": 800.0,
+      "success_rate": 95.0,
+      "error_count": 0,
+      "throughput_mb_s": 232.0
+    },
+    {
+      "module_name": "function_ssrf_go",
+      "test_duration": 1.3904740810394287,
+      "requests_per_second": 290.0,
+      "peak_memory_mb": 27.59375,
+      "avg_cpu_percent": 0.0,
+      "concurrent_connections": 50,
+      "response_time_p95": 800.0,
+      "success_rate": 95.0,
+      "error_count": 0,
+      "throughput_mb_s": 232.0
+    },
+    {
+      "module_name": "function_authn_go",
+      "test_duration": 1.054746150970459,
+      "requests_per_second": 290.0,
+      "peak_memory_mb": 27.62109375,
+      "avg_cpu_percent": 0.0,
+      "concurrent_connections": 50,
+      "response_time_p95": 800.0,
+      "success_rate": 95.0,
+      "error_count": 0,
+      "throughput_mb_s": 232.0
+    },
+    {
+      "module_name": "aiva_scan_node",
+      "test_duration": 0.4074842929840088,
+      "requests_per_second": 172.5,
+      "peak_memory_mb": 27.6484375,
+      "avg_cpu_percent": 0.0,
+      "concurrent_connections": 30,
+      "response_time_p95": 1200.0,
+      "success_rate": 85.0,
+      "error_count": 5,
+      "throughput_mb_s": 103.5
+    },
+    {
+      "module_name": "aiva_common_ts",
+      "test_duration": 0.36414241790771484,
+      "requests_per_second": 202.5,
+      "peak_memory_mb": 27.67578125,
+      "avg_cpu_percent": 0.0,
+      "concurrent_connections": 30,
+      "response_time_p95": 1200.0,
+      "success_rate": 85.0,
+      "error_count": 5,
+      "throughput_mb_s": 121.5
+    }
+  ]
+}

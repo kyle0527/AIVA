@@ -11,6 +11,6 @@ Server-Side Request Forgery (SSRF) Detection Module
 __version__ = "1.0.0"
 
 # 導入核心組件 - 遵循 README 規範，不使用 try/except fallback
-from .result_publisher import ResultPublisher
+from .result_publisher import SsrfResultPublisher
 
-__all__ = ["ResultPublisher"]
+__all__ = ["SsrfResultPublisher"]

@@ -101,7 +101,7 @@ from services.core.models import (
     RiskAssessmentResult,
     RiskFactor,
     RiskTrendAnalysis,
-    SASTDASTCorrelation,
+
     SystemOrchestration,
     TaskDependency,
     TaskQueue,
@@ -231,7 +231,7 @@ __all__ = [
     "RiskAssessmentResult",
     "RiskFactor",
     "RiskTrendAnalysis",
-    "SASTDASTCorrelation",
+
     "SystemOrchestration",
     "Target",
     "TaskDependency",
