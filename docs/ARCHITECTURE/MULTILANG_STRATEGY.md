@@ -951,60 +951,61 @@ export interface FindingPayload {
 - Python `aiva_common/schemas.py` 作為單一事實來源
 - Go/Rust/TypeScript 手動同步維護對應的 struct/interface
 
-**中長期 (建議):**
-遷移到 Protocol Buffers:
+**長期策略:**
+持續使用統一數據合約 (JSON-based):
 
-```protobuf
-// schemas/aiva.proto
-syntax = "proto3";
+```yaml
+# core_schema_sot.yaml - 統一數據合約來源
+MessageHeader:
+  type: object
+  properties:
+    message_id: {type: str}
+    trace_id: {type: str}
+    correlation_id: {type: str, optional: true}
+    source_module: {type: str}
+    timestamp: {type: datetime}
+    version: {type: str}
 
-package aiva.schemas;
+FindingPayload:
+  type: object
+  properties:
+    finding_id: {type: str}
+    scan_id: {type: str}
+    vulnerability_type: {type: str}
+    severity: {type: Severity}
+    confidence: {type: Confidence}
+    title: {type: str}
+    description: {type: str}
+    location: {type: LocationInfo}
+    # ... 其他欄位
 
-message MessageHeader {
-  string message_id = 1;
-  string trace_id = 2;
-  optional string correlation_id = 3;
-  string source_module = 4;
-  string timestamp = 5;
-  string version = 6;
-}
-
-message FindingPayload {
-  string finding_id = 1;
-  string scan_id = 2;
-  string vulnerability_type = 3;
-  Severity severity = 4;
-  Confidence confidence = 5;
-  string title = 6;
-  string description = 7;
-  LocationInfo location = 8;
-  // ... 其他欄位
-}
-
-enum Severity {
-  SEVERITY_UNSPECIFIED = 0;
-  CRITICAL = 1;
-  HIGH = 2;
-  MEDIUM = 3;
-  LOW = 4;
-  INFO = 5;
-}
+Severity:
+  type: enum
+  values:
+    - CRITICAL
+    - HIGH  
+    - MEDIUM
+    - LOW
+    - INFO
 ```
 
 **自動生成多語言程式碼:**
 
 ```bash
-# 生成 Python
-protoc --python_out=services/aiva_common/ schemas/aiva.proto
+# 使用統一 Schema 生成工具
+python schema_codegen_tool.py --generate-all
 
-# 生成 Go
-protoc --go_out=services/function/common/go/aiva_common_go/ schemas/aiva.proto
+# 生成 Python Pydantic 模型
+python schema_codegen_tool.py --generate-python
 
-# 生成 Rust
-protoc --rust_out=services/function/common/rust/aiva_common_rust/src/ schemas/aiva.proto
+# 生成 Go Struct 定義
+python schema_codegen_tool.py --generate-go
 
-# 生成 TypeScript
-protoc --ts_out=services/scan/aiva_common_node/src/ schemas/aiva.proto
+# 生成 Rust Serde 結構
+python schema_codegen_tool.py --generate-rust
+
+# 生成 TypeScript 接口
+python schema_codegen_tool.py --generate-typescript
 ```
 
 ### 2. RabbitMQ 訊息格式標準

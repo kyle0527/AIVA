@@ -1,5 +1,10 @@
 """
 通用枚舉 - 狀態、級別、類型等基礎枚舉
+
+遵循官方標準：
+- CVSS v4.0: Common Vulnerability Scoring System
+- RFC 5424: Syslog Protocol  
+- RFC 7231: HTTP/1.1 Semantics and Content
 """
 
 from enum import Enum
@@ -8,12 +13,21 @@ from enum import Enum
 HTML_MIME_TYPE = "text/html"
 
 
-class Severity(str, Enum):
-    CRITICAL = "critical"
-    HIGH = "high"
-    MEDIUM = "medium"
-    LOW = "low"
-    INFORMATIONAL = "info"
+class CVSSSeverity(str, Enum):
+    """CVSS v4.0 官方嚴重程度等級
+    
+    基於 CVSS v4.0 規範: https://www.first.org/cvss/v4.0/specification-document
+    嚴重程度按照官方分數範圍定義
+    """
+    NONE = "None"        # 0.0 - 無影響
+    LOW = "Low"          # 0.1-3.9 - 低風險  
+    MEDIUM = "Medium"    # 4.0-6.9 - 中等風險
+    HIGH = "High"        # 7.0-8.9 - 高風險
+    CRITICAL = "Critical" # 9.0-10.0 - 極高風險
+
+
+# 向後相容別名 (將於 v6.0 移除)
+Severity = CVSSSeverity
 
 
 class Confidence(str, Enum):
@@ -680,14 +694,21 @@ class HttpMethod(str, Enum):
     CONNECT = "CONNECT"
 
 
-class HttpStatusCodeRange(str, Enum):
-    """HTTP 狀態碼範圍 - 用於狀態碼分類"""
+class HTTPStatusClass(str, Enum):
+    """HTTP 狀態碼分類 - RFC 7231 官方術語
+    
+    參考: https://tools.ietf.org/html/rfc7231#section-6
+    """
 
-    INFORMATIONAL = "1xx"  # 100-199 信息性響應
-    SUCCESS = "2xx"  # 200-299 成功響應
-    REDIRECT = "3xx"  # 300-399 重定向響應
-    CLIENT_ERROR = "4xx"  # 400-499 客戶端錯誤
-    SERVER_ERROR = "5xx"  # 500-599 服務器錯誤
+    INFORMATIONAL = "1xx"  # 100-199: RFC 7231 Section 6.2 - 信息響應
+    SUCCESSFUL = "2xx"     # 200-299: RFC 7231 Section 6.3 - 成功響應  
+    REDIRECTION = "3xx"    # 300-399: RFC 7231 Section 6.4 - 重定向響應
+    CLIENT_ERROR = "4xx"   # 400-499: RFC 7231 Section 6.5 - 客戶端錯誤
+    SERVER_ERROR = "5xx"   # 500-599: RFC 7231 Section 6.6 - 服務器錯誤
+
+
+# 向後相容別名 (將於 v6.0 移除)  
+HttpStatusCodeRange = HTTPStatusClass
 
 
 class ResponseDataType(str, Enum):

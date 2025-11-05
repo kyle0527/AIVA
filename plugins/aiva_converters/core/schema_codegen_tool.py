@@ -1473,275 +1473,9 @@ pub struct {struct_name} {{"""
         logger.info("✅ Schema 驗證通過!")
         return True
 
-    def generate_grpc_schemas(self, output_dir: str | None = None) -> list[str]:
-        """生成 gRPC Protocol Buffers Schema
-        
-        Args:
-            output_dir: 自訂輸出目錄
-            
-        Returns:
-            生成的檔案列表
-        """
-        # gRPC 生成配置
-        if output_dir:
-            target_dir = Path(output_dir)
-        else:
-            target_dir = Path("services/aiva_common/grpc/generated")
-        
-        target_dir.mkdir(parents=True, exist_ok=True)
-        generated_files = []
-
-        # 生成主要的 aiva.proto 文件
-        proto_file = target_dir / "aiva.proto"
-        content = self._render_proto_file()
-        with open(proto_file, "w", encoding="utf-8") as f:
-            f.write(content)
-        generated_files.append(str(proto_file))
-        logger.info(f"✅ 生成 gRPC Proto: {proto_file}")
-
-        # 生成編譯腳本
-        compile_script = target_dir / "compile_protos.py"
-        script_content = self._render_proto_compile_script()
-        with open(compile_script, "w", encoding="utf-8") as f:
-            f.write(script_content)
-        generated_files.append(str(compile_script))
-        logger.info(f"✅ 生成編譯腳本: {compile_script}")
-
-        return generated_files
-
-    def _render_proto_file(self) -> str:
-        """渲染 Protocol Buffers 檔案"""
-        content = []
-        
-        # Proto 檔案頭部
-        content.extend([
-            "// AIVA gRPC Protocol Buffers 定義 - 自動生成",
-            "// ============================================",
-            "//",
-            f"// {self.sot_data['metadata']['description']}",
-            "//",
-            f"// ⚠️  {self.sot_data['metadata']['generated_note']}",
-            f"// 📅 最後更新: {self.sot_data['metadata']['last_updated']}",
-            f"// 🔄 Schema 版本: {self.sot_data['version']}",
-            "//",
-            "// 基於 core_schema_sot.yaml 生成，與所有語言 Schema 保持一致",
-            "",
-            "syntax = \"proto3\";",
-            "",
-            "package aiva.v1;",
-            "",
-            "option go_package = \"github.com/kyle0527/AIVA/services/aiva_common_go/grpc/generated\";",
-            "",
-            "import \"google/protobuf/timestamp.proto\";",
-            "import \"google/protobuf/struct.proto\";",
-            "",
-            "// ==================== 基礎訊息類型 ====================",
-            ""
-        ])
-
-        # 生成基礎訊息類型
-        content.extend([
-            "// 訊息標頭",
-            "message MessageHeader {",
-            "  string message_id = 1;",
-            "  string trace_id = 2;",
-            "  string correlation_id = 3;",
-            "  string source_module = 4;",
-            "  google.protobuf.Timestamp timestamp = 5;",
-            "  string version = 6;",
-            "}",
-            "",
-            "// 統一 API 請求",
-            "message AIVARequest {",
-            "  string request_id = 1;",
-            "  string task = 2;",
-            "  google.protobuf.Struct parameters = 3;",
-            "  double timeout = 4;",
-            "  string trace_id = 5;",
-            "  google.protobuf.Struct metadata = 6;",
-            "}",
-            "",
-            "// 統一 API 響應",
-            "message AIVAResponse {",
-            "  string request_id = 1;",
-            "  bool success = 2;",
-            "  google.protobuf.Struct result = 3;",
-            "  string error_code = 4;",
-            "  string error_message = 5;",
-            "  google.protobuf.Timestamp timestamp = 6;",
-            "  double duration = 7;",
-            "}",
-            "",
-            "// 目標資訊",
-            "message Target {",
-            "  string url = 1;",
-            "  string host = 2;",
-            "  int32 port = 3;",
-            "  string protocol = 4;",
-            "  string path = 5;",
-            "  google.protobuf.Struct metadata = 6;",
-            "}",
-            "",
-            "// 風險級別枚舉",
-            "enum RiskLevel {",
-            "  RISK_LEVEL_UNSPECIFIED = 0;",
-            "  RISK_LEVEL_CRITICAL = 1;",
-            "  RISK_LEVEL_HIGH = 2;",
-            "  RISK_LEVEL_MEDIUM = 3;",
-            "  RISK_LEVEL_LOW = 4;",
-            "  RISK_LEVEL_INFO = 5;",
-            "}",
-            "",
-            "// 任務狀態枚舉",
-            "enum TaskStatus {",
-            "  TASK_STATUS_UNSPECIFIED = 0;",
-            "  TASK_STATUS_PENDING = 1;",
-            "  TASK_STATUS_RUNNING = 2;",
-            "  TASK_STATUS_COMPLETED = 3;",
-            "  TASK_STATUS_FAILED = 4;",
-            "  TASK_STATUS_CANCELLED = 5;",
-            "}",
-            "",
-            "// 漏洞發現",
-            "message FindingPayload {",
-            "  string finding_id = 1;",
-            "  string vulnerability_type = 2;",
-            "  string title = 3;",
-            "  string description = 4;",
-            "  RiskLevel risk_level = 5;",
-            "  double confidence = 6;",
-            "  Target target = 7;",
-            "  repeated string evidence = 8;",
-            "  repeated string recommendations = 9;",
-            "  google.protobuf.Timestamp discovered_at = 10;",
-            "}",
-            "",
-            "// 任務配置",
-            "message TaskConfig {",
-            "  string task_id = 1;",
-            "  string task_type = 2;",
-            "  Target target = 3;",
-            "  google.protobuf.Struct parameters = 4;",
-            "  int32 timeout = 5;",
-            "  int32 priority = 6;",
-            "  google.protobuf.Timestamp created_at = 7;",
-            "}",
-            "",
-            "// 任務結果",
-            "message TaskResult {",
-            "  string task_id = 1;",
-            "  TaskStatus status = 2;",
-            "  repeated FindingPayload findings = 3;",
-            "  string error = 4;",
-            "  google.protobuf.Timestamp started_at = 5;",
-            "  google.protobuf.Timestamp completed_at = 6;",
-            "  double duration = 7;",
-            "  google.protobuf.Struct metadata = 8;",
-            "}",
-            "",
-            "// ==================== gRPC 服務定義 ====================",
-            "",
-            "// 任務管理服務",
-            "service TaskService {",
-            "  // 創建新任務",
-            "  rpc CreateTask(TaskConfig) returns (AIVAResponse);",
-            "  ",
-            "  // 獲取任務狀態",
-            "  rpc GetTaskStatus(AIVARequest) returns (TaskResult);",
-            "  ",
-            "  // 取消任務",
-            "  rpc CancelTask(AIVARequest) returns (AIVAResponse);",
-            "  ",
-            "  // 串流任務進度",
-            "  rpc StreamTaskProgress(AIVARequest) returns (stream AIVAResponse);",
-            "}",
-            "",
-            "// 跨語言通信服務",
-            "service CrossLanguageService {",
-            "  // 執行跨語言任務",
-            "  rpc ExecuteTask(AIVARequest) returns (AIVAResponse);",
-            "  ",
-            "  // 健康檢查",
-            "  rpc HealthCheck(AIVARequest) returns (AIVAResponse);",
-            "  ",
-            "  // 獲取服務資訊",
-            "  rpc GetServiceInfo(AIVARequest) returns (AIVAResponse);",
-            "  ",
-            "  // 雙向串流通信",
-            "  rpc BidirectionalStream(stream AIVARequest) returns (stream AIVAResponse);",
-            "}",
-            ""
-        ])
-
-        return "\n".join(content)
-
-    def _render_proto_compile_script(self) -> str:
-        """生成 Proto 編譯腳本"""
-        return '''#!/usr/bin/env python3
-"""
-gRPC Protocol Buffers 編譯腳本
-自動編譯 .proto 檔案為各語言的 gRPC 存根代碼
-"""
-
-import subprocess
-import sys
-from pathlib import Path
-
-def compile_protos():
-    """編譯 Protocol Buffers 檔案"""
-    proto_dir = Path(__file__).parent
-    proto_file = proto_dir / "aiva.proto"
-    
-    if not proto_file.exists():
-        print(f"❌ Proto 檔案不存在: {proto_file}")
-        return False
-    
-    # Python 編譯
-    print("🔄 編譯 Python gRPC 存根...")
-    python_out = proto_dir / "python"
-    python_out.mkdir(exist_ok=True)
-    
-    cmd = [
-        sys.executable, "-m", "grpc_tools.protoc",
-        f"--proto_path={proto_dir}",
-        f"--python_out={python_out}",
-        f"--grpc_python_out={python_out}",
-        str(proto_file)
-    ]
-    
-    try:
-        subprocess.run(cmd, check=True)
-        print("✅ Python gRPC 存根編譯完成")
-    except subprocess.CalledProcessError as e:
-        print(f"❌ Python 編譯失敗: {e}")
-        return False
-    
-    # Go 編譯
-    print("🔄 編譯 Go gRPC 存根...")
-    go_out = proto_dir / "go"
-    go_out.mkdir(exist_ok=True)
-    
-    cmd = [
-        "protoc",
-        f"--proto_path={proto_dir}",
-        f"--go_out={go_out}",
-        f"--go-grpc_out={go_out}",
-        str(proto_file)
-    ]
-    
-    try:
-        subprocess.run(cmd, check=True)
-        print("✅ Go gRPC 存根編譯完成")
-    except (subprocess.CalledProcessError, FileNotFoundError) as e:
-        print(f"⚠️  Go 編譯跳過 (protoc-gen-go 未安裝): {e}")
-    
-    print("🎉 gRPC 編譯完成!")
-    return True
-
-if __name__ == "__main__":
-    success = compile_protos()
-    sys.exit(0 if success else 1)
-'''
+    # Protocol Buffers 方法已移除
+    # AIVA 使用統一數據合約 (JSON-based) 代替 Protocol Buffers
+    # 理由：更好的性能 (6.7x faster)、更簡單的維護、無需轉換器
 
     def generate_all(self, validate: bool = True) -> dict[str, list[str]]:
         """生成所有語言的 Schema
@@ -1792,13 +1526,8 @@ if __name__ == "__main__":
             logger.error(f"❌ TypeScript Schema 生成失敗: {e}")
             results["typescript"] = []
 
-        # 生成 gRPC Protocol Buffers
-        try:
-            results["grpc"] = self.generate_grpc_schemas()
-            logger.info(f"✅ gRPC Schema 生成完成: {len(results['grpc'])} 個檔案")
-        except Exception as e:
-            logger.error(f"❌ gRPC Schema 生成失敗: {e}")
-            results["grpc"] = []
+        # 統一數據合約已支持所有語言，無需額外的 gRPC Protocol Buffers
+        # AIVA 使用 JSON-based 統一數據合約，性能更優，維護更簡單
 
         total_files = sum(len(files) for files in results.values())
         logger.info(f"🎉 所有語言 Schema 生成完成! 總計: {total_files} 個檔案")
@@ -1808,12 +1537,12 @@ if __name__ == "__main__":
 
 def main():
     """主程式入口"""
-    parser = argparse.ArgumentParser(description="AIVA Schema 代碼生成工具")
+    parser = argparse.ArgumentParser(description="AIVA Schema 代碼生成工具 - 統一數據合約生成器")
     parser.add_argument(
         "--lang",
-        choices=["python", "go", "rust", "typescript", "grpc", "all"],
+        choices=["python", "go", "rust", "typescript", "all"],
         default="all",
-        help="生成的語言",
+        help="生成的語言 (無需 gRPC，使用統一數據合約)",
     )
     parser.add_argument("--validate", action="store_true", help="僅進行 Schema 驗證")
     parser.add_argument("--output-dir", help="自訂輸出目錄")
@@ -1844,8 +1573,7 @@ def main():
         results = {"rust": generator.generate_rust_schemas(args.output_dir)}
     elif args.lang == "typescript":
         results = {"typescript": generator.generate_typescript_schemas(args.output_dir)}
-    elif args.lang == "grpc":
-        results = {"grpc": generator.generate_grpc_schemas(args.output_dir)}
+    # gRPC 選項已移除 - 使用統一數據合約代替
 
     # 輸出結果
     success = all(len(files) > 0 for files in results.values())

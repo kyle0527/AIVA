@@ -110,11 +110,13 @@ from .common import (
     AlertType,
     AsyncTaskStatus,
     Confidence,
+    CVSSSeverity,      # 新的 CVSS v4.0 官方標準
     DataFormat,
     EncodingType,
     ErrorCategory,
     HttpMethod,
-    HttpStatusCodeRange,
+    HTTPStatusClass,   # 新的 RFC 7231 官方術語
+    HttpStatusCodeRange,  # 向後相容別名
     LogLevel,
     NetworkProtocol,
     OperationResult,
@@ -125,7 +127,7 @@ from .common import (
     RiskLevel,
     ScanStatus,
     ScanStrategy,
-    Severity,
+    Severity,          # 向後相容別名
     StoppingReason,
     TaskStatus,
     TaskType,

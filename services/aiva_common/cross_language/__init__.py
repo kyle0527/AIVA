@@ -5,9 +5,9 @@ AIVA 跨語言通訊模組
 此模組提供完整的跨語言架構支持：
 
 核心組件：
-- CrossLanguageService: 跨語言服務核心
-- ErrorHandler: 統一錯誤處理系統
-- LanguageAdapter: 語言適配器基類
+- 統一數據合約通信服務
+- 統一錯誤處理系統
+- 語言適配器基類
 
 適配器：
 - PythonAdapter: Python 語言適配器（內建）
@@ -15,24 +15,28 @@ AIVA 跨語言通訊模組
 - GoAdapter: Go 語言適配器（微服務）
 
 協議支持：
-- Protocol Buffers: 數據序列化
-- gRPC: 服務間通訊
+- 統一數據合約: JSON 標準格式
+- RabbitMQ: 服務間通訊
 - 統一錯誤碼: 跨語言錯誤映射
 
 使用範例：
 ```python
-from aiva_common.cross_language import CrossLanguageService, create_rust_adapter
+from aiva_common.schemas.messaging import AivaMessage, AIVARequest
+from aiva_common.cross_language import create_rust_adapter
 
-# 初始化服務
-service = CrossLanguageService()
-await service.start_server([])
+# 創建統一消息
+request = AIVARequest(
+    request_id="req_123",
+    source_module="python_scanner",
+    target_module="rust_engine",
+    request_type="security_scan",
+    payload={"url": "http://example.com"}
+)
 
-# 使用 Rust 適配器
+# 使用 Rust 適配器處理
 async with create_rust_adapter() as rust_adapter:
-    result = await rust_adapter.execute_security_scan("http://example.com")
-    print("Scan result:", result)
-
-await service.stop_server()
+    result = await rust_adapter.process_request(request)
+    print("Scan result:", result.payload)
 ```
 """
 
