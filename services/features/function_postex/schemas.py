@@ -2,10 +2,14 @@
 PostEx (Post-Exploitation) 模組專用數據合約
 定義後滲透測試相關的所有數據結構，基於 Pydantic v2.12.0
 僅用於授權的滲透測試環境
+
+⚠️ DEPRECATION WARNING - V1 架構 ⚠️
+此文件為 V1 架構的 schema 定義，正在逐步遷移到 V2 統一架構。
+V2 單一事實來源: services/aiva_common/core_schema_sot.yaml
+新功能開發請使用 V2 架構。
 """
 
-
-
+import warnings
 from datetime import UTC, datetime
 from typing import Any
 
@@ -13,6 +17,14 @@ from pydantic import BaseModel, Field, field_validator
 
 from services.aiva_common.enums import PostExTestType, ThreatLevel
 from services.aiva_common.schemas import (
+
+# V1 架構棄用警告
+warnings.warn(
+    "services/features/function_postex/schemas.py is deprecated (V1 architecture). "
+    "Migrate to V2: services/aiva_common/core_schema_sot.yaml",
+    DeprecationWarning,
+    stacklevel=2,
+)
     FindingPayload,
     FunctionTelemetry,
 )

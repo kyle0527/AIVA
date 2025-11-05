@@ -1,5 +1,16 @@
 """Core 模組專用數據合約
 
+⚠️ DEPRECATION WARNING - V1 架構 ⚠️
+此文件為 V1 架構的 schema 定義，正在逐步遷移到 V2 統一架構。
+
+V2 單一事實來源 (Single Source of Truth):
+- 檔案位置: services/aiva_common/core_schema_sot.yaml
+- 說明文件: services/aiva_common/README_SCHEMA.md
+- 生成工具: tools/schema_codegen_tool.py
+
+未來此文件將被廢棄，請優先使用 V2 架構的 schema。
+新功能開發請使用 core_schema_sot.yaml 定義 schema。
+
 定義核心引擎的內部數據結構，包括：
 - 攻擊面分析結果
 - 測試策略
@@ -7,9 +18,18 @@
 - 策略調整記錄
 """
 
+import warnings
 from typing import Literal
 
 from pydantic import BaseModel, Field, field_validator
+
+# 發出運行時警告，提醒開發者遷移到 V2
+warnings.warn(
+    "services/core/aiva_core/schemas.py is deprecated (V1 architecture). "
+    "Please migrate to V2 unified schema: services/aiva_common/core_schema_sot.yaml",
+    DeprecationWarning,
+    stacklevel=2,
+)
 
 # ============================================================================
 # 攻擊面分析相關

@@ -2,13 +2,18 @@
 Scan 模組專用數據合約
 定義掃描引擎相關的所有數據結構，基於 Pydantic v2.12.0
 
+⚠️ DEPRECATION WARNING - V1 架構 ⚠️
+此文件為 V1 架構的 schema 定義，正在逐步遷移到 V2 統一架構。
+
+V2 單一事實來源: services/aiva_common/core_schema_sot.yaml
+請優先使用 V2 架構的 schema 進行新功能開發。
+
 修復記錄 (2025-10-29):
 - 使用 aiva_common.enums.HttpMethod 替代硬編碼 HTTP 方法驗證
 - 遵循統一枚舉原則，提升代碼一致性
 """
 
-
-
+import warnings
 from typing import Any
 
 from pydantic import BaseModel, Field, field_validator
@@ -17,6 +22,14 @@ from pydantic import BaseModel, Field, field_validator
 from ...aiva_common.enums import HttpMethod
 
 from services.aiva_common.enums import Location, SensitiveInfoType, Severity
+
+# V1 架構棄用警告
+warnings.warn(
+    "services/scan/aiva_scan/schemas.py is deprecated (V1 architecture). "
+    "Migrate to V2: services/aiva_common/core_schema_sot.yaml",
+    DeprecationWarning,
+    stacklevel=2,
+)
 
 
 class SensitiveMatch(BaseModel):

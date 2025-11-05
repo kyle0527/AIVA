@@ -1,12 +1,19 @@
-"""Multi-Language AI Coordinator
-多語言 AI 協調器
+"""Multi-Language AI Coordinator - V2 Unified Architecture
+多語言 AI 協調器 - V2 統一架構
 
 負責協調 Python/Rust/Go/TypeScript 等多語言 AI 模組
+使用 V2 CrossLanguageService (gRPC) 作為主要通訊方式，
+並保留 V1 (HTTP/subprocess) 作為後備方案
 """
 
+import asyncio
 import time
 from typing import Any
 
+from services.aiva_common.cross_language import (
+    CrossLanguageConfig,
+    get_cross_language_service,
+)
 from services.aiva_common.enums import ProgrammingLanguage
 
 from .utils.logging_formatter import get_aiva_logger, log_cross_language_call
@@ -15,9 +22,19 @@ logger = get_aiva_logger("multilang_coordinator")
 
 
 class MultiLanguageAICoordinator:
-    """多語言 AI 協調器"""
+    """多語言 AI 協調器 - V2 統一架構
+    
+    使用 gRPC (V2) 作為主要跨語言通訊方式，
+    自動降級到 HTTP/subprocess (V1) 作為後備
+    """
 
-    def __init__(self):
+    def __init__(self, use_grpc: bool = True):
+        """初始化協調器
+        
+        Args:
+            use_grpc: 是否優先使用 gRPC (V2架構)，預設為 True
+        """
+        self.use_grpc = use_grpc
         self.available_ai_modules: dict[ProgrammingLanguage, bool] = {
             ProgrammingLanguage.PYTHON: True,  # 主要 AI 引擎
             ProgrammingLanguage.RUST: False,  # Rust AI 模組（需啟動）
@@ -25,8 +42,16 @@ class MultiLanguageAICoordinator:
             ProgrammingLanguage.TYPESCRIPT: False,  # TypeScript AI 模組（需啟動）
         }
         self.module_status: dict[str, Any] = {}
+        
+        # V2: gRPC 服務 (優先使用)
+        self.cross_lang_service = get_cross_language_service() if use_grpc else None
+        self.grpc_endpoints: dict[ProgrammingLanguage, str] = {
+            ProgrammingLanguage.GO: "localhost:50051",
+            ProgrammingLanguage.RUST: "localhost:50052", 
+            ProgrammingLanguage.TYPESCRIPT: "localhost:50053",
+        }
 
-        # 初始化 Rust 和 Go 子模組
+        # 初始化模組 (會嘗試 gRPC，失敗則降級到 V1)
         self._initialize_rust_module()
         self._initialize_go_module()
         self._initialize_typescript_module()
@@ -153,16 +178,33 @@ class MultiLanguageAICoordinator:
             return False
 
     def _initialize_rust_module(self) -> None:
-        """初始化 Rust AI 模組"""
+        """初始化 Rust AI 模組 - V2 優先使用 gRPC"""
         try:
-            # TODO: 實際實現 Rust AI 模組的初始化
-            # 這裡可以調用 Rust 二進制文件或通過 FFI
             logger.info("正在初始化 Rust AI 模組...")
 
-            # 模擬檢查 Rust 模組是否可用
+            # V2: 優先嘗試 gRPC 健康檢查
+            if self.cross_lang_service:
+                grpc_target = self.grpc_endpoints[ProgrammingLanguage.RUST]
+                try:
+                    # 使用異步方式檢查 gRPC 服務
+                    is_healthy = asyncio.run(
+                        self.cross_lang_service.health_check(grpc_target)
+                    )
+                    if is_healthy:
+                        self.available_ai_modules[ProgrammingLanguage.RUST] = True
+                        logger.info(f"✅ Rust AI 模組已就緒 (gRPC: {grpc_target})")
+                        self.module_status[ProgrammingLanguage.RUST] = {
+                            "status": "ready",
+                            "transport": "grpc",
+                            "endpoint": grpc_target,
+                        }
+                        return
+                except Exception as e:
+                    logger.debug(f"gRPC 健康檢查失敗，降級到 V1: {e}")
+
+            # V1 降級: 使用 subprocess 檢查
             import subprocess
 
-            # 檢查是否有 Rust 執行檔案
             rust_module_path = (
                 "services/features/rust_ai_module/target/release/ai_processor"
             )
@@ -172,11 +214,11 @@ class MultiLanguageAICoordinator:
                 )
                 if result.returncode == 0:
                     self.available_ai_modules[ProgrammingLanguage.RUST] = True
-                    logger.info("✅ Rust AI 模組已就緒")
+                    logger.info("✅ Rust AI 模組已就緒 (subprocess)")
                     self.module_status[ProgrammingLanguage.RUST] = {
                         "status": "ready",
+                        "transport": "subprocess",
                         "version": result.stdout.decode().strip(),
-                        "initialized_at": logger.info.__name__,
                     }
                 else:
                     logger.warning("⚠️ Rust AI 模組初始化失敗")
@@ -187,22 +229,41 @@ class MultiLanguageAICoordinator:
             logger.error(f"Rust 模組初始化異常: {e}")
 
     def _initialize_go_module(self) -> None:
-        """初始化 Go AI 模組"""
+        """初始化 Go AI 模組 - V2 優先使用 gRPC"""
         try:
             logger.info("正在初始化 Go AI 模組...")
 
-            # 檢查 Go AI 服務是否運行
+            # V2: 優先嘗試 gRPC 健康檢查
+            if self.cross_lang_service:
+                grpc_target = self.grpc_endpoints[ProgrammingLanguage.GO]
+                try:
+                    is_healthy = asyncio.run(
+                        self.cross_lang_service.health_check(grpc_target)
+                    )
+                    if is_healthy:
+                        self.available_ai_modules[ProgrammingLanguage.GO] = True
+                        logger.info(f"✅ Go AI 模組已就緒 (gRPC: {grpc_target})")
+                        self.module_status[ProgrammingLanguage.GO] = {
+                            "status": "ready",
+                            "transport": "grpc",
+                            "endpoint": grpc_target,
+                        }
+                        return
+                except Exception as e:
+                    logger.debug(f"gRPC 健康檢查失敗，降級到 V1: {e}")
+
+            # V1 降級: 使用 HTTP 健康檢查
             import requests
 
-            go_service_url = "http://localhost:8081/health"  # Go AI 服務的健康檢查端點
-
+            go_service_url = "http://localhost:8081/health"
             try:
                 response = requests.get(go_service_url, timeout=2)
                 if response.status_code == 200:
                     self.available_ai_modules[ProgrammingLanguage.GO] = True
-                    logger.info("✅ Go AI 模組已就緒")
+                    logger.info("✅ Go AI 模組已就緒 (HTTP)")
                     self.module_status[ProgrammingLanguage.GO] = {
                         "status": "ready",
+                        "transport": "http",
                         "service_url": go_service_url,
                         "response_time": response.elapsed.total_seconds(),
                     }
@@ -215,24 +276,41 @@ class MultiLanguageAICoordinator:
             logger.error(f"Go 模組初始化異常: {e}")
 
     def _initialize_typescript_module(self) -> None:
-        """初始化 TypeScript AI 模組"""
+        """初始化 TypeScript AI 模組 - V2 優先使用 gRPC"""
         try:
             logger.info("正在初始化 TypeScript AI 模組...")
 
-            # 檢查 Node.js AI 服務
+            # V2: 優先嘗試 gRPC 健康檢查
+            if self.cross_lang_service:
+                grpc_target = self.grpc_endpoints[ProgrammingLanguage.TYPESCRIPT]
+                try:
+                    is_healthy = asyncio.run(
+                        self.cross_lang_service.health_check(grpc_target)
+                    )
+                    if is_healthy:
+                        self.available_ai_modules[ProgrammingLanguage.TYPESCRIPT] = True
+                        logger.info(f"✅ TypeScript AI 模組已就緒 (gRPC: {grpc_target})")
+                        self.module_status[ProgrammingLanguage.TYPESCRIPT] = {
+                            "status": "ready",
+                            "transport": "grpc",
+                            "endpoint": grpc_target,
+                        }
+                        return
+                except Exception as e:
+                    logger.debug(f"gRPC 健康檢查失敗，降級到 V1: {e}")
+
+            # V1 降級: 使用 HTTP 健康檢查
             import requests
 
-            ts_service_url = (
-                "http://localhost:3001/api/health"  # TypeScript AI 服務端點
-            )
-
+            ts_service_url = "http://localhost:3001/api/health"
             try:
                 response = requests.get(ts_service_url, timeout=2)
                 if response.status_code == 200:
                     self.available_ai_modules[ProgrammingLanguage.TYPESCRIPT] = True
-                    logger.info("✅ TypeScript AI 模組已就緒")
+                    logger.info("✅ TypeScript AI 模組已就緒 (HTTP)")
                     self.module_status[ProgrammingLanguage.TYPESCRIPT] = {
                         "status": "ready",
+                        "transport": "http",
                         "service_url": ts_service_url,
                         "response_time": response.elapsed.total_seconds(),
                     }
@@ -245,23 +323,33 @@ class MultiLanguageAICoordinator:
             logger.error(f"TypeScript 模組初始化異常: {e}")
 
     async def call_rust_ai(self, task: str, **kwargs) -> dict[str, Any]:
-        """調用 Rust AI 模組"""
+        """調用 Rust AI 模組 - V2 優先使用 gRPC"""
         if not self.available_ai_modules[ProgrammingLanguage.RUST]:
             return {"success": False, "error": "Rust AI 模組未啟用"}
 
         start_time = time.time()
+        
+        # V2: 優先使用 gRPC
+        if self.cross_lang_service and self.module_status.get(ProgrammingLanguage.RUST, {}).get("transport") == "grpc":
+            try:
+                # TODO: 實現實際的 gRPC 調用 (需要對應的 proto service)
+                # from services.aiva_common.protocols import aiva_services_pb2_grpc
+                # response = await self.cross_lang_service.call_service(...)
+                logger.warning("gRPC 調用尚未完全實現，降級到 V1")
+            except Exception as e:
+                logger.error(f"gRPC 調用失敗: {e}，降級到 V1")
+        
+        # V1 降級: 使用 subprocess
         try:
             import json
             import subprocess
 
-            # 構建調用參數
             input_data = {
                 "task": task,
                 "parameters": kwargs,
-                "timestamp": str(logger.info.__name__),
+                "timestamp": str(time.time()),
             }
 
-            # 調用 Rust 執行檔
             rust_module_path = (
                 "services/features/rust_ai_module/target/release/ai_processor"
             )
@@ -283,7 +371,7 @@ class MultiLanguageAICoordinator:
                     kwargs,
                     result,
                     None,
-                    time.time() - start_time if "start_time" in locals() else None,
+                    time.time() - start_time,
                 )
                 return {
                     "success": True,
@@ -301,7 +389,7 @@ class MultiLanguageAICoordinator:
                     kwargs,
                     None,
                     error_msg,
-                    time.time() - start_time if "start_time" in locals() else None,
+                    time.time() - start_time,
                 )
                 return {"success": False, "error": error_msg}
 
@@ -310,25 +398,31 @@ class MultiLanguageAICoordinator:
             return {"success": False, "error": str(e)}
 
     async def call_go_ai(self, task: str, **kwargs) -> dict[str, Any]:
-        """調用 Go AI 模組"""
+        """調用 Go AI 模組 - V2 優先使用 gRPC"""
         if not self.available_ai_modules[ProgrammingLanguage.GO]:
             return {"success": False, "error": "Go AI 模組未啟用"}
 
         start_time = time.time()
-        try:
+        
+        # V2: 優先使用 gRPC
+        if self.cross_lang_service and self.module_status.get(ProgrammingLanguage.GO, {}).get("transport") == "grpc":
+            try:
+                # TODO: 實現實際的 gRPC 調用
+                logger.warning("gRPC 調用尚未完全實現，降級到 V1")
+            except Exception as e:
+                logger.error(f"gRPC 調用失敗: {e}，降級到 V1")
 
+        # V1 降級: 使用 HTTP
+        try:
             import requests
 
-            # 構建請求數據
             request_data = {
                 "task": task,
                 "parameters": kwargs,
-                "timestamp": str(logger.info.__name__),
+                "timestamp": str(time.time()),
             }
 
-            # 發送 HTTP 請求到 Go 服務
             go_service_url = "http://localhost:8081/api/ai/process"
-
             response = requests.post(go_service_url, json=request_data, timeout=30)
 
             if response.status_code == 200:
@@ -368,25 +462,31 @@ class MultiLanguageAICoordinator:
             return {"success": False, "error": str(e)}
 
     async def call_typescript_ai(self, task: str, **kwargs) -> dict[str, Any]:
-        """調用 TypeScript AI 模組"""
+        """調用 TypeScript AI 模組 - V2 優先使用 gRPC"""
         if not self.available_ai_modules[ProgrammingLanguage.TYPESCRIPT]:
             return {"success": False, "error": "TypeScript AI 模組未啟用"}
 
         start_time = time.time()
-        try:
+        
+        # V2: 優先使用 gRPC
+        if self.cross_lang_service and self.module_status.get(ProgrammingLanguage.TYPESCRIPT, {}).get("transport") == "grpc":
+            try:
+                # TODO: 實現實際的 gRPC 調用
+                logger.warning("gRPC 調用尚未完全實現，降級到 V1")
+            except Exception as e:
+                logger.error(f"gRPC 調用失敗: {e}，降級到 V1")
 
+        # V1 降級: 使用 HTTP
+        try:
             import requests
 
-            # 構建請求數據
             request_data = {
                 "task": task,
                 "parameters": kwargs,
-                "timestamp": str(logger.info.__name__),
+                "timestamp": str(time.time()),
             }
 
-            # 發送請求到 TypeScript/Node.js 服務
             ts_service_url = "http://localhost:3001/api/ai/process"
-
             response = requests.post(ts_service_url, json=request_data, timeout=30)
 
             if response.status_code == 200:
