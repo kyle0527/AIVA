@@ -17,7 +17,8 @@ from ..learning.scalable_bio_trainer import (
 )
 from .bio_neuron_core import BioNeuronRAGAgent, ScalableBioNet
 from ...aiva_common.schemas import AttackPlan, AttackStep, ExperienceSample
-from ...aiva_common.ai.experience_manager import ExperienceManager
+# V2 統一經驗管理器 (取代 V1 ExperienceManager)
+from services.integration.aiva_integration.reception.experience_repository import ExperienceRepository
 
 logger = logging.getLogger(__name__)
 
@@ -29,7 +30,7 @@ class AIModelManager:
     - BioNeuronRAGAgent (主要決策引擎)
     - ScalableBioNet (神經網路核心)
     - 訓練系統 (ModelTrainer, ScalableBioTrainer)
-    - 經驗管理 (ExperienceManager)
+    - 經驗管理 (使用 V2 ExperienceRepository 取代 V1 ExperienceManager)
     """
 
     def __init__(
@@ -56,7 +57,12 @@ class AIModelManager:
         self.model_trainer = ModelTrainer(
             model_dir=self.model_dir, storage_backend=storage_backend
         )
-        self.experience_manager = ExperienceManager(storage_backend=storage_backend)
+        # V2 統一經驗管理器 - 使用 ExperienceRepository 取代 ExperienceManager
+        database_url = "sqlite:///experience_db.sqlite"  # 使用 SQLite 作為默認數據庫
+        self.experience_repository = ExperienceRepository(database_url=database_url)
+        
+        # 為向後兼容創建適配器
+        self.experience_manager = self._create_experience_adapter()
 
         # 配置
         self.knowledge_base_path = knowledge_base_path
@@ -546,3 +552,61 @@ class AIModelManager:
                 }
                 for _ in queries
             ]
+
+    def _create_experience_adapter(self):
+        """創建 V1 ExperienceManager API 的適配器，內部使用 V2 ExperienceRepository"""
+        
+        class ExperienceManagerAdapter:
+            def __init__(self, experience_repository):
+                self.experience_repository = experience_repository
+                
+            async def get_training_samples(self, min_score=0.5, max_samples=1000):
+                """適配器：獲取訓練樣本"""
+                import asyncio
+                
+                def _sync_get_samples():
+                    try:
+                        # 使用 V2 ExperienceRepository API
+                        experiences = self.experience_repository.query_experiences(
+                            min_score=min_score, limit=max_samples
+                        )
+                        
+                        # 轉換為 V1 格式
+                        samples = []
+                        for exp in experiences:
+                            sample = {
+                                "input": exp.context if hasattr(exp, 'context') else {},
+                                "output": exp.action if hasattr(exp, 'action') else {},
+                                "score": exp.overall_score if hasattr(exp, 'overall_score') else 0.5
+                            }
+                            samples.append(sample)
+                        
+                        logger.info(f"V1/V2 適配器: 獲取 {len(samples)} 個訓練樣本")
+                        return samples
+                    except Exception as e:
+                        logger.error(f"V1/V2 適配器獲取訓練樣本失敗: {e}")
+                        return []
+                
+                return await asyncio.get_event_loop().run_in_executor(None, _sync_get_samples)
+                    
+            async def add_experience(self, context, action, result, score):
+                """適配器：添加經驗記錄"""
+                import asyncio
+                
+                def _sync_add_experience():
+                    try:
+                        # 使用 V2 ExperienceRepository API
+                        self.experience_repository.add_experience(
+                            attack_type="general",
+                            context=context,
+                            action=action,
+                            result=result,
+                            overall_score=score
+                        )
+                        logger.info(f"V1/V2 適配器: 成功添加經驗記錄 (score: {score})")
+                    except Exception as e:
+                        logger.error(f"V1/V2 適配器添加經驗失敗: {e}")
+                
+                return await asyncio.get_event_loop().run_in_executor(None, _sync_add_experience)
+        
+        return ExperienceManagerAdapter(self.experience_repository)
