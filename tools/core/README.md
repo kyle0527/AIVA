@@ -65,4 +65,4 @@ python tools/core/delete_migrated_files.py
 ### 🔗 相關資源
 
 - [五模組架構說明](../../README.md)
-- [路徑管理最佳實踐](../../docs/IMPORT_PATH_BEST_PRACTICES.md)
+- [依賴管理最佳實踐](../../guides/development/DEPENDENCY_MANAGEMENT_GUIDE.md)

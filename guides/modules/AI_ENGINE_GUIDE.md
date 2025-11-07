@@ -278,7 +278,7 @@ class TestUnifiedAIController:
     
     async def test_process_request(self):
         """測試 AI 請求處理"""
-        config = AIControllerConfig(model_name="bio-gpt")
+        config = AIControllerConfig(model_name="aiva-bio-neuron")
         controller = UnifiedAIController(config)
         
         request = {

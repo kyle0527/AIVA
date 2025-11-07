@@ -407,9 +407,9 @@ pip install grpcio grpcio-tools  # integration 模組
 
 ### 文檔資源
 - [五模組架構說明](../README.md)
-- [路徑管理最佳實踐](../docs/IMPORT_PATH_BEST_PRACTICES.md)
-- [多語言整合文檔](../docs/ARCHITECTURE_MULTILANG.md)
-- [Schema 管理指南](../docs/SCHEMAS_DIRECTORIES_EXPLANATION.md)
+- [Schema 管理指南](../guides/architecture/SCHEMA_GUIDE.md)
+- [跨語言開發標準](../guides/development/MULTI_LANGUAGE_ENVIRONMENT_STANDARD.md)
+- [依賴管理最佳實踐](../guides/development/DEPENDENCY_MANAGEMENT_GUIDE.md)
 
 ### 輸出目錄
 - `_out/analysis/` - 分析報告

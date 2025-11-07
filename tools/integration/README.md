@@ -131,5 +131,5 @@ python tools/integration/update_imports.py
 ### 🔗 相關資源
 
 - [插件開發指南](../README.md)
-- [Schema 管理最佳實踐](../../docs/IMPORT_PATH_BEST_PRACTICES.md)
-- [多語言整合文檔](../../docs/ARCHITECTURE_MULTILANG.md)
+- [Schema 管理最佳實踐](../../guides/architecture/SCHEMA_GUIDE.md)
+- [跨語言開發標準](../../guides/development/MULTI_LANGUAGE_ENVIRONMENT_STANDARD.md)

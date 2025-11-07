@@ -1,54 +1,131 @@
-# AIVA AI 智能安全平台使用者指南
+# AIVA AI 系統實際使用指南 (實際狀況版)
 
-> **📖 閱讀對象**: 滲透測試人員、安全研究員、Bug Bounty獵人、企業安全團隊  
-> **🎯 使用場景**: 基於統一Schema的智能化安全測試、AI驅動漏洞發現、標準化報告生成  
-> **⏱️ 預計閱讀時間**: 15 分鐘  
-> **🚀 版本**: v5.0 跨語言統一版本 (2025.10.28)  
-> **� 核心突破**: 100% Schema標準化 + AI智能協同 + 企業級數據治理
-
----
-
-## 📚 使用者指南目錄
-
-1. [🚀 3分鐘快速上手](#-3分鐘快速上手)
-2. [⚡ CLI智能指令系統](#-cli智能指令系統)
-3. [🎯 六大掃描策略詳解](#-六大掃描策略詳解)
-4. [📊 實戰案例與結果解讀](#-實戰案例與結果解讀)
-5. [🔧 進階使用技巧](#-進階使用技巧)
-6. [⚠️ 使用注意事項與限制](#️-使用注意事項與限制)
-7. [🆘 常見問題與解決方案](#-常見問題與解決方案)
-8. [� 最佳實踐指南](#-最佳實踐指南)
+> **📖 閱讀對象**: 開發者、研究員、對 AIVA 架構感興趣的技術人員  
+> **🎯 實際場景**: AI 對話系統體驗、架構學習、開發環境搭建  
+> **⏱️ 預計閱讀時間**: 10 分鐘  
+> **🚀 版本**: v6.0-dev 實際狀況版本 (2025.11.07)  
+> **⚠️ 重要提醒**: 本指南反映 AIVA 的實際可用功能，不包含尚未實現的功能
 
 ---
 
-## 🚀 3分鐘快速上手
+## 📚 實際功能指南目錄
 
-### 🎯 超簡單！三步驟開始使用AIVA
+1. [🚀 實際可用功能快速體驗](#-實際可用功能快速體驗)
+2. [⚠️ 當前開發狀況說明](#️-當前開發狀況說明)
+3. [�️ 架構設計價值分析](#️-架構設計價值分析)
+4. [� 開發者參與指南](#-開發者參與指南)
+5. [� 實際測試結果記錄](#-實際測試結果記錄)
+6. [🚧 功能開發進度追蹤](#-功能開發進度追蹤)
+7. [🆘 常見問題與實際解決方案](#-常見問題與實際解決方案)
+8. [💡 改進建議與發展方向](#-改進建議與發展方向)
 
-#### **Step 1: 環境準備** (1分鐘)
+---
+
+## 🚀 實際可用功能快速體驗
+
+### ⚠️ **重要提醒**
+AIVA 當前為開發原型階段，大部分安全檢測功能尚未完成。以下是實際可以體驗的功能：
+
+#### **✅ 可用功能 1: AI 對話助手**
 
 ```bash
-# 1. 確保您已在AIVA專案目錄中
-cd /path/to/AIVA-git
+# 測試 AI 對話助手 (已驗證可用)
+python -c "
+import asyncio
+import sys
+sys.path.append('.')
+from services.core.aiva_core.dialog.assistant import AIVADialogAssistant
 
-# 2. 檢查環境是否準備就緒 (可選)
-python scripts/utilities/health_check.py
+async def test_ai():
+    assistant = AIVADialogAssistant()
+    queries = [
+        '系統狀況如何？',
+        '你能做什麼？',
+        'AIVA 有哪些功能？'
+    ]
+    
+    for query in queries:
+        print(f'\\n🤔 問題: {query}')
+        result = await assistant.process_user_input(query)
+        print(f'🤖 AI回應: {result[\"message\"][:200]}...')
 
-# 3. 啟動靶場環境 (OWASP Juice Shop)
-# 注意：靶場由您自行啟動，AIVA不會自動啟動
-docker run -d -p 3000:3000 bkimminich/juice-shop
+asyncio.run(test_ai())
+"
 ```
 
-#### **Step 2: 選擇您的第一個指令** (30秒)
+#### **✅ 可用功能 2: 能力註冊系統狀況**
 
-**新手推薦指令**:
 ```bash
-# 快速掃描 - 最適合第一次使用
-python scripts/misc/core_scan_integration_cli.py quick-scan http://localhost:3000
+# 檢查能力註冊系統 (基礎架構可用，但沒有實際檢測能力)
+python -c "
+import asyncio
+import sys
+sys.path.append('.')
+from services.integration.capability.registry import CapabilityRegistry
 
-# 如果您想看詳細的JSON結果
-python scripts/misc/core_scan_integration_cli.py quick-scan http://localhost:3000 --output json
+async def check_capabilities():
+    registry = CapabilityRegistry()
+    caps = await registry.list_capabilities()
+    print(f'📊 當前註冊的安全檢測能力: {len(caps) if caps else 0} 個')
+    print('💡 提示: 0 個能力表示檢測功能尚未實現')
+
+asyncio.run(check_capabilities())
+"
 ```
+
+#### **❌ 無法使用的功能示例**
+
+```bash
+# 以下功能當前無法正常使用，僅作為示例展示問題：
+
+# ❌ SQL 注入檢測 - 會出現 ModuleNotFoundError
+# python -c "from services.features.function_sqli import SmartDetectionManager"
+
+# ❌ 大部分掃描腳本 - 依賴缺失或實現不完整
+# python scripts/misc/core_scan_integration_cli.py quick-scan http://localhost:3000
+```
+
+---
+
+## ⚠️ 當前開發狀況說明
+
+### 📊 **實際能力分析** (基於 2025年11月7日 測試)
+
+#### **✅ 可正常工作的組件**
+- **AI 對話助手**: 完全可用，能處理系統狀態查詢
+- **基礎架構**: Python 模組導入正常
+- **能力註冊中心**: 框架可用但沒有實際註冊的檢測能力
+- **多語言支援**: 代碼結構完整 (Python/Go/Rust)
+
+#### **❌ 存在問題的組件**
+- **安全檢測模組**: 大部分無法導入，依賴缺失
+- **Bug Bounty 功能**: 架構存在但檢測邏輯空洞
+- **自動化掃描**: 核心引擎尚未實現
+- **實戰測試能力**: 缺乏真正的漏洞檢測算法
+
+### 🎯 **技術價值評估**
+
+#### **高價值部分** ⭐⭐⭐⭐
+- **創新架構設計**: 兩階段智能分離確實先進
+- **工具整合思路**: HackingTool 適配器設計有價值
+- **AI 整合方式**: 對話系統與決策引擎的結合有參考意義
+
+#### **待完善部分** ⚠️
+- **核心檢測邏輯**: 需要重新實現實際的檢測算法
+- **依賴管理**: 模組間依賴關係需要修復
+- **實戰驗證**: 缺乏真實環境測試驗證
+
+### 📈 **發展建議**
+
+#### **短期目標 (1-2個月)**
+1. **修復模組依賴**: 讓基礎檢測功能可以正常導入
+2. **實現一個完整功能**: 選擇 SQL 注入檢測作為突破口
+3. **建立測試環境**: 用真實靶場驗證功能
+
+#### **中期目標 (3-6個月)**
+1. **完善檢測引擎**: 實現 2-3 個核心漏洞檢測功能
+2. **改進 AI 決策**: 用真正的邏輯替代佔位符代碼
+3. **優化用戶體驗**: 提供可用的命令行介面
 
 **經驗用戶指令**:
 ```bash
@@ -1040,7 +1117,7 @@ controller.config.update(safe_config)
 
 1. **AI 模型限制**
    - 500萬參數神經網路 (中等規模)
-   - 複雜推理能力不如 GPT-4
+   - 複雜推理能力針對滲透測試優化，不需要通用推理
    - 需依賴 RAG 知識增強
 
 2. **支援的漏洞類型**

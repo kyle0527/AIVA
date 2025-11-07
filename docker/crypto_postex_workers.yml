@@ -1,0 +1,31 @@
+version: "3.9"
+services:
+  crypto_worker:
+    build:
+      context: .
+      dockerfile: services/features/function_crypto/Dockerfile
+    image: aiva/crypto_worker:latest
+    environment:
+      - AIVA_AMQP_URL=${AIVA_AMQP_URL:-amqp://guest:guest@rabbitmq:5672/}
+    depends_on:
+      - rabbitmq
+    command: ["python", "-m", "services.features.function_crypto"]
+    networks:
+      - aiva_network
+
+  postex_worker:
+    build:
+      context: .
+      dockerfile: services/features/function_postex/Dockerfile
+    image: aiva/postex_worker:latest
+    environment:
+      - AIVA_AMQP_URL=${AIVA_AMQP_URL:-amqp://guest:guest@rabbitmq:5672/}
+    depends_on:
+      - rabbitmq
+    command: ["python", "-m", "services.features.function_postex"]
+    networks:
+      - aiva_network
+
+networks:
+  aiva_network:
+    external: true

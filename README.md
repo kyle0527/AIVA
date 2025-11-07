@@ -1,27 +1,24 @@
-# AIVA - AI 驅動的漏洞評估平台
+# AIVA - AI 驅動的安全測試框架 (開發中)
 
 > 🎯 **A**rtificial **I**ntelligence **V**ulnerability **A**ssessment Platform  
-> 專為 Bug Bounty 獵人設計的智能化動態安全測試解決方案
+> **⚠️ 開發中的安全測試框架 - 當前為研究原型階段**
 
-> 🧠 **專業Bug Bounty架構**  
-> AIVA 專注於實戰Bug Bounty場景，採用 **模型上下文協議 (MCP)** 架構，AI (Python) 專注漏洞發現策略，多語言工具專注動態測試執行。移除不實用的靜態分析，專注於黑盒滲透測試和動態漏洞發現。
+> 🧠 **創新架構設計**  
+> AIVA 採用兩階段智能分離架構，整合 AI 對話系統與多語言工具庫。注意：**當前主要為架構驗證和概念實現階段**。
 
 [![Python](https://img.shields.io/badge/Python-3.13+-blue.svg)](https://python.org)
 [![Go](https://img.shields.io/badge/Go-1.21+-00ADD8.svg)](https://golang.org)
 [![Rust](https://img.shields.io/badge/Rust-1.70+-000000.svg)](https://rust-lang.org)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.0+-3178C6.svg)](https://typescriptlang.org)
-[![Architecture Status](https://img.shields.io/badge/Architecture-Unified-green.svg)](https://github.com)
-[![Schema Status](https://img.shields.io/badge/Schema-Standardized-brightgreen.svg)](https://github.com)
+[![Development Status](https://img.shields.io/badge/Status-In%20Development-orange.svg)](https://github.com)
+[![Architecture Status](https://img.shields.io/badge/Architecture-Prototype-yellow.svg)](https://github.com)
 
-**當前版本:** v6.0 | **最後更新:** 2025年11月5日 | **架構狀態:** ✅ Bug Bounty優化完成 | **文檔同步:** ✅ 2025-11-05 更新完成
+**當前版本:** v6.0-dev | **最後更新:** 2025年11月7日 | **開發狀態:** 🚧 原型開發中 | **文檔狀態:** 🔄 實際能力更新中
 
-> 🎯 **Bug Bounty專業化重構 (v6.0)**: 移除非實用SAST功能，專注動態測試和實戰漏洞發現！  
-> ⚡ **性能優化突破**: 移除30%冗餘代碼 | 6.7x動態測試性能提升 | $10,000/年維護成本節省  
-> � **實戰導向**: 專注HackerOne/Bugcrowd實戰場景，黑盒測試專業化，動態掃描精準化。
-
-> ✨ **架構簡化成就**: 統一數據合約保留 | 移除靜態分析冗餘 | 核心功能100%保留  
-> 🚀 **專業定位**: 從通用安全平台轉型為專業Bug Bounty工具，實用性和效率雙重提升  
-> 🎪 **維護友好**: 代碼庫精簡化，開發效率提升，專注高價值功能開發。
+> ⚠️ **重要說明**: 本專案當前為**研究原型**，不建議用於生產環境  
+> ✅ **可用功能**: AI對話助手、基礎架構、工具整合框架  
+> � **開發中功能**: 核心安全檢測、漏洞發現、自動化測試  
+> 📚 **文檔狀態**: 正在更新以反映實際能力
 
 ---
 
@@ -74,30 +71,75 @@
 └── 📊 監控與 CI/CD          # 生產環境部署指南
 ```
 
-### 🚀 **立即開始**
+### 🚀 **5分鐘實際體驗**
+
+**📋 完整實際體驗指南**: [AIVA 實際狀況快速開始指南](AIVA_REALISTIC_QUICKSTART_GUIDE.md)
+
 ```bash
-# 🎯 新用戶 - 直接閱讀綜合指南
-code reports/documentation/AIVA_COMPREHENSIVE_GUIDE.md
+# ✅ 測試 AI 對話助手 (已驗證可用)
+python -c "
+import asyncio
+import sys; sys.path.append('.')
+from services.core.aiva_core.dialog.assistant import AIVADialogAssistant
+async def test():
+    assistant = AIVADialogAssistant()
+    result = await assistant.process_user_input('系統狀況如何？')
+    print(f'🤖 AI回應: {result[\"message\"][:100]}...')
+asyncio.run(test())
+"
 
-# 🔧 開發者 - 系統健康檢查  
-python scripts/utilities/health_check.py
+# ✅ 檢查能力註冊系統 (基礎架構可用)
+python -c "
+import asyncio
+import sys; sys.path.append('.')
+from services.integration.capability.registry import CapabilityRegistry
+async def check():
+    registry = CapabilityRegistry()
+    caps = await registry.list_capabilities()
+    print(f'📊 註冊的檢測能力: {len(caps) if caps else 0} 個')
+    print('💡 0 個表示檢測功能尚未實現')
+asyncio.run(check())
+"
 
-# 🤖 體驗 AI 自主化 - 完全自主測試閉環  
-python scripts/ai_analysis/ai_autonomous_testing_loop.py
-
-# 🛡️ Schema 安全檢查 - 避免相容性問題
-python tools/schema_compliance_validator.py
+# ⚠️ 重要提醒：大部分安全檢測功能仍在開發中
+# 詳細說明請參考實際能力評估報告
 ```
 
-### 🎯 **快速導航**
-| 我是... | 我想要... | 推薦資源 |
-|---------|----------|----------|
-| 🆕 **新手用戶** | 快速上手體驗 | [� 指南中心](guides/README.md) → 新手入門路徑 |
-| 👨‍💻 **開發人員** | 完整開發環境 | [�️ 開發者手冊](reports/documentation/DEVELOPER_GUIDE.md) + [插件清單](_out/VSCODE_EXTENSIONS_INVENTORY.md) |
-| 🏗️ **架構師** | 深度技術分析 | [🏗️ 綜合技術手冊](reports/documentation/AIVA_COMPREHENSIVE_GUIDE.md) |
-| 🤖 **AI 愛好者** | AI 自主化系統 | [🧠 AI 自主化系統](reports/documentation/AIVA_COMPREHENSIVE_GUIDE.md#-ai功能模組系統技術突破) |
-| 🚨 **遇到問題** | 快速解決方案 | [� 疑難排解指南](guides/README.md#-疑難排解指南-troubleshooting) |
-| 🔧 **運維人員** | 部署和監控 | [� 部署運維指南](guides/README.md#-部署運維指南-deployment) |
+### 🎯 **實際狀況導航**
+| 你的身份 | 當前可以做什麼 | 實際狀況 |
+|---------|--------------|----------|
+| 🆕 **新手用戶** | 體驗 AI 對話系統 | ✅ AI助手可用，但檢測功能有限 |
+| 👨‍💻 **開發人員** | 研究架構和代碼 | ✅ 代碼結構完整，需要修復依賴問題 |
+| 🏗️ **架構師** | 學習創新設計思路 | ✅ 兩階段架構設計具有參考價值 |
+| 🤖 **AI 愛好者** | 了解 AI 整合方式 | ✅ 對話系統可用，決策邏輯待完善 |
+| � **安全研究員** | 尋找可用的檢測工具 | ⚠️ 大部分檢測功能仍在開發中 |
+| � **遇到問題** | 查看實際能力評估 | 📋 見 [實際能力評估報告](AIVA_REALISTIC_CAPABILITY_ASSESSMENT.md) |
+
+---
+
+## ⚠️ 實際開發狀況 (2025年11月7日更新)
+
+### 🎯 **當前實際可用功能**
+- ✅ **AI 對話助手**: 可正常初始化和回應查詢
+- ✅ **能力註冊系統**: 基礎架構運行正常 (但沒有註冊實際安全檢測能力)
+- ✅ **多語言架構**: Python/Go/Rust 代碼結構完整
+- ✅ **工具整合框架**: HackingTool 適配器基本可用
+
+### ❌ **當前無法使用的功能**
+- ❌ **SQL 注入檢測**: 模組依賴缺失，無法導入
+- ❌ **XSS 檢測**: 實現不完整
+- ❌ **SSRF 檢測**: 核心邏輯待開發
+- ❌ **自動化掃描**: 檢測引擎尚未實現
+- ❌ **Bug Bounty 報告**: 功能框架存在但內容空洞
+
+### 🔄 **開發優先級建議**
+1. **修復模組依賴問題** - 讓基礎檢測功能可以導入
+2. **實現一個完整檢測功能** - 建議從 SQL 注入開始
+3. **建立實際測試環境** - 驗證功能是否真正可用
+4. **完善 AI 決策邏輯** - 目前主要是佔位符代碼
+
+### 📋 **實際能力評估**
+詳細的技術分析請參考: [AIVA 實際能力評估報告](AIVA_REALISTIC_CAPABILITY_ASSESSMENT.md)
 
 ---
 
@@ -130,9 +172,9 @@ python tools/schema_compliance_validator.py
 |---------|---------|---------|
 | 🔗 **向前引用問題** | [向前引用發現與修復指南](guides/troubleshooting/FORWARD_REFERENCE_REPAIR_GUIDE.md) | Pydantic 模型前向引用錯誤 |
 | ⚡ **批量處理安全** | [批量處理安全原則](./services/aiva_common/README.md#️-批量處理修復原則) | 大量錯誤修復時的安全協議 |
-| 📝 **修復完成報告** | [向前引用修復報告](./FORWARD_REFERENCE_REPAIR_COMPLETION_REPORT.md) | 修復成果與最佳實踐記錄 |
+| 📝 **技術問題分析** | [技術實現問題報告](AIVA_TECHNICAL_IMPLEMENTATION_ISSUES.md) | 技術債務和實現問題分析 |
 | 🧪 **ML 依賴管理** | [依賴管理指南](guides/development/DEPENDENCY_MANAGEMENT_GUIDE.md) | 機器學習庫可選依賴最佳實踐 |
-| 📊 **ML 狀態報告** | [混合狀態報告](ML_DEPENDENCY_STATUS_REPORT.md) | 詳細分析與建議策略 |
+| 📊 **問題集中報告** | [問題集中報告](AIVA_DOCS_ISSUES_CONSOLIDATED_REPORT.md) | 系統性問題識別與分析 |
 | 📖 **AIVA Common 標準** | [開發規範](./services/aiva_common/README.md#🔧-開發指南) | 所有 Python 代碼必須遵循的標準 |
 
 ### 🤖 ML 依賴混合狀態說明
@@ -156,6 +198,7 @@ python tools/schema_compliance_validator.py
 - 新開發的 ML 相關程式碼建議使用統一可選依賴框架
 - 既有程式碼如無問題可暫時保持現狀
 - 詳細指南請參考 [依賴管理指南](guides/development/DEPENDENCY_MANAGEMENT_GUIDE.md)
+- 完整問題分析請參考 [技術實現問題報告](AIVA_TECHNICAL_IMPLEMENTATION_ISSUES.md)
 
 ### 🛡️ 基本修復原則
 

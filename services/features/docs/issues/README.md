@@ -9,21 +9,18 @@
 
 ```
 services/features/docs/issues/
-├── README.md                    # 本文件 - 問題追蹤索引
-├── ISSUES_IDENTIFIED.md         # 已識別的問題清單
-├── IMPROVEMENTS_SUMMARY.md      # 改進總結報告
-└── CURRENT_STATUS.md            # 當前狀態（本文件下方）
+└── README.md                    # 本文件 - 問題追蹤與狀態總覽
 ```
+
+**註**: 問題清單和改進總結已整合在本文檔中，詳見下方內容。
 
 ---
 
 ## 🎯 快速導航
 
-### 📋 問題相關文件
-- **[已識別問題清單](./ISSUES_IDENTIFIED.md)** - 詳細的問題分析和修復建議
-- **[改進總結報告](./IMPROVEMENTS_SUMMARY.md)** - 已完成的改進工作總結
+## 🎯 快速導航
 
-### 📊 當前狀態摘要
+### 📊 當前狀態摘要 (已整合在本文檔中)
 
 | 類別 | 狀態 | 進度 |
 |------|------|------|
@@ -218,7 +215,7 @@ from .jwt_confusion.worker import JwtConfusionWorker
 
 - [Features 模組 README](../../README.md)
 - [開發規範](../DEVELOPMENT_STANDARDS.md)
-- [遷移指南](../../MIGRATION_GUIDE.md)
+- [AIVA 技術實現問題報告](../../../../AIVA_TECHNICAL_IMPLEMENTATION_ISSUES.md)
 
 ---
 

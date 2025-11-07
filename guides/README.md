@@ -136,13 +136,12 @@ guides/
 | Docker & Kubernetes 部署 | [`deployment/DOCKER_KUBERNETES_GUIDE.md`](deployment/DOCKER_KUBERNETES_GUIDE.md) | ☸️ 微服務編排方案 | ✅ 完整 |
 | 環境變數配置指南 | [`deployment/ENVIRONMENT_CONFIG_GUIDE.md`](deployment/ENVIRONMENT_CONFIG_GUIDE.md) | ⚙️ 環境配置管理 | ✅ 完整 |
 
-| 指南類型 | 文檔路徑 | 部署場景 |
-|---------|----------|----------|
-| 部署操作手冊 | [`../docs/README_DEPLOYMENT.md`](../docs/README_DEPLOYMENT.md) | 🏭 生產環境部署 |
-| Docker 容器化手冊 | [`deployment/DOCKER_GUIDE.md`](deployment/DOCKER_GUIDE.md) | 🐳 容器化部署策略 |
-| 構建流程手冊 | [`deployment/BUILD_GUIDE.md`](deployment/BUILD_GUIDE.md) | 🔨 構建和打包流程 |
-| **環境配置指南** | [`deployment/ENVIRONMENT_CONFIG_GUIDE.md`](deployment/ENVIRONMENT_CONFIG_GUIDE.md) | ⚙️ 環境變數配置 | ✅ **新增** |
-| **微服務部署指南** | [`deployment/DOCKER_KUBERNETES_GUIDE.md`](deployment/DOCKER_KUBERNETES_GUIDE.md) | ☸️ 微服務完整部署 | ✅ **新增** |
+| 指南類型 | 文檔路徑 | 部署場景 | 狀態 |
+|---------|----------|----------|------|
+| **部署指南** | [`deployment/BUILD_GUIDE.md`](deployment/BUILD_GUIDE.md) | 🔨 構建流程和打包 | ✅ 完整 |
+| **Docker 容器化手冊** | [`deployment/DOCKER_GUIDE.md`](deployment/DOCKER_GUIDE.md) | 🐳 容器化部署策略 | ✅ 完整 |
+| **微服務部署指南** | [`deployment/DOCKER_KUBERNETES_GUIDE.md`](deployment/DOCKER_KUBERNETES_GUIDE.md) | ☸️ 微服務完整部署 | ✅ 完整 |
+| **環境配置指南** | [`deployment/ENVIRONMENT_CONFIG_GUIDE.md`](deployment/ENVIRONMENT_CONFIG_GUIDE.md) | ⚙️ 環境變數配置 | ✅ 完整 |
 
 ### 🔧 **疑難排解指南** (`troubleshooting/`)
 
@@ -157,9 +156,9 @@ guides/
 
 | 指南類型 | 文檔路徑 | 功能重點 | 驗證狀態 |
 |---------|----------|----------|----------|
-| **22 個 AI 組件詳細說明** | [`../reports/ai_analysis/AIVA_22_AI_COMPONENTS_DETAILED_GUIDE.md`](../reports/ai_analysis/AIVA_22_AI_COMPONENTS_DETAILED_GUIDE.md) | 🤖 完整 AI 組件架構說明 | |
-| AI 用戶操作手冊 | [`../AI_USER_GUIDE.md`](../AI_USER_GUIDE.md) | 🧠 AI 功能實戰案例 | |
-| API 驗證操作手冊 | [`../API_VERIFICATION_GUIDE.md`](../API_VERIFICATION_GUIDE.md) | 🔐 密鑰驗證功能 | (10/31驗證) |
+| **22 個 AI 組件詳細說明** | [`../reports/ai_analysis/AIVA_22_AI_COMPONENTS_DETAILED_GUIDE.md`](../reports/ai_analysis/AIVA_22_AI_COMPONENTS_DETAILED_GUIDE.md) | 🤖 完整 AI 組件架構說明 | ✅ 完整 |
+| AI 服務使用手冊 | [`development/AI_SERVICES_USER_GUIDE.md`](development/AI_SERVICES_USER_GUIDE.md) | 🧠 AI 功能使用實戰 | ✅ 完整 (10/31驗證) |
+| API 驗證操作手冊 | [`development/API_VERIFICATION_GUIDE.md`](development/API_VERIFICATION_GUIDE.md) | 🔐 密鑰驗證功能 | ✅ 完整 (10/31驗證) |
 
 ### 🛠️ **工具與測試手冊**
 
