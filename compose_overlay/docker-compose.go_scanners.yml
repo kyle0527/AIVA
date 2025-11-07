@@ -1,0 +1,37 @@
+version: "3.9"
+services:
+  ssrf_go_scanner:
+    build:
+      context: ..
+      dockerfile: services/scan/go_scanners/ssrf_scanner/Dockerfile
+    image: aiva/ssrf_go:latest
+    environment:
+      - AIVA_AMQP_URL=${AIVA_AMQP_URL:-amqp://guest:guest@rabbitmq:5672/}
+      - SCAN_TASKS_SSRF_GO=${SCAN_TASKS_SSRF_GO:-SCAN_TASKS_SSRF_GO}
+      - SCAN_RESULTS_QUEUE=${SCAN_RESULTS_QUEUE:-SCAN_RESULTS}
+    depends_on:
+      - rabbitmq
+
+  cspm_go_scanner:
+    build:
+      context: ..
+      dockerfile: services/scan/go_scanners/cspm_scanner/Dockerfile
+    image: aiva/cspm_go:latest
+    environment:
+      - AIVA_AMQP_URL=${AIVA_AMQP_URL:-amqp://guest:guest@rabbitmq:5672/}
+      - SCAN_TASKS_CSPM_GO=${SCAN_TASKS_CSPM_GO:-SCAN_TASKS_CSPM_GO}
+      - SCAN_RESULTS_QUEUE=${SCAN_RESULTS_QUEUE:-SCAN_RESULTS}
+    depends_on:
+      - rabbitmq
+
+  sca_go_scanner:
+    build:
+      context: ..
+      dockerfile: services/scan/go_scanners/sca_scanner/Dockerfile
+    image: aiva/sca_go:latest
+    environment:
+      - AIVA_AMQP_URL=${AIVA_AMQP_URL:-amqp://guest:guest@rabbitmq:5672/}
+      - SCAN_TASKS_SCA_GO=${SCAN_TASKS_SCA_GO:-SCAN_TASKS_SCA_GO}
+      - SCAN_RESULTS_QUEUE=${SCAN_RESULTS_QUEUE:-SCAN_RESULTS}
+    depends_on:
+      - rabbitmq

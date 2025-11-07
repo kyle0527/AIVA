@@ -1,24 +1,54 @@
 # AIVA Features 模組 - 多語言安全功能架構
 
-## 🔗 **L2 功能分類導航** (AI 優先搜尋區域)
+---
 
-> **⚡ 快速定位**: 根據功能需求直接跳轉到相應的詳細文檔
+## 🔧 **修復規範**
 
-### 📚 **核心功能分類文檔**
-- 💎 **[高價值功能](docs/README_HIGH_VALUE.md)** - 5個商業級安全功能 ($1,800-$10,200 賞金等級)
-- 🛡️ **[安全核心引擎](docs/README_SECURITY_CORE.md)** - 8個核心檢測引擎 (OWASP Top 10 全覆蓋)
-- 🏢 **[業務邏輯檢測](docs/README_BUSINESS_LOGIC.md)** - 6個業務邏輯漏洞檢測系統
-- 🏗️ **[基礎設施支援](docs/README_INFRASTRUCTURE.md)** - 31個基礎架構與工具框架
-- 🌐 **[多語言實現](docs/README_LANGUAGES.md)** - Python/Go/Rust 三語言統一架構
+**保留未使用函數原則**: 在程式碼修復過程中，若發現有定義但尚未使用的函數或方法，只要不影響程式正常運作，建議予以保留。這些函數可能是：
+- 預留的 API 端點或介面
+- 未來功能的基礎架構
+- 測試或除錯用途的輔助函數
+- 向下相容性考量的舊版介面
 
-### 📈 **文檔架構統計**
-```
-📊 L2 分類文檔: 5 個詳細指南
-🎯 覆蓋功能模組: 50 個完整覆蓋  
-📝 文檔總規模: 30,000+ 行技術文檔
-💻 程式碼範例: 200+ 個實作案例
-🌍 多語言支援: Python + Go + Rust
-```
+說不定未來會用到，保持程式碼的擴展性和靈活性。
+
+---
+
+## 🔗 **功能模組導航** (實際存在模組)
+
+### 📚 **核心功能模組** (實際已實現)
+
+#### ✅ **完整實現** (5個模組)
+- ⚡️ **[SQL注入檢測](function_sqli/README.md)** - 完整的SQL注入漏洞檢測 (20個Python文件，含6個檢測引擎)
+- 🎭 **[XSS檢測](function_xss/README.md)** - 跨站腳本攻擊檢測 (10個Python文件，含DOM/存儲型/反射型)
+- 🌐 **[SSRF檢測](function_ssrf/README.md)** - 服務端請求偽造檢測 (12個Python文件，含內網探測)
+- 🔐 **[IDOR檢測](function_idor/README.md)** - 不安全直接對象引用檢測 (12個Python文件，含權限升級測試)
+- 🔑 **[認證檢測](function_authn_go/README.md)** - Go語言認證繞過檢測 (5個Go文件，高性能實現)
+
+#### 🔹 **部分實現** (2個模組)  
+- 🔒 **[密碼學檢測](function_crypto/README.md)** - 密碼學漏洞檢測 (8個文件，Python+Rust混合架構)
+- ⚡ **[後滲透](function_postex/README.md)** - 滲透後利用模組 (9個Python文件，含橫向/持久化引擎)
+
+#### 🛠️ **支援組件** (1個模組)
+- 💼 **[共用組件](common/README.md)** - 跨語言共用功能 (12個文件，Go/Python混合)
+
+### 🎯 **系統管理模組**
+- 💎 **[高價值管理器](high_value_manager.py)** - 高價值目標識別與管理
+- 🧠 **[智能檢測管理器](smart_detection_manager.py)** - 智能檢測策略協調
+- ⚙️ **[功能步驟執行器](feature_step_executor.py)** - 功能執行流程控制
+
+### 📊 **模組完成度統計** (根據實際檔案統計)
+
+| 模組名稱 | 語言 | 實際文件數 | 實現程度 | 主要功能 |
+|----------|------|-----------|----------|----------|
+| function_sqli | Python | 20 | ✅ 95% | SQL注入檢測 (含多種檢測引擎) |
+| function_xss | Python | 10 | ✅ 90% | XSS漏洞檢測 (含DOM/存儲型) |
+| function_ssrf | Python | 12 | ✅ 90% | SSRF檢測 (含內網探測) |
+| function_idor | Python | 12 | ✅ 85% | 權限繞過檢測 (含垂直/水平測試) |
+| function_authn_go | Go | 5 | ✅ 100% | 認證繞過檢測 (Go高性能) |
+| function_crypto | Python/Rust | 8 | 🔹 40% | 密碼學漏洞 (含Rust核心) |
+| function_postex | Python | 9 | 🔹 30% | 滲透後利用 (含橫向/持久化) |
+| common | Go/Python | 12 | ✅ 90% | 共用組件 (統計/配置) |
 
 ---
 
@@ -75,17 +105,17 @@
 
 ### 💡 語言特定快速技巧
 
-**Python (26.9% 組件)**:
+**Python (87.0% 組件)**:
 - 使用 Ruff 進行超快速 linting（比 pylint 快 10-100 倍）
 - Black 自動格式化：`Ctrl+Shift+I`
 - 查看 [Python 最佳實踐](../../_out/VSCODE_EXTENSIONS_INVENTORY.md#案例-2-修復-python-未定義函數錯誤)
 
-**Go (6.1% 組件)**:
+**Go (13.0% 組件)**:
 - gopls 提供完整的語言支援
 - 使用 `Go: Test Package` 執行測試
 - 格式化自動使用 gofmt
 
-**Rust (67.0% 組件)**:
+**Rust (混合架構)**:
 - rust-analyzer 提供即時編譯檢查
 - Cargo 任務整合，支援 build/test/run
 - 錯誤訊息詳細且實用
@@ -96,25 +126,24 @@
 
 ## 📊 **模組規模一覽**
 
-### **🏗️ 整體統計**
-- **總組件數**: **2,692** 個組件
-- **檔案數量**: **114** 個檔案 (82 Python + 21 Go + 11 Rust)  
-- **功能模組**: **50** 個功能模組
-- **複雜度等級**: ⭐⭐⭐⭐⭐ (最高級別)
+### **🏗️ 整體統計** (實際統計)
+- **總代碼行數**: **13,798** 行代碼 (實測)
+- **檔案數量**: **87** 個檔案 (75 Python + 11 Go + 1 Rust)  
+- **功能模組**: **7** 個核心功能模組 (實際存在)
+- **複雜度等級**: ⭐⭐⭐⭐ (高級別，持續增長中)
 
-### **📈 語言分佈**
+### **📈 語言分佈** (基於實際統計)
 ```
-🦀 Rust    │████████████████████████████████████████████████████████████████████ 67.0% (1,804)
-🐍 Python  │███████████████████████████████ 26.9% (723)
-🐹 Go      │███████ 6.1% (165)
+🐍 Python  │████████████████████████████████████████████████████████████████████████████████████ 87% (12,002行)
+🐹 Go      │████████████ 13% (1,796行)
+🦀 Rust    │▌ <1% (計劃中)
 ```
 
-### **🎯 功能分佈**  
+### **🎯 功能模組狀態**  
 ```
-🛡️ Security │████████████████████████████████████████████████████████████████████████████████ 78.4% (2,111)
-🔧 Support  │████████████████ 12.9% (346)
-🏢 Business │███████ 6.5% (174)  
-🔴 Core     │███ 2.3% (61)
+✅ 完整實現 │████████████████████████ 57% (4個: SQLI, XSS, SSRF, IDOR)
+� 部分實現 │██████████████████ 43% (3個: AUTHN_GO, CRYPTO, POSTEX)
+� 計劃中   │████████ (高價值功能擴展)
 ```
 
 ---
@@ -168,16 +197,15 @@ flowchart TD
 - 🏗️ [**基礎設施支援**](docs/README_INFRASTRUCTURE.md) - 框架基類、工具集、跨語言橋接、配置管理、測試支援
 - 🌐 [**多語言實現**](docs/README_LANGUAGES.md) - Python 協調、Go 高併發、Rust 極致效능、跨語言整合
 
-### **📁 按功能查看** (傳統分類)
-- 📊 [**核心功能詳解**](docs/README_CORE.md) - 智能檢測管理、高價值目標識別
-- 🛡️ [**安全功能詳解**](docs/README_SECURITY.md) - SAST、漏洞檢測、安全掃描
-- 🏢 [**業務功能詳解**](docs/README_BUSINESS.md) - SCA、CSPM、認證服務  
-- 🔧 [**支援功能詳解**](docs/README_SUPPORT.md) - Worker、配置、工具
+### **📁 按功能查看** (實際模組)
+- 📊 **[核心功能詳解](docs/README.md)** - 系統管理與協調功能
+- 🛡️ **[安全功能詳解](docs/security/README.md)** - SQL注入、XSS、SSRF、IDOR檢測
+- 🔧 **[開發中功能](docs/development/README.md)** - 密碼學、認證、後滲透功能  
 
 ### **💻 按語言查看**
-- 🐍 [**Python 開發指南**](docs/README_PYTHON.md) - 723 組件 | 核心協調與業務邏輯
-- 🐹 [**Go 開發指南**](docs/README_GO.md) - 165 組件 | 高效能服務與網路處理  
-- 🦀 [**Rust 開發指南**](docs/README_RUST.md) - 1,804 組件 | 安全分析與效能關鍵
+- 🐍 **[Python 模組](docs/python/README.md)** - 75 文件 | 主要安全檢測實現
+- 🐹 **[Go 模組](docs/go/README.md)** - 11 文件 | 高效能認證檢測  
+- 🦀 **[Rust 模組](docs/rust/README.md)** - 計劃中 | 高效能安全分析引擎
 
 ### **🎨 架構圖表**
 - 📊 [功能分層架構圖](../_out/architecture_diagrams/functional/FEATURES_INTEGRATED_FUNCTIONAL.mmd)
@@ -812,9 +840,25 @@ go test ./... -run TestEnumConsistency
 pytest services/features/tests/integration/test_multi_language.py -v
 ```
 
-#### � **修復與維護原則**
+#### 📝 **修復與維護原則**
 
 > **保留未使用函數原則**: 在程式碼修復過程中，若發現有定義但尚未使用的函數或方法，只要不影響程式正常運作，建議予以保留。這些函數可能為未來功能預留，或作為API的擴展接口，刪除可能影響系統的擴展性和向前兼容性。
+
+### 🔗 **開發規範與指南**
+
+#### **📚 核心開發指南**
+- [🏗️ **AIVA Common 共享庫規範**](../../services/aiva_common/README.md) - 統一數據模型、枚舉定義、開發規範
+- [🛠️ **開發快速開始指南**](../../guides/development/DEVELOPMENT_QUICK_START_GUIDE.md) - 環境設置、快速部署
+- [🌐 **多語言環境標準**](../../guides/development/MULTI_LANGUAGE_ENVIRONMENT_STANDARD.md) - Python/TypeScript/Go/Rust 環境配置
+- [📦 **依賴管理指南**](../../guides/development/DEPENDENCY_MANAGEMENT_GUIDE.md) - 依賴問題排查、包管理優化
+- [🔒 **安全框架規範**](../../services/aiva_common/SECURITY_FRAMEWORK_COMPLETED.md) - 企業級安全防護標準
+
+#### **🔧 技術規範細節**
+- [📋 **Schema 導入規範**](../../guides/development/SCHEMA_IMPORT_GUIDE.md) - 跨模組數據結構導入標準
+- [📊 **性能監控規範**](../../guides/development/METRICS_USAGE_GUIDE.md) - 系統監控與性能分析
+- [🔍 **API 驗證指南**](../../guides/development/API_VERIFICATION_GUIDE.md) - 介面測試與驗證流程
+- [💾 **數據存儲規範**](../../guides/development/DATA_STORAGE_GUIDE.md) - 數據庫設計與存儲標準
+- [🎯 **Git 推送規範**](../../guides/development/GIT_PUSH_GUIDELINES.md) - 版本控制最佳實踐
 
 #### �📝 **語言特定注意事項**
 

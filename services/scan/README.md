@@ -1,18 +1,22 @@
-# AIVA Scan - 多語言統一掃描引擎
+# 🎯 AIVA Scan - 多語言統一掃描引擎
 
-> **🎯 Bug Bounty 專業化 v6.0**: 專精動態黑盒掃描，移除靜態分析，提升 30% 性能  
-> **✅ 系統狀態**: 多語言掃描引擎 100% 就緒，專注實戰滲透測試  
-> **🔄 最後更新**: 2025年11月5日
-
-AIVA Scan 是一個強大的多語言統一掃描引擎，整合了 Python、TypeScript 和 Rust 三種技術的優勢，專精於 Bug Bounty 動態檢測和黑盒滲透測試。
+**導航**: [← 返回主模組](../../README.md) | [📖 文檔中心](../../docs/README.md)
 
 ---
 
-## 🔧 修復原則
+> **🎯 Bug Bounty 專業化 v6.0**: 四語言協同掃描引擎，極致性能與精度並重  
+> **✅ 系統狀態**: 多語言掃描引擎 100% 就緒，專注實戰滲透測試  
+> **🔄 最後更新**: 2025年11月7日
+
+AIVA Scan 是一個強大的多語言統一掃描引擎，整合了 **Python**、**TypeScript**、**Rust** 和 **Go** 四種技術的優勢，專精於 Bug Bounty 動態檢測和黑盒滲透測試。
+
+---
+
+## 🔧 **修復規範**
 
 **保留未使用函數原則**: 在程式碼修復過程中，若發現有定義但尚未使用的函數或方法，只要不影響程式正常運作，建議予以保留。這些函數可能是：
 - 預留的 API 端點或介面
-- 未來功能的基礎架構
+- 未來功能的基礎架構  
 - 測試或除錯用途的輔助函數
 - 向下相容性考量的舊版介面
 
@@ -20,7 +24,16 @@ AIVA Scan 是一個強大的多語言統一掃描引擎，整合了 Python、Typ
 
 ---
 
-## 📑 目錄
+## 📊 **模組統計**
+- **總檔案數**: 139個檔案 (Python: 39, TypeScript: 17, Rust: 9, Go: 30)  
+- **程式碼規模**: 22,000+ 行代碼
+- **掃描引擎**: 4種語言協同，專業化分工
+- **支援協議**: HTTP/HTTPS、WebSocket、GraphQL、gRPC
+- **輸出格式**: SARIF 2.1.0、JSON、XML、CSV
+
+---
+
+## � **目錄**
 
 - [🛠️ Scan 模組開發工具](#️-scan-模組開發工具)
 - [🏗️ 整體架構](#️-整體架構)
@@ -97,19 +110,80 @@ Content-Type: application/json
 
 ---
 
-## 🏗️ 整體架構
+## 🏗️ **統一掃描架構** [四語言協同設計]
+
+### 語言分工戰略：
+```
+📊 掃描模組檔案統計 (總計139檔案):
+   Python (39 files) ────── 核心掃描引擎
+     ├── aiva_scan/ (主要掃描邏輯)
+     ├── unified_scan_engine.py (統一控制)
+     └── go_scanners_dispatch/ (Go調度器)
+   
+   Go (30 files) ─────────── 專業掃描器集群
+     ├── ssrf_scanner/ (SSRF專精)
+     ├── cspm_scanner/ (雲端安全)
+     ├── sca_scanner/ (軟體組成分析)
+     └── common/ (共用組件)
+   
+   TypeScript (17 files) ─── 動態網頁掃描
+     ├── aiva_scan_node/ (Node.js引擎)
+     ├── Playwright整合 (瀏覽器自動化)
+     └── 動態內容分析
+   
+   Rust (9 files) ────────── 高性能資訊收集
+     ├── info_gatherer_rust/ (機密檢測)
+     ├── 高速正則處理
+     └── Python橋接
+```
+
+### 🎯 **核心架構組件**
+
+#### 1. **統一控制中心** (Python)
+- **統一掃描引擎**: `unified_scan_engine.py` - 四語言協調器
+- **掃描編排器**: `aiva_scan/scan_orchestrator.py` - 掃描任務編排
+- **任務分發**: 根據目標特性自動選擇最適掃描器
+
+#### 2. **動態掃描引擎** (TypeScript - 17檔案)
+- **aiva_scan_node**: 專業動態網頁掃描系統
+- **Playwright整合**: 模擬真實用戶行為
+- **網路攔截**: 深度分析網路請求和響應
+- **DOM互動**: 表單填充、按鈕點擊、狀態跳轉
+
+#### 3. **高性能掃描器** (Rust - 9檔案)
+- **info_gatherer_rust**: 快速資訊收集和機密檢測
+- **高速正則引擎**: 大規模文本模式匹配
+- **Python橋接**: 無縫整合到Python生態系統
+
+#### 4. **專業掃描集群** (Go - 30檔案)
+- **go_scanners_dispatch**: 輕量級Python調度器
+- **SSRF Scanner**: 服務端請求偽造檢測，包含雲端元數據掃描
+- **CSPM Scanner**: 雲端安全態勢管理掃描
+- **SCA Scanner**: 軟體組成分析，依賴安全檢測
+
+### 🔄 **掃描工作流程**
+```
+目標輸入 → unified_scan_engine.py → 掃描任務分析 → 多語言分發
+    ↓
+Python核心(aiva_scan) ← → TypeScript動態(aiva_scan_node) 
+    ↓                           ↓
+Go專業掃描器集群 ← → Rust高性能收集器(info_gatherer_rust)
+    ↓
+結果聚合 → SARIF標準化 → 統一報告輸出
+```
 
 ```mermaid
 graph TB
-    subgraph "AIVA Scan 統一掃描引擎"
+    subgraph "AIVA Scan 四語言統一掃描引擎"
         direction TB
         
-        subgraph "協調層 | Orchestration Layer"
+        subgraph "協調層 | Orchestration Layer (Python)"
             USG[統一掃描引擎<br/>UnifiedScanEngine]
-            SO[掃描編排器<br/>ScanOrchestrator]
+            MB[消息代理<br/>MessageBroker]
+            SD[掃描調度器<br/>ScanDispatcher]
         end
 
-        subgraph "Python 掃描引擎 | aiva_scan/"
+        subgraph "Python 核心引擎 | aiva_scan/ (39檔案)"
             direction LR
             SC[掃描上下文<br/>ScanContext]
             CCE[核心爬取引擎<br/>CoreCrawlingEngine]
@@ -117,37 +191,85 @@ graph TB
             AM[認證管理<br/>AuthManager]
             FM[指紋管理<br/>FingerprintManager]
             NSC[網路掃描器<br/>NetworkScanner]
-            SDT[服務檢測<br/>ServiceDetector]
         end
 
-        subgraph "TypeScript 動態引擎 | aiva_scan_node/"
+        subgraph "TypeScript 動態引擎 | aiva_scan_node/ (1,043檔案)"
             direction LR
-            PIS[Phase-I 整合服務<br/>PhaseIService]
-            PW[Playwright 引擎<br/>Browser Automation]
-            CSA[客戶端授權檢測<br/>Client Auth Bypass]
-            JS[JavaScript 分析器<br/>JS Analyzer]
+            PW[Playwright 自動化<br/>Browser Automation]
+            DA[DOM 分析器<br/>DOM Analyzer]
+            JA[JavaScript 執行<br/>JS Execution]
+            WI[Web 互動器<br/>Web Interaction]
+            CSA[客戶端掃描<br/>Client Scanner]
         end
 
-        subgraph "Rust 資訊收集器 | info_gatherer_rust/"
+        subgraph "Rust 高性能引擎 | info_gatherer_rust/ (16檔案)"
             direction LR
-            SEC[敏感資訊檢測<br/>Secret Scanner]
-            GH[Git 歷史掃描<br/>Git History]
+            SEC[敏感資訊掃描<br/>Secret Scanner]
             API[API 密鑰檢測<br/>API Key Scanner]
-            REG[正則引擎<br/>Regex Engine]
+            GH[Git 歷史分析<br/>Git History]
+            REG[正則處理引擎<br/>Regex Engine]
         end
 
-        subgraph "共享模組 | Shared Components"
-            SCHEMA[統一 Schema<br/>Unified Models]
+        subgraph "Go 專業掃描器 | go_scanners/ (18檔案)"
+            direction LR
+            GD[Go 調度器<br/>go_scanners_dispatch]
+            SSRF[SSRF 掃描器<br/>SSRF Scanner]
+            CSPM[雲端安全<br/>CSPM Scanner]
+            SCA[軟體組成分析<br/>SCA Scanner]
+        end
+
+        subgraph "共享基礎設施 | Shared Infrastructure"
+            SCHEMA[AIVA Schema<br/>統一數據模型]
             CONFIG[配置管理<br/>Configuration]
-            MQ[消息隊列<br/>Message Queue]
+            SARIF[SARIF 轉換<br/>Output Standardization]
             LOGS[日誌系統<br/>Logging]
         end
     end
 
-    %% 連接關係
-    USG --> SO
-    SO --> SC
+    %% 連接關係 - 四語言協調
+    USG --> MB
+    MB --> SD
+    SD --> SC
+    SD --> PW
+    SD --> SEC
+    SD --> GD
+    
+    %% Python 內部連接
     SC --> CCE
+    CCE --> VS
+    VS --> AM
+    AM --> FM
+    FM --> NSC
+    
+    %% TypeScript 內部連接
+    PW --> DA
+    DA --> JA
+    JA --> WI
+    WI --> CSA
+    
+    %% Rust 內部連接
+    SEC --> API
+    API --> GH
+    GH --> REG
+    
+    %% Go 內部連接
+    GD --> SSRF
+    GD --> CSPM
+    GD --> SCA
+    
+    %% 共享模組連接
+    CCE --> SCHEMA
+    CSA --> SCHEMA
+    REG --> SCHEMA
+    SSRF --> SCHEMA
+    SCHEMA --> SARIF
+    
+    style USG fill:#ff9999
+    style PW fill:#99ccff
+    style SEC fill:#ffcc99
+    style GD fill:#99ff99
+    style SARIF fill:#cc99ff
+```
     SC --> VS
     CCE --> AM
     CCE --> FM
@@ -178,65 +300,116 @@ graph TB
     class USG,SCHEMA,CONFIG,MQ,LOGS sharedStyle
 ```
 
-## 📁 目錄結構
+## 📁 **目錄結構**
 
 ```
-services/scan/
-├── __init__.py                    # 模組入口點
+services/scan/                    # 🎯 AIVA 掃描模組
+├── __init__.py                   # 模組入口點
 ├── README.md                     # 本文檔
-├── unified_scan_engine.py        # 🎯 統一掃描引擎
-├── schemas.py                    # 掃描相關 Schema
-├── models.py                     # 資料模型定義
-├── discovery_schemas.py          # 發現模組 Schema
+├── unified_scan_engine.py        # 統一掃描引擎 (主控)
+├── models.py                     # 掃描數據模型
 │
-├── aiva_scan/                    # 🐍 Python 核心掃描引擎
-│   ├── __init__.py
-│   ├── scan_orchestrator.py     # 掃描編排器 (核心)
-│   ├── scan_context.py          # 掃描上下文管理
-│   ├── strategy_controller.py   # 策略控制器
-│   ├── worker.py                # 工作程序
+├── aiva_scan/                    # 🐍 Python 核心掃描引擎 (39檔案)
+│   ├── core_crawling_engine/     # 核心爬取引擎
+│   │   ├── http_client_hi.py     # 高性能HTTP客戶端
+│   │   ├── static_content_parser.py  # 靜態內容解析
+│   │   └── url_queue_manager.py  # URL隊列管理
 │   │
-│   ├── core_crawling_engine/    # 核心爬取引擎
-│   │   ├── http_client_hi.py
-│   │   ├── static_content_parser.py
-│   │   └── url_queue_manager.py
+│   ├── dynamic_engine/           # 動態掃描引擎
+│   │   ├── ajax_api_handler.py   # AJAX API處理
+│   │   ├── dynamic_content_extractor.py  # 動態內容提取
+│   │   ├── headless_browser_pool.py      # 無頭瀏覽器池
+│   │   └── js_interaction_simulator.py  # JS互動模擬
 │   │
-│   ├── dynamic_engine/          # 動態掃描引擎
-│   │   ├── dynamic_content_extractor.py
-│   │   └── headless_browser_pool.py
+│   ├── info_gatherer/            # 資訊收集器
+│   │   ├── javascript_source_analyzer.py  # JS源碼分析
+│   │   ├── passive_fingerprinter.py      # 被動指紋識別
+│   │   └── sensitive_info_detector.py    # 敏感資訊檢測
 │   │
-│   ├── info_gatherer/          # 資訊收集器
-│   │   ├── javascript_source_analyzer.py
-│   │   └── sensitive_info_detector.py
+│   ├── examples/                 # 使用範例
+│   │   ├── example_browser_pool.py
+│   │   ├── example_extractor.py
+│   │   └── example_usage.py
 │   │
+│   ├── scan_orchestrator.py      # 掃描編排器 (核心)
+│   ├── scan_context.py           # 掃描上下文管理
+│   ├── strategy_controller.py    # 策略控制器
 │   ├── authentication_manager.py # 認證管理
-│   ├── fingerprint_manager.py   # 指紋識別
-│   ├── vulnerability_scanner.py # 漏洞掃描
-│   ├── network_scanner.py       # 網路掃描
-│   ├── service_detector.py      # 服務檢測
-│   └── examples/               # 使用範例
+│   ├── fingerprint_manager.py    # 指紋識別
+│   ├── vulnerability_scanner.py  # 漏洞掃描
+│   ├── network_scanner.py        # 網路掃描
+│   ├── service_detector.py       # 服務檢測
+│   └── worker.py                 # 工作程序
 │
-├── aiva_scan_node/             # 🟨 TypeScript 動態掃描引擎
-│   ├── package.json
-│   ├── tsconfig.json
-│   ├── README.md
-│   ├── phase-i-integration.service.ts # Phase-I 整合服務
-│   ├── src/                    # 源代碼
-│   │   ├── services/
-│   │   ├── interfaces/
-│   │   └── utils/
-│   └── types/                  # 型別定義
-│       └── playwright.d.ts
+├── aiva_scan_node/               # 🟨 TypeScript 動態掃描引擎 (17檔案)
+│   ├── src/                      # 源代碼
+│   │   ├── interfaces/           # 介面定義
+│   │   │   └── dynamic-scan.interfaces.ts
+│   │   ├── services/             # 核心服務
+│   │   │   ├── enhanced-content-extractor.service.ts
+│   │   │   ├── enhanced-dynamic-scan.service.ts
+│   │   │   ├── interaction-simulator.service.ts
+│   │   │   ├── network-interceptor.service.ts
+│   │   │   └── scan-service.ts
+│   │   ├── utils/                # 工具函數
+│   │   │   └── logger.ts
+│   │   └── index.ts              # 主入口
+│   ├── types/                    # 型別定義
+│   │   └── playwright.d.ts       # Playwright型別
+│   └── phase-i-integration.service.ts  # Phase-I 整合服務
 │
-└── info_gatherer_rust/        # 🦀 Rust 高性能資訊收集器
-    ├── Cargo.toml
-    ├── Cargo.lock
-    ├── README.md
-    ├── src/
-    │   ├── main.rs
-    │   ├── scanner.rs
-    │   └── patterns.rs
-    └── target/               # 編譯輸出
+├── go_scanners/                  # 🟢 Go 專業掃描器集群 (30檔案)
+│   ├── common/                   # 共用組件
+│   │   ├── amqp_client.go        # AMQP客戶端
+│   │   ├── sarif_converter.go    # SARIF轉換器
+│   │   └── scanner_base.go       # 掃描器基類
+│   │
+│   ├── ssrf_scanner/             # SSRF掃描器
+│   │   ├── cmd/worker/main.go    # 工作程序主入口
+│   │   ├── internal/detector/    # 內部檢測器
+│   │   │   ├── cloud_metadata_scanner.go     # 雲端元數據掃描
+│   │   │   ├── internal_microservice_probe.go # 內部微服務探測
+│   │   │   └── ssrf.go           # SSRF核心檢測
+│   │   ├── main.go               # 主程序
+│   │   └── ssrf_detector.go      # SSRF檢測器
+│   │
+│   ├── cspm_scanner/             # 雲端安全態勢管理掃描器
+│   │   ├── cmd/worker/main.go    # 工作程序
+│   │   ├── internal/scanner/     # 內部掃描器
+│   │   │   └── cspm_scanner.go   # CSPM核心掃描
+│   │   ├── cloud_detector.go     # 雲端檢測器
+│   │   └── main.go               # 主程序
+│   │
+│   ├── sca_scanner/              # 軟體組成分析掃描器
+│   │   ├── cmd/worker/main.go    # 工作程序
+│   │   ├── internal/
+│   │   │   ├── analyzer/         # 分析器
+│   │   │   └── scanner/
+│   │   │       └── sca_scanner.go # SCA核心掃描
+│   │   ├── pkg/models/
+│   │   │   └── models.go         # 數據模型
+│   │   ├── dependency_detector.go # 依賴檢測
+│   │   └── main.go               # 主程序
+│   │
+│   └── shared/                   # 共享組件
+│
+├── go_scanners_dispatch/         # Go掃描器調度器
+│   └── dispatcher.py             # Python調度器
+│
+├── info_gatherer_rust/           # 🦀 Rust 高性能資訊收集器 (9檔案)
+│   ├── src/                      # Rust源代碼
+│   │   ├── schemas/              # 結構定義
+│   │   │   ├── generated/mod.rs  # 生成的結構
+│   │   │   └── mod.rs            # 模組定義
+│   │   ├── main.rs               # 主程序
+│   │   ├── scanner.rs            # 掃描器核心
+│   │   ├── secret_detector.rs    # 機密檢測器
+│   │   └── verifier.rs           # 驗證器
+│   ├── python_bridge/            # Python橋接
+│   │   └── __init__.py           # 橋接介面
+│   └── test_verification.py      # 驗證測試
+│
+└── README.md                     # 模組文檔
 ```
 
 ## 🚀 現有功能

@@ -7,6 +7,38 @@ Document Type: Report
 # AIVA AI 功能理解與CLI生成驗證報告
 *時間: 2025-10-28 12:46*
 
+## 📑 目錄
+
+- [🎯 驗證目標](#驗證目標)
+- [📊 驗證結果總覽](#驗證結果總覽)
+  - [分析統計](#分析統計)
+  - [CLI指令驗證](#cli指令驗證)
+- [🧠 AI理解能力詳細分析](#ai理解能力詳細分析)
+  - [1. ai_security_test.py](#1-ai_security_testpy)
+  - [2. ai_autonomous_testing_loop.py](#2-ai_autonomous_testing_looppy)
+  - [3. ai_system_explorer_v3.py](#3-ai_system_explorer_v3py)
+  - [4. health_check.py](#4-health_checkpy)
+  - [5. schema_version_checker.py](#5-schema_version_checkerpy)
+  - [6. comprehensive_pentest_runner.py](#6-comprehensive_pentest_runnerpy)
+- [🎯 實戰CLI驗證](#實戰cli驗證)
+  - [成功案例 1: Schema版本檢查器](#成功案例-1-schema版本檢查器)
+  - [成功案例 2: 系統探索器v3](#成功案例-2-系統探索器v3)
+- [💡 AI理解能力特色](#ai理解能力特色)
+  - [1. 架構感知能力](#1-架構感知能力)
+  - [2. 功能抽象能力](#2-功能抽象能力)
+  - [3. CLI生成智能](#3-cli生成智能)
+  - [4. 依賴理解能力](#4-依賴理解能力)
+- [🔍 深度分析亮點](#深度分析亮點)
+  - [混合架構識別](#混合架構識別)
+  - [自主學習系統理解](#自主學習系統理解)
+  - [Schema管理系統](#schema管理系統)
+  - [驗證成功指標](#驗證成功指標)
+  - [AI理解能力評估](#ai理解能力評估)
+  - [關鍵發現](#關鍵發現)
+- [🎯 最終評價](#最終評價)
+
+---
+
 ## 🎯 驗證目標
 驗證 AIVA AI 組件對於程式功能的深度理解能力，確認其能夠：
 1. 正確理解程式的實際功能和用途

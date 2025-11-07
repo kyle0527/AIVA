@@ -1,0 +1,85 @@
+version: "3.9"
+
+services:
+  # SSRF Detection Worker
+  ssrf_worker:
+    build:
+      context: .
+      dockerfile: services/features/function_ssrf/Dockerfile
+    image: aiva/ssrf_worker:latest
+    environment:
+      - AIVA_AMQP_URL=${AIVA_AMQP_URL:-amqp://guest:guest@rabbitmq:5672/}
+      - SSRF_TOPIC_TASK=${SSRF_TOPIC_TASK:-TASK_FUNCTION_SSRF}
+      - TOPIC_FINDING=${TOPIC_FINDING:-FINDING_DETECTED}
+      - TOPIC_STATUS=${TOPIC_STATUS:-TASK_STATUS}
+      - SSRF_SAFE_MODE=${SSRF_SAFE_MODE:-true}
+      - SSRF_ENABLE_INTERNAL=${SSRF_ENABLE_INTERNAL:-true}
+      - SSRF_ENABLE_METADATA=${SSRF_ENABLE_METADATA:-true}
+      - SSRF_ENABLE_FILE=${SSRF_ENABLE_FILE:-false}
+      - SSRF_TIMEOUT=${SSRF_TIMEOUT:-8.0}
+    depends_on:
+      - rabbitmq
+    restart: unless-stopped
+    command: ["python", "-m", "services.features.function_ssrf"]
+
+  # IDOR Detection Worker  
+  idor_worker:
+    build:
+      context: .
+      dockerfile: services/features/function_idor/Dockerfile
+    image: aiva/idor_worker:latest
+    environment:
+      - AIVA_AMQP_URL=${AIVA_AMQP_URL:-amqp://guest:guest@rabbitmq:5672/}
+      - IDOR_TOPIC_TASK=${IDOR_TOPIC_TASK:-TASK_FUNCTION_IDOR}
+      - TOPIC_FINDING=${TOPIC_FINDING:-FINDING_DETECTED}
+      - TOPIC_STATUS=${TOPIC_STATUS:-TASK_STATUS}
+      - IDOR_ENABLE_HORIZONTAL=${IDOR_ENABLE_HORIZONTAL:-true}
+      - IDOR_ENABLE_VERTICAL=${IDOR_ENABLE_VERTICAL:-true}
+      - IDOR_MAX_VARIATIONS=${IDOR_MAX_VARIATIONS:-5}
+      - IDOR_ALLOW_ACTIVE=${IDOR_ALLOW_ACTIVE:-false}
+      - IDOR_SAFE_MODE=${IDOR_SAFE_MODE:-true}
+      - IDOR_TIMEOUT=${IDOR_TIMEOUT:-8.0}
+    depends_on:
+      - rabbitmq
+    restart: unless-stopped
+    command: ["python", "-m", "services.features.function_idor"]
+
+  # Authentication Testing Worker (Go)
+  authn_go_worker:
+    build:
+      context: .
+      dockerfile: services/features/function_authn_go/Dockerfile
+    image: aiva/authn_go_worker:latest
+    environment:
+      - AMQP_URL=${AMQP_URL:-amqp://guest:guest@rabbitmq:5672/}
+      - TOPIC_TASK_AUTHN=${TOPIC_TASK_AUTHN:-TASK_FUNCTION_AUTHN}
+      - TOPIC_FINDING=${TOPIC_FINDING:-FINDING_DETECTED}
+      - TOPIC_STATUS=${TOPIC_STATUS:-TASK_STATUS}
+    depends_on:
+      - rabbitmq
+    restart: unless-stopped
+    command: ["/usr/local/bin/authn_worker"]
+
+networks:
+  default:
+    external:
+      name: aiva_network
+
+# 環境變數說明
+# SSRF 相關:
+# - SSRF_SAFE_MODE: 安全模式，預設為 true
+# - SSRF_ENABLE_INTERNAL: 啟用內網掃描檢測
+# - SSRF_ENABLE_METADATA: 啟用雲端metadata檢測
+# - SSRF_ENABLE_FILE: 啟用file://協議檢測
+# - SSRF_TIMEOUT: 請求超時時間(秒)
+#
+# IDOR 相關:
+# - IDOR_ENABLE_HORIZONTAL: 啟用水平權限檢測
+# - IDOR_ENABLE_VERTICAL: 啟用垂直權限檢測  
+# - IDOR_MAX_VARIATIONS: ID變異最大數量
+# - IDOR_ALLOW_ACTIVE: 允許主動網絡測試
+# - IDOR_SAFE_MODE: 安全模式
+# - IDOR_TIMEOUT: 請求超時時間(秒)
+#
+# AUTHN_GO 相關:
+# - TOPIC_TASK_AUTHN: 認證測試任務主題

@@ -490,3 +490,63 @@ class EnhancedRiskAssessmentEngine:
                 else 0
             ),
         }
+
+    def _get_specific_recommendation(self, vuln_type: str) -> str | None:
+        """
+        根據漏洞類型提供具體技術建議
+
+        Args:
+            vuln_type: 漏洞類型
+
+        Returns:
+            技術建議字串，如果無匹配則返回 None
+        """
+        recommendations_map = {
+            "sql_injection": "實施參數化查詢和 ORM，禁止動態 SQL 拼接",
+            "xss": "實施嚴格的輸出編碼和 CSP（內容安全政策）",
+            "csrf": "啟用 CSRF token 驗證並檢查 Referer/Origin header",
+            "command_injection": "避免執行外部命令，使用安全的 API 替代",
+            "path_traversal": "實施嚴格的路徑驗證和白名單機制",
+            "xxe": "禁用外部實體解析，使用安全的 XML 解析器配置",
+            "ssrf": "實施 URL 白名單和網路隔離，禁止訪問內部網路",
+            "deserialization": "避免反序列化不可信資料，使用簽名驗證",
+            "authentication_bypass": "加強認證機制，實施多因素認證（MFA）",
+            "authorization_bypass": "實施嚴格的權限檢查和最小權限原則",
+        }
+
+        return recommendations_map.get(vuln_type.lower())
+
+    def _generate_impact_summary(
+        self,
+        financial_loss: float,
+        affected_users: int,
+        disruption_risk: str,
+        reputation_impact: str,
+    ) -> str:
+        """
+        生成業務影響摘要
+
+        Args:
+            financial_loss: 財務損失估算
+            affected_users: 受影響使用者數
+            disruption_risk: 業務中斷風險
+            reputation_impact: 聲譽影響
+
+        Returns:
+            影響摘要字串
+        """
+        summary_parts = []
+
+        if financial_loss > 0:
+            summary_parts.append(f"潛在財務損失 ${financial_loss:,.2f}")
+
+        if affected_users > 0:
+            summary_parts.append(f"可能影響 {affected_users:,} 名使用者")
+
+        if disruption_risk in ["high", "medium"]:
+            summary_parts.append(f"業務中斷風險: {disruption_risk}")
+
+        if reputation_impact in ["high", "medium"]:
+            summary_parts.append(f"聲譽影響: {reputation_impact}")
+
+        return "；".join(summary_parts) if summary_parts else "影響較小"

@@ -13,12 +13,12 @@ import httpx
 
 from services.aiva_common.enums import Topic
 from services.aiva_common.mq import get_broker
-from services.aiva_common.schemas import (
-    AivaMessage,
-    FindingPayload,
+from services.aiva_common.schemas.tasks import (
     FunctionTaskPayload,
-    MessageHeader,
 )
+from services.aiva_common.schemas.findings import FindingPayload
+from services.aiva_common.schemas.messaging import AivaMessage
+from services.aiva_common.schemas.base import MessageHeader
 from services.aiva_common.utils import get_logger, new_id
 from services.features.common.worker_statistics import (
     StatisticsCollector,
@@ -34,6 +34,7 @@ from .engines import (
     UnionDetectionEngine,
 )
 from .engines.hackingtool_engine import HackingToolDetectionEngine
+from .detector.sqli_detector import SqliDetector
 from .result_binder_publisher import SqliResultBinderPublisher
 from .task_queue import QueuedTask, SqliTaskQueue
 from .telemetry import SqliExecutionTelemetry
@@ -178,7 +179,7 @@ class SqliOrchestrator:
                     stats.record_error(
                         category=ErrorCategory.TIMEOUT,
                         message=error_msg,
-                        request_info={"engine": engine_name, "url": context.task.url}
+                        request_info={"engine": engine_name, "url": context.task.target.url}
                     )
                 # 繼續執行其他引擎
                 
@@ -193,7 +194,7 @@ class SqliOrchestrator:
                     stats.record_error(
                         category=ErrorCategory.NETWORK,
                         message=error_msg,
-                        request_info={"engine": engine_name, "url": context.task.url}
+                        request_info={"engine": engine_name, "url": context.task.target.url}
                     )
                 # 繼續執行其他引擎
                 
@@ -208,7 +209,7 @@ class SqliOrchestrator:
                     stats.record_error(
                         category=ErrorCategory.UNKNOWN,
                         message=error_msg,
-                        request_info={"engine": engine_name, "url": context.task.url}
+                        request_info={"engine": engine_name, "url": context.task.target.url}
                     )
                 # 繼續執行其他引擎，不因單個引擎失敗而停止
 
