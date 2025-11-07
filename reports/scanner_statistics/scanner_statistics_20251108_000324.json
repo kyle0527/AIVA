@@ -1,0 +1,104 @@
+{
+  "timestamp": "2025-11-08T00:03:24.214640",
+  "summary": {
+    "go_scanners": 0,
+    "rust_scanners": 0,
+    "python_scanners": 11,
+    "ai_detectors": 4,
+    "total_scanners": 15
+  },
+  "details": {
+    "go_scanners": [],
+    "rust_scanners": [],
+    "python_scanners": [
+      {
+        "name": "authn_go_scanner",
+        "path": "services/features\\function_authn_go",
+        "type": "features",
+        "status": "✅ 可用"
+      },
+      {
+        "name": "crypto_scanner",
+        "path": "services/features\\function_crypto",
+        "type": "features",
+        "status": "✅ 可用"
+      },
+      {
+        "name": "idor_scanner",
+        "path": "services/features\\function_idor",
+        "type": "features",
+        "status": "✅ 可用"
+      },
+      {
+        "name": "postex_scanner",
+        "path": "services/features\\function_postex",
+        "type": "features",
+        "status": "✅ 可用"
+      },
+      {
+        "name": "sqli_scanner",
+        "path": "services/features\\function_sqli",
+        "type": "features",
+        "status": "✅ 可用"
+      },
+      {
+        "name": "ssrf_scanner",
+        "path": "services/features\\function_ssrf",
+        "type": "features",
+        "status": "✅ 可用"
+      },
+      {
+        "name": "xss_scanner",
+        "path": "services/features\\function_xss",
+        "type": "features",
+        "status": "✅ 可用"
+      },
+      {
+        "name": "core_crawling_engine",
+        "path": "services/scan/aiva_scan\\core_crawling_engine",
+        "type": "scan",
+        "status": "✅ 可用"
+      },
+      {
+        "name": "dynamic_engine",
+        "path": "services/scan/aiva_scan\\dynamic_engine",
+        "type": "scan",
+        "status": "✅ 可用"
+      },
+      {
+        "name": "examples",
+        "path": "services/scan/aiva_scan\\examples",
+        "type": "scan",
+        "status": "✅ 可用"
+      },
+      {
+        "name": "info_gatherer",
+        "path": "services/scan/aiva_scan\\info_gatherer",
+        "type": "scan",
+        "status": "✅ 可用"
+      }
+    ],
+    "ai_detectors": [
+      {
+        "name": "smart_detection_manager",
+        "type": "AI智能檢測器",
+        "status": "✅ 可用"
+      },
+      {
+        "name": "unified_smart_detection_manager",
+        "type": "AI智能檢測器",
+        "status": "✅ 可用"
+      },
+      {
+        "name": "smart_idor_detector",
+        "type": "AI智能檢測器",
+        "status": "✅ 可用"
+      },
+      {
+        "name": "smart_ssrf_detector",
+        "type": "AI智能檢測器",
+        "status": "✅ 可用"
+      }
+    ]
+  }
+}

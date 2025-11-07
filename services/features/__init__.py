@@ -63,21 +63,27 @@ from ..aiva_common.schemas import (
     TestExecution,
 )
 
-# ==================== 從本模組導入 Features 專屬類 ====================
-from .models import (
+# ==================== 從 aiva_common 導入 Features 使用的類 ====================
+# 注意: 這些類實際定義在 aiva_common.schemas 中，而非本地 models 模組
+from ..aiva_common.schemas.tasks import (
     APISchemaPayload,
     APISecurityTestPayload,
     APITestCase,
-    BizLogicResultPayload,
-    BizLogicTestPayload,
-    EnhancedFunctionTaskTarget,
-    ExecutionError,
-    FunctionTelemetry,
-    JavaScriptAnalysisResult,
-    PostExResultPayload,
-    PostExTestPayload,
-    SensitiveMatch,
 )
+from ..aiva_common.schemas.base import ExecutionError
+from ..aiva_common.schemas.telemetry import FunctionTelemetry
+
+# ==================== 本模組專屬類型（待實現或移除） ====================
+# 以下類型暫時註釋，保留作為未來功能預留
+# from .models import (
+#     BizLogicResultPayload,
+#     BizLogicTestPayload,
+#     EnhancedFunctionTaskTarget,
+#     JavaScriptAnalysisResult,
+#     PostExResultPayload,
+#     PostExTestPayload,
+#     SensitiveMatch,
+# )
 
 __all__ = [
     # ==================== 來自 aiva_common ====================
@@ -100,33 +106,35 @@ __all__ = [
     "AuthZCheckPayload",
     "AuthZAnalysisPayload",
     "AuthZResultPayload",
-    # ==================== 來自本模組 (Features 專屬) ====================
-    "EnhancedFunctionTaskTarget",
+    # ==================== Features 使用的類（來自 aiva_common） ====================
     "FunctionTelemetry",
     "ExecutionError",
-    "PostExTestPayload",
-    "PostExResultPayload",
     "APISchemaPayload",
     "APITestCase",
     "APISecurityTestPayload",
-    "BizLogicTestPayload",
-    "BizLogicResultPayload",
-    "SensitiveMatch",
-    "JavaScriptAnalysisResult",
-    # ==================== 高價值功能模組 ====================
-    "FeatureBase",
-    "FeatureRegistry",
-    "SafeHttp",
-    "FeatureResult",
-    "Finding",
+    # ==================== 本模組專屬類（預留，待實現） ====================
+    # "EnhancedFunctionTaskTarget",
+    # "PostExTestPayload",
+    # "PostExResultPayload",
+    # "BizLogicTestPayload",
+    # "BizLogicResultPayload",
+    # "SensitiveMatch",
+    # "JavaScriptAnalysisResult",
+    # ==================== 高價值功能模組（預留，待實現 base 模組） ====================
+    # "FeatureBase",
+    # "FeatureRegistry",
+    # "SafeHttp",
+    # "FeatureResult",
+    # "Finding",
     "FeatureStepExecutor",
     "get_available_features",
     "create_feature_executor",
 ]
 
-# 導入基礎架構
+# 導入基礎架構（暫時註釋，保留作為未來功能預留）
+# 遵循 README 保留未使用函數原則：這些可能是預留的 API 介面或未來功能的基礎架構
 try:
-    from .base import FeatureBase, FeatureRegistry, SafeHttp, FeatureResult, Finding
+    # from .base import FeatureBase, FeatureRegistry, SafeHttp, FeatureResult, Finding
     from .feature_step_executor import FeatureStepExecutor
     
     def _register_high_value_features() -> list[str]:

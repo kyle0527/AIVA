@@ -25,7 +25,14 @@ from services.aiva_common.schemas import (
 )
 
 from ..detection_models import DetectionResult
-from ..schemas import SqliDetectionResult, SqliTelemetry
+# 修復: schemas 模組不存在，這些類型實際在其他文件中定義
+# SqliDetectionResult 使用 DetectionResult，SqliTelemetry 從 telemetry 導入
+try:
+    from ..telemetry import SqliExecutionTelemetry as SqliTelemetry
+except ImportError:
+    # 如果 telemetry 模組不存在，使用基礎遙測類
+    SqliTelemetry = None  # type: ignore
+
 from ..config import SqliConfig
 from ..hackingtool_config import (
     HackingToolSQLIntegrator, SQLToolType, 
