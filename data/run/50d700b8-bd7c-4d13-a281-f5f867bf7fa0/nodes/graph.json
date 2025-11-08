@@ -1,0 +1,13 @@
+{
+  "ok": true,
+  "name": "graph",
+  "started_at": 1762581198.0977535,
+  "ended_at": 1762581198.1866689,
+  "blocked": false,
+  "metrics": {},
+  "findings": [],
+  "artifacts": {
+    "graph": "data/artifacts\\graph_f4e783ee.json"
+  },
+  "error": null
+}

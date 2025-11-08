@@ -1,0 +1,3 @@
+# TODO: 未來掛 RAG 檢索 → 重排 → 模板修補
+nodes: []
+policy: {retry: 0, risk_cap: 'L0,L1'}

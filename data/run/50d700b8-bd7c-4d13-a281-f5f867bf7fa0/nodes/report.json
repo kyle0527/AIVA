@@ -1,0 +1,13 @@
+{
+  "ok": true,
+  "name": "report",
+  "started_at": 1762581198.188139,
+  "ended_at": 1762581198.2236726,
+  "blocked": false,
+  "metrics": {},
+  "findings": [],
+  "artifacts": {
+    "report": "reports\\report_466db426.md"
+  },
+  "error": null
+}

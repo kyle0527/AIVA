@@ -1,0 +1,15 @@
+{
+  "ok": true,
+  "name": "index",
+  "started_at": 1762581094.775814,
+  "ended_at": 1762581095.4243755,
+  "blocked": false,
+  "metrics": {
+    "files": 5117
+  },
+  "findings": [],
+  "artifacts": {
+    "index": "data/artifacts\\index_3a52ce78.json"
+  },
+  "error": null
+}

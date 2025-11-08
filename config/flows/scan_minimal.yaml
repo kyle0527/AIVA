@@ -1,0 +1,30 @@
+# 最小掃描流程：index → ast → graph → report
+nodes:
+  - id: index
+    cap: index_repo
+    args:
+      root: ${target}
+    risk: L0
+  - id: ast
+    cap: parse_ast
+    needs: [index]
+    args:
+      index_artifact: ${index.artifacts.index}
+    risk: L0
+  - id: graph
+    cap: build_graph
+    needs: [ast]
+    args:
+      ast_artifact: ${ast.artifacts.ast}
+    risk: L0
+  - id: report
+    cap: render_report
+    needs: [graph]
+    args:
+      index_artifact: ${index.artifacts.index}
+      ast_artifact: ${ast.artifacts.ast}
+      graph_artifact: ${graph.artifacts.graph}
+    risk: L0
+policy:
+  retry: 0
+  risk_cap: "L0,L1"

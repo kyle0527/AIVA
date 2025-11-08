@@ -1,0 +1,15 @@
+{
+  "ok": true,
+  "name": "ast",
+  "started_at": 1762581095.425912,
+  "ended_at": 1762581198.0959363,
+  "blocked": false,
+  "metrics": {
+    "files": 5115
+  },
+  "findings": [],
+  "artifacts": {
+    "ast": "data/artifacts\\ast_466db426.json"
+  },
+  "error": null
+}

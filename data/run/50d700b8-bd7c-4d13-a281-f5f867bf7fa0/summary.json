@@ -1,0 +1,22 @@
+{
+  "run_id": "50d700b8-bd7c-4d13-a281-f5f867bf7fa0",
+  "nodes": {
+    "index": {
+      "ok": true,
+      "error": null
+    },
+    "ast": {
+      "ok": true,
+      "error": null
+    },
+    "graph": {
+      "ok": true,
+      "error": null
+    },
+    "report": {
+      "ok": true,
+      "error": null
+    }
+  },
+  "ok": true
+}
