@@ -1,0 +1,1258 @@
+================================================================================
+AIVA 專案程式碼樹狀架構圖（終極整合版 - 含中文檔名說明）
+================================================================================
+生成日期: 2025年11月09日 10:31:48
+專案路徑: C:\D\fold7\AIVA-git
+
+📊 程式碼統計
+────────────────────────────────────────────────────────────────────────────────
+總檔案數: 760
+總程式碼行數: 225318
+
+💻 語言分布:
+   • .py: 700 檔案, 202374 行 (89.8%)
+   • .rs: 9 檔案, 8593 行 (3.8%)
+   • .go: 30 檔案, 7019 行 (3.1%)
+   • .ts: 17 檔案, 5870 行 (2.6%)
+   • .js: 1 檔案, 578 行 (0.3%)
+   • .sql: 2 檔案, 524 行 (0.2%)
+   • .html: 1 檔案, 360 行 (0.2%)
+
+🔧 排除項目
+────────────────────────────────────────────────────────────────────────────────
+已排除：
+• 虛擬環境: .venv, venv, env
+• 快取: __pycache__, .mypy_cache, .ruff_cache
+• 建置產物: dist, build, target, bin, obj
+• 文件: .md, .txt
+• 配置檔: .json, .yaml, .toml, .ini
+• 腳本: .ps1, .sh, .bat
+
+💡 說明
+────────────────────────────────────────────────────────────────────────────────
+「行」(Line) = 程式碼的一行，以換行符號 (\n) 結束
+「字」(Character) = 單一字元（含中文、英文、符號）
+「檔案數」= 符合條件的程式碼檔案總數
+「程式碼行數」= 所有程式碼檔案的總行數（包含空行和註解）
+
+🎨 差異標記說明
+────────────────────────────────────────────────────────────────────────────────
+[+] = 🟢 新增的檔案或目錄（綠色顯示於終端機）
+[-] = 🔴 已刪除的檔案或目錄（紅色顯示於終端機）
+    = ⚪ 保持不變（白色顯示於終端機）
+
+🌏 中文檔名說明
+────────────────────────────────────────────────────────────────────────────────
+每個檔案名稱後面會自動添加中文說明，格式：檔案名 # 中文說明
+• 根據檔案名稱和目錄結構智慧推測功能
+• 涵蓋 Python、Go、Rust、TypeScript 等多語言
+• 包含 AIVA 專案特定的模組和功能說明
+
+注意：文字檔案輸出含 [+]/[-] 標記和中文說明
+終端機執行時會顯示對應顏色但不含 [+]/[-] 標記
+下一版本更新時，[-] 項目將被移除，[+] 項目將變為不變（空格）
+
+================================================================================
+程式碼結構樹狀圖（含中文檔名說明）
+================================================================================
+
+AIVA-git
+    ├─_archive
+    │   ├─completed_projects
+    │   │   ├─architecture_fixes
+    │   │   ├─file_cleanup
+    │   │   └─schema_restructuring
+    │   ├─deprecated_schema_tools
+    │   │   ├─schemas
+    │   │   │   ├─crosslang
+    │   │   │   ├─aiva_schemas.d.ts
+    │   │   │   ├─aiva_schemas.go
+    │   │   │   ├─aiva_schemas.rs
+    │   │   │   └─enums.ts
+    │   │   ├─ci_schema_check.py
+    │   │   ├─compare_schemas.py
+    │   │   ├─compatible_schema_generator.py
+    │   │   ├─create_schemas_files.py
+    │   │   ├─generate_compatible_schemas.py
+    │   │   ├─generate_official_schemas.py
+    │   │   ├─generate_rust_schemas.py
+    │   │   ├─schema_generator.py
+    │   │   ├─schema_unification_tool.py
+    │   │   └─schema_version_checker.py
+    │   ├─duplicates_cleanup
+    │   │   ├─__init__.py
+    │   │   ├─async_utils.py
+    │   │   ├─base_types.py
+    │   │   ├─cli.py
+    │   │   ├─findings.py
+    │   │   ├─messaging.py
+    │   │   ├─plugins.py
+    │   │   └─tasks.py
+    │   ├─legacy_components
+    │   │   └─trainer_legacy.py
+    │   └─scripts_completed
+    ├─.cache
+    ├─.github
+    │   └─workflows
+    ├─ai_components
+    │   ├─agentic_orchestration.py
+    │   ├─cognition_module.py
+    │   ├─event_bus.py
+    │   ├─knowledge_module.py
+    │   ├─mcp_protocol.py
+    │   ├─perception_module.py
+    │   ├─self_improving_mechanism.py
+    │   └─strangler_fig_controller.py
+    ├─api
+    │   ├─routers
+    │   │   ├─__init__.py
+    │   │   ├─admin.py
+    │   │   ├─auth.py
+    │   │   └─security.py
+    │   ├─main.py
+    │   ├─start_api.py
+    │   └─test_api.py
+    ├─cli_generated
+    │   ├─aiva_cli
+    │   │   ├─__init__.py
+    │   │   └─__main__.py
+    │   ├─index.ts
+    │   └─schemas.ts
+    ├─compose_overlay
+    ├─config
+    │   ├─flows
+    │   ├─api_keys.py
+    │   └─settings.py
+    ├─data
+    │   ├─ai_commander
+    │   │   ├─experience_db
+    │   │   └─knowledge
+    │   │       └─vectors
+    │   ├─artifacts
+    │   ├─database
+    │   ├─integration
+    │   │   ├─database
+    │   │   ├─knowledge
+    │   │   │   ├─payloads
+    │   │   │   └─vectors
+    │   │   ├─logs
+    │   │   ├─models
+    │   │   │   ├─checkpoints
+    │   │   │   ├─metadata
+    │   │   │   └─production
+    │   │   ├─scenarios
+    │   │   │   ├─custom
+    │   │   │   └─owasp
+    │   │   └─training
+    │   │       ├─experiences
+    │   │       ├─metrics
+    │   │       ├─sessions
+    │   │       └─traces
+    │   ├─integration_test
+    │   │   ├─database
+    │   │   ├─knowledge
+    │   │   │   ├─payloads
+    │   │   │   └─vectors
+    │   │   ├─logs
+    │   │   ├─models
+    │   │   │   ├─checkpoints
+    │   │   │   ├─metadata
+    │   │   │   └─production
+    │   │   ├─scenarios
+    │   │   │   ├─custom
+    │   │   │   └─owasp
+    │   │   └─training
+    │   │       ├─experiences
+    │   │       ├─metrics
+    │   │       ├─sessions
+    │   │       └─traces
+    │   ├─knowledge
+    │   │   ├─payloads
+    │   │   └─vectors
+    │   ├─learning
+    │   │   ├─performance
+    │   │   └─training
+    │   ├─logs
+    │   ├─models
+    │   │   ├─checkpoints
+    │   │   ├─metadata
+    │   │   └─production
+    │   ├─run
+    │   │   └─50d700b8-bd7c-4d13-a281-f5f867bf7fa0
+    │   │       └─nodes
+    │   ├─scenarios
+    │   │   ├─custom
+    │   │   └─owasp
+    │   ├─storage_test
+    │   │   ├─database
+    │   │   ├─knowledge
+    │   │   │   ├─payloads
+    │   │   │   └─vectors
+    │   │   ├─logs
+    │   │   ├─models
+    │   │   │   ├─checkpoints
+    │   │   │   ├─metadata
+    │   │   │   └─production
+    │   │   ├─scenarios
+    │   │   │   ├─custom
+    │   │   │   └─owasp
+    │   │   └─training
+    │   │       ├─experiences
+    │   │       ├─metrics
+    │   │       ├─sessions
+    │   │       └─traces
+    │   └─training
+    │       ├─experiences
+    │       ├─metrics
+    │       ├─sessions
+    │       └─traces
+    ├─docker
+    │   ├─components
+    │   ├─compose
+    │   ├─core
+    │   ├─helm
+    │   │   └─aiva
+    │   ├─image
+    │   │   └─DOCKER_GUIDE
+    │   ├─infrastructure
+    │   │   └─initdb
+    │   │       ├─001_schema.sql
+    │   │       └─002_enhanced_schema.sql
+    │   ├─initdb
+    │   └─k8s
+    ├─docs
+    │   └─ai_core_options
+    ├─examples
+    │   ├─core_integration_demo.py
+    │   ├─demo_bio_neuron_agent.py
+    │   ├─demo_bio_neuron_master.py
+    │   ├─demo_module_import_fix.py
+    │   ├─demo_storage.py
+    │   ├─demo_ui_panel.py
+    │   ├─detection_effectiveness_demo.py
+    │   ├─init_storage.py
+    │   ├─start_ui_auto.py
+    │   └─test_api_service.py
+    ├─guides
+    │   ├─architecture
+    │   ├─deployment
+    │   ├─development
+    │   │   └─image
+    │   │       └─TOKEN_OPTIMIZATION_GUIDE
+    │   ├─modules
+    │   └─troubleshooting
+    ├─image
+    │   ├─AIVA_AI_DEPLOYMENT_GUIDE
+    │   ├─ENVIRONMENT_SETUP_CHECKLIST
+    │   ├─SCHEMA_CROSS_LANGUAGE_FIXES_COMPLETION_REPORT
+    │   └─SCHEMA_PROJECT_FINAL_REPORT
+    ├─logs
+    │   ├─aiva_core
+    │   ├─archive
+    │   ├─misc
+    │   └─status_reports
+    │       └─archive
+    ├─models
+    ├─observability
+    │   └─centralized_observability.py
+    ├─plugins
+    │   └─aiva_converters
+    │       ├─converters
+    │       │   ├─docx_to_md_converter.py
+    │       │   ├─sarif_converter.py
+    │       │   └─task_converter.py
+    │       ├─core
+    │       │   ├─cross_language_interface.py
+    │       │   ├─cross_language_validator.py
+    │       │   ├─schema_codegen_tool.py
+    │       │   ├─schema_validator.py
+    │       │   └─typescript_generator.py
+    │       ├─examples
+    │       ├─scripts
+    │       ├─templates
+    │       │   ├─go
+    │       │   ├─python
+    │       │   ├─rust
+    │       │   └─typescript
+    │       ├─tests
+    │       │   ├─conftest.py
+    │       │   └─test_schema_codegen.py
+    │       └─__init__.py
+    ├─reports
+    │   ├─ai_analysis
+    │   ├─ai_diagnostics
+    │   ├─ai_sessions
+    │   ├─analysis
+    │   ├─architecture
+    │   ├─archive
+    │   ├─connectivity
+    │   ├─data
+    │   │   └─archive
+    │   ├─debugging
+    │   ├─documentation
+    │   │   └─image
+    │   │       └─DEVELOPER_GUIDE
+    │   ├─implementation
+    │   ├─misc
+    │   ├─project_status
+    │   ├─scanner_statistics
+    │   ├─schema
+    │   ├─security
+    │   └─testing
+    ├─scripts
+    │   ├─ai_analysis
+    │   │   ├─ai_autonomous_testing_loop.py
+    │   │   ├─ai_component_explorer.py
+    │   │   ├─ai_functionality_validator.py
+    │   │   ├─ai_security_test.py
+    │   │   ├─ai_system_explorer_v2.py
+    │   │   ├─ai_system_explorer.py
+    │   │   ├─aiva_continuous_ai_manager.py
+    │   │   ├─analyze_ai_performance.py
+    │   │   ├─enterprise_ai_manager.py
+    │   │   ├─intelligent_ai_manager.py
+    │   │   └─production_ai_manager_v2.py
+    │   ├─analysis
+    │   │   ├─check_documentation_errors.py
+    │   │   ├─check_readme_compliance.py
+    │   │   ├─duplication_fix_tool.py
+    │   │   ├─example_usage.py
+    │   │   ├─scanner_statistics.py
+    │   │   ├─validate_todo7_cross_language_api.py
+    │   │   └─verify_p0_fixes.py
+    │   ├─common
+    │   │   ├─deployment
+    │   │   ├─launcher
+    │   │   │   ├─aiva_launcher.py
+    │   │   │   └─start_ai_continuous_training.py
+    │   │   ├─maintenance
+    │   │   │   ├─fix_import_paths.py
+    │   │   │   └─system_repair_tool.py
+    │   │   ├─setup
+    │   │   └─validation
+    │   │       └─aiva_package_validator.py
+    │   ├─core
+    │   │   └─reporting
+    │   │       └─aiva_enterprise_security_report.py
+    │   ├─crypto_postex
+    │   ├─features
+    │   │   ├─conversion
+    │   │   └─original_scripts
+    │   ├─integration
+    │   │   ├─reporting
+    │   │   │   └─aiva_crosslang_unified.py
+    │   │   ├─ffi_integration.py
+    │   │   ├─graalvm_integration.py
+    │   │   └─wasm_integration.py
+    │   ├─launcher
+    │   │   ├─aiva_launcher.py
+    │   │   └─smart_communication_selector.py
+    │   ├─migration
+    │   │   └─database_migration_plan.py
+    │   ├─misc
+    │   │   ├─__init__.py
+    │   │   ├─aiva_ai_coordinator.py
+    │   │   ├─comprehensive_system_validation.py
+    │   │   ├─core_scan_integration_cli.py
+    │   │   ├─features_ai_cli.py
+    │   │   ├─final_validation.py
+    │   │   ├─fixed_pentest_runner.py
+    │   │   ├─live_pentest_runner.py
+    │   │   ├─organize_aiva_files.py
+    │   │   ├─sqli_scanner.py
+    │   │   ├─system_explorer.py
+    │   │   └─xss_scanner.py
+    │   ├─scan
+    │   │   └─reporting
+    │   │       └─final_report.py
+    │   ├─testing
+    │   │   ├─aiva_final_test.py
+    │   │   ├─autonomous_test.py
+    │   │   ├─comprehensive_pentest_runner.py
+    │   │   ├─comprehensive_schema_test.py
+    │   │   ├─data_persistence_test.py
+    │   │   ├─full_validation_test.py
+    │   │   ├─message_queue_test.py
+    │   │   ├─pentest_runner.py
+    │   │   ├─sqli_test.py
+    │   │   ├─test_ai_components.py
+    │   │   ├─test_cross_language_validation.py
+    │   │   ├─test_exploit_functionality.py
+    │   │   ├─test_intelligent_logic.py
+    │   │   ├─test_schema_codegen.py
+    │   │   ├─test_unified_storage_config.py
+    │   │   └─test_vector_storage.py
+    │   ├─utilities
+    │   │   ├─advanced_debug_fixer.py
+    │   │   ├─aiva_debug_fixer.py
+    │   │   ├─aiva_launcher.py
+    │   │   ├─aiva_package_validator.py
+    │   │   ├─apply_performance_optimizations.py
+    │   │   ├─deep_debug_analyzer.py
+    │   │   ├─final_debug_fixer.py
+    │   │   ├─fix_environment_dependencies.py
+    │   │   ├─fix_offline_dependencies.py
+    │   │   ├─health_check.py
+    │   │   ├─import_fixer.py
+    │   │   ├─launch_offline_mode.py
+    │   │   ├─migrate_vector_storage.py
+    │   │   ├─precise_debug_fixer.py
+    │   │   ├─restore_features_smart.py
+    │   │   └─validate_environment_variables.py
+    │   ├─analyze_integration_module.py
+    │   ├─cleanup_diagram_output.py
+    │   ├─demo_cross_language_ai.py
+    │   ├─diagram_auto_composer.py
+    │   ├─docker_infrastructure_analysis.py
+    │   ├─docker_infrastructure_updater.py
+    │   ├─generate_advanced_diagrams.py
+    │   ├─generate_complete_readme_architecture.py
+    │   ├─generate_core_multilayer_readme.py
+    │   ├─generate_multilayer_readme.py
+    │   ├─generate_organization_diagrams.py
+    │   ├─generate_threat_model_diagrams.py
+    │   ├─intelligent_analysis_framework_v3.py
+    │   ├─organize_features_by_function.py
+    │   ├─potential_capability_analyzer.py
+    │   ├─ultimate_organization_discovery_v2.py
+    │   └─v3_improvements_preview.py
+    ├─security
+    │   ├─certs
+    │   └─microservices_security_framework.py
+    ├─services
+    │   ├─aiva_common
+    │   │   ├─ai
+    │   │   │   ├─__init__.py
+    │   │   │   ├─interfaces.py
+    │   │   │   ├─performance_config.py
+    │   │   │   └─registry.py
+    │   │   ├─aiva_common.egg-info
+    │   │   ├─async_utils
+    │   │   │   └─__init__.py
+    │   │   ├─cli
+    │   │   │   └─__init__.py
+    │   │   ├─config
+    │   │   │   ├─__init__.py
+    │   │   │   ├─settings.py
+    │   │   │   └─unified_config.py
+    │   │   ├─cross_language
+    │   │   │   ├─adapters
+    │   │   │   │   ├─__init__.py
+    │   │   │   │   ├─go_adapter.py
+    │   │   │   │   └─rust_adapter.py
+    │   │   │   ├─__init__.py
+    │   │   │   ├─core.py
+    │   │   │   └─errors.py
+    │   │   ├─enums
+    │   │   │   ├─__init__.py
+    │   │   │   ├─academic.py
+    │   │   │   ├─ai.py
+    │   │   │   ├─assets.py
+    │   │   │   ├─business.py
+    │   │   │   ├─common.py
+    │   │   │   ├─data_models.py
+    │   │   │   ├─infrastructure.py
+    │   │   │   ├─modules.py
+    │   │   │   ├─operations.py
+    │   │   │   ├─pentest.py
+    │   │   │   ├─security.py
+    │   │   │   ├─ui_ux.py
+    │   │   │   └─web_api_standards.py
+    │   │   ├─messaging
+    │   │   │   ├─compatibility_layer.py
+    │   │   │   ├─retry_handler.py
+    │   │   │   └─unified_topic_manager.py
+    │   │   ├─observability
+    │   │   │   └─__init__.py
+    │   │   ├─plugins
+    │   │   │   └─__init__.py
+    │   │   ├─protocols
+    │   │   ├─schemas
+    │   │   │   ├─_base
+    │   │   │   │   ├─__init__.py
+    │   │   │   │   └─messaging.py
+    │   │   │   ├─analysis
+    │   │   │   │   ├─__init__.py
+    │   │   │   │   ├─ai_models.py
+    │   │   │   │   ├─language_support.py
+    │   │   │   │   └─results.py
+    │   │   │   ├─generated
+    │   │   │   │   ├─__init__.py
+    │   │   │   │   ├─async_utils.py
+    │   │   │   │   ├─base_types.py
+    │   │   │   │   ├─cli.py
+    │   │   │   │   ├─findings.py
+    │   │   │   │   ├─messaging.py
+    │   │   │   │   ├─plugins.py
+    │   │   │   │   └─tasks.py
+    │   │   │   ├─infrastructure
+    │   │   │   │   ├─__init__.py
+    │   │   │   │   ├─assets.py
+    │   │   │   │   ├─plugins.py
+    │   │   │   │   ├─system.py
+    │   │   │   │   └─telemetry.py
+    │   │   │   ├─interfaces
+    │   │   │   │   ├─__init__.py
+    │   │   │   │   ├─api_standards.py
+    │   │   │   │   ├─async_utils.py
+    │   │   │   │   └─cli.py
+    │   │   │   ├─risk
+    │   │   │   │   ├─__init__.py
+    │   │   │   │   ├─assessment.py
+    │   │   │   │   ├─attack_paths.py
+    │   │   │   │   └─references.py
+    │   │   │   ├─security
+    │   │   │   │   ├─__init__.py
+    │   │   │   │   ├─events.py
+    │   │   │   │   ├─findings.py
+    │   │   │   │   ├─threat_intel.py
+    │   │   │   │   └─vulnerabilities.py
+    │   │   │   ├─testing
+    │   │   │   │   ├─__init__.py
+    │   │   │   │   ├─api_testing.py
+    │   │   │   │   ├─scenarios.py
+    │   │   │   │   └─tasks.py
+    │   │   │   ├─__init__.py
+    │   │   │   ├─ai.py
+    │   │   │   ├─analysis.py
+    │   │   │   ├─api_standards.py
+    │   │   │   ├─assets.py
+    │   │   │   ├─async_utils.py
+    │   │   │   ├─base.py
+    │   │   │   ├─capability.py
+    │   │   │   ├─cli.py
+    │   │   │   ├─enhanced.py
+    │   │   │   ├─findings.py
+    │   │   │   ├─languages.py
+    │   │   │   ├─low_value_vulnerabilities.py
+    │   │   │   ├─messaging.py
+    │   │   │   ├─plugins.py
+    │   │   │   ├─references.py
+    │   │   │   ├─risk.py
+    │   │   │   ├─security_events.py
+    │   │   │   ├─system.py
+    │   │   │   ├─tasks.py
+    │   │   │   ├─telemetry.py
+    │   │   │   ├─threat_intelligence.py
+    │   │   │   └─vulnerability_finding.py
+    │   │   ├─services
+    │   │   │   └─features
+    │   │   │       └─common
+    │   │   │           └─typescript
+    │   │   │               └─aiva_common_ts
+    │   │   │                   └─schemas
+    │   │   │                       └─generated
+    │   │   │                           ├─index.ts
+    │   │   │                           └─schemas.ts
+    │   │   ├─tools
+    │   │   │   ├─services
+    │   │   │   │   ├─aiva_common
+    │   │   │   │   │   └─schemas
+    │   │   │   │   │       └─generated
+    │   │   │   │   │           ├─__init__.py
+    │   │   │   │   │           ├─findings.py
+    │   │   │   │   │           ├─messaging.py
+    │   │   │   │   │           └─tasks.py
+    │   │   │   │   └─scan
+    │   │   │   │       └─info_gatherer_rust
+    │   │   │   │           └─src
+    │   │   │   │               └─schemas
+    │   │   │   │                   └─generated
+    │   │   │   │                       └─mod.rs
+    │   │   │   ├─module_connectivity_tester.py
+    │   │   │   ├─schema_codegen_tool.py
+    │   │   │   └─schema_validator.py
+    │   │   ├─utils
+    │   │   │   ├─dedup
+    │   │   │   │   ├─__init__.py
+    │   │   │   │   └─dedupe.py
+    │   │   │   ├─network
+    │   │   │   │   ├─__init__.py
+    │   │   │   │   ├─backoff.py
+    │   │   │   │   └─ratelimit.py
+    │   │   │   ├─__init__.py
+    │   │   │   ├─ids.py
+    │   │   │   ├─logging.py
+    │   │   │   └─retry.py
+    │   │   ├─v2_client
+    │   │   │   ├─__init__.py
+    │   │   │   └─aiva_client.py
+    │   │   ├─__init__.py
+    │   │   ├─config_manager.py
+    │   │   ├─data_pipeline.py
+    │   │   ├─error_handling.py
+    │   │   ├─metrics.py
+    │   │   ├─monitoring_log_handler.py
+    │   │   ├─monitoring.py
+    │   │   ├─mq.py
+    │   │   ├─security_config.py
+    │   │   ├─security_middleware.py
+    │   │   ├─security_test.py
+    │   │   ├─security.py
+    │   │   ├─service_discovery.py
+    │   │   ├─simple_validation.py
+    │   │   ├─stream_processor.py
+    │   │   ├─validate_aiva_common_extensions.py
+    │   │   └─version.py
+    │   ├─core
+    │   │   ├─aiva_core
+    │   │   │   ├─ai_engine
+    │   │   │   │   ├─tools
+    │   │   │   │   │   ├─shell_command_tool.py
+    │   │   │   │   │   └─system_status_tool.py
+    │   │   │   │   ├─training
+    │   │   │   │   │   ├─__init__.py
+    │   │   │   │   │   ├─data_loader.py
+    │   │   │   │   │   └─model_updater.py
+    │   │   │   │   ├─__init__.py
+    │   │   │   │   ├─ai_model_manager.py
+    │   │   │   │   ├─anti_hallucination_module.py
+    │   │   │   │   ├─bio_neuron_core.py
+    │   │   │   │   ├─knowledge_base.py
+    │   │   │   │   ├─learning_engine.py
+    │   │   │   │   ├─memory_manager.py
+    │   │   │   │   ├─neural_network.py
+    │   │   │   │   ├─performance_enhancements.py
+    │   │   │   │   └─tools.py
+    │   │   │   ├─ai_model
+    │   │   │   │   └─train_classifier.py
+    │   │   │   ├─ai_testing
+    │   │   │   ├─analysis
+    │   │   │   │   ├─__init__.py
+    │   │   │   │   ├─ast_trace_comparator.py
+    │   │   │   │   ├─dynamic_strategy_adjustment.py
+    │   │   │   │   ├─initial_surface.py
+    │   │   │   │   ├─plan_comparator.py
+    │   │   │   │   ├─risk_assessment_engine.py
+    │   │   │   │   └─strategy_generator.py
+    │   │   │   ├─attack
+    │   │   │   │   ├─__init__.py
+    │   │   │   │   ├─attack_chain.py
+    │   │   │   │   ├─attack_executor.py
+    │   │   │   │   ├─attack_validator.py
+    │   │   │   │   ├─exploit_manager.py
+    │   │   │   │   └─payload_generator.py
+    │   │   │   ├─authz
+    │   │   │   │   ├─__init__.py
+    │   │   │   │   ├─authz_mapper.py
+    │   │   │   │   ├─matrix_visualizer.py
+    │   │   │   │   └─permission_matrix.py
+    │   │   │   ├─bizlogic
+    │   │   │   │   ├─__init__.py
+    │   │   │   │   ├─finding_helper.py
+    │   │   │   │   └─worker.py
+    │   │   │   ├─decision
+    │   │   │   │   ├─enhanced_decision_agent.py
+    │   │   │   │   └─skill_graph.py
+    │   │   │   ├─dialog
+    │   │   │   │   └─assistant.py
+    │   │   │   ├─execution
+    │   │   │   │   ├─__init__.py
+    │   │   │   │   ├─attack_plan_mapper.py
+    │   │   │   │   ├─execution_status_monitor.py
+    │   │   │   │   ├─plan_executor.py
+    │   │   │   │   ├─task_generator.py
+    │   │   │   │   ├─task_queue_manager.py
+    │   │   │   │   └─trace_logger.py
+    │   │   │   ├─execution_tracer
+    │   │   │   │   ├─__init__.py
+    │   │   │   │   ├─execution_monitor.py
+    │   │   │   │   ├─task_executor.py
+    │   │   │   │   └─trace_recorder.py
+    │   │   │   ├─ingestion
+    │   │   │   │   ├─__init__.py
+    │   │   │   │   └─scan_module_interface.py
+    │   │   │   ├─launchers
+    │   │   │   ├─learning
+    │   │   │   │   ├─__init__.py
+    │   │   │   │   ├─model_trainer.py
+    │   │   │   │   ├─rl_models.py
+    │   │   │   │   ├─rl_trainers.py
+    │   │   │   │   └─scalable_bio_trainer.py
+    │   │   │   ├─messaging
+    │   │   │   │   ├─__init__.py
+    │   │   │   │   ├─message_broker.py
+    │   │   │   │   ├─result_collector.py
+    │   │   │   │   └─task_dispatcher.py
+    │   │   │   ├─monitoring
+    │   │   │   ├─output
+    │   │   │   │   ├─__init__.py
+    │   │   │   │   └─to_functions.py
+    │   │   │   ├─performance
+    │   │   │   │   ├─__init__.py
+    │   │   │   │   ├─memory_manager.py
+    │   │   │   │   ├─monitoring.py
+    │   │   │   │   └─parallel_processor.py
+    │   │   │   ├─planner
+    │   │   │   │   ├─__init__.py
+    │   │   │   │   ├─ast_parser.py
+    │   │   │   │   ├─orchestrator.py
+    │   │   │   │   ├─task_converter.py
+    │   │   │   │   └─tool_selector.py
+    │   │   │   ├─plugins
+    │   │   │   │   └─ai_summary_plugin.py
+    │   │   │   ├─processing
+    │   │   │   │   ├─__init__.py
+    │   │   │   │   └─scan_result_processor.py
+    │   │   │   ├─rag
+    │   │   │   │   ├─__init__.py
+    │   │   │   │   ├─demo_rag_integration.py
+    │   │   │   │   ├─knowledge_base.py
+    │   │   │   │   ├─postgresql_vector_store.py
+    │   │   │   │   ├─rag_engine.py
+    │   │   │   │   ├─unified_vector_store.py
+    │   │   │   │   └─vector_store.py
+    │   │   │   ├─state
+    │   │   │   │   ├─__init__.py
+    │   │   │   │   └─session_state_manager.py
+    │   │   │   ├─storage
+    │   │   │   │   ├─__init__.py
+    │   │   │   │   ├─backends.py
+    │   │   │   │   ├─config.py
+    │   │   │   │   ├─models.py
+    │   │   │   │   └─storage_manager.py
+    │   │   │   ├─training
+    │   │   │   │   ├─__init__.py
+    │   │   │   │   ├─scenario_manager.py
+    │   │   │   │   └─training_orchestrator.py
+    │   │   │   ├─ui_panel
+    │   │   │   │   ├─__init__.py
+    │   │   │   │   ├─auto_server.py
+    │   │   │   │   ├─dashboard.py
+    │   │   │   │   ├─improved_ui.py
+    │   │   │   │   ├─rich_cli_config.py
+    │   │   │   │   ├─rich_cli.py
+    │   │   │   │   └─server.py
+    │   │   │   ├─utils
+    │   │   │   │   └─logging_formatter.py
+    │   │   │   ├─__init__.py
+    │   │   │   ├─ai_commander.py
+    │   │   │   ├─ai_controller.py
+    │   │   │   ├─ai_integration_test.py
+    │   │   │   ├─ai_ui_schemas.py
+    │   │   │   ├─app.py
+    │   │   │   ├─bio_neuron_master.py
+    │   │   │   ├─business_schemas.py
+    │   │   │   ├─command_router.py
+    │   │   │   ├─context_manager.py
+    │   │   │   ├─core_service_coordinator.py
+    │   │   │   ├─execution_planner.py
+    │   │   │   ├─multilang_coordinator.py
+    │   │   │   ├─nlg_system.py
+    │   │   │   ├─optimized_core.py
+    │   │   │   └─unified_function_caller.py
+    │   │   ├─aiva_core_v1
+    │   │   │   ├─capabilities
+    │   │   │   │   ├─__init__.py
+    │   │   │   │   └─builtin.py
+    │   │   │   ├─__init__.py
+    │   │   │   ├─events.py
+    │   │   │   ├─executor.py
+    │   │   │   ├─guard.py
+    │   │   │   ├─planner.py
+    │   │   │   ├─registry.py
+    │   │   │   ├─schemas.py
+    │   │   │   └─state.py
+    │   │   ├─docs
+    │   │   ├─scripts
+    │   │   ├─__init__.py
+    │   │   ├─ai_models.py
+    │   │   ├─models.py
+    │   │   └─session_state_manager.py
+    │   ├─features
+    │   │   ├─common
+    │   │   │   ├─go
+    │   │   │   │   └─aiva_common_go
+    │   │   │   │       ├─config
+    │   │   │   │       │   ├─config_test.go
+    │   │   │   │       │   └─config.go
+    │   │   │   │       ├─logger
+    │   │   │   │       │   └─logger.go
+    │   │   │   │       ├─metrics
+    │   │   │   │       │   └─metrics.go
+    │   │   │   │       ├─mq
+    │   │   │   │       │   ├─client_test.go
+    │   │   │   │       │   └─client.go
+    │   │   │   │       └─schemas
+    │   │   │   │           └─generated
+    │   │   │   │               └─schemas.go
+    │   │   │   ├─__init__.py
+    │   │   │   └─worker_statistics.py
+    │   │   ├─docs
+    │   │   │   ├─development
+    │   │   │   ├─go
+    │   │   │   ├─issues
+    │   │   │   ├─python
+    │   │   │   └─security
+    │   │   ├─function_authn_go
+    │   │   │   ├─cmd
+    │   │   │   │   └─worker
+    │   │   │   │       └─main.go
+    │   │   │   └─internal
+    │   │   │       ├─amqp.go
+    │   │   │       ├─config.go
+    │   │   │       └─engine.go
+    │   │   ├─function_crypto
+    │   │   │   ├─config
+    │   │   │   │   └─crypto_config.py
+    │   │   │   ├─detector
+    │   │   │   │   └─crypto_detector.py
+    │   │   │   ├─python_wrapper
+    │   │   │   │   ├─__init__.py
+    │   │   │   │   └─engine_bridge.py
+    │   │   │   ├─rust_core
+    │   │   │   │   └─src
+    │   │   │   │       └─lib.rs
+    │   │   │   ├─tests
+    │   │   │   │   └─test_detector.py
+    │   │   │   ├─worker
+    │   │   │   │   └─crypto_worker.py
+    │   │   │   ├─__init__.py
+    │   │   │   └─__main__.py
+    │   │   ├─function_idor
+    │   │   │   ├─config
+    │   │   │   │   └─idor_config.py
+    │   │   │   ├─detector
+    │   │   │   │   └─idor_detector.py
+    │   │   │   ├─engine
+    │   │   │   │   └─idor_engine.py
+    │   │   │   ├─worker
+    │   │   │   │   └─idor_worker.py
+    │   │   │   ├─__init__.py
+    │   │   │   ├─__main__.py
+    │   │   │   ├─cross_user_tester.py
+    │   │   │   ├─enhanced_worker.py
+    │   │   │   ├─resource_id_extractor.py
+    │   │   │   ├─smart_idor_detector.py
+    │   │   │   ├─vertical_escalation_tester.py
+    │   │   │   └─worker.py
+    │   │   ├─function_postex
+    │   │   │   ├─config
+    │   │   │   │   └─postex_config.py
+    │   │   │   ├─detector
+    │   │   │   │   └─postex_detector.py
+    │   │   │   ├─engines
+    │   │   │   │   ├─lateral_engine.py
+    │   │   │   │   ├─persistence_engine.py
+    │   │   │   │   └─privilege_engine.py
+    │   │   │   ├─tests
+    │   │   │   │   └─test_detector.py
+    │   │   │   ├─worker
+    │   │   │   │   └─postex_worker.py
+    │   │   │   ├─__init__.py
+    │   │   │   └─__main__.py
+    │   │   ├─function_sqli
+    │   │   │   ├─config
+    │   │   │   │   └─sqli_config.py
+    │   │   │   ├─detector
+    │   │   │   │   └─sqli_detector.py
+    │   │   │   ├─engines
+    │   │   │   │   ├─__init__.py
+    │   │   │   │   ├─boolean_detection_engine.py
+    │   │   │   │   ├─error_detection_engine.py
+    │   │   │   │   ├─hackingtool_engine.py
+    │   │   │   │   ├─oob_detection_engine.py
+    │   │   │   │   ├─time_detection_engine.py
+    │   │   │   │   └─union_detection_engine.py
+    │   │   │   ├─backend_db_fingerprinter.py
+    │   │   │   ├─config.py
+    │   │   │   ├─detection_models.py
+    │   │   │   ├─exceptions.py
+    │   │   │   ├─hackingtool_config.py
+    │   │   │   ├─hackingtool_manager.py
+    │   │   │   ├─hackingtool_sql_cli.py
+    │   │   │   ├─payload_wrapper_encoder.py
+    │   │   │   ├─result_binder_publisher.py
+    │   │   │   ├─smart_detection_manager.py
+    │   │   │   ├─task_queue.py
+    │   │   │   ├─telemetry.py
+    │   │   │   └─worker.py
+    │   │   ├─function_ssrf
+    │   │   │   ├─config
+    │   │   │   │   └─ssrf_config.py
+    │   │   │   ├─detector
+    │   │   │   │   └─ssrf_detector.py
+    │   │   │   ├─engine
+    │   │   │   │   └─ssrf_engine.py
+    │   │   │   ├─worker
+    │   │   │   │   └─ssrf_worker.py
+    │   │   │   ├─__init__.py
+    │   │   │   ├─__main__.py
+    │   │   │   ├─internal_address_detector.py
+    │   │   │   ├─oast_dispatcher.py
+    │   │   │   ├─param_semantics_analyzer.py
+    │   │   │   ├─result_publisher.py
+    │   │   │   ├─smart_ssrf_detector.py
+    │   │   │   └─worker.py
+    │   │   ├─function_xss
+    │   │   │   ├─engines
+    │   │   │   │   └─hackingtool_engine.py
+    │   │   │   ├─blind_xss_listener_validator.py
+    │   │   │   ├─dom_xss_detector.py
+    │   │   │   ├─hackingtool_config.py
+    │   │   │   ├─payload_generator.py
+    │   │   │   ├─result_publisher.py
+    │   │   │   ├─stored_detector.py
+    │   │   │   ├─task_queue.py
+    │   │   │   ├─traditional_detector.py
+    │   │   │   └─worker.py
+    │   │   ├─__init__.py
+    │   │   ├─feature_step_executor.py
+    │   │   ├─high_value_manager.py
+    │   │   └─smart_detection_manager.py
+    │   ├─integration
+    │   │   ├─aiva_integration
+    │   │   │   ├─analysis
+    │   │   │   │   ├─__init__.py
+    │   │   │   │   ├─compliance_policy_checker.py
+    │   │   │   │   ├─risk_assessment_engine_enhanced.py
+    │   │   │   │   └─vuln_correlation_analyzer.py
+    │   │   │   ├─attack_path_analyzer
+    │   │   │   │   ├─__init__.py
+    │   │   │   │   ├─engine.py
+    │   │   │   │   ├─graph_builder.py
+    │   │   │   │   ├─nlp_recommender.py
+    │   │   │   │   └─visualizer.py
+    │   │   │   ├─config_template
+    │   │   │   │   ├─__init__.py
+    │   │   │   │   └─config_template_manager.py
+    │   │   │   ├─examples
+    │   │   │   │   ├─enhanced_attack_path_demo.py
+    │   │   │   │   ├─enhanced_risk_assessment_demo.py
+    │   │   │   │   └─enhanced_scan_integration.py
+    │   │   │   ├─middlewares
+    │   │   │   │   ├─__init__.py
+    │   │   │   │   └─rate_limiter.py
+    │   │   │   ├─observability
+    │   │   │   │   ├─__init__.py
+    │   │   │   │   └─metrics.py
+    │   │   │   ├─perf_feedback
+    │   │   │   │   ├─__init__.py
+    │   │   │   │   ├─improvement_suggestion_generator.py
+    │   │   │   │   ├─phase_i_performance_optimizer.py
+    │   │   │   │   └─scan_metadata_analyzer.py
+    │   │   │   ├─reception
+    │   │   │   │   ├─__init__.py
+    │   │   │   │   ├─data_reception_layer.py
+    │   │   │   │   ├─experience_models.py
+    │   │   │   │   ├─experience_repository.py
+    │   │   │   │   ├─lifecycle_manager.py
+    │   │   │   │   ├─models_enhanced.py
+    │   │   │   │   ├─sql_result_database.py
+    │   │   │   │   ├─test_result_database.py
+    │   │   │   │   └─unified_storage_adapter.py
+    │   │   │   ├─remediation
+    │   │   │   │   ├─__init__.py
+    │   │   │   │   ├─code_fixer.py
+    │   │   │   │   ├─config_recommender.py
+    │   │   │   │   ├─patch_generator.py
+    │   │   │   │   └─report_generator.py
+    │   │   │   ├─reporting
+    │   │   │   │   ├─__init__.py
+    │   │   │   │   ├─formatter_exporter.py
+    │   │   │   │   ├─report_content_generator.py
+    │   │   │   │   └─report_template_selector.py
+    │   │   │   ├─security
+    │   │   │   │   ├─__init__.py
+    │   │   │   │   └─auth.py
+    │   │   │   ├─threat_intel
+    │   │   │   │   ├─threat_intel
+    │   │   │   │   │   ├─__init__.py
+    │   │   │   │   │   ├─intel_aggregator.py
+    │   │   │   │   │   ├─ioc_enricher.py
+    │   │   │   │   │   └─mitre_mapper.py
+    │   │   │   │   └─__init__.py
+    │   │   │   ├─__init__.py
+    │   │   │   ├─ai_operation_recorder.py
+    │   │   │   ├─app.py
+    │   │   │   ├─settings.py
+    │   │   │   └─system_performance_monitor.py
+    │   │   ├─alembic
+    │   │   │   ├─versions
+    │   │   │   │   └─001_initial_schema.py
+    │   │   │   └─env.py
+    │   │   ├─api_gateway
+    │   │   │   └─api_gateway
+    │   │   │       └─app.py
+    │   │   ├─capability
+    │   │   │   ├─adapters
+    │   │   │   │   ├─__init__.py
+    │   │   │   │   └─hackingtool_adapter.py
+    │   │   │   ├─__init__.py
+    │   │   │   ├─bug_bounty_reporting.py
+    │   │   │   ├─cli.py
+    │   │   │   ├─config.py
+    │   │   │   ├─ddos_attack_tools.py
+    │   │   │   ├─demo_bounty_hunter.py
+    │   │   │   ├─demo_function_recon.py
+    │   │   │   ├─demo_sql_injection_tools.py
+    │   │   │   ├─examples.py
+    │   │   │   ├─forensic_tools.py
+    │   │   │   ├─function_recon.py
+    │   │   │   ├─lifecycle_cli.py
+    │   │   │   ├─lifecycle.py
+    │   │   │   ├─models.py
+    │   │   │   ├─payload_generator.py
+    │   │   │   ├─registry.py
+    │   │   │   ├─reverse_engineering_tools.py
+    │   │   │   ├─sql_injection_bounty_hunter.py
+    │   │   │   ├─sql_injection_tools.py
+    │   │   │   ├─start_registry.py
+    │   │   │   ├─steganography_tools.py
+    │   │   │   ├─task11_demo.py
+    │   │   │   ├─task9_demo.py
+    │   │   │   ├─test_basic.py
+    │   │   │   ├─test_function_recon.py
+    │   │   │   ├─test_lifecycle.py
+    │   │   │   ├─test_payload_generator.py
+    │   │   │   ├─test_sql_injection_tools.py
+    │   │   │   ├─test_web_attack.py
+    │   │   │   ├─toolkit.py
+    │   │   │   ├─web_attack.py
+    │   │   │   ├─wireless_attack_tools.py
+    │   │   │   └─xss_attack_tools.py
+    │   │   ├─__init__.py
+    │   │   └─models.py
+    │   ├─scan
+    │   │   ├─aiva_scan
+    │   │   │   ├─core_crawling_engine
+    │   │   │   │   ├─__init__.py
+    │   │   │   │   ├─http_client_hi.py
+    │   │   │   │   ├─static_content_parser.py
+    │   │   │   │   └─url_queue_manager.py
+    │   │   │   ├─dynamic_engine
+    │   │   │   │   ├─__init__.py
+    │   │   │   │   ├─ajax_api_handler.py
+    │   │   │   │   ├─dynamic_content_extractor.py
+    │   │   │   │   ├─headless_browser_pool.py
+    │   │   │   │   └─js_interaction_simulator.py
+    │   │   │   ├─examples
+    │   │   │   │   ├─example_browser_pool.py
+    │   │   │   │   ├─example_extractor.py
+    │   │   │   │   └─example_usage.py
+    │   │   │   ├─info_gatherer
+    │   │   │   │   ├─__init__.py
+    │   │   │   │   ├─javascript_source_analyzer.py
+    │   │   │   │   ├─passive_fingerprinter.py
+    │   │   │   │   └─sensitive_info_detector.py
+    │   │   │   ├─__init__.py
+    │   │   │   ├─authentication_manager.py
+    │   │   │   ├─config_control_center.py
+    │   │   │   ├─fingerprint_manager.py
+    │   │   │   ├─header_configuration.py
+    │   │   │   ├─javascript_analyzer.py
+    │   │   │   ├─network_scanner.py
+    │   │   │   ├─optimized_security_scanner.py
+    │   │   │   ├─scan_context.py
+    │   │   │   ├─scan_orchestrator.py
+    │   │   │   ├─scope_manager.py
+    │   │   │   ├─sensitive_data_scanner.py
+    │   │   │   ├─service_detector.py
+    │   │   │   ├─strategy_controller.py
+    │   │   │   ├─target_environment_detector.py
+    │   │   │   ├─vulnerability_scanner.py
+    │   │   │   └─worker.py
+    │   │   ├─aiva_scan_node
+    │   │   │   ├─src
+    │   │   │   │   ├─interfaces
+    │   │   │   │   │   └─dynamic-scan.interfaces.ts
+    │   │   │   │   ├─services
+    │   │   │   │   │   ├─enhanced-content-extractor.service.ts
+    │   │   │   │   │   ├─enhanced-dynamic-scan.service.ts
+    │   │   │   │   │   ├─interaction-simulator.service.ts
+    │   │   │   │   │   ├─network-interceptor.service.ts
+    │   │   │   │   │   └─scan-service.ts
+    │   │   │   │   ├─utils
+    │   │   │   │   │   └─logger.ts
+    │   │   │   │   └─index.ts
+    │   │   │   ├─types
+    │   │   │   │   └─playwright.d.ts
+    │   │   │   └─phase-i-integration.service.ts
+    │   │   ├─go_scanners
+    │   │   │   ├─common
+    │   │   │   │   ├─amqp_client.go
+    │   │   │   │   ├─sarif_converter.go
+    │   │   │   │   └─scanner_base.go
+    │   │   │   ├─cspm_scanner
+    │   │   │   │   ├─cmd
+    │   │   │   │   │   └─worker
+    │   │   │   │   │       └─main.go
+    │   │   │   │   ├─internal
+    │   │   │   │   │   └─scanner
+    │   │   │   │   │       └─cspm_scanner.go
+    │   │   │   │   ├─cloud_detector.go
+    │   │   │   │   └─main.go
+    │   │   │   ├─sca_scanner
+    │   │   │   │   ├─cmd
+    │   │   │   │   │   └─worker
+    │   │   │   │   │       └─main.go
+    │   │   │   │   ├─internal
+    │   │   │   │   │   ├─analyzer
+    │   │   │   │   │   └─scanner
+    │   │   │   │   │       └─sca_scanner.go
+    │   │   │   │   ├─pkg
+    │   │   │   │   │   └─models
+    │   │   │   │   │       └─models.go
+    │   │   │   │   ├─dependency_detector.go
+    │   │   │   │   └─main.go
+    │   │   │   ├─shared
+    │   │   │   └─ssrf_scanner
+    │   │   │       ├─cmd
+    │   │   │       │   └─worker
+    │   │   │       │       └─main.go
+    │   │   │       ├─internal
+    │   │   │       │   └─detector
+    │   │   │       │       ├─cloud_metadata_scanner.go
+    │   │   │       │       ├─internal_microservice_probe.go
+    │   │   │       │       └─ssrf.go
+    │   │   │       ├─main.go
+    │   │   │       └─ssrf_detector.go
+    │   │   ├─go_scanners_dispatch
+    │   │   │   └─dispatcher.py
+    │   │   ├─info_gatherer_rust
+    │   │   │   ├─python_bridge
+    │   │   │   │   └─__init__.py
+    │   │   │   ├─src
+    │   │   │   │   ├─schemas
+    │   │   │   │   │   ├─generated
+    │   │   │   │   │   │   └─mod.rs
+    │   │   │   │   │   └─mod.rs
+    │   │   │   │   ├─main.rs
+    │   │   │   │   ├─scanner.rs
+    │   │   │   │   ├─secret_detector.rs
+    │   │   │   │   └─verifier.rs
+    │   │   │   └─test_verification.py
+    │   │   ├─__init__.py
+    │   │   ├─models.py
+    │   │   └─unified_scan_engine.py
+    │   └─__init__.py
+    ├─testing
+    │   ├─common
+    │   │   ├─complete_system_check.py
+    │   │   └─improvements_check.py
+    │   ├─core
+    │   │   ├─ai_system_connectivity_check.py
+    │   │   ├─ai_working_check.py
+    │   │   └─enhanced_real_ai_attack_system.py
+    │   ├─features
+    │   │   └─real_attack_executor.py
+    │   ├─integration
+    │   │   ├─aiva_full_worker_live_test.py
+    │   │   ├─aiva_module_status_checker.py
+    │   │   ├─aiva_system_connectivity_sop_check.py
+    │   │   └─comprehensive_integration_test_suite.py
+    │   ├─performance
+    │   │   ├─reports
+    │   │   └─aiva_performance_benchmark_suite.py
+    │   ├─scan
+    │   │   ├─comprehensive_test.py
+    │   │   └─juice_shop_real_attack_test.py
+    │   ├─__init__.py
+    │   └─p0_fixes_validation_test.py
+    ├─tests
+    │   └─test_attack_plan_mapper.py
+    ├─tools
+    │   ├─common
+    │   │   ├─analysis
+    │   │   │   ├─analyze_aiva_common_status.py
+    │   │   │   ├─analyze_core_modules.py
+    │   │   │   ├─analyze_cross_language_ai.py
+    │   │   │   ├─analyze_enums.py
+    │   │   │   └─analyze_missing_schemas.py
+    │   │   ├─automation
+    │   │   │   └─check_script_functionality.py
+    │   │   ├─development
+    │   │   │   ├─analyze_codebase.py
+    │   │   │   ├─generate_complete_architecture.py
+    │   │   │   ├─generate_mermaid_diagrams.py
+    │   │   │   └─py2mermaid.py
+    │   │   ├─monitoring
+    │   │   ├─quality
+    │   │   │   ├─find_non_cp950_filtered.py
+    │   │   │   ├─markdown_check.py
+    │   │   │   ├─replace_emoji.py
+    │   │   │   └─replace_non_cp950.py
+    │   │   ├─schema
+    │   │   │   ├─schema_manager.py
+    │   │   │   ├─schema_validator.py
+    │   │   │   └─unified_schema_manager.py
+    │   │   ├─create_enums_structure.py
+    │   │   ├─diagnose_missing_enums.py
+    │   │   ├─generate_programming_language_support.py
+    │   │   ├─generate_typescript_interfaces.py
+    │   │   └─import_path_checker.py
+    │   ├─core
+    │   │   ├─comprehensive_migration_analysis.py
+    │   │   ├─delete_migrated_files.py
+    │   │   └─verify_migration_completeness.py
+    │   ├─features
+    │   │   ├─mermaid_optimizer.py
+    │   │   └─remove_init_marks.py
+    │   ├─integration
+    │   │   ├─aiva-contracts-tooling
+    │   │   │   └─aiva-contracts-tooling
+    │   │   │       └─src
+    │   │   │           ├─aiva_contracts_tooling
+    │   │   │           │   ├─__init__.py
+    │   │   │           │   └─cli.py
+    │   │   │           └─aiva_contracts_tooling.egg-info
+    │   │   ├─aiva-enums-plugin
+    │   │   │   └─aiva-enums-plugin
+    │   │   │       ├─scripts
+    │   │   │       │   └─gen_ts_enums.py
+    │   │   │       └─src
+    │   │   │           ├─aiva_enums_plugin
+    │   │   │           │   └─__init__.py
+    │   │   │           └─aiva_enums_plugin.egg-info
+    │   │   ├─aiva-go-plugin
+    │   │   │   └─aiva-go-plugin
+    │   │   ├─aiva-schemas-plugin
+    │   │   │   └─aiva-schemas-plugin
+    │   │   │       ├─scripts
+    │   │   │       │   ├─copy_into_plugin.py
+    │   │   │       │   └─refactor_imports_and_cleanup.py
+    │   │   │       ├─src
+    │   │   │       │   ├─aiva_schemas_plugin
+    │   │   │       │   │   └─__init__.py
+    │   │   │       │   └─aiva_schemas_plugin.egg-info
+    │   │   │       └─tests
+    │   │   │           └─test_import.py
+    │   │   ├─fix_all_schema_imports.py
+    │   │   ├─fix_field_validators.py
+    │   │   ├─fix_metadata_reserved.py
+    │   │   └─update_imports.py
+    │   ├─scan
+    │   │   ├─apply_marks_to_tree.py
+    │   │   ├─extract_enhanced.py
+    │   │   ├─list_no_functionality_files.py
+    │   │   └─mark_nonfunctional_scripts.py
+    │   ├─aiva_cross_language_cli.py
+    │   ├─aiva_mcp_architecture_validator.py
+    │   ├─analyze_contract_coverage.py
+    │   ├─contract_coverage_booster.py
+    │   ├─contract_health_monitor.py
+    │   ├─queue_naming_validator.py
+    │   ├─schema_compliance_validator.py
+    │   ├─simple_ci_check.py
+    │   └─validate_queue_naming_simplified.py
+    ├─utilities
+    │   ├─common
+    │   ├─core
+    │   ├─features
+    │   ├─integration
+    │   ├─scan
+    │   ├─__init__.py
+    │   └─optional_deps.py
+    ├─web
+    │   ├─contracts
+    │   │   └─aiva-web-contracts.ts
+    │   ├─js
+    │   │   └─aiva-dashboard.js
+    │   └─index.html
+    ├─ai_autonomous_testing_loop.py
+    ├─aiva_launcher.py
+    ├─health_check.py
+    ├─setup_python_path.py
+    ├─start_rich_cli.py
+    ├─start_ui_auto.py
+    └─validate_integration.py
