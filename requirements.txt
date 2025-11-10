@@ -1,7 +1,141 @@
+# AIVA v2.0.0 Dependencies
+# Updated: 2025-11-10
+# Support for 5M Neural Network + Multi-Agent Architecture + RAG System
+
+# ==================== Core AI & Neural Network ====================
+torch>=2.1.0              # 5M parameter neural network core  
+torchvision>=0.16.0        # Computer vision capabilities
+transformers>=4.30.0       # Transformer models support
+numpy>=1.24.0             # Numerical computing (required by neural networks)
+scipy>=1.10.0             # Scientific computing
+scikit-learn>=1.3.0       # Machine learning utilities
+
+# ==================== Multi-Agent & RAG System ====================
+# autogen-agentchat>=0.2.0   # Microsoft AutoGen multi-agent framework (planned)
+langchain>=0.1.0          # LangChain for agent orchestration (planned)
+# langchain-community>=0.0.20 # Community integrations (planned)
+sentence-transformers>=2.2.0 # Semantic text embeddings for RAG
+chromadb>=0.4.0           # Vector database for RAG (planned)
+# faiss-cpu>=1.7.4          # Fast similarity search (planned)
+
 # ==================== Core Framework ====================
-fastapi>=0.115.0
-uvicorn[standard]>=0.30.0
-pydantic>=2.7.0
+fastapi>=0.115.0          # Modern API framework
+uvicorn[standard]>=0.30.0  # ASGI server
+pydantic>=2.7.0           # Data validation
+websockets>=11.0.0        # Real-time communication (planned)
+sqlalchemy>=2.0.31        # Database ORM
+
+# ==================== Message Queue & Communication ====================
+aio-pika>=9.4.0           # Async RabbitMQ client (use for all Workers)
+celery>=5.3.0             # Distributed task queue (planned)
+kombu>=5.3.0              # Message passing library (planned)
+
+# ==================== HTTP Clients ====================
+httpx>=0.27.0             # Async HTTP client (preferred)
+requests>=2.31.0          # Sync HTTP client
+aiohttp>=3.8.0            # Alternative async HTTP client
+aiofiles>=23.2.1          # Async file operations
+
+# ==================== Web Scraping & Parsing ====================
+beautifulsoup4>=4.12.2    # HTML parsing
+lxml>=5.0.0               # XML processing
+
+# ==================== Database & Storage ====================
+redis>=5.0.0              # In-memory data structure store
+neo4j>=5.23.0             # Graph database for knowledge graphs
+asyncpg>=0.29.0           # Async PostgreSQL driver
+psycopg2-binary>=2.9.0    # PostgreSQL adapter
+alembic>=1.13.2           # Database migration tool
+# pymongo>=4.4.0           # MongoDB driver (optional)
+
+# ==================== Configuration & Environment ====================
+python-dotenv>=1.0.1      # Environment variables
+orjson>=3.10.0            # Fast JSON processing
+toml>=0.10.2              # TOML parser (planned)
+PyYAML>=6.0               # YAML parser (planned)
+
+# ==================== Logging & Monitoring ====================
+structlog>=24.1.0         # Structured logging
+rich>=13.0.0              # Rich text and beautiful formatting
+click>=8.1.0              # Command line interface
+prometheus-client>=0.17.0  # Metrics collection (planned)
+psutil>=5.9.6             # System monitoring
+
+# ==================== Security & Authentication ====================
+PyJWT>=2.8.0              # JWT handling
+python-jose[cryptography]>=3.3.0  # JWT handling with crypto
+passlib[bcrypt]>=1.7.4    # Password hashing
+cryptography>=42.0.0      # Cryptographic operations
+python-multipart>=0.0.6   # File upload support (planned)
+
+# ==================== Advanced AI & NLP ====================
+openai>=1.0.0             # OpenAI API client
+nltk>=3.8.0               # Natural Language Toolkit
+spacy>=3.6.0              # Industrial-strength NLP
+
+# ==================== Data Processing & Analysis ====================
+pandas>=2.0.0             # Data manipulation and analysis
+# polars>=0.18.0          # Fast DataFrame library (planned)
+# pyarrow>=12.0.0         # Columnar memory format (planned)
+# openpyxl>=3.1.0         # Excel file handling (planned)
+
+# ==================== Resilience & Utilities ====================
+tenacity>=8.3.0           # Retry and resilience patterns
+# datetime                # Built-in date and time handling
+# json                    # Built-in JSON processing  
+# uuid                    # Built-in UUID generation
+# pathlib                 # Built-in path manipulation
+
+# ==================== Cross-Language Communication ====================
+grpcio>=1.60.0           # gRPC for cross-language communication
+grpcio-tools>=1.60.0     # gRPC tools
+protobuf>=4.25.0         # Protocol buffers
+
+# ==================== Reinforcement Learning ====================
+gymnasium>=0.29.0        # RL environment interface (for future Agent Lightning)
+
+# ==================== Development Tools ====================
+pytest>=8.0.0            # Testing framework
+pytest-cov>=4.0.0        # Coverage plugin
+pytest-asyncio>=0.23.0   # Async testing support
+black>=24.0.0             # Code formatting
+ruff>=0.3.0              # Fast linting
+mypy>=1.8.0              # Type checking
+pre-commit>=3.6.0        # Git pre-commit hooks
+types-requests>=2.31.0   # Type stubs for requests
+
+# ==================== Performance & Optimization ====================
+# cython>=3.0.0           # C extensions for Python (planned)
+# numba>=0.57.0           # JIT compilation (planned) 
+# memory-profiler>=0.61.0 # Memory usage monitoring (planned)
+
+# ==================== Visualization (for Neural Network Analysis) ====================
+# matplotlib>=3.7.0       # Plotting and visualization (planned)
+# seaborn>=0.12.0         # Statistical data visualization (planned)
+# plotly>=5.15.0          # Interactive plotting (planned)
+# networkx>=3.1           # Graph algorithms for neural topology (planned)
+
+# ==================== INSTALLATION NOTES ====================
+# This requirements.txt supports AIVA v2.0.0 core features:
+# ✅ 5M parameter biological neural network (4,999,481 parameters)
+# ✅ RAG system foundation with sentence transformers
+# ✅ Real-time API with FastAPI and WebSockets
+# ✅ Cross-language coordination via gRPC
+# ✅ Enterprise monitoring and logging
+# ✅ Async processing and message queues
+# 🔄 Multi-agent orchestration (planned for Q1 2025)
+# 🔄 Advanced RAG with vector databases (planned)
+# 🔄 Reinforcement learning (planned for Q2 2025)
+#
+# Installation:
+# pip install -r requirements.txt
+#
+# For GPU support (recommended for neural network):
+# pip install torch torchvision --index-url https://download.pytorch.org/whl/cu118
+#
+# For development environment:
+# pip install -r requirements.txt
+# pre-commit install
 
 # ==================== Message Queue ====================
 aio-pika>=9.4.0  # Async RabbitMQ client (use for all Workers)

@@ -1,0 +1,185 @@
+{
+  "comprehensive_analysis_report": {
+    "timestamp": "2025-11-10",
+    "analyzed_files": [
+      "aiva_capability_orchestrator.py",
+      "services/core/aiva_core/ai_engine/real_neural_core.py"
+    ],
+    "problems_categorized": {
+      "syntax_errors": {
+        "count": 0,
+        "files": [],
+        "description": "無語法錯誤 - 通過第一層檢查"
+      },
+      "complexity_issues": {
+        "count": 1,
+        "severity": "HIGH",
+        "files": ["aiva_capability_orchestrator.py"],
+        "details": [
+          {
+            "function": "extract_vulnerability_features",
+            "line": 69,
+            "current_complexity": 22,
+            "threshold": 15,
+            "category": "COMPLEX_MANUAL",
+            "priority": "P0",
+            "refactoring_strategy": "Extract Method Pattern"
+          }
+        ]
+      },
+      "async_issues": {
+        "count": 2,
+        "severity": "MEDIUM",
+        "files": ["aiva_capability_orchestrator.py"],
+        "details": [
+          {
+            "function": "make_ai_decision",
+            "line": 662,
+            "issue": "async without await",
+            "category": "MODERATE_INDIVIDUAL", 
+            "priority": "P1"
+          },
+          {
+            "function": "execute_comprehensive_analysis", 
+            "line": 730,
+            "issue": "await on non-awaitable",
+            "category": "MODERATE_INDIVIDUAL",
+            "priority": "P1"
+          }
+        ]
+      },
+      "unused_issues": {
+        "count": 5,
+        "severity": "LOW",
+        "files": ["aiva_capability_orchestrator.py"],
+        "details": [
+          {
+            "variable": "topology",
+            "line": 161,
+            "category": "SIMPLE_BATCH",
+            "priority": "P2"
+          },
+          {
+            "variable": "target_code", 
+            "line": 450,
+            "category": "SIMPLE_BATCH",
+            "priority": "P2"
+          },
+          {
+            "variable": "target_url",
+            "line": 488,
+            "category": "SIMPLE_BATCH", 
+            "priority": "P2"
+          },
+          {
+            "variable": "target_host",
+            "line": 532,
+            "category": "SIMPLE_BATCH",
+            "priority": "P2"
+          },
+          {
+            "variable": "target_info",
+            "line": 575,
+            "category": "SIMPLE_BATCH",
+            "priority": "P2"
+          }
+        ]
+      },
+      "f_string_issues": {
+        "count": 11,
+        "severity": "LOW",
+        "files": [
+          "aiva_capability_orchestrator.py",
+          "real_neural_core.py"
+        ],
+        "details": "Empty f-strings without replacement fields",
+        "category": "SIMPLE_BATCH",
+        "priority": "P2"
+      },
+      "import_issues": {
+        "count": 1,
+        "severity": "HIGH",
+        "files": ["aiva_capability_orchestrator.py"],
+        "details": [
+          {
+            "import": "real_neural_core",
+            "line": 431,
+            "issue": "Unable to resolve import",
+            "category": "MODERATE_INDIVIDUAL",
+            "priority": "P0"
+          }
+        ]
+      },
+      "type_issues": {
+        "count": 2,
+        "severity": "MEDIUM", 
+        "files": ["aiva_capability_orchestrator.py"],
+        "details": [
+          {
+            "function": "execute_comprehensive_analysis",
+            "line": 660,
+            "issue": "Type mismatch in return statement",
+            "category": "MODERATE_INDIVIDUAL",
+            "priority": "P1"
+          },
+          {
+            "method_call": "forward_with_aux",
+            "line": 672,
+            "issue": "Method not found on None type",
+            "category": "MODERATE_INDIVIDUAL", 
+            "priority": "P0"
+          }
+        ]
+      }
+    },
+    "processing_strategy": {
+      "stage_2_individual_complex": {
+        "description": "需要個別手動處理的複雜問題",
+        "items": [
+          "extract_vulnerability_features函數重構 (複雜度22→≤15)",
+          "AI核心連接修復 (forward_with_aux方法調用)",
+          "匯入路徑修復 (real_neural_core模組)"
+        ],
+        "estimated_time": "2小時",
+        "risk_level": "HIGH"
+      },
+      "stage_2_individual_moderate": {
+        "description": "需要邏輯判斷的中等問題",
+        "items": [
+          "async函數調整 (make_ai_decision)",
+          "型別註解修復 (返回類型不匹配)",
+          "await調用修正"
+        ],
+        "estimated_time": "1小時",
+        "risk_level": "MEDIUM"
+      },
+      "stage_3_batch_safe": {
+        "description": "可安全批量處理的標準化問題", 
+        "items": [
+          "11個空F-string修復",
+          "5個未使用變數清理"
+        ],
+        "estimated_time": "30分鐘",
+        "risk_level": "LOW"
+      }
+    },
+    "single_truth_validation": {
+      "ai_core_interface_issues": [
+        "RealAICore類缺少forward_with_aux方法定義",
+        "匯入路徑不一致：orchestrator期望real_neural_core模組",
+        "async/await模式不一致"
+      ],
+      "consistency_fixes_needed": [
+        "統一AI核心實例名稱為ai_core",
+        "確保forward_with_aux方法存在於RealAICore類中",
+        "修復匯入路徑為相對路徑或動態匯入"
+      ]
+    },
+    "quality_metrics": {
+      "total_issues": 22,
+      "critical_issues": 3,
+      "complexity_violations": 1,
+      "overall_health": "NEEDS_IMPROVEMENT"
+    }
+  }
+}

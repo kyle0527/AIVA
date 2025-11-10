@@ -1,0 +1,182 @@
+{
+  "manager_status": {
+    "active_model": "aiva_real_weights",
+    "total_models": 3,
+    "loaded_models": 2,
+    "model_list": {
+      "aiva_real_ai_core": {
+        "status": "loaded",
+        "params": 3739264,
+        "size_mb": 14.26809024810791,
+        "type": "structured_model"
+      },
+      "aiva_real_weights": {
+        "status": "loaded",
+        "params": 4547924,
+        "size_mb": 17.353062629699707,
+        "type": "raw_weights"
+      },
+      "aiva_5M_weights": {
+        "status": "not_loaded",
+        "params": 4999481,
+        "size_mb": 19.07650089263916,
+        "type": "raw_weights"
+      }
+    },
+    "timestamp": "2025-11-10T11:05:11.297579"
+  },
+  "detailed_models": {
+    "aiva_real_ai_core": {
+      "name": "aiva_real_ai_core",
+      "file_path": "aiva_real_ai_core.pth",
+      "model_type": "ModelType.STRUCTURED",
+      "total_params": 3739264,
+      "layers": 8,
+      "file_size_mb": 14.26809024810791,
+      "architecture": {
+        "input_size": 512,
+        "hidden_sizes": [
+          2048,
+          1024,
+          512
+        ],
+        "output_size": 128,
+        "dropout_rate": 0.2
+      },
+      "timestamp": 1762701598.7208402,
+      "load_time_ms": 11.63625717163086,
+      "status": "LoadStatus.LOADED",
+      "error_message": null
+    },
+    "aiva_real_weights": {
+      "name": "aiva_real_weights",
+      "file_path": "aiva_real_weights.pth",
+      "model_type": "ModelType.RAW_WEIGHTS",
+      "total_params": 4547924,
+      "layers": 10,
+      "file_size_mb": 17.353062629699707,
+      "architecture": {
+        "type": "inferred",
+        "input_size": 1600,
+        "output_size": 512,
+        "hidden_sizes": [
+          512,
+          1600,
+          1200,
+          1024
+        ],
+        "total_params": 4547924,
+        "layer_details": [
+          {
+            "name": "input_layer.weight",
+            "shape": [
+              1600,
+              512
+            ],
+            "params": 819200
+          },
+          {
+            "name": "input_layer.bias",
+            "shape": [
+              1600
+            ],
+            "params": 1600
+          },
+          {
+            "name": "hidden1.weight",
+            "shape": [
+              1200,
+              1600
+            ],
+            "params": 1920000
+          },
+          {
+            "name": "hidden1.bias",
+            "shape": [
+              1200
+            ],
+            "params": 1200
+          },
+          {
+            "name": "hidden2.weight",
+            "shape": [
+              1024,
+              1200
+            ],
+            "params": 1228800
+          }
+        ]
+      },
+      "timestamp": null,
+      "load_time_ms": 9.111404418945312,
+      "status": "LoadStatus.LOADED",
+      "error_message": null
+    },
+    "aiva_5M_weights": {
+      "name": "aiva_5M_weights",
+      "file_path": "aiva_5M_weights.pth",
+      "model_type": "ModelType.RAW_WEIGHTS",
+      "total_params": 4999481,
+      "layers": 14,
+      "file_size_mb": 19.07650089263916,
+      "architecture": {
+        "type": "inferred",
+        "input_size": 1650,
+        "output_size": 300,
+        "hidden_sizes": [
+          512,
+          1650,
+          1200,
+          1000,
+          600,
+          300
+        ],
+        "total_params": 4999481,
+        "layer_details": [
+          {
+            "name": "layer1.weight",
+            "shape": [
+              1650,
+              512
+            ],
+            "params": 844800
+          },
+          {
+            "name": "layer1.bias",
+            "shape": [
+              1650
+            ],
+            "params": 1650
+          },
+          {
+            "name": "layer2.weight",
+            "shape": [
+              1200,
+              1650
+            ],
+            "params": 1980000
+          },
+          {
+            "name": "layer2.bias",
+            "shape": [
+              1200
+            ],
+            "params": 1200
+          },
+          {
+            "name": "layer3.weight",
+            "shape": [
+              1000,
+              1200
+            ],
+            "params": 1200000
+          }
+        ]
+      },
+      "timestamp": null,
+      "load_time_ms": 8.374929428100586,
+      "status": "LoadStatus.NOT_LOADED",
+      "error_message": null
+    }
+  }
+}

@@ -5,6 +5,7 @@
 
 from datetime import UTC, datetime
 import logging
+import numpy as np
 from pathlib import Path
 from typing import Any
 from uuid import uuid4

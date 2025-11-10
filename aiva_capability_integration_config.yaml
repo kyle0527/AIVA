@@ -1,0 +1,215 @@
+# AIVA 核心能力模組串接配置
+# 定義所有可用能力模組及其與5M神經網路的串接規則
+
+capabilities:
+  # 🔍 靜態分析能力
+  static_analysis:
+    name: "靜態程式碼分析"
+    description: "分析程式碼結構、複雜度、安全模式"
+    priority: high
+    output_features: 90  # 程式碼特徵維度
+    modules:
+      - code_complexity_analyzer
+      - security_pattern_detector
+      - dependency_analyzer
+      - ast_explorer
+    integration:
+      feature_extraction: "extract_code_features"
+      neural_input_mapping: "code_features[90]"
+  
+  # 🛡️ 漏洞掃描能力  
+  vulnerability_scanning:
+    name: "漏洞檢測掃描"
+    description: "檢測SQL注入、XSS、SSRF等常見漏洞"
+    priority: critical
+    output_features: 100  # 漏洞特徵維度
+    modules:
+      - sql_injection_scanner
+      - xss_detector
+      - ssrf_scanner
+      - file_inclusion_detector
+      - command_injection_scanner
+    integration:
+      feature_extraction: "extract_vulnerability_features"
+      neural_input_mapping: "vulnerability_features[100]"
+  
+  # 🌐 網路偵察能力
+  network_reconnaissance:
+    name: "網路偵察分析"
+    description: "端口掃描、服務識別、作業系統指紋識別"
+    priority: high
+    output_features: 80  # 網路特徵維度
+    modules:
+      - port_scanner
+      - service_detector
+      - os_fingerprinter
+      - waf_detector
+      - cdn_detector
+    integration:
+      feature_extraction: "extract_network_features"
+      neural_input_mapping: "network_features[80]"
+  
+  # ⚖️ 風險評估能力
+  risk_assessment:
+    name: "綜合風險評估"
+    description: "CVSS評分、威脅情報整合、資產價值分析"
+    priority: critical
+    output_features: 60  # 風險特徵維度
+    modules:
+      - cvss_calculator
+      - threat_intelligence
+      - asset_valuation
+      - regulatory_assessment
+    integration:
+      feature_extraction: "extract_risk_features"
+      neural_input_mapping: "risk_features[60]"
+  
+  # 💥 攻擊模擬能力
+  web_attack:
+    name: "網站攻擊測試"
+    description: "模擬各種攻擊向量驗證安全性"
+    priority: medium
+    output_features: 70  # 攻擊特徵維度
+    modules:
+      - attack_vector_tester
+      - payload_generator
+      - defense_bypass_tester
+      - success_rate_calculator
+    integration:
+      feature_extraction: "extract_attack_features" 
+      neural_input_mapping: "attack_features[70]"
+  
+  # 📊 情報收集能力
+  intelligence_gathering:
+    name: "目標情報收集"
+    description: "技術棧識別、組織分析、歷史攻擊記錄"
+    priority: medium
+    output_features: 50  # 情報特徵維度
+    modules:
+      - technology_stack_analyzer
+      - organization_profiler
+      - attack_history_analyzer
+      - social_media_intelligence
+    integration:
+      feature_extraction: "extract_intelligence_features"
+      neural_input_mapping: "intel_features[50]"
+  
+  # 🔎 程式探索能力
+  code_exploration:
+    name: "深度程式探索"
+    description: "函數追蹤、資料流分析、呼叫圖建構"
+    priority: high
+    output_features: 0  # 併入靜態分析
+    modules:
+      - function_tracer
+      - data_flow_analyzer
+      - call_graph_builder
+      - control_flow_analyzer
+    integration:
+      feature_extraction: "merge_with_static_analysis"
+      neural_input_mapping: "included_in_code_features"
+
+# 🧠 5M神經網路整合配置
+neural_network:
+  model_name: "AIVA-5M-Specialized"
+  parameters: 4999481
+  input_dimension: 512
+  architecture:
+    input_layer: 512
+    hidden_layers: [1650, 1200, 1000, 600, 300]
+    main_output: 100    # 主要決策輸出
+    aux_output: 531     # 輔助特徵輸出
+  
+  # 特徵向量組成 (總計512維)
+  feature_mapping:
+    vulnerability_features: 100  # 漏洞特徵
+    network_features: 80         # 網路特徵  
+    code_features: 90           # 程式碼特徵
+    risk_features: 60           # 風險特徵
+    attack_features: 70         # 攻擊特徵
+    intel_features: 50          # 情報特徵
+    meta_features: 62           # 元特徵(執行狀態、信心度等)
+  
+  # AI決策輸出解釋
+  output_classes:
+    0: "繼續深度掃描"
+    1: "立即停止攻擊"
+    2: "切換攻擊向量"
+    3: "提升權限嘗試"
+    4: "資料外洩模擬"
+    5: "橫向移動探索"
+    10: "生成詳細報告"
+    50: "需要人工干預"
+    99: "任務完成"
+
+# 🔄 能力串接執行流程
+execution_workflow:
+  # 階段1: 基礎偵察
+  phase_1_reconnaissance:
+    sequence: [network_reconnaissance, intelligence_gathering]
+    parallel: true
+    timeout: 30s
+    
+  # 階段2: 深度分析  
+  phase_2_analysis:
+    sequence: [static_analysis, code_exploration, vulnerability_scanning]
+    parallel: true
+    timeout: 60s
+    depends_on: phase_1_reconnaissance
+    
+  # 階段3: 風險評估
+  phase_3_assessment:
+    sequence: [risk_assessment, web_attack]
+    parallel: false  # 順序執行
+    timeout: 45s
+    depends_on: phase_2_analysis
+    
+  # 階段4: AI決策
+  phase_4_decision:
+    sequence: [neural_network_inference]
+    parallel: false
+    timeout: 5s
+    depends_on: phase_3_assessment
+
+# 📈 資料流向配置
+data_flow:
+  # 能力模組 → 特徵提取器
+  capability_to_feature_extractor:
+    interface: "CapabilityResult"
+    format: "structured_json"
+    validation: "schema_check"
+    
+  # 特徵提取器 → 神經網路
+  feature_extractor_to_neural_network:
+    interface: "numpy.ndarray[512]"
+    format: "float32_tensor"
+    preprocessing: "normalization"
+    
+  # 神經網路 → 決策引擎
+  neural_network_to_decision_engine:
+    interface: "torch.Tensor"
+    format: "softmax_probabilities"
+    postprocessing: "confidence_calibration"
+
+# ⚙️ 整合優化配置
+integration_optimization:
+  # 效能優化
+  performance:
+    parallel_execution: true
+    max_concurrent_capabilities: 4
+    feature_caching: true
+    neural_inference_batching: true
+    
+  # 品質控制
+  quality_control:
+    min_confidence_threshold: 0.7
+    result_validation: true
+    error_recovery: "graceful_degradation"
+    logging_level: "detailed"
+    
+  # 資源管理  
+  resource_management:
+    memory_limit: "2GB"
+    cpu_cores: 4
+    execution_timeout: "5min"
+    cleanup_after_execution: true

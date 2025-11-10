@@ -15,7 +15,8 @@ from ..learning.scalable_bio_trainer import (
     ScalableBioTrainer,
     ScalableBioTrainingConfig,
 )
-from .bio_neuron_core import BioNeuronRAGAgent, ScalableBioNet
+# 使用向後相容適配器替代bio_neuron_core（遵循PEP 484最佳實踐）
+from .real_bio_net_adapter import RealBioNeuronRAGAgent as BioNeuronRAGAgent, RealScalableBioNet as ScalableBioNet
 from ...aiva_common.schemas import AttackPlan, AttackStep, ExperienceSample
 # V2 統一經驗管理器 (取代 V1 ExperienceManager)
 from services.integration.aiva_integration.reception.experience_repository import ExperienceRepository

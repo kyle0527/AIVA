@@ -1,0 +1,207 @@
+{
+  "test_summary": {
+    "total_tests": 5,
+    "passed": 2,
+    "failed": 0,
+    "errors": 3,
+    "skipped": 0,
+    "success_rate": 0.4,
+    "total_execution_time": 10.070407390594482,
+    "avg_test_time": 1.5290780067443848
+  },
+  "system_metrics": {
+    "initial": {
+      "cpu_percent": 6.5,
+      "memory_percent": 80.2,
+      "memory_used_gb": 12.23025131225586,
+      "memory_available_gb": 3.01507568359375,
+      "disk_usage_percent": 34.5,
+      "process_count": 297,
+      "load_average": 0.0,
+      "timestamp": "2025-11-10T14:07:52.091661"
+    },
+    "final": {
+      "cpu_percent": 6.5,
+      "memory_percent": 81.8,
+      "memory_used_gb": 12.46725845336914,
+      "memory_available_gb": 2.7780685424804688,
+      "disk_usage_percent": 34.5,
+      "process_count": 295,
+      "load_average": 0.0,
+      "timestamp": "2025-11-10T14:08:00.759283"
+    }
+  },
+  "test_results": [
+    {
+      "test_name": "5M神經網路核心測試",
+      "status": "error",
+      "execution_time": 4.4804911613464355,
+      "metrics": {},
+      "error_message": "name 'np' is not defined",
+      "details": null
+    },
+    {
+      "test_name": "能力編排器整合測試",
+      "status": "error",
+      "execution_time": 0.0051386356353759766,
+      "metrics": {},
+      "error_message": "name 'np' is not defined",
+      "details": null
+    },
+    {
+      "test_name": "RAG系統檢索測試",
+      "status": "error",
+      "execution_time": 0.0034639835357666016,
+      "metrics": {},
+      "error_message": "name 'np' is not defined",
+      "details": null
+    },
+    {
+      "test_name": "代碼靜態分析測試",
+      "status": "pass",
+      "execution_time": 1.0664548873901367,
+      "metrics": {
+        "total_files": 5,
+        "successful_analyses": 5,
+        "success_rate": 1.0,
+        "total_lines_analyzed": 2834,
+        "average_complexity": 15.516115762225922,
+        "total_security_issues": 1,
+        "lines_per_second": 2657.4026088768346
+      },
+      "error_message": null,
+      "details": {
+        "analysis_results": [
+          {
+            "file_path": "C:\\D\\fold7\\AIVA-git\\aiva_5M_replacement_evaluation.py",
+            "line_count": 359,
+            "non_empty_lines": 282,
+            "complexity_score": 14.206128133704734,
+            "security_issues": [
+              "eval(: 使用eval()可能導致代碼注入"
+            ],
+            "file_size": 12961
+          },
+          {
+            "file_path": "C:\\D\\fold7\\AIVA-git\\aiva_capability_orchestrator.py",
+            "line_count": 799,
+            "non_empty_lines": 664,
+            "complexity_score": 17.271589486858574,
+            "security_issues": [],
+            "file_size": 32064
+          },
+          {
+            "file_path": "C:\\D\\fold7\\AIVA-git\\aiva_launcher.py",
+            "line_count": 459,
+            "non_empty_lines": 368,
+            "complexity_score": 14.161220043572984,
+            "security_issues": [],
+            "file_size": 13692
+          }
+        ]
+      }
+    },
+    {
+      "test_name": "系統整合性能測試",
+      "status": "pass",
+      "execution_time": 2.089841365814209,
+      "metrics": {
+        "total_tasks": 5,
+        "avg_task_time": 0.0071585655212402345,
+        "max_task_time": 0.007426261901855469,
+        "min_task_time": 0.006524562835693359,
+        "memory_before": 82.1,
+        "memory_peak": 82.6,
+        "memory_after": 82.1,
+        "memory_recovery": 0.0,
+        "max_memory_usage": 82.1,
+        "cpu_before": 4.0,
+        "cpu_after": 5.4,
+        "system_stability": 0.09999999999999432
+      },
+      "error_message": null,
+      "details": {
+        "load_test_results": [
+          {
+            "task_id": 0,
+            "computation_time": 0.006524562835693359,
+            "result_shape": [
+              1000,
+              1000
+            ],
+            "memory_usage": 82.1
+          },
+          {
+            "task_id": 1,
+            "computation_time": 0.007426261901855469,
+            "result_shape": [
+              1000,
+              1000
+            ],
+            "memory_usage": 82.1
+          },
+          {
+            "task_id": 2,
+            "computation_time": 0.007335186004638672,
+            "result_shape": [
+              1000,
+              1000
+            ],
+            "memory_usage": 82.1
+          },
+          {
+            "task_id": 3,
+            "computation_time": 0.007261753082275391,
+            "result_shape": [
+              1000,
+              1000
+            ],
+            "memory_usage": 82.1
+          },
+          {
+            "task_id": 4,
+            "computation_time": 0.007245063781738281,
+            "result_shape": [
+              1000,
+              1000
+            ],
+            "memory_usage": 82.1
+          }
+        ],
+        "start_metrics": {
+          "cpu_percent": 4.0,
+          "memory_percent": 82.0,
+          "memory_used_gb": 12.503520965576172,
+          "memory_available_gb": 2.7418060302734375,
+          "disk_usage_percent": 34.5,
+          "process_count": 297,
+          "load_average": 0.0,
+          "timestamp": "2025-11-10T14:07:58.666530"
+        },
+        "end_metrics": {
+          "cpu_percent": 5.4,
+          "memory_percent": 82.1,
+          "memory_used_gb": 12.516498565673828,
+          "memory_available_gb": 2.7288284301757812,
+          "disk_usage_percent": 34.5,
+          "process_count": 297,
+          "load_average": 0.0,
+          "timestamp": "2025-11-10T14:07:59.755085"
+        }
+      }
+    }
+  ],
+  "performance_analysis": {
+    "fastest_test": "RAG系統檢索測試 (0.00s)",
+    "slowest_test": "5M神經網路核心測試 (4.48s)",
+    "memory_efficiency": "優秀",
+    "memory_change_percent": 1.5999999999999943,
+    "total_execution_time": 7.645390033721924
+  },
+  "recommendations": [
+    "有3個測試失敗，需要檢查相關組件的穩定性",
+    "測試成功率較低，建議加強系統穩定性"
+  ],
+  "timestamp": "2025-11-10T14:08:00.759682",
+  "framework_version": "v1.0.0"
+}

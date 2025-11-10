@@ -264,42 +264,19 @@ graph TB
     SSRF --> SCHEMA
     SCHEMA --> SARIF
     
-    style USG fill:#ff9999
-    style PW fill:#99ccff
-    style SEC fill:#ffcc99
-    style GD fill:#99ff99
-    style SARIF fill:#cc99ff
-```
-    SC --> VS
-    CCE --> AM
-    CCE --> FM
-    
-    USG --> PIS
-    PIS --> PW
-    PIS --> CSA
-    PW --> JS
-    
-    USG --> SEC
-    SEC --> GH
-    SEC --> API
-    SEC --> REG
-    
-    SO -.-> MQ
-    PIS -.-> MQ
-    SEC -.-> LOGS
-    
-    %% 樣式
+    %% 樣式定義
     classDef pythonStyle fill:#3776ab,stroke:#2d5aa0,stroke-width:2px,color:#fff
     classDef typescriptStyle fill:#3178c6,stroke:#2b6cb0,stroke-width:2px,color:#fff
     classDef rustStyle fill:#ce422b,stroke:#a0351f,stroke-width:2px,color:#fff
+    classDef goStyle fill:#00add8,stroke:#007d9c,stroke-width:2px,color:#fff
     classDef sharedStyle fill:#6b7280,stroke:#4b5563,stroke-width:2px,color:#fff
     
-    class SO,SC,CCE,VS,AM,FM,NSC,SDT pythonStyle
-    class PIS,PW,CSA,JS typescriptStyle
-    class SEC,GH,API,REG rustStyle
-    class USG,SCHEMA,CONFIG,MQ,LOGS sharedStyle
+    class USG,MB,SD,SC,CCE,VS,AM,FM,NSC pythonStyle
+    class PW,DA,JA,WI,CSA typescriptStyle
+    class SEC,API,GH,REG rustStyle
+    class GD,SSRF,CSPM,SCA goStyle
+    class SCHEMA,CONFIG,SARIF,LOGS sharedStyle
 ```
-
 ## 📁 **目錄結構**
 
 ```

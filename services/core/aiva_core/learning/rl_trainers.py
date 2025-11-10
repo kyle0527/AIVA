@@ -6,8 +6,10 @@
 import logging
 from typing import Any
 
+import numpy as np
 import torch
 import torch.nn as nn
+import torch.optim as optim
 
 from .rl_models import ActorCritic, DQNNetwork, ReplayBuffer, RolloutBuffer
 

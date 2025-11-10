@@ -65,7 +65,7 @@ class RealAICore(nn.Module):
         # 計算總參數數量
         self.total_params = sum(p.numel() for p in self.parameters())
         
-        logger.info("真實AI核心初始化完成:")
+        logger.info(f"真實AI核心初始化完成:")
         logger.info(f"  - 模型類型: {'5M特化神經網路' if use_5m_model else '原始架構'}")
         logger.info(f"  - 總參數: {self.total_params:,} ({self.total_params/1_000_000:.2f}M)")
         if use_5m_model:
@@ -204,7 +204,7 @@ class RealAICore(nn.Module):
                 file_size = Path(filepath).stat().st_size
                 total_params = sum(tensor.numel() for tensor in checkpoint.values())
                 
-                logger.info("5M模型載入完成:")
+                logger.info(f"5M模型載入完成:")
                 logger.info(f"  - 檔案大小: {file_size/1024/1024:.1f} MB")
                 logger.info(f"  - 總參數: {total_params:,}")
                 logger.info(f"  - 主輸出維度: {self.output_size}")
@@ -427,7 +427,7 @@ def test_real_vs_fake_ai():
     # 真實AI決策
     real_result = real_engine.generate_decision(test_input, "系統CPU使用率90%")
     
-    print("\n🤖 真實AI結果:")
+    print(f"\n🤖 真實AI結果:")
     print(f"  決策: {real_result['decision']}")
     print(f"  信心度: {real_result['confidence']:.3f}")
     print(f"  推理: {real_result['reasoning']}")
@@ -437,16 +437,16 @@ def test_real_vs_fake_ai():
     weights_file = "aiva_real_ai_core.pth"
     if Path(weights_file).exists():
         file_size = Path(weights_file).stat().st_size
-        print("\n📁 權重檔案資訊:")
+        print(f"\n📁 權重檔案資訊:")
         print(f"  檔案: {weights_file}")
         print(f"  大小: {file_size/1024/1024:.1f} MB")
         print(f"  參數: ~{real_engine.ai_core.total_params:,}")
     
-    print("\n✅ 真實AI核心創建完成！")
-    print("   - 使用PyTorch神經網路 (不是MD5 hash)")
-    print("   - 真實權重檔案 (~18MB, 不是43KB)")
-    print("   - 真正的矩陣乘法運算")
-    print("   - 可訓練的參數")
+    print(f"\n✅ 真實AI核心創建完成！")
+    print(f"   - 使用PyTorch神經網路 (不是MD5 hash)")
+    print(f"   - 真實權重檔案 (~18MB, 不是43KB)")
+    print(f"   - 真正的矩陣乘法運算")
+    print(f"   - 可訓練的參數")
 
 if __name__ == "__main__":
     # 設置日誌

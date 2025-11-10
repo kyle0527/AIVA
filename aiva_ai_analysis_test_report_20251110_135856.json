@@ -1,0 +1,475 @@
+{
+  "test_summary": {
+    "total_tests": 5,
+    "passed": 4,
+    "failed": 0,
+    "errors": 1,
+    "skipped": 0,
+    "success_rate": 0.8,
+    "total_execution_time": 13.362261295318604,
+    "avg_test_time": 2.0384324550628663
+  },
+  "system_metrics": {
+    "initial": {
+      "cpu_percent": 8.7,
+      "memory_percent": 77.2,
+      "memory_used_gb": 11.771110534667969,
+      "memory_available_gb": 3.4742164611816406,
+      "disk_usage_percent": 34.5,
+      "process_count": 295,
+      "load_average": 0.0,
+      "timestamp": "2025-11-10T13:58:45.317609"
+    },
+    "final": {
+      "cpu_percent": 4.6,
+      "memory_percent": 79.4,
+      "memory_used_gb": 12.099544525146484,
+      "memory_available_gb": 3.145782470703125,
+      "disk_usage_percent": 34.5,
+      "process_count": 295,
+      "load_average": 0.0,
+      "timestamp": "2025-11-10T13:58:56.519109"
+    }
+  },
+  "test_results": [
+    {
+      "test_name": "5M神經網路核心測試",
+      "status": "error",
+      "execution_time": 2.8429102897644043,
+      "metrics": {},
+      "error_message": "無法導入神經網路核心: cannot import name 'ExperienceSample' from 'services.aiva_common.schemas' (C:\\D\\fold7\\AIVA-git\\services\\aiva_common\\schemas\\__init__.py)",
+      "details": null
+    },
+    {
+      "test_name": "能力編排器整合測試",
+      "status": "pass",
+      "execution_time": 1.740044355392456,
+      "metrics": {
+        "total_capabilities": 4,
+        "successful_capabilities": 4,
+        "success_rate": 1.0,
+        "feature_vector_dimension": 512,
+        "feature_statistics": {
+          "mean": 0.11205703800777972,
+          "std": 0.2900014621723122,
+          "min": 0.0,
+          "max": 1.04,
+          "non_zero_count": "86",
+          "sparsity": 0.83203125
+        },
+        "capability_statistics": {
+          "static_analysis": {
+            "count": 1,
+            "success_rate": 1.0,
+            "avg_confidence": 0.85,
+            "avg_execution_time": 0.15
+          },
+          "vulnerability_scanning": {
+            "count": 1,
+            "success_rate": 1.0,
+            "avg_confidence": 0.92,
+            "avg_execution_time": 2.5
+          },
+          "network_reconnaissance": {
+            "count": 1,
+            "success_rate": 1.0,
+            "avg_confidence": 0.88,
+            "avg_execution_time": 5.2
+          },
+          "risk_assessment": {
+            "count": 1,
+            "success_rate": 1.0,
+            "avg_confidence": 0.91,
+            "avg_execution_time": 0.8
+          }
+        },
+        "ai_decision_quality": 0.010783683508634567,
+        "has_ai_decision": true
+      },
+      "error_message": null,
+      "details": {
+        "results": [
+          {
+            "capability_type": "static_analysis",
+            "status": "success",
+            "confidence": 0.85,
+            "data": {
+              "languages": [
+                "python",
+                "javascript"
+              ],
+              "complexity": {
+                "cyclomatic_complexity": 15,
+                "halstead_difficulty": 25.5,
+                "lines_of_code": 1250,
+                "maintainability_index": 75.2
+              },
+              "security_patterns": {
+                "eval": 2,
+                "exec": 1,
+                "sql_query": 5,
+                "subprocess.call": 3,
+                "os.system": 1
+              },
+              "dependencies": [
+                "requests",
+                "urllib",
+                "json",
+                "sqlite3"
+              ]
+            },
+            "features": null,
+            "execution_time": 0.15,
+            "error_message": null
+          },
+          {
+            "capability_type": "vulnerability_scanning",
+            "status": "success",
+            "confidence": 0.92,
+            "data": {
+              "vulnerabilities": [
+                {
+                  "type": "sqli",
+                  "severity": "high",
+                  "cvss_score": 8.5,
+                  "location": "/login?id=1",
+                  "payload": "1' OR '1'='1"
+                },
+                {
+                  "type": "xss",
+                  "severity": "medium",
+                  "cvss_score": 6.2,
+                  "location": "/search?q=<script>",
+                  "payload": "<script>alert(\"XSS\")</script>"
+                }
+              ],
+              "exploit_difficulty": {
+                "easy": 2,
+                "medium": 1
+              },
+              "detection_confidence": [
+                0.95,
+                0.87,
+                0.76
+              ]
+            },
+            "features": null,
+            "execution_time": 2.5,
+            "error_message": null
+          },
+          {
+            "capability_type": "network_reconnaissance",
+            "status": "success",
+            "confidence": 0.88,
+            "data": {
+              "open_ports": [
+                22,
+                80,
+                443,
+                3306,
+                8080
+              ],
+              "services": {
+                "22": "OpenSSH 7.4",
+                "80": "Apache httpd 2.4.29",
+                "443": "Apache httpd 2.4.29 (SSL)",
+                "3306": "MySQL 5.7.24",
+                "8080": "Tomcat 9.0.14"
+              },
+              "os_fingerprint": {
+                "ttl": 64,
+                "window_size": 29200,
+                "os_class": "Linux 3.X|4.X"
+              },
+              "waf_detected": true,
+              "cdn_detected": false,
+              "response_time": 120,
+              "bandwidth": 1000000
+            },
+            "features": null,
+            "execution_time": 5.2,
+            "error_message": null
+          },
+          {
+            "capability_type": "risk_assessment",
+            "status": "success",
+            "confidence": 0.91,
+            "data": {
+              "cvss_v3": {
+                "attack_vector": 0.85,
+                "attack_complexity": 0.77,
+                "privileges_required": 0.62,
+                "user_interaction": 0.85,
+                "confidentiality_impact": 0.56,
+                "integrity_impact": 0.56,
+                "availability_impact": 0.56
+              },
+              "threat_intelligence": {
+                "actively_exploited": 0.8,
+                "exploit_available": 1.0,
+                "in_the_wild": 0.6,
+                "threat_actor_interest": 0.7
+              },
+              "asset_value": {
+                "business_criticality": 0.9,
+                "data_sensitivity": 0.85,
+                "regulatory_impact": 0.7,
+                "financial_impact": 0.8
+              }
+            },
+            "features": null,
+            "execution_time": 0.8,
+            "error_message": null
+          }
+        ],
+        "feature_vector_sample": [
+          1.0,
+          1.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "ai_decision": {
+          "primary_decision": {
+            "class": 83,
+            "confidence": 0.010783683508634567,
+            "description": "推薦動作類別 83"
+          },
+          "alternative_actions": [
+            {
+              "class": 83,
+              "probability": 0.010783683508634567,
+              "description": "備選動作 83"
+            },
+            {
+              "class": 67,
+              "probability": 0.010754578746855259,
+              "description": "備選動作 67"
+            },
+            {
+              "class": 10,
+              "probability": 0.01065044291317463,
+              "description": "備選動作 10"
+            },
+            {
+              "class": 6,
+              "probability": 0.010581894777715206,
+              "description": "備選動作 6"
+            },
+            {
+              "class": 39,
+              "probability": 0.010529547929763794,
+              "description": "備選動作 39"
+            }
+          ],
+          "auxiliary_analysis": {
+            "feature_count": 531,
+            "max_activation": 0.07083141058683395,
+            "min_activation": -0.08197303116321564,
+            "mean_activation": 0.00028452095303775675,
+            "active_features": 436
+          },
+          "reasoning": "基於512維特徵分析，5M神經網路推薦執行類別83的動作，信心度0.011"
+        }
+      }
+    },
+    {
+      "test_name": "RAG系統檢索測試 (模擬)",
+      "status": "pass",
+      "execution_time": 0.00432586669921875,
+      "metrics": {
+        "total_queries": 5,
+        "successful_queries": 4,
+        "success_rate": 0.8,
+        "avg_retrieval_time_ms": 172.5,
+        "is_simulation": true
+      },
+      "error_message": null,
+      "details": {
+        "query_results": [
+          {
+            "query": "test1",
+            "success": true,
+            "retrieval_time_ms": 150,
+            "result_length": 500
+          },
+          {
+            "query": "test2",
+            "success": true,
+            "retrieval_time_ms": 200,
+            "result_length": 750
+          },
+          {
+            "query": "test3",
+            "success": false,
+            "error": "simulated error",
+            "retrieval_time_ms": 0
+          },
+          {
+            "query": "test4",
+            "success": true,
+            "retrieval_time_ms": 180,
+            "result_length": 600
+          },
+          {
+            "query": "test5",
+            "success": true,
+            "retrieval_time_ms": 160,
+            "result_length": 450
+          }
+        ]
+      }
+    },
+    {
+      "test_name": "代碼靜態分析測試",
+      "status": "pass",
+      "execution_time": 3.2431468963623047,
+      "metrics": {
+        "total_files": 5,
+        "successful_analyses": 5,
+        "success_rate": 1.0,
+        "total_lines_analyzed": 2834,
+        "average_complexity": 15.516115762225922,
+        "total_security_issues": 1,
+        "lines_per_second": 873.842625870192
+      },
+      "error_message": null,
+      "details": {
+        "analysis_results": [
+          {
+            "file_path": "C:\\D\\fold7\\AIVA-git\\aiva_5M_replacement_evaluation.py",
+            "line_count": 359,
+            "non_empty_lines": 282,
+            "complexity_score": 14.206128133704734,
+            "security_issues": [
+              "eval(: 使用eval()可能導致代碼注入"
+            ],
+            "file_size": 12961
+          },
+          {
+            "file_path": "C:\\D\\fold7\\AIVA-git\\aiva_capability_orchestrator.py",
+            "line_count": 799,
+            "non_empty_lines": 664,
+            "complexity_score": 17.271589486858574,
+            "security_issues": [],
+            "file_size": 32064
+          },
+          {
+            "file_path": "C:\\D\\fold7\\AIVA-git\\aiva_launcher.py",
+            "line_count": 459,
+            "non_empty_lines": 368,
+            "complexity_score": 14.161220043572984,
+            "security_issues": [],
+            "file_size": 13692
+          }
+        ]
+      }
+    },
+    {
+      "test_name": "系統整合性能測試",
+      "status": "pass",
+      "execution_time": 2.3617348670959473,
+      "metrics": {
+        "total_tasks": 5,
+        "avg_task_time": 0.008402442932128907,
+        "max_task_time": 0.00989532470703125,
+        "min_task_time": 0.007704257965087891,
+        "memory_before": 79.4,
+        "memory_peak": 79.9,
+        "memory_after": 79.4,
+        "memory_recovery": 0.0,
+        "max_memory_usage": 79.4,
+        "cpu_before": 4.2,
+        "cpu_after": 5.1,
+        "system_stability": 0.10000000000000853
+      },
+      "error_message": null,
+      "details": {
+        "load_test_results": [
+          {
+            "task_id": 0,
+            "computation_time": 0.00989532470703125,
+            "result_shape": [
+              1000,
+              1000
+            ],
+            "memory_usage": 79.4
+          },
+          {
+            "task_id": 1,
+            "computation_time": 0.00867319107055664,
+            "result_shape": [
+              1000,
+              1000
+            ],
+            "memory_usage": 79.4
+          },
+          {
+            "task_id": 2,
+            "computation_time": 0.00791168212890625,
+            "result_shape": [
+              1000,
+              1000
+            ],
+            "memory_usage": 79.4
+          },
+          {
+            "task_id": 3,
+            "computation_time": 0.007704257965087891,
+            "result_shape": [
+              1000,
+              1000
+            ],
+            "memory_usage": 79.4
+          },
+          {
+            "task_id": 4,
+            "computation_time": 0.0078277587890625,
+            "result_shape": [
+              1000,
+              1000
+            ],
+            "memory_usage": 79.4
+          }
+        ],
+        "start_metrics": {
+          "cpu_percent": 4.2,
+          "memory_percent": 79.3,
+          "memory_used_gb": 12.090801239013672,
+          "memory_available_gb": 3.1545257568359375,
+          "disk_usage_percent": 34.5,
+          "process_count": 295,
+          "load_average": 0.0,
+          "timestamp": "2025-11-10T13:58:54.156190"
+        },
+        "end_metrics": {
+          "cpu_percent": 5.1,
+          "memory_percent": 79.4,
+          "memory_used_gb": 12.111663818359375,
+          "memory_available_gb": 3.1336631774902344,
+          "disk_usage_percent": 34.5,
+          "process_count": 295,
+          "load_average": 0.0,
+          "timestamp": "2025-11-10T13:58:55.516084"
+        }
+      }
+    }
+  ],
+  "performance_analysis": {
+    "fastest_test": "RAG系統檢索測試 (模擬) (0.00s)",
+    "slowest_test": "代碼靜態分析測試 (3.24s)",
+    "memory_efficiency": "良好",
+    "memory_change_percent": 2.200000000000003,
+    "total_execution_time": 10.192162275314331
+  },
+  "recommendations": [
+    "有1個測試失敗，需要檢查相關組件的穩定性"
+  ],
+  "timestamp": "2025-11-10T13:58:56.519514",
+  "framework_version": "v1.0.0"
+}
