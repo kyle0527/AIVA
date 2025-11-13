@@ -444,44 +444,21 @@ class PlanExecutor:
                         "timestamp": datetime.now().isoformat(),
                     }
                 else:
-                    # 4. 模擬執行（在沒有實際任務系統時的降級方案）
-                    logger.info(f"模擬執行任務 {task_id}")
-
-                    # 模擬執行時間
-                    simulation_time = min(2.0, timeout * 0.1)
-                    await asyncio.sleep(simulation_time)
-
-                    # 模擬成功結果（80% 成功率）
-                    import random
-
-                    is_successful = random.random() > 0.2
-
-                    if is_successful:
-                        mock_findings = self._generate_mock_findings(task_id)
-                        return {
-                            "task_id": task_id,
-                            "success": True,
-                            "status": "completed",
-                            "findings": mock_findings,
-                            "metadata": {
-                                "simulated": True,
-                                "execution_mode": "mock",
-                                "simulation_time": simulation_time,
-                            },
-                            "execution_time": simulation_time,
-                            "timestamp": datetime.now().isoformat(),
-                        }
-                    else:
-                        return {
-                            "task_id": task_id,
-                            "success": False,
-                            "status": "failed",
-                            "findings": [],
-                            "metadata": {"simulated": True, "execution_mode": "mock"},
-                            "error": "Simulated execution failure",
-                            "execution_time": simulation_time,
-                            "timestamp": datetime.now().isoformat(),
-                        }
+                    # 4. 任務不存在 - 返回錯誤而非虛假結果
+                    logger.error(f"任務 {task_id} 不存在於執行佇列或完成佇列中")
+                    return {
+                        "task_id": task_id,
+                        "success": False,
+                        "status": "not_found",
+                        "findings": [],
+                        "metadata": {
+                            "error_type": "task_not_found",
+                            "message": "任務不存在或已被清理"
+                        },
+                        "error": f"Task {task_id} not found in execution queues",
+                        "execution_time": 0,
+                        "timestamp": datetime.now().isoformat(),
+                    }
 
         except TimeoutError:
             logger.error(f"任務 {task_id} 等待結果超時")
@@ -507,44 +484,7 @@ class PlanExecutor:
                 "timestamp": datetime.now().isoformat(),
             }
 
-    def _generate_mock_findings(self, task_id: str) -> list[dict[str, Any]]:
-        """生成模擬發現結果"""
-        import random
 
-        mock_findings = [
-            {
-                "type": "sql_injection",
-                "severity": "high",
-                "location": "/api/user/login",
-                "description": "Potential SQL injection vulnerability in login form",
-                "confidence": 0.85,
-            },
-            {
-                "type": "xss",
-                "severity": "medium",
-                "location": "/search",
-                "description": "Reflected XSS in search parameter",
-                "confidence": 0.72,
-            },
-            {
-                "type": "csrf",
-                "severity": "low",
-                "location": "/profile/update",
-                "description": "Missing CSRF protection on profile update",
-                "confidence": 0.65,
-            },
-        ]
-
-        # 隨機選擇 1-3 個發現
-        num_findings = random.randint(1, 3)
-        selected_findings = random.sample(mock_findings, num_findings)
-
-        # 添加任務特定信息
-        for finding in selected_findings:
-            finding["task_id"] = task_id
-            finding["finding_id"] = f"finding_{task_id}_{random.randint(1000, 9999)}"
-
-        return selected_findings
 
     async def _check_dependencies(
         self,

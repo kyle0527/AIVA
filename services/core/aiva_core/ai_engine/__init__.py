@@ -4,36 +4,37 @@ AI Engine - AIVA 的 AI 決策引擎
 """
 
 from .ai_model_manager import AIModelManager
-from .bio_neuron_core import (
-    AntiHallucinationModule,
-    BiologicalSpikingLayer,
-    BioNeuronRAGAgent,
-    ScalableBioNet,
+from .real_neural_core import (
+    RealAICore,
+    RealDecisionEngine,
 )
+from .anti_hallucination_module import AntiHallucinationModule
 from .knowledge_base import KnowledgeBase
 from .performance_enhancements import (
     ComponentPool,
-    MemoryManager,
     OptimizedBioSpikingLayer,
     OptimizedScalableBioNet,
     PerformanceConfig,
 )
+# 記憶體管理從統一模組導入
+from ..performance.unified_memory_manager import MemoryManager
+# 工具系統從新的統一結構導入
 from .tools import (
-    CodeAnalyzer,
+    Tool,
+    ToolManager,
     CodeReader,
     CodeWriter,
+    CodeAnalyzer,
     CommandExecutor,
-    ScanTrigger,
-    Tool,
-    VulnerabilityDetector,
+    ShellCommandTool,
+    SystemStatusTool,
 )
 
 __all__ = [
-    # Bio Neuron Core
-    "BiologicalSpikingLayer",
+    # AI Core Components
+    "RealAICore",
+    "RealDecisionEngine", 
     "AntiHallucinationModule",
-    "ScalableBioNet",
-    "BioNeuronRAGAgent",
     # AI Model Management
     "AIModelManager",
     # Performance Enhancements
@@ -44,12 +45,13 @@ __all__ = [
     "ComponentPool",
     # Knowledge Base
     "KnowledgeBase",
-    # Tools
+    # Tools - 統一工具系統
     "Tool",
+    "ToolManager",
     "CodeReader",
     "CodeWriter",
     "CodeAnalyzer",
     "CommandExecutor",
-    "ScanTrigger",
-    "VulnerabilityDetector",
+    "ShellCommandTool",
+    "SystemStatusTool",
 ]

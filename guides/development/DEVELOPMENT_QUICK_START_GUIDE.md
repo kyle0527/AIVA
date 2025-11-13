@@ -1,4 +1,4 @@
-# AIVA 開發環境快速設置指南
+# AIVA 開發環境快速設置指南 ✅ 11/10驗證
 
 > **📋 適用對象**: 新手開發者、團隊成員、快速部署需求  
 > **🎯 使用場景**: 開發環境初始化、快速項目設置、環境驗證  
@@ -220,7 +220,8 @@ AIVA 專案已針對多語言開發環境進行了語言伺服器優化配置，
 **快速驗證**：
 ```bash
 # 檢查語言伺服器配置
-.\verify-language-configs.ps1
+# 注意：verify-language-configs.ps1 腳本不在當前專案中
+# 可以手動檢查 .vscode/settings.json 和 AIVA.code-workspace 檔案
 ```
 
 **如果需要調整設定**，請參考：
@@ -235,7 +236,7 @@ AIVA 專案已針對多語言開發環境進行了語言伺服器優化配置，
 ### 每日開始 (5分鐘)
 ```bash
 # 1. 環境檢查
-python aiva_package_validator.py
+python scripts/utilities/aiva_package_validator.py
 
 # 2. 拉取最新代碼
 git pull origin main
@@ -270,7 +271,7 @@ git push origin feature/[branch-name]
 # Windows PowerShell
 & {
     Write-Host "🔍 驗證AIVA開發環境..." -ForegroundColor Green
-    python aiva_package_validator.py
+    python scripts/utilities/aiva_package_validator.py
     if ($LASTEXITCODE -eq 0) {
         Write-Host "✅ 環境就緒，可以開始開發！" -ForegroundColor Green
         Write-Host "📝 請查看 DEVELOPMENT_TASKS_CHECKLIST.md 開始Week 1任務" -ForegroundColor Yellow
@@ -300,7 +301,7 @@ def run_command(cmd, description):
 
 def main():
     tests = [
-        ("python aiva_package_validator.py", "補包驗證"),
+        ("python scripts/utilities/aiva_package_validator.py", "補包驗證"),
         ("python -m pytest tests/ -v", "單元測試"),
         ("python -c 'from services.core.aiva_core.execution.attack_plan_mapper import AttackPlanMapper; print(\"導入成功\")'", "模組導入測試"),
     ]
@@ -335,7 +336,7 @@ python run_dev_tests.py
 python -c "import sys; print('\n'.join(sys.path))"
 
 # 重新執行路徑修復
-python aiva_system_connectivity_sop_check.py
+python testing/integration/aiva_system_connectivity_sop_check.py
 ```
 
 2. **Go 編譯失敗**

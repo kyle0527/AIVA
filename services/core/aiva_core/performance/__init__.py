@@ -3,7 +3,7 @@
 包含並行處理、記憶體管理和監控功能
 """
 
-from .memory_manager import ComponentPool, MemoryManager
+from .unified_memory_manager import ComponentPool, MemoryManager, UnifiedMemoryManager
 from .monitoring import Metric, MetricsCollector, metrics_collector, monitor_performance
 from .parallel_processor import ParallelMessageProcessor
 
@@ -11,6 +11,7 @@ __all__ = [
     "ParallelMessageProcessor",
     "ComponentPool",
     "MemoryManager",
+    "UnifiedMemoryManager",
     "MetricsCollector",
     "Metric",
     "monitor_performance",

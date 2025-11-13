@@ -1,169 +1,126 @@
-# 🧪 AIVA 統一測試框架
+# 🧪 AIVA 通用測試工具和配置
 
-現代化的測試結構，支援單元測試、整合測試和系統測試。
+這個目錄包含 AIVA 項目的通用測試工具、共享配置和實用程式。
 
 ## 📁 目錄結構
 
 ```
 testing/
-├── unit/                    # 單元測試
-│   ├── common/             # 通用模組測試
-│   ├── core/               # 核心模組測試  
-│   ├── scan/               # 掃描模組測試
-│   ├── integration/        # 整合模組測試
-│   └── features/           # 功能模組測試
-├── integration/            # 整合測試
-│   ├── api/               # API測試
-│   ├── database/          # 資料庫測試
-│   ├── messaging/         # 消息系統測試
-│   └── workflow/          # 工作流測試
-├── system/                # 系統測試
-│   ├── e2e/              # 端到端測試
-│   ├── performance/       # 效能測試
-│   ├── security/         # 安全測試
-│   └── compatibility/    # 相容性測試
-├── fixtures/              # 測試數據
-├── mocks/                # 模擬對象
-├── utilities/            # 測試工具
-├── conftest.py           # pytest配置
+├── common/                 # 通用測試工具和配置 (本目錄)
+├── core/                   # 核心功能測試
+├── features/               # 功能特性測試
+├── integration/            # 集成測試
+├── performance/            # 性能測試
+├── scan/                   # 掃描和滲透測試
 └── README.md
 ```
 
-## 🚀 快速開始
+## 📄 本目錄檔案說明
 
-### 安裝依賴
+### 測試工具
+- **`api_testing.py`** - API 測試工具和實用程式
+- **`module_connectivity_tester.py`** - 模組連接性測試工具
+- **`security_test.py`** - 安全性測試工具
+
+### Schema 和配置測試
+- **`test_schema_codegen_converters.py`** - Schema 代碼生成和轉換器測試
+- **`test_unified_storage_config.py`** - 統一存儲配置測試
+- **`test_vector_storage.py`** - 向量存儲測試
+
+### 測試配置
+- **`conftest_converters.py`** - 轉換器相關的 pytest 配置和 fixtures
+
+## 🚀 使用方法
+
+### 執行通用測試
 ```bash
-pip install pytest pytest-cov pytest-asyncio pytest-mock
+# 執行所有通用測試
+pytest testing/common/ -v
+
+# 執行特定測試檔案
+pytest testing/common/test_schema_codegen_converters.py -v
+
+# 執行 API 測試
+python testing/common/api_testing.py
+
+# 執行安全測試
+python testing/common/security_test.py
 ```
 
-### 執行所有測試
+### 模組連接測試
 ```bash
-# 從專案根目錄執行
-pytest testing/ -v
+# 測試模組連接性
+python testing/common/module_connectivity_tester.py
 ```
 
-### 執行特定類型測試
-```bash
-# 單元測試
-pytest testing/unit/ -v
+## 🛠️ 測試工具功能
 
-# 整合測試  
-pytest testing/integration/ -v
+### API 測試工具 (`api_testing.py`)
+- RESTful API 端點測試
+- API 響應驗證
+- 認證和授權測試
 
-# 系統測試
-pytest testing/system/ -v
-```
+### 模組連接測試器 (`module_connectivity_tester.py`)
+- 模組間依賴檢查
+- 服務連接性驗證
+- 網絡連接測試
 
-### 覆蓋率報告
-```bash
-pytest testing/ --cov=services --cov-report=html
-```
+### 安全測試 (`security_test.py`)
+- 安全漏洞檢測
+- 權限驗證
+- 資料安全測試
 
-## 📊 測試策略
+### Schema 測試
+- **代碼生成測試**: 驗證從 schema 生成多語言代碼
+- **存儲配置測試**: 測試統一存儲配置
+- **向量存儲測試**: 驗證向量存儲功能
 
-### 🔬 單元測試 (Unit Tests)
-- **目標**: 測試個別函數和類別
-- **特點**: 快速執行，完全隔離
-- **覆蓋率目標**: > 90%
+## 📝 編寫新測試
 
-### 🔗 整合測試 (Integration Tests)  
-- **目標**: 測試模組間互動
-- **特點**: 真實依賴，中等執行時間
-- **覆蓋率目標**: > 70%
-
-### 🏗️ 系統測試 (System Tests)
-- **目標**: 端到端功能驗證
-- **特點**: 完整工作流程，長時間執行
-- **覆蓋率目標**: > 60%
-
-## 🛠️ 測試工具
-
-### pytest配置檔案
-- `conftest.py` - 全局fixtures和配置
-- `pytest.ini` - pytest設定檔
-
-### Mock和Fixtures
-- `fixtures/` - 共用測試數據
-- `mocks/` - 模擬對象和服務
-
-### 工具類
-- `utilities/` - 測試輔助工具
-- 資料庫助手
-- API客戶端
-- 檔案操作工具
-
-## 📝 編寫測試指南
-
-### 命名規範
+### 測試檔案命名規範
 - 測試檔案: `test_*.py`
 - 測試類: `Test*`
 - 測試方法: `test_*`
 
-### 測試結構
+### 使用共享 Fixtures
 ```python
-def test_should_do_something_when_condition():
-    # Arrange - 準備
-    setup_data = create_test_data()
-    
-    # Act - 執行
-    result = function_under_test(setup_data)
-    
-    # Assert - 驗證
-    assert result.success is True
-    assert result.value == expected_value
+# 在測試檔案中使用 conftest_converters.py 中的 fixtures
+def test_my_function(converter_instance, sample_schemas):
+    result = converter_instance.convert(sample_schemas["test_schema"])
+    assert result is not None
 ```
 
-### Fixtures範例
-```python
-@pytest.fixture
-def sample_user():
-    return {
-        "id": "test-user-1",
-        "name": "Test User",
-        "email": "test@example.com"
-    }
-```
+### 添加新的通用工具
+1. 創建新的測試工具檔案
+2. 確保檔案包含適當的文檔字符串
+3. 更新本 README 檔案
+4. 如需要，更新 `conftest_converters.py` 添加新的 fixtures
 
-## 🔄 CI/CD整合
+## 🔧 配置說明
 
-### GitHub Actions
-```yaml
-- name: Run Tests
-  run: |
-    pytest testing/ --cov=services --cov-report=xml
-    
-- name: Upload Coverage
-  uses: codecov/codecov-action@v3
-```
+### Pytest 配置
+- **`conftest_converters.py`** 提供轉換器相關的測試配置
+- 包含預定義的 fixtures 用於常見測試場景
+- 支持異步測試和 mock 配置
 
-### 測試階段
-1. **Lint & Format** - 代碼品質檢查
-2. **Unit Tests** - 快速單元測試
-3. **Integration Tests** - 整合測試
-4. **System Tests** - 系統測試
-5. **Coverage Report** - 覆蓋率報告
+## 📊 測試覆蓋率
 
-## 📊 測試報告
+建議的測試覆蓋率目標：
+- **通用工具**: > 90%
+- **API 測試**: > 85%
+- **Schema 測試**: > 95%
+- **安全測試**: > 80%
 
-### 生成報告
-```bash
-# HTML覆蓋率報告
-pytest testing/ --cov=services --cov-report=html
+## 🔄 持續集成
 
-# XML覆蓋率報告 (CI/CD)
-pytest testing/ --cov=services --cov-report=xml
-
-# JUnit XML報告
-pytest testing/ --junitxml=reports/junit.xml
-```
-
-### 報告位置
-- `htmlcov/index.html` - HTML覆蓋率報告
-- `coverage.xml` - XML覆蓋率報告
-- `reports/junit.xml` - JUnit測試報告
+這些通用測試工具在 CI/CD 流程中的角色：
+1. **前置檢查**: 模組連接性測試
+2. **功能驗證**: Schema 和配置測試
+3. **安全掃描**: 安全測試工具
+4. **API 驗證**: API 測試套件
 
 ---
 
-**建立時間**: 2025-10-24  
-**維護者**: QA Team  
-**測試策略**: TDD + BDD + E2E
+**目錄更新**: 2025-11-12  
+**維護者**: AIVA QA Team  
+**測試策略**: 通用工具 + 共享配置

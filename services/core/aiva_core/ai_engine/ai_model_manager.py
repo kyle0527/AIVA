@@ -17,9 +17,10 @@ from ..learning.scalable_bio_trainer import (
 )
 # 使用向後相容適配器替代bio_neuron_core（遵循PEP 484最佳實踐）
 from .real_bio_net_adapter import RealBioNeuronRAGAgent as BioNeuronRAGAgent, RealScalableBioNet as ScalableBioNet
-from ...aiva_common.schemas import AttackPlan, AttackStep, ExperienceSample
+# 暫時注釋掉未實現的導入
+# from ...aiva_common.schemas import AttackPlan, AttackStep, ExperienceSample
 # V2 統一經驗管理器 (取代 V1 ExperienceManager)
-from services.integration.aiva_integration.reception.experience_repository import ExperienceRepository
+# from services.integration.aiva_integration.reception.experience_repository import ExperienceRepository
 
 logger = logging.getLogger(__name__)
 
@@ -58,9 +59,31 @@ class AIModelManager:
         self.model_trainer = ModelTrainer(
             model_dir=self.model_dir, storage_backend=storage_backend
         )
-        # V2 統一經驗管理器 - 使用 ExperienceRepository 取代 ExperienceManager
-        database_url = "sqlite:///experience_db.sqlite"  # 使用 SQLite 作為默認數據庫
-        self.experience_repository = ExperienceRepository(database_url=database_url)
+        # V2 統一經驗管理器 - 使用模擬實現取代未完成的 ExperienceRepository
+        class MockExperienceRepository:
+            def __init__(self, database_url: str):
+                self.database_url = database_url
+                self.experiences = []
+                
+            def query_experiences(self, min_score=0.5, limit=1000):
+                """查詢經驗記錄"""
+                filtered = [exp for exp in self.experiences if exp.get('overall_score', 0) >= min_score]
+                return filtered[:limit]
+                
+            def add_experience(self, attack_type, context, action, result, overall_score):
+                """添加經驗記錄"""
+                experience = {
+                    'attack_type': attack_type,
+                    'context': context,
+                    'action': action,
+                    'result': result,
+                    'overall_score': overall_score,
+                    'timestamp': datetime.now(UTC).isoformat()
+                }
+                self.experiences.append(experience)
+        
+        database_url = "sqlite:///experience_db.sqlite"
+        self.experience_repository = MockExperienceRepository(database_url=database_url)
         
         # 為向後兼容創建適配器
         self.experience_manager = self._create_experience_adapter()

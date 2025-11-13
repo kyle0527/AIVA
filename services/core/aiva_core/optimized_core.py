@@ -17,17 +17,18 @@
 """
 
 import asyncio
+import numpy as np
 
 from fastapi import FastAPI
 
 # 導入拆分的性能模組
 from .performance import (
     ComponentPool,
-    MemoryManager,
     MetricsCollector,
     ParallelMessageProcessor,
     metrics_collector,
     monitor_performance,
+    UnifiedMemoryManager,
 )
 from ...aiva_common.schemas import APIResponse
 
@@ -42,10 +43,9 @@ class OptimizedBioNet:
         self.hidden_size = hidden_size
 
         # 使用量化權重降低記憶體使用
-        self.weights_input = np.random.randn(input_size, hidden_size).astype(np.float16)
-        self.weights_hidden = np.random.randn(hidden_size, hidden_size).astype(
-            np.float16
-        )
+        rng = np.random.default_rng(42)
+        self.weights_input = rng.normal(size=(input_size, hidden_size)).astype(np.float16)
+        self.weights_hidden = rng.normal(size=(hidden_size, hidden_size)).astype(np.float16)
 
         # 計算快取
         self._prediction_cache = {}
@@ -85,7 +85,7 @@ class OptimizedBioNet:
 
         # 簡化的前向傳播
         h1 = np.tanh(np.dot(x, self.weights_input))
-        output = np.sigmoid(np.dot(h1, self.weights_hidden[:, :10]))  # 輸出層
+        output = 1.0 / (1.0 + np.exp(-np.dot(h1, self.weights_hidden[:, :10])))  # sigmoid輸出層
 
         return output
 
@@ -112,7 +112,7 @@ class OptimizedBioNet:
 # 建立全域實例
 message_processor = ParallelMessageProcessor(max_concurrent=20, batch_size=50)
 optimized_bio_net = OptimizedBioNet(input_size=1024, hidden_size=2048)
-memory_manager = MemoryManager(gc_threshold_mb=512)
+memory_manager = UnifiedMemoryManager(gc_threshold_mb=512)
 metrics_collector = MetricsCollector()
 
 # 組件池
@@ -146,8 +146,8 @@ async def optimized_ai_prediction(input_data: np.ndarray):
     result = await optimized_bio_net.predict(input_data, use_cache=True)
 
     # 記錄記憶體使用情況
-    memory_stats = memory_manager.get_memory_stats()
-    metrics_collector.set_gauge("memory_usage_mb", memory_stats["current_memory_mb"])
+    memory_stats = memory_manager.get_comprehensive_stats()['memory']
+    metrics_collector.set_gauge("memory_usage_mb", memory_stats["current_mb"])
 
     return result
 
@@ -163,10 +163,10 @@ async def startup():
     print("Starting optimized AIVA Core Engine...")
 
     # 啟動記憶體監控
-    asyncio.create_task(memory_manager.start_monitoring())
+    memory_manager.start_monitoring()
 
     # 啟動並行訊息處理
-    asyncio.create_task(optimized_process_scan_results())
+    _ = asyncio.create_task(optimized_process_scan_results())
 
     print("Optimized core engine started successfully!")
 
@@ -179,7 +179,7 @@ async def get_metrics():
         message="系統指標檢索成功",
         data={
             "performance_metrics": metrics_collector.get_metrics_summary(),
-            "memory_stats": memory_manager.get_memory_stats(),
+            "memory_stats": memory_manager.get_comprehensive_stats()['memory'],
             "ai_cache_stats": optimized_bio_net.get_cache_stats(),
             "pool_stats": {
                 name: pool.get_pool_stats() for name, pool in component_pools.items()
@@ -193,14 +193,14 @@ async def get_metrics():
 @app.get("/health")
 async def health_check():
     """健康檢查"""
-    memory_stats = memory_manager.get_memory_stats()
+    memory_stats = memory_manager.get_comprehensive_stats()['memory']
 
     response = APIResponse(
         success=True,
         message="服務運行健康",
         data={
             "status": "healthy",
-            "memory_usage_mb": memory_stats["current_memory_mb"],
+            "memory_usage_mb": memory_stats["current_mb"],
             "memory_threshold_mb": memory_stats["threshold_mb"],
             "components_active": sum(
                 pool.get_pool_stats()["active"] for pool in component_pools.values()

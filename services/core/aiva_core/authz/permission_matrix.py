@@ -15,7 +15,7 @@ from utilities.optional_deps import deps
 from services.aiva_common.enums import AccessDecision
 
 # 註冊 pandas 依賴
-deps.register("pandas", ["pandas"])
+deps.register("pandas", "pandas")
 
 # 可選 pandas 導入
 if deps.is_available("pandas"):
@@ -30,6 +30,7 @@ else:
             return len(self.data)
             
         def to_dict(self, orient='records'):
+            del orient  # 避免未使用參數警告
             return self.data
             
         def to_json(self, *args, **kwargs):
@@ -502,6 +503,215 @@ def main():
     print("\n=== DataFrame ===")
     df = matrix.to_dataframe()
     print(df)
+
+
+# ==================== 風險控制增強功能 (整合自 aiva_core_v1) ====================
+
+import os
+from enum import Enum
+from typing import Dict, List, Optional
+from dataclasses import dataclass
+
+
+class RiskLevel(str, Enum):
+    """風險等級枚舉 (整合自 aiva_core_v1)"""
+    L0 = "L0"  # 安全操作 - 掃描、分析、報告
+    L1 = "L1"  # 低風險 - 主動探測、指紋識別
+    L2 = "L2"  # 中風險 - 漏洞驗證、PoC 測試
+    L3 = "L3"  # 高風險 - 攻擊利用、資料提取
+
+
+@dataclass
+class OperationContext:
+    """操作上下文"""
+    operation_name: str
+    risk_level: RiskLevel = RiskLevel.L0
+    tags: Optional[List[str]] = None
+    environment: str = "development"  # development, testing, production
+    requester: str = "system"
+    metadata: Optional[Dict[str, Any]] = None
+
+    def __post_init__(self):
+        if self.tags is None:
+            self.tags = []
+        if self.metadata is None:
+            self.metadata = {}
+
+
+class RiskGuard:
+    """風險控制守衛 (整合自 aiva_core_v1 Guard)
+    
+    實現環境感知的分層風險控制機制
+    """
+
+    def __init__(self):
+        """初始化風險守衛"""
+        # 從環境變數讀取允許的風險等級
+        allowed_risk_env = os.getenv("AIVA_ALLOWED_RISK", "L0,L1")
+        self.allowed_risk_levels = set(allowed_risk_env.split(","))
+        
+        # 攻擊操作控制
+        self.allow_attack = os.getenv("AIVA_ALLOW_ATTACK") == "1"
+        
+        # 環境檢測
+        self.environment = os.getenv("AIVA_ENVIRONMENT", "development")
+        
+        # 環境風險限制配置
+        self._environment_risk_limits = {
+            "production": {"L0", "L1"},           # 生產環境僅允許安全操作
+            "testing": {"L0", "L1", "L2"},        # 測試環境限制高風險
+            "development": {"L0", "L1", "L2", "L3"}  # 開發環境允許所有
+        }
+        
+        logger.info(
+            f"RiskGuard initialized: environment={self.environment}, "
+            f"allowed_risk={self.allowed_risk_levels}, attack_allowed={self.allow_attack}"
+        )
+
+    def authorize_operation(self, context: OperationContext) -> AccessDecision:
+        """授權操作執行
+        
+        Args:
+            context: 操作上下文
+            
+        Returns:
+            授權決策
+        """
+        # 1. 檢查風險等級是否被允許
+        if not self._check_risk_level(context.risk_level):
+            logger.warning(
+                f"Operation blocked: risk level {context.risk_level} not allowed. "
+                f"Allowed: {self.allowed_risk_levels}"
+            )
+            return AccessDecision.DENY
+        
+        # 2. 檢查環境風險限制
+        if not self._check_environment_limits(context.risk_level):
+            logger.warning(
+                f"Operation blocked: risk level {context.risk_level} not allowed in "
+                f"{self.environment} environment"
+            )
+            return AccessDecision.DENY
+        
+        # 3. 檢查攻擊標籤
+        if not self._check_attack_tags(context.tags or []):
+            logger.warning(
+                f"Operation blocked: contains attack tags {context.tags} but "
+                f"AIVA_ALLOW_ATTACK not enabled"
+            )
+            return AccessDecision.DENY
+        
+        # 4. 生產環境的額外檢查
+        if self.environment == "production":
+            if not self._production_safety_check(context):
+                logger.error(
+                    f"Operation blocked: failed production safety check for "
+                    f"{context.operation_name}"
+                )
+                return AccessDecision.DENY
+        
+        logger.info(f"Operation authorized: {context.operation_name} (risk: {context.risk_level})")
+        return AccessDecision.ALLOW
+
+    def _check_risk_level(self, risk_level: RiskLevel) -> bool:
+        """檢查風險等級是否被允許"""
+        return risk_level.value in self.allowed_risk_levels
+
+    def _check_environment_limits(self, risk_level: RiskLevel) -> bool:
+        """檢查環境風險限制"""
+        env_limits = self._environment_risk_limits.get(self.environment)
+        if env_limits is None:
+            return True  # 未知環境，允許通過
+        return risk_level.value in env_limits
+
+    def _check_attack_tags(self, tags: List[str]) -> bool:
+        """檢查攻擊標籤"""
+        attack_tags = {"attack", "exploit", "destructive", "intrusive"}
+        has_attack_tags = bool(set(tags) & attack_tags)
+        
+        if has_attack_tags and not self.allow_attack:
+            return False
+        return True
+
+    def _production_safety_check(self, context: OperationContext) -> bool:
+        """生產環境安全檢查"""
+        # 生產環境禁止的操作類型
+        forbidden_operations = {
+            "exploit", "attack", "bruteforce", "dos", "flood"
+        }
+        
+        # 檢查操作名稱
+        if any(forbidden in context.operation_name.lower() for forbidden in forbidden_operations):
+            return False
+        
+        # 檢查標籤
+        if any(tag in forbidden_operations for tag in (context.tags or [])):
+            return False
+        
+        return True
+
+    def get_allowed_operations(self, environment: Optional[str] = None) -> Dict[str, List[str]]:
+        """獲取當前環境允許的操作列表
+        
+        Args:
+            environment: 指定環境，如果為 None 則使用當前環境
+            
+        Returns:
+            按風險等級分類的允許操作列表
+        """
+        env = environment or self.environment
+        allowed_risks = self._environment_risk_limits.get(env, self.allowed_risk_levels)
+        
+        risk_operations = {
+            "L0": ["scan", "analyze", "report", "monitor", "discover"],
+            "L1": ["probe", "enumerate", "fingerprint", "passive_scan"],  
+            "L2": ["verify", "test_poc", "active_scan", "vulnerability_test"],
+            "L3": ["exploit", "attack", "penetrate", "extract"]
+        }
+        
+        allowed_ops = {}
+        for risk in allowed_risks:
+            if risk in risk_operations:
+                allowed_ops[risk] = risk_operations[risk]
+        
+        return allowed_ops
+
+
+# 全域風險守衛實例
+_risk_guard = None
+
+
+def get_risk_guard() -> RiskGuard:
+    """獲取全域風險守衛實例"""
+    global _risk_guard
+    if _risk_guard is None:
+        _risk_guard = RiskGuard()
+    return _risk_guard
+
+
+def authorize_operation(operation_name: str, risk_level: str = "L0", 
+                       tags: Optional[List[str]] = None, **kwargs) -> bool:
+    """便捷的操作授權函數
+    
+    Args:
+        operation_name: 操作名稱
+        risk_level: 風險等級 (L0-L3)
+        tags: 操作標籤
+        **kwargs: 其他上下文參數
+        
+    Returns:
+        是否被授權
+    """
+    guard = get_risk_guard()
+    context = OperationContext(
+        operation_name=operation_name,
+        risk_level=RiskLevel(risk_level),
+        tags=tags or [],
+        **kwargs
+    )
+    
+    decision = guard.authorize_operation(context)
+    return decision == AccessDecision.ALLOW
 
 
 if __name__ == "__main__":

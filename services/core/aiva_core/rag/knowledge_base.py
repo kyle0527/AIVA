@@ -64,7 +64,7 @@ class KnowledgeEntry:
         }
 
     @classmethod
-    def from_dict(cls, data: dict[str, Any]) -> KnowledgeEntry:
+    def from_dict(cls, data: dict[str, Any]) -> "KnowledgeEntry":
         """從字典創建"""
         return cls(
             id=data["id"],

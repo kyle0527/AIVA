@@ -1,6 +1,6 @@
 """
-AIVA 統一 AI 控制器 - 整合所有 AI 組件
-將分散的 AI 組件統一在 BioNeuronRAGAgent 控制下
+AIVA AI 子系統控制器 - BioNeuronMasterController 的專門模組
+負責特定 AI 功能的協調，避免與主控制器衝突
 支援插件化的智能分析系統
 """
 
@@ -9,8 +9,6 @@ from datetime import datetime
 import json
 import logging
 from typing import Any
-
-from .ai_engine import BioNeuronRAGAgent
 
 try:
     from .plugins.ai_summary_plugin import AISummaryPlugin
@@ -22,15 +20,23 @@ except ImportError:
 logger = logging.getLogger(__name__)
 
 
-class UnifiedAIController:
-    """AIVA 統一 AI 控制器 - 消除 AI 組件衝突"""
+class AISubsystemController:
+    """AIVA AI 子系統控制器 - 避免與主控制器衝突
+    
+    重要：此類不再實例化 BioNeuronRAGAgent，而是使用主控制器共享的實例
+    """
 
-    def __init__(self, codebase_path: str = "c:/AMD/AIVA"):
-        """初始化統一 AI 控制器"""
-        logger.info("🧠 初始化 AIVA 統一 AI 控制器...")
+    def __init__(self, master_controller=None):
+        """初始化 AI 子系統控制器
+        
+        Args:
+            master_controller: 主控制器實例，用於共享 AI 資源
+        """
+        logger.info("🔧 初始化 AIVA AI 子系統控制器...")
 
-        # 主控 AI 系統
-        self.master_ai = BioNeuronRAGAgent(codebase_path)
+        # 重要：不再創建獨立的 AI 實例，避免資源浪費
+        self.master_controller = master_controller
+        self._master_ai = None  # 延遲獲取主控 AI
 
         # 分散 AI 組件註冊
         self.ai_components = {
@@ -39,9 +45,9 @@ class UnifiedAIController:
             "detection_engines": {},
         }
 
-        # AI 決策歷史
+        # AI 決策歷史 (與主控制器共享)
         self.decision_history = []
-
+        
         # 🔌 插件系統 - 摘要功能
         self.summary_plugin: AISummaryPlugin | None = None
         if SUMMARY_PLUGIN_AVAILABLE:
@@ -54,33 +60,44 @@ class UnifiedAIController:
         else:
             logger.info("ℹ️ 摘要插件不可用")
 
-        logger.info("✅ 統一 AI 控制器初始化完成")
+        logger.info("✅ AI 子系統控制器初始化完成")
+    
+    @property
+    def master_ai(self):
+        """獲取主控 AI（從主控制器共享）"""
+        if self.master_controller and hasattr(self.master_controller, 'bio_neuron_agent'):
+            return self.master_controller.bio_neuron_agent
+        return None
 
-    async def process_unified_request(
+    async def process_specialized_request(
         self, user_input: str, **context
     ) -> dict[str, Any]:
-        """統一處理所有 AI 請求 - 避免 AI 衝突"""
-        logger.info(f"🎯 統一 AI 處理: {user_input}")
+        """處理專門的 AI 請求 - 透過主控制器協調"""
+        logger.info(f"🔧 子系統 AI 處理: {user_input}")
 
-        # 1. 主控 AI 分析任務複雜度
+        if not self.master_ai:
+            return {
+                "status": "error",
+                "error": "No master AI controller available",
+                "message": "子系統需要主控制器支援"
+            }
+
+        # 1. 分析任務複雜度
         task_analysis = self._analyze_task_complexity(user_input, context)
 
-        # 2. 決定處理策略
-        if task_analysis["can_handle_directly"]:
-            # 主控 AI 直接處理
-            result = await self._direct_processing(user_input, context)
-        elif task_analysis["needs_code_fixing"]:
-            # 需要程式碼修復，但仍由主控 AI 協調
-            result = await self._coordinated_code_fixing(user_input, context)
-        elif task_analysis["needs_specialized_detection"]:
-            # 需要專門檢測，主控 AI 統籌
-            result = await self._coordinated_detection(user_input, context)
-        else:
-            # 複雜任務，多 AI 協同但主控統籌
-            result = await self._multi_ai_coordination(user_input, context)
+        # 2. 透過主控 AI 處理（避免重複實例化）
+        try:
+            if task_analysis["can_handle_directly"]:
+                result = self._direct_processing(user_input, context)
+            elif task_analysis["needs_code_fixing"]:
+                result = self._coordinated_code_fixing(user_input, context)
+            elif task_analysis["needs_specialized_detection"]:
+                result = self._coordinated_detection(user_input, context)
+            else:
+                result = self._multi_ai_coordination(user_input, context)
 
-        # 3. 記錄統一決策
-        self._record_unified_decision(user_input, task_analysis, result)
+            # 3. 記錄決策（與主控制器共享）
+            self._record_specialized_decision(user_input, task_analysis, result)
 
         # 4. 🔌 插件化摘要生成
         if self.summary_plugin and self.summary_plugin.is_enabled():

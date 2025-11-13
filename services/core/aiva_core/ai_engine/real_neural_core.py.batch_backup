@@ -65,7 +65,7 @@ class RealAICore(nn.Module):
         # 計算總參數數量
         self.total_params = sum(p.numel() for p in self.parameters())
         
-        logger.info(f"真實AI核心初始化完成:")
+        logger.info("真實AI核心初始化完成:")
         logger.info(f"  - 模型類型: {'5M特化神經網路' if use_5m_model else '原始架構'}")
         logger.info(f"  - 總參數: {self.total_params:,} ({self.total_params/1_000_000:.2f}M)")
         if use_5m_model:
@@ -204,7 +204,7 @@ class RealAICore(nn.Module):
                 file_size = Path(filepath).stat().st_size
                 total_params = sum(tensor.numel() for tensor in checkpoint.values())
                 
-                logger.info(f"5M模型載入完成:")
+                logger.info("5M模型載入完成:")
                 logger.info(f"  - 檔案大小: {file_size/1024/1024:.1f} MB")
                 logger.info(f"  - 總參數: {total_params:,}")
                 logger.info(f"  - 主輸出維度: {self.output_size}")

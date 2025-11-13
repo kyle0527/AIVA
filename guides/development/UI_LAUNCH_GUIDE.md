@@ -1,4 +1,4 @@
-# AIVA UI 面板啟動指南 (10/31實測驗證)
+# AIVA UI 面板啟動指南 ✅ 11/10驗證 (10/31實測驗證)
 
 ## � 目錄
 
@@ -20,7 +20,9 @@
 
 **方法二: 使用 Python 腳本**
 ```bash
-python start_ui_auto.py
+python src/launchers/start_ui_auto.py
+# 或者
+python examples/start_ui_auto.py
 ```
 
 **方法三: 手動執行**

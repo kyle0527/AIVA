@@ -4,7 +4,7 @@ Last Modified: 2025-10-30
 Document Type: Report
 ---
 
-# AIVA 環境變數配置指南 (10/31實測驗證)
+# AIVA 環境變數配置指南 ✅ 11/10驗證 (10/31實測驗證)
 
 ## 📑 目錄
 

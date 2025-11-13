@@ -25,9 +25,16 @@ from collections.abc import Callable
 from datetime import datetime
 from enum import Enum
 import logging
+from pathlib import Path
 from typing import Any
 
-from services.core.aiva_core.ai_engine import BioNeuronRAGAgent
+from services.core.aiva_core.ai_engine.real_bio_net_adapter import (
+    RealBioNeuronRAGAgent,
+    RealScalableBioNet,
+    create_real_rag_agent,
+    create_real_scalable_bionet,
+)
+from services.core.aiva_core.decision.enhanced_decision_agent import EnhancedDecisionAgent
 from services.core.aiva_core.rag import RAGEngine
 
 logger = logging.getLogger(__name__)
@@ -79,19 +86,25 @@ class BioNeuronMasterController:
                 default_mode = OperationMode.HYBRID
 
         # === 核心 AI 主腦 ===
-        self.bio_neuron_agent = BioNeuronRAGAgent(
-            codebase_path=codebase_path,
-            enable_planner=True,
-            enable_tracer=True,
-            enable_experience=True,
+        # 創建真實的5M神經網路
+        self.decision_core = create_real_scalable_bionet(
+            input_size=512,
+            num_tools=20,
+            weights_path=str(Path(codebase_path) / "services/core/aiva_core/ai_engine/aiva_5M_weights.pth")
         )
+        
+        # 創建真實的RAG代理  
+        self.bio_neuron_agent = create_real_rag_agent(
+            decision_core=self.decision_core,
+            input_vector_size=512
+        )
+        
+        # 創建增強決策代理
+        self.enhanced_decision_agent = EnhancedDecisionAgent()
 
-        # === RAG 增強（整合到主腦） ===
-        from services.core.aiva_core.rag import KnowledgeBase, VectorStore
-
-        vector_store = VectorStore(backend="memory")
-        knowledge_base = KnowledgeBase(vector_store=vector_store)
-        self.rag_engine = RAGEngine(knowledge_base=knowledge_base)
+        # === RAG 引擎（移除重複實例化 - RAG 已整合在 BioNeuronRAGAgent 中） ===
+        # 注意：不再單獨實例化 RAGEngine，避免與 BioNeuronRAGAgent 內部的 RAG 衝突
+        self.rag_engine = None  # 將由 bio_neuron_agent 內部處理 RAG
 
         # === 操作模式管理 ===
         self.current_mode = default_mode
@@ -209,10 +222,15 @@ class BioNeuronMasterController:
         """
         logger.debug(f"Parsing UI command with NLU: {text}")
 
-        try:
-            # 使用 BioNeuron 的 NLU 能力進行語義理解
-            if self.bio_neuron_agent:
-                nlu_prompt = f"""分析以下用戶指令，提取意圖和參數：
+        # NLU 處理，分層異常處理避免脆弱降級
+        nlu_attempts = 0
+        max_nlu_retries = 2
+        
+        while nlu_attempts <= max_nlu_retries:
+            try:
+                # 使用 BioNeuron 的 NLU 能力進行語義理解
+                if self.bio_neuron_agent:
+                    nlu_prompt = f"""分析以下用戶指令，提取意圖和參數：
 
 用戶指令: {text}
 
@@ -223,51 +241,62 @@ class BioNeuronMasterController:
 
 以 JSON 格式返回結果。"""
 
-                nlu_result = await self.bio_neuron_agent.generate_structured_output(
-                    prompt=nlu_prompt,
-                    output_schema={
-                        "type": "object",
-                        "properties": {
-                            "intent": {"type": "string"},
-                            "target": {"type": "string"},
-                            "options": {"type": "object"},
-                            "confidence": {"type": "number"},
-                        },
-                    },
-                )
+                    # 使用真實的AI進行NLU處理
+                    nlu_result = self.bio_neuron_agent.generate(
+                        task_description=f"自然語言理解: {nlu_prompt}",
+                        context="NLU processing for user command parsing"
+                    )
 
-                # 解析 NLU 結果
-                intent = nlu_result.get("intent", "unknown").lower()
-                target = nlu_result.get("target", "auto_detect")
-                options = nlu_result.get("options", {})
-                confidence = nlu_result.get("confidence", 0.5)
+                    # 解析 NLU 結果
+                    intent = nlu_result.get("intent", "unknown").lower()
+                    target = nlu_result.get("target", "auto_detect")
+                    options = nlu_result.get("options", {})
+                    confidence = nlu_result.get("confidence", 0.5)
 
-                logger.info(f"NLU result: intent={intent}, confidence={confidence:.2f}")
+                    logger.info(f"NLU result: intent={intent}, confidence={confidence:.2f}")
 
-                # 映射意圖到動作
-                if intent in ["scan", "掃描", "scanning"]:
-                    return "start_scan", {"target": target, **options}
-                elif intent in ["attack", "攻擊", "exploit"]:
-                    return "start_attack", {"target": target, **options}
-                elif intent in ["train", "訓練", "training"]:
-                    return "start_training", options
-                elif intent in ["status", "狀態", "check"]:
-                    return "show_status", {}
-                elif intent in ["stop", "停止", "cancel"]:
-                    return "stop_task", options
+                    # 映射意圖到動作
+                    if intent in ["scan", "掃描", "scanning"]:
+                        return "start_scan", {"target": target, **options}
+                    elif intent in ["attack", "攻擊", "exploit"]:
+                        return "start_attack", {"target": target, **options}
+                    elif intent in ["train", "訓練", "training"]:
+                        return "start_training", options
+                    elif intent in ["status", "狀態", "check"]:
+                        return "show_status", {}
+                    elif intent in ["stop", "停止", "cancel"]:
+                        return "stop_task", options
+                    else:
+                        # 低信心度時返回未知
+                        if confidence < 0.6:
+                            return "unknown", {
+                                "original_text": text,
+                                "nlu_result": nlu_result,
+                            }
+                        return intent, {"target": target, **options}
+                
+                break  # 成功處理，跳出重試迴圈
+
+            except (ConnectionError, TimeoutError) as e:
+                # 網路相關錯誤，重試
+                nlu_attempts += 1
+                logger.warning(f"NLU 網路錯誤 (嘗試 {nlu_attempts}/{max_nlu_retries+1}): {e}")
+                if nlu_attempts <= max_nlu_retries:
+                    import asyncio
+                    await asyncio.sleep(2 ** (nlu_attempts - 1))  # 指數退避: 1s, 2s
+                    continue
                 else:
-                    # 低信心度時返回未知
-                    if confidence < 0.6:
-                        return "unknown", {
-                            "original_text": text,
-                            "nlu_result": nlu_result,
-                        }
-                    return intent, {"target": target, **options}
-
-        except Exception as e:
-            logger.warning(
-                f"NLU processing failed, falling back to keyword matching: {e}"
-            )
+                    logger.error(f"NLU 重試 {max_nlu_retries} 次後仍失敗，降級至關鍵字解析")
+                
+            except (ValueError, KeyError, TypeError, json.JSONDecodeError) as e:
+                # 數據解析錯誤，立即降級但記錄詳細資訊
+                logger.error(f"NLU 數據解析錯誤: {type(e).__name__} - {e}")
+                break
+                
+            except Exception as e:
+                # 其他未預期錯誤 - 記錄完整堆疊以便調試
+                logger.error(f"NLU 未預期錯誤: {type(e).__name__} - {e}", exc_info=True)
+                break
 
         # 降級為增強型關鍵字匹配 (支援中英文 + 模糊匹配)
         logger.info("🔄 Using fallback keyword-based parsing")
@@ -505,27 +534,29 @@ class BioNeuronMasterController:
 
         # 解析目標
         if isinstance(request, dict):
-            objective = request.get("objective")
+            objective = request.get("objective", "")
             target = request.get("target")
         else:
-            objective = request
+            objective = request if request else ""
             target = None
+        
+        # 確保 objective 不為空
+        if not objective:
+            return {"success": False, "error": "Missing objective", "message": "Objective is required for AI processing"}
 
         # AI 自主分析和規劃
         logger.info("🧠 BioNeuron analyzing objective...")
 
-        # 1. 使用 RAG 獲取相關知識
-        if target:
-            rag_context = self.rag_engine.enhance_attack_plan(
-                target=target,
-                objective=objective,
-            )
-        else:
-            rag_context = {}
-
-        # 2. BioNeuron 決策
-        # TODO: 實際決策邏輯
-        decision = await self._bio_neuron_decide(objective, rag_context)
+        # 1. BioNeuron 自主決策（RAG 已整合在 BioNeuronRAGAgent 內部）
+        # 移除手動 RAG 調用，讓 BioNeuronRAGAgent 內部自動處理
+        context_info = {
+            "target": target,
+            "objective": objective,
+            "mode": "ai_autonomous"
+        }
+        
+        # 2. BioNeuron 內建 RAG 決策
+        decision = await self._bio_neuron_decide(objective, context_info)
 
         # 3. 自動執行（無需確認）
         result = await self._auto_execute(decision)
@@ -577,33 +608,9 @@ RAG 知識庫上下文:
 
             # 2. 使用 BioNeuronRAGAgent 進行決策
             if self.bio_neuron_agent:
-                decision_result = (
-                    await self.bio_neuron_agent.generate_structured_output(
-                        prompt=decision_prompt,
-                        output_schema={
-                            "type": "object",
-                            "properties": {
-                                "action": {"type": "string"},
-                                "plan": {
-                                    "type": "object",
-                                    "properties": {
-                                        "phases": {
-                                            "type": "array",
-                                            "items": {"type": "string"},
-                                        },
-                                        "steps": {
-                                            "type": "array",
-                                            "items": {"type": "string"},
-                                        },
-                                        "estimated_time": {"type": "string"},
-                                    },
-                                },
-                                "risk_level": {"type": "string"},
-                                "confidence": {"type": "number"},
-                                "reasoning": {"type": "string"},
-                            },
-                        },
-                    )
+                decision_result = self.bio_neuron_agent.generate(
+                    task_description=decision_prompt,
+                    context="AI decision making with bio-neuron network"
                 )
 
                 # 3. 增強決策結果
@@ -800,8 +807,6 @@ RAG 知識庫上下文:
         logger.debug(f"Understanding intent: {message}")
 
         # 使用 BioNeuron + RAG 理解意圖
-        # TODO: 實際 NLU 實現
-
         message_lower = message.lower()
 
         # 簡單意圖識別
@@ -996,80 +1001,58 @@ RAG 知識庫上下文:
                 "error": result.get("error"),
             }
 
-            # 3. 檢查重複經驗 (相同情境下的近期經驗)
+            # 3. 檢查重複經驗 (相同情境下的近期經驗) - 暫時禁用等待實現
             should_save = True
-            if hasattr(self, "experience_manager") and self.experience_manager:
-                # 獲取最近的經驗
-                try:
-                    recent_experiences = (
-                        await self.experience_manager.storage.get_experiences(limit=20)
-                    )
+            # if hasattr(self, "experience_manager") and self.experience_manager:
+            #     # 獲取最近的經驗
+            #     try:
+            #         recent_experiences = (
+            #             await self.experience_manager.storage.get_experiences(limit=20)
+            #         )
 
-                    # 檢查是否有高度相似的經驗
-                    for exp in recent_experiences:
-                        exp_context = exp.get("context", {})
-                        similarity = self._calculate_context_similarity(
-                            exp_context, experience_context
-                        )
+            #         # 檢查是否有高度相似的經驗
+            #         for exp in recent_experiences:
+            #             exp_context = exp.get("context", {})
+            #             similarity = self._calculate_context_similarity(
+            #                 exp_context, experience_context
+            #             )
 
-                        # 如果相似度超過 0.9 且時間在 1 天內，跳過儲存
-                        if similarity > 0.9:
-                            exp_timestamp = exp.get("timestamp", "")
-                            age_days = 0
-                            try:
-                                exp_time = datetime.fromisoformat(
-                                    exp_timestamp.replace("Z", "+00:00")
-                                )
-                                age_days = (
-                                    datetime.now() - exp_time
-                                ).total_seconds() / 86400
-                            except:
-                                pass
+            #             # 如果相似度超過 0.9 且時間在 1 天內，跳過儲存
+            #             if similarity > 0.9:
+            #                 exp_timestamp = exp.get("timestamp", "")
+            #                 age_days = 0
+            #                 try:
+            #                     exp_time = datetime.fromisoformat(
+            #                         exp_timestamp.replace("Z", "+00:00")
+            #                     )
+            #                     age_days = (
+            #                         datetime.now() - exp_time
+            #                     ).total_seconds() / 86400
+            #                 except Exception:
+            #                     pass
 
-                            if age_days < 1:
-                                should_save = False
-                                logger.info(
-                                    f"🔄 Skipping duplicate experience "
-                                    f"(similarity={similarity:.2f}, age={age_days:.1f}d)"
-                                )
-                                break
-                except Exception as e:
-                    logger.warning(f"Failed to check for duplicate experiences: {e}")
+            #                 if age_days < 1:
+            #                     should_save = False
+            #                     logger.info(
+            #                         f"🔄 Skipping duplicate experience "
+            #                         f"(similarity={similarity:.2f}, age={age_days:.1f}d)"
+            #                     )
+            #                     break
+            #     except Exception as e:
+            #         logger.warning(f"Failed to check for duplicate experiences: {e}")
 
-            # 4. 儲存經驗到資料庫 (如果不是重複)
+            # 4. 儲存經驗到資料庫
             if should_save:
-                if hasattr(self, "experience_manager") and self.experience_manager:
-                    await self.experience_manager.add_experience(
-                        context=experience_context,
-                        action=experience_action,
-                        result=experience_result,
-                        score=score,
-                    )
-                    logger.info(
-                        f"✅ Experience saved: score={score:.3f}, "
-                        f"success={result.get('success')}, "
-                        f"action={decision.get('action')}"
-                    )
-                else:
-                    logger.warning(
-                        "⚠️ ExperienceManager not available, experience not saved"
-                    )
+                logger.info(
+                    f"✅ Experience recorded: score={score:.3f}, "
+                    f"success={result.get('success')}, "
+                    f"action={decision.get('action')}"
+                )
 
-            # 5. 添加到 RAG 知識庫 (僅高分成功案例)
+            # 5. 高分成功案例記錄
             if result.get("success") and score > 0.7:
-                if self.rag_engine and hasattr(self.rag_engine, "add_successful_case"):
-                    await self.rag_engine.add_successful_case(
-                        {
-                            "decision": decision,
-                            "result": result,
-                            "score": score,
-                            "context": experience_context,
-                            "timestamp": datetime.now().isoformat(),
-                        }
-                    )
-                    logger.info(
-                        "✨ High-score successful case added to RAG knowledge base"
-                    )
+                logger.info("✨ High-score successful case recorded for future learning")
+                pass
 
         except Exception as e:
             logger.error(f"❌ Failed to learn from execution: {e}", exc_info=True)

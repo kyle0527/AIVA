@@ -23,7 +23,13 @@ sys.path.append(str(Path(__file__).parent.parent.parent.parent.parent))
 from services.aiva_common.enums import RiskLevel
 
 # Compliance Note: 2025-10-26 - 移除重複定義，統一使用 bio_neuron_master.py 中的 OperationMode
-from ..bio_neuron_master import OperationMode
+# 避免循環導入，使用字符串類型註釋
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ..bio_neuron_master import OperationMode
+else:
+    OperationMode = "OperationMode"  # 運行時使用字符串
 
 
 class DecisionContext:

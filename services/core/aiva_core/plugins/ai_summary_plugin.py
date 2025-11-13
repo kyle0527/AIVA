@@ -1,15 +1,224 @@
 """
 AI 摘要插件 - 可插拔的智能分析模組
 獨立的摘要生成和分析系統，可隨時啟用或禁用
+
+整合功能：
+- v1 動態能力註冊
+- AI 模組智能編排
+- 統一插件管理
 """
 
 from datetime import datetime
 import json
 import logging
-from typing import Any
+import asyncio
+import inspect
+from typing import Any, Callable, Dict, Optional, List
+from pathlib import Path
 
 logger = logging.getLogger(__name__)
 
+
+# ==================== 統一能力註冊系統 ====================
+
+class EnhancedCapabilityRegistry:
+    """增強的能力註冊中心 - 整合 v1 和 AI 模組功能"""
+    
+    def __init__(self):
+        # 基礎註冊表 (來自 v1)
+        self._capabilities: Dict[str, Dict[str, Any]] = {}
+        
+        # 智能編排系統 (來自 AI 模組)
+        self._orchestration_rules: Dict[str, Dict[str, Any]] = {}
+        self._capability_dependencies: Dict[str, List[str]] = {}
+        
+        # 插件元數據系統
+        self._plugin_metadata: Dict[str, Dict[str, Any]] = {}
+        
+        # 統計和性能追蹤
+        self._stats = {
+            'total_registrations': 0,
+            'successful_executions': 0,
+            'failed_executions': 0,
+            'avg_execution_time': 0.0,
+        }
+        
+        logger.info("🎯 增強能力註冊中心已初始化")
+
+    def register_capability(self, 
+                          name: str, 
+                          fn: Callable[..., Any], 
+                          *, 
+                          description: str = "",
+                          version: str = "v1",
+                          category: str = "general",
+                          dependencies: Optional[List[str]] = None,
+                          orchestration_config: Optional[Dict[str, Any]] = None) -> None:
+        """註冊能力 - 支援依賴關係和編排配置"""
+        
+        # 基礎註冊 (v1 風格)
+        capability_info = {
+            "fn": fn,
+            "description": description,
+            "version": version,
+            "category": category,
+            "is_async": inspect.iscoroutinefunction(fn),
+            "signature": str(inspect.signature(fn)),
+            "registered_at": datetime.now().isoformat()
+        }
+        
+        self._capabilities[name] = capability_info
+        
+        # 依賴關係管理
+        if dependencies:
+            self._capability_dependencies[name] = dependencies
+            
+        # 編排配置 (AI 模組風格)
+        if orchestration_config:
+            self._orchestration_rules[name] = orchestration_config
+            
+        self._stats['total_registrations'] += 1
+        logger.info(f"✅ 已註冊能力: {name} (v{version})")
+
+    def discover_and_register(self, scan_paths: Optional[List[str]] = None) -> Dict[str, Any]:
+        """自動發現和註冊能力 - 來自 v1 的 try_autoload_features"""
+        
+        if not scan_paths:
+            scan_paths = ["services.features", "services.integration"]
+            
+        discovery_stats = {
+            'scanned_paths': scan_paths,
+            'discovered_capabilities': 0,
+            'registered_capabilities': 0,
+            'errors': []
+        }
+        
+        for module_path in scan_paths:
+            self._process_module_path(module_path, discovery_stats)
+        
+        logger.info(f"🔍 發現並註冊了 {discovery_stats['registered_capabilities']} 個能力")
+        return discovery_stats
+
+    def _process_module_path(self, module_path: str, discovery_stats: Dict[str, Any]) -> None:
+        """處理單個模組路徑"""
+        try:
+            import importlib
+            module = importlib.import_module(module_path)
+            
+            # 尋找註冊函數
+            for attr_name in dir(module):
+                attr = getattr(module, attr_name)
+                if callable(attr) and attr_name.startswith('register_'):
+                    self._try_register_function(attr, attr_name, discovery_stats)
+                        
+        except ImportError as e:
+            discovery_stats['errors'].append(f"{module_path}: {str(e)}")
+            
+    def _try_register_function(self, attr: Callable, attr_name: str, discovery_stats: Dict[str, Any]) -> None:
+        """嘗試執行註冊函數"""
+        try:
+            # 只處理同步註冊函數
+            if not inspect.iscoroutinefunction(attr):
+                attr(self)
+                discovery_stats['registered_capabilities'] += 1
+        except Exception as e:
+            discovery_stats['errors'].append(f"{attr_name}: {str(e)}")
+
+    async def execute_capability(self, name: str, **kwargs) -> Dict[str, Any]:
+        """執行能力 - 支援依賴解析和智能編排"""
+        
+        if name not in self._capabilities:
+            return {
+                'status': 'error',
+                'error': f'能力 {name} 未註冊'
+            }
+            
+        capability = self._capabilities[name]
+        start_time = datetime.now()
+        
+        try:
+            # 檢查並解析依賴
+            if name in self._capability_dependencies:
+                dependencies = self._capability_dependencies[name]
+                for dep in dependencies:
+                    if dep not in self._capabilities:
+                        return {
+                            'status': 'error',
+                            'error': f'依賴能力 {dep} 未找到'
+                        }
+                        
+            # 執行能力
+            fn = capability['fn']
+            if capability['is_async']:
+                result = await fn(**kwargs)
+            else:
+                result = fn(**kwargs)
+                
+            # 計算執行時間
+            execution_time = (datetime.now() - start_time).total_seconds()
+            
+            # 更新統計
+            self._stats['successful_executions'] += 1
+            self._update_avg_execution_time(execution_time)
+            
+            return {
+                'status': 'success',
+                'result': result,
+                'execution_time': execution_time,
+                'capability_info': {
+                    'name': name,
+                    'version': capability['version'],
+                    'category': capability['category']
+                }
+            }
+            
+        except Exception as e:
+            self._stats['failed_executions'] += 1
+            logger.error(f"❌ 能力執行失敗 {name}: {e}")
+            
+            return {
+                'status': 'error',
+                'error': str(e),
+                'execution_time': (datetime.now() - start_time).total_seconds()
+            }
+
+    def _update_avg_execution_time(self, new_time: float):
+        """更新平均執行時間"""
+        total_executions = self._stats['successful_executions']
+        if total_executions == 1:
+            self._stats['avg_execution_time'] = new_time
+        else:
+            current_avg = self._stats['avg_execution_time']
+            self._stats['avg_execution_time'] = (current_avg * (total_executions - 1) + new_time) / total_executions
+
+    def list_capabilities(self) -> Dict[str, Dict[str, Any]]:
+        """列出所有已註冊的能力"""
+        return {name: {
+            'description': info['description'],
+            'version': info['version'],
+            'category': info['category'],
+            'is_async': info['is_async'],
+            'signature': info['signature'],
+            'dependencies': self._capability_dependencies.get(name, []),
+            'has_orchestration': name in self._orchestration_rules
+        } for name, info in self._capabilities.items()}
+
+    def get_registry_stats(self) -> Dict[str, Any]:
+        """獲取註冊表統計信息"""
+        return {
+            **self._stats,
+            'total_capabilities': len(self._capabilities),
+            'categories': {info['category'] for info in self._capabilities.values()},
+            'async_capabilities': sum(1 for info in self._capabilities.values() if info['is_async']),
+            'orchestrated_capabilities': len(self._orchestration_rules)
+        }
+
+
+# 全域能力註冊表實例
+global_capability_registry = EnhancedCapabilityRegistry()
+
+
+# ==================== 插件系統增強 ====================
 
 class AISummaryPlugin:
     """AI 摘要插件 - 獨立的摘要生成系統"""
@@ -59,7 +268,7 @@ class AISummaryPlugin:
             "config": self.config,
         }
 
-    async def generate_summary(
+    def generate_summary(
         self, user_input: str, task_analysis: dict, result: dict, master_ai
     ) -> dict[str, Any] | None:
         """生成 AI 處理摘要"""
@@ -103,9 +312,7 @@ class AISummaryPlugin:
                     "method_used": result.get("processing_method", "unknown"),
                     "ai_coordination": result.get("unified_control", False),
                     "conflicts_avoided": result.get("ai_conflicts", 0) == 0,
-                    "efficiency_score": self._calculate_efficiency_score(
-                        task_analysis, result
-                    ),
+                    "efficiency_score": self._calculate_efficiency_score(result),
                 },
                 "ai_insights": {
                     "analysis": ai_analysis.get("tool_result", {}).get(
@@ -114,7 +321,7 @@ class AISummaryPlugin:
                     "recommendations": self._extract_recommendations(ai_analysis),
                     "confidence": task_analysis.get("confidence", 0.0),
                     "learning_points": self._identify_learning_points(
-                        user_input, task_analysis, result
+                        task_analysis, result
                     ),
                 },
             }
@@ -195,7 +402,7 @@ class AISummaryPlugin:
         else:
             return "高度複雜"
 
-    def _calculate_efficiency_score(self, task_analysis: dict, result: dict) -> float:
+    def _calculate_efficiency_score(self, result: dict) -> float:
         """計算處理效率分數"""
         base_score = 0.7
 
@@ -232,7 +439,7 @@ class AISummaryPlugin:
             return ["請人工檢查處理結果"]
 
     def _identify_learning_points(
-        self, user_input: str, task_analysis: dict, result: dict
+        self, task_analysis: dict, result: dict
     ) -> list[str]:
         """識別學習要點"""
         learning_points = []

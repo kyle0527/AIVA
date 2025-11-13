@@ -1,4 +1,4 @@
-# AIVA 性能優化配置指南
+# AIVA 性能優化配置指南 ✅ 11/10驗證
 
 > **📋 適用對象**: 開發者、DevOps工程師、性能調優人員  
 > **🎯 使用場景**: IDE性能優化、開發環境調優、多語言項目配置  
@@ -29,14 +29,14 @@
 ## 📋 各語言配置檔案清單
 
 ### 🐍 Python (Pylance)
-- 配置檔案: `.vscode/settings.json`, `pyrightconfig.json`
+- 配置檔案: `.vscode/settings.json` ✅ (pyrightconfig.json 不存在，使用 VS Code 設定)
 - 主要設定:
   - `diagnosticMode: "openFilesOnly"`
   - `diagnosticRefreshDelay: 30000`
   - `userFileIndexingLimit: -1` (無限制)
 
 ### 🟨 TypeScript/JavaScript (ESLint + TypeScript)
-- 配置檔案: `services/scan/aiva_scan_node/.eslintrc.json`
+- 配置檔案: `services/scan/aiva_scan_node/.eslintrc.json` ✅
 - 主要設定:
   - `eslint.run: "onSave"`
   - `typescript.disableAutomaticTypeAcquisition: true`

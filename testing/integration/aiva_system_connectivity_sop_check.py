@@ -39,14 +39,15 @@ logger = logging.getLogger(__name__)
 try:
     from services.core.aiva_core.ai_engine import (
         BioNeuronRAGAgent, AIModelManager, Tool, CodeReader, CodeWriter,
-        CodeAnalyzer, CommandExecutor, ScanTrigger, VulnerabilityDetector
+        CodeAnalyzer, CommandExecutor, ScanTrigger, VulnerabilityDetector,
+        PerformanceConfig
     )
     from services.core.aiva_core.learning import (
         ModelTrainer, ScalableBioTrainer,
         ScalableBioTrainingConfig
     )
     from services.aiva_common.ai import AIVAExperienceManager as ExperienceManager
-    from services.core.aiva_core.ai_engine import PerformanceConfig, MemoryManager, ComponentPool
+    from services.core.aiva_core.performance import MemoryManager, ComponentPool
     # 嘗試導入 aiva_common (如果前面 sys.path 設置正確，這裡應該能成功)
     import services.aiva_common
     IMPORT_SUCCESS = True

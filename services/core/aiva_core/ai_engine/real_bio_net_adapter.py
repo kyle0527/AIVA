@@ -41,13 +41,11 @@ class RealScalableBioNet:
         # 創建真實的AI核心（向後相容的尺寸）
         self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
         
-        # 構建符合AIVA預期的網路架構
-        # 保持500萬參數的目標
+        # 構建符合AIVA預期的網路架構，保持500萬參數的目標
         self.real_ai_core = RealAICore(
             input_size=input_size,
             hidden_sizes=[2048, 1024, 512],  # 與原始假AI類似的結構
-            output_size=num_tools,  # 輸出工具選擇
-            dropout_rate=0.1
+            output_size=num_tools
         ).to(self.device)
         
         # 載入權重（如果存在）
@@ -137,8 +135,8 @@ class RealScalableBioNet:
     def _fallback_forward(self, x: NDArray) -> NDArray:
         """降級方案 - 簡單的前向傳播"""
         # 創建隨機但一致的輸出
-        np.random.seed(hash(str(x.tobytes())) % 2**32)
-        output = np.random.random((x.shape[0] if x.ndim > 1 else 1, self.num_tools))
+        rng = np.random.default_rng(seed=hash(str(x.tobytes())) % 2**32)
+        output = rng.random((x.shape[0] if x.ndim > 1 else 1, self.num_tools))
         return self._softmax(output)
     
     def _softmax(self, x: NDArray) -> NDArray:
