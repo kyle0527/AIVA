@@ -53,7 +53,8 @@ try:
     if "AIVA_RABBITMQ_URL" not in os.environ:
         os.environ["AIVA_RABBITMQ_URL"] = "amqp://guest:guest@localhost:5672/"
 
-    from ...aiva_common.schemas import ExperienceSample, TraceRecord
+            # 僅在需要時導入，避免循環依賴
+        from aiva_common.schemas import ExperienceSample, TraceRecord
 
     SCHEMAS_AVAILABLE = True
 

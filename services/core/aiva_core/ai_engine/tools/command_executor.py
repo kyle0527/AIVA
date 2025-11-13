@@ -1,17 +1,32 @@
 """統一命令執行工具 - 整合所有命令執行功能
 
 將原本的 CommandExecutor 和 ShellCommandTool 整合為統一接口
-提供完整的命令執行能力，包含安全性、超時控制、輸出限制等特性
+提供完整的命令執行能力,包含安全性、超時控制、輸出限制等特性
 """
 
 import logging
+from abc import ABC, abstractmethod
 from pathlib import Path
 from typing import Any
 
-from . import Tool
 from .shell_command_tool import ShellCommandTool
 
 logger = logging.getLogger(__name__)
+
+
+class Tool(ABC):
+    """工具基礎抽象類別 - 避免循環導入"""
+    
+    def __init__(self, name: str, description: str) -> None:
+        self.name = name
+        self.description = description
+    
+    @abstractmethod
+    def execute(self, **kwargs: Any) -> dict[str, Any]:
+        ...
+    
+    def get_info(self) -> dict[str, str]:
+        return {"name": self.name, "description": self.description, "class": self.__class__.__name__}
 
 
 class CommandExecutor(Tool):

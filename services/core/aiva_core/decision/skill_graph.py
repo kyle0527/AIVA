@@ -10,12 +10,12 @@ from typing import Any
 
 import networkx as nx
 
-from services.aiva_common.enums import (
+from aiva_common.enums import (
     ProgrammingLanguage,
 )
-from services.aiva_common.schemas import CapabilityInfo
-from services.aiva_common.utils.logging import get_logger
-from services.integration.capability import CapabilityRegistry
+from aiva_common.schemas import CapabilityInfo
+from aiva_common.utils.logging import get_logger
+from services.integration.capability.registry import CapabilityRegistry
 
 logger = get_logger(__name__)
 

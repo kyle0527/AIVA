@@ -916,9 +916,9 @@ class APISecurityTest(BaseModel):
 
 # APIVulnerabilityFinding 已移除重複定義，統一使用 aiva_common.schemas.vulnerability_finding
 # 原 api_standards.py 中的 APIVulnerabilityFinding 於 2024-12-19 移除
-# 請使用: from services.aiva_common.schemas.vulnerability_finding import APIVulnerabilityFinding
+# 請使用: from aiva_common.schemas.vulnerability_finding import APIVulnerabilityFinding
 
-from services.aiva_common.schemas.vulnerability_finding import APIVulnerabilityFinding
+from .vulnerability_finding import APIVulnerabilityFinding
 
 
 # 前向引用解決

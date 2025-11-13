@@ -19,7 +19,7 @@ from typing import Any
 
 from pydantic import BaseModel, Field, field_validator
 
-from ..aiva_common.enums import (
+from aiva_common.enums import (
     AttackPathEdgeType,
     AttackPathNodeType,
     ComplianceFramework,
@@ -29,7 +29,7 @@ from ..aiva_common.enums import (
     Severity,
     TaskStatus,
 )
-from ..aiva_common.schemas import (
+from aiva_common.schemas import (
     CVEReference,
     CVSSv3Metrics,
     CWEReference,

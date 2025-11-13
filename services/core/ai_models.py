@@ -20,14 +20,14 @@ from typing import Any
 
 from pydantic import BaseModel, Field
 
-from ..aiva_common.enums import (
+from aiva_common.enums import (
     Confidence,
     ModuleName,
     RiskLevel,
     Severity,
     TestStatus,
 )
-from ..aiva_common.schemas import (
+from aiva_common.schemas import (
     RAGResponsePayload,
     AIVerificationRequest,
     AITrainingStartPayload,

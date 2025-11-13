@@ -10,7 +10,7 @@ import logging
 import time
 from typing import Any
 
-from ...aiva_common.cross_language import AIVAError
+from aiva_common.cross_language import AIVAError
 
 
 class CommandType(Enum):

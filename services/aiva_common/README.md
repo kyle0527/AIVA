@@ -1,7 +1,9 @@
 # AIVA Common - Bug Bounty 專業化共享庫
 
+**導航**: [← 返回 Services 總覽](../README.md) | [📖 文檔中心](../../docs/README.md)
+
 [![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
-[![Bug Bounty Ready](https://img.shields.io/badge/Bug%20Bounty-v6.0%20Ready-brightgreen.svg)](https://github.com/)
+[![Bug Bounty Ready](https://img.shields.io/badge/Bug%20Bounty-v6.1%20Ready-brightgreen.svg)](https://github.com/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 [![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
@@ -27,9 +29,9 @@
 
 ## 📋 概述
 
-> **🎯 Bug Bounty 專業化 v6.0**: 跨語言統一數據標準，專精動態檢測，移除 SAST 冗餘  
-> **✅ 系統狀態**: 100% Bug Bounty 就緒，跨語言 Schema 100% 統一成功  
-> **🔄 最後更新**: 2025年11月5日
+> **🎯 Bug Bounty 專業化 v6.1**: 跨語言統一數據標準，專精動態檢測，移除 SAST 冗餘  
+> **✅ 系統狀態**: 100% Bug Bounty 就緒，跨語言 Schema 100% 統一成功，P0-P2架構修復完成  
+> **🔄 最後更新**: 2025年11月13日
 
 **AIVA Common** 是 AIVA Bug Bounty 專業化平台的現代化 Python 共享庫，基於 2024-2025 年最佳實踐，提供統一的數據模型、配置管理、可觀測性、異步工具和插件架構，專為實戰滲透測試和動態漏洞檢測設計。
 
@@ -1903,6 +1905,44 @@ references_standard = {
 - **專案維護者**: AIVA 開發團隊
 - **問題回報**: 請使用 GitHub Issues
 - **功能請求**: 請使用 GitHub Discussions
+
+---
+
+## 🚀 **2025年11月最新更新**
+
+### **📊 支援 Core 模組架構升級** (2025-11-13)
+
+**關鍵改進**:
+- ✅ **依賴注入模式**: 支援 Core 的 AI Controller 重構
+- ✅ **語義編碼整合**: 為 sentence-transformers 提供標準化 Schema
+- ✅ **NLU重試機制**: 擴展異常處理枚舉,支援特定異常捕獲
+- ✅ **命令安全解析**: 提供安全執行相關的標準定義
+- ✅ **RAG架構簡化**: 優化知識檢索相關 Schema 結構
+
+**新增/更新的支援**:
+```python
+# 新增枚舉支援語義分析
+from aiva_common.enums import AsyncTaskStatus, RetryStrategy
+
+# 擴展 Schema 支援 AI 語義編碼
+from aiva_common.schemas import (
+    AsyncTaskConfig,      # 異步任務配置
+    RetryConfig,          # 重試策略配置
+    SemanticVector,       # 語義向量表示 (新增)
+    CodeAnalysisResult    # 代碼分析結果 (新增)
+)
+```
+
+**與 Core 模組的協同提升**:
+- 🔗 提供統一的異步任務管理 Schema
+- 🔗 支援 AI 語義分析的數據結構
+- 🔗 標準化錯誤處理和重試機制
+- 🔗 優化跨模組通信效率
+
+**版本同步**:
+- Core v6.1 ✅
+- Common v6.1 ✅
+- Schema 一致性驗證 ✅
 
 ---
 

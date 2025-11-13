@@ -76,29 +76,54 @@
 
 ## 🚀 **快速開始**
 
+> **✅ 安裝狀態**: 本專案已完成初始安裝設定 (2025-11-13)  
+> 詳細安裝說明請參考 [INSTALLATION_GUIDE.md](./INSTALLATION_GUIDE.md)
+
 ### **環境需求**
-- Python 3.8+
-- Node.js 16+
-- Go 1.19+
-- Rust 1.70+
-- Docker & Docker Compose
+- Python 3.13+ (已安裝: 3.13.9)
+- Node.js 16+ (可選)
+- Go 1.19+ (可選)
+- Rust 1.70+ (可選)
+- Docker & Docker Compose (可選)
 
-### **安裝與啟動**
+### **快速啟動 (已安裝環境)**
 
-```bash
-# 克隆專案
-git clone https://github.com/kyle0527/AIVA.git
-cd AIVA
+```powershell
+# 激活虛擬環境
+& C:/D/fold7/AIVA-git/.venv/Scripts/Activate.ps1
 
-# 設置環境
-./setup_env.ps1
+# 驗證安裝
+python -m pip list | Select-String "aiva"
+# 預期輸出: aiva-platform-integrated 1.0.0
 
-# 啟動AIVA (Windows)
-.\start-aiva.ps1
+# 執行測試
+pytest services/core/tests/ -v
 
-# 啟動AIVA (Linux/macOS)
-./start-aiva.sh
+# 啟動服務 (如需要)
+uvicorn api.main:app --reload
 ```
+
+### **首次安裝 (新環境)**
+
+```powershell
+# 切換到專案目錄
+cd C:\D\fold7\AIVA-git
+
+# 建立並激活虛擬環境
+python -m venv .venv
+& .venv\Scripts\Activate.ps1
+
+# 安裝專案 (可編輯模式)
+pip install -e .
+
+# 安裝完整依賴
+pip install -r requirements.txt
+
+# 驗證安裝
+pip list | Select-String "aiva"
+```
+
+**詳細安裝步驟**: 請參考 [INSTALLATION_GUIDE.md](./INSTALLATION_GUIDE.md)
 
 ### **使用範例**
 

@@ -1,0 +1,55 @@
+[project]
+name = "aiva-services"
+version = "1.0.0"
+description = "AIVA Multi-Service Package - Core, Common, Features, Integration, and Scan modules"
+readme = "README.md"
+requires-python = ">=3.9"
+license = {text = "MIT"}
+
+dependencies = [
+    "pydantic>=2.0.0",
+    "fastapi",
+    "pytest>=8.0.0",
+    "pytest-asyncio>=0.21.0",
+]
+
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+# 使用 src-layout: services/ 是我們的源碼根目錄
+package-dir = {"" = "."}
+
+[tool.setuptools.packages.find]
+where = ["."]
+# 明確包含所有子包
+include = [
+    "aiva_common",
+    "aiva_common.*",
+    "core",
+    "core.*", 
+    "features",
+    "features.*",
+    "integration",
+    "integration.*",
+    "scan",
+    "scan.*",
+]
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
+asyncio_mode = "auto"
+testpaths = [
+    "core/tests",
+    "features/tests",
+    "integration/tests", 
+    "scan/tests",
+]
+
+# Pytest configuration
+addopts = [
+    "-v",
+    "--strict-markers",
+    "--tb=short",
+]

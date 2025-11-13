@@ -4,11 +4,18 @@
 從經驗庫提取樣本並對 AI 決策模型進行微調
 """
 
-from ...learning.model_trainer import ModelTrainer
-from ...learning.scalable_bio_trainer import (
-    ScalableBioTrainer,
-    ScalableBioTrainingConfig,
-)
+try:
+    from ...learning.model_trainer import ModelTrainer
+    from ...learning.scalable_bio_trainer import (
+        ScalableBioTrainer,
+        ScalableBioTrainingConfig,
+    )
+except (ImportError, ValueError):
+    from services.core.aiva_core.learning.model_trainer import ModelTrainer
+    from services.core.aiva_core.learning.scalable_bio_trainer import (
+        ScalableBioTrainer,
+        ScalableBioTrainingConfig,
+    )
 from .data_loader import ExperienceDataLoader
 from .model_updater import ModelUpdater
 

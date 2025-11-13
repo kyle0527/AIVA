@@ -9,7 +9,7 @@ import logging
 import time
 from typing import Any
 
-from ...aiva_common.cross_language import create_error_context, get_error_handler
+from aiva_common.cross_language import create_error_context, get_error_handler
 from .command_router import CommandContext, CommandType, ExecutionResult
 
 

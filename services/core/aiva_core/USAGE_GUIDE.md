@@ -3,12 +3,124 @@
 > **🎯 目的**: AIVA Core 新一代AI自主安全代理核心引擎使用教學  
 > **👥 適用對象**: Bug Bounty獵人、安全研究員、AI開發者  
 > **⚡ 核心特色**: 5M參數BioNeuron + 四種協作模式 + 完全自主執行  
-> **📅 版本**: v2.0.0-dev | **最後更新**: 2025年11月10日
+> **📅 版本**: v2.0.0-dev | **最後更新**: 2025年11月13日
+
+---
+
+## ✅ **安裝狀態**
+
+**已完成專案安裝** (2025-11-13)
+
+- ✅ Python 虛擬環境: `.venv/`
+- ✅ 套件: `aiva-platform-integrated 1.0.0`
+- ✅ 可編輯模式安裝完成
+- ✅ 所有依賴已安裝
+
+**快速驗證**:
+```powershell
+# 激活虛擬環境
+& C:/D/fold7/AIVA-git/.venv/Scripts/Activate.ps1
+
+# 檢查安裝狀態
+pip list | Select-String "aiva"
+# 預期輸出: aiva-platform-integrated 1.0.0
+
+# 測試導入
+python -c "import services; print('✓ AIVA Core 已就緒')"
+```
+
+**詳細安裝指南**: [INSTALLATION_GUIDE.md](../../../INSTALLATION_GUIDE.md)
+
+---
+
+## 🧪 **測試驗證指南**
+
+### **ModuleExplorer 測試** ✅ **已驗證通過**
+
+**測試狀態** (2025-11-13):
+- ✅ 所有 11 個測試用例通過
+- ✅ 修復了 `ModuleName.FEATURES` 枚舉缺失問題  
+- ✅ 修復了文件編碼讀取問題 (支援 UTF-8/GBK/Latin1)
+- ✅ 修復了相對導入問題
+
+**執行測試的正確方式**:
+```powershell
+# 1. 激活虛擬環境 (必須!)
+& C:/D/fold7/AIVA-git/.venv/Scripts/Activate.ps1
+
+# 2. 切換到項目根目錄 (重要!)
+cd C:\D\fold7\AIVA-git
+
+# 3. 執行完整測試套件
+python -m pytest services/core/tests/test_module_explorer.py -v
+
+# 4. 執行單一測試
+python -m pytest services/core/tests/test_module_explorer.py::TestModuleExplorer::test_initialization -v
+
+# 5. 測試導入是否成功
+python -c "from services.core.aiva_core.ai_engine.module_explorer import ModuleExplorer; print('ModuleExplorer import successful')"
+```
+
+**預期輸出**:
+```
+============== 11 passed, 20 warnings in 9.22s ===============
+```
+
+**已解決的問題**:
+1. **枚舉缺失**: 在 `aiva_common/enums/modules.py` 中添加了 `FEATURES = "FeaturesModule"`
+2. **編碼問題**: 在 `module_explorer.py` 中添加了多層編碼處理 (UTF-8 → GBK → Latin1)
+3. **導入錯誤**: 修改了模組映射使用直接字符串而非枚舉值調用
+
+### **相對導入修復** ✅ **已驗證通過**
+
+**修復狀態** (2025-11-13):
+- ✅ 修復了 `ImportError: attempted relative import beyond top-level package`
+- ✅ 修復了 `ImportError: attempted relative import with no known parent package`  
+- ✅ 修復了 `ModuleNotFoundError: No module named 'services'`
+
+**驗證相對導入修復**:
+```powershell
+# 從項目根目錄測試導入
+cd C:\D\fold7\AIVA-git
+python -c "import services.core.aiva_core; print('All imports successful!')"
+
+# 測試 pytest 執行 (應無導入錯誤)
+python -m pytest services/core/aiva_core/ -v --tb=short
+```
+
+**修復技術**:
+- 使用 **try-except 條件導入模式**
+- 優先嘗試相對導入，失敗時自動降級到絕對導入  
+- 動態添加項目根目錄到 `sys.path`
+
+### **測試最佳實踐**
+
+**⚠️ 常見錯誤避免**:
+```powershell
+# ❌ 錯誤: 在錯誤目錄執行測試
+cd C:\D\fold7\AIVA-git\services\core
+python -m pytest tests/test_module_explorer.py  # 找不到文件
+
+# ✅ 正確: 從項目根目錄執行
+cd C:\D\fold7\AIVA-git
+python -m pytest services/core/tests/test_module_explorer.py
+```
+
+**📝 測試記錄模板**:
+```bash
+# 執行測試並記錄結果
+python -m pytest services/core/tests/test_module_explorer.py -v > test_results.log 2>&1
+
+# 檢查測試結果
+Get-Content test_results.log | Select-String -Pattern "PASSED|FAILED|ERROR"
+```
 
 ---
 
 ## 📋 **目錄**
 
+- [✅ 安裝狀態](#-安裝狀態)
+- [🧪 測試驗證指南](#-測試驗證指南)
 - [🚀 快速開始](#-快速開始)
 - [🎮 不同模式使用範例](#-不同模式使用範例)
 - [⚙️ 高級配置](#️-高級配置)
@@ -453,7 +565,69 @@ async def continuous_security_monitoring(assets):
 
 ## 🔧 **故障排除**
 
-### **常見問題解決**
+### **測試和導入問題** 🧪
+
+#### **1. ModuleExplorer 測試失敗**
+
+**問題**: `AttributeError: type object 'ModuleName' has no attribute 'FEATURES'`
+```powershell
+# 解決方案: 檢查枚舉定義
+python -c "from aiva_common.enums.modules import ModuleName; print(dir(ModuleName))"
+
+# 如果缺少 FEATURES，需要在 aiva_common/enums/modules.py 中添加:
+# FEATURES = "FeaturesModule"
+```
+
+#### **2. 文件編碼錯誤**
+
+**問題**: `'utf-8' codec can't decode byte 0xb4 in position 5`
+```powershell
+# 解決方案已內建在 module_explorer.py 中，會自動嘗試多種編碼:
+# UTF-8 → GBK → Latin1
+# 如果仍有問題，檢查文件編碼:
+file -i path/to/problem_file.py
+```
+
+#### **3. 相對導入錯誤**
+
+**問題**: `ImportError: attempted relative import beyond top-level package`
+```powershell
+# 解決方案: 確保從正確目錄執行
+cd C:\D\fold7\AIVA-git  # 必須在項目根目錄
+
+# 測試導入是否成功
+python -c "import services.core.aiva_core"
+
+# 如果仍失敗，檢查 sys.path
+python -c "import sys; print('\n'.join(sys.path))"
+```
+
+#### **4. 測試文件找不到**
+
+**問題**: `ERROR: file or directory not found`
+```powershell
+# 檢查文件路徑是否正確
+ls services/core/tests/test_module_explorer.py
+
+# 確保使用正確的相對路徑
+python -m pytest services/core/tests/test_module_explorer.py -v
+```
+
+### **開發環境問題**
+
+#### **5. 虛擬環境未激活**
+```powershell
+# 檢查是否在虛擬環境中
+python -c "import sys; print(sys.prefix)"
+
+# 激活虛擬環境
+& C:/D/fold7/AIVA-git/.venv/Scripts/Activate.ps1
+
+# 驗證激活成功 (應顯示 .venv 路徑)
+which python
+```
+
+### **AI相關問題**
 
 #### **1. AI決策速度慢**
 
@@ -554,7 +728,43 @@ AIVA Core使用指南涵蓋了從基礎使用到高級配置的完整流程。�
 
 ---
 
-**📝 文檔版本**: v1.0.0  
-**🔄 最後更新**: 2025年11月10日  
+## ✅ **快速檢查清單**
+
+### **開發環境檢查** (執行前必檢)
+```powershell
+# 1. 檢查虛擬環境
+& C:/D/fold7/AIVA-git/.venv/Scripts/Activate.ps1
+python -c "import sys; print('✓ Python:', sys.executable)"
+
+# 2. 檢查工作目錄
+cd C:\D\fold7\AIVA-git
+pwd  # 應顯示: C:\D\fold7\AIVA-git
+
+# 3. 檢查核心導入
+python -c "import services.core.aiva_core; print('✓ AIVA Core 導入成功')"
+
+# 4. 檢查測試環境
+python -m pytest --version
+python -m pytest services/core/tests/test_module_explorer.py::TestModuleExplorer::test_initialization -v
+```
+
+### **故障排除檢查清單**
+- [ ] 虛擬環境已激活 (`(.venv)` 顯示在提示符中)
+- [ ] 工作目錄為項目根目錄 (`C:\D\fold7\AIVA-git`)
+- [ ] Python 版本正確 (>=3.9)
+- [ ] 所有依賴已安裝 (`pip list | Select-String aiva`)
+- [ ] 核心模組可正常導入
+- [ ] 測試文件路徑正確
+- [ ] 枚舉定義完整 (包含 `FEATURES`)
+
+### **成功測試的標準輸出**
+```
+============== 11 passed, 20 warnings in 9.22s ===============
+```
+
+---
+
+**📝 文檔版本**: v1.1.0  
+**🔄 最後更新**: 2025年11月13日 - 添加測試驗證指南  
 **👥 維護團隊**: AIVA Core Development Team  
 **📧 支持聯繫**: 請參考主項目文檔聯繫方式

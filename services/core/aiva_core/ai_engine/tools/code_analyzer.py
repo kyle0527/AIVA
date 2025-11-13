@@ -5,10 +5,20 @@
 """
 
 import ast
+from abc import ABC, abstractmethod
 from pathlib import Path
 from typing import Any
 
-from . import Tool
+
+class Tool(ABC):
+    """工具基礎抽象類別"""
+    def __init__(self, name: str, description: str) -> None:
+        self.name = name
+        self.description = description
+    @abstractmethod
+    def execute(self, **kwargs: Any) -> dict[str, Any]: ...
+    def get_info(self) -> dict[str, str]:
+        return {"name": self.name, "description": self.description, "class": self.__class__.__name__}
 
 
 class CodeAnalyzer(Tool):

@@ -8,10 +8,16 @@ from pathlib import Path
 import pickle
 from typing import Any
 
-from ...learning.scalable_bio_trainer import (
-    ScalableBioTrainer,
-    ScalableBioTrainingConfig,
-)
+try:
+    from ...learning.scalable_bio_trainer import (
+        ScalableBioTrainer,
+        ScalableBioTrainingConfig,
+    )
+except (ImportError, ValueError):
+    from services.core.aiva_core.learning.scalable_bio_trainer import (
+        ScalableBioTrainer,
+        ScalableBioTrainingConfig,
+    )
 from .data_loader import ExperienceDataLoader
 
 logger = logging.getLogger(__name__)

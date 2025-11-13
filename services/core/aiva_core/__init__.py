@@ -210,8 +210,8 @@ def get_migration_phase() -> MigrationPhase:
 
 # ==================== 原有導入保持不變 ====================
 
-# 從 aiva_common 導入共享基礎設施
-from services.aiva_common.enums import (
+# 從 aiva_common 導入共享基礎設施 (修復: 移除錯誤的 services. 前綴)
+from aiva_common.enums import (
     ComplianceFramework,
     Confidence,
     ModuleName,
@@ -222,42 +222,86 @@ from services.aiva_common.enums import (
     TaskStatus,
     Topic,
 )
-from services.aiva_common.schemas import CVEReference, CVSSv3Metrics, CWEReference
+from aiva_common.schemas import CVEReference, CVSSv3Metrics, CWEReference
 
-# 從 core.ai_models 導入 AI 系統相關模型
-from services.core.ai_models import (
-    AIExperienceCreatedEvent,
-    AIModelDeployCommand,
-    AIModelUpdatedEvent,
-    AITraceCompletedEvent,
-    AITrainingCompletedPayload,
-    AITrainingProgressPayload,
-    AITrainingStartPayload,
-    AIVACommand,
-    AIVAEvent,
-    AIVARequest,
-    AIVAResponse,
-    AIVerificationRequest,
-    AIVerificationResult,
-    AttackPlan,
-    AttackStep,
-    ExperienceSample,
-    ModelTrainingConfig,
-    ModelTrainingResult,
-    PlanExecutionMetrics,
-    PlanExecutionResult,
-    RAGKnowledgeUpdatePayload,
-    RAGQueryPayload,
-    RAGResponsePayload,
-    ScenarioTestResult,
-    SessionState,
-    StandardScenario,
-    TraceRecord,
-)
+# 從 core.ai_models 導入 AI 系統相關模型 (修復: ai_models 在 services/core/ 目錄)
+# 使用更智能的條件導入處理相對導入問題
+try:
+    # 首先嘗試相對導入 (當作為正確包導入時)
+    from ..ai_models import (
+        AIExperienceCreatedEvent,
+        AIModelDeployCommand,
+        AIModelUpdatedEvent,
+        AITraceCompletedEvent,
+        AITrainingCompletedPayload,
+        AITrainingProgressPayload,
+        AITrainingStartPayload,
+        AIVACommand,
+        AIVAEvent,
+        AIVARequest,
+        AIVAResponse,
+        AIVerificationRequest,
+        AIVerificationResult,
+        AttackPlan,
+        AttackStep,
+        ExperienceSample,
+        ModelTrainingConfig,
+        ModelTrainingResult,
+        PlanExecutionMetrics,
+        PlanExecutionResult,
+        RAGKnowledgeUpdatePayload,
+        RAGQueryPayload,
+        RAGResponsePayload,
+        ScenarioTestResult,
+        SessionState,
+        StandardScenario,
+        TraceRecord,
+    )
+except (ImportError, ValueError):
+    # 如果相對導入失敗，使用絕對導入
+    import sys
+    import os
+    # 添加項目根目錄到 sys.path
+    _current_path = os.path.dirname(os.path.abspath(__file__))  # aiva_core 目錄
+    _services_core_path = os.path.dirname(_current_path)  # services/core 目錄
+    _services_path = os.path.dirname(_services_core_path)  # services 目錄  
+    _project_root = os.path.dirname(_services_path)  # 項目根目錄
+    if _project_root not in sys.path:
+        sys.path.insert(0, _project_root)
+    
+    from services.core.ai_models import (
+        AIExperienceCreatedEvent,
+        AIModelDeployCommand,
+        AIModelUpdatedEvent,
+        AITraceCompletedEvent,
+        AITrainingCompletedPayload,
+        AITrainingProgressPayload,
+        AITrainingStartPayload,
+        AIVACommand,
+        AIVAEvent,
+        AIVARequest,
+        AIVAResponse,
+        AIVerificationRequest,
+        AIVerificationResult,
+        AttackPlan,
+        AttackStep,
+        ExperienceSample,
+        ModelTrainingConfig,
+        ModelTrainingResult,
+        PlanExecutionMetrics,
+        PlanExecutionResult,
+        RAGKnowledgeUpdatePayload,
+        RAGQueryPayload,
+        RAGResponsePayload,
+        ScenarioTestResult,
+        SessionState,
+        StandardScenario,
+        TraceRecord,
+    )
 
 # 從 core.models 導入核心業務邏輯模型
 # 從 aiva_common.schemas 導入共享標準模型
-from services.aiva_common.schemas import (
+from aiva_common.schemas import (
     ConfigUpdatePayload,
     FeedbackEventPayload,
     FindingEvidence,
@@ -272,32 +316,60 @@ from services.aiva_common.schemas import (
     TaskUpdatePayload,
 )
 
-# 從 services.core.models 導入核心擴展模型
-from services.core.models import (
-    AttackPathEdge,
-    AttackPathNode,
-    AttackPathPayload,
-    AttackPathRecommendation,
-    CodeLevelRootCause,
-    EnhancedAttackPath,
-    EnhancedAttackPathNode,
-    EnhancedFindingPayload,
-    EnhancedModuleStatus,
-    EnhancedRiskAssessment,
-    EnhancedTaskExecution,
-    EnhancedVulnerability,
-    EnhancedVulnerabilityCorrelation,
-    RiskAssessmentContext,
-    RiskAssessmentResult,
-    RiskFactor,
-    RiskTrendAnalysis,
-
-    SystemOrchestration,
-    TaskDependency,
-    TaskQueue,
-    TestStrategy,
-    VulnerabilityCorrelation,
-)
+# 從 core.models 導入核心擴展模型（conftest.py 已將 services/core/ 加入 Python 路徑）
+# 使用智能條件導入處理相對導入問題
+try:
+    # 首先嘗試相對導入
+    from ..models import (
+        AttackPathEdge,
+        AttackPathNode,
+        AttackPathPayload,
+        AttackPathRecommendation,
+        CodeLevelRootCause,
+        EnhancedAttackPath,
+        EnhancedAttackPathNode,
+        EnhancedFindingPayload,
+        EnhancedModuleStatus,
+        EnhancedRiskAssessment,
+        EnhancedTaskExecution,
+        EnhancedVulnerability,
+        EnhancedVulnerabilityCorrelation,
+        RiskAssessmentContext,
+        RiskAssessmentResult,
+        RiskFactor,
+        RiskTrendAnalysis,
+        SystemOrchestration,
+        TaskDependency,
+        TaskQueue,
+        TestStrategy,
+        VulnerabilityCorrelation,
+    )
+except (ImportError, ValueError):
+    # 如果相對導入失敗，使用絕對導入
+    from services.core.models import (
+        AttackPathEdge,
+        AttackPathNode,
+        AttackPathPayload,
+        AttackPathRecommendation,
+        CodeLevelRootCause,
+        EnhancedAttackPath,
+        EnhancedAttackPathNode,
+        EnhancedFindingPayload,
+        EnhancedModuleStatus,
+        EnhancedRiskAssessment,
+        EnhancedTaskExecution,
+        EnhancedVulnerability,
+        EnhancedVulnerabilityCorrelation,
+        RiskAssessmentContext,
+        RiskAssessmentResult,
+        RiskFactor,
+        RiskTrendAnalysis,
+        SystemOrchestration,
+        TaskDependency,
+        TaskQueue,
+        TestStrategy,
+        VulnerabilityCorrelation,
+    )
 
 # 從新遷移的核心服務組件導入 (從 aiva_core_v2 遷移而來)
 from .command_router import (

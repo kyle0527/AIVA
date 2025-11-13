@@ -30,7 +30,7 @@ from .performance import (
     monitor_performance,
     UnifiedMemoryManager,
 )
-from ...aiva_common.schemas import APIResponse
+from aiva_common.schemas import APIResponse
 
 # ==================== AI 模型優化 ====================
 

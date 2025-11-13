@@ -232,6 +232,7 @@ class ModuleName(str, Enum):
     CORE = "CoreModule"
     SCAN = "ScanModule"
     INTEGRATION = "IntegrationModule"
+    FEATURES = "FeaturesModule"
     FUNCTION = "FunctionModule"
     FUNC_XSS = "FunctionXSS"
     FUNC_SQLI = "FunctionSQLI"
