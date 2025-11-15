@@ -11,7 +11,7 @@ from .vector_store import VectorStore
 
 __all__ = [
     "KnowledgeBase",
-    "RAGEngine",
+    "RAGEngine", 
     "VectorStore",
     "UnifiedVectorStore",
     "create_unified_vector_store",

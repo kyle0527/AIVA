@@ -18,6 +18,12 @@ from aiva_common.cross_language import (
     error_handler,
     get_cross_language_service,
 )
+from aiva_common.error_handling import (
+    AIVAError,
+    ErrorSeverity,
+    ErrorType,
+    create_error_context,
+)
 from aiva_common.monitoring import (
     MetricType,
     get_monitoring_service,
@@ -547,7 +553,15 @@ async def initialize_core_module() -> dict[str, Any]:
 
         logging.getLogger("aiva_core_module").error(f"核心模組初始化失敗: {e}")
 
-        raise RuntimeError(f"核心模組初始化失敗: {e}") from e
+        raise AIVAError(
+            f"核心模組初始化失敗: {e}",
+            error_type=ErrorType.SYSTEM,
+            severity=ErrorSeverity.CRITICAL,
+            context=create_error_context(
+                module="aiva_core.core_service_coordinator",
+                function="initialize_core_module"
+            )
+        ) from e
 
 
 async def shutdown_core_module() -> dict[str, Any]:

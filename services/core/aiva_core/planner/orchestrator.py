@@ -8,11 +8,20 @@ import logging
 from typing import Any
 from uuid import uuid4
 
+# aiva_common 統一錯誤處理
+from aiva_common.error_handling import (
+    AIVAError,
+    ErrorType,
+    ErrorSeverity,
+    create_error_context,
+)
+
 from .ast_parser import ASTParser, AttackFlowGraph
 from .task_converter import ExecutableTask, TaskConverter, TaskSequence, TaskStatus
 from .tool_selector import ToolDecision, ToolSelector
 
 logger = logging.getLogger(__name__)
+MODULE_NAME = "planner_orchestrator"
 
 
 @dataclass
@@ -66,7 +75,12 @@ class AttackOrchestrator:
         elif isinstance(ast_input, AttackFlowGraph):
             graph = ast_input
         else:
-            raise ValueError(f"Unsupported AST input type: {type(ast_input)}")
+            raise AIVAError(
+                f"Unsupported AST input type: {type(ast_input)}",
+                error_type=ErrorType.VALIDATION,
+                severity=ErrorSeverity.MEDIUM,
+                context=create_error_context(module=MODULE_NAME, function="create_execution_plan")
+            )
 
         # 2. 轉換為任務序列
         task_sequence = self.task_converter.convert(graph)

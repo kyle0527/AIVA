@@ -9,7 +9,16 @@ from enum import Enum
 import logging
 from typing import Any
 
+# aiva_common 統一錯誤處理
+from aiva_common.error_handling import (
+    AIVAError,
+    ErrorType,
+    ErrorSeverity,
+    create_error_context,
+)
+
 logger = logging.getLogger(__name__)
+MODULE_NAME = "ast_parser"
 
 
 class NodeType(str, Enum):
@@ -78,9 +87,19 @@ class AttackFlowGraph:
     def add_edge(self, edge: AttackFlowEdge) -> None:
         """添加邊"""
         if edge.from_node not in self.nodes:
-            raise ValueError(f"Source node {edge.from_node} not found")
+            raise AIVAError(
+                f"Source node {edge.from_node} not found",
+                error_type=ErrorType.VALIDATION,
+                severity=ErrorSeverity.MEDIUM,
+                context=create_error_context(module=MODULE_NAME, function="add_edge")
+            )
         if edge.to_node not in self.nodes:
-            raise ValueError(f"Target node {edge.to_node} not found")
+            raise AIVAError(
+                f"Target node {edge.to_node} not found",
+                error_type=ErrorType.VALIDATION,
+                severity=ErrorSeverity.MEDIUM,
+                context=create_error_context(module=MODULE_NAME, function="add_edge")
+            )
         self.edges.append(edge)
 
     def get_start_node(self) -> AttackFlowNode | None:

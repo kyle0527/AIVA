@@ -1,7 +1,7 @@
 from typing import Any
 
 from services.aiva_common.schemas import Asset, ScanCompletedPayload
-from services.core.aiva_core.schemas import (
+from services.core.aiva_core.business_schemas import (
     AssetAnalysis,
     AttackSurfaceAnalysis,
     IdorCandidate,

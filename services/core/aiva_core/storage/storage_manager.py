@@ -7,9 +7,12 @@ import logging
 from pathlib import Path
 from typing import Any
 
+from aiva_common.error_handling import AIVAError, ErrorType, ErrorSeverity, create_error_context
+
 from .backends import HybridBackend, JSONLBackend, PostgreSQLBackend, SQLiteBackend
 
 logger = logging.getLogger(__name__)
+MODULE_NAME = "storage_manager"
 
 
 class StorageManager:
@@ -159,12 +162,22 @@ class StorageManager:
             return HybridBackend(db_backend=db_backend, jsonl_backend=jsonl_backend)
 
         else:
-            raise ValueError(f"Unknown database type: {self.db_type}")
+            raise AIVAError(
+                f"Unknown database type: {self.db_type}",
+                error_type=ErrorType.CONFIGURATION,
+                severity=ErrorSeverity.HIGH,
+                context=create_error_context(module=MODULE_NAME, function="_init_backend")
+            )
 
     def get_path(self, category: str, subcategory: str | None = None) -> Path:
         """獲取數據路徑"""
         if category not in self.dirs:
-            raise ValueError(f"Unknown category: {category}")
+            raise AIVAError(
+                f"Unknown category: {category}",
+                error_type=ErrorType.VALIDATION,
+                severity=ErrorSeverity.MEDIUM,
+                context=create_error_context(module=MODULE_NAME, function="get_path")
+            )
 
         if subcategory:
             paths = self.dirs[category]
@@ -172,21 +185,39 @@ class StorageManager:
                 result = paths[subcategory]
                 if isinstance(result, Path):
                     return result
-                raise TypeError(
-                    f"Path for {category}/{subcategory} is not a Path object"
+                raise AIVAError(
+                    f"Path for {category}/{subcategory} is not a Path object",
+                    error_type=ErrorType.SYSTEM,
+                    severity=ErrorSeverity.HIGH,
+                    context=create_error_context(module=MODULE_NAME, function="get_path")
                 )
             else:
-                raise ValueError(f"Unknown subcategory: {subcategory} in {category}")
+                raise AIVAError(
+                    f"Unknown subcategory: {subcategory} in {category}",
+                    error_type=ErrorType.VALIDATION,
+                    severity=ErrorSeverity.MEDIUM,
+                    context=create_error_context(module=MODULE_NAME, function="get_path")
+                )
 
         paths = self.dirs[category]
         if isinstance(paths, dict):
             result = paths.get("root")
             if isinstance(result, Path):
                 return result
-            raise TypeError(f"Root path for {category} is not a Path object")
+            raise AIVAError(
+                f"Root path for {category} is not a Path object",
+                error_type=ErrorType.SYSTEM,
+                severity=ErrorSeverity.HIGH,
+                context=create_error_context(module=MODULE_NAME, function="get_path")
+            )
         if isinstance(paths, Path):
             return paths
-        raise TypeError(f"Path for {category} is not a Path object")
+        raise AIVAError(
+            f"Path for {category} is not a Path object",
+            error_type=ErrorType.SYSTEM,
+            severity=ErrorSeverity.HIGH,
+            context=create_error_context(module=MODULE_NAME, function="get_path")
+        )
 
     async def get_statistics(self) -> dict[str, Any]:
         """獲取完整統計信息"""

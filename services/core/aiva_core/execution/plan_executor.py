@@ -26,10 +26,20 @@ from services.aiva_common.schemas import (
     SessionState,
     TraceRecord,
 )
+from services.aiva_common.error_handling import (
+    AIVAError,
+    ErrorContext,
+    ErrorSeverity,
+    ErrorType,
+)
 
-from .trace_logger import TraceLogger
+from .unified_tracer import UnifiedTracer
+from ..messaging.message_broker import MessageBroker
 
 logger = logging.getLogger(__name__)
+
+# 模組常量
+MODULE_NAME = "execution.plan_executor"
 
 
 class PlanExecutor:
@@ -40,19 +50,19 @@ class PlanExecutor:
 
     def __init__(
         self,
-        mq_client: Any | None = None,
-        trace_logger: TraceLogger | None = None,
+        message_broker: MessageBroker | None = None,
+        unified_tracer: UnifiedTracer | None = None,
         storage_backend: Any | None = None,
     ) -> None:
         """初始化執行器
 
         Args:
-            mq_client: RabbitMQ 客戶端
-            trace_logger: 追蹤記錄器
+            message_broker: 消息代理
+            unified_tracer: 統一追蹤記錄器
             storage_backend: 儲存後端
         """
-        self.mq_client = mq_client
-        self.trace_logger = trace_logger or TraceLogger(storage_backend)
+        self.message_broker = message_broker or MessageBroker()
+        self.unified_tracer = unified_tracer or UnifiedTracer(storage_backend)
         self.storage = storage_backend
         self.active_sessions: dict[str, SessionState] = {}
 
@@ -143,12 +153,24 @@ class PlanExecutor:
                     break
 
             # 標記會話完成
-            self.trace_logger.complete_session(session.session_id)
+            self.unified_tracer.complete_session(session.session_id)
 
         except Exception as e:
-            logger.error(f"Plan execution failed: {e}", exc_info=True)
-            self.trace_logger.fail_session(session.session_id)
-            anomalies.append(f"Execution error: {str(e)}")
+            error_context = ErrorContext(
+                module=MODULE_NAME,
+                function="execute_plan",
+                session_id=session.session_id
+            )
+            aiva_error = AIVAError(
+                message=f"Plan execution failed: {str(e)}",
+                error_type=ErrorType.SYSTEM,
+                severity=ErrorSeverity.HIGH,
+                context=error_context,
+                original_exception=e
+            )
+            logger.error(str(aiva_error), exc_info=True)
+            self.unified_tracer.fail_session(session.session_id)
+            anomalies.append(f"Execution error: {str(aiva_error)}")
 
         # 計算執行指標
         metrics = self._calculate_metrics(
@@ -220,8 +242,8 @@ class PlanExecutor:
                 sandbox_mode=sandbox_mode,
             )
 
-            # 發送任務到 RabbitMQ
-            if self.mq_client:
+            # 發送任務到消息隊列
+            if self.message_broker:
                 await self._send_task(step.tool_type, task_payload)
 
             # 等待結果（使用超時）
@@ -244,10 +266,22 @@ class PlanExecutor:
                 execution_time=execution_time,
             )
 
-        except TimeoutError:
+        except TimeoutError as e:
             execution_time = (datetime.now(UTC) - start_time).total_seconds()
-            error = f"Step execution timeout after {step.timeout_seconds}s"
-            logger.error(f"Step {step.step_id}: {error}")
+            error_context = ErrorContext(
+                module=MODULE_NAME,
+                function="_execute_step",
+                session_id=session.session_id,
+                additional_data={"step_id": step.step_id, "timeout": step.timeout_seconds}
+            )
+            aiva_error = AIVAError(
+                message=f"Step execution timeout after {step.timeout_seconds}s",
+                error_type=ErrorType.SYSTEM,
+                severity=ErrorSeverity.MEDIUM,
+                context=error_context,
+                original_exception=e
+            )
+            logger.error(f"Step {step.step_id}: {str(aiva_error)}")
 
             trace = await self.trace_logger.log_task_execution(
                 session_id=session.session_id,
@@ -263,8 +297,20 @@ class PlanExecutor:
 
         except Exception as e:
             execution_time = (datetime.now(UTC) - start_time).total_seconds()
-            error = f"Step execution error: {str(e)}"
-            logger.error(f"Step {step.step_id}: {error}", exc_info=True)
+            error_context = ErrorContext(
+                module=MODULE_NAME,
+                function="_execute_step",
+                session_id=session.session_id,
+                additional_data={"step_id": step.step_id}
+            )
+            aiva_error = AIVAError(
+                message=f"Step execution error: {str(e)}",
+                error_type=ErrorType.SYSTEM,
+                severity=ErrorSeverity.MEDIUM,
+                context=error_context,
+                original_exception=e
+            )
+            logger.error(f"Step {step.step_id}: {str(aiva_error)}", exc_info=True)
 
             trace = await self.trace_logger.log_task_execution(
                 session_id=session.session_id,
@@ -336,20 +382,30 @@ class PlanExecutor:
         return payload
 
     async def _send_task(self, tool_type: str, payload: FunctionTaskPayload) -> None:
-        """發送任務到 RabbitMQ
+        """發送任務到消息隊列
 
         Args:
             tool_type: 工具類型
-            payload: 任務 Payload
+            payload: 任務載荷
         """
-        if not self.mq_client:
-            logger.warning("No MQ client configured, task not sent")
-            return
+        if not self.message_broker:
+            raise AIVAError(
+                message="Message broker not initialized",
+                error_type=ErrorType.CONFIGURATION,
+                severity=ErrorSeverity.HIGH
+            )
+
+        # 記錄發送的任務
+        self.running_tasks[payload.task_id] = {
+            "payload": payload.model_dump(),
+            "tool_type": tool_type,
+            "start_time": datetime.now(UTC),
+        }
 
         # 根據工具類型決定 routing key
         routing_key_map = {
             "function_sqli": "tasks.function.sqli",
-            "function_xss": "tasks.function.xss",
+            "function_xss": "tasks.function.xss", 
             "function_ssrf": "tasks.function.ssrf",
             "function_idor": "tasks.function.idor",
         }
@@ -357,14 +413,23 @@ class PlanExecutor:
         routing_key = routing_key_map.get(tool_type, "tasks.function.start")
 
         try:
-            await self.mq_client.publish(
+            await self.message_broker.publish_message(
+                exchange_name="aiva.tasks",
                 routing_key=routing_key,
                 message=payload.model_dump(),
             )
             logger.debug(f"Task {payload.task_id} sent to {routing_key}")
         except Exception as e:
-            logger.error(f"Failed to send task {payload.task_id}: {e}")
-            raise
+            # 清理失敗的任務
+            if payload.task_id in self.running_tasks:
+                del self.running_tasks[payload.task_id]
+            
+            raise AIVAError(
+                message=f"Failed to send task to {tool_type}",
+                error_type=ErrorType.NETWORK,
+                severity=ErrorSeverity.HIGH,
+                original_exception=e
+            )
 
     async def _wait_for_result(
         self, task_id: str, timeout: float = 30.0

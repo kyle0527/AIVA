@@ -10,6 +10,12 @@ from pathlib import Path
 from typing import Any
 from uuid import uuid4
 
+from services.aiva_common.error_handling import (
+    AIVAError,
+    ErrorSeverity,
+    ErrorType,
+    create_error_context,
+)
 from services.aiva_common.schemas import (
     ExperienceSample,
     ModelTrainingConfig,
@@ -19,6 +25,7 @@ from services.aiva_common.schemas import (
 )
 
 logger = logging.getLogger(__name__)
+MODULE_NAME = "aiva_core.learning.model_trainer"
 
 # 動態導入深度學習模組（可選）
 try:
@@ -231,8 +238,14 @@ class ModelTrainer:
             訓練結果
         """
         if not TORCH_AVAILABLE:
-            raise RuntimeError(
-                "PyTorch is not installed. Please install with: pip install torch"
+            raise AIVAError(
+                "PyTorch is not installed. Please install with: pip install torch",
+                error_type=ErrorType.SYSTEM,
+                severity=ErrorSeverity.HIGH,
+                context=create_error_context(
+                    module=MODULE_NAME,
+                    function="train_dqn"
+                )
             )
 
         logger.info(
@@ -376,8 +389,14 @@ class ModelTrainer:
             訓練結果
         """
         if not TORCH_AVAILABLE:
-            raise RuntimeError(
-                "PyTorch is not installed. Please install with: pip install torch"
+            raise AIVAError(
+                "PyTorch is not installed. Please install with: pip install torch",
+                error_type=ErrorType.SYSTEM,
+                severity=ErrorSeverity.HIGH,
+                context=create_error_context(
+                    module=MODULE_NAME,
+                    function="train_ppo"
+                )
             )
 
         logger.info(

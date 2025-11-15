@@ -15,10 +15,17 @@ from typing import Any
 from uuid import uuid4
 
 from services.aiva_common.enums.common import TaskStatus
+from services.aiva_common.error_handling import (
+    AIVAError,
+    ErrorSeverity,
+    ErrorType,
+    create_error_context,
+)
 
 from .ast_parser import AttackFlowGraph, AttackFlowNode, NodeType
 
 logger = logging.getLogger(__name__)
+MODULE_NAME = "aiva_core.planner.task_converter"
 
 
 class TaskPriority(str, Enum):
@@ -200,9 +207,16 @@ class TaskConverter:
                 # 檢測到循環依賴
                 remaining_nodes = list(dependency_map.keys())
                 logger.error(f"Circular dependency detected among nodes: {remaining_nodes}")
-                raise RuntimeError(
+                raise AIVAError(
                     f"Flow has cycles or unmet dependencies. "
-                    f"Remaining nodes with dependencies: {remaining_nodes}"
+                    f"Remaining nodes with dependencies: {remaining_nodes}",
+                    error_type=ErrorType.VALIDATION,
+                    severity=ErrorSeverity.HIGH,
+                    context=create_error_context(
+                        module=MODULE_NAME,
+                        function="_topological_sort",
+                        remaining_nodes=remaining_nodes
+                    )
                 )
             
             # 按優先級排序無依賴節點 (確保執行順序最優)

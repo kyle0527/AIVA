@@ -1,6 +1,6 @@
 from collections.abc import Iterable
 
-from services.aiva_common.enums import Topic
+from services.aiva_common.enums.modules import Topic
 from services.aiva_common.schemas import (
     FunctionTaskPayload,
     FunctionTaskTarget,

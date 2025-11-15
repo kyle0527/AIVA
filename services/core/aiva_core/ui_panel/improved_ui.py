@@ -22,14 +22,101 @@ PROJECT_ROOT = "/home/oai/share/AIVA/AIVA-master"
 if PROJECT_ROOT not in sys.path:
     sys.path.append(PROJECT_ROOT)
 
+from aiva_common.error_handling import AIVAError, ErrorType, ErrorSeverity, create_error_context
+
+MODULE_NAME = "ui_panel.improved_ui"
+
 try:
     from services.core.aiva_core.ui_panel.dashboard import Dashboard  # type: ignore
     from services.aiva_common.schemas import APIResponse  # type: ignore
 except Exception as exc:  # pragma: no cover
-    raise ImportError(
-        "Unable to import Dashboard from AIVA project. Ensure the PROJECT_ROOT"
-        " is correct and the services package is installed."
+    raise AIVAError(
+        message="Unable to import Dashboard from AIVA project. Ensure the PROJECT_ROOT is correct and the services package is installed.",
+        error_type=ErrorType.SYSTEM,
+        severity=ErrorSeverity.CRITICAL,
+        context=create_error_context(
+            module=MODULE_NAME,
+            function="<module>",
+            project_root=PROJECT_ROOT
+        )
     ) from exc
+
+
+def _build_task_rows(tasks: list) -> str:
+    """構建任務表格行"""
+    if not tasks:
+        return "<tr><td colspan=6 style='text-align:center; color:#888;'>無任務</td></tr>"
+    
+    rows = ""
+    for task in tasks:
+        task_id = task.get("task_id", "-")
+        target = task.get("target", "-")
+        scan_type = task.get("scan_type", "-")
+        status = task.get("status", "-")
+        created_by = task.get("created_by", "-")
+        ai_result_text = "AI" if task.get("ai_result") else "-"
+        rows += (
+            f"<tr><td>{task_id}</td><td>{target}</td><td>{scan_type}</td>"
+            f"<td>{status}</td><td>{created_by}</td><td>{ai_result_text}</td></tr>"
+        )
+    return rows
+
+
+def _build_detection_rows(detections: list) -> str:
+    """構建檢測結果表格行"""
+    if not detections:
+        return "<tr><td colspan=5 style='text-align:center; color:#888;'>無檢測結果</td></tr>"
+    
+    rows = ""
+    for det in detections:
+        vuln_type = det.get("vuln_type", "-")
+        target = det.get("target", "-")
+        status = det.get("status", "-")
+        method = det.get("method", "-")
+        result = det.get("result", det.get("findings", "-"))
+        result_preview = _format_result_preview(result)
+        rows += (
+            f"<tr><td>{vuln_type}</td><td>{target}</td><td>{status}</td>"
+            f"<td>{method}</td><td>{result_preview}</td></tr>"
+        )
+    return rows
+
+
+def _build_history_rows(ai_history: list) -> str:
+    """構建AI歷史記錄表格行"""
+    if not ai_history:
+        return "<tr><td colspan=4 style='text-align:center; color:#888;'>無 AI 歷史紀錄</td></tr>"
+    
+    rows = ""
+    for record in ai_history:
+        status = record.get("status", "-")
+        tool_used = record.get("tool_used", "-")
+        confidence = record.get("confidence", "-")
+        result = record.get("result", "-")
+        conf_display = f"{confidence:.2%}" if isinstance(confidence, float) else str(confidence)
+        result_preview = _format_result_preview(result)
+        rows += f"<tr><td>{status}</td><td>{tool_used}</td><td>{conf_display}</td><td>{result_preview}</td></tr>"
+    return rows
+
+
+def _format_result_preview(result: Any) -> str:
+    """格式化結果預覽"""
+    if isinstance(result, list | dict):
+        return "[複雜結果]"
+    result_str = str(result)
+    return result_str[:50] + ("..." if len(result_str) > 50 else "")
+
+
+def _build_ai_card(stats: dict[str, Any]) -> str:
+    """構建AI卡片HTML"""
+    if not stats.get("ai_enabled"):
+        return ""
+    return f"""
+                <div class="stat-card">
+                    <h3>AI 知識庫</h3>
+                    <div class="value">{stats.get('ai_chunks', 0)}</div>
+                </div>
+            """
 
 
 def _build_index_html(dashboard: Dashboard) -> str:
@@ -44,88 +131,10 @@ def _build_index_html(dashboard: Dashboard) -> str:
     detections = dashboard.get_detections()
     ai_history = dashboard.get_ai_history()
 
-    # Build HTML table rows for tasks
-    task_rows = ""
-    for task in tasks:
-        task_id = task.get("task_id", "-")
-        target = task.get("target", "-")
-        scan_type = task.get("scan_type", "-")
-        status = task.get("status", "-")
-        created_by = task.get("created_by", "-")
-        ai_result = task.get("ai_result", None)
-        ai_result_text = "AI" if ai_result else "-"
-        task_rows += (
-            f"<tr><td>{task_id}</td><td>{target}</td><td>{scan_type}</td>"
-            f"<td>{status}</td><td>{created_by}</td><td>{ai_result_text}</td></tr>"
-        )
-
-    if not task_rows:
-        task_rows = (
-            "<tr><td colspan=6 style='text-align:center; color:#888;'>"
-            "無任務</td></tr>"
-        )
-
-    # Build HTML table rows for detections
-    detection_rows = ""
-    for det in detections:
-        vuln_type = det.get("vuln_type", "-")
-        target = det.get("target", "-")
-        status = det.get("status", "-")
-        method = det.get("method", "-")
-        result = det.get("result", det.get("findings", "-"))
-        # Show a short preview of the result to avoid overly long cells
-        if isinstance(result, list | dict):
-            result_preview = "[複雜結果]"
-        else:
-            result_str = str(result)
-            result_preview = result_str[:50] + ("..." if len(result_str) > 50 else "")
-        detection_rows += (
-            f"<tr><td>{vuln_type}</td><td>{target}</td><td>{status}</td>"
-            f"<td>{method}</td><td>{result_preview}</td></tr>"
-        )
-
-    if not detection_rows:
-        detection_rows = (
-            "<tr><td colspan=5 style='text-align:center; color:#888;'>"
-            "無檢測結果</td></tr>"
-        )
-
-    # Build HTML table rows for AI history
-    history_rows = ""
-    for record in ai_history:
-        # Each history entry is expected to be a dict with keys like
-        # 'status', 'tool_used', 'confidence' and 'result'.  Use
-        # graceful fallbacks for missing keys.
-        status = record.get("status", "-")
-        tool_used = record.get("tool_used", "-")
-        confidence = record.get("confidence", "-")
-        result = record.get("result", "-")
-        # Convert confidence to percentage if it's a float
-        if isinstance(confidence, float):
-            conf_display = f"{confidence:.2%}"
-        else:
-            conf_display = str(confidence)
-        # Truncate result for brevity
-        result_str = str(result)
-        result_preview = result_str[:50] + ("..." if len(result_str) > 50 else "")
-        history_rows += f"<tr><td>{status}</td><td>{tool_used}</td><td>{conf_display}</td><td>{result_preview}</td></tr>"
-
-    if not history_rows:
-        history_rows = "<tr><td colspan=4 style='text-align:center; color:#888;'>無 AI 歷史紀錄</td></tr>"
-
-    # Build the full HTML page
-    # Optionally include AI card only when AI is enabled.  Avoid nested f-strings
-    # inside the HTML literal to prevent backslash escapes inside expressions.
-    ai_card_html: str = ""
-    if stats.get("ai_enabled"):
-        ai_card_html = (
-            """
-                <div class="stat-card">
-                    <h3>AI 知識庫</h3>
-                    <div class="value">{ai_chunks}</div>
-                </div>
-            """
-        ).format(ai_chunks=stats.get("ai_chunks", 0))
+    task_rows = _build_task_rows(tasks)
+    detection_rows = _build_detection_rows(detections)
+    history_rows = _build_history_rows(ai_history)
+    ai_card_html = _build_ai_card(stats)
 
     html = f"""
     <!DOCTYPE html>

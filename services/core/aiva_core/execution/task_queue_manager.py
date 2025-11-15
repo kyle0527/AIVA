@@ -3,7 +3,7 @@ from datetime import UTC, datetime
 from queue import PriorityQueue
 from typing import Any
 
-from services.aiva_common.enums import Topic
+from services.aiva_common.enums.modules import Topic
 from services.aiva_common.schemas import FunctionTaskPayload
 from services.aiva_common.utils import get_logger
 

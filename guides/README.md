@@ -156,6 +156,8 @@ guides/
 
 | 指南類型 | 文檔路徑 | 功能重點 | 驗證狀態 |
 |---------|----------|----------|----------|
+| **AI 自我優化雙重閉環設計** | [`../AI_SELF_OPTIMIZATION_DUAL_LOOP_DESIGN.md`](../AI_SELF_OPTIMIZATION_DUAL_LOOP_DESIGN.md) | 🔄 AI 自我優化核心設計理念 | ✅ **核心文檔** (2025-11-15) |
+| **術語對照表** | [`../TERMINOLOGY_GLOSSARY.md`](../TERMINOLOGY_GLOSSARY.md) | 📖 統一術語規範 (對內 vs 對外) | ✅ **必讀** (2025-11-15) |
 | **22 個 AI 組件詳細說明** | [`../reports/ai_analysis/AIVA_22_AI_COMPONENTS_DETAILED_GUIDE.md`](../reports/ai_analysis/AIVA_22_AI_COMPONENTS_DETAILED_GUIDE.md) | 🤖 完整 AI 組件架構說明 | ✅ 完整 |
 | AI 服務使用手冊 | [`development/AI_SERVICES_USER_GUIDE.md`](development/AI_SERVICES_USER_GUIDE.md) | 🧠 AI 功能使用實戰 | ✅ 完整 (10/31驗證) |
 | API 驗證操作手冊 | [`development/API_VERIFICATION_GUIDE.md`](development/API_VERIFICATION_GUIDE.md) | 🔐 密鑰驗證功能 | ✅ 完整 (10/31驗證) |
@@ -170,6 +172,26 @@ guides/
 ---
 
 ## 🎯 **使用建議與學習路徑**
+
+### 🧠 **AI 核心設計理念** (必讀)
+在開始任何其他學習路徑之前,請先了解 AIVA 的核心 AI 設計理念:
+
+**📖 雙重閉環自我優化設計**
+- **內部閉環 (Know Thyself)**: 探索(對內自省) + 分析(靜態代碼) + RAG(知識增強) → 了解自身能力與缺口
+- **外部閉環 (Learn from Battle)**: 掃描(對外偵測) + 攻擊(實戰反饋) → 收集優化方向
+- **視覺化優先**: 用圖表展示優化方案,減少 NLP 負擔,提供人工審核決策點
+
+📚 **核心文檔閱讀順序**:
+1. [`AI_SELF_OPTIMIZATION_DUAL_LOOP_DESIGN.md`](../AI_SELF_OPTIMIZATION_DUAL_LOOP_DESIGN.md) - 理解完整設計理念
+2. [`TERMINOLOGY_GLOSSARY.md`](../TERMINOLOGY_GLOSSARY.md) - 掌握術語規範 (對內 vs 對外)
+3. [`EXPLORATION_SYSTEM_MISUNDERSTANDING_ANALYSIS.md`](../EXPLORATION_SYSTEM_MISUNDERSTANDING_ANALYSIS.md) - 了解常見誤解
+
+⚠️ **重要提醒**:
+- 「**探索 (Exploration)**」= AIVA 系統**自我診斷** (對內)
+- 「**掃描 (Scan/Reconnaissance)**」= **目標系統偵測** (對外)
+- 絕對不要混淆這兩個概念
+
+---
 
 ### 📚 **新手入門路徑** (按順序學習)
 1. **功能模組完成總結** - 了解當前系統狀況和模組完成度
@@ -198,10 +220,13 @@ guides/
 4. **疑難排解指南** - 解決運維問題
 
 ### 🤖 **AI 功能專家路徑**
-1. **AI 引擎操作手冊** - AI 系統配置
-2. **學習系統操作手冊** - ML 工程實踐
-3. **AI 用戶操作手冊** - 實戰案例學習
-4. **執行引擎操作手冊** - 性能優化
+1. **AI 自我優化雙重閉環設計** - 理解核心 AI 設計理念
+2. **術語對照表** - 掌握統一術語規範
+3. **AI 引擎操作手冊** - AI 系統配置
+4. **22 個 AI 組件詳細說明** - 完整組件架構
+5. **學習系統操作手冊** - ML 工程實踐
+6. **AI 用戶操作手冊** - 實戰案例學習
+7. **執行引擎操作手冊** - 性能優化
 
 ---
 

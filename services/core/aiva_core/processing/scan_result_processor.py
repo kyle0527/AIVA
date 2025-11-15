@@ -9,21 +9,16 @@ from typing import TYPE_CHECKING
 
 from services.aiva_common.schemas import ScanCompletedPayload
 from services.aiva_common.utils import get_logger
+from services.aiva_common.mq import AbstractBroker
+from services.core.aiva_core.ingestion.scan_module_interface import ScanModuleInterface
+from services.core.aiva_core.analysis.dynamic_strategy_adjustment import StrategyAdjuster
+from services.core.aiva_core.analysis.initial_surface import InitialAttackSurface
+from services.core.aiva_core.execution.task_generator import TaskGenerator
+from services.core.aiva_core.execution.task_queue_manager import TaskQueueManager
+from services.core.aiva_core.state.session_state_manager import SessionStateManager
 
 if TYPE_CHECKING:
-    from services.aiva_common.mq import Broker
-    from services.core.aiva_core.analysis.dynamic_strategy_adjustment import (
-        StrategyAdjuster,
-    )
-    from services.core.aiva_core.analysis.initial_surface import InitialAttackSurface
-    from services.core.aiva_core.execution.task_generator import TaskGenerator
-    from services.core.aiva_core.execution.task_queue_manager import TaskQueueManager
-    from services.core.aiva_core.ingestion.scan_module_interface import (
-        ScanModuleInterface,
-    )
-    from services.core.aiva_core.state.session_state_manager import (
-        SessionStateManager,
-    )
+    pass  # 保留為將來的僅類型檢查導入
 
 logger = get_logger(__name__)
 
@@ -237,7 +232,7 @@ class ScanResultProcessor:
         self,
         scan_id: str,
         tasks: list,
-        broker: Broker,
+        broker: AbstractBroker,
         trace_id: str,
     ) -> int:
         """階段6: 任務佇列管理與分發 (Task Queue Management & Distribution)
@@ -313,7 +308,7 @@ class ScanResultProcessor:
         logger.info(f"[已] [Stage 7/7] All stages completed for {scan_id}")
 
     async def process(
-        self, payload: ScanCompletedPayload, broker: Broker, trace_id: str
+        self, payload: ScanCompletedPayload, broker: AbstractBroker, trace_id: str
     ) -> None:
         """執行完整的七階段處理流程
 

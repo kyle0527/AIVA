@@ -62,7 +62,16 @@ python autonomous_test.py
 ```bash
 python system_explorer.py  
 # 預期: 發現17個目錄，22個端點
+# ⚠️ 注意: system_explorer.py 是系統自我探索工具 (對內診斷)
+# 不要與目標掃描工具 (對外偵測) 混淆
 ```
+
+**📖 術語說明**: 
+- `system_explorer.py` = **SystemSelfExplorer** = AIVA **自我診斷**工具 (對內)
+- 用途: 掃描 AIVA 自身的模組、組件、端點
+- 不是: 對外部目標的掃描工具
+
+📚 **詳細說明**: 參見 [`../../AI_SELF_OPTIMIZATION_DUAL_LOOP_DESIGN.md`](../../AI_SELF_OPTIMIZATION_DUAL_LOOP_DESIGN.md)
 
 #### 4. 組件間通信測試 (1分鐘)
 ```bash

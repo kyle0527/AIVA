@@ -17,10 +17,9 @@ from services.aiva_common.schemas import (
     FunctionTaskPayload,
     FunctionTaskTarget,
     MessageHeader,
-    ModuleName,
     ScanStartPayload,
-    Topic,
 )
+from services.aiva_common.enums.modules import ModuleName, Topic
 
 from .message_broker import MessageBroker
 

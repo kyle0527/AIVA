@@ -19,25 +19,39 @@ from enum import Enum
 import logging
 from pathlib import Path
 from typing import Any
+import logging
+
+# 在try-except之前先定義logger
+logger = logging.getLogger(__name__)
 
 try:
-    from services.aiva_common.ai.experience_manager import (
-        AIVAExperienceManager as ExperienceManager,
-    )
-
+    from services.aiva_common.ai import AIVAExperienceManager as ExperienceManager
+    from services.aiva_common.ai.interfaces import IExperienceManager
+    
     from .ai_engine import BioNeuronRAGAgent
     from .learning.model_trainer import ModelTrainer
     from .multilang_coordinator import MultiLanguageAICoordinator
     from .rag import KnowledgeBase, RAGEngine, VectorStore
     from .training.training_orchestrator import TrainingOrchestrator
-except ImportError:
-    from services.core.aiva_core.ai_engine import BioNeuronRAGAgent
-    from services.core.aiva_core.learning.model_trainer import ModelTrainer
-    from services.core.aiva_core.multilang_coordinator import MultiLanguageAICoordinator
-    from services.core.aiva_core.rag import KnowledgeBase, RAGEngine, VectorStore
-    from services.core.aiva_core.training.training_orchestrator import (
-        TrainingOrchestrator,
-    )
+except ImportError as e:
+    logger.warning(f"Failed to import AI components: {e}")
+    # 回退到核心模組
+    try:
+        from services.core.aiva_core.ai_engine import BioNeuronRAGAgent
+        from services.core.aiva_core.learning.model_trainer import ModelTrainer
+        from services.core.aiva_core.multilang_coordinator import MultiLanguageAICoordinator
+        from services.core.aiva_core.rag import KnowledgeBase, RAGEngine, VectorStore
+        from services.core.aiva_core.training.training_orchestrator import (
+            TrainingOrchestrator,
+        )
+        # 使用介面的預設實現
+        ExperienceManager = None
+        IExperienceManager = None
+    except ImportError:
+        logger.error("Unable to import core AI components")
+        # 設定預設值
+        ExperienceManager = None
+        IExperienceManager = None
 
 logger = logging.getLogger(__name__)
 

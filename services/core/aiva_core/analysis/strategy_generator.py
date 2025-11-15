@@ -10,7 +10,7 @@
 import logging
 
 from services.aiva_common.schemas import ScanCompletedPayload
-from services.core.aiva_core.schemas import (
+from services.core.aiva_core.business_schemas import (
     AttackSurfaceAnalysis,
     IdorCandidate,
     SqliCandidate,

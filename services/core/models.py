@@ -29,6 +29,9 @@ from aiva_common.enums import (
     Severity,
     TaskStatus,
 )
+from aiva_common.error_handling import AIVAError, ErrorType, ErrorSeverity, create_error_context
+
+MODULE_NAME = "models"
 from aiva_common.schemas import (
     CVEReference,
     CVSSv3Metrics,
@@ -414,7 +417,16 @@ class EnhancedTaskExecution(BaseModel):
     @classmethod
     def validate_task_id(cls, v: str) -> str:
         if not v.startswith("task_"):
-            raise ValueError("task_id must start with 'task_'")
+            raise AIVAError(
+                message="task_id must start with 'task_'",
+                error_type=ErrorType.VALIDATION,
+                severity=ErrorSeverity.MEDIUM,
+                context=create_error_context(
+                    module=MODULE_NAME,
+                    function="validate_task_id",
+                    task_id=v
+                )
+            )
         return v
 
 

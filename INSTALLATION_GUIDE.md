@@ -2,6 +2,21 @@
 
 > **重要**: 本專案已完成初始安裝設定,本文件提供完整的安裝步驟說明。
 
+## 📑 目錄
+
+- [📋 安裝狀態](#安裝狀態)
+- [🚀 快速開始 (已安裝用戶)](#快速開始-已安裝用戶)
+- [⚙️ 系統要求](#系統要求)
+- [📍 詳細安裝步驟](#詳細安裝步驟)
+  - [步驟 1: 克隆專案](#步驟-1-克隆專案)
+  - [步驟 2: 設定 Python 環境](#步驟-2-設定-python-環境)
+  - [步驟 3: 安裝依賴](#步驟-3-安裝依賴)
+  - [步驟 4: 配置環境變數](#步驟-4-配置環境變數)
+  - [步驟 5: 驗證安裝](#步驟-5-驗證安裝)
+- [🐛 常見問題與解決](#常見問題與解決)
+- [🚀 進階配置](#進階配置)
+- [📞 支援](#支援)
+
 ---
 
 ## 📋 安裝狀態
@@ -82,6 +97,22 @@ pip install -e ".[dev]"
 # 方案 C: 完整安裝 (包含所有依賴)
 pip install -e .
 pip install -r requirements.txt
+```
+
+### 步驟 4: 生成 Protocol Buffers 代碼
+
+```powershell
+# 進入 protocols 目錄
+cd services/aiva_common/protocols
+
+# 執行 protobuf 編譯腳本
+python generate_proto.py
+
+# 返回專案根目錄
+cd ../../..
+
+# 驗證生成結果
+python -c "from services.aiva_common.protocols import aiva_services_pb2; print('Protobuf OK')"
 ```
 
 **說明**:

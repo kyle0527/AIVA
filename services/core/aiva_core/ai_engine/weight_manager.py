@@ -1,13 +1,14 @@
 #!/usr/bin/env python3
-"""
-真實AI權重管理系統
+"""真實AI權重管理系統
 
-基於PyTorch官方最佳實踐實現的權重管理系統，包含：
-- 自動載入/儲存機制
-- 檔案完整性檢查  
-- 權重版本管理
-- 錯誤處理和容錯
-- 安全的序列化/反序列化
+基於PyTorch官方最佳實踐實現的權重管理系統。
+
+功能包含：
+    - 自動載入和儲存機制
+    - 檔案完整性檢查
+    - 權重版本管理
+    - 錯誤處理和容錯
+    - 安全的序列化和反序列化
 """
 
 import torch
@@ -20,6 +21,9 @@ from typing import Dict, Any, Optional, Union, Tuple
 from dataclasses import dataclass
 from datetime import datetime
 import shutil
+from aiva_common.error_handling import AIVAError, ErrorType, ErrorSeverity, create_error_context
+
+MODULE_NAME = "ai_engine.weight_manager"
 
 logger = logging.getLogger(__name__)
 
@@ -76,7 +80,7 @@ class AIWeightManager:
     def save_model_weights(self, 
                           model: torch.nn.Module,
                           model_name: str,
-                          version: str = None,
+                          version: Optional[str] = None,
                           metadata: Optional[Dict[str, Any]] = None) -> Tuple[str, WeightMetadata]:
         """
         保存模型權重 (基於PyTorch最佳實踐)
@@ -167,7 +171,17 @@ class AIWeightManager:
             # 找到權重檔案
             filepath = self._find_weight_file(model_name, version)
             if not filepath.exists():
-                raise FileNotFoundError(f"權重檔案不存在: {filepath}")
+                raise AIVAError(
+                    message=f"權重檔案不存在: {filepath}",
+                    error_type=ErrorType.SYSTEM,
+                    severity=ErrorSeverity.HIGH,
+                    context=create_error_context(
+                        module=MODULE_NAME,
+                        function="load_weights",
+                        model_name=model_name,
+                        version=version
+                    )
+                )
             
             # 載入元數據並驗證
             metadata = self._load_and_verify_metadata(model_name, version, filepath)
@@ -208,51 +222,64 @@ class AIWeightManager:
     
     def list_available_weights(self, model_name: Optional[str] = None) -> Dict[str, list]:
         """列出可用的權重檔案"""
-        result = {}
-        
         try:
             if model_name:
-                # 列出特定模型的版本
-                pattern = f"{model_name}_*.pth"
-                files = list(self.weights_dir.glob(pattern))
-                versions = []
-                
-                for file in files:
-                    parts = file.stem.split('_')
-                    if len(parts) >= 2:
-                        version = '_'.join(parts[1:])
-                        metadata_path = self.metadata_dir / f"{model_name}_{version}.json"
-                        if metadata_path.exists():
-                            with open(metadata_path, 'r') as f:
-                                meta = json.load(f)
-                                versions.append({
-                                    'version': version,
-                                    'created_at': meta.get('created_at'),
-                                    'file_size_mb': file.stat().st_size / 1024 / 1024,
-                                    'parameters': meta.get('total_parameters', 0)
-                                })
-                
-                result[model_name] = sorted(versions, key=lambda x: x['created_at'], reverse=True)
+                return {model_name: self._list_model_versions(model_name)}
             else:
-                # 列出所有模型
-                for file in self.weights_dir.glob("*.pth"):
-                    parts = file.stem.split('_')
-                    if len(parts) >= 2:
-                        name = parts[0]
-                        if name not in result:
-                            result[name] = []
-                        
-                        version = '_'.join(parts[1:])
-                        result[name].append({
-                            'version': version,
-                            'file_size_mb': file.stat().st_size / 1024 / 1024
-                        })
-            
-            return result
-            
+                return self._list_all_models()
         except Exception as e:
             logger.error(f"列出權重檔案失敗: {e}")
             return {}
+    
+    def _list_model_versions(self, model_name: str) -> list:
+        """列出特定模型的所有版本"""
+        pattern = f"{model_name}_*.pth"
+        files = list(self.weights_dir.glob(pattern))
+        versions = []
+        
+        for file in files:
+            version_info = self._extract_version_info(file, model_name)
+            if version_info:
+                versions.append(version_info)
+        
+        return sorted(versions, key=lambda x: x.get('created_at', ''), reverse=True)
+    
+    def _extract_version_info(self, file: Path, model_name: str) -> Optional[Dict[str, Any]]:
+        """從權重檔案提取版本資訊"""
+        parts = file.stem.split('_')
+        if len(parts) < 2:
+            return None
+        
+        version = '_'.join(parts[1:])
+        metadata_path = self.metadata_dir / f"{model_name}_{version}.json"
+        
+        if metadata_path.exists():
+            with open(metadata_path, 'r') as f:
+                meta = json.load(f)
+                return {
+                    'version': version,
+                    'created_at': meta.get('created_at'),
+                    'file_size_mb': file.stat().st_size / 1024 / 1024,
+                    'parameters': meta.get('total_parameters', 0)
+                }
+        return None
+    
+    def _list_all_models(self) -> Dict[str, list]:
+        """列出所有模型及其版本"""
+        result = {}
+        for file in self.weights_dir.glob("*.pth"):
+            parts = file.stem.split('_')
+            if len(parts) >= 2:
+                name = parts[0]
+                if name not in result:
+                    result[name] = []
+                
+                version = '_'.join(parts[1:])
+                result[name].append({
+                    'version': version,
+                    'file_size_mb': file.stat().st_size / 1024 / 1024
+                })
+        return result
     
     def delete_weights(self, model_name: str, version: str) -> bool:
         """刪除特定版本的權重"""
@@ -283,7 +310,16 @@ class AIWeightManager:
             pattern = f"{model_name}_*.pth"
             files = list(self.weights_dir.glob(pattern))
             if not files:
-                raise FileNotFoundError(f"未找到模型權重: {model_name}")
+                raise AIVAError(
+                    message=f"未找到模型權重: {model_name}",
+                    error_type=ErrorType.SYSTEM,
+                    severity=ErrorSeverity.HIGH,
+                    context=create_error_context(
+                        module=MODULE_NAME,
+                        function="_find_weight_file",
+                        model_name=model_name
+                    )
+                )
             
             # 按修改時間排序，返回最新的
             files.sort(key=lambda f: f.stat().st_mtime, reverse=True)

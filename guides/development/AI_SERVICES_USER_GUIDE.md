@@ -1,10 +1,52 @@
-# AIVA AI 系統實際使用指南 ✅ 11/10驗證 (實際狀況版)
+# AIVA AI 系統實際使用指南 ✅ 11/15更新 (實際狀況版)
 
 > **📖 閱讀對象**: 開發者、研究員、對 AIVA 架構感興趣的技術人員  
 > **🎯 實際場景**: AI 對話系統體驗、架構學習、開發環境搭建  
 > **⏱️ 預計閱讀時間**: 10 分鐘  
-> **🚀 版本**: v6.0-dev 實際狀況版本 (2025.11.07)  
+> **🚀 版本**: v6.0-dev 實際狀況版本 (2025.11.15)  
 > **⚠️ 重要提醒**: 本指南反映 AIVA 的實際可用功能，不包含尚未實現的功能
+
+---
+
+## 🧠 AI 核心設計理念 (必讀)
+
+### 🔄 雙重閉環自我優化架構
+
+AIVA 採用**雙重閉環**設計,讓 AI 能夠持續自我優化:
+
+#### **內部閉環 (Know Thyself)** - 系統自我認知
+- **探索功能 (對內)**: `SystemSelfExplorer` - AIVA 系統**自我診斷**
+  - ⚠️ **重要**: 這是對 AIVA **自身**的內省,不是對外部目標的偵測
+  - 掃描 AIVA 五大模組健康狀態 (ai_core, attack_engine, scan_engine, integration_service, feature_detection)
+  - 分析系統組件依賴關係
+  - 生成系統能力報告
+- **靜態分析**: `AnalysisEngine` - 代碼品質評估
+- **知識增強**: `BioNeuronRAGAgent` - RAG 知識檢索
+
+**目標**: 了解自身能力與缺口
+
+#### **外部閉環 (Learn from Battle)** - 實戰學習
+- **掃描功能 (對外)**: **目標系統**偵測與探測
+  - ⚠️ **重要**: 這是對**外部目標**的掃描,不是對 AIVA 自身的檢查
+  - 目標資產發現
+  - 漏洞檢測
+  - 風險評估
+- **攻擊測試**: 實戰反饋收集
+- **數據收集**: 成功/失敗案例記錄
+
+**目標**: 收集優化方向
+
+### 📖 術語規範 (避免混淆)
+
+| 術語 | 方向 | 用途 | 範例組件/函數 |
+|------|------|------|--------------|
+| **探索 (Exploration)** | 對內 | AIVA 系統自我診斷 | `SystemSelfExplorer`, `system_self_*` |
+| **掃描 (Scan/Reconnaissance)** | 對外 | 目標系統偵測 | `Scanner`, `target_*`, `reconnaissance_*` |
+| **分析 (Analysis)** | 對內 | 代碼品質評估 | `AnalysisEngine`, `internal_analysis_*` |
+| **攻擊 (Attack)** | 對外 | 實戰測試 | `AttackEngine`, `exploit_*`, `attack_*` |
+
+📚 **完整術語對照表**: 參見 [`../../TERMINOLOGY_GLOSSARY.md`](../../TERMINOLOGY_GLOSSARY.md)  
+📚 **完整設計說明**: 參見 [`../../AI_SELF_OPTIMIZATION_DUAL_LOOP_DESIGN.md`](../../AI_SELF_OPTIMIZATION_DUAL_LOOP_DESIGN.md)
 
 ---
 

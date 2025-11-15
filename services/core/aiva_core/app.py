@@ -11,7 +11,7 @@ from tenacity import (
 )
 
 from services.aiva_common.config import get_settings
-from services.aiva_common.enums import Topic
+from services.aiva_common.enums.modules import Topic
 from services.aiva_common.mq import get_broker
 from services.aiva_common.schemas import AivaMessage, ScanCompletedPayload
 from services.aiva_common.utils import get_logger

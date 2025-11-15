@@ -12,7 +12,15 @@ project_root = Path(__file__).parent.parent.parent.parent.parent
 if str(project_root) not in sys.path:
     sys.path.insert(0, str(project_root))
 
+from services.aiva_common.error_handling import (
+    AIVAError,
+    ErrorSeverity,
+    ErrorType,
+    create_error_context,
+)
+
 logger = logging.getLogger(__name__)
+MODULE_NAME = "aiva_core.ui_panel.auto_server"
 
 
 def find_free_port(start_port: int = 8080, max_attempts: int = 100) -> int:
@@ -26,7 +34,7 @@ def find_free_port(start_port: int = 8080, max_attempts: int = 100) -> int:
         可用的端口號
 
     Raises:
-        RuntimeError: 找不到可用的端口
+        AIVAError: 找不到可用的端口
     """
     for port in range(start_port, start_port + max_attempts):
         try:
@@ -37,7 +45,17 @@ def find_free_port(start_port: int = 8080, max_attempts: int = 100) -> int:
             continue
 
     msg = f"無法在 {start_port}-{start_port + max_attempts - 1} 範圍內找到可用端口"
-    raise RuntimeError(msg)
+    raise AIVAError(
+        msg,
+        error_type=ErrorType.SYSTEM,
+        severity=ErrorSeverity.HIGH,
+        context=create_error_context(
+            module=MODULE_NAME,
+            function="find_free_port",
+            start_port=start_port,
+            max_attempts=max_attempts
+        )
+    )
 
 
 def start_auto_server(

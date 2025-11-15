@@ -5,25 +5,7 @@ This module contains core business logic, process orchestration,
 and AI system models.
 """
 
-# 從共通模組導入
-from ..aiva_common.enums import (
-    Severity,
-    TaskStatus,
-)
-from ..aiva_common.schemas import (
-    ConfigUpdatePayload,
-    FeedbackEventPayload,
-    FindingEvidence,
-    FindingImpact,
-    FindingPayload,
-    FindingRecommendation,
-    HeartbeatPayload,
-    ModuleStatus,
-    RemediationGeneratePayload,
-    RemediationResultPayload,
-    Target,
-    TaskUpdatePayload,
-)
+# 注意：共通模組導入已移除，如需要請確認正確路徑
 
 # 從 AI 模型模組導入
 from .ai_models import (
@@ -62,25 +44,27 @@ from .models import (
     TestStrategy,
     VulnerabilityCorrelation,
 )
-from .aiva_core.execution_tracer import (
-    ExecutionContext,
-    ExecutionMonitor,
-    ExecutionResult,
-    TaskExecutor,
-    TraceEntry,
-    TraceRecorder,
+from .aiva_core.execution import (
+    UnifiedTracer,
     TraceType,
+    ExecutionTrace,
+    get_global_tracer,
+    record_execution_trace,
+    # 向後相容性別名
+    TraceRecorder,
+    TraceLogger,
 )
 
 __all__ = [
-    # Core logic models
-    "ExecutionContext",
-    "ExecutionMonitor",
-    "ExecutionResult",
-    "TaskExecutor",
-    "TraceEntry",
+    # Execution models - 統一追蹤器
+    "UnifiedTracer",
+    "TraceType", 
+    "ExecutionTrace",
+    "get_global_tracer",
+    "record_execution_trace",
+    # 向後相容性
     "TraceRecorder",
-    "TraceType",
+    "TraceLogger",
     # AI models
     "ModelTrainingConfig",
     "ModelTrainingResult",

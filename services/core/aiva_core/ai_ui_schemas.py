@@ -9,6 +9,16 @@ from typing import Literal
 
 from pydantic import BaseModel, Field, field_validator
 
+# aiva_common 統一錯誤處理
+from aiva_common.error_handling import (
+    AIVAError,
+    ErrorType,
+    ErrorSeverity,
+    create_error_context,
+)
+
+MODULE_NAME = "ai_ui_schemas"
+
 # ============================================================================
 # AI 引擎相關數據合約
 # ============================================================================
@@ -40,7 +50,12 @@ class ToolExecutionRequest(BaseModel):
             "CommandExecutor",
         }
         if v not in valid_tools:
-            raise ValueError(f"Invalid tool name: {v}. Valid tools: {valid_tools}")
+            raise AIVAError(
+                f"Invalid tool name: {v}. Valid tools: {valid_tools}",
+                error_type=ErrorType.VALIDATION,
+                severity=ErrorSeverity.MEDIUM,
+                context=create_error_context(module=MODULE_NAME, function="validate_tool_name")
+            )
         return v
 
 
@@ -62,7 +77,12 @@ class ToolExecutionResult(BaseModel):
     def validate_execution_time(cls, v: int | None) -> int | None:
         """驗證執行時間."""
         if v is not None and v < 0:
-            raise ValueError("Execution time cannot be negative")
+            raise AIVAError(
+                "Execution time cannot be negative",
+                error_type=ErrorType.VALIDATION,
+                severity=ErrorSeverity.MEDIUM,
+                context=create_error_context(module=MODULE_NAME, function="validate_execution_time")
+            )
         return v
 
 
@@ -79,7 +99,12 @@ class AIAgentQuery(BaseModel):
     def validate_query(cls, v: str) -> str:
         """驗證查詢字串."""
         if not v.strip():
-            raise ValueError("Query cannot be empty")
+            raise AIVAError(
+                "Query cannot be empty",
+                error_type=ErrorType.VALIDATION,
+                severity=ErrorSeverity.MEDIUM,
+                context=create_error_context(module=MODULE_NAME, function="validate_query")
+            )
         return v.strip()
 
 
@@ -106,7 +131,12 @@ class AIAgentResponse(BaseModel):
     def validate_confidence(cls, v: float) -> float:
         """驗證信心度."""
         if not 0.0 <= v <= 1.0:
-            raise ValueError("Confidence must be between 0.0 and 1.0")
+            raise AIVAError(
+                "Confidence must be between 0.0 and 1.0",
+                error_type=ErrorType.VALIDATION,
+                severity=ErrorSeverity.MEDIUM,
+                context=create_error_context(module=MODULE_NAME, function="validate_confidence")
+            )
         return v
 
 
@@ -124,7 +154,12 @@ class RAGChunk(BaseModel):
     def validate_score(cls, v: int) -> int:
         """驗證分數."""
         if v < 0:
-            raise ValueError("Score cannot be negative")
+            raise AIVAError(
+                "Score cannot be negative",
+                error_type=ErrorType.VALIDATION,
+                severity=ErrorSeverity.MEDIUM,
+                context=create_error_context(module=MODULE_NAME, function="validate_score")
+            )
         return v
 
 
@@ -161,7 +196,12 @@ class ScanTaskRequest(BaseModel):
     def validate_url(cls, v: str) -> str:
         """驗證 URL 格式."""
         if not v.startswith(("http://", "https://")):
-            raise ValueError("URL must start with http:// or https://")
+            raise AIVAError(
+                "URL must start with http:// or https://",
+                error_type=ErrorType.VALIDATION,
+                severity=ErrorSeverity.MEDIUM,
+                context=create_error_context(module=MODULE_NAME, function="validate_url")
+            )
         return v
 
 
@@ -194,7 +234,12 @@ class VulnerabilityDetectionRequest(BaseModel):
     def validate_target(cls, v: str) -> str:
         """驗證目標."""
         if not v.strip():
-            raise ValueError("Target cannot be empty")
+            raise AIVAError(
+                "Target cannot be empty",
+                error_type=ErrorType.VALIDATION,
+                severity=ErrorSeverity.MEDIUM,
+                context=create_error_context(module=MODULE_NAME, function="validate_target")
+            )
         return v.strip()
 
 
@@ -225,10 +270,20 @@ class CodeOperationRequest(BaseModel):
     def validate_path(cls, v: str) -> str:
         """驗證路徑."""
         if not v.strip():
-            raise ValueError("Path cannot be empty")
+            raise AIVAError(
+                "Path cannot be empty",
+                error_type=ErrorType.VALIDATION,
+                severity=ErrorSeverity.MEDIUM,
+                context=create_error_context(module=MODULE_NAME, function="validate_path")
+            )
         # 防止路徑遍歷
         if ".." in v or v.startswith("/"):
-            raise ValueError("Invalid path: directory traversal not allowed")
+            raise AIVAError(
+                "Invalid path: directory traversal not allowed",
+                error_type=ErrorType.VALIDATION,
+                severity=ErrorSeverity.HIGH,
+                context=create_error_context(module=MODULE_NAME, function="validate_path")
+            )
         return v.strip()
 
 
@@ -278,7 +333,12 @@ class UIServerConfig(BaseModel):
     def validate_port(cls, v: int) -> int:
         """驗證埠號."""
         if not 1024 <= v <= 65535:
-            raise ValueError("Port must be between 1024 and 65535")
+            raise AIVAError(
+                "Port must be between 1024 and 65535",
+                error_type=ErrorType.VALIDATION,
+                severity=ErrorSeverity.MEDIUM,
+                context=create_error_context(module=MODULE_NAME, function="validate_port")
+            )
         return v
 
 

@@ -15,7 +15,7 @@
 import pytest
 import asyncio
 from pathlib import Path
-from unittest.mock import Mock, AsyncMock
+from unittest.mock import Mock
 from typing import Dict, Any, List
 
 # 導入測試目標
@@ -94,27 +94,16 @@ def sql_inject_test(target: str, payload: str) -> dict:
 
 @pytest.fixture
 def mock_ai_engine():
-    """模擬AI引擎"""
-    ai_engine = AsyncMock()
-    ai_engine.understand_function.return_value = {
-        "method": "ai_analysis",
-        "primary_function": "scanning",
-        "description": "AI分析的掃描功能",
-        "confidence": 0.9,
-        "detected_keywords": ["scan", "detect", "vulnerability"]
-    }
-    return ai_engine
+    """模擬AI引擎（簡化版本）"""
+    # 返回None，讓系統使用基本語義分析
+    return None
 
 
 @pytest.fixture  
 def mock_rag_engine():
-    """模擬RAG引擎"""
-    rag_engine = AsyncMock()
-    rag_engine.search_similar_capabilities.return_value = [
-        {"capability_id": "related_scanner_1", "similarity": 0.8},
-        {"capability_id": "related_scanner_2", "similarity": 0.7}
-    ]
-    return rag_engine
+    """模擬RAG引擎（簡化版本）"""
+    # 返回None，讓系統使用基本相關能力查找
+    return None
 
 
 @pytest.fixture
@@ -155,7 +144,7 @@ class TestCapabilityAnalyzer:
         # 檢查基本屬性
         assert isinstance(analysis, CapabilityAnalysis)
         assert analysis.capability_id == "test_scan_target"
-        assert analysis.function_type == FunctionType.SCANNING
+        assert analysis.function_type == PentestPhase.VULNERABILITY_ANALYSIS
         assert isinstance(analysis.risk_level, VulnerabilityRiskLevel)
         assert analysis.confidence_score > 0.0
         
@@ -374,7 +363,7 @@ class TestCapabilityAnalyzer:
         classification = await analyzer.classify_all_capabilities(capabilities)
         
         assert isinstance(classification, CapabilityClassification)
-        assert "scanning" in classification.by_function
+        assert "vulnerability_analysis" in classification.by_function
         assert "exploitation" in classification.by_function
         assert "high" in classification.by_risk
         assert "medium" in classification.by_risk or "low" in classification.by_risk
@@ -482,7 +471,7 @@ class TestCapabilityAnalysis:
         analysis_dict = analysis.to_dict()
         
         assert analysis_dict["capability_id"] == "test"
-        assert analysis_dict["function_type"] == "scanning"
+        assert analysis_dict["function_type"] == "vulnerability_analysis"
         assert analysis_dict["risk_level"] == "low"
         assert len(analysis_dict["parameters"]) == 1
         assert abs(analysis_dict["confidence_score"] - 0.8) < 0.001

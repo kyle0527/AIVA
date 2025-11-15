@@ -10,7 +10,15 @@ from typing import Any
 import asyncpg
 import numpy as np
 
+from services.aiva_common.error_handling import (
+    AIVAError,
+    ErrorSeverity,
+    ErrorType,
+    create_error_context,
+)
+
 logger = logging.getLogger(__name__)
+MODULE_NAME = "aiva_core.rag.postgresql_vector_store"
 
 
 class PostgreSQLVectorStore:
@@ -39,7 +47,15 @@ class PostgreSQLVectorStore:
         self.pool = await asyncpg.create_pool(self.database_url)
 
         if self.pool is None:
-            raise RuntimeError("Failed to create database connection pool")
+            raise AIVAError(
+                "Failed to create database connection pool",
+                error_type=ErrorType.DATABASE,
+                severity=ErrorSeverity.CRITICAL,
+                context=create_error_context(
+                    module=MODULE_NAME,
+                    function="initialize"
+                )
+            )
 
         async with self.pool.acquire() as conn:
             # 啟用 pgvector 擴展
@@ -89,9 +105,17 @@ class PostgreSQLVectorStore:
 
         # 確保向量維度正確
         if len(embedding) != self.embedding_dimension:
-            raise ValueError(
+            raise AIVAError(
                 f"Embedding dimension {len(embedding)} doesn't match "
-                f"expected {self.embedding_dimension}"
+                f"expected {self.embedding_dimension}",
+                error_type=ErrorType.VALIDATION,
+                severity=ErrorSeverity.MEDIUM,
+                context=create_error_context(
+                    module=MODULE_NAME,
+                    function="add_document",
+                    embedding_dim=len(embedding),
+                    expected_dim=self.embedding_dimension
+                )
             )
 
         if self.pool is None:

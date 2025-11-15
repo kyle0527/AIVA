@@ -1,10 +1,14 @@
 """RAG Engine - 檢索增強生成引擎
 
-將知識庫檢索與 AI 決策結合，增強攻擊計畫生成
+將向量檢索與 AI 決策結合，增強攻擊計畫生成
 """
 
 import logging
-from typing import Any
+from typing import Any, TYPE_CHECKING
+from enum import Enum
+
+if TYPE_CHECKING:
+    from .knowledge_base import KnowledgeBase
 
 from services.aiva_common.schemas import (
     AttackPlan,
@@ -13,7 +17,16 @@ from services.aiva_common.schemas import (
     ExperienceSample,
 )
 
-from .knowledge_base import KnowledgeBase, KnowledgeType
+logger = logging.getLogger(__name__)
+
+
+class KnowledgeType(str, Enum):
+    """知識類型"""
+    VULNERABILITY = "vulnerability"
+    ATTACK_TECHNIQUE = "attack_technique"
+    BEST_PRACTICE = "best_practice"
+    EXPERIENCE = "experience"
+    MITIGATION = "mitigation"
 
 logger = logging.getLogger(__name__)
 
@@ -24,7 +37,7 @@ class RAGEngine:
     結合向量檢索和 AI 生成，提供上下文增強的決策
     """
 
-    def __init__(self, knowledge_base: KnowledgeBase) -> None:
+    def __init__(self, knowledge_base: "KnowledgeBase") -> None:
         """初始化 RAG 引擎
 
         Args:

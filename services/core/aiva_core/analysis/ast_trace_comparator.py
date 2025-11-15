@@ -8,7 +8,7 @@ from dataclasses import asdict, dataclass, field
 import logging
 from typing import Any
 
-from ..execution_tracer.trace_recorder import ExecutionTrace, TraceType
+from ..execution.trace_recorder import ExecutionTrace, TraceType
 from ..planner.ast_parser import AttackFlowGraph, NodeType
 
 logger = logging.getLogger(__name__)

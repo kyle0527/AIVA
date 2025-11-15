@@ -9,8 +9,17 @@ import logging
 import time
 from typing import Any
 
-from aiva_common.cross_language import create_error_context, get_error_handler
+# aiva_common 統一錯誤處理
+from aiva_common.error_handling import (
+    AIVAError,
+    ErrorType,
+    ErrorSeverity,
+    create_error_context as create_error_ctx,
+)
+from aiva_common.cross_language import get_error_handler
 from .command_router import CommandContext, CommandType, ExecutionResult
+
+MODULE_NAME = "execution_planner"
 
 
 class ExecutionPlanner:
@@ -23,7 +32,7 @@ class ExecutionPlanner:
         self._plan_history: dict[str, dict[str, Any]] = {}
         self._execution_lock = asyncio.Lock()
 
-    async def create_execution_plan(
+    def create_execution_plan(
         self, context: CommandContext, route_info: dict[str, Any]
     ) -> dict[str, Any]:
         """創建執行計劃"""
@@ -207,7 +216,12 @@ class ExecutionPlanner:
 
                 # 檢查資源可用性
                 if not await self._check_resources(plan["resources_required"]):
-                    raise RuntimeError("Required resources not available")
+                    raise AIVAError(
+                        "Required resources not available",
+                        error_type=ErrorType.SYSTEM,
+                        severity=ErrorSeverity.HIGH,
+                        context=create_error_ctx(module=MODULE_NAME, function="execute_plan")
+                    )
 
                 # 執行各個步驟
                 step_results = []
@@ -323,24 +337,11 @@ class ExecutionPlanner:
                     },
                 )
 
-    async def _check_resources(self, required_resources: list[str]) -> bool:
+    def _check_resources(self, required_resources: list[str]) -> bool:
         """檢查所需資源是否可用"""
-        # 這裡可以實現實際的資源檢查邏輯
-        # 例如檢查AI引擎、掃描器、數據庫連接等是否可用
-
-        for resource in required_resources:
-            if resource == "ai_engine":
-                # 檢查AI引擎是否可用
-                pass
-            elif resource == "rust_adapter":
-                # 檢查Rust適配器是否可用
-                pass
-            elif resource == "scan_engine":
-                # 檢查掃描引擎是否可用
-                pass
-            # ... 其他資源檢查
-
-        return True  # 簡化實現，總是返回可用
+        # 實現資源檢查邏輯
+        available = {"ai_engine", "rust_adapter", "scan_engine", "database"}
+        return all(resource in available for resource in required_resources)
 
     async def _execute_step(
         self, step: dict[str, Any], step_context: dict[str, Any]
@@ -365,13 +366,18 @@ class ExecutionPlanner:
             # 默認處理器
             return await self._execute_generic_step(step_context)
 
-    async def _validate_input(self, context: dict[str, Any]) -> dict[str, Any]:
+    def _validate_input(self, context: dict[str, Any]) -> dict[str, Any]:
         """輸入驗證步驟"""
         command_context = context["plan"]["context"]
 
         # 基本驗證邏輯
         if not command_context.command:
-            raise ValueError("Command is required")
+            raise AIVAError(
+                "Command is required",
+                error_type=ErrorType.VALIDATION,
+                severity=ErrorSeverity.MEDIUM,
+                context=create_error_ctx(module=MODULE_NAME, function="_validate_input")
+            )
 
         return {
             "validation_result": "passed",
@@ -392,7 +398,7 @@ class ExecutionPlanner:
             "message": f"Command '{command_context.command}' executed successfully",
         }
 
-    async def _format_output(self, context: dict[str, Any]) -> dict[str, Any]:
+    def _format_output(self, context: dict[str, Any]) -> dict[str, Any]:
         """格式化輸出"""
         previous_results = context["previous_results"]
 
@@ -479,7 +485,7 @@ class ExecutionPlanner:
             "context_data": context_data,
         }
 
-    async def get_plan_status(self, plan_id: str) -> dict[str, Any] | None:
+    def get_plan_status(self, plan_id: str) -> dict[str, Any] | None:
         """獲取計劃狀態"""
         if plan_id in self._plan_history:
             plan = self._plan_history[plan_id]
@@ -494,7 +500,7 @@ class ExecutionPlanner:
             }
         return None
 
-    async def cancel_plan(self, plan_id: str) -> bool:
+    def cancel_plan(self, plan_id: str) -> bool:
         """取消計劃執行"""
         if plan_id in self._running_tasks:
             task = self._running_tasks[plan_id]
@@ -508,8 +514,8 @@ class ExecutionPlanner:
             return True
         return False
 
-    async def get_execution_stats(self) -> dict[str, Any]:
-        """獲取執行統計信息"""
+    def get_execution_stats(self) -> dict[str, Any]:
+        """獲取執行統計資訊"""
         total_plans = len(self._plan_history)
         completed_plans = len(
             [p for p in self._plan_history.values() if p.get("status") == "completed"]

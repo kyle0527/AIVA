@@ -84,7 +84,72 @@ class AttackExecutor:
             f"max_concurrent={max_concurrent}, timeout={timeout}s"
         )
 
-    async def execute_plan(
+    async def execute_plan_with_ai_analysis(
+        self,
+        plan: "AttackPlan | dict[str, Any]",
+        target: "AttackTarget | dict[str, Any]",
+        ai_analysis_results: dict[str, Any] | None = None,
+    ) -> "PlanExecutionResult | dict[str, Any]":
+        """執行攻擊計劃（整合AI分析結果）
+        
+        根據業務流程圖實現：AI分析結果 -> 攻擊計劃解析
+        
+        Args:
+            plan: 攻擊計劃
+            target: 攻擊目標 
+            ai_analysis_results: AI分析結果（影響執行策略）
+
+        Returns:
+            執行結果（包含回饋數據）
+        """
+        plan_id = (
+            plan.plan_id if hasattr(plan, "plan_id") else plan.get("plan_id", "unknown")
+        )
+        
+        # 業務流程：根據AI分析調整執行策略
+        if ai_analysis_results:
+            risk_level = ai_analysis_results.get("overall_risk_level", "low")
+            logger.info(f"根據AI分析調整執行策略，風險等級: {risk_level}")
+            
+            # 根據風險等級調整執行模式
+            if risk_level == "high" and self.mode != ExecutionMode.SAFE:
+                logger.warning("高風險環境，切換到安全模式")
+                original_mode = self.mode
+                self.mode = ExecutionMode.SAFE
+            else:
+                original_mode = None
+                
+        # 執行標準攻擊計劃流程
+        result = await self.execute_plan(plan, target)
+        
+        # 恢復原始執行模式
+        if ai_analysis_results and 'original_mode' in locals() and original_mode:
+            self.mode = original_mode
+            
+        # 業務流程：生成回饋數據供其他模組使用
+        if isinstance(result, dict):
+            result["feedback_data"] = self._generate_feedback_data(result)
+            
+        return result
+
+    def _generate_feedback_data(self, execution_result: dict[str, Any]) -> dict[str, Any]:
+        """生成回饋數據供Payload生成器和AI分析使用"""
+        return {
+            "successful_payloads": [
+                trace.get("payload") for trace in execution_result.get("trace", [])
+                if trace.get("success") and trace.get("payload")
+            ],
+            "failed_payloads": [
+                trace.get("payload") for trace in execution_result.get("trace", [])
+                if not trace.get("success") and trace.get("payload")
+            ],
+            "target_characteristics": {
+                "response_patterns": execution_result.get("response_patterns", []),
+                "security_mechanisms": execution_result.get("detected_security", []),
+                "execution_environment": execution_result.get("environment_info", {})
+            },
+            "execution_metrics": execution_result.get("metrics", {})
+        }
         self,
         plan: "AttackPlan | dict[str, Any]",
         target: "AttackTarget | dict[str, Any]",
@@ -104,35 +169,52 @@ class AttackExecutor:
 
         logger.info(f"開始執行攻擊計劃: {plan_id}")
 
-        # 安全檢查
+        # 安全檢查 - 整合AI風險評估
         if self.safety_enabled:
-            if not await self._safety_check(target):
-                logger.warning(f"安全檢查失敗，中止攻擊: {plan_id}")
-                return self._create_aborted_result(plan_id, "Safety check failed")
+            safety_result = await self._enhanced_safety_check(target, ai_analysis_results)
+            if not safety_result["passed"]:
+                logger.warning(f"安全檢查失敗，中止攻擊: {plan_id}, 原因: {safety_result['reason']}")
+                return self._create_aborted_result(plan_id, safety_result['reason'])
 
         # 記錄開始時間
         start_time = datetime.now(UTC)
 
-        # 執行攻擊步驟
+        # 執行攻擊步驟 - 按照業務流程圖的循環邏輯
         trace_records = []
         findings = []
+        step_index = 0
 
         try:
             steps = plan.steps if hasattr(plan, "steps") else plan.get("steps", [])
-
-            for step in steps:
-                step_result = await self._execute_step(step, target)
+            
+            # 業務流程：逐步執行攻擊 (ae_step_loop)
+            while step_index < len(steps):
+                current_step = steps[step_index]
+                logger.info(f"執行步驟 {step_index + 1}/{len(steps)}: {current_step.get('name', 'Unknown')}")
+                
+                # 業務流程：執行單一步驟 (ae_step_exec)
+                step_result = await self._execute_step(current_step, target)
                 trace_records.append(step_result["trace"])
 
                 if step_result.get("findings"):
                     findings.extend(step_result["findings"])
 
-                # 檢查是否應該繼續
-                if not step_result.get("success") and step_result.get(
-                    "critical", False
-                ):
-                    logger.warning(f"關鍵步驟失敗，中止計劃: {plan_id}")
-                    break
+                # 業務流程：步驟成功檢查 (ae_check)
+                if step_result.get("success"):
+                    # 業務流程：繼續下一步 (ae_continue)
+                    step_index += 1
+                    logger.info(f"步驟 {step_index} 成功，繼續執行")
+                else:
+                    # 業務流程：關鍵步驟檢查 (ae_critical)
+                    is_critical = step_result.get("critical", False)
+                    if is_critical:
+                        # 業務流程：停止執行 (ae_stop)
+                        logger.warning(f"關鍵步驟 {step_index + 1} 失敗，中止計劃: {plan_id}")
+                        break
+                    else:
+                        # 非關鍵步驟失敗，繼續下一步
+                        step_index += 1
+                        logger.warning(f"非關鍵步驟 {step_index} 失敗，繼續執行")
 
             status = "completed"
 
@@ -352,6 +434,37 @@ class AttackExecutor:
         }
 
         return type_mapping.get(step_type.lower(), ExploitType.IDOR)
+
+    async def _enhanced_safety_check(
+        self,
+        target: "AttackTarget | dict[str, Any]",
+        ai_analysis_results: dict[str, Any] | None = None,
+    ) -> dict[str, Any]:
+        """執行增強安全檢查（整合AI風險評估）"""
+        
+        # 基本安全檢查
+        basic_check = await self._safety_check(target)
+        if not basic_check:
+            return {"passed": False, "reason": "Basic safety check failed"}
+            
+        # AI風險評估檢查
+        if ai_analysis_results:
+            risk_level = ai_analysis_results.get("overall_risk_level", "low")
+            if risk_level == "high" and self.mode == ExecutionMode.AGGRESSIVE:
+                return {
+                    "passed": False, 
+                    "reason": f"High risk environment detected (risk_level: {risk_level}), aggressive mode not allowed"
+                }
+                
+            # 檢查高風險發現
+            high_risk_findings = ai_analysis_results.get("high_risk_findings", [])
+            if len(high_risk_findings) > 5:
+                return {
+                    "passed": False,
+                    "reason": f"Too many high-risk findings detected: {len(high_risk_findings)}"
+                }
+                
+        return {"passed": True, "reason": "Enhanced safety check passed"}
 
     async def _safety_check(
         self,

@@ -1,16 +1,28 @@
 """AIVA 核心業務模式定義
 
 包含風險評估、任務管理、策略生成、系統協調等核心業務邏輯相關的數據模式。
-屬於 core 模組的業務特定定義。
+屬於 core 模塊的業務特定定義。
 """
+
+from __future__ import annotations
 
 from datetime import UTC, datetime
 from typing import Any
 
 from pydantic import BaseModel, Field, field_validator
 
-from services.aiva_common.enums import ModuleName, Severity, TestStatus
+# aiva_common 統一錯誤處理
+from aiva_common.error_handling import (
+    AIVAError,
+    ErrorType,
+    ErrorSeverity,
+    create_error_context,
+)
+from services.aiva_common.enums import Severity, TestStatus
+from services.aiva_common.enums.modules import ModuleName
 from services.aiva_common.schemas.ai import CVSSv3Metrics
+
+MODULE_NAME = "business_schemas"
 
 # ==================== 風險評估 ====================
 
@@ -173,7 +185,12 @@ class TaskExecution(BaseModel):
     @classmethod
     def validate_task_id(cls, v: str) -> str:
         if not v.startswith("task_"):
-            raise ValueError("task_id must start with 'task_'")
+            raise AIVAError(
+                "task_id must start with 'task_'",
+                error_type=ErrorType.VALIDATION,
+                severity=ErrorSeverity.MEDIUM,
+                context=create_error_context(module=MODULE_NAME, function="validate_task_id")
+            )
         return v
 
 
@@ -352,6 +369,162 @@ class VulnerabilityCorrelation(BaseModel):
     metadata: dict[str, Any] = Field(default_factory=dict, description="元數據")
 
 
+# ==================== 攻擊面分析 ====================
+
+
+class AssetAnalysis(BaseModel):
+    """資產分析結果"""
+    
+    asset_id: str = Field(description="資產ID")
+    url: str = Field(description="資產URL")
+    asset_type: str = Field(description="資產類型")
+    risk_score: int = Field(ge=0, le=100, description="風險評分")
+    parameters: list[str] = Field(default_factory=list, description="參數列表")
+    has_form: bool = Field(default=False, description="是否有表單")
+
+
+class XssCandidate(BaseModel):
+    """XSS 漏洞候選"""
+    
+    asset_url: str = Field(description="資產URL")
+    parameter: str = Field(description="參數名稱")
+    location: str = Field(description="位置")
+    confidence: float = Field(ge=0.0, le=1.0, description="置信度")
+    reasons: list[str] = Field(description="原因列表")
+    xss_type: str = Field(default="reflected", description="XSS類型")
+    context: str | None = Field(default=None, description="上下文")
+
+
+class SqliCandidate(BaseModel):
+    """SQLi 漏洞候選"""
+    
+    asset_url: str = Field(description="資產URL")
+    parameter: str = Field(description="參數名稱")
+    location: str = Field(description="位置")
+    confidence: float = Field(ge=0.0, le=1.0, description="置信度")
+    reasons: list[str] = Field(description="原因列表")
+    union_based_possible: bool = Field(default=False, description="支持UNION查詢")
+    error_based_possible: bool = Field(default=False, description="支持錯誤注入")
+    database_hints: list[str] = Field(default_factory=list, description="資料庫提示")
+
+
+class SsrfCandidate(BaseModel):
+    """SSRF 漏洞候選"""
+    
+    asset_url: str = Field(description="資產URL")
+    parameter: str = Field(description="參數名稱")
+    location: str = Field(description="位置")
+    confidence: float = Field(ge=0.0, le=1.0, description="置信度")
+    reasons: list[str] = Field(description="原因列表")
+    target_type: str = Field(description="目標類型")
+    protocols: list[str] = Field(default_factory=list, description="可能的協定")
+
+
+class IdorCandidate(BaseModel):
+    """IDOR 漏洞候選"""
+    
+    asset_url: str = Field(description="資產URL")
+    parameter: str = Field(description="參數名稱")
+    location: str = Field(description="位置")
+    confidence: float = Field(ge=0.0, le=1.0, description="置信度")
+    reasons: list[str] = Field(description="原因列表")
+    resource_type: str | None = Field(default=None, description="資源類型")
+    id_pattern: str | None = Field(default=None, description="ID模式")
+    requires_auth: bool = Field(default=True, description="需要認證")
+
+
+class AttackSurfaceAnalysis(BaseModel):
+    """攻擊面分析結果"""
+    
+    scan_id: str = Field(description="掃描ID")
+    total_assets: int = Field(description="總資產數")
+    forms: int = Field(description="表單數")
+    parameters: int = Field(description="參數數")
+    waf_detected: bool = Field(description="是否偵測到WAF")
+    
+    # 資產分層
+    high_risk_assets: list[AssetAnalysis] = Field(description="高風險資產")
+    medium_risk_assets: list[AssetAnalysis] = Field(description="中風險資產")
+    low_risk_assets: list[AssetAnalysis] = Field(description="低風險資產")
+    
+    # 漏洞候選
+    xss_candidates: list[XssCandidate] = Field(description="XSS候選")
+    sqli_candidates: list[SqliCandidate] = Field(description="SQLi候選")
+    ssrf_candidates: list[SsrfCandidate] = Field(description="SSRF候選")
+    idor_candidates: list[IdorCandidate] = Field(description="IDOR候選")
+    
+    @property
+    def total_candidates(self) -> int:
+        """總候選數"""
+        return (
+            len(self.xss_candidates) + 
+            len(self.sqli_candidates) + 
+            len(self.ssrf_candidates) + 
+            len(self.idor_candidates)
+        )
+
+
+# ==================== 測試策略 ====================
+
+
+class TestTask(BaseModel):
+    """測試任務"""
+    
+    vulnerability_type: str = Field(description="漏洞類型")
+    asset: str = Field(description="目標資產")
+    parameter: str = Field(description="參數名稱")
+    location: str = Field(description="位置")
+    priority: int = Field(description="優先級")
+    confidence: float = Field(ge=0.0, le=1.0, description="置信度")
+    metadata: dict[str, Any] = Field(default_factory=dict, description="元數據")
+
+
+class StrategyGenerationConfig(BaseModel):
+    """策略生成配置"""
+    
+    min_confidence_threshold: float = Field(default=0.3, description="最低置信度闾值")
+    high_confidence_threshold: float = Field(default=0.7, description="高置信度闾值")
+    max_tasks_per_type: int = Field(default=50, description="每種類型最大任務數")
+    max_tasks_per_scan: int = Field(default=200, description="每次掃描最大任務數")
+    prioritize_high_confidence: bool = Field(default=True, description="優先高置信度")
+    
+    # 優先級設定
+    high_risk_priority: int = Field(default=90, description="高風險優先級")
+    medium_risk_priority: int = Field(default=50, description="中風險優先級")
+    low_risk_priority: int = Field(default=20, description="低風險優先級")
+    
+    # 平均執行時間(秒)
+    avg_xss_task_duration: int = Field(default=30, description="XSS任務平均時間")
+    avg_sqli_task_duration: int = Field(default=60, description="SQLi任務平均時間")
+    avg_ssrf_task_duration: int = Field(default=45, description="SSRF任務平均時間")
+    avg_idor_task_duration: int = Field(default=40, description="IDOR任務平均時間")
+
+
+class TestStrategy(BaseModel):
+    """測試策略"""
+    
+    scan_id: str = Field(description="掃描ID")
+    strategy_type: str = Field(description="策略類型")
+    
+    # 各類型任務
+    xss_tasks: list[TestTask] = Field(description="XSS任務")
+    sqli_tasks: list[TestTask] = Field(description="SQLi任務")
+    ssrf_tasks: list[TestTask] = Field(description="SSRF任務")
+    idor_tasks: list[TestTask] = Field(description="IDOR任務")
+    
+    estimated_duration_seconds: int = Field(description="預估執行時間(秒)")
+    
+    @property
+    def total_tasks(self) -> int:
+        """總任務數"""
+        return (
+            len(self.xss_tasks) + 
+            len(self.sqli_tasks) + 
+            len(self.ssrf_tasks) + 
+            len(self.idor_tasks)
+        )
+
+
 __all__ = [
     "RiskFactor",
     "RiskAssessment",
@@ -364,4 +537,14 @@ __all__ = [
     "ModuleStatus",
     "SystemOrchestration",
     "VulnerabilityCorrelation",
+    # 攻擊面分析
+    "AssetAnalysis",
+    "AttackSurfaceAnalysis",
+    "XssCandidate",
+    "SqliCandidate",
+    "SsrfCandidate",
+    "IdorCandidate",
+    # 測試策略
+    "TestTask",
+    "StrategyGenerationConfig",
 ]

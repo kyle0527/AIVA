@@ -10,7 +10,7 @@ class ScanModuleInterface:
     包含格式檢測、資料清理、去重、豐富化等功能。
     """
 
-    async def process_scan_data(self, payload: ScanCompletedPayload) -> dict[str, Any]:
+    def process_scan_data(self, payload: ScanCompletedPayload) -> dict[str, Any]:
         """處理掃描模組回傳的原始數據
 
         Args:

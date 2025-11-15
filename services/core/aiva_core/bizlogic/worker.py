@@ -5,7 +5,7 @@
 
 import json
 
-from services.aiva_common.enums import ModuleName, Topic
+from services.aiva_common.enums.modules import ModuleName, Topic
 from services.aiva_common.mq import get_broker
 from services.aiva_common.schemas import AivaMessage, MessageHeader
 from services.aiva_common.utils import get_logger, new_id

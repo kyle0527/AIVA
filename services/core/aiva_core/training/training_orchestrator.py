@@ -8,6 +8,8 @@ import logging
 from pathlib import Path
 from typing import Any
 
+from aiva_common.error_handling import AIVAError, ErrorType, ErrorSeverity, create_error_context
+
 try:
     from ..execution.plan_executor import PlanExecutor
     from ..learning.model_trainer import ModelTrainer
@@ -137,7 +139,12 @@ class TrainingOrchestrator:
         # 1. 加載場景
         scenario = self.scenario_manager.get_scenario(scenario_id)
         if scenario is None:
-            raise ValueError(f"Scenario {scenario_id} not found")
+            raise AIVAError(
+                f"Scenario {scenario_id} not found",
+                error_type=ErrorType.VALIDATION,
+                severity=ErrorSeverity.MEDIUM,
+                context=create_error_context(module="training_orchestrator", function="run_training_episode")
+            )
 
         logger.info(
             f"Starting training episode for scenario: {scenario.name} "
@@ -788,7 +795,12 @@ class TrainingOrchestrator:
         elif model_type == "reinforcement":
             result = await self.model_trainer.train_reinforcement(samples)
         else:
-            raise ValueError(f"Unknown model type: {model_type}")
+            raise AIVAError(
+                f"Unknown model type: {model_type}",
+                error_type=ErrorType.VALIDATION,
+                severity=ErrorSeverity.MEDIUM,
+                context=create_error_context(module="training_orchestrator", function="train_model")
+            )
 
         return result
 

@@ -47,3 +47,18 @@ except ImportError:
         "aiva_common 模組導入失敗。請檢查 services/aiva_common/ 目錄是否存在",
         ImportWarning
     )
+
+# 嘗試導入core模組
+try:
+    from . import core
+    if 'core' not in __all__:
+        __all__.append('core')
+except ImportError:
+    import warnings
+    warnings.warn(
+        "core 模組導入失敗。請檢查 services/core/ 目錄是否存在",
+        ImportWarning
+    )
+except NameError:
+    # 如果__all__還未定義
+    __all__ = ['core']

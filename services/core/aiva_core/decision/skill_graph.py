@@ -13,11 +13,18 @@ import networkx as nx
 from aiva_common.enums import (
     ProgrammingLanguage,
 )
+from aiva_common.error_handling import (
+    AIVAError,
+    ErrorSeverity,
+    ErrorType,
+    create_error_context,
+)
 from aiva_common.schemas import CapabilityInfo
 from aiva_common.utils.logging import get_logger
 from services.integration.capability.registry import CapabilityRegistry
 
 logger = get_logger(__name__)
+MODULE_NAME = "aiva_core.decision.skill_graph"
 
 
 @dataclass
@@ -569,7 +576,15 @@ class AIVASkillGraph:
         await self.rebuild_if_needed()
 
         if not self.analyzer:
-            raise RuntimeError("技能圖未初始化")
+            raise AIVAError(
+                "技能圖未初始化",
+                error_type=ErrorType.SYSTEM,
+                severity=ErrorSeverity.HIGH,
+                context=create_error_context(
+                    module=MODULE_NAME,
+                    function="find_execution_path"
+                )
+            )
 
         return self.analyzer.find_optimal_path(start_capability, goal, max_path_length)
 
@@ -580,7 +595,15 @@ class AIVASkillGraph:
         await self.rebuild_if_needed()
 
         if not self.analyzer:
-            raise RuntimeError("技能圖未初始化")
+            raise AIVAError(
+                "技能圖未初始化",
+                error_type=ErrorType.SYSTEM,
+                severity=ErrorSeverity.HIGH,
+                context=create_error_context(
+                    module=MODULE_NAME,
+                    function="get_recommendations"
+                )
+            )
 
         return self.analyzer.get_capability_recommendations(capability_id, limit)
 
@@ -589,7 +612,15 @@ class AIVASkillGraph:
         await self.rebuild_if_needed()
 
         if not self.analyzer:
-            raise RuntimeError("技能圖未初始化")
+            raise AIVAError(
+                "技能圖未初始化",
+                error_type=ErrorType.SYSTEM,
+                severity=ErrorSeverity.HIGH,
+                context=create_error_context(
+                    module=MODULE_NAME,
+                    function="analyze_centrality"
+                )
+            )
 
         return self.analyzer.analyze_capability_centrality()
 

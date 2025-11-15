@@ -6,10 +6,18 @@ import logging
 import socket
 from typing import TYPE_CHECKING, Any
 
+from services.aiva_common.error_handling import (
+    AIVAError,
+    ErrorSeverity,
+    ErrorType,
+    create_error_context,
+)
+
 if TYPE_CHECKING:
     pass
 
 logger = logging.getLogger(__name__)
+MODULE_NAME = "aiva_core.ui_panel.server"
 
 
 def find_free_port(start_port: int = 8080, max_attempts: int = 100) -> int:
@@ -34,7 +42,17 @@ def find_free_port(start_port: int = 8080, max_attempts: int = 100) -> int:
             continue
 
     msg = f"無法在 {start_port}-{start_port + max_attempts - 1} 範圍內找到可用端口"
-    raise RuntimeError(msg)
+    raise AIVAError(
+        msg,
+        error_type=ErrorType.SYSTEM,
+        severity=ErrorSeverity.HIGH,
+        context=create_error_context(
+            module=MODULE_NAME,
+            function="find_free_port",
+            start_port=start_port,
+            max_attempts=max_attempts
+        )
+    )
 
 
 def start_ui_server(

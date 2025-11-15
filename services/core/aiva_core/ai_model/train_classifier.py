@@ -2,6 +2,21 @@ import os
 import sqlite3
 from typing import Any
 
+# aiva_common 統一錯誤處理
+from aiva_common.error_handling import (
+    AIVAError,
+    ErrorType,
+    ErrorSeverity,
+    create_error_context,
+)
+
+MODULE_NAME = "train_classifier"
+
+# 常量定義
+DEFAULT_DB_PATH = "data/training_data.db"
+DEFAULT_MODEL_PATH = "data/vuln_classifier.joblib"
+DEFAULT_VECTORIZER_PATH = "data/vectorizer.joblib"
+
 # 使用統一的可選依賴管理器
 try:
     from utilities.optional_deps import deps, has_sklearn, require_sklearn
@@ -18,9 +33,14 @@ except ImportError:
     
     def require_sklearn():
         if not has_sklearn():
-            raise ImportError(
-                "scikit-learn and joblib are required for model training. "
-                "Install with: pip install scikit-learn joblib"
+            raise AIVAError(
+                message="scikit-learn and joblib are required for model training. Install with: pip install scikit-learn joblib",
+                error_type=ErrorType.SYSTEM,
+                severity=ErrorSeverity.HIGH,
+                context=create_error_context(
+                    module=MODULE_NAME,
+                    function="require_sklearn"
+                )
             )
         import sklearn
         import joblib
@@ -55,7 +75,7 @@ else:
     train_test_split = None
 
 
-def create_database(db_path: str = "data/training_data.db") -> None:
+def create_database(db_path: str = DEFAULT_DB_PATH) -> None:
     os.makedirs(os.path.dirname(db_path), exist_ok=True)
     conn = sqlite3.connect(db_path)
     cur = conn.cursor()
@@ -93,7 +113,7 @@ def create_database(db_path: str = "data/training_data.db") -> None:
     conn.close()
 
 
-def load_data(db_path: str = "data/training_data.db") -> tuple[list[str], list[str]]:
+def load_data(db_path: str = DEFAULT_DB_PATH) -> tuple[list[str], list[str]]:
     conn = sqlite3.connect(db_path)
     cur = conn.cursor()
     cur.execute("SELECT text, label FROM vulnerabilities")
@@ -103,17 +123,29 @@ def load_data(db_path: str = "data/training_data.db") -> tuple[list[str], list[s
 
 
 def train_and_save_model(
-    db_path: str = "data/training_data.db",
-    model_path: str = "data/vuln_classifier.joblib",
-    vectorizer_path: str = "data/vectorizer.joblib",
+    db_path: str = DEFAULT_DB_PATH,
+    model_path: str = DEFAULT_MODEL_PATH,
+    vectorizer_path: str = DEFAULT_VECTORIZER_PATH,
 ) -> float:
     # 運行時檢查：根據網路最佳實踐提供清晰的錯誤信息
     if not has_sklearn():
         require_sklearn()  # 這會拋出詳細的錯誤信息
     
+    # 在運行時重新導入，確保可用
+    import joblib
+    from sklearn.feature_extraction.text import TfidfVectorizer
+    from sklearn.linear_model import LogisticRegression
+    from sklearn.metrics import accuracy_score, classification_report
+    from sklearn.model_selection import train_test_split
+    
     texts, labels = load_data(db_path)
     if not texts or not labels:
-        raise ValueError("Dataset is empty; please populate the database first.")
+        raise AIVAError(
+            "Dataset is empty; please populate the database first.",
+            error_type=ErrorType.VALIDATION,
+            severity=ErrorSeverity.HIGH,
+            context=create_error_context(module=MODULE_NAME, function="train")
+        )
     
     vectorizer = TfidfVectorizer()
     X = vectorizer.fit_transform(texts)
@@ -131,7 +163,7 @@ def train_and_save_model(
     os.makedirs(os.path.dirname(model_path), exist_ok=True)
     joblib.dump(classifier, model_path)
     joblib.dump(vectorizer, vectorizer_path)
-    return acc
+    return float(acc)  # 確保返回 float 類型
 
 
 def load_model(
@@ -143,8 +175,19 @@ def load_model(
         require_sklearn()  # 這會拋出詳細的錯誤信息
     
     if not os.path.exists(model_path) or not os.path.exists(vectorizer_path):
-        raise FileNotFoundError("Model files not found. Please train the model first.")
+        raise AIVAError(
+            message="Model files not found. Please train the model first.",
+            error_type=ErrorType.SYSTEM,
+            severity=ErrorSeverity.HIGH,
+            context=create_error_context(
+                module=MODULE_NAME,
+                function="load_model",
+                model_path=model_path,
+                vectorizer_path=vectorizer_path
+            )
+        )
     
+    import joblib  # 在運行時重新導入
     classifier = joblib.load(model_path)
     vectorizer = joblib.load(vectorizer_path)
     return classifier, vectorizer

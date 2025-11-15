@@ -11,83 +11,16 @@
 import asyncio
 from typing import TYPE_CHECKING
 
-# 使用可選依賴處理策略
-try:
-    from services.aiva_common.enums import Severity, ThreatLevel, VulnerabilityType
-    from services.aiva_common.schemas import FindingPayload
-    from services.aiva_common.utils import get_logger
-except ImportError as e:
-    # 提供後備導入或 Mock 實現
-    print(f"Warning: Could not import services.aiva_common modules: {e}")
-    # 創建基本的 Mock 類型用於類型檢查
-    from enum import Enum
-    import logging
-    
-    class Severity(Enum):
-        CRITICAL = "critical"
-        HIGH = "high"
-        MEDIUM = "medium"
-        LOW = "low"
-        INFORMATIONAL = "info"
-    
-    class ThreatLevel(Enum):
-        CRITICAL = "critical"
-        HIGH = "high"
-        MEDIUM = "medium"
-        LOW = "low"
-        INFO = "info"
-    
-    class VulnerabilityType(Enum):
-        SQLI = "sqli"
-        XSS = "xss"
-        SSRF = "ssrf"
-        IDOR = "idor"
-        BOLA = "bola"
-        INFO_LEAK = "info_leak"
-        WEAK_AUTH = "weak_auth"
-        PRICE_MANIPULATION = "price_manipulation"
-        WORKFLOW_BYPASS = "workflow_bypass"
-        RACE_CONDITION = "race_condition"
-    
-    # Mock FindingPayload 和相關類型
-    class MockTarget:
-        def __init__(self):
-            self.url = "http://example.com"
-    
-    class MockConfidence:
-        def __init__(self):
-            self.value = 'Firm'
-    
-    class MockVulnerability:
-        def __init__(self):
-            self.name = "Mock Vulnerability"
-            self.severity = Severity.MEDIUM
-            self.confidence = MockConfidence()
-            self.cwe = None
-    
-    class MockEvidence:
-        def __init__(self):
-            self.proof = None
-    
-    class FindingPayload:
-        def __init__(self):
-            self.finding_id = "mock-finding"
-            self.target = MockTarget()
-            self.vulnerability = MockVulnerability()
-            self.evidence = MockEvidence()
-    
-    def get_logger(name):
-        return logging.getLogger(name)
+# 直接使用 aiva_common 標準枚舉 - 符合 aiva_common 規範
+from services.aiva_common.enums.common import Severity, ThreatLevel
+from services.aiva_common.enums.security import VulnerabilityType
+from services.aiva_common.schemas.findings import FindingPayload
+from services.aiva_common.utils.logging import get_logger
 
 if TYPE_CHECKING:
-    try:
-        from services.integration.aiva_integration.threat_intel.intel_aggregator import (
-            IntelAggregator,
-        )
-    except ImportError:
-        # 為類型檢查提供 Mock 類型
-        class IntelAggregator:
-            pass
+    from services.integration.aiva_integration.threat_intel.threat_intel.intel_aggregator import (
+        IntelAggregator,
+    )
 
 logger = get_logger(__name__)
 
@@ -105,13 +38,11 @@ class RiskAssessmentEngine:
             enable_threat_intel: 是否啟用威脅情報查詢
         """
         self.enable_threat_intel = enable_threat_intel
-        # 使用 Any 類型以避免未繫結的類型錯誤
-        from typing import Any
-        self.intel_aggregator: Any = None
+        self.intel_aggregator: "IntelAggregator | None" = None
 
         if enable_threat_intel:
             try:
-                from services.integration.aiva_integration.threat_intel.intel_aggregator import (
+                from services.integration.aiva_integration.threat_intel.threat_intel.intel_aggregator import (
                     IntelAggregator,
                 )
 
@@ -121,15 +52,10 @@ class RiskAssessmentEngine:
                 logger.warning(
                     "Threat intel module not available, using base scoring only"
                 )
-                # 創建 Mock IntelAggregator
-                class MockIntelAggregator:
-                    def __init__(self):
-                        pass
-                
-                self.intel_aggregator = MockIntelAggregator()
+                self.intel_aggregator = None
                 self.enable_threat_intel = False
 
-    async def assess_risk(self, finding: FindingPayload) -> float:
+    def assess_risk(self, finding: FindingPayload) -> float:
         """評估漏洞風險分數
 
         Args:
@@ -141,13 +67,13 @@ class RiskAssessmentEngine:
         # 1. 基礎 CVSS 分數 (根據 severity)
         base_score = self._calculate_base_score(finding)
 
-        # 2. 威脅情報調整 (如果有 CWE)
+        # 2. 威脅情報調整 (可選)
         if (
             self.enable_threat_intel
             and self.intel_aggregator
             and finding.vulnerability.cwe
         ):
-            base_score = await self._adjust_by_threat_intel(base_score, finding)
+            base_score = self._adjust_by_threat_intel(base_score, finding)
 
         # 3. 可利用性調整
         base_score = self._adjust_by_exploitability(base_score, finding)
@@ -179,7 +105,7 @@ class RiskAssessmentEngine:
             Severity.HIGH: 7.5,
             Severity.MEDIUM: 5.0,
             Severity.LOW: 3.0,
-            Severity.INFORMATIONAL: 1.0,
+            Severity.NONE: 0.0,  # 使用 NONE 而不是 INFO/INFORMATIONAL
         }
 
         base_score = severity_scores.get(finding.vulnerability.severity, 5.0)
@@ -207,7 +133,9 @@ class RiskAssessmentEngine:
         # 支援字串類型的漏洞類型名稱 (Phase I 格式)
         vuln_name = finding.vulnerability.name
         if hasattr(vuln_name, "value"):
-            multiplier = vuln_type_multipliers.get(vuln_name.value, 1.0)
+            # 獲取漏洞類型倍數
+            vuln_type_str = vuln_name if isinstance(vuln_name, str) else str(vuln_name)
+            multiplier = vuln_type_multipliers.get(vuln_type_str, 1.0)
         else:
             # 處理字串格式的漏洞類型 (如 "Client-Side Authorization Bypass")
             multiplier = vuln_type_multipliers.get(str(vuln_name), 1.0)
@@ -260,7 +188,7 @@ class RiskAssessmentEngine:
 
         return base_score
 
-    async def _adjust_by_threat_intel(
+    def _adjust_by_threat_intel(
         self, base_score: float, finding: FindingPayload
     ) -> float:
         """根據威脅情報調整分數
@@ -355,7 +283,7 @@ class RiskAssessmentEngine:
         else:
             return ThreatLevel.INFO
 
-    async def batch_assess(
+    def batch_assess(
         self, findings: list[FindingPayload]
     ) -> list[tuple[FindingPayload, float]]:
         """批量評估風險分數
@@ -366,14 +294,15 @@ class RiskAssessmentEngine:
         Returns:
             list: [(finding, risk_score), ...]
         """
-        tasks = [self.assess_risk(finding) for finding in findings]
-        scores = await asyncio.gather(*tasks, return_exceptions=True)
-
+        # 由於 assess_risk 現在是同步的，直接調用即可
         results = []
-        for finding, score in zip(findings, scores, strict=False):
-            if isinstance(score, Exception):
-                logger.error(f"Failed to assess risk for {finding.finding_id}: {score}")
+        for finding in findings:
+            try:
+                score = self.assess_risk(finding)
+                results.append((finding, score))
+            except Exception as e:
+                logger.error(f"Failed to assess risk for {finding.finding_id}: {e}")
                 score = self._calculate_base_score(finding)  # Fallback
-            results.append((finding, score))
+                results.append((finding, score))
 
         return results

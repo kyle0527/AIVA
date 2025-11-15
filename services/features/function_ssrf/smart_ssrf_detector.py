@@ -328,85 +328,125 @@ class SmartSSRFDetector:
         vector: SsrfTestVector,
         payload: str,
     ) -> httpx.Response:
-        """發送 HTTP 請求"""
+        """發送 HTTP 請求 - 重構後複雜度 ≤15"""
         # 使用統一管理器的自適應超時
         current_timeout = self.smart_manager.timeout_manager.get_timeout()
-
-        # 複製 worker.py 的請求邏輯，但使用自適應超時
+        
+        # 解析目標和參數
+        target_config = self._parse_target_config(task, vector)
+        
+        # 處理參數置換
+        request_data = self._process_parameter_injection(target_config, payload)
+        
+        # 發送請求
+        return await self._execute_http_request(client, request_data, current_timeout)
+    
+    def _parse_target_config(self, task: FunctionTaskPayload, vector: SsrfTestVector) -> dict:
+        """解析目標配置 - 複雜度 8"""
         target = task.target
         method = (target.method or "GET").upper()
         parameter = vector.parameter or target.parameter
         location = (vector.location or target.parameter_location or "query").lower()
-
+        
         from urllib.parse import parse_qsl, urlparse
-
         parsed = urlparse(str(target.url))
-        base_params = dict(parse_qsl(parsed.query, keep_blank_values=True))
-        headers = dict(target.headers)
-        cookies = dict(target.cookies)
-        data = dict(target.form_data)
-        json_data = dict(target.json_data or {}) if target.json_data else None
-        content = target.body
-
-        if location in {"query", "url"} and parameter:
-            base_params[parameter] = payload
-        elif location in {"body", "form"} and parameter:
-            data[parameter] = payload
-        elif location == "json" and parameter:
-            json_data = json_data or {}
-            json_data[parameter] = payload
-        elif location == "header" and parameter:
-            headers[parameter] = payload
-        elif location == "cookie" and parameter:
-            cookies[parameter] = payload
-        elif location == "body_raw":
-            if parameter and content:
-                content = content.replace(f"{{{{{parameter}}}}}", payload)
-            else:
-                content = payload
-
-        from urllib.parse import urlunparse
-
-        new_url = urlunparse(
-            parsed._replace(query="&".join(f"{k}={v}" for k, v in base_params.items()))
-        )
-
-        # httpx 的正確參數組織方式
-        if json_data:
-            return await client.request(
-                method=method,
-                url=new_url,
-                headers=headers,
-                cookies=cookies,
-                json=json_data,
-                timeout=current_timeout,
-            )
-        elif data:
-            return await client.request(
-                method=method,
-                url=new_url,
-                headers=headers,
-                cookies=cookies,
-                data=data,
-                timeout=current_timeout,
-            )
-        elif content:
-            return await client.request(
-                method=method,
-                url=new_url,
-                headers=headers,
-                cookies=cookies,
-                content=content,
-                timeout=current_timeout,
-            )
+        
+        return {
+            'method': method,
+            'parameter': parameter,
+            'location': location,
+            'parsed_url': parsed,
+            'base_params': dict(parse_qsl(parsed.query, keep_blank_values=True)),
+            'headers': dict(target.headers),
+            'cookies': dict(target.cookies),
+            'form_data': dict(target.form_data),
+            'json_data': dict(target.json_data or {}) if target.json_data else None,
+            'body': target.body
+        }
+    
+    def _process_parameter_injection(self, config: dict, payload: str) -> dict:
+        """處理參數注入邏輯 - 使用策略模式重構，複雜度 ≤15"""
+        location = config['location']
+        parameter = config['parameter']
+        
+        # 使用策略模式 - 每個處理器複雜度 ≤5
+        injection_handlers = {
+            'query': self._inject_query_parameter,
+            'url': self._inject_query_parameter,
+            'body': self._inject_form_parameter,
+            'form': self._inject_form_parameter,
+            'json': self._inject_json_parameter,
+            'header': self._inject_header_parameter,
+            'cookie': self._inject_cookie_parameter,
+            'body_raw': self._inject_body_raw_parameter
+        }
+        
+        handler = injection_handlers.get(location)
+        if handler:
+            handler(config, parameter, payload)
+        
+        return config
+    
+    def _inject_query_parameter(self, config: dict, parameter: str, payload: str) -> None:
+        """注入查詢參數 - 複雜度 2"""
+        if parameter:
+            config['base_params'][parameter] = payload
+    
+    def _inject_form_parameter(self, config: dict, parameter: str, payload: str) -> None:
+        """注入表單參數 - 複雜度 2"""
+        if parameter:
+            config['form_data'][parameter] = payload
+    
+    def _inject_json_parameter(self, config: dict, parameter: str, payload: str) -> None:
+        """注入JSON參數 - 複雜度 3"""
+        if parameter:
+            config['json_data'] = config['json_data'] or {}
+            config['json_data'][parameter] = payload
+    
+    def _inject_header_parameter(self, config: dict, parameter: str, payload: str) -> None:
+        """注入頭部參數 - 複雜度 2"""
+        if parameter:
+            config['headers'][parameter] = payload
+    
+    def _inject_cookie_parameter(self, config: dict, parameter: str, payload: str) -> None:
+        """注入Cookie參數 - 複雜度 2"""
+        if parameter:
+            config['cookies'][parameter] = payload
+    
+    def _inject_body_raw_parameter(self, config: dict, parameter: str, payload: str) -> None:
+        """注入原始Body參數 - 複雜度 4"""
+        if parameter and config['body']:
+            config['body'] = config['body'].replace(f"{{{{{parameter}}}}}", payload)
         else:
-            return await client.request(
-                method=method,
-                url=new_url,
-                headers=headers,
-                cookies=cookies,
-                timeout=current_timeout,
+            config['body'] = payload
+    
+    async def _execute_http_request(self, client: httpx.AsyncClient, config: dict, timeout: float) -> httpx.Response:
+        """執行 HTTP 請求 - 複雜度 8"""
+        from urllib.parse import urlunparse
+        
+        new_url = urlunparse(
+            config['parsed_url']._replace(
+                query="&".join(f"{k}={v}" for k, v in config['base_params'].items())
             )
+        )
+        
+        base_kwargs = {
+            'method': config['method'],
+            'url': new_url,
+            'headers': config['headers'],
+            'cookies': config['cookies'],
+            'timeout': timeout
+        }
+        
+        # 使用 Early Return Pattern 避免多層 if-elif
+        if config['json_data']:
+            return await client.request(**base_kwargs, json=config['json_data'])
+        if config['form_data']:
+            return await client.request(**base_kwargs, data=config['form_data'])
+        if config['body']:
+            return await client.request(**base_kwargs, content=config['body'])
+        
+        return await client.request(**base_kwargs)
 
     def _build_internal_finding(
         self,

@@ -18,12 +18,15 @@ from aio_pika.abc import (
     AbstractQueue,
     AbstractRobustConnection,
 )
+from typing import Any, Dict  # 添加缺少的類型
 
+from aiva_common.error_handling import AIVAError, ErrorType, ErrorSeverity, create_error_context
 from services.aiva_common.config import get_settings
-from services.aiva_common.enums import ModuleName
+from services.aiva_common.enums.modules import ModuleName
 from services.aiva_common.schemas import AivaMessage
 
 logger = logging.getLogger(__name__)
+MODULE_NAME = "message_broker"
 
 
 class MessageBroker:
@@ -76,7 +79,12 @@ class MessageBroker:
     async def _declare_exchanges(self) -> None:
         """聲明所有需要的交換機"""
         if not self.channel:
-            raise RuntimeError("Channel not initialized")
+            raise AIVAError(
+                "Channel not initialized",
+                error_type=ErrorType.SYSTEM,
+                severity=ErrorSeverity.HIGH,
+                context=create_error_context(module=MODULE_NAME, function="_declare_exchanges")
+            )
 
         exchange_names = [
             "aiva.tasks",  # 任務交換機
@@ -110,11 +118,21 @@ class MessageBroker:
             correlation_id: 關聯 ID（用於請求-響應模式）
         """
         if not self.channel:
-            raise RuntimeError("Channel not initialized")
+            raise AIVAError(
+                "Channel not initialized",
+                error_type=ErrorType.SYSTEM,
+                severity=ErrorSeverity.HIGH,
+                context=create_error_context(module=MODULE_NAME, function="publish_message")
+            )
 
         exchange = self.exchanges.get(exchange_name)
         if not exchange:
-            raise ValueError(f"Exchange {exchange_name} not found")
+            raise AIVAError(
+                f"Exchange {exchange_name} not found",
+                error_type=ErrorType.VALIDATION,
+                severity=ErrorSeverity.MEDIUM,
+                context=create_error_context(module=MODULE_NAME, function="publish_message")
+            )
 
         # 轉換為字典
         if isinstance(message, AivaMessage):
@@ -154,18 +172,28 @@ class MessageBroker:
         """訂閱消息
 
         Args:
-            queue_name: 隊列名稱
+            queue_name: 佇列名稱
             routing_keys: 路由鍵列表
             exchange_name: 交換機名稱
             callback: 消息處理回調函數
             auto_ack: 是否自動確認
         """
         if not self.channel:
-            raise RuntimeError("Channel not initialized")
+            raise AIVAError(
+                "Channel not initialized",
+                error_type=ErrorType.SYSTEM,
+                severity=ErrorSeverity.HIGH,
+                context=create_error_context(module=MODULE_NAME, function="subscribe")
+            )
 
         exchange = self.exchanges.get(exchange_name)
         if not exchange:
-            raise ValueError(f"Exchange {exchange_name} not found")
+            raise AIVAError(
+                f"Exchange {exchange_name} not found",
+                error_type=ErrorType.VALIDATION,
+                severity=ErrorSeverity.MEDIUM,
+                context=create_error_context(module=MODULE_NAME, function="subscribe")
+            )
 
         # 聲明隊列
         queue = await self.channel.declare_queue(
@@ -192,7 +220,7 @@ class MessageBroker:
         self,
         exchange_name: str,
         timeout: float = 30.0,
-    ) -> RPCClient:
+    ) -> 'RPCClient':
         """創建 RPC 客戶端
 
         Args:
@@ -203,12 +231,61 @@ class MessageBroker:
             RPC 客戶端
         """
         if not self.channel:
-            raise RuntimeError("Channel not initialized")
+            raise AIVAError(
+                "Channel not initialized",
+                error_type=ErrorType.SYSTEM,
+                severity=ErrorSeverity.HIGH,
+                context=create_error_context(module=MODULE_NAME, function="create_rpc_client")
+            )
 
         exchange = self.exchanges.get(exchange_name)
         if not exchange:
-            raise ValueError(f"Exchange {exchange_name} not found")
+            raise AIVAError(
+                f"Exchange {exchange_name} not found",
+                error_type=ErrorType.VALIDATION,
+                severity=ErrorSeverity.MEDIUM,
+                context=create_error_context(module=MODULE_NAME, function="create_rpc_client")
+            )
 
+        return RPCClient(
+            channel=self.channel,
+            exchange=exchange,
+            timeout=timeout,
+        )
+
+    def get_rpc_client(
+        self, module_name: str, timeout: float = 30.0
+    ) -> 'RPCClient':
+        """獲取 RPC 客戶端
+
+        Args:
+            module_name: 模組名稱
+            timeout: 超時時間
+
+        Returns:
+            RPC 客戶端實例
+        """
+        if not self.connection:
+            logger.warning("No connection available for RPC client")
+            # 返回一個虛擬的RPCClient，避免None錯誤
+            return type('RPCClient', (), {
+                'call': lambda self, method, **kwargs: {'error': 'No connection'}
+            })()
+        
+        # 使用預設交換機創建RPC客戶端
+        default_exchange_name = "rpc_exchange"
+        if default_exchange_name not in self.exchanges:
+            logger.warning(f"Exchange {default_exchange_name} not found, using first available")
+            if self.exchanges:
+                exchange = next(iter(self.exchanges.values()))
+            else:
+                logger.error("No exchanges available")
+                return type('RPCClient', (), {
+                    'call': lambda self, method, **kwargs: {'error': 'No exchanges'}
+                })()
+        else:
+            exchange = self.exchanges[default_exchange_name]
+        
         return RPCClient(
             channel=self.channel,
             exchange=exchange,
