@@ -26,6 +26,13 @@ class ModuleExplorer:
     - scan: 掃描模組
     - features: 功能模組  
     - integration: 整合模組
+    
+    支援語言:
+    - Python (.py)
+    - Go (.go)
+    - Rust (.rs)
+    - TypeScript (.ts)
+    - JavaScript (.js)
     """
     
     def __init__(self, root_path: Path | None = None):
@@ -41,7 +48,16 @@ class ModuleExplorer:
             "features",
             "integration"
         ]
+        # 支援的文件類型
+        self.file_extensions = {
+            "python": "*.py",
+            "go": "*.go",
+            "rust": "*.rs",
+            "typescript": "*.ts",
+            "javascript": "*.js"
+        }
         logger.info(f"ModuleExplorer initialized with root: {self.root_path}")
+        logger.info(f"Supported languages: {', '.join(self.file_extensions.keys())}")
     
     def _infer_root_path(self) -> Path:
         """推斷專案根目錄"""
@@ -85,7 +101,7 @@ class ModuleExplorer:
         return results
     
     async def _explore_module(self, path: Path) -> dict[str, Any]:
-        """探索單一模組
+        """探索單一模組 (掃描多語言文件)
         
         Args:
             path: 模組路徑
@@ -95,23 +111,27 @@ class ModuleExplorer:
         """
         files = []
         total_size = 0
-        python_files = 0
+        file_counts = {lang: 0 for lang in self.file_extensions.keys()}
         
-        # 掃描所有 Python 文件
-        for py_file in path.rglob("*.py"):
-            # 跳過 __pycache__ 和測試文件
-            if "__pycache__" in str(py_file) or py_file.name.startswith("test_"):
-                continue
-            
-            file_size = py_file.stat().st_size
-            files.append({
-                "path": str(py_file.relative_to(path)),
-                "type": "python",
-                "size": file_size,
-                "name": py_file.name
-            })
-            total_size += file_size
-            python_files += 1
+        # 掃描所有支援的語言文件
+        for lang, pattern in self.file_extensions.items():
+            for file_path in path.rglob(pattern):
+                # 跳過特殊目錄和測試文件
+                if any(skip in str(file_path) for skip in ["__pycache__", "node_modules", "target", ".git"]):
+                    continue
+                if file_path.name.startswith("test_") or file_path.name.endswith("_test.go"):
+                    continue
+                
+                file_size = file_path.stat().st_size
+                files.append({
+                    "path": str(file_path.relative_to(path)),
+                    "type": lang,
+                    "size": file_size,
+                    "name": file_path.name,
+                    "language": lang
+                })
+                total_size += file_size
+                file_counts[lang] += 1
         
         # 分析模組結構
         structure = self._analyze_structure(path)
@@ -121,9 +141,10 @@ class ModuleExplorer:
             "files": files,
             "structure": structure,
             "stats": {
-                "total_files": python_files,
+                "total_files": sum(file_counts.values()),
                 "total_size": total_size,
-                "subdirectories": len(structure.get("subdirectories", []))
+                "subdirectories": len(structure.get("subdirectories", [])),
+                "by_language": file_counts
             }
         }
     
