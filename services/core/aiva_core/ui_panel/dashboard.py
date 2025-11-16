@@ -50,7 +50,7 @@ class Dashboard:
     def _init_ai_agent(self) -> None:
         """初始化 AI 代理."""
         try:
-            from ..ai_engine import BioNeuronRAGAgent
+            from ..cognitive_core.neural import BioNeuronRAGAgent
 
             logger.info("\n[AI] 正在初始化 BioNeuronRAGAgent...")
             self.ai_agent = BioNeuronRAGAgent(codebase_path="c:/D/E/AIVA/AIVA-main")

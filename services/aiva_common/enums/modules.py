@@ -276,6 +276,10 @@ class Topic(str, Enum):
     EVENT_AI_TRACE_COMPLETED = "events.ai.trace.completed"
     EVENT_AI_MODEL_UPDATED = "events.ai.model.updated"
     COMMAND_AI_MODEL_DEPLOY = "commands.ai.model.deploy"
+    
+    # Task Completion Topics (用於外部學習閉環)
+    TASK_COMPLETED = "tasks.completed"  # 任務完成事件（觸發學習循環）
+    MODEL_UPDATED = "model.updated"  # 模型更新通知
 
     # RAG Knowledge Topics
     TASK_RAG_KNOWLEDGE_UPDATE = "tasks.rag.knowledge.update"

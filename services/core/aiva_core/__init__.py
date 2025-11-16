@@ -1,28 +1,25 @@
 """
 AIVA Core - 核心引擎模組
 
-這是 AIVA 的核心處理引擎，負責協調掃描結果處理、
-測試策略生成、任務分發和執行狀態監控。
+這是 AIVA 的核心處理引擎，基於六大模組架構設計：
 
-核心功能:
-- bio_neuron_master: 生物神經網絡主控制器
-- ai_engine: AI 引擎和策略生成
-- attack: 攻擊執行和漏洞利用
-- storage: 數據存儲和持久化
-- analysis: 風險分析和評估
-- execution: 任務執行和調度
+六大模組架構 (v3.0):
+1. 🧠 cognitive_core/      - AI 認知核心 (神經網路、RAG、決策、反幻覺)
+2. 🧭 internal_exploration/ - 對內探索 (自我認知、能力分析)
+3. 📋 task_planning/        - 任務規劃與執行 (規劃器、執行器、指揮官)
+4. 🌍 external_learning/    - 對外學習 (分析、追蹤、訓練、模型)
+5. 🎯 core_capabilities/    - 核心能力 (攻擊鏈、業務邏輯、對話、插件)
+6. 🏗️ service_backbone/     - 服務骨幹 (API、協調、消息、存儲、狀態)
 
-新增核心組件 (附件要求實現):
-- dialog: 對話助理 - AI 對話層，支援自然語言問答和一鍵執行
-- decision: 技能圖 - 能力關係映射和決策支援
-- learning: 能力評估器 - 訓練探索和學習反饋機制
+UI 層:
+- 🎨 ui_panel/             - 使用者介面 (控制台、儀表板、CLI)
 
-整合增強功能 (v1 + AI模組):
+整合增強功能:
 - migration_controller: Strangler Fig 遷移控制器
 - plugins: 增強插件系統，整合能力註冊和智能編排
 """
 
-__version__ = "1.0.0"
+__version__ = "3.0.0-alpha"
 
 import logging
 from typing import Any, Dict, Optional, Set, List
@@ -372,7 +369,7 @@ except (ImportError, ValueError):
     )
 
 # 從新遷移的核心服務組件導入 (從 aiva_core_v2 遷移而來)
-from .command_router import (
+from .task_planning.command_router import (
     CommandContext,
     CommandRouter,
     CommandType,
@@ -380,7 +377,7 @@ from .command_router import (
     ExecutionResult,
     get_command_router,
 )
-from .context_manager import ContextManager, get_context_manager
+from .task_planning.context_manager import ContextManager, get_context_manager
 from .core_service_coordinator import (
     AIVACoreServiceCoordinator,
     get_core_service_coordinator,
@@ -392,7 +389,7 @@ from .decision.skill_graph import AIVASkillGraph, skill_graph
 
 # 從新增核心組件導入 (附件要求實現)
 from .dialog.assistant import AIVADialogAssistant, dialog_assistant
-from .execution_planner import ExecutionPlanner, get_execution_planner
+from .task_planning.execution_planner import ExecutionPlanner, get_execution_planner
 
 # capability_evaluator 現在使用 aiva_common.ai.capability_evaluator 統一實現
 

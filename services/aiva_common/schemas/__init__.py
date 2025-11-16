@@ -26,6 +26,16 @@ AIVA Common Schemas Package - Domain-Driven Design (DDD) Architecture
 # ==================== 核心基礎設施 ====================
 # 注意：_base/common.py 已移除重複，統一使用 base.py 中的定義
 
+# ==================== 決策數據合約 ====================
+from .decision import (
+    IntentType,
+    TargetInfo,
+    DecisionConstraints,
+    HighLevelIntent,
+    DecisionToASTContract,
+    DecisionFeedback,
+)
+
 # ==================== 分析引擎領域 ====================
 from .analysis import (
     BaseAnalysisResult,
@@ -701,6 +711,13 @@ __all__ = [
     "BugBountyStrategy",
     "BountyPrediction",
     "ROIAnalysis",
+    # 決策數據合約 (問題三修復)
+    "IntentType",
+    "TargetInfo",
+    "DecisionConstraints",
+    "HighLevelIntent",
+    "DecisionToASTContract",
+    "DecisionFeedback",
     # 分析結果統一標準
     "BaseAnalysisResult",
     "JavaScriptAnalysisResult",
