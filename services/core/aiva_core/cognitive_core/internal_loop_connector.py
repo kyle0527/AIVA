@@ -189,22 +189,35 @@ class InternalLoopConnector:
         # if force_refresh:
         #     await self.rag_kb.clear_namespace("self_awareness")
         
-        for doc in documents:
+        for i, doc in enumerate(documents):
             try:
+                # 確保 metadata 是字典類型
+                metadata_dict = {}
+                for key, value in doc["metadata"].items():
+                    # 確保所有值都是可序列化的基本類型
+                    if isinstance(value, (str, int, float, bool)):
+                        metadata_dict[key] = value
+                    elif value is None:
+                        metadata_dict[key] = None
+                    else:
+                        # 複雜類型轉為字串
+                        metadata_dict[key] = str(value)
+                
+                # 添加命名空間
+                metadata_dict["namespace"] = "self_awareness"
+                
                 # 使用 RAG 知識庫的 add_knowledge 方法
                 success = self.rag_kb.add_knowledge(
                     content=doc["content"],
-                    metadata={
-                        **doc["metadata"],
-                        "namespace": "self_awareness"  # 專屬命名空間
-                    }
+                    metadata=metadata_dict
                 )
                 
                 if success:
                     added_count += 1
                     
             except Exception as e:
-                logger.error(f"Failed to add document: {e}")
+                logger.error(f"Failed to add document {i}: {e}")
+                logger.debug(f"Document: {doc}")  # 調試用
         
         logger.info(f"  Injected {added_count}/{len(documents)} documents to RAG")
         return added_count

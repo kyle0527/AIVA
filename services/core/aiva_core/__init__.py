@@ -377,19 +377,20 @@ from .task_planning.command_router import (
     ExecutionResult,
     get_command_router,
 )
-from .task_planning.context_manager import ContextManager, get_context_manager
-from .core_service_coordinator import (
+from .service_backbone.context_manager import ContextManager, get_context_manager
+from .service_backbone.coordination.core_service_coordinator import (
     AIVACoreServiceCoordinator,
     get_core_service_coordinator,
     initialize_core_module,
     process_command,
     shutdown_core_module,
 )
-from .decision.skill_graph import AIVASkillGraph, skill_graph
+from .cognitive_core.decision.skill_graph import AIVASkillGraph, skill_graph
+from .cognitive_core.neural.bio_neuron_master import BioNeuronDecisionController
 
-# 從新增核心組件導入 (附件要求實現)
-from .dialog.assistant import AIVADialogAssistant, dialog_assistant
-from .task_planning.execution_planner import ExecutionPlanner, get_execution_planner
+# 從核心組件導入
+from .core_capabilities.dialog.assistant import AIVADialogAssistant, dialog_assistant
+from .task_planning.planner.execution_planner import ExecutionPlanner, get_execution_planner
 
 # capability_evaluator 現在使用 aiva_common.ai.capability_evaluator 統一實現
 
@@ -408,6 +409,7 @@ __all__ = [
     "is_feature_enabled",
     "get_migration_phase",
     # 新增核心組件 (附件要求實現)
+    "BioNeuronDecisionController",
     "AIVADialogAssistant",
     "dialog_assistant",
     "AIVASkillGraph",

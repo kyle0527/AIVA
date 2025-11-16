@@ -44,16 +44,16 @@ from .models import (
     TestStrategy,
     VulnerabilityCorrelation,
 )
-from .aiva_core.execution import (
+from .aiva_core.external_learning.tracing.unified_tracer import (
     UnifiedTracer,
     TraceType,
     ExecutionTrace,
     get_global_tracer,
     record_execution_trace,
-    # 向後相容性別名
-    TraceRecorder,
-    TraceLogger,
 )
+# 向後相容性別名
+from .aiva_core.external_learning.tracing.trace_recorder import TraceRecorder
+# TraceLogger 已棄用，使用 UnifiedTracer
 
 __all__ = [
     # Execution models - 統一追蹤器
@@ -64,7 +64,6 @@ __all__ = [
     "record_execution_trace",
     # 向後相容性
     "TraceRecorder",
-    "TraceLogger",
     # AI models
     "ModelTrainingConfig",
     "ModelTrainingResult",

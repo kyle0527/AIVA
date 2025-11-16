@@ -14,6 +14,7 @@ task_planning (執行結果) → ExternalLoopConnector → external_learning (�
 import logging
 from datetime import datetime, timezone
 from typing import Any
+from uuid import uuid4
 
 logger = logging.getLogger(__name__)
 
@@ -91,7 +92,7 @@ class ExternalLoopConnector:
         try:
             # 步驟 1: 偏差分析
             logger.info("  Step 1: Analyzing deviations...")
-            deviations = await self._analyze_deviations(plan, trace)
+            deviations = self._analyze_deviations(plan, trace)
             
             # 步驟 2: 判斷是否需要訓練
             is_significant = self._is_significant_deviation(deviations)
@@ -110,7 +111,7 @@ class ExternalLoopConnector:
                 # 步驟 4: 如果產生了新權重，通知權重管理器
                 if training_result.get("new_weights_path"):
                     logger.info("  Step 3: Registering new weights...")
-                    new_version = await self._register_new_weights(training_result)
+                    new_version = self._register_new_weights(training_result)
                     weights_updated = True
             else:
                 logger.info("  Deviations not significant, skipping training")
@@ -252,28 +253,52 @@ class ExternalLoopConnector:
             samples = []
             for i, deviation in enumerate(deviations):
                 sample = ExperienceSample(
-                    scenario_id=f"deviation_{i}",
-                    attack_type="analysis",
-                    target_profile={},
-                    decision_context=plan,
-                    execution_trace=trace,
-                    outcome_metrics={
-                        "deviation_type": deviation.get("type"),
-                        "severity": deviation.get("severity"),
-                        "score": deviation.get("score", 0)
+                    sample_id=f"sample_{uuid4().hex[:12]}",
+                    session_id=f"session_{datetime.now(timezone.utc).strftime('%Y%m%d_%H%M%S')}",
+                    plan_id=plan.get("plan_id", f"plan_{i}"),
+                    state_before={
+                        "plan_steps": len(plan.get("steps", [])),
+                        "expected_execution": "complete"
                     },
-                    reward_signal=1.0 - deviation.get("score", 0) / 10.0,
-                    success=False,
-                    timestamp=datetime.now(timezone.utc).isoformat()
+                    action_taken={
+                        "executed_steps": len(trace),
+                        "deviations": deviation
+                    },
+                    state_after={
+                        "actual_steps": len(trace),
+                        "deviation_detected": True
+                    },
+                    reward=1.0 - min(deviation.get("score", 0) / 10.0, 1.0),
+                    reward_breakdown={
+                        "completion": 0.3,
+                        "success": 0.3,
+                        "sequence": 0.2,
+                        "goal": 0.2
+                    },
+                    context={
+                        "deviation_type": deviation.get("type"),
+                        "severity": deviation.get("severity")
+                    },
+                    target_info=plan.get("target_info", {}),
+                    timestamp=datetime.now(timezone.utc),
+                    is_positive=False,
+                    confidence=0.8,
+                    learning_tags=["deviation", deviation.get("type", "unknown")],
+                    difficulty_level=3 if deviation.get("severity") == "high" else 2
                 )
                 samples.append(sample)
             
             # 使用監督學習訓練
             config = ModelTrainingConfig(
-                algorithm="supervised",
+                config_id=f"config_{datetime.now(timezone.utc).strftime('%Y%m%d_%H%M%S')}",
+                model_type="neural_network",
+                training_mode="supervised",
                 epochs=10,
                 batch_size=32,
-                learning_rate=0.001
+                learning_rate=0.001,
+                validation_split=0.2,
+                early_stopping=True,
+                patience=3
             )
             
             training_result = await self.trainer.train_supervised(
@@ -291,7 +316,7 @@ class ExternalLoopConnector:
             logger.error(f"Model training failed: {e}")
             return {}
     
-    async def _register_new_weights(self, training_result: dict[str, Any]) -> str | None:
+    def _register_new_weights(self, training_result: dict[str, Any]) -> str | None:
         """註冊新權重到權重管理器
         
         Args:

@@ -52,13 +52,13 @@ from aiva_common.security import get_security_manager
 from aiva_common.security_middleware import (
     create_security_middleware,
 )
-from .command_router import (
+from ...task_planning.command_router import (
     CommandContext,
     ExecutionResult,
     get_command_router,
 )
-from .context_manager import get_context_manager
-from .execution_planner import get_execution_planner
+from ..context_manager import get_context_manager
+from ...task_planning.planner.execution_planner import get_execution_planner
 
 
 class AIVACoreServiceCoordinator:

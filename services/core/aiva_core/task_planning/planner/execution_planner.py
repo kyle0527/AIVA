@@ -17,7 +17,7 @@ from aiva_common.error_handling import (
     create_error_context as create_error_ctx,
 )
 from aiva_common.cross_language import get_error_handler
-from .command_router import CommandContext, CommandType, ExecutionResult
+from ..command_router import CommandContext, CommandType, ExecutionResult
 
 MODULE_NAME = "execution_planner"
 

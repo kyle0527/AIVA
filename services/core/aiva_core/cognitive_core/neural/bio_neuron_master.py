@@ -37,14 +37,14 @@ import logging
 from pathlib import Path
 from typing import Any
 
-from services.core.aiva_core.ai_engine.real_bio_net_adapter import (
+from .real_bio_net_adapter import (
     RealBioNeuronRAGAgent,
     RealScalableBioNet,
     create_real_rag_agent,
     create_real_scalable_bionet,
 )
-from services.core.aiva_core.decision.enhanced_decision_agent import EnhancedDecisionAgent
-from services.core.aiva_core.rag import RAGEngine
+from ..decision.enhanced_decision_agent import EnhancedDecisionAgent
+from ..rag import RAGEngine
 
 logger = logging.getLogger(__name__)
 

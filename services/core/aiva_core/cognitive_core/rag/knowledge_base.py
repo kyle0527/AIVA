@@ -46,10 +46,10 @@ class KnowledgeBase:
             knowledge_results = []
             for result in results:
                 knowledge_results.append({
-                    "content": result.get("content", ""),
+                    "content": result.get("text", ""),  # vector_store 使用 "text" 而非 "content"
                     "metadata": result.get("metadata", {}),
                     "relevance_score": result.get("score", 0.0),
-                    "source": result.get("source", "unknown")
+                    "source": result.get("metadata", {}).get("source", "unknown")
                 })
             
             return knowledge_results
@@ -75,7 +75,7 @@ class KnowledgeBase:
             self.vector_store.add_document(doc_id, content, metadata)
             return True
         except Exception as e:
-            logger.error(f"Failed to add knowledge: {e}")
+            logger.error(f"Failed to add knowledge: {e}", exc_info=True)
             return False
     
     def index_codebase(self, codebase_path: str) -> bool:

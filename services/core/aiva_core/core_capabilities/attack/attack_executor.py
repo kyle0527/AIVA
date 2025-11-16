@@ -150,6 +150,8 @@ class AttackExecutor:
             },
             "execution_metrics": execution_result.get("metrics", {})
         }
+
+    async def execute_plan(
         self,
         plan: "AttackPlan | dict[str, Any]",
         target: "AttackTarget | dict[str, Any]",

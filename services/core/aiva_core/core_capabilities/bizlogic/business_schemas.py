@@ -224,8 +224,8 @@ class TaskQueue(BaseModel):
 # ==================== 策略生成 ====================
 
 
-class TestStrategy(BaseModel):
-    """測試策略"""
+class GeneralTestStrategy(BaseModel):
+    """通用測試策略 - 用於系統編排和動態策略調整"""
 
     strategy_id: str = Field(description="策略ID")
     strategy_name: str = Field(description="策略名稱")
@@ -500,8 +500,8 @@ class StrategyGenerationConfig(BaseModel):
     avg_idor_task_duration: int = Field(default=40, description="IDOR任務平均時間")
 
 
-class TestStrategy(BaseModel):
-    """測試策略"""
+class VulnerabilityTestStrategy(BaseModel):
+    """漏洞測試策略 - 攻擊面分析後生成的具體測試任務策略"""
     
     scan_id: str = Field(description="掃描ID")
     strategy_type: str = Field(description="策略類型")
@@ -533,7 +533,7 @@ __all__ = [
     "TaskDependency",
     "TaskExecution",
     "TaskQueue",
-    "TestStrategy",
+    "GeneralTestStrategy",
     "ModuleStatus",
     "SystemOrchestration",
     "VulnerabilityCorrelation",
@@ -547,4 +547,5 @@ __all__ = [
     # 測試策略
     "TestTask",
     "StrategyGenerationConfig",
+    "VulnerabilityTestStrategy",
 ]

@@ -3,8 +3,10 @@
 **導航**: [← 返回 AIVA Core](../README.md)
 
 > **版本**: 3.0.0-alpha  
-> **狀態**: 生產就緒  
-> **角色**: AIVA 的「學習大腦」- 從執行結果中學習並持續優化
+> **狀態**: 生產就緒，測試通過  
+> **🧪 測試狀態**: 階段 8 測試 100% 通過 (4/4 組件，包含 ExperienceManager 警告)  
+> **角色**: AIVA 的「學習大腦」- 從執行結果中學習並持續優化  
+> **最後更新**: 2025年11月16日
 
 ---
 
@@ -63,10 +65,13 @@ external_learning/
 │   ├── trace_recorder.py         # 軌跡記錄器
 │   └── unified_tracer.py         # 統一追蹤器
 │
-└── 📁 ai_model/                  # AI 模型 (1 檔案)
-    └── train_classifier.py       # 分類器訓練
+├── 📁 ai_model/                  # AI 模型 (1 檔案)
+│   └── train_classifier.py       # 分類器訓練
+│
+├── event_listener.py             # ✅ 外部學習事件監聽器
+└── README.md                     # 本文檔
 
-總計: 15 個 Python 檔案
+總計: 17 個 Python 檔案
 ```
 
 ### 學習流程
@@ -358,7 +363,55 @@ scenario = manager.get_scenario("custom_sqli_test")
 
 ---
 
-### 4. 📝 Tracing (執行追蹤)
+### 4. 🎧 Event Listener (事件監聽)
+
+#### `event_listener.py` - 外部學習事件監聽器
+**功能**: 監聽 TASK_COMPLETED 事件並觸發學習流程
+```python
+from external_learning import ExternalLearningListener
+from aiva_common.enums import Topic
+
+# 初始化事件監聽器
+listener = ExternalLearningListener()
+
+# 啟動監聽
+await listener.start_listening()
+
+# 監聽器會自動處理以下流程：
+# 1. 監聽 TASK_COMPLETED 事件
+# 2. 提取執行數據和結果
+# 3. 觸發 ExternalLoopConnector 處理
+# 4. 啟動 AST vs Trace 偏差分析
+# 5. 判斷是否需要模型重訓練
+```
+
+**事件處理流程**:
+```
+任務完成事件 (TASK_COMPLETED)
+    ↓
+ExternalLearningListener.handle_task_completed()
+    ↓
+提取執行軌跡和 AST 計劃
+    ↓
+ExternalLoopConnector.process_execution_result()
+    ↓
+ASTTraceComparator.compare() - 偏差分析
+    ↓
+如果偏差 > 閾值
+    ↓
+ModelTrainer.retrain() - 重新訓練模型
+```
+
+**特性**:
+- ✅ **自動監聽** - 自動訂閱 TASK_COMPLETED 主題
+- ✅ **異常處理** - 完整的錯誤處理和重試機制
+- ✅ **日誌記錄** - 詳細的事件處理日誌
+- ✅ **閉環觸發** - 自動觸發外部學習閉環
+- ✅ **效能監控** - 事件處理性能統計
+
+---
+
+### 5. 📝 Tracing (執行追蹤)
 
 #### `execution_tracer.py` - 執行追蹤器
 **功能**: 追蹤攻擊執行的完整軌跡
@@ -446,7 +499,14 @@ adjuster.learn_from_result({
     "payload": payload
 })
 
-# 5. 定期訓練模型
+# 5. 啟動事件監聽器 (自動化學習)
+from external_learning import ExternalLearningListener
+
+listener = ExternalLearningListener()
+await listener.start_listening()
+print("外部學習事件監聽器已啟動，將自動處理任務完成事件")
+
+# 6. 定期訓練模型 (手動觸發)
 if should_train():
     experiences = collect_experiences()
     training_result = await trainer.train_from_experiences(
@@ -454,6 +514,41 @@ if should_train():
         model_type="dqn"
     )
     print(f"模型訓練完成: {training_result.model_id}")
+```
+
+### 事件驅動學習流程
+```python
+from external_learning import ExternalLearningListener
+from external_learning.training import TrainingOrchestrator
+
+# 1. 啟動事件監聽器
+listener = ExternalLearningListener()
+await listener.start_listening()
+print("事件監聽器已啟動，監聽任務完成事件")
+
+# 2. 事件監聽器會自動處理：
+# - 監聽 TASK_COMPLETED 事件
+# - 觸發 AST vs Trace 偏差分析
+# - 自動決定是否需要重訓練
+
+# 3. 手動訓練編排 (可選)
+orchestrator = TrainingOrchestrator()
+
+# 運行訓練週期
+result = await orchestrator.run_training_cycle(
+    scenario_type="owasp_top10",
+    num_iterations=100,
+    model_type="dqn"
+)
+
+print(f"訓練完成:")
+print(f"  模型 ID: {result['model_id']}")
+print(f"  最終準確率: {result['final_accuracy']}")
+print(f"  訓練時間: {result['training_time']} 秒")
+
+# 4. 停止監聽器
+await listener.stop_listening()
+print("事件監聽器已停止")
 ```
 
 ### 自動化訓練編排

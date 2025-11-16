@@ -150,10 +150,15 @@ class VectorStore:
         # 生成嵌入
         model = self._get_embedding_model()
 
-        if callable(model):
+        # 檢查是否為 SentenceTransformer 模型
+        if hasattr(model, 'encode'):
+            # 使用 encode 方法（SentenceTransformer）
+            embedding = model.encode(text, convert_to_numpy=True)
+        elif callable(model):
+            # 使用簡單嵌入函數
             embedding = model(text)
         else:
-            embedding = model.encode(text, convert_to_numpy=True)
+            raise ValueError(f"Unknown embedding model type: {type(model)}")
 
         # 存儲
         self.vectors[doc_id] = embedding
@@ -202,10 +207,13 @@ class VectorStore:
         # 生成查詢嵌入
         model = self._get_embedding_model()
 
-        if callable(model):
+        # 檢查是否為 SentenceTransformer 模型
+        if hasattr(model, 'encode'):
+            query_embedding = model.encode(query, convert_to_numpy=True)
+        elif callable(model):
             query_embedding = model(query)
         else:
-            query_embedding = model.encode(query, convert_to_numpy=True)
+            raise ValueError(f"Unknown embedding model type: {type(model)}")
 
         # 計算相似度
         similarities = []

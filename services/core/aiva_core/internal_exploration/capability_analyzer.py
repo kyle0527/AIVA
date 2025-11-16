@@ -107,30 +107,55 @@ class CapabilityAnalyzer:
         return capabilities
     
     def _has_capability_decorator(self, node: ast.FunctionDef) -> bool:
-        """檢查函數是否有能力裝飾器
+        """檢查函數是否為能力函數
+        
+        策略：
+        1. 有 @capability 裝飾器的函數（明確標記）
+        2. async def 函數（異步能力）
+        3. 公開函數（非 _ 開頭）且有文檔字串
         
         Args:
             node: AST 函數定義節點
             
         Returns:
-            是否有能力裝飾器
+            是否為能力函數
+        """
+        # 策略 1: 檢查裝飾器
+        if self._check_decorator_for_capability(node):
+            return True
+        
+        # 策略 2 & 3: 公開的異步函數或有文檔的函數
+        if node.name.startswith('_'):
+            return False
+            
+        # 異步函數
+        if isinstance(node, ast.AsyncFunctionDef):
+            return True
+        
+        # 有實質性文檔的函數
+        docstring = ast.get_docstring(node)
+        return bool(docstring and len(docstring) > 20)
+    
+    def _check_decorator_for_capability(self, node: ast.FunctionDef) -> bool:
+        """檢查裝飾器是否包含 capability
+        
+        Args:
+            node: AST 函數定義節點
+            
+        Returns:
+            是否有 capability 相關裝飾器
         """
         for decorator in node.decorator_list:
-            # 檢查 @capability 或 @register_capability
             if isinstance(decorator, ast.Name):
                 if "capability" in decorator.id.lower():
                     return True
-            
-            # 檢查帶參數的裝飾器 @capability(...) 
             elif isinstance(decorator, ast.Call):
                 if isinstance(decorator.func, ast.Name):
                     if "capability" in decorator.func.id.lower():
                         return True
-                # 檢查 @module.capability
                 elif isinstance(decorator.func, ast.Attribute):
                     if "capability" in decorator.func.attr.lower():
                         return True
-        
         return False
     
     def _extract_capability_info(

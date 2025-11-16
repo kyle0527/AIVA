@@ -1,6 +1,9 @@
 """Training Orchestrator - 訓練編排器
 
 整合 RAG、場景管理、模型訓練，實現完整的自動化訓練流程
+
+⚠️ 注意: ExperienceManager 類別尚未實現，相關功能暫時註釋
+TODO: 實現 ExperienceManager 或使用 ExperienceRepository 替代
 """
 
 from datetime import UTC, datetime
@@ -27,6 +30,9 @@ from services.aiva_common.schemas import (
     StandardScenario,
 )
 
+# TODO: ExperienceManager 尚未實現，需要實現或使用 ExperienceRepository
+# from services.integration.aiva_integration.reception.experience_repository import ExperienceRepository
+
 logger = logging.getLogger(__name__)
 
 
@@ -47,18 +53,20 @@ class TrainingOrchestrator:
         scenario_manager: ScenarioManager | None = None,
         rag_engine: RAGEngine | None = None,
         plan_executor: PlanExecutor | None = None,
-        experience_manager: ExperienceManager | None = None,
+        experience_manager: Any | None = None,  # TODO: 改為使用 ExperienceRepository
         model_trainer: ModelTrainer | None = None,
         data_directory: Path | None = None,
         auto_initialize: bool = True,
     ) -> None:
         """初始化訓練編排器
+        
+        ⚠️ 注意: experience_manager 參數暫不可用，等待 ExperienceManager 實現
 
         Args:
             scenario_manager: 場景管理器（None 時自動創建）
             rag_engine: RAG 引擎（None 時自動創建）
             plan_executor: 計畫執行器（None 時自動創建）
-            experience_manager: 經驗管理器（None 時自動創建）
+            experience_manager: 經驗管理器（暫不可用，傳入 None）
             model_trainer: 模型訓練器（None 時自動創建）
             data_directory: 數據目錄
             auto_initialize: 是否自動初始化缺失的組件
@@ -70,14 +78,15 @@ class TrainingOrchestrator:
             )
             self.rag_engine = rag_engine or self._create_default_rag_engine()
             self.plan_executor = plan_executor or self._create_default_plan_executor()
-            self.experience_manager = (
-                experience_manager or self._create_default_experience_manager()
-            )
+            # TODO: ExperienceManager 未實現，暫時設為 None
+            self.experience_manager = None  # experience_manager (待實現)
             self.model_trainer = model_trainer or self._create_default_model_trainer()
         else:
             self.scenario_manager = scenario_manager
             self.rag_engine = rag_engine
             self.plan_executor = plan_executor
+            self.experience_manager = None  # TODO: 待實現
+            self.model_trainer = model_trainer
             self.experience_manager = experience_manager
             self.model_trainer = model_trainer
 
@@ -112,10 +121,11 @@ class TrainingOrchestrator:
         logger.debug("Creating default PlanExecutor")
         return PlanExecutor()
 
-    def _create_default_experience_manager(self) -> ExperienceManager:
-        """創建默認經驗管理器"""
-        logger.debug("Creating default ExperienceManager")
-        return ExperienceManager()
+    # TODO: ExperienceManager 類別尚未實現，此方法暫時註釋
+    # def _create_default_experience_manager(self) -> ExperienceManager:
+    #     """創建默認經驗管理器"""
+    #     logger.debug("Creating default ExperienceManager")
+    #     return ExperienceManager()
 
     def _create_default_model_trainer(self) -> ModelTrainer:
         """創建默認模型訓練器"""

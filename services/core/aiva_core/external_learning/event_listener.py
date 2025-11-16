@@ -12,8 +12,11 @@
 """
 
 import asyncio
+import json
 import logging
 from typing import Any
+
+from aio_pika.abc import AbstractIncomingMessage
 
 from services.aiva_common.enums import Topic
 from services.aiva_common.schemas import AivaMessage
@@ -44,7 +47,7 @@ class ExternalLearningListener:
     def broker(self):
         """延遲加載 MessageBroker"""
         if self._broker is None:
-            from ...service_backbone.messaging.message_broker import MessageBroker
+            from ..service_backbone.messaging.message_broker import MessageBroker
             self._broker = MessageBroker()
         return self._broker
     
@@ -52,7 +55,7 @@ class ExternalLearningListener:
     def connector(self):
         """延遲加載 ExternalLoopConnector"""
         if self._connector is None:
-            from ...cognitive_core.external_loop_connector import ExternalLoopConnector
+            from ..cognitive_core.external_loop_connector import ExternalLoopConnector
             self._connector = ExternalLoopConnector()
         return self._connector
     
@@ -66,10 +69,15 @@ class ExternalLearningListener:
         logger.info("=" * 60)
         
         try:
+            # 連接到消息代理
+            await self.broker.connect()
+            
             # 訂閱 TASK_COMPLETED 事件
             await self.broker.subscribe(
-                topic=Topic.TASK_COMPLETED,
-                callback=self._on_task_completed,
+                queue_name="external_learning.task_completed",
+                routing_keys=["task.completed.*"],
+                exchange_name="aiva.events",
+                callback=self._on_task_completed_wrapper,
             )
             
             self._is_running = True
@@ -92,28 +100,44 @@ class ExternalLearningListener:
         logger.info("🛑 Stopping External Learning Listener...")
         self._is_running = False
         
-        # 取消訂閱
-        if self._broker:
-            await self.broker.unsubscribe(Topic.TASK_COMPLETED)
+        # 斷開連接
+        if self._broker and self.broker.connection:
+            await self.broker.disconnect()
         
         logger.info(f"✅ Listener stopped (processed {self._processing_count} events)")
     
-    async def _on_task_completed(self, message: AivaMessage | dict[str, Any]):
+    async def _on_task_completed_wrapper(self, message: AbstractIncomingMessage):
+        """MessageBroker 回調包裝器（異步）
+        
+        Args:
+            message: RabbitMQ 消息
+        """
+        try:
+            # 解析消息體
+            body = json.loads(message.body.decode())
+            
+            # 調用實際處理邏輯
+            self._on_task_completed(body)
+            
+            # 確認消息
+            await message.ack()
+            
+        except Exception as e:
+            logger.error(f"❌ Failed to process message: {e}", exc_info=True)
+            await message.nack(requeue=False)
+    
+    def _on_task_completed(self, message: dict[str, Any]):
         """處理任務完成事件
         
         Args:
-            message: 任務完成消息
+            message: 任務完成消息（字典格式）
         """
         self._processing_count += 1
         
         try:
             # 解析消息
-            if isinstance(message, AivaMessage):
-                payload = message.payload
-                plan_id = message.header.trace_id
-            else:
-                payload = message
-                plan_id = payload.get("plan_id", "unknown")
+            payload = message.get("payload", message)
+            plan_id = message.get("plan_id", payload.get("plan_id", "unknown"))
             
             logger.info("=" * 60)
             logger.info(f"📥 Received TASK_COMPLETED event #{self._processing_count}")
@@ -123,7 +147,6 @@ class ExternalLearningListener:
             # 提取執行數據
             plan = payload.get("plan_ast", {})
             trace = payload.get("execution_trace", [])
-            result = payload.get("result", {})
             
             # 驗證數據完整性
             if not plan or not trace:
@@ -134,7 +157,13 @@ class ExternalLearningListener:
             logger.info(f"   Trace records: {len(trace)}")
             
             # 觸發學習處理（異步，不阻塞）
-            asyncio.create_task(self._process_learning(plan, trace, result, plan_id))
+            # 保存 task 到變數以防止過早垃圾回收
+            task = asyncio.create_task(self._process_learning(plan, trace, plan_id))
+            # 存儲 task 引用以防止垃圾回收
+            if not hasattr(self, '_background_tasks'):
+                self._background_tasks = set()
+            self._background_tasks.add(task)
+            task.add_done_callback(self._background_tasks.discard)
             
         except Exception as e:
             logger.error(f"❌ Failed to process TASK_COMPLETED event: {e}", exc_info=True)
@@ -143,7 +172,6 @@ class ExternalLearningListener:
         self,
         plan: dict[str, Any],
         trace: list[dict[str, Any]],
-        result: dict[str, Any],
         plan_id: str,
     ):
         """處理學習流程（異步）
@@ -151,17 +179,15 @@ class ExternalLearningListener:
         Args:
             plan: 計劃 AST
             trace: 執行軌跡
-            result: 執行結果
             plan_id: 計劃 ID
         """
         try:
             logger.info(f"\n🧠 Processing learning for plan {plan_id}...")
             
-            # 使用 ExternalLoopConnector 處理
+            # 使用 ExternalLoopConnector 處理（只需 plan 和 trace）
             processing_result = await self.connector.process_execution_result(
                 plan=plan,
                 trace=trace,
-                result=result,
             )
             
             # 顯示處理結果
