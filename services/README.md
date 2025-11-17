@@ -1,8 +1,8 @@
 # 🏗️ AIVA Services - 企業級 Bug Bounty 平台服務架構
 
 > **🎯 Bug Bounty 專業化 v6.2**: 五大核心服務協同，AI 驅動智能游透測試平台  
-> **✅ 系統狀態**: 100% Bug Bounty 就緒，RAG1徹底移除完成，Core模組架構修復完成，跨語言 gRPC 整合完成  
-> **🔄 最後更新**: 2025年11月15日
+> **✅ 系統狀態**: 100% Bug Bounty 就緒，RAG1徹底移除完成，Core模組架構修復完成，跨語言 gRPC 整合完成，整合模組資料儲存標準化完成  
+> **🔄 最後更新**: 2025年11月16日
 
 ---
 
@@ -367,21 +367,26 @@ services/
 
 ### 🔄 [Integration - 企業級整合中樞](integration/README.md)
 
-**定位**: 服務協調器、通信管理、效能監控
+**定位**: 服務協調器、通信管理、效能監控、資料儲存管理
 
 **核心能力**:
 - 🤖 **AI Operation Recorder**: 智能協調核心
 - 📡 **多層整合架構**: 7 層分散式設計
 - 📊 **效能監控**: 實時指標、追蹤、告警
-- 🔗 **服務通信**: RabbitMQ、Redis、PostgreSQL、Neo4j
+- 🔗 **服務通信**: RabbitMQ、PostgreSQL (Neo4j → NetworkX 遷移完成)
+- 💾 **資料儲存**: 標準化資料儲存結構 (攻擊路徑、經驗記錄、訓練資料集、模型檢查點)
+- 🔧 **維護工具**: 自動備份與清理腳本
 
-**技術棧**: Python 3.11+、FastAPI、PostgreSQL、Redis、RabbitMQ、Neo4j
+**技術棧**: Python 3.11+、FastAPI、PostgreSQL、Redis、RabbitMQ、NetworkX
 
 **關鍵特性**:
 - ✅ 企業級整合中樞、AI 驅動協調
 - ✅ 7 層架構深度、模組化設計
 - ✅ 統一配置系統、環境變數管理
 - ✅ 完整監控體系、故障排除工具
+- ✅ **NEW**: 資料儲存標準化 (2025-11-16)
+- ✅ **NEW**: Neo4j → NetworkX 遷移 (零外部依賴)
+- ✅ **NEW**: 自動備份與清理維護腳本
 
 **📖 詳細文檔**: [services/integration/README.md](integration/README.md)
 
@@ -600,27 +605,35 @@ chore: 雜項
 
 ## 🎯 2025年11月更新摘要
 
-### ✅ Core 模組架構修復完成
+### ✅ Core 模組架構修復完成 (2025-11-15)
 - **RAG1徹底移除**: 第五次確認，所有RAG引用已指向當前版本，無legacy殘留
 - **execution_tracer修復**: 建立`execution/trace_recorder.py`解決缺失模組問題
 - **導入路徑修復**: 修正`services/core/__init__.py`相對導入錯誤
 - **P0-P2架構優化**: 移除Mock邏輯、實施依賴注入、RAG簡化、命令安全
 
-### 🔄 跨語言 gRPC 整合完成
+### 🔄 跨語言 gRPC 整合完成 (2025-11-15)
 - **Protocol Buffers 生成**: aiva_services.proto → pb2.py 自動化編譯
 - **multilang_coordinator 修正**: 38 個 Pylance 錯誤 → 0 個錯誤
 - **Type Ignore 註釋**: 符合 Google gRPC Python 官方標準
 - **跨語言通信**: Python ↔ Go ↔ Rust ↔ TypeScript gRPC 通道就緒
 
-### 🧠 AI 語義編碼升級
+### 🧠 AI 語義編碼升級 (2025-11-15)
 - **sentence-transformers 5.1.1**: 384 維語義向量
 - **real_neural_core.py**: 替換字符累加為語義編碼
 - **相似度分析**: 區分代碼語義 (0.25-0.59 vs 閑值 0.7)
 
+### 💾 整合模組資料儲存標準化完成 (2025-11-16)
+- **目錄結構建立**: `data/integration/` 標準化資料儲存 (攻擊路徑、經驗記錄、訓練資料集、模型檢查點)
+- **Neo4j → NetworkX 遷移**: 攻擊路徑分析引擎完全遷移至 NetworkX (零外部依賴)
+- **統一配置系統**: `config.py` 集中管理所有資料儲存路徑
+- **維護腳本建立**: `backup.py` (自動備份) + `cleanup.py` (舊資料清理)
+- **環境變數配置**: `.env` 新增整合模組專用配置 (AIVA_INTEGRATION_DATA_DIR 等)
+- **依賴簡化**: 資料庫依賴從 4 個減少至 2 個 (PostgreSQL + RabbitMQ)
+
 ### 📦 版本同步
 - **所有模組**: 升級至 v6.2
-- **日期統一**: 2025年11月15日
-- **文檔更新**: RAG1移除確認、execution_tracer修復記錄、gRPC 整合說明
+- **日期統一**: 2025年11月16日
+- **文檔更新**: RAG1移除確認、execution_tracer修復記錄、gRPC 整合說明、資料儲存標準化說明
 
 ---
 
@@ -700,6 +713,6 @@ chore: 雜項
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.0+-blue.svg)](https://www.typescriptlang.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-**最後更新**: 2025年11月15日
+**最後更新**: 2025年11月16日
 
 </div>

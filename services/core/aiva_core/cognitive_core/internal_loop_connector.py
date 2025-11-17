@@ -98,6 +98,7 @@ class InternalLoopConnector:
             result = {
                 "modules_scanned": len(modules),
                 "capabilities_found": len(capabilities),
+                "capabilities": capabilities,  # 新增: 返回原始能力數據
                 "documents_added": documents_added,
                 "timestamp": datetime.now(timezone.utc).isoformat(),
                 "success": True

@@ -72,6 +72,73 @@ graph TD
 
 ---
 
+## 💾 資料儲存與配置
+
+> **🎯 2025-11-16 更新**: 整合模組已完成資料儲存標準化，統一使用 `config.py` 管理所有路徑配置。
+
+### 📂 統一配置系統
+
+整合模組使用 `config.py` 集中管理所有資料儲存路徑和資料庫連線:
+
+```python
+from services.integration.aiva_integration.config import (
+    # 資料儲存路徑
+    INTEGRATION_DATA_DIR,        # 整合模組資料根目錄
+    ATTACK_GRAPH_FILE,           # 攻擊路徑圖檔案 (NetworkX pickle)
+    EXPERIENCE_DB_URL,           # 經驗資料庫 URL (SQLite)
+    TRAINING_DATASET_DIR,        # 訓練資料集目錄
+    MODEL_CHECKPOINT_DIR,        # 模型檢查點目錄
+    
+    # 資料庫連線
+    POSTGRES_DSN,                # PostgreSQL 連線字串
+    POSTGRES_CONFIG,             # PostgreSQL 配置字典
+    
+    # 備份配置
+    BACKUP_DIR,                  # 備份根目錄
+    BACKUP_RETENTION_DAYS,       # 備份保留策略
+)
+```
+
+### 🗄️ 核心資料庫
+
+#### 1. 攻擊路徑圖 (attack_graph.pkl)
+- **類型**: NetworkX DiGraph
+- **位置**: `data/integration/attack_paths/attack_graph.pkl`
+- **用途**: 資產與漏洞關聯分析
+- **更新**: ✅ Neo4j → NetworkX 遷移完成 (2025-11-16)
+
+#### 2. 經驗資料庫 (experience.db)
+- **類型**: SQLite 資料庫
+- **位置**: `data/integration/experiences/experience.db`
+- **表結構**: experience_records, training_datasets, dataset_samples, model_training_history
+- **用途**: 經驗重放記憶體 (Experience Replay Memory)
+
+### 🔧 使用範例
+
+```python
+# 攻擊路徑引擎 - 使用標準化配置
+from services.integration.aiva_integration.attack_path_analyzer import AttackPathEngine
+from services.integration.aiva_integration.config import ATTACK_GRAPH_FILE
+
+engine = AttackPathEngine(graph_file=ATTACK_GRAPH_FILE)
+paths = engine.find_attack_paths(target_node_type="Database")
+
+# 經驗資料庫 - 使用標準化配置
+from services.integration.aiva_integration.reception import ExperienceRepository
+from services.integration.aiva_integration.config import EXPERIENCE_DB_URL
+
+repo = ExperienceRepository(database_url=EXPERIENCE_DB_URL)
+repo.save_experience(plan_id="...", attack_type="sqli", ...)
+```
+
+### 📚 詳細文檔
+
+- 📖 **[資料儲存完整說明](../../../data/integration/README.md)** - 目錄結構、資料庫詳解
+- 📖 **[維護腳本文檔](../scripts/README.md)** - 備份與清理工具
+- 📖 **[建立報告](../../../reports/INTEGRATION_DATA_STORAGE_SETUP_REPORT.md)** - 完整建立過程
+
+---
+
 ## 🧩 核心組件
 
 ### 🎯 **AI Operation Recorder** (核心協調器)

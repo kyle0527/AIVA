@@ -127,6 +127,7 @@ from .common import (
     RiskLevel,
     ScanStatus,
     ScanStrategy,
+    ServiceType,       # 新增: 服務類型枚舉
     Severity,          # 向後相容別名
     StoppingReason,
     TaskStatus,

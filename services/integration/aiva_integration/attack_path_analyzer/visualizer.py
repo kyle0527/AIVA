@@ -276,8 +276,9 @@ class AttackPathVisualizer:
 # 使用範例
 if __name__ == "__main__":
     from .engine import AttackPathEngine
+    from services.integration.aiva_integration.config import ATTACK_GRAPH_FILE
 
-    engine = AttackPathEngine()
+    engine = AttackPathEngine(graph_file=ATTACK_GRAPH_FILE)
     try:
         engine.initialize_graph()
         paths = engine.find_attack_paths()

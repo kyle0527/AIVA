@@ -407,6 +407,7 @@ from .tasks import (
     FunctionTaskTarget,
     FunctionTaskTestConfig,
     PostExTestPayload,
+    PostExResultPayload,  # ✅ 修復: 補充遺漏的導入
     RemediationGeneratePayload,
     RemediationResultPayload,
     ScanCompletedPayload,

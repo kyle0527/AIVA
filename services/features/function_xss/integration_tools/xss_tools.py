@@ -1,8 +1,17 @@
 #!/usr/bin/env python3
 """
-AIVA XSS Attack Tools - Task 13
+AIVA XSS Integration Tools
 整合 AIVA 現有 XSS 功能與 HackingTool 工具集
 專業級 XSS 漏洞檢測和利用工具
+
+✅ **已移至 Features 模組** ✅
+本檔案現在位於 Features/function_xss/integration_tools/
+符合 AIVA 五大模組架構原則。
+
+功能:
+- Dalfox 掃描器整合
+- 多種 XSS 測試器 (Reflected, Stored, DOM, Blind)
+- 與 AIVA 現有 XSS 模組的整合接口
 """
 
 import asyncio
@@ -29,10 +38,9 @@ from rich.prompt import Prompt, Confirm
 from rich.table import Table
 from rich.text import Text
 
-# 本地導入
-from ...core.base_capability import BaseCapability
-from ...aiva_common.schemas import APIResponse
-from ...core.registry import CapabilityRegistry
+# 本地導入 - 已更新為 Features 模組路徑
+from services.aiva_common.schemas import APIResponse
+# BaseCapability 待更新為 Features 專用 Base
 
 console = Console()
 logger = logging.getLogger(__name__)

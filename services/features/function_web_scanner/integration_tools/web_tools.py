@@ -3,6 +3,12 @@
 AIVA Web Attack Module - Task 11
 基於 HackingTool webattack.py 實現的網絡攻擊工具集成
 包含網站安全掃描、子域名發現、目錄掃描、弱點檢測等功能
+
+✅ **已移至 Features 模組** ✅
+本檔案提供 Web 掃描工具整合功能（子域名發現、目錄掃描等）。
+符合 AIVA 五大模組架構原則：
+- Features 模組負責**實際執行測試**
+- 提供與外部工具的整合接口
 """
 
 import asyncio
@@ -26,8 +32,7 @@ from rich.progress import Progress, SpinnerColumn, TextColumn
 from rich.table import Table
 from rich.text import Text
 
-from services.base_capability import BaseCapability
-from services.capability_registry import CapabilityRegistry
+from services.aiva_common.schemas import APIResponse
 from services.config.settings_manager import SettingsManager
 from utilities.logger_setup import setup_logger
 

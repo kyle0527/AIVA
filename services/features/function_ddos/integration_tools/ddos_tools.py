@@ -3,6 +3,14 @@
 AIVA DDoS Attack Tools - Task 14 (Clean Version)
 分散式拒絕服務攻擊工具集
 ⚠️ 僅用於授權的安全測試和教育目的 ⚠️
+
+✅ **已移至 Features 模組** ✅
+本檔案提供 DDoS 壓力測試工具整合功能。
+符合 AIVA 五大模組架構原則：
+- Features 模組負責**實際執行測試**
+- 提供負載測試和壓力測試能力
+
+⚠️ 僅用於授權的安全測試和教育目的 ⚠️
 """
 
 import asyncio
@@ -26,10 +34,7 @@ from rich.progress import Progress, SpinnerColumn, TextColumn
 from rich.prompt import Confirm
 from rich.table import Table
 
-# 本地導入
-from ...core.base_capability import BaseCapability
-from ...core.registry import CapabilityRegistry
-from ...aiva_common.schemas import APIResponse
+from services.aiva_common.schemas import APIResponse
 
 console = Console()
 logger = logging.getLogger(__name__)

@@ -15,12 +15,13 @@ AIVA Attack Module
 from .attack_chain import AttackChain
 from .attack_executor import AttackExecutor
 from .attack_validator import AttackValidator
-from .exploit_manager import ExploitManager
+from .exploit_orchestrator import ExploitOrchestrator, ExploitManager
 from .payload_generator import PayloadGenerator
 
 __all__ = [
     "AttackExecutor",
     "ExploitManager",
+    "ExploitOrchestrator",
     "PayloadGenerator",
     "AttackChain",
     "AttackValidator",

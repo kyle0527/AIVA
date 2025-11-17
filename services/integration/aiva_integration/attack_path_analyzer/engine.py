@@ -1,7 +1,7 @@
 """
 Attack Path Analyzer - 攻擊路徑分析引擎
 
-使用 Neo4j 圖資料庫建立資產與漏洞的關聯圖,
+使用 NetworkX 圖庫建立資產與漏洞的關聯圖,
 計算從外部攻擊者到核心資產的攻擊路徑。
 
 Compliance Note (遵循 aiva_common 設計原則):
@@ -9,13 +9,16 @@ Compliance Note (遵循 aiva_common 設計原則):
 - AttackPathNodeType → 節點類型枚舉
 - AttackPathEdgeType → 邊類型枚舉
 - 修正日期: 2025-10-25
+- 遷移記錄: 2025-11-16 從 Neo4j 遷移至 NetworkX (降低外部依賴)
 """
 
 from dataclasses import dataclass
 import logging
+import pickle
+from pathlib import Path
 from typing import Any
 
-from neo4j import GraphDatabase
+import networkx as nx
 
 from services.aiva_common.enums import Severity
 from services.aiva_common.enums.security import (
@@ -40,68 +43,77 @@ class AttackPath:
 
 
 class AttackPathEngine:
-    """攻擊路徑分析引擎"""
+    """攻擊路徑分析引擎 (使用 NetworkX)"""
 
     def __init__(
         self,
-        neo4j_uri: str = "bolt://localhost:7687",
-        neo4j_user: str = "neo4j",
-        neo4j_password: str = "password",
+        graph_file: str | Path | None = None,
     ):
         """
         初始化引擎
 
         Args:
-            neo4j_uri: Neo4j 連線 URI
-            neo4j_user: Neo4j 使用者名稱
-            neo4j_password: Neo4j 密碼
+            graph_file: 圖持久化檔案路徑 (可選,用於載入既有圖)
         """
-        self.driver = GraphDatabase.driver(
-            neo4j_uri,
-            auth=(neo4j_user, neo4j_password),
-        )
-        logger.info(f"Connected to Neo4j at {neo4j_uri}")
+        self.graph = nx.DiGraph()  # 有向圖
+        self.graph_file = Path(graph_file) if graph_file else None
+        
+        # 如果提供了檔案且存在,則載入
+        if self.graph_file and self.graph_file.exists():
+            self.load_graph()
+            logger.info(f"Loaded graph from {self.graph_file}")
+        else:
+            self.initialize_graph()
+            logger.info("Initialized new NetworkX graph")
 
     def close(self):
-        """關閉連線"""
-        self.driver.close()
+        """儲存圖 (如果有指定檔案)"""
+        if self.graph_file:
+            self.save_graph()
+
+    def save_graph(self, file_path: str | Path | None = None) -> None:
+        """
+        儲存圖到檔案
+
+        Args:
+            file_path: 儲存路徑 (可選,預設使用初始化時的路徑)
+        """
+        target_file = Path(file_path) if file_path else self.graph_file
+        if not target_file:
+            logger.warning("No file path specified for saving graph")
+            return
+        
+        target_file.parent.mkdir(parents=True, exist_ok=True)
+        with open(target_file, "wb") as f:
+            pickle.dump(self.graph, f)
+        logger.info(f"Graph saved to {target_file}")
+
+    def load_graph(self, file_path: str | Path | None = None) -> None:
+        """
+        從檔案載入圖
+
+        Args:
+            file_path: 載入路徑 (可選,預設使用初始化時的路徑)
+        """
+        source_file = Path(file_path) if file_path else self.graph_file
+        if not source_file or not source_file.exists():
+            logger.warning(f"Graph file not found: {source_file}")
+            return
+        
+        with open(source_file, "rb") as f:
+            self.graph = pickle.load(f)
+        logger.info(f"Graph loaded from {source_file}")
 
     def initialize_graph(self):
-        """初始化圖結構（建立索引和約束）"""
-        with self.driver.session() as session:
-            # 建立唯一性約束
-            session.run(
-                "CREATE CONSTRAINT asset_id IF NOT EXISTS "
-                "FOR (a:Asset) REQUIRE a.id IS UNIQUE"
-            )
-            session.run(
-                "CREATE CONSTRAINT vuln_id IF NOT EXISTS "
-                "FOR (v:Vulnerability) REQUIRE v.id IS UNIQUE"
-            )
-            session.run(
-                "CREATE CONSTRAINT cred_id IF NOT EXISTS "
-                "FOR (c:Credential) REQUIRE c.id IS UNIQUE"
-            )
-
-            # 建立索引以加速查詢
-            session.run(
-                "CREATE INDEX asset_type IF NOT EXISTS " "FOR (a:Asset) ON (a.type)"
-            )
-            session.run(
-                "CREATE INDEX vuln_severity IF NOT EXISTS "
-                "FOR (v:Vulnerability) ON (v.severity)"
-            )
-
-            # 建立攻擊者節點（外部攻擊者）
-            session.run(
-                """
-                MERGE (attacker:Attacker {id: 'external_attacker'})
-                SET attacker.name = 'External Attacker',
-                    attacker.description = '外部攻擊者'
-                """
-            )
-
-            logger.info("Graph structure initialized")
+        """初始化圖結構（建立攻擊者節點）"""
+        # 建立攻擊者節點（外部攻擊者）
+        self.graph.add_node(
+            "external_attacker",
+            node_type="Attacker",
+            name="External Attacker",
+            description="外部攻擊者",
+        )
+        logger.info("Graph structure initialized with external attacker")
 
     def add_asset(self, asset: Asset) -> None:
         """
@@ -110,30 +122,27 @@ class AttackPathEngine:
         Args:
             asset: 資產物件
         """
-        with self.driver.session() as session:
-            session.run(
-                """
-                MERGE (a:Asset {id: $asset_id})
-                SET a.value = $value,
-                    a.type = $type,
-                    a.is_public = $is_public
-                """,
-                asset_id=asset.asset_id,
-                value=asset.value,
-                type=asset.type,
-                is_public=True,  # 假設從外部掃描發現的都是公開資產
-            )
+        asset_id = asset.asset_id
+        
+        # 新增資產節點
+        self.graph.add_node(
+            asset_id,
+            node_type="Asset",
+            value=asset.value,
+            type=asset.type,
+            is_public=True,  # 假設從外部掃描發現的都是公開資產
+        )
 
-            # 如果是公開資產,連接到外部攻擊者
-            session.run(
-                """
-                MATCH (attacker:Attacker {id: 'external_attacker'})
-                MATCH (asset:Asset {id: $asset_id})
-                WHERE asset.is_public = true
-                MERGE (attacker)-[:CAN_ACCESS]->(asset)
-                """,
-                asset_id=asset.asset_id,
+        # 如果是公開資產,連接到外部攻擊者
+        if self.graph.nodes[asset_id].get("is_public"):
+            self.graph.add_edge(
+                "external_attacker",
+                asset_id,
+                edge_type="CAN_ACCESS",
+                risk=1.0,
             )
+        
+        logger.debug(f"Added asset: {asset_id}")
 
     def add_finding(self, finding: FindingPayload) -> None:
         """
@@ -142,107 +151,116 @@ class AttackPathEngine:
         Args:
             finding: Finding 物件
         """
-        with self.driver.session() as session:
-            # 建立漏洞節點
-            session.run(
-                """
-                MERGE (v:Vulnerability {id: $finding_id})
-                SET v.name = $vuln_name,
-                    v.severity = $severity,
-                    v.confidence = $confidence,
-                    v.cwe = $cwe,
-                    v.risk_score = $risk_score
-                """,
-                finding_id=finding.finding_id,
-                vuln_name=finding.vulnerability.name.value,
-                severity=finding.vulnerability.severity.value,
-                confidence=finding.vulnerability.confidence.value,
-                cwe=finding.vulnerability.cwe,
-                risk_score=self._calculate_risk_score(finding),
+        finding_id = finding.finding_id
+        risk_score = self._calculate_risk_score(finding)
+        
+        # 建立漏洞節點
+        self.graph.add_node(
+            finding_id,
+            node_type="Vulnerability",
+            name=finding.vulnerability.name.value,
+            severity=finding.vulnerability.severity.value,
+            confidence=finding.vulnerability.confidence.value,
+            cwe=finding.vulnerability.cwe,
+            risk_score=risk_score,
+        )
+
+        # 建立或取得資產節點
+        target_url = str(finding.target.url)
+        asset_id = f"asset_{finding_id}"
+        
+        if not self.graph.has_node(asset_id):
+            self.graph.add_node(
+                asset_id,
+                node_type="Asset",
+                value=target_url,
+                type="discovered",
             )
+        
+        # 建立資產與漏洞的關聯
+        self.graph.add_edge(
+            asset_id,
+            finding_id,
+            edge_type="HAS_VULNERABILITY",
+            risk=risk_score,
+        )
 
-            # 建立資產與漏洞的關聯
-            # 先嘗試找到資產（透過 URL 匹配）
-            target_url = str(finding.target.url)
-            session.run(
-                """
-                MATCH (v:Vulnerability {id: $finding_id})
-                MERGE (a:Asset {value: $target_url})
-                ON CREATE SET a.id = $asset_id, a.type = 'discovered'
-                MERGE (a)-[:HAS_VULNERABILITY]->(v)
-                """,
-                finding_id=finding.finding_id,
-                target_url=target_url,
-                asset_id=f"asset_{finding.finding_id}",
-            )
+        # 根據漏洞類型建立攻擊路徑
+        self._create_attack_edges(finding)
+        
+        logger.debug(f"Added finding: {finding_id}")
 
-            # 根據漏洞類型建立攻擊路徑
-            self._create_attack_edges(session, finding)
-
-    def _create_attack_edges(self, session: Any, finding: FindingPayload) -> None:
+    def _create_attack_edges(self, finding: FindingPayload) -> None:
         """
         根據漏洞類型建立攻擊邊
 
         Args:
-            session: Neo4j session
             finding: Finding 物件
         """
+        finding_id = finding.finding_id
         vuln_name = finding.vulnerability.name.value
+        risk_score = self._calculate_risk_score(finding)
 
         # SSRF -> 內部網路
         if vuln_name == "SSRF":
-            session.run(
-                """
-                MATCH (v:Vulnerability {id: $finding_id})
-                MERGE (internal:InternalNetwork {id: 'internal_network'})
-                ON CREATE SET internal.name = 'Internal Network'
-                MERGE (v)-[:LEADS_TO {risk: $risk}]->(internal)
-                """,
-                finding_id=finding.finding_id,
-                risk=self._calculate_risk_score(finding),
+            internal_id = "internal_network"
+            if not self.graph.has_node(internal_id):
+                self.graph.add_node(
+                    internal_id,
+                    node_type="InternalNetwork",
+                    name="Internal Network",
+                )
+            self.graph.add_edge(
+                finding_id,
+                internal_id,
+                edge_type="LEADS_TO",
+                risk=risk_score,
             )
 
         # SQLi -> 資料庫
         elif vuln_name == "SQLI":
-            session.run(
-                """
-                MATCH (v:Vulnerability {id: $finding_id})
-                MERGE (db:Database {id: 'database'})
-                ON CREATE SET db.name = 'Application Database'
-                MERGE (v)-[:LEADS_TO {risk: $risk}]->(db)
-                """,
-                finding_id=finding.finding_id,
-                risk=self._calculate_risk_score(finding),
+            db_id = "database"
+            if not self.graph.has_node(db_id):
+                self.graph.add_node(
+                    db_id,
+                    node_type="Database",
+                    name="Application Database",
+                )
+            self.graph.add_edge(
+                finding_id,
+                db_id,
+                edge_type="LEADS_TO",
+                risk=risk_score,
             )
 
         # IDOR/BOLA -> API 端點
         elif vuln_name in ["IDOR", "BOLA"]:
-            session.run(
-                """
-                MATCH (v:Vulnerability {id: $finding_id})
-                MATCH (a:Asset)-[:HAS_VULNERABILITY]->(v)
-                MERGE (api:APIEndpoint {id: $api_id})
-                ON CREATE SET api.value = $url
-                MERGE (v)-[:GRANTS_ACCESS {risk: $risk}]->(api)
-                """,
-                finding_id=finding.finding_id,
-                api_id=f"api_{finding.finding_id}",
-                url=str(finding.target.url),
-                risk=self._calculate_risk_score(finding),
+            api_id = f"api_{finding_id}"
+            self.graph.add_node(
+                api_id,
+                node_type="APIEndpoint",
+                value=str(finding.target.url),
+            )
+            self.graph.add_edge(
+                finding_id,
+                api_id,
+                edge_type="GRANTS_ACCESS",
+                risk=risk_score,
             )
 
         # XSS -> 憑證洩漏
         elif vuln_name == "XSS":
-            session.run(
-                """
-                MATCH (v:Vulnerability {id: $finding_id})
-                MERGE (cred:Credential {id: $cred_id})
-                ON CREATE SET cred.type = 'Session Cookie'
-                MERGE (v)-[:EXPOSES {risk: $risk}]->(cred)
-                """,
-                finding_id=finding.finding_id,
-                cred_id=f"cred_{finding.finding_id}",
-                risk=self._calculate_risk_score(finding),
+            cred_id = f"cred_{finding_id}"
+            self.graph.add_node(
+                cred_id,
+                node_type="Credential",
+                type="Session Cookie",
+            )
+            self.graph.add_edge(
+                finding_id,
+                cred_id,
+                edge_type="EXPOSES",
+                risk=risk_score,
             )
 
     def find_attack_paths(
@@ -264,42 +282,86 @@ class AttackPathEngine:
         Returns:
             攻擊路徑列表
         """
-        with self.driver.session() as session:
-            query_str = f"""
-                MATCH path = (attacker:Attacker {{id: 'external_attacker'}})
-                             -[*1..{max_length}]->(target:{target_node_type})
-                WITH path,
-                     reduce(risk = 0.0, r in relationships(path) |
-                            risk + coalesce(r.risk, 1.0)) as total_risk
-                WHERE total_risk >= $min_risk_score
-                RETURN path, total_risk, length(path) as path_length
-                ORDER BY total_risk DESC, path_length ASC
-                LIMIT {limit}
-                """
-            result = session.run(query_str, min_risk_score=min_risk_score)  # type: ignore[arg-type]
+        # 找出所有符合類型的目標節點
+        target_nodes = [
+            node
+            for node, data in self.graph.nodes(data=True)
+            if data.get("node_type") == target_node_type
+        ]
 
-            paths = []
-            for record in result:
-                path_data = record["path"]
-                nodes = [dict(node) for node in path_data.nodes]
-                edges = [dict(rel) for rel in path_data.relationships]
+        if not target_nodes:
+            logger.warning(f"No target nodes found with type: {target_node_type}")
+            return []
 
-                # 生成描述
-                description = self._generate_path_description(nodes, edges)
+        paths = []
+        attacker_id = "external_attacker"
 
-                paths.append(
-                    AttackPath(
-                        path_id=f"path_{len(paths)}",
-                        nodes=nodes,
-                        edges=edges,
-                        total_risk_score=record["total_risk"],
-                        length=record["path_length"],
-                        description=description,
-                    )
+        # 對每個目標節點找路徑
+        for target_node in target_nodes:
+            try:
+                # 使用 NetworkX 的所有簡單路徑演算法
+                all_paths = nx.all_simple_paths(
+                    self.graph,
+                    source=attacker_id,
+                    target=target_node,
+                    cutoff=max_length,
                 )
 
-            logger.info(f"Found {len(paths)} attack paths to {target_node_type}")
-            return paths
+                for path_nodes in all_paths:
+                    # 計算路徑總風險
+                    total_risk = 0.0
+                    edges = []
+                    
+                    for i in range(len(path_nodes) - 1):
+                        edge_data = self.graph[path_nodes[i]][path_nodes[i + 1]]
+                        risk = edge_data.get("risk", 1.0)
+                        total_risk += risk
+                        edges.append({
+                            "source": path_nodes[i],
+                            "target": path_nodes[i + 1],
+                            **edge_data,
+                        })
+
+                    # 過濾風險分數
+                    if total_risk < min_risk_score:
+                        continue
+
+                    # 收集節點資料
+                    nodes = [
+                        {"id": node_id, **self.graph.nodes[node_id]}
+                        for node_id in path_nodes
+                    ]
+
+                    # 生成描述
+                    description = self._generate_path_description(nodes, edges)
+
+                    paths.append(
+                        AttackPath(
+                            path_id=f"path_{len(paths)}",
+                            nodes=nodes,
+                            edges=edges,
+                            total_risk_score=total_risk,
+                            length=len(path_nodes) - 1,
+                            description=description,
+                        )
+                    )
+
+                    # 達到限制就停止
+                    if len(paths) >= limit:
+                        break
+
+            except nx.NetworkXNoPath:
+                continue
+
+            if len(paths) >= limit:
+                break
+
+        # 依風險分數排序
+        paths.sort(key=lambda p: (-p.total_risk_score, p.length))
+        paths = paths[:limit]
+
+        logger.info(f"Found {len(paths)} attack paths to {target_node_type}")
+        return paths
 
     def find_critical_nodes(self, limit: int = 10) -> list[dict[str, Any]]:
         """
@@ -311,47 +373,42 @@ class AttackPathEngine:
         Returns:
             關鍵節點列表
         """
-        with self.driver.session() as session:
-            query_str = """
-                MATCH (n)
-                WHERE n:Asset OR n:Vulnerability
-                WITH n,
-                     size((n)--()) as degree
-                RETURN n, degree
-                ORDER BY degree DESC
-                LIMIT $limit
-                """
-            result = session.run(query_str, limit=limit)
+        # 過濾出資產和漏洞節點
+        relevant_nodes = [
+            node_id
+            for node_id, data in self.graph.nodes(data=True)
+            if data.get("node_type") in ["Asset", "Vulnerability"]
+        ]
 
-            nodes = []
-            for record in result:
-                node = dict(record["n"])
-                node["degree"] = record["degree"]
-                nodes.append(node)
+        if not relevant_nodes:
+            return []
 
-            return nodes
+        # 計算度中心性 (degree centrality)
+        nodes_with_degree = []
+        for node_id in relevant_nodes:
+            degree = self.graph.degree(node_id)
+            node_data = dict(self.graph.nodes[node_id])
+            node_data["id"] = node_id
+            node_data["degree"] = degree
+            nodes_with_degree.append(node_data)
+
+        # 排序並限制數量
+        nodes_with_degree.sort(key=lambda x: x["degree"], reverse=True)
+        return nodes_with_degree[:limit]
 
     def get_vulnerability_statistics(self) -> dict[str, Any]:
         """取得漏洞統計資訊"""
-        with self.driver.session() as session:
-            result = session.run(
-                """
-                MATCH (v:Vulnerability)
-                RETURN
-                    v.severity as severity,
-                    count(*) as count
-                ORDER BY count DESC
-                """
-            )
+        stats: dict[str, Any] = {"total": 0, "by_severity": {}}
 
-            stats: dict[str, Any] = {"total": 0, "by_severity": {}}
-            for record in result:
-                severity = record["severity"]
-                count = record["count"]
-                stats["by_severity"][severity] = count
-                stats["total"] += count
+        for node_id, data in self.graph.nodes(data=True):
+            if data.get("node_type") == "Vulnerability":
+                severity = data.get("severity", "UNKNOWN")
+                stats["by_severity"][severity] = (
+                    stats["by_severity"].get(severity, 0) + 1
+                )
+                stats["total"] += 1
 
-            return stats
+        return stats
 
     def _calculate_risk_score(self, finding: FindingPayload) -> float:
         """
@@ -392,8 +449,7 @@ class AttackPathEngine:
         """生成攻擊路徑描述"""
         steps = []
         for i, node in enumerate(nodes):
-            node_labels = node.get("labels", [])
-            node_type = node_labels[0] if node_labels else "Unknown"
+            node_type = node.get("node_type", "Unknown")
             node_name = node.get("name", node.get("value", node.get("id", "Unknown")))
 
             if i == 0:
@@ -402,33 +458,31 @@ class AttackPathEngine:
                 steps.append(f"目標: {node_name} ({node_type})")
             else:
                 edge = edges[i - 1] if i - 1 < len(edges) else {}
-                edge_type = edge.get("type", "UNKNOWN")
+                edge_type = edge.get("edge_type", "UNKNOWN")
                 steps.append(f"→ [{edge_type}] → {node_name} ({node_type})")
 
         return " ".join(steps)
 
     def clear_graph(self) -> None:
         """清空圖（危險操作,僅用於測試）"""
-        with self.driver.session() as session:
-            session.run("MATCH (n) DETACH DELETE n")
-            logger.warning("Graph cleared!")
+        self.graph.clear()
+        self.initialize_graph()
+        logger.warning("Graph cleared!")
 
 
 # 使用範例
 if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO)
 
-    # 建立引擎
+    # 從配置檔案取得標準化路徑
+    from services.integration.aiva_integration.config import ATTACK_GRAPH_FILE
+
+    # 建立引擎 (使用標準化路徑)
     engine = AttackPathEngine(
-        neo4j_uri="bolt://localhost:7687",
-        neo4j_user="neo4j",
-        neo4j_password="your_password",
+        graph_file=ATTACK_GRAPH_FILE,
     )
 
     try:
-        # 初始化圖
-        engine.initialize_graph()
-
         # 尋找攻擊路徑
         paths = engine.find_attack_paths(target_node_type="Database")
 
@@ -452,4 +506,4 @@ if __name__ == "__main__":
             print(f"  {severity}: {count}")
 
     finally:
-        engine.close()
+        engine.close()  # 自動儲存圖

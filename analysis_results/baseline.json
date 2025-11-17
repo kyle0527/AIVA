@@ -1,0 +1,43 @@
+{
+  "timestamp": "2025-11-16T20:38:03.859647",
+  "total_capabilities": 692,
+  "language_distribution": {
+    "python": 411,
+    "go": 88,
+    "rust": 115,
+    "typescript": 78
+  },
+  "module_distribution": {
+    "core/aiva_core": 206,
+    "scan": 268,
+    "common": 9,
+    "main": 18,
+    "detector": 7,
+    "scanner": 4,
+    "features": 54,
+    "internal": 12,
+    "config": 1,
+    "logger": 6,
+    "metrics": 26,
+    "mq": 5,
+    "integration": 76
+  },
+  "rust_details": {
+    "total": 115,
+    "methods": 115,
+    "functions": 0
+  },
+  "extraction_report": {
+    "statistics": {
+      "total_files": 324,
+      "successful_files": 324,
+      "failed_files": 0,
+      "skipped_files": 0
+    },
+    "success_rate": 100.0,
+    "total_errors": 0,
+    "errors_by_type": {},
+    "errors_by_language": {},
+    "recent_errors": []
+  }
+}

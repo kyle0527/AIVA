@@ -321,17 +321,18 @@ class GraphBuilder:
 async def main():
     logging.basicConfig(level=logging.INFO)
 
-    # 建立引擎
+    # 從配置檔案取得標準化路徑
+    from services.integration.aiva_integration.config import ATTACK_GRAPH_FILE, POSTGRES_DSN
+
+    # 建立引擎 (使用標準化路徑)
     engine = AttackPathEngine(
-        neo4j_uri="bolt://localhost:7687",
-        neo4j_user="neo4j",
-        neo4j_password="your_password",
+        graph_file=ATTACK_GRAPH_FILE,
     )
 
-    # 建立 Builder
+    # 建立 Builder (使用統一配置的 PostgreSQL DSN)
     builder = GraphBuilder(
         attack_path_engine=engine,
-        postgres_dsn="postgresql://user:password@localhost:5432/aiva",
+        postgres_dsn=POSTGRES_DSN,
     )
 
     try:

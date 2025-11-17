@@ -1,10 +1,45 @@
 import asyncio
+from dataclasses import dataclass, field
 from datetime import UTC, datetime, timedelta
 from typing import Any
 
 from services.aiva_common.utils import get_logger
 
 logger = get_logger(__name__)
+
+
+@dataclass
+class ExecutionContext:
+    """執行上下文 - 追蹤任務執行的環境信息"""
+    
+    session_id: str
+    task_id: str
+    start_time: str = field(default_factory=lambda: datetime.now(UTC).isoformat())
+    metadata: dict[str, Any] = field(default_factory=dict)
+    
+    def to_dict(self) -> dict[str, Any]:
+        """轉換為字典"""
+        return {
+            "session_id": self.session_id,
+            "task_id": self.task_id,
+            "start_time": self.start_time,
+            "metadata": self.metadata
+        }
+    
+    @classmethod
+    def from_dict(cls, data: dict[str, Any]) -> "ExecutionContext":
+        """從字典創建"""
+        return cls(
+            session_id=data["session_id"],
+            task_id=data["task_id"],
+            start_time=data.get("start_time", datetime.now(UTC).isoformat()),
+            metadata=data.get("metadata", {})
+        )
+
+
+class ExecutionMonitor:
+    """執行監控器的別名類，保持向後兼容"""
+    pass
 
 
 class ExecutionStatusMonitor:

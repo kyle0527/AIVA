@@ -3,6 +3,12 @@
 AIVA SQL Injection Tools Module - Task 12
 基於 HackingTool sql_tools.py 實現的 SQL 注入檢測和利用工具集成
 包含 Sqlmap、NoSQLMap、時間盲注、自動化 SQL 注入檢測等功能
+
+✅ **已移至 Features 模組** ✅
+本檔案提供 SQL 注入工具整合功能（Sqlmap、NoSQLMap 等）。
+符合 AIVA 五大模組架構原則：
+- Features 模組負責**實際執行測試**
+- 提供與外部工具的整合接口
 """
 
 import asyncio
@@ -26,8 +32,7 @@ from rich.progress import Progress, SpinnerColumn, TextColumn
 from rich.table import Table
 from rich.text import Text
 
-from services.base_capability import BaseCapability
-from services.capability_registry import CapabilityRegistry
+from services.aiva_common.schemas import APIResponse
 from services.config.settings_manager import SettingsManager
 from utilities.logger_setup import setup_logger
 

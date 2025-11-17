@@ -3,15 +3,15 @@
 **導航**: [← 返回 Services 總覽](../README.md) | [📖 文檔中心](../../docs/README.md)
 
 ![AIVA Integration Module](https://img.shields.io/badge/AIVA-Integration%20Module-purple?style=for-the-badge)
-![Bug Bounty Ready](https://img.shields.io/badge/Bug%20Bounty-v6.1%20Ready-brightgreen?style=for-the-badge)
+![Bug Bounty Ready](https://img.shields.io/badge/Bug%20Bounty-v6.2%20Ready-brightgreen?style=for-the-badge)
 ![Python](https://img.shields.io/badge/Python-3.11+-green?style=flat-square)
 ![FastAPI](https://img.shields.io/badge/FastAPI-0.104+-blue?style=flat-square)
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-15+-orange?style=flat-square)
-![Redis](https://img.shields.io/badge/Redis-7.0+-red?style=flat-square)
+![NetworkX](https://img.shields.io/badge/NetworkX-3.0+-blue?style=flat-square)
 
-> **🎯 Bug Bounty 專業化 v6.1**: 企業級整合中樞專精動態檢測協調，AI 驅動攻擊策略整合  
-> **✅ 系統狀態**: 100% Bug Bounty 就緒，跨語言整合 100% 成功  
-> **🔄 最後更新**: 2025年11月13日
+> **🎯 Bug Bounty 專業化 v6.2**: 企業級整合中樞專精動態檢測協調，AI 驅動攻擊策略整合  
+> **✅ 系統狀態**: 100% Bug Bounty 就緒，跨語言整合 100% 成功，資料儲存標準化完成  
+> **🔄 最後更新**: 2025年11月16日
 
 > AIVA 整合模組是企業級 Bug Bounty 平台的**智能中樞**，採用**多層分散式整合架構**，以 **AI Operation Recorder** 為核心協調器，整合動態掃描、漏洞分析、攻擊驗證等各個安全服務，提供統一的 Bug Bounty 操作協調、效能監控和智能決策能力。專為實戰滲透測試設計，實際檔案結構深度可達 7 層，確保模組化和可擴展性。
 
@@ -44,9 +44,9 @@
 ### 環境要求
 - Python 3.11+
 - PostgreSQL 15+ (已配置 pgvector)
-- Redis 7.0+
 - RabbitMQ 3.12+
-- Neo4j 5.0+
+- ~~Neo4j 5.0+~~ ✅ **已移除** (已遷移至 NetworkX)
+- ~~Redis 7.0+~~ ⚠️ **未使用** (可選)
 
 ### 📦 安裝與配置
 
@@ -83,6 +83,171 @@ python -m services.integration.main
 uvicorn services.integration.main:app --reload --host 0.0.0.0 --port 8000
 ```
 
+---
+
+## 💾 資料儲存結構
+
+> **🎯 2025-11-16 更新**: 整合模組資料儲存已完成標準化,統一管理攻擊路徑、經驗記錄、訓練資料集等核心資料。
+
+### 📂 標準化目錄結構
+
+```
+data/integration/
+├── attack_paths/          # 攻擊路徑圖資料
+│   ├── attack_graph.pkl   # NetworkX 圖持久化檔案 (主檔案)
+│   ├── attack_graph_*.pkl # 歷史備份檔案
+│   └── exports/           # 匯出的可視化檔案 (HTML, Mermaid)
+│
+├── experiences/           # 經驗記錄資料庫
+│   ├── experience.db      # SQLite 經驗庫 (主資料庫)
+│   ├── experience_*.db    # 備份檔案
+│   └── exports/           # 匯出的訓練資料集 (JSONL, CSV)
+│
+├── training_datasets/     # 訓練資料集
+│   ├── dataset_*.jsonl    # 訓練資料集 (JSONL 格式)
+│   ├── dataset_*.csv      # 訓練資料集 (CSV 格式)
+│   └── metadata/          # 資料集元資料
+│
+├── models/                # 訓練模型檢查點
+│   ├── attack_*.pth       # PyTorch 模型檔案
+│   ├── attack_*.onnx      # ONNX 匯出檔案
+│   └── checkpoints/       # 訓練檢查點
+│
+└── backups/               # 自動備份目錄
+    ├── attack_paths/      # 攻擊路徑圖備份 (保留 7 天)
+    ├── experiences/       # 經驗資料庫備份 (保留 30 天)
+    ├── training_datasets/ # 訓練資料集備份 (保留 90 天)
+    └── models/            # 模型檢查點備份 (保留 180 天)
+```
+
+### 🗄️ 核心資料庫說明
+
+#### 1. attack_graph.pkl (攻擊路徑圖)
+- **格式**: NetworkX DiGraph (pickle 序列化)
+- **用途**: 儲存資產與漏洞的攻擊路徑圖
+- **大小**: ~1-10MB (取決於資產數量)
+- **更新頻率**: 每日重建 + 即時增量更新
+- **備份策略**: 每日備份,保留 7 天
+- **遷移記錄**: ✅ Neo4j → NetworkX (2025-11-16,零外部依賴)
+
+#### 2. experience.db (經驗資料庫)
+- **格式**: SQLite 資料庫
+- **用途**: 經驗重放記憶體 (Experience Replay Memory)
+- **表結構**:
+  - `experience_records`: 攻擊執行經驗
+  - `training_datasets`: 訓練資料集定義
+  - `dataset_samples`: 資料集樣本關聯
+  - `model_training_history`: 模型訓練歷史
+- **大小**: ~100MB-1GB (取決於經驗數量)
+- **更新頻率**: 每次攻擊執行後即時更新
+- **備份策略**: 每日備份,保留 30 天
+
+### 🔧 統一配置管理
+
+整合模組使用 `config.py` 集中管理所有資料儲存路徑:
+
+```python
+from services.integration.aiva_integration.config import (
+    ATTACK_GRAPH_FILE,           # 攻擊路徑圖檔案路徑
+    EXPERIENCE_DB_URL,           # 經驗資料庫 URL
+    TRAINING_DATASET_DIR,        # 訓練資料集目錄
+    MODEL_CHECKPOINT_DIR,        # 模型檢查點目錄
+    POSTGRES_DSN,                # PostgreSQL 連線字串
+)
+
+# 攻擊路徑引擎使用標準化路徑
+from services.integration.aiva_integration.attack_path_analyzer import AttackPathEngine
+engine = AttackPathEngine(graph_file=ATTACK_GRAPH_FILE)
+
+# 經驗資料庫使用標準化路徑
+from services.integration.aiva_integration.reception import ExperienceRepository
+repo = ExperienceRepository(database_url=EXPERIENCE_DB_URL)
+```
+
+### 🛠️ 維護腳本
+
+#### 自動備份 (`scripts/backup.py`)
+```bash
+# 完整備份 (攻擊路徑圖 + 經驗資料庫 + 訓練資料集 + 模型)
+python services/integration/scripts/backup.py
+
+# 僅備份攻擊路徑圖
+python services/integration/scripts/backup.py --attack-graph-only
+
+# 僅備份經驗資料庫
+python services/integration/scripts/backup.py --experience-only
+
+# 備份但不清理舊備份
+python services/integration/scripts/backup.py --no-cleanup
+```
+
+#### 舊資料清理 (`scripts/cleanup.py`)
+```bash
+# 清理 30 天前的資料 (預設)
+python services/integration/scripts/cleanup.py
+
+# 清理 7 天前的資料
+python services/integration/scripts/cleanup.py --days 7
+
+# 僅清理備份檔案
+python services/integration/scripts/cleanup.py --backup-only
+
+# 僅清理匯出檔案
+python services/integration/scripts/cleanup.py --exports-only
+```
+
+### 📊 資料流向
+
+```
+┌─────────────────────────────────────────────────────────┐
+│              PostgreSQL (資產與漏洞)                     │
+└──────────────────────┬──────────────────────────────────┘
+                       │
+                       ▼
+          ┌────────────────────────┐
+          │   GraphBuilder         │
+          │   (圖建構器)            │
+          └────────────┬───────────┘
+                       │
+                       ▼
+          ┌────────────────────────┐
+          │ AttackPathEngine       │
+          │ (NetworkX 攻擊路徑)     │
+          └────────────┬───────────┘
+                       │
+                       ▼
+     ┌─────────────────────────────────┐
+     │  attack_graph.pkl (NetworkX)    │
+     │  儲存於: attack_paths/           │
+     └─────────────────────────────────┘
+
+
+┌─────────────────────────────────────────────────────────┐
+│        攻擊執行 (AST + Execution Trace)                  │
+└──────────────────────┬──────────────────────────────────┘
+                       │
+                       ▼
+          ┌────────────────────────┐
+          │ ExperienceRepository   │
+          │ (經驗資料庫)            │
+          └────────────┬───────────┘
+                       │
+                       ▼
+     ┌─────────────────────────────────┐
+     │ experience.db (SQLite)          │
+     │ 儲存於: experiences/             │
+     └─────────────────────────────────┘
+```
+
+### 📚 相關文件
+
+- 📖 **[資料儲存詳細說明](../../data/integration/README.md)** - 完整資料儲存結構說明
+- 📖 **[維護腳本文檔](scripts/README.md)** - 備份與清理腳本使用指南
+- 📖 **[配置管理文檔](aiva_integration/config.py)** - 統一配置系統實現
+- 📖 **[建立報告](../../reports/INTEGRATION_DATA_STORAGE_SETUP_REPORT.md)** - 完整建立過程記錄
+
+---
+
 ## 🔧 環境變數配置
 
 ### 統一配置系統
@@ -110,15 +275,16 @@ AIVA_RABBITMQ_URL=amqp://guest:guest@localhost:5672/
 AIVA_RABBITMQ_HOST=localhost
 AIVA_RABBITMQ_PORT=5672
 
-# 快取系統 (Redis)
-AIVA_REDIS_URL=redis://localhost:6379/0
-AIVA_REDIS_HOST=localhost
-AIVA_REDIS_PORT=6379
+# ✅ 整合模組資料儲存配置 (NEW - 2025-11-16)
+AIVA_INTEGRATION_DATA_DIR=C:/D/fold7/AIVA-git/data/integration
+AIVA_ATTACK_GRAPH_FILE=${AIVA_INTEGRATION_DATA_DIR}/attack_paths/attack_graph.pkl
+AIVA_EXPERIENCE_DB_URL=sqlite:///${AIVA_INTEGRATION_DATA_DIR}/experiences/experience.db
+AIVA_TRAINING_DATASET_DIR=${AIVA_INTEGRATION_DATA_DIR}/training_datasets
+AIVA_MODEL_CHECKPOINT_DIR=${AIVA_INTEGRATION_DATA_DIR}/models
 
-# 圖資料庫 (Neo4j)
-AIVA_NEO4J_URL=bolt://neo4j:aiva1234@localhost:7687
-AIVA_NEO4J_HOST=localhost
-AIVA_NEO4J_PORT=7687
+# ❌ 已移除配置
+# Redis - 未實際使用 (0 imports)
+# Neo4j - 已遷移至 NetworkX (零外部依賴)
 
 # API 配置
 AIVA_API_KEY=dev_api_key_for_local_testing

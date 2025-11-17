@@ -48,12 +48,13 @@
 
 ### 📚 **核心功能模組** (實際已實現)
 
-#### ✅ **完整實現** (5個模組)
+#### ✅ **完整實現** (6個模組)
 - ⚡️ **[SQL注入檢測](function_sqli/README.md)** - 完整的SQL注入漏洞檢測 (20個Python文件，含6個檢測引擎)
 - 🎭 **[XSS檢測](function_xss/README.md)** - 跨站腳本攻擊檢測 (10個Python文件，含DOM/存儲型/反射型)
 - 🌐 **[SSRF檢測](function_ssrf/README.md)** - 服務端請求偽造檢測 (12個Python文件，含內網探測)
 - 🔐 **[IDOR檢測](function_idor/README.md)** - 不安全直接對象引用檢測 (12個Python文件，含權限升級測試)
 - 🔑 **[認證檢測](function_authn_go/README.md)** - Go語言認證繞過檢測 (5個Go文件，高性能實現)
+- 💼 **[業務邏輯檢測](function_bizlogic/README.md)** - 業務邏輯漏洞測試 (6個Python文件，含價格操控/競態/流程繞過)
 
 #### 🔹 **部分實現** (2個模組)  
 - 🔒 **[密碼學檢測](function_crypto/README.md)** - 密碼學漏洞檢測 (8個文件，Python+Rust混合架構)
@@ -76,6 +77,7 @@
 | function_ssrf | Python | 12 | ✅ 90% | SSRF檢測 (含內網探測) |
 | function_idor | Python | 12 | ✅ 85% | 權限繞過檢測 (含垂直/水平測試) |
 | function_authn_go | Go | 5 | ✅ 100% | 認證繞過檢測 (Go高性能) |
+| function_bizlogic | Python | 6 | 🔹 20% | 業務邏輯測試 (框架完成，測試器待實現) |
 | function_crypto | Python/Rust | 8 | 🔹 40% | 密碼學漏洞 (含Rust核心) |
 | function_postex | Python | 9 | 🔹 30% | 滲透後利用 (含橫向/持久化) |
 | common | Go/Python | 12 | ✅ 90% | 共用組件 (統計/配置) |

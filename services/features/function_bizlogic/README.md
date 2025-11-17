@@ -1,10 +1,11 @@
 # 💼 BizLogic - 業務邏輯測試
 
-**導航**: [← 返回 Core Capabilities](../README.md) | [← 返回 AIVA Core](../../README.md)
+**導航**: [← 返回 Features 模組](../README.md) | [← 返回 Services 總覽](../../README.md)
 
 > **版本**: 3.0.0-alpha  
-> **代碼量**: 3 個 Python 檔案，約 580 行代碼  
-> **角色**: AIVA 的「業務邏輯偵探」- 專注於業務邏輯漏洞測試
+> **代碼量**: 6 個 Python 檔案，約 650 行代碼  
+> **角色**: AIVA 的「業務邏輯偵探」- **功能執行模組**，執行實際業務邏輯漏洞測試  
+> **架構定位**: Features 模組 - 接收 Core 指令，執行實際測試操作
 
 ---
 
@@ -23,18 +24,23 @@
 
 ## 🎯 模組概述
 
-**BizLogic** 子模組專注於業務邏輯漏洞的自動化測試，包括價格操控、競態條件、工作流程繞過等常見的業務邏輯安全問題。透過訊息佇列整合，支援異步測試任務執行。
+**BizLogic** 功能模組專注於業務邏輯漏洞的**實際執行測試**，包括價格操控、競態條件、工作流程繞過等常見的業務邏輯安全問題。作為 **Features 模組**的一部分，它遵循 AIVA 五大模組架構原則：
+
+### 🏗️ 架構原則
+- **AI 只下令，不執行** - Core 模組負責分析和決策
+- **Features 執行實際操作** - 本模組接收 Core 指令，執行實際 HTTP 測試
+- **訊息驅動架構** - 透過 MQ 接收任務，回報結果給 Integration 模組
 
 ### 核心能力
-1. **價格操控測試** - 檢測價格、折扣、優惠券的邏輯漏洞
-2. **競態條件測試** - 並發請求測試資源競爭問題
-3. **工作流程繞過測試** - 測試流程步驟的繞過可能性
-4. **自動化發現** - 智能識別和回報業務邏輯漏洞
+1. **價格操控測試** - 執行價格、折扣、優惠券的實際漏洞測試
+2. **競態條件測試** - 發送並發請求測試資源競爭問題
+3. **工作流程繞過測試** - 實際測試流程步驟的繞過可能性
+4. **自動化回報** - 將測試結果標準化回報給 Integration 模組
 
 ### 設計特色
-- **訊息驅動** - 透過 MQ 接收和回報測試任務
-- **模組化測試器** - 每種測試類型有獨立的測試器
-- **標準化 Schema** - 統一的業務實體定義
+- **訊息驅動** - 監聽 `tasks.function.bizlogic` Topic
+- **模組化測試器** - 每種測試類型有獨立的測試器（待實現）
+- **標準化 Schema** - 使用 `aiva_common` 的業務實體定義
 - **智能輔助** - 自動化漏洞分類和優先級評估
 
 ---
@@ -43,12 +49,19 @@
 
 | 檔案名 | 行數 | 核心功能 | 狀態 |
 |--------|------|----------|------|
-| **worker.py** | 126 | 業務邏輯測試 Worker - MQ 任務監聽和執行 | ✅ 生產 |
-| **business_schemas.py** | 423 | 業務 Schema 定義 - 訂單、商品、用戶等實體 | ✅ 生產 |
-| **finding_helper.py** | 58 | 漏洞發現輔助工具 - 結果分析和報告 | ✅ 生產 |
-| **__init__.py** | - | 模組初始化 | - |
+| **worker.py** | 180 | 業務邏輯測試 Worker - MQ 任務監聽和執行 | ⚠️ Tester 待實現 |
+| **business_schemas.py** | 423 | 業務 Schema 定義 - 訂單、商品、用戶等實體 | ✅ 完成 |
+| **finding_helper.py** | 58 | 漏洞發現輔助工具 - 結果分析和報告 | ✅ 完成 |
+| **__init__.py** | 15 | 模組初始化和導出 | ✅ 完成 |
+| **__main__.py** | 12 | 模組執行入口點 | ✅ 完成 |
+| **README.md** | 1171 | 完整文檔說明 | ✅ 完成 |
 
-**總計**: 約 607 行代碼（含註解和空行）
+**總計**: 約 1,859 行代碼（含文檔和註解）
+
+⚠️ **當前狀態**: Worker 框架已完成，但三個測試器模組尚未實現：
+- `price_manipulation_tester.py` - 價格操控測試
+- `race_condition_tester.py` - 競態條件測試
+- `workflow_bypass_tester.py` - 工作流程繞過測試
 
 ---
 
@@ -56,9 +69,11 @@
 
 ### Worker - 業務邏輯測試 Worker
 
-**檔案**: `worker.py` (126 行)
+**檔案**: `worker.py` (180 行)
 
-監聽業務邏輯測試任務，執行測試並回報結果。整合了三種主要測試器。
+監聽 `tasks.function.bizlogic` Topic，接收 Core 模組發出的測試任務，執行實際測試並回報結果給 Integration 模組。
+
+⚠️ **當前狀態**: Worker 框架已完成，但測試器模組尚未實現。Worker 目前會記錄警告並返回，不執行實際測試。
 
 #### 核心功能
 
@@ -750,11 +765,12 @@ async for result_msg in broker.subscribe(Topic.TASK_FUNCTION_RESULT):
 
 ## 📚 相關文檔
 
-- [Core Capabilities 主文檔](../README.md)
-- [Attack 子模組](../attack/README.md) - 攻擊執行系統
-- [Analysis 子模組](../analysis/README.md) - 代碼分析
-- [Service Backbone - MQ](../../service_backbone/messaging/README.md) - 訊息佇列
-- [Task Planning](../../task_planning/README.md) - 任務規劃
+- [Features 模組主文檔](../README.md) - 功能模組總覽
+- [IDOR 模組](../function_idor/README.md) - 權限繞過檢測
+- [XSS 模組](../function_xss/README.md) - 跨站腦本攻擊檢測
+- [SQLI 模組](../function_sqli/README.md) - SQL 注入檢測
+- [AIVA Common](../../aiva_common/README.md) - 共用組件和 Schema
+- [Integration 模組](../../integration/README.md) - 結果收集和協調
 
 ---
 

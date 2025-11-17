@@ -102,9 +102,13 @@ class CapabilityRegistry:
             from services.core.aiva_core.cognitive_core.rag.knowledge_base import (
                 KnowledgeBase,
             )
+            from services.core.aiva_core.cognitive_core.rag.unified_vector_store import (
+                UnifiedVectorStore,
+            )
 
-            # 初始化連接器
-            kb = KnowledgeBase()
+            # 初始化 vector_store 和 knowledge_base
+            vector_store = UnifiedVectorStore()
+            kb = KnowledgeBase(vector_store=vector_store)
             connector = InternalLoopConnector(rag_knowledge_base=kb)
 
             # 獲取能力分析結果

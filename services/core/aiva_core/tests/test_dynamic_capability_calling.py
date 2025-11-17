@@ -9,6 +9,12 @@ Architecture Fix Note:
 
 import asyncio
 import logging
+import sys
+
+# 設置 UTF-8 輸出
+if sys.platform == "win32":
+    import io
+    sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
 
 # 設置日誌
 logging.basicConfig(

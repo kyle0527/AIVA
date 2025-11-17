@@ -23,8 +23,10 @@ services:
     volumes:
       - ./initdb:/docker-entrypoint-initdb.d
 
-  neo4j:
-    image: neo4j:5
-    environment:
-      NEO4J_AUTH: neo4j/password
-    ports: ["7474:7474", "7687:7687"]
+  # neo4j:
+  #   已移除 (2025-11-16)
+  #   原因: attack_path_analyzer 已遷移至 NetworkX
+  #   image: neo4j:5
+  #   environment:
+  #     NEO4J_AUTH: neo4j/password
+  #   ports: ["7474:7474", "7687:7687"]

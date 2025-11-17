@@ -1,7 +1,13 @@
 #!/usr/bin/env python3
 """
 AIVA SQL Injection Tools - Bounty Hunter Edition
-專注於發現高價值 SQL 注入漏洞以贏取獎金
+專注於發現高價值 SQL 注入漏洞以贏取獸金
+
+✅ **已移至 Features 模組** ✅
+專注於發現高價值 SQL 注入漏洞以贏取獸金。
+符合 AIVA 五大模組架構原則：
+- Features 模組負責**實際執行測試**
+- 提供 Bug Bounty 場景優化
 """
 
 import asyncio
@@ -24,10 +30,7 @@ from rich.prompt import Prompt, Confirm
 from rich.table import Table
 from rich.text import Text
 
-# 本地導入
-from ...core.base_capability import BaseCapability
-from ...aiva_common.schemas import APIResponse
-from ...core.registry import CapabilityRegistry
+from services.aiva_common.schemas import APIResponse
 
 console = Console()
 logger = logging.getLogger(__name__)
