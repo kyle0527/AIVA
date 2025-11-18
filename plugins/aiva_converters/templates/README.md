@@ -130,3 +130,7 @@ export interface {{ class_name }} {
 ## 📋 Available Templates
 
 Check the subdirectories for language-specific templates and examples of how to structure templates for different output formats.
+
+---
+
+[← 返回 AIVA Converters](../README.md) | [← 返回 Plugins 主目錄](../../README.md)

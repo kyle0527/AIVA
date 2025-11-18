@@ -249,7 +249,16 @@ class ModuleName(str, Enum):
 
 
 class Topic(str, Enum):
-    # Scan Topics
+    # Scan Topics - Two-Phase Architecture
+    # Phase 0: Fast reconnaissance (Rust engine, 5-10 mins)
+    TASK_SCAN_PHASE0 = "tasks.scan.phase0"
+    RESULTS_SCAN_PHASE0_COMPLETED = "results.scan.phase0.completed"
+    
+    # Phase 1: Deep scanning (Multi-engine, 10-30 mins)
+    TASK_SCAN_PHASE1 = "tasks.scan.phase1"
+    RESULTS_SCAN_PHASE1_COMPLETED = "results.scan.phase1.completed"
+    
+    # Legacy unified scan (backward compatibility)
     # SCAN_START 別名已於 2024-12-19 移除，統一使用 TASK_SCAN_START
     TASK_SCAN_START = "tasks.scan.start"
     RESULTS_SCAN_COMPLETED = "results.scan.completed"

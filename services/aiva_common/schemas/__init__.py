@@ -412,6 +412,11 @@ from .tasks import (
     RemediationResultPayload,
     ScanCompletedPayload,
     ScanStartPayload,
+    # Phase0/Phase1 兩階段掃描 Schema
+    Phase0StartPayload,
+    Phase0CompletedPayload,
+    Phase1StartPayload,
+    Phase1CompletedPayload,
     Scenario,
     ScenarioResult,
     ScenarioTestResult,
@@ -504,6 +509,11 @@ __all__ = [
     # 任務相關
     "ScanStartPayload",
     "ScanCompletedPayload",
+    # Phase0/Phase1 兩階段掃描
+    "Phase0StartPayload",
+    "Phase0CompletedPayload",
+    "Phase1StartPayload",
+    "Phase1CompletedPayload",
     "FunctionTaskPayload",
     "FunctionTaskTarget",
     "FunctionTaskContext",

@@ -2,11 +2,140 @@
 
 **導航**: [← 返回 Services 總覽](../README.md) | [📖 文檔中心](../../docs/README.md)
 
-> **🎯 Bug Bounty 專業化 v6.1**: 四語言協同掃描引擎，極致性能與精度並重  
-> **✅ 系統狀態**: 多語言掃描引擎 100% 就緒，專注實戰滲透測試  
-> **🔄 最後更新**: 2025年11月13日
+> **🎯 Bug Bounty 專業化 v6.3**: 兩階段掃描架構，Core 指揮 Scan 執行  
+> **✅ 系統狀態**: 架構修復完成，符合 aiva_common 規範  
+> **🔄 最後更新**: 2025年11月17日
+
+## 📋 修復狀態 (2025年11月17日 - 第二次完整修復)
+
+### ✅ 已完成修復
+
+1. **架構重構完成 (第二輪)**
+   - ✅ **完全移除所有重複定義** (遵循 aiva_common 單一數據來源原則)
+   - ✅ 移除 `VulnerabilityDiscovery`, `EASMAsset`, `JavaScriptAnalysisResult` 等 10+ 個重複類
+   - ✅ 只保留 3 個真正的協調器特有模型:
+     * `ScanCoordinationMetadata` (協調控制)
+     * `EngineStatus` (引擎監控)
+     * `MultiEngineCoordinationResult` (結果聚合)
+   - ✅ `coordinators/scan_models.py` 從 400+ 行縮減至 173 行
+   - ✅ 所有重複的 Schema 改為從 aiva_common 導入
+   - ✅ 整個 scan 模組無編譯錯誤
+
+2. **遵循 aiva_common 規範 (完全合規)**
+   - ✅ 優先使用 aiva_common 的標準 Schema
+   - ✅ **禁止重複定義** - 所有重複已移除
+   - ✅ 正確的導入鏈: `aiva_common` → `scan_models` → `__init__`
+   - ✅ 導入清單:
+     * 枚舉: `AssetType`, `Confidence`, `Severity`, `VulnerabilityStatus`, `VulnerabilityType`
+     * 基礎: `Asset`, `Vulnerability`, `CVEReference`, `CVSSv3Metrics` 等
+     * 資產: `AssetInventoryItem`, `AssetLifecyclePayload`, `DiscoveredAsset`, `EASMAsset`
+     * 引用: `TechnicalFingerprint`, `VulnerabilityDiscovery`
+     * 任務: `EASMDiscoveryPayload`
+     * 分析: `JavaScriptAnalysisResult`
+
+3. **兩階段掃描架構明確**
+   - ✅ Phase 0: Rust 快速偵察 (Core 下令執行)
+   - ✅ Phase 1: 多引擎深度掃描 (Core 根據 Phase 0 結果決策)
+   - ✅ 數據流向: User → Core → Scan → Core
+   - ✅ 完整流程圖文檔: [SCAN_FLOW_DIAGRAMS.md](./SCAN_FLOW_DIAGRAMS.md)
+
+4. **模組職責清晰**
+   - ✅ Core 模組: 指揮官 (下令、分析、決策)
+   - ✅ Scan 模組: 執行者 (接收命令、執行掃描、回傳結果)
+   - ✅ RabbitMQ: 模組間通信 (解耦設計)
+
+### 🎯 核心設計原則
+
+**兩階段掃描流程**:
+1. **Phase 0 (必須)**: Core 下令 → Scan 執行 Rust 快速偵察 → 回傳初步資產清單
+2. **Phase 1 (按需)**: Core 分析決策 → Scan 執行選定引擎 → 回傳完整資產清單
+
+**角色定位**:
+- **指揮官 (Core)**: 接收用戶輸入、下達命令、分析結果、決策引擎
+- **執行者 (Scan)**: 接收命令、執行掃描、整合結果、回傳數據
+
+---
 
 AIVA Scan 是一個強大的多語言統一掃描引擎，整合了 **Python**、**TypeScript**、**Rust** 和 **Go** 四種技術的優勢，專精於 Bug Bounty 動態檢測和黑盒滲透測試。
+
+AIVA Scan 是一個強大的多語言統一掃描引擎，整合了 **Python**、**TypeScript**、**Rust** 和 **Go** 四種技術的優勢，專精於 Bug Bounty 動態檢測和黑盒滲透測試。
+
+---
+
+## 🚀 **5 分鐘快速開始 - Docker 多目標掃描測試**
+
+### **Windows 用戶 (推薦)**
+
+```powershell
+# 1. 進入 scan 目錄
+cd services\scan
+
+# 2. 運行快速啟動腳本
+.\start_scan_test.ps1
+
+# 3. 選擇 [1] 啟動所有服務
+# 4. 選擇 [3] 發送測試目標 (8 個內建測試)
+# 5. 選擇 [4] 查看實時日誌
+# 6. 選擇 [5] 打開 RabbitMQ 管理界面 (http://localhost:15672)
+```
+
+### **Linux/Mac 用戶**
+
+```bash
+# 1. 進入 scan 目錄
+cd services/scan
+
+# 2. 啟動 Docker 服務
+docker-compose -f docker-compose.scan.yml up -d
+
+# 3. 等待服務啟動完成
+sleep 30
+
+# 4. 發送測試目標
+docker-compose -f docker-compose.scan.yml run --rm test-target-generator
+
+# 5. 查看實時日誌
+docker logs -f aiva-rust-deep-analysis
+```
+
+### **預期結果**
+
+✅ **啟動後應看到**:
+- 5 個容器運行: RabbitMQ, Redis, 3 個 Rust 引擎
+- RabbitMQ 管理界面可訪問: http://localhost:15672 (用戶名: aiva / 密碼: aiva_mq_password)
+- 8 個測試目標成功發送到隊列
+
+✅ **掃描結果驗證**:
+```
+📥 收到敏感資訊掃描任務: test_a1b2c3d4
+📊 敏感資訊掃描: 發現 3 個結果
+🔐 密鑰檢測掃描: 發現 2 個密鑰
+🔍 驗證密鑰: AWS Access Key ...
+✅ 掃描完成: test_a1b2c3d4 (總計發現 5 個結果)
+```
+
+### **三種 Rust 掃描模式**
+
+| 模式 | 用途 | 平均速度 | 發現數 |
+|------|------|----------|--------|
+| **Mode 1: Fast Discovery** | 快速技術棧識別 | 80ms | 4-6 個 |
+| **Mode 2: Deep Analysis** | 完整敏感資訊掃描 | 350ms | 10-20 個 |
+| **Mode 3: Focused Verification** | 高價值密鑰驗證 | 600ms | 2-5 個 |
+
+### **測試驗證清單**
+
+- [ ] 所有容器成功啟動
+- [ ] 8 個測試目標被發送到 `tasks.scan.sensitive_info` 隊列
+- [ ] Mode 1 識別到技術棧 (React, Vue, Java, PHP, Python, .NET)
+- [ ] Mode 2 檢測到 AWS Key, GitHub Token, JWT, 私鑰
+- [ ] Mode 3 報告高信心度密鑰 (信心度 > 0.9)
+- [ ] `findings.new` 隊列有 40+ 條消息
+
+### **詳細文檔**
+
+- 📖 **完整測試指南**: [MULTI_TARGET_TESTING_GUIDE.md](./MULTI_TARGET_TESTING_GUIDE.md)
+- 📖 **架構設計**: [SCAN_MODULE_ARCHITECTURE.md](./SCAN_MODULE_ARCHITECTURE.md)
+- 📖 **三引擎協調**: [MULTI_ENGINE_COORDINATION_GUIDE.md](./MULTI_ENGINE_COORDINATION_GUIDE.md)
 
 ---
 

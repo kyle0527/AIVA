@@ -5,6 +5,12 @@
 - OWASP Testing Guide
 - Bug Bounty 平台標準（HackerOne、Bugcrowd）
 - 可觀測性標準（OpenTelemetry）
+
+使用 aiva_common 標準合約（SOT 原則）：
+- UnifiedVulnerabilityFinding: 統一漏洞發現模型
+- APIResponse: 標準 API 響應格式
+- Target, FindingEvidence: 標準目標和證據模型
+- Severity, Confidence, VulnerabilityType: 標準枚舉類型
 """
 
 import asyncio
@@ -17,82 +23,52 @@ from uuid import uuid4
 
 from pydantic import BaseModel, Field, validator
 
+# ============ 使用 aiva_common 標準合約 ============
+from aiva_common.schemas import APIResponse
+from aiva_common.schemas.vulnerability_finding import UnifiedVulnerabilityFinding
+from aiva_common.schemas.security.findings import Target, FindingEvidence
+from aiva_common.enums import (
+    Severity,
+    Confidence,
+    VulnerabilityType,
+    ModuleName,
+    TaskStatus,
+)
+
 logger = logging.getLogger(__name__)
 
 
 # ============================================================================
 # Pydantic Models - 資料驗證 Schema
+# 注意：基礎模型（Finding, Target, Evidence）使用 aiva_common 標準合約
+#      僅定義 Coordinator 特有的模型
 # ============================================================================
 
-class TargetInfo(BaseModel):
-    """目標信息"""
-    url: str
-    endpoint: Optional[str] = None
-    method: str = "GET"
-    parameters: Dict[str, Any] = Field(default_factory=dict)
 
-
-class EvidenceData(BaseModel):
-    """證據數據"""
-    payload: str
-    request: str
-    response: str
-    matched_pattern: Optional[str] = None
-    confidence: float = Field(ge=0.0, le=1.0)
-    timestamp: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
-
-
-class PoCData(BaseModel):
-    """Proof of Concept 數據"""
-    steps: List[str]
-    curl_command: Optional[str] = None
-    exploit_code: Optional[str] = None
-    screenshot_path: Optional[str] = None
-    video_path: Optional[str] = None
-
-
-class ImpactAssessment(BaseModel):
-    """影響評估（CVSS 標準）"""
-    confidentiality: str = Field(regex="^(high|medium|low|none)$")
-    integrity: str = Field(regex="^(high|medium|low|none)$")
-    availability: str = Field(regex="^(high|medium|low|none)$")
-    scope_changed: bool = False
-
-
-class RemediationAdvice(BaseModel):
-    """修復建議"""
-    recommendation: str
-    references: List[str] = Field(default_factory=list)
-    effort: str = Field(regex="^(low|medium|high)$", default="medium")
-    priority: str = Field(regex="^(critical|high|medium|low)$", default="medium")
-
+# ============ Coordinator 特有的數據模型 ============
 
 class BountyInfo(BaseModel):
-    """Bug Bounty 信息"""
+    """Bug Bounty 信息（Coordinator 特有擴展）"""
     eligible: bool = True
     estimated_value: Optional[str] = None
     program_relevance: float = Field(ge=0.0, le=1.0, default=0.5)
     submission_ready: bool = False
 
 
-class Finding(BaseModel):
-    """單個漏洞發現"""
-    id: str = Field(default_factory=lambda: str(uuid4()))
-    vulnerability_type: str
-    severity: str = Field(regex="^(critical|high|medium|low|info)$")
-    cvss_score: Optional[float] = Field(ge=0.0, le=10.0, default=None)
-    cwe_id: Optional[str] = None
-    owasp_category: Optional[str] = None
+class CoordinatorFinding(BaseModel):
+    """Coordinator 擴展的漏洞發現模型
     
-    title: str
-    description: str
-    evidence: EvidenceData
-    poc: Optional[PoCData] = None
-    impact: ImpactAssessment
-    remediation: RemediationAdvice
+    基於 aiva_common.UnifiedVulnerabilityFinding，添加 Coordinator 特有字段：
+    - bounty_info: Bug Bounty 相關信息
+    - false_positive_probability: 誤報概率
+    - verified: 驗證狀態
+    - verification_notes: 驗證備註
+    """
+    # 使用標準 Finding 的所有字段（通過組合而非繼承）
+    finding: UnifiedVulnerabilityFinding
+    
+    # Coordinator 特有擴展
     bounty_info: Optional[BountyInfo] = None
-    
-    # 內部追蹤
     false_positive_probability: float = Field(ge=0.0, le=1.0, default=0.0)
     verified: bool = False
     verification_notes: Optional[str] = None
@@ -129,15 +105,15 @@ class ErrorInfo(BaseModel):
 class FeatureResult(BaseModel):
     """Features 模組返回的完整結果"""
     task_id: str
-    feature_module: str
+    feature_module: ModuleName  # 使用標準枚舉
     timestamp: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     duration_ms: float
     
-    status: str = Field(regex="^(completed|failed|timeout|partial)$")
+    status: TaskStatus  # 使用標準枚舉
     success: bool
     
-    target: TargetInfo
-    findings: List[Finding] = Field(default_factory=list)
+    target: Target  # 使用 aiva_common 標準 Target
+    findings: List[CoordinatorFinding] = Field(default_factory=list)
     statistics: StatisticsData
     performance: PerformanceMetrics
     errors: List[ErrorInfo] = Field(default_factory=list)
@@ -149,7 +125,7 @@ class FeatureResult(BaseModel):
 class OptimizationData(BaseModel):
     """內循環優化數據"""
     task_id: str
-    feature_module: str
+    feature_module: ModuleName  # 使用標準枚舉
     
     # Payload 效率分析
     payload_efficiency: Dict[str, float] = Field(default_factory=dict)
@@ -169,7 +145,7 @@ class OptimizationData(BaseModel):
 class ReportData(BaseModel):
     """外循環報告數據"""
     task_id: str
-    feature_module: str
+    feature_module: ModuleName  # 使用標準枚舉
     generated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     
     # 漏洞摘要
@@ -189,8 +165,8 @@ class ReportData(BaseModel):
     bounty_eligible_count: int = 0
     estimated_total_value: Optional[str] = None
     
-    # 詳細發現
-    findings: List[Finding]
+    # 詳細發現（使用 Coordinator 擴展模型）
+    findings: List[CoordinatorFinding]
     
     # 合規性
     owasp_coverage: Dict[str, int] = Field(default_factory=dict)
@@ -210,7 +186,7 @@ class VerificationResult(BaseModel):
 class CoreFeedback(BaseModel):
     """給 Core 的反饋"""
     task_id: str
-    feature_module: str
+    feature_module: ModuleName  # 使用標準枚舉
     
     # 執行結果
     execution_success: bool
@@ -249,7 +225,7 @@ class BaseCoordinator(ABC):
         mq_client: Optional[Any] = None,
         db_client: Optional[Any] = None,
         cache_client: Optional[Any] = None,
-        feature_module: str = "unknown"
+        feature_module: ModuleName = ModuleName.INTEGRATION
     ):
         """初始化協調器
         
@@ -257,7 +233,7 @@ class BaseCoordinator(ABC):
             mq_client: 消息隊列客戶端（RabbitMQ/Redis）
             db_client: 數據庫客戶端（PostgreSQL/MongoDB）
             cache_client: 緩存客戶端（Redis）
-            feature_module: 對應的 Feature 模組名稱
+            feature_module: 對應的 Feature 模組名稱（使用標準枚舉）
         """
         self.mq_client = mq_client
         self.db_client = db_client
@@ -457,7 +433,7 @@ class BaseCoordinator(ABC):
         high_value_count = sum(
             1
             for f in result.findings
-            if f.severity in ["critical", "high"] and f.verified
+            if f.finding.severity in [Severity.CRITICAL, Severity.HIGH] and f.verified
         )
         
         # 決定是否繼續測試
@@ -525,9 +501,11 @@ class BaseCoordinator(ABC):
         """
         return {
             "successful_payloads": [
-                f.evidence.payload
+                evidence.payload
                 for f in result.findings
-                if f.verified
+                if f.verified and f.finding.evidence
+                for evidence in f.finding.evidence
+                if evidence.payload
             ],
             "failed_payloads": [],  # TODO: 從統計數據中提取
             "target_characteristics": {

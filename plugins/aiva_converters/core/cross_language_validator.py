@@ -21,7 +21,7 @@ from datetime import datetime
 from pathlib import Path
 from typing import Any
 
-from cross_language_interface import CrossLanguageSchemaInterface, SchemaDefinition
+from .cross_language_interface import CrossLanguageSchemaInterface, SchemaDefinition
 
 
 @dataclass

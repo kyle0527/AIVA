@@ -185,11 +185,11 @@ def start_api_service():
         if api_start.exists():
             print("✅ 使用 start_api.py 啟動服務")
             print("🔗 API 服務將在背景執行...")
-            subprocess.Popen([sys.executable, str(api_start)])
+            _start_api_service(str(api_start))
         elif api_main.exists():
             print("✅ 使用 main.py 啟動服務")
             print("🔗 API 服務將在背景執行...")
-            subprocess.Popen([sys.executable, str(api_main)])
+            _start_api_service(str(api_main))
         else:
             print("❌ 找不到 API 主檔案")
             print("💡 請確認 api/main.py 或 api/start_api.py 存在")
@@ -198,6 +198,15 @@ def start_api_service():
         print(f"❌ 模組導入失敗: {e}")
     except Exception as e:
         print(f"❌ 啟動失敗: {e}")
+
+
+def _start_api_service(api_path: str):
+    """啟動 API 服務"""
+    import subprocess
+    import sys
+    process = subprocess.Popen([sys.executable, api_path])
+    # 可以將 process 存儲以便後續管理
+    return process
 
 def show_system_status():
     """顯示系統狀態"""

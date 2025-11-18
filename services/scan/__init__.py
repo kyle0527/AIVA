@@ -1,20 +1,22 @@
 """
-AIVA Scan - 掃描模組
+AIVA Scan - 多語言統一掃描引擎
 
-這是 AIVA 的掃描模組包，負責目標發現、指紋識別和漏洞掃描。
+重構後的模組架構（遵循 aiva_common 規範）：
+- engines/: 四個語言引擎模組 (python, typescript, rust, go)  
+- coordinators/: 協調器和掃描配置管理
+  - scan_models.py: 掃描特定的數據模型擴展
+  - multi_engine_coordinator.py: 多引擎協調器
+  - unified_scan_engine.py: 統一掃描引擎
 
-模組包含:
-- aiva_scan: 主要掃描功能
-  - core_crawling_engine: 核心爬取引擎
-  - info_gatherer: 信息收集器
-  - authentication_manager: 認證管理
-  - scope_manager: 範圍管理
-  - javascript_analyzer: JavaScript 分析器
+設計原則：
+- 優先使用 aiva_common 的標準 Schema
+- 只在必要時擴展模組特定的數據模型  
+- 避免重複定義，遵循單一數據來源原則
 """
 
-__version__ = "1.0.0"
+__version__ = "1.2.0"  # 重構完成版本
 
-# 從 aiva_common 導入共享基礎設施
+# 從 aiva_common 導入共享基礎設施 (標準優先)
 from ..aiva_common.enums import (
     AssetType,
     ScanStatus,
@@ -32,28 +34,24 @@ from ..aiva_common.schemas import (
     Vulnerability,
 )
 
-# 從本模組導入掃描相關模型（僅本地特定擴展）
-from .models import (
-    AssetInventoryItem,
-    AssetLifecyclePayload,
-    DiscoveredAsset,
-    EASMAsset,
-    EASMDiscoveryPayload,
-    EASMDiscoveryResult,
-    EnhancedScanRequest,
-    EnhancedScanScope,
-    JavaScriptAnalysisResult,
-    TechnicalFingerprint,
-    VulnerabilityDiscovery,
-    VulnerabilityLifecyclePayload,
-    VulnerabilityUpdatePayload,
+# 從 coordinators 導入掃描特定擴展 (只有 aiva_common 沒有的才定義)
+from .coordinators.scan_models import (
+    ScanCoordinationMetadata,
+    EngineStatus,
+    MultiEngineCoordinationResult,
 )
 
-# 導入 SARIF 轉換器
-from .sarif_converter import SARIFConverter
+# 導入各引擎模組（延遲導入以避免循環依賴）
+try:
+    from . import engines
+    from . import coordinators
+except ImportError as e:
+    import logging
+    logger = logging.getLogger(__name__)
+    logger.warning(f"部分模組導入失敗（可能處於重構中）: {e}")
 
 __all__ = [
-    # ========== 從 aiva_common 導入（共享標準） ==========
+    # ========== 從 aiva_common 導入（共享標準，優先使用） ==========
     # 枚舉
     "AssetType",
     "ScanStatus",
@@ -63,7 +61,7 @@ __all__ = [
     "Fingerprints",
     "Summary",
     # Schema - 掃描任務
-    "ScanStartPayload",
+    "ScanStartPayload", 
     "ScanCompletedPayload",
     # Schema - 漏洞
     "Vulnerability",
@@ -72,25 +70,12 @@ __all__ = [
     "CVSSv3Metrics",
     "CWEReference",
     
-    # ========== 本模組特定擴展 ==========
-    # 掃描配置擴展
-    "EnhancedScanScope",
-    "EnhancedScanRequest",
-    # 資產管理擴展
-    "AssetInventoryItem",
-    "AssetLifecyclePayload",
-    "DiscoveredAsset",
-    "TechnicalFingerprint",
-    # 漏洞管理擴展
-    "VulnerabilityDiscovery",
-    "VulnerabilityLifecyclePayload",
-    "VulnerabilityUpdatePayload",
-    # EASM 功能
-    "EASMAsset",
-    "EASMDiscoveryPayload",
-    "EASMDiscoveryResult",
-    # 分析功能
-    "JavaScriptAnalysisResult",
-    # SARIF 支援
-    "SARIFConverter",
+    # ========== 協調器特有模型（只有新定義的） ==========
+    "ScanCoordinationMetadata",
+    "EngineStatus",
+    "MultiEngineCoordinationResult",
+    
+    # ========== 模組架構 ==========
+    "engines",         # 四個語言引擎模組
+    "coordinators",    # 協調器模組
 ]

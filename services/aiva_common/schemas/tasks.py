@@ -76,6 +76,144 @@ class ScanCompletedPayload(BaseModel):
     error_info: str | None = None
 
 
+# ==================== Phase0/Phase1 兩階段掃描任務 ====================
+
+
+class Phase0StartPayload(BaseModel):
+    """Phase 0 快速偵察啟動 Payload
+    
+    Phase 0 使用 Rust 引擎進行快速偵察（5-10分鐘）：
+    - 敏感資訊掃描
+    - 技術棧指紋識別
+    - 基礎端點發現
+    - 初步攻擊面評估
+    """
+    
+    scan_id: str = Field(..., description="掃描任務 ID")
+    targets: list[HttpUrl] = Field(..., description="目標 URL 列表")
+    scope: ScanScope = Field(default_factory=ScanScope, description="掃描範圍")
+    authentication: Authentication = Field(default_factory=Authentication, description="認證配置")
+    rate_limit: RateLimit = Field(default_factory=RateLimit, description="速率限制")
+    custom_headers: dict[str, str] = Field(default_factory=dict, description="自定義 HTTP 頭")
+    max_depth: int = Field(default=3, ge=1, le=5, description="最大爬取深度")
+    timeout: int = Field(default=600, ge=60, le=1800, description="超時時間（秒）")
+    
+    @field_validator("scan_id")
+    @classmethod
+    def validate_scan_id(cls, v: str) -> str:
+        if not v.startswith("scan_"):
+            raise ValueError("scan_id must start with 'scan_'")
+        if len(v) < 10:
+            raise ValueError("scan_id too short (minimum 10 characters)")
+        return v
+
+
+class Phase0CompletedPayload(BaseModel):
+    """Phase 0 快速偵察完成 Payload
+    
+    返回初步資產清單和技術棧資訊，供 Core 決定是否執行 Phase 1
+    """
+    
+    scan_id: str = Field(..., description="掃描任務 ID")
+    status: str = Field(..., description="執行狀態 (success/failed)")
+    execution_time: float = Field(..., description="執行時間（秒）")
+    
+    # 發現的資產
+    assets: list[Asset] = Field(default_factory=list, description="發現的資產清單")
+    
+    # 技術棧資訊
+    fingerprints: Fingerprints | None = Field(None, description="檢測到的技術棧指紋")
+    
+    # 統計資訊
+    summary: Summary = Field(..., description="掃描摘要統計")
+    
+    # 決策建議（供 Core 參考）
+    recommendations: dict[str, Any] = Field(
+        default_factory=dict,
+        description="Phase 1 引擎選擇建議：{'needs_js_engine': bool, 'needs_form_testing': bool, 'needs_api_testing': bool}"
+    )
+    
+    error_info: str | None = Field(None, description="錯誤資訊（如有）")
+
+
+class Phase1StartPayload(BaseModel):
+    """Phase 1 深度掃描啟動 Payload
+    
+    Phase 1 根據 Phase 0 結果使用多引擎深度掃描（10-30分鐘）：
+    - Python: 靜態爬取、表單發現、API 分析
+    - TypeScript: JS 渲染、SPA 路由、動態內容
+    - Go: 並發掃描、服務發現
+    - Rust: 高性能大規模處理
+    """
+    
+    scan_id: str = Field(..., description="掃描任務 ID")
+    targets: list[HttpUrl] = Field(..., description="目標 URL 列表")
+    scope: ScanScope = Field(default_factory=ScanScope, description="掃描範圍")
+    authentication: Authentication = Field(default_factory=Authentication, description="認證配置")
+    
+    # Phase 0 結果（用於引擎選擇）
+    phase0_result: Phase0CompletedPayload | None = Field(None, description="Phase 0 掃描結果")
+    
+    # 引擎選擇（Core 根據 Phase 0 結果決定）
+    selected_engines: list[str] = Field(
+        default_factory=lambda: ["python"],
+        description="選擇的掃描引擎：python/typescript/go/rust"
+    )
+    
+    # 掃描策略
+    strategy: str = Field(default="deep", description="掃描策略")
+    rate_limit: RateLimit = Field(default_factory=RateLimit, description="速率限制")
+    custom_headers: dict[str, str] = Field(default_factory=dict, description="自定義 HTTP 頭")
+    
+    # 深度掃描參數
+    max_depth: int = Field(default=5, ge=1, le=10, description="最大爬取深度")
+    max_pages: int = Field(default=1000, ge=10, le=10000, description="最大爬取頁面數")
+    timeout: int = Field(default=1800, ge=300, le=7200, description="超時時間（秒）")
+    
+    @field_validator("selected_engines")
+    @classmethod
+    def validate_engines(cls, v: list[str]) -> list[str]:
+        allowed = {"python", "typescript", "go", "rust"}
+        invalid = set(v) - allowed
+        if invalid:
+            raise ValueError(f"Invalid engines: {invalid}. Must be one of {allowed}")
+        return v
+
+
+class Phase1CompletedPayload(BaseModel):
+    """Phase 1 深度掃描完成 Payload
+    
+    整合 Phase 0 和 Phase 1 結果，返回完整資產清單
+    """
+    
+    scan_id: str = Field(..., description="掃描任務 ID")
+    status: str = Field(..., description="執行狀態 (success/partial/failed)")
+    execution_time: float = Field(..., description="執行時間（秒）")
+    
+    # 完整資產清單（包含 Phase 0 + Phase 1）
+    assets: list[Asset] = Field(default_factory=list, description="完整資產清單")
+    
+    # 技術棧資訊（整合結果）
+    fingerprints: Fingerprints | None = Field(None, description="完整技術棧指紋")
+    
+    # 統計資訊（整合結果）
+    summary: Summary = Field(..., description="完整掃描摘要")
+    
+    # 各引擎執行結果
+    engine_results: dict[str, dict[str, Any]] = Field(
+        default_factory=dict,
+        description="各引擎執行結果：{'python': {...}, 'typescript': {...}, ...}"
+    )
+    
+    # Phase 0 結果引用
+    phase0_summary: dict[str, Any] | None = Field(
+        None,
+        description="Phase 0 執行摘要"
+    )
+    
+    error_info: str | None = Field(None, description="錯誤資訊（如有）")
+
+
 # ==================== 功能測試任務 ====================
 
 

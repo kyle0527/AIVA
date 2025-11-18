@@ -6,20 +6,18 @@
 
 from .ddos_tools import (
     DDoSTarget,
-    DDoSResult,
-    HTTPFlood,
-    TCPFlood,
-    UDPFlood,
-    SlowLoris,
+    AttackResult,
+    HTTPFloodAttack,
+    SlowLorisAttack,
+    UDPFloodAttack,
     DDoSManager,
 )
 
 __all__ = [
     "DDoSTarget",
-    "DDoSResult",
-    "HTTPFlood",
-    "TCPFlood",
-    "UDPFlood",
-    "SlowLoris",
+    "AttackResult",
+    "HTTPFloodAttack",
+    "SlowLorisAttack",
+    "UDPFloodAttack",
     "DDoSManager",
 ]

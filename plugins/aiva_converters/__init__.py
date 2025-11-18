@@ -19,9 +19,21 @@ PLUGIN_DESCRIPTION = "Comprehensive conversion and generation tools for AIVA"
 PLUGIN_ROOT = Path(__file__).parent
 
 # Export main classes and functions
-from .core.schema_codegen_tool import SchemaCodeGenerator
-from .core.typescript_generator import TypeScriptGenerator
-from .core.cross_language_validator import CrossLanguageValidator
+# 暫時註釋掉有問題的導入,只導出可用的
+try:
+    from .core.schema_codegen_tool import SchemaCodeGenerator
+except ImportError:
+    SchemaCodeGenerator = None
+
+try:
+    from .core.typescript_generator import TypeScriptGenerator
+except ImportError:
+    TypeScriptGenerator = None
+
+try:
+    from .core.cross_language_validator import CrossLanguageValidator
+except ImportError:
+    CrossLanguageValidator = None
 
 __all__ = [
     "SchemaCodeGenerator",

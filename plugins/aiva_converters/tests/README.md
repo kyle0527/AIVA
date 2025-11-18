@@ -326,3 +326,7 @@ def assert_schema_compatibility(schema1, schema2, min_score=90):
 
 **Test Documentation Updated**: November 2, 2025  
 **Plugin Version**: 1.0.0
+
+---
+
+[← 返回 AIVA Converters](../README.md) | [← 返回 Plugins 主目錄](../../README.md)

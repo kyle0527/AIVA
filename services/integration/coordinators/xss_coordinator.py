@@ -1,21 +1,24 @@
-"""XSS Coordinator - XSS 測試結果協調器
+"""XSS Coordinator - XSS 測試結果協調器（重構版）
 
 專門處理 function_xss 返回的結果，實現：
 1. XSS 特定的優化數據提取
-2. XSS 漏洞驗證邏輯
+2. XSS 漏洞驗證邏輯  
 3. XSS 報告數據整理
+
+✅ 使用 aiva_common 標準合約（SOT 原則）
 """
 
 import logging
 import re
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Optional
 from urllib.parse import urlparse
+
+from aiva_common.enums import ModuleName, Severity, Confidence
 
 from .base_coordinator import (
     BaseCoordinator,
-    CoreFeedback,
+    CoordinatorFinding,
     FeatureResult,
-    Finding,
     OptimizationData,
     ReportData,
     VerificationResult,
@@ -32,7 +35,7 @@ class XSSCoordinator(BaseCoordinator):
     """
     
     def __init__(self, **kwargs):
-        super().__init__(feature_module="function_xss", **kwargs)
+        super().__init__(feature_module=ModuleName.FUNC_XSS, **kwargs)
         
         # XSS Payload 分類權重（機器學習得出）
         self.payload_weights = {
@@ -53,22 +56,12 @@ class XSSCoordinator(BaseCoordinator):
     async def _extract_optimization_data(
         self, result: FeatureResult
     ) -> OptimizationData:
-        """提取 XSS 特定的優化數據
-        
-        分析：
-        1. 哪些 XSS payload 類型最有效
-        2. 哪些注入點（URL參數、表單、Header）成功率高
-        3. WAF 繞過策略效果
-        4. DOM XSS vs Reflected XSS 分布
-        """
+        """提取 XSS 特定的優化數據"""
         # 分析 Payload 效率
         payload_efficiency = await self._analyze_payload_efficiency(result)
         
         # 識別成功模式
         successful_patterns = await self._identify_successful_patterns(result)
-        
-        # 識別失敗模式
-        failed_patterns = await self._identify_failed_patterns(result)
         
         # 性能建議
         perf_recommendations = await self._generate_performance_recommendations(result)
@@ -83,7 +76,7 @@ class XSSCoordinator(BaseCoordinator):
             feature_module=result.feature_module,
             payload_efficiency=payload_efficiency,
             successful_patterns=successful_patterns,
-            failed_patterns=failed_patterns,
+            failed_patterns=[],  # 暫不實現
             recommended_concurrency=perf_recommendations.get("concurrency"),
             recommended_timeout_ms=perf_recommendations.get("timeout_ms"),
             recommended_rate_limit=perf_recommendations.get("rate_limit"),
@@ -94,20 +87,20 @@ class XSSCoordinator(BaseCoordinator):
     async def _analyze_payload_efficiency(
         self, result: FeatureResult
     ) -> Dict[str, float]:
-        """分析 XSS Payload 效率
-        
-        Returns:
-            {payload_type: success_rate} 映射
-        """
+        """分析 XSS Payload 效率"""
         payload_stats = {}
         
         for finding in result.findings:
             if finding.verified:
-                payload_type = self._classify_xss_payload(finding.evidence.payload)
-                current_success = payload_stats.get(payload_type, 0.0)
-                payload_stats[payload_type] = min(
-                    current_success + 0.1, 1.0
-                )  # 累加成功率
+                # 訪問內部的 UnifiedVulnerabilityFinding
+                evidence_list = finding.finding.evidence
+                if evidence_list:
+                    payload = evidence_list[0].payload or ""
+                    payload_type = self._classify_xss_payload(payload)
+                    current_success = payload_stats.get(payload_type, 0.0)
+                    payload_stats[payload_type] = min(
+                        current_success + 0.1, 1.0
+                    )
         
         # 正規化
         total = sum(payload_stats.values()) or 1
@@ -119,7 +112,7 @@ class XSSCoordinator(BaseCoordinator):
         
         if "<script" in payload_lower:
             return "script_tag"
-        elif "on" in payload_lower and "=" in payload_lower:  # onerror=, onload=
+        elif "on" in payload_lower and "=" in payload_lower:
             return "event_handler"
         elif "<svg" in payload_lower:
             return "svg_tag"
@@ -137,32 +130,27 @@ class XSSCoordinator(BaseCoordinator):
         patterns = set()
         
         for finding in result.findings:
-            if finding.verified and finding.evidence.confidence > 0.8:
-                # 提取模式特徵
+            # 使用 Confidence 枚舉進行比較
+            if finding.verified and finding.finding.confidence == Confidence.CONFIRMED:
                 pattern = self._extract_pattern(finding)
                 patterns.add(pattern)
         
         return list(patterns)
     
-    def _extract_pattern(self, finding: Finding) -> str:
+    def _extract_pattern(self, finding: CoordinatorFinding) -> str:
         """提取 XSS 模式特徵"""
-        payload = finding.evidence.payload
-        context = finding.metadata.get("injection_context", "unknown")
-        encoding = finding.metadata.get("encoding_used", "none")
+        evidence_list = finding.finding.evidence
+        payload = evidence_list[0].payload if evidence_list else ""
+        context = finding.finding.metadata.get("injection_context", "unknown")
+        encoding = finding.finding.metadata.get("encoding_used", "none")
         
         return f"{context}:{self._classify_xss_payload(payload)}:{encoding}"
-    
-    async def _identify_failed_patterns(self, result: FeatureResult) -> List[str]:
-        """識別失敗的模式（從統計數據推斷）"""
-        # TODO: 需要 Features 返回失敗的 payload 信息
-        return []
     
     async def _generate_performance_recommendations(
         self, result: FeatureResult
     ) -> Dict[str, int]:
         """生成性能建議"""
         perf = result.performance
-        
         recommendations = {}
         
         # 併發數建議
@@ -198,7 +186,7 @@ class XSSCoordinator(BaseCoordinator):
         injection_points = {}
         for finding in result.findings:
             if finding.verified:
-                point = finding.target.parameters.get("injection_point", "unknown")
+                point = finding.finding.target.parameter or "unknown"
                 injection_points[point] = injection_points.get(point, 0) + 1
         
         if injection_points:
@@ -221,9 +209,9 @@ class XSSCoordinator(BaseCoordinator):
         """計算優先級調整"""
         adjustments = {}
         
-        # 根據成功率調整端點優先級
         for finding in result.findings:
-            endpoint = finding.target.endpoint or finding.target.url
+            target = finding.finding.target
+            endpoint = target.parameter or str(target.url)
             current_priority = adjustments.get(endpoint, 0.5)
             if finding.verified:
                 adjustments[endpoint] = min(current_priority + 0.2, 1.0)
@@ -233,13 +221,20 @@ class XSSCoordinator(BaseCoordinator):
     async def _extract_report_data(self, result: FeatureResult) -> ReportData:
         """提取 XSS 報告數據"""
         # 統計各嚴重程度的漏洞數量
-        severity_count = {"critical": 0, "high": 0, "medium": 0, "low": 0, "info": 0}
+        severity_count = {
+            Severity.CRITICAL: 0,
+            Severity.HIGH: 0,
+            Severity.MEDIUM: 0,
+            Severity.LOW: 0,
+            # 注意: CVSS v4.0 沒有 INFO 級別，低價值發現使用 LOW
+        }
         verified_count = 0
         false_positive_count = 0
         bounty_eligible_count = 0
         
         for finding in result.findings:
-            severity_count[finding.severity] += 1
+            severity = finding.finding.severity
+            severity_count[severity] = severity_count.get(severity, 0) + 1
             if finding.verified:
                 verified_count += 1
             if finding.false_positive_probability > 0.7:
@@ -249,24 +244,28 @@ class XSSCoordinator(BaseCoordinator):
         
         # OWASP 分類
         owasp_coverage = {
-            "A03:2021-Injection": len([f for f in result.findings if "xss" in f.vulnerability_type.lower()])
+            "A03:2021-Injection": len([
+                f for f in result.findings
+                if "xss" in str(f.finding.vulnerability_type).lower()
+            ])
         }
         
         # CWE 分布
         cwe_distribution = {}
         for finding in result.findings:
-            if finding.cwe_id:
-                cwe_distribution[finding.cwe_id] = cwe_distribution.get(finding.cwe_id, 0) + 1
+            cwe_id = finding.finding.cwe_id
+            if cwe_id:
+                cwe_distribution[cwe_id] = cwe_distribution.get(cwe_id, 0) + 1
         
         return ReportData(
             task_id=result.task_id,
             feature_module=result.feature_module,
             total_findings=len(result.findings),
-            critical_count=severity_count["critical"],
-            high_count=severity_count["high"],
-            medium_count=severity_count["medium"],
-            low_count=severity_count["low"],
-            info_count=severity_count["info"],
+            critical_count=severity_count.get(Severity.CRITICAL, 0),
+            high_count=severity_count.get(Severity.HIGH, 0),
+            medium_count=severity_count.get(Severity.MEDIUM, 0),
+            low_count=severity_count.get(Severity.LOW, 0),
+            info_count=0,  # CVSS v4.0 無 INFO 級別，未來考慮使用 ThreatLevel.INFO
             verified_findings=verified_count,
             unverified_findings=len(result.findings) - verified_count,
             false_positives=false_positive_count,
@@ -277,22 +276,22 @@ class XSSCoordinator(BaseCoordinator):
             cwe_distribution=cwe_distribution,
         )
     
-    def _estimate_bounty_value(self, findings: List[Finding]) -> str:
-        """估算總賞金價值（基於 HackerOne/Bugcrowd 數據）"""
+    def _estimate_bounty_value(self, findings: List[CoordinatorFinding]) -> Optional[str]:
+        """估算總賞金價值"""
         total_min = 0
         total_max = 0
         
-        # 賞金範圍參考（美元）
         bounty_ranges = {
-            "critical": (2000, 10000),
-            "high": (500, 2000),
-            "medium": (100, 500),
-            "low": (50, 100),
+            Severity.CRITICAL: (2000, 10000),
+            Severity.HIGH: (500, 2000),
+            Severity.MEDIUM: (100, 500),
+            Severity.LOW: (50, 100),
         }
         
         for finding in findings:
             if finding.verified and finding.bounty_info and finding.bounty_info.eligible:
-                min_val, max_val = bounty_ranges.get(finding.severity, (0, 0))
+                severity = finding.finding.severity
+                min_val, max_val = bounty_ranges.get(severity, (0, 0))
                 total_min += min_val
                 total_max += max_val
         
@@ -303,19 +302,17 @@ class XSSCoordinator(BaseCoordinator):
     async def _verify_findings(
         self, result: FeatureResult
     ) -> List[VerificationResult]:
-        """驗證 XSS 漏洞真實性
-        
-        驗證標準（參考 OWASP）：
-        1. Payload 在響應中未被編碼
-        2. 響應 Content-Type 是 text/html
-        3. Payload 在可執行的 HTML 上下文中
-        4. 無 CSP (Content Security Policy) 保護或 CSP 可繞過
-        """
+        """驗證 XSS 漏洞真實性"""
         verification_results = []
         
         for finding in result.findings:
-            # 基礎驗證
-            confidence = finding.evidence.confidence
+            # 轉換 Confidence 枚舉為數值
+            confidence_map = {
+                Confidence.CONFIRMED: 1.0,
+                Confidence.FIRM: 0.8,
+                Confidence.TENTATIVE: 0.5,
+            }
+            confidence = confidence_map.get(finding.finding.confidence, 0.5)
             
             # 檢查證據完整性
             if not self._check_evidence_completeness(finding):
@@ -341,7 +338,7 @@ class XSSCoordinator(BaseCoordinator):
             
             verification_results.append(
                 VerificationResult(
-                    finding_id=finding.id,
+                    finding_id=finding.finding.finding_id,
                     verified=verified,
                     confidence=confidence,
                     verification_method="automated_xss_verification",
@@ -355,19 +352,27 @@ class XSSCoordinator(BaseCoordinator):
         
         return verification_results
     
-    def _check_evidence_completeness(self, finding: Finding) -> bool:
+    def _check_evidence_completeness(self, finding: CoordinatorFinding) -> bool:
         """檢查證據完整性"""
-        evidence = finding.evidence
+        evidence_list = finding.finding.evidence
+        if not evidence_list:
+            return False
+        
+        evidence = evidence_list[0]
         return bool(
             evidence.payload
             and evidence.request
             and evidence.response
-            and evidence.matched_pattern
+            and evidence.proof
         )
     
-    def _check_false_positive(self, finding: Finding) -> bool:
+    def _check_false_positive(self, finding: CoordinatorFinding) -> bool:
         """檢查是否為誤報"""
-        response = finding.evidence.response
+        evidence_list = finding.finding.evidence
+        if not evidence_list:
+            return True
+        
+        response = evidence_list[0].response or ""
         
         for pattern in self.false_positive_patterns:
             if re.search(pattern, response, re.IGNORECASE):
@@ -375,21 +380,22 @@ class XSSCoordinator(BaseCoordinator):
         
         return False
     
-    def _check_response_headers(self, finding: Finding) -> bool:
+    def _check_response_headers(self, finding: CoordinatorFinding) -> bool:
         """檢查響應頭"""
-        headers = finding.metadata.get("response_headers", {})
+        headers = finding.finding.metadata.get("response_headers", {})
         content_type = headers.get("content-type", "").lower()
         
-        # XSS 通常需要 HTML 響應
         return "text/html" in content_type or "application/xhtml" in content_type
     
-    def _check_html_context(self, finding: Finding) -> bool:
+    def _check_html_context(self, finding: CoordinatorFinding) -> bool:
         """檢查 HTML 上下文"""
-        response = finding.evidence.response
-        payload = finding.evidence.payload
+        evidence_list = finding.finding.evidence
+        if not evidence_list:
+            return False
         
-        # 檢查 payload 是否在可執行的 HTML 標籤中
-        # 簡化版：檢查是否在 <script>, <body>, 事件處理器中
+        response = evidence_list[0].response or ""
+        payload = evidence_list[0].payload or ""
+        
         executable_contexts = [
             f"<script>{payload}",
             f"<script {payload}",
@@ -399,19 +405,18 @@ class XSSCoordinator(BaseCoordinator):
         
         return any(ctx in response.lower() for ctx in executable_contexts)
     
-    def _check_csp_protection(self, finding: Finding) -> bool:
+    def _check_csp_protection(self, finding: CoordinatorFinding) -> bool:
         """檢查 CSP 保護"""
-        headers = finding.metadata.get("response_headers", {})
+        headers = finding.finding.metadata.get("response_headers", {})
         csp = headers.get("content-security-policy", "")
         
         if not csp:
-            return False  # 無 CSP，不影響利用
+            return False
         
-        # 簡化版：檢查 CSP 是否嚴格
         strict_policies = ["'none'", "'self'", "nonce-", "sha256-"]
         return any(policy in csp for policy in strict_policies)
     
-    def _generate_verification_notes(self, finding: Finding, confidence: float) -> str:
+    def _generate_verification_notes(self, finding: CoordinatorFinding, confidence: float) -> str:
         """生成驗證註記"""
         notes = []
         

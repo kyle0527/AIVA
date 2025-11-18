@@ -48,17 +48,13 @@ except ImportError:
         ImportWarning
     )
 
-# 嘗試導入core模組
-try:
-    from . import core
-    if 'core' not in __all__:
-        __all__.append('core')
-except ImportError:
-    import warnings
-    warnings.warn(
-        "core 模組導入失敗。請檢查 services/core/ 目錄是否存在",
-        ImportWarning
-    )
-except NameError:
-    # 如果__all__還未定義
-    __all__ = ['core']
+# 延遲導入 core 模組（避免 torch/transformers 導入過慢）
+# core 模組包含 sentence_transformers → transformers → torch
+# 導入鏈過長會導致啟動時間超過 60 秒
+# 解決方案：使用 __getattr__ 實現懶加載
+def __getattr__(name):
+    """懶加載模組以提升導入速度"""
+    if name == 'core':
+        from . import core
+        return core
+    raise AttributeError(f"module {__name__!r} has no attribute {name!r}")

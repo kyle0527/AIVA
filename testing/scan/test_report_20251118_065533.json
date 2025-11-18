@@ -1,0 +1,22 @@
+{
+  "test_time": "2025-11-18T06:55:33.589778",
+  "target": "http://localhost:3000",
+  "phases": {
+    "Python Engine Scan": {
+      "status": "FAIL",
+      "details": "1 validation error for ScanStartPayload\nscan_id\n  Value error, scan_id must start with 'scan_' [type=value_error, input_value='scan-fd4cab74-de53-4346-b774-f2c126e81812', input_type=str]\n    For further information visit https://errors.pydantic.dev/2.11/v/value_error",
+      "timestamp": "2025-11-18T06:55:33.723968"
+    },
+    "Multi-Engine Coordination": {
+      "status": "SKIP",
+      "details": "當前只有 Python 引擎可用",
+      "timestamp": "2025-11-18T06:55:33.727632"
+    }
+  },
+  "errors": [
+    {
+      "phase": "Python Engine Scan",
+      "error": "1 validation error for ScanStartPayload\nscan_id\n  Value error, scan_id must start with 'scan_' [type=value_error, input_value='scan-fd4cab74-de53-4346-b774-f2c126e81812', input_type=str]\n    For further information visit https://errors.pydantic.dev/2.11/v/value_error"
+    }
+  ]
+}

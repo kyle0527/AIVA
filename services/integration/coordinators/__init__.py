@@ -8,17 +8,12 @@ from .base_coordinator import (
     BountyInfo,
     CoreFeedback,
     ErrorInfo,
-    EvidenceData,
     FeatureResult,
-    Finding,
-    ImpactAssessment,
+    CoordinatorFinding,
     OptimizationData,
     PerformanceMetrics,
-    PoCData,
-    RemediationAdvice,
     ReportData,
     StatisticsData,
-    TargetInfo,
     VerificationResult,
 )
 from .xss_coordinator import XSSCoordinator
@@ -27,13 +22,8 @@ __all__ = [
     # Base classes
     "BaseCoordinator",
     # Data models
-    "TargetInfo",
-    "EvidenceData",
-    "PoCData",
-    "ImpactAssessment",
-    "RemediationAdvice",
     "BountyInfo",
-    "Finding",
+    "CoordinatorFinding",
     "StatisticsData",
     "PerformanceMetrics",
     "ErrorInfo",

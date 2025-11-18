@@ -107,6 +107,7 @@ from .business import (
     TransactionType,
 )
 from .common import (
+    AlertSeverity,     # 告警嚴重程度
     AlertType,
     AsyncTaskStatus,
     Confidence,

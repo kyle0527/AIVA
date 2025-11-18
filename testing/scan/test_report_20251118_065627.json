@@ -1,0 +1,22 @@
+{
+  "test_time": "2025-11-18T06:56:27.652160",
+  "target": "http://localhost:3000",
+  "phases": {
+    "Python Engine Scan": {
+      "status": "FAIL",
+      "details": "type object 'CVSSSeverity' has no attribute 'INFORMATIONAL'",
+      "timestamp": "2025-11-18T06:56:27.682560"
+    },
+    "Multi-Engine Coordination": {
+      "status": "SKIP",
+      "details": "當前只有 Python 引擎可用",
+      "timestamp": "2025-11-18T06:56:27.686605"
+    }
+  },
+  "errors": [
+    {
+      "phase": "Python Engine Scan",
+      "error": "type object 'CVSSSeverity' has no attribute 'INFORMATIONAL'"
+    }
+  ]
+}

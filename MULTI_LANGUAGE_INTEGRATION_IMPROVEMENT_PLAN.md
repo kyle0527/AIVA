@@ -978,7 +978,7 @@ Get-ChildItem -Path "C:\D\fold7\AIVA-git\services" -Recurse -Filter "*.rs" |
 **理由**:
 1. 降低依賴複雜度 (避免引入 tree-sitter 等重型庫)
 2. 90% 案例正則足夠 (只需提取公開函數/方法)
-3. 性能更優 (正則比完整 AST 快 10x+)
+3. 性能更優 (正則處理速度快)
 4. 維護成本更低
 
 **權衡**: 無法處理複雜語法結構 (可接受)

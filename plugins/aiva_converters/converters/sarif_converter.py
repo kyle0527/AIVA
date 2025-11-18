@@ -14,12 +14,14 @@ SARIF 是業界標準的靜態分析結果格式，支援：
 
 
 from datetime import UTC, datetime
+import sys
+from pathlib import Path
 
+# 添加項目根目錄到路徑
+sys.path.insert(0, str(Path(__file__).parent.parent.parent.parent))
 
-
-
-from ..aiva_common.enums import Severity
-from ..aiva_common.schemas import (
+from services.aiva_common.enums import Severity
+from services.aiva_common.schemas import (
     CVSSv3Metrics,
     SARIFLocation,
     SARIFReport,
@@ -27,8 +29,9 @@ from ..aiva_common.schemas import (
     SARIFRule,
     SARIFRun,
     SARIFTool,
+    Vulnerability,
 )
-from .models import Vulnerability, VulnerabilityDiscovery
+from services.scan.models import VulnerabilityDiscovery
 
 
 class SARIFConverter:

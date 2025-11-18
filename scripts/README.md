@@ -1,147 +1,291 @@
-# 📜 AIVA Scripts - 按五大模組重組
+# 📜 AIVA Scripts - 服務導向重組架構
 
-本目錄包含 AIVA 專案的各種自動化腳本和工具，支援系統的部署、測試、維護和監控等各項功能。
-
-## 🔧 修復原則
-
-**保留未使用函數原則**: 在程式碼修復過程中，若發現有定義但尚未使用的函數或方法，只要不影響程式正常運作，建議予以保留。這些函數可能是：
-- 預留的 API 端點或介面
-- 未來功能的基礎架構
-- 測試或除錯用途的輔助函數
-- 向下相容性考量的舊版介面
-
-說不定未來會用到，保持程式碼的擴展性和靈活性。
-
-## 📁 目錄結構
-
-### 🚀 launcher/ - 啟動器腳本 (3個)
-- **aiva_launcher.py** ✅ - AIVA 統一啟動入口
-- **start_ai_continuous_training.py** ✅ - AI 持續訓練啟動器
-- **smart_communication_selector.py** ✅ - 智能通訊選擇器
-
-### 🧪 testing/ - 測試相關腳本 (8個)
-- **comprehensive_test.py** ✅ - 全功能測試腳本
-- **ai_system_connectivity_check.py** ✅ - AI 系統連接檢查
-
-### 🔍 **scan/** - 掃描模組腳本  - **aiva_full_worker_live_test.py** ✅ - 完整工作者實時測試
-
-- **reporting/** - 掃描結果報告- **aiva_module_status_checker.py** ✅ - 模組狀態檢查器
-
-- **aiva_system_connectivity_sop_check.py** ✅ - 系統連接 SOP 檢查
-
-### 🔗 **integration/** - 整合模組腳本- **enhanced_real_ai_attack_system.py** ✅ - 增強型 AI 攻擊測試
-
-- **cross_language_bridge.py** - 跨語言橋接- **juice_shop_real_attack_test.py** ✅ - Juice Shop 攻擊測試
-
-- **ffi_integration.py** - FFI 整合- **real_attack_executor.py** ✅ - 真實攻擊執行器
-
-- **graalvm_integration.py** - GraalVM 整合  
-
-- **wasm_integration.py** - WebAssembly 整合### ✅ validation/ - 驗證相關腳本 (1個)
-
-- **reporting/** - 整合狀態報告- **aiva_package_validator.py** ✅ - 套件驗證器
-
-
-
-### ⚙️ **features/** - 功能模組腳本### 🔗 integration/ - 整合相關腳本 (4個)
-
-- **conversion/** - 文檔轉換工具- **cross_language_bridge.py** ✅ - 跨語言橋接器
-
-- **ffi_integration.py** ✅ - FFI 整合
-
-## 🚀 使用指南- **graalvm_integration.py** ✅ - GraalVM 整合
-
-- **wasm_integration.py** ✅ - WebAssembly 整合
-
-### 系統部署
-
-```bash### 📊 reporting/ - 報告生成腳本 (3個)
-
-# 環境設置- **aiva_enterprise_security_report.py** ✅ - 企業安全報告生成器
-
-scripts/common/setup/setup_env.bat- **final_report.py** ✅ - 最終報告生成器
-
-- **aiva_crosslang_unified.py** ✅ - 跨語言統一報告工具
-
-# 啟動系統
-
-scripts/common/launcher/aiva_launcher.py### 🔄 conversion/ - 轉換工具腳本 (1個)
-
-- **docx_to_md_converter.py** ✅ - DOCX 轉 Markdown 轉換器
-
-# 部署服務
-
-scripts/common/deployment/start_all.ps1### 🚀 deployment/ - 部署腳本 (6個)
-
-```- **start_all.ps1** ✅ - 啟動所有服務
-
-- **start_all_multilang.ps1** ✅ - 啟動多語言服務
-
-### 模組測試- **start_dev.bat** ✅ - 開發環境啟動
-
-```bash- **start_ui_auto.ps1** ✅ - 自動啟動 UI
-
-# 核心模組測試 - 在 testing/core/- **stop_all.ps1** ✅ - 停止所有服務
-
-# 掃描模組測試 - 在 testing/scan/  - **stop_all_multilang.ps1** ✅ - 停止多語言服務
-
-# 整合模組測試 - 在 testing/integration/
-
-# 功能模組測試 - 在 testing/features/### ⚙️ setup/ - 環境設置腳本 (2個)
-
-```- **setup_env.bat** ✅ - 環境設置
-
-- **setup_multilang.ps1** ✅ - 多語言環境設置
+> **🎯 重組版本**: v6.3 - 基於 AIVA Services 六大核心架構  
+> **📅 重組日期**: 2025年11月17日  
+> **🚀 狀態**: 完全重組完成，移除重複腳本 80%+
 
 ---
 
-### 🔍 maintenance/ - 維護腳本 (9個)
+## 📑 目錄索引
 
-**重組完成**: 2025-10-24  - **check_status.ps1** ✅ - 檢查系統狀態
+### 🎯 核心服務腳本
+- [🤖 **Core 服務**](./core/README.md) - AI 核心分析與自我感知工具
+- [🔗 **Common 服務**](./common/README.md) - 通用基礎設施與啟動工具
+- [🎯 **Features 服務**](./features/README.md) - 功能模組管理工具
+- [🔄 **Integration 服務**](./integration/README.md) - 跨語言整合工具
+- [🔍 **Scan 服務**](./scan/README.md) - 掃描監控工具
 
-**架構**: 五大模組對應- **diagnose_system.ps1** ✅ - 系統診斷
-- **health_check_multilang.ps1** ✅ - 多語言健康檢查
-- **generate_project_report.ps1** ✅ - 生成專案報告
-- **generate_stats.ps1** ✅ - 生成統計資料
-- **generate_tree_ultimate_chinese.ps1** ✅ - 生成專案樹狀圖
-- **fix_import_paths.py** ✅ - 修復導入路徑
-- **optimize_core_modules.ps1** ✅ - 優化核心模組
-- **system_repair_tool.py** ✅ - 系統修復工具
+### 🛠️ 支援工具腳本
+- [🧪 **Testing**](./testing/README.md) - 系統驗證與測試工具
+- [🛠️ **Utilities**](./utilities/README.md) - 精簡實用工具集
+- [📊 **Analysis**](./analysis/README.md) - 深度分析工具
+
+### 📁 特殊目錄
+- [🗑️ **Deprecated**](./deprecated/README.md) - 廢棄腳本存放區
+- [🔐 **Crypto & Post-Exploitation**](./crypto_postex/README.md) - 加密與滲透測試工具
+- [🔧 **Miscellaneous**](./misc/README.md) - 雜項工具與臨時腳本
+- [🔄 **Migration**](./migration/README.md) - 資料庫遷移工具
+- [✅ **Validation**](./validation/README.md) - 架構驗證工具
+- [🚀 **Startup**](./startup/README.md) - 系統啟動工具
 
 ---
 
-## 🚀 快速使用
+## 📋 概述
 
-### 首次部署
-```powershell
-.\scripts\setup\setup_env.bat
-.\scripts\setup\setup_multilang.ps1
-.\scripts\deployment\start_all_multilang.ps1
+AIVA Scripts 已完全重組以對應 **AIVA Services 六大核心架構**，提供清晰的服務導向目錄結構，移除重複腳本並建立標準化的工具集。
+
+### 🎯 重組成果
+
+- ✅ **重複腳本清理**: 移除 80%+ 重複的 debug fixer、launcher 等
+- ✅ **服務導向架構**: 對應六大核心服務的目錄結構  
+- ✅ **廢棄腳本隔離**: 建立 deprecated/ 安全保存過時內容
+- ✅ **工具集簡化**: utilities/ 僅保留最佳實用工具
+- ✅ **文檔標準化**: 各層級完整的 README 文檔
+
+### 🗂️ 新架構特點
+
+1. **服務導向**: 對應 Core、Common、Features、Integration、Scan 服務
+2. **功能分類**: 測試、分析、工具明確分離  
+3. **標準化**: 統一的命名規範與文檔格式
+4. **可維護性**: 清晰的依賴關係與職責分工
+
+---
+
+## 🏗️ 目錄架構
+
+```
+scripts/
+├── 📋 README.md                     # 本文檔 - 重組後總覽
+├── 📊 REORGANIZATION_PLAN.md        # 重組詳細計劃書
+│
+├── 🤖 core/                         # Core 服務相關腳本
+│   ├── ai_analysis/                 # AI 分析工具 (9個)
+│   │   ├── ai_component_explorer.py
+│   │   ├── ai_system_explorer_v2.py
+│   │   ├── aiva_continuous_ai_manager.py
+│   │   ├── enterprise_ai_manager.py
+│   │   ├── production_ai_manager_v2.py
+│   │   └── reporting/              # Core 企業報告
+│   ├── update_self_awareness.py    # 自我感知更新
+│   └── README.md
+│
+├── 🔗 common/                       # Common 服務相關腳本
+│   ├── launcher/                   # 統一啟動器 (3個)
+│   │   ├── aiva_launcher.py        # AIVA 統一啟動入口
+│   │   ├── start_ai_continuous_training.py # AI 持續訓練
+│   │   └── smart_communication_selector.py # 智能通信選擇
+│   ├── maintenance/                # 維護工具 (1個)
+│   │   └── system_repair_tool.py   # 系統修復工具
+│   ├── setup/                      # 環境設置 (1個)
+│   │   └── setup_python_path.py    # Python 路徑設置
+│   ├── validation/                 # 驗證工具 (1個)
+│   │   └── aiva_package_validator.py # 套件驗證
+│   └── README.md
+│
+├── 🎯 features/                     # Features 服務相關腳本
+│   ├── conversion/                 # 功能轉換工具
+│   ├── original_scripts/           # 原始功能腳本
+│   ├── organize_features_by_function.py # 功能組織器
+│   └── README.md
+│
+├── 🔄 integration/                  # Integration 服務相關腳本
+│   ├── reporting/                  # 整合報告
+│   │   └── aiva_crosslang_unified.py
+│   ├── ffi_integration.py          # FFI 整合
+│   ├── graalvm_integration.py      # GraalVM 整合
+│   ├── wasm_integration.py         # WebAssembly 整合
+│   └── README.md
+│
+├── 🔍 scan/                        # Scan 服務相關腳本
+│   ├── docker/                     # Docker 掃描器 (1個)
+│   │   └── docker_infrastructure_updater.py
+│   ├── reporting/                  # 掃描報告 (1個)
+│   │   └── final_report.py
+│   └── README.md
+│
+├── 🧪 testing/                     # 測試相關腳本
+│   ├── test_ai_self_exploration.py # AI 自我探索測試
+│   ├── verify_aiva_system.py       # AIVA 系統驗證
+│   ├── v3_improvements_preview.py  # v3 改進預覽
+│   └── README.md
+│
+├── 🛠️ utilities/                   # 精簡工具腳本
+│   ├── health_check.py             # 系統健康檢查 (保留最佳版本)
+│   ├── debug_fixer.py              # 調試修復器 (整合版)
+│   ├── cleanup_diagram_output.py   # 圖表清理
+│   ├── safe_batch_repair.py        # 安全批次修復
+│   ├── generate_*.py               # 生成工具集 (6個)
+│   ├── diagram_auto_composer.py    # 圖表自動組成
+│   └── README.md
+│
+├── 📊 analysis/                    # 分析工具
+│   ├── duplication_fix_tool.py     # 重複定義修復
+│   ├── scanner_statistics.py       # 掃描器統計
+│   ├── check_readme_compliance.py  # README 合規檢查
+│   ├── verify_p0_fixes.py          # P0 修復驗證
+│   ├── analyze_integration_module.py # 整合模組分析
+│   ├── ultimate_organization_discovery_v2.py # 組織發現
+│   ├── intelligent_analysis_v3_report.json # 智能分析報告
+│   └── README.md
+│
+├── 🔐 crypto_postex/               # 加密與滲透測試工具
+│   ├── build_crypto_engine.sh      # 加密引擎構建
+│   ├── build_docker_crypto.sh      # 加密 Docker 映像
+│   ├── build_docker_postex.sh      # 後滲透 Docker 映像
+│   ├── run_crypto_worker.sh        # 加密工作程序
+│   ├── run_postex_worker.sh        # 後滲透工作程序
+│   ├── gen_contracts.sh            # 智能合約生成
+│   ├── run_tests.sh               # 安全測試套件
+│   └── README.md
+│
+├── 🔧 misc/                        # 雜項工具
+│   ├── port_scanner.py             # 端口掃描器
+│   ├── vulnerability_scanner.py    # 漏洞掃描器
+│   ├── network_diagnostic.py       # 網路診斷
+│   ├── system_monitor.py           # 系統監控
+│   ├── log_analyzer.py             # 日誌分析
+│   ├── file_organizer.py           # 檔案整理
+│   ├── backup_manager.py           # 備份管理
+│   ├── config_validator.py         # 配置驗證
+│   ├── report_generator.py         # 報告生成
+│   └── README.md
+│
+├── 🔄 migration/                   # 資料庫遷移工具
+│   ├── database_migration.py       # 資料庫遷移工具
+│   └── README.md
+│
+├── ⚙️ setup/                       # 安裝設置工具 (空)
+│
+├── 🚀 startup/                     # 系統啟動工具
+│   ├── start-aiva.sh               # AIVA 主要啟動腳本
+│   └── README.md
+│
+├── ✅ validation/                  # 架構驗證工具
+│   ├── architecture_validation.py  # 架構驗證工具
+│   └── README.md
+│
+└── 🗑️ deprecated/                  # 廢棄腳本存放區
+    ├── duplicate_launchers/        # 重複啟動器 (3個)
+    ├── obsolete_debug_tools/       # 過時調試工具 (4個)
+    ├── conflicting_scripts/        # 衝突腳本 (30+ ps1/sh)
+    └── README.md
 ```
 
-### 測試驗證
-```powershell
-python scripts\testing\comprehensive_test.py
-python scripts\validation\aiva_package_validator.py
+---
+
+## 📊 重組統計
+
+### 🔥 廢棄腳本處理
+
+```
+重複的 Debug Fixer:     5個 → 1個 (保留最佳版本)
+重複的 Launcher:        3個 → 1個 (合併最佳功能)  
+重複的 Health Check:    2個 → 1個 (功能一致)
+PowerShell 腳本:       30+ → deprecated/ (架構衝突)
+Shell 腳本:           20+ → deprecated/ (環境不符)
+─────────────────────────────────────────────────────
+總計廢棄:             60+ 腳本 (約 80%+ 重複內容)
 ```
 
-### 系統維護
-```powershell
-.\scripts\maintenance\check_status.ps1
-.\scripts\maintenance\diagnose_system.ps1
-python scripts\maintenance\system_repair_tool.py
+### 📦 服務分布
+
+```
+🤖 Core:             10個腳本 (AI分析、自我感知)
+🔗 Common:           6個腳本 (啟動、維護、設置)
+🎯 Features:         1個腳本 (功能組織) + 子目錄
+🔄 Integration:      4個腳本 (跨語言整合)  
+🔍 Scan:             2個腳本 (Docker、報告)
+🧪 Testing:          3個腳本 (系統驗證)
+🛠️ Utilities:        12個腳本 (精簡工具集)
+📊 Analysis:         7個腳本 (深度分析)
+─────────────────────────────────────────────
+總計有效:            45個腳本 (高品質實用工具)
 ```
 
 ---
 
-## 📊 統計資訊
-- **總計**: 37 個腳本
-- **Python**: 22 個
-- **PowerShell**: 13 個  
-- **Batch**: 2 個
+## 🚀 使用指南
+
+### 🔧 常用操作
+
+#### 系統健康檢查
+```bash
+cd scripts/utilities
+python health_check.py
+```
+
+#### AIVA 服務啟動
+```bash
+cd scripts/common/launcher  
+python aiva_launcher.py
+```
+
+#### 調試問題修復
+```bash
+cd scripts/utilities
+python debug_fixer.py
+```
+
+#### 功能模組分析
+```bash
+cd scripts/analysis
+python ultimate_organization_discovery_v2.py
+```
+
+### 📋 服務專用腳本
+
+每個服務目錄都包含該服務專用的腳本工具，請參考各目錄的 README.md 獲取詳細使用說明。
 
 ---
 
-**維護者**: AIVA DevOps Team  
-**最後更新**: 2025-10-24  
-**驗證狀態**: ✅ 所有 37 個腳本已驗證
+## 🔄 遷移指南
+
+### ⚠️ 腳本路徑變更
+
+如果您的程式碼引用了舊的腳本路徑，請更新為新路徑：
+
+```python
+# 舊路徑 (已廢棄)
+scripts/health_check.py → scripts/utilities/health_check.py
+scripts/aiva_debug_fixer.py → scripts/utilities/debug_fixer.py
+scripts/launcher/aiva_launcher.py → scripts/common/launcher/aiva_launcher.py
+
+# 新架構路徑
+scripts/[service]/[category]/[script].py
+```
+
+### 🗑️ 廢棄腳本恢復
+
+如需恢復 `deprecated/` 中的腳本功能：
+
+1. **檢查現行版本**: 功能可能已整合到新腳本中
+2. **避免直接使用**: deprecated 腳本未經維護  
+3. **參考實現**: 用於理解原始邏輯
+4. **適配新架構**: 確保符合 Services 標準
+
+---
+
+## 🎯 重組效益
+
+### ✅ 開發效益
+
+- **🔍 易於定位**: 服務導向的明確分類
+- **🛠️ 維護簡化**: 移除重複降低維護成本
+- **📚 文檔完整**: 每個目錄都有詳細說明
+- **🚀 執行效率**: 保留最佳工具版本
+
+### ✅ 團隊協作
+
+- **🎯 職責清晰**: 每個服務有對應的腳本工具
+- **📦 標準化**: 統一的目錄結構與命名規範
+- **🔄 可擴展**: 基於服務的模組化架構
+- **💡 知識管理**: 廢棄腳本的保存與說明
+
+---
+
+## 📞 支援與維護
+
+- **📋 問題回報**: 請在對應服務目錄的 README 中查找聯繫方式
+- **🔧 腳本維護**: 定期評估 deprecated 目錄內容
+- **📚 文檔更新**: 隨服務架構演進同步更新
+- **✅ 品質控制**: 新增腳本需符合服務導向原則

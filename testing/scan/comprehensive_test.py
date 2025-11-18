@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+!/usr/bin/env python3
 """
 AIVA 全功能測試腳本
 測試所有模組的基本功能，不依賴外部服務

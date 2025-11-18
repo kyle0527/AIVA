@@ -114,6 +114,11 @@ with contextlib.suppress(ImportError):
         ScanCompletedPayload,
         ScanScope,
         ScanStartPayload,
+        # Phase0/Phase1 兩階段掃描
+        Phase0StartPayload,
+        Phase0CompletedPayload,
+        Phase1StartPayload,
+        Phase1CompletedPayload,
         SensitiveMatch,
         Summary,
         Target,
@@ -314,6 +319,11 @@ __all__ = [
     "RateLimit",
     "ScanScope",
     "ScanStartPayload",
+    # Phase0/Phase1 兩階段掃描
+    "Phase0StartPayload",
+    "Phase0CompletedPayload",
+    "Phase1StartPayload",
+    "Phase1CompletedPayload",
     "Asset",
     "Summary",
     "Fingerprints",

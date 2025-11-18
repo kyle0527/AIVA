@@ -13,10 +13,26 @@ from enum import Enum
 import logging
 from typing import Any
 from uuid import uuid4
+import sys
+from pathlib import Path
+
+# 添加項目根目錄到路徑
+sys.path.insert(0, str(Path(__file__).parent.parent.parent.parent))
 
 from services.aiva_common.enums.common import TaskStatus
 
-from .ast_parser import AttackFlowGraph, AttackFlowNode, NodeType
+# 從 services 導入 ASTParser
+try:
+    from services.core.aiva_core.task_planning.planner.ast_parser import (
+        AttackFlowGraph, 
+        AttackFlowNode, 
+        NodeType
+    )
+except ImportError:
+    # 如果找不到,使用本地的簡化版本
+    AttackFlowGraph = None
+    AttackFlowNode = None
+    NodeType = None
 
 logger = logging.getLogger(__name__)
 

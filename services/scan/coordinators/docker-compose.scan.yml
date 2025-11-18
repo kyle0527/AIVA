@@ -1,0 +1,198 @@
+# Scan 模組 Docker Compose 配置
+# 包含三引擎: Python, TypeScript (Playwright), Rust
+# 支持多目標掃描測試
+
+services:
+  # ============================================
+  # 基礎設施服務
+  # ============================================
+  rabbitmq:
+    image: rabbitmq:3.13-management
+    container_name: aiva-rabbitmq
+    ports:
+      - "5672:5672"    # AMQP
+      - "15672:15672"  # Management UI
+    environment:
+      RABBITMQ_DEFAULT_USER: aiva
+      RABBITMQ_DEFAULT_PASS: aiva_mq_password
+      RABBITMQ_DEFAULT_VHOST: aiva
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - aiva-network
+
+  redis:
+    image: redis:7-alpine
+    container_name: aiva-redis
+    command: redis-server --requirepass aiva_redis_password
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "--raw", "incr", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+    networks:
+      - aiva-network
+
+  # ============================================
+  # Rust 掃描引擎 (三種模式)
+  # ============================================
+  
+  # Rust Mode 1: 快速發現
+  rust-fast-discovery:
+    build:
+      context: ./info_gatherer_rust
+      dockerfile: Dockerfile
+    container_name: aiva-rust-fast-discovery
+    environment:
+      # 掃描模式
+      RUST_SCAN_MODE: fast_discovery
+      
+      # RabbitMQ 配置
+      RABBITMQ_URL: amqp://aiva:aiva_mq_password@rabbitmq:5672/aiva
+      RABBITMQ_HOST: rabbitmq
+      RABBITMQ_PORT: 5672
+      RABBITMQ_USER: aiva
+      RABBITMQ_PASSWORD: aiva_mq_password
+      RABBITMQ_VHOST: aiva
+      
+      # 統計配置
+      AIVA_METRICS_OUTPUT_FILE: /var/log/aiva/metrics/rust_fast_discovery.jsonl
+      AIVA_METRICS_INTERVAL: 60
+      
+      # 日誌配置
+      RUST_LOG: info
+    volumes:
+      - rust-logs:/var/log/aiva/metrics
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - aiva-network
+
+  # Rust Mode 2: 深度分析
+  rust-deep-analysis:
+    build:
+      context: ./info_gatherer_rust
+      dockerfile: Dockerfile
+    container_name: aiva-rust-deep-analysis
+    environment:
+      RUST_SCAN_MODE: deep_analysis
+      RABBITMQ_URL: amqp://aiva:aiva_mq_password@rabbitmq:5672/aiva
+      RABBITMQ_HOST: rabbitmq
+      RABBITMQ_PORT: 5672
+      RABBITMQ_USER: aiva
+      RABBITMQ_PASSWORD: aiva_mq_password
+      RABBITMQ_VHOST: aiva
+      AIVA_METRICS_OUTPUT_FILE: /var/log/aiva/metrics/rust_deep_analysis.jsonl
+      AIVA_METRICS_INTERVAL: 60
+      RUST_LOG: info
+    volumes:
+      - rust-logs:/var/log/aiva/metrics
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - aiva-network
+
+  # Rust Mode 3: 聚焦驗證
+  rust-focused-verification:
+    build:
+      context: ./info_gatherer_rust
+      dockerfile: Dockerfile
+    container_name: aiva-rust-focused-verification
+    environment:
+      RUST_SCAN_MODE: focused_verification
+      RABBITMQ_URL: amqp://aiva:aiva_mq_password@rabbitmq:5672/aiva
+      RABBITMQ_HOST: rabbitmq
+      RABBITMQ_PORT: 5672
+      RABBITMQ_USER: aiva
+      RABBITMQ_PASSWORD: aiva_mq_password
+      RABBITMQ_VHOST: aiva
+      AIVA_METRICS_OUTPUT_FILE: /var/log/aiva/metrics/rust_focused_verification.jsonl
+      AIVA_METRICS_INTERVAL: 60
+      RUST_LOG: info
+    volumes:
+      - rust-logs:/var/log/aiva/metrics
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - aiva-network
+
+  # ============================================
+  # Python 掃描引擎
+  # ============================================
+  python-scanner:
+    build:
+      context: ./aiva_scan
+      dockerfile: Dockerfile
+    container_name: aiva-python-scanner
+    environment:
+      RABBITMQ_URL: amqp://aiva:aiva_mq_password@rabbitmq:5672/aiva
+      REDIS_URL: redis://:aiva_redis_password@redis:6379/0
+      PYTHON_ENGINE_MODE: crawler
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - aiva-network
+
+  # ============================================
+  # TypeScript 掃描引擎 (Playwright)
+  # ============================================
+  typescript-scanner:
+    build:
+      context: ./aiva_scan_node
+      dockerfile: Dockerfile
+    container_name: aiva-typescript-scanner
+    environment:
+      RABBITMQ_URL: amqp://aiva:aiva_mq_password@rabbitmq:5672/aiva
+      NODE_ENV: production
+      PLAYWRIGHT_BROWSERS_PATH: /ms-playwright
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - aiva-network
+
+  # ============================================
+  # 測試目標生成器 (用於多目標測試)
+  # ============================================
+  test-target-generator:
+    image: python:3.11-slim
+    container_name: aiva-test-target-generator
+    working_dir: /app
+    volumes:
+      - ./test_targets:/app
+    environment:
+      RABBITMQ_URL: amqp://aiva:aiva_mq_password@rabbitmq:5672/aiva
+    command: |
+      sh -c "
+        pip install pika &&
+        python generate_test_targets.py
+      "
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    networks:
+      - aiva-network
+
+volumes:
+  rust-logs:
+    driver: local
+
+networks:
+  aiva-network:
+    driver: bridge
