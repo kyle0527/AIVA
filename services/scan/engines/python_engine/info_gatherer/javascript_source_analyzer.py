@@ -284,7 +284,7 @@ class JavaScriptSourceAnalyzer:
 
         return patterns
 
-    def _analyze_dataflow(self, lines: list[str], result: AnalysisResult) -> None:
+    def _analyze_dataflow(self, _lines: list[str], result: AnalysisResult) -> None:
         """
         分析數據流（簡化版）
 

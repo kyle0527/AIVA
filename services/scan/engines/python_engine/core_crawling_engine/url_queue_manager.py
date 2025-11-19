@@ -56,12 +56,12 @@ class UrlQueueManager:
         """
         return bool(self._queue)
 
-    def next(self) -> str:
+    def next(self) -> tuple[str, int]:
         """
-        獲取下一個要處理的 URL
+        獲取下一個要處理的 URL 及其深度
 
         Returns:
-            下一個 URL 字符串
+            (URL字符串, 深度級別) 的元組
 
         Raises:
             IndexError: 如果佇列為空
@@ -72,7 +72,7 @@ class UrlQueueManager:
         url, depth = self._queue.popleft()
         self._processed.add(url)
         logger.debug(f"Dequeued URL: {url} (depth={depth})")
-        return url
+        return url, depth
 
     def add(self, url: str, parent_url: str | None = None, depth: int = 0) -> bool:
         """

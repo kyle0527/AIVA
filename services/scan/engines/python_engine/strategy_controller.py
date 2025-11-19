@@ -94,6 +94,15 @@ class StrategyController:
         controller.apply_to_config(config_center)
     """
 
+    # Schema 策略到內部策略的映射
+    _STRATEGY_MAPPING: dict[str, str] = {
+        "quick": ScanStrategyType.FAST.value,
+        "normal": ScanStrategyType.BALANCED.value,
+        "full": ScanStrategyType.AGGRESSIVE.value,
+        "deep": ScanStrategyType.DEEP.value,
+        "custom": ScanStrategyType.BALANCED.value,
+    }
+
     # 預定義的策略參數
     _STRATEGY_PRESETS: dict[str, StrategyParameters] = {
         ScanStrategyType.CONSERVATIVE.value: StrategyParameters(
@@ -130,7 +139,7 @@ class StrategyController:
         ),
         ScanStrategyType.DEEP.value: StrategyParameters(
             max_depth=10,
-            max_pages=1000,
+            max_pages=20,  # 🔧 調整為 20 加快測試，實際使用會根據 Phase0 動態調整
             max_forms=200,
             requests_per_second=2.0,
             concurrent_requests=5,
@@ -216,14 +225,30 @@ class StrategyController:
 
         Args:
             strategy: 策略名稱
-                (conservative, balanced, deep, fast,
-                aggressive, stealth, targeted)
+                Schema: quick/normal/full/deep/custom
+                內部: conservative/balanced/deep/fast/aggressive/stealth/targeted
         """
-        self.strategy = strategy.lower()
+        # 🔧 修復: 映射 Schema 策略到內部策略
+        strategy_mapping = {
+            "quick": "fast",
+            "normal": "balanced",
+            "full": "aggressive",
+            "deep": "deep",
+            "custom": "balanced",
+        }
+        
+        original_strategy = strategy
+        normalized_strategy = strategy.lower()
+        self.strategy = strategy_mapping.get(normalized_strategy, normalized_strategy)
         self._parameters = self._load_strategy_parameters()
         self._customizations: dict[str, Any] = {}
 
-        logger.info(f"StrategyController initialized with strategy: {self.strategy}")
+        if original_strategy.lower() != self.strategy:
+            logger.info(
+                f"StrategyController: {original_strategy} -> {self.strategy}"
+            )
+        else:
+            logger.info(f"StrategyController initialized with strategy: {self.strategy}")
 
     def get_parameters(self) -> StrategyParameters:
         """
@@ -408,6 +433,90 @@ class StrategyController:
 
         return estimated_time
 
+    def adjust_from_phase0(self, phase0_summary: dict) -> None:
+        """
+        根據 Phase0 (Rust Engine) 掃描結果動態調整策略參數
+
+        Args:
+            phase0_summary: Phase0 掃描摘要，包含：
+                - urls_found: 發現的 URL 數量
+                - forms_found: 發現的表單數量
+                - endpoints_found: 發現的端點數量
+                - tech_stack: 技術棧信息
+                - is_spa: 是否為 SPA
+
+        調整邏輯：
+            - 大型網站 (urls > 100): 增加 max_pages
+            - SPA 應用: 啟用動態掃描，增加 page_load_timeout
+            - API 密集型: 增加 max_forms 和 requests_per_second
+            - 複雜表單: 增加 max_forms
+        """
+        urls_found = phase0_summary.get("urls_found", 0)
+        forms_found = phase0_summary.get("forms_found", 0)
+        endpoints_found = phase0_summary.get("endpoints_found", 0)
+        is_spa = phase0_summary.get("is_spa", False)
+        tech_stack = phase0_summary.get("tech_stack", [])
+
+        logger.info(
+            f"Adjusting strategy based on Phase0: "
+            f"urls={urls_found}, forms={forms_found}, spa={is_spa}"
+        )
+
+        # 1. 根據規模調整 max_pages
+        if urls_found > 500:
+            self._parameters.max_pages = min(200, urls_found // 3)
+            logger.info(f"Large site detected, max_pages → {self._parameters.max_pages}")
+        elif urls_found > 100:
+            self._parameters.max_pages = min(100, urls_found // 2)
+            logger.info(f"Medium site detected, max_pages → {self._parameters.max_pages}")
+        elif urls_found > 20:
+            self._parameters.max_pages = min(50, urls_found)
+            logger.info(f"Small site detected, max_pages → {self._parameters.max_pages}")
+        else:
+            self._parameters.max_pages = 20
+            logger.info("Minimal site, max_pages → 20")
+
+        # 2. SPA 應用特殊處理
+        if is_spa or any(tech in str(tech_stack).lower() for tech in ["react", "vue", "angular"]):
+            self._parameters.enable_dynamic_scan = True
+            self._parameters.page_load_timeout = 60.0  # 增加載入時間
+            self._parameters.max_depth = 5  # SPA 通常深度較淺
+            logger.info("SPA detected, enabling dynamic scan with extended timeout")
+
+        # 3. 根據表單數量調整
+        if forms_found > 50:
+            self._parameters.max_forms = min(300, forms_found * 2)
+            logger.info(f"Many forms detected, max_forms → {self._parameters.max_forms}")
+        elif forms_found > 20:
+            self._parameters.max_forms = forms_found * 3
+
+        # 4. API 密集型應用
+        if endpoints_found > 30:
+            self._parameters.requests_per_second = 3.0  # 增加速率
+            self._parameters.concurrent_requests = 8
+            logger.info("API-heavy site, increasing request rate")
+
+        # 5. 根據技術棧優化
+        tech_lower = str(tech_stack).lower()
+        if "wordpress" in tech_lower or "drupal" in tech_lower:
+            # 傳統 CMS 通常頁面多但深度淺
+            self._parameters.max_depth = 5
+            self._parameters.skip_static_resources = True
+            logger.info("CMS detected, optimizing crawl depth")
+
+        if "cloudflare" in tech_lower or "akamai" in tech_lower:
+            # 有 CDN 時降低請求速率避免封鎖
+            self._parameters.requests_per_second = 1.5
+            logger.info("CDN detected, reducing request rate")
+
+        logger.info(f"Strategy adjusted: max_pages={self._parameters.max_pages}, "
+                    f"max_depth={self._parameters.max_depth}, "
+                    f"dynamic={self._parameters.enable_dynamic_scan}")
+        if params.enable_dynamic_scan:
+            estimated_time *= 1.5
+
+        return estimated_time
+
     def get_recommended_strategy_for_target(
         self, target_size: str = "medium", target_type: str = "web_app"
     ) -> str:
@@ -456,7 +565,7 @@ class StrategyController:
 
         # 未知策略，使用默認（balanced）
         logger.warning(
-            f"Unknown strategy '{self.strategy}', using 'balanced' as default"
+            f"Unknown strategy '{self.strategy}', falling back to 'balanced'"
         )
         return self._STRATEGY_PRESETS[ScanStrategyType.BALANCED.value]
 

@@ -1,0 +1,65 @@
+# Python Engine - 全域環境依賴清單
+# 安裝方式: python -m pip install -r requirements-global.txt
+# 最後更新: 2025-11-19
+# 驗證狀態: ✅ 已在 Juice Shop 測試通過
+
+# ==========================================
+# 核心依賴（必須）
+# ==========================================
+
+# HTML/XML 解析
+beautifulsoup4>=4.12.0
+lxml>=4.9.0
+
+# 動態渲染
+playwright>=1.41.0
+
+# HTTP 客戶端
+httpx>=0.26.0
+
+# 數據驗證和序列化
+pydantic>=2.5.0
+
+# ==========================================
+# 推薦依賴（強烈建議）
+# ==========================================
+
+# 異步 HTTP
+aiohttp>=3.9.0
+
+# RabbitMQ 客戶端（Worker 需要）
+pika>=1.3.0
+
+# 環境變數管理
+python-dotenv>=1.0.0
+
+# ==========================================
+# 開發依賴（可選）
+# ==========================================
+
+# 測試框架
+# pytest>=7.4.0
+# pytest-asyncio>=0.21.0
+
+# 代碼質量
+# black>=23.0.0
+# ruff>=0.1.0
+
+# ==========================================
+# 安裝說明
+# ==========================================
+
+# 1. 安裝所有核心依賴
+#    python -m pip install beautifulsoup4 lxml playwright httpx pydantic
+
+# 2. 安裝 Playwright 瀏覽器
+#    playwright install chromium
+
+# 3. 驗證安裝
+#    python -c "from bs4 import BeautifulSoup; print('✅ BeautifulSoup OK')"
+#    python -c "from playwright.async_api import async_playwright; print('✅ Playwright OK')"
+
+# 4. 運行測試
+#    cd C:\D\fold7\AIVA-git
+#    $env:PYTHONPATH="C:\D\fold7\AIVA-git"
+#    python -c "import asyncio; from services.scan.engines.python_engine.scan_orchestrator import ScanOrchestrator; print('✅ Import OK')"

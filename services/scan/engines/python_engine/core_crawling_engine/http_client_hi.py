@@ -114,7 +114,7 @@ class HiHttpClient:
             return response
 
         except httpx.HTTPStatusError as e:
-            logger.warning(f"HTTP error for {url}: {e.response.status_code}")
+            logger.warning(f"⚠️ HTTP error for {url}: {e.response.status_code}")
             # 仍然更新速率限制器
             if hasattr(e, "response"):
                 self._rate_limiter.update_from_response(
@@ -124,12 +124,16 @@ class HiHttpClient:
                 )
             return None
 
+        except httpx.TimeoutException as e:
+            logger.warning(f"⚠️ Timeout for {url}: {e}")
+            return None
+            
         except httpx.RequestError as e:
-            logger.warning(f"Request error for {url}: {e}")
+            logger.warning(f"⚠️ Request error for {url}: {e}")
             return None
 
         except Exception as e:
-            logger.error(f"Unexpected error for {url}: {e}")
+            logger.error(f"⚠️ Unexpected error for {url}: {e}")
             return None
 
     async def post(
@@ -162,8 +166,16 @@ class HiHttpClient:
             logger.debug(f"POST {url} -> {response.status_code}")
             return response
 
+        except httpx.TimeoutException as e:
+            logger.warning(f"⚠️ Timeout for POST {url}: {e}")
+            return None
+            
+        except httpx.RequestError as e:
+            logger.warning(f"⚠️ POST request error for {url}: {e}")
+            return None
+
         except Exception as e:
-            logger.warning(f"POST request failed for {url}: {e}")
+            logger.warning(f"⚠️ POST request failed for {url}: {e}")
             return None
 
     async def close(self) -> None:

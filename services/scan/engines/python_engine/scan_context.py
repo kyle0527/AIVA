@@ -49,6 +49,9 @@ class ScanContext:
 
         # 收集的資產
         self.assets: list[Asset] = []
+        
+        # Asset 去重 (參考 Rust A4 優化 - HashSet 去重)
+        self._asset_keys: set[str] = set()
 
         # 統計信息
         self.urls_found = 0
@@ -76,11 +79,23 @@ class ScanContext:
 
     def add_asset(self, asset: Asset) -> None:
         """
-        添加資產到收集列表
+        添加資產到收集列表 (自動去重)
 
         Args:
             asset: 要添加的資產對象
         """
+        # 生成唯一鍵 (type + value + method) - 參考 Rust A4 優化
+        asset_key = f"{asset.type}:{asset.value}"
+        if hasattr(asset, 'method') and asset.method:
+            asset_key += f":{asset.method}"
+        
+        # 檢查是否已存在
+        if asset_key in self._asset_keys:
+            logger.debug(f"Asset skipped (duplicate): {asset.type} - {asset.value}")
+            return
+        
+        # 添加新資產
+        self._asset_keys.add(asset_key)
         self.assets.append(asset)
         logger.debug(f"Asset added: {asset.type} - {asset.value}")
 

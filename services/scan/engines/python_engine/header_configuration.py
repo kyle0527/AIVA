@@ -7,6 +7,9 @@ from services.aiva_common.utils import get_logger
 
 logger = get_logger(__name__)
 
+# 常量定義
+CONTENT_TYPE_JSON = "application/json"
+
 
 class HeaderConfiguration:
     """
@@ -164,8 +167,8 @@ class HeaderConfiguration:
 
         # 3. 如果是 JSON 請求，調整 Content-Type 和 Accept
         if for_json:
-            headers["Content-Type"] = "application/json"
-            headers["Accept"] = "application/json, */*"
+            headers["Content-Type"] = CONTENT_TYPE_JSON
+            headers["Accept"] = f"{CONTENT_TYPE_JSON}, */*"
 
         # 4. 用戶自定義頭覆蓋默認值
         headers.update(self.user_headers)
