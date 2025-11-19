@@ -31,6 +31,7 @@ from .info_gatherer.javascript_source_analyzer import JavaScriptSourceAnalyzer
 from .info_gatherer.sensitive_info_detector import SensitiveInfoDetector
 from .scan_context import ScanContext
 from .strategy_controller import StrategyController, StrategyParameters
+from .vulnerability_scanner import VulnerabilityScanner
 
 logger = get_logger(__name__)
 
@@ -61,6 +62,9 @@ class ScanOrchestrator:
         self.sensitive_detector = SensitiveInfoDetector()
         self.js_analyzer = JavaScriptSourceAnalyzer()
 
+        # 初始化漏洞掃描器 (Phase 2 MVP)
+        self.vuln_scanner = VulnerabilityScanner()
+
         # 動態引擎組件（延遲初始化）
         self.browser_pool: HeadlessBrowserPool | None = None
         self.dynamic_extractor: DynamicContentExtractor | None = None
@@ -81,6 +85,9 @@ class ScanOrchestrator:
 
         # 創建掃描上下文
         context = ScanContext(request)
+
+        # 確保漏洞掃描器已初始化
+        await self.vuln_scanner.initialize()
 
         # 初始化策略
         strategy_controller = StrategyController(request.strategy)
@@ -134,6 +141,39 @@ class ScanOrchestrator:
             fingerprints = self.fingerprint_collector.get_final_fingerprints()
             if fingerprints:
                 context.set_fingerprints(fingerprints)
+
+            # === Phase 2 MVP 閉環：執行漏洞驗證 ===
+            if context.assets:
+                logger.info(f"🔄 Phase 2 Handover: Found {len(context.assets)} assets. Starting vulnerability verification...")
+                
+                # 篩選可測試的資產 (URL 或 Form)
+                test_targets = []
+                for asset in context.assets:
+                    if asset.type in ['URL', 'form', 'link', 'api_endpoint']:
+                        # 簡單去重
+                        if asset.value not in test_targets:
+                            test_targets.append(asset.value)
+                
+                # 限制 MVP 測試數量（避免過長執行時間）
+                max_vuln_targets = 10
+                test_targets = test_targets[:max_vuln_targets]
+                
+                logger.info(f"🎯 Selected {len(test_targets)} targets for vulnerability scan: {test_targets[:3]}...")
+
+                for target in test_targets:
+                    try:
+                        logger.debug(f"Scanning {target} for vulnerabilities...")
+                        vuln_results = await self.vuln_scanner.scan_target(target)
+                        
+                        # 如果發現漏洞，記錄下來
+                        if vuln_results.get('vulnerabilities'):
+                            count = len(vuln_results['vulnerabilities'])
+                            logger.warning(f"🚨 [VULNERABILITY FOUND] {target} has {count} issues!")
+                            for v in vuln_results['vulnerabilities']:
+                                logger.warning(f"   - {v.get('type')}: {v.get('description')}")
+                    except Exception as e:
+                        logger.error(f"Vulnerability scan failed for {target}: {e}")
+            # ==============================================
 
             # 構建並返回結果
             result = self._build_scan_result(context)
@@ -610,12 +650,25 @@ class ScanOrchestrator:
 
         complete_asset_list = []
         engines_used = request.selected_engines if request.selected_engines else []
+        
+        # 整合 Phase 0 (Rust) 的發現結果
+        targets_to_scan = list(request.targets)
+        
+        # 如果有 Phase 0 結果，合併發現的端點
+        if hasattr(request, 'phase0_result') and request.phase0_result:
+            phase0_endpoints = getattr(request.phase0_result, 'basic_endpoints', [])
+            if phase0_endpoints:
+                logger.info(f"Inheriting {len(phase0_endpoints)} endpoints from Phase 0")
+                targets_to_scan.extend(phase0_endpoints)
+                # 去重
+                targets_to_scan = list(dict.fromkeys(targets_to_scan))
 
         try:
-            # 1. 根據引擎選擇執行掃描
-            if "python" in engines_used:
-                logger.info("Phase1: Executing Python engine")
-                python_results = await self._execute_python_scan(request)
+            # 1. 根據引擎選擇執行掃描（強制使用 Python 進行 MVP 驗證）
+            # MVP 模式：始終執行 Python 引擎以驗證完整流程
+            if "python" in engines_used or not engines_used:  # 如果沒有指定引擎，預設使用 Python
+                logger.info("Phase1: Executing Python engine for MVP loop")
+                python_results = await self._execute_python_scan(request, override_targets=targets_to_scan)
                 complete_asset_list.extend(python_results)
 
             if "typescript" in engines_used:
@@ -728,15 +781,23 @@ class ScanOrchestrator:
 
     # ==================== Phase1 輔助方法 ====================
 
-    async def _execute_python_scan(self, request: "Phase1StartPayload") -> list[Asset]:
-        """Phase1: 執行 Python 引擎掃描"""
+    async def _execute_python_scan(self, request: "Phase1StartPayload", override_targets: list[str] = None) -> list[Asset]:
+        """Phase1: 執行 Python 引擎掃描
+        
+        Args:
+            request: Phase1 掃描請求
+            override_targets: 可選的目標列表覆蓋（用於整合 Phase 0 結果）
+        """
         from services.aiva_common.schemas import ScanStartPayload
+
+        # 使用傳入的 targets 或原本 request 的 targets
+        final_targets = override_targets if override_targets else request.targets
 
         # 將 Phase1 請求轉換為標準掃描請求
         scan_request = ScanStartPayload(
             scan_id=request.scan_id,
-            targets=request.targets,
-            strategy="deep",  # Phase1 使用深度掃描
+            targets=final_targets,  # 使用合併後的目標
+            strategy="deep",  # Phase1 強制使用深度掃描（啟用 Playwright）
             scope=request.scope,
             authentication=request.authentication,
         )
