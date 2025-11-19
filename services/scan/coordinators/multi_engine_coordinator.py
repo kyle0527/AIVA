@@ -376,17 +376,29 @@ class MultiEngineCoordinator:
         """運行 Python 爬蟲引擎"""
         start_time = time.time()
         try:
-            self.logger.info("  🐍 Python 引擎: 靜態內容爬取")
+            self.logger.info("  🐍 Python 引擎: 開始掃描")
             from ..engines.python_engine.scan_orchestrator import ScanOrchestrator
-            # TODO: 實際調用
-            await asyncio.sleep(0)  # 保持異步語義
+            
+            # 實際調用 Python Engine
+            orchestrator = ScanOrchestrator()
+            scan_result = await orchestrator.execute_scan(request)
+            
+            execution_time = time.time() - start_time
+            self.logger.info(f"  🐍 Python 引擎完成: {len(scan_result.assets)} 個資產, {execution_time:.1f}s")
+            
             return EngineResult(
                 engine=EngineType.PYTHON,
                 phase=ScanPhase.MULTI_ENGINE_SCAN,
-                assets=[],
-                execution_time=time.time() - start_time
+                assets=scan_result.assets,
+                metadata={
+                    "urls_found": scan_result.summary.urls_found,
+                    "forms_found": scan_result.summary.forms_found,
+                    "scan_duration": scan_result.summary.scan_duration_seconds
+                },
+                execution_time=execution_time
             )
         except Exception as e:
+            self.logger.error(f"  ❌ Python 引擎錯誤: {e}")
             return EngineResult(
                 engine=EngineType.PYTHON,
                 phase=ScanPhase.MULTI_ENGINE_SCAN,

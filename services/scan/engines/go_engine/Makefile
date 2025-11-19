@@ -1,11 +1,9 @@
 # AIVA Go 掃描器 Makefile
-# 根據 aiva_common README 規範統一構建流程
+# 重構後的統一構建流程
 
 # 常量定義
-SCANNER_DIRS := ssrf_scanner cspm_scanner sca_scanner
 BUILD_DIR := bin
 GO_FLAGS := -ldflags="-s -w" -trimpath
-PYTHON_BUILD := python build.py
 
 # 自動檢測平台
 UNAME_S := $(shell uname -s 2>/dev/null || echo "Windows")
@@ -34,21 +32,85 @@ all: build
 .PHONY: build
 build:
 	@echo "🚀 Building all Go scanners for platform: $(PLATFORM)"
-	@$(PYTHON_BUILD) --scanner all --platform auto
+	@mkdir -p $(BUILD_DIR)
+	@cd cmd/ssrf-scanner && go build $(GO_FLAGS) -o ../../$(BUILD_DIR)/ssrf-scanner$(EXT) .
+	@cd cmd/cspm-scanner && go build $(GO_FLAGS) -o ../../$(BUILD_DIR)/cspm-scanner$(EXT) .
+	@cd cmd/sca-scanner && go build $(GO_FLAGS) -o ../../$(BUILD_DIR)/sca-scanner$(EXT) .
+	@echo "✅ All scanners built successfully"
 
 # 構建單一掃描器
 .PHONY: ssrf cspm sca
 ssrf:
 	@echo "🔍 Building SSRF scanner..."
-	@$(PYTHON_BUILD) --scanner ssrf_scanner --platform auto
+	@mkdir -p $(BUILD_DIR)
+	@cd cmd/ssrf-scanner && go build $(GO_FLAGS) -o ../../$(BUILD_DIR)/ssrf-scanner$(EXT) .
 
 cspm:
 	@echo "☁️ Building CSPM scanner..."
-	@$(PYTHON_BUILD) --scanner cspm_scanner --platform auto
+	@mkdir -p $(BUILD_DIR)
+	@cd cmd/cspm-scanner && go build $(GO_FLAGS) -o ../../$(BUILD_DIR)/cspm-scanner$(EXT) .
 
 sca:
 	@echo "📦 Building SCA scanner..."
-	@$(PYTHON_BUILD) --scanner sca_scanner --platform auto
+	@mkdir -p $(BUILD_DIR)
+	@cd cmd/sca-scanner && go build $(GO_FLAGS) -o ../../$(BUILD_DIR)/sca-scanner$(EXT) .
+
+# 快速重建
+.PHONY: rebuild
+rebuild: clean build
+
+# 清理構建檔案
+.PHONY: clean
+clean:
+	@echo "🧹 Cleaning build artifacts..."
+	@rm -rf $(BUILD_DIR)/*$(EXT) 2>/dev/null || true
+	@echo "✅ Clean completed"
+
+# 檢查前置條件
+.PHONY: check
+check:
+	@echo "🔍 Checking prerequisites..."
+	@command -v go >/dev/null 2>&1 || { echo "❌ Go is not installed"; exit 1; }
+	@echo "✅ Go version: $$(go version)"
+
+# 開發環境設置
+.PHONY: setup
+setup: check
+	@echo "⚡ Setting up development environment..."
+	@go work sync
+	@echo "✅ Development environment ready"
+
+# 顯示構建狀態
+.PHONY: status
+status:
+	@echo "📊 Build Status Report"
+	@echo "======================"
+	@echo "Platform: $(PLATFORM)"
+	@echo "Extension: $(EXT)"
+	@echo ""
+	@ls -lh $(BUILD_DIR)/*$(EXT) 2>/dev/null || echo "No binaries found"
+
+# 幫助資訊
+.PHONY: help
+help:
+	@echo "AIVA Go Scanner Build System (Refactored)"
+	@echo "=========================================="
+	@echo ""
+	@echo "Available targets:"
+	@echo "  build        - Build all scanners (default)"
+	@echo "  ssrf         - Build SSRF scanner only"
+	@echo "  cspm         - Build CSPM scanner only"
+	@echo "  sca          - Build SCA scanner only"
+	@echo "  rebuild      - Clean and rebuild all"
+	@echo "  clean        - Remove all build artifacts"
+	@echo "  check        - Check prerequisites"
+	@echo "  setup        - Set up development environment"
+	@echo "  status       - Show build status"
+	@echo ""
+	@echo "Usage examples:"
+	@echo "  make build    # Build all scanners"
+	@echo "  make ssrf     # Build only SSRF scanner"
+	@echo "  make rebuild  # Clean and rebuild"
 
 # 跨平台構建
 .PHONY: build-windows build-linux build-darwin build-arm64

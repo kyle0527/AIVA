@@ -1,20 +1,19 @@
 """
 Go 專業掃描器集群
 
-包含從 go_scanners 移動過來的所有 Go 組件：
-- common/: 共用組件
-- ssrf_scanner/: SSRF 掃描器
-- cspm_scanner/: 雲端安全態勢管理掃描器
-- sca_scanner/: 軟體組成分析掃描器  
-- shared/: 共享組件
+重構後的目錄結構：
+- cmd/: 命令入口點 (ssrf-scanner, cspm-scanner, sca-scanner)
+- internal/: 內部實現邏輯 (ssrf, cspm, sca, common)
+- pkg/: 共享模型 (models)
+- dispatcher/: Python 協調器
+- bin/: 編譯產物
 
 路徑已從 services.scan.go_scanners 更新為 services.scan.engines.go_engine
 """
 
 __all__ = [
-    "common",
-    "ssrf_scanner",
-    "cspm_scanner", 
-    "sca_scanner",
-    "shared"
+    "cmd",
+    "internal",
+    "pkg",
+    "dispatcher",
 ]
