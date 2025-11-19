@@ -15,9 +15,9 @@ from dataclasses import dataclass
 from datetime import datetime
 
 # 設置環境變數
-os.environ.setdefault('AIVA_RABBITMQ_URL', 'amqp://localhost:5672')
-os.environ.setdefault('AIVA_RABBITMQ_USER', 'guest')
-os.environ.setdefault('AIVA_RABBITMQ_PASSWORD', 'guest')
+os.environ.setdefault('RABBITMQ_URL', 'amqp://localhost:5672')
+os.environ.setdefault('RABBITMQ_USER', 'guest')
+os.environ.setdefault('RABBITMQ_PASSWORD', 'guest')
 
 sys.path.insert(0, str(Path(__file__).parent / "services"))
 

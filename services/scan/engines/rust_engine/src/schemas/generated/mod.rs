@@ -5,14 +5,18 @@
 // 完整的 Rust Schema 實現，包含序列化/反序列化支持
 
 use serde::{Serialize, Deserialize};
+#[allow(unused_imports)]
 use std::collections::HashMap;
+#[allow(unused_imports)]
 use chrono::{DateTime, Utc};
 
 // 可選依賴 - 根據實際使用情況啟用
 #[cfg(feature = "uuid")]
+#[allow(unused_imports)]
 use uuid::Uuid;
 
 #[cfg(feature = "url")]
+#[allow(unused_imports)]
 use url::Url;
 
 /// 漏洞嚴重程度枚舉
@@ -104,7 +108,8 @@ pub enum FindingStatus {
     /// 已解決
     RESOLVED,
     /// 誤報
-    FALSE_POSITIVE,
+    #[serde(rename = "false_positive")]
+    FalsePositive,
 }
 
 impl std::fmt::Display for FindingStatus {
@@ -113,7 +118,7 @@ impl std::fmt::Display for FindingStatus {
             FindingStatus::NEW => write!(f, "new"),
             FindingStatus::CONFIRMED => write!(f, "confirmed"),
             FindingStatus::RESOLVED => write!(f, "resolved"),
-            FindingStatus::FALSE_POSITIVE => write!(f, "false_positive"),
+            FindingStatus::FalsePositive => write!(f, "false_positive"),
         }
     }
 }
@@ -126,7 +131,7 @@ impl std::str::FromStr for FindingStatus {
             "NEW" => Ok(FindingStatus::NEW),
             "CONFIRMED" => Ok(FindingStatus::CONFIRMED),
             "RESOLVED" => Ok(FindingStatus::RESOLVED),
-            "FALSE_POSITIVE" => Ok(FindingStatus::FALSE_POSITIVE),
+            "FALSE_POSITIVE" => Ok(FindingStatus::FalsePositive),
             _ => Err(format!("Invalid FindingStatus: {}", s)),
         }
     }
@@ -428,7 +433,8 @@ pub struct Asset {
     /// 
     pub asset_id: String,
     /// 
-    pub type: String,
+    #[serde(rename = "type")]
+    pub asset_type: String,
     /// 
     pub value: String,
     /// 
@@ -444,7 +450,7 @@ impl Asset {
     pub fn new() -> Self {
         Self {
             asset_id: String::new(),
-            type: String::new(),
+            asset_type: String::new(),
             value: String::new(),
             parameters: None,
             has_form: None,
@@ -2082,7 +2088,7 @@ impl AsyncBatchResult {
             batch_status: String::new(),
             start_time: chrono::Utc::now(),
             end_time: None,
-            total_execution_time_ms: 0,
+            total_execution_time_ms: 0.0,
         }
     }
     
@@ -2487,7 +2493,8 @@ pub struct CLIParameter {
     /// 參數名稱
     pub name: String,
     /// 參數類型
-    pub type: String,
+    #[serde(rename = "type")]
+    pub param_type: String,
     /// 參數描述
     pub description: String,
     /// 是否必需
@@ -2517,7 +2524,7 @@ impl CLIParameter {
     pub fn new() -> Self {
         Self {
             name: String::new(),
-            type: String::new(),
+            param_type: String::new(),
             description: String::new(),
             required: false,
             default_value: None,

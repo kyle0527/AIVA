@@ -32,14 +32,19 @@ logger = get_logger(__name__)
 # 新：統一的 StorageManager + PostgreSQL 後端，集中管理所有數據
 import os
 
+# 研發階段直接使用預設配置
+from urllib.parse import urlparse
+database_url = "postgresql://postgres:postgres@localhost:5432/aiva_db"
+db_url = urlparse(database_url)
+
 storage_adapter = UnifiedStorageAdapter(
     data_root="./data/integration",
     db_config={
-        "host": os.getenv("AIVA_POSTGRES_HOST") or os.getenv("POSTGRES_HOST", "localhost"),  # 使用統一配置
-        "port": int(os.getenv("AIVA_POSTGRES_PORT") or os.getenv("POSTGRES_PORT", "5432")),
-        "database": os.getenv("AIVA_POSTGRES_DB") or os.getenv("POSTGRES_DB", "aiva_db"), 
-        "user": os.getenv("AIVA_POSTGRES_USER") or os.getenv("POSTGRES_USER", "postgres"),
-        "password": os.getenv("AIVA_POSTGRES_PASSWORD") or os.getenv("POSTGRES_PASSWORD", "aiva123"),
+        "host": db_url.hostname or "localhost",
+        "port": db_url.port or 5432,
+        "database": db_url.path.lstrip('/') or "aiva_db",
+        "user": db_url.username or "postgres",
+        "password": db_url.password or "postgres",
     }
 )
 recv = DataReceptionLayer(storage_adapter)

@@ -260,17 +260,17 @@ def test_worker_integration():
 - SQLmap, Nmap, Dirb 等
 ```
 
-### 環境變數設置
-```bash
-# 集成測試配置
-export AIVA_INTEGRATION_MODE=true
-export AIVA_DATABASE_URL=postgresql://test:test@localhost:5432/aiva_test
-export AIVA_REDIS_URL=redis://localhost:6379/1
-export AIVA_RABBITMQ_URL=amqp://guest:guest@localhost:5672/test
+### 測試配置
 
-# 靶場配置
-export AIVA_TARGET_URL=http://localhost:3000
-export AIVA_TEST_TIMEOUT=300
+**研發階段**：測試直接使用預設配置，無需設置環境變數。
+
+預設測試配置：
+```python
+DATABASE_URL = "postgresql://postgres:postgres@localhost:5432/aiva_db"
+RABBITMQ_URL = "amqp://guest:guest@localhost:5672/"
+REDIS_URL = "redis://localhost:6379"
+TARGET_URL = "http://localhost:3000"
+TEST_TIMEOUT = 300
 ```
 
 ### Docker 環境設置
@@ -284,10 +284,6 @@ services:
   
   postgres:
     image: postgres:13
-    environment:
-      POSTGRES_DB: aiva_test
-      POSTGRES_USER: test
-      POSTGRES_PASSWORD: test
     ports: ["5432:5432"]
   
   redis:
@@ -351,7 +347,7 @@ jobs:
     - name: Install Dependencies
       run: pip install -r requirements.txt
     
-    - name: Run Integration Tests
+    - name: Run Integration Tests (使用預設配置)
       run: |
         pytest testing/integration/ -v
         python testing/integration/aiva_full_worker_live_test.py

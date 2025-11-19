@@ -636,7 +636,8 @@ class BlindSQLInjectionScanner:
                 # 構建測試 URL
                 test_url = f"{target.url}?id=1{urllib.parse.quote(payload)}"
                 
-                async with self.session.get(test_url) as response:
+                start_time = time.time()
+                async with self.session.get(test_url) as _:
                     response_time = time.time() - start_time
                     
                     # 如果響應時間大於 4 秒，可能存在時間盲注
@@ -992,8 +993,6 @@ class SQLInjectionCLI:
             console.print("[bold red]載荷不能為空[/bold red]")
             return
         
-        target = self.manager._parse_target(target_url, {})
-        
         try:
             # 執行自定義載荷測試
             console.print(f"[yellow]正在測試載荷: {payload}[/yellow]")
@@ -1105,7 +1104,7 @@ class SQLInjectionCLI:
         table.add_column("漏洞數量", style="yellow")
         table.add_column("最高嚴重度", style="red")
         
-        for result in self.manager.scan_results[-10:]:  # 顯示最近10次
+        for _ in self.manager.scan_results[-10:]:  # 顯示最近10次
             # 這裡需要根據實際的掃描歷史數據結構調整
             table.add_row("2024-11-01 15:30", "http://example.com", "3", "High")
         

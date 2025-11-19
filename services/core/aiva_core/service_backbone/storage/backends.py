@@ -50,8 +50,8 @@ try:
     sys.path.insert(0, str(services_path))
 
     # 設置必要環境變數（不自創，使用現有配置）
-    if "AIVA_RABBITMQ_URL" not in os.environ:
-        os.environ["AIVA_RABBITMQ_URL"] = "amqp://guest:guest@localhost:5672/"
+    if "RABBITMQ_URL" not in os.environ:
+        os.environ["RABBITMQ_URL"] = "amqp://guest:guest@localhost:5672/"
 
             # 僅在需要時導入，避免循環依賴
         from aiva_common.schemas import ExperienceSample, TraceRecord

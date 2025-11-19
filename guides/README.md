@@ -134,14 +134,14 @@ guides/
 | 構建流程操作指南 | [`deployment/BUILD_GUIDE.md`](deployment/BUILD_GUIDE.md) | 🔨 多語言構建自動化 | ✅ 完整 |
 | Docker 基礎設施指南 | [`deployment/DOCKER_GUIDE.md`](deployment/DOCKER_GUIDE.md) | 🐳 容器化部署實踐 | ✅ 完整 (10/31實測驗證) |
 | Docker & Kubernetes 部署 | [`deployment/DOCKER_KUBERNETES_GUIDE.md`](deployment/DOCKER_KUBERNETES_GUIDE.md) | ☸️ 微服務編排方案 | ✅ 完整 |
-| 環境變數配置指南 | [`deployment/ENVIRONMENT_CONFIG_GUIDE.md`](deployment/ENVIRONMENT_CONFIG_GUIDE.md) | ⚙️ 環境配置管理 | ✅ 完整 |
+| 配置指南（生產環境） | [`deployment/ENVIRONMENT_CONFIG_GUIDE.md`](deployment/ENVIRONMENT_CONFIG_GUIDE.md) | ⚙️ 生產環境配置管理 | ✅ 完整 |
 
 | 指南類型 | 文檔路徑 | 部署場景 | 狀態 |
 |---------|----------|----------|------|
 | **部署指南** | [`deployment/BUILD_GUIDE.md`](deployment/BUILD_GUIDE.md) | 🔨 構建流程和打包 | ✅ 完整 |
 | **Docker 容器化手冊** | [`deployment/DOCKER_GUIDE.md`](deployment/DOCKER_GUIDE.md) | 🐳 容器化部署策略 | ✅ 完整 |
 | **微服務部署指南** | [`deployment/DOCKER_KUBERNETES_GUIDE.md`](deployment/DOCKER_KUBERNETES_GUIDE.md) | ☸️ 微服務完整部署 | ✅ 完整 |
-| **環境配置指南** | [`deployment/ENVIRONMENT_CONFIG_GUIDE.md`](deployment/ENVIRONMENT_CONFIG_GUIDE.md) | ⚙️ 環境變數配置 | ✅ 完整 |
+| **生產配置指南** | [`deployment/ENVIRONMENT_CONFIG_GUIDE.md`](deployment/ENVIRONMENT_CONFIG_GUIDE.md) | ⚙️ 生產環境變數配置 | ✅ 完整 |
 
 ### 🔧 **疑難排解指南** (`troubleshooting/`)
 

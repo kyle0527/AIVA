@@ -202,17 +202,62 @@ services/aiva_common/
 
 ## 🎨 核心模組說明
 
-### 1️⃣ 配置管理 (`config/`)
+## ⚙️ 配置管理
 
-統一的配置管理系統，支援環境變量和動態配置更新。
+### 🎯 **研發階段配置原則**
 
-**主要組件**:
-- `unified_config.py`: 統一配置管理器
+> **重要**: 在研發階段，**不需要設置任何環境變數**。所有配置都使用合理的預設值，直接開箱即用。
 
-**功能**:
-- 環境變量讀取與驗證
-- 配置熱更新支援
-- 多環境配置管理
+**何時需要環境變數？**
+- ✅ **生產環境部署**: 需要覆蓋預設值（資料庫、消息隊列等）
+- ✅ **外部服務整合**: 需要 API Key（如 VirusTotal、Shodan 等第三方服務）
+- ❌ **研發階段**: 完全不需要，直接使用預設值
+
+**設計理念**:
+```python
+# ✅ 正確做法 - 直接使用預設值
+DATABASE_URL = "postgresql://postgres:postgres@localhost:5432/aiva_db"
+RABBITMQ_URL = "amqp://guest:guest@localhost:5672/"
+
+# ❌ 過度設計 - 研發階段不需要
+DATABASE_URL = os.getenv("DATABASE_URL", "...")  # 多餘的環境變數讀取
+POSTGRES_USER = os.getenv("POSTGRES_USER", "...")  # 多餘的認證配置
+```
+
+### 📋 預設配置值
+
+**資料庫連接**:
+- 連接字串: `postgresql://postgres:postgres@localhost:5432/aiva_db`
+- 說明: 本地 PostgreSQL，使用預設帳號密碼
+
+**消息隊列**:
+- 連接字串: `amqp://guest:guest@localhost:5672/`
+- 說明: 本地 RabbitMQ，使用預設帳號密碼
+
+**運行環境**:
+- 環境: `development`
+- 日誌級別: `INFO`
+
+**資料目錄**:
+- 路徑: `{PROJECT_ROOT}/data/integration`
+- 說明: 自動推導所有子路徑
+
+### 🔧 生產環境配置（未來使用）
+
+只有在部署到生產環境時，才需要通過環境變數覆蓋預設值：
+
+```bash
+# 僅生產環境需要
+export DATABASE_URL="postgresql://prod_user:secure_password@prod-host:5432/aiva_prod"
+export RABBITMQ_URL="amqp://prod_user:secure_password@prod-rabbitmq:5672/"
+export ENVIRONMENT="production"
+export LOG_LEVEL="WARNING"
+```
+
+**核心功能**:
+- 配置熱更新支援（生產環境）
+- 多環境配置管理（development/production/staging）
+- 安全的預設值（研發階段開箱即用）
 
 ---
 
@@ -1963,41 +2008,83 @@ from aiva_common.schemas import (
 
 ---
 
-## ✅ 架構修復完成報告
+## ✅ **簡化完成報告**
 
-> **修復日期**: 2025年10月26日  
-> **修復狀態**: 全部完成  
+> **更新日期**: 2025年11月19日  
+> **簡化狀態**: 完成  
 > **驗證狀態**: 通過
 
-### 🎉 修復成功: 所有重複定義問題已解決
+### 🎉 環境變數簡化成功
 
-經過系統性的修復工作，所有違反 aiva_common 單一數據來源原則的重複定義問題已全部解決：
+**簡化前 (~60個變數)**:
+- 需要設置大量認證資訊（USER, PASSWORD）
+- 連接配置分散（HOST, PORT, DB等）
+- 研發階段配置繁瑣
 
-#### ✅ 已修復問題 1: `services/integration/aiva_integration/reception/models_enhanced.py`
+**簡化後 (0個必需變數)**:
+- ✅ **研發階段**: 完全不需要設置環境變數
+- ✅ **所有配置**: 使用合理的預設值
+- ✅ **開箱即用**: 無需任何配置即可開始開發
 
-**修復狀態**: ✅ **完成 (2025-10-25)**
+### 📊 配置定義
+
+**核心預設值（內建）**:
 ```python
-# ✅ 修復後狀態: 正確導入 aiva_common
-from services.aiva_common.enums.assets import (
-    AssetStatus,
-    AssetType,
-    BusinessCriticality,
-    Environment,
-)
-from services.aiva_common.enums.common import Confidence, Severity
-from services.aiva_common.enums.security import Exploitability, VulnerabilityStatus
+# 資料庫（自動使用）
+DATABASE_URL = "postgresql://postgres:postgres@localhost:5432/aiva_db"
+
+# 消息隊列（自動使用）
+RABBITMQ_URL = "amqp://guest:guest@localhost:5672/"
+
+# 運行環境（自動使用）
+ENVIRONMENT = "development"
+LOG_LEVEL = "INFO"
+
+# 資料目錄（自動推導）
+INTEGRATION_DATA_DIR = "{PROJECT_ROOT}/data/integration"
 ```
 
-**驗證結果**: ✅ 通過
-- 所有 5 個重複枚舉已移除
-- 正確使用 aiva_common 導入
-- 模型功能正常
+**可選配置（僅生產環境或特定功能）**:
+- `API_KEY`: 外部 API 整合時需要（如 VirusTotal, Shodan）
+- `CORS_ORIGINS`: 前端跨域配置（有預設值）
+
+### 🎯 設計理念
+
+**為什麼移除環境變數？**
+1. **研發效率**: 新開發者無需配置任何環境即可開始工作
+2. **避免錯誤**: 減少配置錯誤導致的問題
+3. **符合實際**: 研發階段根本不需要認證
+4. **延後配置**: 只在真正需要時（生產部署）才配置
+
+**何時才需要環境變數？**
+- ✅ 部署到生產環境
+- ✅ 整合需要 API Key 的外部服務
+- ✅ 優化特定功能（如漏洞檢測需要模擬登入）
+- ❌ 日常開發（完全不需要）
+
+### 📝 開發者指南
+
+**研發階段（當前）**:
+```bash
+# 1. 克隆代碼
+git clone <repo>
+
+# 2. 安裝依賴
+pip install -e services/aiva_common
+
+# 3. 直接運行（無需任何配置）
+python your_script.py  # 自動使用預設值
+```
+
+**生產部署（未來）**:
+```bash
+# 僅在部署到生產環境時才需要設置
+export DATABASE_URL="postgresql://prod_user:password@prod-host:5432/aiva"
+export RABBITMQ_URL="amqp://prod_user:password@prod-mq:5672/"
+export ENVIRONMENT="production"
+```
 
 ---
-
-#### ✅ 已修復問題 2: `services/core/aiva_core/planner/task_converter.py`
-
-**修復狀態**: ✅ **完成 (2025-10-25)**
 ```python
 # ✅ 修復後狀態: 正確導入 TaskStatus，保留模組特定的 TaskPriority
 from services.aiva_common.enums.common import TaskStatus

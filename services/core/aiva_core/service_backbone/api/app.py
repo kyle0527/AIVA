@@ -29,7 +29,7 @@ from tenacity import (
 from services.aiva_common.config import get_settings
 from services.aiva_common.enums.modules import Topic
 from services.aiva_common.mq import get_broker
-from services.aiva_common.schemas import AivaMessage, ScanCompletedPayload
+from services.aiva_common.schemas import AivaMessage, ScanCompletedPayload, Phase0CompletedPayload
 from services.aiva_common.utils import get_logger
 from services.core.aiva_core.external_learning.analysis.dynamic_strategy_adjustment import (
     StrategyAdjuster,
@@ -145,6 +145,13 @@ async def startup() -> None:
     logger.info("[統計] Initializing analysis components...")
     logger.info("[循環] Starting message processing loops...")
     
+    # Phase0 結果處理器 (優先於標準掃描)
+    _background_tasks.append(asyncio.create_task(
+        process_phase0_results(),
+        name="phase0_results_processor"
+    ))
+    
+    # 標準掃描結果處理器 (處理 Phase1 和傳統掃描)
     _background_tasks.append(asyncio.create_task(
         process_scan_results(),
         name="scan_results_processor"
@@ -160,7 +167,7 @@ async def startup() -> None:
         name="execution_monitor"
     ))
     
-    logger.info("✅ [啟動] All background tasks started")
+    logger.info("✅ [啟動] All background tasks started (including Phase0 processor)")
     logger.info("🎉 [啟動] AIVA Core Engine ready to accept requests!")
 
 
@@ -218,6 +225,84 @@ async def _process_single_scan_with_retry(
     """
     broker = await get_broker()
     await scan_result_processor.process(payload, broker, trace_id)
+
+
+async def process_phase0_results() -> None:
+    """處理 Phase0 快速偵察結果 - AI 決策與引擎選擇
+    
+    流程:
+    1. 接收 Phase0 結果 (scan.phase0.completed)
+    2. AI 分析決策是否需要 Phase1
+    3. 如果需要 Phase1, 選擇適合的引擎
+    4. 發送 Phase1 命令 (tasks.scan.phase1)
+    """
+    logger.info("[Phase0] Starting Phase0 results processor...")
+    broker = await get_broker()
+
+    aiterator = broker.subscribe(Topic.RESULTS_SCAN_PHASE0_COMPLETED)
+    if hasattr(aiterator, "__await__"):
+        aiterator = await aiterator  # type: ignore[misc]
+
+    async for mqmsg in aiterator:  # type: ignore[misc]
+        msg = AivaMessage.model_validate_json(mqmsg.body)
+        payload = Phase0CompletedPayload(**msg.payload)
+        scan_id = payload.scan_id
+
+        try:
+            logger.info(
+                f"[Phase0] Received results for {scan_id} - "
+                f"Technologies: {len(payload.discovered_technologies)}, "
+                f"Sensitive: {len(payload.sensitive_data_found)}, "
+                f"Endpoints: {len(payload.basic_endpoints)}"
+            )
+
+            # 處理 Phase0 結果並決策
+            need_phase1, reason, selected_engines = await scan_result_processor.process_phase0(
+                payload, broker, msg.header.trace_id
+            )
+
+            if not need_phase1:
+                logger.info(
+                    f"[Phase0] Scan {scan_id} does not need Phase1. Reason: {reason}"
+                )
+                # TODO: 進入輕量級分析流程
+                continue
+
+            logger.info(
+                f"[Phase0] Scan {scan_id} needs Phase1 with engines: {selected_engines}. Reason: {reason}"
+            )
+
+            # 發送 Phase1 命令
+            # TODO: 需要從 Phase0 命令中獲取原始 targets 和配置
+            # 臨時實現: 假設 targets 存儲在會話上下文中
+            session_context = session_state_manager.get_session_context(scan_id)
+            targets = session_context.get("targets", [])
+
+            await scan_interface.send_phase1_command(
+                broker=broker,
+                scan_id=scan_id,
+                targets=targets,
+                trace_id=msg.header.trace_id,
+                phase0_result=payload,
+                selected_engines=selected_engines,
+                max_depth=3,
+                max_urls=1000,
+            )
+
+            logger.info(
+                f"[Phase0] Phase1 command sent for {scan_id} with engines {selected_engines}"
+            )
+
+        except Exception as e:
+            logger.error(
+                f"[Phase0] Error processing Phase0 result for {scan_id}: {e}",
+                exc_info=True,
+            )
+            session_state_manager.update_session_status(
+                scan_id,
+                "phase0_failed",
+                {"error": str(e), "error_type": type(e).__name__},
+            )
 
 
 async def process_scan_results() -> None:

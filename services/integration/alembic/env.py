@@ -28,10 +28,10 @@ target_metadata = Base.metadata
 
 
 def get_database_url() -> str:
-    """從環境變數獲取資料庫 URL"""
-    url = os.getenv("AIVA_DATABASE_URL")
+    """獲取資料庫 URL"""
+    url = "postgresql://postgres:postgres@localhost:5432/aiva_db"
     if not url:
-        raise ValueError("AIVA_DATABASE_URL environment variable is required")
+        raise ValueError("DATABASE_URL environment variable is required")
     return url
 
 

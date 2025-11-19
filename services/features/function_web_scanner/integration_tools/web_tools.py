@@ -93,7 +93,7 @@ class SubdomainEnumerator:
                 self.session = session
                 await asyncio.gather(*tasks, return_exceptions=True)
             
-            return sorted(list(self.found_subdomains))
+            return sorted(self.found_subdomains)
             
         except Exception as e:
             logger.error(f"子域名枚舉失敗: {e}")
@@ -389,13 +389,13 @@ class TechnologyDetector:
                         self.technologies.append(f"Server: {server}")
                     
                     # 檢測框架和CMS
-                    await self._detect_frameworks(content, headers)
+                    self._detect_frameworks(content)
                     
                     # 檢測JavaScript庫
-                    await self._detect_js_libraries(content)
+                    self._detect_js_libraries(content)
                     
                     # 檢測CSS框架
-                    await self._detect_css_frameworks(content)
+                    self._detect_css_frameworks(content)
             
             return self.technologies
             
@@ -403,7 +403,7 @@ class TechnologyDetector:
             logger.error(f"技術檢測失敗: {e}")
             return []
     
-    async def _detect_frameworks(self, content: str, headers: Dict[str, str]) -> None:
+    def _detect_frameworks(self, content: str) -> None:
         """檢測框架和CMS"""
         framework_patterns = {
             'WordPress': ['wp-content', 'wp-includes', 'wordpress'],
@@ -421,7 +421,7 @@ class TechnologyDetector:
             if any(pattern in content_lower for pattern in patterns):
                 self.technologies.append(f"Framework: {framework}")
     
-    async def _detect_js_libraries(self, content: str) -> None:
+    def _detect_js_libraries(self, content: str) -> None:
         """檢測JavaScript庫"""
         js_patterns = {
             'jQuery': ['jquery', 'jQuery'],
@@ -435,7 +435,7 @@ class TechnologyDetector:
             if any(pattern in content for pattern in patterns):
                 self.technologies.append(f"JS Library: {library}")
     
-    async def _detect_css_frameworks(self, content: str) -> None:
+    def _detect_css_frameworks(self, content: str) -> None:
         """檢測CSS框架"""
         css_patterns = {
             'Bootstrap': ['bootstrap.css', 'bootstrap.min.css'],

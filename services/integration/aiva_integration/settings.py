@@ -44,7 +44,7 @@ class IntegrationSettings:
 
         return cls(
             # 資料庫配置
-            db_url=os.getenv("DATABASE_URL"),
+            db_url="postgresql://postgres:postgres@localhost:5432/aiva_db",
             auto_migrate=os.getenv("AUTO_MIGRATE", "0") == "1",
             db_pool_size=int(os.getenv("DB_POOL_SIZE", "10")),
             db_max_overflow=int(os.getenv("DB_MAX_OVERFLOW", "20")),

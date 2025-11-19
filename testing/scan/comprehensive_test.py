@@ -1,9 +1,18 @@
-!/usr/bin/env python3
+#!/usr/bin/env python3
 """
-AIVA 全功能測試腳本
+AIVA 全功能測試腦本
 測試所有模組的基本功能，不依賴外部服務
 記錄錯誤並生成完整測試報告
 """
+
+# 常量定義
+PASS_STATUS = "✅ PASS"
+FAIL_STATUS = "❌ FAIL"
+TIMEOUT_STATUS = "⚠️  TIMEOUT"
+SKIP_STATUS = "📦 SKIP"
+TARGET_DETECTION_MODULE = "Target Detection"
+AI_INTEGRATION_MODULE = "AI Integration"
+AI_CORE_MODULE = "AI Core"
 
 import sys
 import subprocess
@@ -133,12 +142,13 @@ class AIVAComprehensiveTest:
         for project_path, module_name in go_projects:
             try:
                 # 首先嘗試 go mod tidy
-                tidy_result = subprocess.run(
+                subprocess.run(
                     ["go", "mod", "tidy"], 
                     cwd=project_path,
                     capture_output=True,
                     text=True,
-                    timeout=30
+                    timeout=30,
+                    check=False  # 不拋出異常，即使失敗
                 )
                 
                 # 然後進行編譯檢查
@@ -172,7 +182,7 @@ class AIVAComprehensiveTest:
         print("\n🎯 測試靶場檢測功能...")
         
         try:
-            from services.scan.aiva_scan.target_environment_detector import TargetEnvironmentDetector
+            from services.scan.engines.python_engine.target_environment_detector import TargetEnvironmentDetector
             
             detector = TargetEnvironmentDetector()
             
@@ -326,7 +336,7 @@ class AIVAComprehensiveTest:
         self.print_report()
         self.save_report()
         
-        print(f"\n✅ 全功能測試完成！")
+        print("\\n✅ 全功能測試完成！")
 
 async def main():
     """主函數"""

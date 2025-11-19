@@ -15,10 +15,8 @@ from pathlib import Path
 PROJECT_ROOT = Path(__file__).parent.parent.parent.parent
 DATA_ROOT = PROJECT_ROOT / "data"
 
-# 整合模組資料儲存根目錄
-INTEGRATION_DATA_DIR = Path(
-    os.getenv("AIVA_INTEGRATION_DATA_DIR", DATA_ROOT / "integration")
-)
+# 整合模組資料儲存根目錄 (研發階段直接使用預設路徑)
+INTEGRATION_DATA_DIR = DATA_ROOT / "integration"
 
 # 確保目錄存在
 INTEGRATION_DATA_DIR.mkdir(parents=True, exist_ok=True)
@@ -31,13 +29,8 @@ INTEGRATION_DATA_DIR.mkdir(parents=True, exist_ok=True)
 ATTACK_PATHS_DIR = INTEGRATION_DATA_DIR / "attack_paths"
 ATTACK_PATHS_DIR.mkdir(parents=True, exist_ok=True)
 
-# NetworkX 圖持久化檔案
-ATTACK_GRAPH_FILE = Path(
-    os.getenv(
-        "AIVA_ATTACK_GRAPH_FILE",
-        ATTACK_PATHS_DIR / "attack_graph.pkl",
-    )
-)
+# NetworkX 圖持久化檔案 (自動推導，不需要環境變數)
+ATTACK_GRAPH_FILE = ATTACK_PATHS_DIR / "attack_graph.pkl"
 
 # 攻擊路徑匯出目錄 (HTML, Mermaid 等)
 ATTACK_PATHS_EXPORT_DIR = ATTACK_PATHS_DIR / "exports"
@@ -54,11 +47,8 @@ EXPERIENCES_DIR.mkdir(parents=True, exist_ok=True)
 # 經驗資料庫檔案 (SQLite)
 EXPERIENCE_DB_FILE = EXPERIENCES_DIR / "experience.db"
 
-# 經驗資料庫 URL
-EXPERIENCE_DB_URL = os.getenv(
-    "AIVA_EXPERIENCE_DB_URL",
-    f"sqlite:///{EXPERIENCE_DB_FILE}",
-)
+# 經驗資料庫 URL (自動推導)
+EXPERIENCE_DB_URL = f"sqlite:///{EXPERIENCE_DB_FILE}"
 
 # 經驗資料匯出目錄
 EXPERIENCES_EXPORT_DIR = EXPERIENCES_DIR / "exports"
@@ -68,13 +58,8 @@ EXPERIENCES_EXPORT_DIR.mkdir(parents=True, exist_ok=True)
 # 訓練資料集配置
 # ============================================================================
 
-# 訓練資料集目錄
-TRAINING_DATASET_DIR = Path(
-    os.getenv(
-        "AIVA_TRAINING_DATASET_DIR",
-        INTEGRATION_DATA_DIR / "training_datasets",
-    )
-)
+# 訓練資料集目錄 (自動推導)
+TRAINING_DATASET_DIR = INTEGRATION_DATA_DIR / "training_datasets"
 TRAINING_DATASET_DIR.mkdir(parents=True, exist_ok=True)
 
 # 資料集元資料目錄
@@ -85,13 +70,8 @@ DATASET_METADATA_DIR.mkdir(parents=True, exist_ok=True)
 # 模型檢查點配置
 # ============================================================================
 
-# 模型檢查點目錄
-MODEL_CHECKPOINT_DIR = Path(
-    os.getenv(
-        "AIVA_MODEL_CHECKPOINT_DIR",
-        INTEGRATION_DATA_DIR / "models",
-    )
-)
+# 模型檢查點目錄 (自動推導)
+MODEL_CHECKPOINT_DIR = INTEGRATION_DATA_DIR / "models"
 MODEL_CHECKPOINT_DIR.mkdir(parents=True, exist_ok=True)
 
 # 模型檢查點子目錄
@@ -102,20 +82,9 @@ MODEL_CHECKPOINTS_SUBDIR.mkdir(parents=True, exist_ok=True)
 # PostgreSQL 配置 (生產環境)
 # ============================================================================
 
-# PostgreSQL 連線配置
-POSTGRES_CONFIG = {
-    "host": os.getenv("POSTGRES_HOST", "localhost"),
-    "port": int(os.getenv("POSTGRES_PORT", "5432")),
-    "database": os.getenv("POSTGRES_DB", "aiva_db"),
-    "user": os.getenv("POSTGRES_USER", "postgres"),
-    "password": os.getenv("POSTGRES_PASSWORD", "aiva123"),
-}
-
-# PostgreSQL DSN (用於 asyncpg)
-POSTGRES_DSN = (
-    f"postgresql://{POSTGRES_CONFIG['user']}:{POSTGRES_CONFIG['password']}"
-    f"@{POSTGRES_CONFIG['host']}:{POSTGRES_CONFIG['port']}/{POSTGRES_CONFIG['database']}"
-)
+# PostgreSQL 連線配置 (研發階段直接使用預設值)
+DATABASE_URL = "postgresql://postgres:postgres@localhost:5432/aiva_db"
+POSTGRES_DSN = DATABASE_URL
 
 # ============================================================================
 # 備份配置
@@ -163,9 +132,7 @@ def get_config_summary() -> dict[str, str]:
         "EXPERIENCE_DB_URL": EXPERIENCE_DB_URL,
         "TRAINING_DATASET_DIR": str(TRAINING_DATASET_DIR),
         "MODEL_CHECKPOINT_DIR": str(MODEL_CHECKPOINT_DIR),
-        "POSTGRES_DSN": POSTGRES_DSN.replace(
-            POSTGRES_CONFIG["password"], "***"
-        ),  # 隱藏密碼
+        "DATABASE_URL": DATABASE_URL.split('@')[0].split('//')[1].split(':')[0] + ":***@" + DATABASE_URL.split('@')[1] if '@' in DATABASE_URL else DATABASE_URL,  # 隱藏密碼
         "BACKUP_DIR": str(BACKUP_DIR),
     }
 

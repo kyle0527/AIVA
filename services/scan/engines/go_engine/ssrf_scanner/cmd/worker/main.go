@@ -28,16 +28,16 @@ var logger *zap.Logger
 // getRabbitMQURL 獲取 RabbitMQ 連接 URL，遵循 12-factor app 原則
 func getRabbitMQURL() string {
 	// 優先使用完整 URL
-	if url := os.Getenv("AIVA_RABBITMQ_URL"); url != "" {
+	if url := os.Getenv("RABBITMQ_URL"); url != "" {
 		return url
 	}
 
 	// 組合式配置
-	host := getEnv("AIVA_RABBITMQ_HOST", "localhost")
-	port := getEnv("AIVA_RABBITMQ_PORT", "5672")
-	user := os.Getenv("AIVA_RABBITMQ_USER")
-	password := os.Getenv("AIVA_RABBITMQ_PASSWORD")
-	vhost := getEnv("AIVA_RABBITMQ_VHOST", "/")
+	host := getEnv("RABBITMQ_HOST", "localhost")
+	port := getEnv("RABBITMQ_PORT", "5672")
+	user := os.Getenv("RABBITMQ_USER")
+	password := os.Getenv("RABBITMQ_PASSWORD")
+	vhost := getEnv("RABBITMQ_VHOST", "/")
 
 	if user == "" || password == "" {
 		return ""
@@ -99,7 +99,7 @@ func main() {
 	logger.Info("📡 連接 RabbitMQ...")
 	rabbitmqURL := getRabbitMQURL()
 	if rabbitmqURL == "" {
-		logger.Fatal("AIVA_RABBITMQ_URL or AIVA_RABBITMQ_USER/AIVA_RABBITMQ_PASSWORD must be set")
+		logger.Fatal("RABBITMQ_URL or RABBITMQ_USER/RABBITMQ_PASSWORD must be set")
 	}
 
 	conn, err := amqp.Dial(rabbitmqURL)

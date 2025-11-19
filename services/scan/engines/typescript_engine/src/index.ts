@@ -6,34 +6,34 @@
 
 import { chromium, Browser } from 'playwright-core';
 import * as amqp from 'amqplib';
-import { logger } from './utils/logger';
-import { ScanService } from './services/scan-service';
+import { logger } from './utils/logger.js';
+import { ScanService } from './services/scan-service.js';
 // import { EnhancedDynamicScanService } from './services/enhanced-dynamic-scan.service';
 // import { DynamicScanTask, DynamicScanResult } from './interfaces/dynamic-scan.interfaces';
 
 // 遵循 12-factor app 原則獲取 RabbitMQ URL
 function getRabbitMQURL(): string {
     // 優先使用完整 URL
-    const url = process.env.AIVA_RABBITMQ_URL;
+    const url = process.env.RABBITMQ_URL;
     if (url) return url;
     
     // 組合式配置
-    const host = process.env.AIVA_RABBITMQ_HOST || 'localhost';
-    const port = process.env.AIVA_RABBITMQ_PORT || '5672';
-    const user = process.env.AIVA_RABBITMQ_USER;
-    const password = process.env.AIVA_RABBITMQ_PASSWORD;
-    const vhost = process.env.AIVA_RABBITMQ_VHOST || '/';
+    const host = process.env.RABBITMQ_HOST || 'localhost';
+    const port = process.env.RABBITMQ_PORT || '5672';
+    const user = process.env.RABBITMQ_USER;
+    const password = process.env.RABBITMQ_PASSWORD;
+    const vhost = process.env.RABBITMQ_VHOST || '/';
     
     if (!user || !password) {
-        throw new Error('AIVA_RABBITMQ_URL or AIVA_RABBITMQ_USER/AIVA_RABBITMQ_PASSWORD must be set');
+        throw new Error('RABBITMQ_URL or RABBITMQ_USER/RABBITMQ_PASSWORD must be set');
     }
     
     return `amqp://${user}:${password}@${host}:${port}${vhost}`;
 }
 
 const RABBITMQ_URL = getRabbitMQURL();
-const TASK_QUEUE = process.env.AIVA_TASK_QUEUE || 'task.scan.dynamic';
-const RESULT_QUEUE = process.env.AIVA_RESULT_QUEUE || 'findings.new';
+const TASK_QUEUE = process.env.TASK_QUEUE || 'task.scan.dynamic';
+const RESULT_QUEUE = process.env.RESULT_QUEUE || 'findings.new';
 // const ENHANCED_TASK_QUEUE = 'task.scan.dynamic.enhanced';
 
 interface ScanTask {

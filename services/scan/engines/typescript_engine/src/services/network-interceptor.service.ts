@@ -4,8 +4,8 @@
  */
 
 import { Page } from 'playwright-core';
-import { logger } from '../utils/logger';
-import { NetworkRequest } from '../interfaces/dynamic-scan.interfaces';
+import { logger } from '../utils/logger.js';
+import { NetworkRequest } from '../interfaces/dynamic-scan.interfaces.js';
 
 export class NetworkInterceptor {
   private requests: NetworkRequest[] = [];

@@ -396,8 +396,19 @@ type_mappings = convert_types_for_ai("Optional[str]")
 ### Q1: 代碼生成失敗
 **A1**: 檢查環境變數設置和 YAML 文件格式
 ```bash
-export AIVA_RABBITMQ_URL="amqp://guest:guest@localhost:5672/"
-export AIVA_POSTGRES_URL="postgresql://user:pass@localhost:5432/aiva"
+## 跨語言環境配置
+
+### 研發階段（自動配置）
+```bash
+# 無需手動設置，自動使用預設值
+# DATABASE_URL="postgresql://postgres:postgres@localhost:5432/aiva_db"
+# RABBITMQ_URL="amqp://guest:guest@localhost:5672/"
+```
+
+### 生產環境（部署時才需要）
+```bash
+export AIVA_RABBITMQ_URL="amqp://prod_user:password@prod-mq:5672/"
+export AIVA_DATABASE_URL="postgresql://prod_user:password@prod-db:5432/aiva"
 ```
 
 ### Q2: 跨語言類型不一致

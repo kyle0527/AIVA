@@ -103,27 +103,12 @@ class EnterpriseAIManager:
         """設置完整的環境變數"""
         # 基礎環境設置
         env_vars = {
-            'AIVA_MODE': 'production',
-            'AIVA_ENVIRONMENT': 'online', 
-            'AIVA_LOG_LEVEL': 'INFO',
+            'ENVIRONMENT': 'production', 
+            'LOG_LEVEL': 'INFO',
             
-            # RabbitMQ配置 (從.env文件讀取或使用預設值)
-            'AIVA_RABBITMQ_HOST': os.getenv('AIVA_RABBITMQ_HOST', 'localhost'),
-            'AIVA_RABBITMQ_PORT': os.getenv('AIVA_RABBITMQ_PORT', '5672'),
-            'AIVA_RABBITMQ_USER': os.getenv('AIVA_RABBITMQ_USER', 'admin'),
-            'AIVA_RABBITMQ_PASSWORD': os.getenv('AIVA_RABBITMQ_PASSWORD', 'admin123'),
-            
-            # 資料庫配置
-            'AIVA_POSTGRES_HOST': os.getenv('AIVA_POSTGRES_HOST', 'localhost'),
-            'AIVA_POSTGRES_PORT': os.getenv('AIVA_POSTGRES_PORT', '5432'),
-            'AIVA_POSTGRES_DB': os.getenv('AIVA_POSTGRES_DB', 'aiva'),
-            'AIVA_POSTGRES_USER': os.getenv('AIVA_POSTGRES_USER', 'postgres'),
-            'AIVA_POSTGRES_PASSWORD': os.getenv('AIVA_POSTGRES_PASSWORD', 'password'),
-            
-            # Redis配置
-            'AIVA_REDIS_HOST': os.getenv('AIVA_REDIS_HOST', 'localhost'),
-            'AIVA_REDIS_PORT': os.getenv('AIVA_REDIS_PORT', '6379'), 
-            'AIVA_REDIS_PASSWORD': os.getenv('AIVA_REDIS_PASSWORD', ''),
+            # 研發階段直接使用預設值
+            'DATABASE_URL': 'postgresql://postgres:postgres@localhost:5432/aiva_db',
+            'RABBITMQ_URL': 'amqp://guest:guest@localhost:5672/',
             
             # Python路徑
             'PYTHONPATH': str(self.project_root),
@@ -131,12 +116,12 @@ class EnterpriseAIManager:
         }
         
         # 構建RabbitMQ URL
-        rabbitmq_user = env_vars['AIVA_RABBITMQ_USER']
-        rabbitmq_pass = env_vars['AIVA_RABBITMQ_PASSWORD'] 
-        rabbitmq_host = env_vars['AIVA_RABBITMQ_HOST']
-        rabbitmq_port = env_vars['AIVA_RABBITMQ_PORT']
+        rabbitmq_user = env_vars['RABBITMQ_USER']
+        rabbitmq_pass = env_vars['RABBITMQ_PASSWORD'] 
+        rabbitmq_host = env_vars['RABBITMQ_HOST']
+        rabbitmq_port = env_vars['RABBITMQ_PORT']
         
-        env_vars['AIVA_RABBITMQ_URL'] = f"amqp://{rabbitmq_user}:{rabbitmq_pass}@{rabbitmq_host}:{rabbitmq_port}/"
+        env_vars['RABBITMQ_URL'] = f"amqp://{rabbitmq_user}:{rabbitmq_pass}@{rabbitmq_host}:{rabbitmq_port}/"
         
         # 設置環境變數
         for key, value in env_vars.items():

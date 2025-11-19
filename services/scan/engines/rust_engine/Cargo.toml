@@ -1,3 +1,6 @@
+[workspace]
+# 獨立包，不從父工作區繼承
+
 [package]
 name = "aiva-info-gatherer"
 version = "1.0.0"
@@ -24,20 +27,17 @@ chrono = { version = "0.4", features = ["serde"] }
 # HTTP 客戶端 (用於 API 驗證)
 reqwest = { version = "0.11", features = ["json"] }
 
-# RabbitMQ 客戶端
-lapin = "2.3"
+# CLI 參數解析
+clap = { version = "4.4", features = ["derive"] }
+
+# 異步運行時 (移除不需要的 RabbitMQ 依賴)
 tokio = { version = "1.35", features = ["full"] }
-futures = "0.3"
-futures-lite = "2.6"
 
 # 日誌
 tracing = "0.1"
 tracing-subscriber = { version = "0.3", features = ["env-filter"] }
 
 # Git 依賴已移除 - 專注於實戰 Bug Bounty 測試
-
-# AIVA 共用模組 (統計收集)
-aiva_common_rust = { path = "../../features/common/rust/aiva_common_rust" }
 
 # 熵值計算（已使用內建 HashMap）
 

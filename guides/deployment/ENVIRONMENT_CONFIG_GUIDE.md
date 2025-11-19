@@ -4,123 +4,87 @@ Last Modified: 2025-10-30
 Document Type: Report
 ---
 
-# AIVA 環境變數配置指南 ✅ 11/10驗證 (10/31實測驗證)
+# AIVA 配置指南 - 生產環境部署專用
+
+> ⚠️ **重要說明**: 本指南僅適用於**生產環境部署**  
+> 📘 **研發階段**: 無需任何環境變數配置，直接使用預設值開發
 
 ## 📑 目錄
 
-- [📁 配置文件說明](#-配置文件說明)
-- [⚙️ 配置項目統一說明](#-配置項目統一說明)
-- [🚀 快速設定](#-快速設定)
-- [🔒 安全配置](#-安全配置)
+- [📁 研發 vs 生產配置說明](#-研發-vs-生產配置說明)
+- [⚙️ 生產環境配置項目](#-生產環境配置項目)
+- [🚀 生產環境部署流程](#-生產環境部署流程)
+- [🔒 安全配置指南](#-安全配置指南)
 - [🐛 故障排除](#-故障排除)
-- [🔗 相關資源](#-相關資源)
 
-## 配置文件說明
+## 研發 vs 生產配置說明
 
-AIVA 專案有三個標準化的環境配置文件：
+### 🛠️ 研發階段（當前使用）
+**完全無需配置**，AIVA 自動使用安全的預設值：
 
-### 1. `.env` - 本地開發配置 (當前使用)
-- **用途**: 在本地主機運行 AIVA 服務，連接到 Docker 容器
-- **場景**: 開發調試時使用
-- **特點**: 所有服務地址都是 `localhost`
-
-### 2. `.env.docker` - Docker 容器配置
-- **用途**: 在 Docker Compose 網絡內運行所有服務
-- **場景**: 完整容器化部署
-- **特點**: 使用容器服務名稱 (postgres, rabbitmq, redis, neo4j)
-
-### 3. `.env.example` - 生產環境範本
-- **用途**: 生產環境配置參考
-- **場景**: 正式部署時使用
-- **特點**: 包含安全配置和性能優化參數
-
-## 配置項目統一說明
-
-### 資料庫配置 (PostgreSQL + pgvector)
 ```bash
-# 主要配置
-AIVA_DATABASE_URL=postgresql://postgres:aiva123@localhost:5432/aiva_db
-AIVA_DB_TYPE=postgres
-
-# 詳細配置
-AIVA_POSTGRES_HOST=localhost
-AIVA_POSTGRES_PORT=5432
-AIVA_POSTGRES_DB=aiva_db
-AIVA_POSTGRES_USER=postgres
-AIVA_POSTGRES_PASSWORD=aiva123
-
-# 傳統配置支援（向後兼容）
-POSTGRES_HOST=localhost
-POSTGRES_PORT=5432
-POSTGRES_DB=aiva_db
-POSTGRES_USER=postgres
-POSTGRES_PASSWORD=aiva123
+# 自動使用的預設連接（無需手動設置）
+DATABASE_URL="postgresql://postgres:postgres@localhost:5432/aiva_db"
+RABBITMQ_URL="amqp://guest:guest@localhost:5672/"
+LOG_LEVEL="INFO"
+ENVIRONMENT="development"
 ```
 
-### 消息隊列配置 (RabbitMQ)
+### 🏭 生產環境（未來部署時）
+以下配置**僅在生產部署時**才需要設置：
+
 ```bash
-# 主要配置
-AIVA_RABBITMQ_URL=amqp://guest:guest@localhost:5672/
-
-# 詳細配置
-AIVA_RABBITMQ_HOST=localhost
-AIVA_RABBITMQ_PORT=5672
-AIVA_RABBITMQ_USER=guest
-AIVA_RABBITMQ_PASSWORD=guest
-AIVA_RABBITMQ_VHOST=/
-
-# 隊列配置
-AIVA_MQ_EXCHANGE=aiva.topic
-AIVA_MQ_DLX=aiva.dlx
+# 生產資料庫配置
+DATABASE_URL="postgresql://prod_user:secure_password@prod-db:5432/aiva_prod"
+RABBITMQ_URL="amqp://prod_user:secure_password@prod-mq:5672/"
+LOG_LEVEL="WARN"
+ENVIRONMENT="production"
 ```
 
-### Redis 配置
-```bash
-AIVA_REDIS_URL=redis://localhost:6379/0
-AIVA_REDIS_HOST=localhost
-AIVA_REDIS_PORT=6379
 ```
 
-### Neo4j 配置
-```bash
-AIVA_NEO4J_URL=bolt://neo4j:aiva1234@localhost:7687
-AIVA_NEO4J_HOST=localhost
-AIVA_NEO4J_PORT=7687
-AIVA_NEO4J_USER=neo4j
-AIVA_NEO4J_PASSWORD=aiva1234
-```
+## 生產環境部署流程
 
-## 使用方式
-
-### 本地開發 (推薦)
-```bash
-# 使用當前的 .env 配置
-cp .env .env.backup  # 備份
-# .env 已經是本地配置，直接使用
-```
-
-### Docker 部署
-```bash
-# 切換到 Docker 配置
-cp .env.docker .env
-docker-compose up -d
-```
-
-### 生產環境
+### 步驟 1: 準備生產配置
 ```bash
 # 基於範本創建生產配置
 cp .env.example .env.production
-# 修改 .env.production 中的密碼和地址
+# 修改 .env.production 中的連接參數
 ```
 
-## 測試配置
-確保 Docker 服務正在運行：
+### 步驟 2: 設置安全連接
 ```bash
-docker-compose ps
+# 設置生產環境變數
+export DATABASE_URL="postgresql://prod_user:secure_password@prod-db:5432/aiva_prod"
+export RABBITMQ_URL="amqp://prod_user:secure_password@prod-mq:5672/"
+export LOG_LEVEL="WARN"
+export ENVIRONMENT="production"
 ```
 
-測試連接：
+### 步驟 3: 部署驗證
 ```bash
+# 測試連接
+docker-compose -f docker-compose.prod.yml up -d
+```
+
+## 安全配置指南
+
+### 密碼安全
+- 使用強密碼（至少 16 字符）
+- 定期輪換密碼
+- 避免在程式碼中寫死密碼
+
+### 網絡安全
+- 使用 TLS 加密連接
+- 限制資料庫訪問 IP
+- 設定防火牆規則
+
+## 故障排除
+
+### 連接問題
+- 檢查服務是否運行: `docker ps`
+- 驗證網絡連通性: `ping <host>`
+- 查看服務日誌: `docker logs <container>`
 python -c "
 import os
 from services.integration.aiva_integration.reception.unified_storage_adapter import UnifiedStorageAdapter

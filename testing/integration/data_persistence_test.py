@@ -14,28 +14,30 @@ from typing import Dict, List, Any, Optional
 import uuid
 
 # 設置環境變數
-os.environ.setdefault('AIVA_RABBITMQ_URL', 'amqp://guest:guest@localhost:5672')
-os.environ.setdefault('AIVA_POSTGRES_HOST', 'localhost')
-os.environ.setdefault('AIVA_POSTGRES_PORT', '5432')
-os.environ.setdefault('AIVA_POSTGRES_USER', 'postgres')
-os.environ.setdefault('AIVA_POSTGRES_PASSWORD', 'aiva123')
-os.environ.setdefault('AIVA_POSTGRES_DB', 'aiva_db')
-os.environ.setdefault('AIVA_REDIS_URL', 'redis://localhost:6379')
+os.environ.setdefault('RABBITMQ_URL', 'amqp://guest:guest@localhost:5672')
+os.environ.setdefault('POSTGRES_HOST', 'localhost')
+os.environ.setdefault('POSTGRES_PORT', '5432')
+os.environ.setdefault('POSTGRES_USER', 'postgres')
+os.environ.setdefault('POSTGRES_PASSWORD', 'aiva123')
+os.environ.setdefault('POSTGRES_DB', 'aiva_db')
 
 class DataPersistenceValidator:
     """數據持久化驗證器"""
     
     def __init__(self):
-        self.postgres_config = {
-            'host': os.getenv('AIVA_POSTGRES_HOST', 'localhost'),
-            'port': int(os.getenv('AIVA_POSTGRES_PORT', '5432')),
-            'user': os.getenv('AIVA_POSTGRES_USER', 'postgres'),
-            'password': os.getenv('AIVA_POSTGRES_PASSWORD', 'aiva123'),
-            'database': os.getenv('AIVA_POSTGRES_DB', 'aiva_db'),
+        # 研發階段直接使用預設配置
+        from urllib.parse import urlparse
+        db_url = urlparse('postgresql://postgres:postgres@localhost:5432/aiva_db')
+        pg_config = {
+            'host': db_url.hostname or 'localhost',
+            'port': db_url.port or 5432,
+            'user': db_url.username or 'postgres',
+            'password': db_url.password or 'postgres',
+            'database': db_url.path.lstrip('/') or 'aiva_db',
         }
         
         self.redis_config = {
-            'url': os.getenv('AIVA_REDIS_URL', 'redis://localhost:6379')
+            'url': 'redis://localhost:6379'
         }
         
         self.test_results = {

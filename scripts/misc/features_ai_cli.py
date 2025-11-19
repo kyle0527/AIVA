@@ -72,10 +72,10 @@ except ImportError:
 
 # 設置離線環境變數
 import os
-os.environ.setdefault('AIVA_ENVIRONMENT', 'offline')
-os.environ.setdefault('AIVA_RABBITMQ_URL', 'memory://localhost')
-os.environ.setdefault('AIVA_RABBITMQ_USER', 'offline')
-os.environ.setdefault('AIVA_RABBITMQ_PASSWORD', 'offline')
+os.environ.setdefault('ENVIRONMENT', 'offline')
+os.environ.setdefault('RABBITMQ_URL', 'memory://localhost')
+os.environ.setdefault('RABBITMQ_USER', 'offline')
+os.environ.setdefault('RABBITMQ_PASSWORD', 'offline')
 
 # 模擬AI組件導入
 try:

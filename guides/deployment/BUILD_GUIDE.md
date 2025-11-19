@@ -329,7 +329,7 @@ jobs:
 ## 📚 相關資源
 
 - [Docker 指南](docker/DOCKER_GUIDE.md)
-- [環境變數配置](../.env.docker)
+- [配置說明（生產環境專用）](../.env.docker)
 - [Docker Compose 配置](docker/compose/docker-compose.yml)
 - [Kubernetes 配置](docker/k8s/)
 - [Helm Chart](docker/helm/aiva/)

@@ -442,8 +442,8 @@ cd services/core
 # 2. 安裝依賴
 pip install -r requirements.txt
 
-# 3. 配置環境變量
-cp .env.example .env
+# 3. 配置說明（研發階段無需配置）
+# 自動使用預設值: DATABASE_URL="postgresql://postgres:postgres@localhost:5432/aiva_db"
 
 # 4. 執行測試
 python -m pytest tests/ -v

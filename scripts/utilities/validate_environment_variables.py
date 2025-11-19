@@ -84,40 +84,40 @@ AIVA_ENV_STANDARDS = {
         production_value="amqp://aiva:aiva_mq_password@rabbitmq:5672/aiva",
         docker_value="amqp://aiva:aiva_mq_password@rabbitmq:5672/aiva"
     ),
-    "AIVA_RABBITMQ_HOST": EnvironmentStandard(
-        name="AIVA_RABBITMQ_HOST",
+    "RABBITMQ_HOST": EnvironmentStandard(
+        name="RABBITMQ_HOST",
         required=False,
         default_value="localhost",
         description="RabbitMQ 主機",
         production_value="rabbitmq",
         docker_value="rabbitmq"
     ),
-    "AIVA_RABBITMQ_PORT": EnvironmentStandard(
-        name="AIVA_RABBITMQ_PORT",
+    "RABBITMQ_PORT": EnvironmentStandard(
+        name="RABBITMQ_PORT",
         required=False,
         default_value="5672",
         description="RabbitMQ 端口",
         production_value="5672",
         docker_value="5672"
     ),
-    "AIVA_RABBITMQ_USER": EnvironmentStandard(
-        name="AIVA_RABBITMQ_USER",
+    "RABBITMQ_USER": EnvironmentStandard(
+        name="RABBITMQ_USER",
         required=False,
         default_value=None,
         description="RabbitMQ 用戶名",
         production_value="aiva",
         docker_value="aiva"
     ),
-    "AIVA_RABBITMQ_PASSWORD": EnvironmentStandard(
-        name="AIVA_RABBITMQ_PASSWORD",
+    "RABBITMQ_PASSWORD": EnvironmentStandard(
+        name="RABBITMQ_PASSWORD",
         required=False,
         default_value=None,
         description="RabbitMQ 密碼",
         production_value="aiva_mq_password",
         docker_value="aiva_mq_password"
     ),
-    "AIVA_RABBITMQ_VHOST": EnvironmentStandard(
-        name="AIVA_RABBITMQ_VHOST",
+    "RABBITMQ_VHOST": EnvironmentStandard(
+        name="RABBITMQ_VHOST",
         required=False,
         default_value="/",
         description="RabbitMQ Virtual Host",
@@ -162,16 +162,16 @@ AIVA_ENV_STANDARDS = {
     ),
     
     # 安全配置
-    "AIVA_API_KEY": EnvironmentStandard(
-        name="AIVA_API_KEY",
+    "API_KEY": EnvironmentStandard(
+        name="API_KEY",
         required=False,
         default_value=None,
         description="API 主密鑰",
         production_value="production_api_key_change_me",
         docker_value="dev_api_key_for_docker_testing"
     ),
-    "AIVA_INTEGRATION_TOKEN": EnvironmentStandard(
-        name="AIVA_INTEGRATION_TOKEN",
+    "INTEGRATION_TOKEN": EnvironmentStandard(
+        name="INTEGRATION_TOKEN",
         required=False,
         default_value=None,
         description="Integration 模組認證令牌",
@@ -180,8 +180,8 @@ AIVA_ENV_STANDARDS = {
     ),
     
     # 其他配置
-    "AIVA_LOG_LEVEL": EnvironmentStandard(
-        name="AIVA_LOG_LEVEL",
+    "LOG_LEVEL": EnvironmentStandard(
+        name="LOG_LEVEL",
         required=False,
         default_value="INFO",
         description="日誌級別",
@@ -265,14 +265,12 @@ class EnvironmentValidator:
         ]
         
         categories = {
-            "資料庫配置": ["AIVA_DATABASE_URL", "AIVA_POSTGRES_HOST", "AIVA_POSTGRES_PORT", 
-                         "AIVA_POSTGRES_DB", "AIVA_POSTGRES_USER", "AIVA_POSTGRES_PASSWORD"],
-            "消息隊列配置": ["AIVA_RABBITMQ_URL", "AIVA_RABBITMQ_HOST", "AIVA_RABBITMQ_PORT",
-                           "AIVA_RABBITMQ_USER", "AIVA_RABBITMQ_PASSWORD", "AIVA_RABBITMQ_VHOST"],
-            "Redis 配置": ["AIVA_REDIS_URL"],
-            "Neo4j 配置": ["AIVA_NEO4J_URL", "AIVA_NEO4J_USER", "AIVA_NEO4J_PASSWORD"],
-            "安全配置": ["AIVA_API_KEY", "AIVA_INTEGRATION_TOKEN"],
-            "其他配置": ["AIVA_LOG_LEVEL", "AUTO_MIGRATE"],
+            "資料庫配置": ["AIVA_DATABASE_URL", "POSTGRES_HOST", "POSTGRES_PORT", 
+                         "POSTGRES_DB", "POSTGRES_USER", "POSTGRES_PASSWORD"],
+            "消息隊列配置": ["RABBITMQ_URL", "RABBITMQ_HOST", "RABBITMQ_PORT",
+                           "RABBITMQ_USER", "RABBITMQ_PASSWORD", "RABBITMQ_VHOST"],
+            "安全配置": ["API_KEY", "INTEGRATION_TOKEN"],
+            "其他配置": ["LOG_LEVEL", "ENVIRONMENT", "AUTO_MIGRATE"],
         }
         
         for category, env_vars in categories.items():

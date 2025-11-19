@@ -269,7 +269,11 @@ fn process_task(task_data: &TaskData) -> Result<Vec<Finding>, Box<dyn std::error
 
 ## 配置建議
 
-### 環境變數配置
+### 配置說明
+
+**研發階段**：無需設置環境變數，使用預設配置。
+
+**生產環境**：部署時才需要設置相關監控參數。
 
 ```bash
 # 統計收集配置

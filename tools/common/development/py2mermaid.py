@@ -15,6 +15,7 @@ class Node:
         self.label = label
         self.kind = kind
         self.nexts: list[Node] = []
+        self.edge_info: dict[str, dict[str, str]] = {}  # Store edge labels and styles
 
     def _sanitize_id(self, id_str: str) -> str:
         import re
@@ -56,10 +57,16 @@ class Graph:
         return node
 
     def link(self, a: Node, b: Node, label: str = "", style: str = "-->"):
+        """Link two nodes with optional label and style"""
         if b not in a.nexts:
             a.nexts.append(b)
+        # Store label and style information in the node for later use
+        if not hasattr(a, 'edge_info'):
+            a.edge_info = {}
+        a.edge_info[b.id] = {'label': label, 'style': style}
 
-    def to_mermaid(self) -> str:
+    def to_mermaid(self) -> str:  # noqa: C901
+        """Generate Mermaid flowchart syntax - complexity acceptable for DSL generation"""
         lines = [f"flowchart {self.direction}"]
 
         def sanitize_text(text: str) -> str:
@@ -173,7 +180,7 @@ class Builder(ast.NodeVisitor):
             self.g.link(entry, node)
             return node
 
-    def _get_stmt_label(self, stmt: ast.stmt) -> str:
+    def _get_stmt_label(self, stmt: ast.stmt) -> str:  # noqa: C901
         if isinstance(stmt, ast.Return):
             value = getattr(stmt, "value", None)
             if value is not None:

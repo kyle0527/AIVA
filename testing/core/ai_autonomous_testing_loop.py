@@ -13,12 +13,11 @@ AIVA AI 自主測試與優化閉環系統
 
 # 設置離線模式環境變數
 import os
-if not os.getenv("AIVA_OFFLINE_MODE"):
-    os.environ["AIVA_OFFLINE_MODE"] = "true"
-    os.environ["AIVA_RABBITMQ_URL"] = "memory://localhost"
-    os.environ["AIVA_RABBITMQ_USER"] = "offline"
-    os.environ["AIVA_RABBITMQ_PASSWORD"] = "offline"
-    os.environ["AIVA_ENVIRONMENT"] = "offline"
+if not os.getenv("ENVIRONMENT"):
+    os.environ["ENVIRONMENT"] = "offline"
+    os.environ["RABBITMQ_URL"] = "memory://localhost"
+    os.environ["RABBITMQ_USER"] = "offline"
+    os.environ["RABBITMQ_PASSWORD"] = "offline"
 
 import asyncio
 import sys

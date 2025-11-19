@@ -610,9 +610,9 @@ async def main():
 if __name__ == "__main__":
     # 設置環境變數（如果需要）
     import os
-    if not os.getenv("AIVA_RABBITMQ_URL"):
-        os.environ["AIVA_RABBITMQ_URL"] = "amqp://localhost:5672"
-        os.environ["AIVA_RABBITMQ_USER"] = "guest"
-        os.environ["AIVA_RABBITMQ_PASSWORD"] = "guest"
+    # 研發階段直接使用預設值
+    os.environ["RABBITMQ_URL"] = "amqp://guest:guest@localhost:5672/"
+    os.environ["RABBITMQ_USER"] = "guest"
+    os.environ["RABBITMQ_PASSWORD"] = "guest"
     
     asyncio.run(main())

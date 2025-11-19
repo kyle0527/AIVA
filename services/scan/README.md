@@ -295,29 +295,61 @@ Content-Type: application/json
      └── Python橋接
 ```
 
-### 🎯 **核心架構組件**
+### 🎯 **兩階段掃描流程**
+
+根據 [SCAN_FLOW_DIAGRAMS.md](./SCAN_FLOW_DIAGRAMS.md) 的完整設計：
+
+**Phase 0 - 快速偵察** (Core 下令 → Scan執行)
+- **執行者**: Rust引擎 (必須)
+- **時間限制**: 10分鐘內完成
+- **任務**:
+  1. 驗證目標可達性
+  2. 敏感資訊掃描 (API Key, Token, 密碼)
+  3. 技術棧指紋識別
+  4. 基礎端點發現 (深度1)
+  5. 初步攻擊面評估
+- **輸出**: 初步資產清單 → 回傳 Core
+
+**Phase 1 - 深度掃描** (Core 根據 Phase0 決策)
+- **選擇引擎**: Python / TypeScript / Go / Rust (多引擎協同)
+- **時間限制**: 30-60分鐘
+- **任務**:
+  * **Python**: 靜態爬取、表單發現、API分析
+  * **TypeScript**: JS渲染、SPA路由、動態內容
+  * **Go**: 並發掃描、服務發現、端口掃描
+  * **Rust**: 高性能掃描、大規模處理
+- **輸出**: 完整資產清單 → 回傳 Core
+
+### 🏗️ **核心架構組件**
 
 #### 1. **統一控制中心** (Python)
 - **統一掃描引擎**: `unified_scan_engine.py` - 四語言協調器
-- **掃描編排器**: `aiva_scan/scan_orchestrator.py` - 掃描任務編排
-- **任務分發**: 根據目標特性自動選擇最適掃描器
+- **掃描編排器**: `scan_orchestrator.py` - Phase0/Phase1 任務編排
+- **任務分發**: 根據 Core 指令執行對應階段掃描
 
-#### 2. **動態掃描引擎** (TypeScript - 17檔案)
-- **aiva_scan_node**: 專業動態網頁掃描系統
-- **Playwright整合**: 模擬真實用戶行為
-- **網路攔截**: 深度分析網路請求和響應
-- **DOM互動**: 表單填充、按鈕點擊、狀態跳轉
+#### 2. **Rust Engine** (Phase0 核心 + Phase1 輔助)
+- **職責**: Phase0 必執行引擎 + Phase1 高性能掃描
+- **特性**: 10-100倍性能優勢、極低內存消耗
+- **技術**: Rayon 並行引擎、零拷貝字串處理
+- **詳細**: [engines/rust_engine/README.md](./engines/rust_engine/README.md)
 
-#### 3. **高性能掃描器** (Rust - 9檔案)
-- **info_gatherer_rust**: 快速資訊收集和機密檢測
-- **高速正則引擎**: 大規模文本模式匹配
-- **Python橋接**: 無縫整合到Python生態系統
+#### 3. **Python Engine** (Phase1 主力)
+- **職責**: Phase1 深度爬取與漏洞掃描
+- **特性**: 完整靜態爬取、表單發現、API分析
+- **技術**: Playwright整合、JavaScript分析、動態引擎
+- **詳細**: [engines/python_engine/README.md](./engines/python_engine/README.md)
 
-#### 4. **專業掃描集群** (Go - 30檔案)
-- **go_scanners_dispatch**: 輕量級Python調度器
-- **SSRF Scanner**: 服務端請求偽造檢測，包含雲端元數據掃描
-- **CSPM Scanner**: 雲端安全態勢管理掃描
-- **SCA Scanner**: 軟體組成分析，依賴安全檢測
+#### 4. **TypeScript Engine** (Phase1 動態)
+- **職責**: Phase1 JavaScript渲染與SPA掃描
+- **特性**: 瀏覽器自動化、動態內容捕獲
+- **技術**: Puppeteer/Playwright、AJAX攔截、路由發現
+- **詳細**: [engines/typescript_engine/README.md](./engines/typescript_engine/README.md)
+
+#### 5. **Go Engine** (Phase1 專用掃描器)
+- **職責**: Phase1 高並發掃描與專業檢測
+- **特性**: SSRF/CSPM/SCA 專用掃描器集群
+- **技術**: 高並發、服務發現、雲端安全
+- **詳細**: [engines/go_engine/README.md](./engines/go_engine/README.md)
 
 ### 🔄 **掃描工作流程**
 ```
@@ -1049,8 +1081,8 @@ docker compose up -d rabbitmq
 # 權限問題
 sudo chown -R $USER:$USER services/scan/
 
-# 環境變數
-export RABBITMQ_URL=amqp://aiva:dev_password@localhost:5672/
+# 配置說明（研發階段無需設置）
+# 自動使用預設值: RABBITMQ_URL="amqp://guest:guest@localhost:5672/"
 ```
 
 ## 📊 性能基準

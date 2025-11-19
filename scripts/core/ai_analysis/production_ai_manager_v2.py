@@ -159,15 +159,14 @@ class ProductionAIManager:
         
         # 生產級預設值
         production_defaults = {
-            'AIVA_MODE': 'production',
-            'AIVA_ENVIRONMENT': 'online',
-            'AIVA_LOG_LEVEL': 'INFO',
+            'ENVIRONMENT': 'production',
+            'LOG_LEVEL': 'INFO',
             
             # RabbitMQ配置
-            'AIVA_RABBITMQ_HOST': 'localhost',
-            'AIVA_RABBITMQ_PORT': '5672', 
-            'AIVA_RABBITMQ_USER': 'admin',
-            'AIVA_RABBITMQ_PASSWORD': 'admin123',
+            'RABBITMQ_HOST': 'localhost',
+            'RABBITMQ_PORT': '5672', 
+            'RABBITMQ_USER': 'admin',
+            'RABBITMQ_PASSWORD': 'admin123',
             
             # 資料庫配置
             'AIVA_POSTGRES_HOST': 'localhost',
@@ -190,8 +189,8 @@ class ProductionAIManager:
         final_config = {**production_defaults, **env_vars}
         
         # 構建RabbitMQ URL
-        rabbitmq_url = f"amqp://{final_config['AIVA_RABBITMQ_USER']}:{final_config['AIVA_RABBITMQ_PASSWORD']}@{final_config['AIVA_RABBITMQ_HOST']}:{final_config['AIVA_RABBITMQ_PORT']}/"
-        final_config['AIVA_RABBITMQ_URL'] = rabbitmq_url
+        rabbitmq_url = f"amqp://{final_config['RABBITMQ_USER']}:{final_config['RABBITMQ_PASSWORD']}@{final_config['RABBITMQ_HOST']}:{final_config['RABBITMQ_PORT']}/"
+        final_config['RABBITMQ_URL'] = rabbitmq_url
         
         # 設置環境變數
         for key, value in final_config.items():

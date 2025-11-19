@@ -322,7 +322,7 @@ def integrate_with_repository_example():
     )
     
     # 記錄經驗 (記憶體)
-    exp_id = manager.push(
+    _ = manager.push(
         state={"ast": {...}, "target": "http://example.com"},
         action={"type": "sqli", "params": {...}},
         next_state={"success": True},

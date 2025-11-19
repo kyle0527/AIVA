@@ -1124,15 +1124,20 @@ source .venv/bin/activate  # Linux/Mac
 pip install -r requirements.txt
 ```
 
-#### 3. 配置環境變數
-```bash
-# 複製環境變數範本
-cp .env.example .env
+#### 3. 配置說明
 
-# 編輯配置 (資料庫連接、API 金鑰等)
-notepad .env  # Windows
-vim .env      # Linux/Mac
+**研發階段**：無需配置，直接使用預設值。
+
+所有服務自動使用安全的預設配置：
+```bash
+# 資料庫
+DATABASE_URL="postgresql://postgres:postgres@localhost:5432/aiva_db"
+
+# 消息隊列
+RABBITMQ_URL="amqp://guest:guest@localhost:5672/"
 ```
+
+**生產環境部署時**（未來）才需要設置環境變數覆蓋預設值。
 
 #### 4. 啟動服務
 
@@ -1288,7 +1293,7 @@ chore: 雜項
 - **Neo4j → NetworkX 遷移**: 攻擊路徑分析引擎完全遷移至 NetworkX (零外部依賴)
 - **統一配置系統**: `config.py` 集中管理所有資料儲存路徑
 - **維護腳本建立**: `backup.py` (自動備份) + `cleanup.py` (舊資料清理)
-- **環境變數配置**: `.env` 新增整合模組專用配置 (AIVA_INTEGRATION_DATA_DIR 等)
+- **配置簡化**: 研發階段無需環境變數，全部使用預設值 (AIVA_INTEGRATION_DATA_DIR 等檔案路徑配置除外)
 - **依賴簡化**: 資料庫依賴從 4 個減少至 2 個 (PostgreSQL + RabbitMQ)
 
 ### 📦 版本與文檔同步

@@ -23,6 +23,13 @@ from ..enums import (
 )
 from .base import Asset, Authentication, Fingerprints, RateLimit, ScanScope, Summary
 
+# ==================== 常量定義 ====================
+
+# 驗證常量
+SCAN_ID_PREFIX = "scan_"
+SCAN_ID_PREFIX_ERROR = f"scan_id must start with '{SCAN_ID_PREFIX}'"
+SCAN_TASK_ID_DESCRIPTION = "掃描任務 ID"
+
 # ==================== 掃描任務 ====================
 
 
@@ -41,8 +48,8 @@ class ScanStartPayload(BaseModel):
     @field_validator("scan_id")
     @classmethod
     def validate_scan_id(cls, v: str) -> str:
-        if not v.startswith("scan_"):
-            raise ValueError("scan_id must start with 'scan_'")
+        if not v.startswith(SCAN_ID_PREFIX):
+            raise ValueError(SCAN_ID_PREFIX_ERROR)
         if len(v) < 10:
             raise ValueError("scan_id too short (minimum 10 characters)")
         return v
@@ -89,7 +96,7 @@ class Phase0StartPayload(BaseModel):
     - 初步攻擊面評估
     """
     
-    scan_id: str = Field(..., description="掃描任務 ID")
+    scan_id: str = Field(..., description=SCAN_TASK_ID_DESCRIPTION)
     targets: list[HttpUrl] = Field(..., description="目標 URL 列表")
     scope: ScanScope = Field(default_factory=ScanScope, description="掃描範圍")
     authentication: Authentication = Field(default_factory=Authentication, description="認證配置")
@@ -101,8 +108,8 @@ class Phase0StartPayload(BaseModel):
     @field_validator("scan_id")
     @classmethod
     def validate_scan_id(cls, v: str) -> str:
-        if not v.startswith("scan_"):
-            raise ValueError("scan_id must start with 'scan_'")
+        if not v.startswith(SCAN_ID_PREFIX):
+            raise ValueError(SCAN_ID_PREFIX_ERROR)
         if len(v) < 10:
             raise ValueError("scan_id too short (minimum 10 characters)")
         return v
@@ -114,7 +121,7 @@ class Phase0CompletedPayload(BaseModel):
     返回初步資產清單和技術棧資訊，供 Core 決定是否執行 Phase 1
     """
     
-    scan_id: str = Field(..., description="掃描任務 ID")
+    scan_id: str = Field(..., description=SCAN_TASK_ID_DESCRIPTION)
     status: str = Field(..., description="執行狀態 (success/failed)")
     execution_time: float = Field(..., description="執行時間（秒）")
     
@@ -146,7 +153,7 @@ class Phase1StartPayload(BaseModel):
     - Rust: 高性能大規模處理
     """
     
-    scan_id: str = Field(..., description="掃描任務 ID")
+    scan_id: str = Field(..., description=SCAN_TASK_ID_DESCRIPTION)
     targets: list[HttpUrl] = Field(..., description="目標 URL 列表")
     scope: ScanScope = Field(default_factory=ScanScope, description="掃描範圍")
     authentication: Authentication = Field(default_factory=Authentication, description="認證配置")
@@ -186,7 +193,7 @@ class Phase1CompletedPayload(BaseModel):
     整合 Phase 0 和 Phase 1 結果，返回完整資產清單
     """
     
-    scan_id: str = Field(..., description="掃描任務 ID")
+    scan_id: str = Field(..., description=SCAN_TASK_ID_DESCRIPTION)
     status: str = Field(..., description="執行狀態 (success/partial/failed)")
     execution_time: float = Field(..., description="執行時間（秒）")
     
@@ -271,8 +278,8 @@ class FunctionTaskPayload(BaseModel):
     @field_validator("scan_id")
     @classmethod
     def validate_scan_id(cls, v: str) -> str:
-        if not v.startswith("scan_"):
-            raise ValueError("scan_id must start with 'scan_'")
+        if not v.startswith(SCAN_ID_PREFIX):
+            raise ValueError(SCAN_ID_PREFIX_ERROR)
         return v
 
     @field_validator("priority")

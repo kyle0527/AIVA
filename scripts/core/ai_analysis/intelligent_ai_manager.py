@@ -116,16 +116,15 @@ class IntelligentAIManager:
     def setup_production_environment(self):
         """設置生產環境變數（智能配置）"""
         production_defaults = {
-            'AIVA_MODE': 'production',
-            'AIVA_ENVIRONMENT': 'production',
-            'AIVA_RABBITMQ_HOST': 'localhost',
-            'AIVA_RABBITMQ_PORT': '5672',
-            'AIVA_RABBITMQ_USER': 'guest',
-            'AIVA_RABBITMQ_PASSWORD': 'guest',
-            'AIVA_POSTGRES_HOST': 'localhost',
-            'AIVA_POSTGRES_PORT': '5432',
-            'AIVA_POSTGRES_USER': 'postgres',
-            'AIVA_POSTGRES_PASSWORD': 'aiva123',
+            'ENVIRONMENT': 'production',
+            'RABBITMQ_HOST': 'localhost',
+            'RABBITMQ_PORT': '5672',
+            'RABBITMQ_USER': 'guest',
+            'RABBITMQ_PASSWORD': 'guest',
+            'POSTGRES_HOST': 'localhost',
+            'POSTGRES_PORT': '5432',
+            'POSTGRES_USER': 'postgres',
+            'POSTGRES_PASSWORD': 'aiva123',
             'AIVA_POSTGRES_DB': 'aiva_db',
             'AIVA_REDIS_HOST': 'localhost',
             'AIVA_REDIS_PORT': '6379',
@@ -141,8 +140,8 @@ class IntelligentAIManager:
                 os.environ[key] = value
         
         # 生成RabbitMQ URL
-        rabbitmq_url = f"amqp://{os.environ['AIVA_RABBITMQ_USER']}:{os.environ['AIVA_RABBITMQ_PASSWORD']}@{os.environ['AIVA_RABBITMQ_HOST']}:{os.environ['AIVA_RABBITMQ_PORT']}/"
-        os.environ.setdefault('AIVA_RABBITMQ_URL', rabbitmq_url)
+        rabbitmq_url = f"amqp://{os.environ['RABBITMQ_USER']}:{os.environ['RABBITMQ_PASSWORD']}@{os.environ['RABBITMQ_HOST']}:{os.environ['RABBITMQ_PORT']}/"
+        os.environ.setdefault('RABBITMQ_URL', rabbitmq_url)
         
         self.logger.info("智能環境變數配置完成")
         self.logger.info(f"RabbitMQ URL: {rabbitmq_url}")

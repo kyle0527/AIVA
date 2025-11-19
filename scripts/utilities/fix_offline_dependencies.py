@@ -11,20 +11,19 @@ def setup_offline_environment():
     """設置離線環境配置"""
     print("🔧 設置 AIVA 離線環境...")
     
-    # 設置基本環境變數 (使用 mock 值)
+    # 設置基本環境變數 (簡化版)
     env_vars = {
-        # RabbitMQ 配置 (離線模式)
-        "AIVA_RABBITMQ_URL": "memory://localhost",  # 使用內存模式
-        "AIVA_RABBITMQ_USER": "offline",
-        "AIVA_RABBITMQ_PASSWORD": "offline",
-        "AIVA_OFFLINE_MODE": "true",  # 標記為離線模式
+        # 核心配置
+        "ENVIRONMENT": "offline",
+        "LOG_LEVEL": "INFO",
         
-        # 其他配置
-        "AIVA_LOG_LEVEL": "INFO",
-        "AIVA_ENVIRONMENT": "offline",
-        "AIVA_REDIS_URL": "memory://localhost",
-        "AIVA_POSTGRES_HOST": "localhost",
-        "AIVA_NEO4J_URL": "memory://localhost"
+        # RabbitMQ 配置 (離線模式)
+        "RABBITMQ_URL": "memory://localhost",
+        "RABBITMQ_USER": "offline",
+        "RABBITMQ_PASSWORD": "offline",
+        
+        # 資料庫配置
+        "POSTGRES_HOST": "localhost",
     }
     
     for key, value in env_vars.items():
@@ -56,46 +55,46 @@ def patch_rabbitmq_dependency():
             content = f.read()
             
         # 檢查是否已經修補
-        if "AIVA_OFFLINE_MODE" not in content:
+        if "ENVIRONMENT" not in content or "offline" not in content:
             # 在 _get_rabbitmq_url 方法中添加離線模式支援
             old_method = '''    def _get_rabbitmq_url(self):
         """獲取 RabbitMQ URL"""
-        url = os.getenv("AIVA_RABBITMQ_URL")
+        url = os.getenv("RABBITMQ_URL")
         if url:
             return url
             
-        host = os.getenv("AIVA_RABBITMQ_HOST", "localhost")
-        port = os.getenv("AIVA_RABBITMQ_PORT", "5672")
-        user = os.getenv("AIVA_RABBITMQ_USER")
-        password = os.getenv("AIVA_RABBITMQ_PASSWORD")
-        vhost = os.getenv("AIVA_RABBITMQ_VHOST", "/")
+        host = os.getenv("RABBITMQ_HOST", "localhost")
+        port = os.getenv("RABBITMQ_PORT", "5672")
+        user = os.getenv("RABBITMQ_USER")
+        password = os.getenv("RABBITMQ_PASSWORD")
+        vhost = os.getenv("RABBITMQ_VHOST", "/")
         
         if not user or not password:
-            raise ValueError("AIVA_RABBITMQ_URL or AIVA_RABBITMQ_USER/AIVA_RABBITMQ_PASSWORD must be set")
+            raise ValueError("RABBITMQ_URL or RABBITMQ_USER/RABBITMQ_PASSWORD must be set")
             
         return f"amqp://{user}:{password}@{host}:{port}{vhost}"'''
             
             new_method = '''    def _get_rabbitmq_url(self):
         """獲取 RabbitMQ URL"""
         # 檢查是否為離線模式
-        if os.getenv("AIVA_OFFLINE_MODE", "false").lower() == "true":
+        if os.getenv("ENVIRONMENT") == "offline":
             return "memory://localhost"
             
-        url = os.getenv("AIVA_RABBITMQ_URL")
+        url = os.getenv("RABBITMQ_URL")
         if url:
             return url
             
-        host = os.getenv("AIVA_RABBITMQ_HOST", "localhost")
-        port = os.getenv("AIVA_RABBITMQ_PORT", "5672")
-        user = os.getenv("AIVA_RABBITMQ_USER")
-        password = os.getenv("AIVA_RABBITMQ_PASSWORD")
-        vhost = os.getenv("AIVA_RABBITMQ_VHOST", "/")
+        host = os.getenv("RABBITMQ_HOST", "localhost")
+        port = os.getenv("RABBITMQ_PORT", "5672")
+        user = os.getenv("RABBITMQ_USER")
+        password = os.getenv("RABBITMQ_PASSWORD")
+        vhost = os.getenv("RABBITMQ_VHOST", "/")
         
         if not user or not password:
             # 離線模式回退
-            if os.getenv("AIVA_ENVIRONMENT") == "offline":
+            if os.getenv("ENVIRONMENT") == "offline":
                 return "memory://localhost"
-            raise ValueError("AIVA_RABBITMQ_URL or AIVA_RABBITMQ_USER/AIVA_RABBITMQ_PASSWORD must be set")
+            raise ValueError("RABBITMQ_URL or RABBITMQ_USER/RABBITMQ_PASSWORD must be set")
             
         return f"amqp://{user}:{password}@{host}:{port}{vhost}"'''
             
@@ -132,12 +131,11 @@ sys.path.insert(0, str(project_root))
 def setup_offline_env():
     """設置離線環境"""
     env_vars = {
-        "AIVA_RABBITMQ_URL": "memory://localhost",
-        "AIVA_RABBITMQ_USER": "offline",
-        "AIVA_RABBITMQ_PASSWORD": "offline",
-        "AIVA_OFFLINE_MODE": "true",
-        "AIVA_LOG_LEVEL": "INFO",
-        "AIVA_ENVIRONMENT": "offline"
+        "RABBITMQ_URL": "memory://localhost",
+        "RABBITMQ_USER": "offline",
+        "RABBITMQ_PASSWORD": "offline",
+        "ENVIRONMENT": "offline",
+        "LOG_LEVEL": "INFO",
     }
     
     for key, value in env_vars.items():

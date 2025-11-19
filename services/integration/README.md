@@ -24,7 +24,7 @@
 
 ### � 本文檔內容
 - [�🚀 快速開始](#-快速開始) - 環境設置與基本使用
-- [🔧 環境變數配置](#-環境變數配置) - 統一配置系統
+- [🔧 配置說明](#-配置說明) - 研發階段配置
 - [🛠️ 開發工具與環境](#️-開發工具與環境) - 開發環境建議
 - [🏗️ 整合架構深度分析](#️-整合架構深度分析) - 系統架構概覽
 - [📊 效能基準與全方位監控](#-效能基準與全方位監控) - 監控與優化
@@ -248,7 +248,7 @@ python services/integration/scripts/cleanup.py --exports-only
 
 ---
 
-## 🔧 環境變數配置
+## 🔧 配置說明
 
 ### 統一配置系統
 AIVA 整合模組使用統一的環境變數配置系統，支援多種部署場景：
@@ -262,33 +262,26 @@ AIVA 整合模組使用統一的環境變數配置系統，支援多種部署場
 ### 核心配置項
 
 ```bash
-# 資料庫配置 (PostgreSQL + pgvector)
-AIVA_DATABASE_URL=postgresql://postgres:aiva123@localhost:5432/aiva_db
-AIVA_POSTGRES_HOST=localhost
-AIVA_POSTGRES_PORT=5432
-AIVA_POSTGRES_DB=aiva_db
-AIVA_POSTGRES_USER=postgres
-AIVA_POSTGRES_PASSWORD=aiva123
+**研發階段配置範例**（僅檔案路徑需配置）：
 
-# 消息隊列 (RabbitMQ)
-AIVA_RABBITMQ_URL=amqp://guest:guest@localhost:5672/
-AIVA_RABBITMQ_HOST=localhost
-AIVA_RABBITMQ_PORT=5672
-
-# ✅ 整合模組資料儲存配置 (NEW - 2025-11-16)
+```bash
+# ✅ 整合模組資料儲存配置（必要）
 AIVA_INTEGRATION_DATA_DIR=C:/D/fold7/AIVA-git/data/integration
 AIVA_ATTACK_GRAPH_FILE=${AIVA_INTEGRATION_DATA_DIR}/attack_paths/attack_graph.pkl
 AIVA_EXPERIENCE_DB_URL=sqlite:///${AIVA_INTEGRATION_DATA_DIR}/experiences/experience.db
 AIVA_TRAINING_DATASET_DIR=${AIVA_INTEGRATION_DATA_DIR}/training_datasets
 AIVA_MODEL_CHECKPOINT_DIR=${AIVA_INTEGRATION_DATA_DIR}/models
 
-# ❌ 已移除配置
-# Redis - 未實際使用 (0 imports)
-# Neo4j - 已遷移至 NetworkX (零外部依賴)
-
-# API 配置
+# ✅ API 配置（可選）
 AIVA_API_KEY=dev_api_key_for_local_testing
 AIVA_CORS_ORIGINS=http://localhost:3000,http://localhost:8000
+
+# ❌ 已移除/不需要配置
+# 資料庫連接 (DATABASE_URL) - 使用預設值 postgresql://postgres:postgres@localhost:5432/aiva_db
+# RabbitMQ 連接 (RABBITMQ_URL) - 使用預設值 amqp://guest:guest@localhost:5672/
+# POSTGRES_HOST, POSTGRES_PORT 等 - 已統一為 DATABASE_URL
+# Redis - 未實際使用 (0 imports)
+# Neo4j - 已遷移至 NetworkX (零外部依賴)
 ```
 
 ### 配置優先級
@@ -596,18 +589,17 @@ class AIOperationRecorder:
         self.database_config = self._get_database_config()
         
     def _get_database_config(self) -> dict:
-        """統一資料庫配置讀取 (支援新環境變數系統)"""
+        """統一資料庫配置 (研發階段直接使用預設值)"""
+        database_url = "postgresql://postgres:postgres@localhost:5432/aiva_db"
+        from urllib.parse import urlparse
+        db_url = urlparse(database_url)
+        
         return {
-            'host': os.getenv('AIVA_POSTGRES_HOST', 
-                            os.getenv('POSTGRES_HOST', 'localhost')),
-            'port': int(os.getenv('AIVA_POSTGRES_PORT', 
-                                os.getenv('POSTGRES_PORT', '5432'))),
-            'database': os.getenv('AIVA_POSTGRES_DB', 
-                                os.getenv('POSTGRES_DB', 'aiva_db')),
-            'user': os.getenv('AIVA_POSTGRES_USER', 
-                            os.getenv('POSTGRES_USER', 'postgres')),
-            'password': os.getenv('AIVA_POSTGRES_PASSWORD', 
-                                os.getenv('POSTGRES_PASSWORD', 'aiva123'))
+            'host': db_url.hostname or 'localhost',
+            'port': db_url.port or 5432,
+            'database': db_url.path.lstrip('/') or 'aiva_db',
+            'user': db_url.username or 'postgres',
+            'password': db_url.password or 'postgres'
         }
         
     async def record_operation(self, operation: SecurityOperation) -> RecordResult:

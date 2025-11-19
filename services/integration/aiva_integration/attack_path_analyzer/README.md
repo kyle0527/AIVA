@@ -156,25 +156,24 @@ AttackPathVisualizer.to_html(paths, output_file="attack_paths.html")
 1. 環境變數 (`.env` 檔案)
 2. 預設值 (`config.py` 中定義)
 
-### 環境變數配置
+### 配置說明（研發階段）
 
 在 `.env` 檔案中設定 (已統一定義):
 
 ```bash
-# ✅ 攻擊路徑圖配置 (NEW - 2025-11-16)
+# ✅ 攻擊路徑圖檔案 (儲存於本地)
 AIVA_ATTACK_GRAPH_FILE=C:/D/fold7/AIVA-git/data/integration/attack_paths/attack_graph.pkl
 
-# ✅ PostgreSQL 配置 (讀取資產/漏洞資料)
-POSTGRES_HOST=localhost
-POSTGRES_PORT=5432
-POSTGRES_DB=aiva_core
-POSTGRES_USER=aiva
-POSTGRES_PASSWORD=your_password
+# ✅ 資料庫配置（研發階段使用預設值）
+# DATABASE_URL="postgresql://postgres:postgres@localhost:5432/aiva_db"
+# 無需手動設置，自動使用預設值
 
 # ❌ 已移除配置
 # NEO4J_URI - 已遷移至 NetworkX (2025-11-16)
 # NEO4J_USER - 已遷移至 NetworkX (2025-11-16)
 # NEO4J_PASSWORD - 已遷移至 NetworkX (2025-11-16)
+# POSTGRES_HOST, POSTGRES_PORT, POSTGRES_DB - 已改用 DATABASE_URL
+# POSTGRES_USER, POSTGRES_PASSWORD - 研發階段使用預設值
 ```
 
 ### 程式碼中使用配置

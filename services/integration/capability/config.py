@@ -189,8 +189,8 @@ class CapabilityRegistryConfig(BaseModel):
             "AIVA_DB_PATH": "database.path",
             "AIVA_API_HOST": "api.host", 
             "AIVA_API_PORT": "api.port",
-            "AIVA_DEBUG": "api.debug",
-            "AIVA_LOG_LEVEL": "logging.level",
+            "DEBUG": "api.debug",
+            "LOG_LEVEL": "logging.level",
             "AIVA_DISCOVERY_ENABLED": "discovery.auto_discovery_enabled",
             "AIVA_MONITORING_ENABLED": "monitoring.health_check_enabled"
         }

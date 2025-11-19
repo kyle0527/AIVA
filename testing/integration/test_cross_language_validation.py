@@ -4,8 +4,8 @@ import os
 
 # 設置路徑和環境變數
 sys.path.insert(0, 'services/aiva_common/tools')
-os.environ["AIVA_RABBITMQ_URL"] = "amqp://guest:guest@localhost:5672/"
-os.environ["AIVA_POSTGRES_URL"] = "postgresql://user:pass@localhost:5432/aiva"
+os.environ["RABBITMQ_URL"] = "amqp://guest:guest@localhost:5672/"
+os.environ["DATABASE_URL"] = "postgresql://user:pass@localhost:5432/aiva"
 
 from cross_language_validator import CrossLanguageValidator
 

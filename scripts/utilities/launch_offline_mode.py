@@ -13,12 +13,11 @@ sys.path.insert(0, str(project_root))
 def setup_offline_env():
     """設置離線環境"""
     env_vars = {
-        "AIVA_RABBITMQ_URL": "memory://localhost",
-        "AIVA_RABBITMQ_USER": "offline",
-        "AIVA_RABBITMQ_PASSWORD": "offline",
-        "AIVA_OFFLINE_MODE": "true",
-        "AIVA_LOG_LEVEL": "INFO",
-        "AIVA_ENVIRONMENT": "offline"
+        "RABBITMQ_URL": "memory://localhost",
+        "RABBITMQ_USER": "offline",
+        "RABBITMQ_PASSWORD": "offline",
+        "ENVIRONMENT": "offline",
+        "LOG_LEVEL": "INFO",
     }
     
     for key, value in env_vars.items():

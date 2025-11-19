@@ -17,12 +17,17 @@ DATABASE_TYPE = os.getenv(
 DATABASE_URL = os.getenv("AIVA_DB_URL", f"sqlite:///{DATA_ROOT}/database/aiva.db")
 
 # PostgreSQL 配置（生產環境）
+# 研發階段直接使用預設配置
+DATABASE_URL = "postgresql://postgres:postgres@localhost:5432/aiva_db"
+
+from urllib.parse import urlparse
+_db_url = urlparse(DATABASE_URL)
 POSTGRES_CONFIG = {
-    "host": os.getenv("POSTGRES_HOST", "localhost"),
-    "port": int(os.getenv("POSTGRES_PORT", "5432")),
-    "database": os.getenv("POSTGRES_DB", "aiva"),
-    "user": os.getenv("POSTGRES_USER", "aiva"),
-    "password": os.getenv("POSTGRES_PASSWORD", "aiva"),
+    "host": _db_url.hostname or "localhost",
+    "port": _db_url.port or 5432,
+    "database": _db_url.path.lstrip('/') or "aiva_db",
+    "user": _db_url.username or "postgres",
+    "password": _db_url.password or "postgres",
 }
 
 # 存儲策略

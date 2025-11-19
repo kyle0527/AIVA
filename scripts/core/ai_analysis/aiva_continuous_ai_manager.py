@@ -29,12 +29,12 @@ import psutil
 import subprocess
 
 # 設置離線模式環境變數(遵循現有資源配置)
-if not os.getenv("AIVA_RABBITMQ_USER"):
-    os.environ["AIVA_RABBITMQ_USER"] = "admin"
-    os.environ["AIVA_RABBITMQ_PASSWORD"] = "password123"
-    os.environ["AIVA_RABBITMQ_HOST"] = "localhost"
-    os.environ["AIVA_RABBITMQ_PORT"] = "5672"
-    os.environ["AIVA_ENVIRONMENT"] = "continuous"
+if not os.getenv("RABBITMQ_USER"):
+    os.environ["RABBITMQ_USER"] = "admin"
+    os.environ["RABBITMQ_PASSWORD"] = "password123"
+    os.environ["RABBITMQ_HOST"] = "localhost"
+    os.environ["RABBITMQ_PORT"] = "5672"
+    os.environ["ENVIRONMENT"] = "continuous"
 
 # 設置路徑
 PROJECT_ROOT = Path(__file__).parent

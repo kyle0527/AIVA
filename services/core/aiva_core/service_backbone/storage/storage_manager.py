@@ -100,33 +100,16 @@ class StorageManager:
 
         config = provided_config or {}
 
-        # PostgreSQL 配置（支援多種環境變數名稱）
-        config.setdefault(
-            "host",
-            os.getenv("AIVA_POSTGRES_HOST")
-            or os.getenv("POSTGRES_HOST")
-            or "localhost",
-        )
-        config.setdefault(
-            "port",
-            int(
-                os.getenv("AIVA_POSTGRES_PORT") or os.getenv("POSTGRES_PORT") or "5432"
-            ),
-        )
-        config.setdefault(
-            "database",
-            os.getenv("AIVA_POSTGRES_DB") or os.getenv("POSTGRES_DB") or "aiva_db",
-        )
-        config.setdefault(
-            "user",
-            os.getenv("AIVA_POSTGRES_USER") or os.getenv("POSTGRES_USER") or "postgres",
-        )
-        config.setdefault(
-            "password",
-            os.getenv("AIVA_POSTGRES_PASSWORD")
-            or os.getenv("POSTGRES_PASSWORD")
-            or "aiva123",
-        )
+        # 研發階段直接使用預設配置
+        from urllib.parse import urlparse
+        database_url = "postgresql://postgres:postgres@localhost:5432/aiva_db"
+        db_url = urlparse(database_url)
+        
+        config.setdefault("host", db_url.hostname or "localhost")
+        config.setdefault("port", db_url.port or 5432)
+        config.setdefault("database", db_url.path.lstrip('/') or "aiva_db")
+        config.setdefault("user", db_url.username or "postgres")
+        config.setdefault("password", db_url.password or "postgres")
 
         return config
 

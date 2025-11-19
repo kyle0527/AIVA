@@ -377,15 +377,18 @@ response = await master.process_request(
 # 數據目錄
 export AIVA_DATA_DIR=/workspaces/AIVA/data
 
+# 數據庫配置（生產環境專用）
+
+> ⚠️ **研發階段無需以下配置**  
+> 開發時自動使用: `postgresql://postgres:postgres@localhost:5432/aiva_db`
+
+## 生產環境配置
+```bash
 # 數據庫類型
 export AIVA_DB_TYPE=hybrid  # sqlite / postgres / jsonl / hybrid
 
 # PostgreSQL（生產環境）
-export POSTGRES_HOST=localhost
-export POSTGRES_PORT=5432
-export POSTGRES_DB=aiva
-export POSTGRES_USER=aiva
-export POSTGRES_PASSWORD=your-password
+export DATABASE_URL="postgresql://prod_user:secure_password@prod-host:5432/aiva_prod"
 
 # 存儲策略
 export AIVA_EXPERIENCE_STORAGE=both  # database / jsonl / both
@@ -397,7 +400,7 @@ export AIVA_BACKUP_DIR=/workspaces/AIVA/backups
 export AIVA_BACKUP_KEEP_DAYS=30
 ```
 
-### Python 配置
+## 研發階段配置
 
 ```python
 from aiva_core.storage.config import get_storage_config

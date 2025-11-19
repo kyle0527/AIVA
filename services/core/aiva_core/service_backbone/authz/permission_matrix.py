@@ -554,7 +554,7 @@ class RiskGuard:
         self.allow_attack = os.getenv("AIVA_ALLOW_ATTACK") == "1"
         
         # 環境檢測
-        self.environment = os.getenv("AIVA_ENVIRONMENT", "development")
+        self.environment = os.getenv("ENVIRONMENT", "development")
         
         # 環境風險限制配置
         self._environment_risk_limits = {

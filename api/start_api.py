@@ -114,7 +114,7 @@ def setup_environment():
     
     # 設置環境變數
     os.environ.setdefault('AIVA_API_ENV', 'development')
-    os.environ.setdefault('AIVA_LOG_LEVEL', 'INFO')
+    os.environ.setdefault('LOG_LEVEL', 'INFO')
 
 if __name__ == '__main__':
     main()

@@ -2,12 +2,16 @@
 
 此模組封裝了核心引擎處理掃描結果的完整七階段流程,
 提高了程式碼的可讀性和可維護性。
+
+同時支援兩階段掃描 (Phase0/Phase1) 流程:
+- Phase0: 快速偵察 (5-10 分鐘)
+- Phase1: 深度掃描 (10-30 分鐘)
 """
 
 import json
 from typing import TYPE_CHECKING
 
-from services.aiva_common.schemas import ScanCompletedPayload
+from services.aiva_common.schemas import ScanCompletedPayload, Phase0CompletedPayload
 from services.aiva_common.utils import get_logger
 from services.aiva_common.mq import AbstractBroker
 from services.core.aiva_core.core_capabilities.ingestion.scan_module_interface import ScanModuleInterface
@@ -343,3 +347,209 @@ class ScanResultProcessor:
 
         # 階段7: 執行狀態監控
         await self.stage_7_monitor_execution(scan_id, payload, dispatched_count)
+
+    # ==================== Phase0 結果處理 ====================
+
+    async def process_phase0(
+        self, payload: Phase0CompletedPayload, broker: AbstractBroker, trace_id: str
+    ) -> tuple[bool, str, list[str]]:
+        """處理 Phase0 快速偵察結果並決策是否需要 Phase1
+
+        Args:
+            payload: Phase0 完成載荷
+            broker: 訊息代理
+            trace_id: 追蹤 ID
+
+        Returns:
+            (需要Phase1, 決策原因, 選中的引擎列表)
+        """
+        scan_id = payload.scan_id
+        logger.info(f"[Phase0] Processing results for {scan_id}")
+
+        # 處理 Phase0 數據
+        processed_data = await self.scan_interface.process_phase0_result(payload)
+
+        # 更新會話上下文
+        self.session_state_manager.update_context(
+            scan_id,
+            {
+                "phase": "phase0_completed",
+                "discovered_technologies": processed_data["discovered_technologies"],
+                "sensitive_data_count": processed_data["sensitive_count"],
+                "endpoint_count": processed_data["endpoint_count"],
+                "risk_level": processed_data["risk_level"],
+            },
+        )
+
+        # AI 決策: 是否需要 Phase1
+        need_phase1, reason = await self._analyze_phase0_and_decide(
+            scan_id, payload, processed_data
+        )
+
+        logger.info(
+            f"[Phase0] AI Decision for {scan_id} - "
+            f"Need Phase1: {need_phase1}, Reason: {reason}"
+        )
+
+        if not need_phase1:
+            # Phase0 已足夠,進入輕量級分析
+            self.session_state_manager.update_session_status(
+                scan_id,
+                "phase0_only_completed",
+                {"decision": "phase1_not_needed", "reason": reason},
+            )
+            return False, reason, []
+
+        # 選擇 Phase1 引擎
+        selected_engines = await self._select_engines_for_phase1(scan_id, payload)
+
+        logger.info(
+            f"[Phase0] Engine selection for {scan_id} - Engines: {selected_engines}"
+        )
+
+        # 更新會話狀態
+        self.session_state_manager.update_context(
+            scan_id,
+            {
+                "phase": "ready_for_phase1",
+                "selected_engines": selected_engines,
+                "phase1_decision": reason,
+            },
+        )
+
+        return True, reason, selected_engines
+
+    async def _analyze_phase0_and_decide(
+        self,
+        scan_id: str,
+        payload: Phase0CompletedPayload,
+        processed_data: dict,
+    ) -> tuple[bool, str]:
+        """AI 分析 Phase0 結果並決策是否需要 Phase1
+
+        決策規則:
+        1. 發現敏感資料 → 需要 Phase1 (高風險)
+        2. 發現多種技術棧 (≥3) → 需要 Phase1 (複雜目標)
+        3. 端點數量大 (>20) → 需要 Phase1 (大型應用)
+        4. 攻擊面風險 ≥ medium → 需要 Phase1
+        5. 默認策略 → 建議 Phase1 (保守)
+
+        Args:
+            scan_id: 掃描 ID
+            payload: Phase0 載荷
+            processed_data: 處理後的數據
+
+        Returns:
+            (需要Phase1, 原因)
+        """
+        # 規則1: 敏感資料
+        if processed_data["sensitive_count"] > 0:
+            return (
+                True,
+                f"Sensitive data detected: {processed_data['sensitive_count']} items",
+            )
+
+        # 規則2: 複雜技術棧
+        if processed_data["tech_count"] >= 3:
+            return (
+                True,
+                f"Complex tech stack: {processed_data['tech_count']} technologies",
+            )
+
+        # 規則3: 大型應用
+        if processed_data["endpoint_count"] > 20:
+            return (
+                True,
+                f"Large application: {processed_data['endpoint_count']} endpoints",
+            )
+
+        # 規則4: 風險等級
+        risk_level = processed_data["risk_level"]
+        if risk_level in ["high", "critical"]:
+            return True, f"High risk level: {risk_level}"
+        if risk_level == "medium":
+            # Medium 風險需考慮其他因素
+            if (
+                processed_data["tech_count"] >= 2
+                or processed_data["endpoint_count"] > 10
+            ):
+                return True, "Medium risk with additional complexity"
+
+        # 規則5: 默認策略 (保守,建議全面掃描)
+        return True, "Default strategy: comprehensive scan recommended"
+
+    async def _select_engines_for_phase1(
+        self, scan_id: str, payload: Phase0CompletedPayload
+    ) -> list[str]:
+        """引擎選擇決策樹
+
+        決策規則:
+        1. JavaScript/TypeScript → 添加 "typescript" 引擎
+        2. 表單或 API → 添加 "python" 引擎
+        3. URL 數量大 (>50) → 添加 "go" 引擎 (並發優勢)
+        4. 高風險或敏感資料 → 添加 "rust" 引擎 (快速掃描)
+        5. 默認 → "python" 引擎
+
+        Args:
+            scan_id: 掃描 ID
+            payload: Phase0 載荷
+
+        Returns:
+            引擎列表
+        """
+        selected: list[str] = []
+
+        # 獲取 Phase0 結果的正確欄位
+        fingerprints = payload.fingerprints
+        summary = payload.summary
+        recommendations = payload.recommendations
+
+        # 優先使用 recommendations
+        if recommendations.get("needs_js_engine", False):
+            selected.append("typescript")
+            logger.info(f"[Engine] {scan_id} - Added 'typescript' (recommended)")
+
+        if recommendations.get("needs_form_testing", False) or recommendations.get("needs_api_testing", False):
+            if "python" not in selected:
+                selected.append("python")
+                logger.info(f"[Engine] {scan_id} - Added 'python' (recommended)")
+
+        # 規則1: JavaScript/TypeScript (從 fingerprints 檢查)
+        if fingerprints and fingerprints.language:
+            has_js = any(
+                "javascript" in lang.lower() or "typescript" in lang.lower()
+                for lang in fingerprints.language.values()
+            )
+            if has_js and "typescript" not in selected:
+                selected.append("typescript")
+                logger.info(f"[Engine] {scan_id} - Added 'typescript' (JS detected)")
+
+        # 規則2: 表單或 API (從 summary 檢查)
+        if summary.forms_found > 0 or summary.apis_found > 0:
+            if "python" not in selected:
+                selected.append("python")
+                logger.info(
+                    f"[Engine] {scan_id} - Added 'python' (forms: {summary.forms_found}, APIs: {summary.apis_found})"
+                )
+
+        # 規則3: 大型 URL 數量
+        if summary.urls_found > 50:
+            selected.append("go")
+            logger.info(
+                f"[Engine] {scan_id} - Added 'go' (large URL count: {summary.urls_found})"
+            )
+
+        # 規則4: 高風險/WAF
+        if recommendations.get("high_risk", False) or (fingerprints and fingerprints.waf_detected):
+            if "rust" not in selected:
+                selected.append("rust")
+                logger.info(
+                    f"[Engine] {scan_id} - Added 'rust' (high risk or WAF detected)"
+                )
+
+        # 規則5: 默認引擎
+        if not selected:
+            selected.append("python")
+            logger.info(f"[Engine] {scan_id} - Added 'python' (default)")
+
+        return selected

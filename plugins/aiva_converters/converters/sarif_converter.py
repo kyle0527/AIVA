@@ -122,7 +122,7 @@ class SARIFConverter:
         # 構建消息
         message = vuln.description
         if vuln.evidence:
-            message += f"\n\n證據:\n" + "\n".join(f"- {e}" for e in vuln.evidence[:3])
+            message += "\n\n證據:\n" + "\n".join(f"- {e}" for e in vuln.evidence[:3])
 
         # 創建 SARIF Result
         result = SARIFResult(
@@ -187,7 +187,7 @@ class SARIFConverter:
         # 構建消息
         message = discovery.description
         if discovery.evidence:
-            message += f"\n\n證據:\n" + "\n".join(f"- {e}" for e in discovery.evidence[:3])
+            message += "\n\n證據:\n" + "\n".join(f"- {e}" for e in discovery.evidence[:3])
 
         # 創建 SARIF Result
         result = SARIFResult(

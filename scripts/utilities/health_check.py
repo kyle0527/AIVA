@@ -9,12 +9,11 @@ project_root = os.path.join(current_dir, "..", "..")
 sys.path.insert(0, project_root)
 
 # 設置離線模式環境變數
-if not os.getenv("AIVA_OFFLINE_MODE"):
-    os.environ["AIVA_OFFLINE_MODE"] = "true"
-    os.environ["AIVA_RABBITMQ_URL"] = "memory://localhost"
-    os.environ["AIVA_RABBITMQ_USER"] = "offline"
-    os.environ["AIVA_RABBITMQ_PASSWORD"] = "offline"
-    os.environ["AIVA_ENVIRONMENT"] = "offline"
+if not os.getenv("ENVIRONMENT"):
+    os.environ["ENVIRONMENT"] = "offline"
+    os.environ["RABBITMQ_URL"] = "memory://localhost"
+    os.environ["RABBITMQ_USER"] = "offline"
+    os.environ["RABBITMQ_PASSWORD"] = "offline"
 
 def check_schemas():
     """檢查 AIVA Common Schemas 可用性"""

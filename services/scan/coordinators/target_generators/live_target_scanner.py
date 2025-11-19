@@ -70,7 +70,7 @@ class LiveTargetScanner:
                     time.sleep(retry_delay)
                 else:
                     print("❌ 無法連接到 RabbitMQ")
-                    return False
+        return False
     
     def validate_targets(self, urls: List[str]) -> List[str]:
         """驗證和標準化目標 URL"""
@@ -96,11 +96,10 @@ class LiveTargetScanner:
     def create_scan_payload(self, 
                            urls: List[str],
                            strategy: str = "normal",
-                           exclusions: List[str] = None,
+                           exclusions: Optional[List[str]] = None,
                            include_subdomains: bool = True,
                            rate_limit_requests: int = 10,
-                           rate_limit_delay: float = 1.0,
-                           custom_headers: dict = None) -> ScanStartPayload:
+                           custom_headers: Optional[dict] = None) -> ScanStartPayload:
         """創建符合 aiva_common 規範的掃描負載"""
         
         # 生成掃描 ID
@@ -116,16 +115,20 @@ class LiveTargetScanner:
         # 配置速率限制
         rate_limit = RateLimit(
             requests_per_second=rate_limit_requests,
-            delay_between_requests=rate_limit_delay
+            burst=rate_limit_requests * 2
         )
         
         # 配置身份驗證（如果需要）
         authentication = Authentication()
         
         try:
+            # 轉換 URLs 為 HttpUrl 類型
+            from pydantic import HttpUrl
+            http_urls = [HttpUrl(url) for url in urls]
+            
             payload = ScanStartPayload(
                 scan_id=scan_id,
-                targets=urls,
+                targets=http_urls,
                 scope=scope,
                 authentication=authentication,
                 strategy=strategy,
@@ -139,10 +142,10 @@ class LiveTargetScanner:
             raise
     
     def send_scan_task(self, payload: ScanStartPayload) -> str:
-        """發送掃描任務到隊列"""
+        """發送掃描任務到佇列"""
         
         if not self.channel:
-            raise Exception("RabbitMQ 連接未建立")
+            raise ConnectionError("RabbitMQ 連接未建立")
         
         message = json.dumps(payload.model_dump(), ensure_ascii=False, indent=2)
         
@@ -166,11 +169,10 @@ class LiveTargetScanner:
     def scan_targets(self, 
                     urls: List[str],
                     strategy: str = "normal",
-                    exclusions: List[str] = None,
+                    exclusions: Optional[List[str]] = None,
                     include_subdomains: bool = True,
                     rate_limit_requests: int = 10,
-                    rate_limit_delay: float = 1.0,
-                    custom_headers: dict = None) -> str:
+                    custom_headers: Optional[dict] = None) -> str:
         """執行對指定目標的掃描"""
         
         print("=" * 80)
@@ -182,22 +184,22 @@ class LiveTargetScanner:
         if not validated_urls:
             raise ValueError("❌ 沒有有效的目標 URL")
         
-        print(f"\n📋 掃描配置:")
+        print("\n📋 掃描配置:")
         print(f"   目標數量: {len(validated_urls)}")
         print(f"   掃描策略: {strategy}")
         print(f"   包含子域名: {include_subdomains}")
-        print(f"   速率限制: {rate_limit_requests} req/s，延遲 {rate_limit_delay}s")
+        print(f"   速率限制: {rate_limit_requests} req/s")
         if exclusions:
             print(f"   排除路徑: {', '.join(exclusions)}")
         
         # 顯示目標
-        print(f"\n🎯 掃描目標:")
+        print("\n🎯 掃描目標:")
         for i, url in enumerate(validated_urls, 1):
             print(f"   [{i}] {url}")
         
         # 建立連接
         if not self.connect_rabbitmq():
-            raise Exception("❌ 無法連接到 RabbitMQ")
+            raise ConnectionError("❌ 無法連接到 RabbitMQ")
         
         try:
             # 創建掃描負載
@@ -207,17 +209,16 @@ class LiveTargetScanner:
                 exclusions=exclusions,
                 include_subdomains=include_subdomains,
                 rate_limit_requests=rate_limit_requests,
-                rate_limit_delay=rate_limit_delay,
                 custom_headers=custom_headers
             )
             
             # 發送任務
             scan_id = self.send_scan_task(payload)
             
-            print(f"\n✅ 掃描任務已發送!")
+            print("\n✅ 掃描任務已發送!")
             print(f"   掃描 ID: {scan_id}")
-            print(f"   隊列: {TASK_QUEUE}")
-            print(f"   RabbitMQ 管理界面: http://localhost:15672")
+            print(f"   佇列: {TASK_QUEUE}")
+            print("   RabbitMQ 管理界面: http://localhost:15672")
             
             return scan_id
             
@@ -342,12 +343,11 @@ def main():
                 exclusions=exclusions,
                 include_subdomains=not args.no_subdomains,
                 rate_limit_requests=args.rate_limit,
-                rate_limit_delay=args.delay,
                 custom_headers=custom_headers
             )
-            print(f"\n✅ 配置驗證成功!")
+            print("\n✅ 配置驗證成功!")
             if args.verbose:
-                print(f"\n📄 生成的負載:")
+                print("\n📄 生成的負載:")
                 print(json.dumps(payload.model_dump(), indent=2, ensure_ascii=False))
             return 0
         
@@ -359,17 +359,16 @@ def main():
             exclusions=exclusions,
             include_subdomains=not args.no_subdomains,
             rate_limit_requests=args.rate_limit,
-            rate_limit_delay=args.delay,
             custom_headers=custom_headers
         )
         
-        print(f"\n🔍 監控建議:")
-        print(f"   1. 查看 RabbitMQ 隊列狀態: http://localhost:15672")
-        print(f"   2. 監控掃描引擎日誌:")
-        print(f"      docker logs -f aiva-rust-fast-discovery")
-        print(f"      docker logs -f aiva-python-scanner")
-        print(f"      docker logs -f aiva-typescript-scanner")
-        print(f"   3. 查詢掃描結果:")
+        print("\n🔍 監控建議:")
+        print("   1. 查看 RabbitMQ 佇列狀態: http://localhost:15672")
+        print("   2. 監控掃描引擎日誌:")
+        print("      docker logs -f aiva-rust-fast-discovery")
+        print("      docker logs -f aiva-python-scanner")
+        print("      docker logs -f aiva-typescript-scanner")
+        print("   3. 查詢掃描結果:")
         print(f"      python query_scan_results.py --scan-id {scan_id}")
         
         return 0

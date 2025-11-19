@@ -22,33 +22,23 @@ class EnvironmentFixer:
         
         env_vars = {
             # RabbitMQ 配置
-            "AIVA_RABBITMQ_URL": "amqp://guest:guest@localhost:5672/",
-            "AIVA_RABBITMQ_USER": "guest",
-            "AIVA_RABBITMQ_PASSWORD": "guest",
-            "AIVA_RABBITMQ_HOST": "localhost",
-            "AIVA_RABBITMQ_PORT": "5672",
-            "AIVA_RABBITMQ_VHOST": "/",
-            
-            # Redis 配置
-            "AIVA_REDIS_URL": "redis://localhost:6379/0",
+            "RABBITMQ_URL": "amqp://guest:guest@localhost:5672/",
+            "RABBITMQ_USER": "guest",
+            "RABBITMQ_PASSWORD": "guest",
+            "RABBITMQ_HOST": "localhost",
+            "RABBITMQ_PORT": "5672",
+            "RABBITMQ_VHOST": "/",
             
             # PostgreSQL 配置
-            "AIVA_POSTGRES_HOST": "localhost",
-            "AIVA_POSTGRES_PORT": "5432",
-            "AIVA_POSTGRES_USER": "aiva",
-            "AIVA_POSTGRES_PASSWORD": "aiva",
-            "AIVA_POSTGRES_DB": "aiva",
-            
-            # Neo4j 配置
-            "AIVA_NEO4J_URL": "bolt://localhost:7687",
-            "AIVA_NEO4J_USER": "neo4j",
-            "AIVA_NEO4J_PASSWORD": "password",
+            "POSTGRES_HOST": "localhost",
+            "POSTGRES_PORT": "5432",
+            "POSTGRES_USER": "aiva",
+            "POSTGRES_PASSWORD": "aiva",
+            "POSTGRES_DB": "aiva",
             
             # AIVA 特定配置
-            "AIVA_MQ_EXCHANGE": "aiva.topic",
-            "AIVA_MQ_DLX": "aiva.dlx",
-            "AIVA_LOG_LEVEL": "INFO",
-            "AIVA_ENVIRONMENT": "development"
+            "LOG_LEVEL": "INFO",
+            "ENVIRONMENT": "development"
         }
         
         # 設置環境變數
@@ -211,20 +201,16 @@ sys.path.insert(0, str(project_root))
 
 # 設置環境變數
 env_vars = {
-    "AIVA_RABBITMQ_URL": "amqp://guest:guest@localhost:5672/",
-    "AIVA_RABBITMQ_USER": "guest",
-    "AIVA_RABBITMQ_PASSWORD": "guest",
-    "AIVA_REDIS_URL": "redis://localhost:6379/0",
-    "AIVA_POSTGRES_HOST": "localhost",
-    "AIVA_POSTGRES_PORT": "5432",
-    "AIVA_POSTGRES_USER": "aiva",
-    "AIVA_POSTGRES_PASSWORD": "aiva",
-    "AIVA_POSTGRES_DB": "aiva",
-    "AIVA_NEO4J_URL": "bolt://localhost:7687",
-    "AIVA_NEO4J_USER": "neo4j",
-    "AIVA_NEO4J_PASSWORD": "password",
-    "AIVA_LOG_LEVEL": "INFO",
-    "AIVA_ENVIRONMENT": "development"
+    "RABBITMQ_URL": "amqp://guest:guest@localhost:5672/",
+    "RABBITMQ_USER": "guest",
+    "RABBITMQ_PASSWORD": "guest",
+    "POSTGRES_HOST": "localhost",
+    "POSTGRES_PORT": "5432",
+    "POSTGRES_USER": "aiva",
+    "POSTGRES_PASSWORD": "aiva",
+    "POSTGRES_DB": "aiva",
+    "LOG_LEVEL": "INFO",
+    "ENVIRONMENT": "development"
 }
 
 for key, value in env_vars.items():

@@ -30,10 +30,17 @@ docker run -d -p 3000:3000 bkimminch/juice-shop  # 啟動靶場
 ### 🔧 環境設置 (1分鐘)
 ```bash
 # PowerShell 環境變數設置
-$env:AIVA_POSTGRES_HOST = "postgres"
-$env:AIVA_POSTGRES_USER = "postgres"
-$env:AIVA_POSTGRES_PASSWORD = "aiva123"
-$env:AIVA_POSTGRES_DB = "aiva_db"
+# 測試環境配置
+
+> ⚠️ **研發階段**: 以下環境變數設置**不需要**  
+> 測試自動使用預設值: `postgresql://postgres:postgres@localhost:5432/aiva_db`
+
+## 僅限特殊測試情境（Docker 環境）
+```powershell
+$env:POSTGRES_HOST = "postgres"
+$env:POSTGRES_USER = "postgres"
+$env:POSTGRES_PASSWORD = "aiva123"
+$env:POSTGRES_DB = "aiva_db"
 $env:AIVA_TARGET_URL = "http://localhost:3000"
 ```
 

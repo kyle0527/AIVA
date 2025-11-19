@@ -222,7 +222,7 @@ class ConfigManager:
                 default_value="INFO",
                 description="日誌級別",
                 choices=["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"],
-                env_var="AIVA_LOG_LEVEL",
+                env_var="LOG_LEVEL",
             ),
             ConfigSchema(
                 key="system.max_workers",
@@ -308,7 +308,7 @@ class ConfigManager:
                 config_type=ConfigType.URL,
                 default_value="sqlite:///~/.aiva/data/aiva.db",
                 description="數據庫連接 URL",
-                env_var="AIVA_DATABASE_URL",
+                env_var="DATABASE_URL",
             ),
             ConfigSchema(
                 key="database.pool_size",

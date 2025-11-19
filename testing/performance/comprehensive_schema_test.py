@@ -25,8 +25,8 @@ from datetime import datetime
 from pathlib import Path
 
 # 設置環境
-os.environ["AIVA_RABBITMQ_URL"] = "amqp://guest:guest@localhost:5672/"
-os.environ["AIVA_POSTGRES_URL"] = "postgresql://user:pass@localhost:5432/aiva"
+os.environ["RABBITMQ_URL"] = "amqp://guest:guest@localhost:5672/"
+os.environ["DATABASE_URL"] = "postgresql://user:pass@localhost:5432/aiva"
 sys.path.insert(0, 'services/aiva_common/tools')
 
 from cross_language_interface import CrossLanguageSchemaInterface

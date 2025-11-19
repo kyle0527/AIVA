@@ -26,72 +26,42 @@ import logging
 project_root = Path(__file__).parent.parent.parent
 sys.path.insert(0, str(project_root))
 
-# 設置環境變數（遵循 AIVA_COMPREHENSIVE_GUIDE.md 標準）
+# 設置環境變數（簡化版本）
 def setup_environment_variables():
     """
-    設置測試所需的環境變數
-    參考: AIVA_COMPREHENSIVE_GUIDE.md 和 .env.example 標準配置
+    設置測試所需的最小環境變數
+    大部分配置使用代碼預設值 (見 defaults.py)
     """
-    # 基於使用者手冊的標準環境變數設置
     env_vars = {
-        # 消息隊列配置 - 使用推薦的完整 URL
-        'AIVA_RABBITMQ_URL': 'amqp://aiva_user:secure_password@localhost:5672/aiva',
+        # 資料庫配置 (必需)
+        'DATABASE_URL': 'postgresql://aiva:aiva_secure_password@localhost:5432/aiva_test',
         
-        # 資料庫配置
-        'AIVA_DATABASE_URL': 'postgresql://aiva:aiva_secure_password@localhost:5432/aiva',
-        'AIVA_DB_POOL_SIZE': '10',
-        'AIVA_DB_MAX_OVERFLOW': '20',
-        'AIVA_DB_POOL_TIMEOUT': '30',
-        'AIVA_DB_POOL_RECYCLE': '1800',
+        # 消息隊列配置 (必需)
+        'RABBITMQ_URL': 'amqp://guest:guest@localhost:5672/',
         
-        # Redis 配置
-        'AIVA_REDIS_URL': 'redis://:aiva_redis_password@localhost:6379/0',
-        
-        # 安全配置
-        'AIVA_API_KEY': 'test_super_secure_api_key_for_integration',
-        'AIVA_INTEGRATION_TOKEN': 'test_integration_secure_token',
-        
-        # 消息隊列其他配置
-        'AIVA_MQ_EXCHANGE': 'aiva.topic',
-        'AIVA_MQ_DLX': 'aiva.dlx',
-        
-        # CORS 和安全
-        'AIVA_CORS_ORIGINS': 'http://localhost:3000,https://localhost:8080',
-        
-        # 速率限制
-        'AIVA_RATE_LIMIT_RPS': '20',
-        'AIVA_RATE_LIMIT_BURST': '60',
-        
-        # 監控和觀察性
-        'AIVA_ENABLE_PROM': '1',
-        'AIVA_LOG_LEVEL': 'INFO',
-        
-        # 自動遷移
-        'AUTO_MIGRATE': '1',
-        
-        # OAST 服務
-        'AIVA_OAST_URL': 'http://localhost:8084',
+        # 測試環境配置
+        'ENVIRONMENT': 'test',
+        'LOG_LEVEL': 'DEBUG',  # 測試時需要詳細日誌
         
         # 測試專用配置
-        'AIVA_DEBUG': '1',
-        'AIVA_TEST_MODE': '1'
+        'AUTO_MIGRATE': '0',  # 測試環境手動控制遷移
     }
     
-    print("   🔧 配置 AIVA 標準環境變數...")
+    print("   🔧 配置測試環境變數...")
     for key, value in env_vars.items():
         if key not in os.environ:
             os.environ[key] = value
             print(f"      ├─ {key}={value}")
     
     # 驗證關鍵環境變數
-    critical_vars = ['AIVA_RABBITMQ_URL', 'AIVA_DATABASE_URL', 'AIVA_API_KEY']
+    critical_vars = ['RABBITMQ_URL', 'DATABASE_URL']
     for var in critical_vars:
         if var in os.environ:
             print(f"      ✅ {var} 已設置")
         else:
             print(f"      ❌ {var} 設置失敗")
     
-    print("   ✅ 環境變數設置完成 (遵循 AIVA v5.0 標準)")
+    print("   ✅ 環境變數設置完成 (簡化版本，其他使用預設值)")
 
 # 初始化環境變數
 setup_environment_variables()

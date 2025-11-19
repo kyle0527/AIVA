@@ -182,15 +182,16 @@ def test_crypto_detector():
 - **DVWA** - 用於 Web 漏洞測試
 - **測試網路隔離**
 
-### 環境變數配置
-```bash
-# 測試模式設置
-export AIVA_TEST_MODE=true
-export AIVA_TARGET_URL=http://localhost:3000
+### 測試配置
 
-# 攻擊測試配置
-export AIVA_ATTACK_MODE=safe
-export AIVA_MAX_THREADS=5
+**研發階段**：測試使用預設值，無需環境變數。
+
+預設配置：
+```python
+TEST_MODE = True
+TARGET_URL = "http://localhost:3000"
+ATTACK_MODE = "safe"
+MAX_THREADS = 5
 ```
 
 ### 工具依賴

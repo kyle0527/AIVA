@@ -504,31 +504,13 @@ docker build -f docker/core/Dockerfile.core.minimal -t aiva-core:minimal .
 
 ```bash
 # 模式配置
-AIVA_MODE=production
-AIVA_ENVIRONMENT=docker
+ENVIRONMENT=docker
 
-# 數據庫配置
-AIVA_POSTGRES_HOST=postgres
-AIVA_POSTGRES_PORT=5432
-AIVA_POSTGRES_USER=postgres
-AIVA_POSTGRES_PASSWORD=aiva123
-AIVA_POSTGRES_DB=aiva_db
+# 數據庫配置 (使用單一 DATABASE_URL)
+DATABASE_URL=postgresql://postgres:postgres@postgres:5432/aiva_db
 
-# Redis 配置
-AIVA_REDIS_HOST=redis
-AIVA_REDIS_PORT=6379
-
-# RabbitMQ 配置
-AIVA_RABBITMQ_HOST=rabbitmq
-AIVA_RABBITMQ_PORT=5672
-AIVA_RABBITMQ_USER=guest
-AIVA_RABBITMQ_PASSWORD=guest
-
-# Neo4j 配置
-AIVA_NEO4J_HOST=neo4j
-AIVA_NEO4J_PORT=7687
-AIVA_NEO4J_USER=neo4j
-AIVA_NEO4J_PASSWORD=aiva123
+# RabbitMQ 配置 (使用單一 RABBITMQ_URL)
+RABBITMQ_URL=amqp://guest:guest@rabbitmq:5672/
 ```
 
 ### 端口映射
