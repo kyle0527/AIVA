@@ -8,6 +8,23 @@
 
 ---
 
+## 📑 目錄
+
+- [🚀 快速開始](#-快速開始)
+- [📋 功能特性](#-功能特性)
+- [🏗️ 架構組件](#️-架構組件)
+- [💻 使用方式](#-使用方式)
+- [🎯 與其他引擎的配合](#-與其他引擎的配合)
+- [📊 性能特徵](#-性能特徵)
+- [🧪 測試驗證](#-測試驗證)
+- [⚙️ 依賴需求](#️-依賴需求)
+- [🐛 已知問題與修復](#-已知問題與修復)
+- [📈 優化路線圖](#-優化路線圖)
+- [🔗 相關文檔](#-相關文檔)
+- [📞 技術支持](#-技術支持)
+
+---
+
 ## 🚀 快速開始
 
 ### 全域環境安裝（推薦）⭐
@@ -349,18 +366,53 @@ playwright install chromium
 
 ## 🔗 相關文檔
 
-### 安裝和配置 ⭐ **必讀**
-- **全域環境安裝指南**: [GLOBAL_ENVIRONMENT_SETUP.md](./GLOBAL_ENVIRONMENT_SETUP.md)
-- **BeautifulSoup 修復記錄**: [BEAUTIFULSOUP_FIX.md](./BEAUTIFULSOUP_FIX.md)
+### 📖 閱讀順序建議
 
-### 開發和維護
-- **修復報告**: [FIX_COMPLETION_REPORT.md](./FIX_COMPLETION_REPORT.md)
-- **驗證計劃**: [VALIDATION_TEST_PLAN.md](./VALIDATION_TEST_PLAN.md)
-- **架構分析**: [../ENGINE_COMPLETION_ANALYSIS.md](../ENGINE_COMPLETION_ANALYSIS.md)
+**新手入門** (按順序閱讀):
+1. 📘 **[快速參考](./QUICK_REFERENCE.md)** - 3 分鐘快速上手
+2. ⚙️ **[全域環境安裝指南](./GLOBAL_ENVIRONMENT_SETUP.md)** - 詳細安裝步驟（必讀）
+3. 🧪 **[驗證測試](./GLOBAL_ENVIRONMENT_SETUP.md#🧪-功能驗證測試)** - 確認安裝成功
+4. 📋 **[主 README](./README.md)** - 完整功能介紹（本文檔）
 
-### 參考資料
-- **Rust 參考**: [../rust_engine/USAGE_GUIDE.md](../rust_engine/USAGE_GUIDE.md)
-- **依賴清單**: [requirements-global.txt](./requirements-global.txt)
+**故障排查** (遇到問題時):
+1. 🔧 **[快速排查](./QUICK_REFERENCE.md#🐛-故障排查)** - 常見問題快速解決
+2. 🐛 **[詳細排查](./GLOBAL_ENVIRONMENT_SETUP.md#🔍-故障排查)** - 深入診斷指南
+3. 📄 **[BeautifulSoup 修復案例](./BEAUTIFULSOUP_FIX.md)** - 真實故障案例
+
+**深入理解** (開發和維護):
+1. 📊 **[操作完成報告](./OPERATION_COMPLETION_REPORT.md)** - 完整操作記錄
+2. 🔧 **[修復報告](./FIX_COMPLETION_REPORT.md)** - Rust 經驗應用
+3. 🧪 **[驗證計劃](./VALIDATION_TEST_PLAN.md)** - 測試策略
+4. 🏗️ **[架構分析](../ENGINE_COMPLETION_ANALYSIS.md)** - 引擎對比
+
+**參考資料**:
+1. 📦 **[依賴清單](./requirements-global.txt)** - 安裝清單
+2. 🦀 **[Rust Engine](../rust_engine/USAGE_GUIDE.md)** - Phase0 參考
+3. 📚 **[能力狀態](./CAPABILITY_STATUS.md)** - 功能清單
+
+---
+
+### 📚 文檔清單
+
+#### 安裝和配置 ⭐ **必讀**
+- **[QUICK_REFERENCE.md](./QUICK_REFERENCE.md)** - 快速參考卡片
+- **[GLOBAL_ENVIRONMENT_SETUP.md](./GLOBAL_ENVIRONMENT_SETUP.md)** - 全域環境安裝指南
+- **[requirements-global.txt](./requirements-global.txt)** - 依賴清單
+
+#### 故障排查和修復
+- **[BEAUTIFULSOUP_FIX.md](./BEAUTIFULSOUP_FIX.md)** - BeautifulSoup 修復記錄
+- **[OPERATION_COMPLETION_REPORT.md](./OPERATION_COMPLETION_REPORT.md)** - 操作完成報告
+
+#### 開發和維護
+- **[FIX_COMPLETION_REPORT.md](./FIX_COMPLETION_REPORT.md)** - 修復完成報告
+- **[VALIDATION_TEST_PLAN.md](./VALIDATION_TEST_PLAN.md)** - 驗證測試計劃
+- **[CRAWLER_FIX_REPORT.md](./CRAWLER_FIX_REPORT.md)** - 爬蟲修復報告
+- **[DYNAMIC_SCAN_COMPLETION_REPORT.md](./DYNAMIC_SCAN_COMPLETION_REPORT.md)** - 動態掃描完成報告
+- **[CAPABILITY_STATUS.md](./CAPABILITY_STATUS.md)** - 能力狀態文檔
+
+#### 架構和參考
+- **[../ENGINE_COMPLETION_ANALYSIS.md](../ENGINE_COMPLETION_ANALYSIS.md)** - 引擎完成度分析
+- **[../rust_engine/USAGE_GUIDE.md](../rust_engine/USAGE_GUIDE.md)** - Rust Engine 使用指南
 
 ---
 
