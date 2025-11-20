@@ -1,5 +1,7 @@
 # Python Engine - Phase1 主力爬蟲引擎
 
+**導航**: [← 返回 Scan 總覽](../../README.md) | [📊 完整流程圖](../../SCAN_FLOW_DIAGRAMS.md) | [🔧 引擎比較](../ENGINE_COMPLETION_ANALYSIS.md)
+
 > **角色定位**: Phase1 核心引擎 - 靜態/動態爬取、表單發現、API分析  
 > **技術優勢**: 完整的爬蟲生態、Playwright 動態渲染、豐富的分析工具  
 > **當前狀態**: ✅ 90% 功能完成 + ✅ 核心修復完成 + ✅ 全域環境驗證通過  
