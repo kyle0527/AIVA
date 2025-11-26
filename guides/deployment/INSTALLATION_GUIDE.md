@@ -21,17 +21,17 @@
 
 ## 📋 安裝狀態
 
-✅ **已完成安裝** (2025-11-13)
+✅ **已完成全域安裝** (2025-11-25)
 
-- ✅ Python 虛擬環境: `.venv/`
+- ✅ Python 套件: 全域環境
 - ✅ 套件已安裝: `aiva-platform-integrated 1.0.0`
 - ✅ 可編輯模式 (editable install)
-- ✅ 所有依賴已安裝
+- ✅ 所有依賴已安裝至全域
 
 **驗證方式**:
 ```powershell
 # 檢查安裝狀態
-C:/D/fold7/AIVA-git/.venv/Scripts/python.exe -m pip list | Select-String "aiva"
+python -m pip list | Select-String "aiva"
 
 # 預期輸出:
 # aiva-platform-integrated 1.0.0     C:\D\fold7\AIVA-git
@@ -41,15 +41,12 @@ C:/D/fold7/AIVA-git/.venv/Scripts/python.exe -m pip list | Select-String "aiva"
 
 ## 🚀 快速開始 (已安裝用戶)
 
-如果專案已完成安裝,只需激活虛擬環境:
+專案已使用全域 Python 環境，直接使用即可:
 
 ```powershell
-# 激活虛擬環境
-& C:/D/fold7/AIVA-git/.venv/Scripts/Activate.ps1
-
 # 驗證 Python 版本
 python --version
-# Python 3.13.9
+# Python 3.13.x
 
 # 開始使用
 python -m pytest services/core/tests/ -v
@@ -61,21 +58,15 @@ python -m pytest services/core/tests/ -v
 
 ### 前置需求
 
-- **Python**: 3.13.9 或更高版本
+- **Python**: 3.13.9 或更高版本 (全域安裝)
 - **Git**: 用於版本控制
-- **虛擬環境**: 推薦使用 venv
+- **安裝策略**: 使用全域 Python 環境，不使用虛擬環境
 
-### 步驟 1: 建立虛擬環境
+### 步驟 1: 切換到專案目錄
 
 ```powershell
 # 切換到專案目錄
 cd C:\D\fold7\AIVA-git
-
-# 建立虛擬環境
-python -m venv .venv
-
-# 激活虛擬環境
-& .venv\Scripts\Activate.ps1
 ```
 
 ### 步驟 2: 升級 pip 工具
@@ -88,15 +79,11 @@ python -m pip install --upgrade pip setuptools wheel
 ### 步驟 3: 安裝專案 (可編輯模式)
 
 ```powershell
-# 方案 A: 基礎安裝
-pip install -e .
-
-# 方案 B: 含開發工具 (推薦)
-pip install -e ".[dev]"
-
-# 方案 C: 完整安裝 (包含所有依賴)
-pip install -e .
+# 安裝所有依賴到全域環境
 pip install -r requirements.txt
+
+# 將專案本身以可編輯模式安裝到全域
+pip install -e .
 ```
 
 ### 步驟 4: 生成 Protocol Buffers 代碼
@@ -205,7 +192,6 @@ pip install -r requirements.txt
 
 ```
 AIVA-git/
-├── .venv/                           # Python 虛擬環境
 ├── pyproject.toml                   # 主專案配置
 ├── requirements.txt                 # Python 依賴清單
 │
@@ -271,9 +257,6 @@ from services.aiva_common import Config  # ❌ (舊式,已禁用)
 ### 執行單一測試
 
 ```powershell
-# 激活虛擬環境
-& .venv\Scripts\Activate.ps1
-
 # 執行特定測試
 pytest services/core/tests/test_module_explorer.py -v
 ```
@@ -306,17 +289,16 @@ addopts = -v --tb=short
 
 ### Q1: `ModuleNotFoundError: No module named 'services'`
 
-**原因**: 專案未安裝或虛擬環境未激活
+**原因**: 專案未安裝或套件缺失
 
 **解決方式**:
 ```powershell
-# 激活虛擬環境
-& .venv\Scripts\Activate.ps1
-
 # 確認是否已安裝
 pip list | Select-String "aiva"
 
 # 如未安裝,執行:
+pip install -e .
+```
 pip install -e .
 ```
 
@@ -352,13 +334,13 @@ pip install -e .
 
 ### Q4: IDE 無法自動完成或找不到模組
 
-**原因**: IDE 未正確識別虛擬環境
+**原因**: IDE 未正確識別 Python 解譯器
 
 **解決方式**:
 ```
 1. 在 VS Code 中按 Ctrl+Shift+P
 2. 輸入 "Python: Select Interpreter"
-3. 選擇 ".venv\Scripts\python.exe"
+3. 選擇全域 Python (`python.exe`)
 4. 重新載入視窗
 ```
 
@@ -470,7 +452,7 @@ pip install -r requirements.txt
 如遇到安裝問題:
 
 1. 檢查 Python 版本: `python --version` (需要 3.13+)
-2. 確認虛擬環境已激活: `which python` (應指向 `.venv/`)
+2. 確認 Python 在系統 PATH 中: `python --version`
 3. 查看錯誤日誌: `pip install -e . --verbose`
 4. 參考文件: [DEPENDENCY_ANALYSIS.md](./services/core/DEPENDENCY_ANALYSIS.md)
 
@@ -479,3 +461,28 @@ pip install -r requirements.txt
 **最後更新**: 2025-11-13  
 **版本**: 1.0.0  
 **狀態**: ✅ 已完成安裝
+
+
+---
+
+## 🔗 相關資源
+
+### 生產環境部署
+- 📖 [系統安裝指南](./SYSTEM_INSTALLATION_GUIDE.md) - **生產環境完整安裝** (Python/Node/Go/Rust/PostgreSQL/Redis)
+- 📖 [生產環境故障排除指南](../troubleshooting/PRODUCTION_TROUBLESHOOTING_GUIDE.md) - 運行時問題解決
+- 📖 [構建指南](./BUILD_GUIDE.md) - 項目構建
+- 📖 [Docker/K8s 指南](./DOCKER_KUBERNETES_GUIDE.md) - 容器化部署
+- 📖 [部署檢查清單](../../docs/DEPLOYMENT_CHECKLIST.md) - 發布前修復項目
+
+### 開發環境
+- 📍 [當前文件](./INSTALLATION_GUIDE.md) - **開發環境** Python 全域安裝
+- 📖 [開發快速指南](../development/DEVELOPMENT_QUICK_START_GUIDE.md)
+- 📖 [依賴管理指南](../development/DEPENDENCY_MANAGEMENT_GUIDE.md)
+
+### 故障排除
+- 📖 [性能優化指南](../troubleshooting/PERFORMANCE_OPTIMIZATION_GUIDE.md)
+- 📖 [測試重現指南](../troubleshooting/TESTING_REPRODUCTION_GUIDE.md)
+
+### 使用者手冊
+- 📚 [AIVA 使用者手冊](../../docs/user_guides/00_general/AIVA_USER_MANUAL.md)
+

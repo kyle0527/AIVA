@@ -10,6 +10,12 @@ import { NetworkRequest } from '../interfaces/dynamic-scan.interfaces.js';
 export class NetworkInterceptor {
   private requests: NetworkRequest[] = [];
   private isActive: boolean = false;
+  private page: Page | null = null;
+  
+  // 儲存監聽器引用以便後續移除
+  private requestHandler: ((request: any) => void) | null = null;
+  private responseHandler: ((response: any) => void) | null = null;
+  private failureHandler: ((request: any) => void) | null = null;
   
   constructor() {}
 
@@ -17,16 +23,17 @@ export class NetworkInterceptor {
    * 開始攔截網路請求
    */
   async startInterception(page: Page): Promise<void> {
-    if (this.isActive) {
-      logger.warn('Network interception already active');
-      return;
+    // 如果已經在攔截，先清理舊的監聽器
+    if (this.isActive && this.page) {
+      this.removeListeners();
     }
 
+    this.page = page;
     this.requests = [];
     this.isActive = true;
 
-    // 攔截所有請求
-    page.on('request', (request: any) => {
+    // 建立監聽器函數
+    this.requestHandler = (request: any) => {
       const networkRequest: NetworkRequest = {
         url: request.url(),
         method: request.method(),
@@ -42,10 +49,9 @@ export class NetworkInterceptor {
         method: request.method(),
         resource_type: request.resourceType()
       }, '📡 Network Request Intercepted');
-    });
+    };
 
-    // 攔截回應
-    page.on('response', (response: any) => {
+    this.responseHandler = (response: any) => {
       const request = this.requests.find(req => req.url === response.url());
       if (request) {
         request.response_status = response.status();
@@ -56,17 +62,42 @@ export class NetworkInterceptor {
         url: response.url(),
         status: response.status()
       }, '📨 Network Response Intercepted');
-    });
+    };
 
-    // 攔截失敗的請求
-    page.on('requestfailed', (request: any) => {
+    this.failureHandler = (request: any) => {
       logger.warn({
         url: request.url(),
         failure: request.failure()?.errorText
       }, '❌ Network Request Failed');
-    });
+    };
+
+    // 註冊監聽器
+    page.on('request', this.requestHandler);
+    page.on('response', this.responseHandler);
+    page.on('requestfailed', this.failureHandler);
 
     logger.info('🕸️  Network interception started');
+  }
+
+  /**
+   * 移除事件監聽器
+   */
+  private removeListeners(): void {
+    if (!this.page) return;
+
+    if (this.requestHandler) {
+      this.page.off('request', this.requestHandler);
+    }
+    if (this.responseHandler) {
+      this.page.off('response', this.responseHandler);
+    }
+    if (this.failureHandler) {
+      this.page.off('requestfailed', this.failureHandler);
+    }
+
+    this.requestHandler = null;
+    this.responseHandler = null;
+    this.failureHandler = null;
   }
 
   /**
@@ -74,8 +105,13 @@ export class NetworkInterceptor {
    */
   stopInterception(): NetworkRequest[] {
     this.isActive = false;
+    
+    // 移除事件監聽器
+    this.removeListeners();
+    
     const capturedRequests = [...this.requests];
     this.requests = [];
+    this.page = null;
     
     logger.info({
       total_requests: capturedRequests.length

@@ -257,11 +257,8 @@ async def execute_plan(...):
 #### 測試內部閉環
 
 ```bash
-# 1. 進入專案根目錄
+# 1. 切換到專案根目錄
 cd C:\D\fold7\AIVA-git
-
-# 2. 啟動虛擬環境
-.venv\Scripts\Activate.ps1
 
 # 3. 執行自我認知更新
 python scripts/update_self_awareness.py

@@ -110,7 +110,8 @@ func isPublicACL(acl *s3.GetBucketAclOutput) bool {
 // - 密鑰輪換策略
 // - 過度授權的策略
 func (a *AWSAuditor) AuditIAMUsers() ([]string, error) {
-	// TODO: 需要 IAM 客戶端
+	// FUTURE: AWS IAM 客戶端功能待後續實現 (v2.1 計劃)
+	// 目前返回空結果，不影響其他模組運行
 	logrus.Info("[AWS Auditor] IAM audit not yet implemented")
 	return nil, nil
 }
@@ -120,7 +121,8 @@ func (a *AWSAuditor) AuditIAMUsers() ([]string, error) {
 // - 是否有 0.0.0.0/0 開放的高風險端口 (22, 3389, 3306 等)
 // - 過於寬鬆的出站規則
 func (a *AWSAuditor) AuditSecurityGroups() ([]string, error) {
-	// TODO: 需要 EC2 客戶端
+	// FUTURE: AWS EC2 安全組审計功能待後續實現 (v2.1 計劃)
+	// 目前返回空結果，不影響其他模組運行
 	logrus.Info("[AWS Auditor] Security Group audit not yet implemented")
 	return nil, nil
 }
@@ -131,7 +133,8 @@ func (a *AWSAuditor) AuditSecurityGroups() ([]string, error) {
 // - 日誌文件驗證
 // - S3 存儲桶加密
 func (a *AWSAuditor) AuditCloudTrail() ([]string, error) {
-	// TODO: 需要 CloudTrail 客戶端
+	// FUTURE: AWS CloudTrail 客戶端功能待後續實現 (v2.1 計劃)
+	// 目前返回空結果，不影響其他模組運行
 	logrus.Info("[AWS Auditor] CloudTrail audit not yet implemented")
 	return nil, nil
 }
@@ -142,7 +145,8 @@ func (a *AWSAuditor) AuditCloudTrail() ([]string, error) {
 // - 密鑰訪問策略
 // - 未使用的密鑰
 func (a *AWSAuditor) AuditKMSKeys() ([]string, error) {
-	// TODO: 需要 KMS 客戶端
+	// FUTURE: AWS KMS 客戶端功能待後續實現 (v2.1 計劃)
+	// 目前返回空結果，不影響其他模組運行
 	logrus.Info("[AWS Auditor] KMS audit not yet implemented")
 	return nil, nil
 }

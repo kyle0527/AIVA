@@ -28,7 +28,7 @@ try:
     from services.aiva_common.ai import AIVAExperienceManager as ExperienceManager
     from services.aiva_common.ai.interfaces import IExperienceManager
     
-    from ..cognitive_core.neural import BioNeuronRAGAgent
+    from ..cognitive_core.neural.real_bio_net_adapter import RealBioNeuronRAGAgent as BioNeuronRAGAgent
     from ..external_learning.learning.model_trainer import ModelTrainer
     from ..core_capabilities.multilang_coordinator import MultiLanguageAICoordinator
     from ..cognitive_core.rag import KnowledgeBase, RAGEngine, VectorStore
@@ -37,7 +37,7 @@ except ImportError as e:
     logger.warning(f"Failed to import AI components: {e}")
     # 回退到核心模組
     try:
-        from services.core.aiva_core.cognitive_core.neural import BioNeuronRAGAgent
+        from services.core.aiva_core.cognitive_core.neural.real_bio_net_adapter import RealBioNeuronRAGAgent as BioNeuronRAGAgent
         from services.core.aiva_core.external_learning.learning.model_trainer import ModelTrainer
         from services.core.aiva_core.core_capabilities.multilang_coordinator import MultiLanguageAICoordinator
         from services.core.aiva_core.cognitive_core.rag import KnowledgeBase, RAGEngine, VectorStore
@@ -68,6 +68,8 @@ class AITaskType(str, Enum):
     VULNERABILITY_DETECTION = "vulnerability_detection"  # 漏洞檢測
     EXPLOIT_EXECUTION = "exploit_execution"  # 漏洞利用
     CODE_ANALYSIS = "code_analysis"  # 代碼分析
+    ATTACK_EXECUTION = "attack_execution"  # 攻擊執行
+    TWO_PHASE_SCAN = "two_phase_scan"  # 兩階段掃描
 
     # 學習類
     EXPERIENCE_LEARNING = "experience_learning"  # 經驗學習
@@ -121,24 +123,36 @@ class AICommander:
         self.data_directory.mkdir(parents=True, exist_ok=True)
 
         # === 核心 AI 組件 ===
+        # 將所有初始化包裹在 try-except 中以確保優雅降級
+        try:
+            # 1. Python 主控 AI（BioNeuronRAGAgent）
+            logger.info("  Loading BioNeuronRAGAgent...")
+            self.bio_neuron_agent = BioNeuronRAGAgent(codebase_path)
+        except Exception as e:
+            logger.warning(f"BioNeuronRAGAgent not available: {e}")
+            self.bio_neuron_agent = None
 
-        # 1. Python 主控 AI（BioNeuronRAGAgent）
-        logger.info("  Loading BioNeuronRAGAgent...")
-        self.bio_neuron_agent = BioNeuronRAGAgent(codebase_path)
+        # 2. RAG 系統（知識增強）- 可選組件
+        try:
+            logger.info("  Loading RAG Engine...")
+            if not all([VectorStore, KnowledgeBase, RAGEngine]):
+                raise ImportError("RAG components not available")
+            
+            vector_store = VectorStore(
+                backend="memory",  # 可配置為 chroma/faiss
+                persist_directory=self.data_directory / "vectors",
+            )
+            knowledge_base = KnowledgeBase(
+                vector_store=vector_store,
+                data_directory=self.data_directory / "knowledge",
+            )
+            self.rag_engine = RAGEngine(knowledge_base=knowledge_base)
+            logger.info("  ✅ RAG Engine loaded")
+        except (NameError, ImportError, AttributeError) as e:
+            logger.warning(f"RAG Engine not available (optional): {e}")
+            self.rag_engine = None  # RAG 是可選的
 
-        # 2. RAG 系統（知識增強）
-        logger.info("  Loading RAG Engine...")
-        vector_store = VectorStore(
-            backend="memory",  # 可配置為 chroma/faiss
-            persist_directory=self.data_directory / "vectors",
-        )
-        knowledge_base = KnowledgeBase(
-            vector_store=vector_store,
-            data_directory=self.data_directory / "knowledge",
-        )
-        self.rag_engine = RAGEngine(knowledge_base=knowledge_base)
-
-        # 3. 經驗管理和模型訓練
+        # 3. 經驗管理和模型訓練 - 簡化版
         logger.info("  Loading Training System...")
 
         # 整合 ExperienceManager 與資料庫後端
@@ -184,46 +198,67 @@ class AICommander:
                     return []
 
         storage_backend = SimpleStorageBackend(experience_db_path)
-        self.experience_manager = ExperienceManager(
-            storage_backend=storage_backend,
-        )
-        self.model_trainer = ModelTrainer(
-            # 移除 model_config 參數避免與 Pydantic 衝突
-            # 配置將在後續通過方法設置
-        )
-
-        # 4. 訓練編排器（整合 RAG 和訓練）
+        
+        # Experience Manager 初始化（可選）
         try:
-            from .execution.plan_executor import PlanExecutor
-            from .messaging.message_broker import MessageBroker
-            from .training.scenario_manager import ScenarioManager
-        except ImportError:
-            from services.core.aiva_core.execution.plan_executor import PlanExecutor
-            from services.core.aiva_core.messaging.message_broker import MessageBroker
-            from services.core.aiva_core.training.scenario_manager import (
-                ScenarioManager,
-            )
-
-        scenario_manager = ScenarioManager()
-
+            if ExperienceManager:
+                self.experience_manager = ExperienceManager(
+                    storage_backend=storage_backend,
+                )
+            else:
+                # 創建簡單的替代品
+                class SimpleExperienceManager:
+                    def __init__(self, storage):
+                        self.storage = storage
+                    
+                    def add_sample(self, sample):
+                        pass
+                    
+                    def get_statistics(self):
+                        return {"total_samples": 0}
+                        
+                    async def export_to_jsonl(self, path):
+                        pass
+                
+                self.experience_manager = SimpleExperienceManager(storage_backend)
+                logger.warning("Using simplified ExperienceManager")
+        except Exception as e:
+            logger.warning(f"ExperienceManager init failed: {e}")
+            class SimpleExperienceManager:
+                def __init__(self, storage):
+                    self.storage = storage
+                
+                def add_sample(self, sample):
+                    pass
+                
+                def get_statistics(self):
+                    return {"total_samples": 0}
+                    
+                async def export_to_jsonl(self, path):
+                    pass
+            
+            self.experience_manager = SimpleExperienceManager(storage_backend)
+        
+        # Model Trainer 初始化（可選）
         try:
-            message_broker = MessageBroker()
-            plan_executor = PlanExecutor(message_broker=message_broker)
-        except TypeError:
-            # 如果 PlanExecutor 不接受 message_broker 參數，使用無參數初始化
-            plan_executor = PlanExecutor()
+            if ModelTrainer:
+                self.model_trainer = ModelTrainer()
+            else:
+                self.model_trainer = None
+        except Exception as e:
+            logger.warning(f"ModelTrainer init failed: {e}")
+            self.model_trainer = None
 
-        self.training_orchestrator = TrainingOrchestrator(
-            scenario_manager=scenario_manager,
-            rag_engine=self.rag_engine,
-            plan_executor=plan_executor,
-            experience_manager=self.experience_manager,
-            model_trainer=self.model_trainer,
-        )
+        # 4. 訓練編排器（可選）
+        self.training_orchestrator = None  # 簡化版不需要
 
-        # 5. 多語言協調器
-        logger.info("  Loading Multi-Language Coordinator...")
-        self.multilang_coordinator = MultiLanguageAICoordinator()
+        # 5. 多語言協調器 - 可選
+        try:
+            logger.info("  Loading Multi-Language Coordinator...")
+            self.multilang_coordinator = MultiLanguageAICoordinator()
+        except Exception as e:
+            logger.warning(f"MultiLanguageAICoordinator not available: {e}")
+            self.multilang_coordinator = None
 
         # === 指揮狀態 ===
         self.command_history: list[dict[str, Any]] = []
@@ -278,6 +313,12 @@ class AICommander:
 
             elif task_type == AITaskType.VULNERABILITY_DETECTION:
                 result = await self._detect_vulnerabilities(context)
+
+            elif task_type == AITaskType.ATTACK_EXECUTION:
+                result = await self._execute_attack(context)
+
+            elif task_type == AITaskType.TWO_PHASE_SCAN:
+                result = await self._execute_two_phase_scan(context)
 
             elif task_type == AITaskType.EXPERIENCE_LEARNING:
                 result = await self._learn_from_experience(context)
@@ -932,31 +973,112 @@ Please provide a comprehensive decision包含:
         )
 
     async def _detect_vulnerabilities(self, context: dict[str, Any]) -> dict[str, Any]:
-        """檢測漏洞（協調多語言模組）
+        """檢測漏洞（調用功能模組）
 
         Args:
-            context: 檢測上下文
+            context: 檢測上下文 {
+                "target": str,  # 目標 URL
+                "vulnerability_types": list[str],  # ["sqli", "xss", "ssrf", "idor"]
+                "deep_scan": bool,  # 是否深度掃描
+            }
 
         Returns:
             檢測結果
         """
-        logger.info("🔍 Detecting vulnerabilities across languages...")
+        logger.info("🔍 AI 控制: 開始漏洞檢測...")
 
-        # 協調多語言 AI 模組
         target = context.get("target")
-        vuln_types = context.get("vulnerability_types", [])
+        if not target:
+            return {"success": False, "error": "No target specified"}
 
-        # TODO: 實際協調邏輯
-        # results = await self.multilang_coordinator.coordinate_detection(
-        #     target=target,
-        #     vuln_types=vuln_types
-        # )
+        vuln_types = context.get("vulnerability_types", ["sqli", "xss", "ssrf", "idor"])
+        deep_scan = context.get("deep_scan", False)
 
-        return {
+        results = {
             "success": True,
-            "vulnerabilities_found": 0,
-            "languages_coordinated": ["python", "go", "rust"],
+            "target": target,
+            "vulnerabilities_found": [],
+            "modules_executed": [],
+            "total_findings": 0,
         }
+
+        try:
+            # 動態導入功能模組（按需加載）
+            module_map = {
+                "sqli": "services.features.function_sqli.worker",
+                "xss": "services.features.function_xss.worker",
+                "ssrf": "services.features.function_ssrf.worker",
+                "idor": "services.features.function_idor.worker",
+            }
+
+            for vuln_type in vuln_types:
+                if vuln_type not in module_map:
+                    logger.warning(f"⚠️ 未知漏洞類型: {vuln_type}")
+                    continue
+
+                try:
+                    # 動態導入 Worker
+                    module_path = module_map[vuln_type]
+                    module = __import__(module_path, fromlist=["*"])
+                    
+                    # 獲取 Worker 類
+                    worker_class_name = f"{vuln_type.capitalize()}WorkerService"
+                    if vuln_type == "sqli":
+                        worker_class_name = "SqliWorkerService"
+                    elif vuln_type == "xss":
+                        worker_class_name = "XssWorkerService"
+                    elif vuln_type == "ssrf":
+                        worker_class_name = "SsrfWorkerService"
+                    elif vuln_type == "idor":
+                        worker_class_name = "IdorWorkerService"
+                    
+                    worker_class = getattr(module, worker_class_name)
+                    worker = worker_class()
+
+                    # 構建任務
+                    from services.aiva_common.schemas.tasks import (
+                        FunctionTaskPayload,
+                        FunctionTaskTarget,
+                    )
+
+                    task = FunctionTaskPayload(
+                        task_id=f"task_ai_{vuln_type}_{datetime.now().strftime('%Y%m%d%H%M%S')}",
+                        scan_id=f"scan_ai_{datetime.now().strftime('%Y%m%d%H%M%S')}",
+                        target=FunctionTaskTarget(
+                            url=target,
+                            method="GET",
+                        ),
+                        priority=8 if deep_scan else 5,
+                    )
+
+                    # 執行檢測
+                    logger.info(f"   🎯 執行 {vuln_type.upper()} 檢測...")
+                    detection_result = await worker.process_task(task)
+
+                    # 收集結果
+                    if detection_result:
+                        findings_count = len(detection_result.get("findings", []))
+                        results["vulnerabilities_found"].extend(
+                            detection_result.get("findings", [])
+                        )
+                        results["modules_executed"].append(vuln_type)
+                        results["total_findings"] += findings_count
+                        logger.info(f"   ✅ {vuln_type.upper()}: 發現 {findings_count} 個漏洞")
+
+                except Exception as e:
+                    logger.error(f"   ❌ {vuln_type.upper()} 模組執行失敗: {e}")
+                    results[vuln_type + "_error"] = str(e)
+
+            logger.info(
+                f"✅ AI 控制: 漏洞檢測完成 - 共發現 {results['total_findings']} 個漏洞"
+            )
+
+        except Exception as e:
+            logger.error(f"❌ AI 控制: 漏洞檢測失敗 - {e}", exc_info=True)
+            results["success"] = False
+            results["error"] = str(e)
+
+        return results
 
     async def _learn_from_experience(self, context: dict[str, Any]) -> dict[str, Any]:
         """從經驗中學習
@@ -1038,24 +1160,273 @@ Please provide a comprehensive decision包含:
         }
 
     async def _coordinate_multilang(self, context: dict[str, Any]) -> dict[str, Any]:
-        """協調多語言 AI 模組
+        """協調掃描引擎（Python/TypeScript/Rust/Go）
 
         Args:
-            context: 協調上下文
+            context: 協調上下文 {
+                "targets": list[str],  # 目標列表
+                "scan_strategy": str,  # fast/balanced/comprehensive/aggressive/smart
+                "scan_id": str,  # 掃描 ID
+                "max_depth": int,  # 最大深度
+                "timeout": int,  # 超時時間
+            }
 
         Returns:
-            協調結果
+            掃描結果
         """
-        logger.info("🌐 Coordinating multi-language AI modules...")
+        logger.info("🌐 AI 控制: 協調多引擎掃描...")
 
-        # 使用多語言協調器
-        # TODO: 實際協調邏輯
+        targets = context.get("targets", [])
+        if not targets:
+            return {"success": False, "error": "No targets specified"}
 
-        return {
-            "success": True,
-            "modules_coordinated": ["go", "rust", "typescript"],
-            "tasks_distributed": 0,
-        }
+        strategy = context.get("scan_strategy", "balanced")
+        scan_id = context.get("scan_id", f"scan_ai_{datetime.now().strftime('%Y%m%d%H%M%S')}")
+        max_depth = context.get("max_depth", 3)
+        timeout = context.get("timeout", 600)
+
+        try:
+            # 導入 MultiEngineCoordinator
+            from services.scan.coordinators.multi_engine_coordinator import (
+                MultiEngineCoordinator,
+            )
+
+            # 初始化協調器
+            coordinator = MultiEngineCoordinator()
+            await coordinator.initialize()
+
+            logger.info(f"   🎯 使用策略: {strategy}")
+            logger.info(f"   🎯 目標數量: {len(targets)}")
+
+            # 根據策略選擇執行方法
+            strategy_methods = {
+                "fast": coordinator.execute_strategy_fast,
+                "balanced": coordinator.execute_strategy_balanced,
+                "comprehensive": coordinator.execute_strategy_comprehensive,
+                "aggressive": coordinator.execute_strategy_aggressive,
+                "smart": coordinator.execute_strategy_smart,
+            }
+
+            if strategy not in strategy_methods:
+                logger.warning(f"⚠️ 未知策略 '{strategy}'，使用 'balanced'")
+                strategy = "balanced"
+
+            # 執行掃描
+            scan_method = strategy_methods[strategy]
+            result = await scan_method(
+                scan_id=scan_id,
+                targets=targets,
+                max_depth=max_depth,
+            )
+
+            # 解析結果 (Phase1CompletedPayload 是 Pydantic model)
+            urls_found = result.summary.urls_found if result.summary else 0
+            assets_found = len(result.assets) if result.assets else 0
+            execution_time = result.execution_time if hasattr(result, "execution_time") else 0
+            engines_used = [
+                engine for engine, data in result.engine_results.items()
+                if data.get("status") == "completed"
+            ] if result.engine_results else []
+
+            logger.info(
+                f"✅ AI 控制: 掃描完成 - 發現 {urls_found} 個 URL, {assets_found} 個資產, 耗時 {execution_time:.2f}s"
+            )
+
+            return {
+                "success": True,
+                "scan_id": scan_id,
+                "strategy_used": strategy,
+                "targets_scanned": len(targets),
+                "urls_found": urls_found,
+                "assets_found": assets_found,
+                "execution_time": execution_time,
+                "engines_used": engines_used,
+                "full_result": result,
+            }
+
+        except Exception as e:
+            logger.error(f"❌ AI 控制: 多引擎掃描失敗 - {e}", exc_info=True)
+            return {
+                "success": False,
+                "error": str(e),
+                "scan_id": scan_id,
+            }
+
+    async def _execute_attack(self, context: dict[str, Any]) -> dict[str, Any]:
+        """執行攻擊計畫（調用 AttackExecutor）
+
+        Args:
+            context: 執行上下文 {
+                "plan": dict | AttackPlan,  # 攻擊計畫
+                "target": dict | AttackTarget,  # 攻擊目標
+                "mode": str,  # 執行模式: safe/testing/aggressive
+                "ai_analysis": dict,  # AI 分析結果（可選）
+            }
+
+        Returns:
+            執行結果
+        """
+        logger.info("⚔️ AI 控制: 執行攻擊計畫...")
+
+        plan = context.get("plan")
+        target = context.get("target")
+
+        if not plan or not target:
+            return {"success": False, "error": "Missing plan or target"}
+
+        try:
+            # 導入 AttackExecutor
+            from services.core.aiva_core.core_capabilities.attack.attack_executor import (
+                AttackExecutor,
+                ExecutionMode,
+            )
+
+            # 解析執行模式
+            mode_str = context.get("mode", "testing").lower()
+            mode_map = {
+                "safe": ExecutionMode.SAFE,
+                "testing": ExecutionMode.TESTING,
+                "aggressive": ExecutionMode.AGGRESSIVE,
+            }
+            mode = mode_map.get(mode_str, ExecutionMode.TESTING)
+
+            # 初始化執行器
+            executor = AttackExecutor(
+                mode=mode,
+                max_concurrent=context.get("max_concurrent", 5),
+                timeout=context.get("timeout", 300),
+                safety_enabled=context.get("safety_enabled", True),
+            )
+
+            # 獲取 AI 分析結果
+            ai_analysis = context.get("ai_analysis")
+
+            # 執行攻擊計畫
+            logger.info(f"   🎯 執行模式: {mode.value}")
+            logger.info(f"   🎯 安全檢查: {'啟用' if executor.safety_enabled else '禁用'}")
+
+            execution_result = await executor.execute_plan_with_ai_analysis(
+                plan=plan,
+                target=target,
+                ai_analysis_results=ai_analysis,
+            )
+
+            # 解析結果
+            if hasattr(execution_result, "success"):
+                success = execution_result.success
+                steps_completed = execution_result.steps_completed
+                steps_failed = execution_result.steps_failed
+            else:
+                success = execution_result.get("success", False)
+                steps_completed = execution_result.get("steps_completed", 0)
+                steps_failed = execution_result.get("steps_failed", 0)
+
+            logger.info(
+                f"✅ AI 控制: 攻擊執行完成 - 成功: {success}, "
+                f"完成步驟: {steps_completed}, 失敗步驟: {steps_failed}"
+            )
+
+            return {
+                "success": success,
+                "mode": mode.value,
+                "steps_completed": steps_completed,
+                "steps_failed": steps_failed,
+                "execution_result": execution_result
+                if isinstance(execution_result, dict)
+                else execution_result.__dict__,
+            }
+
+        except Exception as e:
+            logger.error(f"❌ AI 控制: 攻擊執行失敗 - {e}", exc_info=True)
+            return {
+                "success": False,
+                "error": str(e),
+            }
+
+    async def _execute_two_phase_scan(self, context: dict[str, Any]) -> dict[str, Any]:
+        """執行兩階段掃描（調用 TwoPhaseScanOrchestrator）
+
+        Args:
+            context: 掃描上下文 {
+                "targets": list[str],  # 目標列表
+                "trace_id": str,  # 追蹤 ID
+                "max_depth": int,  # Phase1 最大深度
+                "max_urls": int,  # Phase1 最大 URL 數量
+                "broker": AbstractBroker,  # RabbitMQ Broker (必需)
+            }
+
+        Returns:
+            掃描結果
+        """
+        logger.info("🔍 AI 控制: 執行兩階段掃描...")
+
+        targets = context.get("targets", [])
+        if not targets:
+            return {"success": False, "error": "No targets specified"}
+
+        broker = context.get("broker")
+        if not broker:
+            return {
+                "success": False,
+                "error": "RabbitMQ broker is required for two-phase scan",
+            }
+
+        try:
+            # 導入 TwoPhaseScanOrchestrator
+            from services.core.aiva_core.core_capabilities.orchestration.two_phase_scan_orchestrator import (
+                TwoPhaseScanOrchestrator,
+            )
+
+            # 初始化編排器
+            orchestrator = TwoPhaseScanOrchestrator(broker=broker)
+
+            trace_id = context.get("trace_id", f"ai_scan_{datetime.now().strftime('%Y%m%d%H%M%S')}")
+            max_depth = context.get("max_depth", 3)
+            max_urls = context.get("max_urls", 1000)
+
+            logger.info(f"   🎯 目標數量: {len(targets)}")
+            logger.info(f"   🎯 最大深度: {max_depth}")
+            logger.info(f"   🎯 最大 URL: {max_urls}")
+
+            # 執行兩階段掃描
+            result = await orchestrator.execute_two_phase_scan(
+                targets=targets,
+                trace_id=trace_id,
+                max_depth=max_depth,
+                max_urls=max_urls,
+            )
+
+            # 解析結果
+            urls_found = result.summary.urls_found if hasattr(result, "summary") else 0
+            assets_found = len(result.assets) if hasattr(result, "assets") else 0
+            execution_time = (
+                result.execution_time if hasattr(result, "execution_time") else 0
+            )
+
+            logger.info(
+                f"✅ AI 控制: 兩階段掃描完成 - 發現 {urls_found} 個 URL, "
+                f"{assets_found} 個資產, 耗時 {execution_time:.2f}s"
+            )
+
+            return {
+                "success": True,
+                "trace_id": trace_id,
+                "targets_scanned": len(targets),
+                "urls_found": urls_found,
+                "assets_found": assets_found,
+                "execution_time": execution_time,
+                "phase0_summary": result.phase0_summary
+                if hasattr(result, "phase0_summary")
+                else {},
+                "full_result": result.__dict__ if hasattr(result, "__dict__") else result,
+            }
+
+        except Exception as e:
+            logger.error(f"❌ AI 控制: 兩階段掃描失敗 - {e}", exc_info=True)
+            return {
+                "success": False,
+                "error": str(e),
+            }
 
     async def run_training_session(
         self,

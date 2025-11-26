@@ -18,7 +18,7 @@ import json
 import time
 import traceback
 from pathlib import Path
-from typing import Dict, Any, List, Tuple, Optional
+from typing import Dict, Any, List, Optional
 from datetime import datetime
 import logging
 
@@ -29,39 +29,22 @@ sys.path.insert(0, str(project_root))
 # 設置環境變數（簡化版本）
 def setup_environment_variables():
     """
-    設置測試所需的最小環境變數
-    大部分配置使用代碼預設值 (見 defaults.py)
+    設置測試所需的最小環境變數（v2.0 簡化版）
+    v2.0 架構：無需外部服務（RabbitMQ、PostgreSQL）
     """
     env_vars = {
-        # 資料庫配置 (必需)
-        'DATABASE_URL': 'postgresql://aiva:aiva_secure_password@localhost:5432/aiva_test',
-        
-        # 消息隊列配置 (必需)
-        'RABBITMQ_URL': 'amqp://guest:guest@localhost:5672/',
-        
         # 測試環境配置
         'ENVIRONMENT': 'test',
         'LOG_LEVEL': 'DEBUG',  # 測試時需要詳細日誌
-        
-        # 測試專用配置
-        'AUTO_MIGRATE': '0',  # 測試環境手動控制遷移
     }
     
-    print("   🔧 配置測試環境變數...")
+    print("   🔧 配置測試環境變數（v2.0 簡化版）...")
     for key, value in env_vars.items():
         if key not in os.environ:
             os.environ[key] = value
             print(f"      ├─ {key}={value}")
     
-    # 驗證關鍵環境變數
-    critical_vars = ['RABBITMQ_URL', 'DATABASE_URL']
-    for var in critical_vars:
-        if var in os.environ:
-            print(f"      ✅ {var} 已設置")
-        else:
-            print(f"      ❌ {var} 設置失敗")
-    
-    print("   ✅ 環境變數設置完成 (簡化版本，其他使用預設值)")
+    print("   ✅ 環境變數設置完成（v2.0 無需外部服務）")
 
 # 初始化環境變數
 setup_environment_variables()
@@ -109,7 +92,7 @@ class ComprehensiveIntegrationTestSuite:
         print(f"   ⏱️  已執行時間: {elapsed:.1f}s / {self.max_duration_seconds}s")
         if elapsed > self.max_duration_seconds:
             self.timeout_reached = True
-            print(f"   ⏰ 達到時間限制，提前終止")
+            print("   ⏰ 達到時間限制，提前終止")
             return True
         return False
     
@@ -420,104 +403,10 @@ class ComprehensiveIntegrationTestSuite:
         details = {}
         
         # 3.1 測試資料結構對應
-        print("3.1 測試 Python-TypeScript 資料結構對應...")
-        try:
-            # 導入 Python 資料結構
-            from services.aiva_common.schemas import (
-                ExperienceSample, CapabilityInfo, CapabilityScorecard,
-                FindingPayload, VulnerabilityScorecard
-            )
-            
-            # 檢查 TypeScript schemas.ts 中的對應定義
-            schemas_ts_path = self.typescript_dir / "schemas.ts"
-            if schemas_ts_path.exists():
-                schemas_content = schemas_ts_path.read_text(encoding='utf-8')
-                
-                # 檢查關鍵介面定義
-                required_interfaces = [
-                    "interface ExperienceSample",
-                    "interface CapabilityInfo",
-                    "interface CapabilityScorecard", 
-                    "interface FindingPayload",
-                    "interface VulnerabilityScorecard"
-                ]
-                
-                found_interfaces = []
-                missing_interfaces = []
-                
-                for interface in required_interfaces:
-                    if interface in schemas_content:
-                        found_interfaces.append(interface)
-                        print(f"   ✅ {interface} 已定義")
-                    else:
-                        missing_interfaces.append(interface)
-                        print(f"   ❌ {interface} 缺失")
-                
-                details['data_structure_mapping'] = {
-                    "success": len(missing_interfaces) == 0,
-                    "found_interfaces": found_interfaces,
-                    "missing_interfaces": missing_interfaces,
-                    "schema_file_size": len(schemas_content)
-                }
-            else:
-                print("   ❌ TypeScript schemas.ts 文件不存在")
-                details['data_structure_mapping'] = {
-                    "success": False, 
-                    "error": "schemas.ts file not found"
-                }
-                
-        except Exception as e:
-            print(f"   ❌ 資料結構對應測試失敗: {e}")
-            details['data_structure_mapping'] = {"success": False, "error": str(e)}
+        self._test_data_structure_mapping(details)
         
         # 3.2 測試配置一致性
-        print("3.2 測試 Python-TypeScript 配置一致性...")
-        try:
-            # 檢查 Python 性能配置
-            from services.aiva_common.ai.performance_config import (
-                OPTIMIZED_CAPABILITY_EVALUATOR_CONFIG,
-                OPTIMIZED_EXPERIENCE_MANAGER_CONFIG
-            )
-            
-            # 檢查 TypeScript 性能配置
-            perf_config_ts_path = self.typescript_dir / "performance-config.ts"
-            if perf_config_ts_path.exists():
-                ts_config_content = perf_config_ts_path.read_text(encoding='utf-8')
-                
-                # 檢查關鍵配置常數
-                required_configs = [
-                    "OPTIMIZED_CAPABILITY_EVALUATOR_CONFIG",
-                    "OPTIMIZED_EXPERIENCE_MANAGER_CONFIG",
-                    "PerformanceOptimizer"
-                ]
-                
-                config_found = []
-                config_missing = []
-                
-                for config_name in required_configs:
-                    if config_name in ts_config_content:
-                        config_found.append(config_name)
-                        print(f"   ✅ {config_name} 已定義")
-                    else:
-                        config_missing.append(config_name)
-                        print(f"   ❌ {config_name} 缺失")
-                
-                details['config_consistency'] = {
-                    "success": len(config_missing) == 0,
-                    "found_configs": config_found,
-                    "missing_configs": config_missing,
-                    "python_config_keys": list(OPTIMIZED_CAPABILITY_EVALUATOR_CONFIG.keys())
-                }
-            else:
-                print("   ❌ TypeScript performance-config.ts 文件不存在")
-                details['config_consistency'] = {
-                    "success": False,
-                    "error": "performance-config.ts file not found"
-                }
-                
-        except Exception as e:
-            print(f"   ❌ 配置一致性測試失敗: {e}")
-            details['config_consistency'] = {"success": False, "error": str(e)}
+        self._test_config_consistency(details)
         
         # 3.3 測試 API 介面相容性
         print("3.3 測試 API 介面相容性...")
@@ -678,7 +567,7 @@ class ComprehensiveIntegrationTestSuite:
                 probe_type="basic",
                 timestamp=datetime.now()
             )
-            result = await evaluator.evaluate_capability("test_capability", [test_evidence_perf])
+            _ = await evaluator.evaluate_capability("test_capability", [test_evidence_perf])
             eval_time = (time.time() - eval_start) * 1000
             
             # 檢查是否符合基準
@@ -1077,7 +966,7 @@ class ComprehensiveIntegrationTestSuite:
         total_execution_time = sum(result.execution_time for result in self.test_results)
         
         # 顯示詳細結果
-        print(f"\n📋 測試結果詳情:")
+        print("\n📋 測試結果詳情:")
         for i, result in enumerate(self.test_results, 1):
             status_icon = "✅" if result.success else "❌"
             print(f"  {i}. {status_icon} {result.test_name}")
@@ -1086,7 +975,7 @@ class ComprehensiveIntegrationTestSuite:
                 print(f"     錯誤: {result.error}")
         
         # 整體評估
-        print(f"\n🎯 整體測試統計:")
+        print("\n🎯 整體測試統計:")
         print(f"   總測試數: {total_tests}")
         print(f"   成功測試: {successful_tests}")
         print(f"   失敗測試: {failed_tests}")

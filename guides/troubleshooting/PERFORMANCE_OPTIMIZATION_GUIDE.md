@@ -1,4 +1,4 @@
-# AIVA 性能優化配置指南 ✅ 11/10驗證
+# AIVA 性能優化配置指南
 
 > **📋 適用對象**: 開發者、DevOps工程師、性能調優人員  
 > **🎯 使用場景**: IDE性能優化、開發環境調優、多語言項目配置  
@@ -117,7 +117,7 @@
 ## �📁 檔案監控優化
 
 ### 排除目錄
-- Python: `__pycache__`, `.venv`
+- Python: `__pycache__`
 - TypeScript: `node_modules`, `dist`
 - Go: `vendor`, `bin`
 - Rust: `target`, `Cargo.lock`
@@ -184,3 +184,23 @@ cargo check --manifest-path services/scan/info_gatherer_rust/Cargo.toml
 - ✅ 30秒靜默時間後才開始語法檢查
 - ✅ 大幅減少編輯器卡頓和CPU使用
 - ✅ 所有語言都遵循相同的延遲標準
+
+---
+
+## 🔗 相關資源
+
+### 故障排除指南
+- 📖 [導入問題解決](./IMPORT_ISSUES_RESOLUTION_GUIDE.md)
+- 📖 [前向引用修復](./FORWARD_REFERENCE_REPAIR_GUIDE.md)
+- 📖 [性能優化指南](./PERFORMANCE_OPTIMIZATION_GUIDE.md)
+- 📖 [測試重現指南](./TESTING_REPRODUCTION_GUIDE.md)
+
+### 修復指南
+- �� [AI 修復指南](../repairs/AIVA_AI_REPAIR_GUIDE.md)
+
+### 架構指南
+- 📖 [兼容性指南](../architecture/CROSS_LANGUAGE_COMPATIBILITY_GUIDE.md)
+
+### 開發指南
+- 📖 [依賴管理指南](../development/DEPENDENCY_MANAGEMENT_GUIDE.md)
+

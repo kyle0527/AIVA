@@ -81,3 +81,26 @@ services/features/common/go/aiva_common_go/schemas/generated/schemas.go:306:9: u
 - [x] 跨語言 Schema 測試通過
 - [x] 功能測試保持綠色
 - [x] 代碼生成管道產生一致結果
+
+---
+
+## 🔗 相關資源
+
+### 架構指南
+- 📖 [Schema 統一指南](./SCHEMA_GUIDE.md) - Schema 總覽
+- 📖 [Schema 生成指南](./SCHEMA_GENERATION_GUIDE.md) - 自動生成
+- 📖 [Schema 合規指南](./SCHEMA_COMPLIANCE_GUIDE.md) - 驗證規範
+- 📖 [跨語言 Schema 指南](./CROSS_LANGUAGE_SCHEMA_GUIDE.md) - 多語言支持
+- 📖 [跨語言兼容性指南](./CROSS_LANGUAGE_COMPATIBILITY_GUIDE.md) - 兼容性處理
+
+### 開發指南
+- 📖 [Schema 導入指南](../development/SCHEMA_IMPORT_GUIDE.md)
+- 📖 [開發快速指南](../development/DEVELOPMENT_QUICK_START_GUIDE.md)
+
+### 使用者手冊
+- 📚 [AIVA 使用者手冊](../../docs/user_guides/00_general/AIVA_USER_MANUAL.md)
+- 📚 [Core 模組手冊](../../docs/user_guides/01_core/AIVA_CORE_使用者手冊.md)
+
+### 服務文檔
+- 🔧 [Common 模組](../../services/aiva_common/README.md) - Schema 定義
+- 🔧 [Integration 模組](../../services/integration/README.md)

@@ -8,6 +8,6 @@ Integrated with AIVA five-module architecture.
 
 from .detector.ssrf_detector import SSRFDetector
 from .engine.ssrf_engine import SSRFEngine, SSRFIssue
-from .config.ssrf_config import SSRFConfig
+from .config.ssrf_config import SsrfConfig
 
-__all__ = ["SSRFDetector", "SSRFEngine", "SSRFIssue", "SSRFConfig"]
+__all__ = ["SSRFDetector", "SSRFEngine", "SSRFIssue", "SsrfConfig"]

@@ -1,40 +1,40 @@
-# Architecture Guides README ✅ 11/10驗證
+# Architecture Guides README
 
-## 🏗️ Contract-Driven Architecture Hub
+## 🏗️ AIVA v2.0 數據合約架構指南中心
 
-Central hub for AIVA's contract-driven design philosophy and implementation guides. This directory contains essential documentation for understanding and implementing AIVA's revolutionary "Protocol Over Language" architecture.
+AIVA v2.0 數據合約驅動架構的核心指南中心。本目錄包含理解和實現 AIVA 數據合約架構的重要文檔。
 
-**Key Principle**: AI and tools communicate through unified contracts, not language-specific converters. This eliminates the need for complex cross-language transformation layers while maintaining 6.7x performance advantage over traditional Protocol Buffers approaches.
+**核心原則**: 通過統一的數據合約進行通信，無需語言特定的轉換器。這消除了複雜的跨語言轉換層需求，同時保持高性能優勢。
 
-## 📊 Current Architecture Health
+## 📊 當前架構狀態
 
-- **Contract Completion**: 58.3% (Target: 85% by Q2 2025)
-- **Performance Advantage**: 6.7x faster than Protocol Buffers (8,536 vs 1,280 ops/s)
-- **Cross-Language Integration**: Fully operational without converters
-- **Database Health**: 0% (Critical improvement area)
-- **Schema Definitions**: 100% (Excellent foundation)
+- **架構版本**: v2.0 (數據合約驅動)
+- **通信機制**: 直接數據合約（已移除 RabbitMQ）
+- **跨語言整合**: Python/TypeScript/Go/Rust 無縫協作
+- **Schema 定義**: 114 個統一 Schema
+- **模組架構**: 五大程式模組 + 六大核心服務
 
 ## 📖 Architecture Guides
 
-### 🎯 **High Priority - Contract Integration Required**
+### 🎯 **High Priority - Schema Integration Required**
 
-- **[Cross-Language Compatibility Guide](./CROSS_LANGUAGE_COMPATIBILITY_GUIDE.md)** - Multi-language integration strategies
-  - *Integration Need*: Performance benchmark data validation
-  - *Contains*: 43.7% error reduction analysis across Python/TypeScript/Rust/Go
+- **[Cross-Language Compatibility Guide](./CROSS_LANGUAGE_COMPATIBILITY_GUIDE.md)** - 多語言整合策略
+  - *整合需求*: 性能基準數據驗證
+  - *包含*: 跨 Python/TypeScript/Rust/Go 的 43.7% 錯誤減少分析
   
-- **[Cross-Language Schema Guide](./CROSS_LANGUAGE_SCHEMA_GUIDE.md)** - Schema management across languages
-  - *Integration Need*: Contract completion metrics and improvement roadmap
-  - *Contains*: Comprehensive schema synchronization strategies
+- **[Cross-Language Schema Guide](./CROSS_LANGUAGE_SCHEMA_GUIDE.md)** - 跨語言 Schema 管理
+  - *整合需求*: Schema 完成度指標和改進路線圖
+  - *包含*: 全面的 Schema 同步策略
   
-- **[Schema Compliance Guide](./SCHEMA_COMPLIANCE_GUIDE.md)** - Contract validation and compliance
-  - *Integration Need*: Automated compliance checking tools reference
-  - *Contains*: Standards and validation procedures
+- **[Schema Compliance Guide](./SCHEMA_COMPLIANCE_GUIDE.md)** - Schema 驗證和合規性
+  - *整合需求*: 自動化合規性檢查工具參考
+  - *包含*: 標準和驗證程序
 
 ### 🔧 **Standard Architecture Guides**
 
 - **[Cross-Language Schema Sync Guide](./CROSS_LANGUAGE_SCHEMA_SYNC_GUIDE.md)** - Schema synchronization procedures
   - *Purpose*: Automated multi-language schema management
-  - *Use Case*: When adding new contracts or updating existing schemas
+  - *Use Case*: When adding new schemas or updating existing definitions
 
 - **[Schema Generation Guide](./SCHEMA_GENERATION_GUIDE.md)** - Automated schema generation
   - *Purpose*: Code generation from core schema definitions
@@ -48,17 +48,18 @@ Central hub for AIVA's contract-driven design philosophy and implementation guid
 
 ### 📊 **Performance Analysis Tools**
 - **[Performance Benchmark Script](../../aiva_performance_comparison.py)** - Validate architectural decisions
-  - Proves AIVA's JSON approach is 6.7x faster than Protocol Buffers
+  - Proves AIVA's JSON approach provides superior performance
   - Essential for architecture validation and optimization decisions
 
-### 📈 **Contract Health Monitoring**
-- **[Contract Completion Analyzer](../../analyze_contract_completion.py)** - Track system health
-  - Provides quantitative contract adoption metrics (current: 58.3%)
+### 📈 **Schema Health Monitoring**
+- **[Schema Completion Analyzer](../../analyze_contract_completion.py)** - Track system health
+  - Provides quantitative schema adoption metrics
   - Identifies improvement opportunities and tracks progress
 
 ### 📚 **Related Documentation**
-- **[Contract Development Guide](../AIVA_合約開發指南.md)** - Master contract guide (63KB comprehensive resource)
-- **[Contract Integration Report](../AIVA_CONTRACT_ARCHITECTURE_INTEGRATION_REPORT.md)** - Latest integration analysis
+- **[AIVA v2.0 系統架構文檔](../../README.md)** - 完整的 v2.0 架構說明
+- **[Services 架構總覽](../../services/README.md)** - 六大核心服務架構
+- **[跨語言兼容性指南](./CROSS_LANGUAGE_COMPATIBILITY_GUIDE.md)** - 多語言整合
 - **[Cross-Language Best Practices](../../docs/guides/CROSS_LANGUAGE_BEST_PRACTICES.md)** - Implementation standards
 
 ## 🚀 Quick Start for Architecture Work
@@ -76,28 +77,28 @@ Central hub for AIVA's contract-driven design philosophy and implementation guid
 
 ### For Performance Analysis
 1. Use `python ../../aiva_performance_comparison.py` for baseline testing
-2. Compare results against 8,536 ops/s JSON baseline
-3. Document any performance improvements or regressions
+2. 與 JSON 基準性能比較
+3. 記錄任何性能改進或退步
 
-## 📋 Contract Integration Checklist
+## 📋 Schema 整合檢查清單
 
-When working on architecture guides, ensure:
+處理架構指南時，請確保：
 
-- [ ] Performance data references current 6.7x advantage baseline
-- [ ] Contract completion metrics are up-to-date (target: 85%)
-- [ ] Cross-language examples use standard AIVA contracts
-- [ ] Integration tools are properly referenced and functional
-- [ ] Architecture decisions are backed by quantitative analysis
+- [ ] 性能數據參考當前基準
+- [ ] Schema 完成度指標是最新的
+- [ ] 跨語言範例使用標準 AIVA Schema
+- [ ] 整合工具被正確引用且功能正常
+- [ ] 架構決策有定量分析支持
 
-## 🎯 Priority Areas for Enhancement
+## 🎯 優先增強領域
 
-1. **Database Health (0% → 80%)** - Implement contract metrics tracking
-2. **Usage Coverage (33.1% → 60%)** - Systematic adoption program
-3. **Performance Monitoring** - Continuous validation of architectural advantages
-4. **Tool Integration** - Better integration of analysis tools with development workflow
+1. **資料庫健康** - 實現 Schema 指標追蹤
+2. **使用覆蓋率** - 系統化採用計劃
+3. **性能監控** - 持續驗證架構優勢
+4. **工具整合** - 更好地將分析工具整合到開發工作流程
 
 ---
 
 **Maintained by**: AIVA Architecture Team  
-**Last Updated**: November 2, 2025  
-**Integration Status**: High priority for contract-driven architecture implementation
+**Last Updated**: 2025-11-22  
+**Integration Status**: Schema 驅動架構實現的高優先級

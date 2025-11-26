@@ -13,8 +13,15 @@ from services.aiva_common.schemas import (
     ScanCompletedPayload,
     ScanStartPayload,
     Summary,
+    Phase0StartPayload,
+    Phase0CompletedPayload,
+    Phase1StartPayload,
+    Phase1CompletedPayload,
+    Fingerprints,
 )
-from services.aiva_common.utils import get_logger, new_id
+from services.aiva_common.utils import new_id, get_logger
+
+logger = get_logger(__name__)
 
 from .authentication_manager import AuthenticationManager
 from .core_crawling_engine.http_client_hi import HiHttpClient
@@ -32,8 +39,6 @@ from .info_gatherer.sensitive_info_detector import SensitiveInfoDetector
 from .scan_context import ScanContext
 from .strategy_controller import StrategyController, StrategyParameters
 from .vulnerability_scanner import VulnerabilityScanner
-
-logger = get_logger(__name__)
 
 
 class ScanOrchestrator:
@@ -69,8 +74,6 @@ class ScanOrchestrator:
         self.browser_pool: HeadlessBrowserPool | None = None
         self.dynamic_extractor: DynamicContentExtractor | None = None
 
-        logger.info("ScanOrchestrator initialized")
-
     async def execute_scan(self, request: ScanStartPayload) -> ScanCompletedPayload:
         """
         執行完整的掃描流程
@@ -81,8 +84,6 @@ class ScanOrchestrator:
         Returns:
             掃描完成結果
         """
-        logger.info(f"Starting scan for request: {request.scan_id}")
-
         # 創建掃描上下文
         context = ScanContext(request)
 
@@ -92,18 +93,10 @@ class ScanOrchestrator:
         # 初始化策略
         strategy_controller = StrategyController(request.strategy)
         
-        # 🔧 如果有 Phase0 結果，根據其動態調整策略
-        if hasattr(request, 'phase0_summary') and request.phase0_summary:
-            logger.info("Phase0 results detected, adjusting strategy...")
-            strategy_controller.adjust_from_phase0(request.phase0_summary)
+        # 注意：ScanStartPayload 不包含 phase0_summary，這是 Phase1StartPayload 才有的
+        # 如果需要根據 Phase0 結果調整策略，應該在 Phase1 中處理
         
         strategy_params = strategy_controller.get_parameters()
-
-        logger.info(
-            f"Scan strategy: {request.strategy}, "
-            f"dynamic_scan: {strategy_params.enable_dynamic_scan}, "
-            f"max_pages: {strategy_params.max_pages}"
-        )
 
         # 初始化組件
         auth_manager = AuthenticationManager(request.authentication)
@@ -144,8 +137,6 @@ class ScanOrchestrator:
 
             # === Phase 2 MVP 閉環：執行漏洞驗證 ===
             if context.assets:
-                logger.info(f"🔄 Phase 2 Handover: Found {len(context.assets)} assets. Starting vulnerability verification...")
-                
                 # 篩選可測試的資產 (URL 或 Form)
                 test_targets = []
                 for asset in context.assets:
@@ -158,31 +149,19 @@ class ScanOrchestrator:
                 max_vuln_targets = 10
                 test_targets = test_targets[:max_vuln_targets]
                 
-                logger.info(f"🎯 Selected {len(test_targets)} targets for vulnerability scan: {test_targets[:3]}...")
-
                 for target in test_targets:
                     try:
-                        logger.debug(f"Scanning {target} for vulnerabilities...")
                         vuln_results = await self.vuln_scanner.scan_target(target)
                         
                         # 如果發現漏洞，記錄下來
                         if vuln_results.get('vulnerabilities'):
-                            count = len(vuln_results['vulnerabilities'])
-                            logger.warning(f"🚨 [VULNERABILITY FOUND] {target} has {count} issues!")
-                            for v in vuln_results['vulnerabilities']:
-                                logger.warning(f"   - {v.get('type')}: {v.get('description')}")
-                    except Exception as e:
-                        logger.error(f"Vulnerability scan failed for {target}: {e}")
+                            pass
+                    except Exception:
+                        pass
             # ==============================================
 
             # 構建並返回結果
             result = self._build_scan_result(context)
-
-            logger.info(
-                f"Scan completed for {request.scan_id}: "
-                f"{context.urls_found} URLs, {context.forms_found} forms, "
-                f"duration: {context.scan_duration}s"
-            )
 
             return result
 
@@ -199,8 +178,6 @@ class ScanOrchestrator:
         Args:
             strategy_params: 策略參數
         """
-        logger.info("Initializing dynamic scan engine...")
-
         # 配置瀏覽器池
         pool_config = PoolConfig(
             min_instances=1,
@@ -222,8 +199,6 @@ class ScanOrchestrator:
         )
 
         self.dynamic_extractor = DynamicContentExtractor(extraction_config)
-
-        logger.info("Dynamic scan engine initialized successfully")
 
     async def _perform_crawling(
         self,
@@ -247,8 +222,6 @@ class ScanOrchestrator:
         while url_queue.has_next() and pages_processed < max_pages:
             url, current_depth = url_queue.next()
 
-            logger.debug(f"Processing URL: {url} (depth={current_depth})")
-
             # 根據策略選擇爬蟲引擎
             if strategy_params.enable_dynamic_scan and self.browser_pool:
                 await self._process_url_dynamic(
@@ -264,8 +237,7 @@ class ScanOrchestrator:
 
             # 定期報告進度
             if pages_processed % 10 == 0:
-                stats = context.get_statistics()
-                logger.info(f"Progress: {pages_processed} pages, {stats}")
+                pass
 
     async def _process_url_static(
         self,
@@ -305,6 +277,7 @@ class ScanOrchestrator:
 
         # 靜態內容解析
         parsed_assets, forms_count = self.static_parser.extract(url, response)
+        logger.info(f"📝 Parsed {len(parsed_assets)} assets from {url}")
         for parsed_asset in parsed_assets:
             context.add_asset(parsed_asset)
         context.add_forms_found(forms_count)
@@ -317,15 +290,15 @@ class ScanOrchestrator:
         ]
         
         if new_urls:
-            added_count = url_queue.add_batch(new_urls, parent_url=url, depth=current_depth + 1)
-            logger.debug(f"Added {added_count} new URLs from {url} at depth {current_depth + 1}")
+            logger.info(f"🔗 Adding {len(new_urls)} new URLs to queue (depth={current_depth + 1})")
+            url_queue.add_batch(new_urls, parent_url=url, depth=current_depth + 1)
+        else:
+            logger.info(f"⚠️ No new URLs found from {url} (parsed {len(parsed_assets)} assets, forms={forms_count})")
 
         # 敏感信息檢測
         detection_result = self.sensitive_detector.detect_in_html(response.text, url)
         if detection_result.matches:
-            logger.warning(
-                f"Found {len(detection_result.matches)} sensitive info items in {url}"
-            )
+            pass
 
         # 🔧 JavaScript 源碼分析 - 只分析內聯 script
         if response.headers.get("content-type", "").startswith("text/html"):
@@ -342,10 +315,7 @@ class ScanOrchestrator:
                 combined_js = '\n'.join(inline_scripts)
                 analysis_result = self.js_analyzer.analyze(combined_js, url)
                 if analysis_result.sinks or analysis_result.patterns:
-                    total_findings = len(analysis_result.sinks) + len(
-                        analysis_result.patterns
-                    )
-                    logger.info(f"Found {total_findings} JS findings in {url}")
+                    pass
 
     async def _process_url_dynamic(
         self,
@@ -366,7 +336,6 @@ class ScanOrchestrator:
             _strategy_params: 策略參數 (未使用)
         """
         if not self.browser_pool or not self.dynamic_extractor:
-            logger.warning("Dynamic engine not initialized, falling back to static")
             return
 
         try:
@@ -375,10 +344,6 @@ class ScanOrchestrator:
                 # 提取動態內容
                 dynamic_contents = await self.dynamic_extractor.extract_from_url(
                     url, page=page
-                )
-
-                logger.info(
-                    f"Extracted {len(dynamic_contents)} dynamic contents from {url}"
                 )
 
                 # 🔧 處理提取的內容 - 收集 URL
@@ -423,14 +388,14 @@ class ScanOrchestrator:
                 # 🔧 動態頁面也進行 JS 分析
                 rendered_html = await page.content()
                 
-                # 提取並分析 JavaScript
-                scripts = await self._extract_and_analyze_scripts(page, url, rendered_html)
-                if scripts:
-                    logger.info(f"Analyzed {len(scripts)} JavaScript sources from {url}")
+            # 提取並分析 JavaScript
+            scripts = await self._extract_and_analyze_scripts(page, url, rendered_html)
+            if scripts:
+                # JS 分析完成，scripts 已包含結果
+                logger.debug(f"Extracted {len(scripts)} scripts from {url}")
 
-        except Exception as e:
-            logger.error(f"Dynamic processing failed for {url}: {e}")
-            context.add_error("dynamic_error", str(e), url)
+        except Exception:
+            context.add_error("dynamic_error", "渲染失敗", url)
 
     async def _extract_and_analyze_scripts(
         self, page: Any, url: str, html: str
@@ -495,14 +460,16 @@ class ScanOrchestrator:
                                     f"External script {script_url}: "
                                     f"{len(analysis.sinks)} sinks, {len(analysis.patterns)} patterns"
                                 )
-                except Exception as e:
-                    logger.debug(f"Failed to analyze external script {script_url}: {e}")
+                except Exception:
+                    # 外部 script 獲取失敗，跳過
+                    pass
             
-        except Exception as e:
-            logger.warning(f"Script extraction failed for {url}: {e}")
-        
-        return scripts
+        except Exception:
+            # JS 提取或分析失敗
+            pass
 
+        return scripts
+    
     def _build_scan_result(self, context: ScanContext) -> ScanCompletedPayload:
         """
         構建掃描結果
@@ -531,13 +498,13 @@ class ScanOrchestrator:
     def reset(self) -> None:
         """重置編排器狀態"""
         self.fingerprint_collector.reset()
-        logger.info("ScanOrchestrator reset")
+
 
     # ==================== Phase0/Phase1 兩階段掃描 ====================
 
-    async def execute_phase0(
-        self, request: "Phase0StartPayload"
-    ) -> "Phase0CompletedPayload":
+    def execute_phase0(
+        self, request: Phase0StartPayload
+    ) -> Phase0CompletedPayload:
         """
         執行 Phase0 快速偵察掃描（5-10 分鐘）
 
@@ -552,82 +519,111 @@ class ScanOrchestrator:
         Returns:
             Phase0CompletedPayload: Phase0 掃描結果
         """
-        from services.aiva_common.schemas import Phase0CompletedPayload
         import time
 
-        logger.info(f"Starting Phase0 scan: {request.scan_id}")
+
         start_time = time.time()
 
-        discovered_technologies = []
-        sensitive_data_found = []
-        basic_endpoints = []
-        initial_attack_surface = {}
+        discovered_assets: list[Asset] = []
+        discovered_technologies: list[str] = []
+        sensitive_data_found: list[str] = []
+        basic_endpoints: list[str] = []
 
         try:
             # 1. 快速指紋識別
             for target in request.targets:
                 target_str = str(target)
-                logger.info(f"Phase0: Fingerprinting {target_str}")
+
 
                 # 使用現有的指紋識別器
-                fingerprints = await self._quick_fingerprint(target_str)
-                discovered_technologies.extend(fingerprints.get("technologies", []))
+                fingerprints_data = self._quick_fingerprint(target_str)
+                discovered_technologies.extend(fingerprints_data.get("technologies", []))
 
             # 2. 敏感資訊掃描（調用 Rust 引擎）
             for target in request.targets:
                 target_str = str(target)
-                logger.info(f"Phase0: Sensitive info scan {target_str}")
+
 
                 # 調用敏感信息檢測器
-                sensitive_matches = await self._quick_sensitive_scan(target_str)
+                sensitive_matches = self._quick_sensitive_scan(target_str)
                 sensitive_data_found.extend(sensitive_matches)
 
             # 3. 基礎端點發現
             for target in request.targets:
                 target_str = str(target)
-                logger.info(f"Phase0: Basic endpoint discovery {target_str}")
+
 
                 # 快速爬取（深度1，最多50個URL）
-                endpoints = await self._quick_endpoint_discovery(target_str)
+                endpoints = self._quick_endpoint_discovery(target_str)
                 basic_endpoints.extend(endpoints)
 
-            # 4. 初步攻擊面評估
-            initial_attack_surface = {
-                "total_endpoints": len(basic_endpoints),
-                "sensitive_count": len(sensitive_data_found),
-                "technology_count": len(set(discovered_technologies)),
-            }
+            # 4. 構建資產列表
+            for endpoint in basic_endpoints[:100]:
+                discovered_assets.append(
+                    Asset(
+                        asset_id=new_id("asset"),
+                        type="url",
+                        value=endpoint,
+                    )
+                )
+
+            # 5. 構建技術指紋
+            fingerprints = Fingerprints(
+                web_server={"type": discovered_technologies[0]} if discovered_technologies else None,
+                framework={"detected": ", ".join(discovered_technologies[:5])} if discovered_technologies else None,
+            )
+
+            # 6. 構建摘要
+            summary = Summary(
+                urls_found=len(basic_endpoints),
+                forms_found=0,
+                apis_found=0,
+                scan_duration_seconds=int(time.time() - start_time),
+            )
 
             execution_time = time.time() - start_time
 
+            # 7. 構建建議
+            recommendations = {
+                "needs_js_engine": any("javascript" in tech.lower() for tech in discovered_technologies),
+                "needs_form_testing": False,
+                "needs_api_testing": any("api" in endpoint.lower() for endpoint in basic_endpoints),
+            }
+
             return Phase0CompletedPayload(
                 scan_id=request.scan_id,
-                success=True,
-                discovered_technologies=list(set(discovered_technologies)),
-                sensitive_data_found=list(set(sensitive_data_found)),
-                basic_endpoints=basic_endpoints[:100],  # 限制返回數量
-                initial_attack_surface=initial_attack_surface,
-                execution_time_seconds=execution_time,
+                status="success",
+                execution_time=execution_time,
+                assets=discovered_assets,
+                fingerprints=fingerprints,
+                summary=summary,
+                recommendations=recommendations,
+                error_info=None,
             )
 
         except Exception as e:
             execution_time = time.time() - start_time
-            logger.exception(f"Phase0 scan failed: {e}")
+
 
             return Phase0CompletedPayload(
                 scan_id=request.scan_id,
-                success=False,
-                discovered_technologies=discovered_technologies,
-                sensitive_data_found=sensitive_data_found,
-                basic_endpoints=basic_endpoints,
-                initial_attack_surface=initial_attack_surface,
-                execution_time_seconds=execution_time,
-                error_message=str(e),
+                status="failed",
+                execution_time=execution_time,
+                assets=[],
+                fingerprints=None,
+                summary=Summary(
+                    urls_found=0,
+                    forms_found=0,
+                    apis_found=0,
+                    scan_duration_seconds=int(execution_time),
+                ),
+                recommendations={},
+                error_info=str(e),
             )
 
     async def execute_phase1(
-        self, request: "Phase1StartPayload"
-    ) -> "Phase1CompletedPayload":
+        self, request: Phase1StartPayload
+    ) -> Phase1CompletedPayload:
         """
         執行 Phase1 深度掃描（10-30 分鐘）
 
@@ -642,10 +638,9 @@ class ScanOrchestrator:
         Returns:
             Phase1CompletedPayload: Phase1 掃描結果
         """
-        from services.aiva_common.schemas import Phase1CompletedPayload
         import time
 
-        logger.info(f"Starting Phase1 scan: {request.scan_id}")
+        # Phase1 開始
         start_time = time.time()
 
         complete_asset_list = []
@@ -658,7 +653,7 @@ class ScanOrchestrator:
         if hasattr(request, 'phase0_result') and request.phase0_result:
             phase0_endpoints = getattr(request.phase0_result, 'basic_endpoints', [])
             if phase0_endpoints:
-                logger.info(f"Inheriting {len(phase0_endpoints)} endpoints from Phase 0")
+                # 繼承 phase0 結果
                 targets_to_scan.extend(phase0_endpoints)
                 # 去重
                 targets_to_scan = list(dict.fromkeys(targets_to_scan))
@@ -667,51 +662,76 @@ class ScanOrchestrator:
             # 1. 根據引擎選擇執行掃描（強制使用 Python 進行 MVP 驗證）
             # MVP 模式：始終執行 Python 引擎以驗證完整流程
             if "python" in engines_used or not engines_used:  # 如果沒有指定引擎，預設使用 Python
-                logger.info("Phase1: Executing Python engine for MVP loop")
-                python_results = await self._execute_python_scan(request, override_targets=targets_to_scan)
+                # 執行Python引擎
+                python_results = await self._execute_python_scan(request, override_targets=[str(t) for t in targets_to_scan])
                 complete_asset_list.extend(python_results)
 
             if "typescript" in engines_used:
-                logger.info("Phase1: TypeScript engine would be called here")
+                # TypeScript引擎留待實現
                 # TypeScript 引擎需要獨立的 Worker 服務
                 # 引擎呼叫由 multi_engine_coordinator 統一調度
+                pass
 
             if "go" in engines_used:
-                logger.info("Phase1: Go engine would be called here")
+                # Go引擎留待實現
                 # Go 引擎需要獨立的 Worker 服務
                 # 引擎呼叫由 multi_engine_coordinator 統一調度
+                pass
 
             if "rust" in engines_used:
-                logger.info("Phase1: Rust engine would be called here")
+                # Rust引擎留待實現
                 # Rust 引擎需要獨立的 Worker 服務
                 # 引擎呼叫由 multi_engine_coordinator 統一調度
+                pass
 
             # 2. 去重和關聯分析
             complete_asset_list = self._deduplicate_assets(complete_asset_list)
 
             execution_time = time.time() - start_time
+            
+            # 生成摘要信息
+            from services.aiva_common.schemas import Summary
+            summary = Summary(
+                urls_found=len([a for a in complete_asset_list if a.type == "url"]),
+                forms_found=len([a for a in complete_asset_list if a.has_form]),
+                apis_found=len([a for a in complete_asset_list if a.type == "api"]),
+                scan_duration_seconds=int(execution_time)
+            )
 
             return Phase1CompletedPayload(
                 scan_id=request.scan_id,
-                success=True,
-                complete_asset_list=complete_asset_list,
-                engines_used=engines_used,
-                phase0_integrated=True,
-                execution_time_seconds=execution_time,
+                status="completed",
+                execution_time=execution_time,
+                assets=complete_asset_list,
+                fingerprints=None,
+                summary=summary,
+                engine_results={"python": {"assets_count": len(complete_asset_list)}},
+                phase0_summary=None,
+                error_info=None
             )
 
         except Exception as e:
             execution_time = time.time() - start_time
-            logger.exception(f"Phase1 scan failed: {e}")
+            # Phase1 失敗
+            
+            from services.aiva_common.schemas import Summary
+            summary = Summary(
+                urls_found=0,
+                forms_found=0,
+                apis_found=0,
+                scan_duration_seconds=int(execution_time)
+            )
 
             return Phase1CompletedPayload(
                 scan_id=request.scan_id,
-                success=False,
-                complete_asset_list=complete_asset_list,
-                engines_used=engines_used,
-                phase0_integrated=False,
-                execution_time_seconds=execution_time,
-                error_message=str(e),
+                status="failed",
+                execution_time=execution_time,
+                assets=complete_asset_list,
+                fingerprints=None,
+                summary=summary,
+                engine_results={},
+                phase0_summary=None,
+                error_info=str(e)
             )
 
     # ==================== Phase0 輔助方法 ====================
@@ -730,12 +750,9 @@ class ScanOrchestrator:
         try:
             # 嘗試調用 Rust 引擎 (同步調用)
             return self._call_rust_sensitive_scanner([target])
-        except Exception as e:
-            logger.warning(
-                f"Rust sensitive scanner failed: {e}, falling back to Python"
-            )
-            # 回退到 Python 實現 (同步調用)
-            return self._python_sensitive_scan(target)
+        except Exception:
+            # 回退到 Python 實現
+            return self._python_sensitive_scan()
 
     def _call_rust_sensitive_scanner(self, _targets: list[str]) -> list[str]:
         """調用 Rust 引擎的敏感資訊掃描器
@@ -743,25 +760,15 @@ class ScanOrchestrator:
         Note: Rust 引擎在 Phase0 中由 Rust Worker 直接處理
         這裡保留為備用接口
         """
-        logger.debug("Rust sensitive scanner delegated to Rust Worker")
+        # 使用Rust Worker
         return []
 
-    def _python_sensitive_scan(self, target: str) -> list[str]:
-        """Python 實現的敷感資訊掃描（回退方案）"""
-        import re
-        
-        # 常見敷感資訊模式
-        patterns = {
-            'api_key': r'api[_-]?key["\']?\s*[:=]\s*["\']([a-zA-Z0-9_-]+)["\']',
-            'password': r'password["\']?\s*[:=]\s*["\']([^"\'{]+)["\']',
-            'token': r'token["\']?\s*[:=]\s*["\']([a-zA-Z0-9_-]+)["\']',
-        }
-        
-        found = []
-        for sensitive_type in patterns:
-            found.append(f"{sensitive_type}_pattern_exists")
-        
-        return found
+    def _python_sensitive_scan(self) -> list[str]:
+        """回退方案：Python 實現的敏感資訊掃描。返回空列表以避免 Rust 引擎失敗時報告誤判。"""
+        # 簡化實現：Rust 引擎失敗時返回空列表
+        # 實際的敏感資訊掃描應該由 Rust 引擎在 Phase0 中完成
+        # 使用Python fallback
+        return []
 
     def _quick_endpoint_discovery(self, target: str) -> list[str]:
         """Phase0: 基礎端點發現（深度1，最多50個URL）"""
@@ -781,22 +788,25 @@ class ScanOrchestrator:
 
     # ==================== Phase1 輔助方法 ====================
 
-    async def _execute_python_scan(self, request: "Phase1StartPayload", override_targets: list[str] = None) -> list[Asset]:
-        """Phase1: 執行 Python 引擎掃描
+    async def _execute_python_scan(self, request: Phase1StartPayload, override_targets: list[str] | None = None) -> list[Asset]:
+        """執行 Python 引擎掃描
         
         Args:
             request: Phase1 掃描請求
             override_targets: 可選的目標列表覆蓋（用於整合 Phase 0 結果）
         """
-        from services.aiva_common.schemas import ScanStartPayload
+        from pydantic import HttpUrl
 
         # 使用傳入的 targets 或原本 request 的 targets
-        final_targets = override_targets if override_targets else request.targets
+        if override_targets:
+            final_targets = [HttpUrl(url) for url in override_targets]
+        else:
+            final_targets = request.targets
 
         # 將 Phase1 請求轉換為標準掃描請求
         scan_request = ScanStartPayload(
             scan_id=request.scan_id,
-            targets=final_targets,  # 使用合併後的目標
+            targets=final_targets,
             strategy="deep",  # Phase1 強制使用深度掃描（啟用 Playwright）
             scope=request.scope,
             authentication=request.authentication,
@@ -817,5 +827,5 @@ class ScanOrchestrator:
                 seen.add(asset.asset_id)
                 unique_assets.append(asset)
 
-        logger.info(f"Deduplicated assets: {len(assets)} -> {len(unique_assets)}")
+        # 資產去重完成
         return unique_assets

@@ -71,14 +71,14 @@ AIVA-git/
 等待 60 秒，核心服務將包括：
 - ✅ PostgreSQL (數據庫)
 - ✅ Redis (緩存)
-- ✅ RabbitMQ (消息隊列)
+- ⚠️ RabbitMQ (消息佇列 - v2.0已改用命令系統，可選)
 - ✅ Neo4j (圖數據庫)
 - ✅ **AIVA Core AI Service** (核心大腦)
 
 ### 步驟 2: 訪問服務
 打開瀏覽器：
 - 🌐 **AIVA API**: http://localhost:8000/health
-- 🌐 **RabbitMQ 管理**: http://localhost:15672 (guest/guest)
+- 🌐 **RabbitMQ 管理** (可選): http://localhost:15672 (guest/guest)
 - 🌐 **Neo4j 瀏覽器**: http://localhost:7474 (neo4j/aiva123)
 
 ### 步驟 3: 啟動功能組件（按需）
@@ -323,3 +323,26 @@ kubectl autoscale deployment aiva-core --cpu-percent=70 --min=1 --max=3 -n aiva-
 ---
 
 **現在就開始：`.\start-aiva.ps1 -Action core`** 🎯
+
+
+---
+
+## 🔗 相關資源
+
+### 部署指南
+- 📖 [安裝指南](./INSTALLATION_GUIDE.md) - 系統安裝
+- 📖 [環境配置指南](./ENVIRONMENT_CONFIG_GUIDE.md) - 環境設置
+- 📖 [構建指南](./BUILD_GUIDE.md) - 項目構建
+- 📖 [Docker/K8s 指南](./DOCKER_KUBERNETES_GUIDE.md) - 容器化部署
+
+### 開發指南
+- 📖 [開發快速指南](../development/DEVELOPMENT_QUICK_START_GUIDE.md)
+- 📖 [依賴管理指南](../development/DEPENDENCY_MANAGEMENT_GUIDE.md)
+
+### 故障排除
+- 📖 [性能優化指南](../troubleshooting/PERFORMANCE_OPTIMIZATION_GUIDE.md)
+- 📖 [測試重現指南](../troubleshooting/TESTING_REPRODUCTION_GUIDE.md)
+
+### 使用者手冊
+- 📚 [AIVA 使用者手冊](../../docs/user_guides/00_general/AIVA_USER_MANUAL.md)
+

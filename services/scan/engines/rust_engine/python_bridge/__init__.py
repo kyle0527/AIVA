@@ -38,10 +38,10 @@ class RustInfoGatherer:
         
         # Try release build first, then debug build
         possible_paths = [
-            base_dir / "target" / "release" / "info_gatherer_rust.exe",
-            base_dir / "target" / "release" / "info_gatherer_rust",
-            base_dir / "target" / "debug" / "info_gatherer_rust.exe", 
-            base_dir / "target" / "debug" / "info_gatherer_rust",
+            base_dir / "target" / "release" / "aiva-info-gatherer.exe",
+            base_dir / "target" / "release" / "aiva-info-gatherer",
+            base_dir / "target" / "debug" / "aiva-info-gatherer.exe", 
+            base_dir / "target" / "debug" / "aiva-info-gatherer",
         ]
         
         for path in possible_paths:
@@ -161,5 +161,8 @@ class RustInfoGatherer:
 # Create a default instance for easy importing
 rust_info_gatherer = RustInfoGatherer()
 
+# For compatibility with multi_engine_coordinator.py
+RustScanner = RustInfoGatherer
+
 # Export main classes and functions
-__all__ = ['RustInfoGatherer', 'rust_info_gatherer']
+__all__ = ['RustInfoGatherer', 'rust_info_gatherer', 'RustScanner']

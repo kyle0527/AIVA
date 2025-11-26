@@ -34,13 +34,24 @@ from services.aiva_common.schemas import (
 )
 from services.aiva_common.utils import get_logger, new_id
 
-from .cross_user_tester import CrossUserTester, CrossUserTestResult
+# from .cross_user_tester import CrossUserTester, CrossUserTestResult
+# CrossUserTester 模組暫時未實現
+CrossUserTester = None
+CrossUserTestResult = None
 from .resource_id_extractor import ResourceIdExtractor
-from .vertical_escalation_tester import (
-    PrivilegeLevel,
-    VerticalEscalationTester,
-    VerticalTestResult,
-)
+# from .vertical_escalation_tester import (
+#     PrivilegeLevel,
+#     VerticalEscalationTester,
+#     VerticalTestResult,
+# )
+# VerticalEscalationTester 模組暫時未實現
+class PrivilegeLevel:
+    """佔位符類"""
+    USER = "user"
+    ADMIN = "admin"
+
+VerticalEscalationTester = None
+VerticalTestResult = None
 
 logger = get_logger(__name__)
 

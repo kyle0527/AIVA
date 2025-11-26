@@ -1,108 +1,101 @@
 # Troubleshooting Guides README
 
-> **🎯 Bug Bounty 專業化 v6.0**: 疑難排解指南更新，專精動態檢測問題解決  
-> **✅ 系統狀態**: 100% Bug Bounty 就緒，主要問題已解決  
-> **🔄 最後更新**: 2025年11月5日
+> **🎯 v2.0 架構**: 疑難排解指南更新  
+> **✅ 系統狀態**: 主要問題已解決  
+> **🔄 最後更新**: 2025年11月22日
 
-## 🔧 Bug Bounty System Problem Resolution
+## 🔧 AIVA v2.0 系統問題解決
 
-Troubleshooting guides focused on diagnosing and resolving issues related to AIVA's Bug Bounty specialized architecture. These guides provide systematic approaches to identifying and fixing dynamic testing related problems while maintaining system performance and integrity.
+疑難排解指南專注於診斷和解決 AIVA v2.0 數據合約架構相關問題。這些指南提供系統化的方法來識別和修復問題，同時保持系統性能和完整性。
 
-**Troubleshooting Philosophy**: Bug Bounty issues often manifest as compilation failures, module import problems, or dynamic testing compatibility issues. Quick diagnosis and resolution maintain AIVA's 30%+ performance advantage and Bug Bounty readiness.
+**疑難排解哲學**: 快速診斷和解決問題以維持 AIVA 的性能優勢和系統就緒。
 
-## 📊 Bug Bounty System Issues Status (2025-11-05)
+## 📊 AIVA v2.0 系統狀態 (2025-11-22)
 
-Based on latest system analysis and monitoring data:
+基於最新系統分析和監控數據：
 
-- **✅ Go Module Compilation**: 100% resolved (all 4 modules compile successfully)
-- **✅ Python Module Import**: 100% resolved (6/6 core modules import successfully)
-- **✅ Cross-Language Issues**: Resolved (multi-language compilation success)
-- **✅ Rust Cleanup**: Complete (SAST removal cleanup finished)
-- **🔄 TypeScript Dependencies**: In progress (optimization needed)
-- **✅ Testing Framework**: Available (aiva_full_worker_live_test.py)
+- **✅ Go 模組編譯**: 100% 解決（所有模組編譯成功）
+- **✅ Python 模組導入**: 100% 解決（核心模組導入成功）
+- **✅ 跨語言問題**: 已解決（多語言編譯成功）
+- **✅ Rust 清理**: 完成
+- **🔄 TypeScript 依賴**: 進行中（優化需要）
+- **✅ 測試框架**: 可用
 
 ## 📖 Troubleshooting Guides
 
 ### 🚨 **Critical System Issues (High Priority)**
 
-- **[Development Environment Troubleshooting](./DEVELOPMENT_ENVIRONMENT_TROUBLESHOOTING.md)** - Multi-language environment rapid diagnosis
-  - *Contract Integration*: Contract library setup and validation issues
-  - *Verified*: ✅ October 31, 2025 - Real-world testing
-  - *Common Issues*: Schema import failures, contract validation setup problems
+- **[Development Environment Troubleshooting](./DEVELOPMENT_ENVIRONMENT_TROUBLESHOOTING.md)** - 多語言環境快速診斷
+  - *Schema 整合*: Schema 庫設置和驗證問題
+  - *常見問題*: Schema 導入失敗、驗證設置問題
 
-- **[Performance Optimization Guide](./PERFORMANCE_OPTIMIZATION_GUIDE.md)** - Performance optimization configuration
-  - *Contract Integration*: Contract-related performance bottlenecks and optimization
-  - *Target*: Maintain 8,536+ ops/s JSON serialization baseline
-  - *Common Issues*: Contract serialization overhead, validation performance
+- **[Performance Optimization Guide](./PERFORMANCE_OPTIMIZATION_GUIDE.md)** - 性能優化配置
+  - *Schema 整合*: Schema 相關性能瓶頸和優化
+  - *常見問題*: Schema 序列化開銷、驗證性能
 
 ### 🔗 **Schema & Import Issues (Development Critical)**
 
-- **[Forward Reference Repair Guide](./FORWARD_REFERENCE_REPAIR_GUIDE.md)** - Pydantic model repair
-  - *Contract Integration*: Contract definition and import order problems
-  - *Impact*: 43.7% error reduction achieved through systematic repair
-  - *Common Issues*: Circular imports in contract definitions, type resolution
+- **[Forward Reference Repair Guide](./FORWARD_REFERENCE_REPAIR_GUIDE.md)** - Pydantic 模型修復
+  - *Schema 整合*: Schema 定義和導入順序問題
+  - *影響*: 系統化修復實現 43.7% 錯誤減少
+  - *常見問題*: Schema 定義中的循環導入、類型解析
 
-- **[Import Issues Resolution Guide](./IMPORT_ISSUES_RESOLUTION_GUIDE.md)** - Import problem resolution
-  - *Contract Integration*: Contract library import and dependency issues
-  - *Common Issues*: Contract package resolution, cross-language import problems
+- **[Import Issues Resolution Guide](./IMPORT_ISSUES_RESOLUTION_GUIDE.md)** - 導入問題解決
+  - *Schema 整合*: Schema 庫導入和依賴問題
+  - *常見問題*: Schema 包解析、跨語言導入問題
 
 ### 🧪 **Testing & Reproduction (Quality Assurance)**
 
-- **[Testing Reproduction Guide](./TESTING_REPRODUCTION_GUIDE.md)** - Test environment rapid reproduction
-  - *Contract Integration*: Contract validation in test environments
-  - *Use Case*: Reproducing contract-related failures in controlled environments
-  - *Common Issues*: Test data contract compliance, mock contract setup
+- **[Testing Reproduction Guide](./TESTING_REPRODUCTION_GUIDE.md)** - 測試環境快速重現
+  - *Schema 整合*: 測試環境中的 Schema 驗證
+  - *使用場景*: 在受控環境中重現 Schema 相關故障
+  - *常見問題*: 測試數據 Schema 合規性、模擬 Schema 設置
 
-## 🔗 Related Resources
+## 🔗 相關資源
 
-### 📚 **Foundation Documentation**
-- **[Contract Development Guide](../AIVA_合約開發指南.md)** - Comprehensive contract system reference
-- **[Architecture Troubleshooting](../architecture/README.md)** - Architecture-level problem resolution
-- **[Development Guides](../development/README.md)** - Development workflow troubleshooting
+### 📚 **基礎文檔**
+- **[AIVA v2.0 系統架構](../../README.md)** - v2.0 架構總覽
+- **[架構疑難排解](../architecture/README.md)** - 架構級問題解決
+- **[開發指南](../development/README.md)** - 開發流程疑難排解
 
-### 🛠️ **Diagnostic Tools**
-- **[Contract Completion Analyzer](../../analyze_contract_completion.py)** - System health diagnosis
-  - Current status: 58.3% completion with detailed breakdown
-  - Use for: Identifying contract adoption gaps and health issues
-  
-- **[Performance Benchmark Tool](../../aiva_performance_comparison.py)** - Performance problem diagnosis
-  - Baseline validation: 8,536 ops/s JSON vs 1,280 ops/s Protocol Buffers
-  - Use for: Identifying performance regressions and bottlenecks
+### 🛠️ **診斷工具**
+- **[測試框架](../../testing/README.md)** - 系統健康診斷
+- **[工具集](../../tools/README.md)** - 問題診斷工具
 
-### 📊 **Monitoring & Analysis**
-- **[Contract Integration Report](../AIVA_CONTRACT_ARCHITECTURE_INTEGRATION_REPORT.md)** - System-wide analysis
-- **[VS Code Extensions Inventory](../../_out/VSCODE_EXTENSIONS_INVENTORY.md)** - Development tool troubleshooting
+### 📊 **監控與分析**
+- **[Services 架構](../../services/README.md)** - 服務架構分析
+- **[開發工具清單](../../_out/VSCODE_EXTENSIONS_INVENTORY.md)** - 開發工具疑難排解
 
 ## 📋 Troubleshooting Process
 
 ### 🎯 **Quick Diagnosis Checklist**
 
-When encountering contract-related issues:
+When encountering schema-related issues:
 
 1. **Performance Issues**
-   - [ ] Run performance benchmark to compare against 8,536 ops/s baseline
-   - [ ] Check contract validation overhead in problematic operations
+   - [ ] Run performance benchmark to validate system performance
+   - [ ] Check schema validation overhead in problematic operations
    - [ ] Validate JSON serialization performance vs alternatives
 
 2. **Validation Failures**
-   - [ ] Verify contract schema definitions are up-to-date
-   - [ ] Check for circular imports in contract definitions
-   - [ ] Validate data against contract requirements
+   - [ ] Verify schema definitions are up-to-date
+   - [ ] Check for circular imports in schema definitions
+   - [ ] Validate data against schema requirements
 
 3. **Cross-Language Issues**
-   - [ ] Verify contract bindings exist for target languages
-   - [ ] Test contract serialization/deserialization across languages
+   - [ ] Verify schema bindings exist for target languages
+   - [ ] Test schema serialization/deserialization across languages
    - [ ] Check schema synchronization status
 
 4. **Development Environment**
    - [ ] Verify aiva_common installation and import resolution
-   - [ ] Check contract library dependencies
+   - [ ] Check schema library dependencies
    - [ ] Validate development tool configuration
 
 ### 🔍 **Systematic Problem Resolution**
 
 #### Step 1: Issue Classification
-- **Performance**: Slow contract operations, serialization bottlenecks
+- **Performance**: Slow schema operations, serialization bottlenecks
 - **Validation**: Schema validation failures, type mismatches
 - **Integration**: Cross-language compatibility, import issues
 - **Environment**: Development setup, dependency problems
@@ -131,7 +124,7 @@ When encountering contract-related issues:
 1. **Immediate**: Run performance benchmark to quantify impact
 2. **Diagnosis**: Identify contract-related bottlenecks
 3. **Mitigation**: Apply performance optimization techniques
-4. **Validation**: Confirm restoration of 6.7x performance advantage
+4. **Validation**: 確認性能優勢的恢復
 
 ### 🔥 **Contract System Failure**
 1. **Assessment**: Run contract completion analyzer for health status

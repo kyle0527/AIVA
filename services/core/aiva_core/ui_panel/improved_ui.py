@@ -282,12 +282,88 @@ def _build_index_html(dashboard: Dashboard) -> str:
             </div>
 
             <div class="section">
-                <h2>API 端點</h2>
+                <h2>🎯 AI 自主攻擊控制台</h2>
+                <form id="aiAttackForm" onsubmit="startAIAttack(event)" style="margin-bottom: 20px;">
+                    <div style="display: grid; grid-template-columns: 1fr auto; gap: 10px; align-items: end;">
+                        <div>
+                            <label for="targetUrl" style="display: block; margin-bottom: 5px; font-weight: bold;">
+                                目標網址（輸入靶場 URL）
+                            </label>
+                            <input type="url" id="targetUrl" name="targetUrl" class="search-input" 
+                                   placeholder="http://localhost:3000 或 http://localhost:3001" 
+                                   required style="margin: 0;">
+                            <small style="color: #666;">例如: http://localhost:3000 (juice-shop-live)</small>
+                        </div>
+                        <button type="submit" style="padding: 12px 30px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
+                                color: white; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; font-size: 16px;">
+                            🚀 啟動 AI 自主攻擊
+                        </button>
+                    </div>
+                </form>
+                <div id="attackStatus" style="display: none; padding: 15px; background: #e7f3ff; border-left: 4px solid #667eea; border-radius: 4px; margin-bottom: 20px;">
+                    <strong>攻擊狀態:</strong> <span id="statusText">準備中...</span>
+                    <div style="margin-top: 10px;">
+                        <strong>目標:</strong> <span id="currentTarget">-</span>
+                    </div>
+                </div>
+                
+                <h3 style="margin-top: 30px;">📊 API 端點</h3>
                 <a href="/api/stats" class="api-link">統計資訊</a>
                 <a href="/api/tasks" class="api-link">掃描任務</a>
                 <a href="/api/detections" class="api-link">檢測結果</a>
                 <a href="/docs" class="api-link">API 文檔</a>
             </div>
+            
+            <script>
+            async function startAIAttack(event) {{
+                event.preventDefault();
+                const targetUrl = document.getElementById('targetUrl').value;
+                const statusDiv = document.getElementById('attackStatus');
+                const statusText = document.getElementById('statusText');
+                const currentTarget = document.getElementById('currentTarget');
+                
+                // 顯示狀態
+                statusDiv.style.display = 'block';
+                statusText.textContent = 'AI 正在分析目標...';
+                currentTarget.textContent = targetUrl;
+                
+                try {{
+                    // 調用 AI 自主攻擊 API
+                    const response = await fetch('/api/ai/attack', {{
+                        method: 'POST',
+                        headers: {{
+                            'Content-Type': 'application/json',
+                        }},
+                        body: JSON.stringify({{
+                            target_url: targetUrl,
+                            attack_mode: 'full',
+                            use_ai: true
+                        }})
+                    }});
+                    
+                    const result = await response.json();
+                    
+                    if (result.status === 'success') {{
+                        statusText.textContent = '✅ AI 攻擊已啟動！任務ID: ' + result.task_id;
+                        statusDiv.style.background = '#d4edda';
+                        statusDiv.style.borderColor = '#28a745';
+                        
+                        // 5秒後重新載入頁面以顯示新結果
+                        setTimeout(() => {{
+                            window.location.reload();
+                        }}, 3000);
+                    }} else {{
+                        statusText.textContent = '❌ 攻擊失敗: ' + result.message;
+                        statusDiv.style.background = '#f8d7da';
+                        statusDiv.style.borderColor = '#dc3545';
+                    }}
+                }} catch (error) {{
+                    statusText.textContent = '❌ 錯誤: ' + error.message;
+                    statusDiv.style.background = '#f8d7da';
+                    statusDiv.style.borderColor = '#dc3545';
+                }}
+            }}
+            </script>
 
             <div class="section">
                 <h2>掃描任務</h2>
@@ -351,11 +427,12 @@ def _build_index_html(dashboard: Dashboard) -> str:
     return html
 
 
-def create_app(mode: str = "hybrid") -> FastAPI:
+def create_app(mode: str = "ui") -> FastAPI:
     """Create a FastAPI app with the improved UI.
 
     Args:
         mode: Operational mode for the Dashboard (ui/ai/hybrid).
+            預設使用 ui 模式以避免 AICommander 初始化失敗
 
     Returns:
         FastAPI instance ready for serving the UI and API endpoints.
@@ -394,6 +471,34 @@ def create_app(mode: str = "hybrid") -> FastAPI:
     @app.get("/api/ai/history")
     async def api_ai_history() -> list[dict[str, Any]]:
         return dashboard.get_ai_history()
+
+    @app.post("/api/ai/attack")
+    async def api_ai_attack(
+        target_url: str, attack_mode: str = "full", use_ai: bool = True
+    ) -> dict[str, Any]:
+        """AI 自主攻擊端點 - 讓 AI 自動調整程序攻擊指定目標"""
+        try:
+            # 使用 AI 模式創建全面掃描任務
+            result = dashboard.create_scan_task(
+                target_url=target_url,
+                scan_type=attack_mode,
+                use_ai=True  # 強制使用 AI
+            )
+            
+            return {
+                "status": "success",
+                "message": f"AI 已開始自主攻擊目標: {target_url}",
+                "task_id": result.get("task_id"),
+                "target": target_url,
+                "mode": attack_mode,
+                "ai_enabled": True
+            }
+        except Exception as e:
+            return {
+                "status": "error",
+                "message": str(e),
+                "target": target_url
+            }
 
     return app
 

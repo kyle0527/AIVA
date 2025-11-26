@@ -62,17 +62,8 @@ function_*/                 # 功能模組根目錄
 - **推薦版本**: Python 3.10+
 - **支援平台**: Windows, Linux, macOS
 
-### **虛擬環境設置**
+### **套件安裝**
 ```bash
-# 創建虛擬環境
-python -m venv aiva_env
-
-# 啟動虛擬環境
-# Windows
-aiva_env\Scripts\activate
-# Linux/macOS  
-source aiva_env/bin/activate
-
 # 安裝基礎依賴
 pip install --upgrade pip
 pip install -r requirements.txt

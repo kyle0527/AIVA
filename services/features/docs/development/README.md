@@ -185,8 +185,6 @@
 ```bash
 # Python環境
 cd services/features/function_crypto  # 或 function_postex
-python -m venv venv
-source venv/bin/activate  # Windows: venv\Scripts\activate
 pip install -r requirements.txt
 
 # Go環境

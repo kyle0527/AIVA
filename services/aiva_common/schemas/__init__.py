@@ -26,6 +26,18 @@ AIVA Common Schemas Package - Domain-Driven Design (DDD) Architecture
 # ==================== 核心基礎設施 ====================
 # 注意：_base/common.py 已移除重複，統一使用 base.py 中的定義
 
+# ==================== AI 指令系統 ====================
+from .commands import (
+    CommandType,
+    CommandStatus,
+    CommandPriority,
+    AICommand,
+    AICommandResult,
+    AICommandBatch,
+    AICommandBatchResult,
+    CommandContext,
+)
+
 # ==================== 決策數據合約 ====================
 from .decision import (
     IntentType,

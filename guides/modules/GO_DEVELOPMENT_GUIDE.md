@@ -1,4 +1,7 @@
-# AIVA Features - Go 開發指南 🐹 ✅ 11/10驗證 (2025-11-06更新)
+# AIVA Features - Go 開發指南 🐹
+
+> **架構版本**: v2.0  
+> **最後更新**: 2025-11-22
 
 > **定位**: 高效能掃描層、並發處理、大規模檢測  
 > **規模**: 165 個 Go 組件 (6.1%)  
@@ -1023,3 +1026,28 @@ spec:
 **👥 維護團隊**: AIVA Go Development Team
 
 *這是 AIVA Features 模組 Go 組件的完整開發指南，專注於高效能服務、並發處理和雲端安全功能的實現。*
+
+---
+
+## 🔗 相關資源
+
+### 模組開發指南
+- 📖 [Python 開發指南](./PYTHON_DEVELOPMENT_GUIDE.md)
+- 📖 [Go 開發指南](./GO_DEVELOPMENT_GUIDE.md)
+- 📖 [Rust 開發指南](./RUST_DEVELOPMENT_GUIDE.md)
+- 📖 [AI 引擎指南](./AI_ENGINE_GUIDE.md)
+- 📖 [功能模組開發指南](./FEATURE_MODULES_DEVELOPMENT_GUIDE.md)
+- 📖 [模組遷移指南](./MODULE_MIGRATION_GUIDE.md)
+
+### 架構指南
+- 📖 [跨語言 Schema 指南](../architecture/CROSS_LANGUAGE_SCHEMA_GUIDE.md)
+- 📖 [兼容性指南](../architecture/CROSS_LANGUAGE_COMPATIBILITY_GUIDE.md)
+
+### 開發指南
+- 📖 [開發快速指南](../development/DEVELOPMENT_QUICK_START_GUIDE.md)
+- 📖 [依賴管理指南](../development/DEPENDENCY_MANAGEMENT_GUIDE.md)
+
+### 服務文檔
+- 🔧 [Features 模組](../../services/features/README.md)
+- 🔧 [Scan 引擎文檔](../../services/scan/README.md)
+

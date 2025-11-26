@@ -29,7 +29,7 @@
 
 | 項目 | 狀態 | 驗證方式 | 最新驗證 |
 |-----|------|---------|----------|
-| Python 環境 | ✅ 完成 | `.venv/` (Python 3.13.9) | 2025-11-15 ✅ |
+| Python 環境 | ✅ 完成 | Python 3.13.9 (341 個套件) | 2025-11-25 ✅ |
 | 套件安裝 | ✅ 完成 | `pip list \| Select-String "aiva"` | 2025-11-15 ✅ |
 | 核心依賴 | ✅ 完成 | 182 個套件正確安裝 | 2025-11-15 ✅ |
 | Protobuf 生成 | ✅ 完成 | 6 個 pb2.py 文件生成 | 2025-11-15 ✅ |
@@ -120,9 +120,9 @@
 ### 安裝驗證
 
 ```powershell
-# 1. 虛擬環境確認
-& C:/D/fold7/AIVA-git/.venv/Scripts/Activate.ps1
-# ✅ 成功啟動
+# 1. Python 環境確認
+python --version
+# ✅ Python 3.13.9
 
 # 2. 套件確認
 pip list | Select-String "aiva"
@@ -165,7 +165,7 @@ python -c "from aiva_core.ai_engine.tools import CommandExecutor; print('✓')"
 ## 📊 同步確認清單
 
 ### 環境設定
-- [x] Python 虛擬環境已建立
+- [x] Python 全域環境已配置 (3.13.9)
 - [x] pip/setuptools/wheel 已升級
 - [x] 主套件已安裝 (editable mode)
 - [x] 核心依賴已安裝
@@ -188,7 +188,7 @@ python -c "from aiva_core.ai_engine.tools import CommandExecutor; print('✓')"
 ### 配置文件
 - [x] pyproject.toml 驗證通過
 - [x] requirements.txt 驗證通過
-- [x] .venv/ 環境正常運作
+- [x] Python 環境正常運作 (3.13.9, 341 個套件)
 
 ---
 
@@ -198,7 +198,7 @@ python -c "from aiva_core.ai_engine.tools import CommandExecutor; print('✓')"
 
 | 階段 | 完成度 | 說明 |
 |-----|-------|------|
-| 環境配置 | 100% | ✅ .venv 已建立 |
+| 環境配置 | 100% | ✅ Python 3.13.9 全域環境 |
 | 套件安裝 | 100% | ✅ pip install -e . 成功 |
 | 依賴安裝 | 100% | ✅ 所有依賴已安裝 |
 | 文件建立 | 100% | ✅ 4 個文件完成 |
@@ -219,18 +219,15 @@ python -c "from aiva_core.ai_engine.tools import CommandExecutor; print('✓')"
 ### 日常開發流程
 
 ```powershell
-# 1. 啟動虛擬環境
-& C:/D/fold7/AIVA-git/.venv/Scripts/Activate.ps1
-
-# 2. 驗證環境 (可選)
+# 1. 驗證環境 (可選)
 pip list | Select-String "aiva"
 
-# 3. 生成 Protobuf (首次或更新 .proto 後)
+# 2. 生成 Protobuf (首次或更新 .proto 後)
 cd services/aiva_common/protocols
 python generate_proto.py
 cd ../../..
 
-# 4. 開始開發
+# 3. 開始開發
 # 無需重新安裝,直接修改代碼即可
 
 # 5. 執行測試

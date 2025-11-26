@@ -11,14 +11,6 @@ from pydantic import BaseModel
 
 # 導入預設值
 from .defaults import (
-    DB_POOL_SIZE,
-    DB_MAX_OVERFLOW,
-    DB_POOL_TIMEOUT,
-    DB_POOL_RECYCLE,
-    RABBITMQ_PORT,
-    RABBITMQ_VHOST,
-    MQ_EXCHANGE,
-    MQ_DLX,
     ENABLE_PROMETHEUS,
     RATE_LIMIT_RPS,
     RATE_LIMIT_BURST,
@@ -32,56 +24,17 @@ from .defaults import (
 )
 
 
-class DatabaseConfig(BaseModel):
-    """資料庫配置"""
-
-    type: str = os.getenv("DB_TYPE", "hybrid")
-    url: str = "postgresql://postgres:postgres@localhost:5432/aiva_db"
-
-    # PostgreSQL 配置 - 使用簡潔的命名
-    # 研發階段直接使用預設連接字串
-    database_url: str = "postgresql://postgres:postgres@localhost:5432/aiva_db"
-    postgres_user: str = os.getenv("POSTGRES_USER", "aiva")
-    postgres_password: str = os.getenv("POSTGRES_PASSWORD", "aiva_secure_password")
+# ================================
+# ✅ 已移除資料庫配置 (v2.0)
+# ================================
+# v2.0 架構使用本地檔案系統，無需外部資料庫
 
 
-class MessageQueueConfig(BaseModel):
-    """訊息佇列配置 - 遵循 12-factor app 原則"""
-
-    def _get_rabbitmq_url(self):
-        """獲取 RabbitMQ URL"""
-        # 檢查是否為離線模式
-        environment = os.getenv("ENVIRONMENT", "development")
-        if environment == "offline":
-            return "memory://localhost"
-
-        url = os.getenv("RABBITMQ_URL")
-        if url:
-            return url
-
-        # 組合式配置
-        host = os.getenv("RABBITMQ_HOST", "localhost")
-        port = os.getenv("RABBITMQ_PORT", str(RABBITMQ_PORT))
-        user = os.getenv("RABBITMQ_USER")
-        password = os.getenv("RABBITMQ_PASSWORD")
-        vhost = os.getenv("RABBITMQ_VHOST", RABBITMQ_VHOST)
-
-        if not user or not password:
-            # 開發環境提供默認值
-            if environment == "development":
-                return "memory://localhost"
-            return f"amqp://guest:guest@{host}:{port}{vhost}"
-
-        return f"amqp://{user}:{password}@{host}:{port}{vhost}"
-
-    rabbitmq_url: str = ""  # 將在 __post_init__ 中設置
-    exchange_name: str = os.getenv("MQ_EXCHANGE", MQ_EXCHANGE)
-    dlx_name: str = os.getenv("MQ_DLX", MQ_DLX)
-
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-        if not self.rabbitmq_url:
-            self.rabbitmq_url = self._get_rabbitmq_url()
+# ================================
+# ✅ 已移除消息隊列配置 (v2.0)
+# ================================
+# v2.0 架構使用數據合約（AICommand/AICommandResult）
+# 通過命令中心直接調用，無需 RabbitMQ
 
 
 # ================================
@@ -166,10 +119,8 @@ class IntegrationConfig(BaseModel):
 
 
 class UnifiedSettings(BaseModel):
-    """統一配置設定"""
+    """統一配置設定 - v2.0 簡化版"""
 
-    database: DatabaseConfig = DatabaseConfig()
-    message_queue: MessageQueueConfig = MessageQueueConfig()
     security: SecurityConfig = SecurityConfig()
     performance: PerformanceConfig = PerformanceConfig()
     ai: AIConfig = AIConfig()
@@ -187,16 +138,6 @@ class UnifiedSettings(BaseModel):
         os.getenv("ENABLE_PROMETHEUS", str(ENABLE_PROMETHEUS)).lower() == "true"
     )
 
-    # 向後相容屬性
-    @property
-    def rabbitmq_url(self) -> str:
-        return self.message_queue.rabbitmq_url
-
-    @property
-    def postgres_dsn(self) -> str:
-        db = self.database
-        return f"postgresql+asyncpg://{db.postgres_user}:{db.postgres_password}@{db.postgres_host}:{db.postgres_port}/{db.postgres_db}"
-
 
 @lru_cache
 def get_settings() -> UnifiedSettings:
@@ -204,47 +145,8 @@ def get_settings() -> UnifiedSettings:
     return UnifiedSettings()
 
 
-# 向後相容的設定
-class Settings(BaseModel):
-    """Runtime configuration for AIVA platform."""
-
-    def _get_rabbitmq_url_legacy(self) -> str:
-        """獲取 RabbitMQ URL (向後相容版本)"""
-        url = os.getenv("RABBITMQ_URL")
-        if url:
-            return url
-
-        user = os.getenv("RABBITMQ_USER")
-        password = os.getenv("RABBITMQ_PASSWORD")
-        if user and password:
-            host = os.getenv("RABBITMQ_HOST", "localhost")
-            port = os.getenv("RABBITMQ_PORT", "5672")
-            vhost = os.getenv("RABBITMQ_VHOST", "/")
-            return f"amqp://{user}:{password}@{host}:{port}{vhost}"
-
-        raise ValueError("RABBITMQ_URL or RABBITMQ_USER/RABBITMQ_PASSWORD must be set")
-
-    rabbitmq_url: str = ""  # 將在初始化時設置
-    exchange_name: str = os.getenv("MQ_EXCHANGE", MQ_EXCHANGE)
-    dlx_name: str = os.getenv("MQ_DLX", MQ_DLX)
-
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-        if not self.rabbitmq_url:
-            self.rabbitmq_url = self._get_rabbitmq_url_legacy()
-
-    postgres_dsn: str = os.getenv(
-        "DATABASE_URL",
-        "postgresql+asyncpg://aiva:aiva_secure_password@localhost:5432/aiva",
-    )
-
-    jwt_secret: str = os.getenv("JWT_SECRET", "change-me")
-    jwt_algorithm: str = os.getenv("JWT_ALG", "HS256")
-
-    req_per_sec_default: int = int(os.getenv("RATE_LIMIT_RPS", str(RATE_LIMIT_RPS)))
-
-
-@lru_cache
-def get_legacy_settings() -> Settings:
-    """獲取舊版配置（向後相容）"""
-    return Settings()
+# ================================
+# ✅ 已移除舊版配置 (v2.0)
+# ================================
+# v2.0 架構已完全遷移至新配置系統
+# 舊版 Settings 和 get_legacy_settings() 已移除

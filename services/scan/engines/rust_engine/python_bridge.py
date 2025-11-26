@@ -24,10 +24,10 @@ class RustInfoGatherer:
         """查找 Rust 二進制文件"""
         # 檢查可能的 Rust 二進制路徑
         possible_paths = [
-            Path(__file__).parent / "target" / "release" / "rust_scanner.exe",
-            Path(__file__).parent / "target" / "release" / "rust_scanner",
-            Path(__file__).parent / "rust_scanner.exe",
-            Path(__file__).parent / "rust_scanner",
+            Path(__file__).parent / "target" / "release" / "aiva-info-gatherer.exe",
+            Path(__file__).parent / "target" / "release" / "aiva-info-gatherer",
+            Path(__file__).parent / "aiva-info-gatherer.exe",
+            Path(__file__).parent / "aiva-info-gatherer",
         ]
         
         for path in possible_paths:
@@ -100,8 +100,9 @@ class RustInfoGatherer:
             if "timeout" in config:
                 scan_args.extend(["--timeout", str(config["timeout"])])
             
-            if "max_depth" in config:
-                scan_args.extend(["--depth", str(config["max_depth"])])
+            # Rust 使用指南沒有 --depth 參數,移除此行避免 exit code 2
+            # if "max_depth" in config:
+            #     scan_args.extend(["--depth", str(config["max_depth"])])
             
             # 運行 Rust 掃描器
             logger.debug(f"[RustBridge] Running: {' '.join(scan_args)}")
@@ -168,6 +169,20 @@ class RustInfoGatherer:
             results.append(result)
         
         return results
+    
+    async def scan_target_async(self, target_url: str, config: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        異步掃描目標 URL (包裝同步方法)
+        
+        Args:
+            target_url: 目標 URL
+            config: 掃描配置
+            
+        Returns:
+            掃描結果字典
+        """
+        import asyncio
+        return await asyncio.to_thread(self.scan_target, target_url, config)
 
 
 class MockRustInfoGatherer:
@@ -231,6 +246,11 @@ class MockRustInfoGatherer:
     def scan_multiple_targets(self, targets: List[str], config: Dict[str, Any]) -> List[Dict[str, Any]]:
         """模擬多目標掃描"""
         return [self.scan_target(target, config) for target in targets]
+    
+    async def scan_target_async(self, target_url: str, config: Dict[str, Any]) -> Dict[str, Any]:
+        """異步模擬掃描結果"""
+        import asyncio
+        return await asyncio.to_thread(self.scan_target, target_url, config)
 
 
 # 創建全局實例
@@ -243,5 +263,7 @@ except Exception as e:
     logger.error(f"[RustBridge] Failed to initialize: {e}")
     rust_info_gatherer = MockRustInfoGatherer()  # type: ignore
 
+# 為了兼容性，提供 RustScanner 別名
+RustScanner = RustInfoGatherer
 
-__all__ = ["rust_info_gatherer", "RustInfoGatherer", "MockRustInfoGatherer"]
+__all__ = ["rust_info_gatherer", "RustInfoGatherer", "MockRustInfoGatherer", "RustScanner"]

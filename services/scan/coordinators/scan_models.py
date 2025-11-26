@@ -22,7 +22,7 @@ from pydantic import BaseModel, Field
 # ==================== 從 aiva_common 重新導出標準 Schema (避免重複定義) ====================
 
 # 枚舉
-from ...aiva_common.enums import (
+from services.aiva_common.enums import (
     AssetType,
     Confidence,
     Severity,
@@ -31,7 +31,7 @@ from ...aiva_common.enums import (
 )
 
 # 基礎 Schema
-from ...aiva_common.schemas import (
+from services.aiva_common.schemas import (
     Asset,
     Authentication,
     CVEReference,
@@ -46,13 +46,13 @@ from ...aiva_common.schemas import (
 )
 
 # 增強 Schema
-from ...aiva_common.schemas.enhanced import (
+from services.aiva_common.schemas.enhanced import (
     EnhancedScanScope,
     EnhancedScanRequest,
 )
 
 # 資產 Schema
-from ...aiva_common.schemas.assets import (
+from services.aiva_common.schemas.assets import (
     AssetInventoryItem,
     AssetLifecyclePayload,
     DiscoveredAsset,
@@ -60,18 +60,18 @@ from ...aiva_common.schemas.assets import (
 )
 
 # 引用 Schema
-from ...aiva_common.schemas.references import (
+from services.aiva_common.schemas.references import (
     TechnicalFingerprint,
     VulnerabilityDiscovery,
 )
 
 # 任務 Schema
-from ...aiva_common.schemas.tasks import (
+from services.aiva_common.schemas.tasks import (
     EASMDiscoveryPayload,
 )
 
 # 分析 Schema
-from ...aiva_common.schemas.findings import (
+from services.aiva_common.schemas.findings import (
     JavaScriptAnalysisResult,
 )
 

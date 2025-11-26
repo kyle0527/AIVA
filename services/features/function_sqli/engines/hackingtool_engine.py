@@ -50,7 +50,7 @@ class HackingToolDetectionEngine:
         self.integrator = sql_integrator
         self.trace_id = new_id("hackingtool_sqli")
         
-        logger.info("HackingTool SQL 檢測引擎已初始化", trace_id=self.trace_id)
+        logger.info(f"HackingTool SQL 檢測引擎已初始化 [trace_id={self.trace_id}]")
     
     async def detect(self, task: FunctionTaskPayload, client: httpx.AsyncClient) -> List[DetectionResult]:
         """執行 HackingTool SQL 注入檢測"""
@@ -66,7 +66,7 @@ class HackingToolDetectionEngine:
         enabled_tools = self.integrator.get_enabled_tools()
         
         if not enabled_tools:
-            logger.warning("沒有可用的 HackingTool SQL 工具", trace_id=self.trace_id)
+            logger.warning(f"沒有可用的 HackingTool SQL 工具 [trace_id={self.trace_id}]")
             return results
         
         # 並行執行工具檢測
@@ -101,7 +101,7 @@ class HackingToolDetectionEngine:
         
         return results
     
-    async def _run_tool_detection(self, tool_name: str, target: str, task: FunctionTaskPayload) -> List[SqliDetectionResult]:
+    async def _run_tool_detection(self, tool_name: str, target: str, task: FunctionTaskPayload) -> List[DetectionResult]:
         """執行單個工具的檢測"""
         config = HACKINGTOOL_SQL_CONFIGS.get(tool_name)
         if not config:
@@ -126,7 +126,7 @@ class HackingToolDetectionEngine:
             return detection_results
             
         except Exception as e:
-            logger.error(f"工具 {tool_name} 檢測過程異常: {e}", trace_id=self.trace_id)
+            logger.error(f"工具 {tool_name} 檢測過程異常: {e} [trace_id={self.trace_id}]")
             return []
     
     async def _execute_tool(self, tool_name: str, target: str) -> Dict[str, Any]:
@@ -170,7 +170,7 @@ class HackingToolDetectionEngine:
         except Exception as e:
             return {"success": False, "error": str(e)}
     
-    def _parse_tool_output(self, tool_name: str, execution_result: Dict[str, Any], target: str) -> List[SqliDetectionResult]:
+    def _parse_tool_output(self, tool_name: str, execution_result: Dict[str, Any], target: str) -> List[DetectionResult]:
         """解析工具輸出，生成檢測結果"""
         config = HACKINGTOOL_SQL_CONFIGS[tool_name]
         results = []
@@ -211,7 +211,7 @@ class HackingToolDetectionEngine:
         vuln_info: Dict[str, Any], 
         target: str, 
         full_output: str
-    ) -> Optional[SqliDetectionResult]:
+    ) -> Optional[DetectionResult]:
         """創建標準化的檢測結果"""
         
         try:
@@ -280,7 +280,7 @@ class HackingToolDetectionEngine:
             )
             
             # 創建檢測結果
-            result = SqliDetectionResult(
+            result = DetectionResult(
                 is_vulnerable=True,
                 vulnerability=vulnerability,
                 evidence=evidence,
@@ -297,7 +297,7 @@ class HackingToolDetectionEngine:
             return result
             
         except Exception as e:
-            logger.error(f"創建檢測結果時發生錯誤: {e}", trace_id=self.trace_id)
+            logger.error(f"創建檢測結果時發生錯誤: {e} [trace_id={self.trace_id}]")
             return None
     
     def _determine_severity(self, vuln_type: str) -> Severity:
@@ -395,20 +395,20 @@ class HackingToolDetectionEngine:
         
         for tool_name in HACKINGTOOL_SQL_CONFIGS:
             if not self.integrator.check_tool_availability(tool_name):
-                logger.info(f"嘗試安裝工具: {tool_name}", trace_id=self.trace_id)
+                logger.info(f"嘗試安裝工具: {tool_name} [trace_id={self.trace_id}]")
                 
                 success = self.integrator.install_tool(tool_name)
                 installation_results[tool_name] = success
                 
                 if success:
-                    logger.info(f"工具 {tool_name} 安裝成功", trace_id=self.trace_id)
+                    logger.info(f"工具 {tool_name} 安裝成功 [trace_id={self.trace_id}]")
                 else:
-                    logger.error(f"工具 {tool_name} 安裝失敗", trace_id=self.trace_id)
+                    logger.error(f"工具 {tool_name} 安裝失敗 [trace_id={self.trace_id}]")
         
         return installation_results
     
-    def _convert_to_detection_result(self, sqli_result: SqliDetectionResult) -> Optional[DetectionResult]:
-        """將 SqliDetectionResult 轉換為 DetectionResult"""
+    def _convert_to_detection_result(self, sqli_result: DetectionResult) -> Optional[DetectionResult]:
+        """將 DetectionResult 轉換為 DetectionResult（已經是正確類型）"""
         try:
             # 使用正確的 DetectionResult 結構
             detection_result = DetectionResult(
@@ -428,5 +428,5 @@ class HackingToolDetectionEngine:
             return detection_result
             
         except Exception as e:
-            logger.error(f"轉換檢測結果時發生錯誤: {e}", trace_id=self.trace_id)
+            logger.error(f"轉換檢測結果時發生錯誤: {e} [trace_id={self.trace_id}]")
             return None

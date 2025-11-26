@@ -1,0 +1,13 @@
+{
+  "scan_id": "indent_fixed_test",
+  "scanner_type": "ssrf",
+  "status": "success",
+  "execution_time": 1.0992274,
+  "targets_scanned": 1,
+  "requests_made": 0,
+  "success_count": 1,
+  "failure_count": 0,
+  "assets": [],
+  "errors": [],
+  "warnings": []
+}

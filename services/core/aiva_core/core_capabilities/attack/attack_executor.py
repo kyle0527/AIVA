@@ -171,7 +171,8 @@ class AttackExecutor:
 
         logger.info(f"開始執行攻擊計劃: {plan_id}")
 
-        # 安全檢查 - 整合AI風險評估
+        # 安全檢查 - 當沒有 AI 分析結果時使用預設值
+        ai_analysis_results = {}  # 預設空字典
         if self.safety_enabled:
             safety_result = await self._enhanced_safety_check(target, ai_analysis_results)
             if not safety_result["passed"]:

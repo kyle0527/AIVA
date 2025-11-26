@@ -3,9 +3,8 @@
 
 [workspace]
 members = [
-    "services/scan/info_gatherer_rust",
-    "services/features/function_sast_rust",
-    "services/features/common/rust/aiva_common_rust"
+    "services/features/function_crypto/rust_core",
+    "tools/common/development"
 ]
 
 [workspace.dependencies]

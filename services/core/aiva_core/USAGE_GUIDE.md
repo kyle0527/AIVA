@@ -9,10 +9,10 @@
 
 ## ✅ **系統狀態驗證**
 
-**✅ 已完成專案安裝及驗證** (2025-11-14)
+**✅ 已完成專案安裝及驗證** (2025-11-25)
 
-- ✅ Python 虛擬環境: `.venv/` (Python 3.13.9)
-- ✅ 套件: `aiva-platform-integrated 1.0.0` + 182個依賴包
+- ✅ Python 全域環境: Python 3.13.9 (341 個套件)
+- ✅ 套件: `aiva-platform-integrated 1.0.0` + 依賴包
 - ✅ 可編輯模式安裝完成
 - ✅ **系統完整性檢查通過** - 所有核心組件運行正常
 
@@ -24,8 +24,8 @@
 
 **快速驗證**:
 ```powershell
-# 激活虛擬環境
-& C:/D/fold7/AIVA-git/.venv/Scripts/Activate.ps1
+# 檢查 Python 環境
+python --version
 
 # 檢查安裝狀態
 pip list | Select-String "aiva"
@@ -57,19 +57,16 @@ print('✅ AIVA Core 系統完整性驗證通過')
 
 **執行測試的正確方式**:
 ```powershell
-# 1. 激活虛擬環境 (必須!)
-& C:/D/fold7/AIVA-git/.venv/Scripts/Activate.ps1
-
-# 2. 切換到項目根目錄 (重要!)
+# 1. 切換到項目根目錄 (重要!)
 cd C:\D\fold7\AIVA-git
 
-# 3. 執行完整測試套件
+# 2. 執行完整測試套件
 python -m pytest services/core/tests/test_module_explorer.py -v
 
-# 4. 執行單一測試
+# 3. 執行單一測試
 python -m pytest services/core/tests/test_module_explorer.py::TestModuleExplorer::test_initialization -v
 
-# 5. 測試導入是否成功
+# 4. 測試導入是否成功
 python -c "from services.core.aiva_core.ai_engine.module_explorer import ModuleExplorer; print('ModuleExplorer import successful')"
 ```
 
@@ -627,16 +624,13 @@ python -m pytest services/core/tests/test_module_explorer.py -v
 
 ### **開發環境問題**
 
-#### **5. 虛擬環境未激活**
+#### **5. Python 環境檢查**
 ```powershell
-# 檢查是否在虛擬環境中
+# 檢查 Python 環境
 python -c "import sys; print(sys.prefix)"
 
-# 激活虛擬環境
-& C:/D/fold7/AIVA-git/.venv/Scripts/Activate.ps1
-
-# 驗證激活成功 (應顯示 .venv 路徑)
-which python
+# 驗證 Python 路徑
+where python
 ```
 
 ### **AI相關問題**
@@ -744,8 +738,8 @@ AIVA Core使用指南涵蓋了從基礎使用到高級配置的完整流程。�
 
 ### **開發環境檢查** (執行前必檢)
 ```powershell
-# 1. 檢查虛擬環境
-& C:/D/fold7/AIVA-git/.venv/Scripts/Activate.ps1
+# 1. 檢查 Python 環境
+python --version
 python -c "import sys; print('✓ Python:', sys.executable)"
 
 # 2. 檢查工作目錄
@@ -761,7 +755,7 @@ python -m pytest services/core/tests/test_module_explorer.py::TestModuleExplorer
 ```
 
 ### **故障排除檢查清單**
-- [ ] 虛擬環境已激活 (`(.venv)` 顯示在提示符中)
+- [ ] Python 環境正常運作
 - [ ] 工作目錄為項目根目錄 (`C:\D\fold7\AIVA-git`)
 - [ ] Python 版本正確 (>=3.9)
 - [ ] 所有依賴已安裝 (`pip list | Select-String aiva`)

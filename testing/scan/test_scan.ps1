@@ -17,9 +17,6 @@ Write-Host "最大深度:  $MaxDepth" -ForegroundColor Yellow
 Write-Host "最大頁數:  $MaxPages" -ForegroundColor Yellow
 Write-Host ""
 
-# 啟動虛擬環境
-& .\.venv\Scripts\Activate.ps1
-
 # 建立臨時 Python 腳本
 $pythonScript = @"
 import asyncio

@@ -2,9 +2,10 @@
 
 ## 📋 文件資訊
 - **創建日期**: 2025-10-31
-- **最後更新**: 2025-10-31
+- **最後更新**: 2025-11-25
 - **適用場景**: 開發環境配置問題快速診斷
-- **狀態**: ✅ 已驗證 (10/31實測驗證)
+- **Python 環境**: 全域環境 (341 個套件)
+- **狀態**: ✅ 已更新為全域環境配置
 
 ## 🚨 緊急故障排除
 
@@ -17,8 +18,8 @@ node --version
 go version
 rustc --version
 
-# 2. 檢查虛擬環境
-.\.venv\Scripts\python.exe --version
+# 2. 檢查 Python 套件
+python -m pip list | Select-String "aiva-platform-integrated"
 
 # 3. 檢查專案建置
 cd services/features/common/typescript/aiva_common_ts && npm run build
@@ -45,19 +46,22 @@ cd ../function_sast_rust && cargo check
 }
 ```
 
-### 問題 2: Python 路徑錯誤
+### 問題 2: Python 套件缺失
 ```
-❌ Python interpreter not found
+❌ ModuleNotFoundError: No module named 'xxx'
 ```
 
 **診斷命令**:
 ```powershell
-# 檢查虛擬環境是否存在
-Test-Path ".venv\Scripts\python.exe"
+# 檢查 Python 路徑
+python -c "import sys; print(sys.executable)"
 
-# 重新創建虛擬環境
-python -m venv .venv --clear
-.\.venv\Scripts\Activate.ps1
+# 檢查套件是否安裝
+python -m pip list | Select-String "package-name"
+
+# 重新安裝缺少的套件
+pip install -r requirements.txt
+pip install -e .
 ```
 
 ### 問題 3: TypeScript 編譯失敗
@@ -76,26 +80,26 @@ Test-Path "services/features/common/typescript/aiva_common_ts/tsconfig.json"
 
 ## 🐍 Python 環境問題
 
-### 虛擬環境故障
-```powershell
-# 完整重建虛擬環境
-Remove-Item -Recurse -Force .venv -ErrorAction SilentlyContinue
-python -m venv .venv
-.\.venv\Scripts\Activate.ps1
-python -m pip install --upgrade pip
-pip install -r requirements.txt
-```
-
-### 依賴衝突解決
+### 套件依賴問題
 ```powershell
 # 檢查依賴衝突
 pip check
 
 # 重新安裝所有依賴
-pip freeze > temp_requirements.txt
-pip uninstall -y -r temp_requirements.txt
-pip install -r requirements.txt
-Remove-Item temp_requirements.txt
+pip install -r requirements.txt --force-reinstall
+pip install -e . --force-reinstall
+```
+
+### 套件版本衝突解決
+```powershell
+# 檢查特定套件版本
+pip show package-name
+
+# 升級特定套件
+pip install --upgrade package-name
+
+# 降級到指定版本
+pip install package-name==1.2.3
 ```
 
 ## 🔧 TypeScript 環境問題
@@ -181,7 +185,8 @@ Write-Host "=== AIVA 開發環境診斷 ===" -ForegroundColor Cyan
 
 Write-Host "`n🐍 Python 環境:" -ForegroundColor Yellow
 python --version
-Test-Path ".venv\Scripts\python.exe"
+python -c "import sys; print(f'路徑: {sys.executable}')"
+python -m pip list | Select-String "aiva-platform-integrated"
 
 Write-Host "`n🔧 TypeScript 環境:" -ForegroundColor Yellow
 node --version
@@ -250,8 +255,8 @@ Write-Host "`n=== 診斷完成 ===" -ForegroundColor Cyan
 - [ ] VS Code 最新版本安裝
 
 ### 專案配置 ✅
-- [ ] `.venv` 虛擬環境創建成功
 - [ ] `requirements.txt` 依賴安裝完成
+- [ ] `pip install -e .` 專案安裝成功
 - [ ] TypeScript 專案建置成功
 - [ ] Go 模組初始化完成
 - [ ] Rust 專案檢查通過
@@ -271,7 +276,7 @@ Write-Host "`n=== 診斷完成 ===" -ForegroundColor Cyan
 ## 🆘 求助資源
 
 ### 官方文檔
-- [Python 虛擬環境](https://docs.python.org/3/tutorial/venv.html)
+- [Python 套件管理](https://docs.python.org/3/installing/index.html)
 - [TypeScript 配置](https://www.typescriptlang.org/tsconfig)
 - [Go 模組管理](https://golang.org/ref/mod)
 - [Rust Cargo 指南](https://doc.rust-lang.org/cargo/)

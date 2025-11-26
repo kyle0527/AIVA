@@ -1,4 +1,7 @@
-# AIVA 多語言開發環境標準配置指南 ✅ 11/10驗證
+# AIVA 多語言開發環境標準配置指南
+
+> **架構版本**: v2.0  
+> **最後更新**: 2025-11-22
 
 ## 📋 文件資訊
 - **創建日期**: 2025-10-31
@@ -24,7 +27,7 @@
   // 🎯 基本 Python 環境設定
   "python.testing.pytestEnabled": true,
   "python.testing.unittestEnabled": false,
-  "python.defaultInterpreterPath": "${workspaceFolder}/.venv/Scripts/python.exe",
+  "python.defaultInterpreterPath": "python",
   "python.envFile": "${workspaceFolder}/.env",
 
   // 🐍 Python/Pylance 最佳化設定
@@ -105,7 +108,6 @@
   "files.watcherExclude": {
     "**/.git/**": true,
     "**/node_modules/**": true,
-    "**/.venv/**": true,
     "**/__pycache__/**": true,
     "**/target/**": true,
     "**/dist/**": true,
@@ -120,7 +122,6 @@
   "search.exclude": {
     "**/.git": true,
     "**/node_modules": true,
-    "**/.venv": true,
     "**/__pycache__": true,
     "**/target": true,
     "**/dist": true,
@@ -161,16 +162,16 @@
 
 ## 🐍 Python 環境標準
 
-### 1. 虛擬環境設定
+### 1. 全域 Python 環境
 ```powershell
-# 創建虛擬環境
-python -m venv .venv
-
-# 啟動虛擬環境 (Windows)
-.venv\Scripts\Activate.ps1
-
 # 升級 pip
 python -m pip install --upgrade pip
+
+# 安裝專案依賴到全域
+pip install -r requirements.txt
+
+# 安裝專案本身 (可編輯模式)
+pip install -e .
 ```
 
 ### 2. 核心依賴管理
@@ -203,7 +204,6 @@ disallow_untyped_defs = True
   ],
   "exclude": [
     "**/__pycache__",
-    "**/.venv",
     "**/node_modules",
     "**/target"
   ],
@@ -428,9 +428,9 @@ cargo clippy
    - 移除已廢棄的設定選項 (如 `experimentalWorkspaceModule`)
    - 確保 tsconfig.json 路徑正確
 
-2. **Python 虛擬環境問題**
-   - 確認 `.venv/Scripts/python.exe` 路徑存在
-   - 重新創建虛擬環境如果損壞
+2. **Python 套件問題**
+   - 確認 Python 在系統 PATH 中
+   - 重新安裝套件: `pip install -r requirements.txt --force-reinstall`
 
 3. **Go 模組問題**
    - 運行 `go mod tidy` 清理依賴

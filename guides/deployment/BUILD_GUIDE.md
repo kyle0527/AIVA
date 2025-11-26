@@ -1,4 +1,4 @@
-# AIVA 構建流程操作指南 ✅ 11/10驗證 (10/31實測驗證)
+# AIVA 構建流程操作指南
 
 > **📋 適用對象**: DevOps工程師、部署人員、容器化專家  
 > **🎯 使用場景**: Docker映像建立、微服務部署、生產環境構建  
@@ -366,3 +366,26 @@ jobs:
 - 內部文檔: [Docker 指南](docker/DOCKER_GUIDE.md)
 
 *最後更新: 2025-10-30*
+
+---
+
+## 🔗 相關資源
+
+### 安裝與部署
+- 📖 [系統安裝指南](./SYSTEM_INSTALLATION_GUIDE.md) - 完整生產環境安裝
+- 📖 [生產環境故障排除指南](../troubleshooting/PRODUCTION_TROUBLESHOOTING_GUIDE.md) - 運行時問題解決
+- 📖 [Docker/K8s 指南](./DOCKER_KUBERNETES_GUIDE.md) - 容器化部署
+- 📖 [部署檢查清單](../../docs/DEPLOYMENT_CHECKLIST.md) - 部署前檢查
+
+### 開發環境
+- 📖 [Python 開發環境安裝](./INSTALLATION_GUIDE.md) - 全域環境與可編輯安裝
+- 📖 [開發快速指南](../development/DEVELOPMENT_QUICK_START_GUIDE.md)
+- 📖 [依賴管理指南](../development/DEPENDENCY_MANAGEMENT_GUIDE.md)
+
+### 故障排除
+- 📖 [性能優化指南](../troubleshooting/PERFORMANCE_OPTIMIZATION_GUIDE.md)
+- 📖 [測試重現指南](../troubleshooting/TESTING_REPRODUCTION_GUIDE.md)
+
+### 使用者手冊
+- 📚 [AIVA 使用者手冊](../../docs/user_guides/00_general/AIVA_USER_MANUAL.md)
+

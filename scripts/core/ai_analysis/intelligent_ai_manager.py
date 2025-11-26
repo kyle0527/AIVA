@@ -13,7 +13,6 @@ AIVA 智能AI組件管理器 v3.0
 
 import os
 import sys
-import json
 import time
 import locale
 import logging
@@ -22,7 +21,7 @@ import subprocess
 import requests
 from pathlib import Path
 from datetime import datetime, timedelta
-from typing import Dict, List, Optional, Any, Tuple
+from typing import Dict, List, Optional
 from dataclasses import dataclass
 from enum import Enum
 
@@ -114,24 +113,11 @@ class IntelligentAIManager:
         self.logger = logging.getLogger('IntelligentAIManager')
     
     def setup_production_environment(self):
-        """設置生產環境變數（智能配置）"""
+        """設置生產環境變數（v2.0 簡化版）"""
+        # v2.0 架構：移除 RabbitMQ、PostgreSQL、Redis、Neo4j 等外部依賴
+        # 只保留必要的編碼配置
         production_defaults = {
             'ENVIRONMENT': 'production',
-            'RABBITMQ_HOST': 'localhost',
-            'RABBITMQ_PORT': '5672',
-            'RABBITMQ_USER': 'guest',
-            'RABBITMQ_PASSWORD': 'guest',
-            'POSTGRES_HOST': 'localhost',
-            'POSTGRES_PORT': '5432',
-            'POSTGRES_USER': 'postgres',
-            'POSTGRES_PASSWORD': 'aiva123',
-            'AIVA_POSTGRES_DB': 'aiva_db',
-            'AIVA_REDIS_HOST': 'localhost',
-            'AIVA_REDIS_PORT': '6379',
-            'AIVA_NEO4J_HOST': 'localhost',
-            'AIVA_NEO4J_PORT': '7687',
-            'AIVA_NEO4J_USER': 'neo4j',
-            'AIVA_NEO4J_PASSWORD': 'aiva123',
             'PYTHONIOENCODING': self.system_encoding
         }
         
@@ -139,12 +125,7 @@ class IntelligentAIManager:
             if key not in os.environ:
                 os.environ[key] = value
         
-        # 生成RabbitMQ URL
-        rabbitmq_url = f"amqp://{os.environ['RABBITMQ_USER']}:{os.environ['RABBITMQ_PASSWORD']}@{os.environ['RABBITMQ_HOST']}:{os.environ['RABBITMQ_PORT']}/"
-        os.environ.setdefault('RABBITMQ_URL', rabbitmq_url)
-        
-        self.logger.info("智能環境變數配置完成")
-        self.logger.info(f"RabbitMQ URL: {rabbitmq_url}")
+        self.logger.info("智能環境變數配置完成（v2.0 簡化版）")
     
     def create_safe_process(self, cmd: List[str]) -> Optional[subprocess.Popen]:
         """創建安全的子進程"""
@@ -183,7 +164,8 @@ class IntelligentAIManager:
             try:
                 response = requests.get(component.health_check_url, timeout=5)
                 return response.status_code == 200
-            except:
+            except Exception as e:
+                self.logger.debug(f"Health check failed for {component.name}: {e}")
                 return False
         
         # 對於核心服務，檢查是否已經運行足夠長時間（避免立即重啟）
@@ -240,8 +222,8 @@ class IntelligentAIManager:
             try:
                 stdout, stderr = process.communicate(timeout=1)
                 error_info = stderr or stdout or "未知錯誤"
-            except:
-                error_info = "進程啟動後立即終止"
+            except subprocess.TimeoutExpired as e:
+                error_info = f"進程啟動後立即終止: {e}"
             
             component_info.status = ComponentStatus.ERROR
             component_info.last_error = error_info[:200]  # 限制錯誤信息長度
@@ -393,9 +375,31 @@ class IntelligentAIManager:
                     optional_success += 1
         
         self.logger.info(f"可選組件啟動完成: {optional_success}/{optional_total}")
-        self.logger.info(f"系統已準備就緒 - 核心服務正常運行")
+        self.logger.info("系統已準備就緒 - 核心服務正常運行")
         
         return True
+    
+    def _handle_unhealthy_component(self, name: str, component: ComponentInfo):
+        """處理不健康的組件"""
+        self.logger.warning(f"組件 {name} 健康檢查失敗")
+        
+        # 核心組件自動重啟，可選組件禁用
+        if component.component_type == ComponentType.CORE:
+            if component.restart_count < component.max_restarts:
+                self.logger.info(f"重啟核心組件 {name}")
+                self.restart_component(name)
+            else:
+                self.logger.error(f"核心組件 {name} 重啟次數過多，系統可能有問題")
+        else:
+            self.logger.info(f"禁用有問題的可選組件 {name}")
+            component.status = ComponentStatus.DISABLED
+    
+    def _check_all_components_health(self):
+        """檢查所有組件健康狀態"""
+        for name, component in self.components.items():
+            if component.status == ComponentStatus.RUNNING:
+                if not self.check_service_health(component):
+                    self._handle_unhealthy_component(name, component)
     
     def monitor_components(self):
         """智能組件監控"""
@@ -405,26 +409,8 @@ class IntelligentAIManager:
             try:
                 # 每30秒進行一次健康檢查
                 time.sleep(30)
-                
-                for name, component in self.components.items():
-                    if component.status == ComponentStatus.RUNNING:
-                        if not self.check_service_health(component):
-                            self.logger.warning(f"組件 {name} 健康檢查失敗")
-                            
-                            # 核心組件自動重啟，可選組件禁用
-                            if component.component_type == ComponentType.CORE:
-                                if component.restart_count < component.max_restarts:
-                                    self.logger.info(f"重啟核心組件 {name}")
-                                    self.restart_component(name)
-                                else:
-                                    self.logger.error(f"核心組件 {name} 重啟次數過多，系統可能有問題")
-                            else:
-                                self.logger.info(f"禁用有問題的可選組件 {name}")
-                                component.status = ComponentStatus.DISABLED
-                
-                # 狀態報告
+                self._check_all_components_health()
                 self.print_status_summary()
-                
             except Exception as e:
                 self.logger.error(f"監控循環錯誤: {e}")
     
@@ -452,7 +438,7 @@ class IntelligentAIManager:
         """停止所有組件"""
         self.logger.info("停止所有組件...")
         
-        for name in list(self.components.keys()):
+        for name in self.components.keys():
             self.stop_component(name)
         
         self.logger.info("所有組件已停止")

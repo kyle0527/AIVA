@@ -15,11 +15,9 @@ from datetime import datetime
 from typing import Dict, List, Any
 
 # 設置離線模式環境變數
+# v2.0 架構：無需設置 RabbitMQ 環境變數
 if not os.getenv("ENVIRONMENT"):
     os.environ["ENVIRONMENT"] = "offline"
-    os.environ["RABBITMQ_URL"] = "memory://localhost"
-    os.environ["RABBITMQ_USER"] = "offline"
-    os.environ["RABBITMQ_PASSWORD"] = "offline"
 
 # 確保路徑正確
 sys.path.insert(0, str(Path(__file__).parent))

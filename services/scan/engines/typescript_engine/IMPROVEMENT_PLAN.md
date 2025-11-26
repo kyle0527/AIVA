@@ -553,7 +553,7 @@ await broker.publish(
 - [ ] `npm run build` 編譯成功
 - [ ] Playwright 瀏覽器已安裝（`npm run install:browsers`）
 - [ ] RabbitMQ 運行中
-- [ ] Python 虛擬環境已激活
+- [ ] Python 環境已配置
 - [ ] AIVA Common 可導入
 
 **修復完成後驗證**:

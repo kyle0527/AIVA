@@ -80,19 +80,35 @@ class ExperienceManager:
     - 與 RAG 整合進行經驗檢索和相似度匹配
     """
     
-    def __init__(self, capacity: int = 10000):
+    def __init__(
+        self,
+        capacity: int = 10000,
+        auto_persist: bool = True,
+        persist_batch_size: int = 100,
+        unified_manager=None,
+    ):
         """初始化經驗管理器
         
         Args:
             capacity: 經驗緩衝區容量 (預設 10000)
+            auto_persist: 是否自動持久化到整合模組資料庫
+            persist_batch_size: 自動持久化的批次大小
+            unified_manager: UnifiedDataManager 實例（用於持久化）
         """
         self.capacity = capacity
         self.memory: Deque[ExperienceTransition] = deque(maxlen=capacity)
         self._total_experiences = 0
         self._total_reward = 0.0
         
+        # 整合模組連接
+        self.auto_persist = auto_persist
+        self.persist_batch_size = persist_batch_size
+        self.unified_manager = unified_manager
+        self._pending_persist_count = 0
+        
         logger.info(
-            f"ExperienceManager initialized with capacity={capacity}"
+            f"ExperienceManager initialized with capacity={capacity}, "
+            f"auto_persist={auto_persist}"
         )
     
     def push(
@@ -136,13 +152,129 @@ class ExperienceManager:
         self.memory.append(transition)
         self._total_experiences += 1
         self._total_reward += reward
+        self._pending_persist_count += 1
         
         logger.debug(
             f"Saved experience {transition.experience_id} "
             f"(reward: {reward:.2f}, buffer size: {len(self.memory)})"
         )
         
+        # 自動持久化到整合模組
+        if (
+            self.auto_persist
+            and self.unified_manager
+            and self._pending_persist_count >= self.persist_batch_size
+        ):
+            self._persist_to_integration()
+        
         return transition.experience_id
+    
+    def _persist_to_integration(self) -> None:
+        """持久化經驗到整合模組資料庫
+        
+        將記憶體中的高品質經驗批次保存到 UnifiedDataManager
+        """
+        if not self.unified_manager:
+            logger.warning("UnifiedDataManager not configured, skipping persist")
+            return
+        
+        try:
+            # 採樣高品質經驗進行持久化
+            high_quality = [
+                exp for exp in self.memory
+                if exp.reward >= 0.6  # 最低品質閾值
+            ]
+            
+            # 批次保存到整合模組
+            saved_count = 0
+            for exp in high_quality[-self.persist_batch_size:]:
+                try:
+                    self.unified_manager.save_attack_experience(
+                        plan_id=exp.metadata.get("plan_id", f"plan_{exp.experience_id}"),
+                        attack_type=exp.action.get("type", "unknown"),
+                        ast_graph=exp.state.get("ast", {}),
+                        execution_trace={
+                            "state_before": exp.state,
+                            "action": exp.action,
+                            "state_after": exp.next_state,
+                        },
+                        metrics={"overall_score": exp.reward},
+                        feedback={"reward": exp.reward, "metadata": exp.metadata},
+                        target_info=exp.state.get("target_info"),
+                        metadata=exp.metadata,
+                    )
+                    saved_count += 1
+                except Exception as e:
+                    logger.error(f"Failed to persist experience {exp.experience_id}: {e}")
+            
+            self._pending_persist_count = 0
+            logger.info(f"Persisted {saved_count}/{len(high_quality)} experiences to integration module")
+            
+        except Exception as e:
+            logger.error(f"Failed to persist batch: {e}")
+    
+    def load_from_integration(
+        self,
+        attack_type: str | None = None,
+        min_score: float = 0.7,
+        limit: int = 100,
+    ) -> int:
+        """從整合模組載入歷史經驗到記憶體
+        
+        用於跨會話共享經驗或初始化訓練
+        
+        Args:
+            attack_type: 攻擊類型過濾
+            min_score: 最低分數閾值
+            limit: 載入數量限制
+        
+        Returns:
+            實際載入的經驗數量
+        """
+        if not self.unified_manager:
+            logger.warning("UnifiedDataManager not configured, cannot load")
+            return 0
+        
+        try:
+            # 從整合模組查詢高品質經驗
+            records = self.unified_manager.query_high_quality_experiences(
+                attack_type=attack_type,
+                min_score=min_score,
+                limit=limit,
+            )
+            
+            # 轉換並加載到記憶體
+            loaded_count = 0
+            for record in records:
+                try:
+                    # 重建 ExperienceTransition
+                    trace = record.execution_trace or {}
+                    self.push(
+                        state=trace.get("state_before", {}),
+                        action=trace.get("action", {}),
+                        next_state=trace.get("state_after", {}),
+                        reward=record.overall_score or 0.0,
+                        metadata={
+                            "plan_id": record.plan_id,
+                            "attack_type": record.attack_type,
+                            "loaded_from_db": True,
+                            "original_created_at": record.created_at.isoformat() if record.created_at else None,
+                        },
+                    )
+                    loaded_count += 1
+                except Exception as e:
+                    logger.error(f"Failed to load experience {record.id}: {e}")
+            
+            logger.info(
+                f"Loaded {loaded_count}/{len(records)} experiences from integration module "
+                f"(type={attack_type}, min_score={min_score})"
+            )
+            
+            return loaded_count
+            
+        except Exception as e:
+            logger.error(f"Failed to load from integration: {e}")
+            return 0
     
     def sample(self, batch_size: int) -> list[ExperienceTransition]:
         """隨機採樣經驗批次
@@ -304,6 +436,97 @@ class ExperienceManager:
             f"buffer_size={len(self.memory)}, "
             f"avg_reward={stats['avg_reward']:.2f})"
         )
+    
+    def add_sample(self, sample: Any) -> str:
+        """添加經驗樣本（TrainingOrchestrator 整合點）
+        
+        這是與 TrainingOrchestrator 的橋接方法，接收 ExperienceSample 對象
+        並轉換為 ExperienceTransition 格式保存。
+        
+        Args:
+            sample: ExperienceSample 對象（來自 TrainingOrchestrator）
+        
+        Returns:
+            experience_id: 經驗唯一識別碼
+        
+        Example:
+            >>> # 在 TrainingOrchestrator 中使用
+            >>> for sample in samples:
+            >>>     self.experience_manager.add_sample(sample)
+        """
+        from services.aiva_common.schemas import ExperienceSample
+        
+        # 檢查類型
+        if not isinstance(sample, ExperienceSample):
+            logger.warning(f"Expected ExperienceSample, got {type(sample).__name__}")
+            # 嘗試轉換
+            if hasattr(sample, 'state_before') and hasattr(sample, 'action_taken'):
+                pass  # 繼續處理
+            else:
+                raise TypeError(f"Cannot convert {type(sample).__name__} to ExperienceTransition")
+        
+        # 轉換 ExperienceSample → ExperienceTransition
+        experience_id = self.push(
+            state=sample.state_before,
+            action=sample.action_taken,
+            next_state=sample.state_after,
+            reward=sample.reward,
+            metadata={
+                "sample_id": sample.sample_id,
+                "session_id": sample.session_id,
+                "plan_id": sample.plan_id,
+                "quality_score": sample.quality_score,
+                "is_positive": sample.is_positive,
+                "confidence": sample.confidence,
+                "learning_tags": sample.learning_tags,
+                "difficulty_level": sample.difficulty_level,
+                "timestamp": sample.timestamp.isoformat() if hasattr(sample.timestamp, 'isoformat') else str(sample.timestamp),
+                "duration_ms": sample.duration_ms,
+                "reward_breakdown": sample.reward_breakdown,
+                "context": sample.context,
+                "target_info": sample.target_info,
+            }
+        )
+        
+        logger.debug(f"Converted ExperienceSample {sample.sample_id} → ExperienceTransition {experience_id}")
+        
+        return experience_id
+    
+    def get_high_quality_samples(
+        self,
+        min_quality: float = 0.6,
+        limit: int = 1000,
+    ) -> list[ExperienceTransition]:
+        """獲取高質量樣本（用於訓練）
+        
+        Args:
+            min_quality: 最低質量閾值
+            limit: 最大返回數量
+        
+        Returns:
+            高質量經驗轉換列表
+        """
+        # 過濾高質量經驗（基於獎勵值）
+        high_quality = [
+            exp for exp in self.memory
+            if exp.reward >= min_quality
+        ]
+        
+        # 按獎勵值降序排序
+        sorted_experiences = sorted(
+            high_quality,
+            key=lambda x: x.reward,
+            reverse=True,
+        )
+        
+        result = sorted_experiences[:limit]
+        
+        logger.info(
+            f"Retrieved {len(result)} high-quality samples "
+            f"(min_quality={min_quality}, total_available={len(high_quality)})"
+        )
+        
+        return result
 
 
 # ==================== 整合示例 ====================

@@ -98,6 +98,15 @@ class AISubsystemController:
 
             # 3. 記錄決策（與主控制器共享）
             self._record_specialized_decision(user_input, task_analysis, result)
+        except Exception as e:
+            # 根據 Python 最佳實踐：捕獲異常並記錄詳細錯誤信息
+            logger.error(f"❌ AI 決策處理失敗: {e}", exc_info=True)
+            result = {
+                "status": "error",
+                "error_type": type(e).__name__,
+                "message": str(e),
+                "fallback": "使用默認處理策略"
+            }
 
         # 4. 🔌 插件化摘要生成
         if self.summary_plugin and self.summary_plugin.is_enabled():

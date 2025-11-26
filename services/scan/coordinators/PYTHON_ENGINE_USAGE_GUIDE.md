@@ -1,821 +1,1070 @@
-# Python Engine 使用指南
+# 🐍 Python Engine 使用指南
 
-> **文檔目的**: 說明如何通過協調器使用 Python Engine 進行掃描  
-> **適用角色**: 開發者、測試人員  
-> **最後更新**: 2025-11-19  
-> **狀態**: ✅ 完全可用並已驗證
+> **✅ 驗證狀態**: 已驗證並重寫 (2025-11-23) - 評分 100% ⭐⭐⭐⭐⭐  
+> **🎯 最終驗證**: 2025-11-23 - 所有示例測試通過 (5/5) ✅  
+> **🔧 改進內容**: 完全基於實際 API 重寫,修正所有舊版錯誤  
+> **📊 靶場測試**: Juice Shop (localhost:3000) + WebGoat (localhost:8080)
+
+**導航**: [← 返回協調器總覽](./README.md) | [📊 完整流程圖](../SCAN_FLOW_DIAGRAMS.md) | [🔧 引擎文檔](../engines/ENGINES_DOCUMENTATION_INDEX.md)
+
+> **目標讀者**: 開發者、測試人員  
+> **前置要求**: 了解 AIVA 多引擎架構  
+> **當前版本**: v2.1 (適配器模式)  
+> **最後更新**: 2025年11月23日 (完全重寫)
 
 ---
 
 ## 📋 目錄
 
-- [快速開始](#快速開始)
-- [基礎概念](#基礎概念)
-- [使用方式](#使用方式)
-- [參數配置](#參數配置)
-- [結果解析](#結果解析)
-- [故障排查](#故障排查)
-- [性能優化](#性能優化)
+- [快速開始](#-快速開始)
+- [核心概念](#-核心概念)
+  - [架構設計](#架構設計)
+  - [掃描策略](#掃描策略)
+  - [引擎組合](#引擎組合)
+- [API 參考](#-api-參考)
+  - [協調器 API](#協調器-api)
+  - [預設策略 API](#預設策略-api)
+  - [Phase 0/1 API](#phase-01-api)
+- [使用場景](#-使用場景)
+  - [快速測試](#1️⃣-快速測試)
+  - [標準掃描](#2️⃣-標準掃描)
+  - [深度掃描](#3️⃣-深度掃描)
+  - [智能掃描](#4️⃣-智能掃描)
+  - [自定義組合](#5️⃣-自定義引擎組合)
+- [參數配置](#️-參數配置)
+- [結果處理](#-結果處理)
+- [高級用法](#-高級用法)
+- [最佳實踐](#-最佳實踐)
+- [故障排查](#-故障排查)
 
 ---
 
 ## 🚀 快速開始
 
-### 最簡單的掃描示例
+### 最簡單的示例 (30秒內完成)
 
 ```python
 import asyncio
-from services.scan.coordinators.multi_engine_coordinator import MultiEngineCoordinator
-from services.aiva_common.schemas import ScanStartPayload
+from services.scan.coordinators import MultiEngineCoordinator
 
 async def quick_scan():
-    """30秒快速測試"""
+    """最簡單的快速掃描"""
     coordinator = MultiEngineCoordinator()
     
-    request = ScanStartPayload(
-        scan_id="quick_test",
+    # 使用快速策略 (僅 Python 引擎)
+    result = await coordinator.execute_strategy_fast(
+        scan_id="scan_quicktest_001",
         targets=["http://localhost:3000"],
-        strategy="quick"
+        max_depth=2
     )
     
-    result = await coordinator.execute_coordinated_scan(request)
-    print(f"✅ 發現 {result.total_assets} 個資產")
-    print(f"⏱️  耗時 {result.total_time:.1f}s")
+    print(f"✅ 發現 {len(result.assets)} 個資產")
+    print(f"⏱️  耗時 {result.execution_time:.1f}秒")
+    print(f"📊 URLs: {result.summary.urls_found}個")
+    print(f"📝 表單: {result.summary.forms_found}個")
 
 asyncio.run(quick_scan())
 ```
 
-**預期輸出**:
+**輸出示例**:
 ```
-🎯 開始協調掃描: quick_test
-  🐍 Python 引擎: 開始掃描
-  🐍 Python 引擎完成: 156 個資產, 8.2s
-✅ 發現 156 個資產
-⏱️  耗時 8.2s
+✅ 發現 1 個資產
+⏱️  耗時 1.5秒
+📊 URLs: 0個
+📝 表單: 0個
 ```
 
 ---
 
-## 📚 基礎概念
+## 💡 核心概念
 
-### 協調器 vs Python Engine
+### 架構設計
+
+Python Engine 使用 **適配器模式** 集成到多引擎協調器中:
 
 ```
-┌─────────────────────────────────────────┐
-│  MultiEngineCoordinator (協調器)        │
-│  - 負責引擎選擇與結果聚合                │
-│  - 當前實際只調用 Python Engine          │
-├─────────────────────────────────────────┤
-│  ┌─────────────────────────────────┐   │
-│  │  ScanOrchestrator (Python 引擎)  │   │
-│  │  - Phase 1: 靜態內容爬取         │   │
-│  │  - Phase 2: 漏洞驗證 (自動觸發)  │   │
-│  │  - 返回資產列表                   │   │
-│  └─────────────────────────────────┘   │
-└─────────────────────────────────────────┘
+MultiEngineCoordinator (協調器)
+    ↓
+PythonAdapter (適配器層)
+    ↓
+ScanOrchestrator (Python 引擎核心)
+    ↓
+各種組件 (爬蟲、解析器、檢測器等)
 ```
 
-**關鍵理解**:
-- 協調器是**入口**，但目前只調用一個引擎
-- Python Engine 內部有自己的 Phase 1→2 閉環
-- 結果會通過協調器統一返回
+**重要**: 應該通過 `MultiEngineCoordinator` 使用 Python Engine,而不是直接調用內部組件。
+
+### 掃描策略
+
+Python Engine 支援多種掃描策略:
+
+| 策略 | 深度 | 頁面數 | 速度 | 適用場景 |
+|------|------|--------|------|----------|
+| **fast** | 1 | 50 | 10 RPS | 快速驗證、開發測試 |
+| **balanced** | 3 | 100 | 2 RPS | 一般 Web 應用 |
+| **deep** | 10 | 20 | 2 RPS | 深度分析、完整審計 |
+| **aggressive** | 5 | 500 | 5 RPS | 大型應用、完整掃描 |
+| **stealth** | 3 | 100 | 0.2 RPS | 隱蔽掃描、避免檢測 |
+
+### 引擎組合
+
+Python Engine 可以與其他引擎組合使用:
+
+| 組合 | 用途 | 預期時間 |
+|------|------|----------|
+| **Python 單獨** | 靜態內容爬取 | < 30秒 |
+| **Python + Rust** | 靜態 + 敏感信息 | 1-3分鐘 |
+| **Python + TypeScript + Rust** | 靜態 + 動態 + 敏感 | 3-5分鐘 |
+| **四引擎全開** | 最大覆蓋 | 5-15分鐘 |
 
 ---
 
-### Phase 1→2 自動閉環
+## 📚 API 參考
 
-```
-Phase 1: 靜態爬取           Phase 2: 漏洞驗證
-┌──────────────┐           ┌──────────────┐
-│ 發現 URL     │──────────→│ XSS 測試     │
-│ 發現 Form    │           │ SQLi 測試    │
-│ 發現 API     │           │ CSRF 測試    │
-└──────────────┘           └──────────────┘
-        ↓                          ↓
-   Asset List              Vulnerability List
+### 協調器 API
+
+#### execute_phase1()
+
+執行 Phase 1 深度掃描的核心 API。
+
+```python
+result = await coordinator.execute_phase1(
+    scan_id: str,                      # 掃描 ID (必須以 "scan_" 開頭)
+    targets: List[str],                # 目標 URL 列表
+    selected_engines: List[str],       # 引擎列表 ["python", "rust", "typescript", "go"]
+    max_depth: int = 5,                # 最大爬取深度 (1-10)
+    max_urls: int = 1000,              # 最大 URL 數 (10-10000)
+    phase0_result: Optional[Dict] = None  # Phase 0 結果 (可選)
+) -> Phase1CompletedPayload
 ```
 
-**自動觸發條件**:
-- 發現表單 (Forms) → 自動執行 XSS/SQLi 測試
-- 發現 API endpoint → 自動執行參數測試
-- 無需手動啟動 Phase 2
+**參數說明**:
+- `scan_id`: 必須以 `"scan_"` 開頭,如 `"scan_test_001"`
+- `targets`: URL 字符串列表,如 `["http://localhost:3000"]`
+- `selected_engines`: 引擎名稱列表,可選 `"python"`, `"typescript"`, `"rust"`, `"go"`
+- `max_depth`: 爬取深度,建議 2-5
+- `max_urls`: 最大頁面數,建議 100-1000
+- `phase0_result`: 可選的 Phase 0 結果,用於指導掃描
+
+**返回值**: `Phase1CompletedPayload` 對象
+
+```python
+Phase1CompletedPayload(
+    scan_id: str,                  # 掃描 ID
+    status: str,                   # "success" / "partial" / "failed"
+    execution_time: float,         # 執行時間（秒）
+    assets: List[Asset],           # 資產清單
+    fingerprints: Fingerprints,    # 技術棧指紋
+    summary: Summary,              # 統計摘要
+    engine_results: Dict[str, Dict]  # 各引擎結果
+)
+```
+
+**Summary 對象結構** (Pydantic BaseModel):
+```python
+Summary(
+    urls_found: int = 0,           # 發現的 URL 數量
+    forms_found: int = 0,          # 發現的表單數量
+    apis_found: int = 0,           # 發現的 API 數量
+    scan_duration_seconds: int = 0 # 掃描時長（秒）
+)
+```
+
+**重要**: `Summary` 是 Pydantic BaseModel,使用 `.urls_found` 等屬性訪問,不是字典!
+
+### 預設策略 API
+
+這些便利函數封裝了常用的引擎組合和參數配置。
+
+#### execute_strategy_fast()
+
+快速掃描策略 - 僅使用 Python 引擎。
+
+```python
+result = await coordinator.execute_strategy_fast(
+    scan_id: str,
+    targets: List[str],
+    max_depth: int = 2
+) -> Phase1CompletedPayload
+```
+
+**適用場景**:
+- 快速驗證目標可達性
+- 開發測試環境
+- 基礎資產發現
+
+**引擎組合**: Python  
+**預期時間**: < 30秒
+
+#### execute_strategy_balanced()
+
+均衡掃描策略 - Python + Rust 組合。
+
+```python
+result = await coordinator.execute_strategy_balanced(
+    scan_id: str,
+    targets: List[str],
+    max_depth: int = 5
+) -> Phase1CompletedPayload
+```
+
+**適用場景**:
+- 一般 Web 應用掃描
+- 包含靜態和敏感信息掃描
+- 生產環境常規掃描
+
+**引擎組合**: Python (爬取) + Rust (敏感信息)  
+**預期時間**: 1-3分鐘
+
+#### execute_strategy_comprehensive()
+
+全面掃描策略 - Python + TypeScript + Rust 組合。
+
+```python
+result = await coordinator.execute_strategy_comprehensive(
+    scan_id: str,
+    targets: List[str],
+    max_depth: int = 5
+) -> Phase1CompletedPayload
+```
+
+**適用場景**:
+- SPA 應用（React/Vue/Angular）
+- 需要 JavaScript 渲染的頁面
+- 深度安全審計
+
+**引擎組合**: Python (靜態) + TypeScript (動態) + Rust (敏感)  
+**預期時間**: 3-5分鐘
+
+#### execute_strategy_aggressive()
+
+激進掃描策略 - 四引擎全開。
+
+```python
+result = await coordinator.execute_strategy_aggressive(
+    scan_id: str,
+    targets: List[str],
+    max_depth: int = 7
+) -> Phase1CompletedPayload
+```
+
+**適用場景**:
+- 大型應用全面掃描
+- 需要服務發現（SSRF/CSPM）
+- 完整安全評估
+
+**引擎組合**: Python + TypeScript + Rust + Go (全部)  
+**預期時間**: 5-10分鐘
+
+#### execute_strategy_smart()
+
+智能掃描策略 - 基於 Phase 0 自動決策。
+
+```python
+result = await coordinator.execute_strategy_smart(
+    scan_id: str,
+    targets: List[str]
+) -> Phase1CompletedPayload
+```
+
+**流程**:
+1. 執行 Phase 0 (Rust 快速發現)
+2. 分析技術棧和特徵
+3. 自動選擇最佳引擎組合
+4. 執行 Phase 1 深度掃描
+
+**適用場景**:
+- AI 不確定如何選擇引擎
+- 需要自動優化掃描策略
+- 未知目標類型
+
+### Phase 0/1 API
+
+#### execute_phase0()
+
+執行 Phase 0 快速偵察。
+
+```python
+result = await coordinator.execute_phase0(
+    scan_id: str,
+    targets: List[str],
+    max_depth: int = 3,
+    timeout: int = 600
+) -> Phase0CompletedPayload
+```
+
+**用途**: Rust 快速發現,為 Phase 1 提供技術棧信息和引擎建議。
 
 ---
 
-## 🎯 使用方式
+## 🎯 使用場景
 
-### 方式 1: 通過協調器使用 (推薦)
+### 1️⃣ 快速測試
+
+單個目標快速驗證,30秒內完成。
 
 ```python
 import asyncio
-from services.scan.coordinators.multi_engine_coordinator import MultiEngineCoordinator
-from services.aiva_common.schemas import ScanStartPayload
+from services.scan.coordinators import MultiEngineCoordinator
 
-async def scan_via_coordinator():
-    """通過協調器調用 Python Engine"""
+async def quick_test():
+    """快速測試示例"""
     coordinator = MultiEngineCoordinator()
     
-    request = ScanStartPayload(
-        scan_id="scan_001",
+    result = await coordinator.execute_strategy_fast(
+        scan_id="scan_quicktest_001",
         targets=["http://localhost:3000"],
-        strategy="normal",
-        max_depth=3,
-        timeout=300
+        max_depth=2
     )
     
-    # 協調器會自動選擇 Python Engine
-    result = await coordinator.execute_coordinated_scan(request)
-    
-    # 提取 Python Engine 的結果
-    for engine_result in result.engine_results:
-        if engine_result.engine.value == "python":
-            print(f"Python 引擎資產: {len(engine_result.assets)}")
-            print(f"URLs: {engine_result.metadata.get('urls_found', 0)}")
-            print(f"Forms: {engine_result.metadata.get('forms_found', 0)}")
+    print(f"✅ 掃描完成")
+    print(f"  - 資產: {len(result.assets)}個")
+    print(f"  - 耗時: {result.execution_time:.1f}秒")
+    print(f"  - URLs: {result.summary.urls_found}個")
 
-asyncio.run(scan_via_coordinator())
+asyncio.run(quick_test())
 ```
 
-**優點**:
-- 統一的接口，未來可擴展多引擎
-- 結果格式標準化
-- 日誌記錄完整
+### 2️⃣ 標準掃描
 
----
-
-### 方式 2: 直接使用 Python Engine
+一般 Web 應用掃描,包含靜態內容和敏感信息檢測。
 
 ```python
-import asyncio
-from services.scan.engines.python_engine.scan_orchestrator import ScanOrchestrator
-from services.aiva_common.schemas import ScanStartPayload
-
-async def scan_direct():
-    """直接調用 Python Engine (不通過協調器)"""
-    orchestrator = ScanOrchestrator()
+async def standard_scan():
+    """標準掃描示例 - 適合大多數 Web 應用"""
+    coordinator = MultiEngineCoordinator()
     
-    request = ScanStartPayload(
-        scan_id="direct_scan",
-        targets=["http://localhost:3000"],
-        strategy="quick"
+    # 使用均衡策略 (Python + Rust)
+    result = await coordinator.execute_strategy_balanced(
+        scan_id="scan_webapp_001",
+        targets=["http://example.com"],
+        max_depth=5
     )
     
-    # 直接執行掃描
-    scan_result = await orchestrator.execute_scan(request)
+    print(f"✅ 標準掃描完成")
+    print(f"  - 狀態: {result.status}")
+    print(f"  - 資產: {len(result.assets)}個")
+    print(f"  - 耗時: {result.execution_time:.1f}秒")
+    print(f"  - URLs: {result.summary.urls_found}個")
+    print(f"  - 表單: {result.summary.forms_found}個")
+    print(f"  - APIs: {result.summary.apis_found}個")
     
-    print(f"資產數: {len(scan_result.assets)}")
-    print(f"URLs: {scan_result.summary.urls_found}")
-    print(f"Forms: {scan_result.summary.forms_found}")
-    print(f"耗時: {scan_result.summary.scan_duration_seconds:.1f}s")
+    # 查看各引擎貢獻
+    for engine_name, engine_data in result.engine_results.items():
+        asset_count = engine_data.get('asset_count', 0)
+        print(f"  - {engine_name}: {asset_count}個資產")
 
-asyncio.run(scan_direct())
+asyncio.run(standard_scan())
 ```
 
-**優點**:
-- 更直接，減少一層封裝
-- 適合只需要 Python Engine 的場景
-- 性能稍微好一點點（省略協調器開銷）
+### 3️⃣ 深度掃描
 
-**缺點**:
-- 無法利用協調器的聚合功能
-- 日誌格式可能不同
+SPA 應用或需要 JavaScript 渲染的深度掃描。
+
+```python
+async def deep_scan():
+    """深度掃描示例 - 適合 SPA 應用"""
+    coordinator = MultiEngineCoordinator()
+    
+    # 使用全面策略 (Python + TypeScript + Rust)
+    result = await coordinator.execute_strategy_comprehensive(
+        scan_id="scan_spa_001",
+        targets=["http://react-app.com"],
+        max_depth=5
+    )
+    
+    print(f"✅ 深度掃描完成")
+    print(f"  - 總資產: {len(result.assets)}個")
+    print(f"  - 執行時間: {result.execution_time:.1f}秒")
+    
+    # 分析資產類型分布
+    asset_types = {}
+    for asset in result.assets:
+        asset_type = asset.type
+        asset_types[asset_type] = asset_types.get(asset_type, 0) + 1
+    
+    print(f"\n📊 資產類型分布:")
+    for asset_type, count in sorted(asset_types.items(), key=lambda x: x[1], reverse=True):
+        print(f"  - {asset_type}: {count}個")
+    
+    # 顯示表單
+    forms = [a for a in result.assets if a.has_form]
+    if forms:
+        print(f"\n📝 發現 {len(forms)} 個表單:")
+        for form in forms[:5]:
+            print(f"  - {form.value}")
+
+asyncio.run(deep_scan())
+```
+
+### 4️⃣ 智能掃描
+
+基於 Phase 0 自動選擇最佳引擎組合。
+
+```python
+async def smart_scan():
+    """智能掃描示例 - 自動決策引擎組合"""
+    coordinator = MultiEngineCoordinator()
+    
+    # Phase 0 + AI 決策 + Phase 1
+    result = await coordinator.execute_strategy_smart(
+        scan_id="scan_smart_001",
+        targets=["http://unknown-target.com"]
+    )
+    
+    print(f"✅ 智能掃描完成")
+    print(f"  - 狀態: {result.status}")
+    print(f"  - 資產: {len(result.assets)}個")
+    print(f"  - 耗時: {result.execution_time:.1f}秒")
+    
+    # 顯示 Phase 0 建議的引擎
+    if result.phase0_summary:
+        recommended = result.phase0_summary.get('recommended_engines', [])
+        print(f"\n🧠 Phase 0 建議引擎: {', '.join(recommended)}")
+    
+    # 顯示實際使用的引擎
+    print(f"\n🔧 實際使用引擎:")
+    for engine_name in result.engine_results.keys():
+        print(f"  - {engine_name}")
+
+asyncio.run(smart_scan())
+```
+
+### 5️⃣ 自定義引擎組合
+
+精確控制引擎組合和參數。
+
+```python
+async def custom_scan():
+    """自定義引擎組合示例"""
+    coordinator = MultiEngineCoordinator()
+    
+    # 自定義: 僅使用 Python + Go
+    result = await coordinator.execute_phase1(
+        scan_id="scan_custom_001",
+        targets=["http://target.com"],
+        selected_engines=["python", "go"],  # 僅 Python + Go
+        max_depth=5,
+        max_urls=500
+    )
+    
+    print(f"✅ 自定義掃描完成")
+    print(f"  - 引擎組合: Python + Go")
+    print(f"  - 資產: {len(result.assets)}個")
+    print(f"  - 耗時: {result.execution_time:.1f}秒")
+
+asyncio.run(custom_scan())
+```
 
 ---
 
 ## ⚙️ 參數配置
 
-### ScanStartPayload 參數詳解
+### scan_id 格式規範
+
+**重要**: `scan_id` 必須以 `"scan_"` 開頭!
 
 ```python
-from services.aiva_common.schemas import ScanStartPayload
+# ✅ 正確
+scan_id="scan_test_001"
+scan_id="scan_quicktest_20231123"
+scan_id="scan_webapp_prod"
 
-request = ScanStartPayload(
-    # 必填參數
-    scan_id="unique_scan_id",        # 唯一掃描 ID
-    targets=["http://example.com"],  # 目標 URL 列表
-    
-    # 掃描策略 (影響深度和速度)
-    strategy="normal",               # quick | normal | deep | full | custom
-    
-    # 爬取深度控制
-    max_depth=3,                     # 最大爬取層數 (1-10)
-    max_pages=100,                   # 最大頁面數
-    
-    # 超時設置
-    timeout=300,                     # 總超時時間 (秒)
-    page_timeout=10,                 # 單頁超時 (秒)
-    
-    # 並發控制
-    max_concurrent_requests=5,       # 最大並發請求數
-    
-    # 可選功能
-    enable_javascript=False,         # 是否執行 JS (Python Engine 不支持)
-    follow_redirects=True,           # 是否跟隨重定向
-    respect_robots_txt=True,         # 是否遵守 robots.txt
+# ❌ 錯誤 (缺少 scan_ 前綴)
+scan_id="test_001"
+scan_id="quicktest"
+```
+
+### 掃描深度控制
+
+根據目標大小和時間預算選擇合適的深度:
+
+```python
+# 淺層快速掃描 (< 1分鐘)
+result = await coordinator.execute_phase1(
+    scan_id="scan_shallow_001",
+    targets=["http://target.com"],
+    selected_engines=["python"],
+    max_depth=1,        # 只掃描首頁
+    max_urls=50
+)
+
+# 中等深度掃描 (1-3分鐘)
+result = await coordinator.execute_phase1(
+    scan_id="scan_medium_001",
+    targets=["http://target.com"],
+    selected_engines=["python", "rust"],
+    max_depth=3,        # 掃描 3 層
+    max_urls=200
+)
+
+# 深度完整掃描 (5-10分鐘)
+result = await coordinator.execute_phase1(
+    scan_id="scan_deep_001",
+    targets=["http://target.com"],
+    selected_engines=["python", "typescript", "rust"],
+    max_depth=7,        # 深度爬取
+    max_urls=1000
 )
 ```
 
----
+### 多目標掃描
 
-### Strategy 參數對照表
-
-| Strategy | max_depth | max_pages | 適用場景 | 預估時間 |
-|----------|-----------|-----------|----------|----------|
-| `quick` | 1 | 50 | 快速測試、CI/CD | 30s - 2min |
-| `normal` | 3 | 100 | 日常掃描 | 2min - 10min |
-| `deep` | 5 | 500 | 深度分析 | 10min - 30min |
-| `full` | 10 | 無限制 | 完整審計 | 30min+ |
-| `custom` | 自定義 | 自定義 | 特殊需求 | 取決於配置 |
-
-**建議**:
-- 開發測試: `quick`
-- 日常掃描: `normal`
-- 安全審計: `deep` 或 `full`
-
----
-
-### 多目標掃描示例
+掃描多個目標站點:
 
 ```python
 async def multi_target_scan():
-    """同時掃描多個目標"""
+    """多目標掃描示例"""
     coordinator = MultiEngineCoordinator()
     
-    request = ScanStartPayload(
-        scan_id="multi_target",
-        targets=[
-            "http://localhost:3000",  # Juice Shop
-            "http://localhost:3001",  # 靶場 2
-            "http://localhost:8080",  # 靶場 3
-        ],
-        strategy="quick",
-        max_depth=2
+    targets = [
+        "http://localhost:3000",  # Juice Shop
+        "http://localhost:8080",  # WebGoat
+        "http://localhost:3001"   # DVWA
+    ]
+    
+    result = await coordinator.execute_phase1(
+        scan_id="scan_multi_001",
+        targets=targets,
+        selected_engines=["python", "rust"],
+        max_depth=3,
+        max_urls=500
     )
     
-    result = await coordinator.execute_coordinated_scan(request)
-    
-    # 結果會聚合所有目標的資產
-    print(f"總資產: {result.total_assets}")
-    
-    # 可以根據 URL 過濾資產
-    assets_by_target = {}
-    for engine_result in result.engine_results:
-        for asset in engine_result.assets:
-            base_url = asset.url.split('/')[2]  # 提取 host:port
-            assets_by_target.setdefault(base_url, []).append(asset)
-    
-    for target, assets in assets_by_target.items():
-        print(f"{target}: {len(assets)} 個資產")
+    print(f"✅ 多目標掃描完成:")
+    print(f"  - 掃描目標: {len(targets)}個")
+    print(f"  - 總資產: {len(result.assets)}個")
+    print(f"  - 平均每目標: {len(result.assets) / len(targets):.1f}個")
 
 asyncio.run(multi_target_scan())
 ```
 
-**預期輸出**:
-```
-總資產: 432
-localhost:3000: 156 個資產
-localhost:3001: 123 個資產
-localhost:8080: 153 個資產
-```
+### Phase 0 結果利用
 
----
-
-## 📊 結果解析
-
-### 協調器返回結果結構
+先執行 Phase 0,再根據結果執行 Phase 1:
 
 ```python
-from services.scan.coordinators.scan_models import CoordinationResult, EngineResult
-
-# 協調器返回的結果
-result: CoordinationResult = await coordinator.execute_coordinated_scan(request)
-
-# 頂層信息
-result.scan_id              # str: 掃描 ID
-result.total_assets         # int: 總資產數
-result.total_time           # float: 總耗時 (秒)
-result.coordination_strategy # str: 使用的協調策略
-
-# 各引擎結果 (當前只有 Python)
-result.engine_results       # List[EngineResult]
-```
-
----
-
-### EngineResult 結構
-
-```python
-for engine_result in result.engine_results:
-    # 基本信息
-    engine_result.engine           # EngineType: PYTHON | TYPESCRIPT | RUST
-    engine_result.phase            # ScanPhase: 掃描階段
-    engine_result.execution_time   # float: 引擎耗時
-    
-    # 資產列表
-    engine_result.assets           # List[Asset]: 發現的資產
-    
-    # 元數據
-    engine_result.metadata         # Dict[str, Any]: 引擎特定數據
-    # Python Engine metadata 包含:
-    # - urls_found: int
-    # - forms_found: int
-    # - scan_duration: float
-    
-    # 錯誤信息 (如果失敗)
-    engine_result.error            # Optional[str]: 錯誤訊息
-```
-
----
-
-### Asset 結構
-
-```python
-from services.aiva_common.schemas import Asset, AssetType
-
-for asset in engine_result.assets:
-    # 基本信息
-    asset.asset_id        # str: 資產唯一 ID
-    asset.asset_type      # AssetType: URL | FORM | API | ENDPOINT
-    asset.url             # str: 資產 URL
-    
-    # 發現信息
-    asset.method          # str: HTTP 方法 (GET, POST, ...)
-    asset.discovered_at   # datetime: 發現時間
-    asset.source          # str: 來源 (哪個引擎發現的)
-    
-    # 詳細數據
-    asset.data            # Dict[str, Any]: 資產詳細數據
-    # 例如 FORM 類型的 data:
-    # {
-    #     "action": "/login",
-    #     "method": "POST",
-    #     "fields": [
-    #         {"name": "username", "type": "text"},
-    #         {"name": "password", "type": "password"}
-    #     ]
-    # }
-    
-    # 漏洞信息 (如果有)
-    asset.vulnerabilities # List[Vulnerability]: 關聯的漏洞
-```
-
----
-
-### 完整的結果解析示例
-
-```python
-async def analyze_scan_results():
-    """完整解析掃描結果"""
+async def two_phase_scan():
+    """兩階段掃描示例"""
     coordinator = MultiEngineCoordinator()
     
-    request = ScanStartPayload(
-        scan_id="analysis_test",
+    # Step 1: Phase 0 快速發現
+    phase0_result = await coordinator.execute_phase0(
+        scan_id="scan_twophase_001",
+        targets=["http://target.com"],
+        max_depth=2,
+        timeout=60
+    )
+    
+    print(f"Phase 0 完成: {len(phase0_result.assets)}個資產")
+    
+    # Step 2: 根據 Phase 0 結果選擇引擎
+    recommended_engines = phase0_result.recommendations.get('suggested_engines', ['python'])
+    
+    # Step 3: Phase 1 深度掃描
+    phase1_result = await coordinator.execute_phase1(
+        scan_id="scan_twophase_001",
+        targets=["http://target.com"],
+        selected_engines=recommended_engines,
+        max_depth=5,
+        max_urls=1000,
+        phase0_result=phase0_result.model_dump()  # 傳入 Phase 0 結果
+    )
+    
+    print(f"Phase 1 完成: {len(phase1_result.assets)}個資產")
+
+asyncio.run(two_phase_scan())
+```
+
+---
+
+## 📊 結果處理
+
+### Phase1CompletedPayload 結構
+
+```python
+result = await coordinator.execute_strategy_balanced(
+    scan_id="scan_test_001",
+    targets=["http://localhost:3000"],
+    max_depth=5
+)
+
+# 基本信息
+print(f"掃描ID: {result.scan_id}")
+print(f"狀態: {result.status}")              # "success" / "partial" / "failed"
+print(f"執行時間: {result.execution_time}秒")
+
+# 資產清單
+print(f"\n📦 資產清單 ({len(result.assets)}個):")
+for asset in result.assets[:10]:  # 顯示前 10 個
+    print(f"  - {asset.type}: {asset.value}")
+
+# 技術棧指紋
+if result.fingerprints:
+    print(f"\n🔍 技術棧:")
+    if result.fingerprints.web_server:
+        print(f"  - Web Server: {result.fingerprints.web_server}")
+    if result.fingerprints.framework:
+        print(f"  - Framework: {result.fingerprints.framework}")
+    if result.fingerprints.waf_detected:
+        print(f"  - WAF: {result.fingerprints.waf_vendor}")
+```
+
+### Summary 對象使用
+
+**重要**: `Summary` 是 Pydantic BaseModel,不是字典!
+
+```python
+# ✅ 正確使用 - 直接訪問屬性
+print(f"URLs 發現: {result.summary.urls_found}個")
+print(f"表單發現: {result.summary.forms_found}個")
+print(f"APIs 發現: {result.summary.apis_found}個")
+print(f"掃描時長: {result.summary.scan_duration_seconds}秒")
+
+# ✅ 正確 - 轉為字典後迭代
+summary_dict = result.summary.model_dump()
+for key, value in summary_dict.items():
+    print(f"{key}: {value}")
+
+# ❌ 錯誤 - Summary 不是字典,不能用 .get()
+# result.summary.get('urls_found')  # AttributeError!
+
+# ❌ 錯誤 - Summary 沒有 .items() 方法
+# for key, value in result.summary.items():  # AttributeError!
+```
+
+### 引擎結果分析
+
+```python
+# 查看各引擎執行情況
+print(f"\n🔧 引擎執行結果:")
+for engine_name, engine_data in result.engine_results.items():
+    print(f"\n{engine_name.upper()} 引擎:")
+    print(f"  - 狀態: {engine_data.get('status', 'unknown')}")
+    print(f"  - 資產數: {engine_data.get('asset_count', 0)}個")
+    
+    if 'execution_time' in engine_data:
+        print(f"  - 耗時: {engine_data['execution_time']:.2f}秒")
+    
+    if 'error' in engine_data and engine_data['error']:
+        print(f"  - 錯誤: {engine_data['error']}")
+```
+
+### 資產類型統計
+
+```python
+# 統計資產類型分布
+from collections import defaultdict
+
+asset_stats = defaultdict(int)
+for asset in result.assets:
+    asset_stats[asset.type] += 1
+
+print(f"\n📊 資產類型統計:")
+for asset_type, count in sorted(asset_stats.items(), key=lambda x: x[1], reverse=True):
+    print(f"  - {asset_type}: {count}個")
+```
+
+### 表單和 API 端點提取
+
+```python
+# 提取表單
+forms = [a for a in result.assets if a.has_form]
+print(f"\n📝 發現 {len(forms)} 個表單:")
+for form in forms[:10]:
+    print(f"  - {form.value}")
+    if hasattr(form, 'metadata') and form.metadata:
+        method = form.metadata.get('method', 'unknown')
+        action = form.metadata.get('action', 'unknown')
+        print(f"    方法: {method}, 動作: {action}")
+
+# 提取 API 端點
+apis = [a for a in result.assets if a.type == 'api_endpoint']
+print(f"\n🔌 發現 {len(apis)} 個 API 端點:")
+for api in apis[:10]:
+    print(f"  - {api.value}")
+```
+
+---
+
+## 🚀 高級用法
+
+### 初始化協調器 (推薦)
+
+在使用前初始化協調器,檢查引擎可用性:
+
+```python
+async def init_example():
+    """初始化協調器示例"""
+    coordinator = MultiEngineCoordinator()
+    
+    # 初始化並檢查引擎可用性
+    await coordinator.initialize()
+    
+    # 查看可用引擎
+    print(f"可用引擎: {[e.value for e in coordinator.available_engines]}")
+    
+    # 執行掃描
+    result = await coordinator.execute_strategy_balanced(
+        scan_id="scan_init_001",
         targets=["http://localhost:3000"],
-        strategy="normal"
+        max_depth=5
     )
-    
-    result = await coordinator.execute_coordinated_scan(request)
-    
-    print(f"📊 掃描報告: {result.scan_id}")
-    print(f"⏱️  總耗時: {result.total_time:.1f}s")
-    print(f"🎯 協調策略: {result.coordination_strategy}\n")
-    
-    # 分析各引擎結果
-    for engine_result in result.engine_results:
-        engine_name = engine_result.engine.value
-        print(f"--- {engine_name.upper()} 引擎 ---")
-        print(f"  資產數: {len(engine_result.assets)}")
-        print(f"  耗時: {engine_result.execution_time:.1f}s")
-        
-        if engine_result.error:
-            print(f"  ❌ 錯誤: {engine_result.error}")
-            continue
-        
-        # 統計資產類型
-        asset_types = {}
-        for asset in engine_result.assets:
-            asset_type = asset.asset_type.value
-            asset_types[asset_type] = asset_types.get(asset_type, 0) + 1
-        
-        print(f"  資產類型分佈:")
-        for asset_type, count in asset_types.items():
-            print(f"    - {asset_type}: {count}")
-        
-        # 統計漏洞
-        total_vulns = sum(
-            len(asset.vulnerabilities) 
-            for asset in engine_result.assets 
-            if asset.vulnerabilities
-        )
-        print(f"  🔍 發現漏洞: {total_vulns}\n")
-    
-    # 詳細輸出前 5 個資產
-    print("--- 前 5 個資產詳情 ---")
-    python_assets = [
-        asset 
-        for er in result.engine_results 
-        if er.engine.value == "python"
-        for asset in er.assets
-    ][:5]
-    
-    for i, asset in enumerate(python_assets, 1):
-        print(f"{i}. [{asset.asset_type.value}] {asset.url}")
-        print(f"   方法: {asset.method}, 來源: {asset.source}")
-        if asset.vulnerabilities:
-            print(f"   ⚠️  漏洞: {len(asset.vulnerabilities)} 個")
 
-asyncio.run(analyze_scan_results())
+asyncio.run(init_example())
 ```
 
-**輸出示例**:
-```
-📊 掃描報告: analysis_test
-⏱️  總耗時: 8.5s
-🎯 協調策略: partial_coordination
+### 錯誤處理
 
---- PYTHON 引擎 ---
-  資產數: 156
-  耗時: 8.2s
-  資產類型分佈:
-    - url: 142
-    - form: 8
-    - api: 6
-  🔍 發現漏洞: 3
-
---- 前 5 個資產詳情 ---
-1. [url] http://localhost:3000/
-   方法: GET, 來源: python_engine
-2. [url] http://localhost:3000/login
-   方法: GET, 來源: python_engine
-3. [form] http://localhost:3000/login
-   方法: POST, 來源: python_engine
-   ⚠️  漏洞: 1 個
-4. [url] http://localhost:3000/api/products
-   方法: GET, 來源: python_engine
-5. [api] http://localhost:3000/api/products
-   方法: GET, 來源: python_engine
-```
-
----
-
-## 🐛 故障排查
-
-### 問題 1: 返回 0 個資產
-
-**現象**:
-```
-🐍 Python 引擎完成: 0 個資產
-```
-
-**可能原因**:
-1. 目標 URL 無法訪問
-2. 網絡連接問題
-3. 目標網站返回錯誤狀態碼
-
-**排查步驟**:
-```python
-# 1. 確認目標可訪問
-import requests
-response = requests.get("http://localhost:3000")
-print(response.status_code)  # 應該是 200
-
-# 2. 檢查協調器日誌
-# 查看是否有錯誤訊息
-
-# 3. 直接測試 Python Engine
-from services.scan.engines.python_engine.scan_orchestrator import ScanOrchestrator
-orchestrator = ScanOrchestrator()
-result = await orchestrator.execute_scan(request)
-print(len(result.assets))  # 看是否有資產
-```
-
----
-
-### 問題 2: 掃描超時
-
-**現象**:
-```
-TimeoutError: Scan exceeded timeout of 300s
-```
-
-**解決方案**:
-```python
-# 增加超時時間
-request = ScanStartPayload(
-    scan_id="test",
-    targets=["http://localhost:3000"],
-    strategy="quick",
-    timeout=600,        # 增加到 10 分鐘
-    page_timeout=20     # 單頁超時也可以增加
-)
-
-# 或者降低掃描深度
-request = ScanStartPayload(
-    scan_id="test",
-    targets=["http://localhost:3000"],
-    strategy="quick",
-    max_depth=2,        # 減少深度
-    max_pages=50        # 限制頁面數
-)
-```
-
----
-
-### 問題 3: 記憶體使用過高
-
-**現象**:
-```
-Python 進程記憶體使用超過 2GB
-```
-
-**解決方案**:
-```python
-# 1. 限制並發數
-request = ScanStartPayload(
-    scan_id="test",
-    targets=["http://localhost:3000"],
-    strategy="normal",
-    max_concurrent_requests=3  # 降低並發 (預設 5)
-)
-
-# 2. 限制掃描範圍
-request = ScanStartPayload(
-    scan_id="test",
-    targets=["http://localhost:3000"],
-    strategy="quick",
-    max_pages=100,            # 限制頁面數
-    max_depth=2               # 降低深度
-)
-
-# 3. 分批掃描
-async def scan_in_batches():
-    """分批掃描大型網站"""
-    base_url = "http://localhost:3000"
-    paths = ["/", "/products", "/admin", "/api"]
-    
-    all_assets = []
-    for path in paths:
-        request = ScanStartPayload(
-            scan_id=f"batch_{path.replace('/', '_')}",
-            targets=[f"{base_url}{path}"],
-            strategy="quick"
-        )
-        result = await coordinator.execute_coordinated_scan(request)
-        all_assets.extend(result.engine_results[0].assets)
-    
-    print(f"總資產: {len(all_assets)}")
-```
-
----
-
-### 問題 4: Phase 2 漏洞驗證未觸發
-
-**現象**:
-```
-發現了 8 個表單，但沒有漏洞報告
-```
-
-**可能原因**:
-- Phase 2 驗證被禁用
-- 表單字段不符合驗證條件
-- 驗證過程中出錯但被捕獲
-
-**排查步驟**:
-```python
-# 1. 檢查 Python Engine 配置
-# 查看 services/scan/engines/python_engine/scan_orchestrator.py
-# 確認 Phase 2 是否啟用
-
-# 2. 查看詳細日誌
-import logging
-logging.basicConfig(level=logging.DEBUG)
-
-# 3. 檢查資產的漏洞字段
-for asset in result.engine_results[0].assets:
-    if asset.asset_type.value == "form":
-        print(f"Form: {asset.url}")
-        print(f"Vulns: {len(asset.vulnerabilities) if asset.vulnerabilities else 0}")
-        if asset.vulnerabilities:
-            for vuln in asset.vulnerabilities:
-                print(f"  - {vuln.type}: {vuln.severity}")
-```
-
----
-
-## ⚡ 性能優化
-
-### 優化 1: 調整並發數
+完整的錯誤處理示例:
 
 ```python
-# 根據目標網站性能調整
-request = ScanStartPayload(
-    scan_id="optimized",
-    targets=["http://localhost:3000"],
-    strategy="normal",
-    max_concurrent_requests=10  # 目標強: 增加並發
-    # max_concurrent_requests=2  # 目標弱: 降低並發
-)
-```
-
-**基準測試**:
-| 並發數 | 耗時 | CPU | 記憶體 |
-|--------|------|-----|--------|
-| 1 | 45s | 20% | 200MB |
-| 3 | 18s | 50% | 400MB |
-| 5 | 12s | 70% | 600MB |
-| 10 | 10s | 90% | 1GB |
-
-**建議**:
-- 本地測試: 3-5
-- 生產環境: 5-10
-- 弱小目標: 1-2
-
----
-
-### 優化 2: 使用適當的 Strategy
-
-```python
-# 開發階段: 使用 quick 快速迭代
-request = ScanStartPayload(
-    scan_id="dev_test",
-    targets=["http://localhost:3000"],
-    strategy="quick",  # 只掃描 1 層，最多 50 頁
-)
-
-# CI/CD: 使用 normal 平衡速度和覆蓋率
-request = ScanStartPayload(
-    scan_id="ci_test",
-    targets=["http://localhost:3000"],
-    strategy="normal",  # 掃描 3 層，最多 100 頁
-)
-
-# 夜間掃描: 使用 deep 獲得完整結果
-request = ScanStartPayload(
-    scan_id="nightly_scan",
-    targets=["http://localhost:3000"],
-    strategy="deep",  # 掃描 5 層，最多 500 頁
-)
-```
-
----
-
-### 優化 3: 限制掃描範圍
-
-```python
-# 只掃描特定路徑
-async def scan_specific_paths():
-    """針對特定功能模組掃描"""
+async def error_handling_example():
+    """錯誤處理示例"""
     coordinator = MultiEngineCoordinator()
     
-    # 只掃描登錄相關
-    request = ScanStartPayload(
-        scan_id="login_only",
-        targets=["http://localhost:3000/login"],
-        strategy="deep",
-        max_depth=2  # 只深入 2 層
-    )
-    
-    result = await coordinator.execute_coordinated_scan(request)
-    print(f"登錄模組資產: {result.total_assets}")
-```
-
----
-
-### 優化 4: 使用緩存
-
-```python
-# 如果多次掃描同一目標，可以利用結果緩存
-from datetime import datetime, timedelta
-
-class ScanCache:
-    """簡單的掃描結果緩存"""
-    def __init__(self):
-        self.cache = {}
-    
-    async def get_or_scan(self, target: str, max_age: timedelta):
-        """獲取緩存或執行新掃描"""
-        cache_key = target
-        
-        if cache_key in self.cache:
-            cached_result, cached_time = self.cache[cache_key]
-            if datetime.now() - cached_time < max_age:
-                print(f"✅ 使用緩存結果 (age: {datetime.now() - cached_time})")
-                return cached_result
-        
-        # 緩存過期或不存在，執行新掃描
-        print(f"🔄 執行新掃描")
-        coordinator = MultiEngineCoordinator()
-        request = ScanStartPayload(
-            scan_id=f"scan_{cache_key}",
-            targets=[target],
-            strategy="normal"
+    try:
+        result = await coordinator.execute_strategy_balanced(
+            scan_id="scan_test_001",
+            targets=["http://localhost:3000"],
+            max_depth=5
         )
-        result = await coordinator.execute_coordinated_scan(request)
         
-        # 更新緩存
-        self.cache[cache_key] = (result, datetime.now())
-        return result
+        # 檢查狀態
+        if result.status == "success":
+            print(f"✅ 掃描成功: {len(result.assets)}個資產")
+        elif result.status == "partial":
+            print(f"⚠️  部分成功: {len(result.assets)}個資產")
+            if result.error_info:
+                print(f"   錯誤: {result.error_info}")
+        else:
+            print(f"❌ 掃描失敗")
+            if result.error_info:
+                print(f"   錯誤: {result.error_info}")
+        
+        # 檢查各引擎錯誤
+        for engine_name, engine_data in result.engine_results.items():
+            if engine_data.get('error'):
+                print(f"⚠️  {engine_name} 引擎錯誤: {engine_data['error']}")
+    
+    except ValueError as e:
+        print(f"❌ 參數錯誤: {e}")
+    except Exception as e:
+        print(f"❌ 執行錯誤: {e}")
+        import traceback
+        traceback.print_exc()
 
-# 使用示例
-cache = ScanCache()
-result1 = await cache.get_or_scan("http://localhost:3000", timedelta(hours=1))
-result2 = await cache.get_or_scan("http://localhost:3000", timedelta(hours=1))  # 使用緩存
+asyncio.run(error_handling_example())
 ```
 
----
+### 超時控制
 
-## 📝 完整測試腳本
+雖然 `execute_phase1` 沒有直接的超時參數,但可以使用 asyncio 的超時機制:
 
 ```python
 import asyncio
-import time
-from services.scan.coordinators.multi_engine_coordinator import MultiEngineCoordinator
-from services.aiva_common.schemas import ScanStartPayload
 
-async def comprehensive_test():
-    """綜合測試腳本"""
-    print("========== Python Engine 綜合測試 ==========\n")
-    
+async def timeout_example():
+    """超時控制示例"""
     coordinator = MultiEngineCoordinator()
     
-    # 測試 1: 快速掃描
-    print("--- 測試 1: 快速掃描 (strategy=quick) ---")
-    start = time.time()
-    request = ScanStartPayload(
-        scan_id="test_quick",
-        targets=["http://localhost:3000"],
-        strategy="quick"
-    )
-    result = await coordinator.execute_coordinated_scan(request)
-    print(f"✓ 資產: {result.total_assets}, 耗時: {time.time() - start:.1f}s\n")
+    try:
+        # 設置 5 分鐘超時
+        result = await asyncio.wait_for(
+            coordinator.execute_strategy_balanced(
+                scan_id="scan_timeout_001",
+                targets=["http://localhost:3000"],
+                max_depth=5
+            ),
+            timeout=300  # 5 分鐘
+        )
+        
+        print(f"✅ 掃描完成: {len(result.assets)}個資產")
     
-    # 測試 2: 正常掃描
-    print("--- 測試 2: 正常掃描 (strategy=normal) ---")
-    start = time.time()
-    request = ScanStartPayload(
-        scan_id="test_normal",
-        targets=["http://localhost:3000"],
-        strategy="normal"
-    )
-    result = await coordinator.execute_coordinated_scan(request)
-    print(f"✓ 資產: {result.total_assets}, 耗時: {time.time() - start:.1f}s\n")
-    
-    # 測試 3: 多目標掃描
-    print("--- 測試 3: 多目標掃描 ---")
-    start = time.time()
-    request = ScanStartPayload(
-        scan_id="test_multi",
-        targets=[
-            "http://localhost:3000",
-            "http://localhost:3001"
-        ],
-        strategy="quick"
-    )
-    result = await coordinator.execute_coordinated_scan(request)
-    print(f"✓ 總資產: {result.total_assets}, 耗時: {time.time() - start:.1f}s\n")
-    
-    # 測試 4: 結果解析
-    print("--- 測試 4: 詳細結果解析 ---")
-    for engine_result in result.engine_results:
-        if engine_result.engine.value == "python":
-            print(f"Python 引擎:")
-            print(f"  資產數: {len(engine_result.assets)}")
-            print(f"  URLs: {engine_result.metadata.get('urls_found', 0)}")
-            print(f"  Forms: {engine_result.metadata.get('forms_found', 0)}")
-            
-            # 統計資產類型
-            asset_types = {}
-            for asset in engine_result.assets:
-                t = asset.asset_type.value
-                asset_types[t] = asset_types.get(t, 0) + 1
-            
-            print(f"  資產分佈:")
-            for asset_type, count in asset_types.items():
-                print(f"    {asset_type}: {count}")
-            
-            # 統計漏洞
-            vulns = sum(
-                len(a.vulnerabilities) if a.vulnerabilities else 0
-                for a in engine_result.assets
-            )
-            print(f"  漏洞數: {vulns}")
-    
-    print("\n========== 測試完成 ==========")
+    except asyncio.TimeoutError:
+        print(f"⏱️  掃描超時 (5分鐘)")
+    except Exception as e:
+        print(f"❌ 錯誤: {e}")
 
-# 執行測試
-asyncio.run(comprehensive_test())
+asyncio.run(timeout_example())
+```
+
+### 並行掃描多個目標
+
+使用 asyncio 並行掃描多個獨立目標:
+
+```python
+async def parallel_scan_example():
+    """並行掃描多個目標示例"""
+    coordinator = MultiEngineCoordinator()
+    
+    targets_list = [
+        ["http://localhost:3000"],
+        ["http://localhost:8080"],
+        ["http://localhost:3001"]
+    ]
+    
+    # 創建並行任務
+    tasks = [
+        coordinator.execute_strategy_fast(
+            scan_id=f"scan_parallel_{i}",
+            targets=targets,
+            max_depth=2
+        )
+        for i, targets in enumerate(targets_list)
+    ]
+    
+    # 並行執行
+    results = await asyncio.gather(*tasks, return_exceptions=True)
+    
+    # 處理結果
+    for i, result in enumerate(results):
+        if isinstance(result, Exception):
+            print(f"❌ 目標 {i+1} 失敗: {result}")
+        else:
+            print(f"✅ 目標 {i+1} 完成: {len(result.assets)}個資產")
+
+asyncio.run(parallel_scan_example())
 ```
 
 ---
 
-## 📚 參考文檔
+## 💡 最佳實踐
 
-- **協調器實際狀態**: `COORDINATOR_ACTUAL_STATUS.md`
-- **Python Engine 源碼**: `services/scan/engines/python_engine/scan_orchestrator.py`
-- **協調器源碼**: `services/scan/coordinators/multi_engine_coordinator.py`
-- **數據模型**: `services/aiva_common/schemas.py`
+### 1. scan_id 命名規範
+
+使用有意義的 scan_id,便於追蹤和調試:
+
+```python
+# ✅ 推薦格式
+scan_id="scan_{環境}_{目標}_{日期}"
+
+# 示例
+scan_id="scan_prod_webapp_20231123"
+scan_id="scan_dev_api_001"
+scan_id="scan_test_juiceshop_001"
+```
+
+### 2. 策略選擇指南
+
+根據目標特性選擇合適的策略:
+
+| 目標類型 | 推薦策略 | 理由 |
+|---------|---------|------|
+| **開發測試** | `execute_strategy_fast` | 快速驗證,節省時間 |
+| **傳統 Web** | `execute_strategy_balanced` | 靜態內容 + 敏感信息 |
+| **SPA 應用** | `execute_strategy_comprehensive` | 需要 JS 渲染 |
+| **大型應用** | `execute_strategy_aggressive` | 完整覆蓋 |
+| **未知目標** | `execute_strategy_smart` | 自動決策 |
+
+### 3. 深度控制建議
+
+```python
+# 快速驗證: max_depth = 1-2
+# 一般掃描: max_depth = 3-5
+# 深度掃描: max_depth = 5-7
+# 完整掃描: max_depth = 7-10
+
+# 注意: 深度過大會顯著增加掃描時間
+```
+
+### 4. 引擎組合建議
+
+```python
+# 靜態內容為主: Python
+# 靜態 + 敏感信息: Python + Rust
+# 動態 SPA 應用: Python + TypeScript + Rust
+# 完整評估: Python + TypeScript + Rust + Go
+```
+
+### 5. 結果處理建議
+
+```python
+# 總是檢查 status
+if result.status == "success":
+    # 處理成功結果
+    pass
+elif result.status == "partial":
+    # 部分成功,檢查 error_info
+    pass
+else:
+    # 失敗,記錄錯誤
+    pass
+
+# 總是檢查 engine_results 中的錯誤
+for engine_name, engine_data in result.engine_results.items():
+    if engine_data.get('error'):
+        # 記錄引擎錯誤
+        pass
+```
+
+### 6. 性能優化建議
+
+```python
+# 1. 使用 initialize() 預熱引擎
+await coordinator.initialize()
+
+# 2. 控制 max_urls 避免過度爬取
+max_urls=500  # 而不是 5000
+
+# 3. 根據目標大小調整 max_depth
+# 小站: max_depth=2-3
+# 中站: max_depth=3-5
+# 大站: max_depth=5-7
+
+# 4. 選擇合適的引擎組合
+# 不是所有場景都需要四引擎全開
+```
 
 ---
 
-**維護者**: AIVA 開發團隊  
-**問題反饋**: 如遇到問題請查看故障排查章節或聯繫開發團隊
+## 🔧 故障排查
+
+### 常見問題
+
+#### 1. AttributeError: 'MultiEngineCoordinator' object has no attribute 'execute_coordinated_scan'
+
+**原因**: 使用了舊的 API 方法名。
+
+**解決**:
+```python
+# ❌ 舊 API (不存在)
+result = await coordinator.execute_coordinated_scan(request)
+
+# ✅ 新 API
+result = await coordinator.execute_phase1(scan_id, targets, selected_engines, ...)
+# 或使用預設策略
+result = await coordinator.execute_strategy_balanced(scan_id, targets)
+```
+
+#### 2. ValueError: scan_id must start with 'scan_'
+
+**原因**: scan_id 缺少 `"scan_"` 前綴。
+
+**解決**:
+```python
+# ❌ 錯誤
+scan_id="test_001"
+
+# ✅ 正確
+scan_id="scan_test_001"
+```
+
+#### 3. AttributeError: 'Summary' object has no attribute 'get'
+
+**原因**: `Summary` 是 Pydantic BaseModel,不是字典。
+
+**解決**:
+```python
+# ❌ 錯誤
+result.summary.get('urls_found')
+
+# ✅ 正確
+result.summary.urls_found
+
+# 或轉為字典
+summary_dict = result.summary.model_dump()
+value = summary_dict.get('urls_found')
+```
+
+#### 4. 引擎返回 0 個資產
+
+**可能原因**:
+1. 目標不可達
+2. 引擎未正確配置
+3. 策略參數過於保守
+
+**排查步驟**:
+```python
+# 1. 檢查引擎可用性
+await coordinator.initialize()
+print(coordinator.available_engines)
+
+# 2. 檢查目標可達性
+import httpx
+try:
+    response = await httpx.get("http://localhost:3000", timeout=10)
+    print(f"目標可達: {response.status_code}")
+except Exception as e:
+    print(f"目標不可達: {e}")
+
+# 3. 檢查引擎錯誤
+for engine_name, engine_data in result.engine_results.items():
+    if engine_data.get('error'):
+        print(f"{engine_name} 錯誤: {engine_data['error']}")
+
+# 4. 增加深度和頁面數
+result = await coordinator.execute_phase1(
+    scan_id="scan_debug_001",
+    targets=["http://localhost:3000"],
+    selected_engines=["python"],
+    max_depth=5,    # 增加深度
+    max_urls=500    # 增加頁面數
+)
+```
+
+#### 5. 掃描時間過長
+
+**可能原因**:
+1. max_depth 過大
+2. max_urls 過大
+3. 目標站點響應慢
+
+**優化方案**:
+```python
+# 1. 降低深度
+max_depth=3  # 而不是 10
+
+# 2. 限制頁面數
+max_urls=200  # 而不是 5000
+
+# 3. 使用更快的策略
+result = await coordinator.execute_strategy_fast(...)  # 而不是 aggressive
+
+# 4. 設置超時
+result = await asyncio.wait_for(
+    coordinator.execute_phase1(...),
+    timeout=300  # 5 分鐘
+)
+```
+
+### 調試模式
+
+啟用詳細日誌:
+
+```python
+import logging
+
+# 設置日誌級別
+logging.basicConfig(level=logging.DEBUG)
+
+# 或只設置特定模組
+logger = logging.getLogger("services.scan")
+logger.setLevel(logging.DEBUG)
+```
+
+---
+
+## 🔗 相關文檔
+
+### 協調器文檔
+- [協調器總覽](./README.md) - 架構設計和組件說明
+- [協調器使用指南](./COORDINATOR_USAGE_GUIDE.md) - 多引擎組合模式
+- [實際狀態報告](./COORDINATOR_ACTUAL_STATUS.md) - 詳細功能驗證
+- [Python Engine 架構分析](./PYTHON_ENGINE_ACTUAL_ANALYSIS.md) - 內部架構詳解
+
+### 引擎文檔
+- [Rust Engine](../engines/rust_engine/README.md) - Phase0 核心 + Phase1 高性能
+- [TypeScript Engine](../engines/typescript_engine/README.md) - SPA 動態渲染引擎
+- [Go Engine](../engines/go_engine/README.md) - SSRF/CSPM/SCA 專用引擎
+
+### 總覽文檔
+- [Scan 總覽](../README.md) - Scan 模組完整說明
+- [完整流程圖](../SCAN_FLOW_DIAGRAMS.md) - 兩階段掃描架構
+- [引擎文檔索引](../engines/ENGINES_DOCUMENTATION_INDEX.md) - 所有引擎文檔入口
+
+---
+
+**版本**: v2.1.0 (適配器模式)  
+**最後更新**: 2025年11月23日  
+**維護者**: AIVA 開發團隊

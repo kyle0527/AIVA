@@ -325,10 +325,7 @@ class SqliWorkerService:
         orchestrator = SqliOrchestrator(task_config)
 
         # 創建統計數據收集器
-        stats_collector = StatisticsCollector(
-            task_id=task.task_id,
-            worker_type="sqli"
-        )
+        stats_collector = StatisticsCollector()
 
         timeout = task.test_config.timeout or task_config.timeout_seconds
         context = SqliContext(

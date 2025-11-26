@@ -24,11 +24,11 @@
 
 ## 🎯 功能模組架構概覽
 
-### AIVA v5 五大模組架構
+### AIVA v2.0 五大模組架構
 
 ```
-AIVA v5 架構
-├── 🧠 Core (23 AI components)
+AIVA v2.0 架構 (數據合約驅動)
+├── 🧠 Core (AI 核心引擎)
 │   └── AI驅動的核心決策引擎
 ├── ⚙️ Features (10 security functions)  ← 📍 本指南重點
 │   ├── XSS (4/4) ✅
@@ -38,12 +38,12 @@ AIVA v5 架構
 │   ├── POSTEX (0/4) 🚨
 │   ├── IDOR (0/4) 🔧
 │   └── SSRF (0/4) 🔧
-├── 🔗 Integration (12 enterprise components)
-├── 🔍 Scan (15 scanning components + 3 GO modules)
+├── 🔗 Integration (企業整合服務)
+├── 🔍 Scan (掃描與偵測模組)
 │   ├── SSRF_GO (遷移中) 🔄
 │   ├── CSPM_GO (遷移中) 🔄
 │   └── SCA_GO (遷移中) 🔄
-└── 📚 aiva_common (unified standards)
+└── 📚 Common (統一標準和共用功能)
 ```
 
 ---
@@ -377,7 +377,9 @@ services:
       - GO111MODULE=on
     ports:
       - "8080:8080"    # API服務
-      - "5672:5672"    # RabbitMQ
+      - "5432:5432"    # PostgreSQL
+      - "6379:6379"    # Redis
+      - "7687:7687"    # Neo4j
 ```
 
 ---
@@ -446,3 +448,28 @@ Phase 3: 組件補強 (Week 12-15)
 - **建立日期**: 2025-11-06
 - **更新頻率**: 隨開發進度即時更新
 - **版本**: v1.0 (配合功能模組需求文件完成)
+
+---
+
+## 🔗 相關資源
+
+### 模組開發指南
+- 📖 [Python 開發指南](./PYTHON_DEVELOPMENT_GUIDE.md)
+- 📖 [Go 開發指南](./GO_DEVELOPMENT_GUIDE.md)
+- 📖 [Rust 開發指南](./RUST_DEVELOPMENT_GUIDE.md)
+- 📖 [AI 引擎指南](./AI_ENGINE_GUIDE.md)
+- 📖 [功能模組開發指南](./FEATURE_MODULES_DEVELOPMENT_GUIDE.md)
+- 📖 [模組遷移指南](./MODULE_MIGRATION_GUIDE.md)
+
+### 架構指南
+- 📖 [跨語言 Schema 指南](../architecture/CROSS_LANGUAGE_SCHEMA_GUIDE.md)
+- 📖 [兼容性指南](../architecture/CROSS_LANGUAGE_COMPATIBILITY_GUIDE.md)
+
+### 開發指南
+- 📖 [開發快速指南](../development/DEVELOPMENT_QUICK_START_GUIDE.md)
+- 📖 [依賴管理指南](../development/DEPENDENCY_MANAGEMENT_GUIDE.md)
+
+### 服務文檔
+- 🔧 [Features 模組](../../services/features/README.md)
+- 🔧 [Scan 引擎文檔](../../services/scan/README.md)
+

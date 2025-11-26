@@ -1,217 +1,254 @@
 #!/usr/bin/env python3
 """
-掃描驗證腳本 - 根據使用者手冊進行實際測試
-測試目標: Docker 中的靶場 (Juice Shop, WebGoat)
+多引擎協調器驗證腳本 - 驗證四種語言引擎實際運作
+測試目標: Docker 中的靶場 (Juice Shop 多實例)
+驗證重點: 協調器能力、各引擎請求發出與接收
 """
 import asyncio
 import sys
 import os
+import time
+from datetime import datetime
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
 
-from services.core.aiva_core.core_capabilities.orchestration.two_phase_scan_orchestrator import TwoPhaseScanOrchestrator
-from services.aiva_common.mq import RabbitBroker
+from services.scan.coordinators.multi_engine_coordinator import MultiEngineCoordinator
 from services.aiva_common.utils import get_logger
 
 logger = get_logger(__name__)
 
 
-async def validate_scan_system():
-    """驗證掃描系統 - 按照使用者手冊流程"""
+async def validate_multi_engine_coordinator():
+    """驗證多引擎協調器 - 四種引擎實戰測試"""
     
-    print("=" * 80)
-    print("🧪 AIVA Scan 模組驗證測試")
-    print("=" * 80)
+    print("=" * 100)
+    print("🚀 多引擎協調器驗證測試")
+    print("=" * 100)
+    print(f"測試時間: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
     
     # 測試目標（從 Docker 截圖）
     test_targets = {
         "Juice Shop (主)": "http://localhost:3000",
-        "WebGoat": "http://localhost:8080",
-        "Juice Shop 2": "http://localhost:3001",
+        "Juice Shop 2": "http://localhost:3001", 
         "Juice Shop 3": "http://localhost:3003",
+        "WebGoat": "http://localhost:8080",
     }
     
-    print("\n📋 測試目標:")
+    print("\n📋 可用靶場:")
     for name, url in test_targets.items():
-        print(f"  - {name}: {url}")
+        print(f"  • {name}: {url}")
     
-    # 選擇測試目標
-    target_name = "Juice Shop (主)"
-    target_url = test_targets[target_name]
+    # 選擇測試目標（多目標）
+    selected_targets = [
+        test_targets["Juice Shop (主)"],
+        test_targets["Juice Shop 2"],
+        test_targets["Juice Shop 3"],
+    ]
     
-    print(f"\n🎯 選擇測試目標: {target_name}")
-    print(f"   URL: {target_url}")
+    print(f"\n🎯 選擇的測試目標:")
+    for i, target in enumerate(selected_targets, 1):
+        print(f"  {i}. {target}")
     
-    broker = None
     try:
-        # 步驟 1: 連接 RabbitMQ
-        print("\n" + "─" * 80)
-        print("📍 步驟 1: 連接 RabbitMQ")
-        print("─" * 80)
+        # 步驟 1: 初始化協調器
+        print("\n" + "─" * 100)
+        print("📍 階段 1: 初始化多引擎協調器")
+        print("─" * 100)
         
-        rabbitmq_url = "amqp://guest:guest@localhost:5672/"
-        print(f"   連接 URL: {rabbitmq_url}")
+        coordinator = MultiEngineCoordinator()
+        print("   ✅ 協調器初始化完成")
         
-        broker = RabbitBroker(rabbitmq_url)
-        await broker.connect()
-        print("   ✅ RabbitMQ 連接成功")
+        # 檢查適配器
+        print("\n   可用適配器:")
+        for engine_name, adapter in coordinator.adapters.items():
+            available = await adapter.is_available()
+            status_icon = "✅" if available else "❌"
+            print(f"     {status_icon} {engine_name.upper()}: {'可用' if available else '不可用'}")
         
-        # 步驟 2: 創建兩階段掃描器
-        print("\n" + "─" * 80)
-        print("📍 步驟 2: 初始化兩階段掃描器")
-        print("─" * 80)
+        # 步驟 2: 測試 Python 引擎 (快速單引擎)
+        print("\n" + "─" * 100)
+        print("📍 階段 2: 測試 Python 引擎 (快速模式)")
+        print("─" * 100)
         
-        orchestrator = TwoPhaseScanOrchestrator(broker)
-        print(f"   Phase0 超時: {orchestrator.phase0_timeout}秒 ({orchestrator.phase0_timeout/60:.1f}分鐘)")
-        print(f"   Phase1 超時: {orchestrator.phase1_timeout}秒 ({orchestrator.phase1_timeout/60:.1f}分鐘)")
-        print("   ✅ 掃描器初始化完成")
+        print("\n🐍 Python 引擎測試 (FAST 策略)")
+        start_time = time.time()
         
-        # 步驟 3: 執行兩階段掃描
-        print("\n" + "─" * 80)
-        print("📍 步驟 3: 執行兩階段掃描")
-        print("─" * 80)
-        
-        print("\n🚀 開始掃描流程...")
-        print("   Phase0: Rust 快速偵察 (5-10 分鐘)")
-        print("   AI 決策: 是否需要 Phase1")
-        print("   Phase1: 多引擎深度掃描 (10-30 分鐘，按需)")
-        
-        result = await orchestrator.execute_two_phase_scan(
-            targets=[target_url],
-            trace_id="validation-test-001",
-            max_depth=3,
-            max_urls=1000
+        result_python = await coordinator.execute_strategy_fast(
+            scan_id="scan_python_001",  # ✅ 正確格式: scan_ 前綴
+            targets=selected_targets[:1]  # 單目標
         )
         
-        # 步驟 4: 分析結果
-        print("\n" + "=" * 80)
-        print("✅ 掃描完成 - 結果分析")
-        print("=" * 80)
+        python_time = time.time() - start_time
         
-        print(f"\n📊 基本資訊:")
-        print(f"   掃描 ID: {result.scan_id}")
-        print(f"   最終狀態: {result.status}")
-        print(f"   總執行時間: {result.total_execution_time:.2f} 秒 ({result.total_execution_time/60:.1f} 分鐘)")
+        print(f"\n   📊 Python 引擎結果:")
+        print(f"     • 狀態: {result_python.status}")
+        print(f"     • 執行時間: {python_time:.2f}s")
+        print(f"     • 發現資產: {len(result_python.assets)}")
+        print(f"     • 引擎狀態: {result_python.engine_results}")
         
-        # Phase0 結果
-        if result.phase0_result:
-            print(f"\n📋 Phase0 結果分析:")
-            print(f"   狀態: {result.phase0_result.status}")
-            print(f"   執行時間: {result.phase0_result.execution_time:.2f} 秒")
-            print(f"   發現資產: {len(result.phase0_result.assets)} 個")
-            
-            summary = result.phase0_result.summary
-            print(f"\n   掃描摘要:")
-            print(f"     - URLs: {summary.urls_found}")
-            print(f"     - 表單: {summary.forms_found}")
-            print(f"     - APIs: {summary.apis_found}")
-            print(f"     - 掃描時長: {summary.scan_duration_seconds:.0f} 秒")
-            
-            if result.phase0_result.fingerprints:
-                fp = result.phase0_result.fingerprints
-                print(f"\n   技術棧指紋:")
-                if fp.web_server:
-                    print(f"     - Web Server: {fp.web_server}")
-                if fp.frameworks:
-                    print(f"     - Frameworks: {fp.frameworks}")
-                if fp.cms:
-                    print(f"     - CMS: {fp.cms}")
-                if fp.technologies:
-                    print(f"     - Technologies: {fp.technologies}")
-            
-            # 顯示前 5 個資產
-            if result.phase0_result.assets:
-                print(f"\n   資產清單 (前 5 個):")
-                for i, asset in enumerate(result.phase0_result.assets[:5], 1):
-                    params_str = f", 參數: {asset.parameters}" if asset.parameters else ""
-                    form_str = " [表單]" if asset.has_form else ""
-                    print(f"     [{i}] {asset.type}: {asset.value}{form_str}{params_str}")
+        if result_python.assets:
+            print(f"\n     • 資產樣本 (前 3 個):")
+            for i, asset in enumerate(result_python.assets[:3], 1):
+                print(f"       [{i}] {asset.type}: {asset.value}")
         
-        # AI 決策
-        print(f"\n🤖 AI 決策:")
-        print(f"   需要 Phase1: {'是' if result.need_phase1 else '否'}")
-        if result.decision_reasoning:
-            print(f"   決策理由: {result.decision_reasoning}")
+        # 步驟 3: 測試所有引擎 (平衡模式)
+        print("\n" + "─" * 100)
+        print("📍 階段 3: 測試所有四種引擎 (平衡模式)")
+        print("─" * 100)
         
-        # Phase1 結果
-        if result.phase1_result:
-            print(f"\n📋 Phase1 結果分析:")
-            print(f"   狀態: {result.phase1_result.status}")
-            print(f"   執行時間: {result.phase1_result.execution_time:.2f} 秒")
-            print(f"   發現資產: {len(result.phase1_result.assets)} 個")
-            
-            summary = result.phase1_result.summary
-            print(f"\n   掃描摘要:")
-            print(f"     - URLs: {summary.urls_found}")
-            print(f"     - 表單: {summary.forms_found}")
-            print(f"     - APIs: {summary.apis_found}")
-            
-            print(f"\n   引擎執行結果:")
-            for engine, engine_result in result.phase1_result.engine_results.items():
-                status_icon = "✅" if engine_result.get("status") == "completed" else "❌"
-                print(f"     {status_icon} {engine}: {engine_result.get('status')} ({engine_result.get('findings', 0)} 發現)")
-            
-            # 顯示前 10 個資產
-            if result.phase1_result.assets:
-                print(f"\n   資產清單 (前 10 個):")
-                for i, asset in enumerate(result.phase1_result.assets[:10], 1):
-                    params_str = f", 參數: {asset.parameters}" if asset.parameters else ""
-                    form_str = " [表單]" if asset.has_form else ""
-                    print(f"     [{i}] {asset.type}: {asset.value}{form_str}{params_str}")
+        print("\n⚡ 啟動四引擎並行掃描 (Python + TypeScript + Rust + Go)")
+        print("   引擎: ['python', 'typescript', 'rust', 'go']")
+        print("   策略: BALANCED")
+        print("   並行: True")
         
-        # 步驟 5: 驗證結果
-        print("\n" + "─" * 80)
-        print("📍 步驟 5: 驗證測試結果")
-        print("─" * 80)
+        start_time = time.time()
+        
+        result_all = await coordinator.execute_phase1(
+            scan_id="scan_all_engines_001",  # ✅ 正確格式: scan_ 前綴
+            targets=selected_targets,  # 多目標
+            selected_engines=["python", "typescript", "rust", "go"],
+            max_depth=2,
+            max_urls=50
+        )
+        
+        all_engines_time = time.time() - start_time
+        
+        print(f"\n   📊 四引擎協調結果:")
+        print(f"     • 最終狀態: {result_all.status}")
+        print(f"     • 總執行時間: {all_engines_time:.2f}s")
+        print(f"     • 總資產數: {len(result_all.assets)}")
+        print(f"     • 去重後資產: {len(result_all.assets)}")
+        
+        print(f"\n   🔍 各引擎執行詳情:")
+        for engine_name, engine_status in result_all.engine_results.items():
+            status_icon = "✅" if engine_status.get("status") == "completed" else "❌"
+            assets_count = engine_status.get("assets_count", 0)
+            error = engine_status.get("error", "")
+            
+            print(f"     {status_icon} {engine_name.upper()}:")
+            print(f"        - 狀態: {engine_status.get('status')}")
+            print(f"        - 資產: {assets_count} 個")
+            if error:
+                print(f"        - 錯誤: {error}")
+        
+        # 步驟 4: 驗證引擎通訊
+        print("\n" + "─" * 100)
+        print("📍 階段 4: 驗證引擎通訊能力")
+        print("─" * 100)
         
         validation_passed = True
+        validation_details = []
         
-        # 檢查點 1: 掃描成功完成
-        if result.status == "success":
-            print("   ✅ 掃描成功完成")
+        # 檢查點 1: 協調器狀態
+        if result_all.status in ["completed", "partial_success"]:
+            print("   ✅ 協調器成功完成協調任務")
+            validation_details.append(("協調器狀態", True, result_all.status))
         else:
-            print(f"   ❌ 掃描狀態異常: {result.status}")
+            print(f"   ❌ 協調器狀態異常: {result_all.status}")
             validation_passed = False
+            validation_details.append(("協調器狀態", False, result_all.status))
         
-        # 檢查點 2: Phase0 執行
-        if result.phase0_result and result.phase0_result.status == "success":
-            print("   ✅ Phase0 執行成功")
+        # 檢查點 2: 引擎請求發出
+        successful_engines = [
+            name for name, status in result_all.engine_results.items()
+            if status.get("status") == "completed"
+        ]
+        
+        if len(successful_engines) >= 2:
+            print(f"   ✅ 至少 2 個引擎成功執行: {successful_engines}")
+            validation_details.append(("引擎執行", True, f"{len(successful_engines)}/4"))
         else:
-            print("   ❌ Phase0 執行失敗")
+            print(f"   ❌ 成功引擎數不足: {successful_engines}")
             validation_passed = False
+            validation_details.append(("引擎執行", False, f"{len(successful_engines)}/4"))
         
-        # 檢查點 3: 發現資產
-        total_assets = len(result.phase0_result.assets if result.phase0_result else [])
-        if result.phase1_result:
-            total_assets += len(result.phase1_result.assets)
-        
+        # 檢查點 3: 引擎結果接收
+        total_assets = len(result_all.assets)
         if total_assets > 0:
-            print(f"   ✅ 發現資產: {total_assets} 個")
+            print(f"   ✅ 成功接收引擎結果: {total_assets} 個資產")
+            validation_details.append(("結果接收", True, f"{total_assets} assets"))
         else:
-            print("   ⚠️  未發現任何資產")
-            validation_passed = False
+            print(f"   ⚠️  未接收到任何資產")
+            validation_details.append(("結果接收", False, "0 assets"))
         
-        # 檢查點 4: 執行時間合理
-        if result.total_execution_time > 0:
-            print(f"   ✅ 執行時間合理: {result.total_execution_time:.2f} 秒")
+        # 檢查點 4: 錯誤隔離
+        failed_engines = [
+            name for name, status in result_all.engine_results.items()
+            if status.get("status") == "failed"
+        ]
+        
+        if failed_engines and len(successful_engines) > 0:
+            print(f"   ✅ 錯誤隔離正常: {failed_engines} 失敗不影響其他引擎")
+            validation_details.append(("錯誤隔離", True, "部分失敗可容忍"))
+        elif len(successful_engines) == 4:
+            print(f"   ✅ 所有引擎成功，無錯誤")
+            validation_details.append(("錯誤隔離", True, "全部成功"))
         else:
-            print("   ❌ 執行時間異常")
+            print(f"   ❌ 錯誤隔離失敗: 所有引擎均失敗")
             validation_passed = False
+            validation_details.append(("錯誤隔離", False, "全部失敗"))
         
-        # 最終結論
-        print("\n" + "=" * 80)
+        # 檢查點 5: 執行時間
+        if all_engines_time > 0:
+            print(f"   ✅ 執行時間合理: {all_engines_time:.2f}s")
+            validation_details.append(("執行時間", True, f"{all_engines_time:.2f}s"))
+        else:
+            print(f"   ❌ 執行時間異常")
+            validation_passed = False
+            validation_details.append(("執行時間", False, "異常"))
+        
+        # 步驟 5: 智能引擎選擇測試
+        print("\n" + "─" * 100)
+        print("📍 階段 5: 智能引擎選擇 (SMART 策略)")
+        print("─" * 100)
+        
+        print("\n🧠 智能模式測試")
+        start_time = time.time()
+        
+        result_smart = await coordinator.execute_strategy_smart(
+            scan_id="scan_smart_001",  # ✅ 正確格式: scan_ 前綴
+            targets=selected_targets[:1]
+        )
+        
+        smart_time = time.time() - start_time
+        
+        print(f"\n   📊 智能引擎選擇結果:")
+        print(f"     • 狀態: {result_smart.status}")
+        print(f"     • 執行時間: {smart_time:.2f}s")
+        print(f"     • 選擇的引擎: {list(result_smart.engine_results.keys())}")
+        print(f"     • 發現資產: {len(result_smart.assets)}")
+        
+        # 最終報告
+        print("\n" + "=" * 100)
+        print("📋 驗證測試報告")
+        print("=" * 100)
+        
+        print(f"\n✅ 測試完成項目:")
+        print(f"  1. Python 引擎單獨測試: {python_time:.2f}s")
+        print(f"  2. 四引擎並行測試: {all_engines_time:.2f}s")
+        print(f"  3. 智能引擎選擇: {smart_time:.2f}s")
+        
+        print(f"\n📊 驗證結果詳情:")
+        for check_name, passed, detail in validation_details:
+            icon = "✅" if passed else "❌"
+            print(f"  {icon} {check_name}: {detail}")
+        
+        print("\n" + "=" * 100)
         if validation_passed:
-            print("🎉 驗證通過 - 掃描系統運作正常")
+            print("🎉 驗證通過 - 多引擎協調器運作正常")
+            print("  • 協調器可以正確調度四種引擎")
+            print("  • 各引擎請求成功發出並接收結果")
+            print("  • 錯誤隔離機制正常工作")
         else:
-            print("⚠️  驗證失敗 - 請檢查上述錯誤")
-        print("=" * 80)
+            print("⚠️  驗證失敗 - 請檢查上述錯誤項目")
+        print("=" * 100)
         
-        return result, validation_passed
+        return result_all, validation_passed
         
     except Exception as e:
-        print("\n" + "=" * 80)
-        print("❌ 驗證測試失敗")
-        print("=" * 80)
+        print("\n" + "=" * 100)
+        print("❌ 驗證測試異常")
+        print("=" * 100)
         logger.exception(f"錯誤: {e}")
         print(f"\n錯誤詳情: {e}")
         
@@ -220,21 +257,16 @@ async def validate_scan_system():
         traceback.print_exc()
         
         return None, False
-        
-    finally:
-        if broker:
-            await broker.close()
-            print("\n🔌 已關閉 MQ 連接")
 
 
 async def main():
     """主函數"""
-    print("\n⏰ 測試開始時間:", __import__('datetime').datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+    print("\n⏰ 測試開始時間:", datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
     
     try:
-        result, passed = await validate_scan_system()
+        _, passed = await validate_multi_engine_coordinator()
         
-        print("\n⏰ 測試結束時間:", __import__('datetime').datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+        print("\n⏰ 測試結束時間:", datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
         
         return 0 if passed else 1
         

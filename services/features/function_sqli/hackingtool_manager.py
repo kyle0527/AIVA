@@ -88,7 +88,7 @@ class HackingToolSQLManager:
             
         except Exception as e:
             status["error"] = str(e)
-            logger.error(f"檢查工具 {tool_name} 狀態時發生錯誤: {e}", trace_id=self.trace_id)
+            logger.error(f"檢查工具 {tool_name} 狀態時發生錯誤: {e} [trace_id={self.trace_id}]")
         
         return status
     
@@ -120,10 +120,10 @@ class HackingToolSQLManager:
             return process.returncode in [0, 1, 2]  # 很多工具的 --help 返回非零
             
         except asyncio.TimeoutError:
-            logger.warning(f"測試工具 {tool_name} 超時", trace_id=self.trace_id)
+            logger.warning(f"測試工具 {tool_name} 超時 [trace_id={self.trace_id}]")
             return False
         except Exception as e:
-            logger.warning(f"測試工具 {tool_name} 可執行性失敗: {e}", trace_id=self.trace_id)
+            logger.warning(f"測試工具 {tool_name} 可執行性失敗: {e} [trace_id={self.trace_id}]")
             return False
     
     async def install_tool(self, tool_name: str, force_reinstall: bool = False) -> Dict[str, Any]:
@@ -180,7 +180,7 @@ class HackingToolSQLManager:
                 if process.returncode != 0:
                     error_msg = f"Install command failed: {cmd}\nStderr: {stderr.decode()}"
                     result["error"] = error_msg
-                    logger.error(error_msg, trace_id=self.trace_id)
+                    logger.error(f"{error_msg} [trace_id={self.trace_id}]")
                     return result
                 
                 result["steps_completed"].append(f"install_command_{i+1}")
@@ -197,7 +197,7 @@ class HackingToolSQLManager:
             result["error"] = f"Installation timeout after {config.timeout_seconds} seconds"
         except Exception as e:
             result["error"] = f"Installation failed: {str(e)}"
-            logger.error(f"安裝工具 {tool_name} 時發生錯誤: {e}", trace_id=self.trace_id)
+            logger.error(f"安裝工具 {tool_name} 時發生錯誤: {e} [trace_id={self.trace_id}]")
         
         finally:
             result["duration"] = (datetime.now() - start_time).total_seconds()
@@ -208,7 +208,7 @@ class HackingToolSQLManager:
         """安裝所有工具"""
         results = {}
         
-        logger.info("開始批量安裝 HackingTool SQL 工具", trace_id=self.trace_id)
+        logger.info(f"開始批量安裝 HackingTool SQL 工具 [trace_id={self.trace_id}]")
         
         for tool_name in self.configs:
             logger.info(f"安裝工具: {tool_name}")
@@ -224,7 +224,7 @@ class HackingToolSQLManager:
         successful = sum(1 for r in results.values() if r["success"])
         total = len(results)
         
-        logger.info(f"批量安裝完成: {successful}/{total} 工具安裝成功", trace_id=self.trace_id)
+        logger.info(f"批量安裝完成: {successful}/{total} 工具安裝成功 [trace_id={self.trace_id}]")
         
         return results
     
@@ -238,14 +238,14 @@ class HackingToolSQLManager:
         try:
             if install_path.exists():
                 shutil.rmtree(install_path)
-                logger.info(f"工具 {tool_name} 已卸載", trace_id=self.trace_id)
+                logger.info(f"工具 {tool_name} 已卸載 [trace_id={self.trace_id}]")
                 return {"success": True, "message": f"Tool {tool_name} uninstalled"}
             else:
                 return {"success": True, "message": f"Tool {tool_name} was not installed"}
         
         except Exception as e:
             error_msg = f"Failed to uninstall {tool_name}: {str(e)}"
-            logger.error(error_msg, trace_id=self.trace_id)
+            logger.error(f"{error_msg} [trace_id={self.trace_id}]")
             return {"success": False, "error": error_msg}
     
     async def get_tool_recommendations(self, target_type: str = "web") -> List[str]:

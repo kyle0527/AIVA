@@ -188,6 +188,10 @@ class CapabilityAnalyzer:
     def _extract_python_capabilities(self, file_path: Path, module: str) -> list[dict]:
         """從 Python 文件提取能力 (使用 AST)
         
+        支持兩種模式:
+        1. @capability 裝飾器標記的函數
+        2. Manager 類中的 public async 方法 (function_* 模組)
+        
         Args:
             file_path: Python 文件路徑
             module: 所屬模組名稱
@@ -202,12 +206,29 @@ class CapabilityAnalyzer:
                 content = f.read()
                 tree = ast.parse(content)
             
+            # 檢測是否為 Manager 文件
+            is_manager_file = file_path.name == "manager.py" and "function_" in str(file_path.parent.name)
+            
             for node in ast.walk(tree):
+                # 模式 1: 裝飾器標記的函數
                 if isinstance(node, ast.FunctionDef):
-                    # 檢查是否有能力裝飾器
                     if self._has_capability_decorator(node):
                         cap = self._extract_capability_info(node, file_path, module)
                         capabilities.append(cap)
+                
+                # 模式 2: Manager 類方法 (新增)
+                if is_manager_file and isinstance(node, ast.ClassDef):
+                    if node.name.endswith("Manager"):
+                        # 提取 Manager 類中的所有 public async 方法
+                        for item in node.body:
+                            if isinstance(item, ast.AsyncFunctionDef):
+                                # 排除私有方法和特殊方法
+                                if not item.name.startswith('_') and item.name not in ['__init__', '__aenter__', '__aexit__']:
+                                    cap = self._extract_capability_info(item, file_path, module)
+                                    cap["manager_class"] = node.name
+                                    cap["is_manager_method"] = True
+                                    capabilities.append(cap)
+                                    logger.debug(f"  Found Manager method: {node.name}.{item.name}")
             
             if capabilities:
                 logger.debug(f"  Found {len(capabilities)} Python capabilities in {file_path.name}")

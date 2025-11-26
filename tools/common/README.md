@@ -163,7 +163,7 @@ project_root = Path(__file__).parent.parent.parent.parent
 
 ### 常見問題
 1. **路徑錯誤**: 確保在AIVA專案根目錄執行
-2. **導入錯誤**: 檢查Python路徑和虛擬環境
+2. **導入錯誤**: 檢查Python路徑和環境配置
 3. **權限問題**: 確保腳本有執行權限
 4. **編碼問題**: 大多數腳本使用UTF-8編碼
 

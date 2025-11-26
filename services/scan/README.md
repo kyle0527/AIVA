@@ -1,1670 +1,707 @@
 # 🎯 AIVA Scan - 多語言統一掃描引擎
 
-**導航**: [← 返回 Services 總覽](../README.md) | [📖 文檔中心](../../docs/README.md)
+**導航**: [← 返回 Services 總覽](../README.md) | [📖 文檔中心](../../docs/README.md) | [🔬 引擎驗證指南](./ENGINE_VERIFICATION_AND_FIX_PLAN.md)
 
-> **🎯 Bug Bounty 專業化 v6.3**: 兩階段掃描架構，Core 指揮 Scan 執行  
-> **✅ 系統狀態**: 架構修復完成，符合 aiva_common 規範  
-> **🔄 最後更新**: 2025年11月17日
+> **🎯 設計目標**: 兩階段掃描架構，適配器模式協調四引擎  
+> **❌ 實際狀態**: 架構設計完成，但所有引擎均無實際掃描能力  
+> **🔄 最後更新**: 2025年11月22日 - 驗證確認：0/4 引擎可用
 
-## 📋 修復狀態 (2025年11月17日 - 第二次完整修復)
+## 🏗️ 核心架構
 
-### ✅ 已完成修復
+### 設計理念
 
-1. **架構重構完成 (第二輪)**
-   - ✅ **完全移除所有重複定義** (遵循 aiva_common 單一數據來源原則)
-   - ✅ 移除 `VulnerabilityDiscovery`, `EASMAsset`, `JavaScriptAnalysisResult` 等 10+ 個重複類
-   - ✅ 只保留 3 個真正的協調器特有模型:
-     * `ScanCoordinationMetadata` (協調控制)
-     * `EngineStatus` (引擎監控)
-     * `MultiEngineCoordinationResult` (結果聚合)
-   - ✅ `coordinators/scan_models.py` 從 400+ 行縮減至 173 行
-   - ✅ 所有重複的 Schema 改為從 aiva_common 導入
-   - ✅ 整個 scan 模組無編譯錯誤
+Scan 模組採用**適配器模式**協調四個語言引擎（Python、TypeScript、Rust、Go），實現兩階段掃描流程：
 
-2. **遵循 aiva_common 規範 (完全合規)**
-   - ✅ 優先使用 aiva_common 的標準 Schema
-   - ✅ **禁止重複定義** - 所有重複已移除
-   - ✅ 正確的導入鏈: `aiva_common` → `scan_models` → `__init__`
-   - ✅ 導入清單:
-     * 枚舉: `AssetType`, `Confidence`, `Severity`, `VulnerabilityStatus`, `VulnerabilityType`
-     * 基礎: `Asset`, `Vulnerability`, `CVEReference`, `CVSSv3Metrics` 等
-     * 資產: `AssetInventoryItem`, `AssetLifecyclePayload`, `DiscoveredAsset`, `EASMAsset`
-     * 引用: `TechnicalFingerprint`, `VulnerabilityDiscovery`
-     * 任務: `EASMDiscoveryPayload`
-     * 分析: `JavaScriptAnalysisResult`
-
-3. **兩階段掃描架構明確**
-   - ✅ Phase 0: Rust 快速偵察 (Core 下令執行)
-   - ✅ Phase 1: 多引擎深度掃描 (Core 根據 Phase 0 結果決策)
-   - ✅ 數據流向: User → Core → Scan → Core
-   - ✅ 完整流程圖文檔: [SCAN_FLOW_DIAGRAMS.md](./SCAN_FLOW_DIAGRAMS.md)
-
-4. **模組職責清晰**
-   - ✅ Core 模組: 指揮官 (下令、分析、決策)
-   - ✅ Scan 模組: 執行者 (接收命令、執行掃描、回傳結果)
-   - ✅ RabbitMQ: 模組間通信 (解耦設計)
-
-### 🎯 核心設計原則
-
-**兩階段掃描流程**:
-1. **Phase 0 (必須)**: Core 下令 → Scan 執行 Rust 快速偵察 → 回傳初步資產清單
-2. **Phase 1 (按需)**: Core 分析決策 → Scan 執行選定引擎 → 回傳完整資產清單
-
-**角色定位**:
-- **指揮官 (Core)**: 接收用戶輸入、下達命令、分析結果、決策引擎
-- **執行者 (Scan)**: 接收命令、執行掃描、整合結果、回傳數據
-
----
-
-AIVA Scan 是一個強大的多語言統一掃描引擎，整合了 **Python**、**TypeScript**、**Rust** 和 **Go** 四種技術的優勢，專精於 Bug Bounty 動態檢測和黑盒滲透測試。
-
-AIVA Scan 是一個強大的多語言統一掃描引擎，整合了 **Python**、**TypeScript**、**Rust** 和 **Go** 四種技術的優勢，專精於 Bug Bounty 動態檢測和黑盒滲透測試。
-
----
-
-## 🚀 **5 分鐘快速開始 - Docker 多目標掃描測試**
-
-### **Windows 用戶 (推薦)**
-
-```powershell
-# 1. 進入 scan 目錄
-cd services\scan
-
-# 2. 運行快速啟動腳本
-.\start_scan_test.ps1
-
-# 3. 選擇 [1] 啟動所有服務
-# 4. 選擇 [3] 發送測試目標 (8 個內建測試)
-# 5. 選擇 [4] 查看實時日誌
-# 6. 選擇 [5] 打開 RabbitMQ 管理界面 (http://localhost:15672)
+```
+┌─────────────────────────────────────────────────────────────┐
+│                    AI 命令中心 (Core 模組)                   │
+│                                                              │
+│  Phase 0 決策 → Rust 快速偵察 → 分析結果 → Phase 1 決策     │
+└─────────────────────────────────────────────────────────────┘
+                            ↓ ↑
+                    數據合約 (Pydantic)
+                            ↓ ↑
+┌─────────────────────────────────────────────────────────────┐
+│              Scan 模組 - MultiEngineCoordinator              │
+│                                                              │
+│  ┌──────────────────────────────────────────────────────┐  │
+│  │        適配器層 (coordinators/engines/)              │  │
+│  ├──────────────────────────────────────────────────────┤  │
+│  │  Python Adapter  │  TypeScript Adapter               │  │
+│  │  Rust Adapter    │  Go Adapter                       │  │
+│  └──────────────────────────────────────────────────────┘  │
+│                            ↓                                 │
+│  ┌──────────────────────────────────────────────────────┐  │
+│  │           四引擎並行執行 (asyncio.gather)            │  │
+│  └──────────────────────────────────────────────────────┘  │
+└─────────────────────────────────────────────────────────────┘
 ```
 
-### **Linux/Mac 用戶**
+**理論優勢** (架構設計):
+- ✅ **複雜度降低**: 從 171 降至 17 (-90%)
+- ✅ **錯誤隔離**: 單引擎失敗不影響整體
+- ✅ **統一接口**: 適配器模式封裝引擎差異
+- ✅ **類型安全**: Pydantic 數據合約驗證
 
+**實際驗證結果** (2025年11月22日):
+- ❌ **無實際掃描功能**: 所有引擎均未發送真實 HTTP 請求
+- ❌ **假陽性結果**: 漏洞掃描器未真實測試目標
+- ❌ **引擎不可用**: 4 個引擎中 0 個可正常工作
+- ⚠️ **架構與實現脫節**: 代碼結構正確但功能缺失
+- 📋 **需要重新實現**: 所有引擎的掃描邏輯需從頭編寫
+
+### 兩階段掃描流程
+
+**Phase 0 - 快速偵察** (5-10 分鐘):
+- **執行者**: Rust 引擎 (必須)
+- **任務**: 目標驗證、敏感資訊掃描、技術棧識別、基礎端點發現
+- **輸出**: 初步資產清單 + AI 決策建議
+
+**Phase 1 - 深度掃描** (10-30 分鐘，按需):
+- **選擇引擎**: AI 根據 Phase 0 結果決定組合
+- **並行執行**: Python/TypeScript/Rust/Go (1-4 個)
+- **任務**: 深度爬取、動態渲染、表單發現、API 分析
+- **輸出**: 完整資產清單
+```
+
+---
+
+## 📊 系統狀態
+
+### ❌ 驗證失敗 (v2.1 - 2025年11月22日)
+
+| 組件 | 架構狀態 | 功能狀態 | 驗證結果 |
+|------|----------|----------|----------|
+| **適配器模式** | ✅ 架構完成 | ❌ 未實現 | **無真實請求發送** |
+| **四引擎支援** | ⚠️ 代碼存在 | ❌ 不可用 | TypeScript/Go 未安裝，Rust 失敗 |
+| **Phase 0 流程** | ✅ 邏輯完成 | ❌ 不可用 | Rust 引擎執行失敗 |
+| **Phase 1 流程** | ✅ 邏輯完成 | ❌ 不可用 | Python 無網路活動 |
+| **命令處理** | ✅ 接口完成 | ⚠️ 部分可用 | 可接收命令但無實際掃描 |
+| **錯誤隔離** | ✅ 完成 | ✅ 正常 | 唯一正常工作的功能 |
+
+**致命問題** (2025年11月22日 驗證):
+- ❌ **所有引擎均未發送 HTTP 請求到靶場目標**
+- ❌ Python 引擎僅記錄日誌，無實際網路掃描
+- ❌ 漏洞掃描器返回假陽性結果（未真實測試）
+- ❌ Rust 引擎二進制執行失敗 (exit code 2)
+- ❌ TypeScript/Go 引擎未編譯安裝
+- 📋 結論: **協調器架構正確，但所有引擎的掃描實現均缺失**
+
+**詳細分析**: 📄 [能力分析報告](_out/SCAN_MODULE_CAPABILITY_ANALYSIS.md)  
+**修復計劃**: 📋 [修復計劃文檔](./SCAN_MODULE_RESTORATION_PLAN.md)
+
+---
+
+## ⚠️ 重要聲明
+
+**AIVA Scan 目前狀態** (2025年11月22日驗證):
+
+- ❌ **無實際掃描功能**: 所有引擎均未實現真實的網路請求
+- ❌ **架構與實現脫節**: 代碼結構完整但底層功能缺失
+- ❌ **需要完整重寫**: 4 個引擎的掃描邏輯需從零實現
+- ⚠️ **文檔僅供參考**: 所有功能描述為設計目標，非實際能力
+
+**設計理念**（未實現）:
+AIVA Scan 設計為多語言統一掃描引擎，計劃整合 Python、TypeScript、Rust 和 Go 四種技術的優勢，專精於 Bug Bounty 動態檢測和黑盒滲透測試。
+
+---
+
+## 🚀 快速開始
+
+### ⚠️ 重要警告
+
+**目前所有範例代碼僅為架構演示，不會執行實際的網路掃描。**
+
+驗證結果 (2025年11月22日):
+- ❌ 代碼可以執行但不會發送 HTTP 請求
+- ❌ 返回的結果為空或假陽性數據
+- ❌ 所有引擎均無實際掃描能力
+
+### 基本使用（理論架構）
+
+```python
+# ⚠️ 警告：此代碼不會執行實際掃描
+# 透過 AI 命令中心執行掃描（僅架構演示）
+from services.aiva_common.command_center import get_command_center
+from services.aiva_common.schemas import AICommand, CommandType
+
+# 建立命令
+command = AICommand(
+    command_type=CommandType.SCAN_PHASE0,
+    target_module="scan",
+    payload={
+        "scan_id": "scan_001",
+        "targets": ["https://example.com"]
+    }
+)
+
+# ❌ 執行後不會有實際掃描發生
+command_center = get_command_center()
+result = await command_center.execute(command)  # 返回空結果或假數據
+```
+
+### 詳細指南
+
+- 📘 **使用者手冊**: [SCAN_USER_GUIDE.md](./SCAN_USER_GUIDE.md) - 完整操作指南
+- 🔧 **API 參考**: [command_handler.py](./command_handler.py) - 命令處理器實現
+- 📊 **流程圖解**: [SCAN_FLOW_DIAGRAMS.md](./SCAN_FLOW_DIAGRAMS.md) - 完整流程說明
+
+---
+
+## 📚 文檔導航
+
+### 📖 主要文檔
+
+| 文檔 | 說明 | 適用對象 |
+|------|------|----------|
+| 📘 [SCAN_USER_GUIDE.md](./SCAN_USER_GUIDE.md) | 使用者手冊 | 所有使用者 |
+| 📊 [SCAN_FLOW_DIAGRAMS.md](./SCAN_FLOW_DIAGRAMS.md) | 流程圖解（基準文檔） | 開發者 |
+| 📋 [SCAN_MODULE_RESTORATION_PLAN.md](./SCAN_MODULE_RESTORATION_PLAN.md) | 修復計劃與完成狀態 | 開發者 |
+| 📄 [SCAN_MODULE_CAPABILITY_ANALYSIS.md](../../_out/SCAN_MODULE_CAPABILITY_ANALYSIS.md) | 能力分析報告 | 開發者 |
+
+### 🔧 引擎文檔（架構設計）
+
+| 引擎 | 架構狀態 | 功能狀態 | 文檔 | 設計目標 |
+|------|----------|----------|------|----------|
+| 🦀 **Rust** | ⚠️ 代碼存在 | ❌ 執行失敗 | [rust_engine/README.md](./engines/rust_engine/README.md) | Phase 0 快速偵察 |
+| 🐍 **Python** | ⚠️ 代碼存在 | ❌ 無網路掃描 | [python_engine/README.md](./engines/python_engine/README.md) | Phase 1 深度爬取 |
+| 📘 **TypeScript** | ⚠️ 代碼存在 | ❌ 未編譯 | [typescript_engine/README.md](./engines/typescript_engine/README.md) | Phase 1 動態渲染 |
+| 🔷 **Go** | ⚠️ 代碼存在 | ❌ 未編譯 | [go_engine/README.md](./engines/go_engine/README.md) | Phase 1 高並發掃描 |
+
+### 🎯 協調器文檔
+
+| 文檔 | 說明 |
+|------|------|
+| [coordinators/README.md](./coordinators/README.md) | 協調器總覽和適配器模式 |
+| [coordinators/COORDINATOR_ACTUAL_STATUS.md](./coordinators/COORDINATOR_ACTUAL_STATUS.md) | 實際狀態報告 |
+
+---
+
+## 🏗️ 四引擎架構
+
+### 引擎分工
+
+| 引擎 | 主要職責 | 技術優勢 | 支援模式 | 使用階段 |
+|------|----------|----------|----------|----------|
+| 🦀 **Rust** | 快速偵察、敏感資訊掃描 | 極高性能 (10-100x) | **3種模式**<br/>1. FastDiscovery<br/>2. DeepAnalysis<br/>3. FocusedVerification | Phase 0 必須<br/>Phase 1 可選 |
+| 🐍 **Python** | 靜態爬取、表單發現、API 分析 | 生態豐富、開發快速 | **7種策略**<br/>FAST/CONSERVATIVE/BALANCED<br/>DEEP/AGGRESSIVE<br/>STEALTH/TARGETED | Phase 1 主力 |
+| 📘 **TypeScript** | JavaScript 渲染、SPA 路由 | Playwright 自動化 | **5種模式**<br/>1. Basic Dynamic<br/>2. SPA Detection<br/>3. Network Interception<br/>4. Content Extraction<br/>5. Interaction Simulation | Phase 1 動態 |
+| 🔷 **Go** | 高並發掃描、SSRF/CSPM/SCA | 高並發、低資源 | **3種專業掃描器**<br/>1. SSRF Scanner<br/>2. CSPM Scanner<br/>3. SCA Scanner | Phase 1 可選 |
+
+### 引擎詳細說明
+
+#### 🦀 Rust 引擎
+- **位置**: `engines/rust_engine/`
+- **狀態**: ✅ 完全可用
+- **主要功能**:
+  - Phase 0 快速偵察 (必須)
+  - 敏感資訊掃描 (API Key, Token, 密鑰)
+  - 技術棧指紋識別
+- **詳細文檔**: [Rust Engine README](./engines/rust_engine/README.md)
+
+#### 🐍 Python 引擎
+- **位置**: `engines/python_engine/`
+- **狀態**: ✅ 完全可用
+- **主要功能**:
+  - 靜態內容爬取
+  - 表單與參數發現
+  - API 端點分析
+- **詳細文檔**: [Python Engine README](./engines/python_engine/README.md)
+
+#### 📘 TypeScript 引擎
+- **位置**: `engines/typescript_engine/`
+- **狀態**: ✅ 完全可用
+- **主要功能**:
+  - Playwright 瀏覽器自動化
+  - JavaScript 渲染
+  - SPA 路由發現
+- **詳細文檔**: [TypeScript Engine README](./engines/typescript_engine/README.md)
+
+#### 🔷 Go 引擎
+- **位置**: `engines/go_engine/`
+- **狀態**: ✅ 完全可用
+- **主要功能**:
+  - SSRF 漏洞檢測（雲端元數據、內部微服務）
+  - 雲端安全態勢管理（AWS/GCP/Azure）
+  - 軟體組成分析（依賴包漏洞、許可證合規）
+- **詳細文檔**: [Go Engine README](./engines/go_engine/README.md)
+
+---
+
+## 🎯 各引擎掃描模式總覽
+
+### 📊 模式對照表
+
+| 引擎 | 模式名稱 | 特性 | 適用場景 | 切換方式 |
+|------|---------|------|---------|----------|
+| **Rust** | FastDiscovery | 快速、輕量、無驗證 | Phase 0 必用 | `--mode fast` |
+| | DeepAnalysis | 完整密鑰檢測+驗證 | Phase 1 深度 | `--mode deep` |
+| | FocusedVerification | 針對性驗證 | AI 決策選擇 | `--mode focused` |
+| **Python** | FAST | 深度2-3、極快 | 快速資產發現 | `strategy="FAST"` |
+| | CONSERVATIVE | 深度2、低負載 | 避免觸發防護 | `strategy="CONSERVATIVE"` |
+| | BALANCED | 深度3-4、平衡 | 日常掃描 | `strategy="BALANCED"` |
+| | DEEP | 深度5-6、全面 | 完整覆蓋 | `strategy="DEEP"` |
+| | AGGRESSIVE | 深度7+、最慢 | 完整測試 | `strategy="AGGRESSIVE"` |
+| | STEALTH | 深度3、隱秘 | 避免檢測 | `strategy="STEALTH"` |
+| | TARGETED | 自定義深度 | 特定目標 | `strategy="TARGETED"` |
+| **TypeScript** | Basic Dynamic | 基礎渲染 | 傳統網站 | 默認模式 |
+| | SPA Detection | 框架識別 | React/Vue/Angular | 自動檢測 |
+| | Network Interception | AJAX/Fetch 攔截 | API 端點發現 | 自動啟用 |
+| | Content Extraction | 深度 DOM 分析 | 資產發現 | 自動啟用 |
+| | Interaction Simulation | 自動點擊/表單 | 互動內容 | 配置啟用 |
+| **Go** | SSRF Scanner | 雲端元數據檢測 | 內網探測 | `ssrf-scanner.exe` |
+| | CSPM Scanner | AWS 配置審計 | 雲端安全 | `cspm-scanner.exe` |
+| | SCA Scanner | 依賴包漏洞 | 供應鏈安全 | `sca-scanner.exe` |
+
+### 🔄 模式切換詳細說明
+
+#### 1. **Rust 引擎模式切換**
+
+**通過 CLI 參數切換**：
 ```bash
-# 1. 進入 scan 目錄
-cd services/scan
+# Mode 1: 快速發現（Phase 0 使用）
+./aiva-info-gatherer scan --url http://target.com --mode fast --timeout 10
 
-# 2. 啟動 Docker 服務
-docker-compose -f docker-compose.scan.yml up -d
+# Mode 2: 深度分析（Phase 1 使用）
+./aiva-info-gatherer scan --url http://target.com --mode deep --timeout 20
 
-# 3. 等待服務啟動完成
-sleep 30
-
-# 4. 發送測試目標
-docker-compose -f docker-compose.scan.yml run --rm test-target-generator
-
-# 5. 查看實時日誌
-docker logs -f aiva-rust-deep-analysis
+# Mode 3: 聚焦驗證（AI 決策使用）
+./aiva-info-gatherer scan --url http://target.com --mode focused --verify-keys
 ```
 
-### **預期結果**
+**通過協調器自動選擇**：
+```python
+# Phase 0 自動使用 FastDiscovery
+phase0_result = await coordinator.execute_phase0(
+    scan_id="scan_001",
+    targets=["https://example.com"]
+)
 
-✅ **啟動後應看到**:
-- 5 個容器運行: RabbitMQ, Redis, 3 個 Rust 引擎
-- RabbitMQ 管理界面可訪問: http://localhost:15672 (用戶名: aiva / 密碼: aiva_mq_password)
-- 8 個測試目標成功發送到隊列
-
-✅ **掃描結果驗證**:
+# Phase 1 可指定使用 DeepAnalysis
+phase1_result = await coordinator.execute_phase1(
+    scan_id="scan_001",
+    targets=["https://example.com"],
+    selected_engines=["rust"],  # 自動使用 deep 模式
+    max_depth=5
+)
 ```
-📥 收到敏感資訊掃描任務: test_a1b2c3d4
-📊 敏感資訊掃描: 發現 3 個結果
-🔐 密鑰檢測掃描: 發現 2 個密鑰
-🔍 驗證密鑰: AWS Access Key ...
-✅ 掃描完成: test_a1b2c3d4 (總計發現 5 個結果)
+
+**配置參數**：
+```python
+config = {
+    "mode": "deep",  # fast/deep/focused
+    "timeout": 20,
+    "max_depth": 5,
+    "verify_keys": True  # 僅 deep/focused 模式
+}
 ```
-
-### **三種 Rust 掃描模式**
-
-| 模式 | 用途 | 平均速度 | 發現數 |
-|------|------|----------|--------|
-| **Mode 1: Fast Discovery** | 快速技術棧識別 | 80ms | 4-6 個 |
-| **Mode 2: Deep Analysis** | 完整敏感資訊掃描 | 350ms | 10-20 個 |
-| **Mode 3: Focused Verification** | 高價值密鑰驗證 | 600ms | 2-5 個 |
-
-### **測試驗證清單**
-
-- [ ] 所有容器成功啟動
-- [ ] 8 個測試目標被發送到 `tasks.scan.sensitive_info` 隊列
-- [ ] Mode 1 識別到技術棧 (React, Vue, Java, PHP, Python, .NET)
-- [ ] Mode 2 檢測到 AWS Key, GitHub Token, JWT, 私鑰
-- [ ] Mode 3 報告高信心度密鑰 (信心度 > 0.9)
-- [ ] `findings.new` 隊列有 40+ 條消息
-
-### **詳細文檔**
-
-- 📖 **完整測試指南**: [MULTI_TARGET_TESTING_GUIDE.md](./MULTI_TARGET_TESTING_GUIDE.md)
-- 📖 **架構設計**: [SCAN_MODULE_ARCHITECTURE.md](./SCAN_MODULE_ARCHITECTURE.md)
-- 📖 **三引擎協調**: [MULTI_ENGINE_COORDINATION_GUIDE.md](./MULTI_ENGINE_COORDINATION_GUIDE.md)
 
 ---
 
-## 📑 目錄
+#### 2. **Python 引擎策略切換**
 
-### 核心說明
-- [📋 修復狀態](#修復狀態-2025年11月17日---第二次完整修復) - 最新修復記錄
-- [🚀 快速開始](#5-分鐘快速開始---docker-多目標掃描測試) - Docker 多目標測試
-- [🔧 修復規範](#修復規範)
-- [📊 模組統計](#模組統計)
+**通過 ScanStartPayload 切換**：
+```python
+from services.aiva_common.schemas import ScanStartPayload
 
-### 掃描引擎（4 個語言）
-- [🦀 Rust Engine](./engines/rust_engine/README.md) - Phase0 必執行 + Phase1 高性能（80% 完成）
-- [🐍 Python Engine](./engines/python_engine/README.md) - Phase1 主力爬蟲（90% 完成）
-- [📘 TypeScript Engine](./engines/typescript_engine/README.md) - SPA 動態渲染（70% 完成）
-- [🔷 Go Engine](./engines/go_engine/README.md) - SSRF/CSPM/SCA 專用（75% 完成）
-- [📊 引擎完成度分析](./engines/ENGINE_COMPLETION_ANALYSIS.md)
-- [📚 引擎文檔索引](./engines/ENGINES_DOCUMENTATION_INDEX.md)
+# 快速掃描
+request = ScanStartPayload(
+    scan_id="scan_001",
+    targets=["http://localhost:3000"],
+    strategy="FAST",  # 關鍵參數
+    max_depth=2
+)
 
-### 協調器與編排
-- [🎯 Coordinators](./coordinators/README.md) - 多引擎協調器（管理 4 個引擎的掃描工作）
-  - MultiEngineCoordinator - 多引擎協調
-  - UnifiedScanEngine - 統一掃描接口
-  - ScanModels - 數據模型（遵循 aiva_common 規範）
-  - Target Generators - 測試目標生成器
+# 深度掃描
+request = ScanStartPayload(
+    scan_id="scan_002",
+    targets=["http://localhost:3000"],
+    strategy="DEEP",  # 關鍵參數
+    max_depth=5
+)
 
-### 架構與設計
-- [🏗️ 核心架構](#核心架構)
-  - [多語言協同設計](#多語言協同設計)
-  - [掃描引擎架構](#掃描引擎架構)
-  - [統一API層](#統一api層)
-- [🎯 子模組詳解](#子模組詳解)
-- [📁 目錄結構](#目錄結構)
-- [📊 完整流程圖](./SCAN_FLOW_DIAGRAMS.md)
+result = await orchestrator.execute_scan(request)
+```
 
-### 開發與使用
-- [🚀 現有功能](#現有功能)
-- [💻 如何使用](#如何使用)
-- [🛠️ 開發指南](#開發指南)
-  - [開發環境設置](#開發環境設置)
-  - [多語言開發規範](#多語言開發規範)
-  - [API開發](#api開發)
-- [📋 新增/刪減功能 SOP](#新增刪減功能-sop)
+**通過協調器預設策略**：
+```python
+# 方式 1: 使用預設策略方法
+result = await coordinator.execute_strategy_fast(scan_id, targets)     # FAST
+result = await coordinator.execute_strategy_balanced(scan_id, targets) # BALANCED
+result = await coordinator.execute_strategy_comprehensive(scan_id, targets) # DEEP
 
-### 測試與維護
-- [🧪 測試](#測試)
-- [📊 性能指標](#性能指標)
-- [🔧 故障排除](#故障排除)
-- [🏆 最佳實踐](#最佳實踐)
-- [🐛 問題排除](#問題排除)
+# 方式 2: 通過 Phase1 配置
+result = await coordinator.execute_phase1(
+    scan_id=scan_id,
+    targets=targets,
+    selected_engines=["python"],
+    max_depth=5,  # 影響策略選擇
+    strategy="AGGRESSIVE"  # 明確指定
+)
+```
 
----
-
-## 🔧 **修復規範**
-
-**保留未使用函數原則**: 在程式碼修復過程中，若發現有定義但尚未使用的函數或方法，只要不影響程式正常運作，建議予以保留。這些函數可能是：
-- 預留的 API 端點或介面
-- 未來功能的基礎架構  
-- 測試或除錯用途的輔助函數
-- 向下相容性考量的舊版介面
-
-說不定未來會用到，保持程式碼的擴展性和靈活性。
+**策略映射關係**：
+```python
+# aiva_common 標準策略 → Python 引擎策略
+"quick" → "FAST"
+"normal" → "BALANCED"
+"full" → "AGGRESSIVE"
+"stealth" → "STEALTH"
+```
 
 ---
 
-## 📊 **模組統計**
-- **總檔案數**: 139個檔案 (Python: 39, TypeScript: 17, Rust: 9, Go: 30)  
+#### 3. **TypeScript 引擎模式切換**
+
+**自動模式檢測**（無需手動切換）：
+```typescript
+// TypeScript 引擎會自動檢測並啟用相應模式：
+
+// 1. 檢測到 React/Vue/Angular → 啟用 SPA Detection
+if (page.url().includes('react') || hasReactRoot) {
+    await enableSPADetection();
+}
+
+// 2. 監聽所有網路請求 → 自動啟用 Network Interception
+page.on('request', captureRequest);
+page.on('response', captureResponse);
+
+// 3. 深度 DOM 分析 → Content Extraction 始終啟用
+await extractDOMContent(page);
+
+// 4. 互動模擬 → 通過配置控制
+if (config.enableInteraction) {
+    await simulateInteractions(page);
+}
+```
+
+**通過協調器配置**：
+```python
+# TypeScript 引擎配置選項
+ts_options = {
+    "enable_interaction": True,  # 啟用互動模擬
+    "wait_for_network": True,    # 等待網路請求完成
+    "capture_websocket": True,   # 捕獲 WebSocket
+    "max_wait_time": 5000        # 最大等待時間（ms）
+}
+
+result = await coordinator.execute_phase1(
+    scan_id=scan_id,
+    targets=targets,
+    selected_engines=["typescript"],
+    options=ts_options
+)
+```
+
+**模式組合示例**：
+```typescript
+// 完整模式組合（所有5種模式同時啟用）
+const scanConfig = {
+    basicDynamic: true,          // 基礎渲染
+    spaDetection: true,          // SPA 框架檢測
+    networkInterception: true,   // 網路攔截
+    contentExtraction: true,     // 內容提取
+    interactionSimulation: true  // 互動模擬
+};
+```
+
+---
+
+#### 4. **Go 引擎掃描器切換**
+
+**通過執行不同二進制**：
+```bash
+# 掃描器 1: SSRF 檢測
+./ssrf-scanner.exe --url https://example.com --param image_url
+
+# 掃描器 2: CSPM 審計
+./cspm-scanner.exe --cloud aws --region us-east-1
+
+# 掃描器 3: SCA 分析
+./sca-scanner.exe --path ./project --lang nodejs
+```
+
+**通過協調器調用**：
+```python
+# 協調器會根據需求自動選擇掃描器
+result = await coordinator.execute_phase1(
+    scan_id=scan_id,
+    targets=targets,
+    selected_engines=["go"],  # 協調器內部會並行執行 3 個掃描器
+    options={
+        "enable_ssrf": True,   # 啟用 SSRF 掃描
+        "enable_cspm": True,   # 啟用 CSPM 掃描
+        "enable_sca": True     # 啟用 SCA 掃描
+    }
+)
+```
+
+**Go 引擎內部調度**：
+```python
+# go_adapter.py 的實現
+async def scan(self, targets, options):
+    tasks = []
+    
+    if options.get("enable_ssrf", True):
+        tasks.append(self._run_ssrf_scanner(targets))
+    
+    if options.get("enable_cspm", True):
+        tasks.append(self._run_cspm_scanner(targets))
+    
+    if options.get("enable_sca", True):
+        tasks.append(self._run_sca_scanner(targets))
+    
+    # 並行執行多個掃描器
+    results = await asyncio.gather(*tasks)
+    return self._merge_results(results)
+```
+
+---
+
+### 🎯 協調器如何選擇模式
+
+協調器使用 **5 種預設策略** 自動選擇引擎和模式：
+
+```python
+# 1. 快速掃描 - 僅 Python (FAST 策略)
+await coordinator.execute_strategy_fast(scan_id, targets)
+# 內部映射: Python → FAST 策略，深度=2
+
+# 2. 均衡掃描 - Python (BALANCED) + Rust (FastDiscovery)
+await coordinator.execute_strategy_balanced(scan_id, targets)
+# 內部映射: 
+#   - Python → BALANCED 策略，深度=3
+#   - Rust → fast 模式
+
+# 3. 全面掃描 - Python (DEEP) + TypeScript + Rust (DeepAnalysis)
+await coordinator.execute_strategy_comprehensive(scan_id, targets)
+# 內部映射:
+#   - Python → DEEP 策略，深度=5
+#   - TypeScript → 所有模式啟用
+#   - Rust → deep 模式
+
+# 4. 激進掃描 - 四引擎全開
+await coordinator.execute_strategy_aggressive(scan_id, targets)
+# 內部映射:
+#   - Python → AGGRESSIVE 策略，深度=7
+#   - TypeScript → 所有模式啟用
+#   - Rust → deep 模式
+#   - Go → 3 個掃描器並行
+
+# 5. 智能掃描 - Phase 0 分析後自動選擇
+await coordinator.execute_strategy_smart(scan_id, targets)
+# 動態決策:
+#   1. Phase 0: Rust (fast 模式)
+#   2. 分析結果（技術棧、框架）
+#   3. 自動選擇最佳引擎組合和模式
+```
+
+**智能掃描決策邏輯**：
+```python
+# 協調器內部的智能決策示例
+if "Angular" in phase0_result.tech_stack:
+    selected_engines.append("typescript")  # 啟用 TypeScript (SPA 模式)
+
+if phase0_result.has_api_endpoints:
+    python_strategy = "DEEP"  # 提升 Python 掃描深度
+
+if phase0_result.cloud_metadata_detected:
+    selected_engines.append("go")  # 啟用 Go (SSRF 掃描器)
+```
+
+---
+
+### 📋 模式選擇決策樹
+
+```
+掃描需求分析
+├─ 需要快速驗證？
+│  └─ 使用 execute_strategy_fast
+│     └─ Python (FAST) 單引擎
+│
+├─ 一般 Web 應用？
+│  └─ 使用 execute_strategy_balanced
+│     └─ Python (BALANCED) + Rust (fast)
+│
+├─ SPA 應用（React/Vue/Angular）？
+│  └─ 使用 execute_strategy_comprehensive
+│     └─ Python (DEEP) + TypeScript (全模式) + Rust (deep)
+│
+├─ 大型應用或完整評估？
+│  └─ 使用 execute_strategy_aggressive
+│     └─ 四引擎全開（最大覆蓋）
+│
+└─ 不確定目標類型？
+   └─ 使用 execute_strategy_smart
+      └─ Phase 0 分析 → 自動決策
+```
+
+---
+
+### 💡 最佳實踐建議
+
+1. **開發測試階段**
+   - 使用 `execute_strategy_fast` 快速驗證
+   - 單引擎（Python FAST）即可
+
+2. **日常掃描**
+   - 使用 `execute_strategy_balanced` 平衡速度與覆蓋
+   - Python + Rust 雙引擎
+
+3. **完整安全評估**
+   - 使用 `execute_strategy_aggressive` 最大覆蓋
+   - 四引擎全開，所有模式啟用
+
+4. **未知目標**
+   - 使用 `execute_strategy_smart` 智能決策
+   - 根據 Phase 0 結果自動選擇最佳組合
+
+5. **自定義需求**
+   - 直接調用 `execute_phase1`
+   - 明確指定引擎列表和配置參數
+
+---
+
+## 📁 目錄結構
+
+```
+services/scan/
+├── coordinators/                    # 協調器模組
+│   ├── engines/                     # 適配器層 (888 lines)
+│   │   ├── base.py                 # 基礎適配器（實際檔名）
+│   │   ├── python_adapter.py       # Python 引擎適配器
+│   │   ├── typescript_adapter.py   # TypeScript 引擎適配器
+│   │   ├── rust_adapter.py         # Rust 引擎適配器
+│   │   ├── go_adapter.py           # Go 引擎適配器
+│   │   └── __init__.py             # 模組初始化
+│   ├── multi_engine_coordinator.py # 多引擎協調器 (647 lines, 複雜度 17)
+│   ├── scan_models.py              # 數據模型定義
+│   ├── unified_scan_engine.py      # 統一掃描引擎
+│   ├── target_generators/          # 測試目標生成器
+│   ├── README.md                    # 協調器文檔
+│   ├── COORDINATOR_ACTUAL_STATUS.md # 狀態報告
+│   └── COORDINATOR_ENGINE_INTEGRATION_DESIGN.md # 引擎整合設計
+├── engines/                         # 四個掃描引擎
+│   ├── rust_engine/                # Rust 引擎（Phase 0 必須）
+│   ├── python_engine/              # Python 引擎（Phase 1 主力）
+│   ├── typescript_engine/          # TypeScript 引擎（Phase 1 動態）
+│   ├── go_engine/                  # Go 引擎（Phase 1 可選）
+│   └── ENGINES_DOCUMENTATION_INDEX.md # 引擎文檔索引
+├── archived_docs/                   # 歷史文檔歸檔
+├── command_handler.py              # AI 命令處理器 (461 lines)
+├── README.md                        # 本文檔（架構總覽）
+├── SCAN_USER_GUIDE.md              # 使用者手冊
+├── SCAN_FLOW_DIAGRAMS.md           # 流程圖解（基準文檔，不可修改）
+├── SCAN_MODULE_RESTORATION_PLAN.md # 修復計劃與完成狀態
+└── __init__.py                      # 模組初始化
+```
+
+---
+
+## 📄 重要檔案說明
+
+### 核心檔案
+
+| 檔案 | 說明 | 狀態 |
+|------|------|------|
+| `command_handler.py` | AI 命令處理器，處理 SCAN_PHASE0 和 SCAN_PHASE1 命令 | ✅ 完成 (461 lines) |
+| `__init__.py` | Scan 模組初始化，定義公開接口 | ✅ 完成 |
+
+### 文檔檔案
+
+| 檔案 | 說明 | 狀態 |
+|------|------|------|
+| `README.md` | 架構總覽（本文檔） | ✅ 已更新 |
+| `SCAN_USER_GUIDE.md` | 使用者手冊，包含 AI 命令接口使用範例 | ✅ 已更新 |
+| `SCAN_FLOW_DIAGRAMS.md` | 流程圖解（**基準文檔，不可修改**） | 📌 基準 |
+| `SCAN_MODULE_RESTORATION_PLAN.md` | 修復計劃與重構完成狀態 | ✅ 已更新 |
+
+### 協調器檔案 (coordinators/)
+
+| 檔案 | 說明 | 狀態 |
+|------|------|------|
+| `multi_engine_coordinator.py` | 多引擎協調器，複雜度從 171 降至 17 | ✅ 完成 (647 lines) |
+| `scan_models.py` | 數據模型定義（遵循 aiva_common 規範） | ✅ 完成 |
+| `unified_scan_engine.py` | 統一掃描引擎 | ✅ 完成 |
+| `engines/base.py` | 基礎適配器（統一引擎接口） | ✅ 完成 |
+| `engines/*_adapter.py` | 各引擎適配器（Python/TypeScript/Rust/Go） | ✅ 完成 (888 lines) |
+| `README.md` | 協調器總覽文檔 | ✅ 已更新 |
+| `COORDINATOR_USAGE_GUIDE.md` | 協調器使用指南 | ✅ 新增 |
+| `COORDINATOR_ACTUAL_STATUS.md` | 實際狀態報告 | ✅ 已更新 |
+
+### 引擎檔案 (engines/)
+
+| 引擎 | README 位置 | 狀態 |
+|------|-------------|------|
+| Rust | `engines/rust_engine/README.md` | ✅ Phase 0 可用 |
+| Python | `engines/python_engine/README.md` | ✅ Phase 1 可用 |
+| TypeScript | `engines/typescript_engine/README.md` | ✅ Phase 1 可用 |
+| Go | `engines/go_engine/README.md` | ✅ Phase 1 可用 |
+
+### 歸檔目錄
+
+- `archived_docs/` - 歷史文檔歸檔（舊版 RabbitMQ 相關文檔）
+
+---
+
+## 📊 系統統計
+
+- **總檔案數**: 139 個檔案 (Python: 39, TypeScript: 17, Rust: 9, Go: 30)
 - **程式碼規模**: 22,000+ 行代碼
-- **掃描引擎**: 4種語言協同，專業化分工
+- **核心組件**:
+  - MultiEngineCoordinator: 647 lines (複雜度 17，從 171 降低 90%)
+  - 適配器層: 888 lines (統一四引擎接口)
+  - 命令處理器: 461 lines (AI 命令接口)
 - **支援協議**: HTTP/HTTPS、WebSocket、GraphQL、gRPC
 - **輸出格式**: SARIF 2.1.0、JSON、XML、CSV
 
 ---
 
-## � **目錄**
+## 🛠️ 開發指南
 
-- [🛠️ Scan 模組開發工具](#️-scan-模組開發工具)
-- [🏗️ 整體架構](#️-整體架構)
-- [📁 目錄結構](#-目錄結構)
-- [🚀 現有功能](#-現有功能)
-  - [1. Python 核心掃描引擎](#1-python-核心掃描引擎-aiva_scan)
-  - [2. TypeScript 動態引擎](#2-typescript-動態引擎-aiva_scan_node)
-  - [3. Rust 資訊收集器](#3-rust-資訊收集器-info_gatherer_rust)
-  - [4. 統一掃描引擎](#4-統一掃描引擎-unified_scan_enginepy)
-  - [5. SARIF 轉換器](#5-sarif-轉換器-sarif_converterpy)
-- [💻 如何使用](#-如何使用)
-- [🔌 技術整合](#-技術整合)
-- [🎯 未來規劃](#-未來規劃)
-- [📊 效能指標](#-效能指標)
-- [🔐 安全性考量](#-安全性考量)
-- [🛠️ 開發指南](#️-開發指南)
+### 開發環境
 
----
+詳細的開發環境設置請參考：
+- 📘 [使用者手冊](./SCAN_USER_GUIDE.md)
+- 🔧 [命令處理器](./command_handler.py)
+- 📊 [流程圖解](./SCAN_FLOW_DIAGRAMS.md)
 
-## �🛠️ Scan 模組開發工具
+### 新增引擎
 
-> **Python + TypeScript + Rust 混合架構**: 根據不同子模組選擇對應工具
+1. 在 `coordinators/engines/` 建立新的適配器
+2. 繼承 `BaseEngineAdapter`
+3. 實現 `scan_async()` 和 `validate_config()` 方法
+4. 在 `MultiEngineCoordinator` 註冊新引擎
 
-| 子模組 | 主要語言 | 推薦插件 | 工具連結 |
-|-------|---------|---------|---------|
-| 🐍 **aiva_scan/** | Python | Pylance + Ruff + Black | [Python 工具 (22個)](../../_out/VSCODE_EXTENSIONS_INVENTORY.md#-1-python-開發生態-22-個) |
-| 📘 **aiva_scan_node/** | TypeScript | ESLint + Prettier | [TypeScript 工具](../../_out/VSCODE_EXTENSIONS_INVENTORY.md#-3-其他程式語言-5-個) |
-| 🦀 **info_gatherer_rust/** | Rust | rust-analyzer | [Rust 工具](../../_out/VSCODE_EXTENSIONS_INVENTORY.md#-3-其他程式語言-5-個) |
-
-### 掃描模組專用工具
-
-| 功能需求 | 推薦插件 | 說明 |
-|---------|---------|------|
-| 🌐 **網路除錯** | REST Client | 測試 HTTP 請求、API 掃描驗證 |
-| 🔍 **安全分析** | SonarLint (4.33.0) | 靜態安全分析、漏洞檢測 |
-| 🤖 **AI 輔助** | GitHub Copilot | 掃描邏輯生成、正則表達式協助 |
-| 📊 **結果分析** | Rainbow CSV + Jupyter | 掃描結果資料分析 |
-| 🐳 **環境管理** | Docker + Remote Containers | 隔離測試環境 |
-| 🔀 **版本控制** | GitLens + Git Graph | 追蹤掃描邏輯變更 |
-
-📚 **完整工具清單**: [VS Code 插件參考](../../_out/VSCODE_EXTENSIONS_INVENTORY.md) (88個插件)
-
-### 💡 Scan 開發快速技巧
-
-**Python 掃描引擎 (aiva_scan/)**:
-- 使用 Pylance 進行型別檢查，確保掃描器參數正確
-- Ruff 快速檢測常見錯誤（如未處理的異常）
-- autoDocstring 生成掃描器說明文檔
-
-**TypeScript 動態引擎 (aiva_scan_node/)**:
-- ESLint 檢查異步程式碼問題
-- Prettier 統一格式化
-- 使用 Code Runner 快速測試 Playwright 腳本
-
-**Rust 資訊收集器 (info_gatherer_rust/)**:
-- rust-analyzer 提供即時編譯檢查
-- Cargo 任務整合測試與建構
-- ErrorLens 即時顯示編譯錯誤
-
-**掃描測試**:
-```bash
-# 使用 REST Client 測試掃描 API
-# 建立 scan.http 檔案
-POST http://localhost:8000/scan/start
-Content-Type: application/json
-
-{
-  "target": "https://example.com",
-  "scan_type": "vulnerability"
-}
-```
-
-**除錯技巧**: [多語言除錯指南](../../_out/VSCODE_EXTENSIONS_INVENTORY.md#-問題排查流程) | [掃描器最佳實踐](../../_out/VSCODE_EXTENSIONS_INVENTORY.md#-實際使用案例)
-
----
-
-## 🏗️ **統一掃描架構** [四語言協同設計]
-
-### 語言分工戰略：
-```
-📊 掃描模組檔案統計 (總計139檔案):
-   Python (39 files) ────── 核心掃描引擎
-     ├── aiva_scan/ (主要掃描邏輯)
-     ├── unified_scan_engine.py (統一控制)
-     └── go_scanners_dispatch/ (Go調度器)
-   
-   Go (30 files) ─────────── 專業掃描器集群
-     ├── ssrf_scanner/ (SSRF專精)
-     ├── cspm_scanner/ (雲端安全)
-     ├── sca_scanner/ (軟體組成分析)
-     └── common/ (共用組件)
-   
-   TypeScript (17 files) ─── 動態網頁掃描
-     ├── aiva_scan_node/ (Node.js引擎)
-     ├── Playwright整合 (瀏覽器自動化)
-     └── 動態內容分析
-   
-   Rust (9 files) ────────── 高性能資訊收集
-     ├── info_gatherer_rust/ (機密檢測)
-     ├── 高速正則處理
-     └── Python橋接
-```
-
-### 🎯 **兩階段掃描流程**
-
-根據 [SCAN_FLOW_DIAGRAMS.md](./SCAN_FLOW_DIAGRAMS.md) 的完整設計：
-
-**Phase 0 - 快速偵察** (Core 下令 → Scan執行)
-- **執行者**: Rust引擎 (必須)
-- **時間限制**: 10分鐘內完成
-- **任務**:
-  1. 驗證目標可達性
-  2. 敏感資訊掃描 (API Key, Token, 密碼)
-  3. 技術棧指紋識別
-  4. 基礎端點發現 (深度1)
-  5. 初步攻擊面評估
-- **輸出**: 初步資產清單 → 回傳 Core
-
-**Phase 1 - 深度掃描** (Core 根據 Phase0 決策)
-- **選擇引擎**: Python / TypeScript / Go / Rust (多引擎協同)
-- **時間限制**: 30-60分鐘
-- **任務**:
-  * **Python**: 靜態爬取、表單發現、API分析
-  * **TypeScript**: JS渲染、SPA路由、動態內容
-  * **Go**: 並發掃描、服務發現、端口掃描
-  * **Rust**: 高性能掃描、大規模處理
-- **輸出**: 完整資產清單 → 回傳 Core
-
-### 🏗️ **核心架構組件**
-
-#### 1. **統一控制中心** (Python)
-- **統一掃描引擎**: `unified_scan_engine.py` - 四語言協調器
-- **掃描編排器**: `scan_orchestrator.py` - Phase0/Phase1 任務編排
-- **任務分發**: 根據 Core 指令執行對應階段掃描
-
-#### 2. **Rust Engine** (Phase0 核心 + Phase1 輔助)
-- **職責**: Phase0 必執行引擎 + Phase1 高性能掃描
-- **特性**: 10-100倍性能優勢、極低內存消耗
-- **技術**: Rayon 並行引擎、零拷貝字串處理
-- **詳細**: [engines/rust_engine/README.md](./engines/rust_engine/README.md)
-
-#### 3. **Python Engine** (Phase1 主力)
-- **職責**: Phase1 深度爬取與漏洞掃描
-- **特性**: 完整靜態爬取、表單發現、API分析
-- **技術**: Playwright整合、JavaScript分析、動態引擎
-- **詳細**: [engines/python_engine/README.md](./engines/python_engine/README.md)
-
-#### 4. **TypeScript Engine** (Phase1 動態)
-- **職責**: Phase1 JavaScript渲染與SPA掃描
-- **特性**: 瀏覽器自動化、動態內容捕獲
-- **技術**: Puppeteer/Playwright、AJAX攔截、路由發現
-- **詳細**: [engines/typescript_engine/README.md](./engines/typescript_engine/README.md)
-
-#### 5. **Go Engine** (Phase1 專用掃描器)
-- **職責**: Phase1 高並發掃描與專業檢測
-- **特性**: SSRF/CSPM/SCA 專用掃描器集群
-- **技術**: 高並發、服務發現、雲端安全
-- **詳細**: [engines/go_engine/README.md](./engines/go_engine/README.md)
-
-### 🔄 **掃描工作流程**
-```
-目標輸入 → unified_scan_engine.py → 掃描任務分析 → 多語言分發
-    ↓
-Python核心(aiva_scan) ← → TypeScript動態(aiva_scan_node) 
-    ↓                           ↓
-Go專業掃描器集群 ← → Rust高性能收集器(info_gatherer_rust)
-    ↓
-結果聚合 → SARIF標準化 → 統一報告輸出
-```
-
-```mermaid
-graph TB
-    subgraph "AIVA Scan 四語言統一掃描引擎"
-        direction TB
-        
-        subgraph "協調層 | Orchestration Layer (Python)"
-            USG[統一掃描引擎<br/>UnifiedScanEngine]
-            MB[消息代理<br/>MessageBroker]
-            SD[掃描調度器<br/>ScanDispatcher]
-        end
-
-        subgraph "Python 核心引擎 | aiva_scan/ (39檔案)"
-            direction LR
-            SC[掃描上下文<br/>ScanContext]
-            CCE[核心爬取引擎<br/>CoreCrawlingEngine]
-            VS[漏洞掃描器<br/>VulnerabilityScanner]
-            AM[認證管理<br/>AuthManager]
-            FM[指紋管理<br/>FingerprintManager]
-            NSC[網路掃描器<br/>NetworkScanner]
-        end
-
-        subgraph "TypeScript 動態引擎 | aiva_scan_node/ (1,043檔案)"
-            direction LR
-            PW[Playwright 自動化<br/>Browser Automation]
-            DA[DOM 分析器<br/>DOM Analyzer]
-            JA[JavaScript 執行<br/>JS Execution]
-            WI[Web 互動器<br/>Web Interaction]
-            CSA[客戶端掃描<br/>Client Scanner]
-        end
-
-        subgraph "Rust 高性能引擎 | info_gatherer_rust/ (16檔案)"
-            direction LR
-            SEC[敏感資訊掃描<br/>Secret Scanner]
-            API[API 密鑰檢測<br/>API Key Scanner]
-            GH[Git 歷史分析<br/>Git History]
-            REG[正則處理引擎<br/>Regex Engine]
-        end
-
-        subgraph "Go 專業掃描器 | go_scanners/ (18檔案)"
-            direction LR
-            GD[Go 調度器<br/>go_scanners_dispatch]
-            SSRF[SSRF 掃描器<br/>SSRF Scanner]
-            CSPM[雲端安全<br/>CSPM Scanner]
-            SCA[軟體組成分析<br/>SCA Scanner]
-        end
-
-        subgraph "共享基礎設施 | Shared Infrastructure"
-            SCHEMA[AIVA Schema<br/>統一數據模型]
-            CONFIG[配置管理<br/>Configuration]
-            SARIF[SARIF 轉換<br/>Output Standardization]
-            LOGS[日誌系統<br/>Logging]
-        end
-    end
-
-    %% 連接關係 - 四語言協調
-    USG --> MB
-    MB --> SD
-    SD --> SC
-    SD --> PW
-    SD --> SEC
-    SD --> GD
-    
-    %% Python 內部連接
-    SC --> CCE
-    CCE --> VS
-    VS --> AM
-    AM --> FM
-    FM --> NSC
-    
-    %% TypeScript 內部連接
-    PW --> DA
-    DA --> JA
-    JA --> WI
-    WI --> CSA
-    
-    %% Rust 內部連接
-    SEC --> API
-    API --> GH
-    GH --> REG
-    
-    %% Go 內部連接
-    GD --> SSRF
-    GD --> CSPM
-    GD --> SCA
-    
-    %% 共享模組連接
-    CCE --> SCHEMA
-    CSA --> SCHEMA
-    REG --> SCHEMA
-    SSRF --> SCHEMA
-    SCHEMA --> SARIF
-    
-    %% 樣式定義
-    classDef pythonStyle fill:#3776ab,stroke:#2d5aa0,stroke-width:2px,color:#fff
-    classDef typescriptStyle fill:#3178c6,stroke:#2b6cb0,stroke-width:2px,color:#fff
-    classDef rustStyle fill:#ce422b,stroke:#a0351f,stroke-width:2px,color:#fff
-    classDef goStyle fill:#00add8,stroke:#007d9c,stroke-width:2px,color:#fff
-    classDef sharedStyle fill:#6b7280,stroke:#4b5563,stroke-width:2px,color:#fff
-    
-    class USG,MB,SD,SC,CCE,VS,AM,FM,NSC pythonStyle
-    class PW,DA,JA,WI,CSA typescriptStyle
-    class SEC,API,GH,REG rustStyle
-    class GD,SSRF,CSPM,SCA goStyle
-    class SCHEMA,CONFIG,SARIF,LOGS sharedStyle
-```
-## 📁 **目錄結構**
-
-```
-services/scan/                    # 🎯 AIVA 掃描模組
-├── __init__.py                   # 模組入口點
-├── README.md                     # 本文檔
-├── unified_scan_engine.py        # 統一掃描引擎 (主控)
-├── models.py                     # 掃描數據模型
-│
-├── aiva_scan/                    # 🐍 Python 核心掃描引擎 (39檔案)
-│   ├── core_crawling_engine/     # 核心爬取引擎
-│   │   ├── http_client_hi.py     # 高性能HTTP客戶端
-│   │   ├── static_content_parser.py  # 靜態內容解析
-│   │   └── url_queue_manager.py  # URL隊列管理
-│   │
-│   ├── dynamic_engine/           # 動態掃描引擎
-│   │   ├── ajax_api_handler.py   # AJAX API處理
-│   │   ├── dynamic_content_extractor.py  # 動態內容提取
-│   │   ├── headless_browser_pool.py      # 無頭瀏覽器池
-│   │   └── js_interaction_simulator.py  # JS互動模擬
-│   │
-│   ├── info_gatherer/            # 資訊收集器
-│   │   ├── javascript_source_analyzer.py  # JS源碼分析
-│   │   ├── passive_fingerprinter.py      # 被動指紋識別
-│   │   └── sensitive_info_detector.py    # 敏感資訊檢測
-│   │
-│   ├── examples/                 # 使用範例
-│   │   ├── example_browser_pool.py
-│   │   ├── example_extractor.py
-│   │   └── example_usage.py
-│   │
-│   ├── scan_orchestrator.py      # 掃描編排器 (核心)
-│   ├── scan_context.py           # 掃描上下文管理
-│   ├── strategy_controller.py    # 策略控制器
-│   ├── authentication_manager.py # 認證管理
-│   ├── fingerprint_manager.py    # 指紋識別
-│   ├── vulnerability_scanner.py  # 漏洞掃描
-│   ├── network_scanner.py        # 網路掃描
-│   ├── service_detector.py       # 服務檢測
-│   └── worker.py                 # 工作程序
-│
-├── aiva_scan_node/               # 🟨 TypeScript 動態掃描引擎 (17檔案)
-│   ├── src/                      # 源代碼
-│   │   ├── interfaces/           # 介面定義
-│   │   │   └── dynamic-scan.interfaces.ts
-│   │   ├── services/             # 核心服務
-│   │   │   ├── enhanced-content-extractor.service.ts
-│   │   │   ├── enhanced-dynamic-scan.service.ts
-│   │   │   ├── interaction-simulator.service.ts
-│   │   │   ├── network-interceptor.service.ts
-│   │   │   └── scan-service.ts
-│   │   ├── utils/                # 工具函數
-│   │   │   └── logger.ts
-│   │   └── index.ts              # 主入口
-│   ├── types/                    # 型別定義
-│   │   └── playwright.d.ts       # Playwright型別
-│   └── phase-i-integration.service.ts  # Phase-I 整合服務
-│
-├── go_scanners/                  # 🟢 Go 專業掃描器集群 (30檔案)
-│   ├── common/                   # 共用組件
-│   │   ├── amqp_client.go        # AMQP客戶端
-│   │   ├── sarif_converter.go    # SARIF轉換器
-│   │   └── scanner_base.go       # 掃描器基類
-│   │
-│   ├── ssrf_scanner/             # SSRF掃描器
-│   │   ├── cmd/worker/main.go    # 工作程序主入口
-│   │   ├── internal/detector/    # 內部檢測器
-│   │   │   ├── cloud_metadata_scanner.go     # 雲端元數據掃描
-│   │   │   ├── internal_microservice_probe.go # 內部微服務探測
-│   │   │   └── ssrf.go           # SSRF核心檢測
-│   │   ├── main.go               # 主程序
-│   │   └── ssrf_detector.go      # SSRF檢測器
-│   │
-│   ├── cspm_scanner/             # 雲端安全態勢管理掃描器
-│   │   ├── cmd/worker/main.go    # 工作程序
-│   │   ├── internal/scanner/     # 內部掃描器
-│   │   │   └── cspm_scanner.go   # CSPM核心掃描
-│   │   ├── cloud_detector.go     # 雲端檢測器
-│   │   └── main.go               # 主程序
-│   │
-│   ├── sca_scanner/              # 軟體組成分析掃描器
-│   │   ├── cmd/worker/main.go    # 工作程序
-│   │   ├── internal/
-│   │   │   ├── analyzer/         # 分析器
-│   │   │   └── scanner/
-│   │   │       └── sca_scanner.go # SCA核心掃描
-│   │   ├── pkg/models/
-│   │   │   └── models.go         # 數據模型
-│   │   ├── dependency_detector.go # 依賴檢測
-│   │   └── main.go               # 主程序
-│   │
-│   └── shared/                   # 共享組件
-│
-├── go_scanners_dispatch/         # Go掃描器調度器
-│   └── dispatcher.py             # Python調度器
-│
-├── info_gatherer_rust/           # 🦀 Rust 高性能資訊收集器 (9檔案)
-│   ├── src/                      # Rust源代碼
-│   │   ├── schemas/              # 結構定義
-│   │   │   ├── generated/mod.rs  # 生成的結構
-│   │   │   └── mod.rs            # 模組定義
-│   │   ├── main.rs               # 主程序
-│   │   ├── scanner.rs            # 掃描器核心
-│   │   ├── secret_detector.rs    # 機密檢測器
-│   │   └── verifier.rs           # 驗證器
-│   ├── python_bridge/            # Python橋接
-│   │   └── __init__.py           # 橋接介面
-│   └── test_verification.py      # 驗證測試
-│
-└── README.md                     # 模組文檔
-```
-
-## 🚀 現有功能
-
-### 1. Python 核心掃描引擎 (aiva_scan/)
-
-#### 核心功能
-- **ScanOrchestrator**: 統一掃描編排，支援多種掃描策略
-- **策略控制**: 支援 FAST/COMPREHENSIVE/AGGRESSIVE 三種掃描模式
-- **動態掃描**: 整合 Headless Browser 進行 JavaScript 渲染
-- **認證管理**: 支援多種認證方式 (Basic, Bearer, Custom Headers)
-- **指紋識別**: 自動識別技術棧和服務版本
-
-#### 掃描能力
-- **網路掃描**: 端口掃描、服務檢測、橫幅抓取
-- **漏洞掃描**: SQL 注入、XSS、CSRF、目錄遍歷等
-- **內容分析**: 靜態內容解析、JavaScript 源碼分析
-- **敏感資訊**: API 密鑰、密碼、憑證等檢測
-
-### 2. TypeScript 動態引擎 (aiva_scan_node/)
-
-#### Phase-I 高價值功能
-- **客戶端授權繞過檢測**: 檢測前端權限控制漏洞
-- **Playwright 自動化**: 真實瀏覽器環境掃描
-- **JavaScript 深度分析**: 代碼邏輯分析和漏洞挖掘
-- **DOM 操作檢測**: 動態內容變化監控
-
-#### 技術特性
-- **TypeScript 型別安全**: 完整的型別定義
-- **非同步處理**: 高效的並發掃描
-- **模組化架構**: 易於擴展和維護
-
-### 3. Rust 資訊收集器 (info_gatherer_rust/)
-
-#### 性能優勢
-- **極致性能**: 比 Python 快 10-100 倍
-- **低記憶體消耗**: 單次掃描僅需 ~5 MB
-- **並行處理**: Rayon 並行引擎
-- **零拷貝**: 高效字串處理
-
-#### 檢測類型
-- AWS Access/Secret Keys
-- GitHub Tokens  
-- API Keys
-- Private Keys (PEM/SSH)
-- JWT Tokens
-- Database Connection Strings
-- Email 地址和 IP 位址
-
-### 4. 統一掃描引擎 (unified_scan_engine.py)
-
-#### 整合能力
-- **多引擎協調**: 統一管理三種技術引擎
-- **Phase-I 整合**: 高價值功能模組整合
-- **策略配置**: 彈性的掃描策略配置
-- **結果聚合**: 統一的結果格式和匯報
-- **SARIF 2.1.0 輸出**: 支援業界標準的安全報告格式
-
-### 5. SARIF 轉換器 (sarif_converter.py)
-
-#### SARIF 2.1.0 標準支援
-AIVA Scan 完全支援 SARIF (Static Analysis Results Interchange Format) 2.1.0 標準，可與以下工具整合：
-- **GitHub Security**: 自動顯示在 GitHub Security Code Scanning
-- **Azure DevOps**: 整合至 Azure Pipelines 安全掃描
-- **VS Code**: 直接在編輯器中顯示漏洞
-- **其他 SARIF 相容工具**: SonarQube、Checkmarx 等
-
-#### 功能特性
-- **自動映射嚴重程度**: 將 CVSS 評分映射到 SARIF level (error/warning/note)
-- **完整證據鏈**: 包含請求、響應、載荷等完整證據
-- **標準化規則**: 支援 CWE/CVE 引用和 OWASP 分類
-- **修復建議**: 包含短期和長期修復建議
-- **位置信息**: 精確定位漏洞位置（URL、參數、行號）
-
-## 💻 如何使用
-
-### 1. 快速開始
-
-```python
-# 使用統一掃描引擎
-from services.scan.unified_scan_engine import UnifiedScanEngine
-
-# 創建快速掃描
-engine = UnifiedScanEngine.create_fast_scan(["https://example.com"])
-
-# 執行掃描
-results = await engine.run_comprehensive_scan()
-print(f"掃描完成: {results['scan_id']}")
-```
-
-### 2. 使用 Python 掃描器
-
-```python
-from services.scan.aiva_scan import ScanOrchestrator
-from ..aiva_common.schemas import ScanStartPayload
-
-# 創建掃描請求
-request = ScanStartPayload(
-    scan_id="scan_001",
-    targets=["https://example.com"],
-    strategy="COMPREHENSIVE"
-)
-
-# 執行掃描
-orchestrator = ScanOrchestrator()
-result = await orchestrator.execute_scan(request)
-```
-
-### 3. 配置 TypeScript 引擎
+### 測試
 
 ```bash
-# 安裝依賴
-cd services/scan/aiva_scan_node
-npm install
+# 測試 Phase 0
+python test_ai_command_scan.py
 
-# 安裝瀏覽器
-npm run install:browsers
+# 測試多引擎協調
+python test_two_phase_scan.py
 
-# 啟動服務
-npm run dev
-```
-
-### 4. 編譯 Rust 收集器
-
-```bash
-cd services/scan/info_gatherer_rust
-
-# 開發模式
-cargo run
-
-# 釋出模式 (最佳化)
-cargo build --release
-.\target\release\info_gatherer_rust.exe
-```
-
-### 5. 工作程序模式
-
-```python
-# 啟動掃描工作程序 (透過 RabbitMQ)
-from services.scan.aiva_scan.worker import run
-
-# 監聽掃描任務
-await run()
-```
-
-### 6. 生成 SARIF 報告
-
-```python
-from services.scan import SARIFConverter, Vulnerability
-
-# 假設你已經有漏洞列表
-vulnerabilities: list[Vulnerability] = [...]
-
-# 轉換為 SARIF 格式
-sarif_json = SARIFConverter.to_json(
-    vulnerabilities=vulnerabilities,
-    scan_id="scan_001"
-)
-
-# 保存為文件
-with open("scan_results.sarif.json", "w") as f:
-    f.write(sarif_json)
-
-# 或者獲取 Python 對象
-sarif_report = SARIFConverter.vulnerabilities_to_sarif(
-    vulnerabilities=vulnerabilities,
-    scan_id="scan_001"
-)
-```
-
-## 📋 新增/刪減功能 SOP
-
-### 新增功能 SOP
-
-#### 1. 分析需求階段
-```markdown
-📝 需求分析檢查清單:
-□ 確定功能屬於哪個引擎 (Python/TypeScript/Rust)
-□ 評估性能要求和技術適用性
-□ 檢查是否需要跨引擎整合
-□ 確認 Schema 定義需求
-```
-
-#### 2. 技術選型指引
-
-| 需求類型 | 推薦技術 | 理由 |
-|---------|---------|------|
-| 高性能文本處理 | Rust | 正則引擎性能最佳 |
-| 瀏覽器自動化 | TypeScript + Playwright | 生態最成熟 |
-| 複雜業務邏輯 | Python | 開發效率高 |
-| 跨語言整合 | unified_scan_engine.py | 統一入口 |
-
-#### 3. 開發流程
-
-**Step 1: Schema 定義**
-```python
-# 1. 在 models.py 中添加新的資料模型
-class NewFeatureConfig(BaseModel):
-    enabled: bool = True
-    parameters: Dict[str, Any] = Field(default_factory=dict)
-
-# 2. 更新 __init__.py 的 __all__ 列表
-__all__ = [
-    # ... 現有項目
-    "NewFeatureConfig",
-]
-```
-
-**Step 2: 核心實作**
-```python
-# Python 範例: 新增掃描器
-class NewScanner:
-    def __init__(self, config: NewFeatureConfig):
-        self.config = config
-        self.logger = get_logger(self.__class__.__name__)
-    
-    async def scan(self, target: str) -> List[Finding]:
-        # 實作掃描邏輯
-        pass
-```
-
-**Step 3: 整合到編排器**
-```python
-# 在 ScanOrchestrator 中整合
-class ScanOrchestrator:
-    def __init__(self):
-        # ... 現有初始化
-        self.new_scanner = NewScanner()
-    
-    async def execute_scan(self, request: ScanStartPayload):
-        # ... 現有邏輯
-        
-        # 添加新功能
-        if strategy_params.enable_new_feature:
-            new_results = await self.new_scanner.scan(target)
-            context.add_findings(new_results)
-```
-
-**Step 4: 測試驗證**
-```python
-# 創建單元測試
-class TestNewScanner:
-    async def test_basic_scan(self):
-        scanner = NewScanner(NewFeatureConfig())
-        results = await scanner.scan("https://example.com")
-        assert len(results) >= 0
-```
-
-**Step 5: 文檔更新**
-```markdown
-# 更新本 README.md
-## 新功能: XXX
-- 功能描述
-- 使用方式  
-- 配置選項
-```
-
-### 刪減功能 SOP
-
-#### 1. 影響評估
-```markdown
-🔍 刪減前檢查清單:
-□ 檢查功能使用情況 (logs, metrics)
-□ 確認依賴關係 (grep -r "功能名稱" services/)
-□ 評估向後兼容性影響
-□ 準備遷移計畫 (如果需要)
-```
-
-#### 2. 安全刪除流程
-
-**Step 1: 標記為廢棄**
-```python
-import warnings
-
-@deprecated("此功能將在 v2.0 移除，請使用 NewFeature 替代")
-class OldScanner:
-    def __init__(self):
-        warnings.warn(
-            "OldScanner 已廢棄，請遷移至 NewScanner",
-            DeprecationWarning,
-            stacklevel=2
-        )
-```
-
-**Step 2: 配置開關**
-```python
-# 添加功能開關
-class StrategyParameters:
-    enable_old_feature: bool = False  # 預設關閉
-```
-
-**Step 3: 逐步移除**
-```python
-# 第一階段：條件執行
-if strategy_params.enable_old_feature:
-    # 舊功能代碼
-    pass
-else:
-    logger.info("舊功能已停用")
-
-# 第二階段：完全移除代碼
-# (在確認無影響後)
-```
-
-**Step 4: 清理工作**
-```bash
-# 移除相關文件
-rm services/scan/old_feature.py
-
-# 更新導入
-# 從 __init__.py 和其他文件移除相關導入
-
-# 更新測試
-# 移除相關測試案例
-
-# 更新文檔
-# 從 README.md 移除相關描述
-```
-
-### 版本控制最佳實踐
-
-#### Git 工作流程
-```bash
-# 1. 創建功能分支
-git checkout -b feature/new-scanner
-
-# 2. 開發並提交
-git add .
-git commit -m "feat(scan): 添加新掃描器功能
-
-- 實作 NewScanner 類別
-- 整合到 ScanOrchestrator
-- 添加單元測試
-- 更新文檔
-
-Closes #123"
-
-# 3. 合併到主分支
-git checkout main
-git merge feature/new-scanner
-
-# 4. 標記版本
-git tag -a v1.2.0 -m "Release v1.2.0: 新增 NewScanner 功能"
-```
-
-#### 變更紀錄格式
-```markdown
-## [1.2.0] - 2025-10-24
-
-### Added
-- 新增 NewScanner 掃描器
-- 支援 XXX 類型漏洞檢測
-- 添加 Phase-I 高價值功能整合
-
-### Changed  
-- 改進 ScanOrchestrator 性能
-- 更新統一掃描引擎配置介面
-
-### Deprecated
-- OldScanner 標記為廢棄，將在 v2.0 移除
-
-### Removed
-- 移除已廢棄的 LegacyFeature
-
-### Fixed
-- 修復 TypeScript 引擎記憶體洩漏問題
-- 解決 Rust 收集器 Unicode 處理錯誤
-```
-
-### 監控與維護
-
-#### 性能監控
-```python
-# 添加性能指標
-import time
-from prometheus_client import Counter, Histogram
-
-SCAN_DURATION = Histogram('scan_duration_seconds', 'Scan duration')
-SCAN_ERRORS = Counter('scan_errors_total', 'Scan errors')
-
-class ScanOrchestrator:
-    async def execute_scan(self, request):
-        start_time = time.time()
-        try:
-            result = await self._do_scan(request)
-            return result
-        except Exception as e:
-            SCAN_ERRORS.inc()
-            raise
-        finally:
-            SCAN_DURATION.observe(time.time() - start_time)
-```
-
-#### 日誌管理
-```python
-# 結構化日誌
-logger.info(
-    "掃描完成",
-    extra={
-        "scan_id": request.scan_id,
-        "targets_count": len(request.targets),
-        "duration": context.scan_duration,
-        "findings_count": len(context.findings)
-    }
-)
-```
-
-## � 問題處理標準流程
-
-### 🎯 問題分類與處理原則
-
-#### **P0 - 阻塞性問題** (24小時內解決)
-- 掃描引擎無法啟動或崩潰
-- 關鍵安全漏洞檢測失敗
-- 多語言整合通信中斷
-
-#### **P1 - 功能性問題** (3天內解決)  
-- 特定目標掃描失敗
-- 掃描結果不準確或遺漏
-- 效能顯著下降
-
-#### **P2 - 改善性問題** (1週內解決)
-- UI/UX 改善需求
-- 新功能請求
-- 文檔更新需求
-
-### 🔧 標準修復流程
-
-1. **問題確認階段**
-   ```bash
-   # 1. 驗證問題重現
-   python scripts/launcher/aiva_launcher.py --scan-test
-   
-   # 2. 收集系統狀態
-   python testing/integration/aiva_module_status_checker.py
-   
-   # 3. 檢查相關日誌
-   tail -f logs/scan_engine.log
-   ```
-
-2. **根因分析階段**
-   - 使用調試工具定位問題
-   - 檢查相關模組依賴
-   - 驗證數據流完整性
-
-3. **解決方案實施**
-   - 編寫針對性修復代碼
-   - 執行單元測試驗證
-   - 進行集成測試確認
-
-4. **結果驗證與文檔更新**
-   - 確認問題完全解決
-   - 更新相關文檔說明
-   - 記錄修復過程供參考
-
----
-
-## �🔧 故障排除
-
-### 常見問題
-
-#### 1. Python 引擎問題
-```bash
-# 依賴問題
-pip install -r requirements.txt
-
-# 導入錯誤
-export PYTHONPATH="${PYTHONPATH}:/path/to/AIVA-git"
-
-# 權限問題  
-chmod +x scripts/launcher/aiva_launcher.py
-```
-
-#### 2. TypeScript 引擎問題
-```bash
-# Node.js 版本問題
-nvm use 18
-
-# 依賴安裝問題
-rm -rf node_modules package-lock.json
-npm install
-
-# Playwright 瀏覽器問題
-npx playwright install --with-deps
-```
-
-#### 3. Rust 引擎問題
-```bash
-# 編譯問題
-cargo clean
-cargo build --release
-
-# 依賴問題
-cargo update
-```
-
-#### 4. 整合問題
-```bash
-# RabbitMQ 連線問題
-docker compose up -d rabbitmq
-
-# 權限問題
-sudo chown -R $USER:$USER services/scan/
-
-# 配置說明（研發階段無需設置）
-# 自動使用預設值: RABBITMQ_URL="amqp://guest:guest@localhost:5672/"
-```
-
-## 📊 性能基準
-
-### 掃描性能對比
-
-| 引擎類型 | 小型站點 (10 頁面) | 中型站點 (100 頁面) | 大型站點 (1000 頁面) |
-|---------|-------------------|-------------------|-------------------|
-| Python 核心 | ~30 秒 | ~5 分鐘 | ~45 分鐘 |
-| TypeScript 動態 | ~45 秒 | ~8 分鐘 | ~60 分鐘 |
-| Rust 資訊收集 | ~2 秒 | ~15 秒 | ~2 分鐘 |
-| 統一引擎 | ~50 秒 | ~10 分鐘 | ~65 分鐘 |
-
-### 資源消耗
-
-| 引擎類型 | 記憶體消耗 | CPU 使用率 | 磁碟 I/O |
-|---------|-----------|-----------|----------|
-| Python | ~100 MB | ~20% | 中等 |
-| TypeScript | ~200 MB | ~30% | 高 (瀏覽器快取) |
-| Rust | ~5 MB | ~10% | 極低 |
-
-## 🏆 最佳實踐
-
-### 1. 掃描策略選擇
-```python
-# 快速掃描：適用於 CI/CD 流水線
-UnifiedScanEngine.create_fast_scan(targets)
-
-# 綜合掃描：適用於定期安全檢查  
-UnifiedScanEngine.create_comprehensive_scan(targets)
-
-# 自訂掃描：適用於特殊需求
-config = UnifiedScanConfig(
-    targets=targets,
-    scan_type="comprehensive",
-    max_depth=5,
-    max_pages=500,
-    enable_plugins=True
-)
-```
-
-### 2. 效能優化
-```python
-# 平行掃描
-strategy_params.requests_per_second = 10
-strategy_params.connection_pool_size = 50
-
-# 記憶體控制
-strategy_params.max_pages = 100
-strategy_params.enable_dynamic_scan = False  # 如不需要 JS 渲染
-```
-
-### 3. 安全配置
-```python
-# 認證配置
-authentication = {
-    "type": "bearer",
-    "token": "your-api-token"
-}
-
-# 自訂標頭
-custom_headers = {
-    "User-Agent": "AIVA-Scanner/1.0",
-    "X-Custom-Header": "value"
-}
+# 測試命令處理器
+python test_command_handler_quick.py
 ```
 
 ---
 
-## 🔧 **開發規範與最佳實踐**
+## 🔧 修復規範
 
-### 📐 **Scan 模組設計原則**
-
-作為 AIVA 的統一掃描引擎,本模組必須在 Python/TypeScript/Rust 間維持一致的漏洞表示和評分標準。
-
-#### 🎯 **使用 aiva_common 的核心原則**
-
-**✅ Scan 模組的標準做法**（參考 `models.py` 正確實現）:
-
-```python
-# ✅ 正確 - Scan 模組的標準導入
-from ..aiva_common.enums import (
-    AssetType,               # 掃描目標類型
-    Confidence,              # 檢測信心度
-    ModuleName,              # 模組識別
-    ScanProgress,            # 掃描進度狀態
-    Severity,                # CVSS 嚴重程度映射
-    VulnerabilityStatus,     # 漏洞生命週期狀態
-)
-from ..aiva_common.schemas import (
-    CVEReference,            # CVE 標準引用
-    CVSSv3Metrics,           # CVSS v3.x 評分
-    CWEReference,            # CWE 分類
-    SARIFResult,             # SARIF 2.1.0 格式
-)
-```
-
-#### 🚨 **嚴格禁止的做法**
-
-```python
-# ❌ 禁止 - 重複定義通用枚舉
-class Severity(str, Enum):  # 錯誤!使用 aiva_common.Severity
-    CRITICAL = "critical"
-
-# ❌ 禁止 - 重複定義標準結構
-class SARIFResult(BaseModel):  # 錯誤!使用 aiva_common.SARIFResult
-    tool_name: str
-
-# ❌ 禁止 - 自創評分標準
-class CustomVuln(BaseModel):  # 錯誤!使用 aiva_common.CVSSv3Metrics
-    custom_score: float
-```
-
-#### 🔍 **多語言引擎統一標準**
-
-Scan 模組作為多語言統一引擎，所有語言實現都必須使用相同的數據結構：
-
-```python
-# ✅ Python 端 - 標準實現
-from ..aiva_common.schemas import FindingPayload, CVSSv3Metrics
-```
-
-```typescript
-// ✅ TypeScript 端 - 必須對應相同結構
-import { FindingPayload, CVSSv3Metrics } from '../aiva_common/schemas'
-```
-
-```rust
-// ✅ Rust 端 - 必須對應相同結構
-use aiva_common::schemas::{FindingPayload, CVSSv3Metrics};
-```
-
-# ✅ 正確 - 使用標準化的 CVSS 結構
-from services.scan.models import Vulnerability
-
-vulnerability = Vulnerability(
-    vuln_id="vuln_001",
-    title="SQL Injection",
-    description="SQL injection vulnerability found",
-    severity=Severity.HIGH,
-    confidence=Confidence.HIGH,
-    vuln_type=VulnerabilityType.SQL_INJECTION,
-    url="https://example.com/api/users",
-    parameter="id",
-    cvss_metrics=CVSSv3Metrics(
-        base_score=8.5,
-        attack_vector="NETWORK",
-        attack_complexity="LOW",
-        privileges_required="NONE",
-        user_interaction="NONE",
-        scope="UNCHANGED",
-        confidentiality_impact="HIGH",
-        integrity_impact="HIGH",
-        availability_impact="NONE"
-    ),
-    cwe_ids=["CWE-89"],
-    evidence=["Payload: ' OR 1=1--"]
-)
-
-# ✅ 正確 - 生成 SARIF 報告
-from services.scan import SARIFConverter
-
-sarif_report = SARIFConverter.vulnerabilities_to_sarif(
-    vulnerabilities=[vulnerability],
-    scan_id="scan_001"
-)
-```
-
-#### 🆕 **新增或修改功能時的流程**
-
-##### **⚙️ 執行前的準備工作 (必讀)**
-
-**核心原則**: 充分利用現有資源，避免重複造輪子
-
-在開始任何修改或新增掃描引擎功能前，務必執行以下檢查：
-
-1. **檢查本機現有工具與插件**
-   ```bash
-   # 檢查專案內的輔助工具
-   ls scripts/scan/                  # 查看 Scan 專用腳本
-   ls tools/scan/                    # 查看掃描工具
-   ls testing/scan/                  # 查看測試腳本
-   
-   # 常用工具和現有掃描引擎:
-   # - services/scan/aiva_scan/vulnerability_scanner.py (漏洞掃描器)
-   # - services/scan/aiva_scan/network_scanner.py (網路掃描)
-   # - services/scan/aiva_scan/service_detector.py (服務探測)
-   # - testing/scan/comprehensive_test.py (完整測試)
-   # - testing/scan/juice_shop_real_attack_test.py (實戰測試)
-   ```
-
-2. **利用 VS Code 擴展功能**
-   ```python
-   # Pylance MCP 工具:
-   # - pylanceFileSyntaxErrors: 檢查語法錯誤
-   # - pylanceRunCodeSnippet: 測試掃描邏輯
-   # - pylanceImports: 分析依賴關係
-   
-   # SonarQube 工具:
-   # - sonarqube_analyze_file: 代碼質量檢查
-   # - sonarqube_list_potential_security_issues: 安全問題檢測
-   ```
-
-3. **參考現有掃描引擎和工具**
-   ```bash
-   # 查看已實現的掃描功能
-   ls services/scan/aiva_scan/*/
-   
-   # 參考專業掃描工具的實現:
-   # Python 工具: ZAP (OWASP), Nuclei, Nikto
-   # TypeScript 工具: Retire.js, ESLint Security
-   # Rust 工具: Rustscan, Feroxbuster
-   # Go 工具: Subfinder, Httpx, Katana
-   ```
-
-4. **功能不確定時，立即查詢最佳實踐**
-   - 🌐 **掃描技術**: 查詢 OWASP Testing Guide, NIST 標準
-   - 📚 **工具文檔**: 參考 Nmap, Masscan, ZAP 等工具的掃描技術
-   - 🔍 **開源項目**: 使用 `github_repo` 搜索成熟的掃描引擎
-   - 📊 **SARIF 標準**: 查詢 SARIF 2.1.0 規範文檔
-   - 🛡️ **CVE 數據**: 使用 `fetch_webpage` 查詢 CVE 漏洞庫
-
-5. **選擇最佳方案的判斷標準**
-   - ✅ 優先使用 SARIF 2.1.0 標準輸出格式
-   - ✅ 優先使用 CVSS v3.1 進行風險評分
-   - ✅ 優先參考成熟工具（Nmap, ZAP, Nuclei）的掃描邏輯
-   - ✅ 多語言引擎保持一致的數據格式（使用 aiva_common）
-   - ⚠️ 避免自創掃描規則，參考 CWE/CAPEC 標準
-   - ⚠️ 新掃描技術不確定時，先查詢業界實踐
-
-**示例工作流程**:
-```python
-# 錯誤做法 ❌
-# 直接開始寫掃描代碼，自己定義輸出格式
-
-# 正確做法 ✅
-# 步驟 1: 查找是否有類似掃描功能
-ls services/scan/aiva_scan/
-cat services/scan/aiva_scan/vulnerability_scanner.py  # 參考現有實現
-
-# 步驟 2: 查詢專業工具的實現方式
-# - Nmap 的端口掃描技術
-# - ZAP 的主動/被動掃描
-# - Nuclei 的模板引擎
-
-# 步驟 3: 使用標準化格式
-from aiva_common.schemas import SARIFResult, CVSSv3Metrics
-from aiva_common.enums import Severity, Confidence
-
-# 步驟 4: 參考 SARIF 規範
-fetch_webpage("https://docs.oasis-open.org/sarif/sarif/v2.1.0/")
-
-# 步驟 5: 使用工具檢查
-pylance_analyze_file("new_scanner.py")
-sonarqube_analyze_file("new_scanner.py")
-
-# 步驟 6: 運行測試
-python testing/scan/comprehensive_test.py
-```
-
-**多語言引擎開發參考**:
-```python
-# Python 引擎 - 參考工具
-references_python = {
-    "zap": "OWASP ZAP Python API",
-    "nuclei": "Nuclei Template Engine",
-    "nikto": "Nikto Web Scanner",
-    "docs": "https://python-security.readthedocs.io/"
-}
-
-# TypeScript 引擎 - 參考工具
-references_typescript = {
-    "retire": "Retire.js (依賴漏洞掃描)",
-    "eslint_security": "ESLint Security Plugin",
-    "docs": "https://cheatsheetseries.owasp.org/cheatsheets/Nodejs_Security_Cheat_Sheet.html"
-}
-
-# Rust 引擎 - 參考工具
-references_rust = {
-    "rustscan": "高性能端口掃描",
-    "feroxbuster": "Web 目錄爆破",
-    "docs": "https://github.com/OWASP/crAPI (Rust 安全測試)"
-}
-
-# Go 引擎 - 參考工具
-references_go = {
-    "subfinder": "子域名發現",
-    "httpx": "HTTP 探測",
-    "katana": "網站爬蟲",
-    "nuclei": "漏洞掃描",
-    "docs": "https://github.com/projectdiscovery/"
-}
-```
+**保留未使用函數原則**: 在程式碼修復過程中，若發現有定義但尚未使用的函數或方法，只要不影響程式正常運作，建議予以保留。這些函數可能是：
+- 預留的 API 端點或介面
+- 未來功能的基礎架構
+- 測試或除錯用途的輔助函數
+- 向下相容性考量的舊版介面
 
 ---
 
-##### **情境 1: 新增 Python 掃描引擎功能**
+## 📋 更新記錄
 
-```python
-# 步驟 1: 使用標準化的漏洞表示
-from aiva_common.schemas import SARIFResult, CVSSv3Metrics
-from aiva_common.enums import Severity, Confidence
-
-def generate_vulnerability_report(finding: dict) -> SARIFResult:
-    """生成符合 SARIF 標準的漏洞報告"""
-    
-    # ✅ 使用 CVSS 標準評分
-    cvss = CVSSv3Metrics(
-        base_score=7.5,
-        attack_vector="NETWORK",
-        attack_complexity="LOW",
-        # ... CVSS 標準欄位
-    )
-    
-    # ✅ 使用標準 Severity 映射
-    severity = Severity.HIGH  # 基於 CVSS 分數
-    
-    return SARIFResult(
-        ruleId=f"CWE-{finding['cwe_id']}",
-        level="error",  # SARIF 標準: error/warning/note
-        message=finding['description'],
-        # ...
-    )
-```
-
-##### **情境 2: 新增 TypeScript 掃描規則**
-
-```typescript
-// ✅ 正確 - TypeScript 中使用一致的枚舉值
-export enum Severity {
-    CRITICAL = "critical",  // 對應 Python Severity.CRITICAL
-    HIGH = "high",
-    MEDIUM = "medium",
-    LOW = "low",
-    INFO = "info"
-}
-
-// ✅ SARIF 標準結果格式
-export interface SARIFResult {
-    ruleId: string;
-    level: "error" | "warning" | "note";  // SARIF 標準級別
-    message: string;
-    locations?: SARIFLocation[];
-}
-
-// ❌ 禁止 - 不要使用自定義嚴重程度
-export enum CustomSeverity {
-    VeryBad = "very_bad",   // ❌ 與標準不一致
-    SoBad = "so_bad"        // ❌ 不符合 CVSS 映射
-}
-```
-
-##### **情境 3: 新增 Rust 掃描模組**
-
-```rust
-// ✅ 正確 - Rust 中使用 CVSS 標準
-use serde::{Deserialize, Serialize};
-
-#[derive(Serialize, Deserialize, Debug, Clone)]
-#[serde(rename_all = "lowercase")]
-pub enum Severity {
-    Critical,  // CVSS 9.0-10.0
-    High,      // CVSS 7.0-8.9
-    Medium,    // CVSS 4.0-6.9
-    Low,       // CVSS 0.1-3.9
-    Info,      // CVSS 0.0
-}
-
-// ✅ CVSS v3 標準結構
-#[derive(Serialize, Deserialize)]
-pub struct CVSSv3Metrics {
-    pub base_score: f32,
-    pub attack_vector: String,      // NETWORK/ADJACENT/LOCAL/PHYSICAL
-    pub attack_complexity: String,  // LOW/HIGH
-    pub privileges_required: String, // NONE/LOW/HIGH
-    // ... 其他 CVSS 標準欄位
-}
-
-// ❌ 禁止 - 不要使用非標準評分系統
-pub struct CustomScore {
-    pub danger_level: i32,  // ❌ 應使用 CVSS base_score
-}
-```
-
-#### 🌐 **多語言掃描引擎協作**
-
-**統一的漏洞報告格式**:
-
-```python
-# Python Engine（ZAP/Nuclei wrapper）
-from aiva_common.schemas import SARIFResult
-
-def wrap_zap_result(zap_alert: dict) -> SARIFResult:
-    """將 ZAP 結果轉換為 SARIF 標準"""
-    return SARIFResult(
-        ruleId=f"ZAP-{zap_alert['pluginId']}",
-        level=map_risk_to_sarif_level(zap_alert['risk']),
-        message=zap_alert['alert'],
-        locations=[{
-            "physicalLocation": {
-                "artifactLocation": {"uri": zap_alert['url']},
-                "region": {"startLine": 1}
-            }
-        }]
-    )
-```
-
-```typescript
-// TypeScript Engine（自定義規則）
-interface SARIFResult {
-    ruleId: string;
-    level: "error" | "warning" | "note";
-    message: string;
-    locations?: Array<{
-        physicalLocation: {
-            artifactLocation: { uri: string };
-            region?: { startLine: number; endLine?: number };
-        }
-    }>;
-}
-
-function generateSARIFResult(
-    vulnType: string,
-    severity: Severity,
-    location: string
-): SARIFResult {
-    return {
-        ruleId: `TS-${vulnType}`,
-        level: mapSeverityToSARIF(severity),
-        message: `Detected ${vulnType} vulnerability`,
-        locations: [/* ... */]
-    };
-}
-```
-
-```rust
-// Rust Engine（高性能掃描）
-use serde_json::json;
-
-pub fn create_sarif_result(
-    rule_id: &str,
-    severity: Severity,
-    message: &str,
-    uri: &str
-) -> serde_json::Value {
-    json!({
-        "ruleId": rule_id,
-        "level": map_severity_to_sarif(&severity),
-        "message": message,
-        "locations": [{
-            "physicalLocation": {
-                "artifactLocation": {"uri": uri},
-                "region": {"startLine": 1}
-            }
-        }]
-    })
-}
-```
-
-#### � **修改現有功能的檢查清單**
-
-在修改 Scan 模組任何掃描引擎前:
-
-- [ ] **CVSS 合規**: 確保使用 CVSSv3Metrics 進行評分
-- [ ] **SARIF 標準**: 輸出必須符合 SARIF 2.1.0 規範
-- [ ] **CWE/CVE 引用**: 使用標準 ID 格式（CWE-79, CVE-2024-1234）
-- [ ] **跨引擎一致性**: Python/TypeScript/Rust 產生的報告格式一致
-- [ ] **性能測試**: 驗證新功能不影響掃描性能指標
-
-#### 🧪 **Scan 模組特殊驗證**
-
-```bash
-# 1. 檢查是否有非標準 Severity 定義
-grep -r "class.*Severity.*Enum" services/scan --include="*.py" --exclude-dir=__pycache__
-
-# 2. 驗證 SARIF 輸出格式
-python -m services.scan.validators.sarif_validator \
-    --input test_output.sarif.json
-
-# 3. 驗證 TypeScript 掃描引擎
-cd services/scan/ts_engine
-npm test -- --grep "SARIF compliance"
-
-# 4. 驗證 Rust 掃描引擎
-cd services/scan/rust_scanner
-cargo test sarif_format_test
-
-# 5. 跨引擎報告一致性測試
-pytest services/scan/tests/integration/test_multi_engine_consistency.py -v
-
-# 6. CVSS 評分驗證
-python -c "
-from services.scan.models import VulnerabilityReport
-from ..aiva_common.schemas import CVSSv3Metrics
-# 測試 CVSS 計算邏輯
-"
-```
-
-#### 📊 **掃描結果標準化流程**
-
-```mermaid
-graph TD
-    A[原始掃描結果] --> B{掃描引擎類型}
-    B -->|Python/ZAP| C[ZAP Alert]
-    B -->|TypeScript| D[Custom Finding]
-    B -->|Rust| E[High-Perf Result]
-    
-    C --> F[轉換為 SARIF]
-    D --> F
-    E --> F
-    
-    F --> G[添加 CVSS 評分]
-    G --> H[映射到標準 Severity]
-    H --> I[添加 CWE/CVE 引用]
-    I --> J[統一 SARIF 輸出]
-    
-    J --> K{驗證}
-    K -->|通過| L[存入數據庫]
-    K -->|失敗| M[記錄錯誤]
-```
-
-#### 🎯 **Scan 專屬的合理擴展**
-
-```python
-# ✅ 合理的 Scan 專屬枚舉（掃描技術細節）
-class ScanTechnique(str, Enum):
-    """掃描技術類型 - Scan 模組內部使用"""
-    PASSIVE_CRAWL = "passive"           # 被動爬取
-    ACTIVE_INJECTION = "active"         # 主動注入測試
-    FUZZING = "fuzzing"                 # 模糊測試
-    STATIC_ANALYSIS = "static"          # 靜態分析
-    # 這些是掃描引擎的執行策略，不需要跨模組共享
-
-class ScanEngineType(str, Enum):
-    """掃描引擎類型識別"""
-    ZAP = "zap"
-    NUCLEI = "nuclei"
-    CUSTOM_TS = "typescript"
-    CUSTOM_RUST = "rust"
-    # 這是掃描引擎的技術分類，用於路由和調度
-```
-
-#### 📝 **引擎特定注意事項**
-
-**Python 開發者（ZAP/Nuclei wrapper）**:
-- ✅ 將第三方工具結果轉換為 SARIF 標準
-- ✅ 使用 CVSSv3Metrics 計算標準評分
-- ❌ 不要保留工具特定的評分系統
-
-**TypeScript 開發者（自定義規則）**:
-- ✅ 實現符合 SARIF 的 TypeScript 接口
-- ✅ 使用 `level: "error" | "warning" | "note"` 而非自定義級別
-- ❌ 避免使用數字代碼代替語義化嚴重程度
-
-**Rust 開發者（高性能掃描）**:
-- ✅ 使用 `serde_json` 生成標準 SARIF JSON
-- ✅ 確保序列化欄位名與 SARIF 規範一致
-- ❌ 不要為了性能犧牲標準合規性
+- **2025年11月21日**: 完成適配器模式重構 (v2.1)
+- **2025年11月17日**: 第二次完整修復
+- **2025年10月**: 初始版本 (v2.0)
 
 ---
-
-�📝 **文檔版本**: v1.1.0  
-🔄 **最後更新**: 2025-10-25  
-👥 **維護者**: AIVA Development Team  
-
-有任何問題或建議，請提交 Issue 或 Pull Request！

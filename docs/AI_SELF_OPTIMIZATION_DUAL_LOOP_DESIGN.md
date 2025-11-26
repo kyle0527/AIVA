@@ -1,13 +1,30 @@
 # AIVA AI 自我優化雙重閉環設計
 
 **設計日期**: 2025年11月15日  
-**核心理念**: 內省 + 實戰 → 自我優化 → 視覺化驗證
+**最後更新**: 2025年11月23日  
+**核心理念**: 內省 + 實戰 → 自我優化 → 視覺化驗證  
+**狀態**: ✅ 已整合多引擎掃描工作流程
+
+---
+
+## 📋 目錄
+
+1. [設計核心概念](#設計核心概念)
+2. [完整掃描工作流程](#完整掃描工作流程)
+   - [Phase 0: Rust 快速偵察](#phase-0-rust-快速偵察)
+   - [AI 核心模組決策](#ai-核心模組決策)
+   - [Phase 1: 多引擎深度掃描](#phase-1-多引擎深度掃描)
+   - [Phase 2: Go 專項測試](#phase-2-go-專項測試)
+3. [雙重閉環機制](#雙重閉環機制)
+4. [引擎資料流與參數提取](#引擎資料流與參數提取)
+5. [Mermaid 流程圖](#mermaid-流程圖)
+6. [最佳實踐](#最佳實踐)
 
 ---
 
 ## 🎯 設計核心概念
 
-AIVA 的 AI 自我優化系統採用**雙重閉環反饋機制**，通過內部分析和外部實戰兩個維度持續進化:
+AIVA 的 AI 自我優化系統採用**雙重閉環反饋機制**，通過內部分析和外部實戰兩個維度持續進化。**外部閉環 (對外掃描)** 現已整合完整的多語言引擎協同工作流程:
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
@@ -97,6 +114,542 @@ AIVA 的 AI 自我優化系統採用**雙重閉環反饋機制**，通過內部�
                       ▼
               循環回到探索/掃描
 ```
+
+---
+
+## 🔄 完整掃描工作流程
+
+### 整體架構
+
+AIVA 的外部閉環掃描系統採用**多階段智能協同**策略,由 4 個專業引擎按序執行:
+
+```mermaid
+graph TB
+    Start([用戶啟動掃描]) --> Phase0[Phase 0: Rust 快速偵察]
+    Phase0 --> |200ms| Rust[Rust Engine<br/>端點發現<br/>技術棧識別<br/>JS 分析]
+    Rust --> |輸出| RustOut[端點列表<br/>40+ 路徑<br/>無參數詳情]
+    
+    RustOut --> AI1{AI 核心模組<br/>決策分析}
+    AI1 --> |查詢| DB[(歷史數據庫)]
+    AI1 --> |搜索| RAG[RAG 知識庫]
+    DB --> AI1
+    RAG --> AI1
+    
+    AI1 --> |決策| Decision1[選擇引擎組合<br/>python + typescript]
+    Decision1 --> Phase1[Phase 1: 多引擎深度掃描]
+    
+    Phase1 --> Python[Python Engine<br/>30s<br/>爬蟲 + 表單提取]
+    Phase1 --> TS[TypeScript Engine<br/>45s<br/>SPA 動態渲染]
+    
+    Python --> |輸出| PyOut[完整 URL<br/>參數列表<br/>表單結構]
+    TS --> |輸出| TSOut[動態路由<br/>AJAX 請求]
+    
+    PyOut --> Merge[整合資產]
+    TSOut --> Merge
+    
+    Merge --> AI2{AI 再次決策<br/>是否繼續?}
+    AI2 --> |已確認漏洞| Stop1[停止並產生報告]
+    AI2 --> |需深層測試| Phase2[Phase 2: Go 專項測試]
+    AI2 --> |資訊不足| RAG2[RAG 搜索建議]
+    
+    Phase2 --> Go[Go Engine<br/>5s<br/>SSRF 專項測試]
+    Go --> |輸出| GoOut[漏洞確認<br/>高信心度結果]
+    
+    GoOut --> Final[整合模組產生報告]
+    Stop1 --> Final
+    RAG2 --> AI2
+    
+    Final --> End([完整掃描報告])
+    
+    style Phase0 fill:#e1f5ff
+    style Phase1 fill:#fff3e0
+    style Phase2 fill:#ffe0e0
+    style AI1 fill:#e8f5e9
+    style AI2 fill:#e8f5e9
+    style Final fill:#f3e5f5
+```
+
+---
+
+### Phase 0: Rust 快速偵察
+
+**目的**: 快速探測攻擊面 (~200ms),為後續決策提供基礎資訊
+
+**輸入**:
+```json
+{
+  "url": "http://target.com",
+  "mode": "fast",
+  "timeout": 10
+}
+```
+
+**Rust 引擎執行**:
+1. 爬取常見路徑 (`/api/*`, `/admin`, `/graphql` 等)
+2. 分析 JS 文件,提取 API 端點
+3. 識別技術棧 (Express.js, Node.js, Angular)
+4. 評估端點風險等級
+
+**輸出示例**:
+```json
+{
+  "mode": "FastDiscovery",
+  "targets": [{
+    "url": "http://localhost:3000",
+    "success": true,
+    "endpoints": [
+      {
+        "path": "/api/users",
+        "method": "GET",
+        "status_code": 401,
+        "risk_level": "high"
+      },
+      {
+        "path": "/api/Products",
+        "method": "GET",
+        "status_code": 200,
+        "risk_level": "medium"
+      }
+    ],
+    "js_findings": [
+      "ApiEndpoint: /api/SecurityQuestions",
+      "ApiEndpoint: /api/Challenges"
+    ],
+    "technologies": ["Express.js", "Node.js", "Angular"],
+    "sensitive_info": []
+  }],
+  "summary": {
+    "total_endpoints": 40,
+    "high_risk": 9,
+    "medium_risk": 18,
+    "low_risk": 13
+  }
+}
+```
+
+**Rust 提供的資訊**:
+- ✅ **端點列表**: 40+ 個常見路徑
+- ✅ **技術棧**: Express.js, Node.js, Angular
+- ✅ **風險等級**: high/medium/low
+- ✅ **JS Findings**: JS 文件中的 API 端點
+- ❌ **無參數詳情**: 只有路徑,沒有參數名稱
+- ❌ **無表單結構**: 沒有表單字段
+
+---
+
+### AI 核心模組決策
+
+**輸入**: Phase 0 結果 + 歷史數據 + RAG 知識庫
+
+**AI 核心模組分析流程**:
+
+```mermaid
+flowchart LR
+    Input[Rust Phase 0 結果] --> Analyze[AI 分析引擎]
+    DB[(歷史數據庫)] --> Analyze
+    RAG[RAG 知識庫] --> Analyze
+    
+    Analyze --> Tech[技術棧判斷<br/>Express.js + Node.js]
+    Analyze --> Risk[風險評估<br/>9 個 high-risk 端點]
+    Analyze --> Pattern[模式識別<br/>API 密集型應用]
+    
+    Tech --> Decision{引擎選擇策略}
+    Risk --> Decision
+    Pattern --> Decision
+    
+    Decision --> |發現大量 API| SelectPy[選擇 Python<br/>爬取完整資訊]
+    Decision --> |SPA 技術| SelectTS[選擇 TypeScript<br/>動態渲染]
+    Decision --> |暫不選擇| NoGo[Go 引擎<br/>需要完整參數]
+    
+    SelectPy --> Output[AI 決策輸出]
+    SelectTS --> Output
+    NoGo -.-> Output
+    
+    style Decision fill:#e8f5e9
+    style Output fill:#fff3e0
+```
+
+**AI 決策輸出**:
+```json
+{
+  "selected_engines": ["python", "typescript"],
+  "recommended_strategy": "deep",
+  "priority_endpoints": ["/api/users", "/api/config"],
+  "stop_condition": "found_confirmed_vulnerability",
+  "max_depth": 3,
+  "reasoning": {
+    "python": "發現大量 API 端點,需要爬取完整參數",
+    "typescript": "Angular SPA 需要動態渲染",
+    "skip_go": "尚未獲得完整參數,暫不執行 SSRF 測試"
+  }
+}
+```
+
+**整合模組協助**:
+- 查詢資料庫: 類似目標的歷史掃描記錄
+- 對比數據: 該技術棧常見的漏洞類型
+- 補充建議: 遇到未知情況時使用 RAG 搜索
+
+---
+
+### Phase 1: 多引擎深度掃描
+
+#### Python 引擎 (爬蟲 + 表單提取)
+
+**輸入** (由協調器轉換):
+```python
+{
+  "scan_id": "scan_001",
+  "strategy": "deep",      # AI 決定
+  "max_depth": 3,          # AI 決定
+  "max_pages": 100,        # AI 決定
+  "timeout": 10
+}
+```
+
+**Python 引擎執行**:
+1. **靜態爬取**: 使用 httpx 爬取頁面
+2. **HTML 解析**: BeautifulSoup 提取鏈接和表單
+3. **表單字段提取**: 分析 `<input name="xxx">` 獲取參數
+4. **URL 隊列管理**: 廣度優先爬取,避免重複
+
+**關鍵代碼** (`static_content_parser.py`):
+```python
+class StaticContentParser:
+    def extract(self, base_url: str, response: httpx.Response) -> tuple[list[Asset], int]:
+        assets: list[Asset] = []
+        forms = 0
+        
+        if "text/html" in response.headers.get("content-type", ""):
+            soup = BeautifulSoup(response.text, "lxml")
+            
+            # 提取表單
+            for form in soup.find_all("form"):
+                action_url = form.get("action") or base_url
+                full_url = urljoin(base_url, action_url)
+                
+                # ✅ 提取參數名稱
+                params = []
+                for input_elem in form.find_all("input"):
+                    name = input_elem.get("name")
+                    if isinstance(name, str):
+                        params.append(name)  # username, password, email...
+                
+                assets.append(Asset(
+                    asset_id=new_id("asset"),
+                    type="URL",
+                    value=full_url,
+                    parameters=params if params else None,  # ✅ 參數列表
+                    has_form=True
+                ))
+                forms += 1
+            
+            # 提取鏈接
+            for a in soup.find_all("a"):
+                href = a.get("href")
+                if isinstance(href, str):
+                    assets.append(Asset(
+                        asset_id=new_id("asset"),
+                        type="URL",
+                        value=urljoin(base_url, href),
+                        has_form=False
+                    ))
+        
+        return assets, forms
+```
+
+**Python 引擎輸出** (Asset 格式):
+```python
+[
+  {
+    "asset_id": "asset_001",
+    "type": "URL",
+    "value": "http://localhost:3000/login",
+    "parameters": ["username", "password", "remember"],  # ✅ 表單字段
+    "has_form": True
+  },
+  {
+    "asset_id": "asset_002",
+    "type": "URL",
+    "value": "http://localhost:3000/api/users",
+    "parameters": None,  # 無表單,只是鏈接
+    "has_form": False
+  },
+  {
+    "asset_id": "asset_003",
+    "type": "URL",
+    "value": "http://localhost:3000/search",
+    "parameters": ["q", "category", "sort"],  # ✅ 搜索表單
+    "has_form": True
+  }
+]
+```
+
+**Python 引擎能力**:
+- ✅ **完整 URL**: 包含協議、域名、路徑
+- ✅ **表單參數提取**: 從 `<input name="xxx">` 提取
+- ✅ **表單結構識別**: `has_form=True`
+- ❌ **無 URL 參數提取**: 不解析 `?id=123` 的參數
+- ❌ **無 AJAX 監聽**: 靜態引擎看不到動態請求
+
+---
+
+#### TypeScript 引擎 (動態渲染)
+
+**適用場景**: SPA (React/Vue/Angular)
+
+**輸入**:
+```json
+{
+  "scan_id": "scan_001",
+  "max_depth": 3,
+  "timeout": 10
+}
+```
+
+**TypeScript 引擎執行**:
+1. 使用 Playwright 啟動真實瀏覽器
+2. 執行 JavaScript,等待頁面完全渲染
+3. 監聽 AJAX 請求,捕獲動態 API 調用
+4. 提取動態生成的鏈接和路由
+
+**TypeScript 引擎輸出**:
+```typescript
+[
+  {
+    asset_id: "asset_004",
+    type: "api",
+    value: "http://localhost:3000/api/Products",
+    parameters: [],
+    has_form: false
+  },
+  {
+    asset_id: "asset_005",
+    type: "api",
+    value: "http://localhost:3000/rest/user/whoami",
+    parameters: [],
+    has_form: false
+  }
+]
+```
+
+**TypeScript 引擎能力**:
+- ✅ **動態路由**: 捕獲 SPA 的客戶端路由
+- ✅ **AJAX 請求**: 監聽 XHR/Fetch 請求
+- ✅ **真實渲染**: 看到用戶實際看到的內容
+- ⚠️ **部分參數**: 可能捕獲部分動態參數
+- ❌ **無表單分析**: 不專注於表單提取
+
+---
+
+### AI 再次決策: 是否繼續
+
+**條件判斷**:
+
+```mermaid
+flowchart TD
+    Start[Phase 1 完成] --> Check{檢查結果}
+    
+    Check --> |發現確認漏洞| Vuln[SQL 注入<br/>XSS<br/>認證繞過]
+    Check --> |未確認漏洞| NoVuln[只有資產<br/>無漏洞驗證]
+    
+    Vuln --> Decision1{AI 決策:<br/>是否深層漏洞?}
+    Decision1 --> |是| DeepTest[繼續深層測試]
+    Decision1 --> |否| Stop[停止並產生報告]
+    
+    NoVuln --> Check2{是否有<br/>URL 參數?}
+    Check2 --> |有| HasParams[Python 發現<br/>parameters 字段]
+    Check2 --> |無| NoParams[只有端點<br/>無參數]
+    
+    HasParams --> SSRF{需要 SSRF<br/>測試?}
+    SSRF --> |是| Phase2[Phase 2:<br/>Go 引擎]
+    SSRF --> |否| Stop
+    
+    NoParams --> RAG[RAG 搜索建議]
+    RAG --> Decision2{AI 決策}
+    Decision2 --> |繼續| DeepTest
+    Decision2 --> |停止| Stop
+    
+    DeepTest --> Phase2
+    Phase2 --> Final[整合模組<br/>產生報告]
+    Stop --> Final
+    
+    style Decision1 fill:#e8f5e9
+    style Decision2 fill:#e8f5e9
+    style Phase2 fill:#ffe0e0
+    style Final fill:#f3e5f5
+```
+
+**決策邏輯**:
+```python
+def ai_decision_continue(phase1_result: ScanResult) -> str:
+    """
+    AI 核心模組決策: 是否繼續掃描
+    
+    Returns:
+        "STOP" - 停止並產生報告
+        "PHASE2_GO" - 執行 Go SSRF 測試
+        "RAG_SEARCH" - 尋找建議
+    """
+    # 檢查是否有確認漏洞
+    confirmed_vulns = [
+        asset for asset in phase1_result.assets 
+        if asset.type == "web_vulnerability" and asset.confidence == "high"
+    ]
+    
+    if confirmed_vulns:
+        # 發現確認漏洞
+        if ai_judge_need_deeper_test(confirmed_vulns):
+            return "PHASE2_GO"  # 可能有更深層漏洞
+        else:
+            return "STOP"  # 足夠了,產生報告
+    
+    # 檢查是否有 URL 參數可供 SSRF 測試
+    assets_with_params = [
+        asset for asset in phase1_result.assets 
+        if asset.parameters and len(asset.parameters) > 0
+    ]
+    
+    if assets_with_params:
+        # Python 發現了參數,可以測試 SSRF
+        if ai_judge_need_ssrf_test(assets_with_params):
+            return "PHASE2_GO"
+        else:
+            return "STOP"
+    
+    # 資訊不足,尋求建議
+    return "RAG_SEARCH"
+```
+
+---
+
+### Phase 2: Go 專項測試
+
+**前置條件**: Python 引擎必須提供帶參數的資產
+
+**協調器轉換邏輯**:
+```python
+def convert_python_assets_to_go_targets(assets: list[Asset]) -> list[str]:
+    """
+    將 Python 資產轉換為 Go 引擎可用的目標
+    
+    Python Asset:
+        {"value": "http://target.com/api/fetch", "parameters": ["url", "callback"]}
+    
+    Go Target:
+        ["http://target.com/api/fetch?url=", "http://target.com/api/fetch?callback="]
+    """
+    targets = []
+    for asset in assets:
+        if asset.parameters:
+            for param in asset.parameters:
+                # 構造完整的帶參數 URL
+                separator = "&" if "?" in asset.value else "?"
+                target = f"{asset.value}{separator}{param}="
+                targets.append(target)
+    return targets
+```
+
+**Go 引擎輸入**:
+```json
+{
+  "scan_id": "scan_002",
+  "targets": [
+    "http://localhost:3000/api/fetch?url=",
+    "http://localhost:3000/api/fetch?callback=",
+    "http://localhost:3000/search?q="
+  ],
+  "concurrency": 5,
+  "timeout": 10
+}
+```
+
+**Go 引擎執行**:
+1. 接收**完整的帶參數 URL**
+2. 測試 SSRF payload: `?url=file:///etc/passwd`
+3. 驗證響應內容,確認是否執行了 SSRF
+4. 評估信心度 (high/medium/low)
+
+**Go 引擎輸出**:
+```json
+{
+  "scan_id": "scan_002",
+  "status": "completed",
+  "assets": [
+    {
+      "type": "web_vulnerability",
+      "name": "SSRF - File Protocol",
+      "severity": "high",
+      "confidence": "high",
+      "details": {
+        "affected_url": "http://localhost:3000/api/fetch?url=file:///etc/passwd",
+        "vulnerable_param": "url",
+        "response_preview": "root:x:0:0:root:/root:/bin/bash\ndaemon:x:1:1:daemon:/usr/sbin:/usr/sbin/nologin",
+        "evidence": "Response contains /etc/passwd content"
+      }
+    }
+  ]
+}
+```
+
+**Go 引擎能力**:
+- ✅ **專項 SSRF 測試**: 18 種 payload
+- ✅ **漏洞確認**: 高信心度驗證
+- ✅ **快速執行**: ~5 秒完成
+- ❌ **依賴完整參數**: 需要 Python 先提取
+- ❌ **單一功能**: 只測試 SSRF
+
+---
+
+## 🔄 雙重閉環機制
+
+### 外部閉環 (對外掃描) - 已整合多引擎工作流程
+
+外部閉環現在包含完整的 4 階段掃描流程:
+
+```mermaid
+flowchart LR
+    Scan[4. 掃描<br/>Rust Phase 0] --> Attack[5. 攻擊<br/>Python + TypeScript<br/>Phase 1]
+    Attack --> Collect[6. 實戰數據收集<br/>Go Phase 2]
+    Collect --> Feedback[實戰反饋]
+    Feedback --> Optimize[AI 優化決策]
+    Optimize --> Scan
+    
+    style Scan fill:#e1f5ff
+    style Attack fill:#fff3e0
+    style Collect fill:#ffe0e0
+    style Optimize fill:#e8f5e9
+```
+
+**外部閉環數據收集**:
+- ✅ **成功/失敗記錄**: 哪些 payload 有效
+- ✅ **有效攻擊向量**: SSRF 成功的參數模式
+- ✅ **目標特徵**: 技術棧與漏洞的關聯
+- ✅ **防禦機制**: WAF 規則和過濾器
+
+### 內部閉環 (對內探索)
+
+內部閉環專注於自身能力分析:
+
+```mermaid
+flowchart LR
+    Explore[1. 探索<br/>SystemSelfExplorer] --> Analyze[2. 分析<br/>AnalysisEngine]
+    Analyze --> RAG[3. RAG 增強<br/>知識檢索]
+    RAG --> Decision[AI 優化決策]
+    Decision --> Improve[能力提升]
+    Improve --> Explore
+    
+    style Explore fill:#e8f5e9
+    style Analyze fill:#fff3e0
+    style RAG fill:#ffe0e0
+    style Decision fill:#e8f5e9
+```
+
+**內部閉環數據收集**:
+- ✅ **現有能力清單**: 5 大模組狀態
+- ✅ **代碼品質評估**: AST 分析結果
+- ✅ **依賴關係**: 模組間耦合度
+- ✅ **健康狀態**: 錯誤率和性能指標
 
 ---
 
@@ -805,3 +1358,134 @@ Week 5: 發現新的優化方向...
 **創建日期**: 2025年11月15日  
 **作者**: AIVA AI Team  
 **狀態**: ✅ 設計完成,待實施第2-4階段
+
+## 📊 引擎資料流與參數提取
+
+### Python 引擎與參數提取的關係
+
+**核心發現**: Python 引擎**只提取表單字段參數**,不提取 URL 查詢參數
+
+#### 提取邏輯
+
+```python
+# services/scan/engines/python_engine/core_crawling_engine/static_content_parser.py
+
+class StaticContentParser:
+    def extract(self, base_url: str, response: httpx.Response):
+        # 提取表單
+        for form in soup.find_all("form"):
+            params = []
+            for input_elem in form.find_all("input"):
+                name = input_elem.get("name")
+                if name:
+                    params.append(name)  # ✅ 只提取 <input name="xxx">
+            
+            assets.append(Asset(
+                value=full_url,
+                parameters=params,  # ["username", "password"]
+                has_form=True
+            ))
+        
+        # 提取鏈接
+        for a in soup.find_all("a"):
+            href = a.get("href")
+            assets.append(Asset(
+                value=urljoin(base_url, href),
+                parameters=None,  # ❌ 不解析 URL 參數
+                has_form=False
+            ))
+```
+
+#### 示例對比
+
+| HTML 內容 | Python 提取結果 |
+|-----------|----------------|
+| `<form action="/login"><input name="username"><input name="password"></form>` | ✅ `parameters: ["username", "password"]` |
+| `<a href="/search?q=test&sort=asc">Search</a>` | ❌ `parameters: None` (URL 參數被忽略) |
+| `<a href="/api/users">Users API</a>` | ❌ `parameters: None` |
+
+**結論**: 
+- ✅ Python 引擎適合提取登錄表單、註冊表單、搜索框等**表單參數**
+- ❌ Python 引擎無法提取 API 的 URL 查詢參數 (`?id=123`)
+- ⚠️ Go 引擎需要的是**完整帶參數 URL**,目前只能從表單中獲得
+
+---
+
+### 各引擎資料流對比
+
+```mermaid
+flowchart TD
+    Start[目標: http://localhost:3000] --> Rust
+    
+    subgraph Rust [Rust Engine - Phase 0]
+        R1[爬取常見路徑] --> R2[分析 JS 文件]
+        R2 --> R3[識別技術棧]
+        R3 --> ROut[輸出:<br/>端點路徑<br/>無參數]
+    end
+    
+    Rust --> AI1[AI 決策:<br/>選擇 Python + TypeScript]
+    
+    AI1 --> Python
+    AI1 --> TS
+    
+    subgraph Python [Python Engine - Phase 1]
+        P1[爬取頁面] --> P2[解析 HTML]
+        P2 --> P3[提取表單]
+        P3 --> P4[提取 input 字段]
+        P4 --> POut[輸出:<br/>表單參數<br/>has_form=True]
+    end
+    
+    subgraph TS [TypeScript Engine - Phase 1]
+        T1[Playwright 渲染] --> T2[執行 JS]
+        T2 --> T3[監聽 AJAX]
+        T3 --> TOut[輸出:<br/>動態路由<br/>API 請求]
+    end
+    
+    Python --> Merge[整合資產]
+    TS --> Merge
+    
+    Merge --> AI2[AI 決策:<br/>是否有參數?]
+    
+    AI2 --> |有表單參數| Go
+    AI2 --> |無參數| Stop[停止:<br/>無法執行 SSRF]
+    
+    subgraph Go [Go Engine - Phase 2]
+        G1[接收帶參數 URL] --> G2[測試 SSRF payload]
+        G2 --> G3[驗證響應內容]
+        G3 --> GOut[輸出:<br/>漏洞確認<br/>高信心度]
+    end
+    
+    Go --> Final[整合報告]
+    Stop --> Final
+    
+    style Rust fill:#e1f5ff
+    style Python fill:#fff3e0
+    style TS fill:#fff3e0
+    style Go fill:#ffe0e0
+    style AI1 fill:#e8f5e9
+    style AI2 fill:#e8f5e9
+```
+
+### 參數提取策略
+
+| 場景 | 推薦引擎 | 原因 |
+|------|---------|------|
+| 登錄表單 | Python | ✅ 可提取 username, password |
+| 搜索框 | Python | ✅ 可提取 q, category, sort |
+| REST API | TypeScript | ⚠️ 動態監聽 AJAX 請求 |
+| URL 參數 | Rust + 手動 | ❌ Python 無法提取,需其他方法 |
+| SSRF 測試 | Go | ✅ 但需要先有完整參數 |
+
+### 當前限制與改進方向
+
+**限制**:
+1. ❌ Python 無法提取 URL 查詢參數 (`?id=123`)
+2. ❌ Go 引擎無法獨立工作 (需要完整參數)
+3. ⚠️ TypeScript 參數提取能力有限
+
+**改進方向**:
+1. 🔧 增強 Python 引擎: 解析 URL 參數
+2. 🔧 增強 TypeScript 引擎: 從 AJAX 請求提取參數
+3. 🔧 新增參數推理模組: 基於 API 規範推測參數
+4. 🔧 實現協調器資產轉換: Python → Go 的完整流程
+

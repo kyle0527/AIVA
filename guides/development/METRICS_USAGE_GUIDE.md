@@ -326,3 +326,27 @@ VOLUME ["/var/log/aiva"]
 2. **記憶體洩漏**: 確保呼叫清理函數
 3. **效能影響**: 調整收集間隔或關閉不必要的指標
 4. **資料不一致**: 檢查時間同步和任務 ID 唯一性
+
+---
+
+## 🔗 相關資源
+
+### 開發指南
+- 📖 [開發快速指南](./DEVELOPMENT_QUICK_START_GUIDE.md)
+- 📖 [開發任務指南](./DEVELOPMENT_TASKS_GUIDE.md)
+- 📖 [開發者指南](./DEVELOPER_GUIDE.md)
+- 📖 [依賴管理指南](./DEPENDENCY_MANAGEMENT_GUIDE.md)
+- 📖 [API 驗證指南](./API_VERIFICATION_GUIDE.md)
+- 📖 [Schema 導入指南](./SCHEMA_IMPORT_GUIDE.md)
+
+### 架構指南
+- 📖 [Schema 統一指南](../architecture/SCHEMA_GUIDE.md)
+- 📖 [架構兼容性指南](../architecture/CROSS_LANGUAGE_COMPATIBILITY_GUIDE.md)
+
+### 故障排除
+- 📖 [導入問題解決](../troubleshooting/IMPORT_ISSUES_RESOLUTION_GUIDE.md)
+- 📖 [性能優化指南](../troubleshooting/PERFORMANCE_OPTIMIZATION_GUIDE.md)
+
+### 使用者手冊
+- 📚 [Core 模組手冊](../../docs/user_guides/01_core/AIVA_CORE_使用者手冊.md)
+

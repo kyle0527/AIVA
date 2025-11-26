@@ -4,8 +4,8 @@ import os
 
 # 設置路徑和環境變數
 sys.path.insert(0, 'services/aiva_common/tools')
-os.environ["RABBITMQ_URL"] = "amqp://guest:guest@localhost:5672/"
-os.environ["DATABASE_URL"] = "postgresql://user:pass@localhost:5432/aiva"
+# v2.0 架構：無需設置外部服務環境變數
+# 所有通信通過數據合約，所有存儲使用本地檔案
 
 from cross_language_validator import CrossLanguageValidator
 

@@ -61,7 +61,8 @@ ctm = ConfigTemplateManager()
 
 @app.on_event("startup")
 async def startup() -> None:
-    asyncio.create_task(_consume_logs())
+    log_task = asyncio.create_task(_consume_logs())
+    _background_tasks.append(log_task)  # 保存任務引用以防止過早垃圾回收
 
 
 @app.get("/findings/{finding_id}")

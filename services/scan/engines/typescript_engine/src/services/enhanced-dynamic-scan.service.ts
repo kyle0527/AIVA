@@ -29,6 +29,7 @@ export class EnhancedDynamicScanService {
     const startTime = Date.now();
     let context: BrowserContext | null = null;
     let page: Page | null = null;
+    let networkInterceptor: NetworkInterceptor | null = null;
 
     logger.info({
       task_id: task.task_id,
@@ -49,7 +50,7 @@ export class EnhancedDynamicScanService {
       page = await context.newPage();
 
       // 初始化服務
-      const networkInterceptor = new NetworkInterceptor();
+      networkInterceptor = new NetworkInterceptor();
       const contentExtractor = new EnhancedContentExtractor(page, task.extraction_config);
       const interactionSimulator = new InteractionSimulator(page, task.interaction_config);
 
@@ -159,8 +160,11 @@ export class EnhancedDynamicScanService {
       };
 
     } finally {
-      // 清理資源
+      // 清理資源 - 確保網路監聽器被移除
       try {
+        if (networkInterceptor) {
+          networkInterceptor.stopInterception();
+        }
         if (page) await page.close();
         if (context) await context.close();
       } catch (cleanupError: any) {

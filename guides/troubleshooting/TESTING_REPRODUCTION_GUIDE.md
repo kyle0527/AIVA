@@ -46,7 +46,8 @@ $env:AIVA_TARGET_URL = "http://localhost:3000"
 
 ### ⚡ 基礎服務啟動 (2分鐘)
 ```bash
-docker-compose up -d postgres redis rabbitmq neo4j aiva-core
+# v2.0 架構: 已移除 RabbitMQ，使用直接數據合約通信
+docker-compose up -d postgres redis neo4j aiva-core
 Start-Sleep 60  # 等待服務健康
 docker-compose ps  # 確認所有服務healthy
 ```
@@ -129,3 +130,23 @@ docker logs aiva-testing-autonomous
 
 ## 🎉 重現成功標準
 執行上述6個測試都成功，即可確認AIVA系統核心功能完全正常！
+
+---
+
+## 🔗 相關資源
+
+### 故障排除指南
+- 📖 [導入問題解決](./IMPORT_ISSUES_RESOLUTION_GUIDE.md)
+- 📖 [前向引用修復](./FORWARD_REFERENCE_REPAIR_GUIDE.md)
+- 📖 [性能優化指南](./PERFORMANCE_OPTIMIZATION_GUIDE.md)
+- 📖 [測試重現指南](./TESTING_REPRODUCTION_GUIDE.md)
+
+### 修復指南
+- �� [AI 修復指南](../repairs/AIVA_AI_REPAIR_GUIDE.md)
+
+### 架構指南
+- 📖 [兼容性指南](../architecture/CROSS_LANGUAGE_COMPATIBILITY_GUIDE.md)
+
+### 開發指南
+- 📖 [依賴管理指南](../development/DEPENDENCY_MANAGEMENT_GUIDE.md)
+

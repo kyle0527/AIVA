@@ -2,11 +2,12 @@
 
 **版本**: 1.0.0  
 **日期**: 2025-11-19  
-**狀態**: ✅ 生產可用
+**狀態**: ✅ 生產可用  
+**驗證**: ✅ 已驗證 2025-11-23 (6/9 章節)
 
 ---
 
-## 🚀 快速開始
+## 🚀 快速開始 ✅ 已驗證 2025-11-23
 
 ### 1. 編譯
 
@@ -35,7 +36,7 @@ cargo build --release
 
 ---
 
-## 📋 命令行參數
+## 📋 命令行參數 ✅ 已驗證 2025-11-23
 
 ### scan 子命令
 
@@ -54,9 +55,9 @@ cargo build --release
 
 ---
 
-## 💡 使用場景
+## 💡 使用場景 ✅ 已驗證 2025-11-23
 
-### 場景1: 單目標快速掃描
+### 場景1: 單目標快速掃描 ✅ 已驗證
 
 ```bash
 # 用於首次接觸目標,快速了解攻擊面
@@ -72,7 +73,7 @@ cargo build --release
 - 技術棧識別
 - 風險等級分類
 
-### 場景2: 多靶場並行掃描
+### 場景2: 多靶場並行掃描 ✅ 已驗證 2025-11-23
 
 ```bash
 # 同時掃描多個目標 (實際場景: Bug Bounty平台多個子域名)
@@ -115,7 +116,7 @@ cargo build --release
 
 ---
 
-## 📊 輸出格式
+## 📊 輸出格式 ✅ 已驗證 2025-11-23
 
 ### JSON 結構
 
@@ -166,7 +167,7 @@ $json.targets[0].endpoints | Where-Object { $_.risk_level -eq "critical" } | For
 
 ---
 
-## 🎯 與 AIVA 架構整合
+## 🎯 與 AIVA 架構整合 ✅ 已修復 2025-11-23
 
 ### Phase0: 快速偵察 (必執行)
 
@@ -184,10 +185,13 @@ $json.targets[0].endpoints | Where-Object { $_.risk_level -eq "critical" } | For
 3. **風險等級** → 優先級排序
 4. **JS Findings** → 發現隱藏攻擊面
 
-### 與Python引擎配合
+### 作為命令行工具調用 (外部集成)
+
+⚠️ **注意**: 以下為命令行工具調用方式,適用於外部腳本。  
+AIVA 內部使用 **FFI Bridge** 進行原生集成 (見下一節)。
 
 ```python
-# Python調用Rust引擎 (未來實現)
+# 命令行工具調用方式 (適用於外部腳本)
 import subprocess
 import json
 
@@ -206,6 +210,61 @@ for endpoint in endpoints:
     if endpoint['risk_level'] == 'critical':
         test_sql_injection(endpoint['path'])
 ```
+
+### AIVA 內部集成 (FFI Bridge)
+
+✅ **實際架構**: AIVA 使用 **FFI (Foreign Function Interface)** 直接調用 Rust 共享庫,性能更高。
+
+```python
+# services/scan/coordinators/engines/rust_adapter.py
+from services.scan.engines.rust_engine.python_bridge import rust_info_gatherer
+import asyncio
+import concurrent.futures
+
+class RustAdapter(BaseScannerAdapter):
+    """Rust 引擎適配器 - FFI 原生調用"""
+    
+    async def scan(self, targets: List[str], options: Dict[str, Any]) -> Dict[str, Any]:
+        """使用線程池包裝同步 FFI 調用"""
+        
+        loop = asyncio.get_event_loop()
+        
+        with concurrent.futures.ThreadPoolExecutor(max_workers=4) as pool:
+            def _sync_scan_all_targets():
+                all_rust_assets = []
+                
+                # 循環處理所有目標
+                for target in targets:
+                    # 直接調用 Rust FFI Bridge
+                    result = rust_info_gatherer.scan_target(target, {
+                        "mode": options.get("mode", "deep_analysis"),
+                        "max_depth": options.get("max_depth", 5),
+                        "timeout": options.get("timeout", 30)
+                    })
+                    
+                    if result and result.get("success"):
+                        all_rust_assets.extend(result["results"].get("assets", []))
+                
+                return all_rust_assets
+            
+            # 在線程池中執行 FFI 調用 (避免阻塞事件循環)
+            raw_assets = await loop.run_in_executor(pool, _sync_scan_all_targets)
+        
+        return {
+            "assets": self._standardize_assets(raw_assets, "rust"),
+            "metadata": {"engine": "rust", "targets_scanned": len(targets)}
+        }
+```
+
+**FFI vs Subprocess 對比**:
+
+| 特性 | FFI Bridge (實際) | Subprocess (外部) |
+|------|------------------|-------------------|
+| 性能 | 高 (直接函數調用) | 低 (進程開銷) |
+| 異步支持 | ✅ (線程池包裝) | ❌ (阻塞) |
+| 內存效率 | 高 (共享地址空間) | 低 (進程隔離) |
+| 架構整合 | 原生整合 | 外部工具 |
+| 適用場景 | AIVA 內部引擎 | 外部腳本/CLI |
 
 ---
 

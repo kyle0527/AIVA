@@ -368,3 +368,28 @@ analysis_config = {
 ---
 
 **🎯 通過理解這些核心機制，即使未來圖表產生略有不同，我們仍能快速理解變化原因並進行相應調整！**
+
+---
+
+## 🔗 相關資源
+
+### 模組開發指南
+- 📖 [Python 開發指南](./PYTHON_DEVELOPMENT_GUIDE.md)
+- 📖 [Go 開發指南](./GO_DEVELOPMENT_GUIDE.md)
+- 📖 [Rust 開發指南](./RUST_DEVELOPMENT_GUIDE.md)
+- 📖 [AI 引擎指南](./AI_ENGINE_GUIDE.md)
+- 📖 [功能模組開發指南](./FEATURE_MODULES_DEVELOPMENT_GUIDE.md)
+- 📖 [模組遷移指南](./MODULE_MIGRATION_GUIDE.md)
+
+### 架構指南
+- 📖 [跨語言 Schema 指南](../architecture/CROSS_LANGUAGE_SCHEMA_GUIDE.md)
+- 📖 [兼容性指南](../architecture/CROSS_LANGUAGE_COMPATIBILITY_GUIDE.md)
+
+### 開發指南
+- 📖 [開發快速指南](../development/DEVELOPMENT_QUICK_START_GUIDE.md)
+- 📖 [依賴管理指南](../development/DEPENDENCY_MANAGEMENT_GUIDE.md)
+
+### 服務文檔
+- 🔧 [Features 模組](../../services/features/README.md)
+- 🔧 [Scan 引擎文檔](../../services/scan/README.md)
+

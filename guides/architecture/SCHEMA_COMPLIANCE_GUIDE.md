@@ -372,3 +372,40 @@ python tools/schema_compliance_validator.py --format json | jq '.summary'
 ---
 
 **重要提醒**: 此規範為強制性規範，所有開發人員必須遵循。違反此規範的程式碼將無法通過 CI/CD 檢查。如有疑問，請諮詢架構團隊。
+
+---
+
+## 🔗 相關資源
+
+### 架構指南
+- 📖 [Schema 統一指南](./SCHEMA_GUIDE.md)
+- 📖 [Schema 生成指南](./SCHEMA_GENERATION_GUIDE.md)
+- 📖 [Schema 合規指南](./SCHEMA_COMPLIANCE_GUIDE.md)
+- 📖 [跨語言 Schema 指南](./CROSS_LANGUAGE_SCHEMA_GUIDE.md)
+- 📖 [跨語言兼容性指南](./CROSS_LANGUAGE_COMPATIBILITY_GUIDE.md)
+
+### 模組開發
+- 📖 [Python 開發指南](../modules/PYTHON_DEVELOPMENT_GUIDE.md)
+- 📖 [Rust 開發指南](../modules/RUST_DEVELOPMENT_GUIDE.md)
+- 📖 [Go 開發指南](../modules/GO_DEVELOPMENT_GUIDE.md)
+
+### 故障排除
+- 📖 [導入問題解決指南](../troubleshooting/IMPORT_ISSUES_RESOLUTION_GUIDE.md)
+- 📖 [前向引用修復指南](../troubleshooting/FORWARD_REFERENCE_REPAIR_GUIDE.md)
+
+
+---
+
+## 🔗 相關資源
+
+### 架構指南
+- 📖 [Schema 統一指南](./SCHEMA_GUIDE.md)
+- 📖 [Schema 生成指南](./SCHEMA_GENERATION_GUIDE.md)
+- 📖 [Schema 合規指南](./SCHEMA_COMPLIANCE_GUIDE.md)
+- 📖 [跨語言 Schema 指南](./CROSS_LANGUAGE_SCHEMA_GUIDE.md)
+- 📖 [跨語言兼容性指南](./CROSS_LANGUAGE_COMPATIBILITY_GUIDE.md)
+
+### 開發指南
+- 📖 [開發快速指南](../development/DEVELOPMENT_QUICK_START_GUIDE.md)
+- 📖 [依賴管理指南](../development/DEPENDENCY_MANAGEMENT_GUIDE.md)
+

@@ -1,4 +1,7 @@
-# 跨語言兼容性指南 ✅ 11/10驗證
+# 跨語言兼容性指南
+
+> **架構版本**: v2.0 (數據合約驅動)  
+> **最後更新**: 2025-11-22
 
 > **📋 適用對象**: 架構師、跨語言開發團隊、技術負責人  
 > **🎯 使用場景**: 多語言項目整合、兼容性問題排查、架構設計  
@@ -257,3 +260,40 @@ import "../common/schemas"
 
 *檢查涵蓋語言: Python ✅, TypeScript ✅, Rust ❌ (需修復), Go ❌ (需修復), JavaScript ✅*  
 *驗證日期: 2025年10月30日*
+
+---
+
+## 🔗 相關資源
+
+### 架構指南
+- 📖 [Schema 統一指南](./SCHEMA_GUIDE.md)
+- 📖 [Schema 生成指南](./SCHEMA_GENERATION_GUIDE.md)
+- 📖 [Schema 合規指南](./SCHEMA_COMPLIANCE_GUIDE.md)
+- 📖 [跨語言 Schema 指南](./CROSS_LANGUAGE_SCHEMA_GUIDE.md)
+- 📖 [跨語言兼容性指南](./CROSS_LANGUAGE_COMPATIBILITY_GUIDE.md)
+
+### 模組開發
+- 📖 [Python 開發指南](../modules/PYTHON_DEVELOPMENT_GUIDE.md)
+- 📖 [Rust 開發指南](../modules/RUST_DEVELOPMENT_GUIDE.md)
+- 📖 [Go 開發指南](../modules/GO_DEVELOPMENT_GUIDE.md)
+
+### 故障排除
+- 📖 [導入問題解決指南](../troubleshooting/IMPORT_ISSUES_RESOLUTION_GUIDE.md)
+- 📖 [前向引用修復指南](../troubleshooting/FORWARD_REFERENCE_REPAIR_GUIDE.md)
+
+
+---
+
+## 🔗 相關資源
+
+### 架構指南
+- 📖 [Schema 統一指南](./SCHEMA_GUIDE.md)
+- 📖 [Schema 生成指南](./SCHEMA_GENERATION_GUIDE.md)
+- 📖 [Schema 合規指南](./SCHEMA_COMPLIANCE_GUIDE.md)
+- 📖 [跨語言 Schema 指南](./CROSS_LANGUAGE_SCHEMA_GUIDE.md)
+- 📖 [跨語言兼容性指南](./CROSS_LANGUAGE_COMPATIBILITY_GUIDE.md)
+
+### 開發指南
+- 📖 [開發快速指南](../development/DEVELOPMENT_QUICK_START_GUIDE.md)
+- 📖 [依賴管理指南](../development/DEPENDENCY_MANAGEMENT_GUIDE.md)
+

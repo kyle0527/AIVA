@@ -402,13 +402,14 @@ type_mappings = convert_types_for_ai("Optional[str]")
 ```bash
 # 無需手動設置，自動使用預設值
 # DATABASE_URL="postgresql://postgres:postgres@localhost:5432/aiva_db"
-# RABBITMQ_URL="amqp://guest:guest@localhost:5672/"
+# 注意：v2.0 架構已移除 RabbitMQ，採用直接數據合約通信
 ```
 
 ### 生產環境（部署時才需要）
 ```bash
-export AIVA_RABBITMQ_URL="amqp://prod_user:password@prod-mq:5672/"
+# v2.0 架構配置
 export AIVA_DATABASE_URL="postgresql://prod_user:password@prod-db:5432/aiva"
+# 注意：不再需要 RABBITMQ_URL 配置
 ```
 
 ### Q2: 跨語言類型不一致
@@ -467,3 +468,40 @@ AIVA 跨語言 Schema 系統提供了完整的多語言數據模型解決方案�
 - **完整** 的開發工具鏈
 
 通過這個系統，AI 組件可以無縫理解和操作不同程式語言的數據結構，實現真正的跨語言統一架構。
+
+---
+
+## 🔗 相關資源
+
+### 架構指南
+- 📖 [Schema 統一指南](./SCHEMA_GUIDE.md)
+- 📖 [Schema 生成指南](./SCHEMA_GENERATION_GUIDE.md)
+- 📖 [Schema 合規指南](./SCHEMA_COMPLIANCE_GUIDE.md)
+- 📖 [跨語言 Schema 指南](./CROSS_LANGUAGE_SCHEMA_GUIDE.md)
+- 📖 [跨語言兼容性指南](./CROSS_LANGUAGE_COMPATIBILITY_GUIDE.md)
+
+### 模組開發
+- 📖 [Python 開發指南](../modules/PYTHON_DEVELOPMENT_GUIDE.md)
+- 📖 [Rust 開發指南](../modules/RUST_DEVELOPMENT_GUIDE.md)
+- 📖 [Go 開發指南](../modules/GO_DEVELOPMENT_GUIDE.md)
+
+### 故障排除
+- 📖 [導入問題解決指南](../troubleshooting/IMPORT_ISSUES_RESOLUTION_GUIDE.md)
+- 📖 [前向引用修復指南](../troubleshooting/FORWARD_REFERENCE_REPAIR_GUIDE.md)
+
+
+---
+
+## 🔗 相關資源
+
+### 架構指南
+- 📖 [Schema 統一指南](./SCHEMA_GUIDE.md)
+- 📖 [Schema 生成指南](./SCHEMA_GENERATION_GUIDE.md)
+- 📖 [Schema 合規指南](./SCHEMA_COMPLIANCE_GUIDE.md)
+- 📖 [跨語言 Schema 指南](./CROSS_LANGUAGE_SCHEMA_GUIDE.md)
+- 📖 [跨語言兼容性指南](./CROSS_LANGUAGE_COMPATIBILITY_GUIDE.md)
+
+### 開發指南
+- 📖 [開發快速指南](../development/DEVELOPMENT_QUICK_START_GUIDE.md)
+- 📖 [依賴管理指南](../development/DEPENDENCY_MANAGEMENT_GUIDE.md)
+

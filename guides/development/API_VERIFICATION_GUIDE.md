@@ -1,4 +1,6 @@
-# API 驗證功能操作指南 ✅ 11/10驗證
+# API 驗證功能操作指南
+
+> **最後更新**: 2025-11-22
 
 > **📋 適用對象**: 開發者、安全工程師、API集成人員  
 > **🎯 使用場景**: 密鑰驗證、API憑證確認、安全漏洞優先級排序  
@@ -509,3 +511,28 @@ serde_json = "1.0"
 ## 聯絡資訊
 
 問題或建議請聯繫 AIVA 開發團隊。
+
+
+---
+
+## 🔗 相關資源
+
+### 開發指南
+- 📖 [開發快速指南](./DEVELOPMENT_QUICK_START_GUIDE.md)
+- 📖 [開發任務指南](./DEVELOPMENT_TASKS_GUIDE.md)
+- 📖 [開發者指南](./DEVELOPER_GUIDE.md)
+- 📖 [依賴管理指南](./DEPENDENCY_MANAGEMENT_GUIDE.md)
+- 📖 [API 驗證指南](./API_VERIFICATION_GUIDE.md)
+- 📖 [Schema 導入指南](./SCHEMA_IMPORT_GUIDE.md)
+
+### 架構指南
+- 📖 [Schema 統一指南](../architecture/SCHEMA_GUIDE.md)
+- 📖 [架構兼容性指南](../architecture/CROSS_LANGUAGE_COMPATIBILITY_GUIDE.md)
+
+### 故障排除
+- 📖 [導入問題解決](../troubleshooting/IMPORT_ISSUES_RESOLUTION_GUIDE.md)
+- 📖 [性能優化指南](../troubleshooting/PERFORMANCE_OPTIMIZATION_GUIDE.md)
+
+### 使用者手冊
+- 📚 [Core 模組手冊](../../docs/user_guides/01_core/AIVA_CORE_使用者手冊.md)
+

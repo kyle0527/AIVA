@@ -14,12 +14,9 @@ from typing import Dict, List, Any, Optional
 import uuid
 
 # 設置環境變數
-os.environ.setdefault('RABBITMQ_URL', 'amqp://guest:guest@localhost:5672')
-os.environ.setdefault('POSTGRES_HOST', 'localhost')
-os.environ.setdefault('POSTGRES_PORT', '5432')
-os.environ.setdefault('POSTGRES_USER', 'postgres')
-os.environ.setdefault('POSTGRES_PASSWORD', 'aiva123')
-os.environ.setdefault('POSTGRES_DB', 'aiva_db')
+# v2.0 架構：無需設置外部服務環境變數
+# 所有存儲使用本地 SQLite 和 JSON 檔案
+os.environ.setdefault('ENVIRONMENT', 'test')
 
 class DataPersistenceValidator:
     """數據持久化驗證器"""

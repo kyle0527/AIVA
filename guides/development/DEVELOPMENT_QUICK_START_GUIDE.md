@@ -1,4 +1,7 @@
-# AIVA 開發環境快速設置指南 ✅ 11/10驗證
+# AIVA 開發環境快速設置指南
+
+> **架構版本**: v2.0  
+> **最後更新**: 2025-11-22
 
 > **📋 適用對象**: 新手開發者、團隊成員、快速部署需求  
 > **🎯 使用場景**: 開發環境初始化、快速項目設置、環境驗證  
@@ -369,3 +372,27 @@ pip list --outdated
 
 **快速開始**: 直接執行 `python run_dev_tests.py` 驗證環境，然後開始編輯 `attack_plan_mapper.py`  
 **支援文件**: 參考 `DEVELOPMENT_TASKS_CHECKLIST.md` 了解詳細任務
+
+---
+
+## 🔗 相關資源
+
+### 開發指南
+- 📖 [開發快速指南](./DEVELOPMENT_QUICK_START_GUIDE.md)
+- 📖 [開發任務指南](./DEVELOPMENT_TASKS_GUIDE.md)
+- 📖 [開發者指南](./DEVELOPER_GUIDE.md)
+- 📖 [依賴管理指南](./DEPENDENCY_MANAGEMENT_GUIDE.md)
+- 📖 [API 驗證指南](./API_VERIFICATION_GUIDE.md)
+- 📖 [Schema 導入指南](./SCHEMA_IMPORT_GUIDE.md)
+
+### 架構指南
+- 📖 [Schema 統一指南](../architecture/SCHEMA_GUIDE.md)
+- 📖 [架構兼容性指南](../architecture/CROSS_LANGUAGE_COMPATIBILITY_GUIDE.md)
+
+### 故障排除
+- 📖 [導入問題解決](../troubleshooting/IMPORT_ISSUES_RESOLUTION_GUIDE.md)
+- 📖 [性能優化指南](../troubleshooting/PERFORMANCE_OPTIMIZATION_GUIDE.md)
+
+### 使用者手冊
+- 📚 [Core 模組手冊](../../docs/user_guides/01_core/AIVA_CORE_使用者手冊.md)
+

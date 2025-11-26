@@ -1,0 +1,18 @@
+{
+  "targets": [
+    "http://localhost:8080/WebGoat/SSRF/task1",
+    "http://localhost:8080/WebGoat/SSRF/task2", 
+    "http://localhost:8080/WebGoat/ssrf/task1",
+    "http://localhost:8080/WebGoat/ssrf/task2",
+    "http://localhost:8080/WebGoat/ServerSideRequestForgery/task1",
+    "http://localhost:8080/WebGoat/lesson/SSRF.lesson",
+    "http://localhost:8080/WebGoat/attack"
+  ],
+  "authentication": {
+    "enabled": true,
+    "login_url": "http://localhost:8080/WebGoat/login",
+    "username": "guest",
+    "password": "guest"
+  },
+  "config": {}
+}

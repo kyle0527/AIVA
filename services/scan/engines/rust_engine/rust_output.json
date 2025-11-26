@@ -1,0 +1,435 @@
+[2m2025-11-23T02:28:52.754268Z[0m [32m INFO[0m [2maiva_info_gatherer[0m[2m:[0m ?? AIVA Rust Scanner ??
+[2m2025-11-23T02:28:52.754314Z[0m [32m INFO[0m [2maiva_info_gatherer[0m[2m:[0m ?? ??璅∪?: Fast
+[2m2025-11-23T02:28:52.754320Z[0m [32m INFO[0m [2maiva_info_gatherer[0m[2m:[0m ? ?格??賊?: 1
+[2m2025-11-23T02:28:52.754324Z[0m [32m INFO[0m [2maiva_info_gatherer[0m[2m:[0m ???? 1 ?璅?(璅∪?: FastDiscovery)
+[2m2025-11-23T02:28:52.754403Z[0m [32m INFO[0m [2maiva_info_gatherer[0m[2m:[0m ???格?: http://localhost:3000
+[2m2025-11-23T02:28:52.754431Z[0m [32m INFO[0m [2maiva_info_gatherer[0m[2m:[0m [Phase0] 敹恍撖芋撘?- ?? http://localhost:3000
+[2m2025-11-23T02:28:52.755177Z[0m [32m INFO[0m [2maiva_info_gatherer::endpoint_discovery[0m[2m:[0m ?? ??蝡舫??潛: http://localhost:3000
+[2m2025-11-23T02:28:53.104476Z[0m [32m INFO[0m [2maiva_info_gatherer::endpoint_discovery[0m[2m:[0m ?? Robots.txt: ?潛 1 ?楝敺?[2m2025-11-23T02:28:53.115188Z[0m [32m INFO[0m [2maiva_info_gatherer::endpoint_discovery[0m[2m:[0m ??蝡舫??潛摰?: ??40 ??[2m2025-11-23T02:28:53.115225Z[0m [32m INFO[0m [2maiva_info_gatherer[0m[2m:[0m   ???潛 40 ?垢暺?[2m2025-11-23T02:28:53.141264Z[0m [32m INFO[0m [2maiva_info_gatherer::js_analyzer[0m[2m:[0m ?? ?? JS ?辣: http://localhost:3000/main.js
+[2m2025-11-23T02:28:53.153036Z[0m [32m INFO[0m [2maiva_info_gatherer::js_analyzer[0m[2m:[0m   ???潛 35 ??JS finding
+[2m2025-11-23T02:28:53.153118Z[0m [32m INFO[0m [2maiva_info_gatherer[0m[2m:[0m     - main.js: 35 findings
+[2m2025-11-23T02:28:53.157220Z[0m [32m INFO[0m [2maiva_info_gatherer::js_analyzer[0m[2m:[0m ?? ?? JS ?辣: http://localhost:3000/runtime.js
+[2m2025-11-23T02:28:53.157442Z[0m [32m INFO[0m [2maiva_info_gatherer::js_analyzer[0m[2m:[0m   ???潛 0 ??JS finding
+[2m2025-11-23T02:28:53.177023Z[0m [32m INFO[0m [2maiva_info_gatherer::js_analyzer[0m[2m:[0m ?? ?? JS ?辣: http://localhost:3000/vendor.js
+[2m2025-11-23T02:28:53.195756Z[0m [32m INFO[0m [2maiva_info_gatherer::js_analyzer[0m[2m:[0m   ???潛 49 ??JS finding
+[2m2025-11-23T02:28:53.195839Z[0m [32m INFO[0m [2maiva_info_gatherer[0m[2m:[0m     - vendor.js: 49 findings
+[2m2025-11-23T02:28:53.196053Z[0m [32m INFO[0m [2maiva_info_gatherer[0m[2m:[0m   ??JS??摰?: 84 ???[2m2025-11-23T02:28:53.206159Z[0m [32m INFO[0m [2maiva_info_gatherer[0m[2m:[0m   ????靽⊥: 0 ??[2m2025-11-23T02:28:53.206227Z[0m [32m INFO[0m [2maiva_info_gatherer[0m[2m:[0m   ??瑼Ｘ葫??2 ??銵?[2m2025-11-23T02:28:53.207063Z[0m [32m INFO[0m [2maiva_info_gatherer[0m[2m:[0m ??摰?嚗? 0.45蝘?{
+  "mode": "FastDiscovery",
+  "targets": [
+    {
+      "url": "http://localhost:3000",
+      "success": true,
+      "error": null,
+      "endpoints": [
+        {
+          "path": "/api",
+          "method": "GET",
+          "status_code": 500,
+          "discovered_by": "dictionary",
+          "risk_level": "high",
+          "response_size": 0
+        },
+        {
+          "path": "/api/v1",
+          "method": "GET",
+          "status_code": 500,
+          "discovered_by": "dictionary",
+          "risk_level": "high",
+          "response_size": 0
+        },
+        {
+          "path": "/api/v2",
+          "method": "GET",
+          "status_code": 500,
+          "discovered_by": "dictionary",
+          "risk_level": "high",
+          "response_size": 0
+        },
+        {
+          "path": "/api/users",
+          "method": "GET",
+          "status_code": 401,
+          "discovered_by": "dictionary",
+          "risk_level": "high",
+          "response_size": 0
+        },
+        {
+          "path": "/api/config",
+          "method": "GET",
+          "status_code": 500,
+          "discovered_by": "dictionary",
+          "risk_level": "high",
+          "response_size": 0
+        },
+        {
+          "path": "/graphql",
+          "method": "GET",
+          "status_code": 200,
+          "discovered_by": "dictionary",
+          "risk_level": "medium",
+          "response_size": 75002
+        },
+        {
+          "path": "/graphiql",
+          "method": "GET",
+          "status_code": 200,
+          "discovered_by": "dictionary",
+          "risk_level": "info",
+          "response_size": 75002
+        },
+        {
+          "path": "/admin",
+          "method": "GET",
+          "status_code": 200,
+          "discovered_by": "dictionary",
+          "risk_level": "critical",
+          "response_size": 75002
+        },
+        {
+          "path": "/admin/login",
+          "method": "GET",
+          "status_code": 200,
+          "discovered_by": "dictionary",
+          "risk_level": "critical",
+          "response_size": 75002
+        },
+        {
+          "path": "/administrator",
+          "method": "GET",
+          "status_code": 200,
+          "discovered_by": "dictionary",
+          "risk_level": "critical",
+          "response_size": 75002
+        },
+        {
+          "path": "/management",
+          "method": "GET",
+          "status_code": 200,
+          "discovered_by": "dictionary",
+          "risk_level": "critical",
+          "response_size": 75002
+        },
+        {
+          "path": "/console",
+          "method": "GET",
+          "status_code": 200,
+          "discovered_by": "dictionary",
+          "risk_level": "info",
+          "response_size": 75002
+        },
+        {
+          "path": "/backend",
+          "method": "GET",
+          "status_code": 200,
+          "discovered_by": "dictionary",
+          "risk_level": "info",
+          "response_size": 75002
+        },
+        {
+          "path": "/auth",
+          "method": "GET",
+          "status_code": 200,
+          "discovered_by": "dictionary",
+          "risk_level": "high",
+          "response_size": 75002
+        },
+        {
+          "path": "/login",
+          "method": "GET",
+          "status_code": 200,
+          "discovered_by": "dictionary",
+          "risk_level": "info",
+          "response_size": 75002
+        },
+        {
+          "path": "/signin",
+          "method": "GET",
+          "status_code": 200,
+          "discovered_by": "dictionary",
+          "risk_level": "info",
+          "response_size": 75002
+        },
+        {
+          "path": "/logout",
+          "method": "GET",
+          "status_code": 200,
+          "discovered_by": "dictionary",
+          "risk_level": "info",
+          "response_size": 75002
+        },
+        {
+          "path": "/register",
+          "method": "GET",
+          "status_code": 200,
+          "discovered_by": "dictionary",
+          "risk_level": "info",
+          "response_size": 75002
+        },
+        {
+          "path": "/reset-password",
+          "method": "GET",
+          "status_code": 200,
+          "discovered_by": "dictionary",
+          "risk_level": "info",
+          "response_size": 75002
+        },
+        {
+          "path": "/swagger.json",
+          "method": "GET",
+          "status_code": 200,
+          "discovered_by": "dictionary",
+          "risk_level": "medium",
+          "response_size": 75002
+        },
+        {
+          "path": "/swagger-ui",
+          "method": "GET",
+          "status_code": 200,
+          "discovered_by": "dictionary",
+          "risk_level": "medium",
+          "response_size": 75002
+        },
+        {
+          "path": "/openapi.json",
+          "method": "GET",
+          "status_code": 200,
+          "discovered_by": "dictionary",
+          "risk_level": "low",
+          "response_size": 75002
+        },
+        {
+          "path": "/api-docs",
+          "method": "GET",
+          "status_code": 200,
+          "discovered_by": "dictionary",
+          "risk_level": "high",
+          "response_size": 3106
+        },
+        {
+          "path": "/.well-known/security.txt",
+          "method": "GET",
+          "status_code": 200,
+          "discovered_by": "dictionary",
+          "risk_level": "info",
+          "response_size": 475
+        },
+        {
+          "path": "/security.txt",
+          "method": "GET",
+          "status_code": 200,
+          "discovered_by": "dictionary",
+          "risk_level": "info",
+          "response_size": 475
+        },
+        {
+          "path": "/debug",
+          "method": "GET",
+          "status_code": 200,
+          "discovered_by": "dictionary",
+          "risk_level": "medium",
+          "response_size": 75002
+        },
+        {
+          "path": "/test",
+          "method": "GET",
+          "status_code": 200,
+          "discovered_by": "dictionary",
+          "risk_level": "medium",
+          "response_size": 75002
+        },
+        {
+          "path": "/dev",
+          "method": "GET",
+          "status_code": 200,
+          "discovered_by": "dictionary",
+          "risk_level": "info",
+          "response_size": 75002
+        },
+        {
+          "path": "/_debug",
+          "method": "GET",
+          "status_code": 200,
+          "discovered_by": "dictionary",
+          "risk_level": "info",
+          "response_size": 75002
+        },
+        {
+          "path": "/upload",
+          "method": "GET",
+          "status_code": 200,
+          "discovered_by": "dictionary",
+          "risk_level": "high",
+          "response_size": 75002
+        },
+        {
+          "path": "/download",
+          "method": "GET",
+          "status_code": 200,
+          "discovered_by": "dictionary",
+          "risk_level": "high",
+          "response_size": 75002
+        },
+        {
+          "path": "/files",
+          "method": "GET",
+          "status_code": 200,
+          "discovered_by": "dictionary",
+          "risk_level": "info",
+          "response_size": 75002
+        },
+        {
+          "path": "/.env",
+          "method": "GET",
+          "status_code": 200,
+          "discovered_by": "dictionary",
+          "risk_level": "info",
+          "response_size": 75002
+        },
+        {
+          "path": "/.git/config",
+          "method": "GET",
+          "status_code": 200,
+          "discovered_by": "dictionary",
+          "risk_level": "info",
+          "response_size": 75002
+        },
+        {
+          "path": "/config.json",
+          "method": "GET",
+          "status_code": 200,
+          "discovered_by": "dictionary",
+          "risk_level": "low",
+          "response_size": 75002
+        },
+        {
+          "path": "/package.json",
+          "method": "GET",
+          "status_code": 200,
+          "discovered_by": "dictionary",
+          "risk_level": "low",
+          "response_size": 75002
+        },
+        {
+          "path": "/sitemap.xml",
+          "method": "GET",
+          "status_code": 200,
+          "discovered_by": "dictionary",
+          "risk_level": "low",
+          "response_size": 75002
+        },
+        {
+          "path": "/robots.txt",
+          "method": "GET",
+          "status_code": 200,
+          "discovered_by": "dictionary",
+          "risk_level": "info",
+          "response_size": 28
+        },
+        {
+          "path": "/crossdomain.xml",
+          "method": "GET",
+          "status_code": 200,
+          "discovered_by": "dictionary",
+          "risk_level": "low",
+          "response_size": 75002
+        },
+        {
+          "path": "/ftp",
+          "method": "GET",
+          "status_code": 200,
+          "discovered_by": "robots",
+          "risk_level": "info",
+          "response_size": 0
+        }
+      ],
+      "js_findings": [
+        "JsFinding { file_path: \"http://localhost:3000/main.js\", finding_type: ApiEndpoint, value: \"/api/Hints\", severity: \"INFO\", line_number: 2, confidence: 0.9 }",
+        "JsFinding { file_path: \"http://localhost:3000/main.js\", finding_type: ApiEndpoint, value: \"/api/SecurityQuestions\", severity: \"INFO\", line_number: 2, confidence: 0.9 }",
+        "JsFinding { file_path: \"http://localhost:3000/main.js\", finding_type: ApiEndpoint, value: \"/api/Quantitys\", severity: \"INFO\", line_number: 2, confidence: 0.9 }",
+        "JsFinding { file_path: \"http://localhost:3000/main.js\", finding_type: ApiEndpoint, value: \"/api/Challenges\", severity: \"INFO\", line_number: 2, confidence: 0.9 }",
+        "JsFinding { file_path: \"http://localhost:3000/main.js\", finding_type: ApiEndpoint, value: \"/api/Recycles\", severity: \"INFO\", line_number: 2, confidence: 0.9 }",
+        "JsFinding { file_path: \"http://localhost:3000/main.js\", finding_type: ApiEndpoint, value: \"/api/Users\", severity: \"INFO\", line_number: 2, confidence: 0.9 }",
+        "JsFinding { file_path: \"http://localhost:3000/main.js\", finding_type: ApiEndpoint, value: \"/api/Cards\", severity: \"INFO\", line_number: 2, confidence: 0.9 }",
+        "JsFinding { file_path: \"http://localhost:3000/main.js\", finding_type: ApiEndpoint, value: \"/api/Challenges/?key=nftMintChallenge\", severity: \"INFO\", line_number: 2, confidence: 0.9 }",
+        "JsFinding { file_path: \"http://localhost:3000/main.js\", finding_type: ApiEndpoint, value: \"/api/Complaints\", severity: \"INFO\", line_number: 2, confidence: 0.9 }",
+        "JsFinding { file_path: \"http://localhost:3000/main.js\", finding_type: ApiEndpoint, value: \"/api/Deliverys\", severity: \"INFO\", line_number: 2, confidence: 0.9 }",
+        "JsFinding { file_path: \"http://localhost:3000/main.js\", finding_type: ApiEndpoint, value: \"/api/BasketItems\", severity: \"INFO\", line_number: 2, confidence: 0.9 }",
+        "JsFinding { file_path: \"http://localhost:3000/main.js\", finding_type: ApiEndpoint, value: \"/api/Feedbacks\", severity: \"INFO\", line_number: 2, confidence: 0.9 }",
+        "JsFinding { file_path: \"http://localhost:3000/main.js\", finding_type: ApiEndpoint, value: \"/api/SecurityAnswers\", severity: \"INFO\", line_number: 2, confidence: 0.9 }",
+        "JsFinding { file_path: \"http://localhost:3000/main.js\", finding_type: ApiEndpoint, value: \"/api/Products\", severity: \"INFO\", line_number: 2, confidence: 0.9 }",
+        "JsFinding { file_path: \"http://localhost:3000/main.js\", finding_type: ApiEndpoint, value: \"/api/Addresss\", severity: \"INFO\", line_number: 2, confidence: 0.9 }",
+        "JsFinding { file_path: \"http://localhost:3000/main.js\", finding_type: InternalDomain, value: \"this.localBackupService\", severity: \"MEDIUM\", line_number: 2, confidence: 0.85 }",
+        "JsFinding { file_path: \"http://localhost:3000/main.js\", finding_type: InternalDomain, value: \"i.localBackupService.save\", severity: \"MEDIUM\", line_number: 2, confidence: 0.85 }",
+        "JsFinding { file_path: \"http://localhost:3000/main.js\", finding_type: InternalDomain, value: \"i.localBackupService.restore\", severity: \"MEDIUM\", line_number: 2, confidence: 0.85 }",
+        "JsFinding { file_path: \"http://localhost:3000/main.js\", finding_type: SensitiveComment, value: \"welc****atus\", severity: \"LOW\", line_number: 2, confidence: 0.7 }",
+        "JsFinding { file_path: \"http://localhost:3000/main.js\", finding_type: SensitiveComment, value: \"+e)}****ver+\", severity: \"LOW\", line_number: 2, confidence: 0.7 }",
+        "JsFinding { file_path: \"http://localhost:3000/main.js\", finding_type: SensitiveComment, value: \"func****1(0,\", severity: \"LOW\", line_number: 2, confidence: 0.7 }",
+        "JsFinding { file_path: \"http://localhost:3000/main.js\", finding_type: SensitiveComment, value: \"[h.H****es:[\", severity: \"LOW\", line_number: 2, confidence: 0.7 }",
+        "JsFinding { file_path: \"http://localhost:3000/main.js\", finding_type: SensitiveComment, value: \">{th****tem(\", severity: \"LOW\", line_number: 2, confidence: 0.7 }",
+        "JsFinding { file_path: \"http://localhost:3000/main.js\", finding_type: SensitiveComment, value: \"emai****s:[[\", severity: \"LOW\", line_number: 2, confidence: 0.7 }",
+        "JsFinding { file_path: \"http://localhost:3000/main.js\", finding_type: SensitiveComment, value: \"${c}****log(\", severity: \"LOW\", line_number: 2, confidence: 0.7 }",
+        "JsFinding { file_path: \"http://localhost:3000/main.js\", finding_type: SensitiveComment, value: \">{th****lue,\", severity: \"LOW\", line_number: 2, confidence: 0.7 }",
+        "JsFinding { file_path: \"http://localhost:3000/main.js\", finding_type: SensitiveComment, value: \"n,fa****dIn:\", severity: \"LOW\", line_number: 2, confidence: 0.7 }",
+        "JsFinding { file_path: \"http://localhost:3000/main.js\", finding_type: SensitiveComment, value: \"func****s:[[\", severity: \"LOW\", line_number: 2, confidence: 0.7 }",
+        "JsFinding { file_path: \"http://localhost:3000/main.js\", finding_type: SensitiveComment, value: \"i),s****(13,\", severity: \"LOW\", line_number: 2, confidence: 0.7 }",
+        "JsFinding { file_path: \"http://localhost:3000/main.js\", finding_type: SensitiveComment, value: \"e}ng****s:[[\", severity: \"LOW\", line_number: 2, confidence: 0.7 }",
+        "JsFinding { file_path: \"http://localhost:3000/main.js\", finding_type: SensitiveComment, value: \"e=>{****turn\", severity: \"LOW\", line_number: 2, confidence: 0.7 }",
+        "JsFinding { file_path: \"http://localhost:3000/main.js\", finding_type: SensitiveComment, value: \"t.Xp****Y8G(\", severity: \"LOW\", line_number: 2, confidence: 0.7 }",
+        "JsFinding { file_path: \"http://localhost:3000/main.js\", finding_type: SensitiveComment, value: \"t.Xp****1(0,\", severity: \"LOW\", line_number: 2, confidence: 0.7 }",
+        "JsFinding { file_path: \"http://localhost:3000/vendor.js\", finding_type: InternalDomain, value: \"this.locale\", severity: \"MEDIUM\", line_number: 2, confidence: 0.85 }",
+        "JsFinding { file_path: \"http://localhost:3000/vendor.js\", finding_type: InternalDomain, value: \"outlet.localeCompare\", severity: \"MEDIUM\", line_number: 2, confidence: 0.85 }",
+        "JsFinding { file_path: \"http://localhost:3000/vendor.js\", finding_type: InternalDomain, value: \"angular.dev\", severity: \"MEDIUM\", line_number: 2, confidence: 0.85 }",
+        "JsFinding { file_path: \"http://localhost:3000/vendor.js\", finding_type: InternalDomain, value: \"this.internalPendingTasks.add\", severity: \"MEDIUM\", line_number: 2, confidence: 0.85 }",
+        "JsFinding { file_path: \"http://localhost:3000/vendor.js\", finding_type: InternalDomain, value: \"this.internalPendingTasks.has\", severity: \"MEDIUM\", line_number: 2, confidence: 0.85 }",
+        "JsFinding { file_path: \"http://localhost:3000/vendor.js\", finding_type: InternalDomain, value: \"this.internalPendingTasks.remove\", severity: \"MEDIUM\", line_number: 2, confidence: 0.85 }",
+        "JsFinding { file_path: \"http://localhost:3000/vendor.js\", finding_type: InternalDomain, value: \"n.localNames\", severity: \"MEDIUM\", line_number: 2, confidence: 0.85 }",
+        "JsFinding { file_path: \"http://localhost:3000/vendor.js\", finding_type: InternalDomain, value: \"t.localNames\", severity: \"MEDIUM\", line_number: 2, confidence: 0.85 }",
+        "JsFinding { file_path: \"http://localhost:3000/vendor.js\", finding_type: InternalDomain, value: \"I.localNames\", severity: \"MEDIUM\", line_number: 2, confidence: 0.85 }",
+        "JsFinding { file_path: \"http://localhost:3000/vendor.js\", finding_type: InternalDomain, value: \"I.localNames.push\", severity: \"MEDIUM\", line_number: 2, confidence: 0.85 }",
+        "JsFinding { file_path: \"http://localhost:3000/vendor.js\", finding_type: InternalDomain, value: \"wt.localNames\", severity: \"MEDIUM\", line_number: 2, confidence: 0.85 }",
+        "JsFinding { file_path: \"http://localhost:3000/vendor.js\", finding_type: InternalDomain, value: \"wt.localNames.push\", severity: \"MEDIUM\", line_number: 2, confidence: 0.85 }",
+        "JsFinding { file_path: \"http://localhost:3000/vendor.js\", finding_type: InternalDomain, value: \"this.internalPendingTask.hasPendingTasksObservable.pipe\", severity: \"MEDIUM\", line_number: 2, confidence: 0.85 }",
+        "JsFinding { file_path: \"http://localhost:3000/vendor.js\", finding_type: InternalDomain, value: \"this.internalErrorHandler\", severity: \"MEDIUM\", line_number: 2, confidence: 0.85 }",
+        "JsFinding { file_path: \"http://localhost:3000/vendor.js\", finding_type: InternalDomain, value: \"common.locales\", severity: \"MEDIUM\", line_number: 2, confidence: 0.85 }",
+        "JsFinding { file_path: \"http://localhost:3000/vendor.js\", finding_type: InternalDomain, value: \"localize.locale\", severity: \"MEDIUM\", line_number: 2, confidence: 0.85 }",
+        "JsFinding { file_path: \"http://localhost:3000/vendor.js\", finding_type: InternalDomain, value: \"dateAdapter.localeChanges.pipe\", severity: \"MEDIUM\", line_number: 2, confidence: 0.85 }",
+        "JsFinding { file_path: \"http://localhost:3000/vendor.js\", finding_type: InternalDomain, value: \"dateAdapter.localeChanges.subscribe\", severity: \"MEDIUM\", line_number: 2, confidence: 0.85 }",
+        "JsFinding { file_path: \"http://localhost:3000/vendor.js\", finding_type: SensitiveComment, value: \"0.16****4, 1\", severity: \"LOW\", line_number: 2, confidence: 0.7 }",
+        "JsFinding { file_path: \"http://localhost:3000/vendor.js\", finding_type: SensitiveComment, value: \"We,f****dIn:\", severity: \"LOW\", line_number: 2, confidence: 0.7 }",
+        "JsFinding { file_path: \"http://localhost:3000/vendor.js\", finding_type: SensitiveComment, value: \"tran****0)}}\", severity: \"LOW\", line_number: 2, confidence: 0.7 }",
+        "JsFinding { file_path: \"http://localhost:3000/vendor.js\", finding_type: SensitiveComment, value: \"this****mit(\", severity: \"LOW\", line_number: 2, confidence: 0.7 }",
+        "JsFinding { file_path: \"http://localhost:3000/vendor.js\", finding_type: SensitiveComment, value: \"L.pa****lit(\", severity: \"LOW\", line_number: 2, confidence: 0.7 }",
+        "JsFinding { file_path: \"http://localhost:3000/vendor.js\", finding_type: SensitiveComment, value: \"w.ch****oin(\", severity: \"LOW\", line_number: 2, confidence: 0.7 }",
+        "JsFinding { file_path: \"http://localhost:3000/vendor.js\", finding_type: SensitiveComment, value: \"new ****;if(\", severity: \"LOW\", line_number: 2, confidence: 0.7 }",
+        "JsFinding { file_path: \"http://localhost:3000/vendor.js\", finding_type: SensitiveComment, value: \">$e!****)=>{\", severity: \"LOW\", line_number: 2, confidence: 0.7 }",
+        "JsFinding { file_path: \"http://localhost:3000/vendor.js\", finding_type: SensitiveComment, value: \"z.to****ame=\", severity: \"LOW\", line_number: 2, confidence: 0.7 }",
+        "JsFinding { file_path: \"http://localhost:3000/vendor.js\", finding_type: SensitiveComment, value: \"Oe,f****t V=\", severity: \"LOW\", line_number: 2, confidence: 0.7 }",
+        "JsFinding { file_path: \"http://localhost:3000/vendor.js\", finding_type: SensitiveComment, value: \"t,pr****dIn:\", severity: \"LOW\", line_number: 2, confidence: 0.7 }",
+        "JsFinding { file_path: \"http://localhost:3000/vendor.js\", finding_type: SensitiveComment, value: \"t,fa****dIn:\", severity: \"LOW\", line_number: 2, confidence: 0.7 }",
+        "JsFinding { file_path: \"http://localhost:3000/vendor.js\", finding_type: SensitiveComment, value: \"Ze,f****le=[\", severity: \"LOW\", line_number: 2, confidence: 0.7 }",
+        "JsFinding { file_path: \"http://localhost:3000/vendor.js\", finding_type: SensitiveComment, value: \"D.le**** at=\", severity: \"LOW\", line_number: 2, confidence: 0.7 }",
+        "JsFinding { file_path: \"http://localhost:3000/vendor.js\", finding_type: SensitiveComment, value: \"Ue,f****dIn:\", severity: \"LOW\", line_number: 2, confidence: 0.7 }",
+        "JsFinding { file_path: \"http://localhost:3000/vendor.js\", finding_type: SensitiveComment, value: \"fe,f****dIn:\", severity: \"LOW\", line_number: 2, confidence: 0.7 }",
+        "JsFinding { file_path: \"http://localhost:3000/vendor.js\", finding_type: SensitiveComment, value: \"rota****}}\\\\n\", severity: \"LOW\", line_number: 2, confidence: 0.7 }",
+        "JsFinding { file_path: \"http://localhost:3000/vendor.js\", finding_type: SensitiveComment, value: \"j,va****,op:\", severity: \"LOW\", line_number: 2, confidence: 0.7 }",
+        "JsFinding { file_path: \"http://localhost:3000/vendor.js\", finding_type: SensitiveComment, value: \"(0,e****=0]=\", severity: \"LOW\", line_number: 2, confidence: 0.7 }",
+        "JsFinding { file_path: \"http://localhost:3000/vendor.js\", finding_type: SensitiveComment, value: \"not(****ent:\", severity: \"LOW\", line_number: 2, confidence: 0.7 }"
+      ],
+      "sensitive_info": [],
+      "attack_surface": null,
+      "technologies": [
+        "Angular",
+        "jQuery"
+      ]
+    }
+  ],
+  "total_execution_time_ms": 452.0,
+  "summary": {
+    "total_targets": 1,
+    "successful_scans": 1,
+    "failed_scans": 0,
+    "total_endpoints": 40,
+    "total_sensitive_info": 0,
+    "average_risk_score": 0.0
+  }
+}

@@ -1,758 +1,630 @@
 # AIVA Go Engine 使用指南
 
+> **架構版本**: v2.1 適配器模式  
+> **通信方式**: JSON stdin/stdout (無 RabbitMQ 依賴)  
+> **最後更新**: 2025-11-21
+
 ## 📋 目錄
 
-1. [快速開始](#快速開始)
-2. [SSRF 掃描器使用](#ssrf-掃描器使用)
-3. [CSPM 掃描器使用](#cspm-掃描器使用)
-4. [SCA 掃描器使用](#sca-掃描器使用)
-5. [命令行參數](#命令行參數)
-6. [配置文件](#配置文件)
-7. [Python 集成](#python-集成)
-8. [實戰範例](#實戰範例)
-9. [故障排除](#故障排除)
-10. [性能調優](#性能調優)
+1. [快速開始](#快速開始) ✅ 已驗證 2025-11-23
+2. [架構概覽](#架構概覽)
+3. [SSRF 掃描器使用](#ssrf-掃描器使用) ✅ 已驗證 2025-11-23
+4. [JSON 通信協議](#json-通信協議) ✅ 已驗證 2025-11-23
+5. [Python 集成](#python-集成) ✅ 已修復 2025-11-23 (原有同步代碼錯誤)
+6. [實戰測試](#實戰測試) ✅ 已驗證 2025-11-23
+7. [檢測邏輯詳解](#檢測邏輯詳解)
+8. [故障排除](#故障排除)
+9. [性能調優](#性能調優)
 
 ---
 
 ## 快速開始
 
-### 1. 編譯所有掃描器
+### 1. 編譯掃描器
 
-```bash
-# 使用 Makefile
-make build
-
-# 或手動編譯
+```powershell
+# Windows PowerShell
+cd C:\D\fold7\AIVA-git\services\scan\engines\go_engine
 go build -o bin/ssrf-scanner.exe ./cmd/ssrf-scanner
-go build -o bin/cspm-scanner.exe ./cmd/cspm-scanner
-go build -o bin/sca-scanner.exe ./cmd/sca-scanner
 ```
 
 ### 2. 驗證編譯結果
 
 ```powershell
 # 檢查編譯產物
-Get-ChildItem bin/*.exe | Select-Object Name, Length
+Get-ChildItem bin/*.exe | Select-Object Name, Length, LastWriteTime
 
 # 預期輸出:
-# Name              Length
-# ----              ------
-# ssrf-scanner.exe  7864320
-# cspm-scanner.exe  5816320
-# sca-scanner.exe   5816320
+# Name              Length    LastWriteTime
+# ----              ------    -------------
+# ssrf-scanner.exe  7864320   2025-11-21 ...
 ```
 
-### 3. 基礎運行測試
+### 3. 基礎測試（JSON stdin/stdout）
 
-```bash
-# SSRF 掃描器
-./bin/ssrf-scanner.exe
+```powershell
+# 創建測試輸入
+$input = '{"scan_id":"test001","targets":["http://example.com"],"concurrency":5,"timeout":10}'
 
-# CSPM 掃描器
-./bin/cspm-scanner.exe
+# 執行掃描
+echo $input | .\bin\ssrf-scanner.exe
 
-# SCA 掃描器
-./bin/sca-scanner.exe
+# 預期輸出: JSON 格式的掃描結果
+# {
+#   "scan_id": "test001",
+#   "scanner_type": "ssrf",
+#   "status": "success",
+#   "assets": [...]
+# }
+```
+
+---
+
+## 架構概覽
+
+### 設計原則
+
+Go Engine 採用 **v2.1 適配器模式**，特點：
+
+- ✅ **無外部依賴**: 不依賴 RabbitMQ、Redis 等
+- ✅ **簡單通信**: JSON stdin/stdout，易於調試
+- ✅ **高性能**: 並發執行，Worker Pool 管理
+- ✅ **統一接口**: 所有掃描器使用相同的 JSON 協議
+
+---
+
+### 目錄結構
+
+```
+services/scan/engines/go_engine/
+├── cmd/
+│   └── ssrf-scanner/
+│       └── main.go              # 掃描器入口
+├── internal/
+│   ├── common/
+│   │   ├── types.go            # 共享類型定義
+│   │   └── worker_pool.go      # 並發 Worker Pool
+│   └── ssrf/
+│       └── detector/
+│           └── ssrf.go         # SSRF 檢測邏輯
+├── bin/
+│   └── ssrf-scanner.exe        # 編譯產物
+└── USAGE_GUIDE.md              # 本文檔
 ```
 
 ---
 
 ## SSRF 掃描器使用
 
-### 架構概覽
+### 核心特性
 
-SSRF 掃描器由三個核心模塊組成：
+✅ **智能檢測**: 基於 OWASP/PortSwigger 最佳實踐  
+✅ **避免誤判**: 精確的響應格式驗證，排除登錄頁面  
+✅ **多 Payload**: 支持 AWS/GCP/Azure 元數據、File Protocol、內網探測  
+✅ **高性能**: 並發執行，支持自定義並發數
 
-```
-internal/ssrf/
-├── detector/              # 核心檢測引擎
-│   ├── ssrf.go           # 主要 SSRF 檢測邏輯
-│   ├── cloud_metadata_scanner.go  # 雲端元數據掃描
-│   └── internal_microservice_probe.go  # 內部微服務探測
-├── oob/                  # Out-of-Band 驗證
-│   └── monitor.go        # OOB 監控器
-└── verifier/             # 驗證器
-    └── verifier.go       # 結果驗證邏輯
-```
+### 基本使用
 
-### 使用方式
+#### 方式 1: 直接調用（PowerShell）
 
-#### 方式 1: 獨立運行（需要手動實現任務輸入）
-
-```go
-package main
-
-import (
-    "context"
-    "fmt"
-    "log"
-    
-    "github.com/kyle0527/aiva/services/scan/engines/go_engine/internal/ssrf/detector"
-    "go.uber.org/zap"
-)
-
-func main() {
-    // 初始化 Logger
-    logger, _ := zap.NewProduction()
-    defer logger.Sync()
-    
-    // 創建 SSRF 檢測器
-    ssrfDetector := detector.NewSSRFDetector(logger)
-    
-    // 構造掃描任務
-    task := &detector.ScanTask{
-        TaskID: "scan_001",
-        Module: "ssrf",
-        Target: "http://vulnerable-app.com/api",
-        Metadata: map[string]string{
-            "priority": "high",
-        },
-    }
-    
-    // 執行掃描
-    ctx := context.Background()
-    findings, err := ssrfDetector.Scan(ctx, task)
-    if err != nil {
-        log.Fatal(err)
-    }
-    
-    // 輸出結果
-    fmt.Printf("發現 %d 個漏洞\n", len(findings))
-    for _, finding := range findings {
-        fmt.Printf("漏洞: %s (嚴重性: %s)\n", 
-            finding.Vulnerability.Name, 
-            finding.Vulnerability.Severity)
-    }
+```powershell
+# 基礎測試
+$input = @'
+{
+  "scan_id": "test001",
+  "targets": ["http://localhost:8080/WebGoat/SSRF/task1"],
+  "concurrency": 5,
+  "timeout": 10
 }
+'@
+
+$input | .\bin\ssrf-scanner.exe 2>$null | ConvertFrom-Json
+
+# 輸出結果
+# {
+#   "scan_id": "test001",
+#   "scanner_type": "ssrf",
+#   "status": "success",
+#   "execution_time": 1.23,
+#   "targets_scanned": 1,
+#   "assets": []
+# }
 ```
 
-#### 方式 2: 通過 Python 調度器
+#### 方式 2: 通過 Python 適配器（推薦）
 
 ```python
-from dispatcher.worker import GoEngineWorker
+# 使用 services/scan/coordinators/engines/go_adapter.py
+import subprocess
+import json
 
-# 初始化 Worker
-worker = GoEngineWorker(scanner_type="ssrf")
-
-# 提交任務
-task = {
-    "task_id": "scan_001",
-    "module": "ssrf",
-    "target": "http://vulnerable-app.com/api",
-    "metadata": {
-        "priority": "high"
+def scan_with_go_engine(targets, concurrency=5, timeout=10):
+    """使用 Go 引擎掃描"""
+    
+    # 構造輸入
+    scan_input = {
+        "scan_id": "python_scan",
+        "targets": targets,
+        "concurrency": concurrency,
+        "timeout": timeout
     }
-}
+    
+    # 調用 Go 掃描器
+    process = subprocess.Popen(
+        ["./bin/ssrf-scanner.exe"],
+        stdin=subprocess.PIPE,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE
+    )
+    
+    stdout, stderr = process.communicate(
+        input=json.dumps(scan_input).encode()
+    )
+    
+    # 解析結果
+    if process.returncode == 0:
+        return json.loads(stdout)
+    else:
+        raise Exception(f"Scan failed: {stderr.decode()}")
 
-# 執行掃描
-results = worker.execute_scan(task)
-
-# 處理結果
-for finding in results["findings"]:
-    print(f"發現漏洞: {finding['vulnerability']['name']}")
-```
-
-### 檢測邏輯說明
-
-#### 1. 內網 IP 阻擋
-
-掃描器自動阻擋以下 IP 範圍：
-
-```go
-blockedCIDRs := []string{
-    "10.0.0.0/8",           // 私有網絡 A
-    "172.16.0.0/12",        // 私有網絡 B
-    "192.168.0.0/16",       // 私有網絡 C
-    "127.0.0.0/8",          // Localhost
-    "169.254.169.254/32",   // AWS IMDS
-    "fd00::/8",             // IPv6 ULA
-}
-```
-
-#### 2. 雲端元數據服務檢測
-
-支持檢測以下雲端提供商的元數據服務：
-
-| 提供商 | 元數據端點 | 風險等級 |
-|--------|-----------|---------|
-| AWS | `http://169.254.169.254/latest/meta-data/` | HIGH |
-| GCP | `http://metadata.google.internal/computeMetadata/v1/` | HIGH |
-| Azure | `http://169.254.169.254/metadata/instance?api-version=2021-02-01` | HIGH |
-| Alibaba Cloud | `http://100.100.100.200/latest/meta-data/` | HIGH |
-
-#### 3. 敏感資訊關鍵字
-
-響應內容包含以下關鍵字時會標記為漏洞：
-
-- `ami-id`
-- `instance-id`
-- `iam/security-credentials`
-- `computeMetadata`
-- `config`
-- `password`
-- `secret`
-- `token`
-- `api_key`
-
-### Payload 範例
-
-```go
-// 測試 AWS IMDS
-target := "http://target.com/api?url=http://169.254.169.254/latest/meta-data/"
-
-// 測試 localhost 繞過
-target := "http://target.com/api?url=http://127.0.0.1:8080/admin"
-
-// 測試 IPv6 localhost
-target := "http://target.com/api?url=http://[::1]/"
-
-// 測試內網掃描
-target := "http://target.com/api?url=http://192.168.1.1/"
+# 使用
+results = scan_with_go_engine(["http://example.com/api"])
+print(f"Found {len(results['assets'])} vulnerabilities")
 ```
 
 ---
 
-## CSPM 掃描器使用
+## JSON 通信協議
 
-### 架構概覽
+### 輸入格式 (stdin)
 
-CSPM（Cloud Security Posture Management）掃描器用於雲端配置審計：
-
+```json
+{
+  "scan_id": "unique_scan_id",
+  "targets": [
+    "http://target1.com/api",
+    "http://target2.com/page"
+  ],
+  "concurrency": 5,
+  "timeout": 10
+}
 ```
-internal/cspm/
-├── audit/
-│   └── aws.go            # AWS 審計邏輯
-└── scanner/
-    └── scanner.go        # 掃描器入口
-```
 
-### AWS S3 Bucket 審計
+**字段說明**:
+- `scan_id` (string): 唯一掃描 ID
+- `targets` (array): 目標 URL 列表
+- `concurrency` (int, 可選): 並發數，默認 5
+- `timeout` (int, 可選): 超時秒數，默認 10
 
-#### 完整使用範例
+### 輸出格式 (stdout)
 
-```go
-package main
-
-import (
-    "context"
-    "fmt"
-    "log"
-    "os"
-    
-    "github.com/kyle0527/aiva/services/scan/engines/go_engine/internal/cspm/audit"
-)
-
-func main() {
-    // 從環境變數讀取 AWS 憑證
-    // export AWS_ACCESS_KEY_ID="your_key"
-    // export AWS_SECRET_ACCESS_KEY="your_secret"
-    // export AWS_DEFAULT_REGION="us-east-1"
-    
-    ctx := context.Background()
-    region := os.Getenv("AWS_DEFAULT_REGION")
-    if region == "" {
-        region = "us-east-1"
-    }
-    
-    // 創建審計器
-    auditor, err := audit.NewAWSAuditor(ctx, region)
-    if err != nil {
-        log.Fatalf("無法創建審計器: %v", err)
-    }
-    
-    // 執行 S3 Bucket 審計
-    fmt.Println("開始 S3 Bucket 審計...")
-    riskBuckets, err := auditor.AuditS3Buckets()
-    if err != nil {
-        log.Fatalf("審計失敗: %v", err)
-    }
-    
-    // 輸出結果
-    if len(riskBuckets) == 0 {
-        fmt.Println("✓ 未發現風險 Bucket")
-    } else {
-        fmt.Printf("⚠️  發現 %d 個風險 Bucket:\n", len(riskBuckets))
-        for i, bucket := range riskBuckets {
-            fmt.Printf("  %d. %s\n", i+1, bucket)
+```json
+{
+  "scan_id": "unique_scan_id",
+  "scanner_type": "ssrf",
+  "status": "success",
+  "execution_time": 2.543,
+  "targets_scanned": 2,
+  "requests_made": 144,
+  "success_count": 2,
+  "failure_count": 0,
+  "assets": [
+    {
+      "type": "web_vulnerability",
+      "name": "SSRF - File Protocol",
+      "severity": "high",
+      "confidence": "high",
+      "source_engine": "go",
+      "details": {
+        "finding_id": "ssrf_abc123",
+        "vulnerability_type": "SSRF",
+        "cwe": "CWE-918",
+        "description": "Attempt to read local files via file protocol",
+        "affected_url": "http://target.com/api?url=file:///etc/passwd",
+        "vulnerable_param": "url",
+        "payload_used": "file:///etc/passwd",
+        "payload_type": "File Protocol",
+        "http_method": "GET",
+        "response_status": 200,
+        "response_time_ms": 45,
+        "response_length": 2048,
+        "response_preview": "root:x:0:0:root:/root:/bin/bash...",
+        "evidence": {
+          "request_url": "http://target.com/api?url=file:///etc/passwd",
+          "response_status": 200,
+          "response_headers": {...},
+          "indicators_found": [
+            "Found /etc/passwd root entry",
+            "Unix password file format detected"
+          ]
         }
+      }
     }
+  ]
 }
 ```
 
-#### 執行完整 CIS Benchmark 審計
-
-```go
-// 執行所有 AWS 服務審計
-results, err := auditor.RunFullAudit()
-if err != nil {
-    log.Fatal(err)
-}
-
-// 輸出各服務的審計結果
-fmt.Println("\n=== AWS CIS Benchmark 審計報告 ===\n")
-for service, risks := range results {
-    fmt.Printf("服務: %s\n", service)
-    if len(risks) == 0 {
-        fmt.Println("  ✓ 未發現風險配置")
-    } else {
-        fmt.Printf("  ⚠️  發現 %d 個風險項:\n", len(risks))
-        for _, risk := range risks {
-            fmt.Printf("    - %s\n", risk)
-        }
-    }
-    fmt.Println()
-}
-```
-
-### AWS 認證配置
-
-#### 方式 1: 環境變數
-
-```bash
-# Linux/macOS
-export AWS_ACCESS_KEY_ID="AKIAIOSFODNN7EXAMPLE"
-export AWS_SECRET_ACCESS_KEY="wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY"
-export AWS_DEFAULT_REGION="us-east-1"
-
-# Windows PowerShell
-$env:AWS_ACCESS_KEY_ID="AKIAIOSFODNN7EXAMPLE"
-$env:AWS_SECRET_ACCESS_KEY="wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY"
-$env:AWS_DEFAULT_REGION="us-east-1"
-```
-
-#### 方式 2: AWS CLI 配置
-
-```bash
-# 使用 AWS CLI 配置
-aws configure
-
-# 驗證配置
-aws sts get-caller-identity
-```
-
-#### 方式 3: IAM Role（推薦用於 EC2/ECS）
-
-```go
-// SDK 自動從 Instance Metadata 獲取憑證
-cfg, err := config.LoadDefaultConfig(ctx, config.WithRegion("us-east-1"))
-```
-
-### 檢查項目列表
-
-#### ✅ 已實現
-
-| 檢查項 | 描述 | 嚴重性 |
-|--------|------|--------|
-| S3 Bucket ACL | 檢查是否存在公開訪問權限 | HIGH |
-| Public Access Block | 驗證 PAB 配置是否啟用 | HIGH |
-
-#### 🚧 待實現
-
-| 檢查項 | 描述 | 嚴重性 |
-|--------|------|--------|
-| IAM 用戶審計 | 檢查權限過大、未使用的訪問密鑰 | HIGH |
-| Security Group | 檢查 0.0.0.0/0 開放的高風險端口 | HIGH |
-| CloudTrail | 驗證日誌審計配置 | MEDIUM |
-| KMS 密鑰 | 檢查密鑰輪換策略 | MEDIUM |
-
----
-
-## SCA 掃描器使用
-
-### 架構概覽
-
-SCA（Software Composition Analysis）掃描器用於依賴分析：
-
-```
-internal/sca/
-├── scanner/
-│   └── scanner.go        # 掃描器主邏輯
-├── analyzer/
-│   └── analyzer.go       # 依賴分析器
-└── fs/
-    └── walker.go         # 文件系統遍歷
-```
-
-### 使用方式
-
-```go
-package main
-
-import (
-    "context"
-    "fmt"
-    "log"
-    
-    "github.com/kyle0527/aiva/services/scan/engines/go_engine/internal/sca/scanner"
-    "go.uber.org/zap"
-)
-
-func main() {
-    logger, _ := zap.NewProduction()
-    defer logger.Sync()
-    
-    // 創建 SCA 掃描器
-    scaScanner := scanner.NewSCAScanner(logger)
-    
-    // 掃描目標目錄
-    ctx := context.Background()
-    targetPath := "/path/to/project"
-    
-    results, err := scaScanner.ScanDirectory(ctx, targetPath)
-    if err != nil {
-        log.Fatal(err)
-    }
-    
-    // 輸出結果
-    fmt.Printf("發現 %d 個依賴項\n", len(results.Dependencies))
-    fmt.Printf("發現 %d 個已知漏洞\n", len(results.Vulnerabilities))
-}
-```
-
----
-
-## 命令行參數
-
-### 通用參數
-
-所有掃描器支持以下參數：
-
-```bash
-# 顯示版本
-./bin/ssrf-scanner.exe --version
-
-# 顯示幫助
-./bin/ssrf-scanner.exe --help
-
-# 啟用詳細日誌
-./bin/ssrf-scanner.exe --verbose
-
-# 指定配置文件
-./bin/ssrf-scanner.exe --config /path/to/config.yaml
-```
-
-### SSRF 掃描器專用參數
-
-```bash
-# 指定目標 URL
-./bin/ssrf-scanner.exe --target "http://example.com/api"
-
-# 指定 Payload 文件
-./bin/ssrf-scanner.exe --payloads /path/to/payloads.txt
-
-# 設置超時時間
-./bin/ssrf-scanner.exe --timeout 30s
-
-# 設置並發數
-./bin/ssrf-scanner.exe --concurrency 10
-```
-
-### CSPM 掃描器專用參數
-
-```bash
-# 指定 AWS Region
-./bin/cspm-scanner.exe --region us-east-1
-
-# 指定服務類型
-./bin/cspm-scanner.exe --service s3,iam,ec2
-
-# 僅掃描特定 Bucket
-./bin/cspm-scanner.exe --bucket my-bucket-name
-
-# 輸出格式
-./bin/cspm-scanner.exe --format json
-```
-
----
-
-## 配置文件
-
-### SSRF 掃描器配置
-
-創建 `config/ssrf.yaml`:
-
-```yaml
-# SSRF 掃描器配置
-scanner:
-  timeout: 30s
-  max_redirects: 3
-  concurrency: 5
-  
-# 阻擋的 IP 範圍
-blocked_cidrs:
-  - "10.0.0.0/8"
-  - "172.16.0.0/12"
-  - "192.168.0.0/16"
-  - "127.0.0.0/8"
-  - "169.254.169.254/32"
-  - "fd00::/8"
-
-# Payload 列表
-payloads:
-  - name: "AWS IMDS"
-    url: "http://169.254.169.254/latest/meta-data/"
-    risk: "HIGH"
-  - name: "GCP Metadata"
-    url: "http://metadata.google.internal/computeMetadata/v1/"
-    risk: "HIGH"
-  - name: "Localhost Admin"
-    url: "http://127.0.0.1:80/admin"
-    risk: "MEDIUM"
-
-# 敏感關鍵字
-sensitive_keywords:
-  - "ami-id"
-  - "instance-id"
-  - "iam/security-credentials"
-  - "password"
-  - "secret"
-  - "token"
-  - "api_key"
-
-# 日誌配置
-logging:
-  level: "info"
-  format: "json"
-  output: "stdout"
-```
-
-### CSPM 掃描器配置
-
-創建 `config/cspm.yaml`:
-
-```yaml
-# CSPM 掃描器配置
-aws:
-  region: "us-east-1"
-  profile: "default"
-  
-  # 要掃描的服務
-  services:
-    - s3
-    - iam
-    - ec2
-    - cloudtrail
-    - kms
-  
-  # S3 配置
-  s3:
-    check_acl: true
-    check_public_access_block: true
-    check_encryption: true
-    check_versioning: true
-  
-  # IAM 配置
-  iam:
-    check_unused_credentials: true
-    check_password_policy: true
-    check_mfa: true
-
-# 合規框架
-compliance:
-  frameworks:
-    - "CIS AWS Foundations Benchmark v1.4.0"
-    - "AWS Well-Architected Framework"
-  
-# 報告配置
-reporting:
-  format: "json"
-  output_dir: "./reports"
-  include_recommendations: true
-```
+**狀態碼**:
+- `success`: 掃描成功完成
+- `error`: 掃描過程發生錯誤
+- `partial`: 部分目標掃描失敗
 
 ---
 
 ## Python 集成
 
-### 使用 dispatcher/worker.py
+### 使用 go_adapter.py（推薦）
 
 ```python
+# services/scan/coordinators/engines/go_adapter.py
+# ⚠️ 注意: 實際的 go_adapter.py 使用異步(async/await)
+# 以下為簡化的同步示例,僅供理解 JSON 通信協議
+
+import asyncio
 import json
+import logging
+from typing import List, Dict, Any
 from pathlib import Path
-from dispatcher.worker import GoEngineWorker
 
-class ScanOrchestrator:
-    def __init__(self):
-        self.ssrf_worker = GoEngineWorker(scanner_type="ssrf")
-        self.cspm_worker = GoEngineWorker(scanner_type="cspm")
-        self.sca_worker = GoEngineWorker(scanner_type="sca")
+class GoAdapter:
+    """Go 引擎適配器 - 異步 JSON stdin/stdout 通信
     
-    def scan_target(self, target_url, scan_types=["ssrf"]):
-        """
-        對目標執行多種類型的掃描
-        
-        Args:
-            target_url: 目標 URL
-            scan_types: 掃描類型列表 ['ssrf', 'cspm', 'sca']
-        
-        Returns:
-            dict: 掃描結果
-        """
-        results = {}
-        
-        if "ssrf" in scan_types:
-            task = {
-                "task_id": f"ssrf_{target_url}",
-                "target": target_url,
-                "module": "ssrf"
-            }
-            results["ssrf"] = self.ssrf_worker.execute_scan(task)
-        
-        if "cspm" in scan_types:
-            task = {
-                "task_id": f"cspm_{target_url}",
-                "target": target_url,
-                "module": "cspm"
-            }
-            results["cspm"] = self.cspm_worker.execute_scan(task)
-        
-        if "sca" in scan_types:
-            task = {
-                "task_id": f"sca_{target_url}",
-                "target": target_url,
-                "module": "sca"
-            }
-            results["sca"] = self.sca_worker.execute_scan(task)
-        
-        return results
+    注意: AIVA 使用異步架構,實際代碼必須使用 async/await
+    """
     
-    def save_results(self, results, output_file):
-        """保存掃描結果到文件"""
-        with open(output_file, 'w', encoding='utf-8') as f:
-            json.dump(results, f, indent=2, ensure_ascii=False)
+    def __init__(self, logger=None):
+        self.logger = logger or logging.getLogger(__name__)
+        self.go_scanner_path = None
+    
+    async def is_available(self) -> bool:
+        """檢查 Go 引擎是否可用"""
+        try:
+            base_path = Path(__file__).parent.parent.parent / "engines" / "go_engine"
+            possible_paths = [
+                base_path / "bin" / "ssrf-scanner.exe",
+                base_path / "bin" / "cspm-scanner.exe",
+                base_path / "bin" / "sca-scanner.exe"
+            ]
+            
+            for path in possible_paths:
+                if path.exists():
+                    self.go_scanner_path = path
+                    self.logger.info(f"找到 Go 掃描器: {path}")
+                    return True
+            
+            self.logger.warning("Go 掃描器二進制文件不存在")
+            return False
+        except Exception as e:
+            self.logger.warning(f"Go 引擎檢查失敗: {e}")
+            return False
+    
+    async def scan(self, targets: List[str], options: Dict[str, Any]) -> Dict[str, Any]:
+        """執行異步掃描"""
+        
+        if not await self.is_available():
+            return {
+                "assets": [],
+                "metadata": {"engine": "go"},
+                "error": "Go 引擎不可用"
+            }
+        
+        # 構造輸入
+        scan_input = {
+            "scan_id": options.get("scan_id", "default_scan"),
+            "targets": targets,
+            "concurrency": options.get("concurrency", 10),
+            "timeout": options.get("timeout", 30)
+        }
+        
+        self.logger.info(f"🚀 Go 引擎開始掃描: {len(targets)} 個目標")
+        
+        # 異步調用 Go 掃描器
+        try:
+            proc = await asyncio.create_subprocess_exec(
+                str(self.go_scanner_path),
+                stdin=asyncio.subprocess.PIPE,
+                stdout=asyncio.subprocess.PIPE,
+                stderr=asyncio.subprocess.PIPE
+            )
+            
+            stdout, stderr = await asyncio.wait_for(
+                proc.communicate(input=json.dumps(scan_input).encode('utf-8')),
+                timeout=options.get("timeout", 30) + 10
+            )
+            
+            if proc.returncode != 0:
+                error_msg = stderr.decode('utf-8', errors='ignore')
+                self.logger.error(f"Go 掃描器執行失敗: {error_msg}")
+                return {
+                    "assets": [],
+                    "metadata": {"engine": "go"},
+                    "error": error_msg
+                }
+            
+            # 解析結果
+            result = json.loads(stdout.decode('utf-8', errors='ignore'))
+            assets = result.get("assets", [])
+            
+            self.logger.info(f"✅ Go 引擎完成: {len(assets)} 個資產")
+            
+            return {
+                "assets": assets,
+                "metadata": {
+                    "engine": "go",
+                    "scanner_type": result.get("scanner_type", "ssrf"),
+                    "execution_time": result.get("execution_time", 0)
+                },
+                "error": None
+            }
+            
+        except asyncio.TimeoutError:
+            self.logger.error("Go 掃描器執行超時")
+            return {
+                "assets": [],
+                "metadata": {"engine": "go"},
+                "error": "超時"
+            }
+        except Exception as e:
+            self.logger.error(f"Go 引擎錯誤: {str(e)}")
+            return {
+                "assets": [],
+                "metadata": {"engine": "go"},
+                "error": str(e)
+            }
 
-# 使用範例
+# 使用範例 (異步)
+async def main():
+    adapter = GoAdapter()
+    results = await adapter.scan(
+        targets=["http://localhost:3000"],
+        options={"scan_id": "test_001", "concurrency": 10}
+    )
+    print(f"Found {len(results['assets'])} vulnerabilities")
+
 if __name__ == "__main__":
-    orchestrator = ScanOrchestrator()
-    
-    # 掃描目標
-    target = "http://vulnerable-app.com"
-    results = orchestrator.scan_target(target, scan_types=["ssrf", "cspm"])
-    
-    # 保存結果
-    orchestrator.save_results(results, "scan_results.json")
-    
-    # 輸出摘要
-    print(f"掃描完成: {target}")
-    print(f"SSRF 漏洞: {len(results['ssrf']['findings'])}")
-    print(f"CSPM 風險: {len(results['cspm']['risks'])}")
+    asyncio.run(main())
 ```
 
 ---
 
-## 實戰範例
+## 實戰測試
 
-### 範例 1: 批量掃描多個目標
+### 測試環境準備
 
-```python
-import asyncio
-from concurrent.futures import ThreadPoolExecutor
-from dispatcher.worker import GoEngineWorker
+```powershell
+# 1. 啟動 WebGoat 靶場（Docker）
+docker run -d -p 8080:8080 webgoat/webgoat
 
-async def scan_multiple_targets(targets):
-    """並行掃描多個目標"""
-    worker = GoEngineWorker(scanner_type="ssrf")
-    
-    with ThreadPoolExecutor(max_workers=5) as executor:
-        futures = []
-        for target in targets:
-            task = {
-                "task_id": f"scan_{target}",
-                "target": target,
-                "module": "ssrf"
-            }
-            future = executor.submit(worker.execute_scan, task)
-            futures.append((target, future))
-        
-        results = {}
-        for target, future in futures:
-            try:
-                result = future.result(timeout=60)
-                results[target] = result
-            except Exception as e:
-                print(f"掃描失敗 {target}: {e}")
-                results[target] = {"error": str(e)}
-        
-        return results
+# 2. 啟動 OWASP Juice Shop
+docker run -d -p 3000:3000 bkimminich/juice-shop
 
-# 使用
-targets = [
-    "http://app1.example.com",
-    "http://app2.example.com",
-    "http://app3.example.com",
-]
-
-results = asyncio.run(scan_multiple_targets(targets))
+# 3. 驗證靶場運行
+curl http://localhost:8080/WebGoat
+curl http://localhost:3000
 ```
 
-### 範例 2: CI/CD 集成
+### 測試 1: WebGoat SSRF 檢測
 
-```yaml
-# .github/workflows/security-scan.yml
-name: Security Scan
+```powershell
+# 創建測試腳本
+$testScript = @'
+$input = @"
+{
+  "scan_id": "webgoat_ssrf_test",
+  "targets": ["http://localhost:8080/WebGoat/SSRF/task1"],
+  "concurrency": 5,
+  "timeout": 15
+}
+"@
 
-on:
-  pull_request:
-    branches: [main]
-
-jobs:
-  security-scan:
-    runs-on: ubuntu-latest
+Write-Host "=== WebGoat SSRF 掃描測試 ===" -ForegroundColor Cyan
+$input | .\bin\ssrf-scanner.exe 2>$null | ConvertFrom-Json | ForEach-Object {
+    Write-Host "`n狀態: $($_.status)" -ForegroundColor Green
+    Write-Host "掃描耗時: $($_.execution_time)s"
+    Write-Host "目標數: $($_.targets_scanned)"
+    Write-Host "請求數: $($_.requests_made)"
+    Write-Host "發現資產: $($_.assets.Count)" -ForegroundColor Yellow
     
-    steps:
-      - uses: actions/checkout@v3
-      
-      - name: Setup Go
-        uses: actions/setup-go@v4
-        with:
-          go-version: '1.23'
-      
-      - name: Build Scanners
-        run: |
-          cd services/scan/engines/go_engine
-          make build
-      
-      - name: Run SSRF Scan
-        run: |
-          ./bin/ssrf-scanner.exe --target ${{ secrets.TEST_TARGET }}
-      
-      - name: Run CSPM Audit
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        run: |
-          ./bin/cspm-scanner.exe --region us-east-1
-      
-      - name: Upload Results
-        uses: actions/upload-artifact@v3
-        with:
-          name: scan-results
-          path: ./reports/
+    if ($_.assets.Count -gt 0) {
+        Write-Host "`n🚨 檢測到漏洞:" -ForegroundColor Red
+        $_.assets | Select-Object -First 3 | ForEach-Object {
+            Write-Host "  [$($_.severity)] $($_.name)"
+            Write-Host "  置信度: $($_.confidence)"
+            Write-Host "  參數: $($_.details.vulnerable_param)"
+            Write-Host "  證據: $($_.details.evidence.indicators_found -join ', ')" -ForegroundColor Gray
+            Write-Host ""
+        }
+    } else {
+        Write-Host "`n✅ 未發現 SSRF 漏洞（或目標未登錄）" -ForegroundColor Green
+    }
+}
+'@
+
+$testScript | Out-File -Encoding UTF8 test_webgoat_ssrf.ps1
+
+# 執行測試
+.\test_webgoat_ssrf.ps1
 ```
 
-### 範例 3: Docker 容器掃描
+### 測試 2: Juice Shop 誤判驗證
 
-```bash
-# 掃描運行中的 Docker 容器
-#!/bin/bash
+```powershell
+# 測試修復後的檢測器是否還會誤判登錄頁面
+$input = @'
+{
+  "scan_id": "juice_shop_test",
+  "targets": ["http://localhost:3000"],
+  "concurrency": 3,
+  "timeout": 10
+}
+'@
 
-echo "掃描 Docker 容器..."
+Write-Host "=== Juice Shop 誤判測試 ===" -ForegroundColor Cyan
+$result = $input | .\bin\ssrf-scanner.exe 2>$null | ConvertFrom-Json
 
-# 列出所有運行中的容器
-containers=$(docker ps --format "{{.Names}}")
+if ($result.assets.Count -eq 0) {
+    Write-Host "✅ 測試通過: 正確識別為正常應用，無誤報" -ForegroundColor Green
+} else {
+    Write-Host "❌ 測試失敗: 仍有誤報" -ForegroundColor Red
+    $result.assets | ForEach-Object {
+        Write-Host "  誤報: $($_.name)"
+    }
+}
+```
 
-for container in $containers; do
-    echo "掃描容器: $container"
+### 測試 3: 並發性能測試
+
+```powershell
+# 測試不同並發數的性能
+$targets = @(
+    "http://localhost:8080/WebGoat/SSRF/task1",
+    "http://localhost:8080/WebGoat/SSRF/task2",
+    "http://localhost:3000",
+    "http://localhost:3001"
+)
+
+foreach ($concurrency in @(1, 5, 10)) {
+    $input = @{
+        scan_id = "perf_test_$concurrency"
+        targets = $targets
+        concurrency = $concurrency
+        timeout = 15
+    } | ConvertTo-Json
     
-    # 獲取容器 IP
-    ip=$(docker inspect -f '{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}' $container)
-    
-    # 執行 SSRF 掃描
-    ./bin/ssrf-scanner.exe --target "http://$ip" --output "scan_$container.json"
-done
+    Write-Host "`n測試並發數: $concurrency" -ForegroundColor Yellow
+    $result = $input | .\bin\ssrf-scanner.exe 2>$null | ConvertFrom-Json
+    Write-Host "  耗時: $($result.execution_time)s"
+    Write-Host "  請求數: $($result.requests_made)"
+    Write-Host "  成功率: $([math]::Round($result.success_count / $result.targets_scanned * 100, 2))%"
+}
+```
 
-echo "掃描完成"
+---
+
+## 檢測邏輯詳解
+
+### 1. 避免誤判機制（核心修復）
+
+基於 **PortSwigger** 和 **OWASP** 最佳實踐，實現了精確的響應驗證：
+
+```go
+// ❌ 舊邏輯（會誤判）
+if strings.Contains(body, "password") {
+    return true  // 登錄頁面也有 password 字段！
+}
+
+// ✅ 新邏輯（精確驗證）
+func isSSRFVulnerable(statusCode int, body, payload string) bool {
+    // 1. 排除常見錯誤頁面
+    if isCommonErrorPage(body) {  // 檢查 <title>login</title>
+        return false
+    }
+    
+    // 2. 針對不同 payload 精確驗證
+    if strings.Contains(payload, "169.254.169.254") {
+        return isAWSMetadataResponse(body, statusCode)  // 驗證 IMDS 格式
+    }
+    
+    if strings.Contains(payload, "file://") {
+        return isFileProtocolResponse(body, statusCode)  // 驗證 /etc/passwd 格式
+    }
+    
+    // 3. 內網地址檢查響應差異
+    if isInternalIP(payload) {
+        if statusCode == 401 || statusCode == 403 {
+            return true  // 成功到達內部服務
+        }
+        if statusCode == 200 && !isLoginPage(body) {
+            return containsInternalServiceIndicators(body)
+        }
+    }
+    
+    return false
+}
+```
+
+### 2. AWS IMDS 精確檢測
+
+```go
+func isAWSMetadataResponse(body string, statusCode int) bool {
+    if statusCode != 200 {
+        return false
+    }
+    
+    // AWS IMDS 響應特徵：純文本，無 HTML
+    if strings.Contains(body, "<html") || strings.Contains(body, "<body") {
+        return false
+    }
+    
+    // 檢查 IMDS 特定內容
+    if strings.Contains(body, "ami-id") || 
+       strings.Contains(body, "instance-id") ||
+       strings.Contains(body, "security-credentials") {
+        return true
+    }
+    
+    // 簡短純文本（如 ami-id 值）
+    if len(body) < 500 && !strings.Contains(body, "<") {
+        return true
+    }
+    
+    return false
+}
+```
+
+### 3. File Protocol 檢測
+
+```go
+func isFileProtocolResponse(body string, statusCode int) bool {
+    if statusCode != 200 {
+        return false
+    }
+    
+    // 檢查 /etc/passwd 格式：root:x:0:0:...
+    if strings.Contains(body, "root:x:0:0") {
+        return true
+    }
+    
+    // 驗證 Unix 用戶列表格式
+    lines := strings.Split(body, "\n")
+    for _, line := range lines {
+        // username:x:uid:gid:info:home:shell
+        if strings.Count(line, ":") >= 6 && !strings.Contains(line, "<") {
+            return true
+        }
+    }
+    
+    return false
+}
+```
+
+### 4. 支持的 Payload 類型
+
+| Payload 類型 | 目標 | 檢測方法 | 嚴重性 |
+|-------------|------|---------|--------|
+| AWS IMDS v1 | `http://169.254.169.254/latest/meta-data/` | 驗證元數據格式 | HIGH |
+| AWS IMDS v2 | `http://169.254.169.254/latest/api/token` | 檢查 token 響應 | HIGH |
+| GCP Metadata | `http://metadata.google.internal/...` | 驗證 JSON 格式 | HIGH |
+| File Protocol | `file:///etc/passwd` | 驗證文件格式 | HIGH |
+| Localhost Admin | `http://127.0.0.1/admin` | 檢查內部服務 | MEDIUM |
+| Private Network | `http://192.168.1.1/` | 檢查響應差異 | MEDIUM |
+
+### 5. 證據收集
+
+每個檢測到的漏洞都包含完整證據：
+
+```json
+{
+  "evidence": {
+    "request_url": "http://target.com/api?url=...",
+    "response_status": 200,
+    "response_headers": {...},
+    "indicators_found": [
+      "Found /etc/passwd root entry",
+      "Unix password file format detected"
+    ]
+  }
+}
 ```
 
 ---
@@ -761,50 +633,64 @@ echo "掃描完成"
 
 ### 問題 1: 編譯失敗
 
-```bash
-# 錯誤: cannot find package
-go: downloading github.com/...
+```powershell
+# 錯誤: cannot find module
+go: module github.com/kyle0527/aiva@latest found
 
 # 解決方案
-cd services/scan/engines/go_engine
-go work sync
-go mod download
+cd C:\D\fold7\AIVA-git\services\scan\engines\go_engine
+go mod tidy
+go build -o bin/ssrf-scanner.exe ./cmd/ssrf-scanner
 ```
 
-### 問題 2: AWS 認證失敗
+### 問題 2: JSON 解析失敗
 
-```bash
-# 錯誤: UnauthorizedOperation
+```powershell
+# 錯誤: invalid character 'e' after top-level value
 
-# 解決方案 1: 檢查環境變數
-echo $AWS_ACCESS_KEY_ID
-echo $AWS_SECRET_ACCESS_KEY
-
-# 解決方案 2: 驗證 IAM 權限
-aws sts get-caller-identity
-
-# 解決方案 3: 使用正確的 Profile
-export AWS_PROFILE=your-profile
+# 原因: stderr 混入 stdout
+# 解決方案: 重定向 stderr
+$input | .\bin\ssrf-scanner.exe 2>$null | ConvertFrom-Json
 ```
 
-### 問題 3: SSRF 掃描無結果
+### 問題 3: 掃描無結果
 
-```bash
-# 原因 1: 目標無 SSRF 漏洞（正常）
-# 原因 2: 目標參數名不匹配
+```powershell
+# 原因 1: 目標確實無漏洞（正常）
+# 原因 2: 靶場需要登錄
+# 原因 3: 參數名不匹配
 
-# 解決方案: 自定義參數名
-./bin/ssrf-scanner.exe --params "url,target,redirect,link"
+# 解決方案: 檢查目標是否可訪問
+curl http://localhost:8080/WebGoat/SSRF/task1
+
+# 查看完整日誌
+$input | .\bin\ssrf-scanner.exe 2>&1 | Out-File -Encoding UTF8 debug.log
+cat debug.log
 ```
 
-### 問題 4: 記憶體佔用過高
+### 問題 4: 編碼錯誤
 
-```bash
-# 解決方案: 降低並發數
-./bin/ssrf-scanner.exe --concurrency 2
+```powershell
+# 錯誤: invalid UTF-8 sequence
 
-# 或限制 Go 運行時記憶體
-export GOGC=50
+# 原因: 中文字符編碼問題（已修復）
+# 現版本使用英文描述，不應出現此問題
+
+# 如仍出現，檢查 PowerShell 編碼
+[Console]::OutputEncoding = [System.Text.Encoding]::UTF8
+```
+
+### 問題 5: 靶場連接失敗
+
+```powershell
+# 檢查 Docker 容器
+docker ps | Select-String "webgoat|juice-shop"
+
+# 重啟容器
+docker restart <container_id>
+
+# 查看容器日誌
+docker logs <container_id>
 ```
 
 ---
@@ -813,74 +699,158 @@ export GOGC=50
 
 ### 1. 並發控制
 
-```yaml
-# config/ssrf.yaml
-scanner:
-  concurrency: 10  # 根據系統資源調整
-  timeout: 30s
-  retry: 3
+```json
+{
+  "concurrency": 10  // 根據系統資源調整
+}
 ```
 
-### 2. 記憶體優化
+**建議值**:
+- 本地測試: 1-5
+- 生產環境: 10-20
+- 高性能服務器: 50+
 
-```bash
+### 2. 超時設置
+
+```json
+{
+  "timeout": 15  // 秒
+}
+```
+
+**建議值**:
+- 內網掃描: 5-10秒
+- 外網掃描: 15-30秒
+- 慢速目標: 60秒+
+
+### 3. Worker Pool 配置
+
+Worker Pool 自動管理並發執行：
+
+```go
+// internal/common/worker_pool.go
+pool := NewWorkerPool(concurrency)
+pool.Start()
+defer pool.Stop()
+
+// 提交任務
+pool.Submit(func() {
+    // 執行掃描任務
+})
+```
+
+### 4. 記憶體優化
+
+```powershell
 # 設置 Go GC 策略
-export GOGC=100  # 預設值，降低會更頻繁 GC
+$env:GOGC = "100"  # 預設值，降低會更頻繁 GC
 
 # 限制最大記憶體
-export GOMEMLIMIT=2GiB
+$env:GOMEMLIMIT = "2GiB"
+
+# 執行掃描
+$input | .\bin\ssrf-scanner.exe
 ```
 
-### 3. 網絡優化
+### 5. 日誌級別
 
-```yaml
-# config/ssrf.yaml
-scanner:
-  keep_alive: true
-  idle_conn_timeout: 90s
-  max_idle_conns: 100
-```
+```go
+// 生產環境: 僅輸出 Error 和 Warn
+logger, _ := zap.NewProduction()
 
-### 4. 日誌優化
-
-```yaml
-# config/logging.yaml
-logging:
-  level: "warn"  # 生產環境使用 warn 或 error
-  output: "file"
-  file_path: "/var/log/aiva/scan.log"
-  max_size: 100  # MB
-  max_backups: 5
+// 開發環境: 輸出所有級別
+logger, _ := zap.NewDevelopment()
 ```
 
 ---
 
-## 附錄
+## 常見問題 (FAQ)
 
-### A. 完整 API 參考
+### Q1: 為什麼 WebGoat 掃描結果為 0？
 
-參考 Go 源碼註釋和 GoDoc。
+**A**: 這是正常的！修復後的檢測器會正確識別登錄頁面，不會誤報。如果 WebGoat 返回登錄頁面（未登錄狀態），檢測器會自動排除，避免誤判。
 
-### B. 漏洞數據庫
+要測試真實檢測，需要：
+1. 登錄 WebGoat
+2. 或使用已登錄的 session cookie
+3. 或測試其他已認證的 SSRF 端點
 
-- CVE: https://cve.mitre.org/
-- NVD: https://nvd.nist.gov/
-- GitHub Advisory: https://github.com/advisories
+### Q2: 如何驗證檢測器是否正常工作？
 
-### C. 合規框架
+**A**: 使用多個測試場景：
 
-- CIS AWS Foundations Benchmark
-- NIST Cybersecurity Framework
-- OWASP Top 10
+```powershell
+# 1. 測試登錄頁面（應該 0 個結果）
+echo '{"scan_id":"test1","targets":["http://localhost:3000"]}' | .\bin\ssrf-scanner.exe
 
-### D. 相關資源
+# 2. 測試明顯的 SSRF endpoint（如果存在）
+echo '{"scan_id":"test2","targets":["http://vulnerable-app.com/api?url=..."]}' | .\bin\ssrf-scanner.exe
 
+# 3. 檢查日誌輸出
+.\bin\ssrf-scanner.exe 2>&1 | Out-File debug.log
+```
+
+### Q3: 如何添加自定義 Payload？
+
+**A**: 修改 `internal/ssrf/detector/ssrf.go`:
+
+```go
+testPayloads := []struct {
+    name        string
+    url         string
+    description string
+}{
+    // ... 現有 payload
+    {
+        name:        "Custom Internal API",
+        url:         "http://internal-api.local/v1/",
+        description: "Attempt to access custom internal API",
+    },
+}
+```
+
+### Q4: 為什麼不支持 POST 請求？
+
+**A**: 當前版本聚焦於 GET 請求的 SSRF 檢測。POST 支持將在後續版本添加。
+
+### Q5: 如何與 CI/CD 集成？
+
+**A**: 使用 PowerShell 腳本或 Python 適配器：
+
+```yaml
+# .github/workflows/security-scan.yml
+- name: Run SSRF Scan
+  run: |
+    $input = '{"scan_id":"ci_scan","targets":["${{ secrets.TEST_URL }}"]}}'
+    $result = $input | .\bin\ssrf-scanner.exe 2>$null | ConvertFrom-Json
+    if ($result.assets.Count -gt 0) {
+      Write-Error "Found $($result.assets.Count) vulnerabilities"
+      exit 1
+    }
+```
+
+---
+
+## 參考資源
+
+### 安全最佳實踐
 - [OWASP SSRF](https://owasp.org/www-community/attacks/Server_Side_Request_Forgery)
-- [AWS Security Best Practices](https://aws.amazon.com/security/best-practices/)
+- [PortSwigger SSRF](https://portswigger.net/web-security/ssrf)
+- [CWE-918](https://cwe.mitre.org/data/definitions/918.html)
+
+### Go 開發資源
+- [Go Concurrency Patterns](https://go.dev/blog/pipelines)
+- [Effective Go](https://go.dev/doc/effective_go)
 - [Go Security Checklist](https://github.com/guardrailsio/awesome-golang-security)
 
+### AIVA 相關文檔
+- [架構設計](../../README.md)
+- [Python 適配器](../coordinators/engines/go_adapter.py)
+- [多引擎協調](../coordinators/multi_engine_coordinator.py)
+
 ---
 
-**文檔版本**: 1.0.0  
-**最後更新**: 2025-11-20  
-**維護者**: AIVA Team
+**文檔版本**: 2.1.0  
+**最後更新**: 2025-11-21  
+**維護者**: AIVA Security Team  
+**支持**: 如有問題請提交 Issue

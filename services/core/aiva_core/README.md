@@ -255,10 +255,6 @@ Service Backbone → 消息傳遞 → 狀態同步 → 性能監控
 # 從項目根目錄安裝
 cd C:\D\fold7\AIVA-git
 pip install -e .
-
-# 或使用虛擬環境
-& .venv/Scripts/Activate.ps1
-pip install -e .
 ```
 
 ### 基本使用

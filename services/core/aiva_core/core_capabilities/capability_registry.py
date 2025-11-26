@@ -148,7 +148,7 @@ class CapabilityRegistry:
                 "errors": [error_msg],
             }
 
-    async def register_capability(
+    def register_capability(
         self,
         name: str,
         module: str,
@@ -356,14 +356,14 @@ if __name__ == "__main__":
 
         # 載入能力
         result = await registry.load_from_exploration()
-        print(f"\n📊 Load Result:")
+        print("\n📊 Load Result:")
         print(f"   - Capabilities loaded: {result['capabilities_loaded']}")
         print(f"   - Modules indexed: {result['modules_indexed']}")
         print(f"   - Errors: {result['errors']}")
 
         # 獲取統計
         stats = registry.get_statistics()
-        print(f"\n📈 Statistics:")
+        print("\n📈 Statistics:")
         print(f"   - Total capabilities: {stats['total_capabilities']}")
         print(f"   - Total modules: {stats['total_modules']}")
         print(f"   - Async capabilities: {stats['async_capabilities']}")

@@ -386,9 +386,8 @@ API 測試:    ██░░░░░░░░  20% 🚧
 ### **1. 安裝 Playwright (必需)**
 
 ```powershell
-# 在專案虛擬環境中
+# 在專案環境中
 cd C:\D\fold7\AIVA-git
-.\.venv\Scripts\Activate.ps1
 
 # 安裝 Playwright
 pip install playwright

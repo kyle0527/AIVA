@@ -45,6 +45,24 @@ export class ScanService {
     this.networkInterceptor = new NetworkInterceptor();
   }
 
+  /**
+   * 正規化 URL：移除 hash 和尾隨斜線，確保一致性
+   */
+  private normalizeUrl(url: string): string {
+    try {
+      const parsed = new URL(url);
+      parsed.hash = ''; // 移除 hash (#section)
+      // 移除尾隨斜線（但保留根路徑的斜線）
+      let normalized = parsed.href;
+      if (normalized.endsWith('/') && parsed.pathname !== '/') {
+        normalized = normalized.slice(0, -1);
+      }
+      return normalized;
+    } catch {
+      return url; // 無效 URL 直接返回原值
+    }
+  }
+
   async scan(task: ScanTask): Promise<ScanResult> {
     const startTime = new Date();
     const assets: Asset[] = [];
@@ -52,6 +70,10 @@ export class ScanService {
     const queue: { url: string; depth: number }[] = [
       { url: task.target_url, depth: 0 },
     ];
+
+    // 掃描超時設定：10 分鐘
+    const MAX_SCAN_TIME_MS = 10 * 60 * 1000;
+    const scanTimeout = Date.now() + MAX_SCAN_TIME_MS;
 
     let context: BrowserContext | null = null;
     let page: Page | null = null;
@@ -76,14 +98,19 @@ export class ScanService {
       // 監聽 SPA 路由變化 (設置監聽器)
       await this.setupSpaMonitoring(page);
 
-      while (queue.length > 0 && assets.length < task.max_pages) {
+      while (queue.length > 0 && 
+             assets.length < task.max_pages &&
+             Date.now() < scanTimeout) {
         const { url, depth } = queue.shift()!;
+        
+        // 正規化 URL 以避免重複爬取
+        const normalizedUrl = this.normalizeUrl(url);
 
-        if (visited.has(url) || depth > task.max_depth) {
+        if (visited.has(normalizedUrl) || depth > task.max_depth) {
           continue;
         }
 
-        visited.add(url);
+        visited.add(normalizedUrl);
 
         try {
           logger.info({ scan_id: task.scan_id, url, depth }, '🕷️  掃描頁面');
@@ -130,8 +157,9 @@ export class ScanService {
           if (depth < task.max_depth) {
             const links = await this.extractLinks(page, url);
             for (const link of links) {
-              if (!visited.has(link)) {
-                queue.push({ url: link, depth: depth + 1 });
+              const normalizedLink = this.normalizeUrl(link);
+              if (!visited.has(normalizedLink)) {
+                queue.push({ url: normalizedLink, depth: depth + 1 });
               }
             }
           }
@@ -140,7 +168,17 @@ export class ScanService {
           await page.waitForTimeout(500);
         } catch (error: any) {
           logger.error({ url, error: error.message }, '❌ 掃描頁面失敗');
+          continue; // 跳過當前頁面，繼續處理下一個
         }
+      }
+
+      // 檢查是否超時
+      if (Date.now() >= scanTimeout) {
+        logger.warn({ 
+          scan_id: task.scan_id, 
+          duration_ms: Date.now() - startTime.getTime(),
+          pages_scanned: visited.size 
+        }, '⏱️ 掃描達到最大時間限制');
       }
 
       // 停止攔截並提取網路請求資產
@@ -224,25 +262,30 @@ export class ScanService {
   }
 
   private async extractLinks(page: Page, baseUrl: string): Promise<string[]> {
-    const links = await page.locator('a[href]').all();
-    const urls: string[] = [];
+    try {
+      const links = await page.locator('a[href]').all();
+      const urls: string[] = [];
 
-    for (const link of links) {
-      const href = await link.getAttribute('href');
-      if (href) {
-        try {
-          const absoluteUrl = new URL(href, baseUrl);
-          // 只保留同域名的連結
-          if (absoluteUrl.origin === new URL(baseUrl).origin) {
-            urls.push(absoluteUrl.href);
+      for (const link of links) {
+        const href = await link.getAttribute('href');
+        if (href) {
+          try {
+            const absoluteUrl = new URL(href, baseUrl);
+            // 只保留同域名的連結
+            if (absoluteUrl.origin === new URL(baseUrl).origin) {
+              urls.push(absoluteUrl.href);
+            }
+          } catch {
+            // 忽略無效的 URL
           }
-        } catch {
-          // 忽略無效的 URL
         }
       }
-    }
 
-    return [...new Set(urls)]; // 去重
+      return [...new Set(urls)]; // 去重
+    } catch (error: any) {
+      logger.warn({ error: error.message, baseUrl }, '❌ Failed to extract links');
+      return []; // 返回空數組而非崩潰
+    }
   }
 
   /**

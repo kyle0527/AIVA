@@ -131,56 +131,57 @@ __all__ = [
     "create_feature_executor",
 ]
 
-# 導入基礎架構（暫時註釋，保留作為未來功能預留）
-# 遵循 README 保留未使用函數原則：這些可能是預留的 API 介面或未來功能的基礎架構
+# 導入基礎架構
 try:
-    # from .base import FeatureBase, FeatureRegistry, SafeHttp, FeatureResult, Finding
+    from .base import FeatureRegistry, FeatureResult, Finding
     from .feature_step_executor import FeatureStepExecutor
     
+    _BASE_AVAILABLE = True
+except ImportError as e:
+    # 如果 base 模組不可用，提供基本功能
+    _BASE_AVAILABLE = False
+    FeatureStepExecutor = None
+    
+    def _register_high_value_features() -> list[str]:
+        """空實現，當 base 模組不可用時"""
+        return []
+    
+    def get_available_features() -> dict:
+        """空實現，當 base 模組不可用時"""
+        return {}
+
+if _BASE_AVAILABLE:
     def _register_high_value_features() -> list[str]:
         """
         自動註冊所有高價值功能模組
         
-        遵循 README 規範：
-        - ✅ 使用明確的類導入（不使用 import worker）
-        - ✅ 移除過度的 ImportError 處理
-        - ✅ 確保依賴可用而非使用 fallback
-        
         Returns:
             已註冊的功能模組名稱列表
-            
-        Raises:
-            ImportError: 當必要的功能模組無法導入時
         """
-        registered: list[str] = []
+        from .base import get_global_registry
         
-        # 按照 README 建議，使用明確的類導入
-        # 如果導入失敗，應該讓錯誤明確顯示而非靜默處理
-
-
-
-
-
+        registry = get_global_registry()
+        registered = registry.list_features()
         
-        # 從 FeatureRegistry 獲取實際註冊的功能列表
-        registered = list(FeatureRegistry.list_features().keys())
-        print(f"[OK] 已註冊 {len(registered)} 個高價值功能模組: {', '.join(registered)}")
+        if registered:
+            print(f"[OK] 已註冊 {len(registered)} 個高價值功能模組: {', '.join(registered)}")
         
         return registered
     
     # 執行註冊
     _available_features = _register_high_value_features()
     
-    def get_available_features() -> dict[str, type[FeatureBase]]:
+    def get_available_features() -> dict:
         """
         取得所有可用的功能模組列表
         
         Returns:
             功能名稱到功能類別的映射字典
         """
-        return FeatureRegistry.list_features()
+        from .base import get_global_registry
+        return get_global_registry().list_features()
     
-    def create_feature_executor(**kwargs) -> FeatureStepExecutor:
+    def create_feature_executor(**kwargs):
         """
         創建功能執行器的便利函數
         
@@ -190,11 +191,11 @@ try:
         Returns:
             配置好的 FeatureStepExecutor 實例
         """
-        return FeatureStepExecutor(**kwargs)
-
-except ImportError as e:
-    # 遵循 README 原則：不使用 fallback，讓錯誤明確顯示
-    import sys
-    print(f"[FAIL] 高價值功能模組導入失敗: {e}", file=sys.stderr)
-    print(f"   請確保 aiva_common 和所有依賴已正確安裝", file=sys.stderr)
-    raise  # 重新拋出異常，不要靜默處理
+        if FeatureStepExecutor:
+            return FeatureStepExecutor(**kwargs)
+        else:
+            raise ImportError("FeatureStepExecutor 不可用")
+else:
+    def create_feature_executor(**kwargs):
+        """空實現"""
+        raise ImportError("base 模組不可用，無法創建 FeatureStepExecutor")

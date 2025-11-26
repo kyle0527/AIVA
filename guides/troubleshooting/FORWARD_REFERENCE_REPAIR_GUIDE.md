@@ -811,3 +811,23 @@ def verify_guide_effectiveness():
 ---
 
 > 💡 **提示**: 本指南基於實際修復經驗編寫，所有示例都經過驗證。遇到問題時，請優先使用 Pylance MCP 工具進行診斷。
+
+---
+
+## 🔗 相關資源
+
+### 故障排除指南
+- 📖 [導入問題解決](./IMPORT_ISSUES_RESOLUTION_GUIDE.md)
+- 📖 [前向引用修復](./FORWARD_REFERENCE_REPAIR_GUIDE.md)
+- 📖 [性能優化指南](./PERFORMANCE_OPTIMIZATION_GUIDE.md)
+- 📖 [測試重現指南](./TESTING_REPRODUCTION_GUIDE.md)
+
+### 修復指南
+- �� [AI 修復指南](../repairs/AIVA_AI_REPAIR_GUIDE.md)
+
+### 架構指南
+- 📖 [兼容性指南](../architecture/CROSS_LANGUAGE_COMPATIBILITY_GUIDE.md)
+
+### 開發指南
+- 📖 [依賴管理指南](../development/DEPENDENCY_MANAGEMENT_GUIDE.md)
+

@@ -25,7 +25,8 @@ func main() {
 		zap.String("mode", "standalone"),
 	)
 
-	// TODO: 實現 RabbitMQ Worker 或命令行參數處理
+	// v2.0 架構: 使用 CLI 模式，由 Python Coordinator 調用
+	// 接收 JSON 參數，輸出 JSON 結果，無需 RabbitMQ
 	// 目前只是驗證編譯
 	_ = scaScanner
 

@@ -150,7 +150,7 @@ async def process_task(
     client: httpx.AsyncClient,
     analyzer: ParamSemanticsAnalyzer | None = None,
     detector: InternalAddressDetector | None = None,
-    dispatcher: OastDispatcherLike | None = None,
+    dispatcher: "OastDispatcherLike | None" = None,
 ) -> TaskExecutionResult:
     analyzer = analyzer or ParamSemanticsAnalyzer()
     detector = detector or InternalAddressDetector()
@@ -323,7 +323,7 @@ async def process_task(
 
 async def _resolve_payload(
     vector: SsrfTestVector,
-    dispatcher: OastDispatcherLike,
+    dispatcher: "OastDispatcherLike",
     task: FunctionTaskPayload,
 ) -> str:
     payload = vector.payload

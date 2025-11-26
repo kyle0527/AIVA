@@ -16,11 +16,11 @@ from services.aiva_common.schemas import (
     FindingImpact,
     FindingPayload,
     FindingRecommendation,
-    FindingTarget,
     FunctionTaskPayload,
     MessageHeader,
     Vulnerability,
 )
+from services.aiva_common.schemas.generated.base_types import FindingTarget
 from services.aiva_common.utils import get_logger, new_id
 from services.features.common.worker_statistics import (
     StatisticsCollector,

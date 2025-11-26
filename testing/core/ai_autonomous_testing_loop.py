@@ -13,11 +13,9 @@ AIVA AI 自主測試與優化閉環系統
 
 # 設置離線模式環境變數
 import os
+# v2.0 架構：無需設置 RabbitMQ 環境變數
 if not os.getenv("ENVIRONMENT"):
     os.environ["ENVIRONMENT"] = "offline"
-    os.environ["RABBITMQ_URL"] = "memory://localhost"
-    os.environ["RABBITMQ_USER"] = "offline"
-    os.environ["RABBITMQ_PASSWORD"] = "offline"
 
 import asyncio
 import sys

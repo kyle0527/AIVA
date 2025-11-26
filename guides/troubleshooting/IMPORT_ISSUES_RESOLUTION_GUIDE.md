@@ -1,4 +1,4 @@
-# 📥 **導入問題修復指南** ✅ 11/10驗證 (10/31實測驗證)
+# 📥 **導入問題修復指南**
 
 > **版本**: 1.0.0  
 > **最後更新**: 2025-10-31  
@@ -334,3 +334,23 @@ python -m services.core.main --check-imports
 - 檢查 [GitHub Issues](https://github.com/your-repo/issues)
 - 查看 [疑難排解 FAQ](./FAQ.md)
 - 參考現有的修復範例在專案中
+
+---
+
+## 🔗 相關資源
+
+### 故障排除指南
+- 📖 [導入問題解決](./IMPORT_ISSUES_RESOLUTION_GUIDE.md)
+- 📖 [前向引用修復](./FORWARD_REFERENCE_REPAIR_GUIDE.md)
+- 📖 [性能優化指南](./PERFORMANCE_OPTIMIZATION_GUIDE.md)
+- 📖 [測試重現指南](./TESTING_REPRODUCTION_GUIDE.md)
+
+### 修復指南
+- �� [AI 修復指南](../repairs/AIVA_AI_REPAIR_GUIDE.md)
+
+### 架構指南
+- 📖 [兼容性指南](../architecture/CROSS_LANGUAGE_COMPATIBILITY_GUIDE.md)
+
+### 開發指南
+- 📖 [依賴管理指南](../development/DEPENDENCY_MANAGEMENT_GUIDE.md)
+

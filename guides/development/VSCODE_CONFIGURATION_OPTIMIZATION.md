@@ -22,7 +22,7 @@
 {
   // 🎯 基本設定 - 保持核心功能
   "python.testing.pytestEnabled": true,
-  "python.defaultInterpreterPath": "${workspaceFolder}/.venv/Scripts/python.exe",
+  "python.defaultInterpreterPath": "python",
   
   // 🚀 性能最佳化 - 減少背景分析
   "python.analysis.diagnosticMode": "openFilesOnly",    // 只分析開啟的檔案
@@ -134,7 +134,6 @@
   "files.watcherExclude": {
     "**/.git/**": true,
     "**/node_modules/**": true,
-    "**/.venv/**": true,
     "**/__pycache__/**": true,
     "**/target/**": true,        // Rust 建置目錄
     "**/dist/**": true,          // TypeScript 輸出
@@ -145,11 +144,10 @@
     "**/*.egg-info/**": true     // Python 套件資訊
   },
   
-  // 🔍 搜索排除 - 提升搜索效率
+  // 🔍 搜尋排除 - 提升搜尋效率
   "search.exclude": {
     "**/.git": true,
     "**/node_modules": true,
-    "**/.venv": true,
     "**/__pycache__": true,
     "**/target": true,
     "**/dist": true,
@@ -228,13 +226,13 @@
 }
 ```
 
-### 2. Python 虛擬環境路徑問題
+### 2. Python 解譯器路徑問題
 **錯誤**: `Python interpreter not found`
 
 **解決**:
 ```jsonc
-// 檢查路徑是否正確
-"python.defaultInterpreterPath": "${workspaceFolder}/.venv/Scripts/python.exe"
+// 確認使用全域 Python
+"python.defaultInterpreterPath": "python"
 ```
 
 ### 3. TypeScript 編譯錯誤
@@ -251,7 +249,7 @@ parserOptions: {
 ## 📋 配置檢查清單
 
 - [ ] VS Code settings.json 無語法錯誤
-- [ ] Python 虛擬環境路徑正確
+- [ ] Python 解譯器路徑正確
 - [ ] TypeScript tsconfig.json 存在且有效
 - [ ] Go mod 初始化完成
 - [ ] Rust Cargo.toml 配置正確

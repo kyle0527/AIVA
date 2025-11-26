@@ -366,3 +366,29 @@ class TestUnifiedAIController:
 **👥 維護團隊**: AIVA AI Engine Team
 
 *本文件詳細介紹 AIVA Core 模組的 AI 引擎架構，包含生物神經網絡、AI 控制器和自然語言生成系統。*
+
+
+---
+
+## 🔗 相關資源
+
+### 模組開發指南
+- 📖 [Python 開發指南](./PYTHON_DEVELOPMENT_GUIDE.md)
+- 📖 [Go 開發指南](./GO_DEVELOPMENT_GUIDE.md)
+- 📖 [Rust 開發指南](./RUST_DEVELOPMENT_GUIDE.md)
+- 📖 [AI 引擎指南](./AI_ENGINE_GUIDE.md)
+- 📖 [功能模組開發指南](./FEATURE_MODULES_DEVELOPMENT_GUIDE.md)
+- 📖 [模組遷移指南](./MODULE_MIGRATION_GUIDE.md)
+
+### 架構指南
+- 📖 [跨語言 Schema 指南](../architecture/CROSS_LANGUAGE_SCHEMA_GUIDE.md)
+- 📖 [兼容性指南](../architecture/CROSS_LANGUAGE_COMPATIBILITY_GUIDE.md)
+
+### 開發指南
+- 📖 [開發快速指南](../development/DEVELOPMENT_QUICK_START_GUIDE.md)
+- 📖 [依賴管理指南](../development/DEPENDENCY_MANAGEMENT_GUIDE.md)
+
+### 服務文檔
+- 🔧 [Features 模組](../../services/features/README.md)
+- 🔧 [Scan 引擎文檔](../../services/scan/README.md)
+

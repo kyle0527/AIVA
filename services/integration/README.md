@@ -44,9 +44,9 @@
 ### 環境要求
 - Python 3.11+
 - PostgreSQL 15+ (已配置 pgvector)
-- RabbitMQ 3.12+
-- ~~Neo4j 5.0+~~ ✅ **已移除** (已遷移至 NetworkX)
-- ~~Redis 7.0+~~ ⚠️ **未使用** (可選)
+- RabbitMQ 3.12+ (⚠️ v2.0已改用命令系統，可選)
+- ✅ **無需外部圖資料庫** (已遷移至 NetworkX, 零外部依賴)
+- ✅ **無需 Redis** (研發階段不需要)
 
 ### 📦 安裝與配置
 
@@ -521,11 +521,12 @@ flowchart TD
     SYS_MONITOR --> REDIS
     RATE_LIMITER --> REDIS
     
-    THREAT_ANALYZER --> NEO4J
-    RISK_ASSESSMENT --> NEO4J
-    
     AI_RECORDER --> RABBITMQ
     REPORTING_INT --> RABBITMQ
+    
+    %% ========== NetworkX 圖資料 (本地檔案) ==========
+    THREAT_ANALYZER -.-> ATTACK_PATHS["attack_graph.pkl"]
+    RISK_ASSESSMENT -.-> ATTACK_PATHS
     
     %% ========== 樣式定義 ==========
     classDef layer1 fill:#fce4ec,stroke:#880e4f,stroke-width:2px,color:#000
@@ -543,7 +544,7 @@ flowchart TD
     class ANALYSIS_INT,RECEPTION_INT,REPORTING_INT layer4
     class DATA_RECEPTION,EXPERIENCE_MODELS,LIFECYCLE_MGR layer5
     class RISK_ASSESSMENT,REMEDIATION_ENGINE,THREAT_ANALYZER layer6
-    class POSTGRES,REDIS,NEO4J,RABBITMQ,OBSERVABILITY layer7
+    class POSTGRES,REDIS,RABBITMQ,OBSERVABILITY,ATTACK_PATHS layer7
 ```
 
 ### 🔍 架構深度分析
@@ -561,7 +562,7 @@ flowchart TD
 | **🔄 服務整合層** | 52 | 服務間協調整合 | Analysis/Reception/Reporting Integration | 自定義整合協議 |
 | **📊 資料處理層** | 48 | 資料管理與處理 | Data Reception, Experience Models | pandas, scikit-learn |
 | **🛡️ 智能響應層** | 65 | 風險分析與修復 | Risk Assessment, Remediation Engine | 機器學習模型 |
-| **📤 持久化監控層** | 22 | 資料持久化與監控 | 四大資料庫, Observability | PostgreSQL, Redis, Neo4j, RabbitMQ |
+| **📤 持久化監控層** | 22 | 資料持久化與監控 | PostgreSQL, Redis, NetworkX, RabbitMQ | PostgreSQL + pgvector, Redis (可選), NetworkX, RabbitMQ (可選) |
 
 **📁 實際檔案結構層次** (物理架構)  
 根據實際架構分析，integration 模組的檔案結構具有以下特徵：
@@ -1293,15 +1294,10 @@ class CustomRiskLevel(str, Enum):  # 錯誤!應使用 CVSS 標準
 git clone https://github.com/aiva/integration-module.git
 cd integration-module
 
-# 2. 設定 Python 虛擬環境
-python3.11 -m venv aiva-integration-env
-source aiva-integration-env/bin/activate  # Linux/Mac
-# aiva-integration-env\Scripts\activate.bat  # Windows
-
-# 3. 安裝依賴
+# 2. 安裝依賴
 pip install -r requirements-dev.txt
 
-# 4. 設定資料庫
+# 3. 設定資料庫
 createdb aiva_integration_dev
 alembic upgrade head
 

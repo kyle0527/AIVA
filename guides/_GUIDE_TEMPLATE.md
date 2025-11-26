@@ -1,0 +1,128 @@
+# [指南標題]
+
+> **📍 分類**: [architecture/deployment/development/integration/modules/repairs/troubleshooting/validation]  
+> **📅 最後更新**: 2025-11-22  
+> **👥 適用對象**: [開發者/架構師/運維/測試人員]  
+> **⏱️ 預計閱讀**: [5/10/15/20/30] 分鐘  
+> **🏗️ AIVA 版本**: v2.0 (數據合約驅動架構)
+
+---
+
+## 📑 目錄
+
+- [📋 概述](#-概述)
+- [🎯 使用場景](#-使用場景)
+- [🔧 前置需求](#-前置需求)
+- [📖 詳細說明](#-詳細說明)
+- [💡 最佳實踐](#-最佳實踐)
+- [⚠️ 注意事項](#-注意事項)
+- [🔗 相關資源](#-相關資源)
+
+---
+
+## 📋 概述
+
+[簡短描述這份指南的目的和內容]
+
+### 核心要點
+
+- ✅ 要點1
+- ✅ 要點2
+- ✅ 要點3
+
+---
+
+## 🎯 使用場景
+
+### 適用情況
+
+- 場景1
+- 場景2
+- 場景3
+
+### 不適用情況
+
+- ⚠️ 情況1
+- ⚠️ 情況2
+
+---
+
+## 🔧 前置需求
+
+### 環境需求
+
+- Python 3.11+
+- Python 全域環境已配置
+- 相關依賴已安裝
+
+### 知識背景
+
+- 了解 AIVA 基本架構
+- 熟悉相關技術棧
+
+---
+
+## 📖 詳細說明
+
+[詳細內容]
+
+---
+
+## 💡 最佳實踐
+
+1. **實踐1**
+   - 說明
+   - 範例
+
+2. **實踐2**
+   - 說明
+   - 範例
+
+---
+
+## ⚠️ 注意事項
+
+### 常見錯誤
+
+- ❌ 錯誤1: [說明]
+  - ✅ 解決方案: [說明]
+
+- ❌ 錯誤2: [說明]
+  - ✅ 解決方案: [說明]
+
+### 重要提醒
+
+- ⚠️ 提醒1
+- ⚠️ 提醒2
+
+---
+
+## 🔗 相關資源
+
+### 相關指南
+
+- 📖 [相關指南1](../category/GUIDE_NAME.md)
+- 📖 [相關指南2](../category/GUIDE_NAME.md)
+
+### 使用者手冊
+
+- 📚 [AIVA 使用者手冊](../../docs/user_guides/00_general/AIVA_USER_MANUAL.md)
+- 📚 [Core 模組手冊](../../docs/user_guides/01_core/AIVA_CORE_使用者手冊.md)
+
+### 服務文檔
+
+- 🔧 [Common 模組](../../services/aiva_common/README.md)
+- 🔧 [Features 模組](../../services/features/README.md)
+- 🔧 [Integration 模組](../../services/integration/README.md)
+- 🔧 [Scan 模組](../../services/scan/README.md)
+
+### 架構文檔
+
+- 🏗️ [數據合約架構](../../docs/ARCHITECTURE.md)
+- 🏗️ [五大模組說明](../architecture/SCHEMA_GUIDE.md)
+
+---
+
+**維護者**: AIVA 開發團隊  
+**問題回報**: [GitHub Issues](https://github.com/kyle0527/AIVA/issues)  
+**更新頻率**: 每次重大架構更新

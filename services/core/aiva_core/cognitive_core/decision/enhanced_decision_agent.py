@@ -498,6 +498,164 @@ class EnhancedDecisionAgent:
         )
         return strategies[strategy_index]
 
+    async def execute_decision(self, decision: Decision, context: DecisionContext) -> dict[str, Any]:
+        """執行 AI 決策（實際調用模組）
+        
+        這是 AI 決策 → 實際執行的橋梁
+        
+        Args:
+            decision: AI 決策結果
+            context: 決策上下文
+            
+        Returns:
+            執行結果
+        """
+        self.logger.info(f"🚀 執行 AI 決策: {decision.action}")
+        
+        try:
+            # 根據決策動作執行對應操作
+            if decision.action == "RUN_TOOL":
+                return await self._execute_tool_decision(decision, context)
+            
+            elif decision.action in ["EXPLOIT_SQL_INJECTION", "WEB_ATTACK"]:
+                return await self._execute_vulnerability_test(decision, context)
+            
+            elif decision.action == "SWITCH_MODE":
+                return self._execute_mode_switch(decision, context)
+            
+            elif decision.action == "CHANGE_APPROACH":
+                return self._execute_strategy_change(decision, context)
+            
+            elif decision.action == "STOP_OPERATION":
+                return self._execute_stop(decision, context)
+            
+            else:
+                self.logger.warning(f"⚠️ 未知決策動作: {decision.action}")
+                return {
+                    "success": False,
+                    "error": f"Unknown decision action: {decision.action}"
+                }
+                
+        except Exception as e:
+            self.logger.error(f"❌ 決策執行失敗: {e}", exc_info=True)
+            return {
+                "success": False,
+                "error": str(e),
+                "decision": decision.action
+            }
+    
+    async def _execute_tool_decision(self, decision: Decision, context: DecisionContext) -> dict[str, Any]:
+        """執行工具相關決策"""
+        tool = decision.params.get("tool")
+        target_vuln = decision.params.get("target_vuln")
+        
+        self.logger.info(f"   🔧 使用工具: {tool}, 目標漏洞: {target_vuln}")
+        
+        # 導入 AICommander 來執行（如果可用）
+        try:
+            from ...task_planning.ai_commander import AICommander, AITaskType
+            
+            # 初始化 AI Commander
+            commander = AICommander()
+            
+            # 執行漏洞檢測
+            result = await commander.execute_command(
+                task_type=AITaskType.VULNERABILITY_DETECTION,
+                context={
+                    "target": context.target_info.get("value", "http://localhost:3000"),
+                    "vulnerability_types": [target_vuln] if target_vuln else ["sqli", "xss", "ssrf", "idor"],
+                    "deep_scan": True,
+                }
+            )
+            
+            return result
+            
+        except ImportError as e:
+            self.logger.warning(f"⚠️ AICommander 不可用: {e}")
+            # 回退到模擬執行
+            return {
+                "success": True,
+                "simulated": True,
+                "tool": tool,
+                "message": "Simulated execution (AICommander not available)"
+            }
+    
+    async def _execute_vulnerability_test(self, decision: Decision, context: DecisionContext) -> dict[str, Any]:
+        """執行漏洞測試"""
+        target = context.target_info.get("value", "http://localhost:3000")
+        
+        self.logger.info(f"   🎯 對目標 {target} 執行漏洞測試")
+        
+        try:
+            from ...task_planning.ai_commander import AICommander, AITaskType
+            
+            commander = AICommander()
+            
+            # 決定測試類型
+            if decision.action == "EXPLOIT_SQL_INJECTION":
+                vuln_types = ["sqli"]
+            else:
+                vuln_types = ["sqli", "xss", "ssrf", "idor"]  # 全面測試
+            
+            result = await commander.execute_command(
+                task_type=AITaskType.VULNERABILITY_DETECTION,
+                context={
+                    "target": target,
+                    "vulnerability_types": vuln_types,
+                    "deep_scan": True,
+                }
+            )
+            
+            return result
+            
+        except ImportError:
+            return {
+                "success": True,
+                "simulated": True,
+                "message": "Vulnerability test simulated"
+            }
+    
+    def _execute_mode_switch(self, decision: Decision, context: DecisionContext) -> dict[str, Any]:
+        """執行模式切換"""
+        new_mode = decision.params.get("mode")
+        message = decision.params.get("message", "Mode switch")
+        
+        self.logger.info(f"   🔄 切換模式到: {new_mode}")
+        
+        return {
+            "success": True,
+            "action": "mode_switch",
+            "new_mode": new_mode,
+            "message": message,
+            "requires_user_action": True,
+        }
+    
+    def _execute_strategy_change(self, decision: Decision, context: DecisionContext) -> dict[str, Any]:
+        """執行策略變更"""
+        new_strategy = decision.params.get("new_strategy")
+        
+        self.logger.info(f"   🔄 變更策略到: {new_strategy}")
+        
+        return {
+            "success": True,
+            "action": "strategy_change",
+            "new_strategy": new_strategy,
+            "reasoning": decision.reasoning,
+        }
+    
+    def _execute_stop(self, decision: Decision, context: DecisionContext) -> dict[str, Any]:
+        """執行停止操作"""
+        reason = decision.params.get("reason", "Safety measure")
+        
+        self.logger.warning(f"   ⛔ 停止操作: {reason}")
+        
+        return {
+            "success": True,
+            "action": "stop",
+            "reason": reason,
+            "requires_user_action": True,
+        }
+
     def _make_default_decision(self, context: DecisionContext) -> Decision:
         """預設決策邏輯"""
         # 如果有可用工具，選擇一個執行

@@ -74,7 +74,7 @@ maintenance/
 
 2. **項目結構檢查**
    - 必要目錄存在性
-   - 虛擬環境完整性
+   - Python 環境配置
 
 3. **配置文件檢查**
    - pyproject.toml、requirements.txt、docker-compose.yml
@@ -89,15 +89,13 @@ maintenance/
    ✅ Node.js: v18.17.0
    ✅ Docker: Docker version 24.0.6
 
-⚠️  診斷完成 - 發現 2 個問題
+⚠️  診斷完成 - 發現 1 個問題
 
 🔧 發現的問題:
    • Docker 服務未運行
-   • Python 虛擬環境不存在
 
 💡 修復建議:
    • 啟動 Docker Desktop
-   • 創建虛擬環境: python -m venv .venv
 ```
 
 ---

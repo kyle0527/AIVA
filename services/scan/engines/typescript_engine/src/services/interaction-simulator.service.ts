@@ -131,7 +131,12 @@ export class InteractionSimulator {
           logger.debug({ selector }, '👆 Clicking button');
           
           await button.click({ timeout: this.config.wait_time_ms });
-          await this.page.waitForTimeout(1000); // 等待響應
+          
+          // 智能等待：網路閒置或 DOM 穩定，最多等待 2 秒
+          await Promise.race([
+            this.page.waitForLoadState('networkidle', { timeout: 2000 }),
+            this.page.waitForTimeout(500) // 最短等待
+          ]).catch(() => {}); // 超時也沒關係，繼續執行
           
           const afterDOMChanges = await this.captureDOMChanges();
           

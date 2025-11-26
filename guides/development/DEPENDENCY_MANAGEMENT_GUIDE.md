@@ -1,9 +1,12 @@
-# AIVA 依賴管理操作指南 ✅ 11/10驗證
+# AIVA 依賴管理操作指南
+
+> **架構版本**: v2.0  
+> **最後更新**: 2025-11-22
 
 > **📋 適用對象**: 開發者、DevOps工程師、系統管理員  
 > **🎯 使用場景**: 開發環境設置、依賴問題排查、包管理優化  
 > **⏱️ 預計閱讀時間**: 20 分鐘  
-> **🔧 技術需求**: Python 3.8+、pip、虛擬環境
+> **🔧 技術需求**: Python 3.8+、pip、全域環境
 
 ## 🚨 **重要通知：ML 依賴混合狀態**
 
@@ -171,17 +174,17 @@ print('✅ 混合型別注解完全相容')
 
 ### **檢查當前環境**
 ```bash
-# 確認虛擬環境
-& "C:/D/fold7/AIVA-git/.venv/Scripts/python.exe" --version
+# 確認 Python 環境
+python --version
 
 # 檢查核心依賴
-& "C:/D/fold7/AIVA-git/.venv/Scripts/python.exe" -c "import fastapi, pydantic, redis; print('✅ 核心依賴正常')"
+python -c "import fastapi, pydantic, redis; print('✅ 核心依賴正常')"
 ```
 
 ### **執行系統檢查**
 ```bash
 # 完整系統測試
-& "C:/D/fold7/AIVA-git/.venv/Scripts/python.exe" testing\common\complete_system_check.py
+python testing\common\complete_system_check.py
 ```
 
 ---
@@ -327,7 +330,8 @@ from services.aiva_common.schemas import ConfigUpdatePayload  # ✅ 正確
 ### **問題 6: Docker 服務未啟動**
 ```bash
 # 啟動基礎服務 (需要 Docker)
-docker-compose up -d redis rabbitmq postgres neo4j
+# v2.0 架構所需服務（已移除 RabbitMQ）
+docker-compose up -d redis postgres neo4j
 ```
 
 ---
@@ -407,7 +411,7 @@ pip-autoremove -y
 
 ### **新開發者加入**
 - [ ] 檢查 Python 版本 (3.13.9)
-- [ ] 創建虛擬環境
+- [ ] 確認全域 Python 環境
 - [ ] 安裝基礎依賴 (`pip install -e .`)
 - [ ] 測試 Optional Dependency 框架 (`python -c "from utilities.optional_deps import OptionalDependencyManager; print('框架運行正常')"`)
 - [ ] 執行系統檢查測試
@@ -451,3 +455,27 @@ pip-autoremove -y
 - [依賴分析詳細報告](./DEPENDENCY_ANALYSIS_REPORT.md)
 - [系統測試腳本](../../testing/common/complete_system_check.py)
 - [導入問題修復指南](../troubleshooting/IMPORT_ISSUES_RESOLUTION_GUIDE.md) (待建立)
+
+---
+
+## 🔗 相關資源
+
+### 開發指南
+- 📖 [開發快速指南](./DEVELOPMENT_QUICK_START_GUIDE.md)
+- 📖 [開發任務指南](./DEVELOPMENT_TASKS_GUIDE.md)
+- 📖 [開發者指南](./DEVELOPER_GUIDE.md)
+- 📖 [依賴管理指南](./DEPENDENCY_MANAGEMENT_GUIDE.md)
+- 📖 [API 驗證指南](./API_VERIFICATION_GUIDE.md)
+- 📖 [Schema 導入指南](./SCHEMA_IMPORT_GUIDE.md)
+
+### 架構指南
+- 📖 [Schema 統一指南](../architecture/SCHEMA_GUIDE.md)
+- 📖 [架構兼容性指南](../architecture/CROSS_LANGUAGE_COMPATIBILITY_GUIDE.md)
+
+### 故障排除
+- 📖 [導入問題解決](../troubleshooting/IMPORT_ISSUES_RESOLUTION_GUIDE.md)
+- 📖 [性能優化指南](../troubleshooting/PERFORMANCE_OPTIMIZATION_GUIDE.md)
+
+### 使用者手冊
+- 📚 [Core 模組手冊](../../docs/user_guides/01_core/AIVA_CORE_使用者手冊.md)
+

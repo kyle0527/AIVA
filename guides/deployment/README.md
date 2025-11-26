@@ -1,162 +1,158 @@
 # Deployment Guides README
 
-## 🚀 Contract-Aware Deployment & Operations
+## 🚀 AIVA v2.0 部署與運維
 
-Deployment guides focused on maintaining AIVA's contract-driven architecture advantages in production environments. All deployment processes should validate contract integrity and performance baselines to ensure optimal system operation.
+部署指南專注於在生產環境中維持 AIVA v2.0 數據合約架構的優勢。所有部署流程應驗證數據合約完整性以確保最佳系統運行。
 
-**Deployment Philosophy**: Deploy with contract validation as a first-class concern. Ensure production systems maintain the 6.7x performance advantage and contract compliance that defines AIVA's architecture.
+**部署哲學**: 以數據合約驗證為優先進行部署。確保生產系統保持高效性能和數據合約合規性。
 
-## 📊 Deployment Contract Requirements
+## 📊 部署要求
 
-- **Performance Baseline**: 8,536+ ops/s JSON serialization in production
-- **Contract Validation**: Automated contract health checks in CI/CD pipelines
-- **Cross-Language Support**: Multi-language contract bindings in containerized environments
-- **Monitoring Integration**: Contract health metrics in production monitoring
+- **架構版本**: v2.0 (數據合約驅動)
+- **通信機制**: 直接數據合約（已移除 RabbitMQ）
+- **跨語言支援**: 多語言數據合約綁定
+- **監控整合**: Schema 健康指標監控
 
-## 📖 Deployment Guides
+## 📍 部署指南
 
-### 🔨 **Build & Compilation**
+### 🔨 **構建與編譯**
 
-- **[Build Guide](./BUILD_GUIDE.md)** - Multi-language build automation
-  - *Contract Integration*: Contract validation and schema compilation in build process
-  - *Performance*: Build-time contract optimization and validation
-  - *Use Case*: Setting up automated builds with contract health checks
+- **[Build Guide](./BUILD_GUIDE.md)** - 多語言構建自動化
+  - *Schema 整合*: Schema 驗證和編譯流程
+  - *性能*: 構建時驗證與優化
+  - *使用場景*: 設置自動化構建
 
-### 🐳 **Containerization & Orchestration**
+### 🐳 **容器化與編排**
 
-- **[Docker Guide](./DOCKER_GUIDE.md)** - Container deployment practices
-  - *Contract Integration*: Contract libraries and schemas in Docker images
-  - *Verified*: ✅ October 31, 2025 - Real deployment testing
-  - *Use Case*: Single-service containerization with contract support
+- **[Docker Guide](./DOCKER_GUIDE.md)** - 容器部署實踐
+  - *Schema 整合*: Docker 鏡像中的 Schema 庫
+  - *使用場景*: 單服務容器化
 
-- **[Docker & Kubernetes Guide](./DOCKER_KUBERNETES_GUIDE.md)** - Microservices orchestration solutions
-  - *Contract Integration*: Cross-service contract communication in K8s clusters
-  - *Performance*: Load balancing with contract-aware health checks
-  - *Use Case*: Full microservices deployment with contract validation
+- **[Docker & Kubernetes Guide](./DOCKER_KUBERNETES_GUIDE.md)** - 微服務編排解決方案
+  - *Schema 整合*: K8s 集群中的跨服務通信
+  - *性能*: 負載均衡與健康檢查
+  - *使用場景*: 完整微服務部署
 
 ### ⚙️ **Configuration & Environment**
 
-- **[Environment Configuration Guide](./ENVIRONMENT_CONFIG_GUIDE.md)** - Environment variable configuration management
-  - *Contract Integration*: Contract-related environment variables and configuration
-  - *Security*: Secure configuration of contract validation and API endpoints
-  - *Use Case*: Multi-environment deployment with consistent contract behavior
+- **[Environment Configuration Guide](./ENVIRONMENT_CONFIG_GUIDE.md)** - 環境變數配置管理
+  - *Schema 整合*: Schema 相關環境變數
+  - *安全*: API 端點安全配置
+  - *使用場景*: 多環境部署
 
-## 🔗 Related Deployment Resources
+## 🔗 相關部署資源
 
-### 📚 **Core Deployment Documentation**
-- **[Main Deployment Guide](../../docs/README_DEPLOYMENT.md)** - Production environment deployment
-- **[Contract Development Guide](../AIVA_合約開發指南.md)** - Contract system deployment considerations
-- **[Architecture Guides](../architecture/README.md)** - Architectural deployment patterns
+### 📚 **核心部署文檔**
+- **[主部署指南](../../docs/README_DEPLOYMENT.md)** - 生產環境部署
+- **[架構指南](../architecture/README.md)** - 架構部署模式
 
-### 🛠️ **Validation & Monitoring Tools**
-- **[Performance Benchmark Tool](../../aiva_performance_comparison.py)** - Production performance validation
-- **[Contract Health Monitor](../../analyze_contract_completion.py)** - Deployment health assessment
-- **[Contract Integration Report](../AIVA_CONTRACT_ARCHITECTURE_INTEGRATION_REPORT.md)** - Deployment readiness analysis
+### 🛠️ **驗證與監控工具**
+- **[測試框架](../../testing/README.md)** - 生產環境驗證
+- **[工具集](../../tools/README.md)** - 部署工具
 
-## 📋 Deployment Contract Checklist
+## 📋 部署檢查清單
 
-### Pre-Deployment Validation
-- [ ] All contract schemas compiled and validated
-- [ ] Performance benchmarks meet 8,536+ ops/s baseline
-- [ ] Cross-language contract bindings tested in target environment
-- [ ] Contract health metrics show 58.3%+ completion (target: 75%)
-- [ ] API endpoints use standard APIResponse contracts
-- [ ] Database schemas support contract persistence (improve from 0%)
+### 部署前驗證
+- [ ] 所有 Schema 已編譯並驗證
+- [ ] 性能基準測試通過
+- [ ] 跨語言 Schema 綁定已測試
+- [ ] API 端點使用標準 Schema
+- [ ] 數據庫 Schema 支援持久化
 
-### Production Deployment
-- [ ] Contract validation integrated into health checks
-- [ ] Performance monitoring includes contract-specific metrics
-- [ ] Error handling uses standard ExecutionError contracts
-- [ ] Cross-service communication validated with contract compliance
-- [ ] Rollback procedures include contract compatibility checks
+### 生產環境部署
+- [ ] Schema 驗證整合至健康檢查
+- [ ] 性能監控包含 Schema 指標
+- [ ] 錯誤處理使用標準 Schema
+- [ ] 跨服務通信已驗證
+- [ ] 回滾程序包含兼容性檢查
 
-### Post-Deployment Monitoring
-- [ ] Contract health metrics continuously tracked
-- [ ] Performance baselines maintained in production
-- [ ] Cross-language compatibility monitored
-- [ ] Contract adoption rates tracked per service
-- [ ] Performance regressions detected and alerted
+### 部署後監控
+- [ ] Schema 健康指標持續追蹤
+- [ ] 維持生產環境性能基準
+- [ ] 監控跨語言兼容性
+- [ ] 追蹤每個服務的 Schema 使用率
+- [ ] 檢測並警示性能退步
 
-## 🎯 Deployment Integration Priorities
+## 🎯 部署整合優先級
 
-### 🚨 **Critical for Production (High Priority)**
+### 🚨 **生產環境關鍵（高優先級）**
 
-1. **Performance Validation** - Ensure production maintains 6.7x advantage
-   - Integrate benchmark tools into deployment pipelines
-   - Establish performance regression detection
-   - Configure performance-based deployment gates
+1. **性能驗證** - 確保生產環境保持高效性能
+   - 將基準測試工具整合至部署管線
+   - 建立性能退步檢測
+   - 配置基於性能的部署閘門
 
-2. **Contract Health Monitoring** - Track contract system health in production
-   - Implement real-time contract completion tracking
-   - Set up alerts for contract health degradation
-   - Establish contract adoption targets for production services
+2. **Schema 健康監控** - 追蹤生產環境中的 Schema 健康
+   - 實現即時 Schema 使用追蹤
+   - 設置 Schema 健康退化警示
+   - 建立生產環境 Schema 使用目標
 
-### 🔧 **Operational Excellence (Medium Priority)**
+### 🔧 **運維卓越（中優先級）**
 
-3. **CI/CD Integration** - Contract validation in deployment pipelines
-   - Automated contract schema validation
-   - Performance benchmark gates in CI/CD
-   - Cross-language compatibility testing
+3. **CI/CD 整合** - 部署管線中的 Schema 驗證
+   - 自動化 Schema 驗證
+   - 性能基準測試閘門
+   - 跨語言兼容性測試
 
-4. **Multi-Environment Consistency** - Consistent contract behavior across environments
-   - Environment-specific contract configuration
-   - Cross-environment contract compatibility testing
-   - Standardized contract deployment procedures
+4. **多環境一致性** - 跨環境的一致 Schema 行為
+   - 環境特定 Schema 配置
+   - 跨環境 Schema 兼容性測試
+   - 標準化部署程序
 
-### 📊 **Advanced Monitoring (Lower Priority)**
+### 📊 **進階監控（低優先級）**
 
-5. **Advanced Analytics** - Deep contract system insights
-   - Contract usage pattern analysis
-   - Performance trend analysis
-   - Predictive contract health monitoring
+5. **進階分析** - 深入 Schema 系統洞察
+   - Schema 使用模式分析
+   - 性能趨勢分析
+   - 預測性 Schema 健康監控
 
-## 🚀 Deployment Workflow Integration
+## 🚀 部署流程整合
 
-### Standard Deployment Process
-1. **Pre-Build**: Validate contract schemas and dependencies
-2. **Build**: Include contract validation and performance testing
-3. **Testing**: Validate contract compliance in staging environment
-4. **Deploy**: Deploy with contract health monitoring active
-5. **Monitor**: Track contract performance and health metrics
-6. **Validate**: Confirm production performance meets baselines
+### 標準部署流程
+1. **構建前**: 驗證 Schema 和依賴
+2. **構建**: 包含 Schema 驗證和性能測試
+3. **測試**: 在準生產環境驗證 Schema 合規性
+4. **部署**: 啟用 Schema 健康監控
+5. **監控**: 追蹤 Schema 性能和健康指標
+6. **驗證**: 確認生產環境性能符合基準
 
-### Container Deployment
-1. **Image Preparation**: Include all necessary contract libraries and schemas
-2. **Configuration**: Set up contract-aware environment variables
-3. **Health Checks**: Implement contract-aware health endpoints
-4. **Service Discovery**: Configure cross-service contract communication
-5. **Monitoring**: Deploy with contract-specific metrics collection
+### 容器部署
+1. **鏡像準備**: 包含所有必要的 Schema 庫
+2. **配置**: 設置 Schema 相關環境變數
+3. **健康檢查**: 實現 Schema 感知健康端點
+4. **服務發現**: 配置跨服務 Schema 通信
+5. **監控**: 部署 Schema 特定指標收集
 
-### Microservices Deployment
-1. **Service Coordination**: Ensure contract compatibility between services
-2. **API Gateway**: Configure contract-aware request/response handling
-3. **Load Balancing**: Implement contract-aware health checks for load balancing
-4. **Cross-Service Communication**: Validate contract compliance in service mesh
-5. **Monitoring**: Track contract health across entire service ecosystem
+### 微服務部署
+1. **服務協調**: 確保服務間 Schema 兼容性
+2. **API 閘道**: 配置 Schema 請求/響應處理
+3. **負載均衡**: 實現健康檢查
+4. **跨服務通信**: 驗證 Schema 合規性
+5. **監控**: 追蹤整個服務生態系統的 Schema 健康
 
-## 📈 Deployment Success Metrics
+## 📈 部署成功指標
 
-### Performance Metrics
-- **JSON Serialization**: Maintain 8,536+ ops/s in production
-- **Cross-Service Latency**: Minimize contract serialization overhead
-- **Resource Utilization**: Optimize contract validation resource usage
-- **Error Rates**: Track contract validation failures and performance
+### 性能指標
+- **序列化性能**: 維持生產環境高效性能
+- **跨服務延遲**: 最小化序列化開銷
+- **資源利用**: 優化 Schema 驗證資源使用
+- **錯誤率**: 追蹤 Schema 驗證失敗和性能
 
-### Contract Health Metrics
-- **Deployment Success Rate**: Track deployments with contract validation
-- **Contract Adoption**: Monitor production contract usage (target: 75%)
-- **Performance Maintenance**: Ensure 6.7x advantage maintained in production
-- **Cross-Language Compatibility**: Track multi-language service integration success
+### Schema 健康指標
+- **部署成功率**: 追蹤 Schema 驗證的部署
+- **Schema 採用率**: 監控生產環境 Schema 使用
+- **性能維護**: 確保生產環境維持高效性能
+- **跨語言兼容性**: 追蹤多語言服務整合成功率
 
-## 🔧 Troubleshooting Integration
+## 🔧 故障排除整合
 
-For deployment issues related to contracts, refer to:
-- **[Troubleshooting Guides](../troubleshooting/README.md)** - Contract-related problem resolution
-- **[Performance Optimization Guide](../troubleshooting/PERFORMANCE_OPTIMIZATION_GUIDE.md)** - Production performance issues
-- **[Development Environment Troubleshooting](../troubleshooting/DEVELOPMENT_ENVIRONMENT_TROUBLESHOOTING.md)** - Environment setup issues
+部署相關問題請參考：
+- **[故障排除指南](../troubleshooting/README.md)** - Schema 相關問題解決
+- **[性能優化指南](../troubleshooting/PERFORMANCE_OPTIMIZATION_GUIDE.md)** - 生產性能問題
+- **[開發環境故障排除](../troubleshooting/DEVELOPMENT_ENVIRONMENT_TROUBLESHOOTING.md)** - 環境設置問題
 
 ---
 
 **Maintained by**: AIVA DevOps Team  
-**Last Updated**: November 2, 2025  
-**Deployment Focus**: Contract-aware production deployment and monitoring
+**Last Updated**: 2025-11-22  
+**Deployment Focus**: Schema 感知的生產部署與監控

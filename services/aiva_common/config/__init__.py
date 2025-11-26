@@ -1,33 +1,23 @@
 """
-AIVA 配置管理模組
+AIVA 配置管理模組 - v2.0 簡化版
 """
 
 from .unified_config import (
     AIConfig,
-    CacheConfig,
-    DatabaseConfig,
-    GraphDatabaseConfig,
-    MessageQueueConfig,
+    IntegrationConfig,
     PerformanceConfig,
     ScanConfig,
     SecurityConfig,
-    Settings,
     UnifiedSettings,
-    get_legacy_settings,
     get_settings,
 )
 
 __all__ = [
     "UnifiedSettings",
     "get_settings",
-    "Settings",
-    "get_legacy_settings",
-    "DatabaseConfig",
-    "MessageQueueConfig",
-    "CacheConfig",
-    "GraphDatabaseConfig",
     "SecurityConfig",
     "PerformanceConfig",
     "AIConfig",
     "ScanConfig",
+    "IntegrationConfig",
 ]

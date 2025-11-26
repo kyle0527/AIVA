@@ -1,18 +1,28 @@
 #!/usr/bin/env python3
 """
 測試目標生成器 - 用於多目標掃描測試
-將多個測試目標發送到 RabbitMQ 隊列
+
+⚠️ v2.0 架構更新：
+- 舊架構: 發送到 RabbitMQ 隊列
+- 新架構: 直接調用 command_handler 執行掃描
+
+使用方法:
+    python generate_test_targets.py --mode demo
+    python generate_test_targets.py --mode full
 """
 
-import json
-import os
-import time
-import pika
+import argparse
 from uuid import uuid4
 
-# RabbitMQ 配置
-RABBITMQ_URL = os.environ.get('RABBITMQ_URL', 'amqp://aiva:aiva_mq_password@localhost:5672/aiva')
-TASK_QUEUE = 'tasks.scan.sensitive_info'
+# 移除 RabbitMQ 依賴
+# from services.aiva_common.mq import get_broker
+
+# 新架構使用命令處理器
+from services.scan.command_handler import ScanCommandHandler
+from services.aiva_common.schemas import AICommand, CommandType
+from services.aiva_common.utils import get_logger
+
+logger = get_logger(__name__)
 
 # 測試目標配置
 TEST_TARGETS = [
@@ -124,125 +134,92 @@ TEST_TARGETS = [
 ]
 
 
-def create_rabbitmq_connection():
-    """建立 RabbitMQ 連接"""
-    max_retries = 10
-    retry_delay = 5
-    
-    for attempt in range(max_retries):
-        try:
-            print(f"🔗 嘗試連接 RabbitMQ (嘗試 {attempt + 1}/{max_retries})...")
-            parameters = pika.URLParameters(RABBITMQ_URL)
-            connection = pika.BlockingConnection(parameters)
-            channel = connection.channel()
-            
-            # 聲明隊列
-            channel.queue_declare(
-                queue=TASK_QUEUE,
-                durable=True,
-                arguments={'x-message-ttl': 3600000}  # 1 小時 TTL
-            )
-            
-            print("✅ RabbitMQ 連接成功!")
-            return connection, channel
-            
-        except Exception as e:
-            print(f"❌ 連接失敗: {e}")
-            if attempt < max_retries - 1:
-                print(f"⏳ {retry_delay} 秒後重試...")
-                time.sleep(retry_delay)
-            else:
-                raise Exception("無法連接到 RabbitMQ")
-
-
-def send_test_target(channel, target_config):
-    """發送單個測試目標到隊列"""
-    task_id = f"test_{uuid4().hex[:8]}"
-    
-    task_payload = {
-        "task_id": task_id,
-        "content": target_config["content"],
-        "source_url": target_config["url"],
-        "metadata": {
-            "name": target_config["name"],
-            "expected_findings": target_config["expected_findings"],
-            "timestamp": time.time()
-        }
-    }
-    
-    message = json.dumps(task_payload, ensure_ascii=False)
-    
-    channel.basic_publish(
-        exchange='',
-        routing_key=TASK_QUEUE,
-        body=message.encode('utf-8'),
-        properties=pika.BasicProperties(
-            delivery_mode=2,  # 持久化
-            content_type='application/json',
-        )
-    )
-    
-    return task_id
-
-
-def main():
+async def main():
+    """主函數 - 使用 command_handler 執行掃描"""
     print("=" * 80)
-    print("🎯 AIVA 多目標掃描測試生成器")
+    print("🎯 AIVA 多目標掃描測試生成器 (v2.0)")
     print("=" * 80)
     
     try:
-        # 建立連接
-        connection, channel = create_rabbitmq_connection()
+        # 初始化命令處理器
+        print("\n📋 初始化掃描命令處理器...")
+        handler = ScanCommandHandler()
         
-        print(f"\n📋 準備發送 {len(TEST_TARGETS)} 個測試目標...\n")
+        print(f"\n📋 準備執行 {len(TEST_TARGETS)} 個測試目標掃描...\n")
         
-        # 發送所有測試目標
-        sent_tasks = []
+        # 執行所有測試目標
+        scan_results = []
         for i, target in enumerate(TEST_TARGETS, 1):
-            task_id = send_test_target(channel, target)
-            sent_tasks.append({
-                "task_id": task_id,
-                "name": target["name"],
-                "url": target["url"],
-                "expected": target["expected_findings"]
-            })
+            scan_id = f"test_{uuid4().hex[:8]}"
             
-            print(f"✅ [{i}/{len(TEST_TARGETS)}] {target['name']}")
-            print(f"   Task ID: {task_id}")
+            # 構建命令
+            command = AICommand(
+                command_id=f"cmd_{scan_id}",
+                command_type=CommandType.SCAN_PHASE0,  # Phase 0 快速掃描
+                target_module="scan",
+                trace_id=scan_id,
+                session_id=None,
+                parent_command_id=None,
+                callback_url=None,
+                payload={
+                    "scan_id": scan_id,
+                    "targets": [target["url"]],
+                    "max_depth": 2,
+                    "timeout": 60,
+                }
+            )
+            
+            print(f"🔍 [{i}/{len(TEST_TARGETS)}] {target['name']}")
+            print(f"   Scan ID: {scan_id}")
             print(f"   URL: {target['url']}")
             print(f"   預期發現: {', '.join(target['expected_findings'])}")
-            print()
             
-            time.sleep(0.5)  # 避免過快發送
-        
-        # 關閉連接
-        connection.close()
+            # 執行掃描
+            result = await handler.handle_command(command)
+            
+            if result.success:
+                print(f"   ✅ 掃描完成 ({result.execution_time:.2f}s)")
+                scan_results.append({
+                    "scan_id": scan_id,
+                    "name": target["name"],
+                    "url": target["url"],
+                    "expected": target["expected_findings"],
+                    "status": "success",
+                    "execution_time": result.execution_time,
+                    "result": result.result
+                })
+            else:
+                print(f"   ❌ 掃描失敗: {result.error}")
+                scan_results.append({
+                    "scan_id": scan_id,
+                    "name": target["name"],
+                    "url": target["url"],
+                    "status": "failed",
+                    "error": result.error
+                })
+            print()
         
         # 輸出總結
         print("=" * 80)
-        print("✅ 所有測試目標已成功發送!")
+        print("✅ 所有測試目標掃描完成!")
         print("=" * 80)
         print(f"\n📊 總結:")
-        print(f"   - 已發送任務數: {len(sent_tasks)}")
-        print(f"   - 目標隊列: {TASK_QUEUE}")
-        print(f"   - RabbitMQ 管理界面: http://localhost:15672")
-        print(f"   - 帳號/密碼: aiva / aiva_mq_password")
+        print(f"   - 已完成掃描: {len(scan_results)}")
+        print(f"   - 成功: {sum(1 for r in scan_results if r.get('status') == 'success')}")
+        print(f"   - 失敗: {sum(1 for r in scan_results if r.get('status') == 'failed')}")
         
-        print("\n🔍 監控建議:")
-        print("   1. 查看 RabbitMQ 管理界面確認隊列狀態")
-        print("   2. 使用 'docker logs' 查看各引擎處理日誌:")
-        print("      docker logs -f aiva-rust-fast-discovery")
-        print("      docker logs -f aiva-rust-deep-analysis")
-        print("      docker logs -f aiva-rust-focused-verification")
-        print("   3. 查看統計指標文件:")
-        print("      docker exec aiva-rust-fast-discovery cat /var/log/aiva/metrics/rust_fast_discovery.jsonl")
+        print("\n🔍 v2.0 架構說明:")
+        print("   - 使用同步命令處理器 (command_handler.py)")
+        print("   - 無需 RabbitMQ，直接調用引擎")
+        print("   - 數據合約直接通信")
         
         print("\n" + "=" * 80)
         
         # 保存任務清單
-        with open('/tmp/sent_tasks.json', 'w', encoding='utf-8') as f:
-            json.dump(sent_tasks, f, indent=2, ensure_ascii=False)
-        print("💾 任務清單已保存到: /tmp/sent_tasks.json")
+        import json
+        with open('/tmp/scan_results.json', 'w', encoding='utf-8') as f:
+            json.dump(scan_results, f, indent=2, ensure_ascii=False)
+        print("💾 掃描結果已保存到: /tmp/scan_results.json")
         
     except Exception as e:
         print(f"\n❌ 錯誤: {e}")
@@ -252,4 +229,6 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    import asyncio
+    asyncio.run(main())
+

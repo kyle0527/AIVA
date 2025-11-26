@@ -13,7 +13,6 @@ AIVA 企業級AI組件管理器
 
 import os
 import sys
-import json
 import time
 import signal
 import locale
@@ -22,7 +21,7 @@ import threading
 import subprocess
 from pathlib import Path
 from datetime import datetime
-from typing import Dict, List, Optional, Any
+from typing import Dict, List, Optional
 from dataclasses import dataclass
 from enum import Enum
 
@@ -100,34 +99,21 @@ class EnterpriseAIManager:
         self.logger = logging.getLogger("EnterpriseAIManager")
     
     def setup_complete_environment(self):
-        """設置完整的環境變數"""
-        # 基礎環境設置
+        """設置完整的環境變數（v2.0 簡化版）"""
+        # v2.0 架構：移除 RabbitMQ、PostgreSQL 等外部依賴
+        # 只保留必要的編碼和路徑配置
         env_vars = {
             'ENVIRONMENT': 'production', 
             'LOG_LEVEL': 'INFO',
-            
-            # 研發階段直接使用預設值
-            'DATABASE_URL': 'postgresql://postgres:postgres@localhost:5432/aiva_db',
-            'RABBITMQ_URL': 'amqp://guest:guest@localhost:5672/',
-            
-            # Python路徑
             'PYTHONPATH': str(self.project_root),
             'PYTHONIOENCODING': self.system_encoding,
         }
-        
-        # 構建RabbitMQ URL
-        rabbitmq_user = env_vars['RABBITMQ_USER']
-        rabbitmq_pass = env_vars['RABBITMQ_PASSWORD'] 
-        rabbitmq_host = env_vars['RABBITMQ_HOST']
-        rabbitmq_port = env_vars['RABBITMQ_PORT']
-        
-        env_vars['RABBITMQ_URL'] = f"amqp://{rabbitmq_user}:{rabbitmq_pass}@{rabbitmq_host}:{rabbitmq_port}/"
         
         # 設置環境變數
         for key, value in env_vars.items():
             os.environ[key] = value
         
-        self.logger.info("✅ 完整環境變數配置完成")
+        self.logger.info("✅ 完整環境變數配置完成（v2.0 簡化版）")
     
     def setup_signal_handlers(self):
         """設置信號處理器"""
@@ -162,7 +148,7 @@ class EnterpriseAIManager:
             self.logger.error(f"❌ 創建進程失敗: {e}")
             return None
     
-    def start_component(self, name: str, script_path: str, args: List[str] = None) -> bool:
+    def start_component(self, name: str, script_path: str, args: list | None = None) -> bool:
         """啟動組件"""
         if args is None:
             args = []
@@ -212,7 +198,7 @@ class EnterpriseAIManager:
         else:
             # 獲取錯誤資訊（使用編碼兼容方法）
             try:
-                stdout, stderr = process.communicate(timeout=1)
+                _, stderr = process.communicate(timeout=1)
                 error_msg = f"啟動失敗: {stderr[:200]}..." if stderr else "進程意外退出"
             except:
                 error_msg = "啟動失敗且無法獲取錯誤資訊"
@@ -302,20 +288,9 @@ class EnterpriseAIManager:
             ("core_service", "aiva_launcher.py", ["--mode", "core_only"]),
         ]
         
-        # AI組件需要特殊處理（因為有依賴問題）
-        ai_components = [
-            # 這些組件需要修復後才能啟動
-            # ("autonomous_testing", "ai_autonomous_testing_loop.py", []),
-            # ("system_explorer", "ai_system_explorer_v3.py", ["--continuous"]), 
-            # ("functionality_validator", "ai_functionality_validator.py", [])
-        ]
-        
         # 先啟動基本組件
         for name, script, args in basic_components:
             self.start_component(name, script, args)
-        
-        # AI組件需要等基本服務啟動後再嘗試
-        # self.logger.info("⏳ AI組件需要修復依賴問題後才能啟動")
     
     def monitor_components(self):
         """監控組件狀態"""
@@ -369,7 +344,7 @@ class EnterpriseAIManager:
         """停止所有組件"""
         self.logger.info("🛑 停止所有組件...")
         
-        for name in list(self.components.keys()):
+        for name in self.components.keys():
             self.stop_component(name)
         
         self.logger.info("✅ 所有組件已停止")

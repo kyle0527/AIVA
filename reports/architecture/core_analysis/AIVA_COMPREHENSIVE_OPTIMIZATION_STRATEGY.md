@@ -668,16 +668,13 @@ class UnifiedStorageService:
 
 #### **步驟 1: 環境準備 (30分鐘)**
 ```bash
-# 1. 激活虛擬環境
+# 1. 安裝新依賴
 cd "c:\D\fold7\AIVA-git"
-& .\.venv\Scripts\Activate.ps1
-
-# 2. 安裝新依賴
 pip install sentence-transformers==2.2.2
 pip install scikit-learn==1.3.0
 pip install lru-dict==1.2.0
 
-# 3. 創建備份分支
+# 2. 創建備份分支
 git checkout -b feature/ai-semantic-upgrade
 git add .
 git commit -m "備份：AI 語義升級前的狀態"

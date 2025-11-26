@@ -1,7 +1,7 @@
-# AIVA Schema 統一指南 ✅ 11/10驗證
+# AIVA Schema 統一指南
 
-> **版本**: 2.0
-> **最後更新**: 2025-10-16  
+> **架構版本**: v2.0 (數據合約驅動)
+> **最後更新**: 2025-11-22  
 > **狀態**: ✅ 統一完成
 > **總計**: 114 個 Schema
 
@@ -63,7 +63,9 @@
 ### 技術標準
 
 - **Python**: Pydantic v2.12.0+
-- **TypeScript**: v5.3.3+
+- **TypeScript**: TypeScript 5.3.3+
+- **Go**: Go 1.21+
+- **Rust**: Rust 1.70+
 - **驗證**: 嚴格類型檢查
 - **序列化**: JSON 兼容性
 - **文檔**: 完整的 docstring
@@ -362,6 +364,28 @@ def test_schema_serialization():
 
 ---
 
+## 🔗 相關資源
+
+### 架構指南
+- 📖 [Schema 生成指南](./SCHEMA_GENERATION_GUIDE.md) - 自動生成 Schema
+- 📖 [Schema 合規指南](./SCHEMA_COMPLIANCE_GUIDE.md) - 驗證和合規檢查
+- 📖 [跨語言 Schema 指南](./CROSS_LANGUAGE_SCHEMA_GUIDE.md) - 多語言 Schema 統一
+- 📖 [跨語言兼容性指南](./CROSS_LANGUAGE_COMPATIBILITY_GUIDE.md) - 兼容性問題解決
+
+### 開發指南
+- 📖 [Schema 導入指南](../development/SCHEMA_IMPORT_GUIDE.md) - Schema 使用方法
+- 📖 [API 驗證指南](../development/API_VERIFICATION_GUIDE.md) - API 測試
+
+### 使用者手冊
+- 📚 [AIVA 使用者手冊](../../docs/user_guides/00_general/AIVA_USER_MANUAL.md)
+- 📚 [Core 模組手冊](../../docs/user_guides/01_core/AIVA_CORE_使用者手冊.md)
+
+### 服務文檔
+- 🔧 [Common 模組](../../services/aiva_common/README.md) - Schema 定義
+- 🔧 [Integration 模組](../../services/integration/README.md) - 整合 Schema
+
+---
+
 **完成狀態**: ✅ 100% 完成  
 **維護者**: AIVA Schema Team  
-**下次檢查**: 2025-11-16
+**最後更新**: 2025-11-22

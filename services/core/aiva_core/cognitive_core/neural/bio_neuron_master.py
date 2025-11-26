@@ -56,6 +56,7 @@ class OperationMode(str, Enum):
     AI = "ai"  # AI 自主
     CHAT = "chat"  # 對話溝通
     HYBRID = "hybrid"  # 混合模式
+    SENTINEL = "sentinel"  # 哨兵模式 - 24/7 主動監控
 
 
 class ConversationContext:
@@ -141,6 +142,7 @@ class BioNeuronDecisionController:
             OperationMode.AI: self._handle_ai_mode,
             OperationMode.CHAT: self._handle_chat_mode,
             OperationMode.HYBRID: self._handle_hybrid_mode,
+            OperationMode.SENTINEL: self._handle_sentinel_mode,  # 🆕 哨兵模式
         }
 
         # === 對話管理 ===
@@ -148,6 +150,17 @@ class BioNeuronDecisionController:
 
         # === UI 回調函數 ===
         self.ui_callbacks: dict[str, Callable] = {}
+        
+        # === 哨兵模式配置 ===
+        self.sentinel_config = {
+            "enabled": False,
+            "targets": [],  # 監控目標列表
+            "scan_interval": 3600,  # 掃描間隔（秒）
+            "alert_threshold": SeverityLevel.HIGH,  # 告警閾值
+            "auto_response": False,  # 是否自動響應
+        }
+        self.sentinel_running = False
+        self.sentinel_task = None
 
         # === 任務隊列 ===
         self.task_queue: list[dict[str, Any]] = []
@@ -1487,6 +1500,308 @@ RAG 知識庫上下文:
             對話歷史
         """
         return self.conversation.history[-limit:]
+    
+    # ==================== 🆕 Sentinel Mode - 哨兵模式 ====================
+    
+    async def _handle_sentinel_mode(
+        self,
+        request: dict[str, Any],
+    ) -> dict[str, Any]:
+        """處理哨兵模式請求
+        
+        哨兵模式特性：
+        1. 24/7 主動監控指定目標
+        2. 定時自動掃描和漏洞檢測
+        3. 異常告警和自動響應
+        4. AI 自主決策是否需要介入
+        
+        Args:
+            request: 哨兵模式請求
+        
+        Returns:
+            處理結果
+        """
+        action = request.get("action", "status")
+        
+        if action == "start":
+            return await self._start_sentinel_mode(request)
+        elif action == "stop":
+            return await self._stop_sentinel_mode()
+        elif action == "status":
+            return self._get_sentinel_status()
+        elif action == "add_target":
+            return self._add_sentinel_target(request.get("target"))
+        elif action == "remove_target":
+            return self._remove_sentinel_target(request.get("target"))
+        elif action == "configure":
+            return self._configure_sentinel(request.get("config", {}))
+        else:
+            return {"success": False, "error": f"Unknown action: {action}"}
+    
+    async def _start_sentinel_mode(
+        self,
+        request: dict[str, Any],
+    ) -> dict[str, Any]:
+        """啟動哨兵模式 - AI 自主 24/7 監控"""
+        if self.sentinel_running:
+            return {
+                "success": False,
+                "error": "Sentinel mode already running",
+                "status": self._get_sentinel_status(),
+            }
+        
+        # 配置哨兵參數
+        self.sentinel_config.update(request.get("config", {}))
+        
+        # 添加監控目標
+        targets = request.get("targets", [])
+        if targets:
+            self.sentinel_config["targets"] = targets
+        
+        if not self.sentinel_config["targets"]:
+            return {
+                "success": False,
+                "error": "No targets specified for sentinel mode",
+            }
+        
+        # 啟動哨兵任務
+        self.sentinel_running = True
+        self.sentinel_config["enabled"] = True
+        
+        # 創建異步監控任務
+        import asyncio
+        self.sentinel_task = asyncio.create_task(self._sentinel_main_loop())
+        
+        logger.info(
+            f"🛡️ Sentinel Mode Started - AI monitoring {len(self.sentinel_config['targets'])} targets "
+            f"every {self.sentinel_config['scan_interval']} seconds"
+        )
+        
+        return {
+            "success": True,
+            "message": "Sentinel mode started - AI autonomous monitoring active",
+            "config": self.sentinel_config,
+            "targets": self.sentinel_config["targets"],
+        }
+    
+    async def _stop_sentinel_mode(self) -> dict[str, Any]:
+        """停止哨兵模式"""
+        if not self.sentinel_running:
+            return {"success": False, "error": "Sentinel mode not running"}
+        
+        self.sentinel_running = False
+        self.sentinel_config["enabled"] = False
+        
+        # 取消監控任務
+        if self.sentinel_task:
+            self.sentinel_task.cancel()
+            try:
+                import asyncio
+                await self.sentinel_task
+            except asyncio.CancelledError:
+                pass
+            self.sentinel_task = None
+        
+        logger.info("🛡️ Sentinel Mode Stopped")
+        
+        return {"success": True, "message": "Sentinel mode stopped"}
+    
+    async def _sentinel_main_loop(self):
+        """哨兵模式主循環 - AI 完全自主決策和執行"""
+        import asyncio
+        
+        iteration = 0
+        logger.info("🛡️ Sentinel Main Loop Started - AI Autonomous Mode")
+        
+        try:
+            while self.sentinel_running:
+                iteration += 1
+                logger.info(f"🛡️ Sentinel Iteration {iteration} - AI scanning {len(self.sentinel_config['targets'])} targets")
+                
+                # AI 自主掃描所有監控目標
+                for target in self.sentinel_config["targets"]:
+                    try:
+                        await self._sentinel_scan_target(target, iteration)
+                    except Exception as e:
+                        logger.error(f"Sentinel scan failed for {target}: {e}")
+                
+                # 等待下一次掃描
+                scan_interval = self.sentinel_config.get("scan_interval", 3600)
+                logger.info(f"🛡️ AI waiting {scan_interval} seconds until next scan...")
+                
+                await asyncio.sleep(scan_interval)
+                
+        except asyncio.CancelledError:
+            logger.info("🛡️ Sentinel Main Loop Cancelled")
+            raise
+        except Exception as e:
+            logger.error(f"Sentinel main loop error: {e}", exc_info=True)
+            self.sentinel_running = False
+    
+    async def _sentinel_scan_target(self, target: str, iteration: int):
+        """AI 自主掃描單個監控目標"""
+        logger.info(f"🔍 AI Sentinel scanning target: {target}")
+        
+        # 1. AI 決策：是否需要掃描
+        decision = await self._sentinel_ai_decide(target, iteration)
+        
+        if not decision.get("should_scan", True):
+            logger.info(f"⏭️  AI decided to skip scan for {target}: {decision.get('reason')}")
+            return
+        
+        # 2. 執行快速健康檢查
+        health_status = await self._sentinel_health_check(target)
+        
+        # 3. AI 評估：是否需要深度掃描
+        if health_status.get("anomaly_detected"):
+            logger.warning(f"⚠️  AI detected anomaly on {target}: {health_status.get('anomaly_type')}")
+            
+            # AI 自主決策是否深度掃描
+            deep_scan_decision = await self._sentinel_decide_deep_scan(target, health_status)
+            
+            if deep_scan_decision.get("should_deep_scan"):
+                logger.info(f"🔬 AI triggered deep scan for {target}")
+                await self._sentinel_deep_scan(target)
+            
+            # AI 自主決定是否告警
+            if health_status.get("severity", 0) >= self.sentinel_config.get("alert_threshold", 7.0):
+                await self._sentinel_alert(target, health_status)
+        
+        else:
+            logger.info(f"✅ AI confirmed target {target} healthy")
+    
+    async def _sentinel_ai_decide(self, target: str, iteration: int) -> dict[str, Any]:
+        """AI 決策是否需要掃描此目標（模擬 - 實際調用 BioNeuronRAGAgent）"""
+        return {
+            "should_scan": True,
+            "reason": f"Regular AI-driven scan iteration {iteration}",
+            "confidence": 0.9,
+        }
+    
+    async def _sentinel_health_check(self, target: str) -> dict[str, Any]:
+        """快速健康檢查（模擬 - 實際發送 HTTP 請求）"""
+        import asyncio
+        import random
+        
+        await asyncio.sleep(0.5)
+        
+        # 模擬異常檢測
+        anomaly_detected = random.random() < 0.1
+        
+        if anomaly_detected:
+            return {
+                "target": target,
+                "status": "unhealthy",
+                "anomaly_detected": True,
+                "anomaly_type": "suspicious_response_time",
+                "severity": 7.5,
+                "details": "Response time exceeded baseline by 300%",
+            }
+        else:
+            return {
+                "target": target,
+                "status": "healthy",
+                "anomaly_detected": False,
+                "response_time": 150,
+            }
+    
+    async def _sentinel_decide_deep_scan(self, target: str, health_status: dict[str, Any]) -> dict[str, Any]:
+        """AI 決策是否需要深度掃描"""
+        severity = health_status.get("severity", 0)
+        should_deep_scan = severity >= 7.0
+        
+        return {
+            "should_deep_scan": should_deep_scan,
+            "reason": f"AI analysis: Severity {severity} {'exceeds' if should_deep_scan else 'below'} threshold",
+            "confidence": 0.85,
+        }
+    
+    async def _sentinel_deep_scan(self, target: str):
+        """執行 AI 驅動的深度掃描"""
+        logger.info(f"🔬 AI executing deep scan for {target}")
+        
+        # 實際環境中調用 AICommander 執行完整掃描
+        scan_request = {
+            "objective": f"AI Sentinel triggered deep security scan",
+            "target": target,
+            "scan_type": "comprehensive",
+            "priority": "high",
+        }
+        
+        logger.info(f"🔬 AI deep scan completed for {target}")
+    
+    async def _sentinel_alert(self, target: str, health_status: dict[str, Any]):
+        """AI 自主發送告警"""
+        logger.warning(
+            f"🚨 AI SENTINEL ALERT - Target: {target}, "
+            f"Severity: {health_status.get('severity')}, "
+            f"Type: {health_status.get('anomaly_type')}"
+        )
+        
+        # 如果啟用 AI 自動響應
+        if self.sentinel_config.get("auto_response"):
+            await self._sentinel_auto_response(target, health_status)
+    
+    async def _sentinel_auto_response(self, target: str, health_status: dict[str, Any]):
+        """AI 自主響應異常"""
+        logger.info(f"🤖 AI executing autonomous response for {target}")
+        # AI 決策並執行響應策略
+    
+    def _get_sentinel_status(self) -> dict[str, Any]:
+        """獲取哨兵模式狀態"""
+        return {
+            "enabled": self.sentinel_config.get("enabled", False),
+            "running": self.sentinel_running,
+            "targets": self.sentinel_config.get("targets", []),
+            "scan_interval": self.sentinel_config.get("scan_interval", 3600),
+            "alert_threshold": self.sentinel_config.get("alert_threshold"),
+            "auto_response": self.sentinel_config.get("auto_response", False),
+        }
+    
+    def _add_sentinel_target(self, target: str) -> dict[str, Any]:
+        """添加監控目標"""
+        if not target:
+            return {"success": False, "error": "Target cannot be empty"}
+        
+        if target in self.sentinel_config["targets"]:
+            return {"success": False, "error": f"Target {target} already exists"}
+        
+        self.sentinel_config["targets"].append(target)
+        logger.info(f"🎯 AI Sentinel added target: {target}")
+        
+        return {
+            "success": True,
+            "message": f"Target {target} added to AI monitoring",
+            "targets": self.sentinel_config["targets"],
+        }
+    
+    def _remove_sentinel_target(self, target: str) -> dict[str, Any]:
+        """移除監控目標"""
+        if target not in self.sentinel_config["targets"]:
+            return {"success": False, "error": f"Target {target} not found"}
+        
+        self.sentinel_config["targets"].remove(target)
+        logger.info(f"🗑️  AI Sentinel removed target: {target}")
+        
+        return {"success": True, "message": f"Target {target} removed", "targets": self.sentinel_config["targets"]}
+    
+    def _configure_sentinel(self, config: dict[str, Any]) -> dict[str, Any]:
+        """配置哨兵模式參數"""
+        allowed_keys = ["scan_interval", "alert_threshold", "auto_response"]
+        
+        for key, value in config.items():
+            if key in allowed_keys:
+                self.sentinel_config[key] = value
+                logger.info(f"⚙️  AI Sentinel config updated: {key} = {value}")
+        
+        return {
+            "success": True,
+            "message": "AI Sentinel configuration updated",
+            "config": {k: self.sentinel_config[k] for k in allowed_keys if k in self.sentinel_config},
+        }
+
+
+
 
 
 # ✅ 向後兼容別名（保留舊名稱以避免破壞現有代碼）

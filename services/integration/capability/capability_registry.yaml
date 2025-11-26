@@ -82,3 +82,166 @@ supported_languages:
   - "go"
   - "rust"
   - "typescript"
+
+# ===== 新增功能模組能力註冊 =====
+# 以下為 7 個新整合的 HackingTool 功能模組
+# 注意: wireless_attack 模組已移除（移至技術儲備）
+
+capabilities:
+  # 1. 字典生成器模組
+  - id: "wordlist_generator"
+    name: "Wordlist Generator"
+    module_path: "services.features.function_wordlist_generator"
+    manager_class: "WordlistGeneratorManager"
+    version: "1.0.0"
+    risk_level: "L1"  # LOW
+    category: "utility"
+    enabled: true
+    requires_authorization: false
+    tags: ["wordlist", "password", "dictionary", "brute_force", "cupp"]
+    capabilities:
+      - "combination_generation"
+      - "cupp_profile_generation"
+      - "wordlist_merge"
+      - "wordlist_analysis"
+    required_tools: ["cupp"]
+    metadata:
+      tools: ["cupp"]
+      strategies: ["combination", "profile", "rule_based", "hybrid"]
+      max_words: 10000000
+
+  # 2. 數位鑑識模組
+  - id: "forensic"
+    name: "Digital Forensic Tools"
+    module_path: "services.features.function_forensic"
+    manager_class: "ForensicManager"
+    version: "1.0.0"
+    risk_level: "L1"  # LOW
+    category: "analysis"
+    enabled: true
+    requires_authorization: false
+    tags: ["forensic", "evidence", "analysis", "timeline", "autopsy"]
+    capabilities:
+      - "case_management"
+      - "evidence_acquisition"
+      - "disk_image_analysis"
+      - "memory_dump_analysis"
+      - "timeline_generation"
+    required_tools: ["autopsy", "volatility", "bulk_extractor"]
+    metadata:
+      tools: ["autopsy", "volatility", "bulk_extractor"]
+      supported_formats: ["raw", "E01", "AFF", "vmdk"]
+      analysis_types: ["disk", "memory", "network", "file_carving"]
+
+  # 4. 隱寫術模組
+  - id: "steganography"
+    name: "Steganography Tools"
+    module_path: "services.features.function_steganography"
+    manager_class: "SteganographyManager"
+    version: "1.0.0"
+    risk_level: "L1"  # MEDIUM
+    category: "utility"
+    enabled: true
+    requires_authorization: false
+    tags: ["steganography", "hiding", "extraction", "detection", "steghide"]
+    capabilities:
+      - "data_embed"
+      - "data_extract"
+      - "hidden_data_detection"
+      - "capacity_calculation"
+    required_tools: ["steghide", "stegcracker", "stegdetect"]
+    metadata:
+      tools: ["steghide", "stegcracker"]
+      supported_carriers: ["image", "audio", "video", "text"]
+      methods: ["LSB", "DCT", "DWT", "spread_spectrum"]
+
+  # 4. 漏洞利用框架模組
+  - id: "exploit_framework"
+    name: "Exploit Framework"
+    module_path: "services.features.function_exploit_framework"
+    manager_class: "ExploitFrameworkManager"
+    version: "1.0.0"
+    risk_level: "L2"  # CRITICAL
+    category: "attack"
+    enabled: true
+    requires_authorization: true
+    tags: ["exploit", "vulnerability", "metasploit", "attack", "routersploit"]
+    capabilities:
+      - "exploit_search"
+      - "exploit_execution"
+      - "vulnerability_scan"
+      - "vulnerability_verification"
+    required_tools: ["metasploit", "routersploit", "commix"]
+    metadata:
+      tools: ["metasploit", "routersploit", "commix"]
+      exploit_types: ["remote", "local", "web", "network"]
+      platforms: ["linux", "windows", "macos", "router", "iot"]
+
+  # 5. 逆向工程模組
+  - id: "reverse_engineering"
+    name: "Reverse Engineering Tools"
+    module_path: "services.features.function_reverse_engineering"
+    manager_class: "ReverseEngineeringManager"
+    version: "1.0.0"
+    risk_level: "L1"  # LOW
+    category: "analysis"
+    enabled: true
+    requires_authorization: false
+    tags: ["reverse_engineering", "decompile", "analysis", "apk", "jadx"]
+    capabilities:
+      - "binary_analysis"
+      - "apk_analysis"
+      - "apk_decompile"
+      - "malware_detection"
+      - "string_extraction"
+    required_tools: ["jadx", "androguard", "ghidra", "radare2"]
+    metadata:
+      tools: ["jadx", "androguard"]
+      supported_formats: ["APK", "DEX", "ELF", "PE", "Mach-O"]
+      analysis_modes: ["static", "dynamic", "hybrid"]
+
+  # 6. Payload 生成器模組
+  - id: "payload_generator"
+    name: "Payload Generator"
+    module_path: "services.features.function_payload_generator"
+    manager_class: "PayloadGeneratorManager"
+    version: "1.0.0"
+    risk_level: "L2"  # CRITICAL
+    category: "attack"
+    enabled: true
+    requires_authorization: true
+    tags: ["payload", "shellcode", "msfvenom", "webshell", "meterpreter"]
+    capabilities:
+      - "reverse_shell_generation"
+      - "web_shell_generation"
+      - "meterpreter_generation"
+      - "poc_generation"
+      - "payload_obfuscation"
+    required_tools: ["msfvenom", "metasploit"]
+    metadata:
+      tools: ["msfvenom", "metasploit"]
+      languages: ["bash", "python", "powershell", "php", "ruby", "perl", "java", "c"]
+      platforms: ["linux", "windows", "macos", "android", "web"]
+
+  # 7. 社交工程模組
+  - id: "social_engineering"
+    name: "Social Engineering Tools"
+    module_path: "services.features.function_social_engineering"
+    manager_class: "SocialEngineeringManager"
+    version: "1.0.0"
+    risk_level: "L2"  # HIGH
+    category: "attack"
+    enabled: true
+    requires_authorization: true
+    tags: ["phishing", "social_engineering", "osint", "credential", "setoolkit"]
+    capabilities:
+      - "phishing_campaign"
+      - "credential_harvesting"
+      - "osint_collection"
+      - "campaign_analytics"
+      - "email_spoofing"
+    required_tools: ["setoolkit", "gophish", "evilginx2"]
+    metadata:
+      tools: ["setoolkit", "gophish", "evilginx2"]
+      phishing_types: ["email", "spear", "smishing", "vishing"]
+      platforms: ["office365", "google", "github", "linkedin"]

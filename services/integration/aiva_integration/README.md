@@ -300,10 +300,6 @@ fixes = await remediation.suggest_remediation({
 # 確保在 services/integration 目錄
 cd services/integration
 
-# 激活虛擬環境
-source .venv/bin/activate  # Linux/Mac
-# .venv\Scripts\activate     # Windows
-
 # 安裝依賴
 pip install -r requirements.txt
 ```

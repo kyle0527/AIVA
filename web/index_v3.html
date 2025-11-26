@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AIVA v3.0 - AI 自主安全平台</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        :root {
+            --aiva-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --aiva-primary: #667eea;
+            --aiva-secondary: #764ba2;
+            --aiva-success: #10b981;
+            --aiva-warning: #f59e0b;
+            --aiva-danger: #ef4444;
+            --aiva-info: #3b82f6;
+        }
+
+        body {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            min-height: 100vh;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            color: #e2e8f0;
+        }
+
+        /* 導航欄 */
+        .navbar-custom {
+            background: rgba(26, 26, 46, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(102, 126, 234, 0.3);
+        }
+
+        .navbar-brand {
+            font-weight: 700;
+            font-size: 1.5rem;
+            background: var(--aiva-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* 儀表板卡片 */
+        .dashboard-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            transition: all 0.3s ease;
+            overflow: hidden;
+        }
+
+        .dashboard-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+            border-color: var(--aiva-primary);
+        }
+
+        /* 統計卡片 */
+        .stat-card {
+            background: var(--aiva-gradient);
+            border-radius: 16px;
+            padding: 1.5rem;
+            color: white;
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: scale(1.05);
+        }
+
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin: 0.5rem 0;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        /* Sentinel Mode 狀態 */
+        .sentinel-status {
+            background: rgba(16, 185, 129, 0.1);
+            border: 2px solid var(--aiva-success);
+            border-radius: 12px;
+            padding: 1.5rem;
+        }
+
+        .sentinel-status.inactive {
+            background: rgba(148, 163, 184, 0.1);
+            border-color: #94a3b8;
+        }
+
+        .sentinel-pulse {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: var(--aiva-success);
+            animation: pulse 2s infinite;
+            display: inline-block;
+            margin-right: 0.5rem;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+
+        /* 業務邏輯攻擊模組 */
+        .bizlogic-module {
+            background: rgba(59, 130, 246, 0.1);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            border-radius: 12px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .bizlogic-module:hover {
+            background: rgba(59, 130, 246, 0.2);
+            border-color: var(--aiva-info);
+        }
+
+        /* 按鈕樣式 */
+        .btn-aiva {
+            background: var(--aiva-gradient);
+            border: none;
+            color: white;
+            padding: 0.75rem 2rem;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .btn-aiva:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.4);
+            color: white;
+        }
+
+        .btn-sentinel {
+            background: linear-gradient(135deg, var(--aiva-success) 0%, #059669 100%);
+        }
+
+        /* 模式切換 */
+        .mode-selector {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 1rem;
+            display: flex;
+            gap: 1rem;
+        }
+
+        .mode-btn {
+            flex: 1;
+            padding: 1rem;
+            border: 2px solid transparent;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.05);
+            color: #94a3b8;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .mode-btn.active {
+            border-color: var(--aiva-primary);
+            background: rgba(102, 126, 234, 0.2);
+            color: white;
+        }
+
+        .mode-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        /* 日誌面板 */
+        .log-panel {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 1rem;
+            max-height: 400px;
+            overflow-y: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 0.85rem;
+        }
+
+        .log-entry {
+            padding: 0.5rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .log-entry.success { color: var(--aiva-success); }
+        .log-entry.warning { color: var(--aiva-warning); }
+        .log-entry.error { color: var(--aiva-danger); }
+        .log-entry.info { color: var(--aiva-info); }
+
+        /* 進度條 */
+        .progress-aiva {
+            height: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-bar-aiva {
+            height: 100%;
+            background: var(--aiva-gradient);
+            transition: width 0.5s ease;
+        }
+
+        /* 標籤 */
+        .badge-aiva {
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 0.85rem;
+        }
+
+        /* 響應式 */
+        @media (max-width: 768px) {
+            .mode-selector {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 導航欄 -->
+    <nav class="navbar navbar-expand-lg navbar-dark navbar-custom sticky-top">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">
+                <i class="bi bi-shield-shaded"></i>
+                AIVA v3.0
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#dashboard">
+                            <i class="bi bi-speedometer2"></i> 儀表板
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#sentinel">
+                            <i class="bi bi-broadcast"></i> Sentinel 模式
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#bizlogic">
+                            <i class="bi bi-bug"></i> 業務邏輯
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#learning">
+                            <i class="bi bi-cpu"></i> AI 學習
+                        </a>
+                    </li>
+                </ul>
+                <div class="d-flex align-items-center">
+                    <span class="badge bg-success me-3">
+                        <i class="bi bi-circle-fill"></i> 系統運行中
+                    </span>
+                    <button class="btn btn-outline-light btn-sm">
+                        <i class="bi bi-person-circle"></i> Admin
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container-fluid mt-4">
+        <!-- 核心統計 -->
+        <div class="row mb-4">
+            <div class="col-md-3 mb-3">
+                <div class="stat-card">
+                    <i class="bi bi-broadcast-pin" style="font-size: 2rem;"></i>
+                    <div class="stat-value" id="sentinel-uptime">24/7</div>
+                    <div class="stat-label">Sentinel 模式</div>
+                </div>
+            </div>
+            <div class="col-md-3 mb-3">
+                <div class="stat-card" style="background: linear-gradient(135deg, #3b82f6, #2563eb);">
+                    <i class="bi bi-bug-fill" style="font-size: 2rem;"></i>
+                    <div class="stat-value" id="bizlogic-types">8</div>
+                    <div class="stat-label">業務邏輯攻擊類型</div>
+                </div>
+            </div>
+            <div class="col-md-3 mb-3">
+                <div class="stat-card" style="background: linear-gradient(135deg, #10b981, #059669);">
+                    <i class="bi bi-graph-up-arrow" style="font-size: 2rem;"></i>
+                    <div class="stat-value" id="learning-samples">1,247</div>
+                    <div class="stat-label">AI 學習樣本</div>
+                </div>
+            </div>
+            <div class="col-md-3 mb-3">
+                <div class="stat-card" style="background: linear-gradient(135deg, #f59e0b, #d97706);">
+                    <i class="bi bi-lightning-charge-fill" style="font-size: 2rem;"></i>
+                    <div class="stat-value" id="active-scans">3</div>
+                    <div class="stat-label">活躍掃描任務</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 運作模式選擇器 -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="dashboard-card p-4">
+                    <h5 class="mb-3">
+                        <i class="bi bi-gear-fill"></i>
+                        運作模式切換
+                    </h5>
+                    <div class="mode-selector">
+                        <div class="mode-btn active" data-mode="ui">
+                            <i class="bi bi-mouse"></i>
+                            <div class="fw-bold mt-2">UI 模式</div>
+                            <small>手動操作控制</small>
+                        </div>
+                        <div class="mode-btn" data-mode="ai">
+                            <i class="bi bi-cpu"></i>
+                            <div class="fw-bold mt-2">AI 模式</div>
+                            <small>完全自主決策</small>
+                        </div>
+                        <div class="mode-btn" data-mode="hybrid">
+                            <i class="bi bi-intersection"></i>
+                            <div class="fw-bold mt-2">混合模式</div>
+                            <small>AI 輔助決策</small>
+                        </div>
+                        <div class="mode-btn" data-mode="sentinel">
+                            <i class="bi bi-broadcast"></i>
+                            <div class="fw-bold mt-2">Sentinel 模式</div>
+                            <small>24/7 主動監控</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <!-- 左側面板 - Sentinel Mode -->
+            <div class="col-lg-6 mb-4">
+                <div class="dashboard-card p-4">
+                    <h5 class="mb-3">
+                        <i class="bi bi-broadcast"></i>
+                        🛡️ Sentinel 模式控制台
+                    </h5>
+                    
+                    <div class="sentinel-status active mb-4" id="sentinel-status">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <span class="sentinel-pulse"></span>
+                                <span class="fw-bold">哨兵模式運行中</span>
+                            </div>
+                            <button class="btn btn-danger btn-sm" onclick="stopSentinel()">
+                                <i class="bi bi-stop-circle"></i> 停止
+                            </button>
+                        </div>
+                        <div class="mt-3">
+                            <small class="text-muted">掃描間隔:</small>
+                            <strong>3600秒</strong>
+                            <span class="mx-2">|</span>
+                            <small class="text-muted">監控目標:</small>
+                            <strong id="sentinel-targets-count">2</strong>
+                        </div>
+                        <div class="progress-aiva mt-3">
+                            <div class="progress-bar-aiva" style="width: 65%"></div>
+                        </div>
+                        <small class="text-muted">下次掃描: 23 分鐘</small>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">監控目標列表</label>
+                        <div class="list-group">
+                            <div class="list-group-item bg-dark text-light border-secondary">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <i class="bi bi-globe text-success"></i>
+                                        <strong class="ms-2">http://localhost:3000</strong>
+                                        <span class="badge bg-success ms-2">健康</span>
+                                    </div>
+                                    <button class="btn btn-sm btn-outline-danger" onclick="removeTarget(0)">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </div>
+                                <small class="text-muted d-block mt-2">
+                                    上次掃描: 2 分鐘前 | 異常: 0
+                                </small>
+                            </div>
+                            <div class="list-group-item bg-dark text-light border-secondary">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <i class="bi bi-globe text-warning"></i>
+                                        <strong class="ms-2">http://example.com</strong>
+                                        <span class="badge bg-warning ms-2">警告</span>
+                                    </div>
+                                    <button class="btn btn-sm btn-outline-danger" onclick="removeTarget(1)">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </div>
+                                <small class="text-muted d-block mt-2">
+                                    上次掃描: 15 分鐘前 | 異常: 2
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="input-group">
+                        <input type="url" class="form-control" id="new-target" placeholder="添加新的監控目標...">
+                        <button class="btn btn-aiva btn-sentinel" onclick="addTarget()">
+                            <i class="bi bi-plus-circle"></i> 添加
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 右側面板 - 業務邏輯攻擊 -->
+            <div class="col-lg-6 mb-4">
+                <div class="dashboard-card p-4">
+                    <h5 class="mb-3">
+                        <i class="bi bi-bug"></i>
+                        💼 業務邏輯攻擊模組
+                    </h5>
+
+                    <div class="bizlogic-module">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <strong>價格操縱 (Price Manipulation)</strong>
+                                <div class="text-muted small">檢測負數價格、零價格漏洞</div>
+                            </div>
+                            <button class="btn btn-sm btn-aiva" onclick="runBizLogic('price_manipulation')">
+                                <i class="bi bi-play-circle"></i> 執行
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="bizlogic-module">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <strong>越權訪問 (IDOR)</strong>
+                                <div class="text-muted small">用戶資源枚舉檢測</div>
+                            </div>
+                            <button class="btn btn-sm btn-aiva" onclick="runBizLogic('idor')">
+                                <i class="bi bi-play-circle"></i> 執行
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="bizlogic-module">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <strong>工作流繞過 (Workflow Bypass)</strong>
+                                <div class="text-muted small">跳過付款步驟檢測</div>
+                            </div>
+                            <button class="btn btn-sm btn-aiva" onclick="runBizLogic('workflow_bypass')">
+                                <i class="bi bi-play-circle"></i> 執行
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="bizlogic-module">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <strong>競態條件 (Race Condition)</strong>
+                                <div class="text-muted small">並發優惠券使用檢測</div>
+                            </div>
+                            <button class="btn btn-sm btn-aiva" onclick="runBizLogic('race_condition')">
+                                <i class="bi bi-play-circle"></i> 執行
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="bizlogic-module">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <strong>優惠券濫用 (Coupon Abuse)</strong>
+                                <div class="text-muted small">重複使用檢測</div>
+                            </div>
+                            <button class="btn btn-sm btn-aiva" onclick="runBizLogic('coupon_abuse')">
+                                <i class="bi bi-play-circle"></i> 執行
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="text-center mt-3">
+                        <button class="btn btn-aiva" onclick="runAllBizLogic()">
+                            <i class="bi bi-collection-play"></i> 執行全部檢測
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- AI 學習統計 -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="dashboard-card p-4">
+                    <h5 class="mb-3">
+                        <i class="bi bi-graph-up"></i>
+                        🧠 AI 學習迴路狀態
+                    </h5>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="text-center">
+                                <h6 class="text-muted">總經驗樣本</h6>
+                                <h2 class="text-success">1,247</h2>
+                                <div class="progress-aiva mt-2">
+                                    <div class="progress-bar-aiva" style="width: 85%"></div>
+                                </div>
+                                <small class="text-muted">容量: 85% (850/1000)</small>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="text-center">
+                                <h6 class="text-muted">高質量樣本</h6>
+                                <h2 class="text-info">782</h2>
+                                <div class="progress-aiva mt-2">
+                                    <div class="progress-bar-aiva" style="width: 62%"></div>
+                                </div>
+                                <small class="text-muted">質量閾值: ≥0.6</small>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="text-center">
+                                <h6 class="text-muted">訓練迭代</h6>
+                                <h2 class="text-warning">156</h2>
+                                <div class="progress-aiva mt-2">
+                                    <div class="progress-bar-aiva" style="width: 45%"></div>
+                                </div>
+                                <small class="text-muted">當前 Epoch: 45/100</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 即時日誌 -->
+        <div class="row">
+            <div class="col-12">
+                <div class="dashboard-card p-4">
+                    <h5 class="mb-3">
+                        <i class="bi bi-terminal"></i>
+                        即時系統日誌
+                    </h5>
+                    <div class="log-panel" id="log-panel">
+                        <div class="log-entry success">[2025-11-24 14:32:15] ✓ Sentinel Mode 已啟動</div>
+                        <div class="log-entry info">[2025-11-24 14:32:20] ℹ 開始掃描目標: http://localhost:3000</div>
+                        <div class="log-entry success">[2025-11-24 14:32:25] ✓ 健康檢查完成 - 正常</div>
+                        <div class="log-entry warning">[2025-11-24 14:33:10] ⚠ 檢測到異常: example.com 響應時間過長</div>
+                        <div class="log-entry info">[2025-11-24 14:33:15] ℹ AI 決策: 執行深度掃描</div>
+                        <div class="log-entry success">[2025-11-24 14:35:40] ✓ BizLogic 攻擊執行完成 - 發現 2 個漏洞</div>
+                        <div class="log-entry success">[2025-11-24 14:36:02] ✓ 新經驗樣本已添加到學習系統</div>
+                        <div class="log-entry info">[2025-11-24 14:37:30] ℹ TrainingOrchestrator 開始訓練...</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // 模式切換
+        document.querySelectorAll('.mode-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                const mode = this.dataset.mode;
+                addLog(`info`, `切換到 ${mode.toUpperCase()} 模式`);
+            });
+        });
+
+        // Sentinel 控制
+        function stopSentinel() {
+            const status = document.getElementById('sentinel-status');
+            status.classList.remove('active');
+            status.classList.add('inactive');
+            addLog('warning', 'Sentinel Mode 已停止');
+        }
+
+        function addTarget() {
+            const input = document.getElementById('new-target');
+            const target = input.value;
+            if (target) {
+                addLog('success', `添加監控目標: ${target}`);
+                input.value = '';
+            }
+        }
+
+        function removeTarget(index) {
+            addLog('warning', `移除監控目標 #${index}`);
+        }
+
+        // 業務邏輯攻擊
+        function runBizLogic(type) {
+            addLog('info', `開始執行 ${type} 檢測`);
+            setTimeout(() => {
+                addLog('success', `${type} 檢測完成`);
+            }, 2000);
+        }
+
+        function runAllBizLogic() {
+            addLog('info', '開始執行全部業務邏輯檢測...');
+        }
+
+        // 日誌系統
+        function addLog(type, message) {
+            const logPanel = document.getElementById('log-panel');
+            const timestamp = new Date().toLocaleTimeString();
+            const icons = {
+                success: '✓',
+                warning: '⚠',
+                error: '✗',
+                info: 'ℹ'
+            };
+            const entry = document.createElement('div');
+            entry.className = `log-entry ${type}`;
+            entry.textContent = `[${timestamp}] ${icons[type]} ${message}`;
+            logPanel.insertBefore(entry, logPanel.firstChild);
+            
+            // 保持最多 20 條日誌
+            while (logPanel.children.length > 20) {
+                logPanel.removeChild(logPanel.lastChild);
+            }
+        }
+
+        // 模擬數據更新
+        setInterval(() => {
+            const samples = document.getElementById('learning-samples');
+            const current = parseInt(samples.textContent.replace(',', ''));
+            samples.textContent = (current + Math.floor(Math.random() * 5)).toLocaleString();
+        }, 5000);
+    </script>
+</body>
+</html>

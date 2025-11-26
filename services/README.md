@@ -1101,7 +1101,7 @@ Go 1.21+
 # 資料庫與中間件
 PostgreSQL 15+ (with pgvector)
 Redis 7.0+
-RabbitMQ 3.12+
+RabbitMQ 3.12+ (⚠️ v2.0已改用命令系統，可選)
 Neo4j 5.0+
 ```
 
@@ -1113,13 +1113,8 @@ git clone https://github.com/kyle0527/AIVA.git
 cd AIVA/services
 ```
 
-#### 2. 設置 Python 環境
+#### 2. 安裝依賴
 ```bash
-# 創建虛擬環境
-python -m venv .venv
-.venv\Scripts\activate  # Windows
-source .venv/bin/activate  # Linux/Mac
-
 # 安裝依賴
 pip install -r requirements.txt
 ```
@@ -1213,6 +1208,12 @@ python -m aiva_scan.main
 ---
 
 ## 📚 文檔導航
+
+### 🏗️ 架構與流程設計
+- 📖 **[完整架構設計](../docs/ARCHITECTURE_COMPLETE_DESIGN.md)** - 系統架構完整設計理念
+- 📖 **[完整工作流程圖表](../docs/COMPLETE_WORKFLOW_VISUALIZATION.md)** - 所有模組運作流程視覺化
+- 📖 **[AI 自我優化雙閉環](../docs/AI_SELF_OPTIMIZATION_DUAL_LOOP_DESIGN.md)** - 內部探索與外部實戰雙閉環機制
+- 📖 **[掃描工作流程與數據流](../docs/SCAN_WORKFLOW_AND_DATA_FLOW.md)** - 多引擎掃描協同流程
 
 ### 核心文檔
 - 📖 **[Core 模組文檔](core/README.md)** - AI 引擎架構、開發指南
