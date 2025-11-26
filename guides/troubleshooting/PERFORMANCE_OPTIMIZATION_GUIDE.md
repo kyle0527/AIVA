@@ -1,45 +1,5 @@
 # AIVA 性能優化配置指南
 
-## 📋 目錄
-
-- [📑 目錄](#目錄)
-- [🎯 統一延遲檢查標準](#統一延遲檢查標準)
-- [📋 各語言配置檔案清單](#各語言配置檔案清單)
-  - [🐍 Python (Pylance)](#python-pylance)
-  - [🟨 TypeScript/JavaScript (ESLint + TypeScript)](#typescriptjavascript-eslint-typescript)
-  - [🟢 Go (gopls)](#go-gopls)
-  - [🦀 Rust (rust-analyzer)](#rust-rust-analyzer)
-- [🔧 VS Code 編輯器層級設定](#vs-code-編輯器層級設定)
-  - [延遲設定](#延遲設定)
-  - [關閉即時功能](#關閉即時功能)
-- [� 語言伺服器詳細設定](#語言伺服器詳細設定)
-  - [Python (Pylance) 完整配置](#python-pylance-完整配置)
-  - [Go (gopls) 完整配置](#go-gopls-完整配置)
-  - [Rust (rust-analyzer) 完整配置](#rust-rust-analyzer-完整配置)
-- [�📁 檔案監控優化](#檔案監控優化)
-  - [排除目錄](#排除目錄)
-- [⚡ 效能優化原則](#效能優化原則)
-- [🔄 重新載入設定](#重新載入設定)
-- [📖 詳細設定指南](#詳細設定指南)
-- [✅ 驗證設定生效](#驗證設定生效)
-  - [Python](#python)
-  - [TypeScript](#typescript)
-  - [Go](#go)
-  - [Rust](#rust)
-- [🎉 預期效果](#預期效果)
-- [🔗 相關資源](#相關資源)
-  - [故障排除指南](#故障排除指南)
-  - [修復指南](#修復指南)
-  - [架構指南](#架構指南)
-  - [開發指南](#開發指南)
-
-> **📋 適用對象**: 開發者、DevOps工程師、性能調優人員  
-> **🎯 使用場景**: IDE性能優化、開發環境調優、多語言項目配置  
-> **⏱️ 預計閱讀時間**: 15 分鐘  
-> **🔧 技術需求**: VS Code、多語言開發環境
-
----
-
 ## 📑 目錄
 
 1. [🎯 統一延遲檢查標準](#-統一延遲檢查標準)
