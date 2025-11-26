@@ -6,6 +6,34 @@ Document Type: Guide
 
 # AIVA Schema 導入規範指南
 
+## 📋 目錄
+
+- [📑 目錄](#目錄)
+- [🎯 重要更新 (v3.1)](#重要更新-v31)
+  - [🔥 必須遵循的新規範](#必須遵循的新規範)
+- [📋 導入規範總覽](#導入規範總覽)
+  - [✅ 推薦做法](#推薦做法)
+  - [❌ 避免做法](#避免做法)
+- [🎯 各模組具體規範](#各模組具體規範)
+  - [Core 模組 (`services/core/`)](#core-模組-servicescore)
+  - [Features 模組 (`services/features/`)](#features-模組-servicesfeatures)
+  - [Integration 模組 (`services/integration/`)](#integration-模組-servicesintegration)
+  - [Scan 模組 (`services/scan/`)](#scan-模組-servicesscan)
+- [🔧 環境設置建議](#環境設置建議)
+  - [開發環境](#開發環境)
+  - [生產環境](#生產環境)
+- [🌍 跨平台兼容性](#跨平台兼容性)
+  - [Windows](#windows)
+  - [Linux/macOS](#linuxmacos)
+- [🧪 導入測試](#導入測試)
+  - [驗證導入是否正確](#驗證導入是否正確)
+- [📝 最佳實踐總結](#最佳實踐總結)
+- [🔗 相關資源](#相關資源)
+  - [開發指南](#開發指南)
+  - [架構指南](#架構指南)
+  - [故障排除](#故障排除)
+  - [使用者手冊](#使用者手冊)
+
 > **📋 適用對象**: 所有AIVA開發者、跨語言模組貢獻者  
 > **🎯 使用場景**: Schema導入、跨語言開發、標準化實施  
 > **⏱️ 預計閱讀時間**: 15 分鐘  

@@ -1,5 +1,23 @@
 # Architecture Guides README
 
+## 📋 目錄
+
+- [🏗️ AIVA v2.0 數據合約架構指南中心](#aiva-v20-數據合約架構指南中心)
+- [📊 當前架構狀態](#當前架構狀態)
+- [📖 Architecture Guides](#architecture-guides)
+  - [🎯 **High Priority - Schema Integration Required**](#high-priority-schema-integration-required)
+  - [🔧 **Standard Architecture Guides**](#standard-architecture-guides)
+- [🔗 Integration Tools & Resources](#integration-tools-resources)
+  - [📊 **Performance Analysis Tools**](#performance-analysis-tools)
+  - [📈 **Schema Health Monitoring**](#schema-health-monitoring)
+  - [📚 **Related Documentation**](#related-documentation)
+- [🚀 Quick Start for Architecture Work](#quick-start-for-architecture-work)
+  - [For New Developers](#for-new-developers)
+  - [For Architecture Updates](#for-architecture-updates)
+  - [For Performance Analysis](#for-performance-analysis)
+- [📋 Schema 整合檢查清單](#schema-整合檢查清單)
+- [🎯 優先增強領域](#優先增強領域)
+
 ## 🏗️ AIVA v2.0 數據合約架構指南中心
 
 AIVA v2.0 數據合約驅動架構的核心指南中心。本目錄包含理解和實現 AIVA 數據合約架構的重要文檔。

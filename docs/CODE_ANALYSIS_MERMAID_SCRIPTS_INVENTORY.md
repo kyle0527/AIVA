@@ -1,5 +1,30 @@
 # AIVA 程式碼分析與 Mermaid 流程圖生成腳本完整清單報告
 
+## 📋 目錄
+
+- [📑 目錄](#目錄)
+- [📋 核心分析工具 (Core Analysis Tools)](#核心分析工具-core-analysis-tools)
+  - [1. **py2mermaid.py**](#1-py2mermaidpy)
+  - [2. **generate_mermaid_diagrams.py**](#2-generate-mermaid-diagramspy)
+  - [3. **mermaid_optimizer.py**](#3-mermaid-optimizerpy)
+  - [4. **generate_complete_architecture.py**](#4-generate-complete-architecturepy)
+- [🛠️ 輔助分析工具 (Auxiliary Analysis Tools)](#輔助分析工具-auxiliary-analysis-tools)
+  - [5. **refactor_imports_and_cleanup.py**](#5-refactor-imports-and-cleanuppy)
+  - [6. **generate_organization_diagrams.py**](#6-generate-organization-diagramspy)
+  - [7. **generate_advanced_diagrams.py**](#7-generate-advanced-diagramspy)
+  - [8. **diagram_auto_composer.py**](#8-diagram-auto-composerpy)
+- [🔧 Mermaid 專用工具 (Mermaid-Specific Tools)](#mermaid-專用工具-mermaid-specific-tools)
+  - [9. **smart_repair_engine.py**](#9-smart-repair-enginepy)
+  - [10. **mermaid_diagnostic_system.py**](#10-mermaid-diagnostic-systempy)
+- [🎯 核心解析器 (Core Parsers)](#核心解析器-core-parsers)
+  - [11. **ast_parser.py**](#11-ast-parserpy)
+- [🔗 AIVA Core 整合應用分析](#aiva-core-整合應用分析)
+  - [目前在 `C:\D\fold7\AIVA-git\services\core\aiva_core` 整合中使用的腳本:](#目前在-cdfold7aiva-gitservicescoreaiva-core-整合中使用的腳本)
+- [📈 建議整合策略](#建議整合策略)
+  - [**短期整合 (立即可用)**](#短期整合-立即可用)
+  - [**中期整合 (開發階段)**](#中期整合-開發階段)
+  - [**長期整合 (系統級整合)**](#長期整合-系統級整合)
+
 **報告日期**: 2025年11月14日  
 **專案**: AIVA AI-Driven Security Testing Platform  
 **目的**: 整合階段充分運用現有腳本資源  

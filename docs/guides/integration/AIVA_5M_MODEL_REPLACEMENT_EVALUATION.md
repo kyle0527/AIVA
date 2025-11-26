@@ -1,5 +1,20 @@
 # AIVA 5M 模型替換評估報告
 
+## 📋 目錄
+
+- [模型概覽](#模型概覽)
+  - [aiva_real_ai_core.pth](#aiva-real-ai-corepth)
+  - [aiva_real_weights.pth](#aiva-real-weightspth)
+  - [aiva_5M_weights.pth](#aiva-5m-weightspth)
+- [性能評估結果](#性能評估結果)
+  - [aiva_real_ai_core.pth](#aiva-real-ai-corepth)
+  - [aiva_real_weights.pth](#aiva-real-weightspth)
+  - [aiva_5M_weights.pth](#aiva-5m-weightspth)
+- [替換建議](#替換建議)
+  - [優勢](#優勢)
+  - [挑戰](#挑戰)
+  - [建議步驟](#建議步驟)
+
 生成時間: 2025-11-10 11:29:57
 
 ## 模型概覽

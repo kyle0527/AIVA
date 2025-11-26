@@ -1,5 +1,33 @@
 # Troubleshooting Guides README
 
+## 📋 目錄
+
+- [🔧 AIVA v2.0 系統問題解決](#aiva-v20-系統問題解決)
+- [📊 AIVA v2.0 系統狀態 (2025-11-22)](#aiva-v20-系統狀態-2025-11-22)
+- [📖 Troubleshooting Guides](#troubleshooting-guides)
+  - [🚨 **Critical System Issues (High Priority)**](#critical-system-issues-high-priority)
+  - [🔗 **Schema & Import Issues (Development Critical)**](#schema-import-issues-development-critical)
+  - [🧪 **Testing & Reproduction (Quality Assurance)**](#testing-reproduction-quality-assurance)
+- [🔗 相關資源](#相關資源)
+  - [📚 **基礎文檔**](#基礎文檔)
+  - [🛠️ **診斷工具**](#診斷工具)
+  - [📊 **監控與分析**](#監控與分析)
+- [📋 Troubleshooting Process](#troubleshooting-process)
+  - [🎯 **Quick Diagnosis Checklist**](#quick-diagnosis-checklist)
+  - [🔍 **Systematic Problem Resolution**](#systematic-problem-resolution)
+- [🚀 Emergency Response Procedures](#emergency-response-procedures)
+  - [🚨 **Critical Performance Degradation**](#critical-performance-degradation)
+  - [🔥 **Contract System Failure**](#contract-system-failure)
+  - [⚡ **Development Environment Issues**](#development-environment-issues)
+- [📈 Success Metrics & Monitoring](#success-metrics-monitoring)
+  - [Resolution Effectiveness](#resolution-effectiveness)
+  - [Prevention Metrics](#prevention-metrics)
+- [🎯 Common Issue Quick Reference](#common-issue-quick-reference)
+  - [Performance Problems](#performance-problems)
+  - [Import Failures](#import-failures)
+  - [Validation Errors](#validation-errors)
+  - [Environment Setup](#environment-setup)
+
 > **🎯 v2.0 架構**: 疑難排解指南更新  
 > **✅ 系統狀態**: 主要問題已解決  
 > **🔄 最後更新**: 2025年11月22日

@@ -1,5 +1,16 @@
 # AIVA 模型權重管理與載入指南
 
+## 📋 目錄
+
+- [📑 目錄](#目錄)
+- [📋 指南概述](#指南概述)
+- [🧠 核心概念：程式碼與資料分離 (Code vs. Data)](#核心概念程式碼與資料分離-code-vs-data)
+  - [為什麼要分離？](#為什麼要分離)
+- [權重載入流程](#權重載入流程)
+  - [步驟一：定義模型架構 (Define Architecture)](#步驟一定義模型架構-define-architecture)
+  - [步驟二：指定權重路徑 (Specify Weight Path)](#步驟二指定權重路徑-specify-weight-path)
+  - [步驟三：載入權重 (Load Weights)](#步驟三載入權重-load-weights)
+
 ## 📑 目錄
 
 - [📋 指南概述](#-指南概述)

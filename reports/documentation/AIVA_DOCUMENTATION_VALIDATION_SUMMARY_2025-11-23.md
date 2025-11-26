@@ -1,5 +1,37 @@
 # AIVA 操作指南驗證總結報告
 
+## 📋 目錄
+
+- [📊 驗證總覽](#驗證總覽)
+- [📋 詳細驗證結果](#詳細驗證結果)
+  - [1. SCAN_USER_GUIDE.md](#1-scan-user-guidemd)
+  - [2. Go Engine USAGE_GUIDE.md](#2-go-engine-usage-guidemd)
+  - [3. Rust Engine USAGE_GUIDE.md](#3-rust-engine-usage-guidemd)
+  - [4. Python Engine USAGE_GUIDE.md ✅ (已重寫)](#4-python-engine-usage-guidemd-已重寫)
+  - [5. Coordinator USAGE_GUIDE.md](#5-coordinator-usage-guidemd)
+- [📈 錯誤類型統計](#錯誤類型統計)
+  - [按嚴重程度分類](#按嚴重程度分類)
+  - [按錯誤類型分類](#按錯誤類型分類)
+- [🎯 驗證方法論](#驗證方法論)
+  - [驗證流程](#驗證流程)
+  - [驗證標準](#驗證標準)
+- [🏆 表現評價](#表現評價)
+  - [最佳文檔: Python Engine USAGE_GUIDE.md (已重寫)](#最佳文檔-python-engine-usage-guidemd-已重寫)
+  - [原最佳文檔: Rust Engine USAGE_GUIDE.md](#原最佳文檔-rust-engine-usage-guidemd)
+  - [整體表現](#整體表現)
+- [💡 改進建議](#改進建議)
+  - [短期改進 (✅ 已完成)](#短期改進-已完成)
+  - [中期改進 (建議)](#中期改進-建議)
+  - [長期改進 (建議)](#長期改進-建議)
+- [📁 生成的文件](#生成的文件)
+  - [驗證報告](#驗證報告)
+  - [架構分析](#架構分析)
+  - [測試腳本](#測試腳本)
+  - [備份文件](#備份文件)
+- [✅ 驗證結論](#驗證結論)
+  - [整體質量: 優秀 (92.8%) ⭐⭐⭐⭐⭐](#整體質量-優秀-928)
+  - [最終建議](#最終建議)
+
 **驗證時間**: 2025-11-23  
 **驗證人員**: AI Agent  
 **驗證方法**: 實際代碼執行 + API 檢查 + 靶場測試  

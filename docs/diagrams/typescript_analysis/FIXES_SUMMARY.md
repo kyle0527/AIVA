@@ -1,5 +1,37 @@
 # TypeScript Engine 修復摘要
 
+## 📋 目錄
+
+- [快速統計](#快速統計)
+- [修改檔案清單](#修改檔案清單)
+  - [1. `src/services/scan-service.ts`](#1-srcservicesscan-servicets)
+  - [2. `src/services/network-interceptor.service.ts`](#2-srcservicesnetwork-interceptorservicets)
+  - [3. `src/services/interaction-simulator.service.ts`](#3-srcservicesinteraction-simulatorservicets)
+  - [4. `src/services/enhanced-dynamic-scan.service.ts`](#4-srcservicesenhanced-dynamic-scanservicets)
+- [已確認無問題的項目](#已確認無問題的項目)
+  - [問題 8: DOM 觀察器洩漏](#問題-8-dom-觀察器洩漏)
+  - [問題 9: page.evaluate 超時設定](#問題-9-pageevaluate-超時設定)
+  - [問題 10: 日誌洪水](#問題-10-日誌洪水)
+  - [問題 11: 缺少性能指標](#問題-11-缺少性能指標)
+  - [問題 12: 錯誤訊息不夠詳細](#問題-12-錯誤訊息不夠詳細)
+  - [問題 13: 缺少 healthCheck](#問題-13-缺少-healthcheck)
+  - [問題 14: Magic Numbers](#問題-14-magic-numbers)
+  - [問題 15: 測試覆蓋率指標](#問題-15-測試覆蓋率指標)
+- [修復效果驗證](#修復效果驗證)
+  - [1. 資源管理](#1-資源管理)
+  - [2. 錯誤恢復](#2-錯誤恢復)
+  - [3. 效能優化](#3-效能優化)
+  - [4. 程式碼品質](#4-程式碼品質)
+- [測試建議](#測試建議)
+  - [單元測試](#單元測試)
+  - [整合測試](#整合測試)
+- [Commit 建議](#commit-建議)
+- [下一步行動](#下一步行動)
+  - [立即](#立即)
+  - [短期（1-2 週）](#短期1-2-週)
+  - [中期（1 個月）](#中期1-個月)
+  - [長期（3 個月）](#長期3-個月)
+
 > 修復日期: 2025-11-22  
 > 狀態: ✅ 全部完成 (15/15)
 

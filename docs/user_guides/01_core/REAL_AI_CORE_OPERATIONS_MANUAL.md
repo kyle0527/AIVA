@@ -1,5 +1,40 @@
 # AIVA 真實 AI 核心建制操作手冊 (可直接照做)
 
+## 📋 目錄
+
+- [📑 目錄](#目錄)
+- [1. 成功標準與介面合約 (Contract)](#1-成功標準與介面合約-contract)
+- [2. AI 能力與規格評估方法（立項前必讀）](#2-ai-能力與規格評估方法立項前必讀)
+  - [2.1 使用情境盤點（Use-case Inventory）](#21-使用情境盤點use-case-inventory)
+  - [2.2 能力矩陣（Capability Matrix）](#22-能力矩陣capability-matrix)
+  - [2.3 指標與 SLA 目標（Metrics & SLAs）](#23-指標與-sla-目標metrics-slas)
+  - [2.4 參數與算力估算（Sizing Heuristics）](#24-參數與算力估算sizing-heuristics)
+  - [2.5 記憶體與部署預算（Memory/Deployability）](#25-記憶體與部署預算memorydeployability)
+  - [2.6 數據品質與覆蓋（Data Readiness）](#26-數據品質與覆蓋data-readiness)
+  - [2.7 評估方案設計（Evaluation Plan）](#27-評估方案設計evaluation-plan)
+  - [2.8 升級決策樹（When to Scale What）](#28-升級決策樹when-to-scale-what)
+  - [2.9 風險、合規與安全](#29-風險合規與安全)
+  - [2.10 立項輸出模板（可複製）](#210-立項輸出模板可複製)
+- [3. 系統需求](#3-系統需求)
+- [4. 專案結構與放置位置](#4-專案結構與放置位置)
+- [5. 流程總覽 Checklist](#5-流程總覽-checklist)
+- [6. 步驟詳解 (逐步可落地)](#6-步驟詳解-逐步可落地)
+  - [Step 1. 參數預算與網路設計](#step-1-參數預算與網路設計)
+  - [Step 2. 建立模型類 (YourAICore)](#step-2-建立模型類-youraicore)
+  - [Step 3. 建立決策引擎 (YourDecisionEngine)](#step-3-建立決策引擎-yourdecisionengine)
+  - [Step 4. 串接權重管理 (AIWeightManager)](#step-4-串接權重管理-aiweightmanager)
+  - [Step 5. 建立向後相容適配器 (RealScalableBioNet 等價)](#step-5-建立向後相容適配器-realscalablebionet-等價)
+  - [Step 6. 整合 `bio_neuron_core.py`](#step-6-整合-bio-neuron-corepy)
+  - [Step 7. 測試與驗證](#step-7-測試與驗證)
+  - [Step 8. 文檔與交付](#step-8-文檔與交付)
+- [7. 常見錯誤與排障](#7-常見錯誤與排障)
+- [8. 性能優化建議](#8-性能優化建議)
+- [9. 安全與供應鏈](#9-安全與供應鏈)
+- [10. 參數—大小速查表 (float32)](#10-參數大小速查表-float32)
+- [11. 快速交付腳本 (選擇性)](#11-快速交付腳本-選擇性)
+- [12. 進階：與 RAG/多代理整合](#12-進階與-rag多代理整合)
+- [13. 最小模板清單 (建立新核心時複製)](#13-最小模板清單-建立新核心時複製)
+
 更新日期: 2025-11-10  
 適用對象: 需要在 AIVA 中新建/替換「真實」AI 核心 (非雜湊偽 AI) 的工程師  
 目標時長: 1~2 小時完成一個可推理、可管理權重、可相容舊 API 的新核心

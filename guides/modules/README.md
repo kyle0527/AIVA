@@ -1,5 +1,35 @@
 # Module Guides README
 
+## 📋 目錄
+
+- [🧩 模組特定 Schema 實現](#模組特定-schema-實現)
+- [📊 當前模組覆蓋狀態](#當前模組覆蓋狀態)
+- [📖 Module-Specific Guides](#module-specific-guides)
+  - [🐍 **Python-Focused Modules**](#python-focused-modules)
+  - [🦀 **Rust-Focused Modules**](#rust-focused-modules)
+  - [🐹 **Go-Focused Modules**](#go-focused-modules)
+  - [🤖 **AI & Intelligence**](#ai-intelligence)
+  - [🔍 **Analysis & Functions**](#analysis-functions)
+  - [🔄 **Migration & Transformation**](#migration-transformation)
+- [🎯 模組特定整合優先級](#模組特定整合優先級)
+  - [🚨 **高優先級（需要立即行動）**](#高優先級需要立即行動)
+  - [🔧 **中優先級（策略改進）**](#中優先級策略改進)
+  - [✅ **低優先級（優化與維護）**](#低優先級優化與維護)
+- [📋 模組整合檢查清單](#模組整合檢查清單)
+  - [模組維護者](#模組維護者)
+  - [跨模組工作](#跨模組工作)
+- [🔗 Essential Resources](#essential-resources)
+  - [📚 **Architecture Foundation**](#architecture-foundation)
+  - [🛠️ **Analysis & Monitoring Tools**](#analysis-monitoring-tools)
+  - [🏗️ **Module Documentation**](#module-documentation)
+- [🚀 Module Development Workflow](#module-development-workflow)
+  - [For New Module Features](#for-new-module-features)
+  - [For Legacy Component Migration](#for-legacy-component-migration)
+  - [For Cross-Module Integration](#for-cross-module-integration)
+- [📈 Success Metrics by Module](#success-metrics-by-module)
+  - [Performance Baselines](#performance-baselines)
+  - [Adoption Targets (Q2 2025)](#adoption-targets-q2-2025)
+
 ## 🧩 模組特定 Schema 實現
 
 針對 AIVA 特定模組實現 Schema 驅動架構的指導。每個模組指南提供量身定制的策略，在保持模組特定性能和功能需求的同時採用 AIVA 統一的 Schema 系統。

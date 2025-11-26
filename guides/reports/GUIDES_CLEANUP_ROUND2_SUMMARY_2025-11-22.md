@@ -1,5 +1,40 @@
 # AIVA Guides 第二輪深度清理總結
 
+## 📋 目錄
+
+- [🎯 清理目標](#清理目標)
+- [✅ 已完成更新的文件](#已完成更新的文件)
+  - [1. **guides/deployment/README.md** (完全重構)](#1-guidesdeploymentreadmemd-完全重構)
+  - [2. **guides/deployment/ENVIRONMENT_CONFIG_GUIDE.md** (RabbitMQ 清理)](#2-guidesdeploymentenvironment-config-guidemd-rabbitmq-清理)
+  - [3. **guides/development/README.md** (完全更新)](#3-guidesdevelopmentreadmemd-完全更新)
+  - [4. **guides/development/EXTENSIONS_INSTALL_GUIDE.md** (移除 contracts-tooling)](#4-guidesdevelopmentextensions-install-guidemd-移除-contracts-tooling)
+  - [5. **guides/troubleshooting/README.md** (術語統一)](#5-guidestroubleshootingreadmemd-術語統一)
+  - [6. **guides/troubleshooting/PERFORMANCE_OPTIMIZATION_GUIDE.md**](#6-guidestroubleshootingperformance-optimization-guidemd)
+  - [7. **guides/troubleshooting/IMPORT_ISSUES_RESOLUTION_GUIDE.md**](#7-guidestroubleshootingimport-issues-resolution-guidemd)
+  - [8. **guides/deployment/BUILD_GUIDE.md**](#8-guidesdeploymentbuild-guidemd)
+  - [9. **guides/modules/README.md** (大規模更新)](#9-guidesmodulesreadmemd-大規模更新)
+- [📊 清理統計](#清理統計)
+  - [檔案更新統計](#檔案更新統計)
+  - [內容變更統計](#內容變更統計)
+  - [術語統一](#術語統一)
+- [🔍 剩餘發現（未更新）](#剩餘發現未更新)
+  - [仍包含過時引用的文件（根據 grep 結果）](#仍包含過時引用的文件根據-grep-結果)
+- [✅ 驗證結果](#驗證結果)
+  - [關鍵術語檢查](#關鍵術語檢查)
+  - [文檔一致性](#文檔一致性)
+- [🎯 第二輪清理成果](#第二輪清理成果)
+  - [主要成就](#主要成就)
+  - [用戶反饋響應](#用戶反饋響應)
+  - [架構一致性](#架構一致性)
+- [📝 建議後續行動](#建議後續行動)
+  - [1. 進一步驗證](#1-進一步驗證)
+  - [2. 個別指南深度審查](#2-個別指南深度審查)
+  - [3. 文檔連結驗證](#3-文檔連結驗證)
+- [💡 經驗總結](#經驗總結)
+  - [清理策略](#清理策略)
+  - [技術要點](#技術要點)
+  - [用戶溝通](#用戶溝通)
+
 **清理日期**: 2025年11月22日  
 **執行者**: GitHub Copilot  
 **清理範圍**: guides/ 目錄全面更新

@@ -1,5 +1,31 @@
 # 📋 AIVA 文檔一致性檢查報告
 
+## 📋 目錄
+
+- [📚 文檔目錄檢查](#文檔目錄檢查)
+  - [✅ 已確認有目錄的文檔](#已確認有目錄的文檔)
+- [🔗 README 連結檢查](#readme-連結檢查)
+  - [✅ 主 README (C:\D\fold7\AIVA-git\README.md)](#主-readme-cdfold7aiva-gitreadmemd)
+  - [🏗️ 架構與流程設計](#架構與流程設計)
+  - [✅ Services README (C:\D\fold7\AIVA-git\services\README.md)](#services-readme-cdfold7aiva-gitservicesreadmemd)
+  - [🏗️ 架構與流程設計](#架構與流程設計)
+  - [核心文檔](#核心文檔)
+- [🔄 流程一致性檢查](#流程一致性檢查)
+  - [用戶規劃的核心要點](#用戶規劃的核心要點)
+- [📊 文檔修正記錄](#文檔修正記錄)
+  - [1. COMPLETE_WORKFLOW_VISUALIZATION.md](#1-complete-workflow-visualizationmd)
+  - [2. AI_SELF_OPTIMIZATION_DUAL_LOOP_DESIGN.md](#2-ai-self-optimization-dual-loop-designmd)
+  - [3. ARCHITECTURE_COMPLETE_DESIGN.md](#3-architecture-complete-designmd)
+  - [4. SCAN_WORKFLOW_AND_DATA_FLOW.md](#4-scan-workflow-and-data-flowmd)
+- [✅ 驗證結果](#驗證結果)
+  - [核心設計要點對比表](#核心設計要點對比表)
+- [📝 待改進項目](#待改進項目)
+  - [低優先級改進](#低優先級改進)
+- [🎯 總結](#總結)
+  - [✅ 已完成](#已完成)
+  - [📊 符合度評估](#符合度評估)
+- [📌 建議](#建議)
+
 **檢查日期**: 2025-01-21  
 **檢查範圍**: 所有架構與流程相關文檔  
 **狀態**: ✅ 已完成修正
