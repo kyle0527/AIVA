@@ -25,8 +25,6 @@
 - [📊 Success Metrics](#success-metrics)
 
 ---
----
----
 ## 🛠️ AIVA v2.0 Development Hub
 
 開發指南強調 AIVA v2.0 數據合約驅動的開發模式和最佳實踐。所有開發流程應優先使用統一的 Schema 系統，確保最佳性能和跨語言兼容性，並專注於安全測試和動態檢測能力。

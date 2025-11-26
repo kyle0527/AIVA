@@ -31,8 +31,6 @@
   - [Adoption Targets (Q2 2025)](#adoption-targets-q2-2025)
 
 ---
----
----
 ## 🧩 模組特定 Schema 實現
 
 針對 AIVA 特定模組實現 Schema 驅動架構的指導。每個模組指南提供量身定制的策略，在保持模組特定性能和功能需求的同時採用 AIVA 統一的 Schema 系統。

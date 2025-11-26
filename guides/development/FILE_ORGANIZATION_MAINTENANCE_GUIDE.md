@@ -24,9 +24,6 @@
   - [使用者手冊](#使用者手冊)
 
 ---
----
----
----
 Created: 2025-10-30
 Last Modified: 2025-10-30
 Document Type: Guide

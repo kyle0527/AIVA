@@ -35,8 +35,6 @@ Status: Pre-Release Planning
   - [架構與進度](#架構與進度)
 
 ---
----
----
 ## 📖 Integration 模組運作說明
 
 ### 架構定位

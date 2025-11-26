@@ -50,9 +50,6 @@ Document Type: Report
     - [**中期目標 (1個月內)**](#中期目標-1個月內)
 
 ---
----
----
----
 
 > **🎯 目標**: 實現 Single Source of Truth (SOT) 原則，消除 Schema 定義的雙重性  
 > **⚠️ 現狀**: 系統中存在手動維護和自動生成兩套不相容的 Schema  

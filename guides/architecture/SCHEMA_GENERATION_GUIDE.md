@@ -22,9 +22,6 @@
   - [服務文檔](#服務文檔)
 
 ---
----
----
----
 
 ## 📊 問題摘要
 通過應用 CROSS_LANGUAGE_SCHEMA_SYNC_GUIDE.md，發現了系統性的 Schema 生成問題，需要從根本修復。

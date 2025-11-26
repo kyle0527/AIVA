@@ -59,8 +59,6 @@ Document Type: Report
   - [開發指南](#開發指南)
 
 ---
----
----
 ## 🎯 概述
 
 AIVA 跨語言 Schema 系統提供統一的數據模型定義，支援 Python、Go、Rust 三種語言的自動代碼生成和 AI 組件智能操作。

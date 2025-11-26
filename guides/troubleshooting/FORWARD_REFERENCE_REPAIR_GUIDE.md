@@ -66,8 +66,6 @@
   - [開發指南](#開發指南)
 
 ---
----
----
 ## 📋 概述
 
 本指南基於 **AIVA Common README 規範** 和 **VS Code 現有插件能力**，提供系統化的向前引用（Forward Reference）發現、診斷與修復方法。所有修復均遵循 [AIVA Common 標準](./services/aiva_common/README.md#🔧-開發規範與最佳實踐)。

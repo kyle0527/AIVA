@@ -29,8 +29,6 @@ Document Type: Report
 - [⚠️ 重要提醒](#重要提醒)
 
 ---
----
----
 ## 📁 項目目錄結構確認
 ```
 C:\D\fold7\AIVA-git\
