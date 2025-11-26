@@ -1,14 +1,29 @@
 # 🛠️ 實用工具遷移文檔
 
-## 目錄
+## 📑 目錄
 
 - [概述](#概述)
 - [遷移日期與目的](#遷移日期與目的)
 - [已遷移工具清單](#已遷移工具清單)
+  - [1. Core 模組工具 (`services/core/tools/`)](#1-core-模組工具-servicescoretools)
+    - [`system_connectivity_checker.py`](#systemconnectivitycheckerpy)
+  - [2. Common 模組工具 (`services/aiva_common/tools/`)](#2-common-模組工具-servicesaivacommontools)
+    - [`module_connectivity_checker.py`](#moduleconnectivitycheckerpy)
+  - [3. Integration 模組工具 (`services/integration/tools/`)](#3-integration-模組工具-servicesintegrationtools)
+    - [`sop_compliance_checker.py`](#sopcompliancecheckerpy)
+  - [4. Features 模組工具 (`services/features/common/testers/`)](#4-features-模組工具-servicesfeaturescommontesters)
+    - [`vertical_escalation_tester.py`](#verticalescalationtesterpy)
+    - [`cross_user_tester.py`](#crossusertesterpy)
 - [工具使用指南](#工具使用指南)
+  - [通用執行步驟](#通用執行步驟)
+  - [定期檢查建議](#定期檢查建議)
 - [目錄結構](#目錄結構)
 - [相關文檔](#相關文檔)
+- [總結](#總結)
 
+---
+---
+---
 ---
 
 ## 概述

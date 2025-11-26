@@ -1,6 +1,6 @@
 # 🔍 AIVA 系統當前狀態與問題清單
 
-## 📋 目錄
+## 📑 目錄
 
 - [✅ 已完成修復](#已完成修復)
   - [1. AI Controller 語法錯誤 (Critical - P0) ✅](#1-ai-controller-語法錯誤-critical-p0)
@@ -11,20 +11,28 @@
   - [✅ 所有 Critical 問題已解決](#所有-critical-問題已解決)
 - [🟡 P1 - High Priority 問題（重要但不阻塞）](#p1-high-priority-問題重要但不阻塞)
   - [1. ❌ 認知複雜度超標（8 處）](#1-認知複雜度超標8-處)
-  - [2. ✅ ai_controller.py 語法錯誤](#2-ai-controllerpy-語法錯誤)
+  - [2. ✅ ai_controller.py 語法錯誤](#2-aicontrollerpy-語法錯誤)
 - [🟡 P1 - High 問題 (建議盡快修復)](#p1-high-問題-建議盡快修復)
   - [按模組分類](#按模組分類)
-- [🟢 P2-P3 - Medium/Low 問題](#p2-p3-mediumlow-問題)
+    - [Core 模組](#core-模組)
+    - [Integration 模組](#integration-模組)
+    - [Scan 模組](#scan-模組)
+    - [測試文件](#測試文件)
+- [🟢 P2-P3 - Medium/Low 問題](#p2p3-mediumlow-問題)
   - [代碼風格問題](#代碼風格問題)
   - [異步函數誤用 (12 處)](#異步函數誤用-12-處)
 - [🟢 P4 - 文件必要性分析](#p4-文件必要性分析)
   - [測試文件分類](#測試文件分類)
+    - [✅ 保留 - 重要測試](#保留-重要測試)
+    - [⚠️ 修復後保留](#修復後保留)
+    - [🗑️ 建議刪除 - 臨時測試](#建議刪除-臨時測試)
+    - [📦 工具類文件 - 保留但移動](#工具類文件-保留但移動)
 - [📊 按模組統計](#按模組統計)
-  - [Core 模組](#core-模組)
-  - [Integration 模組](#integration-模組)
-  - [Scan 模組](#scan-模組)
+  - [Core 模組](#core-模組-1)
+  - [Integration 模組](#integration-模組-1)
+  - [Scan 模組](#scan-模組-1)
   - [Features 模組](#features-模組)
-  - [測試文件](#測試文件)
+  - [測試文件](#測試文件-1)
 - [🎯 修復優先級排序](#修復優先級排序)
   - [Phase 1 - Critical (立即執行)](#phase-1-critical-立即執行)
   - [Phase 2 - High (本次執行)](#phase-2-high-本次執行)
@@ -32,13 +40,13 @@
   - [Phase 4 - Low (優化清理)](#phase-4-low-優化清理)
   - [Phase 5 - 文件清理](#phase-5-文件清理)
 - [📝 修復策略](#修復策略)
-  - [1. wireless_attack_tools.py 修復策略](#1-wireless-attack-toolspy-修復策略)
+  - [1. wireless_attack_tools.py 修復策略](#1-wirelessattacktoolspy-修復策略)
   - [2. 認知複雜度優化策略](#2-認知複雜度優化策略)
   - [3. 未使用參數處理策略](#3-未使用參數處理策略)
   - [4. 異步函數修正策略](#4-異步函數修正策略)
   - [5. 文件清理策略](#5-文件清理策略)
 - [🔍 詳細問題清單](#詳細問題清單)
-  - [wireless_attack_tools.py 損壞詳情](#wireless-attack-toolspy-損壞詳情)
+  - [wireless_attack_tools.py 損壞詳情](#wirelessattacktoolspy-損壞詳情)
 - [📈 預期修復效果](#預期修復效果)
   - [修復前](#修復前)
   - [修復後預期](#修復後預期)
@@ -48,6 +56,9 @@
 - [📚 參考文檔](#參考文檔)
 - [✅ 執行檢查清單](#執行檢查清單)
 
+---
+---
+---
 ---
 
 ## ✅ 已完成修復

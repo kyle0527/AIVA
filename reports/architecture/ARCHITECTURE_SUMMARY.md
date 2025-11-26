@@ -15,6 +15,7 @@ Document Type: Report
   - [4. **Helm Chart 打包** ✅](#4-helm-chart-打包)
   - [5. **部署文檔和工具** ✅](#5-部署文檔和工具)
 - [🏗️ 架構設計](#架構設計)
+- [📋 部署模式對比](#部署模式對比)
 - [🚀 快速開始](#快速開始)
   - [Windows (PowerShell)](#windows-powershell)
   - [Linux/macOS (Bash)](#linuxmacos-bash)
@@ -34,6 +35,9 @@ Document Type: Report
 - [📚 相關文檔](#相關文檔)
 - [💡 關鍵優勢](#關鍵優勢)
 
+---
+---
+---
 ---
 
 ## ✅ 已完成的工作

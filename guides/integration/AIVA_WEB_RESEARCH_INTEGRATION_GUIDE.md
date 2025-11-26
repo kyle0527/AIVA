@@ -1,12 +1,18 @@
 # 🚀 AIVA AI能力整合實施指南 - 基於業界最佳實踐
-## 📋 目錄
+## 📑 目錄
 
 - [📊 **網路調研發現的關鍵趨勢**](#網路調研發現的關鍵趨勢)
   - [**🔥 2025年AI代理發展趨勢**](#2025年ai代理發展趨勢)
+    - [**1. 分層架構設計 (Inspired by Semantic Kernel)**](#1-分層架構設計-inspired-by-semantic-kernel)
+    - [**2. 多模態整合 (參考ArXiv最新論文)**](#2-多模態整合-參考arxiv最新論文)
+    - [**3. 工具調用優化 (OpenAI Function Calling)**](#3-工具調用優化-openai-function-calling)
 - [🎯 **基於網路建議的AIVA能力增強計劃**](#基於網路建議的aiva能力增強計劃)
-  - [**階段一：AI Commander 2.0 - 多代理協調 (週1-2)**](#階段一ai-commander-20-多代理協調-週1-2)
+  - [**階段一：AI Commander 2.0 - 多代理協調 (週1-2)**](#階段一ai-commander-20-多代理協調-週12)
+    - [**參考**: Microsoft AutoGen多代理系統](#參考-microsoft-autogen多代理系統)
   - [**階段二：RAG增強系統 - TeaRAG框架 (週3)**](#階段二rag增強系統-tearag框架-週3)
+    - [**參考**: ArXiv論文 "TeaRAG: A Token-Efficient Agentic RAG Framework"](#參考-arxiv論文-tearag-a-tokenefficient-agentic-rag-framework)
   - [**階段三：實時推理增強 - 基於ArXiv最新研究 (週4)**](#階段三實時推理增強-基於arxiv最新研究-週4)
+    - [**參考**: "Real-Time Reasoning Agents in Evolving Environments"](#參考-realtime-reasoning-agents-in-evolving-environments)
 - [🎨 **基於OpenAI最佳實踐的工具系統重構**](#基於openai最佳實踐的工具系統重構)
   - [**智能工具編排器 - Function Calling優化**](#智能工具編排器-function-calling優化)
 - [🧠 **持續學習與自適應優化**](#持續學習與自適應優化)
@@ -28,10 +34,9 @@
   - [使用者手冊](#使用者手冊)
   - [服務文檔](#服務文檔)
 
-**更新時間**: 2025年11月10日  
-**基於**: ArXiv最新研究 + Microsoft AutoGen + LangChain + 網路調研  
-**目標**: 整合網路建議，優化AIVA AI能力
-
+---
+---
+---
 ---
 
 ## 📊 **網路調研發現的關鍵趨勢**

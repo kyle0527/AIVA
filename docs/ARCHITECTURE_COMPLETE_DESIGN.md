@@ -5,24 +5,55 @@
 
 ---
 
-## 📋 目錄
+## 📑 目錄
 
-- [核心架構理念](#核心架構理念)
-- [六大核心服務](#六大核心服務)
-- [三階段掃描流程](#三階段掃描流程)
-- [數據流與合約](#數據流與合約)
-- [模組職責劃分](#模組職責劃分)
-- [AI 決策機制](#ai-決策機制)
-- [Integration 整合機制](#integration-整合機制)
-- [並行執行策略](#並行執行策略)
-- [關鍵設計決策](#關鍵設計決策)
-- [常見誤解澄清](#常見誤解澄清)
+- [🎯 核心架構理念](#核心架構理念)
+  - [1. **職責單一原則** (Single Responsibility)](#1-職責單一原則-single-responsibility)
+  - [2. **高度解耦設計** (Loose Coupling)](#2-高度解耦設計-loose-coupling)
+  - [3. **並行優先策略** (Concurrency First)](#3-並行優先策略-concurrency-first)
+  - [4. **標準化數據流** (Standardized Data Flow)](#4-標準化數據流-standardized-data-flow)
+- [🏗️ 六大核心服務](#六大核心服務)
+  - [1. **aiva_common** - 共享基礎設施](#1-aivacommon-共享基礎設施)
+  - [2. **scan** - 資產發現模組 (Phase 0-1)](#2-scan-資產發現模組-phase-01)
+    - [Phase 0 - Rust 快速偵察 (5-10分鐘)](#phase-0-rust-快速偵察-510分鐘)
+    - [Phase 1 - 多引擎深度掃描 (10-30分鐘)](#phase-1-多引擎深度掃描-1030分鐘)
+  - [3. **features** - 漏洞攻擊測試模組 (Phase 2)](#3-features-漏洞攻擊測試模組-phase-2)
+    - [Phase 2 - 功能模組攻擊測試 (5-20分鐘)](#phase-2-功能模組攻擊測試-520分鐘)
+  - [4. **integration** - 企業級整合中樞](#4-integration-企業級整合中樞)
+  - [5. **core** - AI 驅動核心引擎](#5-core-ai-驅動核心引擎)
+- [🔄 三階段掃描流程](#三階段掃描流程)
+  - [完整數據流程圖](#完整數據流程圖)
+- [📊 數據流與合約](#數據流與合約)
+  - [數據合約詳解](#數據合約詳解)
+    - [1. Phase 0 → Phase 1](#1-phase-0-phase-1)
+    - [2. Phase 1 → Phase 2](#2-phase-1-phase-2)
+    - [3. Phase 2 內部](#3-phase-2-內部)
+- [🎯 模組職責劃分](#模組職責劃分)
+  - [Scan 模組 vs Features 模組](#scan-模組-vs-features-模組)
+  - [引擎分類](#引擎分類)
+    - [Scan 模組的引擎](#scan-模組的引擎)
+    - [Features 模組的 Workers](#features-模組的-workers)
+- [🔑 關鍵設計決策](#關鍵設計決策)
+  - [1. 為什麼 Python 引擎只提取表單參數?](#1-為什麼-python-引擎只提取表單參數)
+  - [2. 為什麼 SSRF 檢測不依賴 Python 引擎?](#2-為什麼-ssrf-檢測不依賴-python-引擎)
+  - [3. 為什麼 Phase 1 引擎並行而非串行?](#3-為什麼-phase-1-引擎並行而非串行)
+  - [4. 為什麼 Go 引擎在 Phase 1 而非 Phase 2?](#4-為什麼-go-引擎在-phase-1-而非-phase-2)
+- [⚠️ 常見誤解澄清](#常見誤解澄清)
+  - [誤解 1: "Scan 模組負責漏洞檢測"](#誤解-1-scan-模組負責漏洞檢測)
+  - [誤解 2: "Python → Go 串行依賴"](#誤解-2-python-go-串行依賴)
+  - [誤解 3: "SSRF 檢測依賴 Python 參數提取"](#誤解-3-ssrf-檢測依賴-python-參數提取)
+  - [誤解 4: "Go 引擎在 Phase 2"](#誤解-4-go-引擎在-phase-2)
+- [📋 實際運作流程範例](#實際運作流程範例)
+  - [場景: 掃描 Juice Shop](#場景-掃描-juice-shop)
+- [🎓 設計理念總結](#設計理念總結)
+  - [核心原則](#核心原則)
+  - [數據流向](#數據流向)
+  - [模組協作](#模組協作)
+- [📚 延伸閱讀](#延伸閱讀)
 
-**相關文檔**:
-- [完整工作流程圖表](COMPLETE_WORKFLOW_VISUALIZATION.md) - 視覺化流程與數據流
-- [AI 自我優化雙閉環設計](AI_SELF_OPTIMIZATION_DUAL_LOOP_DESIGN.md) - 內部探索與外部實戰機制
-- [掃描工作流程與數據流](SCAN_WORKFLOW_AND_DATA_FLOW.md) - 多引擎掃描協同細節
-
+---
+---
+---
 ---
 
 ## 🎯 核心架構理念

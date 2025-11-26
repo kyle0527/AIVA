@@ -1,6 +1,6 @@
 # AIVA 模組用法分析報告
 
-## 📋 目錄
+## 📑 目錄
 
 - [📊 執行摘要](#執行摘要)
   - [掃描模組: ✅ 4/4 可用 (100%)](#掃描模組-44-可用-100)
@@ -11,9 +11,19 @@
   - [✅ 1.2 Phase 0 用法（快速偵察）](#12-phase-0-用法快速偵察)
   - [✅ 1.3 Phase 1 用法（深度掃描）](#13-phase-1-用法深度掃描)
   - [✅ 1.4 預設掃描策略（AI 簡化調用）](#14-預設掃描策略ai-簡化調用)
+    - [策略 1: execute_strategy_fast（快速掃描）](#策略-1-executestrategyfast快速掃描)
+    - [策略 2: execute_strategy_balanced（均衡掃描）⭐ **推薦**](#策略-2-executestrategybalanced均衡掃描-推薦)
+    - [策略 3: execute_strategy_comprehensive（全面掃描）](#策略-3-executestrategycomprehensive全面掃描)
+    - [策略 4: execute_strategy_aggressive（激進掃描）](#策略-4-executestrategyaggressive激進掃描)
+    - [策略 5: execute_strategy_smart（智能掃描）🧠 **AI 自動決策**](#策略-5-executestrategysmart智能掃描-ai-自動決策)
 - [二、功能模組（Feature Modules）](#二功能模組feature-modules)
   - [⚠️ 2.1 導入問題](#21-導入問題)
   - [📋 2.2 功能模組架構（待修復後可用）](#22-功能模組架構待修復後可用)
+    - [SQLi 模組（SQL 注入檢測）](#sqli-模組sql-注入檢測)
+    - [XSS 模組（跨站腳本檢測）](#xss-模組跨站腳本檢測)
+    - [SSRF 模組（服務端請求偽造檢測）](#ssrf-模組服務端請求偽造檢測)
+    - [IDOR 模組（不安全直接對象引用檢測）](#idor-模組不安全直接對象引用檢測)
+    - [BizLogic 模組（業務邏輯漏洞檢測）](#bizlogic-模組業務邏輯漏洞檢測)
 - [三、AI 整合接口](#三ai-整合接口)
   - [✅ 3.1 AttackExecutor（攻擊執行器）](#31-attackexecutor攻擊執行器)
   - [✅ 3.2 TwoPhaseScanOrchestrator（兩階段編排器）](#32-twophasescanorchestrator兩階段編排器)
@@ -25,13 +35,15 @@
 - [五、總結](#五總結)
   - [✅ AI 可以完整調用的模組](#ai-可以完整調用的模組)
   - [📊 掃描模組用法總覽](#掃描模組用法總覽)
+    - [直接控制（AI 完全掌控）](#直接控制ai-完全掌控)
+    - [預設策略（AI 簡化調用）](#預設策略ai-簡化調用)
+    - [自動化編排](#自動化編排)
   - [🔧 功能模組修復計劃](#功能模組修復計劃)
   - [✅ 最終結論](#最終結論)
 
-**生成時間**: 2025-11-24  
-**測試目的**: 確認 AI 能否完整調用所有掃描和功能模組  
-**測試結果**: ✅ **核心模組可用，功能模組需修復導入**
-
+---
+---
+---
 ---
 
 ## 📊 執行摘要

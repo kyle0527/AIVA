@@ -1,25 +1,25 @@
 # AIVA 功能模組實際狀態評估報告
 
-## 📋 目錄
+## 📑 目錄
 
 - [📊 執行摘要](#執行摘要)
   - [整體狀態](#整體狀態)
   - [關鍵發現 ⚠️](#關鍵發現)
 - [🔍 詳細模組分析](#詳細模組分析)
-  - [✅ 1. SQL 注入檢測 (function_sqli)](#1-sql-注入檢測-function-sqli)
-  - [✅ 2. XSS 檢測 (function_xss)](#2-xss-檢測-function-xss)
-  - [✅ 3. SSRF 檢測 (function_ssrf)](#3-ssrf-檢測-function-ssrf)
-  - [✅ 4. IDOR 檢測 (function_idor)](#4-idor-檢測-function-idor)
-  - [✅ 5. 認證檢測 (function_authn_go)](#5-認證檢測-function-authn-go)
-  - [🔹 6. 密碼學檢測 (function_crypto)](#6-密碼學檢測-function-crypto)
-  - [🔹 7. 後滲透 (function_postex)](#7-後滲透-function-postex)
+  - [✅ 1. SQL 注入檢測 (function_sqli)](#1-sql-注入檢測-functionsqli)
+  - [✅ 2. XSS 檢測 (function_xss)](#2-xss-檢測-functionxss)
+  - [✅ 3. SSRF 檢測 (function_ssrf)](#3-ssrf-檢測-functionssrf)
+  - [✅ 4. IDOR 檢測 (function_idor)](#4-idor-檢測-functionidor)
+  - [✅ 5. 認證檢測 (function_authn_go)](#5-認證檢測-functionauthngo)
+  - [🔹 6. 密碼學檢測 (function_crypto)](#6-密碼學檢測-functioncrypto)
+  - [🔹 7. 後滲透 (function_postex)](#7-後滲透-functionpostex)
 - [🛠️ 支援組件狀態](#支援組件狀態)
-  - [💎 high_value_manager.py](#high-value-managerpy)
-  - [🧠 smart_detection_manager.py](#smart-detection-managerpy)
-  - [⚙️ feature_step_executor.py](#feature-step-executorpy)
+  - [💎 high_value_manager.py](#highvaluemanagerpy)
+  - [🧠 smart_detection_manager.py](#smartdetectionmanagerpy)
+  - [⚙️ feature_step_executor.py](#featurestepexecutorpy)
 - [🚨 主要問題與解決方案](#主要問題與解決方案)
-  - [問題 1: features/__init__.py 模組導入錯誤 🔴](#問題-1-features-init-py-模組導入錯誤)
-  - [問題 2: SQLi hackingtool_engine.py schema 導入錯誤 🔴](#問題-2-sqli-hackingtool-enginepy-schema-導入錯誤)
+  - [問題 1: features/__init__.py 模組導入錯誤 🔴](#問題-1-featuresinitpy-模組導入錯誤)
+  - [問題 2: SQLi hackingtool_engine.py schema 導入錯誤 🔴](#問題-2-sqli-hackingtoolenginepy-schema-導入錯誤)
 - [📈 修復優先級建議](#修復優先級建議)
   - [🔴 P0 - 立即修復（阻塞所有模組）](#p0-立即修復阻塞所有模組)
   - [🟡 P1 - 高優先級（影響核心功能）](#p1-高優先級影響核心功能)
@@ -30,10 +30,9 @@
 - [🎯 修復後的能力評估](#修復後的能力評估)
 - [📝 結論](#結論)
 
-**評估日期**: 2025年11月7日  
-**評估範圍**: services/features/ 下所有功能模組  
-**評估方式**: 實際檔案檢查、導入測試、代碼審查
-
+---
+---
+---
 ---
 
 ## 📊 執行摘要

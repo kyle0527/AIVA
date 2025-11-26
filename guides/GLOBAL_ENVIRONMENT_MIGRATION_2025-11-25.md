@@ -1,6 +1,6 @@
 # AIVA 全域環境遷移報告
 
-## 📋 目錄
+## 📑 目錄
 
 - [📋 執行摘要](#執行摘要)
   - [問題背景](#問題背景)
@@ -8,8 +8,16 @@
 - [✅ 完成項目](#完成項目)
   - [1. 套件遷移 (120+ 個套件)](#1-套件遷移-120-個套件)
   - [2. 文檔更新](#2-文檔更新)
+    - [✅ guides/deployment/SYSTEM_INSTALLATION_GUIDE.md](#guidesdeploymentsysteminstallationguidemd)
+    - [✅ guides/troubleshooting/PRODUCTION_TROUBLESHOOTING_GUIDE.md](#guidestroubleshootingproductiontroubleshootingguidemd)
+    - [✅ guides/deployment/INSTALLATION_GUIDE.md](#guidesdeploymentinstallationguidemd)
+    - [✅ guides/development/MULTI_LANGUAGE_ENVIRONMENT_STANDARD.md](#guidesdevelopmentmultilanguageenvironmentstandardmd)
   - [3. 環境清理](#3-環境清理)
+    - [✅ 刪除虛擬環境目錄](#刪除虛擬環境目錄)
+    - [✅ 清理臨時檔案](#清理臨時檔案)
   - [4. 驗證測試](#4-驗證測試)
+    - [✅ 套件匯入測試](#套件匯入測試)
+    - [✅ 專案套件測試](#專案套件測試)
 - [📊 影響範圍](#影響範圍)
   - [主要文檔更新](#主要文檔更新)
   - [未修改的文檔](#未修改的文檔)
@@ -32,10 +40,9 @@
   - [不需要做](#不需要做)
 - [✨ 總結](#總結)
 
-**日期**: 2025-11-25  
-**執行者**: GitHub Copilot  
-**目的**: 將專案從虛擬環境改為全域 Python 環境,避免環境切換造成的套件不一致問題
-
+---
+---
+---
 ---
 
 ## 📋 執行摘要

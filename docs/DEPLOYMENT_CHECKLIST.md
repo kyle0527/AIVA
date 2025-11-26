@@ -6,7 +6,7 @@ Status: Pre-Release Planning
 
 # AIVA 部署前檢查清單
 
-## 📋 目錄
+## 📑 目錄
 
 - [📖 Integration 模組運作說明](#integration-模組運作說明)
   - [架構定位](#架構定位)
@@ -34,6 +34,9 @@ Status: Pre-Release Planning
   - [開發環境指南](#開發環境指南)
   - [架構與進度](#架構與進度)
 
+---
+---
+---
 ## 📖 Integration 模組運作說明
 
 ### 架構定位

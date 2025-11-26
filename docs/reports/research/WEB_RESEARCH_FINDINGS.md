@@ -1,10 +1,16 @@
 # 網路研究：滲透測試自動化分類最佳實踐
-## 📋 目錄
+## 📑 目錄
 
 - [🔍 主要發現摘要](#主要發現摘要)
   - [1. 國際標準框架](#1-國際標準框架)
+    - [OWASP Web Security Testing Guide (WSTG)](#owasp-web-security-testing-guide-wstg)
+    - [MITRE ATT&CK Framework](#mitre-attck-framework)
   - [2. 學術研究發現](#2-學術研究發現)
+    - ["Penetration Taxonomy" (Sarker et al., 2023) - 18次引用](#penetration-taxonomy-sarker-et-al-2023-18次引用)
+    - ["Automated Penetration Testing Overview" (Abu-Dabaseh, 2018) - 86次引用](#automated-penetration-testing-overview-abudabaseh-2018-86次引用)
+    - ["Rule Tree Assessment Method" (Zhao et al., 2015) - 30次引用](#rule-tree-assessment-method-zhao-et-al-2015-30次引用)
   - [3. 行業實務標準](#3-行業實務標準)
+    - [Penetration Testing Execution Standard (PTES)](#penetration-testing-execution-standard-ptes)
 - [💡 建議實施方案](#建議實施方案)
   - [方案 1：階段優先級權重系統 (推薦)](#方案-1階段優先級權重系統-推薦)
   - [方案 2：動詞優先分析法](#方案-2動詞優先分析法)
@@ -15,10 +21,9 @@
   - [長期優化](#長期優化)
 - [📊 預期效果](#預期效果)
 
-**研究日期：** 2025年11月13日  
-**搜索範圍：** OWASP、MITRE ATT&CK、學術論文、行業標準  
-**目標：** 找出滲透測試功能自動分類的建議方法
-
+---
+---
+---
 ## 🔍 主要發現摘要
 
 ### 1. 國際標準框架

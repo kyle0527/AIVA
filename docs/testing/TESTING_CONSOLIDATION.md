@@ -1,17 +1,53 @@
 # 🧹 測試腳本整合總結
 
-## 目錄
+## 📑 目錄
 
 - [整合日期與目標](#整合日期與目標)
-- [新測試工具 (3個)](#新測試工具-3-個)
-- [已歸檔腳本 (13個)](#已歸檔腳本-13-個)
-- [保留的特殊腳本 (6個)](#保留的特殊腳本-6-個)
-- [整合成果](#整合成果)
-- [驗證結果](#驗證結果)
-- [使用建議](#使用建議)
-- [整合完成清單](#整合完成清單)
-- [結論](#結論)
+- [✅ 新測試工具 (3 個)](#新測試工具-3-個)
+  - [1. 📦 `aiva_test.py` (396 行)](#1-aivatestpy-396-行)
+  - [2. 🚀 `quick_test.py` (166 行)](#2-quicktestpy-166-行)
+  - [3. 🔍 `diagnose.py` (191 行)](#3-diagnosepy-191-行)
+- [📦 已歸檔腳本 (13 個)](#已歸檔腳本-13-個)
+  - [💎 保留的高價值測試 (4 個 → tests/integration/)](#保留的高價值測試-4-個-testsintegration)
+  - [引擎測試 (1 個)](#引擎測試-1-個)
+  - [HTTP 測試 (2 個)](#http-測試-2-個)
+  - [掃描測試 (7 個)](#掃描測試-7-個)
+  - [整合測試 (2 個)](#整合測試-2-個)
+  - [特殊測試 (1 個)](#特殊測試-1-個)
+- [🔧 保留的特殊腳本 (6 個)](#保留的特殊腳本-6-個)
+  - [分析工具 (2 個)](#分析工具-2-個)
+    - [1. `run_capability_analysis.py`](#1-runcapabilityanalysispy)
+    - [2. `validate_scan_system.py`](#2-validatescansystempy)
+  - [整合測試 (4 個 → tests/integration/)](#整合測試-4-個-testsintegration)
+    - [3. `test_ai_command_scan.py`](#3-testaicommandscanpy)
+    - [4. `test_dual_loop_juice_shop.py`](#4-testdualloopjuiceshoppy)
+    - [5. `test_two_phase_scan.py`](#5-testtwophasescanpy)
+    - [6. `test_multi_language_analysis.py`](#6-testmultilanguageanalysispy)
+- [📊 整合成果](#整合成果)
+  - [前後對比](#前後對比)
+  - [測試架構](#測試架構)
+  - [功能整合矩陣](#功能整合矩陣)
+- [🎯 驗證結果](#驗證結果)
+  - [`quick_test.py` 測試結果](#quicktestpy-測試結果)
+  - [`diagnose.py` 測試結果](#diagnosepy-測試結果)
+  - [`aiva_test.py` 功能確認](#aivatestpy-功能確認)
+- [📚 文檔更新](#文檔更新)
+  - [新增文檔](#新增文檔)
+  - [文檔內容](#文檔內容)
+- [🚀 使用建議](#使用建議)
+  - [日常開發](#日常開發)
+  - [問題排查](#問題排查)
+  - [詳細測試](#詳細測試)
+  - [CI/CD](#cicd)
+- [✅ 整合完成清單](#整合完成清單)
+- [🎉 結論](#結論)
+  - [📦 日常測試工具 (3 個)](#日常測試工具-3-個)
+  - [🧪 整合測試套件 (4 個)](#整合測試套件-4-個)
+  - [📈 成果統計](#成果統計)
 
+---
+---
+---
 ---
 
 ## 整合日期與目標

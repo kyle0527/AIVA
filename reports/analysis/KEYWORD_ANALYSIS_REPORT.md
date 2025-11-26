@@ -1,10 +1,10 @@
 # 關鍵字分類差異分析報告
-## 📋 目錄
+## 📑 目錄
 
 - [🔍 當前關鍵字映射分析](#當前關鍵字映射分析)
   - [現有映射結構](#現有映射結構)
 - [🚨 核心問題識別](#核心問題識別)
-  - [問題案例分析：exploit_vulnerability](#問題案例分析exploit-vulnerability)
+  - [問題案例分析：exploit_vulnerability](#問題案例分析exploitvulnerability)
 - [📊 關鍵字類型分類](#關鍵字類型分類)
   - [1. 行為動詞類 (Action Verbs) 🎯](#1-行為動詞類-action-verbs)
   - [2. 對象名詞類 (Object Nouns) 📋](#2-對象名詞類-object-nouns)
@@ -24,14 +24,23 @@
   - [驗證案例](#驗證案例)
 - [🌐 網路研究發現 (國際標準與最佳實踐)](#網路研究發現-國際標準與最佳實踐)
   - [📚 學術研究支持](#學術研究支持)
+    - [主要論文發現](#主要論文發現)
   - [🏛️ 國際標準框架](#國際標準框架)
+    - [OWASP Web Security Testing Guide (WSTG)](#owasp-web-security-testing-guide-wstg)
+    - [MITRE ATT&CK Framework](#mitre-attck-framework)
+    - [PTES (Penetration Testing Execution Standard)](#ptes-penetration-testing-execution-standard)
   - [💡 國際最佳實踐建議](#國際最佳實踐建議)
+    - [方案 1：階段優先級權重系統 (學術推薦)](#方案-1階段優先級權重系統-學術推薦)
+    - [方案 2：動詞優先分析法 (語義學研究)](#方案-2動詞優先分析法-語義學研究)
+    - [方案 3：OWASP 標準前綴系統](#方案-3owasp-標準前綴系統)
   - [🎯 研究結論與建議](#研究結論與建議)
+    - [學術與行業共識](#學術與行業共識)
+    - [針對我們的問題](#針對我們的問題)
+    - [實施優先級 (基於研究發現)](#實施優先級-基於研究發現)
 
-**分析日期：** 2025年11月13日 15:45  
-**分析範圍：** CapabilityAnalyzer 關鍵字匹配邏輯  
-**問題案例：** exploit_vulnerability 函數分類錯誤
-
+---
+---
+---
 ## 🔍 當前關鍵字映射分析
 
 ### 現有映射結構

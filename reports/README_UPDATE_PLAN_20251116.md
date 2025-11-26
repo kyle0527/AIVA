@@ -1,14 +1,23 @@
 # Services README 更新計劃
 
-## 📋 目錄
+## 📑 目錄
 
 - [✅ 已確認現況](#已確認現況)
   - [services/README.md 檢查結果](#servicesreadmemd-檢查結果)
 - [📋 更新待辦事項 (按優先級排序)](#更新待辦事項-按優先級排序)
   - [Priority 1: 核心文件更新 (必須)](#priority-1-核心文件更新-必須)
+    - [✅ TODO-1: services/README.md](#todo1-servicesreadmemd)
+    - [✅ TODO-2: services/integration/README.md](#todo2-servicesintegrationreadmemd)
+    - [✅ TODO-3: services/integration/aiva_integration/README.md](#todo3-servicesintegrationaivaintegrationreadmemd)
   - [Priority 2: 資料儲存文件優化 (重要)](#priority-2-資料儲存文件優化-重要)
+    - [✅ TODO-4: data/integration/README.md](#todo4-dataintegrationreadmemd)
+    - [✅ TODO-5: services/integration/scripts/README.md](#todo5-servicesintegrationscriptsreadmemd)
   - [Priority 3: 子模組 README 更新 (次要)](#priority-3-子模組-readme-更新-次要)
+    - [🔹 TODO-6: services/integration/aiva_integration/attack_path_analyzer/README.md](#todo6-servicesintegrationaivaintegrationattackpathanalyzerreadmemd)
+    - [🔹 TODO-7: services/integration/aiva_integration/reception/README.md](#todo7-servicesintegrationaivaintegrationreceptionreadmemd)
   - [Priority 4: 主專案文件同步 (可選)](#priority-4-主專案文件同步-可選)
+    - [🔹 TODO-8: AIVA-git/README.md](#todo8-aivagitreadmemd)
+    - [🔹 TODO-9: reports/INTEGRATION_DATA_STORAGE_SETUP_REPORT.md](#todo9-reportsintegrationdatastoragesetupreportmd)
 - [📊 更新統計](#更新統計)
   - [需更新檔案數量](#需更新檔案數量)
   - [預估總時間](#預估總時間)
@@ -25,9 +34,9 @@
   - [Phase 3](#phase-3)
   - [Phase 4](#phase-4)
 
-**更新日期**: 2025-11-16  
-**更新原因**: 整合模組資料儲存結構建立完成,需要更新所有相關文件
-
+---
+---
+---
 ---
 
 ## ✅ 已確認現況

@@ -5,22 +5,52 @@
 **生成方法**: Python AST 解析 + Mermaid 流程圖生成  
 **設計理念**: 體現 AIVA 「完整掃描 + 智能分析 + 模組化結構」設計哲學
 
-## 📋 目錄
+## 📑 目錄
 
-1. [🎯 設計哲學對應](#🎯-設計哲學對應)
-2. [📊 分析概要](#📊-分析概要)
-   - [分析統計](#分析統計)
-   - [核心模組結構](#核心模組結構)
-3. [🧠 AI 引擎模組分析](#🧠-ai-引擎模組分析)
-4. [🔍 分析系統模組](#🔍-分析系統模組)
-5. [⚔️ 攻擊執行模組](#⚔️-攻擊執行模組)
-6. [🔐 授權系統模組](#🔐-授權系統模組)
-7. [🏢 業務邏輯模組](#🏢-業務邏輯模組)
-8. [🗃️ 規劃器模組](#🗃️-規劃器模組)
-9. [📊 整體架構分析](#📊-整體架構分析)
-10. [📈 性能與效率分析](#📈-性能與效率分析)
-11. [🔮 改進建議](#🔮-改進建議)
+- [🎯 設計哲學對應](#設計哲學對應)
+  - [1. 完整掃描原則](#1-完整掃描原則)
+  - [2. 模組化架構分析](#2-模組化架構分析)
+  - [3. 智能分析驅動最佳化](#3-智能分析驅動最佳化)
+- [📊 分析概要](#分析概要)
+  - [**分析統計**](#分析統計)
+  - [**核心模組結構**](#核心模組結構)
+- [🧠 AI 引擎模組分析](#ai-引擎模組分析)
+  - [**ai_engine/** (核心 AI 系統)](#aiengine-核心-ai-系統)
+    - [**重要組件**:](#重要組件)
+    - [**學習系統**:](#學習系統)
+    - [**性能優化**:](#性能優化)
+- [🎯 規劃器模組分析](#規劃器模組分析)
+  - [**planner/** (核心規劃系統)](#planner-核心規劃系統)
+    - [**AST 解析器** (`ast_parser.py`):](#ast-解析器-astparserpy)
+    - [**任務轉換器** (`task_converter.py`):](#任務轉換器-taskconverterpy)
+    - [**攻擊編排器** (`orchestrator.py`):](#攻擊編排器-orchestratorpy)
+- [⚔️ 攻擊執行模組分析](#攻擊執行模組分析)
+  - [**attack/** (攻擊執行系統)](#attack-攻擊執行系統)
+    - [**攻擊鏈** (`attack_chain.py`):](#攻擊鏈-attackchainpy)
+    - [**載荷生成器** (`payload_generator.py`):](#載荷生成器-payloadgeneratorpy)
+    - [**攻擊驗證器** (`attack_validator.py`):](#攻擊驗證器-attackvalidatorpy)
+- [🔒 授權系統分析](#授權系統分析)
+  - [**authz/** (授權控制系統)](#authz-授權控制系統)
+    - [**權限矩陣** (`permission_matrix.py`):](#權限矩陣-permissionmatrixpy)
+    - [**矩陣視覺化** (`matrix_visualizer.py`):](#矩陣視覺化-matrixvisualizerpy)
+- [📈 分析系統模組](#分析系統模組)
+  - [**analysis/** (分析評估系統)](#analysis-分析評估系統)
+    - [**計畫對比器** (`plan_comparator.py`):](#計畫對比器-plancomparatorpy)
+    - [**風險評估引擎** (`risk_assessment_engine.py`):](#風險評估引擎-riskassessmentenginepy)
+- [🤖 生物神經主控器](#生物神經主控器)
+  - [**bio_neuron_master.py** (BioNeuron 主控制器):](#bioneuronmasterpy-bioneuron-主控制器)
+- [🚀 核心協調系統](#核心協調系統)
+  - [**core_service_coordinator.py** (核心服務協調器):](#coreservicecoordinatorpy-核心服務協調器)
+  - [**command_router.py** (命令路由器):](#commandrouterpy-命令路由器)
+  - [**execution_planner.py** (執行計畫器):](#executionplannerpy-執行計畫器)
+- [📊 關鍵發現](#關鍵發現)
+  - [**架構優勢**:](#架構優勢)
+  - [**技術亮點**:](#技術亮點)
+  - [**整合建議**:](#整合建議)
 
+---
+---
+---
 ---
 
 ## 🎯 設計哲學對應

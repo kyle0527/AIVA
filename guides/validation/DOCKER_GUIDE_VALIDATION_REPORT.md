@@ -1,13 +1,21 @@
 # Docker Guide 驗證報告
 
-## 📋 目錄
+## 📑 目錄
 
 - [📋 驗證項目](#驗證項目)
   - [✅ 檔案路徑驗證](#檔案路徑驗證)
   - [✅ Dockerfile 內容驗證](#dockerfile-內容驗證)
+    - [docker/core/Dockerfile.core](#dockercoredockerfilecore)
+    - [docker/components/Dockerfile.component](#dockercomponentsdockerfilecomponent)
+    - [docker/core/Dockerfile.core.minimal](#dockercoredockerfilecoreminimal)
+    - [docker/infrastructure/Dockerfile.integration](#dockerinfrastructuredockerfileintegration)
   - [✅ 構建命令驗證](#構建命令驗證)
+    - [Docker Build 命令語法](#docker-build-命令語法)
   - [✅ Docker Compose 命令更新](#docker-compose-命令更新)
+    - [命令語法現代化](#命令語法現代化)
   - [✅ 構建上下文驗證](#構建上下文驗證)
+    - [相對路徑正確性](#相對路徑正確性)
+    - [檔案存在性檢查](#檔案存在性檢查)
 - [🔧 修正記錄](#修正記錄)
   - [Docker Compose 語法現代化 (已完成)](#docker-compose-語法現代化-已完成)
   - [路徑一致性確認 (已完成)](#路徑一致性確認-已完成)
@@ -20,10 +28,9 @@
   - [部署指南](#部署指南)
   - [架構指南](#架構指南)
 
-**生成時間**: 2024-12-27 22:10
-**驗證範圍**: docker/DOCKER_GUIDE.md
-**驗證目的**: 確保 Docker Guide 中的構建指令和路徑正確性
-
+---
+---
+---
 ## 📋 驗證項目
 
 ### ✅ 檔案路徑驗證

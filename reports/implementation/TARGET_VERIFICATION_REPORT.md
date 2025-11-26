@@ -1,16 +1,16 @@
 # 測試目標驗證報告
 
-## 📋 目錄
+## 📑 目錄
 
 - [📊 目前運行的 Docker 靶場](#目前運行的-docker-靶場)
   - [完整列表](#完整列表)
   - [驗證結果](#驗證結果)
 - [🎯 測試腳本使用的目標](#測試腳本使用的目標)
-  - [1. `test_all_targets.py`](#1-test-all-targetspy)
-  - [2. `diagnose_http.py`](#2-diagnose-httppy)
-  - [3. `test_dynamic_scan.py`](#3-test-dynamic-scanpy)
-  - [4. `test_targets_detailed.py`](#4-test-targets-detailedpy)
-  - [5. `testing/scan/test_scan_integration.py`](#5-testingscantest-scan-integrationpy)
+  - [1. `test_all_targets.py`](#1-testalltargetspy)
+  - [2. `diagnose_http.py`](#2-diagnosehttppy)
+  - [3. `test_dynamic_scan.py`](#3-testdynamicscanpy)
+  - [4. `test_targets_detailed.py`](#4-testtargetsdetailedpy)
+  - [5. `testing/scan/test_scan_integration.py`](#5-testingscantestscanintegrationpy)
 - [🔍 靶場特性分析](#靶場特性分析)
   - [OWASP Juice Shop (3000, 3001, 3003)](#owasp-juice-shop-3000-3001-3003)
   - [OWASP WebGoat (8080)](#owasp-webgoat-8080)
@@ -28,9 +28,9 @@
 - [📝 測試清單](#測試清單)
 - [🎉 結論](#結論)
 
-**生成日期**: 2025-11-22  
-**用途**: 確認所有掃描測試使用的靶場目標
-
+---
+---
+---
 ---
 
 ## 📊 目前運行的 Docker 靶場

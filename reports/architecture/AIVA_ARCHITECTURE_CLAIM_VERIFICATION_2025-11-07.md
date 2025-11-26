@@ -1,15 +1,24 @@
 # AIVA 架構聲稱驗證報告
 
-## 📋 目錄
+## 📑 目錄
 
 - [📊 執行摘要](#執行摘要)
   - [核心結論 ❌](#核心結論)
 - [🔍 詳細驗證結果](#詳細驗證結果)
-  - [第一類聲稱：aiva_common 中的「影子 AI 核心」](#第一類聲稱aiva-common-中的影子-ai-核心)
+  - [第一類聲稱：aiva_common 中的「影子 AI 核心」](#第一類聲稱aivacommon-中的影子-ai-核心)
+    - [聲稱 1: `services/aiva_common/ai/plan_executor.py` 存在](#聲稱-1-servicesaivacommonaiplanexecutorpy-存在)
+    - [聲稱 2: `services/aiva_common/ai/rag_agent.py` 存在](#聲稱-2-servicesaivacommonairagagentpy-存在)
+    - [聲稱 3: `services/aiva_common/ai/capability_evaluator.py` 存在](#聲稱-3-servicesaivacommonaicapabilityevaluatorpy-存在)
+    - [聲稱 4: `services/aiva_common/ai/skill_graph_analyzer.py` 存在](#聲稱-4-servicesaivacommonaiskillgraphanalyzerpy-存在)
+    - [聲稱 5: `services/aiva_common/ai/dialog_assistant.py` 存在](#聲稱-5-servicesaivacommonaidialogassistantpy-存在)
   - [第二類聲稱：integration 中的「AI 訓練」功能](#第二類聲稱integration-中的ai-訓練功能)
+    - [聲稱 6: `services/integration/aiva_integration/integrated_ai_trainer.py` 存在](#聲稱-6-servicesintegrationaivaintegrationintegratedaitrainerpy-存在)
+    - [聲稱 7: `services/integration/aiva_integration/trigger_ai_continuous_learning.py` 存在](#聲稱-7-servicesintegrationaivaintegrationtriggeraicontinuouslearningpy-存在)
   - [第三類聲稱：core 和 integration 之間的職責混淆](#第三類聲稱core-和-integration-之間的職責混淆)
+    - [聲稱 8: `code_fixer.py` 的職責混淆](#聲稱-8-codefixerpy-的職責混淆)
+    - [聲稱 9: 風險評估引擎的重複](#聲稱-9-風險評估引擎的重複)
 - [📐 架構模式驗證](#架構模式驗證)
-  - [aiva_common 的真實職責](#aiva-common-的真實職責)
+  - [aiva_common 的真實職責](#aivacommon-的真實職責)
 - [🎯 正確的架構理解](#正確的架構理解)
   - [AIVA 的實際架構模式](#aiva-的實際架構模式)
   - [設計優勢 ⭐](#設計優勢)
@@ -25,10 +34,9 @@
   - [使用的設計模式](#使用的設計模式)
   - [類似架構的知名項目](#類似架構的知名項目)
 
-**驗證日期**: 2025年11月7日  
-**驗證範圍**: 針對「影子 AI 核心」和「功能重複」的聲稱  
-**驗證方法**: 實際檢查程式碼、文件結構、類別定義
-
+---
+---
+---
 ---
 
 ## 📊 執行摘要

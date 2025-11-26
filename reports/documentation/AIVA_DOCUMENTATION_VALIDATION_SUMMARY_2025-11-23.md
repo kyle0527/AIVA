@@ -1,14 +1,39 @@
 # AIVA 操作指南驗證總結報告
 
-## 📋 目錄
+## 📑 目錄
 
 - [📊 驗證總覽](#驗證總覽)
 - [📋 詳細驗證結果](#詳細驗證結果)
-  - [1. SCAN_USER_GUIDE.md](#1-scan-user-guidemd)
-  - [2. Go Engine USAGE_GUIDE.md](#2-go-engine-usage-guidemd)
-  - [3. Rust Engine USAGE_GUIDE.md](#3-rust-engine-usage-guidemd)
-  - [4. Python Engine USAGE_GUIDE.md ✅ (已重寫)](#4-python-engine-usage-guidemd-已重寫)
-  - [5. Coordinator USAGE_GUIDE.md](#5-coordinator-usage-guidemd)
+  - [1. SCAN_USER_GUIDE.md](#1-scanuserguidemd)
+    - [驗證章節 (3/8)](#驗證章節-38)
+    - [發現的錯誤 (6 處)](#發現的錯誤-6-處)
+    - [評分: 18/20 (90%) ⭐⭐⭐⭐⭐](#評分-1820-90)
+  - [2. Go Engine USAGE_GUIDE.md](#2-go-engine-usageguidemd)
+    - [驗證章節 (5/9)](#驗證章節-59)
+    - [發現的錯誤 (1 處)](#發現的錯誤-1-處)
+    - [實際測試結果](#實際測試結果)
+    - [評分: 18/20 (90%) ⭐⭐⭐⭐⭐](#評分-1820-90-1)
+  - [3. Rust Engine USAGE_GUIDE.md](#3-rust-engine-usageguidemd)
+    - [驗證章節 (6/9)](#驗證章節-69)
+    - [發現的錯誤 (1 處)](#發現的錯誤-1-處-1)
+    - [實際測試結果](#實際測試結果-1)
+    - [評分: 23.5/25 (94%) ⭐⭐⭐⭐⭐ **最高分**](#評分-23525-94-最高分)
+  - [4. Python Engine USAGE_GUIDE.md ✅ (已重寫)](#4-python-engine-usageguidemd-已重寫)
+    - [✅ 完全重寫 - 基於實際架構](#完全重寫-基於實際架構)
+    - [驗證章節 (7/7)](#驗證章節-77)
+    - [重寫改進](#重寫改進)
+      - [1. 正確的 API 使用](#1-正確的-api-使用)
+      - [2. 正確的 Summary 對象使用](#2-正確的-summary-對象使用)
+      - [3. 正確的 scan_id 格式](#3-正確的-scanid-格式)
+      - [4. 新增架構說明](#4-新增架構說明)
+    - [實際測試結果](#實際測試結果-1)
+    - [評分: 25/25 (100%) ⭐⭐⭐⭐⭐ **從 40% 提升到 100%**](#評分-2525-100-從-40-提升到-100)
+  - [5. Coordinator USAGE_GUIDE.md](#5-coordinator-usageguidemd)
+    - [驗證章節 (5/9)](#驗證章節-59-1)
+    - [發現的錯誤 (3 處)](#發現的錯誤-3-處)
+    - [根本原因](#根本原因)
+    - [實際測試結果](#實際測試結果-1)
+    - [評分: 18/20 (90%) ⭐⭐⭐⭐⭐](#評分-1820-90-1)
 - [📈 錯誤類型統計](#錯誤類型統計)
   - [按嚴重程度分類](#按嚴重程度分類)
   - [按錯誤類型分類](#按錯誤類型分類)
@@ -16,8 +41,8 @@
   - [驗證流程](#驗證流程)
   - [驗證標準](#驗證標準)
 - [🏆 表現評價](#表現評價)
-  - [最佳文檔: Python Engine USAGE_GUIDE.md (已重寫)](#最佳文檔-python-engine-usage-guidemd-已重寫)
-  - [原最佳文檔: Rust Engine USAGE_GUIDE.md](#原最佳文檔-rust-engine-usage-guidemd)
+  - [最佳文檔: Python Engine USAGE_GUIDE.md (已重寫)](#最佳文檔-python-engine-usageguidemd-已重寫)
+  - [原最佳文檔: Rust Engine USAGE_GUIDE.md](#原最佳文檔-rust-engine-usageguidemd)
   - [整體表現](#整體表現)
 - [💡 改進建議](#改進建議)
   - [短期改進 (✅ 已完成)](#短期改進-已完成)
@@ -32,11 +57,9 @@
   - [整體質量: 優秀 (92.8%) ⭐⭐⭐⭐⭐](#整體質量-優秀-928)
   - [最終建議](#最終建議)
 
-**驗證時間**: 2025-11-23  
-**驗證人員**: AI Agent  
-**驗證方法**: 實際代碼執行 + API 檢查 + 靶場測試  
-**靶場環境**: Juice Shop (localhost:3000), WebGoat (localhost:8080)
-
+---
+---
+---
 ---
 
 ## 📊 驗證總覽

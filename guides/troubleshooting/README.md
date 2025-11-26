@@ -1,9 +1,9 @@
 # Troubleshooting Guides README
 
-## 📋 目錄
+## 📑 目錄
 
 - [🔧 AIVA v2.0 系統問題解決](#aiva-v20-系統問題解決)
-- [📊 AIVA v2.0 系統狀態 (2025-11-22)](#aiva-v20-系統狀態-2025-11-22)
+- [📊 AIVA v2.0 系統狀態 (2025-11-22)](#aiva-v20-系統狀態-20251122)
 - [📖 Troubleshooting Guides](#troubleshooting-guides)
   - [🚨 **Critical System Issues (High Priority)**](#critical-system-issues-high-priority)
   - [🔗 **Schema & Import Issues (Development Critical)**](#schema-import-issues-development-critical)
@@ -15,6 +15,10 @@
 - [📋 Troubleshooting Process](#troubleshooting-process)
   - [🎯 **Quick Diagnosis Checklist**](#quick-diagnosis-checklist)
   - [🔍 **Systematic Problem Resolution**](#systematic-problem-resolution)
+    - [Step 1: Issue Classification](#step-1-issue-classification)
+    - [Step 2: Data Collection](#step-2-data-collection)
+    - [Step 3: Resolution Strategy](#step-3-resolution-strategy)
+    - [Step 4: Validation](#step-4-validation)
 - [🚀 Emergency Response Procedures](#emergency-response-procedures)
   - [🚨 **Critical Performance Degradation**](#critical-performance-degradation)
   - [🔥 **Contract System Failure**](#contract-system-failure)
@@ -28,10 +32,9 @@
   - [Validation Errors](#validation-errors)
   - [Environment Setup](#environment-setup)
 
-> **🎯 v2.0 架構**: 疑難排解指南更新  
-> **✅ 系統狀態**: 主要問題已解決  
-> **🔄 最後更新**: 2025年11月22日
-
+---
+---
+---
 ## 🔧 AIVA v2.0 系統問題解決
 
 疑難排解指南專注於診斷和解決 AIVA v2.0 數據合約架構相關問題。這些指南提供系統化的方法來識別和修復問題，同時保持系統性能和完整性。

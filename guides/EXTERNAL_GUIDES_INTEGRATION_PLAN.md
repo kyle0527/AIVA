@@ -1,10 +1,15 @@
 # 外部指南整合計劃
 
-## 📋 目錄
+## 📑 目錄
 
 - [� 目錄](#目錄)
 - [�📊 整合方案總覽](#整合方案總覽)
   - [🟢 建議移入 guides/ 的指南 (高價值，常用)](#建議移入-guides-的指南-高價值常用)
+    - [→ guides/development/](#guidesdevelopment)
+    - [→ guides/architecture/](#guidesarchitecture)
+    - [→ guides/deployment/](#guidesdeployment)
+    - [→ guides/troubleshooting/](#guidestroubleshooting)
+    - [→ guides/development/](#guidesdevelopment-1)
   - [🟡 建議整合到現有指南 (內容重疊)](#建議整合到現有指南-內容重疊)
   - [🔴 建議保留原位置或刪除](#建議保留原位置或刪除)
 - [🔄 整合執行步驟](#整合執行步驟)
@@ -14,6 +19,9 @@
   - [Phase 4: 清理和驗證](#phase-4-清理和驗證)
 - [📈 預期效果](#預期效果)
 
+---
+---
+---
 ## � 目錄
 
 - [📊 整合方案總覽](#-整合方案總覽)

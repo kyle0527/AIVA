@@ -1,11 +1,16 @@
 # AIVA 模組用法完整報告
-## 📋 目錄
+## 📑 目錄
 
 - [一、掃描模組（Scan Module）](#一掃描模組scan-module)
   - [1.1 MultiEngineCoordinator 用法](#11-multienginecoordinator-用法)
   - [1.2 Phase 0 用法（快速偵察）](#12-phase-0-用法快速偵察)
   - [1.3 Phase 1 用法（深度掃描）](#13-phase-1-用法深度掃描)
   - [1.4 預設掃描策略](#14-預設掃描策略)
+    - [execute_strategy_fast](#executestrategyfast)
+    - [execute_strategy_balanced](#executestrategybalanced)
+    - [execute_strategy_comprehensive](#executestrategycomprehensive)
+    - [execute_strategy_aggressive](#executestrategyaggressive)
+    - [execute_strategy_smart](#executestrategysmart)
 - [二、功能模組（Feature Modules）](#二功能模組feature-modules)
   - [2.1 SQLI 模組](#21-sqli-模組)
   - [2.2 XSS 模組](#22-xss-模組)
@@ -21,9 +26,9 @@
   - [功能模組: 4/5 可用](#功能模組-45-可用)
   - [AI 整合: 3/3 可用](#ai-整合-33-可用)
 
-**生成時間**: 2025-11-24 17:37:41
-**測試目的**: 確認 AI 能否完整調用所有掃描和功能模組
-
+---
+---
+---
 ## 一、掃描模組（Scan Module）
 ### 1.1 MultiEngineCoordinator 用法
 **狀態**: ✅ 可用
