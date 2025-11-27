@@ -116,7 +116,7 @@
 
 **輸出文件**:
 - `PYTHON_ENGINE_VALIDATION_REPORT_NEW_2025-11-23.md` (100% 評分)
-- `PYTHON_ENGINE_USAGE_GUIDE.md` (新版,已部署)
+- `docs/guides/services/rust_engine_USAGE_GUIDE.md` (新版,已部署)
 - `PYTHON_ENGINE_USAGE_GUIDE_OLD.md` (舊版,已備份)
 
 ---
@@ -178,7 +178,7 @@
 
 ### 核心文檔
 1. ✅ `PYTHON_ENGINE_ACTUAL_ANALYSIS.md` - 架構分析報告
-2. ✅ `PYTHON_ENGINE_USAGE_GUIDE.md` - 新版使用指南 (已部署)
+2. ✅ `docs/guides/services/rust_engine_USAGE_GUIDE.md` - 新版使用指南 (已部署)
 3. ✅ `PYTHON_ENGINE_USAGE_GUIDE_OLD.md` - 舊版備份
 
 ### 驗證文件

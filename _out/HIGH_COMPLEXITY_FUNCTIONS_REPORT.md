@@ -1,5 +1,21 @@
 # 高複雜度函數記錄報告
 
+## 📑 目錄
+
+- [📊 複雜度過高的函數清單](#-複雜度過高的函數清單)
+  - [1. MultiEngineCoordinator - execute_phase0()](#1-multienginecoordinator---execute_phase0)
+  - [2. MultiEngineCoordinator - execute_phase1()](#2-multienginecoordinator---execute_phase1)
+  - [3. TypeScriptAdapter - scan()](#3-typescriptadapter---scan)
+  - [4. RustAdapter - scan()](#4-rustadapter---scan)
+- [📋 處理建議](#-處理建議)
+  - [高優先級（待 Untitled.md 完成後處理）](#高優先級待-untitledmd-完成後處理)
+  - [中優先級](#中優先級)
+  - [低優先級](#低優先級)
+- [🎯 執行時機](#-執行時機)
+- [📝 備註](#-備註)
+
+---
+
 > 生成時間：2025-11-21
 > 
 > 目的：記錄在重構過程中發現的所有認知複雜度過高的函數，待完成 Untitled.md 所有建議後再處理

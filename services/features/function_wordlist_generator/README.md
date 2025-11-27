@@ -1,5 +1,19 @@
 # Wordlist Generator Module
 
+## 📑 目錄
+
+- [模組概述](#模組概述)
+- [核心能力](#核心能力)
+  - [1. CUPP (Common User Passwords Profiler)](#1-cupp-common-user-passwords-profiler)
+  - [2. 組合生成](#2-組合生成)
+  - [3. 混合字典](#3-混合字典)
+  - [4. 常見密碼列表](#4-常見密碼列表)
+- [工具整合](#工具整合)
+- [使用範例](#使用範例)
+
+---
+
+
 ## 模組概述
 
 密碼字典生成模組，支援多種生成策略和自訂規則。

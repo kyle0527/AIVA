@@ -1,5 +1,15 @@
 # 已完成腳本存檔
 
+## 📑 目錄
+
+- [📁 腳本列表](#-腳本列表)
+  - [init_go_common.ps1](#init_go_commonps1)
+  - [init_go_deps.ps1](#init_go_depsps1)
+  - [migrate_sca_service.ps1](#migrate_sca_serviceps1)
+- [⚠️ 注意事項](#-注意事項)
+
+---
+
 **目錄用途**: 存放已執行完成的一次性初始化腳本  
 **狀態**: 已完成，僅作歷史記錄
 

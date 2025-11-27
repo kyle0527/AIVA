@@ -711,7 +711,7 @@ services/core/tests/test_module_explorer.py::test_module_explorer PASSED [100%]
 ## 🔗 相關文件
 
 - `IMPORT_FIX_PROGRESS.md` - 導入修復進度報告
-- `DEVELOPMENT_STANDARDS.md` - 開發標準指南
+- `docs/development/services_DEVELOPMENT_STANDARDS.md` - 開發標準指南
 - `pyproject.toml` (x3) - 套件配置
 - `requirements.txt` (x6) - 依賴清單
 - `scripts/common/setup/setup_multilang.ps1` - 自動化設定腳本

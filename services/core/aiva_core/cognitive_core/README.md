@@ -1,5 +1,34 @@
 # Cognitive Core - AI 認知核心
 
+## 📑 目錄
+
+- [📋 目錄](#-目錄)
+- [📋 概述](#-概述)
+  - [🎯 核心職責](#-核心職責)
+- [📂 目錄結構](#-目錄結構)
+- [🎨 核心組件說明](#-核心組件說明)
+  - [1️⃣ Neural (神經網路核心) - [📖 詳細文檔](./neural/README.md)](#1-neural-神經網路核心----詳細文檔neuralreadmemd)
+  - [2️⃣ RAG (檢索增強生成) - [📖 詳細文檔](./rag/README.md)](#2-rag-檢索增強生成----詳細文檔ragreadmemd)
+  - [3️⃣ Decision (決策支援) - [📖 詳細文檔](./decision/README.md)](#3-decision-決策支援----詳細文檔decisionreadmemd)
+  - [4️⃣ Anti-Hallucination (反幻覺) - [📖 詳細文檔](./anti_hallucination/README.md)](#4-anti-hallucination-反幻覺----詳細文檔anti_hallucinationreadmemd)
+  - [5️⃣ NLG System (自然語言生成)](#5-nlg-system-自然語言生成)
+- [🔗 閉環連接器](#-閉環連接器)
+  - [InternalLoopConnector (內部閉環連接器)](#internalloopconnector-內部閉環連接器)
+  - [ExternalLoopConnector (外部閉環連接器)](#externalloopconnector-外部閉環連接器)
+- [🚀 快速開始](#-快速開始)
+  - [基本使用](#基本使用)
+  - [整合閉環連接器](#整合閉環連接器)
+- [🔧 開發指南](#-開發指南)
+  - [🛠️ aiva_common 修復規範](#-aiva_common-修復規範)
+  - [遵循 AIVA Common 規範](#遵循-aiva-common-規範)
+  - [新增組件指南](#新增組件指南)
+- [📊 性能指標](#-性能指標)
+- [🧪 測試](#-測試)
+- [📚 相關文檔](#-相關文檔)
+- [⚠️ 重要提醒](#-重要提醒)
+
+---
+
 **導航**: [← 返回 AIVA Core](../README.md) | [📖 重構計劃](../REFACTORING_PLAN.md)
 
 ## 📋 目錄
@@ -21,7 +50,7 @@
 > **🎯 定位**: AIVA 的「大腦」,負責思考和決策  
 > **✅ 狀態**: 系統就緒，測試通過  
 > **🧪 測試狀態**: 階段 4 測試 100% 通過 (4/4 組件)  
-> **🔄 最後更新**: 2025年11月16日
+> **🔄 最後更新**: 2025年11月27日
 
 **Cognitive Core** 是 AIVA Core 的 AI 認知核心模組,整合神經網路推理、RAG 知識增強、決策支援和反幻覺機制,實現 AI 自我優化雙重閉環的核心決策功能。
 
@@ -456,7 +485,7 @@ python benchmarks/benchmark_cognitive_core.py
 ---
 
 **📝 文檔版本**: v1.0  
-**🔄 最後更新**: 2025年11月15日  
+**🔄 最後更新**: 2025年11月27日  
 **👥 維護者**: AIVA Core 開發團隊
 
 ---

@@ -1,5 +1,12 @@
 # aiva-contracts-tooling
 
+## 📑 目錄
+
+- [使用](#使用)
+- [CI 建議](#ci-建議)
+
+---
+
 提供從 `aiva_schemas_plugin` 自動匯出 **JSON Schema** 與 **TypeScript `.d.ts` 型別** 的 CLI。
 
 > 需要在 Python 環境中可匯入 `aiva_schemas_plugin`（或以 `PYTHONPATH` 指向）。

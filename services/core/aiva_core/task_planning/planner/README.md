@@ -1,5 +1,25 @@
 # 📝 Planner - 任務規劃器
 
+## 📑 目錄
+
+- [📋 目錄](#-目錄)
+- [🎯 模組概述](#-模組概述)
+  - [核心功能](#核心功能)
+- [📂 檔案列表](#-檔案列表)
+- [🔧 核心組件](#-核心組件)
+  - [1. `task_generator.py` - 任務生成器](#1-task_generatorpy---任務生成器)
+  - [2. `orchestrator.py` - 攻擊編排器](#2-orchestratorpy---攻擊編排器)
+  - [3. `execution_planner.py` - 執行計劃器](#3-execution_plannerpy---執行計劃器)
+  - [4. `ast_parser.py` - AST 解析器](#4-ast_parserpy---ast-解析器)
+  - [5. `task_converter.py` - 任務轉換器](#5-task_converterpy---任務轉換器)
+  - [6. `tool_selector.py` - 工具選擇器](#6-tool_selectorpy---工具選擇器)
+  - [7. `plan_comparator.py` - 計畫比較器](#7-plan_comparatorpy---計畫比較器)
+- [🚀 完整使用流程](#-完整使用流程)
+  - [從策略到執行](#從策略到執行)
+- [📊 性能指標](#-性能指標)
+
+---
+
 **導航**: [← 返回 Task Planning](../README.md) | [← 返回 AIVA Core](../../README.md)
 
 > **版本**: 3.0.0-alpha  

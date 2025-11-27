@@ -1,0 +1,1051 @@
+{
+  "modules": {
+    "aiva_common": {
+      "name": "aiva_common",
+      "path": "aiva_common",
+      "code_files": {
+        "python": 137,
+        "go": 0,
+        "rust": 1,
+        "typescript": 2
+      },
+      "doc_files": 1,
+      "has_readme": true,
+      "readme_analysis": {
+        "size": 58067,
+        "lines": 2507,
+        "h1_count": 205,
+        "h2_count": 23,
+        "has_toc": true,
+        "total_links": 63,
+        "broken_links": [
+          [
+            "📖 文檔中心",
+            "../../docs/README.md"
+          ],
+          [
+            "Python 工具 (22個)",
+            "../../_out/VSCODE_EXTENSIONS_INVENTORY.md#-1-python-開發生態-22-個"
+          ],
+          [
+            "核心插件速查表",
+            "../../_out/VSCODE_EXTENSIONS_INVENTORY.md#-核心插件速查表"
+          ],
+          [
+            "文檔工具 (8個)",
+            "../../_out/VSCODE_EXTENSIONS_INVENTORY.md#-8-文檔與標記語言-8-個"
+          ],
+          [
+            "品質工具 (5個)",
+            "../../_out/VSCODE_EXTENSIONS_INVENTORY.md#-7-程式碼品質與-linting-5-個"
+          ],
+          [
+            "AI 工具 (5個)",
+            "../../_out/VSCODE_EXTENSIONS_INVENTORY.md#-5-github-整合與-ai-5-個"
+          ],
+          [
+            "開發環境問題解決",
+            "../../_out/VSCODE_EXTENSIONS_INVENTORY.md#-問題排查流程"
+          ],
+          [
+            "`_out/SCHEMA_ARCHITECTURE_ANALYSIS.md`",
+            "../../_out/SCHEMA_ARCHITECTURE_ANALYSIS.md"
+          ],
+          [
+            "aiva_common 修護規範",
+            "services/aiva_common/README.md#🔧-開發指南"
+          ],
+          [
+            "代碼品質報告",
+            "./CODE_QUALITY_REPORT.md"
+          ],
+          [
+            "AIVA 系統架構",
+            "../../docs/ARCHITECTURE/"
+          ],
+          [
+            "LICENSE",
+            "../../LICENSE"
+          ],
+          [
+            "`services/core/README.md`",
+            "../core/README.md#開發規範與最佳實踐"
+          ],
+          [
+            "`services/features/README.md`",
+            "../features/README.md#開發規範與最佳實踐"
+          ],
+          [
+            "`services/scan/README.md`",
+            "../scan/README.md#開發規範與最佳實踐"
+          ],
+          [
+            "`services/integration/README.md`",
+            "../integration/README.md#開發規範與最佳實踐"
+          ]
+        ],
+        "subdir_links": [
+          [
+            "← 返回 Services 總覽",
+            "../README.md"
+          ],
+          [
+            "📖 文檔中心",
+            "../../docs/README.md"
+          ],
+          [
+            "aiva_common 修護規範",
+            "services/aiva_common/README.md#🔧-開發指南"
+          ],
+          [
+            "AIVA 系統架構",
+            "../../docs/ARCHITECTURE/"
+          ],
+          [
+            "開發指南",
+            "../../docs/DEVELOPMENT/"
+          ],
+          [
+            "`services/core/README.md`",
+            "../core/README.md#開發規範與最佳實踐"
+          ],
+          [
+            "`services/features/README.md`",
+            "../features/README.md#開發規範與最佳實踐"
+          ],
+          [
+            "`services/scan/README.md`",
+            "../scan/README.md#開發規範與最佳實踐"
+          ],
+          [
+            "`services/integration/README.md`",
+            "../integration/README.md#開發規範與最佳實踐"
+          ]
+        ],
+        "needs_split": true,
+        "title": "AIVA Common - Bug Bounty 專業化共享庫"
+      },
+      "subdirs": [
+        ".ruff_cache",
+        "ai",
+        "aiva_common.egg-info",
+        "async_utils",
+        "cli",
+        "config",
+        "cross_language",
+        "enums",
+        "messaging",
+        "observability",
+        "plugins",
+        "protocols",
+        "schemas",
+        "services",
+        "tools",
+        "utils",
+        "v2_client"
+      ]
+    },
+    "core": {
+      "name": "core",
+      "path": "core",
+      "code_files": {
+        "python": 136,
+        "go": 0,
+        "rust": 0,
+        "typescript": 0
+      },
+      "doc_files": 38,
+      "has_readme": true,
+      "readme_analysis": {
+        "size": 45911,
+        "lines": 1891,
+        "h1_count": 67,
+        "h2_count": 23,
+        "has_toc": true,
+        "total_links": 206,
+        "broken_links": [
+          [
+            "📖 文檔中心",
+            "../../docs/README.md"
+          ],
+          [
+            "架構修復完成報告",
+            "../../ARCHITECTURE_FIXES_COMPLETION_REPORT.md"
+          ],
+          [
+            "AI語義能力審計",
+            "../../AI_CODE_ANALYSIS_CAPABILITY_AUDIT.md"
+          ],
+          [
+            "語義編碼測試腳本",
+            "../../test_ai_semantic_encoding.py"
+          ],
+          [
+            "三層AI決策架構",
+            "aiva_core/README.md#-ai決策系統"
+          ],
+          [
+            "攻擊執行引擎",
+            "aiva_core/README.md#️-攻擊執行引擎"
+          ],
+          [
+            "`ai/`",
+            "ai/"
+          ],
+          [
+            "AI Core README",
+            "ai/README.md"
+          ],
+          [
+            "AI Core README",
+            "ai/README.md"
+          ],
+          [
+            "事件系統設計",
+            "ai/README.md#-核心組件"
+          ],
+          [
+            "漸進式升級",
+            "ai/README.md#-核心組件"
+          ],
+          [
+            "AI Core 整合建議",
+            "ai/INTEGRATION_ANALYSIS.md"
+          ],
+          [
+            "`aiva_core_v1/`",
+            "aiva_core_v1/"
+          ],
+          [
+            "AIVA Core v1 README",
+            "aiva_core_v1/README.md"
+          ],
+          [
+            "AIVA Core v1 README",
+            "aiva_core_v1/README.md"
+          ],
+          [
+            "v1到v2整合路線圖",
+            "aiva_core_v1/README.md#-整合建議"
+          ],
+          [
+            "整合收益分析",
+            "aiva_core_v1/README.md#-價值評估"
+          ],
+          [
+            "Python 專屬工具 (22個)",
+            "../../_out/VSCODE_EXTENSIONS_INVENTORY.md#-1-python-開發生態-22-個"
+          ],
+          [
+            "問題排查流程",
+            "../../_out/VSCODE_EXTENSIONS_INVENTORY.md#-問題排查流程"
+          ],
+          [
+            "核心模組代碼分析",
+            "_out/core_module_analysis_detailed.json"
+          ],
+          [
+            "架構優化建議",
+            "reports/ANALYSIS_REPORTS/core_module_comprehensive_analysis.md"
+          ],
+          [
+            "aiva_common 使用規範",
+            "../aiva_common/README.md#開發指南"
+          ],
+          [
+            "AI Core 智慧增強文檔",
+            "ai/README.md"
+          ],
+          [
+            "Core v1 工作流引擎文檔",
+            "aiva_core_v1/README.md"
+          ],
+          [
+            "AI Core 整合分析報告",
+            "ai/INTEGRATION_ANALYSIS.md"
+          ],
+          [
+            "AI Core 智慧增強文檔",
+            "ai/README.md"
+          ],
+          [
+            "Core v1 工作流引擎文檔",
+            "aiva_core_v1/README.md"
+          ],
+          [
+            "AI Core 整合分析報告",
+            "ai/INTEGRATION_ANALYSIS.md"
+          ],
+          [
+            "aiva_common 使用規範",
+            "../aiva_common/README.md#開發指南"
+          ]
+        ],
+        "subdir_links": [
+          [
+            "← 返回 Services 總覽",
+            "../README.md"
+          ],
+          [
+            "📖 文檔中心",
+            "../../docs/README.md"
+          ],
+          [
+            "`aiva_core/`",
+            "aiva_core/"
+          ],
+          [
+            "AIVA Core README",
+            "aiva_core/README.md"
+          ],
+          [
+            "AIVA Core README",
+            "aiva_core/README.md"
+          ],
+          [
+            "三層AI決策架構",
+            "aiva_core/README.md#-ai決策系統"
+          ],
+          [
+            "攻擊執行引擎",
+            "aiva_core/README.md#️-攻擊執行引擎"
+          ],
+          [
+            "`ai/`",
+            "ai/"
+          ],
+          [
+            "AI Core README",
+            "ai/README.md"
+          ],
+          [
+            "AI Core README",
+            "ai/README.md"
+          ],
+          [
+            "事件系統設計",
+            "ai/README.md#-核心組件"
+          ],
+          [
+            "漸進式升級",
+            "ai/README.md#-核心組件"
+          ],
+          [
+            "`aiva_core_v1/`",
+            "aiva_core_v1/"
+          ],
+          [
+            "AIVA Core v1 README",
+            "aiva_core_v1/README.md"
+          ],
+          [
+            "AIVA Core v1 README",
+            "aiva_core_v1/README.md"
+          ],
+          [
+            "v1到v2整合路線圖",
+            "aiva_core_v1/README.md#-整合建議"
+          ],
+          [
+            "整合收益分析",
+            "aiva_core_v1/README.md#-價值評估"
+          ],
+          [
+            "aiva_common 使用規範",
+            "../aiva_common/README.md#開發指南"
+          ],
+          [
+            "AIVA Core 主引擎文檔",
+            "aiva_core/README.md"
+          ],
+          [
+            "AI Core 智慧增強文檔",
+            "ai/README.md"
+          ],
+          [
+            "Core v1 工作流引擎文檔",
+            "aiva_core_v1/README.md"
+          ],
+          [
+            "AIVA Core 主引擎文檔",
+            "aiva_core/README.md"
+          ],
+          [
+            "AI Core 智慧增強文檔",
+            "ai/README.md"
+          ],
+          [
+            "Core v1 工作流引擎文檔",
+            "aiva_core_v1/README.md"
+          ],
+          [
+            "aiva_common 使用規範",
+            "../aiva_common/README.md#開發指南"
+          ]
+        ],
+        "needs_split": true,
+        "title": "AIVA Core 模組 - AI驅動核心引擎架構"
+      },
+      "subdirs": [
+        "aiva_core",
+        "tests",
+        "tools"
+      ]
+    },
+    "features": {
+      "name": "features",
+      "path": "features",
+      "code_files": {
+        "python": 131,
+        "go": 11,
+        "rust": 1,
+        "typescript": 0
+      },
+      "doc_files": 22,
+      "has_readme": true,
+      "readme_analysis": {
+        "size": 28842,
+        "lines": 1074,
+        "h1_count": 91,
+        "h2_count": 13,
+        "has_toc": true,
+        "total_links": 98,
+        "broken_links": [
+          [
+            "📖 文檔中心",
+            "../../docs/README.md"
+          ],
+          [
+            "05_A_Social_Engineering_Technical_Integration.md",
+            "../../../Users/User/Downloads/新增資料夾%20(6"
+          ],
+          [
+            "05_B_Payload_Generator_Technical_Integration.md",
+            "../../../Users/User/Downloads/新增資料夾%20(6"
+          ],
+          [
+            "C:\\Users\\User\\Downloads\\新增資料夾 (6)\\AIVA_Enhancement_Plan\\00_INDEX.md",
+            "../../../Users/User/Downloads/新增資料夾%20(6"
+          ],
+          [
+            "執行摘要與現狀分析",
+            "../../../Users/User/Downloads/新增資料夾%20(6"
+          ],
+          [
+            "能力缺口分析",
+            "../../../Users/User/Downloads/新增資料夾%20(6"
+          ],
+          [
+            "Hackingtool 整合分析",
+            "../../../Users/User/Downloads/新增資料夾%20(6"
+          ],
+          [
+            "Social Engineering Technical Integration",
+            "../../../Users/User/Downloads/新增資料夾%20(6"
+          ],
+          [
+            "Payload Generator Technical Integration",
+            "../../../Users/User/Downloads/新增資料夾%20(6"
+          ],
+          [
+            "02_Gap_Analysis.md",
+            "../../../Users/User/Downloads/新增資料夾%20(6"
+          ],
+          [
+            "01_Executive_Summary.md",
+            "../../../Users/User/Downloads/新增資料夾%20(6"
+          ],
+          [
+            "05_Hackingtool_Integration.md",
+            "../../../Users/User/Downloads/新增資料夾%20(6"
+          ],
+          [
+            "共用組件",
+            "common/README.md"
+          ],
+          [
+            "Python 開發指南",
+            "docs/README_PYTHON.md"
+          ],
+          [
+            "Go 開發指南",
+            "docs/README_GO.md"
+          ],
+          [
+            "Rust 開發指南",
+            "docs/README_RUST.md"
+          ],
+          [
+            "安全功能詳解",
+            "docs/README_SECURITY.md"
+          ],
+          [
+            "支援功能指南",
+            "docs/README_SUPPORT.md"
+          ],
+          [
+            "Python 工具 (22個)",
+            "../../_out/VSCODE_EXTENSIONS_INVENTORY.md#-1-python-開發生態-22-個"
+          ],
+          [
+            "Go 工具",
+            "../../_out/VSCODE_EXTENSIONS_INVENTORY.md#-3-其他程式語言-5-個"
+          ],
+          [
+            "Rust 工具",
+            "../../_out/VSCODE_EXTENSIONS_INVENTORY.md#-3-其他程式語言-5-個"
+          ],
+          [
+            "Python 最佳實踐",
+            "../../_out/VSCODE_EXTENSIONS_INVENTORY.md#案例-2-修復-python-未定義函數錯誤"
+          ],
+          [
+            "多語言問題排查",
+            "../../_out/VSCODE_EXTENSIONS_INVENTORY.md#-問題排查流程"
+          ],
+          [
+            "**高價值功能**",
+            "docs/README_HIGH_VALUE.md"
+          ],
+          [
+            "**安全核心引擎**",
+            "docs/README_SECURITY_CORE.md"
+          ],
+          [
+            "**業務邏輯檢測**",
+            "docs/README_BUSINESS_LOGIC.md"
+          ],
+          [
+            "**基礎設施支援**",
+            "docs/README_INFRASTRUCTURE.md"
+          ],
+          [
+            "**多語言實現**",
+            "docs/README_LANGUAGES.md"
+          ],
+          [
+            "Rust 模組",
+            "docs/rust/README.md"
+          ],
+          [
+            "功能分層架構圖",
+            "../_out/architecture_diagrams/functional/FEATURES_INTEGRATED_FUNCTIONAL.mmd"
+          ],
+          [
+            "安全功能架構圖",
+            "../_out/architecture_diagrams/functional/FEATURES_SECURITY_FUNCTIONS.mmd"
+          ],
+          [
+            "核心功能架構圖",
+            "../_out/architecture_diagrams/functional/FEATURES_CORE_FUNCTIONS.mmd"
+          ],
+          [
+            "多語言協作架構圖",
+            "../_out/architecture_diagrams/FEATURES_MODULE_INTEGRATED_ARCHITECTURE.mmd"
+          ],
+          [
+            "🛠️ **開發快速開始指南**",
+            "../../guides/development/DEVELOPMENT_QUICK_START_GUIDE.md"
+          ],
+          [
+            "🌐 **多語言環境標準**",
+            "../../guides/development/MULTI_LANGUAGE_ENVIRONMENT_STANDARD.md"
+          ],
+          [
+            "📦 **依賴管理指南**",
+            "../../guides/development/DEPENDENCY_MANAGEMENT_GUIDE.md"
+          ],
+          [
+            "🔒 **安全框架規範**",
+            "../../services/aiva_common/SECURITY_FRAMEWORK_COMPLETED.md"
+          ],
+          [
+            "📋 **Schema 導入規範**",
+            "../../guides/development/SCHEMA_IMPORT_GUIDE.md"
+          ],
+          [
+            "📊 **性能監控規範**",
+            "../../guides/development/METRICS_USAGE_GUIDE.md"
+          ],
+          [
+            "🔍 **API 驗證指南**",
+            "../../guides/development/API_VERIFICATION_GUIDE.md"
+          ],
+          [
+            "💾 **數據存儲規範**",
+            "../../guides/development/DATA_STORAGE_GUIDE.md"
+          ],
+          [
+            "多語言架構分析",
+            "../../_out/FEATURES_MODULE_ARCHITECTURE_ANALYSIS.md"
+          ],
+          [
+            "功能組織分析",
+            "../../_out/architecture_diagrams/functional/FUNCTIONAL_ORGANIZATION_REPORT.md"
+          ],
+          [
+            "組件分類資料",
+            "../../_out/architecture_diagrams/features_diagram_classification.json"
+          ]
+        ],
+        "subdir_links": [
+          [
+            "← 返回 Services 總覽",
+            "../README.md"
+          ],
+          [
+            "📖 文檔中心",
+            "../../docs/README.md"
+          ],
+          [
+            "SQL注入檢測",
+            "function_sqli/README.md"
+          ],
+          [
+            "XSS檢測",
+            "function_xss/README.md"
+          ],
+          [
+            "SSRF檢測",
+            "function_ssrf/README.md"
+          ],
+          [
+            "IDOR檢測",
+            "function_idor/README.md"
+          ],
+          [
+            "認證檢測",
+            "function_authn_go/README.md"
+          ],
+          [
+            "業務邏輯檢測",
+            "function_bizlogic/README.md"
+          ],
+          [
+            "密碼學檢測",
+            "function_crypto/README.md"
+          ],
+          [
+            "後滲透",
+            "function_postex/README.md"
+          ],
+          [
+            "共用組件",
+            "common/README.md"
+          ],
+          [
+            "核心功能詳解",
+            "docs/README.md"
+          ],
+          [
+            "安全功能詳解",
+            "docs/security/README.md"
+          ],
+          [
+            "開發中功能",
+            "docs/development/README.md"
+          ],
+          [
+            "Python 模組",
+            "docs/python/README.md"
+          ],
+          [
+            "Go 模組",
+            "docs/go/README.md"
+          ],
+          [
+            "Rust 模組",
+            "docs/rust/README.md"
+          ],
+          [
+            "🏗️ **AIVA Common 共享庫規範**",
+            "../../services/aiva_common/README.md"
+          ]
+        ],
+        "needs_split": true,
+        "title": "AIVA Features 模組 - 多語言安全功能架構"
+      },
+      "subdirs": [
+        "base",
+        "common",
+        "docs",
+        "function_authn_go",
+        "function_bizlogic",
+        "function_crypto",
+        "function_ddos",
+        "function_exploit_framework",
+        "function_forensic",
+        "function_idor",
+        "function_payload_generator",
+        "function_postex",
+        "function_reverse_engineering",
+        "function_social_engineering",
+        "function_sqli",
+        "function_ssrf",
+        "function_steganography",
+        "function_web_scanner",
+        "function_wordlist_generator",
+        "function_xss"
+      ]
+    },
+    "integration": {
+      "name": "integration",
+      "path": "integration",
+      "code_files": {
+        "python": 87,
+        "go": 0,
+        "rust": 0,
+        "typescript": 0
+      },
+      "doc_files": 8,
+      "has_readme": true,
+      "readme_analysis": {
+        "size": 37685,
+        "lines": 1353,
+        "h1_count": 76,
+        "h2_count": 18,
+        "has_toc": true,
+        "total_links": 37,
+        "broken_links": [
+          [
+            "📖 文檔中心",
+            "../../docs/README.md"
+          ],
+          [
+            "建立報告",
+            "../../reports/INTEGRATION_DATA_STORAGE_SETUP_REPORT.md"
+          ],
+          [
+            "Python 工具 (22個)",
+            "../../_out/VSCODE_EXTENSIONS_INVENTORY.md#-1-python-開發生態-22-個"
+          ],
+          [
+            "資料庫工具 (4個)",
+            "../../_out/VSCODE_EXTENSIONS_INVENTORY.md#-11-資料庫與連線-3-個"
+          ],
+          [
+            "開發工具 (7個)",
+            "../../_out/VSCODE_EXTENSIONS_INVENTORY.md#-10-開發工具與測試-7-個"
+          ],
+          [
+            "品質工具 (5個)",
+            "../../_out/VSCODE_EXTENSIONS_INVENTORY.md#-7-程式碼品質與-linting-5-個"
+          ],
+          [
+            "容器工具 (7個)",
+            "../../_out/VSCODE_EXTENSIONS_INVENTORY.md#-6-容器與遠端開發-7-個"
+          ],
+          [
+            "AI 工具 (5個)",
+            "../../_out/VSCODE_EXTENSIONS_INVENTORY.md#-5-github-整合與-ai-5-個"
+          ],
+          [
+            "必裝插件速查表",
+            "../../_out/VSCODE_EXTENSIONS_INVENTORY.md#-核心插件速查表"
+          ],
+          [
+            "Integration Core API 參考",
+            "aiva_integration/README.md#-api-參考"
+          ],
+          [
+            "aiva_common 修護規範",
+            "../aiva_common/README.md#🔧-開發指南"
+          ]
+        ],
+        "subdir_links": [
+          [
+            "← 返回 Services 總覽",
+            "../README.md"
+          ],
+          [
+            "📖 文檔中心",
+            "../../docs/README.md"
+          ],
+          [
+            "Integration Core 核心模組",
+            "aiva_integration/README.md"
+          ],
+          [
+            "資料儲存詳細說明",
+            "../../data/integration/README.md"
+          ],
+          [
+            "維護腳本文檔",
+            "scripts/README.md"
+          ],
+          [
+            "Integration Core 核心模組文檔",
+            "aiva_integration/README.md"
+          ],
+          [
+            "Integration Core API 參考",
+            "aiva_integration/README.md#-api-參考"
+          ],
+          [
+            "aiva_common 修護規範",
+            "../aiva_common/README.md#🔧-開發指南"
+          ]
+        ],
+        "needs_split": true,
+        "title": "AIVA 整合模組 - 企業級安全整合中樞"
+      },
+      "subdirs": [
+        "aiva_integration",
+        "alembic",
+        "api_gateway",
+        "capability",
+        "coordinators",
+        "docs",
+        "scripts",
+        "tools"
+      ]
+    },
+    "scan": {
+      "name": "scan",
+      "path": "scan",
+      "code_files": {
+        "python": 62,
+        "go": 18,
+        "rust": 19,
+        "typescript": 16
+      },
+      "doc_files": 2,
+      "has_readme": true,
+      "readme_analysis": {
+        "size": 19606,
+        "lines": 758,
+        "h1_count": 47,
+        "h2_count": 14,
+        "has_toc": true,
+        "total_links": 70,
+        "broken_links": [
+          [
+            "📖 文檔中心",
+            "../../docs/README.md"
+          ],
+          [
+            "🔬 引擎驗證指南",
+            "./ENGINE_VERIFICATION_AND_FIX_PLAN.md"
+          ],
+          [
+            "能力分析報告",
+            "_out/SCAN_MODULE_CAPABILITY_ANALYSIS.md"
+          ],
+          [
+            "修復計劃文檔",
+            "./SCAN_MODULE_RESTORATION_PLAN.md"
+          ],
+          [
+            "SCAN_USER_GUIDE.md",
+            "./SCAN_USER_GUIDE.md"
+          ],
+          [
+            "SCAN_FLOW_DIAGRAMS.md",
+            "./SCAN_FLOW_DIAGRAMS.md"
+          ],
+          [
+            "SCAN_USER_GUIDE.md",
+            "./SCAN_USER_GUIDE.md"
+          ],
+          [
+            "SCAN_FLOW_DIAGRAMS.md",
+            "./SCAN_FLOW_DIAGRAMS.md"
+          ],
+          [
+            "SCAN_MODULE_RESTORATION_PLAN.md",
+            "./SCAN_MODULE_RESTORATION_PLAN.md"
+          ],
+          [
+            "rust_engine/README.md",
+            "./engines/rust_engine/README.md"
+          ],
+          [
+            "python_engine/README.md",
+            "./engines/python_engine/README.md"
+          ],
+          [
+            "typescript_engine/README.md",
+            "./engines/typescript_engine/README.md"
+          ],
+          [
+            "go_engine/README.md",
+            "./engines/go_engine/README.md"
+          ],
+          [
+            "coordinators/COORDINATOR_ACTUAL_STATUS.md",
+            "./coordinators/COORDINATOR_ACTUAL_STATUS.md"
+          ],
+          [
+            "Rust Engine README",
+            "./engines/rust_engine/README.md"
+          ],
+          [
+            "Python Engine README",
+            "./engines/python_engine/README.md"
+          ],
+          [
+            "TypeScript Engine README",
+            "./engines/typescript_engine/README.md"
+          ],
+          [
+            "Go Engine README",
+            "./engines/go_engine/README.md"
+          ],
+          [
+            "使用者手冊",
+            "./SCAN_USER_GUIDE.md"
+          ],
+          [
+            "流程圖解",
+            "./SCAN_FLOW_DIAGRAMS.md"
+          ]
+        ],
+        "subdir_links": [
+          [
+            "← 返回 Services 總覽",
+            "../README.md"
+          ],
+          [
+            "📖 文檔中心",
+            "../../docs/README.md"
+          ],
+          [
+            "rust_engine/README.md",
+            "./engines/rust_engine/README.md"
+          ],
+          [
+            "python_engine/README.md",
+            "./engines/python_engine/README.md"
+          ],
+          [
+            "typescript_engine/README.md",
+            "./engines/typescript_engine/README.md"
+          ],
+          [
+            "go_engine/README.md",
+            "./engines/go_engine/README.md"
+          ],
+          [
+            "coordinators/README.md",
+            "./coordinators/README.md"
+          ],
+          [
+            "Rust Engine README",
+            "./engines/rust_engine/README.md"
+          ],
+          [
+            "Python Engine README",
+            "./engines/python_engine/README.md"
+          ],
+          [
+            "TypeScript Engine README",
+            "./engines/typescript_engine/README.md"
+          ],
+          [
+            "Go Engine README",
+            "./engines/go_engine/README.md"
+          ]
+        ],
+        "needs_split": true,
+        "title": "🎯 AIVA Scan - 多語言統一掃描引擎"
+      },
+      "subdirs": [
+        "archived_docs",
+        "coordinators",
+        "engines",
+        "image"
+      ]
+    }
+  },
+  "empty_dirs": [
+    "core\\aiva_core\\service_backbone\\monitoring",
+    "features\\function_payload_generator\\delivery",
+    "features\\function_payload_generator\\obfuscation",
+    "features\\function_payload_generator\\templates",
+    "features\\function_payload_generator\\tests",
+    "integration\\capability\\payload_templates",
+    "scan\\archived_docs",
+    "scan\\engines\\go_engine\\internal\\sca\\analyzer",
+    "scan\\engines\\rust_engine\\target\\debug\\build\\amq-protocol-fdfd691ebcb582d2\\out",
+    "scan\\engines\\rust_engine\\target\\debug\\build\\async-io-8c51801eec189c02\\out",
+    "scan\\engines\\rust_engine\\target\\debug\\build\\async-io-928df9b864210498\\out",
+    "scan\\engines\\rust_engine\\target\\debug\\build\\crossbeam-utils-5bdd24400ce79ee2\\out",
+    "scan\\engines\\rust_engine\\target\\debug\\build\\doc-comment-b2163b1f21725850\\out",
+    "scan\\engines\\rust_engine\\target\\debug\\build\\generic-array-bd9a897cbdd7380d\\out",
+    "scan\\engines\\rust_engine\\target\\debug\\build\\getrandom-86bb09d2f0863fbe\\out",
+    "scan\\engines\\rust_engine\\target\\debug\\build\\getrandom-def61ea3598e4fb0\\out",
+    "scan\\engines\\rust_engine\\target\\debug\\build\\httparse-63879826a15e254c\\out",
+    "scan\\engines\\rust_engine\\target\\debug\\build\\icu_normalizer_data-5ed2155a5bbaf299\\out",
+    "scan\\engines\\rust_engine\\target\\debug\\build\\icu_normalizer_data-6836c0c4841cc0e1\\out",
+    "scan\\engines\\rust_engine\\target\\debug\\build\\icu_properties_data-635c33be391ecf25\\out",
+    "scan\\engines\\rust_engine\\target\\debug\\build\\icu_properties_data-798699f2627003bf\\out",
+    "scan\\engines\\rust_engine\\target\\debug\\build\\lapin-7d073a005fa9c9e3\\out",
+    "scan\\engines\\rust_engine\\target\\debug\\build\\libc-881a18ffa071e6c2\\out",
+    "scan\\engines\\rust_engine\\target\\debug\\build\\native-tls-0ed90f334d35c0d8\\out",
+    "scan\\engines\\rust_engine\\target\\debug\\build\\num-traits-9b30dc7c4323aadc\\out",
+    "scan\\engines\\rust_engine\\target\\debug\\build\\num-traits-c60d8ff17850a0b2\\out",
+    "scan\\engines\\rust_engine\\target\\debug\\build\\parking_lot_core-39ace72b11582f2c\\out",
+    "scan\\engines\\rust_engine\\target\\debug\\build\\polling-fde28af5ee421551\\out",
+    "scan\\engines\\rust_engine\\target\\debug\\build\\proc-macro2-50c313c3960bf994\\out",
+    "scan\\engines\\rust_engine\\target\\debug\\build\\proc-macro2-9471494de1994910\\out",
+    "scan\\engines\\rust_engine\\target\\debug\\build\\quote-102a82c13fe8e5c0\\out",
+    "scan\\engines\\rust_engine\\target\\debug\\build\\quote-7521154f582b5b45\\out",
+    "scan\\engines\\rust_engine\\target\\debug\\build\\rayon-core-a23592f83a3a4418\\out",
+    "scan\\engines\\rust_engine\\target\\debug\\build\\rustix-22d050289ef542c6\\out",
+    "scan\\engines\\rust_engine\\target\\debug\\build\\rustix-7b0fe748525fab62\\out",
+    "scan\\engines\\rust_engine\\target\\debug\\build\\rustls-4d05d375e0272876\\out",
+    "scan\\engines\\rust_engine\\target\\debug\\build\\rustls-53e9370ff2862c3e\\out",
+    "scan\\engines\\rust_engine\\target\\debug\\build\\rustls-b7ab7635e54c42fe\\out",
+    "scan\\engines\\rust_engine\\target\\debug\\build\\serde_json-e4cd23a57b9d499a\\out",
+    "scan\\engines\\rust_engine\\target\\debug\\build\\winapi-c79fc9717760a494\\out",
+    "scan\\engines\\rust_engine\\target\\debug\\build\\windows_x86_64_msvc-8f1c70f04d068791\\out",
+    "scan\\engines\\rust_engine\\target\\debug\\build\\windows_x86_64_msvc-a640bc323e97bdd2\\out",
+    "scan\\engines\\rust_engine\\target\\debug\\build\\windows_x86_64_msvc-f32bcc1c4fe1ac9e\\out",
+    "scan\\engines\\rust_engine\\target\\debug\\build\\zerocopy-6b50d5fe36dc624b\\out",
+    "scan\\engines\\rust_engine\\target\\debug\\examples",
+    "scan\\engines\\rust_engine\\target\\release\\build\\amq-protocol-5996bbff6ee6ea9b\\out",
+    "scan\\engines\\rust_engine\\target\\release\\build\\async-io-6678368ac23573ba\\out",
+    "scan\\engines\\rust_engine\\target\\release\\build\\async-io-7d56e0f8aed563ab\\out",
+    "scan\\engines\\rust_engine\\target\\release\\build\\crossbeam-utils-40590b5a02e822bd\\out",
+    "scan\\engines\\rust_engine\\target\\release\\build\\doc-comment-223414b9340eb780\\out",
+    "scan\\engines\\rust_engine\\target\\release\\build\\generic-array-711b5ff35ef59623\\out",
+    "scan\\engines\\rust_engine\\target\\release\\build\\getrandom-456d9e4562f9c38c\\out",
+    "scan\\engines\\rust_engine\\target\\release\\build\\getrandom-bf369dcd5f42aadc\\out",
+    "scan\\engines\\rust_engine\\target\\release\\build\\getrandom-d21328e1b31be343\\out",
+    "scan\\engines\\rust_engine\\target\\release\\build\\httparse-7add6b829bb6489c\\out",
+    "scan\\engines\\rust_engine\\target\\release\\build\\icu_normalizer_data-2b77b01e50045fbf\\out",
+    "scan\\engines\\rust_engine\\target\\release\\build\\icu_normalizer_data-a22d9682d01888e9\\out",
+    "scan\\engines\\rust_engine\\target\\release\\build\\icu_properties_data-001224e12c6fe390\\out",
+    "scan\\engines\\rust_engine\\target\\release\\build\\icu_properties_data-0db65fee186051a7\\out",
+    "scan\\engines\\rust_engine\\target\\release\\build\\lapin-27fff3ddcf704762\\out",
+    "scan\\engines\\rust_engine\\target\\release\\build\\libc-35ac515a332b0d67\\out",
+    "scan\\engines\\rust_engine\\target\\release\\build\\native-tls-2bfbd1b6338057d4\\out",
+    "scan\\engines\\rust_engine\\target\\release\\build\\num-traits-568d831ab88a1e83\\out",
+    "scan\\engines\\rust_engine\\target\\release\\build\\num-traits-cec8c9595ea30b04\\out",
+    "scan\\engines\\rust_engine\\target\\release\\build\\parking_lot_core-f69e2468bcd124cd\\out",
+    "scan\\engines\\rust_engine\\target\\release\\build\\polling-c71ce4eb10e5ad4f\\out",
+    "scan\\engines\\rust_engine\\target\\release\\build\\proc-macro2-9217f20cd4594178\\out",
+    "scan\\engines\\rust_engine\\target\\release\\build\\proc-macro2-f74596eab596e9d8\\out",
+    "scan\\engines\\rust_engine\\target\\release\\build\\quote-2d85ff4e35150fff\\out",
+    "scan\\engines\\rust_engine\\target\\release\\build\\quote-946cf514411a8599\\out",
+    "scan\\engines\\rust_engine\\target\\release\\build\\rayon-core-7abc2e88be6d5199\\out",
+    "scan\\engines\\rust_engine\\target\\release\\build\\rustix-934382b65a930b2c\\out",
+    "scan\\engines\\rust_engine\\target\\release\\build\\rustix-ea8746dc7e4124e1\\out",
+    "scan\\engines\\rust_engine\\target\\release\\build\\rustls-bb94d2c2699a3209\\out",
+    "scan\\engines\\rust_engine\\target\\release\\build\\rustls-eb019dc278aa63b2\\out",
+    "scan\\engines\\rust_engine\\target\\release\\build\\serde_json-fe7b3cfc745a57f8\\out",
+    "scan\\engines\\rust_engine\\target\\release\\build\\winapi-88f1f884dc17cf98\\out",
+    "scan\\engines\\rust_engine\\target\\release\\build\\windows_x86_64_msvc-1c8e724b4cf38d3a\\out",
+    "scan\\engines\\rust_engine\\target\\release\\build\\windows_x86_64_msvc-4c7f2cdf348001e2\\out",
+    "scan\\engines\\rust_engine\\target\\release\\build\\windows_x86_64_msvc-5ce82068ca8e5a8e\\out",
+    "scan\\engines\\rust_engine\\target\\release\\build\\zerocopy-2c8ca854c15b5a58\\out",
+    "scan\\engines\\rust_engine\\target\\release\\examples",
+    "scan\\engines\\rust_engine\\target\\release\\incremental",
+    "scan\\engines\\typescript_engine\\dist\\utils",
+    "scan\\engines\\typescript_engine\\docs",
+    "scan\\engines\\typescript_engine\\src\\utils"
+  ],
+  "readme_issues": [],
+  "file_classification_issues": [],
+  "link_hierarchy": {}
+}

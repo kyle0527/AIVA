@@ -132,7 +132,7 @@ guides/
 | AI 服務使用手冊 | [`development/AI_SERVICES_USER_GUIDE.md`](development/AI_SERVICES_USER_GUIDE.md) | 🤖 AI 功能使用 | ✅ 完整 |
 | Schema 導入規範 | [`development/SCHEMA_IMPORT_GUIDE.md`](development/SCHEMA_IMPORT_GUIDE.md) | 📝 Schema 使用規範 | ✅ 必讀 |
 | **Token 最佳化指南** | [`development/TOKEN_OPTIMIZATION_GUIDE.md`](development/TOKEN_OPTIMIZATION_GUIDE.md) | 🎯 開發效率最佳化 | ✅ 完整 |
-| **統計收集系統** | [`development/METRICS_USAGE_GUIDE.md`](development/METRICS_USAGE_GUIDE.md) | 📊 系統監控與統計 | ✅ 完整 |
+| **統計收集系統** | [`docs/guides/services/rust_engine_USAGE_GUIDE.md`](../docs/guides/services/rust_engine_USAGE_GUIDE.md) | 📊 系統監控與統計 | ✅ 完整 |
 | **數據存儲指南** | [`development/DATA_STORAGE_GUIDE.md`](development/DATA_STORAGE_GUIDE.md) | 💾 數據存儲架構 | ✅ 完整 |
 | **UI 啟動指南** | [`development/UI_LAUNCH_GUIDE.md`](development/UI_LAUNCH_GUIDE.md) | 🖥️ 界面管理 | ✅ 完整 |
 | **擴充功能安裝** | [`development/EXTENSIONS_INSTALL_GUIDE.md`](development/EXTENSIONS_INSTALL_GUIDE.md) | 🔌 開發工具配置 | ✅ 完整 |

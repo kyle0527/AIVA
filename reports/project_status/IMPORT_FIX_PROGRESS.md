@@ -285,7 +285,7 @@ from ...aiva_common.enums import Severity
 - [StackOverflow: Sibling package imports](https://stackoverflow.com/questions/6323860/sibling-package-imports) (264k+ views, 449 votes)
 - [Python Packaging Guide: Namespace packages](https://packaging.python.org/en/latest/guides/packaging-namespace-packages/)
 - [Python Guide: Project Structure](https://docs.python-guide.org/writing/structure/)
-- 專案文件: `DEVELOPMENT_STANDARDS.md`
+- 專案文件: `docs/development/services_DEVELOPMENT_STANDARDS.md`
 
 ---
 

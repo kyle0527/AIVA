@@ -89,7 +89,7 @@
 - **[Data Storage Guide](./DATA_STORAGE_GUIDE.md)** - 數據存儲架構
   - *Schema 整合*: 符合 Schema 的數據持久化模式
   
-- **[Metrics Usage Guide](./METRICS_USAGE_GUIDE.md)** - 系統監控和統計
+- **[Metrics Usage Guide](../../docs/guides/services/rust_engine_USAGE_GUIDE.md)** - 系統監控和統計
   - *Schema 整合*: Schema 健康指標與監控
 
 ### 🖥️ **UI & Extensions**

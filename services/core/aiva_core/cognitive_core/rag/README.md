@@ -1,5 +1,23 @@
 # 🔍 RAG - 檢索增強生成系統
 
+## 📑 目錄
+
+- [📋 目錄](#-目錄)
+- [🎯 模組概述](#-模組概述)
+  - [核心功能](#核心功能)
+- [📂 檔案列表](#-檔案列表)
+- [🔧 核心組件](#-核心組件)
+  - [1. `rag_engine.py` - RAG 核心引擎](#1-rag_enginepy---rag-核心引擎)
+  - [2. `knowledge_base.py` - 知識庫管理](#2-knowledge_basepy---知識庫管理)
+  - [3. `unified_vector_store.py` - 統一向量存儲](#3-unified_vector_storepy---統一向量存儲)
+  - [4. `postgresql_vector_store.py` - PostgreSQL 後端](#4-postgresql_vector_storepy---postgresql-後端)
+- [🚀 完整使用流程](#-完整使用流程)
+  - [初始化 RAG 系統](#初始化-rag-系統)
+  - [與 Neural 整合](#與-neural-整合)
+- [📊 性能指標](#-性能指標)
+
+---
+
 **導航**: [← 返回 Cognitive Core](../README.md) | [← 返回 AIVA Core](../../README.md)
 
 > **版本**: 3.0.0-alpha  

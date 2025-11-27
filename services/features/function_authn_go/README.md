@@ -969,5 +969,5 @@ class GoAuthDetector:
 
 ---
 
-*最後更新: 2025年11月7日*  
+*最後更新: 2025年11月27日*  
 *維護團隊: AIVA Security Team*

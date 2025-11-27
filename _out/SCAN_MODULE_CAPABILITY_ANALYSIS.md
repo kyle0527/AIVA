@@ -1,5 +1,38 @@
 # Scan 模組能力分析報告
 
+## 📑 目錄
+
+- [📊 執行能力總覽](#-執行能力總覽)
+- [🏗️ 架構對比分析](#-架構對比分析)
+  - [SCAN_FLOW_DIAGRAMS.md 設計概念 vs 實際實現](#scan_flow_diagramsmd-設計概念-vs-實際實現)
+- [🔌 命令處理與 AI 對接](#-命令處理與-ai-對接)
+  - [SCAN_FLOW_DIAGRAMS.md 要求](#scan_flow_diagramsmd-要求)
+  - [實際實現 (`command_handler.py:1-461`)](#實際實現-command_handlerpy1-461)
+- [🧩 四引擎支援狀態](#-四引擎支援狀態)
+  - [SCAN_FLOW_DIAGRAMS.md 要求](#scan_flow_diagramsmd-要求)
+  - [實際實現狀態](#實際實現狀態)
+- [📈 關鍵指標對比](#-關鍵指標對比)
+- [🎯 超越原設計的增強功能](#-超越原設計的增強功能)
+  - [1. 適配器模式架構 🆕](#1-適配器模式架構-)
+  - [2. 同步調用棧 🆕](#2-同步調用棧-)
+  - [3. 健壯的 JSON 解析 🆕](#3-健壯的-json-解析-)
+  - [4. 線程池包裝 FFI 🆕](#4-線程池包裝-ffi-)
+- [🔍 數據流驗證](#-數據流驗證)
+  - [SCAN_FLOW_DIAGRAMS.md 定義的數據流](#scan_flow_diagramsmd-定義的數據流)
+  - [實際數據流實現](#實際數據流實現)
+- [🛡️ 錯誤處理與容錯](#-錯誤處理與容錯)
+  - [SCAN_FLOW_DIAGRAMS.md 要求](#scan_flow_diagramsmd-要求)
+  - [實際實現](#實際實現)
+- [📝 Schema 驗證](#-schema-驗證)
+  - [SCAN_FLOW_DIAGRAMS.md 定義的 Schema](#scan_flow_diagramsmd-定義的-schema)
+  - [實際實現的 Schema](#實際實現的-schema)
+- [✅ 最終結論](#-最終結論)
+  - [能力符合度總覽](#能力符合度總覽)
+  - [超越原設計的亮點](#超越原設計的亮點)
+  - [總體評估](#總體評估)
+
+---
+
 > **分析日期**: 2025年11月21日  
 > **分析目標**: 確認 `services/scan` 目錄能否完整執行 SCAN_FLOW_DIAGRAMS.md 的流程  
 > **分析結論**: ✅ **完全具備能力**，重構後架構更清晰，能力更強

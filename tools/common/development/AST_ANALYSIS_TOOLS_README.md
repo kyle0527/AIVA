@@ -1,5 +1,35 @@
 # AST 分析工具集 - Mermaid 流程圖生成器
 
+## 📑 目錄
+
+- [📋 工具概覽](#-工具概覽)
+- [🎯 功能特性](#-功能特性)
+- [🚀 使用方法](#-使用方法)
+  - [1. Python 版本 (py2mermaid.py)](#1-python-版本-py2mermaidpy)
+  - [2. Go 版本 (go2mermaid.go)](#2-go-版本-go2mermaidgo)
+  - [3. TypeScript 版本 (ts2mermaid.ts)](#3-typescript-版本-ts2mermaidts)
+  - [4. Rust 版本 (rs2mermaid.rs)](#4-rust-版本-rs2mermaidrs)
+- [📂 輸出格式](#-輸出格式)
+- [🎨 流程圖示例](#-流程圖示例)
+- [🔧 技術細節](#-技術細節)
+  - [Python (py2mermaid.py)](#python-py2mermaidpy)
+  - [Go (go2mermaid.go)](#go-go2mermaidgo)
+  - [TypeScript (ts2mermaid.ts)](#typescript-ts2mermaidts)
+  - [Rust (rs2mermaid.rs)](#rust-rs2mermaidrs)
+- [📊 支援的控制結構](#-支援的控制結構)
+- [🎯 目標引擎分析](#-目標引擎分析)
+  - [TypeScript Engine (`services/scan/engines/typescript_engine`)](#typescript-engine-servicesscanenginestypescript_engine)
+  - [Rust Engine (`services/scan/engines/rust_engine`)](#rust-engine-servicesscanenginesrust_engine)
+- [🔍 最佳實踐](#-最佳實踐)
+- [📝 常見問題](#-常見問題)
+  - [Q: 如何預覽生成的流程圖？](#q-如何預覽生成的流程圖)
+  - [Q: 生成的圖表過於複雜怎麼辦？](#q-生成的圖表過於複雜怎麼辦)
+  - [Q: 如何處理非標準語法？](#q-如何處理非標準語法)
+- [🤝 貢獻](#-貢獻)
+- [📄 授權](#-授權)
+
+---
+
 這個工具集提供四種程式語言的 AST 分析與 Mermaid 流程圖自動生成功能。
 
 ## 📋 工具概覽

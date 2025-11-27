@@ -1,0 +1,1076 @@
+[
+  {
+    "from": "docs\\AIVA_CORE_MERMAID_VISUALIZATION_DESIGN.md",
+    "to": "reports\\architecture\\AIVA_CORE_MERMAID_VISUALIZATION_DESIGN.md",
+    "type": "architecture_report",
+    "title": "AIVA Core Mermaid 組圖視覺化設計文件"
+  },
+  {
+    "from": "docs\\AIVA_INTELLIGENT_AUTOMATION_DESIGN_PHILOSOPHY.md",
+    "to": "reports\\architecture\\AIVA_INTELLIGENT_AUTOMATION_DESIGN_PHILOSOPHY.md",
+    "type": "architecture_report",
+    "title": "AIVA 智能自動化設計哲學報告"
+  },
+  {
+    "from": "docs\\AIVA_SCRIPTS_TECHNICAL_IMPLEMENTATION.md",
+    "to": "reports\\architecture\\AIVA_SCRIPTS_TECHNICAL_IMPLEMENTATION.md",
+    "type": "architecture_report",
+    "title": "AIVA 腳本體系技術實現分析報告"
+  },
+  {
+    "from": "docs\\AIVA_整合重構詳細評估報告.md",
+    "to": "reports\\architecture\\AIVA_整合重構詳細評估報告.md",
+    "type": "architecture_report",
+    "title": "AIVA 重複功能整合重構 - 詳細評估報告"
+  },
+  {
+    "from": "docs\\AI_CAPABILITY_INTEGRATION_PLAN.md",
+    "to": "reports\\architecture\\AI_CAPABILITY_INTEGRATION_PLAN.md",
+    "type": "architecture_report",
+    "title": "AIVA AI能力整合與下一代架構升級計劃"
+  },
+  {
+    "from": "docs\\AI_CODE_ANALYSIS_CAPABILITY_AUDIT.md",
+    "to": "reports\\architecture\\AI_CODE_ANALYSIS_CAPABILITY_AUDIT.md",
+    "type": "architecture_report",
+    "title": "AIVA AI 程式碼分析能力審查報告"
+  },
+  {
+    "from": "docs\\AI_SELF_OPTIMIZATION_DUAL_LOOP_DESIGN.md",
+    "to": "reports\\architecture\\AI_SELF_OPTIMIZATION_DUAL_LOOP_DESIGN.md",
+    "type": "architecture_report",
+    "title": "AIVA AI 自我優化雙重閉環設計"
+  },
+  {
+    "from": "docs\\AI持續運作指南.md",
+    "to": "reports\\architecture\\AI持續運作指南.md",
+    "type": "architecture_report",
+    "title": "AIVA AI 持續運作指南"
+  },
+  {
+    "from": "docs\\ARCHITECTURE_COMPLETE_DESIGN.md",
+    "to": "reports\\architecture\\ARCHITECTURE_COMPLETE_DESIGN.md",
+    "type": "architecture_report",
+    "title": "🏛️ AIVA 完整架構設計與理念"
+  },
+  {
+    "from": "docs\\CODE_ANALYSIS_MERMAID_SCRIPTS_INVENTORY.md",
+    "to": "reports\\architecture\\CODE_ANALYSIS_MERMAID_SCRIPTS_INVENTORY.md",
+    "type": "architecture_report",
+    "title": "AIVA 程式碼分析與 Mermaid 流程圖生成腳本完整清單報告"
+  },
+  {
+    "from": "docs\\COMPLETE_WORKFLOW_VISUALIZATION.md",
+    "to": "reports\\architecture\\COMPLETE_WORKFLOW_VISUALIZATION.md",
+    "type": "architecture_report",
+    "title": "🔄 AIVA 完整運作流程圖表"
+  },
+  {
+    "from": "docs\\DEPLOYMENT_CHECKLIST.md",
+    "to": "reports\\architecture\\DEPLOYMENT_CHECKLIST.md",
+    "type": "architecture_report",
+    "title": "AIVA 部署前檢查清單"
+  },
+  {
+    "from": "docs\\DIRECTORY_STRUCTURE.md",
+    "to": "reports\\architecture\\DIRECTORY_STRUCTURE.md",
+    "type": "architecture_report",
+    "title": "📁 AIVA 目錄結構說明"
+  },
+  {
+    "from": "docs\\DOCUMENTATION_CONSISTENCY_REPORT.md",
+    "to": "reports\\architecture\\DOCUMENTATION_CONSISTENCY_REPORT.md",
+    "type": "architecture_report",
+    "title": "📋 AIVA 文檔一致性檢查報告"
+  },
+  {
+    "from": "docs\\DOCUMENTATION_FINAL_CONSISTENCY_SUMMARY.md",
+    "to": "reports\\architecture\\DOCUMENTATION_FINAL_CONSISTENCY_SUMMARY.md",
+    "type": "architecture_report",
+    "title": "📋 AIVA 文檔最終一致性檢查總結報告"
+  },
+  {
+    "from": "docs\\SCAN_WORKFLOW_AND_DATA_FLOW.md",
+    "to": "reports\\architecture\\SCAN_WORKFLOW_AND_DATA_FLOW.md",
+    "type": "architecture_report",
+    "title": "AIVA 掃描工作流程與資料流"
+  },
+  {
+    "from": "docs\\TERMINOLOGY_GLOSSARY.md",
+    "to": "reports\\architecture\\TERMINOLOGY_GLOSSARY.md",
+    "type": "architecture_report",
+    "title": "📖 AIVA 術語對照表與設計理念統一說明"
+  },
+  {
+    "from": "docs\\UI_V3_GUIDE.md",
+    "to": "reports\\architecture\\UI_V3_GUIDE.md",
+    "type": "architecture_report",
+    "title": "AIVA v3.0 Modern UI - 使用指南"
+  },
+  {
+    "from": "docs\\ai_core_options\\COMPARISON_SUMMARY.md",
+    "to": "reports\\architecture\\COMPARISON_SUMMARY.md",
+    "type": "architecture_report",
+    "title": "AIVA AI 核心方案綜合對比"
+  },
+  {
+    "from": "docs\\ai_core_options\\OPTION_A_PYTHON_BIONEURON.md",
+    "to": "reports\\architecture\\OPTION_A_PYTHON_BIONEURON.md",
+    "type": "architecture_report",
+    "title": "方案 A：改造 AIVA BioNeuron Core (Python + NumPy)"
+  },
+  {
+    "from": "docs\\ai_core_options\\OPTION_B_CPP_NATIVE_CORE.md",
+    "to": "reports\\architecture\\OPTION_B_CPP_NATIVE_CORE.md",
+    "type": "architecture_report",
+    "title": "方案 B：採用 C++ 原生核心 (資料夾 5)"
+  },
+  {
+    "from": "docs\\ai_core_options\\OPTION_C_RUST_TCH.md",
+    "to": "reports\\architecture\\OPTION_C_RUST_TCH.md",
+    "type": "architecture_report",
+    "title": "方案 C：Rust + tch-rs (PyTorch Rust 綁定)"
+  },
+  {
+    "from": "docs\\ai_core_options\\OPTION_D_ONNX_TENSORRT.md",
+    "to": "reports\\architecture\\OPTION_D_ONNX_TENSORRT.md",
+    "type": "architecture_report",
+    "title": "方案 D：ONNX + TensorRT (產業標準推理優化)"
+  },
+  {
+    "from": "docs\\diagrams\\AIVA_CORE_ANALYSIS_REPORT.md",
+    "to": "reports\\architecture\\AIVA_CORE_ANALYSIS_REPORT.md",
+    "type": "architecture_report",
+    "title": "AIVA Core 分析報告"
+  },
+  {
+    "from": "docs\\diagrams\\AIVA_CORE_COMPOSITE_ANALYSIS_COMPLETION_REPORT.md",
+    "to": "reports\\architecture\\AIVA_CORE_COMPOSITE_ANALYSIS_COMPLETION_REPORT.md",
+    "type": "architecture_report",
+    "title": "AIVA Core 組圖分析完成報告"
+  },
+  {
+    "from": "docs\\guides\\現有腳本快速使用指南.md",
+    "to": "reports\\implementation\\現有腳本快速使用指南.md",
+    "type": "implementation_report",
+    "title": "🚀 AIVA 現有腳本快速使用指南"
+  },
+  {
+    "from": "docs\\project-status\\AIVA_PROJECT_PROGRESS_REPORT_20251110.md",
+    "to": "reports\\architecture\\AIVA_PROJECT_PROGRESS_REPORT_20251110.md",
+    "type": "architecture_report",
+    "title": "AIVA 項目進度報告 - 2025年11月10日"
+  },
+  {
+    "from": "docs\\project-status\\AIVA_PROJECT_STATUS.md",
+    "to": "reports\\architecture\\AIVA_PROJECT_STATUS.md",
+    "type": "architecture_report",
+    "title": "🚀 AIVA Project Status Report"
+  },
+  {
+    "from": "docs\\project-status\\AIVA_SYSTEM_ANALYSIS_REPORT_2025-11-10.md",
+    "to": "reports\\architecture\\AIVA_SYSTEM_ANALYSIS_REPORT_2025-11-10.md",
+    "type": "architecture_report",
+    "title": "AIVA 系統全面分析與升級規劃報告"
+  },
+  {
+    "from": "docs\\project-status\\integration_status_report.md",
+    "to": "reports\\architecture\\integration_status_report.md",
+    "type": "architecture_report",
+    "title": "AIVA 核心與能力整合狀況報告"
+  },
+  {
+    "from": "docs\\reports\\AIVA_COMPOSITE_COVERAGE_ANALYSIS_REPORT.md",
+    "to": "reports\\architecture\\AIVA_COMPOSITE_COVERAGE_ANALYSIS_REPORT.md",
+    "type": "architecture_report",
+    "title": "AIVA 複合圖系統覆蓋率分析報告"
+  },
+  {
+    "from": "docs\\reports\\AIVA_COMPOSITE_DIAGRAMS_COMPREHENSIVE_ANALYSIS_FIXED.md",
+    "to": "reports\\architecture\\AIVA_COMPOSITE_DIAGRAMS_COMPREHENSIVE_ANALYSIS_FIXED.md",
+    "type": "architecture_report",
+    "title": "AIVA 複合圖表系統深度分析報告"
+  },
+  {
+    "from": "docs\\reports\\AIVA_REPORTS_CONSISTENCY_AUDIT.md",
+    "to": "reports\\architecture\\AIVA_REPORTS_CONSISTENCY_AUDIT.md",
+    "type": "architecture_report",
+    "title": "AIVA 報告體系一致性審核報告"
+  },
+  {
+    "from": "docs\\testing\\TESTING.md",
+    "to": "reports\\testing\\TESTING.md",
+    "type": "testing_report",
+    "title": "🧪 AIVA 測試工具"
+  },
+  {
+    "from": "docs\\testing\\TESTING_CONSOLIDATION.md",
+    "to": "reports\\architecture\\TESTING_CONSOLIDATION.md",
+    "type": "architecture_report",
+    "title": "🧹 測試腳本整合總結"
+  },
+  {
+    "from": "docs\\testing\\TESTING_SCRIPTS_REORGANIZATION.md",
+    "to": "reports\\architecture\\TESTING_SCRIPTS_REORGANIZATION.md",
+    "type": "architecture_report",
+    "title": "🔄 Testing 和 Scripts 目錄重組計劃"
+  },
+  {
+    "from": "docs\\user_guides\\ALL_GUIDES_CLASSIFICATION.md",
+    "to": "reports\\architecture\\ALL_GUIDES_CLASSIFICATION.md",
+    "type": "architecture_report",
+    "title": "📚 AIVA 所有指南和手冊分類說明"
+  },
+  {
+    "from": "docs\\user_guides\\USER_GUIDES_AUDIT_REPORT.md",
+    "to": "reports\\architecture\\USER_GUIDES_AUDIT_REPORT.md",
+    "type": "architecture_report",
+    "title": "📊 使用者指南審核報告"
+  },
+  {
+    "from": "docs\\validation\\GO_ENGINE_VALIDATION_REPORT_2025-11-23.md",
+    "to": "reports\\architecture\\GO_ENGINE_VALIDATION_REPORT_2025-11-23.md",
+    "type": "architecture_report",
+    "title": "Go Engine USAGE_GUIDE.md 驗證報告"
+  },
+  {
+    "from": "docs\\validation\\PYTHON_ENGINE_VALIDATION_REPORT_2025-11-23.md",
+    "to": "reports\\architecture\\PYTHON_ENGINE_VALIDATION_REPORT_2025-11-23.md",
+    "type": "architecture_report",
+    "title": "Python Engine USAGE_GUIDE.md 驗證報告"
+  },
+  {
+    "from": "docs\\validation\\RUST_ENGINE_VALIDATION_REPORT_2025-11-23.md",
+    "to": "reports\\architecture\\RUST_ENGINE_VALIDATION_REPORT_2025-11-23.md",
+    "type": "architecture_report",
+    "title": "Rust Engine USAGE_GUIDE.md 驗證報告"
+  },
+  {
+    "from": "docs\\validation\\SCAN_USER_GUIDE_VALIDATION_REPORT_2025-11-23.md",
+    "to": "reports\\architecture\\SCAN_USER_GUIDE_VALIDATION_REPORT_2025-11-23.md",
+    "type": "architecture_report",
+    "title": "SCAN_USER_GUIDE.md 驗證報告"
+  },
+  {
+    "from": "docs\\user_guides\\00_general\\AIVA_MODEL_GUIDE.md",
+    "to": "reports\\architecture\\AIVA_MODEL_GUIDE.md",
+    "type": "architecture_report",
+    "title": "AIVA 模型權重管理與載入指南"
+  },
+  {
+    "from": "docs\\user_guides\\00_general\\AIVA_USER_MANUAL.md",
+    "to": "reports\\architecture\\AIVA_USER_MANUAL.md",
+    "type": "architecture_report",
+    "title": "🚀 AIVA AI 系統使用者手冊"
+  },
+  {
+    "from": "docs\\user_guides\\01_core\\AIVA_AI_USER_MANUAL.md",
+    "to": "reports\\architecture\\AIVA_AI_USER_MANUAL.md",
+    "type": "architecture_report",
+    "title": "🚀 AIVA AI 系統使用者手冊"
+  },
+  {
+    "from": "docs\\user_guides\\01_core\\AIVA_CORE_使用者手冊.md",
+    "to": "reports\\architecture\\AIVA_CORE_使用者手冊.md",
+    "type": "architecture_report",
+    "title": "AIVA Core v3.0.0-alpha 使用者手冊"
+  },
+  {
+    "from": "docs\\user_guides\\01_core\\AI_SERVICES_USER_GUIDE.md",
+    "to": "reports\\architecture\\AI_SERVICES_USER_GUIDE.md",
+    "type": "architecture_report",
+    "title": "AIVA AI 系統實際使用指南 ✅ 11/15更新 (實際狀況版)"
+  },
+  {
+    "from": "docs\\user_guides\\01_core\\REAL_AI_CORE_OPERATIONS_MANUAL.md",
+    "to": "reports\\architecture\\REAL_AI_CORE_OPERATIONS_MANUAL.md",
+    "type": "architecture_report",
+    "title": "AIVA 真實 AI 核心建制操作手冊 (可直接照做)"
+  },
+  {
+    "from": "docs\\reports\\mermaid\\MERMAID_DIAGRAM_FIX_REPORT.md",
+    "to": "reports\\architecture\\MERMAID_DIAGRAM_FIX_REPORT.md",
+    "type": "architecture_report",
+    "title": "Mermaid圖表修正報告"
+  },
+  {
+    "from": "docs\\reports\\mermaid\\MERMAID_SAFE_REPAIR_BOUNDARIES.md",
+    "to": "reports\\architecture\\MERMAID_SAFE_REPAIR_BOUNDARIES.md",
+    "type": "architecture_report",
+    "title": "AIVA Mermaid 安全修復邊界定義"
+  },
+  {
+    "from": "docs\\reports\\mermaid\\MERMAID_VERSION_COMPATIBILITY_REPORT.md",
+    "to": "reports\\architecture\\MERMAID_VERSION_COMPATIBILITY_REPORT.md",
+    "type": "architecture_report",
+    "title": "Mermaid 版本兼容性修復報告"
+  },
+  {
+    "from": "docs\\reports\\research\\WEB_RESEARCH_FINDINGS.md",
+    "to": "reports\\testing\\WEB_RESEARCH_FINDINGS.md",
+    "type": "testing_report",
+    "title": "網路研究：滲透測試自動化分類最佳實踐"
+  },
+  {
+    "from": "docs\\guides\\development\\_temp_dev_standards.md",
+    "to": "reports\\architecture\\_temp_dev_standards.md",
+    "type": "architecture_report",
+    "title": "開發規範模板"
+  },
+  {
+    "from": "docs\\guides\\integration\\AIVA_5M_INTEGRATION_SUCCESS_REPORT.md",
+    "to": "reports\\architecture\\AIVA_5M_INTEGRATION_SUCCESS_REPORT.md",
+    "type": "architecture_report",
+    "title": "🧠 AIVA 5M特化神經網路整合成功報告"
+  },
+  {
+    "from": "docs\\guides\\integration\\AIVA_5M_MODEL_REPLACEMENT_EVALUATION.md",
+    "to": "reports\\architecture\\AIVA_5M_MODEL_REPLACEMENT_EVALUATION.md",
+    "type": "architecture_report",
+    "title": "AIVA 5M 模型替換評估報告"
+  },
+  {
+    "from": "docs\\guides\\integration\\AIVA_CORE_5M_CAPABILITY_REQUIREMENTS.md",
+    "to": "reports\\architecture\\AIVA_CORE_5M_CAPABILITY_REQUIREMENTS.md",
+    "type": "architecture_report",
+    "title": "AIVA Core 5M 模型升級能力需求規範"
+  },
+  {
+    "from": "docs\\diagrams\\composite\\AIVA_CORE_AI_ARCHITECTURE_COMPOSITE.md",
+    "to": "reports\\architecture\\AIVA_CORE_AI_ARCHITECTURE_COMPOSITE.md",
+    "type": "architecture_report",
+    "title": "AIVA Core AI 功能架構組合圖"
+  },
+  {
+    "from": "docs\\diagrams\\composite\\COMPOSITE_DIAGRAMS_ANALYSIS_REPORT.md",
+    "to": "reports\\architecture\\COMPOSITE_DIAGRAMS_ANALYSIS_REPORT.md",
+    "type": "architecture_report",
+    "title": "AIVA 組合圖完整分析報告"
+  },
+  {
+    "from": "docs\\diagrams\\typescript_analysis\\FIXES_SUMMARY.md",
+    "to": "reports\\implementation\\FIXES_SUMMARY.md",
+    "type": "implementation_report",
+    "title": "TypeScript Engine 修復摘要"
+  },
+  {
+    "from": "docs\\diagrams\\typescript_test_fixed\\INDEX.md",
+    "to": "guides\\general\\INDEX.md",
+    "type": "general_guide",
+    "title": "函數流程圖導航索引"
+  },
+  {
+    "from": "guides\\AI_COMPONENTS_INTEGRATION_REPORT.md",
+    "to": "reports\\architecture\\AI_COMPONENTS_INTEGRATION_REPORT.md",
+    "type": "architecture_report",
+    "title": "AIVA AI 組件系統整合報告"
+  },
+  {
+    "from": "guides\\EXTERNAL_GUIDES_INTEGRATION_PLAN.md",
+    "to": "reports\\architecture\\EXTERNAL_GUIDES_INTEGRATION_PLAN.md",
+    "type": "architecture_report",
+    "title": "外部指南整合計劃"
+  },
+  {
+    "from": "guides\\GLOBAL_ENVIRONMENT_MIGRATION_2025-11-25.md",
+    "to": "reports\\testing\\GLOBAL_ENVIRONMENT_MIGRATION_2025-11-25.md",
+    "type": "testing_report",
+    "title": "AIVA 全域環境遷移報告"
+  },
+  {
+    "from": "guides\\GUIDES_CONSISTENCY_CHECK_REPORT.md",
+    "to": "reports\\architecture\\GUIDES_CONSISTENCY_CHECK_REPORT.md",
+    "type": "architecture_report",
+    "title": "📋 Guides 目錄一致性檢查報告"
+  },
+  {
+    "from": "guides\\GUIDES_CONSOLIDATION_REPORT.md",
+    "to": "reports\\architecture\\GUIDES_CONSOLIDATION_REPORT.md",
+    "type": "architecture_report",
+    "title": "📊 指南文件整理完成報告"
+  },
+  {
+    "from": "guides\\GUIDES_DIRECTORY_UPDATE_REPORT.md",
+    "to": "reports\\architecture\\GUIDES_DIRECTORY_UPDATE_REPORT.md",
+    "type": "architecture_report",
+    "title": "Guides 目錄更新完成報告"
+  },
+  {
+    "from": "guides\\GUIDES_DIRECTORY_UPDATE_SUMMARY.md",
+    "to": "reports\\architecture\\GUIDES_DIRECTORY_UPDATE_SUMMARY.md",
+    "type": "architecture_report",
+    "title": "Guides 目錄更新摘要"
+  },
+  {
+    "from": "guides\\GUIDES_UPDATE_2025-11-25.md",
+    "to": "reports\\architecture\\GUIDES_UPDATE_2025-11-25.md",
+    "type": "architecture_report",
+    "title": "AIVA 指南文件整理報告 (2025-11-25)"
+  },
+  {
+    "from": "guides\\GUIDES_UPDATE_COMPLETE_2025-11-22.md",
+    "to": "reports\\architecture\\GUIDES_UPDATE_COMPLETE_2025-11-22.md",
+    "type": "architecture_report",
+    "title": "✅ AIVA 指南全面更新完成報告"
+  },
+  {
+    "from": "guides\\architecture\\CROSS_LANGUAGE_COMPATIBILITY_GUIDE.md",
+    "to": "reports\\architecture\\CROSS_LANGUAGE_COMPATIBILITY_GUIDE.md",
+    "type": "architecture_report",
+    "title": "跨語言兼容性指南"
+  },
+  {
+    "from": "guides\\architecture\\CROSS_LANGUAGE_SCHEMA_GUIDE.md",
+    "to": "reports\\architecture\\CROSS_LANGUAGE_SCHEMA_GUIDE.md",
+    "type": "architecture_report",
+    "title": "AIVA 跨語言 Schema 完整使用指南"
+  },
+  {
+    "from": "guides\\architecture\\SCHEMA_COMPLIANCE_GUIDE.md",
+    "to": "reports\\architecture\\SCHEMA_COMPLIANCE_GUIDE.md",
+    "type": "architecture_report",
+    "title": "AIVA Schema 標準化開發規範"
+  },
+  {
+    "from": "guides\\architecture\\SCHEMA_GENERATION_GUIDE.md",
+    "to": "reports\\architecture\\SCHEMA_GENERATION_GUIDE.md",
+    "type": "architecture_report",
+    "title": "Schema 生成操作指南"
+  },
+  {
+    "from": "guides\\architecture\\SCHEMA_GUIDE.md",
+    "to": "reports\\architecture\\SCHEMA_GUIDE.md",
+    "type": "architecture_report",
+    "title": "AIVA Schema 統一指南"
+  },
+  {
+    "from": "guides\\deployment\\BUILD_GUIDE.md",
+    "to": "reports\\architecture\\BUILD_GUIDE.md",
+    "type": "architecture_report",
+    "title": "AIVA 構建流程操作指南"
+  },
+  {
+    "from": "guides\\deployment\\DOCKER_KUBERNETES_GUIDE.md",
+    "to": "reports\\architecture\\DOCKER_KUBERNETES_GUIDE.md",
+    "type": "architecture_report",
+    "title": "🎯 AIVA 微服務部署 - 完整方案"
+  },
+  {
+    "from": "guides\\deployment\\INSTALLATION_GUIDE.md",
+    "to": "reports\\testing\\INSTALLATION_GUIDE.md",
+    "type": "testing_report",
+    "title": "AIVA 專案安裝指南"
+  },
+  {
+    "from": "guides\\deployment\\SYSTEM_INSTALLATION_GUIDE.md",
+    "to": "reports\\architecture\\SYSTEM_INSTALLATION_GUIDE.md",
+    "type": "architecture_report",
+    "title": "AIVA 系統安裝指南"
+  },
+  {
+    "from": "guides\\development\\AIVA_AI_MANUAL_UPDATE_LOG.md",
+    "to": "reports\\implementation\\AIVA_AI_MANUAL_UPDATE_LOG.md",
+    "type": "implementation_report",
+    "title": "AIVA AI 使用手冊更新記錄"
+  },
+  {
+    "from": "guides\\development\\API_VERIFICATION_GUIDE.md",
+    "to": "reports\\architecture\\API_VERIFICATION_GUIDE.md",
+    "type": "architecture_report",
+    "title": "API 驗證功能操作指南"
+  },
+  {
+    "from": "guides\\development\\DATA_STORAGE_GUIDE.md",
+    "to": "reports\\architecture\\DATA_STORAGE_GUIDE.md",
+    "type": "architecture_report",
+    "title": "AIVA 數據存儲使用指南"
+  },
+  {
+    "from": "guides\\development\\DEPENDENCY_MANAGEMENT_GUIDE.md",
+    "to": "reports\\architecture\\DEPENDENCY_MANAGEMENT_GUIDE.md",
+    "type": "architecture_report",
+    "title": "AIVA 依賴管理操作指南"
+  },
+  {
+    "from": "guides\\development\\DEVELOPER_GUIDE.md",
+    "to": "reports\\architecture\\DEVELOPER_GUIDE.md",
+    "type": "architecture_report",
+    "title": "AIVA 開發者指南 v5.0"
+  },
+  {
+    "from": "guides\\development\\DEVELOPMENT_QUICK_START_GUIDE.md",
+    "to": "reports\\architecture\\DEVELOPMENT_QUICK_START_GUIDE.md",
+    "type": "architecture_report",
+    "title": "AIVA 開發環境快速設置指南"
+  },
+  {
+    "from": "guides\\development\\DEVELOPMENT_TASKS_GUIDE.md",
+    "to": "reports\\architecture\\DEVELOPMENT_TASKS_GUIDE.md",
+    "type": "architecture_report",
+    "title": "AIVA 開發任務流程指南"
+  },
+  {
+    "from": "guides\\development\\EXTENSIONS_INSTALL_GUIDE.md",
+    "to": "reports\\architecture\\EXTENSIONS_INSTALL_GUIDE.md",
+    "type": "architecture_report",
+    "title": "AIVA 擴充功能安裝指南"
+  },
+  {
+    "from": "guides\\development\\FILE_ORGANIZATION_MAINTENANCE_GUIDE.md",
+    "to": "reports\\architecture\\FILE_ORGANIZATION_MAINTENANCE_GUIDE.md",
+    "type": "architecture_report",
+    "title": "AIVA 檔案組織維護指南"
+  },
+  {
+    "from": "guides\\development\\LANGUAGE_SERVER_OPTIMIZATION_GUIDE.md",
+    "to": "reports\\architecture\\LANGUAGE_SERVER_OPTIMIZATION_GUIDE.md",
+    "type": "architecture_report",
+    "title": "AIVA 語言伺服器優化設定指南"
+  },
+  {
+    "from": "guides\\development\\METRICS_USAGE_GUIDE.md",
+    "to": "reports\\architecture\\METRICS_USAGE_GUIDE.md",
+    "type": "architecture_report",
+    "title": "AIVA 統一統計收集系統使用指南"
+  },
+  {
+    "from": "guides\\development\\MULTI_LANGUAGE_ENVIRONMENT_STANDARD.md",
+    "to": "reports\\testing\\MULTI_LANGUAGE_ENVIRONMENT_STANDARD.md",
+    "type": "testing_report",
+    "title": "AIVA 多語言開發環境標準配置指南"
+  },
+  {
+    "from": "guides\\development\\SCHEMA_IMPORT_GUIDE.md",
+    "to": "reports\\architecture\\SCHEMA_IMPORT_GUIDE.md",
+    "type": "architecture_report",
+    "title": "AIVA Schema 導入規範指南"
+  },
+  {
+    "from": "guides\\development\\TOKEN_OPTIMIZATION_GUIDE.md",
+    "to": "reports\\architecture\\TOKEN_OPTIMIZATION_GUIDE.md",
+    "type": "architecture_report",
+    "title": "AIVA Token最佳化開發指南 (10/31實測驗證)"
+  },
+  {
+    "from": "guides\\development\\VSCODE_CONFIGURATION_OPTIMIZATION.md",
+    "to": "reports\\architecture\\VSCODE_CONFIGURATION_OPTIMIZATION.md",
+    "type": "architecture_report",
+    "title": "VS Code 多語言開發配置最佳化指南"
+  },
+  {
+    "from": "guides\\development\\WORK_LOG_2025-11-12.md",
+    "to": "reports\\architecture\\WORK_LOG_2025-11-12.md",
+    "type": "architecture_report",
+    "title": "AIVA 系統工作日誌 - 2025年11月12日"
+  },
+  {
+    "from": "guides\\integration\\AIVA_5M_REPLACEMENT_IMPLEMENTATION_GUIDE.md",
+    "to": "reports\\architecture\\AIVA_5M_REPLACEMENT_IMPLEMENTATION_GUIDE.md",
+    "type": "architecture_report",
+    "title": "AIVA 5M 模型替換實施指南"
+  },
+  {
+    "from": "guides\\integration\\AIVA_WEB_RESEARCH_INTEGRATION_GUIDE.md",
+    "to": "reports\\architecture\\AIVA_WEB_RESEARCH_INTEGRATION_GUIDE.md",
+    "type": "architecture_report",
+    "title": "🚀 AIVA AI能力整合實施指南 - 基於業界最佳實踐"
+  },
+  {
+    "from": "guides\\modules\\AI_ENGINE_GUIDE.md",
+    "to": "reports\\architecture\\AI_ENGINE_GUIDE.md",
+    "type": "architecture_report",
+    "title": "AIVA Core - AI 引擎架構詳解 🤖"
+  },
+  {
+    "from": "guides\\modules\\ANALYSIS_FUNCTIONS_GUIDE.md",
+    "to": "reports\\architecture\\ANALYSIS_FUNCTIONS_GUIDE.md",
+    "type": "architecture_report",
+    "title": "🔬 AIVA Features 分析功能運作機制指南"
+  },
+  {
+    "from": "guides\\modules\\FEATURE_MODULES_DEVELOPMENT_GUIDE.md",
+    "to": "reports\\architecture\\FEATURE_MODULES_DEVELOPMENT_GUIDE.md",
+    "type": "architecture_report",
+    "title": "AIVA 功能模組開發指南"
+  },
+  {
+    "from": "guides\\modules\\GO_DEVELOPMENT_GUIDE.md",
+    "to": "reports\\architecture\\GO_DEVELOPMENT_GUIDE.md",
+    "type": "architecture_report",
+    "title": "AIVA Features - Go 開發指南 🐹"
+  },
+  {
+    "from": "guides\\modules\\MODULE_MIGRATION_GUIDE.md",
+    "to": "reports\\architecture\\MODULE_MIGRATION_GUIDE.md",
+    "type": "architecture_report",
+    "title": "Go 服務遷移工具使用指南"
+  },
+  {
+    "from": "guides\\modules\\PYTHON_DEVELOPMENT_GUIDE.md",
+    "to": "reports\\architecture\\PYTHON_DEVELOPMENT_GUIDE.md",
+    "type": "architecture_report",
+    "title": "AIVA Features - Python 開發指南 🐍 (2025-11-06更新)"
+  },
+  {
+    "from": "guides\\modules\\RUST_DEVELOPMENT_GUIDE.md",
+    "to": "reports\\architecture\\RUST_DEVELOPMENT_GUIDE.md",
+    "type": "architecture_report",
+    "title": "AIVA Features - Rust 開發指南 🦀"
+  },
+  {
+    "from": "guides\\modules\\SUPPORT_FUNCTIONS_GUIDE.md",
+    "to": "reports\\architecture\\SUPPORT_FUNCTIONS_GUIDE.md",
+    "type": "architecture_report",
+    "title": "AIVA Features - 支援功能架構 🔧"
+  },
+  {
+    "from": "guides\\repairs\\AIVA_AI_REPAIR_GUIDE.md",
+    "to": "reports\\architecture\\AIVA_AI_REPAIR_GUIDE.md",
+    "type": "architecture_report",
+    "title": "AIVA 通用 AI 修復指南"
+  },
+  {
+    "from": "guides\\repairs\\MERMAID_SMART_REPAIR_GUIDE.md",
+    "to": "reports\\architecture\\MERMAID_SMART_REPAIR_GUIDE.md",
+    "type": "architecture_report",
+    "title": "AIVA Mermaid 智能修復系統完整指南"
+  },
+  {
+    "from": "guides\\reports\\GUIDES_CLEANUP_ROUND2_SUMMARY_2025-11-22.md",
+    "to": "reports\\architecture\\GUIDES_CLEANUP_ROUND2_SUMMARY_2025-11-22.md",
+    "type": "architecture_report",
+    "title": "AIVA Guides 第二輪深度清理總結"
+  },
+  {
+    "from": "guides\\reports\\GUIDES_CLEANUP_SUMMARY_2025-11-22.md",
+    "to": "reports\\architecture\\GUIDES_CLEANUP_SUMMARY_2025-11-22.md",
+    "type": "architecture_report",
+    "title": "Guides 目錄清理總結"
+  },
+  {
+    "from": "guides\\reports\\GUIDES_UPDATE_SUMMARY_2025-11-22.md",
+    "to": "reports\\architecture\\GUIDES_UPDATE_SUMMARY_2025-11-22.md",
+    "type": "architecture_report",
+    "title": "Guides 目錄更新總結"
+  },
+  {
+    "from": "guides\\troubleshooting\\DEVELOPMENT_ENVIRONMENT_TROUBLESHOOTING.md",
+    "to": "reports\\testing\\DEVELOPMENT_ENVIRONMENT_TROUBLESHOOTING.md",
+    "type": "testing_report",
+    "title": "開發環境配置故障排除快速參考"
+  },
+  {
+    "from": "guides\\troubleshooting\\FORWARD_REFERENCE_REPAIR_GUIDE.md",
+    "to": "reports\\architecture\\FORWARD_REFERENCE_REPAIR_GUIDE.md",
+    "type": "architecture_report",
+    "title": "AIVA 向前引用發現與修復指南"
+  },
+  {
+    "from": "guides\\troubleshooting\\PERFORMANCE_OPTIMIZATION_GUIDE.md",
+    "to": "reports\\architecture\\PERFORMANCE_OPTIMIZATION_GUIDE.md",
+    "type": "architecture_report",
+    "title": "AIVA 性能優化配置指南"
+  },
+  {
+    "from": "guides\\troubleshooting\\PRODUCTION_TROUBLESHOOTING_GUIDE.md",
+    "to": "reports\\architecture\\PRODUCTION_TROUBLESHOOTING_GUIDE.md",
+    "type": "architecture_report",
+    "title": "AIVA 生產環境故障排除指南"
+  },
+  {
+    "from": "guides\\troubleshooting\\TESTING_REPRODUCTION_GUIDE.md",
+    "to": "reports\\architecture\\TESTING_REPRODUCTION_GUIDE.md",
+    "type": "architecture_report",
+    "title": "AIVA 測試重現快速指南"
+  },
+  {
+    "from": "guides\\validation\\ARCHITECTURE_FIXES_VALIDATION_GUIDE.md",
+    "to": "reports\\architecture\\ARCHITECTURE_FIXES_VALIDATION_GUIDE.md",
+    "type": "architecture_report",
+    "title": "AIVA 架構修復驗證指南"
+  },
+  {
+    "from": "guides\\validation\\DOCKER_GUIDE_VALIDATION_REPORT.md",
+    "to": "reports\\architecture\\DOCKER_GUIDE_VALIDATION_REPORT.md",
+    "type": "architecture_report",
+    "title": "Docker Guide 驗證報告"
+  },
+  {
+    "from": "services\\SERVICE_ANALYSIS_AND_IMPROVEMENT_PLAN.md",
+    "to": "reports\\architecture\\SERVICE_ANALYSIS_AND_IMPROVEMENT_PLAN.md",
+    "type": "architecture_report",
+    "title": "🔍 AIVA Services 全面分析與改進計劃"
+  },
+  {
+    "from": "services\\aiva_common\\CHANGELOG.md",
+    "to": "reports\\architecture\\CHANGELOG.md",
+    "type": "architecture_report",
+    "title": "CHANGELOG"
+  },
+  {
+    "from": "services\\aiva_common\\SECURITY_FRAMEWORK_COMPLETED.md",
+    "to": "reports\\architecture\\SECURITY_FRAMEWORK_COMPLETED.md",
+    "type": "architecture_report",
+    "title": "AIVA 安全認證框架 (TODO Item 13) - 完成報告"
+  },
+  {
+    "from": "services\\core\\DEVELOPMENT_STANDARDS.md",
+    "to": "reports\\architecture\\DEVELOPMENT_STANDARDS.md",
+    "type": "architecture_report",
+    "title": "Core 模組開發規範"
+  },
+  {
+    "from": "services\\features\\CAPABILITY_REGISTRATION_REPORT.md",
+    "to": "reports\\architecture\\CAPABILITY_REGISTRATION_REPORT.md",
+    "type": "architecture_report",
+    "title": "HackingTool 整合模組能力註冊報告"
+  },
+  {
+    "from": "services\\features\\DEVELOPMENT_STANDARDS.md",
+    "to": "reports\\architecture\\DEVELOPMENT_STANDARDS.md",
+    "type": "architecture_report",
+    "title": "Features 模組開發規範"
+  },
+  {
+    "from": "services\\features\\INTEGRATION_IMPLEMENTATION_EXAMPLE.md",
+    "to": "reports\\implementation\\INTEGRATION_IMPLEMENTATION_EXAMPLE.md",
+    "type": "implementation_report",
+    "title": "整合實施範例 - SQLi Worker"
+  },
+  {
+    "from": "services\\features\\INTEGRATION_USAGE_GUIDE.md",
+    "to": "reports\\implementation\\INTEGRATION_USAGE_GUIDE.md",
+    "type": "implementation_report",
+    "title": "Features 模組整合指南"
+  },
+  {
+    "from": "services\\integration\\DOCUMENTATION_COMPLETION_REPORT.md",
+    "to": "reports\\architecture\\DOCUMENTATION_COMPLETION_REPORT.md",
+    "type": "architecture_report",
+    "title": "整合模組文檔重組報告"
+  },
+  {
+    "from": "services\\scan\\ENGINE_VERIFICATION_AND_FIX_PLAN.md",
+    "to": "reports\\architecture\\ENGINE_VERIFICATION_AND_FIX_PLAN.md",
+    "type": "architecture_report",
+    "title": "🔍 AIVA Scan 引擎驗證與修復計劃"
+  },
+  {
+    "from": "services\\scan\\SCAN_FLOW_DIAGRAMS.md",
+    "to": "reports\\architecture\\SCAN_FLOW_DIAGRAMS.md",
+    "type": "architecture_report",
+    "title": "Scan 模組流程圖完整呈現"
+  },
+  {
+    "from": "services\\scan\\SCAN_MODULE_RESTORATION_PLAN.md",
+    "to": "reports\\architecture\\SCAN_MODULE_RESTORATION_PLAN.md",
+    "type": "architecture_report",
+    "title": "🔧 AIVA Scan 模組完整修復計劃"
+  },
+  {
+    "from": "services\\scan\\SCAN_USER_GUIDE.md",
+    "to": "reports\\architecture\\SCAN_USER_GUIDE.md",
+    "type": "architecture_report",
+    "title": "AIVA Scan 模組使用者手冊"
+  },
+  {
+    "from": "services\\scan\\archived_docs\\MULTI_ENGINE_COORDINATION_GUIDE.md",
+    "to": "reports\\architecture\\MULTI_ENGINE_COORDINATION_GUIDE.md",
+    "type": "architecture_report",
+    "title": "🎯 多引擎協同掃描指南"
+  },
+  {
+    "from": "services\\scan\\coordinators\\COORDINATOR_USAGE_GUIDE.md",
+    "to": "reports\\architecture\\COORDINATOR_USAGE_GUIDE.md",
+    "type": "architecture_report",
+    "title": "🎯 AIVA Scan 協調器使用指南"
+  },
+  {
+    "from": "services\\scan\\coordinators\\PYTHON_ENGINE_USAGE_GUIDE.md",
+    "to": "reports\\architecture\\PYTHON_ENGINE_USAGE_GUIDE.md",
+    "type": "architecture_report",
+    "title": "🐍 Python Engine 使用指南"
+  },
+  {
+    "from": "services\\scan\\engines\\ENGINES_DOCUMENTATION_INDEX.md",
+    "to": "reports\\architecture\\ENGINES_DOCUMENTATION_INDEX.md",
+    "type": "architecture_report",
+    "title": "AIVA 掃描引擎統一文檔索引"
+  },
+  {
+    "from": "services\\scan\\engines\\go_engine\\ANALYSIS_REPORT_Production_Upgrade.md",
+    "to": "reports\\architecture\\ANALYSIS_REPORT_Production_Upgrade.md",
+    "type": "architecture_report",
+    "title": "「Go Engine 實戰化升級計畫」文檔與實際代碼比對分析報告"
+  },
+  {
+    "from": "services\\scan\\engines\\go_engine\\ANALYSIS_REPORT_Untitled.md",
+    "to": "reports\\architecture\\ANALYSIS_REPORT_Untitled.md",
+    "type": "architecture_report",
+    "title": "Word 文檔與 Go Engine 實際狀態比對分析報告"
+  },
+  {
+    "from": "services\\scan\\engines\\go_engine\\DOCUMENT_ANALYSIS_REPORT.md",
+    "to": "reports\\architecture\\DOCUMENT_ANALYSIS_REPORT.md",
+    "type": "architecture_report",
+    "title": "Word 文檔與 Go Engine 實際狀態比對分析報告"
+  },
+  {
+    "from": "services\\scan\\engines\\go_engine\\GO_ENGINE_ARCHITECTURE_UPDATE.md",
+    "to": "docs\\api\\GO_ENGINE_ARCHITECTURE_UPDATE.md",
+    "type": "api_doc",
+    "title": "Go 引擎架構更新說明"
+  },
+  {
+    "from": "services\\scan\\engines\\go_engine\\GO_ENGINE_STATUS.md",
+    "to": "reports\\architecture\\GO_ENGINE_STATUS.md",
+    "type": "architecture_report",
+    "title": "Go Engine 修復完成報告"
+  },
+  {
+    "from": "services\\scan\\engines\\go_engine\\ROOT_CAUSE_DIAGNOSIS.md",
+    "to": "reports\\architecture\\ROOT_CAUSE_DIAGNOSIS.md",
+    "type": "architecture_report",
+    "title": "🔍 無法對靶場進行掃描的根本原因診斷報告"
+  },
+  {
+    "from": "services\\scan\\engines\\go_engine\\SCANNER_WORKFLOW_ANALYSIS.md",
+    "to": "reports\\implementation\\SCANNER_WORKFLOW_ANALYSIS.md",
+    "type": "implementation_report",
+    "title": "SSRF 掃描器工作流程分析報告"
+  },
+  {
+    "from": "services\\scan\\engines\\go_engine\\USAGE_GUIDE.md",
+    "to": "reports\\architecture\\USAGE_GUIDE.md",
+    "type": "architecture_report",
+    "title": "AIVA Go Engine 使用指南"
+  },
+  {
+    "from": "services\\scan\\engines\\python_engine\\BEAUTIFULSOUP_FIX.md",
+    "to": "reports\\implementation\\BEAUTIFULSOUP_FIX.md",
+    "type": "implementation_report",
+    "title": "BeautifulSoup 導入修復記錄"
+  },
+  {
+    "from": "services\\scan\\engines\\python_engine\\CAPABILITY_STATUS.md",
+    "to": "reports\\architecture\\CAPABILITY_STATUS.md",
+    "type": "architecture_report",
+    "title": "Python Engine 功能狀態報告"
+  },
+  {
+    "from": "services\\scan\\engines\\python_engine\\CRAWLER_FIX_REPORT.md",
+    "to": "reports\\architecture\\CRAWLER_FIX_REPORT.md",
+    "type": "architecture_report",
+    "title": "Python Engine 爬蟲修復報告"
+  },
+  {
+    "from": "services\\scan\\engines\\python_engine\\DYNAMIC_SCAN_COMPLETION_REPORT.md",
+    "to": "reports\\architecture\\DYNAMIC_SCAN_COMPLETION_REPORT.md",
+    "type": "architecture_report",
+    "title": "Python Engine 動態掃描完善報告"
+  },
+  {
+    "from": "services\\scan\\engines\\python_engine\\FIX_COMPLETION_REPORT.md",
+    "to": "reports\\implementation\\FIX_COMPLETION_REPORT.md",
+    "type": "implementation_report",
+    "title": "Python Engine 修復完成報告"
+  },
+  {
+    "from": "services\\scan\\engines\\python_engine\\OPERATION_COMPLETION_REPORT.md",
+    "to": "reports\\testing\\OPERATION_COMPLETION_REPORT.md",
+    "type": "testing_report",
+    "title": "Python Engine 全域環境配置完成報告"
+  },
+  {
+    "from": "services\\scan\\engines\\python_engine\\PHASE_LOOP_VERIFICATION_REPORT.md",
+    "to": "reports\\implementation\\PHASE_LOOP_VERIFICATION_REPORT.md",
+    "type": "implementation_report",
+    "title": "Phase 0→1→2 閉環驗證報告"
+  },
+  {
+    "from": "services\\scan\\engines\\python_engine\\QUICK_REFERENCE.md",
+    "to": "guides\\general\\QUICK_REFERENCE.md",
+    "type": "general_guide",
+    "title": "Python Engine - 快速參考卡"
+  },
+  {
+    "from": "services\\scan\\engines\\python_engine\\VALIDATION_TEST_PLAN.md",
+    "to": "reports\\architecture\\VALIDATION_TEST_PLAN.md",
+    "type": "architecture_report",
+    "title": "Python Engine 驗證測試計劃"
+  },
+  {
+    "from": "services\\scan\\engines\\rust_engine\\ARCHITECTURE_OPTIONS.md",
+    "to": "reports\\architecture\\ARCHITECTURE_OPTIONS.md",
+    "type": "architecture_report",
+    "title": "Rust 引擎架構方案對比"
+  },
+  {
+    "from": "services\\scan\\engines\\rust_engine\\INTEGRATION_COMPLETED.md",
+    "to": "reports\\implementation\\INTEGRATION_COMPLETED.md",
+    "type": "implementation_report",
+    "title": "🎉 AIVA Info Gatherer Rust - 密鑰檢測功能整合完成"
+  },
+  {
+    "from": "services\\scan\\engines\\rust_engine\\OPTIMIZATION_ROADMAP.md",
+    "to": "reports\\implementation\\OPTIMIZATION_ROADMAP.md",
+    "type": "implementation_report",
+    "title": "Rust Engine 優化路線圖"
+  },
+  {
+    "from": "services\\scan\\engines\\rust_engine\\PHASE0_IMPLEMENTATION_PLAN.md",
+    "to": "reports\\architecture\\PHASE0_IMPLEMENTATION_PLAN.md",
+    "type": "architecture_report",
+    "title": "Rust Engine Phase0 實現計劃"
+  },
+  {
+    "from": "services\\scan\\engines\\rust_engine\\USAGE_GUIDE.md",
+    "to": "reports\\architecture\\USAGE_GUIDE.md",
+    "type": "architecture_report",
+    "title": "Rust Engine 使用指南"
+  },
+  {
+    "from": "services\\scan\\engines\\rust_engine\\WORKING_STATUS_2025-11-19.md",
+    "to": "reports\\architecture\\WORKING_STATUS_2025-11-19.md",
+    "type": "architecture_report",
+    "title": "Rust Engine 真實掃描驗證報告"
+  },
+  {
+    "from": "services\\scan\\engines\\typescript_engine\\IMPROVEMENT_PLAN.md",
+    "to": "reports\\architecture\\IMPROVEMENT_PLAN.md",
+    "type": "architecture_report",
+    "title": "TypeScript Engine 改善計劃"
+  },
+  {
+    "from": "services\\scan\\engines\\typescript_engine\\NODE_MODULES_GUIDE.md",
+    "to": "reports\\implementation\\NODE_MODULES_GUIDE.md",
+    "type": "implementation_report",
+    "title": "TypeScript Engine - node_modules 依賴完整指南"
+  },
+  {
+    "from": "services\\scan\\engines\\typescript_engine\\VALIDATION_STATUS.md",
+    "to": "reports\\architecture\\VALIDATION_STATUS.md",
+    "type": "architecture_report",
+    "title": "TypeScript Engine 驗證狀態報告"
+  },
+  {
+    "from": "services\\scan\\engines\\typescript_engine\\docs\\ARCHITECTURE.md",
+    "to": "reports\\architecture\\ARCHITECTURE.md",
+    "type": "architecture_report",
+    "title": "TypeScript Engine 架構設計文檔"
+  },
+  {
+    "from": "services\\scan\\engines\\typescript_engine\\docs\\INDEX.md",
+    "to": "reports\\architecture\\INDEX.md",
+    "type": "architecture_report",
+    "title": "TypeScript Engine 文檔中心"
+  },
+  {
+    "from": "services\\scan\\engines\\typescript_engine\\docs\\OPERATION_GUIDE.md",
+    "to": "reports\\architecture\\OPERATION_GUIDE.md",
+    "type": "architecture_report",
+    "title": "TypeScript Engine 操作指南"
+  },
+  {
+    "from": "services\\integration\\docs\\01_快速開始指南.md",
+    "to": "reports\\architecture\\01_快速開始指南.md",
+    "type": "architecture_report",
+    "title": "AIVA 整合模組 - 快速開始指南"
+  },
+  {
+    "from": "services\\integration\\docs\\02_核心功能指南.md",
+    "to": "reports\\architecture\\02_核心功能指南.md",
+    "type": "architecture_report",
+    "title": "AIVA 整合模組 - 核心功能指南"
+  },
+  {
+    "from": "services\\integration\\docs\\03_模組整合指南.md",
+    "to": "reports\\testing\\03_模組整合指南.md",
+    "type": "testing_report",
+    "title": "AIVA 整合模組 - 模組整合指南"
+  },
+  {
+    "from": "services\\integration\\docs\\04_API參考指南.md",
+    "to": "reports\\fixes\\04_API參考指南.md",
+    "type": "bugfix_report",
+    "title": "AIVA 整合模組 - API 參考指南"
+  },
+  {
+    "from": "services\\integration\\docs\\05_維護運維指南.md",
+    "to": "reports\\testing\\05_維護運維指南.md",
+    "type": "testing_report",
+    "title": "AIVA 整合模組 - 維護運維指南"
+  },
+  {
+    "from": "services\\features\\docs\\DEVELOPMENT_STANDARDS_INTEGRATION.md",
+    "to": "reports\\architecture\\DEVELOPMENT_STANDARDS_INTEGRATION.md",
+    "type": "architecture_report",
+    "title": "📚 開發規範整合完成報告"
+  },
+  {
+    "from": "services\\features\\common\\go\\aiva_common_go\\SCHEMA_MAPPING.md",
+    "to": "reports\\architecture\\SCHEMA_MAPPING.md",
+    "type": "architecture_report",
+    "title": "AIVA Schema Mapping - Python ↔ Go"
+  },
+  {
+    "from": "services\\core\\aiva_core\\ARCHITECTURE_FIXES_P0_COMPLETION_REPORT.md",
+    "to": "reports\\architecture\\ARCHITECTURE_FIXES_P0_COMPLETION_REPORT.md",
+    "type": "architecture_report",
+    "title": "AIVA Core 架構修復完成報告 - P0 階段"
+  },
+  {
+    "from": "services\\core\\aiva_core\\ARCHITECTURE_FIXES_P1_COMPLETION_REPORT.md",
+    "to": "reports\\architecture\\ARCHITECTURE_FIXES_P1_COMPLETION_REPORT.md",
+    "type": "architecture_report",
+    "title": "AIVA Core 架構修復 P1 階段完成報告"
+  },
+  {
+    "from": "services\\core\\aiva_core\\ARCHITECTURE_FIXES_P2_COMPLETION_REPORT.md",
+    "to": "reports\\architecture\\ARCHITECTURE_FIXES_P2_COMPLETION_REPORT.md",
+    "type": "architecture_report",
+    "title": "AIVA 架構修復 P2 階段完成報告"
+  },
+  {
+    "from": "services\\core\\aiva_core\\ARCHITECTURE_GAPS_ANALYSIS.md",
+    "to": "reports\\architecture\\ARCHITECTURE_GAPS_ANALYSIS.md",
+    "type": "architecture_report",
+    "title": "AIVA Core 架構缺口分析與修復方案"
+  },
+  {
+    "from": "services\\core\\aiva_core\\ARCHITECTURE_VERIFICATION_REPORT.md",
+    "to": "reports\\architecture\\ARCHITECTURE_VERIFICATION_REPORT.md",
+    "type": "architecture_report",
+    "title": "AIVA Core 架構問題驗證報告"
+  },
+  {
+    "from": "services\\core\\aiva_core\\REFACTORING_PLAN.md",
+    "to": "reports\\architecture\\REFACTORING_PLAN.md",
+    "type": "architecture_report",
+    "title": "AIVA Core 重構計劃 - 六大模組架構"
+  },
+  {
+    "from": "services\\core\\aiva_core\\USAGE_GUIDE.md",
+    "to": "reports\\architecture\\USAGE_GUIDE.md",
+    "type": "architecture_report",
+    "title": "AIVA Core - 使用指南"
+  },
+  {
+    "from": "services\\core\\aiva_core\\service_backbone\\SYSTEM_STARTUP_GUIDE.md",
+    "to": "reports\\architecture\\SYSTEM_STARTUP_GUIDE.md",
+    "type": "architecture_report",
+    "title": "AIVA Core 系統啟動指南"
+  },
+  {
+    "from": "scripts\\REORGANIZATION_PLAN.md",
+    "to": "reports\\architecture\\REORGANIZATION_PLAN.md",
+    "type": "architecture_report",
+    "title": "📜 Scripts 目錄重組計劃"
+  },
+  {
+    "from": "scripts\\common\\MODERN_SCRIPTS_GUIDE.md",
+    "to": "reports\\architecture\\MODERN_SCRIPTS_GUIDE.md",
+    "type": "architecture_report",
+    "title": "AIVA 現代化腳本使用指南"
+  }
+]

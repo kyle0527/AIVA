@@ -1,6 +1,6 @@
 # AIVA 整合模組 - 企業級安全整合中樞
 
-**導航**: [← 返回 Services 總覽](../README.md) | [📖 文檔中心](../../docs/README.md)
+**導航**: [📖 文檔中心](../../docs/guides/services/)
 
 ![AIVA Integration Module](https://img.shields.io/badge/AIVA-Integration%20Module-purple?style=for-the-badge)
 ![Bug Bounty Ready](https://img.shields.io/badge/Bug%20Bounty-v6.2%20Ready-brightgreen?style=for-the-badge)
@@ -11,7 +11,7 @@
 
 > **🎯 Bug Bounty 專業化 v6.2**: 企業級整合中樞專精動態檢測協調，AI 驅動攻擊策略整合  
 > **✅ 系統狀態**: 100% Bug Bounty 就緒，跨語言整合 100% 成功，資料儲存標準化完成  
-> **🔄 最後更新**: 2025年11月16日
+> **🔄 最後更新**: 2025年11月27日
 
 > AIVA 整合模組是企業級 Bug Bounty 平台的**智能中樞**，採用**多層分散式整合架構**，以 **AI Operation Recorder** 為核心協調器，整合動態掃描、漏洞分析、攻擊驗證等各個安全服務，提供統一的 Bug Bounty 操作協調、效能監控和智能決策能力。專為實戰滲透測試設計，實際檔案結構深度可達 7 層，確保模組化和可擴展性。
 
@@ -333,14 +333,14 @@ UnifiedStorageAdapter initialized with PostgreSQL backend: localhost:5432/aiva_d
 
 | 開發場景 | 推薦工具 | 快速連結 |
 |---------|---------|---------|
-| 🐍 **Python/FastAPI** | Pylance + Ruff + Black | [Python 工具 (22個)](../../_out/VSCODE_EXTENSIONS_INVENTORY.md#-1-python-開發生態-22-個) |
-| 🗄️ **資料庫管理** | SQLTools + PostgreSQL Driver | [資料庫工具 (4個)](../../_out/VSCODE_EXTENSIONS_INVENTORY.md#-11-資料庫與連線-3-個) |
-| 🌐 **API 測試** | REST Client | [開發工具 (7個)](../../_out/VSCODE_EXTENSIONS_INVENTORY.md#-10-開發工具與測試-7-個) |
-| 🔍 **監控除錯** | ErrorLens + Code Runner | [品質工具 (5個)](../../_out/VSCODE_EXTENSIONS_INVENTORY.md#-7-程式碼品質與-linting-5-個) |
-| 🐳 **容器開發** | Docker + Dev Containers | [容器工具 (7個)](../../_out/VSCODE_EXTENSIONS_INVENTORY.md#-6-容器與遠端開發-7-個) |
-| 🤖 **AI 輔助開發** | GitHub Copilot + ChatGPT | [AI 工具 (5個)](../../_out/VSCODE_EXTENSIONS_INVENTORY.md#-5-github-整合與-ai-5-個) |
+| 🐍 **Python/FastAPI** | Pylance + Ruff + Black | VS Code 擴展市場 |
+| 🗄️ **資料庫管理** | SQLTools + PostgreSQL Driver | VS Code 擴展市場 |
+| 🌐 **API 測試** | REST Client | VS Code 擴展市場 |
+| 🔍 **監控除錯** | ErrorLens + Code Runner | VS Code 擴展市場 |
+| 🐳 **容器開發** | Docker + Dev Containers | VS Code 擴展市場 |
+| 🤖 **AI 輔助開發** | GitHub Copilot + ChatGPT | VS Code 擴展市場 |
 
-📚 **完整工具清單**: [VS Code 插件參考](../../_out/VSCODE_EXTENSIONS_INVENTORY.md) (88個插件) | **核心推薦**: [必裝插件速查表](../../_out/VSCODE_EXTENSIONS_INVENTORY.md#-核心插件速查表)
+💡 **提示**: 在 VS Code 擴展市場搜尋上述工具名稱即可安裝
 
 ### 開發快速技巧
 

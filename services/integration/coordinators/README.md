@@ -1,5 +1,47 @@
 # Integration Coordinators - 雙閉環協調器系統
 
+## 📑 目錄
+
+- [概述](#概述)
+- [架構設計](#架構設計)
+  - [數據流向](#數據流向)
+- [核心組件](#核心組件)
+  - [1. BaseCoordinator（基礎協調器）](#1-basecoordinator基礎協調器)
+  - [2. 具體協調器](#2-具體協調器)
+    - [XSSCoordinator](#xsscoordinator)
+    - [SQLiCoordinator（待實現）](#sqlicoordinator待實現)
+    - [WebScannerCoordinator（待實現）](#webscannercoordinator待實現)
+    - [DDoSCoordinator（待實現）](#ddoscoordinator待實現)
+- [數據模型](#數據模型)
+  - [Features 返回的標準格式](#features-返回的標準格式)
+  - [Coordinator 返回的數據](#coordinator-返回的數據)
+- [使用範例](#使用範例)
+  - [基礎使用](#基礎使用)
+  - [整合 MQ/DB/Cache](#整合-mqdbcache)
+- [內循環數據用途](#內循環數據用途)
+  - [1. 優化測試策略](#1-優化測試策略)
+  - [2. 資源優化](#2-資源優化)
+  - [3. 智能決策](#3-智能決策)
+- [外循環數據用途](#外循環數據用途)
+  - [1. 漏洞驗證標準](#1-漏洞驗證標準)
+  - [2. 報告類型](#2-報告類型)
+    - [技術報告（開發團隊）](#技術報告開發團隊)
+    - [管理報告（管理層）](#管理報告管理層)
+    - [Bug Bounty 報告（客戶/平台）](#bug-bounty-報告客戶平台)
+  - [3. 持續改進循環](#3-持續改進循環)
+- [數據存儲策略](#數據存儲策略)
+  - [1. 時序數據（InfluxDB/TimescaleDB）](#1-時序數據influxdbtimescaledb)
+  - [2. 文檔數據（MongoDB/Elasticsearch）](#2-文檔數據mongodbelasticsearch)
+  - [3. 關聯數據（PostgreSQL）](#3-關聯數據postgresql)
+  - [4. 緩存數據（Redis）](#4-緩存數據redis)
+- [擴展指南](#擴展指南)
+  - [創建新的協調器](#創建新的協調器)
+- [參考標準](#參考標準)
+- [下一步](#下一步)
+
+---
+
+
 ## 概述
 
 基於 **AIVA 雙閉環架構設計**，Integration 協調器負責：

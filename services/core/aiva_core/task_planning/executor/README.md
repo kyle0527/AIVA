@@ -1,5 +1,23 @@
 # ⚙️ Executor - 任務執行器
 
+## 📑 目錄
+
+- [📋 目錄](#-目錄)
+- [🎯 模組概述](#-模組概述)
+  - [核心功能](#核心功能)
+- [📂 檔案列表](#-檔案列表)
+- [🔧 核心組件](#-核心組件)
+  - [1. `task_executor.py` - 任務執行器](#1-task_executorpy---任務執行器)
+  - [2. `task_queue_manager.py` - 任務佇列管理器](#2-task_queue_managerpy---任務佇列管理器)
+  - [3. `execution_status_monitor.py` - 執行狀態監控器](#3-execution_status_monitorpy---執行狀態監控器)
+  - [4. `plan_executor.py` - 計畫執行器](#4-plan_executorpy---計畫執行器)
+- [🚀 完整使用流程](#-完整使用流程)
+  - [任務執行流程](#任務執行流程)
+  - [計畫執行流程](#計畫執行流程)
+- [📊 性能指標](#-性能指標)
+
+---
+
 **導航**: [← 返回 Task Planning](../README.md) | [← 返回 AIVA Core](../../README.md)
 
 > **版本**: 3.0.0-alpha  

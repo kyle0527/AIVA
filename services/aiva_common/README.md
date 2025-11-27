@@ -1,6 +1,6 @@
 # AIVA Common - Bug Bounty 專業化共享庫
 
-**導航**: [← 返回 Services 總覽](../README.md) | [📖 文檔中心](../../docs/README.md)
+**導航**: [📖 文檔中心](../../docs/guides/services/)
 
 [![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
 [![Bug Bounty Ready](https://img.shields.io/badge/Bug%20Bounty-v6.3%20Ready-brightgreen.svg)](https://github.com/)
@@ -73,7 +73,7 @@ User → AI → Command Center → Module Handler → Engine
 
 > **🎯 Bug Bounty 專業化 v6.3**: 數據合約驅動，AI 直接指揮架構  
 > **✅ 系統狀態**: 100% Bug Bounty 就緒，命令系統完成，架構升級完成  
-> **🔄 最後更新**: 2025年11月20日 (架構 v2.0)
+> **🔄 最後更新**: 2025年11月27日 (架構 v2.0)
 
 **AIVA Common** 是 AIVA Bug Bounty 專業化平台的現代化 Python 共享庫，基於 2024-2025 年最佳實踐，提供統一的數據模型、配置管理、可觀測性、異步工具和插件架構，專為實戰滲透測試和動態漏洞檢測設計。
 
@@ -716,15 +716,15 @@ python -m aiva_common.tools.schema_codegen_tool \
 
 ### 推薦 VS Code 擴展
 
-| 開發需求 | 推薦工具 | 快速連結 |
-|---------|---------|---------|
-| 🐍 **Python 核心開發** | Pylance + Ruff + Black | [Python 工具 (22個)](../../_out/VSCODE_EXTENSIONS_INVENTORY.md#-1-python-開發生態-22-個) |
-| 🔍 **型別檢查增強** | Pylance + Python Type Hint | [核心插件速查表](../../_out/VSCODE_EXTENSIONS_INVENTORY.md#-核心插件速查表) |
-| 📝 **文檔編寫** | Markdown All-in-One + AutoDocstring | [文檔工具 (8個)](../../_out/VSCODE_EXTENSIONS_INVENTORY.md#-8-文檔與標記語言-8-個) |
-| 🔧 **程式碼品質** | SonarLint + ErrorLens | [品質工具 (5個)](../../_out/VSCODE_EXTENSIONS_INVENTORY.md#-7-程式碼品質與-linting-5-個) |
-| 🤖 **AI 輔助** | GitHub Copilot + ChatGPT | [AI 工具 (5個)](../../_out/VSCODE_EXTENSIONS_INVENTORY.md#-5-github-整合與-ai-5-個) |
+| 開發需求 | 推薦工具 |
+|---------|---------|
+| 🐍 **Python 核心開發** | Pylance + Ruff + Black |
+| 🔍 **型別檢查增強** | Pylance + Python Type Hint |
+| 📝 **文檔編寫** | Markdown All-in-One + AutoDocstring |
+| 🔧 **程式碼品質** | SonarLint + ErrorLens |
+| 🤖 **AI 輔助** | GitHub Copilot + ChatGPT |
 
-📚 **完整清單**: [VS Code 插件參考](../../_out/VSCODE_EXTENSIONS_INVENTORY.md) (88個插件) | **問題排查**: [開發環境問題解決](../../_out/VSCODE_EXTENSIONS_INVENTORY.md#-問題排查流程)
+💡 **提示**: 這些工具都可在 VS Code 擴展市場中搜尋安裝
 
 ---
 
@@ -1029,7 +1029,7 @@ pub struct FunctionTaskPayload {  // 不要這樣做!
 - 重複定義了 5 個已生成的類型
 - 應該: 配置 Rust schemas 生成或從 info_gatherer_rust 引用
 
-詳細分析請參閱: [`_out/SCHEMA_ARCHITECTURE_ANALYSIS.md`](../../_out/SCHEMA_ARCHITECTURE_ANALYSIS.md)
+詳細架構分析請參考本文檔的 [Schema 架構](#-數據模型-schema) 章節
 
 #### 代碼生成工作流程
 
@@ -2486,7 +2486,6 @@ services/aiva_common/README.md (本文檔)
 3. **同步文檔**
    - 根據上述檢查清單，更新相關模組文檔
    - 在各模組 README 中更新代碼範例
-   - 更新 `_out/MODULE_DEVELOPMENT_STANDARDS_DEPLOYMENT.md`
 
 4. **驗證同步**
    ```bash
@@ -2498,7 +2497,6 @@ services/aiva_common/README.md (本文檔)
    ```bash
    git add services/aiva_common/
    git add services/*/README.md
-   git add _out/MODULE_DEVELOPMENT_STANDARDS_DEPLOYMENT.md
    git commit -m "feat(aiva_common): 更新 XXX 並同步模組文檔"
    ```
 

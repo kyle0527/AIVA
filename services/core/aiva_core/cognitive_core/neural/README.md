@@ -1,5 +1,26 @@
 # 🧠 Neural - 神經網路核心
 
+## 📑 目錄
+
+- [📋 目錄](#-目錄)
+- [🎯 模組概述](#-模組概述)
+  - [核心功能](#核心功能)
+- [📂 檔案列表](#-檔案列表)
+- [🔧 核心組件](#-核心組件)
+  - [1. `real_neural_core.py` - 神經網路核心](#1-real_neural_corepy---神經網路核心)
+  - [2. `real_bio_net_adapter.py` - 生物網路適配器](#2-real_bio_net_adapterpy---生物網路適配器)
+  - [3. `bio_neuron_master.py` - 主控系統](#3-bio_neuron_masterpy---主控系統)
+  - [4. `ai_model_manager.py` - AI 模型管理器](#4-ai_model_managerpy---ai-模型管理器)
+  - [5. `neural_network.py` - 神經網路基礎](#5-neural_networkpy---神經網路基礎)
+  - [6. `weight_manager.py` - 權重管理系統](#6-weight_managerpy---權重管理系統)
+- [🚀 完整使用流程](#-完整使用流程)
+  - [初始化和推理](#初始化和推理)
+  - [模型訓練和更新](#模型訓練和更新)
+- [📊 性能指標](#-性能指標)
+- [🔗 相關模組](#-相關模組)
+
+---
+
 **導航**: [← 返回 Cognitive Core](../README.md) | [← 返回 AIVA Core](../../README.md)
 
 > **版本**: 3.0.0-alpha  

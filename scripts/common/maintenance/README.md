@@ -1,5 +1,48 @@
 # AIVA 維護工具集 (Maintenance Tools)
 
+## 📑 目錄
+
+- [📁 目錄結構](#-目錄結構)
+- [🛠️ 工具說明](#-工具說明)
+  - [1. **check_status.ps1** - 系統狀態檢查](#1-check_statusps1---系統狀態檢查)
+  - [2. **diagnose_system.ps1** - 系統診斷工具](#2-diagnose_systemps1---系統診斷工具)
+  - [3. **fix_import_paths.py** - 導入路徑修復工具](#3-fix_import_pathspy---導入路徑修復工具)
+  - [4. **generate_project_report.ps1** - 專案完整報告生成器](#4-generate_project_reportps1---專案完整報告生成器)
+  - [5. **generate_stats.ps1** - 專案統計生成腳本](#5-generate_statsps1---專案統計生成腳本)
+  - [6. **generate_tree_ultimate_chinese.ps1** - 程式碼樹狀圖生成器（終極整合版）](#6-generate_tree_ultimate_chineseps1---程式碼樹狀圖生成器終極整合版)
+  - [7. **health_check_multilang.ps1** - 多語言系統健康檢查](#7-health_check_multilangps1---多語言系統健康檢查)
+  - [8. **optimize_core_modules.ps1** - 核心模組優化腳本](#8-optimize_core_modulesps1---核心模組優化腳本)
+  - [9. **system_repair_tool.py** - 系統自動修復工具](#9-system_repair_toolpy---系統自動修復工具)
+- [🚀 快速開始](#-快速開始)
+  - [基本健康檢查](#基本健康檢查)
+  - [專案報告生成](#專案報告生成)
+  - [系統優化](#系統優化)
+- [📊 工具分類](#-工具分類)
+  - [狀態檢查類](#狀態檢查類)
+  - [修復類](#修復類)
+  - [報告生成類](#報告生成類)
+  - [優化類](#優化類)
+- [🔧 常見使用場景](#-常見使用場景)
+  - [場景 1：每日系統檢查](#場景-1每日系統檢查)
+  - [場景 2：發現問題後](#場景-2發現問題後)
+  - [場景 3：專案報告](#場景-3專案報告)
+  - [場景 4：系統優化](#場景-4系統優化)
+- [📝 輸出文件位置](#-輸出文件位置)
+- [⚙️ 環境需求](#-環境需求)
+  - [PowerShell 腳本](#powershell-腳本)
+  - [Python 腳本](#python-腳本)
+  - [系統工具](#系統工具)
+- [🔍 故障排除](#-故障排除)
+  - [問題：PowerShell 腳本無法執行](#問題powershell-腳本無法執行)
+  - [問題：Python 腳本找不到模組](#問題python-腳本找不到模組)
+  - [問題：Docker 檢查失敗](#問題docker-檢查失敗)
+- [📚 相關文件](#-相關文件)
+- [💡 最佳實踐](#-最佳實踐)
+- [🤝 貢獻](#-貢獻)
+- [📞 支援](#-支援)
+
+---
+
 本目錄包含 AIVA 專案的維護、診斷和優化工具，用於系統健康檢查、問題修復和專案管理。
 
 ## 📁 目錄結構

@@ -1,10 +1,10 @@
 # AIVA Features 模組 - 多語言安全功能架構
 
-**導航**: [← 返回 Services 總覽](../README.md) | [📖 文檔中心](../../docs/README.md)
+**導航**: [📖 文檔中心](../../docs/guides/services/)
 
 > **🎯 Bug Bounty 專業化 v6.1**: 多語言安全功能集，專精漏洞檢測與攻擊驗證  
 > **✅ 系統狀態**: 7大功能模組就緒，Python+Go+Rust 混合架構  
-> **🔄 最後更新**: 2025年11月13日
+> **🔄 最後更新**: 2025年11月27日
 
 ---
 
@@ -72,7 +72,7 @@ AIVA 能力增強與擴展計畫是一個為期 **18 個月（72 週）** 的系
 ### 重點技術整合
 
 #### 🛡️ 社交工程測試模組
-**文檔**: [05_A_Social_Engineering_Technical_Integration.md](../../../Users/User/Downloads/新增資料夾%20(6)/AIVA_Enhancement_Plan/05_A_Social_Engineering_Technical_Integration.md)
+**文檔**: [05_A_Social_Engineering_Technical_Integration.md](../../../docs/reports/AIVA_Enhancement_Plan/05_A_Social_Engineering_Technical_Integration.md)
 
 - **Phishing 測試引擎**: 17 種工具完整整合
 - **郵件模板生成器**: 4 種緊急度模板（密碼重設、安全警報等）
@@ -91,7 +91,7 @@ AIVA 能力增強與擴展計畫是一個為期 **18 個月（72 週）** 的系
 ```
 
 #### 🔧 Payload 生成與 PoC 模組
-**文檔**: [05_B_Payload_Generator_Technical_Integration.md](../../../Users/User/Downloads/新增資料夾%20(6)/AIVA_Enhancement_Plan/05_B_Payload_Generator_Technical_Integration.md)
+**文檔**: [05_B_Payload_Generator_Technical_Integration.md](../../../docs/reports/AIVA_Enhancement_Plan/05_B_Payload_Generator_Technical_Integration.md)
 
 - **MSFVenom 完整封裝**: 所有平台支援（Windows/Linux/Android/PHP/Python）
 - **Reverse Shell 生成器**: 8 種語言（Bash/Python/PowerShell/PHP/Ruby/Perl/Java/C）
@@ -112,33 +112,33 @@ AIVA 能力增強與擴展計畫是一個為期 **18 個月（72 週）** 的系
 
 ### 📖 完整計畫文檔
 
-**主入口**: [C:\Users\User\Downloads\新增資料夾 (6)\AIVA_Enhancement_Plan\00_INDEX.md](../../../Users/User/Downloads/新增資料夾%20(6)/AIVA_Enhancement_Plan/00_INDEX.md)
+**主入口**: [../../../docs/reports/AIVA_Enhancement_Plan\00_INDEX.md](../../../docs/reports/AIVA_Enhancement_Plan/00_INDEX.md)
 
 #### 核心文檔（已完成）
 
-1. **[執行摘要與現狀分析](../../../Users/User/Downloads/新增資料夾%20(6)/AIVA_Enhancement_Plan/01_Executive_Summary.md)**
+1. **[執行摘要與現狀分析](../../../docs/reports/AIVA_Enhancement_Plan/01_Executive_Summary.md)**
    - AIVA 現有能力評估（11 個功能模組）
    - Bug Bounty 市場研究（OWASP Top 10 覆蓋率）
    - 關鍵發現與結論
 
-2. **[能力缺口分析](../../../Users/User/Downloads/新增資料夾%20(6)/AIVA_Enhancement_Plan/02_Gap_Analysis.md)**
+2. **[能力缺口分析](../../../docs/reports/AIVA_Enhancement_Plan/02_Gap_Analysis.md)**
    - 24 個缺失模組詳細分析
    - 優先級矩陣（P0/P1/P2）
    - 與競爭對手比較（Burp/ZAP/Nuclei）
 
-3. **[Hackingtool 整合分析](../../../Users/User/Downloads/新增資料夾%20(6)/AIVA_Enhancement_Plan/05_Hackingtool_Integration.md)**
+3. **[Hackingtool 整合分析](../../../docs/reports/AIVA_Enhancement_Plan/05_Hackingtool_Integration.md)**
    - 18 個工具深度分析
    - 8 個可立即整合（NMAP, Sublist3r, Nikto 等）
    - 6 個需適配整合（Web2Attack, Skipfish 等）
 
 #### 技術整合計畫（新增）
 
-4. **[Social Engineering Technical Integration](../../../Users/User/Downloads/新增資料夾%20(6)/AIVA_Enhancement_Plan/05_A_Social_Engineering_Technical_Integration.md)**
+4. **[Social Engineering Technical Integration](../../../docs/reports/AIVA_Enhancement_Plan/05_A_Social_Engineering_Technical_Integration.md)**
    - Phishing 測試引擎完整技術規格
    - 與 AIVA RiskGuard 授權系統整合
    - 5 週實施路線圖
 
-5. **[Payload Generator Technical Integration](../../../Users/User/Downloads/新增資料夾%20(6)/AIVA_Enhancement_Plan/05_B_Payload_Generator_Technical_Integration.md)**
+5. **[Payload Generator Technical Integration](../../../docs/reports/AIVA_Enhancement_Plan/05_B_Payload_Generator_Technical_Integration.md)**
    - MSFVenom/Reverse Shell/Web Shell 完整封裝
    - PoC 自動化框架設計
    - 5 週實施路線圖
@@ -178,9 +178,9 @@ else:
 
 ### 下一步行動
 
-- **技術團隊**: 查看 [02_Gap_Analysis.md](../../../Users/User/Downloads/新增資料夾%20(6)/AIVA_Enhancement_Plan/02_Gap_Analysis.md) 了解實施細節
-- **管理層**: 查看 [01_Executive_Summary.md](../../../Users/User/Downloads/新增資料夾%20(6)/AIVA_Enhancement_Plan/01_Executive_Summary.md) 了解商業價值
-- **安全研究員**: 查看 [05_Hackingtool_Integration.md](../../../Users/User/Downloads/新增資料夾%20(6)/AIVA_Enhancement_Plan/05_Hackingtool_Integration.md) 評估工具整合
+- **技術團隊**: 查看 [02_Gap_Analysis.md](../../../docs/reports/AIVA_Enhancement_Plan/02_Gap_Analysis.md) 了解實施細節
+- **管理層**: 查看 [01_Executive_Summary.md](../../../docs/reports/AIVA_Enhancement_Plan/01_Executive_Summary.md) 了解商業價值
+- **安全研究員**: 查看 [05_Hackingtool_Integration.md](../../../docs/reports/AIVA_Enhancement_Plan/05_Hackingtool_Integration.md) 評估工具整合
 
 ---
 
@@ -224,14 +224,13 @@ else:
 
 ---
 
-> **🎯 快速導航**: 選擇您的角色和需求，找到最適合的文件
+> **🎯 快速導航**: 
 > 
 > - 👨‍💼 **架構師/PM**: 閱讀 [功能架構總覽](#功能架構總覽)
-> - 🐍 **Python 開發者**: 查看 [Python 開發指南](docs/README_PYTHON.md)
-> - 🐹 **Go 開發者**: 查看 [Go 開發指南](docs/README_GO.md)  
-> - 🦀 **Rust 開發者**: 查看 [Rust 開發指南](docs/README_RUST.md)
-> - 🛡️ **安全專家**: 查看 [安全功能詳解](docs/README_SECURITY.md)
-> - 🔧 **運維/DevOps**: 查看 [支援功能指南](docs/README_SUPPORT.md)
+> - 🐍 **Python 開發者**: 查看各功能模組 README
+> - 🐹 **Go 開發者**: 查看 [function_authn_go](function_authn_go/README.md)
+> - 🛡️ **安全專家**: 查看 [功能模組導航](#功能模組導航)
+> - 📖 **開發規範**: 查看 [開發規範與最佳實踐](#開發規範與最佳實踐)
 
 ---
 
@@ -259,40 +258,30 @@ else:
 
 | 語言 | 必備插件 | 開發用途 | 工具連結 |
 |------|---------|---------|---------|
-| 🐍 **Python** | Pylance + Ruff + Black | 型別檢查、快速 linting、格式化 | [Python 工具 (22個)](../../_out/VSCODE_EXTENSIONS_INVENTORY.md#-1-python-開發生態-22-個) |
-| 🐹 **Go** | golang.go (0.50.0) | gopls、除錯、測試、格式化 | [Go 工具](../../_out/VSCODE_EXTENSIONS_INVENTORY.md#-3-其他程式語言-5-個) |
-| 🦀 **Rust** | rust-analyzer (0.3.2593) | 語言伺服器、Cargo 整合、除錯 | [Rust 工具](../../_out/VSCODE_EXTENSIONS_INVENTORY.md#-3-其他程式語言-5-個) |
+| 🐍 **Python** | Pylance + Ruff + Black | 型別檢查、快速 linting、格式化 | VS Code 擴展市場 |
+| 🐹 **Go** | golang.go | gopls、除錯、測試、格式化 | VS Code 擴展市場 |
+| 🦀 **Rust** | rust-analyzer | 語言伺服器、Cargo 整合、除錯 | VS Code 擴展市場 |
 
 ### 跨語言開發推薦工具
 
 | 功能需求 | 推薦插件 | 說明 |
 |---------|---------|------|
-| 🛡️ **安全掃描** | SonarLint (4.33.0) | 支援 Python/Go，靜態安全分析 |
-| 🤖 **AI 程式碼助手** | GitHub Copilot + ChatGPT | 多語言程式碼生成與解釋 |
+| 🛡️ **安全掃描** | SonarLint | 支援 Python/Go，靜態安全分析 |
+| 🤖 **AI 程式碼助手** | GitHub Copilot | 多語言程式碼生成與解釋 |
 | 🔍 **程式碼品質** | ErrorLens + Code Spell Checker | 即時錯誤提示、拼寫檢查 |
 | 🐳 **容器開發** | Docker + Dev Containers | Rust/Go 編譯環境容器化 |
-| 📊 **效能分析** | Code Runner | 快速執行程式碼片段測試 |
-
-📚 **完整工具清單**: [VS Code 插件參考](../../_out/VSCODE_EXTENSIONS_INVENTORY.md) (88個插件)
 
 ### 💡 語言特定快速技巧
 
 **Python (87.0% 組件)**:
 - 使用 Ruff 進行超快速 linting（比 pylint 快 10-100 倍）
 - Black 自動格式化：`Ctrl+Shift+I`
-- 查看 [Python 最佳實踐](../../_out/VSCODE_EXTENSIONS_INVENTORY.md#案例-2-修復-python-未定義函數錯誤)
+- 遵循 PEP 8 編碼規範
 
 **Go (13.0% 組件)**:
 - gopls 提供完整的語言支援
 - 使用 `Go: Test Package` 執行測試
 - 格式化自動使用 gofmt
-
-**Rust (混合架構)**:
-- rust-analyzer 提供即時編譯檢查
-- Cargo 任務整合，支援 build/test/run
-- 錯誤訊息詳細且實用
-
-🔧 **遇到問題？**: [多語言問題排查](../../_out/VSCODE_EXTENSIONS_INVENTORY.md#-問題排查流程)
 
 ---
 
@@ -363,39 +352,44 @@ flowchart TD
 ## 📚 **文件導航地圖**
 
 ### **🎯 L2 功能分類文檔** (推薦優先閱讀)
-- 💎 [**高價值功能**](docs/README_HIGH_VALUE.md) - Mass Assignment、JWT 混淆、OAuth 混淆、GraphQL AuthZ、SSRF OOB
-- 🛡️ [**安全核心引擎**](docs/README_SECURITY_CORE.md) - SQL 注入、XSS、SSRF、IDOR、SAST、SCA、CSPM、Auth Testing
-- 🏢 [**業務邏輯檢測**](docs/README_BUSINESS_LOGIC.md) - 支付繞過、認證繞過、郵件變更、OAuth 重定向、滲透後利用
-- 🏗️ [**基礎設施支援**](docs/README_INFRASTRUCTURE.md) - 框架基類、工具集、跨語言橋接、配置管理、測試支援
-- 🌐 [**多語言實現**](docs/README_LANGUAGES.md) - Python 協調、Go 高併發、Rust 極致效능、跨語言整合
+- 💎 **高價值功能** - Mass Assignment、JWT 混淆、OAuth 混淆、GraphQL AuthZ、SSRF OOB
+- 🛡️ **安全核心引擎** - SQL 注入、XSS、SSRF、IDOR、SAST、SCA、CSPM、Auth Testing
+- 🏢 **業務邏輯檢測** - 支付繞過、認證繞過、郵件變更、OAuth 重定向、滲透後利用
+- 🏗️ **基礎設施支援** - 框架基類、工具集、跨語言橋接、配置管理、測試支援
+- 🌐 **多語言實現** - Python 協調、Go 高併發、Rust 極致效능、跨語言整合
 
 ### **📁 按功能查看** (實際模組)
-- 📊 **[核心功能詳解](docs/README.md)** - 系統管理與協調功能
-- 🛡️ **[安全功能詳解](docs/security/README.md)** - SQL注入、XSS、SSRF、IDOR檢測
-- 🔧 **[開發中功能](docs/development/README.md)** - 密碼學、認證、後滲透功能  
+- 📊 **核心功能詳解** - 系統管理與協調功能
+- 🛡️ **安全功能詳解** - SQL注入、XSS、SSRF、IDOR檢測
+- 🔧 **開發中功能** - 密碼學、認證、後滲透功能  
 
 ### **💻 按語言查看**
-- 🐍 **[Python 模組](docs/python/README.md)** - 75 文件 | 主要安全檢測實現
-- 🐹 **[Go 模組](docs/go/README.md)** - 11 文件 | 高效能認證檢測  
-- 🦀 **[Rust 模組](docs/rust/README.md)** - 計劃中 | 高效能安全分析引擎
+- 🐍 **Python 模組** - 75 文件 | 主要安全檢測實現
+- 🐹 **Go 模組** - 11 文件 | 高效能認證檢測  
+- 🦀 **Rust 模組** - 計劃中 | 高效能安全分析引擎
 
 ### **🎨 架構圖表**
-- 📊 [功能分層架構圖](../_out/architecture_diagrams/functional/FEATURES_INTEGRATED_FUNCTIONAL.mmd)
-- 🛡️ [安全功能架構圖](../_out/architecture_diagrams/functional/FEATURES_SECURITY_FUNCTIONS.mmd)
-- 🔴 [核心功能架構圖](../_out/architecture_diagrams/functional/FEATURES_CORE_FUNCTIONS.mmd)
-- 📈 [多語言協作架構圖](../_out/architecture_diagrams/FEATURES_MODULE_INTEGRATED_ARCHITECTURE.mmd)
+- 📊 [功能分層架構圖](../docs/reports/architecture_diagrams/functional/FEATURES_INTEGRATED_FUNCTIONAL.mmd)
+- 🛡️ [安全功能架構圖](../docs/reports/architecture_diagrams/functional/FEATURES_SECURITY_FUNCTIONS.mmd)
+- 🔴 [核心功能架構圖](../docs/reports/architecture_diagrams/functional/FEATURES_CORE_FUNCTIONS.mmd)
+- 📈 [多語言協作架構圖](../docs/reports/architecture_diagrams/FEATURES_MODULE_INTEGRATED_ARCHITECTURE.mmd)
 
 ---
 
-## 🚀 **快速開始指南**
+## 🚀 **快速開始**
 
-### **🔍 我需要什麼？**
-
-**場景 1: 了解整體架構** 👨‍💼  
+### **場景 1: 了解整體架構**
 ```
-→ 閱讀本文件的功能架構總覽
-→ 查看 docs/README_SECURITY.md (主要功能)
-→ 檢視架構圖表
+→ 閱讀本文件的 [功能架構總覽](#功能架構總覽)
+→ 查看 [功能模組導航](#功能模組導航)
+→ 選擇感興趣的模組深入了解
+```
+
+### **場景 2: 開發新功能**
+```
+→ 參考 [開發規範與最佳實踐](#開發規範與最佳實踐)
+→ 查看類似功能模組的實現
+→ 遵循多語言協作標準
 ```
 
 **場景 2: 開發特定語言模組** 👨‍💻  
@@ -1060,9 +1054,9 @@ pytest services/features/tests/integration/test_multi_language.py -v
 - 🏗️ **架構團隊**: 跨語言設計、系統整合
 
 ### **📊 相關報告**
-- 📈 [多語言架構分析](../../_out/FEATURES_MODULE_ARCHITECTURE_ANALYSIS.md)
-- 📋 [功能組織分析](../../_out/architecture_diagrams/functional/FUNCTIONAL_ORGANIZATION_REPORT.md)
-- 🔍 [組件分類資料](../../_out/architecture_diagrams/features_diagram_classification.json)
+- 📊 **多語言架構**: 參考本文檔的架構說明章節
+- 📋 **功能組織**: 參考本文檔的功能模組導航
+- 🔍 [組件分類資料](../docs/reports/architecture_diagrams/features_diagram_classification.json)
 
 ---
 

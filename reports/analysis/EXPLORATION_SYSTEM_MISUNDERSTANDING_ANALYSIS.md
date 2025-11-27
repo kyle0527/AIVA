@@ -91,15 +91,7 @@ AI 助理將 AIVA 的「探索系統 (Exploration System)」誤解為:
 #### **其他文檔中的 "reconnaissance" 術語**
 
 **搜索結果顯示**:
-```
-c:\D\fold7\AIVA-git\現有腳本快速使用指南.md:
-- real_web_reconnaissance('http://example.com')
-- 'reconnaissance': recon_result
-
-c:\D\fold7\AIVA-git\services\core\aiva_core\USAGE_GUIDE.md:
-- "id": "reconnaissance"
-- phases = ["reconnaissance", "vulnerability_discovery", ...]
-```
+```docs/guides/services/aiva_core_USAGE_GUIDE.md```
 
 **混淆原因**:
 - AIVA 中確實存在對外的 `reconnaissance` 功能 (網路偵察)

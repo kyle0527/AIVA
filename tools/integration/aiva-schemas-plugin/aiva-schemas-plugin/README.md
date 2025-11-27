@@ -1,5 +1,14 @@
 # aiva-schemas-plugin
 
+## 📑 目錄
+
+- [安裝（本地開發）](#安裝本地開發)
+- [使用方式（遷移後的統一寫法）](#使用方式遷移後的統一寫法)
+- [移除其他 `schemas.py` 並批量改寫匯入](#移除其他-schemaspy-並批量改寫匯入)
+- [測試](#測試)
+
+---
+
 本插件將整個專案對 `schemas.py` 的依賴**集中**到單一對外入口：`aiva_schemas_plugin`，
 並以**轉接層**的方式直接 re-export `aiva_common.schemas` 中的所有公開成員。
 

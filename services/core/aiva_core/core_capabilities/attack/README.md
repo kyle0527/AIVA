@@ -1,5 +1,33 @@
 # ⚔️ Attack - 攻擊執行系統
 
+## 📑 目錄
+
+- [📋 目錄](#-目錄)
+- [🎯 模組概述](#-模組概述)
+  - [核心能力](#核心能力)
+  - [設計特色](#設計特色)
+- [📂 檔案列表](#-檔案列表)
+- [🔧 核心組件](#-核心組件)
+  - [AttackChain - 攻擊鏈編排器](#attackchain---攻擊鏈編排器)
+  - [AttackExecutor - 攻擊執行器](#attackexecutor---攻擊執行器)
+  - [AttackValidator - 攻擊驗證器](#attackvalidator---攻擊驗證器)
+  - [ExploitManager - 漏洞利用管理器](#exploitmanager---漏洞利用管理器)
+  - [PayloadGenerator - Payload 生成器](#payloadgenerator---payload-生成器)
+- [🚀 使用範例](#-使用範例)
+  - [完整攻擊鏈示例](#完整攻擊鏈示例)
+  - [單步攻擊執行](#單步攻擊執行)
+  - [Payload 生成和測試](#payload-生成和測試)
+- [🔄 攻擊鏈執行流程](#-攻擊鏈執行流程)
+  - [執行階段說明](#執行階段說明)
+- [📊 性能指標](#-性能指標)
+- [🔒 安全機制](#-安全機制)
+  - [執行模式控制](#執行模式控制)
+  - [授權檢查](#授權檢查)
+  - [速率限制](#速率限制)
+- [📚 相關文檔](#-相關文檔)
+
+---
+
 **導航**: [← 返回 Core Capabilities](../README.md) | [← 返回 AIVA Core](../../README.md)
 
 > **版本**: 3.0.0-alpha  

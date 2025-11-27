@@ -1,10 +1,10 @@
 # AIVA Payload Generator 模組
 
-**導航**: [← 返回 Features](../README.md) | [📖 增強計畫](../../../../../Users/User/Downloads/新增資料夾%20(6)/AIVA_Enhancement_Plan/05_B_Payload_Generator_Technical_Integration.md)
+**導航**: [← 返回 Features](../README.md) | [📖 增強計畫](../../../../../docs/reports/AIVA_Enhancement_Plan/05_B_Payload_Generator_Technical_Integration.md)
 
 > **🎯 風險等級**: L2-L3 (High-Critical Risk)  
 > **✅ 授權要求**: RiskGuard L2+ 或 Authorization Token  
-> **🔄 最後更新**: 2025年11月25日
+> **🔄 最後更新**: 2025年11月27日
 
 ## 📋 目錄
 
@@ -323,10 +323,10 @@ pytest --cov=. --cov-report=html
 
 ## 相關文檔
 
-- [完整技術規格](../../../../../Users/User/Downloads/新增資料夾%20(6)/AIVA_Enhancement_Plan/05_B_Payload_Generator_Technical_Integration.md)
+- [完整技術規格](../../../../../docs/reports/AIVA_Enhancement_Plan/05_B_Payload_Generator_Technical_Integration.md)
 - [AIVA Common README](../../aiva_common/README.md)
 - [Authorization 機制](../../core/aiva_core/service_backbone/authz/README.md)
-- [功能模組標準](../DEVELOPMENT_STANDARDS.md)
+- [功能模組標準](../../../docs/development/services_DEVELOPMENT_STANDARDS.md)
 
 ## 授權
 

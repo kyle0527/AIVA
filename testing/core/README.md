@@ -1,5 +1,44 @@
 # 🧠 AIVA 核心功能測試
 
+## 📑 目錄
+
+- [📁 目錄結構](#-目錄結構)
+- [📄 本目錄檔案說明](#-本目錄檔案說明)
+  - [AI 自主測試系統](#ai-自主測試系統)
+  - [AI 核心功能測試](#ai-核心功能測試)
+  - [AI 集成和連接測試](#ai-集成和連接測試)
+- [🚀 使用方法](#-使用方法)
+  - [執行核心 AI 測試](#執行核心-ai-測試)
+  - [AI 系統連接性檢查](#ai-系統連接性檢查)
+  - [增強攻擊系統測試](#增強攻擊系統測試)
+- [🛠️ 測試組件功能](#-測試組件功能)
+  - [AI 自主測試系統 (`ai_autonomous_testing_loop.py`)](#ai-自主測試系統-ai_autonomous_testing_looppy)
+  - [AI 分析系統 (`test_ai_analysis_system.py`)](#ai-分析系統-test_ai_analysis_systempy)
+  - [AI 組件測試 (`test_ai_components.py`)](#ai-組件測試-test_ai_componentspy)
+  - [智能邏輯測試 (`test_intelligent_logic.py`)](#智能邏輯測試-test_intelligent_logicpy)
+  - [AI 集成測試 (`ai_integration_test.py`)](#ai-集成測試-ai_integration_testpy)
+  - [系統連接性檢查 (`ai_system_connectivity_check.py`)](#系統連接性檢查-ai_system_connectivity_checkpy)
+  - [AI 安全測試 (`ai_security_test.py`)](#ai-安全測試-ai_security_testpy)
+  - [增強攻擊系統 (`enhanced_real_ai_attack_system.py`)](#增強攻擊系統-enhanced_real_ai_attack_systempy)
+- [📝 編寫新的 AI 測試](#-編寫新的-ai-測試)
+  - [測試檔案命名規範](#測試檔案命名規範)
+  - [AI 測試結構範例](#ai-測試結構範例)
+  - [測試環境設置](#測試環境設置)
+- [🔧 配置和環境](#-配置和環境)
+  - [測試配置](#測試配置)
+  - [AI 模型配置](#ai-模型配置)
+- [📊 測試策略和覆蓋率](#-測試策略和覆蓋率)
+  - [測試層級](#測試層級)
+  - [覆蓋率目標](#覆蓋率目標)
+- [🚨 測試注意事項](#-測試注意事項)
+  - [安全考慮](#安全考慮)
+  - [性能考慮](#性能考慮)
+  - [依賴要求](#依賴要求)
+- [🔄 持續集成](#-持續集成)
+  - [CI/CD 中的 AI 測試流程](#cicd-中的-ai-測試流程)
+
+---
+
 這個目錄包含 AIVA 項目的 AI 核心功能測試，專注於驗證人工智能模組的正確性和性能。
 
 ## 📁 目錄結構

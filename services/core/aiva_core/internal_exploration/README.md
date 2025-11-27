@@ -1,5 +1,28 @@
 # Internal Exploration - 對內探索模組
 
+## 📑 目錄
+
+- [📋 目錄](#-目錄)
+- [📋 概述](#-概述)
+  - [🎯 核心職責](#-核心職責)
+- [📂 目錄結構](#-目錄結構)
+- [🎨 核心組件說明](#-核心組件說明)
+  - [1️⃣ ModuleExplorer (模組探索器) - 199 行](#1-moduleexplorer-模組探索器---199-行)
+  - [2️⃣ CapabilityAnalyzer (能力分析器) - 351 行](#2-capabilityanalyzer-能力分析器---351-行)
+  - [3️⃣ LanguageExtractor (語言提取器) - 387 行](#3-languageextractor-語言提取器---387-行)
+- [🔗 與內部閉環的關係](#-與內部閉環的關係)
+- [🚀 快速開始](#-快速開始)
+  - [完整探索流程](#完整探索流程)
+- [🔧 開發指南](#-開發指南)
+  - [遵循 AIVA Common 規範](#遵循-aiva-common-規範)
+  - [能力標記規範](#能力標記規範)
+- [📊 探索統計](#-探索統計)
+- [🧪 測試](#-測試)
+- [📚 相關文檔](#-相關文檔)
+- [✅ 系統狀態](#-系統狀態)
+
+---
+
 **導航**: [← 返回 AIVA Core](../README.md) | [📖 重構計劃](../REFACTORING_PLAN.md)
 
 ## 📋 目錄
@@ -20,7 +43,7 @@
 > **🎯 定位**: AI 的「自我認知」能力  
 > **✅ 狀態**: 系統就緒，測試通過  
 > **🧪 測試狀態**: 階段 8 測試覆蓋 (ModuleExplorer, CapabilityAnalyzer)  
-> **🔄 最後更新**: 2025年11月16日
+> **🔄 最後更新**: 2025年11月27日
 
 **Internal Exploration** 是 AIVA Core 的對內探索模組,負責掃描和分析 AIVA 系統自身的五大模組 (ai_core, attack_engine, scan_engine, integration, features),構建全專案知識圖譜,實現 AI 自我認知能力。
 
@@ -373,7 +396,7 @@ pytest tests/test_capability_analyzer_multi_lang.py -v
 ---
 
 **📝 文檔版本**: v2.0 (多語言整合版)  
-**🔄 最後更新**: 2025年11月16日  
+**🔄 最後更新**: 2025年11月27日  
 **👥 維護者**: AIVA Core 開發團隊
 
 ---

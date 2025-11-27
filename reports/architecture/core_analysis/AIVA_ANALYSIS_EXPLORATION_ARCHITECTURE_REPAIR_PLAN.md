@@ -1036,7 +1036,7 @@ class RiskMonitor:
 **必須遵循的 aiva_common 規範**:
 - [aiva_common 開發指南](../aiva_common/README.md#🔧-開發指南)
 - [aiva_common 代碼品質報告](../aiva_common/CODE_QUALITY_REPORT.md)
-- [Core 模組開發規範](./DEVELOPMENT_STANDARDS.md)
+- [Core 模組開發規範](../../../docs/development/services_DEVELOPMENT_STANDARDS.md)
 
 **檢查清單**:
 ```python

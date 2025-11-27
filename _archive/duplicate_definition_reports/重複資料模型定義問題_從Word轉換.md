@@ -1,3 +1,12 @@
+## 📑 目錄
+
+- [重複資料模型定義問題](#重複資料模型定義問題)
+- [重複枚舉名稱/值問題](#重複枚舉名稱值問題)
+- [多語言契約統一問題](#多語言契約統一問題)
+- [功能模組重複實作問題](#功能模組重複實作問題)
+
+---
+
 ## 重複資料模型定義問題
 
 - **Target** -- ✅ **已修正**：原先於 `services/scan/schemas.py` 定義的 `Target` 類別現已棄用，統一使用 `services.aiva_common.schemas.Target` 作為單一來源[\[1\]](https://github.com/kyle0527/AIVA/blob/2c1538d3ef2eaa14e7c151ad28fcc7a6cfbea882/services/scan/schemas.py#L16-L21)。舊的定義僅保留相容性，建議在確認無舊代碼依賴後將其移除。

@@ -1,5 +1,29 @@
 # 💼 BizLogic - 業務邏輯測試
 
+## 📑 目錄
+
+- [📋 目錄](#-目錄)
+- [🎯 模組概述](#-模組概述)
+  - [🏗️ 架構原則](#-架構原則)
+  - [核心能力](#核心能力)
+  - [設計特色](#設計特色)
+- [📂 檔案列表](#-檔案列表)
+- [🔧 核心組件](#-核心組件)
+  - [Worker - 業務邏輯測試 Worker](#worker---業務邏輯測試-worker)
+  - [BusinessSchemas - 業務 Schema 定義](#businessschemas---業務-schema-定義)
+  - [FindingHelper - 漏洞發現輔助工具](#findinghelper---漏洞發現輔助工具)
+- [🧪 測試類型](#-測試類型)
+  - [1. 價格操控測試 (PriceManipulationTester)](#1-價格操控測試-pricemanipulationtester)
+  - [2. 競態條件測試 (RaceConditionTester)](#2-競態條件測試-raceconditiontester)
+  - [3. 工作流程繞過測試 (WorkflowBypassTester)](#3-工作流程繞過測試-workflowbypasstester)
+- [🚀 使用範例](#-使用範例)
+  - [完整業務邏輯測試流程](#完整業務邏輯測試流程)
+  - [透過 MQ 提交測試任務](#透過-mq-提交測試任務)
+- [📊 性能指標](#-性能指標)
+- [📚 相關文檔](#-相關文檔)
+
+---
+
 **導航**: [← 返回 Features 模組](../README.md) | [← 返回 Services 總覽](../../README.md)
 
 > **版本**: 3.0.0-alpha  
