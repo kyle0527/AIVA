@@ -761,5 +761,24 @@ class AIVADialogAssistant:
         logger.info(f"已清除對話歷史 (user_id: {user_id})")
 
 
-# 創建全域對話助理實例
-dialog_assistant = AIVADialogAssistant()
+# 延遲初始化：只在需要時創建實例，避免不必要的資源消耗
+# 使用方式：from services.core.aiva_core.core_capabilities.dialog.assistant import get_dialog_assistant
+_dialog_assistant_instance = None
+
+def get_dialog_assistant() -> AIVADialogAssistant:
+    """獲取對話助理實例（延遲初始化）"""
+    global _dialog_assistant_instance
+    if _dialog_assistant_instance is None:
+        _dialog_assistant_instance = AIVADialogAssistant()
+    return _dialog_assistant_instance
+
+# 向後兼容：如果直接導入 dialog_assistant，提供懶加載屬性
+class _LazyDialogAssistant:
+    """延遲載入的對話助理包裝器"""
+    def __getattr__(self, name):
+        return getattr(get_dialog_assistant(), name)
+    
+    def __call__(self, *args, **kwargs):
+        return get_dialog_assistant()(*args, **kwargs)
+
+dialog_assistant = _LazyDialogAssistant()
