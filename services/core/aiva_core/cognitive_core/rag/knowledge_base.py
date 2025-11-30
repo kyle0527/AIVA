@@ -6,11 +6,33 @@ Knowledge Base - 知識庫類別
 
 import hashlib
 import logging
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Union, Protocol, Awaitable
 
 from .vector_store import VectorStore
 
 logger = logging.getLogger(__name__)
+
+
+class VectorStoreProtocol(Protocol):
+    """向量存儲協議接口 - 遵循 aiva_common 標準"""
+    
+    def add_document(
+        self,
+        doc_id: str,
+        text: str,
+        metadata: Optional[Dict[str, Any]] = None
+    ) -> Awaitable[None]:
+        """添加文檔到向量存儲（異步）"""
+        ...
+    
+    def search(
+        self,
+        query: str,
+        top_k: int = 5,
+        filter_metadata: Optional[Dict[str, Any]] = None
+    ) -> Awaitable[List[Dict[str, Any]]]:
+        """搜索相似文檔（異步）"""
+        ...
 
 
 class KnowledgeBase:
@@ -18,13 +40,15 @@ class KnowledgeBase:
     
     基於向量存儲的高級知識管理接口，為 RAG 引擎提供統一的知識檢索功能。
     這是 RAG 1 拆解後的新架構，整合了向量化檢索能力。
+    
+    遵循 aiva_common 標準，支持多種向量存儲實現。
     """
     
-    def __init__(self, vector_store: VectorStore) -> None:
+    def __init__(self, vector_store: VectorStoreProtocol) -> None:
         """初始化知識庫
         
         Args:
-            vector_store: 底層向量存儲實例
+            vector_store: 實現 VectorStoreProtocol 的向量存儲實例
         """
         self.vector_store = vector_store
         logger.info("KnowledgeBase initialized with vector store")
@@ -59,7 +83,7 @@ class KnowledgeBase:
             logger.error(f"Knowledge search failed: {e}")
             return []
     
-    def add_knowledge(self, content: str, metadata: Optional[Dict[str, Any]] = None) -> bool:
+    async def add_knowledge(self, content: str, metadata: Optional[Dict[str, Any]] = None) -> bool:
         """添加知識到知識庫
         
         Args:
@@ -84,7 +108,7 @@ class KnowledgeBase:
                 # 降級方案: 使用內容哈希
                 doc_id = f"kb_{hashlib.sha256(content.encode()).hexdigest()[:16]}"
             
-            self.vector_store.add_document(doc_id, content, metadata)
+            await self.vector_store.add_document(doc_id, content, metadata)
             return True
         except Exception as e:
             logger.error(f"Failed to add knowledge: {e}", exc_info=True)

@@ -103,7 +103,7 @@ class PythonAdapter(BaseScannerAdapter):
                 })
             
             self.logger.info(
-                f"✅ Python 引擎完成: {len(assets)} 個資產, "
+                f"[SUCCESS] Python 引擎完成: {len(assets)} 個資產, "
                 f"{metadata.get('scan_duration', 0):.1f}s"
             )
             

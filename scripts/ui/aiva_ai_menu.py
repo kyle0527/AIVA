@@ -19,7 +19,7 @@ from typing import Dict, Any, List
 import json
 
 # 添加項目路徑
-project_root = Path(__file__).parent
+project_root = Path(__file__).parent.parent.parent
 sys.path.insert(0, str(project_root))
 
 try:
@@ -80,7 +80,7 @@ class AIVAIntelligentMenu:
 
     🤖 AI 助理已就緒 | 📊 782 個能力可用 | 🚀 自動化執行
 """
-        if RICH_AVAILABLE:
+        if RICH_AVAILABLE and console:
             console.print(Panel(banner, border_style="cyan", title="[bold]歡迎使用 AIVA[/bold]"))
         else:
             print(banner)
@@ -115,14 +115,14 @@ class AIVAIntelligentMenu:
 
 請選擇功能 (0-12) 或輸入 'help' 查看說明
 """
-        if RICH_AVAILABLE:
+        if RICH_AVAILABLE and console:
             console.print(menu)
         else:
             print(menu)
     
     async def handle_ai_conversation(self):
         """處理 AI 助理對話"""
-        if RICH_AVAILABLE:
+        if RICH_AVAILABLE and console:
             console.print("\n[bold cyan]🤖 AI 助理對話模式[/bold cyan]")
             console.print("[dim]輸入 'back' 返回主選單[/dim]\n")
         else:
@@ -163,7 +163,7 @@ class AIVAIntelligentMenu:
             })
             
             # 顯示回應
-            if RICH_AVAILABLE:
+            if RICH_AVAILABLE and console:
                 console.print(f"\n[bold cyan]🤖 AIVA[/bold cyan]: {response['message']}\n")
                 
                 if response.get('executable') and response.get('data'):
@@ -175,8 +175,8 @@ class AIVAIntelligentMenu:
     
     async def handle_capability_search(self):
         """處理能力搜索"""
-        if RICH_AVAILABLE:
-            console.print("\n[bold cyan]🔍 智能搜索能力[/bold cyan]\n")
+        if RICH_AVAILABLE and console:
+            console.print("\n[bold cyan]🔍 AI 能力搜索[/bold cyan]\n")
             query = Prompt.ask("請輸入搜索關鍵字（如: 掃描, SQL注入, XSS）")
             top_k = int(Prompt.ask("返回結果數量", default="10"))
         else:
@@ -199,7 +199,7 @@ class AIVAIntelligentMenu:
             results = await self.capability_query.query(query, top_k=top_k)
         
         if not results:
-            console.print("[red]未找到相關能力[/red]\n") if RICH_AVAILABLE else print("未找到相關能力\n")
+            console.print("[red]未找到相關能力[/red]\n") if (RICH_AVAILABLE and console) else print("未找到相關能力\n")
             return
         
         # 顯示結果
@@ -220,7 +220,8 @@ class AIVAIntelligentMenu:
                     f"{result.get('score', 0):.2f}"
                 )
             
-            console.print(table)
+            if RICH_AVAILABLE and console:
+                console.print(table)
         else:
             print(f"\n搜索結果: {query} (共 {len(results)} 個)\n")
             for i, result in enumerate(results, 1):
@@ -244,8 +245,8 @@ class AIVAIntelligentMenu:
     
     async def handle_one_click_attack(self):
         """處理一鍵攻擊執行"""
-        if RICH_AVAILABLE:
-            console.print("\n[bold cyan]🎯 一鍵攻擊執行[/bold cyan]\n")
+        if RICH_AVAILABLE and console:
+            console.print("\n[bold cyan]⚡ 一鍵攻擊執行[/bold cyan]\n")
             target = Prompt.ask("請輸入目標 URL")
             attack_type = Prompt.ask(
                 "攻擊類型",
@@ -295,7 +296,7 @@ class AIVAIntelligentMenu:
         })
         
         # 顯示結果
-        if RICH_AVAILABLE:
+        if RICH_AVAILABLE and console:
             console.print(Panel(
                 response['message'],
                 title="[bold]執行結果[/bold]",
@@ -306,7 +307,7 @@ class AIVAIntelligentMenu:
     
     async def handle_workflow_recommendation(self):
         """處理工作流推薦"""
-        if RICH_AVAILABLE:
+        if RICH_AVAILABLE and console:
             console.print("\n[bold cyan]📋 AI 工作流推薦[/bold cyan]\n")
             task = Prompt.ask("請描述您要執行的任務")
         else:
@@ -321,14 +322,14 @@ class AIVAIntelligentMenu:
                 console=console
             ) as progress:
                 progress_task = progress.add_task("AI 規劃中...", total=None)
-                workflow = await self.capability_query.recommend_workflow(task, top_k=10)
+                workflow = await self.capability_query.get_workflow_recommendation(task, max_capabilities=10)
                 progress.update(progress_task, completed=True)
         else:
             print("AI 規劃中...")
-            workflow = await self.capability_query.recommend_workflow(task, top_k=10)
+            workflow = await self.capability_query.get_workflow_recommendation(task, max_capabilities=10)
         
         if not workflow:
-            console.print("[red]無法生成工作流[/red]\n") if RICH_AVAILABLE else print("無法生成工作流\n")
+            console.print("[red]無法生成工作流[/red]\n") if (RICH_AVAILABLE and console) else print("無法生成工作流\n")
             return
         
         # 顯示工作流
@@ -339,7 +340,7 @@ class AIVAIntelligentMenu:
             table.add_column("模組", style="yellow")
             table.add_column("語言", style="magenta")
             
-            for i, step in enumerate(workflow, 1):
+            for i, step in enumerate(workflow.get('capabilities', []), 1):
                 table.add_row(
                     f"步驟 {i}",
                     step.get('name', 'N/A'),
@@ -347,10 +348,11 @@ class AIVAIntelligentMenu:
                     step.get('language', 'N/A')
                 )
             
-            console.print(table)
+            if RICH_AVAILABLE and console:
+                console.print(table)
         else:
             print(f"\n推薦工作流: {task}\n")
-            for i, step in enumerate(workflow, 1):
+            for i, step in enumerate(workflow.get('capabilities', []), 1):
                 print(f"步驟 {i}: {step.get('name')} - {step.get('module')}")
         
         # 詢問是否執行
@@ -360,7 +362,7 @@ class AIVAIntelligentMenu:
             execute = input("\n是否執行此工作流? (y/n): ").lower() == 'y'
         
         if execute:
-            await self._execute_workflow(workflow, task)
+            await self._execute_workflow(workflow.get('capabilities', []), task)
     
     async def handle_system_stats(self):
         """顯示系統統計"""
@@ -377,7 +379,7 @@ class AIVAIntelligentMenu:
             print("載入統計資料...")
             stats = await capability_registry.get_capability_stats()
         
-        if RICH_AVAILABLE:
+        if RICH_AVAILABLE and console:
             console.print("\n[bold cyan]📊 AIVA 系統統計報告[/bold cyan]\n")
             
             # 總覽
@@ -388,7 +390,8 @@ class AIVAIntelligentMenu:
             overview_table.add_row("模組數", str(len(stats.get('by_module', {}))))
             overview_table.add_row("語言數", str(len(stats.get('by_language', {}))))
             overview_table.add_row("健康能力", str(stats.get('health_summary', {}).get('healthy', 0)))
-            console.print(overview_table)
+            if RICH_AVAILABLE and console:
+                console.print(overview_table)
             
             # 模組分布
             module_table = Table(title="模組分布 (Top 10)", box=box.ROUNDED)
@@ -404,8 +407,8 @@ class AIVAIntelligentMenu:
             )[:10]:
                 percentage = (count / total) * 100
                 module_table.add_row(module, str(count), f"{percentage:.1f}%")
-            
-            console.print(module_table)
+            if RICH_AVAILABLE and console:
+                console.print(module_table)
             
             # 語言分布
             lang_table = Table(title="語言分布", box=box.ROUNDED)
@@ -421,7 +424,8 @@ class AIVAIntelligentMenu:
                 percentage = (count / total) * 100
                 lang_table.add_row(lang, str(count), f"{percentage:.1f}%")
             
-            console.print(lang_table)
+            if RICH_AVAILABLE and console:
+                console.print(lang_table)
         else:
             print("\n📊 AIVA 系統統計報告\n")
             print(f"總能力數: {stats.get('total_capabilities', 0)}")
@@ -439,8 +443,8 @@ class AIVAIntelligentMenu:
     
     async def handle_health_check(self):
         """執行健康檢查"""
-        if RICH_AVAILABLE:
-            console.print("\n[bold cyan]🔧 能力健康檢查[/bold cyan]\n")
+        if RICH_AVAILABLE and console:
+            console.print("\n[bold cyan]❤️ 健康檢查[/bold cyan]\n")
             with Progress(
                 SpinnerColumn(),
                 TextColumn("[progress.description]{task.description}"),
@@ -450,7 +454,8 @@ class AIVAIntelligentMenu:
                 # TODO: 實現健康檢查
                 await asyncio.sleep(1)
                 progress.update(task, completed=True)
-            console.print("[green]✓ 所有能力健康[/green]\n")
+            if RICH_AVAILABLE and console:
+                console.print("[green]✓ 所有能力健康[/green]\n")
         else:
             print("\n🔧 能力健康檢查")
             print("檢查中...")
@@ -461,8 +466,8 @@ class AIVAIntelligentMenu:
     
     async def handle_sync_rag(self):
         """同步 RAG 知識庫"""
-        if RICH_AVAILABLE:
-            console.print("\n[bold cyan]🗄️ RAG 知識庫同步[/bold cyan]\n")
+        if RICH_AVAILABLE and console:
+            console.print("\n[bold cyan]🔄 同步 RAG 知識庫[/bold cyan]\n")
             with Progress(
                 SpinnerColumn(),
                 TextColumn("[progress.description]{task.description}"),
@@ -472,7 +477,8 @@ class AIVAIntelligentMenu:
                 # TODO: 實現 RAG 同步
                 await asyncio.sleep(2)
                 progress.update(task, completed=True)
-            console.print("[green]✓ 知識庫已同步[/green]\n")
+            if RICH_AVAILABLE and console:
+                console.print("[green]✓ 知識庫已同步[/green]\n")
         else:
             print("\n🗄️ RAG 知識庫同步")
             print("同步中...")
@@ -484,19 +490,20 @@ class AIVAIntelligentMenu:
     async def handle_show_history(self):
         """顯示執行歷史"""
         if not self.session_history:
-            console.print("[yellow]尚無執行歷史[/yellow]\n") if RICH_AVAILABLE else print("尚無執行歷史\n")
+            console.print("[yellow]尚無執行歷史[/yellow]\n") if (RICH_AVAILABLE and console) else print("尚無執行歷史\n")
             input("按 Enter 繼續...")
             return
         
-        if RICH_AVAILABLE:
-            console.print("\n[bold cyan]📜 執行歷史[/bold cyan]\n")
+        if RICH_AVAILABLE and console:
+            console.print("\n[bold cyan]📊 系統統計[/bold cyan]\n")
             for i, record in enumerate(self.session_history[-10:], 1):
-                console.print(f"[cyan][{i}][/cyan] {record.get('action', 'conversation')}")
-                if 'user' in record:
-                    console.print(f"    用戶: {record['user']}")
-                if 'target' in record:
-                    console.print(f"    目標: {record['target']}")
-                console.print("")
+                if RICH_AVAILABLE and console:
+                    console.print(f"[cyan][{i}][/cyan] {record.get('action', 'conversation')}")
+                    if 'user' in record:
+                        console.print(f"    用戶: {record['user']}")
+                    if 'target' in record:
+                        console.print(f"    目標: {record['target']}")
+                    console.print("")
         else:
             print("\n📜 執行歷史\n")
             for i, record in enumerate(self.session_history[-10:], 1):
@@ -511,7 +518,7 @@ class AIVAIntelligentMenu:
     
     async def _execute_capability(self, capability: Dict[str, Any]):
         """執行單個能力"""
-        if RICH_AVAILABLE:
+        if RICH_AVAILABLE and console:
             console.print(f"\n[bold]執行能力: {capability.get('name')}[/bold]\n")
         else:
             print(f"\n執行能力: {capability.get('name')}\n")
@@ -520,7 +527,8 @@ class AIVAIntelligentMenu:
         await asyncio.sleep(1)
         
         if RICH_AVAILABLE:
-            console.print("[green]✓ 執行完成[/green]\n")
+            if RICH_AVAILABLE and console:
+                console.print("[green]✓ 執行完成[/green]\n")
         else:
             print("✓ 執行完成\n")
         
@@ -528,16 +536,18 @@ class AIVAIntelligentMenu:
     
     async def _execute_workflow(self, workflow: List[Dict[str, Any]], task_description: str):
         """執行工作流"""
-        if RICH_AVAILABLE:
+        if RICH_AVAILABLE and console:
             console.print(f"\n[bold]執行工作流: {task_description}[/bold]\n")
             
             for i, step in enumerate(workflow, 1):
-                console.print(f"[cyan]步驟 {i}/{len(workflow)}:[/cyan] {step.get('name')}")
-                # TODO: 實現步驟執行邏輯
-                await asyncio.sleep(0.5)
-                console.print("[green]✓ 完成[/green]\n")
+                if RICH_AVAILABLE and console:
+                    console.print(f"[cyan]步驟 {i}/{len(workflow)}:[/cyan] {step.get('name')}")
+                    # TODO: 實現步驟執行邏輯
+                    await asyncio.sleep(0.5)
+                    console.print("[green]✓ 完成[/green]\n")
             
-            console.print("[bold green]✓ 工作流執行完成[/bold green]\n")
+            if RICH_AVAILABLE and console:
+                console.print("[bold green]✓ 工作流執行完成[/bold green]\n")
         else:
             print(f"\n執行工作流: {task_description}\n")
             for i, step in enumerate(workflow, 1):
@@ -562,7 +572,7 @@ class AIVAIntelligentMenu:
                     choice = input("\n請選擇> ").strip() or "1"
                 
                 if choice == "0":
-                    if RICH_AVAILABLE:
+                    if RICH_AVAILABLE and console:
                         if Confirm.ask("確定要退出嗎?"):
                             console.print("\n[bold green]👋 感謝使用 AIVA！[/bold green]\n")
                             break
@@ -589,25 +599,25 @@ class AIVAIntelligentMenu:
                 elif choice == "8":
                     await self.handle_show_history()
                 elif choice == "9":
-                    console.print("[yellow]模組管理功能開發中...[/yellow]\n") if RICH_AVAILABLE else print("模組管理功能開發中...\n")
+                    console.print("[yellow]模組管理功能開發中...[/yellow]\n") if (RICH_AVAILABLE and console) else print("模組管理功能開發中...\n")
                     input("按 Enter 繼續...")
                 elif choice == "10":
-                    console.print("[yellow]測試與驗證功能開發中...[/yellow]\n") if RICH_AVAILABLE else print("測試與驗證功能開發中...\n")
+                    console.print("[yellow]測試與驗證功能開發中...[/yellow]\n") if (RICH_AVAILABLE and console) else print("測試與驗證功能開發中...\n")
                     input("按 Enter 繼續...")
                 elif choice == "11":
-                    console.print("[yellow]性能監控功能開發中...[/yellow]\n") if RICH_AVAILABLE else print("性能監控功能開發中...\n")
+                    console.print("[yellow]性能監控功能開發中...[/yellow]\n") if (RICH_AVAILABLE and console) else print("性能監控功能開發中...\n")
                     input("按 Enter 繼續...")
                 elif choice == "12":
-                    console.print("[yellow]匯出報告功能開發中...[/yellow]\n") if RICH_AVAILABLE else print("匯出報告功能開發中...\n")
+                    console.print("[yellow]匯出報告功能開發中...[/yellow]\n") if (RICH_AVAILABLE and console) else print("匯出報告功能開發中...\n")
                     input("按 Enter 繼續...")
                 elif choice.lower() == "help":
                     self.show_help()
                 else:
-                    console.print("[red]無效選擇，請重試[/red]\n") if RICH_AVAILABLE else print("無效選擇，請重試\n")
+                    console.print("[red]無效選擇，請重試[/red]\n") if (RICH_AVAILABLE and console) else print("無效選擇，請重試\n")
                     await asyncio.sleep(1)
             
             except KeyboardInterrupt:
-                if RICH_AVAILABLE:
+                if RICH_AVAILABLE and console:
                     console.print("\n\n[yellow]偵測到 Ctrl+C[/yellow]")
                     if Confirm.ask("確定要退出嗎?"):
                         break
@@ -619,7 +629,7 @@ class AIVAIntelligentMenu:
             
             except Exception as e:
                 logger.error(f"錯誤: {e}")
-                if RICH_AVAILABLE:
+                if RICH_AVAILABLE and console:
                     console.print(f"[red]錯誤: {e}[/red]\n")
                 else:
                     print(f"錯誤: {e}\n")
@@ -644,7 +654,7 @@ class AIVAIntelligentMenu:
         - 選擇 0 退出系統
         - 輸入 'help' 查看此說明
         """
-        if RICH_AVAILABLE:
+        if RICH_AVAILABLE and console:
             console.print(Panel(help_text, title="[bold]使用說明[/bold]", border_style="blue"))
         else:
             print(help_text)

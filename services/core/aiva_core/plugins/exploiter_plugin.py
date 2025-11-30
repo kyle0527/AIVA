@@ -12,11 +12,11 @@ import time
 from pathlib import Path
 from typing import List, Dict, Any, Optional
 
-from ..plugin_system.base_plugin import (
+from services.core.aiva_core.plugin_system.base_plugin import (
     AIModulePlugin,
     AITask,
     AIResult,
-    AITaskType
+    AITaskType,
 )
 
 logger = logging.getLogger(__name__)

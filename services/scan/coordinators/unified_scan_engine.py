@@ -26,7 +26,7 @@ from services.aiva_common.schemas import (
     FunctionTaskTarget,
     FunctionTaskContext,
 )
-from services.aiva_common.schemas.tasks import FunctionTaskSchema
+from services.aiva_common.schemas.tasks import FunctionTaskPayload
 from services.core.aiva_core.messaging.message_broker import MessageBroker
 from services.core.aiva_core.messaging.task_dispatcher import TaskDispatcher
 
@@ -80,7 +80,7 @@ class UnifiedScanEngine:
         self.logger.info("使用消息隊列派發基礎掃描任務")
         
         # 創建掃描套件任務
-        suite_task = FunctionTaskSchema(
+        suite_task = FunctionTaskPayload(
             task_id=f"suite_scan_{uuid4().hex[:8]}",
             module_name=ModuleName.SCAN,
             target=FunctionTaskTarget(urls=self.config.targets),
@@ -119,7 +119,7 @@ class UnifiedScanEngine:
                 self.logger.info(f"派發任務給目標: {target_url}")
                 
                 # 1. 客戶端授權繞過檢測任務
-                csab_task = FunctionTaskSchema(
+                csab_task = FunctionTaskPayload(
                     task_id=f"csab_{uuid4().hex[:8]}",
                     module_name=ModuleName.FUNC_CLIENT_AUTH_BYPASS,
                     target=FunctionTaskTarget(url=target_url),
@@ -131,7 +131,7 @@ class UnifiedScanEngine:
                 task_futures.append(self.dispatcher.dispatch_task(csab_task))
                 
                 # 2. SSRF 檢測任務 (Go)
-                ssrf_task = FunctionTaskSchema(
+                ssrf_task = FunctionTaskPayload(
                     task_id=f"ssrf_{uuid4().hex[:8]}",
                     module_name=ModuleName.FUNC_SSRF_GO,
                     target=FunctionTaskTarget(url=target_url),
@@ -170,7 +170,7 @@ class UnifiedScanEngine:
         try:
             if scan_type == 'aiva':
                 # 派發AIVA主系統掃描任務
-                task = FunctionTaskSchema(
+                task = FunctionTaskPayload(
                     task_id=task_id,
                     module_name=ModuleName.SCAN,
                     target=FunctionTaskTarget(url=target),
@@ -182,7 +182,7 @@ class UnifiedScanEngine:
                 )
             elif scan_type == 'suite':
                 # 派發掃描套件任務
-                task = FunctionTaskSchema(
+                task = FunctionTaskPayload(
                     task_id=task_id,
                     module_name=ModuleName.SCAN,
                     target=FunctionTaskTarget(url=target),

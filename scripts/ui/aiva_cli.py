@@ -38,7 +38,7 @@ from pathlib import Path
 ERROR_MSG_CORE_NOT_AVAILABLE = "[Error] Core modules not available"
 
 # 確保路徑正確
-project_root = Path(__file__).parent
+project_root = Path(__file__).parent.parent.parent
 sys.path.insert(0, str(project_root))
 
 # 導入核心模組

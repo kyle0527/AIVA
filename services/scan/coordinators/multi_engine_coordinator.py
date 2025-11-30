@@ -114,7 +114,7 @@ class MultiEngineCoordinator:
         # 初始化 logger
         self.logger = get_logger("MultiEngineCoordinator")
         
-        # ✅ 適配器模式：初始化四引擎適配器
+        # [SUCCESS] 適配器模式：初始化四引擎適配器
         from .engines import PythonAdapter, TypeScriptAdapter, RustAdapter, GoAdapter
         
         self.adapters = {
@@ -157,19 +157,19 @@ class MultiEngineCoordinator:
                 is_available = await adapter.is_available()
                 if is_available:
                     self.available_engines.add(EngineType(engine_name))
-                    self.logger.info(f"  ✅ {engine_name.upper()} 引擎可用")
+                    self.logger.info(f"  [SUCCESS] {engine_name.upper()} 引擎可用")
                 else:
-                    self.logger.warning(f"  ❌ {engine_name.upper()} 引擎不可用")
+                    self.logger.warning(f"  [ERROR] {engine_name.upper()} 引擎不可用")
             except Exception as e:
-                self.logger.error(f"  ❌ {engine_name.upper()} 引擎檢查失敗: {e}")
+                self.logger.error(f"  [ERROR] {engine_name.upper()} 引擎檢查失敗: {e}")
         
         self._initialized = True
         
         if not self.available_engines:
-            self.logger.error("⚠️  警告：沒有任何引擎可用！")
+            self.logger.error("[WARNING]  警告：沒有任何引擎可用！")
         else:
             available_list = [e.value for e in self.available_engines]
-            self.logger.info(f"✅ 引擎初始化完成，可用引擎: {', '.join(available_list)}")
+            self.logger.info(f"[SUCCESS] 引擎初始化完成，可用引擎: {', '.join(available_list)}")
     
     # ========== 已移除的舊接口（有嚴重缺陷，請勿使用）==========
     # 
@@ -179,7 +179,7 @@ class MultiEngineCoordinator:
     # 所有 _phase_X 和 _run_X 私有方法 - 已刪除
     #   問題：實現有缺陷、同步調用阻塞、引擎未實現
     #
-    # ✅ 請改用新接口：
+    # [SUCCESS] 請改用新接口：
     #   1. execute_phase0() - Rust 快速發現
     #   2. execute_phase1() - 多引擎深度掃描（完整支援四引擎）
     #   3. 或使用預設策略：execute_strategy_fast/balanced/comprehensive/aggressive/smart()
@@ -219,7 +219,7 @@ class MultiEngineCoordinator:
         引擎組合：Python
         預期時間：< 30秒
         """
-        # 🚀 執行快速掃描策略
+        # [START] 執行快速掃描策略
         return await self.execute_phase1(
             scan_id=scan_id,
             targets=targets,
@@ -300,7 +300,7 @@ class MultiEngineCoordinator:
         available = [e.value for e in self.available_engines]
         if len(available) < 4:
             self.logger.warning(
-                f"⚠️ 激進策略需要四引擎，但僅 {len(available)} 個可用: {available}"
+                f"[WARNING] 激進策略需要四引擎，但僅 {len(available)} 個可用: {available}"
             )
         
         return await self.execute_phase1(
@@ -340,7 +340,7 @@ class MultiEngineCoordinator:
         )
         
         if phase0_result.status != "success":
-            # ⚠️ Phase 0 失敗，降級為快速掃描
+            # [WARNING] Phase 0 失敗，降級為快速掃描
             return await self.execute_strategy_fast(scan_id, targets)
         
         # Step 2: 分析建議的引擎
@@ -351,7 +351,7 @@ class MultiEngineCoordinator:
             # ℹ️ 無引擎建議，使用均衡策略
             suggested_engines = ["python", "rust"]
         
-        # 📊 智能策略選擇引擎完成
+        # [REPORT] 智能策略選擇引擎完成
         
         # Step 3: 根據建議執行 Phase 1
         return await self.execute_phase1(
@@ -498,7 +498,7 @@ class MultiEngineCoordinator:
             recommendations["suggested_engines"].append("rust")
             
             self.logger.info(
-                f"✅ Phase 0 完成: {scan_id} "
+                f"[SUCCESS] Phase 0 完成: {scan_id} "
                 f"(資產: {len(assets)}, 耗時: {execution_time:.2f}s)"
             )
             
@@ -516,7 +516,7 @@ class MultiEngineCoordinator:
         except Exception as e:
             execution_time = time.time() - start_time
             error_msg = f"Phase 0 執行異常: {str(e)}"
-            self.logger.error(f"❌ {error_msg}", exc_info=True)
+            self.logger.error(f"[ERROR] {error_msg}", exc_info=True)
             
             return Phase0CompletedPayload(
                 scan_id=scan_id,
@@ -564,7 +564,7 @@ class MultiEngineCoordinator:
         start_time = time.time()
         
         self.logger.info(
-            f"🚀 Phase 1 開始: {scan_id} "
+            f"[START] Phase 1 開始: {scan_id} "
             f"(引擎: {', '.join(selected_engines)}, 目標: {len(targets)}個)"
         )
         
@@ -621,7 +621,7 @@ class MultiEngineCoordinator:
                     # 適配器保證返回標準格式 {"assets": [...], "metadata": {...}}
                     assets = result.get("assets", [])
                     
-                    # 🔧 修正: 統一轉換為 Asset 對象 (處理不同引擎的格式差異)
+                    # [FIX] 修正: 統一轉換為 Asset 對象 (處理不同引擎的格式差異)
                     normalized_assets = []
                     for asset in assets:
                         if isinstance(asset, Asset):
@@ -654,7 +654,7 @@ class MultiEngineCoordinator:
                                     asset_id=asset.get("asset_id", f"{scan_id}_{len(all_assets)}"),
                                     type=asset_type,
                                     value=value,
-                                    parameters=None,  # 🔧 修正: Asset.parameters 期望 List[str],暫不傳遞複雜物件
+                                    parameters=None,  # [FIX] 修正: Asset.parameters 期望 List[str],暫不傳遞複雜物件
                                     has_form=asset.get("has_form", False)
                                 ))
                             except Exception as e:
@@ -692,7 +692,7 @@ class MultiEngineCoordinator:
                 error_msg = None
             
             self.logger.info(
-                f"{'✅' if final_status == 'completed' else '⚠️'} Phase 1 {final_status}: {scan_id} "
+                f"{'[SUCCESS]' if final_status == 'completed' else '[WARNING]'} Phase 1 {final_status}: {scan_id} "
                 f"(資產: {len(unique_assets)}, 成功: {len(active_engines) - len(failed_engines)}/{len(active_engines)}, "
                 f"耗時: {execution_time:.2f}s)"
             )
@@ -712,7 +712,7 @@ class MultiEngineCoordinator:
         except Exception as e:
             execution_time = time.time() - start_time
             error_msg = f"Phase 1 執行異常: {str(e)}"
-            self.logger.error(f"❌ {error_msg}", exc_info=True)
+            self.logger.error(f"[ERROR] {error_msg}", exc_info=True)
             
             return self._create_empty_result(scan_id, "failed", error_msg)
     

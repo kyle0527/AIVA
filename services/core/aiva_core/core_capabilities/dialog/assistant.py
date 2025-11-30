@@ -28,10 +28,11 @@ class DialogIntent:
             r"explain|describe.*(?P<capability>\w+)",
         ],
         "run_scan": [
-            r"(幫我|幫忙|請|麻煩).*(掃描|scan|測試|test|攻擊|attack).*(https?://\S+)",
-            r"(掃描|scan|測試|test|攻擊|attack).*(https?://\S+)",
-            r"(https?://\S+).*(掃描|scan|測試|test)",
-            r"run.*scan|execute.*scan",
+            r"(幫我|幫忙|請|麻煩).*(掃描|scan|測試|test|攻擊|attack)\s*(?P<target>https?://\S+)",
+            r"^(掃描|scan|測試|test)\s+(?P<url>https?://\S+)",
+            r"(掃描|scan|測試|test|攻擊|attack)\s+(?P<target_url>https?://\S+)",
+            r"(?P<scan_target>https?://\S+)\s*(掃描|scan|測試|test)",
+            r"run.*scan.*(?P<scan_url>https?://\S+)|execute.*scan.*(?P<exec_url>https?://\S+)",
         ],
         "compare_capabilities": [
             r"比較.*(?P<cap1>\w+).*和.*(?P<cap2>\w+)|差異|對比",
@@ -160,7 +161,10 @@ class AIVADialogAssistant:
 
         elif intent == "run_scan":
             scan_type = params.get("scan_type", "")
-            target = params.get("target", "")
+            # 支持多種命名組名稱
+            target = (params.get("target") or params.get("url") or 
+                     params.get("target_url") or params.get("scan_target") or 
+                     params.get("scan_url") or params.get("exec_url") or "")
             return await self._handle_run_scan(scan_type, target, original_input)
 
         elif intent == "compare_capabilities":

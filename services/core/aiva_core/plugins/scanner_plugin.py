@@ -12,7 +12,7 @@ import time
 from pathlib import Path
 from typing import List, Dict, Any, Optional
 
-from ..plugin_system.base_plugin import (
+from services.core.aiva_core.plugin_system.base_plugin import (
     AIModulePlugin,
     AITask,
     AIResult,
@@ -132,7 +132,7 @@ class ScannerPlugin(AIModulePlugin):
         return FallbackScanner()
     
     async def execute_task(self, task: AITask) -> AIResult:
-        """執行掃描任務
+        """執行掃描任務 - 通過 AICommandCenter 統一調度
         
         Args:
             task: AI 任務對象
@@ -147,6 +147,117 @@ class ScannerPlugin(AIModulePlugin):
             )
         
         start_time = time.time()
+        
+        try:
+            # ✅ 1. 檢查 command_center 是否可用
+            if not hasattr(self, 'command_center'):
+                logger.error("❌ command_center not initialized in ScannerPlugin")
+                logger.warning("⚠️  Falling back to mock data (command_center not injected)")
+                # 降級到舊實現
+                return await self._execute_task_fallback(task, start_time)
+            
+            # ✅ 2. 導入必要的模組
+            from services.aiva_common.schemas import AICommand, CommandType, CommandStatus
+            
+            # ✅ 3. 根據任務類型構造 AICommand
+            command_type = self._determine_command_type(task)
+            
+            command = AICommand(
+                command_id=f"scan_{task.task_id}_{int(time.time())}",
+                command_type=command_type,
+                target_module="scan",
+                payload=self._build_scan_payload(task),
+                priority=task.priority if hasattr(task, 'priority') else 5,
+                timeout=task.parameters.get("timeout", 300.0)
+            )
+            
+            # ✅ 4. 通過 CommandCenter 發送命令
+            logger.info(f"🎯 ScannerPlugin 發送命令: {command.command_id} [{command_type.value}]")
+            result = await self.command_center.execute(command)
+            
+            # ✅ 5. 轉換為 AIResult
+            execution_time = time.time() - start_time
+            
+            # 記錄掃描歷史
+            self._scan_history.append({
+                "timestamp": time.time(),
+                "target": task.parameters.get("target", "unknown"),
+                "scan_type": command_type.value,
+                "success": result.status == CommandStatus.SUCCESS,
+                "via_command_center": True  # ✅ 標記使用了 CommandCenter
+            })
+            
+            if result.status == CommandStatus.SUCCESS:
+                return AIResult(
+                    success=True,
+                    data=result.result,
+                    execution_time=execution_time,
+                    metrics={
+                        "scan_time_seconds": result.execution_time,
+                        "command_status": result.status.value,
+                        "targets_scanned": 1
+                    },
+                    trace={
+                        "module": "scanner",
+                        "command_id": command.command_id,
+                        "task_description": task.description,
+                        "via_command_center": True  # ✅ 標記
+                    }
+                )
+            else:
+                return AIResult(
+                    success=False,
+                    error=result.error or "Scan command failed",
+                    execution_time=execution_time,
+                    trace={
+                        "module": "scanner",
+                        "command_id": command.command_id,
+                        "via_command_center": True
+                    }
+                )
+        
+        except Exception as e:
+            logger.error(f"❌ Scanner task execution failed: {e}", exc_info=True)
+            return AIResult(
+                success=False,
+                error=str(e),
+                execution_time=time.time() - start_time
+            )
+    
+    def _determine_command_type(self, task: AITask):
+        """根據 AITask 決定 CommandType"""
+        from services.aiva_common.schemas import CommandType
+        
+        task_lower = task.description.lower() if task.description else ""
+        
+        # Phase 判斷
+        if "phase0" in task_lower or "passive" in task_lower:
+            return CommandType.SCAN_PHASE0
+        elif "phase1" in task_lower or "active" in task_lower:
+            return CommandType.SCAN_PHASE1
+        else:
+            # 默認使用 Phase 0
+            return CommandType.SCAN_PHASE0
+    
+    def _build_scan_payload(self, task: AITask) -> Dict[str, Any]:
+        """構造掃描 payload"""
+        return {
+            "scan_id": task.task_id,
+            "targets": task.parameters.get("targets", [task.parameters.get("target", "")]),
+            "scan_profile": task.parameters.get("scan_profile", "fast"),
+            "max_depth": task.parameters.get("max_depth", 3),
+            "timeout": task.parameters.get("timeout", 300.0),
+            "selected_engines": task.parameters.get("engines", ["rust", "python"]),
+            "strategy": task.parameters.get("strategy", "balanced")
+        }
+    
+    async def _execute_task_fallback(self, task: AITask, start_time: float) -> AIResult:
+        """備用實現（當 command_center 不可用時）
+        
+        注意: 這是降級方案，僅在 AICommandCenter 不可用時使用
+        根據 aiva_core README 規範，應優先使用 AICommandCenter 統一調度
+        """
+        logger.warning("⚠️  Using fallback implementation (AICommandCenter not available)")
         
         try:
             # 根據任務類型分發
@@ -173,7 +284,8 @@ class ScannerPlugin(AIModulePlugin):
                 "timestamp": time.time(),
                 "target": task.parameters.get("target", "unknown"),
                 "scan_type": task.task_type if hasattr(task.task_type, 'value') else str(task.task_type),
-                "success": True
+                "success": True,
+                "via_command_center": False  # ❌ 標記未使用 CommandCenter
             })
             
             return AIResult(
@@ -188,12 +300,13 @@ class ScannerPlugin(AIModulePlugin):
                 trace={
                     "module": "scanner",
                     "task_description": task.description,
-                    "parameters": task.parameters
+                    "parameters": task.parameters,
+                    "fallback_mode": True  # 標記為降級模式
                 }
             )
             
         except Exception as e:
-            logger.error(f"Scanner task execution failed: {e}", exc_info=True)
+            logger.error(f"Scanner fallback task execution failed: {e}", exc_info=True)
             return AIResult(
                 success=False,
                 error=str(e),
@@ -201,7 +314,7 @@ class ScannerPlugin(AIModulePlugin):
             )
     
     async def _passive_scan(self, parameters: Dict[str, Any]) -> Dict[str, Any]:
-        """被動掃描
+        """被動掃描（備用實現）
         
         Args:
             parameters: 包含 'traffic' 或 'pcap_file' 的字典

@@ -77,7 +77,7 @@ class AIService:
         self.running = False
         uptime = datetime.now() - self.start_time
         logger.info(f"⏱️  服務運行時間: {uptime}")
-        logger.info("✅ AIVA AI 服務已停止")
+        logger.info("[SUCCESS] AIVA AI 服務已停止")
         
     async def run_api_mode(self):
         """API 服務模式 - REST API 持續監聽"""
@@ -134,7 +134,7 @@ class AIService:
         interval = self.config.get("interval", 3600)  # 預設 1 小時
         
         if not targets:
-            logger.warning("⚠️  未指定監控目標，使用預設目標")
+            logger.warning("[WARNING] 未指定監控目標，使用預設目標")
             targets = ["http://localhost:3000"]
         
         logger.info(f"🔍 監控模式啟動")
@@ -146,7 +146,7 @@ class AIService:
         
         while RUNNING:
             scan_count += 1
-            scan_id = f"monitor_scan_{scan_count:04d}"
+            scan_id = f"scan_monitor_{scan_count:04d}"
             
             logger.info(f"\n{'='*60}")
             logger.info(f"🚀 開始第 {scan_count} 次掃描 [{datetime.now().strftime('%H:%M:%S')}]")
@@ -159,18 +159,18 @@ class AIService:
                     targets=targets
                 )
                 
-                logger.info(f"✅ 掃描完成: {result.status}")
-                logger.info(f"📊 發現資產: {len(result.assets)}")
+                logger.info(f"[SUCCESS] 掃描完成: {result.status}")
+                logger.info(f"[REPORT] 發現資產: {len(result.assets)}")
                 
                 if result.assets:
-                    logger.info("🎯 資產摘要:")
+                    logger.info("[INFO] 資產摘要:")
                     for i, asset in enumerate(result.assets[:5], 1):
                         logger.info(f"   [{i}] {asset.type}: {asset.value}")
                     if len(result.assets) > 5:
                         logger.info(f"   ... 還有 {len(result.assets)-5} 個資產")
                         
             except Exception as e:
-                logger.error(f"❌ 掃描失敗: {e}")
+                logger.error(f"[ERROR] 掃描失敗: {e}")
             
             # 等待下一次掃描
             if RUNNING:
@@ -185,105 +185,62 @@ class AIService:
                     await asyncio.sleep(min(30, remaining))
                     
     async def run_interactive_mode(self):
-        """交互式模式 - 命令行交互"""
-        from services.scan.coordinators.multi_engine_coordinator import MultiEngineCoordinator
+        """交互式模式 - AI 對話交互"""
+        from services.core.aiva_core.core_capabilities.dialog.assistant import AIVADialogAssistant
+        from services.core.aiva_core.task_planning.ai_commander_v2 import AICommanderV2
         
-        logger.info("💬 交互式模式啟動")
-        logger.info("📝 可用命令:")
-        logger.info("   scan <url>  - 掃描指定URL")
-        logger.info("   status      - 查看系統狀態")
-        logger.info("   help        - 顯示幫助")
-        logger.info("   quit        - 退出")
+        logger.info("💬 AIVA AI 交互模式啟動")
+        logger.info("[AI] 正在初始化 AI 對話助理...")
+        
+        # 初始化 AI 對話助理和指揮中心
+        assistant = AIVADialogAssistant()
+        commander = AICommanderV2()
+        await commander.initialize()
+        
+        logger.info("[SUCCESS] AI 對話助理已就緒")
+        logger.info("[INFO] 您可以用自然語言與 AI 對話，例如:")
+        logger.info("   '掃描 http://localhost:3000'")
+        logger.info("   '你會什麼功能？'")
+        logger.info("   '系統狀態如何？'")
+        logger.info("   輸入 'quit' 退出")
         logger.info("")
-        
-        coordinator = MultiEngineCoordinator()
         
         while RUNNING:
             try:
                 # 非阻塞式輸入
-                command = await asyncio.get_event_loop().run_in_executor(
+                user_input = await asyncio.get_event_loop().run_in_executor(
                     None, input, "AIVA> "
                 )
-                command = command.strip()
+                user_input = user_input.strip()
                 
-                if not command:
+                if not user_input:
                     continue
                     
-                if command.lower() in ["quit", "exit", "q"]:
+                if user_input.lower() in ["quit", "exit", "q"]:
                     logger.info("👋 再見！")
                     break
-                    
-                elif command.lower() == "help":
-                    logger.info("\n可用命令:")
-                    logger.info("  scan <url>     - 掃描指定URL")
-                    logger.info("  scan-fast <url> - 快速掃描")
-                    logger.info("  status         - 查看系統狀態")
-                    logger.info("  engines        - 查看引擎狀態")
-                    logger.info("  help           - 顯示此幫助")
-                    logger.info("  quit           - 退出\n")
-                    
-                elif command.lower() == "status":
-                    uptime = datetime.now() - self.start_time
-                    logger.info(f"\n系統狀態:")
-                    logger.info(f"  運行時間: {uptime}")
-                    logger.info(f"  模式: {self.mode}")
-                    logger.info(f"  狀態: {'運行中' if self.running else '已停止'}\n")
-                    
-                elif command.lower() == "engines":
-                    logger.info("\n引擎狀態:")
-                    for engine_name, adapter in coordinator.adapters.items():
-                        available = await adapter.is_available()
-                        status = "✅ 可用" if available else "❌ 不可用"
-                        logger.info(f"  {engine_name.upper()}: {status}")
-                    logger.info("")
-                    
-                elif command.startswith("scan "):
-                    url = command[5:].strip()
-                    if not url:
-                        logger.error("請指定URL")
-                        continue
-                        
-                    logger.info(f"🚀 開始掃描: {url}")
-                    
+                
+                # 將用戶輸入交給 AI 對話助理處理
+                logger.info(f"[AI] AI 正在思考...")
+                response = await assistant.process_user_input(user_input)
+                
+                # 顯示 AI 回應
+                logger.info(f"\n{response.get('message', '無回應')}\n")
+                
+                # 如果有可執行的任務，交給 AICommanderV2 執行
+                if response.get('executable') and response.get('task_plan'):
+                    logger.info("🚀 AI 開始執行任務...")
                     try:
-                        result = await coordinator.execute_strategy_balanced(
-                            scan_id=f"interactive_{datetime.now().timestamp()}",
-                            targets=[url]
-                        )
+                        task_result = await commander.execute_task_plan(response['task_plan'])
                         
-                        logger.info(f"✅ 掃描完成")
-                        logger.info(f"📊 發現 {len(result.assets)} 個資產")
-                        
-                        if result.assets:
-                            logger.info("前 5 個資產:")
-                            for i, asset in enumerate(result.assets[:5], 1):
-                                logger.info(f"  [{i}] {asset.type}: {asset.value}")
-                                
+                        if task_result.get('success'):
+                            logger.info(f"[SUCCESS] 任務執行成功")
+                            if task_result.get('results'):
+                                logger.info(f"[REPORT] 結果: {task_result['results']}")
+                        else:
+                            logger.error(f"[ERROR] 任務執行失敗: {task_result.get('error')}")
                     except Exception as e:
-                        logger.error(f"掃描失敗: {e}")
-                        
-                elif command.startswith("scan-fast "):
-                    url = command[10:].strip()
-                    if not url:
-                        logger.error("請指定URL")
-                        continue
-                        
-                    logger.info(f"⚡ 快速掃描: {url}")
-                    
-                    try:
-                        result = await coordinator.execute_strategy_fast(
-                            scan_id=f"fast_{datetime.now().timestamp()}",
-                            targets=[url]
-                        )
-                        
-                        logger.info(f"✅ 掃描完成 ({result.execution_time:.2f}s)")
-                        logger.info(f"📊 發現 {len(result.assets)} 個資產")
-                        
-                    except Exception as e:
-                        logger.error(f"掃描失敗: {e}")
-                        
-                else:
-                    logger.error(f"未知命令: {command} (輸入 'help' 查看幫助)")
+                        logger.error(f"[ERROR] 執行任務時發生錯誤: {e}")
                     
             except EOFError:
                 break

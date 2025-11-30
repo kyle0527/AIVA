@@ -98,7 +98,7 @@ async def get_capability_registry() -> CapabilityRegistry:
     return _capability_registry
 
 
-async def get_function_caller() -> UnifiedFunctionCaller:
+def get_function_caller() -> UnifiedFunctionCaller:
     """獲取統一功能調用器"""
     global _function_caller
     if _function_caller is None:
@@ -106,7 +106,7 @@ async def get_function_caller() -> UnifiedFunctionCaller:
     return _function_caller
 
 
-async def get_internal_loop_connector() -> InternalLoopConnector:
+def get_internal_loop_connector() -> InternalLoopConnector:
     """獲取內循環連接器"""
     global _internal_loop_connector
     if _internal_loop_connector is None:
@@ -148,7 +148,7 @@ async def query_capabilities(
         logger.info(f"📥 Capability query: {request.query}")
         
         # 獲取內循環連接器（已包含 PostgreSQL 查詢功能）
-        connector = await get_internal_loop_connector()
+        # connector = get_internal_loop_connector()  # 預留供未來使用
         
         # 從資料庫查詢能力
         import asyncpg
@@ -201,7 +201,7 @@ async def query_capabilities(
             query=request.query,
             total_found=len(capabilities),
             capabilities=capabilities,
-            timestamp=datetime.utcnow()
+            timestamp=datetime.now()
         )
         
     except Exception as e:
@@ -286,7 +286,6 @@ async def execute_capability(
         
         capability_name = row['name']
         module = row['module']
-        language = row['language']
         invocation_meta = eval(row['invocation_metadata']) if row['invocation_metadata'] else None
         
         if not invocation_meta:
@@ -298,7 +297,7 @@ async def execute_capability(
         logger.info(f"📋 Invocation: {invocation_meta['protocol']} @ {invocation_meta['endpoint']}")
         
         # 2. 使用 UnifiedFunctionCaller 執行
-        function_caller = await get_function_caller()
+        function_caller = get_function_caller()
         
         # 根據 protocol 調用不同方法
         protocol = invocation_meta['protocol']
@@ -341,7 +340,7 @@ async def execute_capability(
             result=result.result if result.success else None,
             error=result.error if not result.success else None,
             execution_time=execution_time,
-            timestamp=datetime.utcnow()
+            timestamp=datetime.now()
         )
         
     except HTTPException:
@@ -357,7 +356,7 @@ async def execute_capability(
             result=None,
             error=str(e),
             execution_time=execution_time,
-            timestamp=datetime.utcnow()
+            timestamp=datetime.now()
         )
 
 
@@ -424,7 +423,7 @@ async def list_capabilities(
         return {
             "total": len(capabilities),
             "capabilities": [cap.dict() for cap in capabilities],
-            "timestamp": datetime.utcnow()
+            "timestamp": datetime.now()
         }
         
     except Exception as e:
@@ -488,7 +487,7 @@ async def get_capability_stats():
             "invocation_coverage": f"{invocation_coverage}/{total} ({invocation_coverage/total*100:.1f}%)",
             "language_distribution": {row['language']: row['count'] for row in language_dist},
             "top_modules": {row['module']: row['count'] for row in module_dist},
-            "timestamp": datetime.utcnow()
+            "timestamp": datetime.now()
         }
         
     except Exception as e:

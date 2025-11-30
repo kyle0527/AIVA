@@ -72,6 +72,11 @@ class AICommanderV2:
             weights_dir=Path(self.config.get("weights_base_dir", "data/weights"))
         )
         
+        # ✅ 新增: 初始化 AICommandCenter (統一命令調度中心)
+        from services.aiva_common.command_center import get_command_center
+        self.command_center = get_command_center()
+        logger.info("✅ AICommandCenter 已初始化並可用")
+        
         # 協調器
         self.coordinators: Dict[TaskDomain, BaseCoordinator] = {}
         
@@ -93,7 +98,11 @@ class AICommanderV2:
         try:
             logger.info("Initializing AI Commander V2...")
             
-            # 1. 初始化協調器
+            # 1. 註冊模組處理器到 AICommandCenter
+            logger.info("Registering module handlers to CommandCenter...")
+            await self._register_command_handlers()
+            
+            # 2. 初始化協調器
             logger.info("Initializing coordinators...")
             self.coordinators = {
                 TaskDomain.ATTACK: AttackCoordinator(self.module_registry),
@@ -110,12 +119,16 @@ class AICommanderV2:
             
             logger.info("✅ All coordinators initialized")
             
-            # 2. 自動發現並註冊插件
+            # 3. 自動發現並註冊插件
             if self.config.get("auto_discover_plugins", True):
                 logger.info("Auto-discovering plugins...")
                 await self._auto_discover_plugins()
             
-            # 3. 載入權重
+            # 4. 將 command_center 注入到所有 Plugin
+            logger.info("Injecting command_center to plugins...")
+            await self._inject_command_center_to_plugins()
+            
+            # 5. 載入權重
             logger.info("Loading plugin weights...")
             await self._load_plugin_weights()
             
@@ -126,6 +139,47 @@ class AICommanderV2:
         except Exception as e:
             logger.error(f"Failed to initialize AI Commander V2: {e}", exc_info=True)
             return False
+    
+    async def _register_command_handlers(self) -> None:
+        """註冊各模組的 CommandHandler 到 AICommandCenter"""
+        try:
+            # 註冊 Scan 模組處理器
+            from services.scan.command_handler import ScanCommandHandler
+            scan_handler = ScanCommandHandler()
+            self.command_center.register_module("scan", scan_handler)
+            logger.info("✅ 已註冊 Scan 模組處理器")
+            
+            # ⚠️ Features 模組處理器（暫時跳過，等接收端完善）
+            # from services.features.command_handler import FeaturesCommandHandler
+            # features_handler = FeaturesCommandHandler()
+            # self.command_center.register_module("features", features_handler)
+            # logger.info("✅ 已註冊 Features 模組處理器")
+            
+            # ⚠️ Integration 模組處理器（暫時跳過）
+            # from services.integration.command_handler import IntegrationCommandHandler
+            # integration_handler = IntegrationCommandHandler()
+            # self.command_center.register_module("integration", integration_handler)
+            # logger.info("✅ 已註冊 Integration 模組處理器")
+            
+        except ImportError as e:
+            logger.warning(f"Could not import some command handlers: {e}")
+        except Exception as e:
+            logger.error(f"Failed to register command handlers: {e}", exc_info=True)
+    
+    async def _inject_command_center_to_plugins(self) -> None:
+        """將 command_center 注入到所有 Plugin"""
+        plugins = self.module_registry.list_plugins()
+        
+        for plugin_info in plugins:
+            plugin_id = plugin_info.get("module_id")
+            if not plugin_id:
+                continue
+            
+            plugin = self.module_registry.get_plugin(plugin_id)
+            if plugin:
+                # 注入 command_center
+                plugin.command_center = self.command_center
+                logger.info(f"✅ 已將 command_center 注入到 {plugin_id}")
     
     async def _auto_discover_plugins(self) -> None:
         """自動發現並註冊插件"""
