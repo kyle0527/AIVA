@@ -598,11 +598,99 @@ class DynamicContentExtractor:
             logger.warning(f"Failed to setup network listener: {e}")
 
     async def _extract_static(self, url: str) -> list[DynamicContent]:
-        """靜態提取（無瀏覽器）"""
+        """靜態提取（無瀏覽器）- 真實實現"""
         logger.info(f"Using static extraction for {url}")
-        # 這裡可以使用 httpx + BeautifulSoup 進行基本的靜態提取
-        # 暫時返回空列表
-        return []
+        
+        try:
+            import httpx
+            from bs4 import BeautifulSoup
+            
+            contents = []
+            
+            async with httpx.AsyncClient(timeout=30.0, follow_redirects=True) as client:
+                response = await client.get(url)
+                
+                if response.status_code != 200:
+                    logger.warning(f"Static extraction failed: HTTP {response.status_code}")
+                    return []
+                
+                soup = BeautifulSoup(response.text, 'html.parser')
+                
+                # 提取表單
+                for form in soup.find_all('form'):
+                    form_data = {
+                        'action': form.get('action', ''),
+                        'method': form.get('method', 'GET'),
+                        'inputs': []
+                    }
+                    
+                    for input_tag in form.find_all(['input', 'textarea', 'select']):
+                        form_data['inputs'].append({
+                            'name': input_tag.get('name', ''),
+                            'type': input_tag.get('type', 'text'),
+                            'value': input_tag.get('value', '')
+                        })
+                    
+                    contents.append(DynamicContent(
+                        url=url,
+                        content_type='form',
+                        content=str(form),
+                        selector=f"form[action='{form_data['action']}']",
+                        metadata={'form_data': form_data}
+                    ))
+                
+                # 提取連結
+                for link in soup.find_all('a', href=True):
+                    href = link.get('href')
+                    if href and not href.startswith('#'):
+                        contents.append(DynamicContent(
+                            url=url,
+                            content_type='link',
+                            content=link.get_text(strip=True),
+                            selector=f"a[href='{href}']",
+                            metadata={'href': href, 'text': link.get_text(strip=True)}
+                        ))
+                
+                # 提取JavaScript引用
+                for script in soup.find_all('script', src=True):
+                    src = script.get('src')
+                    contents.append(DynamicContent(
+                        url=url,
+                        content_type='javascript',
+                        content='',
+                        selector=f"script[src='{src}']",
+                        metadata={'src': src}
+                    ))
+                
+                # 提取API端點提示
+                for script in soup.find_all('script', string=True):
+                    script_content = script.string
+                    if script_content:
+                        # 簡單的API端點模式匹配
+                        import re
+                        api_patterns = [
+                            r'["\']([/a-zA-Z0-9_-]+/api/[a-zA-Z0-9_/-]+)["\']',
+                            r'fetch\(["\']([^"\']+)["\']',
+                            r'axios\.[a-z]+\(["\']([^"\']+)["\']'
+                        ]
+                        
+                        for pattern in api_patterns:
+                            matches = re.findall(pattern, script_content)
+                            for match in matches:
+                                contents.append(DynamicContent(
+                                    url=url,
+                                    content_type='api_endpoint',
+                                    content=match,
+                                    selector='script',
+                                    metadata={'endpoint': match, 'detected_in': 'static_js'}
+                                ))
+                
+                logger.info(f"Static extraction found {len(contents)} content items")
+                return contents
+        
+        except Exception as e:
+            logger.error(f"Static extraction error: {e}")
+            return []
 
     def get_extracted_contents(self) -> list[DynamicContent]:
         """獲取所有已提取的內容"""

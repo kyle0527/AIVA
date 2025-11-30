@@ -567,6 +567,34 @@ class SmartSSRFDetector:
 
     def _extract_token(self, payload: str) -> str:
         """從載荷中提取 token"""
-        # 這裡需要根據 OAST 系統的具體實現來提取 token
-        # 暫時返回載荷本身
-        return payload
+        import re
+        
+        # 嘗試從各種OAST載荷格式中提取token
+        
+        # 格式1: http://token.burpcollaborator.net
+        match = re.search(r'https?://([a-zA-Z0-9]+)\.(?:burpcollaborator|oast|canarytokens)', payload)
+        if match:
+            return match.group(1)
+        
+        # 格式2: http://example.com/callback?token=xxxxx
+        match = re.search(r'[?&]token=([a-zA-Z0-9]+)', payload)
+        if match:
+            return match.group(1)
+        
+        # 格式3: http://xxxxx.interact.sh
+        match = re.search(r'https?://([a-zA-Z0-9]+)\.interact\.sh', payload)
+        if match:
+            return match.group(1)
+        
+        # 格式4: 直接使用域名部分作為token
+        match = re.search(r'https?://([^/:]+)', payload)
+        if match:
+            domain = match.group(1)
+            # 提取子域名第一部分作為token
+            parts = domain.split('.')
+            if len(parts) > 2:
+                return parts[0]
+        
+        # 如果無法提取，返回payload的hash作為唯一標識
+        import hashlib
+        return hashlib.md5(payload.encode()).hexdigest()[:8]

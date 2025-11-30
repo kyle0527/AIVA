@@ -61,26 +61,134 @@ class AIAgentWithRAG:
             context=rag_context,
         )
 
-        # 3. 調用 AI 模型（這裡使用 BioNeuronRAGAgent 或其他 LLM）
-        # TODO: 整合實際的 AI 模型調用
-        # plan = await self._call_ai_model(prompt)
+        # 3. 調用 AI 模型或使用基於規則的生成
+        try:
+            # 嘗試調用外部LLM (如果配置了)
+            plan = await self._call_ai_model(prompt)
+        except Exception as e:
+            logger.warning(f"AI model unavailable, using rule-based generation: {e}")
+            # Fallback: 使用基於RAG上下文的規則生成
+            plan = self._generate_plan_from_context(target, objective, rag_context)
 
-        # 暫時返回示例計畫
         logger.info(
             f"Generated attack plan with RAG context: "
             f"{len(rag_context['similar_techniques'])} techniques, "
-            f"{len(rag_context['successful_experiences'])} experiences"
+            f"{len(rag_context['successful_experiences'])} experiences, "
+            f"{len(plan.steps)} steps"
         )
 
-        # 這裡應該返回實際生成的計畫
-        # return plan
+        return plan
+    
+    async def _call_ai_model(self, prompt: str) -> AttackPlan:
+        """調用AI模型生成計劃
+        
+        這需要外部LLM API配置，如果未配置會拋出異常
+        """
+        # 檢查是否有可用的LLM配置
+        import os
+        if not os.getenv('OPENAI_API_KEY') and not os.getenv('AZURE_OPENAI_KEY'):
+            raise ValueError("No LLM API key configured")
+        
+        # TODO: 實際的LLM調用邏輯
+        # 這裡需要整合 OpenAI/Azure OpenAI/其他LLM提供商
+        raise NotImplementedError("LLM integration requires API key configuration")
+    
+    def _generate_plan_from_context(
+        self,
+        target: AttackTarget,
+        objective: str,
+        context: dict
+    ) -> AttackPlan:
+        """基於RAG上下文生成攻擊計劃 (Fallback方案)
+        
+        當外部LLM不可用時，使用基於規則的方法生成計劃
+        """
+        from services.aiva_common.schemas import AttackStep
+        
+        steps = []
+        expected_results = []
+        
+        # 1. 偵察階段 (基於best practices)
+        steps.append(AttackStep(
+            step_id="recon_1",
+            name="Target Reconnaissance",
+            description="Gather information about the target application",
+            tool="nmap,nikto,whatweb",
+            parameters={
+                "target": target.url,
+                "scan_type": "comprehensive"
+            },
+            expected_time=300,
+            priority=1
+        ))
+        
+        # 2. 根據相似技術添加測試步驟
+        for i, tech in enumerate(context.get('similar_techniques', [])[:3], start=2):
+            technique_name = tech.get('title', 'Unknown Technique')
+            steps.append(AttackStep(
+                step_id=f"test_{i}",
+                name=f"Test: {technique_name}",
+                description=tech.get('content', '')[:200],
+                tool=self._extract_tool_from_technique(tech),
+                parameters={
+                    "target": target.url,
+                    "technique": technique_name
+                },
+                expected_time=180,
+                priority=i
+            ))
+        
+        # 3. 根據成功經驗添加步驟
+        for i, exp in enumerate(context.get('successful_experiences', [])[:2], start=5):
+            steps.append(AttackStep(
+                step_id=f"exploit_{i}",
+                name=f"Apply: {exp.get('title', 'Known Exploit')}",
+                description=exp.get('content', '')[:200],
+                tool="custom",
+                parameters={
+                    "target": target.url,
+                    "experience_id": exp.get('id', 'unknown')
+                },
+                expected_time=240,
+                priority=i
+            ))
+        
+        # 4. 生成預期結果
+        expected_results = [
+            f"Comprehensive understanding of {target.url} infrastructure",
+            f"Identified vulnerabilities based on {len(context.get('similar_techniques', []))} similar techniques",
+            f"Validated attack vectors with {len(context.get('successful_experiences', []))} known successful patterns"
+        ]
+        
         return AttackPlan(
             target=target,
             objective=objective,
-            steps=[],
+            steps=steps,
             priority=1,
-            expected_results=[],
+            expected_results=expected_results,
         )
+    
+    def _extract_tool_from_technique(self, technique: dict) -> str:
+        """從技術描述中提取工具名稱"""
+        content = technique.get('content', '').lower()
+        tags = technique.get('tags', [])
+        
+        # 根據標籤推斷工具
+        tool_mapping = {
+            'sqli': 'sqlmap',
+            'xss': 'xsstrike',
+            'directory_traversal': 'dotdotpwn',
+            'file_inclusion': 'fimap',
+            'ssrf': 'ssrfmap',
+            'xxe': 'xxeinjector',
+        }
+        
+        for tag in tags:
+            if tag in tool_mapping:
+                return tool_mapping[tag]
+        
+        # 默認工具
+        return 'burpsuite'
 
     def _build_prompt_with_context(
         self,
