@@ -14,6 +14,7 @@ import asyncio
 import logging
 import sys
 from pathlib import Path
+from pathlib import Path
 
 # 添加專案根目錄到 Python 路徑
 project_root = Path(__file__).parent.parent
@@ -47,7 +48,9 @@ async def update_self_awareness(force_refresh: bool = False) -> dict:
         
         # 初始化組件
         logger.info("\n📦 Initializing components...")
-        vector_store = VectorStore()
+        persist_dir = Path("data/vector_db/chroma")
+        persist_dir.mkdir(parents=True, exist_ok=True)
+        vector_store = VectorStore(backend="chroma", persist_directory=persist_dir)
         kb = KnowledgeBase(vector_store=vector_store)
         connector = InternalLoopConnector(rag_knowledge_base=kb)
         
@@ -68,6 +71,10 @@ async def update_self_awareness(force_refresh: bool = False) -> dict:
         
         if not result['success']:
             logger.error(f"   - Error:                {result.get('error', 'Unknown')}")
+        
+        # 驗證數據庫內容
+        db_count = vector_store.count()
+        logger.info(f"   - DB Verified:          {db_count} documents persisted")
         
         logger.info("=" * 60)
         
@@ -96,7 +103,11 @@ async def test_self_awareness_query():
         logger.info("=" * 60)
         
         # 初始化
-        vector_store = VectorStore()
+        persist_dir = Path("data/vector_db/chroma")
+        if not persist_dir.exists():
+            logger.error("❌ Vector database not found. Please run update first!")
+            return
+        vector_store = VectorStore(backend="chroma", persist_directory=persist_dir)
         kb = KnowledgeBase(vector_store=vector_store)
         connector = InternalLoopConnector(rag_knowledge_base=kb)
         

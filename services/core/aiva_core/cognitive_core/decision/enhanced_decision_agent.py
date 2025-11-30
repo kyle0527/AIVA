@@ -41,7 +41,7 @@ from services.aiva_common.schemas import (
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from ..bio_neuron_master import OperationMode
+    from ..neural.bio_neuron_master import OperationMode
 else:
     OperationMode = "OperationMode"  # 運行時使用字符串
 
@@ -64,7 +64,7 @@ class Decision:
     """決策結果"""
 
     def __init__(
-        self, action: str, params: dict[str, Any] = None, confidence: float = 0.5
+        self, action: str, params: dict[str, Any] | None = None, confidence: float = 0.5
     ):
         self.action = action
         self.params = params or {}
@@ -719,7 +719,7 @@ class EnhancedDecisionAgent:
             "decision_types": action_counts,
             "average_confidence": f"{avg_confidence:.2f}",
             "most_common_decision": (
-                max(action_counts, key=action_counts.get) if action_counts else "無"
+                max(action_counts, key=lambda k: action_counts[k]) if action_counts else "無"
             ),
             "recent_decisions": len(
                 [
@@ -731,7 +731,7 @@ class EnhancedDecisionAgent:
             ),
         }
 
-    def export_decision_analysis(self, output_path: str = None) -> str:
+    def export_decision_analysis(self, output_path: str | None = None) -> str:
         """匯出決策分析報告"""
         if not output_path:
             timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")

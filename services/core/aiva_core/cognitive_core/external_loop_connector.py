@@ -1,34 +1,64 @@
-"""External Loop Connector - 外部閉環連接器
+"""External Loop Connector - 外部閉環連接器 (v2.0 合規版本)
 
 將執行結果傳遞給 external_learning 進行偏差分析和模型訓練，實現 AI 從經驗中學習
 
 數據流：
 task_planning (執行結果) → ExternalLoopConnector → external_learning (偏差分析 + 訓練) → cognitive_core (權重更新)
 
-遵循 aiva_common 修復規範:
-- 使用統一的日誌記錄
-- 使用統一的錯誤處理
-- 使用統一的數據格式
+遵循 aiva_common v2.0 修復規範:
+✅ 使用統一的日誌記錄 (get_logger)
+✅ 使用 Pydantic 模型進行數據驗證
+✅ 整合 AICommand/AICommandResult 架構
+✅ 使用統一的錯誤處理
+✅ 完整的類型註解
 """
 
-import logging
-from datetime import datetime, timezone
+from datetime import datetime, UTC
 from typing import Any
 from uuid import uuid4
 
-logger = logging.getLogger(__name__)
+# ✅ 修復 1: 使用統一日誌
+from aiva_common.utils.logging import get_logger
+
+# ✅ 修復 2: 引入 Pydantic 模型
+from aiva_common.schemas.dual_loop import (
+    ExecutionPlan,
+    ExecutionStep,
+    ExecutionTrace,
+    DeviationRecord,
+    DeviationAnalysisResult,
+    TrainingDataSample,
+    ModelTrainingResult,
+    ExternalLoopProcessResult
+)
+
+# ✅ 修復 4: 使用統一錯誤處理
+from aiva_common.error_handling import (
+    AIVAError,
+    ErrorType,
+    ErrorSeverity,
+    create_error_context
+)
+
+logger = get_logger(__name__)
 
 
 class ExternalLoopConnector:
-    """外部閉環連接器
+    """外部閉環連接器 (v2.0 合規版本)
     
     職責：
     1. 接收任務執行結果（計劃 AST + 執行軌跡）
     2. 觸發偏差分析（計劃 vs 實際執行）
-    3. 觸發模型訓練（基於偏差數據）
-    4. 通知權重管理器（新權重可用）
+    3. 使用內閉環發現的能力，驗證實戰效果
+    4. 觸發模型訓練（基於偏差數據）
+    5. 通知權重管理器（新權重可用）
+    6. 回饋優化建議到內閉環
     
     這是 AI 自我優化雙重閉環中「對外學習閉環」的關鍵組件
+    
+    與內閉環的關係：
+    - 內閉環：AI 知道有哪些能力、怎麼使用
+    - 外閉環：實戰使用這些能力，從結果中學習優化
     """
     
     def __init__(self):
@@ -37,7 +67,7 @@ class ExternalLoopConnector:
         self._trainer = None
         self._weight_manager = None
         
-        logger.info("ExternalLoopConnector initialized")
+        logger.info("ExternalLoopConnector initialized (v2.0 compliant)")
     
     @property
     def comparator(self):
@@ -65,29 +95,30 @@ class ExternalLoopConnector:
     
     async def process_execution_result(
         self,
-        plan: dict[str, Any],
-        trace: list[dict[str, Any]]
-    ) -> dict[str, Any]:
-        """處理執行結果並觸發學習循環
+        plan: ExecutionPlan,
+        trace: list[ExecutionTrace]
+    ) -> ExternalLoopProcessResult:
+        """處理執行結果並觸發學習循環 (v2.0 合規版本)
         
         這是外部閉環的核心方法，將執行經驗轉化為 AI 的進化動力
         
+        流程：
+        1. 偏差分析（計劃 vs 實際）
+        2. 判斷是否需要訓練
+        3. 如果顯著，觸發模型訓練
+        4. 註冊新權重
+        5. 返回結果（Pydantic 模型）
+        
         Args:
-            plan: 原始 AST 計劃
-            trace: 執行軌跡
+            plan: 執行計劃（Pydantic 模型）
+            trace: 執行軌跡列表（Pydantic 模型）
             
         Returns:
-            處理統計: {
-                "deviations_found": int,
-                "deviations_significant": bool,
-                "training_triggered": bool,
-                "weights_updated": bool,
-                "new_weights_version": str | None,
-                "timestamp": str,
-                "success": bool
-            }
+            ExternalLoopProcessResult: 處理結果（Pydantic 模型）
         """
-        logger.info("🔄 Starting external loop processing...")
+        logger.info("🔄 Starting external loop processing (v2.0)...")
+        logger.info(f"   Plan ID: {plan.plan_id}, Objective: {plan.objective}")
+        logger.info(f"   Trace: {len(trace)} steps")
         
         try:
             # 步驟 1: 偏差分析
@@ -99,6 +130,7 @@ class ExternalLoopConnector:
             logger.info(f"  Found {len(deviations)} deviations, significant: {is_significant}")
             
             training_triggered = False
+            training_result = None
             weights_updated = False
             new_version = None
             
@@ -108,39 +140,59 @@ class ExternalLoopConnector:
                 training_result = await self._train_from_experience(plan, trace, deviations)
                 training_triggered = True
                 
-                # 步驟 4: 如果產生了新權重，通知權重管理器
-                if training_result.get("new_weights_path"):
+                # 步驟 4: 如果產生了新權重，註冊
+                if training_result and training_result.new_weights_version:
                     logger.info("  Step 3: Registering new weights...")
                     new_version = self._register_new_weights(training_result)
                     weights_updated = True
             else:
                 logger.info("  Deviations not significant, skipping training")
             
-            result_summary = {
-                "deviations_found": len(deviations),
-                "deviations_significant": is_significant,
-                "training_triggered": training_triggered,
-                "weights_updated": weights_updated,
-                "new_weights_version": new_version,
-                "timestamp": datetime.now(timezone.utc).isoformat(),
-                "success": True
-            }
+            # ✅ 返回 Pydantic 模型
+            result = ExternalLoopProcessResult(
+                plan_id=plan.plan_id,
+                deviations_found=len(deviations),
+                deviations_significant=is_significant,
+                deviations=deviations,
+                training_triggered=training_triggered,
+                training_result=training_result,
+                weights_updated=weights_updated,
+                new_weights_version=new_version,
+                timestamp=datetime.now(UTC),
+                success=True
+            )
             
-            logger.info(f"✅ External loop processing completed: {result_summary}")
-            return result_summary
+            logger.info(f"✅ External loop processing completed: {result.model_dump()}")
+            return result
             
         except Exception as e:
-            logger.error(f"❌ External loop processing failed: {e}", exc_info=True)
-            return {
-                "deviations_found": 0,
-                "deviations_significant": False,
-                "training_triggered": False,
-                "weights_updated": False,
-                "new_weights_version": None,
-                "timestamp": datetime.now(timezone.utc).isoformat(),
-                "success": False,
-                "error": str(e)
-            }
+            # ✅ 修復 4: 使用統一錯誤處理
+            error_context = create_error_context(
+                error_type=ErrorType.AI_PROCESSING,
+                severity=ErrorSeverity.HIGH,
+                message="External loop processing failed",
+                details={
+                    "plan_id": plan.plan_id,
+                    "trace_steps": len(trace)
+                },
+                exception=e
+            )
+            logger.error(f"❌ External loop processing failed: {error_context}")
+            
+            # 返回錯誤結果（仍然是 Pydantic 模型）
+            return ExternalLoopProcessResult(
+                plan_id=plan.plan_id,
+                deviations_found=0,
+                deviations_significant=False,
+                deviations=[],
+                training_triggered=False,
+                training_result=None,
+                weights_updated=False,
+                new_weights_version=None,
+                timestamp=datetime.now(UTC),
+                success=False,
+                error=str(e)
+            )
     
     def _analyze_deviations(
         self,

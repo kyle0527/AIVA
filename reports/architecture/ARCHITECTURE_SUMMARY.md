@@ -39,6 +39,11 @@ Document Type: Report
 
 ## ✅ 已完成的工作
 
+> **部署架構 vs 代碼架構**  
+> - **部署視角**: Layer 0 基礎設施 → Layer 1 核心服務 → Layer 2 功能組件  
+> - **代碼視角**: 所有核心服務和功能組件都在 `services/` 目錄內 (93.8%)  
+> - **關鍵理解**: 這是單一程式的邏輯分層，不是分散式微服務
+
 ### 1. **Docker 容器化** ✅
 - ✅ `Dockerfile.core` - 核心 AI 服務容器
 - ✅ `Dockerfile.component` - 功能組件通用容器

@@ -153,7 +153,7 @@
 ## 🔗 Essential Resources
 
 ### 📚 **Architecture Foundation**
-- **[AIVA v2.0 系統架構](../../README.md)** - v2.0 架構總覽
+- **[AIVA v2.1.1 系統架構](../../README.md)** - v2.1.1 架構總覽
 - **[架構指南](../architecture/README.md)** - 數據合約架構原則
 - **[跨語言最佳實踐](../architecture/CROSS_LANGUAGE_COMPATIBILITY_GUIDE.md)** - 多語言標準
 

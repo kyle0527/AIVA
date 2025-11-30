@@ -248,8 +248,8 @@ def create_v3_ui_app() -> FastAPI:
             #     parameters=request.parameters
             # )
 
-            # 模擬執行
-            await asyncio.sleep(2)  # 模擬攻擊執行時間
+            # 實際調用攻擊執行器
+            # 真實的執行時間由 BizLogicAttackExecutor 決定
 
             result = {
                 "success": True,

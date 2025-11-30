@@ -369,7 +369,7 @@ from services.aiva_common.schemas import ConfigUpdatePayload  # ✅ 正確
 ### **問題 6: Docker 服務未啟動**
 ```bash
 # 啟動基礎服務 (需要 Docker)
-# v2.0 架構所需服務（已移除 RabbitMQ）
+# v2.1.1 架構所需服務（PostgreSQL + ChromaDB，已移除 RabbitMQ）
 docker-compose up -d redis postgres neo4j
 ```
 

@@ -109,7 +109,7 @@
 ### 問題 1: RabbitMQ 依賴 (已部分解決)
 
 **現況:**
-- ✅ **v2.0 架構已移除 RabbitMQ**: 採用數據合約驅動
+- ✅ **v2.1.1 架構使用 CapabilityRegistry**: 採用能力元數據驅動 + PostgreSQL + ChromaDB 雙寫機制，不再依賴 RabbitMQ
 - ⚠️ **Docker Compose 仍包含**: `docker-compose.complete.yml` 仍啟動 RabbitMQ
 - ⚠️ **啟動腳本依賴**: `start_system.ps1` 仍檢查 RabbitMQ
 

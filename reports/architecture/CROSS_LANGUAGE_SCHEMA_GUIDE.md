@@ -444,12 +444,12 @@ type_mappings = convert_types_for_ai("Optional[str]")
 ```bash
 # 無需手動設置，自動使用預設值
 # DATABASE_URL="postgresql://postgres:postgres@localhost:5432/aiva_db"
-# 注意：v2.0 架構已移除 RabbitMQ，採用直接數據合約通信
+# 注意：v2.1.1 架構使用 CapabilityRegistry，已不再依賴 RabbitMQ
 ```
 
 ### 生產環境（部署時才需要）
 ```bash
-# v2.0 架構配置
+# v2.1.1 架構配置
 export AIVA_DATABASE_URL="postgresql://prod_user:password@prod-db:5432/aiva"
 # 注意：不再需要 RABBITMQ_URL 配置
 ```

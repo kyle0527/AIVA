@@ -343,10 +343,8 @@ class AttackExecutor:
         step: "AttackStep | dict[str, Any]",
         target: "AttackTarget | dict[str, Any]",
     ) -> dict[str, Any]:
-        """模擬執行攻擊步驟 (安全模式)"""
-        # 模擬延遲
-        await asyncio.sleep(0.1)
-
+        """模擬執行攻擊步驟 (safe mode)"""
+        # 安全模式下不執行真實攻擊
         return {
             "success": True,
             "simulated": True,
@@ -388,7 +386,7 @@ class AttackExecutor:
                 "type": step_type,
             }
 
-            # 模擬漏洞利用配置
+            # 構建漏洞利用配置
             exploit_config = {
                 "id": exploit_id,
                 "name": f"Juice Shop {step_type.upper()} Exploit",
@@ -413,13 +411,11 @@ class AttackExecutor:
         except Exception as e:
             logger.error(f"攻擊執行失敗: {e}")
 
-            # 回退到模擬執行
-            await asyncio.sleep(0.5)  # 模擬執行時間
-
+            # 返回真實的錯誤狀態
             return {
-                "success": True,
+                "success": False,
                 "findings": [],
-                "message": f"Step simulated due to error: {str(e)}",
+                "message": f"Step execution failed: {str(e)}",
                 "error": str(e),
             }
 

@@ -401,39 +401,4 @@ class AIVANaturalLanguageGenerator:
 
 
 # 使用示例和測試
-def test_nlg_system():
-    """測試自然語言生成系統"""
-    print("🧠 AIVA 自然語言生成系統測試")
-    print("=" * 40)
 
-    nlg = AIVANaturalLanguageGenerator()
-
-    test_contexts = [
-        {
-            "user_input": "讀取 app.py 檔案",
-            "bio_result": {"tool_used": "CodeReader", "confidence": 0.95},
-            "tool_result": {"status": "success", "lines": 256},
-        },
-        {
-            "user_input": "檢查 SQL 注入漏洞",
-            "bio_result": {"tool_used": "SQLiDetector", "confidence": 0.88},
-            "tool_result": {"status": "success", "vulnerabilities_found": 2},
-        },
-        {
-            "user_input": "協調 Go 模組",
-            "bio_result": {"tool_used": "CommandExecutor", "confidence": 0.92},
-            "tool_result": {"status": "success", "output": "Module synchronized"},
-        },
-    ]
-
-    for i, context in enumerate(test_contexts, 1):
-        print(f"\n測試 {i}: {context['user_input']}")
-        response = nlg.generate_response(context)
-        print(f"AIVA: {response}")
-
-    print("\n✅ 自然語言生成測試完成！")
-    print("💡 AIVA 無需 GPT-4 也能生成高品質中文回應")
-
-
-if __name__ == "__main__":
-    test_nlg_system()

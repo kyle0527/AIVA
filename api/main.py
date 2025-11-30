@@ -15,7 +15,7 @@ from typing import Dict, Any, List, Optional
 import asyncio
 import time
 import json
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, UTC
 import jwt
 import hashlib
 import os
@@ -66,7 +66,7 @@ JWT_EXPIRATION_HOURS = 24
 def create_access_token(data: dict) -> str:
     """創建 JWT 訪問令牌"""
     to_encode = data.copy()
-    expire = datetime.utcnow() + timedelta(hours=JWT_EXPIRATION_HOURS)
+    expire = datetime.now(UTC) + timedelta(hours=JWT_EXPIRATION_HOURS)
     to_encode.update({"exp": expire})
     encoded_jwt = jwt.encode(to_encode, JWT_SECRET, algorithm=JWT_ALGORITHM)
     return encoded_jwt
@@ -104,7 +104,7 @@ async def root():
         "message": "AIVA Security Platform API",
         "version": "1.0.0",
         "status": "operational",
-        "timestamp": datetime.utcnow().isoformat(),
+        "timestamp": datetime.now(UTC).isoformat(),
         "docs": "/docs"
     }
 
@@ -207,7 +207,7 @@ async def get_current_user_info(current_user: dict = Depends(get_current_user)):
     """獲取當前用戶信息"""
     return {
         "user": current_user,
-        "timestamp": datetime.utcnow().isoformat()
+        "timestamp": datetime.now(UTC).isoformat()
     }
 
 # === 高價值功能模組 API ===
@@ -235,7 +235,7 @@ async def mass_assignment_scan(
         "type": "mass_assignment",
         "status": "started",
         "user": current_user["username"],
-        "start_time": datetime.utcnow(),
+        "start_time": datetime.now(UTC),
         "request": request
     }
     
@@ -246,7 +246,7 @@ async def mass_assignment_scan(
         "scan_id": scan_id,
         "status": "started",
         "message": "Mass Assignment scan initiated",
-        "timestamp": datetime.utcnow(),
+        "timestamp": datetime.now(UTC),
         "estimated_duration": "30-120 seconds"
     }
 
@@ -271,7 +271,7 @@ async def jwt_confusion_scan(
         "type": "jwt_confusion",
         "status": "started",
         "user": current_user["username"],
-        "start_time": datetime.utcnow(),
+        "start_time": datetime.now(UTC),
         "request": request
     }
     
@@ -281,7 +281,7 @@ async def jwt_confusion_scan(
         "scan_id": scan_id,
         "status": "started", 
         "message": "JWT Confusion scan initiated",
-        "timestamp": datetime.utcnow(),
+        "timestamp": datetime.now(UTC),
         "estimated_duration": "15-60 seconds"
     }
 
@@ -306,7 +306,7 @@ async def oauth_confusion_scan(
         "type": "oauth_confusion",
         "status": "started",
         "user": current_user["username"],
-        "start_time": datetime.utcnow(),
+        "start_time": datetime.now(UTC),
         "request": request
     }
     
@@ -316,7 +316,7 @@ async def oauth_confusion_scan(
         "scan_id": scan_id,
         "status": "started",
         "message": "OAuth Confusion scan initiated", 
-        "timestamp": datetime.utcnow(),
+        "timestamp": datetime.now(UTC),
         "estimated_duration": "20-90 seconds"
     }
 
@@ -341,7 +341,7 @@ async def graphql_authz_scan(
         "type": "graphql_authz",
         "status": "started",
         "user": current_user["username"],
-        "start_time": datetime.utcnow(),
+        "start_time": datetime.now(UTC),
         "request": request
     }
     
@@ -351,7 +351,7 @@ async def graphql_authz_scan(
         "scan_id": scan_id,
         "status": "started",
         "message": "GraphQL Authorization scan initiated",
-        "timestamp": datetime.utcnow(),
+        "timestamp": datetime.now(UTC),
         "estimated_duration": "30-120 seconds"
     }
 
@@ -376,7 +376,7 @@ async def ssrf_oob_scan(
         "type": "ssrf_oob",
         "status": "started",
         "user": current_user["username"],
-        "start_time": datetime.utcnow(),
+        "start_time": datetime.now(UTC),
         "request": request
     }
     
@@ -386,7 +386,7 @@ async def ssrf_oob_scan(
         "scan_id": scan_id,
         "status": "started",
         "message": "SSRF OOB scan initiated",
-        "timestamp": datetime.utcnow(),
+        "timestamp": datetime.now(UTC),
         "estimated_duration": "45-180 seconds"
     }
 
@@ -412,7 +412,7 @@ async def get_scan_status(scan_id: str, current_user: dict = Depends(get_current
         "start_time": scan_info["start_time"],
         "result": scan_info.get("result"),
         "error": scan_info.get("error"),
-        "timestamp": datetime.utcnow()
+        "timestamp": datetime.now(UTC)
     }
 
 @app.get("/api/v1/scans")
@@ -433,12 +433,12 @@ async def list_scans(current_user: dict = Depends(get_current_user)):
     return {
         "scans": scans,
         "total": len(scans),
-        "timestamp": datetime.utcnow()
+        "timestamp": datetime.now(UTC)
     }
 
 # === 背景任務執行函數 ===
 
-async def execute_mass_assignment_scan(scan_id: str, request: dict):
+def execute_mass_assignment_scan(scan_id: str, request: dict):
     """執行 Mass Assignment 掃描"""
     try:
         global high_value_manager
@@ -454,14 +454,14 @@ async def execute_mass_assignment_scan(scan_id: str, request: dict):
         
         active_scans[scan_id]["status"] = "completed"
         active_scans[scan_id]["result"] = result.to_dict() if hasattr(result, 'to_dict') else result
-        active_scans[scan_id]["end_time"] = datetime.utcnow()
+        active_scans[scan_id]["end_time"] = datetime.now(UTC)
         
     except Exception as e:
         active_scans[scan_id]["status"] = "failed"
         active_scans[scan_id]["error"] = str(e)
-        active_scans[scan_id]["end_time"] = datetime.utcnow()
+        active_scans[scan_id]["end_time"] = datetime.now(UTC)
 
-async def execute_jwt_confusion_scan(scan_id: str, request: dict):
+def execute_jwt_confusion_scan(scan_id: str, request: dict):
     """執行 JWT Confusion 掃描"""
     try:
         global high_value_manager
@@ -476,14 +476,14 @@ async def execute_jwt_confusion_scan(scan_id: str, request: dict):
         
         active_scans[scan_id]["status"] = "completed"
         active_scans[scan_id]["result"] = result.to_dict() if hasattr(result, 'to_dict') else result
-        active_scans[scan_id]["end_time"] = datetime.utcnow()
+        active_scans[scan_id]["end_time"] = datetime.now(UTC)
         
     except Exception as e:
         active_scans[scan_id]["status"] = "failed"
         active_scans[scan_id]["error"] = str(e)
-        active_scans[scan_id]["end_time"] = datetime.utcnow()
+        active_scans[scan_id]["end_time"] = datetime.now(UTC)
 
-async def execute_oauth_confusion_scan(scan_id: str, request: dict):
+def execute_oauth_confusion_scan(scan_id: str, request: dict):
     """執行 OAuth Confusion 掃描"""
     try:
         global high_value_manager
@@ -500,14 +500,14 @@ async def execute_oauth_confusion_scan(scan_id: str, request: dict):
         
         active_scans[scan_id]["status"] = "completed"
         active_scans[scan_id]["result"] = result.to_dict() if hasattr(result, 'to_dict') else result
-        active_scans[scan_id]["end_time"] = datetime.utcnow()
+        active_scans[scan_id]["end_time"] = datetime.now(UTC)
         
     except Exception as e:
         active_scans[scan_id]["status"] = "failed"
         active_scans[scan_id]["error"] = str(e)
-        active_scans[scan_id]["end_time"] = datetime.utcnow()
+        active_scans[scan_id]["end_time"] = datetime.now(UTC)
 
-async def execute_graphql_authz_scan(scan_id: str, request: dict):
+def execute_graphql_authz_scan(scan_id: str, request: dict):
     """執行 GraphQL AuthZ 掃描"""
     try:
         global high_value_manager
@@ -523,14 +523,14 @@ async def execute_graphql_authz_scan(scan_id: str, request: dict):
         
         active_scans[scan_id]["status"] = "completed"
         active_scans[scan_id]["result"] = result.to_dict() if hasattr(result, 'to_dict') else result
-        active_scans[scan_id]["end_time"] = datetime.utcnow()
+        active_scans[scan_id]["end_time"] = datetime.now(UTC)
         
     except Exception as e:
         active_scans[scan_id]["status"] = "failed"
         active_scans[scan_id]["error"] = str(e)
-        active_scans[scan_id]["end_time"] = datetime.utcnow()
+        active_scans[scan_id]["end_time"] = datetime.now(UTC)
 
-async def execute_ssrf_oob_scan(scan_id: str, request: dict):
+def execute_ssrf_oob_scan(scan_id: str, request: dict):
     """執行 SSRF OOB 掃描"""
     try:
         global high_value_manager
@@ -545,12 +545,12 @@ async def execute_ssrf_oob_scan(scan_id: str, request: dict):
         
         active_scans[scan_id]["status"] = "completed"
         active_scans[scan_id]["result"] = result.to_dict() if hasattr(result, 'to_dict') else result
-        active_scans[scan_id]["end_time"] = datetime.utcnow()
+        active_scans[scan_id]["end_time"] = datetime.now(UTC)
         
     except Exception as e:
         active_scans[scan_id]["status"] = "failed"
         active_scans[scan_id]["error"] = str(e)
-        active_scans[scan_id]["end_time"] = datetime.utcnow()
+        active_scans[scan_id]["end_time"] = datetime.now(UTC)
 
 # === 系統管理端點 ===
 
@@ -576,7 +576,7 @@ async def get_system_stats(current_user: dict = Depends(get_current_user)):
         "scan_types": scan_types,
         "scan_statuses": scan_statuses,
         "uptime": "system_uptime", # 可以添加實際的 uptime 計算
-        "timestamp": datetime.utcnow()
+        "timestamp": datetime.now(UTC)
     }
 
 @app.delete("/api/v1/admin/scans/{scan_id}")
@@ -589,15 +589,17 @@ async def delete_scan(scan_id: str, current_user: dict = Depends(get_current_use
         raise HTTPException(status_code=404, detail="Scan not found")
     
     del active_scans[scan_id]
-    return {"message": f"Scan {scan_id} deleted", "timestamp": datetime.utcnow()}
+    return {"message": f"Scan {scan_id} deleted", "timestamp": datetime.now(UTC)}
 
 # 整合路由模組
 from api.routers import auth, security, admin
+# from api.routers import capabilities  # 暫時禁用 - 啟動時有問題
 
 # 添加路由
 app.include_router(auth.router, prefix="/auth", tags=["Authentication"])
 app.include_router(security.router, prefix="/api/v1/security", tags=["High-Value Security"])
 app.include_router(admin.router, prefix="/api/v1/admin", tags=["System Administration"])
+# app.include_router(capabilities.router, prefix="/api/v1/capabilities", tags=["Capability Execution"])  # 暫時禁用
 
 # 更新主要掃描端點以使用共享存儲
 from api.routers.admin import get_active_scans
@@ -613,11 +615,11 @@ if __name__ == "__main__":
     
     print(f"🚀 Starting AIVA Security Platform API on {host}:{port}")
     print(f"📚 API Documentation: http://{host}:{port}/docs")
-    print(f"🔒 Authentication required for all endpoints except /health")
-    print(f"👤 Default credentials - admin:aiva-admin-2025, user:aiva-user-2025")
+    print("🔒 Authentication required for all endpoints except /health")
+    print("👤 Default credentials - admin:aiva-admin-2025, user:aiva-user-2025")
     
     uvicorn.run(
-        "main:app",
+        app,  # 直接傳遞 app 對象而不是字符串
         host=host,
         port=port,
         reload=debug,

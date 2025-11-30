@@ -1,0 +1,1 @@
+invalid type: string "# Capability: search_techniques_by_keyword\n\nModule: integration\nFunction: search_techniques_by_keyword(self: None, keyword: str, limit: int)\nReturns: list[dict[str, Any]]\n\nDescription: 根據關鍵字搜尋技術\n\nDocumentation:\n根據關鍵字搜尋技術\n\nArgs:\n    keyword: 搜尋關鍵字\n    limit: 返回結果數量限制\n\nReturns:\n    技術列表"代碼

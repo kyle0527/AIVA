@@ -242,5 +242,5 @@ Go 掃描器只需要：
 ## 參考
 
 - Python 調度器: `services/scan/engines/go_engine/dispatcher/python_bridge.py`
-- 新架構文檔: `SCAN_MODULE_RABBITMQ_REMOVAL.md`
+- 架構文檔: `README.md` - v2.1.1 能力元數據驅動架構
 - 命令中心: `services/aiva_common/command_center.py`

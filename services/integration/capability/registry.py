@@ -69,7 +69,7 @@ class CapabilityRegistry:
     - 提供智能能力發現和推薦
     """
     
-    def __init__(self, db_path: str = "capability_registry.db"):
+    def __init__(self, db_path: str = "data/capability_registry.db"):
         self.db_path = db_path
         self._capabilities: Dict[str, CapabilityRecord] = {}
         self._scorecards: Dict[str, CapabilityScorecard] = {}
@@ -280,10 +280,192 @@ class CapabilityRegistry:
             conn.close()
         
         await asyncio.to_thread(store)
+        
+        # 🔄 同步到向量數據庫（用於 RAG 語義搜索）
+        await self._sync_capability_to_vector_db(capability)
+    
+    async def _sync_capability_to_vector_db(self, capability: CapabilityRecord) -> None:
+        """將能力同步到向量數據庫（包含完整的 invocation_metadata）"""
+        try:
+            from services.core.aiva_core.cognitive_core.rag.vector_store import VectorStore
+            from services.core.aiva_core.cognitive_core.internal_loop_connector import InternalLoopConnector
+            from pathlib import Path
+            
+            # 初始化向量存儲
+            persist_dir = Path("data/vector_db/chroma")
+            vector_store = VectorStore(backend="chroma", persist_directory=persist_dir)
+            
+            # 使用 InternalLoopConnector 構建完整的 invocation_metadata
+            connector = InternalLoopConnector(capability_registry=self)
+            
+            # 轉換為字典格式
+            cap_dict = {
+                'id': capability.id,
+                'name': capability.name,
+                'module': capability.module,
+                'description': capability.description,
+                'language': capability.language if isinstance(capability.language, str) else capability.language.value,
+                'parameters': []  # TODO: 從 config 提取參數定義
+            }
+            
+            # 構建 invocation_metadata
+            invocation_metadata = connector._build_invocation_metadata(cap_dict)
+            
+            # 準備文檔文本（用於語義搜索）
+            doc_text = f"{capability.name}\n{capability.description}\n"
+            doc_text += f"Module: {capability.module}\n"
+            doc_text += f"Language: {cap_dict['language']}\n"
+            doc_text += f"Category: {capability.category}"
+            
+            # 準備元數據
+            metadata = {
+                'id': capability.id,
+                'name': capability.name,
+                'module': capability.module,
+                'language': cap_dict['language'],
+                'category': capability.category,
+                'invocation_metadata': invocation_metadata  # ✅ 關鍵：包含調用元數據
+            }
+            
+            # 添加到向量數據庫
+            vector_store.add_document(
+                doc_id=capability.id,
+                text=doc_text,
+                metadata=metadata
+            )
+            
+            logger.info(
+                f"✅ 能力已同步到向量數據庫: {capability.id} "
+                f"(協議: {invocation_metadata['protocol']})"
+            )
+            
+        except Exception as e:
+            logger.warning(
+                f"同步能力到向量數據庫失敗: {capability.id} - {str(e)}"
+            )
     
     async def get_capability(self, capability_id: str) -> Optional[CapabilityRecord]:
         """獲取指定的能力記錄"""
         return await asyncio.to_thread(self._capabilities.get, capability_id)
+    
+    async def record_invocation(
+        self,
+        capability_id: str,
+        success: bool,
+        execution_time_ms: float,
+        error_message: Optional[str] = None,
+        trace_id: Optional[str] = None,
+        metadata: Optional[Dict[str, Any]] = None
+    ) -> None:
+        """
+        記錄能力調用結果（反饋循環核心）
+        
+        Args:
+            capability_id: 能力ID
+            success: 調用是否成功
+            execution_time_ms: 執行時間（毫秒）
+            error_message: 錯誤訊息（如果失敗）
+            trace_id: 追蹤ID
+            metadata: 額外的元數據
+        """
+        import asyncio
+        
+        def record():
+            conn = sqlite3.connect(self.db_path)
+            cursor = conn.cursor()
+            
+            cursor.execute("""
+                INSERT INTO capability_evidence 
+                (capability_id, timestamp, probe_type, success, latency_ms, 
+                 error_message, trace_id, metadata)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+            """, (
+                capability_id,
+                datetime.now().isoformat(),
+                'invocation',  # 調用類型
+                1 if success else 0,
+                int(execution_time_ms),
+                error_message,
+                trace_id,
+                json.dumps(metadata) if metadata else None
+            ))
+            
+            conn.commit()
+            conn.close()
+            
+            logger.debug(
+                f"記錄能力調用: {capability_id} - "
+                f"成功={success}, 耗時={execution_time_ms}ms"
+            )
+        
+        await asyncio.to_thread(record)
+    
+    async def get_invocation_stats(
+        self,
+        capability_id: str,
+        time_window_hours: int = 24
+    ) -> Dict[str, Any]:
+        """
+        獲取能力調用統計（反饋循環核心）
+        
+        Args:
+            capability_id: 能力ID
+            time_window_hours: 統計時間窗口（小時）
+            
+        Returns:
+            Dict: 包含成功率、平均延遲等統計信息
+        """
+        import asyncio
+        
+        def get_stats():
+            conn = sqlite3.connect(self.db_path)
+            cursor = conn.cursor()
+            
+            # 計算時間窗口起始點
+            start_time = (datetime.now() - timedelta(hours=time_window_hours)).isoformat()
+            
+            # 查詢統計數據
+            cursor.execute("""
+                SELECT 
+                    COUNT(*) as total_invocations,
+                    SUM(success) as successful_invocations,
+                    AVG(latency_ms) as avg_latency_ms,
+                    MIN(latency_ms) as min_latency_ms,
+                    MAX(latency_ms) as max_latency_ms
+                FROM capability_evidence
+                WHERE capability_id = ? 
+                  AND timestamp >= ?
+                  AND probe_type = 'invocation'
+            """, (capability_id, start_time))
+            
+            row = cursor.fetchone()
+            conn.close()
+            
+            if not row or row[0] == 0:
+                return {
+                    "capability_id": capability_id,
+                    "time_window_hours": time_window_hours,
+                    "total_invocations": 0,
+                    "success_rate": 0.0,
+                    "avg_latency_ms": 0.0,
+                    "min_latency_ms": 0.0,
+                    "max_latency_ms": 0.0
+                }
+            
+            total, successful, avg_latency, min_latency, max_latency = row
+            
+            return {
+                "capability_id": capability_id,
+                "time_window_hours": time_window_hours,
+                "total_invocations": total,
+                "successful_invocations": successful,
+                "success_rate": (successful / total * 100) if total > 0 else 0.0,
+                "avg_latency_ms": avg_latency or 0.0,
+                "min_latency_ms": min_latency or 0.0,
+                "max_latency_ms": max_latency or 0.0
+            }
+        
+        return await asyncio.to_thread(get_stats)
     
     async def list_capabilities(
         self,

@@ -151,6 +151,14 @@ MAIN_MENU_ITEMS = [
     },
     {
         "key": "4",
+        "name": "AI 能力查詢",
+        "description": "查詢 AIVA 的功能與能力",
+        "icon": "🔍",
+        "handler": "handle_ai_capability_query",
+        "status": "active"
+    },
+    {
+        "key": "5",
         "name": "工具集成",
         "description": "整合新的安全工具",
         "icon": "🔧",
@@ -158,7 +166,7 @@ MAIN_MENU_ITEMS = [
         "status": "development"
     },
     {
-        "key": "5",
+        "key": "6",
         "name": "系統監控",
         "description": "查看系統狀態和日誌",
         "icon": "📊",
@@ -166,7 +174,7 @@ MAIN_MENU_ITEMS = [
         "status": "development"
     },
     {
-        "key": "6",
+        "key": "7",
         "name": "設定配置",
         "description": "調整 AIVA 系統設定",
         "icon": "⚙️",
@@ -174,7 +182,7 @@ MAIN_MENU_ITEMS = [
         "status": "development"
     },
     {
-        "key": "7",
+        "key": "8",
         "name": "報告生成",
         "description": "生成掃描和評估報告",
         "icon": "📄",

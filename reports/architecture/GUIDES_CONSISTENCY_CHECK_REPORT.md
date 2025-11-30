@@ -88,7 +88,7 @@
 | **完整工作流程圖表** | ../docs/COMPLETE_WORKFLOW_VISUALIZATION.md | ✅ 必讀 |
 | **AI 雙閉環自我優化** | ../docs/AI_SELF_OPTIMIZATION_DUAL_LOOP_DESIGN.md | ✅ 核心文檔 |
 | **掃描工作流程與數據流** | ../docs/SCAN_WORKFLOW_AND_DATA_FLOW.md | ✅ 最新 |
-| **數據合約架構** | ../SCAN_MODULE_RABBITMQ_REMOVAL.md | ✅ 最新 |
+| **能力元數據架構** | ../CAPABILITY_METADATA_DATABASE_DESIGN.md | ✅ 最新 |
 | **術語對照表** | ../TERMINOLOGY_GLOSSARY.md | ✅ 必讀 |
 | **實用工具遷移** | ../UTILITY_TOOLS_MIGRATION.md | ✅ 2025-11-22 |
 ```
@@ -289,7 +289,7 @@ guides/
 | 完整工作流程圖表 | `../docs/COMPLETE_WORKFLOW_VISUALIZATION.md` | ✅ 有效 |
 | AI 雙閉環自我優化 | `../docs/AI_SELF_OPTIMIZATION_DUAL_LOOP_DESIGN.md` | ✅ 有效 |
 | 掃描工作流程與數據流 | `../docs/SCAN_WORKFLOW_AND_DATA_FLOW.md` | ✅ 有效 |
-| 數據合約架構 | `../SCAN_MODULE_RABBITMQ_REMOVAL.md` | ✅ 有效 |
+| 能力元數據架構 | `../CAPABILITY_METADATA_DATABASE_DESIGN.md` | ✅ 有效 |
 | 術語對照表 | `../TERMINOLOGY_GLOSSARY.md` | ✅ 有效 |
 | 實用工具遷移 | `../UTILITY_TOOLS_MIGRATION.md` | ✅ 有效 |
 

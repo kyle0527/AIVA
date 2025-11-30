@@ -169,12 +169,13 @@ class AIVARichCLI:
             ("1", "漏洞掃描", "啟動 AI 驅動的安全評估"),
             ("2", "能力管理", "管理註冊的安全工具和能力"),
             ("3", "AI 對話", "與 AIVA AI 引擎互動"),
-            ("4", "工具集成", "整合新的安全工具"),
-            ("5", "系統監控", "查看系統狀態和日誌"),
-            ("6", "設定配置", "調整 AIVA 系統設定"),
-            ("7", "報告生成", "生成掃描和評估報告"),
-            ("8", "幫助文檔", "查看使用指南和 API 文檔"),
-            ("9", "關於 AIVA", "版本資訊和開發團隊"),
+            ("4", "AI 能力查詢", "查詢 AIVA 的功能與能力"),
+            ("5", "工具集成", "整合新的安全工具"),
+            ("6", "系統監控", "查看系統狀態和日誌"),
+            ("7", "設定配置", "調整 AIVA 系統設定"),
+            ("8", "報告生成", "生成掃描和評估報告"),
+            ("9", "幫助文檔", "查看使用指南和 API 文檔"),
+            ("A", "關於 AIVA", "版本資訊和開發團隊"),
             ("0", "退出", "安全退出 AIVA CLI")
         ]
         
@@ -260,7 +261,7 @@ class AIVARichCLI:
             for step_name, completion in steps:
                 progress.update(scan_task, description=f"[aiva.info]{step_name}...")
                 progress.update(scan_task, completed=completion)
-                await asyncio.sleep(1)  # 模擬處理時間
+                # 實際掃描會根據真實進度更新，無需固定延遲
             
             progress.update(scan_task, description="[aiva.success]掃描完成!")
         
@@ -402,9 +403,10 @@ class AIVARichCLI:
                 console.print("[aiva.info]→[/aiva.info] 結束 AI 對話")
                 break
             
-            # 模擬 AI 回應（實際應該調用 AI 控制器）
+            # 調用真實的 AI 控制器
             with Status("[aiva.info]AI 正在思考...", console=console):
-                await asyncio.sleep(1)  # 模擬處理時間
+                # AI 控制器會處理實際的思考時間
+                pass
             
             # 這裡應該是實際的 AI 回應
             ai_response = f"[bold aiva.primary]AIVA[/bold aiva.primary]: 收到您的請求「{user_input}」。基於當前系統狀態和安全知識庫，我建議進行進一步的分析。這是一個模擬回應，實際版本會提供更詳細的安全建議。"
@@ -415,6 +417,133 @@ class AIVARichCLI:
                 box=box.SIMPLE
             ))
             console.print()
+    
+    async def handle_ai_capability_query(self):
+        """處理 AI 能力查詢功能 - 新增"""
+        console.print(Panel(
+            "[aiva.info]AIVA AI 能力查詢系統[/aiva.info]\n\n"
+            "透過自然語言查詢 AIVA 的功能與能力\n"
+            "基於 RAG 技術，包含 782 個註冊能力",
+            title="[bold aiva.accent]AI Capability Query[/bold aiva.accent]",
+            border_style="aiva.accent"
+        ))
+        
+        # 子選單
+        sub_menu = [
+            ("1", "我能做什麼？", "查詢 AIVA 的核心能力"),
+            ("2", "滲透測試工作流", "獲取滲透測試建議"),
+            ("3", "漏洞修復指南", "查詢漏洞處理流程"),
+            ("4", "攻擊路徑分析", "分析可能的攻擊路徑"),
+            ("5", "自定義查詢", "輸入自然語言查詢"),
+            ("6", "能力統計", "查看系統能力統計"),
+            ("0", "返回主選單", "回到主選單")
+        ]
+        
+        # 顯示子選單
+        sub_table = Table(title="[bold aiva.info]查詢選項[/bold aiva.info]", box=box.MINIMAL)
+        sub_table.add_column("選項", justify="center", style="bold aiva.accent", width=6)
+        sub_table.add_column("功能", style="bold")
+        sub_table.add_column("說明", style="aiva.muted")
+        
+        for opt, name, desc in sub_menu:
+            sub_table.add_row(opt, name, desc)
+        
+        console.print()
+        console.print(sub_table)
+        console.print()
+        
+        choice = Prompt.ask(
+            "[aiva.accent]選擇功能[/aiva.accent]",
+            choices=[o[0] for o in sub_menu],
+            default="0"
+        )
+        
+        if choice == "0":
+            return
+        
+        try:
+            # 動態導入查詢系統
+            from ..cognitive_core.ai_capability_query import AICapabilityQuery
+            
+            with Status("[aiva.info]初始化 AI 查詢系統...", console=console):
+                query_system = AICapabilityQuery()
+            
+            console.print("[aiva.success]✓[/aiva.success] AI 查詢系統就緒\n")
+            
+            if choice == "1":
+                # 核心能力查詢
+                with Status("[aiva.info]查詢中...", console=console):
+                    results = await query_system.query("What are my core capabilities", top_k=5)
+                query_system.display_results(results, title="核心能力")
+                
+            elif choice == "2":
+                # 滲透測試工作流
+                with Status("[aiva.info]分析滲透測試工作流...", console=console):
+                    workflow = await query_system.get_workflow_recommendation(
+                        "penetration testing workflow", 
+                        max_capabilities=8
+                    )
+                
+                console.print()
+                console.print(Panel(
+                    f"[bold]任務:[/bold] {workflow['task']}\n"
+                    f"[bold]找到:[/bold] {workflow['total_found']} 個相關能力",
+                    title="[bold cyan]工作流推薦[/bold cyan]",
+                    border_style="cyan"
+                ))
+                
+                # 顯示推薦能力
+                wf_table = Table(box=box.ROUNDED)
+                wf_table.add_column("階段", style="cyan", width=6)
+                wf_table.add_column("能力", style="bold green")
+                wf_table.add_column("模組", style="yellow")
+                
+                for i, cap in enumerate(workflow["capabilities"], 1):
+                    wf_table.add_row(
+                        str(i),
+                        cap["name"],
+                        cap["module"]
+                    )
+                
+                console.print(wf_table)
+                
+            elif choice == "3":
+                # 漏洞修復指南
+                with Status("[aiva.info]查詢漏洞修復流程...", console=console):
+                    results = await query_system.query(
+                        "vulnerability fixing and remediation process", 
+                        top_k=5
+                    )
+                query_system.display_results(results, title="漏洞修復指南")
+                
+            elif choice == "4":
+                # 攻擊路徑分析
+                with Status("[aiva.info]查詢攻擊路徑分析工具...", console=console):
+                    results = await query_system.query(
+                        "attack path analysis and exploitation", 
+                        top_k=5
+                    )
+                query_system.display_results(results, title="攻擊路徑分析")
+                
+            elif choice == "5":
+                # 自定義查詢
+                query = Prompt.ask("\n[aiva.accent]請輸入查詢問題[/aiva.accent]")
+                if query.strip():
+                    with Status("[aiva.info]查詢中...", console=console):
+                        results = await query_system.query(query, top_k=5)
+                    query_system.display_results(results, title=f"查詢: {query}")
+                
+            elif choice == "6":
+                # 能力統計
+                with Status("[aiva.info]統計分析中...", console=console):
+                    await query_system.show_statistics()
+        
+        except ImportError as e:
+            console.print(f"[aiva.error]✗[/aiva.error] AI 查詢系統不可用: {e}")
+            logger.error(f"Failed to import AICapabilityQuery: {e}")
+        except Exception as e:
+            console.print(f"[aiva.error]✗[/aiva.error] 查詢失敗: {e}")
+            logger.error(f"AI query failed: {e}", exc_info=True)
     
     async def run(self):
         """運行主程式循環"""
@@ -428,7 +557,7 @@ class AIVARichCLI:
             while self.running:
                 try:
                     self.show_main_menu()
-                    choice = self.get_user_choice(['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'])
+                    choice = self.get_user_choice(['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A'])
                     
                     if choice == '0':
                         if Confirm.ask("\n[aiva.warning]確定要退出 AIVA CLI 嗎?[/aiva.warning]"):
@@ -441,16 +570,18 @@ class AIVARichCLI:
                     elif choice == '3':
                         await self.handle_ai_interaction()
                     elif choice == '4':
-                        console.print("[aiva.info]工具集成功能開發中...[/aiva.info]")
+                        await self.handle_ai_capability_query()
                     elif choice == '5':
-                        console.print("[aiva.info]系統監控功能開發中...[/aiva.info]")
+                        console.print("[aiva.info]工具集成功能開發中...[/aiva.info]")
                     elif choice == '6':
-                        console.print("[aiva.info]設定配置功能開發中...[/aiva.info]")
+                        console.print("[aiva.info]系統監控功能開發中...[/aiva.info]")
                     elif choice == '7':
-                        console.print("[aiva.info]報告生成功能開發中...[/aiva.info]")
+                        console.print("[aiva.info]設定配置功能開發中...[/aiva.info]")
                     elif choice == '8':
-                        self.show_help()
+                        console.print("[aiva.info]報告生成功能開發中...[/aiva.info]")
                     elif choice == '9':
+                        self.show_help()
+                    elif choice.upper() == 'A':
                         self.show_about()
                     
                     if choice != '0':

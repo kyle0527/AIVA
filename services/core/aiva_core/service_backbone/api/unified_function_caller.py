@@ -161,6 +161,24 @@ class UnifiedFunctionCaller:
             ),
         }
 
+    async def call_python(
+        self, module_name: str, function_name: str, parameters: dict[str, Any]
+    ) -> FunctionCallResult:
+        """調用 Python 模組 (別名方法)"""
+        return await self.call_function(module_name, function_name, parameters)
+    
+    async def call_http(
+        self, module_name: str, function_name: str, parameters: dict[str, Any]
+    ) -> FunctionCallResult:
+        """調用 HTTP API 模組 (別名方法)"""
+        return await self.call_function(module_name, function_name, parameters)
+    
+    async def call_grpc(
+        self, module_name: str, function_name: str, parameters: dict[str, Any]
+    ) -> FunctionCallResult:
+        """調用 gRPC 模組 (別名方法)"""
+        return await self.call_function(module_name, function_name, parameters)
+
     async def call_function(
         self, module_name: str, function_name: str, parameters: dict[str, Any]
     ) -> FunctionCallResult:
@@ -289,15 +307,16 @@ class UnifiedFunctionCaller:
                     return result
 
             elif endpoint.name == "function_ssrf":
-                # SSRF 模組調用
-                target_url = parameters.get("target_url", "")
-                # 模擬 SSRF 檢測結果
-                return {
-                    "target": target_url,
-                    "ssrf_found": False,
-                    "internal_access": [],
-                    "checked_payloads": 15,
-                }
+                from services.function.function_ssrf.aiva_func_ssrf.smart_ssrf_detector import (
+                    SmartSSRFDetector,
+                )
+
+                detector = SmartSSRFDetector()
+
+                if function_name == "detect_ssrf":
+                    target_url = parameters.get("target_url", "")
+                    result = await detector.detect_ssrf_vulnerabilities(target_url)
+                    return result
 
             return None
 
@@ -322,83 +341,15 @@ class UnifiedFunctionCaller:
                     "module": endpoint.name,
                 }
 
-                # 模擬 HTTP 調用（實際部署時會是真實請求）
-                if endpoint.language == "Go":
-                    if (
-                        endpoint.name == "SSRFDetector"
-                        and function_name == "detect_ssrf"
-                    ):
-                        return {
-                            "target": parameters.get("target_url", ""),
-                            "ssrf_vulnerabilities": [],
-                            "internal_endpoints_tested": [
-                                "169.254.169.254",
-                                "localhost",
-                                "127.0.0.1",
-                            ],
-                            "risk_level": "low",
-                            "response_time_ms": 1250,
-                        }
-                    elif (
-                        endpoint.name == "SCAAnalyzer"
-                        and function_name == "analyze_dependencies"
-                    ):
-                        return {
-                            "project_path": parameters.get("project_path", ""),
-                            "total_dependencies": 42,
-                            "vulnerable_dependencies": 3,
-                            "critical_vulnerabilities": 1,
-                            "high_vulnerabilities": 2,
-                            "risk_score": 7.5,
-                        }
-                    elif (
-                        endpoint.name == "CSPMChecker"
-                        and function_name == "check_cloud_config"
-                    ):
-                        return {
-                            "cloud_provider": parameters.get("provider", "aws"),
-                            "total_resources": 128,
-                            "compliant_resources": 95,
-                            "non_compliant_resources": 33,
-                            "compliance_score": 74.2,
-                            "critical_issues": 5,
-                        }
-                    elif (
-                        endpoint.name == "AuthAnalyzer"
-                        and function_name == "analyze_auth"
-                    ):
-                        return {
-                            "target": parameters.get("target_url", ""),
-                            "auth_mechanisms": ["Basic", "Bearer", "Session"],
-                            "vulnerabilities": ["weak_passwords", "no_mfa"],
-                            "bypass_attempts": 8,
-                            "success_rate": 0.125,
-                        }
-
-                elif endpoint.language == "TypeScript":
-                    if (
-                        endpoint.name == "NodeScanner"
-                        and function_name == "scan_frontend"
-                    ):
-                        return {
-                            "target": parameters.get("target_url", ""),
-                            "dom_vulnerabilities": [
-                                {
-                                    "type": "dom_xss",
-                                    "element": "input#search",
-                                    "severity": "medium",
-                                }
-                            ],
-                            "js_libraries": ["react-18.2.0", "lodash-4.17.21"],
-                            "security_headers": {
-                                "csp": "missing",
-                                "hsts": "present",
-                                "x-frame-options": "present",
-                            },
-                            "performance_score": 85,
-                        }
-
-                return None
+                # 發送真實的 HTTP POST 請求
+                async with session.post(url, json=payload, timeout=aiohttp.ClientTimeout(total=1800)) as response:
+                    if response.status == 200:
+                        result = await response.json()
+                        return result
+                    else:
+                        error_text = await response.text()
+                        self.logger.error(f"HTTP call to {url} failed: {response.status} - {error_text}")
+                        return None
 
         except Exception as e:
             self.logger.error(f"HTTP module call failed: {e}")

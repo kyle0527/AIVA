@@ -13,7 +13,7 @@ from aiva_common.enums import ProgrammingLanguage
 
 class DatabaseConfig(BaseModel):
     """資料庫配置"""
-    path: str = Field(default="capability_registry.db", description="SQLite 資料庫路徑")
+    path: str = Field(default="data/capability_registry.db", description="SQLite 資料庫路徑")
     backup_enabled: bool = Field(default=True, description="是否啟用備份")
     backup_interval_hours: int = Field(default=24, description="備份間隔(小時)")
     max_backups: int = Field(default=7, description="最大備份數量")

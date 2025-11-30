@@ -4,6 +4,7 @@ Knowledge Base - 知識庫類別
 為 VectorStore 提供高級抽象接口，支援 RAG 引擎所需的知識管理功能
 """
 
+import hashlib
 import logging
 from typing import Any, Dict, List, Optional
 
@@ -70,8 +71,19 @@ class KnowledgeBase:
         """
         try:
             metadata = metadata or {}
-            # 使用 VectorStore 的實際方法
-            doc_id = f"kb_{hash(content)}"
+            # 使用穩定的 SHA256 哈希生成唯一 ID
+            # 如果 metadata 包含能力標識，使用更語義化的 ID
+            if metadata.get("capability_name") and metadata.get("module"):
+                cap_name = metadata["capability_name"]
+                module = metadata["module"]
+                file_path = metadata.get("file_path", "")
+                # 使用 module + capability_name + file_path 生成穩定ID
+                stable_key = f"{module}::{cap_name}::{file_path}"
+                doc_id = f"kb_{hashlib.sha256(stable_key.encode()).hexdigest()[:16]}"
+            else:
+                # 降級方案: 使用內容哈希
+                doc_id = f"kb_{hashlib.sha256(content.encode()).hexdigest()[:16]}"
+            
             self.vector_store.add_document(doc_id, content, metadata)
             return True
         except Exception as e:

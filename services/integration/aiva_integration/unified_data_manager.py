@@ -31,7 +31,7 @@ from services.aiva_common.enums import Severity, Confidence
 from services.aiva_common.schemas import FindingPayload
 
 # 本地模組
-from ..config import (
+from .config import (
     ATTACK_GRAPH_FILE,
     EXPERIENCE_DB_URL,
     POSTGRES_DSN,

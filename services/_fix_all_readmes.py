@@ -34,7 +34,7 @@ class ReadmeHierarchyFixer:
         for level in self.readmes_by_level:
             self.readmes_by_level[level].sort()
         
-        print(f"📊 掃描完成:")
+        print("📊 掃描完成:")
         for level in sorted(self.readmes_by_level.keys()):
             count = len(self.readmes_by_level[level])
             print(f"   Level {level}: {count} 個 README")
@@ -88,18 +88,17 @@ class ReadmeHierarchyFixer:
             for pattern in broken_links:
                 if re.search(pattern, content):
                     # 只移除連結，保留文字
-                    content = re.sub(pattern, lambda m: re.search(r'\[([^\]]+)\]', m.group(0)).group(1), content)
-                    fixes_applied.append(f"移除損壞連結: {pattern[:30]}...")
+                    match_obj = re.search(r'\[([^\]]+)\]', pattern)
+                    if match_obj:
+                        content = re.sub(pattern, match_obj.group(1), content)
+                        fixes_applied.append(f"移除損壞連結: {pattern[:30]}...")
             
             # 5. 修復導航連結（確保正確指向上層）
-            # 計算相對路徑
             rel_path = readme_path.relative_to(self.services_root)
             level = len(rel_path.parts) - 1
             
-            if level > 1:  # 第二層以上才需要返回連結
-                parent_path = rel_path.parent
-                # 簡單處理：確保有返回上層的導航
-                # 這部分可以根據實際需要細化
+            # 未來可在此添加返回上層的導航邏輯（第二層以上）
+            _ = level  # 預留供未來使用
             
             # 6. 更新最後更新時間
             if '最後更新' in content or '🔄' in content:

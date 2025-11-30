@@ -29,6 +29,7 @@ class VectorStore:
         backend: str = "memory",
         persist_directory: Path | None = None,
         embedding_model: str = "sentence-transformers/all-MiniLM-L6-v2",
+        collection_name: str = "aiva_capabilities",
     ) -> None:
         """初始化向量存儲
 
@@ -36,10 +37,12 @@ class VectorStore:
             backend: 後端類型 ("memory", "chroma", "faiss")
             persist_directory: 持久化目錄
             embedding_model: 嵌入模型名稱
+            collection_name: ChromaDB collection 名稱
         """
         self.backend = backend
         self.persist_directory = persist_directory or Path("./data/vectors")
         self.embedding_model_name = embedding_model
+        self.collection_name = collection_name
 
         self.vectors: dict[str, np.ndarray] = {}
         self.metadata: dict[str, dict[str, Any]] = {}
@@ -47,6 +50,9 @@ class VectorStore:
 
         # 嵌入模型（延遲加載）
         self._embedding_model: Any | None = None
+        
+        # ChromaDB collection（延遲加載）
+        self.collection: Any | None = None
 
         self._initialize_backend()
 
@@ -68,7 +74,15 @@ class VectorStore:
                 self.client = chromadb.PersistentClient(
                     path=str(self.persist_directory)
                 )
-                logger.info(f"ChromaDB initialized at {self.persist_directory}")
+                # 獲取或創建 collection
+                self.collection = self.client.get_or_create_collection(
+                    name=self.collection_name,
+                    metadata={"description": "AIVA capabilities knowledge base"}
+                )
+                logger.info(
+                    f"ChromaDB initialized at {self.persist_directory}, "
+                    f"collection '{self.collection_name}' ready"
+                )
 
             except ImportError:
                 logger.warning(
@@ -147,25 +161,35 @@ class VectorStore:
             text: 文檔文本
             metadata: 元數據
         """
-        # 生成嵌入
-        model = self._get_embedding_model()
-
-        # 檢查是否為 SentenceTransformer 模型
-        if hasattr(model, 'encode'):
-            # 使用 encode 方法（SentenceTransformer）
-            embedding = model.encode(text, convert_to_numpy=True)
-        elif callable(model):
-            # 使用簡單嵌入函數
-            embedding = model(text)
+        if self.backend == "chroma" and self.collection is not None:
+            # 使用 ChromaDB API
+            # ChromaDB 自動處理嵌入，不需要手動生成
+            self.collection.add(
+                ids=[doc_id],
+                documents=[text],
+                metadatas=[metadata or {}]
+            )
+            logger.debug(f"Added document {doc_id} to ChromaDB collection")
         else:
-            raise ValueError(f"Unknown embedding model type: {type(model)}")
+            # Memory backend: 手動生成嵌入
+            model = self._get_embedding_model()
 
-        # 存儲
-        self.vectors[doc_id] = embedding
-        self.documents[doc_id] = text
-        self.metadata[doc_id] = metadata or {}
+            # 檢查是否為 SentenceTransformer 模型
+            if hasattr(model, 'encode'):
+                # 使用 encode 方法（SentenceTransformer）
+                embedding = model.encode(text, convert_to_numpy=True)
+            elif callable(model):
+                # 使用簡單嵌入函數
+                embedding = model(text)
+            else:
+                raise ValueError(f"Unknown embedding model type: {type(model)}")
 
-        logger.debug(f"Added document {doc_id} to vector store")
+            # 存儲到內存
+            self.vectors[doc_id] = embedding
+            self.documents[doc_id] = text
+            self.metadata[doc_id] = metadata or {}
+
+            logger.debug(f"Added document {doc_id} to memory vector store")
 
     def add_batch(
         self,
@@ -183,10 +207,20 @@ class VectorStore:
         if metadatas is None:
             metadatas = [{}] * len(doc_ids)
 
-        for doc_id, text, metadata in zip(doc_ids, texts, metadatas, strict=False):
-            self.add_document(doc_id, text, metadata)
+        if self.backend == "chroma" and self.collection is not None:
+            # 使用 ChromaDB 批量 API（更高效）
+            self.collection.add(
+                ids=doc_ids,
+                documents=texts,
+                metadatas=metadatas
+            )
+            logger.info(f"Added {len(doc_ids)} documents to ChromaDB collection")
+        else:
+            # Memory backend: 逐個添加
+            for doc_id, text, metadata in zip(doc_ids, texts, metadatas, strict=False):
+                self.add_document(doc_id, text, metadata)
 
-        logger.info(f"Added {len(doc_ids)} documents to vector store")
+            logger.info(f"Added {len(doc_ids)} documents to memory vector store")
 
     def search(
         self,
@@ -204,43 +238,78 @@ class VectorStore:
         Returns:
             搜索結果列表，每個結果包含 doc_id, text, metadata, score
         """
-        # 生成查詢嵌入
-        model = self._get_embedding_model()
-
-        # 檢查是否為 SentenceTransformer 模型
-        if hasattr(model, 'encode'):
-            query_embedding = model.encode(query, convert_to_numpy=True)
-        elif callable(model):
-            query_embedding = model(query)
-        else:
-            raise ValueError(f"Unknown embedding model type: {type(model)}")
-
-        # 計算相似度
-        similarities = []
-
-        for doc_id, doc_embedding in self.vectors.items():
-            # 應用過濾器
-            if filter_metadata:
-                doc_meta = self.metadata.get(doc_id, {})
-                if not all(doc_meta.get(k) == v for k, v in filter_metadata.items()):
-                    continue
-
-            # 計算餘弦相似度
-            similarity = np.dot(query_embedding, doc_embedding)
-
-            similarities.append(
-                {
-                    "doc_id": doc_id,
-                    "text": self.documents[doc_id],
-                    "metadata": self.metadata[doc_id],
-                    "score": float(similarity),
-                }
+        if self.backend == "chroma" and self.collection is not None:
+            # 使用 ChromaDB API 查詢
+            where_filter = filter_metadata if filter_metadata else None
+            
+            results = self.collection.query(
+                query_texts=[query],
+                n_results=top_k,
+                where=where_filter  # ChromaDB 元數據過濾
             )
+            
+            # 轉換為統一格式
+            formatted_results = []
+            if results and results.get('ids') and len(results['ids']) > 0:
+                ids = results['ids'][0]
+                documents = results.get('documents', [[]])[0]
+                metadatas = results.get('metadatas', [[]])[0]
+                distances = results.get('distances', [[]])[0]
+                
+                for i, doc_id in enumerate(ids):
+                    # ChromaDB 返回距離（越小越相似），轉換為相似度分數
+                    distance = distances[i] if i < len(distances) else 0.0
+                    score = 1.0 / (1.0 + distance)  # 轉換為 0-1 之間的分數
+                    
+                    formatted_results.append({
+                        "doc_id": doc_id,
+                        "text": documents[i] if i < len(documents) else "",
+                        "metadata": metadatas[i] if i < len(metadatas) else {},
+                        "score": float(score),
+                    })
+            
+            logger.debug(f"ChromaDB query returned {len(formatted_results)} results")
+            return formatted_results
+        
+        else:
+            # Memory backend: 手動計算相似度
+            model = self._get_embedding_model()
 
-        # 排序並返回 top_k
-        similarities.sort(key=lambda x: float(x.get("score", 0.0)), reverse=True)  # type: ignore[arg-type]
+            # 檢查是否為 SentenceTransformer 模型
+            if hasattr(model, 'encode'):
+                query_embedding = model.encode(query, convert_to_numpy=True)
+            elif callable(model):
+                query_embedding = model(query)
+            else:
+                raise ValueError(f"Unknown embedding model type: {type(model)}")
 
-        return similarities[:top_k]
+            # 計算相似度
+            similarities = []
+
+            for doc_id, doc_embedding in self.vectors.items():
+                # 應用過濾器
+                if filter_metadata:
+                    doc_meta = self.metadata.get(doc_id, {})
+                    if not all(doc_meta.get(k) == v for k, v in filter_metadata.items()):
+                        continue
+
+                # 計算餘弦相似度
+                similarity = np.dot(query_embedding, doc_embedding)
+
+                similarities.append(
+                    {
+                        "doc_id": doc_id,
+                        "text": self.documents[doc_id],
+                        "metadata": self.metadata[doc_id],
+                        "score": float(similarity),
+                    }
+                )
+
+            # 排序並返回 top_k
+            similarities.sort(key=lambda x: float(x.get("score", 0.0)), reverse=True)  # type: ignore[arg-type]
+
+            logger.debug(f"Memory search returned {len(similarities[:top_k])} results")
+            return similarities[:top_k]
 
     def delete_document(self, doc_id: str) -> bool:
         """刪除文檔
@@ -329,6 +398,17 @@ class VectorStore:
 
         logger.info(f"Loaded {len(self.vectors)} documents from {load_path}")
 
+    def count(self) -> int:
+        """獲取文檔數量
+
+        Returns:
+            文檔總數
+        """
+        if self.backend == "chroma" and self.collection is not None:
+            return self.collection.count()
+        else:
+            return len(self.vectors)
+
     def get_statistics(self) -> dict[str, Any]:
         """獲取統計信息
 
@@ -336,8 +416,9 @@ class VectorStore:
             統計信息字典
         """
         return {
-            "total_documents": len(self.vectors),
+            "total_documents": self.count(),
             "backend": self.backend,
             "embedding_model": self.embedding_model_name,
             "persist_directory": str(self.persist_directory),
+            "collection_name": getattr(self, 'collection_name', 'N/A'),
         }

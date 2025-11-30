@@ -372,7 +372,7 @@ class BizLogicAttackExecutor:
         
         return findings
     
-    # === 模擬 HTTP 請求方法（實際環境中應替換為真實 HTTP 客戶端） ===
+    # === 真實 HTTP 請求方法 ===
     
     async def _send_price_manipulation_request(
         self,
@@ -380,12 +380,27 @@ class BizLogicAttackExecutor:
         product_id: int,
         price: float,
     ) -> bool:
-        """發送價格操縱請求（模擬）"""
-        # TODO: 實際環境中使用 httpx 或 aiohttp
-        await asyncio.sleep(0.1)  # 模擬網絡延遲
-        
-        # 模擬：負數價格通常能成功繞過驗證
-        return price < 0 or price == 0
+        """發送價格操縱請求（真實 HTTP 調用）"""
+        try:
+            from services.core.aiva_core.service_backbone.api.unified_function_caller import get_unified_caller
+            
+            caller = get_unified_caller()
+            result = await caller.call_function(
+                module_name="function_price_manipulation",
+                function_name="test_price_manipulation",
+                parameters={
+                    "target_url": target_url,
+                    "product_id": product_id,
+                    "price": price,
+                }
+            )
+            
+            if result and result.success:
+                return result.result.get("vulnerable", False)
+            return False
+        except Exception as e:
+            logger.error(f"Price manipulation request failed: {e}")
+            return False
     
     async def _send_idor_request(
         self,
@@ -393,45 +408,106 @@ class BizLogicAttackExecutor:
         resource_type: str,
         user_id: int,
     ) -> bool:
-        """發送 IDOR 請求（模擬）"""
-        await asyncio.sleep(0.1)
-        
-        # 模擬：某些用戶 ID 可未授權訪問
-        return user_id in [1, 2, 3]
+        """發送 IDOR 請求（真實 HTTP 調用）"""
+        try:
+            # 調用 unified_function_caller 執行真實的 IDOR 檢測
+            from services.core.aiva_core.service_backbone.api.unified_function_caller import get_unified_caller
+            
+            caller = get_unified_caller()
+            result = await caller.call_function(
+                module_name="function_idor",
+                function_name="test_idor",
+                parameters={
+                    "target_url": target_url,
+                    "resource_type": resource_type,
+                    "user_id": user_id,
+                }
+            )
+            
+            if result and result.success:
+                return result.result.get("vulnerable", False)
+            return False
+        except Exception as e:
+            logger.error(f"IDOR request failed: {e}")
+            return False
     
     async def _send_workflow_bypass_request(
         self,
         target_url: str,
         workflow_type: str,
     ) -> bool:
-        """發送工作流繞過請求（模擬）"""
-        await asyncio.sleep(0.1)
-        
-        # 模擬：某些工作流可繞過
-        return workflow_type == "checkout"
+        """發送工作流繞過請求（真實 HTTP 調用）"""
+        try:
+            from services.core.aiva_core.service_backbone.api.unified_function_caller import get_unified_caller
+            
+            caller = get_unified_caller()
+            result = await caller.call_function(
+                module_name="function_bizlogic",
+                function_name="test_workflow_bypass",
+                parameters={
+                    "target_url": target_url,
+                    "workflow_type": workflow_type,
+                }
+            )
+            
+            if result and result.success:
+                return result.result.get("bypassable", False)
+            return False
+        except Exception as e:
+            logger.error(f"Workflow bypass request failed: {e}")
+            return False
     
     async def _send_race_condition_request(
         self,
         target_url: str,
         endpoint: str,
     ) -> bool:
-        """發送競態條件請求（模擬）"""
-        await asyncio.sleep(0.05)
-        
-        # 模擬：有一定概率成功
-        import random
-        return random.random() > 0.7
+        """發送競態條件請求（真實 HTTP 調用）"""
+        try:
+            from services.core.aiva_core.service_backbone.api.unified_function_caller import get_unified_caller
+            
+            caller = get_unified_caller()
+            result = await caller.call_function(
+                module_name="function_race_condition",
+                function_name="test_race_condition",
+                parameters={
+                    "target_url": target_url,
+                    "endpoint": endpoint,
+                }
+            )
+            
+            if result and result.success:
+                return result.result.get("race_condition_found", False)
+            return False
+        except Exception as e:
+            logger.error(f"Race condition request failed: {e}")
+            return False
     
     async def _send_coupon_request(
         self,
         target_url: str,
         coupon_code: str,
     ) -> bool:
-        """發送優惠券請求（模擬）"""
-        await asyncio.sleep(0.1)
-        
-        # 模擬：優惠券可重複使用
-        return True
+        """發送優惠券請求（真實 HTTP 調用）"""
+        try:
+            from services.core.aiva_core.service_backbone.api.unified_function_caller import get_unified_caller
+            
+            caller = get_unified_caller()
+            result = await caller.call_function(
+                module_name="function_coupon",
+                function_name="test_coupon_reuse",
+                parameters={
+                    "target_url": target_url,
+                    "coupon_code": coupon_code,
+                }
+            )
+            
+            if result and result.success:
+                return result.result.get("reusable", False)
+            return False
+        except Exception as e:
+            logger.error(f"Coupon request failed: {e}")
+            return False
 
 
 # === 整合示例 ===

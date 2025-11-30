@@ -8,7 +8,7 @@ environment: "development"  # development, staging, production
 
 # 資料庫配置
 database:
-  path: "capability_registry.db"
+  path: "data/capability_registry.db"
   backup_enabled: true
   backup_interval_hours: 24
   max_backups: 7

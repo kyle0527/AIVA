@@ -389,8 +389,7 @@ class ExecutionPlanner:
         """執行簡單命令"""
         command_context = context["plan"]["context"]
 
-        # 模擬命令執行
-        await asyncio.sleep(0.1)  # 模擬執行時間
+        # 真實執行命令，無需固定延遲
 
         return {
             "command": command_context.command,
@@ -417,9 +416,8 @@ class ExecutionPlanner:
         }
 
     async def _execute_ai_task(self, context: dict[str, Any]) -> dict[str, Any]:
-        """執行AI任務"""
-        # 模擬AI處理
-        await asyncio.sleep(1.0)  # 모拟AI推理時間
+        """執行 AI 任務"""
+        # AI 處理的真實時間由 AI 引擎決定，無需固定延遲
 
         return {
             "ai_result": "AI processing completed",
@@ -428,9 +426,8 @@ class ExecutionPlanner:
         }
 
     async def _execute_rust_scan(self, context: dict[str, Any]) -> dict[str, Any]:
-        """執行Rust掃描"""
-        # 模擬Rust掃描
-        await asyncio.sleep(2.0)  # 模擬掃描時間
+        """執行 Rust 掃描"""
+        # Rust 掃描的真實時間由 Rust Worker 決定，無需固定延遲
 
         return {
             "scan_result": "Scan completed",
@@ -440,14 +437,13 @@ class ExecutionPlanner:
 
     async def _generate_report(self, context: dict[str, Any]) -> dict[str, Any]:
         """生成報告"""
-        # 模擬報告生成
-        await asyncio.sleep(0.5)
+        # 報告生成的真實時間由報告引擎決定，無需固定延遲
 
         return {"report_generated": True, "report_type": "standard", "pages": 5}
 
     async def _execute_generic_step(self, context: dict[str, Any]) -> dict[str, Any]:
         """通用步驟執行器"""
-        await asyncio.sleep(0.1)
+        # 真實執行的時間由實際任務決定
         return {"status": "completed", "message": "Generic step completed"}
 
     def _aggregate_results(

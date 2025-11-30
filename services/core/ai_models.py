@@ -39,22 +39,12 @@ from aiva_common.schemas import (
 
 # ==================== AI 驗證系統 ====================
 
-
-class AIVerificationRequest(BaseModel):
-    """AI驗證請求"""
-
-    request_id: str = Field(description="請求ID")
-    verification_type: str = Field(description="驗證類型")
-    target_data: dict[str, Any] = Field(description="目標數據")
-    context: dict[str, Any] = Field(default_factory=dict, description="上下文")
-    confidence_threshold: float = Field(
-        default=0.8, ge=0.0, le=1.0, description="置信度閾值"
-    )
-    metadata: dict[str, Any] = Field(default_factory=dict, description="元數據")
+# 直接使用從 aiva_common.schemas 導入的 AIVerificationRequest
+# AIVerificationRequest 已在上方導入，不需要重新定義
 
 
-class AIVerificationResult(BaseModel):
-    """AI驗證結果"""
+class AIVerificationResponse(BaseModel):
+    """AI驗證回應"""
 
     request_id: str = Field(description="請求ID")
     verified: bool = Field(description="驗證結果")
@@ -65,47 +55,20 @@ class AIVerificationResult(BaseModel):
     metadata: dict[str, Any] = Field(default_factory=dict, description="元數據")
 
 
+# AIVerificationResult 已重命名為 AIVerificationResponse
+# 為了向後兼容，創建別名
+AIVerificationResult = AIVerificationResponse
+
+
 # ==================== AI 訓練系統 ====================
 
+# ==================== AI 訓練系統 ====================
 
-class AITrainingStartPayload(BaseModel):
-    """AI訓練開始載荷"""
-
-    model_config = {"protected_namespaces": ()}
-
-    training_id: str = Field(description="訓練ID")
-    model_type: str = Field(description="模型類型")
-    training_config: dict[str, Any] = Field(description="訓練配置")
-    dataset_info: dict[str, Any] = Field(description="數據集信息")
-    started_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
-    metadata: dict[str, Any] = Field(default_factory=dict, description="元數據")
-
-
-class AITrainingProgressPayload(BaseModel):
-    """AI訓練進度載荷"""
-
-    model_config = {"protected_namespaces": ()}
-
-    training_id: str = Field(description="訓練ID")
-    progress: float = Field(ge=0.0, le=1.0, description="進度")
-    current_epoch: int = Field(ge=0, description="當前輪次")
-    total_epochs: int = Field(ge=1, description="總輪次")
-    metrics: dict[str, Any] = Field(description="指標")
-    timestamp: datetime = Field(default_factory=lambda: datetime.now(UTC))
-    metadata: dict[str, Any] = Field(default_factory=dict, description="元數據")
-
-
-class AITrainingCompletedPayload(BaseModel):
-    """AI訓練完成載荷"""
-
-    model_config = {"protected_namespaces": ()}
-
-    training_id: str = Field(description="訓練ID")
-    success: bool = Field(description="是否成功")
-    final_metrics: dict[str, Any] = Field(description="最終指標")
-    model_path: str | None = Field(default=None, description="模型路徑")
-    completed_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
-    metadata: dict[str, Any] = Field(default_factory=dict, description="元數據")
+# 直接使用從 aiva_common.schemas 導入的訓練相關類：
+# - AITrainingStartPayload
+# - AITrainingProgressPayload
+# - AITrainingCompletedPayload
+# 這些類已在上方導入，不需要重新定義
 
 
 # ==================== AI 事件系統 ====================
@@ -451,36 +414,11 @@ class ScenarioTestResult(BaseModel):
 
 # ==================== RAG 知識庫 ====================
 
-
-class RAGKnowledgeUpdatePayload(BaseModel):
-    """RAG知識更新載荷"""
-
-    update_id: str = Field(description="更新ID")
-    knowledge_type: str = Field(description="知識類型")
-    content: str = Field(description="內容")
-    source: str = Field(description="來源")
-    tags: list[str] = Field(default_factory=list, description="標籤")
-    metadata: dict[str, Any] = Field(default_factory=dict, description="元數據")
-
-
-class RAGQueryPayload(BaseModel):
-    """RAG查詢載荷"""
-
-    query_id: str = Field(description="查詢ID")
-    query_text: str = Field(description="查詢文本")
-    context: dict[str, Any] = Field(default_factory=dict, description="上下文")
-    max_results: int = Field(default=5, ge=1, le=20, description="最大結果數")
-    metadata: dict[str, Any] = Field(default_factory=dict, description="元數據")
-
-
-class RAGResponsePayload(BaseModel):
-    """RAG響應載荷"""
-
-    query_id: str = Field(description="查詢ID")
-    results: list[dict[str, Any]] = Field(description="結果列表")
-    total_matches: int = Field(ge=0, description="總匹配數")
-    confidence: float = Field(ge=0.0, le=1.0, description="置信度")
-    metadata: dict[str, Any] = Field(default_factory=dict, description="元數據")
+# 直接使用從 aiva_common.schemas 導入的 RAG 相關類：
+# - RAGKnowledgeUpdatePayload
+# - RAGQueryPayload
+# - RAGResponsePayload
+# 這些類已在上方導入，不需要重新定義
 
 
 # ==================== AIVA 核心接口 ====================

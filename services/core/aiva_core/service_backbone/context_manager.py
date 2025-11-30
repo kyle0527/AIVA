@@ -51,10 +51,10 @@ class ContextManager:
         self.logger.debug(f"Created context: {context_id}")
         return context_id
 
-    async def _update_session(
+    async def _update_session(  # type: ignore[misc]
         self, session_id: str, context_id: str, user_id: str | None
     ):
-        """更新會話信息"""
+        """更新會話信息 - async保留供未來異步資料庫寫入擴展"""
         if session_id not in self._sessions:
             self._sessions[session_id] = {
                 "created_at": time.time(),
@@ -118,14 +118,14 @@ class ContextManager:
                 return history.copy()
         return []
 
-    async def get_session_contexts(self, session_id: str) -> list[str]:
-        """獲取會話的所有上下文ID"""
+    async def get_session_contexts(self, session_id: str) -> list[str]:  # type: ignore[misc]
+        """獲取會話的所有上下文ID - async保留供未來異步查詢擴展"""
         if session_id in self._sessions:
             return self._sessions[session_id]["contexts"].copy()
         return []
 
-    async def get_session_info(self, session_id: str) -> dict[str, Any] | None:
-        """獲取會話信息"""
+    async def get_session_info(self, session_id: str) -> dict[str, Any] | None:  # type: ignore[misc]
+        """獲取會話信息 - async保留供未來分散式查詢擴展"""
         return self._sessions.get(session_id)
 
     async def cleanup_context(self, context_id: str):
@@ -182,8 +182,8 @@ class ContextManager:
         if expired_sessions:
             self.logger.info(f"Cleaned up {len(expired_sessions)} expired sessions")
 
-    async def get_context_stats(self) -> dict[str, Any]:
-        """獲取上下文統計信息"""
+    async def get_context_stats(self) -> dict[str, Any]:  # type: ignore[misc]
+        """獲取上下文統計信息 - async保留供未來分散式統計擴展"""
         current_time = time.time()
         active_contexts = 0
         active_sessions = 0

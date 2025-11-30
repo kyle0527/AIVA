@@ -98,6 +98,13 @@
 
 ---
 
+> **🎯 架構範圍說明**  
+> 本報告專注於 `services/` 目錄的五大核心模組 (Core, Common, Features, Integration, Scan)。  
+> 這五大模組構成了 AIVA **93.8%** 的程式本體 (165,443 行)。  
+> 其他目錄 (api/, plugins/, web/ 等) 為輔助系統，佔 6.2%。
+
+---
+
 ## 📋 執行摘要
 
 本報告針對 AIVA 專案的五大核心模組（**Core**、**Common**、**Features**、**Integration**、**Scan**）進行完整架構分析。

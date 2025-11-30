@@ -167,19 +167,38 @@ class TaskExecutor:
         Returns:
             掃描結果
         """
-        # Allow async context switch
-        await asyncio.sleep(0)
-        
+        # 記錄開始掃描
         self.monitor.record_step(
             context, "scan_target", {"url": task.parameters.get("url")}
         )
 
-        # Mock 實現
-        result = {
-            "scanned_urls": 10,
-            "discovered_parameters": 5,
-            "scan_duration": 2.5,
-        }
+        # 調用真實的掃描服務
+        try:
+            from ...service_backbone.api.unified_function_caller import get_unified_caller
+            
+            caller = get_unified_caller()
+            scan_result = await caller.call_function(
+                module_name="scan_service",
+                function_name="scan",
+                parameters=task.parameters
+            )
+            
+            if scan_result.success:
+                result = scan_result.result
+            else:
+                # 掃描失敗，返回錯誤信息
+                result = {
+                    "error": scan_result.error,
+                    "scanned_urls": 0,
+                    "discovered_parameters": 0,
+                }
+        except Exception as e:
+            logger.error(f"Scan service call failed: {e}")
+            result = {
+                "error": str(e),
+                "scanned_urls": 0,
+                "discovered_parameters": 0,
+            }
 
         self.monitor.record_tool_invocation(
             context,
@@ -303,19 +322,15 @@ class TaskExecutor:
                 return result
                 
             except Exception as e:
-                logger.warning(
-                    f"Dynamic call failed, falling back to mock: {e}"
+                logger.error(
+                    f"Dynamic call failed: {e}"
                 )
-                # Fallback to Mock implementation
-        
-        # Mock 實現（Fallback 或禁用動態調用時使用）
-        result = {
-            "vulnerability_found": True,
-            "severity": "high",
-            "confidence": 0.85,
-            "evidence": "SQL error message detected",
-            "note": "Mock implementation (dynamic calling failed or disabled)",
-        }
+                # 返回錯誤結果而非 Mock 數據
+                result = {
+                    "vulnerability_found": False,
+                    "error": str(e),
+                    "note": "Function execution failed - real call returned error",
+                }
 
         self.monitor.record_tool_invocation(
             context,
@@ -342,13 +357,27 @@ class TaskExecutor:
         Returns:
             執行結果
         """
-        # Allow async context switch
-        await asyncio.sleep(0)
-        
+        # 記錄整合任務開始
         self.monitor.record_step(context, "integrate_task", task.parameters)
 
-        # Mock 實現
-        result = {"status": "completed", "message": "Integration task executed"}
+        # 調用真實的整合服務（如果有配置）
+        try:
+            from ...service_backbone.api.unified_function_caller import get_unified_caller
+            
+            caller = get_unified_caller()
+            integration_result = await caller.call_function(
+                module_name="integration_service",
+                function_name="integrate",
+                parameters=task.parameters
+            )
+            
+            if integration_result.success:
+                result = integration_result.result
+            else:
+                result = {"status": "failed", "error": integration_result.error}
+        except Exception as e:
+            logger.warning(f"Integration service not configured or failed: {e}")
+            result = {"status": "skipped", "message": "Integration service not available"}
 
         self.monitor.record_tool_invocation(
             context,
@@ -375,17 +404,37 @@ class TaskExecutor:
         Returns:
             分析結果
         """
-        # Allow async context switch
-        await asyncio.sleep(0)
-        
+        # 記錄分析任務開始
         self.monitor.record_step(context, "analyze_data", task.parameters)
 
-        # Mock 實現
-        result = {
-            "analysis_complete": True,
-            "findings": 3,
-            "recommendations": ["test parameter X", "check for SQLi", "validate CSRF"],
-        }
+        # 調用真實的核心分析服務
+        try:
+            from ...service_backbone.api.unified_function_caller import get_unified_caller
+            
+            caller = get_unified_caller()
+            analysis_result = await caller.call_function(
+                module_name="core_analyzer",
+                function_name="analyze",
+                parameters=task.parameters
+            )
+            
+            if analysis_result.success:
+                result = analysis_result.result
+            else:
+                result = {
+                    "analysis_complete": False,
+                    "error": analysis_result.error,
+                    "findings": 0,
+                    "recommendations": [],
+                }
+        except Exception as e:
+            logger.error(f"Core analysis failed: {e}")
+            result = {
+                "analysis_complete": False,
+                "error": str(e),
+                "findings": 0,
+                "recommendations": [],
+            }
 
         self.monitor.record_tool_invocation(
             context,

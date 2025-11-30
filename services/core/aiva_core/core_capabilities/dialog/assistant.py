@@ -2,9 +2,10 @@
 實現 AI 對話層，支援自然語言問答和一鍵執行
 """
 
-from datetime import datetime
+from datetime import datetime, timezone
 import re
 from typing import Any
+from pathlib import Path
 
 from services.aiva_common.utils.logging import get_logger
 from services.integration.capability import CapabilityRegistry
@@ -27,8 +28,10 @@ class DialogIntent:
             r"explain|describe.*(?P<capability>\w+)",
         ],
         "run_scan": [
-            r"幫我跑.*(?P<scan_type>掃描|scan|test)|執行.*(?P<target>https?://\S+)",
-            r"run.*(?P<scan_type>scan|test)|execute.*scan",
+            r"(幫我|幫忙|請|麻煩).*(掃描|scan|測試|test|攻擊|attack).*(https?://\S+)",
+            r"(掃描|scan|測試|test|攻擊|attack).*(https?://\S+)",
+            r"(https?://\S+).*(掃描|scan|測試|test)",
+            r"run.*scan|execute.*scan",
         ],
         "compare_capabilities": [
             r"比較.*(?P<cap1>\w+).*和.*(?P<cap2>\w+)|差異|對比",
@@ -73,6 +76,8 @@ class AIVADialogAssistant:
         self.capability_registry = capability_registry or global_registry
         self.conversation_history: list[dict[str, Any]] = []
         self._initialized = False
+        self._function_caller = None
+        self._rag_kb = None
 
         logger.info("AIVA 對話助理已初始化")
 
@@ -82,12 +87,30 @@ class AIVADialogAssistant:
             # 觸發能力發現
             await self.capability_registry.discover_capabilities()
             self._initialized = True
+    
+    def _get_rag_kb(self):
+        """獲取 RAG 知識庫（使用 ChromaDB 向量數據庫）"""
+        if self._rag_kb is None:
+            from ...cognitive_core.rag.knowledge_base import KnowledgeBase
+            from ...cognitive_core.rag.vector_store import VectorStore
+            
+            persist_dir = Path("data/vector_db/chroma")
+            vector_store = VectorStore(backend="chroma", persist_directory=persist_dir)
+            self._rag_kb = KnowledgeBase(vector_store=vector_store)
+        return self._rag_kb
+    
+    async def _get_function_caller(self):  # type: ignore[misc]
+        """獲取 UnifiedFunctionCaller - async保留供未來異步初始化擴展"""
+        if self._function_caller is None:
+            from services.core.aiva_core.service_backbone.api.unified_function_caller import UnifiedFunctionCaller
+            self._function_caller = UnifiedFunctionCaller()
+        return self._function_caller
 
     async def process_user_input(
         self, user_input: str, user_id: str = "default"
     ) -> dict[str, Any]:
         """處理使用者輸入並產生回應"""
-        timestamp = datetime.utcnow()
+        timestamp = datetime.now(timezone.utc)
 
         # 記錄對話
         self._add_conversation_entry("user", user_input, user_id, timestamp)
@@ -285,7 +308,7 @@ class AIVADialogAssistant:
     async def _handle_run_scan(
         self, scan_type: str, target: str, original_input: str
     ) -> dict[str, Any]:
-        """處理掃描執行請求"""
+        """處理掃描執行請求 - 實際執行攻擊"""
         # 從輸入中提取目標 URL
         if not target:
             url_match = re.search(r"https?://[^\s]+", original_input)
@@ -294,55 +317,208 @@ class AIVADialogAssistant:
         if not target:
             return {
                 "intent": "run_scan",
-                "message": "請提供要掃描的目標 URL，例如：「幫我跑 https://example.com 的掃描」",
+                "message": "請提供要掃描的目標 URL，例如：「掃描 https://example.com」",
                 "executable": False,
             }
 
         try:
-            # 推薦適合的掃描能力
-            scan_capabilities = await self.capability_registry.search_capabilities(
-                "scan"
+            logger.info(f"🎯 AI 決策：對目標 {target} 執行掃描")
+            
+            # 使用 MultiEngineCoordinator 執行實際掃描
+            from services.scan.coordinators.multi_engine_coordinator import MultiEngineCoordinator
+            from uuid import uuid4
+            
+            coordinator = MultiEngineCoordinator()
+            scan_id = f"ai_scan_{uuid4().hex[:8]}"
+            
+            logger.info(f"🚀 啟動多引擎掃描: scan_id={scan_id}")
+            
+            # 執行快速掃描策略
+            result = await coordinator.execute_strategy_fast(
+                scan_id=scan_id,
+                targets=[target]
             )
-
-            if not scan_capabilities:
-                return {
-                    "intent": "run_scan",
-                    "message": "目前沒有可用的掃描功能。",
-                    "executable": False,
-                }
-
-            recommended_cap = scan_capabilities[0]
-
-            message = f"🎯 為目標 {target} 推薦掃描方案:\n\n"
-            message += f"🔧 推薦工具: {recommended_cap.name}\n"
-            message += f"🔤 語言: {recommended_cap.language.value}\n"
-            message += f"📍 入口點: {recommended_cap.entrypoint}\n\n"
-
-            # 生成執行命令
-            cli_command = (
-                f"aiva scan execute --target {target} --capability {recommended_cap.id}"
-            )
-            message += f"💻 執行命令:\n```bash\n{cli_command}\n```\n\n"
-            message += "點擊「執行」按鈕立即開始掃描！"
-
+            
+            # 構建回應訊息
+            message = "✅ 掃描完成！\n\n"
+            message += f"🎯 目標: {target}\n"
+            message += f"📊 掃描 ID: {scan_id}\n"
+            message += f"📈 狀態: {result.status}\n"
+            message += f"🔍 發現資產: {len(result.assets)} 個\n\n"
+            
+            if result.assets:
+                message += "🎯 資產摘要:\n"
+                for i, asset in enumerate(result.assets[:5], 1):
+                    message += f"  [{i}] {asset.type}: {asset.value}\n"
+                if len(result.assets) > 5:
+                    message += f"  ... 還有 {len(result.assets)-5} 個資產\n"
+            
             return {
                 "intent": "run_scan",
                 "message": message,
                 "executable": True,
-                "action": "execute_scan",
+                "data": {
+                    "scan_id": scan_id,
+                    "status": result.status,
+                    "assets": [{
+                        "type": str(asset.type),
+                        "value": asset.value
+                    } for asset in result.assets[:10]]
+                }
+            }
+            
+        except Exception as e:
+            logger.error(f"\u6383\u63cf\u57f7\u884c\u5931\u6557: {e}")
+            # \u6ce8\u610f\uff1a\u9019\u662f\u7b2c\u4e00\u500b\u8a66\u5716\uff08MultiEngineCoordinator\uff09\uff0c
+            # \u5982\u679c\u5931\u6557\u5247\u5617\u5617\u4f7f\u7528RAG\u65b9\u5f0f\uff08\u7b2c\u4e8c\u500b\u8a66\u5716\uff09
+            logger.info("\u5617\u5617\u4f7f\u7528RAG\u8a9e\u7fa9\u641c\u7d22\u4f86\u627e\u5230\u9069\u5408\u7684\u653b\u64ca\u80fd\u529b...")
+            
+            # 步驟 1: 使用 RAG 語義搜索合適的攻擊能力
+            kb = self._get_rag_kb()
+            
+            # 構建查詢語句
+            search_query = f"{scan_type} attack scan" if scan_type else "vulnerability scan attack"
+            
+            # RAG 語義搜索（返回最相關的能力）
+            results = kb.search(search_query, top_k=5)
+            
+            if not results:
+                return {
+                    "intent": "run_scan",
+                    "message": f"找不到適合的攻擊能力（搜索: {search_query}）",
+                    "executable": False,
+                }
+            
+            # 選擇第一個能力（最相關）
+            best_match = results[0]
+            capability = {
+                'id': best_match.get('id', 'unknown'),
+                'name': best_match['metadata'].get('name', 'unknown'),
+                'module': best_match['metadata'].get('module', 'unknown'),
+                'language': best_match['metadata'].get('language', 'Python'),
+                'description': best_match.get('content', '')[:100]
+            }
+            
+            # 檢查是否有 invocation_metadata
+            invocation = best_match['metadata'].get('invocation_metadata')
+            if not invocation:
+                return {
+                    "intent": "run_scan",
+                    "message": f"能力 {capability['name']} 尚未配置執行方法",
+                    "executable": False,
+                }
+            
+            message = "🤖 AI 選擇執行能力:\n"
+            message += f"  📦 名稱: {capability['name']}\n"
+            message += f"  🔤 語言: {capability['language']}\n"
+            message += f"  📍 模組: {capability['module']}\n"
+            message += f"  🔧 協議: {invocation['protocol']}\n\n"
+            
+            # 步驟 2: 使用 UnifiedFunctionCaller 執行攻擊
+            logger.info(f"🚀 執行攻擊: {invocation['module_arg']}.{invocation['function_arg']}")
+            
+            function_caller = await self._get_function_caller()
+            
+            # 準備攻擊參數（根據不同能力類型調整）
+            attack_params = {
+                'target_url': target,
+                'method': 'POST',
+                'timeout': 30
+            }
+            
+            # 根據 protocol 執行
+            start_time = datetime.now()  # 記錄開始時間
+            execution_success = False
+            execution_error = None
+            
+            try:
+                if invocation['protocol'] == 'unified_caller':
+                    result = await function_caller.call_python(
+                        module_name=invocation['module_arg'],
+                        function_name=invocation['function_arg'],
+                        **attack_params
+                    )
+                elif invocation['protocol'] == 'http':
+                    result = await function_caller.call_http(
+                        module_name=capability['module'],
+                        function_name=capability['name'],
+                        **attack_params
+                    )
+                elif invocation['protocol'] == 'grpc':
+                    result = await function_caller.call_grpc(
+                        module_name=capability['module'],
+                        function_name=capability['name'],
+                        **attack_params
+                    )
+                else:
+                    return {
+                        "intent": "run_scan",
+                        "message": f"❌ 不支持的協議: {invocation['protocol']}",
+                        "executable": False,
+                    }
+                
+                execution_success = result.success
+                execution_error = result.error
+                
+            finally:
+                # 🔄 反饋循環：記錄調用結果到 CapabilityRegistry
+                end_time = datetime.now()
+                execution_time_ms = (end_time - start_time).total_seconds() * 1000
+                
+                await self.capability_registry.record_invocation(
+                    capability_id=capability['id'],
+                    success=execution_success,
+                    execution_time_ms=execution_time_ms,
+                    error_message=execution_error,
+                    metadata={
+                        'target': target,
+                        'scan_type': scan_type,
+                        'protocol': invocation['protocol'],
+                        'user_input': original_input[:100]  # 記錄用戶輸入（截斷）
+                    }
+                )
+                
+                logger.info(
+                    f"✅ 反饋循環：已記錄調用結果 - "
+                    f"能力={capability['id']}, 成功={execution_success}, "
+                    f"耗時={execution_time_ms:.1f}ms"
+                )
+            
+            # 步驟 3: 返回執行結果
+            message += "\u2705 \u653b\u64ca\u57f7\u884c\u5b8c\u6210!\\n\\n"
+            message += "\ud83d\udcca \u7d50\u679c:\\n"
+            message += f"  成功: {result.success}\n"
+            message += f"  執行時間: {result.execution_time:.2f}s\n"
+            
+            if result.success:
+                message += f"  🎯 發現結果: {str(result.result)[:200]}\n"
+            else:
+                message += f"  ❌ 錯誤: {result.error}\n"
+            
+            return {
+                "intent": "run_scan",
+                "message": message,
+                "executable": True,
+                "action": "execute_scan_completed",
                 "data": {
                     "target": target,
-                    "capability": recommended_cap.model_dump(),
-                    "command": cli_command,
+                    "capability": {
+                        "id": capability['id'],
+                        "name": capability['name'],
+                        "module": capability['module']
+                    },
+                    "result": {
+                        "success": result.success,
+                        "execution_time": result.execution_time,
+                        "result": str(result.result) if result.success else None,
+                        "error": result.error
+                    }
                 },
             }
 
-        except Exception as e:
-            return {
-                "intent": "run_scan",
-                "message": f"無法準備掃描: {str(e)}",
-                "executable": False,
-            }
+        finally:
+            # 清理資源（如需要）
+            pass
 
     async def _handle_compare_capabilities(
         self, cap1: str, cap2: str
@@ -389,9 +565,9 @@ class AIVADialogAssistant:
 
                 if scorecard1 and scorecard2:
                     message += "\n📈 性能比較:\n"
-                    message += f"  成功率: {scorecard1.success_rate_7d:.1%} vs {scorecard2.success_rate_7d:.1%}\n"
+                    message += f"  成功率: {scorecard1.success_rate_7d:.1%} vs {scorecard2.success_rate_7d:.1%}\n"  # type: ignore[attr-defined]
                     message += f"  平均延遲: {scorecard1.avg_latency_ms}ms vs {scorecard2.avg_latency_ms}ms\n"
-                    message += f"  可用性: {scorecard1.availability_7d:.1%} vs {scorecard2.availability_7d:.1%}\n"
+                    message += f"  可用性: {scorecard1.availability_7d:.1%} vs {scorecard2.availability_7d:.1%}\n"  # type: ignore[attr-defined]
 
             except Exception:
                 message += "\n⚠️ 無法獲取性能比較數據\n"
@@ -416,7 +592,7 @@ class AIVADialogAssistant:
                 "executable": False,
             }
 
-    async def _handle_generate_cli(self, original_input: str) -> dict[str, Any]:
+    async def _handle_generate_cli(self, _original_input: str) -> dict[str, Any]:  # noqa: ARG002
         """處理 CLI 指令生成請求"""
         try:
             # 獲取前幾個能力並生成 CLI 範本
@@ -506,16 +682,16 @@ class AIVADialogAssistant:
                 percentage = (count / total * 100) if total > 0 else 0
                 message += f"  {cap_type}: {count} 個 ({percentage:.1f}%)\n"
 
-            status_icon = (
-                "🟢"
-                if health_percentage >= 80
-                else "🟡" if health_percentage >= 60 else "🔴"
-            )
-            overall_status = (
-                "良好"
-                if health_percentage >= 80
-                else "一般" if health_percentage >= 60 else "需要關注"
-            )
+            # 根據健康度百分比決定圖標和狀態
+            if health_percentage >= 80:
+                status_icon = "🟢"
+                overall_status = "良好"
+            elif health_percentage >= 60:
+                status_icon = "🟡"
+                overall_status = "一般"
+            else:
+                status_icon = "🔴"
+                overall_status = "需要關注"
 
             message += f"\n{status_icon} 整體狀況: {overall_status}"
 
@@ -557,7 +733,7 @@ class AIVADialogAssistant:
             self.conversation_history = self.conversation_history[-100:]
 
     def get_conversation_history(
-        self, limit: int = 10, user_id: str = None
+        self, limit: int = 10, user_id: str | None = None
     ) -> list[dict[str, Any]]:
         """獲取對話歷史"""
         history = self.conversation_history
@@ -567,7 +743,7 @@ class AIVADialogAssistant:
 
         return history[-limit:] if limit > 0 else history
 
-    def clear_conversation_history(self, user_id: str = None) -> None:
+    def clear_conversation_history(self, user_id: str | None = None) -> None:
         """清除對話歷史"""
         if user_id:
             self.conversation_history = [

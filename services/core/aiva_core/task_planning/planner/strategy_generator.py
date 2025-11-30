@@ -16,13 +16,13 @@ Architecture Fix Note:
 import logging
 
 from services.aiva_common.schemas import ScanCompletedPayload, HighLevelIntent, IntentType
-from services.core.aiva_core.business_schemas import (
+from services.aiva_common.schemas.tasks import TestStrategy
+from services.features.function_bizlogic.business_schemas import (
     AttackSurfaceAnalysis,
     IdorCandidate,
     SqliCandidate,
     SsrfCandidate,
     StrategyGenerationConfig,
-    TestStrategy,
     TestTask,
     XssCandidate,
 )
@@ -49,13 +49,11 @@ class RuleBasedStrategyGenerator:
     def generate(
         self,
         attack_surface: AttackSurfaceAnalysis,
-        scan_payload: ScanCompletedPayload,
     ) -> TestStrategy:
         """從攻擊面分析生成測試策略
 
         Args:
             attack_surface: 攻擊面分析結果
-            scan_payload: 原始掃描完成負載
 
         Returns:
             完整的測試策略
