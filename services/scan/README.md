@@ -51,8 +51,6 @@
 ---
 
 
-**導航**: [📖 文檔中心](../../docs/guides/services/) | [🔬 引擎驗證指南](./ENGINE_VERIFICATION_AND_FIX_PLAN.md)
-
 > **🎯 設計目標**: 兩階段掃描架構，適配器模式協調四引擎  
 > **❌ 實際狀態**: 架構設計完成，但所有引擎均無實際掃描能力  
 > **🔄 最後更新**: 2025年11月27日 - 驗證確認：0/4 引擎可用
@@ -131,15 +129,14 @@ Scan 模組採用**適配器模式**協調四個語言引擎（Python、TypeScri
 | **錯誤隔離** | ✅ 完成 | ✅ 正常 | 唯一正常工作的功能 |
 
 **致命問題** (2025年11月22日 驗證):
-- ❌ **所有引擎均未發送 HTTP 請求到靶場目標**
+- ❌ **所有引擎均未發送 HTTP 請求到靠場目標**
 - ❌ Python 引擎僅記錄日誌，無實際網路掃描
 - ❌ 漏洞掃描器返回假陽性結果（未真實測試）
 - ❌ Rust 引擎二進制執行失敗 (exit code 2)
 - ❌ TypeScript/Go 引擎未編譯安裝
 - 📋 結論: **協調器架構正確，但所有引擎的掃描實現均缺失**
 
-**詳細分析**: 📄 [能力分析報告](../docs/reports/SCAN_MODULE_CAPABILITY_ANALYSIS.md)  
-**修復計劃**: 📋 [修復計劃文檔](./SCAN_MODULE_RESTORATION_PLAN.md)
+**修復計劃**: 📋 [修復計劃文檔](../../reports/architecture/SCAN_MODULE_RESTORATION_PLAN.md)
 
 ---
 
@@ -193,9 +190,7 @@ result = await command_center.execute(command)  # 返回空結果或假數據
 
 ### 詳細指南
 
-- 📘 **使用者手冊**: [SCAN_USER_GUIDE.md](./SCAN_USER_GUIDE.md) - 完整操作指南
 - 🔧 **API 參考**: [command_handler.py](./command_handler.py) - 命令處理器實現
-- 📊 **流程圖解**: [SCAN_FLOW_DIAGRAMS.md](./SCAN_FLOW_DIAGRAMS.md) - 完整流程說明
 
 ---
 
@@ -205,10 +200,7 @@ result = await command_center.execute(command)  # 返回空結果或假數據
 
 | 文檔 | 說明 | 適用對象 |
 |------|------|----------|
-| 📘 [SCAN_USER_GUIDE.md](./SCAN_USER_GUIDE.md) | 使用者手冊 | 所有使用者 |
-| 📊 [SCAN_FLOW_DIAGRAMS.md](./SCAN_FLOW_DIAGRAMS.md) | 流程圖解（基準文檔） | 開發者 |
-| 📋 [SCAN_MODULE_RESTORATION_PLAN.md](./SCAN_MODULE_RESTORATION_PLAN.md) | 修復計劃與完成狀態 | 開發者 |
-| 📊 **能力分析報告** | 此模組的功能能力分析 | 開發者 |
+| 📋 [修復計劃文檔](../../reports/architecture/SCAN_MODULE_RESTORATION_PLAN.md) | 修復計劃與完成狀態 | 開發者 |
 
 ### 🔧 引擎文檔（架構設計）
 
@@ -641,9 +633,6 @@ services/scan/
 ├── archived_docs/                   # 歷史文檔歸檔
 ├── command_handler.py              # AI 命令處理器 (461 lines)
 ├── README.md                        # 本文檔（架構總覽）
-├── SCAN_USER_GUIDE.md              # 使用者手冊
-├── SCAN_FLOW_DIAGRAMS.md           # 流程圖解（基準文檔，不可修改）
-├── SCAN_MODULE_RESTORATION_PLAN.md # 修復計劃與完成狀態
 └── __init__.py                      # 模組初始化
 ```
 
@@ -663,9 +652,6 @@ services/scan/
 | 檔案 | 說明 | 狀態 |
 |------|------|------|
 | `README.md` | 架構總覽（本文檔） | ✅ 已更新 |
-| `SCAN_USER_GUIDE.md` | 使用者手冊，包含 AI 命令接口使用範例 | ✅ 已更新 |
-| `SCAN_FLOW_DIAGRAMS.md` | 流程圖解（**基準文檔，不可修改**） | 📌 基準 |
-| `SCAN_MODULE_RESTORATION_PLAN.md` | 修復計劃與重構完成狀態 | ✅ 已更新 |
 
 ### 協調器檔案 (coordinators/)
 
@@ -713,9 +699,7 @@ services/scan/
 ### 開發環境
 
 詳細的開發環境設置請參考：
-- 📘 [使用者手冊](./SCAN_USER_GUIDE.md)
 - 🔧 [命令處理器](./command_handler.py)
-- 📊 [流程圖解](./SCAN_FLOW_DIAGRAMS.md)
 
 ### 新增引擎
 

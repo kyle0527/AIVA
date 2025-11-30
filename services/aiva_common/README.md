@@ -1,7 +1,5 @@
 # AIVA Common - Bug Bounty 專業化共享庫
 
-**導航**: [📖 文檔中心](../../docs/guides/services/)
-
 [![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
 [![Bug Bounty Ready](https://img.shields.io/badge/Bug%20Bounty-v6.3%20Ready-brightgreen.svg)](https://github.com/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)

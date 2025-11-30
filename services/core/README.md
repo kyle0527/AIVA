@@ -73,9 +73,8 @@
 - ✅ **架構完整**: 數據合約驅動完全實現
 
 **詳細報告**: 
-- [CODE_FIX_REPORT.md](../../CODE_FIX_REPORT.md) - 完整修復過程
-- [VERIFICATION_REPORT.md](../../VERIFICATION_REPORT.md) - 驗證結果
-- [guides/development/README.md](../../guides/development/README.md) - 開發指南
+- [CODE_FIX_REPORT.md](../../docs/reports/CODE_FIX_REPORT.md) - 完整修復過程
+- [VERIFICATION_REPORT.md](../../docs/reports/VERIFICATION_REPORT.md) - 驗證結果
 
 ---
 - [🚀 **2025年11月架構修復摘要**](#2025年11月架構修復摘要)
@@ -295,9 +294,7 @@
 - ✅ **ast_trace_comparator.py**: 修正導入路徑為正確的execution模組
 
 **詳細報告**:
-- 📋 [架構修復完成報告](../../ARCHITECTURE_FIXES_COMPLETION_REPORT.md)
-- 🤖 [AI語義能力審計](../../AI_CODE_ANALYSIS_CAPABILITY_AUDIT.md)
-- 🧪 [語義編碼測試腳本](../../test_ai_semantic_encoding.py)
+- 🤖 [AI語義能力審計](../../reports/architecture/AI_CODE_ANALYSIS_CAPABILITY_AUDIT.md)
 
 ---
 

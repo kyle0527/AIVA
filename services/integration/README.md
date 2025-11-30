@@ -1,7 +1,5 @@
 # AIVA 整合模組 - 企業級安全整合中樞
 
-**導航**: [📖 文檔中心](../../docs/guides/services/)
-
 ![AIVA Integration Module](https://img.shields.io/badge/AIVA-Integration%20Module-purple?style=for-the-badge)
 ![Bug Bounty Ready](https://img.shields.io/badge/Bug%20Bounty-v6.2%20Ready-brightgreen?style=for-the-badge)
 ![Python](https://img.shields.io/badge/Python-3.11+-green?style=flat-square)
@@ -244,7 +242,6 @@ python services/integration/scripts/cleanup.py --exports-only
 - 📖 **[資料儲存詳細說明](../../data/integration/README.md)** - 完整資料儲存結構說明
 - 📖 **[維護腳本文檔](scripts/README.md)** - 備份與清理腳本使用指南
 - 📖 **[配置管理文檔](aiva_integration/config.py)** - 統一配置系統實現
-- 📖 **[建立報告](../../reports/INTEGRATION_DATA_STORAGE_SETUP_REPORT.md)** - 完整建立過程記錄
 
 ---
 
