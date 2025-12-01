@@ -1935,12 +1935,123 @@ class FindingPayload(BaseModel):  # 錯誤！aiva_common 已定義
 配置項:       統一配置管理系統
 ```
 
-### 測試覆蓋
+### 測試覆蓋與規範
 
 ```
 單元測試:     核心功能 85%+ 覆蓋
 集成測試:     跨模組通信測試
 工具測試:     代碼生成和驗證工具測試
+```
+
+#### 🚨 測試文件管理規範 (v2.0)
+
+**核心原則**: `services/` 目錄僅包含生產代碼，所有測試文件統一管理於專案根目錄的 `tests/` 目錄。
+
+**💡 最佳實踐**: **實際執行程式本身就是最好的驗證**，不需要額外創建測試腳本。直接運行功能模組、掃描引擎、AI 組件來驗證其正確性，這比寫測試腳本更準確、更直接。
+
+**✅ 正確做法**:
+```
+tests/
+├── services/
+│   ├── scan/              # 掃描模組測試
+│   │   ├── test_all_engines.py
+│   │   ├── test_typescript_engine.py
+│   │   └── test_phase_loop.py
+│   ├── core/              # 核心模組測試
+│   │   ├── test_capability_analyzer.py
+│   │   └── test_module_explorer.py
+│   └── features/          # 功能模組測試
+│       └── test_detector.py
+└── integration/           # 整合測試
+    └── test_complete_flow.py
+```
+
+**❌ 錯誤做法**:
+```
+services/
+├── scan/
+│   ├── engines/
+│   │   └── test_engine.py        # ❌ 禁止：測試文件不應在生產代碼目錄
+│   └── tests/                    # ❌ 禁止：不應在 services 下建立 tests 目錄
+└── core/
+    └── test_module.py            # ❌ 禁止：測試文件混雜在生產代碼中
+```
+
+**驗證執行規範**:
+
+1. **優先實際執行程式，而非創建測試腳本**
+   ```bash
+   # ✅ 最佳：直接執行實際功能驗證
+   python -m services.scan.engines.python_engine.scanner --target http://example.com
+   python -m services.features.function_sqli.detector --url http://test.com
+   python -m services.core.aiva_core.cognitive_core.bioneuron_decision_controller
+   
+   # ✅ 次選：必要時執行測試套件
+   pytest tests/services/scan/ -v
+   
+   # ❌ 錯誤：創建大量測試腳本卻不實際運行程式
+   # 實際執行程式本身比任何測試腳本都更準確
+   ```
+
+2. **直接執行驗證功能，不寫無意義的測試包裝**
+   ```python
+   # ✅ 最佳：直接在 main 中執行驗證
+   if __name__ == "__main__":
+       scanner = ScanEngine()
+       result = scanner.scan("http://example.com")
+       print(f"掃描結果: {len(result.vulnerabilities)} 個漏洞")
+       # 直接執行就能看到是否正常工作
+   
+   # ⚠️ 次選：必要時才寫測試
+   def test_scan_engine_detects_vulnerability():
+       scanner = ScanEngine()
+       result = scanner.scan("http://example.com")
+       assert result.vulnerabilities
+   
+   # ❌ 錯誤：寫測試腳本卻不實際運行功能
+   def test_something():
+       pass  # 這種測試毫無意義
+   ```
+
+3. **禁止使用 Mock 替代實際測試**（符合 aiva_common 規範）
+   ```python
+   # ✅ 正確：測試真實組件
+   def test_rust_engine_initialization():
+       engine = RustInfoGatherer()  # 實際初始化
+       assert engine.is_available()  # 驗證真實狀態
+   
+   # ❌ 錯誤：過度使用 Mock
+   @patch('scan.RustInfoGatherer')
+   def test_with_mock(mock_engine):
+       mock_engine.return_value = "fake_result"
+       # 這不是在測試真實功能
+   ```
+
+4. **持續整合測試**
+   ```bash
+   # 在提交代碼前執行完整測試套件
+   pytest tests/ --cov=services --cov-report=term-missing
+   
+   # 檢查測試覆蓋率
+   pytest tests/ --cov=services --cov-report=html
+   # 查看 htmlcov/index.html 了解覆蓋情況
+   ```
+
+**遷移指南**:
+
+如果發現 `services/` 目錄下有測試文件：
+```bash
+# 1. 移動到正確位置
+mv services/scan/test_something.py tests/services/scan/test_something.py
+
+# 2. 更新導入路徑（如果需要）
+# 將 from . import xxx 改為 from services.scan import xxx
+
+# 3. 執行測試驗證
+pytest tests/services/scan/test_something.py -v
+
+# 4. 刪除空的測試目錄
+rmdir services/scan/tests  # 如果為空
 ```
 
 ---

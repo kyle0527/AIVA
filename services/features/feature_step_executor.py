@@ -111,6 +111,8 @@ class FeatureStepExecutor:
         try:
             # 取得功能模組類別
             feature_class = FeatureRegistry.get(tool_name)
+            if feature_class is None:
+                raise KeyError(f"功能模組 '{tool_name}' 未註冊")
             self.execution_stats["features_used"].add(tool_name)
             
             # 執行功能模組
@@ -157,7 +159,7 @@ class FeatureStepExecutor:
                 "error": f"未知的功能模組: {tool_name}. {str(e)}",
                 "step_id": step.get("step_id"),
                 "execution_time": time.time() - start_time,
-                "available_features": list(FeatureRegistry.list_features().keys())
+                "available_features": list(FeatureRegistry.list_features())
             }
             self._handle_error(step, error_result)
             return error_result

@@ -12,7 +12,7 @@ logger = logging.getLogger(__name__)
 
 class FeatureRegistry:
     """
-    功能模組註冊表
+    功能模組註冊表（單例模式）
     
     負責：
     1. 註冊功能模組
@@ -20,18 +20,23 @@ class FeatureRegistry:
     3. 管理功能模組的元數據
     
     使用方式：
-        registry = FeatureRegistry()
-        registry.register("sqli", SqliFeature)
-        feature = registry.get("sqli")
+        FeatureRegistry.register("sqli", SqliFeature)
+        feature = FeatureRegistry.get("sqli")
     """
     
-    def __init__(self):
-        """初始化註冊表"""
-        self._features: Dict[str, Type] = {}
-        self._metadata: Dict[str, Dict[str, Any]] = {}
-        
+    _instance: Optional['FeatureRegistry'] = None
+    _features: Dict[str, Type] = {}
+    _metadata: Dict[str, Dict[str, Any]] = {}
+    
+    def __new__(cls):
+        """確保單例"""
+        if cls._instance is None:
+            cls._instance = super().__new__(cls)
+        return cls._instance
+    
+    @classmethod
     def register(
-        self,
+        cls,
         name: str,
         feature_class: Type,
         metadata: Optional[Dict[str, Any]] = None
@@ -44,29 +49,31 @@ class FeatureRegistry:
             feature_class: 功能模組類
             metadata: 功能模組元數據
         """
-        if name in self._features:
+        if name in cls._features:
             logger.warning(f"功能模組 '{name}' 已存在，將被覆蓋")
         
-        self._features[name] = feature_class
-        self._metadata[name] = metadata or {}
+        cls._features[name] = feature_class
+        cls._metadata[name] = metadata or {}
         
         logger.info(f"註冊功能模組: {name}")
     
-    def unregister(self, name: str) -> None:
+    @classmethod
+    def unregister(cls, name: str) -> None:
         """
         取消註冊功能模組
         
         Args:
             name: 功能模組名稱
         """
-        if name in self._features:
-            del self._features[name]
-            del self._metadata[name]
+        if name in cls._features:
+            del cls._features[name]
+            del cls._metadata[name]
             logger.info(f"取消註冊功能模組: {name}")
         else:
             logger.warning(f"功能模組 '{name}' 不存在")
     
-    def get(self, name: str) -> Optional[Type]:
+    @classmethod
+    def get(cls, name: str) -> Optional[Type]:
         """
         獲取功能模組類
         
@@ -76,9 +83,10 @@ class FeatureRegistry:
         Returns:
             功能模組類，如果不存在則返回 None
         """
-        return self._features.get(name)
+        return cls._features.get(name)
     
-    def get_metadata(self, name: str) -> Optional[Dict[str, Any]]:
+    @classmethod
+    def get_metadata(cls, name: str) -> Optional[Dict[str, Any]]:
         """
         獲取功能模組元數據
         
@@ -88,18 +96,20 @@ class FeatureRegistry:
         Returns:
             功能模組元數據，如果不存在則返回 None
         """
-        return self._metadata.get(name)
+        return cls._metadata.get(name)
     
-    def list_features(self) -> list[str]:
+    @classmethod
+    def list_features(cls) -> Dict[str, Type]:
         """
         列出所有已註冊的功能模組
         
         Returns:
-            功能模組名稱列表
+            功能模組字典 {名稱: 類}
         """
-        return list(self._features.keys())
+        return cls._features.copy()
     
-    def is_registered(self, name: str) -> bool:
+    @classmethod
+    def is_registered(cls, name: str) -> bool:
         """
         檢查功能模組是否已註冊
         
@@ -109,10 +119,10 @@ class FeatureRegistry:
         Returns:
             True 如果已註冊，否則 False
         """
-        return name in self._features
+        return name in cls._features
 
 
-# 全局註冊表實例
+# 全局註冊表實例（向後兼容）
 _global_registry = FeatureRegistry()
 
 

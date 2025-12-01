@@ -185,85 +185,28 @@ class RustInfoGatherer:
         return await asyncio.to_thread(self.scan_target, target_url, config)
 
 
-class MockRustInfoGatherer:
-    """模擬 Rust 信息收集器，用於測試"""
-    
-    def __init__(self):
-        self._available = True
-    
-    def is_available(self) -> bool:
-        return True
-    
-    def scan_target(self, target_url: str, config: Dict[str, Any]) -> Dict[str, Any]:
-        """模擬掃描結果"""
-        mode = config.get("mode", "fast_discovery")
-        
-        if mode == "fast_discovery":
-            return {
-                "success": True,
-                "results": {
-                    "technologies": ["nginx", "php", "mysql"],
-                    "sensitive_info": [
-                        {
-                            "type": "api_key",
-                            "location": f"{target_url}/config.php",
-                            "value": "DEMO_KEY_***"
-                        }
-                    ],
-                    "endpoints": [
-                        f"{target_url}/login.php",
-                        f"{target_url}/admin/",
-                        f"{target_url}/api/v1/"
-                    ]
-                }
-            }
-        elif mode == "deep_analysis":
-            return {
-                "success": True,
-                "results": {
-                    "assets": [
-                        {
-                            "type": "endpoint",
-                            "url": f"{target_url}/login.php",
-                            "parameters": ["username", "password"],
-                            "has_form": True
-                        },
-                        {
-                            "type": "api",
-                            "url": f"{target_url}/api/v1/users",
-                            "parameters": ["id", "name"],
-                            "has_form": False
-                        }
-                    ]
-                }
-            }
-        else:
-            return {
-                "success": False,
-                "error": f"Unknown scan mode: {mode}"
-            }
-    
-    def scan_multiple_targets(self, targets: List[str], config: Dict[str, Any]) -> List[Dict[str, Any]]:
-        """模擬多目標掃描"""
-        return [self.scan_target(target, config) for target in targets]
-    
-    async def scan_target_async(self, target_url: str, config: Dict[str, Any]) -> Dict[str, Any]:
-        """異步模擬掃描結果"""
-        import asyncio
-        return await asyncio.to_thread(self.scan_target, target_url, config)
+# MockRustInfoGatherer 已移除
+# 依照 aiva_common 規範，不應使用 Mock 返回假數據
+# 如果 Rust 引擎不可用，應該返回明確的錯誤訊息
 
 
 # 創建全局實例
 try:
     rust_info_gatherer = RustInfoGatherer()
     if not rust_info_gatherer.is_available():
-        logger.warning("[RustBridge] Using mock implementation")
-        rust_info_gatherer = MockRustInfoGatherer()  # type: ignore
+        logger.warning(
+            "[RustBridge] Rust 引擎不可用。\n"
+            "要啟用 Rust 引擎，請執行以下步驟：\n"
+            "1. 切換到 Rust 引擎目錄: cd services/scan/engines/rust_engine\n"
+            "2. 編譯 Rust 二進制: cargo build --release\n"
+            "3. 重新啟動服務\n"
+            "注意：在 Rust 引擎編譯完成前，系統將只使用其他可用引擎進行掃描。"
+        )
 except Exception as e:
-    logger.error(f"[RustBridge] Failed to initialize: {e}")
-    rust_info_gatherer = MockRustInfoGatherer()  # type: ignore
+    logger.error(f"[RustBridge] 初始化失敗: {e}")
+    rust_info_gatherer = RustInfoGatherer()  # type: ignore
 
 # 為了兼容性，提供 RustScanner 別名
 RustScanner = RustInfoGatherer
 
-__all__ = ["rust_info_gatherer", "RustInfoGatherer", "MockRustInfoGatherer", "RustScanner"]
+__all__ = ["rust_info_gatherer", "RustInfoGatherer", "RustScanner"]

@@ -67,6 +67,10 @@ class Finding(BaseModel):
     
     timestamp: datetime = Field(default_factory=datetime.now, description="發現時間")
     metadata: Optional[Dict[str, Any]] = Field(None, description="額外元數據")
+    
+    def to_dict(self) -> Dict[str, Any]:
+        """轉換為字典格式"""
+        return self.model_dump()
 
 
 class FeatureExecutionStatus(str, Enum):
@@ -146,3 +150,48 @@ class FeatureResult(BaseModel):
             符合條件的發現列表
         """
         return [f for f in self.findings if f.confidence == confidence]
+    
+    def has_critical_findings(self) -> bool:
+        """是否有嚴重漏洞"""
+        return self.critical_findings_count > 0
+    
+    def has_high_findings(self) -> bool:
+        """是否有高危漏洞"""
+        return self.high_findings_count > 0
+    
+    @property
+    def feature(self) -> str:
+        """功能模組名稱（別名）"""
+        return self.feature_name
+    
+    @property
+    def ok(self) -> bool:
+        """執行是否成功"""
+        return self.status == FeatureExecutionStatus.SUCCESS
+    
+    @property
+    def command_record(self) -> Dict[str, Any]:
+        """命令記錄（用於面板顯示）"""
+        return {
+            "feature": self.feature_name,
+            "task_id": self.task_id,
+            "status": self.status.value,
+            "findings_count": len(self.findings),
+            "execution_time": self.execution_time
+        }
+    
+    def to_dict(self) -> Dict[str, Any]:
+        """轉換為字典格式"""
+        return {
+            "feature_name": self.feature_name,
+            "task_id": self.task_id,
+            "status": self.status.value,
+            "execution_time": self.execution_time,
+            "findings": [f.model_dump() for f in self.findings],
+            "statistics": self.statistics,
+            "error_message": self.error_message,
+            "metadata": self.metadata,
+            "has_findings": self.has_findings,
+            "critical_findings_count": self.critical_findings_count,
+            "high_findings_count": self.high_findings_count
+        }

@@ -47,4 +47,36 @@ __all__ = [
     # ==================== 來自本模組 (Integration 專屬) ====================
     "EnhancedIOCRecord",
     "SIEMEvent",
+    # ==================== 註冊函數 ====================
+    "register_search_handler_to_command_center",
 ]
+
+
+def register_search_handler_to_command_center(config: dict = None) -> None:
+    """
+    註冊 Search 命令處理器到 AI 命令中心
+    
+    這個函數由外部調用（通常是 Core 模組初始化時），
+    避免了跨模組的直接 import 依賴。
+    
+    Args:
+        config: 搜索配置字典，包含各種 API Key
+    
+    使用示例:
+        # 在 AI Commander 或主程式中
+        from services import integration
+        integration.register_search_handler_to_command_center({
+            "google_api_key": os.getenv("GOOGLE_API_KEY"),
+            ...
+        })
+    """
+    from services.aiva_common.command_center import get_command_center
+    from .search_command_handler import SearchCommandHandler
+    
+    command_center = get_command_center()
+    search_handler = SearchCommandHandler(config=config or {})
+    command_center.register_module("search", search_handler)
+    
+    import logging
+    logger = logging.getLogger(__name__)
+    logger.info("✅ Search 命令處理器已註冊到 AI 命令中心")

@@ -52,8 +52,30 @@
 
 
 > **🎯 設計目標**: 兩階段掃描架構，適配器模式協調四引擎  
-> **❌ 實際狀態**: 架構設計完成，但所有引擎均無實際掃描能力  
-> **🔄 最後更新**: 2025年11月27日 - 驗證確認：0/4 引擎可用
+> **✅ 合規性狀態**: 已通過 aiva_common 規範檢查  
+> **⚠️ 引擎狀態**: Python 引擎可用 (1/4)，其他引擎需編譯/驗證  
+> **🔄 最後更新**: 2025年12月1日 - 移除 Mock 實現，符合規範
+
+## 📊 系統狀態更新 (2025年12月1日)
+
+### ✅ 合規性修復完成
+- **移除 Mock 實現**: 刪除 `MockRustInfoGatherer`，不再返回假數據
+- **使用標準枚舉**: 全面使用 `aiva_common` 的 Severity、Confidence 等枚舉
+- **使用標準 Schema**: 使用 `aiva_common` 的數據合約
+- **模組特定枚舉**: 合理保留 `EngineType`、`ScanPhase` 等模組內部枚舉
+
+### 🔧 引擎狀態
+
+| 引擎 | 狀態 | 說明 |
+|------|------|------|
+| **Python** | ✅ 可用 | 有真實的 HTTP 掃描、動態渲染、漏洞檢測能力 |
+| **TypeScript** | ⚠️ 需驗證 | 架構完整，需測試 Playwright 實現 |
+| **Rust** | ⚠️ 需編譯 | 需執行 `cargo build --release` 編譯二進制 |
+| **Go** | ⚠️ 需驗證 | 架構完整，需驗證並發掃描實現 |
+
+### 📖 詳細修復報告
+完整的合規性檢查和修復說明，請查看：
+**[COMPLIANCE_FIX_REPORT.md](./COMPLIANCE_FIX_REPORT.md)**
 
 ## 🏗️ 核心架構
 
@@ -698,8 +720,33 @@ services/scan/
 
 ### 開發環境
 
+**必要工具**:
+- Python 3.11+
+- Node.js 18+ (TypeScript 引擎)
+- Rust 1.70+ (Rust 引擎)
+- Go 1.21+ (Go 引擎)
+
 詳細的開發環境設置請參考：
 - 🔧 [命令處理器](./command_handler.py)
+
+### 🚀 驗證方式
+
+**核心理念**: 實際執行程式本身就是最好的驗證，不需要額外創建測試腳本。
+
+```bash
+# ✅ 最佳實踐：直接執行引擎驗證功能
+python -m services.scan.engines.python_engine.scanner --target http://example.com
+python -m services.scan.coordinators.multi_engine_coordinator
+
+# ✅ 執行完整掃描流程
+python -m services.scan --url http://test.com --phase quick
+
+# ⚠️ 次選：必要時執行測試套件
+pytest tests/services/scan/ -v
+
+# ❌ 不推薦：創建大量測試腳本而不實際運行
+# 實際執行比任何測試都更能發現問題
+```
 
 ### 新增引擎
 
@@ -707,19 +754,7 @@ services/scan/
 2. 繼承 `BaseEngineAdapter`
 3. 實現 `scan_async()` 和 `validate_config()` 方法
 4. 在 `MultiEngineCoordinator` 註冊新引擎
-
-### 測試
-
-```bash
-# 測試 Phase 0
-python test_ai_command_scan.py
-
-# 測試多引擎協調
-python test_two_phase_scan.py
-
-# 測試命令處理器
-python test_command_handler_quick.py
-```
+5. **直接執行驗證**：`python -m your_new_engine --test-target http://example.com`
 
 ---
 

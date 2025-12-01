@@ -177,6 +177,32 @@ User → AI 決策 → 能力查詢 (PostgreSQL/RAG) → 動態調用 → 結果
 
 ---
 
+## 💡 **驗證理念**
+
+**核心原則**: 實際執行程式本身就是最好的驗證，不需要額外創建測試腳本。
+
+```bash
+# ✅ 最佳實踐：直接執行功能驗證
+python -m services.scan.engines.python_engine.scanner --target http://example.com
+python -m services.features.function_sqli.detector --url http://test.com
+python -m services.core.aiva_core.cognitive_core.bioneuron_decision_controller
+
+# ✅ 執行完整系統
+python api/main.py  # 啟動 API 服務
+python -m services.core.aiva_core.ai_commander_v2  # 啟動 AI 指揮中心
+
+# ⚠️ 次選：必要時才執行測試套件
+pytest tests/services/ -v
+```
+
+**為什麼這樣做？**
+- 🎯 直接執行能立即發現實際問題
+- ⚡ 不需要維護額外的測試腳本
+- 🔍 真實環境下的行為最準確
+- 💪 程式本身就是最好的自我證明
+
+---
+
 ## 🚀 **快速開始**
 
 > **✅ 安裝狀態**: 本專案已完成初始安裝設定 (2025-11-13)  

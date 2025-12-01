@@ -173,16 +173,47 @@ class AICommandCenter:
         )
         
         try:
+            # 0. 通知開始執行（如果啟用回調）
+            callback = command.get_callback()
+            if command.enable_callbacks and callback:
+                try:
+                    await callback.on_status_change(
+                        command.command_id,
+                        CommandStatus.PENDING,
+                        CommandStatus.RUNNING
+                    )
+                except Exception as cb_error:
+                    self.logger.warning(f"回調執行失敗: {cb_error}")
+            
             # 1. 檢查處理器是否存在
             handler = self._handlers.get(command.target_module)
             if not handler:
                 error_msg = f"未找到模組 '{command.target_module}' 的處理器"
                 self.logger.error(f"❌ {error_msg}")
+                
+                # 通知失敗
+                if command.enable_callbacks and callback:
+                    try:
+                        await callback.on_status_change(
+                            command.command_id,
+                            CommandStatus.RUNNING,
+                            CommandStatus.FAILED
+                        )
+                    except Exception:
+                        pass
+                
                 return self._create_error_result(
                     command, 
                     error_msg, 
                     time.time() - start_time
                 )
+            
+            # 1.5 將回調傳遞給處理器（如果支持）
+            if command.enable_callbacks and callback and hasattr(handler, 'set_callback'):
+                try:
+                    handler.set_callback(callback)
+                except Exception as e:
+                    self.logger.warning(f"設置處理器回調失敗: {e}")
             
             # 2. 執行命令（帶超時控制）
             result = await asyncio.wait_for(
@@ -195,7 +226,18 @@ class AICommandCenter:
             self._stats["successful_commands"] += 1
             self._stats["total_execution_time"] += execution_time
             
-            # 4. 記錄歷史
+            # 4. 通知完成（如果啟用回調）
+            if command.enable_callbacks and callback:
+                try:
+                    await callback.on_status_change(
+                        command.command_id,
+                        CommandStatus.RUNNING,
+                        result.status
+                    )
+                except Exception as cb_error:
+                    self.logger.warning(f"回調執行失敗: {cb_error}")
+            
+            # 5. 記錄歷史
             self._record_command_history(command, result, execution_time)
             
             self.logger.info(
@@ -210,6 +252,18 @@ class AICommandCenter:
             execution_time = time.time() - start_time
             error_msg = f"命令執行超時（{command.timeout}秒）"
             self.logger.error(f"⏱️  {command.command_id}: {error_msg}")
+            
+            # 通知超時
+            callback = command.get_callback()
+            if command.enable_callbacks and callback:
+                try:
+                    await callback.on_status_change(
+                        command.command_id,
+                        CommandStatus.RUNNING,
+                        CommandStatus.TIMEOUT
+                    )
+                except Exception:
+                    pass
             
             self._stats["failed_commands"] += 1
             result = self._create_error_result(
@@ -226,6 +280,18 @@ class AICommandCenter:
             execution_time = time.time() - start_time
             error_msg = f"命令執行異常: {str(e)}"
             self.logger.error(f"❌ {command.command_id}: {error_msg}", exc_info=True)
+            
+            # 通知失敗
+            callback = command.get_callback()
+            if command.enable_callbacks and callback:
+                try:
+                    await callback.on_status_change(
+                        command.command_id,
+                        CommandStatus.RUNNING,
+                        CommandStatus.FAILED
+                    )
+                except Exception:
+                    pass
             
             self._stats["failed_commands"] += 1
             result = self._create_error_result(

@@ -16,12 +16,71 @@ vs 舊架構:
 
 from datetime import UTC, datetime
 from enum import Enum
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional, Union, Protocol, runtime_checkable
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, PrivateAttr
 
 
 # ==================== 命令類型枚舉 ====================
+
+@runtime_checkable
+class CommandCallback(Protocol):
+    """命令執行回調接口
+    
+    用於實時通知 UI 或其他系統命令執行進度、狀態變更和中間結果。
+    """
+    
+    async def on_progress(
+        self, 
+        command_id: str,
+        progress: float,  # 0.0 - 1.0
+        message: str,
+        metadata: Optional[Dict[str, Any]] = None
+    ) -> None:
+        """進度更新回調
+        
+        Args:
+            command_id: 命令 ID
+            progress: 進度值 (0.0 - 1.0)
+            message: 進度消息
+            metadata: 額外的元數據
+        """
+        ...
+    
+    async def on_status_change(
+        self,
+        command_id: str,
+        old_status: "CommandStatus",
+        new_status: "CommandStatus",
+        metadata: Optional[Dict[str, Any]] = None
+    ) -> None:
+        """狀態變更回調
+        
+        Args:
+            command_id: 命令 ID
+            old_status: 舊狀態
+            new_status: 新狀態
+            metadata: 額外的元數據
+        """
+        ...
+    
+    async def on_partial_result(
+        self,
+        command_id: str,
+        result_type: str,
+        data: Any,
+        metadata: Optional[Dict[str, Any]] = None
+    ) -> None:
+        """中間結果回調
+        
+        Args:
+            command_id: 命令 ID
+            result_type: 結果類型 (vulnerability_found, url_discovered, etc.)
+            data: 結果數據
+            metadata: 額外的元數據
+        """
+        ...
+
 
 class CommandType(str, Enum):
     """AI 命令類型 - 對應五大模組的主要功能"""
@@ -44,6 +103,35 @@ class CommandType(str, Enum):
     # Core 內部命令
     CORE_ANALYZE = "core_analyze"            # AI 分析
     CORE_DECIDE = "core_decide"              # AI 決策
+    
+    # ===== 網路搜索命令 (新增) =====
+    # 漏洞數據庫搜索
+    SEARCH_EXPLOIT_DB = "search_exploit_db"           # ExploitDB 搜索
+    SEARCH_CVE_DETAILS = "search_cve_details"         # CVE Details 搜索
+    SEARCH_CWE_INFO = "search_cwe_info"               # CWE 信息查詢
+    SEARCH_CAPEC_PATTERNS = "search_capec_patterns"   # CAPEC 攻擊模式
+    
+    # 威脅情報搜索
+    SEARCH_THREAT_INTEL = "search_threat_intel"       # 威脅情報查詢
+    SEARCH_IOC = "search_ioc"                         # IOC（入侵指標）搜索
+    SEARCH_MALWARE_ANALYSIS = "search_malware_analysis"  # 惡意軟件分析
+    
+    # 開源情報搜索 (OSINT)
+    SEARCH_GOOGLE = "search_google"                   # Google 搜索
+    SEARCH_DUCKDUCKGO = "search_duckduckgo"           # DuckDuckGo 搜索
+    SEARCH_GITHUB = "search_github"                   # GitHub 代碼/Issue 搜索
+    SEARCH_STACKOVERFLOW = "search_stackoverflow"     # StackOverflow 搜索
+    SEARCH_SHODAN = "search_shodan"                   # Shodan 設備搜索
+    SEARCH_CENSYS = "search_censys"                   # Censys 資產搜索
+    
+    # 社交工程搜索
+    SEARCH_EMAIL_BREACH = "search_email_breach"       # 郵箱洩露查詢
+    SEARCH_DOMAIN_INFO = "search_domain_info"         # 域名信息查詢
+    SEARCH_WHOIS = "search_whois"                     # WHOIS 查詢
+    
+    # AI 輔助搜索
+    RAG_SEARCH_INTERNAL = "rag_search_internal"       # RAG 內部知識庫搜索
+    RAG_SEARCH_EXTERNAL = "rag_search_external"       # RAG 外部網路搜索
     
     # 通用命令
     HEALTH_CHECK = "health_check"            # 健康檢查
@@ -112,8 +200,35 @@ class AICommand(BaseModel):
     metadata: Dict[str, Any] = Field(default_factory=dict, description="額外的元數據")
     created_at: datetime = Field(default_factory=lambda: datetime.now(UTC), description="創建時間")
     
-    # 回調配置
-    callback_url: Optional[str] = Field(None, description="完成後的回調 URL（可選）")
+    # ===== 回調配置 (擴展) =====
+    enable_callbacks: bool = Field(
+        default=False,
+        description="是否啟用實時回調機制"
+    )
+    
+    callback_url: Optional[str] = Field(None, description="完成後的回調 URL（可選，用於 HTTP 回調）")
+    
+    ui_update_interval: float = Field(
+        default=1.0,
+        ge=0.1,
+        le=10.0,
+        description="UI 更新間隔（秒）"
+    )
+    
+    # 回調處理器（僅在 Python 內部使用，不序列化）
+    _callback_handler: Optional[CommandCallback] = PrivateAttr(default=None)
+    
+    def set_callback(self, callback: CommandCallback) -> None:
+        """設置回調處理器
+        
+        Args:
+            callback: 實現了 CommandCallback 協議的回調處理器
+        """
+        self._callback_handler = callback
+    
+    def get_callback(self) -> Optional[CommandCallback]:
+        """獲取回調處理器"""
+        return self._callback_handler
     
     def to_dict(self) -> Dict[str, Any]:
         """轉換為字典格式"""

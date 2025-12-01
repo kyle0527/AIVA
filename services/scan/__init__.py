@@ -59,6 +59,7 @@ except ImportError as e:
 __all__ = [
     # 命令處理器 (新增)
     "ScanCommandHandler",
+    "register_to_command_center",  # 新增: 註冊函數
     
     # ========== 從 aiva_common 導入（共享標準，優先使用） ==========
     # 枚舉
@@ -91,3 +92,27 @@ __all__ = [
     "engines",         # 四個語言引擎模組
     "coordinators",    # 協調器模組
 ]
+
+
+def register_to_command_center() -> None:
+    """
+    註冊 Scan 模組到 AI 命令中心
+    
+    這個函數由外部調用（通常是 Core 模組初始化時），
+    避免了跨模組的直接 import 依賴。
+    
+    使用示例:
+        # 在 AI Commander 或主程式中
+        from services import scan
+        scan.register_to_command_center()
+    """
+    from services.aiva_common.command_center import get_command_center
+    from .command_handler import ScanCommandHandler
+    
+    command_center = get_command_center()
+    scan_handler = ScanCommandHandler()
+    command_center.register_module("scan", scan_handler)
+    
+    import logging
+    logger = logging.getLogger(__name__)
+    logger.info("✅ Scan 模組已註冊到 AI 命令中心")

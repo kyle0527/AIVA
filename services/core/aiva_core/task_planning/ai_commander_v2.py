@@ -8,6 +8,7 @@ AI Commander V2
 
 import logging
 import asyncio
+import os
 import time
 from typing import Dict, Any, Optional, List
 from pathlib import Path
@@ -100,7 +101,7 @@ class AICommanderV2:
             
             # 1. 註冊模組處理器到 AICommandCenter
             logger.info("Registering module handlers to CommandCenter...")
-            await self._register_command_handlers()
+            self._register_command_handlers()  # 改為同步調用
             
             # 2. 初始化協調器
             logger.info("Initializing coordinators...")
@@ -126,7 +127,7 @@ class AICommanderV2:
             
             # 4. 將 command_center 注入到所有 Plugin
             logger.info("Injecting command_center to plugins...")
-            await self._inject_command_center_to_plugins()
+            self._inject_command_center_to_plugins()  # 改為同步調用
             
             # 5. 載入權重
             logger.info("Loading plugin weights...")
@@ -140,33 +141,47 @@ class AICommanderV2:
             logger.error(f"Failed to initialize AI Commander V2: {e}", exc_info=True)
             return False
     
-    async def _register_command_handlers(self) -> None:
-        """註冊各模組的 CommandHandler 到 AICommandCenter"""
+    def _register_command_handlers(self) -> None:
+        """註冊各模組的 CommandHandler 到 AICommandCenter
+        
+        使用模組自行註冊機制，避免跨模組直接 import。
+        這符合微服務架構的邊界隔離原則。
+        """
         try:
             # 註冊 Scan 模組處理器
-            from services.scan.command_handler import ScanCommandHandler
-            scan_handler = ScanCommandHandler()
-            self.command_center.register_module("scan", scan_handler)
+            # ✅ 使用模組自行註冊函數，避免直接 import ScanCommandHandler
+            from services import scan
+            scan.register_to_command_center()
             logger.info("✅ 已註冊 Scan 模組處理器")
             
             # ⚠️ Features 模組處理器（暫時跳過，等接收端完善）
-            # from services.features.command_handler import FeaturesCommandHandler
-            # features_handler = FeaturesCommandHandler()
-            # self.command_center.register_module("features", features_handler)
+            # from services import features
+            # features.register_to_command_center()
             # logger.info("✅ 已註冊 Features 模組處理器")
             
-            # ⚠️ Integration 模組處理器（暫時跳過）
-            # from services.integration.command_handler import IntegrationCommandHandler
-            # integration_handler = IntegrationCommandHandler()
-            # self.command_center.register_module("integration", integration_handler)
-            # logger.info("✅ 已註冊 Integration 模組處理器")
+            # ✅ 註冊 Search 命令處理器（Integration 模組的一部分）
+            try:
+                from services import integration
+                search_config = {
+                    "google_api_key": os.getenv("GOOGLE_API_KEY"),
+                    "google_search_engine_id": os.getenv("GOOGLE_SEARCH_ENGINE_ID"),
+                    "github_token": os.getenv("GITHUB_TOKEN"),
+                    "shodan_api_key": os.getenv("SHODAN_API_KEY"),
+                    "nvd_api_key": os.getenv("NVD_API_KEY"),
+                    "virustotal_api_key": os.getenv("VIRUSTOTAL_API_KEY"),
+                    "abuseipdb_api_key": os.getenv("ABUSEIPDB_API_KEY"),
+                }
+                integration.register_search_handler_to_command_center(search_config)
+                logger.info("✅ 已註冊 Search 模組處理器")
+            except Exception as e:
+                logger.warning(f"無法註冊 Search 模組處理器: {e}")
             
         except ImportError as e:
             logger.warning(f"Could not import some command handlers: {e}")
         except Exception as e:
             logger.error(f"Failed to register command handlers: {e}", exc_info=True)
     
-    async def _inject_command_center_to_plugins(self) -> None:
+    def _inject_command_center_to_plugins(self) -> None:
         """將 command_center 注入到所有 Plugin"""
         plugins = self.module_registry.list_plugins()
         
@@ -233,33 +248,44 @@ class AICommanderV2:
         plugins = self.module_registry.list_plugins()
         
         for plugin_info in plugins:
-            plugin_id = plugin_info.get("module_id")
-            if not plugin_id:
-                continue
-                
-            plugin = self.module_registry.get_plugin(plugin_id)
+            await self._load_single_plugin_weight(plugin_info)
+    
+    async def _load_single_plugin_weight(self, plugin_info: Dict[str, Any]) -> None:
+        """載入單個插件的權重（降低複雜度的輔助方法）
+        
+        Args:
+            plugin_info: 插件信息字典
+        """
+        plugin_id = plugin_info.get("module_id")
+        if not plugin_id:
+            return
             
-            if plugin and plugin.requires_weights:
-                try:
-                    # 獲取權重路徑
-                    weight_info = self.weight_manager.get_weights(plugin_id)
-                    
-                    if weight_info and isinstance(weight_info, dict):
-                        weight_path = weight_info.get("path")
-                        if not weight_path:
-                            logger.warning(f"No path in weight_info for {plugin_id}")
-                            continue
-                        success = await plugin.load_weights(Path(weight_path))
-                        
-                        if success:
-                            logger.info(f"✅ Loaded weights for {plugin_id}")
-                        else:
-                            logger.warning(f"Failed to load weights for {plugin_id}")
-                    else:
-                        logger.warning(f"No weights found for {plugin_id}")
-                
-                except Exception as e:
-                    logger.error(f"Error loading weights for {plugin_id}: {e}")
+        plugin = self.module_registry.get_plugin(plugin_id)
+        
+        if not plugin or not plugin.requires_weights:
+            return
+        
+        try:
+            weight_info = self.weight_manager.get_weights(plugin_id)
+            
+            if not weight_info or not isinstance(weight_info, dict):
+                logger.warning(f"No weights found for {plugin_id}")
+                return
+            
+            weight_path = weight_info.get("path")
+            if not weight_path:
+                logger.warning(f"No path in weight_info for {plugin_id}")
+                return
+            
+            success = await plugin.load_weights(Path(weight_path))
+            
+            if success:
+                logger.info(f"✅ Loaded weights for {plugin_id}")
+            else:
+                logger.warning(f"Failed to load weights for {plugin_id}")
+        
+        except Exception as e:
+            logger.error(f"Error loading weights for {plugin_id}: {e}")
     
     async def execute_task(
         self,
@@ -429,7 +455,7 @@ class AICommanderV2:
         if len(self.task_history) > 1000:
             self.task_history = self.task_history[-500:]
     
-    async def get_task_status(self, task_id: str) -> Optional[Dict[str, Any]]:  # type: ignore[misc]
+    def get_task_status(self, task_id: str) -> Optional[Dict[str, Any]]:
         """獲取任務狀態
         
         Args:
@@ -496,7 +522,7 @@ class AICommanderV2:
         """
         return await self.module_registry.register_plugin(plugin)
     
-    async def unregister_plugin(self, plugin_id: str) -> bool:  # type: ignore[misc]
+    def unregister_plugin(self, plugin_id: str) -> bool:
         """註銷插件
         
         Args:
@@ -510,7 +536,7 @@ class AICommanderV2:
             return self.module_registry.unregister_plugin(plugin_id)  # type: ignore[attr-defined]
         return True
     
-    async def list_plugins(self) -> List[Dict[str, Any]]:  # type: ignore[misc]
+    def list_plugins(self) -> List[Dict[str, Any]]:
         """列出所有已註冊的插件
         
         Returns:
@@ -518,7 +544,7 @@ class AICommanderV2:
         """
         return self.module_registry.list_plugins()
     
-    async def get_plugin_info(self, plugin_id: str) -> Optional[Dict[str, Any]]:  # type: ignore[misc]
+    def get_plugin_info(self, plugin_id: str) -> Optional[Dict[str, Any]]:
         """獲取插件信息
         
         Args:

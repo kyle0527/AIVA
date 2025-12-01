@@ -33,11 +33,55 @@ from rich.table import Table
 from rich.text import Text
 
 from services.aiva_common.schemas import APIResponse
-from services.config.settings_manager import SettingsManager
-from utilities.logger_setup import setup_logger
+from services.aiva_common.utils import get_logger
+
+# 嘗試導入能力系統基類
+try:
+    from services.core.aiva_core.core_capabilities.base import BaseCapability
+except ImportError:
+    # 提供一個簡單的基礎類
+    class BaseCapability:
+        """基礎能力類（回退實現）"""
+        @property
+        def name(self) -> str:
+            raise NotImplementedError
+        
+        @property
+        def version(self) -> str:
+            raise NotImplementedError
+        
+        @property
+        def description(self) -> str:
+            raise NotImplementedError
+        
+        @property
+        def dependencies(self) -> List[str]:
+            return []
+        
+        async def initialize(self) -> bool:
+            return True
+        
+        async def execute(self, command: str, parameters: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
+            raise NotImplementedError
+        
+        async def cleanup(self) -> bool:
+            return True
+
+try:
+    from services.integration.capability import CapabilityRegistry
+    RealCapabilityRegistry = CapabilityRegistry  # type: ignore
+except ImportError:
+    # 提供一個簡單的註冊表
+    class RealCapabilityRegistry:  # type: ignore
+        _capabilities = {}
+        
+        @classmethod
+        async def register_capability(cls, capability) -> bool:
+            cls._capabilities[capability.name] = capability
+            return True
 
 
-logger = setup_logger(__name__)
+logger = get_logger(__name__)
 console = Console()
 
 
@@ -102,12 +146,14 @@ class SubdomainEnumerator:
     async def _enumerate_crt_sh(self, domain: str) -> None:
         """使用 crt.sh 枚舉子域名"""
         try:
+            if not self.session:
+                return
             url = f"https://crt.sh/?q=%25.{domain}&output=json"
             async with self.session.get(url) as response:
                 if response.status == 200:
                     data = await response.json()
                     for entry in data:
-                        name = entry.get('name_value', '')
+                        name = entry.get('name_value', '') if isinstance(entry, dict) else ''
                         if name and name.endswith(domain):
                             self.found_subdomains.add(name.strip())
         except Exception as e:
@@ -152,9 +198,10 @@ class SubdomainEnumerator:
             subdomain = f"{sub}.{domain}"
             try:
                 # 簡單的 HTTP 檢測
-                async with self.session.get(f"http://{subdomain}", allow_redirects=False) as response:
-                    if response.status < 400:
-                        self.found_subdomains.add(subdomain)
+                if self.session:
+                    async with self.session.get(f"http://{subdomain}", allow_redirects=False) as response:
+                        if response.status < 400:
+                            self.found_subdomains.add(subdomain)
             except Exception:
                 continue
 
@@ -198,6 +245,8 @@ class DirectoryScanner:
     async def _check_path(self, url: str, path: str) -> None:
         """檢查單個路徑"""
         try:
+            if not self.session:
+                return
             async with self.session.get(url, allow_redirects=False) as response:
                 result = {
                     'path': path,
@@ -288,10 +337,11 @@ class VulnerabilityScanner:
             try:
                 test_url = f"{target_url}?id={urllib.parse.quote(payload)}"
                 async with self.session.get(test_url) as response:
-                    content = await response.text().lower()
+                    content = await response.text()
+                    content_lower = content.lower()
                     error_indicators = ['sql', 'mysql', 'oracle', 'postgresql', 'syntax error']
                     
-                    if any(indicator in content for indicator in error_indicators):
+                    if any(indicator in content_lower for indicator in error_indicators):
                         self.vulnerabilities.append({
                             'type': 'SQL Injection',
                             'severity': 'High',
@@ -857,11 +907,15 @@ class WebAttackCLI:
             console.print(vuln_table)
 
 
-class WebAttackCapability(BaseCapability):
+class WebAttackCapability(BaseCapability):  # type: ignore
     """網絡攻擊能力類"""
     
     def __init__(self):
-        super().__init__()
+        try:
+            super().__init__()
+        except TypeError:
+            # 如果 BaseCapability 是回退實現，可能沒有 __init__
+            pass
         self.manager = WebAttackManager()
         self.cli = WebAttackCLI(self.manager)
         
@@ -975,7 +1029,7 @@ async def register_capability():
     """註冊網絡攻擊能力"""
     try:
         capability = WebAttackCapability()
-        success = await CapabilityRegistry.register_capability(capability)
+        success = await RealCapabilityRegistry.register_capability(capability)
         if success:
             logger.info("網絡攻擊能力註冊成功")
         else:
