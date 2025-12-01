@@ -78,19 +78,25 @@ class RealScalableBioNet:
         logger.info("-" * 50)
     
     def _load_or_initialize_weights(self) -> None:
-        """載入或初始化權重"""
+        """載入或初始化權重 - 支援不同 key 命名結構"""
         try:
             if Path(self.weights_path).exists():
                 # 載入已存在的權重
                 checkpoint = torch.load(self.weights_path, map_location=self.device)
-                self.real_ai_core.load_state_dict(checkpoint['model_state_dict'])
-                logger.info(f"載入權重: {self.weights_path}")
+                
+                # 檢查權重文件完整性
+                if checkpoint and isinstance(checkpoint, dict):
+                    logger.debug(f"Loaded checkpoint with keys: {list(checkpoint.keys())}")
+                
+                # 使用 RealAICore 的智能載入功能
+                self.real_ai_core.load_weights(self.weights_path)
+                logger.info(f"✅ 載入權重: {self.weights_path}")
             else:
                 # 創建新權重檔案
                 logger.info(f"創建新權重檔案: {self.weights_path}")
                 self.save_weights()
         except Exception as e:
-            logger.warning(f"權重載入失敗，使用隨機初始化: {e}")
+            logger.warning(f"⚠️ 權重載入失敗，使用隨機初始化: {e}")
     
     def forward(self, x: NDArray) -> NDArray:
         """

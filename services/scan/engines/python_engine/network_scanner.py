@@ -1,20 +1,38 @@
 """
 AIVA 網路掃描器
 負責執行端口掃描、服務發現和網路枚舉
+
+整合 python-nmap 進行真實掃描 (P0-1 Full 修復)
+遵循 aiva_common v2.0 規範
 """
 
 import asyncio
 import logging
 import socket
 from typing import Dict, List, Any, Optional, Tuple
-from datetime import datetime
+from datetime import datetime, UTC
 import ipaddress
 
-logger = logging.getLogger(__name__)
+try:
+    import nmap
+    NMAP_AVAILABLE = True
+except ImportError:
+    NMAP_AVAILABLE = False
+    logging.warning("python-nmap not installed, using heuristic mode only")
+
+# ✅ 使用 aiva_common 統一日誌
+from aiva_common.utils.logging import get_logger
+
+logger = get_logger(__name__)
 
 
 class NetworkScanner:
-    """網路掃描器主類別"""
+    """網路掃描器主類別 (v2.0 - 整合 python-nmap)
+    
+    支援兩種模式:
+    1. Nmap 模式: 使用 python-nmap 進行真實掃描 (準確)
+    2. Heuristic 模式: 使用 Python socket 進行基礎掃描 (降級)
+    """
     
     def __init__(self):
         self.session_id = None
@@ -24,7 +42,19 @@ class NetworkScanner:
             21, 22, 23, 25, 53, 80, 110, 111, 135, 139, 143, 443, 993, 995, 1723, 3306, 3389, 5432, 5900, 8080
         ]
         
-    async def initialize(self, config: Dict[str, Any] = None) -> bool:
+        # ✅ 初始化 nmap 掃描器
+        self.nm = None
+        if NMAP_AVAILABLE:
+            try:
+                self.nm = nmap.PortScanner()
+                logger.info("✅ NetworkScanner initialized with python-nmap")
+            except Exception as e:
+                logger.warning(f"⚠️  Failed to initialize nmap scanner: {e}")
+                self.nm = None
+        else:
+            logger.info("⚠️  NetworkScanner initialized in heuristic mode (nmap not available)")
+        
+    def initialize(self, config: Optional[Dict[str, Any]] = None) -> bool:
         """初始化網路掃描器"""
         try:
             self.scan_config = config or {}
@@ -71,7 +101,7 @@ class NetworkScanner:
             return {"error": str(e), "target": target}
     
     async def _port_scan(self, target: str) -> Dict[str, Any]:
-        """執行端口掃描"""
+        """執行端口掃描 (v2.0 - 整合 python-nmap)"""
         results = {
             "open_ports": [],
             "closed_ports": [],
@@ -84,7 +114,14 @@ class NetworkScanner:
         if not host:
             return {"error": "無效的目標地址"}
         
-        logger.info(f"掃描端口: {host}")
+        logger.info(f"🔍 掃描端口: {host}")
+        
+        # ✅ 優先使用 nmap 進行真實掃描
+        if self.nm is not None:
+            return await self._nmap_port_scan(host)
+        
+        # 降級到基礎掃描
+        logger.info("⚠️  Using heuristic port scan (nmap not available)")
         
         # 掃描常見端口
         for port in self.common_ports:
@@ -121,6 +158,7 @@ class NetworkScanner:
         }
         
         host = self._extract_host(target)
+        logger.debug(f"服務發現目標: {host}")
         
         # 先進行端口掃描
         port_results = await self._port_scan(target)
@@ -136,10 +174,7 @@ class NetworkScanner:
                 "category": self._categorize_service(port)
             }
             
-            # 嘗試服務版本檢測
-            version_info = await self._detect_service_version(host, port)
-            if version_info:
-                service_info.update(version_info)
+            # 版本檢測已整合到 nmap 掃描中，不需要單獨調用
             
             results["discovered_services"].append(service_info)
             
@@ -169,13 +204,13 @@ class NetworkScanner:
         results["host_info"] = await self._get_host_info(host)
         
         # 網路資訊
-        results["network_info"] = await self._get_network_info(host)
+        results["network_info"] = self._get_network_info(host)
         
         # 可達性測試
         results["reachability"] = await self._test_reachability(host)
         
         # DNS資訊
-        results["dns_info"] = await self._get_dns_info(host)
+        results["dns_info"] = self._get_dns_info(host)
         
         return results
     
@@ -189,18 +224,20 @@ class NetworkScanner:
         
         return results
     
-    async def _check_port(self, host: str, port: int, timeout: float = 1.0) -> str:
+    async def _check_port(self, host: str, port: int) -> str:
         """檢查端口狀態"""
         try:
-            future = asyncio.open_connection(host, port)
-            reader, writer = await asyncio.wait_for(future, timeout=timeout)
-            writer.close()
-            await writer.wait_closed()
+            async with asyncio.timeout(1.0):
+                _, writer = await asyncio.open_connection(host, port)
+                writer.close()
+                await writer.wait_closed()
             return "open"
-        except (ConnectionRefusedError, OSError):
+        except ConnectionRefusedError:
             return "closed"
-        except asyncio.TimeoutError:
+        except (TimeoutError, asyncio.TimeoutError):
             return "filtered"
+        except OSError:
+            return "closed"
         except Exception:
             return "unknown"
     
@@ -245,22 +282,171 @@ class NetworkScanner:
         else:
             return "other"
     
-    async def _detect_service_version(self, host: str, port: int) -> Optional[Dict[str, str]]:
-        """檢測服務版本"""
+    async def _nmap_port_scan(self, host: str) -> Dict[str, Any]:
+        """使用 nmap 進行真實端口掃描 (P0-1 Full 修復)
+        
+        Args:
+            host: 目標主機
+            
+        Returns:
+            包含真實掃描結果的字典
+        """
+        results = {
+            "open_ports": [],
+            "closed_ports": [],
+            "filtered_ports": [],
+            "total_scanned": 0
+        }
+        
         try:
-            # 模擬版本檢測
-            if port == 80 or port == 8080:
-                return {"version": "Apache/2.4.41", "os": "Ubuntu"}
-            elif port == 443:
-                return {"version": "nginx/1.18.0", "os": "Ubuntu"}
-            elif port == 22:
-                return {"version": "OpenSSH 8.2p1", "os": "Ubuntu 20.04"}
-            elif port == 3306:
-                return {"version": "MySQL 8.0.25", "os": "Linux"}
+            # 當在非 Nmap 環境或 nmap 初始化失敗時，nm 為 None
+            if not self.nm:
+                logger.warning("⚠️ Nmap not available, using heuristic mode")
+                return await self._heuristic_port_scan(host)
+            
+            # 構建端口列表字串
+            ports_str = ','.join(map(str, self.common_ports))
+            
+            # 執行 nmap 掃描 (在線程池中執行以避免阻塞)
+            loop = asyncio.get_event_loop()
+            if self.nm is not None:  # 明確檢查 nm 不為 None
+                await loop.run_in_executor(
+                    None,
+                    lambda: self.nm.scan(
+                        hosts=host,
+                        ports=ports_str,
+                        arguments='-sV --version-intensity 5'  # 服務版本檢測
+                    )
+                )
             else:
-                return None
-        except Exception:
-            return None
+                logger.error("Nmap instance is None, cannot perform scan")
+                return {"error": "Nmap not available"}
+            
+            # 解析結果
+            if host in self.nm.all_hosts():
+                for proto in self.nm[host].all_protocols():
+                    ports = self.nm[host][proto].keys()
+                    results["total_scanned"] += len(ports)
+                    
+                    for port in ports:
+                        port_info = self.nm[host][proto][port]
+                        state = port_info['state']
+                        
+                        port_data = {
+                            "port": port,
+                            "protocol": proto,
+                            "service": port_info.get('name', 'unknown'),
+                            "version": port_info.get('version', ''),
+                            "product": port_info.get('product', ''),
+                            "extrainfo": port_info.get('extrainfo', ''),
+                            "state": state,
+                            "confidence": 0.9  # nmap 掃描高可信度
+                        }
+                        
+                        if state == 'open':
+                            results["open_ports"].append(port_data)
+                        elif state == 'closed':
+                            results["closed_ports"].append(port_data)
+                        elif state == 'filtered':
+                            results["filtered_ports"].append(port_data)
+            
+            logger.info(f"✅ Nmap scan completed: {len(results['open_ports'])} open ports found")
+            
+        except Exception as e:
+            logger.error(f"❌ Nmap scan failed: {e}")
+            # 返回錯誤但不中斷
+            results["error"] = str(e)
+        
+        return results
+    
+    def _detect_service_version(self) -> Optional[Dict[str, str]]:
+        """檢測服務版本 - 已整合到 nmap 掃描中"""  
+        # ✅ P0-1 修復完成: 服務版本檢測已整合到 _nmap_port_scan
+        # 此方法保留用於兼容性
+        return None
+    
+    async def _heuristic_port_scan(self, host: str) -> Dict[str, Any]:
+        """當 nmap 不可用時的啟發式端口掃描"""
+        logger.info(f"🔍 Running heuristic port scan for {host}")
+        
+        results = {
+            "open_ports": [],
+            "closed_ports": [],
+            "scan_method": "heuristic",
+            "timestamp": datetime.now(UTC).isoformat()
+        }
+        
+        try:
+            # 掃描常見端口
+            tasks = []
+            for port in self.common_ports:
+                task = self._check_port_simple(host, port)
+                tasks.append(task)
+            
+            # 並行檢查端口
+            port_results = await asyncio.gather(*tasks, return_exceptions=True)
+            
+            for i, result in enumerate(port_results):
+                port = self.common_ports[i]
+                if isinstance(result, Exception):
+                    logger.debug(f"Port {port} check failed: {result}")
+                    continue
+                
+                if result == "open":
+                    service_name = self._guess_service_by_port(port)
+                    results["open_ports"].append({
+                        "port": port,
+                        "protocol": "tcp",
+                        "state": "open",
+                        "service": service_name,
+                        "method": "heuristic"
+                    })
+                else:
+                    results["closed_ports"].append(port)
+            
+            logger.info(f"✅ Heuristic scan completed. Found {len(results['open_ports'])} open ports")
+            
+        except Exception as e:
+            logger.error(f"❌ Heuristic port scan failed: {e}")
+            results["error"] = str(e)
+        
+        return results
+    
+    async def _check_port_simple(self, host: str, port: int) -> str:
+        """簡單的端口檢查"""
+        try:
+            async with asyncio.timeout(3.0):
+                _, writer = await asyncio.open_connection(host, port)
+                writer.close()
+                await writer.wait_closed()
+                return "open"
+        except ConnectionRefusedError:
+            return "closed"
+    
+    def _guess_service_by_port(self, port: int) -> str:
+        """根據端口號猜測服務類型"""
+        common_services = {
+            21: "ftp",
+            22: "ssh", 
+            23: "telnet",
+            25: "smtp",
+            53: "dns",
+            80: "http",
+            110: "pop3",
+            135: "rpc",
+            139: "netbios",
+            443: "https",
+            445: "smb",
+            993: "imaps",
+            995: "pop3s",
+            3389: "rdp",
+            5432: "postgresql",
+            3306: "mysql",
+            1433: "mssql",
+            6379: "redis",
+            27017: "mongodb"
+        }
+        return common_services.get(port, "unknown")
     
     async def _get_host_info(self, host: str) -> Dict[str, Any]:
         """獲取主機資訊"""
@@ -276,10 +462,13 @@ class NetworkScanner:
             ip = socket.gethostbyname(host)
             info["ip_address"] = ip
             
-            # 簡單的OS指紋識別（模擬）
-            if await self._check_port(host, 135):  # Windows RPC
+            # 簡單的OS指紋識別（基於端口檢查）
+            windows_port = await self._check_port(host, 135)  # Windows RPC
+            ssh_port = await self._check_port(host, 22)  # SSH
+            
+            if windows_port == "open":
                 info["os_guess"] = "Windows"
-            elif await self._check_port(host, 22):  # SSH (通常是Linux/Unix)
+            elif ssh_port == "open":
                 info["os_guess"] = "Linux/Unix"
             
         except Exception as e:
@@ -287,7 +476,7 @@ class NetworkScanner:
         
         return info
     
-    async def _get_network_info(self, host: str) -> Dict[str, Any]:
+    def _get_network_info(self, host: str) -> Dict[str, Any]:
         """獲取網路資訊"""
         info = {
             "network": "Unknown",
@@ -326,22 +515,20 @@ class NetworkScanner:
             start_time = datetime.now()
             
             # 測試TCP連接（使用端口80）
-            status = await self._check_port(host, 80, timeout=2.0)
+            status = await self._check_port(host, 80)
             if status == "open":
                 reachability["tcp_connect"] = True
+                reachability["ping_response"] = True
             
             end_time = datetime.now()
             reachability["response_time"] = (end_time - start_time).total_seconds() * 1000
-            
-            # 簡單的ping模擬
-            reachability["ping_response"] = reachability["tcp_connect"]
             
         except Exception:
             pass
         
         return reachability
     
-    async def _get_dns_info(self, host: str) -> Dict[str, Any]:
+    def _get_dns_info(self, host: str) -> Dict[str, Any]:
         """獲取DNS資訊"""
         dns_info = {
             "hostname": host,
@@ -375,7 +562,7 @@ class NetworkScanner:
         # 移除端口和路徑
         if "/" in target:
             target = target.split("/")[0]
-        if ":" in target and not target.count(":") > 1:  # 不是IPv6
+        if ":" in target and target.count(":") <= 1:  # 不是IPv6
             target = target.split(":")[0]
         
         return target
@@ -409,11 +596,11 @@ class NetworkScanner:
         
         return summary
     
-    async def get_scan_results(self) -> List[Dict[str, Any]]:
+    def get_scan_results(self) -> List[Dict[str, Any]]:
         """獲取所有掃描結果"""
         return self.results
     
-    async def cleanup(self):
+    def cleanup(self) -> None:
         """清理掃描器資源"""
         self.results.clear()
         logger.info(f"網路掃描器已清理，會話: {self.session_id}")
@@ -425,7 +612,7 @@ def demo_network_scanner():
         scanner = NetworkScanner()
         
         # 初始化
-        await scanner.initialize()
+        scanner.initialize()
         
         # 掃描測試目標
         results = await scanner.scan_target("localhost:3000", "port_scan")
@@ -446,7 +633,7 @@ def demo_network_scanner():
             for concern in summary['security_concerns']:
                 print(f"- {concern}")
         
-        await scanner.cleanup()
+        scanner.cleanup()
     
     # 執行演示
     asyncio.run(run_demo())

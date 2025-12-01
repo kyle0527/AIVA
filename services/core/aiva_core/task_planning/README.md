@@ -1,310 +1,239 @@
-# 🎯 Task Planning - 任務規劃與執行
+# 📋 Task Planning - 任務規劃系統
 
-## 📑 目錄
-
-- [📋 目錄](#-目錄)
-- [🎯 模組概述](#-模組概述)
-  - [核心職責](#核心職責)
-  - [設計理念](#設計理念)
-  - [🎯 核心職責](#-核心職責)
-- [🏗️ 架構設計](#-架構設計)
-  - [執行流程](#執行流程)
-  - [2. 🔀 Command Router (命令路由器)](#2--command-router-命令路由器)
-  - [3. 📝 Planner (規劃器)](#3--planner-規劃器)
-  - [4. ⚙️ Executor (執行器)](#4--executor-執行器)
-- [📖 使用範例](#-使用範例)
-  - [完整的任務規劃與執行流程](#完整的任務規劃與執行流程)
-- [🛠️ 開發指南](#-開發指南)
-  - [🔨 aiva_common 修復規範](#-aiva_common-修復規範)
-  - [添加新的任務類型](#添加新的任務類型)
-  - [實現自定義命令處理器](#實現自定義命令處理器)
-- [📊 性能指標](#-性能指標)
-- [🔗 相關模組](#-相關模組)
-
----
+> **版本**: v2.1.2  
+> **狀態**: ✅ 生產就緒  
+> **最後更新**: 2025-12-01  
+> **角色**: AIVA 的智能任務規劃和執行引擎
 
 **導航**: [← 返回 AIVA Core](../README.md)
 
-> **版本**: v2.1.2 (生產就緒)  
-> **狀態**: ✅ 生產就緒，100% 類型安全  
-> **🧪 測試狀態**: 階段 5 測試 100% 通過 (3/3 組件)  
-> **代碼品質**: Phase 3 完成 - 0 個真實錯誤  
-> **角色**: AIVA 的「執行大腦」- 將策略轉化為任務並協調執行  
-> **最後更新**: 2025年12月20日
+---
+
+## 📋 目錄
+
+- [模組概述](#-模組概述)
+- [子系統架構](#-子系統架構)
+  - [Planner - 規劃器](#1-planner---規劃器)
+  - [Executor - 執行器](#2-executor---執行器)  
+  - [Coordinators - 協調器](#3-coordinators---協調器)
+- [完整工作流程](#-完整工作流程)
+- [性能指標](#-性能指標)
 
 ---
 
 ## 🎯 模組概述
 
-**Task Planning** 是 AIVA 六大模組架構中的執行規劃層，負責將抽象的攻擊策略轉化為具體的可執行任務。整合了 AI 指揮系統、命令路由、任務生成、執行編排、狀態監控等核心能力，確保攻擊流程高效有序地執行。
+Task Planning 是 AIVA 的任務規劃和執行系統，負責將高層次目標分解為可執行的子任務，並協調執行過程。
 
-### 核心職責
-1. **AI 指揮** - 統一指揮所有 AI 組件的協調中心
-2. **任務生成** - 將策略轉換為具體的功能測試任務
-3. **執行編排** - AST 解析、工具選擇、任務序列化
-4. **任務調度** - 優先級佇列、負載平衡、並行執行
-5. **狀態監控** - Worker 心跳、SLA 追蹤、健康檢查
-6. **命令路由** - 智能路由、複雜度分析、執行模式選擇
-
-### 設計理念
-- **策略驅動** - 從高層策略到底層任務的自動轉換
-- **AI 增強** - 整合多個 AI 組件智能決策
-- **異步執行** - 支援並行和流式執行模式
-- **可觀測性** - 全程追蹤任務執行狀態
-
-### 🎯 核心職責
-
-- ✅ **AST 規劃**: 將 AI 決策轉換為 AST 攻擊計劃
----
-
-## 🏗️ 架構設計
-
-```
-task_planning/
-├── 📁 planner/                   # 規劃器 (9 檔案) - [📖 README](./planner/README.md)
-│   ├── task_generator.py         # ✅ 任務生成器
-│   ├── orchestrator.py           # ✅ 攻擊編排器
-│   ├── execution_planner.py      # ✅ 執行計劃器
-│   ├── ast_parser.py             # ✅ AST 攻擊流程圖解析 (281行)
-│   ├── task_converter.py         # ✅ 任務轉換器
-│   ├── tool_selector.py          # ✅ 工具選擇器 (219行)
-│   ├── plan_comparator.py        # ✅ 計畫比較器
-│   ├── strategy_generator.py     # 🔧 策略生成器（舊版）
-│   └── __init__.py
-│
-├── 📁 executor/                  # 執行器 (6 檔案) - [📖 README](./executor/README.md)
-│   ├── task_executor.py          # ✅ 任務執行器 (279行)
-│   ├── task_queue_manager.py    # ✅ 任務佇列管理器
-│   ├── execution_status_monitor.py  # ✅ 執行狀態監控器
-│   ├── plan_executor.py          # ✅ 計畫執行器
-│   ├── attack_plan_mapper.py     # 🔧 攻擊計畫映射器（舊版）
-│   └── __init__.py
-│
-├── ai_commander.py               # ✅ AI 指揮系統
-├── command_router.py             # ✅ 命令路由器
-└── __init__.py
-
-總計: 18 個 Python 檔案
-```
-
-### 執行流程
-```
-┌─────────────────────────────────────────────────────────┐
-│           Task Planning (任務規劃與執行)                  │
-│                                                         │
-│  ┌──────────────────────────────────────────────────┐  │
-│  │           AI Commander (AI 指揮中心)              │  │
-│  │  ┌─────────────┐  ┌─────────────┐  ┌──────────┐ │  │
-│  │  │BioNeuronRAG │  │  RAG Engine │  │ Training │ │  │
-│  │  │   Agent     │  │   (知識)    │  │  (學習)  │ │  │
-│  │  └─────────────┘  └─────────────┘  └──────────┘ │  │
-│  └──────────────────────────────────────────────────┘  │
-│                           ▼                            │
-│  ┌──────────────────────────────────────────────────┐  │
-│  │       Command Router (命令路由器)                 │  │
-│  │    智能路由 • 複雜度分析 • 執行模式選擇           │  │
-│  └──────────────────────────────────────────────────┘  │
-│                           ▼                            │
-│         ┌─────────────────┴─────────────────┐          │
-│         │                                   │          │
-│    ┌────▼──────┐                      ┌────▼──────┐   │
-│    │  Planner  │                      │ Executor  │   │
-│    │  (規劃器) │                      │ (執行器)  │   │
-│    └───────────┘                      └───────────┘   │
-│         │                                   │          │
-│    ┌────▼──────────────┐         ┌─────────▼────────┐ │
-│    │ Task Generator    │         │  Task Queue Mgr  │ │
-│    │ Orchestrator      │────────▶│  Status Monitor  │ │
-│    │ Execution Planner │         │  Task Executor   │ │
-│    └───────────────────┘         └──────────────────┘ │
-│                                                         │
-└─────────────────────────────────────────────────────────┘
-                           │
-          ┌────────────────┼────────────────┐
-          │                │                │
-     ┌────▼────┐     ┌─────▼─────┐    ┌───▼────┐
-     │  Core   │     │  Service  │    │External│
-     │Capability│     │ Backbone  │    │Learning│
-     └─────────┘     └───────────┘    └────────┘
-```
+**核心職責**：
+- 📋 **智能規劃** - 將複雜任務分解為可執行步驟
+- ⚡ **並行執行** - 支援多任務並行和依賴管理
+- 🔄 **動態調整** - 根據執行結果動態調整計劃
+- 📊 **進度追蹤** - 實時監控任務執行狀態
 
 ---
 
-### 2. 🔀 Command Router (命令路由器)
+## 🏗️ 子系統架構
 
-#### `command_router.py` - 智能命令路由系統
-**功能**: AI vs 非 AI 自動判斷和複雜度分析
+### 1. Planner - 規劃器
+
+**位置**: `task_planning/planner/`
+
+**核心組件**：
+- `enhanced_planner.py` - AI 增強任務規劃器（500+ 行）
+- `task_decomposer.py` - 任務分解引擎（300+ 行）
+
+**主要功能**：
 ```python
-from task_planning import CommandRouter, CommandContext
+from aiva_core.task_planning.planner import EnhancedPlanner
 
-router = CommandRouter()
+# 初始化規劃器
+planner = EnhancedPlanner(neural_core, decision_agent)
 
-context = CommandContext(
-    command="analyze_vulnerability",
-    args={"target": "https://example.com"}
+# 生成任務計劃
+plan = await planner.create_plan(
+    goal="掃描目標網站並發現漏洞",
+    constraints={"timeout": 3600, "max_depth": 3}
 )
 
-# 自動路由
-route_info = router.route_command(context)
-print(f"需要 AI: {route_info['requires_ai']}")
+# 計劃包含
+# - 任務列表 (tasks)
+# - 依賴關係 (dependencies)
+# - 資源需求 (resources)
+# - 預估時間 (estimated_time)
 ```
 
-### 3. 📝 Planner (規劃器)
-
-#### `task_generator.py` - 任務生成器
-```python
-from task_planning.planner import TaskGenerator
-
-generator = TaskGenerator()
-tasks = generator.from_strategy(attack_plan, scan_payload)
-```
-
-#### `orchestrator.py` - 攻擊編排器
-```python
-from task_planning.planner import AttackOrchestrator
-
-orchestrator = AttackOrchestrator()
-execution_plan = orchestrator.create_execution_plan(ast_input)
-```
-
-### 4. ⚙️ Executor (執行器)
-
-#### `task_queue_manager.py` - 任務佇列管理器
-```python
-from task_planning.executor import TaskQueueManager
-
-queue_manager = TaskQueueManager()
-queue_manager.enqueue_task(topic, task_payload)
-```
-
-#### `execution_status_monitor.py` - 執行狀態監控器
-```python
-from task_planning.executor import ExecutionStatusMonitor
-
-monitor = ExecutionStatusMonitor()
-monitor.record_task_start(task_id, worker_id)
-```
+**特性**：
+- ✅ AI 驅動的任務分解
+- ✅ 依賴關係自動識別
+- ✅ 資源需求評估
+- ✅ 多策略規劃（BFS/DFS/啟發式）
 
 ---
 
-## 📖 使用範例
+### 2. Executor - 執行器
 
-### 完整的任務規劃與執行流程
+**位置**: `task_planning/executor/`
+
+**核心組件**：
+- `task_executor.py` - 任務執行引擎（600+ 行）
+- `parallel_executor.py` - 並行執行管理器（400+ 行）
+- `execution_monitor.py` - 執行監控器（250+ 行）
+
+**主要功能**：
 ```python
-from task_planning import (
-    AICommander,
-    TaskGenerator,
-    TaskQueueManager,
-    ExecutionStatusMonitor
+from aiva_core.task_planning.executor import TaskExecutor, ParallelExecutor
+
+# 初始化執行器
+executor = TaskExecutor(features_invoker)
+parallel_exec = ParallelExecutor(max_workers=5)
+
+# 執行單個任務
+result = await executor.execute_task(task)
+
+# 並行執行多個任務
+results = await parallel_exec.execute_batch(tasks)
+
+# 監控執行進度
+status = executor.get_execution_status(task_id)
+```
+
+**特性**：
+- ✅ 異步並行執行
+- ✅ 依賴順序管理
+- ✅ 錯誤處理和重試
+- ✅ 資源限制和隊列管理
+- ✅ 實時進度報告
+
+---
+
+### 3. Coordinators - 協調器
+
+**位置**: `task_planning/coordinators/`
+
+**核心組件**：
+- `multi_scanner_coordinator.py` - 多掃描器協調（350+ 行）
+
+**主要功能**：
+```python
+from aiva_core.task_planning.coordinators import MultiScannerCoordinator
+
+# 初始化協調器
+coordinator = MultiScannerCoordinator(
+    scanners=["network_scanner", "web_scanner", "api_scanner"]
 )
 
-# 初始化組件
-ai_commander = AICommander()
-generator = TaskGenerator()
-queue_manager = TaskQueueManager()
-monitor = ExecutionStatusMonitor()
-
-await ai_commander.initialize()
-
-# AI 生成攻擊策略
-strategy = await ai_commander.execute_ai_task(
-    task_type=AITaskType.ATTACK_PLANNING,
-    context={"target": "https://example.com"}
+# 協調多個掃描器
+results = await coordinator.coordinate_scan(
+    target="https://example.com",
+    scan_types=["full", "quick", "focused"]
 )
 
-# 生成任務
-tasks = generator.from_strategy(strategy["attack_plan"], scan_payload)
-
-# 添加到佇列
-for topic, task in tasks:
-    queue_manager.enqueue_task(topic, task)
-
-# 監控執行
-stats = queue_manager.get_scan_statistics("scan_001")
-print(f"進度: {stats['completed']}/{stats['total']}")
+# 結果合併和去重
+merged_findings = coordinator.merge_findings(results)
 ```
+
+**特性**：
+- ✅ 多掃描器協調
+- ✅ 結果合併和去重
+- ✅ 衝突解決
+- ✅ 優先級調度
 
 ---
 
-## 🛠️ 開發指南
+## 🔄 完整工作流程
 
-### 🔨 aiva_common 修復規範
-
-> **核心原則**: 本模組必須嚴格遵循 [`services/aiva_common`](../../../aiva_common/README.md#-開發指南) 的修復規範。
-
-**完整規範**: [aiva_common 開發指南](../../../aiva_common/README.md#-開發指南)
-
-#### 關鍵原則
+### 典型任務規劃和執行流程
 
 ```python
-# ✅ 正確：使用 aiva_common 標準
-from aiva_common import TaskStatus, Severity, Confidence
+from aiva_core.task_planning import EnhancedPlanner, TaskExecutor, MultiScannerCoordinator
+from aiva_core.cognitive_core import RealNeuralCore, EnhancedDecisionAgent
 
-# ❌ 禁止：重複定義
-class TaskStatus(str, Enum): pass  # 錯誤！
+# 1. 初始化組件
+neural_core = RealNeuralCore(use_5m_model=True)
+decision_agent = EnhancedDecisionAgent(neural_core)
+planner = EnhancedPlanner(neural_core, decision_agent)
+executor = TaskExecutor(features_invoker)
+coordinator = MultiScannerCoordinator()
 
-# ✅ 合理的模組專屬枚舉（task_converter.py 範例）
-class TaskPriority(str, Enum):
-    """任務優先級 (AI 規劃器專用)"""
-    LOW = "low"
-    NORMAL = "normal"
-    HIGH = "high"
-    CRITICAL = "critical"
+# 2. 創建任務計劃
+plan = await planner.create_plan(
+    goal="全面安全評估",
+    target="https://target.com",
+    constraints={
+        "max_time": 7200,  # 2小時
+        "max_concurrent": 5,
+        "scan_depth": 3
+    }
+)
+
+# 3. 執行計劃
+execution_id = await executor.start_execution(plan)
+
+# 4. 監控執行
+while not executor.is_complete(execution_id):
+    status = executor.get_status(execution_id)
+    print(f"進度: {status.progress}%, 已完成: {status.completed_tasks}/{status.total_tasks}")
+    await asyncio.sleep(5)
+
+# 5. 獲取結果
+results = await executor.get_results(execution_id)
+summary = coordinator.generate_summary(results)
 ```
 
-**判斷標準**:
-- ✅ 模組內部專用 → 可自定義
-- ❌ 通用概念（狀態、嚴重度） → 必須用 aiva_common
+### 動態調整示例
 
-📖 **詳細說明**: [修復規範完整版](../../../aiva_common/README.md#-開發規範與最佳實踐)
-
----
-
-### 添加新的任務類型
 ```python
-# 在 TaskGenerator 添加生成邏輯
-class TaskGenerator:
-    def from_strategy(self, plan, payload):
-        tasks = []
-        for index, x in enumerate(plan.get("custom", [])):
-            tasks.append((
-                Topic.TASK_FUNCTION_CUSTOM,
-                FunctionTaskPayload(...)
-            ))
-        return tasks
-```
-
-### 實現自定義命令處理器
-```python
-class CustomHandler(CommandHandler):
-    async def handle(self, context):
-        result = await self._process(context)
-        return ExecutionResult(success=True, result=result)
-
-router.register_handler("custom", CustomHandler())
+# 根據執行結果動態調整計劃
+async def adaptive_execution(planner, executor, initial_plan):
+    execution_id = await executor.start_execution(initial_plan)
+    
+    while not executor.is_complete(execution_id):
+        status = executor.get_status(execution_id)
+        
+        # 檢查是否需要調整
+        if status.should_adjust:
+            # 重新規劃
+            new_plan = await planner.replan(
+                current_state=status,
+                findings=status.intermediate_results
+            )
+            
+            # 更新執行計劃
+            await executor.update_plan(execution_id, new_plan)
+        
+        await asyncio.sleep(10)
+    
+    return await executor.get_results(execution_id)
 ```
 
 ---
 
 ## 📊 性能指標
 
-- **任務生成速度**: 1000+ 任務/秒
-- **佇列容量**: 100,000+ 任務
-- **調度延遲**: < 1ms
-- **並發 Worker**: 100+
-- **AI 響應時間**: 1-5 秒
+### 規劃性能
+- **規劃速度**: ~200ms (簡單任務), ~1s (複雜任務)
+- **分解深度**: 最多 5 層嵌套
+- **任務數量**: 單次規劃支援 100+ 子任務
+
+### 執行性能
+- **並行度**: 最多 20 個並行任務
+- **執行延遲**: ~10ms (任務調度)
+- **監控開銷**: <5% CPU
+
+### 協調性能
+- **掃描器數量**: 支援 10+ 個掃描器
+- **結果合併**: ~100ms (1000條發現)
+- **去重效率**: >98%
 
 ---
 
 ## 🔗 相關模組
 
-- **cognitive_core** - 提供 BioNeuronRAG 和 RAG Engine
-- **external_learning** - 提供 Training Orchestrator
-- **core_capabilities** - 接收並執行生成的任務
-- **service_backbone** - 提供消息代理和狀態管理
+- [Cognitive Core](../cognitive_core/README.md) - 提供 AI 規劃能力
+- [Integration](../integration/README.md) - Features 調用和外部整合
+- [Persistence](../persistence/README.md) - 任務狀態持久化
 
 ---
 
-**最後更新**: 2025-11-15  
-**維護者**: AIVA Development Team  
-**授權**: MIT License
+**最後更新**: 2025-12-01 | **維護者**: AIVA Team

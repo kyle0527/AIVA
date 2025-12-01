@@ -92,9 +92,9 @@ class RealAICore(nn.Module):
         
         if use_5m_model:
             # 5M特化神經網路架構
-            self.hidden_sizes = [1650, 1200, 1000, 600, 300]
+            self.hidden_sizes = [1600, 1200, 1024, 512]
             self._build_5m_network()
-            self.weights_path = weights_path or "ai_engine/aiva_5M_weights.pth"
+            self.weights_path = weights_path or "models/weights/aiva_real_weights.pth"
         else:
             # 原始網路架構（向後兼容）
             if hidden_sizes is None:
@@ -114,30 +114,17 @@ class RealAICore(nn.Module):
             logger.info(f"  - 網路結構: {input_size} -> {' -> '.join(map(str, self.hidden_sizes))} -> {output_size}")
     
     def _build_5m_network(self):
-        """構建5M特化神經網路（改進版：解決梯度消失問題）"""
-        # 根據5M模型權重結構構建網路（匹配權重鍵名）
-        self.layer1 = nn.Linear(512, 1650)
-        self.bn1 = nn.BatchNorm1d(1650)  # 批次正規化
+        """構建5M特化神經網路（匹配 aiva_real_weights.pth 結構）"""
+        # 匹配權重檔案中的層名稱: input_layer, hidden1, hidden2, hidden3, output_layer
+        self.input_layer = nn.Linear(512, 1600)
+        self.hidden1 = nn.Linear(1600, 1200)
+        self.hidden2 = nn.Linear(1200, 1024)
+        self.hidden3 = nn.Linear(1024, 512)
+        self.output_layer = nn.Linear(512, 100)
         
-        self.layer2 = nn.Linear(1650, 1200)
-        self.bn2 = nn.BatchNorm1d(1200)
-        
-        self.layer3 = nn.Linear(1200, 1000)
-        self.bn3 = nn.BatchNorm1d(1000)
-        
-        self.layer4 = nn.Linear(1000, 600)
-        self.bn4 = nn.BatchNorm1d(600)
-        
-        self.layer5 = nn.Linear(600, 300)
-        self.bn5 = nn.BatchNorm1d(300)
-        
-        # 雙輸出層（匹配權重檔案中的鍵名）
-        self.output = nn.Linear(300, 100)  # 主輸出 (匹配 "output.weight")
-        self.aux = nn.Linear(300, 531)     # 輔助輸出 (匹配 "aux.weight")
-        
-        # 使用更好的激活函數組合
-        self.activation = nn.SiLU()  # SiLU/Swish 激活函數，有助於梯度流動
-        self.dropout = nn.Dropout(0.1)  # 降低dropout率
+        # 激活函數和正則化
+        self.activation = nn.ReLU()
+        self.dropout = nn.Dropout(0.2)
         
         # 權重初始化
         self._initialize_weights()
@@ -170,33 +157,31 @@ class RealAICore(nn.Module):
         self.network = nn.Sequential(*layers)
         
     def forward(self, x: torch.Tensor) -> torch.Tensor:
-        """前向傳播 - 改進版：使用批次正規化和更好的激活函數
+        """前向傳播
         
         Args:
             x: 輸入張量 [batch_size, input_size]
             
         Returns:
-            輸出張量 [batch_size, output_size] (主輸出)
+            輸出張量 [batch_size, output_size]
         """
         if self.use_5m_model:
-            # 5M特化神經網路前向傳播（改進版）
-            x = self.activation(self.bn1(self.layer1(x)))
+            # 5M特化神經網路前向傳播（匹配 aiva_real_weights.pth 結構）
+            x = self.activation(self.input_layer(x))
             x = self.dropout(x)
             
-            x = self.activation(self.bn2(self.layer2(x)))
+            x = self.activation(self.hidden1(x))
             x = self.dropout(x)
             
-            x = self.activation(self.bn3(self.layer3(x)))
+            x = self.activation(self.hidden2(x))
             x = self.dropout(x)
             
-            x = self.activation(self.bn4(self.layer4(x)))
+            x = self.activation(self.hidden3(x))
             x = self.dropout(x)
             
-            x = self.activation(self.bn5(self.layer5(x)))
-            
-            # 主輸出（不使用dropout，保持決策穩定性）
-            main_output = self.output(x)
-            return main_output
+            # 輸出層
+            output = self.output_layer(x)
+            return output
         else:
             # 原始網路架構
             return self.network(x)
@@ -226,25 +211,16 @@ class RealAICore(nn.Module):
                     context=create_error_context(module=MODULE_NAME, function="dual_forward")
                 )
             
-        # 使用相同的前向傳播路徑確保一致性
-        x = self.activation(self.bn1(self.layer1(x)))
-        x = self.dropout(x)
-        
-        x = self.activation(self.bn2(self.layer2(x)))
-        x = self.dropout(x)
-        
-        x = self.activation(self.bn3(self.layer3(x)))
-        x = self.dropout(x)
-        
-        x = self.activation(self.bn4(self.layer4(x)))
-        x = self.dropout(x)
-        
-        x = self.activation(self.bn5(self.layer5(x)))
-        
-        main_output = self.output(x)  # 主輸出 (100維)
-        aux_output = self.aux(x)      # 輔助輸出 (531維)
-        
-        return main_output, aux_output
+        # 當前權重檔案不支援雙輸出功能
+        if AIVA_COMMON_AVAILABLE:
+            raise AIVAError(
+                "當前權重檔案不支援雙輸出功能",
+                error_type=ErrorType.VALIDATION,
+                severity=ErrorSeverity.MEDIUM,
+                context=create_error_context(module=MODULE_NAME, function="dual_forward")
+            )
+        else:
+            raise ValueError("當前權重檔案不支援雙輸出功能")
     
     def save_weights(self, filepath: str) -> None:
         """儲存真實的權重檔案"""
@@ -271,7 +247,7 @@ class RealAICore(nn.Module):
             raise
     
     def load_weights(self, filepath: Optional[str] = None) -> None:
-        """載入真實的權重檔案"""
+        """載入真實的權重檔案 - 支援多種 key 命名結構"""
         try:
             # 確定權重檔案路徑
             if filepath is None:
@@ -282,39 +258,92 @@ class RealAICore(nn.Module):
                     return
             
             if not Path(filepath).exists():
-                logger.warning(f"權重檔案不存在: {filepath}")
-                return
+                error_msg = f"權重檔案不存在: {filepath}"
+                logger.error(error_msg)
+                raise FileNotFoundError(error_msg)
             
             logger.info(f"載入權重: {filepath}")
             checkpoint = torch.load(filepath, map_location='cpu')
             
-            if self.use_5m_model and 'model_state_dict' not in checkpoint:
-                # 5M模型權重是直接的state_dict格式
-                logger.info("載入5M特化神經網路權重...")
-                self.load_state_dict(checkpoint)
-                
-                # 計算檔案大小
-                file_size = Path(filepath).stat().st_size
-                total_params = sum(tensor.numel() for tensor in checkpoint.values())
-                
-                logger.info("5M模型載入完成:")
-                logger.info(f"  - 檔案大小: {file_size/1024/1024:.1f} MB")
-                logger.info(f"  - 總參數: {total_params:,}")
-                logger.info(f"  - 主輸出維度: {self.output_size}")
-                logger.info(f"  - 輔助輸出維度: {self.aux_output_size}")
-                
+            # 提取 state_dict
+            if isinstance(checkpoint, dict) and 'model_state_dict' in checkpoint:
+                state_dict = checkpoint['model_state_dict']
             else:
-                # 標準格式權重
-                if 'model_state_dict' in checkpoint:
-                    self.load_state_dict(checkpoint['model_state_dict'])
-                    total_params = checkpoint.get('total_params', self.total_params)
-                else:
-                    self.load_state_dict(checkpoint)
-                    total_params = self.total_params
+                state_dict = checkpoint
+            
+            # 嘗試直接載入
+            try:
+                self.load_state_dict(state_dict, strict=True)
+                logger.info("✅ 權重完全匹配載入成功")
+            except RuntimeError as e:
+                # 如果 key 不匹配，嘗試 key 映射
+                logger.warning(f"直接載入失敗，嘗試 key 映射: {str(e)[:100]}")
                 
-                file_size = Path(filepath).stat().st_size
-                logger.info(f"權重已載入: {filepath} ({file_size/1024/1024:.1f} MB)")
-                logger.info(f"模型參數: {total_params:,}")
+                # 建立 key 映射規則
+                key_mapping = {}
+                model_keys = set(self.state_dict().keys())
+                
+                # 用於調試的變數檢查
+                logger.debug(f"Model keys: {len(model_keys)}, State dict keys: {len(state_dict.keys())}")
+                
+                # 檢查是否需要映射
+                if self.use_5m_model:
+                    # 5M 模型應有: input_layer, hidden1, hidden2, hidden3, output_layer
+                    expected_prefixes = ['input_layer', 'hidden1', 'hidden2', 'hidden3', 'output_layer']
+                    logger.debug(f"Expected prefixes for 5M model: {expected_prefixes}")
+                    
+                    # 如果 weight 是 network.0, network.3 等格式
+                    if any(k.startswith('network.') for k in state_dict.keys()):
+                        # network.N → layer_name 映射
+                        network_to_layer = {
+                            'network.0': 'input_layer',
+                            'network.3': 'hidden1',
+                            'network.6': 'hidden2',
+                            'network.9': 'hidden3',
+                        }
+                        
+                        new_state_dict = {}
+                        for old_key, tensor in state_dict.items():
+                            # 找到匹配的前綴
+                            mapped = False
+                            for old_prefix, new_prefix in network_to_layer.items():
+                                if old_key.startswith(old_prefix):
+                                    new_key = old_key.replace(old_prefix, new_prefix)
+                                    new_state_dict[new_key] = tensor
+                                    mapped = True
+                                    break
+                            
+                            if not mapped:
+                                # 保持原 key
+                                new_state_dict[old_key] = tensor
+                        
+                        state_dict = new_state_dict
+                        logger.info("✅ Key 映射完成: network.N → layer_name")
+                
+                # 再次嘗試載入，使用 strict=False 允許部分載入
+                missing_keys, unexpected_keys = self.load_state_dict(state_dict, strict=False)
+                
+                if missing_keys:
+                    logger.warning(f"⚠️  缺少的 keys: {missing_keys[:5]}..." if len(missing_keys) > 5 else f"⚠️  缺少的 keys: {missing_keys}")
+                if unexpected_keys:
+                    logger.warning(f"⚠️  未預期的 keys: {unexpected_keys[:5]}..." if len(unexpected_keys) > 5 else f"⚠️  未預期的 keys: {unexpected_keys}")
+                
+                if not missing_keys and not unexpected_keys:
+                    logger.info("✅ 權重載入成功（經 key 映射）")
+                elif not missing_keys:
+                    logger.info("✅ 權重部分載入成功，忽略未預期的 keys")
+                else:
+                    logger.error("❌ 權重載入不完整，缺少關鍵層")
+                    raise RuntimeError(f"無法載入所需的權重，缺少: {missing_keys}")
+            
+            # 計算檔案大小
+            file_size = Path(filepath).stat().st_size
+            total_params = sum(tensor.numel() for tensor in self.state_dict().values())
+            
+            logger.info("權重載入完成:")
+            logger.info(f"  - 檔案大小: {file_size/1024/1024:.1f} MB")
+            logger.info(f"  - 總參數: {total_params:,} ({total_params/1_000_000:.2f}M)")
+            logger.info(f"  - 輸出維度: {self.output_size}")
             
         except Exception as e:
             logger.error(f"載入權重失敗: {e}")
@@ -338,10 +367,9 @@ class RealDecisionEngine:
         if use_5m_model:
             self.ai_core = RealAICore(
                 input_size=512,
-                output_size=100,  # 5M模型主輸出
-                aux_output_size=531,  # 5M模型輔助輸出
+                output_size=100,
                 use_5m_model=True,
-                weights_path=weights_path or "ai_engine/aiva_5M_weights.pth"
+                weights_path=weights_path or "models/weights/aiva_real_weights.pth"
             ).to(self.device)
             logger.info("使用5M特化神經網路決策引擎")
         else:
@@ -660,7 +688,7 @@ class RealDecisionEngine:
         使用 5M 特化神經網絡生成 Bug Bounty 專業決策
         
         修復優化：
-        - 增強置信度計算 (雙重輸出分析)
+        - 單一輸出決策（當前權重檔案不支援雙輸出）
         - Bug Bounty 專業決策邏輯
         - 更智能的錯誤處理
         - 保持現有接口兼容性
@@ -680,46 +708,29 @@ class RealDecisionEngine:
                 combined_input = self._prepare_decision_input(task_description, context)
                 input_vector = self.encode_input(combined_input)
                 
-                # 5M 網絡雙重輸出決策
-                if self.use_5m_model:
-                    main_output, aux_output = self.ai_core.forward_with_aux(input_vector)
-                    
-                    # 增強的置信度計算
-                    confidence = self._calculate_enhanced_confidence(main_output, aux_output)
-                    
-                    # Bug Bounty 專業決策解析
-                    decision_analysis = self._analyze_bug_bounty_decision(
-                        main_output, aux_output, task_description, context
-                    )
-                    
-                    return {
-                        "decision": task_description,
-                        "confidence": float(confidence),
-                        "reasoning": decision_analysis["reasoning"],
-                        "context_used": context,
-                        "decision_index": decision_analysis["decision_index"],
-                        "attack_vector": decision_analysis.get("attack_vector", "unknown"),
-                        "risk_level": decision_analysis.get("risk_level", "medium"),
-                        "recommended_tools": decision_analysis.get("recommended_tools", []),
-                        "is_real_ai": True,
-                        "model_type": "5M_specialized"
-                    }
-                else:
-                    # 原始模式兼容性
-                    output = self.ai_core(input_vector)
-                    probabilities = F.softmax(output, dim=1)
-                    confidence = float(torch.max(probabilities))
-                    decision_index = torch.argmax(output, dim=1).item()
-                    
-                    return {
-                        "decision": task_description,
-                        "confidence": confidence,
-                        "reasoning": f"Legacy AI 決策，信心度: {confidence:.3f}",
-                        "context_used": context,
-                        "decision_index": decision_index,
-                        "is_real_ai": True,
-                        "model_type": "legacy"
-                    }
+                # 前向傳播
+                output = self.ai_core(input_vector)
+                probabilities = F.softmax(output, dim=1)
+                confidence = float(torch.max(probabilities))
+                decision_index = torch.argmax(output, dim=1).item()
+                
+                # Bug Bounty 專業決策解析
+                decision_analysis = self._analyze_decision_output(
+                    output, task_description, context
+                )
+                
+                return {
+                    "decision": task_description,
+                    "confidence": confidence,
+                    "reasoning": decision_analysis.get("reasoning", f"AI 決策，信心度: {confidence:.3f}"),
+                    "context_used": context,
+                    "decision_index": decision_index,
+                    "attack_vector": decision_analysis.get("attack_vector", "unknown"),
+                    "risk_level": decision_analysis.get("risk_level", "medium"),
+                    "recommended_tools": decision_analysis.get("recommended_tools", []),
+                    "is_real_ai": True,
+                    "model_type": "5M_specialized" if self.use_5m_model else "legacy"
+                }
                     
         except Exception as e:
             logger.error(f"決策生成失敗: {e}")
@@ -768,6 +779,61 @@ class RealDecisionEngine:
         )
         
         return max(0.0, min(1.0, enhanced_confidence))
+    
+    def _analyze_decision_output(self, output: torch.Tensor, task: str, context: str) -> Dict[str, Any]:
+        """分析決策輸出（單一輸出版本）"""
+        # 解析決策向量
+        decision_probs = F.softmax(output, dim=1).squeeze()
+        confidence_score = float(torch.max(decision_probs))
+        
+        # 攻擊向量分析 (基於任務描述)
+        task_lower = task.lower()
+        if 'sql' in task_lower:
+            attack_vector = 'sql_injection'
+        elif 'xss' in task_lower:
+            attack_vector = 'cross_site_scripting'
+        elif 'ssrf' in task_lower:
+            attack_vector = 'server_side_request_forgery'
+        elif 'upload' in task_lower:
+            attack_vector = 'file_upload'
+        elif 'auth' in task_lower:
+            attack_vector = 'authentication_bypass'
+        else:
+            attack_vector = 'reconnaissance'
+            
+        # 風險等級評估
+        if confidence_score > 0.8:
+            risk_level = "high"
+        elif confidence_score > 0.6:
+            risk_level = "medium"
+        else:
+            risk_level = "low"
+            
+        # 推薦工具 (基於攻擊向量)
+        tool_recommendations = {
+            'sql_injection': ['sqlmap', 'burp_suite', 'manual_testing'],
+            'cross_site_scripting': ['burp_suite', 'xss_hunter', 'beef_framework'],
+            'server_side_request_forgery': ['burp_suite', 'ssrf_sheriff', 'manual_testing'],
+            'file_upload': ['burp_suite', 'upload_scanner', 'file_analysis'],
+            'authentication_bypass': ['burp_suite', 'auth_analyzer', 'credential_testing'],
+            'reconnaissance': ['nmap', 'dirb', 'whatweb', 'nikto']
+        }
+        
+        recommended_tools = tool_recommendations.get(attack_vector, ['manual_analysis'])
+        
+        # 生成推理說明
+        reasoning = (
+            f"AI 分析: 攻擊向量 '{attack_vector}' "
+            f"(置信度 {confidence_score:.3f}), 風險等級 {risk_level}, "
+            f"推薦工具: {', '.join(recommended_tools)}"
+        )
+        
+        return {
+            "attack_vector": attack_vector,
+            "risk_level": risk_level,
+            "recommended_tools": recommended_tools,
+            "reasoning": reasoning
+        }
     
     def _analyze_bug_bounty_decision(self, main_output: torch.Tensor, aux_output: torch.Tensor, 
                                    task: str, context: str) -> Dict[str, Any]:
@@ -865,6 +931,23 @@ class RealDecisionEngine:
                 "model_type": "fallback_rules",
                 "error": error
             }
+    
+    def decide(self, input_data: torch.Tensor) -> torch.Tensor:
+        """
+        決策方法 - 直接前向傳播
+        
+        這是一個簡化的接口，用於測試和快速推理。
+        對於完整的 Bug Bounty 決策，使用 generate_decision() 方法。
+        
+        Args:
+            input_data: 輸入張量 [batch_size, input_size]
+            
+        Returns:
+            決策輸出張量 [batch_size, output_size]
+        """
+        self.ai_core.eval()
+        with torch.no_grad():
+            return self.ai_core(input_data)
     
     def train_step(self, 
                    inputs: torch.Tensor, 

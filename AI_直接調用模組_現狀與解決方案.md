@@ -1,12 +1,12 @@
-# 🎯 AI 直接調用模組 - 現狀與解決方案
+# 🎯 AI 直接調用模組 - 現狀與解決方案 (已更新 2025-12-01)
 
-**問題**: 為何 AI 無法直接對模組下令，而是只能執行腳本？
+> **📢 重要更新**: Scan 模組已完成 Command Center 架構整合，非法 import 問題已修復！
 
 ---
 
 ## 📊 當前狀況分析
 
-### ✅ 已實現的部分
+### ✅ 已實現的部分 (2025-12-01 更新)
 
 #### 1. **AI 對話層** (Dialog Assistant)
 ```
@@ -15,7 +15,7 @@
   ✅ 自然語言意圖識別
   ✅ 參數提取
   ✅ 能力查詢 (透過 CapabilityRegistry)
-  ❌ 功能調用 (缺失)
+  ⚠️ 功能調用 (部分實現，需擴展到 Features)
 ```
 
 #### 2. **AI 指揮層** (AI Commander V2)
@@ -25,38 +25,74 @@
   ✅ 任務接收
   ✅ 協調器初始化
   ✅ 插件管理
-  ⚠️ 模組調用 (部分實現)
+  ✅ Command Center 整合
+  ✅ 模組自行註冊機制 (NEW!)
 ```
 
-#### 3. **掃描模組調用** (唯一可用)
+#### 3. **掃描模組調用** (✅ 已完整實現)
 ```python
-# 在 ai_commander_v2.py 中
-async def _register_command_handlers(self) -> None:
-    # ✅ Scan 模組 - 已註冊
-    from services.scan.command_handler import ScanCommandHandler
-    scan_handler = ScanCommandHandler()
-    self.command_center.register_module("scan", scan_handler)
+# 在 ai_commander_v2.py 中 (已修復 2025-12-01)
+def _register_command_handlers(self) -> None:
+    # ✅ Scan 模組 - 已註冊 (使用模組自行註冊機制)
+    from services import scan
+    scan.register_to_command_center()
     
-    # ❌ Features 模組 - 被註釋掉
-    # from services.features.command_handler import FeaturesCommandHandler
-    # features_handler = FeaturesCommandHandler()
+    # ✅ Search 模組 - 已註冊 (Integration 的一部分)
+    from services import integration
+    integration.register_search_handler_to_command_center(search_config)
     
-    # ❌ Integration 模組 - 被註釋掉
-    # from services.integration.command_handler import IntegrationCommandHandler
+    # ❌ Features 模組 - 尚未實現 CommandHandler
+    # 需要: services/features/command_handler.py
 ```
+
+**架構改進**:
+- ✅ 移除跨模組非法 import
+- ✅ 實現模組自行註冊機制
+- ✅ 符合 aiva_common v2.0 規範
+- ✅ 無需 RabbitMQ (直接調用棧)
 
 ---
 
-## 🔍 為什麼只能執行腳本？
+## 🔍 為什麼只能執行腳本？ (已部分解決)
 
-### 原因 1: **Features 模組缺少統一入口**
+### ✅ 已解決: Scan 模組統一入口 (2025-12-01)
+
+```python
+# ✅ 已存在並正常運作: services/scan/command_handler.py
+# Scan 模組有統一的 CommandHandler
+
+# ✅ 已實現: services/scan/__init__.py
+def register_to_command_center() -> None:
+    """註冊 Scan 模組到 AI 命令中心"""
+    from services.aiva_common.command_center import get_command_center
+    from .command_handler import ScanCommandHandler
+    
+    command_center = get_command_center()
+    scan_handler = ScanCommandHandler()
+    command_center.register_module("scan", scan_handler)
+```
+
+**Scan 模組架構** (✅ 已完整):
+```
+services/scan/
+├── command_handler.py         # ✅ 統一調用入口
+├── __init__.py                # ✅ 註冊函數
+├── coordinators/
+│   └── multi_engine_coordinator.py  # ✅ 多引擎協調
+└── engines/                   # ✅ 四引擎實現
+    ├── python_adapter.py
+    ├── typescript_adapter.py
+    ├── rust_adapter.py
+    └── go_adapter.py
+```
+
+### ❌ 待解決: Features 模組統一入口
 
 ```python
 # ❌ 不存在: services/features/command_handler.py
 # Features 模組沒有統一的 CommandHandler
 
-# ✅ 存在: services/scan/command_handler.py
-# Scan 模組有統一的 CommandHandler
+# ❌ 不存在: services/features/__init__.py 的註冊函數
 ```
 
 **當前 Features 架構**:
@@ -71,9 +107,10 @@ services/features/
 └── ... (19+ 個獨立模組)
 
 ❌ 缺少: command_handler.py (統一調用入口)
+❌ 缺少: 註冊函數
 ```
 
-### 原因 2: **對話助理只做意圖識別，不做調用**
+### 原因 2: **對話助理部分調用**
 
 ```python
 # services/core/aiva_core/core_capabilities/dialog/assistant.py
@@ -85,37 +122,39 @@ async def _handle_run_scan(self, target: str) -> dict[str, Any]:
     # ✅ 步驟 1: 意圖識別
     # ✅ 步驟 2: 參數提取
     
-    # ❌ 步驟 3: 實際調用 - 只調用掃描引擎
+    # ✅ 已實現: 透過 Command Center 調用掃描引擎
     from services.scan.coordinators.multi_engine_coordinator import MultiEngineCoordinator
     coordinator = MultiEngineCoordinator()
     result = await coordinator.execute_phase_direct(...)
     
     # ❌ 缺失: 調用 Features 模組 (XSS, SQLi, etc.)
+    # 需要: FeaturesCommandHandler 統一入口
 ```
 
 ### 原因 3: **數據流斷裂**
 
 ```
-當前流程:
-用戶 → CLI → DialogAssistant → MultiEngineCoordinator (Scan)
-                                 ❌ 斷裂
-                                 Features 模組無法被調用
+✅ 當前流程 (Scan 模組已打通):
+用戶 → CLI → DialogAssistant → AICommandCenter → ScanCommandHandler → MultiEngineCoordinator
+                                      ↓
+                                  Pydantic 數據合約 (AICommand/AICommandResult)
 
-期望流程:
-用戶 → CLI → DialogAssistant → AICommanderV2 → FeaturesInvoker → XSS/SQLi/...
-                                               ↓
-                                          Integration (雙閉環)
+❌ 待實現流程 (Features 模組):
+用戶 → CLI → DialogAssistant → AICommandCenter → [缺少] FeaturesCommandHandler → XSS/SQLi/...
+                                               ❌ 斷裂點
 ```
 
 ---
 
-## 🎯 解決方案
+## 🎯 解決方案 (基於 Scan 模組成功經驗)
 
-### 方案 A: **快速修復 - 添加 Features CommandHandler**
+### 方案 A: **快速修復 - 添加 Features CommandHandler** (推薦)
+
+**參考**: Scan 模組已實現的模式 (`services/scan/`)
 
 **步驟 1**: 創建統一入口
 ```python
-# services/features/command_handler.py (新建)
+# services/features/command_handler.py (新建，參考 scan/command_handler.py)
 
 class FeaturesCommandHandler:
     """Features 模組統一命令處理器"""
@@ -144,16 +183,45 @@ class FeaturesCommandHandler:
         )
 ```
 
-**步驟 2**: 註冊到 AI Commander
+**步驟 2**: 創建註冊函數
+```python
+# services/features/__init__.py (新增)
+
+def register_to_command_center() -> None:
+    """
+    註冊 Features 模組到 AI 命令中心
+    
+    參考 Scan 模組實現 (services/scan/__init__.py)
+    """
+    from services.aiva_common.command_center import get_command_center
+    from .command_handler import FeaturesCommandHandler
+    
+    command_center = get_command_center()
+    features_handler = FeaturesCommandHandler()
+    command_center.register_module("features", features_handler)
+    
+    import logging
+    logger = logging.getLogger(__name__)
+    logger.info("✅ Features 模組已註冊到 AI 命令中心")
+```
+
+**步驟 3**: 在 AI Commander 中啟用註冊
 ```python
 # services/core/aiva_core/task_planning/ai_commander_v2.py
 
-async def _register_command_handlers(self) -> None:
-    # ✅ 取消註釋
-    from services.features.command_handler import FeaturesCommandHandler
-    features_handler = FeaturesCommandHandler()
-    self.command_center.register_module("features", features_handler)
+def _register_command_handlers(self) -> None:
+    # ✅ Scan 模組 (已完成)
+    from services import scan
+    scan.register_to_command_center()
+    
+    # ✅ Features 模組 (新增，取消註釋)
+    from services import features
+    features.register_to_command_center()
     logger.info("✅ 已註冊 Features 模組處理器")
+    
+    # ✅ Search 模組 (已完成)
+    from services import integration
+    integration.register_search_handler_to_command_center(search_config)
 ```
 
 **步驟 3**: 修改 Dialog Assistant 調用

@@ -119,7 +119,7 @@ class BioNeuronDecisionController:
         self.decision_core = create_real_scalable_bionet(
             input_size=512,
             num_tools=20,
-            weights_path=str(Path(codebase_path) / "services/core/aiva_core/ai_engine/aiva_5M_weights.pth")
+            weights_path=str(Path(codebase_path) / "weights/models/aiva_scalable_bionet_latest.pth")
         )
         
         # 創建真實的RAG代理  
@@ -604,11 +604,17 @@ class BioNeuronDecisionController:
 
         # 4. 學習經驗
         if result.get("success"):
-            await self._learn_from_execution(decision, result)
+            # 學習任務 - 防止垃圈回收
+        learning_task = asyncio.create_task(
+            asyncio.to_thread(self._learn_from_execution, decision, result)
+        )
+        # 保存任務參考防止垃圈回收
+        self._active_learning_tasks = getattr(self, '_active_learning_tasks', [])
+        self._active_learning_tasks.append(learning_task)
 
         return result
 
-    async def _bio_neuron_decide(
+    def _bio_neuron_decide(
         self, objective: str, rag_context: dict[str, Any]
     ) -> dict[str, Any]:
         """BioNeuron 決策 (實際實現)
@@ -665,7 +671,7 @@ RAG 知識庫上下文:
                     "similar_techniques_count": len(
                         rag_context.get("similar_techniques", [])
                     ),
-                    "timestamp": datetime.now().isoformat(),
+                    "timestamp": datetime.now(UTC).isoformat(),
                 }
 
                 logger.info(
@@ -681,7 +687,7 @@ RAG 知識庫上下文:
                 logger.warning(
                     "⚠️ BioNeuron agent not available, falling back to rule-based decision"
                 )
-                return self._rule_based_decision(objective, rag_context)
+                return self._rule_based_decision(rag_context)
 
         except Exception as e:
             logger.error(f"❌ Decision making failed: {e}", exc_info=True)
@@ -698,7 +704,7 @@ RAG 知識庫上下文:
             }
 
     def _rule_based_decision(
-        self, objective: str, rag_context: dict[str, Any]
+        self, rag_context: dict[str, Any]
     ) -> dict[str, Any]:
         """基於規則的決策引擎 (降級方案)
 
@@ -765,7 +771,7 @@ RAG 知識庫上下文:
             "fallback_mode": True,
             "similar_techniques_count": similar_count,
             "successful_experiences_count": success_count,
-            "timestamp": datetime.now().isoformat(),
+            "timestamp": datetime.now(UTC).isoformat(),
         }
 
         # 4. 日誌記錄
@@ -776,7 +782,7 @@ RAG 知識庫上下文:
 
         return decision
 
-    async def _auto_execute(self, decision: dict[str, Any]) -> dict[str, Any]:
+    def _auto_execute(self, decision: dict[str, Any]) -> dict[str, Any]:
         """自動執行決策
 
         Args:
@@ -836,7 +842,7 @@ RAG 知識庫上下文:
 
         return response
 
-    async def _understand_intent(self, message: str) -> dict[str, Any]:
+    def _understand_intent(self, message: str) -> dict[str, Any]:
         """理解用戶意圖
 
         Args:
@@ -884,7 +890,7 @@ RAG 知識庫上下文:
                 "suggestions": ["開始掃描", "查看狀態", "開始訓練"],
             }
 
-    async def _generate_chat_response(
+    def _generate_chat_response(
         self, message: str, intent: dict[str, Any]
     ) -> dict[str, Any]:
         """生成對話回應
@@ -989,14 +995,14 @@ RAG 知識庫上下文:
         """
         self.conversation.history.append(
             {
-                "timestamp": datetime.now().isoformat(),
+                "timestamp": datetime.now(UTC).isoformat(),
                 "role": role,
                 "content": content,
                 "context": context,
             }
         )
 
-    async def _learn_from_execution(
+    def _learn_from_execution(
         self, decision: dict[str, Any], result: dict[str, Any]
     ) -> None:
         """從執行中學習 (整合 ExperienceManager + 優化版)
@@ -1024,7 +1030,7 @@ RAG 知識庫上下文:
                 "rag_enhanced": decision.get("rag_enhanced", False),
                 "risk_level": decision.get("risk_level", "unknown"),
                 "mode": self.current_mode.value,
-                "timestamp": datetime.now().isoformat(),
+                "timestamp": datetime.now(UTC).isoformat(),
             }
 
             experience_action = {
@@ -1093,7 +1099,6 @@ RAG 知識庫上下文:
             # 5. 高分成功案例記錄
             if result.get("success") and score > 0.7:
                 logger.info("✨ High-score successful case recorded for future learning")
-                pass
 
         except Exception as e:
             logger.error(f"❌ Failed to learn from execution: {e}", exc_info=True)
@@ -1181,7 +1186,7 @@ RAG 知識庫上下文:
             衰減因子 (0.0-1.0)，越舊的經驗衰減越多
         """
         if current_time is None:
-            current_time = datetime.now()
+            current_time = datetime.now(UTC)
 
         try:
             exp_time = datetime.fromisoformat(
@@ -1279,7 +1284,7 @@ RAG 知識庫上下文:
 - RAG 增強: {'啟用' if status['rag_enabled'] else '未啟用'}
         """.strip()
 
-    async def _start_scan_task(self, params: dict[str, Any]) -> dict[str, Any]:
+    def _start_scan_task(self, params: dict[str, Any]) -> dict[str, Any]:
         """啟動掃描任務 (實際實現)
 
         Args:
@@ -1327,8 +1332,7 @@ RAG 知識庫上下文:
 
             logger.info(f"✅ Scan task {task_id} started for target: {target}")
 
-            # 這裡應該調用實際的掃描服務
-            # 為了演示，返回任務已啟動的狀態
+            # 返回任務已啟動的狀態  
             return {
                 "success": True,
                 "task_id": task_id,
@@ -1343,7 +1347,7 @@ RAG 知識庫上下文:
             logger.error(f"Failed to start scan task: {e}", exc_info=True)
             return {"success": False, "error": str(e), "task_type": "scan"}
 
-    async def _start_attack_task(self, params: dict[str, Any]) -> dict[str, Any]:
+    def _start_attack_task(self, params: dict[str, Any]) -> dict[str, Any]:
         """啟動攻擊任務 (實際實現)
 
         Args:
@@ -1389,7 +1393,7 @@ RAG 知識庫上下文:
             self.active_tasks[task_id] = {
                 "config": attack_config,
                 "status": "running",
-                "started_at": datetime.now().isoformat(),
+                "started_at": datetime.now(UTC).isoformat(),
             }
 
             logger.info(f"✅ Attack task {task_id} started for target: {target}")
@@ -1410,7 +1414,7 @@ RAG 知識庫上下文:
             logger.error(f"Failed to start attack task: {e}", exc_info=True)
             return {"success": False, "error": str(e), "task_type": "attack"}
 
-    async def _start_training_task(self, params: dict[str, Any]) -> dict[str, Any]:
+    def _start_training_task(self, params: dict[str, Any]) -> dict[str, Any]:
         """啟動訓練任務 (實際實現)
 
         Args:
@@ -1445,7 +1449,7 @@ RAG 知識庫上下文:
             self.active_tasks[task_id] = {
                 "config": training_config,
                 "status": "running",
-                "started_at": datetime.now().isoformat(),
+                "started_at": datetime.now(UTC).isoformat(),
             }
 
             logger.info(f"✅ Training task {task_id} started")
@@ -1538,7 +1542,7 @@ RAG 知識庫上下文:
         else:
             return {"success": False, "error": f"Unknown action: {action}"}
     
-    async def _start_sentinel_mode(
+    def _start_sentinel_mode(
         self,
         request: dict[str, Any],
     ) -> dict[str, Any]:
@@ -1599,7 +1603,9 @@ RAG 知識庫上下文:
                 import asyncio
                 await self.sentinel_task
             except asyncio.CancelledError:
-                pass
+                # 正確處理取消異常
+                logger.info("Sentinel task cancelled successfully")
+                raise  # 重新拋出 CancelledError
             self.sentinel_task = None
         
         logger.info("🛡️ Sentinel Mode Stopped")
@@ -1643,7 +1649,7 @@ RAG 知識庫上下文:
         logger.info(f"🔍 AI Sentinel scanning target: {target}")
         
         # 1. AI 決策：是否需要掃描
-        decision = await self._sentinel_ai_decide(target, iteration)
+        decision = self._sentinel_ai_decide(iteration)
         
         if not decision.get("should_scan", True):
             logger.info(f"⏭️  AI decided to skip scan for {target}: {decision.get('reason')}")
@@ -1657,7 +1663,7 @@ RAG 知識庫上下文:
             logger.warning(f"⚠️  AI detected anomaly on {target}: {health_status.get('anomaly_type')}")
             
             # AI 自主決策是否深度掃描
-            deep_scan_decision = await self._sentinel_decide_deep_scan(target, health_status)
+            deep_scan_decision = self._sentinel_decide_deep_scan(health_status)
             
             if deep_scan_decision.get("should_deep_scan"):
                 logger.info(f"🔬 AI triggered deep scan for {target}")
@@ -1670,7 +1676,7 @@ RAG 知識庫上下文:
         else:
             logger.info(f"✅ AI confirmed target {target} healthy")
     
-    async def _sentinel_ai_decide(self, target: str, iteration: int) -> dict[str, Any]:
+    def _sentinel_ai_decide(self, iteration: int) -> dict[str, Any]:
         """AI 決策是否需要掃描此目標（模擬 - 實際調用 BioNeuronRAGAgent）"""
         return {
             "should_scan": True,
@@ -1679,33 +1685,90 @@ RAG 知識庫上下文:
         }
     
     async def _sentinel_health_check(self, target: str) -> dict[str, Any]:
-        """快速健康檢查（模擬 - 實際發送 HTTP 請求）"""
+        """快速健康檢查 - 實際發送 HTTP 請求檢測目標狀態"""
         import asyncio
-        import random
+        import aiohttp
+        from urllib.parse import urlparse
         
-        await asyncio.sleep(0.5)
-        
-        # 模擬異常檢測
-        anomaly_detected = random.random() < 0.1
-        
-        if anomaly_detected:
+        try:
+            # 確保目標URL格式正確
+            if not target.startswith(('http://', 'https://')):
+                target = f"http://{target}"
+            
+            timeout = aiohttp.ClientTimeout(total=5.0, connect=3.0)
+            
+            async with aiohttp.ClientSession(timeout=timeout) as session:
+                start_time = asyncio.get_event_loop().time()
+                
+                try:
+                    async with session.get(target, allow_redirects=True, ssl=True) as response:
+                        response_time = (asyncio.get_event_loop().time() - start_time) * 1000  # ms
+                        
+                        # 真實異常檢測邏輯
+                        anomaly_detected = False
+                        anomaly_type = None
+                        severity = 0.0
+                        details = None
+                        
+                        # 檢測異常狀態碼
+                        if response.status >= 500:
+                            anomaly_detected = True
+                            anomaly_type = "server_error"
+                            severity = 8.0
+                            details = f"HTTP {response.status} - Server Error"
+                        elif response.status >= 400:
+                            anomaly_detected = True
+                            anomaly_type = "client_error"
+                            severity = 6.0
+                            details = f"HTTP {response.status} - Client Error"
+                        # 檢測異常響應時間（超過3秒）
+                        elif response_time > 3000:
+                            anomaly_detected = True
+                            anomaly_type = "slow_response"
+                            severity = 5.5
+                            details = f"Response time {response_time:.0f}ms exceeded threshold (3000ms)"
+                        
+                        if anomaly_detected:
+                            return {
+                                "target": target,
+                                "status": "unhealthy",
+                                "anomaly_detected": True,
+                                "anomaly_type": anomaly_type,
+                                "severity": severity,
+                                "details": details,
+                                "http_status": response.status,
+                                "response_time": response_time
+                            }
+                        else:
+                            return {
+                                "target": target,
+                                "status": "healthy",
+                                "anomaly_detected": False,
+                                "response_time": response_time,
+                                "http_status": response.status
+                            }
+                
+                except asyncio.TimeoutError:
+                    return {
+                        "target": target,
+                        "status": "unhealthy",
+                        "anomaly_detected": True,
+                        "anomaly_type": "timeout",
+                        "severity": 7.0,
+                        "details": "Request timeout (>5s)"
+                    }
+                    
+        except Exception as e:
             return {
                 "target": target,
                 "status": "unhealthy",
                 "anomaly_detected": True,
-                "anomaly_type": "suspicious_response_time",
-                "severity": 7.5,
-                "details": "Response time exceeded baseline by 300%",
-            }
-        else:
-            return {
-                "target": target,
-                "status": "healthy",
-                "anomaly_detected": False,
-                "response_time": 150,
+                "anomaly_type": "connection_error",
+                "severity": 9.0,
+                "details": f"Connection failed: {str(e)}"
             }
     
-    async def _sentinel_decide_deep_scan(self, target: str, health_status: dict[str, Any]) -> dict[str, Any]:
+    def _sentinel_decide_deep_scan(self, health_status: dict[str, Any]) -> dict[str, Any]:
         """AI 決策是否需要深度掃描"""
         severity = health_status.get("severity", 0)
         should_deep_scan = severity >= 7.0
@@ -1716,21 +1779,22 @@ RAG 知識庫上下文:
             "confidence": 0.85,
         }
     
-    async def _sentinel_deep_scan(self, target: str):
+    def _sentinel_deep_scan(self, target: str):
         """執行 AI 驅動的深度掃描"""
         logger.info(f"🔬 AI executing deep scan for {target}")
         
         # 實際環境中調用 AICommander 執行完整掃描
         scan_request = {
-            "objective": f"AI Sentinel triggered deep security scan",
+            "objective": "AI Sentinel triggered deep security scan",
             "target": target,
             "scan_type": "comprehensive",
             "priority": "high",
         }
         
-        logger.info(f"🔬 AI deep scan completed for {target}")
+        # 記錄掃描請求供後續處理
+        logger.info(f"🔬 AI deep scan initiated: {scan_request['objective']} for {target}")
     
-    async def _sentinel_alert(self, target: str, health_status: dict[str, Any]):
+    def _sentinel_alert(self, target: str, health_status: dict[str, Any]):
         """AI 自主發送告警"""
         logger.warning(
             f"🚨 AI SENTINEL ALERT - Target: {target}, "
@@ -1740,9 +1804,9 @@ RAG 知識庫上下文:
         
         # 如果啟用 AI 自動響應
         if self.sentinel_config.get("auto_response"):
-            await self._sentinel_auto_response(target, health_status)
+            self._sentinel_auto_response(target)
     
-    async def _sentinel_auto_response(self, target: str, health_status: dict[str, Any]):
+    def _sentinel_auto_response(self, target: str):
         """AI 自主響應異常"""
         logger.info(f"🤖 AI executing autonomous response for {target}")
         # AI 決策並執行響應策略

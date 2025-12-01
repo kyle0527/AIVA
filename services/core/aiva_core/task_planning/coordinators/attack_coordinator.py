@@ -4,12 +4,15 @@ Attack Coordinator
 
 協調攻擊相關任務
 負責規劃和執行攻擊鏈
+
+整合 TaskManager 實現 checkpoint 恢復與狀態持久化
 """
 
 import logging
-from typing import Dict, Any, List
+from typing import Dict, Any, List, Optional
 
 from .base_coordinator import BaseCoordinator, CoordinatorTask
+from aiva_core.persistence import TaskManager, TaskStatus
 
 logger = logging.getLogger(__name__)
 
@@ -21,11 +24,11 @@ class AttackCoordinator(BaseCoordinator):
     - 攻擊路徑規劃 (BioNeuron)
     - 掃描和偵察 (Scanner)
     - 漏洞利用 (Exploiter)
-    """
     
-    def __init__(self, module_registry):
-        super().__init__(module_registry, name="AttackCoordinator")
-    
+    整合 TaskManager：
+    - 持久化任務狀態到 SQLite
+    - 支持 checkpoint 恢復
+    - 記錄執行軌跡（雙閉環支持）
     async def decompose_task(self, task: CoordinatorTask) -> List[Dict[str, Any]]:
         """分解攻擊任務
         
@@ -35,8 +38,45 @@ class AttackCoordinator(BaseCoordinator):
         3. BioNeuron 決策下一步
         4. Exploiter 執行利用
         
+        整合 TaskManager：
+        - 創建持久化任務記錄
+        - 啟動 checkpoint 恢復（首次）
+        
         Args:
             task: 攻擊任務
+        
+        Returns:
+            子任務列表
+        """
+        # 確保 TaskManager 已啟動（checkpoint 恢復）
+        if not self._task_manager_started:
+            await self.task_manager.start()
+            self._task_manager_started = True
+        
+        target = task.parameters.get("target", "")
+        attack_type = task.parameters.get("attack_type", "auto")
+        
+        # 創建持久化任務記錄
+        try:
+            scan_config = {
+                "attack_type": attack_type,
+                "scan_depth": task.parameters.get("scan_depth", "basic"),
+                "stealth": task.parameters.get("stealth", False),
+                "risk_level": task.parameters.get("risk_level", "medium")
+            }
+            task_id = await self.task_manager.create_scan_task(
+                url=target,
+                priority=task.parameters.get("priority", 5),
+                scan_config=scan_config
+            )
+            # 記錄到任務元數據
+            task.parameters["persistent_task_id"] = task_id
+            logger.info(f"Created persistent task {task_id} for target {target}")
+        except Exception as e:
+            logger.error(f"Failed to create persistent task: {e}")
+            # 繼續執行，即使持久化失敗
+        
+        logger.info(f"Decomposing attack task for target: {target}")
         
         Returns:
             子任務列表
@@ -106,6 +146,10 @@ class AttackCoordinator(BaseCoordinator):
     ) -> Any:
         """聚合攻擊結果
         
+        整合 TaskManager：
+        - 更新任務狀態為 COMPLETED
+        - 記錄執行軌跡（雙閉環支持）
+        
         Args:
             task: 原始任務
             subtask_results: 子任務結果列表
@@ -153,6 +197,20 @@ class AttackCoordinator(BaseCoordinator):
         
         # 提取關鍵發現
         attack_report["findings"] = self._extract_findings(attack_report["stages"])
+        
+        # 更新持久化任務狀態
+        persistent_task_id = task.parameters.get("persistent_task_id")
+        if persistent_task_id:
+            try:
+                final_status = TaskStatus.COMPLETED if attack_report["overall_success"] else TaskStatus.FAILED
+                await self.task_manager.storage.update_target_status(
+                    target_id=persistent_task_id,
+                    status=final_status,
+                    error_message=None if attack_report["overall_success"] else "Attack stages failed"
+                )
+                logger.info(f"Updated persistent task {persistent_task_id} to {final_status}")
+            except Exception as e:
+                logger.error(f"Failed to update persistent task status: {e}")
         
         return attack_report
     

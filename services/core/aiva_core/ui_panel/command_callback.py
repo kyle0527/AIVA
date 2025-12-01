@@ -213,7 +213,7 @@ class UICommandCallback:
         # 2. Rich Console 輸出
         if self.use_rich_console and console:
             try:
-                self._display_partial_result_rich(command_id, result_type, data)
+                self._display_partial_result_rich(result_type, data)
             except Exception as e:
                 self.logger.error(f"Rich Console 輸出失敗: {e}")
         
@@ -250,48 +250,65 @@ class UICommandCallback:
     
     def _display_partial_result_rich(
         self, 
-        command_id: str, 
         result_type: str, 
         data: Any
     ) -> None:
-        """在 Rich Console 顯示中間結果"""
+        """在 Rich Console 顯示中間結果
+        
+        Args:
+            result_type: 結果類型
+            data: 結果數據
+        """
         if not console:
             return
         
-        # 根據結果類型顯示不同的格式
-        if result_type == "vulnerability_found":
-            vuln_type = data.get("type", "Unknown") if isinstance(data, dict) else "Unknown"
-            severity = data.get("severity", "Unknown") if isinstance(data, dict) else "Unknown"
-            
-            console.print(
-                f"[red]🚨 發現漏洞[/red]: "
-                f"[yellow]{vuln_type}[/yellow] "
-                f"([magenta]{severity}[/magenta])"
-            )
+        # 定義顯示處理器字典
+        display_handlers = {
+            "vulnerability_found": self._display_vulnerability,
+            "url_discovered": self._display_url,
+            "asset_found": self._display_asset,
+            "error": self._display_error
+        }
         
-        elif result_type == "url_discovered":
-            url = data.get("url", str(data)) if isinstance(data, dict) else str(data)
-            console.print(
-                f"[cyan]🔗 發現 URL[/cyan]: [blue]{url}[/blue]"
-            )
-        
-        elif result_type == "asset_found":
-            asset_type = data.get("type", "Unknown") if isinstance(data, dict) else "Unknown"
-            console.print(
-                f"[green]📦 發現資產[/green]: [yellow]{asset_type}[/yellow]"
-            )
-        
-        elif result_type == "error":
-            error_msg = data.get("error", str(data)) if isinstance(data, dict) else str(data)
-            console.print(
-                f"[red]❌ 錯誤[/red]: {error_msg}"
-            )
-        
+        handler = display_handlers.get(result_type)
+        if handler:
+            handler(data)
         else:
             # 通用格式
-            console.print(
-                f"[cyan]📋 {result_type}[/cyan]: {str(data)[:100]}"
-            )
+            console.print(f"[cyan]📋 {result_type}[/cyan]: {str(data)[:100]}")
+    
+    def _display_vulnerability(self, data: Any) -> None:
+        """顯示漏洞信息"""
+        if not console:
+            return
+        vuln_type = data.get("type", "Unknown") if isinstance(data, dict) else "Unknown"
+        severity = data.get("severity", "Unknown") if isinstance(data, dict) else "Unknown"
+        console.print(
+            f"[red]🚨 發現漏洞[/red]: "
+            f"[yellow]{vuln_type}[/yellow] "
+            f"([magenta]{severity}[/magenta])"
+        )
+    
+    def _display_url(self, data: Any) -> None:
+        """顯示 URL 信息"""
+        if not console:
+            return
+        url = data.get("url", str(data)) if isinstance(data, dict) else str(data)
+        console.print(f"[cyan]🔗 發現 URL[/cyan]: [blue]{url}[/blue]")
+    
+    def _display_asset(self, data: Any) -> None:
+        """顯示資產信息"""
+        if not console:
+            return
+        asset_type = data.get("type", "Unknown") if isinstance(data, dict) else "Unknown"
+        console.print(f"[green]📦 發現資產[/green]: [yellow]{asset_type}[/yellow]")
+    
+    def _display_error(self, data: Any) -> None:
+        """顯示錯誤信息"""
+        if not console:
+            return
+        error_msg = data.get("error", str(data)) if isinstance(data, dict) else str(data)
+        console.print(f"[red]❌ 錯誤[/red]: {error_msg}")
     
     def get_progress(self, command_id: str) -> Optional[float]:
         """獲取命令的當前進度

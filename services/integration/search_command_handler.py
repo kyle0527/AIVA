@@ -119,8 +119,12 @@ class SearchCommandHandler:
             if not handler:
                 raise ValueError(f"不支持的搜索類型: {command.command_type.value}")
             
-            # 執行搜索
-            results = await handler(command.payload)
+            # 執行搜索（處理同步和異步函數）
+            import inspect
+            if inspect.iscoroutinefunction(handler):
+                results = await handler(command.payload)
+            else:
+                results = handler(command.payload)
             
             # 通知完成
             if self.callback_handler:
@@ -137,6 +141,9 @@ class SearchCommandHandler:
                 status=CommandStatus.COMPLETED,
                 success=True,
                 result=results,
+                error="",
+                error_code="",
+                error_details={},
                 execution_time=execution_time,
                 started_at=datetime.fromtimestamp(start_time, tz=UTC),
                 completed_at=datetime.now(UTC),
@@ -157,6 +164,8 @@ class SearchCommandHandler:
                 success=False,
                 result={},
                 error=str(e),
+                error_code="SEARCH_EXECUTION_ERROR",
+                error_details={"exception_type": type(e).__name__},
                 execution_time=execution_time,
                 started_at=datetime.fromtimestamp(start_time, tz=UTC),
                 completed_at=datetime.now(UTC)
@@ -196,12 +205,14 @@ class SearchCommandHandler:
             "lr": f"lang_{language.split('-')[0]}"
         }
         
+        headers = {"User-Agent": "AIVA/6.3"}
+        
         try:
             timeout = aiohttp.ClientTimeout(total=30)
             async with aiohttp.ClientSession() as session:
-                async with session.get(url, headers=headers, timeout=timeout) as response:
+                async with session.get(url, params=params, headers=headers, timeout=timeout) as response:
                     if response.status != 200:
-                        raise Exception(f"Google API 返回錯誤: {response.status}")
+                        raise aiohttp.ClientError(f"Google API 返回錯誤: {response.status}")
                     
                     data = await response.json()
                     
@@ -232,7 +243,7 @@ class SearchCommandHandler:
                         ]
                     }
         
-        except Exception as e:
+        except (aiohttp.ClientError, asyncio.TimeoutError) as e:
             self.logger.error(f"Google 搜索失敗: {e}")
             raise
     
@@ -359,7 +370,7 @@ class SearchCommandHandler:
             async with aiohttp.ClientSession(headers=headers) as session:
                 async with session.get(url, params=params, timeout=timeout) as response:
                     if response.status != 200:
-                        raise Exception(f"GitHub API 返回錯誤: {response.status}")
+                        raise aiohttp.ClientError(f"GitHub API 返回錯誤: {response.status}")
                     
                     data = await response.json()
                     
@@ -382,11 +393,11 @@ class SearchCommandHandler:
                         ]
                     }
         
-        except Exception as e:
+        except (aiohttp.ClientError, asyncio.TimeoutError) as e:
             self.logger.error(f"GitHub 搜索失敗: {e}")
             raise
     
-    async def _search_exploitdb(self, payload: Dict[str, Any]) -> Dict[str, Any]:
+    def _search_exploitdb(self, payload: Dict[str, Any]) -> Dict[str, Any]:
         """ExploitDB 搜索（使用公開 API 或爬蟲）
         
         Args:
@@ -449,7 +460,7 @@ class SearchCommandHandler:
             async with aiohttp.ClientSession(headers=headers) as session:
                 async with session.get(url, params=params, timeout=timeout) as response:
                     if response.status != 200:
-                        raise Exception(f"NVD API 返回錯誤: {response.status}")
+                        raise aiohttp.ClientError(f"NVD API 返回錯誤: {response.status}")
                     
                     data = await response.json()
                     
@@ -472,7 +483,7 @@ class SearchCommandHandler:
                         "vulnerabilities": vulnerabilities
                     }
         
-        except Exception as e:
+        except (aiohttp.ClientError, asyncio.TimeoutError) as e:
             self.logger.error(f"CVE 搜索失敗: {e}")
             raise
     
@@ -508,7 +519,7 @@ class SearchCommandHandler:
             async with aiohttp.ClientSession() as session:
                 async with session.get(url, params=params, timeout=timeout) as response:
                     if response.status != 200:
-                        raise Exception(f"Shodan API 返回錯誤: {response.status}")
+                        raise aiohttp.ClientError(f"Shodan API 返回錯誤: {response.status}")
                     
                     data = await response.json()
                     
@@ -528,11 +539,11 @@ class SearchCommandHandler:
                         ]
                     }
         
-        except Exception as e:
+        except (aiohttp.ClientError, asyncio.TimeoutError) as e:
             self.logger.error(f"Shodan 搜索失敗: {e}")
             raise
     
-    async def _search_threat_intel(self, payload: Dict[str, Any]) -> Dict[str, Any]:
+    def _search_threat_intel(self, payload: Dict[str, Any]) -> Dict[str, Any]:
         """威脅情報搜索（整合多個來源）
         
         Args:
@@ -544,28 +555,20 @@ class SearchCommandHandler:
         indicator = payload.get("indicator", "")
         indicator_type = payload.get("type", "ip")
         
-        # 並行查詢多個威脅情報源
-        tasks = []
+        # 查詢多個威脅情報源
+        results = {}
         
         if self.api_keys["virustotal"]:
-            tasks.append(("virustotal", self._query_virustotal(indicator, indicator_type)))
+            try:
+                results["virustotal"] = self._query_virustotal(indicator)
+            except Exception as e:
+                results["virustotal"] = {"error": str(e)}
         
         if self.api_keys["abuseipdb"] and indicator_type == "ip":
-            tasks.append(("abuseipdb", self._query_abuseipdb(indicator)))
-        
-        # 執行並行查詢
-        results = {}
-        if tasks:
-            gathered = await asyncio.gather(
-                *[task for _, task in tasks],
-                return_exceptions=True
-            )
-            
-            for (source, _), result in zip(tasks, gathered):
-                if isinstance(result, Exception):
-                    results[source] = {"error": str(result)}
-                else:
-                    results[source] = result
+            try:
+                results["abuseipdb"] = self._query_abuseipdb(indicator)
+            except Exception as e:
+                results["abuseipdb"] = {"error": str(e)}
         
         return {
             "indicator": indicator,
@@ -574,17 +577,17 @@ class SearchCommandHandler:
             "sources": results
         }
     
-    async def _query_virustotal(self, indicator: str, itype: str) -> Dict:
+    def _query_virustotal(self, indicator: str) -> Dict:
         """查詢 VirusTotal"""
         # 實現 VirusTotal API 查詢
-        return {"status": "not_implemented"}
+        return {"status": "not_implemented", "indicator": indicator}
     
-    async def _query_abuseipdb(self, ip: str) -> Dict:
+    def _query_abuseipdb(self, ip: str) -> Dict:
         """查詢 AbuseIPDB"""
         # 實現 AbuseIPDB API 查詢
-        return {"status": "not_implemented"}
+        return {"status": "not_implemented", "ip": ip}
     
-    async def _search_whois(self, payload: Dict[str, Any]) -> Dict[str, Any]:
+    def _search_whois(self, payload: Dict[str, Any]) -> Dict[str, Any]:
         """WHOIS 查詢
         
         Args:
@@ -604,7 +607,7 @@ class SearchCommandHandler:
             "data": {}
         }
     
-    async def _search_domain_info(self, payload: Dict[str, Any]) -> Dict[str, Any]:
+    def _search_domain_info(self, payload: Dict[str, Any]) -> Dict[str, Any]:
         """域名信息查詢
         
         Args:

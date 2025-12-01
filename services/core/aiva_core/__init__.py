@@ -24,7 +24,7 @@ __version__ = "3.0.0-alpha"
 import logging
 from typing import Any, Dict, Optional, Set, List
 from enum import Enum
-from datetime import datetime
+from datetime import datetime, UTC
 
 logger = logging.getLogger(__name__)
 
@@ -65,8 +65,8 @@ class StranglerFigMigrationController:
             'features_in_transition': 0,
             'legacy_calls': 0,
             'modern_calls': 0,
-            'migration_started': datetime.now().isoformat(),
-            'last_update': datetime.now().isoformat()
+            'migration_started': datetime.now(UTC).isoformat(),
+            'last_update': datetime.now(UTC).isoformat()
         }
         
         # 路由表 - 決定使用新舊系統

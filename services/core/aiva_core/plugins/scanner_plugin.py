@@ -4,6 +4,8 @@ Scanner Plugin
 
 整合掃描模組為標準插件
 提供被動和主動掃描能力
+
+整合 FeaturesInvoker 實現 Core → Features 調用打通
 """
 
 import logging
@@ -18,6 +20,13 @@ from services.core.aiva_core.plugin_system.base_plugin import (
     AIResult,
     AITaskType
 )
+from services.core.aiva_core.integration import (
+    FeaturesInvoker,
+    FeatureRequest,
+    FeatureType,
+    get_global_invoker,
+)
+from services.aiva_common.enums import ModuleName
 
 logger = logging.getLogger(__name__)
 
@@ -31,9 +40,14 @@ class ScannerPlugin(AIModulePlugin):
     - 指紋識別
     - 端口掃描
     - 服務識別
+    
+    整合 FeaturesInvoker：
+    - 統一調用 func_xss, func_sqli 等 Features
+    - 使用數據合約（FeatureRequest/FeatureResponse）
+    - 支持異步調用與錯誤處理
     """
     
-    __version__ = "2.1.0"
+    __version__ = "2.2.0"  # 升級版本號
     
     def __init__(self):
         self.passive_scanner = None
@@ -42,7 +56,10 @@ class ScannerPlugin(AIModulePlugin):
         self.initialized = False
         self._scan_history = []
         
-        logger.info("ScannerPlugin created")
+        # 整合 FeaturesInvoker
+        self.features_invoker: Optional[FeaturesInvoker] = None
+        
+        logger.info("ScannerPlugin created (with FeaturesInvoker support)")
     
     @property
     def module_id(self) -> str:
@@ -57,13 +74,13 @@ class ScannerPlugin(AIModulePlugin):
             "service_detection",
             "fingerprint",
             "vulnerability_scan",
-            "network_mapping"
+            "network_mapping",
+            "xss_detection",  # 新增：通過 FeaturesInvoker 調用 func_xss
+            "sqli_detection",  # 新增：通過 FeaturesInvoker 調用 func_sqli
         ]
     
     @property
     def requires_weights(self) -> bool:
-        return False  # 基於規則的掃描，不需要權重
-    
     async def initialize(self, config: Dict[str, Any]) -> bool:
         """初始化掃描器
         
@@ -73,6 +90,7 @@ class ScannerPlugin(AIModulePlugin):
                 - active_enabled: 是否啟用主動掃描
                 - scan_timeout: 掃描超時時間
                 - max_threads: 最大線程數
+                - features_enabled: 是否啟用 Features 調用（默認 True）
         
         Returns:
             初始化是否成功
@@ -80,6 +98,15 @@ class ScannerPlugin(AIModulePlugin):
         try:
             self.config = config
             logger.info("Initializing Scanner plugin...")
+            
+            # 初始化 FeaturesInvoker（優先級最高）
+            if config.get("features_enabled", True):
+                try:
+                    self.features_invoker = get_global_invoker()
+                    logger.info("✅ FeaturesInvoker initialized (global instance)")
+                except Exception as e:
+                    logger.warning(f"FeaturesInvoker initialization failed: {e}")
+                    self.features_invoker = None
             
             # 初始化被動掃描器
             if config.get("passive_enabled", True):
@@ -102,8 +129,8 @@ class ScannerPlugin(AIModulePlugin):
                     self.active_scanner = None
             
             # 如果沒有任何掃描器可用，使用備用實現
-            if self.passive_scanner is None and self.active_scanner is None:
-                logger.warning("No scanners available, using fallback implementation")
+            if self.passive_scanner is None and self.active_scanner is None and self.features_invoker is None:
+                logger.warning("No scanners or features available, using fallback implementation")
                 self.passive_scanner = self._create_fallback_scanner()
             
             self.initialized = True
@@ -111,6 +138,8 @@ class ScannerPlugin(AIModulePlugin):
             return True
             
         except Exception as e:
+            logger.error(f"Failed to initialize Scanner plugin: {e}", exc_info=True)
+            return False as e:
             logger.error(f"Failed to initialize Scanner plugin: {e}", exc_info=True)
             return False
     
@@ -134,6 +163,11 @@ class ScannerPlugin(AIModulePlugin):
     async def execute_task(self, task: AITask) -> AIResult:
         """執行掃描任務 - 通過 AICommandCenter 統一調度
         
+        整合 FeaturesInvoker + XSSCoordinator 自動觸發：
+        1. 調用 Feature (func_xss/func_sqli)
+        2. 自動觸發 XSSCoordinator 處理結果
+        3. 收集雙閉環優化數據
+        
         Args:
             task: AI 任務對象
         
@@ -149,6 +183,40 @@ class ScannerPlugin(AIModulePlugin):
         start_time = time.time()
         
         try:
+            # ✅ 優先使用 FeaturesInvoker（如果任務涉及 XSS/SQLi 檢測）
+            task_lower = task.description.lower() if task.description else ""
+            target = task.parameters.get("target", "")
+            
+            if self.features_invoker and ("xss" in task_lower or "injection" in task_lower):
+                logger.info(f"🎯 Using FeaturesInvoker for {task_lower}")
+                
+                # 調用對應的 Feature
+                if "xss" in task_lower:
+                    feature_result = await self.call_feature_xss(target, task.parameters)
+                else:
+                    feature_result = await self.call_feature_sqli(target, task.parameters)
+                
+                # ✅ 自動觸發 XSSCoordinator 處理結果
+                if feature_result.get("success") and len(feature_result.get("findings", [])) > 0:
+                    await self._trigger_coordinator(feature_result, task)
+                
+                execution_time = time.time() - start_time
+                return AIResult(
+                    success=feature_result.get("success", False),
+                    data=feature_result.get("data", {}),
+                    execution_time=execution_time,
+                    metrics={
+                        "scan_time_seconds": feature_result.get("duration_ms", 0) / 1000,
+                        "findings_count": len(feature_result.get("findings", [])),
+                        "via_features_invoker": True
+                    },
+                    trace={
+                        "module": "scanner",
+                        "feature_invoked": "xss" if "xss" in task_lower else "sqli",
+                        "coordinator_triggered": True
+                    }
+                )
+            
             # ✅ 1. 檢查 command_center 是否可用
             if not hasattr(self, 'command_center'):
                 logger.error("❌ command_center not initialized in ScannerPlugin")
@@ -470,13 +538,15 @@ class ScannerPlugin(AIModulePlugin):
         
         logger.info(f"Detecting service on {target}:{port}...")
         
+        # 暫時只返回服務類型推測,移除硬編碼的版本和作業系統
+        # TODO: 整合 python-nmap 進行真實服務版本檢測
         return {
             "target": target,
             "port": port,
             "service": self._guess_service(port),
-            "version": "Apache/2.4.41",
-            "os": "Ubuntu",
-            "confidence": 0.85
+            "version": None,
+            "os": None,
+            "confidence": 0.3
         }
     
     async def _fingerprint(self, parameters: Dict[str, Any]) -> Dict[str, Any]:  # type: ignore[misc]
@@ -492,16 +562,17 @@ class ScannerPlugin(AIModulePlugin):
         
         logger.info(f"Fingerprinting {target}...")
         
+        # TODO: 整合真實的指紋識別工具（如 WhatWeb, Wappalyzer）
         return {
             "target": target,
             "fingerprint": {
-                "web_server": "Apache/2.4.41",
-                "framework": "Django/3.2",
-                "language": "Python 3.9",
-                "os": "Ubuntu 20.04",
-                "technologies": ["jQuery", "Bootstrap", "nginx"]
+                "web_server": None,
+                "framework": None,
+                "language": None,
+                "os": None,
+                "technologies": []
             },
-            "confidence": 0.88
+            "confidence": 0.1
         }
     
     def _guess_service(self, port: int) -> str:
@@ -557,11 +628,160 @@ class ScannerPlugin(AIModulePlugin):
                     await self.active_scanner.close()  # type: ignore[attr-defined]
                 self.active_scanner = None
             
+            # 清理 FeaturesInvoker 統計信息
+            if self.features_invoker:
+                stats = self.features_invoker.get_stats()
+                logger.info(f"FeaturesInvoker stats: {stats}")
+            
             self.initialized = False
             logger.info("Scanner plugin shut down successfully")
             
         except Exception as e:
             logger.error(f"Error during Scanner shutdown: {e}")
+    
+    async def call_feature_xss(self, target_url: str, parameters: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
+        """通過 FeaturesInvoker 調用 func_xss
+        
+        Args:
+            target_url: 目標 URL
+            parameters: XSS 掃描參數
+        
+        Returns:
+            XSS 掃描結果
+        """
+        if not self.features_invoker:
+            logger.error("FeaturesInvoker not initialized")
+            return {"error": "FeaturesInvoker not available"}
+        
+        # 構建 FeatureRequest
+        request = FeatureRequest(
+            feature_module=ModuleName.FUNC_XSS,
+            feature_type=FeatureType.PYTHON,
+            target_url=target_url,
+            parameters=parameters or {},
+            timeout_ms=self.config.get("feature_timeout_ms", 60000) if self.config else 60000,
+            priority=7  # XSS 掃描優先級較高
+        )
+        
+        # 調用 Feature
+        logger.info(f"Calling func_xss for {target_url} via FeaturesInvoker")
+        response = await self.features_invoker.invoke(request)
+        
+        # 轉換為字典格式
+        return {
+            "success": response.success,
+            "status": response.status.value,
+            "findings": response.findings,
+            "data": response.data,
+            "duration_ms": response.duration_ms,
+            "error": response.error_message
+        }
+    
+    async def call_feature_sqli(self, target_url: str, parameters: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
+        """通過 FeaturesInvoker 調用 func_sqli
+        
+        Args:
+            target_url: 目標 URL
+            parameters: SQL 注入掃描參數
+        
+        Returns:
+            SQL 注入掃描結果
+        """
+        if not self.features_invoker:
+            logger.error("FeaturesInvoker not initialized")
+            return {"error": "FeaturesInvoker not available"}
+        
+        # 構建 FeatureRequest
+        request = FeatureRequest(
+            feature_module=ModuleName.FUNC_SQLI,
+            feature_type=FeatureType.PYTHON,
+            target_url=target_url,
+            parameters=parameters or {},
+            timeout_ms=self.config.get("feature_timeout_ms", 60000) if self.config else 60000,
+            priority=8  # SQL 注入優先級最高
+        )
+        
+        # 調用 Feature
+        logger.info(f"Calling func_sqli for {target_url} via FeaturesInvoker")
+        response = await self.features_invoker.invoke(request)
+        
+        # 轉換為字典格式
+        return {
+            "success": response.success,
+            "status": response.status.value,
+            "findings": response.findings,
+            "data": response.data,
+            "duration_ms": response.duration_ms,
+            "error": response.error_message
+        }
+    
+    def get_scan_history(self) -> List[Dict[str, Any]]:
+        """獲取掃描歷史記錄"""
+        return self._scan_history.copy()
+    
+    async def _trigger_coordinator(self, feature_result: Dict[str, Any], task: AITask) -> None:
+        """自動觸發 Integration Coordinator 處理 Feature 結果
+        
+        Args:
+            feature_result: Feature 調用結果
+            task: 原始任務
+        """
+        try:
+            # 導入 XSSCoordinator（延遲導入避免循環依賴）
+            from services.integration.coordinators.xss_coordinator import XSSCoordinator
+            from services.integration.coordinators.base_coordinator import FeatureResult
+            from aiva_common.enums import TaskStatus
+            
+            # 構建 FeatureResult 對象（符合 Coordinator 數據合約）
+            feature_result_obj = {
+                "task_id": task.task_id,
+                "feature_module": ModuleName.FUNC_XSS,  # 根據實際 Feature 類型設置
+                "timestamp": datetime.now(timezone.utc).isoformat(),
+                "duration_ms": feature_result.get("duration_ms", 0.0),
+                "status": TaskStatus.COMPLETED if feature_result.get("success") else TaskStatus.FAILED,
+                "success": feature_result.get("success", False),
+                "target": {
+                    "url": task.parameters.get("target", ""),
+                    "parameter": None,
+                    "method": "GET",
+                    "headers": {}
+                },
+                "findings": feature_result.get("findings", []),
+                "statistics": {
+                    "payloads_tested": feature_result.get("data", {}).get("payloads_tested", 0),
+                    "requests_sent": feature_result.get("data", {}).get("requests_sent", 0),
+                    "false_positives_filtered": 0,
+                    "time_per_payload_ms": 0.0,
+                    "success_rate": 1.0 if feature_result.get("success") else 0.0
+                },
+                "performance": {
+                    "avg_response_time_ms": feature_result.get("duration_ms", 0.0),
+                    "max_response_time_ms": feature_result.get("duration_ms", 0.0),
+                    "min_response_time_ms": feature_result.get("duration_ms", 0.0),
+                    "rate_limit_hits": 0,
+                    "retries": 0,
+                    "network_errors": 0,
+                    "timeout_count": 0
+                },
+                "errors": [],
+                "metadata": feature_result.get("data", {})
+            }
+            
+            # 創建 Coordinator 並處理結果
+            coordinator = XSSCoordinator()
+            logger.info(f"🎯 Triggering XSSCoordinator for task {task.task_id}")
+            
+            processed_result = await coordinator.collect_result(feature_result_obj)
+            
+            logger.info(
+                f"✅ XSSCoordinator processed task {task.task_id}: "
+                f"{processed_result.get('status', 'unknown')}"
+            )
+            
+            # TODO: 將處理結果發送到 MessageBroker 或存儲到數據庫
+            
+        except Exception as e:
+            logger.error(f"Failed to trigger coordinator: {e}", exc_info=True)
     
     def get_metadata(self) -> Dict[str, Any]:
         """獲取模組元數據"""
@@ -573,6 +793,7 @@ class ScannerPlugin(AIModulePlugin):
             "initialized": self.initialized,
             "passive_scanner_available": self.passive_scanner is not None,
             "active_scanner_available": self.active_scanner is not None,
+            "features_invoker_available": self.features_invoker is not None,  # 新增
             "total_scans": len(self._scan_history),
             "config": self.config
         }

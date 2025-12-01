@@ -34,7 +34,7 @@ AI 命令中心 - 統一指揮調度系統
 import asyncio
 import time
 from datetime import UTC, datetime
-from typing import Any, Callable, Dict, List, Optional, Protocol
+from typing import Any, Callable, Dict, List, Optional, Protocol, Union
 from uuid import uuid4
 
 from .schemas import (
@@ -173,134 +173,190 @@ class AICommandCenter:
         )
         
         try:
-            # 0. 通知開始執行（如果啟用回調）
-            callback = command.get_callback()
-            if command.enable_callbacks and callback:
-                try:
-                    await callback.on_status_change(
-                        command.command_id,
-                        CommandStatus.PENDING,
-                        CommandStatus.RUNNING
-                    )
-                except Exception as cb_error:
-                    self.logger.warning(f"回調執行失敗: {cb_error}")
+            # 通知開始執行
+            await self._notify_command_start(command)
             
-            # 1. 檢查處理器是否存在
-            handler = self._handlers.get(command.target_module)
-            if not handler:
-                error_msg = f"未找到模組 '{command.target_module}' 的處理器"
-                self.logger.error(f"❌ {error_msg}")
-                
-                # 通知失敗
-                if command.enable_callbacks and callback:
-                    try:
-                        await callback.on_status_change(
-                            command.command_id,
-                            CommandStatus.RUNNING,
-                            CommandStatus.FAILED
-                        )
-                    except Exception:
-                        pass
-                
-                return self._create_error_result(
-                    command, 
-                    error_msg, 
-                    time.time() - start_time
-                )
+            # 檢查並獲取處理器
+            handler = self._get_handler_or_error(command, start_time)
+            if isinstance(handler, AICommandResult):
+                return handler  # 返回錯誤結果
             
-            # 1.5 將回調傳遞給處理器（如果支持）
-            if command.enable_callbacks and callback and hasattr(handler, 'set_callback'):
-                try:
-                    handler.set_callback(callback)
-                except Exception as e:
-                    self.logger.warning(f"設置處理器回調失敗: {e}")
+            # 設置回調
+            self._setup_handler_callback(command, handler)
             
-            # 2. 執行命令（帶超時控制）
-            result = await asyncio.wait_for(
-                handler.handle_command(command, context),
-                timeout=command.timeout
-            )
+            # 執行命令
+            result = await self._execute_with_timeout(command, handler, context)
             
-            # 3. 更新統計
+            # 記錄成功
             execution_time = time.time() - start_time
-            self._stats["successful_commands"] += 1
-            self._stats["total_execution_time"] += execution_time
-            
-            # 4. 通知完成（如果啟用回調）
-            if command.enable_callbacks and callback:
-                try:
-                    await callback.on_status_change(
-                        command.command_id,
-                        CommandStatus.RUNNING,
-                        result.status
-                    )
-                except Exception as cb_error:
-                    self.logger.warning(f"回調執行失敗: {cb_error}")
-            
-            # 5. 記錄歷史
-            self._record_command_history(command, result, execution_time)
-            
-            self.logger.info(
-                f"✅ 命令完成: {command.command_id} "
-                f"({execution_time:.2f}s) - {result.status.value}"
-            )
+            await self._handle_success(command, result, execution_time)
             
             return result
             
         except asyncio.TimeoutError:
-            # 超時處理
-            execution_time = time.time() - start_time
-            error_msg = f"命令執行超時（{command.timeout}秒）"
-            self.logger.error(f"⏱️  {command.command_id}: {error_msg}")
-            
-            # 通知超時
-            callback = command.get_callback()
-            if command.enable_callbacks and callback:
-                try:
-                    await callback.on_status_change(
-                        command.command_id,
-                        CommandStatus.RUNNING,
-                        CommandStatus.TIMEOUT
-                    )
-                except Exception:
-                    pass
-            
-            self._stats["failed_commands"] += 1
-            result = self._create_error_result(
-                command, 
-                error_msg, 
-                execution_time,
-                status=CommandStatus.TIMEOUT
-            )
-            self._record_command_history(command, result, execution_time)
-            return result
+            return await self._handle_timeout(command, start_time)
             
         except Exception as e:
-            # 異常處理
-            execution_time = time.time() - start_time
-            error_msg = f"命令執行異常: {str(e)}"
-            self.logger.error(f"❌ {command.command_id}: {error_msg}", exc_info=True)
+            return await self._handle_exception(command, e, start_time)
+    
+    async def _notify_command_start(self, command: AICommand) -> None:
+        """通知命令開始執行"""
+        callback = command.get_callback()
+        if command.enable_callbacks and callback:
+            try:
+                await callback.on_status_change(
+                    command.command_id,
+                    CommandStatus.PENDING,
+                    CommandStatus.RUNNING
+                )
+            except Exception as e:
+                self.logger.warning(f"回調執行失敗: {e}")
+    
+    def _get_handler_or_error(
+        self, 
+        command: AICommand, 
+        start_time: float
+    ) -> Union[Any, AICommandResult]:
+        """獲取處理器或返回錯誤結果"""
+        handler = self._handlers.get(command.target_module)
+        if not handler:
+            error_msg = f"未找到模組 '{command.target_module}' 的處理器"
+            self.logger.error(f"❌ {error_msg}")
             
-            # 通知失敗
+            # 異步通知失敗（不等待完成）
             callback = command.get_callback()
             if command.enable_callbacks and callback:
                 try:
-                    await callback.on_status_change(
+                    _ = asyncio.create_task(callback.on_status_change(
                         command.command_id,
                         CommandStatus.RUNNING,
                         CommandStatus.FAILED
-                    )
+                    ))
                 except Exception:
                     pass
             
-            self._stats["failed_commands"] += 1
-            result = self._create_error_result(
+            return self._create_error_result(
                 command, 
                 error_msg, 
-                execution_time
+                time.time() - start_time
             )
-            self._record_command_history(command, result, execution_time)
-            return result
+        return handler
+    
+    def _setup_handler_callback(self, command: AICommand, handler: Any) -> None:
+        """設置處理器的回調"""
+        callback = command.get_callback()
+        if command.enable_callbacks and callback and hasattr(handler, 'set_callback'):
+            try:
+                handler.set_callback(callback)
+            except Exception as e:
+                self.logger.warning(f"設置處理器回調失敗: {e}")
+    
+    async def _execute_with_timeout(
+        self, 
+        command: AICommand, 
+        handler: Any, 
+        context: Optional[CommandContext]
+    ) -> AICommandResult:
+        """帶超時控制的命令執行"""
+        return await asyncio.wait_for(
+            handler.handle_command(command, context),
+            timeout=command.timeout
+        )
+    
+    async def _handle_success(
+        self, 
+        command: AICommand, 
+        result: AICommandResult, 
+        execution_time: float
+    ) -> None:
+        """處理命令成功執行"""
+        # 更新統計
+        self._stats["successful_commands"] += 1
+        self._stats["total_execution_time"] += execution_time
+        
+        # 通知完成
+        callback = command.get_callback()
+        if command.enable_callbacks and callback:
+            try:
+                await callback.on_status_change(
+                    command.command_id,
+                    CommandStatus.RUNNING,
+                    result.status
+                )
+            except Exception as e:
+                self.logger.warning(f"回調執行失敗: {e}")
+        
+        # 記錄歷史
+        self._record_command_history(command, result, execution_time)
+        
+        self.logger.info(
+            f"✅ 命令完成: {command.command_id} "
+            f"({execution_time:.2f}s) - {result.status.value}"
+        )
+    
+    async def _handle_timeout(
+        self, 
+        command: AICommand, 
+        start_time: float
+    ) -> AICommandResult:
+        """處理命令超時"""
+        execution_time = time.time() - start_time
+        error_msg = f"命令執行超時（{command.timeout}秒）"
+        self.logger.error(f"⏱️  {command.command_id}: {error_msg}")
+        
+        # 通知超時
+        callback = command.get_callback()
+        if command.enable_callbacks and callback:
+            try:
+                await callback.on_status_change(
+                    command.command_id,
+                    CommandStatus.RUNNING,
+                    CommandStatus.TIMEOUT
+                )
+            except Exception:
+                pass
+        
+        self._stats["failed_commands"] += 1
+        result = self._create_error_result(
+            command, 
+            error_msg, 
+            execution_time,
+            status=CommandStatus.TIMEOUT
+        )
+        self._record_command_history(command, result, execution_time)
+        return result
+    
+    async def _handle_exception(
+        self, 
+        command: AICommand, 
+        error: Exception, 
+        start_time: float
+    ) -> AICommandResult:
+        """處理命令執行異常"""
+        execution_time = time.time() - start_time
+        error_msg = f"命令執行異常: {str(error)}"
+        self.logger.error(f"❌ {command.command_id}: {error_msg}", exc_info=True)
+        
+        # 通知失敗
+        callback = command.get_callback()
+        if command.enable_callbacks and callback:
+            try:
+                await callback.on_status_change(
+                    command.command_id,
+                    CommandStatus.RUNNING,
+                    CommandStatus.FAILED
+                )
+            except Exception:
+                pass
+        
+        self._stats["failed_commands"] += 1
+        result = self._create_error_result(
+            command, 
+            error_msg, 
+            execution_time
+        )
+        self._record_command_history(command, result, execution_time)
+        return result
     
     async def execute_batch(
         self, 

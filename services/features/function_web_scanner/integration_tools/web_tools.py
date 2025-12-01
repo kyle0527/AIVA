@@ -37,7 +37,7 @@ from services.aiva_common.utils import get_logger
 
 # 嘗試導入能力系統基類
 try:
-    from services.core.aiva_core.core_capabilities.base import BaseCapability
+    from services.core.aiva_core.core_capabilities.base import BaseCapability  # type: ignore
 except ImportError:
     # 提供一個簡單的基礎類
     class BaseCapability:
@@ -58,13 +58,13 @@ except ImportError:
         def dependencies(self) -> List[str]:
             return []
         
-        async def initialize(self) -> bool:
+        def initialize(self) -> bool:
             return True
         
         async def execute(self, command: str, parameters: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
             raise NotImplementedError
         
-        async def cleanup(self) -> bool:
+        def cleanup(self) -> bool:
             return True
 
 try:
@@ -83,6 +83,15 @@ except ImportError:
 
 logger = get_logger(__name__)
 console = Console()
+
+# UI 常量
+PROMPT_ENTER_URL = "[bold cyan]請輸入目標 URL: [/bold cyan]"
+ERROR_EMPTY_URL = "[bold red]URL 不能為空[/bold red]"
+PROTOCOL_HTTP = 'http://'
+PROTOCOL_HTTPS = 'https://'
+
+# 錯誤訊息常量
+ERROR_MISSING_TARGET_URL = 'Missing target_url parameter'
 
 
 @dataclass
@@ -120,7 +129,7 @@ class SubdomainEnumerator:
         self.found_subdomains: Set[str] = set()
         self.session: Optional[aiohttp.ClientSession] = None
         
-    async def enumerate_subdomains(self, domain: str, timeout: int = 30) -> List[str]:
+    async def enumerate_subdomains(self, domain: str) -> List[str]:
         """枚舉子域名"""
         try:
             self.found_subdomains.clear()
@@ -133,9 +142,14 @@ class SubdomainEnumerator:
                 self._enumerate_common_subdomains(domain)
             ]
             
-            async with aiohttp.ClientSession(timeout=aiohttp.ClientTimeout(total=timeout)) as session:
+            # 使用 asyncio.timeout 來控制總超時（30秒）
+            async with aiohttp.ClientSession() as session:
                 self.session = session
-                await asyncio.gather(*tasks, return_exceptions=True)
+                try:
+                    async with asyncio.timeout(30):
+                        await asyncio.gather(*tasks, return_exceptions=True)
+                except TimeoutError:
+                    logger.warning("子域名枚舉超時 (30秒)")
             
             return sorted(self.found_subdomains)
             
@@ -667,7 +681,7 @@ class WebAttackCLI:
                 elif choice == "6":
                     self._show_scan_history()
                 elif choice == "7":
-                    await self._export_results()
+                    self._export_results()
                 elif choice == "99":
                     console.print("[bold yellow]感謝使用 AIVA 網絡攻擊工具![/bold yellow]")
                     break
@@ -682,13 +696,13 @@ class WebAttackCLI:
     
     async def _comprehensive_scan(self):
         """執行綜合掃描"""
-        target_url = console.input("[bold cyan]請輸入目標 URL: [/bold cyan]").strip()
+        target_url = console.input(PROMPT_ENTER_URL).strip()
         if not target_url:
-            console.print("[bold red]URL 不能為空[/bold red]")
+            console.print(ERROR_EMPTY_URL)
             return
         
-        if not target_url.startswith(('http://', 'https://')):
-            target_url = f"http://{target_url}"
+        if not target_url.startswith((PROTOCOL_HTTP, PROTOCOL_HTTPS)):
+            target_url = f"{PROTOCOL_HTTP}{target_url}"
         
         try:
             results = await self.manager.comprehensive_scan(target_url)
@@ -722,13 +736,13 @@ class WebAttackCLI:
     
     async def _directory_scan(self):
         """目錄掃描"""
-        target_url = console.input("[bold cyan]請輸入目標 URL: [/bold cyan]").strip()
+        target_url = console.input(PROMPT_ENTER_URL).strip()
         if not target_url:
-            console.print("[bold red]URL 不能為空[/bold red]")
+            console.print(ERROR_EMPTY_URL)
             return
         
-        if not target_url.startswith(('http://', 'https://')):
-            target_url = f"http://{target_url}"
+        if not target_url.startswith((PROTOCOL_HTTP, PROTOCOL_HTTPS)):
+            target_url = f"{PROTOCOL_HTTP}{target_url}"
         
         try:
             directories = await self.manager.directory_scanner.scan_directories(target_url)
@@ -752,13 +766,13 @@ class WebAttackCLI:
     
     async def _vulnerability_scan(self):
         """漏洞掃描"""
-        target_url = console.input("[bold cyan]請輸入目標 URL: [/bold cyan]").strip()
+        target_url = console.input(PROMPT_ENTER_URL).strip()
         if not target_url:
-            console.print("[bold red]URL 不能為空[/bold red]")
+            console.print(ERROR_EMPTY_URL)
             return
         
-        if not target_url.startswith(('http://', 'https://')):
-            target_url = f"http://{target_url}"
+        if not target_url.startswith((PROTOCOL_HTTP, PROTOCOL_HTTPS)):
+            target_url = f"{PROTOCOL_HTTP}{target_url}"
         
         try:
             vulnerabilities = await self.manager.vulnerability_scanner.scan_vulnerabilities(target_url)
@@ -791,13 +805,13 @@ class WebAttackCLI:
     
     async def _technology_detection(self):
         """技術檢測"""
-        target_url = console.input("[bold cyan]請輸入目標 URL: [/bold cyan]").strip()
+        target_url = console.input(PROMPT_ENTER_URL).strip()
         if not target_url:
-            console.print("[bold red]URL 不能為空[/bold red]")
+            console.print(ERROR_EMPTY_URL)
             return
         
-        if not target_url.startswith(('http://', 'https://')):
-            target_url = f"http://{target_url}"
+        if not target_url.startswith((PROTOCOL_HTTP, PROTOCOL_HTTPS)):
+            target_url = f"{PROTOCOL_HTTP}{target_url}"
         
         try:
             technologies = await self.manager.technology_detector.detect_technologies(target_url)
@@ -838,7 +852,7 @@ class WebAttackCLI:
         
         console.print(table)
     
-    async def _export_results(self):
+    def _export_results(self):
         """導出結果"""
         if not self.manager.scan_results:
             console.print("[bold yellow]暫無掃描結果可導出[/bold yellow]")
@@ -960,57 +974,76 @@ class WebAttackCapability(BaseCapability):  # type: ignore
         try:
             parameters = parameters or {}
             
-            if command == "comprehensive_scan":
-                target_url = parameters.get('target_url')
-                if not target_url:
-                    return {'success': False, 'error': 'Missing target_url parameter'}
-                
-                options = parameters.get('options', {})
-                results = await self.manager.comprehensive_scan(target_url, options)
-                return {'success': True, 'data': results}
+            # 命令路由字典
+            command_handlers = {
+                "comprehensive_scan": self._execute_comprehensive_scan,
+                "subdomain_scan": self._execute_subdomain_scan,
+                "directory_scan": self._execute_directory_scan,
+                "vulnerability_scan": self._execute_vulnerability_scan,
+                "technology_detection": self._execute_technology_detection,
+                "interactive": self._execute_interactive
+            }
             
-            elif command == "subdomain_scan":
-                domain = parameters.get('domain')
-                if not domain:
-                    return {'success': False, 'error': 'Missing domain parameter'}
-                
-                subdomains = await self.manager.subdomain_enumerator.enumerate_subdomains(domain)
-                return {'success': True, 'data': {'subdomains': subdomains}}
-            
-            elif command == "directory_scan":
-                target_url = parameters.get('target_url')
-                if not target_url:
-                    return {'success': False, 'error': 'Missing target_url parameter'}
-                
-                directories = await self.manager.directory_scanner.scan_directories(target_url)
-                return {'success': True, 'data': {'directories': directories}}
-            
-            elif command == "vulnerability_scan":
-                target_url = parameters.get('target_url')
-                if not target_url:
-                    return {'success': False, 'error': 'Missing target_url parameter'}
-                
-                vulnerabilities = await self.manager.vulnerability_scanner.scan_vulnerabilities(target_url)
-                return {'success': True, 'data': {'vulnerabilities': vulnerabilities}}
-            
-            elif command == "technology_detection":
-                target_url = parameters.get('target_url')
-                if not target_url:
-                    return {'success': False, 'error': 'Missing target_url parameter'}
-                
-                technologies = await self.manager.technology_detector.detect_technologies(target_url)
-                return {'success': True, 'data': {'technologies': technologies}}
-            
-            elif command == "interactive":
-                await self.cli.run_interactive()
-                return {'success': True, 'message': 'Interactive session completed'}
-            
+            handler = command_handlers.get(command)
+            if handler:
+                return await handler(parameters)
             else:
                 return {'success': False, 'error': f'Unknown command: {command}'}
                 
         except Exception as e:
             logger.error(f"執行網絡攻擊命令失敗: {e}")
             return {'success': False, 'error': str(e)}
+    
+    async def _execute_comprehensive_scan(self, parameters: Dict[str, Any]) -> Dict[str, Any]:
+        """執行綜合掃描"""
+        target_url = parameters.get('target_url')
+        if not target_url:
+            return {'success': False, 'error': ERROR_MISSING_TARGET_URL}
+        
+        options = parameters.get('options', {})
+        results = await self.manager.comprehensive_scan(target_url, options)
+        return {'success': True, 'data': results}
+    
+    async def _execute_subdomain_scan(self, parameters: Dict[str, Any]) -> Dict[str, Any]:
+        """執行子域名掃描"""
+        domain = parameters.get('domain')
+        if not domain:
+            return {'success': False, 'error': 'Missing domain parameter'}
+        
+        subdomains = await self.manager.subdomain_enumerator.enumerate_subdomains(domain)
+        return {'success': True, 'data': {'subdomains': subdomains}}
+    
+    async def _execute_directory_scan(self, parameters: Dict[str, Any]) -> Dict[str, Any]:
+        """執行目錄掃描"""
+        target_url = parameters.get('target_url')
+        if not target_url:
+            return {'success': False, 'error': ERROR_MISSING_TARGET_URL}
+        
+        directories = await self.manager.directory_scanner.scan_directories(target_url)
+        return {'success': True, 'data': {'directories': directories}}
+    
+    async def _execute_vulnerability_scan(self, parameters: Dict[str, Any]) -> Dict[str, Any]:
+        """執行漏洞掃描"""
+        target_url = parameters.get('target_url')
+        if not target_url:
+            return {'success': False, 'error': ERROR_MISSING_TARGET_URL}
+        
+        vulnerabilities = await self.manager.vulnerability_scanner.scan_vulnerabilities(target_url)
+        return {'success': True, 'data': {'vulnerabilities': vulnerabilities}}
+    
+    async def _execute_technology_detection(self, parameters: Dict[str, Any]) -> Dict[str, Any]:
+        """執行技術檢測"""
+        target_url = parameters.get('target_url')
+        if not target_url:
+            return {'success': False, 'error': ERROR_MISSING_TARGET_URL}
+        
+        technologies = await self.manager.technology_detector.detect_technologies(target_url)
+        return {'success': True, 'data': {'technologies': technologies}}
+    
+    async def _execute_interactive(self, parameters: Dict[str, Any]) -> Dict[str, Any]:
+        """執行互動模式"""
+        await self.cli.run_interactive()
+        return {'success': True, 'message': 'Interactive session completed'}
     
     async def cleanup(self) -> bool:
         """清理資源"""

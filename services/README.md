@@ -919,7 +919,7 @@ integration/
 - 📡 **數據整合**: 統一存儲適配、生命週期管理
 - 🤖 **AI操作記錄**: 智能協調核心、經驗累積
 
-**技術棧**: Python 3.11+、FastAPI、PostgreSQL、Redis、RabbitMQ、NetworkX
+**技術棧**: Python 3.11+、FastAPI、PostgreSQL、Redis、NetworkX、Command Center 架構
 
 **關鍵特性**:
 - ✅ 企業級整合中樞、AI驅動協調
@@ -1105,8 +1105,8 @@ scan/
 ```
 🌐 API 端點:        150+ 個 (RESTful + gRPC)
 🔌 跨語言適配器:     Go + Rust 適配器
-📡 消息協議:        RabbitMQ + Redis 整合
-🎯 統一介面:        標準化服務介面
+📡 通訊協議:        Command Center 直接調用 + Redis 整合
+🎯 統一介面:        AICommand/AICommandResult 標準化介面
 ```
 
 ---
@@ -1124,8 +1124,8 @@ Go 1.21+
 # 資料庫與中間件
 PostgreSQL 15+ (with pgvector)
 Redis 7.0+
-RabbitMQ 3.12+ (⚠️ v2.0已改用命令系統，可選)
-Neo4j 5.0+
+# RabbitMQ - 已移除 (v2.0+ 使用 Command Center 直接調用)
+# Neo4j - 已移除 (已遷移至 NetworkX)
 ```
 
 ### 安裝流程
@@ -1156,6 +1156,11 @@ RABBITMQ_URL="amqp://guest:guest@localhost:5672/"
 ```
 
 **生產環境部署時**（未來）才需要設置環境變數覆蓋預設值。
+
+**⚠️ v2.0 架構變更**：
+- ✅ 已移除 RabbitMQ 依賴 (改用 Command Center 直接調用)
+- ✅ 已移除 Neo4j 依賴 (改用 NetworkX 圖分析)
+- ✅ 簡化環境配置 (只需 PostgreSQL + Redis)
 
 #### 4. 啟動服務
 
@@ -1318,7 +1323,8 @@ chore: 雜項
 - **統一配置系統**: `config.py` 集中管理所有資料儲存路徑
 - **維護腳本建立**: `backup.py` (自動備份) + `cleanup.py` (舊資料清理)
 - **配置簡化**: 研發階段無需環境變數，全部使用預設值 (AIVA_INTEGRATION_DATA_DIR 等檔案路徑配置除外)
-- **依賴簡化**: 資料庫依賴從 4 個減少至 2 個 (PostgreSQL + RabbitMQ)
+- **依賴簡化**: 資料庫依賴從 4 個減少至 2 個 (PostgreSQL + Redis)
+- **架構升級**: v2.0 移除 RabbitMQ，改用 Command Center 直接調用架構 (零消息隊列依賴)
 
 ### 📦 版本與文檔同步
 - **所有模組**: 升級至 v6.3
