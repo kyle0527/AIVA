@@ -28,11 +28,10 @@ class DialogIntent:
             r"explain|describe.*(?P<capability>\w+)",
         ],
         "run_scan": [
-            r"(幫我|幫忙|請|麻煩).*(掃描|scan|測試|test|攻擊|attack)\s*(?P<target>https?://\S+)",
-            r"^(掃描|scan|測試|test)\s+(?P<url>https?://\S+)",
-            r"(掃描|scan|測試|test|攻擊|attack)\s+(?P<target_url>https?://\S+)",
-            r"(?P<scan_target>https?://\S+)\s*(掃描|scan|測試|test)",
-            r"run.*scan.*(?P<scan_url>https?://\S+)|execute.*scan.*(?P<exec_url>https?://\S+)",
+            # 修復：匹配整個輸入中的所有 URL（包括多個 URL）
+            r"(幫我|幫忙|請|麻煩).*(掃描|scan|測試|test|攻擊|attack)",
+            r"^(掃描|scan|測試|test|rust|Rust)",
+            r"(掃描|scan|測試|test|攻擊|attack|rust|Rust|快速)",
         ],
         "compare_capabilities": [
             r"比較.*(?P<cap1>\w+).*和.*(?P<cap2>\w+)|差異|對比",
@@ -313,10 +312,10 @@ class AIVADialogAssistant:
         self, scan_type: str, target: str, original_input: str
     ) -> dict[str, Any]:
         """處理掃描執行請求 - 實際執行攻擊"""
-        # 從輸入中提取目標 URL
+        # 從輸入中提取所有目標 URL（支持多目標）
         if not target:
-            url_match = re.search(r"https?://[^\s]+", original_input)
-            target = url_match.group(0) if url_match else ""
+            url_matches = re.findall(r"https?://[^\s,，;；]+", original_input)
+            target = ", ".join(url_matches) if url_matches else ""
 
         if not target:
             return {
@@ -325,27 +324,55 @@ class AIVADialogAssistant:
                 "executable": False,
             }
 
+        # 解析多目標（支持逗號、分號、空格分隔）
+        targets = [t.strip() for t in re.split(r"[,，;；\s]+", target) if t.strip()]
+        
         try:
-            logger.info(f"🎯 AI 決策：對目標 {target} 執行掃描")
+            logger.info(f"🎯 AI 決策：對 {len(targets)} 個目標執行掃描")
             
             # 使用 MultiEngineCoordinator 執行實際掃描
             from services.scan.coordinators.multi_engine_coordinator import MultiEngineCoordinator
             from uuid import uuid4
             
             coordinator = MultiEngineCoordinator()
-            scan_id = f"ai_scan_{uuid4().hex[:8]}"
+            scan_id = f"scan_{uuid4().hex[:8]}"  # 修復：使用正確的前綴
             
-            logger.info(f"🚀 啟動多引擎掃描: scan_id={scan_id}")
+            logger.info(f"🚀 啟動多引擎掃描: scan_id={scan_id}, 目標: {targets}")
             
-            # 執行快速掃描策略
-            result = await coordinator.execute_strategy_fast(
-                scan_id=scan_id,
-                targets=[target]
-            )
+            # 檢測是否要求 Rust/Phase 0 快速發現
+            input_lower = original_input.lower()
+            if any(keyword in input_lower for keyword in ["rust", "快速發現", "phase 0", "phase0", "快速掃描"]):
+                # Phase 0: Rust 快速發現（支持多目標大範圍掃描）
+                logger.info("🦀 使用 Rust 引擎執行 Phase 0 快速發現")
+                result = await coordinator.execute_phase0(
+                    scan_id=scan_id,
+                    targets=targets,
+                    max_depth=3,
+                    timeout=600
+                )
+            # 根據掃描類型選擇策略
+            elif scan_type and ("深度" in scan_type or "完整" in scan_type or "全面" in scan_type):
+                # 深度掃描：啟用動態渲染
+                result = await coordinator.execute_strategy_comprehensive(
+                    scan_id=scan_id,
+                    targets=targets
+                )
+            elif scan_type and ("均衡" in scan_type or "平衡" in scan_type):
+                # 均衡掃描
+                result = await coordinator.execute_strategy_balanced(
+                    scan_id=scan_id,
+                    targets=targets
+                )
+            else:
+                # 預設：快速掃描（僅 Python 靜態爬蟲）
+                result = await coordinator.execute_strategy_fast(
+                    scan_id=scan_id,
+                    targets=targets
+                )
             
             # 構建回應訊息
             message = "✅ 掃描完成！\n\n"
-            message += f"🎯 目標: {target}\n"
+            message += f"🎯 目標: {', '.join(targets)}\n"
             message += f"📊 掃描 ID: {scan_id}\n"
             message += f"📈 狀態: {result.status}\n"
             message += f"🔍 發現資產: {len(result.assets)} 個\n\n"
