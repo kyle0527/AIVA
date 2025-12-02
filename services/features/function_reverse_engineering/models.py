@@ -7,6 +7,9 @@ from datetime import datetime
 from enum import Enum
 from typing import List, Dict, Optional, Any
 
+# 使用 aiva_common 標準枚舉
+from services.aiva_common.enums import ThreatLevel
+
 
 # ==================== Enums ====================
 
@@ -36,14 +39,6 @@ class DecompilerType(str, Enum):
     IDA_PRO = "ida_pro"
     RADARE2 = "radare2"
     BINARY_NINJA = "binary_ninja"
-
-
-class ThreatLevel(str, Enum):
-    """威脅等級"""
-    BENIGN = "benign"
-    SUSPICIOUS = "suspicious"
-    MALICIOUS = "malicious"
-    HIGHLY_MALICIOUS = "highly_malicious"
 
 
 # ==================== Data Models ====================

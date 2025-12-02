@@ -52,12 +52,19 @@ class SteganographyManager:
         try:
             logger.info(f"Embedding data into {carrier_file}")
             
-            # TODO: 實現嵌入邏輯
+            # 使用 StegX 引擎進行嵌入
+            result = await self.stegx_engine.embed_data(
+                cover_image=carrier_file,
+                secret_file=secret_file,
+                output_path=output_file,
+                password=password
+            )
             
             return EmbedResult(
-                success=False,
+                success=result.get("success", False),
                 output_file=output_file,
-                error="Implementation pending"
+                secret_size=result.get("bytes_embedded", 0),
+                error=result.get("error")
             )
             
         except Exception as e:
@@ -78,12 +85,18 @@ class SteganographyManager:
         try:
             logger.info(f"Extracting data from {stego_file}")
             
-            # TODO: 實現提取邏輯
+            # 使用 StegX 引擎進行提取
+            result = await self.stegx_engine.extract_data(
+                stego_image=stego_file,
+                output_path=output_file,
+                password=password
+            )
             
             return ExtractResult(
-                success=False,
+                success=result.get("success", False),
                 output_file=output_file,
-                error="Implementation pending"
+                extracted_size=result.get("bytes_extracted", 0),
+                error=result.get("error"),
             )
             
         except Exception as e:
@@ -102,11 +115,13 @@ class SteganographyManager:
         try:
             logger.info(f"Detecting hidden data in {file_path}")
             
-            # TODO: 實現檢測邏輯
+            # 使用 AI 檢測引擎
+            result = await self.ai_detection_engine.detect_hidden_data(file_path)
             
             return DetectionResult(
-                has_hidden_data=False,
-                confidence=0.0
+                has_hidden_data=result.get("detected", False),
+                confidence=result.get("confidence", 0.0),
+                method_detected=None if not result.get("detected") else SteganographyMethod.LSB
             )
             
         except Exception as e:
@@ -116,7 +131,7 @@ class SteganographyManager:
                 confidence=0.0
             )
     
-    async def calculate_capacity(
+    def calculate_capacity(
         self,
         carrier_file: str,
         method: SteganographyMethod = SteganographyMethod.LSB
@@ -125,9 +140,11 @@ class SteganographyManager:
         try:
             logger.info(f"Calculating capacity for {carrier_file}")
             
-            # TODO: 實現容量計算
+            # 使用 AI 檢測引擎計算容量
+            capacity = self.ai_detection_engine.calculate_embedding_capacity(carrier_file)
             
-            return 0
+            logger.debug(f"Calculated capacity: {capacity} bytes")
+            return capacity
             
         except Exception as e:
             logger.error(f"Capacity calculation failed: {str(e)}", exc_info=True)
@@ -158,14 +175,13 @@ class SteganographyManager:
         try:
             logger.info(f"StegX: Hiding {secret_file} in {carrier_image}")
             result = await self.stegx_engine.hide_file(
-                carrier_image, secret_file, output_image, password, compress
+                carrier_image, secret_file, output_image, password
             )
             
             return EmbedResult(
                 success=result.get("success", False),
                 output_file=output_image,
-                bytes_embedded=result.get("bytes_embedded", 0),
-                encryption_used=result.get("encryption", "AES-256-GCM"),
+                secret_size=result.get("bytes_embedded", 0),
                 error=result.get("error")
             )
         except Exception as e:
@@ -199,8 +215,7 @@ class SteganographyManager:
             return ExtractResult(
                 success=result.get("success", False),
                 output_file=output_file,
-                bytes_extracted=result.get("bytes_extracted", 0),
-                decryption_used=result.get("decryption", "AES-256-GCM"),
+                extracted_size=result.get("bytes_extracted", 0),
                 error=result.get("error")
             )
         except Exception as e:
@@ -268,9 +283,7 @@ class SteganographyManager:
             批量處理結果
         """
         try:
-            result = await self.stegx_engine.batch_hide(
-                carrier_images, secret_file, output_dir, password
-            )
+            result = await self.stegx_engine.batch_hide(operations)
             return result
         except Exception as e:
             logger.error(f"Batch hide failed: {str(e)}", exc_info=True)
@@ -302,8 +315,7 @@ class SteganographyManager:
                     return DetectionResult(
                         has_hidden_data=False,
                         confidence=0.0,
-                        method_detected=None,
-                        error=load_result.get("error")
+                        method_detected=None
                     )
             
             # 執行檢測
@@ -312,15 +324,14 @@ class SteganographyManager:
             return DetectionResult(
                 has_hidden_data=result.get("is_stego", False),
                 confidence=result.get("confidence", 0.0),
-                method_detected=result.get("method", "Unknown"),
-                metadata=result.get("metadata", {})
+                method_detected=result.get("method", None),
+                statistics=result.get("metadata", {})
             )
         except Exception as e:
             logger.error(f"AI detection failed: {str(e)}", exc_info=True)
             return DetectionResult(
                 has_hidden_data=False,
-                confidence=0.0,
-                error=str(e)
+                confidence=0.0
             )
     
     async def ai_batch_scan(
@@ -341,7 +352,7 @@ class SteganographyManager:
         """
         try:
             logger.info(f"AI Batch Scan: {directory}")
-            result = await self.ai_detection_engine.batch_scan(directory, recursive, extensions)
+            result = await self.ai_detection_engine.batch_scan(directory, recursive, extensions or [])
             return result
         except Exception as e:
             logger.error(f"Batch scan failed: {str(e)}", exc_info=True)
@@ -368,7 +379,7 @@ class SteganographyManager:
         try:
             logger.info(f"Training AI model: {training_data_dir}")
             result = await self.ai_detection_engine.train_model(
-                training_data_dir, output_model_path, epochs, batch_size
+                training_data_dir, output_model_path, epochs=epochs, batch_size=batch_size
             )
             return result
         except Exception as e:

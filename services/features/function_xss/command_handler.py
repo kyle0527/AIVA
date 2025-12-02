@@ -5,7 +5,7 @@ XSS 功能模組命令處理器
 包裝現有的 XSS 檢測功能,使其可以被 AI 通過 AICommandCenter 調用。
 
 Usage:
-    from aiva_common import get_command_center
+    from services.aiva_common import get_command_center
     from services.features.function_xss.command_handler import XSSCommandHandler
     
     command_center = get_command_center()
@@ -19,15 +19,15 @@ from typing import Any, Dict, Optional
 from datetime import datetime
 
 # aiva_common 標準導入
-from aiva_common.command_center import CommandHandler
-from aiva_common.schemas.commands import (
+from services.aiva_common.command_center import CommandHandler
+from services.aiva_common.schemas.commands import (
     AICommand,
     AICommandResult,
     CommandStatus,
     CommandContext,
     CommandType,
 )
-from aiva_common.utils import get_logger
+from services.aiva_common.utils import get_logger
 
 # 現有 XSS 功能導入
 from .integration_tools.xss_tools import (
@@ -205,8 +205,8 @@ class XSSCommandHandler(CommandHandler):
         
         # 檢查授權級別 (盲 XSS 需要更高授權)
         if scan_options.get("scan_blind") and context:
-            # 從 metadata 檢查用戶角色
-            user_role = context.metadata.get("user_role", "guest")
+            # 從 custom_config 檢查用戶角色
+            user_role = context.custom_config.get("user_role", "guest")
             if user_role not in ["admin", "security_tester", "pentester"]:
                 self.logger.warning(f"⚠️  盲 XSS 檢測需要高級授權,當前角色: {user_role},已禁用")
                 scan_options["scan_blind"] = False

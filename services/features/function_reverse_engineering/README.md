@@ -1,67 +1,51 @@
-# Reverse Engineering Module
+# 🔍 逆向工程模組
 
-## 📑 目錄
+## 🏗️ 架構圖
+```
+┌─────────────────────────────────────────────────────────────┐
+│                  逆向工程分析架構                            │
+├─────────────────────────────────────────────────────────────┤
+│  AI Command   │  handler.py  │ Reverse Engine │  Tool       │
+│  Interface    │             │               │  Integration │
+│      ↓        │      ↓      │       ↓        │     ↓       │
+│  CommandType  │ TaskPayload │  reverse_mgr   │  ghidra     │
+│ .REVERSE_ANAL │             │  ─────────────  │  jadx       │
+│      │        │             │   - disasm     │  androguard │
+│      └────────┼─────────────┼─  - decompile  │      │      │
+│               │             │   - analysis   │      ↓      │
+│               ↓             │       ↓        │  Binary     │
+│         TaskResult          │   Pattern      │  Database   │
+│         (aiva_common)       │   Recognition  │             │
+└─────────────────────────────────────────────────────────────┘
+```
 
-- [模組概述](#模組概述)
-- [核心能力](#核心能力)
-  - [1. Android 逆向](#1-android-逆向)
-  - [2. 二進位分析](#2-二進位分析)
-  - [3. Malware 分析](#3-malware-分析)
-- [工具整合](#工具整合)
-- [使用範例](#使用範例)
+## ⚙️ 運作流程
+1. **檔案類型檢測** - 識別二進位檔案格式
+2. **靜態分析** - 反組譯和反編譯
+3. **行為分析** - 識別可疑功能和模式
+4. **威脅評估** - 產生安全風險報告
 
----
-
-
-## 模組概述
-
-逆向工程模組，提供二進位分析和 APK 逆向能力。
-
-**風險等級**: L1  
-**模組版本**: 1.0.0
-
-## 核心能力
-
-### 1. Android 逆向
-- Androguard
-- Apk2Gold
-- JadX
-
-### 2. 二進位分析
-- Disassembly
-- Decompilation
-- 靜態分析
-
-### 3. Malware 分析
-- Behavior Analysis
-- API Hooking
-- Code Unpacking
-
-## 工具整合
-
-- Androguard
-- Apk2Gold
-- JadX
-- Ghidra (future)
-
-## 使用範例
+## 🚀 支援指令
 
 ```python
-from services.features.function_reverse_engineering import ReverseEngineeringManager
-
-manager = ReverseEngineeringManager()
-
-# 分析 APK
-result = await manager.analyze_apk(
-    apk_file="app.apk",
-    extract_code=True,
-    analyze_permissions=True
-)
-
-# 反編譯
-decompiled = await manager.decompile(
-    input_file="app.apk",
-    output_dir="output/",
-    tool="jadx"
+command = AICommand(
+    command_type=CommandType.REVERSE_ANALYSIS,
+    payload={
+        "target_file": "/path/to/binary",
+        "analysis_type": "comprehensive",  # basic|comprehensive
+        "file_format": "auto_detect",  # elf|pe|apk|auto_detect
+        "output_format": "report"  # report|json|sarif
+    }
 )
 ```
+
+## 🔧 核心能力
+- **多格式支援**: ELF, PE, APK, DEX, JAR
+- **反組譯引擎**: 整合 Ghidra, Radare2, IDA
+- **惡意程式檢測**: 行為模式和簽名識別
+- **Android 分析**: APK 逆向和漏洞檢測
+
+## 🎯 後續發展
+- [ ] **AI 輔助分析** - 機器學習提升識別精度
+- [ ] **雲端沙箱** - 安全的動態分析環境
+- [ ] **IoT 韌體** - 嵌入式設備分析支援

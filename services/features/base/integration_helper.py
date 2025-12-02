@@ -82,7 +82,11 @@ class IntegrationHelper:
             return False
         
         try:
-            await self._data_manager.save_finding(finding)
+            if hasattr(self._data_manager, 'save_finding'):
+                await self._data_manager.save_finding(finding)  # type: ignore
+            else:
+                logger.warning("save_finding method not available")
+                return False
             logger.debug(
                 "Finding saved to database",
                 extra={"finding_id": finding.finding_id}
@@ -167,12 +171,16 @@ class IntegrationHelper:
             return False
         
         try:
-            await self._data_manager.save_experience(
-                task_id=task_id,
-                action=action,
-                outcome=outcome,
-                metadata=metadata or {}
-            )
+            if self._data_manager and hasattr(self._data_manager, 'save_experience'):
+                await self._data_manager.save_experience(  # type: ignore
+                    task_id=task_id,
+                    action=action,
+                    outcome=outcome,
+                    metadata=metadata or {}
+                )
+            else:
+                logger.warning("save_experience method not available")
+                return False
             logger.debug(
                 "Experience recorded",
                 extra={
@@ -219,20 +227,24 @@ class IntegrationHelper:
             return False
         
         # 只為高危漏洞更新攻擊路徑
-        if finding.severity not in ["critical", "high"]:
+        if finding.vulnerability.severity.value not in ["critical", "high"]:
             return False
         
         try:
-            await self._data_manager.add_vulnerability_to_graph(
-                vuln_id=finding.finding_id,
-                vuln_type=finding.vulnerability.vulnerability_type,
-                target=target
-            )
+            if self._data_manager and hasattr(self._data_manager, 'add_vulnerability_to_graph'):
+                await self._data_manager.add_vulnerability_to_graph(  # type: ignore
+                    vuln_id=finding.finding_id,
+                    vuln_type=finding.vulnerability.name.value,
+                    target=target
+                )
+            else:
+                logger.warning("add_vulnerability_to_graph method not available")
+                return False
             logger.debug(
                 "Attack path updated",
                 extra={
                     "finding_id": finding.finding_id,
-                    "severity": finding.severity
+                    "severity": finding.vulnerability.severity.value
                 }
             )
             return True

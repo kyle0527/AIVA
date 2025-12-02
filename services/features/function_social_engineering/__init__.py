@@ -8,6 +8,7 @@ Social Engineering Toolkit Module
 """
 
 from .manager import SocialEngineeringManager
+from .handler import SocialEngineeringCommandHandler
 from .models import (
     # Enums
     PhishingType,
@@ -30,6 +31,7 @@ from .models import (
 __all__ = [
     # Manager
     "SocialEngineeringManager",
+    "SocialEngineeringCommandHandler",
     
     # Enums
     "PhishingType",

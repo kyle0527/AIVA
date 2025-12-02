@@ -18,7 +18,8 @@ import httpx
 
 from services.aiva_common.utils.logging import get_logger
 from services.aiva_common.utils.ids import new_id
-from services.aiva_common.enums import Severity, Confidence
+from services.aiva_common.enums.common import Severity, Confidence
+from services.aiva_common.enums.security import VulnerabilityType
 from services.aiva_common.schemas import (
     FindingEvidence, FindingImpact, FindingRecommendation, 
     FindingTarget, Vulnerability, FunctionTaskPayload
@@ -162,10 +163,10 @@ class HackingToolDetectionEngine:
         results = []
         
         # 從 task 中提取目標 URL
-        target = task.url
+        target = task.target.url
         
         logger.info("開始 HackingTool SQL 檢測", 
-                   extra={"target": target, "trace_id": self.trace_id})
+                   extra={"target": target})
         
         # 獲取啟用的工具
         enabled_tools = self.integrator.get_enabled_tools()
@@ -190,19 +191,24 @@ class HackingToolDetectionEngine:
             tool_name = enabled_tools[i]
             
             if isinstance(result, Exception):
-                logger.error(f"工具 {tool_name} 檢測失敗: {result}", 
-                           trace_id=self.trace_id)
+                logger.error(f"工具 {tool_name} 檢測失敗: {result}")
                 continue
             
-            if result:
-                # 轉換 SqliDetectionResult 為 DetectionResult
-                for sqli_result in result:
-                    detection_result = self._convert_to_detection_result(sqli_result)
+            if result and not isinstance(result, Exception):
+                # 確保 result 是可疊代的
+                if hasattr(result, '__iter__'):
+                    # 轉換 SqliDetectionResult 為 DetectionResult
+                    for sqli_result in result:
+                        detection_result = self._convert_to_detection_result(sqli_result)
+                        if detection_result:
+                            results.append(detection_result)
+                else:
+                    # 單個結果的情況
+                    detection_result = self._convert_to_detection_result(result)
                     if detection_result:
                         results.append(detection_result)
         
-        logger.info(f"HackingTool 檢測完成，發現 {len(results)} 個結果", 
-                   trace_id=self.trace_id)
+        logger.info(f"HackingTool 檢測完成，發現 {len(results)} 個結果")
         
         return results
     
@@ -386,34 +392,32 @@ class HackingToolDetectionEngine:
             
             # 創建漏洞對象
             vulnerability = Vulnerability(
-                id=new_id("vuln"),
-                cve_id=None,  # HackingTool 通常不提供 CVE
-                title=f"SQL Injection detected by {config.title}",
-                description=f"SQL injection vulnerability found using {tool_name}",
+                name=VulnerabilityType.SQLI,
+                cve=None,  # HackingTool 通常不提供 CVE
                 severity=severity,
-                confidence=Confidence.HIGH if confidence_score >= 0.8 else Confidence.MEDIUM,
-                references=[config.project_url] if config.project_url else []
+                confidence=Confidence.FIRM if confidence_score >= 0.8 else Confidence.POSSIBLE,
+                description=f"SQL injection vulnerability found using {tool_name}"
             )
             
             # 創建證據
             evidence = FindingEvidence(
-                description=f"Tool {tool_name} detected SQL injection",
-                raw_output=full_output[:1000],  # 限制輸出長度
-                detection_method=f"hackingtool_{tool_name}",
-                timestamps={"detected_at": datetime.now().isoformat()}
+                payload=payload_used,
+                proof=full_output[:1000],  # 限制輸出長度
+                request=f"Tool: {tool_name}",
+                response=f"Detection result at {datetime.now().isoformat()}"
             )
             
             # 創建影響評估
             impact = FindingImpact(
-                confidentiality="HIGH",
-                integrity="HIGH", 
-                availability="MEDIUM",
-                description="SQL injection can lead to unauthorized data access, modification, or deletion"
+                description="SQL injection can lead to unauthorized data access, modification, or deletion",
+                business_impact="HIGH - Potential data breach and unauthorized access",
+                technical_impact="HIGH - Database compromise and data manipulation"
             )
             
             # 創建修復建議
             recommendation = FindingRecommendation(
-                description="Implement proper input validation and parameterized queries",
+                fix="Implement proper input validation and parameterized queries",
+                priority="HIGH",
                 remediation_steps=[
                     "Use parameterized queries or prepared statements",
                     "Validate and sanitize all user input",

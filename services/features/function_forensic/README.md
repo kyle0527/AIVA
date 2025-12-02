@@ -1,71 +1,57 @@
-# Forensic Tools Module
+# 🔬 數位鑑識模組
 
-## 📑 目錄
+## 🏗️ 架構圖
+```
+┌─────────────────────────────────────────────────────────────┐
+│                   數位鑑識分析架構                           │
+├─────────────────────────────────────────────────────────────┤
+│  AI Command   │  handler.py  │Forensic Engine │  Evidence   │
+│  Interface    │             │               │   Storage    │
+│      ↓        │      ↓      │       ↓        │     ↓       │
+│  CommandType  │ TaskPayload │  forensic_mgr  │  evidence   │
+│.FORENSIC_ANAL │             │  ─────────────  │  repository │
+│      │        │             │   - disk_img   │      │      │
+│      └────────┼─────────────┼─  - memory     │      ↓      │
+│               │             │   - network    │  Chain of   │
+│               ↓             │       ↓        │  Custody    │
+│         TaskResult          │   Analysis     │             │
+│         (aiva_common)       │   Timeline     │             │
+└─────────────────────────────────────────────────────────────┘
+```
 
-- [模組概述](#模組概述)
-- [核心能力](#核心能力)
-  - [1. 文件分析](#1-文件分析)
-  - [2. 網路鑑識](#2-網路鑑識)
-  - [3. 記憶體取證](#3-記憶體取證)
-  - [4. 磁碟鑑識](#4-磁碟鑑識)
-- [工具整合](#工具整合)
-- [使用範例](#使用範例)
+## ⚙️ 運作流程
+1. **證據收集** - 安全獲取數位證據
+2. **映像分析** - 磁碟和記憶體映像檢查
+3. **時間軸重建** - 重建事件發生時序
+4. **報告生成** - 產生法庭可用的鑑識報告
 
----
-
-
-## 模組概述
-
-數位鑑識工具模組，提供證據收集、分析和報告生成能力。
-
-**風險等級**: L0  
-**模組版本**: 1.0.0
-
-## 核心能力
-
-### 1. 文件分析
-- Autopsy
-- 文件恢復
-- Metadata 提取
-
-### 2. 網路鑑識
-- Wireshark
-- 流量分析
-- 封包重組
-
-### 3. 記憶體取證
-- Volatility
-- Process 分析
-- Malware 檢測
-
-### 4. 磁碟鑑識
-- Disk Imaging
-- Bulk Extractor
-- 文件雕刻
-
-## 工具整合
-
-- Autopsy
-- Wireshark
-- Bulk Extractor
-- Guymager
-
-## 使用範例
+## 🚀 支援指令
 
 ```python
-from services.features.function_forensic import ForensicManager
-
-manager = ForensicManager()
-
-# 創建鑑識案件
-case = await manager.create_case(
-    case_name="Investigation_2025",
-    evidence_path="/evidence/disk.img"
-)
-
-# 執行分析
-result = await manager.analyze_evidence(
-    case_id=case.case_id,
-    analysis_type="disk_forensics"
+command = AICommand(
+    command_type=CommandType.FORENSIC_ANALYSIS,
+    payload={
+        "evidence_sources": ["/dev/sda1", "/path/to/memory.dump"],
+        "analysis_type": "comprehensive",  # basic|comprehensive
+        "timeline_analysis": True,
+        "hash_verification": True,
+        "output_format": "legal_report"
+    }
 )
 ```
+
+## 🔧 核心能力
+- **多源證據**: 磁碟、記憶體、網路封包分析
+- **完整性保證**: 雜湊驗證和證據鏈追蹤
+- **時間軸重建**: 事件序列分析
+- **法庭標準**: 符合法庭證據要求的報告
+
+## ⚖️ 法律合規
+- 證據鏈 (Chain of Custody) 維護
+- 國際鑑識標準 (ISO 27037) 遵循
+- 法庭可採納的證據格式
+
+## 🎯 後續發展
+- [ ] **雲端鑑識** - 雲服務和容器環境鑑識
+- [ ] **AI 輔助分析** - 異常行為自動識別
+- [ ] **行動裝置** - iOS/Android 鑑識支援

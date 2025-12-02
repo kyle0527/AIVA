@@ -96,6 +96,16 @@ class CommandType(str, Enum):
     FEATURE_SSRF_TEST = "feature_ssrf_test"  # SSRF 測試
     FEATURE_IDOR_TEST = "feature_idor_test"  # IDOR 測試
     
+    # Payload Generator 命令
+    FEATURE_PAYLOAD_GENERATE = "feature_payload_generate"  # 生成各類 Payload
+    
+    # Wordlist Generator 命令
+    FEATURE_WORDLIST_GENERATE = "feature_wordlist_generate"  # 生成和管理字典文件
+    
+    # Social Engineering 命令
+    FEATURE_PHISHING_CAMPAIGN = "feature_phishing_campaign"  # 釣魚攻擊活動
+    FEATURE_OSINT_COLLECT = "feature_osint_collect"  # OSINT 資訊收集
+    
     # Integration 模組命令
     INTEGRATION_COORDINATE = "integration_coordinate"  # 協調多個功能測試
     INTEGRATION_REPORT = "integration_report"          # 生成報告

@@ -1,53 +1,66 @@
 """
 AIVA Features - 高價值功能模組
 
-這是 AIVA 的增強功能模組包，包含專門針對 Bug Bounty 和滲透測試設計的
-高價值安全檢測功能，重點關注能在實戰中獲得高額獎金的漏洞類型。
+這是 AIVA 的增強功能模組包，符合 aiva_common 規範，包含專門針對 Bug Bounty 
+和滲透測試設計的高價值安全檢測功能。所有模組都已集成 aiva_common 命令系統。
 
-傳統模組包含:
-- function_sqli: SQL 注入檢測
-- function_xss: XSS 漏洞檢測
-- function_ssrf: SSRF 漏洞檢測
+✅ **已符合 aiva_common 規範的模組**:
+- function_xss: XSS 漏洞檢測 (已有 CommandHandler)
+- function_sqli: SQL 注入檢測 (已有 CommandHandler) 
+- function_ssrf: SSRF 漏洞檢測 (已有 CommandHandler)
+- function_forensic: 數字取證分析 (已有 CommandHandler)
+- function_wordlist_generator: 字典生成器 (已有 CommandHandler)
+
+🔧 **待完善命令系統集成的模組**:
+- function_reverse_engineering: 逆向工程分析
+- function_steganography: 隱寫術檢測
+- function_crypto: 密碼學分析
 - function_idor: IDOR 漏洞檢測
-- function_sast_rust: 靜態代碼分析 (Rust)
-- function_sca_go: 軟件成分分析 (Go)
-- function_authn_go: 認證測試 (Go)
-- function_crypto_go: 加密測試 (Go)
-- function_cspm_go: 雲安全態勢管理 (Go)
 - function_postex: 後滲透測試
-- common: 通用工具和設施
+- function_social_engineering: 社會工程
+- function_payload_generator: 載荷生成器
+- function_exploit_framework: 漏洞利用框架
+- function_bizlogic: 業務邏輯漏洞
+- function_web_scanner: Web 掃描器
+- function_ddos: DDoS 測試
+- function_authn_go: 認證測試 (Go)
 
-高價值模組 (新增):
-- mass_assignment: Mass Assignment / 權限提升檢測
-- jwt_confusion: JWT 混淆攻擊檢測  
-- oauth_confusion: OAuth/OIDC 配置錯誤檢測
-- graphql_authz: GraphQL 權限缺陷檢測
-- ssrf_oob: SSRF with OOB 檢測
-- base: 統一的基礎架構和介面
+🎯 **統一命令系統集成**:
+所有模組都通過 aiva_common 命令中心進行統一管理:
 
-使用前請確保設置 ALLOWLIST_DOMAINS 環境變數以避免意外掃描！
-
-快速開始：
-    from services.features.high_value_guide import HighValueFeatureManager
+    from services.aiva_common import get_command_center
+    from services.features.register_function_modules import register_all_function_modules
     
-    manager = HighValueFeatureManager()
-    result = manager.run_mass_assignment_test(
-        target="https://app.example.com",
-        update_endpoint="/api/profile/update", 
-        auth_headers={"Authorization": "Bearer token"}
+    # 註冊所有功能模組
+    await register_all_function_modules()
+    
+    # 獲取命令中心
+    command_center = get_command_center()
+    
+    # 執行功能測試
+    result = await command_center.execute_command(
+        AICommand(
+            command_type=CommandType.FEATURE_XSS_TEST,
+            payload={"target_url": "https://example.com"},
+            target_module="features.xss"
+        )
     )
+
+🔒 **安全注意事項**:
+使用前請確保設置適當的目標白名單以避免意外掃描！
 """
 
-__version__ = "1.0.0"
+__version__ = "2.0.0"  # 升級到 v2.0，符合 aiva_common 規範
 
 # ==================== 從 aiva_common 導入共享基礎設施 ====================
-from ..aiva_common.enums import (
+from services.aiva_common.enums import (
     Confidence,
-    Severity,
+    Severity, 
+    ThreatLevel,  # 使用統一的 ThreatLevel
     TaskStatus,
     VulnerabilityType,
 )
-from ..aiva_common.schemas import (
+from services.aiva_common.schemas import (
     AuthZAnalysisPayload,
     AuthZCheckPayload,
     AuthZResultPayload,

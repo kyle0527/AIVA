@@ -8,6 +8,7 @@ Wordlist Generator Module
 """
 
 from .manager import WordlistGeneratorManager
+from .handler import WordlistGeneratorCommandHandler
 from .models import (
     # Enums
     GenerationStrategy,
@@ -22,6 +23,7 @@ from .models import (
 
 __all__ = [
     "WordlistGeneratorManager",
+    "WordlistGeneratorCommandHandler",
     "GenerationStrategy",
     "CharsetType",
     "WordlistFormat",

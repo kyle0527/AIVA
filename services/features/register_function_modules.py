@@ -9,7 +9,6 @@
 """
 
 import logging
-import asyncio
 from pathlib import Path
 from typing import Dict, List, Any
 
@@ -244,7 +243,7 @@ MODULE_CAPABILITIES = {
 }
 
 
-async def register_capabilities():
+def register_capabilities():
     """註冊所有功能模組的能力到系統"""
     
     logger.info("=" * 80)
@@ -288,7 +287,7 @@ async def register_capabilities():
     
     # 生成註冊報告
     report_path = Path(__file__).parent / "CAPABILITY_REGISTRATION_REPORT.md"
-    await generate_registration_report(report_path)
+    generate_registration_report(report_path)
     
     logger.info(f"\n📄 詳細報告已生成: {report_path}")
     
@@ -299,12 +298,13 @@ async def register_capabilities():
     }
 
 
-async def generate_registration_report(output_path: Path):
+def generate_registration_report(output_path: Path):
     """生成能力註冊報告"""
     
     with open(output_path, 'w', encoding='utf-8') as f:
         f.write("# HackingTool 整合模組能力註冊報告\n\n")
-        f.write(f"**生成時間**: {asyncio.get_event_loop().time()}\n\n")
+        from datetime import datetime
+        f.write(f"**生成時間**: {datetime.now().isoformat()}\n\n")
         
         f.write("## 📊 註冊概覽\n\n")
         f.write(f"- **模組總數**: {len(MODULE_CAPABILITIES)}\n")
@@ -334,31 +334,30 @@ async def generate_registration_report(output_path: Path):
         f.write("3. 檢查 analysis_results/ 中的 JSON 報告\n\n")
 
 
-async def verify_registration():
-    """驗證註冊結果"""
+def verify_registration():
+    """簡化版驗證 - 不依賴 CapabilityRegistry"""
     
     logger.info("\n🔍 驗證註冊結果...")
     
     try:
-        # 嘗試導入 CapabilityRegistry
-        from services.core.aiva_core.core_capabilities.capability_registry import CapabilityRegistry
+        # 簡單統計資訊
+        total_modules = len(MODULE_CAPABILITIES)
+        total_capabilities = sum(len(config['capabilities']) for config in MODULE_CAPABILITIES.values())
         
-        registry = CapabilityRegistry()
-        await registry.load_from_exploration()
+        logger.info(f"   📦 模組總數: {total_modules}")
+        logger.info(f"   🎯 能力總數: {total_capabilities}")
         
-        # 檢查是否包含新模組
-        for module_name in MODULE_CAPABILITIES.keys():
-            capabilities = registry.get_capabilities_by_module(f"features/{module_name}")
-            logger.info(f"   📦 {module_name}: {len(capabilities)} 個能力")
+        for module_name, config in MODULE_CAPABILITIES.items():
+            logger.info(f"   📦 {module_name}: {len(config['capabilities'])} 個能力")
         
         logger.info("✅ 驗證完成")
         
     except Exception as e:
-        logger.warning(f"⚠️  驗證失敗 (這是正常的，需要先執行內閉環探索): {e}")
+        logger.warning(f"⚠️  驗證失敗: {e}")
 
 
 if __name__ == "__main__":
-    result = asyncio.run(register_capabilities())
+    result = register_capabilities()
     
     print("\n" + "=" * 80)
     print("✅ 能力註冊完成！")

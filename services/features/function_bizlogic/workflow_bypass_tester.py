@@ -237,7 +237,7 @@ class WorkflowBypassTester:
 
     async def test_admin_access_bypass(
         self,
-        admin_endpoints: list[str] = None
+        admin_endpoints: list[str] = []
     ) -> list[dict[str, Any]]:
         """
         測試管理員訪問繞過
