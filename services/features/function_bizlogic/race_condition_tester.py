@@ -10,7 +10,8 @@ from datetime import datetime
 
 import httpx
 
-from services.aiva_common.enums.vulnerability import VulnerabilityType, Severity, Confidence
+from services.aiva_common.enums import VulnerabilityType, Severity, Confidence
+from .finding_helper import create_bizlogic_finding
 
 logger = logging.getLogger(__name__)
 
@@ -58,7 +59,7 @@ class RaceConditionTester:
             tasks = []
             start_time = datetime.now()
             
-            for i in range(concurrent_count):
+            for _ in range(concurrent_count):
                 if method.upper() == "POST":
                     task = client.post(f"{self.target_url}{endpoint}", json=payload or {})
                 elif method.upper() == "GET":

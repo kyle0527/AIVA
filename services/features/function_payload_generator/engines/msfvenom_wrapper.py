@@ -22,6 +22,16 @@ from ..models import (
 
 logger = logging.getLogger(__name__)
 
+# Payload 常量 - 避免重複字串
+WINDOWS_METERPRETER_REVERSE_TCP = "windows/meterpreter/reverse_tcp"
+WINDOWS_SHELL_REVERSE_TCP = "windows/shell_reverse_tcp"
+WINDOWS_POWERSHELL_REVERSE_TCP = "windows/powershell_reverse_tcp"
+LINUX_X64_METERPRETER_REVERSE_TCP = "linux/x64/meterpreter/reverse_tcp"
+LINUX_X64_SHELL_REVERSE_TCP = "linux/x64/shell_reverse_tcp"
+PHP_METERPRETER_REVERSE_TCP = "php/meterpreter/reverse_tcp"
+ANDROID_METERPRETER_REVERSE_TCP = "android/meterpreter/reverse_tcp"
+OSX_X64_METERPRETER_REVERSE_TCP = "osx/x64/meterpreter/reverse_tcp"
+
 
 class MSFVenomWrapper:
     """MSFVenom Payload 生成器 - 真實實現"""
@@ -36,10 +46,33 @@ class MSFVenomWrapper:
         self.output_dir = Path(output_dir)
         self.output_dir.mkdir(parents=True, exist_ok=True)
         
-        # 檢查 msfvenom 是否可用
+        # 延遲檢查到 initialize()
+        self.msfvenom_available = False
+        self._initialized = False
+    
+    def initialize(self) -> None:
+        """
+        初始化並驗證 msfvenom 工具可用性
+        
+        Raises:
+            RuntimeError: msfvenom 不可用時
+        """
+        if self._initialized:
+            return
+        
         self.msfvenom_available = shutil.which("msfvenom") is not None
         if not self.msfvenom_available:
-            logger.warning("msfvenom not found in PATH - MSFVenom functionality limited")
+            raise RuntimeError(
+                "msfvenom 不可用。\n"
+                "請安裝 Metasploit Framework:\n"
+                "- Kali Linux: 預設已安裝\n"
+                "- Ubuntu/Debian: apt-get install metasploit-framework\n"
+                "- macOS: brew install metasploit\n"
+                "- Windows: https://github.com/rapid7/metasploit-framework/wiki/Nightly-Installers"
+            )
+        
+        self._initialized = True
+        logger.info("MSFVenom wrapper initialized successfully")
 
     async def generate(self, config: PayloadConfig) -> PayloadResult:
         """
@@ -50,7 +83,14 @@ class MSFVenomWrapper:
             
         Returns:
             PayloadResult: 生成結果
+            
+        Raises:
+            RuntimeError: msfvenom 未初始化時
         """
+        # 確保已初始化
+        if not self._initialized:
+            raise RuntimeError("MSFVenom wrapper not initialized. Call initialize() first.")
+        
         start_time = datetime.now()
         
         # 授權檢查
@@ -64,19 +104,6 @@ class MSFVenomWrapper:
                 format=config.format,
                 authorized=False,
                 error_message="Authorization required for payload generation"
-            )
-        
-        # 檢查 msfvenom 可用性
-        if not self.msfvenom_available:
-            logger.error("msfvenom not available")
-            return PayloadResult(
-                success=False,
-                payload=None,
-                payload_type=PayloadType.MSFVENOM,
-                platform=config.platform,
-                format=config.format,
-                authorized=True,
-                error_message="msfvenom not found - please install Metasploit Framework"
             )
         
         try:
@@ -219,29 +246,29 @@ class MSFVenomWrapper:
         # Windows
         if config.platform == PayloadPlatform.WINDOWS:
             if config.format == PayloadFormat.EXE:
-                return "windows/meterpreter/reverse_tcp"
+                return WINDOWS_METERPRETER_REVERSE_TCP
             elif config.format == PayloadFormat.DLL:
-                return "windows/meterpreter/reverse_tcp"
+                return WINDOWS_METERPRETER_REVERSE_TCP
             elif config.format == PayloadFormat.POWERSHELL:
-                return "windows/powershell_reverse_tcp"
+                return WINDOWS_POWERSHELL_REVERSE_TCP
             else:
-                return "windows/shell_reverse_tcp"
+                return WINDOWS_SHELL_REVERSE_TCP
         
         # Linux
         elif config.platform == PayloadPlatform.LINUX:
             if config.format == PayloadFormat.ELF:
-                return "linux/x64/meterpreter/reverse_tcp"
+                return LINUX_X64_METERPRETER_REVERSE_TCP
             elif config.format == PayloadFormat.BASH:
                 return "cmd/unix/reverse_bash"
             else:
-                return "linux/x64/shell_reverse_tcp"
+                return LINUX_X64_SHELL_REVERSE_TCP
         
         # Web
         elif config.platform == PayloadPlatform.WEB:
             if config.format == PayloadFormat.PHP:
-                return "php/meterpreter/reverse_tcp"
+                return PHP_METERPRETER_REVERSE_TCP
             elif config.format == PayloadFormat.ASPX:
-                return "windows/meterpreter/reverse_tcp"
+                return WINDOWS_METERPRETER_REVERSE_TCP
             elif config.format == PayloadFormat.JSP:
                 return "java/jsp_shell_reverse_tcp"
             else:
@@ -249,11 +276,11 @@ class MSFVenomWrapper:
         
         # Android
         elif config.platform == PayloadPlatform.ANDROID:
-            return "android/meterpreter/reverse_tcp"
+            return ANDROID_METERPRETER_REVERSE_TCP
         
         # macOS
         elif config.platform == PayloadPlatform.MACOS:
-            return "osx/x64/meterpreter/reverse_tcp"
+            return OSX_X64_METERPRETER_REVERSE_TCP
         
         # Default
         return "generic/shell_reverse_tcp"

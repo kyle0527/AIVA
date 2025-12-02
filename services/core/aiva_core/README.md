@@ -1,153 +1,56 @@
-# 🤖 AIVA Core - 核心服務
+# 🤖 AIVA Core - AI 核心服務
 
-> **版本**: v2.1.2 | **狀態**: ✅ 生產就緒 | **更新**: 2025-12-01
+> **版本**: v3.0-dev | **狀態**: ⚠️ 架構完整但關鍵功能缺失 | **更新**: 2025-12-02
 
-**導航**: [← 返回 Services](../README.md) | [項目根目錄](../../README.md)
-
----
-
-## 📋 目錄
-
-- [概述](#-概述)
-- [核心架構](#-核心架構)
-  - [1. Cognitive Core - 認知核心](#1-cognitive-core---認知核心)
-  - [2. Task Planning - 任務規劃](#2-task-planning---任務規劃)
-  - [3. Core Capabilities - 核心能力](#3-core-capabilities---核心能力)
-  - [4. Service Backbone - 服務骨幹](#4-service-backbone---服務骨幹)
-  - [5. External Learning - 對外學習](#5-external-learning---對外學習)
-  - [6. Integration - 整合層](#6-integration---整合層)
-  - [7. Persistence - 持久化](#7-persistence---持久化)
-  - [8. Reporting - 報告生成](#8-reporting---報告生成)
-  - [9. System - 系統管理](#9-system---系統管理)
-- [快速開始](#-快速開始)
-- [目錄結構](#-目錄結構)
+**導航**: [← 返回 Services](../../services/README.md) | [關鍵缺陷報告](../../../AI核心關鍵缺陷報告.md)
 
 ---
 
-## 🎯 概述
+## ⚠️ 重要聲明 (2025-12-02)
 
-AIVA Core 是 AIVA 系統的核心服務層，提供 AI 認知能力、任務規劃執行、核心功能實現和基礎設施支援。
+### 🚨 核心缺陷
 
-**核心職責**：
-- 🧠 **AI 認知** - 神經網路、決策、RAG、反幻覺
-- 📋 **任務規劃** - 智能分解、並行執行、動態調整
-- ⚡ **核心能力** - 分析、攻擊、對話、處理、輸出
-- 🔌 **服務骨幹** - API、適配器、消息、狀態、存儲
-- 🌐 **對外學習** - AI 模型、追蹤分析、持續學習
-- 🔗 **系統整合** - Features 調用、反饋處理、AI 指揮官
-- 💾 **持久化** - 任務管理、存儲接口
-- 📊 **報告** - 報告生成、格式化輸出
-- ⚙️ **系統** - 資源監控、健康檢查
+經深度代碼審查,發現以下**阻塞性問題**:
 
----
+#### 1. AI 決策核心缺失 (CRITICAL)
 
-## 🏗️ 核心架構
-
-### 1. Cognitive Core - 認知核心
-**路徑**: `cognitive_core/` | [📖 詳細文檔](./cognitive_core/README.md)
-
-AI 認知智能核心，提供神經網路推理、智能決策、知識檢索和可靠性驗證。
-
-**子系統**：
-- **Neural** - 500萬參數 BioNeuron 模型，三模式主控（UI/AI/Chat）
-- **Decision** - AI 增強決策，技能圖譜系統
-- **RAG** - 檢索增強生成，向量存儲（內存/PostgreSQL）
-- **Anti-Hallucination** - 反幻覺驗證，確保輸出可靠性
+**現狀**: `BioNeuronDecisionController` 只有 NLU (自然語言理解),沒有決策邏輯
 
 ```python
-from aiva_core.cognitive_core import RealNeuralCore, RAGEngine, AntiHallucinationModule
+# ❌ 實際狀況: 只做文字解析
+async def _parse_ui_command(self, text: str):
+    # 簡單的關鍵字匹配,不是 AI 決策
+    if "掃描" in text:
+        return "start_scan", {}
 
-neural_core = RealNeuralCore(use_5m_model=True).load_weights()
-rag = RAGEngine(vector_store_type="postgresql")
-validator = AntiHallucinationModule(rag.knowledge_base)
+# ❌ 缺失: 無法生成 AICommand
+# ❌ 缺失: 無法查詢 RAG 能力
+# ❌ 缺失: 無法決定引擎組合策略
 ```
 
-**性能**: 推理 50ms (GPU) | RAG <10ms | 驗證 ~100ms | 準確率 >95%
+**影響**: 
+- 無法實現 13 步驟自動化流程
+- 無法指揮其他模組
+- 內閉環數據完全浪費
 
----
+#### 2. 內閉環數據未使用 (CRITICAL)
 
-### 2. Task Planning - 任務規劃
-**路徑**: `task_planning/` | [📖 詳細文檔](./task_planning/README.md)
-
-智能任務規劃和執行引擎，支援任務分解、並行執行和動態調整。
-
-**子系統**：
-- **Planner** - AI 驅動的任務分解，依賴識別，資源評估
-- **Executor** - 異步並行執行，錯誤重試，進度監控
-- **Coordinators** - 多掃描器協調，結果合併去重
+**現狀**: `InternalLoopConnector.query_capabilities()` 存在但從未被調用
 
 ```python
-from aiva_core.task_planning import EnhancedPlanner, TaskExecutor
+# ✅ 方法存在
+async def query_capabilities(self, query: str) -> RAGQueryResult:
+    # 可以查詢 RAG 中的能力數據
+    pass
 
-planner = EnhancedPlanner(neural_core, decision_agent)
-plan = await planner.create_plan(goal="安全評估", constraints={...})
-results = await TaskExecutor().start_execution(plan)
+# ❌ 問題: 沒有任何地方調用這個方法
+# grep -r "query_capabilities" 只找到定義,沒有使用
 ```
 
-**性能**: 規劃 ~200ms-1s | 並行度 20任務 | 調度延遲 ~10ms
-
----
-
-### 3. Core Capabilities - 核心能力
-**路徑**: `core_capabilities/` | [📖 詳細文檔](./core_capabilities/README.md)
-
-AIVA 的核心功能實現，包含分析、攻擊、對話、處理和輸出能力。
-
-**能力模組**：
-- **Analysis** - 數據分析，模式識別，異常檢測
-- **Attack** - 攻擊模擬，漏洞利用
-- **Dialog** - 對話管理，上下文理解
-- **Ingestion** - 數據攝取，格式轉換
-- **Processing** - 數據處理，轉換管道
-- **Output** - 結果格式化，報告生成
-- **Plugins** - 插件系統，動態擴展
-
----
-
-### 4. Service Backbone - 服務骨幹
-**路徑**: `service_backbone/` | [📖 詳細文檔](./service_backbone/README.md)
-
-AIVA 的基礎設施層，提供 API、適配器、消息、狀態和存儲服務。
-
-**基礎設施**：
-- **API** - RESTful API，GraphQL 接口
-- **Adapters** - 外部系統適配器
-- **Messaging** - 消息隊列，事件總線
-- **State** - 狀態管理，會話追蹤
-- **Storage** - 統一存儲接口
-- **AuthZ** - 授權和訪問控制
-- **Performance** - 性能監控，優化
-- **Coordination** - 服務協調
-- **Utils** - 工具函數庫
-
----
-
-### 5. External Learning - 對外學習
-**路徑**: `external_learning/` | [📖 詳細文檔](./external_learning/README.md)
-
-對外學習系統，整合 AI 模型、追蹤分析和持續學習能力。
-
-**學習能力**：
-- **AI Model** - 外部 AI 模型整合（OpenAI, Claude等）
-- **Analysis** - 外部數據分析
-- **Learning** - 持續學習機制
-- **Tracing** - 追蹤和監控
-- **Training** - 模型訓練協調
-
----
-
-### 6. Integration - 整合層
-**路徑**: `integration/`
-
-系統整合層，提供 Features 調用、反饋處理和 AI 指揮官功能。
-
-**核心組件**：
-- **features_invoker.py** - Features 統一調用器，支援多語言 Features
-- **feedback_processor.py** - 反饋收集和處理
-- **ai_commander_v2.py** - AI 指揮官 V2，智能決策中樞
-
-```python
-from aiva_core.integration import get_global_invoker, AICommanderV2
+**影響**:
+- AI 不知道自己有什麼能力
+- 無法動態適應新模組
+- 雙閉環斷裂
 
 invoker = get_global_invoker()
 invoker.register_feature(ModuleName.XSS_SCANNER, xss_feature)

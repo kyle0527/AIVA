@@ -95,13 +95,13 @@ class BioNeuronDecisionController:
 
     def __init__(
         self,
-        codebase_path: str = "/workspaces/AIVA",
+        codebase_path: str | None = None,
         default_mode: OperationMode | str = OperationMode.HYBRID,
     ) -> None:
         """初始化主控系統
 
         Args:
-            codebase_path: 代碼庫路徑
+            codebase_path: 代碼庫路徑（已棄用，權重檔在同目錄）
             default_mode: 默認操作模式（可以是 OperationMode 或字串）
         """
         logger.info("🧠 Initializing BioNeuron Decision Controller...")
@@ -115,11 +115,14 @@ class BioNeuronDecisionController:
                 default_mode = OperationMode.HYBRID
 
         # === 核心 AI 主腦 ===
+        # 權重檔就在同目錄下
+        weights_path = Path(__file__).parent / "aiva_scalable_bionet_latest.pth"
+        
         # 創建真實的5M神經網路
         self.decision_core = create_real_scalable_bionet(
             input_size=512,
             num_tools=20,
-            weights_path=str(Path(codebase_path) / "weights/models/aiva_scalable_bionet_latest.pth")
+            weights_path=str(weights_path)
         )
         
         # 創建真實的RAG代理  

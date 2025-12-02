@@ -20,13 +20,96 @@ import platform
 from typing import Any
 
 import structlog
+from typing import Dict, Any
+from datetime import datetime
+from services.aiva_common.utils.logging import get_logger
+from services.aiva_common.enums import VulnerabilityType, Severity, Confidence
 
-logger = structlog.get_logger(__name__)
+logger = get_logger(__name__)
 
 
 class AuthorizationError(Exception):
     """授權錯誤異常"""
 
+
+class EnhancedPrivilegeAnalyzer:
+    """增強權限分析器 - 實際檢測系統權限配置"""
+    
+    def __init__(self):
+        self.analysis_results = []
+        self.system_info = {}
+    
+    async def analyze_system_permissions(self) -> Dict[str, Any]:
+        """分析系統權限配置"""
+        try:
+            import os
+            import subprocess
+            import platform
+            
+            logger.info("開始分析系統權限配置")
+            
+            analysis_results = {
+                'system_info': {
+                    'platform': platform.system(),
+                    'version': platform.version(),
+                    'architecture': platform.architecture()[0]
+                },
+                'current_user': {
+                    'username': os.getenv('USERNAME') or os.getenv('USER'),
+                    'uid': os.getuid() if hasattr(os, 'getuid') else None,
+                    'gid': os.getgid() if hasattr(os, 'getgid') else None
+                },
+                'vulnerabilities': [],
+                'recommendations': []
+            }
+            
+            # Windows系統檢測
+            if platform.system() == 'Windows':
+                try:
+                    # 檢測當前用戶權限
+                    result = subprocess.run(['whoami', '/priv'], capture_output=True, text=True, timeout=10)
+                    if 'SeDebugPrivilege' in result.stdout:
+                        analysis_results['vulnerabilities'].append({
+                            'type': 'high_privilege_user',
+                            'severity': 'high',
+                            'description': '當前用戶具有調試權限'
+                        })
+                        
+                except Exception as windows_error:
+                    logger.debug(f"Windows檢測失敗: {windows_error}")
+            
+            # Linux/Unix系統檢測
+            elif platform.system() in ['Linux', 'Darwin']:
+                try:
+                    # 檢測SUID文件
+                    suid_result = subprocess.run(['find', '/', '-perm', '-4000', '-type', 'f', '2>/dev/null'], 
+                                                capture_output=True, text=True, timeout=30)
+                    suid_files = [f for f in suid_result.stdout.split('\n') if f.strip()]
+                    if len(suid_files) > 20:
+                        analysis_results['vulnerabilities'].append({
+                            'type': 'excessive_suid_files',
+                            'severity': 'medium',
+                            'description': f'發現 {len(suid_files)} 個SUID文件',
+                            'files': suid_files[:10]  # 只顯示前10個
+                        })
+                        
+                except Exception as unix_error:
+                    logger.debug(f"Unix檢測失敗: {unix_error}")
+            
+            # 生成建議
+            if len(analysis_results['vulnerabilities']) == 0:
+                analysis_results['recommendations'].append('系統權限配置目前看起來正常')
+            else:
+                analysis_results['recommendations'].append('建議檢查發現的權限問題並進行修復')
+            
+            analysis_results['analysis_time'] = datetime.now()
+            analysis_results['status'] = 'completed'
+            
+            return analysis_results
+            
+        except Exception as e:
+            logger.error(f"系統權限分析失敗: {e}")
+            return {'error': str(e), 'status': 'failed'}
 
 
 class PrivilegeEscalator:

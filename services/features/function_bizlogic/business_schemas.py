@@ -24,6 +24,9 @@ from services.aiva_common.schemas.ai import CVSSv3Metrics
 
 MODULE_NAME = "business_schemas"
 
+# 常量定義以避免重複字符串
+ASSET_URL_DESCRIPTION = "資產URL"
+
 # ==================== 風險評估 ====================
 
 
@@ -376,7 +379,7 @@ class AssetAnalysis(BaseModel):
     """資產分析結果"""
     
     asset_id: str = Field(description="資產ID")
-    url: str = Field(description="資產URL")
+    url: str = Field(description=ASSET_URL_DESCRIPTION)
     asset_type: str = Field(description="資產類型")
     risk_score: int = Field(ge=0, le=100, description="風險評分")
     parameters: list[str] = Field(default_factory=list, description="參數列表")
@@ -386,7 +389,7 @@ class AssetAnalysis(BaseModel):
 class XssCandidate(BaseModel):
     """XSS 漏洞候選"""
     
-    asset_url: str = Field(description="資產URL")
+    asset_url: str = Field(description=ASSET_URL_DESCRIPTION)
     parameter: str = Field(description="參數名稱")
     location: str = Field(description="位置")
     confidence: float = Field(ge=0.0, le=1.0, description="置信度")
@@ -398,7 +401,7 @@ class XssCandidate(BaseModel):
 class SqliCandidate(BaseModel):
     """SQLi 漏洞候選"""
     
-    asset_url: str = Field(description="資產URL")
+    asset_url: str = Field(description=ASSET_URL_DESCRIPTION)
     parameter: str = Field(description="參數名稱")
     location: str = Field(description="位置")
     confidence: float = Field(ge=0.0, le=1.0, description="置信度")
@@ -411,7 +414,7 @@ class SqliCandidate(BaseModel):
 class SsrfCandidate(BaseModel):
     """SSRF 漏洞候選"""
     
-    asset_url: str = Field(description="資產URL")
+    asset_url: str = Field(description=ASSET_URL_DESCRIPTION)
     parameter: str = Field(description="參數名稱")
     location: str = Field(description="位置")
     confidence: float = Field(ge=0.0, le=1.0, description="置信度")
@@ -423,7 +426,7 @@ class SsrfCandidate(BaseModel):
 class IdorCandidate(BaseModel):
     """IDOR 漏洞候選"""
     
-    asset_url: str = Field(description="資產URL")
+    asset_url: str = Field(description=ASSET_URL_DESCRIPTION)
     parameter: str = Field(description="參數名稱")
     location: str = Field(description="位置")
     confidence: float = Field(ge=0.0, le=1.0, description="置信度")

@@ -11,10 +11,15 @@ BizLogic Module - 業務邏輯漏洞測試模組
 - 投票/評分系統操縱 (Voting Manipulation)
 """
 
+# 導入所有測試器類別
+from .price_manipulation_tester import PriceManipulationTester
+from .workflow_bypass_tester import WorkflowBypassTester
+from .race_condition_tester import RaceConditionTester
+
 __version__ = "1.0.0"
 
 __all__ = [
     "PriceManipulationTester",
-    "WorkflowBypassTester",
+    "WorkflowBypassTester", 
     "RaceConditionTester",
 ]

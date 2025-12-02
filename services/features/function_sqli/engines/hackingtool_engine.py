@@ -43,16 +43,121 @@ logger = get_logger(__name__)
 
 
 class HackingToolDetectionEngine:
-    """HackingTool SQL 注入檢測引擎"""
+    """HackingTool SQL 注入檢測引擎
+    
+    ✅ 修復: 添加工具可用性檢查,防止偽陰性
+    """
     
     def __init__(self, config: SqliConfig):
         self.config = config
         self.integrator = sql_integrator
         self.trace_id = new_id("hackingtool_sqli")
+        self._initialized = False
         
-        logger.info(f"HackingTool SQL 檢測引擎已初始化 [trace_id={self.trace_id}]")
+        logger.info(f"HackingTool SQL 檢測引擎已創建 [trace_id={self.trace_id}]")
     
-    async def detect(self, task: FunctionTaskPayload, client: httpx.AsyncClient) -> List[DetectionResult]:
+    def _validate_tools_availability(self, enabled_tools: List[str]) -> List[str]:
+        """驗證工具可用性——降低initialize函數複雜度"""
+        available_tools = []
+        
+        for tool_name in enabled_tools:
+            if self._check_tool_availability(tool_name):
+                available_tools.append(tool_name)
+                
+        return available_tools
+    
+    def _check_tool_availability(self, tool_name: str) -> bool:
+        """檢查單一工具可用性"""
+        config = HACKINGTOOL_SQL_CONFIGS.get(tool_name)
+        if not config:
+            logger.warning(f"⚠️  工具 {tool_name} 配置不存在,已跳過")
+            return False
+        
+        tool_binary = tool_name.lower()
+        if not self._is_tool_installed(tool_binary):
+            logger.warning(f"⚠️  {tool_name} 未安裝 (未在 PATH 中)")
+            return False
+            
+        if self._check_tool_version(tool_binary, tool_name):
+            logger.debug(f"✅ {tool_name} 可用")
+            return True
+            
+        return False
+    
+    def _is_tool_installed(self, tool_binary: str) -> bool:
+        """檢查工具是否安裝"""
+        return subprocess.run(
+            ["which", tool_binary],
+            capture_output=True,
+            text=True
+        ).returncode == 0
+    
+    def _check_tool_version(self, tool_binary: str, tool_name: str) -> bool:
+        """檢查工具版本"""
+        try:
+            version_result = subprocess.run(
+                [tool_binary, "--version"],
+                capture_output=True,
+                text=True,
+                timeout=5
+            )
+            if version_result.returncode == 0:
+                return True
+            else:
+                logger.warning(f"⚠️  {tool_name} 版本檢查失敗")
+        except subprocess.TimeoutExpired:
+            logger.warning(f"⚠️  {tool_name} 版本檢查超時")
+        except Exception as e:
+            logger.warning(f"⚠️  {tool_name} 版本檢查異常: {e}")
+        
+        return False
+    
+    def initialize(self) -> bool:
+        """初始化檢測引擎,驗證工具可用性
+        
+        ✅ 新增: 檢查 sqlmap 等工具是否安裝
+        
+        Raises:
+            RuntimeError: 當必要工具未安裝時
+        """
+        enabled_tools = self.integrator.get_enabled_tools()
+        
+        if not enabled_tools:
+            raise RuntimeError(
+                "❌ SQL 注入檢測引擎初始化失敗: 沒有啟用的工具\n"
+                "\n"
+                "請在配置中啟用至少一個 SQL 工具:\n"
+                "  - sqlmap\n"
+                "  - ghauri\n"
+                "  - NoSQLMap\n"
+                "\n"
+                "配置文件: services/features/function_sqli/hackingtool_config.py"
+            )
+        
+        # 驗證工具可執行性——使用輔助函數降低複雜度
+        available_tools = self._validate_tools_availability(enabled_tools)
+        
+        if not available_tools:
+            raise RuntimeError(
+                f"❌ SQL 注入檢測引擎初始化失敗: 沒有可用的工具\n"
+                f"\n"
+                f"已啟用但不可用的工具: {', '.join(enabled_tools)}\n"
+                f"\n"
+                f"安裝方法:\n"
+                f"  sqlmap:   apt-get install sqlmap  或  pip install sqlmap\n"
+                f"  ghauri:   pip install ghauri\n"
+                f"  NoSQLMap: git clone https://github.com/codingo/NoSQLMap\n"
+            )
+        
+        self._initialized = True
+        logger.info(
+            f"✅ SQL 檢測引擎初始化成功 "
+            f"({len(available_tools)} 個工具可用: {', '.join(available_tools)}) "
+            f"[trace_id={self.trace_id}]"
+        )
+        return True
+    
+    async def detect(self, task: FunctionTaskPayload) -> List[DetectionResult]:
         """執行 HackingTool SQL 注入檢測"""
         results = []
         
@@ -73,7 +178,7 @@ class HackingToolDetectionEngine:
         detection_tasks = []
         for tool_name in enabled_tools:
             detection_task = asyncio.create_task(
-                self._run_tool_detection(tool_name, target, task)
+                self._run_tool_detection(tool_name, target)
             )
             detection_tasks.append(detection_task)
         
@@ -101,40 +206,56 @@ class HackingToolDetectionEngine:
         
         return results
     
-    async def _run_tool_detection(self, tool_name: str, target: str, task: FunctionTaskPayload) -> List[DetectionResult]:
-        """執行單個工具的檢測"""
+    async def _run_tool_detection(self, tool_name: str, target: str) -> List[DetectionResult]:
+        """執行單個工具的檢測
+        
+        ✅ 修復: 工具執行失敗時拋出異常,不再回傳空列表
+        """
         config = HACKINGTOOL_SQL_CONFIGS.get(tool_name)
         if not config:
-            return []
+            raise RuntimeError(
+                f"❌ SQL 工具配置不存在: {tool_name}\n"
+                f"可用工具: {list(HACKINGTOOL_SQL_CONFIGS.keys())}"
+            )
         
         logger.debug(f"執行工具檢測: {tool_name}", 
                     extra={"target": target, "trace_id": self.trace_id})
         
-        try:
-            # 執行工具
-            execution_result = await self._execute_tool(tool_name, target)
-            
-            if not execution_result.get("success", False):
-                logger.warning(f"工具 {tool_name} 執行失敗: {execution_result.get('error', 'Unknown error')}")
-                return []
-            
-            # 解析結果
-            detection_results = self._parse_tool_output(
-                tool_name, execution_result, target
+        # ✅ 修復: 不再捕捉異常,讓異常向上傳播
+        # 執行工具 (失敗時會拋出異常)
+        execution_result = await self._execute_tool(tool_name, target)
+        
+        # 檢查執行結果
+        if not execution_result.get("success", False):
+            # 這個分支理論上不會執行,因為 _execute_tool 失敗會拋異常
+            # 但保留作為雙重保險
+            raise RuntimeError(
+                f"❌ {tool_name} 執行失敗但未拋出異常 (不應該發生)\n"
+                f"錯誤: {execution_result.get('error', 'Unknown error')}"
             )
-            
-            return detection_results
-            
-        except Exception as e:
-            logger.error(f"工具 {tool_name} 檢測過程異常: {e} [trace_id={self.trace_id}]")
-            return []
+        
+        # 解析結果
+        detection_results = self._parse_tool_output(
+            tool_name, execution_result, target
+        )
+        
+        return detection_results
     
     async def _execute_tool(self, tool_name: str, target: str) -> Dict[str, Any]:
-        """異步執行工具命令"""
+        """異步執行工具命令
+        
+        ✅ 修復: 執行失敗時拋出異常,移除偽陰性邏輯
+        
+        Raises:
+            RuntimeError: 當工具執行失敗或超時時
+        """
         config = HACKINGTOOL_SQL_CONFIGS[tool_name]
         
         if not config.run_commands:
-            return {"success": False, "error": "No run commands defined"}
+            raise RuntimeError(
+                f"❌ {tool_name} 工具配置錯誤: 沒有定義執行命令\n"
+                f"請檢查 HACKINGTOOL_SQL_CONFIGS 配置"
+            )
         
         try:
             # 格式化命令
@@ -148,7 +269,7 @@ class HackingToolDetectionEngine:
                 cwd=Path.cwd()
             )
             
-            # 等待執行完成，設置超時
+            # 等待執行完成,設置超時
             try:
                 stdout, stderr = await asyncio.wait_for(
                     process.communicate(),
@@ -157,18 +278,52 @@ class HackingToolDetectionEngine:
             except asyncio.TimeoutError:
                 process.kill()
                 await process.wait()
-                return {"success": False, "error": f"Execution timeout after {config.timeout_seconds}s"}
+                # ✅ 修復: 拋出異常而非回傳 {"success": False}
+                raise RuntimeError(
+                    f"❌ {tool_name} 執行超時\n"
+                    f"目標: {target}\n"
+                    f"超時時間: {config.timeout_seconds}s\n"
+                    f"命令: {cmd}\n"
+                    f"建議: 增加 timeout 或檢查目標可訪問性"
+                ) from None
+            
+            # ✅ 修復: 執行失敗時拋出異常
+            if process.returncode != 0:
+                stderr_str = stderr.decode('utf-8', errors='ignore')
+                raise RuntimeError(
+                    f"❌ {tool_name} 執行失敗\n"
+                    f"目標: {target}\n"
+                    f"返回碼: {process.returncode}\n"
+                    f"錯誤輸出: {stderr_str[:500]}\n"
+                    f"命令: {cmd}\n"
+                    f"請檢查:\n"
+                    f"  1. {tool_name} 是否正確安裝\n"
+                    f"  2. 目標 URL 是否可訪問\n"
+                    f"  3. 命令參數是否正確"
+                )
             
             return {
-                "success": process.returncode == 0,
+                "success": True,
                 "stdout": stdout.decode('utf-8', errors='ignore'),
                 "stderr": stderr.decode('utf-8', errors='ignore'),
                 "returncode": process.returncode,
                 "command": cmd
             }
             
+        except asyncio.TimeoutError:
+            # 已在上面處理
+            raise
+        except RuntimeError:
+            # 已在上面處理的運行時錯誤,直接傳播
+            raise
         except Exception as e:
-            return {"success": False, "error": str(e)}
+            # ✅ 修復: 其他異常也拋出,不回傳字典
+            raise RuntimeError(
+                f"❌ {tool_name} 執行過程異常\n"
+                f"目標: {target}\n"
+                f"異常類型: {type(e).__name__}\n"
+                f"異常信息: {str(e)}"
+            ) from e
     
     def _parse_tool_output(self, tool_name: str, execution_result: Dict[str, Any], target: str) -> List[DetectionResult]:
         """解析工具輸出，生成檢測結果"""

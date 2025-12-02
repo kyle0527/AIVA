@@ -93,38 +93,8 @@ func (enc *AIVAEncoder) EncodeEntry(entry zapcore.Entry, fields []zapcore.Field)
 		Extra: make(map[string]interface{}),
 	}
 
-	// 處理自定義字段
-	for _, field := range fields {
-		switch field.Key {
-		case "task_id":
-			logEntry.TaskID = field.String
-		case "session_id":
-			logEntry.SessionID = field.String
-		case "user_id":
-			logEntry.UserID = field.String
-		case "confidence":
-			if logEntry.AI == nil {
-				logEntry.AI = &AIInfo{}
-			}
-			if f, ok := field.Interface.(float64); ok {
-				logEntry.AI.Confidence = f
-			}
-		case "model_version":
-			if logEntry.AI == nil {
-				logEntry.AI = &AIInfo{}
-			}
-			logEntry.AI.ModelVersion = field.String
-		case "prediction":
-			if logEntry.AI == nil {
-				logEntry.AI = &AIInfo{}
-			}
-			logEntry.AI.Prediction = field.String
-		case "cross_language_call":
-			logEntry.Extra["cross_language_call"] = field.Interface
-		default:
-			logEntry.Extra[field.Key] = field.Interface
-		}
-	}
+	// 處理自定義字段——抽出到獨立函數
+	enc.processCustomFields(&logEntry, fields)
 
 	// 如果沒有額外字段，移除 extra
 	if len(logEntry.Extra) == 0 {
@@ -141,6 +111,52 @@ func (enc *AIVAEncoder) EncodeEntry(entry zapcore.Entry, fields []zapcore.Field)
 	buf.Write(jsonBytes)
 	buf.AppendByte('\n')
 	return buf, nil
+}
+
+// processCustomFields 處理自定義字段（降低 EncodeEntry 複雜度）
+func (enc *AIVAEncoder) processCustomFields(logEntry *AIVALogEntry, fields []zapcore.Field) {
+	for _, field := range fields {
+		switch field.Key {
+		case "task_id":
+			logEntry.TaskID = field.String
+		case "session_id":
+			logEntry.SessionID = field.String
+		case "user_id":
+			logEntry.UserID = field.String
+		case "confidence":
+			enc.processAIField(logEntry, field.Key, field.Interface)
+		case "model_version":
+			enc.processAIField(logEntry, field.Key, field.String)
+		case "prediction":
+			enc.processAIField(logEntry, field.Key, field.String)
+		case "cross_language_call":
+			logEntry.Extra["cross_language_call"] = field.Interface
+		default:
+			logEntry.Extra[field.Key] = field.Interface
+		}
+	}
+}
+
+// processAIField 處理 AI 相關字段
+func (enc *AIVAEncoder) processAIField(logEntry *AIVALogEntry, key string, value interface{}) {
+	if logEntry.AI == nil {
+		logEntry.AI = &AIInfo{}
+	}
+	
+	switch key {
+	case "confidence":
+		if f, ok := value.(float64); ok {
+			logEntry.AI.Confidence = f
+		}
+	case "model_version":
+		if s, ok := value.(string); ok {
+			logEntry.AI.ModelVersion = s
+		}
+	case "prediction":
+		if s, ok := value.(string); ok {
+			logEntry.AI.Prediction = s
+		}
+	}
 }
 
 // NewLogger 建立標準化的統一格式日誌實例
@@ -185,16 +201,54 @@ func NewDevelopmentLogger(serviceName string) (*zap.Logger, error) {
 	return NewLogger(serviceName, "development")
 }
 
-// LogCrossLanguageCall 記錄跨語言調用
-func LogCrossLanguageCall(
+// CrossLanguageCallParams 跨語言調用參數結構（減少 LogCrossLanguageCall 參數數量）
+type CrossLanguageCallParams struct {
+	Source          string
+	Target          string
+	Function        string
+	ParametersHash  string
+	HasResult       bool
+	HasError        bool
+	ExecutionTimeMS float64
+	Message         string
+}
+
+// LogCrossLanguageCall 記錄跨語言調用（重構版，減少參數數量）
+func LogCrossLanguageCall(logger *zap.Logger, params CrossLanguageCallParams) {
+	call := CrossLanguageCall{
+		Source:          params.Source,
+		Target:          params.Target,
+		Function:        params.Function,
+		ParametersHash:  params.ParametersHash,
+		HasResult:       params.HasResult,
+		HasError:        params.HasError,
+		ExecutionTimeMS: params.ExecutionTimeMS,
+	}
+
+	// 簡化日誌級別邏輯
+	logCallWithLevel(logger, call, params)
+}
+
+// logCallWithLevel 依據結果選擇日誌級別
+func logCallWithLevel(logger *zap.Logger, call CrossLanguageCall, params CrossLanguageCallParams) {
+	if params.HasError {
+		logger.Error(params.Message, zap.Any("cross_language_call", call))
+	} else if params.HasResult {
+		logger.Info(params.Message, zap.Any("cross_language_call", call))
+	} else {
+		logger.Debug(params.Message, zap.Any("cross_language_call", call))
+	}
+}
+
+// LogCrossLanguageCallDeprecated 舊版本相容函數（已廢棄，請使用 LogCrossLanguageCall）
+// Deprecated: 使用 LogCrossLanguageCall(logger, CrossLanguageCallParams{...}) 替代
+func LogCrossLanguageCallDeprecated(
 	logger *zap.Logger,
-	source, target, function string,
-	parametersHash string,
+	source, target, function, parametersHash, message string,
 	hasResult, hasError bool,
 	executionTimeMS float64,
-	message string,
 ) {
-	call := CrossLanguageCall{
+	params := CrossLanguageCallParams{
 		Source:          source,
 		Target:          target,
 		Function:        function,
@@ -202,15 +256,9 @@ func LogCrossLanguageCall(
 		HasResult:       hasResult,
 		HasError:        hasError,
 		ExecutionTimeMS: executionTimeMS,
+		Message:         message,
 	}
-
-	if hasError {
-		logger.Error(message, zap.Any("cross_language_call", call))
-	} else if hasResult {
-		logger.Info(message, zap.Any("cross_language_call", call))
-	} else {
-		logger.Debug(message, zap.Any("cross_language_call", call))
-	}
+	LogCrossLanguageCall(logger, params)
 }
 
 // LogAIDecision 記錄 AI 決策

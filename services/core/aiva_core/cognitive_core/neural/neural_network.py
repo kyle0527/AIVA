@@ -9,18 +9,11 @@
 """
 
 import logging
-from typing import TYPE_CHECKING, Union, List, Any
+from typing import Union, List, Any
 
-# 使用統一的 Optional Dependency 框架
-from utilities.optional_deps import deps
+import numpy as np
 
-if TYPE_CHECKING:
-    import numpy as np
-    NDArray = np.ndarray
-else:
-    np = deps.get_or_mock('numpy')
-    # 運行時的型別別名，與 Mock 相容
-    NDArray = Union[List, Any]
+NDArray = Union[np.ndarray, List, Any]
 
 logger = logging.getLogger(__name__)
 
@@ -69,22 +62,27 @@ class ActivationFunctions:
 class DenseLayer:
     """全連接層"""
 
-    def __init__(self, input_size: int, output_size: int, activation: str = "relu"):
+    def __init__(self, input_size: int, output_size: int, activation: str = "relu", seed: int | None = None):
         """初始化全連接層
 
         Args:
             input_size: 輸入維度
             output_size: 輸出維度
             activation: 激活函數類型
+            seed: 隨機種子 (None 表示使用隨機種子)
         """
         self.input_size = input_size
         self.output_size = output_size
         self.activation = activation
 
-        # Xavier 初始化
-        self.weights = np.random.randn(input_size, output_size) * np.sqrt(
-            2.0 / input_size
-        )
+        # Xavier/He 初始化使用現代 Generator API
+        rng = np.random.default_rng(seed)
+        if activation == "relu":
+            # He 初始化適用於 ReLU
+            self.weights = rng.standard_normal((input_size, output_size)) * np.sqrt(2.0 / input_size)
+        else:
+            # Xavier 初始化適用於 tanh/sigmoid
+            self.weights = rng.standard_normal((input_size, output_size)) * np.sqrt(1.0 / input_size)
         self.biases = np.zeros(output_size)
 
         # 梯度
@@ -189,21 +187,25 @@ class FeedForwardNetwork:
 class RecurrentLayer:
     """循環神經網路層"""
 
-    def __init__(self, input_size: int, hidden_size: int, activation: str = "tanh"):
+    def __init__(self, input_size: int, hidden_size: int, activation: str = "tanh", seed: int | None = None):
         """初始化RNN層
 
         Args:
             input_size: 輸入維度
             hidden_size: 隱藏層維度
             activation: 激活函數
+            seed: 隨機種子 (None 表示使用隨機種子)
         """
         self.input_size = input_size
         self.hidden_size = hidden_size
         self.activation = activation
 
-        # 權重初始化
-        self.Wxh = np.random.randn(input_size, hidden_size) * 0.01
-        self.Whh = np.random.randn(hidden_size, hidden_size) * 0.01
+        # 權重初始化使用現代 Generator API (遵循 PEP8 命名規範)
+        rng = np.random.default_rng(seed)
+        # Xavier 初始化適用於 RNN
+        scale = np.sqrt(1.0 / (input_size + hidden_size))
+        self.wxh = rng.standard_normal((input_size, hidden_size)) * scale
+        self.whh = rng.standard_normal((hidden_size, hidden_size)) * scale
         self.bh = np.zeros(hidden_size)
 
         # 隱藏狀態
@@ -220,7 +222,7 @@ class RecurrentLayer:
     def forward(self, x: NDArray) -> NDArray:
         """前向傳播"""
         self.hidden_state = self.activation_func(
-            np.dot(x, self.Wxh) + np.dot(self.hidden_state, self.Whh) + self.bh
+            np.dot(x, self.wxh) + np.dot(self.hidden_state, self.whh) + self.bh
         )
         return self.hidden_state
 
@@ -232,30 +234,36 @@ class RecurrentLayer:
 class LSTMLayer:
     """長短期記憶網路層"""
 
-    def __init__(self, input_size: int, hidden_size: int):
+    def __init__(self, input_size: int, hidden_size: int, seed: int | None = None):
         """初始化LSTM層
 
         Args:
             input_size: 輸入維度
             hidden_size: 隱藏層維度
+            seed: 隨機種子 (None 表示使用隨機種子)
         """
         self.input_size = input_size
         self.hidden_size = hidden_size
 
+        # 使用現代 Generator API 和 Xavier 初始化 (遵循 PEP8 命名規範)
+        rng = np.random.default_rng(seed)
+        combined_size = input_size + hidden_size
+        scale = np.sqrt(1.0 / combined_size)
+
         # 遺忘門權重
-        self.Wf = np.random.randn(input_size + hidden_size, hidden_size) * 0.01
+        self.wf = rng.standard_normal((combined_size, hidden_size)) * scale
         self.bf = np.zeros(hidden_size)
 
         # 輸入門權重
-        self.Wi = np.random.randn(input_size + hidden_size, hidden_size) * 0.01
+        self.wi = rng.standard_normal((combined_size, hidden_size)) * scale
         self.bi = np.zeros(hidden_size)
 
         # 候選值權重
-        self.Wc = np.random.randn(input_size + hidden_size, hidden_size) * 0.01
+        self.wc = rng.standard_normal((combined_size, hidden_size)) * scale
         self.bc = np.zeros(hidden_size)
 
         # 輸出門權重
-        self.Wo = np.random.randn(input_size + hidden_size, hidden_size) * 0.01
+        self.wo = rng.standard_normal((combined_size, hidden_size)) * scale
         self.bo = np.zeros(hidden_size)
 
         # 狀態
@@ -268,19 +276,19 @@ class LSTMLayer:
         combined = np.concatenate([x, self.hidden_state])
 
         # 遺忘門
-        forget_gate = ActivationFunctions.sigmoid(np.dot(combined, self.Wf) + self.bf)
+        forget_gate = ActivationFunctions.sigmoid(np.dot(combined, self.wf) + self.bf)
 
         # 輸入門
-        input_gate = ActivationFunctions.sigmoid(np.dot(combined, self.Wi) + self.bi)
+        input_gate = ActivationFunctions.sigmoid(np.dot(combined, self.wi) + self.bi)
 
         # 候選值
-        candidate = ActivationFunctions.tanh(np.dot(combined, self.Wc) + self.bc)
+        candidate = ActivationFunctions.tanh(np.dot(combined, self.wc) + self.bc)
 
         # 更新細胞狀態
         self.cell_state = forget_gate * self.cell_state + input_gate * candidate
 
         # 輸出門
-        output_gate = ActivationFunctions.sigmoid(np.dot(combined, self.Wo) + self.bo)
+        output_gate = ActivationFunctions.sigmoid(np.dot(combined, self.wo) + self.bo)
 
         # 更新隱藏狀態
         self.hidden_state = output_gate * ActivationFunctions.tanh(self.cell_state)
@@ -296,15 +304,19 @@ class LSTMLayer:
 class AttentionMechanism:
     """注意力機制"""
 
-    def __init__(self, hidden_size: int):
+    def __init__(self, hidden_size: int, seed: int | None = None):
         """初始化注意力機制
 
         Args:
             hidden_size: 隱藏層維度
+            seed: 隨機種子 (None 表示使用隨機種子)
         """
         self.hidden_size = hidden_size
-        self.W_attention = np.random.randn(hidden_size, hidden_size) * 0.01
-        self.v_attention = np.random.randn(hidden_size) * 0.01
+        # 使用現代 Generator API 和 Xavier 初始化 (遵循 PEP8 命名規範)
+        rng = np.random.default_rng(seed)
+        scale = np.sqrt(1.0 / hidden_size)
+        self.w_attention = rng.standard_normal((hidden_size, hidden_size)) * scale
+        self.v_attention = rng.standard_normal(hidden_size) * scale
 
     def forward(
         self, hidden_states: NDArray, query: NDArray
@@ -320,7 +332,7 @@ class AttentionMechanism:
             attention_weights: 注意力權重
         """
         # 計算注意力分數
-        scores = np.dot(hidden_states, self.W_attention)
+        scores = np.dot(hidden_states, self.w_attention)
         scores = np.dot(scores, query)
 
         # 計算注意力權重

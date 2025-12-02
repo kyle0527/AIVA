@@ -9,7 +9,7 @@ from typing import Any
 
 import httpx
 
-from services.aiva_common.enums.vulnerability import VulnerabilityType, Severity, Confidence
+from services.aiva_common.enums import VulnerabilityType, Severity, Confidence
 
 logger = logging.getLogger(__name__)
 

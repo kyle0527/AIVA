@@ -1,10 +1,112 @@
 # AIVA Features 模組 - 多語言安全功能架構
 
-> **🎯 Bug Bounty 專業化 v6.1**: 多語言安全功能集，專精漏洞檢測與攻擊驗證  
-> **✅ 系統狀態**: 7大功能模組就緒，Python+Go+Rust 混合架構  
-> **🔄 最後更新**: 2025年11月27日
+> **版本**: v6.1 | **狀態**: ⚠️ 功能完整但未整合命令系統 | **更新**: 2025-12-02
+
+**導航**: [← 返回 Services](../README.md) | [功能模組實際狀況](../../功能模組實際狀況分析報告.md)
 
 ---
+
+## ⚠️ 重要聲明 (2025-12-02)
+
+### 🚨 架構整合問題
+
+**現狀**: 功能代碼完整,但未整合 aiva_common 命令系統
+
+```python
+# ❌ 當前狀況: 功能模組各自為政
+# services/features/function_xss/integration_tools/xss_tools.py
+class XSSManager:
+    async def comprehensive_scan(self, target_url: str, options: Dict):
+        # 有真實的 XSS 檢測代碼
+        pass
+
+# ✅ 應該實現: aiva_common 命令處理器
+from aiva_common.command_center import CommandHandler
+from aiva_common.schemas.commands import AICommand, AICommandResult
+
+class XSSCommandHandler(CommandHandler):
+    async def handle_command(self, command: AICommand) -> AICommandResult:
+        # 包裝現有功能到標準接口
+        pass
+```
+
+**影響**:
+- AI 無法通過 AICommandCenter 統一指揮
+- 功能模組之間無法協調工作
+- 無法使用標準的命令追蹤和監控
+
+### 📊 各模組實際狀況 (2025-12-02 更新)
+
+| 模組 | 代碼完整度 | 偽陰性修復 | 整合狀態 | 說明 |
+|------|-----------|----------|---------|------|
+| **function_xss** | 90% | ✅ 已修復 | ⚠️ 部分完成 | 移除偽陰性,添加工具檢查,命令處理器已創建 |
+| **function_sqli** | 85% | ✅ 已修復 | ⚠️ 待完成 | 移除偽陰性,添加工具檢查,待創建命令處理器 |
+| **function_web_scanner** | 70% | ⏳ 待檢查 | ❌ 未整合 | 代碼存在但未驗證 |
+| **function_ddos** | 60% | ⏳ 待檢查 | ❌ 未整合 | 需要嚴格授權控制 |
+| **function_ssrf** | 65% | ✅ 無問題 | ❌ 未整合 | 未發現被動模式,OAST 為必須參數 |
+| **function_idor** | 65% | ⏳ 待檢查 | ❌ 未整合 | 基礎功能存在 |
+| **function_exploit_framework** | 40% | ⏳ 待檢查 | ❌ 未整合 | 代碼不完整 |
+
+### 🔧 已完成的修復 (2025-12-02)
+
+#### ✅ XSS 模組 (`function_xss/engines/hackingtool_engine.py`)
+
+**修復內容**:
+```python
+# ✅ 移除偽陰性: 超時/失敗時拋出異常
+except asyncio.TimeoutError:
+    raise RuntimeError(
+        f"XSS 檢測工具執行超時: {tool_name}\n"
+        f"建議: 增加 timeout 設置或檢查目標可訪問性"
+    ) from None
+
+# ✅ 添加初始化檢查
+async def initialize(self) -> bool:
+    available_tools = await self._validate_tool_availability()
+    if not available_tools:
+        raise RuntimeError("沒有可用的 XSS 工具")
+    return True
+```
+
+**效果**:
+- ❌ 舊: 工具失敗回傳 `vulnerability_found=False` (偽陰性)
+- ✅ 新: 工具失敗拋出異常,明確告知用戶
+
+#### ✅ SQLi 模組 (`function_sqli/engines/hackingtool_engine.py`)
+
+**修復內容**:
+```python
+# ✅ 移除 {"success": False} 回傳
+async def _execute_tool(self, tool_name, target):
+    if process.returncode != 0:
+        raise RuntimeError(
+            f"{tool_name} 執行失敗\n"
+            f"請檢查: 工具是否正確安裝"
+        )
+
+# ✅ 添加初始化檢查
+async def initialize(self) -> bool:
+    available_tools = self._check_sqlmap_availability()
+    if not available_tools:
+        raise RuntimeError("沒有可用的 SQL 工具")
+    return True
+```
+
+**效果**:
+- ❌ 舊: sqlmap 失敗回傳空列表 (偽陰性)
+- ✅ 新: sqlmap 失敗拋出異常
+
+### 📋 待修復模組
+
+#### ⏳ Payload 生成器 (P1)
+- **文件**: `function_payload_generator/engines/msfvenom_wrapper.py`
+- **問題**: 可能存在靜態 Payload 回退
+- **修復**: 需檢查並移除靜態列表
+
+#### ⏳ 動態網頁互動 (P1)
+- **文件**: `scan/engines/python_engine/dynamic_engine/js_interaction_simulator.py`
+- **問題**: 可能存在 Log 模擬
+- **修復**: 需檢查並移除模擬邏輯
 
 ## 📑 目錄
 

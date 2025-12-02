@@ -75,6 +75,30 @@ class JsInteractionSimulator:
         self.enable_logging = enable_logging
         self._event_queue: list[JsEvent] = []
         self._results: list[InteractionResult] = []
+        self._initialized = False
+    
+    def initialize(self, page: Any) -> None:
+        """
+        初始化並驗證瀏覽器頁面對象
+        
+        Args:
+            page: 瀏覽器頁面對象 (Playwright/Selenium)
+            
+        Raises:
+            RuntimeError: page 對象無效時
+        """
+        if page is None:
+            raise RuntimeError(
+                "瀏覽器頁面對象為 None。\n"
+                "請確保已正確初始化瀏覽器引擎 (Playwright 或 Selenium)。\n"
+                "安裝方法:\n"
+                "- Playwright: pip install playwright && playwright install\n"
+                "- Selenium: pip install selenium && 下載對應的 WebDriver"
+            )
+        
+        self._initialized = True
+        if self.enable_logging:
+            logger.info("JS interaction simulator initialized successfully")
 
     def add_event(self, event: JsEvent) -> None:
         """添加事件到隊列"""
@@ -157,24 +181,25 @@ class JsInteractionSimulator:
 
         Returns:
             互動結果
+            
+        Raises:
+            RuntimeError: page 為 None 時
         """
         import time
 
         start_time = time.time()
         result = InteractionResult(success=False, event=event)
 
+        # 強制要求 page 對象
+        if page is None:
+            raise RuntimeError(
+                f"瀏覽器頁面對象為 None,無法執行 {event.event_type.value} 互動。\n"
+                "請先調用 initialize(page) 方法初始化模擬器,並確保瀏覽器引擎正常運行。"
+            )
+
         try:
             if self.enable_logging:
                 logger.info(f"Simulating {event.event_type.value} on {event.selector}")
-
-            # 如果沒有提供 page 對象，則僅記錄事件
-            if page is None:
-                if self.enable_logging:
-                    logger.warning("No page object provided, skipping actual execution")
-                result.success = True
-                result.execution_time_ms = (time.time() - start_time) * 1000
-                self._results.append(result)
-                return result
 
             # 等待元素可見
             await self._wait_for_element(page, event.selector)
@@ -243,58 +268,157 @@ class JsInteractionSimulator:
         return results
 
     async def _wait_for_element(self, page: Any, selector: str) -> None:
-        """等待元素可見（抽象方法，需根據實際瀏覽器庫實現）"""
-        # 這裡是佔位符實現，實際應根據使用的瀏覽器庫（如 Playwright）來實現
-        if self.enable_logging:
-            logger.debug(f"Waiting for element: {selector}")
-        await asyncio.sleep(0.1)
+        """等待元素可見（支持 Playwright 和 Selenium）"""
+        try:
+            # 嘗試 Playwright API
+            if hasattr(page, 'wait_for_selector'):
+                await page.wait_for_selector(
+                    selector, 
+                    state='visible', 
+                    timeout=self.default_timeout_ms
+                )
+            # 嘗試 Selenium API
+            elif hasattr(page, 'find_element'):
+                from selenium.webdriver.support.ui import WebDriverWait
+                from selenium.webdriver.support import expected_conditions as EC
+                from selenium.webdriver.common.by import By
+                WebDriverWait(page, self.default_timeout_ms / 1000).until(
+                    EC.visibility_of_element_located((By.CSS_SELECTOR, selector))
+                )
+            else:
+                # 回退到簡單等待
+                if self.enable_logging:
+                    logger.warning(f"Unknown page type, using simple wait for: {selector}")
+                await asyncio.sleep(0.5)
+                
+            if self.enable_logging:
+                logger.debug(f"Element found: {selector}")
+        except Exception as e:
+            if self.enable_logging:
+                logger.error(f"Failed to find element {selector}: {e}")
+            raise
 
     async def _simulate_click(self, page: Any, event: JsEvent) -> None:
-        """模擬點擊事件"""
-        # 佔位符實現
-        # 實際實現範例（Playwright）: await page.click(event.selector)
-        if self.enable_logging:
-            logger.debug(f"Clicking element: {event.selector}")
-        await asyncio.sleep(0.05)
+        """模擬點擊事件（支持 Playwright 和 Selenium）"""
+        try:
+            if hasattr(page, 'click'):
+                # Playwright API
+                await page.click(event.selector, timeout=self.default_timeout_ms)
+            elif hasattr(page, 'find_element'):
+                # Selenium API
+                from selenium.webdriver.common.by import By
+                element = page.find_element(By.CSS_SELECTOR, event.selector)
+                element.click()
+            else:
+                raise RuntimeError(f"Unsupported page type: {type(page)}")
+                
+            if self.enable_logging:
+                logger.debug(f"Clicked element: {event.selector}")
+            await asyncio.sleep(event.delay_ms / 1000.0)
+        except Exception as e:
+            if self.enable_logging:
+                logger.error(f"Failed to click {event.selector}: {e}")
+            raise
 
     async def _simulate_input(self, page: Any, event: JsEvent) -> None:
-        """模擬輸入事件"""
-        # 佔位符實現
-        # 實際實現範例（Playwright）: await page.fill(event.selector, event.value)
-        if self.enable_logging:
-            logger.debug(f"Inputting '{event.value}' to {event.selector}")
-        await asyncio.sleep(0.05)
+        """模擬輸入事件（支持 Playwright 和 Selenium）"""
+        if not event.value:
+            if self.enable_logging:
+                logger.warning(f"No value provided for input: {event.selector}")
+            return
+            
+        try:
+            if hasattr(page, 'fill'):
+                # Playwright API
+                await page.fill(event.selector, event.value, timeout=self.default_timeout_ms)
+            elif hasattr(page, 'find_element'):
+                # Selenium API
+                from selenium.webdriver.common.by import By
+                element = page.find_element(By.CSS_SELECTOR, event.selector)
+                element.clear()
+                element.send_keys(event.value)
+            else:
+                raise RuntimeError(f"Unsupported page type: {type(page)}")
+                
+            if self.enable_logging:
+                logger.debug(f"Input '{event.value}' to {event.selector}")
+            await asyncio.sleep(event.delay_ms / 1000.0)
+        except Exception as e:
+            if self.enable_logging:
+                logger.error(f"Failed to input to {event.selector}: {e}")
+            raise
 
     async def _simulate_hover(self, page: Any, event: JsEvent) -> None:
-        """模擬懸停事件"""
-        # 佔位符實現
-        # 實際實現範例（Playwright）: await page.hover(event.selector)
-        if self.enable_logging:
-            logger.debug(f"Hovering over element: {event.selector}")
-        await asyncio.sleep(0.05)
+        """模擬懸停事件（支持 Playwright 和 Selenium）"""
+        try:
+            if hasattr(page, 'hover'):
+                # Playwright API
+                await page.hover(event.selector, timeout=self.default_timeout_ms)
+            elif hasattr(page, 'find_element'):
+                # Selenium API
+                from selenium.webdriver.common.by import By
+                from selenium.webdriver.common.action_chains import ActionChains
+                element = page.find_element(By.CSS_SELECTOR, event.selector)
+                ActionChains(page).move_to_element(element).perform()
+            else:
+                raise RuntimeError(f"Unsupported page type: {type(page)}")
+                
+            if self.enable_logging:
+                logger.debug(f"Hovered over element: {event.selector}")
+            await asyncio.sleep(event.delay_ms / 1000.0)
+        except Exception as e:
+            if self.enable_logging:
+                logger.error(f"Failed to hover over {event.selector}: {e}")
+            raise
 
     async def _simulate_scroll(self, page: Any, event: JsEvent) -> None:
-        """模擬滾動事件"""
-        # 佔位符實現
-        # 實際實現範例（Playwright）:
-        # await page.evaluate(
-        #     f"document.querySelector('{event.selector}').scrollIntoView()"
-        # )
-        if self.enable_logging:
-            logger.debug(f"Scrolling to element: {event.selector}")
-        await asyncio.sleep(0.05)
+        """模擬滾動事件（支持 Playwright 和 Selenium）"""
+        try:
+            if hasattr(page, 'evaluate'):
+                # Playwright API
+                await page.evaluate(
+                    f"document.querySelector('{event.selector}').scrollIntoView({{behavior: 'smooth', block: 'center'}})"
+                )
+            elif hasattr(page, 'execute_script'):
+                # Selenium API
+                from selenium.webdriver.common.by import By
+                element = page.find_element(By.CSS_SELECTOR, event.selector)
+                page.execute_script("arguments[0].scrollIntoView({behavior: 'smooth', block: 'center'});", element)
+            else:
+                raise RuntimeError(f"Unsupported page type: {type(page)}")
+                
+            if self.enable_logging:
+                logger.debug(f"Scrolled to element: {event.selector}")
+            await asyncio.sleep(event.delay_ms / 1000.0)
+        except Exception as e:
+            if self.enable_logging:
+                logger.error(f"Failed to scroll to {event.selector}: {e}")
+            raise
 
     async def _simulate_submit(self, page: Any, event: JsEvent) -> None:
-        """模擬表單提交事件"""
-        # 佔位符實現
-        # 實際實現範例（Playwright）:
-        # await page.eval_on_selector(
-        #     event.selector,
-        #     "form => form.submit()"
-        # )
-        if self.enable_logging:
-            logger.debug(f"Submitting form: {event.selector}")
-        await asyncio.sleep(0.05)
+        """模擬表單提交事件（支持 Playwright 和 Selenium）"""
+        try:
+            if hasattr(page, 'eval_on_selector'):
+                # Playwright API
+                await page.eval_on_selector(
+                    event.selector,
+                    "form => form.submit()"
+                )
+            elif hasattr(page, 'execute_script'):
+                # Selenium API
+                from selenium.webdriver.common.by import By
+                element = page.find_element(By.CSS_SELECTOR, event.selector)
+                page.execute_script("arguments[0].submit();", element)
+            else:
+                raise RuntimeError(f"Unsupported page type: {type(page)}")
+                
+            if self.enable_logging:
+                logger.debug(f"Submitted form: {event.selector}")
+            await asyncio.sleep(event.delay_ms / 1000.0)
+        except Exception as e:
+            if self.enable_logging:
+                logger.error(f"Failed to submit form {event.selector}: {e}")
+            raise
 
     def clear_queue(self) -> None:
         """清空事件隊列"""

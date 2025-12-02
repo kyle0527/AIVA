@@ -69,14 +69,116 @@ class CrossLanguageXSSEngine:
         self.temp_dir = Path(tempfile.mkdtemp(prefix="aiva_xss_"))
         
     async def initialize(self) -> bool:
-        """初始化檢測引擎，檢測語言環境"""
+        """初始化檢測引擎,檢測語言環境並驗證工具可用性
+        
+        ✅ 修復: 添加工具可用性檢查,防止偽陰性
+        
+        Raises:
+            RuntimeError: 當必要工具未安裝或不可用時
+        """
         try:
+            # 檢測語言環境
             await self._detect_language_environments()
-            self.logger.info("XSS Detection Engine initialized successfully")
+            
+            # ✅ 新增: 驗證至少有一個工具可用
+            available_tools = await self._validate_tool_availability()
+            
+            if not available_tools:
+                raise RuntimeError(
+                    "❌ XSS 檢測引擎初始化失敗: 沒有可用的工具\n"
+                    "\n"
+                    "已檢查的工具:\n"
+                    "  - Dalfox (Go):   需要安裝 'go install github.com/hahwul/dalfox/v2@latest'\n"
+                    "  - XSpear (Ruby): 需要安裝 'gem install XSpear'\n"
+                    "  - xsser (Python): 需要安裝 'pip install xsser'\n"
+                    "\n"
+                    f"當前語言環境:\n"
+                    f"  - Go:     {'✅' if self.language_environments.get('go', LanguageEnvironment('go', False)).available else '❌'}\n"
+                    f"  - Ruby:   {'✅' if self.language_environments.get('ruby', LanguageEnvironment('ruby', False)).available else '❌'}\n"
+                    f"  - Python: {'✅' if self.language_environments.get('python', LanguageEnvironment('python', False)).available else '❌'}\n"
+                    f"  - Rust:   {'✅' if self.language_environments.get('rust', LanguageEnvironment('rust', False)).available else '❌'}\n"
+                    "\n"
+                    "請至少安裝一個 XSS 檢測工具"
+                )
+            
+            self.logger.info(
+                f"✅ XSS Detection Engine 初始化成功 "
+                f"({len(available_tools)} 個工具可用: {', '.join(available_tools)})"
+            )
             return True
+            
         except Exception as e:
-            self.logger.error(f"Failed to initialize XSS engine: {e}")
+            self.logger.error(f"❌ XSS 引擎初始化失敗: {e}")
+            raise  # ✅ 向上傳播異常,不返回 False
+    
+    async def _validate_tool_availability(self) -> List[str]:
+        """驗證工具可用性——降低複雜度
+        
+        Returns:
+            可用工具名稱列表
+        """
+        available_tools = []
+        
+        # 拆分為單獨的檢查方法
+        dalfox_available = await self._check_dalfox_availability()
+        if dalfox_available:
+            available_tools.append("Dalfox")
+            
+        xspear_available = await self._check_xspear_availability()
+        if xspear_available:
+            available_tools.append("XSpear")
+            
+        xsser_available = await self._check_xsser_availability()
+        if xsser_available:
+            available_tools.append("xsser")
+        
+        return available_tools
+    
+    async def _check_dalfox_availability(self) -> bool:
+        """檢查 Dalfox 工具可用性"""
+        go_env = self.language_environments.get("go", LanguageEnvironment("go", False))
+        if not go_env.available or not shutil.which("dalfox"):
             return False
+            
+        try:
+            result = await self._run_command(["dalfox", "version"], timeout_seconds=5)
+            if result.returncode == 0:
+                self.logger.debug("✅ Dalfox 可用")
+                return True
+        except Exception as e:
+            self.logger.warning(f"⚠️  Dalfox 檢查失敗: {e}")
+        return False
+    
+    async def _check_xspear_availability(self) -> bool:
+        """檢查 XSpear 工具可用性"""
+        ruby_env = self.language_environments.get("ruby", LanguageEnvironment("ruby", False))
+        if not ruby_env.available or not shutil.which("XSpear"):
+            return False
+            
+        try:
+            result = await self._run_command(["XSpear", "--version"], timeout_seconds=5)
+            if result.returncode == 0:
+                self.logger.debug("✅ XSpear 可用")
+                return True
+        except Exception as e:
+            self.logger.warning(f"⚠️  XSpear 檢查失敗: {e}")
+        return False
+    
+    async def _check_xsser_availability(self) -> bool:
+        """檢查 xsser 工具可用性"""
+        python_env = self.language_environments.get("python", LanguageEnvironment("python", False))
+        if not python_env.available:
+            return False
+            
+        try:
+            result = await self._run_command(["python3", "-c", "import xsser"], timeout_seconds=5)
+            if result.returncode == 0:
+                self.logger.debug("✅ xsser 可用")
+                return True
+        except Exception as e:
+            self.logger.warning(f"⚠️  xsser 檢查失敗: {e}")
+        return False
+        return available_tools
     
     async def _detect_language_environments(self) -> None:
         """檢測各語言環境可用性"""
@@ -103,16 +205,18 @@ class CrossLanguageXSSEngine:
     async def _check_go_environment(self) -> LanguageEnvironment:
         """檢測 Go 語言環境"""
         try:
-            result = await self._run_command(["go", "version"], timeout_seconds=10)
-            if result.returncode == 0:
-                version = result.stdout.strip()
-                go_path = shutil.which("go")
-                return LanguageEnvironment(
-                    language="go",
-                    available=True,
-                    version=version,
-                    binary_path=go_path
-                )
+            # 使用內建超時機制而非timeout參數
+            async with asyncio.timeout(10):
+                result = await self._run_command(["go", "version"])
+                if result.returncode == 0:
+                    version = result.stdout.strip()
+                    go_path = shutil.which("go")
+                    return LanguageEnvironment(
+                        language="go",
+                        available=True,
+                        version=version,
+                        binary_path=go_path
+                    )
         except Exception as e:
             return LanguageEnvironment(
                 language="go",
@@ -125,16 +229,17 @@ class CrossLanguageXSSEngine:
     async def _check_ruby_environment(self) -> LanguageEnvironment:
         """檢測 Ruby 語言環境"""
         try:
-            result = await self._run_command(["ruby", "--version"], timeout_seconds=10)
-            if result.returncode == 0:
-                version = result.stdout.strip()
-                ruby_path = shutil.which("ruby")
-                return LanguageEnvironment(
-                    language="ruby",
-                    available=True,
-                    version=version,
-                    binary_path=ruby_path
-                )
+            async with asyncio.timeout(10):
+                result = await self._run_command(["ruby", "--version"])
+                if result.returncode == 0:
+                    version = result.stdout.strip()
+                    ruby_path = shutil.which("ruby")
+                    return LanguageEnvironment(
+                        language="ruby",
+                        available=True,
+                        version=version,
+                        binary_path=ruby_path
+                    )
         except Exception as e:
             return LanguageEnvironment(
                 language="ruby",
@@ -248,7 +353,7 @@ class CrossLanguageXSSEngine:
         
         for plan in available_tools:
             default_timeout = plan.get("timeout", 300)
-            task = self._execute_tool_detection(plan, target_url, semaphore, default_timeout)
+            task = self._execute_tool_detection(plan, target_url, semaphore)
             tasks.append(task)
         
         results = await asyncio.gather(*tasks, return_exceptions=True)
@@ -267,8 +372,7 @@ class CrossLanguageXSSEngine:
         self,
         execution_plan: Dict[str, Any],
         target_url: str,
-        semaphore: asyncio.Semaphore,
-        timeout: int
+        semaphore: asyncio.Semaphore
     ) -> Optional[XSSDetectionResult]:
         """執行單一工具檢測"""
         async with semaphore:
@@ -282,17 +386,18 @@ class CrossLanguageXSSEngine:
                 if not tool_config:
                     raise ValueError(f"Tool config not found: {tool_name}")
                 
-                # 根據工具語言選擇執行方法
-                if tool_config.language == "go":
-                    result = await self._execute_go_tool(tool_config, target_url, timeout)
-                elif tool_config.language == "ruby":
-                    result = await self._execute_ruby_tool(tool_config, target_url, timeout)
-                elif tool_config.language == "python":
-                    result = await self._execute_python_tool(tool_config, target_url, timeout)
-                elif tool_config.language == "rust":
-                    result = await self._execute_rust_tool(tool_config, target_url, timeout)
-                else:
-                    raise ValueError(f"Unsupported language: {tool_config.language}")
+                # 使用timeout情境管理器耏非參數
+                async with asyncio.timeout(execution_plan.get("timeout", 300)):
+                    if tool_config.language == "go":
+                        result = await self._execute_go_tool(tool_config, target_url)
+                    elif tool_config.language == "ruby":
+                        result = await self._execute_ruby_tool(tool_config, target_url)
+                    elif tool_config.language == "python":
+                        result = await self._execute_python_tool(tool_config, target_url)
+                    elif tool_config.language == "rust":
+                        result = await self._execute_rust_tool(tool_config, target_url)
+                    else:
+                        raise ValueError(f"Unsupported language: {tool_config.language}")
                 
                 execution_time = time.time() - start_time
                 
@@ -310,38 +415,33 @@ class CrossLanguageXSSEngine:
                 
             except asyncio.TimeoutError:
                 execution_time = time.time() - start_time
-                self.logger.error(f"{tool_name} timed out after {timeout}s")
-                return XSSDetectionResult(
-                    tool_name=tool_name,
-                    language=execution_plan["language"],
-                    target_url=target_url,
-                    vulnerability_found=False,
-                    confidence=0.0,
-                    payloads=[],
-                    execution_time=execution_time,
-                    raw_output="",
-                    error_message=f"Tool execution timed out after {timeout}s"
-                )
+                error_msg = f"{tool_name} 執行超時"
+                self.logger.error(error_msg)
+                # ✅ 修復: 拋出異常耏非回傳空結果
+                raise RuntimeError(
+                    f"XSS 檢測工具執行超時: {tool_name}\n"
+                    f"目標: {target_url}\n"
+                    f"超時時間: {timeout}s\n"
+                    f"建議: 增加 timeout 設置或檢查目標可訪問性"
+                ) from None
             except Exception as e:
                 execution_time = time.time() - start_time
-                self.logger.error(f"{tool_name} failed: {e}")
-                return XSSDetectionResult(
-                    tool_name=tool_name,
-                    language=execution_plan["language"],
-                    target_url=target_url,
-                    vulnerability_found=False,
-                    confidence=0.0,
-                    payloads=[],
-                    execution_time=execution_time,
-                    raw_output="",
-                    error_message=str(e)
-                )
+                self.logger.error(f"{tool_name} 執行失敗: {e}")
+                # ✅ 修復: 拋出異常而非回傳空結果 (移除偽陰性)
+                raise RuntimeError(
+                    f"XSS 檢測工具執行失敗: {tool_name}\n"
+                    f"目標: {target_url}\n"
+                    f"錯誤: {str(e)}\n"
+                    f"請檢查:\n"
+                    f"  1. 工具是否正確安裝\n"
+                    f"  2. 目標 URL 是否可訪問\n"
+                    f"  3. 網絡連接是否正常"
+                ) from e
     
     async def _execute_go_tool(
         self, 
         tool_config: XSSToolConfig, 
-        target_url: str, 
-        timeout: int
+        target_url: str
     ) -> subprocess.CompletedProcess:
         """執行 Go 語言工具"""
         if tool_config.name == "Dalfox":
@@ -372,8 +472,7 @@ class CrossLanguageXSSEngine:
     async def _execute_ruby_tool(
         self, 
         tool_config: XSSToolConfig, 
-        target_url: str, 
-        timeout: int
+        target_url: str
     ) -> subprocess.CompletedProcess:
         """執行 Ruby 語言工具"""
         if tool_config.name == "XSpear":
@@ -402,8 +501,7 @@ class CrossLanguageXSSEngine:
     async def _execute_python_tool(
         self, 
         tool_config: XSSToolConfig, 
-        target_url: str, 
-        timeout: int
+        target_url: str
     ) -> subprocess.CompletedProcess:
         """執行 Python 語言工具"""
         # 根據工具名稱構建命令
@@ -442,8 +540,7 @@ print(json.dumps(results))
     async def _execute_rust_tool(
         self, 
         tool_config: XSSToolConfig, 
-        target_url: str, 
-        timeout: int
+        target_url: str
     ) -> subprocess.CompletedProcess:
         """執行 Rust 語言工具"""
         if tool_config.name == "RVuln":

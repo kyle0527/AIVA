@@ -11,8 +11,8 @@ from decimal import Decimal
 
 import httpx
 
-from services.aiva_common.enums.vulnerability import VulnerabilityType, Severity, Confidence
-from .finding_helper import mk_finding
+from services.aiva_common.enums import VulnerabilityType, Severity, Confidence
+from .finding_helper import create_bizlogic_finding
 
 logger = logging.getLogger(__name__)
 

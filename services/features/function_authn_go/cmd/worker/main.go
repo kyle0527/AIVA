@@ -1,11 +1,11 @@
 package main
 
 import (
-    "encoding/json"
-    "log"
-    "os"
+	"encoding/json"
+	"fmt"
+	"log"
 
-    "aiva/function_authn_go/internal"
+	"aiva/function_authn_go/internal"
 )
 
 func main() {
@@ -36,7 +36,11 @@ func main() {
             continue
         }
         _ = b.PublishStatus(statusQueue, "IN_PROGRESS", "authn task started")
-        findings := eng.RunTests(task)
+        findings, err := eng.RunTests(task)
+        if err != nil {
+            _ = b.PublishStatus(statusQueue, "ERROR", fmt.Sprintf("test execution failed: %v", err))
+            continue
+        }
         for _, f := range findings {
             _ = b.PublishFinding(findingQueue, f)
         }
