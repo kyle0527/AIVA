@@ -32,12 +32,20 @@ from rich.progress import Progress, SpinnerColumn, TextColumn
 from rich.table import Table
 from rich.text import Text
 
+# 常數定義 - 避免字串重複
+CONSOLE_PROMPTS = {
+    'URL_INPUT': "[bold cyan]請輸入目標 URL: [/bold cyan]",
+    'URL_EMPTY_ERROR': "[bold red]URL 不能為空[/bold red]",
+    'INVALID_OPTION': "[bold red]無效選項，請重新選擇[/bold red]",
+    'PROGRAM_INTERRUPTED': "[bold yellow]程序已中斷[/bold yellow]",
+    'GOODBYE': "[bold yellow]感謝使用 AIVA SQL 注入工具集![/bold yellow]"
+}
+
 from services.aiva_common.schemas import APIResponse
-from services.config.settings_manager import SettingsManager
-from utilities.logger_setup import setup_logger
+from services.aiva_common.utils import get_logger
 
 
-logger = setup_logger(__name__)
+logger = get_logger(__name__)
 console = Console()
 
 
@@ -238,7 +246,24 @@ class CustomSQLInjectionScanner:
     
     def __init__(self):
         self.session: Optional[aiohttp.ClientSession] = None
+        self._own_session = False
         self.payloads = self._load_payloads()
+    
+    async def _ensure_session(self) -> aiohttp.ClientSession:
+        """確保 session 已初始化"""
+        if self.session is None:
+            self.session = aiohttp.ClientSession(
+                timeout=aiohttp.ClientTimeout(total=30),
+                connector=aiohttp.TCPConnector(limit=10)
+            )
+            self._own_session = True
+        return self.session
+    
+    async def close(self):
+        """關閉 session"""
+        if self.session and self._own_session:
+            await self.session.close()
+            self.session = None
         
     def _load_payloads(self) -> Dict[str, List[str]]:
         """載入 SQL 注入載荷"""
@@ -381,9 +406,10 @@ class CustomSQLInjectionScanner:
                 
                 # 發送測試請求
                 start_time = time.time()
+                session = await self._ensure_session()
                 
                 if target.method.upper() == "GET":
-                    async with self.session.get(
+                    async with session.get(
                         test_url,
                         headers=target.headers,
                         cookies=target.cookies
@@ -400,7 +426,7 @@ class CustomSQLInjectionScanner:
                         if vulnerability:
                             return vulnerability
                 else:
-                    async with self.session.post(
+                    async with session.post(
                         target.url,
                         data=test_data,
                         headers=target.headers,
@@ -637,7 +663,8 @@ class BlindSQLInjectionScanner:
                 test_url = f"{target.url}?id=1{urllib.parse.quote(payload)}"
                 
                 start_time = time.time()
-                async with self.session.get(test_url) as _:
+                session = await self._ensure_session()
+                async with session.get(test_url) as _:
                     response_time = time.time() - start_time
                     
                     # 如果響應時間大於 4 秒，可能存在時間盲注
@@ -670,12 +697,13 @@ class BlindSQLInjectionScanner:
         try:
             # 測試真條件
             true_url = f"{target.url}?id=1{urllib.parse.quote(true_condition)}"
-            async with self.session.get(true_url) as true_response:
+            session = await self._ensure_session()
+            async with session.get(true_url) as true_response:
                 true_content = await true_response.text()
             
             # 測試假條件
             false_url = f"{target.url}?id=1{urllib.parse.quote(false_condition)}"
-            async with self.session.get(false_url) as false_response:
+            async with session.get(false_url) as false_response:
                 false_content = await false_response.text()
             
             # 比較響應差異
@@ -905,15 +933,15 @@ class SQLInjectionCLI:
                 elif choice == "6":
                     self._show_scan_history()
                 elif choice == "7":
-                    await self._export_report()
+                    self._export_report()  # 移除 await，因為已改為同步函式
                 elif choice == "99":
-                    console.print("[bold yellow]感謝使用 AIVA SQL 注入工具集![/bold yellow]")
+                    console.print(CONSOLE_PROMPTS['GOODBYE'])
                     break
                 else:
-                    console.print("[bold red]無效選項，請重新選擇[/bold red]")
+                    console.print(CONSOLE_PROMPTS['INVALID_OPTION'])
                     
             except KeyboardInterrupt:
-                console.print("\n[bold yellow]程序已中斷[/bold yellow]")
+                console.print(CONSOLE_PROMPTS['PROGRAM_INTERRUPTED'])
                 break
             except Exception as e:
                 console.print(f"[bold red]錯誤: {e}[/bold red]")
@@ -1165,152 +1193,12 @@ class SQLInjectionCLI:
         console.print(method_table)
 
 
-class SQLInjectionCapability(BaseCapability):
-    """SQL 注入工具集能力類"""
-    
-    def __init__(self):
-        super().__init__()
-        self.manager = SQLInjectionManager()
-        self.cli = SQLInjectionCLI(self.manager)
-        
-    @property
-    def name(self) -> str:
-        return "sql_injection_tools"
-    
-    @property
-    def version(self) -> str:
-        return "1.0.0"
-    
-    @property
-    def description(self) -> str:
-        return "SQL 注入工具集 - Sqlmap、NoSQL、盲注、自定義掃描器集成"
-    
-    @property
-    def dependencies(self) -> List[str]:
-        return ["aiohttp", "requests", "rich"]
-    
-    async def initialize(self) -> bool:
-        """初始化 SQL 注入工具集"""
-        try:
-            logger.info("初始化 SQL 注入工具集...")
-            
-            # 檢查 Sqlmap 是否可用
-            if not self.manager.sqlmap.sqlmap_path:
-                logger.warning("Sqlmap 未找到，將在首次使用時自動安裝")
-            
-            logger.info("SQL 注入工具集初始化完成")
-            return True
-            
-        except Exception as e:
-            logger.error(f"SQL 注入工具集初始化失敗: {e}")
-            return False
-    
-    async def execute(self, command: str, parameters: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
-        """執行 SQL 注入命令"""
-        try:
-            parameters = parameters or {}
-            
-            if command == "comprehensive_scan":
-                target_url = parameters.get('target_url')
-                if not target_url:
-                    return {'success': False, 'error': 'Missing target_url parameter'}
-                
-                options = parameters.get('options', {})
-                results = await self.manager.comprehensive_scan(target_url, options)
-                return {'success': True, 'data': results}
-            
-            elif command == "sqlmap_scan":
-                target_url = parameters.get('target_url')
-                if not target_url:
-                    return {'success': False, 'error': 'Missing target_url parameter'}
-                
-                target = self.manager._parse_target(target_url, parameters)
-                sqlmap_options = parameters.get('sqlmap_options', {})
-                results = await self.manager.sqlmap.scan_target(target, sqlmap_options)
-                return {'success': True, 'data': [self.manager._result_to_dict(r) for r in results]}
-            
-            elif command == "custom_scan":
-                target_url = parameters.get('target_url')
-                if not target_url:
-                    return {'success': False, 'error': 'Missing target_url parameter'}
-                
-                target = self.manager._parse_target(target_url, parameters)
-                results = await self.manager.custom_scanner.scan_target(target)
-                return {'success': True, 'data': [self.manager._result_to_dict(r) for r in results]}
-            
-            elif command == "nosql_scan":
-                target_url = parameters.get('target_url')
-                if not target_url:
-                    return {'success': False, 'error': 'Missing target_url parameter'}
-                
-                target = self.manager._parse_target(target_url, parameters)
-                results = await self.manager.nosql_scanner.scan_target(target)
-                return {'success': True, 'data': [self.manager._result_to_dict(r) for r in results]}
-            
-            elif command == "blind_scan":
-                target_url = parameters.get('target_url')
-                if not target_url:
-                    return {'success': False, 'error': 'Missing target_url parameter'}
-                
-                target = self.manager._parse_target(target_url, parameters)
-                results = await self.manager.blind_scanner.scan_blind_injection(target)
-                return {'success': True, 'data': [self.manager._result_to_dict(r) for r in results]}
-            
-            elif command == "interactive":
-                await self.cli.run_interactive()
-                return {'success': True, 'message': 'Interactive session completed'}
-            
-            else:
-                return {'success': False, 'error': f'Unknown command: {command}'}
-                
-        except Exception as e:
-            logger.error(f"執行 SQL 注入命令失敗: {e}")
-            return {'success': False, 'error': str(e)}
-    
-    async def cleanup(self) -> bool:
-        """清理資源"""
-        try:
-            # 清理掃描結果
-            self.manager.scan_results.clear()
-            
-            # 清理 sqlmap 會話文件
-            for session_file in self.manager.sqlmap.session_files:
-                try:
-                    if session_file.exists():
-                        session_file.unlink()
-                except Exception as e:
-                    logger.warning(f"清理會話文件失敗: {e}")
-            
-            logger.info("SQL 注入工具集清理完成")
-            return True
-        except Exception as e:
-            logger.error(f"SQL 注入工具集清理失敗: {e}")
-            return False
+# ============================================================================
+# 註：以下 SQLInjectionCapability 類別為舊註冊系統，已棄用
+# 現使用 command_handler.py 中的 SQLiCommandHandler 統一處理
+# ============================================================================
 
-
-# 註冊能力到系統
-async def register_capability():
-    """註冊 SQL 注入工具集能力"""
-    try:
-        capability = SQLInjectionCapability()
-        success = await CapabilityRegistry.register_capability(capability)
-        if success:
-            logger.info("SQL 注入工具集能力註冊成功")
-        else:
-            logger.error("SQL 注入工具集能力註冊失敗")
-        return success
-    except Exception as e:
-        logger.error(f"註冊 SQL 注入工具集能力時發生錯誤: {e}")
-        return False
-
-
-if __name__ == "__main__":
-    async def main():
-        """主函數 - 用於測試"""
-        capability = SQLInjectionCapability()
-        await capability.initialize()
-        
-        # 測試交互式介面
-        await capability.execute('interactive')
-    
-    asyncio.run(main())
+# TODO: 實現 SQL 注入功能類別 - 需要進一步開發
+# class SQLInjectionCapability(BaseCapability):
+#     """SQL 注入工具集能力類 - 已棄用，使用 SQLiCommandHandler 代替"""
+#     pass

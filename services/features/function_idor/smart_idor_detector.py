@@ -13,15 +13,10 @@ import httpx
 
 from services.aiva_common.schemas import FunctionTaskPayload
 from services.aiva_common.utils import get_logger
-from services.function.common.detection_config import IDORConfig
-from services.function.common.unified_smart_detection_manager import (
-    DetectionMetrics,
-    UnifiedSmartDetectionManager,
-)
-
-from .cross_user_tester import CrossUserTester, CrossUserTestResult
-from .resource_id_extractor import ResourceId, ResourceIdExtractor
-from .vertical_escalation_tester import (
+from .config.idor_config import IdorConfig
+from services.features.common.testers.cross_user_tester import CrossUserTester, CrossUserTestResult
+from services.features.function_idor.resource_id_extractor import ResourceId, ResourceIdExtractor
+from services.features.common.testers.vertical_escalation_tester import (
     PrivilegeLevel,
     VerticalEscalationTester,
     VerticalTestResult,
@@ -67,25 +62,23 @@ class IDORDetectionContext:
 class SmartIDORDetector:
     """智能 IDOR 檢測器 - 基於統一檢測管理器"""
 
-    def __init__(self, config: IDORConfig | None = None) -> None:
+    def __init__(self, config: IdorConfig | None = None) -> None:
         """
         初始化智能 IDOR 檢測器
 
         Args:
             config: IDOR 檢測配置，如果未提供則使用默認配置
         """
-        self.config = config or IDORConfig()
-        self.smart_manager = UnifiedSmartDetectionManager("IDOR", self.config)
+        self.config = config or IdorConfig()
 
         logger.info(
             "Smart IDOR Detector initialized",
             extra={
-                "max_vulnerabilities": self.config.max_vulnerabilities,
-                "timeout_base": self.config.timeout_base,
-                "timeout_max": self.config.timeout_max,
-                "horizontal_enabled": self.config.horizontal_escalation_enabled,
-                "vertical_enabled": self.config.vertical_escalation_enabled,
-                "id_generation_methods": len(self.config.id_generation_methods),
+                "max_id_variations": self.config.max_id_variations,
+                "request_timeout": self.config.request_timeout,
+                "horizontal_enabled": self.config.horizontal_enabled,
+                "vertical_enabled": self.config.vertical_enabled,
+                "safe_mode": self.config.safe_mode,
             },
         )
 
@@ -97,7 +90,7 @@ class SmartIDORDetector:
         id_extractor: ResourceIdExtractor,
         cross_user_tester: CrossUserTester,
         vertical_tester: VerticalEscalationTester,
-    ) -> tuple[list[dict[str, Any]], DetectionMetrics]:
+    ) -> tuple[list[dict[str, Any]], dict[str, Any]]:
         """
         執行智能 IDOR 檢測
 
@@ -143,11 +136,11 @@ class SmartIDORDetector:
             )
 
             # 2. 執行水平權限測試（如果啟用）
-            if self.config.horizontal_escalation_enabled:
+            if self.config.horizontal_enabled:
                 await self._execute_horizontal_testing(context, resource_ids)
 
             # 3. 執行垂直權限測試（如果啟用）
-            if self.config.vertical_escalation_enabled:
+            if self.config.vertical_enabled:
                 await self._execute_vertical_testing(context, resource_ids)
 
             logger.info(
@@ -161,7 +154,7 @@ class SmartIDORDetector:
                 },
             )
 
-            return context.findings, self.smart_manager.metrics
+            return context.findings, {"attempts": context.attempts, "horizontal_tests": context.horizontal_tests, "vertical_tests": context.vertical_tests}
 
         except Exception as exc:
             logger.exception(
@@ -169,21 +162,17 @@ class SmartIDORDetector:
                 extra={"task_id": task.task_id},
             )
             context.add_error(str(exc))
-            return context.findings, self.smart_manager.metrics
+            return context.findings, {"attempts": context.attempts, "errors": 1}
 
     def _calculate_total_steps(self) -> int:
         """計算總檢測步驟數"""
         steps = 1  # ID 提取
 
-        if self.config.horizontal_escalation_enabled:
-            steps += (
-                len(self.config.id_generation_methods) * 2
-            )  # 每個方法有前後兩個測試
+        if self.config.horizontal_enabled:
+            steps += self.config.max_id_variations * 2  # 每個變異有前後兩個測試
 
-        if self.config.vertical_escalation_enabled:
-            steps += (
-                len(self.config.privilege_levels) * 2
-            )  # 每個權限級別有升級和降級測試
+        if self.config.vertical_enabled:
+            steps += 4  # 基本的權限提升測試
 
         return steps
 
@@ -200,7 +189,6 @@ class SmartIDORDetector:
             提取到的資源 ID 列表
         """
         try:
-            self.smart_manager.update_progress("提取資源 ID")
             context.id_extraction_attempts += 1
 
             # 從 URL 提取 ID
@@ -258,17 +246,9 @@ class SmartIDORDetector:
             resource_ids: 資源 ID 列表
         """
         for resource_id in resource_ids:
-            # 檢查是否應該早期停止
-            if not self.smart_manager.should_continue_testing():
-                logger.info("Early stopping triggered during horizontal testing")
-                break
-
-            # 為每種 ID 生成方法執行測試
-            for method in self.config.id_generation_methods:
-                if not self.smart_manager.should_continue_testing():
-                    break
-
-                await self._test_horizontal_access(context, resource_id, method)
+            # 基於配置的最大變異數執行測試
+            for i in range(self.config.max_id_variations):
+                await self._test_horizontal_access(context, resource_id)
                 context.horizontal_tests += 1
 
     async def _execute_vertical_testing(
@@ -283,17 +263,12 @@ class SmartIDORDetector:
             context: 檢測上下文
             resource_ids: 資源 ID 列表
         """
+        # 基本的權限級別測試
+        privilege_levels = [PrivilegeLevel.ADMIN, PrivilegeLevel.USER, PrivilegeLevel.GUEST]
+        
         for resource_id in resource_ids:
-            # 檢查是否應該早期停止
-            if not self.smart_manager.should_continue_testing():
-                logger.info("Early stopping triggered during vertical testing")
-                break
-
             # 為每個權限級別執行測試
-            for privilege_level in self.config.privilege_levels:
-                if not self.smart_manager.should_continue_testing():
-                    break
-
+            for privilege_level in privilege_levels:
                 await self._test_vertical_access(context, resource_id, privilege_level)
                 context.vertical_tests += 1
 
@@ -301,7 +276,6 @@ class SmartIDORDetector:
         self,
         context: IDORDetectionContext,
         resource_id: ResourceId,
-        method: str,
     ) -> None:
         """
         測試水平權限訪問
@@ -309,7 +283,6 @@ class SmartIDORDetector:
         Args:
             context: 檢測上下文
             resource_id: 資源 ID
-            method: ID 生成方法
         """
         try:
             self.smart_manager.update_progress(

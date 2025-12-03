@@ -14,11 +14,11 @@ import httpx
 
 from services.aiva_common.schemas import FunctionTaskPayload
 from services.aiva_common.utils import get_logger
-from services.function.common.detection_config import SSRFConfig
-from services.function.common.unified_smart_detection_manager import (
-    DetectionMetrics,
-    UnifiedSmartDetectionManager,
-)
+from .config.ssrf_config import SsrfConfig
+# from services.function.common.unified_smart_detection_manager import (
+#     DetectionMetrics,
+#     UnifiedSmartDetectionManager,
+# )
 
 from .internal_address_detector import InternalAddressDetector
 from .oast_dispatcher import OastDispatcher, OastEvent
@@ -69,22 +69,21 @@ class SSRFDetectionContext:
 class SmartSSRFDetector:
     """智能 SSRF 檢測器"""
 
-    def __init__(self, config: SSRFConfig | None = None) -> None:
+    def __init__(self, config: SsrfConfig | None = None) -> None:
         """
         初始化智能 SSRF 檢測器
 
         Args:
             config: SSRF 檢測配置，如果未提供則使用默認配置
         """
-        self.config = config or SSRFConfig()
-        self.smart_manager = UnifiedSmartDetectionManager("SSRF", self.config)
+        self.config = config or SsrfConfig()
         logger.info(
             "Smart SSRF Detector initialized",
             extra={
-                "max_vulnerabilities": self.config.max_vulnerabilities,
-                "timeout_base": self.config.timeout_base,
-                "timeout_max": self.config.timeout_max,
-                "requests_per_second": self.config.requests_per_second,
+                "enable_internal_scan": self.config.enable_internal_scan,
+                "enable_cloud_metadata": self.config.enable_cloud_metadata,
+                "request_timeout": self.config.request_timeout,
+                "safe_mode": self.config.safe_mode,
             },
         )
 
@@ -96,7 +95,7 @@ class SmartSSRFDetector:
         analyzer: ParamSemanticsAnalyzer,
         detector: InternalAddressDetector,
         dispatcher: OastDispatcher,
-    ) -> tuple[list[dict[str, Any]], DetectionMetrics]:
+    ) -> tuple[list[dict[str, Any]], dict[str, Any]]:
         """
         執行智能 SSRF 檢測
 

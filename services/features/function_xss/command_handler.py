@@ -5,12 +5,21 @@ XSS 功能模組命令處理器
 包裝現有的 XSS 檢測功能,使其可以被 AI 通過 AICommandCenter 調用。
 
 Usage:
-    from services.aiva_common import get_command_center
     from services.features.function_xss.command_handler import XSSCommandHandler
+    from services.aiva_common.schemas.commands import AICommand, CommandType
     
-    command_center = get_command_center()
+    # 直接創建處理器
     xss_handler = XSSCommandHandler()
-    command_center.register_module("features.xss", xss_handler)
+    
+    # 創建命令
+    command = AICommand(
+        command_type=CommandType.FEATURE_XSS_TEST,
+        payload={"target_url": "https://example.com"},
+        target_module="features.xss"
+    )
+    
+    # 直接執行
+    result = await xss_handler.handle_command(command)
 """
 
 import asyncio
@@ -30,11 +39,19 @@ from services.aiva_common.schemas.commands import (
 from services.aiva_common.utils import get_logger
 
 # 現有 XSS 功能導入
-from .integration_tools.xss_tools import (
-    XSSManager,
-    XSSTarget,
-    XSSVulnerability,
-)
+try:
+    from .integration_tools.xss_tools import (
+        XSSManager,
+        XSSTarget,
+        XSSVulnerability,
+    )
+except ImportError:
+    # 如果相對導入失敗，使用絕對導入
+    from features.function_xss.integration_tools.xss_tools import (
+        XSSManager,
+        XSSTarget,
+        XSSVulnerability,
+    )
 
 logger = get_logger(__name__)
 

@@ -5,12 +5,21 @@ Wordlist Generator 功能模組命令處理器
 包裝現有的字典生成功能,使其可以被 AI 通過 AICommandCenter 調用。
 
 Usage:
-    from services.aiva_common import get_command_center
     from services.features.function_wordlist_generator.handler import WordlistGeneratorCommandHandler
+    from services.aiva_common.schemas.commands import AICommand, CommandType
     
-    command_center = get_command_center()
+    # 直接創建處理器
     wordlist_handler = WordlistGeneratorCommandHandler()
-    command_center.register_module("features.wordlist_generator", wordlist_handler)
+    
+    # 創建命令
+    command = AICommand(
+        command_type=CommandType.FEATURE_WORDLIST_GENERATE,
+        payload={"base_words": ["admin", "password"]},
+        target_module="features.wordlist_generator"
+    )
+    
+    # 直接執行
+    result = await wordlist_handler.handle_command(command)
 """
 
 import asyncio

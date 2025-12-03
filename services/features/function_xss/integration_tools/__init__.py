@@ -7,10 +7,10 @@ from .xss_tools import (
     XSSTarget,
     XSSVulnerability,
     DalfoxIntegration,
-    ReflectedXSSScanner,
-    DOMXSSScanner,
-    StoredXSSScanner,
-    BlindXSSScanner,
+    XSSPayloadGenerator,
+    DOMXSSDetector,
+    StoredXSSDetector,
+    BlindXSSDetector,
     XSSManager,
 )
 
@@ -18,9 +18,9 @@ __all__ = [
     "XSSTarget",
     "XSSVulnerability",
     "DalfoxIntegration",
-    "ReflectedXSSScanner",
-    "DOMXSSScanner",
-    "StoredXSSScanner",
-    "BlindXSSScanner",
+    "XSSPayloadGenerator",
+    "DOMXSSDetector",
+    "StoredXSSDetector",
+    "BlindXSSDetector",
     "XSSManager",
 ]

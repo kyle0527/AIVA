@@ -5,26 +5,14 @@
 
 from .sql_tools import (
     SQLTarget,
-    SQLVulnerability,
+    SQLInjectionResult,
     SqlmapIntegration,
-    NoSQLMapIntegration,
-    TimeSQLIScanner,
-    AutoSQLIScanner,
-    SQLIManager,
-)
-from .bounty_hunter import (
-    HighValueTarget,
-    BountyHunterSQLI,
+    SQLInjectionManager,
 )
 
 __all__ = [
     "SQLTarget",
-    "SQLVulnerability",
+    "SQLInjectionResult",
     "SqlmapIntegration",
-    "NoSQLMapIntegration",
-    "TimeSQLIScanner",
-    "AutoSQLIScanner",
-    "SQLIManager",
-    "HighValueTarget",
-    "BountyHunterSQLI",
+    "SQLInjectionManager",
 ]

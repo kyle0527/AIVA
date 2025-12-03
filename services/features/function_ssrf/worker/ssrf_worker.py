@@ -8,14 +8,11 @@ from ..detector.ssrf_detector import SSRFDetector
 
 logger = get_logger(__name__)
 
-def _topic(env_name: str, default: str):
-    return os.getenv(env_name, default)
-
 async def run():
     broker = await get_broker()
-    task_topic = _topic("SSRF_TOPIC_TASK", getattr(Topic,"TASK_FUNCTION_SSRF","TASK_FUNCTION_SSRF"))
-    finding_topic = _topic("TOPIC_FINDING", getattr(Topic,"FINDING_DETECTED","FINDING_DETECTED"))
-    status_topic = _topic("TOPIC_STATUS", getattr(Topic,"TASK_STATUS","TASK_STATUS"))
+    task_topic = Topic.TASK_FUNCTION_SSRF
+    finding_topic = Topic.FINDING_DETECTED
+    status_topic = Topic.STATUS_TASK_UPDATE
 
     config = SsrfConfig(
         enable_internal_scan = os.getenv("SSRF_ENABLE_INTERNAL","true").lower()=="true",
@@ -28,7 +25,7 @@ async def run():
     )
     detector = SSRFDetector(config)
 
-    async for mqmsg in broker.subscribe(task_topic):
+    async for mqmsg in await broker.subscribe(task_topic):
         try:
             msg = AivaMessage.model_validate_json(mqmsg.body)
             task = FunctionTaskPayload(**msg.payload)
@@ -37,7 +34,7 @@ async def run():
 
             # IN_PROGRESS
             await broker.publish(status_topic, json.dumps(AivaMessage(
-                header=MessageHeader(message_id=new_id("msg"), trace_id=trace_id, source_module=getattr(ModuleName,"FUNC_SSRF","FUNC_SSRF")),
+                header=MessageHeader(message_id=new_id("msg"), trace_id=trace_id, source_module=ModuleName.FUNC_SSRF),
                 topic=status_topic, payload={"status":"IN_PROGRESS","target":target_url}
             ).model_dump()).encode("utf-8"))
 
@@ -46,19 +43,19 @@ async def run():
                 f.task_id = task.task_id
                 f.scan_id = task.scan_id
                 out = AivaMessage(
-                    header=MessageHeader(message_id=new_id("msg"), trace_id=trace_id, source_module=getattr(ModuleName,"FUNC_SSRF","FUNC_SSRF")),
+                    header=MessageHeader(message_id=new_id("msg"), trace_id=trace_id, source_module=ModuleName.FUNC_SSRF),
                     topic=finding_topic, payload=f.model_dump()
                 )
                 await broker.publish(finding_topic, json.dumps(out.model_dump()).encode("utf-8"))
 
             # COMPLETED
             await broker.publish(status_topic, json.dumps(AivaMessage(
-                header=MessageHeader(message_id=new_id("msg"), trace_id=trace_id, source_module=getattr(ModuleName,"FUNC_SSRF","FUNC_SSRF")),
+                header=MessageHeader(message_id=new_id("msg"), trace_id=trace_id, source_module=ModuleName.FUNC_SSRF),
                 topic=status_topic, payload={"status":"COMPLETED","target":target_url,"findings_count":len(findings)}
             ).model_dump()).encode("utf-8"))
         except Exception as e:
             logger.exception("SSRF task failed")
             await broker.publish(status_topic, json.dumps(AivaMessage(
-                header=MessageHeader(message_id=new_id("msg"), trace_id=new_id("trace"), source_module=getattr(ModuleName,"FUNC_SSRF","FUNC_SSRF")),
+                header=MessageHeader(message_id=new_id("msg"), trace_id=new_id("trace"), source_module=ModuleName.FUNC_SSRF),
                 topic=status_topic, payload={"status":"ERROR","error":str(e)}
             ).model_dump()).encode("utf-8"))

@@ -13,7 +13,7 @@ from typing import List, Dict, Optional, Any
 class ForensicAnalysisType(str, Enum):
     """取證分析類型"""
     DISK_IMAGE = "disk_image"
-    MEMORY_DUMP = "memory_dump"
+    MEMORY_DUMP = "memory_dump" 
     NETWORK_CAPTURE = "network_capture"
     FILE_CARVING = "file_carving"
     TIMELINE_ANALYSIS = "timeline_analysis"

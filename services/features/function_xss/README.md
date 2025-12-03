@@ -33,7 +33,97 @@
 
 ## 🚀 支援指令
 
-### 實際使用方式
+### 方式一：直接執行檢測器（開發/測試用）
+
+**適用場景**: 快速驗證、單元測試、本地開發
+
+```bash
+# 進入專案目錄
+cd c:\D\fold7\AIVA-git
+
+# 執行 XSS 檢測測試
+python -c "import asyncio; from services.aiva_common.schemas.tasks import FunctionTaskPayload, FunctionTaskTarget; from services.features.function_xss.traditional_detector import TraditionalXssDetector; exec('''
+async def test_xss():
+    # 建立任務結構
+    task = FunctionTaskPayload(
+        task_id=\"task_xss_001\",
+        scan_id=\"scan_001\",
+        target=FunctionTaskTarget(
+            url=\"http://localhost:3000/rest/products/search\",
+            parameter=\"q\",
+            method=\"GET\",
+            parameter_location=\"query\"
+        ),
+        strategy=\"normal\"
+    )
+    
+    # 建立檢測器
+    detector = TraditionalXssDetector(task, timeout=10.0)
+    
+    # 定義測試 payloads
+    payloads = [
+        \"<script>alert(1)</script>\",
+        \"<img src=x onerror=alert(2)>\"
+    ]
+    
+    # 執行檢測
+    results = await detector.execute(payloads)
+    print(f\"Reflections found: {len(results)}\")
+
+asyncio.run(test_xss())
+''')"
+```
+
+**指令參數說明**:
+- `task_id`: 任務唯一識別碼，必須以 `task_` 開頭
+- `scan_id`: 掃描會話 ID，用於關聯多個任務
+- `target.url`: 目標 URL，完整的 HTTP/HTTPS 位址
+- `target.parameter`: 要測試的參數名稱（如 `q`, `search`, `input`）
+- `target.method`: HTTP 方法 (`GET`, `POST`, `PUT`, `DELETE`)
+- `target.parameter_location`: 參數位置 (`query`, `body`, `header`, `cookie`)
+- `strategy`: 檢測策略 (`normal`, `aggressive`, `stealth`)
+- `timeout`: 超時時間（秒），預設 10.0
+
+**參數變化範例**:
+```python
+# GET 參數測試
+target=FunctionTaskTarget(
+    url="http://example.com/search",
+    parameter="q",
+    method="GET",
+    parameter_location="query"
+)
+
+# POST Body 測試
+target=FunctionTaskTarget(
+    url="http://example.com/comment",
+    parameter="content",
+    method="POST",
+    parameter_location="body",
+    form_data={"username": "test"}  # 其他表單字段
+)
+
+# Header 測試
+target=FunctionTaskTarget(
+    url="http://example.com/api",
+    parameter="X-Custom-Header",
+    method="GET",
+    parameter_location="header"
+)
+
+# Cookie 測試
+target=FunctionTaskTarget(
+    url="http://example.com/profile",
+    parameter="session_id",
+    method="GET",
+    parameter_location="cookie"
+)
+```
+
+### 方式二：透過 Message Queue（生產環境用）
+
+**適用場景**: 分散式架構、非同步任務、生產環境
+
 ```python
 from services.aiva_common.schemas import AICommand, CommandType
 from services.aiva_common import get_command_center

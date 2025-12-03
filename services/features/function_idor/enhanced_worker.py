@@ -18,11 +18,11 @@ from services.aiva_common.schemas import (
     FunctionTaskPayload,
 )
 from services.aiva_common.utils import get_logger
-from services.function.common.detection_config import IDORConfig
-from services.function.common.worker_statistics import (
-    StatisticsCollector,
-    StoppingReason,
-)
+from .config.idor_config import IdorConfig
+# from services.function.common.worker_statistics import (
+#     StatisticsCollector, 
+#     StoppingReason,
+# )
 
 from .cross_user_tester import CrossUserTester
 from .resource_id_extractor import ResourceIdExtractor
@@ -84,14 +84,14 @@ class EnhancedIdorTaskExecutionResult:
 class EnhancedIDORWorker:
     """增強版 IDOR 工作器 - 維持四大模組架構"""
 
-    def __init__(self, config: IDORConfig | None = None) -> None:
+    def __init__(self, config: IdorConfig | None = None) -> None:
         """
         初始化增強版 IDOR 工作器
 
         Args:
             config: IDOR 檢測配置
         """
-        self.config = config or IDORConfig()
+        self.config = config or IdorConfig()
         self.smart_detector = SmartIDORDetector(self.config)
 
         logger.info(

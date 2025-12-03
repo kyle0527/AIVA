@@ -25,26 +25,22 @@ AIVA Features - 高價值功能模組
 - function_ddos: DDoS 測試
 - function_authn_go: 認證測試 (Go)
 
-🎯 **統一命令系統集成**:
-所有模組都通過 aiva_common 命令中心進行統一管理:
+🎯 **直接功能調用**:
+所有模組都可以直接調用，無需註冊系統:
 
-    from services.aiva_common import get_command_center
-    from services.features.register_function_modules import register_all_function_modules
+    from services.features.function_xss.command_handler import XSSCommandHandler
+    from services.aiva_common.schemas.commands import AICommand, CommandType
     
-    # 註冊所有功能模組
-    await register_all_function_modules()
-    
-    # 獲取命令中心
-    command_center = get_command_center()
+    # 直接創建處理器
+    xss_handler = XSSCommandHandler()
     
     # 執行功能測試
-    result = await command_center.execute_command(
-        AICommand(
-            command_type=CommandType.FEATURE_XSS_TEST,
-            payload={"target_url": "https://example.com"},
-            target_module="features.xss"
-        )
+    command = AICommand(
+        command_type=CommandType.FEATURE_XSS_TEST,
+        payload={"target_url": "https://example.com"},
+        target_module="features.xss"
     )
+    result = await xss_handler.handle_command(command)
 
 🔒 **安全注意事項**:
 使用前請確保設置適當的目標白名單以避免意外掃描！
@@ -78,13 +74,17 @@ from services.aiva_common.schemas import (
 
 # ==================== 從 aiva_common 導入 Features 使用的類 ====================
 # 注意: 這些類實際定義在 aiva_common.schemas 中，而非本地 models 模組
-from ..aiva_common.schemas.tasks import (
-    APISchemaPayload,
-    APISecurityTestPayload,
-    APITestCase,
-)
-from ..aiva_common.schemas.base import ExecutionError
-from ..aiva_common.schemas.telemetry import FunctionTelemetry
+try:
+    from aiva_common.schemas.tasks import (
+        APISchemaPayload,
+        APISecurityTestPayload,
+        APITestCase,
+    )
+    from aiva_common.schemas.base import ExecutionError
+    from aiva_common.schemas.telemetry import FunctionTelemetry
+except ImportError:
+    # 如果相對導入失敗，先跳過這些導入
+    pass
 
 # ==================== 本模組專屬類型（待實現或移除） ====================
 # 以下類型暫時註釋，保留作為未來功能預留
