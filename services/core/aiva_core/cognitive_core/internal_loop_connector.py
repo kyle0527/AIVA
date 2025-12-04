@@ -268,8 +268,71 @@ class InternalLoopConnector:
         
         return enhanced
     
+    # 類別匹配規則（降低複雜度）
+    CATEGORY_RULES = {
+        "scanning": {
+            "keywords": ["scan", "detect", "discover", "probe"],
+            "sub_categories": {
+                "port_scan": ["port", "nmap"],
+                "vulnerability_scan": ["vuln", "vulnerability"],
+                "service_detection": ["service"],
+                "web_crawling": ["crawl", "spider"],
+            }
+        },
+        "attacking": {
+            "keywords": ["attack", "exploit", "inject", "bypass"],
+            "sub_categories": {
+                "sql_injection": ["sql"],
+                "xss": ["xss"],
+                "csrf": ["csrf"],
+                "ssrf": ["ssrf"],
+                "auth_bypass": ["auth", "login"],
+                "business_logic": ["business", "logic"],
+            }
+        },
+        "analysis": {
+            "keywords": ["analyze", "parse", "compare", "deviation"],
+            "sub_categories": {
+                "deviation_analysis": ["deviation"],
+                "result_parsing": ["parse", "result"],
+                "pattern_matching": ["pattern", "match"],
+            }
+        },
+        "utility": {
+            "keywords": ["encode", "decode", "encrypt", "decrypt", "transform"],
+            "sub_categories": {
+                "encoding": ["encode", "decode"],
+                "encryption": ["encrypt", "decrypt"],
+                "data_transformation": ["transform", "convert"],
+            }
+        },
+        "reporting": {
+            "keywords": ["report", "generate", "metric", "stat"],
+            "sub_categories": {
+                "report_generation": ["report", "generate"],
+                "metrics": ["metric", "stat"],
+            }
+        },
+        "integration": {
+            "keywords": ["coordinate", "orchestrate", "integrate"],
+            "sub_categories": {
+                "coordination": ["coordinate"],
+                "orchestration": ["orchestrate"],
+            }
+        }
+    }
+    
+    def _match_sub_category(self, name: str, sub_categories: dict[str, list[str]]) -> str | None:
+        """匹配子類別（降低複雜度的輔助函數）"""
+        for sub_cat, keywords in sub_categories.items():
+            if any(k in name for k in keywords):
+                return sub_cat
+        return None
+    
     def _categorize_capability(self, cap: dict) -> tuple[str, str | None]:
         """根據能力名稱和模組自動分類
+        
+        使用查找表模式替代嵌套 if-elif 結構以降低認知複雜度
         
         Args:
             cap: 能力數據
@@ -278,71 +341,14 @@ class InternalLoopConnector:
             (category, sub_category) 元組
         """
         name = cap["name"].lower()
-        # module 變數未使用，已移除
         
-        # Scanning 類別
-        if any(k in name for k in ["scan", "detect", "discover", "probe"]):
-            if "port" in name or "nmap" in name:
-                return ("scanning", "port_scan")
-            elif "vuln" in name or "vulnerability" in name:
-                return ("scanning", "vulnerability_scan")
-            elif "service" in name:
-                return ("scanning", "service_detection")
-            elif "crawl" in name or "spider" in name:
-                return ("scanning", "web_crawling")
-            return ("scanning", None)
-        
-        # Attacking 類別
-        if any(k in name for k in ["attack", "exploit", "inject", "bypass"]):
-            if "sql" in name:
-                return ("attacking", "sql_injection")
-            elif "xss" in name:
-                return ("attacking", "xss")
-            elif "csrf" in name:
-                return ("attacking", "csrf")
-            elif "ssrf" in name:
-                return ("attacking", "ssrf")
-            elif "auth" in name or "login" in name:
-                return ("attacking", "auth_bypass")
-            elif "business" in name or "logic" in name:
-                return ("attacking", "business_logic")
-            return ("attacking", None)
-        
-        # Analysis 類別
-        if any(k in name for k in ["analyze", "parse", "compare", "deviation"]):
-            if "deviation" in name:
-                return ("analysis", "deviation_analysis")
-            elif "parse" in name or "result" in name:
-                return ("analysis", "result_parsing")
-            elif "pattern" in name or "match" in name:
-                return ("analysis", "pattern_matching")
-            return ("analysis", None)
-        
-        # Utility 類別
-        if any(k in name for k in ["encode", "decode", "encrypt", "decrypt", "transform"]):
-            if "encode" in name or "decode" in name:
-                return ("utility", "encoding")
-            elif "encrypt" in name or "decrypt" in name:
-                return ("utility", "encryption")
-            elif "transform" in name or "convert" in name:
-                return ("utility", "data_transformation")
-            return ("utility", None)
-        
-        # Reporting 類別
-        if any(k in name for k in ["report", "generate", "metric", "stat"]):
-            if "report" in name or "generate" in name:
-                return ("reporting", "report_generation")
-            elif "metric" in name or "stat" in name:
-                return ("reporting", "metrics")
-            return ("reporting", None)
-        
-        # Integration 類別
-        if any(k in name for k in ["coordinate", "orchestrate", "integrate"]):
-            if "coordinate" in name:
-                return ("integration", "coordination")
-            elif "orchestrate" in name:
-                return ("integration", "orchestration")
-            return ("integration", None)
+        # 遍歷類別規則
+        for category, rules in self.CATEGORY_RULES.items():
+            # 檢查主類別關鍵字
+            if any(k in name for k in rules["keywords"]):
+                # 查找子類別
+                sub_cat = self._match_sub_category(name, rules["sub_categories"])
+                return (category, sub_cat)
         
         # 默認為 Utility
         return ("utility", None)
@@ -688,8 +694,91 @@ class InternalLoopConnector:
             version=cap_enhanced.get("version", "1.0.0")
         )
     
+    def _build_basic_info_section(self, cap: ModuleCapability) -> list[str]:
+        """構建基本信息區塊（降低複雜度）"""
+        params_str = ", ".join(
+            f"{p.name}: {p.type}" + (f" = {p.default}" if p.default is not None else "")
+            for p in cap.parameters
+        )
+        
+        parts = [
+            f"# Capability: {cap.name}",
+            "\n## Basic Information",
+            f"- **ID**: {cap.capability_id}",
+            f"- **Module**: {cap.module}",
+            f"- **Function**: {cap.function}({params_str})",
+            f"- **Category**: {cap.category.value}",
+        ]
+        
+        if cap.sub_category:
+            parts.append(f"- **Sub-Category**: {cap.sub_category.value}")
+        
+        parts.extend([
+            f"- **Complexity**: {cap.complexity.value}/5",
+            f"- **Tags**: {', '.join(cap.tags) if cap.tags else 'None'}",
+        ])
+        
+        return parts
+    
+    def _build_parameters_section(self, cap: ModuleCapability) -> list[str]:
+        """構建參數區塊（降低複雜度）"""
+        if not cap.parameters:
+            return []
+        
+        parts = ["\n## Parameters"]
+        for p in cap.parameters:
+            required_str = "**Required**" if p.required else "Optional"
+            parts.append(f"- `{p.name}` ({p.type}): {required_str} - {p.description}")
+            if p.example is not None:
+                parts.append(f"  - Example: `{p.example}`")
+        
+        return parts
+    
+    def _build_examples_section(self, cap: ModuleCapability) -> list[str]:
+        """構建使用範例區塊（降低複雜度）"""
+        if not cap.usage_examples:
+            return []
+        
+        parts = ["\n## Usage Examples"]
+        for i, ex in enumerate(cap.usage_examples, 1):
+            parts.append(f"\n### Example {i}: {ex.title}")
+            parts.append(ex.description)
+            if ex.code_snippet:
+                parts.append(f"```python\n{ex.code_snippet}\n```")
+            if ex.notes:
+                parts.append(f"**Note**: {ex.notes}")
+        
+        return parts
+    
+    def _build_health_section(self, cap: ModuleCapability) -> list[str]:
+        """構建健康狀態區塊（降低複雜度）"""
+        parts = [
+            "\n## Health Status",
+            f"- Health Score: {cap.health_score:.2f}",
+            f"- Availability: {cap.availability:.2f}",
+            f"- Error Rate: {cap.error_rate:.2%}",
+        ]
+        
+        if cap.avg_latency_ms:
+            parts.append(f"- Average Latency: {cap.avg_latency_ms:.2f}ms")
+        
+        return parts
+    
+    def _build_dependencies_section(self, cap: ModuleCapability) -> list[str]:
+        """構建依賴信息區塊（降低複雜度）"""
+        parts = []
+        
+        if cap.dependencies:
+            parts.append(f"\n## Dependencies\n{', '.join(cap.dependencies)}")
+        if cap.prerequisites:
+            parts.append(f"\n## Prerequisites\n{', '.join(cap.prerequisites)}")
+        
+        return parts
+    
     def _convert_to_documents(self, capabilities: list[ModuleCapability]) -> list[dict]:
         """將能力轉換為 RAG 文檔格式（詳細版本）
+        
+        重構為多個小函數以降低認知複雜度
         
         Args:
             capabilities: 能力列表（Pydantic 模型）
@@ -700,74 +789,25 @@ class InternalLoopConnector:
         documents = []
         
         for cap in capabilities:
-            # 構建詳細的能力描述
-            params_str = ", ".join(
-                f"{p.name}: {p.type}" + (f" = {p.default}" if p.default is not None else "")
-                for p in cap.parameters
-            )
-            
-            content_parts = [
-                f"# Capability: {cap.name}",
-                "\n## Basic Information",
-                f"- **ID**: {cap.capability_id}",
-                f"- **Module**: {cap.module}",
-                f"- **Function**: {cap.function}({params_str})",
-                f"- **Category**: {cap.category.value}",
-            ]
-            
-            if cap.sub_category:
-                content_parts.append(f"- **Sub-Category**: {cap.sub_category.value}")
-            
-            content_parts.extend([
-                f"- **Complexity**: {cap.complexity.value}/5",
-                f"- **Tags**: {', '.join(cap.tags) if cap.tags else 'None'}",
-            ])
+            # 構建各個區塊
+            content_parts = []
+            content_parts.extend(self._build_basic_info_section(cap))
             
             # 添加描述
             if cap.description:
                 content_parts.append(f"\n## Description\n{cap.description}")
             
-            # 添加參數詳情
-            if cap.parameters:
-                content_parts.append("\n## Parameters")
-                for p in cap.parameters:
-                    required_str = "**Required**" if p.required else "Optional"
-                    content_parts.append(f"- `{p.name}` ({p.type}): {required_str} - {p.description}")
-                    if p.example is not None:
-                        content_parts.append(f"  - Example: `{p.example}`")
+            # 添加各個區塊
+            content_parts.extend(self._build_parameters_section(cap))
             
             # 添加返回值信息
             if cap.return_info:
                 content_parts.append(f"\n## Returns\n- Type: `{cap.return_info.type}`")
                 content_parts.append(f"- {cap.return_info.description}")
             
-            # 添加使用範例
-            if cap.usage_examples:
-                content_parts.append("\n## Usage Examples")
-                for i, ex in enumerate(cap.usage_examples, 1):
-                    content_parts.append(f"\n### Example {i}: {ex.title}")
-                    content_parts.append(ex.description)
-                    if ex.code_snippet:
-                        content_parts.append(f"```python\n{ex.code_snippet}\n```")
-                    if ex.notes:
-                        content_parts.append(f"**Note**: {ex.notes}")
-            
-            # 添加健康狀態
-            content_parts.extend([
-                "\n## Health Status",
-                f"- Health Score: {cap.health_score:.2f}",
-                f"- Availability: {cap.availability:.2f}",
-                f"- Error Rate: {cap.error_rate:.2%}",
-            ])
-            
-            if cap.avg_latency_ms:
-                content_parts.append(f"- Average Latency: {cap.avg_latency_ms:.2f}ms")
-            
-            # 添加依賴信息
-            if cap.dependencies:
-                content_parts.append(f"\n## Dependencies\n{', '.join(cap.dependencies)}")
-            if cap.prerequisites:
-                content_parts.append(f"\n## Prerequisites\n{', '.join(cap.prerequisites)}")
+            content_parts.extend(self._build_examples_section(cap))
+            content_parts.extend(self._build_health_section(cap))
+            content_parts.extend(self._build_dependencies_section(cap))
             
             content = "\n".join(content_parts)
             

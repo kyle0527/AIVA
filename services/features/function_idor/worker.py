@@ -45,10 +45,9 @@ from .resource_id_extractor import ResourceIdExtractor
 #     VerticalTestResult,
 # )
 # VerticalEscalationTester 模組暫時未實現
-class PrivilegeLevel:
-    """佔位符類"""
-    USER = "user"
-    ADMIN = "admin"
+from typing import Literal
+
+PrivilegeLevel = Literal["guest", "user", "moderator", "admin", "superadmin"]
 
 VerticalEscalationTester = None
 VerticalTestResult = None
@@ -73,7 +72,8 @@ async def run() -> None:
     broker = await get_broker()
     worker = IdorWorker()
 
-    async for mqmsg in broker.subscribe(Topic.FUNCTION_IDOR_TASK):
+    subscription = await broker.subscribe(Topic.FUNCTION_IDOR_TASK)
+    async for mqmsg in subscription:
         try:
             msg = AivaMessage.model_validate_json(mqmsg.body)
             task = FunctionTaskPayload(**msg.payload)
@@ -134,8 +134,8 @@ class IdorWorker:
         self.http_client = httpx.AsyncClient(
             timeout=10.0, follow_redirects=True, verify=True
         )
-        self.tester = CrossUserTester(self.http_client)
-        self.vertical_tester = VerticalEscalationTester(self.http_client)
+        self.tester = CrossUserTester(self.http_client) if CrossUserTester else None
+        self.vertical_tester = VerticalEscalationTester(self.http_client) if VerticalEscalationTester else None
 
     async def detect_idor(self, task: FunctionTaskPayload) -> list[FindingPayload]:
         """
@@ -183,7 +183,11 @@ class IdorWorker:
                 test_url = self.extractor.replace_id_in_url(url_str, rid.value, test_id)
                 logger.debug(f"測試 URL: {test_url}")
 
-                # Test for horizontal IDOR
+                # Test for horizontal IDOR (檢查 tester 是否存在)
+                if self.tester is None:
+                    logger.warning("CrossUserTester 未實現，跳過橫向 IDOR 測試")
+                    continue
+                    
                 result = await self.tester.test_horizontal_idor(
                     url=test_url,
                     resource_id=test_id,
@@ -228,7 +232,7 @@ class IdorWorker:
         url_str = str(task.target.url)
         required_level = self._infer_required_privilege(url_str)
 
-        if required_level == PrivilegeLevel.USER:
+        if required_level == "user":
             # No point testing if it's a regular user endpoint
             logger.debug(f"Skipping vertical test for user-level endpoint: {url_str}")
             return findings
@@ -237,7 +241,7 @@ class IdorWorker:
         user_auth = self._extract_auth(task)
 
         # Test with different privilege levels
-        test_levels = [PrivilegeLevel.GUEST, PrivilegeLevel.USER]
+        test_levels: list[PrivilegeLevel] = ["guest", "user"]
 
         for test_level in test_levels:
             if test_level == required_level:
@@ -245,9 +249,18 @@ class IdorWorker:
 
             # For now, we use the same auth but mark it as different level
             # Note: Multi-user credential management is implemented in _get_test_user_auth()
+            if self.vertical_tester is None:
+                logger.warning("VerticalEscalationTester 未實現，跳過垂直權限測試")
+                break
+                
+            # 檢查 vertical_tester 是否有 test_vertical_escalation 方法
+            if not hasattr(self.vertical_tester, 'test_vertical_escalation'):
+                logger.warning("VerticalEscalationTester 缺少 test_vertical_escalation 方法")
+                break
+                
             result = await self.vertical_tester.test_vertical_escalation(
                 url=url_str,
-                user_auth=user_auth if test_level == PrivilegeLevel.USER else {},
+                user_auth=user_auth if test_level == "user" else {},
                 user_level=test_level,
                 required_level=required_level,
                 method=task.target.method,
@@ -256,7 +269,7 @@ class IdorWorker:
             if result.vulnerable:
                 logger.warning(
                     f"[警報] 檢測到 BFLA 漏洞: {url_str} "
-                    f"(user={test_level.value}, required={required_level.value})"
+                    f"(user={test_level}, required={required_level})"
                 )
                 findings.append(
                     self._build_vertical_finding(
@@ -285,24 +298,24 @@ class IdorWorker:
             pattern in url_lower
             for pattern in ["/admin", "/administrator", "/management", "/console"]
         ):
-            return PrivilegeLevel.ADMIN
+            return "admin"
 
         # Moderator patterns
         if any(pattern in url_lower for pattern in ["/mod", "/moderator", "/moderate"]):
-            return PrivilegeLevel.MODERATOR
+            return "moderator"
 
         # Superadmin patterns
         if any(pattern in url_lower for pattern in ["/superadmin", "/root", "/system"]):
-            return PrivilegeLevel.SUPERADMIN
+            return "superadmin"
 
         # Default to user level
-        return PrivilegeLevel.USER
+        return "user"
 
     def _build_vertical_finding(
         self,
         task: FunctionTaskPayload,
         url: HttpUrl,
-        result: VerticalTestResult,
+        result: "VerticalTestResult",  # type: ignore
     ) -> FindingPayload:
         """
         Build a BFLA vulnerability finding from test result.
@@ -357,7 +370,7 @@ class IdorWorker:
         test_url: HttpUrl,
         original_id: str,
         test_id: str,
-        result: CrossUserTestResult,
+        result: "CrossUserTestResult",  # type: ignore
     ) -> FindingPayload:
         """
         Build a vulnerability finding from test result.
@@ -450,42 +463,65 @@ class IdorWorker:
         Returns:
             Test user authentication dictionary or None
         """
-        # 從任務配置中提取第二用戶憑證設定
-        if hasattr(task, 'config') and task.config:
-            auth_config = task.config.get('second_user_auth', {})
+        auth_config = self._extract_auth_config(task)
+        if not auth_config:
+            return None
             
-            if auth_config:
-                # 支援多種認證方式
-                auth_type = auth_config.get('type', 'bearer')
-                
-                if auth_type == 'bearer':
-                    token = auth_config.get('token')
-                    if token:
-                        return {'Authorization': f'Bearer {token}'}
-                
-                elif auth_type == 'cookie':
-                    cookie = auth_config.get('cookie')
-                    if cookie:
-                        return {'Cookie': cookie}
-                
-                elif auth_type == 'api_key':
-                    api_key = auth_config.get('api_key')
-                    key_name = auth_config.get('key_name', 'X-API-Key')
-                    if api_key:
-                        return {key_name: api_key}
-                
-                elif auth_type == 'basic':
-                    username = auth_config.get('username')
-                    password = auth_config.get('password')
-                    if username and password:
-                        import base64
-                        credentials = base64.b64encode(
-                            f"{username}:{password}".encode()
-                        ).decode()
-                        return {'Authorization': f'Basic {credentials}'}
+        return self._build_auth_from_config(auth_config)
+    
+    def _extract_auth_config(self, task: FunctionTaskPayload) -> dict:
+        """提取認證配置"""
+        if not (hasattr(task, 'test_config') and task.test_config):
+            return {}
+            
+        auth_config = getattr(task.test_config, 'second_user_auth', {})
+        return auth_config if isinstance(auth_config, dict) else {}
+    
+    def _build_auth_from_config(self, auth_config: dict) -> dict[str, str] | None:
+        """根據配置構建認證標頭"""
+        auth_type = auth_config.get('type', 'bearer')
         
-        # 無配置時測試未認證訪問
+        if auth_type == 'bearer':
+            return self._build_bearer_auth(auth_config)
+        elif auth_type == 'cookie':
+            return self._build_cookie_auth(auth_config)
+        elif auth_type == 'api_key':
+            return self._build_api_key_auth(auth_config)
+        elif auth_type == 'basic':
+            return self._build_basic_auth(auth_config)
+        
         return None
+    
+    def _build_bearer_auth(self, config: dict) -> dict[str, str] | None:
+        """構建 Bearer 認證"""
+        token = config.get('token')
+        return {'Authorization': f'Bearer {token}'} if token else None
+    
+    def _build_cookie_auth(self, config: dict) -> dict[str, str] | None:
+        """構建 Cookie 認證"""
+        cookie = config.get('cookie')
+        return {'Cookie': cookie} if cookie else None
+    
+    def _build_api_key_auth(self, config: dict) -> dict[str, str] | None:
+        """構建 API Key 認證"""
+        api_key = config.get('api_key')
+        if not api_key:
+            return None
+        key_name = config.get('key_name', 'X-API-Key')
+        return {key_name: api_key}
+    
+    def _build_basic_auth(self, config: dict) -> dict[str, str] | None:
+        """構建 Basic 認證"""
+        username = config.get('username')
+        password = config.get('password')
+        if not (username and password):
+            return None
+            
+        import base64
+        credentials = base64.b64encode(
+            f"{username}:{password}".encode()
+        ).decode()
+        return {'Authorization': f'Basic {credentials}'}
 
 
 class IdorWorkerService:
@@ -498,16 +534,12 @@ class IdorWorkerService:
         """處理 IDOR 檢測任務"""
         # 將 Task 對象轉換為 FunctionTaskPayload
         if hasattr(task, 'target') and task.target:
-            # 構建 FunctionTaskPayload
+            # 構建 FunctionTaskPayload (不需要 header)
             payload = FunctionTaskPayload(
-                header=MessageHeader(
-                    message_id=task.task_id,
-                    trace_id=task.task_id,
-                    source_module="FunctionIDOR"
-                ),
-                scan_id=getattr(task, 'scan_id', 'default'),
+                task_id=task.task_id,
+                scan_id=getattr(task, 'scan_id', 'scan_default'),
                 target=task.target,
-                strategy=getattr(task, 'strategy', 'normal'),
+                strategy=getattr(task, 'strategy', 'full'),
                 priority=getattr(task, 'priority', 5)
             )
         else:

@@ -14,11 +14,8 @@ import httpx
 
 from services.aiva_common.schemas import FunctionTaskPayload
 from services.aiva_common.utils import get_logger
+from services.aiva_common.detection import UnifiedSmartDetectionManager, DetectionPhase
 from .config.ssrf_config import SsrfConfig
-# from services.function.common.unified_smart_detection_manager import (
-#     DetectionMetrics,
-#     UnifiedSmartDetectionManager,
-# )
 
 from .internal_address_detector import InternalAddressDetector
 from .oast_dispatcher import OastDispatcher, OastEvent
@@ -109,6 +106,13 @@ class SmartSSRFDetector:
         Returns:
             檢測到的漏洞列表和檢測指標
         """
+        # 創建統一智能檢測管理器
+        smart_manager = UnifiedSmartDetectionManager(
+            detection_id=task.task_id,
+            detection_type="ssrf",
+            target_url=str(task.target.url)
+        )
+        
         context = SSRFDetectionContext(
             task=task,
             client=client,
@@ -125,32 +129,36 @@ class SmartSSRFDetector:
                 "No SSRF payloads generated for task",
                 extra={"task_id": task.task_id},
             )
-            return [], self.smart_manager.metrics
+            return [], {}
 
-        # 開始智能檢測
-        total_steps = len(plan.vectors)
-        self.smart_manager.start_detection(total_steps)
+        async with smart_manager.start_detection():
+            try:
+                # 優先級排序 - 雲元數據端點優先
+                prioritized_vectors = self._prioritize_vectors(plan.vectors)
 
-        try:
-            # 優先級排序 - 雲元數據端點優先
-            prioritized_vectors = self._prioritize_vectors(plan.vectors)
+                logger.info(
+                    f"Starting SSRF detection with {len(prioritized_vectors)} vectors",
+                    extra={
+                        "task_id": task.task_id,
+                        "cloud_metadata_first": self.config.cloud_metadata_first,
+                    },
+                )
 
-            logger.info(
-                f"Starting SSRF detection with {len(prioritized_vectors)} vectors",
-                extra={
-                    "task_id": task.task_id,
-                    "cloud_metadata_first": self.config.cloud_metadata_first,
-                },
-            )
+                # 執行檢測
+                smart_manager.metrics.start_phase(DetectionPhase.PAYLOAD_INJECTION)
+                await self._execute_detection(context, prioritized_vectors, smart_manager)
 
-            # 執行檢測
-            await self._execute_detection(context, prioritized_vectors)
+                metrics = smart_manager.get_metrics().to_dict()
+                return context.findings, metrics
 
-            return context.findings, self.smart_manager.metrics
-
-        finally:
-            # 無需特殊的結束會話邏輯
-            pass
+            except Exception as exc:
+                logger.exception(
+                    "Error during SSRF detection",
+                    extra={"task_id": task.task_id},
+                )
+                context.add_error(str(exc))
+                metrics = smart_manager.get_metrics().to_dict()
+                return context.findings, metrics
 
     def _prioritize_vectors(
         self, vectors: list[SsrfTestVector]
@@ -192,6 +200,7 @@ class SmartSSRFDetector:
         self,
         context: SSRFDetectionContext,
         vectors: list[SsrfTestVector],
+        smart_manager: UnifiedSmartDetectionManager,
     ) -> None:
         """
         執行檢測邏輯
@@ -199,10 +208,13 @@ class SmartSSRFDetector:
         Args:
             context: 檢測上下文
             vectors: 測試向量列表
+            smart_manager: 智能檢測管理器
         """
+        total = len(vectors)
+        
         for i, vector in enumerate(vectors, 1):
             # 檢查是否應該早期停止
-            if not self.smart_manager.should_continue_testing():
+            if not smart_manager.should_continue_testing():
                 logger.info(
                     f"Early stopping triggered after {i - 1} vectors",
                     extra={"findings_count": len(context.findings)},
@@ -210,10 +222,10 @@ class SmartSSRFDetector:
                 break
 
             # 更新進度
-            self.smart_manager.update_progress(f"測試向量 {i}/{len(vectors)}")
+            smart_manager.update_progress(i, total)
 
             # 執行單個向量檢測
-            await self._test_vector(context, vector)
+            await self._test_vector(context, vector, smart_manager)
 
             context.increment_attempts()
 
@@ -221,6 +233,7 @@ class SmartSSRFDetector:
         self,
         context: SSRFDetectionContext,
         vector: SsrfTestVector,
+        smart_manager: UnifiedSmartDetectionManager,
     ) -> None:
         """
         測試單個 SSRF 向量
@@ -228,6 +241,7 @@ class SmartSSRFDetector:
         Args:
             context: 檢測上下文
             vector: 測試向量
+            smart_manager: 智能檢測管理器
         """
         try:
             # 解析載荷
@@ -328,8 +342,8 @@ class SmartSSRFDetector:
         payload: str,
     ) -> httpx.Response:
         """發送 HTTP 請求 - 重構後複雜度 ≤15"""
-        # 使用統一管理器的自適應超時
-        current_timeout = self.smart_manager.timeout_manager.get_timeout()
+        # 使用配置的請求超時
+        current_timeout = self.config.request_timeout
         
         # 解析目標和參數
         target_config = self._parse_target_config(task, vector)

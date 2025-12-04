@@ -18,16 +18,14 @@ from services.aiva_common.schemas import (
     FunctionTaskPayload,
 )
 from services.aiva_common.utils import get_logger
-from .config.idor_config import IdorConfig
-# from services.function.common.worker_statistics import (
-#     StatisticsCollector, 
-#     StoppingReason,
-# )
+from services.aiva_common.enums import StoppingReason
+from services.features.common.worker_statistics import StatisticsCollector
+from services.features.common.testers.cross_user_tester import CrossUserTester
+from services.features.common.testers.vertical_escalation_tester import VerticalEscalationTester
 
-from .cross_user_tester import CrossUserTester
+from .config.idor_config import IdorConfig
 from .resource_id_extractor import ResourceIdExtractor
 from .smart_idor_detector import SmartIDORDetector
-from .vertical_escalation_tester import VerticalEscalationTester
 
 logger = get_logger(__name__)
 
@@ -100,12 +98,10 @@ class EnhancedIDORWorker:
                 "smart_detection_enabled": True,
                 "worker_module": "IDOR",
                 "config": {
-                    "max_vulnerabilities": self.config.max_vulnerabilities,
-                    "timeout_base": self.config.timeout_base,
-                    "timeout_max": self.config.timeout_max,
-                    "requests_per_second": self.config.requests_per_second,
-                    "horizontal_enabled": self.config.horizontal_escalation_enabled,
-                    "vertical_enabled": self.config.vertical_escalation_enabled,
+                    "horizontal_enabled": self.config.horizontal_enabled,
+                    "vertical_enabled": self.config.vertical_enabled,
+                    "max_id_variations": self.config.max_id_variations,
+                    "request_timeout": self.config.request_timeout,
                 },
             },
         )
@@ -125,7 +121,7 @@ class EnhancedIDORWorker:
             vertical_tester = VerticalEscalationTester(client)
 
             try:
-                async for mqmsg in broker.subscribe(Topic.FUNCTION_IDOR_TASK):
+                async for mqmsg in await broker.subscribe(Topic.FUNCTION_IDOR_TASK):
                     msg = AivaMessage.model_validate_json(mqmsg.body)
                     task = FunctionTaskPayload(**msg.payload)
                     trace_id = msg.header.trace_id
@@ -234,9 +230,7 @@ class EnhancedIDORWorker:
         )
 
         # 創建統計數據收集器
-        stats_collector = StatisticsCollector(
-            task_id=task.task_id, worker_type="idor"
-        )
+        stats_collector = StatisticsCollector()
 
         # 使用智能檢測器執行檢測
         (
@@ -251,15 +245,12 @@ class EnhancedIDORWorker:
         )
 
         # 從檢測指標更新統計數據
-        stats_collector.stats.total_requests = detection_metrics.total_requests
-        stats_collector.stats.successful_requests = (
-            detection_metrics.total_requests - detection_metrics.failed_requests
-        )
-        stats_collector.stats.failed_requests = detection_metrics.failed_requests
-        stats_collector.stats.timeout_requests = detection_metrics.timeout_count
-        stats_collector.stats.rate_limited_requests = (
-            detection_metrics.rate_limited_count
-        )
+        for _ in range(detection_metrics["total_requests"] - detection_metrics["failed_requests"]):
+            stats_collector.record_request(success=True)
+        for _ in range(detection_metrics["failed_requests"]):
+            stats_collector.record_request(success=False, timeout=False)
+        for _ in range(detection_metrics.get("timeout_requests", 0)):
+            stats_collector.record_request(success=False, timeout=True)
 
         # 從檢測上下文中提取水平和垂直測試計數
         horizontal_tests = 0
@@ -282,41 +273,25 @@ class EnhancedIDORWorker:
         # 轉換為 FindingPayload 對象
         findings = self._convert_to_finding_payloads(findings_data, task)
 
-        # 設置自適應行為標記
-        stats_collector.set_adaptive_behavior(
-            adaptive_timeout=detection_metrics.timeout_count > 0,
-            rate_limiting=detection_metrics.rate_limited_count > 0,
-            protection_detected=detection_metrics.rate_limited_count > 0,
-        )
-
-        # 檢查是否觸發 early stopping
-        if len(findings) >= self.config.max_vulnerabilities:
-            stats_collector.record_early_stopping(
-                reason=StoppingReason.MAX_VULNERABILITIES,
-                details={
-                    "max_allowed": self.config.max_vulnerabilities,
-                    "found": len(findings),
-                },
-            )
-
-        # 完成統計數據收集
-        final_stats = stats_collector.finalize()
+        # 獲取統計摘要
+        stats_summary = stats_collector.get_summary()
+        
+        # 檢查是否達到最大漏洞數或從檢測指標中獲取 early stopping 狀態
+        early_stopping = detection_metrics.get("early_stopped", False)
 
         # 創建增強版遙測數據（保持向後兼容）
         telemetry = EnhancedIdorTelemetry(
-            attempts=final_stats.total_requests,
+            attempts=stats_summary["total_requests"],
             findings=len(findings),
             horizontal_tests=horizontal_tests,
             vertical_tests=vertical_tests,
             id_extraction_attempts=1,
-            errors=[
-                error["message"] for error in final_stats.error_details
-            ],  # 簡化錯誤列表
-            adaptive_timeout_used=final_stats.adaptive_timeout_used,
-            early_stopping_triggered=final_stats.early_stopping_triggered,
-            rate_limiting_applied=final_stats.rate_limiting_applied,
-            session_duration=final_stats.duration_seconds,
-            protection_detected=final_stats.protection_detected,
+            errors=[],
+            adaptive_timeout_used=detection_metrics.get("timeout_requests", 0) > 0,
+            early_stopping_triggered=early_stopping,
+            rate_limiting_applied=detection_metrics.get("rate_limited_requests", 0) > 0,
+            session_duration=stats_summary["uptime_seconds"],
+            protection_detected=detection_metrics.get("rate_limited_requests", 0) > 0,
         )
 
         logger.info(
@@ -330,7 +305,7 @@ class EnhancedIDORWorker:
                 "vertical_tests": telemetry.vertical_tests,
                 "session_duration": telemetry.session_duration,
                 "early_stopping": telemetry.early_stopping_triggered,
-                "statistics_summary": stats_collector.get_summary(),
+                "statistics_summary": stats_summary,
             },
         )
 

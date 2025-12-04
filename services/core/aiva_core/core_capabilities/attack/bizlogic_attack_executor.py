@@ -20,8 +20,15 @@ import logging
 from typing import Any
 from datetime import datetime
 
-from services.aiva_common.schemas import Finding, SeverityLevel, VulnerabilityType
+from services.aiva_common.schemas import FindingPayload
+from services.aiva_common.schemas.findings import Vulnerability, FindingEvidence, FindingRecommendation
+from services.aiva_common.schemas.security.findings import Target
+# 根據 aiva_common README 規範使用統一的 schema
+from services.aiva_common.enums import Severity, VulnerabilityType, Confidence
 from services.aiva_common.error_handling import AIVAError, ErrorType, ErrorSeverity, create_error_context
+
+# 向後相容別名
+SeverityLevel = Severity
 
 logger = logging.getLogger(__name__)
 
@@ -103,7 +110,7 @@ class BizLogicAttackExecutor:
             elif attack_type == BizLogicAttackType.IDOR:
                 findings = await self._test_idor(target_url, parameters)
             elif attack_type == BizLogicAttackType.WORKFLOW_BYPASS:
-                findings = await self._test_workflow_bypass(target_url, parameters)
+                findings = await self._test_authorization_bypass(target_url, parameters)
             elif attack_type == BizLogicAttackType.RACE_CONDITION:
                 findings = await self._test_race_condition(target_url, parameters)
             elif attack_type == BizLogicAttackType.COUPON_ABUSE:
@@ -146,7 +153,7 @@ class BizLogicAttackExecutor:
         self,
         target_url: str,
         parameters: dict[str, Any],
-    ) -> list[Finding]:
+    ) -> list[FindingPayload]:
         """測試價格操縱漏洞
         
         嘗試修改商品價格為負數、零或極小值，檢測是否能成功購買。
@@ -167,23 +174,30 @@ class BizLogicAttackExecutor:
                 )
                 
                 if is_vulnerable:
-                    finding = Finding(
-                        finding_id=f"bizlogic_price_{product_id}_{abs(payload)}",
-                        vulnerability_type=VulnerabilityType.BUSINESS_LOGIC_FLAW,
-                        severity=SeverityLevel.HIGH,
-                        title=f"價格操縱漏洞 - 產品 {product_id}",
-                        description=f"可將產品價格修改為 {payload}，導致經濟損失",
-                        affected_url=f"{target_url}/api/BasketItems",
-                        evidence={
-                            "product_id": product_id,
-                            "manipulated_price": payload,
-                            "original_price": "未知",
-                            "attack_vector": "POST /api/BasketItems with negative price",
-                        },
-                        remediation="實施服務端價格驗證，拒絕負數和零值價格",
-                        confidence="high",
-                        cve_id=None,
-                        cvss_score=7.5,
+                    finding = FindingPayload(
+                        finding_id=f"finding_bizlogic_price_{product_id}_{abs(payload)}",
+                        task_id="task_bizlogic_test",
+                        scan_id="scan_bizlogic_scan",
+                        status="confirmed",
+                        vulnerability=Vulnerability(
+                            name=VulnerabilityType.PRICE_MANIPULATION,
+                            severity=Severity.HIGH,
+                            confidence=Confidence.CERTAIN,
+                            description=f"可將產品價格修改為 {payload}，導致經濟損失",
+                            cvss_score=7.5
+                        ),
+                        target=Target(
+                            url=f"{target_url}/api/BasketItems",
+                            method="PUT"
+                        ),
+                        evidence=FindingEvidence(
+                            payload=str(payload),
+                            proof=f"成功將產品 {product_id} 價格修改為 {payload}",
+                            request="POST /api/BasketItems with negative price"
+                        ),
+                        recommendation=FindingRecommendation(
+                            fix="實施服務端價格驗證，拒絕負數和零值價格"
+                        )
                     )
                     findings.append(finding)
                     logger.warning(f"Found price manipulation vulnerability: payload={payload}")
@@ -197,7 +211,7 @@ class BizLogicAttackExecutor:
         self,
         target_url: str,
         parameters: dict[str, Any],
-    ) -> list[Finding]:
+    ) -> list[FindingPayload]:
         """測試越權訪問 (IDOR) 漏洞
         
         嘗試訪問其他用戶的資源（如訂單、個人資料等）。
@@ -216,21 +230,29 @@ class BizLogicAttackExecutor:
                 )
                 
                 if is_vulnerable:
-                    finding = Finding(
-                        finding_id=f"bizlogic_idor_{resource_type}_{user_id}",
-                        vulnerability_type=VulnerabilityType.BUSINESS_LOGIC_FLAW,
-                        severity=SeverityLevel.HIGH,
-                        title=f"越權訪問 (IDOR) - {resource_type.upper()} {user_id}",
-                        description=f"可未授權訪問用戶 {user_id} 的 {resource_type} 資源",
-                        affected_url=f"{target_url}/api/{resource_type}s/{user_id}",
-                        evidence={
-                            "resource_type": resource_type,
-                            "accessed_user_id": user_id,
-                            "attack_vector": f"GET /api/{resource_type}s/{user_id} without auth",
-                        },
-                        remediation="實施嚴格的授權檢查，驗證當前用戶是否有權訪問該資源",
-                        confidence="high",
-                        cvss_score=8.0,
+                    finding = FindingPayload(
+                        finding_id=f"finding_idor_{resource_type}_{user_id}",
+                        task_id="task_bizlogic_test",
+                        scan_id="scan_bizlogic_scan", 
+                        status="confirmed",
+                        vulnerability=Vulnerability(
+                            name=VulnerabilityType.IDOR,
+                            severity=Severity.HIGH,
+                            confidence=Confidence.CERTAIN,
+                            description=f"IDOR 漏洞：可越權存取 {resource_type} {user_id}",
+                            cvss_score=8.0
+                        ),
+                        target=Target(
+                            url=f"{target_url}/api/{resource_type}s/{user_id}",
+                            method="GET"
+                        ),
+                        evidence=FindingEvidence(
+                            payload=str(user_id),
+                            proof=f"成功存取使用者 {user_id} 的資源"
+                        ),
+                        recommendation=FindingRecommendation(
+                            fix="實施嚴格的授權檢查，驗證當前用戶是否有權訪問該資源"
+                        )
                     )
                     findings.append(finding)
                     logger.warning(f"Found IDOR vulnerability: user_id={user_id}")
@@ -240,11 +262,11 @@ class BizLogicAttackExecutor:
         
         return findings
     
-    async def _test_workflow_bypass(
+    async def _test_authorization_bypass(
         self,
         target_url: str,
         parameters: dict[str, Any],
-    ) -> list[Finding]:
+    ) -> list[FindingPayload]:
         """測試工作流繞過漏洞
         
         嘗試跳過必要步驟（如跳過付款直接發貨）。
@@ -261,21 +283,30 @@ class BizLogicAttackExecutor:
         )
         
         if is_vulnerable:
-            finding = Finding(
-                finding_id=f"bizlogic_workflow_{workflow_type}",
-                vulnerability_type=VulnerabilityType.BUSINESS_LOGIC_FLAW,
-                severity=SeverityLevel.CRITICAL,
-                title=f"工作流繞過 - {workflow_type}",
-                description="可跳過關鍵業務步驟（如付款），直接完成交易",
-                affected_url=f"{target_url}/api/{workflow_type}/complete",
-                evidence={
-                    "workflow_type": workflow_type,
-                    "bypassed_step": "payment",
-                    "attack_vector": "Direct access to completion endpoint",
-                },
-                remediation="實施狀態機驗證，確保每個步驟按順序完成",
-                confidence="high",
-                cvss_score=9.0,
+            finding = FindingPayload(
+                finding_id=f"finding_bizlogic_workflow_{workflow_type}",
+                task_id="task_bizlogic_test",
+                scan_id="scan_bizlogic_scan",
+                status="confirmed",
+                vulnerability=Vulnerability(
+                    name=VulnerabilityType.WORKFLOW_BYPASS,
+                    severity=Severity.CRITICAL,
+                    confidence=Confidence.CERTAIN,
+                    description="可跳過關鍵業務步驟（如付款），直接完成交易",
+                    cvss_score=9.0
+                ),
+                target=Target(
+                    url=f"{target_url}/api/{workflow_type}/complete",
+                    method="GET"
+                ),
+                evidence=FindingEvidence(
+                    payload=workflow_type,
+                    proof="可跳過關鍵業務步驟",
+                    request="Direct access to completion endpoint"
+                ),
+                recommendation=FindingRecommendation(
+                    fix="實施狀態機驗證，確保每個步驟按順序完成"
+                )
             )
             findings.append(finding)
         
@@ -285,7 +316,7 @@ class BizLogicAttackExecutor:
         self,
         target_url: str,
         parameters: dict[str, Any],
-    ) -> list[Finding]:
+    ) -> list[FindingPayload]:
         """測試競態條件漏洞
         
         並發發送請求，檢測資源競爭問題（如重複優惠券使用）。
@@ -307,21 +338,30 @@ class BizLogicAttackExecutor:
         successful_count = sum(1 for r in results if r is True)
         
         if successful_count > 1:
-            finding = Finding(
-                finding_id="bizlogic_race_condition",
-                vulnerability_type=VulnerabilityType.BUSINESS_LOGIC_FLAW,
-                severity=SeverityLevel.HIGH,
-                title="競態條件漏洞",
-                description=f"並發請求導致資源重複使用 ({successful_count} 次成功)",
-                affected_url=f"{target_url}{target_endpoint}",
-                evidence={
-                    "concurrent_requests": concurrent_requests,
-                    "successful_requests": successful_count,
-                    "attack_vector": "Concurrent POST requests",
-                },
-                remediation="實施分佈式鎖或資料庫事務隔離",
-                confidence="high",
-                cvss_score=7.0,
+            finding = FindingPayload(
+                finding_id="finding_bizlogic_race_condition",
+                task_id="task_bizlogic_test",
+                scan_id="scan_bizlogic_scan",
+                status="confirmed",
+                vulnerability=Vulnerability(
+                    name=VulnerabilityType.RACE_CONDITION,
+                    severity=Severity.HIGH,
+                    confidence=Confidence.CERTAIN,
+                    description=f"並發請求導致資源重複使用 ({successful_count} 次成功)",
+                    cvss_score=7.0
+                ),
+                target=Target(
+                    url=f"{target_url}{target_endpoint}",
+                    method="POST"
+                ),
+                evidence=FindingEvidence(
+                    payload=str(concurrent_requests),
+                    proof=f"並發請求導致資源重複使用 ({successful_count} 次成功)",
+                    request="Concurrent POST requests"
+                ),
+                recommendation=FindingRecommendation(
+                    fix="實施分佈式鎖或資料庫事務隔離"
+                )
             )
             findings.append(finding)
         
@@ -331,7 +371,7 @@ class BizLogicAttackExecutor:
         self,
         target_url: str,
         parameters: dict[str, Any],
-    ) -> list[Finding]:
+    ) -> list[FindingPayload]:
         """測試優惠券濫用漏洞
         
         嘗試重複使用優惠券、堆疊折扣等。
@@ -344,7 +384,7 @@ class BizLogicAttackExecutor:
         
         # 嘗試多次使用同一優惠券
         reuse_count = 0
-        for attempt in range(3):
+        for _ in range(3):
             is_successful = await self._send_coupon_request(
                 target_url, coupon_code
             )
@@ -352,21 +392,30 @@ class BizLogicAttackExecutor:
                 reuse_count += 1
         
         if reuse_count > 1:
-            finding = Finding(
-                finding_id=f"bizlogic_coupon_{coupon_code}",
-                vulnerability_type=VulnerabilityType.BUSINESS_LOGIC_FLAW,
-                severity=SeverityLevel.MEDIUM,
-                title=f"優惠券重複使用 - {coupon_code}",
-                description=f"優惠券可重複使用 {reuse_count} 次",
-                affected_url=f"{target_url}/api/coupon/apply",
-                evidence={
-                    "coupon_code": coupon_code,
-                    "reuse_count": reuse_count,
-                    "attack_vector": "Multiple POST /api/coupon/apply",
-                },
-                remediation="添加優惠券使用狀態追蹤，限制單次使用",
-                confidence="high",
-                cvss_score=5.0,
+            finding = FindingPayload(
+                finding_id=f"finding_bizlogic_coupon_{coupon_code}",
+                task_id="task_bizlogic_test",
+                scan_id="scan_bizlogic_scan",
+                status="confirmed",
+                vulnerability=Vulnerability(
+                    name=VulnerabilityType.STATE_MANIPULATION,
+                    severity=Severity.MEDIUM,
+                    confidence=Confidence.CERTAIN,
+                    description=f"優惠券可重複使用 {reuse_count} 次",
+                    cvss_score=5.0
+                ),
+                target=Target(
+                    url=f"{target_url}/api/coupon/apply",
+                    method="POST"
+                ),
+                evidence=FindingEvidence(
+                    payload=coupon_code,
+                    proof=f"優惠券可重複使用 {reuse_count} 次",
+                    request="Multiple POST /api/coupon/apply"
+                ),
+                recommendation=FindingRecommendation(
+                    fix="添加優惠券使用狀態追蹤，限制單次使用"
+                )
             )
             findings.append(finding)
         

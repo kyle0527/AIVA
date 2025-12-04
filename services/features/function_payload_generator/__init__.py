@@ -12,7 +12,8 @@ AIVA Payload Generator Module
 """
 
 from .manager import PayloadGeneratorManager
-from .handler import PayloadGeneratorCommandHandler
+# TODO: handler.py 尚未實現，暫時註釋
+# from .handler import PayloadGeneratorCommandHandler
 from .models import (
     PayloadType,
     PayloadPlatform,
@@ -23,7 +24,7 @@ from .models import (
 
 __all__ = [
     "PayloadGeneratorManager",
-    "PayloadGeneratorCommandHandler",
+    # "PayloadGeneratorCommandHandler",  # TODO: 待實現
     "PayloadType",
     "PayloadPlatform",
     "PayloadFormat",

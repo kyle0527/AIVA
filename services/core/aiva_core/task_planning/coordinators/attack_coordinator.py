@@ -12,7 +12,7 @@ import logging
 from typing import Dict, Any, List, Optional
 
 from .base_coordinator import BaseCoordinator, CoordinatorTask
-from aiva_core.persistence import TaskManager, TaskStatus
+from aiva_core.task_planning.persistence import TaskManager, TaskStatus
 
 logger = logging.getLogger(__name__)
 

@@ -93,7 +93,7 @@ class BaseCoordinator(ABC):
         """
         pass
     
-    async def initialize(self, config: Dict[str, Any]) -> bool:  # type: ignore[misc]
+    async def initialize(self, config: Dict[str, Any]) -> bool:
         """初始化協調器 - async保留供未來異步初始化擴展
         
         Args:
@@ -104,6 +104,7 @@ class BaseCoordinator(ABC):
         """
         try:
             logger.info(f"Initializing {self.name}...")
+            await asyncio.sleep(0)  # 保持異步特性
             self.initialized = True
             logger.info(f"✅ {self.name} initialized")
             return True
@@ -213,7 +214,7 @@ class BaseCoordinator(ABC):
                 return {"error": f"Plugin {module_id} not found"}
             
             # 創建 AI 任務
-            from ..plugin_system.base_plugin import AITask, AITaskType  # type: ignore[import-not-found]
+            from aiva_core.cognitive_core.plugin_system.base_plugin import AITask, AITaskType  # type: ignore[import-not-found]
             
             task_type = parameters.get("task_type", AITaskType.CUSTOM)
             description = parameters.get("description", "")
@@ -234,7 +235,7 @@ class BaseCoordinator(ABC):
             logger.error(f"Subtask {subtask_id} execution failed: {e}")
             return {"error": str(e)}
     
-    async def get_task_status(self, task_id: str) -> Optional[Dict[str, Any]]:  # type: ignore[misc]
+    async def get_task_status(self, task_id: str) -> Optional[Dict[str, Any]]:
         """獲取任務狀態 - async保留供未來異步狀態查詢擴展
         
         Args:
@@ -243,6 +244,7 @@ class BaseCoordinator(ABC):
         Returns:
             任務狀態字典或 None
         """
+        await asyncio.sleep(0)  # 保持異步特性
         if task_id in self.active_tasks:
             task = self.active_tasks[task_id]
             return {
@@ -264,7 +266,7 @@ class BaseCoordinator(ABC):
         
         return None
     
-    async def cancel_task(self, task_id: str) -> bool:  # type: ignore[misc]
+    async def cancel_task(self, task_id: str) -> bool:
         """取消任務 - async保留供未來完整取消邏輯實現
         
         Args:
@@ -279,6 +281,7 @@ class BaseCoordinator(ABC):
             - 清理相關資源
             - 記錄取消原因
         """
+        await asyncio.sleep(0)  # 保持異步特性
         if task_id in self.active_tasks:
             logger.info(f"Cancelling task {task_id}")
             del self.active_tasks[task_id]
@@ -286,9 +289,10 @@ class BaseCoordinator(ABC):
         
         return False
     
-    async def health_check(self) -> bool:  # type: ignore[misc]
+    async def health_check(self) -> bool:
         """健康檢查 - async保留供未來分散式健康檢查擴展"""
         try:
+            await asyncio.sleep(0)  # 保持異步特性
             return self.initialized and self.module_registry is not None
         except Exception as e:
             logger.error(f"{self.name} health check failed: {e}")

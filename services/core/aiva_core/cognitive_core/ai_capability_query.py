@@ -114,7 +114,9 @@ class AICapabilityQuery:
         logger.info(f"Querying: '{question}' (top_k={top_k})")
         
         try:
-            results = self.connector.query_self_awareness(question, top_k=top_k)
+            results = await asyncio.to_thread(
+                self.connector.query_self_awareness, question, top_k=top_k
+            )
             logger.info(f"Found {len(results.results)} results")
             return results.results
         except Exception as e:
@@ -182,8 +184,8 @@ class AICapabilityQuery:
             import chromadb
             
             client = chromadb.PersistentClient(path=str(self.persist_dir))
-            collection = client.get_collection('aiva_capabilities')
-            all_data = collection.get(include=['metadatas'])
+            collection = await asyncio.to_thread(client.get_collection, 'aiva_capabilities')
+            all_data = await asyncio.to_thread(collection.get, include=['metadatas'])
             
             # 統計分析
             if all_data['metadatas'] is not None:
@@ -395,44 +397,53 @@ async def quick_stats():
 if __name__ == "__main__":
     import sys
     
+    async def _handle_command_line(query_system: "AICapabilityQuery") -> None:
+        """處理命令行參數"""
+        question = " ".join(sys.argv[1:])
+        
+        if question in ["--stats", "-s"]:
+            await query_system.show_statistics()
+        else:
+            results = await query_system.query(question, top_k=5)
+            query_system.display_results(results)
+
+    async def _handle_interactive_mode(query_system: "AICapabilityQuery") -> None:
+        """處理交互式模式"""
+        print("\nAIVA AI Capability Query System")
+        print("=" * 60)
+        print("Commands:")
+        print("  - Type your question to search capabilities")
+        print("  - Type 'stats' to show statistics")
+        print("  - Type 'quit' to exit")
+        print("=" * 60)
+        
+        while True:
+            try:
+                question = (await asyncio.to_thread(input, "\n[Query] > ")).strip()
+                
+                if question.lower() in ["quit", "exit", "q"]:
+                    break
+                elif question.lower() in ["stats", "statistics"]:
+                    await query_system.show_statistics()
+                elif question:
+                    results = await query_system.query(question, top_k=5)
+                    query_system.display_results(results)
+            
+            except KeyboardInterrupt:
+                print("\n\nGoodbye!")
+                break
+            except Exception as e:
+                print(f"Error: {e}")
+
     async def main():
+        """主程序入口 - 降低認知複雜度"""
         query_system = AICapabilityQuery()
         
         if len(sys.argv) > 1:
             # 命令行查詢
-            question = " ".join(sys.argv[1:])
-            
-            if question in ["--stats", "-s"]:
-                await query_system.show_statistics()
-            else:
-                results = await query_system.query(question, top_k=5)
-                query_system.display_results(results)
+            await _handle_command_line(query_system)
         else:
             # 交互式模式
-            print("\nAIVA AI Capability Query System")
-            print("=" * 60)
-            print("Commands:")
-            print("  - Type your question to search capabilities")
-            print("  - Type 'stats' to show statistics")
-            print("  - Type 'quit' to exit")
-            print("=" * 60)
-            
-            while True:
-                try:
-                    question = input("\n[Query] > ").strip()
-                    
-                    if question.lower() in ["quit", "exit", "q"]:
-                        break
-                    elif question.lower() in ["stats", "statistics"]:
-                        await query_system.show_statistics()
-                    elif question:
-                        results = await query_system.query(question, top_k=5)
-                        query_system.display_results(results)
-                
-                except KeyboardInterrupt:
-                    print("\n\nGoodbye!")
-                    break
-                except Exception as e:
-                    print(f"Error: {e}")
+            await _handle_interactive_mode(query_system)
     
     asyncio.run(main())

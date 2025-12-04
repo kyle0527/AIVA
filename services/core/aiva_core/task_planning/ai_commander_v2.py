@@ -14,8 +14,8 @@ from typing import Dict, Any, Optional, List
 from pathlib import Path
 from enum import Enum
 
-from ..plugin_system.module_registry import ModuleRegistry
-from ..plugin_system.weight_manager import WeightManager
+from aiva_core.cognitive_core.plugin_system.module_registry import ModuleRegistry
+from aiva_core.cognitive_core.plugin_system.weight_manager import WeightManager
 from .coordinators import (
     BaseCoordinator,
     AttackCoordinator,
@@ -219,11 +219,11 @@ class AICommanderV2:
     async def _register_known_plugins(self) -> None:
         """手動註冊已知插件"""
         try:
-            from ..plugins.bio_neuron_plugin import BioNeuronPlugin
-            from ..plugins.scanner_plugin import ScannerPlugin
-            from ..plugins.exploiter_plugin import ExploiterPlugin
-            from ..plugins.data_hub_plugin import DataHubPlugin
-            from ..plugins.learning_plugin import LearningPlugin
+            from aiva_core.cognitive_core.plugins.bio_neuron_plugin import BioNeuronPlugin
+            from aiva_core.cognitive_core.plugins.scanner_plugin import ScannerPlugin
+            from aiva_core.cognitive_core.plugins.exploiter_plugin import ExploiterPlugin
+            from aiva_core.cognitive_core.plugins.data_hub_plugin import DataHubPlugin
+            from aiva_core.cognitive_core.plugins.learning_plugin import LearningPlugin
             
             plugins = [
                 BioNeuronPlugin(),

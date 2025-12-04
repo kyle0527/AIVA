@@ -5,7 +5,7 @@
 import asyncio
 from collections import defaultdict
 from dataclasses import dataclass, field
-from datetime import datetime
+from datetime import UTC, datetime
 from typing import Any
 
 import networkx as nx
@@ -13,6 +13,12 @@ import networkx as nx
 from aiva_common.enums import (
     ProgrammingLanguage,
 )
+from services.core.aiva_core.core_capabilities.capability_registry import (
+    CapabilityRegistry,
+)
+
+# 常量定義
+ERROR_MSG_GRAPH_NOT_INITIALIZED = "技能圖未初始化"
 from aiva_common.error_handling import (
     AIVAError,
     ErrorSeverity,
@@ -85,11 +91,11 @@ class SkillGraphBuilder:
         # 獲取所有能力
         capabilities = await self.capability_registry.list_capabilities(limit=None)
 
-        # 創建節點
+        # 創建節點 - 直接使用 CapabilityRecord
         await self._create_skill_nodes(capabilities)
 
         # 分析關係
-        await self._analyze_relationships(capabilities)
+        await self._analyze_relationships()
 
         # 構建 NetworkX 圖
         await self._build_networkx_graph()
@@ -98,8 +104,43 @@ class SkillGraphBuilder:
             f"技能圖構建完成: {len(self.skill_nodes)} 節點, {len(self.skill_edges)} 邊"
         )
 
-    async def _create_skill_nodes(self, capabilities: list[CapabilityInfo]) -> None:
-        """創建技能節點"""
+    def _extract_success_rate(self, scorecard) -> float:
+        """提取成功率（降低複雜度的輔助函數）"""
+        if hasattr(scorecard, 'success_rate_7d'):
+            return scorecard.success_rate_7d
+        elif scorecard and hasattr(scorecard, 'success_rate_percent'):
+            return scorecard.success_rate_percent / 100.0
+        else:
+            return 0.0
+    
+    def _extract_usage_count(self, scorecard) -> int:
+        """提取使用次數（降低複雜度的輔助函數）"""
+        if hasattr(scorecard, 'usage_count_7d'):
+            return scorecard.usage_count_7d
+        elif scorecard and hasattr(scorecard, 'total_executions'):
+            return scorecard.total_executions
+        else:
+            return 0
+    
+    def _build_node_metadata(self, cap) -> dict:
+        """構建節點元數據（降低複雜度的輔助函數）"""
+        return {
+            "description": cap.description,
+            "entrypoint": cap.entrypoint,
+            "inputs": (
+                [inp.model_dump() for inp in cap.inputs] if cap.inputs else []
+            ),
+            "outputs": (
+                [out.model_dump() for out in cap.outputs] if cap.outputs else []
+            ),
+            "status": cap.status.value if hasattr(cap.status, 'value') else str(cap.status),
+        }
+
+    async def _create_skill_nodes(self, capabilities: list) -> None:
+        """創建技能節點
+        
+        重構為多個輔助函數以降低認知複雜度
+        """
         for cap in capabilities:
             # 獲取性能數據
             scorecard = None
@@ -114,30 +155,23 @@ class SkillGraphBuilder:
                 id=cap.id,
                 name=cap.name,
                 language=cap.language,
-                topic=cap.topic,
+                topic=cap.topic or "unknown",
                 tags=cap.tags or [],
                 prerequisites=cap.prerequisites or [],
                 dependencies=cap.dependencies or [],
-                success_rate=scorecard.success_rate_7d if scorecard else 0.0,
-                avg_latency=scorecard.avg_latency_ms if scorecard else 0.0,
-                last_used=scorecard.last_used_at if scorecard else None,
-                usage_count=scorecard.usage_count_7d if scorecard else 0,
-                metadata={
-                    "description": cap.description,
-                    "entrypoint": cap.entrypoint,
-                    "inputs": (
-                        [inp.model_dump() for inp in cap.inputs] if cap.inputs else []
-                    ),
-                    "outputs": (
-                        [out.model_dump() for out in cap.outputs] if cap.outputs else []
-                    ),
-                    "status": cap.status.value,
-                },
+                success_rate=self._extract_success_rate(scorecard),
+                avg_latency=scorecard.avg_latency_ms if scorecard and hasattr(scorecard, 'avg_latency_ms') else 0.0,
+                last_used=(
+                    scorecard.last_used_at if scorecard and hasattr(scorecard, 'last_used_at') and scorecard.last_used_at
+                    else None
+                ),
+                usage_count=self._extract_usage_count(scorecard),
+                metadata=self._build_node_metadata(cap),
             )
 
             self.skill_nodes[cap.id] = node
 
-    async def _analyze_relationships(self, capabilities: list[CapabilityInfo]) -> None:
+    async def _analyze_relationships(self) -> None:
         """分析技能間關係"""
         # 1. 前置條件關係
         await self._analyze_prerequisite_relationships()
@@ -156,6 +190,7 @@ class SkillGraphBuilder:
 
     async def _analyze_prerequisite_relationships(self) -> None:
         """分析前置條件關係"""
+        await asyncio.sleep(0)  # 保持 async 性質
         for node_id, node in self.skill_nodes.items():
             for prereq in node.prerequisites:
                 # 尋找匹配的前置條件能力
@@ -176,10 +211,11 @@ class SkillGraphBuilder:
 
     async def _analyze_tag_similarity_relationships(self) -> None:
         """分析標籤相似性關係"""
-        nodes_list = list(self.skill_nodes.values())
+        await asyncio.sleep(0)  # 保持 async 性質
+        nodes = list(self.skill_nodes.values())
 
-        for i, node1 in enumerate(nodes_list):
-            for node2 in nodes_list[i + 1 :]:
+        for i, node1 in enumerate(nodes):
+            for node2 in nodes[i + 1 :]:
                 if node1.id == node2.id:
                     continue
 
@@ -206,6 +242,7 @@ class SkillGraphBuilder:
 
     async def _analyze_language_ecosystem_relationships(self) -> None:
         """分析語言生態關係"""
+        await asyncio.sleep(0)  # 保持 async 性質
         # 按語言分組
         language_groups = defaultdict(list)
         for node in self.skill_nodes.values():
@@ -231,6 +268,7 @@ class SkillGraphBuilder:
 
     async def _analyze_topic_relationships(self) -> None:
         """分析主題關聯關係"""
+        await asyncio.sleep(0)  # 保持 async 性質
         # 定義主題關聯規則
         topic_relationships = {
             "scanning": ["vulnerability", "security", "web"],
@@ -267,33 +305,42 @@ class SkillGraphBuilder:
                                 },
                             )
                             self.skill_edges.append(edge)
+    
+    def _check_io_compatibility(self, node1, node2) -> SkillEdge | None:
+        """檢查兩個節點的 I/O 兼容性（降低複雜度的輔助函數）"""
+        node1_outputs = node1.metadata.get("outputs", [])
+        node2_inputs = node2.metadata.get("inputs", [])
+        
+        for output in node1_outputs:
+            for input_param in node2_inputs:
+                if self._is_compatible_io(output, input_param):
+                    return SkillEdge(
+                        source=node1.id,
+                        target=node2.id,
+                        relationship_type="sequence",
+                        weight=0.7,
+                        confidence=0.6,
+                        metadata={
+                            "reason": f"I/O 匹配: {output.get('name')} -> {input_param.get('name')}"
+                        },
+                    )
+        return None
 
     async def _analyze_io_relationships(self) -> None:
-        """分析輸入輸出關係"""
+        """分析輸入輸出關係
+        
+        重構為輔助函數以降低認知複雜度
+        """
+        await asyncio.sleep(0)  # 保持 async 性質
         for node1 in self.skill_nodes.values():
             for node2 in self.skill_nodes.values():
                 if node1.id == node2.id:
                     continue
-
-                # 檢查 node1 的輸出是否匹配 node2 的輸入
-                node1_outputs = node1.metadata.get("outputs", [])
-                node2_inputs = node2.metadata.get("inputs", [])
-
-                for output in node1_outputs:
-                    for input_param in node2_inputs:
-                        if self._is_compatible_io(output, input_param):
-                            edge = SkillEdge(
-                                source=node1.id,
-                                target=node2.id,
-                                relationship_type="sequence",
-                                weight=0.7,
-                                confidence=0.6,
-                                metadata={
-                                    "reason": f"I/O 匹配: {output.get('name')} -> {input_param.get('name')}"
-                                },
-                            )
-                            self.skill_edges.append(edge)
-                            break
+                
+                # 檢查 I/O 兼容性
+                edge = self._check_io_compatibility(node1, node2)
+                if edge:
+                    self.skill_edges.append(edge)
 
     def _is_compatible_io(
         self, output: dict[str, Any], input_param: dict[str, Any]
@@ -318,6 +365,7 @@ class SkillGraphBuilder:
 
     async def _build_networkx_graph(self) -> None:
         """構建 NetworkX 圖"""
+        await asyncio.sleep(0)  # 保持 async 性質
         # 添加節點
         for node_id, node in self.skill_nodes.items():
             self.graph.add_node(node_id, **node.__dict__)
@@ -554,7 +602,7 @@ class AIVASkillGraph:
                 self.builder.graph, self.builder.skill_nodes
             )
 
-            self.last_build_time = datetime.utcnow()
+            self.last_build_time = datetime.now(UTC)
 
         logger.info("AIVA 技能圖初始化完成")
 
@@ -564,7 +612,7 @@ class AIVASkillGraph:
             await self.initialize()
             return
 
-        age = datetime.utcnow() - self.last_build_time
+        age = datetime.now(UTC) - self.last_build_time
         if age.total_seconds() > max_age_hours * 3600:
             logger.info("技能圖需要重建...")
             await self.initialize()
@@ -577,7 +625,7 @@ class AIVASkillGraph:
 
         if not self.analyzer:
             raise AIVAError(
-                "技能圖未初始化",
+                ERROR_MSG_GRAPH_NOT_INITIALIZED,
                 error_type=ErrorType.SYSTEM,
                 severity=ErrorSeverity.HIGH,
                 context=create_error_context(
@@ -596,7 +644,7 @@ class AIVASkillGraph:
 
         if not self.analyzer:
             raise AIVAError(
-                "技能圖未初始化",
+                ERROR_MSG_GRAPH_NOT_INITIALIZED,
                 error_type=ErrorType.SYSTEM,
                 severity=ErrorSeverity.HIGH,
                 context=create_error_context(
@@ -613,7 +661,7 @@ class AIVASkillGraph:
 
         if not self.analyzer:
             raise AIVAError(
-                "技能圖未初始化",
+                ERROR_MSG_GRAPH_NOT_INITIALIZED,
                 error_type=ErrorType.SYSTEM,
                 severity=ErrorSeverity.HIGH,
                 context=create_error_context(

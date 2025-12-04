@@ -9,7 +9,7 @@ from datetime import datetime, UTC
 
 from services.aiva_common.schemas.commands import CommandCallback, CommandStatus
 from services.aiva_common.utils import get_logger
-from services.core.aiva_core.ui_panel.websocket_manager import get_websocket_manager
+from services.core.ui.websocket_manager import get_websocket_manager
 
 # 嘗試導入 Rich Console（可選）
 try:

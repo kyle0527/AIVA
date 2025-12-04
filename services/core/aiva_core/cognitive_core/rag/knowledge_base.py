@@ -53,7 +53,7 @@ class KnowledgeBase:
         self.vector_store = vector_store
         logger.info("KnowledgeBase initialized with vector store")
     
-    def search(self, query: str, top_k: int = 5) -> List[Dict[str, Any]]:
+    async def search(self, query: str, top_k: int = 5) -> List[Dict[str, Any]]:
         """搜索相關知識
         
         Args:
@@ -65,7 +65,7 @@ class KnowledgeBase:
         """
         try:
             # 使用向量存儲進行檢索
-            results = self.vector_store.search(query, top_k=top_k)
+            results = await self.vector_store.search(query, top_k=top_k)
             
             # 轉換為知識庫格式
             knowledge_results = []
@@ -145,9 +145,10 @@ class KnowledgeBase:
                 "status": "active"
             }
             
-            if hasattr(self.vector_store, 'get_statistics'):
-                vector_stats = self.vector_store.get_statistics()
-                stats.update(vector_stats)
+            # 移除對不存在方法的調用 - VectorStoreProtocol 沒有 get_statistics
+            # if hasattr(self.vector_store, 'get_statistics'):
+            #     vector_stats = self.vector_store.get_statistics()
+            #     stats.update(vector_stats)
             
             return stats
         except Exception as e:

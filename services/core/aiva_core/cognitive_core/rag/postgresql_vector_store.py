@@ -356,16 +356,24 @@ class PostgreSQLVectorStore:
 # 使用示例
 async def demo_postgresql_vector_store():
     """演示新架構的強大功能"""
-    # 初始化
-    store = PostgreSQLVectorStore(
-        database_url="postgresql://postgres:aiva123@localhost:5432/aiva_db"
+    import os
+    
+    # 從環境變量獲取數據庫連接 - 開發期間不需要登入
+    database_url = os.getenv(
+        "AIVA_DATABASE_URL",
+        "postgresql://postgres:change_me_in_production@localhost:5432/aiva_db"  # 開發環境密碼 - 生產環境需更改
     )
+    
+    # 初始化
+    store = PostgreSQLVectorStore(database_url=database_url)
 
     try:
         await store.initialize()
 
         # 添加攻擊技術知識
-        embedding = np.random.randn(384).astype(np.float32)
+        # 使用 numpy.random.Generator 替代 legacy function
+        rng = np.random.default_rng(42)  # 固定種子確保可重現性
+        embedding = rng.standard_normal(384, dtype=np.float32)
         await store.add_document(
             doc_id="sqli_union_technique",
             text="UNION based SQL injection allows...",
@@ -378,7 +386,7 @@ async def demo_postgresql_vector_store():
         )
 
         # 搜索相關技術
-        query_embedding = np.random.randn(384).astype(np.float32)
+        query_embedding = rng.standard_normal(384, dtype=np.float32)
         results = await store.search(
             query_embedding=query_embedding,
             top_k=3,

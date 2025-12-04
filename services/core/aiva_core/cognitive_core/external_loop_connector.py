@@ -141,25 +141,51 @@ class ExternalLoopConnector:
                 training_triggered = True
                 
                 # 步驟 4: 如果產生了新權重，註冊
-                if training_result and training_result.new_weights_version:
-                    logger.info("  Step 3: Registering new weights...")
-                    new_version = self._register_new_weights(training_result)
-                    weights_updated = True
+                if training_result:
+                    # 安全訪問 new_weights_version
+                    if hasattr(training_result, 'new_weights_version'):
+                        new_weights_version = training_result.new_weights_version
+                    elif isinstance(training_result, dict):
+                        new_weights_version = training_result.get('new_weights_version')
+                    else:
+                        new_weights_version = None
+                    
+                    if new_weights_version:
+                        logger.info("  Step 3: Registering new weights...")
+                        new_version = self._register_new_weights(training_result)
+                        weights_updated = True
             else:
                 logger.info("  Deviations not significant, skipping training")
             
-            # ✅ 返回 Pydantic 模型
+            # ✅ 返回 Pydantic 模型 - 使用 model_validate 進行安全轉換
+            # 將 deviations 轉換為 DeviationRecord 列表
+            deviation_records = []
+            for dev in deviations:
+                if isinstance(dev, dict):
+                    deviation_records.append(DeviationRecord.model_validate(dev))
+                else:
+                    deviation_records.append(dev)  # 假設已經是 DeviationRecord
+            
+            # 將 training_result 轉換為 ModelTrainingResult (如果需要)
+            training_result_obj = None
+            if training_result:
+                if isinstance(training_result, dict):
+                    training_result_obj = ModelTrainingResult.model_validate(training_result)
+                else:
+                    training_result_obj = training_result  # 假設已經是正確的實例
+            
             result = ExternalLoopProcessResult(
                 plan_id=plan.plan_id,
                 deviations_found=len(deviations),
                 deviations_significant=is_significant,
-                deviations=deviations,
+                deviations=deviation_records,  # 現在是正確的類型
                 training_triggered=training_triggered,
-                training_result=training_result,
+                training_result=training_result_obj,  # 現在是正確的類型
                 weights_updated=weights_updated,
                 new_weights_version=new_version,
                 timestamp=datetime.now(UTC),
-                success=True
+                success=True,
+                error=None
             )
             
             logger.info(f"✅ External loop processing completed: {result.model_dump()}")
@@ -168,7 +194,7 @@ class ExternalLoopConnector:
         except Exception as e:
             # ✅ 修復 4: 使用統一錯誤處理
             error_context = create_error_context(
-                error_type=ErrorType.AI_PROCESSING,
+                error_type=ErrorType.SYSTEM,
                 severity=ErrorSeverity.HIGH,
                 message="External loop processing failed",
                 details={
@@ -196,8 +222,8 @@ class ExternalLoopConnector:
     
     def _analyze_deviations(
         self,
-        plan: dict[str, Any],
-        trace: list[dict[str, Any]]
+        plan: ExecutionPlan,
+        trace: list[ExecutionTrace]
     ) -> list[dict[str, Any]]:
         """分析執行偏差
         
@@ -214,7 +240,7 @@ class ExternalLoopConnector:
             deviations = []
             
             # 基本檢查：計劃步驟數 vs 執行步驟數
-            plan_steps = plan.get("steps", [])
+            plan_steps = plan.steps if hasattr(plan, 'steps') else []
             if len(trace) < len(plan_steps):
                 deviations.append({
                     "type": "incomplete_execution",
@@ -225,7 +251,7 @@ class ExternalLoopConnector:
                 })
             
             # 檢查執行錯誤
-            failed_steps = [t for t in trace if t.get("status") == "failed"]
+            failed_steps = [t for t in trace if t.status == "failed"]
             if failed_steps:
                 deviations.append({
                     "type": "execution_failures",
@@ -235,7 +261,7 @@ class ExternalLoopConnector:
                 })
             
             # 檢查執行時間異常
-            avg_duration = sum(t.get("duration", 0) for t in trace) / max(len(trace), 1)
+            avg_duration = sum(getattr(t, 'duration', 0) for t in trace) / max(len(trace), 1)
             if avg_duration > 30:  # 假設 30 秒為閾值
                 deviations.append({
                     "type": "slow_execution",
@@ -284,10 +310,10 @@ class ExternalLoopConnector:
     
     async def _train_from_experience(
         self,
-        plan: dict[str, Any],
-        trace: list[dict[str, Any]],
+        plan: ExecutionPlan,
+        trace: list[ExecutionTrace],
         deviations: list[dict[str, Any]]
-    ) -> dict[str, Any]:
+    ) -> dict[str, Any] | None:
         """基於執行經驗訓練模型
         
         Args:
@@ -306,10 +332,10 @@ class ExternalLoopConnector:
             for i, deviation in enumerate(deviations):
                 sample = ExperienceSample(
                     sample_id=f"sample_{uuid4().hex[:12]}",
-                    session_id=f"session_{datetime.now(timezone.utc).strftime('%Y%m%d_%H%M%S')}",
-                    plan_id=plan.get("plan_id", f"plan_{i}"),
+                    session_id=f"session_{datetime.now(UTC).strftime('%Y%m%d_%H%M%S')}",
+                    plan_id=plan.plan_id if hasattr(plan, 'plan_id') else f"plan_{i}",
                     state_before={
-                        "plan_steps": len(plan.get("steps", [])),
+                        "plan_steps": len(plan.steps if hasattr(plan, 'steps') else []),
                         "expected_execution": "complete"
                     },
                     action_taken={
@@ -331,8 +357,8 @@ class ExternalLoopConnector:
                         "deviation_type": deviation.get("type"),
                         "severity": deviation.get("severity")
                     },
-                    target_info=plan.get("target_info", {}),
-                    timestamp=datetime.now(timezone.utc),
+                    target_info=getattr(plan, 'target_info', {}) if hasattr(plan, 'target_info') else {},
+                    timestamp=datetime.now(UTC),
                     is_positive=False,
                     confidence=0.8,
                     learning_tags=["deviation", deviation.get("type", "unknown")],
@@ -342,7 +368,7 @@ class ExternalLoopConnector:
             
             # 使用監督學習訓練
             config = ModelTrainingConfig(
-                config_id=f"config_{datetime.now(timezone.utc).strftime('%Y%m%d_%H%M%S')}",
+                config_id=f"config_{datetime.now(UTC).strftime('%Y%m%d_%H%M%S')}",
                 model_type="neural_network",
                 training_mode="supervised",
                 epochs=10,
@@ -379,7 +405,7 @@ class ExternalLoopConnector:
         """
         try:
             weights_path = training_result.get("new_weights_path")
-            version = training_result.get("version", f"v{datetime.now(timezone.utc).strftime('%Y%m%d_%H%M%S')}")
+            version = training_result.get("version", f"v{datetime.now(UTC).strftime('%Y%m%d_%H%M%S')}")
             metrics = training_result.get("metrics", {})
             
             # 目前 AIWeightManager 使用 save_model_weights 方法

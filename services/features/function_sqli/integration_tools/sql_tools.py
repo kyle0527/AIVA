@@ -257,6 +257,7 @@ class CustomSQLInjectionScanner:
                 connector=aiohttp.TCPConnector(limit=10)
             )
             self._own_session = True
+        await asyncio.sleep(0)  # 使 async 函數合法
         return self.session
     
     async def close(self):
@@ -345,6 +346,9 @@ class CustomSQLInjectionScanner:
     async def _get_baseline_response(self, target: SQLTarget) -> Optional[Dict[str, Any]]:
         """獲取基準響應"""
         try:
+            if self.session is None:
+                return None
+                
             start_time = time.time()
             
             if target.method.upper() == "GET":
@@ -395,7 +399,9 @@ class CustomSQLInjectionScanner:
                 # 注入載荷到參數
                 if target.method.upper() == "GET":
                     parsed_url = urllib.parse.urlparse(test_url)
-                    query_params = urllib.parse.parse_qs(parsed_url.query)
+                    query_str = parsed_url.query if parsed_url.query else ""
+                    # 使用 keep_blank_values=True 確保正確的類型推斷
+                    query_params: Dict[str, List[str]] = urllib.parse.parse_qs(query_str, keep_blank_values=True)
                     query_params[param_name] = [param_value + payload]
                     new_query = urllib.parse.urlencode(query_params, doseq=True)
                     test_url = urllib.parse.urlunparse(parsed_url._replace(query=new_query))
@@ -410,7 +416,7 @@ class CustomSQLInjectionScanner:
                 
                 if target.method.upper() == "GET":
                     async with session.get(
-                        test_url,
+                        str(test_url),
                         headers=target.headers,
                         cookies=target.cookies
                     ) as response:
@@ -586,6 +592,9 @@ class NoSQLInjectionScanner:
                 test_data = test_data.replace("username=admin", f"username={payload}")
             
             # 發送請求
+            if self.session is None:
+                return None
+                
             async with self.session.post(
                 target.url,
                 data=test_data,
@@ -623,6 +632,17 @@ class BlindSQLInjectionScanner:
     
     def __init__(self):
         self.session: Optional[aiohttp.ClientSession] = None
+        self._own_session = False
+        
+    async def _ensure_session(self) -> aiohttp.ClientSession:
+        """確保 session 已初始化"""
+        if self.session is None:
+            self.session = aiohttp.ClientSession(
+                timeout=aiohttp.ClientTimeout(total=15)
+            )
+            self._own_session = True
+        await asyncio.sleep(0)  # 使 async 函數合法
+        return self.session
         
     async def scan_blind_injection(self, target: SQLTarget) -> List[SQLInjectionResult]:
         """掃描盲注漏洞"""
@@ -933,7 +953,7 @@ class SQLInjectionCLI:
                 elif choice == "6":
                     self._show_scan_history()
                 elif choice == "7":
-                    self._export_report()  # 移除 await，因為已改為同步函式
+                    await self._export_report()
                 elif choice == "99":
                     console.print(CONSOLE_PROMPTS['GOODBYE'])
                     break
@@ -1142,6 +1162,7 @@ class SQLInjectionCLI:
         """導出掃描報告"""
         if not self.manager.scan_results:
             console.print("[bold yellow]暫無掃描結果可導出[/bold yellow]")
+            await asyncio.sleep(0)  # 使 async 函數合法
             return
         
         output_dir = Path("reports/sql_injection")
@@ -1157,6 +1178,7 @@ class SQLInjectionCLI:
                 'results': [self.manager._result_to_dict(r) for r in self.manager.scan_results]
             }
             
+            await asyncio.sleep(0)  # 使 async 函數合法
             with open(filename, 'w', encoding='utf-8') as f:
                 json.dump(report_data, f, ensure_ascii=False, indent=2)
             

@@ -411,7 +411,7 @@ class AIVADialogAssistant:
             search_query = f"{scan_type} attack scan" if scan_type else "vulnerability scan attack"
             
             # RAG 語義搜索（返回最相關的能力）
-            results = kb.search(search_query, top_k=5)
+            results = await kb.search(search_query, top_k=5)
             
             if not results:
                 return {

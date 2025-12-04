@@ -3,6 +3,7 @@
 負責向量化和存儲攻擊模式、經驗樣本、知識文檔
 """
 
+import asyncio
 import json
 import logging
 from pathlib import Path
@@ -148,7 +149,7 @@ class VectorStore:
 
         return embedding
 
-    def add_document(
+    async def add_document(
         self,
         doc_id: str,
         text: str,
@@ -164,7 +165,8 @@ class VectorStore:
         if self.backend == "chroma" and self.collection is not None:
             # 使用 ChromaDB API
             # ChromaDB 自動處理嵌入，不需要手動生成
-            self.collection.add(
+            await asyncio.to_thread(
+                self.collection.add,
                 ids=[doc_id],
                 documents=[text],
                 metadatas=[metadata or {}]
@@ -177,16 +179,19 @@ class VectorStore:
             # 檢查是否為 SentenceTransformer 模型
             if hasattr(model, 'encode'):
                 # 使用 encode 方法（SentenceTransformer）
-                embedding = model.encode(text, convert_to_numpy=True)
+                embedding = await asyncio.to_thread(
+                    model.encode, text, convert_to_numpy=True
+                )
             elif callable(model):
                 # 使用簡單嵌入函數
-                embedding = model(text)
+                embedding = await asyncio.to_thread(model, text)
             else:
                 raise ValueError(f"Unknown embedding model type: {type(model)}")
 
             # 存儲到內存
             self.vectors[doc_id] = embedding
             self.documents[doc_id] = text
+            self.metadata[doc_id] = metadata or {}
             self.metadata[doc_id] = metadata or {}
 
             logger.debug(f"Added document {doc_id} to memory vector store")
@@ -222,7 +227,7 @@ class VectorStore:
 
             logger.info(f"Added {len(doc_ids)} documents to memory vector store")
 
-    def search(
+    async def search(
         self,
         query: str,
         top_k: int = 5,
@@ -242,7 +247,8 @@ class VectorStore:
             # 使用 ChromaDB API 查詢
             where_filter = filter_metadata if filter_metadata else None
             
-            results = self.collection.query(
+            results = await asyncio.to_thread(
+                self.collection.query,
                 query_texts=[query],
                 n_results=top_k,
                 where=where_filter  # ChromaDB 元數據過濾

@@ -224,17 +224,25 @@ class TwoPhaseScanOrchestrator:
                 if isinstance(msg, dict):
                     msg_data = msg
                 else:
-                    # MQMessage 使用 body 屬性
-                    msg_body = msg.body if hasattr(msg, 'body') else msg
-                    msg_data = json.loads(msg_body.decode("utf-8") if isinstance(msg_body, bytes) else msg_body)
+                    # MQMessage 使用 body 屬性 - 安全類型檢查
+                    if hasattr(msg, 'body') and hasattr(msg.body, 'decode'):
+                        msg_body = msg.body.decode("utf-8")
+                    elif hasattr(msg, 'body'):
+                        msg_body = str(msg.body)
+                    else:
+                        msg_body = str(msg)
+                    msg_data = json.loads(msg_body)
                 
                 # 檢查是否是我們的掃描結果
                 if isinstance(msg_data, dict) and msg_data.get("payload", {}).get("scan_id") == scan_id:
                     logger.info(f"[Phase0] Received result for scan_id={scan_id}")
                     
-                    # 解析 Phase0CompletedPayload
+                    # 解析 Phase0CompletedPayload - 使用 Pydantic v2 model_validate
                     payload_data = msg_data.get("payload", {})
-                    phase0_result = Phase0CompletedPayload(**payload_data)
+                    if isinstance(payload_data, dict):
+                        phase0_result = Phase0CompletedPayload.model_validate(payload_data)
+                    else:
+                        phase0_result = payload_data  # 假設已經是正確的實例
                     
                     logger.info(
                         f"[Phase0] Completed: technologies={len(phase0_result.fingerprints.web_server or {}) if phase0_result.fingerprints else 0}, "
@@ -334,17 +342,25 @@ class TwoPhaseScanOrchestrator:
                 if isinstance(msg, dict):
                     msg_data = msg
                 else:
-                    # MQMessage 使用 body 屬性
-                    msg_body = msg.body if hasattr(msg, 'body') else msg
-                    msg_data = json.loads(msg_body.decode("utf-8") if isinstance(msg_body, bytes) else msg_body)
+                    # MQMessage 使用 body 屬性 - 安全類型檢查
+                    if hasattr(msg, 'body') and hasattr(msg.body, 'decode'):
+                        msg_body = msg.body.decode("utf-8")
+                    elif hasattr(msg, 'body'):
+                        msg_body = str(msg.body)
+                    else:
+                        msg_body = str(msg)
+                    msg_data = json.loads(msg_body)
                 
                 # 檢查是否是我們的掃描結果
                 if isinstance(msg_data, dict) and msg_data.get("payload", {}).get("scan_id") == scan_id:
                     logger.info(f"[Phase1] Received result for scan_id={scan_id}")
                     
-                    # 解析 Phase1CompletedPayload
+                    # 解析 Phase1CompletedPayload - 使用 Pydantic v2 model_validate
                     payload_data = msg_data.get("payload", {})
-                    phase1_result = Phase1CompletedPayload(**payload_data)
+                    if isinstance(payload_data, dict):
+                        phase1_result = Phase1CompletedPayload.model_validate(payload_data)
+                    else:
+                        phase1_result = payload_data  # 假設已經是正確的實例
                     
                     logger.info(
                         f"[Phase1] Completed: status={phase1_result.status}, "

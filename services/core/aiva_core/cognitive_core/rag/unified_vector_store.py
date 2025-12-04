@@ -43,8 +43,14 @@ class UnifiedVectorStore:
             embedding_model: 嵌入模型名稱
             legacy_persist_directory: 舊的文件存儲目錄（用於遷移）
         """
+        import os
+        
+        # 從環境變量獲取或使用無密碼本地開發配置
         self.database_url = (
-            database_url or "postgresql://postgres:aiva123@postgres:5432/aiva_db"
+            database_url or os.getenv(
+                "AIVA_DATABASE_URL",
+                "postgresql://postgres:change_me_in_production@localhost:5432/aiva_db"  # 開發環境密碼 - 生產環境需更改
+            )
         )
         self.table_name = table_name
         self.embedding_dimension = embedding_dimension
@@ -136,9 +142,9 @@ class UnifiedVectorStore:
                 import importlib
 
                 st_module = importlib.import_module("sentence_transformers")
-                SentenceTransformer = st_module.SentenceTransformer
+                sentence_transformer_cls = st_module.SentenceTransformer
 
-                self._embedding_model = SentenceTransformer(self.embedding_model_name)
+                self._embedding_model = sentence_transformer_cls(self.embedding_model_name)
                 logger.info(f"Loaded embedding model: {self.embedding_model_name}")
 
             except ImportError:
@@ -155,8 +161,8 @@ class UnifiedVectorStore:
         """簡單的嵌入函數（後備方案）"""
         # 使用字符哈希生成固定維度向量
         hash_val = hash(text)
-        np.random.seed(hash_val % (2**32))
-        embedding = np.random.randn(self.embedding_dimension).astype(np.float32)
+        rng = np.random.default_rng(hash_val % (2**32))
+        embedding = rng.standard_normal(self.embedding_dimension, dtype=np.float32)
 
         # 歸一化
         norm = np.linalg.norm(embedding)

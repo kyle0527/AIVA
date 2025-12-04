@@ -163,7 +163,7 @@ class ScanModuleInterface:
         phase0_payload = Phase0StartPayload(
             scan_id=scan_id,
             targets=targets,
-            timeout_seconds=timeout_seconds,
+            timeout=timeout_seconds,  # 使用正確的參數名 timeout
         )
 
         message = {
@@ -213,8 +213,8 @@ class ScanModuleInterface:
             phase0_result=phase0_result,
             selected_engines=selected_engines,
             max_depth=max_depth,
-            max_urls=max_urls,
-            timeout_seconds=timeout_seconds,
+            max_pages=max_urls,  # 使用正確的參數名 max_pages
+            timeout=timeout_seconds,  # 使用正確的參數名 timeout
         )
 
         message = {

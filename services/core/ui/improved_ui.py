@@ -27,7 +27,7 @@ from aiva_common.error_handling import AIVAError, ErrorType, ErrorSeverity, crea
 MODULE_NAME = "ui_panel.improved_ui"
 
 try:
-    from services.core.aiva_core.ui_panel.dashboard import Dashboard  # type: ignore
+    from services.core.ui.dashboard import Dashboard  # type: ignore
     from services.aiva_common.schemas import APIResponse  # type: ignore
 except Exception as exc:  # pragma: no cover
     raise AIVAError(

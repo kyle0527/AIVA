@@ -8,7 +8,8 @@ Social Engineering Toolkit Module
 """
 
 from .manager import SocialEngineeringManager
-from .handler import SocialEngineeringCommandHandler
+# TODO: handler.py 尚未實現，暫時註釋
+# from .handler import SocialEngineeringCommandHandler
 from .models import (
     # Enums
     PhishingType,
@@ -31,7 +32,7 @@ from .models import (
 __all__ = [
     # Manager
     "SocialEngineeringManager",
-    "SocialEngineeringCommandHandler",
+    # "SocialEngineeringCommandHandler",  # TODO: 待實現
     
     # Enums
     "PhishingType",

@@ -339,54 +339,59 @@ class AntiHallucinationModule:
         ]
 
         return any(variation in action_lower for variation in common_variations)
+    
+    def _extract_relevance_score(self, result: Any) -> float:
+        """提取相關性分數（降低複雜度的輔助函數）"""
+        if isinstance(result, dict):
+            # 優先檢查字典格式的分數
+            if "relevance_score" in result:
+                return result["relevance_score"]
+            elif "score" in result:
+                return result["score"]
+            else:
+                # 如果字典中沒有分數，但有結果，就認為是有效的
+                return self.confidence_threshold + 0.1
+        elif hasattr(result, "score"):
+            # 物件格式的分數
+            return result.score
+        elif hasattr(result, "relevance_score"):
+            # 物件格式的相關性分數
+            return result.relevance_score
+        else:
+            # 如果沒有分數，但有結果，就認為是有效的
+            return self.confidence_threshold + 0.1
 
     def _validate_with_knowledge_base(self, step: Dict[str, Any]) -> Dict[str, Any]:
-        """使用主要知識庫驗證步驟"""
+        """使用主要知識庫驗證步驟
+        
+        重構為輔助函數以降低認知複雜度
+        """
         try:
             # 搜尋相關知識條目
             query = step.get("description", "") + " " + step.get("action", "")
 
-            if self.knowledge_base and hasattr(self.knowledge_base, "search"):
-                results = self.knowledge_base.search(query, top_k=3)
-
-                if not results or len(results) == 0:
-                    return {
-                        "is_valid": False,
-                        "reason": "知識庫中無相關技術資料，可能是幻覺",
-                    }
-
-                # 檢查相關性分數（支援新版knowledge_base.py的回應格式）
-                best_result = results[0]
-                score = 0.0  # 預設分數
-                
-                if isinstance(best_result, dict):
-                    # 優先檢查字典格式的分數
-                    if "relevance_score" in best_result:
-                        score = best_result["relevance_score"]
-                    elif "score" in best_result:
-                        score = best_result["score"]
-                    else:
-                        # 如果字典中沒有分數，但有結果，就認為是有效的
-                        score = self.confidence_threshold + 0.1
-                elif hasattr(best_result, "score"):
-                    # 物件格式的分數
-                    score = best_result.score
-                elif hasattr(best_result, "relevance_score"):
-                    # 物件格式的相關性分數
-                    score = best_result.relevance_score
-                else:
-                    # 如果沒有分數，但有結果，就認為是有效的
-                    score = self.confidence_threshold + 0.1
-
-                if score < self.confidence_threshold:
-                    return {
-                        "is_valid": False,
-                        "reason": f"知識庫匹配度過低: {score:.2f} < {self.confidence_threshold}",
-                    }
-
-                return {"is_valid": True, "reason": f"知識庫驗證通過 (分數: {score:.2f})"}
-            else:
+            if not (self.knowledge_base and hasattr(self.knowledge_base, "search")):
                 return {"is_valid": False, "reason": "知識庫不可用或缺少search方法"}
+            
+            results = self.knowledge_base.search(query, top_k=3)
+
+            if not results or len(results) == 0:
+                return {
+                    "is_valid": False,
+                    "reason": "知識庫中無相關技術資料，可能是幻覺",
+                }
+
+            # 檢查相關性分數（支援新版knowledge_base.py的回應格式）
+            best_result = results[0]
+            score = self._extract_relevance_score(best_result)
+
+            if score < self.confidence_threshold:
+                return {
+                    "is_valid": False,
+                    "reason": f"知識庫匹配度過低: {score:.2f} < {self.confidence_threshold}",
+                }
+
+            return {"is_valid": True, "reason": f"知識庫驗證通過 (分數: {score:.2f})"}
 
         except Exception as e:
             self.logger.error(f"知識庫驗證異常: {e}")
