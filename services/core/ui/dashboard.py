@@ -66,17 +66,17 @@ class Dashboard:
             self.mode = "ui"
 
     def _init_ai_commander(self) -> None:
-        """初始化 AI Commander - 真正執行攻擊的組件."""
+        """初始化 AI 命令中心 - 直接使用 CommandCenter."""
         try:
-            from ..task_planning.ai_commander import AICommander
+            from services.aiva_common.command_center import get_command_center
 
-            logger.info("\n[AI Commander] 正在初始化 AICommander...")
-            self.ai_commander = AICommander()
-            logger.info("[AI Commander] AICommander 初始化成功")
+            logger.info("\n[AI CommandCenter] 正在初始化...")
+            self.command_center = get_command_center()
+            logger.info("[AI CommandCenter] 初始化成功")
         except Exception as e:
-            logger.warning(f"[AI Commander] AICommander 初始化失敗: {e}")
-            self.ai_commander = None
-            logger.info("[AI Commander] 將使用 AttackExecutor 作為 fallback")
+            logger.warning(f"[AI CommandCenter] 初始化失敗: {e}")
+            self.command_center = None
+            logger.info("[AI CommandCenter] 將使用 fallback 模式")
 
     def create_scan_task(
         self,
@@ -100,63 +100,47 @@ class Dashboard:
 
         task_id = f"scan_{hash(target_url) % 100000}"
 
-        if use_ai and self.ai_commander:
+        if use_ai and self.command_center:
             logger.info(f"\n{'='*60}")
             logger.info(f"[AI 自主攻擊] 啟動針對 {target_url} 的全面攻擊")
             logger.info(f"{'='*60}")
             
-            # 使用 AICommander 執行真正的攻擊
+            # 使用 CommandCenter 執行真正的攻擊
             try:
-                from ..task_planning.ai_commander import AITaskType
-                
-                # 創建攻擊任務上下文
-                context = {
-                    "target": target_url,
-                    "scan_type": scan_type,
-                    "objective": f"對 {target_url} 執行全面安全測試",
-                    "constraints": {
-                        "timeout": 300,  # 5分鐘超時
-                        "max_depth": 3,
-                        "stealth_mode": False
-                    }
-                }
+                from services.aiva_common.schemas import AICommand, CommandType
                 
                 # 在新的事件循環中執行異步任務
                 loop = asyncio.new_event_loop()
                 asyncio.set_event_loop(loop)
                 try:
-                    # 執行攻擊計畫生成
-                    logger.info("[攻擊階段 1] AI 正在生成攻擊計畫...")
-                    plan_result = loop.run_until_complete(
-                        self.ai_commander.execute_command(
-                            AITaskType.ATTACK_PLANNING,
-                            context
-                        )
+                    # 執行掃描命令
+                    logger.info("[攻擊階段] AI 正在執行安全掃描...")
+                    
+                    command = AICommand(
+                        command_type=CommandType.SCAN_PHASE0,
+                        target_module="scan",
+                        payload={
+                            "target": target_url,
+                            "scan_type": scan_type,
+                            "deep_scan": True,
+                            "timeout": 300,
+                        }
                     )
                     
-                    # 執行漏洞檢測
-                    logger.info("[攻擊階段 2] AI 正在執行漏洞檢測...")
-                    detection_result = loop.run_until_complete(
-                        self.ai_commander.execute_command(
-                            AITaskType.VULNERABILITY_DETECTION,
-                            {**context, "attack_plan": plan_result}
-                        )
+                    result = loop.run_until_complete(
+                        self.command_center.execute(command)
                     )
                     
-                    logger.info(f"[攻擊完成] ✅ 已完成對 {target_url} 的攻擊")
+                    logger.info(f"[攻擊完成] ✅ 已完成對 {target_url} 的掃描")
                     
                     task = {
                         "task_id": task_id,
                         "target": target_url,
                         "scan_type": scan_type,
-                        "status": "completed",
-                        "created_by": "ai_commander",
-                        "attack_plan": plan_result,
-                        "detection_result": detection_result,
-                        "ai_result": {
-                            "plan": plan_result,
-                            "detection": detection_result
-                        },
+                        "status": "completed" if result.success else "failed",
+                        "created_by": "command_center",
+                        "result": result.result_data,
+                        "error": result.error_message,
                     }
                 finally:
                     loop.close()
@@ -168,7 +152,7 @@ class Dashboard:
                     "target": target_url,
                     "scan_type": scan_type,
                     "status": "failed",
-                    "created_by": "ai_commander",
+                    "created_by": "command_center",
                     "error": str(e),
                 }
         

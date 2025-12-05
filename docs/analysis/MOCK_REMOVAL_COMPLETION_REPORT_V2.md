@@ -6,6 +6,21 @@
 
 ---
 
+## 📑 目錄
+
+1. [📊 執行摘要](#-執行摘要)
+2. [🎯 修復詳情](#-修復詳情)
+   - [修復 #1: Core Module - 對話助理懶加載](#-修復-1-core-module---對話助理懶加載)
+   - [修復 #2: Features Module - Payload Generator](#-修復-2-features-module---payload-generator-4個文件)
+   - [修復 #3: Features Module - BizLogic Testers](#-修復-3-features-module---bizlogic-testers-3個文件)
+   - [修復 #4: Scan Module - Vulnerability Scanner](#-修復-4-scan-module---vulnerability-scanner)
+3. [📈 統計數據](#-統計數據)
+4. [🎯 驗證結果](#-驗證結果)
+5. [🔍 未修復項目說明](#-未修復項目說明)
+6. [🎉 總結](#-總結)
+
+---
+
 ## 📊 執行摘要
 
 | 模組 | 初始狀態 | 完成狀態 | 實現率變化 | 狀態 |

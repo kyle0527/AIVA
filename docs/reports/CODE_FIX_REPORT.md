@@ -6,6 +6,26 @@
 
 ---
 
+## 📑 目錄
+
+1. [📊 執行總覽](#-執行總覽)
+   - [修復統計](#修復統計)
+   - [系統狀態](#系統狀態)
+2. [🎯 修復的6個核心文件](#-修復的6個核心文件)
+   - [1. ai_capability_query.py](#1-ai_capability_querypy)
+   - [2. internal_loop_connector.py](#2-internal_loop_connectorpy)
+   - [3. capability_registry.py](#3-capability_registrypy)
+   - [4. invocation_metadata.py](#4-invocation_metadatapy)
+   - [5. knowledge_graph.py](#5-knowledge_graphpy)
+   - [6. real_neural_core.py](#6-real_neural_corepy)
+3. [📈 修復模式總結](#-修復模式總結)
+4. [✅ 驗證結果](#-驗證結果)
+5. [🎯 系統狀態評估](#-系統狀態評估)
+6. [📚 相關文檔](#-相關文檔)
+7. [🎉 結論](#-結論)
+
+---
+
 ## 📊 執行總覽
 
 ### 修復統計

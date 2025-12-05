@@ -187,15 +187,14 @@ class AIService:
     async def run_interactive_mode(self):
         """交互式模式 - AI 對話交互"""
         from services.core.aiva_core.core_capabilities.dialog.assistant import AIVADialogAssistant
-        from services.core.aiva_core.task_planning.ai_commander_v2 import AICommanderV2
+        from services.aiva_common.command_center import get_command_center
         
         logger.info("💬 AIVA AI 交互模式啟動")
         logger.info("[AI] 正在初始化 AI 對話助理...")
         
-        # 初始化 AI 對話助理和指揮中心
+        # 初始化 AI 對話助理和命令中心
         assistant = AIVADialogAssistant()
-        commander = AICommanderV2()
-        await commander.initialize()
+        command_center = get_command_center()
         
         logger.info("[SUCCESS] AI 對話助理已就緒")
         logger.info("[INFO] 您可以用自然語言與 AI 對話，例如:")
@@ -227,11 +226,17 @@ class AIService:
                 # 顯示 AI 回應
                 logger.info(f"\n{response.get('message', '無回應')}\n")
                 
-                # 如果有可執行的任務，交給 AICommanderV2 執行
+                # 如果有可執行的任務，交給 CommandCenter 執行
                 if response.get('executable') and response.get('task_plan'):
                     logger.info("🚀 AI 開始執行任務...")
                     try:
-                        task_result = await commander.execute_task_plan(response['task_plan'])
+                        from services.aiva_common.models import AICommand
+                        # 將任務計劃轉換為 CommandCenter 可執行的指令
+                        command = AICommand(
+                            action=response['task_plan'].get('action', 'execute'),
+                            params=response['task_plan']
+                        )
+                        task_result = await command_center.execute(command)
                         
                         if task_result.get('success'):
                             logger.info(f"[SUCCESS] 任務執行成功")

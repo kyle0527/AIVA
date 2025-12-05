@@ -551,33 +551,42 @@ class EnhancedDecisionAgent:
         
         self.logger.info(f"   🔧 使用工具: {tool}, 目標漏洞: {target_vuln}")
         
-        # 導入 AICommander 來執行（如果可用）
+        # 直接使用 AICommandCenter 下達命令
         try:
-            from ...task_planning.ai_commander import AICommander, AITaskType
+            from services.aiva_common.command_center import get_command_center
+            from services.aiva_common.schemas import AICommand, CommandType
             
-            # 初始化 AI Commander
-            commander = AICommander()
+            command_center = get_command_center()
+            target = context.target_info.get("value", "http://localhost:3000")
             
-            # 執行漏洞檢測
-            result = await commander.execute_command(
-                task_type=AITaskType.VULNERABILITY_DETECTION,
-                context={
-                    "target": context.target_info.get("value", "http://localhost:3000"),
+            # 構建命令
+            command = AICommand(
+                command_type=CommandType.SCAN_PHASE0,
+                target_module="scan",
+                payload={
+                    "target": target,
                     "vulnerability_types": [target_vuln] if target_vuln else ["sqli", "xss", "ssrf", "idor"],
                     "deep_scan": True,
                 }
             )
             
-            return result
+            # 執行命令
+            result = await command_center.execute(command)
             
-        except ImportError as e:
-            self.logger.warning(f"⚠️ AICommander 不可用: {e}")
+            return {
+                "success": result.success,
+                "data": result.result_data,
+                "error": result.error_message
+            }
+            
+        except Exception as e:
+            self.logger.warning(f"⚠️ Command execution failed: {e}")
             # 回退到模擬執行
             return {
                 "success": True,
                 "simulated": True,
                 "tool": tool,
-                "message": "Simulated execution (AICommander not available)"
+                "message": "Simulated execution (CommandCenter not available)"
             }
     
     async def _execute_vulnerability_test(self, decision: Decision, context: DecisionContext) -> dict[str, Any]:
@@ -587,9 +596,10 @@ class EnhancedDecisionAgent:
         self.logger.info(f"   🎯 對目標 {target} 執行漏洞測試")
         
         try:
-            from ...task_planning.ai_commander import AICommander, AITaskType
+            from services.aiva_common.command_center import get_command_center
+            from services.aiva_common.schemas import AICommand, CommandType
             
-            commander = AICommander()
+            command_center = get_command_center()
             
             # 決定測試類型
             if decision.action == "EXPLOIT_SQL_INJECTION":
@@ -597,18 +607,28 @@ class EnhancedDecisionAgent:
             else:
                 vuln_types = ["sqli", "xss", "ssrf", "idor"]  # 全面測試
             
-            result = await commander.execute_command(
-                task_type=AITaskType.VULNERABILITY_DETECTION,
-                context={
+            # 構建命令
+            command = AICommand(
+                command_type=CommandType.SCAN_PHASE0,
+                target_module="scan",
+                payload={
                     "target": target,
                     "vulnerability_types": vuln_types,
                     "deep_scan": True,
                 }
             )
             
-            return result
+            # 執行命令
+            result = await command_center.execute(command)
             
-        except ImportError:
+            return {
+                "success": result.success,
+                "data": result.result_data,
+                "error": result.error_message
+            }
+            
+        except Exception as e:
+            self.logger.warning(f"⚠️ Test execution failed: {e}")
             return {
                 "success": True,
                 "simulated": True,

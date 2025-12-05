@@ -5,6 +5,24 @@
 
 ---
 
+## 📑 目錄
+
+1. [📊 執行摘要](#-執行摘要)
+2. [1️⃣ Core 核心模組](#️-core-核心模組-servicescoreaiva_core)
+   - [📁 結構](#-結構)
+   - [✅ 實際可用功能](#-實際可用功能)
+   - [❌ 不可用功能](#-不可用功能)
+3. [2️⃣ Scan 掃描模組](#️-scan-掃描模組-servicesscan)
+4. [3️⃣ Features 功能模組](#️-features-功能模組-servicesfeatures)
+5. [4️⃣ Integration 整合模組](#️-integration-整合模組-servicesintegration)
+6. [5️⃣ aiva_common 共用模組](#️-aiva_common-共用模組)
+7. [6️⃣ CLI 命令列工具](#️-cli-命令列工具)
+8. [🔍 關鍵問題總結](#-關鍵問題總結)
+9. [📋 建議修復優先級](#-建議修復優先級)
+10. [結論](#結論)
+
+---
+
 ## 📊 執行摘要
 
 系統共有 **782 個能力**，分布於 4 種語言 (Python 63.3%, Rust 15.7%, TypeScript 10.7%, Go 10.2%)
