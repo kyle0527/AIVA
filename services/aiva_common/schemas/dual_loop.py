@@ -15,7 +15,7 @@
 """
 
 from datetime import datetime, UTC
-from typing import Any, Literal
+from typing import Any, Literal, List
 from pydantic import BaseModel, Field, field_validator
 from enum import Enum
 
@@ -130,6 +130,97 @@ class ChangeType(str, Enum):
     MODIFIED = "modified"  # 修改
     DELETED = "deleted"  # 刪除
     UNCHANGED = "unchanged"  # 未變更
+
+
+# ==================== 圖形拼接數據流 Schema ====================
+
+class DataFlowPathNode(BaseModel):
+    """數據流路徑節點
+    
+    表示數據流中的一個函數調用點
+    """
+    node_id: str = Field(..., description="節點唯一標識")
+    function_signature: str = Field(..., description="函數簽名 (ClassName.method_name)")
+    file_path: str = Field(..., description="檔案路徑")
+    module_name: str = Field(..., description="模組名稱")
+    is_async: bool = Field(default=False, description="是否為異步函數")
+    parameters: List[ParameterDefinition] = Field(default_factory=list, description="參數列表")
+    line_number: int = Field(default=0, description="行號")
+
+
+class CompleteDataFlow(BaseModel):
+    """完整數據流
+    
+    從入口點到出口點的完整調用路徑 (基於圖形拼接生成)
+    """
+    flow_id: str = Field(..., description="數據流唯一標識")
+    entry_point: str = Field(..., description="入口點函數簽名")
+    exit_point: str | None = Field(None, description="出口點函數簽名")
+    path: List[DataFlowPathNode] = Field(..., description="完整調用路徑")
+    path_length: int = Field(..., description="路徑長度 (節點數)")
+    crosses_files: bool = Field(default=False, description="是否跨檔案")
+    file_count: int = Field(default=0, description="涉及的檔案數量")
+    
+    @field_validator("path_length", mode="before")
+    @classmethod
+    def set_path_length(cls, v: Any, info) -> int:
+        """自動設置路徑長度"""
+        if "path" in info.data:
+            return len(info.data["path"])
+        return v
+
+
+class BrokenChainDiagnosis(BaseModel):
+    """斷鏈診斷記錄
+    
+    記錄無法拼接的調用點,用於自我修復診斷
+    """
+    caller_signature: str = Field(..., description="調用方函數簽名")
+    caller_file: str = Field(..., description="調用方檔案路徑")
+    missing_function: str = Field(..., description="缺失的被調用函數")
+    line_number: int = Field(..., description="調用位置行號")
+    possible_causes: List[str] = Field(default_factory=list, description="可能原因")
+    severity: Literal["error", "warning", "info"] = Field(
+        default="warning", 
+        description="嚴重程度"
+    )
+    auto_fix_suggestion: str | None = Field(None, description="自動修復建議")
+
+
+class DataFlowAnalysisSnapshot(BaseModel):
+    """數據流分析快照
+    
+    保存某一時刻的完整分析結果,支援增量更新
+    """
+    snapshot_id: str = Field(..., description="快照唯一標識")
+    timestamp: datetime = Field(default_factory=lambda: datetime.now(UTC), description="分析時間")
+    total_files_analyzed: int = Field(..., description="分析的檔案總數")
+    total_functions_found: int = Field(..., description="發現的函數總數")
+    entry_points: List[str] = Field(..., description="所有入口點列表")
+    complete_flows: List[CompleteDataFlow] = Field(
+        default_factory=list, 
+        description="所有完整數據流"
+    )
+    broken_chains: List[BrokenChainDiagnosis] = Field(
+        default_factory=list, 
+        description="所有斷鏈診斷"
+    )
+    file_hashes: Dict[str, str] = Field(
+        default_factory=dict, 
+        description="檔案哈希映射 (用於增量更新)"
+    )
+    statistics: Dict[str, Any] = Field(
+        default_factory=dict, 
+        description="統計資訊"
+    )
+    
+    def get_flows_by_entry(self, entry_point: str) -> List[CompleteDataFlow]:
+        """獲取特定入口點的所有數據流"""
+        return [flow for flow in self.complete_flows if flow.entry_point == entry_point]
+    
+    def get_broken_chains_by_severity(self, severity: str) -> List[BrokenChainDiagnosis]:
+        """按嚴重程度過濾斷鏈"""
+        return [chain for chain in self.broken_chains if chain.severity == severity]
 
 
 # ==================== 能力使用範例 ====================

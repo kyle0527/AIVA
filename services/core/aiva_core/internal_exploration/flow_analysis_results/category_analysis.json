@@ -1,0 +1,134 @@
+{
+  "categories": {},
+  "usage_guide": {
+    "AI/機器學習": {
+      "description": "人工智能核心模組，包含神經網路、機器學習訓練、決策系統",
+      "key_components": [
+        "ai_model_manager",
+        "neural_network",
+        "model_trainer",
+        "rl_trainers"
+      ],
+      "use_cases": [
+        "🧠 神經網路訓練和推理",
+        "📊 機器學習模型管理",
+        "🎯 智能決策和策略生成",
+        "🔄 強化學習訓練循環"
+      ],
+      "how_to_use": "從ai_model_manager開始 → 配置neural_network → 使用model_trainer訓練 → 部署推理"
+    },
+    "安全認證": {
+      "description": "企業級安全框架，提供認證、授權、加密等安全服務",
+      "key_components": [
+        "security",
+        "auth",
+        "crypto",
+        "token_service"
+      ],
+      "use_cases": [
+        "🔐 用戶身份認證和授權",
+        "🛡️ 數據加密和解密",
+        "🎫 JWT令牌管理",
+        "🔑 密鑰和證書管理"
+      ],
+      "how_to_use": "初始化security_manager → 配置認證策略 → 申請令牌 → 訪問受保護資源"
+    },
+    "數據處理": {
+      "description": "高性能數據流處理管道，支援實時和批量數據處理",
+      "key_components": [
+        "data_pipeline",
+        "stream_processor",
+        "queue_manager"
+      ],
+      "use_cases": [
+        "📥 數據攝取和預處理",
+        "⚡ 實時數據流處理",
+        "📊 批量數據分析",
+        "🔄 數據轉換和路由"
+      ],
+      "how_to_use": "創建data_pipeline → 添加數據源 → 配置處理器 → 設定輸出目標"
+    },
+    "監控日誌": {
+      "description": "全面的系統監控和日誌管理，提供指標收集和告警功能",
+      "key_components": [
+        "monitoring",
+        "metrics",
+        "log_handler",
+        "alert_manager"
+      ],
+      "use_cases": [
+        "📈 系統性能監控",
+        "📋 日誌聚合和分析",
+        "🚨 異常檢測和告警",
+        "📊 指標可視化儀表板"
+      ],
+      "how_to_use": "啟動monitoring_service → 配置指標收集 → 設定告警規則 → 查看儀表板"
+    },
+    "配置管理": {
+      "description": "統一配置管理系統，支援動態配置和環境隔離",
+      "key_components": [
+        "config_manager",
+        "settings",
+        "environment"
+      ],
+      "use_cases": [
+        "⚙️ 應用配置管理",
+        "🔧 環境變數處理",
+        "🔄 動態配置更新",
+        "🔒 敏感配置加密"
+      ],
+      "how_to_use": "初始化config_manager → 載入配置檔案 → 註冊配置模式 → 動態更新配置"
+    },
+    "服務發現": {
+      "description": "微服務架構的服務註冊與發現機制",
+      "key_components": [
+        "service_discovery",
+        "registry",
+        "health_check"
+      ],
+      "use_cases": [
+        "🔍 服務自動發現",
+        "💡 負載均衡和路由",
+        "💚 健康狀態檢查",
+        "🌐 服務網格管理"
+      ],
+      "how_to_use": "註冊服務 → 發現可用服務 → 健康檢查 → 負載均衡調用"
+    },
+    "錯誤處理": {
+      "description": "統一的錯誤處理和異常管理框架",
+      "key_components": [
+        "error_handling",
+        "exception_manager",
+        "retry_handler"
+      ],
+      "use_cases": [
+        "🚫 異常捕獲和處理",
+        "🔄 失敗重試機制",
+        "📊 錯誤統計和分析",
+        "🔔 錯誤通知和報告"
+      ],
+      "how_to_use": "配置錯誤處理器 → 設定重試策略 → 記錄錯誤日誌 → 生成錯誤報告"
+    },
+    "核心基礎": {
+      "description": "系統核心基礎設施和公共模組",
+      "key_components": [
+        "__init__",
+        "core",
+        "common",
+        "utils"
+      ],
+      "use_cases": [
+        "🏗️ 系統初始化和啟動",
+        "🔧 公共工具和函數",
+        "📚 共享數據模型",
+        "⚡ 基礎設施服務"
+      ],
+      "how_to_use": "系統自動載入 → 提供基礎服務 → 支撐上層應用 → 管理系統生命週期"
+    }
+  },
+  "statistics": {
+    "total_analyzed": 0,
+    "category_count": 0,
+    "connections_by_category": {}
+  }
+}
