@@ -15,7 +15,7 @@
 """
 
 from datetime import datetime, UTC
-from typing import Any, Literal, List
+from typing import Any, Literal, List, Dict
 from pydantic import BaseModel, Field, field_validator
 from enum import Enum
 

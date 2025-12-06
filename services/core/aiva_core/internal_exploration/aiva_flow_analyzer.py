@@ -9,13 +9,15 @@ AIVA 流程組圖分析器
 3. 輸出階段：生成組合後的完整數據流程圖
 """
 
+import argparse
 import ast
 import re
 import sys
 import json
+from datetime import datetime
 from pathlib import Path
 from typing import Any, Dict, List, Tuple, Optional
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from collections import defaultdict
 
 # ============================================================================
@@ -746,8 +748,8 @@ class DataFlowStitcher:
             'fan_out_nodes': fan_out_nodes,
             'fan_in_nodes': fan_in_nodes,
             'total_connections': len(self.real_connections),
-            'unique_sources': len(set(s for s, _ in self.real_connections)),
-            'unique_targets': len(set(t for _, t in self.real_connections))
+            'unique_sources': len({s for s, _ in self.real_connections}),
+            'unique_targets': len({t for _, t in self.real_connections})
         }
 
 @dataclass
@@ -906,7 +908,9 @@ class AIVAFlowAnalyzer:
     """AIVA 流程分析器主類"""
     
     def __init__(self, target_dir: Optional[str] = None):
-        self.target_dir = Path(target_dir) if target_dir else project_root
+        # 使用 services 目錄作為預設掃描根目錄
+        default_target = Path(__file__).parent.parent.parent.parent
+        self.target_dir = Path(target_dir) if target_dir else default_target
         self.stitcher = DataFlowStitcher()  # 使用新的數據流拼接器
         self.results = {}
         

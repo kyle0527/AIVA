@@ -396,7 +396,7 @@ class DataFlowStitcher:
         # 使用 List 是因為可能有多個同名函數（不同文件/類）
         self.function_graphs: dict[str, list[FunctionFlowGraph]] = {}
         
-        logger.info(f"🎨 DataFlowStitcher initialized (支援上千張圖的規模化索引)")
+        logger.info("🎨 DataFlowStitcher initialized (支援上千張圖的規模化索引)")
     
     def analyze_file(self, file_path: Path) -> list[FunctionFlowGraph]:
         """分析檔案中的所有函數（以檔案為單位）
@@ -717,7 +717,7 @@ class CapabilityAnalyzer:
         }
         logger.info("✅ CapabilityAnalyzer initialized (v2.0 - 完全整合 py2mermaid)")
     
-    async def analyze_capabilities(self, modules_info: dict) -> list[dict[str, Any]]:
+    def analyze_capabilities(self, modules_info: dict) -> list[dict[str, Any]]:
         """分析模組能力（對外接口）
         
         這是 internal_loop_connector.py 調用的核心方法
@@ -787,7 +787,7 @@ class CapabilityAnalyzer:
         stitcher.save_analysis_results(entry_points)
         
         # 6. 統計
-        logger.info(f"✅ Analysis completed:")
+        logger.info("✅ Analysis completed:")
         logger.info(f"   - Files: {self.stats['analyzed_files']}/{self.stats['total_files']}")
         logger.info(f"   - Functions: {self.stats['total_functions']}")
         logger.info(f"   - Entry points: {self.stats['entry_points_found']}")
@@ -945,7 +945,7 @@ def main():
             
             # 1. 掃描模組
             explorer = ModuleExplorer()
-            modules = await explorer.explore_all_modules()
+            modules = explorer.explore_all_modules()
             
             # 2. 根據目標過濾模組
             if args.target != "all":
@@ -1048,7 +1048,7 @@ def main():
             # 8. 顯示結果摘要
             print("=" * 80)
             print("✅ 分析完成！")
-            print(f"📊 統計：")
+            print("📊 統計：")
             print(f"   - 模組數: {len(modules)}")
             print(f"   - 函數數: {total_functions}")
             print(f"   - 入口點: {len(entry_points)}")

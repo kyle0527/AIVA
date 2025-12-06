@@ -1,0 +1,76 @@
+{
+  "endpoint": "trainers",
+  "total_paths": 30,
+  "path_groups": [
+    {
+      "pattern": "bio → trainer → neural → network → rl → trainers",
+      "count": 29,
+      "percentage": 96.66666666666667,
+      "avg_length": 6.0,
+      "files": [
+        "c:\\D\\fold7\\AIVA-git\\flow_analysis_ai_core\\data_flow_chain_237_0_scalable_bio_trainer_neural_network_rl_trainers_flow.md",
+        "c:\\D\\fold7\\AIVA-git\\flow_analysis_ai_core\\data_flow_chain_238_0_scalable_bio_trainer_neural_network_rl_trainers_flow.md",
+        "c:\\D\\fold7\\AIVA-git\\flow_analysis_ai_core\\data_flow_chain_239_0_scalable_bio_trainer_neural_network_rl_trainers_flow.md",
+        "c:\\D\\fold7\\AIVA-git\\flow_analysis_ai_core\\data_flow_chain_240_0_scalable_bio_trainer_neural_network_rl_trainers_flow.md",
+        "c:\\D\\fold7\\AIVA-git\\flow_analysis_ai_core\\data_flow_chain_241_0_scalable_bio_trainer_neural_network_rl_trainers_flow.md"
+      ]
+    },
+    {
+      "pattern": "bio → trainer → rl → trainers",
+      "count": 1,
+      "percentage": 3.3333333333333335,
+      "avg_length": 4.0,
+      "files": [
+        "c:\\D\\fold7\\AIVA-git\\flow_analysis_ai_core\\data_flow_chain_18_0_scalable_bio_trainer_rl_trainers_flow.md"
+      ]
+    }
+  ],
+  "common_nodes": [
+    "trainer",
+    "trainers",
+    "bio",
+    "rl"
+  ],
+  "efficiency_ranking": [
+    [
+      "bio → trainer → rl → trainers",
+      0.25
+    ],
+    [
+      "bio → trainer → neural → network → rl → trainers",
+      0.16666666666666666
+    ],
+    [
+      "bio → trainer → neural → network → rl → trainers",
+      0.16666666666666666
+    ],
+    [
+      "bio → trainer → neural → network → rl → trainers",
+      0.16666666666666666
+    ],
+    [
+      "bio → trainer → neural → network → rl → trainers",
+      0.16666666666666666
+    ],
+    [
+      "bio → trainer → neural → network → rl → trainers",
+      0.16666666666666666
+    ],
+    [
+      "bio → trainer → neural → network → rl → trainers",
+      0.16666666666666666
+    ],
+    [
+      "bio → trainer → neural → network → rl → trainers",
+      0.16666666666666666
+    ],
+    [
+      "bio → trainer → neural → network → rl → trainers",
+      0.16666666666666666
+    ],
+    [
+      "bio → trainer → neural → network → rl → trainers",
+      0.16666666666666666
+    ]
+  ]
+}

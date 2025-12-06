@@ -1,0 +1,28 @@
+{
+  "sequence_id": "orchestrator_1",
+  "capability_name": "orchestrator",
+  "validation_status": "warning",
+  "steps": [
+    {
+      "script_name": "orchestrator",
+      "command": "python \"c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\task_planning\\planner\\orchestrator.py\"",
+      "is_executable": true,
+      "parameters": {},
+      "execution_time": 15.0
+    }
+  ],
+  "validation_messages": [
+    "❌ 未找到腳本: bio",
+    "❌ 未找到腳本: trainer",
+    "❌ 未找到腳本: model",
+    "❌ 未找到腳本: trainer",
+    "❌ 未找到腳本: training",
+    "✅ orchestrator: 腳本驗證成功",
+    "❌ 構建步驟失敗 bio: 未找到腳本: bio",
+    "❌ 構建步驟失敗 trainer: 未找到腳本: trainer",
+    "❌ 構建步驟失敗 model: 未找到腳本: model",
+    "❌ 構建步驟失敗 trainer: 未找到腳本: trainer",
+    "❌ 構建步驟失敗 training: 未找到腳本: training"
+  ],
+  "execution_history": []
+}

@@ -1,0 +1,21 @@
+{
+  "sequence_id": "store_3",
+  "capability_name": "store",
+  "validation_status": "invalid",
+  "steps": [],
+  "validation_messages": [
+    "❌ 未找到腳本: bio",
+    "❌ 未找到腳本: trainer",
+    "❌ 未找到腳本: rl",
+    "❌ 未找到腳本: trainers",
+    "❌ 未找到腳本: vector",
+    "❌ 未找到腳本: store",
+    "❌ 構建步驟失敗 bio: 未找到腳本: bio",
+    "❌ 構建步驟失敗 trainer: 未找到腳本: trainer",
+    "❌ 構建步驟失敗 rl: 未找到腳本: rl",
+    "❌ 構建步驟失敗 trainers: 未找到腳本: trainers",
+    "❌ 構建步驟失敗 vector: 未找到腳本: vector",
+    "❌ 構建步驟失敗 store: 未找到腳本: store"
+  ],
+  "execution_history": []
+}

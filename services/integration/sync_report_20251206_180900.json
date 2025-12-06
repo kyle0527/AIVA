@@ -1,0 +1,13 @@
+{
+  "timestamp": "2025-12-06T18:09:00.522585",
+  "source_analysis_dir": "c:\\D\\fold7\\AIVA-git\\flow_analysis_ai_core",
+  "target_integration_dir": "c:\\D\\fold7\\AIVA-git\\services\\integration",
+  "flows_synced": 268,
+  "capabilities_synced": 21,
+  "commands_synced": 4,
+  "graph_nodes_added": 50,
+  "graph_edges_added": 68,
+  "db_records_added": 303,
+  "success": true,
+  "error_messages": []
+}

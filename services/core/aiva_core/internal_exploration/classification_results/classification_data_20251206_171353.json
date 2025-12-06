@@ -1,0 +1,2320 @@
+{
+  "metadata": {
+    "total_flows": 268,
+    "timestamp": "2025-12-06T17:13:53.153469",
+    "source_directory": "c:\\D\\fold7\\AIVA-git\\flow_analysis_ai_core"
+  },
+  "statistics": {
+    "total_flows": 268,
+    "unique_endpoints": 21,
+    "unique_entrypoints": 4,
+    "unique_patterns": 41,
+    "avg_length": 5.936567164179104,
+    "max_length": 8,
+    "min_length": 4
+  },
+  "classification": {
+    "by_endpoint": {
+      "models": {
+        "count": 155,
+        "percentage": 57.83582089552238,
+        "sample_paths": [
+          "bio → trainer → neural → network → rl → models",
+          "bio → trainer → neural → network → rl → models",
+          "bio → trainer → neural → network → rl → models"
+        ]
+      },
+      "trainers": {
+        "count": 30,
+        "percentage": 11.194029850746269,
+        "sample_paths": [
+          "bio → trainer → rl → trainers",
+          "bio → trainer → neural → network → rl → trainers",
+          "bio → trainer → neural → network → rl → trainers"
+        ]
+      },
+      "store": {
+        "count": 25,
+        "percentage": 9.328358208955224,
+        "sample_paths": [
+          "bio → trainer → rl → trainers → vector → store",
+          "bio → trainer → rl → trainers → vector → store",
+          "bio → trainer → rl → trainers → vector → store"
+        ]
+      },
+      "orchestrator": {
+        "count": 13,
+        "percentage": 4.850746268656716,
+        "sample_paths": [
+          "bio → trainer → model → trainer → training → orchestrator",
+          "bio → trainer → rl → trainers → capability → orchestrator",
+          "initial → surface → exploit → orchestrator"
+        ]
+      },
+      "manager": {
+        "count": 6,
+        "percentage": 2.2388059701492535,
+        "sample_paths": [
+          "strategy → generator → scenario → manager",
+          "bio → trainer → model → trainer → ai → model → manager",
+          "bio → trainer → rl → trainers → scenario → manager"
+        ]
+      },
+      "core": {
+        "count": 6,
+        "percentage": 2.2388059701492535,
+        "sample_paths": [
+          "bio → trainer → neural → network → real → neural → core",
+          "bio → trainer → real → neural → core",
+          "bio → trainer → rl → trainers → real → neural → core"
+        ]
+      },
+      "mapper": {
+        "count": 4,
+        "percentage": 1.4925373134328357,
+        "sample_paths": [
+          "bio → trainer → permission → matrix → authz → mapper",
+          "bio → trainer → rl → trainers → authz → mapper",
+          "logging → formatter → authz → mapper"
+        ]
+      },
+      "trainer": {
+        "count": 4,
+        "percentage": 1.4925373134328357,
+        "sample_paths": [
+          "bio → trainer → model → trainer",
+          "bio → trainer → rl → trainers → model → trainer",
+          "bio → trainer → rl → trainers → model → trainer"
+        ]
+      },
+      "monitor": {
+        "count": 4,
+        "percentage": 1.4925373134328357,
+        "sample_paths": [
+          "bio → trainer → rl → trainers → execution → status → monitor",
+          "bio → trainer → rl → trainers → execution → status → monitor",
+          "bio → trainer → rl → trainers → execution → status → monitor"
+        ]
+      },
+      "classifier": {
+        "count": 4,
+        "percentage": 1.4925373134328357,
+        "sample_paths": [
+          "bio → trainer → rl → trainers → train → classifier",
+          "bio → trainer → rl → trainers → train → classifier",
+          "bio → trainer → rl → trainers → train → classifier"
+        ]
+      },
+      "visualizer": {
+        "count": 3,
+        "percentage": 1.1194029850746268,
+        "sample_paths": [
+          "bio → trainer → permission → matrix → matrix → visualizer",
+          "logging → formatter → matrix → visualizer",
+          "logging → formatter → permission → matrix → matrix → visualizer"
+        ]
+      },
+      "matrix": {
+        "count": 2,
+        "percentage": 0.7462686567164178,
+        "sample_paths": [
+          "bio → trainer → permission → matrix",
+          "logging → formatter → permission → matrix"
+        ]
+      },
+      "adapter": {
+        "count": 2,
+        "percentage": 0.7462686567164178,
+        "sample_paths": [
+          "bio → trainer → real → bio → net → adapter",
+          "bio → trainer → rl → trainers → real → bio → net → adapter"
+        ]
+      },
+      "planner": {
+        "count": 2,
+        "percentage": 0.7462686567164178,
+        "sample_paths": [
+          "bio → trainer → rl → trainers → execution → planner",
+          "bio → trainer → rl → trainers → execution → planner"
+        ]
+      },
+      "engine": {
+        "count": 2,
+        "percentage": 0.7462686567164178,
+        "sample_paths": [
+          "bio → trainer → rl → trainers → analysis → engine",
+          "bio → trainer → analysis → engine"
+        ]
+      },
+      "generator": {
+        "count": 1,
+        "percentage": 0.3731343283582089,
+        "sample_paths": [
+          "logging → formatter → payload → generator"
+        ]
+      },
+      "interface": {
+        "count": 1,
+        "percentage": 0.3731343283582089,
+        "sample_paths": [
+          "initial → surface → scan → module → interface"
+        ]
+      },
+      "commander": {
+        "count": 1,
+        "percentage": 0.3731343283582089,
+        "sample_paths": [
+          "bio → trainer → rl → trainers → ai → commander"
+        ]
+      },
+      "app": {
+        "count": 1,
+        "percentage": 0.3731343283582089,
+        "sample_paths": [
+          "initial → surface → scan → module → interface → app"
+        ]
+      },
+      "system": {
+        "count": 1,
+        "percentage": 0.3731343283582089,
+        "sample_paths": [
+          "logging → formatter → nlg → system"
+        ]
+      },
+      "network": {
+        "count": 1,
+        "percentage": 0.3731343283582089,
+        "sample_paths": [
+          "bio → trainer → neural → network"
+        ]
+      }
+    },
+    "by_entrypoint": {
+      "bio": {
+        "count": 257,
+        "percentage": 95.8955223880597
+      },
+      "logging": {
+        "count": 7,
+        "percentage": 2.6119402985074625
+      },
+      "initial": {
+        "count": 3,
+        "percentage": 1.1194029850746268
+      },
+      "strategy": {
+        "count": 1,
+        "percentage": 0.3731343283582089
+      }
+    },
+    "by_length": {
+      "4步": 12,
+      "5步": 3,
+      "6步": 244,
+      "7步": 8,
+      "8步": 1
+    },
+    "top_nodes": [
+      {
+        "node": "trainer",
+        "count": 263,
+        "percentage": 16.530483972344438
+      },
+      {
+        "node": "bio",
+        "count": 259,
+        "percentage": 16.27906976744186
+      },
+      {
+        "node": "rl",
+        "count": 242,
+        "percentage": 15.210559396605907
+      },
+      {
+        "node": "neural",
+        "count": 192,
+        "percentage": 12.067881835323696
+      },
+      {
+        "node": "network",
+        "count": 189,
+        "percentage": 11.879321181646763
+      },
+      {
+        "node": "models",
+        "count": 155,
+        "percentage": 9.742300439974859
+      },
+      {
+        "node": "trainers",
+        "count": 87,
+        "percentage": 5.4682589566310495
+      },
+      {
+        "node": "vector",
+        "count": 25,
+        "percentage": 1.571338780641106
+      },
+      {
+        "node": "store",
+        "count": 25,
+        "percentage": 1.571338780641106
+      },
+      {
+        "node": "orchestrator",
+        "count": 13,
+        "percentage": 0.8170961659333752
+      },
+      {
+        "node": "capability",
+        "count": 11,
+        "percentage": 0.6913890634820867
+      },
+      {
+        "node": "matrix",
+        "count": 9,
+        "percentage": 0.5656819610307983
+      },
+      {
+        "node": "model",
+        "count": 9,
+        "percentage": 0.5656819610307983
+      },
+      {
+        "node": "logging",
+        "count": 7,
+        "percentage": 0.43997485857950974
+      },
+      {
+        "node": "formatter",
+        "count": 7,
+        "percentage": 0.43997485857950974
+      },
+      {
+        "node": "manager",
+        "count": 6,
+        "percentage": 0.3771213073538655
+      },
+      {
+        "node": "permission",
+        "count": 6,
+        "percentage": 0.3771213073538655
+      },
+      {
+        "node": "core",
+        "count": 6,
+        "percentage": 0.3771213073538655
+      },
+      {
+        "node": "execution",
+        "count": 6,
+        "percentage": 0.3771213073538655
+      },
+      {
+        "node": "real",
+        "count": 5,
+        "percentage": 0.3142677561282213
+      }
+    ]
+  },
+  "critical_nodes": [
+    {
+      "node": "bio",
+      "path_count": 257,
+      "coverage_percent": 95.8955223880597,
+      "criticality_score": 115.07462686567165,
+      "positions": {
+        "entry": 257,
+        "exit": 0,
+        "middle": 2
+      },
+      "risk_level": "HIGH"
+    },
+    {
+      "node": "trainer",
+      "path_count": 257,
+      "coverage_percent": 95.8955223880597,
+      "criticality_score": 115.07462686567165,
+      "positions": {
+        "entry": 0,
+        "exit": 4,
+        "middle": 259
+      },
+      "risk_level": "HIGH"
+    },
+    {
+      "node": "rl",
+      "path_count": 242,
+      "coverage_percent": 90.29850746268657,
+      "criticality_score": 99.32835820895524,
+      "positions": {
+        "entry": 0,
+        "exit": 0,
+        "middle": 242
+      },
+      "risk_level": "HIGH"
+    },
+    {
+      "node": "network",
+      "path_count": 189,
+      "coverage_percent": 70.52238805970148,
+      "criticality_score": 84.62686567164178,
+      "positions": {
+        "entry": 0,
+        "exit": 1,
+        "middle": 188
+      },
+      "risk_level": "MEDIUM"
+    },
+    {
+      "node": "neural",
+      "path_count": 191,
+      "coverage_percent": 71.26865671641791,
+      "criticality_score": 78.3955223880597,
+      "positions": {
+        "entry": 0,
+        "exit": 0,
+        "middle": 192
+      },
+      "risk_level": "MEDIUM"
+    },
+    {
+      "node": "models",
+      "path_count": 155,
+      "coverage_percent": 57.83582089552238,
+      "criticality_score": 63.61940298507462,
+      "positions": {
+        "entry": 0,
+        "exit": 155,
+        "middle": 0
+      },
+      "risk_level": "MEDIUM"
+    },
+    {
+      "node": "trainers",
+      "path_count": 87,
+      "coverage_percent": 32.46268656716418,
+      "criticality_score": 38.95522388059701,
+      "positions": {
+        "entry": 0,
+        "exit": 30,
+        "middle": 57
+      },
+      "risk_level": "LOW"
+    },
+    {
+      "node": "vector",
+      "path_count": 25,
+      "coverage_percent": 9.328358208955224,
+      "criticality_score": 10.261194029850747,
+      "positions": {
+        "entry": 0,
+        "exit": 0,
+        "middle": 25
+      },
+      "risk_level": "LOW"
+    },
+    {
+      "node": "store",
+      "path_count": 25,
+      "coverage_percent": 9.328358208955224,
+      "criticality_score": 10.261194029850747,
+      "positions": {
+        "entry": 0,
+        "exit": 25,
+        "middle": 0
+      },
+      "risk_level": "LOW"
+    },
+    {
+      "node": "orchestrator",
+      "path_count": 13,
+      "coverage_percent": 4.850746268656716,
+      "criticality_score": 5.335820895522389,
+      "positions": {
+        "entry": 0,
+        "exit": 13,
+        "middle": 0
+      },
+      "risk_level": "LOW"
+    }
+  ],
+  "flows": [
+    {
+      "id": "data_flow_chain_100_0_scalable_bio_trainer_neural_network_rl_models_flow",
+      "path": "bio → trainer → neural → network → rl → models",
+      "length": 6,
+      "entry": "bio",
+      "exit": "models"
+    },
+    {
+      "id": "data_flow_chain_101_0_scalable_bio_trainer_neural_network_rl_models_flow",
+      "path": "bio → trainer → neural → network → rl → models",
+      "length": 6,
+      "entry": "bio",
+      "exit": "models"
+    },
+    {
+      "id": "data_flow_chain_102_0_scalable_bio_trainer_neural_network_rl_models_flow",
+      "path": "bio → trainer → neural → network → rl → models",
+      "length": 6,
+      "entry": "bio",
+      "exit": "models"
+    },
+    {
+      "id": "data_flow_chain_103_0_scalable_bio_trainer_neural_network_rl_models_flow",
+      "path": "bio → trainer → neural → network → rl → models",
+      "length": 6,
+      "entry": "bio",
+      "exit": "models"
+    },
+    {
+      "id": "data_flow_chain_104_0_scalable_bio_trainer_neural_network_rl_models_flow",
+      "path": "bio → trainer → neural → network → rl → models",
+      "length": 6,
+      "entry": "bio",
+      "exit": "models"
+    },
+    {
+      "id": "data_flow_chain_105_0_scalable_bio_trainer_neural_network_rl_models_flow",
+      "path": "bio → trainer → neural → network → rl → models",
+      "length": 6,
+      "entry": "bio",
+      "exit": "models"
+    },
+    {
+      "id": "data_flow_chain_106_0_scalable_bio_trainer_neural_network_rl_models_flow",
+      "path": "bio → trainer → neural → network → rl → models",
+      "length": 6,
+      "entry": "bio",
+      "exit": "models"
+    },
+    {
+      "id": "data_flow_chain_107_0_scalable_bio_trainer_neural_network_rl_models_flow",
+      "path": "bio → trainer → neural → network → rl → models",
+      "length": 6,
+      "entry": "bio",
+      "exit": "models"
+    },
+    {
+      "id": "data_flow_chain_108_0_scalable_bio_trainer_neural_network_rl_models_flow",
+      "path": "bio → trainer → neural → network → rl → models",
+      "length": 6,
+      "entry": "bio",
+      "exit": "models"
+    },
+    {
+      "id": "data_flow_chain_109_0_scalable_bio_trainer_neural_network_rl_models_flow",
+      "path": "bio → trainer → neural → network → rl → models",
+      "length": 6,
+      "entry": "bio",
+      "exit": "models"
+    },
+    {
+      "id": "data_flow_chain_10_0_logging_formatter_payload_generator_flow",
+      "path": "logging → formatter → payload → generator",
+      "length": 4,
+      "entry": "logging",
+      "exit": "generator"
+    },
+    {
+      "id": "data_flow_chain_110_0_scalable_bio_trainer_neural_network_rl_models_flow",
+      "path": "bio → trainer → neural → network → rl → models",
+      "length": 6,
+      "entry": "bio",
+      "exit": "models"
+    },
+    {
+      "id": "data_flow_chain_111_0_scalable_bio_trainer_neural_network_rl_models_flow",
+      "path": "bio → trainer → neural → network → rl → models",
+      "length": 6,
+      "entry": "bio",
+      "exit": "models"
+    },
+    {
+      "id": "data_flow_chain_112_0_scalable_bio_trainer_neural_network_rl_models_flow",
+      "path": "bio → trainer → neural → network → rl → models",
+      "length": 6,
+      "entry": "bio",
+      "exit": "models"
+    },
+    {
+      "id": "data_flow_chain_113_0_scalable_bio_trainer_neural_network_rl_models_flow",
+      "path": "bio → trainer → neural → network → rl → models",
+      "length": 6,
+      "entry": "bio",
+      "exit": "models"
+    },
+    {
+      "id": "data_flow_chain_114_0_scalable_bio_trainer_neural_network_rl_models_flow",
+      "path": "bio → trainer → neural → network → rl → models",
+      "length": 6,
+      "entry": "bio",
+      "exit": "models"
+    },
+    {
+      "id": "data_flow_chain_115_0_scalable_bio_trainer_neural_network_rl_models_flow",
+      "path": "bio → trainer → neural → network → rl → models",
+      "length": 6,
+      "entry": "bio",
+      "exit": "models"
+    },
+    {
+      "id": "data_flow_chain_116_0_scalable_bio_trainer_neural_network_rl_models_flow",
+      "path": "bio → trainer → neural → network → rl → models",
+      "length": 6,
+      "entry": "bio",
+      "exit": "models"
+    },
+    {
+      "id": "data_flow_chain_117_0_scalable_bio_trainer_neural_network_rl_models_flow",
+      "path": "bio → trainer → neural → network → rl → models",
+      "length": 6,
+      "entry": "bio",
+      "exit": "models"
+    },
+    {
+      "id": "data_flow_chain_118_0_scalable_bio_trainer_neural_network_rl_models_flow",
+      "path": "bio → trainer → neural → network → rl → models",
+      "length": 6,
+      "entry": "bio",
+      "exit": "models"
+    },
+    {
+      "id": "data_flow_chain_119_0_scalable_bio_trainer_neural_network_rl_models_flow",
+      "path": "bio → trainer → neural → network → rl → models",
+      "length": 6,
+      "entry": "bio",
+      "exit": "models"
+    },
+    {
+      "id": "data_flow_chain_11_0_strategy_generator_scenario_manager_flow",
+      "path": "strategy → generator → scenario → manager",
+      "length": 4,
+      "entry": "strategy",
+      "exit": "manager"
+    },
+    {
+      "id": "data_flow_chain_120_0_scalable_bio_trainer_neural_network_rl_models_flow",
+      "path": "bio → trainer → neural → network → rl → models",
+      "length": 6,
+      "entry": "bio",
+      "exit": "models"
+    },
+    {
+      "id": "data_flow_chain_121_0_scalable_bio_trainer_neural_network_rl_models_flow",
+      "path": "bio → trainer → neural → network → rl → models",
+      "length": 6,
+      "entry": "bio",
+      "exit": "models"
+    },
+    {
+      "id": "data_flow_chain_122_0_scalable_bio_trainer_neural_network_rl_models_flow",
+      "path": "bio → trainer → neural → network → rl → models",
+      "length": 6,
+      "entry": "bio",
+      "exit": "models"
+    },
+    {
+      "id": "data_flow_chain_123_0_scalable_bio_trainer_neural_network_rl_models_flow",
+      "path": "bio → trainer → neural → network → rl → models",
+      "length": 6,
+      "entry": "bio",
+      "exit": "models"
+    },
+    {
+      "id": "data_flow_chain_124_0_scalable_bio_trainer_neural_network_rl_models_flow",
+      "path": "bio → trainer → neural → network → rl → models",
+      "length": 6,
+      "entry": "bio",
+      "exit": "models"
+    },
+    {
+      "id": "data_flow_chain_125_0_scalable_bio_trainer_neural_network_rl_models_flow",
+      "path": "bio → trainer → neural → network → rl → models",
+      "length": 6,
+      "entry": "bio",
+      "exit": "models"
+    },
+    {
+      "id": "data_flow_chain_126_0_scalable_bio_trainer_neural_network_rl_models_flow",
+      "path": "bio → trainer → neural → network → rl → models",
+      "length": 6,
+      "entry": "bio",
+      "exit": "models"
+    },
+    {
+      "id": "data_flow_chain_127_0_scalable_bio_trainer_neural_network_rl_models_flow",
+      "path": "bio → trainer → neural → network → rl → models",
+      "length": 6,
+      "entry": "bio",
+      "exit": "models"
+    },
+    {
+      "id": "data_flow_chain_128_0_scalable_bio_trainer_neural_network_rl_models_flow",
+      "path": "bio → trainer → neural → network → rl → models",
+      "length": 6,
+      "entry": "bio",
+      "exit": "models"
+    },
+    {
+      "id": "data_flow_chain_129_0_scalable_bio_trainer_neural_network_rl_models_flow",
+      "path": "bio → trainer → neural → network → rl → models",
+      "length": 6,
+      "entry": "bio",
+      "exit": "models"
+    },
+    {
+      "id": "data_flow_chain_12_0_scalable_bio_trainer_permission_matrix_flow",
+      "path": "bio → trainer → permission → matrix",
+      "length": 4,
+      "entry": "bio",
+      "exit": "matrix"
+    },
+    {
+      "id": "data_flow_chain_130_0_scalable_bio_trainer_neural_network_rl_models_flow",
+      "path": "bio → trainer → neural → network → rl → models",
+      "length": 6,
+      "entry": "bio",
+      "exit": "models"
+    },
+    {
+      "id": "data_flow_chain_131_0_scalable_bio_trainer_neural_network_rl_models_flow",
+      "path": "bio → trainer → neural → network → rl → models",
+      "length": 6,
+      "entry": "bio",
+      "exit": "models"
+    },
+    {
+      "id": "data_flow_chain_132_0_scalable_bio_trainer_neural_network_rl_models_flow",
+      "path": "bio → trainer → neural → network → rl → models",
+      "length": 6,
+      "entry": "bio",
+      "exit": "models"
+    },
+    {
+      "id": "data_flow_chain_133_0_scalable_bio_trainer_neural_network_rl_models_flow",
+      "path": "bio → trainer → neural → network → rl → models",
+      "length": 6,
+      "entry": "bio",
+      "exit": "models"
+    },
+    {
+      "id": "data_flow_chain_134_0_scalable_bio_trainer_neural_network_rl_models_flow",
+      "path": "bio → trainer → neural → network → rl → models",
+      "length": 6,
+      "entry": "bio",
+      "exit": "models"
+    },
+    {
+      "id": "data_flow_chain_135_0_scalable_bio_trainer_neural_network_rl_models_flow",
+      "path": "bio → trainer → neural → network → rl → models",
+      "length": 6,
+      "entry": "bio",
+      "exit": "models"
+    },
+    {
+      "id": "data_flow_chain_136_0_scalable_bio_trainer_neural_network_rl_models_flow",
+      "path": "bio → trainer → neural → network → rl → models",
+      "length": 6,
+      "entry": "bio",
+      "exit": "models"
+    },
+    {
+      "id": "data_flow_chain_137_0_scalable_bio_trainer_neural_network_rl_models_flow",
+      "path": "bio → trainer → neural → network → rl → models",
+      "length": 6,
+      "entry": "bio",
+      "exit": "models"
+    },
+    {
+      "id": "data_flow_chain_138_0_scalable_bio_trainer_neural_network_rl_models_flow",
+      "path": "bio → trainer → neural → network → rl → models",
+      "length": 6,
+      "entry": "bio",
+      "exit": "models"
+    },
+    {
+      "id": "data_flow_chain_139_0_scalable_bio_trainer_neural_network_rl_models_flow",
+      "path": "bio → trainer → neural → network → rl → models",
+      "length": 6,
+      "entry": "bio",
+      "exit": "models"
+    },
+    {
+      "id": "data_flow_chain_13_0_scalable_bio_trainer_permission_matrix_authz_mapper_flow",
+      "path": "bio → trainer → permission → matrix → authz → mapper",
+      "length": 6,
+      "entry": "bio",
+      "exit": "mapper"
+    },
+    {
+      "id": "data_flow_chain_140_0_scalable_bio_trainer_neural_network_rl_models_flow",
+      "path": "bio → trainer → neural → network → rl → models",
+      "length": 6,
+      "entry": "bio",
+      "exit": "models"
+    },
+    {
+      "id": "data_flow_chain_141_0_scalable_bio_trainer_neural_network_rl_models_flow",
+      "path": "bio → trainer → neural → network → rl → models",
+      "length": 6,
+      "entry": "bio",
+      "exit": "models"
+    },
+    {
+      "id": "data_flow_chain_142_0_scalable_bio_trainer_neural_network_rl_models_flow",
+      "path": "bio → trainer → neural → network → rl → models",
+      "length": 6,
+      "entry": "bio",
+      "exit": "models"
+    },
+    {
+      "id": "data_flow_chain_143_0_scalable_bio_trainer_neural_network_rl_models_flow",
+      "path": "bio → trainer → neural → network → rl → models",
+      "length": 6,
+      "entry": "bio",
+      "exit": "models"
+    },
+    {
+      "id": "data_flow_chain_144_0_scalable_bio_trainer_neural_network_rl_models_flow",
+      "path": "bio → trainer → neural → network → rl → models",
+      "length": 6,
+      "entry": "bio",
+      "exit": "models"
+    },
+    {
+      "id": "data_flow_chain_145_0_scalable_bio_trainer_neural_network_rl_models_flow",
+      "path": "bio → trainer → neural → network → rl → models",
+      "length": 6,
+      "entry": "bio",
+      "exit": "models"
+    },
+    {
+      "id": "data_flow_chain_146_0_scalable_bio_trainer_neural_network_rl_models_flow",
+      "path": "bio → trainer → neural → network → rl → models",
+      "length": 6,
+      "entry": "bio",
+      "exit": "models"
+    },
+    {
+      "id": "data_flow_chain_147_0_scalable_bio_trainer_neural_network_rl_models_flow",
+      "path": "bio → trainer → neural → network → rl → models",
+      "length": 6,
+      "entry": "bio",
+      "exit": "models"
+    },
+    {
+      "id": "data_flow_chain_148_0_scalable_bio_trainer_neural_network_rl_models_flow",
+      "path": "bio → trainer → neural → network → rl → models",
+      "length": 6,
+      "entry": "bio",
+      "exit": "models"
+    },
+    {
+      "id": "data_flow_chain_149_0_scalable_bio_trainer_neural_network_rl_models_flow",
+      "path": "bio → trainer → neural → network → rl → models",
+      "length": 6,
+      "entry": "bio",
+      "exit": "models"
+    },
+    {
+      "id": "data_flow_chain_14_0_scalable_bio_trainer_permission_matrix_matrix_visualizer_flow",
+      "path": "bio → trainer → permission → matrix → matrix → visualizer",
+      "length": 6,
+      "entry": "bio",
+      "exit": "visualizer"
+    },
+    {
+      "id": "data_flow_chain_150_0_scalable_bio_trainer_neural_network_rl_models_flow",
+      "path": "bio → trainer → neural → network → rl → models",
+      "length": 6,
+      "entry": "bio",
+      "exit": "models"
+    },
+    {
+      "id": "data_flow_chain_151_0_scalable_bio_trainer_neural_network_rl_models_flow",
+      "path": "bio → trainer → neural → network → rl → models",
+      "length": 6,
+      "entry": "bio",
+      "exit": "models"
+    },
+    {
+      "id": "data_flow_chain_152_0_scalable_bio_trainer_neural_network_rl_models_flow",
+      "path": "bio → trainer → neural → network → rl → models",
+      "length": 6,
+      "entry": "bio",
+      "exit": "models"
+    },
+    {
+      "id": "data_flow_chain_153_0_scalable_bio_trainer_neural_network_rl_models_flow",
+      "path": "bio → trainer → neural → network → rl → models",
+      "length": 6,
+      "entry": "bio",
+      "exit": "models"
+    },
+    {
+      "id": "data_flow_chain_154_0_scalable_bio_trainer_neural_network_rl_models_flow",
+      "path": "bio → trainer → neural → network → rl → models",
+      "length": 6,
+      "entry": "bio",
+      "exit": "models"
+    },
+    {
+      "id": "data_flow_chain_155_0_scalable_bio_trainer_neural_network_rl_models_flow",
+      "path": "bio → trainer → neural → network → rl → models",
+      "length": 6,
+      "entry": "bio",
+      "exit": "models"
+    },
+    {
+      "id": "data_flow_chain_156_0_scalable_bio_trainer_neural_network_rl_models_flow",
+      "path": "bio → trainer → neural → network → rl → models",
+      "length": 6,
+      "entry": "bio",
+      "exit": "models"
+    },
+    {
+      "id": "data_flow_chain_157_0_scalable_bio_trainer_neural_network_rl_models_flow",
+      "path": "bio → trainer → neural → network → rl → models",
+      "length": 6,
+      "entry": "bio",
+      "exit": "models"
+    },
+    {
+      "id": "data_flow_chain_158_0_scalable_bio_trainer_neural_network_rl_models_flow",
+      "path": "bio → trainer → neural → network → rl → models",
+      "length": 6,
+      "entry": "bio",
+      "exit": "models"
+    },
+    {
+      "id": "data_flow_chain_159_0_scalable_bio_trainer_neural_network_rl_models_flow",
+      "path": "bio → trainer → neural → network → rl → models",
+      "length": 6,
+      "entry": "bio",
+      "exit": "models"
+    },
+    {
+      "id": "data_flow_chain_15_0_scalable_bio_trainer_model_trainer_flow",
+      "path": "bio → trainer → model → trainer",
+      "length": 4,
+      "entry": "bio",
+      "exit": "trainer"
+    },
+    {
+      "id": "data_flow_chain_160_0_scalable_bio_trainer_neural_network_rl_models_flow",
+      "path": "bio → trainer → neural → network → rl → models",
+      "length": 6,
+      "entry": "bio",
+      "exit": "models"
+    },
+    {
+      "id": "data_flow_chain_161_0_scalable_bio_trainer_neural_network_rl_models_flow",
+      "path": "bio → trainer → neural → network → rl → models",
+      "length": 6,
+      "entry": "bio",
+      "exit": "models"
+    },
+    {
+      "id": "data_flow_chain_162_0_scalable_bio_trainer_neural_network_rl_models_flow",
+      "path": "bio → trainer → neural → network → rl → models",
+      "length": 6,
+      "entry": "bio",
+      "exit": "models"
+    },
+    {
+      "id": "data_flow_chain_163_0_scalable_bio_trainer_neural_network_rl_models_flow",
+      "path": "bio → trainer → neural → network → rl → models",
+      "length": 6,
+      "entry": "bio",
+      "exit": "models"
+    },
+    {
+      "id": "data_flow_chain_164_0_scalable_bio_trainer_neural_network_rl_models_flow",
+      "path": "bio → trainer → neural → network → rl → models",
+      "length": 6,
+      "entry": "bio",
+      "exit": "models"
+    },
+    {
+      "id": "data_flow_chain_165_0_scalable_bio_trainer_neural_network_rl_models_flow",
+      "path": "bio → trainer → neural → network → rl → models",
+      "length": 6,
+      "entry": "bio",
+      "exit": "models"
+    },
+    {
+      "id": "data_flow_chain_166_0_scalable_bio_trainer_neural_network_rl_models_flow",
+      "path": "bio → trainer → neural → network → rl → models",
+      "length": 6,
+      "entry": "bio",
+      "exit": "models"
+    },
+    {
+      "id": "data_flow_chain_167_0_scalable_bio_trainer_neural_network_rl_models_flow",
+      "path": "bio → trainer → neural → network → rl → models",
+      "length": 6,
+      "entry": "bio",
+      "exit": "models"
+    },
+    {
+      "id": "data_flow_chain_168_0_scalable_bio_trainer_neural_network_rl_models_flow",
+      "path": "bio → trainer → neural → network → rl → models",
+      "length": 6,
+      "entry": "bio",
+      "exit": "models"
+    },
+    {
+      "id": "data_flow_chain_169_0_scalable_bio_trainer_neural_network_rl_models_flow",
+      "path": "bio → trainer → neural → network → rl → models",
+      "length": 6,
+      "entry": "bio",
+      "exit": "models"
+    },
+    {
+      "id": "data_flow_chain_16_0_scalable_bio_trainer_model_trainer_training_orchestrator_flow",
+      "path": "bio → trainer → model → trainer → training → orchestrator",
+      "length": 6,
+      "entry": "bio",
+      "exit": "orchestrator"
+    },
+    {
+      "id": "data_flow_chain_170_0_scalable_bio_trainer_neural_network_rl_models_flow",
+      "path": "bio → trainer → neural → network → rl → models",
+      "length": 6,
+      "entry": "bio",
+      "exit": "models"
+    },
+    {
+      "id": "data_flow_chain_171_0_scalable_bio_trainer_neural_network_rl_models_flow",
+      "path": "bio → trainer → neural → network → rl → models",
+      "length": 6,
+      "entry": "bio",
+      "exit": "models"
+    },
+    {
+      "id": "data_flow_chain_172_0_scalable_bio_trainer_neural_network_rl_models_flow",
+      "path": "bio → trainer → neural → network → rl → models",
+      "length": 6,
+      "entry": "bio",
+      "exit": "models"
+    },
+    {
+      "id": "data_flow_chain_173_0_scalable_bio_trainer_neural_network_rl_models_flow",
+      "path": "bio → trainer → neural → network → rl → models",
+      "length": 6,
+      "entry": "bio",
+      "exit": "models"
+    },
+    {
+      "id": "data_flow_chain_174_0_scalable_bio_trainer_neural_network_rl_models_flow",
+      "path": "bio → trainer → neural → network → rl → models",
+      "length": 6,
+      "entry": "bio",
+      "exit": "models"
+    },
+    {
+      "id": "data_flow_chain_175_0_scalable_bio_trainer_neural_network_rl_models_flow",
+      "path": "bio → trainer → neural → network → rl → models",
+      "length": 6,
+      "entry": "bio",
+      "exit": "models"
+    },
+    {
+      "id": "data_flow_chain_176_0_scalable_bio_trainer_neural_network_rl_models_flow",
+      "path": "bio → trainer → neural → network → rl → models",
+      "length": 6,
+      "entry": "bio",
+      "exit": "models"
+    },
+    {
+      "id": "data_flow_chain_177_0_scalable_bio_trainer_neural_network_rl_models_flow",
+      "path": "bio → trainer → neural → network → rl → models",
+      "length": 6,
+      "entry": "bio",
+      "exit": "models"
+    },
+    {
+      "id": "data_flow_chain_178_0_scalable_bio_trainer_neural_network_rl_models_flow",
+      "path": "bio → trainer → neural → network → rl → models",
+      "length": 6,
+      "entry": "bio",
+      "exit": "models"
+    },
+    {
+      "id": "data_flow_chain_179_0_scalable_bio_trainer_neural_network_rl_models_flow",
+      "path": "bio → trainer → neural → network → rl → models",
+      "length": 6,
+      "entry": "bio",
+      "exit": "models"
+    },
+    {
+      "id": "data_flow_chain_17_0_scalable_bio_trainer_model_trainer_ai_model_manager_flow",
+      "path": "bio → trainer → model → trainer → ai → model → manager",
+      "length": 7,
+      "entry": "bio",
+      "exit": "manager"
+    },
+    {
+      "id": "data_flow_chain_180_0_scalable_bio_trainer_neural_network_rl_models_flow",
+      "path": "bio → trainer → neural → network → rl → models",
+      "length": 6,
+      "entry": "bio",
+      "exit": "models"
+    },
+    {
+      "id": "data_flow_chain_181_0_scalable_bio_trainer_neural_network_rl_models_flow",
+      "path": "bio → trainer → neural → network → rl → models",
+      "length": 6,
+      "entry": "bio",
+      "exit": "models"
+    },
+    {
+      "id": "data_flow_chain_182_0_scalable_bio_trainer_neural_network_rl_models_flow",
+      "path": "bio → trainer → neural → network → rl → models",
+      "length": 6,
+      "entry": "bio",
+      "exit": "models"
+    },
+    {
+      "id": "data_flow_chain_183_0_scalable_bio_trainer_neural_network_rl_models_flow",
+      "path": "bio → trainer → neural → network → rl → models",
+      "length": 6,
+      "entry": "bio",
+      "exit": "models"
+    },
+    {
+      "id": "data_flow_chain_184_0_scalable_bio_trainer_neural_network_rl_models_flow",
+      "path": "bio → trainer → neural → network → rl → models",
+      "length": 6,
+      "entry": "bio",
+      "exit": "models"
+    },
+    {
+      "id": "data_flow_chain_185_0_scalable_bio_trainer_neural_network_rl_models_flow",
+      "path": "bio → trainer → neural → network → rl → models",
+      "length": 6,
+      "entry": "bio",
+      "exit": "models"
+    },
+    {
+      "id": "data_flow_chain_186_0_scalable_bio_trainer_neural_network_rl_models_flow",
+      "path": "bio → trainer → neural → network → rl → models",
+      "length": 6,
+      "entry": "bio",
+      "exit": "models"
+    },
+    {
+      "id": "data_flow_chain_187_0_scalable_bio_trainer_neural_network_rl_models_flow",
+      "path": "bio → trainer → neural → network → rl → models",
+      "length": 6,
+      "entry": "bio",
+      "exit": "models"
+    },
+    {
+      "id": "data_flow_chain_188_0_scalable_bio_trainer_neural_network_rl_models_flow",
+      "path": "bio → trainer → neural → network → rl → models",
+      "length": 6,
+      "entry": "bio",
+      "exit": "models"
+    },
+    {
+      "id": "data_flow_chain_189_0_scalable_bio_trainer_neural_network_rl_models_flow",
+      "path": "bio → trainer → neural → network → rl → models",
+      "length": 6,
+      "entry": "bio",
+      "exit": "models"
+    },
+    {
+      "id": "data_flow_chain_18_0_scalable_bio_trainer_rl_trainers_flow",
+      "path": "bio → trainer → rl → trainers",
+      "length": 4,
+      "entry": "bio",
+      "exit": "trainers"
+    },
+    {
+      "id": "data_flow_chain_190_0_scalable_bio_trainer_neural_network_rl_models_flow",
+      "path": "bio → trainer → neural → network → rl → models",
+      "length": 6,
+      "entry": "bio",
+      "exit": "models"
+    },
+    {
+      "id": "data_flow_chain_191_0_scalable_bio_trainer_neural_network_rl_models_flow",
+      "path": "bio → trainer → neural → network → rl → models",
+      "length": 6,
+      "entry": "bio",
+      "exit": "models"
+    },
+    {
+      "id": "data_flow_chain_192_0_scalable_bio_trainer_neural_network_rl_models_flow",
+      "path": "bio → trainer → neural → network → rl → models",
+      "length": 6,
+      "entry": "bio",
+      "exit": "models"
+    },
+    {
+      "id": "data_flow_chain_193_0_scalable_bio_trainer_neural_network_rl_models_flow",
+      "path": "bio → trainer → neural → network → rl → models",
+      "length": 6,
+      "entry": "bio",
+      "exit": "models"
+    },
+    {
+      "id": "data_flow_chain_194_0_scalable_bio_trainer_neural_network_rl_models_flow",
+      "path": "bio → trainer → neural → network → rl → models",
+      "length": 6,
+      "entry": "bio",
+      "exit": "models"
+    },
+    {
+      "id": "data_flow_chain_195_0_scalable_bio_trainer_neural_network_rl_models_flow",
+      "path": "bio → trainer → neural → network → rl → models",
+      "length": 6,
+      "entry": "bio",
+      "exit": "models"
+    },
+    {
+      "id": "data_flow_chain_196_0_scalable_bio_trainer_neural_network_rl_models_flow",
+      "path": "bio → trainer → neural → network → rl → models",
+      "length": 6,
+      "entry": "bio",
+      "exit": "models"
+    },
+    {
+      "id": "data_flow_chain_197_0_scalable_bio_trainer_neural_network_rl_models_flow",
+      "path": "bio → trainer → neural → network → rl → models",
+      "length": 6,
+      "entry": "bio",
+      "exit": "models"
+    },
+    {
+      "id": "data_flow_chain_198_0_scalable_bio_trainer_neural_network_rl_models_flow",
+      "path": "bio → trainer → neural → network → rl → models",
+      "length": 6,
+      "entry": "bio",
+      "exit": "models"
+    },
+    {
+      "id": "data_flow_chain_199_0_scalable_bio_trainer_neural_network_rl_models_flow",
+      "path": "bio → trainer → neural → network → rl → models",
+      "length": 6,
+      "entry": "bio",
+      "exit": "models"
+    },
+    {
+      "id": "data_flow_chain_19_0_scalable_bio_trainer_rl_trainers_capability_orchestrator_flow",
+      "path": "bio → trainer → rl → trainers → capability → orchestrator",
+      "length": 6,
+      "entry": "bio",
+      "exit": "orchestrator"
+    },
+    {
+      "id": "data_flow_chain_1_0_initial_surface_exploit_orchestrator_flow",
+      "path": "initial → surface → exploit → orchestrator",
+      "length": 4,
+      "entry": "initial",
+      "exit": "orchestrator"
+    },
+    {
+      "id": "data_flow_chain_200_0_scalable_bio_trainer_neural_network_rl_models_flow",
+      "path": "bio → trainer → neural → network → rl → models",
+      "length": 6,
+      "entry": "bio",
+      "exit": "models"
+    },
+    {
+      "id": "data_flow_chain_201_0_scalable_bio_trainer_neural_network_rl_models_flow",
+      "path": "bio → trainer → neural → network → rl → models",
+      "length": 6,
+      "entry": "bio",
+      "exit": "models"
+    },
+    {
+      "id": "data_flow_chain_202_0_scalable_bio_trainer_neural_network_rl_models_flow",
+      "path": "bio → trainer → neural → network → rl → models",
+      "length": 6,
+      "entry": "bio",
+      "exit": "models"
+    },
+    {
+      "id": "data_flow_chain_203_0_scalable_bio_trainer_neural_network_rl_models_flow",
+      "path": "bio → trainer → neural → network → rl → models",
+      "length": 6,
+      "entry": "bio",
+      "exit": "models"
+    },
+    {
+      "id": "data_flow_chain_204_0_scalable_bio_trainer_neural_network_rl_models_flow",
+      "path": "bio → trainer → neural → network → rl → models",
+      "length": 6,
+      "entry": "bio",
+      "exit": "models"
+    },
+    {
+      "id": "data_flow_chain_205_0_scalable_bio_trainer_neural_network_rl_models_flow",
+      "path": "bio → trainer → neural → network → rl → models",
+      "length": 6,
+      "entry": "bio",
+      "exit": "models"
+    },
+    {
+      "id": "data_flow_chain_206_0_scalable_bio_trainer_neural_network_rl_models_flow",
+      "path": "bio → trainer → neural → network → rl → models",
+      "length": 6,
+      "entry": "bio",
+      "exit": "models"
+    },
+    {
+      "id": "data_flow_chain_207_0_scalable_bio_trainer_neural_network_rl_models_flow",
+      "path": "bio → trainer → neural → network → rl → models",
+      "length": 6,
+      "entry": "bio",
+      "exit": "models"
+    },
+    {
+      "id": "data_flow_chain_208_0_scalable_bio_trainer_neural_network_rl_models_flow",
+      "path": "bio → trainer → neural → network → rl → models",
+      "length": 6,
+      "entry": "bio",
+      "exit": "models"
+    },
+    {
+      "id": "data_flow_chain_209_0_scalable_bio_trainer_neural_network_rl_models_flow",
+      "path": "bio → trainer → neural → network → rl → models",
+      "length": 6,
+      "entry": "bio",
+      "exit": "models"
+    },
+    {
+      "id": "data_flow_chain_20_0_scalable_bio_trainer_rl_trainers_capability_orchestrator_flow",
+      "path": "bio → trainer → rl → trainers → capability → orchestrator",
+      "length": 6,
+      "entry": "bio",
+      "exit": "orchestrator"
+    },
+    {
+      "id": "data_flow_chain_210_0_scalable_bio_trainer_neural_network_rl_models_flow",
+      "path": "bio → trainer → neural → network → rl → models",
+      "length": 6,
+      "entry": "bio",
+      "exit": "models"
+    },
+    {
+      "id": "data_flow_chain_211_0_scalable_bio_trainer_neural_network_rl_models_flow",
+      "path": "bio → trainer → neural → network → rl → models",
+      "length": 6,
+      "entry": "bio",
+      "exit": "models"
+    },
+    {
+      "id": "data_flow_chain_212_0_scalable_bio_trainer_neural_network_rl_models_flow",
+      "path": "bio → trainer → neural → network → rl → models",
+      "length": 6,
+      "entry": "bio",
+      "exit": "models"
+    },
+    {
+      "id": "data_flow_chain_213_0_scalable_bio_trainer_neural_network_rl_models_flow",
+      "path": "bio → trainer → neural → network → rl → models",
+      "length": 6,
+      "entry": "bio",
+      "exit": "models"
+    },
+    {
+      "id": "data_flow_chain_214_0_scalable_bio_trainer_neural_network_rl_models_flow",
+      "path": "bio → trainer → neural → network → rl → models",
+      "length": 6,
+      "entry": "bio",
+      "exit": "models"
+    },
+    {
+      "id": "data_flow_chain_215_0_scalable_bio_trainer_neural_network_rl_models_flow",
+      "path": "bio → trainer → neural → network → rl → models",
+      "length": 6,
+      "entry": "bio",
+      "exit": "models"
+    },
+    {
+      "id": "data_flow_chain_216_0_scalable_bio_trainer_neural_network_rl_models_flow",
+      "path": "bio → trainer → neural → network → rl → models",
+      "length": 6,
+      "entry": "bio",
+      "exit": "models"
+    },
+    {
+      "id": "data_flow_chain_217_0_scalable_bio_trainer_neural_network_rl_models_flow",
+      "path": "bio → trainer → neural → network → rl → models",
+      "length": 6,
+      "entry": "bio",
+      "exit": "models"
+    },
+    {
+      "id": "data_flow_chain_218_0_scalable_bio_trainer_neural_network_rl_models_flow",
+      "path": "bio → trainer → neural → network → rl → models",
+      "length": 6,
+      "entry": "bio",
+      "exit": "models"
+    },
+    {
+      "id": "data_flow_chain_219_0_scalable_bio_trainer_neural_network_rl_models_flow",
+      "path": "bio → trainer → neural → network → rl → models",
+      "length": 6,
+      "entry": "bio",
+      "exit": "models"
+    },
+    {
+      "id": "data_flow_chain_21_0_scalable_bio_trainer_rl_trainers_capability_orchestrator_flow",
+      "path": "bio → trainer → rl → trainers → capability → orchestrator",
+      "length": 6,
+      "entry": "bio",
+      "exit": "orchestrator"
+    },
+    {
+      "id": "data_flow_chain_220_0_scalable_bio_trainer_neural_network_rl_models_flow",
+      "path": "bio → trainer → neural → network → rl → models",
+      "length": 6,
+      "entry": "bio",
+      "exit": "models"
+    },
+    {
+      "id": "data_flow_chain_221_0_scalable_bio_trainer_neural_network_rl_models_flow",
+      "path": "bio → trainer → neural → network → rl → models",
+      "length": 6,
+      "entry": "bio",
+      "exit": "models"
+    },
+    {
+      "id": "data_flow_chain_222_0_scalable_bio_trainer_neural_network_rl_models_flow",
+      "path": "bio → trainer → neural → network → rl → models",
+      "length": 6,
+      "entry": "bio",
+      "exit": "models"
+    },
+    {
+      "id": "data_flow_chain_223_0_scalable_bio_trainer_neural_network_rl_models_flow",
+      "path": "bio → trainer → neural → network → rl → models",
+      "length": 6,
+      "entry": "bio",
+      "exit": "models"
+    },
+    {
+      "id": "data_flow_chain_224_0_scalable_bio_trainer_neural_network_rl_models_flow",
+      "path": "bio → trainer → neural → network → rl → models",
+      "length": 6,
+      "entry": "bio",
+      "exit": "models"
+    },
+    {
+      "id": "data_flow_chain_225_0_scalable_bio_trainer_neural_network_rl_models_flow",
+      "path": "bio → trainer → neural → network → rl → models",
+      "length": 6,
+      "entry": "bio",
+      "exit": "models"
+    },
+    {
+      "id": "data_flow_chain_226_0_scalable_bio_trainer_neural_network_rl_models_flow",
+      "path": "bio → trainer → neural → network → rl → models",
+      "length": 6,
+      "entry": "bio",
+      "exit": "models"
+    },
+    {
+      "id": "data_flow_chain_227_0_scalable_bio_trainer_neural_network_rl_models_flow",
+      "path": "bio → trainer → neural → network → rl → models",
+      "length": 6,
+      "entry": "bio",
+      "exit": "models"
+    },
+    {
+      "id": "data_flow_chain_228_0_scalable_bio_trainer_neural_network_rl_models_flow",
+      "path": "bio → trainer → neural → network → rl → models",
+      "length": 6,
+      "entry": "bio",
+      "exit": "models"
+    },
+    {
+      "id": "data_flow_chain_229_0_scalable_bio_trainer_neural_network_rl_models_flow",
+      "path": "bio → trainer → neural → network → rl → models",
+      "length": 6,
+      "entry": "bio",
+      "exit": "models"
+    },
+    {
+      "id": "data_flow_chain_22_0_scalable_bio_trainer_rl_trainers_capability_orchestrator_flow",
+      "path": "bio → trainer → rl → trainers → capability → orchestrator",
+      "length": 6,
+      "entry": "bio",
+      "exit": "orchestrator"
+    },
+    {
+      "id": "data_flow_chain_230_0_scalable_bio_trainer_neural_network_rl_models_flow",
+      "path": "bio → trainer → neural → network → rl → models",
+      "length": 6,
+      "entry": "bio",
+      "exit": "models"
+    },
+    {
+      "id": "data_flow_chain_231_0_scalable_bio_trainer_neural_network_rl_models_flow",
+      "path": "bio → trainer → neural → network → rl → models",
+      "length": 6,
+      "entry": "bio",
+      "exit": "models"
+    },
+    {
+      "id": "data_flow_chain_232_0_scalable_bio_trainer_neural_network_rl_models_flow",
+      "path": "bio → trainer → neural → network → rl → models",
+      "length": 6,
+      "entry": "bio",
+      "exit": "models"
+    },
+    {
+      "id": "data_flow_chain_233_0_scalable_bio_trainer_neural_network_rl_models_flow",
+      "path": "bio → trainer → neural → network → rl → models",
+      "length": 6,
+      "entry": "bio",
+      "exit": "models"
+    },
+    {
+      "id": "data_flow_chain_234_0_scalable_bio_trainer_neural_network_rl_models_flow",
+      "path": "bio → trainer → neural → network → rl → models",
+      "length": 6,
+      "entry": "bio",
+      "exit": "models"
+    },
+    {
+      "id": "data_flow_chain_235_0_scalable_bio_trainer_neural_network_rl_models_flow",
+      "path": "bio → trainer → neural → network → rl → models",
+      "length": 6,
+      "entry": "bio",
+      "exit": "models"
+    },
+    {
+      "id": "data_flow_chain_236_0_scalable_bio_trainer_neural_network_rl_models_flow",
+      "path": "bio → trainer → neural → network → rl → models",
+      "length": 6,
+      "entry": "bio",
+      "exit": "models"
+    },
+    {
+      "id": "data_flow_chain_237_0_scalable_bio_trainer_neural_network_rl_trainers_flow",
+      "path": "bio → trainer → neural → network → rl → trainers",
+      "length": 6,
+      "entry": "bio",
+      "exit": "trainers"
+    },
+    {
+      "id": "data_flow_chain_238_0_scalable_bio_trainer_neural_network_rl_trainers_flow",
+      "path": "bio → trainer → neural → network → rl → trainers",
+      "length": 6,
+      "entry": "bio",
+      "exit": "trainers"
+    },
+    {
+      "id": "data_flow_chain_239_0_scalable_bio_trainer_neural_network_rl_trainers_flow",
+      "path": "bio → trainer → neural → network → rl → trainers",
+      "length": 6,
+      "entry": "bio",
+      "exit": "trainers"
+    },
+    {
+      "id": "data_flow_chain_23_0_scalable_bio_trainer_rl_trainers_capability_orchestrator_flow",
+      "path": "bio → trainer → rl → trainers → capability → orchestrator",
+      "length": 6,
+      "entry": "bio",
+      "exit": "orchestrator"
+    },
+    {
+      "id": "data_flow_chain_240_0_scalable_bio_trainer_neural_network_rl_trainers_flow",
+      "path": "bio → trainer → neural → network → rl → trainers",
+      "length": 6,
+      "entry": "bio",
+      "exit": "trainers"
+    },
+    {
+      "id": "data_flow_chain_241_0_scalable_bio_trainer_neural_network_rl_trainers_flow",
+      "path": "bio → trainer → neural → network → rl → trainers",
+      "length": 6,
+      "entry": "bio",
+      "exit": "trainers"
+    },
+    {
+      "id": "data_flow_chain_242_0_scalable_bio_trainer_neural_network_rl_trainers_flow",
+      "path": "bio → trainer → neural → network → rl → trainers",
+      "length": 6,
+      "entry": "bio",
+      "exit": "trainers"
+    },
+    {
+      "id": "data_flow_chain_243_0_scalable_bio_trainer_neural_network_rl_trainers_flow",
+      "path": "bio → trainer → neural → network → rl → trainers",
+      "length": 6,
+      "entry": "bio",
+      "exit": "trainers"
+    },
+    {
+      "id": "data_flow_chain_244_0_scalable_bio_trainer_neural_network_rl_trainers_flow",
+      "path": "bio → trainer → neural → network → rl → trainers",
+      "length": 6,
+      "entry": "bio",
+      "exit": "trainers"
+    },
+    {
+      "id": "data_flow_chain_245_0_scalable_bio_trainer_neural_network_rl_trainers_flow",
+      "path": "bio → trainer → neural → network → rl → trainers",
+      "length": 6,
+      "entry": "bio",
+      "exit": "trainers"
+    },
+    {
+      "id": "data_flow_chain_246_0_scalable_bio_trainer_neural_network_rl_trainers_flow",
+      "path": "bio → trainer → neural → network → rl → trainers",
+      "length": 6,
+      "entry": "bio",
+      "exit": "trainers"
+    },
+    {
+      "id": "data_flow_chain_247_0_scalable_bio_trainer_neural_network_rl_trainers_flow",
+      "path": "bio → trainer → neural → network → rl → trainers",
+      "length": 6,
+      "entry": "bio",
+      "exit": "trainers"
+    },
+    {
+      "id": "data_flow_chain_248_0_scalable_bio_trainer_neural_network_rl_trainers_flow",
+      "path": "bio → trainer → neural → network → rl → trainers",
+      "length": 6,
+      "entry": "bio",
+      "exit": "trainers"
+    },
+    {
+      "id": "data_flow_chain_249_0_scalable_bio_trainer_neural_network_rl_trainers_flow",
+      "path": "bio → trainer → neural → network → rl → trainers",
+      "length": 6,
+      "entry": "bio",
+      "exit": "trainers"
+    },
+    {
+      "id": "data_flow_chain_24_0_scalable_bio_trainer_rl_trainers_capability_orchestrator_flow",
+      "path": "bio → trainer → rl → trainers → capability → orchestrator",
+      "length": 6,
+      "entry": "bio",
+      "exit": "orchestrator"
+    },
+    {
+      "id": "data_flow_chain_250_0_scalable_bio_trainer_neural_network_rl_trainers_flow",
+      "path": "bio → trainer → neural → network → rl → trainers",
+      "length": 6,
+      "entry": "bio",
+      "exit": "trainers"
+    },
+    {
+      "id": "data_flow_chain_251_0_scalable_bio_trainer_neural_network_rl_trainers_flow",
+      "path": "bio → trainer → neural → network → rl → trainers",
+      "length": 6,
+      "entry": "bio",
+      "exit": "trainers"
+    },
+    {
+      "id": "data_flow_chain_252_0_scalable_bio_trainer_neural_network_rl_trainers_flow",
+      "path": "bio → trainer → neural → network → rl → trainers",
+      "length": 6,
+      "entry": "bio",
+      "exit": "trainers"
+    },
+    {
+      "id": "data_flow_chain_253_0_scalable_bio_trainer_neural_network_rl_trainers_flow",
+      "path": "bio → trainer → neural → network → rl → trainers",
+      "length": 6,
+      "entry": "bio",
+      "exit": "trainers"
+    },
+    {
+      "id": "data_flow_chain_254_0_scalable_bio_trainer_neural_network_rl_trainers_flow",
+      "path": "bio → trainer → neural → network → rl → trainers",
+      "length": 6,
+      "entry": "bio",
+      "exit": "trainers"
+    },
+    {
+      "id": "data_flow_chain_255_0_scalable_bio_trainer_neural_network_rl_trainers_flow",
+      "path": "bio → trainer → neural → network → rl → trainers",
+      "length": 6,
+      "entry": "bio",
+      "exit": "trainers"
+    },
+    {
+      "id": "data_flow_chain_256_0_scalable_bio_trainer_neural_network_rl_trainers_flow",
+      "path": "bio → trainer → neural → network → rl → trainers",
+      "length": 6,
+      "entry": "bio",
+      "exit": "trainers"
+    },
+    {
+      "id": "data_flow_chain_257_0_scalable_bio_trainer_neural_network_rl_trainers_flow",
+      "path": "bio → trainer → neural → network → rl → trainers",
+      "length": 6,
+      "entry": "bio",
+      "exit": "trainers"
+    },
+    {
+      "id": "data_flow_chain_258_0_scalable_bio_trainer_neural_network_rl_trainers_flow",
+      "path": "bio → trainer → neural → network → rl → trainers",
+      "length": 6,
+      "entry": "bio",
+      "exit": "trainers"
+    },
+    {
+      "id": "data_flow_chain_259_0_scalable_bio_trainer_neural_network_rl_trainers_flow",
+      "path": "bio → trainer → neural → network → rl → trainers",
+      "length": 6,
+      "entry": "bio",
+      "exit": "trainers"
+    },
+    {
+      "id": "data_flow_chain_25_0_scalable_bio_trainer_rl_trainers_capability_orchestrator_flow",
+      "path": "bio → trainer → rl → trainers → capability → orchestrator",
+      "length": 6,
+      "entry": "bio",
+      "exit": "orchestrator"
+    },
+    {
+      "id": "data_flow_chain_260_0_scalable_bio_trainer_neural_network_rl_trainers_flow",
+      "path": "bio → trainer → neural → network → rl → trainers",
+      "length": 6,
+      "entry": "bio",
+      "exit": "trainers"
+    },
+    {
+      "id": "data_flow_chain_261_0_scalable_bio_trainer_neural_network_rl_trainers_flow",
+      "path": "bio → trainer → neural → network → rl → trainers",
+      "length": 6,
+      "entry": "bio",
+      "exit": "trainers"
+    },
+    {
+      "id": "data_flow_chain_262_0_scalable_bio_trainer_neural_network_rl_trainers_flow",
+      "path": "bio → trainer → neural → network → rl → trainers",
+      "length": 6,
+      "entry": "bio",
+      "exit": "trainers"
+    },
+    {
+      "id": "data_flow_chain_263_0_scalable_bio_trainer_neural_network_rl_trainers_flow",
+      "path": "bio → trainer → neural → network → rl → trainers",
+      "length": 6,
+      "entry": "bio",
+      "exit": "trainers"
+    },
+    {
+      "id": "data_flow_chain_264_0_scalable_bio_trainer_neural_network_rl_trainers_flow",
+      "path": "bio → trainer → neural → network → rl → trainers",
+      "length": 6,
+      "entry": "bio",
+      "exit": "trainers"
+    },
+    {
+      "id": "data_flow_chain_265_0_scalable_bio_trainer_neural_network_rl_trainers_flow",
+      "path": "bio → trainer → neural → network → rl → trainers",
+      "length": 6,
+      "entry": "bio",
+      "exit": "trainers"
+    },
+    {
+      "id": "data_flow_chain_266_0_scalable_bio_trainer_neural_network_real_neural_core_flow",
+      "path": "bio → trainer → neural → network → real → neural → core",
+      "length": 7,
+      "entry": "bio",
+      "exit": "core"
+    },
+    {
+      "id": "data_flow_chain_267_0_scalable_bio_trainer_real_bio_net_adapter_flow",
+      "path": "bio → trainer → real → bio → net → adapter",
+      "length": 6,
+      "entry": "bio",
+      "exit": "adapter"
+    },
+    {
+      "id": "data_flow_chain_268_0_scalable_bio_trainer_real_neural_core_flow",
+      "path": "bio → trainer → real → neural → core",
+      "length": 5,
+      "entry": "bio",
+      "exit": "core"
+    },
+    {
+      "id": "data_flow_chain_26_0_scalable_bio_trainer_rl_trainers_capability_orchestrator_flow",
+      "path": "bio → trainer → rl → trainers → capability → orchestrator",
+      "length": 6,
+      "entry": "bio",
+      "exit": "orchestrator"
+    },
+    {
+      "id": "data_flow_chain_27_0_scalable_bio_trainer_rl_trainers_capability_orchestrator_flow",
+      "path": "bio → trainer → rl → trainers → capability → orchestrator",
+      "length": 6,
+      "entry": "bio",
+      "exit": "orchestrator"
+    },
+    {
+      "id": "data_flow_chain_28_0_scalable_bio_trainer_rl_trainers_capability_orchestrator_flow",
+      "path": "bio → trainer → rl → trainers → capability → orchestrator",
+      "length": 6,
+      "entry": "bio",
+      "exit": "orchestrator"
+    },
+    {
+      "id": "data_flow_chain_29_0_scalable_bio_trainer_rl_trainers_capability_orchestrator_flow",
+      "path": "bio → trainer → rl → trainers → capability → orchestrator",
+      "length": 6,
+      "entry": "bio",
+      "exit": "orchestrator"
+    },
+    {
+      "id": "data_flow_chain_2_0_initial_surface_scan_module_interface_flow",
+      "path": "initial → surface → scan → module → interface",
+      "length": 5,
+      "entry": "initial",
+      "exit": "interface"
+    },
+    {
+      "id": "data_flow_chain_30_0_scalable_bio_trainer_rl_trainers_ai_commander_flow",
+      "path": "bio → trainer → rl → trainers → ai → commander",
+      "length": 6,
+      "entry": "bio",
+      "exit": "commander"
+    },
+    {
+      "id": "data_flow_chain_31_0_scalable_bio_trainer_rl_trainers_execution_status_monitor_flow",
+      "path": "bio → trainer → rl → trainers → execution → status → monitor",
+      "length": 7,
+      "entry": "bio",
+      "exit": "monitor"
+    },
+    {
+      "id": "data_flow_chain_32_0_scalable_bio_trainer_rl_trainers_execution_status_monitor_flow",
+      "path": "bio → trainer → rl → trainers → execution → status → monitor",
+      "length": 7,
+      "entry": "bio",
+      "exit": "monitor"
+    },
+    {
+      "id": "data_flow_chain_33_0_scalable_bio_trainer_rl_trainers_execution_status_monitor_flow",
+      "path": "bio → trainer → rl → trainers → execution → status → monitor",
+      "length": 7,
+      "entry": "bio",
+      "exit": "monitor"
+    },
+    {
+      "id": "data_flow_chain_34_0_scalable_bio_trainer_rl_trainers_execution_status_monitor_flow",
+      "path": "bio → trainer → rl → trainers → execution → status → monitor",
+      "length": 7,
+      "entry": "bio",
+      "exit": "monitor"
+    },
+    {
+      "id": "data_flow_chain_35_0_scalable_bio_trainer_rl_trainers_execution_planner_flow",
+      "path": "bio → trainer → rl → trainers → execution → planner",
+      "length": 6,
+      "entry": "bio",
+      "exit": "planner"
+    },
+    {
+      "id": "data_flow_chain_36_0_scalable_bio_trainer_rl_trainers_execution_planner_flow",
+      "path": "bio → trainer → rl → trainers → execution → planner",
+      "length": 6,
+      "entry": "bio",
+      "exit": "planner"
+    },
+    {
+      "id": "data_flow_chain_37_0_scalable_bio_trainer_rl_trainers_authz_mapper_flow",
+      "path": "bio → trainer → rl → trainers → authz → mapper",
+      "length": 6,
+      "entry": "bio",
+      "exit": "mapper"
+    },
+    {
+      "id": "data_flow_chain_38_0_scalable_bio_trainer_rl_trainers_train_classifier_flow",
+      "path": "bio → trainer → rl → trainers → train → classifier",
+      "length": 6,
+      "entry": "bio",
+      "exit": "classifier"
+    },
+    {
+      "id": "data_flow_chain_39_0_scalable_bio_trainer_rl_trainers_train_classifier_flow",
+      "path": "bio → trainer → rl → trainers → train → classifier",
+      "length": 6,
+      "entry": "bio",
+      "exit": "classifier"
+    },
+    {
+      "id": "data_flow_chain_3_0_initial_surface_scan_module_interface_app_flow",
+      "path": "initial → surface → scan → module → interface → app",
+      "length": 6,
+      "entry": "initial",
+      "exit": "app"
+    },
+    {
+      "id": "data_flow_chain_40_0_scalable_bio_trainer_rl_trainers_train_classifier_flow",
+      "path": "bio → trainer → rl → trainers → train → classifier",
+      "length": 6,
+      "entry": "bio",
+      "exit": "classifier"
+    },
+    {
+      "id": "data_flow_chain_41_0_scalable_bio_trainer_rl_trainers_train_classifier_flow",
+      "path": "bio → trainer → rl → trainers → train → classifier",
+      "length": 6,
+      "entry": "bio",
+      "exit": "classifier"
+    },
+    {
+      "id": "data_flow_chain_42_0_scalable_bio_trainer_rl_trainers_model_trainer_flow",
+      "path": "bio → trainer → rl → trainers → model → trainer",
+      "length": 6,
+      "entry": "bio",
+      "exit": "trainer"
+    },
+    {
+      "id": "data_flow_chain_43_0_scalable_bio_trainer_rl_trainers_model_trainer_flow",
+      "path": "bio → trainer → rl → trainers → model → trainer",
+      "length": 6,
+      "entry": "bio",
+      "exit": "trainer"
+    },
+    {
+      "id": "data_flow_chain_44_0_scalable_bio_trainer_rl_trainers_model_trainer_flow",
+      "path": "bio → trainer → rl → trainers → model → trainer",
+      "length": 6,
+      "entry": "bio",
+      "exit": "trainer"
+    },
+    {
+      "id": "data_flow_chain_45_0_scalable_bio_trainer_rl_trainers_scenario_manager_flow",
+      "path": "bio → trainer → rl → trainers → scenario → manager",
+      "length": 6,
+      "entry": "bio",
+      "exit": "manager"
+    },
+    {
+      "id": "data_flow_chain_46_0_scalable_bio_trainer_rl_trainers_analysis_engine_flow",
+      "path": "bio → trainer → rl → trainers → analysis → engine",
+      "length": 6,
+      "entry": "bio",
+      "exit": "engine"
+    },
+    {
+      "id": "data_flow_chain_47_0_scalable_bio_trainer_rl_trainers_ai_model_manager_flow",
+      "path": "bio → trainer → rl → trainers → ai → model → manager",
+      "length": 7,
+      "entry": "bio",
+      "exit": "manager"
+    },
+    {
+      "id": "data_flow_chain_48_0_scalable_bio_trainer_rl_trainers_real_bio_net_adapter_flow",
+      "path": "bio → trainer → rl → trainers → real → bio → net → adapter",
+      "length": 8,
+      "entry": "bio",
+      "exit": "adapter"
+    },
+    {
+      "id": "data_flow_chain_49_0_scalable_bio_trainer_rl_trainers_real_neural_core_flow",
+      "path": "bio → trainer → rl → trainers → real → neural → core",
+      "length": 7,
+      "entry": "bio",
+      "exit": "core"
+    },
+    {
+      "id": "data_flow_chain_4_0_logging_formatter_nlg_system_flow",
+      "path": "logging → formatter → nlg → system",
+      "length": 4,
+      "entry": "logging",
+      "exit": "system"
+    },
+    {
+      "id": "data_flow_chain_50_0_scalable_bio_trainer_rl_trainers_weight_manager_flow",
+      "path": "bio → trainer → rl → trainers → weight → manager",
+      "length": 6,
+      "entry": "bio",
+      "exit": "manager"
+    },
+    {
+      "id": "data_flow_chain_51_0_scalable_bio_trainer_rl_trainers_vector_store_flow",
+      "path": "bio → trainer → rl → trainers → vector → store",
+      "length": 6,
+      "entry": "bio",
+      "exit": "store"
+    },
+    {
+      "id": "data_flow_chain_52_0_scalable_bio_trainer_rl_trainers_vector_store_flow",
+      "path": "bio → trainer → rl → trainers → vector → store",
+      "length": 6,
+      "entry": "bio",
+      "exit": "store"
+    },
+    {
+      "id": "data_flow_chain_53_0_scalable_bio_trainer_rl_trainers_vector_store_flow",
+      "path": "bio → trainer → rl → trainers → vector → store",
+      "length": 6,
+      "entry": "bio",
+      "exit": "store"
+    },
+    {
+      "id": "data_flow_chain_54_0_scalable_bio_trainer_rl_trainers_vector_store_flow",
+      "path": "bio → trainer → rl → trainers → vector → store",
+      "length": 6,
+      "entry": "bio",
+      "exit": "store"
+    },
+    {
+      "id": "data_flow_chain_55_0_scalable_bio_trainer_rl_trainers_vector_store_flow",
+      "path": "bio → trainer → rl → trainers → vector → store",
+      "length": 6,
+      "entry": "bio",
+      "exit": "store"
+    },
+    {
+      "id": "data_flow_chain_56_0_scalable_bio_trainer_rl_trainers_vector_store_flow",
+      "path": "bio → trainer → rl → trainers → vector → store",
+      "length": 6,
+      "entry": "bio",
+      "exit": "store"
+    },
+    {
+      "id": "data_flow_chain_57_0_scalable_bio_trainer_rl_trainers_vector_store_flow",
+      "path": "bio → trainer → rl → trainers → vector → store",
+      "length": 6,
+      "entry": "bio",
+      "exit": "store"
+    },
+    {
+      "id": "data_flow_chain_58_0_scalable_bio_trainer_rl_trainers_vector_store_flow",
+      "path": "bio → trainer → rl → trainers → vector → store",
+      "length": 6,
+      "entry": "bio",
+      "exit": "store"
+    },
+    {
+      "id": "data_flow_chain_59_0_scalable_bio_trainer_rl_trainers_vector_store_flow",
+      "path": "bio → trainer → rl → trainers → vector → store",
+      "length": 6,
+      "entry": "bio",
+      "exit": "store"
+    },
+    {
+      "id": "data_flow_chain_5_0_logging_formatter_authz_mapper_flow",
+      "path": "logging → formatter → authz → mapper",
+      "length": 4,
+      "entry": "logging",
+      "exit": "mapper"
+    },
+    {
+      "id": "data_flow_chain_60_0_scalable_bio_trainer_rl_trainers_vector_store_flow",
+      "path": "bio → trainer → rl → trainers → vector → store",
+      "length": 6,
+      "entry": "bio",
+      "exit": "store"
+    },
+    {
+      "id": "data_flow_chain_61_0_scalable_bio_trainer_rl_trainers_vector_store_flow",
+      "path": "bio → trainer → rl → trainers → vector → store",
+      "length": 6,
+      "entry": "bio",
+      "exit": "store"
+    },
+    {
+      "id": "data_flow_chain_62_0_scalable_bio_trainer_rl_trainers_vector_store_flow",
+      "path": "bio → trainer → rl → trainers → vector → store",
+      "length": 6,
+      "entry": "bio",
+      "exit": "store"
+    },
+    {
+      "id": "data_flow_chain_63_0_scalable_bio_trainer_rl_trainers_vector_store_flow",
+      "path": "bio → trainer → rl → trainers → vector → store",
+      "length": 6,
+      "entry": "bio",
+      "exit": "store"
+    },
+    {
+      "id": "data_flow_chain_64_0_scalable_bio_trainer_rl_trainers_vector_store_flow",
+      "path": "bio → trainer → rl → trainers → vector → store",
+      "length": 6,
+      "entry": "bio",
+      "exit": "store"
+    },
+    {
+      "id": "data_flow_chain_65_0_scalable_bio_trainer_rl_trainers_vector_store_flow",
+      "path": "bio → trainer → rl → trainers → vector → store",
+      "length": 6,
+      "entry": "bio",
+      "exit": "store"
+    },
+    {
+      "id": "data_flow_chain_66_0_scalable_bio_trainer_rl_trainers_vector_store_flow",
+      "path": "bio → trainer → rl → trainers → vector → store",
+      "length": 6,
+      "entry": "bio",
+      "exit": "store"
+    },
+    {
+      "id": "data_flow_chain_67_0_scalable_bio_trainer_rl_trainers_vector_store_flow",
+      "path": "bio → trainer → rl → trainers → vector → store",
+      "length": 6,
+      "entry": "bio",
+      "exit": "store"
+    },
+    {
+      "id": "data_flow_chain_68_0_scalable_bio_trainer_rl_trainers_vector_store_flow",
+      "path": "bio → trainer → rl → trainers → vector → store",
+      "length": 6,
+      "entry": "bio",
+      "exit": "store"
+    },
+    {
+      "id": "data_flow_chain_69_0_scalable_bio_trainer_rl_trainers_vector_store_flow",
+      "path": "bio → trainer → rl → trainers → vector → store",
+      "length": 6,
+      "entry": "bio",
+      "exit": "store"
+    },
+    {
+      "id": "data_flow_chain_6_0_logging_formatter_matrix_visualizer_flow",
+      "path": "logging → formatter → matrix → visualizer",
+      "length": 4,
+      "entry": "logging",
+      "exit": "visualizer"
+    },
+    {
+      "id": "data_flow_chain_70_0_scalable_bio_trainer_rl_trainers_vector_store_flow",
+      "path": "bio → trainer → rl → trainers → vector → store",
+      "length": 6,
+      "entry": "bio",
+      "exit": "store"
+    },
+    {
+      "id": "data_flow_chain_71_0_scalable_bio_trainer_rl_trainers_vector_store_flow",
+      "path": "bio → trainer → rl → trainers → vector → store",
+      "length": 6,
+      "entry": "bio",
+      "exit": "store"
+    },
+    {
+      "id": "data_flow_chain_72_0_scalable_bio_trainer_rl_trainers_vector_store_flow",
+      "path": "bio → trainer → rl → trainers → vector → store",
+      "length": 6,
+      "entry": "bio",
+      "exit": "store"
+    },
+    {
+      "id": "data_flow_chain_73_0_scalable_bio_trainer_rl_trainers_vector_store_flow",
+      "path": "bio → trainer → rl → trainers → vector → store",
+      "length": 6,
+      "entry": "bio",
+      "exit": "store"
+    },
+    {
+      "id": "data_flow_chain_74_0_scalable_bio_trainer_rl_trainers_vector_store_flow",
+      "path": "bio → trainer → rl → trainers → vector → store",
+      "length": 6,
+      "entry": "bio",
+      "exit": "store"
+    },
+    {
+      "id": "data_flow_chain_75_0_scalable_bio_trainer_rl_trainers_vector_store_flow",
+      "path": "bio → trainer → rl → trainers → vector → store",
+      "length": 6,
+      "entry": "bio",
+      "exit": "store"
+    },
+    {
+      "id": "data_flow_chain_76_0_scalable_bio_trainer_analysis_engine_flow",
+      "path": "bio → trainer → analysis → engine",
+      "length": 4,
+      "entry": "bio",
+      "exit": "engine"
+    },
+    {
+      "id": "data_flow_chain_77_0_scalable_bio_trainer_ai_model_manager_flow",
+      "path": "bio → trainer → ai → model → manager",
+      "length": 5,
+      "entry": "bio",
+      "exit": "manager"
+    },
+    {
+      "id": "data_flow_chain_78_0_scalable_bio_trainer_neural_network_flow",
+      "path": "bio → trainer → neural → network",
+      "length": 4,
+      "entry": "bio",
+      "exit": "network"
+    },
+    {
+      "id": "data_flow_chain_79_0_scalable_bio_trainer_neural_network_optimized_core_flow",
+      "path": "bio → trainer → neural → network → optimized → core",
+      "length": 6,
+      "entry": "bio",
+      "exit": "core"
+    },
+    {
+      "id": "data_flow_chain_7_0_logging_formatter_permission_matrix_flow",
+      "path": "logging → formatter → permission → matrix",
+      "length": 4,
+      "entry": "logging",
+      "exit": "matrix"
+    },
+    {
+      "id": "data_flow_chain_80_0_scalable_bio_trainer_neural_network_optimized_core_flow",
+      "path": "bio → trainer → neural → network → optimized → core",
+      "length": 6,
+      "entry": "bio",
+      "exit": "core"
+    },
+    {
+      "id": "data_flow_chain_81_0_scalable_bio_trainer_neural_network_optimized_core_flow",
+      "path": "bio → trainer → neural → network → optimized → core",
+      "length": 6,
+      "entry": "bio",
+      "exit": "core"
+    },
+    {
+      "id": "data_flow_chain_82_0_scalable_bio_trainer_neural_network_rl_models_flow",
+      "path": "bio → trainer → neural → network → rl → models",
+      "length": 6,
+      "entry": "bio",
+      "exit": "models"
+    },
+    {
+      "id": "data_flow_chain_83_0_scalable_bio_trainer_neural_network_rl_models_flow",
+      "path": "bio → trainer → neural → network → rl → models",
+      "length": 6,
+      "entry": "bio",
+      "exit": "models"
+    },
+    {
+      "id": "data_flow_chain_84_0_scalable_bio_trainer_neural_network_rl_models_flow",
+      "path": "bio → trainer → neural → network → rl → models",
+      "length": 6,
+      "entry": "bio",
+      "exit": "models"
+    },
+    {
+      "id": "data_flow_chain_85_0_scalable_bio_trainer_neural_network_rl_models_flow",
+      "path": "bio → trainer → neural → network → rl → models",
+      "length": 6,
+      "entry": "bio",
+      "exit": "models"
+    },
+    {
+      "id": "data_flow_chain_86_0_scalable_bio_trainer_neural_network_rl_models_flow",
+      "path": "bio → trainer → neural → network → rl → models",
+      "length": 6,
+      "entry": "bio",
+      "exit": "models"
+    },
+    {
+      "id": "data_flow_chain_87_0_scalable_bio_trainer_neural_network_rl_models_flow",
+      "path": "bio → trainer → neural → network → rl → models",
+      "length": 6,
+      "entry": "bio",
+      "exit": "models"
+    },
+    {
+      "id": "data_flow_chain_88_0_scalable_bio_trainer_neural_network_rl_models_flow",
+      "path": "bio → trainer → neural → network → rl → models",
+      "length": 6,
+      "entry": "bio",
+      "exit": "models"
+    },
+    {
+      "id": "data_flow_chain_89_0_scalable_bio_trainer_neural_network_rl_models_flow",
+      "path": "bio → trainer → neural → network → rl → models",
+      "length": 6,
+      "entry": "bio",
+      "exit": "models"
+    },
+    {
+      "id": "data_flow_chain_8_0_logging_formatter_permission_matrix_authz_mapper_flow",
+      "path": "logging → formatter → permission → matrix → authz → mapper",
+      "length": 6,
+      "entry": "logging",
+      "exit": "mapper"
+    },
+    {
+      "id": "data_flow_chain_90_0_scalable_bio_trainer_neural_network_rl_models_flow",
+      "path": "bio → trainer → neural → network → rl → models",
+      "length": 6,
+      "entry": "bio",
+      "exit": "models"
+    },
+    {
+      "id": "data_flow_chain_91_0_scalable_bio_trainer_neural_network_rl_models_flow",
+      "path": "bio → trainer → neural → network → rl → models",
+      "length": 6,
+      "entry": "bio",
+      "exit": "models"
+    },
+    {
+      "id": "data_flow_chain_92_0_scalable_bio_trainer_neural_network_rl_models_flow",
+      "path": "bio → trainer → neural → network → rl → models",
+      "length": 6,
+      "entry": "bio",
+      "exit": "models"
+    },
+    {
+      "id": "data_flow_chain_93_0_scalable_bio_trainer_neural_network_rl_models_flow",
+      "path": "bio → trainer → neural → network → rl → models",
+      "length": 6,
+      "entry": "bio",
+      "exit": "models"
+    },
+    {
+      "id": "data_flow_chain_94_0_scalable_bio_trainer_neural_network_rl_models_flow",
+      "path": "bio → trainer → neural → network → rl → models",
+      "length": 6,
+      "entry": "bio",
+      "exit": "models"
+    },
+    {
+      "id": "data_flow_chain_95_0_scalable_bio_trainer_neural_network_rl_models_flow",
+      "path": "bio → trainer → neural → network → rl → models",
+      "length": 6,
+      "entry": "bio",
+      "exit": "models"
+    },
+    {
+      "id": "data_flow_chain_96_0_scalable_bio_trainer_neural_network_rl_models_flow",
+      "path": "bio → trainer → neural → network → rl → models",
+      "length": 6,
+      "entry": "bio",
+      "exit": "models"
+    },
+    {
+      "id": "data_flow_chain_97_0_scalable_bio_trainer_neural_network_rl_models_flow",
+      "path": "bio → trainer → neural → network → rl → models",
+      "length": 6,
+      "entry": "bio",
+      "exit": "models"
+    },
+    {
+      "id": "data_flow_chain_98_0_scalable_bio_trainer_neural_network_rl_models_flow",
+      "path": "bio → trainer → neural → network → rl → models",
+      "length": 6,
+      "entry": "bio",
+      "exit": "models"
+    },
+    {
+      "id": "data_flow_chain_99_0_scalable_bio_trainer_neural_network_rl_models_flow",
+      "path": "bio → trainer → neural → network → rl → models",
+      "length": 6,
+      "entry": "bio",
+      "exit": "models"
+    },
+    {
+      "id": "data_flow_chain_9_0_logging_formatter_permission_matrix_matrix_visualizer_flow",
+      "path": "logging → formatter → permission → matrix → matrix → visualizer",
+      "length": 6,
+      "entry": "logging",
+      "exit": "visualizer"
+    }
+  ]
+}

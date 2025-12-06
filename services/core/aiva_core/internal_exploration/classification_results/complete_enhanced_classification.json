@@ -1,0 +1,3057 @@
+{
+  "metadata": {
+    "total_flows": 268,
+    "timestamp": "2025-12-06T17:13:44.792567",
+    "source_directory": "c:\\D\\fold7\\AIVA-git\\flow_analysis_ai_core"
+  },
+  "statistics": {
+    "total_flows": 268,
+    "unique_endpoints": 21,
+    "unique_entrypoints": 4,
+    "unique_patterns": 41,
+    "avg_length": 5.936567164179104,
+    "max_length": 8,
+    "min_length": 4
+  },
+  "endpoints": {
+    "models": {
+      "total_paths": 155,
+      "unique_patterns": 1,
+      "recommendation": "唯一路徑: bio → trainer → neural → network → rl → models",
+      "paths": [
+        {
+          "pattern": "bio → trainer → neural → network → rl → models",
+          "length": 6,
+          "efficiency": 0.16666666666666666,
+          "use_cases": [
+            "複雜流程處理",
+            "完整功能鏈路",
+            "需要神經網絡處理",
+            "強化學習任務",
+            "模型訓練"
+          ],
+          "advantages": [
+            "功能完整",
+            "模塊化程度高",
+            "文檔完善"
+          ],
+          "disadvantages": [
+            "無明顯劣勢"
+          ],
+          "scripts": [
+            {
+              "name": "scalable_bio_trainer",
+              "path": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\external_learning\\learning\\scalable_bio_trainer.py",
+              "purpose": "ScalableBio Trainer - ScalableBioNet 專用訓練器",
+              "classes": [
+                "ScalableBioTrainingConfig",
+                "ScalableBioTrainer",
+                "MockNdarray",
+                "MockNumpy"
+              ],
+              "functions": [
+                "train",
+                "get_training_history",
+                "save_model",
+                "load_model",
+                "mean",
+                "sum",
+                "abs"
+              ]
+            },
+            {
+              "name": "neural_network",
+              "path": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\cognitive_core\\neural\\neural_network.py",
+              "purpose": "Neural Network - 神經網路基礎架構 與 BioNeuron Core 配合的通用神經網路實現",
+              "classes": [
+                "ActivationFunctions",
+                "DenseLayer",
+                "FeedForwardNetwork",
+                "RecurrentLayer",
+                "LSTMLayer"
+              ],
+              "functions": [
+                "relu",
+                "relu_derivative",
+                "sigmoid",
+                "sigmoid_derivative",
+                "tanh",
+                "tanh_derivative",
+                "softmax",
+                "forward",
+                "backward",
+                "update_weights"
+              ]
+            },
+            {
+              "name": "rl_models",
+              "path": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\external_learning\\learning\\rl_models.py",
+              "purpose": "強化學習神經網絡模型",
+              "classes": [
+                "DQNNetwork",
+                "ActorCritic",
+                "ReplayBuffer",
+                "RolloutBuffer"
+              ],
+              "functions": [
+                "forward",
+                "select_action",
+                "forward",
+                "select_action",
+                "evaluate_actions",
+                "push",
+                "sample",
+                "push",
+                "get",
+                "compute_returns"
+              ]
+            },
+            {
+              "name": "multilang_coordinator",
+              "path": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\core_capabilities\\multilang_coordinator.py",
+              "purpose": "Multi-Language AI Coordinator 多語言 AI 協調器 - V2 gRPC 統一架構",
+              "classes": [
+                "MultiLanguageAICoordinator"
+              ],
+              "functions": [
+                "check_module_availability",
+                "get_status",
+                "enable_module",
+                "disable_module"
+              ]
+            },
+            {
+              "name": "analysis_engine",
+              "path": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\core_capabilities\\analysis\\analysis_engine.py",
+              "purpose": "AI增強代碼分析引擎 基於Tree-sitter AST和神經網路的智能代碼分析系統",
+              "classes": [
+                "AnalysisType",
+                "IndexingConfig",
+                "CacheManager",
+                "AIAnalysisResult",
+                "CodeChunk"
+              ],
+              "functions": [
+                "get_file_hash",
+                "is_cached",
+                "update_cache",
+                "save_cache_index",
+                "initialize",
+                "analyze_code",
+                "index_codebase",
+                "search_code_chunks",
+                "get_analysis_summary",
+                "visit_node"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "trainers": {
+      "total_paths": 30,
+      "unique_patterns": 2,
+      "recommendation": "推薦路徑: bio → trainer → rl → trainers\n  效率: 0.250\n  適用: 快速原型開發, 簡單任務執行\n\n備選路徑: bio → trainer → neural → network → rl → trainers\n  適用: 複雜流程處理, 完整功能鏈路",
+      "paths": [
+        {
+          "pattern": "bio → trainer → rl → trainers",
+          "length": 4,
+          "efficiency": 0.25,
+          "use_cases": [
+            "快速原型開發",
+            "簡單任務執行",
+            "強化學習任務",
+            "模型訓練"
+          ],
+          "advantages": [
+            "執行效率高（0.250）",
+            "依賴少，易維護",
+            "文檔完善"
+          ],
+          "disadvantages": [
+            "可能功能受限",
+            "缺少中間處理環節"
+          ],
+          "scripts": [
+            {
+              "name": "scalable_bio_trainer",
+              "path": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\external_learning\\learning\\scalable_bio_trainer.py",
+              "purpose": "ScalableBio Trainer - ScalableBioNet 專用訓練器",
+              "classes": [
+                "ScalableBioTrainingConfig",
+                "ScalableBioTrainer",
+                "MockNdarray",
+                "MockNumpy"
+              ],
+              "functions": [
+                "train",
+                "get_training_history",
+                "save_model",
+                "load_model",
+                "mean",
+                "sum",
+                "abs"
+              ]
+            },
+            {
+              "name": "rl_trainers",
+              "path": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\external_learning\\learning\\rl_trainers.py",
+              "purpose": "強化學習訓練器",
+              "classes": [
+                "DQNTrainer",
+                "PPOTrainer"
+              ],
+              "functions": [
+                "select_action",
+                "train_step",
+                "get_metrics",
+                "save",
+                "load",
+                "select_action",
+                "store_transition",
+                "update",
+                "get_metrics",
+                "save"
+              ]
+            }
+          ]
+        },
+        {
+          "pattern": "bio → trainer → neural → network → rl → trainers",
+          "length": 6,
+          "efficiency": 0.16666666666666666,
+          "use_cases": [
+            "複雜流程處理",
+            "完整功能鏈路",
+            "需要神經網絡處理",
+            "強化學習任務",
+            "模型訓練"
+          ],
+          "advantages": [
+            "功能完整",
+            "模塊化程度高",
+            "文檔完善"
+          ],
+          "disadvantages": [
+            "無明顯劣勢"
+          ],
+          "scripts": [
+            {
+              "name": "scalable_bio_trainer",
+              "path": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\external_learning\\learning\\scalable_bio_trainer.py",
+              "purpose": "ScalableBio Trainer - ScalableBioNet 專用訓練器",
+              "classes": [
+                "ScalableBioTrainingConfig",
+                "ScalableBioTrainer",
+                "MockNdarray",
+                "MockNumpy"
+              ],
+              "functions": [
+                "train",
+                "get_training_history",
+                "save_model",
+                "load_model",
+                "mean",
+                "sum",
+                "abs"
+              ]
+            },
+            {
+              "name": "neural_network",
+              "path": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\cognitive_core\\neural\\neural_network.py",
+              "purpose": "Neural Network - 神經網路基礎架構 與 BioNeuron Core 配合的通用神經網路實現",
+              "classes": [
+                "ActivationFunctions",
+                "DenseLayer",
+                "FeedForwardNetwork",
+                "RecurrentLayer",
+                "LSTMLayer"
+              ],
+              "functions": [
+                "relu",
+                "relu_derivative",
+                "sigmoid",
+                "sigmoid_derivative",
+                "tanh",
+                "tanh_derivative",
+                "softmax",
+                "forward",
+                "backward",
+                "update_weights"
+              ]
+            },
+            {
+              "name": "rl_trainers",
+              "path": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\external_learning\\learning\\rl_trainers.py",
+              "purpose": "強化學習訓練器",
+              "classes": [
+                "DQNTrainer",
+                "PPOTrainer"
+              ],
+              "functions": [
+                "select_action",
+                "train_step",
+                "get_metrics",
+                "save",
+                "load",
+                "select_action",
+                "store_transition",
+                "update",
+                "get_metrics",
+                "save"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "store": {
+      "total_paths": 25,
+      "unique_patterns": 1,
+      "recommendation": "唯一路徑: bio → trainer → rl → trainers → vector → store",
+      "paths": [
+        {
+          "pattern": "bio → trainer → rl → trainers → vector → store",
+          "length": 6,
+          "efficiency": 0.16666666666666666,
+          "use_cases": [
+            "複雜流程處理",
+            "完整功能鏈路",
+            "強化學習任務",
+            "模型訓練"
+          ],
+          "advantages": [
+            "功能完整",
+            "模塊化程度高",
+            "文檔完善"
+          ],
+          "disadvantages": [
+            "無明顯劣勢"
+          ],
+          "scripts": [
+            {
+              "name": "scalable_bio_trainer",
+              "path": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\external_learning\\learning\\scalable_bio_trainer.py",
+              "purpose": "ScalableBio Trainer - ScalableBioNet 專用訓練器",
+              "classes": [
+                "ScalableBioTrainingConfig",
+                "ScalableBioTrainer",
+                "MockNdarray",
+                "MockNumpy"
+              ],
+              "functions": [
+                "train",
+                "get_training_history",
+                "save_model",
+                "load_model",
+                "mean",
+                "sum",
+                "abs"
+              ]
+            },
+            {
+              "name": "rl_trainers",
+              "path": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\external_learning\\learning\\rl_trainers.py",
+              "purpose": "強化學習訓練器",
+              "classes": [
+                "DQNTrainer",
+                "PPOTrainer"
+              ],
+              "functions": [
+                "select_action",
+                "train_step",
+                "get_metrics",
+                "save",
+                "load",
+                "select_action",
+                "store_transition",
+                "update",
+                "get_metrics",
+                "save"
+              ]
+            },
+            {
+              "name": "vector_store",
+              "path": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\cognitive_core\\rag\\vector_store.py",
+              "purpose": "Vector Store - 向量數據庫",
+              "classes": [
+                "VectorStore"
+              ],
+              "functions": [
+                "add_batch",
+                "delete_document",
+                "get_document",
+                "save",
+                "load",
+                "count",
+                "get_statistics"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "orchestrator": {
+      "total_paths": 13,
+      "unique_patterns": 3,
+      "recommendation": "推薦路徑: initial → surface → exploit → orchestrator\n  效率: 0.250\n  適用: 快速原型開發, 簡單任務執行\n\n備選路徑: bio → trainer → model → trainer → training → orchestrator\n  適用: 複雜流程處理, 完整功能鏈路",
+      "paths": [
+        {
+          "pattern": "initial → surface → exploit → orchestrator",
+          "length": 4,
+          "efficiency": 0.25,
+          "use_cases": [
+            "快速原型開發",
+            "簡單任務執行"
+          ],
+          "advantages": [
+            "執行效率高（0.250）",
+            "依賴少，易維護"
+          ],
+          "disadvantages": [
+            "可能功能受限",
+            "缺少中間處理環節"
+          ],
+          "scripts": [
+            {
+              "name": "initial_surface",
+              "path": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\core_capabilities\\analysis\\initial_surface.py",
+              "purpose": "定義1個類: InitialAttackSurface",
+              "classes": [
+                "InitialAttackSurface"
+              ],
+              "functions": [
+                "analyze"
+              ]
+            },
+            {
+              "name": "exploit_orchestrator",
+              "path": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\core_capabilities\\attack\\exploit_orchestrator.py",
+              "purpose": "Exploit Orchestrator - 漏洞利用編排器",
+              "classes": [
+                "ExploitOrchestrator"
+              ],
+              "functions": [
+                "get_exploit",
+                "get_all_exploits",
+                "get_exploits_by_type",
+                "get_exploits_by_severity",
+                "orchestrate_exploit",
+                "analyze_results",
+                "get_execution_history",
+                "get_statistics"
+              ]
+            }
+          ]
+        },
+        {
+          "pattern": "bio → trainer → model → trainer → training → orchestrator",
+          "length": 6,
+          "efficiency": 0.16666666666666666,
+          "use_cases": [
+            "複雜流程處理",
+            "完整功能鏈路",
+            "模型訓練"
+          ],
+          "advantages": [
+            "功能完整",
+            "模塊化程度高",
+            "文檔完善"
+          ],
+          "disadvantages": [
+            "無明顯劣勢"
+          ],
+          "scripts": [
+            {
+              "name": "scalable_bio_trainer",
+              "path": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\external_learning\\learning\\scalable_bio_trainer.py",
+              "purpose": "ScalableBio Trainer - ScalableBioNet 專用訓練器",
+              "classes": [
+                "ScalableBioTrainingConfig",
+                "ScalableBioTrainer",
+                "MockNdarray",
+                "MockNumpy"
+              ],
+              "functions": [
+                "train",
+                "get_training_history",
+                "save_model",
+                "load_model",
+                "mean",
+                "sum",
+                "abs"
+              ]
+            },
+            {
+              "name": "model_trainer",
+              "path": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\external_learning\\learning\\model_trainer.py",
+              "purpose": "Model Trainer - 強化學習模型訓練器",
+              "classes": [
+                "ModelTrainer"
+              ],
+              "functions": []
+            },
+            {
+              "name": "training_orchestrator",
+              "path": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\external_learning\\training\\training_orchestrator.py",
+              "purpose": "Training Orchestrator - 訓練編排器",
+              "classes": [
+                "TrainingOrchestrator"
+              ],
+              "functions": [
+                "get_training_statistics",
+                "save_session"
+              ]
+            }
+          ]
+        },
+        {
+          "pattern": "bio → trainer → rl → trainers → capability → orchestrator",
+          "length": 6,
+          "efficiency": 0.16666666666666666,
+          "use_cases": [
+            "複雜流程處理",
+            "完整功能鏈路",
+            "強化學習任務",
+            "模型訓練"
+          ],
+          "advantages": [
+            "功能完整",
+            "模塊化程度高",
+            "文檔完善"
+          ],
+          "disadvantages": [
+            "無明顯劣勢"
+          ],
+          "scripts": [
+            {
+              "name": "scalable_bio_trainer",
+              "path": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\external_learning\\learning\\scalable_bio_trainer.py",
+              "purpose": "ScalableBio Trainer - ScalableBioNet 專用訓練器",
+              "classes": [
+                "ScalableBioTrainingConfig",
+                "ScalableBioTrainer",
+                "MockNdarray",
+                "MockNumpy"
+              ],
+              "functions": [
+                "train",
+                "get_training_history",
+                "save_model",
+                "load_model",
+                "mean",
+                "sum",
+                "abs"
+              ]
+            },
+            {
+              "name": "rl_trainers",
+              "path": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\external_learning\\learning\\rl_trainers.py",
+              "purpose": "強化學習訓練器",
+              "classes": [
+                "DQNTrainer",
+                "PPOTrainer"
+              ],
+              "functions": [
+                "select_action",
+                "train_step",
+                "get_metrics",
+                "save",
+                "load",
+                "select_action",
+                "store_transition",
+                "update",
+                "get_metrics",
+                "save"
+              ]
+            },
+            {
+              "name": "capability_orchestrator",
+              "path": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\cognitive_core\\capability_orchestrator.py",
+              "purpose": "能力編排器 (Capability Orchestrator) - AI 決策引擎核心",
+              "classes": [
+                "TaskRequirement",
+                "CapabilityPlan",
+                "ExecutionResult",
+                "CapabilityOrchestrator"
+              ],
+              "functions": []
+            }
+          ]
+        }
+      ]
+    },
+    "manager": {
+      "total_paths": 6,
+      "unique_patterns": 6,
+      "recommendation": "推薦路徑: strategy → generator → scenario → manager\n  效率: 0.250\n  適用: 快速原型開發, 簡單任務執行\n\n備選路徑: bio → trainer → ai → model → manager\n  適用: 模型訓練",
+      "paths": [
+        {
+          "pattern": "strategy → generator → scenario → manager",
+          "length": 4,
+          "efficiency": 0.25,
+          "use_cases": [
+            "快速原型開發",
+            "簡單任務執行"
+          ],
+          "advantages": [
+            "執行效率高（0.250）",
+            "依賴少，易維護",
+            "文檔完善"
+          ],
+          "disadvantages": [
+            "可能功能受限",
+            "缺少中間處理環節"
+          ],
+          "scripts": [
+            {
+              "name": "strategy_generator",
+              "path": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\task_planning\\planner\\strategy_generator.py",
+              "purpose": "基於規則的測試策略生成器",
+              "classes": [
+                "RuleBasedStrategyGenerator"
+              ],
+              "functions": [
+                "generate",
+                "generate_from_intent"
+              ]
+            },
+            {
+              "name": "scenario_manager",
+              "path": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\external_learning\\training\\scenario_manager.py",
+              "purpose": "Standard Scenario Manager - OWASP 靶場場景管理器",
+              "classes": [
+                "ScenarioManager"
+              ],
+              "functions": []
+            }
+          ]
+        },
+        {
+          "pattern": "bio → trainer → ai → model → manager",
+          "length": 5,
+          "efficiency": 0.2,
+          "use_cases": [
+            "模型訓練"
+          ],
+          "advantages": [
+            "文檔完善"
+          ],
+          "disadvantages": [
+            "無明顯劣勢"
+          ],
+          "scripts": [
+            {
+              "name": "scalable_bio_trainer",
+              "path": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\external_learning\\learning\\scalable_bio_trainer.py",
+              "purpose": "ScalableBio Trainer - ScalableBioNet 專用訓練器",
+              "classes": [
+                "ScalableBioTrainingConfig",
+                "ScalableBioTrainer",
+                "MockNdarray",
+                "MockNumpy"
+              ],
+              "functions": [
+                "train",
+                "get_training_history",
+                "save_model",
+                "load_model",
+                "mean",
+                "sum",
+                "abs"
+              ]
+            },
+            {
+              "name": "ai_model_manager",
+              "path": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\cognitive_core\\neural\\ai_model_manager.py",
+              "purpose": "AI Model Manager - AI 模型管理器",
+              "classes": [
+                "AIModelManager",
+                "MockExperienceRepository",
+                "ExperienceManagerAdapter"
+              ],
+              "functions": [
+                "initialize_models",
+                "get_model_status",
+                "load_model",
+                "query_experiences",
+                "add_experience"
+              ]
+            }
+          ]
+        },
+        {
+          "pattern": "bio → trainer → rl → trainers → scenario → manager",
+          "length": 6,
+          "efficiency": 0.16666666666666666,
+          "use_cases": [
+            "複雜流程處理",
+            "完整功能鏈路",
+            "強化學習任務",
+            "模型訓練"
+          ],
+          "advantages": [
+            "功能完整",
+            "模塊化程度高",
+            "文檔完善"
+          ],
+          "disadvantages": [
+            "無明顯劣勢"
+          ],
+          "scripts": [
+            {
+              "name": "scalable_bio_trainer",
+              "path": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\external_learning\\learning\\scalable_bio_trainer.py",
+              "purpose": "ScalableBio Trainer - ScalableBioNet 專用訓練器",
+              "classes": [
+                "ScalableBioTrainingConfig",
+                "ScalableBioTrainer",
+                "MockNdarray",
+                "MockNumpy"
+              ],
+              "functions": [
+                "train",
+                "get_training_history",
+                "save_model",
+                "load_model",
+                "mean",
+                "sum",
+                "abs"
+              ]
+            },
+            {
+              "name": "rl_trainers",
+              "path": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\external_learning\\learning\\rl_trainers.py",
+              "purpose": "強化學習訓練器",
+              "classes": [
+                "DQNTrainer",
+                "PPOTrainer"
+              ],
+              "functions": [
+                "select_action",
+                "train_step",
+                "get_metrics",
+                "save",
+                "load",
+                "select_action",
+                "store_transition",
+                "update",
+                "get_metrics",
+                "save"
+              ]
+            },
+            {
+              "name": "scenario_manager",
+              "path": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\external_learning\\training\\scenario_manager.py",
+              "purpose": "Standard Scenario Manager - OWASP 靶場場景管理器",
+              "classes": [
+                "ScenarioManager"
+              ],
+              "functions": []
+            }
+          ]
+        },
+        {
+          "pattern": "bio → trainer → rl → trainers → weight → manager",
+          "length": 6,
+          "efficiency": 0.16666666666666666,
+          "use_cases": [
+            "複雜流程處理",
+            "完整功能鏈路",
+            "強化學習任務",
+            "模型訓練"
+          ],
+          "advantages": [
+            "功能完整",
+            "模塊化程度高",
+            "文檔完善"
+          ],
+          "disadvantages": [
+            "無明顯劣勢"
+          ],
+          "scripts": [
+            {
+              "name": "scalable_bio_trainer",
+              "path": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\external_learning\\learning\\scalable_bio_trainer.py",
+              "purpose": "ScalableBio Trainer - ScalableBioNet 專用訓練器",
+              "classes": [
+                "ScalableBioTrainingConfig",
+                "ScalableBioTrainer",
+                "MockNdarray",
+                "MockNumpy"
+              ],
+              "functions": [
+                "train",
+                "get_training_history",
+                "save_model",
+                "load_model",
+                "mean",
+                "sum",
+                "abs"
+              ]
+            },
+            {
+              "name": "rl_trainers",
+              "path": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\external_learning\\learning\\rl_trainers.py",
+              "purpose": "強化學習訓練器",
+              "classes": [
+                "DQNTrainer",
+                "PPOTrainer"
+              ],
+              "functions": [
+                "select_action",
+                "train_step",
+                "get_metrics",
+                "save",
+                "load",
+                "select_action",
+                "store_transition",
+                "update",
+                "get_metrics",
+                "save"
+              ]
+            },
+            {
+              "name": "weight_manager",
+              "path": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\cognitive_core\\neural\\weight_manager.py",
+              "purpose": "真實AI權重管理系統",
+              "classes": [
+                "WeightMetadata",
+                "AIWeightManager"
+              ],
+              "functions": [
+                "get_weight_manager",
+                "initialize_weight_manager",
+                "save_model_weights",
+                "load_model_weights",
+                "list_available_weights",
+                "delete_weights"
+              ]
+            }
+          ]
+        },
+        {
+          "pattern": "bio → trainer → model → trainer → ai → model → manager",
+          "length": 7,
+          "efficiency": 0.14285714285714285,
+          "use_cases": [
+            "複雜流程處理",
+            "完整功能鏈路",
+            "模型訓練"
+          ],
+          "advantages": [
+            "功能完整",
+            "模塊化程度高",
+            "文檔完善"
+          ],
+          "disadvantages": [
+            "執行鏈路長",
+            "潛在故障點多"
+          ],
+          "scripts": [
+            {
+              "name": "scalable_bio_trainer",
+              "path": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\external_learning\\learning\\scalable_bio_trainer.py",
+              "purpose": "ScalableBio Trainer - ScalableBioNet 專用訓練器",
+              "classes": [
+                "ScalableBioTrainingConfig",
+                "ScalableBioTrainer",
+                "MockNdarray",
+                "MockNumpy"
+              ],
+              "functions": [
+                "train",
+                "get_training_history",
+                "save_model",
+                "load_model",
+                "mean",
+                "sum",
+                "abs"
+              ]
+            },
+            {
+              "name": "model_trainer",
+              "path": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\external_learning\\learning\\model_trainer.py",
+              "purpose": "Model Trainer - 強化學習模型訓練器",
+              "classes": [
+                "ModelTrainer"
+              ],
+              "functions": []
+            },
+            {
+              "name": "ai_model_manager",
+              "path": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\cognitive_core\\neural\\ai_model_manager.py",
+              "purpose": "AI Model Manager - AI 模型管理器",
+              "classes": [
+                "AIModelManager",
+                "MockExperienceRepository",
+                "ExperienceManagerAdapter"
+              ],
+              "functions": [
+                "initialize_models",
+                "get_model_status",
+                "load_model",
+                "query_experiences",
+                "add_experience"
+              ]
+            }
+          ]
+        },
+        {
+          "pattern": "bio → trainer → rl → trainers → ai → model → manager",
+          "length": 7,
+          "efficiency": 0.14285714285714285,
+          "use_cases": [
+            "複雜流程處理",
+            "完整功能鏈路",
+            "強化學習任務",
+            "模型訓練"
+          ],
+          "advantages": [
+            "功能完整",
+            "模塊化程度高",
+            "文檔完善"
+          ],
+          "disadvantages": [
+            "執行鏈路長",
+            "潛在故障點多"
+          ],
+          "scripts": [
+            {
+              "name": "scalable_bio_trainer",
+              "path": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\external_learning\\learning\\scalable_bio_trainer.py",
+              "purpose": "ScalableBio Trainer - ScalableBioNet 專用訓練器",
+              "classes": [
+                "ScalableBioTrainingConfig",
+                "ScalableBioTrainer",
+                "MockNdarray",
+                "MockNumpy"
+              ],
+              "functions": [
+                "train",
+                "get_training_history",
+                "save_model",
+                "load_model",
+                "mean",
+                "sum",
+                "abs"
+              ]
+            },
+            {
+              "name": "rl_trainers",
+              "path": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\external_learning\\learning\\rl_trainers.py",
+              "purpose": "強化學習訓練器",
+              "classes": [
+                "DQNTrainer",
+                "PPOTrainer"
+              ],
+              "functions": [
+                "select_action",
+                "train_step",
+                "get_metrics",
+                "save",
+                "load",
+                "select_action",
+                "store_transition",
+                "update",
+                "get_metrics",
+                "save"
+              ]
+            },
+            {
+              "name": "ai_model_manager",
+              "path": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\cognitive_core\\neural\\ai_model_manager.py",
+              "purpose": "AI Model Manager - AI 模型管理器",
+              "classes": [
+                "AIModelManager",
+                "MockExperienceRepository",
+                "ExperienceManagerAdapter"
+              ],
+              "functions": [
+                "initialize_models",
+                "get_model_status",
+                "load_model",
+                "query_experiences",
+                "add_experience"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "core": {
+      "total_paths": 6,
+      "unique_patterns": 4,
+      "recommendation": "推薦路徑: bio → trainer → real → neural → core\n  效率: 0.200\n  適用: 需要神經網絡處理, 模型訓練\n\n備選路徑: bio → trainer → neural → network → optimized → core\n  適用: 複雜流程處理, 完整功能鏈路",
+      "paths": [
+        {
+          "pattern": "bio → trainer → real → neural → core",
+          "length": 5,
+          "efficiency": 0.2,
+          "use_cases": [
+            "需要神經網絡處理",
+            "模型訓練"
+          ],
+          "advantages": [
+            "文檔完善"
+          ],
+          "disadvantages": [
+            "無明顯劣勢"
+          ],
+          "scripts": [
+            {
+              "name": "scalable_bio_trainer",
+              "path": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\external_learning\\learning\\scalable_bio_trainer.py",
+              "purpose": "ScalableBio Trainer - ScalableBioNet 專用訓練器",
+              "classes": [
+                "ScalableBioTrainingConfig",
+                "ScalableBioTrainer",
+                "MockNdarray",
+                "MockNumpy"
+              ],
+              "functions": [
+                "train",
+                "get_training_history",
+                "save_model",
+                "load_model",
+                "mean",
+                "sum",
+                "abs"
+              ]
+            },
+            {
+              "name": "real_neural_core",
+              "path": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\cognitive_core\\neural\\real_neural_core.py",
+              "purpose": "真實的神經網路核心 - 替換AIVA的假AI實現",
+              "classes": [
+                "RealAICore",
+                "RealDecisionEngine",
+                "_LocalSeverity",
+                "_LocalConfidence"
+              ],
+              "functions": [
+                "create_real_ai_replacement",
+                "forward",
+                "forward_with_aux",
+                "save_weights",
+                "load_weights",
+                "encode_input",
+                "generate_decision",
+                "decide",
+                "train_step",
+                "save_model"
+              ]
+            }
+          ]
+        },
+        {
+          "pattern": "bio → trainer → neural → network → optimized → core",
+          "length": 6,
+          "efficiency": 0.16666666666666666,
+          "use_cases": [
+            "複雜流程處理",
+            "完整功能鏈路",
+            "需要神經網絡處理",
+            "模型訓練"
+          ],
+          "advantages": [
+            "功能完整",
+            "模塊化程度高",
+            "文檔完善"
+          ],
+          "disadvantages": [
+            "無明顯劣勢"
+          ],
+          "scripts": [
+            {
+              "name": "scalable_bio_trainer",
+              "path": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\external_learning\\learning\\scalable_bio_trainer.py",
+              "purpose": "ScalableBio Trainer - ScalableBioNet 專用訓練器",
+              "classes": [
+                "ScalableBioTrainingConfig",
+                "ScalableBioTrainer",
+                "MockNdarray",
+                "MockNumpy"
+              ],
+              "functions": [
+                "train",
+                "get_training_history",
+                "save_model",
+                "load_model",
+                "mean",
+                "sum",
+                "abs"
+              ]
+            },
+            {
+              "name": "neural_network",
+              "path": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\cognitive_core\\neural\\neural_network.py",
+              "purpose": "Neural Network - 神經網路基礎架構 與 BioNeuron Core 配合的通用神經網路實現",
+              "classes": [
+                "ActivationFunctions",
+                "DenseLayer",
+                "FeedForwardNetwork",
+                "RecurrentLayer",
+                "LSTMLayer"
+              ],
+              "functions": [
+                "relu",
+                "relu_derivative",
+                "sigmoid",
+                "sigmoid_derivative",
+                "tanh",
+                "tanh_derivative",
+                "softmax",
+                "forward",
+                "backward",
+                "update_weights"
+              ]
+            },
+            {
+              "name": "optimized_core",
+              "path": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\service_backbone\\coordination\\optimized_core.py",
+              "purpose": "AIVA 自主 AI 核心 - 無需外部 LLM 依賴",
+              "classes": [
+                "OptimizedBioNet",
+                "AIVAAutonomyProof"
+              ],
+              "functions": [
+                "prove_aiva_independence",
+                "clear_cache",
+                "get_cache_stats",
+                "analyze_current_capabilities",
+                "compare_with_gpt4",
+                "demonstrate_self_sufficiency",
+                "final_verdict"
+              ]
+            }
+          ]
+        },
+        {
+          "pattern": "bio → trainer → neural → network → real → neural → core",
+          "length": 7,
+          "efficiency": 0.14285714285714285,
+          "use_cases": [
+            "複雜流程處理",
+            "完整功能鏈路",
+            "需要神經網絡處理",
+            "模型訓練"
+          ],
+          "advantages": [
+            "功能完整",
+            "模塊化程度高",
+            "文檔完善"
+          ],
+          "disadvantages": [
+            "執行鏈路長",
+            "潛在故障點多"
+          ],
+          "scripts": [
+            {
+              "name": "scalable_bio_trainer",
+              "path": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\external_learning\\learning\\scalable_bio_trainer.py",
+              "purpose": "ScalableBio Trainer - ScalableBioNet 專用訓練器",
+              "classes": [
+                "ScalableBioTrainingConfig",
+                "ScalableBioTrainer",
+                "MockNdarray",
+                "MockNumpy"
+              ],
+              "functions": [
+                "train",
+                "get_training_history",
+                "save_model",
+                "load_model",
+                "mean",
+                "sum",
+                "abs"
+              ]
+            },
+            {
+              "name": "neural_network",
+              "path": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\cognitive_core\\neural\\neural_network.py",
+              "purpose": "Neural Network - 神經網路基礎架構 與 BioNeuron Core 配合的通用神經網路實現",
+              "classes": [
+                "ActivationFunctions",
+                "DenseLayer",
+                "FeedForwardNetwork",
+                "RecurrentLayer",
+                "LSTMLayer"
+              ],
+              "functions": [
+                "relu",
+                "relu_derivative",
+                "sigmoid",
+                "sigmoid_derivative",
+                "tanh",
+                "tanh_derivative",
+                "softmax",
+                "forward",
+                "backward",
+                "update_weights"
+              ]
+            },
+            {
+              "name": "real_neural_core",
+              "path": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\cognitive_core\\neural\\real_neural_core.py",
+              "purpose": "真實的神經網路核心 - 替換AIVA的假AI實現",
+              "classes": [
+                "RealAICore",
+                "RealDecisionEngine",
+                "_LocalSeverity",
+                "_LocalConfidence"
+              ],
+              "functions": [
+                "create_real_ai_replacement",
+                "forward",
+                "forward_with_aux",
+                "save_weights",
+                "load_weights",
+                "encode_input",
+                "generate_decision",
+                "decide",
+                "train_step",
+                "save_model"
+              ]
+            }
+          ]
+        },
+        {
+          "pattern": "bio → trainer → rl → trainers → real → neural → core",
+          "length": 7,
+          "efficiency": 0.14285714285714285,
+          "use_cases": [
+            "複雜流程處理",
+            "完整功能鏈路",
+            "需要神經網絡處理",
+            "強化學習任務",
+            "模型訓練"
+          ],
+          "advantages": [
+            "功能完整",
+            "模塊化程度高",
+            "文檔完善"
+          ],
+          "disadvantages": [
+            "執行鏈路長",
+            "潛在故障點多"
+          ],
+          "scripts": [
+            {
+              "name": "scalable_bio_trainer",
+              "path": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\external_learning\\learning\\scalable_bio_trainer.py",
+              "purpose": "ScalableBio Trainer - ScalableBioNet 專用訓練器",
+              "classes": [
+                "ScalableBioTrainingConfig",
+                "ScalableBioTrainer",
+                "MockNdarray",
+                "MockNumpy"
+              ],
+              "functions": [
+                "train",
+                "get_training_history",
+                "save_model",
+                "load_model",
+                "mean",
+                "sum",
+                "abs"
+              ]
+            },
+            {
+              "name": "rl_trainers",
+              "path": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\external_learning\\learning\\rl_trainers.py",
+              "purpose": "強化學習訓練器",
+              "classes": [
+                "DQNTrainer",
+                "PPOTrainer"
+              ],
+              "functions": [
+                "select_action",
+                "train_step",
+                "get_metrics",
+                "save",
+                "load",
+                "select_action",
+                "store_transition",
+                "update",
+                "get_metrics",
+                "save"
+              ]
+            },
+            {
+              "name": "real_neural_core",
+              "path": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\cognitive_core\\neural\\real_neural_core.py",
+              "purpose": "真實的神經網路核心 - 替換AIVA的假AI實現",
+              "classes": [
+                "RealAICore",
+                "RealDecisionEngine",
+                "_LocalSeverity",
+                "_LocalConfidence"
+              ],
+              "functions": [
+                "create_real_ai_replacement",
+                "forward",
+                "forward_with_aux",
+                "save_weights",
+                "load_weights",
+                "encode_input",
+                "generate_decision",
+                "decide",
+                "train_step",
+                "save_model"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "mapper": {
+      "total_paths": 4,
+      "unique_patterns": 4,
+      "recommendation": "推薦路徑: logging → formatter → authz → mapper\n  效率: 0.250\n  適用: 快速原型開發, 簡單任務執行\n\n備選路徑: bio → trainer → permission → matrix → authz → mapper\n  適用: 複雜流程處理, 完整功能鏈路",
+      "paths": [
+        {
+          "pattern": "logging → formatter → authz → mapper",
+          "length": 4,
+          "efficiency": 0.25,
+          "use_cases": [
+            "快速原型開發",
+            "簡單任務執行"
+          ],
+          "advantages": [
+            "執行效率高（0.250）",
+            "依賴少，易維護",
+            "文檔完善"
+          ],
+          "disadvantages": [
+            "可能功能受限",
+            "缺少中間處理環節"
+          ],
+          "scripts": [
+            {
+              "name": "logging_formatter",
+              "path": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\service_backbone\\utils\\logging_formatter.py",
+              "purpose": "統一日誌格式器 按照 AIVA 日誌記錄標準實現跨模組統一的日誌格式",
+              "classes": [
+                "AIVALogFormatter",
+                "CrossLanguageLogManager"
+              ],
+              "functions": [
+                "create_unified_logger",
+                "log_ai_decision",
+                "log_cross_language_call",
+                "get_aiva_logger",
+                "format",
+                "get_logger",
+                "log_with_context"
+              ]
+            },
+            {
+              "name": "authz_mapper",
+              "path": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\service_backbone\\authz\\authz_mapper.py",
+              "purpose": "AuthZ Mapper - 權限映射器",
+              "classes": [
+                "AuthZMapper"
+              ],
+              "functions": [
+                "main",
+                "assign_role_to_user",
+                "revoke_role_from_user",
+                "set_user_attribute",
+                "get_user_roles",
+                "check_user_permission",
+                "get_user_all_permissions",
+                "detect_permission_conflicts",
+                "analyze_role_overlap",
+                "simulate_role_removal"
+              ]
+            }
+          ]
+        },
+        {
+          "pattern": "bio → trainer → permission → matrix → authz → mapper",
+          "length": 6,
+          "efficiency": 0.16666666666666666,
+          "use_cases": [
+            "複雜流程處理",
+            "完整功能鏈路",
+            "模型訓練"
+          ],
+          "advantages": [
+            "功能完整",
+            "模塊化程度高",
+            "文檔完善"
+          ],
+          "disadvantages": [
+            "無明顯劣勢"
+          ],
+          "scripts": [
+            {
+              "name": "scalable_bio_trainer",
+              "path": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\external_learning\\learning\\scalable_bio_trainer.py",
+              "purpose": "ScalableBio Trainer - ScalableBioNet 專用訓練器",
+              "classes": [
+                "ScalableBioTrainingConfig",
+                "ScalableBioTrainer",
+                "MockNdarray",
+                "MockNumpy"
+              ],
+              "functions": [
+                "train",
+                "get_training_history",
+                "save_model",
+                "load_model",
+                "mean",
+                "sum",
+                "abs"
+              ]
+            },
+            {
+              "name": "permission_matrix",
+              "path": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\service_backbone\\authz\\permission_matrix.py",
+              "purpose": "Permission Matrix - 權限矩陣數據結構與分析",
+              "classes": [
+                "PermissionMatrix",
+                "RiskLevel",
+                "OperationContext",
+                "RiskGuard",
+                "MockDataFrame"
+              ],
+              "functions": [
+                "main",
+                "get_risk_guard",
+                "authorize_operation",
+                "add_role",
+                "add_resource",
+                "add_permission",
+                "grant_permission",
+                "revoke_permission",
+                "check_permission",
+                "get_role_permissions"
+              ]
+            },
+            {
+              "name": "authz_mapper",
+              "path": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\service_backbone\\authz\\authz_mapper.py",
+              "purpose": "AuthZ Mapper - 權限映射器",
+              "classes": [
+                "AuthZMapper"
+              ],
+              "functions": [
+                "main",
+                "assign_role_to_user",
+                "revoke_role_from_user",
+                "set_user_attribute",
+                "get_user_roles",
+                "check_user_permission",
+                "get_user_all_permissions",
+                "detect_permission_conflicts",
+                "analyze_role_overlap",
+                "simulate_role_removal"
+              ]
+            }
+          ]
+        },
+        {
+          "pattern": "bio → trainer → rl → trainers → authz → mapper",
+          "length": 6,
+          "efficiency": 0.16666666666666666,
+          "use_cases": [
+            "複雜流程處理",
+            "完整功能鏈路",
+            "強化學習任務",
+            "模型訓練"
+          ],
+          "advantages": [
+            "功能完整",
+            "模塊化程度高",
+            "文檔完善"
+          ],
+          "disadvantages": [
+            "無明顯劣勢"
+          ],
+          "scripts": [
+            {
+              "name": "scalable_bio_trainer",
+              "path": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\external_learning\\learning\\scalable_bio_trainer.py",
+              "purpose": "ScalableBio Trainer - ScalableBioNet 專用訓練器",
+              "classes": [
+                "ScalableBioTrainingConfig",
+                "ScalableBioTrainer",
+                "MockNdarray",
+                "MockNumpy"
+              ],
+              "functions": [
+                "train",
+                "get_training_history",
+                "save_model",
+                "load_model",
+                "mean",
+                "sum",
+                "abs"
+              ]
+            },
+            {
+              "name": "rl_trainers",
+              "path": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\external_learning\\learning\\rl_trainers.py",
+              "purpose": "強化學習訓練器",
+              "classes": [
+                "DQNTrainer",
+                "PPOTrainer"
+              ],
+              "functions": [
+                "select_action",
+                "train_step",
+                "get_metrics",
+                "save",
+                "load",
+                "select_action",
+                "store_transition",
+                "update",
+                "get_metrics",
+                "save"
+              ]
+            },
+            {
+              "name": "authz_mapper",
+              "path": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\service_backbone\\authz\\authz_mapper.py",
+              "purpose": "AuthZ Mapper - 權限映射器",
+              "classes": [
+                "AuthZMapper"
+              ],
+              "functions": [
+                "main",
+                "assign_role_to_user",
+                "revoke_role_from_user",
+                "set_user_attribute",
+                "get_user_roles",
+                "check_user_permission",
+                "get_user_all_permissions",
+                "detect_permission_conflicts",
+                "analyze_role_overlap",
+                "simulate_role_removal"
+              ]
+            }
+          ]
+        },
+        {
+          "pattern": "logging → formatter → permission → matrix → authz → mapper",
+          "length": 6,
+          "efficiency": 0.16666666666666666,
+          "use_cases": [
+            "複雜流程處理",
+            "完整功能鏈路"
+          ],
+          "advantages": [
+            "功能完整",
+            "模塊化程度高",
+            "文檔完善"
+          ],
+          "disadvantages": [
+            "無明顯劣勢"
+          ],
+          "scripts": [
+            {
+              "name": "logging_formatter",
+              "path": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\service_backbone\\utils\\logging_formatter.py",
+              "purpose": "統一日誌格式器 按照 AIVA 日誌記錄標準實現跨模組統一的日誌格式",
+              "classes": [
+                "AIVALogFormatter",
+                "CrossLanguageLogManager"
+              ],
+              "functions": [
+                "create_unified_logger",
+                "log_ai_decision",
+                "log_cross_language_call",
+                "get_aiva_logger",
+                "format",
+                "get_logger",
+                "log_with_context"
+              ]
+            },
+            {
+              "name": "permission_matrix",
+              "path": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\service_backbone\\authz\\permission_matrix.py",
+              "purpose": "Permission Matrix - 權限矩陣數據結構與分析",
+              "classes": [
+                "PermissionMatrix",
+                "RiskLevel",
+                "OperationContext",
+                "RiskGuard",
+                "MockDataFrame"
+              ],
+              "functions": [
+                "main",
+                "get_risk_guard",
+                "authorize_operation",
+                "add_role",
+                "add_resource",
+                "add_permission",
+                "grant_permission",
+                "revoke_permission",
+                "check_permission",
+                "get_role_permissions"
+              ]
+            },
+            {
+              "name": "authz_mapper",
+              "path": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\service_backbone\\authz\\authz_mapper.py",
+              "purpose": "AuthZ Mapper - 權限映射器",
+              "classes": [
+                "AuthZMapper"
+              ],
+              "functions": [
+                "main",
+                "assign_role_to_user",
+                "revoke_role_from_user",
+                "set_user_attribute",
+                "get_user_roles",
+                "check_user_permission",
+                "get_user_all_permissions",
+                "detect_permission_conflicts",
+                "analyze_role_overlap",
+                "simulate_role_removal"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "trainer": {
+      "total_paths": 4,
+      "unique_patterns": 2,
+      "recommendation": "推薦路徑: bio → trainer → model → trainer\n  效率: 0.250\n  適用: 快速原型開發, 簡單任務執行\n\n備選路徑: bio → trainer → rl → trainers → model → trainer\n  適用: 複雜流程處理, 完整功能鏈路",
+      "paths": [
+        {
+          "pattern": "bio → trainer → model → trainer",
+          "length": 4,
+          "efficiency": 0.25,
+          "use_cases": [
+            "快速原型開發",
+            "簡單任務執行",
+            "模型訓練"
+          ],
+          "advantages": [
+            "執行效率高（0.250）",
+            "依賴少，易維護",
+            "文檔完善"
+          ],
+          "disadvantages": [
+            "可能功能受限",
+            "缺少中間處理環節"
+          ],
+          "scripts": [
+            {
+              "name": "scalable_bio_trainer",
+              "path": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\external_learning\\learning\\scalable_bio_trainer.py",
+              "purpose": "ScalableBio Trainer - ScalableBioNet 專用訓練器",
+              "classes": [
+                "ScalableBioTrainingConfig",
+                "ScalableBioTrainer",
+                "MockNdarray",
+                "MockNumpy"
+              ],
+              "functions": [
+                "train",
+                "get_training_history",
+                "save_model",
+                "load_model",
+                "mean",
+                "sum",
+                "abs"
+              ]
+            },
+            {
+              "name": "model_trainer",
+              "path": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\external_learning\\learning\\model_trainer.py",
+              "purpose": "Model Trainer - 強化學習模型訓練器",
+              "classes": [
+                "ModelTrainer"
+              ],
+              "functions": []
+            }
+          ]
+        },
+        {
+          "pattern": "bio → trainer → rl → trainers → model → trainer",
+          "length": 6,
+          "efficiency": 0.16666666666666666,
+          "use_cases": [
+            "複雜流程處理",
+            "完整功能鏈路",
+            "強化學習任務",
+            "模型訓練"
+          ],
+          "advantages": [
+            "功能完整",
+            "模塊化程度高",
+            "文檔完善"
+          ],
+          "disadvantages": [
+            "無明顯劣勢"
+          ],
+          "scripts": [
+            {
+              "name": "scalable_bio_trainer",
+              "path": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\external_learning\\learning\\scalable_bio_trainer.py",
+              "purpose": "ScalableBio Trainer - ScalableBioNet 專用訓練器",
+              "classes": [
+                "ScalableBioTrainingConfig",
+                "ScalableBioTrainer",
+                "MockNdarray",
+                "MockNumpy"
+              ],
+              "functions": [
+                "train",
+                "get_training_history",
+                "save_model",
+                "load_model",
+                "mean",
+                "sum",
+                "abs"
+              ]
+            },
+            {
+              "name": "rl_trainers",
+              "path": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\external_learning\\learning\\rl_trainers.py",
+              "purpose": "強化學習訓練器",
+              "classes": [
+                "DQNTrainer",
+                "PPOTrainer"
+              ],
+              "functions": [
+                "select_action",
+                "train_step",
+                "get_metrics",
+                "save",
+                "load",
+                "select_action",
+                "store_transition",
+                "update",
+                "get_metrics",
+                "save"
+              ]
+            },
+            {
+              "name": "model_trainer",
+              "path": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\external_learning\\learning\\model_trainer.py",
+              "purpose": "Model Trainer - 強化學習模型訓練器",
+              "classes": [
+                "ModelTrainer"
+              ],
+              "functions": []
+            }
+          ]
+        }
+      ]
+    },
+    "monitor": {
+      "total_paths": 4,
+      "unique_patterns": 1,
+      "recommendation": "唯一路徑: bio → trainer → rl → trainers → execution → status → monitor",
+      "paths": [
+        {
+          "pattern": "bio → trainer → rl → trainers → execution → status → monitor",
+          "length": 7,
+          "efficiency": 0.14285714285714285,
+          "use_cases": [
+            "複雜流程處理",
+            "完整功能鏈路",
+            "強化學習任務",
+            "模型訓練"
+          ],
+          "advantages": [
+            "功能完整",
+            "模塊化程度高"
+          ],
+          "disadvantages": [
+            "執行鏈路長",
+            "潛在故障點多"
+          ],
+          "scripts": [
+            {
+              "name": "scalable_bio_trainer",
+              "path": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\external_learning\\learning\\scalable_bio_trainer.py",
+              "purpose": "ScalableBio Trainer - ScalableBioNet 專用訓練器",
+              "classes": [
+                "ScalableBioTrainingConfig",
+                "ScalableBioTrainer",
+                "MockNdarray",
+                "MockNumpy"
+              ],
+              "functions": [
+                "train",
+                "get_training_history",
+                "save_model",
+                "load_model",
+                "mean",
+                "sum",
+                "abs"
+              ]
+            },
+            {
+              "name": "rl_trainers",
+              "path": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\external_learning\\learning\\rl_trainers.py",
+              "purpose": "強化學習訓練器",
+              "classes": [
+                "DQNTrainer",
+                "PPOTrainer"
+              ],
+              "functions": [
+                "select_action",
+                "train_step",
+                "get_metrics",
+                "save",
+                "load",
+                "select_action",
+                "store_transition",
+                "update",
+                "get_metrics",
+                "save"
+              ]
+            },
+            {
+              "name": "execution_status_monitor",
+              "path": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\task_planning\\executor\\execution_status_monitor.py",
+              "purpose": "監控器 - 狀態監控",
+              "classes": [
+                "ExecutionContext",
+                "ExecutionMonitor",
+                "ExecutionStatusMonitor"
+              ],
+              "functions": [
+                "to_dict",
+                "from_dict",
+                "record_worker_heartbeat",
+                "record_task_start",
+                "record_task_completion",
+                "get_system_health",
+                "check_sla_violations",
+                "add_alert"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "classifier": {
+      "total_paths": 4,
+      "unique_patterns": 1,
+      "recommendation": "唯一路徑: bio → trainer → rl → trainers → train → classifier",
+      "paths": [
+        {
+          "pattern": "bio → trainer → rl → trainers → train → classifier",
+          "length": 6,
+          "efficiency": 0.16666666666666666,
+          "use_cases": [
+            "複雜流程處理",
+            "完整功能鏈路",
+            "強化學習任務",
+            "模型訓練"
+          ],
+          "advantages": [
+            "功能完整",
+            "模塊化程度高"
+          ],
+          "disadvantages": [
+            "無明顯劣勢"
+          ],
+          "scripts": [
+            {
+              "name": "scalable_bio_trainer",
+              "path": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\external_learning\\learning\\scalable_bio_trainer.py",
+              "purpose": "ScalableBio Trainer - ScalableBioNet 專用訓練器",
+              "classes": [
+                "ScalableBioTrainingConfig",
+                "ScalableBioTrainer",
+                "MockNdarray",
+                "MockNumpy"
+              ],
+              "functions": [
+                "train",
+                "get_training_history",
+                "save_model",
+                "load_model",
+                "mean",
+                "sum",
+                "abs"
+              ]
+            },
+            {
+              "name": "rl_trainers",
+              "path": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\external_learning\\learning\\rl_trainers.py",
+              "purpose": "強化學習訓練器",
+              "classes": [
+                "DQNTrainer",
+                "PPOTrainer"
+              ],
+              "functions": [
+                "select_action",
+                "train_step",
+                "get_metrics",
+                "save",
+                "load",
+                "select_action",
+                "store_transition",
+                "update",
+                "get_metrics",
+                "save"
+              ]
+            },
+            {
+              "name": "train_classifier",
+              "path": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\external_learning\\ai_model\\train_classifier.py",
+              "purpose": "分類器 - 數據分類",
+              "classes": [],
+              "functions": [
+                "create_database",
+                "load_data",
+                "train_and_save_model",
+                "load_model",
+                "has_sklearn",
+                "require_sklearn"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "visualizer": {
+      "total_paths": 3,
+      "unique_patterns": 3,
+      "recommendation": "推薦路徑: logging → formatter → matrix → visualizer\n  效率: 0.250\n  適用: 快速原型開發, 簡單任務執行\n\n備選路徑: bio → trainer → permission → matrix → matrix → visualizer\n  適用: 複雜流程處理, 完整功能鏈路",
+      "paths": [
+        {
+          "pattern": "logging → formatter → matrix → visualizer",
+          "length": 4,
+          "efficiency": 0.25,
+          "use_cases": [
+            "快速原型開發",
+            "簡單任務執行"
+          ],
+          "advantages": [
+            "執行效率高（0.250）",
+            "依賴少，易維護",
+            "文檔完善"
+          ],
+          "disadvantages": [
+            "可能功能受限",
+            "缺少中間處理環節"
+          ],
+          "scripts": [
+            {
+              "name": "logging_formatter",
+              "path": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\service_backbone\\utils\\logging_formatter.py",
+              "purpose": "統一日誌格式器 按照 AIVA 日誌記錄標準實現跨模組統一的日誌格式",
+              "classes": [
+                "AIVALogFormatter",
+                "CrossLanguageLogManager"
+              ],
+              "functions": [
+                "create_unified_logger",
+                "log_ai_decision",
+                "log_cross_language_call",
+                "get_aiva_logger",
+                "format",
+                "get_logger",
+                "log_with_context"
+              ]
+            },
+            {
+              "name": "matrix_visualizer",
+              "path": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\service_backbone\\authz\\matrix_visualizer.py",
+              "purpose": "Matrix Visualizer - 權限矩陣視覺化",
+              "classes": [
+                "MatrixVisualizer",
+                "MockFigure",
+                "MockTrace",
+                "MockHeatmap",
+                "MockBar"
+              ],
+              "functions": [
+                "main",
+                "make_subplots",
+                "generate_heatmap",
+                "generate_coverage_chart",
+                "generate_role_comparison_chart",
+                "generate_html_report",
+                "export_to_csv",
+                "add_trace",
+                "update_layout",
+                "to_html"
+              ]
+            }
+          ]
+        },
+        {
+          "pattern": "bio → trainer → permission → matrix → matrix → visualizer",
+          "length": 6,
+          "efficiency": 0.16666666666666666,
+          "use_cases": [
+            "複雜流程處理",
+            "完整功能鏈路",
+            "模型訓練"
+          ],
+          "advantages": [
+            "功能完整",
+            "模塊化程度高",
+            "文檔完善"
+          ],
+          "disadvantages": [
+            "無明顯劣勢"
+          ],
+          "scripts": [
+            {
+              "name": "scalable_bio_trainer",
+              "path": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\external_learning\\learning\\scalable_bio_trainer.py",
+              "purpose": "ScalableBio Trainer - ScalableBioNet 專用訓練器",
+              "classes": [
+                "ScalableBioTrainingConfig",
+                "ScalableBioTrainer",
+                "MockNdarray",
+                "MockNumpy"
+              ],
+              "functions": [
+                "train",
+                "get_training_history",
+                "save_model",
+                "load_model",
+                "mean",
+                "sum",
+                "abs"
+              ]
+            },
+            {
+              "name": "permission_matrix",
+              "path": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\service_backbone\\authz\\permission_matrix.py",
+              "purpose": "Permission Matrix - 權限矩陣數據結構與分析",
+              "classes": [
+                "PermissionMatrix",
+                "RiskLevel",
+                "OperationContext",
+                "RiskGuard",
+                "MockDataFrame"
+              ],
+              "functions": [
+                "main",
+                "get_risk_guard",
+                "authorize_operation",
+                "add_role",
+                "add_resource",
+                "add_permission",
+                "grant_permission",
+                "revoke_permission",
+                "check_permission",
+                "get_role_permissions"
+              ]
+            },
+            {
+              "name": "matrix_visualizer",
+              "path": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\service_backbone\\authz\\matrix_visualizer.py",
+              "purpose": "Matrix Visualizer - 權限矩陣視覺化",
+              "classes": [
+                "MatrixVisualizer",
+                "MockFigure",
+                "MockTrace",
+                "MockHeatmap",
+                "MockBar"
+              ],
+              "functions": [
+                "main",
+                "make_subplots",
+                "generate_heatmap",
+                "generate_coverage_chart",
+                "generate_role_comparison_chart",
+                "generate_html_report",
+                "export_to_csv",
+                "add_trace",
+                "update_layout",
+                "to_html"
+              ]
+            }
+          ]
+        },
+        {
+          "pattern": "logging → formatter → permission → matrix → matrix → visualizer",
+          "length": 6,
+          "efficiency": 0.16666666666666666,
+          "use_cases": [
+            "複雜流程處理",
+            "完整功能鏈路"
+          ],
+          "advantages": [
+            "功能完整",
+            "模塊化程度高",
+            "文檔完善"
+          ],
+          "disadvantages": [
+            "無明顯劣勢"
+          ],
+          "scripts": [
+            {
+              "name": "logging_formatter",
+              "path": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\service_backbone\\utils\\logging_formatter.py",
+              "purpose": "統一日誌格式器 按照 AIVA 日誌記錄標準實現跨模組統一的日誌格式",
+              "classes": [
+                "AIVALogFormatter",
+                "CrossLanguageLogManager"
+              ],
+              "functions": [
+                "create_unified_logger",
+                "log_ai_decision",
+                "log_cross_language_call",
+                "get_aiva_logger",
+                "format",
+                "get_logger",
+                "log_with_context"
+              ]
+            },
+            {
+              "name": "permission_matrix",
+              "path": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\service_backbone\\authz\\permission_matrix.py",
+              "purpose": "Permission Matrix - 權限矩陣數據結構與分析",
+              "classes": [
+                "PermissionMatrix",
+                "RiskLevel",
+                "OperationContext",
+                "RiskGuard",
+                "MockDataFrame"
+              ],
+              "functions": [
+                "main",
+                "get_risk_guard",
+                "authorize_operation",
+                "add_role",
+                "add_resource",
+                "add_permission",
+                "grant_permission",
+                "revoke_permission",
+                "check_permission",
+                "get_role_permissions"
+              ]
+            },
+            {
+              "name": "matrix_visualizer",
+              "path": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\service_backbone\\authz\\matrix_visualizer.py",
+              "purpose": "Matrix Visualizer - 權限矩陣視覺化",
+              "classes": [
+                "MatrixVisualizer",
+                "MockFigure",
+                "MockTrace",
+                "MockHeatmap",
+                "MockBar"
+              ],
+              "functions": [
+                "main",
+                "make_subplots",
+                "generate_heatmap",
+                "generate_coverage_chart",
+                "generate_role_comparison_chart",
+                "generate_html_report",
+                "export_to_csv",
+                "add_trace",
+                "update_layout",
+                "to_html"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "matrix": {
+      "total_paths": 2,
+      "unique_patterns": 2,
+      "recommendation": "推薦路徑: bio → trainer → permission → matrix\n  效率: 0.250\n  適用: 快速原型開發, 簡單任務執行\n\n備選路徑: logging → formatter → permission → matrix\n  適用: 快速原型開發, 簡單任務執行",
+      "paths": [
+        {
+          "pattern": "bio → trainer → permission → matrix",
+          "length": 4,
+          "efficiency": 0.25,
+          "use_cases": [
+            "快速原型開發",
+            "簡單任務執行",
+            "模型訓練"
+          ],
+          "advantages": [
+            "執行效率高（0.250）",
+            "依賴少，易維護",
+            "文檔完善"
+          ],
+          "disadvantages": [
+            "可能功能受限",
+            "缺少中間處理環節"
+          ],
+          "scripts": [
+            {
+              "name": "scalable_bio_trainer",
+              "path": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\external_learning\\learning\\scalable_bio_trainer.py",
+              "purpose": "ScalableBio Trainer - ScalableBioNet 專用訓練器",
+              "classes": [
+                "ScalableBioTrainingConfig",
+                "ScalableBioTrainer",
+                "MockNdarray",
+                "MockNumpy"
+              ],
+              "functions": [
+                "train",
+                "get_training_history",
+                "save_model",
+                "load_model",
+                "mean",
+                "sum",
+                "abs"
+              ]
+            },
+            {
+              "name": "permission_matrix",
+              "path": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\service_backbone\\authz\\permission_matrix.py",
+              "purpose": "Permission Matrix - 權限矩陣數據結構與分析",
+              "classes": [
+                "PermissionMatrix",
+                "RiskLevel",
+                "OperationContext",
+                "RiskGuard",
+                "MockDataFrame"
+              ],
+              "functions": [
+                "main",
+                "get_risk_guard",
+                "authorize_operation",
+                "add_role",
+                "add_resource",
+                "add_permission",
+                "grant_permission",
+                "revoke_permission",
+                "check_permission",
+                "get_role_permissions"
+              ]
+            }
+          ]
+        },
+        {
+          "pattern": "logging → formatter → permission → matrix",
+          "length": 4,
+          "efficiency": 0.25,
+          "use_cases": [
+            "快速原型開發",
+            "簡單任務執行"
+          ],
+          "advantages": [
+            "執行效率高（0.250）",
+            "依賴少，易維護",
+            "文檔完善"
+          ],
+          "disadvantages": [
+            "可能功能受限",
+            "缺少中間處理環節"
+          ],
+          "scripts": [
+            {
+              "name": "logging_formatter",
+              "path": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\service_backbone\\utils\\logging_formatter.py",
+              "purpose": "統一日誌格式器 按照 AIVA 日誌記錄標準實現跨模組統一的日誌格式",
+              "classes": [
+                "AIVALogFormatter",
+                "CrossLanguageLogManager"
+              ],
+              "functions": [
+                "create_unified_logger",
+                "log_ai_decision",
+                "log_cross_language_call",
+                "get_aiva_logger",
+                "format",
+                "get_logger",
+                "log_with_context"
+              ]
+            },
+            {
+              "name": "permission_matrix",
+              "path": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\service_backbone\\authz\\permission_matrix.py",
+              "purpose": "Permission Matrix - 權限矩陣數據結構與分析",
+              "classes": [
+                "PermissionMatrix",
+                "RiskLevel",
+                "OperationContext",
+                "RiskGuard",
+                "MockDataFrame"
+              ],
+              "functions": [
+                "main",
+                "get_risk_guard",
+                "authorize_operation",
+                "add_role",
+                "add_resource",
+                "add_permission",
+                "grant_permission",
+                "revoke_permission",
+                "check_permission",
+                "get_role_permissions"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "adapter": {
+      "total_paths": 2,
+      "unique_patterns": 2,
+      "recommendation": "推薦路徑: bio → trainer → real → bio → net → adapter\n  效率: 0.167\n  適用: 複雜流程處理, 完整功能鏈路\n\n備選路徑: bio → trainer → rl → trainers → real → bio → net → adapter\n  適用: 複雜流程處理, 完整功能鏈路",
+      "paths": [
+        {
+          "pattern": "bio → trainer → real → bio → net → adapter",
+          "length": 6,
+          "efficiency": 0.16666666666666666,
+          "use_cases": [
+            "複雜流程處理",
+            "完整功能鏈路",
+            "模型訓練"
+          ],
+          "advantages": [
+            "功能完整",
+            "模塊化程度高",
+            "文檔完善"
+          ],
+          "disadvantages": [
+            "無明顯劣勢"
+          ],
+          "scripts": [
+            {
+              "name": "scalable_bio_trainer",
+              "path": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\external_learning\\learning\\scalable_bio_trainer.py",
+              "purpose": "ScalableBio Trainer - ScalableBioNet 專用訓練器",
+              "classes": [
+                "ScalableBioTrainingConfig",
+                "ScalableBioTrainer",
+                "MockNdarray",
+                "MockNumpy"
+              ],
+              "functions": [
+                "train",
+                "get_training_history",
+                "save_model",
+                "load_model",
+                "mean",
+                "sum",
+                "abs"
+              ]
+            },
+            {
+              "name": "real_bio_net_adapter",
+              "path": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\cognitive_core\\neural\\real_bio_net_adapter.py",
+              "purpose": "真實AI核心的向後相容適配器",
+              "classes": [
+                "RealScalableBioNet",
+                "RealBioNeuronRAGAgent"
+              ],
+              "functions": [
+                "create_real_scalable_bionet",
+                "create_real_rag_agent",
+                "forward",
+                "save_weights",
+                "generate"
+              ]
+            }
+          ]
+        },
+        {
+          "pattern": "bio → trainer → rl → trainers → real → bio → net → adapter",
+          "length": 8,
+          "efficiency": 0.125,
+          "use_cases": [
+            "複雜流程處理",
+            "完整功能鏈路",
+            "強化學習任務",
+            "模型訓練"
+          ],
+          "advantages": [
+            "功能完整",
+            "模塊化程度高",
+            "文檔完善"
+          ],
+          "disadvantages": [
+            "執行鏈路長",
+            "潛在故障點多"
+          ],
+          "scripts": [
+            {
+              "name": "scalable_bio_trainer",
+              "path": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\external_learning\\learning\\scalable_bio_trainer.py",
+              "purpose": "ScalableBio Trainer - ScalableBioNet 專用訓練器",
+              "classes": [
+                "ScalableBioTrainingConfig",
+                "ScalableBioTrainer",
+                "MockNdarray",
+                "MockNumpy"
+              ],
+              "functions": [
+                "train",
+                "get_training_history",
+                "save_model",
+                "load_model",
+                "mean",
+                "sum",
+                "abs"
+              ]
+            },
+            {
+              "name": "rl_trainers",
+              "path": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\external_learning\\learning\\rl_trainers.py",
+              "purpose": "強化學習訓練器",
+              "classes": [
+                "DQNTrainer",
+                "PPOTrainer"
+              ],
+              "functions": [
+                "select_action",
+                "train_step",
+                "get_metrics",
+                "save",
+                "load",
+                "select_action",
+                "store_transition",
+                "update",
+                "get_metrics",
+                "save"
+              ]
+            },
+            {
+              "name": "real_bio_net_adapter",
+              "path": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\cognitive_core\\neural\\real_bio_net_adapter.py",
+              "purpose": "真實AI核心的向後相容適配器",
+              "classes": [
+                "RealScalableBioNet",
+                "RealBioNeuronRAGAgent"
+              ],
+              "functions": [
+                "create_real_scalable_bionet",
+                "create_real_rag_agent",
+                "forward",
+                "save_weights",
+                "generate"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "planner": {
+      "total_paths": 2,
+      "unique_patterns": 1,
+      "recommendation": "唯一路徑: bio → trainer → rl → trainers → execution → planner",
+      "paths": [
+        {
+          "pattern": "bio → trainer → rl → trainers → execution → planner",
+          "length": 6,
+          "efficiency": 0.16666666666666666,
+          "use_cases": [
+            "複雜流程處理",
+            "完整功能鏈路",
+            "強化學習任務",
+            "模型訓練"
+          ],
+          "advantages": [
+            "功能完整",
+            "模塊化程度高",
+            "文檔完善"
+          ],
+          "disadvantages": [
+            "無明顯劣勢"
+          ],
+          "scripts": [
+            {
+              "name": "scalable_bio_trainer",
+              "path": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\external_learning\\learning\\scalable_bio_trainer.py",
+              "purpose": "ScalableBio Trainer - ScalableBioNet 專用訓練器",
+              "classes": [
+                "ScalableBioTrainingConfig",
+                "ScalableBioTrainer",
+                "MockNdarray",
+                "MockNumpy"
+              ],
+              "functions": [
+                "train",
+                "get_training_history",
+                "save_model",
+                "load_model",
+                "mean",
+                "sum",
+                "abs"
+              ]
+            },
+            {
+              "name": "rl_trainers",
+              "path": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\external_learning\\learning\\rl_trainers.py",
+              "purpose": "強化學習訓練器",
+              "classes": [
+                "DQNTrainer",
+                "PPOTrainer"
+              ],
+              "functions": [
+                "select_action",
+                "train_step",
+                "get_metrics",
+                "save",
+                "load",
+                "select_action",
+                "store_transition",
+                "update",
+                "get_metrics",
+                "save"
+              ]
+            },
+            {
+              "name": "execution_planner",
+              "path": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\task_planning\\planner\\execution_planner.py",
+              "purpose": "AIVA Execution Planner - 執行計劃器 從 aiva_core_v2 遷移到核心模組",
+              "classes": [
+                "ExecutionPlanner"
+              ],
+              "functions": [
+                "get_execution_planner",
+                "create_execution_plan",
+                "get_plan_status",
+                "cancel_plan",
+                "get_execution_stats"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "engine": {
+      "total_paths": 2,
+      "unique_patterns": 2,
+      "recommendation": "推薦路徑: bio → trainer → analysis → engine\n  效率: 0.250\n  適用: 快速原型開發, 簡單任務執行\n\n備選路徑: bio → trainer → rl → trainers → analysis → engine\n  適用: 複雜流程處理, 完整功能鏈路",
+      "paths": [
+        {
+          "pattern": "bio → trainer → analysis → engine",
+          "length": 4,
+          "efficiency": 0.25,
+          "use_cases": [
+            "快速原型開發",
+            "簡單任務執行",
+            "模型訓練"
+          ],
+          "advantages": [
+            "執行效率高（0.250）",
+            "依賴少，易維護",
+            "文檔完善"
+          ],
+          "disadvantages": [
+            "可能功能受限",
+            "缺少中間處理環節"
+          ],
+          "scripts": [
+            {
+              "name": "scalable_bio_trainer",
+              "path": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\external_learning\\learning\\scalable_bio_trainer.py",
+              "purpose": "ScalableBio Trainer - ScalableBioNet 專用訓練器",
+              "classes": [
+                "ScalableBioTrainingConfig",
+                "ScalableBioTrainer",
+                "MockNdarray",
+                "MockNumpy"
+              ],
+              "functions": [
+                "train",
+                "get_training_history",
+                "save_model",
+                "load_model",
+                "mean",
+                "sum",
+                "abs"
+              ]
+            },
+            {
+              "name": "analysis_engine",
+              "path": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\core_capabilities\\analysis\\analysis_engine.py",
+              "purpose": "AI增強代碼分析引擎 基於Tree-sitter AST和神經網路的智能代碼分析系統",
+              "classes": [
+                "AnalysisType",
+                "IndexingConfig",
+                "CacheManager",
+                "AIAnalysisResult",
+                "CodeChunk"
+              ],
+              "functions": [
+                "get_file_hash",
+                "is_cached",
+                "update_cache",
+                "save_cache_index",
+                "initialize",
+                "analyze_code",
+                "index_codebase",
+                "search_code_chunks",
+                "get_analysis_summary",
+                "visit_node"
+              ]
+            }
+          ]
+        },
+        {
+          "pattern": "bio → trainer → rl → trainers → analysis → engine",
+          "length": 6,
+          "efficiency": 0.16666666666666666,
+          "use_cases": [
+            "複雜流程處理",
+            "完整功能鏈路",
+            "強化學習任務",
+            "模型訓練"
+          ],
+          "advantages": [
+            "功能完整",
+            "模塊化程度高",
+            "文檔完善"
+          ],
+          "disadvantages": [
+            "無明顯劣勢"
+          ],
+          "scripts": [
+            {
+              "name": "scalable_bio_trainer",
+              "path": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\external_learning\\learning\\scalable_bio_trainer.py",
+              "purpose": "ScalableBio Trainer - ScalableBioNet 專用訓練器",
+              "classes": [
+                "ScalableBioTrainingConfig",
+                "ScalableBioTrainer",
+                "MockNdarray",
+                "MockNumpy"
+              ],
+              "functions": [
+                "train",
+                "get_training_history",
+                "save_model",
+                "load_model",
+                "mean",
+                "sum",
+                "abs"
+              ]
+            },
+            {
+              "name": "rl_trainers",
+              "path": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\external_learning\\learning\\rl_trainers.py",
+              "purpose": "強化學習訓練器",
+              "classes": [
+                "DQNTrainer",
+                "PPOTrainer"
+              ],
+              "functions": [
+                "select_action",
+                "train_step",
+                "get_metrics",
+                "save",
+                "load",
+                "select_action",
+                "store_transition",
+                "update",
+                "get_metrics",
+                "save"
+              ]
+            },
+            {
+              "name": "analysis_engine",
+              "path": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\core_capabilities\\analysis\\analysis_engine.py",
+              "purpose": "AI增強代碼分析引擎 基於Tree-sitter AST和神經網路的智能代碼分析系統",
+              "classes": [
+                "AnalysisType",
+                "IndexingConfig",
+                "CacheManager",
+                "AIAnalysisResult",
+                "CodeChunk"
+              ],
+              "functions": [
+                "get_file_hash",
+                "is_cached",
+                "update_cache",
+                "save_cache_index",
+                "initialize",
+                "analyze_code",
+                "index_codebase",
+                "search_code_chunks",
+                "get_analysis_summary",
+                "visit_node"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "generator": {
+      "total_paths": 1,
+      "unique_patterns": 1,
+      "recommendation": "唯一路徑: logging → formatter → payload → generator",
+      "paths": [
+        {
+          "pattern": "logging → formatter → payload → generator",
+          "length": 4,
+          "efficiency": 0.25,
+          "use_cases": [
+            "快速原型開發",
+            "簡單任務執行"
+          ],
+          "advantages": [
+            "執行效率高（0.250）",
+            "依賴少，易維護",
+            "文檔完善"
+          ],
+          "disadvantages": [
+            "可能功能受限",
+            "缺少中間處理環節"
+          ],
+          "scripts": [
+            {
+              "name": "logging_formatter",
+              "path": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\service_backbone\\utils\\logging_formatter.py",
+              "purpose": "統一日誌格式器 按照 AIVA 日誌記錄標準實現跨模組統一的日誌格式",
+              "classes": [
+                "AIVALogFormatter",
+                "CrossLanguageLogManager"
+              ],
+              "functions": [
+                "create_unified_logger",
+                "log_ai_decision",
+                "log_cross_language_call",
+                "get_aiva_logger",
+                "format",
+                "get_logger",
+                "log_with_context"
+              ]
+            },
+            {
+              "name": "payload_generator",
+              "path": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\core_capabilities\\attack\\payload_generator.py",
+              "purpose": "Payload Generator - Payload 生成器",
+              "classes": [
+                "PayloadEncodingType",
+                "PayloadGenerator"
+              ],
+              "functions": [
+                "generate_with_target_analysis",
+                "generate",
+                "generate_fuzzing_payloads",
+                "get_statistics"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "interface": {
+      "total_paths": 1,
+      "unique_patterns": 1,
+      "recommendation": "唯一路徑: initial → surface → scan → module → interface",
+      "paths": [
+        {
+          "pattern": "initial → surface → scan → module → interface",
+          "length": 5,
+          "efficiency": 0.2,
+          "use_cases": [
+            "通用場景"
+          ],
+          "advantages": [
+            "標準流程"
+          ],
+          "disadvantages": [
+            "無明顯劣勢"
+          ],
+          "scripts": [
+            {
+              "name": "initial_surface",
+              "path": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\core_capabilities\\analysis\\initial_surface.py",
+              "purpose": "定義1個類: InitialAttackSurface",
+              "classes": [
+                "InitialAttackSurface"
+              ],
+              "functions": [
+                "analyze"
+              ]
+            },
+            {
+              "name": "scan_module_interface",
+              "path": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\core_capabilities\\ingestion\\scan_module_interface.py",
+              "purpose": "定義1個類: ScanModuleInterface",
+              "classes": [
+                "ScanModuleInterface"
+              ],
+              "functions": [
+                "process_scan_data"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "commander": {
+      "total_paths": 1,
+      "unique_patterns": 1,
+      "recommendation": "唯一路徑: bio → trainer → rl → trainers → ai → commander",
+      "paths": [
+        {
+          "pattern": "bio → trainer → rl → trainers → ai → commander",
+          "length": 6,
+          "efficiency": 0.16666666666666666,
+          "use_cases": [
+            "複雜流程處理",
+            "完整功能鏈路",
+            "強化學習任務",
+            "模型訓練"
+          ],
+          "advantages": [
+            "功能完整",
+            "模塊化程度高",
+            "文檔完善"
+          ],
+          "disadvantages": [
+            "無明顯劣勢"
+          ],
+          "scripts": [
+            {
+              "name": "scalable_bio_trainer",
+              "path": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\external_learning\\learning\\scalable_bio_trainer.py",
+              "purpose": "ScalableBio Trainer - ScalableBioNet 專用訓練器",
+              "classes": [
+                "ScalableBioTrainingConfig",
+                "ScalableBioTrainer",
+                "MockNdarray",
+                "MockNumpy"
+              ],
+              "functions": [
+                "train",
+                "get_training_history",
+                "save_model",
+                "load_model",
+                "mean",
+                "sum",
+                "abs"
+              ]
+            },
+            {
+              "name": "rl_trainers",
+              "path": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\external_learning\\learning\\rl_trainers.py",
+              "purpose": "強化學習訓練器",
+              "classes": [
+                "DQNTrainer",
+                "PPOTrainer"
+              ],
+              "functions": [
+                "select_action",
+                "train_step",
+                "get_metrics",
+                "save",
+                "load",
+                "select_action",
+                "store_transition",
+                "update",
+                "get_metrics",
+                "save"
+              ]
+            },
+            {
+              "name": "ai_commander",
+              "path": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\task_planning\\ai_commander.py",
+              "purpose": "AI Commander - AIVA 中央 AI 指揮系統",
+              "classes": [
+                "AITaskType",
+                "AIComponent",
+                "AICommander",
+                "SimpleStorageBackend",
+                "SimpleExperienceManager"
+              ],
+              "functions": [
+                "get_status",
+                "save_state",
+                "add_sample",
+                "get_statistics",
+                "add_sample",
+                "get_statistics"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "app": {
+      "total_paths": 1,
+      "unique_patterns": 1,
+      "recommendation": "唯一路徑: initial → surface → scan → module → interface → app",
+      "paths": [
+        {
+          "pattern": "initial → surface → scan → module → interface → app",
+          "length": 6,
+          "efficiency": 0.16666666666666666,
+          "use_cases": [
+            "複雜流程處理",
+            "完整功能鏈路"
+          ],
+          "advantages": [
+            "功能完整",
+            "模塊化程度高"
+          ],
+          "disadvantages": [
+            "無明顯劣勢"
+          ],
+          "scripts": [
+            {
+              "name": "initial_surface",
+              "path": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\core_capabilities\\analysis\\initial_surface.py",
+              "purpose": "定義1個類: InitialAttackSurface",
+              "classes": [
+                "InitialAttackSurface"
+              ],
+              "functions": [
+                "analyze"
+              ]
+            },
+            {
+              "name": "scan_module_interface",
+              "path": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\core_capabilities\\ingestion\\scan_module_interface.py",
+              "purpose": "定義1個類: ScanModuleInterface",
+              "classes": [
+                "ScanModuleInterface"
+              ],
+              "functions": [
+                "process_scan_data"
+              ]
+            },
+            {
+              "name": "app",
+              "path": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\service_backbone\\api\\app.py",
+              "purpose": "AIVA Core API - 系統唯一入口點",
+              "classes": [],
+              "functions": []
+            }
+          ]
+        }
+      ]
+    },
+    "system": {
+      "total_paths": 1,
+      "unique_patterns": 1,
+      "recommendation": "唯一路徑: logging → formatter → nlg → system",
+      "paths": [
+        {
+          "pattern": "logging → formatter → nlg → system",
+          "length": 4,
+          "efficiency": 0.25,
+          "use_cases": [
+            "快速原型開發",
+            "簡單任務執行"
+          ],
+          "advantages": [
+            "執行效率高（0.250）",
+            "依賴少，易維護",
+            "文檔完善"
+          ],
+          "disadvantages": [
+            "可能功能受限",
+            "缺少中間處理環節"
+          ],
+          "scripts": [
+            {
+              "name": "logging_formatter",
+              "path": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\service_backbone\\utils\\logging_formatter.py",
+              "purpose": "統一日誌格式器 按照 AIVA 日誌記錄標準實現跨模組統一的日誌格式",
+              "classes": [
+                "AIVALogFormatter",
+                "CrossLanguageLogManager"
+              ],
+              "functions": [
+                "create_unified_logger",
+                "log_ai_decision",
+                "log_cross_language_call",
+                "get_aiva_logger",
+                "format",
+                "get_logger",
+                "log_with_context"
+              ]
+            },
+            {
+              "name": "nlg_system",
+              "path": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\cognitive_core\\nlg_system.py",
+              "purpose": "AIVA 自然語言生成增強系統 基於規則和模板的高品質中文回應生成，無需外部 LLM",
+              "classes": [
+                "AIVANaturalLanguageGenerator"
+              ],
+              "functions": [
+                "generate_response"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "network": {
+      "total_paths": 1,
+      "unique_patterns": 1,
+      "recommendation": "唯一路徑: bio → trainer → neural → network",
+      "paths": [
+        {
+          "pattern": "bio → trainer → neural → network",
+          "length": 4,
+          "efficiency": 0.25,
+          "use_cases": [
+            "快速原型開發",
+            "簡單任務執行",
+            "需要神經網絡處理",
+            "模型訓練"
+          ],
+          "advantages": [
+            "執行效率高（0.250）",
+            "依賴少，易維護",
+            "文檔完善"
+          ],
+          "disadvantages": [
+            "可能功能受限",
+            "缺少中間處理環節"
+          ],
+          "scripts": [
+            {
+              "name": "scalable_bio_trainer",
+              "path": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\external_learning\\learning\\scalable_bio_trainer.py",
+              "purpose": "ScalableBio Trainer - ScalableBioNet 專用訓練器",
+              "classes": [
+                "ScalableBioTrainingConfig",
+                "ScalableBioTrainer",
+                "MockNdarray",
+                "MockNumpy"
+              ],
+              "functions": [
+                "train",
+                "get_training_history",
+                "save_model",
+                "load_model",
+                "mean",
+                "sum",
+                "abs"
+              ]
+            },
+            {
+              "name": "neural_network",
+              "path": "c:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\cognitive_core\\neural\\neural_network.py",
+              "purpose": "Neural Network - 神經網路基礎架構 與 BioNeuron Core 配合的通用神經網路實現",
+              "classes": [
+                "ActivationFunctions",
+                "DenseLayer",
+                "FeedForwardNetwork",
+                "RecurrentLayer",
+                "LSTMLayer"
+              ],
+              "functions": [
+                "relu",
+                "relu_derivative",
+                "sigmoid",
+                "sigmoid_derivative",
+                "tanh",
+                "tanh_derivative",
+                "softmax",
+                "forward",
+                "backward",
+                "update_weights"
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

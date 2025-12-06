@@ -1,0 +1,36 @@
+{
+  "sequence_id": "core_2",
+  "capability_name": "core",
+  "validation_status": "warning",
+  "steps": [
+    {
+      "script_name": "network",
+      "command": "python \"c:\\D\\fold7\\AIVA-git\\services\\features\\function_forensic\\external_tools\\volatility3\\volatility3\\framework\\symbols\\linux\\extensions\\network.py\"",
+      "is_executable": true,
+      "parameters": {},
+      "execution_time": 10.0
+    },
+    {
+      "script_name": "core",
+      "command": "python \"c:\\D\\fold7\\AIVA-git\\services\\aiva_common\\cross_language\\core.py\"",
+      "is_executable": true,
+      "parameters": {},
+      "execution_time": 10.0
+    }
+  ],
+  "validation_messages": [
+    "❌ 未找到腳本: bio",
+    "❌ 未找到腳本: trainer",
+    "❌ 未找到腳本: neural",
+    "✅ network: 腳本驗證成功",
+    "❌ 未找到腳本: real",
+    "❌ 未找到腳本: neural",
+    "✅ core: 腳本驗證成功",
+    "❌ 構建步驟失敗 bio: 未找到腳本: bio",
+    "❌ 構建步驟失敗 trainer: 未找到腳本: trainer",
+    "❌ 構建步驟失敗 neural: 未找到腳本: neural",
+    "❌ 構建步驟失敗 real: 未找到腳本: real",
+    "❌ 構建步驟失敗 neural: 未找到腳本: neural"
+  ],
+  "execution_history": []
+}

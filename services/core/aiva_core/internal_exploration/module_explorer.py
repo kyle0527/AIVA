@@ -13,6 +13,9 @@ import logging
 from pathlib import Path
 from typing import Any
 
+# 常數定義
+INIT_FILE = "__init__.py"
+
 logger = logging.getLogger(__name__)
 
 
@@ -72,7 +75,7 @@ class ModuleExplorer:
         # 降級方案：使用當前文件的相對路徑
         return Path(__file__).parent.parent.parent.parent
     
-    async def explore_all_modules(self) -> dict[str, Any]:
+    def explore_all_modules(self) -> dict[str, Any]:
         """掃描所有目標模組
         
         Returns:
@@ -93,14 +96,14 @@ class ModuleExplorer:
             
             if module_path.exists():
                 logger.info(f"  Exploring: {module}")
-                results[module] = await self._explore_module(module_path)
+                results[module] = self._explore_module(module_path)
             else:
                 logger.warning(f"  Module not found: {module_path}")
         
         logger.info(f"✅ Module exploration completed: {len(results)} modules scanned")
         return results
     
-    async def _explore_module(self, path: Path) -> dict[str, Any]:
+    def _explore_module(self, path: Path) -> dict[str, Any]:
         """探索單一模組 (掃描多語言文件)
         
         Args:
@@ -111,7 +114,7 @@ class ModuleExplorer:
         """
         files = []
         total_size = 0
-        file_counts = {lang: 0 for lang in self.file_extensions.keys()}
+        file_counts = dict.fromkeys(self.file_extensions.keys(), 0)
         
         # 掃描所有支援的語言文件
         for lang, pattern in self.file_extensions.items():
@@ -163,13 +166,13 @@ class ModuleExplorer:
             if item.is_dir() and not item.name.startswith(("_", ".")):
                 subdirs.append({
                     "name": item.name,
-                    "has_init": (item / "__init__.py").exists(),
-                    "is_package": (item / "__init__.py").exists()
+                    "has_init": (item / INIT_FILE).exists(),
+                    "is_package": (item / INIT_FILE).exists()
                 })
         
         return {
             "subdirectories": subdirs,
-            "is_package": (path / "__init__.py").exists(),
+            "is_package": (path / INIT_FILE).exists(),
             "has_readme": (path / "README.md").exists()
         }
     
