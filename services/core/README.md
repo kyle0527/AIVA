@@ -1,4 +1,4 @@
-# AIVA Core 模組 - AI驅動核心引擎架構
+# AIVA Core 模組 - 程式化核心引擎架構
 
 **版本**: v2.1.2 (生產就緒)  
 **更新日期**: 2025-12-20  
@@ -56,12 +56,12 @@
    - AnalysisCoordinator
    - TrainingCoordinator
 
-✅ AI Commander & Integration
-   - AICommanderV2
-   - AICommanderV2Adapter
+✅ 核心指令器 & 整合
+   - CoreCommanderV2
+   - CoreCommanderV2Adapter
    - UnifiedDataManagerV2
    - TrainingDatasetManager
-   - AI Tasks Router
+   - System Tasks Router
 ```
 
 ### 生產就緒確認
@@ -79,7 +79,7 @@
 ---
 - [🚀 **2025年11月架構修復摘要**](#2025年11月架構修復摘要)
   - [**✅ P0-P2 架構修復完成 + 系統驗證** (2025-11-15)](#p0p2-架構修復完成-系統驗證-20251115)
-  - [**🧠 AI 語義編碼升級**](#ai-語義編碼升級)
+  - [**🧠 系統語義編碼升級**](#系統語義編碼升級)
   - [**📜 模組狀態確認**](#模組狀態確認)
 - [🏗️ **核心架構總覽**](#核心架構總覽)
 - [📁 **Core 子目錄結構**](#core-子目錄結構)
@@ -88,7 +88,7 @@
     - [**📊 規模指標**](#規模指標)
     - [**🎯 主要模組**](#主要模組)
     - [**🔗 詳細連結**](#詳細連結)
-  - [**🧠 AI Core - 智慧增強**](#ai-core-智慧增強)
+  - [**🧠 Core Engine - 系統增強**](#core-engine-系統增強)
     - [**🔥 核心特色**](#核心特色-1)
     - [**📊 規模指標**](#規模指標-1)
     - [**🎯 主要組件**](#主要組件)

@@ -27,10 +27,7 @@ __version__ = "3.0.0-alpha"
 __status__ = "部分實現 (核心組件已完成)"
 
 # ✅ 已實現的組件
-from .module_explorer import ModuleExplorer
-from .capability_analyzer import CapabilityAnalyzer
+# 注意: module_explorer 和 capability_analyzer 尚未實現
+# 相關功能已整合到 aiva_flow_analyzer 和其他工具中
 
-__all__ = [
-    "ModuleExplorer",
-    "CapabilityAnalyzer",
-]
+__all__ = []  # 暫無可導出組件

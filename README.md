@@ -1,6 +1,6 @@
 # 🚀 AIVA - Autonomous Intelligence Virtual Assistant
 
-**AIVA (自主智能虛擬助手)** 是一個企業級的AI驅動安全測試平台，具備真正的自主決策能力和5百萬參數的Bug Bounty特化神經網路。
+**AIVA (自主智能虛擬助手)** 是一個企業級的程式化安全測試平台，具備程式邏輯決策能力和5百萬參數的Bug Bounty特化神經網路。系統主要通過預設指令、UI選單和API接口進行操作。
 
 ![Version](https://img.shields.io/badge/version-v2.1.2-blue)
 ![Architecture](https://img.shields.io/badge/architecture-v2.0%20Contract--Driven-brightgreen)
@@ -33,20 +33,20 @@
 ### ✅ Phase 2 完成：AI 能力執行系統
 - **Invocation 元數據**: 782 條能力記錄 100% 完成 invocation_metadata
 - **API 端點**: `/api/v1/capabilities/query`, `/execute`, `/list`, `/stats`
-- **AI 對話助理**: 支援自然語言下令執行攻擊
+- **指令處理器**: 支援預設指令執行和UI操作
 - **統一配置**: 資料庫連接統一使用 `.env` 配置管理
 
 ### 🎯 核心能力
-**AI 現在可以**:
-1. 接收自然語言指令（如「幫我跑 http://localhost:8080 的掃描」）
+**系統核心功能**:
+1. 處理預設指令格式（如 "scan --target http://localhost:8080"）
 2. 自動查詢資料庫找到合適的攻擊能力
 3. 讀取 invocation 元數據並執行實際攻擊
-4. 返回執行結果並記錄學習經驗
+4. 返回執行結果並記錄系統狀態
 
 **技術架構**:
 - 782 個能力覆蓋 4 種語言（Python 495, Rust 123, TypeScript 84, Go 80）
 - 支援 3 種協議（unified_caller, http, grpc）
-- 完整的端到端流程：AI 決策 → 查詢能力 → 執行攻擊 → 返回結果
+- 完整的端到端流程：程式決策 → 查詢能力 → 執行攻擊 → 返回結果
 
 📄 **詳細報告**: [AI_CAPABILITY_EXECUTION_IMPLEMENTATION_REPORT.md](AI_CAPABILITY_EXECUTION_IMPLEMENTATION_REPORT.md)
 
@@ -96,7 +96,7 @@
 
 ```
 架構流程:
-User → AI 決策 → 能力查詢 (PostgreSQL/RAG) → 動態調用 → 結果彙總
+User → 程式決策 → 能力查詢 (PostgreSQL/RAG) → 動態調用 → 結果匯總
         ↓              ↓                         ↓            ↓
      分析需求    CapabilityRegistry         跨語言執行    統一格式
                  (782 capabilities)        (Py/Go/Rust/TS)
@@ -133,19 +133,19 @@ User → AI 決策 → 能力查詢 (PostgreSQL/RAG) → 動態調用 → 結果
 
 ## 🌟 **核心特色**
 
-### **🧠 真實AI大腦**
+### **🧠 系統核心引擎**
 - **5百萬參數神經網路** - Bug Bounty特化設計 (512→1650→1200→1000→600→300→{100+531}雙輸出)
 - **雙輸出架構**: 主決策(100維) + 輔助上下文(531維)
 - **100%離線運行**: 無需依賴任何外部LLM服務
-- **RAG增強決策**: 結合檢索增強生成的智能決策
+- **RAG結構化檢索**: 結合結構化資料的程式決策
 - **aiva_common標準**: 統一枚舉 (Severity, Confidence) 和數據結構
-- **雙重閉環自我優化**: 內部探索(系統自省) + 外部實戰(攻擊反饋) → 持續進化
+- **雙重閭環自我優化**: 內部探索(系統自省) + 外部實戰(攻擊反饋) → 持續進化
 
-### **⚡ 自主運行能力**
-- **四種協作模式**: UI模式、AI模式、Chat模式、混合模式
-- **智能攻擊編排**: AST驅動的攻擊計畫自動生成和執行
+### **⚡ 系統運行能力**
+- **四種協作模式**: UI模式、指令模式、Chat模式、混合模式
+- **程式化攻擊編排**: AST驅動的攻擊計畫自動生成和執行
 - **實時監控**: 完整的執行過程追蹤和分析
-- **抗幻覺機制**: 多層驗證確保決策可靠性
+- **多層驗證機制**: 多層驗證確保決策可靠性
 
 ### **🏗️ 企業級架構**
 - **微服務設計**: 165,000+ 行代碼
@@ -163,17 +163,17 @@ User → AI 決策 → 能力查詢 (PostgreSQL/RAG) → 動態調用 → 結果
 ## 📊 **技術指標**
 
 | 技術指標 | 數值 | 狀態 |
-|---------|------|------|
+|---------|------|
 | **架構版本** | v2.0 (數據合約) | ✅ 升級完成 |
 | **5M神經網路健康度** | 100% | ✅ 優秀 |
-| **AI決策功能** | 完全正常 | ✅ 優秀 |
-| **命令系統** | 完整實現 | ✅ 完成 |
+| **程式決策功能** | 完全正常 | ✅ 優秀 |
+| **指令系統** | 完整實現 | ✅ 完成 |
 | **類型安全** | 0錯誤 | ✅ 優秀 |
 | **語義編碼精準度** | 512維度 | ✅ 達標 |
 | **系統響應時間** | <50ms | ✅ 優秀 |
 | **核心功能驗證** | 100% | ✅ 完成 |
 | **跨語言整合** | 100% | ✅ 完成 |
-| **部署複雜度** | ↓90% | ✅ 大幅簡化 |
+| **部署複雜度** | ←90% | ✅ 大幅簡化 |
 
 ---
 
@@ -265,18 +265,18 @@ ai_core = RealAICore()
 knowledge_base = KnowledgeBase()
 rag_engine = RAGEngine(knowledge_base)
 
-print(f"🧠 AI引擎: {type(decision_engine).__name__}")
+print(f"🧠 核心引擎: {type(decision_engine).__name__}")
 print(f"🎯 使用5M模型: {decision_engine.use_5m_model}")
 
-# AI決策生成
+# 程式化決策生成
 result = decision_engine.generate_decision(
-    task_description="測試目標網站的安全漏洞",
+    task_description="系統化測試目標網站的安全漏洞",
     context="目標: https://example.com"
 )
 
 print(f"執行結果: {result.get('confidence', 'N/A')}")
 print(f"風險等級: {result.get('risk_level', 'N/A')}")
-print(f"真實AI: {result.get('is_real_ai', False)}")
+print(f"系統引擎: {result.get('is_real_ai', False)}")
 ```
 
 ---

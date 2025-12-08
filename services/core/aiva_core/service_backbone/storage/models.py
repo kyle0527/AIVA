@@ -253,3 +253,67 @@ class ScenarioModel(Base):
     extra_metadata = Column("metadata", JSON, nullable=True)
 
     __table_args__ = (Index("idx_type_difficulty", "vulnerability_type", "difficulty"),)
+
+
+class CommandExecutionModel(Base):
+    """CLI 指令執行歷史模型
+    
+    用於存儲和追蹤所有 CLI 指令執行記錄,支持:
+    - 指令執行歷史查詢
+    - 成功/失敗率統計
+    - 執行路徑分析
+    - 性能監控
+    """
+
+    __tablename__ = "command_executions"
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    command_id = Column(String(64), unique=True, nullable=False, index=True)
+    created_at = Column(DateTime, default=datetime.utcnow, nullable=False, index=True)
+    completed_at = Column(DateTime, nullable=True)
+
+    # 指令信息
+    command_name = Column(String(128), nullable=False, index=True)  # 能力名稱
+    command_type = Column(String(32), nullable=False, index=True)  # exec, query, flows, etc
+    capability_endpoint = Column(String(128), nullable=False, index=True)  # 終點腳本名稱
+    
+    # 執行路徑信息
+    flow_id = Column(String(64), nullable=True, index=True)  # 使用的數據流 ID
+    flow_path = Column(JSON, nullable=False)  # List[str] - 完整執行路徑
+    flow_length = Column(Integer, nullable=False)  # 路徑長度
+    flow_preference = Column(String(16), nullable=False, default="balanced")  # fastest/balanced/complete
+    
+    # 涉及模組
+    primary_module = Column(String(64), nullable=False, index=True)  # 主要模組
+    modules_involved = Column(JSON, nullable=False)  # List[str] - 所有涉及模組
+    
+    # 執行參數
+    parameters = Column(JSON, nullable=True)  # Dict[str, Any] - 輸入參數
+    
+    # 執行結果
+    status = Column(String(16), nullable=False, index=True)  # completed/failed/timeout
+    success = Column(Boolean, nullable=False, index=True)
+    result_data = Column(JSON, nullable=True)  # 執行結果數據
+    error_message = Column(Text, nullable=True)  # 錯誤訊息
+    
+    # 性能指標
+    execution_time_ms = Column(Float, nullable=False)  # 執行時間(毫秒)
+    
+    # 用戶和會話
+    user_id = Column(String(64), nullable=True, index=True)
+    session_id = Column(String(64), nullable=True, index=True)
+    
+    # AI 相關
+    is_ai_generated = Column(Boolean, nullable=False, default=False)  # 是否由AI生成
+    natural_language_input = Column(Text, nullable=True)  # 原始自然語言輸入
+    
+    # 元數據
+    extra_metadata = Column("metadata", JSON, nullable=True)
+
+    __table_args__ = (
+        Index("idx_command_status", "command_name", "status"),
+        Index("idx_success_created", "success", "created_at"),
+        Index("idx_module_capability", "primary_module", "capability_endpoint"),
+        Index("idx_flow_preference", "flow_preference", "created_at"),
+        Index("idx_execution_time", "execution_time_ms"),
+    )

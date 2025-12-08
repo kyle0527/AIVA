@@ -47,7 +47,7 @@ try:
     from services.core.aiva_core.cognitive_core.internal_loop_connector import InternalLoopConnector
     from services.core.aiva_core.cognitive_core.rag.knowledge_base import KnowledgeBase
     from services.core.aiva_core.cognitive_core.rag.vector_store import VectorStore
-    from services.core.aiva_core.core_capabilities.dialog.assistant import AIVADialogAssistant
+    from services.core.aiva_core.core_capabilities.dialog.assistant import AIVACommandProcessor
     CORE_AVAILABLE = True
 except ImportError as e:
     print(f"[Warning] Core modules not fully available: {e}")

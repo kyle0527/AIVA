@@ -963,8 +963,9 @@ class AIVAFlowAnalyzer:
     """AIVA 流程分析器主類"""
     
     def __init__(self, target_dir: Optional[str] = None):
-        # 使用 services 目錄作為預設掃描根目錄
-        default_target = Path(__file__).parent.parent.parent.parent
+        # 從tools目錄計算專案根目錄：tools/common/development -> ../../..
+        script_dir = Path(__file__).parent
+        default_target = script_dir.parent.parent.parent
         self.target_dir = Path(target_dir) if target_dir else default_target
         self.root_path = self.target_dir  # 添加 root_path 屬性
         self.stitcher = DataFlowStitcher()  # 使用新的數據流拼接器

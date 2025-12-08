@@ -10,6 +10,7 @@ from typing import Any
 from aiva_common.error_handling import AIVAError, ErrorType, ErrorSeverity, create_error_context
 
 from .backends import HybridBackend, JSONLBackend, PostgreSQLBackend, SQLiteBackend
+from .command_repository import CommandRepository
 
 logger = logging.getLogger(__name__)
 MODULE_NAME = "storage_manager"
@@ -73,6 +74,9 @@ class StorageManager:
 
         # 創建存儲後端
         self.backend = self._create_backend()
+        
+        # 創建指令儲存庫
+        self.command_repository = CommandRepository(self.backend)
 
         logger.info(
             f"StorageManager initialized: type={db_type}, root={self.data_root}"
@@ -259,3 +263,40 @@ class StorageManager:
     async def save_training_session(self, session_data: dict[str, Any]) -> bool:
         """保存訓練會話"""
         return await self.backend.save_training_session(session_data)
+    
+    # 指令儲存庫代理方法
+    async def save_command_execution(self, **kwargs) -> bool:
+        """保存指令執行記錄
+        
+        代理到 CommandRepository.save_command_execution()
+        支持記錄複雜流程(4+步)的執行歷史
+        """
+        return await self.command_repository.save_command_execution(**kwargs)
+    
+    async def get_command_history(self, **kwargs) -> list[dict[str, Any]]:
+        """查詢指令執行歷史
+        
+        代理到 CommandRepository.get_command_history()
+        """
+        return await self.command_repository.get_command_history(**kwargs)
+    
+    async def get_command_statistics(self, **kwargs) -> dict[str, Any]:
+        """獲取指令統計信息
+        
+        代理到 CommandRepository.get_command_statistics()
+        """
+        return await self.command_repository.get_command_statistics(**kwargs)
+    
+    async def get_popular_capabilities(self, **kwargs) -> list[dict[str, Any]]:
+        """獲取最常用的能力
+        
+        代理到 CommandRepository.get_popular_capabilities()
+        """
+        return await self.command_repository.get_popular_capabilities(**kwargs)
+    
+    async def get_slow_executions(self, **kwargs) -> list[dict[str, Any]]:
+        """獲取執行緩慢的指令
+        
+        代理到 CommandRepository.get_slow_executions()
+        """
+        return await self.command_repository.get_slow_executions(**kwargs)

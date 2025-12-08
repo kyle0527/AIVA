@@ -48,38 +48,45 @@ class DialogIntent:
     }
 
     @classmethod
-    def identify_intent(cls, user_input: str) -> tuple[str, dict[str, Any]]:
-        """識別使用者意圖和提取參數"""
-        user_input = user_input.strip()
-
-        for intent, patterns in cls.INTENT_PATTERNS.items():
-            for pattern in patterns:
-                match = re.search(pattern, user_input, re.IGNORECASE)
-                if match:
-                    params = match.groupdict() if match.groups else {}
-                    return intent, params
-
+    def classify_command(cls, user_input: str) -> tuple[str, dict[str, Any]]:
+        """識別用戶指令類型"""
+        user_input = user_input.strip().lower()
+        
+        # 優先匹配精確指令
+        for command_type, keywords in cls.COMMAND_PATTERNS.items():
+            for keyword in keywords:
+                if keyword in user_input:
+                    # 提取可能的目標URL或參數
+                    params = {}
+                    # 簡單 URL 提取
+                    url_match = re.search(r'https?://[\w\.-]+(?:/[\w\.-]*)*', user_input)
+                    if url_match:
+                        params['target'] = url_match.group()
+                    
+                    return command_type, params
+        
         return "unknown", {}
 
 
-class AIVADialogAssistant:
-    """AIVA 對話助理
+class AIVACommandProcessor:
+    """AIVA 指令處理器
 
     功能:
-    - NLU 對「查能力/執行/解釋」的意圖解析
-    - 透過 CapabilityRegistry 回答「你會什麼？」
+    - 處理預設指令和 UI 操作
+    - 透過 CapabilityRegistry 管理系統功能
     - 呼叫 PlanExecutor 執行任務
+    - 支援模式: CLI指令、UI選單、預設程式
     """
 
     def __init__(self, capability_registry: CapabilityRegistry | None = None):
-        # 優先使用全局registry實例，確保數據一致性
+        # 優先使用全域registry實例，確保數據一致性
         self.capability_registry = capability_registry or global_registry
-        self.conversation_history: list[dict[str, Any]] = []
+        self.command_history: list[dict[str, Any]] = []
         self._initialized = False
         self._function_caller = None
         self._rag_kb = None
 
-        logger.info("AIVA 對話助理已初始化")
+        logger.info("AIVA 指令處理器已初始化")
 
     async def _ensure_initialized(self):
         """確保能力註冊表已初始化"""
@@ -89,7 +96,7 @@ class AIVADialogAssistant:
             self._initialized = True
     
     def _get_rag_kb(self):
-        """獲取 RAG 知識庫（使用 ChromaDB 向量數據庫）"""
+        """獲取 RAG 系統（使用 ChromaDB 結構化資料庫）"""
         if self._rag_kb is None:
             from ...cognitive_core.rag.knowledge_base import KnowledgeBase
             from ...cognitive_core.rag.vector_store import VectorStore
@@ -109,41 +116,41 @@ class AIVADialogAssistant:
     async def process_user_input(
         self, user_input: str, user_id: str = "default"
     ) -> dict[str, Any]:
-        """處理使用者輸入並產生回應"""
+        """處理使用者指令並產生回應"""
         timestamp = datetime.now(timezone.utc)
 
-        # 記錄對話
-        self._add_conversation_entry("user", user_input, user_id, timestamp)
+        # 記錄指令
+        self._add_command_entry("user", user_input, user_id, timestamp)
 
         try:
-            # 意圖識別
-            intent, params = DialogIntent.identify_intent(user_input)
+            # 指令分類
+            command_type, params = CommandClassifier.classify_command(user_input)
 
-            logger.info(f"識別意圖: {intent}, 參數: {params}")
+            logger.info(f"識別指令: {command_type}, 參數: {params}")
 
-            # 根據意圖處理
-            response = await self._handle_intent(intent, params, user_input)
+            # 根據指令類型處理
+            response = await self._handle_command(command_type, params, user_input)
 
-            # 記錄助理回應
-            self._add_conversation_entry(
-                "assistant", response["message"], user_id, timestamp
+            # 記錄回應
+            self._add_command_entry(
+                "system", response["message"], user_id, timestamp
             )
 
             return response
 
         except Exception as e:
-            error_msg = f"處理輸入時發生錯誤: {str(e)}"
+            error_msg = f"處理指令時發生錯誤: {str(e)}"
             logger.error(error_msg)
 
             response = {
-                "intent": "error",
-                "message": "抱歉，我無法處理這個請求。請稍後再試。",
+                "command_type": "error",
+                "message": "無法處理該指令，請確認指令格式或稍後再試。",
                 "error": str(e),
                 "executable": False,
             }
 
-            self._add_conversation_entry(
-                "assistant", response["message"], user_id, timestamp
+            self._add_command_entry(
+                "system", response["message"], user_id, timestamp
             )
             return response
 
