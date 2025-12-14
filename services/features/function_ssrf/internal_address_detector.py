@@ -73,7 +73,7 @@ class InternalAddressDetector:
         indicators: list[InternalIndicator] = []
 
         # find IP-like strings in the response and check if they map to internal ranges
-        ips = set(re.findall(r"\b(?:[0-9]{1,3}\.){3}[0-9]{1,3}\b", text))
+        ips = set(re.findall(r"\b(?:\d{1,3}\.){3}\d{1,3}\b", text))
         for ip in ips:
             if self.is_internal_address(ip):
                 indicators.append(

@@ -76,6 +76,68 @@ class CapabilityComplexity(int, Enum):
     ADVANCED = 5  # 高級：涉及 AI 決策、多模組協調
 
 
+# ==================== 能力範圍管理 (v3.0) ====================
+
+class CapabilityScope(str, Enum):
+    """能力範圍
+    
+    定義能力可用的範圍層級：
+    - CORE: 核心內部能力（只能 aiva_core 使用）
+    - SERVICE: 服務級能力（services/* 可用）
+    - GLOBAL: 全局能力（整個項目可用）
+    - EXTERNAL: 外部工具能力（調用第三方工具）
+    """
+    CORE = "core"              # 核心內部能力（如 AST 分析、RAG 管理）
+    SERVICE = "service"        # 服務級能力（如 AI 決策、多引擎協調）
+    GLOBAL = "global"          # 全局能力（如 SQL 注入、XSS 檢測）
+    EXTERNAL = "external"      # 外部工具能力（如 sqlmap, XSStrike）
+
+
+class CapabilityVisibility(str, Enum):
+    """能力可見性
+    
+    定義能力的可見性級別：
+    - PUBLIC: AI Commander 可直接調用
+    - INTERNAL: 只能內部調用（模組間調用）
+    - SYSTEM: 系統級（需特殊權限）
+    - DEPRECATED: 已棄用（不推薦使用）
+    """
+    PUBLIC = "public"          # AI Commander 可直接調用
+    INTERNAL = "internal"      # 只能內部調用
+    SYSTEM = "system"          # 系統級（需特殊權限）
+    DEPRECATED = "deprecated"  # 已棄用
+
+
+class CapabilityAccessLevel(str, Enum):
+    """能力訪問級別
+    
+    定義能力的訪問控制級別：
+    - L0_SYSTEM: 系統管理（如服務重啟、配置更新）
+    - L1_SERVICE: 服務協調（如多引擎協調、任務分發）
+    - L2_MODULE: 模組功能（如 SQL 注入檢測、XSS 掃描）
+    - L3_INTERNAL: 內部實現（如 AST 分析、數據解析）
+    """
+    L0_SYSTEM = "system"       # 系統管理（如服務重啟）
+    L1_SERVICE = "service"     # 服務協調（如多引擎協調）
+    L2_MODULE = "module"       # 模組功能（如 SQL 注入檢測）
+    L3_INTERNAL = "internal"   # 內部實現（如 AST 分析）
+
+
+class CLIMaturityLevel(str, Enum):
+    """CLI 成熟度級別
+    
+    定義能力 CLI 接口的成熟度：
+    - NONE: 無 CLI 接口
+    - ALPHA: 早期 CLI（有基本命令，未測試）
+    - BETA: 測試中（有完整命令，部分測試）
+    - STABLE: 穩定版（完整測試，文檔齊全）
+    """
+    NONE = "none"              # 無 CLI 接口
+    ALPHA = "alpha"            # 早期 CLI（未測試）
+    BETA = "beta"              # 測試中
+    STABLE = "stable"          # 穩定版
+
+
 # ==================== 參數定義 ====================
 
 class ParameterDefinition(BaseModel):
@@ -243,6 +305,7 @@ class ModuleCapability(BaseModel):
     記錄 AI 系統可用的所有能力，包括：
     - 能力基本信息（名稱、描述、位置）
     - 能力分類（類別、子類別、複雜度）
+    - 六大模組分類（aiva_module, sub_module, entry_point）
     - 使用方法（參數、返回值、範例）
     - 健康狀態（可用性、性能、錯誤率）
     """
@@ -264,6 +327,20 @@ class ModuleCapability(BaseModel):
         description="能力複雜度"
     )
     tags: list[str] = Field(default_factory=list, description="標籤列表")
+    
+    # 六大模組分類（新增）
+    aiva_module: str | None = Field(
+        None,
+        description="AIVA 六大模組分類: cognitive_core, internal_exploration, task_planning, external_learning, core_capabilities, service_backbone"
+    )
+    sub_module: str | None = Field(
+        None,
+        description="子模組名稱，例如: neural, rag, decision (for cognitive_core), python_tools, go_tools (for internal_exploration)"
+    )
+    entry_point: str | None = Field(
+        None,
+        description="主要入口點: AICommander, CapabilityOrchestrator, app.py, ExternalLoopConnector, ScanResultProcessor, InternalLoopConnector"
+    )
     
     # 使用方法
     parameters: list[ParameterDefinition] = Field(
@@ -304,6 +381,46 @@ class ModuleCapability(BaseModel):
         le=1
     )
     last_used: datetime | None = Field(None, description="最後使用時間")
+    
+    # ==================== ✅ v3.0 新增: 範圍管理 ====================
+    
+    # 範圍分類
+    scope: CapabilityScope = Field(
+        default=CapabilityScope.CORE,
+        description="能力範圍：CORE(核心內部)/SERVICE(服務級)/GLOBAL(全局)/EXTERNAL(外部工具)"
+    )
+    visibility: CapabilityVisibility = Field(
+        default=CapabilityVisibility.INTERNAL,
+        description="能力可見性：PUBLIC(可直接調用)/INTERNAL(內部)/SYSTEM(系統級)/DEPRECATED(已棄用)"
+    )
+    access_level: CapabilityAccessLevel = Field(
+        default=CapabilityAccessLevel.L3_INTERNAL,
+        description="訪問級別：L0_SYSTEM(系統)/L1_SERVICE(服務)/L2_MODULE(模組)/L3_INTERNAL(內部)"
+    )
+    
+    # 可用性條件
+    available_in: list[str] = Field(
+        default_factory=list,
+        description="可用的服務路徑列表，例如：['core', 'features/sqli', 'scan']"
+    )
+    depends_on_services: list[str] = Field(
+        default_factory=list,
+        description="依賴的服務列表，例如：['core/rag', 'scan', 'features']"
+    )
+    
+    # CLI 相關
+    has_cli: bool = Field(
+        default=False,
+        description="是否有 CLI 接口"
+    )
+    cli_command: str | None = Field(
+        None,
+        description="CLI 命令，例如：'aiva sqli scan' 或 'aiva xss detect'"
+    )
+    cli_maturity: CLIMaturityLevel = Field(
+        default=CLIMaturityLevel.NONE,
+        description="CLI 成熟度：NONE(無)/ALPHA(早期)/BETA(測試)/STABLE(穩定)"
+    )
     
     # 元數據
     created_at: datetime = Field(

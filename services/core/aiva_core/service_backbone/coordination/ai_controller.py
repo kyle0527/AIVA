@@ -210,11 +210,13 @@ class AISubsystemController:
         # 主控 AI 分析檢測需求
         detection_plan = self.master_ai.invoke(f"規劃檢測策略: {user_input}", **context)
 
-        # 模擬多引擎檢測結果
+        # 實際調用檢測引擎 (TODO: 接入真實的 scan_orchestrator)
+        # 目前返回空狀態,避免虛假報告
         detection_results = {
-            "sqli_results": {"vulnerabilities_found": 0, "confidence": 0.9},
-            "xss_results": {"vulnerabilities_found": 1, "confidence": 0.8},
-            "ssrf_results": {"vulnerabilities_found": 0, "confidence": 0.95},
+            "sqli_results": {"vulnerabilities_found": 0, "confidence": 0.0, "status": "pending"},
+            "xss_results": {"vulnerabilities_found": 0, "confidence": 0.0, "status": "pending"},
+            "ssrf_results": {"vulnerabilities_found": 0, "confidence": 0.0, "status": "pending"},
+            "note": "等待實際掃描引擎執行"
         }
 
         # 主控 AI 整合結果
@@ -243,12 +245,12 @@ class AISubsystemController:
             f"制定協同計畫: {user_input}", **context
         )
 
-        # 模擬多 AI 協同執行
+        # 實際多 AI 協同執行 (TODO: 實現真實的協同邏輯)
         coordination_results = {
             "master_ai_role": "總體規劃與最終決策",
             "code_fixer_role": "程式碼問題修復",
             "detectors_role": "安全漏洞檢測",
-            "coordination_efficiency": 0.92,
+            # 移除硬編碼效率分數,應由實際執行時間計算
         }
 
         # 主控 AI 最終整合

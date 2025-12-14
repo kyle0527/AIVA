@@ -67,6 +67,13 @@ class TaskExecutionResult:
 
 
 async def run() -> None:
+    """運行 SSRF Worker - 從 MQ 訂閱並處理 SSRF 檢測任務
+    
+    Note: subscribe() 返回 AsyncIterator，類型檢查器可能誤報迭代錯誤
+    """
+    from collections.abc import AsyncIterator
+    from services.aiva_common.mq import MQMessage
+    
     broker = await get_broker()
     publisher = SsrfResultPublisher(broker)
     analyzer = ParamSemanticsAnalyzer()
@@ -77,7 +84,9 @@ async def run() -> None:
         follow_redirects=True, timeout=DEFAULT_TIMEOUT_SECONDS
     ) as client:
         try:
-            async for mqmsg in broker.subscribe(Topic.TASK_FUNCTION_SSRF):
+            # subscribe() 方法返回協程，需要 await 獲取 AsyncIterator
+            subscription = await broker.subscribe(Topic.TASK_FUNCTION_SSRF)
+            async for mqmsg in subscription:
                 msg = AivaMessage.model_validate_json(mqmsg.body)
                 task = FunctionTaskPayload(**msg.payload)
                 trace_id = msg.header.trace_id
@@ -159,26 +168,25 @@ async def process_task(
     dispatcher = dispatcher or OastDispatcher()
 
     # 創建統計數據收集器
-    stats_collector = StatisticsCollector(
-        task_id=task.task_id,
-        worker_type="ssrf"
-    )
+    stats_collector = StatisticsCollector()
 
     plan: AnalysisPlan = analyzer.analyze(task)
     telemetry = SsrfTelemetry()
     findings: list[FindingPayload] = []
 
     if not plan.vectors:
-        logger.debug(
-            "No SSRF payloads generated for task", extra={"task_id": task.task_id}
+        error_msg = f"No SSRF test vectors generated for task {task.task_id}. Target: {task.target.url}, Parameter: {task.target.parameter}"
+        logger.error(
+            error_msg, 
+            extra={
+                "task_id": task.task_id,
+                "target_url": str(task.target.url),
+                "parameter": task.target.parameter,
+                "parameter_location": task.target.parameter_location
+            }
         )
-        # 完成統計收集（無測試）
-        final_stats = stats_collector.finalize()
-        return TaskExecutionResult(
-            findings=findings, 
-            telemetry=telemetry,
-            statistics_summary=stats_collector.get_summary()
-        )
+        # 不降級，拋出異常
+        raise ValueError(error_msg)
 
     for vector in plan.vectors:
         telemetry.attempts += 1
@@ -187,10 +195,6 @@ async def process_task(
         stats_collector.record_payload_test(success=False)
         
         payload = await _resolve_payload(vector, dispatcher, task)
-        
-        # 記錄 OAST 探針發送（如果適用）
-        if vector.requires_oast:
-            stats_collector.record_oast_probe()
 
         try:
             response = await _issue_request(client, task, vector, payload)
@@ -198,57 +202,62 @@ async def process_task(
             # 記錄成功的請求
             stats_collector.record_request(
                 success=True,
-                timeout=False,
-                rate_limited=False
+                timeout=False
             )
             
         except httpx.TimeoutException as exc:
-            logger.warning(
-                "SSRF payload request timeout",
+            error_msg = f"SSRF payload request timeout: {str(exc)}"
+            logger.error(
+                error_msg,
                 extra={"task_id": task.task_id, "payload": payload, "error": repr(exc)},
             )
-            telemetry.errors.append(str(exc))
             
             # 記錄超時錯誤
             stats_collector.record_request(success=False, timeout=True)
             stats_collector.record_error(
                 category=ErrorCategory.TIMEOUT,
-                message=str(exc),
-                request_info={"url": task.url, "payload": payload}
+                error_msg=str(exc),
+                request_info={"url": str(task.target.url), "payload": payload}
             )
-            continue
+            
+            # 不降級，拋出異常
+            raise RuntimeError(f"Request timeout after {DEFAULT_TIMEOUT_SECONDS}s: {payload}") from exc
             
         except httpx.NetworkError as exc:
-            logger.warning(
-                "SSRF payload network error",
+            error_msg = f"SSRF payload network error: {str(exc)}"
+            logger.error(
+                error_msg,
                 extra={"task_id": task.task_id, "payload": payload, "error": repr(exc)},
             )
-            telemetry.errors.append(str(exc))
             
             # 記錄網絡錯誤
             stats_collector.record_request(success=False)
             stats_collector.record_error(
                 category=ErrorCategory.NETWORK,
-                message=str(exc),
-                request_info={"url": task.url, "payload": payload}
+                error_msg=str(exc),
+                request_info={"url": str(task.target.url), "payload": payload}
             )
-            continue
+            
+            # 不降級，拋出異常
+            raise RuntimeError(f"Network error occurred while testing SSRF payload: {payload}") from exc
             
         except Exception as exc:
-            logger.warning(
-                "Failed to execute SSRF payload",
+            error_msg = f"Failed to execute SSRF payload: {str(exc)}"
+            logger.error(
+                error_msg,
                 extra={"task_id": task.task_id, "payload": payload, "error": repr(exc)},
             )
-            telemetry.errors.append(str(exc))
             
             # 記錄未知錯誤
             stats_collector.record_request(success=False)
             stats_collector.record_error(
                 category=ErrorCategory.UNKNOWN,
-                message=str(exc),
-                request_info={"url": task.url, "payload": payload}
+                error_msg=str(exc),
+                request_info={"url": str(task.target.url), "payload": payload}
             )
-            continue
+            
+            # 不降級，拋出異常
+            raise RuntimeError(f"Unexpected error while testing SSRF payload: {payload}") from exc
 
         detection: Any = detector.analyze(response)
         if detection.matched:
@@ -278,19 +287,7 @@ async def process_task(
                 telemetry.findings += 1
                 telemetry.oast_callbacks += len(events)
                 
-                # 記錄 OAST 回調
-                for event in events:
-                    stats_collector.record_oast_callback(
-                        probe_token=_extract_token(payload),
-                        callback_type=event.event_type if hasattr(event, 'event_type') else "unknown",
-                        source_ip=event.source_ip if hasattr(event, 'source_ip') else "unknown",
-                        payload_info={
-                            "url": task.url,
-                            "parameter": vector.injection_point,
-                            "payload": payload
-                        }
-                    )
-                
+
                 # 記錄成功檢測到漏洞
                 stats_collector.record_vulnerability(false_positive=False)
                 stats_collector.record_payload_test(success=True)
@@ -310,9 +307,6 @@ async def process_task(
         sum(1 for v in plan.vectors if not v.requires_oast))
     stats_collector.set_module_specific("oast_tests", 
         sum(1 for v in plan.vectors if v.requires_oast))
-    
-    # 完成統計數據收集
-    final_stats = stats_collector.finalize()
 
     return TaskExecutionResult(
         findings=findings, 
@@ -554,34 +548,57 @@ class OastDispatcherLike(Protocol):
 
 
 class SsrfWorkerService:
-    """SSRF Worker 服務類 - 提供統一的任務處理接口"""
+    """SSRF Worker 服務類 - 提供統一的任務處理接口
+    
+    Note: 這個類已經被棄用，請直接使用 run_worker() 函數
+    保留此類僅為向後兼容
+    """
     
     def __init__(self):
-        self.oast_dispatcher = None
-        self.internal_detector = None
+        """初始化 SSRF Worker 服務（已棄用）"""
+        logger.warning(
+            "SsrfWorkerService is deprecated, use run_worker() instead",
+            extra={"deprecation": "v2.0"}
+        )
+        self.oast_dispatcher = OastDispatcher()
+        self.internal_detector = InternalAddressDetector()
+        self.analyzer = ParamSemanticsAnalyzer()
         
     async def process_task(self, task) -> dict:
-        """處理 SSRF 檢測任務"""
+        """處理 SSRF 檢測任務（已棄用）
+        
+        建議使用 process_task() 函數替代此方法
+        """
         # 將 Task 對象轉換為 FunctionTaskPayload
-        if hasattr(task, 'target') and task.target:
-            # 構建 FunctionTaskPayload
-            payload = FunctionTaskPayload(
-                header=MessageHeader(
-                    message_id=task.task_id,
-                    trace_id=task.task_id,
-                    source_module="FunctionSSRF"
-                ),
-                scan_id=getattr(task, 'scan_id', 'default'),
-                target=task.target,
-                strategy=getattr(task, 'strategy', 'normal'),
-                priority=getattr(task, 'priority', 5)
-            )
-        else:
+        if not hasattr(task, 'target') or not task.target:
             raise ValueError("Task must have a valid target")
             
-        # 使用現有的 _execute_task 函數
-        return await _execute_task(
-            payload,
-            oast_dispatcher=self.oast_dispatcher,
-            internal_address_detector=self.internal_detector
+        # 構建 FunctionTaskPayload
+        payload = FunctionTaskPayload(
+            task_id=task.task_id,
+            scan_id=getattr(task, 'scan_id', 'default'),
+            target=task.target,
+            strategy=getattr(task, 'strategy', 'normal'),
+            priority=getattr(task, 'priority', 5)
         )
+            
+        # 創建必要的依賴
+        from services.aiva_common.mq import get_broker
+        
+        broker = await get_broker()
+        publisher = SsrfResultPublisher(broker)
+        
+        async with httpx.AsyncClient(timeout=DEFAULT_TIMEOUT_SECONDS) as client:
+            # 使用現有的 _execute_task 函數
+            await _execute_task(
+                payload,
+                trace_id=task.task_id,
+                client=client,
+                publisher=publisher,
+                analyzer=self.analyzer,
+                detector=self.internal_detector,
+                dispatcher=self.oast_dispatcher
+            )
+            
+        # 返回結果摘要
+        return {"status": "completed", "task_id": task.task_id}

@@ -62,7 +62,7 @@ class TimeDetectionEngine:
 
         # 測量基準回應時間
         baseline_times = await self._measure_baseline_times(
-            task, client, encoder, samples=3
+            client, encoder, samples=3
         )
         if not baseline_times:
             logger.warning("Failed to establish baseline timing")
@@ -118,10 +118,9 @@ class TimeDetectionEngine:
 
     async def _measure_baseline_times(
         self,
-        task: FunctionTaskPayload,
         client: httpx.AsyncClient,
         encoder: PayloadWrapperEncoder,
-        samples: int = 3,
+        samples: int,
     ) -> list[float]:
         """測量基準回應時間"""
         times = []

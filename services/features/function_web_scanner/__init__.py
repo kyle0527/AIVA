@@ -8,16 +8,23 @@ AIVA Web Scanner Module
 - Technology Fingerprinting: 技術指紋識別
 - Port Scanning: 端口掃描
 
-架構: 工具集成型
+架構: 工具集成型 + 統一管理器
 風險等級: L1 (資訊收集)
-模組版本: 1.0.0
+模組版本: 1.1.0
+
+使用方式:
+    from services.features.function_web_scanner import WebScannerManager
+    manager = WebScannerManager()
+    result = manager.scan("https://example.com")
 """
 
-# Web Scanner 目前使用工具集成方式
-# 可通過 integration_tools.web_tools 訪問功能
+from services.features.function_web_scanner.scanner_manager import (
+    WebScannerManager,
+    scan_target
+)
 
-__all__ = []
+__all__ = ["WebScannerManager", "scan_target"]
 
-__version__ = "1.0.0"
-__status__ = "integration-tools"
+__version__ = "1.1.0"
+__status__ = "ready"
 __risk_level__ = "L1"

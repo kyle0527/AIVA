@@ -529,6 +529,113 @@ class MultiEngineCoordinator:
                 error_info=error_msg
             )
     
+    def _prepare_ai_command(self, scan_id: str, targets: List[str], max_depth: int) -> dict:
+        """Prepare simplified AI command."""
+        return {
+            "scan_id": scan_id,
+            "targets": targets,
+            "depth": max_depth,
+            "timeout": 10,
+        }
+    
+    async def _dispatch_tasks(
+        self, selected_engines: List[str], targets: List[str], ai_command: dict, max_urls: int
+    ) -> tuple[List, List[str]]:
+        """Dispatch tasks to available engines."""
+        tasks = []
+        active_engines = []
+        
+        for engine_name in selected_engines:
+            adapter = self.adapters.get(engine_name)
+            if not adapter or not await adapter.is_available():
+                continue
+            
+            engine_options = self._translate_command_for_engine(engine_name, ai_command, max_urls)
+            active_engines.append(engine_name)
+            tasks.append(adapter.scan(targets, engine_options))
+        
+        return tasks, active_engines
+    
+    def _aggregate_results(
+        self, scan_id: str, active_engines: List[str], results: List
+    ) -> tuple[List["Asset"], dict, List[str]]:
+        """Aggregate results from all engines."""
+        all_assets = []
+        engine_status = {}
+        failed_engines = []
+        
+        for engine_name, result in zip(active_engines, results):
+            if isinstance(result, Exception):
+                engine_status[engine_name] = {"status": "failed", "error": str(result)}
+                failed_engines.append(engine_name)
+            elif isinstance(result, dict):
+                normalized_assets = self._normalize_assets(scan_id, result.get("assets", []))
+                all_assets.extend(normalized_assets)
+                engine_status[engine_name] = {"status": "completed", "assets_count": len(normalized_assets)}
+        
+        return all_assets, engine_status, failed_engines
+    
+    def _normalize_assets(self, scan_id: str, assets: List) -> List["Asset"]:
+        """Normalize assets from different engine formats."""
+        normalized = []
+        for asset in assets:
+            if isinstance(asset, Asset):
+                normalized.append(asset)
+            elif isinstance(asset, dict):
+                normalized_asset = self._convert_dict_to_asset(scan_id, asset, len(normalized))
+                if normalized_asset:
+                    normalized.append(normalized_asset)
+        return normalized
+    
+    def _convert_dict_to_asset(self, scan_id: str, asset: dict, index: int) -> Optional["Asset"]:
+        """Convert dict asset to Asset object."""
+        try:
+            asset_type = asset.get("type", "unknown")
+            value = self._extract_asset_value(asset, asset_type)
+            
+            if not value:
+                self.logger.warning(f"資產缺少 value,跳過: type={asset_type}")
+                return None
+            
+            return Asset(
+                asset_id=asset.get("asset_id", f"{scan_id}_{index}"),
+                type=asset_type,
+                value=value,
+                parameters=None,
+                has_form=asset.get("has_form", False)
+            )
+        except Exception as e:
+            self.logger.warning(f"資產轉換失敗: {e}, 跳過資產: {asset.get('type', 'unknown')}")
+            return None
+    
+    def _extract_asset_value(self, asset: dict, asset_type: str) -> str:
+        """Extract value from asset based on type."""
+        if asset_type == "web_vulnerability":
+            return (
+                asset.get("details", {}).get("affected_url") or
+                asset.get("name", "") or
+                str(asset.get("details", {}).get("finding_id", ""))
+            )
+        return asset.get("value", "")
+    
+    def _build_summary(self, assets: List["Asset"], start_time: float) -> "Summary":
+        """Build summary statistics from assets."""
+        from services.aiva_common.schemas import Summary
+        return Summary(
+            urls_found=len([a for a in assets if a.type == "url"]),
+            forms_found=len([a for a in assets if a.has_form]),
+            apis_found=len([a for a in assets if a.type == "api"]),
+            scan_duration_seconds=int(time.time() - start_time)
+        )
+    
+    def _determine_status(self, engine_status: dict, failed_engines: List[str]) -> tuple[str, Optional[str]]:
+        """Determine final status based on engine results."""
+        if not engine_status or all(s["status"] == "failed" for s in engine_status.values()):
+            return "failed", f"所有引擎失敗: {', '.join(failed_engines)}"
+        elif failed_engines:
+            return "partial_success", f"部分引擎失敗: {', '.join(failed_engines)}"
+        return "completed", None
+    
     async def execute_phase1(
         self,
         scan_id: str,
@@ -538,159 +645,28 @@ class MultiEngineCoordinator:
         max_urls: int = 1000,
         phase0_result: Optional[Dict[str, Any]] = None
     ) -> "Phase1CompletedPayload":
-        """執行 Phase 1 深度掃描 - 使用適配器模式（重構後）
-        
-        核心改進：
-        1. 從 171 複雜度降至 < 30
-        2. 使用適配器統一接口，不再關心引擎細節
-        3. 清晰的錯誤隔離和狀態管理
-        
-        Args:
-            scan_id: 掃描 ID
-            targets: 目標 URL 列表
-            selected_engines: AI 選擇的引擎列表 (python/typescript/rust/go)
-            max_depth: 最大爬取深度
-            max_urls: 最大 URL 數量
-            phase0_result: Phase 0 結果（可選）
-            
-        Returns:
-            Phase 1 完成結果
-        """
-        from services.aiva_common.schemas import (
-            Phase1CompletedPayload,
-            Summary
-        )
+        """Coordinator: execute Phase 1 deep scan with adapter pattern."""
+        from services.aiva_common.schemas import Phase1CompletedPayload, Summary
         
         start_time = time.time()
-        
         self.logger.info(
-            f"[START] Phase 1 開始: {scan_id} "
-            f"(引擎: {', '.join(selected_engines)}, 目標: {len(targets)}個)"
+            f"[START] Phase 1 開始: {scan_id} (引擎: {', '.join(selected_engines)}, 目標: {len(targets)}個)"
         )
         
         try:
-            # 1. 準備 AI 簡化指令 - 協調器負責轉換為各引擎的具體格式
-            # AI 只需下達簡單的高層次指令,協調器確保正確執行
-            ai_command = {
-                "scan_id": scan_id,
-                "targets": targets,  # AI 指定的目標列表
-                "depth": max_depth,   # AI 指定的深度 (1-5)
-                "timeout": 10,        # 統一超時
-            }
-            
-            # 2. 任務分發 - 協調器為每個引擎轉換命令格式
-            tasks = []
-            active_engines = []
-            
-            for engine_name in selected_engines:
-                adapter = self.adapters.get(engine_name)
-                
-                if not adapter or not await adapter.is_available():
-                    continue
-                
-                # 協調器根據引擎類型轉換命令
-                engine_options = self._translate_command_for_engine(
-                    engine_name, ai_command, max_urls
-                )
-                
-                active_engines.append(engine_name)
-                tasks.append(adapter.scan(targets, engine_options))
-                # (已在上方處理)
+            ai_command = self._prepare_ai_command(scan_id, targets, max_depth)
+            tasks, active_engines = await self._dispatch_tasks(selected_engines, targets, ai_command, max_urls)
             
             if not tasks:
-                # 沒有可用的引擎
                 return self._create_empty_result(scan_id, "failed", "沒有可用的引擎")
             
-            # 3. 並行執行 - return_exceptions=True 確保單引擎失敗不拖垮整體
-            # 並行執行引擎
             results = await asyncio.gather(*tasks, return_exceptions=True)
-            
-            # 4. 結果聚合 - 錯誤隔離與資產收集
-            all_assets = []
-            engine_status = {}
-            failed_engines = []
-            
-            for engine_name, result in zip(active_engines, results):
-                if isinstance(result, Exception):
-                    # 錯誤隔離：單引擎失敗被記錄，但不影響其他引擎
-                    error_msg = str(result)
-                    # 引擎失敗
-                    engine_status[engine_name] = {"status": "failed", "error": error_msg}
-                    failed_engines.append(engine_name)
-                elif isinstance(result, dict):
-                    # 適配器保證返回標準格式 {"assets": [...], "metadata": {...}}
-                    assets = result.get("assets", [])
-                    
-                    # [FIX] 修正: 統一轉換為 Asset 對象 (處理不同引擎的格式差異)
-                    normalized_assets = []
-                    for asset in assets:
-                        if isinstance(asset, Asset):
-                            # 已經是 Asset 對象 (Python Engine)
-                            normalized_assets.append(asset)
-                        elif isinstance(asset, dict):
-                            # 需要轉換的 dict (Go/Rust/TypeScript Engine)
-                            try:
-                                # 檢查資產類型並提取 value
-                                asset_type = asset.get("type", "unknown")
-                                
-                                # 不同引擎的 value 提取邏輯
-                                if asset_type == "web_vulnerability":
-                                    # Go 引擎的漏洞格式: 使用 affected_url 或 name 作為 value
-                                    value = (
-                                        asset.get("details", {}).get("affected_url") or
-                                        asset.get("name", "") or
-                                        str(asset.get("details", {}).get("finding_id", ""))
-                                    )
-                                else:
-                                    # 標準格式: 直接使用 value 欄位
-                                    value = asset.get("value", "")
-                                
-                                # 如果還是沒有 value,跳過這個資產
-                                if not value:
-                                    self.logger.warning(f"資產缺少 value,跳過: type={asset_type}")
-                                    continue
-                                
-                                normalized_assets.append(Asset(
-                                    asset_id=asset.get("asset_id", f"{scan_id}_{len(all_assets)}"),
-                                    type=asset_type,
-                                    value=value,
-                                    parameters=None,  # [FIX] 修正: Asset.parameters 期望 List[str],暫不傳遞複雜物件
-                                    has_form=asset.get("has_form", False)
-                                ))
-                            except Exception as e:
-                                self.logger.warning(f"資產轉換失敗: {e}, 跳過資產: {asset.get('type', 'unknown')}")
-                    
-                    all_assets.extend(normalized_assets)
-                    engine_status[engine_name] = {
-                        "status": "completed",
-                        "assets_count": len(normalized_assets)
-                    }
-                    # 引擎成功
-            
-            # 5. 去重
+            all_assets, engine_status, failed_engines = self._aggregate_results(scan_id, active_engines, results)
             unique_assets = self._deduplicate_assets(all_assets)
+            summary = self._build_summary(unique_assets, start_time)
+            final_status, error_msg = self._determine_status(engine_status, failed_engines)
             
-            # 6. 構建統計信息
-            summary = Summary(
-                urls_found=len([a for a in unique_assets if a.type == "url"]),
-                forms_found=len([a for a in unique_assets if a.has_form]),
-                apis_found=len([a for a in unique_assets if a.type == "api"]),
-                scan_duration_seconds=int(time.time() - start_time)
-            )
-            
-            # 7. 判斷最終狀態
             execution_time = time.time() - start_time
-            
-            if not engine_status or all(s["status"] == "failed" for s in engine_status.values()):
-                final_status = "failed"
-                error_msg = f"所有引擎失敗: {', '.join(failed_engines)}"
-            elif failed_engines:
-                final_status = "partial_success"
-                error_msg = f"部分引擎失敗: {', '.join(failed_engines)}"
-            else:
-                final_status = "completed"
-                error_msg = None
-            
             self.logger.info(
                 f"{'[SUCCESS]' if final_status == 'completed' else '[WARNING]'} Phase 1 {final_status}: {scan_id} "
                 f"(資產: {len(unique_assets)}, 成功: {len(active_engines) - len(failed_engines)}/{len(active_engines)}, "

@@ -17,6 +17,7 @@ import time
 import json
 from datetime import datetime, timedelta, UTC
 import jwt
+from jwt.exceptions import ExpiredSignatureError, InvalidTokenError
 import hashlib
 import os
 import sys
@@ -28,7 +29,7 @@ from config.settings import get_config
 from config.api_keys import get_api_key, has_api_key
 from services.features.high_value_manager import HighValueFeatureManager
 from services.features.base.result_schema import FeatureResult
-from services.aiva_common.schemas import APIResponse
+from api.schemas import APIResponse
 
 # 初始化配置
 config = get_config()
@@ -56,8 +57,8 @@ app.add_middleware(
 active_scans: Dict[str, Dict[str, Any]] = {}
 high_value_manager = None
 
-# JWT 密鑰
-JWT_SECRET = get_api_key("jwt_secret", "aiva-default-secret-change-in-production")
+# JWT 密鑰（確保不為 None）
+JWT_SECRET: str = get_api_key("jwt_secret", "aiva-default-secret-change-in-production") or "aiva-default-secret-change-in-production"
 JWT_ALGORITHM = "HS256"
 JWT_EXPIRATION_HOURS = 24
 
@@ -76,12 +77,12 @@ def verify_token(credentials: HTTPAuthorizationCredentials = Depends(security)) 
     try:
         payload = jwt.decode(credentials.credentials, JWT_SECRET, algorithms=[JWT_ALGORITHM])
         return payload
-    except jwt.ExpiredSignatureError:
+    except ExpiredSignatureError:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Token has expired"
         )
-    except jwt.JWTError:
+    except InvalidTokenError:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Could not validate credentials"
@@ -127,7 +128,10 @@ async def health_check():
                 data={
                     "status": "unhealthy",
                     "services": {}
-                }
+                },
+                trace_id=None,
+                errors=[str(e)],
+                metadata={"timestamp": datetime.now(UTC).isoformat()}
             )
             return JSONResponse(
                 status_code=503,
@@ -145,7 +149,10 @@ async def health_check():
                 "authentication": "operational"
             },
             "active_scans": len(active_scans)
-        }
+        },
+        trace_id=None,
+        errors=None,
+        metadata={"timestamp": datetime.now(UTC).isoformat()}
     )
     return response.model_dump()
 
@@ -593,13 +600,11 @@ async def delete_scan(scan_id: str, current_user: dict = Depends(get_current_use
 
 # 整合路由模組
 from api.routers import auth, security, admin
-# from api.routers import capabilities  # 暫時禁用 - 啟動時有問題
 
 # 添加路由
 app.include_router(auth.router, prefix="/auth", tags=["Authentication"])
 app.include_router(security.router, prefix="/api/v1/security", tags=["High-Value Security"])
 app.include_router(admin.router, prefix="/api/v1/admin", tags=["System Administration"])
-# app.include_router(capabilities.router, prefix="/api/v1/capabilities", tags=["Capability Execution"])  # 暫時禁用
 
 # 更新主要掃描端點以使用共享存儲
 from api.routers.admin import get_active_scans

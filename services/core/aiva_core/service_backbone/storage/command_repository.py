@@ -63,7 +63,6 @@ class CommandRepository:
         user_id: Optional[str] = None,
         session_id: Optional[str] = None,
         is_ai_generated: bool = False,
-        natural_language_input: Optional[str] = None,
         metadata: Optional[Dict[str, Any]] = None,
     ) -> bool:
         """保存指令執行記錄
@@ -88,7 +87,6 @@ class CommandRepository:
             user_id: 用戶 ID
             session_id: 會話 ID
             is_ai_generated: 是否AI生成
-            natural_language_input: 自然語言輸入
             metadata: 額外元數據
             
         Returns:
@@ -122,7 +120,6 @@ class CommandRepository:
                 user_id=user_id,
                 session_id=session_id,
                 is_ai_generated=is_ai_generated,
-                natural_language_input=natural_language_input,
                 extra_metadata=metadata,
             )
             
@@ -235,7 +232,6 @@ class CommandRepository:
                     "user_id": r.user_id,
                     "session_id": r.session_id,
                     "is_ai_generated": r.is_ai_generated,
-                    "natural_language_input": r.natural_language_input,
                     "metadata": r.extra_metadata,
                 }
                 for r in records

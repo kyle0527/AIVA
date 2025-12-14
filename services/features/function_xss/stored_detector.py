@@ -2,6 +2,7 @@
 
 from collections.abc import Iterable, Sequence
 from dataclasses import dataclass
+import html
 from urllib.parse import urlparse, urlunparse
 
 import httpx
@@ -69,16 +70,18 @@ class StoredXssDetector:
                 resp = await client.get(url)
                 text = resp.text or ""
                 if payload in text:
-                    results.append(
-                        StoredXssResult(
-                            payload=payload,
-                            request=resp.request,
-                            response_status=resp.status_code,
-                            response_headers=dict(resp.headers),
-                            response_text=text,
+                    # 驗證是否為真實的持久化 XSS (不是反射或緩存)
+                    if self._verify_persistence(payload, text, resp):
+                        results.append(
+                            StoredXssResult(
+                                payload=payload,
+                                request=resp.request,
+                                response_status=resp.status_code,
+                                response_headers=dict(resp.headers),
+                                response_text=text,
+                            )
                         )
-                    )
-                    break  # one positive hit is enough
+                        break  # one positive hit is enough
 
             return results
         finally:
@@ -133,6 +136,55 @@ class StoredXssDetector:
         parsed = urlparse(str(self._task.target.url))
         return urlunparse(parsed._replace(query=""))
 
+    def _verify_persistence(
+        self,
+        payload: str,
+        response_text: str,
+        response: httpx.Response
+    ) -> bool:
+        """驗證是否為真實的持久化 XSS，過濾反射型和緩存誤報"""
+        # 檢查 1: 確認不是反射型 (檢查 URL 中沒有 payload)
+        if payload in str(response.url):
+            return False  # URL 中有 payload = 反射型 XSS
+        
+        # 檢查 2: 確認不是 HTTP 緩存
+        cache_headers = [
+            "x-cache", "cf-cache-status", "x-varnish-cache",
+            "x-proxy-cache", "age"
+        ]
+        if any(header in response.headers for header in cache_headers):
+            # 如果有緩存標頭且是 HIT，可能是緩存的反射型
+            cache_status = " ".join(
+                str(response.headers.get(h, "")).lower() 
+                for h in cache_headers
+            )
+            if "hit" in cache_status or "from cache" in cache_status:
+                return False
+        
+        # 檢查 3: 確認 payload 在可執行的上下文中 (非註釋/textarea)
+        # 使用與 traditional_detector 相同的邏輯
+        escaped_payload = html.escape(payload)
+        if escaped_payload in response_text and payload not in response_text:
+            return False  # Payload 被編碼，無法執行
+        
+        # 檢查安全上下文 (HTML 註釋、textarea、noscript 等)
+        safe_contexts = [
+            f"<!--{payload}-->",
+            f"<!--{payload}",
+            f"{payload}-->",
+            f"<textarea>{payload}",
+            f"<textarea {payload}",
+            f"<noscript>{payload}",
+            f"<style>{payload}",
+        ]
+        if any(ctx in response_text for ctx in safe_contexts):
+            return False
+        
+        # 檢查 4: 驗證多次請求的一致性 (真正持久化的內容應該每次都出現)
+        # 注意：這裡只做基本檢查，完整的多次驗證需要在更高層級實作
+        
+        return True
+    
     @staticmethod
     def _inject_query(url: str, parameter: str | None, value: str) -> str:
         if not parameter:

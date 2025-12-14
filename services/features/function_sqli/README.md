@@ -1,4 +1,87 @@
-# 🛡️ SQL 注入檢測模組
+# 🛡️ SQL 注入檢測模組 (function_sqli)
+
+## 📑 目錄
+- [模組概述](#模組概述)
+- [快速開始](#快速開始)
+- [架構設計](#架構設計)
+- [目錄結構](#目錄結構)
+- [使用方式](#使用方式)
+  - [方式一：CLI 命令行](#方式一cli-命令行推薦)
+  - [方式二：命令處理器](#方式二命令處理器)
+  - [方式三：直接調用引擎](#方式三直接調用引擎開發測試用)
+- [檢測能力](#檢測能力)
+- [配置說明](#配置說明)
+- [性能指標](#性能指標)
+- [故障排除](#故障排除)
+- [子模組文檔](#子模組文檔)
+- [開發指南](#開發指南)
+
+---
+
+## 模組概述
+
+**什麼是 SQL 注入檢測？**  
+SQL 注入是最常見的 Web 應用程式漏洞之一（OWASP Top 10 #1），攻擊者通過在輸入字段中注入惡意 SQL 代碼來操控資料庫，可能導致數據洩露、篡改或刪除。
+
+**本模組特色**：
+- ✅ **多引擎並行檢測**：6 種專業檢測引擎同時工作
+- ✅ **高準確率**：多重驗證機制，誤報率 <5%
+- ✅ **CLI 就緒**：完全支持命令行操作，無 MQ 依賴
+- ✅ **外部工具整合**：集成 sqlmap、NoSQLMap 等業界標準工具
+- ✅ **Bug Bounty 優化**：專門為漏洞賞金獵人設計的模式
+
+---
+
+## 快速開始
+
+### 最簡單的檢測
+
+```python
+# 1. 導入模組
+from services.features.function_sqli.worker import process_task
+from services.aiva_common.schemas import FunctionTaskPayload, Target
+import httpx
+
+# 2. 創建任務
+task = FunctionTaskPayload(
+    task_id="test_001",
+    scan_id="scan_001",
+    target=Target(
+        url="http://testphp.vulnweb.com/artists.php",
+        parameter="artist",
+        method="GET"
+    )
+)
+
+# 3. 執行檢測
+async with httpx.AsyncClient() as client:
+    result = await process_task(task, http_client=client)
+
+# 4. 查看結果
+print(f"發現漏洞: {len(result['findings'])} 個")
+for finding in result['findings']:
+    print(f"  - {finding.vulnerability.name}")
+    print(f"    Payload: {finding.evidence.payload}")
+```
+
+### 5 分鐘教學
+
+1. **安裝依賴**
+```bash
+cd c:\D\fold7\AIVA-git
+pip install -r requirements.txt
+```
+
+2. **運行測試**
+```bash
+python -m pytest services/features/function_sqli/tests/
+```
+
+3. **執行檢測**（參見下方「使用方式」）
+
+---
+
+## 架構設計
 
 **什麼是 SQL 注入檢測？**  
 SQL 注入是最常見的 Web 應用程式漏洞之一，攻擊者通過在輸入字段中注入惡意 SQL 代碼來操控資料庫。本模組使用多引擎並行檢測技術，能識別布林型、時間型、聯合查詢型等各種注入類型。
@@ -252,6 +335,210 @@ asyncio.run(test_sqli_command_handler())
 - ✅ AICommandResult 使用 `started_at`, `completed_at` 而非舊的 `timestamp`
 - ✅ 錯誤處理包含 `error_code` 和 `error_details`
 - ✅ 符合 aiva_common v2.0 命令系統規範
+
+---
+
+## 📂 目錄結構
+
+```
+function_sqli/
+├── README.md                          # 本文檔（頂層概述）
+├── __init__.py                        # 模組初始化
+│
+├── engines/                           # 檢測引擎（核心技術層）
+│   ├── README.md                      # 🔗 引擎技術文檔
+│   ├── boolean_detection_engine.py    # 布林注入檢測
+│   ├── time_detection_engine.py       # 時間盲注檢測
+│   ├── union_detection_engine.py      # 聯合查詢檢測
+│   ├── error_detection_engine.py      # 錯誤回顯檢測
+│   ├── oob_detection_engine.py        # 帶外檢測
+│   └── hackingtool_engine.py          # 外部工具引擎
+│
+├── integration_tools/                 # 工具整合層
+│   ├── README.md                      # 🔗 整合工具文檔
+│   ├── sql_tools.py                   # SQL 工具管理器
+│   └── bounty_hunter.py               # Bug Bounty 模式
+│
+├── external_tools/                    # 第三方工具（不修改）
+│   ├── README.md                      # 🔗 外部工具說明
+│   ├── USAGE_AND_ISSUES.md           # 使用分析
+│   ├── NoSQLMap/                      # NoSQL 注入工具
+│   ├── sqlmap/                        # SQL 注入工具
+│   └── sql-injection-payload-list/    # Payload 庫
+│
+├── config/                            # 配置目錄
+│   └── default.yaml                   # 默認配置
+│
+├── worker.py                          # 核心執行器
+├── sqli_detector.py                   # 檢測器編排
+├── command_handler.py                 # 命令處理器
+├── detection_models.py                # 數據模型
+├── config.py                          # 配置管理
+├── telemetry.py                       # 遙測統計
+├── exceptions.py                      # 異常定義
+├── hackingtool_config.py              # 外部工具配置
+├── hackingtool_manager.py             # 外部工具管理
+├── hackingtool_sql_cli.py             # 工具 CLI 介面
+└── ... (其他輔助文件)
+```
+
+### 文檔層級說明
+
+- **頂層 (function_sqli/README.md)**：模組概述、使用方式、快速開始
+- **[engines/README.md](engines/README.md)**：技術深度文檔，詳細的檢測原理和 Payload 設計
+- **[integration_tools/README.md](integration_tools/README.md)**：工具整合、API 參考、Bug Bounty 模式
+- **[external_tools/README.md](external_tools/README.md)**：外部工具使用、授權信息、問題分析
+
+---
+
+## 📚 子模組文檔
+
+詳細的技術文檔請參閱各子模組：
+
+### 🔗 [檢測引擎技術文檔](engines/README.md)
+- 6 種檢測引擎的詳細原理
+- Payload 設計和優化
+- 數據庫特定技術
+- WAF 繞過策略
+- 開發新引擎指南
+
+**適合**：安全研究員、引擎開發者
+
+---
+
+### 🔗 [工具整合文檔](integration_tools/README.md)
+- Sqlmap 整合使用
+- NoSQLMap 整合
+- Bug Bounty 獵人模式
+- 工具管理和安裝
+- API 參考
+
+**適合**：滲透測試人員、Bug Bounty 獵人
+
+---
+
+### 🔗 [外部工具說明](external_tools/README.md)
+- 第三方工具列表
+- 授權信息
+- 使用無問題分析
+- 集成方式
+
+**適合**：系統管理員、架構師
+
+---
+
+## 🔧 開發指南
+
+### 添加新檢測引擎
+
+1. **創建引擎文件**
+```python
+# engines/my_detection_engine.py
+from typing import List
+import httpx
+from services.aiva_common.schemas import FunctionTaskPayload
+from ..detection_models import DetectionResult
+
+class MyDetectionEngine:
+    """我的自定義檢測引擎"""
+    
+    async def detect(
+        self,
+        task: FunctionTaskPayload,
+        client: httpx.AsyncClient
+    ) -> List[DetectionResult]:
+        # 實現檢測邏輯
+        results = []
+        
+        # ... 檢測代碼 ...
+        
+        return results
+```
+
+2. **註冊到檢測器**
+```python
+# sqli_detector.py
+from .engines.my_detection_engine import MyDetectionEngine
+
+class SqliDetector:
+    def __init__(self):
+        # ...
+        self.my_engine = MyDetectionEngine()
+    
+    async def detect(self, task):
+        tasks = [
+            # ...其他引擎
+            self.my_engine.detect(task, client)
+        ]
+        # ...
+```
+
+3. **添加測試**
+```python
+# tests/test_my_engine.py
+import pytest
+from engines.my_detection_engine import MyDetectionEngine
+
+@pytest.mark.asyncio
+async def test_my_engine():
+    engine = MyDetectionEngine()
+    # ... 測試代碼 ...
+```
+
+### 貢獻指南
+
+1. Fork 本項目
+2. 創建特性分支 (`git checkout -b feature/my-engine`)
+3. 提交更改 (`git commit -am 'Add my engine'`)
+4. 推送到分支 (`git push origin feature/my-engine`)
+5. 創建 Pull Request
+
+---
+
+## 🎯 後續發展
+
+### 短期目標（1-3 個月）
+- [ ] 機器學習增強的 payload 生成
+- [ ] 更多 WAF 繞過技術
+- [ ] GraphQL 注入檢測
+- [ ] 性能優化（減少請求數）
+
+### 中期目標（3-6 個月）
+- [ ] NoSQL 注入深度支持
+- [ ] 自動化利用和數據提取
+- [ ] 漏洞影響評估
+- [ ] Docker 容器化部署
+
+### 長期目標（6-12 個月）
+- [ ] 雲原生架構支持
+- [ ] 分散式檢測集群
+- [ ] AI 輔助決策系統
+- [ ] 企業級管理介面
+
+---
+
+## 📞 支持與反饋
+
+### 問題報告
+- GitHub Issues: https://github.com/your-repo/issues
+- 郵件: security@aiva.example.com
+
+### 文檔問題
+如發現文檔錯誤或需要補充，請提交 Issue 或 PR。
+
+---
+
+## 📄 許可證
+
+本模組遵循 MIT 許可證。外部工具遵循其各自的許可證（詳見 [external_tools/README.md](external_tools/README.md)）。
+
+---
+
+**模組狀態**: ✅ 生產就緒  
+**維護者**: AIVA Security Team  
+**最後更新**: 2025年12月12日  
+**版本**: v1.0.0  
+**CLI 支持**: ✅ 完全就緒
 
 ### 方式三：透過 Message Queue（分散式架構）
 

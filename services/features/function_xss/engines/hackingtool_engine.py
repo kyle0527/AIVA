@@ -386,16 +386,17 @@ class CrossLanguageXSSEngine:
                 if not tool_config:
                     raise ValueError(f"Tool config not found: {tool_name}")
                 
-                # 使用timeout情境管理器耏非參數
-                async with asyncio.timeout(execution_plan.get("timeout", 300)):
+                # 使用timeout情境管理器並傳遞參數
+                timeout = execution_plan.get("timeout", 300)
+                async with asyncio.timeout(timeout):
                     if tool_config.language == "go":
-                        result = await self._execute_go_tool(tool_config, target_url)
+                        result = await self._execute_go_tool(tool_config, target_url, timeout)
                     elif tool_config.language == "ruby":
-                        result = await self._execute_ruby_tool(tool_config, target_url)
+                        result = await self._execute_ruby_tool(tool_config, target_url, timeout)
                     elif tool_config.language == "python":
-                        result = await self._execute_python_tool(tool_config, target_url)
+                        result = await self._execute_python_tool(tool_config, target_url, timeout)
                     elif tool_config.language == "rust":
-                        result = await self._execute_rust_tool(tool_config, target_url)
+                        result = await self._execute_rust_tool(tool_config, target_url, timeout)
                     else:
                         raise ValueError(f"Unsupported language: {tool_config.language}")
                 
@@ -441,7 +442,8 @@ class CrossLanguageXSSEngine:
     async def _execute_go_tool(
         self, 
         tool_config: XSSToolConfig, 
-        target_url: str
+        target_url: str,
+        timeout: int = 300
     ) -> subprocess.CompletedProcess:
         """執行 Go 語言工具"""
         if tool_config.name == "Dalfox":
@@ -472,7 +474,8 @@ class CrossLanguageXSSEngine:
     async def _execute_ruby_tool(
         self, 
         tool_config: XSSToolConfig, 
-        target_url: str
+        target_url: str,
+        timeout: int = 300
     ) -> subprocess.CompletedProcess:
         """執行 Ruby 語言工具"""
         if tool_config.name == "XSpear":
@@ -501,7 +504,8 @@ class CrossLanguageXSSEngine:
     async def _execute_python_tool(
         self, 
         tool_config: XSSToolConfig, 
-        target_url: str
+        target_url: str,
+        timeout: int = 300
     ) -> subprocess.CompletedProcess:
         """執行 Python 語言工具"""
         # 根據工具名稱構建命令
@@ -540,7 +544,8 @@ print(json.dumps(results))
     async def _execute_rust_tool(
         self, 
         tool_config: XSSToolConfig, 
-        target_url: str
+        target_url: str,
+        timeout: int = 300
     ) -> subprocess.CompletedProcess:
         """執行 Rust 語言工具"""
         if tool_config.name == "RVuln":

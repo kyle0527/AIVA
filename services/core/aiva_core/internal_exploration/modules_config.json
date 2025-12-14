@@ -1,0 +1,58 @@
+{
+  "modules": {
+    "aiva_core": {
+      "cognitive_core": "認知核心模組",
+      "internal_exploration": "內探模組", 
+      "task_planning": "任務規劃模組",
+      "external_learning": "外學模組",
+      "core_capabilities": "核心能力模組",
+      "service_backbone": "服務骨幹模組"
+    },
+    "aiva_features": {
+      "attack_chains": "攻擊鏈模組",
+      "business_logic": "業務邏輯模組",
+      "conversation": "對話系統模組",
+      "plugins": "插件系統模組"
+    },
+    "aiva_scan": {
+      "vulnerability_scanner": "漏洞掃描模組",
+      "port_scanner": "端口掃描模組",
+      "web_scanner": "Web掃描模組",
+      "network_scanner": "網路掃描模組"
+    },
+    "aiva_integration": {
+      "api_gateway": "API閘道模組",
+      "message_queue": "消息隊列模組",
+      "database": "數據庫模組",
+      "authentication": "身份驗證模組"
+    }
+  },
+  "component_types": {
+    "AI組件": {
+      "keywords": ["ai", "neural", "machine_learning", "model", "train", "predict", "intelligence", "cognitive", "decision"],
+      "patterns": [".*ai.*", ".*neural.*", ".*model.*", ".*train.*"]
+    },
+    "程式組件": {
+      "keywords": ["config", "utils", "helper", "parser", "validator", "converter", "formatter"],
+      "patterns": [".*config.*", ".*util.*", ".*helper.*"]
+    },
+    "混合組件": {
+      "keywords": ["analyzer", "processor", "engine", "manager", "controller", "orchestrator"],
+      "patterns": [".*analyzer.*", ".*processor.*", ".*engine.*"]
+    }
+  },
+  "script_descriptions": {
+    "default_patterns": {
+      "analyzer": "分析器 - 數據分析處理",
+      "processor": "處理器 - 數據處理邏輯", 
+      "manager": "管理器 - 資源管理控制",
+      "controller": "控制器 - 流程控制管理",
+      "engine": "引擎 - 核心執行邏輯",
+      "scanner": "掃描器 - 掃描檢測工具",
+      "parser": "解析器 - 數據解析處理",
+      "validator": "驗證器 - 數據驗證檢查",
+      "formatter": "格式化器 - 數據格式處理",
+      "converter": "轉換器 - 數據轉換工具"
+    }
+  }
+}

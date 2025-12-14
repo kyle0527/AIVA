@@ -70,6 +70,10 @@ select = ["E", "F", "I", "UP", "B", "SIM", "C4", "PIE"]
 ignore = ["E501"]                                       # handled by black
 fix = true
 target-version = "py313"
+exclude = [
+    "*/external_tools/*",
+    "services/features/*/external_tools/*"
+]
 
 [tool.ruff.isort]
 known-first-party = ["services"]
@@ -93,7 +97,7 @@ no_implicit_reexport = true
 no_implicit_optional = false
 disallow_untyped_defs = false
 ignore_missing_imports = true
-exclude = "^(tests|services[\\/]scan)[\\/]"
+exclude = "^(tests|services[\\/]scan|.*[\\/]external_tools)[\\/]"
 disable_error_code = [
     "no-any-return",
     "assignment", 

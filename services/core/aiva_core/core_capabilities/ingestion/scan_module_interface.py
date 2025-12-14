@@ -1,6 +1,7 @@
 import json
 from typing import Any
 
+from pydantic import HttpUrl
 from services.aiva_common.enums import Topic
 from services.aiva_common.mq import AbstractBroker
 from services.aiva_common.schemas import (
@@ -160,9 +161,12 @@ class ScanModuleInterface:
             trace_id: 追蹤 ID
             timeout_seconds: 超時時間 (預設 10 分鐘)
         """
+        # 將 str 轉換為 HttpUrl 以符合 schema 要求
+        validated_targets = [HttpUrl(url) for url in targets]
+        
         phase0_payload = Phase0StartPayload(
             scan_id=scan_id,
-            targets=targets,
+            targets=validated_targets,
             timeout=timeout_seconds,  # 使用正確的參數名 timeout
         )
 
@@ -207,9 +211,12 @@ class ScanModuleInterface:
             max_urls: 最大 URL 數量 (預設 1000)
             timeout_seconds: 超時時間 (預設 30 分鐘)
         """
+        # 將 str 轉換為 HttpUrl 以符合 schema 要求
+        validated_targets = [HttpUrl(url) for url in targets]
+        
         phase1_payload = Phase1StartPayload(
             scan_id=scan_id,
-            targets=targets,
+            targets=validated_targets,
             phase0_result=phase0_result,
             selected_engines=selected_engines,
             max_depth=max_depth,

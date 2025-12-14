@@ -1,7 +1,16 @@
 # 🌐 SSRF 檢測模組
 
+**版本**: v2.0 | **狀態**: ✅ 生產就緒 | **更新**: 2025-12-12
+
 **什麼是 SSRF？**  
-Server-Side Request Forgery（伺服器端請求偽造）是一種攻擊技術，攻擊者誘使伺服器對內部或第三方系統發起非預期的HTTP請求。本模組整合了內網探測、雲端元數據訪問、協議測試和帶外（OAST）驗證等多重檢測技術。
+Server-Side Request Forgery（伺服器端請求偽造）是一種攻擊技術，政擊者誘使伺服器對內部或第三方系統發起非預期的HTTP請求。本模組整合了內網探測、雲端元數據訪問、協議測試、DNS rebinding 和帶外（OAST）驗證等多重檢測技術。
+
+## 📚 快速導航
+
+- [🚀 CLI 使用方式](#-cli-使用方式) - **推薦：無需 MQ，直接測試**
+- [⚡ 新增強化功能](#-新增強化功能) - v2.0 特性
+- [⚙️ 運作流程](#️-運作流程)
+- [🔧 核心能力](#-核心能力)
 
 ## 🏗️ 架構圖
 ```
@@ -22,101 +31,163 @@ Server-Side Request Forgery（伺服器端請求偽造）是一種攻擊技術�
 └─────────────────────────────────────────────────────────────┘
 ```
 
-## ⚙️ 運作流程
+## ⚡ 新增強化功能
+
+### v2.0 (2025-12-12) - 重大更新
+
+- ✅ **移除降級功能**: 所有錯誤現在都會拋出異常，不再默默失敗
+- ✅ **IP 編碼繞過**: 支援 Decimal、Hex、Octal、Mixed encoding
+- ✅ **DNS Rebinding**: 支援 rebind.it、rbndr.us 等服務
+- ✅ **雲端元數據強化**: 新增 AWS ECS、GCP、Azure、阿里雲、騰訊雲
+- ✅ **協議繞過**: CRLF 注入、URL encoding、@ symbol bypass
+- ✅ **更多協議**: 支援 gopher://、dict://、tftp:// 等 5+ 協議
+
+## ⚡️ 運作流程
 1. **參數語義分析** - 識別可能的 SSRF 注入點（URL、檔案路徑參數）
 2. **測試向量生成** - 根據參數特性生成對應的測試 payload
 3. **多層級檢測** - 執行分層檢測策略：
    - **內網探測**: 掃描 127.0.0.1、169.254.169.254（AWS 元數據）等
    - **協議測試**: file://, gopher://, dict://, ldap:// 等協議
+   - **IP 繞過**: Decimal/Hex/Octal 編碼、DNS rebinding
    - **帶外驗證**: 使用 OAST 服務確認盲 SSRF
 4. **結果整合** - 綜合直接響應和帶外回調確認漏洞
 
-## 🚀 快速執行
+## 🚀 CLI 使用方式
 
-### 方式一：直接執行檢測引擎（開發/測試用）
+### ⭐ 推薦：CLI 直接測試（無需 MQ）
 
-**適用場景**: 快速驗證、單元測試、本地開發
+**版本**: v2.0 新增 | **狀態**: ✅ 完整支援
 
-```bash
-# 進入專案目錄
-cd c:\D\fold7\AIVA-git
+```powershell
+# 在專案根目錄執行
 
-# 執行 SSRF 檢測測試
-python -c "import asyncio; import httpx; from services.aiva_common.schemas.tasks import FunctionTaskPayload, FunctionTaskTarget; from services.features.function_ssrf.engine.ssrf_engine import SSRFEngine; exec('''
+# 1. 基本 SSRF 檢測
+python -m services.features.function_ssrf `
+    --url "http://localhost:3000/api/fetch" `
+    --param "url" `
+    --timeout 30
+
+# 2. 進階檢測（含 IP 繞過）
+python -m services.features.function_ssrf `
+    --url "http://localhost:3000/api/fetch" `
+    --param "url" `
+    --advanced `
+    --timeout 30
+
+# 3. DNS Rebinding 檢測
+python -m services.features.function_ssrf `
+    --url "http://localhost:3000/api/fetch" `
+    --param "url" `
+    --dns-rebinding `
+    --timeout 60
+
+# 4. 雲端 metadata 檢測
+python -m services.features.function_ssrf `
+    --url "http://vulnerable-app.com/import" `
+    --param "source_url" `
+    --method POST `
+    --location body `
+    --cloud aws,gcp,azure
+```
+
+**輸出格式** (JSON):
+```json
+{
+  "target": "http://localhost:3000/api/fetch",
+  "findings_count": 2,
+  "vulnerable": true,
+  "findings": [
+    {
+      "type": "SSRF_INTERNAL_ACCESS",
+      "severity": "HIGH",
+      "payload": "http://127.0.0.1/admin",
+      "evidence": "Successfully accessed internal service"
+    },
+    {
+      "type": "SSRF_CLOUD_METADATA",
+      "severity": "CRITICAL",
+      "payload": "http://169.254.169.254/latest/meta-data/",
+      "evidence": "AWS metadata endpoint accessible"
+    }
+  ]
+}
+```
+
+---
+
+### 方式二：程式化調用（開發用）
+
+**適用場景**: 整合測試、自動化腳本
+
+```python
+# 方式 A: 使用 worker.process_task（推薦）
+import asyncio
+from services.aiva_common.schemas import FunctionTaskPayload, FunctionTaskTarget
+from services.features.function_ssrf.worker import process_task
+from services.features.function_ssrf.param_semantics_analyzer import ParamSemanticsAnalyzer
+from services.features.function_ssrf.internal_address_detector import InternalAddressDetector
+from services.features.function_ssrf.oast_dispatcher import OastDispatcher
+import httpx
+
 async def test_ssrf():
     # 建立任務結構
     task = FunctionTaskPayload(
-        task_id=\"task_ssrf_001\",
-        scan_id=\"scan_001\",
+        task_id="task_ssrf_001",
+        scan_id="scan_001",
         target=FunctionTaskTarget(
-            url=\"http://localhost:3000/api/fetch\",
-            parameter=\"url\",
-            method=\"GET\",
-            parameter_location=\"query\"
+            url="http://localhost:3000/api/fetch",
+            parameter="url",
+            method="GET",
+            parameter_location="query"
         ),
-        strategy=\"normal\"
+        strategy="normal"
     )
     
-    # 建立 SSRF 引擎
-    engine = SSRFEngine(
-        timeout=5.0,
-        max_redirects=3,
-        allow_active=True,
-        safe_mode=False
-    )
+    async with httpx.AsyncClient(timeout=30) as client:
+        result = await process_task(
+            task,
+            client=client,
+            analyzer=ParamSemanticsAnalyzer(),
+            detector=InternalAddressDetector(),
+            dispatcher=OastDispatcher()
+        )
     
-    # 測試內網掃描
-    print(\"=== 測試 1: 內網掃描 ===\")
-    issues = await engine.check_internal_access(\"http://127.0.0.1:3000\")
-    print(f\"發現 {len(issues)} 個內網訪問問題\")
+    # 輸出結果
+    print(f\"發現 {len(result.findings)} 個漏洞\")
+    print(f\"嘗試次數: {result.telemetry.attempts}\")
+    print(f\"OAST 回調: {result.telemetry.oast_callbacks}\")
     
-    # 測試檔案協議
-    print(\"\\n=== 測試 2: 檔案協議 ===\")
-    issues = await engine.check_file_protocol(\"file:///etc/passwd\")
-    print(f\"發現 {len(issues)} 個檔案協議問題\")
-    
-    # 測試雲端元數據
-    print(\"\\n=== 測試 3: 雲端元數據 ===\")
-    issues = await engine.check_cloud_metadata(\"http://169.254.169.254/latest/meta-data/\")
-    print(f\"發現 {len(issues)} 個雲端元數據訪問問題\")
-    
-    await engine.close()
+    for finding in result.findings:
+        print(f\"\\n漏洞類型: {finding.vulnerability.type}\")
+        print(f\"嚴重程度: {finding.vulnerability.severity}\")
+        print(f\"Payload: {finding.payload.request}\")
 
 asyncio.run(test_ssrf())
-''')"
 ```
 
-**指令參數說明**:
+**任務參數說明**:
 - `task_id`: 任務唯一識別碼，必須以 `task_` 開頭
 - `scan_id`: 掃描會話 ID，用於關聯多個任務
 - `target.url`: 目標 URL，完整的 HTTP/HTTPS 位址
 - `target.parameter`: 要測試的參數名稱（如 `url`, `file`, `path`）
-- `target.method`: HTTP 方法 (`GET`, `POST`)
-- `target.parameter_location`: 參數位置 (`query`, `body`)
+- `target.method`: HTTP 方法 (`GET`, `POST`, `PUT`, `DELETE`)
+- `target.parameter_location`: 參數位置 (`query`, `body`, `header`, `cookie`)
 - `strategy`: 檢測策略 (`normal`, `aggressive`, `stealth`)
 
-**SSRFEngine 初始化參數**:
-- `timeout`: 請求超時時間（秒），預設 5.0
-- `max_redirects`: 最大重定向次數，預設 3
-- `allow_active`: 是否允許主動探測，預設 True
-- `safe_mode`: 安全模式（避免破壞性測試），預設 False
+**process_task 函數參數**:
+- `task`: FunctionTaskPayload 對象，包含檢測目標信息
+- `client`: httpx.AsyncClient 實例，用於發送 HTTP 請求
+- `analyzer`: ParamSemanticsAnalyzer 實例，用於分析參數語義
+- `detector`: InternalAddressDetector 實例，用於檢測內網地址
+- `dispatcher`: OastDispatcher 實例，用於處理帶外回調
 
-**四種檢測方法說明**:
-1. **check_internal_access(url)**: 內網訪問檢測
-   - 測試目標: `127.0.0.1`, `localhost`, `169.254.169.254` (AWS metadata)
-   - 檢測是否可訪問內網資源
-
-2. **check_file_protocol(url)**: 檔案協議檢測
-   - 測試協議: `file://`, `ftp://`, `gopher://`, `dict://`
-   - 檢測是否可讀取本地檔案
-
-3. **check_cloud_metadata(url)**: 雲端元數據檢測
-   - AWS: `http://169.254.169.254/latest/meta-data/`
-   - Azure: `http://169.254.169.254/metadata/instance`
-   - GCP: `http://metadata.google.internal/computeMetadata/v1/`
-
-4. **check_protocol_confusion(url)**: 協議混淆檢測
-   - 測試 URL 解析漏洞和協議繞過
+**自動檢測功能**:
+- ✅ **內網掃描**: 自動測試 127.0.0.1, localhost, 192.168.x.x
+- ✅ **雲端 metadata**: 自動探測 AWS/GCP/Azure/阿里雲/騰訊雲
+- ✅ **協議繞過**: 自動測試 file://, gopher://, dict:// 等
+- ✅ **IP 編碼**: 自動生成 Decimal/Hex/Octal 編碼 payload
+- ✅ **DNS Rebinding**: 自動使用 rebind.it, rbndr.us 服務
+- ✅ **OAST 驗證**: 自動註冊並檢查帶外回調
 
 **參數變化範例**:
 ```python
@@ -146,12 +217,51 @@ target=FunctionTaskTarget(
 )
 ```
 
-**實際測試結果範例：**
+```python
+import asyncio
+import httpx
+from services.aiva_common.schemas import FunctionTaskPayload, FunctionTaskTarget
+from services.features.function_ssrf.smart_ssrf_detector import SmartSSRFDetector
+from services.features.function_ssrf.param_semantics_analyzer import ParamSemanticsAnalyzer
+from services.features.function_ssrf.internal_address_detector import InternalAddressDetector
+from services.features.function_ssrf.oast_dispatcher import OastDispatcher
+
+async def test_ssrf():
+    task = FunctionTaskPayload(
+        task_id="task_ssrf_001",
+        scan_id="scan_001",
+        target=FunctionTaskTarget(
+            url="http://localhost:3000/api/fetch",
+            parameter="url",
+            method="GET",
+            parameter_location="query"
+        )
+    )
+    
+    detector = SmartSSRFDetector()
+    async with httpx.AsyncClient(timeout=30) as client:
+        findings, metrics = await detector.detect_vulnerabilities(
+            task,
+            client=client,
+            analyzer=ParamSemanticsAnalyzer(),
+            detector=InternalAddressDetector(),
+            dispatcher=OastDispatcher()
+        )
+    
+    print(f"Found {len(findings)} vulnerabilities")
+    print(f"Metrics: {metrics}")
+
+asyncio.run(test_ssrf())
 ```
 
-### 方式二：透過 Command Handler（推薦生產用法） 🔧
+---
 
-**適用場景**: AI 指揮架構、統一命令介面、符合 aiva_common 規範
+### 方式三：透過 Message Queue（已棄用）
+
+**狀態**: ⚠️ 已棄用，請使用 CLI 方式
+
+<details>
+<summary>點擊查看舊版 MQ 方式（不推薦）</summary>
 
 ```python
 # 🎯 正確的 SSRF 命令處理器使用方式 (2025-12-03 修正)
@@ -235,54 +345,58 @@ asyncio.run(test_ssrf_command_handler())
 === 測試完成 ===
 ```
 
-✅ **驗證結論：SSRF 模組真實發送請求並檢測到漏洞！**
+</details>
 
-## 🚀 支援指令
+---
 
-### 實際使用方式（程式化調用）
-```python
-from services.aiva_common.schemas import AICommand, CommandType
-from services.aiva_common import get_command_center
+## 🔧 核心能力
 
-# 建立命令中心連線
-command_center = get_command_center()
+- ✅ **多雲端支援**: AWS、GCP、Azure、阿里雲、騰訊雲 metadata 檢測
+- ✅ **IP 編碼繞過**: Decimal、Hex、Octal、Mixed encoding
+- ✅ **DNS Rebinding**: 支援 rebind.it、rbndr.us 等服務
+- ✅ **協議繞過**: CRLF 注入、URL encoding、@ symbol bypass
+- ✅ **多協議測試**: gopher://、dict://、tftp://、ldap://、smb://
+- ✅ **OAST 驗證**: 帶外回調確認盲 SSRF
+- ✅ **虛假回應過濾**: 內部服務驗證、WAF 干擾檢測
+- ✅ **無降級模式**: 所有錯誤拋出異常，不會默默失敗
 
-# SSRF 檢測命令
-command = AICommand(
-    command_id="ssrf_test_001",
-    command_type=CommandType.FEATURE_SSRF_TEST,
-    target_module="features.ssrf",
-    payload={
-        "target_url": "https://app.com/api/fetch",
-        "test_parameters": {
-            "url": "https://example.com",
-            "callback": "https://webhook.site/xyz",
-            "file_path": "/etc/passwd"
-        },
-        "internal_scan": True,
-        "cloud_metadata": ["aws", "gcp", "azure"],
-        "protocols": ["http", "https", "file", "gopher"],
-        "oast_callback": True,
-        "timeout": 30
-    }
-)
+## 📝 更新日誌
 
-# 執行檢測
-result = await command_center.execute(command)
-```
+### v2.0 (2025-12-12)
+- ✅ 移除所有降級功能（continue、return []）
+- ✅ 新增 DNS rebinding 檢測器
+- ✅ 新增 IP 編碼繞過技術（17+ payloads）
+- ✅ 擴展雲端 metadata 端點（AWS ECS、GCP、Azure、阿里雲、騰訊雲）
+- ✅ 強化協議繞過（CRLF、URL encoding、@ bypass）
+- ✅ 新增 CLI 入口
+- ✅ 移除 MQ 依賴
 
-### 何時使用？
-- ✅ **適用場景**:
-  - **URL 參數功能**: 圖片獲取、網頁預覽、文件下載
-  - **Webhook 回調**: API 通知、第三方整合
-  - **代理服務**: 內容代理、API 轉發
-  - **雲端服務**: 檔案處理、數據同步
-  
-- ⚠️ **使用注意**:
-  - 避免掃描生產環境的關鍵內部服務
-  - 注意可能觸發的安全警報
-  - 謹慎測試雲端元數據端點
-  - 確保 OAST 回調域名的安全性
+### v1.0
+- 初始版本，支援基本 SSRF 檢測
+
+## 🎯 使用場景
+
+### ✅ 適用場景
+
+- **URL 參數功能**: 圖片獲取、網頁預覽、文件下載
+- **Webhook 回調**: API 通知、第三方整合
+- **代理服務**: 內容代理、API 轉發
+- **雲端服務**: 檔案處理、數據同步
+
+### ⚠️ 使用注意
+
+- 避免掃描生產環境的關鍵內部服務
+- 注意可能觸發的安全警報
+- 謹慎測試雲端元數據端點
+- 確保 OAST 回調域名的安全性
+- 僅在授權的目標上進行測試
+
+## 📚 相關文檔
+
+- [dns_rebinding_detector.py](./dns_rebinding_detector.py) - DNS Rebinding 檢測器實現
+- [param_semantics_analyzer.py](./param_semantics_analyzer.py) - 參數語義分析與 payload 生成
+- [smart_ssrf_detector.py](./smart_ssrf_detector.py) - 智能 SSRF 檢測器
+- [FALSE_POSITIVE_ANALYSIS.md](../FALSE_POSITIVE_ANALYSIS.md) - 虛假回應分析報告
 
 ### 如何使用？
 ```python
@@ -367,5 +481,7 @@ comprehensive_ssrf = {
 ## 🎯 後續發展方向
 - [ ] **容器環境檢測** - Docker socket、Kubernetes API 探測
 - [ ] **IPv6 支援** - 擴展到 IPv6 網路環境檢測
-- [ ] **DNS 重綁定** - 高級 DNS 攻擊技術實現
+- [ ] **時間盲注檢測** - 基於延遲的 SSRF 檢測技術
 - [ ] **機器學習參數識別** - AI 自動識別潛在 SSRF 參數
+- [ ] **響應差異分析** - 更智能的虛假陽性過濾
+- [ ] **自動化 payload 優化** - 根據目標特徵動態調整測試向量

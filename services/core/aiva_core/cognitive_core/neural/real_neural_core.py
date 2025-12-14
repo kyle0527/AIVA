@@ -842,20 +842,17 @@ class RealDecisionEngine:
         decision_probs = F.softmax(main_output, dim=1).squeeze()
         decision_index = int(torch.argmax(decision_probs))
         
-        # 攻擊向量分析 (基於任務描述)
-        task_lower = task.lower()
-        if 'sql' in task_lower:
-            attack_vector = 'sql_injection'
-        elif 'xss' in task_lower:
-            attack_vector = 'cross_site_scripting'
-        elif 'ssrf' in task_lower:
-            attack_vector = 'server_side_request_forgery'
-        elif 'upload' in task_lower:
-            attack_vector = 'file_upload'
-        elif 'auth' in task_lower:
-            attack_vector = 'authentication_bypass'
-        else:
-            attack_vector = 'reconnaissance'
+        # 攻擊向量分析 - 使用神經網路輸出決定,而非字串比對
+        attack_vectors = [
+            'reconnaissance',
+            'sql_injection',
+            'cross_site_scripting',
+            'server_side_request_forgery',
+            'file_upload',
+            'authentication_bypass'
+        ]
+        attack_vector_index = decision_index % len(attack_vectors)
+        attack_vector = attack_vectors[attack_vector_index]
             
         # 風險等級評估 - 使用 aiva_common 標準枚舉
         confidence_score = float(torch.max(decision_probs))

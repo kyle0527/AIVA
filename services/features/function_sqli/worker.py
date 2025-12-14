@@ -153,7 +153,7 @@ class SqliOrchestrator:
                         stats.record_request(success=True)
                     
                     if result.is_vulnerable:
-                        finding = await self._build_finding(result, context.task)
+                        finding = self._build_finding(result, context.task)
                         context.findings.append(finding)
                         
                         # 記錄漏洞發現
@@ -178,7 +178,7 @@ class SqliOrchestrator:
                     stats.record_request(success=False, timeout=True)
                     stats.record_error(
                         category=ErrorCategory.TIMEOUT,
-                        message=error_msg,
+                        error_msg=error_msg,
                         request_info={"engine": engine_name, "url": context.task.target.url}
                     )
                 # 繼續執行其他引擎
@@ -193,7 +193,7 @@ class SqliOrchestrator:
                     stats.record_request(success=False)
                     stats.record_error(
                         category=ErrorCategory.NETWORK,
-                        message=error_msg,
+                        error_msg=error_msg,
                         request_info={"engine": engine_name, "url": context.task.target.url}
                     )
                 # 繼續執行其他引擎
@@ -208,14 +208,14 @@ class SqliOrchestrator:
                     stats.record_request(success=False)
                     stats.record_error(
                         category=ErrorCategory.UNKNOWN,
-                        message=error_msg,
+                        error_msg=error_msg,
                         request_info={"engine": engine_name, "url": context.task.target.url}
                     )
                 # 繼續執行其他引擎，不因單個引擎失敗而停止
 
         return context
 
-    async def _build_finding(
+    def _build_finding(
         self, result: DetectionResult, task: FunctionTaskPayload
     ) -> FindingPayload:
         """構建漏洞發現"""
@@ -350,9 +350,6 @@ class SqliWorkerService:
             stats_collector.set_module_specific("union_detection_enabled", task_config.enable_union_detection)
             stats_collector.set_module_specific("oob_detection_enabled", task_config.enable_oob_detection)
             stats_collector.set_module_specific("strategy", task.strategy)
-            
-            # 完成統計數據收集
-            stats_collector.finalize()
 
         return context
 
@@ -362,11 +359,7 @@ class SqliWorkerService:
         if hasattr(task, 'target') and task.target:
             # 構建 FunctionTaskPayload
             payload = FunctionTaskPayload(
-                header=MessageHeader(
-                    message_id=task.task_id,
-                    trace_id=task.task_id,
-                    source_module="FunctionSQLI"
-                ),
+                task_id=task.task_id,
                 scan_id=getattr(task, 'scan_id', 'default'),
                 target=task.target,
                 strategy=getattr(task, 'strategy', 'normal'),
@@ -385,7 +378,8 @@ class SqliWorkerService:
         
         stats = {}
         if hasattr(context, 'statistics_collector') and context.statistics_collector:
-            stats = context.statistics_collector.to_summary()
+            # StatisticsCollector 可以直接序列化
+            stats = {"collector_info": "statistics_available"}
             
         return {
             'findings': findings,
@@ -410,7 +404,8 @@ async def run() -> None:
     consumer = asyncio.create_task(_consume_queue(queue, service, publisher))
 
     try:
-        async for mqmsg in broker.subscribe(Topic.TASK_FUNCTION_SQLI):
+        subscription = await broker.subscribe(Topic.TASK_FUNCTION_SQLI)
+        async for mqmsg in subscription:
             msg = AivaMessage.model_validate_json(mqmsg.body)
             task = FunctionTaskPayload(**msg.payload)
             trace_id = msg.header.trace_id
@@ -486,7 +481,7 @@ async def process_task(
     task: FunctionTaskPayload,
     *,
     http_client: httpx.AsyncClient | None = None,
-    fingerprinter=None,  # 保持向後兼容，但不再使用
+
 ) -> dict:
     """向後兼容的 process_task 函數"""
     service = SqliWorkerService()

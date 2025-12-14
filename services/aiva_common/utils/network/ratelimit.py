@@ -226,128 +226,174 @@ class RateLimiter:
             latency: Response time in seconds
         """
         self._touch_host(host)
-        global_penalty = 1.0
-        host_penalty = 1.0
-        base_penalty = 1.0
-        global_boost = 1.0
-        host_boost = 1.0
-        base_boost = 1.0
+        
+        # Phase 1: Handle Retry-After
+        retry_after_until = self._handle_retry_after(host, headers)
+        
+        # Phase 2: Calculate adjustments
+        adjustments = self._calculate_adjustments(status_code, latency, retry_after_until)
+        
+        # Phase 3: Apply adjustments
+        self._apply_adjustments(host, adjustments)
+        
+        # Phase 4: Cleanup cooldown if success
+        self._cleanup_cooldown_if_success(host, status_code, latency)
 
-        # --- Retry-After handling ---
-        ra_until = None
+    def _handle_retry_after(self, host: str, headers: dict[str, str] | None) -> float | None:
+        """Parse and apply Retry-After header."""
+        ra_until = self._parse_retry_after(host, headers)
+        if ra_until is None:
+            return None
+        
+        prev = self._cooldown_until.get(host)
+        self._cooldown_until[host] = max(prev or 0.0, ra_until)
+        with contextlib.suppress(Exception):
+            self._log.info(
+                "ratelimiter.cooldown_begin host=%s until=%.3f source=Retry-After",
+                host,
+                ra_until,
+            )
+        return ra_until
+
+    def _parse_retry_after(self, host: str, headers: dict[str, str] | None) -> float | None:
+        """Parse Retry-After header value."""
+        if not headers or not any(k.lower() == "retry-after" for k in headers):
+            return None
+        
         try:
-            if headers and any(k.lower() == "retry-after" for k in headers):
-                ra_val = next(
-                    (headers[k] for k in headers if k.lower() == "retry-after"), None
-                )
-                if ra_val is not None:
-                    ra_val = str(ra_val).strip()
-                    # numeric seconds
-                    if re.fullmatch(r"\d+", ra_val):
-                        ra_until = time.monotonic() + float(ra_val)
-                    else:
-                        # HTTP-date
-                        try:
-                            dt = parsedate_to_datetime(ra_val)
-                            ra_until = time.monotonic() + max(
-                                0.0, (dt.timestamp() - time.time())
-                            )
-                        except (ValueError, TypeError, OverflowError) as e:
-                            self._log.debug(
-                                "Failed to parse HTTP-date in Retry-After header for host %s: %s",
-                                host,
-                                str(e),
-                            )
-                            ra_until = None
+            ra_val = next((headers[k] for k in headers if k.lower() == "retry-after"), None)
+            if ra_val is None:
+                return None
+            
+            ra_val = str(ra_val).strip()
+            if re.fullmatch(r"\d+", ra_val):
+                return time.monotonic() + float(ra_val)
+            
+            return self._parse_http_date(host, ra_val)
         except (KeyError, AttributeError, ValueError) as e:
-            self._log.debug(
-                "Failed to process Retry-After header for host %s: %s", host, str(e)
-            )
-            ra_until = None
+            self._log.debug("Failed to process Retry-After header for host %s: %s", host, str(e))
+            return None
 
-        if ra_until is not None:
-            prev = self._cooldown_until.get(host)
-            self._cooldown_until[host] = max(prev or 0.0, ra_until)
-            with contextlib.suppress(Exception):
-                self._log.info(
-                    "ratelimiter.cooldown_begin host=%s until=%.3f source=Retry-After",
-                    host,
-                    ra_until,
-                )
-            # Apply strong penalties to reduce send rate
-            base_penalty *= 1.5
-            host_penalty *= 2.0
-
-        # Status code handling
-        if status_code is not None:
-            if status_code == 429:
-                global_penalty = min(global_penalty, 0.7)
-                host_penalty = min(host_penalty, 0.4)
-                base_penalty = min(base_penalty, 0.85)
-            elif status_code in {503, 504}:
-                global_penalty = min(global_penalty, 0.8)
-                host_penalty = min(host_penalty, 0.6)
-                base_penalty = min(base_penalty, 0.9)
-            elif 500 <= status_code < 600:
-                global_penalty = min(global_penalty, 0.9)
-                host_penalty = min(host_penalty, 0.75)
-                base_penalty = min(base_penalty, 0.95)
-            elif 200 <= status_code < 300:
-                global_boost = max(global_boost, 1.05)
-                host_boost = max(host_boost, 1.08)
-                base_boost = max(base_boost, 1.02)
-
-        # Latency handling
-        if latency is not None:
-            if latency > 5.0:
-                global_penalty = min(global_penalty, 0.6)
-                host_penalty = min(host_penalty, 0.5)
-                base_penalty = min(base_penalty, 0.85)
-            elif latency > 2.5:
-                global_penalty = min(global_penalty, 0.75)
-                host_penalty = min(host_penalty, 0.65)
-                base_penalty = min(base_penalty, 0.9)
-            elif latency < 0.3:
-                global_boost = max(global_boost, 1.08)
-                host_boost = max(host_boost, 1.1)
-                base_boost = max(base_boost, 1.04)
-            elif latency < 0.6:
-                global_boost = max(global_boost, 1.03)
-                host_boost = max(host_boost, 1.05)
-                base_boost = max(base_boost, 1.02)
-
-        # Apply penalties or boosts
-        if global_penalty < 1.0 or host_penalty < 1.0 or base_penalty < 1.0:
-            if global_penalty < 1.0:
-                self._scale_global(global_penalty)
-            if base_penalty < 1.0:
-                self._scale_per_host_base(base_penalty)
-            if host_penalty < 1.0:
-                self._scale_host(host, host_penalty)
-            return
-
-        if global_boost > 1.0:
-            self._scale_global(global_boost)
-        if base_boost > 1.0:
-            self._scale_per_host_base(base_boost)
-        if host_boost > 1.0:
-            self._scale_host(host, host_boost)
-
-        # Cooldown cleanup: if success and latency is good, end cooldown early
+    def _parse_http_date(self, host: str, ra_val: str) -> float | None:
+        """Parse HTTP-date format in Retry-After."""
         try:
-            if status_code and 200 <= int(status_code) < 300 and latency is not None:
-                until = self._cooldown_until.get(host)
-                if until:
-                    now = time.monotonic()
-                    if now + max(0.0, latency) * 2 < until:
-                        self._cooldown_until.pop(host, None)
-                        self._log.info(
-                            "ratelimiter.cooldown_end host=%s reason=success", host
-                        )
-        except (KeyError, ValueError, TypeError) as e:
+            dt = parsedate_to_datetime(ra_val)
+            return time.monotonic() + max(0.0, (dt.timestamp() - time.time()))
+        except (ValueError, TypeError, OverflowError) as e:
             self._log.debug(
-                "Error processing response update for host %s: %s", host, str(e)
+                "Failed to parse HTTP-date in Retry-After header for host %s: %s",
+                host,
+                str(e),
             )
+            return None
+
+    def _calculate_adjustments(
+        self, status_code: int | None, latency: float | None, retry_after_until: float | None
+    ) -> dict[str, tuple[float, float, float]]:
+        """Calculate penalty/boost adjustments from response signals."""
+        penalty = [1.0, 1.0, 1.0]  # [global, host, base]
+        boost = [1.0, 1.0, 1.0]
+        
+        if retry_after_until is not None:
+            penalty[2] *= 1.5  # base
+            penalty[1] *= 2.0  # host
+        
+        self._adjust_for_status_code(status_code, penalty, boost)
+        self._adjust_for_latency(latency, penalty, boost)
+        
+        return {"penalty": tuple(penalty), "boost": tuple(boost)}
+
+    def _adjust_for_status_code(
+        self, status_code: int | None, penalty: list[float], boost: list[float]
+    ) -> None:
+        """Adjust penalty/boost based on status code."""
+        if status_code is None:
+            return
+        
+        if status_code == 429:
+            penalty[0] = min(penalty[0], 0.7)   # global
+            penalty[1] = min(penalty[1], 0.4)   # host
+            penalty[2] = min(penalty[2], 0.85)  # base
+        elif status_code in {503, 504}:
+            penalty[0] = min(penalty[0], 0.8)
+            penalty[1] = min(penalty[1], 0.6)
+            penalty[2] = min(penalty[2], 0.9)
+        elif 500 <= status_code < 600:
+            penalty[0] = min(penalty[0], 0.9)
+            penalty[1] = min(penalty[1], 0.75)
+            penalty[2] = min(penalty[2], 0.95)
+        elif 200 <= status_code < 300:
+            boost[0] = max(boost[0], 1.05)
+            boost[1] = max(boost[1], 1.08)
+            boost[2] = max(boost[2], 1.02)
+
+    def _adjust_for_latency(
+        self, latency: float | None, penalty: list[float], boost: list[float]
+    ) -> None:
+        """Adjust penalty/boost based on latency."""
+        if latency is None:
+            return
+        
+        if latency > 5.0:
+            penalty[0] = min(penalty[0], 0.6)
+            penalty[1] = min(penalty[1], 0.5)
+            penalty[2] = min(penalty[2], 0.85)
+        elif latency > 2.5:
+            penalty[0] = min(penalty[0], 0.75)
+            penalty[1] = min(penalty[1], 0.65)
+            penalty[2] = min(penalty[2], 0.9)
+        elif latency < 0.3:
+            boost[0] = max(boost[0], 1.08)
+            boost[1] = max(boost[1], 1.1)
+            boost[2] = max(boost[2], 1.04)
+        elif latency < 0.6:
+            boost[0] = max(boost[0], 1.03)
+            boost[1] = max(boost[1], 1.05)
+            boost[2] = max(boost[2], 1.02)
+
+    def _apply_adjustments(
+        self, host: str, adjustments: dict[str, tuple[float, float, float]]
+    ) -> None:
+        """Apply calculated penalty or boost adjustments."""
+        penalty = adjustments["penalty"]
+        boost = adjustments["boost"]
+        
+        # Apply penalties first (higher priority)
+        if any(p < 1.0 for p in penalty):
+            if penalty[0] < 1.0:
+                self._scale_global(penalty[0])
+            if penalty[2] < 1.0:
+                self._scale_per_host_base(penalty[2])
+            if penalty[1] < 1.0:
+                self._scale_host(host, penalty[1])
+            return
+        
+        # Apply boosts if no penalties
+        if boost[0] > 1.0:
+            self._scale_global(boost[0])
+        if boost[2] > 1.0:
+            self._scale_per_host_base(boost[2])
+        if boost[1] > 1.0:
+            self._scale_host(host, boost[1])
+
+    def _cleanup_cooldown_if_success(
+        self, host: str, status_code: int | None, latency: float | None
+    ) -> None:
+        """End cooldown early if response is successful with good latency."""
+        try:
+            if not (status_code and 200 <= int(status_code) < 300 and latency is not None):
+                return
+            
+            until = self._cooldown_until.get(host)
+            if not until:
+                return
+            
+            now = time.monotonic()
+            if now + max(0.0, latency) * 2 < until:
+                self._cooldown_until.pop(host, None)
+                self._log.info("ratelimiter.cooldown_end host=%s reason=success", host)
+        except (KeyError, ValueError, TypeError) as e:
+            self._log.debug("Error processing response update for host %s: %s", host, str(e))
 
     def should_send(self, host: str) -> bool:
         """
@@ -422,115 +468,133 @@ class RateLimiter:
         """Load state from persistent storage."""
         if not self.state_file or not self.state_file.exists():
             return
+        
         with self.state_lock:
-            try:
-                with self.state_file.open("r", encoding="utf-8") as fh:
-                    data = json.load(fh)
-            except (OSError, json.JSONDecodeError) as exc:
-                logger.warning(
-                    "Failed to load rate limiter state from %s: %s",
-                    self.state_file,
-                    exc,
-                )
+            data = self._read_state_file()
+            if data is None:
                 return
+            
+            time_context = self._calculate_time_context(data)
+            self._restore_global_bucket(data, time_context)
+            self._clear_host_state()
+            self._restore_host_overrides(data)
+            self._restore_per_host_base(data)
+            self._restore_host_buckets(data, time_context)
 
-            now_wall = time.time()
-            now_mono = time.monotonic()
-            saved_at = data.get("saved_at")
-            try:
-                saved_at_f = float(saved_at) if saved_at is not None else 0.0
-            except (TypeError, ValueError):
-                saved_at_f = 0.0
-            base_elapsed = max(0.0, now_wall - saved_at_f) if saved_at_f else 0.0
+    def _read_state_file(self) -> dict[str, Any] | None:
+        """Read and parse state file."""
+        try:
+            with self.state_file.open("r", encoding="utf-8") as fh:
+                return json.load(fh)
+        except (OSError, json.JSONDecodeError) as exc:
+            logger.warning("Failed to load rate limiter state from %s: %s", self.state_file, exc)
+            return None
 
-            # Restore global bucket
-            global_state = data.get("global")
-            if isinstance(global_state, dict):
-                rate_val = global_state.get("rate", self.global_rps)
-                try:
-                    rate = float(rate_val)
-                except (TypeError, ValueError):
-                    rate = self.global_rps
-                self._set_global_rate(rate)
-                tokens_val = global_state.get("tokens", self.global_bucket.tokens)
-                try:
-                    tokens = float(tokens_val)
-                except (TypeError, ValueError):
-                    tokens = self.global_bucket.tokens
-                updated_val = global_state.get("updated")
-                try:
-                    updated_at = float(updated_val) if updated_val is not None else None
-                except (TypeError, ValueError):
-                    updated_at = None
-                elapsed = (
-                    base_elapsed
-                    if updated_at is None
-                    else max(0.0, now_wall - updated_at)
+    def _calculate_time_context(self, data: dict[str, Any]) -> dict[str, float]:
+        """Calculate timing context for state restoration."""
+        now_wall = time.time()
+        now_mono = time.monotonic()
+        saved_at_f = self._safe_float(data.get("saved_at"), 0.0)
+        base_elapsed = max(0.0, now_wall - saved_at_f) if saved_at_f else 0.0
+        
+        return {
+            "now_wall": now_wall,
+            "now_mono": now_mono,
+            "base_elapsed": base_elapsed,
+        }
+
+    def _restore_global_bucket(self, data: dict[str, Any], time_context: dict[str, float]) -> None:
+        """Restore global bucket from saved state."""
+        global_state = data.get("global")
+        if not isinstance(global_state, dict):
+            return
+        
+        rate = self._safe_float(global_state.get("rate"), self.global_rps)
+        self._set_global_rate(rate)
+        
+        tokens = self._safe_float(global_state.get("tokens"), self.global_bucket.tokens)
+        updated_at = self._safe_float(global_state.get("updated"), None)
+        
+        elapsed = (
+            time_context["base_elapsed"]
+            if updated_at is None
+            else max(0.0, time_context["now_wall"] - updated_at)
+        )
+        
+        with self.global_bucket.lock:
+            refill = tokens + elapsed * self.global_bucket.rate
+            self.global_bucket.tokens = min(self.global_bucket.capacity, refill)
+            self.global_bucket.updated = max(time_context["now_mono"] - elapsed, 0.0)
+
+    def _clear_host_state(self) -> None:
+        """Clear existing host state."""
+        self.host_buckets.clear()
+        with self._host_usage_lock:
+            self.host_last_used.clear()
+
+    def _restore_host_overrides(self, data: dict[str, Any]) -> None:
+        """Restore host-specific rate overrides."""
+        overrides = data.get("host_overrides")
+        if not isinstance(overrides, dict):
+            self.host_overrides = {}
+            return
+        
+        new_overrides: dict[str, float] = {}
+        for host, value in overrides.items():
+            safe_value = self._safe_float(value, None)
+            if safe_value is not None:
+                new_overrides[str(host)] = safe_value
+        self.host_overrides = new_overrides
+
+    def _restore_per_host_base(self, data: dict[str, Any]) -> None:
+        """Restore per-host base rate."""
+        per_host_base = data.get("per_host_rps")
+        if per_host_base is not None:
+            with contextlib.suppress(TypeError, ValueError):
+                self._set_per_host_base(float(per_host_base))
+
+    def _restore_host_buckets(self, data: dict[str, Any], time_context: dict[str, float]) -> None:
+        """Restore all host-specific buckets."""
+        hosts = data.get("hosts")
+        if not isinstance(hosts, dict):
+            return
+        
+        for host, bucket_data in hosts.items():
+            if isinstance(bucket_data, dict):
+                self._restore_single_host_bucket(
+                    str(host), bucket_data, time_context
                 )
-                with self.global_bucket.lock:
-                    refill = tokens + elapsed * self.global_bucket.rate
-                    self.global_bucket.tokens = min(self.global_bucket.capacity, refill)
-                    self.global_bucket.updated = max(now_mono - elapsed, 0.0)
 
-            # Clear host buckets
-            self.host_buckets.clear()
-            with self._host_usage_lock:
-                self.host_last_used.clear()
+    def _restore_single_host_bucket(
+        self, host: str, bucket_data: dict[str, Any], time_context: dict[str, float]
+    ) -> None:
+        """Restore a single host bucket."""
+        rate = self._safe_float(bucket_data.get("rate"), self._host_rate(host))
+        burst = max(1, int(rate))
+        bucket = TokenBucket(rate, burst)
+        
+        tokens = self._safe_float(bucket_data.get("tokens"), burst)
+        updated_at = self._safe_float(bucket_data.get("updated"), None)
+        
+        elapsed = (
+            time_context["base_elapsed"]
+            if updated_at is None
+            else max(0.0, time_context["now_wall"] - updated_at)
+        )
+        
+        refill = tokens + elapsed * rate
+        bucket.tokens = min(bucket.capacity, refill)
+        bucket.updated = max(time_context["now_mono"] - elapsed, 0.0)
+        
+        self.host_buckets[host] = bucket
+        self._touch_host(host, time_context["now_mono"])
 
-            # Restore host overrides
-            overrides = data.get("host_overrides")
-            if isinstance(overrides, dict):
-                new_overrides: dict[str, float] = {}
-                for host, value in overrides.items():
-                    try:
-                        new_overrides[str(host)] = float(value)
-                    except (TypeError, ValueError):
-                        continue
-                self.host_overrides = new_overrides
-            else:
-                self.host_overrides = {}
-
-            # Restore per-host base rate
-            per_host_base = data.get("per_host_rps")
-            if per_host_base is not None:
-                with contextlib.suppress(TypeError, ValueError):
-                    self._set_per_host_base(float(per_host_base))
-
-            # Restore host buckets
-            hosts = data.get("hosts")
-            if isinstance(hosts, dict):
-                for host, bucket_data in hosts.items():
-                    if not isinstance(bucket_data, dict):
-                        continue
-                    rate_val = bucket_data.get("rate", self._host_rate(host))
-                    try:
-                        rate = float(rate_val)
-                    except (TypeError, ValueError):
-                        rate = self._host_rate(host)
-                    burst = max(1, int(rate))
-                    bucket = TokenBucket(rate, burst)
-                    tokens_val = bucket_data.get("tokens", burst)
-                    try:
-                        tokens = float(tokens_val)
-                    except (TypeError, ValueError):
-                        tokens = float(burst)
-                    updated_val = bucket_data.get("updated")
-                    try:
-                        updated_at = (
-                            float(updated_val) if updated_val is not None else None
-                        )
-                    except (TypeError, ValueError):
-                        updated_at = None
-                    elapsed = (
-                        base_elapsed
-                        if updated_at is None
-                        else max(0.0, now_wall - updated_at)
-                    )
-                    refill = tokens + elapsed * rate
-                    bucket.tokens = min(bucket.capacity, refill)
-                    bucket.updated = max(now_mono - elapsed, 0.0)
-                    self.host_buckets[str(host)] = bucket
-                    self._touch_host(str(host), now_mono)
+    def _safe_float(self, value: Any, default: float | None) -> float | None:
+        """Safely convert value to float, return default on failure."""
+        try:
+            return float(value) if value is not None else default
+        except (TypeError, ValueError):
+            return default
 
     def _bucket_state(
         self,

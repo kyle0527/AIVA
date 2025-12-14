@@ -9,6 +9,9 @@ persistent=yes
 # user-friendly hints instead of false-positive error messages
 suggestion-mode=yes
 
+# Ignore external third-party tools
+ignore-paths=^.*/external_tools/.*$
+
 [MESSAGES CONTROL]
 # Disable specific messages
 disable=

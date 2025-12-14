@@ -2,7 +2,7 @@
 
 > **版本**: v2.1.2  
 > **狀態**: ✅ 生產就緒  
-> **最後更新**: 2025-01-24  
+> **最後更新**: 2025-12-10  
 > **角色**: AIVA 的 AI 認知能力核心
 
 **導航**: [← 返回 AIVA Core](../README.md)
@@ -30,7 +30,7 @@
 Cognitive Core 是 AIVA 的認知智能核心，整合了神經網路推理、智能決策、知識檢索和可靠性驗證四大子系統，提供完整的 AI 認知能力。
 
 **核心職責**：
-- 🧠 **神經網路推理** - 500萬參數 BioNeuron 模型的推理和管理
+- 🧠 **神經網路推理** - AI 模型推理和管理
 - 🎯 **智能決策** - AI 增強的決策支援和技能圖譜
 - 🔍 **知識檢索** - RAG 系統提供上下文增強
 - 🛡️ **可靠性保障** - 反幻覺機制確保輸出準確性
@@ -44,33 +44,26 @@ Cognitive Core 是 AIVA 的認知智能核心，整合了神經網路推理、�
 **位置**: `cognitive_core/neural/`
 
 **核心組件**：
-- `real_neural_core.py` - 500萬參數神經網路核心（800+ 行）
-- `bio_neuron_master.py` - 三模式主控系統（UI/AI/Chat）（600+ 行）
+- `real_neural_core.py` - 神經網路核心（800+ 行）
 - `ai_model_manager.py` - 統一 AI 模型管理器（400+ 行）
 - `weight_manager.py` - 權重持久化和版本控制（300+ 行）
-- `real_bio_net_adapter.py` - 生物網路適配器（200+ 行）
+- `real_bio_net_adapter.py` - RAG 適配器（200+ 行）
 - `neural_network.py` - 神經網路基礎類（150+ 行）
 
 **主要功能**：
 ```python
-from aiva_core.cognitive_core.neural import RealNeuralCore, BioNeuronMaster
+from aiva_core.cognitive_core.neural import RealNeuralCore
 
 # 神經網路推理
 neural_core = RealNeuralCore(use_5m_model=True)
 neural_core.load_weights()
 output = neural_core.forward(input_tensor)
-
-# 主控系統（三模式）
-master = BioNeuronMaster(mode="ai")  # ui/ai/chat
-result = await master.process_request(request)
 ```
 
 **特性**：
-- ✅ 500萬參數生物啟發架構
 - ✅ 支援 PyTorch 訓練和推理
 - ✅ 權重自動持久化和版本控制
 - ✅ GPU/CPU 自動切換
-- ✅ 三模式統一調度（UI/AI/Chat）
 
 ---
 

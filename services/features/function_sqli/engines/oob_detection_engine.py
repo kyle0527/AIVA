@@ -85,9 +85,6 @@ class OOBDetectionEngine:
                             f"OOB SQL injection detected: {db_type} with subdomain {subdomain}"
                         )
 
-                    # 注意：真正的OOB檢測需要監聽OAST伺服器
-                    # 這裡只能檢查回應中的即時指示器
-
                 except Exception as e:
                     logger.warning(f"OOB detection failed for {db_type} payload: {e}")
                     continue

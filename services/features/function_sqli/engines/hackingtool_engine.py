@@ -158,7 +158,7 @@ class HackingToolDetectionEngine:
         )
         return True
     
-    async def detect(self, task: FunctionTaskPayload) -> List[DetectionResult]:
+    async def detect(self, task: FunctionTaskPayload, client: httpx.AsyncClient) -> List[DetectionResult]:
         """執行 HackingTool SQL 注入檢測"""
         results = []
         
@@ -195,18 +195,18 @@ class HackingToolDetectionEngine:
                 continue
             
             if result and not isinstance(result, Exception):
-                # 確保 result 是可疊代的
-                if hasattr(result, '__iter__'):
-                    # 轉換 SqliDetectionResult 為 DetectionResult
-                    for sqli_result in result:
-                        detection_result = self._convert_to_detection_result(sqli_result)
-                        if detection_result:
-                            results.append(detection_result)
-                else:
-                    # 單個結果的情況
-                    detection_result = self._convert_to_detection_result(result)
-                    if detection_result:
-                        results.append(detection_result)
+                # result 應該是 List[DetectionResult]
+                if isinstance(result, list):
+                    # 轉換工具結果為 DetectionResult
+                    for item in result:
+                        # item 已經是 DetectionResult，直接添加
+                        if isinstance(item, DetectionResult):
+                            results.append(item)
+                        else:
+                            # 如果不是 DetectionResult，嘗試轉換
+                            detection_result = self._convert_to_detection_result(item)
+                            if detection_result:
+                                results.append(detection_result)
         
         logger.info(f"HackingTool 檢測完成，發現 {len(results)} 個結果")
         

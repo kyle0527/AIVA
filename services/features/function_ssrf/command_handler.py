@@ -102,7 +102,6 @@ class SSRFCommandHandler(CommandHandler):
             
             parameters = payload.get("parameters", {})
             detection_methods = payload.get("detection_methods", ["callback"])
-            callback_server = payload.get("callback_server")
             
             self.logger.info(f"🎯 開始 SSRF 檢測: {target_url}")
             
@@ -131,23 +130,18 @@ class SSRFCommandHandler(CommandHandler):
             # SSRF 檢測 - 使用實際的檢測方法
             if "callback" in detection_methods:
                 # 使用實際的檢測器方法
-                ssrf_results = await self.ssrf_detector.detect_vulnerabilities(
-                    task, client=self.client
-                )
-                results.extend(ssrf_results[0])  # 取得檢測結果
-            
-            # 其他檢測方法暫時註解，因為這些方法在當前實現中不存在
-            # if "blind" in detection_methods:
-            #     blind_results = await self.ssrf_detector.test_blind_detection(
-            #         target_url, parameters
-            #     )
-            #     results.extend(blind_results)
-            
-            # if "internal_scan" in detection_methods:
-            #     internal_results = await self.ssrf_detector.test_internal_addresses(
-            #         target_url, parameters
-            #     )
-            #     results.extend(internal_results)
+                import httpx
+                from .internal_address_detector import InternalAddressDetector
+                
+                async with httpx.AsyncClient(timeout=30.0) as client:
+                    ssrf_results, _ = await self.ssrf_detector.detect_vulnerabilities(
+                        task,
+                        client=client,
+                        analyzer=analyzer,
+                        detector=InternalAddressDetector(),
+                        dispatcher=self.oast_dispatcher
+                    )
+                    results.extend(ssrf_results)
             
             # 4. 格式化結果
             execution_time = time.time() - start_time

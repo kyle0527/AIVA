@@ -67,6 +67,33 @@ DATASET_METADATA_DIR = TRAINING_DATASET_DIR / "metadata"
 DATASET_METADATA_DIR.mkdir(parents=True, exist_ok=True)
 
 # ============================================================================
+# 內閉環分析結果配置 (Internal Exploration Outputs)
+# ============================================================================
+
+# 內閉環分析結果根目錄
+INTERNAL_EXPLORATION_DIR = INTEGRATION_DATA_DIR / "internal_exploration"
+INTERNAL_EXPLORATION_DIR.mkdir(parents=True, exist_ok=True)
+
+# CLI 指令輸出目錄 (來自 internal_exploration/python_tools)
+CLI_OUTPUTS_DIR = INTEGRATION_DATA_DIR / "cli_outputs"
+CLI_OUTPUTS_DIR.mkdir(parents=True, exist_ok=True)
+
+# Python 工具 CLI 輸出
+CLI_OUTPUTS_PYTHON_DIR = CLI_OUTPUTS_DIR / "python"
+CLI_OUTPUTS_PYTHON_DIR.mkdir(parents=True, exist_ok=True)
+
+# 分析歷史目錄 (來自 aiva_exploration_pipeline)
+ANALYSIS_HISTORY_DIR = INTERNAL_EXPLORATION_DIR / "analysis_history"
+ANALYSIS_HISTORY_DIR.mkdir(parents=True, exist_ok=True)
+
+# 最新分類數據快捷方式（InternalLoopConnector 使用）
+LATEST_CLASSIFICATION_JSON = INTERNAL_EXPLORATION_DIR / "latest_classification.json"
+
+# 分析結果目錄（內閉環 RAG 使用的能力數據）
+ANALYSIS_RESULTS_DIR = INTERNAL_EXPLORATION_DIR / "analysis_results"
+ANALYSIS_RESULTS_DIR.mkdir(parents=True, exist_ok=True)
+
+# ============================================================================
 # 模型檢查點配置
 # ============================================================================
 
@@ -134,6 +161,10 @@ def get_config_summary() -> dict[str, str]:
         "MODEL_CHECKPOINT_DIR": str(MODEL_CHECKPOINT_DIR),
         "DATABASE_URL": DATABASE_URL.split('@')[0].split('//')[1].split(':')[0] + ":***@" + DATABASE_URL.split('@')[1] if '@' in DATABASE_URL else DATABASE_URL,  # 隱藏密碼
         "BACKUP_DIR": str(BACKUP_DIR),
+        "INTERNAL_EXPLORATION_DIR": str(INTERNAL_EXPLORATION_DIR),
+        "CLI_OUTPUTS_DIR": str(CLI_OUTPUTS_DIR),
+        "ANALYSIS_HISTORY_DIR": str(ANALYSIS_HISTORY_DIR),
+        "ANALYSIS_RESULTS_DIR": str(ANALYSIS_RESULTS_DIR),
     }
 
 

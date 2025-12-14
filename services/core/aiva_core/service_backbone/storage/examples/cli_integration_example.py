@@ -76,7 +76,6 @@ class CLICommandExecutor:
         user_id: Optional[str] = None,
         session_id: Optional[str] = None,
         is_ai_generated: bool = False,
-        natural_language_input: Optional[str] = None,
     ) -> Dict[str, Any]:
         """執行能力並記錄到存儲庫
         
@@ -87,7 +86,6 @@ class CLICommandExecutor:
             user_id: 用戶ID
             session_id: 會話ID
             is_ai_generated: 是否AI生成的指令
-            natural_language_input: 原始自然語言輸入
             
         Returns:
             執行結果字典
@@ -143,7 +141,6 @@ class CLICommandExecutor:
             user_id=user_id,
             session_id=session_id,
             is_ai_generated=is_ai_generated,
-            natural_language_input=natural_language_input,
             metadata={
                 "complexity": flow_info["complexity"],
                 "is_multi_path": flow_info["is_multi_path"],
@@ -273,7 +270,7 @@ async def example_usage():
     print(f"涉及模組: {result1['flow_info']['modules_involved']}")
     
     # === 範例2: AI生成的指令 ===
-    print("\n=== 範例2: AI生成的自然語言指令 ===")
+    print("\n=== 範例2: AI生成的指令 ===")
     result2 = await executor.execute_capability(
         capability_endpoint="integration_module_sync",
         parameters={"action": "sync_all"},
@@ -281,7 +278,6 @@ async def example_usage():
         user_id="user_001",
         session_id="session_20240115_001",
         is_ai_generated=True,
-        natural_language_input="請同步所有外部系統的數據",
     )
     print(f"執行結果: {result2['success']}")
     print(f"執行時間: {result2['execution_time_ms']:.2f}ms")

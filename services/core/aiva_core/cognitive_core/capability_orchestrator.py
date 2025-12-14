@@ -226,7 +226,9 @@ class CapabilityOrchestrator:
     
     async def _query_relevant_capabilities(
         self, 
-        requirement: TaskRequirement
+        requirement: TaskRequirement,
+        aiva_module_filter: Optional[str] = None,
+        entry_point_filter: Optional[str] = None
     ) -> List[Dict[str, Any]]:
         """查詢相關能力
         
@@ -234,6 +236,8 @@ class CapabilityOrchestrator:
         
         Args:
             requirement: 任務需求
+            aiva_module_filter: 六大模組過濾 (可選)
+            entry_point_filter: 入口點過濾 (可選)
             
         Returns:
             相關能力列表
@@ -243,6 +247,12 @@ class CapabilityOrchestrator:
             f"Task: {requirement.task_type}",
             f"Objectives: {', '.join(requirement.objectives)}",
         ]
+        
+        # ✅ 新增：六大模組過濾
+        if aiva_module_filter:
+            query_parts.append(f"AIVA Module: {aiva_module_filter}")
+        if entry_point_filter:
+            query_parts.append(f"Entry Point: {entry_point_filter}")
         
         # 根據任務類型添加特定查詢
         if requirement.task_type == "scan":
@@ -262,10 +272,84 @@ class CapabilityOrchestrator:
                 query,
                 top_k=20  # 獲取更多候選
             )
-            return results.results
+            
+            # ✅ 新增：後過濾（如果 RAG 查詢無法直接支援）
+            filtered_results = self._filter_by_aiva_module(
+                results.results, 
+                aiva_module_filter, 
+                entry_point_filter
+            )
+            return filtered_results
         else:
             logger.warning("   RAG not available, using fallback")
             return await self._fallback_capability_search(requirement)
+    
+    def _filter_by_aiva_module(
+        self,
+        capabilities: List[Dict[str, Any]],
+        aiva_module_filter: Optional[str] = None,
+        entry_point_filter: Optional[str] = None
+    ) -> List[Dict[str, Any]]:
+        """✅ 新增：按六大模組和入口點過濾能力
+        
+        Args:
+            capabilities: 能力列表
+            aiva_module_filter: 六大模組過濾
+            entry_point_filter: 入口點過濾
+            
+        Returns:
+            過濾後的能力列表
+        """
+        if not aiva_module_filter and not entry_point_filter:
+            return capabilities
+        
+        filtered = []
+        for cap in capabilities:
+            meta = cap.get("metadata", {})
+            
+            # 檢查模組過濾
+            if aiva_module_filter:
+                cap_module = meta.get("aiva_module", "")
+                if cap_module != aiva_module_filter:
+                    continue
+            
+            # 檢查入口點過濾
+            if entry_point_filter:
+                cap_entry = meta.get("entry_point", "")
+                if cap_entry != entry_point_filter:
+                    continue
+            
+            filtered.append(cap)
+        
+        logger.debug(f"   Filtered by module/entry_point: {len(capabilities)} -> {len(filtered)}")
+        return filtered
+    
+    def group_capabilities_by_aiva_module(
+        self,
+        capabilities: List[Dict[str, Any]]
+    ) -> Dict[str, List[Dict[str, Any]]]:
+        """✅ 新增：按六大模組分組能力
+        
+        用於展示和分析能力分佈
+        
+        Args:
+            capabilities: 能力列表
+            
+        Returns:
+            按模組分組的能力字典
+        """
+        grouped = {}
+        
+        for cap in capabilities:
+            meta = cap.get("metadata", {})
+            aiva_module = meta.get("aiva_module", "unclassified")
+            
+            if aiva_module not in grouped:
+                grouped[aiva_module] = []
+            
+            grouped[aiva_module].append(cap)
+        
+        return grouped
     
     async def _fallback_capability_search(
         self,
@@ -288,6 +372,9 @@ class CapabilityOrchestrator:
                         "module": cap.module,
                         "language": cap.language,
                         "description": cap.description,
+                        "aiva_module": getattr(cap, "aiva_module", None),  # ✅ 包含新欄位
+                        "sub_module": getattr(cap, "sub_module", None),
+                        "entry_point": getattr(cap, "entry_point", None),
                     }
                 })
         
@@ -834,7 +921,7 @@ class CapabilityOrchestrator:
                         f"success_rate={stats['success_rate']:.2f}, "
                         f"avg_latency={stats['avg_latency_ms']:.0f}ms")
         
-        logger.info(f"✅ Learning completed, performance stats updated")
+        logger.info("✅ Learning completed, performance stats updated")
 
 
 # ==================== 輔助功能 ====================

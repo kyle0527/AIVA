@@ -1,6 +1,7 @@
 # 🤖 AIVA Core - 程式化核心服務
 
-> **版本**: v3.0-dev | **狀態**: ⚠️ 架構完整但關鍵功能需優化 | **更新**: 2025-12-02
+> **版本**: v3.0-dev | **狀態**: ⚠️ 架構完整但關鍵功能需優化 | **更新**: 2025-12-10  
+> **Internal Exploration**: v10.0.0 ✅ Self-Healing 模組已完成並驗證 (Zero Errors)
 
 **導航**: [← 返回 Services](../../services/README.md) | [關鍵缺陷報告](../../../AI核心關鍵缺陷報告.md)
 
@@ -12,28 +13,7 @@
 
 經深度代碼審查,發現以下**優先改進問題**:
 
-#### 1. 程式決策核心需強化 (HIGH PRIORITY)
-
-**現狀**: `BioNeuronDecisionController` 只有 NLU (指令解析),決策邏輯需強化
-
-```python
-# ⚠️ 現狀: 只做指令解析
-async def _parse_ui_command(self, text: str):
-    # 簡單的關鍵字匹配,需強化決策邏輯
-    if "掲描" in text:
-        return "start_scan", {}
-
-# ⚠️ 需強化: 無法生成 SystemCommand
-# ⚠️ 需強化: 無法查詢 RAG 能力
-# ⚠️ 需強化: 無法決定引擎組合策略
-```
-
-**影響**: 
-- 無法實現 13 步驟程式化流程
-- 無法指揮其他模組
-- 內閭環數據未充分利用
-
-#### 2. 內閉環數據未使用 (CRITICAL)
+#### 1. 內閉環數據未使用 (CRITICAL)
 
 **現狀**: `InternalLoopConnector.query_capabilities()` 存在但從未被調用
 
@@ -172,7 +152,12 @@ aiva_core/
 │   └── resource_watchdog.py
 ├── plugin_system/           # 插件系統（已廢棄）
 ├── plugins/                 # 插件目錄（已廢棄）
-├── internal_exploration/    # 內部探索（整合中）
+├── internal_exploration/    # 內部探索 - 三階段數據流分析管道 ✅
+│   ├── aiva_flow_analyzer.py      # 第一階段: AST 分析與數據流發現
+│   ├── aiva_flow_classifier.py    # 第二階段: 數據流分類與統計
+│   ├── aiva_cli_implementation.py # 第三階段: 動態執行與文檔生成
+│   ├── services_classification_v9_new/  # 分類結果 (282 flows)
+│   └── README.md            # 完整使用指南
 └── ui_panel/                # UI面板（整合中）
 ```
 

@@ -7,6 +7,8 @@ Smart SSRF Detector - 智能 SSRF 檢測器
 
 import asyncio
 from dataclasses import dataclass, field
+import json
+import re
 import time
 from typing import Any
 
@@ -17,7 +19,7 @@ from services.aiva_common.utils import get_logger
 from services.aiva_common.detection import UnifiedSmartDetectionManager, DetectionPhase
 from .config.ssrf_config import SsrfConfig
 
-from .internal_address_detector import InternalAddressDetector
+from .internal_address_detector import InternalAddressDetector, InternalAddressDetection
 from .oast_dispatcher import OastDispatcher, OastEvent
 from .param_semantics_analyzer import (
     OAST_PLACEHOLDER,
@@ -125,11 +127,18 @@ class SmartSSRFDetector:
         plan: AnalysisPlan = analyzer.analyze(task)
 
         if not plan.vectors:
-            logger.debug(
-                "No SSRF payloads generated for task",
-                extra={"task_id": task.task_id},
+            error_msg = f"No SSRF test vectors generated for task {task.task_id}. Target: {task.target.url}, Parameter: {task.target.parameter}"
+            logger.error(
+                error_msg,
+                extra={
+                    "task_id": task.task_id,
+                    "target_url": str(task.target.url),
+                    "parameter": task.target.parameter,
+                    "parameter_location": task.target.parameter_location
+                },
             )
-            return [], {}
+            # 不降級，拋出異常
+            raise ValueError(error_msg)
 
         async with smart_manager.start_detection():
             try:
@@ -225,7 +234,7 @@ class SmartSSRFDetector:
             smart_manager.update_progress(i, total)
 
             # 執行單個向量檢測
-            await self._test_vector(context, vector, smart_manager)
+            await self._test_vector(context, vector)
 
             context.increment_attempts()
 
@@ -233,7 +242,6 @@ class SmartSSRFDetector:
         self,
         context: SSRFDetectionContext,
         vector: SsrfTestVector,
-        smart_manager: UnifiedSmartDetectionManager,
     ) -> None:
         """
         測試單個 SSRF 向量
@@ -241,7 +249,6 @@ class SmartSSRFDetector:
         Args:
             context: 檢測上下文
             vector: 測試向量
-            smart_manager: 智能檢測管理器
         """
         try:
             # 解析載荷
@@ -260,24 +267,35 @@ class SmartSSRFDetector:
             # 檢測內部地址訪問
             detection = context.detector.analyze(response)
             if detection.matched:
-                finding = self._build_internal_finding(
-                    task=context.task,
-                    vector=vector,
-                    payload=payload,
-                    response=response,
-                    detection_summary=detection.summary(),
-                )
-                context.add_finding(finding)
+                # 驗證是否為真實的內部服務訪問
+                if self._verify_internal_service_access(response, detection):
+                    finding = self._build_internal_finding(
+                        task=context.task,
+                        vector=vector,
+                        payload=payload,
+                        response=response,
+                        detection_summary=detection.summary(),
+                    )
+                    context.add_finding(finding)
 
-                logger.info(
-                    "SSRF vulnerability detected (internal address)",
-                    extra={
-                        "task_id": context.task.task_id,
-                        "payload": payload,
-                        "detection": detection.summary(),
-                    },
-                )
-                return
+                    logger.info(
+                        "SSRF vulnerability detected (internal address)",
+                        extra={
+                            "task_id": context.task.task_id,
+                            "payload": payload,
+                            "detection": detection.summary(),
+                        },
+                    )
+                    return
+                else:
+                    logger.debug(
+                        "Internal address detection dismissed as false positive",
+                        extra={
+                            "task_id": context.task.task_id,
+                            "payload": payload,
+                            "reason": "Failed internal service verification",
+                        },
+                    )
 
             # 檢查 OAST 回調
             if vector.requires_oast:
@@ -341,18 +359,18 @@ class SmartSSRFDetector:
         vector: SsrfTestVector,
         payload: str,
     ) -> httpx.Response:
-        """發送 HTTP 請求 - 重構後複雜度 ≤15"""
-        # 使用配置的請求超時
-        current_timeout = self.config.request_timeout
+        """發送 HTTP 請求 - 重構後複雜度 ≤15
         
+        Note: timeout 已在 client 初始化時設定，無需在此處理
+        """
         # 解析目標和參數
         target_config = self._parse_target_config(task, vector)
         
         # 處理參數置換
         request_data = self._process_parameter_injection(target_config, payload)
         
-        # 發送請求
-        return await self._execute_http_request(client, request_data, current_timeout)
+        # 發送請求（timeout 已在 client 初始化時設定）
+        return await self._execute_http_request(client, request_data)
     
     def _parse_target_config(self, task: FunctionTaskPayload, vector: SsrfTestVector) -> dict:
         """解析目標配置 - 複雜度 8"""
@@ -433,8 +451,11 @@ class SmartSSRFDetector:
         else:
             config['body'] = payload
     
-    async def _execute_http_request(self, client: httpx.AsyncClient, config: dict, timeout: float) -> httpx.Response:
-        """執行 HTTP 請求 - 複雜度 8"""
+    async def _execute_http_request(self, client: httpx.AsyncClient, config: dict) -> httpx.Response:
+        """執行 HTTP 請求 - 複雜度 8
+        
+        Note: timeout 已經在 client 初始化時設定，不需要作為參數傳遞
+        """
         from urllib.parse import urlunparse
         
         new_url = urlunparse(
@@ -447,8 +468,7 @@ class SmartSSRFDetector:
             'method': config['method'],
             'url': new_url,
             'headers': config['headers'],
-            'cookies': config['cookies'],
-            'timeout': timeout
+            'cookies': config['cookies']
         }
         
         # 使用 Early Return Pattern 避免多層 if-elif
@@ -578,10 +598,148 @@ class SmartSSRFDetector:
             ),
         }
 
+    def _verify_internal_service_access(
+        self,
+        response: httpx.Response,
+        detection: InternalAddressDetection
+    ) -> bool:
+        """驗證是否為真實的內部服務訪問，過濾虛假內部地址檢測"""
+        # 檢查回應狀態碼 (200-299 表示成功訪問)
+        if not (200 <= response.status_code < 300):
+            # 非 2xx 狀態碼可能是錯誤頁面，不是真實內部服務
+            return False
+        
+        # 檢查回應內容長度 (太短可能是空白回應)
+        if len(response.text) < 50:
+            return False
+        
+        # 驗證是否包含真實的服務內容
+        service_content_verified = self._verify_service_content(response)
+        if not service_content_verified:
+            return False
+        
+        # 驗證雲端 metadata 服務的真實性
+        if any(ind.source == "cloud_metadata" for ind in detection.indicators):
+            return self._verify_cloud_metadata(response)
+        
+        return True
+    
+    def _verify_service_content(
+        self,
+        response: httpx.Response
+    ) -> bool:
+        """驗證服務內容的真實性"""
+        text = response.text.lower()
+        
+        # 檢查是否為常見的內部服務回應
+        internal_service_indicators = [
+            # Web 服務器
+            ("apache", "server:", "httpd"),
+            ("nginx", "server:", "welcome"),
+            # 資料庫
+            ("mysql", "database", "sql"),
+            ("postgres", "postgresql", "database"),
+            ("redis", "redis server", "version"),
+            # 訊息佇列
+            ("rabbitmq", "amqp", "queue"),
+            ("kafka", "broker", "topic"),
+            # 容器/編排
+            ("docker", "container", "image"),
+            ("kubernetes", "pod", "service"),
+            # 監控/日誌
+            ("elasticsearch", "cluster", "index"),
+            ("prometheus", "metrics", "query"),
+            ("grafana", "dashboard", "panel"),
+        ]
+        
+        # 檢查是否匹配任何內部服務特徵 (需 3 個指標中至少 2 個)
+        for indicators in internal_service_indicators:
+            matches = sum(1 for indicator in indicators if indicator in text)
+            if matches >= 2:
+                return True
+        
+        # 檢查 JSON API 回應 (常見於內部服務)
+        if self._is_valid_json_api(response):
+            return True
+        
+        # 檢查 HTML 管理介面
+        if self._is_admin_interface(text):
+            return True
+        
+        return False
+    
+    def _verify_cloud_metadata(self, response: httpx.Response) -> bool:
+        """驗證雲端 metadata 服務回應的真實性"""
+        text = response.text
+        
+        # AWS metadata 特徵
+        aws_indicators = [
+            "ami-id", "instance-id", "instance-type",
+            "security-credentials", "iam/security-credentials"
+        ]
+        if any(indicator in text for indicator in aws_indicators):
+            # 嘗試解析 JSON
+            try:
+                data = json.loads(text)
+                if isinstance(data, dict) and any(k in data for k in ["Code", "AccessKeyId", "Token"]):
+                    return True
+            except json.JSONDecodeError:
+                pass
+            return len([ind for ind in aws_indicators if ind in text]) >= 2
+        
+        # GCP metadata 特徵
+        gcp_indicators = [
+            "project-id", "instance/id", "service-accounts",
+            "attributes/", "metadata.google.internal"
+        ]
+        if any(indicator in text for indicator in gcp_indicators):
+            return len([ind for ind in gcp_indicators if ind in text]) >= 2
+        
+        # Azure metadata 特徵
+        azure_indicators = [
+            "compute", "vmId", "subscriptionId",
+            "resourceGroupName", "azEnvironment"
+        ]
+        if any(indicator in text for indicator in azure_indicators):
+            try:
+                data = json.loads(text)
+                if isinstance(data, dict) and "compute" in data:
+                    return True
+            except json.JSONDecodeError:
+                pass
+        
+        return False
+    
+    def _is_valid_json_api(self, response: httpx.Response) -> bool:
+        """檢查是否為有效的 JSON API 回應"""
+        # 檢查 Content-Type
+        content_type = response.headers.get("content-type", "").lower()
+        if "application/json" not in content_type:
+            return False
+        
+        # 嘗試解析 JSON
+        try:
+            data = json.loads(response.text)
+            # 確認是有結構的 JSON (不是空物件)
+            if isinstance(data, (dict, list)):
+                return len(data) >= 1
+        except json.JSONDecodeError:
+            pass
+        
+        return False
+    
+    def _is_admin_interface(self, text: str) -> bool:
+        """檢查是否為管理介面"""
+        admin_patterns = [
+            "admin panel", "administration", "dashboard",
+            "control panel", "management console",
+            "<title>admin", "<title>dashboard"
+        ]
+        
+        return any(pattern in text for pattern in admin_patterns)
+    
     def _extract_token(self, payload: str) -> str:
         """從載荷中提取 token"""
-        import re
-        
         # 嘗試從各種OAST載荷格式中提取token
         
         # 格式1: http://token.burpcollaborator.net

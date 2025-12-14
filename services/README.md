@@ -15,9 +15,10 @@
 1. **❌ AI 決策核心缺失** - `BioNeuronDecisionController` 只有 NLU 文字解析,無決策邏輯
 2. **❌ 內閉環數據未使用** - RAG 查詢接口存在但從未被調用
 3. **⚠️ 掃描未經驗證** - 雖有 HTTP 客戶端但未經靶場驗證
-4. **❌ Features 模組缺失** - 無 `FeaturesCommandHandler`,Phase 2 攻擊無法執行
+4. **❌ Features 模組整合缺失** - 功能代碼完整但未整合到 AI Commander，Phase 2 攻擊無法執行
 
-**詳細分析**: [AI核心關鍵缺陷報告.md](../AI核心關鍵缺陷報告.md)
+**詳細分析**: [AI核心關鍵缺陷報告.md](../AI核心關鍵缺陷報告.md)  
+**新架構設計**: [features/SIMPLE_ARCHITECTURE.md](features/SIMPLE_ARCHITECTURE.md) - AI Commander 直接調用功能模組
 
 ### 📋 實際可用功能
 
@@ -31,7 +32,7 @@
 - AI 決策邏輯 (如何生成 AICommand)
 - 內閉環整合 (如何使用 RAG 數據)
 - 外閉環自動觸發 (如何從經驗學習)
-- Features 攻擊處理器
+- AI Commander 整合功能模組 (按 [SIMPLE_ARCHITECTURE.md](features/SIMPLE_ARCHITECTURE.md) 設計)
 
 ---
 
@@ -852,6 +853,8 @@ aiva_common/
 **語言**: Python, Go, Rust, TypeScript  
 **定位**: 專業化漏洞檢測與滲透測試功能集
 
+> **📐 最新架構設計**: [SIMPLE_ARCHITECTURE.md](features/SIMPLE_ARCHITECTURE.md) - AI Commander 直接調用，功能模組按最佳實踐實現
+
 **核心功能架構**:
 ```
 features/
@@ -891,7 +894,9 @@ features/
 - ✅ 可擴展架構、模組化設計
 - ✅ 智能檢測算法 (語義分析、機器學習)
 
-**📖 詳細文檔**: [services/features/README.md](features/README.md)
+**📖 詳細文檔**: 
+- [services/features/README.md](features/README.md) - 功能模組現況
+- [services/features/SIMPLE_ARCHITECTURE.md](features/SIMPLE_ARCHITECTURE.md) - ⭐ 最新架構設計
 
 ---
 
@@ -1254,6 +1259,7 @@ python -m aiva_scan.main
 - 📖 **[Core 模組文檔](core/README.md)** - AI 引擎架構、開發指南
 - 📖 **[Common 模組文檔](aiva_common/README.md)** - 數據模型、API 參考
 - 📖 **[Features 模組文檔](features/README.md)** - 功能模組、檢測引擎
+  - ⭐ **[Features 架構設計](features/SIMPLE_ARCHITECTURE.md)** - AI Commander 直接調用，簡化架構
 - 📖 **[Integration 模組文檔](integration/README.md)** - 整合架構、監控系統
 - 📖 **[Scan 模組文檔](scan/README.md)** - 掃描引擎、多語言協同
 
@@ -1261,7 +1267,12 @@ python -m aiva_scan.main
 > **📌 注意**: 各模組的詳細文檔請參考各自的 README.md
 - 📖 **Core 模組**: 詳細的 AI 引擎、執行引擎、學習系統文檔請見 [core/README.md](core/README.md)
 - 📖 **Integration 模組**: 整合架構、API 參考請見 [integration/README.md](integration/README.md) 及 [aiva_integration/README.md](integration/aiva_integration/README.md)
-- 📖 **Features 模組**: 各功能模組文檔請見 [features/README.md](features/README.md) 及各功能子目錄
+- 📖 **Features 模組**: 
+  - 功能模組現況請見 [features/README.md](features/README.md) 及各功能子目錄
+  - ⭐ **最新架構設計**: [features/SIMPLE_ARCHITECTURE.md](features/SIMPLE_ARCHITECTURE.md)
+    - AI Commander 直接調用功能模組（subprocess/import）
+    - 功能模組保持簡單同步，按功能最佳實踐實現
+    - 無需適配器層、JSON 契約、統一架構模式
 
 ---
 

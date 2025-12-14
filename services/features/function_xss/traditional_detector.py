@@ -3,6 +3,8 @@
 from collections.abc import Sequence
 import copy
 from dataclasses import dataclass
+import html
+import re
 from html import unescape
 from urllib.parse import unquote_plus, urlencode, urlparse, urlunparse
 
@@ -102,14 +104,26 @@ class TraditionalXssDetector:
                     continue
 
                 body_text = response.text or ""
+                response_headers = dict(response.headers)
+                
+                # ✅ 強化驗證：不僅檢查 payload 存在，還要驗證執行上下文
                 if _payload_in_response(payload, body_text):
+                    # 驗證 1: 檢查是否在可執行上下文
+                    if not _verify_execution_context(payload, body_text, response_headers):
+                        continue
+                    
+                    # 驗證 2: 檢查 WAF 是否干擾
+                    if _detect_waf_interference(payload, body_text):
+                        continue
+                    
+                    # ✅ 確認為有效 XSS
                     request = response.request
                     results.append(
                         XssDetectionResult(
                             payload=payload,
                             request=request,
                             response_status=response.status_code,
-                            response_headers=dict(response.headers),
+                            response_headers=response_headers,
                             response_text=body_text,
                         )
                     )
@@ -196,7 +210,7 @@ def _inject_mapping(
         mapping[parameter] = payload
         return mapping
 
-    for key in list(mapping.keys()):
+    for key in mapping.keys():
         mapping[key] = payload
     return mapping
 
@@ -235,3 +249,127 @@ def _payload_in_response(payload: str, body_text: str) -> bool:
 
     html_decoded = unescape(body_text)
     return payload in html_decoded
+
+
+def _verify_execution_context(payload: str, response_text: str, response_headers: dict[str, str]) -> bool:
+    """
+    驗證 payload 是否在可執行上下文中
+    
+    Args:
+        payload: XSS payload
+        response_text: 響應內容
+        response_headers: 響應標頭
+        
+    Returns:
+        bool: True 表示在可執行上下文，False 表示在安全上下文
+    """
+    # 檢查 1: 是否在安全上下文（HTML 註解、textarea、script 註解等）
+    safe_contexts = [
+        r'<!--.*?' + re.escape(payload) + r'.*?-->',  # HTML 註解
+        r'<textarea[^>]*>.*?' + re.escape(payload),    # Textarea
+        r'<script[^>]*><!--.*?' + re.escape(payload),  # Script 註解
+        r'<noscript[^>]*>.*?' + re.escape(payload),    # NoScript
+        r'<style[^>]*>.*?' + re.escape(payload),       # Style 標籤
+    ]
+    
+    for pattern in safe_contexts:
+        if re.search(pattern, response_text, re.DOTALL | re.IGNORECASE):
+            return False  # 在安全上下文，非有效 XSS
+    
+    # 檢查 2: 是否被 HTML 編碼
+    encoded_payload = html.escape(payload)
+    # 如果找到編碼版本但找不到原始版本，說明被編碼了
+    if encoded_payload in response_text and payload not in response_text:
+        # 再次確認編碼的 payload 確實存在
+        if '&lt;' in encoded_payload or '&gt;' in encoded_payload or '&quot;' in encoded_payload:
+            return False  # 被編碼，無法執行
+    
+    # 檢查 3: CSP (Content Security Policy) 是否阻止執行
+    csp = response_headers.get('content-security-policy', '') or response_headers.get('Content-Security-Policy', '')
+    if csp:
+        csp_lower = csp.lower()
+        
+        # 檢查是否有 script-src 限制
+        if 'script-src' in csp_lower:
+            # 如果沒有 'unsafe-inline'，內聯腳本會被阻止
+            if "'unsafe-inline'" not in csp_lower:
+                # 檢查是否有 nonce 或 hash（這些可能允許特定腳本）
+                # 但我們的測試 payload 通常沒有正確的 nonce/hash
+                if 'nonce-' in response_text or 'sha256-' in csp_lower or 'sha384-' in csp_lower:
+                    return False  # CSP 阻止執行
+    
+    # 檢查 4: 是否在屬性值內但被正確引號包圍
+    # 例如: <input value="<script>alert(1)</script>"> - 這不會執行
+    attr_patterns = [
+        r'<[^>]*\s+\w+\s*=\s*["\'].*?' + re.escape(payload) + r'.*?["\'][^>]*>',
+    ]
+    
+    for pattern in attr_patterns:
+        matches = re.finditer(pattern, response_text, re.DOTALL | re.IGNORECASE)
+        for match in matches:
+            matched_text = match.group(0)
+            # 檢查 payload 是否被引號正確包圍，如果在引號內可能不會執行
+            if '<script' in payload.lower() and ('"' in matched_text or "'" in matched_text):
+                pass  # 繼續其他檢查
+    
+    return True  # 通過所有檢查，在可執行上下文
+
+
+def _detect_waf_interference(payload: str, response_text: str) -> bool:
+    """
+    檢測 WAF 是否干擾了 payload
+    
+    Args:
+        payload: 原始 payload
+        response_text: 響應內容
+        
+    Returns:
+        bool: True 表示檢測到 WAF 干擾，False 表示無干擾
+    """
+    # 常見 WAF 修改模式
+    waf_patterns = [
+        # Imperva WAF
+        (r'<scr<script>ipt>', '<script>'),
+        (r'<scri<script>pt>', '<script>'),
+        
+        # Cloudflare WAF
+        (r'<script.*?removed.*?>', '<script>'),
+        (r'<script.*?blocked.*?>', '<script>'),
+        
+        # AWS WAF
+        (r'javascript:.*?blocked', 'javascript:'),
+        
+        # ModSecurity
+        (r'<script.*?filtered.*?>', '<script>'),
+        
+        # 通用過濾
+        (r'<script.*?sanitized.*?>', '<script>'),
+    ]
+    
+    for waf_pattern, original_pattern in waf_patterns:
+        if original_pattern in payload.lower():
+            if re.search(waf_pattern, response_text, re.IGNORECASE):
+                return True  # 檢測到 WAF 干擾
+    
+    # 檢查 WAF 標識性響應
+    waf_indicators = [
+        'cloudflare',
+        'imperva',
+        'incapsula',
+        'sucuri',
+        'barracuda',
+        'f5 big-ip',
+        'fortiweb',
+        'modsecurity',
+        'request blocked',
+        'access denied',
+        'security policy',
+    ]
+    
+    response_lower = response_text.lower()
+    for indicator in waf_indicators:
+        if indicator in response_lower:
+            # 可能是 WAF 阻止頁面
+            return True
+    
+    return False  # 無 WAF 干擾

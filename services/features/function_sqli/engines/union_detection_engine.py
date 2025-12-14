@@ -73,7 +73,7 @@ class UnionDetectionEngine:
         logger.debug(f"Starting UNION detection for task {task.task_id}")
 
         # 獲取基準回應以進行比較
-        baseline_response = await self._get_baseline_response(task, client, encoder)
+        baseline_response = await self._get_baseline_response(client, encoder)
         if not baseline_response:
             logger.warning("Failed to get baseline response")
             return results
@@ -119,7 +119,6 @@ class UnionDetectionEngine:
 
     async def _get_baseline_response(
         self,
-        task: FunctionTaskPayload,
         client: httpx.AsyncClient,
         encoder: PayloadWrapperEncoder,
     ) -> httpx.Response | None:

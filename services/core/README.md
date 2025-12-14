@@ -256,6 +256,7 @@
   - [🎯 AIVA Core - 主引擎](#-aiva-core---主引擎)
   - [🧠 AI Core - 智慧增強](#-ai-core---智慧增強)
   - [⚡ AIVA Core v1 - 工作流引擎](#-aiva-core-v1---工作流引擎)
+  - [🔍 Internal Exploration - 內部探索](#-internal-exploration---內部探索)
 - [🔗 核心模組整合分析](#-核心模組整合分析)
 - [🛠️ Core 模組開發工具](#️-core-模組開發工具)
 - [📊 模組規模一覽](#-模組規模一覽)
@@ -444,6 +445,41 @@ graph TB
 - 📖 **設計文檔**: [AIVA Core v1 README](aiva_core_v1/README.md)
 - 🚀 **整合建議**: [v1到v2整合路線圖](aiva_core_v1/README.md#-整合建議)
 - 📊 **價值評估**: [整合收益分析](aiva_core_v1/README.md#-價值評估)
+
+---
+
+### **🔍 Internal Exploration - 內部探索**
+
+> **📍 路徑**: [`aiva_core/internal_exploration/`](aiva_core/internal_exploration/)  
+> **📋 完整文檔**: [Internal Exploration README](aiva_core/internal_exploration/README.md)  
+> **🎯 版本**: v9.0.0 (生產就緒)
+
+三階段數據流分析管道，用於 AIVA 系統自我分析、能力發現與動態文檔生成。
+
+#### **🔥 核心特色**
+- **🔬 AST 深度分析**: 全面的代碼結構分析與數據流發現
+- **📊 智能分類系統**: 282個數據流的自動分類與路徑優化
+- **⚡ 動態執行引擎**: 實時命令執行與結果驗證
+- **📖 自動文檔生成**: Markdown + JSON 雙格式命令參考文檔
+
+#### **📊 規模指標**
+```
+📦 階段數量: 3階段管道 (分析 → 分類 → 執行)
+💻 數據流數量: 282個已分類數據流
+📄 文檔產出: Markdown參考 + JSON數據庫
+🎯 設計理念: 探索 + 分析 + 執行三位一體
+```
+
+#### **🎯 三階段管道**
+1. **aiva_flow_analyzer.py** - 第一階段: AST分析與數據流發現
+2. **aiva_flow_classifier.py** - 第二階段: 數據流分類與統計分析  
+3. **aiva_cli_implementation.py** - 第三階段: 動態執行與文檔生成
+
+#### **🔗 詳細連結**
+- 📖 **完整使用指南**: [Internal Exploration README](aiva_core/internal_exploration/README.md)
+- 🔬 **第一階段詳解**: [Flow Analyzer Guide](aiva_core/internal_exploration/AIVA_FLOW_ANALYZER_GUIDE.md)
+- 📊 **第二階段詳解**: [Flow Classifier Guide](aiva_core/internal_exploration/AIVA_FLOW_CLASSIFIER_GUIDE.md)
+- ⚡ **第三階段詳解**: [CLI Implementation Guide](aiva_core/internal_exploration/AIVA_CLI_IMPLEMENTATION_GUIDE.md)
 
 ---
 

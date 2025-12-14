@@ -26,7 +26,6 @@ except ImportError:
     # tree_sitter 套件未安裝，使用備用解析方案
     pass
 
-from ...cognitive_core.neural.bio_neuron_master import BioNeuronMasterController
 from ...cognitive_core.neural.real_bio_net_adapter import RealBioNeuronRAGAgent
 from aiva_common.error_handling import AIVAError, ErrorType, ErrorSeverity, create_error_context
 
@@ -171,7 +170,8 @@ class AIAnalysisEngine:
                 real_decision_core = create_real_scalable_bionet(
                     input_size=1024,
                     num_tools=10,
-                    weights_path=None  # 使用隨機初始化
+                    weights_path=None  # TODO: 使用訓練好的權重檔案,避免隨機初始化
+                    # 目前使用隨機權重,因此神經網路輸出不應用於信心度計算
                 )
                 
                 # 初始化RAG代理用於代碼分析
@@ -771,18 +771,24 @@ class AIAnalysisEngine:
         task_description = task_prompts.get(analysis_type, "代碼分析")
         
         try:
-            # 使用RAG代理進行AI分析 (如果可用)
-            if self.rag_agent is not None:
-                rag_result = self.rag_agent.generate(
-                    task_description=f"{task_description}\n文件: {file_path}",
-                    context=source_code[:2000]  # 限制上下文長度
-                )
-                confidence = rag_result.get('confidence', 0.5) if isinstance(rag_result, dict) else 0.5
-            else:
-                confidence = 0.5
-            
             # 基於特徵向量和分析類型生成具體發現
             findings = self._generate_findings(features, analysis_type)
+            
+            # 計算基於規則的信心度 (而非隨機神經網路輸出)
+            # 根據實際發現的特徵數量和嚴重程度計算
+            if findings:
+                # 根據發現的數量和類型計算信心度
+                confidence = min(0.95, 0.5 + (len(findings) * 0.1))
+            else:
+                confidence = 0.3  # 未發現問題時的基準信心度
+            
+            # 如果 RAG 代理可用,用於生成說明文字 (但不使用其隨機信心度)
+            # (目前 RAG 輸出不用於後續處理,僅用於潛在的調試)
+            if self.rag_agent is not None:
+                _ = self.rag_agent.generate(
+                    task_description=f"{task_description}\n文件: {file_path}",
+                    context=source_code[:2000]
+                )
             
             # 生成建議
             recommendations = self._generate_recommendations(analysis_type, findings)

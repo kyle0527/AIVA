@@ -305,7 +305,6 @@ class CommandExecutionModel(Base):
     
     # AI 相關
     is_ai_generated = Column(Boolean, nullable=False, default=False)  # 是否由AI生成
-    natural_language_input = Column(Text, nullable=True)  # 原始自然語言輸入
     
     # 元數據
     extra_metadata = Column("metadata", JSON, nullable=True)

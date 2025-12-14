@@ -36,14 +36,9 @@ from services.aiva_common.schemas import (
     DecisionConstraints,
 )
 
-# Compliance Note: 2025-10-26 - 移除重複定義，統一使用 bio_neuron_master.py 中的 OperationMode
-# 避免循環導入，使用字符串類型註釋
-from typing import TYPE_CHECKING
-
-if TYPE_CHECKING:
-    from ..neural.bio_neuron_master import OperationMode
-else:
-    OperationMode = "OperationMode"  # 運行時使用字符串
+# Operation mode as string literal (bio_neuron_master.py 已移除)
+from typing import Literal
+OperationMode = Literal["ui", "ai", "chat"]
 
 
 class DecisionContext:
@@ -342,37 +337,37 @@ class EnhancedDecisionAgent:
         self, context: DecisionContext
     ) -> list[dict[str, Any]]:
         """查找相似的成功經驗"""
-        # 模擬經驗查找 (實際實作應該查詢經驗管理器)
-        mock_experiences = [
-            {
-                "scenario": "web_application_test",
-                "target_type": "http_service",
-                "vulnerabilities": ["sql_injection"],
-                "recommended_action": "EXPLOIT_SQL_INJECTION",
-                "parameters": {"tool": "sqlmap", "payload_type": "boolean"},
-                "success_score": 0.85,
-                "attempts": 2,
-            },
-            {
-                "scenario": "network_penetration",
-                "target_type": "ssh_service",
-                "vulnerabilities": ["weak_credentials"],
-                "recommended_action": "SSH_BRUTE_FORCE",
-                "parameters": {"tool": "hydra", "wordlist": "common_passwords"},
-                "success_score": 0.75,
-                "attempts": 4,
-            },
-        ]
-
-        # 簡單的相似度匹配
-        similar = []
-        for exp in mock_experiences:
-            similarity = self._calculate_similarity(context, exp)
-            if similarity > 0.6:
-                exp["similarity"] = similarity
-                similar.append(exp)
-
-        return sorted(similar, key=lambda x: x["similarity"], reverse=True)
+        # 實際查詢 experience_manager (移除硬編碼的 mock_experiences)
+        if not self.experience_manager:
+            # 沒有經驗管理器時，返回空列表而非假數據
+            self.logger.debug("Experience manager not available, no historical data")
+            return []
+        
+        try:
+            # 查詢條件構建
+            query_params = {
+                "target_type": context.target_info.get("type"),
+                "vulnerabilities": context.discovered_vulns,
+                "risk_level": context.risk_level.value,
+                "min_success_score": 0.6,
+            }
+            
+            # 實際查詢經驗管理器
+            experiences = self.experience_manager.query_similar_experiences(query_params)
+            
+            # 計算相似度並排序
+            similar = []
+            for exp in experiences:
+                similarity = self._calculate_similarity(context, exp)
+                if similarity > 0.6:
+                    exp["similarity"] = similarity
+                    similar.append(exp)
+            
+            return sorted(similar, key=lambda x: x["similarity"], reverse=True)
+            
+        except Exception as e:
+            self.logger.error(f"Failed to query experience manager: {e}")
+            return []
 
     def _calculate_similarity(
         self, context: DecisionContext, experience: dict[str, Any]
@@ -555,18 +550,27 @@ class EnhancedDecisionAgent:
         try:
             from services.aiva_common.command_center import get_command_center
             from services.aiva_common.schemas import AICommand, CommandType
+            import uuid
             
             command_center = get_command_center()
             target = context.target_info.get("value", "http://localhost:3000")
             
-            # 構建命令
+            # 生成唯一的 scan_id
+            scan_id = f"scan_{uuid.uuid4().hex[:12]}"
+            command_id = f"{scan_id}_phase0"
+            
+            # 構建符合 Phase0StartPayload schema 的命令
             command = AICommand(
+                command_id=command_id,
                 command_type=CommandType.SCAN_PHASE0,
                 target_module="scan",
                 payload={
-                    "target": target,
-                    "vulnerability_types": [target_vuln] if target_vuln else ["sqli", "xss", "ssrf", "idor"],
-                    "deep_scan": True,
+                    "scan_id": scan_id,
+                    "targets": [target],
+                    "max_depth": 3,
+                    "timeout": 600,
+                    # 可選參數
+                    "custom_headers": {},
                 }
             )
             
@@ -575,18 +579,19 @@ class EnhancedDecisionAgent:
             
             return {
                 "success": result.success,
-                "data": result.result_data,
-                "error": result.error_message
+                "data": result.result,  # 修正：使用 result 而非 result_data
+                "error": result.error
             }
             
         except Exception as e:
-            self.logger.warning(f"⚠️ Command execution failed: {e}")
-            # 回退到模擬執行
+            self.logger.error(f"❌ Command execution failed: {e}")
+            # 返回實際失敗狀態，不再偽裝成功
             return {
-                "success": True,
-                "simulated": True,
+                "success": False,
+                "error": str(e),
                 "tool": tool,
-                "message": "Simulated execution (CommandCenter not available)"
+                "message": "Command execution failed - CommandCenter not available or error occurred",
+                "requires_user_action": True
             }
     
     async def _execute_vulnerability_test(self, decision: Decision, context: DecisionContext) -> dict[str, Any]:
@@ -598,23 +603,28 @@ class EnhancedDecisionAgent:
         try:
             from services.aiva_common.command_center import get_command_center
             from services.aiva_common.schemas import AICommand, CommandType
+            import uuid
             
             command_center = get_command_center()
             
-            # 決定測試類型
-            if decision.action == "EXPLOIT_SQL_INJECTION":
-                vuln_types = ["sqli"]
-            else:
-                vuln_types = ["sqli", "xss", "ssrf", "idor"]  # 全面測試
+            # 生成唯一的 scan_id
+            scan_id = f"scan_{uuid.uuid4().hex[:12]}"
+            command_id = f"{scan_id}_phase0"
             
-            # 構建命令
+            # 決定掃描深度（SQLi 需要更深入）
+            max_depth = 5 if decision.action == "EXPLOIT_SQL_INJECTION" else 3
+            
+            # 構建符合 Phase0StartPayload schema 的命令
             command = AICommand(
+                command_id=command_id,
                 command_type=CommandType.SCAN_PHASE0,
                 target_module="scan",
                 payload={
-                    "target": target,
-                    "vulnerability_types": vuln_types,
-                    "deep_scan": True,
+                    "scan_id": scan_id,
+                    "targets": [target],
+                    "max_depth": max_depth,
+                    "timeout": 600,
+                    "custom_headers": {},
                 }
             )
             
@@ -623,16 +633,18 @@ class EnhancedDecisionAgent:
             
             return {
                 "success": result.success,
-                "data": result.result_data,
-                "error": result.error_message
+                "data": result.result,  # 修正：使用 result 而非 result_data
+                "error": result.error
             }
             
         except Exception as e:
-            self.logger.warning(f"⚠️ Test execution failed: {e}")
+            self.logger.error(f"❌ Test execution failed: {e}")
+            # 返回實際失敗狀態，不再偽裝成功
             return {
-                "success": True,
-                "simulated": True,
-                "message": "Vulnerability test simulated"
+                "success": False,
+                "error": str(e),
+                "message": "Vulnerability test execution failed",
+                "requires_user_action": True
             }
     
     def _execute_mode_switch(self, decision: Decision, context: DecisionContext) -> dict[str, Any]:

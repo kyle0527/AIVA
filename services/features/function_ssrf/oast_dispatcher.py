@@ -113,16 +113,51 @@ class OastDispatcher:
             else:
                 evidence_text = str(evidence)
 
-            events.append(
-                OastEvent(
-                    token=resolved,
-                    evidence=evidence_text,
-                    request=entry.get("request"),
-                    response=entry.get("response"),
-                )
+            event = OastEvent(
+                token=resolved,
+                evidence=evidence_text,
+                request=entry.get("request"),
+                response=entry.get("response"),
             )
+            
+            # 驗證 OAST 事件的真實性
+            if self._validate_oast_event(event):
+                events.append(event)
 
         return events
+    
+    def _validate_oast_event(self, event: OastEvent) -> bool:
+        """驗證 OAST 事件是否為真實 SSRF，過濾虛假回呼"""
+        # 檢查是否有請求內容
+        if not event.request:
+            return False
+        
+        # 檢查是否包含真實的 HTTP 請求特徵
+        request_indicators = [
+            "GET ", "POST ", "PUT ", "DELETE ",
+            "Host:", "User-Agent:", "Accept:",
+            "HTTP/1.", "HTTP/2"
+        ]
+        if not any(indicator in event.request for indicator in request_indicators):
+            return False
+        
+        # 檢查是否為預期的回呼來源 (非瀏覽器預載入等)
+        if event.request and "User-Agent:" in event.request:
+            # 排除瀏覽器預載入和掃描器
+            browser_preload_patterns = [
+                "Chrome-Lighthouse", "Googlebot", "bingbot",
+                "Prefetch", "Preload", "Scanner"
+            ]
+            if any(pattern in event.request for pattern in browser_preload_patterns):
+                return False
+        
+        # 檢查回應內容 (如果有)
+        if event.response:
+            # 確認有實質回應內容
+            if len(event.response.strip()) < 10:
+                return False
+        
+        return True
 
     async def close(self) -> None:
         if self._client:

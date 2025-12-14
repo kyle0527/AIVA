@@ -1,0 +1,6273 @@
+[
+  {
+    "flow_id": 1,
+    "description": "Execute flow: monitoring -> optimized_core",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 1",
+    "modules_involved": [
+      "service_backbone"
+    ],
+    "steps": [
+      "monitoring",
+      "optimized_core"
+    ],
+    "length": 2
+  },
+  {
+    "flow_id": 2,
+    "description": "Execute flow: monitoring -> optimized_core -> train_classifier",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 2",
+    "modules_involved": [
+      "service_backbone"
+    ],
+    "steps": [
+      "monitoring",
+      "optimized_core",
+      "train_classifier"
+    ],
+    "length": 3
+  },
+  {
+    "flow_id": 3,
+    "description": "Execute flow: monitoring -> optimized_core -> train_classifier -> model_trainer",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 3",
+    "modules_involved": [
+      "service_backbone",
+      "external_learning"
+    ],
+    "steps": [
+      "monitoring",
+      "optimized_core",
+      "train_classifier",
+      "model_trainer"
+    ],
+    "length": 4
+  },
+  {
+    "flow_id": 4,
+    "description": "Execute flow: monitoring -> optimized_core -> train_classifier -> model_trainer -> training_orchestrator",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 4",
+    "modules_involved": [
+      "service_backbone",
+      "external_learning"
+    ],
+    "steps": [
+      "monitoring",
+      "optimized_core",
+      "train_classifier",
+      "model_trainer",
+      "training_orchestrator"
+    ],
+    "length": 5
+  },
+  {
+    "flow_id": 5,
+    "description": "Execute flow: monitoring -> optimized_core -> train_classifier -> model_trainer -> ai_model_manager",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 5",
+    "modules_involved": [
+      "service_backbone",
+      "external_learning",
+      "cognitive_core"
+    ],
+    "steps": [
+      "monitoring",
+      "optimized_core",
+      "train_classifier",
+      "model_trainer",
+      "ai_model_manager"
+    ],
+    "length": 5
+  },
+  {
+    "flow_id": 6,
+    "description": "Execute flow: logging_formatter -> nlg_system",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 6",
+    "modules_involved": [
+      "service_backbone"
+    ],
+    "steps": [
+      "logging_formatter",
+      "nlg_system"
+    ],
+    "length": 2
+  },
+  {
+    "flow_id": 7,
+    "description": "Execute flow: logging_formatter -> authz_mapper",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 7",
+    "modules_involved": [
+      "service_backbone"
+    ],
+    "steps": [
+      "logging_formatter",
+      "authz_mapper"
+    ],
+    "length": 2
+  },
+  {
+    "flow_id": 8,
+    "description": "Execute flow: logging_formatter -> matrix_visualizer",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 8",
+    "modules_involved": [
+      "service_backbone"
+    ],
+    "steps": [
+      "logging_formatter",
+      "matrix_visualizer"
+    ],
+    "length": 2
+  },
+  {
+    "flow_id": 9,
+    "description": "Execute flow: logging_formatter -> permission_matrix",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 9",
+    "modules_involved": [
+      "service_backbone"
+    ],
+    "steps": [
+      "logging_formatter",
+      "permission_matrix"
+    ],
+    "length": 2
+  },
+  {
+    "flow_id": 10,
+    "description": "Execute flow: logging_formatter -> permission_matrix -> authz_mapper",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 10",
+    "modules_involved": [
+      "service_backbone"
+    ],
+    "steps": [
+      "logging_formatter",
+      "permission_matrix",
+      "authz_mapper"
+    ],
+    "length": 3
+  },
+  {
+    "flow_id": 11,
+    "description": "Execute flow: logging_formatter -> permission_matrix -> matrix_visualizer",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 11",
+    "modules_involved": [
+      "service_backbone"
+    ],
+    "steps": [
+      "logging_formatter",
+      "permission_matrix",
+      "matrix_visualizer"
+    ],
+    "length": 3
+  },
+  {
+    "flow_id": 12,
+    "description": "Execute flow: logging_formatter -> payload_generator",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 12",
+    "modules_involved": [
+      "service_backbone"
+    ],
+    "steps": [
+      "logging_formatter",
+      "payload_generator"
+    ],
+    "length": 2
+  },
+  {
+    "flow_id": 13,
+    "description": "Execute flow: scalable_bio_trainer -> permission_matrix",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 13",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "permission_matrix"
+    ],
+    "length": 2
+  },
+  {
+    "flow_id": 14,
+    "description": "Execute flow: scalable_bio_trainer -> permission_matrix -> authz_mapper",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 14",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "permission_matrix",
+      "authz_mapper"
+    ],
+    "length": 3
+  },
+  {
+    "flow_id": 15,
+    "description": "Execute flow: scalable_bio_trainer -> permission_matrix -> matrix_visualizer",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 15",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "permission_matrix",
+      "matrix_visualizer"
+    ],
+    "length": 3
+  },
+  {
+    "flow_id": 16,
+    "description": "Execute flow: scalable_bio_trainer -> command_repository",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 16",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "command_repository"
+    ],
+    "length": 2
+  },
+  {
+    "flow_id": 17,
+    "description": "Execute flow: scalable_bio_trainer -> model_trainer",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 17",
+    "modules_involved": [
+      "external_learning"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "model_trainer"
+    ],
+    "length": 2
+  },
+  {
+    "flow_id": 18,
+    "description": "Execute flow: scalable_bio_trainer -> model_trainer -> training_orchestrator",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 18",
+    "modules_involved": [
+      "external_learning"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "model_trainer",
+      "training_orchestrator"
+    ],
+    "length": 3
+  },
+  {
+    "flow_id": 19,
+    "description": "Execute flow: scalable_bio_trainer -> model_trainer -> ai_model_manager",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 19",
+    "modules_involved": [
+      "external_learning",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "model_trainer",
+      "ai_model_manager"
+    ],
+    "length": 3
+  },
+  {
+    "flow_id": 20,
+    "description": "Execute flow: scalable_bio_trainer -> rl_trainers",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 20",
+    "modules_involved": [
+      "external_learning"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "rl_trainers"
+    ],
+    "length": 2
+  },
+  {
+    "flow_id": 21,
+    "description": "Execute flow: scalable_bio_trainer -> rl_trainers -> capability_orchestrator",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 21",
+    "modules_involved": [
+      "external_learning",
+      "core_capabilities"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "rl_trainers",
+      "capability_orchestrator"
+    ],
+    "length": 3
+  },
+  {
+    "flow_id": 22,
+    "description": "Execute flow: scalable_bio_trainer -> rl_trainers -> capability_orchestrator -> train_classifier",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 22",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone",
+      "core_capabilities"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "rl_trainers",
+      "capability_orchestrator",
+      "train_classifier"
+    ],
+    "length": 4
+  },
+  {
+    "flow_id": 23,
+    "description": "Execute flow: scalable_bio_trainer -> rl_trainers -> capability_orchestrator -> train_classifier -> model_trainer",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 23",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone",
+      "core_capabilities"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "rl_trainers",
+      "capability_orchestrator",
+      "train_classifier",
+      "model_trainer"
+    ],
+    "length": 5
+  },
+  {
+    "flow_id": 24,
+    "description": "Execute flow: scalable_bio_trainer -> rl_trainers -> capability_orchestrator -> enhanced_decision_agent",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 24",
+    "modules_involved": [
+      "external_learning",
+      "core_capabilities",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "rl_trainers",
+      "capability_orchestrator",
+      "enhanced_decision_agent"
+    ],
+    "length": 4
+  },
+  {
+    "flow_id": 25,
+    "description": "Execute flow: scalable_bio_trainer -> rl_trainers -> capability_orchestrator -> enhanced_decision_agent -> ai_model_manager",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 25",
+    "modules_involved": [
+      "external_learning",
+      "core_capabilities",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "rl_trainers",
+      "capability_orchestrator",
+      "enhanced_decision_agent",
+      "ai_model_manager"
+    ],
+    "length": 5
+  },
+  {
+    "flow_id": 26,
+    "description": "Execute flow: scalable_bio_trainer -> rl_trainers -> capability_orchestrator -> postgresql_vector_store",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 26",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone",
+      "core_capabilities"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "rl_trainers",
+      "capability_orchestrator",
+      "postgresql_vector_store"
+    ],
+    "length": 4
+  },
+  {
+    "flow_id": 27,
+    "description": "Execute flow: scalable_bio_trainer -> rl_trainers -> capability_orchestrator -> postgresql_vector_store -> nlg_system",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 27",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone",
+      "core_capabilities"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "rl_trainers",
+      "capability_orchestrator",
+      "postgresql_vector_store",
+      "nlg_system"
+    ],
+    "length": 5
+  },
+  {
+    "flow_id": 28,
+    "description": "Execute flow: scalable_bio_trainer -> rl_trainers -> capability_orchestrator -> postgresql_vector_store -> command_repository",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 28",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone",
+      "core_capabilities"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "rl_trainers",
+      "capability_orchestrator",
+      "postgresql_vector_store",
+      "command_repository"
+    ],
+    "length": 5
+  },
+  {
+    "flow_id": 29,
+    "description": "Execute flow: scalable_bio_trainer -> rl_trainers -> capability_orchestrator -> postgresql_vector_store -> analyze_connection_recommendations",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 29",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone",
+      "core_capabilities"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "rl_trainers",
+      "capability_orchestrator",
+      "postgresql_vector_store",
+      "analyze_connection_recommendations"
+    ],
+    "length": 5
+  },
+  {
+    "flow_id": 30,
+    "description": "Execute flow: scalable_bio_trainer -> rl_trainers -> capability_orchestrator -> postgresql_vector_store -> practical_analyzer",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 30",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone",
+      "core_capabilities"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "rl_trainers",
+      "capability_orchestrator",
+      "postgresql_vector_store",
+      "practical_analyzer"
+    ],
+    "length": 5
+  },
+  {
+    "flow_id": 31,
+    "description": "Execute flow: scalable_bio_trainer -> rl_trainers -> capability_orchestrator -> postgresql_vector_store -> train_classifier",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 31",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone",
+      "core_capabilities"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "rl_trainers",
+      "capability_orchestrator",
+      "postgresql_vector_store",
+      "train_classifier"
+    ],
+    "length": 5
+  },
+  {
+    "flow_id": 32,
+    "description": "Execute flow: scalable_bio_trainer -> rl_trainers -> capability_orchestrator -> postgresql_vector_store -> attack_validator",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 32",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone",
+      "core_capabilities"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "rl_trainers",
+      "capability_orchestrator",
+      "postgresql_vector_store",
+      "attack_validator"
+    ],
+    "length": 5
+  },
+  {
+    "flow_id": 33,
+    "description": "Execute flow: scalable_bio_trainer -> rl_trainers -> capability_orchestrator -> postgresql_vector_store -> assistant",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 33",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone",
+      "core_capabilities"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "rl_trainers",
+      "capability_orchestrator",
+      "postgresql_vector_store",
+      "assistant"
+    ],
+    "length": 5
+  },
+  {
+    "flow_id": 34,
+    "description": "Execute flow: scalable_bio_trainer -> rl_trainers -> capability_orchestrator -> postgresql_vector_store -> unified_vector_store",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 34",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone",
+      "core_capabilities"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "rl_trainers",
+      "capability_orchestrator",
+      "postgresql_vector_store",
+      "unified_vector_store"
+    ],
+    "length": 5
+  },
+  {
+    "flow_id": 35,
+    "description": "Execute flow: scalable_bio_trainer -> rl_trainers -> aiva_exploration_pipeline",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 35",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "rl_trainers",
+      "aiva_exploration_pipeline"
+    ],
+    "length": 3
+  },
+  {
+    "flow_id": 36,
+    "description": "Execute flow: scalable_bio_trainer -> rl_trainers -> aiva_exploration_pipeline -> ai_capability_query",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 36",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "rl_trainers",
+      "aiva_exploration_pipeline",
+      "ai_capability_query"
+    ],
+    "length": 4
+  },
+  {
+    "flow_id": 37,
+    "description": "Execute flow: scalable_bio_trainer -> rl_trainers -> aiva_exploration_pipeline -> ai_capability_query -> backends",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 37",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "rl_trainers",
+      "aiva_exploration_pipeline",
+      "ai_capability_query",
+      "backends"
+    ],
+    "length": 5
+  },
+  {
+    "flow_id": 38,
+    "description": "Execute flow: scalable_bio_trainer -> rl_trainers -> aiva_exploration_pipeline -> ai_capability_query -> command_repository",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 38",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "rl_trainers",
+      "aiva_exploration_pipeline",
+      "ai_capability_query",
+      "command_repository"
+    ],
+    "length": 5
+  },
+  {
+    "flow_id": 39,
+    "description": "Execute flow: scalable_bio_trainer -> rl_trainers -> aiva_exploration_pipeline -> capability_registry",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 39",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone",
+      "core_capabilities"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "rl_trainers",
+      "aiva_exploration_pipeline",
+      "capability_registry"
+    ],
+    "length": 4
+  },
+  {
+    "flow_id": 40,
+    "description": "Execute flow: scalable_bio_trainer -> rl_trainers -> aiva_exploration_pipeline -> capability_registry -> experience_manager",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 40",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone",
+      "core_capabilities"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "rl_trainers",
+      "aiva_exploration_pipeline",
+      "capability_registry",
+      "experience_manager"
+    ],
+    "length": 5
+  },
+  {
+    "flow_id": 41,
+    "description": "Execute flow: scalable_bio_trainer -> rl_trainers -> aiva_exploration_pipeline -> capability_registry -> aiva_cli_implementation",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 41",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone",
+      "core_capabilities"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "rl_trainers",
+      "aiva_exploration_pipeline",
+      "capability_registry",
+      "aiva_cli_implementation"
+    ],
+    "length": 5
+  },
+  {
+    "flow_id": 42,
+    "description": "Execute flow: scalable_bio_trainer -> rl_trainers -> aiva_exploration_pipeline -> capability_registry -> core_analyzer",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 42",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone",
+      "core_capabilities"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "rl_trainers",
+      "aiva_exploration_pipeline",
+      "capability_registry",
+      "core_analyzer"
+    ],
+    "length": 5
+  },
+  {
+    "flow_id": 43,
+    "description": "Execute flow: scalable_bio_trainer -> rl_trainers -> aiva_exploration_pipeline -> capability_registry -> run_analysis",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 43",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone",
+      "core_capabilities"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "rl_trainers",
+      "aiva_exploration_pipeline",
+      "capability_registry",
+      "run_analysis"
+    ],
+    "length": 5
+  },
+  {
+    "flow_id": 44,
+    "description": "Execute flow: scalable_bio_trainer -> rl_trainers -> aiva_exploration_pipeline -> capability_registry -> trace_recorder",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 44",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone",
+      "core_capabilities"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "rl_trainers",
+      "aiva_exploration_pipeline",
+      "capability_registry",
+      "trace_recorder"
+    ],
+    "length": 5
+  },
+  {
+    "flow_id": 45,
+    "description": "Execute flow: scalable_bio_trainer -> rl_trainers -> aiva_exploration_pipeline -> event_listener",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 45",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "rl_trainers",
+      "aiva_exploration_pipeline",
+      "event_listener"
+    ],
+    "length": 4
+  },
+  {
+    "flow_id": 46,
+    "description": "Execute flow: scalable_bio_trainer -> rl_trainers -> aiva_exploration_pipeline -> event_listener -> app",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 46",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "rl_trainers",
+      "aiva_exploration_pipeline",
+      "event_listener",
+      "app"
+    ],
+    "length": 5
+  },
+  {
+    "flow_id": 47,
+    "description": "Execute flow: scalable_bio_trainer -> rl_trainers -> aiva_exploration_pipeline -> unified_function_caller",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 47",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "rl_trainers",
+      "aiva_exploration_pipeline",
+      "unified_function_caller"
+    ],
+    "length": 4
+  },
+  {
+    "flow_id": 48,
+    "description": "Execute flow: scalable_bio_trainer -> rl_trainers -> aiva_exploration_pipeline -> unified_function_caller -> assistant",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 48",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "rl_trainers",
+      "aiva_exploration_pipeline",
+      "unified_function_caller",
+      "assistant"
+    ],
+    "length": 5
+  },
+  {
+    "flow_id": 49,
+    "description": "Execute flow: scalable_bio_trainer -> rl_trainers -> aiva_exploration_pipeline -> ai_controller",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 49",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "rl_trainers",
+      "aiva_exploration_pipeline",
+      "ai_controller"
+    ],
+    "length": 4
+  },
+  {
+    "flow_id": 50,
+    "description": "Execute flow: scalable_bio_trainer -> rl_trainers -> aiva_exploration_pipeline -> ai_controller -> ai_summary_plugin",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 50",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "rl_trainers",
+      "aiva_exploration_pipeline",
+      "ai_controller",
+      "ai_summary_plugin"
+    ],
+    "length": 5
+  },
+  {
+    "flow_id": 51,
+    "description": "Execute flow: scalable_bio_trainer -> rl_trainers -> aiva_exploration_pipeline -> cli_integration_example",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 51",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "rl_trainers",
+      "aiva_exploration_pipeline",
+      "cli_integration_example"
+    ],
+    "length": 4
+  },
+  {
+    "flow_id": 52,
+    "description": "Execute flow: scalable_bio_trainer -> rl_trainers -> aiva_exploration_pipeline -> aiva_exploration_pipeline",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 52",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "rl_trainers",
+      "aiva_exploration_pipeline",
+      "aiva_exploration_pipeline"
+    ],
+    "length": 4
+  },
+  {
+    "flow_id": 53,
+    "description": "Execute flow: scalable_bio_trainer -> rl_trainers -> aiva_exploration_pipeline -> bizlogic_attack_executor",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 53",
+    "modules_involved": [
+      "external_learning",
+      "task_planning",
+      "service_backbone"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "rl_trainers",
+      "aiva_exploration_pipeline",
+      "bizlogic_attack_executor"
+    ],
+    "length": 4
+  },
+  {
+    "flow_id": 54,
+    "description": "Execute flow: scalable_bio_trainer -> rl_trainers -> aiva_exploration_pipeline -> postgresql_vector_store",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 54",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "rl_trainers",
+      "aiva_exploration_pipeline",
+      "postgresql_vector_store"
+    ],
+    "length": 4
+  },
+  {
+    "flow_id": 55,
+    "description": "Execute flow: scalable_bio_trainer -> rl_trainers -> aiva_exploration_pipeline -> postgresql_vector_store -> nlg_system",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 55",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "rl_trainers",
+      "aiva_exploration_pipeline",
+      "postgresql_vector_store",
+      "nlg_system"
+    ],
+    "length": 5
+  },
+  {
+    "flow_id": 56,
+    "description": "Execute flow: scalable_bio_trainer -> rl_trainers -> aiva_exploration_pipeline -> postgresql_vector_store -> command_repository",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 56",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "rl_trainers",
+      "aiva_exploration_pipeline",
+      "postgresql_vector_store",
+      "command_repository"
+    ],
+    "length": 5
+  },
+  {
+    "flow_id": 57,
+    "description": "Execute flow: scalable_bio_trainer -> rl_trainers -> aiva_exploration_pipeline -> postgresql_vector_store -> analyze_connection_recommendations",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 57",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "rl_trainers",
+      "aiva_exploration_pipeline",
+      "postgresql_vector_store",
+      "analyze_connection_recommendations"
+    ],
+    "length": 5
+  },
+  {
+    "flow_id": 58,
+    "description": "Execute flow: scalable_bio_trainer -> rl_trainers -> aiva_exploration_pipeline -> postgresql_vector_store -> practical_analyzer",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 58",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "rl_trainers",
+      "aiva_exploration_pipeline",
+      "postgresql_vector_store",
+      "practical_analyzer"
+    ],
+    "length": 5
+  },
+  {
+    "flow_id": 59,
+    "description": "Execute flow: scalable_bio_trainer -> rl_trainers -> aiva_exploration_pipeline -> postgresql_vector_store -> train_classifier",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 59",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "rl_trainers",
+      "aiva_exploration_pipeline",
+      "postgresql_vector_store",
+      "train_classifier"
+    ],
+    "length": 5
+  },
+  {
+    "flow_id": 60,
+    "description": "Execute flow: scalable_bio_trainer -> rl_trainers -> aiva_exploration_pipeline -> postgresql_vector_store -> attack_validator",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 60",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "rl_trainers",
+      "aiva_exploration_pipeline",
+      "postgresql_vector_store",
+      "attack_validator"
+    ],
+    "length": 5
+  },
+  {
+    "flow_id": 61,
+    "description": "Execute flow: scalable_bio_trainer -> rl_trainers -> aiva_exploration_pipeline -> postgresql_vector_store -> assistant",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 61",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "rl_trainers",
+      "aiva_exploration_pipeline",
+      "postgresql_vector_store",
+      "assistant"
+    ],
+    "length": 5
+  },
+  {
+    "flow_id": 62,
+    "description": "Execute flow: scalable_bio_trainer -> rl_trainers -> aiva_exploration_pipeline -> postgresql_vector_store -> unified_vector_store",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 62",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "rl_trainers",
+      "aiva_exploration_pipeline",
+      "postgresql_vector_store",
+      "unified_vector_store"
+    ],
+    "length": 5
+  },
+  {
+    "flow_id": 63,
+    "description": "Execute flow: scalable_bio_trainer -> rl_trainers -> ai_commander",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 63",
+    "modules_involved": [
+      "external_learning",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "rl_trainers",
+      "ai_commander"
+    ],
+    "length": 3
+  },
+  {
+    "flow_id": 64,
+    "description": "Execute flow: scalable_bio_trainer -> rl_trainers -> execution_status_monitor",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 64",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "rl_trainers",
+      "execution_status_monitor"
+    ],
+    "length": 3
+  },
+  {
+    "flow_id": 65,
+    "description": "Execute flow: scalable_bio_trainer -> rl_trainers -> execution_status_monitor -> app",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 65",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "rl_trainers",
+      "execution_status_monitor",
+      "app"
+    ],
+    "length": 4
+  },
+  {
+    "flow_id": 66,
+    "description": "Execute flow: scalable_bio_trainer -> rl_trainers -> execution_status_monitor -> unified_memory_manager",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 66",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "rl_trainers",
+      "execution_status_monitor",
+      "unified_memory_manager"
+    ],
+    "length": 4
+  },
+  {
+    "flow_id": 67,
+    "description": "Execute flow: scalable_bio_trainer -> rl_trainers -> execution_status_monitor -> unified_memory_manager -> optimized_core",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 67",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "rl_trainers",
+      "execution_status_monitor",
+      "unified_memory_manager",
+      "optimized_core"
+    ],
+    "length": 5
+  },
+  {
+    "flow_id": 68,
+    "description": "Execute flow: scalable_bio_trainer -> rl_trainers -> execution_planner",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 68",
+    "modules_involved": [
+      "external_learning",
+      "task_planning"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "rl_trainers",
+      "execution_planner"
+    ],
+    "length": 3
+  },
+  {
+    "flow_id": 69,
+    "description": "Execute flow: scalable_bio_trainer -> rl_trainers -> execution_planner -> payload_generator",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 69",
+    "modules_involved": [
+      "external_learning",
+      "task_planning",
+      "service_backbone"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "rl_trainers",
+      "execution_planner",
+      "payload_generator"
+    ],
+    "length": 4
+  },
+  {
+    "flow_id": 70,
+    "description": "Execute flow: scalable_bio_trainer -> rl_trainers -> authz_mapper",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 70",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "rl_trainers",
+      "authz_mapper"
+    ],
+    "length": 3
+  },
+  {
+    "flow_id": 71,
+    "description": "Execute flow: scalable_bio_trainer -> rl_trainers -> aiva_cli_implementation",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 71",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "rl_trainers",
+      "aiva_cli_implementation"
+    ],
+    "length": 3
+  },
+  {
+    "flow_id": 72,
+    "description": "Execute flow: scalable_bio_trainer -> rl_trainers -> aiva_exploration_pipeline",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 72",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "rl_trainers",
+      "aiva_exploration_pipeline"
+    ],
+    "length": 3
+  },
+  {
+    "flow_id": 73,
+    "description": "Execute flow: scalable_bio_trainer -> rl_trainers -> analyze_dataflow_breakpoints",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 73",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "rl_trainers",
+      "analyze_dataflow_breakpoints"
+    ],
+    "length": 3
+  },
+  {
+    "flow_id": 74,
+    "description": "Execute flow: scalable_bio_trainer -> rl_trainers -> analyze_dataflow_breakpoints -> analyze_missing_function_connections",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 74",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "rl_trainers",
+      "analyze_dataflow_breakpoints",
+      "analyze_missing_function_connections"
+    ],
+    "length": 4
+  },
+  {
+    "flow_id": 75,
+    "description": "Execute flow: scalable_bio_trainer -> rl_trainers -> analyze_dataflow_breakpoints -> analyze_missing_function_connections -> core_analyzer",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 75",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "rl_trainers",
+      "analyze_dataflow_breakpoints",
+      "analyze_missing_function_connections",
+      "core_analyzer"
+    ],
+    "length": 5
+  },
+  {
+    "flow_id": 76,
+    "description": "Execute flow: scalable_bio_trainer -> rl_trainers -> analyze_dataflow_breakpoints -> core_analyzer",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 76",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "rl_trainers",
+      "analyze_dataflow_breakpoints",
+      "core_analyzer"
+    ],
+    "length": 4
+  },
+  {
+    "flow_id": 77,
+    "description": "Execute flow: scalable_bio_trainer -> rl_trainers -> analyze_dataflow_breakpoints -> core_analyzer -> run_analysis",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 77",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "rl_trainers",
+      "analyze_dataflow_breakpoints",
+      "core_analyzer",
+      "run_analysis"
+    ],
+    "length": 5
+  },
+  {
+    "flow_id": 78,
+    "description": "Execute flow: scalable_bio_trainer -> rl_trainers -> analyze_dataflow_breakpoints -> run_analysis",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 78",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "rl_trainers",
+      "analyze_dataflow_breakpoints",
+      "run_analysis"
+    ],
+    "length": 4
+  },
+  {
+    "flow_id": 79,
+    "description": "Execute flow: scalable_bio_trainer -> rl_trainers -> analyze_missing_function_connections",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 79",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "rl_trainers",
+      "analyze_missing_function_connections"
+    ],
+    "length": 3
+  },
+  {
+    "flow_id": 80,
+    "description": "Execute flow: scalable_bio_trainer -> rl_trainers -> analyze_missing_function_connections -> core_analyzer",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 80",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "rl_trainers",
+      "analyze_missing_function_connections",
+      "core_analyzer"
+    ],
+    "length": 4
+  },
+  {
+    "flow_id": 81,
+    "description": "Execute flow: scalable_bio_trainer -> rl_trainers -> analyze_missing_function_connections -> core_analyzer -> run_analysis",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 81",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "rl_trainers",
+      "analyze_missing_function_connections",
+      "core_analyzer",
+      "run_analysis"
+    ],
+    "length": 5
+  },
+  {
+    "flow_id": 82,
+    "description": "Execute flow: scalable_bio_trainer -> rl_trainers -> generate_capability_index",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 82",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "rl_trainers",
+      "generate_capability_index"
+    ],
+    "length": 3
+  },
+  {
+    "flow_id": 83,
+    "description": "Execute flow: scalable_bio_trainer -> rl_trainers -> generate_capability_list",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 83",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "rl_trainers",
+      "generate_capability_list"
+    ],
+    "length": 3
+  },
+  {
+    "flow_id": 84,
+    "description": "Execute flow: scalable_bio_trainer -> rl_trainers -> train_classifier",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 84",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "rl_trainers",
+      "train_classifier"
+    ],
+    "length": 3
+  },
+  {
+    "flow_id": 85,
+    "description": "Execute flow: scalable_bio_trainer -> rl_trainers -> train_classifier -> model_trainer",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 85",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "rl_trainers",
+      "train_classifier",
+      "model_trainer"
+    ],
+    "length": 4
+  },
+  {
+    "flow_id": 86,
+    "description": "Execute flow: scalable_bio_trainer -> rl_trainers -> train_classifier -> model_trainer -> training_orchestrator",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 86",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "rl_trainers",
+      "train_classifier",
+      "model_trainer",
+      "training_orchestrator"
+    ],
+    "length": 5
+  },
+  {
+    "flow_id": 87,
+    "description": "Execute flow: scalable_bio_trainer -> rl_trainers -> train_classifier -> model_trainer -> ai_model_manager",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 87",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "rl_trainers",
+      "train_classifier",
+      "model_trainer",
+      "ai_model_manager"
+    ],
+    "length": 5
+  },
+  {
+    "flow_id": 88,
+    "description": "Execute flow: scalable_bio_trainer -> rl_trainers -> model_trainer",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 88",
+    "modules_involved": [
+      "external_learning"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "rl_trainers",
+      "model_trainer"
+    ],
+    "length": 3
+  },
+  {
+    "flow_id": 89,
+    "description": "Execute flow: scalable_bio_trainer -> rl_trainers -> model_trainer -> training_orchestrator",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 89",
+    "modules_involved": [
+      "external_learning"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "rl_trainers",
+      "model_trainer",
+      "training_orchestrator"
+    ],
+    "length": 4
+  },
+  {
+    "flow_id": 90,
+    "description": "Execute flow: scalable_bio_trainer -> rl_trainers -> model_trainer -> ai_model_manager",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 90",
+    "modules_involved": [
+      "external_learning",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "rl_trainers",
+      "model_trainer",
+      "ai_model_manager"
+    ],
+    "length": 4
+  },
+  {
+    "flow_id": 91,
+    "description": "Execute flow: scalable_bio_trainer -> rl_trainers -> scenario_manager",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 91",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "rl_trainers",
+      "scenario_manager"
+    ],
+    "length": 3
+  },
+  {
+    "flow_id": 92,
+    "description": "Execute flow: scalable_bio_trainer -> rl_trainers -> analysis_engine",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 92",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "rl_trainers",
+      "analysis_engine"
+    ],
+    "length": 3
+  },
+  {
+    "flow_id": 93,
+    "description": "Execute flow: scalable_bio_trainer -> rl_trainers -> ai_model_manager",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 93",
+    "modules_involved": [
+      "external_learning",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "rl_trainers",
+      "ai_model_manager"
+    ],
+    "length": 3
+  },
+  {
+    "flow_id": 94,
+    "description": "Execute flow: scalable_bio_trainer -> rl_trainers -> real_bio_net_adapter",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 94",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "rl_trainers",
+      "real_bio_net_adapter"
+    ],
+    "length": 3
+  },
+  {
+    "flow_id": 95,
+    "description": "Execute flow: scalable_bio_trainer -> rl_trainers -> real_neural_core",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 95",
+    "modules_involved": [
+      "external_learning",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "rl_trainers",
+      "real_neural_core"
+    ],
+    "length": 3
+  },
+  {
+    "flow_id": 96,
+    "description": "Execute flow: scalable_bio_trainer -> rl_trainers -> weight_manager",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 96",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "rl_trainers",
+      "weight_manager"
+    ],
+    "length": 3
+  },
+  {
+    "flow_id": 97,
+    "description": "Execute flow: scalable_bio_trainer -> rl_trainers -> vector_store",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 97",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "rl_trainers",
+      "vector_store"
+    ],
+    "length": 3
+  },
+  {
+    "flow_id": 98,
+    "description": "Execute flow: scalable_bio_trainer -> rl_trainers -> vector_store -> ai_controller",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 98",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "rl_trainers",
+      "vector_store",
+      "ai_controller"
+    ],
+    "length": 4
+  },
+  {
+    "flow_id": 99,
+    "description": "Execute flow: scalable_bio_trainer -> rl_trainers -> vector_store -> ai_controller -> ai_summary_plugin",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 99",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "rl_trainers",
+      "vector_store",
+      "ai_controller",
+      "ai_summary_plugin"
+    ],
+    "length": 5
+  },
+  {
+    "flow_id": 100,
+    "description": "Execute flow: scalable_bio_trainer -> rl_trainers -> vector_store -> backends",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 100",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "rl_trainers",
+      "vector_store",
+      "backends"
+    ],
+    "length": 4
+  },
+  {
+    "flow_id": 101,
+    "description": "Execute flow: scalable_bio_trainer -> rl_trainers -> vector_store -> backends -> external_loop_connector",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 101",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "rl_trainers",
+      "vector_store",
+      "backends",
+      "external_loop_connector"
+    ],
+    "length": 5
+  },
+  {
+    "flow_id": 102,
+    "description": "Execute flow: scalable_bio_trainer -> rl_trainers -> vector_store -> backends -> internal_loop_connector",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 102",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "rl_trainers",
+      "vector_store",
+      "backends",
+      "internal_loop_connector"
+    ],
+    "length": 5
+  },
+  {
+    "flow_id": 103,
+    "description": "Execute flow: scalable_bio_trainer -> rl_trainers -> vector_store -> backends -> plan_executor",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 103",
+    "modules_involved": [
+      "external_learning",
+      "task_planning",
+      "service_backbone"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "rl_trainers",
+      "vector_store",
+      "backends",
+      "plan_executor"
+    ],
+    "length": 5
+  },
+  {
+    "flow_id": 104,
+    "description": "Execute flow: scalable_bio_trainer -> rl_trainers -> vector_store -> backends -> protocol_adapter",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 104",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "rl_trainers",
+      "vector_store",
+      "backends",
+      "protocol_adapter"
+    ],
+    "length": 5
+  },
+  {
+    "flow_id": 105,
+    "description": "Execute flow: scalable_bio_trainer -> rl_trainers -> vector_store -> backends -> optimized_core",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 105",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "rl_trainers",
+      "vector_store",
+      "backends",
+      "optimized_core"
+    ],
+    "length": 5
+  },
+  {
+    "flow_id": 106,
+    "description": "Execute flow: scalable_bio_trainer -> rl_trainers -> vector_store -> backends -> message_broker",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 106",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "rl_trainers",
+      "vector_store",
+      "backends",
+      "message_broker"
+    ],
+    "length": 5
+  },
+  {
+    "flow_id": 107,
+    "description": "Execute flow: scalable_bio_trainer -> rl_trainers -> vector_store -> backends -> result_collector",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 107",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "rl_trainers",
+      "vector_store",
+      "backends",
+      "result_collector"
+    ],
+    "length": 5
+  },
+  {
+    "flow_id": 108,
+    "description": "Execute flow: scalable_bio_trainer -> rl_trainers -> vector_store -> backends -> task_dispatcher",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 108",
+    "modules_involved": [
+      "external_learning",
+      "task_planning",
+      "service_backbone"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "rl_trainers",
+      "vector_store",
+      "backends",
+      "task_dispatcher"
+    ],
+    "length": 5
+  },
+  {
+    "flow_id": 109,
+    "description": "Execute flow: scalable_bio_trainer -> rl_trainers -> vector_store -> backends -> model_trainer",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 109",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "rl_trainers",
+      "vector_store",
+      "backends",
+      "model_trainer"
+    ],
+    "length": 5
+  },
+  {
+    "flow_id": 110,
+    "description": "Execute flow: scalable_bio_trainer -> rl_trainers -> vector_store -> backends -> scenario_manager",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 110",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "rl_trainers",
+      "vector_store",
+      "backends",
+      "scenario_manager"
+    ],
+    "length": 5
+  },
+  {
+    "flow_id": 111,
+    "description": "Execute flow: scalable_bio_trainer -> rl_trainers -> vector_store -> backends -> bizlogic_attack_executor",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 111",
+    "modules_involved": [
+      "external_learning",
+      "task_planning",
+      "service_backbone"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "rl_trainers",
+      "vector_store",
+      "backends",
+      "bizlogic_attack_executor"
+    ],
+    "length": 5
+  },
+  {
+    "flow_id": 112,
+    "description": "Execute flow: scalable_bio_trainer -> rl_trainers -> vector_store -> backends -> assistant",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 112",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "rl_trainers",
+      "vector_store",
+      "backends",
+      "assistant"
+    ],
+    "length": 5
+  },
+  {
+    "flow_id": 113,
+    "description": "Execute flow: scalable_bio_trainer -> rl_trainers -> vector_store -> backends -> scan_module_interface",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 113",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "rl_trainers",
+      "vector_store",
+      "backends",
+      "scan_module_interface"
+    ],
+    "length": 5
+  },
+  {
+    "flow_id": 114,
+    "description": "Execute flow: scalable_bio_trainer -> rl_trainers -> vector_store -> backends -> two_phase_scan_orchestrator",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 114",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "rl_trainers",
+      "vector_store",
+      "backends",
+      "two_phase_scan_orchestrator"
+    ],
+    "length": 5
+  },
+  {
+    "flow_id": 115,
+    "description": "Execute flow: scalable_bio_trainer -> rl_trainers -> vector_store -> backends -> to_functions",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 115",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "rl_trainers",
+      "vector_store",
+      "backends",
+      "to_functions"
+    ],
+    "length": 5
+  },
+  {
+    "flow_id": 116,
+    "description": "Execute flow: scalable_bio_trainer -> rl_trainers -> vector_store -> backends -> scan_result_processor",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 116",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "rl_trainers",
+      "vector_store",
+      "backends",
+      "scan_result_processor"
+    ],
+    "length": 5
+  },
+  {
+    "flow_id": 117,
+    "description": "Execute flow: scalable_bio_trainer -> rl_trainers -> vector_store -> backends -> skill_graph",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 117",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "rl_trainers",
+      "vector_store",
+      "backends",
+      "skill_graph"
+    ],
+    "length": 5
+  },
+  {
+    "flow_id": 118,
+    "description": "Execute flow: scalable_bio_trainer -> rl_trainers -> vector_store -> command_repository",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 118",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "rl_trainers",
+      "vector_store",
+      "command_repository"
+    ],
+    "length": 4
+  },
+  {
+    "flow_id": 119,
+    "description": "Execute flow: scalable_bio_trainer -> rl_trainers -> vector_store -> real_bio_net_adapter",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 119",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "rl_trainers",
+      "vector_store",
+      "real_bio_net_adapter"
+    ],
+    "length": 4
+  },
+  {
+    "flow_id": 120,
+    "description": "Execute flow: scalable_bio_trainer -> rl_trainers -> vector_store -> real_neural_core",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 120",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "rl_trainers",
+      "vector_store",
+      "real_neural_core"
+    ],
+    "length": 4
+  },
+  {
+    "flow_id": 121,
+    "description": "Execute flow: scalable_bio_trainer -> analysis_engine",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 121",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "analysis_engine"
+    ],
+    "length": 2
+  },
+  {
+    "flow_id": 122,
+    "description": "Execute flow: scalable_bio_trainer -> ai_model_manager",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 122",
+    "modules_involved": [
+      "external_learning",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "ai_model_manager"
+    ],
+    "length": 2
+  },
+  {
+    "flow_id": 123,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 123",
+    "modules_involved": [
+      "external_learning",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network"
+    ],
+    "length": 2
+  },
+  {
+    "flow_id": 124,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> optimized_core",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 124",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "optimized_core"
+    ],
+    "length": 3
+  },
+  {
+    "flow_id": 125,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> optimized_core -> train_classifier",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 125",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "optimized_core",
+      "train_classifier"
+    ],
+    "length": 4
+  },
+  {
+    "flow_id": 126,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> optimized_core -> train_classifier -> model_trainer",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 126",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "optimized_core",
+      "train_classifier",
+      "model_trainer"
+    ],
+    "length": 5
+  },
+  {
+    "flow_id": 127,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> rl_models",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 127",
+    "modules_involved": [
+      "external_learning",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "rl_models"
+    ],
+    "length": 3
+  },
+  {
+    "flow_id": 128,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> rl_models -> ai_capability_query",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 128",
+    "modules_involved": [
+      "external_learning",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "rl_models",
+      "ai_capability_query"
+    ],
+    "length": 4
+  },
+  {
+    "flow_id": 129,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> rl_models -> ai_capability_query -> backends",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 129",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "rl_models",
+      "ai_capability_query",
+      "backends"
+    ],
+    "length": 5
+  },
+  {
+    "flow_id": 130,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> rl_models -> ai_capability_query -> command_repository",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 130",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "rl_models",
+      "ai_capability_query",
+      "command_repository"
+    ],
+    "length": 5
+  },
+  {
+    "flow_id": 131,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> rl_models -> capability_orchestrator",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 131",
+    "modules_involved": [
+      "external_learning",
+      "cognitive_core",
+      "core_capabilities"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "rl_models",
+      "capability_orchestrator"
+    ],
+    "length": 4
+  },
+  {
+    "flow_id": 132,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> rl_models -> capability_orchestrator -> train_classifier",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 132",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone",
+      "cognitive_core",
+      "core_capabilities"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "rl_models",
+      "capability_orchestrator",
+      "train_classifier"
+    ],
+    "length": 5
+  },
+  {
+    "flow_id": 133,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> rl_models -> capability_orchestrator -> enhanced_decision_agent",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 133",
+    "modules_involved": [
+      "external_learning",
+      "cognitive_core",
+      "core_capabilities"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "rl_models",
+      "capability_orchestrator",
+      "enhanced_decision_agent"
+    ],
+    "length": 5
+  },
+  {
+    "flow_id": 134,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> rl_models -> capability_orchestrator -> postgresql_vector_store",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 134",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone",
+      "cognitive_core",
+      "core_capabilities"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "rl_models",
+      "capability_orchestrator",
+      "postgresql_vector_store"
+    ],
+    "length": 5
+  },
+  {
+    "flow_id": 135,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> rl_models -> external_loop_connector",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 135",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "rl_models",
+      "external_loop_connector"
+    ],
+    "length": 4
+  },
+  {
+    "flow_id": 136,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> rl_models -> internal_loop_connector",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 136",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "rl_models",
+      "internal_loop_connector"
+    ],
+    "length": 4
+  },
+  {
+    "flow_id": 137,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> rl_models -> internal_loop_connector -> capability_registry",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 137",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone",
+      "cognitive_core",
+      "core_capabilities"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "rl_models",
+      "internal_loop_connector",
+      "capability_registry"
+    ],
+    "length": 5
+  },
+  {
+    "flow_id": 138,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> rl_models -> internal_loop_connector -> aiva_cli_implementation",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 138",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "rl_models",
+      "internal_loop_connector",
+      "aiva_cli_implementation"
+    ],
+    "length": 5
+  },
+  {
+    "flow_id": 139,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> rl_models -> nlg_system",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 139",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "rl_models",
+      "nlg_system"
+    ],
+    "length": 4
+  },
+  {
+    "flow_id": 140,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> rl_models -> capability_registry",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 140",
+    "modules_involved": [
+      "external_learning",
+      "cognitive_core",
+      "core_capabilities"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "rl_models",
+      "capability_registry"
+    ],
+    "length": 4
+  },
+  {
+    "flow_id": 141,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> rl_models -> capability_registry -> experience_manager",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 141",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone",
+      "cognitive_core",
+      "core_capabilities"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "rl_models",
+      "capability_registry",
+      "experience_manager"
+    ],
+    "length": 5
+  },
+  {
+    "flow_id": 142,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> rl_models -> capability_registry -> aiva_cli_implementation",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 142",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone",
+      "cognitive_core",
+      "core_capabilities"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "rl_models",
+      "capability_registry",
+      "aiva_cli_implementation"
+    ],
+    "length": 5
+  },
+  {
+    "flow_id": 143,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> rl_models -> capability_registry -> core_analyzer",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 143",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone",
+      "cognitive_core",
+      "core_capabilities"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "rl_models",
+      "capability_registry",
+      "core_analyzer"
+    ],
+    "length": 5
+  },
+  {
+    "flow_id": 144,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> rl_models -> capability_registry -> run_analysis",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 144",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone",
+      "cognitive_core",
+      "core_capabilities"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "rl_models",
+      "capability_registry",
+      "run_analysis"
+    ],
+    "length": 5
+  },
+  {
+    "flow_id": 145,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> rl_models -> capability_registry -> trace_recorder",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 145",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone",
+      "cognitive_core",
+      "core_capabilities"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "rl_models",
+      "capability_registry",
+      "trace_recorder"
+    ],
+    "length": 5
+  },
+  {
+    "flow_id": 146,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> rl_models -> multilang_coordinator",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 146",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "rl_models",
+      "multilang_coordinator"
+    ],
+    "length": 4
+  },
+  {
+    "flow_id": 147,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> rl_models -> multilang_coordinator -> ai_commander",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 147",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "rl_models",
+      "multilang_coordinator",
+      "ai_commander"
+    ],
+    "length": 5
+  },
+  {
+    "flow_id": 148,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> rl_models -> multilang_coordinator -> enhanced_unified_caller",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 148",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "rl_models",
+      "multilang_coordinator",
+      "enhanced_unified_caller"
+    ],
+    "length": 5
+  },
+  {
+    "flow_id": 149,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> rl_models -> multilang_coordinator -> storage_manager",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 149",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "rl_models",
+      "multilang_coordinator",
+      "storage_manager"
+    ],
+    "length": 5
+  },
+  {
+    "flow_id": 150,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> rl_models -> multilang_coordinator -> analysis_engine",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 150",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "rl_models",
+      "multilang_coordinator",
+      "analysis_engine"
+    ],
+    "length": 5
+  },
+  {
+    "flow_id": 151,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> rl_models -> multilang_coordinator -> skill_graph",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 151",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "rl_models",
+      "multilang_coordinator",
+      "skill_graph"
+    ],
+    "length": 5
+  },
+  {
+    "flow_id": 152,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> rl_models -> multilang_coordinator -> postgresql_vector_store",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 152",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "rl_models",
+      "multilang_coordinator",
+      "postgresql_vector_store"
+    ],
+    "length": 5
+  },
+  {
+    "flow_id": 153,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> rl_models -> event_listener",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 153",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "rl_models",
+      "event_listener"
+    ],
+    "length": 4
+  },
+  {
+    "flow_id": 154,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> rl_models -> event_listener -> app",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 154",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "rl_models",
+      "event_listener",
+      "app"
+    ],
+    "length": 5
+  },
+  {
+    "flow_id": 155,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> rl_models -> experience_manager",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 155",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "rl_models",
+      "experience_manager"
+    ],
+    "length": 4
+  },
+  {
+    "flow_id": 156,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> rl_models -> aiva_exploration_pipeline",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 156",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "rl_models",
+      "aiva_exploration_pipeline"
+    ],
+    "length": 4
+  },
+  {
+    "flow_id": 157,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> rl_models -> aiva_exploration_pipeline -> ai_capability_query",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 157",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "rl_models",
+      "aiva_exploration_pipeline",
+      "ai_capability_query"
+    ],
+    "length": 5
+  },
+  {
+    "flow_id": 158,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> rl_models -> aiva_exploration_pipeline -> capability_registry",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 158",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone",
+      "cognitive_core",
+      "core_capabilities"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "rl_models",
+      "aiva_exploration_pipeline",
+      "capability_registry"
+    ],
+    "length": 5
+  },
+  {
+    "flow_id": 159,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> rl_models -> aiva_exploration_pipeline -> event_listener",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 159",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "rl_models",
+      "aiva_exploration_pipeline",
+      "event_listener"
+    ],
+    "length": 5
+  },
+  {
+    "flow_id": 160,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> rl_models -> aiva_exploration_pipeline -> unified_function_caller",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 160",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "rl_models",
+      "aiva_exploration_pipeline",
+      "unified_function_caller"
+    ],
+    "length": 5
+  },
+  {
+    "flow_id": 161,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> rl_models -> aiva_exploration_pipeline -> ai_controller",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 161",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "rl_models",
+      "aiva_exploration_pipeline",
+      "ai_controller"
+    ],
+    "length": 5
+  },
+  {
+    "flow_id": 162,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> rl_models -> aiva_exploration_pipeline -> cli_integration_example",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 162",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "rl_models",
+      "aiva_exploration_pipeline",
+      "cli_integration_example"
+    ],
+    "length": 5
+  },
+  {
+    "flow_id": 163,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> rl_models -> aiva_exploration_pipeline -> aiva_exploration_pipeline",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 163",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "rl_models",
+      "aiva_exploration_pipeline",
+      "aiva_exploration_pipeline"
+    ],
+    "length": 5
+  },
+  {
+    "flow_id": 164,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> rl_models -> aiva_exploration_pipeline -> bizlogic_attack_executor",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 164",
+    "modules_involved": [
+      "external_learning",
+      "task_planning",
+      "service_backbone",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "rl_models",
+      "aiva_exploration_pipeline",
+      "bizlogic_attack_executor"
+    ],
+    "length": 5
+  },
+  {
+    "flow_id": 165,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> rl_models -> aiva_exploration_pipeline -> postgresql_vector_store",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 165",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "rl_models",
+      "aiva_exploration_pipeline",
+      "postgresql_vector_store"
+    ],
+    "length": 5
+  },
+  {
+    "flow_id": 166,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> rl_models -> context_manager",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 166",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "rl_models",
+      "context_manager"
+    ],
+    "length": 4
+  },
+  {
+    "flow_id": 167,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> rl_models -> ai_commander",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 167",
+    "modules_involved": [
+      "external_learning",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "rl_models",
+      "ai_commander"
+    ],
+    "length": 4
+  },
+  {
+    "flow_id": 168,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> rl_models -> attack_plan_mapper",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 168",
+    "modules_involved": [
+      "external_learning",
+      "task_planning",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "rl_models",
+      "attack_plan_mapper"
+    ],
+    "length": 4
+  },
+  {
+    "flow_id": 169,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> rl_models -> execution_status_monitor",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 169",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "rl_models",
+      "execution_status_monitor"
+    ],
+    "length": 4
+  },
+  {
+    "flow_id": 170,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> rl_models -> execution_status_monitor -> app",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 170",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "rl_models",
+      "execution_status_monitor",
+      "app"
+    ],
+    "length": 5
+  },
+  {
+    "flow_id": 171,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> rl_models -> execution_status_monitor -> unified_memory_manager",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 171",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "rl_models",
+      "execution_status_monitor",
+      "unified_memory_manager"
+    ],
+    "length": 5
+  },
+  {
+    "flow_id": 172,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> rl_models -> plan_executor",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 172",
+    "modules_involved": [
+      "external_learning",
+      "task_planning",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "rl_models",
+      "plan_executor"
+    ],
+    "length": 4
+  },
+  {
+    "flow_id": 173,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> rl_models -> plan_executor -> execution_planner",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 173",
+    "modules_involved": [
+      "external_learning",
+      "task_planning",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "rl_models",
+      "plan_executor",
+      "execution_planner"
+    ],
+    "length": 5
+  },
+  {
+    "flow_id": 174,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> rl_models -> plan_executor -> plan_comparator",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 174",
+    "modules_involved": [
+      "external_learning",
+      "task_planning",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "rl_models",
+      "plan_executor",
+      "plan_comparator"
+    ],
+    "length": 5
+  },
+  {
+    "flow_id": 175,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> rl_models -> plan_executor -> core_analyzer",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 175",
+    "modules_involved": [
+      "external_learning",
+      "task_planning",
+      "service_backbone",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "rl_models",
+      "plan_executor",
+      "core_analyzer"
+    ],
+    "length": 5
+  },
+  {
+    "flow_id": 176,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> rl_models -> plan_executor -> analysis_engine",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 176",
+    "modules_involved": [
+      "external_learning",
+      "task_planning",
+      "service_backbone",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "rl_models",
+      "plan_executor",
+      "analysis_engine"
+    ],
+    "length": 5
+  },
+  {
+    "flow_id": 177,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> rl_models -> plan_executor -> attack_executor",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 177",
+    "modules_involved": [
+      "external_learning",
+      "task_planning",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "rl_models",
+      "plan_executor",
+      "attack_executor"
+    ],
+    "length": 5
+  },
+  {
+    "flow_id": 178,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> rl_models -> ast_parser",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 178",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "rl_models",
+      "ast_parser"
+    ],
+    "length": 4
+  },
+  {
+    "flow_id": 179,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> rl_models -> execution_planner",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 179",
+    "modules_involved": [
+      "external_learning",
+      "task_planning",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "rl_models",
+      "execution_planner"
+    ],
+    "length": 4
+  },
+  {
+    "flow_id": 180,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> rl_models -> execution_planner -> payload_generator",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 180",
+    "modules_involved": [
+      "external_learning",
+      "task_planning",
+      "service_backbone",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "rl_models",
+      "execution_planner",
+      "payload_generator"
+    ],
+    "length": 5
+  },
+  {
+    "flow_id": 181,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> rl_models -> task_converter",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 181",
+    "modules_involved": [
+      "external_learning",
+      "task_planning",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "rl_models",
+      "task_converter"
+    ],
+    "length": 4
+  },
+  {
+    "flow_id": 182,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> rl_models -> task_generator",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 182",
+    "modules_involved": [
+      "external_learning",
+      "task_planning",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "rl_models",
+      "task_generator"
+    ],
+    "length": 4
+  },
+  {
+    "flow_id": 183,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> rl_models -> tool_selector",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 183",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "rl_models",
+      "tool_selector"
+    ],
+    "length": 4
+  },
+  {
+    "flow_id": 184,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> rl_models -> protocol_adapter",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 184",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "rl_models",
+      "protocol_adapter"
+    ],
+    "length": 4
+  },
+  {
+    "flow_id": 185,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> rl_models -> app",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 185",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "rl_models",
+      "app"
+    ],
+    "length": 4
+  },
+  {
+    "flow_id": 186,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> rl_models -> enhanced_unified_caller",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 186",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "rl_models",
+      "enhanced_unified_caller"
+    ],
+    "length": 4
+  },
+  {
+    "flow_id": 187,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> rl_models -> enhanced_unified_caller -> task_executor",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 187",
+    "modules_involved": [
+      "external_learning",
+      "task_planning",
+      "service_backbone",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "rl_models",
+      "enhanced_unified_caller",
+      "task_executor"
+    ],
+    "length": 5
+  },
+  {
+    "flow_id": 188,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> rl_models -> enhanced_unified_caller -> unified_function_caller",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 188",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "rl_models",
+      "enhanced_unified_caller",
+      "unified_function_caller"
+    ],
+    "length": 5
+  },
+  {
+    "flow_id": 189,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> rl_models -> enhanced_unified_caller -> bizlogic_attack_executor",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 189",
+    "modules_involved": [
+      "external_learning",
+      "task_planning",
+      "service_backbone",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "rl_models",
+      "enhanced_unified_caller",
+      "bizlogic_attack_executor"
+    ],
+    "length": 5
+  },
+  {
+    "flow_id": 190,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> rl_models -> unified_function_caller",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 190",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "rl_models",
+      "unified_function_caller"
+    ],
+    "length": 4
+  },
+  {
+    "flow_id": 191,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> rl_models -> unified_function_caller -> assistant",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 191",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "rl_models",
+      "unified_function_caller",
+      "assistant"
+    ],
+    "length": 5
+  },
+  {
+    "flow_id": 192,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> rl_models -> matrix_visualizer",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 192",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "rl_models",
+      "matrix_visualizer"
+    ],
+    "length": 4
+  },
+  {
+    "flow_id": 193,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> rl_models -> ai_controller",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 193",
+    "modules_involved": [
+      "external_learning",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "rl_models",
+      "ai_controller"
+    ],
+    "length": 4
+  },
+  {
+    "flow_id": 194,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> rl_models -> ai_controller -> ai_summary_plugin",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 194",
+    "modules_involved": [
+      "external_learning",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "rl_models",
+      "ai_controller",
+      "ai_summary_plugin"
+    ],
+    "length": 5
+  },
+  {
+    "flow_id": 195,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> rl_models -> core_service_coordinator",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 195",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "rl_models",
+      "core_service_coordinator"
+    ],
+    "length": 4
+  },
+  {
+    "flow_id": 196,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> rl_models -> core_service_coordinator -> app",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 196",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "rl_models",
+      "core_service_coordinator",
+      "app"
+    ],
+    "length": 5
+  },
+  {
+    "flow_id": 197,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> rl_models -> optimized_core",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 197",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "rl_models",
+      "optimized_core"
+    ],
+    "length": 4
+  },
+  {
+    "flow_id": 198,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> rl_models -> optimized_core -> train_classifier",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 198",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "rl_models",
+      "optimized_core",
+      "train_classifier"
+    ],
+    "length": 5
+  },
+  {
+    "flow_id": 199,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> rl_models -> result_collector",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 199",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "rl_models",
+      "result_collector"
+    ],
+    "length": 4
+  },
+  {
+    "flow_id": 200,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> rl_models -> task_dispatcher",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 200",
+    "modules_involved": [
+      "external_learning",
+      "task_planning",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "rl_models",
+      "task_dispatcher"
+    ],
+    "length": 4
+  },
+  {
+    "flow_id": 201,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> rl_models -> session_state_manager",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 201",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "rl_models",
+      "session_state_manager"
+    ],
+    "length": 4
+  },
+  {
+    "flow_id": 202,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> rl_models -> session_state_manager -> app",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 202",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "rl_models",
+      "session_state_manager",
+      "app"
+    ],
+    "length": 5
+  },
+  {
+    "flow_id": 203,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> rl_models -> backends",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 203",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "rl_models",
+      "backends"
+    ],
+    "length": 4
+  },
+  {
+    "flow_id": 204,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> rl_models -> backends -> external_loop_connector",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 204",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "rl_models",
+      "backends",
+      "external_loop_connector"
+    ],
+    "length": 5
+  },
+  {
+    "flow_id": 205,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> rl_models -> backends -> internal_loop_connector",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 205",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "rl_models",
+      "backends",
+      "internal_loop_connector"
+    ],
+    "length": 5
+  },
+  {
+    "flow_id": 206,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> rl_models -> backends -> plan_executor",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 206",
+    "modules_involved": [
+      "external_learning",
+      "task_planning",
+      "service_backbone",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "rl_models",
+      "backends",
+      "plan_executor"
+    ],
+    "length": 5
+  },
+  {
+    "flow_id": 207,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> rl_models -> backends -> protocol_adapter",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 207",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "rl_models",
+      "backends",
+      "protocol_adapter"
+    ],
+    "length": 5
+  },
+  {
+    "flow_id": 208,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> rl_models -> backends -> optimized_core",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 208",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "rl_models",
+      "backends",
+      "optimized_core"
+    ],
+    "length": 5
+  },
+  {
+    "flow_id": 209,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> rl_models -> backends -> message_broker",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 209",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "rl_models",
+      "backends",
+      "message_broker"
+    ],
+    "length": 5
+  },
+  {
+    "flow_id": 210,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> rl_models -> backends -> result_collector",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 210",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "rl_models",
+      "backends",
+      "result_collector"
+    ],
+    "length": 5
+  },
+  {
+    "flow_id": 211,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> rl_models -> backends -> task_dispatcher",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 211",
+    "modules_involved": [
+      "external_learning",
+      "task_planning",
+      "service_backbone",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "rl_models",
+      "backends",
+      "task_dispatcher"
+    ],
+    "length": 5
+  },
+  {
+    "flow_id": 212,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> rl_models -> backends -> model_trainer",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 212",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "rl_models",
+      "backends",
+      "model_trainer"
+    ],
+    "length": 5
+  },
+  {
+    "flow_id": 213,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> rl_models -> backends -> scenario_manager",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 213",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "rl_models",
+      "backends",
+      "scenario_manager"
+    ],
+    "length": 5
+  },
+  {
+    "flow_id": 214,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> rl_models -> backends -> bizlogic_attack_executor",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 214",
+    "modules_involved": [
+      "external_learning",
+      "task_planning",
+      "service_backbone",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "rl_models",
+      "backends",
+      "bizlogic_attack_executor"
+    ],
+    "length": 5
+  },
+  {
+    "flow_id": 215,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> rl_models -> backends -> assistant",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 215",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "rl_models",
+      "backends",
+      "assistant"
+    ],
+    "length": 5
+  },
+  {
+    "flow_id": 216,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> rl_models -> backends -> scan_module_interface",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 216",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "rl_models",
+      "backends",
+      "scan_module_interface"
+    ],
+    "length": 5
+  },
+  {
+    "flow_id": 217,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> rl_models -> backends -> two_phase_scan_orchestrator",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 217",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "rl_models",
+      "backends",
+      "two_phase_scan_orchestrator"
+    ],
+    "length": 5
+  },
+  {
+    "flow_id": 218,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> rl_models -> backends -> to_functions",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 218",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "rl_models",
+      "backends",
+      "to_functions"
+    ],
+    "length": 5
+  },
+  {
+    "flow_id": 219,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> rl_models -> backends -> scan_result_processor",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 219",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "rl_models",
+      "backends",
+      "scan_result_processor"
+    ],
+    "length": 5
+  },
+  {
+    "flow_id": 220,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> rl_models -> backends -> skill_graph",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 220",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "rl_models",
+      "backends",
+      "skill_graph"
+    ],
+    "length": 5
+  },
+  {
+    "flow_id": 221,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> rl_models -> storage_manager",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 221",
+    "modules_involved": [
+      "external_learning",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "rl_models",
+      "storage_manager"
+    ],
+    "length": 4
+  },
+  {
+    "flow_id": 222,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> rl_models -> storage_manager -> cli_integration_example",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 222",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "rl_models",
+      "storage_manager",
+      "cli_integration_example"
+    ],
+    "length": 5
+  },
+  {
+    "flow_id": 223,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> rl_models -> cli_integration_example",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 223",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "rl_models",
+      "cli_integration_example"
+    ],
+    "length": 4
+  },
+  {
+    "flow_id": 224,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> rl_models -> aiva_cli_implementation",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 224",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "rl_models",
+      "aiva_cli_implementation"
+    ],
+    "length": 4
+  },
+  {
+    "flow_id": 225,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> rl_models -> aiva_exploration_pipeline",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 225",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "rl_models",
+      "aiva_exploration_pipeline"
+    ],
+    "length": 4
+  },
+  {
+    "flow_id": 226,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> rl_models -> analyze_connection_recommendations",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 226",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "rl_models",
+      "analyze_connection_recommendations"
+    ],
+    "length": 4
+  },
+  {
+    "flow_id": 227,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> rl_models -> analyze_connection_recommendations -> analyze_dataflow_breakpoints",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 227",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "rl_models",
+      "analyze_connection_recommendations",
+      "analyze_dataflow_breakpoints"
+    ],
+    "length": 5
+  },
+  {
+    "flow_id": 228,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> rl_models -> analyze_connection_recommendations -> analyze_missing_function_connections",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 228",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "rl_models",
+      "analyze_connection_recommendations",
+      "analyze_missing_function_connections"
+    ],
+    "length": 5
+  },
+  {
+    "flow_id": 229,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> rl_models -> analyze_connection_recommendations -> core_analyzer",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 229",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "rl_models",
+      "analyze_connection_recommendations",
+      "core_analyzer"
+    ],
+    "length": 5
+  },
+  {
+    "flow_id": 230,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> rl_models -> analyze_connection_recommendations -> practical_analyzer",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 230",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "rl_models",
+      "analyze_connection_recommendations",
+      "practical_analyzer"
+    ],
+    "length": 5
+  },
+  {
+    "flow_id": 231,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> rl_models -> analyze_connection_recommendations -> run_analysis",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 231",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "rl_models",
+      "analyze_connection_recommendations",
+      "run_analysis"
+    ],
+    "length": 5
+  },
+  {
+    "flow_id": 232,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> rl_models -> analyze_connection_recommendations -> exploit_orchestrator",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 232",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "rl_models",
+      "analyze_connection_recommendations",
+      "exploit_orchestrator"
+    ],
+    "length": 5
+  },
+  {
+    "flow_id": 233,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> rl_models -> analyze_dataflow_breakpoints",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 233",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "rl_models",
+      "analyze_dataflow_breakpoints"
+    ],
+    "length": 4
+  },
+  {
+    "flow_id": 234,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> rl_models -> analyze_dataflow_breakpoints -> analyze_missing_function_connections",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 234",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "rl_models",
+      "analyze_dataflow_breakpoints",
+      "analyze_missing_function_connections"
+    ],
+    "length": 5
+  },
+  {
+    "flow_id": 235,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> rl_models -> analyze_dataflow_breakpoints -> core_analyzer",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 235",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "rl_models",
+      "analyze_dataflow_breakpoints",
+      "core_analyzer"
+    ],
+    "length": 5
+  },
+  {
+    "flow_id": 236,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> rl_models -> analyze_dataflow_breakpoints -> run_analysis",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 236",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "rl_models",
+      "analyze_dataflow_breakpoints",
+      "run_analysis"
+    ],
+    "length": 5
+  },
+  {
+    "flow_id": 237,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> rl_models -> analyze_missing_function_connections",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 237",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "rl_models",
+      "analyze_missing_function_connections"
+    ],
+    "length": 4
+  },
+  {
+    "flow_id": 238,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> rl_models -> analyze_missing_function_connections -> core_analyzer",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 238",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "rl_models",
+      "analyze_missing_function_connections",
+      "core_analyzer"
+    ],
+    "length": 5
+  },
+  {
+    "flow_id": 239,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> rl_models -> core_analyzer",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 239",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "rl_models",
+      "core_analyzer"
+    ],
+    "length": 4
+  },
+  {
+    "flow_id": 240,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> rl_models -> core_analyzer -> run_analysis",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 240",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "rl_models",
+      "core_analyzer",
+      "run_analysis"
+    ],
+    "length": 5
+  },
+  {
+    "flow_id": 241,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> rl_models -> generate_capability_index",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 241",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "rl_models",
+      "generate_capability_index"
+    ],
+    "length": 4
+  },
+  {
+    "flow_id": 242,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> rl_models -> generate_capability_list",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 242",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "rl_models",
+      "generate_capability_list"
+    ],
+    "length": 4
+  },
+  {
+    "flow_id": 243,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> rl_models -> dynamic_strategy_adjustment",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 243",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "rl_models",
+      "dynamic_strategy_adjustment"
+    ],
+    "length": 4
+  },
+  {
+    "flow_id": 244,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> rl_models -> dynamic_strategy_adjustment -> app",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 244",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "rl_models",
+      "dynamic_strategy_adjustment",
+      "app"
+    ],
+    "length": 5
+  },
+  {
+    "flow_id": 245,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> rl_models -> risk_assessment_engine",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 245",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "rl_models",
+      "risk_assessment_engine"
+    ],
+    "length": 4
+  },
+  {
+    "flow_id": 246,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> rl_models -> model_trainer",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 246",
+    "modules_involved": [
+      "external_learning",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "rl_models",
+      "model_trainer"
+    ],
+    "length": 4
+  },
+  {
+    "flow_id": 247,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> rl_models -> model_trainer -> training_orchestrator",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 247",
+    "modules_involved": [
+      "external_learning",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "rl_models",
+      "model_trainer",
+      "training_orchestrator"
+    ],
+    "length": 5
+  },
+  {
+    "flow_id": 248,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> rl_models -> model_trainer -> ai_model_manager",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 248",
+    "modules_involved": [
+      "external_learning",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "rl_models",
+      "model_trainer",
+      "ai_model_manager"
+    ],
+    "length": 5
+  },
+  {
+    "flow_id": 249,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> rl_models -> rl_trainers",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 249",
+    "modules_involved": [
+      "external_learning",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "rl_models",
+      "rl_trainers"
+    ],
+    "length": 4
+  },
+  {
+    "flow_id": 250,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> rl_models -> rl_trainers -> capability_orchestrator",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 250",
+    "modules_involved": [
+      "external_learning",
+      "cognitive_core",
+      "core_capabilities"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "rl_models",
+      "rl_trainers",
+      "capability_orchestrator"
+    ],
+    "length": 5
+  },
+  {
+    "flow_id": 251,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> rl_models -> rl_trainers -> aiva_exploration_pipeline",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 251",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "rl_models",
+      "rl_trainers",
+      "aiva_exploration_pipeline"
+    ],
+    "length": 5
+  },
+  {
+    "flow_id": 252,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> rl_models -> rl_trainers -> ai_commander",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 252",
+    "modules_involved": [
+      "external_learning",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "rl_models",
+      "rl_trainers",
+      "ai_commander"
+    ],
+    "length": 5
+  },
+  {
+    "flow_id": 253,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> rl_models -> rl_trainers -> execution_status_monitor",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 253",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "rl_models",
+      "rl_trainers",
+      "execution_status_monitor"
+    ],
+    "length": 5
+  },
+  {
+    "flow_id": 254,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> rl_models -> rl_trainers -> execution_planner",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 254",
+    "modules_involved": [
+      "external_learning",
+      "task_planning",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "rl_models",
+      "rl_trainers",
+      "execution_planner"
+    ],
+    "length": 5
+  },
+  {
+    "flow_id": 255,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> rl_models -> rl_trainers -> authz_mapper",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 255",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "rl_models",
+      "rl_trainers",
+      "authz_mapper"
+    ],
+    "length": 5
+  },
+  {
+    "flow_id": 256,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> rl_models -> rl_trainers -> aiva_cli_implementation",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 256",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "rl_models",
+      "rl_trainers",
+      "aiva_cli_implementation"
+    ],
+    "length": 5
+  },
+  {
+    "flow_id": 257,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> rl_models -> rl_trainers -> aiva_exploration_pipeline",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 257",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "rl_models",
+      "rl_trainers",
+      "aiva_exploration_pipeline"
+    ],
+    "length": 5
+  },
+  {
+    "flow_id": 258,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> rl_models -> rl_trainers -> analyze_dataflow_breakpoints",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 258",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "rl_models",
+      "rl_trainers",
+      "analyze_dataflow_breakpoints"
+    ],
+    "length": 5
+  },
+  {
+    "flow_id": 259,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> rl_models -> rl_trainers -> analyze_missing_function_connections",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 259",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "rl_models",
+      "rl_trainers",
+      "analyze_missing_function_connections"
+    ],
+    "length": 5
+  },
+  {
+    "flow_id": 260,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> rl_models -> rl_trainers -> generate_capability_index",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 260",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "rl_models",
+      "rl_trainers",
+      "generate_capability_index"
+    ],
+    "length": 5
+  },
+  {
+    "flow_id": 261,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> rl_models -> rl_trainers -> generate_capability_list",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 261",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "rl_models",
+      "rl_trainers",
+      "generate_capability_list"
+    ],
+    "length": 5
+  },
+  {
+    "flow_id": 262,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> rl_models -> rl_trainers -> train_classifier",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 262",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "rl_models",
+      "rl_trainers",
+      "train_classifier"
+    ],
+    "length": 5
+  },
+  {
+    "flow_id": 263,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> rl_models -> rl_trainers -> model_trainer",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 263",
+    "modules_involved": [
+      "external_learning",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "rl_models",
+      "rl_trainers",
+      "model_trainer"
+    ],
+    "length": 5
+  },
+  {
+    "flow_id": 264,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> rl_models -> rl_trainers -> scenario_manager",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 264",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "rl_models",
+      "rl_trainers",
+      "scenario_manager"
+    ],
+    "length": 5
+  },
+  {
+    "flow_id": 265,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> rl_models -> rl_trainers -> analysis_engine",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 265",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "rl_models",
+      "rl_trainers",
+      "analysis_engine"
+    ],
+    "length": 5
+  },
+  {
+    "flow_id": 266,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> rl_models -> rl_trainers -> ai_model_manager",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 266",
+    "modules_involved": [
+      "external_learning",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "rl_models",
+      "rl_trainers",
+      "ai_model_manager"
+    ],
+    "length": 5
+  },
+  {
+    "flow_id": 267,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> rl_models -> rl_trainers -> real_bio_net_adapter",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 267",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "rl_models",
+      "rl_trainers",
+      "real_bio_net_adapter"
+    ],
+    "length": 5
+  },
+  {
+    "flow_id": 268,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> rl_models -> rl_trainers -> real_neural_core",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 268",
+    "modules_involved": [
+      "external_learning",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "rl_models",
+      "rl_trainers",
+      "real_neural_core"
+    ],
+    "length": 5
+  },
+  {
+    "flow_id": 269,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> rl_models -> rl_trainers -> weight_manager",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 269",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "rl_models",
+      "rl_trainers",
+      "weight_manager"
+    ],
+    "length": 5
+  },
+  {
+    "flow_id": 270,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> rl_models -> rl_trainers -> vector_store",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 270",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "rl_models",
+      "rl_trainers",
+      "vector_store"
+    ],
+    "length": 5
+  },
+  {
+    "flow_id": 271,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> rl_models -> scenario_manager",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 271",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "rl_models",
+      "scenario_manager"
+    ],
+    "length": 4
+  },
+  {
+    "flow_id": 272,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> rl_models -> training_orchestrator",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 272",
+    "modules_involved": [
+      "external_learning",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "rl_models",
+      "training_orchestrator"
+    ],
+    "length": 4
+  },
+  {
+    "flow_id": 273,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> rl_models -> analysis_engine",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 273",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "rl_models",
+      "analysis_engine"
+    ],
+    "length": 4
+  },
+  {
+    "flow_id": 274,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> rl_models -> attack_chain",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 274",
+    "modules_involved": [
+      "external_learning",
+      "cognitive_core",
+      "core_capabilities"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "rl_models",
+      "attack_chain"
+    ],
+    "length": 4
+  },
+  {
+    "flow_id": 275,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> rl_models -> attack_executor",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 275",
+    "modules_involved": [
+      "external_learning",
+      "task_planning",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "rl_models",
+      "attack_executor"
+    ],
+    "length": 4
+  },
+  {
+    "flow_id": 276,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> rl_models -> attack_executor -> ai_commander",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 276",
+    "modules_involved": [
+      "external_learning",
+      "task_planning",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "rl_models",
+      "attack_executor",
+      "ai_commander"
+    ],
+    "length": 5
+  },
+  {
+    "flow_id": 277,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> rl_models -> attack_validator",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 277",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "rl_models",
+      "attack_validator"
+    ],
+    "length": 4
+  },
+  {
+    "flow_id": 278,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> rl_models -> bizlogic_attack_executor",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 278",
+    "modules_involved": [
+      "external_learning",
+      "task_planning",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "rl_models",
+      "bizlogic_attack_executor"
+    ],
+    "length": 4
+  },
+  {
+    "flow_id": 279,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> rl_models -> exploit_manager_legacy",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 279",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "rl_models",
+      "exploit_manager_legacy"
+    ],
+    "length": 4
+  },
+  {
+    "flow_id": 280,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> rl_models -> exploit_manager_legacy -> attack_executor",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 280",
+    "modules_involved": [
+      "external_learning",
+      "task_planning",
+      "service_backbone",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "rl_models",
+      "exploit_manager_legacy",
+      "attack_executor"
+    ],
+    "length": 5
+  },
+  {
+    "flow_id": 281,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> rl_models -> exploit_manager_legacy -> exploit_orchestrator",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 281",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "rl_models",
+      "exploit_manager_legacy",
+      "exploit_orchestrator"
+    ],
+    "length": 5
+  },
+  {
+    "flow_id": 282,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> rl_models -> exploit_orchestrator",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 282",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "rl_models",
+      "exploit_orchestrator"
+    ],
+    "length": 4
+  },
+  {
+    "flow_id": 283,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> rl_models -> payload_generator",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 283",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "rl_models",
+      "payload_generator"
+    ],
+    "length": 4
+  },
+  {
+    "flow_id": 284,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> rl_models -> assistant",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 284",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "rl_models",
+      "assistant"
+    ],
+    "length": 4
+  },
+  {
+    "flow_id": 285,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> rl_models -> scan_module_interface",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 285",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "rl_models",
+      "scan_module_interface"
+    ],
+    "length": 4
+  },
+  {
+    "flow_id": 286,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> rl_models -> scan_module_interface -> app",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 286",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "rl_models",
+      "scan_module_interface",
+      "app"
+    ],
+    "length": 5
+  },
+  {
+    "flow_id": 287,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> rl_models -> two_phase_scan_orchestrator",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 287",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "rl_models",
+      "two_phase_scan_orchestrator"
+    ],
+    "length": 4
+  },
+  {
+    "flow_id": 288,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> rl_models -> two_phase_scan_orchestrator -> ai_commander",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 288",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "rl_models",
+      "two_phase_scan_orchestrator",
+      "ai_commander"
+    ],
+    "length": 5
+  },
+  {
+    "flow_id": 289,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> rl_models -> two_phase_scan_orchestrator -> scan_result_processor",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 289",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "rl_models",
+      "two_phase_scan_orchestrator",
+      "scan_result_processor"
+    ],
+    "length": 5
+  },
+  {
+    "flow_id": 290,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> rl_models -> ai_summary_plugin",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 290",
+    "modules_involved": [
+      "external_learning",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "rl_models",
+      "ai_summary_plugin"
+    ],
+    "length": 4
+  },
+  {
+    "flow_id": 291,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> rl_models -> ai_summary_plugin -> unified_memory_manager",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 291",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "rl_models",
+      "ai_summary_plugin",
+      "unified_memory_manager"
+    ],
+    "length": 5
+  },
+  {
+    "flow_id": 292,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> rl_models -> scan_result_processor",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 292",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "rl_models",
+      "scan_result_processor"
+    ],
+    "length": 4
+  },
+  {
+    "flow_id": 293,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> rl_models -> scan_result_processor -> app",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 293",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "rl_models",
+      "scan_result_processor",
+      "app"
+    ],
+    "length": 5
+  },
+  {
+    "flow_id": 294,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> rl_models -> scan_result_processor -> result_collector",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 294",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "rl_models",
+      "scan_result_processor",
+      "result_collector"
+    ],
+    "length": 5
+  },
+  {
+    "flow_id": 295,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> rl_models -> anti_hallucination_module",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 295",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "rl_models",
+      "anti_hallucination_module"
+    ],
+    "length": 4
+  },
+  {
+    "flow_id": 296,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> rl_models -> anti_hallucination_module -> enhanced_decision_agent",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 296",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "rl_models",
+      "anti_hallucination_module",
+      "enhanced_decision_agent"
+    ],
+    "length": 5
+  },
+  {
+    "flow_id": 297,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> rl_models -> enhanced_decision_agent",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 297",
+    "modules_involved": [
+      "external_learning",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "rl_models",
+      "enhanced_decision_agent"
+    ],
+    "length": 4
+  },
+  {
+    "flow_id": 298,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> rl_models -> enhanced_decision_agent -> ai_model_manager",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 298",
+    "modules_involved": [
+      "external_learning",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "rl_models",
+      "enhanced_decision_agent",
+      "ai_model_manager"
+    ],
+    "length": 5
+  },
+  {
+    "flow_id": 299,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> rl_models -> skill_graph",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 299",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "rl_models",
+      "skill_graph"
+    ],
+    "length": 4
+  },
+  {
+    "flow_id": 300,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> rl_models -> ai_model_manager",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 300",
+    "modules_involved": [
+      "external_learning",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "rl_models",
+      "ai_model_manager"
+    ],
+    "length": 4
+  },
+  {
+    "flow_id": 301,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> rl_models -> real_neural_core",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 301",
+    "modules_involved": [
+      "external_learning",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "rl_models",
+      "real_neural_core"
+    ],
+    "length": 4
+  },
+  {
+    "flow_id": 302,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> rl_models -> weight_manager",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 302",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "rl_models",
+      "weight_manager"
+    ],
+    "length": 4
+  },
+  {
+    "flow_id": 303,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> rl_models -> knowledge_base",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 303",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "rl_models",
+      "knowledge_base"
+    ],
+    "length": 4
+  },
+  {
+    "flow_id": 304,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> rl_models -> knowledge_base -> assistant",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 304",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "rl_models",
+      "knowledge_base",
+      "assistant"
+    ],
+    "length": 5
+  },
+  {
+    "flow_id": 305,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> rl_models -> knowledge_base -> unified_vector_store",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 305",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "rl_models",
+      "knowledge_base",
+      "unified_vector_store"
+    ],
+    "length": 5
+  },
+  {
+    "flow_id": 306,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> rl_models -> knowledge_base -> vector_store",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 306",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "rl_models",
+      "knowledge_base",
+      "vector_store"
+    ],
+    "length": 5
+  },
+  {
+    "flow_id": 307,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> rl_models -> rag_engine",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 307",
+    "modules_involved": [
+      "external_learning",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "rl_models",
+      "rag_engine"
+    ],
+    "length": 4
+  },
+  {
+    "flow_id": 308,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> rl_models -> vector_store",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 308",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "rl_models",
+      "vector_store"
+    ],
+    "length": 4
+  },
+  {
+    "flow_id": 309,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> rl_models -> vector_store -> ai_controller",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 309",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "rl_models",
+      "vector_store",
+      "ai_controller"
+    ],
+    "length": 5
+  },
+  {
+    "flow_id": 310,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> rl_models -> vector_store -> backends",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 310",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "rl_models",
+      "vector_store",
+      "backends"
+    ],
+    "length": 5
+  },
+  {
+    "flow_id": 311,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> rl_models -> vector_store -> command_repository",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 311",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "rl_models",
+      "vector_store",
+      "command_repository"
+    ],
+    "length": 5
+  },
+  {
+    "flow_id": 312,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> rl_models -> vector_store -> real_bio_net_adapter",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 312",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "rl_models",
+      "vector_store",
+      "real_bio_net_adapter"
+    ],
+    "length": 5
+  },
+  {
+    "flow_id": 313,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> rl_models -> vector_store -> real_neural_core",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 313",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "rl_models",
+      "vector_store",
+      "real_neural_core"
+    ],
+    "length": 5
+  },
+  {
+    "flow_id": 314,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> rl_trainers",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 314",
+    "modules_involved": [
+      "external_learning",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "rl_trainers"
+    ],
+    "length": 3
+  },
+  {
+    "flow_id": 315,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> rl_trainers -> capability_orchestrator",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 315",
+    "modules_involved": [
+      "external_learning",
+      "cognitive_core",
+      "core_capabilities"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "rl_trainers",
+      "capability_orchestrator"
+    ],
+    "length": 4
+  },
+  {
+    "flow_id": 316,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> rl_trainers -> capability_orchestrator -> train_classifier",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 316",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone",
+      "cognitive_core",
+      "core_capabilities"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "rl_trainers",
+      "capability_orchestrator",
+      "train_classifier"
+    ],
+    "length": 5
+  },
+  {
+    "flow_id": 317,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> rl_trainers -> capability_orchestrator -> enhanced_decision_agent",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 317",
+    "modules_involved": [
+      "external_learning",
+      "cognitive_core",
+      "core_capabilities"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "rl_trainers",
+      "capability_orchestrator",
+      "enhanced_decision_agent"
+    ],
+    "length": 5
+  },
+  {
+    "flow_id": 318,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> rl_trainers -> capability_orchestrator -> postgresql_vector_store",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 318",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone",
+      "cognitive_core",
+      "core_capabilities"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "rl_trainers",
+      "capability_orchestrator",
+      "postgresql_vector_store"
+    ],
+    "length": 5
+  },
+  {
+    "flow_id": 319,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> rl_trainers -> aiva_exploration_pipeline",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 319",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "rl_trainers",
+      "aiva_exploration_pipeline"
+    ],
+    "length": 4
+  },
+  {
+    "flow_id": 320,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> rl_trainers -> aiva_exploration_pipeline -> ai_capability_query",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 320",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "rl_trainers",
+      "aiva_exploration_pipeline",
+      "ai_capability_query"
+    ],
+    "length": 5
+  },
+  {
+    "flow_id": 321,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> rl_trainers -> aiva_exploration_pipeline -> capability_registry",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 321",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone",
+      "cognitive_core",
+      "core_capabilities"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "rl_trainers",
+      "aiva_exploration_pipeline",
+      "capability_registry"
+    ],
+    "length": 5
+  },
+  {
+    "flow_id": 322,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> rl_trainers -> aiva_exploration_pipeline -> event_listener",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 322",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "rl_trainers",
+      "aiva_exploration_pipeline",
+      "event_listener"
+    ],
+    "length": 5
+  },
+  {
+    "flow_id": 323,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> rl_trainers -> aiva_exploration_pipeline -> unified_function_caller",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 323",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "rl_trainers",
+      "aiva_exploration_pipeline",
+      "unified_function_caller"
+    ],
+    "length": 5
+  },
+  {
+    "flow_id": 324,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> rl_trainers -> aiva_exploration_pipeline -> ai_controller",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 324",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "rl_trainers",
+      "aiva_exploration_pipeline",
+      "ai_controller"
+    ],
+    "length": 5
+  },
+  {
+    "flow_id": 325,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> rl_trainers -> aiva_exploration_pipeline -> cli_integration_example",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 325",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "rl_trainers",
+      "aiva_exploration_pipeline",
+      "cli_integration_example"
+    ],
+    "length": 5
+  },
+  {
+    "flow_id": 326,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> rl_trainers -> aiva_exploration_pipeline -> aiva_exploration_pipeline",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 326",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "rl_trainers",
+      "aiva_exploration_pipeline",
+      "aiva_exploration_pipeline"
+    ],
+    "length": 5
+  },
+  {
+    "flow_id": 327,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> rl_trainers -> aiva_exploration_pipeline -> bizlogic_attack_executor",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 327",
+    "modules_involved": [
+      "external_learning",
+      "task_planning",
+      "service_backbone",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "rl_trainers",
+      "aiva_exploration_pipeline",
+      "bizlogic_attack_executor"
+    ],
+    "length": 5
+  },
+  {
+    "flow_id": 328,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> rl_trainers -> aiva_exploration_pipeline -> postgresql_vector_store",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 328",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "rl_trainers",
+      "aiva_exploration_pipeline",
+      "postgresql_vector_store"
+    ],
+    "length": 5
+  },
+  {
+    "flow_id": 329,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> rl_trainers -> ai_commander",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 329",
+    "modules_involved": [
+      "external_learning",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "rl_trainers",
+      "ai_commander"
+    ],
+    "length": 4
+  },
+  {
+    "flow_id": 330,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> rl_trainers -> execution_status_monitor",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 330",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "rl_trainers",
+      "execution_status_monitor"
+    ],
+    "length": 4
+  },
+  {
+    "flow_id": 331,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> rl_trainers -> execution_status_monitor -> app",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 331",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "rl_trainers",
+      "execution_status_monitor",
+      "app"
+    ],
+    "length": 5
+  },
+  {
+    "flow_id": 332,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> rl_trainers -> execution_status_monitor -> unified_memory_manager",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 332",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "rl_trainers",
+      "execution_status_monitor",
+      "unified_memory_manager"
+    ],
+    "length": 5
+  },
+  {
+    "flow_id": 333,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> rl_trainers -> execution_planner",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 333",
+    "modules_involved": [
+      "external_learning",
+      "task_planning",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "rl_trainers",
+      "execution_planner"
+    ],
+    "length": 4
+  },
+  {
+    "flow_id": 334,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> rl_trainers -> execution_planner -> payload_generator",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 334",
+    "modules_involved": [
+      "external_learning",
+      "task_planning",
+      "service_backbone",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "rl_trainers",
+      "execution_planner",
+      "payload_generator"
+    ],
+    "length": 5
+  },
+  {
+    "flow_id": 335,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> rl_trainers -> authz_mapper",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 335",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "rl_trainers",
+      "authz_mapper"
+    ],
+    "length": 4
+  },
+  {
+    "flow_id": 336,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> rl_trainers -> aiva_cli_implementation",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 336",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "rl_trainers",
+      "aiva_cli_implementation"
+    ],
+    "length": 4
+  },
+  {
+    "flow_id": 337,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> rl_trainers -> aiva_exploration_pipeline",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 337",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "rl_trainers",
+      "aiva_exploration_pipeline"
+    ],
+    "length": 4
+  },
+  {
+    "flow_id": 338,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> rl_trainers -> analyze_dataflow_breakpoints",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 338",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "rl_trainers",
+      "analyze_dataflow_breakpoints"
+    ],
+    "length": 4
+  },
+  {
+    "flow_id": 339,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> rl_trainers -> analyze_dataflow_breakpoints -> analyze_missing_function_connections",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 339",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "rl_trainers",
+      "analyze_dataflow_breakpoints",
+      "analyze_missing_function_connections"
+    ],
+    "length": 5
+  },
+  {
+    "flow_id": 340,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> rl_trainers -> analyze_dataflow_breakpoints -> core_analyzer",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 340",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "rl_trainers",
+      "analyze_dataflow_breakpoints",
+      "core_analyzer"
+    ],
+    "length": 5
+  },
+  {
+    "flow_id": 341,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> rl_trainers -> analyze_dataflow_breakpoints -> run_analysis",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 341",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "rl_trainers",
+      "analyze_dataflow_breakpoints",
+      "run_analysis"
+    ],
+    "length": 5
+  },
+  {
+    "flow_id": 342,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> rl_trainers -> analyze_missing_function_connections",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 342",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "rl_trainers",
+      "analyze_missing_function_connections"
+    ],
+    "length": 4
+  },
+  {
+    "flow_id": 343,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> rl_trainers -> analyze_missing_function_connections -> core_analyzer",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 343",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "rl_trainers",
+      "analyze_missing_function_connections",
+      "core_analyzer"
+    ],
+    "length": 5
+  },
+  {
+    "flow_id": 344,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> rl_trainers -> generate_capability_index",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 344",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "rl_trainers",
+      "generate_capability_index"
+    ],
+    "length": 4
+  },
+  {
+    "flow_id": 345,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> rl_trainers -> generate_capability_list",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 345",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "rl_trainers",
+      "generate_capability_list"
+    ],
+    "length": 4
+  },
+  {
+    "flow_id": 346,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> rl_trainers -> train_classifier",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 346",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "rl_trainers",
+      "train_classifier"
+    ],
+    "length": 4
+  },
+  {
+    "flow_id": 347,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> rl_trainers -> train_classifier -> model_trainer",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 347",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "rl_trainers",
+      "train_classifier",
+      "model_trainer"
+    ],
+    "length": 5
+  },
+  {
+    "flow_id": 348,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> rl_trainers -> model_trainer",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 348",
+    "modules_involved": [
+      "external_learning",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "rl_trainers",
+      "model_trainer"
+    ],
+    "length": 4
+  },
+  {
+    "flow_id": 349,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> rl_trainers -> model_trainer -> training_orchestrator",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 349",
+    "modules_involved": [
+      "external_learning",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "rl_trainers",
+      "model_trainer",
+      "training_orchestrator"
+    ],
+    "length": 5
+  },
+  {
+    "flow_id": 350,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> rl_trainers -> model_trainer -> ai_model_manager",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 350",
+    "modules_involved": [
+      "external_learning",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "rl_trainers",
+      "model_trainer",
+      "ai_model_manager"
+    ],
+    "length": 5
+  },
+  {
+    "flow_id": 351,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> rl_trainers -> scenario_manager",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 351",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "rl_trainers",
+      "scenario_manager"
+    ],
+    "length": 4
+  },
+  {
+    "flow_id": 352,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> rl_trainers -> analysis_engine",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 352",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "rl_trainers",
+      "analysis_engine"
+    ],
+    "length": 4
+  },
+  {
+    "flow_id": 353,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> rl_trainers -> ai_model_manager",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 353",
+    "modules_involved": [
+      "external_learning",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "rl_trainers",
+      "ai_model_manager"
+    ],
+    "length": 4
+  },
+  {
+    "flow_id": 354,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> rl_trainers -> real_bio_net_adapter",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 354",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "rl_trainers",
+      "real_bio_net_adapter"
+    ],
+    "length": 4
+  },
+  {
+    "flow_id": 355,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> rl_trainers -> real_neural_core",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 355",
+    "modules_involved": [
+      "external_learning",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "rl_trainers",
+      "real_neural_core"
+    ],
+    "length": 4
+  },
+  {
+    "flow_id": 356,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> rl_trainers -> weight_manager",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 356",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "rl_trainers",
+      "weight_manager"
+    ],
+    "length": 4
+  },
+  {
+    "flow_id": 357,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> rl_trainers -> vector_store",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 357",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "rl_trainers",
+      "vector_store"
+    ],
+    "length": 4
+  },
+  {
+    "flow_id": 358,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> rl_trainers -> vector_store -> ai_controller",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 358",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "rl_trainers",
+      "vector_store",
+      "ai_controller"
+    ],
+    "length": 5
+  },
+  {
+    "flow_id": 359,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> rl_trainers -> vector_store -> backends",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 359",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "rl_trainers",
+      "vector_store",
+      "backends"
+    ],
+    "length": 5
+  },
+  {
+    "flow_id": 360,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> rl_trainers -> vector_store -> command_repository",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 360",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "rl_trainers",
+      "vector_store",
+      "command_repository"
+    ],
+    "length": 5
+  },
+  {
+    "flow_id": 361,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> rl_trainers -> vector_store -> real_bio_net_adapter",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 361",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "rl_trainers",
+      "vector_store",
+      "real_bio_net_adapter"
+    ],
+    "length": 5
+  },
+  {
+    "flow_id": 362,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> rl_trainers -> vector_store -> real_neural_core",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 362",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "rl_trainers",
+      "vector_store",
+      "real_neural_core"
+    ],
+    "length": 5
+  },
+  {
+    "flow_id": 363,
+    "description": "Execute flow: scalable_bio_trainer -> neural_network -> real_neural_core",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 363",
+    "modules_involved": [
+      "external_learning",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "neural_network",
+      "real_neural_core"
+    ],
+    "length": 3
+  },
+  {
+    "flow_id": 364,
+    "description": "Execute flow: scalable_bio_trainer -> real_bio_net_adapter",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 364",
+    "modules_involved": [
+      "external_learning",
+      "service_backbone"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "real_bio_net_adapter"
+    ],
+    "length": 2
+  },
+  {
+    "flow_id": 365,
+    "description": "Execute flow: scalable_bio_trainer -> real_neural_core",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 365",
+    "modules_involved": [
+      "external_learning",
+      "cognitive_core"
+    ],
+    "steps": [
+      "scalable_bio_trainer",
+      "real_neural_core"
+    ],
+    "length": 2
+  },
+  {
+    "flow_id": 366,
+    "description": "Execute flow: initial_surface -> exploit_orchestrator",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 366",
+    "modules_involved": [
+      "service_backbone"
+    ],
+    "steps": [
+      "initial_surface",
+      "exploit_orchestrator"
+    ],
+    "length": 2
+  },
+  {
+    "flow_id": 367,
+    "description": "Execute flow: initial_surface -> scan_module_interface",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 367",
+    "modules_involved": [
+      "service_backbone"
+    ],
+    "steps": [
+      "initial_surface",
+      "scan_module_interface"
+    ],
+    "length": 2
+  },
+  {
+    "flow_id": 368,
+    "description": "Execute flow: initial_surface -> scan_module_interface -> app",
+    "cli_command": "python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 368",
+    "modules_involved": [
+      "service_backbone"
+    ],
+    "steps": [
+      "initial_surface",
+      "scan_module_interface",
+      "app"
+    ],
+    "length": 3
+  }
+]

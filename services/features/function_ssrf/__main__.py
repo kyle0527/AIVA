@@ -6,7 +6,7 @@ AIVA SSRF Worker Entry Point
 """
 
 import asyncio
-from .worker.ssrf_worker import run
+from .worker import run
 
 if __name__ == "__main__":
     asyncio.run(run())

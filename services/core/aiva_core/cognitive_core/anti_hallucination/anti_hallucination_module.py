@@ -91,7 +91,10 @@ class AntiHallucinationModule:
             self.logger.error(f"知識庫健康檢查失敗: {e}，將使用fallback機制")
 
     def _fallback_knowledge_validation(self, step: Dict[str, Any]) -> Dict[str, Any]:
-        """備用知識驗證機制（當主知識庫不可用時）"""
+        """備用知識驗證機制（當主知識庫不可用時）
+        
+        改進: 降低信心閾值，明確標註僅通過基礎驗證
+        """
         action = step.get("action", "").lower()
         description = step.get("description", "").lower()
         
@@ -99,7 +102,9 @@ class AntiHallucinationModule:
         if not self._is_known_technique(action):
             return {
                 "is_valid": False,
-                "reason": f"fallback驗證：未知攻擊技術 '{action}'"
+                "reason": f"fallback驗證：未知攻擊技術 '{action}'",
+                "confidence": 0.0,
+                "fallback_mode": True
             }
         
         # 2. 關鍵字黑名單檢查（明顯的幻覺）
@@ -113,7 +118,9 @@ class AntiHallucinationModule:
             if keyword in content:
                 return {
                     "is_valid": False,
-                    "reason": f"fallback驗證：檢測到幻覺關鍵字 '{keyword}'"
+                    "reason": f"fallback驗證：檢測到幻覺關鍵字 '{keyword}'",
+                    "confidence": 0.0,
+                    "fallback_mode": True
                 }
         
         # 3. 技術分類一致性檢查
@@ -121,12 +128,18 @@ class AntiHallucinationModule:
         if technique_category and not self._validate_technique_consistency(description, technique_category):
             return {
                 "is_valid": False,
-                "reason": "fallback驗證：技術描述與分類不一致"
+                "reason": "fallback驗證：技術描述與分類不一致",
+                "confidence": 0.0,
+                "fallback_mode": True
             }
         
+        # Fallback 模式通過，但信心度降低並標註警告
         return {
             "is_valid": True,
-            "reason": "fallback驗證通過"
+            "reason": "⚠️ fallback驗證通過 (僅基礎語法驗證，未經知識庫確認)",
+            "confidence": 0.5,  # 降低信心閾值
+            "fallback_mode": True,
+            "warning": "Knowledge base unavailable - basic validation only"
         }
 
     def _get_technique_category(self, action: str) -> Optional[str]:

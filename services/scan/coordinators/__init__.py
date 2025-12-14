@@ -1,14 +1,18 @@
 """
-AIVA Scan 協調器模組
+AIVA Scan 協調器模組 - 基於 AICommandCenter 架構
 
 協調器模組負責管理和協調四個語言引擎的掃描工作，提供統一的掃描介面。
 
 核心組件：
 - scan_models.py: 協調器數據模型 (遵循 aiva_common 規範)
-- multi_engine_coordinator.py: 多引擎協調器  
-- unified_scan_engine.py: 統一掃描引擎
-- scan_orchestrator.py: 掃描編排器
+- multi_engine_coordinator.py: 多引擎協調器 (適配器模式)
+- engines/: 四引擎適配器層 (統一接口)
 - target_generators/: 目標生成器 (動態掃描配置)
+
+架構特點：
+- 使用 AICommandCenter 直接調用，不再依賴 MessageBroker
+- 適配器模式統一四引擎接口
+- 同步調用棧，易於調試
 
 遵循 aiva_common 規範：
 - 優先使用 aiva_common 的標準 Schema
@@ -32,7 +36,6 @@ from .scan_models import (
 # 導入協調器組件（延遲導入避免循環依賴）
 try:
     from .multi_engine_coordinator import MultiEngineCoordinator
-    from .unified_scan_engine import UnifiedScanEngine
     # ScanOrchestrator 已移至 engines/python_engine/ 目錄
     from ..engines.python_engine.scan_orchestrator import ScanOrchestrator
 except ImportError as e:
@@ -54,6 +57,5 @@ __all__ = [
     
     # ========== 協調器組件 ==========
     "MultiEngineCoordinator",
-    "UnifiedScanEngine",
     "ScanOrchestrator",
 ]

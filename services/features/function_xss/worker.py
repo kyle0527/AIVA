@@ -151,199 +151,247 @@ async def process_task(
     blind_validator: BlindXssListenerValidator | None = None,
     stored_detector: StoredXssDetector | None = None,
 ) -> TaskExecutionResult:
+    """Coordinator: orchestrate XSS testing workflow."""
     config = task.test_config
     timeout = config.timeout or DEFAULT_TIMEOUT_SECONDS
-
-    # 創建統計數據收集器
-    stats_collector = StatisticsCollector(
-        task_id=task.task_id,
-        worker_type="xss"
-    )
-
+    stats_collector = StatisticsCollector(task_id=task.task_id, worker_type="xss")
+    
+    # Phase 1: Setup blind XSS
     generator = payload_generator or XssPayloadGenerator()
-    validator = blind_validator
-    blind_payload: str | None = None
-    if config.blind_xss:
-        validator = validator or BlindXssListenerValidator()
-        try:
-            blind_payload = await validator.provision_payload(task)
-            # 記錄 OAST 探針 (Blind XSS)
-            if blind_payload:
-                stats_collector.record_oast_probe()
-        except Exception as exc:  # pragma: no cover - defensive guard for OAST outages
-            logger.exception(
-                "Failed to provision blind XSS payload",
-                extra={"task_id": task.task_id},
-            )
-            # 記錄錯誤
-            stats_collector.record_error(
-                category=ErrorCategory.NETWORK,
-                message=f"Failed to provision blind XSS payload: {str(exc)}",
-                request_info={"task_id": task.task_id}
-            )
-            blind_payload = None
-            validator = None
-
+    validator, blind_payload = await _setup_blind_xss(task, config, blind_validator, stats_collector)
+    
+    # Phase 2: Build and validate payloads
     payloads = _build_payloads(task, generator, blind_payload)
     telemetry = XssExecutionTelemetry(payloads_sent=len(payloads))
-
     if not payloads:
-        logger.debug("No payloads produced for task", extra={"task_id": task.task_id})
-        # 完成統計
         stats_collector.finalize()
-        return TaskExecutionResult(
-            findings=[], 
-            telemetry=telemetry,
-            statistics_summary=stats_collector.get_summary()
-        )
-
-    detector = detector or TraditionalXssDetector(task, timeout=timeout)
+        return TaskExecutionResult(findings=[], telemetry=telemetry, statistics_summary=stats_collector.get_summary())
     
-    # 記錄 Payload 測試
+    # Phase 3: Execute traditional detection
+    detector = detector or TraditionalXssDetector(task, timeout=timeout)
+    detections = await _execute_traditional_detection(detector, payloads, stats_collector, telemetry)
+    
+    # Phase 4: Process detections with DOM analysis
+    dom_engine = _get_dom_engine(config, dom_detector)
+    findings = _process_detections(task, detections, dom_engine, telemetry, stats_collector)
+    
+    # Phase 5: Stored XSS testing
+    await _execute_stored_xss(task, config, payloads, validator, telemetry, findings, stored_detector, timeout, stats_collector)
+    
+    # Phase 6: Collect blind XSS callbacks
+    await _collect_blind_callbacks(task, validator, telemetry, findings, stats_collector)
+    
+    # Phase 7: Finalize statistics
+    _finalize_statistics(stats_collector, detections, telemetry, config, validator, findings)
+    
+    return TaskExecutionResult(findings=findings, telemetry=telemetry, statistics_summary=stats_collector.get_summary())
+
+
+async def _setup_blind_xss(
+    task: FunctionTaskPayload,
+    config,
+    blind_validator: BlindXssListenerValidator | None,
+    stats_collector: StatisticsCollector,
+) -> tuple[BlindXssListenerValidator | None, str | None]:
+    """Setup blind XSS validator and provision payload."""
+    if not config.blind_xss:
+        return None, None
+    
+    validator = blind_validator or BlindXssListenerValidator()
+    try:
+        blind_payload = await validator.provision_payload(task)
+        if blind_payload:
+            stats_collector.record_oast_probe()
+        return validator, blind_payload
+    except Exception as exc:
+        logger.exception("Failed to provision blind XSS payload", extra={"task_id": task.task_id})
+        stats_collector.record_error(
+            category=ErrorCategory.NETWORK,
+            message=f"Failed to provision blind XSS payload: {str(exc)}",
+            request_info={"task_id": task.task_id}
+        )
+        return None, None
+
+
+async def _execute_traditional_detection(
+    detector: TraditionalXssDetector,
+    payloads: list,
+    stats_collector: StatisticsCollector,
+    telemetry: XssExecutionTelemetry,
+) -> list[XssDetectionResult]:
+    """Execute traditional XSS detection and record results."""
     for _ in payloads:
         stats_collector.record_payload_test(success=False)
     
     detections = await detector.execute(payloads)
-    
-    # 記錄請求統計 (成功的檢測)
     stats_collector.stats.total_requests = len(payloads)
     stats_collector.stats.successful_requests = len(detections)
+    
+    _handle_detection_errors(detector, stats_collector, telemetry)
+    return detections
 
+
+def _handle_detection_errors(
+    detector: TraditionalXssDetector,
+    stats_collector: StatisticsCollector,
+    telemetry: XssExecutionTelemetry,
+) -> None:
+    """Log and record detection errors."""
     errors: list[XssExecutionError] = getattr(detector, "errors", [])
-    if errors:
-        for error in errors:
-            logger.warning(
-                "Payload attempt failed",
-                extra={
-                    "task_id": task.task_id,
-                    "payload": error.payload,
-                    "vector": error.vector,
-                    "error": error.message,
-                    "attempts": error.attempts,
-                },
-            )
-            # 記錄錯誤
-            stats_collector.record_error(
-                category=ErrorCategory.NETWORK if "timeout" not in error.message.lower() else ErrorCategory.TIMEOUT,
-                message=error.message,
-                request_info={
-                    "payload": error.payload,
-                    "vector": error.vector,
-                    "attempts": error.attempts
-                }
-            )
-        telemetry.errors = [error.to_detail() for error in errors]
-        stats_collector.stats.failed_requests = len(errors)
-
-    findings: list[FindingPayload] = []
-
-    dom_engine = dom_detector if config.dom_testing else None
-    if dom_engine is None and config.dom_testing:
-        dom_engine = DomXssDetector()
-
-    for detection in detections:
-        dom_result: DomDetectionResult | None = None
-        severity = Severity.MEDIUM
-        confidence = Confidence.FIRM
-
-        if dom_engine:
-            dom_result = dom_engine.analyze(
-                payload=detection.payload, document=detection.response_text
-            )
-            if dom_result:
-                severity = Severity.HIGH
-                confidence = Confidence.CERTAIN
-                telemetry.dom_escalations += 1
-
-        findings.append(
-            _build_finding(
-                task,
-                detection,
-                severity=severity,
-                confidence=confidence,
-                dom_result=dom_result,
-            )
+    if not errors:
+        return
+    
+    for error in errors:
+        logger.warning(
+            "Payload attempt failed",
+            extra={
+                "task_id": detector.task.task_id,
+                "payload": error.payload,
+                "vector": error.vector,
+                "error": error.message,
+                "attempts": error.attempts,
+            },
         )
-        
-        # 記錄漏洞發現
+        stats_collector.record_error(
+            category=ErrorCategory.TIMEOUT if "timeout" in error.message.lower() else ErrorCategory.NETWORK,
+            message=error.message,
+            request_info={"payload": error.payload, "vector": error.vector, "attempts": error.attempts}
+        )
+    
+    telemetry.errors = [error.to_detail() for error in errors]
+    stats_collector.stats.failed_requests = len(errors)
+
+
+def _get_dom_engine(config, dom_detector: DomXssDetector | None) -> DomXssDetector | None:
+    """Get or create DOM XSS detector if enabled."""
+    if not config.dom_testing:
+        return None
+    return dom_detector or DomXssDetector()
+
+
+def _process_detections(
+    task: FunctionTaskPayload,
+    detections: list[XssDetectionResult],
+    dom_engine: DomXssDetector | None,
+    telemetry: XssExecutionTelemetry,
+    stats_collector: StatisticsCollector,
+) -> list[FindingPayload]:
+    """Process detections with DOM analysis and build findings."""
+    findings: list[FindingPayload] = []
+    
+    for detection in detections:
+        severity, confidence, dom_result = _analyze_detection_with_dom(detection, dom_engine, telemetry)
+        findings.append(_build_finding(task, detection, severity=severity, confidence=confidence, dom_result=dom_result))
         stats_collector.record_vulnerability(false_positive=False)
         stats_collector.record_payload_test(success=True)
-
+    
     telemetry.reflections = len(findings)
+    return findings
 
-    # Stored XSS (submit then view) – conservative activation:
-    # - if no direct reflections found, but blind or DOM hints exist
-    # - or if user requested via payload set name 'stored' (future-compat)
-    wants_stored = any(
-        (name.lower() == "stored") for name in (task.test_config.payloads or [])
-    )
+
+def _analyze_detection_with_dom(
+    detection: XssDetectionResult,
+    dom_engine: DomXssDetector | None,
+    telemetry: XssExecutionTelemetry,
+) -> tuple[Severity, Confidence, DomDetectionResult | None]:
+    """Analyze detection with DOM engine and determine severity."""
+    if not dom_engine:
+        return Severity.MEDIUM, Confidence.FIRM, None
+    
+    dom_result = dom_engine.analyze(payload=detection.payload, document=detection.response_text)
+    if dom_result:
+        telemetry.dom_escalations += 1
+        return Severity.HIGH, Confidence.CERTAIN, dom_result
+    
+    return Severity.MEDIUM, Confidence.FIRM, None
+
+
+async def _execute_stored_xss(
+    task: FunctionTaskPayload,
+    config,
+    payloads: list,
+    validator: BlindXssListenerValidator | None,
+    telemetry: XssExecutionTelemetry,
+    findings: list[FindingPayload],
+    stored_detector: StoredXssDetector | None,
+    timeout: float,
+    stats_collector: StatisticsCollector,
+) -> None:
+    """Execute stored XSS testing if conditions are met."""
+    wants_stored = any((name.lower() == "stored") for name in (task.test_config.payloads or []))
     hinted = (telemetry.dom_escalations > 0) or bool(validator)
-    if (not findings and hinted) or wants_stored:
-        try:
-            sdetector = stored_detector or StoredXssDetector(task, timeout=timeout)
-            # Allow caller to pass follow-up view URLs via custom_payloads (optional)
-            view_urls = [p for p in (task.custom_payloads or []) if isinstance(p, str)]
-            sresults: list[StoredXssResult] = await sdetector.execute(
-                payloads, view_urls=view_urls or None
-            )
-            for sres in sresults:
-                findings.append(
-                    _build_finding(
-                        task,
-                        XssDetectionResult(
-                            payload=sres.payload,
-                            request=sres.request,
-                            response_status=sres.response_status,
-                            response_headers=sres.response_headers,
-                            response_text=sres.response_text,
-                        ),
-                        severity=Severity.HIGH,
-                        confidence=Confidence.CERTAIN,
-                        dom_result=None,
-                    )
+    
+    if not ((not findings and hinted) or wants_stored):
+        return
+    
+    try:
+        sdetector = stored_detector or StoredXssDetector(task, timeout=timeout)
+        view_urls = [p for p in (task.custom_payloads or []) if isinstance(p, str)]
+        sresults: list[StoredXssResult] = await sdetector.execute(payloads, view_urls=view_urls or None)
+        
+        for sres in sresults:
+            findings.append(
+                _build_finding(
+                    task,
+                    XssDetectionResult(
+                        payload=sres.payload,
+                        request=sres.request,
+                        response_status=sres.response_status,
+                        response_headers=sres.response_headers,
+                        response_text=sres.response_text,
+                    ),
+                    severity=Severity.HIGH,
+                    confidence=Confidence.CERTAIN,
+                    dom_result=None,
                 )
-        except Exception:  # pragma: no cover - defensive guard
-            logger.exception(
-                "Stored XSS detector failed",
-                extra={"task_id": task.task_id},
             )
+    except Exception:
+        logger.exception("Stored XSS detector failed", extra={"task_id": task.task_id})
 
-    if validator:
-        blind_events = await validator.collect_events()
-        for event in blind_events:
-            findings.append(_build_blind_finding(task, event))
-            
-            # 記錄 OAST 回調 (Blind XSS)
-            stats_collector.record_oast_callback(
-                probe_token=event.token if hasattr(event, 'token') else "blind_xss",
-                callback_type="blind_xss",
-                source_ip=event.source_ip if hasattr(event, 'source_ip') else "unknown",
-                payload_info={
-                    "url": task.url,
-                    "event_type": event.event_type if hasattr(event, 'event_type') else "unknown"
-                }
-            )
-            
-            # 記錄漏洞發現 (Blind XSS)
-            stats_collector.record_vulnerability(false_positive=False)
 
-        telemetry.blind_callbacks = len(blind_events)
+async def _collect_blind_callbacks(
+    task: FunctionTaskPayload,
+    validator: BlindXssListenerValidator | None,
+    telemetry: XssExecutionTelemetry,
+    findings: list[FindingPayload],
+    stats_collector: StatisticsCollector,
+) -> None:
+    """Collect and process blind XSS callbacks."""
+    if not validator:
+        return
+    
+    blind_events = await validator.collect_events()
+    for event in blind_events:
+        findings.append(_build_blind_finding(task, event))
+        stats_collector.record_oast_callback(
+            probe_token=event.token if hasattr(event, 'token') else "blind_xss",
+            callback_type="blind_xss",
+            source_ip=event.source_ip if hasattr(event, 'source_ip') else "unknown",
+            payload_info={"url": task.url, "event_type": event.event_type if hasattr(event, 'event_type') else "unknown"}
+        )
+        stats_collector.record_vulnerability(false_positive=False)
+    
+    telemetry.blind_callbacks = len(blind_events)
 
-    # 設置 XSS 特定統計數據
+
+def _finalize_statistics(
+    stats_collector: StatisticsCollector,
+    detections: list[XssDetectionResult],
+    telemetry: XssExecutionTelemetry,
+    config,
+    validator: BlindXssListenerValidator | None,
+    findings: list[FindingPayload],
+) -> None:
+    """Finalize XSS-specific statistics."""
+    wants_stored = any((name.lower() == "stored") for name in (config.payloads or []))
+    hinted = (telemetry.dom_escalations > 0) or bool(validator)
+    
     stats_collector.set_module_specific("reflected_xss_tests", len(detections))
     stats_collector.set_module_specific("dom_xss_escalations", telemetry.dom_escalations)
     stats_collector.set_module_specific("blind_xss_enabled", config.blind_xss)
     stats_collector.set_module_specific("dom_testing_enabled", config.dom_testing)
     stats_collector.set_module_specific("stored_xss_tested", wants_stored or (not findings and hinted))
-    
-    # 完成統計數據收集
     stats_collector.finalize()
-
-    return TaskExecutionResult(
-        findings=findings, 
-        telemetry=telemetry,
-        statistics_summary=stats_collector.get_summary()
-    )
 
 
 def _build_payloads(

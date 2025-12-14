@@ -1,298 +1,359 @@
-# AIVA Features 模組 - 多語言安全功能架構
+# AIVA Features 模組
 
-> **版本**: v6.1 | **狀態**: ⚠️ 功能完整但未整合命令系統 | **更新**: 2025-12-02
+> **版本**: v6.2 | **狀態**: ⚠️ 功能代碼完整，待 AI Commander 整合 | **更新**: 2025-12-12
 
-**導航**: [← 返回 Services](../README.md) | [功能模組實際狀況](../../功能模組實際狀況分析報告.md)
+**快速導航**: [← Services](../README.md) | [📐 架構設計](./SIMPLE_ARCHITECTURE.md)
 
 ---
 
-## ⚠️ 重要聲明 (2025-12-02)
+## 📚 目錄
 
-### 🚨 架構整合問題
+1. [📐 架構設計](#-架構設計)
+2. [🎯 現況與整合計劃](#-現況與整合計劃)
+3. [📊 功能模組狀態](#-功能模組狀態)
+4. [🔗 功能模組導航](#-功能模組導航)
+5. [🛠️ 開發指南](#️-開發指南)
+6. [📋 快速參考](#-快速參考)
 
-**現狀**: 功能代碼完整,但未整合 aiva_common 命令系統
+---
+
+## 📐 架構設計
+
+- **[SIMPLE_ARCHITECTURE.md](./SIMPLE_ARCHITECTURE.md)** - ⭐ **最新簡化架構設計 (v5.0)**
+  - AI Commander 直接調用功能模組
+  - 功能模組提供同步接口：`scan(target, options) -> dict`
+  - 無需適配器層，無需命令處理器
+  - **核心理念**: 「功能決定架構，不同功能不同架構」
+
+- **[ARCHITECTURE_CORRECTION.md](./ARCHITECTURE_CORRECTION.md)** - 🔧 **架構修正說明**
+  - 為何不需要統一管理器模式
+  - 為何不需要強制 Python 回退
+  - 為何不需要統一 `__init__.py` 導出
+  - 每個模組應該按功能特性獨立設計
+  
+- **[ARCHITECTURE_ANALYSIS_AND_CORRECTION.md](./ARCHITECTURE_ANALYSIS_AND_CORRECTION.md)** - 架構演進歷史
+
+---
+
+## 🎯 現況與整合計劃
+
+### 📌 當前狀態
+
+**功能模組**：✅ 已有完整檢測邏輯（同步實現）
 
 ```python
-# ❌ 當前狀況: 功能模組各自為政
 # services/features/function_xss/integration_tools/xss_tools.py
 class XSSManager:
-    async def comprehensive_scan(self, target_url: str, options: Dict):
-        # 有真實的 XSS 檢測代碼
-        pass
-
-# ✅ 應該實現: aiva_common 命令處理器
-from aiva_common.command_center import CommandHandler
-from aiva_common.schemas.commands import AICommand, AICommandResult
-
-class XSSCommandHandler(CommandHandler):
-    async def handle_command(self, command: AICommand) -> AICommandResult:
-        # 包裝現有功能到標準接口
-        pass
+    def comprehensive_scan(self, target_url: str, options: Dict) -> dict:
+        # 真實的 XSS 檢測代碼
+        return {"vulnerable": True, "payloads": [...]}
 ```
 
-**影響**:
-- AI 無法通過 AICommandCenter 統一指揮
-- 功能模組之間無法協調工作
-- 無法使用標準的命令追蹤和監控
-
-### 📊 各模組實際狀況 (2025-12-02 更新)
-
-| 模組 | 代碼完整度 | 偽陰性修復 | 整合狀態 | 說明 |
-|------|-----------|----------|---------|------|
-| **function_xss** | 90% | ✅ 已修復 | ⚠️ 部分完成 | 移除偽陰性,添加工具檢查,命令處理器已創建 |
-| **function_sqli** | 85% | ✅ 已修復 | ⚠️ 待完成 | 移除偽陰性,添加工具檢查,待創建命令處理器 |
-| **function_web_scanner** | 70% | ⏳ 待檢查 | ❌ 未整合 | 代碼存在但未驗證 |
-| **function_ddos** | 60% | ⏳ 待檢查 | ❌ 未整合 | 需要嚴格授權控制 |
-| **function_ssrf** | 65% | ✅ 無問題 | ❌ 未整合 | 未發現被動模式,OAST 為必須參數 |
-| **function_idor** | 65% | ⏳ 待檢查 | ❌ 未整合 | 基礎功能存在 |
-| **function_exploit_framework** | 40% | ⏳ 待檢查 | ❌ 未整合 | 代碼不完整 |
-
-### 🔧 已完成的修復 (2025-12-02)
-
-#### ✅ XSS 模組 (`function_xss/engines/hackingtool_engine.py`)
-
-**修復內容**:
-```python
-# ✅ 移除偽陰性: 超時/失敗時拋出異常
-except asyncio.TimeoutError:
-    raise RuntimeError(
-        f"XSS 檢測工具執行超時: {tool_name}\n"
-        f"建議: 增加 timeout 設置或檢查目標可訪問性"
-    ) from None
-
-# ✅ 添加初始化檢查
-async def initialize(self) -> bool:
-    available_tools = await self._validate_tool_availability()
-    if not available_tools:
-        raise RuntimeError("沒有可用的 XSS 工具")
-    return True
-```
-
-**效果**:
-- ❌ 舊: 工具失敗回傳 `vulnerability_found=False` (偽陰性)
-- ✅ 新: 工具失敗拋出異常,明確告知用戶
-
-#### ✅ SQLi 模組 (`function_sqli/engines/hackingtool_engine.py`)
-
-**修復內容**:
-```python
-# ✅ 移除 {"success": False} 回傳
-async def _execute_tool(self, tool_name, target):
-    if process.returncode != 0:
-        raise RuntimeError(
-            f"{tool_name} 執行失敗\n"
-            f"請檢查: 工具是否正確安裝"
-        )
-
-# ✅ 添加初始化檢查
-async def initialize(self) -> bool:
-    available_tools = self._check_sqlmap_availability()
-    if not available_tools:
-        raise RuntimeError("沒有可用的 SQL 工具")
-    return True
-```
-
-**效果**:
-- ❌ 舊: sqlmap 失敗回傳空列表 (偽陰性)
-- ✅ 新: sqlmap 失敗拋出異常
-
-### 📋 待修復模組
-
-#### ⏳ Payload 生成器 (P1)
-- **文件**: `function_payload_generator/engines/msfvenom_wrapper.py`
-- **問題**: 可能存在靜態 Payload 回退
-- **修復**: 需檢查並移除靜態列表
-
-#### ⏳ 動態網頁互動 (P1)
-- **文件**: `scan/engines/python_engine/dynamic_engine/js_interaction_simulator.py`
-- **問題**: 可能存在 Log 模擬
-- **修復**: 需檢查並移除模擬邏輯
-
-## 📑 目錄
-
-- [🔧 修復規範](#修復規範)
-- [📈 AIVA 能力增強計畫](#aiva-能力增強計畫)
-- [🔗 功能模組導航](#功能模組導航)
-  - [📚 核心功能模組](#核心功能模組)
-    - [✅ 完整實現](#完整實現)
-    - [🔹 部分實現](#部分實現)
-  - [🎯 專業工具模組](#專業工具模組)
-  - [🌐 多語言架構支援](#多語言架構支援)
-- [📊 模組統計](#模組統計)
-- [🛠️ 開發指南](#開發指南)
-  - [🚀 快速開始](#快速開始)
-  - [🔧 開發環境設定](#開發環境設定)
-  - [📝 程式碼規範](#程式碼規範)
-- [🧪 測試](#測試)
-  - [單元測試](#單元測試)
-  - [整合測試](#整合測試)
-  - [性能測試](#性能測試)
-- [📚 文檔資源](#文檔資源)
-- [🐛 問題回報](#問題回報)
-- [🤝 貢獻指南](#貢獻指南)
-
----
-
-## 🔧 **修復規範**
-
-**保留未使用函數原則**: 在程式碼修復過程中，若發現有定義但尚未使用的函數或方法，只要不影響程式正常運作，建議予以保留。這些函數可能是：
-- 預留的 API 端點或介面
-- 未來功能的基礎架構
-- 測試或除錯用途的輔助函數
-- 向下相容性考量的舊版介面
-
-說不定未來會用到，保持程式碼的擴展性和靈活性。
-
----
-
-## 📈 **AIVA 能力增強計畫**
-
-> **🎯 目標**: 將 AIVA 打造成 Bug Bounty 領域最強的自動化滲透測試平台
-
-### 計畫概覽
-
-AIVA 能力增強與擴展計畫是一個為期 **18 個月（72 週）** 的系統性升級方案，旨在補足現有能力缺口，實現：
-
-- ✅ **OWASP Top 10 2023** 100% 覆蓋率
-- ✅ **OWASP API Security Top 10** 100% 覆蓋率
-- ✅ **Bug Bounty 主流程序** 95%+ 支援率
-- ✅ **24 個新增安全模組** + **2 個技術整合模組**
-
-### 核心增強方向
-
-| 方向 | 模組數量 | 優先級 | 預估時程 |
-|------|---------|--------|---------|
-| **API 安全** | 4 個模組 | P0 (Critical) | Month 1-3 |
-| **注入攻擊** | 4 個模組 | P0-P1 | Month 4-6 |
-| **認證與授權** | 3 個模組 | P0 | Month 1-6 |
-| **業務邏輯** | 3 個模組 | P1 | Month 7-12 |
-| **工具整合** | 18 個工具 | P1-P2 | Month 7-15 |
-| **AI 智能化** | 架構優化 | P1 | Month 16-18 |
-
-### 重點技術整合
-
-> 注意：擴展計畫文檔正在整理中，將在後續版本中提供完整的技術規格文檔。
-
-### 與現有架構的整合
-
-增強計畫**完全兼容**現有 AIVA 架構：
+**AI Commander**：⏳ 待整合（直接調用功能模組）
 
 ```python
-# 利用現有 RiskGuard 授權系統
-from services.core.aiva_core.service_backbone.authz.permission_matrix import authorize_operation
+# services/core/aiva_core/task_planning/security_scanner.py
+import asyncio
+from services.features.function_xss.integration_tools.xss_tools import XSSManager
 
-# L0-L3 風險等級控制
-if not authorize_operation(
-    operation_name="phishing_campaign_execution",
-    risk_level="L2",  # High Risk
-    tags=["social_engineering", "phishing"],
-    environment=os.getenv("AIVA_ENVIRONMENT", "development")
-):
-    raise PermissionError("Requires L2 authorization")
-
-# 利用現有 Authorization Token 模式
-if not authorization_token:
-    return {"mode": "safe", "message": "Detection only"}
-else:
-    return {"mode": "full", "capabilities": "complete"}
+class SecurityScanner:
+    async def scan_xss(self, target: str) -> dict:
+        # 用 asyncio.to_thread 包裝同步調用
+        xss_manager = XSSManager()
+        result = await asyncio.to_thread(xss_manager.comprehensive_scan, target, {})
+        return result
 ```
 
-### 商業價值
+### 🎯 整合方式
 
-| 指標 | 目標值 | 說明 |
-|------|--------|------|
-| **Bug Bounty 程序支援** | 95%+ | 覆蓋主流平台（HackerOne, Bugcrowd, Synack） |
-| **漏洞檢測準確率** | 85% | 減少 False Positive |
-| **自動化程度** | 90% | 減少手動測試工作量 |
-| **平均獎金提升** | 3-5x | 更全面的漏洞覆蓋 |
+按 [SIMPLE_ARCHITECTURE.md](./SIMPLE_ARCHITECTURE.md) 設計：
 
-### 下一步行動
-
-- **技術團隊**: 查看各功能模組 README 了解實施細節
-- **管理層**: 查看系統架構文檔了解商業價值
-- **安全研究員**: 查看功能模組導航評估工具整合
+- **外部工具**：AI Commander 通過 `subprocess` 調用（如 sqlmap、XSStrike）
+- **AIVA 模組**：AI Commander 通過 `import + asyncio.to_thread()` 調用
+- **功能模組**：提供簡單同步函數，返回字典結果
 
 ---
 
-## 🔗 **功能模組導航** (實際存在模組)
+## 📊 功能模組狀態
 
-### 📚 **核心功能模組** (實際已實現)
+> **完整分析**: 2025-12-11  
+> **架構**: 同步函數提供 `scan(target, options) -> dict` 接口  
+> **範圍**: 不包含需人工操作的模組（social_engineering、forensic 等）
 
-#### ✅ **完整實現** (6個模組)
-- ⚡️ **[SQL注入檢測](function_sqli/README.md)** - 完整的SQL注入漏洞檢測 (20個Python文件，含6個檢測引擎)
-- 🎭 **[XSS檢測](function_xss/README.md)** - 跨站腳本攻擊檢測 (10個Python文件，含DOM/存儲型/反射型)
-- 🌐 **[SSRF檢測](function_ssrf/README.md)** - 服務端請求偽造檢測 (12個Python文件，含內網探測)
-- 🔐 **[IDOR檢測](function_idor/README.md)** - 不安全直接對象引用檢測 (12個Python文件，含權限升級測試)
-- 🔑 **[認證檢測](function_authn_go/README.md)** - Go語言認證繞過檢測 (5個Go文件，高性能實現)
-- 💼 **[業務邏輯檢測](function_bizlogic/README.md)** - 業務邏輯漏洞測試 (6個Python文件，含價格操控/競態/流程繞過)
+### ✅ 高完成度 - 可直接整合 (6個)
 
-#### 🔹 **部分實現** (2個模組)  
-- 🔒 **[密碼學檢測](function_crypto/README.md)** - 密碼學漏洞檢測 (8個文件，Python+Rust混合架構)
-- ⚡ **[後滲透](function_postex/README.md)** - 滲透後利用模組 (9個Python文件，含橫向/持久化引擎)
+| 模組 | 完成度 | 架構狀態 | 核心功能 | 整合難度 |
+|------|--------|---------|---------|------|
+| **[function_sqli](function_sqli/README.md)** | 95% | ✅ 完整 | 6種檢測引擎、多資料庫支援 | ⭐ 低 |
+| **[function_crypto](function_crypto/README.md)** | 95% | ✅ 完整 | 純 Rust CLI（v2.0）、TLS/Cookie/Headers/JS 分析 | ⭐ 低 |
+| **[function_xss](function_xss/README.md)** | 90% | ✅ 完整 | 反射型/存儲型/DOM XSS、Blind XSS | ⭐ 低 |
+| **[function_ssrf](function_ssrf/README.md)** | 85% | ✅ 完整 | 內網探測、OAST技術、語義分析 | ⭐ 低 |
+| **[function_idor](function_idor/README.md)** | 80% | ✅ 完整 | 權限矩陣、資源ID提取 | ⭐ 低 |
+| **[function_bizlogic](function_bizlogic/README.md)** | 70% | ⚠️ 需整合 | 業務邏輯漏洞測試（價格操控、競態條件、工作流繞過） | ⭐⭐ 中 |
 
-#### 🛠️ **支援組件** (1個模組)
-- 💼 **[共用組件](common/README.md)** - 跨語言共用功能 (12個文件，Go/Python混合)
+**特徵**：
+- ✅ 完整的檢測邏輯實現
+- ✅ 有工作器（worker.py）或統一接口
+- ⏳ 整合重點：提供統一的同步接口 `scan(target, options) -> dict`
 
-### 🎯 **系統管理模組**
-- 💎 **[高價值管理器](high_value_manager.py)** - 高價值目標識別與管理
-- 🧠 **[智能檢測管理器](smart_detection_manager.py)** - 智能檢測策略協調
-- ⚙️ **[功能步驟執行器](feature_step_executor.py)** - 功能執行流程控制
+### ⚠️ 中等完成度 - 需完善檢測邏輯 (3個)
 
-### 📊 **模組完成度統計** (根據實際檔案統計)
+| 模組 | 完成度 | 狀態 | 現有架構 | 下一步 |
+|------|--------|-----|---------|--------|
+| **[function_authn_go](function_authn_go/README.md)** | 70% | ⏳ 需編譯 | Go 語言實現 | **編譯 Go 引擎**(必須) |
+| **[function_postex](function_postex/README.md)** | 50% | ⏳ 需完善 | PostExDetector + 多引擎 | 完善引擎檢測邏輯 |
+| **[function_web_scanner](function_web_scanner/README.md)** | 35% | ⚠️ 缺少文檔 | WebScannerManager(同步) + 整合工具 | 完善檢測邏輯、新增 README |
 
-| 模組名稱 | 語言 | 實際文件數 | 實現程度 | 主要功能 |
-|----------|------|-----------|----------|----------|
-| function_sqli | Python | 20 | ✅ 95% | SQL注入檢測 (含多種檢測引擎) |
-| function_xss | Python | 10 | ✅ 90% | XSS漏洞檢測 (含DOM/存儲型) |
-| function_ssrf | Python | 12 | ✅ 90% | SSRF檢測 (含內網探測) |
-| function_idor | Python | 12 | ✅ 85% | 權限繞過檢測 (含垂直/水平測試) |
-| function_authn_go | Go | 5 | ✅ 100% | 認證繞過檢測 (Go高性能) |
-| function_bizlogic | Python | 6 | 🔹 20% | 業務邏輯測試 (框架完成，測試器待實現) |
-| function_crypto | Python/Rust | 8 | 🔹 40% | 密碼學漏洞 (含Rust核心) |
-| function_postex | Python | 9 | 🔹 30% | 滲透後利用 (含橫向/持久化) |
-| common | Go/Python | 12 | ✅ 90% | 共用組件 (統計/配置) |
+**✨ 核心理念**（依照 [SIMPLE_ARCHITECTURE.md](./SIMPLE_ARCHITECTURE.md)）：
 
----
-
-> **🎯 快速導航**: 
+> **「功能決定架構，不同功能不同架構」**
 > 
-> - 👨‍💼 **架構師/PM**: 閱讀 [功能架構總覽](#功能架構總覽)
-> - 🐍 **Python 開發者**: 查看各功能模組 README
-> - 🐹 **Go 開發者**: 查看 [function_authn_go](function_authn_go/README.md)
-> - 🛡️ **安全專家**: 查看 [功能模組導航](#功能模組導航)
-> - 📖 **開發規範**: 查看 [開發規範與最佳實踐](#開發規範與最佳實踐)
+> **「有問題就修復，不繞過問題」**
+
+**唯一的統一要求**:
+- ✅ 提供簡單的 `scan()` 類型接口
+- ✅ 返回清晰的數據結構
+- ✅ 錯誤處理明確
+
+**不需要統一**:
+- ❌ 不強制統一的類別名稱
+- ❌ 不強制統一的文件結構
+- ❌ 不需要 Python 回退實現
+- ✅ 每個模組用最適合的技術實現
+
+**重要原則**:
+- 🔴 **Go 模組就用 Go** - 不需要 Python 回退
+- 🔴 **Rust 模組就用 Rust** - 不需要 Python 回退  
+- 🔴 **未編譯就報錯** - 提供明確的編譯指引
+- ✅ 有編譯問題就修復，不降級到 Python
+
+**架構說明**（每個模組按功能特性獨立設計）：
+
+```python
+# 功能模組 - 簡單同步實現（各自按最佳實踐組織）
+
+# function_sqli - 多引擎架構
+from services.features.function_sqli.detector import SQLInjectionDetector
+detector = SQLInjectionDetector()
+result = detector.scan(target)  # 使用多個測試引擎
+
+# function_xss - DOM 分析架構
+from services.features.function_xss.integration_tools.xss_tools import XSSManager
+manager = XSSManager()
+result = manager.comprehensive_scan(target, options)  # Context-aware 分析
+
+# function_authn_go - Go 語言實現
+# 可能直接調用 Go 二進制文件或使用 subprocess
+
+# AI Commander - 統一的異步調度
+class SecurityScanner:
+    async def scan_sqli(self, target: str):
+        detector = SQLInjectionDetector()
+        # 用 asyncio.to_thread() 包裝任何同步調用
+        result = await asyncio.to_thread(detector.scan, target)
+        return result
+```
+
+**關鍵點**：
+- ✅ 每個模組使用最適合的架構（SQLi 用引擎模式，XSS 用 Manager 模式等）
+- ✅ 只要提供同步的 `scan()` 接口即可
+- ✅ AI Commander 統一用 `asyncio.to_thread()` 處理異步
+- ❌ 不強制所有模組使用相同的類別名稱或結構
+
+### ❌ 低完成度 - 暫不處理 (1個)
+
+| 模組 | 完成度 | 狀態 | 說明 |
+|------|--------|-----|------|
+| **[function_exploit_framework](function_exploit_framework/README.md)** | 25% | 🟡 輔助 | 僅作為 PoC 驗證工具，非主力掃描 |
+
+**特徵**：
+- ⚠️ 功能敏感，需額外授權
+- 🎯 定位為輔助增強工具（獎金翻倍器）
+- 📝 不應作為主動掃描工具
+
+### 🗑️ 已移除模組 (1個)
+
+| 模組 | 原因 | 備份位置 |
+|------|------|---------|
+| **function_ddos** | 不適用於 Bug Bounty，法律風險極高 | `新增資料夾 (3)/function_ddos_archived/` |
+
+**說明**：
+- ❌ 所有主流 Bug Bounty 平台都禁止傳統 DDoS 測試
+- ⚠️ 法律風險過高（可能構成犯罪）
+- 📋 詳見 [BOUNTY_EARNING_ANALYSIS.md](BOUNTY_EARNING_ANALYSIS.md)
+
+### 🚫 需人工操作 - 暫不處理 (5個)
+
+| 模組 | 說明 | 不處理原因 |
+|------|-----|-----------|
+| **[function_social_engineering](function_social_engineering/README.md)** | 社會工程測試 | 需要OSINT收集、人員分析等複雜人工操作 |
+| **[function_forensic](function_forensic/README.md)** | 數位鑑識 | 需要證據收集、人工分析判斷 |
+| **[function_reverse_engineering](function_reverse_engineering/README.md)** | 逆向工程 | 需要人工分析二進制文件 |
+| **[function_steganography](function_steganography/README.md)** | 隱寫術分析 | 需要人工判斷和分析 |
+| **[function_wordlist_generator](function_wordlist_generator/README.md)** | 字典生成 | 需要人工定義生成策略 |
 
 ---
 
-## 📑 目錄
+### 🎯 整合優先級
 
-- [🛠️ Features 模組開發工具](#️-features-模組開發工具)
-- [📊 模組規模一覽](#-模組規模一覽)
-- [🏗️ 功能架構總覽](#️-功能架構總覽)
-  - [四層功能架構](#四層功能架構)
-  - [🎯 各層核心職責](#-各層核心職責)
-- [📚 文件導航地圖](#-文件導航地圖)
-- [🚀 快速開始指南](#-快速開始指南)
-- [⚠️ 重要注意事項](#️-重要注意事項)
-- [🔧 開發規範與最佳實踐](#-開發規範與最佳實踐)
-- [🔴 核心功能層](#-核心功能層)
-- [🛡️ 安全功能層](#️-安全功能層)
-- [🏢 業務功能層](#-業務功能層)
-- [🔧 支援功能層](#-支援功能層)
+**Phase 1 - 立即整合** (2-3 週)：
+1. function_sqli - 6種引擎，95%完成，✅ README 已完整
+2. function_crypto - 純 Rust CLI（v2.0），95%完成 ✅
+3. function_xss - 多種類型，90%完成
+4. function_ssrf - OAST技術，85%完成
+5. function_idor - 權限檢測，80%完成
+
+**Phase 2 - 短期完善** (2-4 週)：
+6. function_bizlogic - 業務邏輯測試
+7. **function_authn_go** - 🔴 **必須編譯 Go 引擎** → 不提供 Python 回退
+8. function_postex - 完善引擎檢測邏輯（使用 PostExDetector）
+9. function_web_scanner - 完善檢測邏輯（使用 WebAttackManager）
+
+**已移除**：function_ddos（不適用於 Bug Bounty，已移至備份資料夾）
+**暫不處理**：exploit_framework（僅作輔助工具）、需人工操作的模組
+
+### 📋 整合檢查清單
+
+針對每個模組：
+
+- [ ] **代碼檢查**
+  - [ ] 確認完整檢測邏輯
+  - [ ] 確認測試數據存在
+  
+- [ ] **接口標準化** (依照 [SIMPLE_ARCHITECTURE.md](./SIMPLE_ARCHITECTURE.md))
+  - [ ] 提供 `scan()` 類型的接口（函數名可以是 scan, comprehensive_scan, detect 等）
+  - [ ] 確保純同步實現（不使用 async/await）
+  - [ ] 返回字典結果
+  - [ ] 錯誤處理清晰
+  - [ ] 由 AI Commander 負責異步調度（`asyncio.to_thread()`）
+  - ❌ 不強制統一類別名稱（如 Manager）
+  - ❌ 不強制統一導出方式
+
+- [ ] **AI Commander 整合**
+  - [ ] 在 SecurityScanner 添加調用方法
+  - [ ] 使用 `asyncio.to_thread()` 包裝
+  - [ ] 實現結果聚合
+
+- [ ] **測試驗證**
+  - [ ] 單元測試通過
+  - [ ] 集成測試通過
+  - [ ] 靶場實測
 
 ---
 
-## �🛠️ Features 模組開發工具
+## 🔗 功能模組導航
 
-> **多語言開發環境**: 本模組整合 Python, Go, Rust 三種語言，需要對應的開發工具
+### 📚 核心功能模組
 
-| 語言 | 必備插件 | 開發用途 | 工具連結 |
-|------|---------|---------|---------|
-| 🐍 **Python** | Pylance + Ruff + Black | 型別檢查、快速 linting、格式化 | VS Code 擴展市場 |
-| 🐹 **Go** | golang.go | gopls、除錯、測試、格式化 | VS Code 擴展市場 |
-| 🦀 **Rust** | rust-analyzer | 語言伺服器、Cargo 整合、除錯 | VS Code 擴展市場 |
+#### ✅ 完整實現 (6個)
 
-### 跨語言開發推薦工具
+- ⚡️ **[SQL注入檢測](function_sqli/README.md)** - 6種引擎、多資料庫支援
+- 🔒 **[密碼學檢測](function_crypto/README.md)** - 純 Rust CLI（v2.0）、TLS/Cookie/Headers/JS 分析
+- 🎭 **[XSS檢測](function_xss/README.md)** - 反射型/存儲型/DOM XSS、Blind XSS
+- 🌐 **[SSRF檢測](function_ssrf/README.md)** - 內網探測、OAST技術、語義分析
+- 🔐 **[IDOR檢測](function_idor/README.md)** - 權限矩陣、資源ID提取
+- 🔑 **[認證檢測](function_authn_go/README.md)** - Go高性能認證繞過檢測
+- 💼 **[業務邏輯檢測](function_bizlogic/README.md)** - 價格操控、競態條件、流程繞過
+
+#### 🔹 部分實現 (1個)
+
+- ⚡ **[後滲透](function_postex/README.md)** - 橫向移動、持久化引擎
+
+#### 🛠️ 支援組件
+
+- 💼 **[共用組件](common/README.md)** - Go/Python跨語言共用功能
+
+### 📊 模組完成度統計
+
+| 模組 | 語言 | 完成度 | 主要功能 |
+|------|------|--------|---------|
+| function_sqli | Python | 95% | SQL注入檢測（6種引擎） |
+| function_crypto | Rust | 95% | 密碼學配置掃描（純CLI v2.0） |
+| function_xss | Python | 90% | XSS檢測（多種類型） |
+| function_ssrf | Python | 85% | SSRF檢測（OAST） |
+| function_idor | Python | 80% | 權限繞過檢測 |
+| function_bizlogic | Python | 75% | 業務邏輯測試 |
+| function_authn_go | Go | 70% | 認證繞過（Go） |
+| function_postex | Python | 50% | 後滲透利用 |
+
+---
+
+## 🛠️ 開發指南
+
+### 🎯 功能模組設計原則
+
+**核心理念**：簡單直接，AI Commander 直接調用
+
+```python
+# ✅ 功能模組標準實現
+def scan(target: str, options: dict = None) -> dict:
+    """
+    同步掃描函數
+    
+    Args:
+        target: 掃描目標（URL、IP等）
+        options: 掃描選項
+        
+    Returns:
+        dict: 掃描結果 {"vulnerable": bool, "details": ...}
+    """
+    # 實現檢測邏輯
+    return result
+```
+
+**禁止的做法**：
+- ❌ 使用 async/await（AI Commander 處理異步）
+- ❌ 創建命令處理器（不需要）
+- ❌ 添加適配器層（不需要）
+
+### 📐 使用 aiva_common 標準
+
+```python
+# ✅ 正確 - 使用標準枚舉
+from ..aiva_common.enums import (
+    Severity,           # 嚴重程度
+    Confidence,         # 信心度
+    VulnerabilityStatus # 漏洞狀態
+)
+from ..aiva_common.schemas import (
+    CVEReference,       # CVE引用
+    CWEReference,       # CWE分類
+    SARIFResult        # SARIF報告
+)
+
+# ❌ 禁止 - 重複定義
+class MySeverity(Enum):
+    HIGH = "high"  # 錯誤！使用 aiva_common.Severity
+```
+
+### 🌐 多語言協作
+
+**Python 模組**：
+```python
+from ..aiva_common.schemas import FunctionTaskPayload, FindingPayload
+```
+
+**Go 模組**：
+```go
+import "services/features/common/go/aiva_common_go"
+```
+
+**Rust 模組**：
+```rust
+use aiva_common::schemas::{FunctionTaskPayload, FindingPayload};
+```
+
+### 🔧 開發工具推薦
+
+#### 多語言開發必備插件
+
+| 語言 | 必備插件 | 開發用途 |
+|------|---------|---------|
+| 🐍 **Python** | Pylance + Ruff + Black | 型別檢查、快速 linting、格式化 |
+| 🐹 **Go** | golang.go | gopls、除錯、測試、格式化 |
+| 🦀 **Rust** | rust-analyzer | 語言伺服器、Cargo 整合、除錯 |
+
+#### 跨語言開發推薦工具
 
 | 功能需求 | 推薦插件 | 說明 |
 |---------|---------|------|
@@ -301,104 +362,119 @@ else:
 | 🔍 **程式碼品質** | ErrorLens + Code Spell Checker | 即時錯誤提示、拼寫檢查 |
 | 🐳 **容器開發** | Docker + Dev Containers | Rust/Go 編譯環境容器化 |
 
-### 💡 語言特定快速技巧
+#### 語言特定快速技巧
 
-**Python (87.0% 組件)**:
+**Python (87.0% 組件)**：
 - 使用 Ruff 進行超快速 linting（比 pylint 快 10-100 倍）
 - Black 自動格式化：`Ctrl+Shift+I`
 - 遵循 PEP 8 編碼規範
 
-**Go (13.0% 組件)**:
+**Go (13.0% 組件)**：
 - gopls 提供完整的語言支援
 - 使用 `Go: Test Package` 執行測試
 - 格式化自動使用 gofmt
 
+**更多開發工具資訊**：
+- 🛠️ [開發指南總覽](../../guides/development/README.md)
+- 🔌 [插件與工具指南](../../guides/development/PLUGINS_AND_TOOLS_INVENTORY.md)
+- 🔧 [工具集使用手冊](../../tools/README.md)
+
+### 📝 開發流程
+
+1. **參考現有實現**：查看類似功能模組
+2. **繼承基類**：使用 `FeatureBase`（如果適用）
+3. **使用標準枚舉**：從 `aiva_common` 導入
+4. **提供同步接口**：`scan(target, options) -> dict`
+5. **編寫測試**：參考 `testing/features/`
+
+### ⚙️ 執行前的準備工作
+
+**核心原則**：充分利用現有資源，避免重複造輪子
+
+在開始任何修改或新增安全檢測功能前，務必執行以下檢查：
+
+#### 1. 檢查本機現有工具
+```bash
+# 查看基礎組件
+ls services/features/base/        # 功能基類、HTTP客戶端
+ls services/features/common/      # 智能檢測管理器
+ls testing/features/              # 測試腳本
+```
+
+#### 2. 利用 VS Code 擴展功能
+```python
+# Pylance MCP 工具 (推薦):
+# - pylanceFileSyntaxErrors: 檢查語法錯誤
+# - pylanceRunCodeSnippet: 測試 Payload 生成邏輯
+# - pylanceInvokeRefactoring: 移除未使用的導入
+
+# SonarQube 工具 (安全檢測必備):
+# - sonarqube_analyze_file: 檢查代碼安全問題
+# - sonarqube_list_potential_security_issues: 列出潛在漏洞
+```
+
+#### 3. 參考現有功能實現
+完善的實現案例：
+- `function_sqli/` - SQL 注入檢測（多引擎、智能檢測）
+- `function_xss/` - XSS 檢測（DOM/Stored/Reflected）
+- `function_idor/` - IDOR 檢測（垂直/水平越權）
+
+#### 4. 功能不確定時的查詢資源
+- 🌐 **安全規範**：OWASP Top 10, CWE, CAPEC
+- 📚 **工具文檔**：Burp Suite, ZAP, SQLMap
+- 🔍 **PoC 參考**：使用 `github_repo` 搜索公開漏洞 PoC
+- 🛡️ **CVE 數據**：使用 `fetch_webpage` 查詢 CVE 詳情
+- 📖 **編碼技巧**：WAF 繞過技術和 Payload 混淆方法
+
+#### 5. 選擇最佳方案的判斷標準
+- ✅ 優先繼承 `FeatureBase` 基類，複用通用邏輯
+- ✅ 優先參考 OWASP 和業界公認的檢測方法
+- ✅ Payload 設計參考知名安全工具（SQLMap, XSStrike 等）
+- ⚠️ 避免自創檢測邏輯，容易產生誤報
+- ⚠️ 新漏洞檢測方法不確定時，先查詢 CVE 和安全公告
+
+### 🚫 保留未使用函數原則
+
+若發現定義但未使用的函數，只要不影響運作，建議保留：
+- 預留的 API 端點
+- 未來功能的基礎架構
+- 測試/除錯輔助函數
+- 向下兼容性考量
+
 ---
 
-## 📊 **模組規模一覽**
+## 📋 快速參考
 
-### **🏗️ 整體統計** (實際統計)
-- **總代碼行數**: **13,798** 行代碼 (實測)
-- **檔案數量**: **87** 個檔案 (75 Python + 11 Go + 1 Rust)  
-- **功能模組**: **7** 個核心功能模組 (實際存在)
-- **複雜度等級**: ⭐⭐⭐⭐ (高級別，持續增長中)
+### 語言分佈
 
-### **📈 語言分佈** (基於實際統計)
 ```
-🐍 Python  │████████████████████████████████████████████████████████████████████████████████████ 87% (12,002行)
-🐹 Go      │████████████ 13% (1,796行)
-🦀 Rust    │▌ <1% (計劃中)
+🐍 Python │████████████████████████████████████████████ 87% (12,002行)
+🐹 Go     │██████ 13% (1,796行)
+🦀 Rust   │▌ <1% (計劃中)
 ```
 
-### **🎯 功能模組狀態**  
-```
-✅ 完整實現 │████████████████████████ 57% (4個: SQLI, XSS, SSRF, IDOR)
-� 部分實現 │██████████████████ 43% (3個: AUTHN_GO, CRYPTO, POSTEX)
-� 計劃中   │████████ (高價值功能擴展)
-```
+### 技術棧
+
+- **Python**: 主要語言（70%），asyncio 僅在 AI Commander
+- **Go**: 高並發（15%），認證掃描，Cobra CLI
+- **Rust**: 高性能（10%），密碼檢測，PyO3 綁定
+- **TypeScript**: 動態掃描（5%）
+
+### 整體統計
+
+- **總代碼行數**: 13,798 行
+- **檔案數量**: 87 個（75 Python + 11 Go + 1 Rust）
+- **功能模組**: 17 個（5 高完成 + 4 中完成 + 2 低完成 + 5 需人工 + 1 支援）
+
+### 外部工具
+
+- **已集成**: sqlmap, XSStrike, NoSQLMap
+- **待安裝**: nuclei, Dalfox, jwt_tool
 
 ---
 
-## 🏗️ **功能架構總覽**
+## 🎨 架構圖表資源
 
-### **四層功能架構**
-
-```mermaid
-flowchart TD
-    AIVA["🎯 AIVA Features 模組<br/>2692 組件"]
-    
-    CORE["🔴 核心功能層<br/>61 組件 (2.3%)<br/>智能管理與協調"]
-    SECURITY["🛡️ 安全功能層<br/>2111 組件 (78.4%)<br/>主要業務邏輯"]  
-    BUSINESS["🏢 業務功能層<br/>174 組件 (6.5%)<br/>功能實現"]
-    SUPPORT["🔧 支援功能層<br/>346 組件 (12.9%)<br/>基礎設施"]
-    
-    AIVA --> CORE
-    AIVA --> SECURITY
-    AIVA --> BUSINESS  
-    AIVA --> SUPPORT
-    
-    classDef coreStyle fill:#7c3aed,color:#fff
-    classDef securityStyle fill:#dc2626,color:#fff
-    classDef businessStyle fill:#2563eb,color:#fff
-    classDef supportStyle fill:#059669,color:#fff
-    
-    class CORE coreStyle
-    class SECURITY securityStyle
-    class BUSINESS businessStyle
-    class SUPPORT supportStyle
-```
-
-### **🎯 各層核心職責**
-
-| 功能層 | 主要職責 | 關鍵模組 | 主要語言 |
-|--------|----------|----------|----------|
-| 🔴 **核心功能** | 智能管理、系統協調、決策引擎 | 統一智能檢測管理器、高價值目標識別 | 🐍 Python |
-| 🛡️ **安全功能** | 漏洞檢測、靜態分析、安全掃描 | SAST 引擎、SQL/XSS/SSRF 檢測 | 🦀 Rust + 🐍 Python |
-| 🏢 **業務功能** | 功能實現、服務提供、API 介面 | 軟體組件分析、雲端安全管理 | 🐹 Go + 🐍 Python |
-| 🔧 **支援功能** | 基礎設施、配置管理、工具支援 | Worker 系統、Schema 定義 | 🐍 Python |
-
----
-
-## 📚 **文件導航地圖**
-
-### **🎯 L2 功能分類文檔** (推薦優先閱讀)
-- 💎 **高價值功能** - Mass Assignment、JWT 混淆、OAuth 混淆、GraphQL AuthZ、SSRF OOB
-- 🛡️ **安全核心引擎** - SQL 注入、XSS、SSRF、IDOR、SAST、SCA、CSPM、Auth Testing
-- 🏢 **業務邏輯檢測** - 支付繞過、認證繞過、郵件變更、OAuth 重定向、滲透後利用
-- 🏗️ **基礎設施支援** - 框架基類、工具集、跨語言橋接、配置管理、測試支援
-- 🌐 **多語言實現** - Python 協調、Go 高併發、Rust 極致效능、跨語言整合
-
-### **📁 按功能查看** (實際模組)
-- 📊 **核心功能詳解** - 系統管理與協調功能
-- 🛡️ **安全功能詳解** - SQL注入、XSS、SSRF、IDOR檢測
-- 🔧 **開發中功能** - 密碼學、認證、後滲透功能  
-
-### **💻 按語言查看**
-- 🐍 **Python 模組** - 75 文件 | 主要安全檢測實現
-- 🐹 **Go 模組** - 11 文件 | 高效能認證檢測  
-- 🦀 **Rust 模組** - 計劃中 | 高效能安全分析引擎
-
-### **🎨 架構圖表**
 - 📊 [功能分層架構圖](../docs/reports/architecture_diagrams/functional/FEATURES_INTEGRATED_FUNCTIONAL.mmd)
 - 🛡️ [安全功能架構圖](../docs/reports/architecture_diagrams/functional/FEATURES_SECURITY_FUNCTIONS.mmd)
 - 🔴 [核心功能架構圖](../docs/reports/architecture_diagrams/functional/FEATURES_CORE_FUNCTIONS.mmd)
@@ -406,542 +482,47 @@ flowchart TD
 
 ---
 
-## 🚀 **快速開始**
+## ⚠️ 重要開發注意事項
 
-### **場景 1: 了解整體架構**
-```
-→ 閱讀本文件的 [功能架構總覽](#功能架構總覽)
-→ 查看 [功能模組導航](#功能模組導航)
-→ 選擇感興趣的模組深入了解
-```
+### 架構靈活性原則
 
-### **場景 2: 開發新功能**
-```
-→ 參考 [開發規範與最佳實踐](#開發規範與最佳實踐)
-→ 查看類似功能模組的實現
-→ 遵循多語言協作標準
-```
+Features 模組由眾多獨立安全檢測功能組成，**每個子功能可採用最適合其特性的內部架構**：
 
-**場景 2: 開發特定語言模組** 👨‍💻  
-```
-→ 選擇對應語言的 README (Python/Go/Rust)
-→ 跟隨語言特定的開發指南
-→ 參考最佳實踐和程式碼範例
-```
+**✅ 必須遵守（模組層級）**：
+- 使用 `aiva_common` 標準（Severity, Confidence, SARIF）
+- 統一的跨模組通信接口（AivaMessage）
+- 符合所用程式語言的官方規範
 
-**場景 3: 實現新的安全功能** 🛡️  
-```  
-→ 閱讀 docs/README_SECURITY.md
-→ 查看 SAST 或漏洞檢測模組範例
-→ 跟隨安全功能開發模式
-```
+**🎨 完全自由（子功能內部）**：
+- 內部目錄結構（扁平/分層/模塊化 皆可）
+- 算法實現方式（OOP/函數式/過程式）
+- 數據流設計（同步/異步/事件驅動）
+- 性能優化策略（緩存/並發/流式處理）
 
-**場景 4: 系統維護和部署** 🔧  
-```
-→ 閱讀 docs/README_SUPPORT.md  
-→ 查看跨語言整合指南
-→ 參考部署和監控最佳實踐
-```
-
-### **🛠️ 環境設定**
-```bash
-# 1. 克隆並進入 Features 模組
-cd services/features
-
-# 2. 設定各語言環境
-make setup-all  # 或手動設定各語言環境
-
-# 3. 執行測試確認環境
-make test-all
-
-# 4. 查看具體語言的設定指南
-make help
-```
-
----
-
-## ⚠️ **重要注意事項**
-
-### **🔴 關鍵架構原則**
-1. **安全優先**: 78.4% 的組件專注於安全功能
-2. **語言專業化**: 每種語言都有明確的職責範圍
-3. **分層清晰**: 四層架構職責分明,避免跨層直接調用  
-4. **統一介面**: 跨語言協作需要統一的資料格式和錯誤處理
-
-### **🚨 開發約束**
-- ✅ **必須**: 遵循對應語言的開發指南和最佳實踐
-- ✅ **必須**: 實現統一的錯誤處理和日誌格式
-- ⚠️ **避免**: 跨語言模組的直接依賴
-- ⚠️ **避免**: 繞過既定的資料交換協議
-
----
-
-## 🔧 **開發規範與最佳實踐**
-
-### 📐 **Features 模組設計原則**
-
-作為 AIVA 的多語言安全功能層,本模組必須在 Python/Go/Rust 間維持一致的數據標準。
-
-#### 🎯 **使用 aiva_common 的核心原則**
-
-**✅ Features 模組的標準做法**（參考 `models.py` 正確實現）:
-
+**實際案例**：
 ```python
-# ✅ 正確 - Features 模組的標準導入
-from ..aiva_common.enums import (
-    AssetStatus,             # 資產狀態追蹤
-    AssetType,               # 資產類型分類
-    Confidence,              # 檢測信心度
-    ModuleName,              # 跨模組通信
-    ScanProgress,            # 掃描進度
-    Severity,                # 漏洞嚴重程度
-    VulnerabilityStatus,     # 漏洞狀態管理
-)
-from ..aiva_common.schemas import (
-    CVEReference,            # CVE 引用標準
-    CWEReference,            # CWE 分類標準
-    SARIFResult,             # SARIF 報告格式
-)
+# ✅ 簡單功能 - 單文件實現
+services/features/xss_detector/
+  ├── detector.py          # 單文件實現
+  └── patterns.json
+
+# ✅ 複雜功能 - 分層架構  
+services/features/advanced_sqli/
+  ├── core/
+  │   ├── engine.py
+  │   └── parser.py
+  ├── detectors/
+  ├── utils/
+  └── main.py
+
+# ✅ 多語言混合
+services/features/crypto_analyzer/
+  ├── python_wrapper/      # Python 接口層
+  ├── rust_engine/         # Rust 核心引擎
+  └── shared_schemas/      # 共享數據定義
 ```
 
-#### ✅ **架構修復完成狀態** (更新: 2025-10-26)
-
-**已修復檔案**: ~~`client_side_auth_bypass/worker.py`~~ → **完成 (2025-10-25)**
-
-```python
-# ✅ 修復後狀態 - 正確使用 aiva_common (跨平台可移植)
-from ..aiva_common.schemas.generated.tasks import FunctionTaskPayload, FunctionTaskResult
-from ..aiva_common.schemas.generated.findings import FindingPayload
-from ..aiva_common.enums import Severity, Confidence
-
-# ✅ 已完全移除不安全的 fallback 重複定義
-# ✅ 所有功能模組現在正確使用單一數據來源 (SOT)
-# ✅ 跨模組數據類型一致性得到保證
-# 💡 使用相對路徑 (..aiva_common) 確保跨平台/跨環境可移植性
-```
-
-#### 🚨 **嚴格禁止的做法**
-
-```python
-# ❌ 禁止 - 重複定義通用枚舉
-class Severity(str, Enum):  # 錯誤!使用 aiva_common.Severity
-    HIGH = "high"
-
-# ❌ 禁止 - 重複定義標準結構
-class VulnResult(BaseModel):  # 錯誤!使用 aiva_common.FindingPayload
-    finding_id: str
-
-# ❌ 禁止 - 自創功能評分
-class CustomRisk(BaseModel):  # 錯誤!使用 aiva_common.CVSSv3Metrics
-    feature_score: int
-```
-
-#### 🔍 **多語言功能實現統一標準**
-
-Features 模組跨 Python/Go/Rust 三語言實現，必須保持數據結構一致：
-
-```python
-# ✅ Python 實現 - 標準格式
-from ..aiva_common.schemas import FunctionTaskPayload, FindingPayload
-```
-
-```go
-// ✅ Go 實現 - 對應相同結構
-import "services/features/common/go/aiva_common_go"
-```
-
-```rust
-// ✅ Rust 實現 - 對應相同結構  
-use aiva_common::schemas::{FunctionTaskPayload, FindingPayload};
-```
-
-**修復驗證**: 所有關鍵枚舉導入測試通過 ✅
-
-#### 🆕 **新增或修改功能時的流程**
-
-##### **⚙️ 執行前的準備工作 (必讀)**
-
-**核心原則**: 充分利用現有資源，避免重複造輪子
-
-在開始任何修改或新增安全檢測功能前，務必執行以下檢查：
-
-1. **檢查本機現有工具與插件**
-   ```bash
-   # 檢查專案內的輔助工具
-   ls scripts/features/              # 查看 Features 專用腳本
-   ls testing/                       # 查看測試工具
-   ls services/features/base/        # 查看基礎類和通用功能
-   
-   # 常用工具和基礎組件:
-   # - services/features/base/feature_base.py (功能基類)
-   # - services/features/base/http_client.py (HTTP 客戶端封裝)
-   # - services/features/common/unified_smart_detection_manager.py (智能檢測管理器)
-   # - testing/features/ (各種功能測試腳本)
-   ```
-
-2. **利用 VS Code 擴展功能**
-   ```python
-   # Pylance MCP 工具 (推薦優先使用):
-   # - pylanceFileSyntaxErrors: 檢查語法錯誤
-   # - pylanceRunCodeSnippet: 測試 Payload 生成邏輯
-   # - pylanceInvokeRefactoring: 移除未使用的導入
-   
-   # SonarQube 工具 (安全檢測必備):
-   # - sonarqube_analyze_file: 檢查代碼安全問題
-   # - sonarqube_list_potential_security_issues: 列出潛在漏洞
-   ```
-
-3. **參考現有安全檢測功能實現**
-   ```bash
-   # 查找類似的檢測邏輯
-   ls services/features/function_*/    # 查看各功能實現
-   
-   # 參考完善的功能實現案例:
-   # - function_sqli/: SQL 注入檢測 (包含多引擎、智能檢測)
-   # - function_xss/: XSS 檢測 (包含 DOM/Stored/Reflected)
-   # - function_idor/: IDOR 檢測 (包含垂直/水平越權)
-   # - payment_logic_bypass/: 支付邏輯繞過 (包含增強功能)
-   ```
-
-4. **功能不確定時，立即查詢最佳實踐**
-   - 🌐 **安全規範**: 查詢 OWASP Top 10, CWE, CAPEC 等安全標準
-   - 📚 **工具文檔**: 參考 Burp Suite, ZAP, SQLMap 等工具的檢測邏輯
-   - 🔍 **PoC 參考**: 使用 `github_repo` 搜索公開的漏洞 PoC
-   - 🛡️ **CVE 數據**: 使用 `fetch_webpage` 查詢 CVE 詳情和利用方式
-   - 📖 **編碼技巧**: 查詢 WAF 繞過技術和 Payload 混淆方法
-
-5. **選擇最佳方案的判斷標準**
-   - ✅ 優先繼承 `FeatureBase` 基類，複用通用邏輯
-   - ✅ 優先使用 `unified_smart_detection_manager` 進行智能檢測
-   - ✅ 優先參考 OWASP 和業界公認的檢測方法
-   - ✅ Payload 設計參考知名安全工具（SQLMap, XSStrike 等）
-   - ⚠️ 避免自創檢測邏輯，容易產生誤報
-   - ⚠️ 新漏洞檢測方法不確定時，先查詢 CVE 和安全公告
-
-**示例工作流程**:
-```python
-# 錯誤做法 ❌
-# 直接開始寫檢測代碼，自己設計 Payload
-
-# 正確做法 ✅
-# 步驟 1: 查找是否有類似功能可參考
-ls services/features/function_*/
-cat services/features/function_sqli/worker.py  # 參考 SQL 注入實現
-
-# 步驟 2: 繼承基類，複用通用功能
-from services.features.base.feature_base import FeatureBase
-from services.features.base.http_client import HttpClient
-
-# 步驟 3: 查詢漏洞相關資料
-# - OWASP 測試指南
-# - CVE 詳情
-# - 已知的 Payload 變種
-
-# 步驟 4: 使用工具檢查代碼質量
-pylance_analyze_file("new_feature_worker.py")
-sonarqube_list_potential_security_issues("new_feature_worker.py")
-
-# 步驟 5: 參考業界工具實現
-# 例如: SQLMap 的布爾盲注檢測、XSStrike 的 DOM XSS 檢測
-
-# 步驟 6: 實現時使用標準枚舉
-from aiva_common.enums import Severity, Confidence
-from aiva_common.schemas import FindingPayload
-
-# 步驟 7: 編寫測試案例
-# 參考 testing/features/ 下的測試腳本
-```
-
-**常見檢測功能的參考資源**:
-```python
-# SQL 注入檢測
-reference = {
-    "tool": "SQLMap",
-    "docs": "OWASP SQL Injection Testing Guide",
-    "cwe": "CWE-89",
-    "example": "services/features/function_sqli/"
-}
-
-# XSS 檢測
-reference = {
-    "tool": "XSStrike, DOMPurify",
-    "docs": "OWASP XSS Prevention Cheat Sheet",
-    "cwe": "CWE-79, CWE-80",
-    "example": "services/features/function_xss/"
-}
-
-# SSRF 檢測
-reference = {
-    "tool": "SSRFmap",
-    "docs": "PortSwigger SSRF Academy",
-    "cwe": "CWE-918",
-    "example": "services/features/function_ssrf/"
-}
-```
-
----
-
-##### **🏗️ Features 架構靈活性原則**
-
-**核心理念**: Features 模組由眾多獨立的安全檢測功能組成，每個子功能可以採用最適合其特性的內部架構。
-
-```
-┌─────────────────────────────────────────────────────────────────┐
-│  Features 模組架構設計自由度                                    │
-├─────────────────────────────────────────────────────────────────┤
-│  ✅ 必須遵守（五大模組層級）:                                   │
-│     • 使用 aiva_common 標準（Severity, Confidence, SARIF）      │
-│     • 統一的跨模組通信接口（AivaMessage）                       │
-│     • 符合所用程式語言的官方規範                                │
-│                                                                  │
-│  🎨 完全自由（子功能內部）:                                     │
-│     • 內部目錄結構（扁平/分層/模塊化 皆可）                     │
-│     • 算法實現方式（OOP/函數式/過程式）                         │
-│     • 數據流設計（同步/異步/事件驅動）                          │
-│     • 性能優化策略（緩存/並發/流式處理）                        │
-│                                                                  │
-│  ⚖️ 權衡考慮:                                                   │
-│     • Python 功能: 可用 asyncio, multiprocessing, 任意框架      │
-│     • Rust 功能: 可用 tokio, rayon, 任意 crate                  │
-│     • Go 功能: 可用 goroutines, channels, 任意 package          │
-│     • 只要對外接口一致，內部實現完全自主                        │
-└─────────────────────────────────────────────────────────────────┘
-```
-
-**實際案例**:
-
-```python
-# ✅ 範例 1: 簡單功能使用扁平結構
-# services/features/xss_detector/
-#   ├── detector.py          # 單文件實現
-#   └── patterns.json        # 配置文件
-
-# ✅ 範例 2: 複雜功能使用分層架構  
-# services/features/advanced_sqli/
-#   ├── core/
-#   │   ├── engine.py        # 核心引擎
-#   │   └── parser.py        # SQL 解析器
-#   ├── detectors/
-#   │   ├── boolean_based.py
-#   │   └── time_based.py
-#   ├── utils/
-#   └── main.py              # 統一入口
-
-# ✅ 範例 3: 多語言混合功能
-# services/features/crypto_analyzer/
-#   ├── python_wrapper/      # Python 接口層
-#   ├── rust_engine/         # Rust 核心引擎（性能關鍵）
-#   └── shared_schemas/      # 共享數據定義
-```
-
-**唯一的硬性要求**:
-
-1. **對外接口標準化**:
-```python
-# 所有 Features 功能必須提供統一接口
-async def execute(target: str, config: dict) -> SARIFResult:
-    """
-    標準執行接口
-    
-    Args:
-        target: 目標 URL/代碼路徑
-        config: 功能配置
-        
-    Returns:
-        SARIFResult: 符合 SARIF 2.1.0 標準的結果
-    """
-    # 內部實現完全自由
-    # 可以是 OOP、函數式、任何架構
-    pass
-```
-
-2. **數據標準一致性**:
-```python
-# 輸出必須使用 aiva_common 標準
-from aiva_common.enums import Severity, Confidence
-from aiva_common.schemas import SARIFResult
-
-result = SARIFResult(
-    ruleId="FEAT-XSS-001",
-    level="error",              # SARIF 標準
-    message="XSS vulnerability",
-    # 內部如何檢測出來的? 完全自由!
-)
-```
-
-3. **語言規範遵循**:
-```rust
-// Rust 功能遵循 Rust 官方規範
-// Cargo.toml, 目錄結構, 命名慣例等
-```
-
-```go
-// Go 功能遵循 Go 官方規範  
-// go.mod, package 結構, 命名慣例等
-```
-
-##### **情境 1: 新增 Python 安全檢測功能**
-
-```python
-# 步驟 1: 使用 aiva_common 的標準枚舉
-from aiva_common.enums import Severity, Confidence, VulnerabilityStatus
-from aiva_common.schemas import SARIFResult, CWEReference
-
-# 步驟 2: 如果需要新的漏洞類型，評估範圍
-# 問題: 這個類型會被其他功能使用嗎？
-# - 是（如 SQL Injection, XSS）→ 加入 aiva_common
-# - 否（功能特定細節）→ 可在 Feature 內定義
-
-# ✅ 合理的 Feature 專屬枚舉（檢測細節）
-class AuthBypassTechnique(str, Enum):
-    """客戶端認證繞過技術 - client_side_auth_bypass 專用"""
-    COOKIE_MANIPULATION = "cookie_manipulation"
-    TOKEN_FORGERY = "token_forgery"
-    SESSION_HIJACKING = "session_hijacking"
-    # 這些是特定檢測功能的技術細節，不需要跨功能共享
-```
-
-##### **情境 2: 開發 Rust 安全引擎功能**
-
-```rust
-// ✅ 正確 - Rust 中使用一致的枚舉值（字符串形式）
-#[derive(Serialize, Deserialize, Debug, Clone)]
-#[serde(rename_all = "lowercase")]
-pub enum Severity {
-    Critical,    // 對應 Python 的 "critical"
-    High,        // 對應 Python 的 "high"
-    Medium,      // 對應 Python 的 "medium"
-    Low,         // 對應 Python 的 "low"
-    Info,        // 對應 Python 的 "info"
-}
-
-// ❌ 禁止 - 不要使用與 aiva_common 不一致的值
-pub enum MySeverity {
-    VeryBad,     // ❌ 與 Python 不一致
-    Bad,         // ❌ 與 Python 不一致
-    // ...
-}
-
-// 🔄 跨語言數據交換時確保一致性
-impl Severity {
-    pub fn to_python_value(&self) -> &str {
-        match self {
-            Severity::Critical => "critical",  // 必須與 aiva_common 一致
-            Severity::High => "high",
-            // ...
-        }
-    }
-}
-```
-
-##### **情境 3: 開發 Go 高性能服務功能**
-
-```go
-// ✅ 正確 - Go 中使用一致的常量定義
-package models
-
-const (
-    // Severity levels - 必須與 aiva_common 一致
-    SeverityCritical = "critical"
-    SeverityHigh     = "high"
-    SeverityMedium   = "medium"
-    SeverityLow      = "low"
-    SeverityInfo     = "info"
-)
-
-// ❌ 禁止 - 不要自定義不一致的值
-const (
-    SeverityLevel1 = "1"  // ❌ 與 Python 不一致
-    SeverityLevel2 = "2"  // ❌ 與 Python 不一致
-)
-
-// 🔄 與 Python 交互時的數據結構
-type VulnerabilityReport struct {
-    Severity   string `json:"severity"`    // 使用 aiva_common 的值
-    Confidence string `json:"confidence"`  // 使用 aiva_common 的值
-    CWE        string `json:"cwe"`         // CWE-123 格式
-}
-```
-
-##### **情境 4: 設計功能的內部架構（完全自由）**
-
-**重要**: 子功能內部架構設計**不受**五大模組架構限制，可以根據實際需求選擇最佳方案。
-
-```python
-# ✅ 選項 A: 簡單功能使用單文件實現
-# services/features/header_injection/detector.py
-
-from aiva_common.enums import Severity, Confidence
-from aiva_common.schemas import SARIFResult
-
-class HeaderInjectionDetector:
-    """簡單的標頭注入檢測器 - 單類實現"""
-    
-    async def scan(self, url: str) -> SARIFResult:
-        # 直接實現邏輯，不需要分層
-        payloads = self._load_payloads()
-        vulnerable = await self._test_injection(url, payloads)
-        return self._generate_sarif(vulnerable)
-    
-    def _load_payloads(self): ...
-    def _test_injection(self, url, payloads): ...
-    def _generate_sarif(self, result): ...
-
-# ✅ 選項 B: 複雜功能使用分層架構
-# services/features/advanced_xxe/
-#   ├── core/
-#   │   ├── parser.py        # XML 解析層
-#   │   ├── detector.py      # 檢測邏輯層
-#   │   └── validator.py     # 驗證層
-#   ├── payloads/
-#   │   ├── oob.py           # Out-of-band 檢測
-#   │   └── inband.py        # In-band 檢測
-#   └── main.py              # 統一入口
-
-# ✅ 選項 C: 事件驅動架構
-# services/features/realtime_scanner/
-
-from asyncio import Queue
-from typing import AsyncIterator
-
-class RealtimeScanEngine:
-    """事件驅動的即時掃描引擎"""
-    
-    def __init__(self):
-        self.event_queue = Queue()
-        self.workers = []
-    
-    async def stream_scan(self, target: str) -> AsyncIterator[SARIFResult]:
-        """流式輸出結果"""
-        async for event in self._scan_events(target):
-            yield self._event_to_sarif(event)
-    
-    # 內部可以使用任何並發模型
-    # asyncio, threading, multiprocessing 都可以
-
-# ✅ 選項 D: 插件化架構
-# services/features/extensible_sast/
-
-class SASTEngine:
-    """可擴展的 SAST 引擎"""
-    
-    def __init__(self):
-        self.plugins = []
-    
-    def register_plugin(self, plugin: BasePlugin):
-        """動態註冊檢測插件"""
-        self.plugins.append(plugin)
-    
-    async def scan(self, code: str) -> List[SARIFResult]:
-        """聚合所有插件的結果"""
-        results = []
-        for plugin in self.plugins:
-            # 每個插件可以有完全不同的內部實現
-            results.extend(await plugin.analyze(code))
-        return results
-```
-
-**架構選擇指南**:
+### 架構選擇指南
 
 | 功能複雜度 | 推薦架構 | 範例 |
 |-----------|---------|------|
@@ -951,148 +532,40 @@ class SASTEngine:
 | **高性能需求** | Rust/Go 核心 + Python 包裝 | 密碼學分析, 大規模爬蟲 |
 | **即時處理** | 事件驅動/流式 | WebSocket 掃描, 即時監控 |
 
-**關鍵原則**:
-- 🎯 **對外統一**: 必須提供標準 `execute()` 或 `scan()` 接口
-- 🔓 **對內自由**: 內部實現完全由開發者決定
-- 📊 **結果標準**: 輸出必須符合 SARIF 2.1.0 + aiva_common 枚舉
-- 🌐 **語言規範**: 遵循所用語言的官方最佳實踐
-
-#### 🌐 **多語言協作最佳實踐**
-
-**數據交換標準**:
-
-```python
-# Python 端（生產者）
-from aiva_common.schemas import SARIFResult
-
-def generate_report() -> dict:
-    """生成符合 SARIF 標準的報告"""
-    return SARIFResult(
-        ruleId="AUTH-001",
-        level="error",  # SARIF 標準值
-        message="Authentication bypass detected"
-    ).model_dump()
-```
-
-```rust
-// Rust 端（消費者）
-#[derive(Deserialize)]
-struct SARIFResult {
-    rule_id: String,
-    level: String,    // 接收 SARIF 標準值
-    message: String,
-}
-
-fn process_report(json: &str) -> Result<SARIFResult, Error> {
-    serde_json::from_str(json)  // 解析 Python 生成的 JSON
-}
-```
-
-```go
-// Go 端（消費者）
-type SARIFResult struct {
-    RuleID  string `json:"ruleId"`
-    Level   string `json:"level"`   // 接收 SARIF 標準值
-    Message string `json:"message"`
-}
-
-func ProcessReport(jsonData []byte) (*SARIFResult, error) {
-    var result SARIFResult
-    err := json.Unmarshal(jsonData, &result)
-    return &result, err
-}
-```
-
-#### 🔄 **修改現有功能的檢查清單**
-
-在修改 Features 模組任何語言的代碼前:
-
-- [ ] **Python 檢查**: 確認從 aiva_common 正確導入,無 Fallback 代碼
-- [ ] **Rust 檢查**: 枚舉序列化值與 aiva_common 一致
-- [ ] **Go 檢查**: 常量定義與 aiva_common 一致
-- [ ] **跨語言測試**: 驗證 Python ↔ Rust ↔ Go 數據交換正確性
-- [ ] **SARIF 合規**: 確保輸出符合 SARIF 2.1.0 標準
-
-#### 🧪 **Features 模組特殊驗證**
-
-```bash
-# 1. 檢查 Python 部分是否有重複定義 (✅ 已通過驗證)
-# grep -r "class Severity.*Enum" services/features --include="*.py" --exclude-dir=__pycache__
-# 結果: 無重複定義，僅在 aiva_common 中存在
-
-# 2. 檢查 Fallback 代碼 (✅ 已清理完成)
-# grep -r "except ImportError" services/features --include="*.py" -A 5  
-# 結果: 已移除所有不安全的 fallback 重複定義
-
-# 3. 驗證 Rust 序列化一致性
-cd services/features/rust_modules
-cargo test --test cross_language_compatibility
-
-# 4. 驗證 Go 常量定義
-cd services/features/go_services
-go test ./... -run TestEnumConsistency
-
-# 5. 完整多語言集成測試
-pytest services/features/tests/integration/test_multi_language.py -v
-```
-
-#### 📝 **修復與維護原則**
-
-> **保留未使用函數原則**: 在程式碼修復過程中，若發現有定義但尚未使用的函數或方法，只要不影響程式正常運作，建議予以保留。這些函數可能為未來功能預留，或作為API的擴展接口，刪除可能影響系統的擴展性和向前兼容性。
-
-### 🔗 **開發規範與指南**
-
-#### **📚 核心開發指南**
-- [🏗️ **AIVA Common 共享庫規範**](../../services/aiva_common/README.md) - 統一數據模型、枚舉定義、開發規範
-- [🛠️ **開發快速開始指南**](../../guides/development/DEVELOPMENT_QUICK_START_GUIDE.md) - 環境設置、快速部署
-- [🌐 **多語言環境標準**](../../guides/development/MULTI_LANGUAGE_ENVIRONMENT_STANDARD.md) - Python/TypeScript/Go/Rust 環境配置
-- [📦 **依賴管理指南**](../../guides/development/DEPENDENCY_MANAGEMENT_GUIDE.md) - 依賴問題排查、包管理優化
-- [🔒 **安全框架規範**](../../services/aiva_common/SECURITY_FRAMEWORK_COMPLETED.md) - 企業級安全防護標準
-
-#### **🔧 技術規範細節**
-- [📋 **Schema 導入規範**](../../guides/development/SCHEMA_IMPORT_GUIDE.md) - 跨模組數據結構導入標準
-- [📊 **性能監控規範**](../../guides/development/METRICS_USAGE_GUIDE.md) - 系統監控與性能分析
-- [🔍 **API 驗證指南**](../../guides/development/API_VERIFICATION_GUIDE.md) - 介面測試與驗證流程
-- [💾 **數據存儲規範**](../../guides/development/DATA_STORAGE_GUIDE.md) - 數據庫設計與存儲標準
-- [🎯 **Git 推送規範**](../../guides/development/GIT_PUSH_GUIDELINES.md) - 版本控制最佳實踐
-
-#### �📝 **語言特定注意事項**
-
-**Python 開發者**:
-- ✅ 始終從 `aiva_common` 導入標準枚舉
-- ❌ 移除所有 `except ImportError` Fallback 代碼
-- 🔧 使用 `pydantic` 模型進行數據驗證
-
-**Rust 開發者**:
-- ✅ 使用 `#[serde(rename_all = "lowercase")]` 確保序列化一致
-- ❌ 避免自定義枚舉表示形式
-- 🔧 實現 `to_python_value()` 進行顯式轉換
-
-**Go 開發者**:
-- ✅ 使用字符串常量而非自定義類型
-- ❌ 避免使用數字代碼代替語義化字符串
-- 🔧 使用 `json` tag 確保字段名一致
+**關鍵原則**：
+- 🎯 **對外統一**：必須提供標準 `execute()` 或 `scan()` 接口
+- 🔓 **對內自由**：內部實現完全由開發者決定
+- 📊 **結果標準**：輸出必須符合 SARIF 2.1.0 + aiva_common 枚舉
+- 🌐 **語言規範**：遵循所用語言的官方最佳實踐
 
 ---
 
-## 📞 **支援與聯繫**
+## 📚 相關開發指南
 
-### **👥 團隊分工**
-- 🦀 **Rust 團隊**: 安全引擎、SAST、密碼學
-- 🐍 **Python 團隊**: 核心協調、業務邏輯、整合
-- 🐹 **Go 團隊**: 高效能服務、網路處理、認證
-- 🏗️ **架構團隊**: 跨語言設計、系統整合
+### 核心開發資源
 
-### **📊 相關報告**
-- 📊 **多語言架構**: 參考本文檔的架構說明章節
-- 📋 **功能組織**: 參考本文檔的功能模組導航
-- 🔍 [組件分類資料](../docs/reports/architecture_diagrams/features_diagram_classification.json)
+- 🏗️ **[AIVA Common 共享庫](../aiva_common/README.md)** - 統一數據模型、枚舉定義、命令系統
+- 🛠️ **[開發指南總覽](../../guides/development/README.md)** - 完整開發指南索引
+- 🏗️ **[架構指南](../../guides/architecture/README.md)** - v2.0 數據合約架構文檔
+- 🔧 **[工具集使用手冊](../../tools/README.md)** - 專業工具操作
+- 📊 **[Services 架構總覽](../README.md)** - 六大核心服務架構
+
+### 推薦閱讀順序
+
+**新手開發者**：
+1. [開發指南總覽](../../guides/development/README.md) - 了解整體開發流程
+2. [AIVA Common](../aiva_common/README.md) - 學習數據模型使用
+3. [SIMPLE_ARCHITECTURE.md](./SIMPLE_ARCHITECTURE.md) - Features 模組架構設計
+
+**進階開發者**：
+1. [架構指南](../../guides/architecture/README.md) - 深入架構設計
+2. [Services 總覽](../README.md) - 掌握服務架構
+3. [工具集手冊](../../tools/README.md) - 提升開發效率
 
 ---
 
-**📝 文件版本**: v2.1 - Multi-Layer Architecture + P0-P2 Fixes  
-**🔄 最後更新**: 2025-11-13  
-**📈 複雜度等級**: ⭐⭐⭐⭐⭐ (最高) - 多層次文件架構  
-**👥 維護團隊**: AIVA Multi-Language Architecture Team
+**文件版本**: v6.2  
+**最後更新**: 2025-12-12  
+**維護團隊**: AIVA Multi-Language Architecture Team
 
-*這是 AIVA Features 模組的主要導航文件。根據您的角色和需求，選擇適合的專業文件深入了解。*
+*這是 AIVA Features 模組的主要導航文件。查看 [SIMPLE_ARCHITECTURE.md](./SIMPLE_ARCHITECTURE.md) 了解詳細架構設計。*

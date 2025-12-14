@@ -3,20 +3,8 @@ import asyncio, importlib, inspect
 from dataclasses import dataclass
 from typing import Any, Dict, List, Optional, Protocol
 
-try:
-    # Prefer native detection models if present
-    from ..detection_models import DetectionResult
-except ImportError:
-    @dataclass
-    class DetectionResult:  # minimal compatibility model
-        engine: str
-        vulnerable: bool
-        payload: Optional[str] = None
-        evidence: Optional[str] = None
-        severity: str = "MEDIUM"
-        confidence: str = "MEDIUM"
-        parameter: Optional[str] = None
-        cwe: Optional[str] = None
+# Import native detection models
+from ..detection_models import DetectionResult
 
 class SqliEngineProtocol(Protocol):
     async def detect(self, target: str, params: Dict[str, Any]) -> List[DetectionResult]: ...  # noqa: E701
@@ -53,9 +41,9 @@ class SqliDetector:
             # if engine.detect is sync, wrap as async
             if not inspect.iscoroutinefunction(getattr(inst, "detect", None)):
                 sync_detect = inst.detect  # type: ignore[attr-defined]
-                async def _aw(target: str, params: Dict[str, Any]):  # noqa: ANN001
-                    return sync_detect(target, params)
-                inst.detect = _aw  # type: ignore[assignment]
+                async def _async_wrapper(target: str, params: Dict[str, Any]) -> List[DetectionResult]:
+                    return await asyncio.to_thread(sync_detect, target, params)
+                inst.detect = _async_wrapper  # type: ignore[assignment]
             return inst  # type: ignore[return-value]
         except Exception:
             return None
@@ -97,17 +85,14 @@ class SqliDetector:
         merged = []
         
         for dr in results:
-            key = (dr.engine, dr.payload, dr.parameter)
+            # 使用新的 DetectionResult 結構
+            key = (dr.detection_method, dr.payload_used, dr.target.parameter if dr.target.parameter else "")
             if key in seen:
                 continue
             seen.add(key)
             
-            # 標準化嚴重度和置信度
-            if dr.vulnerable:
-                if dr.severity not in {"LOW", "MEDIUM", "HIGH", "CRITICAL"}:
-                    dr.severity = "HIGH"
-                if dr.confidence not in {"LOW", "MEDIUM", "HIGH"}:
-                    dr.confidence = "MEDIUM"
+            # DetectionResult 使用 Vulnerability 對象，不需要手動標準化
+            # 嚴重度和置信度已在創建時設置
             
             merged.append(dr)
         

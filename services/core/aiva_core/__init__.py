@@ -386,7 +386,6 @@ from .service_backbone.coordination.core_service_coordinator import (
     shutdown_core_module,
 )
 from .cognitive_core.decision.skill_graph import AIVASkillGraph, skill_graph
-from .cognitive_core.neural.bio_neuron_master import BioNeuronDecisionController
 
 # 從核心組件導入
 from .core_capabilities.dialog.assistant import AIVADialogAssistant, dialog_assistant
@@ -409,7 +408,6 @@ __all__ = [
     "is_feature_enabled",
     "get_migration_phase",
     # 新增核心組件 (附件要求實現)
-    "BioNeuronDecisionController",
     "AIVADialogAssistant",
     "dialog_assistant",
     "AIVASkillGraph",

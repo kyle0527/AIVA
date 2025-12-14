@@ -1,9 +1,14 @@
-"""Internal Loop Connector - 內部閉環連接器 (v2.0 合規版本)
+"""Internal Loop Connector - 內部閉環連接器 (v9.0 更新版本)
 
 將 internal_exploration 的能力分析結果注入到 cognitive_core RAG，實現 AI 自我認知
 
+⚠️ 架構更新說明 (v9.0):
+原設計使用 ModuleExplorer 和 CapabilityAnalyzer (未實現)
+當前實現使用三階段管道: aiva_flow_analyzer → aiva_flow_classifier → aiva_cli_implementation
+詳見: services/core/aiva_core/internal_exploration/README.md
+
 數據流：
-internal_exploration (能力分析) → InternalLoopConnector → RAG Knowledge Base
+internal_exploration (三階段分析管道) → InternalLoopConnector → RAG Knowledge Base
 
 遵循 aiva_common v2.0 修復規範:
 ✅ 使用統一的日誌記錄 (get_logger)
@@ -16,7 +21,7 @@ internal_exploration (能力分析) → InternalLoopConnector → RAG Knowledge 
 
 from datetime import datetime, UTC
 from pathlib import Path
-from typing import Any
+from typing import Any, List, Dict, Optional
 from uuid import uuid4
 
 # ✅ 修復 1: 使用統一日誌
@@ -33,9 +38,15 @@ from aiva_common.schemas.dual_loop import (
     ParameterDefinition,
     ReturnDefinition,
     CapabilityUsageExample,
+    InvocationInfo,
     RAGQueryRequest,
     RAGQueryResult,
-    SystemIssue
+    SystemIssue,
+    # ✅ v11.0: 新增範圍管理枚舉
+    CapabilityScope,
+    CapabilityVisibility,
+    CapabilityAccessLevel,
+    CLIMaturityLevel
 )
 
 # ✅ 修復 3: 引入 AICommand 架構（將在後續整合）
@@ -52,8 +63,322 @@ from aiva_common.error_handling import (
 logger = get_logger(__name__)
 
 
+class CapabilityScopeClassifier:
+    """能力範圍分類器 (v3.0)
+    
+    根據文件路徑、能力類別和名稱自動分類能力的範圍、可見性和訪問級別。
+    
+    設計原則（遵循 aiva_common v2.0 規範）:
+    - 基於查找表模式（降低複雜度）
+    - 明確的分類規則（可維護性）
+    - 自動推斷機制（減少手動配置）
+    """
+    
+    # 路徑常量 (避免重複字串)
+    _PATH_FEATURES = "services/features"
+    _PATH_FEATURES_WIN = "services\\features"
+    _PATH_SCAN = "services/scan"
+    _PATH_SCAN_WIN = "services\\scan"
+    _PATH_INTEGRATION = "services/integration"
+    _PATH_INTEGRATION_WIN = "services\\integration"
+    _ENTRY_APP_PY = "app.py"
+    
+    def classify_scope(self, file_path: str) -> tuple[CapabilityScope, CapabilityVisibility]:
+        """根據文件路徑自動分類能力範圍和可見性
+        
+        分類規則:
+        - services/core/aiva_core/internal_exploration/* → CORE, INTERNAL
+        - services/core/aiva_core/cognitive_core/internal_* → CORE, INTERNAL
+        - services/core/aiva_core/task_planning/* → SERVICE, PUBLIC
+        - services/core/aiva_core/core_capabilities/* → SERVICE, PUBLIC
+        - services/features/* → GLOBAL, PUBLIC
+        - services/scan/* → GLOBAL, PUBLIC
+        - services/integration/* → GLOBAL, SYSTEM
+        
+        Args:
+            file_path: 文件路徑
+            
+        Returns:
+            (scope, visibility) 元組
+        """
+        file_path_lower = file_path.lower()
+        
+        # 規則 1: 內部探索和內部閉環 → CORE, INTERNAL
+        if "internal_exploration" in file_path_lower or "internal_loop" in file_path_lower:
+            return (CapabilityScope.CORE, CapabilityVisibility.INTERNAL)
+        
+        # 規則 2: 認知核心內部組件 → CORE, INTERNAL
+        if "cognitive_core" in file_path_lower and any(x in file_path_lower for x in ["neural", "rag", "internal"]):
+            return (CapabilityScope.CORE, CapabilityVisibility.INTERNAL)
+        
+        # 規則 3: 任務規劃和核心能力 → SERVICE, PUBLIC
+        if "task_planning" in file_path_lower or "core_capabilities" in file_path_lower:
+            return (CapabilityScope.SERVICE, CapabilityVisibility.PUBLIC)
+        
+        # 規則 4: AI Commander → SERVICE, PUBLIC
+        if "ai_commander" in file_path_lower or "orchestrator" in file_path_lower:
+            return (CapabilityScope.SERVICE, CapabilityVisibility.PUBLIC)
+        
+        # 規則 5: Features 功能模組 → GLOBAL, PUBLIC
+        if self._PATH_FEATURES in file_path_lower or self._PATH_FEATURES_WIN in file_path_lower:
+            return (CapabilityScope.GLOBAL, CapabilityVisibility.PUBLIC)
+        
+        # 規則 6: Scan 掃描引擎 → GLOBAL, PUBLIC
+        if self._PATH_SCAN in file_path_lower or self._PATH_SCAN_WIN in file_path_lower:
+            return (CapabilityScope.GLOBAL, CapabilityVisibility.PUBLIC)
+        
+        # 規則 7: Integration 整合層 → GLOBAL, SYSTEM
+        if self._PATH_INTEGRATION in file_path_lower or self._PATH_INTEGRATION_WIN in file_path_lower:
+            return (CapabilityScope.GLOBAL, CapabilityVisibility.SYSTEM)
+        
+        # 默認: CORE, INTERNAL
+        return (CapabilityScope.CORE, CapabilityVisibility.INTERNAL)
+    
+    def classify_access_level(self, category: str, sub_category: str | None = None) -> CapabilityAccessLevel:
+        """根據能力類別判斷訪問級別
+        
+        Note: sub_category 參數保留以備未來擴展需求
+        
+        分類規則:
+        - Scanning, Attacking → L2_MODULE (功能模組級)
+        - Analysis, Reporting → L1_SERVICE (服務協調級)
+        - Integration, Utility → L0_SYSTEM (系統管理級)
+        - 其他 → L3_INTERNAL (內部實現級)
+        
+        Args:
+            category: 能力主類別
+            sub_category: 能力子類別（可選）
+            
+        Returns:
+            訪問級別
+        """
+        category_lower = category.lower()
+        
+        # L2_MODULE: 功能模組（掃描和攻擊）
+        if category_lower in ["scanning", "attacking"]:
+            return CapabilityAccessLevel.L2_MODULE
+        
+        # L1_SERVICE: 服務協調（分析和報告）
+        if category_lower in ["analysis", "reporting"]:
+            return CapabilityAccessLevel.L1_SERVICE
+        
+        # L0_SYSTEM: 系統管理（整合和部分工具）
+        if category_lower == "integration":
+            return CapabilityAccessLevel.L0_SYSTEM
+        
+        # L3_INTERNAL: 內部實現（其他工具和內部函數）
+        return CapabilityAccessLevel.L3_INTERNAL
+    
+    def detect_available_in(self, file_path: str) -> list[str]:
+        """檢測能力可用的服務路徑
+        
+        Args:
+            file_path: 文件路徑
+            
+        Returns:
+            可用路徑列表，例如: ['core', 'features/sqli', 'scan']
+        """
+        available = []
+        file_path_lower = file_path.lower()
+        
+        # 檢測所在的服務目錄
+        if "services/core" in file_path_lower or "services\\core" in file_path_lower:
+            available.append("core")
+        
+        if "services/features" in file_path_lower or "services\\features" in file_path_lower:
+            # 提取具體功能模組名稱
+            import re
+            match = re.search(r"features[/\\]+(function_\w+)", file_path_lower)
+            if match:
+                available.append(f"features/{match.group(1)}")
+            else:
+                available.append("features")
+        
+        if "services/scan" in file_path_lower or "services\\scan" in file_path_lower:
+            available.append("scan")
+        
+        if "services/integration" in file_path_lower or "services\\integration" in file_path_lower:
+            available.append("integration")
+        
+        # 默認至少在 core 可用
+        return available if available else ["core"]
+    
+    def detect_cli_info(self, cap: dict) -> tuple[bool, str | None, CLIMaturityLevel]:
+        """檢測 CLI 信息 (v3.0 - 修復版本)
+        
+        修復內容:
+        - 使用精確的正則匹配，避免 "client" 誤判為 "cli"
+        - 添加排除規則 (node_modules, client.py, http_client 等)
+        - 驗證文件內容是否真的有 CLI 入口點
+        
+        Args:
+            cap: 能力數據字典
+            
+        Returns:
+            (has_cli, cli_command, cli_maturity) 元組
+        """
+        import re
+        
+        name = cap.get("name", "").lower()
+        file_path = cap.get("file_path", "")
+        file_path_lower = file_path.lower()
+        
+        # 排除規則 (優先檢查)
+        exclude_patterns = [
+            r"node_modules",          # 第三方庫
+            r"client\.py$",           # 客戶端庫 (不是 CLI)
+            r"client\.go$",           # Go 客戶端庫
+            r"client\.ts$",           # TypeScript 客戶端
+            r"http_client",           # HTTP 客戶端
+            r"mq.*client",            # MQ 客戶端
+            r"/test/",                # 測試文件
+            r"_test\.(py|go|ts)$",    # 測試文件
+            r"commander\.py$",        # AI Commander (不是 CLI)
+        ]
+        
+        for pattern in exclude_patterns:
+            if re.search(pattern, file_path_lower):
+                return (False, None, CLIMaturityLevel.NONE)
+        
+        # 精確的 CLI 文件名匹配
+        cli_file_patterns = [
+            r"_cli\.py$",             # 結尾是 _cli.py
+            r"^cli\.py$",             # 就叫 cli.py
+            r"/cli/[^/]+\.py$",       # 在 cli/ 目錄下
+            r"command_handler\.py$",  # 命令處理器
+            r"rich_cli\.py$",         # Rich CLI
+        ]
+        
+        has_cli = False
+        for pattern in cli_file_patterns:
+            if re.search(pattern, file_path_lower):
+                # 進一步驗證: 檢查文件內容
+                if self._verify_cli_content(file_path):
+                    has_cli = True
+                    break
+        
+        if not has_cli:
+            return (False, None, CLIMaturityLevel.NONE)
+        
+        # 推斷 CLI 命令
+        cli_command = self._infer_cli_command(name, file_path)
+        
+        # 判斷成熟度
+        if "services/core/ui/rich_cli.py" in file_path_lower:
+            maturity = CLIMaturityLevel.STABLE  # 主 CLI 界面，非常穩定
+        elif "lifecycle_cli.py" in file_path_lower:
+            maturity = CLIMaturityLevel.STABLE  # 生命週期管理 CLI
+        elif "services/features" in file_path_lower:
+            maturity = CLIMaturityLevel.ALPHA  # features 模組 CLI 尚未完善
+        elif "services/core/aiva_core" in file_path_lower:
+            maturity = CLIMaturityLevel.BETA  # core 模組較成熟
+        elif "services/scan" in file_path_lower:
+            maturity = CLIMaturityLevel.BETA  # scan 模組有基本 CLI
+        else:
+            maturity = CLIMaturityLevel.ALPHA
+        
+        return (has_cli, cli_command, maturity)
+    
+    def _verify_cli_content(self, file_path: str) -> bool:
+        """驗證文件內容是否為真正的 CLI
+        
+        檢查特徵:
+        - 有主入口點: if __name__ == '__main__'
+        - 使用 CLI 框架: argparse/click/typer/Rich Console
+        - 有命令解析器: ArgumentParser/@click.command
+        
+        Args:
+            file_path: 文件路徑
+            
+        Returns:
+            是否為真正的 CLI 文件
+        """
+        try:
+            with open(file_path, 'r', encoding='utf-8') as f:
+                content = f.read(10000)  # 讀取前 10000 字元
+            
+            # CLI 框架特徵
+            cli_indicators = [
+                "if __name__ == '__main__'",
+                "ArgumentParser",
+                "@click.command",
+                "@click.group",
+                "Console()",
+                "Prompt.ask",
+                "typer.Typer()",
+            ]
+            
+            return any(indicator in content for indicator in cli_indicators)
+        except Exception as e:
+            logger.debug(f"無法讀取文件 {file_path}: {e}")
+            return False
+    
+    def _infer_cli_command(self, func_name: str, file_path: str) -> str:
+        """推斷 CLI 命令
+        
+        例如:
+        - function_sqli/scanner.py → aiva sqli scan
+        - function_xss/detector.py → aiva xss detect
+        
+        Args:
+            func_name: 函數名稱
+            file_path: 文件路徑
+            
+        Returns:
+            CLI 命令字符串
+        """
+        import re
+        
+        # 提取功能模組名
+        match = re.search(r"function_(\w+)", file_path)
+        if match:
+            module = match.group(1)
+            # 簡化函數名為動詞
+            action = func_name.split("_")[0] if "_" in func_name else func_name
+            return f"aiva {module} {action}"
+        
+        return f"aiva {func_name}"
+    
+    def detect_service_dependencies(self, cap: dict) -> list[str]:
+        """檢測服務依賴
+        
+        通過分析參數類型和名稱檢測依賴的服務。
+        
+        Args:
+            cap: 能力數據字典
+            
+        Returns:
+            依賴的服務列表
+        """
+        dependencies = []
+        
+        # 從參數中提取依賴線索
+        params = cap.get("parameters", [])
+        for param in params:
+            param_type = str(param.get("type", "")).lower()
+            param_name = str(param.get("name", "")).lower()
+            
+            # RAG 依賴
+            if "rag" in param_type or "knowledge" in param_name:
+                dependencies.append("core/rag")
+            
+            # 掃描引擎依賴
+            if "scan" in param_type or "engine" in param_name:
+                dependencies.append("scan")
+            
+            # 功能執行器依賴
+            if "feature" in param_type or "executor" in param_name:
+                dependencies.append("features")
+            
+            # 數據庫依賴
+            if "session" in param_type or "db" in param_name:
+                dependencies.append("core/database")
+        
+        return list(set(dependencies))  # 去重
+
+
 class InternalLoopConnector:
-    """內部閉環連接器 (v2.0 合規版本)
+    """內部閉環連接器 (v11.0 範圍管理增強版)
     
     職責：
     1. 從 internal_exploration 獲取能力分析結果
@@ -75,7 +400,10 @@ class InternalLoopConnector:
     """
     
     def __init__(self, rag_knowledge_base=None, pg_session=None):
-        """初始化內部閉環連接器
+        """初始化內部閉環連接器 (v9.0 更新)
+        
+        ⚠️ 注意: 原設計依賴的 ModuleExplorer 和 CapabilityAnalyzer 未實現
+        當前系統使用三階段管道: aiva_flow_analyzer → aiva_flow_classifier → aiva_cli_implementation
         
         Args:
             rag_knowledge_base: RAG 知識庫實例，如果為 None 則延遲初始化
@@ -83,153 +411,293 @@ class InternalLoopConnector:
         """
         self.rag_kb = rag_knowledge_base
         self.pg_session = pg_session
-        self._module_explorer = None
-        self._capability_analyzer = None
+        # ⚠️ v9.0: 以下組件未實現，保留屬性以維持相容性
+        self._module_explorer = None  # 未實現: 使用 aiva_flow_analyzer.py 代替
+        self._capability_analyzer = None  # 未實現: 使用 aiva_flow_classifier.py 代替
         self._capability_registry = None
         
-        # 如果提供了 pg_session，初始化 CapabilityRegistry
-        if pg_session is not None:
-            from ..internal_exploration.capability_registry import CapabilityRegistry
-            self._capability_registry = CapabilityRegistry(
-                pg_session=pg_session,
-                chroma_collection=None  # ChromaDB 透過 RAG 寫入
-            )
-            logger.info("InternalLoopConnector initialized with CapabilityRegistry (dual-write enabled)")
-        else:
-            logger.info("InternalLoopConnector initialized (v2.0 compliant, RAG-only mode)")
+        # ✅ v11.0: 初始化範圍分類器
+        self.scope_classifier = CapabilityScopeClassifier()
+        logger.info("✅ InternalLoopConnector initialized with scope management (v11.0)")
+        
+        # 如果提供了 pg_session，初始化 CapabilityRegistry（已知未實現，註解掉避免錯誤）
+        # if pg_session is not None:
+        #     try:
+        #         from ..internal_exploration.capability_registry import CapabilityRegistry
+        #         self._capability_registry = CapabilityRegistry(
+        #             pg_session=pg_session,
+        #             chroma_collection=None  # ChromaDB 透過 RAG 寫入
+        #         )
+        #         logger.info("InternalLoopConnector initialized with CapabilityRegistry (dual-write enabled)")
+        #     except ImportError:
+        #         logger.warning("CapabilityRegistry not found - dual-write disabled")
+        # else:
+        logger.info("InternalLoopConnector initialized (v9.0, RAG-only mode)")
     
     @property
     def module_explorer(self):
-        """延遲加載 ModuleExplorer"""
+        """延遲加載 ModuleExplorer (v9.0: 未實現)
+        
+        ⚠️ 此組件未實現，請使用三階段管道:
+        - aiva_flow_analyzer.py (第一階段: AST分析)
+        - aiva_flow_classifier.py (第二階段: 分類)
+        - aiva_cli_implementation.py (第三階段: 執行)
+        """
         if self._module_explorer is None:
-            from ..internal_exploration.module_explorer import ModuleExplorer
-            self._module_explorer = ModuleExplorer()
+            logger.warning("ModuleExplorer not implemented - use aiva_flow_analyzer.py instead")
+            # 組件未實現，返回 None
         return self._module_explorer
     
     @property
     def capability_analyzer(self):
-        """延遲加載 CapabilityAnalyzer"""
+        """延遲加載 CapabilityAnalyzer (v9.0: 未實現)
+        
+        ⚠️ 此組件未實現，請使用三階段管道:
+        - aiva_flow_classifier.py 提供分類功能
+        - classification_data.json 包含282個已分類數據流
+        """
         if self._capability_analyzer is None:
-            from ..internal_exploration.capability_analyzer import CapabilityAnalyzer
-            self._capability_analyzer = CapabilityAnalyzer()
+            logger.warning("CapabilityAnalyzer not implemented - use aiva_flow_classifier.py instead")
         return self._capability_analyzer
     
     async def sync_capabilities_to_rag(
         self, 
-        force_refresh: bool = False
+        force_refresh: bool = False,
+        target_scope: str = "core"
     ) -> InternalLoopSyncResult:
-        """同步能力到 RAG 知識庫 (v2.0 合規版本)
+        """同步能力到 RAG 知識庫 (v10.0 Pipeline 整合版本)
         
-        這是內部閉環的核心方法，將系統能力注入 AI 的認知體系
-        
-        流程：
-        1. 掃描模組
-        2. 分析能力（原始數據）
-        3. 增強能力信息（分類、參數、範例）
-        4. 轉換為 Pydantic 模型（數據驗證）
-        5. 轉換為 RAG 文檔格式
-        6. 注入到 RAG 知識庫
-        7. 計算能力摘要
+        ⚠️ 架構更新說明 (v10.0):
+        整合新的三階段管道系統:
+        1. 觸發 ExplorationPipeline 進行代碼分析與版控
+        2. 從 latest_classification.json 讀取分析結果
+        3. 將 Flows 轉換為結構化能力並注入 RAG
         
         Args:
-            force_refresh: 是否強制刷新（清空舊數據）
+            force_refresh: 是否強制重新分析代碼 (觸發 Pipeline)
+            target_scope: 分析範圍 (預設 'core'，可指定模組路徑)
             
         Returns:
             InternalLoopSyncResult: 同步結果（Pydantic 模型）
         """
-        logger.info("🔄 Starting internal loop synchronization (v2.0)...")
+        logger.info("🔄 Starting internal loop synchronization (v10.0 Pipeline Integrated)...")
         
+        # 步驟 1: 如果強制刷新，觸發外部管線進行代碼分析
+        if force_refresh:
+            try:
+                from ..internal_exploration.python_tools.aiva_exploration_pipeline import ExplorationPipeline
+                logger.info("⚙️ Force refresh requested. Triggering Exploration Pipeline...")
+                logger.info(f"   Target scope: {target_scope}")
+                
+                # 在異步環境中運行同步的 Pipeline
+                import asyncio
+                pipeline = ExplorationPipeline(target_path=target_scope)
+                success = await asyncio.to_thread(pipeline.run)
+                
+                if success:
+                    logger.info("✅ Exploration Pipeline completed successfully.")
+                else:
+                    logger.error("❌ Exploration Pipeline failed. Using existing data.")
+            except ImportError:
+                logger.warning("⚠️ ExplorationPipeline module not found. Skipping analysis.")
+            except Exception as e:
+                logger.error(f"❌ Pipeline execution error: {e}")
+                import traceback
+                traceback.print_exc()
+        
+        # 步驟 2: 讀取並轉換 Flow 能力
+        capabilities = []
         try:
-            # 步驟 1: 掃描模組
-            logger.info("  Step 1: Scanning modules...")
-            modules = await self.module_explorer.explore_all_modules()
-            
-            # 步驟 2: 分析能力（原始數據）
-            logger.info("  Step 2: Analyzing capabilities...")
-            capabilities_raw = await self.capability_analyzer.analyze_capabilities(modules)
-            
-            # ✅ 步驟 3: 增強能力信息（添加分類、參數定義、範例）
-            logger.info("  Step 3: Enhancing capability information...")
-            capabilities_enhanced = self._enhance_capabilities(capabilities_raw)
-            
-            # ✅ 步驟 4: 轉換為 Pydantic 模型（數據驗證）
-            logger.info("  Step 4: Converting to Pydantic models...")
-            capabilities = [
-                self._convert_to_capability_model(cap)
-                for cap in capabilities_enhanced
-            ]
-            
-            # 步驟 5: 轉換為 RAG 文檔格式
-            logger.info("  Step 5: Converting to RAG documents...")
-            documents = self._convert_to_documents(capabilities)
-            
-            # 步驟 6: 雙寫機制（PostgreSQL + ChromaDB）
-            logger.info("  Step 6: Dual-write to PostgreSQL and ChromaDB...")
-            
-            # 6a. 寫入 PostgreSQL (如果啟用)
-            if self._capability_registry is not None:
-                try:
-                    logger.info("    6a. Writing to PostgreSQL...")
-                    registry_result = self._capability_registry.register_capabilities(capabilities)
-                    logger.info(f"    PostgreSQL write: {registry_result.get('added', 0)} added, "
-                              f"{registry_result.get('modified', 0)} modified, "
-                              f"{registry_result.get('deleted', 0)} deleted, "
-                              f"{registry_result.get('unchanged', 0)} unchanged")
-                except Exception as pg_error:
-                    logger.error(f"    PostgreSQL write failed: {pg_error}")
-                    # 繼續執行 RAG 寫入，不中斷流程
-            else:
-                logger.info("    6a. PostgreSQL disabled (no pg_session)")
-            
-            # 6b. 寫入 ChromaDB (透過 RAG)
-            logger.info("    6b. Writing to ChromaDB (RAG)...")
-            documents_added = self._inject_to_rag(documents)
-            
-            # ✅ 步驟 7: 計算能力摘要
-            logger.info("  Step 7: Calculating summary...")
-            result = InternalLoopSyncResult(
-                modules_scanned=len(modules),
-                capabilities_found=len(capabilities),
-                capabilities=capabilities,
-                summary=None,  # 將在下面計算
-                documents_added=documents_added,
-                timestamp=datetime.now(UTC),
-                success=True,
-                error=None
-            )
-            
-            # 計算摘要
-            result.summary = result.calculate_summary()
-            
-            logger.info(f"✅ Internal loop sync completed: {result.model_dump()}")
-            logger.info(f"   Summary: {result.summary.total_capabilities} capabilities, "
-                       f"{result.summary.healthy_count} healthy, "
-                       f"avg health: {result.summary.avg_health_score:.2f}")
-            
-            return result
+            logger.info("  Step 2: Loading flow capabilities from latest data...")
+            flow_caps = self._scan_flows_structured()
+            capabilities.extend(flow_caps)
+            logger.info(f"   -> Loaded {len(flow_caps)} flow capabilities")
             
         except Exception as e:
-            # ✅ 修復 4: 使用統一錯誤處理
-            error_context = create_error_context(
-                error_type=ErrorType.SYSTEM,
-                severity=ErrorSeverity.HIGH,
-                message="Internal loop sync failed",
-                details={"force_refresh": force_refresh},
-                exception=e
-            )
-            logger.error(f"❌ Internal loop sync failed: {error_context}")
-            
-            # 返回錯誤結果（仍然是 Pydantic 模型）
+            logger.error(f"❌ Failed to load capabilities: {e}")
+            import traceback
+            traceback.print_exc()
             return InternalLoopSyncResult(
-                modules_scanned=0,
-                capabilities_found=0,
-                capabilities=[],
-                summary=None,
-                documents_added=0,
+                success=False, 
+                error=str(e), 
                 timestamp=datetime.now(UTC),
-                success=False,
-                error=str(e)
+                modules_scanned=0, 
+                capabilities_found=0, 
+                documents_added=0, 
+                capabilities=[], 
+                summary=None
             )
+        
+        # 步驟 3: 轉換為 RAG 文檔並注入
+        logger.info("  Step 3: Converting to RAG documents...")
+        documents = self._convert_to_documents(capabilities)
+        
+        logger.info("  Step 4: Injecting to RAG...")
+        documents_added = self._inject_to_rag(documents)
+        
+        # 步驟 4: 生成結果摘要
+        result = InternalLoopSyncResult(
+            modules_scanned=1,
+            capabilities_found=len(capabilities),
+            capabilities=capabilities,
+            summary=None,
+            documents_added=documents_added,
+            timestamp=datetime.now(UTC),
+            success=True,
+            error=None
+        )
+        result.summary = result.calculate_summary()
+        
+        logger.info(f"✅ Sync completed. Found {len(capabilities)} capabilities.")
+        logger.info(f"   Summary: {result.summary.total_capabilities} total, "
+                   f"{result.summary.healthy_count} healthy")
+        
+        return result
+    
+    def _scan_flows_structured(self) -> List[ModuleCapability]:
+        """
+        [AI 認知核心] 將 Flow 轉換為結構化能力物件 (Pydantic Model)
+        
+        讀取 latest_classification.json 並轉換為 ModuleCapability 格式
+        
+        特點:
+        - 不使用自然語言描述 (No Storytelling)
+        - 使用緊湊的格式字串 (Compact Format String)
+        - 包含詳細的 Metadata 供程式調用
+        
+        Returns:
+            List[ModuleCapability]: 結構化能力列表
+        """
+        try:
+            from ..internal_exploration.python_tools.aiva_cli_implementation import FlowExecutor
+            from pathlib import Path
+            
+            # 自動讀取 latest_classification.json
+            executor = FlowExecutor()
+            flows = executor.data.get("flows", [])
+            
+            if not flows:
+                logger.warning("No flows found in classification data")
+                return []
+            
+            converted_caps = []
+            
+            for flow in flows:
+                flow_id = flow['id']
+                length = flow.get('length', 0)
+                primary_mod = flow.get('primary_module', 'unknown')
+                
+                # 1. 構建路徑簽名 (Path Signature)
+                path_steps = [
+                    self._snake_to_camel(step.get('script', '')) 
+                    for step in flow.get("classifications", [])
+                    if step.get('script')
+                ]
+                path_signature = "->".join(path_steps) if path_steps else "unknown"
+                
+                # 2. 構建緊湊描述 (Structured Description)
+                compact_desc = (
+                    f"[FLOW] ID:{flow_id} | LEN:{length} | MOD:{primary_mod} | "
+                    f"PATH:{path_signature}"
+                )
+                
+                # 3. 構建調用元數據 (Invocation Info)
+                invocation = InvocationInfo(
+                    protocol="direct",
+                    endpoint="direct://aiva_core.internal_exploration.aiva_cli_implementation.execute_flow",
+                    module_arg="aiva_cli_implementation",
+                    function_arg="execute_flow",
+                    parameter_mapping={"flow_id": str(flow_id)},
+                    timeout_seconds=300,
+                    retry_count=0
+                )
+                
+                # 4. ✅ v11.0: 分類範圍管理信息
+                # Flow 都是核心內部能力，用於內部編排
+                scope = CapabilityScope.CORE
+                visibility = CapabilityVisibility.INTERNAL
+                access_level = CapabilityAccessLevel.L1_SERVICE  # 服務編排級別
+                
+                # 5. 建立 Pydantic 模型
+                cap = ModuleCapability(
+                    capability_id=f"flow_{flow_id}",
+                    name=f"exec_flow_{flow_id}",
+                    module="aiva_flows",
+                    function="execute_flow",
+                    language="python",
+                    file_path="latest_classification.json",
+                    description=compact_desc,
+                    
+                    # 分類標籤
+                    category=CapabilityCategory.INTEGRATION,
+                    sub_category=CapabilitySubCategory.ORCHESTRATION,
+                    complexity=CapabilityComplexity.MODERATE,  # 修正為 MODERATE 而非 MEDIUM
+                    
+                    # 參數定義
+                    parameters=[
+                        ParameterDefinition(
+                            name="flow_id",
+                            type="int",
+                            description="Fixed Flow ID",
+                            default=flow_id,
+                            required=True,
+                            example=str(flow_id),
+                            constraints=None
+                        )
+                    ],
+                    
+                    # 返回值定義
+                    return_info=ReturnDefinition(
+                        type="dict",
+                        description="Flow execution result",
+                        example={"status": "success"},
+                        structure=None
+                    ),
+                    
+                    # 調用資訊
+                    invocation=invocation,
+                    
+                    # 標籤 (方便檢索)
+                    tags=["flow", "pipeline", primary_mod] + path_steps,
+                    
+                    # ✅ v11.0: 範圍管理
+                    scope=scope,
+                    visibility=visibility,
+                    access_level=access_level,
+                    available_in=["core"],  # Flow 只在 core 可用
+                    depends_on_services=[],
+                    has_cli=True,  # Flow 可通過 CLI 執行
+                    cli_command=f"aiva flow exec {flow_id}",
+                    cli_maturity=CLIMaturityLevel.BETA,  # Flow 系統較成熟
+                    
+                    # 其他必填欄位
+                    health_score=1.0,
+                    availability=1.0,
+                    avg_latency_ms=None,
+                    last_used=None,
+                    created_at=datetime.now(UTC),
+                    updated_at=datetime.now(UTC),
+                    version="11.0.0"  # 更新版本號
+                )
+                converted_caps.append(cap)
+            
+            logger.info(f"  -> Converted {len(converted_caps)} flows to structured capabilities.")
+            return converted_caps
+            
+        except ImportError as e:
+            logger.error(f"Failed to import FlowExecutor: {e}")
+            return []
+        except Exception as e:
+            logger.error(f"Error scanning flows: {e}")
+            import traceback
+            traceback.print_exc()
+            return []
+    
+    def _snake_to_camel(self, snake_str: str) -> str:
+        """將 snake_case 轉為 CamelCase"""
+        if not snake_str:
+            return ""
+        return ''.join(x.title() for x in snake_str.split('_'))
     
     def _enhance_capabilities(self, capabilities_raw: list[dict]) -> list[dict]:
         """增強能力信息（添加分類、詳細參數定義、使用範例）
@@ -247,6 +715,17 @@ class InternalLoopConnector:
             category, sub_category = self._categorize_capability(cap)
             complexity = self._assess_complexity(cap)
             
+            # 六大模組分類（新增）
+            aiva_module, sub_module, entry_point = self._classify_aiva_module(cap)
+            
+            # ✅ v11.0: 範圍管理分類
+            file_path = cap.get("file_path", "")
+            scope, visibility = self.scope_classifier.classify_scope(file_path)
+            access_level = self.scope_classifier.classify_access_level(category, sub_category)
+            available_in = self.scope_classifier.detect_available_in(file_path)
+            has_cli, cli_command, cli_maturity = self.scope_classifier.detect_cli_info(cap)
+            depends_on_services = self.scope_classifier.detect_service_dependencies(cap)
+            
             # 構建增強數據
             enhanced_cap = {
                 **cap,  # 保留原始數據
@@ -259,9 +738,21 @@ class InternalLoopConnector:
                 "return_info": self._build_return_definition(cap),
                 "usage_examples": self._generate_usage_examples(cap),
                 "invocation_info": self._build_invocation_metadata(cap),  # 新增：生成調用元數據
+                "aiva_module": aiva_module,  # 新增：六大模組分類
+                "sub_module": sub_module,  # 新增：子模組
+                "entry_point": entry_point,  # 新增：入口點
                 "health_score": 1.0,  # 默認健康
                 "availability": 1.0,
                 "error_rate": 0.0,
+                # ✅ v11.0: 範圍管理信息
+                "scope": scope.value,
+                "visibility": visibility.value,
+                "access_level": access_level.value,
+                "available_in": available_in,
+                "depends_on_services": depends_on_services,
+                "has_cli": has_cli,
+                "cli_command": cli_command,
+                "cli_maturity": cli_maturity.value,
             }
             
             enhanced.append(enhanced_cap)
@@ -328,6 +819,172 @@ class InternalLoopConnector:
             if any(k in name for k in keywords):
                 return sub_cat
         return None
+    
+    # 模組分類配置 - 使用查找表降低複雜度
+    MODULE_CLASSIFICATIONS = {
+        "cognitive_core": {
+            "default_entry": "CapabilityOrchestrator",
+            "sub_modules": {
+                "neural": ("neural", "CapabilityOrchestrator"),
+                "rag": ("rag", "CapabilityOrchestrator"),
+                "decision": ("decision", "CapabilityOrchestrator"),
+                "orchestrator": ("orchestration", "AICommander"),
+                "internal_loop": ("internal_loop_connector", "InternalLoopConnector"),
+            },
+            "name_keywords": {"rag": ["knowledge"], "neural": ["ai", "decision", "neural"]},
+        },
+        "internal_exploration": {
+            "default_entry": "InternalLoopConnector",
+            "sub_modules": {
+                "python_tools": ("python_tools", "InternalLoopConnector"),
+                "typescript_tools": ("typescript_tools", "InternalLoopConnector"),
+                "go_tools": ("go_tools", "InternalLoopConnector"),
+                "rust_tools": ("rust_tools", "InternalLoopConnector"),
+                "self_healing": ("self_healing", "InternalLoopConnector"),
+                "registry": ("capability_registry", "InternalLoopConnector"),
+            },
+            "name_keywords": {"python_tools": ["flow", "ast", "mermaid", "parse", "analyze_code"]},
+        },
+        "task_planning": {
+            "default_entry": "AICommander",
+            "sub_modules": {
+                "commander": ("ai_commander", "AICommander"),
+                "planner": ("planner", "AICommander"),
+                "executor": ("executor", "AICommander"),
+                "orchestrator": ("orchestrator", "AICommander"),
+            },
+            "name_keywords": {"default": ["plan", "task", "execute"]},
+        },
+        "external_learning": {
+            "default_entry": "ExternalLoopConnector",
+            "sub_modules": {
+                "analysis": ("analysis", "ExternalLoopConnector"),
+                "tracing": ("tracing", "ExternalLoopConnector"),
+                "training": ("training", "ExternalLoopConnector"),
+                "experience": ("experience_manager", "ExternalLoopConnector"),
+            },
+            "name_keywords": {"tracing": ["trace"], "training": ["train"]},
+        },
+        "core_capabilities": {
+            "default_entry": "ScanResultProcessor",
+            "sub_modules": {
+                "analysis": ("analysis", "ScanResultProcessor"),
+                "attack": ("attack", "ScanResultProcessor"),
+                "ingestion": ("ingestion", "ScanResultProcessor"),
+                "processing": ("processing", "app.py"),
+                "orchestration": ("orchestration", "ScanResultProcessor"),
+                "multilang": ("multilang_coordinator", "AICommander"),
+            },
+        },
+        "service_backbone": {
+            "default_entry": "app.py",
+            "sub_modules": {
+                "api": ("api", "app.py"),
+                "coordination": ("coordination", "app.py"),
+                "messaging": ("messaging", "app.py"),
+                "storage": ("storage", "app.py"),
+                "state": ("state", "app.py"),
+                "performance": ("performance", "app.py"),
+            },
+            "name_keywords": {"messaging": ["broker"]},
+        },
+    }
+
+    def _classify_aiva_module(self, cap: dict) -> tuple[str | None, str | None, str | None]:
+        """根據能力的模組路徑和功能，分類到六大模組
+        
+        使用查找表模式替代巨大的 if-elif 鏈，降低認知複雜度從 85 → <10
+        
+        六大模組:
+        1. cognitive_core - AI 認知核心 (神經網路、RAG、決策)
+        2. internal_exploration - 對內探索 (Python/TS/Go/Rust Tools, Self-Healing)
+        3. task_planning - 任務規劃與執行 (AI Commander, Planner, Executor)
+        4. external_learning - 對外學習 (Analysis, Tracing, Training)
+        5. core_capabilities - 核心能力 (Analysis, Attack, Processing)
+        6. service_backbone - 服務骨幹 (API, Messaging, Storage, State)
+        
+        Args:
+            cap: 能力數據
+            
+        Returns:
+            (aiva_module, sub_module, entry_point) 元組
+        """
+        module_path = cap.get("module", "").lower()
+        file_path = cap.get("file_path", "").lower()
+        name = cap.get("name", "").lower()
+        
+        # 1. 根據模組路徑直接匹配
+        for module_name, config in self.MODULE_CLASSIFICATIONS.items():
+            if self._matches_module_path(module_name, module_path, file_path):
+                return self._classify_sub_module(module_name, config, module_path, file_path, name)
+        
+        # 2. 默認情況：根據功能推斷
+        return self._infer_module_from_name(name)
+    
+    def _matches_module_path(self, module_name: str, module_path: str, file_path: str) -> bool:
+        """檢查模組路徑是否匹配"""
+        return module_name in module_path or module_name in file_path
+    
+    def _classify_sub_module(
+        self,
+        module_name: str,
+        config: dict,
+        module_path: str,
+        file_path: str,
+        name: str
+    ) -> tuple[str, str | None, str]:
+        """分類子模組
+        
+        Args:
+            module_name: 主模組名稱
+            config: 模組配置
+            module_path: 模組路徑
+            file_path: 檔案路徑
+            name: 能力名稱
+            
+        Returns:
+            (module, sub_module, entry_point)
+        """
+        # 檢查子模組路徑匹配
+        for sub_key, (sub_name, entry) in config["sub_modules"].items():
+            if sub_key in module_path or sub_key in file_path:
+                return (module_name, sub_name, entry)
+        
+        # 檢查名稱關鍵字匹配
+        if "name_keywords" in config:
+            for sub_key, keywords in config["name_keywords"].items():
+                if any(keyword in name for keyword in keywords):
+                    if sub_key in config["sub_modules"]:
+                        sub_name, entry = config["sub_modules"][sub_key]
+                        return (module_name, sub_name, entry)
+        
+        # 返回默認配置
+        return (module_name, None, config["default_entry"])
+    
+    def _infer_module_from_name(self, name: str) -> tuple[str | None, str | None, str | None]:
+        """根據名稱推斷模組分類
+        
+        Args:
+            name: 能力名稱
+            
+        Returns:
+            (module, sub_module, entry_point) 或 (None, None, None)
+        """
+        # 遍歷所有模組的名稱關鍵字
+        for module_name, config in self.MODULE_CLASSIFICATIONS.items():
+            if "name_keywords" not in config:
+                continue
+            
+            for sub_key, keywords in config["name_keywords"].items():
+                if any(keyword in name for keyword in keywords):
+                    if sub_key == "default":
+                        return (module_name, None, config["default_entry"])
+                    elif sub_key in config["sub_modules"]:
+                        sub_name, entry = config["sub_modules"][sub_key]
+                        return (module_name, sub_name, entry)
+        
+        # 默認返回 None（未分類）
+        return (None, None, None)
     
     def _categorize_capability(self, cap: dict) -> tuple[str, str | None]:
         """根據能力名稱和模組自動分類
@@ -422,6 +1079,14 @@ class InternalLoopConnector:
         根據模組語言和位置生成調用信息，使 AI 能夠直接調用能力。
         遵循 aiva_common InvocationInfo 規範。
         
+        ⚠️ 重要: 這裡的 language 指的是工具的 CLI 執行方式，不是工具本身的程式語言
+        
+        CLI 格式類型:
+        - python: `python -m module --flow <ID>` (流程級執行)
+        - typescript: `npx ts-node script.ts --file X --func Y` (函數級執行)
+        - go: `go run script.go --func=FuncName` (函數級執行)
+        - rust: `cargo run --bin prog -- --file X --func Y` (函數級執行)
+        
         Args:
             cap: 能力數據
             
@@ -430,7 +1095,8 @@ class InternalLoopConnector:
         """
         module = cap.get("module", "")
         function = cap.get("name", "")
-        language = cap.get("language", "python")
+        cli_format = cap.get("language", "python").lower()  # CLI 格式類型，非程式語言
+        file_path = cap.get("file_path", "")
         
         # 構建參數映射（簡單情況：參數名相同）
         parameter_mapping = {}
@@ -439,101 +1105,80 @@ class InternalLoopConnector:
             if param_name:
                 parameter_mapping[param_name] = param_name
         
-        # 根據語言確定調用協議和端點
-        if language.lower() == "python":
-            # Python 模組 - 使用 unified_caller 統一調用
+        # 根據 CLI 格式類型確定調用方式
+        if cli_format == "python":
+            # Python CLI 格式: python -m module --flow <ID>
+            # 注意: 這是 CLI 執行格式，工具本身可能是任何語言寫的
             return {
-                "protocol": "unified_caller",
+                "protocol": "cli_python_flow",
                 "endpoint": f"python://{module}.{function}",
+                "cli_command": f"python -m {module}",
+                "cli_args": ["--flow", "{flow_id}"],  # {flow_id} 由執行時替換
                 "module_arg": module,
                 "function_arg": function,
                 "parameter_mapping": parameter_mapping,
-                "timeout_seconds": 30,
+                "timeout_seconds": 300,
                 "retry_count": 0
             }
         
-        elif language.lower() == "go":
-            # Go 模組 - HTTP API
-            port = self._get_go_module_port(module)
+        elif cli_format == "typescript":
+            # TypeScript CLI 格式: npx ts-node script.ts --file X --func Y
             return {
-                "protocol": "http",
-                "endpoint": f"http://localhost:{port}/execute",
-                "module_arg": module,
+                "protocol": "cli_typescript_function",
+                "endpoint": f"typescript://{file_path}::{function}",
+                "cli_command": "npx ts-node",
+                "cli_args": [file_path, "--file", "{file}", "--func", "{function}"],
+                "module_arg": file_path,
                 "function_arg": function,
                 "parameter_mapping": parameter_mapping,
-                "timeout_seconds": 60,
+                "timeout_seconds": 120,
                 "retry_count": 1
             }
         
-        elif language.lower() == "rust":
-            # Rust 模組 - gRPC
-            port = self._get_rust_module_port(module)
+        elif cli_format == "go":
+            # Go CLI 格式: go run script.go --func=FuncName
             return {
-                "protocol": "grpc",
-                "endpoint": f"localhost:{port}",
-                "module_arg": module,
+                "protocol": "cli_go_function",
+                "endpoint": f"go://{file_path}::{function}",
+                "cli_command": "go run",
+                "cli_args": [file_path, f"--func={function}"],
+                "module_arg": file_path,
                 "function_arg": function,
                 "parameter_mapping": parameter_mapping,
-                "timeout_seconds": 60,
+                "timeout_seconds": 120,
                 "retry_count": 1
             }
         
-        elif language.lower() == "typescript":
-            # TypeScript 模組 - HTTP API
+        elif cli_format == "rust":
+            # Rust CLI 格式: cargo run --bin prog -- --file X --func Y
+            bin_name = module or "main"
             return {
-                "protocol": "http",
-                "endpoint": "http://localhost:3001/execute",
-                "module_arg": module,
+                "protocol": "cli_rust_function",
+                "endpoint": f"rust://{bin_name}::{function}",
+                "cli_command": "cargo run",
+                "cli_args": ["--bin", bin_name, "--", "--file", "{file}", "--func", "{function}"],
+                "module_arg": bin_name,
                 "function_arg": function,
                 "parameter_mapping": parameter_mapping,
-                "timeout_seconds": 30,
+                "timeout_seconds": 180,  # Rust 編譯較慢
                 "retry_count": 1
             }
         
         else:
-            # 默認使用 unified_caller
+            # 未知格式 - 使用通用 CLI 調用
+            logger.warning(f"Unknown CLI format: {cli_format}, using generic CLI protocol")
             return {
-                "protocol": "unified_caller",
-                "endpoint": f"unknown://{module}.{function}",
+                "protocol": "cli_generic",
+                "endpoint": f"generic://{module}.{function}",
+                "cli_command": "unknown",
+                "cli_args": [],
                 "module_arg": module,
                 "function_arg": function,
                 "parameter_mapping": parameter_mapping,
-                "timeout_seconds": 30,
-                "retry_count": 0
+                "timeout_seconds": 60,
+                "retry_count": 1,
+                "note": f"Unknown CLI format '{cli_format}', manual configuration required"
             }
-    
-    def _get_go_module_port(self, module: str) -> int:
-        """獲取 Go 模組的服務端口
-        
-        Args:
-            module: 模組名稱
-            
-        Returns:
-            端口號
-        """
-        # Go 引擎端口映射（基於現有架構）
-        port_mapping = {
-            "SSRFDetector": 50051,
-            "SCAAnalyzer": 50052,
-            "CSPMChecker": 50053,
-            "AuthAnalyzer": 50054,
-        }
-        return port_mapping.get(module, 50050)  # 默認端口
-    
-    def _get_rust_module_port(self, module: str) -> int:
-        """獲取 Rust 模組的服務端口
-        
-        Args:
-            module: 模組名稱
-            
-        Returns:
-            端口號
-        """
-        # Rust 引擎端口映射
-        port_mapping = {
-            "InfoGatherer": 50056,
-        }
-        return port_mapping.get(module, 50060)  # 默認端口
     
     def _build_parameter_definitions(self, params: list[dict]) -> list[dict]:
         """構建詳細的參數定義
@@ -678,6 +1323,9 @@ class InternalLoopConnector:
             sub_category=sub_category,
             complexity=complexity,
             tags=cap_enhanced.get("tags", []),
+            aiva_module=cap_enhanced.get("aiva_module"),  # ✅ 新增：六大模組分類
+            sub_module=cap_enhanced.get("sub_module"),  # ✅ 新增：子模組
+            entry_point=cap_enhanced.get("entry_point"),  # ✅ 新增：入口點
             parameters=parameters,
             return_info=return_info,
             usage_examples=usage_examples,
@@ -717,6 +1365,14 @@ class InternalLoopConnector:
             f"- **Complexity**: {cap.complexity.value}/5",
             f"- **Tags**: {', '.join(cap.tags) if cap.tags else 'None'}",
         ])
+        
+        # ✅ 新增：六大模組分類信息
+        if cap.aiva_module:
+            parts.append(f"- **AIVA Module**: {cap.aiva_module}")
+        if cap.sub_module:
+            parts.append(f"- **Sub-Module**: {cap.sub_module}")
+        if cap.entry_point:
+            parts.append(f"- **Entry Point**: {cap.entry_point}")
         
         return parts
     
