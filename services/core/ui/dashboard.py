@@ -66,7 +66,11 @@ class Dashboard:
             self.mode = "ui"
 
     def _init_ai_commander(self) -> None:
-        """初始化 AI 命令中心 - 直接使用 CommandCenter."""
+        """初始化 AI 命令中心 - 直接使用 CommandCenter.
+        
+        Raises:
+            RuntimeError: CommandCenter 初始化失敗時拋出錯誤
+        """
         try:
             from services.aiva_common.command_center import get_command_center
 
@@ -74,9 +78,11 @@ class Dashboard:
             self.command_center = get_command_center()
             logger.info("[AI CommandCenter] 初始化成功")
         except Exception as e:
-            logger.warning(f"[AI CommandCenter] 初始化失敗: {e}")
-            self.command_center = None
-            logger.info("[AI CommandCenter] 將使用 fallback 模式")
+            logger.error(f"[AI CommandCenter] 初始化失敗: {e}")
+            raise RuntimeError(
+                f"AI CommandCenter 初始化失敗: {e}. "
+                "請檢查 aiva_common 配置和依賴是否正確安裝。"
+            ) from e
 
     def create_scan_task(
         self,
@@ -157,68 +163,11 @@ class Dashboard:
                 }
         
         elif use_ai:
-            # Fallback: 直接使用 AttackExecutor（當 AICommander 不可用時）
-            logger.info("\n" + "="*60)
-            logger.info("[直接攻擊模式] 使用 AttackExecutor 執行攻擊")
-            logger.info("目標: " + target_url)
-            logger.info("="*60)
-            
-            try:
-                from ..core_capabilities.attack.attack_executor import AttackExecutor, ExecutionMode
-                
-                executor = AttackExecutor(
-                    mode=ExecutionMode.TESTING,
-                    max_concurrent=3,
-                    timeout=300,
-                    safety_enabled=True
-                )
-                
-                attack_plan = {
-                    "plan_id": f"plan_{task_id}",
-                    "target_url": target_url,
-                    "scan_type": scan_type,
-                    "steps": [
-                        {"name": "偵查階段", "type": "reconnaissance", "description": "收集目標信息", "critical": False},
-                        {"name": "XSS 檢測", "type": "xss_scan", "description": "檢測跨站腳本漏洞", "critical": False},
-                        {"name": "SQL 注入檢測", "type": "sqli_scan", "description": "檢測 SQL 注入漏洞", "critical": False},
-                        {"name": "業務邏輯測試", "type": "bizlogic_test", "description": "測試業務邏輯漏洞", "critical": False}
-                    ]
-                }
-                
-                attack_target = {"target_url": target_url, "scan_type": scan_type}
-                
-                loop = asyncio.new_event_loop()
-                asyncio.set_event_loop(loop)
-                try:
-                    logger.info("[執行中] 正在執行攻擊計劃...")
-                    execution_result = loop.run_until_complete(
-                        executor.execute_plan(attack_plan, attack_target)
-                    )
-                    logger.info("[完成] ✅ 攻擊執行完成")
-                    
-                    task = {
-                        "task_id": task_id,
-                        "target": target_url,
-                        "scan_type": scan_type,
-                        "status": "completed",
-                        "created_by": "attack_executor",
-                        "execution_result": execution_result,
-                        "findings": execution_result.get("findings", []),
-                        "metrics": execution_result.get("metrics", {}),
-                    }
-                finally:
-                    loop.close()
-                    
-            except Exception as e:
-                logger.error(f"[攻擊失敗] ❌ {e}", exc_info=True)
-                task = {
-                    "task_id": task_id,
-                    "target": target_url,
-                    "scan_type": scan_type,
-                    "status": "failed",
-                    "created_by": "attack_executor",
-                    "error": str(e),
-                }
+            # AI 模式必須使用 CommandCenter
+            raise RuntimeError(
+                "AI 模式需要 CommandCenter 正常運行。"
+                "請確保 CommandCenter 已正確初始化。"
+            )
                 
         elif self.ai_agent:
             logger.info("\n[AI] 使用 AI 代理建立掃描任務...")

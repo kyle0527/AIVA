@@ -1,0 +1,364 @@
+{
+  "timestamp": "2025-12-15T08:27:33.421384",
+  "total_capabilities": 216,
+  "internal_commands": [
+    {
+      "name": "capability_analyzer",
+      "language": "python",
+      "module": "core/aiva_core",
+      "description": "延遲加載 CapabilityAnalyzer",
+      "parameters": [
+        {
+          "name": "self",
+          "annotation": null
+        }
+      ],
+      "file_path": "C:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\cognitive_core\\internal_loop_connector.py",
+      "return_type": null,
+      "is_async": false,
+      "decorators": [
+        "property"
+      ],
+      "docstring": "延遲加載 CapabilityAnalyzer",
+      "line_number": 55,
+      "scope": "CORE",
+      "visibility": "INTERNAL",
+      "access_level": "L3_INTERNAL",
+      "available_in": [
+        "core"
+      ],
+      "has_cli": false,
+      "cli_command": null,
+      "cli_maturity": "NONE",
+      "service_dependencies": [],
+      "is_internal_command": true,
+      "command_type": "other",
+      "file_normalized": "services/core/aiva_core/cognitive_core/internal_loop_connector.py"
+    },
+    {
+      "name": "get_capability_registry",
+      "language": "python",
+      "module": "core/aiva_core",
+      "description": "獲取全局能力註冊表實例 (Singleton)",
+      "parameters": [],
+      "file_path": "C:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\core_capabilities\\capability_registry.py",
+      "return_type": "CapabilityRegistry",
+      "is_async": false,
+      "decorators": [],
+      "docstring": "獲取全局能力註冊表實例 (Singleton)\n\nReturns:\n    CapabilityRegistry 實例",
+      "line_number": 310,
+      "scope": "SERVICE",
+      "visibility": "PUBLIC",
+      "access_level": "L3_INTERNAL",
+      "available_in": [
+        "core"
+      ],
+      "has_cli": false,
+      "cli_command": null,
+      "cli_maturity": "NONE",
+      "service_dependencies": [],
+      "is_internal_command": true,
+      "command_type": "management",
+      "file_normalized": "services/core/aiva_core/core_capabilities/capability_registry.py"
+    },
+    {
+      "name": "connector",
+      "language": "python",
+      "module": "core/aiva_core",
+      "description": "延遲加載 ExternalLoopConnector",
+      "parameters": [
+        {
+          "name": "self",
+          "annotation": null
+        }
+      ],
+      "file_path": "C:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\external_learning\\event_listener.py",
+      "return_type": null,
+      "is_async": false,
+      "decorators": [
+        "property"
+      ],
+      "docstring": "延遲加載 ExternalLoopConnector",
+      "line_number": 55,
+      "scope": "CORE",
+      "visibility": "PUBLIC",
+      "access_level": "L3_INTERNAL",
+      "available_in": [
+        "core"
+      ],
+      "has_cli": false,
+      "cli_command": null,
+      "cli_maturity": "NONE",
+      "service_dependencies": [],
+      "is_internal_command": true,
+      "command_type": "other",
+      "file_normalized": "services/core/aiva_core/external_learning/event_listener.py"
+    },
+    {
+      "name": "integrate_with_repository_example",
+      "language": "python",
+      "module": "core/aiva_core",
+      "description": "整合範例: ExperienceManager + ExperienceRepository",
+      "parameters": [],
+      "file_path": "C:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\external_learning\\experience_manager.py",
+      "return_type": null,
+      "is_async": false,
+      "decorators": [],
+      "docstring": "整合範例: ExperienceManager + ExperienceRepository\n\n展示如何將記憶體經驗持久化到資料庫。",
+      "line_number": 534,
+      "scope": "CORE",
+      "visibility": "PUBLIC",
+      "access_level": "L3_INTERNAL",
+      "available_in": [
+        "core"
+      ],
+      "has_cli": false,
+      "cli_command": null,
+      "cli_maturity": "NONE",
+      "service_dependencies": [],
+      "is_internal_command": true,
+      "command_type": "management",
+      "file_normalized": "services/core/aiva_core/external_learning/experience_manager.py"
+    },
+    {
+      "name": "assign_role_to_user",
+      "language": "python",
+      "module": "core/aiva_core",
+      "description": "分配角色給用戶",
+      "parameters": [
+        {
+          "name": "self",
+          "annotation": null
+        },
+        {
+          "name": "user_id",
+          "annotation": "str"
+        },
+        {
+          "name": "role",
+          "annotation": "str"
+        }
+      ],
+      "file_path": "C:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\service_backbone\\authz\\authz_mapper.py",
+      "return_type": "None",
+      "is_async": false,
+      "decorators": [],
+      "docstring": "分配角色給用戶\n\nArgs:\n    user_id: 用戶 ID\n    role: 角色名稱",
+      "line_number": 39,
+      "scope": "SERVICE",
+      "visibility": "SYSTEM",
+      "access_level": "L3_INTERNAL",
+      "available_in": [
+        "core"
+      ],
+      "has_cli": false,
+      "cli_command": null,
+      "cli_maturity": "NONE",
+      "service_dependencies": [],
+      "is_internal_command": true,
+      "command_type": "other",
+      "file_normalized": "services/core/aiva_core/service_backbone/authz/authz_mapper.py"
+    },
+    {
+      "name": "make_subplots",
+      "language": "python",
+      "module": "core/aiva_core",
+      "description": "Mock make_subplots 函數",
+      "parameters": [],
+      "file_path": "C:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\service_backbone\\authz\\matrix_visualizer.py",
+      "return_type": null,
+      "is_async": false,
+      "decorators": [],
+      "docstring": "Mock make_subplots 函數",
+      "line_number": 101,
+      "scope": "SERVICE",
+      "visibility": "SYSTEM",
+      "access_level": "L3_INTERNAL",
+      "available_in": [
+        "core"
+      ],
+      "has_cli": false,
+      "cli_command": null,
+      "cli_maturity": "NONE",
+      "service_dependencies": [],
+      "is_internal_command": true,
+      "command_type": "other",
+      "file_normalized": "services/core/aiva_core/service_backbone/authz/matrix_visualizer.py"
+    },
+    {
+      "name": "authorize_operation",
+      "language": "python",
+      "module": "core/aiva_core",
+      "description": "便捷的操作授權函數",
+      "parameters": [
+        {
+          "name": "operation_name",
+          "annotation": "str"
+        },
+        {
+          "name": "risk_level",
+          "annotation": "str"
+        },
+        {
+          "name": "tags",
+          "annotation": "Optional[List[str]]"
+        }
+      ],
+      "file_path": "C:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\service_backbone\\authz\\permission_matrix.py",
+      "return_type": "bool",
+      "is_async": false,
+      "decorators": [],
+      "docstring": "便捷的操作授權函數\n\nArgs:\n    operation_name: 操作名稱\n    risk_level: 風險等級 (L0-L3)\n    tags: 操作標籤\n    **kwargs: 其他上下文參數\n    \nReturns:\n    是否被授權",
+      "line_number": 692,
+      "scope": "SERVICE",
+      "visibility": "SYSTEM",
+      "access_level": "L3_INTERNAL",
+      "available_in": [
+        "core"
+      ],
+      "has_cli": false,
+      "cli_command": null,
+      "cli_maturity": "NONE",
+      "service_dependencies": [],
+      "is_internal_command": true,
+      "command_type": "other",
+      "file_normalized": "services/core/aiva_core/service_backbone/authz/permission_matrix.py"
+    },
+    {
+      "name": "compare_with_gpt4",
+      "language": "python",
+      "module": "core/aiva_core",
+      "description": "比較 AIVA vs GPT-4 在程式控制場景的適用性",
+      "parameters": [
+        {
+          "name": "self",
+          "annotation": null
+        }
+      ],
+      "file_path": "C:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\service_backbone\\coordination\\optimized_core.py",
+      "return_type": null,
+      "is_async": false,
+      "decorators": [],
+      "docstring": "比較 AIVA vs GPT-4 在程式控制場景的適用性",
+      "line_number": 256,
+      "scope": "SERVICE",
+      "visibility": "SYSTEM",
+      "access_level": "L3_INTERNAL",
+      "available_in": [
+        "core"
+      ],
+      "has_cli": false,
+      "cli_command": null,
+      "cli_maturity": "NONE",
+      "service_dependencies": [],
+      "is_internal_command": true,
+      "command_type": "other",
+      "file_normalized": "services/core/aiva_core/service_backbone/coordination/optimized_core.py"
+    },
+    {
+      "name": "demo_anti_hallucination",
+      "language": "python",
+      "module": "core/aiva_core",
+      "description": "示範抗幻覺模組的使用（包含fallback機制）",
+      "parameters": [],
+      "file_path": "C:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\cognitive_core\\anti_hallucination\\anti_hallucination_module.py",
+      "return_type": null,
+      "is_async": false,
+      "decorators": [],
+      "docstring": "示範抗幻覺模組的使用（包含fallback機制）",
+      "line_number": 489,
+      "scope": "CORE",
+      "visibility": "PUBLIC",
+      "access_level": "L3_INTERNAL",
+      "available_in": [
+        "core"
+      ],
+      "has_cli": false,
+      "cli_command": null,
+      "cli_maturity": "NONE",
+      "service_dependencies": [],
+      "is_internal_command": true,
+      "command_type": "other",
+      "file_normalized": "services/core/aiva_core/cognitive_core/anti_hallucination/anti_hallucination_module.py"
+    },
+    {
+      "name": "decide",
+      "language": "python",
+      "module": "core/aiva_core",
+      "description": "做出高階決策 - 返回 HighLevelIntent (問題三修復)",
+      "parameters": [
+        {
+          "name": "self",
+          "annotation": null
+        },
+        {
+          "name": "context",
+          "annotation": "DecisionContext"
+        }
+      ],
+      "file_path": "C:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\cognitive_core\\decision\\enhanced_decision_agent.py",
+      "return_type": "HighLevelIntent",
+      "is_async": false,
+      "decorators": [],
+      "docstring": "做出高階決策 - 返回 HighLevelIntent (問題三修復)\n\n這是 cognitive_core → task_planning 的標準接口\n\n職責劃分：\n- cognitive_core (此方法): 決定「做什麼」(What) 和「為什麼」(Why)\n- task_planning: 決定「怎麼做」(How) - 生成具體的 AST\n\nArgs:\n    context: 決策上下文\n    \nReturns:\n    HighLevelIntent: 高階意圖 (包含目標、參數、約束、推理等)",
+      "line_number": 163,
+      "scope": "CORE",
+      "visibility": "INTERNAL",
+      "access_level": "L3_INTERNAL",
+      "available_in": [
+        "core"
+      ],
+      "has_cli": false,
+      "cli_command": null,
+      "cli_maturity": "NONE",
+      "service_dependencies": [],
+      "is_internal_command": true,
+      "command_type": "other",
+      "file_normalized": "services/core/aiva_core/cognitive_core/decision/enhanced_decision_agent.py"
+    }
+  ],
+  "statistics": {
+    "total": 10,
+    "by_type": {
+      "other": 8,
+      "management": 2
+    },
+    "by_module": {
+      "cognitive_core": 3,
+      "core_capabilities": 1,
+      "external_learning": 2,
+      "service_backbone": 4
+    },
+    "by_scope": {
+      "CORE": 5,
+      "SERVICE": 5
+    },
+    "by_visibility": {
+      "INTERNAL": 2,
+      "PUBLIC": 4,
+      "SYSTEM": 4
+    },
+    "missing": [
+      "services/core/aiva_core/cognitive_core/ai_capability_query.py",
+      "services/core/aiva_core/cognitive_core/rag/postgresql_vector_store.py",
+      "services/core/aiva_core/cognitive_core/test_scope_management.py",
+      "services/core/aiva_core/core_capabilities/attack/bizlogic_attack_executor.py",
+      "services/core/aiva_core/external_learning/ai_model/train_classifier.py",
+      "services/core/aiva_core/internal_exploration/aiva_exploration_pipeline.py",
+      "services/core/aiva_core/internal_exploration/python_tools/aiva_cli_implementation.py",
+      "services/core/aiva_core/internal_exploration/python_tools/aiva_exploration_pipeline.py",
+      "services/core/aiva_core/internal_exploration/python_tools/aiva_flow_analyzer.py",
+      "services/core/aiva_core/internal_exploration/python_tools/aiva_flow_classifier.py",
+      "services/core/aiva_core/internal_exploration/self_healing/analyze_connection_recommendations.py",
+      "services/core/aiva_core/internal_exploration/self_healing/analyze_dataflow_breakpoints.py",
+      "services/core/aiva_core/internal_exploration/self_healing/analyze_missing_function_connections.py",
+      "services/core/aiva_core/internal_exploration/self_healing/analyze_results.py",
+      "services/core/aiva_core/internal_exploration/self_healing/core_analyzer.py",
+      "services/core/aiva_core/internal_exploration/self_healing/practical_analyzer.py",
+      "services/core/aiva_core/internal_exploration/self_healing/run_analysis.py",
+      "services/core/aiva_core/service_backbone/api/unified_function_caller.py",
+      "services/core/aiva_core/service_backbone/coordination/ai_controller.py",
+      "services/core/aiva_core/service_backbone/storage/examples/cli_integration_example.py"
+    ]
+  }
+}

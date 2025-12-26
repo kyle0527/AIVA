@@ -93,7 +93,7 @@ class AIVADashboard {
             this.startAutoRefresh();
             
         } catch (error) {
-            alert('登入失敗: ' + error.message);
+            this.showAlert('danger', '登入失敗: ' + error.message);
         } finally {
             btn.classList.remove('loading');
         }
@@ -120,7 +120,8 @@ class AIVADashboard {
             await this.loadRecentScans();
             
         } catch (error) {
-            console.error('Failed to load dashboard data:', error);
+            console.error('[AIVA] Failed to load dashboard data:', error);
+            this.showAlert('warning', '部分儀表板數據載入失敗，請稍後再試');
         }
     }
     
@@ -179,7 +180,8 @@ class AIVADashboard {
             }
             
         } catch (error) {
-            console.error('Failed to load stats:', error);
+            console.error('[AIVA] Failed to load stats:', error);
+            // 靜默失敗，不打擾用戶
         }
     }
     
@@ -206,7 +208,8 @@ class AIVADashboard {
             }
             
         } catch (error) {
-            console.error('Failed to load recent scans:', error);
+            console.error('[AIVA] Failed to load recent scans:', error);
+            // 靜默失敗，不打擾用戶
         }
     }
     

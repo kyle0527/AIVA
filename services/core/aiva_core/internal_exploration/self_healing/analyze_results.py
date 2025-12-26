@@ -51,7 +51,7 @@ def build_connection_graph(flow_chains: list) -> dict:
     Returns:
         連接計數字典 {script_name: connection_count}
     """
-    connections = defaultdict(int)
+    connections: dict[str, int] = defaultdict(int)
     for chain in flow_chains:
         for i in range(len(chain) - 1):
             source = Path(chain[i]).stem

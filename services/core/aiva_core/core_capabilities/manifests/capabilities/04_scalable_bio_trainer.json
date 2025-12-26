@@ -1,0 +1,118 @@
+{
+  "meta": {
+    "flow_id": 4,
+    "tool_name": "ScalableBio Trainer - Model Training",
+    "description": "ScalableBioNet 專用訓練器，用於 AI 模型訓練和優化（118 flows 的外部學習起點）",
+    "version": "1.0.0",
+    "language": "python",
+    "module": "external_learning",
+    "tags": ["training", "ml", "ai", "scalable"]
+  },
+  "ai_cognitive": {
+    "primary_capability": "model_training",
+    "risk_level": "medium",
+    "tags": {
+      "required": ["training", "ml"],
+      "boost": ["optimization", "learning", "adaptation"],
+      "exclude": ["real-time", "critical-path"]
+    },
+    "cognitive_insights": {
+      "適用場景": "模型訓練、參數優化、外部學習閉環",
+      "決策考量": "需要訓練數據，可調整學習率和 epoch 數量",
+      "風險評估": "中風險，可能消耗大量計算資源和時間"
+    }
+  },
+  "execution": {
+    "type": "python_function",
+    "command_template": {
+      "module": "services.core.aiva_core.external_learning.learning.scalable_bio_trainer",
+      "class": "ScalableBioTrainer",
+      "method": "train",
+      "instantiate": false,
+      "note": "需要先實例化 ScalableBioTrainer，暫時標記為 false"
+    },
+    "timeout_seconds": 3600,
+    "working_directory": "C:/D/fold7/AIVA-git",
+    "environment_variables": {
+      "CUDA_VISIBLE_DEVICES": "0"
+    }
+  },
+  "parameters": {
+    "context_mapping": {
+      "data_path": "training_data_path"
+    },
+    "tunable": {
+      "learning_rate": {
+        "type": "float",
+        "description": "學習率：低強度=保守訓練，高強度=激進優化",
+        "min": 0.0001,
+        "max": 0.01,
+        "mapping_strategy": "logarithmic"
+      },
+      "epochs": {
+        "type": "integer",
+        "description": "訓練輪數：低強度=快速訓練，高強度=深度優化",
+        "min": 5,
+        "max": 100,
+        "mapping_strategy": "exponential"
+      },
+      "batch_size": {
+        "type": "integer",
+        "description": "批次大小：低強度=小批次(穩定)，高強度=大批次(快速)",
+        "min": 8,
+        "max": 128,
+        "mapping_strategy": "exponential"
+      }
+    }
+  },
+  "examples": [
+    {
+      "scenario": "快速驗證訓練（低強度）",
+      "context_data": {
+        "training_data_path": "/data/quick_test.npz"
+      },
+      "ai_intensity": 0.2,
+      "expected_command": "python -m services.core.aiva_core.external_learning.learning.scalable_bio_trainer train --data-path '/data/quick_test.npz' --learning-rate 0.0001 --epochs 10 --batch-size 13",
+      "expected_output": {
+        "status": "training_started",
+        "config": {
+          "learning_rate": 0.0001,
+          "epochs": 10,
+          "batch_size": 13
+        }
+      }
+    },
+    {
+      "scenario": "標準訓練（中強度）",
+      "context_data": {
+        "training_data_path": "/data/production_dataset.npz"
+      },
+      "ai_intensity": 0.5,
+      "expected_command": "python -m services.core.aiva_core.external_learning.learning.scalable_bio_trainer train --data-path '/data/production_dataset.npz' --learning-rate 0.001 --epochs 32 --batch-size 36",
+      "expected_output": {
+        "status": "training_started",
+        "config": {
+          "learning_rate": 0.001,
+          "epochs": 32,
+          "batch_size": 36
+        }
+      }
+    },
+    {
+      "scenario": "深度優化訓練（高強度）",
+      "context_data": {
+        "training_data_path": "/data/full_corpus.npz"
+      },
+      "ai_intensity": 0.9,
+      "expected_command": "python -m services.core.aiva_core.external_learning.learning.scalable_bio_trainer train --data-path '/data/full_corpus.npz' --learning-rate 0.008 --epochs 90 --batch-size 115",
+      "expected_output": {
+        "status": "training_started",
+        "config": {
+          "learning_rate": 0.008,
+          "epochs": 90,
+          "batch_size": 115
+        }
+      }
+    }
+  ]
+}

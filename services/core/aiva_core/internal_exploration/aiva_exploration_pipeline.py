@@ -248,6 +248,9 @@ class ExplorationPipeline:
         # 5. 更新系統指針 (Latest Link)
         self._step_update_link(classification_json)
 
+        # 6. ✅ 新增：同步能力到 integration.CapabilityRegistry
+        self._step_sync_to_registry(classification_json)
+
         logger.info(f"✨ 管線執行完畢。數據已更新至 {version_name}。")
         return True
 
@@ -386,7 +389,7 @@ class ExplorationPipeline:
 
     def _step_update_link(self, final_json_path):
         """步驟 4: 更新最新數據鏈接"""
-        logger.info(">> [4/4] 更新系統數據指針...")
+        logger.info(">> [4/5] 更新系統數據指針...")
         
         try:
             if final_json_path.exists():
@@ -401,6 +404,60 @@ class ExplorationPipeline:
                 logger.error("   ❌ 找不到分類數據文件")
         except Exception as e:
             logger.error(f"   ❌ 更新失敗: {e}")
+    
+    def _step_sync_to_registry(self, classification_json):
+        """步驟 5: 同步能力到 integration.CapabilityRegistry
+        
+        ✅ 架構修復 (2025-12-16):
+        建立 Internal Exploration → CapabilityRegistry → RAG 的雙向同步機制。
+        遵循 aiva_common 單一數據來源 (SOT) 原則。
+        """
+        logger.info(">> [5/5] 同步能力到 CapabilityRegistry 和 RAG...")
+        
+        try:
+            # 讀取分類數據
+            if not classification_json.exists():
+                logger.error("   ❌ 找不到分類數據文件")
+                return False
+            
+            with open(classification_json, 'r', encoding='utf-8') as f:
+                data = json.load(f)
+            
+            flows = data.get('flows', [])
+            logger.info(f"   發現 {len(flows)} 個能力流程")
+            
+            # 導入必要模組（異步操作需要 asyncio）
+            import asyncio
+            from services.core.aiva_core.core_capabilities.capability_registry import get_capability_registry
+            
+            # 獲取 capability registry (代理到 integration)
+            registry = get_capability_registry()
+            
+            # 同步能力（使用 load_from_exploration 方法）
+            async def sync_capabilities():
+                result = await registry.load_from_exploration()
+                return result
+            
+            # 執行異步同步
+            result = asyncio.run(sync_capabilities())
+            
+            logger.info("   ✅ 同步完成:")
+            logger.info(f"      - 能力數量: {result['capabilities_loaded']}")
+            logger.info(f"      - 模組數量: {result['modules_indexed']}")
+            if result['errors']:
+                logger.warning(f"      - 錯誤數量: {len(result['errors'])}")
+                for error in result['errors'][:3]:  # 只顯示前3個錯誤
+                    logger.warning(f"        {error}")
+            
+            logger.info("   📊 數據流向: Internal Exploration → CapabilityRegistry → RAG")
+            
+            return True
+            
+        except Exception as e:
+            logger.error(f"   ❌ 同步失敗: {e}")
+            import traceback
+            traceback.print_exc()
+            return False
 
 
 def main():

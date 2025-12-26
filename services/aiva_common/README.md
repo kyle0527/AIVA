@@ -606,9 +606,8 @@ print(f"平均執行時間: {stats['avg_execution_time']:.2f}s")
 - 自動重連機制
 - 訊息序列化/反序列化
 
-**支援的 MQ 系統** (可選):
-- RabbitMQ (需要 aio_pika)
-- InMemory (測試用，內建)
+**支援的 MQ 系統**:
+- RabbitMQ (必需，需要 aio_pika)
 
 **使用範例** (僅在需要異步消息時):
 ```python

@@ -1,0 +1,68 @@
+{
+  "meta": {
+    "flow_id": 0,
+    "tool_name": "Internal Loop Connector - Query Self Awareness",
+    "description": "查詢 aiva_core 內部能力，支持語義搜索和過濾。返回相關能力列表及其詳細信息。",
+    "language": "python",
+    "version": "1.0.0",
+    "module": "cognitive_core"
+  },
+  "ai_cognitive": {
+    "primary_capability": "internal_query",
+    "risk_level": "low",
+    "tags": {
+      "required": ["context:internal", "action:query"],
+      "boost": ["need:capability_discovery", "need:self_awareness"],
+      "exclude": ["action:modify", "action:delete"]
+    }
+  },
+  "execution": {
+    "binary_path": "services/core/aiva_core/cognitive_core/internal_loop_connector.py",
+    "command_template": "python -m aiva_core.cognitive_core.internal_loop_connector query --text '{query_text}' --top-k {result_count}",
+    "working_dir": ".",
+    "timeout_seconds": 60
+  },
+  "parameters": {
+    "context_mapping": {
+      "query_text": "query"
+    },
+    "tunable": {
+      "result_count": {
+        "type": "integer",
+        "default": 5,
+        "min": 1,
+        "max": 20,
+        "mapping_strategy": "linear",
+        "description": "返回結果數量 (強度越高返回越多結果)"
+      }
+    }
+  },
+  "dependencies": [],
+  "examples": [
+    {
+      "scenario": "查詢 SQL 注入相關能力",
+      "context_data": {
+        "query": "SQL injection detection capabilities"
+      },
+      "ai_intensity": 0.5,
+      "expected_command": "python -m aiva_core.cognitive_core.internal_loop_connector query --text 'SQL injection detection capabilities' --top-k 10"
+    },
+    {
+      "scenario": "查詢 XSS 攻擊能力 (高強度)",
+      "context_data": {
+        "query": "XSS attack and detection"
+      },
+      "ai_intensity": 0.9,
+      "expected_command": "python -m aiva_core.cognitive_core.internal_loop_connector query --text 'XSS attack and detection' --top-k 18"
+    },
+    {
+      "scenario": "查詢訓練相關功能 (低強度)",
+      "context_data": {
+        "query": "model training and learning"
+      },
+      "ai_intensity": 0.2,
+      "expected_command": "python -m aiva_core.cognitive_core.internal_loop_connector query --text 'model training and learning' --top-k 4"
+    }
+  ],
+  "notes": "這是 Phase 0 的第一個 Manifest，用於驗證整個 Manifest 架構的可行性。internal_loop_connector 是 aiva_core 自我認知的核心接口，適合作為試點。"
+}

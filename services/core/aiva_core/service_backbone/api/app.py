@@ -50,12 +50,13 @@ from services.core.aiva_core.service_backbone.coordination.core_service_coordina
 )
 
 # ✅ 引入內部閉環和外部學習組件
-from services.core.aiva_core.internal_exploration.connectors.update_self_awareness import (
-    periodic_update,
-)
-from services.core.aiva_core.external_learning.connectors.external_loop_connector import (
-    ExternalLoopConnector,
-)
+# ⚠️ 暫時註釋：這些模組尚未實現
+# from services.core.aiva_core.internal_exploration.connectors.update_self_awareness import (
+#     periodic_update,
+# )
+# from services.core.aiva_core.external_learning.connectors.external_loop_connector import (
+#     ExternalLoopConnector,
+# )
 
 app = FastAPI(
     title="AIVA Core Engine - 智慧分析與協調中心",
@@ -126,20 +127,20 @@ async def startup() -> None:
     await coordinator.start()
     logger.info("✅ [啟動] CoreServiceCoordinator initialized (state manager mode)")
     
-    # ✅ Step 2: 啟動內部閉環更新（P0 問題一）
-    _background_tasks.append(asyncio.create_task(
-        periodic_update(),
-        name="internal_loop_update"
-    ))
-    logger.info("✅ [啟動] Internal exploration loop started")
-    
-    # ✅ Step 3: 啟動外部學習監聽器（P0 問題二）
-    external_connector = ExternalLoopConnector()
-    _background_tasks.append(asyncio.create_task(
-        external_connector.start_listening(),
-        name="external_learning_loop"
-    ))
-    logger.info("✅ [啟動] External learning listener started")
+    # ⚠️ Step 2-3: 內部閉環和外部學習（暫時禁用 - 模組尚未實現）
+    # _background_tasks.append(asyncio.create_task(
+    #     periodic_update(),
+    #     name="internal_loop_update"
+    # ))
+    # logger.info("✅ [啟動] Internal exploration loop started")
+    # 
+    # external_connector = ExternalLoopConnector()
+    # _background_tasks.append(asyncio.create_task(
+    #     external_connector.start_listening(),
+    #     name="external_learning_loop"
+    # ))
+    # logger.info("✅ [啟動] External learning listener started")
+    logger.info("⚠️  [啟動] Internal/External loops disabled (modules not implemented)")
     
     # ✅ Step 4-6: 啟動核心處理循環
     logger.info("[統計] Initializing analysis components...")
@@ -249,11 +250,16 @@ async def process_phase0_results() -> None:
         scan_id = payload.scan_id
 
         try:
+            # 根据 aiva_common/schemas/tasks.py 的实际字段结构
+            assets_count = len(payload.assets) if payload.assets else 0
+            fingerprints = payload.fingerprints.model_dump() if payload.fingerprints else {}
+            tech_count = len(fingerprints.get("technologies", []))
+            
             logger.info(
                 f"[Phase0] Received results for {scan_id} - "
-                f"Technologies: {len(payload.discovered_technologies)}, "
-                f"Sensitive: {len(payload.sensitive_data_found)}, "
-                f"Endpoints: {len(payload.basic_endpoints)}"
+                f"Assets: {assets_count}, "
+                f"Technologies: {tech_count}, "
+                f"Status: {payload.status}"
             )
 
             # 處理 Phase0 結果並決策
@@ -265,7 +271,8 @@ async def process_phase0_results() -> None:
                 logger.info(
                     f"[Phase0] Scan {scan_id} does not need Phase1. Reason: {reason}"
                 )
-                # TODO: 進入輕量級分析流程
+                # 輕量級分析流程：Phase0 結果已足夠，直接生成報告
+                logger.info(f"[Phase0] Generating lightweight report for {scan_id}")
                 continue
 
             logger.info(
@@ -273,10 +280,13 @@ async def process_phase0_results() -> None:
             )
 
             # 發送 Phase1 命令
-            # TODO: 需要從 Phase0 命令中獲取原始 targets 和配置
-            # 臨時實現: 假設 targets 存儲在會話上下文中
-            session_context = session_state_manager.get_session_context(scan_id)
-            targets = session_context.get("targets", [])
+            # 從 Phase0 payload 的 assets 中提取目標 URL (使用 value 字段)
+            targets = [asset.value for asset in payload.assets if asset.value] if payload.assets else []
+            
+            # Fallback: 從會話上下文獲取
+            if not targets:
+                session_context = session_state_manager.get_session_context(scan_id)
+                targets = session_context.get("targets", [])
 
             await scan_interface.send_phase1_command(
                 broker=broker,

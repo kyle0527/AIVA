@@ -1,7 +1,6 @@
 """AIVA Message Queue (MQ) abstraction layer.
 
-This module provides a unified interface for message broker operations,
-supporting both RabbitMQ (production) and in-memory (testing) implementations.
+This module provides a unified interface for RabbitMQ message broker operations.
 """
 
 import asyncio
@@ -194,114 +193,25 @@ class RabbitBroker(AbstractBroker):
             await self._connection.close()
 
 
-class InMemoryBroker(AbstractBroker):
-    """內存消息代理實現（用於測試）。
-
-    使用 asyncio.Queue 在記憶體中模擬消息隊列，
-    不需要外部 RabbitMQ 服務。
-
-    Attributes:
-        _queues: 主題到隊列的映射
-
-    """
-
-    def __init__(self) -> None:
-        """初始化內存 Broker。"""
-        self._queues: dict[str, asyncio.Queue[bytes]] = {}
-
-    async def connect(self) -> None:
-        """內存 Broker 無需連接操作。"""
-        return None
-
-    async def publish(self, topic: Topic, body: bytes) -> None:
-        """發布消息到內存隊列。
-
-        Args:
-            topic: 消息主題
-            body: 消息內容（字節）
-
-        """
-        q = self._queues.setdefault(str(topic), asyncio.Queue())
-        await q.put(body)
-
-    async def subscribe(self, topic: Topic) -> AsyncIterator[MQMessage]:
-        """訂閱內存隊列消息。
-
-        Args:
-            topic: 要訂閱的主題
-
-        Yields:
-            MQMessage: 接收到的消息
-
-        """
-        q = self._queues.setdefault(str(topic), asyncio.Queue())
-        while True:
-            body = await q.get()
-            yield MQMessage(body=body, routing_key=str(topic))
-
-    async def publish_message(
-        self,
-        _exchange_name: str,
-        routing_key: str,
-        message: Any,
-        _correlation_id: str | None = None,
-    ) -> None:
-        """統一的消息發布介面 - 與 TaskDispatcher 兼容。
-
-        Args:
-            _exchange_name: Exchange 名稱（InMemoryBroker 中不使用）
-            routing_key: 路由鍵，用作隊列名稱
-            message: 消息內容，支援 Pydantic 模型、字典或字節
-            _correlation_id: 關聯 ID（InMemoryBroker 中不使用）
-
-        """
-        import json  # noqa: PLC0415
-
-        # 將 AivaMessage 對象轉換為 JSON 字節
-        if hasattr(message, "model_dump"):
-            # Pydantic 模型
-            body = json.dumps(message.model_dump(), default=str).encode()
-        elif isinstance(message, dict):
-            # 字典對象
-            body = json.dumps(message, default=str).encode()
-        else:
-            # 直接使用字節
-            body = message if isinstance(message, bytes) else str(message).encode()
-
-        # 使用 routing_key 作為隊列名
-        q = self._queues.setdefault(routing_key, asyncio.Queue())
-        await q.put(body)
-
-    async def close(self) -> None:
-        """清空所有內存隊列。"""
-        self._queues.clear()
-
-
 async def get_broker() -> AbstractBroker:
     """獲取可用的消息代理實例。
 
-    優先嘗試連接 RabbitMQ，如果失敗則退回到內存代理。
+    必須成功連接 RabbitMQ，否則拋出異常。
 
     Returns:
-        AbstractBroker: 可用的消息代理實例（RabbitBroker 或 InMemoryBroker）
+        AbstractBroker: RabbitBroker 實例
+
+    Raises:
+        RuntimeError: aio_pika 模組未安裝
+        Exception: RabbitMQ 連接失敗
 
     """
-    if aio_pika is not None:
-        try:
-            broker = RabbitBroker()
-            await broker.connect()
-            return broker
-        except Exception as e:  # pylint: disable=broad-exception-caught
-            # Intentionally catch all exceptions to fall back to InMemoryBroker
-            logger.warning(
-                "Failed to connect to RabbitMQ broker, falling back to InMemoryBroker. "
-                "This may impact message persistence and scalability. Error: %s",
-                str(e),
-            )
-    else:
-        logger.warning(
-            "aio_pika module not available, using InMemoryBroker. "
-            "Install aio_pika for production message queue support."
+    if aio_pika is None:
+        raise RuntimeError(
+            "aio_pika module not available. "
+            "Install aio_pika: pip install aio-pika"
         )
-    # fallback
-    return InMemoryBroker()
+    
+    broker = RabbitBroker()
+    await broker.connect()
+    return broker

@@ -1,4 +1,17 @@
-# AIVA Internal Exploration 總覽
+# 🧭 Internal Exploration - 內部探索
+
+> **版本**: v2.1.0  
+> **狀態**: ✅ 生產就緒  
+> **最後更新**: 2025-12-21  
+> **角色**: AIVA 的自我認知系統 - 代碼分析與能力發現  
+> **架構**: CLI工具已移至tools模組，保留分析和管理功能
+
+**導航**: [← 返回 AIVA Core](../README.md)
+
+---
+
+> **🔔 重要更新 (2025-12-15)**: 分析結果輸出路徑已重構！  
+> 📖 查看 [更新摘要](python_tools/UPDATE_SUMMARY.md) | [詳細變更日誌](python_tools/CHANGELOG_PATH_MIGRATION.md) | [使用指南](python_tools/README.md#輸出路徑配置)
 
 ## 📑 目錄
 
@@ -48,9 +61,18 @@ internal_exploration/
 │   ├── aiva_exploration_pipeline.py       # 認知更新管線總控
 │   └── README.md                          # 📘 Python 工具詳細文檔
 │
-│   ⚠️ **輸出路徑已變更**: 所有工具的輸出現在統一存儲在 
-│      services/integration/data/internal_exploration/
-│      詳見: docs/UNIFIED_OUTPUT_PATHS.md
+│   ⚠️ **重要：輸出路徑架構變更 (2025-12-15)**
+│   
+│   **新路徑結構**: services/integration/analysis_data/{module}/{category}/
+│   - module: core, features, scan, integration
+│   - category: capabilities, flows, classifications
+│   
+│   **舊路徑**: services/integration/data/internal_exploration/ (保留)
+│   **新路徑**: services/integration/analysis_data/ (統一儲存)
+│   
+│   詳見: 
+│   - [Python 工具實作說明](python_tools/README.md#輸出路徑配置)
+│   - [統一路徑文檔](../../../docs/UNIFIED_OUTPUT_PATHS.md)
 │
 ├── 📁 typescript_tools/                    # TypeScript AST 分析工具
 │   ├── ts2mermaid.ts                      # TypeScript 統一分析工具

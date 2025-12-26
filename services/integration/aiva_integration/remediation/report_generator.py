@@ -1,9 +1,12 @@
 """
 Report Generator - 報告生成器
 
-生成詳細的安全掃描和修復報告
-支持 HTML, PDF 等多種格式
-使用 Jinja2 模板和 ReportLab/WeasyPrint
+生成詳細的安全掃描和修復報告。
+支持 HTML, PDF, Markdown 等多種格式。
+
+Requirements:
+- jinja2 (必須)
+- weasyprint 或 reportlab (PDF 生成所需)
 """
 
 from datetime import datetime
@@ -50,14 +53,19 @@ class ReportGenerator:
     """
     多格式報告生成器
 
-    支持 HTML, PDF, Markdown 等格式
+    支持 HTML, PDF, Markdown 等格式。
+    
+    Attributes:
+        output_dir: 報告輸出目錄
+        jinja_env: Jinja2 模板環境
+        reports: 報告歷史記錄
     """
 
     def __init__(
         self,
         template_dir: str | Path | None = None,
         output_dir: str | Path = "./reports",
-    ):
+    ) -> None:
         """
         初始化報告生成器
 
@@ -328,7 +336,12 @@ class ReportGenerator:
         return html
 
     def _generate_pdf_report(self, report: dict[str, Any]) -> Path:
-        """生成 PDF 報告"""
+        """
+        生成 PDF 報告
+        
+        Raises:
+            RuntimeError: 當 PDF 庫未安裝時
+        """
         output_file = self.output_dir / f"{report['report_id']}_vulnerability.pdf"
 
         if WEASYPRINT_AVAILABLE and WeasyHTML is not None:
@@ -343,9 +356,12 @@ class ReportGenerator:
             logger.info("pdf_generated_reportlab")
 
         else:
-            # 降級到 HTML
-            logger.warning("no_pdf_library", message="Falling back to HTML")
-            return self._generate_html_report(report)
+            error_msg = (
+                "PDF generation requires either 'weasyprint' or 'reportlab' library. "
+                "Install with: pip install weasyprint  OR  pip install reportlab"
+            )
+            logger.error("pdf_library_not_available")
+            raise RuntimeError(error_msg)
 
         return output_file
 
@@ -524,7 +540,7 @@ class ReportGenerator:
         return self.reports
 
 
-def main():
+def main() -> None:
     """測試範例"""
     print("📄 Report Generator Demo")
     print("=" * 60)

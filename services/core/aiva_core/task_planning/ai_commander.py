@@ -21,39 +21,20 @@ from pathlib import Path
 from typing import Any
 import logging
 
-# 在try-except之前先定義logger
 logger = logging.getLogger(__name__)
 
-try:
-    from services.aiva_common.ai import AIVAExperienceManager as ExperienceManager
-    from services.aiva_common.ai.interfaces import IExperienceManager
-    
-    from ..cognitive_core.neural.real_bio_net_adapter import RealBioNeuronRAGAgent as BioNeuronRAGAgent
-    from ..external_learning.learning.model_trainer import ModelTrainer
-    from ..core_capabilities.multilang_coordinator import MultiLanguageAICoordinator
-    from ..cognitive_core.rag import KnowledgeBase, RAGEngine, VectorStore
-    from ..external_learning.training.training_orchestrator import TrainingOrchestrator
-except ImportError as e:
-    logger.warning(f"Failed to import AI components: {e}")
-    # 回退到核心模組
-    try:
-        from services.core.aiva_core.cognitive_core.neural.real_bio_net_adapter import RealBioNeuronRAGAgent as BioNeuronRAGAgent
-        from services.core.aiva_core.external_learning.learning.model_trainer import ModelTrainer
-        from services.core.aiva_core.core_capabilities.multilang_coordinator import MultiLanguageAICoordinator
-        from services.core.aiva_core.cognitive_core.rag import KnowledgeBase, RAGEngine, VectorStore
-        from services.core.aiva_core.external_learning.training.training_orchestrator import (
-            TrainingOrchestrator,
-        )
-        # 使用介面的預設實現
-        ExperienceManager = None
-        IExperienceManager = None
-    except ImportError:
-        logger.error("Unable to import core AI components")
-        # 設定預設值
-        ExperienceManager = None
-        IExperienceManager = None
-
-logger = logging.getLogger(__name__)
+# 直接導入所需組件，遵循 aiva_common 規範：有錯就報錯
+from ..cognitive_core.neural.real_bio_net_adapter import RealBioNeuronRAGAgent as BioNeuronRAGAgent
+from ..external_learning.experience_manager import ExperienceManager
+from ..external_learning.learning.model_trainer import ModelTrainer
+from ..core_capabilities.multilang_coordinator import MultiLanguageAICoordinator
+from ..cognitive_core.rag import KnowledgeBase, RAGEngine, VectorStore
+# 統一執行器 - 替代 TrainingOrchestrator（已廢棄）
+from .unified_executor import UnifiedAttackExecutor
+from ..core_capabilities.task_context import TaskContext, parse_user_input_to_context
+# v2.0: 統一反饋架構支援
+from .mode_manager import ModeManager, get_mode_manager
+from .executor.execution_status_monitor import ExecutionContext, EnvironmentType
 
 
 class AITaskType(str, Enum):
@@ -75,6 +56,7 @@ class AITaskType(str, Enum):
     EXPERIENCE_LEARNING = "experience_learning"  # 經驗學習
     MODEL_TRAINING = "model_training"  # 模型訓練
     KNOWLEDGE_RETRIEVAL = "knowledge_retrieval"  # 知識檢索
+    CAPABILITY_QUERY = "capability_query"  # 能力查詢 (v11.0)
 
     # 協調類
     MULTI_LANG_COORDINATION = "multi_lang_coordination"  # 多語言協調
@@ -123,34 +105,24 @@ class AICommander:
         self.data_directory.mkdir(parents=True, exist_ok=True)
 
         # === 核心 AI 組件 ===
-        # 將所有初始化包裹在 try-except 中以確保優雅降級
-        try:
-            # 1. Python 主控 AI（BioNeuronRAGAgent）
-            logger.info("  Loading BioNeuronRAGAgent...")
-            self.bio_neuron_agent = BioNeuronRAGAgent(codebase_path)
-        except Exception as e:
-            logger.warning(f"BioNeuronRAGAgent not available: {e}")
-            self.bio_neuron_agent = None
+        # 直接初始化，不使用降級邏輯
+        # 1. Python 主控 AI（BioNeuronRAGAgent）
+        logger.info("  Loading BioNeuronRAGAgent...")
+        self.bio_neuron_agent = BioNeuronRAGAgent(codebase_path)
+        logger.info("  ✅ BioNeuronRAGAgent loaded")
 
-        # 2. RAG 系統（知識增強）- 可選組件
-        try:
-            logger.info("  Loading RAG Engine...")
-            if not all([VectorStore, KnowledgeBase, RAGEngine]):
-                raise ImportError("RAG components not available")
-            
-            vector_store = VectorStore(
-                backend="memory",  # 可配置為 chroma/faiss
-                persist_directory=self.data_directory / "vectors",
-            )
-            knowledge_base = KnowledgeBase(
-                vector_store=vector_store,
-                data_directory=self.data_directory / "knowledge",
-            )
-            self.rag_engine = RAGEngine(knowledge_base=knowledge_base)
-            logger.info("  ✅ RAG Engine loaded")
-        except (NameError, ImportError, AttributeError) as e:
-            logger.warning(f"RAG Engine not available (optional): {e}")
-            self.rag_engine = None  # RAG 是可選的
+        # 2. RAG 系統（知識增強）
+        logger.info("  Loading RAG Engine...")
+        vector_store = VectorStore(
+            backend="memory",  # 可配置為 chroma/faiss
+            persist_directory=self.data_directory / "vectors",
+        )
+        knowledge_base = KnowledgeBase(
+            vector_store=vector_store,
+            data_directory=self.data_directory / "knowledge",
+        )
+        self.rag_engine = RAGEngine(knowledge_base=knowledge_base)
+        logger.info("  ✅ RAG Engine loaded")
 
         # 3. 經驗管理和模型訓練 - 簡化版
         logger.info("  Loading Training System...")
@@ -158,107 +130,55 @@ class AICommander:
         # 整合 ExperienceManager 與資料庫後端
         experience_db_path = self.data_directory / "experience_db"
         experience_db_path.mkdir(parents=True, exist_ok=True)
-
-        # 使用簡單的 JSON 檔案儲存後端（可擴展為資料庫）
-        class SimpleStorageBackend:
-            """簡單的檔案儲存後端"""
-
-            def __init__(self, storage_path: Path):
-                self.storage_path = storage_path
-                self.experiences_file = storage_path / "experiences.json"
-                if not self.experiences_file.exists():
-                    import json
-
-                    with open(self.experiences_file, "w", encoding="utf-8") as f:
-                        json.dump([], f)
-
-            async def add_experience(self, experience_data: dict):
-                """添加經驗記錄"""
-                import json
-
-                try:
-                    with open(self.experiences_file, encoding="utf-8") as f:
-                        experiences = json.load(f)
-                    experiences.append(experience_data)
-                    with open(self.experiences_file, "w", encoding="utf-8") as f:
-                        json.dump(experiences, f, indent=2, ensure_ascii=False)
-                except Exception as e:
-                    logger.error(f"Failed to save experience: {e}")
-
-            async def get_experiences(self, limit: int = 100) -> list[dict]:
-                """獲取經驗記錄"""
-                import json
-
-                try:
-                    with open(self.experiences_file, encoding="utf-8") as f:
-                        experiences = json.load(f)
-                    return experiences[-limit:]  # 返回最近的記錄
-                except Exception as e:
-                    logger.error(f"Failed to load experiences: {e}")
-                    return []
-
-        storage_backend = SimpleStorageBackend(experience_db_path)
         
-        # Experience Manager 初始化（可選）
-        try:
-            if ExperienceManager:
-                self.experience_manager = ExperienceManager(
-                    storage_backend=storage_backend,
-                )
-            else:
-                # 創建簡單的替代品
-                class SimpleExperienceManager:
-                    def __init__(self, storage):
-                        self.storage = storage
-                    
-                    def add_sample(self, sample):
-                        pass
-                    
-                    def get_statistics(self):
-                        return {"total_samples": 0}
-                        
-                    async def export_to_jsonl(self, path):
-                        pass
-                
-                self.experience_manager = SimpleExperienceManager(storage_backend)
-                logger.warning("Using simplified ExperienceManager")
-        except Exception as e:
-            logger.warning(f"ExperienceManager init failed: {e}")
-            class SimpleExperienceManager:
-                def __init__(self, storage):
-                    self.storage = storage
-                
-                def add_sample(self, sample):
-                    pass
-                
-                def get_statistics(self):
-                    return {"total_samples": 0}
-                    
-                async def export_to_jsonl(self, path):
-                    pass
-            
-            self.experience_manager = SimpleExperienceManager(storage_backend)
+        # 使用統一的儲存後端
+        from ..external_learning.experience_manager import ExperienceManager
+        storage_backend = None  # TODO: 整合實際儲存後端
+
+        # 注意：SimpleStorageBackend 已在內部使用，無需在此處創建
+        # storage_backend = SimpleStorageBackend(experience_db_path)
         
-        # Model Trainer 初始化（可選）
-        try:
-            if ModelTrainer:
-                self.model_trainer = ModelTrainer()
-            else:
-                self.model_trainer = None
-        except Exception as e:
-            logger.warning(f"ModelTrainer init failed: {e}")
-            self.model_trainer = None
+        # 3. Experience Manager 初始化
+        logger.info("  Loading ExperienceManager...")
+        self.experience_manager = ExperienceManager(
+            capacity=10000,
+            auto_persist=True,
+            persist_batch_size=100,
+            unified_manager=None  # 可擴展為整合資料庫
+        )
+        logger.info("  ✅ ExperienceManager loaded")
+        
+        # 4. Model Trainer 初始化
+        logger.info("  Loading ModelTrainer...")
+        self.model_trainer = ModelTrainer()
+        logger.info("  ✅ ModelTrainer loaded")
 
-        # 4. 訓練編排器（可選）
-        self.training_orchestrator = None  # 簡化版不需要
+        # 5. 統一執行器（替代 TrainingOrchestrator）
+        logger.info("  Loading Unified Attack Executor...")
+        self.unified_executor = UnifiedAttackExecutor(
+            learning_enabled=True,
+            auto_train_threshold=100,
+            data_directory=self.data_directory / "unified_executor"
+        )
+        logger.info("  ✅ Unified Attack Executor loaded")
 
-        # 5. 多語言協調器 - 可選
-        try:
-            logger.info("  Loading Multi-Language Coordinator...")
-            self.multilang_coordinator = MultiLanguageAICoordinator()
-        except Exception as e:
-            logger.warning(f"MultiLanguageAICoordinator not available: {e}")
-            self.multilang_coordinator = None
+        # 6. 多語言協調器
+        logger.info("  Loading Multi-Language Coordinator...")
+        self.multilang_coordinator = MultiLanguageAICoordinator()
+        logger.info("  ✅ Multi-Language Coordinator loaded")
+
+        # 7. 內部循環連接器 (v11.0 新增)
+        logger.info("  Loading Internal Loop Connector...")
+        from ..cognitive_core.internal_loop_connector import InternalLoopConnector
+        self.internal_loop = InternalLoopConnector(rag_kb=self.knowledge_base)
+        logger.info("  ✅ Internal Loop Connector loaded")
+
+        # 8. 模式管理器 (v2.0 統一反饋架構)
+        logger.info("  Loading Mode Manager...")
+        self.mode_manager = get_mode_manager(
+            config_path=self.data_directory / "mode_config.json"
+        )
+        logger.info(f"  ✅ Mode Manager loaded: {self.mode_manager.get_mode().value}")
 
         # === 指揮狀態 ===
         self.command_history: list[dict[str, Any]] = []
@@ -267,13 +187,73 @@ class AICommander:
             component.value: True for component in AIComponent
         }
 
+        # === v11.0: 系統啟動時自動同步能力 ===
+        logger.info("🔄 Starting auto-sync of capabilities...")
+        try:
+            import asyncio
+            # 創建事件循環來執行 async 方法
+            loop = asyncio.new_event_loop()
+            asyncio.set_event_loop(loop)
+            sync_result = loop.run_until_complete(
+                self.internal_loop.sync_capabilities_to_rag(
+                    force_refresh=False,
+                    target_scope="core",
+                    target_module="core"
+                )
+            )
+            loop.close()
+            
+            if sync_result.success:
+                logger.info(f"✅ Auto-sync completed: {sync_result.total_synced} capabilities synced")
+            else:
+                logger.warning(f"⚠️ Auto-sync had issues: {sync_result.error_message}")
+        except Exception as e:
+            logger.error(f"❌ Auto-sync failed: {e}")
+            # 不阻止系統啟動，繼續運行
+
         logger.info("✅ AI Commander initialized successfully")
-        logger.info(f"   - BioNeuronRAGAgent: {self.bio_neuron_agent is not None}")
-        logger.info(f"   - RAG Engine: {self.rag_engine is not None}")
-        logger.info(f"   - Training System: {self.training_orchestrator is not None}")
-        logger.info(
-            f"   - Multi-Language Coordinator: {self.multilang_coordinator is not None}"
-        )
+        logger.info("   - All components loaded (no fallback mode)")
+        logger.info("   - BioNeuronRAGAgent: ✅")
+        logger.info("   - RAG Engine: ✅")
+        logger.info("   - ExperienceManager: ✅")
+        logger.info("   - ModelTrainer: ✅")
+        logger.info("   - Unified Attack Executor: ✅")
+        logger.info("   - Multi-Language Coordinator: ✅")
+        logger.info("   - Internal Loop Connector: ✅")
+        logger.info(f"   - Mode Manager: ✅ (mode={self.mode_manager.get_mode().value})")
+
+    def set_execution_mode(
+        self,
+        mode: str,
+        persist: bool = True
+    ) -> None:
+        """設定執行模式（手動切換）
+        
+        Args:
+            mode: 目標模式 ("sandbox" 或 "production")
+            persist: 是否持久化到設定檔（預設 True）
+        
+        Raises:
+            ValueError: 模式名稱無效
+        
+        使用範例:
+            >>> commander.set_execution_mode("sandbox")  # 切換到靶場模式
+            >>> commander.set_execution_mode("production")  # 切換到生產模式
+        """
+        self.mode_manager.set_mode(mode, persist=persist)
+        logger.info(f"🔄 Execution mode set to: {mode}")
+    
+    def get_execution_mode(self) -> str:
+        """獲取當前執行模式
+        
+        Returns:
+            當前模式字串 ("sandbox" 或 "production")
+        
+        使用範例:
+            >>> mode = commander.get_execution_mode()
+            >>> print(f"Current mode: {mode}")
+        """
+        return self.mode_manager.get_mode().value
 
     async def execute_command(
         self,
@@ -321,13 +301,20 @@ class AICommander:
                 result = await self._execute_two_phase_scan(context)
 
             elif task_type == AITaskType.EXPERIENCE_LEARNING:
-                result = await self._learn_from_experience(context)
+                result = self._learn_from_experience(context)
 
             elif task_type == AITaskType.MODEL_TRAINING:
                 result = await self._train_model(context)
 
             elif task_type == AITaskType.KNOWLEDGE_RETRIEVAL:
-                result = await self._retrieve_knowledge(context)
+                result = self._retrieve_knowledge(context)
+
+            elif task_type == AITaskType.CAPABILITY_QUERY:
+                result = await self.query_my_capabilities(
+                    query=context.get("query", ""),
+                    filters=context.get("filters"),
+                    top_k=context.get("top_k", 5)
+                )
 
             elif task_type == AITaskType.MULTI_LANG_COORDINATION:
                 result = await self._coordinate_multilang(context)
@@ -482,77 +469,124 @@ class AICommander:
         historical_experiences: list[dict],
         constraints: dict[str, Any],
     ) -> str:
-        """構建計畫生成提示詞 (優化版)
+        """構建計畫生成提示詞 (優化版 - 降低認知複雜度)
 
         優化重點:
-        - 更詳細的技術描述
-        - 成功案例引用
-        - 失敗經驗警示
-        - 動態策略建議
+        - 將複雜邏輯提取為獨立方法
+        - 降低嵌套層次
+        - 提高可讀性和維護性
         """
-        # 1. 基本資訊
-        prompt = f"""Generate a comprehensive security testing attack plan for:
+        # 構建基本提示詞
+        prompt = self._build_base_prompt(target, objective)
+        
+        # 添加各個部分
+        prompt += self._build_rag_section(rag_context)
+        prompt += self._build_historical_section(historical_experiences)
+        prompt += self._build_constraints_section(constraints)
+        prompt += self._build_output_structure()
+        
+        return prompt
+
+    def _build_base_prompt(self, target: str, objective: str) -> str:
+        """構建基本提示詞部分"""
+        return f"""Generate a comprehensive security testing attack plan for:
 
 🎯 Target: {target}
 📋 Objective: {objective}
 
 """
 
-        # 2. RAG 知識庫相似技術 (詳細版)
+    def _build_rag_section(self, rag_context: dict[str, Any]) -> str:
+        """構建 RAG 知識庫部分"""
         similar_techs = rag_context.get("similar_techniques", [])
-        if similar_techs:
-            prompt += "🔍 Similar Techniques from Knowledge Base:\n"
-            for idx, tech in enumerate(similar_techs[:5], 1):  # 增加到 5 個
-                prompt += f"{idx}. {tech.get('name', 'N/A')}\n"
-                prompt += f"   - Description: {tech.get('description', 'N/A')}\n"
-                prompt += f"   - Relevance Score: {tech.get('score', 0):.2f}\n"
-                if tech.get("tags"):
-                    prompt += f"   - Tags: {', '.join(tech.get('tags', []))}\n"
-            prompt += "\n"
+        if not similar_techs:
+            return ""
+            
+        section = "🔍 Similar Techniques from Knowledge Base:\n"
+        for idx, tech in enumerate(similar_techs[:5], 1):
+            section += f"{idx}. {tech.get('name', 'N/A')}\n"
+            section += f"   - Description: {tech.get('description', 'N/A')}\n"
+            section += f"   - Relevance Score: {tech.get('score', 0):.2f}\n"
+            if tech.get("tags"):
+                section += f"   - Tags: {', '.join(tech.get('tags', []))}\n"
+        return section + "\n"
 
-        # 3. 歷史經驗統計
-        if historical_experiences:
-            success_exps = [
-                e for e in historical_experiences if e.get("score", 0) > 0.7
-            ]
-            medium_exps = [
-                e for e in historical_experiences if 0.4 <= e.get("score", 0) <= 0.7
-            ]
-            failed_exps = [e for e in historical_experiences if e.get("score", 0) < 0.4]
+    def _build_historical_section(self, historical_experiences: list[dict]) -> str:
+        """構建歷史經驗部分"""
+        if not historical_experiences:
+            return ""
+            
+        # 分類經驗
+        categories = self._categorize_experiences(historical_experiences)
+        
+        # 構建統計信息
+        section = self._build_experience_stats(historical_experiences, categories)
+        
+        # 添加成功案例和失敗教訓
+        section += self._build_success_cases(categories['success'])
+        section += self._build_failure_lessons(categories['failed'])
+        
+        return section + "\n"
 
-            prompt += "📊 Historical Performance Analysis:\n"
-            prompt += f"   - Total Experiences: {len(historical_experiences)}\n"
-            prompt += f"   - ✅ Success Rate: {len(success_exps)/len(historical_experiences)*100:.1f}%\n"
-            prompt += f"   - ⚠️ Partial Success: {len(medium_exps)/len(historical_experiences)*100:.1f}%\n"
-            prompt += f"   - ❌ Failure Rate: {len(failed_exps)/len(historical_experiences)*100:.1f}%\n"
+    def _categorize_experiences(self, experiences: list[dict]) -> dict[str, list[dict]]:
+        """將經驗按效果分類"""
+        return {
+            'success': [e for e in experiences if e.get("score", 0) > 0.7],
+            'medium': [e for e in experiences if 0.4 <= e.get("score", 0) <= 0.7],
+            'failed': [e for e in experiences if e.get("score", 0) < 0.4]
+        }
 
-            # 引用成功案例
-            if success_exps:
-                prompt += "\n🌟 Top Successful Cases:\n"
-                for exp in success_exps[:2]:
-                    context = exp.get("context", {})
-                    action = exp.get("action", {})
-                    prompt += f"   - Strategy: {action.get('decision', 'N/A')}\n"
-                    prompt += f"     Score: {exp.get('score', 0):.2f}, Type: {context.get('objective', 'N/A')}\n"
+    def _build_experience_stats(self, all_exps: list[dict], categories: dict[str, list[dict]]) -> str:
+        """構建經驗統計信息"""
+        total = len(all_exps)
+        success_rate = len(categories['success']) / total * 100
+        medium_rate = len(categories['medium']) / total * 100
+        failure_rate = len(categories['failed']) / total * 100
+        
+        return f"""📊 Historical Performance Analysis:
+   - Total Experiences: {total}
+   - ✅ Success Rate: {success_rate:.1f}%
+   - ⚠️ Partial Success: {medium_rate:.1f}%
+   - ❌ Failure Rate: {failure_rate:.1f}%
+"""
 
-            # 警示失敗經驗
-            if failed_exps:
-                prompt += "\n⚠️ Lessons from Failed Attempts:\n"
-                for exp in failed_exps[:2]:
-                    result = exp.get("result", {})
-                    prompt += f"   - Avoid: {result.get('error', 'Unknown error')}\n"
+    def _build_success_cases(self, success_exps: list[dict]) -> str:
+        """構建成功案例部分"""
+        if not success_exps:
+            return ""
+            
+        section = "\n🌟 Top Successful Cases:\n"
+        for exp in success_exps[:2]:
+            context = exp.get("context", {})
+            action = exp.get("action", {})
+            section += f"   - Strategy: {action.get('decision', 'N/A')}\n"
+            section += f"     Score: {exp.get('score', 0):.2f}, Type: {context.get('objective', 'N/A')}\n"
+        return section
 
-            prompt += "\n"
+    def _build_failure_lessons(self, failed_exps: list[dict]) -> str:
+        """構建失敗教訓部分"""
+        if not failed_exps:
+            return ""
+            
+        section = "\n⚠️ Lessons from Failed Attempts:\n"
+        for exp in failed_exps[:2]:
+            result = exp.get("result", {})
+            section += f"   - Avoid: {result.get('error', 'Unknown error')}\n"
+        return section
 
-        # 4. 約束條件
-        if constraints:
-            prompt += "🚧 Constraints:\n"
-            for key, value in constraints.items():
-                prompt += f"   - {key}: {value}\n"
-            prompt += "\n"
+    def _build_constraints_section(self, constraints: dict[str, Any]) -> str:
+        """構建約束條件部分"""
+        if not constraints:
+            return ""
+            
+        section = "🚧 Constraints:\n"
+        for key, value in constraints.items():
+            section += f"   - {key}: {value}\n"
+        return section + "\n"
 
-        # 5. 動態策略建議
-        prompt += """🎯 Required Output Structure:
+    def _build_output_structure(self) -> str:
+        """構建輸出結構要求部分"""
+        return """🎯 Required Output Structure:
 1. **Multi-Phase Plan**:
    - Phase 1: Reconnaissance (information gathering)
    - Phase 2: Vulnerability Analysis (identify weaknesses)
@@ -577,7 +611,6 @@ class AICommander:
 ⚖️ Focus on: Practical, safe, authorized security testing approaches.
 🔒 Ensure: Compliance with ethical hacking standards and legal boundaries.
 """
-        return prompt
 
     def _calculate_plan_confidence(
         self, rag_context: dict[str, Any], historical_experiences: list[dict]
@@ -1080,7 +1113,7 @@ Please provide a comprehensive decision包含:
 
         return results
 
-    async def _learn_from_experience(self, context: dict[str, Any]) -> dict[str, Any]:
+    def _learn_from_experience(self, context: dict[str, Any]) -> dict[str, Any]:
         """從經驗中學習
 
         Args:
@@ -1126,7 +1159,7 @@ Please provide a comprehensive decision包含:
 
         return result
 
-    async def _retrieve_knowledge(self, context: dict[str, Any]) -> dict[str, Any]:
+    def _retrieve_knowledge(self, context: dict[str, Any]) -> dict[str, Any]:
         """檢索知識
 
         Args:
@@ -1158,6 +1191,77 @@ Please provide a comprehensive decision包含:
                 for entry in results
             ],
         }
+    
+    async def query_my_capabilities(
+        self,
+        query: str,
+        filters: dict[str, Any] | None = None,
+        top_k: int = 5
+    ) -> dict[str, Any]:
+        """查詢自身能力（v11.0 - 內部循環增強）
+        
+        使用內部循環連接器從 RAG 查詢 AIVA 自身的能力數據
+        
+        Args:
+            query: 查詢文本（例如："如何執行掃描？"、"神經網路訓練流程"）
+            filters: 過濾條件 (例如 {'module': 'cognitive_core', 'scope': 'CORE'})
+            top_k: 返回結果數量
+            
+        Returns:
+            包含匹配能力的結果字典
+            
+        Example:
+            >>> result = await ai_commander.query_my_capabilities(
+            ...     query="如何執行神經網路訓練？",
+            ...     filters={"module": "cognitive_core"},
+            ...     top_k=3
+            ... )
+            >>> print(f"Found {result['total_found']} capabilities")
+            >>> for cap in result['capabilities']:
+            ...     print(f"  - {cap['name']}: {cap['description']}")
+        """
+        logger.info(f"🧠 AI Commander querying self capabilities: '{query}'")
+        
+        try:
+            # 使用內部循環連接器查詢
+            rag_result = await self.internal_loop.query_capabilities(
+                query=query,
+                filters=filters,
+                top_k=top_k
+            )
+            
+            # 轉換為適合返回的格式
+            capabilities = []
+            for result in rag_result.results:
+                cap_data = result.get('metadata', {})
+                capabilities.append({
+                    "name": cap_data.get('name', 'unknown'),
+                    "description": cap_data.get('description', ''),
+                    "module": cap_data.get('module', 'unknown'),
+                    "category": cap_data.get('category', 'unknown'),
+                    "file_path": cap_data.get('file_path', ''),
+                    "relevance_score": result.get('score', 0.0)
+                })
+            
+            logger.info(f"✅ Found {len(capabilities)} matching capabilities")
+            
+            return {
+                "success": True,
+                "query": query,
+                "total_found": rag_result.total_found,
+                "capabilities": capabilities,
+                "timestamp": rag_result.timestamp.isoformat()
+            }
+            
+        except Exception as e:
+            logger.error(f"❌ Failed to query capabilities: {e}", exc_info=True)
+            return {
+                "success": False,
+                "error": str(e),
+                "query": query,
+                "total_found": 0,
+                "capabilities": []
+            }
 
     async def _coordinate_multilang(self, context: dict[str, Any]) -> dict[str, Any]:
         """協調掃描引擎（Python/TypeScript/Rust/Go）
@@ -1183,7 +1287,8 @@ Please provide a comprehensive decision包含:
         strategy = context.get("scan_strategy", "balanced")
         scan_id = context.get("scan_id", f"scan_ai_{datetime.now().strftime('%Y%m%d%H%M%S')}")
         max_depth = context.get("max_depth", 3)
-        timeout = context.get("timeout", 600)
+        # 注意：timeout 參數已獲取但在當前實現中未使用
+        # timeout = context.get("timeout", 600)
 
         try:
             # 導入 MultiEngineCoordinator
@@ -1433,7 +1538,7 @@ Please provide a comprehensive decision包含:
         scenario_ids: list[str] | None = None,
         episodes_per_scenario: int = 10,
     ) -> dict[str, Any]:
-        """運行訓練會話
+        """運行訓練會話（已廢棄 - 由 UnifiedExecutor 自動管理）
 
         Args:
             scenario_ids: 場景 ID 列表
@@ -1442,16 +1547,125 @@ Please provide a comprehensive decision包含:
         Returns:
             訓練結果
         """
-        logger.info("🎓 Starting training session...")
+        logger.warning("⚠️ run_training_session is deprecated. Training is now automatic in UnifiedExecutor.")
+        
+        # 返回當前學習狀態
+        status = self.unified_executor.get_learning_status()
+        
+        return {
+            "success": True,
+            "message": "Training is now automatic. Current learning status:",
+            "learning_status": status
+        }
+    
+    async def process_scan_command(
+        self,
+        user_input: str
+    ) -> dict[str, Any]:
+        """處理用戶掃描命令 - 完整的指揮鏈流程
+        
+        流程: 用戶輸入 → TaskContext → AI 決策 → Orchestrator 執行
+        
+        Args:
+            user_input: 用戶自然語言輸入，如 "快速掃描 192.168.1.1"
+        
+        Returns:
+            掃描結果
+        """
+        try:
+            # 步驟 1: 解析用戶輸入為標準任務參數包
+            from ..core_capabilities.task_context import parse_user_input_to_context
+            scan_context = parse_user_input_to_context(user_input)
+            
+            logger.info(f"📋 已解析任務參數: target={scan_context.target}, "
+                       f"intent={scan_context.intent}")
+            
+            # 步驟 2: AI 決策 - 選擇掃描工具和參數
+            from ..cognitive_core.decision.enhanced_decision_agent import EnhancedDecisionAgent
+            decision_agent = EnhancedDecisionAgent()
+            ai_decision = decision_agent.decide_scan_strategy(scan_context)
+            
+            # 將 AI 決策結果填充到 context 中
+            scan_context.ai_decision.selected_tool = ai_decision["selected_tool"]
+            scan_context.ai_decision.confidence_score = ai_decision["confidence"]
+            scan_context.ai_decision.reasoning = ai_decision["reasoning"]
+            
+            logger.info(f"🎯 AI 決策: {ai_decision['selected_tool']} "
+                       f"(信心度 {ai_decision['confidence']:.2f})")
+            
+            # 步驟 3: 傳給 Orchestrator 執行
+            from ..core_capabilities.orchestration.two_phase_scan_orchestrator import TwoPhaseScanOrchestrator
+            orchestrator = TwoPhaseScanOrchestrator(broker=self.broker)
+            result = await orchestrator.execute_scan_with_context(scan_context)
+            
+            logger.info(f"✅ 掃描完成: {result.total_found if hasattr(result, 'total_found') else 'N/A'} 個發現")
+            
+            return {
+                "status": "success",
+                "task_id": scan_context.task_id,
+                "ai_decision": ai_decision,
+                "scan_result": result.to_dict() if hasattr(result, 'to_dict') else str(result)
+            }
+        
+        except Exception as e:
+            logger.error(f"❌ 掃描命令處理失敗: {e}", exc_info=True)
+            return {
+                "status": "error",
+                "error": str(e)
+            }
 
-        result = await self.training_orchestrator.run_training_batch(
-            scenario_ids=scenario_ids,
-            episodes_per_scenario=episodes_per_scenario,
-            use_rag=True,  # 使用 RAG 增強
-        )
-
-        return result
-
+    async def unified_attack(
+        self,
+        target: str,
+        objective: str,
+        user_input: Optional[str] = None
+    ) -> dict[str, Any]:
+        """統一攻擊執行接口 - 簡化版
+        
+        使用統一執行器執行攻擊，自動學習。
+        
+        Args:
+            target: 目標 URL/IP
+            objective: 攻擊目標描述
+            user_input: 原始用戶輸入（可選）
+        
+        Returns:
+            執行結果
+        """
+        logger.info(f"🚀 Unified Attack: {target} - {objective}")
+        
+        try:
+            # 使用統一執行器
+            result = await self.unified_executor.execute(
+                target=target,
+                objective=objective,
+                scenario=None,  # 實戰模式
+                constraints=None
+            )
+            
+            # 格式化返回結果
+            return {
+                "success": result.success,
+                "vulnerabilities": result.vulnerabilities,
+                "learning_info": result.learning_info,
+                "execution_details": result.execution_details
+            }
+        except Exception as e:
+            logger.error(f"Unified attack failed: {e}", exc_info=True)
+            return {
+                "success": False,
+                "error": str(e),
+                "vulnerabilities": []
+            }
+    
+    def get_learning_status(self) -> dict[str, Any]:
+        """獲取學習狀態"""
+        try:
+            return self.unified_executor.get_learning_status()
+        except Exception as e:
+            logger.error(f"Failed to get learning status: {e}")
+            return {"error": str(e)}
+    
     def get_status(self) -> dict[str, Any]:
         """獲取 AI 指揮官狀態
 
@@ -1465,7 +1679,7 @@ Please provide a comprehensive decision包含:
             "successful_commands": sum(
                 1 for cmd in self.command_history if cmd.get("status") == "completed"
             ),
-            "training_stats": self.training_orchestrator.get_training_statistics(),
+            "learning_status": self.get_learning_status(),
             "knowledge_stats": self.rag_engine.get_statistics(),
             "experience_stats": self.experience_manager.get_statistics(),
         }
@@ -1482,7 +1696,7 @@ Please provide a comprehensive decision包含:
             self.data_directory / "experiences.jsonl"
         )
 
-        # 保存訓練會話
-        self.training_orchestrator.save_session()
+        # 注意：UnifiedExecutor 會自動管理學習狀態
+        # 經驗已通過 experience_manager 保存
 
         logger.info("✅ AI Commander state saved")

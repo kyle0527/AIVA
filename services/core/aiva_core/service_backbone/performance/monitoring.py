@@ -13,6 +13,12 @@ import time
 from typing import Any, Dict, List, Optional
 from enum import Enum
 
+try:
+    import numpy as np
+    HAS_NUMPY = True
+except ImportError:
+    HAS_NUMPY = False
+
 
 class ComponentHealth(str, Enum):
     """組件健康狀態"""
@@ -85,16 +91,20 @@ class MetricsCollector:
         for name, metrics in self.metrics.items():
             if metrics:
                 durations = [m.value for m in metrics]
+                # 計算 p95 - 使用 numpy 或手動實現
+                if HAS_NUMPY and len(durations) > 1:
+                    p95 = float(np.percentile(durations, 95))
+                else:
+                    sorted_durations = sorted(durations)
+                    p95_index = int(len(sorted_durations) * 0.95)
+                    p95 = sorted_durations[min(p95_index, len(sorted_durations) - 1)]
+                
                 summary["durations"][name] = {
                     "count": len(durations),
                     "avg": sum(durations) / len(durations),
                     "min": min(durations),
                     "max": max(durations),
-                    "p95": (
-                        np.percentile(durations, 95)
-                        if len(durations) > 1
-                        else durations[0]
-                    ),
+                    "p95": p95,
                 }
 
         return summary

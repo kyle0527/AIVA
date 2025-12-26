@@ -17,6 +17,9 @@ try:
 except ImportError:
     SUMMARY_PLUGIN_AVAILABLE = False
 
+# CodeFixer 已移除，代碼修復功能由 aiva_core 的特化 AI 處理
+CODE_FIXER_AVAILABLE = False
+
 logger = logging.getLogger(__name__)
 
 
@@ -156,7 +159,7 @@ class AISubsystemController:
         analysis["confidence"] = min(analysis["complexity_score"] + 0.3, 1.0)
         return analysis
 
-    async def _direct_processing(
+    def _direct_processing(
         self, user_input: str, context: dict
     ) -> dict[str, Any]:
         """主控 AI 直接處理"""
@@ -172,7 +175,7 @@ class AISubsystemController:
             "unified_control": True,
         }
 
-    async def _coordinated_code_fixing(
+    def _coordinated_code_fixing(
         self, user_input: str, context: dict
     ) -> dict[str, Any]:
         """協調程式碼修復 - 主控 AI 監督下的修復"""
@@ -181,12 +184,8 @@ class AISubsystemController:
         # 主控 AI 預處理
         preprocessed = self.master_ai.invoke(f"分析修復需求: {user_input}", **context)
 
-        # 模擬程式碼修復 (實際會調用 CodeFixer，但保持主控監督)
-        fix_result = {
-            "fixed_code": "# 修復後的程式碼 (由主控 AI 協調)",
-            "explanation": f'基於主控 AI 分析: {preprocessed.get("tool_result", {}).get("analysis", "未知")}',
-            "confidence": 0.85,
-        }
+        # 實際調用 CodeFixer 進行真實修復
+        fix_result = self._execute_code_fixing(user_input, preprocessed, context)
 
         # 主控 AI 驗證結果
         validation = self.master_ai.invoke(f"驗證修復結果: {fix_result}", **context)
@@ -201,7 +200,80 @@ class AISubsystemController:
             "unified_control": True,
         }
 
-    async def _coordinated_detection(
+    def _execute_code_fixing(
+        self, user_input: str, preprocessed: dict, context: dict
+    ) -> dict[str, Any]:
+        """執行真實的代碼修復
+        
+        Args:
+            user_input: 用戶輸入
+            preprocessed: 主控 AI 預處理結果
+            context: 上下文信息
+            
+        Returns:
+            修復結果字典
+        """
+        if not CODE_FIXER_AVAILABLE:
+            logger.warning("⚠️ CodeFixer 不可用，返回模擬結果")
+            return {
+                "status": "unavailable",
+                "message": "CodeFixer 模組不可用，請確認 services.integration 已安裝",
+                "analysis": preprocessed.get("tool_result", {}).get("analysis", ""),
+            }
+
+        # 獲取或創建 CodeFixer 實例
+        if not self.ai_components.get("code_fixer"):
+            try:
+                # 從環境變量或配置獲取 API 密鑰
+                api_key = context.get("api_key") or None
+                self.ai_components["code_fixer"] = CodeFixer(
+                    api_key=api_key,
+                    model="gpt-4",
+                    use_litellm=True
+                )
+                logger.info("✅ CodeFixer 實例已創建")
+            except Exception as e:
+                logger.error(f"❌ CodeFixer 初始化失敗: {e}")
+                return {
+                    "status": "error",
+                    "message": f"CodeFixer 初始化失敗: {str(e)}",
+                    "analysis": preprocessed.get("tool_result", {}).get("analysis", ""),
+                }
+
+        code_fixer = self.ai_components["code_fixer"]
+        
+        # 從上下文提取代碼和漏洞信息
+        code = context.get("code", "")
+        vulnerability_type = context.get("vulnerability_type", "unknown")
+        language = context.get("language", "python")
+        
+        if not code:
+            logger.warning("⚠️ 未提供代碼，無法執行修復")
+            return {
+                "status": "error",
+                "message": "未提供需要修復的代碼",
+                "analysis": preprocessed.get("tool_result", {}).get("analysis", ""),
+            }
+
+        # 執行修復
+        try:
+            fix_result = code_fixer.fix_vulnerability(
+                code=code,
+                vulnerability_type=vulnerability_type,
+                language=language,
+                context=user_input
+            )
+            logger.info(f"✅ 代碼修復完成: {fix_result.get('fix_id')}")
+            return fix_result
+        except Exception as e:
+            logger.error(f"❌ 代碼修復執行失敗: {e}", exc_info=True)
+            return {
+                "status": "error",
+                "message": f"代碼修復執行失敗: {str(e)}",
+                "analysis": preprocessed.get("tool_result", {}).get("analysis", ""),
+            }
+
+    def _coordinated_detection(
         self, user_input: str, context: dict
     ) -> dict[str, Any]:
         """協調漏洞檢測 - 統一調度多檢測引擎"""
@@ -234,7 +306,7 @@ class AISubsystemController:
             "unified_control": True,
         }
 
-    async def _multi_ai_coordination(
+    def _multi_ai_coordination(
         self, user_input: str, context: dict
     ) -> dict[str, Any]:
         """多 AI 協同 - 主控 AI 統籌"""
@@ -403,8 +475,12 @@ class AISubsystemController:
         else:
             return "高度複雜"
 
-    def _calculate_efficiency_score(self, task_analysis: dict, result: dict) -> float:
-        """計算處理效率分數"""
+    def _calculate_efficiency_score(self, result: dict) -> float:
+        """計算處理效率分數
+        
+        Args:
+            result: 處理結果字典
+        """
         base_score = 0.7
 
         # 根據統一控制加分
@@ -441,9 +517,14 @@ class AISubsystemController:
             return ["請人工檢查處理結果"]
 
     def _identify_learning_points(
-        self, user_input: str, task_analysis: dict, result: dict
+        self, task_analysis: dict, result: dict
     ) -> list[str]:
-        """識別學習要點"""
+        """識別學習要點
+        
+        Args:
+            task_analysis: 任務分析結果
+            result: 處理結果
+        """
         learning_points = []
 
         # 根據處理方式識別學習點
@@ -559,22 +640,6 @@ class AISubsystemController:
         # 保持歷史記錄在合理範圍
         if len(self.summary_history) > 50:
             self.summary_history.pop(0)
-
-    def _record_unified_decision(self, user_input: str, analysis: dict, result: dict):
-        """記錄統一決策歷史"""
-        decision_record = {
-            "timestamp": asyncio.get_event_loop().time(),
-            "user_input": user_input,
-            "task_analysis": analysis,
-            "processing_method": result.get("processing_method"),
-            "ai_conflicts_avoided": result.get("ai_conflicts", 0) == 0,
-            "unified_control_maintained": result.get("unified_control", False),
-        }
-
-        self.decision_history.append(decision_record)
-
-        if len(self.decision_history) > 100:  # 保持歷史記錄在合理範圍
-            self.decision_history.pop(0)
 
     def get_ai_summary_statistics(self) -> dict[str, Any]:
         """獲取 AI 摘要統計"""
@@ -886,37 +951,6 @@ class AISubsystemController:
             recommendations.append("🎯 系統處理多樣化任務能力強，可專注於深度優化")
 
         return recommendations
-
-    def get_control_statistics(self) -> dict[str, Any]:
-        """獲取統一控制統計"""
-        if not self.decision_history:
-            return {"no_decisions": True}
-
-        total_decisions = len(self.decision_history)
-        unified_decisions = sum(
-            1 for d in self.decision_history if d["unified_control_maintained"]
-        )
-        conflict_free_decisions = sum(
-            1 for d in self.decision_history if d["ai_conflicts_avoided"]
-        )
-
-        return {
-            "total_decisions": total_decisions,
-            "unified_control_rate": unified_decisions / total_decisions,
-            "conflict_free_rate": conflict_free_decisions / total_decisions,
-            "processing_methods": {
-                method: sum(
-                    1 for d in self.decision_history if d["processing_method"] == method
-                )
-                for method in {d["processing_method"] for d in self.decision_history}
-            },
-            "recommendation": (
-                "統一控制效果良好"
-                if unified_decisions / total_decisions > 0.9
-                else "需要優化統一控制"
-            ),
-        }
-
 
 # 使用示例
 async def demonstrate_unified_control():

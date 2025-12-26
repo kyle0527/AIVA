@@ -218,20 +218,22 @@ operation_result = await recorder.record_operation({
 **功能**: 風險評估、漏洞關聯分析、合規性檢查
 
 #### 核心組件
-- **`risk_assessment_engine.py`**: 風險評估引擎
 - **`vuln_correlation_analyzer.py`**: 漏洞關聯分析器  
 - **`compliance_policy_checker.py`**: 合規政策檢查器
+- **`risk_assessment_engine_enhanced.py`**: 增強風險評估引擎
+- ❌ **`risk_assessment_engine.py`** (已移除 - 應改用 RAG 動態查詢)
 
 ```python
-from aiva_integration.analysis import RiskAssessmentEngine
+# ❌ 已廢棄 - RiskAssessmentEngine 已移除
+# from aiva_integration.analysis import RiskAssessmentEngine
 
-# 風險評估
-risk_engine = RiskAssessmentEngine()
-risk_score = await risk_engine.assess_vulnerability({
-    "cve": "CVE-2023-1234",
-    "asset_criticality": "high",
-    "exposure_level": "external"
-})
+# ✅ 使用 RAG 動態查詢風險資訊
+from aiva_core import BioNeuronRAGAgent
+
+rag_agent = BioNeuronRAGAgent()
+risk_info = await rag_agent.query(
+    "CVE-2023-1234 的風險評估和緩解建議"
+)
 ```
 
 ---
@@ -369,7 +371,6 @@ from aiva_integration.reception import UnifiedStorageAdapter
 async def main():
     # 初始化核心組件
     recorder = AIOperationRecorder()
-    risk_engine = RiskAssessmentEngine()
     storage = UnifiedStorageAdapter()
     
     # 處理掃描結果
@@ -384,10 +385,9 @@ async def main():
         "data": scan_result
     })
     
-    # 風險評估
-    risk_scores = await risk_engine.batch_assess(
-        scan_result["vulnerabilities"]
-    )
+    # 風險評估 - 使用 RAG 動態查詢
+    # ❌ risk_scores = await risk_engine.batch_assess(...)
+    # ✅ 使用 RAG 查詢最新風險資訊
     
     # 存儲結果
     await storage.store_analysis_result({

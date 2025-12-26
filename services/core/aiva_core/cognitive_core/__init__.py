@@ -25,11 +25,8 @@ Cognitive Core - AI 認知核心
 __version__ = "3.0.0-alpha"
 __status__ = "架構搭建中"
 
-# TODO: 在模組遷移完成後添加以下導入
-# from .neural import RealNeuralCore, RealBioNetAdapter
-# from .rag import RAGEngine, KnowledgeBase, UnifiedVectorStore
-# from .decision import EnhancedDecisionAgent
-# from .anti_hallucination import AntiHallucinationModule
+# NOTE: 其他認知核心模組將在 v3.1 版本中遷移完成後導入
+# 計劃包含: neural (RealNeuralCore), rag (RAGEngine), decision (EnhancedDecisionAgent), anti_hallucination
 
 # ✅ 內部閉環連接器已實現
 from .internal_loop_connector import InternalLoopConnector
@@ -38,15 +35,6 @@ from .internal_loop_connector import InternalLoopConnector
 from .external_loop_connector import ExternalLoopConnector
 
 __all__ = [
-    # 將在遷移完成後導出
-    # "RealNeuralCore",
-    # "RealBioNetAdapter",
-    # "RAGEngine",
-    # "KnowledgeBase",
-    # "UnifiedVectorStore",
-    # "EnhancedDecisionAgent",
-    # "AntiHallucinationModule",
-    
     # ✅ 雙閉環連接器已導出
     "InternalLoopConnector",
     "ExternalLoopConnector",

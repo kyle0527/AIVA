@@ -9,6 +9,10 @@
 ![Languages](https://img.shields.io/badge/languages-Python%2BGo%2BRust%2BTS-orange)
 ![Code Quality](https://img.shields.io/badge/code%20quality-100%25%20type%20safe-success)
 
+> 📚 **文檔導航**: 新用戶請參閱 [文檔導航.md](文檔導航.md) 快速找到所需資源  
+> 🗂️ **歷史檔案**: 已完成項目和報告請查看 [_archive/](_archive/ARCHIVE_INDEX.md) 目錄  
+> 🏗️ **架構指南**: 完整目錄結構說明請參考 [_PROJECT_ROOT_STRUCTURE_GUIDE.md](_PROJECT_ROOT_STRUCTURE_GUIDE.md)
+
 ## 📋 最新進度 (2025-12-XX)
 
 ### ✅ Phase 3 完成：代碼品質全面提升 (NEW!)

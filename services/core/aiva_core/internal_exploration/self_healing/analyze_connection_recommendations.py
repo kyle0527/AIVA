@@ -446,8 +446,8 @@ class ConnectionRecommendationAnalyzer:
             f.write("## 📊 統計摘要\n\n")
             f.write(f"- **總建議數:** {len(recommendations)}\n")
             
-            impact_stats = defaultdict(int)
-            confidence_stats = defaultdict(int)
+            impact_stats: dict[str, int] = defaultdict(int)
+            confidence_stats: dict[str, int] = defaultdict(int)
             for rec in recommendations:
                 impact_stats[rec.impact] += 1
                 confidence_stats[rec.confidence] += 1

@@ -95,6 +95,7 @@ class CommandType(str, Enum):
     FEATURE_SQLI_TEST = "feature_sqli_test"  # SQL 注入測試
     FEATURE_SSRF_TEST = "feature_ssrf_test"  # SSRF 測試
     FEATURE_IDOR_TEST = "feature_idor_test"  # IDOR 測試
+    FEATURE_BIZLOGIC_TEST = "feature_bizlogic_test"  # 業務邏輯測試
     
     # Payload Generator 命令
     FEATURE_PAYLOAD_GENERATE = "feature_payload_generate"  # 生成各類 Payload

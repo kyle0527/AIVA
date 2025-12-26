@@ -1,0 +1,100 @@
+{
+  "structure": {
+    "root_exists": true,
+    "modules_valid": {
+      "core": true,
+      "features": true,
+      "scan": true,
+      "integration": true
+    },
+    "files_found": {
+      "core": {
+        "capabilities": [
+          "core_capabilities_20251215_184037.json",
+          "latest_core_capabilities.json"
+        ],
+        "flows": [
+          "core_flows_20251215_184036.json",
+          "latest_core_flows.json"
+        ],
+        "classifications": [
+          "core_classifications_20251215_184036.json",
+          "latest_core_classifications.json"
+        ]
+      },
+      "features": {
+        "capabilities": [],
+        "flows": [],
+        "classifications": []
+      },
+      "scan": {
+        "capabilities": [],
+        "flows": [],
+        "classifications": []
+      },
+      "integration": {
+        "capabilities": [],
+        "flows": [],
+        "classifications": []
+      }
+    },
+    "errors": []
+  },
+  "latest_files": {
+    "core": {
+      "capabilities": {
+        "exists": true,
+        "valid": true,
+        "total_flows": 840
+      },
+      "flows": {
+        "exists": true,
+        "valid": false
+      },
+      "classifications": {
+        "exists": true,
+        "valid": true,
+        "total_flows": 840
+      }
+    },
+    "features": {
+      "capabilities": {
+        "exists": false
+      },
+      "flows": {
+        "exists": false
+      },
+      "classifications": {
+        "exists": false
+      }
+    },
+    "scan": {
+      "capabilities": {
+        "exists": false
+      },
+      "flows": {
+        "exists": false
+      },
+      "classifications": {
+        "exists": false
+      }
+    },
+    "integration": {
+      "capabilities": {
+        "exists": false
+      },
+      "flows": {
+        "exists": false
+      },
+      "classifications": {
+        "exists": false
+      }
+    }
+  },
+  "summary": {
+    "valid_modules": 4,
+    "total_modules": 4,
+    "valid_files": 2,
+    "total_files": 12
+  }
+}

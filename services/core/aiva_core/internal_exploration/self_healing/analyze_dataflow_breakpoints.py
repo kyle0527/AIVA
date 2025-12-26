@@ -38,9 +38,9 @@ class DataFlowBreakpointAnalyzer:
         self.issues: List[BreakpointIssue] = []
         
         # 構建圖結構
-        self.graph = defaultdict(set)  # script -> {called_scripts}
-        self.reverse_graph = defaultdict(set)  # script -> {caller_scripts}
-        self.all_scripts = set()
+        self.graph: dict[str, set[str]] = defaultdict(set)  # script -> {called_scripts}
+        self.reverse_graph: dict[str, set[str]] = defaultdict(set)  # script -> {caller_scripts}
+        self.all_scripts: set[str] = set()
         
     def _load_analysis_results(self) -> Dict:
         """載入分析結果"""
@@ -375,7 +375,7 @@ class DataFlowBreakpointAnalyzer:
             f.write("## 📊 問題摘要\n\n")
             f.write(f"- **總問題數:** {len(self.issues)}\n")
             
-            issue_types = defaultdict(int)
+            issue_types: dict[str, int] = defaultdict(int)
             for issue in self.issues:
                 issue_types[issue.issue_type] += 1
             
@@ -384,7 +384,7 @@ class DataFlowBreakpointAnalyzer:
             f.write("\n")
             
             # 嚴重程度統計
-            severity_counts = defaultdict(int)
+            severity_counts: dict[str, int] = defaultdict(int)
             for issue in self.issues:
                 severity_counts[issue.severity] += 1
             

@@ -1,0 +1,103 @@
+{
+  "scan_time": "2025-12-15T10:11:33.970723",
+  "targets_scanned": 3,
+  "successful_scans": 3,
+  "total_vulnerabilities": 3,
+  "total_duration": 10.910318,
+  "results": [
+    {
+      "target": "juice_shop",
+      "success": true,
+      "vulnerabilities": 0,
+      "duration": 5.275964,
+      "details": {
+        "race_conditions": [],
+        "price_manipulations": [],
+        "workflow_bypasses": [],
+        "total_vulnerabilities": 0,
+        "scan_info": {
+          "target_url": "http://localhost:3000",
+          "start_time": "2025-12-15T10:11:23.051519",
+          "tests_performed": [
+            "race_condition",
+            "price_manipulation",
+            "workflow_bypass"
+          ],
+          "end_time": "2025-12-15T10:11:28.325954",
+          "duration": 5.274435
+        }
+      }
+    },
+    {
+      "target": "webgoat",
+      "success": true,
+      "vulnerabilities": 0,
+      "duration": 0.714253,
+      "details": {
+        "race_conditions": [],
+        "price_manipulations": [],
+        "workflow_bypasses": [],
+        "total_vulnerabilities": 0,
+        "scan_info": {
+          "target_url": "http://localhost:8080",
+          "start_time": "2025-12-15T10:11:28.329588",
+          "tests_performed": [
+            "workflow_bypass"
+          ],
+          "end_time": "2025-12-15T10:11:29.042723",
+          "duration": 0.713135
+        }
+      }
+    },
+    {
+      "target": "target_3001",
+      "success": true,
+      "vulnerabilities": 3,
+      "duration": 4.920101,
+      "details": {
+        "race_conditions": [
+          {
+            "type": "race_condition_detected",
+            "severity": "High",
+            "confidence": "possible",
+            "concurrent_requests": 20,
+            "successful_requests": 20,
+            "duration": 4.072708,
+            "evidence": "20/20 concurrent requests succeeded"
+          },
+          {
+            "type": "race_condition_detected",
+            "severity": "High",
+            "confidence": "possible",
+            "concurrent_requests": 20,
+            "successful_requests": 20,
+            "duration": 3.317647,
+            "evidence": "20/20 concurrent requests succeeded"
+          },
+          {
+            "type": "race_condition_detected",
+            "severity": "High",
+            "confidence": "possible",
+            "concurrent_requests": 20,
+            "successful_requests": 20,
+            "duration": 2.886792,
+            "evidence": "20/20 concurrent requests succeeded"
+          }
+        ],
+        "price_manipulations": [],
+        "workflow_bypasses": [],
+        "total_vulnerabilities": 3,
+        "scan_info": {
+          "target_url": "http://localhost:3001",
+          "start_time": "2025-12-15T10:11:29.045886",
+          "tests_performed": [
+            "race_condition",
+            "price_manipulation"
+          ],
+          "end_time": "2025-12-15T10:11:33.965277",
+          "duration": 4.919391
+        }
+      }
+    }
+  ]
+}

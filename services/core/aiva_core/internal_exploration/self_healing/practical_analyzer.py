@@ -31,6 +31,11 @@ class Issue:
 class PracticalAnalyzer:
     """實用分析器"""
     
+    # 定義常量
+    MARKDOWN_SEPARATOR = "---\n\n"
+    CODE_BLOCK_BASH = "```bash\n"
+    CODE_BLOCK_END = "```\n\n"
+    
     def __init__(self):
         # 擴展的 Python 內建（更全面的過濾）
         self.python_builtins = {
@@ -55,12 +60,10 @@ class PracticalAnalyzer:
             'swapcase', 'center', 'ljust', 'rjust', 'zfill', 'encode', 'decode',
             'isalpha', 'isdigit', 'isalnum', 'isspace', 'isupper', 'islower',
             'istitle', 'isdecimal', 'isnumeric', 'isidentifier', 'isprintable',
-            # 列表方法
-            'append', 'extend', 'insert', 'remove', 'pop', 'clear', 'sort',
-            'reverse', 'copy', 'count', 'index',
-            # 字典方法
-            'get', 'keys', 'values', 'items', 'update', 'setdefault', 'popitem',
-            'fromkeys', 'copy', 'clear',
+            # 列表方法（已移除重複：count, index, copy, clear）
+            'append', 'extend', 'insert', 'remove', 'pop', 'sort', 'reverse',
+            # 字典方法（已移除重複：copy, clear）
+            'get', 'keys', 'values', 'items', 'update', 'setdefault', 'popitem', 'fromkeys',
             # 文件方法
             'read', 'write', 'close', 'readline', 'readlines', 'writelines',
             'seek', 'tell', 'flush', 'fileno', 'isatty', 'truncate',
@@ -99,7 +102,7 @@ class PracticalAnalyzer:
             content = f.read()
             
         # 提取三種類型的問題
-        issues = {
+        issues: dict[str, list[Issue]] = {
             'CRITICAL': [],
             'HIGH': [],
             'MEDIUM': [],
@@ -130,7 +133,7 @@ class PracticalAnalyzer:
             issues[severity] = self._deduplicate_issues(issues[severity])
         
         # 統計
-        print(f"\n📊 問題分級統計:")
+        print("\n📊 問題分級統計:")
         print(f"  🔴 CRITICAL: {len(issues['CRITICAL'])} 個")
         print(f"  ⚠️  HIGH:     {len(issues['HIGH'])} 個")
         print(f"  ⚡ MEDIUM:   {len(issues['MEDIUM'])} 個")
@@ -141,17 +144,17 @@ class PracticalAnalyzer:
         
     def _parse_definition_missing(self, content: str) -> List[Issue]:
         """解析定義缺失"""
-        issues = []
+        issues: list[Issue] = []
         
         # 找到定義缺失部分
-        match = re.search(r'### 定義缺失.*?(?=###|$)', content, re.DOTALL)
+        match = re.search(r'### 定義缺失(.*?)(?=###|\Z)', content, re.DOTALL)
         if not match:
             return issues
             
         section = match.group()
         
         # 解析每個問題
-        pattern = r'#### \d+\. (🔴|🟡|🔵) (\w+) → (\w+)\s+\*\*源文件:\*\* `([^`]+)`'
+        pattern = r'#### \d+\. ([\U0001f534\U0001f7e1\U0001f535]) (\w+) → (\w+)\s+\*\*源文件:\*\* `([^`]+)`'
         
         for match in re.finditer(pattern, section):
             emoji, caller, callee, file = match.groups()
@@ -170,15 +173,15 @@ class PracticalAnalyzer:
         
     def _parse_call_missing(self, content: str) -> List[Issue]:
         """解析調用缺失"""
-        issues = []
+        issues: list[Issue] = []
         
-        match = re.search(r'### 調用缺失.*?(?=###|$)', content, re.DOTALL)
+        match = re.search(r'### 調用缺失(.*?)(?=###|\Z)', content, re.DOTALL)
         if not match:
             return issues
             
         section = match.group()
         
-        pattern = r'#### \d+\. (🔴|🟡|🔵) (\w+)\s+\*\*文件:\*\* `([^`]+)`'
+        pattern = r'#### \d+\. ([\U0001f534\U0001f7e1\U0001f535]) (\w+)\s+\*\*文件:\*\* `([^`]+)`'
         
         for match in re.finditer(pattern, section):
             emoji, function, file = match.groups()
@@ -197,15 +200,15 @@ class PracticalAnalyzer:
         
     def _parse_potential_missing(self, content: str) -> List[Issue]:
         """解析潛在連接缺失"""
-        issues = []
+        issues: list[Issue] = []
         
-        match = re.search(r'### 潛在連接缺失.*?(?=###|$)', content, re.DOTALL)
+        match = re.search(r'### 潛在連接缺失(.*?)(?=###|\Z)', content, re.DOTALL)
         if not match:
             return issues
             
         section = match.group()
         
-        pattern = r'#### \d+\. (🔴|🟡|🔵) (\w+) → (\w+)\s+\*\*源文件:\*\* `([^`]+)`'
+        pattern = r'#### \d+\. ([\U0001f534\U0001f7e1\U0001f535]) (\w+) → (\w+)\s+\*\*源文件:\*\* `([^`]+)`'
         
         for match in re.finditer(pattern, section):
             emoji, caller, callee, file = match.groups()
@@ -380,7 +383,7 @@ class PracticalAnalyzer:
             f.write("這些問題影響有限，可以根據實際情況決定是否修復。\n\n")
             f.write(f"**總計:** {len(medium_issues)} 個問題\n\n")
             
-            by_type = defaultdict(int)
+            by_type: dict[str, int] = defaultdict(int)
             for issue in medium_issues:
                 by_type[issue.problem_type] += 1
             
@@ -470,7 +473,7 @@ class PracticalAnalyzer:
             self._write_action_plan(f, issues)
             self._write_quick_start_guide(f, issues)
         
-        print(f"  ✅ 報告已保存")
+        print("  ✅ 報告已保存")
         
     def generate_quick_fix_list(self, issues: Dict[str, List[Issue]], output_file: str):
         """生成快速修復清單"""
@@ -495,7 +498,7 @@ class PracticalAnalyzer:
                     f.write(f"\n*... 還有 {len(issues['HIGH']) - 30} 個 HIGH 問題*\n")
                 f.write("\n")
                 
-        print(f"  ✅ 清單已保存")
+        print("  ✅ 清單已保存")
         
     def _get_timestamp(self) -> str:
         from datetime import datetime
@@ -548,7 +551,7 @@ def main():
     if high_count > 0:
         print(f"⚠️  發現 {high_count} 個 HIGH 問題 - 建議本週處理")
         
-    print(f"\n💡 提示: 寧可多列不漏，已確保所有重要問題都在報告中")
+    print("\n💡 提示: 寧可多列不漏，已確保所有重要問題都在報告中")
 
 
 if __name__ == "__main__":

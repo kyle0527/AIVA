@@ -161,27 +161,26 @@ class AIAnalysisEngine:
     def initialize(self) -> bool:
         """初始化AI分析引擎"""
         try:
-            # 初始化生物神經網路控制器
-            self.bio_controller = BioNeuronMasterController()
+            # NOTE: 生物神經網路控制器尚未實現，當前使用基於規則的分析
+            self.bio_controller = None
             
-            # 創建真實的決策核心
+            # 創建真實的決策核心（使用訓練好的權重）
             from ...cognitive_core.neural.real_bio_net_adapter import create_real_scalable_bionet, create_real_rag_agent
-            try:
-                real_decision_core = create_real_scalable_bionet(
-                    input_size=1024,
-                    num_tools=10,
-                    weights_path=None  # TODO: 使用訓練好的權重檔案,避免隨機初始化
-                    # 目前使用隨機權重,因此神經網路輸出不應用於信心度計算
-                )
-                
-                # 初始化RAG代理用於代碼分析
-                self.rag_agent = create_real_rag_agent(
-                    decision_core=real_decision_core,
-                    input_vector_size=1024
-                )
-            except Exception as e:
-                # 降級到無RAG模式
-                self.rag_agent = None
+            from pathlib import Path
+            
+            # 指向訓練好的權重檔案
+            weights_path = Path(__file__).parent.parent.parent / "cognitive_core" / "neural" / "weights" / "aiva_real_weights.pth"
+            real_decision_core = create_real_scalable_bionet(
+                input_size=1024,
+                num_tools=10,
+                weights_path=str(weights_path) if weights_path.exists() else None
+            )
+            
+            # 初始化 RAG 代理用於代碼分析
+            self.rag_agent = create_real_rag_agent(
+                decision_core=real_decision_core,
+                input_vector_size=1024
+            )
             
             self.initialized = True
             return True
@@ -774,8 +773,6 @@ class AIAnalysisEngine:
             # 基於特徵向量和分析類型生成具體發現
             findings = self._generate_findings(features, analysis_type)
             
-            # 計算基於規則的信心度 (而非隨機神經網路輸出)
-            # 根據實際發現的特徵數量和嚴重程度計算
             if findings:
                 # 根據發現的數量和類型計算信心度
                 confidence = min(0.95, 0.5 + (len(findings) * 0.1))

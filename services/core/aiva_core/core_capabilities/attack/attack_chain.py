@@ -49,7 +49,7 @@ class AttackChain:
         step_id: str,
         action: str,
         parameters: dict[str, Any],
-        depends_on: list[str] = None,
+        depends_on: list[str] | None = None,
     ):
         """添加攻擊步驟
 
@@ -57,7 +57,7 @@ class AttackChain:
             step_id: 步驟 ID
             action: 動作類型
             parameters: 參數
-            depends_on: 依賴的步驟列表
+            depends_on: 依賴的步驟列表（可選）
         """
         step = {
             "step_id": step_id,

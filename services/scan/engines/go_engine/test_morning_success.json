@@ -1,9 +1,0 @@
-{
-  "scan_id": "webgoat_ssrf_test",
-  "targets": [
-    "http://localhost:8080/WebGoat/SSRF/task1",
-    "http://localhost:8080/WebGoat/SSRF/task2"
-  ],
-  "concurrency": 5,
-  "timeout": 15
-}

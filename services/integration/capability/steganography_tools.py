@@ -60,11 +60,11 @@ class SteganographyTool:
     """Base steganography tool class - equivalent to HackingTool"""
     
     def __init__(self):
-        self.TITLE = ""
-        self.DESCRIPTION = ""
-        self.INSTALL_COMMANDS = []
-        self.RUN_COMMANDS = []
-        self.PROJECT_URL = ""
+        self.name = ""
+        self.description = ""
+        self.install_commands = []
+        self.run_commands = []
+        self.project_url = ""
         self.installable = True
         self.runnable = True
     
@@ -74,13 +74,13 @@ class SteganographyTool:
             return True  # Assume non-installable tools are available
             
         # For steganography tools, check specific commands
-        if self.TITLE == "SteganoHide":
+        if self.name == "SteganoHide":
             try:
                 result = subprocess.run(["which", "steghide"], capture_output=True, timeout=5)
                 return result.returncode == 0
             except Exception:
                 return False
-        elif self.TITLE == "StegnoCracker":
+        elif self.name == "StegnoCracker":
             try:
                 result = subprocess.run(["stegcracker", "--help"], capture_output=True, timeout=5)
                 return result.returncode == 0
@@ -92,17 +92,17 @@ class SteganographyTool:
     def install(self) -> bool:
         """Install tool"""
         if not self.installable:
-            console.print(f"[yellow]{self.TITLE} is not installable via this interface[/yellow]")
+            console.print(f"[yellow]{self.name} is not installable via this interface[/yellow]")
             return False
             
-        console.print(f"[cyan]Installing {self.TITLE}...[/cyan]")
+        console.print(f"[cyan]Installing {self.name}...[/cyan]")
         console.print("[yellow]⚠️  For authorized steganography analysis only![/yellow]")
         
-        if not Confirm.ask(f"Confirm install {self.TITLE}?"):
+        if not Confirm.ask(f"Confirm install {self.name}?"):
             return False
         
         success = True
-        for cmd in self.INSTALL_COMMANDS:
+        for cmd in self.install_commands:
             try:
                 console.print(f"[yellow]Executing: {cmd}[/yellow]")
                 result = subprocess.run(
@@ -128,21 +128,21 @@ class SteganographyTool:
                 break
         
         if success:
-            console.print(f"[green]✅ {self.TITLE} installed successfully[/green]")
+            console.print(f"[green]✅ {self.name} installed successfully[/green]")
         else:
-            console.print(f"[red]❌ {self.TITLE} installation failed[/red]")
+            console.print(f"[red]❌ {self.name} installation failed[/red]")
         
         return success
     
     def run(self) -> SteganographyResult:
         """Run tool"""
-        console.print(f"[bold green]🎭 Running {self.TITLE}[/bold green]")
+        console.print(f"[bold green]🎭 Running {self.name}[/bold green]")
         console.print("[yellow]⚠️  For authorized steganography analysis only![/yellow]")
         
         if not self.runnable:
-            console.print(f"[yellow]{self.TITLE} requires manual setup[/yellow]")
+            console.print(f"[yellow]{self.name} requires manual setup[/yellow]")
             return SteganographyResult(
-                tool_name=self.TITLE,
+                tool_name=self.name,
                 command="not_runnable",
                 start_time=datetime.now().isoformat(),
                 end_time=datetime.now().isoformat(),
@@ -151,9 +151,9 @@ class SteganographyTool:
                 error_details="Tool not runnable via CLI"
             )
         
-        if not Confirm.ask(f"Confirm run {self.TITLE}?"):
+        if not Confirm.ask(f"Confirm run {self.name}?"):
             return SteganographyResult(
-                tool_name=self.TITLE,
+                tool_name=self.name,
                 command="cancelled",
                 start_time=datetime.now().isoformat(),
                 end_time=datetime.now().isoformat(),
@@ -171,7 +171,7 @@ class SteganographyTool:
                 if isinstance(result, SteganographyResult):
                     return result
             else:
-                for cmd in self.RUN_COMMANDS:
+                for cmd in self.run_commands:
                     console.print(f"[yellow]Executing: {cmd}[/yellow]")
                     subprocess.run(cmd, shell=True)
         
@@ -180,8 +180,8 @@ class SteganographyTool:
             duration = (end_time - start_time).total_seconds()
             
             return SteganographyResult(
-                tool_name=self.TITLE,
-                command=str(self.RUN_COMMANDS),
+                tool_name=self.name,
+                command=str(self.run_commands),
                 start_time=start_time.isoformat(),
                 end_time=end_time.isoformat(),
                 duration=duration,
@@ -193,8 +193,8 @@ class SteganographyTool:
         duration = (end_time - start_time).total_seconds()
         
         return SteganographyResult(
-            tool_name=self.TITLE,
-            command=str(self.RUN_COMMANDS),
+            tool_name=self.name,
+            command=str(self.run_commands),
             start_time=start_time.isoformat(),
             end_time=end_time.isoformat(),
             duration=duration,
@@ -207,9 +207,9 @@ class SteganoHide(SteganographyTool):
     
     def __init__(self):
         super().__init__()
-        self.TITLE = "SteganoHide"
-        self.DESCRIPTION = "Hide and extract data in/from image and audio files using steganography"
-        self.INSTALL_COMMANDS = ["sudo apt-get install steghide -y"]
+        self.name = "SteganoHide"
+        self.description = "Hide and extract data in/from image and audio files using steganography"
+        self.install_commands = ["sudo apt-get install steghide -y"]
     
     def custom_run(self) -> SteganographyResult:
         """Custom run method - same as HackingTool"""
@@ -224,7 +224,7 @@ class SteganoHide(SteganographyTool):
         
         if choice == "99":
             return SteganographyResult(
-                tool_name=self.TITLE,
+                tool_name=self.name,
                 command="cancelled",
                 start_time=start_time.isoformat(),
                 end_time=datetime.now().isoformat(),
@@ -242,7 +242,7 @@ class SteganoHide(SteganographyTool):
                 result = subprocess.run(cmd, capture_output=True, text=True)
                 
                 return SteganographyResult(
-                    tool_name=self.TITLE,
+                    tool_name=self.name,
                     command=" ".join(cmd),
                     start_time=start_time.isoformat(),
                     end_time=datetime.now().isoformat(),
@@ -261,7 +261,7 @@ class SteganoHide(SteganographyTool):
                 result = subprocess.run(cmd, capture_output=True, text=True)
                 
                 return SteganographyResult(
-                    tool_name=self.TITLE,
+                    tool_name=self.name,
                     command=" ".join(cmd),
                     start_time=start_time.isoformat(),
                     end_time=datetime.now().isoformat(),
@@ -274,7 +274,7 @@ class SteganoHide(SteganographyTool):
                 
         except Exception as e:
             return SteganographyResult(
-                tool_name=self.TITLE,
+                tool_name=self.name,
                 command="error",
                 start_time=start_time.isoformat(),
                 end_time=datetime.now().isoformat(),
@@ -289,9 +289,9 @@ class StegnoCracker(SteganographyTool):
     
     def __init__(self):
         super().__init__()
-        self.TITLE = "StegnoCracker"
-        self.DESCRIPTION = "SteganoCracker uncovers hidden data inside files using brute-force utility"
-        self.INSTALL_COMMANDS = ["pip3 install stegcracker && pip3 install stegcracker -U --force-reinstall"]
+        self.name = "StegnoCracker"
+        self.description = "SteganoCracker uncovers hidden data inside files using brute-force utility"
+        self.install_commands = ["pip3 install stegcracker && pip3 install stegcracker -U --force-reinstall"]
     
     def custom_run(self) -> SteganographyResult:
         """Custom run method - same as HackingTool"""
@@ -305,7 +305,7 @@ class StegnoCracker(SteganographyTool):
             result = subprocess.run(cmd, capture_output=True, text=True, timeout=300)
             
             return SteganographyResult(
-                tool_name=self.TITLE,
+                tool_name=self.name,
                 command=" ".join(cmd),
                 start_time=start_time.isoformat(),
                 end_time=datetime.now().isoformat(),
@@ -318,7 +318,7 @@ class StegnoCracker(SteganographyTool):
             
         except subprocess.TimeoutExpired:
             return SteganographyResult(
-                tool_name=self.TITLE,
+                tool_name=self.name,
                 command=" ".join(cmd),
                 start_time=start_time.isoformat(),
                 end_time=datetime.now().isoformat(),
@@ -328,7 +328,7 @@ class StegnoCracker(SteganographyTool):
             )
         except Exception as e:
             return SteganographyResult(
-                tool_name=self.TITLE,
+                tool_name=self.name,
                 command="error",
                 start_time=start_time.isoformat(),
                 end_time=datetime.now().isoformat(),
@@ -343,17 +343,17 @@ class StegoCracker(SteganographyTool):
     
     def __init__(self):
         super().__init__()
-        self.TITLE = "StegoCracker"
-        self.DESCRIPTION = "StegoCracker lets you hide and retrieve data in image or audio files"
-        self.INSTALL_COMMANDS = [
+        self.name = "StegoCracker"
+        self.description = "StegoCracker lets you hide and retrieve data in image or audio files"
+        self.install_commands = [
             "sudo git clone https://github.com/W1LDN16H7/StegoCracker.git",
             "sudo chmod -R 755 StegoCracker"
         ]
-        self.RUN_COMMANDS = [
+        self.run_commands = [
             "cd StegoCracker && python3 -m pip install -r requirements.txt",
             "./install.sh"
         ]
-        self.PROJECT_URL = "https://github.com/W1LDN16H7/StegoCracker"
+        self.project_url = "https://github.com/W1LDN16H7/StegoCracker"
 
 
 class Whitespace(SteganographyTool):
@@ -361,23 +361,23 @@ class Whitespace(SteganographyTool):
     
     def __init__(self):
         super().__init__()
-        self.TITLE = "Whitespace"
-        self.DESCRIPTION = "Use whitespace and unicode characters for steganography"
-        self.INSTALL_COMMANDS = [
+        self.name = "Whitespace"
+        self.description = "Use whitespace and unicode characters for steganography"
+        self.install_commands = [
             "sudo git clone https://github.com/beardog108/snow10.git",
             "sudo chmod -R 755 snow10"
         ]
-        self.RUN_COMMANDS = ["cd snow10 && ./install.sh"]
-        self.PROJECT_URL = "https://github.com/beardog108/snow10"
+        self.run_commands = ["cd snow10 && ./install.sh"]
+        self.project_url = "https://github.com/beardog108/snow10"
 
 
 class SteganographyManager:
     """Steganography tools manager - equivalent to HackingToolsCollection"""
     
     def __init__(self):
-        self.TITLE = "Steganography Tools"
-        self.DESCRIPTION = "Data hiding and steganography analysis tools"
-        self.TOOLS = [
+        self.name = "Steganography Tools"
+        self.description = "Data hiding and steganography analysis tools"
+        self.tools = [
             SteganoHide(),
             StegnoCracker(),
             StegoCracker(),
@@ -386,7 +386,11 @@ class SteganographyManager:
         self.steganography_results = []
     
     def _get_attr(self, obj, *names, default=""):
-        """Get attribute with fallback"""
+        """獲取屬性（支持多種命名習慣）。
+        
+        嘗試多個可能的屬性名稱，以支持不同工具的命名規範。
+        這是兼容性處理，不是降級邏輯。
+        """
         for n in names:
             if hasattr(obj, n):
                 return getattr(obj, n)
@@ -399,7 +403,7 @@ class SteganographyManager:
         table.add_column("Description", style="purple")
         table.add_column("Project URL", style="purple", no_wrap=True)
 
-        for t in self.TOOLS:
+        for t in self.tools:
             title = self._get_attr(t, "TITLE", "Title", "title", default=t.__class__.__name__)
             desc = self._get_attr(t, "DESCRIPTION", "Description", "description", default="").strip().replace("\n", " ")
             url = self._get_attr(t, "PROJECT_URL", "PROJECT_URL", "project_url", "projectUrl", default="")
@@ -423,7 +427,7 @@ class SteganographyManager:
         table.add_column("Description", justify="left", style="white")
         table.add_column("Status", justify="center", style="cyan")
 
-        for i, tool in enumerate(self.TOOLS):
+        for i, tool in enumerate(self.tools):
             title = self._get_attr(tool, "TITLE", "Title", "title", default=tool.__class__.__name__)
             desc = self._get_attr(tool, "DESCRIPTION", "Description", "description", default="—")
             status = "✅" if tool.is_installed() else "❌"
@@ -438,8 +442,8 @@ class SteganographyManager:
         try:
             choice = int(Prompt.ask("[bold cyan]Select a tool to run[/bold cyan]", default="99"))
             
-            if 1 <= choice <= len(self.TOOLS):
-                selected = self.TOOLS[choice - 1]
+            if 1 <= choice <= len(self.tools):
+                selected = self.tools[choice - 1]
                 self._handle_tool_selection(selected)
             elif choice == 88:
                 self.pretty_print()
@@ -465,8 +469,8 @@ class SteganographyManager:
     
     def _display_tool_info(self, tool: SteganographyTool):
         """Display tool information"""
-        console.print(f"\n[bold green]Selected: {tool.TITLE}[/bold green]")
-        console.print(f"[cyan]Description: {tool.DESCRIPTION}[/cyan]")
+        console.print(f"\n[bold green]Selected: {tool.name}[/bold green]")
+        console.print(f"[cyan]Description: {tool.description}[/cyan]")
         console.print(f"[blue]Project URL: {getattr(tool, 'PROJECT_URL', 'N/A')}[/blue]")
     
     def _ensure_tool_installed(self, tool: SteganographyTool) -> bool:
@@ -474,31 +478,31 @@ class SteganographyManager:
         if not tool.installable or tool.is_installed():
             return True
         
-        console.print(f"[yellow]{tool.TITLE} is not installed[/yellow]")
+        console.print(f"[yellow]{tool.name} is not installed[/yellow]")
         if not Confirm.ask("Install now?"):
             return False
         
         if tool.install():
-            console.print(f"[green]{tool.TITLE} installed successfully![/green]")
+            console.print(f"[green]{tool.name} installed successfully![/green]")
             return True
         else:
-            console.print(f"[red]{tool.TITLE} installation failed![/red]")
+            console.print(f"[red]{tool.name} installation failed![/red]")
             return False
     
     def _execute_tool_if_confirmed(self, tool: SteganographyTool):
         """Execute tool if confirmed"""
-        if not Confirm.ask(f"Run {tool.TITLE}?"):
+        if not Confirm.ask(f"Run {tool.name}?"):
             return
         
         result = tool.run()
         self.steganography_results.append(result)
         
         if result.success:
-            console.print(f"[green]✅ {tool.TITLE} completed![/green]")
+            console.print(f"[green]✅ {tool.name} completed![/green]")
             if result.hidden_data:
                 console.print(f"[blue]Hidden data: {result.hidden_data}[/blue]")
         else:
-            console.print(f"[red]❌ {tool.TITLE} failed: {result.error_details}[/red]")
+            console.print(f"[red]❌ {tool.name} failed: {result.error_details}[/red]")
     
     def _show_steganography_results(self):
         """Show steganography analysis results"""
@@ -565,10 +569,10 @@ class SteganographyCapability(BaseCapability):
             
             elif command == "list_tools":
                 tools_info = []
-                for tool in self.manager.TOOLS:
+                for tool in self.manager.tools:
                     tools_info.append({
-                        "title": tool.TITLE,
-                        "description": tool.DESCRIPTION,
+                        "title": tool.name,
+                        "description": tool.description,
                         "project_url": getattr(tool, "PROJECT_URL", ""),
                         "installed": tool.is_installed()
                     })
@@ -583,7 +587,7 @@ class SteganographyCapability(BaseCapability):
                 if not tool_name:
                     return {"success": False, "error": "Missing tool_name parameter"}
                 
-                tool = next((t for t in self.manager.TOOLS if t.TITLE == tool_name), None)
+                tool = next((t for t in self.manager.tools if t.name == tool_name), None)
                 if not tool:
                     return {"success": False, "error": f"Tool {tool_name} not found"}
                 

@@ -3,6 +3,13 @@
 
 負責將 AI 生成的抽象攻擊計畫 (來自 BioNeuron) 轉換為
 一系列具體的可執行的 FunctionTaskPayload。
+
+**重構說明** (2025-12-26):
+- 修復FunctionTaskPayload參數錯誤
+- 所有task必須包含scan_id
+- 移除不存在的參數: module_name, function_name, config
+- 使用正確的參數: task_id, scan_id, target, context, strategy, test_config
+- 降低認知複雜度
 """
 
 import logging
@@ -11,397 +18,334 @@ from urllib.parse import urlparse
 import uuid
 
 from services.aiva_common.schemas import AivaMessage
-
-# 遵循 aiva_common 單一事實來源原則 - 統一使用標準模組
 from services.aiva_common.schemas.tasks import (
     FunctionTaskContext,
     FunctionTaskPayload,
     FunctionTaskTarget,
+    FunctionTaskTestConfig,
 )
 
 logger = logging.getLogger(__name__)
 
 
 class AttackPlanMapper:
-    """將 AI 決策映射到具體執行任務。
-    """
+    """將 AI 決策映射到具體執行任務"""
 
-    def __init__(self):
+    def __init__(self, default_scan_id: str | None = None):
+        """初始化攻擊計畫映射器
+        
+        Args:
+            default_scan_id: 預設scan ID，如果scan_context中沒有提供
+        """
         logger.info("AttackPlanMapper initialized.")
-        # 可能需要初始化資源，例如工具註冊表、目標信息等
+        self.default_scan_id = default_scan_id or self._generate_scan_id()
 
     async def map_decision_to_tasks(
         self, ai_decision: AivaMessage, scan_context: dict[str, Any]
     ) -> list[FunctionTaskPayload]:
-        """將單個 AI 決策步驟轉換為一個或多個 FunctionTaskPayload。
-
+        """將單個 AI 決策步驟轉換為一個或多個 FunctionTaskPayload
+        
         Args:
-            ai_decision: AI 生成的決策對象。
-            scan_context: 當前的掃描上下文信息 (例如目標 URL、先前結果等)。
-
+            ai_decision: AI 生成的決策對象
+            scan_context: 掃描上下文，必須包含：
+                - scan_id: 掃描ID (可選，使用default_scan_id)
+                - target_url: 目標URL
+                - session_id: 會話ID (可選)
+                
         Returns:
-            一個包含具體任務 Payload 的列表。
+            FunctionTaskPayload列表
         """
         tasks: list[FunctionTaskPayload] = []
-        logger.info(f"Mapping AI decision: {ai_decision}")
+        
+        # 獲取或生成scan_id
+        scan_id = scan_context.get("scan_id", self.default_scan_id)
+        if not scan_id.startswith("scan_"):
+            scan_id = f"scan_{scan_id}"
+        
+        logger.info(f"Mapping AI decision: {ai_decision.header.message_id}")
 
-        # --- 核心映射邏輯 ---
-        # 1. 解析 ai_decision 中的意圖、目標、使用的工具/技術。
-        # 2. 根據意圖選擇合適的 Aiva 功能模組 (Function Module)。
-        # 3. 從 scan_context 和 ai_decision 中提取目標信息 (URL, params, headers...)。
-        # 4. 構建 FunctionTaskTarget。
-        # 5. 構建 FunctionTaskContext (可能包含先前步驟的結果)。
-        # 6. 構建 FunctionTaskPayload，指定 module_name、target、context、策略等。
-        # 7. 如果一個決策需要多個步驟，則生成多個 Task。
-
-        # 示例：基本映射邏輯
         try:
-            # 假設 ai_decision 包含工具選擇和參數
-            if hasattr(ai_decision, "payload") and ai_decision.payload:
-                decision_data = ai_decision.payload
+            if not hasattr(ai_decision, "payload") or not ai_decision.payload:
+                logger.warning(f"AI decision {ai_decision.header.message_id} has no payload")
+                return tasks
 
-                # 根據決策類型進行映射
-                if decision_data.get("action_type") == "vulnerability_scan":
-                    target_info = decision_data.get("target", {})
-                    if target_info.get("url"):
-                        # 創建掃描任務
-                        target = FunctionTaskTarget(
-                            url=target_info.get("url"),
-                            method=target_info.get("method", "GET"),
-                            params=target_info.get("params"),
-                            data=target_info.get("data"),
-                            headers=scan_context.get("base_headers", {}),
-                        )
+            decision_data = ai_decision.payload
+            action_type = decision_data.get("action_type", "")
 
-                        context = FunctionTaskContext(
-                            session_id=scan_context.get("session_id"),
-                            parent_task_id=scan_context.get("parent_task_id"),
-                            scan_config=scan_context.get("scan_config", {}),
-                        )
-
-                        # 根據漏洞類型選擇模組
-                        vuln_type = decision_data.get("vulnerability_type", "general")
-                        module_name = self._map_vulnerability_to_module(vuln_type)
-
-                        payload = FunctionTaskPayload(
-                            task_id=f"task_{ai_decision.header.message_id}_{vuln_type}",
-                            module_name=module_name,
-                            target=target,
-                            context=context,
-                            strategy=decision_data.get("strategy", "NORMAL"),
-                        )
-                        tasks.append(payload)
-                        logger.info(
-                            f"Generated {vuln_type} task for decision {ai_decision.header.message_id}"
-                        )
-
-                elif decision_data.get("action_type") == "information_gathering":
-                    # 信息收集任務映射
-                    tasks.extend(
-                        await self._create_info_gathering_tasks(
-                            ai_decision, scan_context
-                        )
-                    )
-
-                elif decision_data.get("action_type") == "exploitation":
-                    # 漏洞利用任務映射
-                    tasks.extend(
-                        await self._create_exploitation_tasks(ai_decision, scan_context)
-                    )
+            # 根據決策類型路由
+            if action_type == "vulnerability_scan":
+                tasks.extend(self._create_vulnerability_scan_task(
+                    ai_decision, scan_context, scan_id
+                ))
+            elif action_type == "information_gathering":
+                tasks.extend(self._create_info_gathering_tasks(
+                    scan_context, scan_id
+                ))
+            elif action_type == "exploitation":
+                tasks.extend(self._create_exploitation_tasks(
+                    scan_context, scan_id
+                ))
+            else:
+                logger.warning(f"Unknown action_type: {action_type}")
 
         except Exception as e:
             logger.error(
-                f"Error mapping decision {getattr(ai_decision, 'header', {}).get('message_id', 'unknown')}: {e}",
+                f"Error mapping decision {ai_decision.header.message_id}: {e}",
                 exc_info=True,
             )
 
         if not tasks:
             logger.warning(
-                f"No tasks generated for AI decision: {ai_decision}. Decision might be informational or mapping logic is missing."
+                f"No tasks generated for AI decision: {ai_decision.header.message_id}"
             )
 
         return tasks
 
-    def _map_vulnerability_to_module(self, vuln_type: str) -> str:
-        """將漏洞類型映射到對應的模組"""
-        mapping = {
-            "sqli": "FUNC_SQLI",
-            "xss": "FUNC_XSS",
-            "ssrf": "FUNC_SSRF",
-            "client_auth_bypass": "FUNC_CLIENT_AUTH_BYPASS",
-            "rce": "FUNC_RCE",
-            "lfi": "FUNC_LFI",
-            "general": "FUNC_GENERAL_SCAN",
-        }
-        return mapping.get(vuln_type, "FUNC_GENERAL_SCAN")
+    def _create_vulnerability_scan_task(
+        self,
+        ai_decision: AivaMessage,
+        scan_context: dict[str, Any],
+        scan_id: str
+    ) -> list[FunctionTaskPayload]:
+        """創建漏洞掃描任務"""
+        tasks = []
+        decision_data = ai_decision.payload
+        target_info = decision_data.get("target", {})
+        
+        if not target_info.get("url"):
+            logger.warning("No URL in target_info, skipping task creation")
+            return tasks
 
-    async def _create_info_gathering_tasks(
-        self, ai_decision: AivaMessage, scan_context: dict[str, Any]
+        # 創建目標
+        target = FunctionTaskTarget(
+            url=target_info.get("url"),
+            method=target_info.get("method", "GET"),
+            headers=scan_context.get("base_headers", {}),
+        )
+
+        # 創建上下文
+        context = FunctionTaskContext(
+            environment="default",
+        )
+
+        # 創建測試配置
+        vuln_type = decision_data.get("vulnerability_type", "general")
+        test_config = self._create_test_config_for_vuln(vuln_type)
+
+        # 創建payload
+        task_id = f"task_{ai_decision.header.message_id}_{vuln_type}"
+        payload = FunctionTaskPayload(
+            task_id=task_id,
+            scan_id=scan_id,
+            priority=self._get_priority_for_vuln(vuln_type),
+            target=target,
+            context=context,
+            strategy=decision_data.get("strategy", "full"),
+            test_config=test_config,
+        )
+        
+        tasks.append(payload)
+        logger.info(f"Generated {vuln_type} task: {task_id}")
+        
+        return tasks
+
+    def _create_info_gathering_tasks(
+        self, scan_context: dict[str, Any], scan_id: str
     ) -> list[FunctionTaskPayload]:
         """創建信息收集任務
-
-        基於 OWASP WSTG 4.1 Information Gathering 和 MITRE ATT&CK TA0007 Discovery 實現
-        包含：Web指紋識別、目錄枚舉、技術堆疊探測、端點發現等
+        
+        基於 OWASP WSTG 4.1 Information Gathering
         """
         tasks = []
         target_url = scan_context.get("target_url", "")
+        
+        if not target_url:
+            logger.warning("No target_url in scan_context")
+            return tasks
 
         logger.info(f"Creating information gathering tasks for {target_url}")
+        
+        # 創建通用的目標和上下文
+        base_target = FunctionTaskTarget(url=target_url, method="GET")
+        base_context = FunctionTaskContext(
+            environment="info_gathering"
+        )
 
-        # 1. Web Server Fingerprinting (WSTG-INFO-02)
-        if target_url:
-            fingerprint_task = FunctionTaskPayload(
-                task_id=self._generate_task_id("info_fingerprint"),
-                function_name="web_fingerprinting",
-                target=FunctionTaskTarget(url=target_url, method="GET"),
-                strategy="comprehensive",
-                config={
-                    "techniques": ["headers", "error_pages", "default_files"],
-                    "timeout": 30,
-                    "follow_redirects": True,
-                },
-            )
-            tasks.append(fingerprint_task)
+        # 1. Web Server Fingerprinting
+        tasks.append(FunctionTaskPayload(
+            task_id=self._generate_task_id("info_fingerprint"),
+            scan_id=scan_id,
+            priority=7,
+            target=base_target,
+            context=base_context,
+            strategy="full",
+            test_config=FunctionTaskTestConfig(),
+        ))
 
-        # 2. Directory and File Enumeration (WSTG-INFO-04)
-        if target_url:
-            directory_task = FunctionTaskPayload(
-                task_id=self._generate_task_id("info_directory"),
-                function_name="directory_enumeration",
-                target=FunctionTaskTarget(url=target_url, method="GET"),
-                strategy="discovery",
-                config={
-                    "wordlists": ["common", "admin", "backup"],
-                    "extensions": [".php", ".asp", ".aspx", ".jsp", ".html"],
-                    "max_depth": 3,
-                    "threads": 10,
-                },
-            )
-            tasks.append(directory_task)
+        # 2. Directory Enumeration
+        tasks.append(FunctionTaskPayload(
+            task_id=self._generate_task_id("info_directory"),
+            scan_id=scan_id,
+            priority=6,
+            target=base_target,
+            context=base_context,
+            strategy="full",
+            test_config=FunctionTaskTestConfig(),
+        ))
 
-        # 3. Technology Stack Detection (WSTG-INFO-08/09)
-        if target_url:
-            tech_stack_task = FunctionTaskPayload(
-                task_id=self._generate_task_id("info_techstack"),
-                function_name="technology_detection",
-                target=FunctionTaskTarget(url=target_url, method="GET"),
-                strategy="passive",
-                config={
-                    "detect": ["framework", "cms", "javascript", "server", "database"],
-                    "passive_only": True,
-                    "include_versions": True,
-                },
-            )
-            tasks.append(tech_stack_task)
+        # 3. Technology Detection
+        tasks.append(FunctionTaskPayload(
+            task_id=self._generate_task_id("info_techstack"),
+            scan_id=scan_id,
+            priority=8,
+            target=base_target,
+            context=base_context,
+            strategy="full",
+            test_config=FunctionTaskTestConfig(),
+        ))
 
-        # 4. Entry Points Identification (WSTG-INFO-06)
-        if target_url:
-            entry_points_task = FunctionTaskPayload(
-                task_id=self._generate_task_id("info_entrypoints"),
-                function_name="entry_point_discovery",
-                target=FunctionTaskTarget(url=target_url, method="GET"),
-                strategy="comprehensive",
-                config={
-                    "scan_forms": True,
-                    "scan_parameters": True,
-                    "scan_cookies": True,
-                    "scan_headers": True,
-                    "spider_depth": 2,
-                },
-            )
-            tasks.append(entry_points_task)
+        # 4. Entry Points Discovery
+        tasks.append(FunctionTaskPayload(
+            task_id=self._generate_task_id("info_entrypoints"),
+            scan_id=scan_id,
+            priority=7,
+            target=base_target,
+            context=base_context,
+            strategy="full",
+            test_config=FunctionTaskTestConfig(),
+        ))
 
-        # 5. Subdomain Enumeration (MITRE ATT&CK T1583.001)
+        # 5. Subdomain Enumeration
         domain = self._extract_domain(target_url)
         if domain:
-            subdomain_task = FunctionTaskPayload(
+            tasks.append(FunctionTaskPayload(
                 task_id=self._generate_task_id("info_subdomains"),
-                function_name="subdomain_enumeration",
-                target=FunctionTaskTarget(url=domain, method="DNS"),
-                strategy="passive",
-                config={
-                    "techniques": [
-                        "certificate_transparency",
-                        "dns_brute",
-                        "search_engines",
-                    ],
-                    "wordlist_size": "medium",
-                    "include_wildcards": True,
-                },
-            )
-            tasks.append(subdomain_task)
+                scan_id=scan_id,
+                priority=6,
+                target=FunctionTaskTarget(url=domain, method="GET"),
+                context=base_context,
+                strategy="full",
+                test_config=FunctionTaskTestConfig(),
+            ))
 
         logger.info(f"Created {len(tasks)} information gathering tasks")
         return tasks
 
-    async def _create_exploitation_tasks(
-        self, ai_decision: AivaMessage, scan_context: dict[str, Any]
+    def _create_exploitation_tasks(
+        self, scan_context: dict[str, Any], scan_id: str
     ) -> list[FunctionTaskPayload]:
         """創建漏洞利用任務
-
-        基於已發現的漏洞信息，創建對應的利用任務
-        遵循 OWASP 測試指南和負責任披露原則
+        
+        基於已發現的漏洞信息創建對應的利用任務
         """
         tasks = []
         target_url = scan_context.get("target_url", "")
         findings = scan_context.get("findings", [])
 
+        if not target_url:
+            logger.warning("No target_url in scan_context")
+            return tasks
+
         logger.info(f"Creating exploitation tasks for {len(findings)} findings")
 
-        for finding in findings:
-            vuln_type = finding.get("vulnerability_type", "").lower()
-            severity = finding.get("severity", "medium").lower()
+        # 根據嚴重程度過濾
+        high_severity_findings = [
+            f for f in findings 
+            if f.get("severity", "").lower() in ["high", "critical", "medium"]
+        ]
 
-            # 僅對高危和中危漏洞創建利用任務
-            if severity not in ["high", "critical", "medium"]:
-                continue
-
-            # 1. IDOR 漏洞利用
-            if "idor" in vuln_type or "direct_object" in vuln_type:
-                idor_task = FunctionTaskPayload(
-                    task_id=self._generate_task_id("exploit_idor"),
-                    function_name="function_idor",
-                    target=FunctionTaskTarget(
-                        url=finding.get("url", target_url),
-                        method=finding.get("method", "GET"),
-                    ),
-                    strategy="exploit",
-                    config={
-                        "resource_id": finding.get("resource_id"),
-                        "test_variations": 5,
-                        "multi_user_test": True,
-                        "privilege_escalation": True,
-                    },
-                )
-                tasks.append(idor_task)
-
-            # 2. SQL Injection 利用
-            elif "sql" in vuln_type or "injection" in vuln_type:
-                sqli_task = FunctionTaskPayload(
-                    task_id=self._generate_task_id("exploit_sqli"),
-                    function_name="sql_injection",
-                    target=FunctionTaskTarget(
-                        url=finding.get("url", target_url),
-                        method=finding.get("method", "POST"),
-                    ),
-                    strategy="exploit",
-                    config={
-                        "parameter": finding.get("parameter"),
-                        "injection_type": finding.get("injection_type", "boolean"),
-                        "database_type": finding.get("database", "mysql"),
-                        "payload_level": 2,  # 中等侵入性
-                    },
-                )
-                tasks.append(sqli_task)
-
-            # 3. XSS 利用
-            elif "xss" in vuln_type or "script" in vuln_type:
-                xss_task = FunctionTaskPayload(
-                    task_id=self._generate_task_id("exploit_xss"),
-                    function_name="xss_exploitation",
-                    target=FunctionTaskTarget(
-                        url=finding.get("url", target_url),
-                        method=finding.get("method", "GET"),
-                    ),
-                    strategy="proof_of_concept",
-                    config={
-                        "xss_type": finding.get("xss_type", "reflected"),
-                        "parameter": finding.get("parameter"),
-                        "context": finding.get("context", "html"),
-                        "payload_complexity": "medium",
-                    },
-                )
-                tasks.append(xss_task)
-
-            # 4. 認證繞過利用
-            elif "auth" in vuln_type or "bypass" in vuln_type:
-                auth_task = FunctionTaskPayload(
-                    task_id=self._generate_task_id("exploit_auth"),
-                    function_name="function_authn_go",
-                    target=FunctionTaskTarget(
-                        url=finding.get("url", target_url), method="POST"
-                    ),
-                    strategy="bypass",
-                    config={
-                        "techniques": [
-                            "brute_force",
-                            "weak_credentials",
-                            "token_manipulation",
-                        ],
-                        "credential_lists": ["common", "default"],
-                        "rate_limit_bypass": True,
-                    },
-                )
-                tasks.append(auth_task)
-
-            # 5. JWT 相關漏洞利用
-            elif "jwt" in vuln_type or "token" in vuln_type:
-                jwt_task = FunctionTaskPayload(
-                    task_id=self._generate_task_id("exploit_jwt"),
-                    function_name="jwt_confusion",
-                    target=FunctionTaskTarget(
-                        url=finding.get("url", target_url), method="GET"
-                    ),
-                    strategy="token_manipulation",
-                    config={
-                        "attacks": ["none_algorithm", "weak_secret", "key_confusion"],
-                        "token": finding.get("token"),
-                        "target_claims": ["sub", "role", "admin"],
-                    },
-                )
-                tasks.append(jwt_task)
-
-            # 6. GraphQL 授權繞過
-            elif "graphql" in vuln_type:
-                graphql_task = FunctionTaskPayload(
-                    task_id=self._generate_task_id("exploit_graphql"),
-                    function_name="graphql_authz",
-                    target=FunctionTaskTarget(
-                        url=finding.get("url", target_url), method="POST"
-                    ),
-                    strategy="authorization_bypass",
-                    config={
-                        "query_depth": 5,
-                        "introspection": True,
-                        "field_suggestions": True,
-                        "batch_queries": True,
-                    },
-                )
-                tasks.append(graphql_task)
-
-        # 7. 通用漏洞掃描 (如果沒有具體發現)
-        if not findings and target_url:
-            comprehensive_task = FunctionTaskPayload(
-                task_id=self._generate_task_id("exploit_comprehensive"),
-                function_name="comprehensive_scan",
-                target=FunctionTaskTarget(url=target_url, method="GET"),
-                strategy="safe_exploitation",
-                config={
-                    "modules": ["idor", "xss", "sqli", "auth", "jwt"],
-                    "intensity": "medium",
-                    "safe_mode": True,
-                    "proof_of_concept_only": True,
-                },
+        # 為每個高危發現創建利用任務
+        for finding in high_severity_findings:
+            task = self._create_exploitation_task_for_finding(
+                finding, target_url, scan_id, scan_context
             )
-            tasks.append(comprehensive_task)
+            if task:
+                tasks.append(task)
+
+        # 如果沒有發現，創建通用掃描任務
+        if not findings and target_url:
+            tasks.append(self._create_comprehensive_scan_task(
+                target_url, scan_id, scan_context
+            ))
 
         logger.info(f"Created {len(tasks)} exploitation tasks")
         return tasks
 
+    def _create_exploitation_task_for_finding(
+        self,
+        finding: dict[str, Any],
+        default_url: str,
+        scan_id: str,
+        scan_context: dict[str, Any]
+    ) -> FunctionTaskPayload | None:
+        """為單個發現創建利用任務"""
+        vuln_type = finding.get("vulnerability_type", "").lower()
+        
+        # 創建目標
+        target = FunctionTaskTarget(
+            url=finding.get("url", default_url),
+            method=finding.get("method", "GET"),
+        )
+        
+        # 創建上下文
+        context = FunctionTaskContext(
+            environment="exploitation",
+        )
+        
+        # 根據漏洞類型創建測試配置
+        test_config = self._create_test_config_for_exploitation(finding)
+        
+        # 確定策略
+        strategy = self._determine_exploitation_strategy(vuln_type)
+        
+        # 確定優先級
+        severity = finding.get("severity", "medium").lower()
+        priority = {"critical": 10, "high": 9, "medium": 6}.get(severity, 5)
+        
+        return FunctionTaskPayload(
+            task_id=self._generate_task_id(f"exploit_{vuln_type}"),
+            scan_id=scan_id,
+            priority=priority,
+            target=target,
+            context=context,
+            strategy=strategy,
+            test_config=test_config,
+        )
+
+    def _create_comprehensive_scan_task(
+        self, target_url: str, scan_id: str
+    ) -> FunctionTaskPayload:
+        """創建通用掃描任務"""
+        return FunctionTaskPayload(
+            task_id=self._generate_task_id("exploit_comprehensive"),
+            scan_id=scan_id,
+            priority=5,
+            target=FunctionTaskTarget(url=target_url, method="GET"),
+            context=FunctionTaskContext(
+                environment="exploitation"
+            ),
+            strategy="full",
+            test_config=FunctionTaskTestConfig(),
+        )
+
     async def map_entire_plan(
         self, attack_plan: list[AivaMessage], initial_context: dict[str, Any]
     ) -> list[FunctionTaskPayload]:
-        """將整個 AI 攻擊計畫 (一系列決策) 映射為任務列表。
-
+        """將整個 AI 攻擊計畫映射為任務列表
+        
         Args:
-            attack_plan: AI 生成的包含多個決策步驟的計畫。
-            initial_context: 初始掃描上下文。
-
+            attack_plan: AI 生成的決策步驟列表
+            initial_context: 初始掃描上下文
+            
         Returns:
-            一個包含所有計畫步驟對應任務的列表。
+            所有任務的列表
         """
         all_tasks: list[FunctionTaskPayload] = []
         current_context = initial_context.copy()
+
+        # 確保有scan_id
+        if "scan_id" not in current_context:
+            current_context["scan_id"] = self.default_scan_id
 
         logger.info(f"Mapping entire attack plan with {len(attack_plan)} steps.")
 
@@ -410,7 +354,7 @@ class AttackPlanMapper:
             step_tasks = await self.map_decision_to_tasks(decision, current_context)
             all_tasks.extend(step_tasks)
 
-            # 更新上下文以便後續步驟使用
+            # 更新上下文
             if step_tasks:
                 current_context["previous_task_ids"] = [
                     task.task_id for task in step_tasks
@@ -420,9 +364,15 @@ class AttackPlanMapper:
         logger.info(f"Generated {len(all_tasks)} tasks from the attack plan.")
         return all_tasks
 
+    # ==================== 輔助方法 ====================
+
     def _generate_task_id(self, prefix: str) -> str:
-        """生成唯一的任務 ID"""
-        return f"{prefix}_{uuid.uuid4().hex[:8]}"
+        """生成唯一的任務 ID (符合task_前綴要求)"""
+        return f"task_{prefix}_{uuid.uuid4().hex[:8]}"
+
+    def _generate_scan_id(self) -> str:
+        """生成掃描ID (符合scan_前綴要求)"""
+        return f"scan_{uuid.uuid4().hex[:12]}"
 
     def _extract_domain(self, url: str) -> str | None:
         """從 URL 中提取域名"""
@@ -432,3 +382,56 @@ class AttackPlanMapper:
         except Exception as e:
             logger.warning(f"Failed to extract domain from {url}: {e}")
             return None
+
+    def _create_test_config_for_vuln(self, vuln_type: str) -> FunctionTaskTestConfig:
+        """根據漏洞類型創建測試配置"""
+        # 基本配置
+        config = FunctionTaskTestConfig()
+        
+        # 根據漏洞類型定制
+        if "xss" in vuln_type:
+            config.payloads = ["basic", "encoded", "bypass"]
+            config.blind_xss = True
+            config.dom_testing = True
+        elif "sql" in vuln_type:
+            config.payloads = ["boolean", "time", "error"]
+        
+        return config
+
+    def _create_test_config_for_exploitation(
+        self, finding: dict[str, Any]
+    ) -> FunctionTaskTestConfig:
+        """根據漏洞類型和發現信息創建利用測試配置"""
+        config = FunctionTaskTestConfig()
+        
+        # 從finding中提取自定義payload
+        if finding.get("suggested_payloads"):
+            config.custom_payloads = finding["suggested_payloads"]
+        
+        return config
+
+    def _get_priority_for_vuln(self, vuln_type: str) -> int:
+        """根據漏洞類型確定優先級 (1-10)"""
+        priority_map = {
+            "sqli": 9,
+            "xss": 7,
+            "rce": 10,
+            "ssrf": 8,
+            "idor": 8,
+            "lfi": 8,
+            "auth": 9,
+            "jwt": 8,
+            "general": 5,
+        }
+        return priority_map.get(vuln_type, 5)
+
+    def _determine_exploitation_strategy(self, vuln_type: str) -> str:
+        """根據漏洞類型確定利用策略"""
+        strategy_map = {
+            "idor": "full",
+            "sqli": "full",
+            "xss": "full",
+            "auth": "full",
+            "jwt": "full",
+        }
+        return strategy_map.get(vuln_type, "full")

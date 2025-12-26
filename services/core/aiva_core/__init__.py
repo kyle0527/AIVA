@@ -388,7 +388,7 @@ from .service_backbone.coordination.core_service_coordinator import (
 from .cognitive_core.decision.skill_graph import AIVASkillGraph, skill_graph
 
 # 從核心組件導入
-from .core_capabilities.dialog.assistant import AIVADialogAssistant, dialog_assistant
+from .core_capabilities.dialog.assistant import AIVACommandProcessor, get_dialog_assistant
 from .task_planning.planner.execution_planner import ExecutionPlanner, get_execution_planner
 
 # capability_evaluator 現在使用 aiva_common.ai.capability_evaluator 統一實現
@@ -408,7 +408,7 @@ __all__ = [
     "is_feature_enabled",
     "get_migration_phase",
     # 新增核心組件 (附件要求實現)
-    "AIVADialogAssistant",
+    "AIVACommandProcessor",
     "dialog_assistant",
     "AIVASkillGraph",
     "skill_graph",

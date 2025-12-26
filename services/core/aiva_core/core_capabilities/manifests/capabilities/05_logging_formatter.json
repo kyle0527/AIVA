@@ -1,0 +1,91 @@
+{
+  "meta": {
+    "flow_id": 5,
+    "tool_name": "Logging Formatter - Event Processing",
+    "description": "日誌格式化處理器，格式化和處理系統事件日誌（6 flows 入口點）",
+    "version": "1.0.0",
+    "language": "python",
+    "module": "service_backbone",
+    "tags": ["logging", "formatter", "events"]
+  },
+  "ai_cognitive": {
+    "primary_capability": "log_processing",
+    "risk_level": "low",
+    "tags": {
+      "required": ["logging", "format"],
+      "boost": ["monitoring", "debugging", "trace"],
+      "exclude": ["write", "destructive"]
+    },
+    "cognitive_insights": {
+      "適用場景": "系統事件記錄、錯誤追蹤、審計日誌",
+      "決策考量": "支援多種日誌級別和格式",
+      "風險評估": "只讀操作，用於可觀測性"
+    }
+  },
+  "execution": {
+    "binary_path": "python",
+    "command_template": "python -m services.core.aiva_core.service_backbone.logging.logging_formatter format --message '{message}' --level {log_level} --format {output_format}",
+    "timeout_seconds": 5,
+    "working_directory": "C:/D/fold7/AIVA-git",
+    "environment_variables": {}
+  },
+  "parameters": {
+    "context_mapping": {
+      "message": "log_message"
+    },
+    "tunable": {
+      "log_level": {
+        "type": "string",
+        "description": "日誌級別：低強度=INFO, 中強度=WARNING, 高強度=ERROR",
+        "min": 1,
+        "max": 5,
+        "mapping_strategy": "linear",
+        "value_map": {
+          "1": "DEBUG",
+          "2": "INFO",
+          "3": "WARNING",
+          "4": "ERROR",
+          "5": "CRITICAL"
+        }
+      },
+      "output_format": {
+        "type": "string",
+        "description": "輸出格式：低強度=簡潔, 高強度=詳細JSON",
+        "min": 1,
+        "max": 3,
+        "mapping_strategy": "linear",
+        "value_map": {
+          "1": "simple",
+          "2": "structured",
+          "3": "json"
+        }
+      }
+    }
+  },
+  "examples": [
+    {
+      "scenario": "簡單INFO日誌",
+      "context_data": {
+        "log_message": "System started successfully"
+      },
+      "ai_intensity": 0.3,
+      "expected_command": "python -m services.core.aiva_core.service_backbone.logging.logging_formatter format --message 'System started successfully' --level 2 --format simple"
+    },
+    {
+      "scenario": "結構化WARNING日誌",
+      "context_data": {
+        "log_message": "High memory usage detected"
+      },
+      "ai_intensity": 0.6,
+      "expected_command": "python -m services.core.aiva_core.service_backbone.logging.logging_formatter format --message 'High memory usage detected' --level 3 --format structured"
+    },
+    {
+      "scenario": "詳細ERROR日誌",
+      "context_data": {
+        "log_message": "Database connection failed"
+      },
+      "ai_intensity": 0.9,
+      "expected_command": "python -m services.core.aiva_core.service_backbone.logging.logging_formatter format --message 'Database connection failed' --level 4 --format json"
+    }
+  ]
+}

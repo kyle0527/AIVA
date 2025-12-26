@@ -9,41 +9,10 @@ from typing import Any
 import numpy as np
 import structlog
 
-# 使用統一的可選依賴管理框架
-from utilities.optional_deps import deps
+# 直接導入pandas - 缺少依賴時應明確報錯，不使用降級邏輯
+import pandas as pd
 
 from services.aiva_common.enums import AccessDecision
-
-# 註冊 pandas 依賴
-deps.register("pandas", "pandas")
-
-# 可選 pandas 導入
-if deps.is_available("pandas"):
-    import pandas as pd
-else:
-    # Mock pandas DataFrame
-    class MockDataFrame:
-        def __init__(self, data=None):
-            self.data = data or []
-            
-        def __len__(self):
-            return len(self.data)
-            
-        def to_dict(self, orient='records'):
-            del orient  # 避免未使用參數警告
-            return self.data
-            
-        def to_json(self, *args, **kwargs):
-            import json
-            return json.dumps(self.data)
-            
-        def empty(self):
-            return len(self.data) == 0
-    
-    class MockPandas:
-        DataFrame = MockDataFrame
-    
-    pd = MockPandas()
 
 logger = structlog.get_logger(__name__)
 

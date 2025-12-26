@@ -135,15 +135,14 @@ class RealScalableBioNet:
                 
         except Exception as e:
             logger.error(f"真實AI前向傳播失敗: {e}")
-            # 降級到簡單隨機輸出
-            return self._fallback_forward(x)
-    
-    def _fallback_forward(self, x: NDArray) -> NDArray:
-        """降級方案 - 簡單的前向傳播"""
-        # 創建隨機但一致的輸出
-        rng = np.random.default_rng(seed=hash(str(x.tobytes())) % 2**32)
-        output = rng.random((x.shape[0] if x.ndim > 1 else 1, self.num_tools))
-        return self._softmax(output)
+            # 移除降級邏輯 - 前向傳播失敗時應明確報錯
+            raise RuntimeError(
+                f"神經網絡前向傳播失敗: {e}\n"
+                "請檢查：\n"
+                "1. 輸入數據格式是否正確\n"
+                "2. 模型是否正確初始化\n"
+                "3. 設備(CPU/GPU)配置是否正確"
+            ) from e
     
     def _softmax(self, x: NDArray) -> NDArray:
         """Softmax 激活函數 - 向後相容"""

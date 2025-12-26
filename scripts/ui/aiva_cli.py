@@ -118,12 +118,12 @@ async def handle_attack(command: str):
     else:
         print(f"\nAI 攻擊指令: {command}\n")
     
-    # 初始化 AI 對話助理
-    assistant = AIVADialogAssistant()
+    # 初始化 AI 命令處理器
+    processor = AIVACommandProcessor()
     
     try:
         # AI 處理指令並執行攻擊
-        response = await assistant.process_user_input(command)
+        response = await processor.process_user_input(command)
         
         if RICH_AVAILABLE and console:
             console.print("\n[cyan]AI Response:[/cyan]")  # type: ignore[union-attr]

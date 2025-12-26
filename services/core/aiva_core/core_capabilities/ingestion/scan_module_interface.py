@@ -240,7 +240,7 @@ class ScanModuleInterface:
             f"(scan_id={scan_id}, engines={selected_engines}, max_depth={max_depth})"
         )
 
-    async def process_phase0_result(
+    def process_phase0_result(
         self, payload: Phase0CompletedPayload
     ) -> dict[str, Any]:
         """處理 Phase0 結果

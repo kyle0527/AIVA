@@ -1,9 +1,10 @@
 # 📋 Task Planning - 任務規劃系統
 
-> **版本**: v2.1.2  
+> **版本**: v2.2.0  
 > **狀態**: ✅ 生產就緒  
-> **最後更新**: 2025-12-10  
-> **角色**: AIVA 的智能任務規劃和執行引擎
+> **最後更新**: 2025-12-21  
+> **角色**: AIVA 的智能任務編排和協調引擎  
+> **架構**: 純編排決策，不直接執行具體任務
 
 **導航**: [← 返回 AIVA Core](../README.md)
 
@@ -26,10 +27,11 @@
 Task Planning 是 AIVA 的任務規劃和執行系統，負責將高層次目標分解為可執行的子任務，並協調執行過程。
 
 **核心職責**：
-- 📋 **智能規劃** - 將複雜任務分解為可執行步驟
-- ⚡ **並行執行** - 支援多任務並行和依賴管理
-- 🔄 **動態調整** - 根據執行結果動態調整計劃
-- 📊 **進度追蹤** - 實時監控任務執行狀態
+- 📋 **智能規劃** - 將複雜任務分解為可執行步驟和編排流程
+- ⚡ **任務編排** - 支援多任務並行和依賴管理編排
+- 🔄 **動態調整** - 根據AI分析結果動態調整計劃
+- 📊 **進度追蹤** - 實時監控任務編排狀態和結果收集
+- 🎯 **攻擊計劃映射** - AI決策映射為具體Features模組任務
 
 ---
 
@@ -107,7 +109,128 @@ status = executor.get_execution_status(task_id)
 
 ---
 
-### 3. Coordinators - 協調器
+### 3. ⭐ UnifiedAttackExecutor - 統一攻擊執行器（新增 2025-12-17）
+
+**位置**: `task_planning/unified_executor.py`
+
+**核心功能**：
+- 🎯 **統一執行路徑** - 靶場與實戰統一流程（消除雙重邏輯）
+- 📊 **自動經驗收集** - 每次執行自動記錄經驗到 ExperienceManager
+- 🎓 **自動觸發訓練** - 累積到閾值（默認 100 樣本）自動訓練
+- 🔧 **可配置學習** - 可禁用學習模式（純執行）
+
+**主要接口**：
+```python
+from task_planning.unified_executor import UnifiedAttackExecutor
+from external_learning import ExperienceManager
+from external_learning.learning import ModelTrainer
+
+# 初始化（自動學習已內建）
+executor = UnifiedAttackExecutor(
+    plan_executor=plan_executor,
+    experience_manager=experience_manager,
+    model_trainer=model_trainer,
+    rag_engine=rag_engine,
+    auto_learn=True,  # 啟用自動學習
+    learn_threshold=100  # 訓練閾值（樣本數）
+)
+
+# 執行攻擊（自動學習）
+result = await executor.execute_with_learning(
+    plan=attack_plan,
+    context=task_context
+)
+
+# 純執行（不學習）
+result = await executor.execute_without_learning(
+    plan=attack_plan,
+    context=task_context
+)
+
+# 查看學習統計
+stats = executor.get_learning_stats()
+print(f"已收集樣本: {stats['samples_collected']}")
+print(f"訓練次數: {stats['training_runs']}")
+```
+
+**特性**：
+- ✅ 代碼量減少 47%（800 行 vs 舊架構 1500 行）
+- ✅ 學習覆蓋 100%（vs 舊架構 50%）
+- ✅ 數據利用率提升 10x（靶場 = 實戰）
+- ✅ 單一執行路徑，消除雙重邏輯
+
+**架構優勢**：
+- 消除 TrainingOrchestrator 雙重執行路徑
+- 靶場和實戰數據統一收集
+- 學習過程透明化和可配置
+- 減少代碼重複和維護成本
+
+**替代說明**：
+> ⚠️ 此組件取代了原有的 `TrainingOrchestrator`（external_learning 模組）  
+> TrainingOrchestrator 包含 40+ 錯誤且與 AI Commander 存在雙重執行邏輯  
+> 詳見：[架構簡化報告](../_ARCHITECTURE_SIMPLIFICATION_REPORT_2025-12-17.md)
+
+---
+
+### 4. TaskContext - 標準任務參數包
+
+**位置**: `core_capabilities/task_context.py`
+
+**核心功能**：
+- 📦 **標準化參數** - 統一任務參數結構
+- 🎯 **類型特化** - ScanTaskContext, AttackTaskContext
+- 🔄 **解析器** - parse_user_input_to_context()
+
+**主要數據結構**：
+```python
+from core_capabilities.task_context import (
+    TaskContext,
+    ScanTaskContext,
+    AttackTaskContext,
+    parse_user_input_to_context
+)
+
+# 基礎上下文
+context = TaskContext(
+    objective="SQL 注入測試",
+    target_info={"url": "https://target.com", "port": 443}
+)
+
+# 掃描專用上下文
+scan_context = ScanTaskContext(
+    objective="全面掃描",
+    target_info={"url": "https://target.com"},
+    scan_depth=3,
+    scan_types=["ports", "web", "vulns"]
+)
+
+# 攻擊專用上下文
+attack_context = AttackTaskContext(
+    objective="SQL 注入",
+    target_info={"url": "https://target.com/login"},
+    attack_type="sqli",
+    payload_config={"injection_point": "username"}
+)
+
+# 從用戶輸入解析
+context = parse_user_input_to_context(
+    user_input="掃描 192.168.1.1",
+    context_type="scan"
+)
+```
+
+**特性**：
+- ✅ 類型安全的參數傳遞
+- ✅ 驗證和默認值
+- ✅ 可擴展的上下文類型
+- ✅ 自然語言解析
+
+**整合說明**：
+TaskContext 用於標準化 AI Commander → UnifiedExecutor → Core Capabilities 的參數傳遞，確保指揮鏈集成的一致性。
+
+---
+
+### 5. Coordinators - 協調器
 
 **位置**: `task_planning/coordinators/`
 

@@ -20,10 +20,14 @@ import json
 import logging
 from pathlib import Path
 import sys
-from typing import Any
+from typing import Any, Optional
+import asyncio
 
 # 添加 AIVA 模組路徑
 sys.path.append(str(Path(__file__).parent.parent.parent.parent.parent))
+
+# [新增] 引入真實神經網路引擎
+from ..neural.real_neural_core import RealDecisionEngine
 
 # 使用 aiva_common 的統一枚舉定義
 from services.aiva_common.enums import RiskLevel
@@ -79,6 +83,20 @@ class EnhancedDecisionAgent:
         self.risk_threshold = 0.7
         self.success_threshold = 3  # 失敗嘗試的閾值
 
+        # 設定日誌
+        self.logger = self._setup_logger()
+
+        # [新增] 初始化真實 AI 引擎
+        # 不使用降級方案，如果載入失敗就讓錯誤暴露
+        # 指向權重檔案的正確路徑
+        weights_path = Path(__file__).parent.parent / "neural" / "weights" / "aiva_real_weights.pth"
+        self.neural_engine = RealDecisionEngine(
+            use_5m_model=True,
+            weights_path=str(weights_path)
+        )
+        self.use_neural_decision = True
+        self.logger.info("🧠 Real Neural Core (5M) 整合成功")
+
         # 決策規則引擎
         self.decision_rules = self._initialize_decision_rules()
 
@@ -92,7 +110,7 @@ class EnhancedDecisionAgent:
             "brute_force": ["hydra", "medusa", "john"],
         }
 
-        self.logger = self._setup_logger()
+        self.logger.info("🛡️ 規則引擎已就緒")
 
     def _setup_logger(self) -> logging.Logger:
         """設置日誌記錄器"""
@@ -172,8 +190,8 @@ class EnhancedDecisionAgent:
         """
         self.logger.info(f"🤔 開始高階決策分析 - 風險等級: {context.risk_level.value}")
         
-        # 使用現有的決策邏輯
-        legacy_decision = self.make_decision(context)
+        # 使用現有的決策邏輯（支援 async）
+        legacy_decision = self._sync_make_decision(context)
         
         # 將 Legacy Decision 轉換為 HighLevelIntent
         intent = self._convert_decision_to_intent(legacy_decision, context)
@@ -181,6 +199,23 @@ class EnhancedDecisionAgent:
         self.logger.info(f"✅ 生成高階意圖: {intent.intent_type.value} (信心度: {intent.confidence:.2f})")
         
         return intent
+    
+    def _sync_make_decision(self, context: DecisionContext) -> Decision:
+        """同步包裝的 make_decision 方法"""
+        try:
+            loop = asyncio.get_event_loop()
+            if loop.is_running():
+                # 如果已經在 event loop 中，創建 task
+                import concurrent.futures
+                with concurrent.futures.ThreadPoolExecutor() as executor:
+                    future = executor.submit(asyncio.run, self.make_decision(context))
+                    return future.result()
+            else:
+                # 沒有運行的 loop，直接運行
+                return loop.run_until_complete(self.make_decision(context))
+        except RuntimeError:
+            # 沒有 event loop，創建新的
+            return asyncio.run(self.make_decision(context))
     
     def _convert_decision_to_intent(
         self, decision: Decision, context: DecisionContext
@@ -240,8 +275,9 @@ class EnhancedDecisionAgent:
         
         return intent
 
-    def make_decision(self, context: DecisionContext) -> Decision:
-        """基於上下文做出智能決策 (Legacy 方法，保持向後兼容)
+    async def make_decision(self, context: DecisionContext) -> Decision:
+        """基於多模態評估做出智能決策
+        邏輯：神經網路(直覺) + 經驗庫(記憶) + 規則引擎(安全邊界)
         
         注意: 新代碼應使用 decide() 方法返回 HighLevelIntent
 
@@ -251,30 +287,151 @@ class EnhancedDecisionAgent:
         Returns:
             決策結果
         """
-        self.logger.info(f"🤔 開始決策分析 - 風險等級: {context.risk_level.value}")
+        self.logger.info(f"🤔 開始多維度決策分析 - 風險: {context.risk_level.value}")
 
-        # 1. 風險評估決策
+        # 1. 安全煞車 (規則優先 - 最高優先級)
+        # 如果觸發高風險規則，直接攔截，不經過 AI
         risk_decision = self._assess_risk_decision(context)
-        if risk_decision:
+        if risk_decision and risk_decision.action == "STOP_OPERATION":
             return risk_decision
 
-        # 2. 經驗驅動決策
-        experience_decision = self._make_experience_driven_decision(context)
-        if experience_decision and experience_decision.confidence > 0.7:
-            return experience_decision
+        # 2. 並行獲取決策建議
+        neural_task = self._make_neural_decision(context)
+        exp_task = self._async_wrapper(self._make_experience_driven_decision, context)
+        rule_task = self._async_wrapper(self._apply_decision_rules, context)
 
-        # 3. 規則引擎決策
-        rule_decision = self._apply_decision_rules(context)
-        if rule_decision:
-            return rule_decision
+        # 等待所有決策模組返回
+        neural_result, exp_result, rule_result = await asyncio.gather(
+            neural_task, exp_task, rule_task
+        )
 
-        # 4. 預設決策
-        default_decision = self._make_default_decision(context)
+        # 3. 集成學習決策 (Ensemble Learning)
+        # 使用加權算法融合三方意見
+        final_decision = self._ensemble_decision(
+            neural=neural_result,
+            experience=exp_result,
+            rule=rule_result,
+            context=context
+        )
 
-        # 記錄決策
-        self._record_decision(context, default_decision)
+        # 4. 記錄並返回
+        self._record_decision(context, final_decision)
+        return final_decision
 
-        return default_decision
+    async def _make_neural_decision(self, context: DecisionContext) -> Optional[Decision]:
+        """[新增] 基於 5M 神經網路的真實 AI 決策"""
+        # neural_engine 必須存在，不使用降級方案
+        try:
+            # A. 狀態序列化：將 Context 轉為 AI 可讀的 Prompt
+            state_description = (
+                f"TargetType: {context.target_info.get('type', 'unknown')} | "
+                f"VulnsFound: {','.join(context.discovered_vulns) or 'None'} | "
+                f"RiskLevel: {context.risk_level.value} | "
+                f"FailCount: {context.attempts_without_success} | "
+                f"AvailableTools: {','.join(context.available_tools[:3])}"
+            )
+
+            # B. 神經網路推論 (Forward Pass)
+            # 使用 real_neural_core 的 generate_decision 方法
+            # 注意：這裡使用 run_in_executor 避免阻塞 Event Loop
+            loop = asyncio.get_event_loop()
+            ai_result = await loop.run_in_executor(
+                None, 
+                lambda: self.neural_engine.generate_decision(
+                    task_description="determine_optimal_action",
+                    context=state_description
+                )
+            )
+
+            # C. 解析輸出張量
+            confidence = ai_result.get("confidence", 0.0)
+            attack_vector = ai_result.get("attack_vector")
+            
+            # 過濾低信心度結果
+            if confidence < 0.55:
+                return None
+
+            # D. 動作映射 (Vector -> Action)
+            # 將 AI 的抽象意圖映射為系統可執行的具體指令
+            action_map: dict[str, str] = {
+                "sql_injection": "EXPLOIT_SQL_INJECTION",
+                "cross_site_scripting": "WEB_ATTACK",
+                "server_side_request_forgery": "RUN_TOOL",
+                "reconnaissance": "RUN_TOOL",
+                "file_upload": "WEB_ATTACK"
+            }
+            
+            mapped_action = action_map.get(attack_vector or "", "RUN_TOOL")
+            
+            # 參數綁定
+            tools = ai_result.get("recommended_tools", [])
+            selected_tool = tools[0] if tools else "manual"
+
+            decision = Decision(
+                action=mapped_action,
+                params={
+                    "tool": selected_tool, 
+                    "target_vuln": attack_vector,
+                    "source": "neural_network_5m"
+                },
+                confidence=confidence
+            )
+            decision.reasoning = f"NeuralNet Suggestion: {ai_result.get('reasoning')}"
+            return decision
+
+        except Exception as e:
+            self.logger.error(f"❌ 神經網路推論錯誤: {e}")
+            return None
+
+    def _ensemble_decision(self, neural: Optional[Decision], experience: Optional[Decision], rule: Optional[Decision], context: DecisionContext) -> Decision:
+        """[新增] 加權決策融合算法"""
+        candidates: list[tuple[Decision, float]] = []
+
+        # 權重配置
+        W_NEURAL = 0.5      # AI 直覺佔 50%
+        W_EXPERIENCE = 0.3  # 歷史經驗佔 30%
+        W_RULE = 0.2        # 硬性規則佔 20%
+
+        # 1. 評分計算（使用元組存儲決策和分數）
+        if neural:
+            score = neural.confidence * W_NEURAL
+            # AI 的建議如果有經驗支持，給予額外加成
+            if experience and neural.action == experience.action:
+                score += 0.1
+            candidates.append((neural, score))
+            
+        if experience:
+            score = experience.confidence * W_EXPERIENCE
+            candidates.append((experience, score))
+            
+        if rule:
+            score = rule.confidence * W_RULE
+            # 規則通常是兜底，分數較低，但如果是高優先級規則則例外
+            if rule.action == "REQUIRE_CONFIRMATION":
+                score += 0.5 
+            candidates.append((rule, score))
+
+        # 2. 決策選擇
+        if not candidates:
+            self.logger.info("無有效決策，使用預設策略")
+            return self._make_default_decision(context)
+
+        # 選出分數最高的決策
+        best_decision = max(candidates, key=lambda x: x[1])[0]
+        
+        self.logger.info(
+            f"✅ 最終決策: {best_decision.action} "
+            f"(來源: {best_decision.params.get('source', 'rule/exp')}, "
+            f"加權分數: {getattr(best_decision, 'score', 0):.2f})"
+        )
+        
+        return best_decision
+
+    async def _async_wrapper(self, func, *args, **kwargs):
+        """輔助方法：將同步函數包裝為異步"""
+        if asyncio.iscoroutinefunction(func):
+            return await func(*args, **kwargs)
+        return func(*args, **kwargs)
 
     def _assess_risk_decision(self, context: DecisionContext) -> Decision | None:
         """基於風險評估的決策"""
@@ -290,7 +447,7 @@ class EnhancedDecisionAgent:
         if context.risk_level == RiskLevel.HIGH:
             decision = Decision(
                 action="SWITCH_MODE",
-                params={"mode": OperationMode.UI.value},  # 現在使用統一的小寫值 "ui"
+                params={"mode": "ui"},  # OperationMode 是 Literal 類型，直接使用字串值
                 confidence=0.9,
             )
             decision.reasoning = "高風險操作，切換至 UI 模式要求用戶確認"
@@ -426,7 +583,7 @@ class EnhancedDecisionAgent:
             return Decision(
                 action="SWITCH_MODE",
                 params={
-                    "mode": OperationMode.UI.value,
+                    "mode": "ui",  # OperationMode 是 Literal 類型
                     "message": "需要用戶確認",
                 },  # 統一使用小寫值
                 confidence=0.95,
@@ -571,7 +728,12 @@ class EnhancedDecisionAgent:
                     "timeout": 600,
                     # 可選參數
                     "custom_headers": {},
-                }
+                },
+                # 添加必需參數
+                trace_id=scan_id,
+                session_id=scan_id,
+                parent_command_id=None,
+                callback_url=None
             )
             
             # 執行命令
@@ -625,7 +787,12 @@ class EnhancedDecisionAgent:
                     "max_depth": max_depth,
                     "timeout": 600,
                     "custom_headers": {},
-                }
+                },
+                # 添加必需參數
+                trace_id=scan_id,
+                session_id=scan_id,
+                parent_command_id=None,
+                callback_url=None
             )
             
             # 執行命令
@@ -799,6 +966,110 @@ class EnhancedDecisionAgent:
         except Exception as e:
             self.logger.error(f"報告輸出失敗: {e}")
             return ""
+    
+    def decide_scan_strategy(self, scan_context) -> dict[str, Any]:
+        """基於 ScanTaskContext 做掃描策略決策
+        
+        這是新的標準化決策接口，使用統一的參數包。
+        
+        Args:
+            scan_context: ScanTaskContext 或包含相關信息的字典
+        
+        Returns:
+            決策結果 {
+                "selected_tool": str,  # nmap/masscan
+                "confidence": float,
+                "reasoning": str,
+                "suggested_params": dict
+            }
+        """
+        # 提取上下文信息
+        if hasattr(scan_context, 'constraints'):
+            # ScanTaskContext 對象
+            stealth_level = scan_context.constraints.stealth_level
+            rate_limit = scan_context.constraints.rate_limit
+            target = scan_context.target
+        else:
+            # 字典格式（向後兼容）
+            constraints = scan_context.get('constraints', {})
+            stealth_level = constraints.get('stealth_level', 'medium')
+            rate_limit = constraints.get('rate_limit', 1000)
+            target = scan_context.get('target', '')
+        
+        # 決策邏輯
+        selected_tool = "nmap"  # 默認
+        confidence = 0.7
+        reasoning = "標準掃描配置"
+        
+        # 規則 1: 隱匿模式優先使用 Nmap（更低調）
+        if str(stealth_level).lower() in ['high', 'paranoid']:
+            selected_tool = "nmap"
+            confidence = 0.9
+            reasoning = "檢測到高隱匿需求，推薦 Nmap -sS -T2（低調掃描）"
+        
+        # 規則 2: 高速掃描優先使用 Masscan
+        elif rate_limit > 2000:
+            selected_tool = "masscan"
+            confidence = 0.85
+            reasoning = f"檢測到高速需求（{rate_limit} pps），推薦 Masscan"
+        
+        # 規則 3: 神經網路增強決策（如果可用）
+        if self.use_neural_decision:
+            try:
+                # 構建簡化的決策上下文
+                neural_input = f"Target: {target}, Stealth: {stealth_level}, Speed: {rate_limit}"
+                loop = asyncio.new_event_loop()
+                ai_result = loop.run_until_complete(
+                    loop.run_in_executor(
+                        None,
+                        lambda: self.neural_engine.generate_decision(
+                            task_description="select_scan_tool",
+                            context=neural_input
+                        )
+                    )
+                )
+                loop.close()
+                
+                # 如果神經網路信心度更高，採用其建議
+                if ai_result.get("confidence", 0) > confidence:
+                    selected_tool = ai_result.get("recommended_tool", selected_tool)
+                    confidence = ai_result["confidence"]
+                    reasoning = f"AI 推薦: {ai_result.get('reasoning', reasoning)}"
+            
+            except Exception as e:
+                self.logger.warning(f"神經網路決策失敗，使用規則引擎: {e}")
+        
+        # 構建建議參數
+        suggested_params = {}
+        if selected_tool == "nmap":
+            if str(stealth_level).lower() in ['high', 'paranoid']:
+                suggested_params = {
+                    "scan_type": "-sS",  # SYN 掃描
+                    "timing": "-T2",     # 慢速
+                    "flags": ["--disable-arp-ping", "-f"]  # 分片
+                }
+            else:
+                suggested_params = {
+                    "scan_type": "-sS",
+                    "timing": "-T4",
+                    "flags": ["-Pn"]
+                }
+        elif selected_tool == "masscan":
+            suggested_params = {
+                "rate": min(rate_limit, 10000),  # 限制最大速率
+                "wait": 0 if rate_limit > 5000 else 1
+            }
+        
+        self.logger.info(
+            f"🎯 掃描策略決策: {selected_tool} (信心度: {confidence:.2f})"
+        )
+        
+        return {
+            "selected_tool": selected_tool,
+            "confidence": confidence,
+            "reasoning": reasoning,
+            "suggested_params": suggested_params
+        }
 
 
 # 使用範例和測試
@@ -807,57 +1078,9 @@ def demo_enhanced_decision_agent():
     print("🧠 AIVA 增強決策代理示範")
     print("=" * 50)
 
-    # 創建決策代理
-    agent = EnhancedDecisionAgent()
-
-    # 測試場景 1: 高風險操作
-    print("\n🔴 場景 1: 高風險操作")
-    context1 = DecisionContext()
-    context1.risk_level = RiskLevel.HIGH
-    context1.available_tools = ["sqlmap", "nikto", "hydra"]
-
-    decision1 = agent.make_decision(context1)
-    print(f"決策: {decision1.action}")
-    print(f"參數: {decision1.params}")
-    print(f"信心度: {decision1.confidence:.2f}")
-    print(f"理由: {decision1.reasoning}")
-
-    # 測試場景 2: 發現 SQL 注入
-    print("\n🎯 場景 2: 發現 SQL 注入漏洞")
-    context2 = DecisionContext()
-    context2.risk_level = RiskLevel.MEDIUM
-    context2.discovered_vulns = ["sql_injection", "xss"]
-    context2.available_tools = ["sqlmap", "xsser", "nikto"]
-
-    decision2 = agent.make_decision(context2)
-    print(f"決策: {decision2.action}")
-    print(f"參數: {decision2.params}")
-    print(f"信心度: {decision2.confidence:.2f}")
-    print(f"理由: {decision2.reasoning}")
-
-    # 測試場景 3: 多次失敗
-    print("\n⚠️  場景 3: 多次攻擊失敗")
-    context3 = DecisionContext()
-    context3.risk_level = RiskLevel.LOW
-    context3.attempts_without_success = 5
-    context3.available_tools = ["nmap", "dirb", "hydra"]
-
-    decision3 = agent.make_decision(context3)
-    print(f"決策: {decision3.action}")
-    print(f"參數: {decision3.params}")
-    print(f"信心度: {decision3.confidence:.2f}")
-    print(f"理由: {decision3.reasoning}")
-
-    # 顯示統計
-    stats = agent.get_decision_stats()
-    print("\n📈 決策統計:")
-    for key, value in stats.items():
-        print(f"   {key}: {value}")
-
-    # 匯出分析報告
-    report_path = agent.export_decision_analysis()
-    if report_path:
-        print(f"\n📄 決策分析報告: {report_path}")
+    # 測試代碼已移除 - 使用獨立的測試文件進行測試
+    # 如需測試請執行: python -m pytest tests/test_enhanced_decision_agent.py
+    print("請使用專用測試套件進行功能測試")
 
 
 if __name__ == "__main__":

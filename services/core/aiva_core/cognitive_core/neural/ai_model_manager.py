@@ -67,31 +67,17 @@ class AIModelManager:
         self.model_trainer = ModelTrainer(
             model_dir=self.model_dir, storage_backend=storage_backend
         )
-        # V2 統一經驗管理器 - 使用模擬實現取代未完成的 ExperienceRepository
-        class MockExperienceRepository:
-            def __init__(self, database_url: str):
-                self.database_url = database_url
-                self.experiences = []
-                
-            def query_experiences(self, min_score=0.5, limit=1000):
-                """查詢經驗記錄"""
-                filtered = [exp for exp in self.experiences if exp.get('overall_score', 0) >= min_score]
-                return filtered[:limit]
-                
-            def add_experience(self, attack_type, context, action, result, overall_score):
-                """添加經驗記錄"""
-                experience = {
-                    'attack_type': attack_type,
-                    'context': context,
-                    'action': action,
-                    'result': result,
-                    'overall_score': overall_score,
-                    'timestamp': datetime.now(UTC).isoformat()
-                }
-                self.experiences.append(experience)
+        # V2 統一經驗管理器 - 必須使用真實實現
+        # 修正：使用正確的絕對導入路徑和參數
+        from services.core.aiva_core.external_learning.experience_manager import ExperienceManager
         
-        database_url = "sqlite:///experience_db.sqlite"
-        self.experience_repository = MockExperienceRepository(database_url=database_url)
+        # 不使用 mock，直接實例化真實的 ExperienceManager
+        # 使用正確的參數：capacity, auto_persist, persist_batch_size
+        self.experience_repository = ExperienceManager(
+            capacity=10000,
+            auto_persist=True,
+            persist_batch_size=100
+        )
         
         # 為向後兼容創建適配器
         self.experience_manager = self._create_experience_adapter()

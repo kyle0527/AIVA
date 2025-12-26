@@ -196,31 +196,20 @@ class RealAICore(nn.Module):
             (main_output, aux_output): 主輸出和輔助輸出
         """
         if not self.use_5m_model:
-            if AIVA_COMMON_AVAILABLE:
-                raise AIVAError(
-                    "雙輸出僅在5M模型模式下支援",
-                    error_type=ErrorType.VALIDATION,
-                    severity=ErrorSeverity.MEDIUM,
-                    context=create_error_context(module=MODULE_NAME, function="dual_forward")
-                )
-            else:
-                raise AIVAError(
-                    "雙輸出僅在5M模型模式下支援",
-                    error_type=ErrorType.VALIDATION,
-                    severity=ErrorSeverity.MEDIUM,
-                    context=create_error_context(module=MODULE_NAME, function="dual_forward")
-                )
-            
-        # 當前權重檔案不支援雙輸出功能
-        if AIVA_COMMON_AVAILABLE:
             raise AIVAError(
-                "當前權重檔案不支援雙輸出功能",
+                "雙輸出僅在5M模型模式下支援",
                 error_type=ErrorType.VALIDATION,
                 severity=ErrorSeverity.MEDIUM,
-                context=create_error_context(module=MODULE_NAME, function="dual_forward")
+                context=create_error_context(module=MODULE_NAME, function="dual_forward") if AIVA_COMMON_AVAILABLE else None
             )
-        else:
-            raise ValueError("當前權重檔案不支援雙輸出功能")
+            
+        # 當前權重檔案不支援雙輸出功能
+        raise AIVAError(
+            "當前權重檔案不支援雙輸出功能",
+            error_type=ErrorType.VALIDATION,
+            severity=ErrorSeverity.MEDIUM,
+            context=create_error_context(module=MODULE_NAME, function="dual_forward") if AIVA_COMMON_AVAILABLE else None
+        )
     
     def save_weights(self, filepath: str) -> None:
         """儲存真實的權重檔案"""
@@ -247,107 +236,124 @@ class RealAICore(nn.Module):
             raise
     
     def load_weights(self, filepath: Optional[str] = None) -> None:
-        """載入真實的權重檔案 - 支援多種 key 命名結構"""
+        """載入真實的權重檔案 - 支援多種 key 命名結構
+        
+        重構說明: 將複雜的權重載入邏輯拆分為多個子函數以降低複雜度
+        """
         try:
-            # 確定權重檔案路徑
-            if filepath is None:
-                if self.use_5m_model:
-                    filepath = self.weights_path
-                else:
-                    logger.warning("未指定權重檔案路徑")
-                    return
-            
-            if not Path(filepath).exists():
-                error_msg = f"權重檔案不存在: {filepath}"
-                logger.error(error_msg)
-                raise FileNotFoundError(error_msg)
-            
-            logger.info(f"載入權重: {filepath}")
+            filepath = self._validate_weight_filepath(filepath)
             checkpoint = torch.load(filepath, map_location='cpu')
+            state_dict = self._extract_state_dict(checkpoint)
             
-            # 提取 state_dict
-            if isinstance(checkpoint, dict) and 'model_state_dict' in checkpoint:
-                state_dict = checkpoint['model_state_dict']
-            else:
-                state_dict = checkpoint
+            # 嘗試載入權重，失敗則進行 key 映射
+            if not self._try_direct_load(state_dict):
+                state_dict = self._apply_key_mapping(state_dict)
+                self._load_with_partial_match(state_dict)
             
-            # 嘗試直接載入
-            try:
-                self.load_state_dict(state_dict, strict=True)
-                logger.info("✅ 權重完全匹配載入成功")
-            except RuntimeError as e:
-                # 如果 key 不匹配，嘗試 key 映射
-                logger.warning(f"直接載入失敗，嘗試 key 映射: {str(e)[:100]}")
-                
-                # 建立 key 映射規則
-                key_mapping = {}
-                model_keys = set(self.state_dict().keys())
-                
-                # 用於調試的變數檢查
-                logger.debug(f"Model keys: {len(model_keys)}, State dict keys: {len(state_dict.keys())}")
-                
-                # 檢查是否需要映射
-                if self.use_5m_model:
-                    # 5M 模型應有: input_layer, hidden1, hidden2, hidden3, output_layer
-                    expected_prefixes = ['input_layer', 'hidden1', 'hidden2', 'hidden3', 'output_layer']
-                    logger.debug(f"Expected prefixes for 5M model: {expected_prefixes}")
-                    
-                    # 如果 weight 是 network.0, network.3 等格式
-                    if any(k.startswith('network.') for k in state_dict.keys()):
-                        # network.N → layer_name 映射
-                        network_to_layer = {
-                            'network.0': 'input_layer',
-                            'network.3': 'hidden1',
-                            'network.6': 'hidden2',
-                            'network.9': 'hidden3',
-                        }
-                        
-                        new_state_dict = {}
-                        for old_key, tensor in state_dict.items():
-                            # 找到匹配的前綴
-                            mapped = False
-                            for old_prefix, new_prefix in network_to_layer.items():
-                                if old_key.startswith(old_prefix):
-                                    new_key = old_key.replace(old_prefix, new_prefix)
-                                    new_state_dict[new_key] = tensor
-                                    mapped = True
-                                    break
-                            
-                            if not mapped:
-                                # 保持原 key
-                                new_state_dict[old_key] = tensor
-                        
-                        state_dict = new_state_dict
-                        logger.info("✅ Key 映射完成: network.N → layer_name")
-                
-                # 再次嘗試載入，使用 strict=False 允許部分載入
-                missing_keys, unexpected_keys = self.load_state_dict(state_dict, strict=False)
-                
-                if missing_keys:
-                    logger.warning(f"⚠️  缺少的 keys: {missing_keys[:5]}..." if len(missing_keys) > 5 else f"⚠️  缺少的 keys: {missing_keys}")
-                if unexpected_keys:
-                    logger.warning(f"⚠️  未預期的 keys: {unexpected_keys[:5]}..." if len(unexpected_keys) > 5 else f"⚠️  未預期的 keys: {unexpected_keys}")
-                
-                if not missing_keys and not unexpected_keys:
-                    logger.info("✅ 權重載入成功（經 key 映射）")
-                elif not missing_keys:
-                    logger.info("✅ 權重部分載入成功，忽略未預期的 keys")
-                else:
-                    logger.error("❌ 權重載入不完整，缺少關鍵層")
-                    raise RuntimeError(f"無法載入所需的權重，缺少: {missing_keys}")
-            
-            # 計算檔案大小
-            file_size = Path(filepath).stat().st_size
-            total_params = sum(tensor.numel() for tensor in self.state_dict().values())
-            
-            logger.info("權重載入完成:")
-            logger.info(f"  - 檔案大小: {file_size/1024/1024:.1f} MB")
-            logger.info(f"  - 總參數: {total_params:,} ({total_params/1_000_000:.2f}M)")
-            logger.info(f"  - 輸出維度: {self.output_size}")
+            self._log_weight_info(filepath)
             
         except Exception as e:
             logger.error(f"載入權重失敗: {e}")
             raise
+
+    def _validate_weight_filepath(self, filepath: Optional[str]) -> str:
+        """驗證並返回權重檔案路徑"""
+        if filepath is None:
+            if self.use_5m_model:
+                filepath = self.weights_path
+            else:
+                logger.warning("未指定權重檔案路徑")
+                raise ValueError("未指定權重檔案路徑")
+        
+        if not Path(filepath).exists():
+            error_msg = f"權重檔案不存在: {filepath}"
+            logger.error(error_msg)
+            raise FileNotFoundError(error_msg)
+        
+        logger.info(f"載入權重: {filepath}")
+        return filepath
+    
+    def _extract_state_dict(self, checkpoint: Any) -> dict:
+        """從 checkpoint 提取 state_dict"""
+        if isinstance(checkpoint, dict) and 'model_state_dict' in checkpoint:
+            return checkpoint['model_state_dict']
+        return checkpoint
+    
+    def _try_direct_load(self, state_dict: dict) -> bool:
+        """嘗試直接載入權重，成功返回 True"""
+        try:
+            self.load_state_dict(state_dict, strict=True)
+            logger.info("✅ 權重完全匹配載入成功")
+            return True
+        except RuntimeError as e:
+            logger.warning(f"直接載入失敗，嘗試 key 映射: {str(e)[:100]}")
+            return False
+    
+    def _apply_key_mapping(self, state_dict: dict) -> dict:
+        """應用 key 映射轉換（network.N → layer_name）"""
+        if not self.use_5m_model:
+            return state_dict
+        
+        logger.debug(f"Model keys: {len(self.state_dict().keys())}, State dict keys: {len(state_dict.keys())}")
+        
+        # 檢查是否需要 network.N 格式映射
+        if not any(k.startswith('network.') for k in state_dict.keys()):
+            return state_dict
+        
+        # 定義映射規則
+        network_to_layer = {
+            'network.0': 'input_layer',
+            'network.3': 'hidden1',
+            'network.6': 'hidden2',
+            'network.9': 'hidden3',
+        }
+        
+        new_state_dict = {}
+        for old_key, tensor in state_dict.items():
+            mapped = False
+            for old_prefix, new_prefix in network_to_layer.items():
+                if old_key.startswith(old_prefix):
+                    new_key = old_key.replace(old_prefix, new_prefix)
+                    new_state_dict[new_key] = tensor
+                    mapped = True
+                    break
+            
+            if not mapped:
+                new_state_dict[old_key] = tensor
+        
+        logger.info("✅ Key 映射完成: network.N → layer_name")
+        return new_state_dict
+    
+    def _load_with_partial_match(self, state_dict: dict) -> None:
+        """使用部分匹配模式載入權重，並檢查結果"""
+        missing_keys, unexpected_keys = self.load_state_dict(state_dict, strict=False)
+        
+        # 記錄缺失和未預期的 keys
+        if missing_keys:
+            keys_preview = missing_keys[:5] if len(missing_keys) > 5 else missing_keys
+            logger.warning(f"⚠️  缺少的 keys: {keys_preview}{'...' if len(missing_keys) > 5 else ''}")
+        if unexpected_keys:
+            keys_preview = unexpected_keys[:5] if len(unexpected_keys) > 5 else unexpected_keys
+            logger.warning(f"⚠️  未預期的 keys: {keys_preview}{'...' if len(unexpected_keys) > 5 else ''}")
+        
+        # 判斷載入結果
+        if not missing_keys and not unexpected_keys:
+            logger.info("✅ 權重載入成功（經 key 映射）")
+        elif not missing_keys:
+            logger.info("✅ 權重部分載入成功，忽略未預期的 keys")
+        else:
+            logger.error("❌ 權重載入不完整，缺少關鍵層")
+            raise RuntimeError(f"無法載入所需的權重，缺少: {missing_keys}")
+    
+    def _log_weight_info(self, filepath: str) -> None:
+        """記錄權重檔案信息"""
+        file_size = Path(filepath).stat().st_size
+        total_params = sum(tensor.numel() for tensor in self.state_dict().values())
+        
+        logger.info("權重載入完成:")
+        logger.info(f"  - 檔案大小: {file_size/1024/1024:.1f} MB")
+        logger.info(f"  - 總參數: {total_params:,} ({total_params/1_000_000:.2f}M)")
+        logger.info(f"  - 輸出維度: {self.output_size}")
 
 class RealDecisionEngine:
     """真實的決策引擎 - 支援5M特化神經網路"""
@@ -409,15 +415,12 @@ class RealDecisionEngine:
         # P0 修復: 初始化語意編碼器
         self.semantic_encoder = None
         if SEMANTIC_ENCODING_AVAILABLE:
-            try:
-                # 使用 all-MiniLM-L6-v2 (輕量級, 384維, 適合代碼)
-                self.semantic_encoder = SentenceTransformer('all-MiniLM-L6-v2')
-                # 移動到相同設備
-                self.semantic_encoder.to(self.device)
-                logger.info("✅ 語意編碼器已載入: all-MiniLM-L6-v2 (384維)")
-            except Exception as e:
-                logger.warning(f"語意編碼器載入失敗，使用降級方案: {e}")
-                self.semantic_encoder = None
+            # 使用 all-MiniLM-L6-v2 (輕量級, 384維, 適合代碼)
+            # 不使用降級方案，如果載入失敗就讓錯誤暴露
+            self.semantic_encoder = SentenceTransformer('all-MiniLM-L6-v2')
+            # 移動到相同設備
+            self.semantic_encoder.to(self.device)
+            logger.info("✅ 語意編碼器已載入: all-MiniLM-L6-v2 (384維)")
         
         logger.info(f"真實決策引擎初始化完成 (Device: {self.device})")
         logger.info(f"  編碼模式: {'語意編碼 (Semantic)' if self.semantic_encoder else '字符編碼 (Fallback)'}")
@@ -441,66 +444,47 @@ class RealDecisionEngine:
         if not text:
             return torch.zeros(1, 512, dtype=torch.float32).to(self.device)
         
-        # 方案 A: 語意編碼 + Bug Bounty 特化 (優先)
-        if self.semantic_encoder is not None:
-            try:
-                # Bug Bounty 上下文增強
-                bug_bounty_context = self._enhance_bug_bounty_context(text)
-                
-                # 使用 Sentence Transformers 進行語意編碼
-                embedding = self.semantic_encoder.encode(
-                    bug_bounty_context,
-                    convert_to_tensor=True,
-                    show_progress_bar=False,
-                    device=str(self.device)
-                )
-                
-                # 調整維度至 512 專為 5M 網絡
-                if embedding.shape[0] != 512:
-                    # 使用線性變換而非池化，保持更多語意信息
-                    if embedding.shape[0] < 512:
-                        # 擴展維度：重複關鍵特徵
-                        repeat_factor = 512 // embedding.shape[0] + 1
-                        embedding = embedding.repeat(repeat_factor)[:512]
-                    else:
-                        # 縮減維度：保留最重要特徵
-                        embedding = embedding[:512]
-                
-                # 添加 Bug Bounty 專業特徵
-                bug_bounty_features = self._extract_bug_bounty_features(text)
-                embedding[-32:] = bug_bounty_features  # 最後32維專門用於專業特徵
-                
-                # 確保形狀正確並歸一化
-                embedding = torch.clamp(embedding, -1.0, 1.0)
-                return embedding.unsqueeze(0).to(self.device)
-                
-            except Exception as e:
-                logger.warning(f"語意編碼失敗，降級至增強字符編碼: {e}")
-                # 降級到方案 B
+        # 語意編碼 + Bug Bounty 特化
+        # 不使用降級方案，如果編碼失敗就讓錯誤暴露
+        # Bug Bounty 上下文增強
+        bug_bounty_context = self._enhance_bug_bounty_context(text)
         
-        # 方案 B: 增強字符編碼 (Fallback) - 專為 5M 網絡優化
-        logger.debug("使用增強字符編碼方案")
-        text_lower = text.lower()
-        vector = np.zeros(512, dtype=np.float32)
+        # 使用 Sentence Transformers 進行語意編碼
+        # 移除降級邏輯 - semantic_encoder必須正確初始化
+        if self.semantic_encoder is None:
+            raise RuntimeError(
+                "semantic_encoder 未初始化。請確保模型正確載入。\n"
+                "檢查項目：\n"
+                "1. sentence-transformers 套件是否已安裝\n"
+                "2. 模型路徑是否正確\n"
+                "3. 初始化過程是否有錯誤"
+            )
         
-        # 多層特徵編碼策略
-        # [0:128] 攻擊意圖特徵
-        attack_features = self._extract_attack_intent_features(text_lower)
-        vector[0:128] = attack_features
+        embedding = self.semantic_encoder.encode(
+            bug_bounty_context,
+            convert_to_tensor=True,
+            show_progress_bar=False,
+            device=str(self.device)
+        )
         
-        # [128:256] 目標系統特徵  
-        target_features = self._extract_target_features(text_lower)
-        vector[128:256] = target_features
+        # 調整維度至 512 專為 5M 網絡
+        if embedding.shape[0] != 512:
+            # 使用線性變換而非池化，保持更多語意信息
+            if embedding.shape[0] < 512:
+                # 擴展維度：重複關鍵特徵
+                repeat_factor = 512 // embedding.shape[0] + 1
+                embedding = embedding.repeat(repeat_factor)[:512]
+            else:
+                # 縮減維度：保留最重要特徵
+                embedding = embedding[:512]
         
-        # [256:384] 工具和技術特徵
-        tool_features = self._extract_tool_features(text_lower)
-        vector[256:384] = tool_features
+        # 添加 Bug Bounty 專業特徵
+        bug_bounty_features = self._extract_bug_bounty_features(text)
+        embedding[-32:] = bug_bounty_features  # 最後32維專門用於專業特徵
         
-        # [384:512] 上下文和統計特徵
-        context_features = self._extract_context_features(text_lower)
-        vector[384:512] = context_features
-        
-        return torch.tensor(vector, dtype=torch.float32).unsqueeze(0).to(self.device)
+        # 確保形狀正確並歸一化
+        embedding = torch.clamp(embedding, -1.0, 1.0)
+        return embedding.unsqueeze(0).to(self.device)
     
     def _enhance_bug_bounty_context(self, text: str) -> str:
         """為 Bug Bounty 場景增強輸入文本上下文"""
@@ -716,7 +700,7 @@ class RealDecisionEngine:
                 
                 # Bug Bounty 專業決策解析
                 decision_analysis = self._analyze_decision_output(
-                    output, task_description, context
+                    output, context
                 )
                 
                 return {
@@ -734,8 +718,14 @@ class RealDecisionEngine:
                     
         except Exception as e:
             logger.error(f"決策生成失敗: {e}")
-            # 降級決策：基於規則的 Bug Bounty 決策
-            return self._fallback_bug_bounty_decision(task_description, context, str(e))
+            # 移除降級邏輯 - 決策失敗時應明確報錯
+            raise RuntimeError(
+                f"Bug Bounty 決策生成失敗: {e}\n"
+                "請檢查：\n"
+                "1. 神經網絡是否正確初始化\n"
+                "2. 輸入數據格式是否正確\n"
+                "3. 模型權重是否正確載入"
+            ) from e
     
     def _prepare_decision_input(self, task_description: str, context: str) -> str:
         """為 5M 網絡準備最優輸入格式"""
@@ -780,26 +770,31 @@ class RealDecisionEngine:
         
         return max(0.0, min(1.0, enhanced_confidence))
     
-    def _analyze_decision_output(self, output: torch.Tensor, task: str, context: str) -> Dict[str, Any]:
-        """分析決策輸出（單一輸出版本）"""
+    def _analyze_decision_output(self, output: torch.Tensor, context: str) -> Dict[str, Any]:
+        """分析決策輸出（單一輸出版本）- 使用神經網路真實輸出
+        
+        注意：移除 task 參數以符合 SonarQube 建議（參數未使用）
+        """
         # 解析決策向量
         decision_probs = F.softmax(output, dim=1).squeeze()
         confidence_score = float(torch.max(decision_probs))
+        decision_index = int(torch.argmax(decision_probs))
         
-        # 攻擊向量分析 (基於任務描述)
-        task_lower = task.lower()
-        if 'sql' in task_lower:
-            attack_vector = 'sql_injection'
-        elif 'xss' in task_lower:
-            attack_vector = 'cross_site_scripting'
-        elif 'ssrf' in task_lower:
-            attack_vector = 'server_side_request_forgery'
-        elif 'upload' in task_lower:
-            attack_vector = 'file_upload'
-        elif 'auth' in task_lower:
-            attack_vector = 'authentication_bypass'
-        else:
-            attack_vector = 'reconnaissance'
+        # 攻擊向量分析 - 使用神經網路輸出決定（argmax），而非字串比對
+        attack_vectors = [
+            'reconnaissance',
+            'sql_injection',
+            'cross_site_scripting',
+            'server_side_request_forgery',
+            'file_upload',
+            'authentication_bypass',
+            'command_injection',
+            'path_traversal',
+            'xxe_injection',
+            'deserialization'
+        ]
+        attack_vector_index = decision_index % len(attack_vectors)
+        attack_vector = attack_vectors[attack_vector_index]
             
         # 風險等級評估
         if confidence_score > 0.8:
@@ -836,8 +831,15 @@ class RealDecisionEngine:
         }
     
     def _analyze_bug_bounty_decision(self, main_output: torch.Tensor, aux_output: torch.Tensor, 
-                                   task: str, context: str) -> Dict[str, Any]:
-        """分析 Bug Bounty 專業決策"""
+                                   _task: str, _context: str) -> Dict[str, Any]:
+        """分析 Bug Bounty 專業決策
+        
+        Args:
+            main_output: 主輸出張量
+            aux_output: 輔助輸出張量
+            _task: 任務描述（保留用於未來擴展）
+            _context: 上下文信息（保留用於未來擴展）
+        """
         # 解析主決策向量 (100維)
         decision_probs = F.softmax(main_output, dim=1).squeeze()
         decision_index = int(torch.argmax(decision_probs))
@@ -894,40 +896,6 @@ class RealDecisionEngine:
                 "aux_magnitude": float(torch.mean(torch.abs(aux_output)))
             }
         }
-    
-    def _fallback_bug_bounty_decision(self, task: str, context: str, error: str) -> Dict[str, Any]:
-        """降級 Bug Bounty 決策 (基於規則)"""
-        task_lower = task.lower()
-        
-        # 基於關鍵詞的簡單分類
-        if any(keyword in task_lower for keyword in ['sql', 'injection', 'database']):
-            return {
-                "decision": task,
-                "confidence": 0.6,
-                "reasoning": f"基於規則的降級決策: SQL注入測試 (錯誤: {error[:50]})",
-                "context_used": context,
-                "decision_index": 1,
-                "attack_vector": "sql_injection",
-                "risk_level": Severity.MEDIUM,
-                "recommended_tools": ["sqlmap", "manual_testing"],
-                "is_real_ai": False,
-                "model_type": "fallback_rules",
-                "error": error
-            }
-        else:
-            return {
-                "decision": task,
-                "confidence": 0.5,
-                "reasoning": f"基於規則的降級決策: 一般安全測試 (錯誤: {error[:50]})",
-                "context_used": context,
-                "decision_index": 0,
-                "attack_vector": "reconnaissance",
-                "risk_level": Severity.LOW,
-                "recommended_tools": ["manual_analysis"],
-                "is_real_ai": False,
-                "model_type": "fallback_rules",
-                "error": error
-            }
     
     def decide(self, input_data: torch.Tensor) -> torch.Tensor:
         """

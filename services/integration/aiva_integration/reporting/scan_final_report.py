@@ -48,15 +48,15 @@ def main():
         print(f"     └─ {task['詳情']}")
     
     # === 發現的問題總結 ===
-    print(f"\n📊 模組連接測試結果:")
-    print(f"  ✅ Scan Module: 完全正常 (包括修正的 ScanStartPayload 驗證)")
-    print(f"  ✅ Function Module: 基本功能正常")
-    print(f"  ⚠️  Core Module: 部分導入路徑需要確認")
-    print(f"  ⚠️  Integration Module: 類名和路徑不匹配")
-    print(f"  ✅ Message System: 核心功能正常工作")
+    print("\n📊 模組連接測試結果:")
+    print("  ✅ Scan Module: 完全正常 (包括修正的 ScanStartPayload 驗證)")
+    print("  ✅ Function Module: 基本功能正常")
+    print("  ⚠️  Core Module: 部分導入路徑需要確認")
+    print("  ⚠️  Integration Module: 類名和路徑不匹配")
+    print("  ✅ Message System: 核心功能正常工作")
     
     # === 關鍵發現 ===
-    print(f"\n🔍 關鍵發現:")
+    print("\n🔍 關鍵發現:")
     key_findings = [
         "ScanStartPayload 驗證規則: scan_id 必須以 'scan_' 開頭且至少 10 字符",
         "Location 枚舉正確值: 應使用 Location.URL 而非 Location.HEADER",
@@ -69,7 +69,7 @@ def main():
         print(f"  • {finding}")
     
     # === 待處理項目 ===
-    print(f"\n📋 識別出的待處理項目:")
+    print("\n📋 識別出的待處理項目:")
     pending_items = [
         {
             "項目": "Core 模組主要類導入",
@@ -89,28 +89,35 @@ def main():
     ]
     
     for item in pending_items:
-        priority_emoji = "🔴" if item["優先級"] == "高" else "🟡" if item["優先級"] == "中" else "🟢"
+        # 根据优先级设置表情符号
+        priority = item["優先級"]
+        if priority == "高":
+            priority_emoji = "🔴"
+        elif priority == "中":
+            priority_emoji = "🟡"
+        else:
+            priority_emoji = "🟢"
         print(f"  {priority_emoji} [{item['優先級']}] {item['項目']}")
         print(f"     └─ {item['說明']}")
     
     # === 驗證正常的功能 ===
-    print(f"\n✅ 驗證正常的核心功能:")
+    print("\n✅ 驗證正常的核心功能:")
     working_features = [
         "完整的 Scan 工作流程 (Worker, Schemas, Validation)",
         "Function 模組基本模型和執行結果",
         "AIVA 消息系統序列化和傳輸",
         "所有模組的 ModuleName 枚舉一致性",
         "Pydantic V2 完全兼容 (無警告)",
-        "RabbitMQ + InMemoryBroker 降級機制"
+        "RabbitMQ 消息代理（已移除降級機制）"
     ]
     
     for feature in working_features:
         print(f"  ✓ {feature}")
     
-    print(f"\n" + "=" * 70)
-    print(f"總結: 所有要求的技術債務修復已完成，模組問題已識別並分類")
-    print(f"建議: 優先處理中優先級項目以改善模組整合穩定性")
-    print(f"=" * 70)
+    print("\n" + "=" * 70)
+    print("總結: 所有要求的技術債務修復已完成，模組問題已識別並分類")
+    print("建議: 優先處理中優先級項目以改善模組整合穩定性")
+    print("=" * 70)
 
 if __name__ == "__main__":
     main()

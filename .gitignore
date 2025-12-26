@@ -65,3 +65,7 @@ cache/
 *.temp
 *.bak
 *.backup
+
+# Documentation files - 本次不提交
+*.md
+*.mmd

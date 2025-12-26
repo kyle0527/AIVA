@@ -37,7 +37,7 @@ from aiva_common.error_handling import AIVAError, ErrorType, ErrorSeverity
 
 from .internal_loop_connector import InternalLoopConnector
 from .rag.knowledge_base import KnowledgeBase
-from ..internal_exploration.capability_registry import get_capability_registry
+from ..core_capabilities.capability_registry import get_capability_registry
 
 logger = get_logger(__name__)
 
@@ -103,7 +103,7 @@ class CapabilityOrchestrator:
         result = await orchestrator.execute(plan)
         
         # 學習優化
-        await orchestrator.learn_from_execution(plan, result)
+        orchestrator.learn_from_execution(plan, result)
     """
     
     def __init__(
@@ -159,33 +159,32 @@ class CapabilityOrchestrator:
             logger.info(f"   Found {len(relevant_capabilities)} relevant capabilities")
             
             # Step 2: 過濾健康且可用的能力
-            available_capabilities = await self._filter_available_capabilities(relevant_capabilities)
+            available_capabilities = self._filter_available_capabilities(relevant_capabilities)
             logger.info(f"   {len(available_capabilities)} capabilities available")
             
             if not available_capabilities:
                 raise AIVAError(
                     error_type=ErrorType.VALIDATION,
                     severity=ErrorSeverity.HIGH,
-                    message=f"No available capabilities for task: {requirement.task_type}",
-                    details={"objectives": requirement.objectives}
+                    message=f"No available capabilities for task: {requirement.task_type}, objectives: {requirement.objectives}"
                 )
             
             # Step 3: 選擇最佳能力組合
-            selected_capabilities = await self._select_best_capabilities(
+            selected_capabilities = self._select_best_capabilities(
                 available_capabilities, 
                 requirement
             )
             logger.info(f"   Selected {len(selected_capabilities)} capabilities")
             
             # Step 4: 生成執行序列
-            execution_sequence = await self._generate_execution_sequence(
+            execution_sequence = self._generate_execution_sequence(
                 selected_capabilities,
                 requirement
             )
             logger.info(f"   Execution sequence: {execution_sequence}")
             
             # Step 5: 轉換為 AICommand
-            commands = await self._capabilities_to_commands(
+            commands = self._capabilities_to_commands(
                 selected_capabilities,
                 execution_sequence,
                 requirement
@@ -230,7 +229,11 @@ class CapabilityOrchestrator:
         aiva_module_filter: Optional[str] = None,
         entry_point_filter: Optional[str] = None
     ) -> List[Dict[str, Any]]:
-        """查詢相關能力
+        """查詢相關能力（使用 InternalLoopConnector.query_capabilities）
+        
+        ✅ 架構修復 (2025-12-16):
+        改用 InternalLoopConnector.query_capabilities() 方法，
+        該方法專門用於查詢 RAG 中的 840 個能力。
         
         使用 RAG 語義搜索找到與任務需求相關的能力
         
@@ -248,41 +251,57 @@ class CapabilityOrchestrator:
             f"Objectives: {', '.join(requirement.objectives)}",
         ]
         
-        # ✅ 新增：六大模組過濾
-        if aiva_module_filter:
-            query_parts.append(f"AIVA Module: {aiva_module_filter}")
-        if entry_point_filter:
-            query_parts.append(f"Entry Point: {entry_point_filter}")
-        
         # 根據任務類型添加特定查詢
         if requirement.task_type == "scan":
-            query_parts.append("Find scanning and detection capabilities")
+            query_parts.append("scanning and detection capabilities")
         elif requirement.task_type == "attack":
-            query_parts.append("Find vulnerability testing and exploitation capabilities")
+            query_parts.append("vulnerability testing and exploitation capabilities")
         elif requirement.task_type == "comprehensive":
-            query_parts.append("Find all relevant security testing capabilities")
+            query_parts.append("all relevant security testing capabilities")
         
         query = " | ".join(query_parts)
-        logger.debug(f"   RAG Query: {query}")
+        logger.info(f"   🔍 Querying capabilities from RAG: {query[:100]}...")
         
-        # 查詢 RAG
-        if self.internal_connector and self.internal_connector.rag_kb:
-            results = await asyncio.to_thread(
-                self.internal_connector.query_self_awareness,
-                query,
-                top_k=20  # 獲取更多候選
-            )
-            
-            # ✅ 新增：後過濾（如果 RAG 查詢無法直接支援）
-            filtered_results = self._filter_by_aiva_module(
-                results.results, 
-                aiva_module_filter, 
-                entry_point_filter
-            )
-            return filtered_results
+        # ✅ 使用 InternalLoopConnector.query_capabilities（正確的能力查詢方法）
+        if self.internal_connector:
+            try:
+                # 構建過濾條件
+                filters = {}
+                if aiva_module_filter:
+                    filters['module'] = aiva_module_filter
+                if entry_point_filter:
+                    filters['entry_point'] = entry_point_filter
+                
+                # 查詢 RAG（使用正確的方法）
+                rag_result = await asyncio.to_thread(
+                    self.internal_connector.query_capabilities,
+                    query=query,
+                    filters=filters if filters else None,
+                    top_k=20  # 獲取更多候選
+                )
+                
+                logger.info(f"   ✅ RAG query returned {len(rag_result.results)} capabilities")
+                
+                # 轉換 RAG 結果為能力字典列表
+                capabilities = []
+                for result in rag_result.results:
+                    # result 是 RAG 返回的文檔，metadata 包含能力信息
+                    cap_dict = {
+                        "metadata": result.get("metadata", {}),
+                        "text": result.get("text", ""),
+                        "relevance_score": result.get("score", 0.0)
+                    }
+                    capabilities.append(cap_dict)
+                
+                return capabilities
+                
+            except Exception as e:
+                logger.error(f"   ❌ RAG query failed: {e}", exc_info=True)
+                logger.warning("   Falling back to registry search")
+                return self._fallback_capability_search(requirement)
         else:
-            logger.warning("   RAG not available, using fallback")
-            return await self._fallback_capability_search(requirement)
+            logger.warning("   ⚠️ InternalLoopConnector not available, using fallback")
+            return self._fallback_capability_search(requirement)
     
     def _filter_by_aiva_module(
         self,
@@ -351,36 +370,50 @@ class CapabilityOrchestrator:
         
         return grouped
     
-    async def _fallback_capability_search(
+    def _fallback_capability_search(
         self,
         requirement: TaskRequirement
     ) -> List[Dict[str, Any]]:
         """降級方案: 直接從 CapabilityRegistry 搜索
         
-        當 RAG 不可用時使用
+        當 RAG 不可用時使用。遵循 aiva_common 原則：
+        - 不使用 mock 數據
+        - 不返回假的成功結果
+        - 如果真的查不到，返回空列表，讓錯誤暴露
         """
+        logger.warning("   ⚠️ Using fallback capability search (RAG unavailable)")
         capabilities = []
         
-        for objective in requirement.objectives:
-            # 搜索包含目標關鍵字的能力
-            matched = self.capability_registry.search_capabilities(objective)
-            for cap in matched:
-                capabilities.append({
-                    "metadata": {
-                        "capability_id": cap.id,
-                        "capability_name": cap.name,
-                        "module": cap.module,
-                        "language": cap.language,
-                        "description": cap.description,
-                        "aiva_module": getattr(cap, "aiva_module", None),  # ✅ 包含新欄位
-                        "sub_module": getattr(cap, "sub_module", None),
-                        "entry_point": getattr(cap, "entry_point", None),
-                    }
-                })
+        try:
+            for objective in requirement.objectives:
+                # 搜索包含目標關鍵字的能力
+                matched = self.capability_registry.search_capabilities(objective)
+                for cap in matched:
+                    capabilities.append({
+                        "metadata": {
+                            "capability_id": cap.id,
+                            "capability_name": cap.name,
+                            "module": cap.module,
+                            "language": cap.language,
+                            "description": cap.description,
+                            "aiva_module": getattr(cap, "aiva_module", None),
+                            "sub_module": getattr(cap, "sub_module", None),
+                            "entry_point": getattr(cap, "entry_point", None),
+                        },
+                        "text": cap.description,
+                        "relevance_score": 0.5  # 降級方案的相關性分數較低
+                    })
+            
+            logger.info(f"   Fallback search found {len(capabilities)} capabilities")
+            
+        except Exception as e:
+            logger.error(f"   ❌ Fallback search failed: {e}")
+            # 遵循「有錯就報錯」原則：不返回假數據
+            return []
         
         return capabilities
     
-    async def _filter_available_capabilities(
+    def _filter_available_capabilities(
         self,
         capabilities: List[Dict[str, Any]]
     ) -> List[Dict[str, Any]]:
@@ -412,7 +445,7 @@ class CapabilityOrchestrator:
         
         return available
     
-    async def _select_best_capabilities(
+    def _select_best_capabilities(
         self,
         capabilities: List[Dict[str, Any]],
         requirement: TaskRequirement
@@ -499,7 +532,7 @@ class CapabilityOrchestrator:
         
         return total_score
     
-    async def _generate_execution_sequence(
+    def _generate_execution_sequence(
         self,
         capabilities: List[Dict[str, Any]],
         requirement: TaskRequirement
@@ -620,7 +653,7 @@ class CapabilityOrchestrator:
         
         return scan_caps + analysis_caps + attack_caps + other_caps
     
-    async def _capabilities_to_commands(
+    def _capabilities_to_commands(
         self,
         capabilities: List[Dict[str, Any]],
         execution_sequence: List[str],
@@ -662,6 +695,10 @@ class CapabilityOrchestrator:
         """從能力元數據構建 AICommand
         
         根據能力類型映射到對應的 CommandType
+        
+        Args:
+            capability_meta: 能力元數據（包含名稱、模組等信息）
+            requirement: 任務需求
         """
         cap_name = capability_meta.get("capability_name", "")
         module = capability_meta.get("module", "")
@@ -673,13 +710,22 @@ class CapabilityOrchestrator:
         payload = self._build_command_payload(capability_meta, requirement)
         
         # 創建 AICommand
+        # 將 int priority 轉換為 CommandPriority 枚舉
+        from services.aiva_common.schemas.commands import CommandPriority
+        priority_map = {1: CommandPriority.LOW, 2: CommandPriority.NORMAL, 3: CommandPriority.HIGH, 4: CommandPriority.HIGH}
+        priority_enum = priority_map.get(requirement.priority, CommandPriority.NORMAL)
+        
         command = AICommand(
             command_id=f"cmd_{requirement.task_id}_{uuid4().hex[:8]}",
             command_type=command_type,
             target_module=self._get_target_module(module),
             payload=payload,
             timeout=requirement.constraints.get("timeout", 300),
-            priority=requirement.priority
+            priority=priority_enum,
+            trace_id=requirement.task_id,
+            session_id=requirement.task_id,
+            parent_command_id=None,
+            callback_url=None
         )
         
         return command
@@ -725,10 +771,15 @@ class CapabilityOrchestrator:
         """構建命令 payload
         
         根據能力的參數定義和任務需求構建 payload
+        
+        Args:
+            capability_meta: 能力元數據
+            requirement: 任務需求
         """
         payload = {
             "target": requirement.target,
             "task_id": requirement.task_id,
+            "capability_id": capability_meta.get("capability_id", ""),
         }
         
         # 添加約束條件
@@ -750,10 +801,15 @@ class CapabilityOrchestrator:
     
     def _assess_risk_level(
         self,
-        capabilities: List[Dict[str, Any]],
+        _capabilities: List[Dict[str, Any]],
         requirement: TaskRequirement
     ) -> str:
-        """評估風險等級"""
+        """評估風險等級
+        
+        Args:
+            _capabilities: 能力列表（保留用於未來擴展）
+            requirement: 任務需求
+        """
         # 簡單規則: 掃描低風險,攻擊中/高風險
         if requirement.task_type == "scan":
             return "low"
@@ -766,11 +822,16 @@ class CapabilityOrchestrator:
         self,
         requirement: TaskRequirement,
         capabilities: List[Dict[str, Any]],
-        sequence: List[str]
+        _sequence: List[str]
     ) -> str:
         """生成決策理由
         
         解釋 AI 為什麼選擇這些能力和執行順序
+        
+        Args:
+            requirement: 任務需求
+            capabilities: 選中的能力列表
+            _sequence: 執行序列（保留用於未來擴展）
         """
         reasoning_parts = [
             f"Task: {requirement.task_type} on {requirement.target}",
@@ -817,7 +878,7 @@ class CapabilityOrchestrator:
                         completed.append(command.command_id)
                     else:
                         failed.append(command.command_id)
-                        logger.warning(f"   Command failed: {result.error_message}")
+                        logger.warning(f"   Command failed: {result.error}")
                 
                 except Exception as e:
                     logger.error(f"   Command execution error: {e}")
@@ -852,13 +913,13 @@ class CapabilityOrchestrator:
         
         for cmd_id, result in results.items():
             if result.status == CommandStatus.COMPLETED:
-                # 從 result.data 提取漏洞信息
-                findings = result.data.get("findings", [])
+                # 從 result.result 提取漏洞信息
+                findings = result.result.get("findings", [])
                 issues.extend(findings)
         
         return issues
     
-    async def learn_from_execution(
+    def learn_from_execution(
         self,
         plan: CapabilityPlan,
         result: ExecutionResult
@@ -958,7 +1019,7 @@ async def quick_plan_and_execute(
     plan = await orchestrator.plan(requirement)
     result = await orchestrator.execute(plan)
     
-    await orchestrator.learn_from_execution(plan, result)
+    orchestrator.learn_from_execution(plan, result)
     
     return plan, result
 

@@ -1,0 +1,2009 @@
+{
+  "timestamp": "2025-12-15T08:18:57.882100",
+  "total_capabilities": 216,
+  "internal_commands": [
+    {
+      "name": "capability_analyzer",
+      "language": "python",
+      "module": "core/aiva_core",
+      "description": "延遲加載 CapabilityAnalyzer",
+      "parameters": [
+        {
+          "name": "self",
+          "annotation": null
+        }
+      ],
+      "file_path": "C:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\cognitive_core\\internal_loop_connector.py",
+      "return_type": null,
+      "is_async": false,
+      "decorators": [
+        "property"
+      ],
+      "docstring": "延遲加載 CapabilityAnalyzer",
+      "line_number": 55,
+      "scope": "CORE",
+      "visibility": "INTERNAL",
+      "access_level": "L3_INTERNAL",
+      "available_in": [
+        "core"
+      ],
+      "has_cli": false,
+      "cli_command": null,
+      "cli_maturity": "NONE",
+      "service_dependencies": [],
+      "is_internal_command": true,
+      "command_type": "other"
+    },
+    {
+      "name": "get_sync_status",
+      "language": "python",
+      "module": "core/aiva_core",
+      "description": "獲取同步狀態",
+      "parameters": [
+        {
+          "name": "self",
+          "annotation": null
+        }
+      ],
+      "file_path": "C:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\cognitive_core\\internal_loop_connector.py",
+      "return_type": "dict[str, Any]",
+      "is_async": false,
+      "decorators": [],
+      "docstring": "獲取同步狀態\n\nReturns:\n    狀態資訊",
+      "line_number": 257,
+      "scope": "CORE",
+      "visibility": "INTERNAL",
+      "access_level": "L3_INTERNAL",
+      "available_in": [
+        "core"
+      ],
+      "has_cli": false,
+      "cli_command": null,
+      "cli_maturity": "NONE",
+      "service_dependencies": [],
+      "is_internal_command": true,
+      "command_type": "other"
+    },
+    {
+      "name": "get_capability_registry",
+      "language": "python",
+      "module": "core/aiva_core",
+      "description": "獲取全局能力註冊表實例 (Singleton)",
+      "parameters": [],
+      "file_path": "C:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\core_capabilities\\capability_registry.py",
+      "return_type": "CapabilityRegistry",
+      "is_async": false,
+      "decorators": [],
+      "docstring": "獲取全局能力註冊表實例 (Singleton)\n\nReturns:\n    CapabilityRegistry 實例",
+      "line_number": 310,
+      "scope": "SERVICE",
+      "visibility": "PUBLIC",
+      "access_level": "L3_INTERNAL",
+      "available_in": [
+        "core"
+      ],
+      "has_cli": false,
+      "cli_command": null,
+      "cli_maturity": "NONE",
+      "service_dependencies": [],
+      "is_internal_command": true,
+      "command_type": "management"
+    },
+    {
+      "name": "get_capability",
+      "language": "python",
+      "module": "core/aiva_core",
+      "description": "獲取能力信息",
+      "parameters": [
+        {
+          "name": "self",
+          "annotation": null
+        },
+        {
+          "name": "name",
+          "annotation": "str"
+        }
+      ],
+      "file_path": "C:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\core_capabilities\\capability_registry.py",
+      "return_type": "CapabilityInfo | None",
+      "is_async": false,
+      "decorators": [],
+      "docstring": "獲取能力信息\n\nArgs:\n    name: 能力名稱\n    \nReturns:\n    能力信息或 None",
+      "line_number": 205,
+      "scope": "SERVICE",
+      "visibility": "PUBLIC",
+      "access_level": "L3_INTERNAL",
+      "available_in": [
+        "core"
+      ],
+      "has_cli": false,
+      "cli_command": null,
+      "cli_maturity": "NONE",
+      "service_dependencies": [],
+      "is_internal_command": true,
+      "command_type": "management"
+    },
+    {
+      "name": "list_capabilities",
+      "language": "python",
+      "module": "core/aiva_core",
+      "description": "列出能力",
+      "parameters": [
+        {
+          "name": "self",
+          "annotation": null
+        },
+        {
+          "name": "module",
+          "annotation": "str | None"
+        },
+        {
+          "name": "filter_func",
+          "annotation": null
+        }
+      ],
+      "file_path": "C:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\core_capabilities\\capability_registry.py",
+      "return_type": "list[CapabilityInfo]",
+      "is_async": false,
+      "decorators": [],
+      "docstring": "列出能力\n\nArgs:\n    module: 可選的模組過濾\n    filter_func: 可選的自定義過濾函數\n    \nReturns:\n    能力列表",
+      "line_number": 216,
+      "scope": "SERVICE",
+      "visibility": "PUBLIC",
+      "access_level": "L3_INTERNAL",
+      "available_in": [
+        "core"
+      ],
+      "has_cli": false,
+      "cli_command": null,
+      "cli_maturity": "NONE",
+      "service_dependencies": [],
+      "is_internal_command": true,
+      "command_type": "management"
+    },
+    {
+      "name": "list_modules",
+      "language": "python",
+      "module": "core/aiva_core",
+      "description": "列出所有模組",
+      "parameters": [
+        {
+          "name": "self",
+          "annotation": null
+        }
+      ],
+      "file_path": "C:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\core_capabilities\\capability_registry.py",
+      "return_type": "list[str]",
+      "is_async": false,
+      "decorators": [],
+      "docstring": "列出所有模組\n\nReturns:\n    模組名稱列表",
+      "line_number": 244,
+      "scope": "SERVICE",
+      "visibility": "PUBLIC",
+      "access_level": "L3_INTERNAL",
+      "available_in": [
+        "core"
+      ],
+      "has_cli": false,
+      "cli_command": null,
+      "cli_maturity": "NONE",
+      "service_dependencies": [],
+      "is_internal_command": true,
+      "command_type": "management"
+    },
+    {
+      "name": "search_capabilities",
+      "language": "python",
+      "module": "core/aiva_core",
+      "description": "搜索能力",
+      "parameters": [
+        {
+          "name": "self",
+          "annotation": null
+        },
+        {
+          "name": "keyword",
+          "annotation": "str"
+        }
+      ],
+      "file_path": "C:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\core_capabilities\\capability_registry.py",
+      "return_type": "list[CapabilityInfo]",
+      "is_async": false,
+      "decorators": [],
+      "docstring": "搜索能力\n\nArgs:\n    keyword: 搜索關鍵字 (在名稱或描述中搜索)\n    \nReturns:\n    匹配的能力列表",
+      "line_number": 252,
+      "scope": "SERVICE",
+      "visibility": "PUBLIC",
+      "access_level": "L3_INTERNAL",
+      "available_in": [
+        "core"
+      ],
+      "has_cli": false,
+      "cli_command": null,
+      "cli_maturity": "NONE",
+      "service_dependencies": [],
+      "is_internal_command": true,
+      "command_type": "management"
+    },
+    {
+      "name": "get_statistics",
+      "language": "python",
+      "module": "core/aiva_core",
+      "description": "獲取統計信息",
+      "parameters": [
+        {
+          "name": "self",
+          "annotation": null
+        }
+      ],
+      "file_path": "C:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\core_capabilities\\capability_registry.py",
+      "return_type": "dict[str, Any]",
+      "is_async": false,
+      "decorators": [],
+      "docstring": "獲取統計信息\n\nReturns:\n    {\n        \"total_capabilities\": int,\n        \"total_modules\": int,\n        \"async_capabilities\": int,\n        \"capabilities_by_module\": dict\n    }",
+      "line_number": 273,
+      "scope": "SERVICE",
+      "visibility": "PUBLIC",
+      "access_level": "L3_INTERNAL",
+      "available_in": [
+        "core"
+      ],
+      "has_cli": false,
+      "cli_command": null,
+      "cli_maturity": "NONE",
+      "service_dependencies": [],
+      "is_internal_command": true,
+      "command_type": "management"
+    },
+    {
+      "name": "connector",
+      "language": "python",
+      "module": "core/aiva_core",
+      "description": "延遲加載 ExternalLoopConnector",
+      "parameters": [
+        {
+          "name": "self",
+          "annotation": null
+        }
+      ],
+      "file_path": "C:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\external_learning\\event_listener.py",
+      "return_type": null,
+      "is_async": false,
+      "decorators": [
+        "property"
+      ],
+      "docstring": "延遲加載 ExternalLoopConnector",
+      "line_number": 55,
+      "scope": "CORE",
+      "visibility": "PUBLIC",
+      "access_level": "L3_INTERNAL",
+      "available_in": [
+        "core"
+      ],
+      "has_cli": false,
+      "cli_command": null,
+      "cli_maturity": "NONE",
+      "service_dependencies": [],
+      "is_internal_command": true,
+      "command_type": "other"
+    },
+    {
+      "name": "get_status",
+      "language": "python",
+      "module": "core/aiva_core",
+      "description": "獲取監聽器狀態",
+      "parameters": [
+        {
+          "name": "self",
+          "annotation": null
+        }
+      ],
+      "file_path": "C:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\external_learning\\event_listener.py",
+      "return_type": "dict[str, Any]",
+      "is_async": false,
+      "decorators": [],
+      "docstring": "獲取監聽器狀態\n\nReturns:\n    狀態資訊",
+      "line_number": 210,
+      "scope": "CORE",
+      "visibility": "PUBLIC",
+      "access_level": "L3_INTERNAL",
+      "available_in": [
+        "core"
+      ],
+      "has_cli": false,
+      "cli_command": null,
+      "cli_maturity": "NONE",
+      "service_dependencies": [],
+      "is_internal_command": true,
+      "command_type": "other"
+    },
+    {
+      "name": "integrate_with_repository_example",
+      "language": "python",
+      "module": "core/aiva_core",
+      "description": "整合範例: ExperienceManager + ExperienceRepository",
+      "parameters": [],
+      "file_path": "C:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\external_learning\\experience_manager.py",
+      "return_type": null,
+      "is_async": false,
+      "decorators": [],
+      "docstring": "整合範例: ExperienceManager + ExperienceRepository\n\n展示如何將記憶體經驗持久化到資料庫。",
+      "line_number": 534,
+      "scope": "CORE",
+      "visibility": "PUBLIC",
+      "access_level": "L3_INTERNAL",
+      "available_in": [
+        "core"
+      ],
+      "has_cli": false,
+      "cli_command": null,
+      "cli_maturity": "NONE",
+      "service_dependencies": [],
+      "is_internal_command": true,
+      "command_type": "management"
+    },
+    {
+      "name": "push",
+      "language": "python",
+      "module": "core/aiva_core",
+      "description": "保存經驗轉換",
+      "parameters": [
+        {
+          "name": "self",
+          "annotation": null
+        },
+        {
+          "name": "state",
+          "annotation": "dict[str, Any]"
+        },
+        {
+          "name": "action",
+          "annotation": "dict[str, Any]"
+        },
+        {
+          "name": "next_state",
+          "annotation": "dict[str, Any]"
+        },
+        {
+          "name": "reward",
+          "annotation": "float"
+        },
+        {
+          "name": "metadata",
+          "annotation": "dict[str, Any] | None"
+        }
+      ],
+      "file_path": "C:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\external_learning\\experience_manager.py",
+      "return_type": "str",
+      "is_async": false,
+      "decorators": [],
+      "docstring": "保存經驗轉換\n\nArgs:\n    state: 當前狀態 (包含 AST 圖、目標資訊)\n    action: 執行的攻擊動作\n    next_state: 下一狀態 (執行結果)\n    reward: 獎勵值 (0.0-1.0)\n    metadata: 額外元資料\n\nReturns:\n    experience_id: 經驗唯一識別碼\n\nExample:\n    >>> manager = ExperienceManager()\n    >>> exp_id = manager.push(\n    ...     state={\"ast\": {...}, \"target\": \"http://example.com\"},\n    ...     action={\"type\": \"sqli\", \"params\": {...}},\n    ...     next_state={\"success\": True, \"findings\": [...]},\n    ...     reward=0.85,\n    ...     metadata={\"execution_time\": 2.5}\n    ... )",
+      "line_number": 114,
+      "scope": "CORE",
+      "visibility": "PUBLIC",
+      "access_level": "L3_INTERNAL",
+      "available_in": [
+        "core"
+      ],
+      "has_cli": false,
+      "cli_command": null,
+      "cli_maturity": "NONE",
+      "service_dependencies": [],
+      "is_internal_command": true,
+      "command_type": "management"
+    },
+    {
+      "name": "load_from_integration",
+      "language": "python",
+      "module": "core/aiva_core",
+      "description": "從整合模組載入歷史經驗到記憶體",
+      "parameters": [
+        {
+          "name": "self",
+          "annotation": null
+        },
+        {
+          "name": "attack_type",
+          "annotation": "str | None"
+        },
+        {
+          "name": "min_score",
+          "annotation": "float"
+        },
+        {
+          "name": "limit",
+          "annotation": "int"
+        }
+      ],
+      "file_path": "C:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\external_learning\\experience_manager.py",
+      "return_type": "int",
+      "is_async": false,
+      "decorators": [],
+      "docstring": "從整合模組載入歷史經驗到記憶體\n\n用於跨會話共享經驗或初始化訓練\n\nArgs:\n    attack_type: 攻擊類型過濾\n    min_score: 最低分數閾值\n    limit: 載入數量限制\n\nReturns:\n    實際載入的經驗數量",
+      "line_number": 216,
+      "scope": "CORE",
+      "visibility": "PUBLIC",
+      "access_level": "L3_INTERNAL",
+      "available_in": [
+        "core"
+      ],
+      "has_cli": false,
+      "cli_command": null,
+      "cli_maturity": "NONE",
+      "service_dependencies": [],
+      "is_internal_command": true,
+      "command_type": "management"
+    },
+    {
+      "name": "sample",
+      "language": "python",
+      "module": "core/aiva_core",
+      "description": "隨機採樣經驗批次",
+      "parameters": [
+        {
+          "name": "self",
+          "annotation": null
+        },
+        {
+          "name": "batch_size",
+          "annotation": "int"
+        }
+      ],
+      "file_path": "C:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\external_learning\\experience_manager.py",
+      "return_type": "list[ExperienceTransition]",
+      "is_async": false,
+      "decorators": [],
+      "docstring": "隨機採樣經驗批次\n\nArgs:\n    batch_size: 批次大小\n\nReturns:\n    隨機採樣的經驗轉換列表\n\nRaises:\n    ValueError: 如果緩衝區經驗數不足",
+      "line_number": 279,
+      "scope": "CORE",
+      "visibility": "PUBLIC",
+      "access_level": "L3_INTERNAL",
+      "available_in": [
+        "core"
+      ],
+      "has_cli": false,
+      "cli_command": null,
+      "cli_maturity": "NONE",
+      "service_dependencies": [],
+      "is_internal_command": true,
+      "command_type": "management"
+    },
+    {
+      "name": "prioritized_sample",
+      "language": "python",
+      "module": "core/aiva_core",
+      "description": "優先級採樣 (基於獎勵值)",
+      "parameters": [
+        {
+          "name": "self",
+          "annotation": null
+        },
+        {
+          "name": "batch_size",
+          "annotation": "int"
+        },
+        {
+          "name": "min_reward",
+          "annotation": "float"
+        }
+      ],
+      "file_path": "C:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\external_learning\\experience_manager.py",
+      "return_type": "list[ExperienceTransition]",
+      "is_async": false,
+      "decorators": [],
+      "docstring": "優先級採樣 (基於獎勵值)\n\n優先採樣高獎勵經驗，用於提升訓練品質。\n\nArgs:\n    batch_size: 批次大小\n    min_reward: 最低獎勵閾值\n\nReturns:\n    優先級排序的經驗轉換列表",
+      "line_number": 301,
+      "scope": "CORE",
+      "visibility": "PUBLIC",
+      "access_level": "L3_INTERNAL",
+      "available_in": [
+        "core"
+      ],
+      "has_cli": false,
+      "cli_command": null,
+      "cli_maturity": "NONE",
+      "service_dependencies": [],
+      "is_internal_command": true,
+      "command_type": "management"
+    },
+    {
+      "name": "create_dataset",
+      "language": "python",
+      "module": "core/aiva_core",
+      "description": "建立訓練資料集",
+      "parameters": [
+        {
+          "name": "self",
+          "annotation": null
+        },
+        {
+          "name": "name",
+          "annotation": "str"
+        },
+        {
+          "name": "min_reward",
+          "annotation": "float"
+        },
+        {
+          "name": "max_samples",
+          "annotation": "int"
+        }
+      ],
+      "file_path": "C:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\external_learning\\experience_manager.py",
+      "return_type": "dict[str, Any]",
+      "is_async": false,
+      "decorators": [],
+      "docstring": "建立訓練資料集\n\nArgs:\n    name: 資料集名稱\n    min_reward: 最低獎勵閾值\n    max_samples: 最大樣本數\n\nReturns:\n    訓練資料集字典\n\nExample:\n    >>> dataset = manager.create_dataset(\n    ...     name=\"sqli_training_v1\",\n    ...     min_reward=0.7,\n    ...     max_samples=500\n    ... )",
+      "line_number": 340,
+      "scope": "CORE",
+      "visibility": "PUBLIC",
+      "access_level": "L3_INTERNAL",
+      "available_in": [
+        "core"
+      ],
+      "has_cli": false,
+      "cli_command": null,
+      "cli_maturity": "NONE",
+      "service_dependencies": [],
+      "is_internal_command": true,
+      "command_type": "management"
+    },
+    {
+      "name": "get_statistics",
+      "language": "python",
+      "module": "core/aiva_core",
+      "description": "獲取經驗庫統計資訊",
+      "parameters": [
+        {
+          "name": "self",
+          "annotation": null
+        }
+      ],
+      "file_path": "C:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\external_learning\\experience_manager.py",
+      "return_type": "dict[str, Any]",
+      "is_async": false,
+      "decorators": [],
+      "docstring": "獲取經驗庫統計資訊\n\nReturns:\n    統計資訊字典",
+      "line_number": 395,
+      "scope": "CORE",
+      "visibility": "PUBLIC",
+      "access_level": "L3_INTERNAL",
+      "available_in": [
+        "core"
+      ],
+      "has_cli": false,
+      "cli_command": null,
+      "cli_maturity": "NONE",
+      "service_dependencies": [],
+      "is_internal_command": true,
+      "command_type": "management"
+    },
+    {
+      "name": "add_sample",
+      "language": "python",
+      "module": "core/aiva_core",
+      "description": "添加經驗樣本（TrainingOrchestrator 整合點）",
+      "parameters": [
+        {
+          "name": "self",
+          "annotation": null
+        },
+        {
+          "name": "sample",
+          "annotation": "Any"
+        }
+      ],
+      "file_path": "C:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\external_learning\\experience_manager.py",
+      "return_type": "str",
+      "is_async": false,
+      "decorators": [],
+      "docstring": "添加經驗樣本（TrainingOrchestrator 整合點）\n\n這是與 TrainingOrchestrator 的橋接方法，接收 ExperienceSample 對象\n並轉換為 ExperienceTransition 格式保存。\n\nArgs:\n    sample: ExperienceSample 對象（來自 TrainingOrchestrator）\n\nReturns:\n    experience_id: 經驗唯一識別碼\n\nExample:\n    >>> # 在 TrainingOrchestrator 中使用\n    >>> for sample in samples:\n    >>>     self.experience_manager.add_sample(sample)",
+      "line_number": 440,
+      "scope": "CORE",
+      "visibility": "PUBLIC",
+      "access_level": "L3_INTERNAL",
+      "available_in": [
+        "core"
+      ],
+      "has_cli": false,
+      "cli_command": null,
+      "cli_maturity": "NONE",
+      "service_dependencies": [],
+      "is_internal_command": true,
+      "command_type": "management"
+    },
+    {
+      "name": "get_high_quality_samples",
+      "language": "python",
+      "module": "core/aiva_core",
+      "description": "獲取高質量樣本（用於訓練）",
+      "parameters": [
+        {
+          "name": "self",
+          "annotation": null
+        },
+        {
+          "name": "min_quality",
+          "annotation": "float"
+        },
+        {
+          "name": "limit",
+          "annotation": "int"
+        }
+      ],
+      "file_path": "C:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\external_learning\\experience_manager.py",
+      "return_type": "list[ExperienceTransition]",
+      "is_async": false,
+      "decorators": [],
+      "docstring": "獲取高質量樣本（用於訓練）\n\nArgs:\n    min_quality: 最低質量閾值\n    limit: 最大返回數量\n\nReturns:\n    高質量經驗轉換列表",
+      "line_number": 495,
+      "scope": "CORE",
+      "visibility": "PUBLIC",
+      "access_level": "L3_INTERNAL",
+      "available_in": [
+        "core"
+      ],
+      "has_cli": false,
+      "cli_command": null,
+      "cli_maturity": "NONE",
+      "service_dependencies": [],
+      "is_internal_command": true,
+      "command_type": "management"
+    },
+    {
+      "name": "assign_role_to_user",
+      "language": "python",
+      "module": "core/aiva_core",
+      "description": "分配角色給用戶",
+      "parameters": [
+        {
+          "name": "self",
+          "annotation": null
+        },
+        {
+          "name": "user_id",
+          "annotation": "str"
+        },
+        {
+          "name": "role",
+          "annotation": "str"
+        }
+      ],
+      "file_path": "C:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\service_backbone\\authz\\authz_mapper.py",
+      "return_type": "None",
+      "is_async": false,
+      "decorators": [],
+      "docstring": "分配角色給用戶\n\nArgs:\n    user_id: 用戶 ID\n    role: 角色名稱",
+      "line_number": 39,
+      "scope": "SERVICE",
+      "visibility": "SYSTEM",
+      "access_level": "L3_INTERNAL",
+      "available_in": [
+        "core"
+      ],
+      "has_cli": false,
+      "cli_command": null,
+      "cli_maturity": "NONE",
+      "service_dependencies": [],
+      "is_internal_command": true,
+      "command_type": "other"
+    },
+    {
+      "name": "revoke_role_from_user",
+      "language": "python",
+      "module": "core/aiva_core",
+      "description": "撤銷用戶的角色",
+      "parameters": [
+        {
+          "name": "self",
+          "annotation": null
+        },
+        {
+          "name": "user_id",
+          "annotation": "str"
+        },
+        {
+          "name": "role",
+          "annotation": "str"
+        }
+      ],
+      "file_path": "C:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\service_backbone\\authz\\authz_mapper.py",
+      "return_type": "None",
+      "is_async": false,
+      "decorators": [],
+      "docstring": "撤銷用戶的角色\n\nArgs:\n    user_id: 用戶 ID\n    role: 角色名稱",
+      "line_number": 53,
+      "scope": "SERVICE",
+      "visibility": "SYSTEM",
+      "access_level": "L3_INTERNAL",
+      "available_in": [
+        "core"
+      ],
+      "has_cli": false,
+      "cli_command": null,
+      "cli_maturity": "NONE",
+      "service_dependencies": [],
+      "is_internal_command": true,
+      "command_type": "other"
+    },
+    {
+      "name": "set_user_attribute",
+      "language": "python",
+      "module": "core/aiva_core",
+      "description": "設置用戶屬性",
+      "parameters": [
+        {
+          "name": "self",
+          "annotation": null
+        },
+        {
+          "name": "user_id",
+          "annotation": "str"
+        },
+        {
+          "name": "attribute",
+          "annotation": "str"
+        },
+        {
+          "name": "value",
+          "annotation": "Any"
+        }
+      ],
+      "file_path": "C:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\service_backbone\\authz\\authz_mapper.py",
+      "return_type": "None",
+      "is_async": false,
+      "decorators": [],
+      "docstring": "設置用戶屬性\n\nArgs:\n    user_id: 用戶 ID\n    attribute: 屬性名稱\n    value: 屬性值",
+      "line_number": 64,
+      "scope": "SERVICE",
+      "visibility": "SYSTEM",
+      "access_level": "L3_INTERNAL",
+      "available_in": [
+        "core"
+      ],
+      "has_cli": false,
+      "cli_command": null,
+      "cli_maturity": "NONE",
+      "service_dependencies": [],
+      "is_internal_command": true,
+      "command_type": "other"
+    },
+    {
+      "name": "get_user_roles",
+      "language": "python",
+      "module": "core/aiva_core",
+      "description": "獲取用戶的所有角色",
+      "parameters": [
+        {
+          "name": "self",
+          "annotation": null
+        },
+        {
+          "name": "user_id",
+          "annotation": "str"
+        }
+      ],
+      "file_path": "C:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\service_backbone\\authz\\authz_mapper.py",
+      "return_type": "list[str]",
+      "is_async": false,
+      "decorators": [],
+      "docstring": "獲取用戶的所有角色\n\nArgs:\n    user_id: 用戶 ID\n\nReturns:\n    角色列表",
+      "line_number": 78,
+      "scope": "SERVICE",
+      "visibility": "SYSTEM",
+      "access_level": "L3_INTERNAL",
+      "available_in": [
+        "core"
+      ],
+      "has_cli": false,
+      "cli_command": null,
+      "cli_maturity": "NONE",
+      "service_dependencies": [],
+      "is_internal_command": true,
+      "command_type": "other"
+    },
+    {
+      "name": "check_user_permission",
+      "language": "python",
+      "module": "core/aiva_core",
+      "description": "檢查用戶權限",
+      "parameters": [
+        {
+          "name": "self",
+          "annotation": null
+        },
+        {
+          "name": "user_id",
+          "annotation": "str"
+        },
+        {
+          "name": "resource",
+          "annotation": "str"
+        },
+        {
+          "name": "permission",
+          "annotation": "str"
+        },
+        {
+          "name": "context",
+          "annotation": "dict[str, Any] | None"
+        }
+      ],
+      "file_path": "C:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\service_backbone\\authz\\authz_mapper.py",
+      "return_type": "tuple[AccessDecision, list[str]]",
+      "is_async": false,
+      "decorators": [],
+      "docstring": "檢查用戶權限\n\nArgs:\n    user_id: 用戶 ID\n    resource: 資源\n    permission: 權限\n    context: 上下文數據\n\nReturns:\n    (訪問決策, 使用的角色列表)",
+      "line_number": 89,
+      "scope": "SERVICE",
+      "visibility": "SYSTEM",
+      "access_level": "L3_INTERNAL",
+      "available_in": [
+        "core"
+      ],
+      "has_cli": false,
+      "cli_command": null,
+      "cli_maturity": "NONE",
+      "service_dependencies": [],
+      "is_internal_command": true,
+      "command_type": "other"
+    },
+    {
+      "name": "get_user_all_permissions",
+      "language": "python",
+      "module": "core/aiva_core",
+      "description": "獲取用戶的所有權限",
+      "parameters": [
+        {
+          "name": "self",
+          "annotation": null
+        },
+        {
+          "name": "user_id",
+          "annotation": "str"
+        }
+      ],
+      "file_path": "C:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\service_backbone\\authz\\authz_mapper.py",
+      "return_type": "list[dict[str, Any]]",
+      "is_async": false,
+      "decorators": [],
+      "docstring": "獲取用戶的所有權限\n\nArgs:\n    user_id: 用戶 ID\n\nReturns:\n    權限列表",
+      "line_number": 165,
+      "scope": "SERVICE",
+      "visibility": "SYSTEM",
+      "access_level": "L3_INTERNAL",
+      "available_in": [
+        "core"
+      ],
+      "has_cli": false,
+      "cli_command": null,
+      "cli_maturity": "NONE",
+      "service_dependencies": [],
+      "is_internal_command": true,
+      "command_type": "other"
+    },
+    {
+      "name": "detect_permission_conflicts",
+      "language": "python",
+      "module": "core/aiva_core",
+      "description": "檢測用戶的權限衝突",
+      "parameters": [
+        {
+          "name": "self",
+          "annotation": null
+        },
+        {
+          "name": "user_id",
+          "annotation": "str"
+        }
+      ],
+      "file_path": "C:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\service_backbone\\authz\\authz_mapper.py",
+      "return_type": "list[dict[str, Any]]",
+      "is_async": false,
+      "decorators": [],
+      "docstring": "檢測用戶的權限衝突\n\nArgs:\n    user_id: 用戶 ID\n\nReturns:\n    衝突列表",
+      "line_number": 194,
+      "scope": "SERVICE",
+      "visibility": "SYSTEM",
+      "access_level": "L3_INTERNAL",
+      "available_in": [
+        "core"
+      ],
+      "has_cli": false,
+      "cli_command": null,
+      "cli_maturity": "NONE",
+      "service_dependencies": [],
+      "is_internal_command": true,
+      "command_type": "other"
+    },
+    {
+      "name": "analyze_role_overlap",
+      "language": "python",
+      "module": "core/aiva_core",
+      "description": "分析角色重疊情況",
+      "parameters": [
+        {
+          "name": "self",
+          "annotation": null
+        }
+      ],
+      "file_path": "C:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\service_backbone\\authz\\authz_mapper.py",
+      "return_type": "list[dict[str, Any]]",
+      "is_async": false,
+      "decorators": [],
+      "docstring": "分析角色重疊情況\n\nReturns:\n    角色重疊分析結果",
+      "line_number": 240,
+      "scope": "SERVICE",
+      "visibility": "SYSTEM",
+      "access_level": "L3_INTERNAL",
+      "available_in": [
+        "core"
+      ],
+      "has_cli": false,
+      "cli_command": null,
+      "cli_maturity": "NONE",
+      "service_dependencies": [],
+      "is_internal_command": true,
+      "command_type": "other"
+    },
+    {
+      "name": "simulate_role_removal",
+      "language": "python",
+      "module": "core/aiva_core",
+      "description": "模擬移除角色的影響",
+      "parameters": [
+        {
+          "name": "self",
+          "annotation": null
+        },
+        {
+          "name": "user_id",
+          "annotation": "str"
+        },
+        {
+          "name": "role",
+          "annotation": "str"
+        }
+      ],
+      "file_path": "C:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\service_backbone\\authz\\authz_mapper.py",
+      "return_type": "dict[str, Any]",
+      "is_async": false,
+      "decorators": [],
+      "docstring": "模擬移除角色的影響\n\nArgs:\n    user_id: 用戶 ID\n    role: 要移除的角色\n\nReturns:\n    影響分析結果",
+      "line_number": 278,
+      "scope": "SERVICE",
+      "visibility": "SYSTEM",
+      "access_level": "L3_INTERNAL",
+      "available_in": [
+        "core"
+      ],
+      "has_cli": false,
+      "cli_command": null,
+      "cli_maturity": "NONE",
+      "service_dependencies": [],
+      "is_internal_command": true,
+      "command_type": "other"
+    },
+    {
+      "name": "recommend_role_consolidation",
+      "language": "python",
+      "module": "core/aiva_core",
+      "description": "推薦角色整合",
+      "parameters": [
+        {
+          "name": "self",
+          "annotation": null
+        },
+        {
+          "name": "user_id",
+          "annotation": "str"
+        }
+      ],
+      "file_path": "C:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\service_backbone\\authz\\authz_mapper.py",
+      "return_type": "list[dict[str, Any]]",
+      "is_async": false,
+      "decorators": [],
+      "docstring": "推薦角色整合\n\nArgs:\n    user_id: 用戶 ID\n\nReturns:\n    推薦列表",
+      "line_number": 327,
+      "scope": "SERVICE",
+      "visibility": "SYSTEM",
+      "access_level": "L3_INTERNAL",
+      "available_in": [
+        "core"
+      ],
+      "has_cli": false,
+      "cli_command": null,
+      "cli_maturity": "NONE",
+      "service_dependencies": [],
+      "is_internal_command": true,
+      "command_type": "other"
+    },
+    {
+      "name": "make_subplots",
+      "language": "python",
+      "module": "core/aiva_core",
+      "description": "Mock make_subplots 函數",
+      "parameters": [],
+      "file_path": "C:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\service_backbone\\authz\\matrix_visualizer.py",
+      "return_type": null,
+      "is_async": false,
+      "decorators": [],
+      "docstring": "Mock make_subplots 函數",
+      "line_number": 101,
+      "scope": "SERVICE",
+      "visibility": "SYSTEM",
+      "access_level": "L3_INTERNAL",
+      "available_in": [
+        "core"
+      ],
+      "has_cli": false,
+      "cli_command": null,
+      "cli_maturity": "NONE",
+      "service_dependencies": [],
+      "is_internal_command": true,
+      "command_type": "other"
+    },
+    {
+      "name": "generate_heatmap",
+      "language": "python",
+      "module": "core/aiva_core",
+      "description": "生成權限熱力圖",
+      "parameters": [
+        {
+          "name": "self",
+          "annotation": null
+        },
+        {
+          "name": "permission_type",
+          "annotation": "str | None"
+        }
+      ],
+      "file_path": "C:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\service_backbone\\authz\\matrix_visualizer.py",
+      "return_type": "Any",
+      "is_async": false,
+      "decorators": [],
+      "docstring": "生成權限熱力圖\n\nArgs:\n    permission_type: 指定權限類型，None 表示所有權限\n\nReturns:\n    Plotly 圖表對象",
+      "line_number": 125,
+      "scope": "SERVICE",
+      "visibility": "SYSTEM",
+      "access_level": "L3_INTERNAL",
+      "available_in": [
+        "core"
+      ],
+      "has_cli": false,
+      "cli_command": null,
+      "cli_maturity": "NONE",
+      "service_dependencies": [],
+      "is_internal_command": true,
+      "command_type": "other"
+    },
+    {
+      "name": "generate_coverage_chart",
+      "language": "python",
+      "module": "core/aiva_core",
+      "description": "生成權限覆蓋率圖表",
+      "parameters": [
+        {
+          "name": "self",
+          "annotation": null
+        }
+      ],
+      "file_path": "C:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\service_backbone\\authz\\matrix_visualizer.py",
+      "return_type": "Any",
+      "is_async": false,
+      "decorators": [],
+      "docstring": "生成權限覆蓋率圖表\n\nReturns:\n    Plotly 圖表對象",
+      "line_number": 203,
+      "scope": "SERVICE",
+      "visibility": "SYSTEM",
+      "access_level": "L3_INTERNAL",
+      "available_in": [
+        "core"
+      ],
+      "has_cli": false,
+      "cli_command": null,
+      "cli_maturity": "NONE",
+      "service_dependencies": [],
+      "is_internal_command": true,
+      "command_type": "other"
+    },
+    {
+      "name": "generate_role_comparison_chart",
+      "language": "python",
+      "module": "core/aiva_core",
+      "description": "生成角色權限比較圖表",
+      "parameters": [
+        {
+          "name": "self",
+          "annotation": null
+        }
+      ],
+      "file_path": "C:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\service_backbone\\authz\\matrix_visualizer.py",
+      "return_type": "Any",
+      "is_async": false,
+      "decorators": [],
+      "docstring": "生成角色權限比較圖表\n\nReturns:\n    Plotly 圖表對象",
+      "line_number": 266,
+      "scope": "SERVICE",
+      "visibility": "SYSTEM",
+      "access_level": "L3_INTERNAL",
+      "available_in": [
+        "core"
+      ],
+      "has_cli": false,
+      "cli_command": null,
+      "cli_maturity": "NONE",
+      "service_dependencies": [],
+      "is_internal_command": true,
+      "command_type": "other"
+    },
+    {
+      "name": "generate_html_report",
+      "language": "python",
+      "module": "core/aiva_core",
+      "description": "生成 HTML 報告",
+      "parameters": [
+        {
+          "name": "self",
+          "annotation": null
+        },
+        {
+          "name": "output_path",
+          "annotation": "str | Path"
+        }
+      ],
+      "file_path": "C:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\service_backbone\\authz\\matrix_visualizer.py",
+      "return_type": "None",
+      "is_async": false,
+      "decorators": [],
+      "docstring": "生成 HTML 報告\n\nArgs:\n    output_path: 輸出文件路徑",
+      "line_number": 334,
+      "scope": "SERVICE",
+      "visibility": "SYSTEM",
+      "access_level": "L3_INTERNAL",
+      "available_in": [
+        "core"
+      ],
+      "has_cli": false,
+      "cli_command": null,
+      "cli_maturity": "NONE",
+      "service_dependencies": [],
+      "is_internal_command": true,
+      "command_type": "other"
+    },
+    {
+      "name": "export_to_csv",
+      "language": "python",
+      "module": "core/aiva_core",
+      "description": "匯出為 CSV",
+      "parameters": [
+        {
+          "name": "self",
+          "annotation": null
+        },
+        {
+          "name": "output_path",
+          "annotation": "str | Path"
+        }
+      ],
+      "file_path": "C:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\service_backbone\\authz\\matrix_visualizer.py",
+      "return_type": "None",
+      "is_async": false,
+      "decorators": [],
+      "docstring": "匯出為 CSV\n\nArgs:\n    output_path: 輸出文件路徑",
+      "line_number": 562,
+      "scope": "SERVICE",
+      "visibility": "SYSTEM",
+      "access_level": "L3_INTERNAL",
+      "available_in": [
+        "core"
+      ],
+      "has_cli": false,
+      "cli_command": null,
+      "cli_maturity": "NONE",
+      "service_dependencies": [],
+      "is_internal_command": true,
+      "command_type": "other"
+    },
+    {
+      "name": "authorize_operation",
+      "language": "python",
+      "module": "core/aiva_core",
+      "description": "便捷的操作授權函數",
+      "parameters": [
+        {
+          "name": "operation_name",
+          "annotation": "str"
+        },
+        {
+          "name": "risk_level",
+          "annotation": "str"
+        },
+        {
+          "name": "tags",
+          "annotation": "Optional[List[str]]"
+        }
+      ],
+      "file_path": "C:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\service_backbone\\authz\\permission_matrix.py",
+      "return_type": "bool",
+      "is_async": false,
+      "decorators": [],
+      "docstring": "便捷的操作授權函數\n\nArgs:\n    operation_name: 操作名稱\n    risk_level: 風險等級 (L0-L3)\n    tags: 操作標籤\n    **kwargs: 其他上下文參數\n    \nReturns:\n    是否被授權",
+      "line_number": 692,
+      "scope": "SERVICE",
+      "visibility": "SYSTEM",
+      "access_level": "L3_INTERNAL",
+      "available_in": [
+        "core"
+      ],
+      "has_cli": false,
+      "cli_command": null,
+      "cli_maturity": "NONE",
+      "service_dependencies": [],
+      "is_internal_command": true,
+      "command_type": "other"
+    },
+    {
+      "name": "add_role",
+      "language": "python",
+      "module": "core/aiva_core",
+      "description": "添加角色",
+      "parameters": [
+        {
+          "name": "self",
+          "annotation": null
+        },
+        {
+          "name": "role",
+          "annotation": "str"
+        },
+        {
+          "name": "inherits_from",
+          "annotation": "list[str] | None"
+        }
+      ],
+      "file_path": "C:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\service_backbone\\authz\\permission_matrix.py",
+      "return_type": "None",
+      "is_async": false,
+      "decorators": [],
+      "docstring": "添加角色\n\nArgs:\n    role: 角色名稱\n    inherits_from: 繼承的父角色列表",
+      "line_number": 74,
+      "scope": "SERVICE",
+      "visibility": "SYSTEM",
+      "access_level": "L3_INTERNAL",
+      "available_in": [
+        "core"
+      ],
+      "has_cli": false,
+      "cli_command": null,
+      "cli_maturity": "NONE",
+      "service_dependencies": [],
+      "is_internal_command": true,
+      "command_type": "other"
+    },
+    {
+      "name": "add_resource",
+      "language": "python",
+      "module": "core/aiva_core",
+      "description": "添加資源",
+      "parameters": [
+        {
+          "name": "self",
+          "annotation": null
+        },
+        {
+          "name": "resource",
+          "annotation": "str"
+        }
+      ],
+      "file_path": "C:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\service_backbone\\authz\\permission_matrix.py",
+      "return_type": "None",
+      "is_async": false,
+      "decorators": [],
+      "docstring": "添加資源\n\nArgs:\n    resource: 資源名稱",
+      "line_number": 88,
+      "scope": "SERVICE",
+      "visibility": "SYSTEM",
+      "access_level": "L3_INTERNAL",
+      "available_in": [
+        "core"
+      ],
+      "has_cli": false,
+      "cli_command": null,
+      "cli_maturity": "NONE",
+      "service_dependencies": [],
+      "is_internal_command": true,
+      "command_type": "other"
+    },
+    {
+      "name": "add_permission",
+      "language": "python",
+      "module": "core/aiva_core",
+      "description": "添加權限",
+      "parameters": [
+        {
+          "name": "self",
+          "annotation": null
+        },
+        {
+          "name": "permission",
+          "annotation": "str"
+        }
+      ],
+      "file_path": "C:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\service_backbone\\authz\\permission_matrix.py",
+      "return_type": "None",
+      "is_async": false,
+      "decorators": [],
+      "docstring": "添加權限\n\nArgs:\n    permission: 權限名稱",
+      "line_number": 97,
+      "scope": "SERVICE",
+      "visibility": "SYSTEM",
+      "access_level": "L3_INTERNAL",
+      "available_in": [
+        "core"
+      ],
+      "has_cli": false,
+      "cli_command": null,
+      "cli_maturity": "NONE",
+      "service_dependencies": [],
+      "is_internal_command": true,
+      "command_type": "other"
+    },
+    {
+      "name": "grant_permission",
+      "language": "python",
+      "module": "core/aiva_core",
+      "description": "授予權限",
+      "parameters": [
+        {
+          "name": "self",
+          "annotation": null
+        },
+        {
+          "name": "role",
+          "annotation": "str"
+        },
+        {
+          "name": "resource",
+          "annotation": "str"
+        },
+        {
+          "name": "permission",
+          "annotation": "str"
+        },
+        {
+          "name": "decision",
+          "annotation": "AccessDecision"
+        },
+        {
+          "name": "condition",
+          "annotation": "str | None"
+        }
+      ],
+      "file_path": "C:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\service_backbone\\authz\\permission_matrix.py",
+      "return_type": "None",
+      "is_async": false,
+      "decorators": [],
+      "docstring": "授予權限\n\nArgs:\n    role: 角色\n    resource: 資源\n    permission: 權限\n    decision: 訪問決策\n    condition: 條件表達式（可選）",
+      "line_number": 106,
+      "scope": "SERVICE",
+      "visibility": "SYSTEM",
+      "access_level": "L3_INTERNAL",
+      "available_in": [
+        "core"
+      ],
+      "has_cli": false,
+      "cli_command": null,
+      "cli_maturity": "NONE",
+      "service_dependencies": [],
+      "is_internal_command": true,
+      "command_type": "other"
+    },
+    {
+      "name": "revoke_permission",
+      "language": "python",
+      "module": "core/aiva_core",
+      "description": "撤銷權限",
+      "parameters": [
+        {
+          "name": "self",
+          "annotation": null
+        },
+        {
+          "name": "role",
+          "annotation": "str"
+        },
+        {
+          "name": "resource",
+          "annotation": "str"
+        },
+        {
+          "name": "permission",
+          "annotation": "str"
+        }
+      ],
+      "file_path": "C:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\service_backbone\\authz\\permission_matrix.py",
+      "return_type": "None",
+      "is_async": false,
+      "decorators": [],
+      "docstring": "撤銷權限\n\nArgs:\n    role: 角色\n    resource: 資源\n    permission: 權限",
+      "line_number": 151,
+      "scope": "SERVICE",
+      "visibility": "SYSTEM",
+      "access_level": "L3_INTERNAL",
+      "available_in": [
+        "core"
+      ],
+      "has_cli": false,
+      "cli_command": null,
+      "cli_maturity": "NONE",
+      "service_dependencies": [],
+      "is_internal_command": true,
+      "command_type": "other"
+    },
+    {
+      "name": "check_permission",
+      "language": "python",
+      "module": "core/aiva_core",
+      "description": "檢查權限",
+      "parameters": [
+        {
+          "name": "self",
+          "annotation": null
+        },
+        {
+          "name": "role",
+          "annotation": "str"
+        },
+        {
+          "name": "resource",
+          "annotation": "str"
+        },
+        {
+          "name": "permission",
+          "annotation": "str"
+        },
+        {
+          "name": "context",
+          "annotation": "dict[str, Any] | None"
+        }
+      ],
+      "file_path": "C:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\service_backbone\\authz\\permission_matrix.py",
+      "return_type": "AccessDecision",
+      "is_async": false,
+      "decorators": [],
+      "docstring": "檢查權限\n\nArgs:\n    role: 角色\n    resource: 資源\n    permission: 權限\n    context: 上下文數據（用於條件評估）\n\nReturns:\n    訪問決策",
+      "line_number": 171,
+      "scope": "SERVICE",
+      "visibility": "SYSTEM",
+      "access_level": "L3_INTERNAL",
+      "available_in": [
+        "core"
+      ],
+      "has_cli": false,
+      "cli_command": null,
+      "cli_maturity": "NONE",
+      "service_dependencies": [],
+      "is_internal_command": true,
+      "command_type": "other"
+    },
+    {
+      "name": "get_role_permissions",
+      "language": "python",
+      "module": "core/aiva_core",
+      "description": "獲取角色的所有權限",
+      "parameters": [
+        {
+          "name": "self",
+          "annotation": null
+        },
+        {
+          "name": "role",
+          "annotation": "str"
+        }
+      ],
+      "file_path": "C:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\service_backbone\\authz\\permission_matrix.py",
+      "return_type": "list[dict[str, Any]]",
+      "is_async": false,
+      "decorators": [],
+      "docstring": "獲取角色的所有權限\n\nArgs:\n    role: 角色名稱\n\nReturns:\n    權限列表",
+      "line_number": 235,
+      "scope": "SERVICE",
+      "visibility": "SYSTEM",
+      "access_level": "L3_INTERNAL",
+      "available_in": [
+        "core"
+      ],
+      "has_cli": false,
+      "cli_command": null,
+      "cli_maturity": "NONE",
+      "service_dependencies": [],
+      "is_internal_command": true,
+      "command_type": "other"
+    },
+    {
+      "name": "get_resource_permissions",
+      "language": "python",
+      "module": "core/aiva_core",
+      "description": "獲取資源的所有權限",
+      "parameters": [
+        {
+          "name": "self",
+          "annotation": null
+        },
+        {
+          "name": "resource",
+          "annotation": "str"
+        }
+      ],
+      "file_path": "C:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\service_backbone\\authz\\permission_matrix.py",
+      "return_type": "list[dict[str, Any]]",
+      "is_async": false,
+      "decorators": [],
+      "docstring": "獲取資源的所有權限\n\nArgs:\n    resource: 資源名稱\n\nReturns:\n    權限列表",
+      "line_number": 259,
+      "scope": "SERVICE",
+      "visibility": "SYSTEM",
+      "access_level": "L3_INTERNAL",
+      "available_in": [
+        "core"
+      ],
+      "has_cli": false,
+      "cli_command": null,
+      "cli_maturity": "NONE",
+      "service_dependencies": [],
+      "is_internal_command": true,
+      "command_type": "other"
+    },
+    {
+      "name": "to_dataframe",
+      "language": "python",
+      "module": "core/aiva_core",
+      "description": "轉換為 Pandas DataFrame",
+      "parameters": [
+        {
+          "name": "self",
+          "annotation": null
+        }
+      ],
+      "file_path": "C:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\service_backbone\\authz\\permission_matrix.py",
+      "return_type": "Any",
+      "is_async": false,
+      "decorators": [],
+      "docstring": "轉換為 Pandas DataFrame\n\nReturns:\n    DataFrame 表示",
+      "line_number": 284,
+      "scope": "SERVICE",
+      "visibility": "SYSTEM",
+      "access_level": "L3_INTERNAL",
+      "available_in": [
+        "core"
+      ],
+      "has_cli": false,
+      "cli_command": null,
+      "cli_maturity": "NONE",
+      "service_dependencies": [],
+      "is_internal_command": true,
+      "command_type": "other"
+    },
+    {
+      "name": "to_numpy_matrix",
+      "language": "python",
+      "module": "core/aiva_core",
+      "description": "轉換為 NumPy 矩陣（用於數值分析）",
+      "parameters": [
+        {
+          "name": "self",
+          "annotation": null
+        }
+      ],
+      "file_path": "C:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\service_backbone\\authz\\permission_matrix.py",
+      "return_type": "tuple[np.ndarray, list[str], list[str], list[str]]",
+      "is_async": false,
+      "decorators": [],
+      "docstring": "轉換為 NumPy 矩陣（用於數值分析）\n\nReturns:\n    (矩陣, 角色列表, 資源列表, 權限列表)",
+      "line_number": 307,
+      "scope": "SERVICE",
+      "visibility": "SYSTEM",
+      "access_level": "L3_INTERNAL",
+      "available_in": [
+        "core"
+      ],
+      "has_cli": false,
+      "cli_command": null,
+      "cli_maturity": "NONE",
+      "service_dependencies": [],
+      "is_internal_command": true,
+      "command_type": "other"
+    },
+    {
+      "name": "analyze_coverage",
+      "language": "python",
+      "module": "core/aiva_core",
+      "description": "分析權限覆蓋率",
+      "parameters": [
+        {
+          "name": "self",
+          "annotation": null
+        }
+      ],
+      "file_path": "C:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\service_backbone\\authz\\permission_matrix.py",
+      "return_type": "dict[str, Any]",
+      "is_async": false,
+      "decorators": [],
+      "docstring": "分析權限覆蓋率\n\nReturns:\n    覆蓋率分析結果",
+      "line_number": 341,
+      "scope": "SERVICE",
+      "visibility": "SYSTEM",
+      "access_level": "L3_INTERNAL",
+      "available_in": [
+        "core"
+      ],
+      "has_cli": false,
+      "cli_command": null,
+      "cli_maturity": "NONE",
+      "service_dependencies": [],
+      "is_internal_command": true,
+      "command_type": "other"
+    },
+    {
+      "name": "find_over_privileged_roles",
+      "language": "python",
+      "module": "core/aiva_core",
+      "description": "查找過度授權的角色",
+      "parameters": [
+        {
+          "name": "self",
+          "annotation": null
+        }
+      ],
+      "file_path": "C:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\service_backbone\\authz\\permission_matrix.py",
+      "return_type": "list[dict[str, Any]]",
+      "is_async": false,
+      "decorators": [],
+      "docstring": "查找過度授權的角色\n\nReturns:\n    過度授權角色列表",
+      "line_number": 382,
+      "scope": "SERVICE",
+      "visibility": "SYSTEM",
+      "access_level": "L3_INTERNAL",
+      "available_in": [
+        "core"
+      ],
+      "has_cli": false,
+      "cli_command": null,
+      "cli_maturity": "NONE",
+      "service_dependencies": [],
+      "is_internal_command": true,
+      "command_type": "other"
+    },
+    {
+      "name": "export_to_dict",
+      "language": "python",
+      "module": "core/aiva_core",
+      "description": "匯出為字典格式",
+      "parameters": [
+        {
+          "name": "self",
+          "annotation": null
+        }
+      ],
+      "file_path": "C:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\service_backbone\\authz\\permission_matrix.py",
+      "return_type": "dict[str, Any]",
+      "is_async": false,
+      "decorators": [],
+      "docstring": "匯出為字典格式\n\nReturns:\n    字典表示",
+      "line_number": 424,
+      "scope": "SERVICE",
+      "visibility": "SYSTEM",
+      "access_level": "L3_INTERNAL",
+      "available_in": [
+        "core"
+      ],
+      "has_cli": false,
+      "cli_command": null,
+      "cli_maturity": "NONE",
+      "service_dependencies": [],
+      "is_internal_command": true,
+      "command_type": "other"
+    },
+    {
+      "name": "authorize_operation",
+      "language": "python",
+      "module": "core/aiva_core",
+      "description": "授權操作執行",
+      "parameters": [
+        {
+          "name": "self",
+          "annotation": null
+        },
+        {
+          "name": "context",
+          "annotation": "OperationContext"
+        }
+      ],
+      "file_path": "C:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\service_backbone\\authz\\permission_matrix.py",
+      "return_type": "AccessDecision",
+      "is_async": false,
+      "decorators": [],
+      "docstring": "授權操作執行\n\nArgs:\n    context: 操作上下文\n    \nReturns:\n    授權決策",
+      "line_number": 571,
+      "scope": "SERVICE",
+      "visibility": "SYSTEM",
+      "access_level": "L3_INTERNAL",
+      "available_in": [
+        "core"
+      ],
+      "has_cli": false,
+      "cli_command": null,
+      "cli_maturity": "NONE",
+      "service_dependencies": [],
+      "is_internal_command": true,
+      "command_type": "other"
+    },
+    {
+      "name": "get_allowed_operations",
+      "language": "python",
+      "module": "core/aiva_core",
+      "description": "獲取當前環境允許的操作列表",
+      "parameters": [
+        {
+          "name": "self",
+          "annotation": null
+        },
+        {
+          "name": "environment",
+          "annotation": "Optional[str]"
+        }
+      ],
+      "file_path": "C:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\service_backbone\\authz\\permission_matrix.py",
+      "return_type": "Dict[str, List[str]]",
+      "is_async": false,
+      "decorators": [],
+      "docstring": "獲取當前環境允許的操作列表\n\nArgs:\n    environment: 指定環境，如果為 None 則使用當前環境\n    \nReturns:\n    按風險等級分類的允許操作列表",
+      "line_number": 653,
+      "scope": "SERVICE",
+      "visibility": "SYSTEM",
+      "access_level": "L3_INTERNAL",
+      "available_in": [
+        "core"
+      ],
+      "has_cli": false,
+      "cli_command": null,
+      "cli_maturity": "NONE",
+      "service_dependencies": [],
+      "is_internal_command": true,
+      "command_type": "other"
+    },
+    {
+      "name": "compare_with_gpt4",
+      "language": "python",
+      "module": "core/aiva_core",
+      "description": "比較 AIVA vs GPT-4 在程式控制場景的適用性",
+      "parameters": [
+        {
+          "name": "self",
+          "annotation": null
+        }
+      ],
+      "file_path": "C:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\service_backbone\\coordination\\optimized_core.py",
+      "return_type": null,
+      "is_async": false,
+      "decorators": [],
+      "docstring": "比較 AIVA vs GPT-4 在程式控制場景的適用性",
+      "line_number": 256,
+      "scope": "SERVICE",
+      "visibility": "SYSTEM",
+      "access_level": "L3_INTERNAL",
+      "available_in": [
+        "core"
+      ],
+      "has_cli": false,
+      "cli_command": null,
+      "cli_maturity": "NONE",
+      "service_dependencies": [],
+      "is_internal_command": true,
+      "command_type": "other"
+    },
+    {
+      "name": "demo_anti_hallucination",
+      "language": "python",
+      "module": "core/aiva_core",
+      "description": "示範抗幻覺模組的使用（包含fallback機制）",
+      "parameters": [],
+      "file_path": "C:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\cognitive_core\\anti_hallucination\\anti_hallucination_module.py",
+      "return_type": null,
+      "is_async": false,
+      "decorators": [],
+      "docstring": "示範抗幻覺模組的使用（包含fallback機制）",
+      "line_number": 489,
+      "scope": "CORE",
+      "visibility": "PUBLIC",
+      "access_level": "L3_INTERNAL",
+      "available_in": [
+        "core"
+      ],
+      "has_cli": false,
+      "cli_command": null,
+      "cli_maturity": "NONE",
+      "service_dependencies": [],
+      "is_internal_command": true,
+      "command_type": "other"
+    },
+    {
+      "name": "validate_attack_plan",
+      "language": "python",
+      "module": "core/aiva_core",
+      "description": "驗證整個攻擊計畫，移除明顯不合理的步驟",
+      "parameters": [
+        {
+          "name": "self",
+          "annotation": null
+        },
+        {
+          "name": "attack_plan",
+          "annotation": "Dict[str, Any]"
+        }
+      ],
+      "file_path": "C:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\cognitive_core\\anti_hallucination\\anti_hallucination_module.py",
+      "return_type": "Dict[str, Any]",
+      "is_async": false,
+      "decorators": [],
+      "docstring": "驗證整個攻擊計畫，移除明顯不合理的步驟\n\nArgs:\n    attack_plan: 包含攻擊步驟的計畫字典\n\nReturns:\n    經過驗證和清理的攻擊計畫",
+      "line_number": 176,
+      "scope": "CORE",
+      "visibility": "PUBLIC",
+      "access_level": "L3_INTERNAL",
+      "available_in": [
+        "core"
+      ],
+      "has_cli": false,
+      "cli_command": null,
+      "cli_maturity": "NONE",
+      "service_dependencies": [],
+      "is_internal_command": true,
+      "command_type": "other"
+    },
+    {
+      "name": "export_validation_report",
+      "language": "python",
+      "module": "core/aiva_core",
+      "description": "匯出驗證報告（包含fallback使用統計）",
+      "parameters": [
+        {
+          "name": "self",
+          "annotation": null
+        },
+        {
+          "name": "output_path",
+          "annotation": "str | None"
+        }
+      ],
+      "file_path": "C:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\cognitive_core\\anti_hallucination\\anti_hallucination_module.py",
+      "return_type": "str",
+      "is_async": false,
+      "decorators": [],
+      "docstring": "匯出驗證報告（包含fallback使用統計）",
+      "line_number": 451,
+      "scope": "CORE",
+      "visibility": "PUBLIC",
+      "access_level": "L3_INTERNAL",
+      "available_in": [
+        "core"
+      ],
+      "has_cli": false,
+      "cli_command": null,
+      "cli_maturity": "NONE",
+      "service_dependencies": [],
+      "is_internal_command": true,
+      "command_type": "other"
+    },
+    {
+      "name": "decide",
+      "language": "python",
+      "module": "core/aiva_core",
+      "description": "做出高階決策 - 返回 HighLevelIntent (問題三修復)",
+      "parameters": [
+        {
+          "name": "self",
+          "annotation": null
+        },
+        {
+          "name": "context",
+          "annotation": "DecisionContext"
+        }
+      ],
+      "file_path": "C:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\cognitive_core\\decision\\enhanced_decision_agent.py",
+      "return_type": "HighLevelIntent",
+      "is_async": false,
+      "decorators": [],
+      "docstring": "做出高階決策 - 返回 HighLevelIntent (問題三修復)\n\n這是 cognitive_core → task_planning 的標準接口\n\n職責劃分：\n- cognitive_core (此方法): 決定「做什麼」(What) 和「為什麼」(Why)\n- task_planning: 決定「怎麼做」(How) - 生成具體的 AST\n\nArgs:\n    context: 決策上下文\n    \nReturns:\n    HighLevelIntent: 高階意圖 (包含目標、參數、約束、推理等)",
+      "line_number": 163,
+      "scope": "CORE",
+      "visibility": "INTERNAL",
+      "access_level": "L3_INTERNAL",
+      "available_in": [
+        "core"
+      ],
+      "has_cli": false,
+      "cli_command": null,
+      "cli_maturity": "NONE",
+      "service_dependencies": [],
+      "is_internal_command": true,
+      "command_type": "other"
+    },
+    {
+      "name": "make_decision",
+      "language": "python",
+      "module": "core/aiva_core",
+      "description": "基於上下文做出智能決策 (Legacy 方法，保持向後兼容)",
+      "parameters": [
+        {
+          "name": "self",
+          "annotation": null
+        },
+        {
+          "name": "context",
+          "annotation": "DecisionContext"
+        }
+      ],
+      "file_path": "C:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\cognitive_core\\decision\\enhanced_decision_agent.py",
+      "return_type": "Decision",
+      "is_async": false,
+      "decorators": [],
+      "docstring": "基於上下文做出智能決策 (Legacy 方法，保持向後兼容)\n\n注意: 新代碼應使用 decide() 方法返回 HighLevelIntent\n\nArgs:\n    context: 決策上下文\n\nReturns:\n    決策結果",
+      "line_number": 248,
+      "scope": "CORE",
+      "visibility": "INTERNAL",
+      "access_level": "L3_INTERNAL",
+      "available_in": [
+        "core"
+      ],
+      "has_cli": false,
+      "cli_command": null,
+      "cli_maturity": "NONE",
+      "service_dependencies": [],
+      "is_internal_command": true,
+      "command_type": "other"
+    }
+  ],
+  "statistics": {
+    "total": 57,
+    "by_type": {
+      "other": 42,
+      "management": 15
+    },
+    "by_module": {
+      "unknown": 57
+    },
+    "by_scope": {
+      "CORE": 18,
+      "SERVICE": 39
+    },
+    "by_visibility": {
+      "INTERNAL": 4,
+      "PUBLIC": 20,
+      "SYSTEM": 33
+    },
+    "missing": [
+      "services/core/aiva_core/cognitive_core/ai_capability_query.py",
+      "services/core/aiva_core/cognitive_core/rag/postgresql_vector_store.py",
+      "services/core/aiva_core/cognitive_core/test_scope_management.py",
+      "services/core/aiva_core/core_capabilities/attack/bizlogic_attack_executor.py",
+      "services/core/aiva_core/external_learning/ai_model/train_classifier.py",
+      "services/core/aiva_core/internal_exploration/aiva_exploration_pipeline.py",
+      "services/core/aiva_core/internal_exploration/python_tools/aiva_cli_implementation.py",
+      "services/core/aiva_core/internal_exploration/python_tools/aiva_exploration_pipeline.py",
+      "services/core/aiva_core/internal_exploration/python_tools/aiva_flow_analyzer.py",
+      "services/core/aiva_core/internal_exploration/python_tools/aiva_flow_classifier.py",
+      "services/core/aiva_core/internal_exploration/self_healing/analyze_connection_recommendations.py",
+      "services/core/aiva_core/internal_exploration/self_healing/analyze_dataflow_breakpoints.py",
+      "services/core/aiva_core/internal_exploration/self_healing/analyze_missing_function_connections.py",
+      "services/core/aiva_core/internal_exploration/self_healing/analyze_results.py",
+      "services/core/aiva_core/internal_exploration/self_healing/core_analyzer.py",
+      "services/core/aiva_core/internal_exploration/self_healing/practical_analyzer.py",
+      "services/core/aiva_core/internal_exploration/self_healing/run_analysis.py",
+      "services/core/aiva_core/service_backbone/api/unified_function_caller.py",
+      "services/core/aiva_core/service_backbone/coordination/ai_controller.py",
+      "services/core/aiva_core/service_backbone/storage/examples/cli_integration_example.py"
+    ]
+  }
+}

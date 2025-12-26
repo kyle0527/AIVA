@@ -23,6 +23,8 @@ class ExperienceTransition:
     
     表示單一攻擊執行的狀態轉換，對應 RL 中的 (state, action, next_state, reward)
     
+    v2.0 擴展：支援統一反饋架構的環境標記
+    
     Attributes:
         experience_id: 經驗唯一識別碼
         state: 當前狀態 (AST圖、目標資訊、上下文)
@@ -30,6 +32,7 @@ class ExperienceTransition:
         next_state: 下一狀態 (執行結果、新發現)
         reward: 獎勵值 (基於成功率、完成度、評分)
         metadata: 額外元資料 (時間戳、執行軌跡)
+        environment: 環境標記 (sandbox/production) - v2.0 新增
     """
     
     def __init__(
@@ -39,6 +42,7 @@ class ExperienceTransition:
         next_state: dict[str, Any],
         reward: float,
         metadata: dict[str, Any] | None = None,
+        environment: str | None = None,  # v2.0: 環境標記
     ):
         self.experience_id = f"exp_{uuid4().hex[:8]}"
         self.state = state
@@ -46,6 +50,7 @@ class ExperienceTransition:
         self.next_state = next_state
         self.reward = reward
         self.metadata = metadata or {}
+        self.environment = environment  # v2.0: 保存環境資訊
         self.timestamp = datetime.now()
     
     def to_dict(self) -> dict[str, Any]:
@@ -57,6 +62,7 @@ class ExperienceTransition:
             "next_state": self.next_state,
             "reward": self.reward,
             "metadata": self.metadata,
+            "environment": self.environment,  # v2.0
             "timestamp": self.timestamp.isoformat(),
         }
 
@@ -76,7 +82,7 @@ class ExperienceManager:
     
     整合點:
     - 與 ExperienceRepository 整合進行持久化存儲
-    - 與 TrainingOrchestrator 整合提供訓練資料
+    - 與 UnifiedAttackExecutor 整合提供訓練資料（自動學習）
     - 與 RAG 整合進行經驗檢索和相似度匹配
     """
     
@@ -97,6 +103,8 @@ class ExperienceManager:
         """
         self.capacity = capacity
         self.memory: Deque[ExperienceTransition] = deque(maxlen=capacity)
+        # 添加 buffer 別名以兼容外部調用（如 UnifiedExecutor）
+        self.buffer = self.memory
         self._total_experiences = 0
         self._total_reward = 0.0
         
@@ -118,6 +126,7 @@ class ExperienceManager:
         next_state: dict[str, Any],
         reward: float,
         metadata: dict[str, Any] | None = None,
+        environment: str | None = None,  # v2.0: 環境標記
     ) -> str:
         """保存經驗轉換
         
@@ -127,6 +136,7 @@ class ExperienceManager:
             next_state: 下一狀態 (執行結果)
             reward: 獎勵值 (0.0-1.0)
             metadata: 額外元資料
+            environment: 環境標記 ("sandbox" 或 "production") - v2.0 新增
         
         Returns:
             experience_id: 經驗唯一識別碼
@@ -138,7 +148,8 @@ class ExperienceManager:
             ...     action={"type": "sqli", "params": {...}},
             ...     next_state={"success": True, "findings": [...]},
             ...     reward=0.85,
-            ...     metadata={"execution_time": 2.5}
+            ...     metadata={"execution_time": 2.5},
+            ...     environment="sandbox"  # v2.0
             ... )
         """
         transition = ExperienceTransition(
@@ -147,6 +158,7 @@ class ExperienceManager:
             next_state=next_state,
             reward=reward,
             metadata=metadata,
+            environment=environment,  # v2.0
         )
         
         self.memory.append(transition)
@@ -275,6 +287,41 @@ class ExperienceManager:
         except Exception as e:
             logger.error(f"Failed to load from integration: {e}")
             return 0
+    
+    def get_experiences_by_environment(
+        self,
+        environment: str,
+        limit: int | None = None
+    ) -> list[ExperienceTransition]:
+        """按環境類型過濾經驗（v2.0 新增）
+        
+        用於統一反饋架構：分別獲取 sandbox 或 production 經驗
+        
+        Args:
+            environment: 環境類型 ("sandbox" 或 "production")
+            limit: 返回數量限制（None 表示返回全部）
+        
+        Returns:
+            匹配環境的經驗列表
+        
+        Example:
+            >>> manager = ExperienceManager()
+            >>> sandbox_exps = manager.get_experiences_by_environment("sandbox")
+            >>> production_exps = manager.get_experiences_by_environment("production", limit=100)
+        """
+        filtered = [
+            exp for exp in self.memory
+            if exp.environment == environment
+        ]
+        
+        if limit is not None:
+            filtered = filtered[-limit:]  # 返回最近的 N 個
+        
+        logger.debug(
+            f"Filtered {len(filtered)} experiences by environment={environment}"
+        )
+        
+        return filtered
     
     def sample(self, batch_size: int) -> list[ExperienceTransition]:
         """隨機採樣經驗批次
@@ -438,19 +485,19 @@ class ExperienceManager:
         )
     
     def add_sample(self, sample: Any) -> str:
-        """添加經驗樣本（TrainingOrchestrator 整合點）
+        """添加經驗樣本（UnifiedAttackExecutor 整合點）
         
-        這是與 TrainingOrchestrator 的橋接方法，接收 ExperienceSample 對象
-        並轉換為 ExperienceTransition 格式保存。
+        這是與 UnifiedAttackExecutor 的橋接方法，接收 ExperienceSample 對象
+        並將其轉換為內部的 ExperienceTransition 格式。
         
         Args:
-            sample: ExperienceSample 對象（來自 TrainingOrchestrator）
+            sample: ExperienceSample 對象（來自 UnifiedAttackExecutor）
         
         Returns:
             experience_id: 經驗唯一識別碼
         
         Example:
-            >>> # 在 TrainingOrchestrator 中使用
+            >>> # 在 UnifiedAttackExecutor 中使用
             >>> for sample in samples:
             >>>     self.experience_manager.add_sample(sample)
         """

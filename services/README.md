@@ -336,10 +336,10 @@ services/                          # 🚀 AIVA Services 根目錄
 │   │   │   ├── sql_result_database.py
 │   │   │   └── unified_storage_adapter.py
 │   │   ├── remediation/           # 🔧 修復建議
-│   │   │   ├── code_fixer.py      # 代碼修復器
 │   │   │   ├── config_recommender.py # 配置推薦器
 │   │   │   ├── patch_generator.py # 補丁生成器
 │   │   │   └── report_generator.py # 報告生成器
+│   │   │   # ❌ code_fixer.py (已移除 - 功能由 aiva_core 特化 AI 處理)
 │   │   ├── reporting/             # 📋 報告系統
 │   │   │   ├── formatter_exporter.py
 │   │   │   ├── report_content_generator.py

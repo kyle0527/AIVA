@@ -16,9 +16,12 @@ AI 命令中心 - 統一指揮調度系統
     command_center = AICommandCenter()
     
     # 註冊 Scan 模組處理器
-    from services.scan.command_handler import ScanCommandHandler
-    scan_handler = ScanCommandHandler()
-    command_center.register_module("scan", scan_handler)
+    # ⚠️ Scan 模組已改為 CLI 直接調用架構，不再需要 Python 處理器
+    # 各引擎通過 subprocess 直接執行:
+    # - Rust: rust_engine/target/release/aiva-info-gatherer.exe
+    # - Go: go_engine/bin/ssrf-scanner.exe, cspm-scanner.exe, sca-scanner.exe
+    # - TypeScript: node typescript_engine/dist/index.js
+    # - Python: python python_engine/xxe_detector.py
     
     # AI 下達 Phase 0 掃描命令
     command = AICommand(
@@ -117,11 +120,11 @@ class AICommandCenter:
         """註冊模組處理器
         
         Args:
-            module_name: 模組名稱 (scan/features/integration/core)
+            module_name: 模組名稱 (features/integration/core)
             handler: 命令處理器實例
             
         Example:
-            command_center.register_module("scan", ScanCommandHandler())
+            command_center.register_module("features", FeaturesCommandHandler())
         """
         if module_name in self._handlers:
             self.logger.warning(f"⚠️  模組 '{module_name}' 處理器已存在，將被覆蓋")

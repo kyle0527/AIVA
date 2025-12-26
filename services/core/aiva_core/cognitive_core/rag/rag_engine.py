@@ -359,6 +359,129 @@ class RAGEngine:
             self._pending_tasks.append(task)
             logger.debug(f"Extracted payload pattern: {entry_id}")
 
+    async def retrieve_similar_cases(
+        self,
+        objective: str,
+        target_info: dict[str, Any],
+        top_k: int = 5
+    ) -> dict[str, Any]:
+        """檢索相似攻擊案例（UnifiedAttackExecutor 需要）
+        
+        Args:
+            objective: 攻擊目標描述（如 "檢查 XSS 漏洞"）
+            target_info: 目標信息字典
+            top_k: 返回最相似的 k 個案例
+        
+        Returns:
+            {
+                "similar_cases": [...],
+                "best_practices": [...],
+                "recommended_tools": [...]
+            }
+        """
+        # 構建查詢
+        target_url = target_info.get("target_url", target_info.get("url", ""))
+        vulnerability_type = objective.split("檢查")[-1].strip() if "檢查" in objective else objective
+        
+        query = f"{objective} {target_url} {vulnerability_type}"
+        
+        # 檢索成功案例
+        successful_cases = await self.knowledge_base.search(
+            query=f"experience success {query}",
+            top_k=top_k
+        )
+        
+        # 檢索最佳實踐
+        best_practices = await self.knowledge_base.search(
+            query=f"best_practice {vulnerability_type}",
+            top_k=3
+        )
+        
+        # 分析推薦工具（基於成功案例）
+        tool_counts: dict[str, int] = {}
+        for case in successful_cases:
+            metadata = case.get("metadata", {})
+            tool = metadata.get("tool_type") or metadata.get("selected_tool")
+            if tool:
+                tool_counts[tool] = tool_counts.get(tool, 0) + 1
+        
+        recommended_tools = sorted(
+            [{"tool": tool, "frequency": count} for tool, count in tool_counts.items()],
+            key=lambda x: x["frequency"],
+            reverse=True
+        )[:3]
+        
+        return {
+            "similar_cases": [
+                {
+                    "content": case.get("content", ""),
+                    "metadata": case.get("metadata", {}),
+                    "relevance_score": case.get("relevance_score", 0.0)
+                }
+                for case in successful_cases
+            ],
+            "best_practices": [
+                {
+                    "content": bp.get("content", ""),
+                    "relevance_score": bp.get("relevance_score", 0.0)
+                }
+                for bp in best_practices
+            ],
+            "recommended_tools": recommended_tools
+        }
+    
+    async def index_new_experience(
+        self,
+        experience
+    ) -> None:
+        """將新經驗索引到向量庫（UnifiedAttackExecutor 需要）
+        
+        Args:
+            experience: ExperienceSample 對象或字典
+        """
+        try:
+            # 提取經驗數據
+            if hasattr(experience, "to_dict"):
+                exp_dict = experience.to_dict()
+            elif isinstance(experience, dict):
+                exp_dict = experience
+            else:
+                exp_dict = {
+                    "sample_id": getattr(experience, "sample_id", "unknown"),
+                    "state": getattr(experience, "state", {}),
+                    "action": getattr(experience, "action", {}),
+                    "reward": getattr(experience, "reward", 0.0)
+                }
+            
+            # 構建索引內容
+            state = exp_dict.get("state", {})
+            action = exp_dict.get("action", {})
+            reward = exp_dict.get("reward", 0.0)
+            
+            # 生成文本描述
+            content = f"Experience: {action.get('type', 'attack')} on {state.get('target', 'unknown')}, reward: {reward}"
+            
+            # 添加到知識庫
+            await self.knowledge_base.add_entry(
+                content=content,
+                metadata={
+                    "type": "experience",
+                    "sample_id": exp_dict.get("sample_id"),
+                    "reward": reward,
+                    "action_type": action.get("type"),
+                    "target": state.get("target"),
+                    "success": reward > 0.5,
+                    "timestamp": exp_dict.get("timestamp", "")
+                },
+                entry_type=KnowledgeType.EXPERIENCE
+            )
+            
+            logger.debug(f"Indexed experience: {exp_dict.get('sample_id')}")
+            
+        except Exception as e:
+            logger.error(f"Failed to index experience: {e}")
+            # 不拋出異常，避免阻塞執行流程
+
     def save_knowledge(self) -> None:
         """保存知識庫"""
         # KnowledgeBase 使用向量存儲,不需要顯式保存

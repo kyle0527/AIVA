@@ -142,17 +142,19 @@ class ExternalLoopConnector:
                 
                 # 步驟 4: 如果產生了新權重，註冊
                 if training_result:
-                    # 安全訪問 new_weights_version
-                    if hasattr(training_result, 'new_weights_version'):
-                        new_weights_version = training_result.new_weights_version
-                    elif isinstance(training_result, dict):
+                    # 安全訪問 new_weights_version - 統一使用 dict 訪問方式
+                    if isinstance(training_result, dict):
                         new_weights_version = training_result.get('new_weights_version')
+                    elif hasattr(training_result, 'new_weights_version'):
+                        new_weights_version = training_result.new_weights_version
                     else:
                         new_weights_version = None
                     
                     if new_weights_version:
                         logger.info("  Step 3: Registering new weights...")
-                        new_version = self._register_new_weights(training_result)
+                        # 確保 training_result 為 dict 類型
+                        result_dict = training_result if isinstance(training_result, dict) else training_result.__dict__
+                        new_version = self._register_new_weights(result_dict)
                         weights_updated = True
             else:
                 logger.info("  Deviations not significant, skipping training")

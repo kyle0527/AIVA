@@ -39,85 +39,23 @@ from .models import (
 logger = logging.getLogger(__name__)
 
 # 使用現實路徑導入 - 遵循CROSS_LANGUAGE_SCHEMA_SYNC_GUIDE.md規範
-try:
-    # 使用現實路徑導入 (遵循AIVA Common指南)
-    import os
-    from pathlib import Path
-    import sys
+# 直接導入，不使用降級邏輯 - 缺少依賴時應明確報錯
+import os
+from pathlib import Path
+import sys
 
-    # 添加services路徑到Python path (現實路徑優於虛擬環境)
-    services_path = Path(__file__).parent.parent.parent.parent
-    sys.path.insert(0, str(services_path))
+# 添加services路徑到Python path (現實路徑優於虛擬環境)
+services_path = Path(__file__).parent.parent.parent.parent
+sys.path.insert(0, str(services_path))
 
-    # 設置必要環境變數（不自創，使用現有配置）
-    if "RABBITMQ_URL" not in os.environ:
-        os.environ["RABBITMQ_URL"] = "amqp://guest:guest@localhost:5672/"
+# 設置必要環境變數（不自創，使用現有配置）
+if "RABBITMQ_URL" not in os.environ:
+    os.environ["RABBITMQ_URL"] = "amqp://guest:guest@localhost:5672/"
 
-            # 僅在需要時導入，避免循環依賴
-        from aiva_common.schemas import ExperienceSample, TraceRecord
+# 僅在需要時導入，避免循環依賴
+from aiva_common.schemas import ExperienceSample, TraceRecord
 
-    SCHEMAS_AVAILABLE = True
-
-except ImportError as e:
-    logger.warning(f"Schema 導入失敗，使用Mock類型: {e}")
-
-    # 使用Mock類型 (緊急備案)
-    class MockExperienceSample:
-        def __init__(self, **kwargs):
-            # ExperienceSample required fields
-            self.sample_id: str = kwargs.get("sample_id", "")
-            self.session_id: str = kwargs.get("session_id", "")
-            self.plan_id: str = kwargs.get("plan_id", "")
-            self.state_before: dict = kwargs.get("state_before", {})
-            self.action_taken: dict = kwargs.get("action_taken", {})
-            self.state_after: dict = kwargs.get("state_after", {})
-            self.reward: float = kwargs.get("reward", 0.0)
-            self.reward_breakdown: dict = kwargs.get("reward_breakdown", {})
-            self.context: dict = kwargs.get("context", {})
-            self.target_info: dict = kwargs.get("target_info", {})
-            self.timestamp = kwargs.get("timestamp", datetime.now())
-            self.duration_ms: int = kwargs.get("duration_ms", 0)
-            self.quality_score: float = kwargs.get("quality_score", 1.0)
-            self.is_positive: bool = kwargs.get("is_positive", True)
-            self.confidence: float = kwargs.get("confidence", 1.0)
-            self.learning_tags: list = kwargs.get("learning_tags", [])
-            self.difficulty_level: int = kwargs.get("difficulty_level", 1)
-
-            # Set any additional attributes
-            for key, value in kwargs.items():
-                if not hasattr(self, key):
-                    setattr(self, key, value)
-
-        def model_dump(self):
-            return {key: value for key, value in self.__dict__.items()}
-
-    class MockTraceRecord:
-        def __init__(self, **kwargs):
-            # TraceRecord required fields
-            self.trace_id: str = kwargs.get("trace_id", "")
-            self.plan_id: str = kwargs.get("plan_id", "")
-            self.step_id: str = kwargs.get("step_id", "")
-            self.session_id: str = kwargs.get("session_id", "")
-            self.tool_name: str = kwargs.get("tool_name", "")
-            self.input_data: dict = kwargs.get("input_data", {})
-            self.output_data: dict = kwargs.get("output_data", {})
-            self.status: str = kwargs.get("status", "success")
-            self.error_message: str | None = kwargs.get("error_message")
-            self.execution_time_seconds: float = kwargs.get(
-                "execution_time_seconds", 0.0
-            )
-            self.timestamp = kwargs.get("timestamp", datetime.now())
-            self.environment_response: dict = kwargs.get("environment_response", {})
-            self.metadata: dict = kwargs.get("metadata", {})
-
-            # Set any additional attributes
-            for key, value in kwargs.items():
-                if not hasattr(self, key):
-                    setattr(self, key, value)
-
-    ExperienceSample = MockExperienceSample
-    TraceRecord = MockTraceRecord
-    SCHEMAS_AVAILABLE = False
+SCHEMAS_AVAILABLE = True
 
 # 為類型註解定義別名
 ExperienceSampleType = Union["ExperienceSample", Any]

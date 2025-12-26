@@ -1,0 +1,76 @@
+{
+  "meta": {
+    "flow_id": 6,
+    "tool_name": "WebSocket Manager - Real-time Communication",
+    "description": "WebSocket 連接管理器，處理即時通訊連接（6 flows 入口點）",
+    "version": "1.0.0",
+    "language": "python",
+    "module": "service_backbone",
+    "tags": ["websocket", "realtime", "communication"]
+  },
+  "ai_cognitive": {
+    "primary_capability": "websocket_management",
+    "risk_level": "medium",
+    "tags": {
+      "required": ["websocket", "connection"],
+      "boost": ["realtime", "streaming", "push"],
+      "exclude": ["batch", "offline"]
+    },
+    "cognitive_insights": {
+      "適用場景": "即時狀態更新、進度推送、雙向通訊",
+      "決策考量": "需要管理連接生命週期和心跳",
+      "風險評估": "中風險，需要處理連接異常和資源管理"
+    }
+  },
+  "execution": {
+    "binary_path": "python",
+    "command_template": "python -m services.core.aiva_core.service_backbone.websocket.websocket_manager connect --endpoint '{endpoint}' --client-id '{client_id}' --heartbeat-interval {heartbeat}",
+    "timeout_seconds": 60,
+    "working_directory": "C:/D/fold7/AIVA-git",
+    "environment_variables": {}
+  },
+  "parameters": {
+    "context_mapping": {
+      "endpoint": "ws_endpoint",
+      "client_id": "client_id"
+    },
+    "tunable": {
+      "heartbeat": {
+        "type": "integer",
+        "description": "心跳間隔（秒）：低強度=長間隔，高強度=頻繁檢測",
+        "min": 30,
+        "max": 5,
+        "mapping_strategy": "inverse"
+      }
+    }
+  },
+  "examples": [
+    {
+      "scenario": "低頻率心跳（節省資源）",
+      "context_data": {
+        "ws_endpoint": "ws://localhost:8000/ws/status",
+        "client_id": "client_001"
+      },
+      "ai_intensity": 0.2,
+      "expected_command": "python -m services.core.aiva_core.service_backbone.websocket.websocket_manager connect --endpoint 'ws://localhost:8000/ws/status' --client-id 'client_001' --heartbeat-interval 25"
+    },
+    {
+      "scenario": "中等心跳頻率",
+      "context_data": {
+        "ws_endpoint": "ws://localhost:8000/ws/events",
+        "client_id": "client_002"
+      },
+      "ai_intensity": 0.5,
+      "expected_command": "python -m services.core.aiva_core.service_backbone.websocket.websocket_manager connect --endpoint 'ws://localhost:8000/ws/events' --client-id 'client_002' --heartbeat-interval 18"
+    },
+    {
+      "scenario": "高頻率心跳（快速檢測）",
+      "context_data": {
+        "ws_endpoint": "ws://localhost:8000/ws/critical",
+        "client_id": "client_003"
+      },
+      "ai_intensity": 0.9,
+      "expected_command": "python -m services.core.aiva_core.service_backbone.websocket.websocket_manager connect --endpoint 'ws://localhost:8000/ws/critical' --client-id 'client_003' --heartbeat-interval 8"
+    }
+  ]
+}

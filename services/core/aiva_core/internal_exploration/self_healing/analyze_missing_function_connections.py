@@ -570,7 +570,7 @@ class MissingConnectionAnalyzer:
         
         複雜度: A (3) - 簡單循環
         """
-        files_with_issues = defaultdict(int)
+        files_with_issues: dict[str, int] = defaultdict(int)
         for conn in self.missing_connections:
             files_with_issues[conn.source_file] += 1
         

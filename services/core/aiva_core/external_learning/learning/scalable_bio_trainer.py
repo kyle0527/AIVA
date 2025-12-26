@@ -7,33 +7,8 @@ from dataclasses import dataclass
 import logging
 from typing import Any
 
-# 使用可選依賴處理策略處理 numpy
-try:
-    import numpy as np
-except ImportError:
-    # 為類型標註提供 Mock numpy
-    print("Warning: numpy not available, using mock types")
-    
-    class MockNdarray:
-        """Mock numpy.ndarray for type annotations"""
-        pass
-    
-    class MockNumpy:
-        ndarray = MockNdarray
-        
-        @staticmethod
-        def mean(arr):
-            return 0.0
-            
-        @staticmethod
-        def sum(arr):
-            return 0
-            
-        @staticmethod
-        def abs(arr):
-            return arr
-    
-    np = MockNumpy()
+# 直接導入numpy - 缺少依賴時應明確報錯，不使用降級邏輯
+import numpy as np
 
 logger = logging.getLogger(__name__)
 
@@ -79,7 +54,7 @@ class ScalableBioTrainer:
         self,
         X_train: np.ndarray,
         y_train: np.ndarray,
-        X_val: np.ndarray | None = None,
+        x_val: np.ndarray | None = None,
         y_val: np.ndarray | None = None,
     ) -> dict[str, Any]:
         """訓練 ScalableBioNet 模型
@@ -162,15 +137,15 @@ class ScalableBioTrainer:
         # 分批處理
         batch_size = self.config.batch_size
         for i in range(0, total_samples, batch_size):
-            batch_X = X[i : i + batch_size]
+            batch_x = X[i : i + batch_size]
             batch_y = y[i : i + batch_size]
 
             # 前向傳播
-            outputs = self.model.forward(batch_X)
+            outputs = self.model.forward(batch_x)
             loss = self._compute_loss(outputs, batch_y)
 
             # 反向傳播
-            self.model.backward(batch_X, batch_y, self.config.learning_rate)
+            self.model.backward(batch_x, batch_y, self.config.learning_rate)
 
             total_loss += loss
             correct_predictions += self._count_correct_predictions(outputs, batch_y)

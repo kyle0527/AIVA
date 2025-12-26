@@ -1,8 +1,38 @@
 # AIVA Features 模組
 
-> **版本**: v6.2 | **狀態**: ⚠️ 功能代碼完整，待 AI Commander 整合 | **更新**: 2025-12-12
+> **版本**: v7.0 | **狀態**: ✅ 架構重構完成 | **更新**: 2025-12-20
 
-**快速導航**: [← Services](../README.md) | [📐 架構設計](./SIMPLE_ARCHITECTURE.md)
+## 🔔 最新更新 (2025-12-20)
+
+### ✅ 重大架構變更
+
+1. **新增功能模組** - [`function_info_leak`](features_ready/function_info_leak/README.md)
+   - ✅ 從 Scan 模組移入敏感信息檢測器（547 lines）
+   - ✅ 支持 API 密鑰、JWT、憑證、信用卡等檢測
+   - ✅ 完整的 README 和使用文檔
+
+2. **明確模組職責**
+   - ✅ Features：所有 Python 檢測邏輯
+   - ✅ Scan：僅負責多語言引擎調度（Go/Rust/TypeScript）
+   - ✅ 刪除重複組件（HTML 解析、指紋識別等）
+
+3. **功能模組完整性確認**
+   - ✅ XSS：使用外部工具（XSStrike/Dalfox）自帶解析器
+   - ✅ SQLI：直接接收測試目標，不需要爬蟲
+   - ✅ IDOR：自己提取 ID，不需要 HTML 解析
+   - ✅ SSRF：直接測試 URL，不需要爬蟲
+
+### 📝 架構原則
+
+**功能模組設計原則**：
+- ✅ 每個模組只包含自己需要的工具
+- ✅ 不追求"共享基礎設施"的過度抽象
+- ✅ 外部工具優先（XSStrike > 自己寫解析器）
+- ✅ 模組間不共享代碼（避免耦合）
+
+---
+
+**快速導航**: [← Services](../README.md) | [📐 架構設計](./SIMPLE_ARCHITECTURE.md) | [🎯 Scan 模組](../scan/README.md)
 
 ---
 
@@ -78,31 +108,39 @@ class SecurityScanner:
 
 > **完整分析**: 2025-12-11  
 > **架構**: 同步函數提供 `scan(target, options) -> dict` 接口  
-> **範圍**: 不包含需人工操作的模組（social_engineering、forensic 等）
+> **範圍**: 不包含需人工操作的模組（social_engineering、forensic 等）  
+> **⚠️ 重組通知**: 2025-12-17 已按完成度重組目錄結構，詳見 [_FEATURES_REORGANIZATION.md](_FEATURES_REORGANIZATION.md)
 
-### ✅ 高完成度 - 可直接整合 (6個)
+### ✅ 高完成度 - 可直接整合 (7個) → `features_ready/`
 
-| 模組 | 完成度 | 架構狀態 | 核心功能 | 整合難度 |
-|------|--------|---------|---------|------|
-| **[function_sqli](function_sqli/README.md)** | 95% | ✅ 完整 | 6種檢測引擎、多資料庫支援 | ⭐ 低 |
-| **[function_crypto](function_crypto/README.md)** | 95% | ✅ 完整 | 純 Rust CLI（v2.0）、TLS/Cookie/Headers/JS 分析 | ⭐ 低 |
-| **[function_xss](function_xss/README.md)** | 90% | ✅ 完整 | 反射型/存儲型/DOM XSS、Blind XSS | ⭐ 低 |
-| **[function_ssrf](function_ssrf/README.md)** | 85% | ✅ 完整 | 內網探測、OAST技術、語義分析 | ⭐ 低 |
-| **[function_idor](function_idor/README.md)** | 80% | ✅ 完整 | 權限矩陣、資源ID提取 | ⭐ 低 |
-| **[function_bizlogic](function_bizlogic/README.md)** | 70% | ⚠️ 需整合 | 業務邏輯漏洞測試（價格操控、競態條件、工作流繞過） | ⭐⭐ 中 |
+| 模組 | 完成度 | 整合狀態 | 核心功能 | 文檔連結 |
+|------|--------|---------|---------|----------|
+| **function_sqli** | 95% | ✅ v2.1.0 | 6種檢測引擎、CommandHandler | [README](features_ready/function_sqli/README.md) |
+| **function_xss** | 90% | ✅ v2.1.0 | 4種檢測器、外部工具整合 | [README](features_ready/function_xss/README.md) |
+| **function_ssrf** | 85% | ✅ v2.0.0 | 內網探測、OAST技術 | [README](features_ready/function_ssrf/README.md) |
+| **function_idor** | 80% | ✅ v1.0.0 | 權限矩陣、資源ID提取 | [README](features_ready/function_idor/README.md) |
+| **function_bizlogic** | 70% | ✅ v1.1.0 | 價格操縱/競態/工作流繞過 | [README](features_ready/function_bizlogic/README.md) |
+| **function_crypto** | 50% | ⏳ v2.0.0 | Rust CLI（需編譯） | [README](features_ready/function_crypto/README.md) |
+| **function_info_leak** | 100% | ✅ v1.0.0 | ⭐ 敏感信息檢測（API密鑰/JWT）| [README](features_ready/function_info_leak/README.md) |
 
 **特徵**：
 - ✅ 完整的檢測邏輯實現
 - ✅ 有工作器（worker.py）或統一接口
-- ⏳ 整合重點：提供統一的同步接口 `scan(target, options) -> dict`
+- ✅ **2025-12-20 新增**: function_info_leak 從 Scan 模組移入（547 lines）
+- ✅ 所有模組功能完整，無重複代碼
 
-### ⚠️ 中等完成度 - 需完善檢測邏輯 (3個)
+### ⚠️ 中等完成度 - 需完善檢測邏輯 (3個) → `features_in_development/`
 
-| 模組 | 完成度 | 狀態 | 現有架構 | 下一步 |
-|------|--------|-----|---------|--------|
-| **[function_authn_go](function_authn_go/README.md)** | 70% | ⏳ 需編譯 | Go 語言實現 | **編譯 Go 引擎**(必須) |
-| **[function_postex](function_postex/README.md)** | 50% | ⏳ 需完善 | PostExDetector + 多引擎 | 完善引擎檢測邏輯 |
-| **[function_web_scanner](function_web_scanner/README.md)** | 35% | ⚠️ 缺少文檔 | WebScannerManager(同步) + 整合工具 | 完善檢測邏輯、新增 README |
+| 模組 | 完成度 | 整合狀態 | 現有架構 | 更新日期 |
+|------|--------|---------|---------|---------|
+| **[function_authn_go](features_in_development/function_authn_go/README.md)** | 50% | ⏳ v1.2.0 | authn_wrapper.py已完成、BUILD_GUIDE.md已創建 | 2025-12-17 |
+| **[function_postex](features_in_development/function_postex/README.md)** | 50% | ⏳ v1.2.0 | PostExManager架構完成、需增強檢測邏輯 | 2025-12-17 |
+| **[function_web_scanner](features_in_development/function_web_scanner/README.md)** | 35% | ⏳ v1.2.0 | WebScannerManager架構完成、缺少README | 2025-12-17 |
+
+**下一步**:
+- ✅ function_authn_go: **編譯 Go 引擎**（參見 BUILD_GUIDE.md）
+- ⏳ function_postex: 完善 lateral_movement、persistence、privilege_escalation 檢測邏輯
+- ⏳ function_web_scanner: 創建 README.md、完善檢測邏輯
 
 **✨ 核心理念**（依照 [SIMPLE_ARCHITECTURE.md](./SIMPLE_ARCHITECTURE.md)）：
 
@@ -160,18 +198,20 @@ class SecurityScanner:
 - ✅ AI Commander 統一用 `asyncio.to_thread()` 處理異步
 - ❌ 不強制所有模組使用相同的類別名稱或結構
 
-### ❌ 低完成度 - 暫不處理 (1個)
+### 🗑️ 低完成度 - 已歸檔 (2個) → `features_archived/`
 
 | 模組 | 完成度 | 狀態 | 說明 |
 |------|--------|-----|------|
-| **[function_exploit_framework](function_exploit_framework/README.md)** | 25% | 🟡 輔助 | 僅作為 PoC 驗證工具，非主力掃描 |
+| **[function_exploit_framework](features_archived/function_exploit_framework/README.md)** | 25% | 🟡 輔助 | 僅作為 PoC 驗證工具，非主力掃描 |
+| **[function_payload_generator](features_archived/function_payload_generator/)** | - | 🟡 輔助 | 輔助工具，可整合到其他模組 |
 
 **特徵**：
 - ⚠️ 功能敏感，需額外授權
 - 🎯 定位為輔助增強工具（獎金翻倍器）
 - 📝 不應作為主動掃描工具
+- 💾 保留備用，定期評估是否恢復開發
 
-### 🗑️ 已移除模組 (1個)
+### 🗑️ 已完全移除模組 (1個)
 
 | 模組 | 原因 | 備份位置 |
 |------|------|---------|
@@ -182,35 +222,36 @@ class SecurityScanner:
 - ⚠️ 法律風險過高（可能構成犯罪）
 - 📋 詳見 [BOUNTY_EARNING_ANALYSIS.md](BOUNTY_EARNING_ANALYSIS.md)
 
-### 🚫 需人工操作 - 暫不處理 (5個)
+### 🚫 需人工操作 - 暫不處理 (5個) → `features_manual_operation/`
 
 | 模組 | 說明 | 不處理原因 |
 |------|-----|-----------|
-| **[function_social_engineering](function_social_engineering/README.md)** | 社會工程測試 | 需要OSINT收集、人員分析等複雜人工操作 |
-| **[function_forensic](function_forensic/README.md)** | 數位鑑識 | 需要證據收集、人工分析判斷 |
-| **[function_reverse_engineering](function_reverse_engineering/README.md)** | 逆向工程 | 需要人工分析二進制文件 |
-| **[function_steganography](function_steganography/README.md)** | 隱寫術分析 | 需要人工判斷和分析 |
-| **[function_wordlist_generator](function_wordlist_generator/README.md)** | 字典生成 | 需要人工定義生成策略 |
+| **[function_social_engineering](features_manual_operation/function_social_engineering/README.md)** | 社會工程測試 | 需要OSINT收集、人員分析等複雜人工操作 |
+| **[function_forensic](features_manual_operation/function_forensic/README.md)** | 數位鑑識 | 需要證據收集、人工分析判斷 |
+| **[function_reverse_engineering](features_manual_operation/function_reverse_engineering/README.md)** | 逆向工程 | 需要人工分析二進制文件 |
+| **[function_steganography](features_manual_operation/function_steganography/README.md)** | 隱寫術分析 | 需要人工判斷和分析 |
+| **[function_wordlist_generator](features_manual_operation/function_wordlist_generator/README.md)** | 字典生成 | 需要人工定義生成策略 |
 
 ---
 
 ### 🎯 整合優先級
 
-**Phase 1 - 立即整合** (2-3 週)：
+**Phase 1 - 立即整合** (2-3 週) - `features_ready/`：
 1. function_sqli - 6種引擎，95%完成，✅ README 已完整
 2. function_crypto - 純 Rust CLI（v2.0），95%完成 ✅
 3. function_xss - 多種類型，90%完成
 4. function_ssrf - OAST技術，85%完成
 5. function_idor - 權限檢測，80%完成
 
-**Phase 2 - 短期完善** (2-4 週)：
-6. function_bizlogic - 業務邏輯測試
+**Phase 2 - 短期完善** (2-4 週) - `features_in_development/`：
+6. function_bizlogic - 業務邏輯測試（已在 features_ready，需整合）
 7. **function_authn_go** - 🔴 **必須編譯 Go 引擎** → 不提供 Python 回退
 8. function_postex - 完善引擎檢測邏輯（使用 PostExDetector）
 9. function_web_scanner - 完善檢測邏輯（使用 WebAttackManager）
 
+**已歸檔** - `features_archived/`：exploit_framework（僅作輔助工具）、payload_generator（輔助工具）
 **已移除**：function_ddos（不適用於 Bug Bounty，已移至備份資料夾）
-**暫不處理**：exploit_framework（僅作輔助工具）、需人工操作的模組
+**暫不處理** - `features_manual_operation/`：5個需人工操作的模組
 
 ### 📋 整合檢查清單
 
@@ -243,38 +284,56 @@ class SecurityScanner:
 
 ## 🔗 功能模組導航
 
+> 💡 **重組說明**: 2025-12-17 已按完成度重組目錄結構，詳見 [_FEATURES_REORGANIZATION.md](_FEATURES_REORGANIZATION.md)
+
 ### 📚 核心功能模組
 
-#### ✅ 完整實現 (6個)
+#### ✅ 高完成度 (6個) - `features_ready/`
 
-- ⚡️ **[SQL注入檢測](function_sqli/README.md)** - 6種引擎、多資料庫支援
-- 🔒 **[密碼學檢測](function_crypto/README.md)** - 純 Rust CLI（v2.0）、TLS/Cookie/Headers/JS 分析
-- 🎭 **[XSS檢測](function_xss/README.md)** - 反射型/存儲型/DOM XSS、Blind XSS
-- 🌐 **[SSRF檢測](function_ssrf/README.md)** - 內網探測、OAST技術、語義分析
-- 🔐 **[IDOR檢測](function_idor/README.md)** - 權限矩陣、資源ID提取
-- 🔑 **[認證檢測](function_authn_go/README.md)** - Go高性能認證繞過檢測
-- 💼 **[業務邏輯檢測](function_bizlogic/README.md)** - 價格操控、競態條件、流程繞過
+- ⚡️ **[SQL注入檢測](features_ready/function_sqli/README.md)** - 6種引擎、多資料庫支援
+- 🔒 **[密碼學檢測](features_ready/function_crypto/README.md)** - 純 Rust CLI（v2.0）、TLS/Cookie/Headers/JS 分析
+- 🎭 **[XSS檢測](features_ready/function_xss/README.md)** - 反射型/存儲型/DOM XSS、Blind XSS
+- 🌐 **[SSRF檢測](features_ready/function_ssrf/README.md)** - 內網探測、OAST技術、語義分析
+- 🔐 **[IDOR檢測](features_ready/function_idor/README.md)** - 權限矩陣、資源ID提取
+- 💼 **[業務邏輯檢測](features_ready/function_bizlogic/README.md)** - 價格操控、競態條件、流程繞過
 
-#### 🔹 部分實現 (1個)
+#### ⚠️ 中等完成度 (3個) - `features_in_development/`
 
-- ⚡ **[後滲透](function_postex/README.md)** - 橫向移動、持久化引擎
+- 🔑 **[認證檢測](features_in_development/function_authn_go/README.md)** - Go高性能認證繞過檢測
+- ⚡ **[後滲透](features_in_development/function_postex/README.md)** - 橫向移動、持久化引擎
+- 🌐 **[Web掃描器](features_in_development/function_web_scanner/README.md)** - 綜合Web漏洞掃描
+
+#### 🚫 需人工操作 (5個) - `features_manual_operation/`
+
+- 🎭 **[社會工程](features_manual_operation/function_social_engineering/README.md)**
+- 🔍 **[數位鑑識](features_manual_operation/function_forensic/README.md)**
+- 🔧 **[逆向工程](features_manual_operation/function_reverse_engineering/README.md)**
+- 🖼️ **[隱寫術分析](features_manual_operation/function_steganography/README.md)**
+- 📝 **[字典生成](features_manual_operation/function_wordlist_generator/README.md)**
+
+#### 🗑️ 已歸檔 (2個) - `features_archived/`
+
+- 💣 **[漏洞利用框架](features_archived/function_exploit_framework/README.md)**
+- 🎯 **[Payload生成器](features_archived/function_payload_generator/)**
 
 #### 🛠️ 支援組件
 
 - 💼 **[共用組件](common/README.md)** - Go/Python跨語言共用功能
+- 🏗️ **[基礎組件](base/README.md)** - 功能基類、HTTP客戶端
 
 ### 📊 模組完成度統計
 
-| 模組 | 語言 | 完成度 | 主要功能 |
-|------|------|--------|---------|
-| function_sqli | Python | 95% | SQL注入檢測（6種引擎） |
-| function_crypto | Rust | 95% | 密碼學配置掃描（純CLI v2.0） |
-| function_xss | Python | 90% | XSS檢測（多種類型） |
-| function_ssrf | Python | 85% | SSRF檢測（OAST） |
-| function_idor | Python | 80% | 權限繞過檢測 |
-| function_bizlogic | Python | 75% | 業務邏輯測試 |
-| function_authn_go | Go | 70% | 認證繞過（Go） |
-| function_postex | Python | 50% | 後滲透利用 |
+| 模組 | 語言 | 完成度 | 目錄 | 主要功能 |
+|------|------|--------|------|---------|
+| function_sqli | Python | 95% | features_ready | SQL注入檢測（6種引擎） |
+| function_crypto | Rust | 95% | features_ready | 密碼學配置掃描（純CLI v2.0） |
+| function_xss | Python | 90% | features_ready | XSS檢測（多種類型） |
+| function_ssrf | Python | 85% | features_ready | SSRF檢測（OAST） |
+| function_idor | Python | 80% | features_ready | 權限繞過檢測 |
+| function_bizlogic | Python | 75% | features_ready | 業務邏輯測試 |
+| function_authn_go | Go | 70% | features_in_development | 認證繞過（Go） |
+| function_postex | Python | 50% | features_in_development | 後滲透利用 |
+| function_web_scanner | Python | 35% | features_in_development | Web漏洞掃描 |
 
 ---
 

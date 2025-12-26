@@ -25,7 +25,7 @@ AIVA Core 數據流分類分析器 (完整版)
 import json
 import argparse
 from pathlib import Path
-from typing import Dict, List, Tuple, Set
+from typing import Any, Dict, List, Tuple, Set
 from collections import defaultdict
 from datetime import datetime
 
@@ -123,18 +123,24 @@ class AIVAFlowClassifier:
         "rag_system", "conversation_handler"
     }
     
-    def __init__(self, input_dir: str, output_dir: str, verbose: bool = False, module_config_path: str = "modules_config.json"):
+    def __init__(self, input_dir: str = None, output_dir: str = None, verbose: bool = False, module_config_path: str = "modules_config.json", flows: List = None):
         """初始化分類器
         
+        ⚠️ 修復版本（2025-12-16）：
+        - 支持直接傳入 flows 列表進行重新分類
+        - 符合 aiva_common 規範：保留未使用函數，維持向前兼容性
+        - 保持原有文件讀取功能不變
+        
         Args:
-            input_dir: 輸入目錄或JSON文件路徑
-            output_dir: 輸出目錄路徑  
+            input_dir: 輸入目錄或JSON文件路徑（可選，如果提供 flows 則不需要）
+            output_dir: 輸出目錄路徑（可選，如果只需重新分類則不需要）
             verbose: 是否顯示詳細信息
             module_config_path: 模組配置文件路徑
+            flows: 直接傳入的 flows 列表（可選，用於重新分類現有數據）
         """
         # 基本參數
-        self.input_dir = Path(input_dir)
-        self.output_dir = Path(output_dir)
+        self.input_dir = Path(input_dir) if input_dir else None
+        self.output_dir = Path(output_dir) if output_dir else None
         self.verbose = verbose
         
         # 動態配置載入
@@ -150,14 +156,15 @@ class AIVAFlowClassifier:
             self.all_modules.update(modules)
 
         # 數據流處理相關屬性
-        self.flows = []
-        self.function_details = {}
-        self.function_map = {}
-        self.script_functions = {}
+        # ⚠️ 修復（2025-12-16）：支持直接傳入 flows
+        self.flows = flows if flows is not None else []
+        self.function_details: dict[str, Any] = {}
+        self.function_map: dict[str, Any] = {}
+        self.script_functions: dict[str, Any] = {}
         
         # 統計信息
         self.stats = {
-            "total_flows": 0,
+            "total_flows": len(self.flows) if flows else 0,
             "module_distribution": defaultdict(int),
             "component_type_distribution": defaultdict(int),
             "multi_path_endpoints": defaultdict(list)
@@ -207,7 +214,22 @@ class AIVAFlowClassifier:
         }
         
     def load_flow_data(self):
-        """載入數據流數據"""
+        """載入數據流數據
+        
+        ⚠️ 修復（2025-12-16）：如果已有 flows，則跳過載入
+        符合 aiva_common 規範：保留未使用函數，維持向前兼容性
+        """
+        # 如果已經有 flows（通過 __init__ 傳入），則跳過載入
+        if self.flows:
+            if self.verbose:
+                print(f"使用已傳入的 {len(self.flows)} 個 flows")
+            self.stats['total_flows'] = len(self.flows)
+            return
+        
+        # 原有的文件載入邏輯（保持向前兼容性）
+        if not self.input_dir:
+            raise ValueError("必須提供 input_dir 或 flows 參數")
+        
         # Check if input_dir is a file or directory
         if self.input_dir.suffix == '.json':
             analysis_file = self.input_dir
@@ -274,23 +296,73 @@ class AIVAFlowClassifier:
         return self.SCRIPT_DESCRIPTIONS.get(script_name, f"{script_name} - 功能組件")
     
     def _classify_module(self, script_name: str) -> str:
-        """根據腳本名稱分類到對應模組"""
-        # 根據腳本名稱特徵進行模組分類
-        if any(keyword in script_name for keyword in ['ai_', 'neural', 'rag', 'decision']):
+        """根據腳本名稱分類到對應模組
+        
+        ⚠️ 修復版本（2025-12-16）：
+        - 擴展關鍵詞匹配，減少誤分類
+        - 移除默認 service_backbone，改為基於內容推斷
+        - 參考 internal_loop_connector.py 的分類邏輯
+        """
+        script_lower = script_name.lower()
+        
+        # 1. Cognitive Core - AI 認知核心
+        if any(keyword in script_lower for keyword in [
+            'neural', 'rag', 'decision', 'ai_capability', 'ai_model',
+            'orchestrator', 'skill_graph', 'anti_hallucination'
+        ]):
             return 'cognitive_core'
-        elif any(keyword in script_name for keyword in ['capability_cli', 'self_aware', 'capability_analyzer']):
+        
+        # 2. Internal Exploration - 內部探索
+        elif any(keyword in script_lower for keyword in [
+            'aiva_flow', 'aiva_cli', 'aiva_exploration', 'capability_cli',
+            'self_aware', 'capability_analyzer', 'internal_loop',
+            'analyze_dataflow', 'self_healing'
+        ]):
             return 'internal_exploration'
-        elif any(keyword in script_name for keyword in ['plan_', 'task_', 'planner', 'executor', 'commander']):
+        
+        # 3. Task Planning - 任務規劃
+        elif any(keyword in script_lower for keyword in [
+            'plan_', 'planner', 'task_', 'commander', 'ai_commander',
+            'executor', 'command_router'
+        ]):
             return 'task_planning'
-        elif any(keyword in script_name for keyword in ['trainer', 'training', 'model', 'bio_analysis', 'rl_', 'resource_tracker']):
+        
+        # 4. External Learning - 外部學習
+        elif any(keyword in script_lower for keyword in [
+            'trainer', 'training', 'model_', 'bio_analysis', 'rl_',
+            'resource_tracker', 'scalable_bio', 'external_loop',
+            'risk_assessment', 'experience_manager'
+        ]):
             return 'external_learning'
-        elif any(keyword in script_name for keyword in ['capability_registry', 'capability_orchestrator', 'attack_chain', 'business', 'conversation', 'plugin']):
+        
+        # 5. Core Capabilities - 核心能力
+        elif any(keyword in script_lower for keyword in [
+            'capability_registry', 'attack_chain', 'business_logic',
+            'conversation', 'plugin', 'assistant', 'initial_surface',
+            'skill_graph', 'ingestion', 'output_formatter'
+        ]):
             return 'core_capabilities'
-        elif any(keyword in script_name for keyword in ['backend', 'storage', 'api_', 'message', 'state_', 'orchestrator']):
+        
+        # 6. Service Backbone - 服務骨幹
+        elif any(keyword in script_lower for keyword in [
+            'backend', 'storage', 'api_gateway', 'message_bus',
+            'state_manager', 'coordination', 'session_state',
+            'monitoring', 'optimized_core', 'performance'
+        ]):
             return 'service_backbone'
+        
+        # 7. 未匹配：使用更智能的推斷
         else:
-            # 默認歸類為服務骨幹 (基礎設施)
-            return 'service_backbone'
+            # 基於常見模式推斷
+            if any(word in script_lower for word in ['core', 'engine', 'system']):
+                return 'cognitive_core'
+            elif any(word in script_lower for word in ['manager', 'coordinator', 'service']):
+                return 'service_backbone'
+            elif any(word in script_lower for word in ['analyze', 'explore', 'inspect']):
+                return 'internal_exploration'
+            else:
+                # 最後才使用 service_backbone 作為兜底
+                return 'service_backbone'
     
     def _classify_component_type(self, script_name: str) -> str:
         """分類組件類型"""
@@ -416,7 +488,8 @@ class AIVAFlowClassifier:
     
     def generate_reports(self):
         """生成完整報告"""
-        self.output_dir.mkdir(parents=True, exist_ok=True)
+        if self.output_dir:
+            self.output_dir.mkdir(parents=True, exist_ok=True)
         
         # 1. 生成分類統計報告
         self._generate_classification_report()
@@ -436,6 +509,8 @@ class AIVAFlowClassifier:
     
     def _generate_classification_report(self):
         """生成分類統計報告"""
+        if not self.output_dir:
+            return
         report_file = self.output_dir / "classification_summary.md"
         
         with open(report_file, 'w', encoding='utf-8') as f:
@@ -491,6 +566,8 @@ class AIVAFlowClassifier:
     
     def _generate_complete_flow_details(self):
         """生成完整數據流詳細列表"""
+        if not self.output_dir:
+            return
         report_file = self.output_dir / "complete_flow_details.md"
         
         with open(report_file, 'w', encoding='utf-8') as f:
@@ -567,6 +644,8 @@ class AIVAFlowClassifier:
     
     def _generate_multi_path_report(self, multi_path_analysis: List[Dict]):
         """生成多路徑分析報告"""
+        if not self.output_dir:
+            return
         report_file = self.output_dir / "multi_path_analysis.md"
         
         with open(report_file, 'w', encoding='utf-8') as f:
@@ -672,6 +751,8 @@ class AIVAFlowClassifier:
     
     def _generate_json_export(self, multi_path_analysis: List[Dict]):
         """生成 JSON 格式完整數據"""
+        if not self.output_dir:
+            return
         json_file = self.output_dir / "classification_data.json"
         
         export_data = {

@@ -1,0 +1,562 @@
+[
+  {
+    "test_id": 1,
+    "flow_index": 0,
+    "flow": {
+      "id": 1,
+      "path": [
+        "monitoring",
+        "optimized_core"
+      ],
+      "full_path": [
+        "C:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\service_backbone\\performance\\monitoring.py",
+        "C:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\service_backbone\\coordination\\optimized_core.py"
+      ],
+      "length": 2,
+      "start": "monitoring",
+      "end": "optimized_core",
+      "classifications": [
+        {
+          "script": "monitoring",
+          "module": "service_backbone",
+          "component_type": "程式組件",
+          "description": "monitoring - 功能組件"
+        },
+        {
+          "script": "optimized_core",
+          "module": "service_backbone",
+          "component_type": "程式組件",
+          "description": "optimized_core - 功能組件"
+        }
+      ],
+      "modules": [
+        "service_backbone",
+        "service_backbone"
+      ],
+      "component_types": [
+        "程式組件",
+        "程式組件"
+      ],
+      "primary_module": "service_backbone",
+      "endpoint_module": "service_backbone",
+      "majority_module": "service_backbone",
+      "primary_component_type": "程式組件"
+    }
+  },
+  {
+    "test_id": 2,
+    "flow_index": 1,
+    "flow": {
+      "id": 2,
+      "path": [
+        "monitoring",
+        "optimized_core",
+        "train_classifier"
+      ],
+      "full_path": [
+        "C:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\service_backbone\\performance\\monitoring.py",
+        "C:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\service_backbone\\coordination\\optimized_core.py",
+        "C:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\external_learning\\ai_model\\train_classifier.py"
+      ],
+      "length": 3,
+      "start": "monitoring",
+      "end": "train_classifier",
+      "classifications": [
+        {
+          "script": "monitoring",
+          "module": "service_backbone",
+          "component_type": "程式組件",
+          "description": "monitoring - 功能組件"
+        },
+        {
+          "script": "optimized_core",
+          "module": "service_backbone",
+          "component_type": "程式組件",
+          "description": "optimized_core - 功能組件"
+        },
+        {
+          "script": "train_classifier",
+          "module": "service_backbone",
+          "component_type": "程式組件",
+          "description": "train_classifier - 功能組件"
+        }
+      ],
+      "modules": [
+        "service_backbone",
+        "service_backbone",
+        "service_backbone"
+      ],
+      "component_types": [
+        "程式組件",
+        "程式組件",
+        "程式組件"
+      ],
+      "primary_module": "service_backbone",
+      "endpoint_module": "service_backbone",
+      "majority_module": "service_backbone",
+      "primary_component_type": "程式組件"
+    }
+  },
+  {
+    "test_id": 3,
+    "flow_index": 2,
+    "flow": {
+      "id": 3,
+      "path": [
+        "monitoring",
+        "optimized_core",
+        "train_classifier",
+        "model_trainer"
+      ],
+      "full_path": [
+        "C:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\service_backbone\\performance\\monitoring.py",
+        "C:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\service_backbone\\coordination\\optimized_core.py",
+        "C:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\external_learning\\ai_model\\train_classifier.py",
+        "C:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\external_learning\\learning\\model_trainer.py"
+      ],
+      "length": 4,
+      "start": "monitoring",
+      "end": "model_trainer",
+      "classifications": [
+        {
+          "script": "monitoring",
+          "module": "service_backbone",
+          "component_type": "程式組件",
+          "description": "monitoring - 功能組件"
+        },
+        {
+          "script": "optimized_core",
+          "module": "service_backbone",
+          "component_type": "程式組件",
+          "description": "optimized_core - 功能組件"
+        },
+        {
+          "script": "train_classifier",
+          "module": "service_backbone",
+          "component_type": "程式組件",
+          "description": "train_classifier - 功能組件"
+        },
+        {
+          "script": "model_trainer",
+          "module": "external_learning",
+          "component_type": "AI組件",
+          "description": "model_trainer - 功能組件"
+        }
+      ],
+      "modules": [
+        "service_backbone",
+        "service_backbone",
+        "service_backbone",
+        "external_learning"
+      ],
+      "component_types": [
+        "程式組件",
+        "程式組件",
+        "程式組件",
+        "AI組件"
+      ],
+      "primary_module": "external_learning",
+      "endpoint_module": "external_learning",
+      "majority_module": "service_backbone",
+      "primary_component_type": "程式組件"
+    }
+  },
+  {
+    "test_id": 4,
+    "flow_index": 3,
+    "flow": {
+      "id": 4,
+      "path": [
+        "monitoring",
+        "optimized_core",
+        "train_classifier",
+        "model_trainer",
+        "training_orchestrator"
+      ],
+      "full_path": [
+        "C:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\service_backbone\\performance\\monitoring.py",
+        "C:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\service_backbone\\coordination\\optimized_core.py",
+        "C:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\external_learning\\ai_model\\train_classifier.py",
+        "C:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\external_learning\\learning\\model_trainer.py",
+        "C:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\external_learning\\training\\training_orchestrator.py"
+      ],
+      "length": 5,
+      "start": "monitoring",
+      "end": "training_orchestrator",
+      "classifications": [
+        {
+          "script": "monitoring",
+          "module": "service_backbone",
+          "component_type": "程式組件",
+          "description": "monitoring - 功能組件"
+        },
+        {
+          "script": "optimized_core",
+          "module": "service_backbone",
+          "component_type": "程式組件",
+          "description": "optimized_core - 功能組件"
+        },
+        {
+          "script": "train_classifier",
+          "module": "service_backbone",
+          "component_type": "程式組件",
+          "description": "train_classifier - 功能組件"
+        },
+        {
+          "script": "model_trainer",
+          "module": "external_learning",
+          "component_type": "AI組件",
+          "description": "model_trainer - 功能組件"
+        },
+        {
+          "script": "training_orchestrator",
+          "module": "external_learning",
+          "component_type": "程式組件",
+          "description": "training_orchestrator - 功能組件"
+        }
+      ],
+      "modules": [
+        "service_backbone",
+        "service_backbone",
+        "service_backbone",
+        "external_learning",
+        "external_learning"
+      ],
+      "component_types": [
+        "程式組件",
+        "程式組件",
+        "程式組件",
+        "AI組件",
+        "程式組件"
+      ],
+      "primary_module": "external_learning",
+      "endpoint_module": "external_learning",
+      "majority_module": "service_backbone",
+      "primary_component_type": "程式組件"
+    }
+  },
+  {
+    "test_id": 5,
+    "flow_index": 123,
+    "flow": {
+      "id": 124,
+      "path": [
+        "initial_surface",
+        "exploit_orchestrator"
+      ],
+      "full_path": [
+        "C:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\core_capabilities\\analysis\\initial_surface.py",
+        "C:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\core_capabilities\\attack\\exploit_orchestrator.py"
+      ],
+      "length": 2,
+      "start": "initial_surface",
+      "end": "exploit_orchestrator",
+      "classifications": [
+        {
+          "script": "initial_surface",
+          "module": "service_backbone",
+          "component_type": "程式組件",
+          "description": "initial_surface - 功能組件"
+        },
+        {
+          "script": "exploit_orchestrator",
+          "module": "service_backbone",
+          "component_type": "程式組件",
+          "description": "exploit_orchestrator - 功能組件"
+        }
+      ],
+      "modules": [
+        "service_backbone",
+        "service_backbone"
+      ],
+      "component_types": [
+        "程式組件",
+        "程式組件"
+      ],
+      "primary_module": "service_backbone",
+      "endpoint_module": "service_backbone",
+      "majority_module": "service_backbone",
+      "primary_component_type": "程式組件"
+    }
+  },
+  {
+    "test_id": 6,
+    "flow_index": 125,
+    "flow": {
+      "id": 126,
+      "path": [
+        "initial_surface",
+        "scan_module_interface",
+        "app"
+      ],
+      "full_path": [
+        "C:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\core_capabilities\\analysis\\initial_surface.py",
+        "C:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\core_capabilities\\ingestion\\scan_module_interface.py",
+        "C:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\service_backbone\\api\\app.py"
+      ],
+      "length": 3,
+      "start": "initial_surface",
+      "end": "app",
+      "classifications": [
+        {
+          "script": "initial_surface",
+          "module": "service_backbone",
+          "component_type": "程式組件",
+          "description": "initial_surface - 功能組件"
+        },
+        {
+          "script": "scan_module_interface",
+          "module": "service_backbone",
+          "component_type": "程式組件",
+          "description": "scan_module_interface - 功能組件"
+        },
+        {
+          "script": "app",
+          "module": "service_backbone",
+          "component_type": "程式組件",
+          "description": "app - 功能組件"
+        }
+      ],
+      "modules": [
+        "service_backbone",
+        "service_backbone",
+        "service_backbone"
+      ],
+      "component_types": [
+        "程式組件",
+        "程式組件",
+        "程式組件"
+      ],
+      "primary_module": "service_backbone",
+      "endpoint_module": "service_backbone",
+      "majority_module": "service_backbone",
+      "primary_component_type": "程式組件"
+    }
+  },
+  {
+    "test_id": 7,
+    "flow_index": 132,
+    "flow": {
+      "id": 133,
+      "path": [
+        "session_state_manager",
+        "system_connectivity_checker"
+      ],
+      "full_path": [
+        "C:\\D\\fold7\\AIVA-git\\services\\core\\session_state_manager.py",
+        "C:\\D\\fold7\\AIVA-git\\services\\core\\tools\\system_connectivity_checker.py"
+      ],
+      "length": 2,
+      "start": "session_state_manager",
+      "end": "system_connectivity_checker",
+      "classifications": [
+        {
+          "script": "session_state_manager",
+          "module": "service_backbone",
+          "component_type": "程式組件",
+          "description": "session_state_manager - 功能組件"
+        },
+        {
+          "script": "system_connectivity_checker",
+          "module": "service_backbone",
+          "component_type": "程式組件",
+          "description": "system_connectivity_checker - 功能組件"
+        }
+      ],
+      "modules": [
+        "service_backbone",
+        "service_backbone"
+      ],
+      "component_types": [
+        "程式組件",
+        "程式組件"
+      ],
+      "primary_module": "service_backbone",
+      "endpoint_module": "service_backbone",
+      "majority_module": "service_backbone",
+      "primary_component_type": "程式組件"
+    }
+  },
+  {
+    "test_id": 8,
+    "flow_index": 139,
+    "flow": {
+      "id": 140,
+      "path": [
+        "session_state_manager",
+        "dashboard",
+        "improved_ui",
+        "analyze_dataflow_breakpoints",
+        "analyze_missing_function_connections"
+      ],
+      "full_path": [
+        "C:\\D\\fold7\\AIVA-git\\services\\core\\session_state_manager.py",
+        "C:\\D\\fold7\\AIVA-git\\services\\core\\ui\\dashboard.py",
+        "C:\\D\\fold7\\AIVA-git\\services\\core\\ui\\improved_ui.py",
+        "C:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\internal_exploration\\self_healing\\analyze_dataflow_breakpoints.py",
+        "C:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\internal_exploration\\self_healing\\analyze_missing_function_connections.py"
+      ],
+      "length": 5,
+      "start": "session_state_manager",
+      "end": "analyze_missing_function_connections",
+      "classifications": [
+        {
+          "script": "session_state_manager",
+          "module": "service_backbone",
+          "component_type": "程式組件",
+          "description": "session_state_manager - 功能組件"
+        },
+        {
+          "script": "dashboard",
+          "module": "service_backbone",
+          "component_type": "程式組件",
+          "description": "dashboard - 功能組件"
+        },
+        {
+          "script": "improved_ui",
+          "module": "service_backbone",
+          "component_type": "程式組件",
+          "description": "improved_ui - 功能組件"
+        },
+        {
+          "script": "analyze_dataflow_breakpoints",
+          "module": "service_backbone",
+          "component_type": "程式組件",
+          "description": "analyze_dataflow_breakpoints - 功能組件"
+        },
+        {
+          "script": "analyze_missing_function_connections",
+          "module": "service_backbone",
+          "component_type": "程式組件",
+          "description": "analyze_missing_function_connections - 功能組件"
+        }
+      ],
+      "modules": [
+        "service_backbone",
+        "service_backbone",
+        "service_backbone",
+        "service_backbone",
+        "service_backbone"
+      ],
+      "component_types": [
+        "程式組件",
+        "程式組件",
+        "程式組件",
+        "程式組件",
+        "程式組件"
+      ],
+      "primary_module": "service_backbone",
+      "endpoint_module": "service_backbone",
+      "majority_module": "service_backbone",
+      "primary_component_type": "程式組件"
+    }
+  },
+  {
+    "test_id": 9,
+    "flow_index": 5,
+    "flow": {
+      "id": 6,
+      "path": [
+        "scalable_bio_trainer",
+        "system_connectivity_checker"
+      ],
+      "full_path": [
+        "C:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\external_learning\\learning\\scalable_bio_trainer.py",
+        "C:\\D\\fold7\\AIVA-git\\services\\core\\tools\\system_connectivity_checker.py"
+      ],
+      "length": 2,
+      "start": "scalable_bio_trainer",
+      "end": "system_connectivity_checker",
+      "classifications": [
+        {
+          "script": "scalable_bio_trainer",
+          "module": "external_learning",
+          "component_type": "AI組件",
+          "description": "可擴展生物訓練器 - 大規模AI訓練"
+        },
+        {
+          "script": "system_connectivity_checker",
+          "module": "service_backbone",
+          "component_type": "程式組件",
+          "description": "system_connectivity_checker - 功能組件"
+        }
+      ],
+      "modules": [
+        "external_learning",
+        "service_backbone"
+      ],
+      "component_types": [
+        "AI組件",
+        "程式組件"
+      ],
+      "primary_module": "service_backbone",
+      "endpoint_module": "service_backbone",
+      "majority_module": "external_learning",
+      "primary_component_type": "AI組件"
+    }
+  },
+  {
+    "test_id": 10,
+    "flow_index": 13,
+    "flow": {
+      "id": 14,
+      "path": [
+        "scalable_bio_trainer",
+        "model_trainer",
+        "ai_model_manager",
+        "system_connectivity_checker"
+      ],
+      "full_path": [
+        "C:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\external_learning\\learning\\scalable_bio_trainer.py",
+        "C:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\external_learning\\learning\\model_trainer.py",
+        "C:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\cognitive_core\\neural\\ai_model_manager.py",
+        "C:\\D\\fold7\\AIVA-git\\services\\core\\tools\\system_connectivity_checker.py"
+      ],
+      "length": 4,
+      "start": "scalable_bio_trainer",
+      "end": "system_connectivity_checker",
+      "classifications": [
+        {
+          "script": "scalable_bio_trainer",
+          "module": "external_learning",
+          "component_type": "AI組件",
+          "description": "可擴展生物訓練器 - 大規模AI訓練"
+        },
+        {
+          "script": "model_trainer",
+          "module": "external_learning",
+          "component_type": "AI組件",
+          "description": "model_trainer - 功能組件"
+        },
+        {
+          "script": "ai_model_manager",
+          "module": "cognitive_core",
+          "component_type": "AI組件",
+          "description": "ai_model_manager - 功能組件"
+        },
+        {
+          "script": "system_connectivity_checker",
+          "module": "service_backbone",
+          "component_type": "程式組件",
+          "description": "system_connectivity_checker - 功能組件"
+        }
+      ],
+      "modules": [
+        "external_learning",
+        "external_learning",
+        "cognitive_core",
+        "service_backbone"
+      ],
+      "component_types": [
+        "AI組件",
+        "AI組件",
+        "AI組件",
+        "程式組件"
+      ],
+      "primary_module": "service_backbone",
+      "endpoint_module": "service_backbone",
+      "majority_module": "external_learning",
+      "primary_component_type": "AI組件"
+    }
+  }
+]

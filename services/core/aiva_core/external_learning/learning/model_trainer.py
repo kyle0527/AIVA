@@ -72,6 +72,29 @@ class ModelTrainer:
 
         logger.info(f"ModelTrainer initialized with model_dir={self.model_dir}")
 
+    async def train(
+        self,
+        samples: list,
+        config,
+        mode: str = "supervised"
+    ):
+        """統一訓練接口
+        
+        Args:
+            samples: 訓練樣本列表
+            config: 訓練配置（ModelTrainingConfig）
+            mode: 訓練模式 ("supervised" 或 "reinforcement")
+        
+        Returns:
+            ModelTrainingResult: 訓練結果
+        """
+        if mode == "supervised":
+            return await self.train_supervised(samples, config)
+        elif mode == "reinforcement":
+            return await self.train_reinforcement(samples, config)
+        else:
+            raise ValueError(f"Unknown training mode: {mode}. Use 'supervised' or 'reinforcement'.")
+
     async def train_supervised(
         self,
         samples: list[ExperienceSample],

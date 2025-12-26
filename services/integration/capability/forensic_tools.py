@@ -50,21 +50,21 @@ class ForensicTool:
     """Base forensic tool class - equivalent to HackingTool"""
     
     def __init__(self):
-        self.TITLE = ""
-        self.DESCRIPTION = ""
-        self.INSTALL_COMMANDS = []
-        self.RUN_COMMANDS = []
-        self.PROJECT_URL = ""
+        self.name = ""
+        self.description = ""
+        self.install_commands = []
+        self.run_commands = []
+        self.project_url = ""
         self.installable = True
         self.runnable = True
     
     def is_installed(self) -> bool:
         """Check if tool is installed"""
-        if not self.RUN_COMMANDS:
+        if not self.run_commands:
             return False
         
         # Extract main command
-        main_cmd = self.RUN_COMMANDS[0].split()[0]
+        main_cmd = self.run_commands[0].split()[0]
         if main_cmd.startswith("sudo "):
             main_cmd = main_cmd.replace("sudo ", "")
         
@@ -81,17 +81,17 @@ class ForensicTool:
     def install(self) -> bool:
         """Install tool"""
         if not self.installable:
-            console.print(f"[yellow]{self.TITLE} is not installable via this interface[/yellow]")
+            console.print(f"[yellow]{self.name} is not installable via this interface[/yellow]")
             return False
             
-        console.print(f"[cyan]Installing {self.TITLE}...[/cyan]")
+        console.print(f"[cyan]Installing {self.name}...[/cyan]")
         console.print("[yellow]⚠️  For authorized forensic analysis only![/yellow]")
         
-        if not Confirm.ask(f"Confirm install {self.TITLE}?"):
+        if not Confirm.ask(f"Confirm install {self.name}?"):
             return False
         
         success = True
-        for cmd in self.INSTALL_COMMANDS:
+        for cmd in self.install_commands:
             try:
                 console.print(f"[yellow]Executing: {cmd}[/yellow]")
                 result = subprocess.run(
@@ -117,21 +117,21 @@ class ForensicTool:
                 break
         
         if success:
-            console.print(f"[green]✅ {self.TITLE} installed successfully[/green]")
+            console.print(f"[green]✅ {self.name} installed successfully[/green]")
         else:
-            console.print(f"[red]❌ {self.TITLE} installation failed[/red]")
+            console.print(f"[red]❌ {self.name} installation failed[/red]")
         
         return success
     
     def run(self) -> ForensicResult:
         """Run tool"""
-        console.print(f"[bold green]🔍 Running {self.TITLE}[/bold green]")
+        console.print(f"[bold green]🔍 Running {self.name}[/bold green]")
         console.print("[yellow]⚠️  For authorized forensic analysis only![/yellow]")
         
         if not self.runnable:
-            console.print(f"[yellow]{self.TITLE} requires manual setup or GUI interface[/yellow]")
+            console.print(f"[yellow]{self.name} requires manual setup or GUI interface[/yellow]")
             return ForensicResult(
-                tool_name=self.TITLE,
+                tool_name=self.name,
                 command="not_runnable",
                 start_time=datetime.now().isoformat(),
                 end_time=datetime.now().isoformat(),
@@ -140,9 +140,9 @@ class ForensicTool:
                 error_details="Tool not runnable via CLI"
             )
         
-        if not Confirm.ask(f"Confirm run {self.TITLE}?"):
+        if not Confirm.ask(f"Confirm run {self.name}?"):
             return ForensicResult(
-                tool_name=self.TITLE,
+                tool_name=self.name,
                 command="cancelled",
                 start_time=datetime.now().isoformat(),
                 end_time=datetime.now().isoformat(),
@@ -158,7 +158,7 @@ class ForensicTool:
             if hasattr(self, 'custom_run'):
                 self.custom_run()
             else:
-                for cmd in self.RUN_COMMANDS:
+                for cmd in self.run_commands:
                     console.print(f"[yellow]Executing: {cmd}[/yellow]")
                     subprocess.run(cmd, shell=True)
         
@@ -167,8 +167,8 @@ class ForensicTool:
             duration = (end_time - start_time).total_seconds()
             
             return ForensicResult(
-                tool_name=self.TITLE,
-                command=str(self.RUN_COMMANDS),
+                tool_name=self.name,
+                command=str(self.run_commands),
                 start_time=start_time.isoformat(),
                 end_time=end_time.isoformat(),
                 duration=duration,
@@ -180,8 +180,8 @@ class ForensicTool:
         duration = (end_time - start_time).total_seconds()
         
         return ForensicResult(
-            tool_name=self.TITLE,
-            command=str(self.RUN_COMMANDS),
+            tool_name=self.name,
+            command=str(self.run_commands),
             start_time=start_time.isoformat(),
             end_time=end_time.isoformat(),
             duration=duration,
@@ -194,14 +194,14 @@ class Autopsy(ForensicTool):
     
     def __init__(self):
         super().__init__()
-        self.TITLE = "Autopsy"
-        self.DESCRIPTION = (
+        self.name = "Autopsy"
+        self.description = (
             "Autopsy is a platform that is used by Cyber Investigators.\n"
             "[!] Works in any OS\n"
             "[!] Recover Deleted Files from any OS & Media\n"
             "[!] Extract Image Metadata"
         )
-        self.RUN_COMMANDS = ["sudo autopsy"]
+        self.run_commands = ["sudo autopsy"]
         self.installable = False
 
 
@@ -210,13 +210,13 @@ class Wireshark(ForensicTool):
     
     def __init__(self):
         super().__init__()
-        self.TITLE = "Wireshark"
-        self.DESCRIPTION = (
+        self.name = "Wireshark"
+        self.description = (
             "Wireshark is a network capture and analyzer\n"
             "tool to see what's happening in your network.\n"
             "And also investigate Network related incident"
         )
-        self.RUN_COMMANDS = ["sudo wireshark"]
+        self.run_commands = ["sudo wireshark"]
         self.installable = False
 
 
@@ -225,15 +225,15 @@ class BulkExtractor(ForensicTool):
     
     def __init__(self):
         super().__init__()
-        self.TITLE = "Bulk extractor"
-        self.DESCRIPTION = "Extract useful information without parsing the file system"
-        self.PROJECT_URL = "https://github.com/simsong/bulk_extractor"
+        self.name = "Bulk extractor"
+        self.description = "Extract useful information without parsing the file system"
+        self.project_url = "https://github.com/simsong/bulk_extractor"
         self.installable = False
         self.runnable = False
     
     def gui_mode(self):
         """GUI Mode implementation"""
-        console.print(Panel(Text(self.TITLE, justify="center"), style=PURPLE_STYLE))
+        console.print(Panel(Text(self.name, justify="center"), style=PURPLE_STYLE))
         console.print("[bold magenta]Cloning repository and attempting to run GUI...[/]")
         os.system("sudo git clone https://github.com/simsong/bulk_extractor.git")
         os.system("ls src/ && cd .. && cd java_gui && ./BEViewer")
@@ -244,7 +244,7 @@ class BulkExtractor(ForensicTool):
 
     def cli_mode(self):
         """CLI Mode implementation"""
-        console.print(Panel(Text(self.TITLE + " - CLI Mode", justify="center"), style=PURPLE_STYLE))
+        console.print(Panel(Text(self.name + " - CLI Mode", justify="center"), style=PURPLE_STYLE))
         os.system("sudo apt install bulk-extractor")
         console.print("[magenta]Showing bulk_extractor help and options:[/]")
         os.system("bulk_extractor -h")
@@ -252,7 +252,7 @@ class BulkExtractor(ForensicTool):
     
     def custom_run(self):
         """Custom run with mode selection"""
-        console.print(f"[bold cyan]{self.TITLE} Mode Selection[/bold cyan]")
+        console.print(f"[bold cyan]{self.name} Mode Selection[/bold cyan]")
         console.print("1. GUI Mode (Download required)")
         console.print("2. CLI Mode")
         
@@ -269,11 +269,11 @@ class Guymager(ForensicTool):
     
     def __init__(self):
         super().__init__()
-        self.TITLE = "Disk Clone and ISO Image Acquire"
-        self.DESCRIPTION = "Guymager is a free forensic imager for media acquisition."
-        self.INSTALL_COMMANDS = ["sudo apt install guymager"]
-        self.RUN_COMMANDS = ["sudo guymager"]
-        self.PROJECT_URL = "https://guymager.sourceforge.io/"
+        self.name = "Disk Clone and ISO Image Acquire"
+        self.description = "Guymager is a free forensic imager for media acquisition."
+        self.install_commands = ["sudo apt install guymager"]
+        self.run_commands = ["sudo guymager"]
+        self.project_url = "https://guymager.sourceforge.io/"
         self.installable = False
 
 
@@ -282,8 +282,8 @@ class Toolsley(ForensicTool):
     
     def __init__(self):
         super().__init__()
-        self.TITLE = "Toolsley"
-        self.DESCRIPTION = (
+        self.name = "Toolsley"
+        self.description = (
             "Toolsley got more than ten useful tools for investigation.\n"
             "[+]File signature verifier\n"
             "[+]File identifier\n"
@@ -293,34 +293,34 @@ class Toolsley(ForensicTool):
             "[+]Data URI generator\n"
             "[+]Password generator"
         )
-        self.PROJECT_URL = "https://www.toolsley.com/"
+        self.project_url = "https://www.toolsley.com/"
         self.installable = False
         self.runnable = False
     
     def custom_run(self):
         """Open Toolsley website"""
-        console.print(f"[cyan]Opening {self.TITLE} website...[/cyan]")
-        console.print(f"[blue]Visit: {self.PROJECT_URL}[/blue]")
+        console.print(f"[cyan]Opening {self.name} website...[/cyan]")
+        console.print(f"[blue]Visit: {self.project_url}[/blue]")
         
         # Cross-platform URL opening
         import platform
         system = platform.system().lower()
         
         if system == "windows":
-            os.system(f"start {self.PROJECT_URL}")
+            os.system(f"start {self.project_url}")
         elif system == "darwin":
-            os.system(f"open {self.PROJECT_URL}")
+            os.system(f"open {self.project_url}")
         else:
-            os.system(f"xdg-open {self.PROJECT_URL}")
+            os.system(f"xdg-open {self.project_url}")
 
 
 class ForensicManager:
     """Forensic tools manager - equivalent to HackingToolsCollection"""
     
     def __init__(self):
-        self.TITLE = "Forensic tools"
-        self.DESCRIPTION = "Digital forensics and incident response tools"
-        self.TOOLS = [
+        self.name = "Forensic tools"
+        self.description = "Digital forensics and incident response tools"
+        self.tools = [
             Autopsy(),
             Wireshark(),
             BulkExtractor(),
@@ -330,7 +330,11 @@ class ForensicManager:
         self.forensic_results = []
     
     def _get_attr(self, obj, *names, default=""):
-        """Get attribute with fallback"""
+        """獲取屬性（支持多種命名習慣）。
+        
+        嘗試多個可能的屬性名稱，以支持不同工具的命名規範。
+        這是兼容性處理，不是降級邏輯。
+        """
         for n in names:
             if hasattr(obj, n):
                 return getattr(obj, n)
@@ -343,7 +347,7 @@ class ForensicManager:
         table.add_column("Description", style=PURPLE_STYLE)
         table.add_column("Project URL", style=PURPLE_STYLE, no_wrap=True)
 
-        for t in self.TOOLS:
+        for t in self.tools:
             title = self._get_attr(t, "TITLE", "Title", "title", default=t.__class__.__name__)
             desc = self._get_attr(t, "DESCRIPTION", "Description", "description", default="")
             url = self._get_attr(t, "PROJECT_URL", "PROJECT_URL", "PROJECT", "project_url", "projectUrl", default="")
@@ -367,7 +371,7 @@ class ForensicManager:
         table.add_column("Description", justify="left", style="white")
         table.add_column("Status", justify="center", style="cyan")
 
-        for i, tool in enumerate(self.TOOLS):
+        for i, tool in enumerate(self.tools):
             title = self._get_attr(tool, "TITLE", "Title", "title", default=tool.__class__.__name__)
             desc = self._get_attr(tool, "DESCRIPTION", "Description", "description", default="—")
             status = "✅" if tool.is_installed() else "❌"
@@ -383,8 +387,8 @@ class ForensicManager:
             choice = Prompt.ask("[bold cyan]Select a tool to run[/bold cyan]", default="99")
             choice = int(choice)
             
-            if 1 <= choice <= len(self.TOOLS):
-                selected = self.TOOLS[choice - 1]
+            if 1 <= choice <= len(self.tools):
+                selected = self.tools[choice - 1]
                 self._handle_tool_selection(selected)
             elif choice == 88:
                 self.pretty_print()
@@ -401,29 +405,29 @@ class ForensicManager:
     
     def _handle_tool_selection(self, tool: ForensicTool):
         """Handle tool selection"""
-        console.print(f"\n[bold green]Selected: {tool.TITLE}[/bold green]")
-        console.print(f"[cyan]Description: {tool.DESCRIPTION}[/cyan]")
+        console.print(f"\n[bold green]Selected: {tool.name}[/bold green]")
+        console.print(f"[cyan]Description: {tool.description}[/cyan]")
         console.print(f"[blue]Project URL: {getattr(tool, 'PROJECT_URL', 'N/A')}[/blue]")
         
         if tool.installable and not tool.is_installed():
-            console.print(f"[yellow]{tool.TITLE} is not installed[/yellow]")
+            console.print(f"[yellow]{tool.name} is not installed[/yellow]")
             if Confirm.ask("Install now?"):
                 if tool.install():
-                    console.print(f"[green]{tool.TITLE} installed successfully![/green]")
+                    console.print(f"[green]{tool.name} installed successfully![/green]")
                 else:
-                    console.print(f"[red]{tool.TITLE} installation failed![/red]")
+                    console.print(f"[red]{tool.name} installation failed![/red]")
                     return
             else:
                 return
         
-        if Confirm.ask(f"Run {tool.TITLE}?"):
+        if Confirm.ask(f"Run {tool.name}?"):
             result = tool.run()
             self.forensic_results.append(result)
             
             if result.success:
-                console.print(f"[green]✅ {tool.TITLE} completed![/green]")
+                console.print(f"[green]✅ {tool.name} completed![/green]")
             else:
-                console.print(f"[red]❌ {tool.TITLE} failed: {result.error_details}[/red]")
+                console.print(f"[red]❌ {tool.name} failed: {result.error_details}[/red]")
     
     def _show_forensic_results(self):
         """Show forensic analysis results"""
@@ -487,10 +491,10 @@ class ForensicCapability(BaseCapability):
             
             elif command == "list_tools":
                 tools_info = []
-                for tool in self.manager.TOOLS:
+                for tool in self.manager.tools:
                     tools_info.append({
-                        "title": tool.TITLE,
-                        "description": tool.DESCRIPTION,
+                        "title": tool.name,
+                        "description": tool.description,
                         "project_url": getattr(tool, "PROJECT_URL", ""),
                         "installed": tool.is_installed()
                     })
@@ -505,7 +509,7 @@ class ForensicCapability(BaseCapability):
                 if not tool_name:
                     return {"success": False, "error": "Missing tool_name parameter"}
                 
-                tool = next((t for t in self.manager.TOOLS if t.TITLE == tool_name), None)
+                tool = next((t for t in self.manager.tools if t.name == tool_name), None)
                 if not tool:
                     return {"success": False, "error": f"Tool {tool_name} not found"}
                 

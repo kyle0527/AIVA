@@ -23,6 +23,35 @@
 
 **AIVA Python Tools** 是 AIVA 專案中用於代碼分析、數據流分類和自動化探索的核心工具套件。包含 4 個主要模組,提供從底層 AST 解析到高階管線編排的完整功能。
 
+### ⚠️ 重要變更通知 (2025-12-15)
+
+**分析結果輸出路徑已重構為統一的模組化結構**：
+
+```
+舊路徑:
+services/integration/data/internal_exploration/
+├── analysis_history/v1/, v2/, ...
+└── analysis_results/
+
+新路徑:
+services/integration/analysis_data/
+├── core/
+│   ├── capabilities/     # 能力數據
+│   ├── flows/           # 數據流分析
+│   └── classifications/ # 分類結果
+├── features/            # 功能模組分析
+├── scan/                # 掃描引擎分析
+└── integration/         # 整合層分析
+```
+
+**使用新路徑的優點**：
+- ✅ 模組化組織：按 core/features/scan/integration 分類
+- ✅ 類型化儲存：capabilities/flows/classifications 獨立管理
+- ✅ 易於查詢：RAG 和 InternalLoopConnector 可直接讀取
+- ✅ 版本追蹤：每個文件帶時間戳，同時保留 latest_ 快捷方式
+
+**向後兼容性**：舊路徑保留用於歷史版本管理和差異比對。
+
 ### 四大核心模組
 
 1. **aiva_flow_analyzer.py** - 流程圖生成與智能組合工具
@@ -65,8 +94,15 @@ pip install -r requirements.txt  # 如果有的話
 ### 2. 基本使用
 
 ```bash
-# 方式 1: 完整管線執行 (推薦)
-python aiva_exploration_pipeline.py --target cognitive_core
+# 方式 1: 完整管線執行 (推薦) - 使用新路徑結構
+python aiva_exploration_pipeline.py --target core --module core
+
+# 分析其他模組
+python aiva_exploration_pipeline.py --target features --module features
+python aiva_exploration_pipeline.py --target scan --module scan
+
+# 分析特定子模組
+python aiva_exploration_pipeline.py --target cognitive_core --module core
 
 # 方式 2: 單獨流程圖分析
 python aiva_flow_analyzer.py --scan-dir ../cognitive_core --output-dir ./analysis_output
@@ -76,6 +112,55 @@ python aiva_flow_classifier.py --input flow_results.json --output classification
 
 # 方式 4: 執行特定數據流
 python aiva_cli_implementation.py --flow 11
+```
+
+### 3. 輸出路徑配置
+
+**新增 `--module` 參數** (2025-12-15)：
+
+```bash
+# 指定目標模組，決定分析結果的儲存位置
+--module core         # → services/integration/analysis_data/core/
+--module features     # → services/integration/analysis_data/features/
+--module scan         # → services/integration/analysis_data/scan/
+--module integration  # → services/integration/analysis_data/integration/
+```
+
+**自動分類儲存**：
+
+分析完成後，結果會自動分類保存到三個子目錄：
+
+```bash
+# 執行分析
+python aiva_exploration_pipeline.py --target core --module core
+
+# 產生的文件結構
+services/integration/analysis_data/core/
+├── capabilities/
+│   ├── core_capabilities_20251215_184037.json  # 帶時間戳
+│   └── latest_core_capabilities.json           # 最新版本快捷方式
+├── flows/
+│   ├── core_flows_20251215_184036.json
+│   └── latest_core_flows.json
+└── classifications/
+    ├── core_classifications_20251215_184036.json
+    └── latest_core_classifications.json
+```
+
+**讀取最新結果**：
+
+```python
+from pathlib import Path
+import json
+
+# 讀取最新的 core 模組能力數據
+capabilities_file = Path(
+    "services/integration/analysis_data/core/capabilities/latest_core_capabilities.json"
+)
+with open(capabilities_file) as f:
+    capabilities = json.load(f)
+
+print(f"總流程數: {capabilities['metadata']['total_flows']}")
 ```
 
 ---
@@ -776,6 +861,197 @@ python aiva_exploration_pipeline.py \
     --output-dir ./custom_output
 ```
 
+### 🔄 路徑架構變更 (2025-12-15)
+
+**重要更新**: 分析結果輸出路徑已重構為統一的模組化結構
+
+#### 變更原因
+
+1. **模組隔離**: 不同模組的分析結果混在一起，難以管理
+2. **類型混淆**: capabilities/flows/classifications 未分開儲存
+3. **查詢困難**: RAG 和 InternalLoopConnector 需要遍歷多個位置
+4. **版本追蹤**: 缺少清晰的文件版本管理機制
+
+#### 新路徑結構
+
+```bash
+services/integration/analysis_data/
+├── core/                        # 核心模組 (aiva_core)
+│   ├── capabilities/
+│   │   ├── core_capabilities_20251215_184037.json
+│   │   └── latest_core_capabilities.json
+│   ├── flows/
+│   │   ├── core_flows_20251215_184036.json
+│   │   └── latest_core_flows.json
+│   └── classifications/
+│       ├── core_classifications_20251215_184036.json
+│       └── latest_core_classifications.json
+├── features/                    # 功能模組
+│   ├── capabilities/
+│   ├── flows/
+│   └── classifications/
+├── scan/                        # 掃描引擎
+│   ├── capabilities/
+│   ├── flows/
+│   └── classifications/
+└── integration/                 # 整合層
+    ├── capabilities/
+    ├── flows/
+    └── classifications/
+```
+
+#### 實作變更
+
+**1. 新增 `--module` 參數**
+
+```python
+# aiva_exploration_pipeline.py __init__() 修改
+def __init__(self, target_path, target_module="core"):
+    """
+    Args:
+        target_path: 要分析的路徑 (core, cognitive_core, features等)
+        target_module: 模組名稱，決定輸出位置
+            - 'core': services/integration/analysis_data/core/
+            - 'features': services/integration/analysis_data/features/
+            - 'scan': services/integration/analysis_data/scan/
+            - 'integration': services/integration/analysis_data/integration/
+    """
+    self.target_path = target_path
+    self.target_module = target_module  # 新增
+```
+
+**2. 新增分類保存方法**
+
+```python
+def _save_to_analysis_data(self, source_file, category):
+    """保存結果到統一的 analysis_data 結構
+    
+    Args:
+        source_file: 源文件路徑 (版本目錄中的 JSON)
+        category: 類別 ('capabilities', 'flows', 'classifications')
+    """
+    # 構建目標路徑
+    analysis_data_root = SERVICES_ROOT / "integration" / "analysis_data"
+    module_dir = analysis_data_root / self.target_module
+    category_dir = module_dir / category
+    
+    # 生成時間戳文件名
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    dest_file = category_dir / f"{self.target_module}_{category}_{timestamp}.json"
+    
+    # 複製文件
+    shutil.copy2(source_file, dest_file)
+    
+    # 創建最新版本鏈接
+    latest_link = category_dir / f"latest_{self.target_module}_{category}.json"
+    shutil.copy2(source_file, latest_link)
+```
+
+**3. 整合到分析流程**
+
+```python
+def _step_analyze(self, target_path, output_json):
+    """步驟 1: 代碼結構分析"""
+    analyzer = AIVAFlowAnalyzer(target_dir=str(PROJECT_ROOT))
+    analyzer.analyze_directory(target=str(target_path), depth=5, verbose=False)
+    analyzer.save_results(output_dir=str(self.current_version_dir))
+    
+    # 新增: 保存到 flows 目錄
+    self._save_to_analysis_data(output_json, "flows")
+    return True
+
+def _step_classify(self, input_json, output_json):
+    """步驟 2: 數據流分類"""
+    classifier = AIVAFlowClassifier(
+        input_dir=str(self.current_version_dir),
+        output_dir=str(self.current_version_dir),
+        verbose=False
+    )
+    classifier.load_flow_data()
+    classifier.classify_flows()
+    classifier.generate_reports()
+    
+    # 新增: 保存到 classifications 和 capabilities 目錄
+    self._save_to_analysis_data(output_json, "classifications")
+    self._save_to_analysis_data(output_json, "capabilities")
+    return True
+```
+
+**4. 配置文件更新**
+
+在 `services/integration/aiva_integration/config.py` 中添加：
+
+```python
+# 統一分析資料儲存配置
+ANALYSIS_DATA_ROOT = Path(__file__).parent.parent / "analysis_data"
+
+# 各模組分析資料目錄
+ANALYSIS_DATA_CORE = ANALYSIS_DATA_ROOT / "core"
+ANALYSIS_DATA_FEATURES = ANALYSIS_DATA_ROOT / "features"
+ANALYSIS_DATA_SCAN = ANALYSIS_DATA_ROOT / "scan"
+ANALYSIS_DATA_INTEGRATION = ANALYSIS_DATA_ROOT / "integration"
+
+# 模組名稱映射
+MODULE_ANALYSIS_DIRS = {
+    "core": ANALYSIS_DATA_CORE,
+    "features": ANALYSIS_DATA_FEATURES,
+    "scan": ANALYSIS_DATA_SCAN,
+    "integration": ANALYSIS_DATA_INTEGRATION,
+}
+```
+
+#### 使用範例
+
+```bash
+# 分析 core 模組
+cd C:\D\fold7\AIVA-git
+python services\core\aiva_core\internal_exploration\python_tools\aiva_exploration_pipeline.py --target core --module core
+
+# 分析結果位置
+ls services\integration\analysis_data\core\capabilities\
+# 輸出: 
+#   core_capabilities_20251215_184037.json
+#   latest_core_capabilities.json
+
+# 分析其他模組
+python ... --target features --module features  # → analysis_data/features/
+python ... --target scan --module scan          # → analysis_data/scan/
+```
+
+#### 讀取最新結果
+
+```python
+from pathlib import Path
+import json
+
+# 讀取最新的 core 模組能力數據
+capabilities_file = Path(
+    "services/integration/analysis_data/core/capabilities/latest_core_capabilities.json"
+)
+
+with open(capabilities_file, encoding='utf-8') as f:
+    data = json.load(f)
+
+print(f"總流程數: {data['metadata']['total_flows']}")
+print(f"模組分布: {data['metadata']['module_distribution']}")
+
+# 遍歷所有流程
+for flow in data['flows']:
+    print(f"Flow {flow['id']}: {' → '.join(flow['path'])}")
+```
+
+#### 向後兼容性
+
+**舊路徑保留**: `services/integration/data/internal_exploration/` 繼續用於：
+- 版本歷史管理 (`analysis_history/v1, v2, ...`)
+- 差異比對報告 (`diff_report.md`)
+- CLI 指令文檔 (`CLI_COMMANDS_REFERENCE.md`)
+
+**新路徑用於**: `services/integration/analysis_data/` 專門存儲：
+- 最終分析結果（供 RAG 和 InternalLoopConnector 使用）
+- 模組化組織的能力數據
+- 便於查詢和檢索的分類結構
+
 ### 差異報告範例
 
 ```markdown
@@ -783,14 +1059,14 @@ python aiva_exploration_pipeline.py \
 
 **版本:** v3
 **對比版本:** v2
-**生成時間:** 2025-12-11 14:30:22
+**生成時間:** 2025-12-15 18:40:37
 
 ## 變更摘要
 
 - **新增數據流:** 5 條
 - **刪除數據流:** 2 條
 - **修改數據流:** 3 條
-- **總數據流:** 285 條 (↑3)
+- **總數據流:** 840 條 (↑3)
 
 ## 新增數據流
 
@@ -847,27 +1123,184 @@ python aiva_exploration_pipeline.py \
 
 ## 🎯 完整工作流範例
 
-### 情境: 新增功能後更新認知系統
+### 情境 1: 新增功能後更新認知系統（使用新路徑結構）
 
 ```bash
-# Step 1: 執行完整管線分析
-python aiva_exploration_pipeline.py --target all
+# 進入專案根目錄
+cd C:\D\fold7\AIVA-git
 
-# 這會自動執行:
-# - aiva_flow_analyzer (掃描所有代碼)
-# - aiva_flow_classifier (分類數據流)
-# - 差異比對 (與上一版本比較)
-# - 版本發布 (建立新版本 v4)
+# Step 1: 分析 core 模組
+python services\core\aiva_core\internal_exploration\python_tools\aiva_exploration_pipeline.py --target core --module core
 
-# Step 2: 查看差異報告
-cat analysis_history/v4/diff_report.md
+# 執行過程:
+# [1/5] 執行代碼結構分析 (Analyzer)...
+#    目標: C:\D\fold7\AIVA-git\services\core
+#    模組: core
+#    ✅ 發現 840 個數據流
+#    📁 已保存到: flows/core_flows_20251215_184036.json
+#
+# [2/5] 執行數據流分類 (Classifier)...
+#    ✅ 分類完成: 840 個流程
+#    📁 已保存到: classifications/core_classifications_20251215_184036.json
+#    📁 已保存到: capabilities/core_capabilities_20251215_184037.json
+#
+# [3/5] 生成版本差異報告 (Diff)...
+#    ✅ 差異分析完成: +5 / -2
+#
+# [4/5] 更新系統數據指針...
+#    ✅ 已更新 latest_classification.json
+#
+# [5/5] 生成 CLI 指令文檔...
+#    ✅ Markdown 文檔: CLI_COMMANDS_REFERENCE.md
+#    ✅ JSON 資料庫: cli_commands_db.json
+#
+# ✨ 管線執行完畢。數據已更新至 v3。
 
-# Step 3: 生成 CLI 指令手冊
-python aiva_cli_implementation.py --generate-doc md
+# Step 2: 驗證輸出結果
+tree /F services\integration\analysis_data\core
+# 輸出:
+# core
+# ├─capabilities
+# │      core_capabilities_20251215_184037.json
+# │      latest_core_capabilities.json
+# ├─classifications
+# │      core_classifications_20251215_184036.json
+# │      latest_core_classifications.json
+# └─flows
+#        core_flows_20251215_184036.json
+#        latest_core_flows.json
 
-# Step 4: 測試新增的數據流
-python aiva_cli_implementation.py --flow 283 --dry-run
-python aiva_cli_implementation.py --flow 283  # 實際執行
+# Step 3: 查看分析統計
+python -c "import json; data = json.load(open('services/integration/analysis_data/core/capabilities/latest_core_capabilities.json')); print(f'總流程數: {data[\"metadata\"][\"total_flows\"]}'); print(f'模組分布: {data[\"metadata\"][\"module_distribution\"]}')"
+
+# Step 4: 查看差異報告（在版本歷史中）
+type services\integration\data\internal_exploration\analysis_history\v3\diff_report.md
+
+# Step 5: 測試新增的數據流
+python services\core\aiva_core\internal_exploration\python_tools\aiva_cli_implementation.py --flow 283 --dry-run
+```
+
+### 情境 2: 分析多個模組
+
+```bash
+# 分析 core 模組
+python services\core\aiva_core\internal_exploration\python_tools\aiva_exploration_pipeline.py --target core --module core
+
+# 分析 features 模組
+python services\core\aiva_core\internal_exploration\python_tools\aiva_exploration_pipeline.py --target features --module features
+
+# 分析 scan 模組
+python services\core\aiva_core\internal_exploration\python_tools\aiva_exploration_pipeline.py --target scan --module scan
+
+# 結果會分別保存在:
+# services/integration/analysis_data/core/
+# services/integration/analysis_data/features/
+# services/integration/analysis_data/scan/
+```
+
+### 情境 3: 整合到 Python 程式中
+
+```python
+from pathlib import Path
+import json
+from datetime import datetime
+
+class AIVAAnalysisReader:
+    """讀取 AIVA 分析結果的輔助類別"""
+    
+    def __init__(self, analysis_root="services/integration/analysis_data"):
+        self.root = Path(analysis_root)
+    
+    def get_latest_capabilities(self, module="core"):
+        """獲取指定模組的最新能力數據"""
+        cap_file = self.root / module / "capabilities" / f"latest_{module}_capabilities.json"
+        with open(cap_file, encoding='utf-8') as f:
+            return json.load(f)
+    
+    def get_latest_flows(self, module="core"):
+        """獲取指定模組的最新流程數據"""
+        flow_file = self.root / module / "flows" / f"latest_{module}_flows.json"
+        with open(flow_file, encoding='utf-8') as f:
+            return json.load(f)
+    
+    def get_module_summary(self, module="core"):
+        """獲取模組摘要統計"""
+        data = self.get_latest_capabilities(module)
+        return {
+            "module": module,
+            "total_flows": data["metadata"]["total_flows"],
+            "module_distribution": data["metadata"]["module_distribution"],
+            "generated_at": data["metadata"]["generated_at"]
+        }
+    
+    def search_flows_by_path(self, module="core", keyword="neural"):
+        """搜尋包含特定關鍵字的流程"""
+        data = self.get_latest_capabilities(module)
+        results = []
+        for flow in data["flows"]:
+            path_str = " -> ".join(flow["path"])
+            if keyword.lower() in path_str.lower():
+                results.append({
+                    "id": flow["id"],
+                    "path": flow["path"],
+                    "length": flow["length"],
+                    "primary_module": flow.get("primary_module", "unknown")
+                })
+        return results
+
+# 使用範例
+reader = AIVAAnalysisReader()
+
+# 獲取 core 模組摘要
+summary = reader.get_module_summary("core")
+print(f"Core 模組總流程數: {summary['total_flows']}")
+
+# 搜尋包含 "neural" 的流程
+neural_flows = reader.search_flows_by_path("core", "neural")
+print(f"找到 {len(neural_flows)} 個與神經網路相關的流程")
+
+# 比較不同模組
+for module in ["core", "features", "scan"]:
+    try:
+        summary = reader.get_module_summary(module)
+        print(f"{module}: {summary['total_flows']} 個流程")
+    except FileNotFoundError:
+        print(f"{module}: 尚未分析")
+```
+
+### 情境 4: 定期自動化分析（批次腳本）
+
+```powershell
+# analyze_all_modules.ps1
+# 自動化分析所有模組的 PowerShell 腳本
+
+$modules = @("core", "features", "scan", "integration")
+$baseDir = "C:\D\fold7\AIVA-git"
+$scriptPath = "services\core\aiva_core\internal_exploration\python_tools\aiva_exploration_pipeline.py"
+
+Write-Host "開始自動化分析..." -ForegroundColor Cyan
+
+foreach ($module in $modules) {
+    Write-Host "`n分析模組: $module" -ForegroundColor Yellow
+    
+    # 執行分析
+    python $scriptPath --target $module --module $module
+    
+    if ($LASTEXITCODE -eq 0) {
+        Write-Host "✓ $module 分析完成" -ForegroundColor Green
+        
+        # 驗證輸出
+        $capFile = "$baseDir\services\integration\analysis_data\$module\capabilities\latest_${module}_capabilities.json"
+        if (Test-Path $capFile) {
+            $size = [math]::Round((Get-Item $capFile).Length / 1KB, 2)
+            Write-Host "  文件大小: ${size} KB" -ForegroundColor Gray
+        }
+    } else {
+        Write-Host "✗ $module 分析失敗" -ForegroundColor Red
+    }
+}
+
+Write-Host "`n所有模組分析完成！" -ForegroundColor Cyan
 ```
 
 ---
@@ -1091,7 +1524,123 @@ def load_or_parse(file_path):
 
 ---
 
-## 📚 延伸閱讀
+## � 快速參考指南
+
+### 常用命令速查
+
+```bash
+# 分析 core 模組
+python aiva_exploration_pipeline.py --target core --module core
+
+# 分析特定子模組
+python aiva_exploration_pipeline.py --target cognitive_core --module core
+
+# 查看最新結果
+cat ../../../integration/analysis_data/core/capabilities/latest_core_capabilities.json
+
+# 執行批次分析（PowerShell）
+.\analyze_all_modules.ps1
+
+# 單獨執行分析器
+python aiva_flow_analyzer.py --scan-dir ../cognitive_core --output-dir ./output
+
+# 單獨執行分類器
+python aiva_flow_classifier.py --input ./output/analysis_results.json --output ./classified
+```
+
+### 路徑速查表
+
+| 用途 | 路徑 |
+|------|------|
+| 最新 core 能力 | `services/integration/analysis_data/core/capabilities/latest_core_capabilities.json` |
+| 最新 core 流程 | `services/integration/analysis_data/core/flows/latest_core_flows.json` |
+| 最新 core 分類 | `services/integration/analysis_data/core/classifications/latest_core_classifications.json` |
+| 版本歷史 | `services/integration/data/internal_exploration/analysis_history/v{N}/` |
+| CLI 文檔 | `services/integration/data/internal_exploration/analysis_history/v{N}/CLI_COMMANDS_REFERENCE.md` |
+| 差異報告 | `services/integration/data/internal_exploration/analysis_history/v{N}/diff_report.md` |
+
+### 文件格式說明
+
+**capabilities JSON 結構**:
+```json
+{
+  "metadata": {
+    "generated_at": "2025-12-15T18:40:36",
+    "total_flows": 840,
+    "module_distribution": {
+      "service_backbone": 628,
+      "cognitive_core": 85,
+      ...
+    }
+  },
+  "flows": [
+    {
+      "id": 1,
+      "path": ["monitoring", "optimized_core"],
+      "full_path": ["C:\\...\\monitoring.py", "C:\\...\\optimized_core.py"],
+      "length": 2,
+      "primary_module": "service_backbone",
+      "component_type": "程式組件"
+    },
+    ...
+  ]
+}
+```
+
+### 常見問題 (FAQ)
+
+**Q: 為什麼有兩個輸出位置？**
+A: 
+- `analysis_data/` - 最新結果，供 RAG 和 InternalLoopConnector 使用
+- `data/internal_exploration/analysis_history/` - 版本歷史，用於差異比對
+
+**Q: 如何只更新特定模組？**
+A: 使用 `--target` 和 `--module` 參數指定：
+```bash
+python aiva_exploration_pipeline.py --target cognitive_core --module core
+```
+
+**Q: 如何查看兩次分析的差異？**
+A: 查看最新版本的 diff_report.md：
+```bash
+cat services/integration/data/internal_exploration/analysis_history/v{N}/diff_report.md
+```
+
+**Q: 可以分析專案外的代碼嗎？**
+A: 可以，使用絕對路徑：
+```bash
+python aiva_exploration_pipeline.py --target "D:\other_project\src" --module core
+```
+
+**Q: 如何自動化定期分析？**
+A: 使用提供的 PowerShell 腳本：
+```bash
+.\analyze_all_modules.ps1
+```
+或建立 Windows 排程任務定期執行。
+
+**Q: 分析結果可以用於其他工具嗎？**
+A: 可以，所有結果都是標準 JSON 格式，可以被任何支援 JSON 的工具讀取：
+```python
+import json
+with open('latest_core_capabilities.json') as f:
+    data = json.load(f)
+```
+
+**Q: 如何只獲取特定模組的流程？**
+A: 使用 Python 過濾：
+```python
+data = json.load(open('latest_core_capabilities.json'))
+cognitive_flows = [f for f in data['flows'] if f['primary_module'] == 'cognitive_core']
+```
+
+**Q: 執行分析需要多久？**
+A: 依據模組大小：
+- `cognitive_core`: ~2-3秒
+- `core` (完整): ~3-5秒
+- `all`: ~10-15秒
+
+## �📚 延伸閱讀
 
 ### 相關文檔
 - `_PROJECT_ROOT_STRUCTURE_GUIDE.md` - AIVA 專案結構指南

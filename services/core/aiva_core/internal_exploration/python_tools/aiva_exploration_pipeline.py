@@ -133,7 +133,7 @@ except (ImportError, FileNotFoundError, AttributeError) as e:
 class ExplorationPipeline:
     """AIVA 探索管線控制器"""
     
-    def __init__(self, target_path):
+    def __init__(self, target_path, target_module="core"):
         """
         初始化管線
         
@@ -143,8 +143,14 @@ class ExplorationPipeline:
                 - 'core': 分析 services/core
                 - 'cognitive_core': 分析 core/aiva_core/cognitive_core
                 - 或任何相對/絕對路徑
+            target_module (str): 目標模組名稱 (用於分類儲存)
+                - 'core': 核心模組
+                - 'features': 功能模組
+                - 'scan': 掃描模組
+                - 'integration': 整合模組
         """
         self.target_path = target_path
+        self.target_module = target_module
         self.current_version_dir = None
         self.prev_version_dir = None
         
@@ -258,6 +264,7 @@ class ExplorationPipeline:
         """步驟 1: 代碼結構分析"""
         logger.info(">> [1/5] 執行代碼結構分析 (Analyzer)...")
         logger.info(f"   目標: {target_path}")
+        logger.info(f"   模組: {self.target_module}")
         
         try:
             analyzer = AIVAFlowAnalyzer(target_dir=str(PROJECT_ROOT))
@@ -269,7 +276,7 @@ class ExplorationPipeline:
                 verbose=False
             )
             
-            # 保存結果
+            # 保存結果到版本目錄
             analyzer.save_results(output_dir=str(self.current_version_dir))
             
             if output_json.exists():
@@ -277,6 +284,9 @@ class ExplorationPipeline:
                     data = json.load(f)
                     flow_count = len(data.get('flows', []))
                     logger.info(f"   ✅ 發現 {flow_count} 個數據流")
+                    
+                # 保存到分類目錄 (flows)
+                self._save_to_analysis_data(output_json, "flows")
                 return True
             else:
                 logger.error("   ❌ 未生成分析結果文件")
@@ -313,6 +323,10 @@ class ExplorationPipeline:
                     data = json.load(f)
                     total = data.get('metadata', {}).get('total_flows', 0)
                     logger.info(f"   ✅ 分類完成: {total} 個流程")
+                    
+                # 保存到分類目錄 (classifications 和 capabilities)
+                self._save_to_analysis_data(output_json, "classifications")
+                self._save_to_analysis_data(output_json, "capabilities")
                 return True
             else:
                 logger.error("   ❌ 未生成分類結果文件")
@@ -405,6 +419,43 @@ class ExplorationPipeline:
         except Exception as e:
             logger.error(f"   ❌ 更新失敗: {e}")
 
+    def _save_to_analysis_data(self, source_file, category):
+        """保存結果到統一的 analysis_data 結構
+        
+        Args:
+            source_file (Path): 源文件路徑
+            category (str): 類別 ('capabilities', 'flows', 'classifications')
+        """
+        try:
+            # 直接構建路徑，避免循環導入
+            analysis_data_root = SERVICES_ROOT / "integration" / "analysis_data"
+            module_dir = analysis_data_root / self.target_module
+            
+            if not module_dir.exists():
+                logger.warning(f"   ⚠️ 模組目錄不存在: {module_dir}，跳過分類保存")
+                return
+            
+            # 構建目標路徑
+            category_dir = module_dir / category
+            category_dir.mkdir(parents=True, exist_ok=True)
+            
+            # 生成時間戳文件名
+            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+            dest_file = category_dir / f"{self.target_module}_{category}_{timestamp}.json"
+            
+            # 複製文件
+            shutil.copy2(source_file, dest_file)
+            logger.info(f"   📁 已保存到: {category_dir.name}/{dest_file.name}")
+            
+            # 創建最新版本鏈接
+            latest_link = category_dir / f"latest_{self.target_module}_{category}.json"
+            if latest_link.exists():
+                latest_link.unlink()
+            shutil.copy2(source_file, latest_link)
+            
+        except Exception as e:
+            logger.warning(f"   ⚠️ 保存到 analysis_data 失敗: {e}")
+
     def _step_generate_cli_docs(self, classification_json):
         """步驟 5: 生成 CLI 指令文檔"""
         logger.info(">> [5/5] 生成 CLI 指令文檔...")
@@ -451,17 +502,17 @@ def main():
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 使用範例:
-  # 分析特定模組
-  python aiva_exploration_pipeline.py --target cognitive_core
+  # 分析 core 模組
+  python aiva_exploration_pipeline.py --target core --module core
   
-  # 分析整個 core
-  python aiva_exploration_pipeline.py --target core
+  # 分析 cognitive_core 子模組
+  python aiva_exploration_pipeline.py --target cognitive_core --module core
+  
+  # 分析 features 模組
+  python aiva_exploration_pipeline.py --target features --module features
   
   # 分析所有服務
-  python aiva_exploration_pipeline.py --target all
-  
-  # 使用絕對路徑
-  python aiva_exploration_pipeline.py --target C:\\path\\to\\module
+  python aiva_exploration_pipeline.py --target all --module core
         """
     )
     
@@ -472,9 +523,17 @@ def main():
         help="指定要分析的目標路徑 (預設: aiva_core)"
     )
     
+    parser.add_argument(
+        "--module", "-m",
+        type=str,
+        default="core",
+        choices=["core", "features", "scan", "integration"],
+        help="指定目標模組名稱，用於分類儲存 (預設: core)"
+    )
+    
     args = parser.parse_args()
     
-    pipeline = ExplorationPipeline(target_path=args.target)
+    pipeline = ExplorationPipeline(target_path=args.target, target_module=args.module)
     success = pipeline.run()
     
     sys.exit(0 if success else 1)

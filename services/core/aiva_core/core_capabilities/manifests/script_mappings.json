@@ -1,0 +1,143 @@
+{
+  "monitoring": {
+    "script_name": "monitoring",
+    "script_file": "monitoring.py",
+    "script_path": "services/core/aiva_core/service_backbone/performance/monitoring.py",
+    "module": "services.core.aiva_core.service_backbone.performance.monitoring",
+    "class": "ComponentHealth",
+    "method": "collect_metrics",
+    "mock": false,
+    "note": "自動修正類名從 SystemMonitor 到 ComponentHealth"
+  },
+  "optimized_core": {
+    "script_name": "optimized_core",
+    "script_file": "optimized_core.py",
+    "script_path": "services/core/aiva_core/service_backbone/coordination/optimized_core.py",
+    "module": "services.core.aiva_core.service_backbone.coordination.optimized_core",
+    "class": "OptimizedBioNet",
+    "method": "clear_cache",
+    "mock": false,
+    "note": "自動修正類名從 OptimizedCore 到 OptimizedBioNet"
+  },
+  "initial_surface": {
+    "script_name": "initial_surface",
+    "script_file": "initial_surface.py",
+    "script_path": "services/core/aiva_core/core_capabilities/analysis/initial_surface.py",
+    "module": "services.core.aiva_core.core_capabilities.analysis.initial_surface",
+    "class": "InitialAttackSurface",
+    "method": "analyze",
+    "mock": false
+  },
+  "exploit_orchestrator": {
+    "script_name": "exploit_orchestrator",
+    "script_file": "exploit_orchestrator.py",
+    "script_path": "services/core/aiva_core/core_capabilities/attack/exploit_orchestrator.py",
+    "module": "services.core.aiva_core.core_capabilities.attack.exploit_orchestrator",
+    "class": "ExploitOrchestrator",
+    "method": "get_exploit",
+    "mock": false,
+    "note": "自動修正方法名從 orchestrate 到 get_exploit"
+  },
+  "scan_module_interface": {
+    "script_name": "scan_module_interface",
+    "script_file": "scan_module_interface.py",
+    "script_path": "services/core/aiva_core/core_capabilities/ingestion/scan_module_interface.py",
+    "module": "services.core.aiva_core.core_capabilities.ingestion.scan_module_interface",
+    "class": "ScanModuleInterface",
+    "method": "process_scan_data",
+    "mock": false,
+    "note": "自動修正方法名從 interface 到 process_scan_data"
+  },
+  "app": {
+    "script_name": "app",
+    "script_file": "app.py",
+    "script_path": "services/core/aiva_core/service_backbone/api/app.py",
+    "module": "services.core.aiva_core.service_backbone.api.app",
+    "function": "health_check",
+    "mock": true,
+    "note": "FastAPI 應用，可能需要不同的調用方式"
+  },
+  "session_state_manager": {
+    "script_name": "session_state_manager",
+    "script_file": "session_state_manager.py",
+    "script_path": "services/core/aiva_core/service_backbone/state/session_state_manager.py",
+    "module": "services.core.aiva_core.service_backbone.state.session_state_manager",
+    "class": "SessionStateManager",
+    "method": "get_session_status",
+    "init_params": {},
+    "mock": false,
+    "note": "已確認存在的類"
+  },
+  "system_connectivity_checker": {
+    "script_name": "system_connectivity_checker",
+    "script_file": "system_connectivity_checker.py",
+    "script_path": "services/core/tools/system_connectivity_checker.py",
+    "module": "services.core.aiva_core.service_backbone.system_connectivity_checker",
+    "class": "ConnectivityChecker",
+    "method": "check",
+    "mock": true
+  },
+  "dashboard": {
+    "script_name": "dashboard",
+    "script_file": "dashboard.py",
+    "script_path": "services/core/ui/dashboard.py",
+    "module": "services.core.aiva_core.cognitive_core.dashboard",
+    "class": "Dashboard",
+    "method": "create_scan_task",
+    "mock": false,
+    "note": "自動修正方法名從 render 到 create_scan_task"
+  },
+  "improved_ui": {
+    "script_name": "improved_ui",
+    "script_file": "improved_ui.py",
+    "script_path": "services/core/ui/improved_ui.py",
+    "module": "services.core.aiva_core.cognitive_core.improved_ui",
+    "class": "ImprovedUI",
+    "method": "display",
+    "mock": true
+  },
+  "analyze_dataflow_breakpoints": {
+    "script_name": "analyze_dataflow_breakpoints",
+    "script_file": "analyze_dataflow_breakpoints.py",
+    "script_path": "services/core/aiva_core/internal_exploration/self_healing/analyze_dataflow_breakpoints.py",
+    "module": "services.core.aiva_core.cognitive_core.analysis.analyze_dataflow_breakpoints",
+    "class": "BreakpointIssue",
+    "method": "analyze",
+    "mock": false,
+    "note": "自動修正類名從 DataflowBreakpointsAnalyzer 到 BreakpointIssue"
+  },
+  "analyze_missing_function_connections": {
+    "script_name": "analyze_missing_function_connections",
+    "script_file": "analyze_missing_function_connections.py",
+    "script_path": "services/core/aiva_core/internal_exploration/self_healing/analyze_missing_function_connections.py",
+    "module": "services.core.aiva_core.cognitive_core.analysis.analyze_missing_function_connections",
+    "class": "FunctionSignature",
+    "method": "analyze",
+    "mock": false,
+    "note": "自動修正類名從 MissingConnectionsAnalyzer 到 FunctionSignature"
+  },
+  "scalable_bio_trainer": {
+    "script_name": "scalable_bio_trainer",
+    "script_file": "scalable_bio_trainer.py",
+    "script_path": "services/core/aiva_core/external_learning/learning/scalable_bio_trainer.py",
+    "module": "services.core.aiva_core.external_learning.learning.scalable_bio_trainer",
+    "class": "ScalableBioTrainer",
+    "method": "train",
+    "init_params": {
+      "model": null,
+      "config": null
+    },
+    "mock": false,
+    "note": "已確認存在，但需要 model 參數"
+  },
+  "ai_model_manager": {
+    "script_name": "ai_model_manager",
+    "script_file": "ai_model_manager.py",
+    "script_path": "services/core/aiva_core/cognitive_core/neural/ai_model_manager.py",
+    "module": "services.core.aiva_core.external_learning.ai_model_manager",
+    "class": "AIModelManager",
+    "method": "initialize_models",
+    "mock": false,
+    "note": "自動修正方法名從 manage 到 initialize_models"
+  }
+}

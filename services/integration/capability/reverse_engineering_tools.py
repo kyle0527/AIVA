@@ -48,37 +48,41 @@ class ReverseEngineeringResult:
 
 
 class ReverseEngineeringTool:
-    """Base reverse engineering tool class - equivalent to HackingTool"""
+    """Base reverse engineering tool class - Standardized with aiva_common v2.0"""
     
     def __init__(self):
-        self.TITLE = ""
-        self.DESCRIPTION = ""
-        self.INSTALL_COMMANDS = []
-        self.RUN_COMMANDS = []
-        self.PROJECT_URL = ""
-        self.installable = True
-        self.runnable = True
+        # 標準化屬性命名 - 遵循 aiva_common CapabilityRecord 規範
+        self.id = ""                    # 唯一標識符
+        self.name = ""                  # 工具顯示名稱
+        self.description = ""           # 詳細描述
+        self.install_commands = []      # 安裝命令列表
+        self.run_commands = []          # 運行命令列表
+        self.project_url = ""           # 項目網址
+        self.installable = True         # 是否可安裝
+        self.runnable = True            # 是否可運行
+        self.tags = []                  # 標籤列表（用於分類）
+        self.inputs = []                # 輸入參數列表（InputParameter）
     
     def is_installed(self) -> bool:
         """Check if tool is installed"""
         if not self.installable:
             return True
             
-        # For reverse engineering tools, check specific binaries
-        if self.TITLE == "Androguard":
+        # 使用標準化的 name 屬性（已移除 TITLE 兼容性處理）
+        if self.name == "Androguard":
             try:
                 result = subprocess.run(["python3", "-c", "import androguard"], 
                                       capture_output=True, timeout=5)
                 return result.returncode == 0
             except Exception:
                 return False
-        elif self.TITLE == "Apk2Gold":
+        elif self.name == "Apk2Gold":
             try:
                 result = subprocess.run(["which", "apk2gold"], capture_output=True, timeout=5)
                 return result.returncode == 0
             except Exception:
                 return False
-        elif self.TITLE == "JadX":
+        elif self.name == "JadX":
             # Check for jadx installation
             if Path("/usr/local/bin/jadx").exists() or Path("jadx/build/jadx/bin/jadx").exists():
                 return True
@@ -93,17 +97,17 @@ class ReverseEngineeringTool:
     def install(self) -> bool:
         """Install tool"""
         if not self.installable:
-            console.print(f"[yellow]{self.TITLE} is not installable via this interface[/yellow]")
+            console.print(f"[yellow]{self.name} is not installable via this interface[/yellow]")
             return False
             
-        console.print(f"[cyan]Installing {self.TITLE}...[/cyan]")
+        console.print(f"[cyan]Installing {self.name}...[/cyan]")
         console.print("[yellow]⚠️  For authorized reverse engineering analysis only![/yellow]")
         
-        if not Confirm.ask(f"Confirm install {self.TITLE}?"):
+        if not Confirm.ask(f"Confirm install {self.name}?"):
             return False
         
         success = True
-        for cmd in self.INSTALL_COMMANDS:
+        for cmd in self.install_commands:
             try:
                 console.print(f"[yellow]Executing: {cmd}[/yellow]")
                 result = subprocess.run(
@@ -129,21 +133,21 @@ class ReverseEngineeringTool:
                 break
         
         if success:
-            console.print(f"[green]✅ {self.TITLE} installed successfully[/green]")
+            console.print(f"[green]✅ {self.name} installed successfully[/green]")
         else:
-            console.print(f"[red]❌ {self.TITLE} installation failed[/red]")
+            console.print(f"[red]❌ {self.name} installation failed[/red]")
         
         return success
     
     def run(self) -> ReverseEngineeringResult:
         """Run tool"""
-        console.print(f"[bold green]🔍 Running {self.TITLE}[/bold green]")
+        console.print(f"[bold green]🔍 Running {self.name}[/bold green]")
         console.print("[yellow]⚠️  For authorized reverse engineering analysis only![/yellow]")
         
         if not self.runnable:
-            console.print(f"[yellow]{self.TITLE} requires manual setup[/yellow]")
+            console.print(f"[yellow]{self.name} requires manual setup[/yellow]")
             return ReverseEngineeringResult(
-                tool_name=self.TITLE,
+                tool_name=self.name,
                 command="not_runnable",
                 start_time=datetime.now().isoformat(),
                 end_time=datetime.now().isoformat(),
@@ -152,9 +156,9 @@ class ReverseEngineeringTool:
                 error_details="Tool not runnable via CLI"
             )
         
-        if not Confirm.ask(f"Confirm run {self.TITLE}?"):
+        if not Confirm.ask(f"Confirm run {self.name}?"):
             return ReverseEngineeringResult(
-                tool_name=self.TITLE,
+                tool_name=self.name,
                 command="cancelled",
                 start_time=datetime.now().isoformat(),
                 end_time=datetime.now().isoformat(),
@@ -172,7 +176,7 @@ class ReverseEngineeringTool:
                 if isinstance(result, ReverseEngineeringResult):
                     return result
             else:
-                for cmd in self.RUN_COMMANDS:
+                for cmd in self.run_commands:
                     console.print(f"[yellow]Executing: {cmd}[/yellow]")
                     subprocess.run(cmd, shell=True)
         
@@ -181,8 +185,8 @@ class ReverseEngineeringTool:
             duration = (end_time - start_time).total_seconds()
             
             return ReverseEngineeringResult(
-                tool_name=self.TITLE,
-                command=str(self.RUN_COMMANDS),
+                tool_name=self.name,
+                command=str(self.run_commands),
                 start_time=start_time.isoformat(),
                 end_time=end_time.isoformat(),
                 duration=duration,
@@ -194,8 +198,8 @@ class ReverseEngineeringTool:
         duration = (end_time - start_time).total_seconds()
         
         return ReverseEngineeringResult(
-            tool_name=self.TITLE,
-            command=str(self.RUN_COMMANDS),
+            tool_name=self.name,
+            command=str(self.run_commands),
             start_time=start_time.isoformat(),
             end_time=end_time.isoformat(),
             duration=duration,
@@ -204,30 +208,50 @@ class ReverseEngineeringTool:
 
 
 class AndroGuard(ReverseEngineeringTool):
-    """Androguard - Direct port from HackingTool"""
+    """Androguard - Standardized with aiva_common v2.0"""
     
     def __init__(self):
         super().__init__()
-        self.TITLE = "Androguard"
-        self.DESCRIPTION = "Androguard is a Reverse engineering, Malware and goodware " \
-                          "analysis of Android applications and more"
-        self.INSTALL_COMMANDS = ["sudo pip3 install -U androguard"]
-        self.PROJECT_URL = "https://github.com/androguard/androguard"
-        self.runnable = False  # Same as HackingTool
+        # 標準化屬性命名
+        self.id = "reverse_engineering.androguard"
+        self.name = "Androguard"
+        self.description = "Reverse engineering, Malware and goodware analysis of Android applications"
+        self.install_commands = ["sudo pip3 install -U androguard"]
+        self.project_url = "https://github.com/androguard/androguard"
+        self.runnable = False
+        # 標籤化分類
+        self.tags = ["android", "reverse-engineering", "malware-analysis", "python"]
+        # 輸入參數（空，因為不可運行）
+        self.inputs = []
 
 
 class Apk2Gold(ReverseEngineeringTool):
-    """Apk2Gold - Direct port from HackingTool"""
+    """Apk2Gold - Standardized with aiva_common v2.0"""
     
     def __init__(self):
         super().__init__()
-        self.TITLE = "Apk2Gold"
-        self.DESCRIPTION = "Apk2Gold is a CLI tool for decompiling Android apps to Java"
-        self.INSTALL_COMMANDS = [
+        # 標準化屬性命名
+        self.id = "reverse_engineering.apk2gold"
+        self.name = "Apk2Gold"
+        self.description = "CLI tool for decompiling Android apps to Java"
+        self.install_commands = [
             "sudo git clone https://github.com/lxdvs/apk2gold.git",
             "cd apk2gold && sudo bash make.sh"
         ]
-        self.PROJECT_URL = "https://github.com/lxdvs/apk2gold"
+        self.project_url = "https://github.com/lxdvs/apk2gold"
+        # 標籤化分類
+        self.tags = ["android", "decompiler", "apk", "java"]
+        # 輸入參數（用於參數提示）
+        from ...aiva_common.schemas.capability import InputParameter
+        self.inputs = [
+            InputParameter(
+                name="apk_file",
+                type="string",
+                required=True,
+                description="Path to APK file (.apk)",
+                default=None
+            )
+        ]
     
     def custom_run(self) -> ReverseEngineeringResult:
         """Custom run method - same as HackingTool"""
@@ -238,7 +262,7 @@ class Apk2Gold(ReverseEngineeringTool):
         
         if not apk_file.endswith('.apk'):
             return ReverseEngineeringResult(
-                tool_name=self.TITLE,
+                tool_name=self.name,
                 command="invalid_input",
                 start_time=start_time.isoformat(),
                 end_time=datetime.now().isoformat(),
@@ -249,7 +273,7 @@ class Apk2Gold(ReverseEngineeringTool):
         
         if not Path(apk_file).exists():
             return ReverseEngineeringResult(
-                tool_name=self.TITLE,
+                tool_name=self.name,
                 command="file_not_found",
                 start_time=start_time.isoformat(),
                 end_time=datetime.now().isoformat(),
@@ -263,7 +287,7 @@ class Apk2Gold(ReverseEngineeringTool):
             result = subprocess.run(cmd, capture_output=True, text=True, timeout=300)
             
             return ReverseEngineeringResult(
-                tool_name=self.TITLE,
+                tool_name=self.name,
                 command=" ".join(cmd),
                 start_time=start_time.isoformat(),
                 end_time=datetime.now().isoformat(),
@@ -277,7 +301,7 @@ class Apk2Gold(ReverseEngineeringTool):
             
         except subprocess.TimeoutExpired:
             return ReverseEngineeringResult(
-                tool_name=self.TITLE,
+                tool_name=self.name,
                 command="timeout",
                 start_time=start_time.isoformat(),
                 end_time=datetime.now().isoformat(),
@@ -287,7 +311,7 @@ class Apk2Gold(ReverseEngineeringTool):
             )
         except Exception as e:
             return ReverseEngineeringResult(
-                tool_name=self.TITLE,
+                tool_name=self.name,
                 command="error",
                 start_time=start_time.isoformat(),
                 end_time=datetime.now().isoformat(),
@@ -298,62 +322,60 @@ class Apk2Gold(ReverseEngineeringTool):
 
 
 class Jadx(ReverseEngineeringTool):
-    """JadX - Direct port from HackingTool"""
+    """JadX - Standardized with aiva_common v2.0"""
     
     def __init__(self):
         super().__init__()
-        self.TITLE = "JadX"
-        self.DESCRIPTION = "Jadx is Dex to Java decompiler.\n" \
-                          "[*] decompile Dalvik bytecode to java classes from APK, dex," \
-                          " aar and zip files\n" \
-                          "[*] decode AndroidManifest.xml and other resources from " \
-                          "resources.arsc"
-        self.INSTALL_COMMANDS = [
+        # 標準化屬性命名
+        self.id = "reverse_engineering.jadx"
+        self.name = "JadX"
+        self.description = ("Dex to Java decompiler. Decompile Dalvik bytecode to Java classes "
+                          "from APK, dex, aar and zip files. Decode AndroidManifest.xml and "
+                          "other resources from resources.arsc")
+        self.install_commands = [
             "sudo git clone https://github.com/skylot/jadx.git",
             "cd jadx && ./gradlew dist"
         ]
-        self.PROJECT_URL = "https://github.com/skylot/jadx"
-        self.runnable = False  # Same as HackingTool
+        self.project_url = "https://github.com/skylot/jadx"
+        self.runnable = False
+        # 標籤化分類
+        self.tags = ["android", "decompiler", "dex", "java", "apk"]
+        # 輸入參數（空，因為不可運行）
+        self.inputs = []
 
 
 class ReverseEngineeringManager:
-    """Reverse engineering tools manager - equivalent to HackingToolsCollection"""
+    """Reverse engineering tools manager - Standardized with aiva_common v2.0"""
     
     def __init__(self):
-        self.TITLE = "Reverse Engineering Tools"
-        self.DESCRIPTION = "Mobile app reverse engineering and analysis tools"
-        self.TOOLS = [
+        self.name = "Reverse Engineering Tools"
+        self.description = "Mobile app reverse engineering and analysis tools"
+        self.tools = [
             AndroGuard(),
             Apk2Gold(),
             Jadx()
         ]
         self.re_results = []
     
-    def _get_attr(self, obj, *names, default=""):
-        """Get attribute with fallback"""
-        for n in names:
-            if hasattr(obj, n):
-                return getattr(obj, n)
-        return default
-
     def pretty_print(self):
-        """Display tools table - same as HackingTool"""
+        """Display tools table - 使用標準化屬性（已移除 _get_attr 兼容性處理）"""
         table = Table(title="Reverse Engineering Tools", show_lines=True, expand=True)
         table.add_column("Title", style="purple", no_wrap=True)
         table.add_column("Description", style="purple")
         table.add_column("Project URL", style="purple", no_wrap=True)
+        table.add_column("Tags", style="cyan")
 
-        for t in self.TOOLS:
-            title = self._get_attr(t, "TITLE", "Title", "title", default=t.__class__.__name__)
-            desc = self._get_attr(t, "DESCRIPTION", "Description", "description", default="").strip().replace("\n", " ")
-            url = self._get_attr(t, "PROJECT_URL", "PROJECT_URL", "project_url", "projectUrl", default="")
-            table.add_row(str(title), str(desc or "—"), str(url))
+        for tool in self.tools:
+            # 直接使用標準化的屬性名稱
+            desc = tool.description.strip().replace("\n", " ")
+            tags = ", ".join(tool.tags[:3])  # 顯示前 3 個標籤
+            table.add_row(tool.name, desc or "—", tool.project_url, tags)
 
         panel = Panel(table, title="[purple]Available Tools[/purple]", border_style="purple")
         console.print(panel)
 
     def show_options(self, parent=None):
-        """Interactive menu - same as HackingTool"""
+        """Interactive menu - 使用標準化屬性（已移除 _get_attr 兼容性處理）"""
         console.print("\n")
         panel = Panel.fit("[bold magenta]🔍 AIVA Reverse Engineering Tools[/bold magenta]\n"
                           "Mobile app reverse engineering and analysis toolkit\n"
@@ -365,26 +387,27 @@ class ReverseEngineeringManager:
         table.add_column("Index", justify="center", style="bold yellow")
         table.add_column("Tool Name", justify="left", style="bold green")
         table.add_column("Description", justify="left", style="white")
+        table.add_column("Tags", justify="left", style="cyan")
         table.add_column("Status", justify="center", style="cyan")
 
-        for i, tool in enumerate(self.TOOLS):
-            title = self._get_attr(tool, "TITLE", "Title", "title", default=tool.__class__.__name__)
-            desc = self._get_attr(tool, "DESCRIPTION", "Description", "description", default="—")
+        for i, tool in enumerate(self.tools):
+            # 直接使用標準化的屬性名稱
+            short_desc = (tool.description[:50] + "...") if len(tool.description) > 50 else tool.description
             status = "✅" if tool.is_installed() else "❌"
             runnable = "🔧" if not tool.runnable else "🏃"
-            short_desc = (desc[:50] + "...") if len(desc) > 50 else desc
-            table.add_row(str(i + 1), title, short_desc or "—", f"{status} {runnable}")
+            tags = ", ".join(tool.tags[:2])  # 顯示前 2 個標籤
+            table.add_row(str(i + 1), tool.name, short_desc, tags, f"{status} {runnable}")
 
-        table.add_row("[cyan]88[/cyan]", "[bold cyan]Show Details[/bold cyan]", "Show detailed tool information", "—")
-        table.add_row("[yellow]77[/yellow]", "[bold yellow]Analysis Results[/bold yellow]", "View reverse engineering history", "—")
-        table.add_row("[red]99[/red]", "[bold red]Exit[/bold red]", "Return to main menu", "—")
+        table.add_row("[cyan]88[/cyan]", "[bold cyan]Show Details[/bold cyan]", "Show detailed tool information", "—", "—")
+        table.add_row("[yellow]77[/yellow]", "[bold yellow]Analysis Results[/bold yellow]", "View reverse engineering history", "—", "—")
+        table.add_row("[red]99[/red]", "[bold red]Exit[/bold red]", "Return to main menu", "—", "—")
         console.print(table)
 
         try:
             choice = int(Prompt.ask("[bold cyan]Select a tool to run[/bold cyan]", default="99"))
             
-            if 1 <= choice <= len(self.TOOLS):
-                selected = self.TOOLS[choice - 1]
+            if 1 <= choice <= len(self.tools):
+                selected = self.tools[choice - 1]
                 self._handle_tool_selection(selected)
             elif choice == 88:
                 self.pretty_print()
@@ -409,49 +432,50 @@ class ReverseEngineeringManager:
         self._execute_tool_if_confirmed(tool)
     
     def _display_tool_info(self, tool: ReverseEngineeringTool):
-        """Display tool information"""
-        console.print(f"\n[bold green]Selected: {tool.TITLE}[/bold green]")
-        console.print(f"[cyan]Description: {tool.DESCRIPTION}[/cyan]")
-        console.print(f"[blue]Project URL: {getattr(tool, 'PROJECT_URL', 'N/A')}[/blue]")
+        """Display tool information - 使用標準化屬性"""
+        console.print(f"\n[bold green]Selected: {tool.name}[/bold green]")
+        console.print(f"[cyan]Description: {tool.description}[/cyan]")
+        console.print(f"[blue]Project URL: {tool.project_url}[/blue]")
+        console.print(f"[magenta]Tags: {', '.join(tool.tags)}[/magenta]")
         
         if not tool.runnable:
             console.print("[yellow]⚠️  This tool requires manual setup and cannot be run directly[/yellow]")
     
-    def _ensure_tool_installed(self, tool: ReverseEngineeringTool) -> bool:
-        """Ensure tool is installed"""
+    def _ensure_tool_installed(self - 使用標準化屬性"""
         if not tool.installable or tool.is_installed():
             return True
         
-        console.print(f"[yellow]{tool.TITLE} is not installed[/yellow]")
+        console.print(f"[yellow]{tool.name} is not installed[/yellow]")
         if not Confirm.ask("Install now?"):
             return False
         
         if tool.install():
-            console.print(f"[green]{tool.TITLE} installed successfully![/green]")
+            console.print(f"[green]{tool.name} installed successfully![/green]")
             return True
         else:
+            console.print(f"[red]{tool.name
             console.print(f"[red]{tool.TITLE} installation failed![/red]")
             return False
     
     def _execute_tool_if_confirmed(self, tool: ReverseEngineeringTool):
-        """Execute tool if confirmed"""
+        """Execute tool if confirmed - 使用標準化屬性"""
         if not tool.runnable:
-            console.print(f"[yellow]{tool.TITLE} is not runnable via CLI interface[/yellow]")
-            console.print(f"[cyan]Please use {tool.TITLE} manually after installation[/cyan]")
+            console.print(f"[yellow]{tool.name} is not runnable via CLI interface[/yellow]")
+            console.print(f"[cyan]Please use {tool.name} manually after installation[/cyan]")
             return
         
-        if not Confirm.ask(f"Run {tool.TITLE}?"):
+        if not Confirm.ask(f"Run {tool.name}?"):
             return
         
         result = tool.run()
         self.re_results.append(result)
         
         if result.success:
-            console.print(f"[green]✅ {tool.TITLE} completed![/green]")
+            console.print(f"[green]✅ {tool.name} completed![/green]")
             if result.target_file:
                 console.print(f"[blue]Target file: {result.target_file}[/blue]")
         else:
-            console.print(f"[red]❌ {tool.TITLE} failed: {result.error_details}[/red]")
+            console.print(f"[red]❌ {tool.name} failed: {result.error_details}[/red]")
     
     def _show_re_results(self):
         """Show reverse engineering analysis results"""
@@ -510,7 +534,7 @@ class ReverseEngineeringCapability(BaseCapability):
             return False
     
     async def execute(self, command: str, parameters: Dict[str, Any]) -> Dict[str, Any]:
-        """Execute command"""
+        """Execute command - 使用標準化屬性"""
         try:
             if command == "interactive_menu":
                 self.manager.show_options()
@@ -518,11 +542,13 @@ class ReverseEngineeringCapability(BaseCapability):
             
             elif command == "list_tools":
                 tools_info = []
-                for tool in self.manager.TOOLS:
+                for tool in self.manager.tools:
                     tools_info.append({
-                        "title": tool.TITLE,
-                        "description": tool.DESCRIPTION,
-                        "project_url": getattr(tool, "PROJECT_URL", ""),
+                        "id": tool.id,
+                        "name": tool.name,
+                        "description": tool.description,
+                        "project_url": tool.project_url,
+                        "tags": tool.tags,
                         "installed": tool.is_installed(),
                         "runnable": tool.runnable
                     })
@@ -537,7 +563,7 @@ class ReverseEngineeringCapability(BaseCapability):
                 if not tool_name:
                     return {"success": False, "error": "Missing tool_name parameter"}
                 
-                tool = next((t for t in self.manager.TOOLS if t.TITLE == tool_name), None)
+                tool = next((t for t in self.manager.tools if t.name == tool_name), None)
                 if not tool:
                     return {"success": False, "error": f"Tool {tool_name} not found"}
                 
@@ -560,8 +586,9 @@ class ReverseEngineeringCapability(BaseCapability):
         except Exception as e:
             logger.error(f"Cleanup failed: {e}")
             return False
-
-
+暫時移除舊的註冊方式 - 待所有文件修復完成後統一註冊
+# TODO: 改用 await registry.register_capability(capability_record) 標準化註冊方式
+# 
 # Register capability
 CapabilityRegistry.register("reverse_engineering_tools", ReverseEngineeringCapability)
 

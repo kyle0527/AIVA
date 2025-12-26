@@ -8,7 +8,7 @@
 
 # Dialog Assistant
 from services.core.aiva_core.core_capabilities.dialog.assistant import (
-    AIVADialogAssistant,
+    AIVACommandProcessor,
 )
 
 # Attack Execution
@@ -33,7 +33,7 @@ from services.core.aiva_core.core_capabilities.capability_registry import (
 
 __all__ = [
     # Dialog
-    "AIVADialogAssistant",
+    "AIVACommandProcessor",
     # Attack
     "AttackExecutor",
     "ExploitManager",

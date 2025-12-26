@@ -160,11 +160,8 @@ class SkillGraphBuilder:
                 prerequisites=cap.prerequisites or [],
                 dependencies=cap.dependencies or [],
                 success_rate=self._extract_success_rate(scorecard),
-                avg_latency=scorecard.avg_latency_ms if scorecard and hasattr(scorecard, 'avg_latency_ms') else 0.0,
-                last_used=(
-                    scorecard.last_used_at if scorecard and hasattr(scorecard, 'last_used_at') and scorecard.last_used_at
-                    else None
-                ),
+                avg_latency=getattr(scorecard, 'avg_latency_ms', 0.0) if scorecard else 0.0,
+                last_used=getattr(scorecard, 'last_used_at', None) if scorecard else None,
                 usage_count=self._extract_usage_count(scorecard),
                 metadata=self._build_node_metadata(cap),
             )

@@ -63,6 +63,7 @@ class PlanExecutor:
         """
         self.message_broker = message_broker or MessageBroker()
         self.unified_tracer = unified_tracer or UnifiedTracer(storage_backend)
+        self.trace_logger = unified_tracer or UnifiedTracer(storage_backend)  # 爲向後相容性
         self.storage = storage_backend
         self.active_sessions: dict[str, SessionState] = {}
 
@@ -105,7 +106,7 @@ class PlanExecutor:
 
         # 執行追蹤記錄
         trace_records: list[TraceRecord] = []
-        findings: list[FindingPayload] = []
+        findings: list[dict[str, Any]] = []  # 修復類型錯誤
         anomalies: list[str] = []
 
         try:
@@ -117,7 +118,7 @@ class PlanExecutor:
                 )
 
                 # 檢查依賴
-                if not await self._check_dependencies(
+                if not self._check_dependencies(
                     step.step_id, plan.dependencies, trace_records
                 ):
                     logger.warning(
@@ -148,7 +149,7 @@ class PlanExecutor:
                     )
 
                 # 檢查是否應該繼續
-                if not await self._should_continue(step, trace, plan):
+                if not self._should_continue(step, trace):
                     logger.info(f"Stopping execution after step {step.step_id}")
                     break
 
@@ -251,15 +252,16 @@ class PlanExecutor:
             
             message = AivaMessage(
                 header=MessageHeader(
-                    source="task_planning.plan_executor",
-                    topic=Topic.TASK_COMPLETED,  # ✅ 新主題
+                    message_id=str(uuid4()),
+                    source_module="task_planning.plan_executor",
                     trace_id=plan.plan_id,
                 ),
                 payload=completion_event,
             )
             
             await self.message_broker.publish_message(
-                topic=Topic.TASK_COMPLETED,
+                exchange_name="task_events",
+                routing_key="task.completed",
                 message=message,
             )
             
@@ -607,7 +609,7 @@ class PlanExecutor:
 
 
 
-    async def _check_dependencies(
+    def _check_dependencies(
         self,
         step_id: str,
         dependencies: dict[str, list[str]],
@@ -633,8 +635,8 @@ class PlanExecutor:
 
         return all(dep in completed_steps for dep in required_steps)
 
-    async def _should_continue(
-        self, step: AttackStep, trace: TraceRecord, plan: AttackPlan
+    def _should_continue(
+        self, step: AttackStep, trace: TraceRecord
     ) -> bool:
         """判斷是否應該繼續執行
 
@@ -810,7 +812,7 @@ class PlanExecutor:
         except Exception as e:
             logger.error(f"Failed to persist result {result.result_id}: {e}")
 
-    async def get_session(self, session_id: str) -> SessionState | None:
+    def get_session(self, session_id: str) -> SessionState | None:
         """獲取會話狀態
 
         Args:
@@ -821,7 +823,7 @@ class PlanExecutor:
         """
         return self.trace_logger.get_session(session_id)
 
-    async def abort_session(self, session_id: str) -> None:
+    def abort_session(self, session_id: str) -> None:
         """中止會話
 
         Args:

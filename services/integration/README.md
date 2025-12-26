@@ -101,6 +101,21 @@ data/integration/
 │   ├── experience_*.db    # 備份檔案
 │   └── exports/           # 匯出的訓練資料集 (JSONL, CSV)
 │
+├── internal_exploration/  # ✨ 內閉環分析結果 (18.37 MB 歷史 + 2.18 MB 最新)
+│   ├── analysis_history/  # 分析歷史版本 (v1-v5)
+│   │   ├── v1/           # 第一版分析結果
+│   │   ├── v2/           # 第二版分析結果
+│   │   ├── v3/           # 第三版分析結果
+│   │   ├── v4/           # 第四版分析結果
+│   │   └── v5/           # 最新版分析結果
+│   ├── latest_classification.json  # 最新分類數據 (2.18 MB)
+│   └── self_healing/     # 自我修復記錄
+│
+├── cli_outputs/           # ✨ CLI 指令參考輸出 (新增)
+│   └── python/           # Python 工具 CLI 輸出
+│       ├── CLI_COMMANDS_REFERENCE.md  # Markdown 參考手冊
+│       └── cli_commands_db.json       # JSON 資料庫
+│
 ├── training_datasets/     # 訓練資料集
 │   ├── dataset_*.jsonl    # 訓練資料集 (JSONL 格式)
 │   ├── dataset_*.csv      # 訓練資料集 (CSV 格式)
@@ -187,11 +202,28 @@ python services/integration/scripts/cleanup.py
 # 清理 7 天前的資料
 python services/integration/scripts/cleanup.py --days 7
 
+# ✨ 僅清理分析歷史舊版本（保留最新 5 個版本）
+python services/integration/scripts/cleanup.py --versions-only --keep-versions 5
+
 # 僅清理備份檔案
 python services/integration/scripts/cleanup.py --backup-only
 
 # 僅清理匯出檔案
 python services/integration/scripts/cleanup.py --exports-only
+```
+
+#### ✨ CLI 指令參考生成（新功能）
+```bash
+# 生成 Markdown 參考手冊 (人類閱讀用)
+cd services/core/aiva_core/internal_exploration/python_tools
+python aiva_cli_implementation.py --data "<latest_classification.json 路徑>" --generate-doc md
+
+# 生成 JSON 資料庫 (AI 檢索用)
+python aiva_cli_implementation.py --data "<latest_classification.json 路徑>" --generate-doc json
+
+# 輸出位置：data/integration/cli_outputs/python/
+#   - CLI_COMMANDS_REFERENCE.md  (Markdown 手冊)
+#   - cli_commands_db.json       (JSON 資料庫)
 ```
 
 ### 📊 資料流向

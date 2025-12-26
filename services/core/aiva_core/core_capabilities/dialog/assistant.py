@@ -50,18 +50,39 @@ class DialogIntent:
     @classmethod
     def classify_command(cls, user_input: str) -> tuple[str, dict[str, Any]]:
         """識別用戶指令類型"""
-        user_input = user_input.strip().lower()
+        user_input_lower = user_input.strip().lower()
         
         # 優先匹配精確指令
-        for command_type, keywords in cls.COMMAND_PATTERNS.items():
-            for keyword in keywords:
-                if keyword in user_input:
+        for command_type, patterns in cls.INTENT_PATTERNS.items():
+            for pattern in patterns:
+                # 使用正則表達式匹配
+                match = re.search(pattern, user_input_lower, re.IGNORECASE)
+                if match:
                     # 提取可能的目標URL或參數
                     params = {}
-                    # 簡單 URL 提取
-                    url_match = re.search(r'https?://[\w\.-]+(?:/[\w\.-]*)*', user_input)
+                    
+                    # 提取 URL
+                    url_match = re.search(r'https?://[\w\.-]+(?::\d+)?(?:/[\w\.-]*)*', user_input)
                     if url_match:
                         params['target'] = url_match.group()
+                    
+                    # 提取掃描類型
+                    if command_type == "run_scan":
+                        scan_type_match = re.search(r'(xss|sql|sqli|ssrf|idor|bizlogic|business|邏輯|業務|全部|完整|complete|full)', user_input_lower)
+                        if scan_type_match:
+                            scan_type = scan_type_match.group(1)
+                            # 標準化掃描類型
+                            if scan_type in ['sql', 'sqli']:
+                                params['scan_type'] = 'sqli'
+                            elif scan_type in ['邏輯', '業務', 'business']:
+                                params['scan_type'] = 'bizlogic'
+                            elif scan_type in ['全部', '完整', 'complete', 'full']:
+                                params['scan_type'] = 'full'
+                            else:
+                                params['scan_type'] = scan_type
+                        else:
+                            # 默認為 XSS 掃描
+                            params['scan_type'] = 'xss'
                     
                     return command_type, params
         
@@ -106,12 +127,53 @@ class AIVACommandProcessor:
             self._rag_kb = KnowledgeBase(vector_store=vector_store)
         return self._rag_kb
     
-    async def _get_function_caller(self):  # type: ignore[misc]
-        """獲取 UnifiedFunctionCaller - async保留供未來異步初始化擴展"""
+    def _get_function_caller(self):
+        """獲取 UnifiedFunctionCaller"""
         if self._function_caller is None:
             from services.core.aiva_core.service_backbone.api.unified_function_caller import UnifiedFunctionCaller
             self._function_caller = UnifiedFunctionCaller()
         return self._function_caller
+
+    def _add_command_entry(
+        self, role: str, content: str, user_id: str, timestamp: datetime
+    ):
+        """記錄命令歷史"""
+        entry = {
+            "role": role,
+            "content": content,
+            "user_id": user_id,
+            "timestamp": timestamp.isoformat(),
+        }
+        self.command_history.append(entry)
+        logger.debug(f"記錄命令: {role} - {content[:50]}...")
+
+    async def _handle_command(
+        self, command_type: str, params: dict[str, Any], original_input: str
+    ) -> dict[str, Any]:
+        """處理不同類型的命令"""
+        # 根據命令類型分發到對應的處理方法
+        if command_type == "list_capabilities":
+            return await self._handle_list_capabilities()
+        elif command_type == "run_scan":
+            # _handle_run_scan 需要 3 個參數
+            scan_type = params.get("scan_type", "comprehensive")
+            target = params.get("target", "")
+            return await self._handle_run_scan(scan_type, target, original_input)
+        elif command_type == "generate_cli":
+            return await self._handle_generate_cli(original_input)
+        elif command_type == "system_status":
+            return await self._handle_system_status()
+        elif command_type == "explain_capability":
+            # _handle_explain_capability 需要 capability_name 字串
+            capability_name = params.get("capability", "")
+            return await self._handle_explain_capability(capability_name)
+        elif command_type == "compare_capabilities":
+            # _handle_compare_capabilities 需要 2 個參數
+            cap1 = params.get("cap1", "")
+            cap2 = params.get("cap2", "")
+            return await self._handle_compare_capabilities(cap1, cap2)
+        else:
+            return await self._handle_intent(command_type, params, original_input)
 
     async def process_user_input(
         self, user_input: str, user_id: str = "default"
@@ -124,7 +186,7 @@ class AIVACommandProcessor:
 
         try:
             # 指令分類
-            command_type, params = CommandClassifier.classify_command(user_input)
+            command_type, params = DialogIntent.classify_command(user_input)
 
             logger.info(f"識別指令: {command_type}, 參數: {params}")
 
@@ -331,8 +393,47 @@ class AIVACommandProcessor:
                 "intent": "run_scan",
                 "message": "請提供要掃描的目標 URL，例如：「掃描 https://example.com」",
                 "executable": False,
+            }    
+    def _parse_constraints(self, user_input: str) -> dict[str, Any]:
+        """解析能力限制和排除网页 (步骤0补充)
+        
+        支持格式:
+        - "扫描 https://example.com 排除 /admin /api"
+        - "扫描 https://example.com 不使用 sqli xss"
+        - "扫描 https://example.com 只使用 rust python"
+        
+        Returns:
+            {
+                "allowed_capabilities": [...],
+                "disallowed_capabilities": [...],
+                "excluded_paths": [...]
             }
-
+        """
+        constraints = {
+            "allowed_capabilities": [],
+            "disallowed_capabilities": [],
+            "excluded_paths": []
+        }
+        
+        # 提取排除路径
+        exclude_match = re.search(r'排除\s+((?:/[\w/-]+\s*)+)', user_input)
+        if exclude_match:
+            paths = exclude_match.group(1).strip().split()
+            constraints["excluded_paths"] = paths
+        
+        # 提取不可用能力
+        disallow_match = re.search(r'不使用\s+((?:\w+\s*)+)', user_input)
+        if disallow_match:
+            caps = disallow_match.group(1).strip().split()
+            constraints["disallowed_capabilities"] = caps
+        
+        # 提取可用能力
+        allow_match = re.search(r'只使用\s+((?:\w+\s*)+)', user_input)
+        if allow_match:
+            caps = allow_match.group(1).strip().split()
+            constraints["allowed_capabilities"] = caps
+        
+        return constraints
         # 解析多目標（支持逗號、分號、空格分隔）
         targets = [t.strip() for t in re.split(r"[,，;；\s]+", target) if t.strip()]
         return target, targets, None
@@ -454,7 +555,7 @@ class AIVACommandProcessor:
         
         複雜度: A (4) - 協議分支
         """
-        function_caller = await self._get_function_caller()
+        function_caller = self._get_function_caller()
         invocation = capability['invocation']
         attack_params = {'target_url': target, 'method': 'POST', 'timeout': 30}
         
@@ -692,6 +793,46 @@ class AIVACommandProcessor:
                 "executable": False,
             }
 
+    def _build_command_with_params(self, cap: Any) -> str:
+        """構建帶參數的 CLI 命令"""
+        cmd = f"aiva capability execute {cap.id}"
+        
+        if cap.inputs:
+            for inp in cap.inputs[:2]:  # 只顯示前2個參數
+                if inp.required:
+                    if inp.name in ["url", "target"]:
+                        cmd += f" --{inp.name} https://example.com"
+                    elif inp.name in ["timeout"]:
+                        cmd += f" --{inp.name} 30"
+                    else:
+                        cmd += f" --{inp.name} <value>"
+        
+        return cmd
+
+    def _format_cli_commands(self, capabilities: list[Any]) -> tuple[str, list[dict[str, Any]]]:
+        """格式化 CLI 命令列表"""
+        message = "💻 可執行的 CLI 指令範本:\n\n"
+        commands = []
+        
+        for cap in capabilities:
+            cmd = self._build_command_with_params(cap)
+            
+            message += f"🔧 {cap.name}:\n"
+            message += f"```bash\n{cmd}\n```\n\n"
+            
+            commands.append({
+                "capability": cap.name,
+                "command": cmd,
+                "description": cap.description or "無描述",
+            })
+        
+        message += "📋 使用說明:\n"
+        message += "• 將 <value> 替換為實際值\n"
+        message += "• 將 https://example.com 替換為目標 URL\n"
+        message += "• 執行前請確保相關服務已啟動\n"
+        
+        return message, commands
+
     async def _handle_generate_cli(self, _original_input: str) -> dict[str, Any]:  # noqa: ARG002
         """處理 CLI 指令生成請求"""
         try:
@@ -705,39 +846,7 @@ class AIVACommandProcessor:
                     "executable": False,
                 }
 
-            message = "💻 可執行的 CLI 指令範本:\n\n"
-
-            commands = []
-            for cap in capabilities:
-                # 生成基本命令
-                cmd = f"aiva capability execute {cap.id}"
-
-                # 添加常用參數
-                if cap.inputs:
-                    for inp in cap.inputs[:2]:  # 只顯示前2個參數
-                        if inp.required:
-                            if inp.name in ["url", "target"]:
-                                cmd += f" --{inp.name} https://example.com"
-                            elif inp.name in ["timeout"]:
-                                cmd += f" --{inp.name} 30"
-                            else:
-                                cmd += f" --{inp.name} <value>"
-
-                message += f"🔧 {cap.name}:\n"
-                message += f"```bash\n{cmd}\n```\n\n"
-
-                commands.append(
-                    {
-                        "capability": cap.name,
-                        "command": cmd,
-                        "description": cap.description or "無描述",
-                    }
-                )
-
-            message += "📋 使用說明:\n"
-            message += "• 將 <value> 替換為實際值\n"
-            message += "• 將 https://example.com 替換為目標 URL\n"
-            message += "• 執行前請確保相關服務已啟動\n"
+            message, commands = self._format_cli_commands(capabilities)
 
             return {
                 "intent": "generate_cli",
@@ -861,11 +970,11 @@ class AIVACommandProcessor:
 # 使用方式：from services.core.aiva_core.core_capabilities.dialog.assistant import get_dialog_assistant
 _dialog_assistant_instance = None
 
-def get_dialog_assistant() -> AIVADialogAssistant:
+def get_dialog_assistant() -> AIVACommandProcessor:
     """獲取對話助理實例（延遲初始化）"""
     global _dialog_assistant_instance
     if _dialog_assistant_instance is None:
-        _dialog_assistant_instance = AIVADialogAssistant()
+        _dialog_assistant_instance = AIVACommandProcessor()
     return _dialog_assistant_instance
 
 # 向後兼容：如果直接導入 dialog_assistant，提供懶加載屬性
@@ -875,6 +984,10 @@ class _LazyDialogAssistant:
         return getattr(get_dialog_assistant(), name)
     
     def __call__(self, *args, **kwargs):
-        return get_dialog_assistant()(*args, **kwargs)
+        # 如果有參數，則認為是嘗試實例化，否則返回單例
+        if args or kwargs:
+            # 不支援帶參數調用，因為使用的是單例模式
+            raise TypeError("dialog_assistant 使用單例模式，不支援帶參數調用")
+        return get_dialog_assistant()
 
 dialog_assistant = _LazyDialogAssistant()

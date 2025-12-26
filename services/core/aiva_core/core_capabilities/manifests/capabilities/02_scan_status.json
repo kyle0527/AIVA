@@ -1,0 +1,69 @@
+{
+  "meta": {
+    "flow_id": 2,
+    "tool_name": "Get Scan Status",
+    "description": "查詢掃描任務的當前狀態和進度",
+    "version": "1.0.0",
+    "language": "python",
+    "module": "service_backbone",
+    "tags": ["scan", "status", "monitoring"]
+  },
+  "ai_cognitive": {
+    "primary_capability": "scan_status_query",
+    "risk_level": "low",
+    "tags": {
+      "required": ["query", "status"],
+      "boost": ["monitoring", "tracking"],
+      "exclude": ["write", "execute"]
+    },
+    "cognitive_insights": {
+      "適用場景": "追蹤掃描進度、檢查任務狀態、監控執行流程",
+      "決策考量": "需要有效的 scan_id",
+      "風險評估": "只讀查詢，無副作用"
+    }
+  },
+  "execution": {
+    "type": "api_call",
+    "command_template": "http://localhost:8000/status/{scan_id}",
+    "method": "GET",
+    "timeout_seconds": 10,
+    "working_directory": null,
+    "environment_variables": {}
+  },
+  "parameters": {
+    "context_mapping": {
+      "scan_id": "scan_id"
+    },
+    "tunable": {}
+  },
+  "examples": [
+    {
+      "scenario": "查詢正在進行的掃描狀態",
+      "context_data": {
+        "scan_id": "scan_20231225_001"
+      },
+      "ai_intensity": 0.0,
+      "expected_command": "curl -X GET 'http://localhost:8000/status/scan_20231225_001'",
+      "expected_output": {
+        "scan_id": "scan_20231225_001",
+        "status": "in_progress",
+        "phase": "phase1_scanning",
+        "progress": "15/50"
+      }
+    },
+    {
+      "scenario": "查詢已完成的掃描",
+      "context_data": {
+        "scan_id": "scan_20231224_999"
+      },
+      "ai_intensity": 0.0,
+      "expected_command": "curl -X GET 'http://localhost:8000/status/scan_20231224_999'",
+      "expected_output": {
+        "scan_id": "scan_20231224_999",
+        "status": "completed",
+        "phase": "report_generated",
+        "progress": "100/100"
+      }
+    }
+  ]
+}

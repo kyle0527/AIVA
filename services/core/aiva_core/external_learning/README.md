@@ -17,12 +17,10 @@
 - [📖 使用範例](#-使用範例)
   - [完整的學習流程](#完整的學習流程)
   - [事件驅動學習流程](#事件驅動學習流程)
-  - [自動化訓練編排](#自動化訓練編排)
 - [🛠️ 開發指南](#-開發指南)
   - [🔨 aiva_common 修復規範](#-aiva_common-修復規範)
   - [添加新的調整策略](#添加新的調整策略)
   - [實現自定義訓練器](#實現自定義訓練器)
-  - [添加新的測試場景](#添加新的測試場景)
 - [📊 性能指標](#-性能指標)
   - [策略調整](#策略調整)
   - [模型訓練](#模型訓練)
@@ -33,11 +31,11 @@
 
 **導航**: [← 返回 AIVA Core](../README.md)
 
-> **版本**: 3.0.0-alpha  
-> **狀態**: 生產就緒，測試通過  
-> **🧪 測試狀態**: 階段 8 測試 100% 通過 (4/4 組件，包含 ExperienceManager 警告)  
-> **角色**: AIVA 的「學習大腦」- 從執行結果中學習並持續優化  
-> **最後更新**: 2025-12-10
+> **版本**: v3.1.0  
+> **狀態**: ✅ 生產就緒  
+> **最後更新**: 2025-12-21  
+> **角色**: AIVA 的「學習大腦」- 從外部環境學習並優化策略  
+> **架構**: 純學習分析，不執行實際攻擊操作
 
 ---
 
@@ -47,15 +45,28 @@
 
 ## 🎯 模組概述
 
-**External Learning** 是 AIVA 六大模組架構中的持續學習層，負責從攻擊執行結果中學習經驗、優化策略、訓練模型，實現系統能力的持續提升。整合了動態策略調整、模型訓練、場景管理、執行追蹤等核心能力。
+**External Learning** 是 AIVA 的對外學習系統，負責從外部環境、執行結果和用戶回饋中學習，並優化AI決策策略。
 
 ### 核心職責
-1. **策略調整** - 基於執行結果動態調整測試策略
+
+- 📊 **結果分析** - 分析Features模組執行結果，提取學習信號
+- 🧠 **策略優化** - 基於學習結果優化攻擊策略和決策模型
+- 🎯 **經驗管理** - 管理歷史經驗和知識庫，支持決策推理
+- 🎧 **事件監聽** - 監聽系統事件，觸發自適應學習流程
+- 📝 **執行追蹤** - 追蹤跨模組執行狀態，收集性能數據
+- 🔄 **反饋循環** - 建立學習-優化-驗證的閉環系統
+- ✅ 所有攻擊執行都自動收集經驗並持續學習（靶場 = 實戰）
+- ✅ 數據利用率提升 10 倍（從月收集 500 樣本 → 5000 樣本）
+
+**External Learning** 是 AIVA 六大模組架構中的持續學習層，負責從攻擊執行結果中學習經驗、優化策略、訓練模型，實現系統能力的持續提升。整合了動態策略調整、模型訓練、經驗管理、執行追蹤等核心能力。
+
+### 核心職責
+1. **經驗管理** - 記錄和管理攻擊執行經驗
 2. **模型訓練** - 訓練和優化強化學習模型
-3. **場景管理** - 管理 OWASP 和自定義測試場景
+3. **策略調整** - 基於執行結果動態調整測試策略
 4. **執行追蹤** - 追蹤和記錄攻擊執行軌跡
 5. **風險評估** - 評估攻擊風險和成功率
-6. **訓練編排** - 自動化訓練流程編排
+6. ~~**訓練編排**~~ - ❌ 已移除（整合至 UnifiedExecutor）
 
 ### 設計理念
 - **持續學習** - 從每次執行中學習並優化
@@ -80,9 +91,9 @@ external_learning/
 │   ├── rl_trainers.py            # 強化學習訓練器
 │   └── scalable_bio_trainer.py   # 可擴展生物神經訓練器
 │
-├── 📁 training/                  # 訓練編排 (3 檔案)
-│   ├── training_orchestrator.py  # ✅ 訓練編排器
-│   ├── scenario_manager.py       # 場景管理器
+├── 📁 training/                  # 訓練編排 (3 檔案) - ❌ 已廢棄
+│   ├── training_orchestrator.py  # ❌ 訓練編排器（已移除）
+│   ├── scenario_manager.py       # ❌ 場景管理器（已移除）
 │   └── __init__.py
 │
 ├── 📁 tracing/                   # 執行追蹤 (3 檔案)
@@ -143,6 +154,10 @@ external_learning/
 
 ## 🔧 核心組件
 
+⚠️ **更新 (2025-12-18)**: 
+- ❌ `risk_assessment_engine.py` 已移除，應改用 RAG 動態查詢風險資訊
+- ❌ `train_classifier.py` 已移除，為訓練工具非運行時能力
+
 ### 1. 📊 Analysis (分析引擎)
 
 #### `dynamic_strategy_adjustment.py` - 動態策略調整器
@@ -187,21 +202,22 @@ adjuster.learn_from_result({
 - ✅ 發現數量調整 - 已發現漏洞時調整測試深度
 - ✅ 進度感知調整 - 根據執行進度動態調整策略
 
-#### `risk_assessment_engine.py` - 風險評估引擎
-**功能**: 評估攻擊風險和成功率
+#### ❌ `risk_assessment_engine.py` - 風險評估引擎 (已移除)
+**狀態**: 已於 2025-12-18 移除  
+**理由**: 硬編碼規則，應改用 RAG 動態查詢最新風險資訊  
+**替代方案**: 使用 `BioNeuronRAGAgent` 查詢風險評估資訊
+
 ```python
-from external_learning.analysis import RiskAssessmentEngine
+# ❌ 已廢棄
+# from external_learning.analysis import RiskAssessmentEngine
 
-engine = RiskAssessmentEngine()
+# ✅ 使用 RAG 動態查詢
+from aiva_core import BioNeuronRAGAgent
 
-# 評估風險
-risk_score = engine.assess_risk(
-    target="https://example.com",
-    attack_type="sql_injection",
-    context={"waf_detected": True, "https": True}
+rag_agent = BioNeuronRAGAgent()
+risk_info = await rag_agent.query(
+    f"評估 SQL Injection 對 {target} 的攻擊風險，考慮 WAF 和 HTTPS 因素"
 )
-
-print(f"風險評分: {risk_score}")  # 0.0-1.0
 ```
 
 #### `ast_trace_comparator.py` - AST 軌跡比較器
@@ -321,70 +337,25 @@ ppo_trainer = PPOTrainer(
 
 ---
 
-### 3. 🎯 Training (訓練編排)
+### 3. 🎯 Training (訓練編排) - ❌ 已廢棄
 
-#### `training_orchestrator.py` - 訓練編排器
-**功能**: 自動化訓練流程的完整編排
-```python
-from external_learning.training import TrainingOrchestrator
+> ⚠️ **架構變更 (2025-12-17)**:  
+> `TrainingOrchestrator` 和 `ScenarioManager` 已移除。  
+> 訓練功能已整合到 `UnifiedAttackExecutor`（位於 `task_planning` 模組）。
 
-# 初始化訓練編排器
-orchestrator = TrainingOrchestrator(
-    scenario_manager=scenario_manager,
-    rag_engine=rag_engine,
-    plan_executor=plan_executor,
-    model_trainer=model_trainer,
-    data_directory="./data"
-)
+**為什麼移除**:
+- TrainingOrchestrator 包含 40+ 錯誤
+- 與 AI Commander 存在雙重執行路徑（代碼重複 1500 行）
+- 靶場訓練與實戰執行分離，導致數據利用率僅 5%
 
-# 執行完整訓練流程
-result = await orchestrator.run_training_cycle(
-    scenario_type="owasp_top10",
-    num_iterations=100,
-    model_type="dqn"
-)
+**新架構優勢**:
+- ✅ 統一執行路徑（-47% 代碼）
+- ✅ 靶場 = 實戰（數據利用率 10x）
+- ✅ 自動學習（100% 覆蓋）
+- ✅ 可配置學習閾值
 
-print(f"訓練完成: {result['model_id']}")
-print(f"最終性能: {result['final_performance']}")
-
-# 持續訓練
-await orchestrator.continuous_training(
-    check_interval_hours=24,
-    min_new_experiences=1000
-)
-```
-
-**訓練週期**:
-1. **場景加載** - 從 ScenarioManager 加載測試場景
-2. **計畫生成** - 使用 RAG 增強計畫生成
-3. **計畫執行** - 執行攻擊計畫並收集結果
-4. **經驗收集** - 將結果轉化為訓練經驗
-5. **模型訓練** - 使用經驗訓練模型
-6. **性能評估** - 評估模型性能
-7. **迭代優化** - 重複流程直到收斂
-
-#### `scenario_manager.py` - 場景管理器
-**功能**: 管理 OWASP 和自定義測試場景
-```python
-from external_learning.training import ScenarioManager
-
-manager = ScenarioManager(data_dir="./data/scenarios")
-
-# 加載 OWASP 場景
-owasp_scenarios = manager.load_owasp_scenarios()
-print(f"加載 {len(owasp_scenarios)} 個 OWASP 場景")
-
-# 創建自定義場景
-manager.create_scenario(
-    name="custom_sqli_test",
-    target_url="http://testphp.vulnweb.com",
-    vulnerabilities=["sql_injection"],
-    difficulty="medium"
-)
-
-# 獲取場景
-scenario = manager.get_scenario("custom_sqli_test")
-```
+**遷移指南**: 請使用 `task_planning.unified_executor.UnifiedAttackExecutor`  
+**詳細說明**: [架構簡化報告](../_ARCHITECTURE_SIMPLIFICATION_REPORT_2025-12-17.md)
 
 ---
 
@@ -483,19 +454,58 @@ traces = await recorder.query_traces(
 
 ## 📖 使用範例
 
-### 完整的學習流程
+### 完整的學習流程（推薦使用 UnifiedExecutor）
+```python
+# ⭐ 推薦：使用 UnifiedExecutor（自動學習）
+from task_planning.unified_executor import UnifiedAttackExecutor
+from external_learning import ExperienceManager
+from external_learning.learning import ModelTrainer
+
+# 1. 初始化組件（學習功能已內建）
+experience_mgr = ExperienceManager()
+model_trainer = ModelTrainer(model_dir="./models")
+
+executor = UnifiedAttackExecutor(
+    plan_executor=plan_executor,
+    experience_manager=experience_mgr,
+    model_trainer=model_trainer,
+    rag_engine=rag_engine,
+    auto_learn=True,  # 啟用自動學習
+    learn_threshold=100  # 累積 100 樣本後自動訓練
+)
+
+# 2. 執行攻擊（自動收集經驗並訓練）
+result = await executor.execute_with_learning(
+    plan=attack_plan,
+    context=task_context
+)
+
+# 3. 查看學習統計
+stats = executor.get_learning_stats()
+print(f"已收集樣本: {stats['samples_collected']}")
+print(f"訓練次數: {stats['training_runs']}")
+print(f"最新模型性能: {stats['latest_model_metrics']}")
+
+# 4. 純執行模式（不學習）
+result = await executor.execute_without_learning(
+    plan=attack_plan,
+    context=task_context
+)
+```
+
+### 傳統方式（手動管理學習）
 ```python
 from external_learning import (
     StrategyAdjuster,
-    ModelTrainer,
-    TrainingOrchestrator,
+    ExperienceManager,
     ExecutionTracer
 )
+from external_learning.learning import ModelTrainer
 
 # 1. 初始化組件
 adjuster = StrategyAdjuster()
 trainer = ModelTrainer(model_dir="./models")
-orchestrator = TrainingOrchestrator()
+experience_mgr = ExperienceManager()
 tracer = ExecutionTracer()
 
 # 2. 執行測試並追蹤
@@ -507,92 +517,58 @@ result = await execute_attack(target, payload)
 tracer.record_step(trace_id, "attack", {"payload": payload, "result": result})
 tracer.end_trace(trace_id, success=result["success"])
 
-# 3. 調整策略
-adjusted_plan = adjuster.adjust(
-    plan=next_plan,
-    context={
-        "waf_detected": result.get("waf_detected"),
-        "findings_count": result.get("vulnerabilities_found")
-    }
-)
-
-# 4. 學習經驗
-adjuster.learn_from_result({
-    "scan_id": "scan_001",
-    "module": "sqli",
-    "success": result["success"],
-    "payload": payload
+# 3. 手動收集經驗
+experience_mgr.record_experience({
+    "objective": "SQL 注入測試",
+    "actions": [payload],
+    "result": result,
+    "success": result["success"]
 })
 
-# 5. 啟動事件監聽器 (自動化學習)
-from external_learning import ExternalLearningListener
-
-listener = ExternalLearningListener()
-await listener.start_listening()
-print("外部學習事件監聽器已啟動，將自動處理任務完成事件")
-
-# 6. 定期訓練模型 (手動觸發)
-if should_train():
-    experiences = collect_experiences()
-    training_result = await trainer.train_from_experiences(
-        experiences=experiences,
-        model_type="dqn"
+# 4. 手動觸發訓練（累積到閾值）
+if len(experience_mgr.buffer) >= 100:
+    samples = experience_mgr.sample_batch(batch_size=64)
+    await trainer.train(
+        samples=samples,
+        config={"learning_rate": 0.001},
+        mode="supervised"
     )
-    print(f"模型訓練完成: {training_result.model_id}")
 ```
 
 ### 事件驅動學習流程
 ```python
 from external_learning import ExternalLearningListener
-from external_learning.training import TrainingOrchestrator
+from task_planning.unified_executor import UnifiedAttackExecutor
 
-# 1. 啟動事件監聽器
+# 1. 初始化 UnifiedExecutor（內建自動學習）
+executor = UnifiedAttackExecutor(
+    auto_learn=True,
+    learn_threshold=100
+)
+
+# 2. 啟動事件監聽器（可選，用於高級分析）
 listener = ExternalLearningListener()
 await listener.start_listening()
 print("事件監聽器已啟動，監聽任務完成事件")
 
-# 2. 事件監聽器會自動處理：
+# 事件監聽器會自動處理：
 # - 監聽 TASK_COMPLETED 事件
 # - 觸發 AST vs Trace 偏差分析
-# - 自動決定是否需要重訓練
+# - 提供額外的診斷信息
 
-# 3. 手動訓練編排 (可選)
-orchestrator = TrainingOrchestrator()
-
-# 運行訓練週期
-result = await orchestrator.run_training_cycle(
-    scenario_type="owasp_top10",
-    num_iterations=100,
-    model_type="dqn"
+# 3. 執行攻擊（自動學習）
+result = await executor.execute_with_learning(
+    plan=attack_plan,
+    context=task_context
 )
 
-print(f"訓練完成:")
-print(f"  模型 ID: {result['model_id']}")
-print(f"  最終準確率: {result['final_accuracy']}")
-print(f"  訓練時間: {result['training_time']} 秒")
+print(f"執行完成:")
+print(f"  成功: {result.success}")
+print(f"  已收集樣本: {executor.get_learning_stats()['samples_collected']}")
 
 # 4. 停止監聽器
 await listener.stop_listening()
 print("事件監聽器已停止")
-```
-
-### 自動化訓練編排
-```python
-from external_learning.training import TrainingOrchestrator
-
-orchestrator = TrainingOrchestrator()
-
-# 運行訓練週期
-result = await orchestrator.run_training_cycle(
-    scenario_type="owasp_top10",
-    num_iterations=100,
-    model_type="dqn"
-)
-
-print(f"訓練完成:")
-print(f"  模型 ID: {result['model_id']}")
-print(f"  最終準確率: {result['final_accuracy']}")
-print(f"  訓練時間: {result['training_time']} 秒")
 ```
 
 ---

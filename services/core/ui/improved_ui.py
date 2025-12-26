@@ -42,24 +42,15 @@ except Exception as exc:  # pragma: no cover
     ) from exc
 
 
+from .utils import build_task_row, build_detection_row, format_result_preview
+
+
 def _build_task_rows(tasks: list) -> str:
     """構建任務表格行"""
     if not tasks:
         return "<tr><td colspan=6 style='text-align:center; color:#888;'>無任務</td></tr>"
     
-    rows = ""
-    for task in tasks:
-        task_id = task.get("task_id", "-")
-        target = task.get("target", "-")
-        scan_type = task.get("scan_type", "-")
-        status = task.get("status", "-")
-        created_by = task.get("created_by", "-")
-        ai_result_text = "AI" if task.get("ai_result") else "-"
-        rows += (
-            f"<tr><td>{task_id}</td><td>{target}</td><td>{scan_type}</td>"
-            f"<td>{status}</td><td>{created_by}</td><td>{ai_result_text}</td></tr>"
-        )
-    return rows
+    return "".join(build_task_row(task) for task in tasks)
 
 
 def _build_detection_rows(detections: list) -> str:
@@ -67,19 +58,7 @@ def _build_detection_rows(detections: list) -> str:
     if not detections:
         return "<tr><td colspan=5 style='text-align:center; color:#888;'>無檢測結果</td></tr>"
     
-    rows = ""
-    for det in detections:
-        vuln_type = det.get("vuln_type", "-")
-        target = det.get("target", "-")
-        status = det.get("status", "-")
-        method = det.get("method", "-")
-        result = det.get("result", det.get("findings", "-"))
-        result_preview = _format_result_preview(result)
-        rows += (
-            f"<tr><td>{vuln_type}</td><td>{target}</td><td>{status}</td>"
-            f"<td>{method}</td><td>{result_preview}</td></tr>"
-        )
-    return rows
+    return "".join(build_detection_row(det) for det in detections)
 
 
 def _build_history_rows(ai_history: list) -> str:
@@ -94,17 +73,9 @@ def _build_history_rows(ai_history: list) -> str:
         confidence = record.get("confidence", "-")
         result = record.get("result", "-")
         conf_display = f"{confidence:.2%}" if isinstance(confidence, float) else str(confidence)
-        result_preview = _format_result_preview(result)
+        result_preview = format_result_preview(result, max_length=50)
         rows += f"<tr><td>{status}</td><td>{tool_used}</td><td>{conf_display}</td><td>{result_preview}</td></tr>"
     return rows
-
-
-def _format_result_preview(result: Any) -> str:
-    """格式化結果預覽"""
-    if isinstance(result, list | dict):
-        return "[複雜結果]"
-    result_str = str(result)
-    return result_str[:50] + ("..." if len(result_str) > 50 else "")
 
 
 def _build_ai_card(stats: dict[str, Any]) -> str:

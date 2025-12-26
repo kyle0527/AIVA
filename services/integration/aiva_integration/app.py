@@ -11,7 +11,6 @@ from services.aiva_common.schemas import AivaMessage, FindingPayload
 from services.aiva_common.utils import get_logger
 
 from .analysis.compliance_policy_checker import CompliancePolicyChecker
-from .analysis.risk_assessment_engine import RiskAssessmentEngine
 from .analysis.vuln_correlation_analyzer import VulnerabilityCorrelationAnalyzer
 from .config_template.config_template_manager import ConfigTemplateManager
 from .perf_feedback.improvement_suggestion_generator import (
@@ -49,7 +48,6 @@ storage_adapter = UnifiedStorageAdapter(
 )
 recv = DataReceptionLayer(storage_adapter)
 corr = VulnerabilityCorrelationAnalyzer()
-risk = RiskAssessmentEngine()
 comp = CompliancePolicyChecker()
 rptgen = ReportContentGenerator()
 fmt = FormatterExporter()

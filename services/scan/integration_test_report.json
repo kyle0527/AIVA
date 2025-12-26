@@ -1,0 +1,119 @@
+{
+  "test_summary": {
+    "total_tests": 6,
+    "passed_tests": 2,
+    "failed_tests": 4,
+    "success_rate": 33.33333333333333
+  },
+  "test_details": {
+    "migration_integrity": {
+      "status": "passed",
+      "details": {
+        "expected_tools": 5,
+        "found_tools": 5,
+        "found_manifests": 5,
+        "missing_tools": [],
+        "invalid_manifests": []
+      }
+    },
+    "manifest_validation": {
+      "status": "failed",
+      "details": {
+        "manifests_checked": 9,
+        "valid_manifests": 5,
+        "validation_errors": [
+          "forensics_tools: Missing required field: tool_name",
+          "forensics_tools: Missing required field: language",
+          "forensics_tools: Missing required field: cluster_type",
+          "forensics_tools: Missing required field: cluster_id",
+          "forensics_tools: Missing required field: cognitive_tags",
+          "forensics_tools: Missing required field: required_tags",
+          "forensics_tools: Missing required field: boost_tags",
+          "forensics_tools: Missing required field: ai_cognitive_description",
+          "forensics_tools: Missing required field: execution_template",
+          "sqli_tools: Missing required field: tool_name",
+          "sqli_tools: Missing required field: language",
+          "sqli_tools: Missing required field: cluster_type",
+          "sqli_tools: Missing required field: cluster_id",
+          "sqli_tools: Missing required field: cognitive_tags",
+          "sqli_tools: Missing required field: required_tags",
+          "sqli_tools: Missing required field: boost_tags",
+          "sqli_tools: Missing required field: ai_cognitive_description",
+          "sqli_tools: Missing required field: execution_template",
+          "xss_tools: Missing required field: tool_name",
+          "xss_tools: Missing required field: language",
+          "xss_tools: Missing required field: cluster_type",
+          "xss_tools: Missing required field: cluster_id",
+          "xss_tools: Missing required field: cognitive_tags",
+          "xss_tools: Missing required field: required_tags",
+          "xss_tools: Missing required field: boost_tags",
+          "xss_tools: Missing required field: ai_cognitive_description",
+          "xss_tools: Missing required field: execution_template",
+          "network_tools: Missing required field: tool_name",
+          "network_tools: Missing required field: language",
+          "network_tools: Missing required field: cluster_type",
+          "network_tools: Missing required field: cluster_id",
+          "network_tools: Missing required field: cognitive_tags",
+          "network_tools: Missing required field: required_tags",
+          "network_tools: Missing required field: boost_tags",
+          "network_tools: Missing required field: ai_cognitive_description",
+          "network_tools: Missing required field: execution_template"
+        ]
+      }
+    },
+    "cluster_engine": {
+      "status": "failed",
+      "details": {
+        "engine_loaded": false,
+        "clusters_found": 0,
+        "test_execution": "not_attempted",
+        "import_error": "No module named 'engines.manifest_engine'"
+      }
+    },
+    "ai_decision": {
+      "status": "failed",
+      "details": {
+        "engine_loaded": false,
+        "context_processing": "not_tested",
+        "decision_making": "not_tested",
+        "import_error": "No module named 'engines.manifest_engine'"
+      }
+    },
+    "command_handler": {
+      "status": "error",
+      "details": {
+        "error": "unable to open database file"
+      }
+    },
+    "tool_execution": {
+      "status": "passed",
+      "details": {
+        "simulation_mode": true,
+        "test_scenarios": [
+          {
+            "scenario": "XSS 檢測模擬",
+            "status": "simulated_success",
+            "details": "Simulation passed - would execute tools in real environment"
+          },
+          {
+            "scenario": "SQL 注入檢測模擬",
+            "status": "simulated_success",
+            "details": "Simulation passed - would execute tools in real environment"
+          },
+          {
+            "scenario": "記憶體取證模擬",
+            "status": "simulated_success",
+            "details": "Simulation passed - would execute tools in real environment"
+          }
+        ]
+      }
+    }
+  },
+  "statistics": {
+    "tests_run": 6,
+    "tests_passed": 2,
+    "tests_failed": 4,
+    "total_tools_tested": 5,
+    "manifests_validated": 5
+  }
+}

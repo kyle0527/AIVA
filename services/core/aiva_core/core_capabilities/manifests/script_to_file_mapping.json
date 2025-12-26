@@ -1,0 +1,512 @@
+{
+  "monitoring": {
+    "full_path": "C:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\service_backbone\\performance\\monitoring.py",
+    "filename": "monitoring.py",
+    "relative_path": "services\\core\\aiva_core\\service_backbone\\performance\\monitoring.py"
+  },
+  "optimized_core": {
+    "full_path": "C:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\service_backbone\\coordination\\optimized_core.py",
+    "filename": "optimized_core.py",
+    "relative_path": "services\\core\\aiva_core\\service_backbone\\coordination\\optimized_core.py"
+  },
+  "train_classifier": {
+    "full_path": "C:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\external_learning\\ai_model\\train_classifier.py",
+    "filename": "train_classifier.py",
+    "relative_path": "services\\core\\aiva_core\\external_learning\\ai_model\\train_classifier.py"
+  },
+  "model_trainer": {
+    "full_path": "C:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\external_learning\\learning\\model_trainer.py",
+    "filename": "model_trainer.py",
+    "relative_path": "services\\core\\aiva_core\\external_learning\\learning\\model_trainer.py"
+  },
+  "training_orchestrator": {
+    "full_path": "C:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\external_learning\\training\\training_orchestrator.py",
+    "filename": "training_orchestrator.py",
+    "relative_path": "services\\core\\aiva_core\\external_learning\\training\\training_orchestrator.py"
+  },
+  "ai_model_manager": {
+    "full_path": "C:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\cognitive_core\\neural\\ai_model_manager.py",
+    "filename": "ai_model_manager.py",
+    "relative_path": "services\\core\\aiva_core\\cognitive_core\\neural\\ai_model_manager.py"
+  },
+  "scalable_bio_trainer": {
+    "full_path": "C:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\external_learning\\learning\\scalable_bio_trainer.py",
+    "filename": "scalable_bio_trainer.py",
+    "relative_path": "services\\core\\aiva_core\\external_learning\\learning\\scalable_bio_trainer.py"
+  },
+  "system_connectivity_checker": {
+    "full_path": "C:\\D\\fold7\\AIVA-git\\services\\core\\tools\\system_connectivity_checker.py",
+    "filename": "system_connectivity_checker.py",
+    "relative_path": "services\\core\\tools\\system_connectivity_checker.py"
+  },
+  "permission_matrix": {
+    "full_path": "C:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\service_backbone\\authz\\permission_matrix.py",
+    "filename": "permission_matrix.py",
+    "relative_path": "services\\core\\aiva_core\\service_backbone\\authz\\permission_matrix.py"
+  },
+  "authz_mapper": {
+    "full_path": "C:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\service_backbone\\authz\\authz_mapper.py",
+    "filename": "authz_mapper.py",
+    "relative_path": "services\\core\\aiva_core\\service_backbone\\authz\\authz_mapper.py"
+  },
+  "matrix_visualizer": {
+    "full_path": "C:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\service_backbone\\authz\\matrix_visualizer.py",
+    "filename": "matrix_visualizer.py",
+    "relative_path": "services\\core\\aiva_core\\service_backbone\\authz\\matrix_visualizer.py"
+  },
+  "command_repository": {
+    "full_path": "C:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\service_backbone\\storage\\command_repository.py",
+    "filename": "command_repository.py",
+    "relative_path": "services\\core\\aiva_core\\service_backbone\\storage\\command_repository.py"
+  },
+  "rl_trainers": {
+    "full_path": "C:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\external_learning\\learning\\rl_trainers.py",
+    "filename": "rl_trainers.py",
+    "relative_path": "services\\core\\aiva_core\\external_learning\\learning\\rl_trainers.py"
+  },
+  "aiva_exploration_pipeline": {
+    "full_path": "C:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\internal_exploration\\aiva_exploration_pipeline.py",
+    "filename": "aiva_exploration_pipeline.py",
+    "relative_path": "services\\core\\aiva_core\\internal_exploration\\aiva_exploration_pipeline.py"
+  },
+  "ai_commander": {
+    "full_path": "C:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\task_planning\\ai_commander.py",
+    "filename": "ai_commander.py",
+    "relative_path": "services\\core\\aiva_core\\task_planning\\ai_commander.py"
+  },
+  "aiva_cli_implementation": {
+    "full_path": "C:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\internal_exploration\\python_tools\\aiva_cli_implementation.py",
+    "filename": "aiva_cli_implementation.py",
+    "relative_path": "services\\core\\aiva_core\\internal_exploration\\python_tools\\aiva_cli_implementation.py"
+  },
+  "analyze_dataflow_breakpoints": {
+    "full_path": "C:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\internal_exploration\\self_healing\\analyze_dataflow_breakpoints.py",
+    "filename": "analyze_dataflow_breakpoints.py",
+    "relative_path": "services\\core\\aiva_core\\internal_exploration\\self_healing\\analyze_dataflow_breakpoints.py"
+  },
+  "analyze_missing_function_connections": {
+    "full_path": "C:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\internal_exploration\\self_healing\\analyze_missing_function_connections.py",
+    "filename": "analyze_missing_function_connections.py",
+    "relative_path": "services\\core\\aiva_core\\internal_exploration\\self_healing\\analyze_missing_function_connections.py"
+  },
+  "core_analyzer": {
+    "full_path": "C:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\internal_exploration\\self_healing\\core_analyzer.py",
+    "filename": "core_analyzer.py",
+    "relative_path": "services\\core\\aiva_core\\internal_exploration\\self_healing\\core_analyzer.py"
+  },
+  "practical_analyzer": {
+    "full_path": "C:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\internal_exploration\\self_healing\\practical_analyzer.py",
+    "filename": "practical_analyzer.py",
+    "relative_path": "services\\core\\aiva_core\\internal_exploration\\self_healing\\practical_analyzer.py"
+  },
+  "run_analysis": {
+    "full_path": "C:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\internal_exploration\\self_healing\\run_analysis.py",
+    "filename": "run_analysis.py",
+    "relative_path": "services\\core\\aiva_core\\internal_exploration\\self_healing\\run_analysis.py"
+  },
+  "analyze_results": {
+    "full_path": "C:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\internal_exploration\\self_healing\\analyze_results.py",
+    "filename": "analyze_results.py",
+    "relative_path": "services\\core\\aiva_core\\internal_exploration\\self_healing\\analyze_results.py"
+  },
+  "verify_rl_models": {
+    "full_path": "C:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\internal_exploration\\self_healing\\verify_rl_models.py",
+    "filename": "verify_rl_models.py",
+    "relative_path": "services\\core\\aiva_core\\internal_exploration\\self_healing\\verify_rl_models.py"
+  },
+  "scenario_manager": {
+    "full_path": "C:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\external_learning\\training\\scenario_manager.py",
+    "filename": "scenario_manager.py",
+    "relative_path": "services\\core\\aiva_core\\external_learning\\training\\scenario_manager.py"
+  },
+  "analysis_engine": {
+    "full_path": "C:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\core_capabilities\\analysis\\analysis_engine.py",
+    "filename": "analysis_engine.py",
+    "relative_path": "services\\core\\aiva_core\\core_capabilities\\analysis\\analysis_engine.py"
+  },
+  "real_bio_net_adapter": {
+    "full_path": "C:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\cognitive_core\\neural\\real_bio_net_adapter.py",
+    "filename": "real_bio_net_adapter.py",
+    "relative_path": "services\\core\\aiva_core\\cognitive_core\\neural\\real_bio_net_adapter.py"
+  },
+  "real_neural_core": {
+    "full_path": "C:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\cognitive_core\\neural\\real_neural_core.py",
+    "filename": "real_neural_core.py",
+    "relative_path": "services\\core\\aiva_core\\cognitive_core\\neural\\real_neural_core.py"
+  },
+  "weight_manager": {
+    "full_path": "C:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\cognitive_core\\neural\\weight_manager.py",
+    "filename": "weight_manager.py",
+    "relative_path": "services\\core\\aiva_core\\cognitive_core\\neural\\weight_manager.py"
+  },
+  "vector_store": {
+    "full_path": "C:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\cognitive_core\\rag\\vector_store.py",
+    "filename": "vector_store.py",
+    "relative_path": "services\\core\\aiva_core\\cognitive_core\\rag\\vector_store.py"
+  },
+  "ai_controller": {
+    "full_path": "C:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\service_backbone\\coordination\\ai_controller.py",
+    "filename": "ai_controller.py",
+    "relative_path": "services\\core\\aiva_core\\service_backbone\\coordination\\ai_controller.py"
+  },
+  "backends": {
+    "full_path": "C:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\service_backbone\\storage\\backends.py",
+    "filename": "backends.py",
+    "relative_path": "services\\core\\aiva_core\\service_backbone\\storage\\backends.py"
+  },
+  "external_loop_connector": {
+    "full_path": "C:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\cognitive_core\\external_loop_connector.py",
+    "filename": "external_loop_connector.py",
+    "relative_path": "services\\core\\aiva_core\\cognitive_core\\external_loop_connector.py"
+  },
+  "internal_loop_connector": {
+    "full_path": "C:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\cognitive_core\\internal_loop_connector.py",
+    "filename": "internal_loop_connector.py",
+    "relative_path": "services\\core\\aiva_core\\cognitive_core\\internal_loop_connector.py"
+  },
+  "plan_executor": {
+    "full_path": "C:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\task_planning\\executor\\plan_executor.py",
+    "filename": "plan_executor.py",
+    "relative_path": "services\\core\\aiva_core\\task_planning\\executor\\plan_executor.py"
+  },
+  "protocol_adapter": {
+    "full_path": "C:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\service_backbone\\adapters\\protocol_adapter.py",
+    "filename": "protocol_adapter.py",
+    "relative_path": "services\\core\\aiva_core\\service_backbone\\adapters\\protocol_adapter.py"
+  },
+  "message_broker": {
+    "full_path": "C:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\service_backbone\\messaging\\message_broker.py",
+    "filename": "message_broker.py",
+    "relative_path": "services\\core\\aiva_core\\service_backbone\\messaging\\message_broker.py"
+  },
+  "result_collector": {
+    "full_path": "C:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\service_backbone\\messaging\\result_collector.py",
+    "filename": "result_collector.py",
+    "relative_path": "services\\core\\aiva_core\\service_backbone\\messaging\\result_collector.py"
+  },
+  "task_dispatcher": {
+    "full_path": "C:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\service_backbone\\messaging\\task_dispatcher.py",
+    "filename": "task_dispatcher.py",
+    "relative_path": "services\\core\\aiva_core\\service_backbone\\messaging\\task_dispatcher.py"
+  },
+  "bizlogic_attack_executor": {
+    "full_path": "C:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\core_capabilities\\attack\\bizlogic_attack_executor.py",
+    "filename": "bizlogic_attack_executor.py",
+    "relative_path": "services\\core\\aiva_core\\core_capabilities\\attack\\bizlogic_attack_executor.py"
+  },
+  "assistant": {
+    "full_path": "C:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\core_capabilities\\dialog\\assistant.py",
+    "filename": "assistant.py",
+    "relative_path": "services\\core\\aiva_core\\core_capabilities\\dialog\\assistant.py"
+  },
+  "scan_module_interface": {
+    "full_path": "C:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\core_capabilities\\ingestion\\scan_module_interface.py",
+    "filename": "scan_module_interface.py",
+    "relative_path": "services\\core\\aiva_core\\core_capabilities\\ingestion\\scan_module_interface.py"
+  },
+  "two_phase_scan_orchestrator": {
+    "full_path": "C:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\core_capabilities\\orchestration\\two_phase_scan_orchestrator.py",
+    "filename": "two_phase_scan_orchestrator.py",
+    "relative_path": "services\\core\\aiva_core\\core_capabilities\\orchestration\\two_phase_scan_orchestrator.py"
+  },
+  "to_functions": {
+    "full_path": "C:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\core_capabilities\\output\\to_functions.py",
+    "filename": "to_functions.py",
+    "relative_path": "services\\core\\aiva_core\\core_capabilities\\output\\to_functions.py"
+  },
+  "scan_result_processor": {
+    "full_path": "C:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\core_capabilities\\processing\\scan_result_processor.py",
+    "filename": "scan_result_processor.py",
+    "relative_path": "services\\core\\aiva_core\\core_capabilities\\processing\\scan_result_processor.py"
+  },
+  "skill_graph": {
+    "full_path": "C:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\cognitive_core\\decision\\skill_graph.py",
+    "filename": "skill_graph.py",
+    "relative_path": "services\\core\\aiva_core\\cognitive_core\\decision\\skill_graph.py"
+  },
+  "neural_network": {
+    "full_path": "C:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\cognitive_core\\neural\\neural_network.py",
+    "filename": "neural_network.py",
+    "relative_path": "services\\core\\aiva_core\\cognitive_core\\neural\\neural_network.py"
+  },
+  "rl_models": {
+    "full_path": "C:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\external_learning\\learning\\rl_models.py",
+    "filename": "rl_models.py",
+    "relative_path": "services\\core\\aiva_core\\external_learning\\learning\\rl_models.py"
+  },
+  "initial_surface": {
+    "full_path": "C:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\core_capabilities\\analysis\\initial_surface.py",
+    "filename": "initial_surface.py",
+    "relative_path": "services\\core\\aiva_core\\core_capabilities\\analysis\\initial_surface.py"
+  },
+  "exploit_orchestrator": {
+    "full_path": "C:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\core_capabilities\\attack\\exploit_orchestrator.py",
+    "filename": "exploit_orchestrator.py",
+    "relative_path": "services\\core\\aiva_core\\core_capabilities\\attack\\exploit_orchestrator.py"
+  },
+  "app": {
+    "full_path": "C:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\service_backbone\\api\\app.py",
+    "filename": "app.py",
+    "relative_path": "services\\core\\aiva_core\\service_backbone\\api\\app.py"
+  },
+  "logging_formatter": {
+    "full_path": "C:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\service_backbone\\utils\\logging_formatter.py",
+    "filename": "logging_formatter.py",
+    "relative_path": "services\\core\\aiva_core\\service_backbone\\utils\\logging_formatter.py"
+  },
+  "payload_generator": {
+    "full_path": "C:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\core_capabilities\\attack\\payload_generator.py",
+    "filename": "payload_generator.py",
+    "relative_path": "services\\core\\aiva_core\\core_capabilities\\attack\\payload_generator.py"
+  },
+  "session_state_manager": {
+    "full_path": "C:\\D\\fold7\\AIVA-git\\services\\core\\session_state_manager.py",
+    "filename": "session_state_manager.py",
+    "relative_path": "services\\core\\session_state_manager.py"
+  },
+  "command_callback": {
+    "full_path": "C:\\D\\fold7\\AIVA-git\\services\\core\\ui\\command_callback.py",
+    "filename": "command_callback.py",
+    "relative_path": "services\\core\\ui\\command_callback.py"
+  },
+  "attack_chain": {
+    "full_path": "C:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\core_capabilities\\attack\\attack_chain.py",
+    "filename": "attack_chain.py",
+    "relative_path": "services\\core\\aiva_core\\core_capabilities\\attack\\attack_chain.py"
+  },
+  "dashboard": {
+    "full_path": "C:\\D\\fold7\\AIVA-git\\services\\core\\ui\\dashboard.py",
+    "filename": "dashboard.py",
+    "relative_path": "services\\core\\ui\\dashboard.py"
+  },
+  "improved_ui": {
+    "full_path": "C:\\D\\fold7\\AIVA-git\\services\\core\\ui\\improved_ui.py",
+    "filename": "improved_ui.py",
+    "relative_path": "services\\core\\ui\\improved_ui.py"
+  },
+  "__init__": {
+    "full_path": "C:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\__init__.py",
+    "filename": "__init__.py",
+    "relative_path": "services\\core\\aiva_core\\__init__.py"
+  },
+  "server": {
+    "full_path": "C:\\D\\fold7\\AIVA-git\\services\\core\\ui\\server.py",
+    "filename": "server.py",
+    "relative_path": "services\\core\\ui\\server.py"
+  },
+  "rich_cli": {
+    "full_path": "C:\\D\\fold7\\AIVA-git\\services\\core\\ui\\rich_cli.py",
+    "filename": "rich_cli.py",
+    "relative_path": "services\\core\\ui\\rich_cli.py"
+  },
+  "auto_server": {
+    "full_path": "C:\\D\\fold7\\AIVA-git\\services\\core\\ui\\auto_server.py",
+    "filename": "auto_server.py",
+    "relative_path": "services\\core\\ui\\auto_server.py"
+  },
+  "server_v3": {
+    "full_path": "C:\\D\\fold7\\AIVA-git\\services\\core\\ui\\server_v3.py",
+    "filename": "server_v3.py",
+    "relative_path": "services\\core\\ui\\server_v3.py"
+  },
+  "ai_capability_query": {
+    "full_path": "C:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\cognitive_core\\ai_capability_query.py",
+    "filename": "ai_capability_query.py",
+    "relative_path": "services\\core\\aiva_core\\cognitive_core\\ai_capability_query.py"
+  },
+  "capability_registry": {
+    "full_path": "C:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\core_capabilities\\capability_registry.py",
+    "filename": "capability_registry.py",
+    "relative_path": "services\\core\\aiva_core\\core_capabilities\\capability_registry.py"
+  },
+  "experience_manager": {
+    "full_path": "C:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\external_learning\\experience_manager.py",
+    "filename": "experience_manager.py",
+    "relative_path": "services\\core\\aiva_core\\external_learning\\experience_manager.py"
+  },
+  "trace_recorder": {
+    "full_path": "C:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\external_learning\\tracing\\trace_recorder.py",
+    "filename": "trace_recorder.py",
+    "relative_path": "services\\core\\aiva_core\\external_learning\\tracing\\trace_recorder.py"
+  },
+  "ast_trace_comparator": {
+    "full_path": "C:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\external_learning\\analysis\\ast_trace_comparator.py",
+    "filename": "ast_trace_comparator.py",
+    "relative_path": "services\\core\\aiva_core\\external_learning\\analysis\\ast_trace_comparator.py"
+  },
+  "multilang_coordinator": {
+    "full_path": "C:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\core_capabilities\\multilang_coordinator.py",
+    "filename": "multilang_coordinator.py",
+    "relative_path": "services\\core\\aiva_core\\core_capabilities\\multilang_coordinator.py"
+  },
+  "event_listener": {
+    "full_path": "C:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\external_learning\\event_listener.py",
+    "filename": "event_listener.py",
+    "relative_path": "services\\core\\aiva_core\\external_learning\\event_listener.py"
+  },
+  "enhanced_unified_caller": {
+    "full_path": "C:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\service_backbone\\api\\enhanced_unified_caller.py",
+    "filename": "enhanced_unified_caller.py",
+    "relative_path": "services\\core\\aiva_core\\service_backbone\\api\\enhanced_unified_caller.py"
+  },
+  "task_executor": {
+    "full_path": "C:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\task_planning\\executor\\task_executor.py",
+    "filename": "task_executor.py",
+    "relative_path": "services\\core\\aiva_core\\task_planning\\executor\\task_executor.py"
+  },
+  "unified_function_caller": {
+    "full_path": "C:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\service_backbone\\api\\unified_function_caller.py",
+    "filename": "unified_function_caller.py",
+    "relative_path": "services\\core\\aiva_core\\service_backbone\\api\\unified_function_caller.py"
+  },
+  "storage_manager": {
+    "full_path": "C:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\service_backbone\\storage\\storage_manager.py",
+    "filename": "storage_manager.py",
+    "relative_path": "services\\core\\aiva_core\\service_backbone\\storage\\storage_manager.py"
+  },
+  "cli_integration_example": {
+    "full_path": "C:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\service_backbone\\storage\\examples\\cli_integration_example.py",
+    "filename": "cli_integration_example.py",
+    "relative_path": "services\\core\\aiva_core\\service_backbone\\storage\\examples\\cli_integration_example.py"
+  },
+  "postgresql_vector_store": {
+    "full_path": "C:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\cognitive_core\\rag\\postgresql_vector_store.py",
+    "filename": "postgresql_vector_store.py",
+    "relative_path": "services\\core\\aiva_core\\cognitive_core\\rag\\postgresql_vector_store.py"
+  },
+  "test_scope_management": {
+    "full_path": "C:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\cognitive_core\\test_scope_management.py",
+    "filename": "test_scope_management.py",
+    "relative_path": "services\\core\\aiva_core\\cognitive_core\\test_scope_management.py"
+  },
+  "analyze_connection_recommendations": {
+    "full_path": "C:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\internal_exploration\\self_healing\\analyze_connection_recommendations.py",
+    "filename": "analyze_connection_recommendations.py",
+    "relative_path": "services\\core\\aiva_core\\internal_exploration\\self_healing\\analyze_connection_recommendations.py"
+  },
+  "attack_validator": {
+    "full_path": "C:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\core_capabilities\\attack\\attack_validator.py",
+    "filename": "attack_validator.py",
+    "relative_path": "services\\core\\aiva_core\\core_capabilities\\attack\\attack_validator.py"
+  },
+  "unified_vector_store": {
+    "full_path": "C:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\cognitive_core\\rag\\unified_vector_store.py",
+    "filename": "unified_vector_store.py",
+    "relative_path": "services\\core\\aiva_core\\cognitive_core\\rag\\unified_vector_store.py"
+  },
+  "execution_planner": {
+    "full_path": "C:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\task_planning\\planner\\execution_planner.py",
+    "filename": "execution_planner.py",
+    "relative_path": "services\\core\\aiva_core\\task_planning\\planner\\execution_planner.py"
+  },
+  "plan_comparator": {
+    "full_path": "C:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\task_planning\\planner\\plan_comparator.py",
+    "filename": "plan_comparator.py",
+    "relative_path": "services\\core\\aiva_core\\task_planning\\planner\\plan_comparator.py"
+  },
+  "attack_executor": {
+    "full_path": "C:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\core_capabilities\\attack\\attack_executor.py",
+    "filename": "attack_executor.py",
+    "relative_path": "services\\core\\aiva_core\\core_capabilities\\attack\\attack_executor.py"
+  },
+  "parallel_processor": {
+    "full_path": "C:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\service_backbone\\performance\\parallel_processor.py",
+    "filename": "parallel_processor.py",
+    "relative_path": "services\\core\\aiva_core\\service_backbone\\performance\\parallel_processor.py"
+  },
+  "capability_orchestrator": {
+    "full_path": "C:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\cognitive_core\\capability_orchestrator.py",
+    "filename": "capability_orchestrator.py",
+    "relative_path": "services\\core\\aiva_core\\cognitive_core\\capability_orchestrator.py"
+  },
+  "enhanced_decision_agent": {
+    "full_path": "C:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\cognitive_core\\decision\\enhanced_decision_agent.py",
+    "filename": "enhanced_decision_agent.py",
+    "relative_path": "services\\core\\aiva_core\\cognitive_core\\decision\\enhanced_decision_agent.py"
+  },
+  "context_manager": {
+    "full_path": "C:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\service_backbone\\context_manager.py",
+    "filename": "context_manager.py",
+    "relative_path": "services\\core\\aiva_core\\service_backbone\\context_manager.py"
+  },
+  "attack_plan_mapper": {
+    "full_path": "C:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\task_planning\\executor\\attack_plan_mapper.py",
+    "filename": "attack_plan_mapper.py",
+    "relative_path": "services\\core\\aiva_core\\task_planning\\executor\\attack_plan_mapper.py"
+  },
+  "execution_status_monitor": {
+    "full_path": "C:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\task_planning\\executor\\execution_status_monitor.py",
+    "filename": "execution_status_monitor.py",
+    "relative_path": "services\\core\\aiva_core\\task_planning\\executor\\execution_status_monitor.py"
+  },
+  "unified_memory_manager": {
+    "full_path": "C:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\service_backbone\\performance\\unified_memory_manager.py",
+    "filename": "unified_memory_manager.py",
+    "relative_path": "services\\core\\aiva_core\\service_backbone\\performance\\unified_memory_manager.py"
+  },
+  "ast_parser": {
+    "full_path": "C:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\task_planning\\planner\\ast_parser.py",
+    "filename": "ast_parser.py",
+    "relative_path": "services\\core\\aiva_core\\task_planning\\planner\\ast_parser.py"
+  },
+  "task_converter": {
+    "full_path": "C:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\task_planning\\planner\\task_converter.py",
+    "filename": "task_converter.py",
+    "relative_path": "services\\core\\aiva_core\\task_planning\\planner\\task_converter.py"
+  },
+  "task_generator": {
+    "full_path": "C:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\task_planning\\planner\\task_generator.py",
+    "filename": "task_generator.py",
+    "relative_path": "services\\core\\aiva_core\\task_planning\\planner\\task_generator.py"
+  },
+  "tool_selector": {
+    "full_path": "C:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\task_planning\\planner\\tool_selector.py",
+    "filename": "tool_selector.py",
+    "relative_path": "services\\core\\aiva_core\\task_planning\\planner\\tool_selector.py"
+  },
+  "core_service_coordinator": {
+    "full_path": "C:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\service_backbone\\coordination\\core_service_coordinator.py",
+    "filename": "core_service_coordinator.py",
+    "relative_path": "services\\core\\aiva_core\\service_backbone\\coordination\\core_service_coordinator.py"
+  },
+  "dynamic_strategy_adjustment": {
+    "full_path": "C:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\external_learning\\analysis\\dynamic_strategy_adjustment.py",
+    "filename": "dynamic_strategy_adjustment.py",
+    "relative_path": "services\\core\\aiva_core\\external_learning\\analysis\\dynamic_strategy_adjustment.py"
+  },
+  "risk_assessment_engine": {
+    "full_path": "C:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\external_learning\\analysis\\risk_assessment_engine.py",
+    "filename": "risk_assessment_engine.py",
+    "relative_path": "services\\core\\aiva_core\\external_learning\\analysis\\risk_assessment_engine.py"
+  },
+  "exploit_manager_legacy": {
+    "full_path": "C:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\core_capabilities\\attack\\exploit_manager_legacy.py",
+    "filename": "exploit_manager_legacy.py",
+    "relative_path": "services\\core\\aiva_core\\core_capabilities\\attack\\exploit_manager_legacy.py"
+  },
+  "anti_hallucination_module": {
+    "full_path": "C:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\cognitive_core\\anti_hallucination\\anti_hallucination_module.py",
+    "filename": "anti_hallucination_module.py",
+    "relative_path": "services\\core\\aiva_core\\cognitive_core\\anti_hallucination\\anti_hallucination_module.py"
+  },
+  "knowledge_base": {
+    "full_path": "C:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\cognitive_core\\rag\\knowledge_base.py",
+    "filename": "knowledge_base.py",
+    "relative_path": "services\\core\\aiva_core\\cognitive_core\\rag\\knowledge_base.py"
+  },
+  "rag_engine": {
+    "full_path": "C:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\cognitive_core\\rag\\rag_engine.py",
+    "filename": "rag_engine.py",
+    "relative_path": "services\\core\\aiva_core\\cognitive_core\\rag\\rag_engine.py"
+  },
+  "websocket_manager": {
+    "full_path": "C:\\D\\fold7\\AIVA-git\\services\\core\\ui\\websocket_manager.py",
+    "filename": "websocket_manager.py",
+    "relative_path": "services\\core\\ui\\websocket_manager.py"
+  },
+  "db_helper": {
+    "full_path": "C:\\D\\fold7\\AIVA-git\\services\\core\\aiva_core\\service_backbone\\storage\\db_helper.py",
+    "filename": "db_helper.py",
+    "relative_path": "services\\core\\aiva_core\\service_backbone\\storage\\db_helper.py"
+  }
+}

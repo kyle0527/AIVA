@@ -10,97 +10,13 @@ from typing import TYPE_CHECKING, Any
 from jinja2 import Template
 import structlog
 
-# 使用統一的可選依賴管理框架
-from utilities.optional_deps import deps
+# 直接導入plotly - 缺少依賴時應明確報錯，不使用降級邏輯
+from plotly.subplots import make_subplots
+import plotly.graph_objects as go
 
 # 型別檢查時的導入
 if TYPE_CHECKING:
-    try:
-        import plotly.graph_objects as go
-        PlotlyFigure = go.Figure
-    except ImportError:
-        PlotlyFigure = Any
-
-# 註冊 plotly 依賴
-deps.register("plotly", ["plotly"])
-
-# 使用統一的 optional dependency 處理
-if deps.is_available("plotly"):
-    from plotly.subplots import make_subplots
-    import plotly.graph_objects as go
-else:
-    # 統一的 Mock 實現
-    class MockFigure:
-        def __init__(self, *args, **kwargs):
-            self.data = []
-            self.layout = {}
-        
-        def add_trace(self, trace, row=None, col=None):
-            """添加圖表追蹤"""
-            self.data.append(trace)
-            return self
-            
-        def update_layout(self, **kwargs):
-            """更新佈局"""
-            self.layout.update(kwargs)
-            return self
-            
-        def to_html(self, *args, **kwargs):
-            """生成 HTML（Mock 版本）"""
-            return """
-            <div style="border: 2px dashed #ccc; padding: 20px; text-align: center; background: #f9f9f9;">
-                <h3>📊 Plotly 圖表區域</h3>
-                <p>此處應顯示互動式權限矩陣圖表</p>
-                <p><small>需要安裝 plotly: pip install plotly</small></p>
-            </div>
-            """
-            
-        def write_html(self, file, *args, **kwargs):
-            """寫入 HTML 檔案"""
-            with open(file, 'w', encoding='utf-8') as f:
-                f.write(self.to_html())
-    
-    class MockTrace:
-        """Mock 追蹤物件基類"""
-        def __init__(self, *args, **kwargs):
-            self.x = kwargs.get('x', [])
-            self.y = kwargs.get('y', [])
-            self.z = kwargs.get('z', [])
-            self.text = kwargs.get('text', [])
-            self.name = kwargs.get('name', '')
-            self.colorscale = kwargs.get('colorscale', 'Viridis')
-    
-    class MockHeatmap(MockTrace):
-        """Mock Heatmap 追蹤"""
-        def __init__(self, *args, **kwargs):
-            super().__init__(*args, **kwargs)
-            self.type = 'heatmap'
-    
-    class MockBar(MockTrace):
-        """Mock Bar 追蹤"""
-        def __init__(self, *args, **kwargs):
-            super().__init__(*args, **kwargs)
-            self.type = 'bar'
-    
-    class MockScatter(MockTrace):
-        """Mock Scatter 追蹤"""
-        def __init__(self, *args, **kwargs):
-            super().__init__(*args, **kwargs)
-            self.type = 'scatter'
-            self.mode = kwargs.get('mode', 'markers')
-    
-    class MockGraphObjects:
-        """Mock plotly.graph_objects 模組"""
-        Figure = MockFigure
-        Heatmap = MockHeatmap
-        Bar = MockBar
-        Scatter = MockScatter
-    
-    go = MockGraphObjects()
-    
-    def make_subplots(*args, **kwargs):
-        """Mock make_subplots 函數"""
-        return MockFigure()
+    PlotlyFigure = go.Figure
 
 from .permission_matrix import AccessDecision, PermissionMatrix
 

@@ -161,8 +161,8 @@ class AIVACoreServiceCoordinator:
     def _apply_initial_config(self):
         """應用初始配置"""
         try:
-            # 獲取服務配置
-            service_config = self.config_manager.get_config("core_service", {})
+            # 獲取服務配置（使用 get() 方法）
+            service_config = self.config_manager.get("core_service", {})
 
             # 設置服務ID
             self.service_id = service_config.get(
@@ -244,11 +244,14 @@ class AIVACoreServiceCoordinator:
         # 啟動跨語言服務
         await self.cross_lang_service.start_server([])
 
-        # 啟動監控服務
-        await self.monitoring_service.start()
+        # 初始化監控服務（aiva_common API）
+        if hasattr(self.monitoring_service, 'initialize'):
+            await self.monitoring_service.initialize()
+        elif hasattr(self.monitoring_service, 'start'):
+            await self.monitoring_service.start()
 
-        # 啟動安全管理器
-        await self.security_manager.start()
+        # 初始化安全管理器（aiva_common API）
+        await self.security_manager.initialize()
 
         self.logger.debug("共享服務啟動完成")
 
@@ -260,13 +263,21 @@ class AIVACoreServiceCoordinator:
         available_commands = self.command_router.get_available_commands()
         self.logger.info(f"命令路由器就緒，支持 {len(available_commands)} 個命令")
 
-        # 檢查上下文管理器
-        stats = await self.context_manager.get_context_stats()
-        self.logger.debug(f"上下文管理器就緒: {stats}")
+        # 檢查上下文管理器（處理同步/異步方法）
+        try:
+            stats_result = self.context_manager.get_context_stats()
+            stats = await stats_result if hasattr(stats_result, '__await__') else stats_result
+            self.logger.debug(f"上下文管理器就緒: {stats}")
+        except Exception as e:
+            self.logger.warning(f"上下文管理器檢查失敗: {e}")
 
-        # 檢查執行計劃器
-        exec_stats = await self.execution_planner.get_execution_stats()
-        self.logger.debug(f"執行計劃器就緒: {exec_stats}")
+        # 檢查執行計劃器（處理同步/異步方法）
+        try:
+            exec_stats_result = self.execution_planner.get_execution_stats()
+            exec_stats = await exec_stats_result if hasattr(exec_stats_result, '__await__') else exec_stats_result
+            self.logger.debug(f"執行計劃器就緒: {exec_stats}")
+        except Exception as e:
+            self.logger.warning(f"執行計劃器檢查失敗: {e}")
 
         self.logger.debug("核心組件啟動檢查完成")
 
@@ -311,14 +322,18 @@ class AIVACoreServiceCoordinator:
 
     async def _stop_shared_services(self):
         """停止共享服務"""
-        # 停止安全管理器
-        await self.security_manager.stop()
+        # 停止安全管理器（如果有 stop 方法）
+        if hasattr(self.security_manager, 'stop'):
+            await self.security_manager.stop()
 
         # 停止跨語言服務
         await self.cross_lang_service.stop_server()
 
         # 停止監控服務（最後停止）
-        await self.monitoring_service.stop()
+        if hasattr(self.monitoring_service, 'stop'):
+            await self.monitoring_service.stop()
+        elif hasattr(self.monitoring_service, 'shutdown'):
+            await self.monitoring_service.shutdown()
 
         self.logger.debug("共享服務停止完成")
 

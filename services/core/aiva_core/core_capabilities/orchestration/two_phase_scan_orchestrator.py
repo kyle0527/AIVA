@@ -72,6 +72,43 @@ class TwoPhaseScanOrchestrator:
         self.phase0_timeout = 600  # 10 分鐘
         self.phase1_timeout = 1800  # 30 分鐘
 
+    async def execute_scan_with_context(
+        self,
+        scan_context
+    ) -> Phase1CompletedPayload:
+        """使用 ScanTaskContext 執行掃描（新接口）
+        
+        這是標準化的掃描接口，接收統一的任務參數包。
+        
+        Args:
+            scan_context: ScanTaskContext 對象或包含任務信息的字典
+        
+        Returns:
+            Phase1CompletedPayload 掃描結果
+        """
+        # 提取參數
+        if hasattr(scan_context, 'target'):
+            # ScanTaskContext 對象
+            targets = [scan_context.target]
+            trace_id = scan_context.task_id
+            max_depth = scan_context.constraints.max_depth if hasattr(scan_context, 'constraints') else 3
+            max_urls = scan_context.constraints.max_urls if hasattr(scan_context, 'constraints') else 1000
+        else:
+            # 字典格式（向後兼容）
+            targets = [scan_context.get('target', '')]
+            trace_id = scan_context.get('task_id', 'unknown')
+            constraints = scan_context.get('constraints', {})
+            max_depth = constraints.get('max_depth', 3)
+            max_urls = constraints.get('max_urls', 1000)
+        
+        # 調用原有方法
+        return await self.execute_two_phase_scan(
+            targets=targets,
+            trace_id=trace_id,
+            max_depth=max_depth,
+            max_urls=max_urls
+        )
+
     async def execute_two_phase_scan(
         self,
         targets: list[str],
