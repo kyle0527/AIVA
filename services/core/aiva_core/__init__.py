@@ -120,12 +120,12 @@ class StranglerFigMigrationController:
                 
         except Exception as e:
             logger.error(f"❌ {service_name} 調用失敗: {e}")
-            
-            # 降級策略
-            if rule['fallback_strategy'] == 'legacy_first':
-                return self._call_legacy_system(rule['legacy_path'], operation, **kwargs)
-            else:
-                return self._call_modern_system(rule['modern_path'], operation, **kwargs)
+            # 嚴格模式：不降級，直接報錯
+            raise RuntimeError(
+                f"服務 {service_name} 調用失敗: {e}。"
+                f"請檢查 {'modern' if use_modern else 'legacy'} 路徑 "
+                f"{rule['modern_path'] if use_modern else rule['legacy_path']} 是否正確配置。"
+            ) from e
     
     def _call_modern_system(self, modern_path: str, operation: str, **kwargs) -> Any:
         """調用新系統"""

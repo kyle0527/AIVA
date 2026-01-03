@@ -393,7 +393,12 @@ class AIVACommandProcessor:
                 "intent": "run_scan",
                 "message": "請提供要掃描的目標 URL，例如：「掃描 https://example.com」",
                 "executable": False,
-            }    
+            }
+        
+        # 解析多目標（支持逗號、分號、空格分隔）
+        targets = [t.strip() for t in re.split(r"[,，;；\s]+", target) if t.strip()]
+        return target, targets, None
+    
     def _parse_constraints(self, user_input: str) -> dict[str, Any]:
         """解析能力限制和排除网页 (步骤0补充)
         
@@ -434,9 +439,6 @@ class AIVACommandProcessor:
             constraints["allowed_capabilities"] = caps
         
         return constraints
-        # 解析多目標（支持逗號、分號、空格分隔）
-        targets = [t.strip() for t in re.split(r"[,，;；\s]+", target) if t.strip()]
-        return target, targets, None
     
     def _determine_scan_strategy(self, scan_type: str, original_input: str) -> str:
         """決定掃描策略
@@ -458,8 +460,15 @@ class AIVACommandProcessor:
         """執行多引擎掃描
         
         複雜度: A (4) - 條件分支
+        
+        注意: MultiEngineCoordinator 尚在開發中，如果導入失敗則回退到 RAG 搜索
         """
-        from services.scan.coordinators.multi_engine_coordinator import MultiEngineCoordinator
+        try:
+            from services.scan.coordinators.multi_engine_coordinator import MultiEngineCoordinator
+        except ImportError:
+            # MultiEngineCoordinator 尚未實現，拋出異常讓調用者使用 RAG 方式
+            raise ImportError("MultiEngineCoordinator 尚未實現")
+        
         coordinator = MultiEngineCoordinator()
         
         if strategy == "phase0":

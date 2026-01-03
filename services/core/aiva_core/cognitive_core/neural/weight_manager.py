@@ -17,7 +17,7 @@ import json
 import logging
 import time
 from pathlib import Path
-from typing import Dict, Any, Optional, Union, Tuple
+from typing import Any, Dict, Optional, Union, Tuple
 from dataclasses import dataclass
 from datetime import datetime
 import shutil
@@ -32,7 +32,7 @@ class WeightMetadata:
     """權重檔案元數據"""
     version: str
     created_at: str
-    model_architecture: Dict[str, Any]
+    model_architecture: dict[str, Any]
     total_parameters: int
     file_hash: str
     pytorch_version: str
@@ -220,7 +220,7 @@ class AIWeightManager:
             logger.error(f"權重載入失敗: {e}")
             raise
     
-    def list_available_weights(self, model_name: Optional[str] = None) -> Dict[str, list]:
+    def list_available_weights(self, model_name: Optional[str] = None) -> dict[str, list]:
         """列出可用的權重檔案"""
         try:
             if model_name:

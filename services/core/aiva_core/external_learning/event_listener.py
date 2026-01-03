@@ -20,6 +20,7 @@ from aio_pika.abc import AbstractIncomingMessage
 
 from services.aiva_common.enums import Topic
 from services.aiva_common.schemas import AivaMessage
+from services.aiva_common.schemas.dual_loop import ExecutionPlan, ExecutionTrace
 
 logger = logging.getLogger(__name__)
 
@@ -184,23 +185,27 @@ class ExternalLearningListener:
         try:
             logger.info(f"\n🧠 Processing learning for plan {plan_id}...")
             
+            # 將 dict 轉換為 Pydantic 模型
+            plan_model = ExecutionPlan.model_validate(plan)
+            trace_models = [ExecutionTrace.model_validate(t) for t in trace]
+            
             # 使用 ExternalLoopConnector 處理（只需 plan 和 trace）
             processing_result = await self.connector.process_execution_result(
-                plan=plan,
-                trace=trace,
+                plan=plan_model,
+                trace=trace_models,
             )
             
-            # 顯示處理結果
+            # 顯示處理結果（使用點符號存取 Pydantic 模型屬性）
             logger.info("\n" + "=" * 60)
             logger.info(f"✅ Learning Processing Completed for {plan_id}")
             logger.info("=" * 60)
-            logger.info(f"   Deviations found:       {processing_result['deviations_found']}")
-            logger.info(f"   Deviations significant: {processing_result['deviations_significant']}")
-            logger.info(f"   Training triggered:     {processing_result['training_triggered']}")
-            logger.info(f"   Weights updated:        {processing_result['weights_updated']}")
+            logger.info(f"   Deviations found:       {processing_result.deviations_found}")
+            logger.info(f"   Deviations significant: {processing_result.deviations_significant}")
+            logger.info(f"   Training triggered:     {processing_result.training_triggered}")
+            logger.info(f"   Weights updated:        {processing_result.weights_updated}")
             
-            if processing_result.get("new_weights_version"):
-                logger.info(f"   New weights version:    {processing_result['new_weights_version']}")
+            if processing_result.new_weights_version:
+                logger.info(f"   New weights version:    {processing_result.new_weights_version}")
             
             logger.info("=" * 60 + "\n")
             

@@ -2,16 +2,16 @@
 AI Commander - AIVA 中央 AI 指揮系統
 
 統一指揮所有 AI 組件：
-1. BioNeuronRAGAgent（Python 主控 AI）
+1. 5M 特化神經網路決策引擎（無 LLM/NLU 依賴）
 2. RAG Engine（知識檢索增強）
-3. Training Orchestrator（訓練系統）
-4. Multi-Language AI Modules（Go/Rust/TypeScript AI）
+3. Experience Manager（經驗管理）
+4. Multi-Language AI Modules（Go/Rust/TypeScript）
 
 架構設計：
 - AI Commander 作為最高指揮層
-- 各語言 AI 作為專業執行層
-- RAG 提供知識支持
-- Training 提供持續學習
+- 5M 神經網路作為核心決策引擎
+- RAG 提供歷史經驗檢索
+- 持續學習優化決策能力
 """
 
 from datetime import datetime
@@ -24,7 +24,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 # 直接導入所需組件，遵循 aiva_common 規範：有錯就報錯
-from ..cognitive_core.neural.real_bio_net_adapter import RealBioNeuronRAGAgent as BioNeuronRAGAgent
+from ..cognitive_core.neural.real_neural_core import RealDecisionEngine
 from ..external_learning.experience_manager import ExperienceManager
 from ..external_learning.learning.model_trainer import ModelTrainer
 from ..core_capabilities.multilang_coordinator import MultiLanguageAICoordinator
@@ -35,6 +35,25 @@ from ..core_capabilities.task_context import TaskContext, parse_user_input_to_co
 # v2.0: 統一反饋架構支援
 from .mode_manager import ModeManager, get_mode_manager
 from .executor.execution_status_monitor import ExecutionContext, EnvironmentType
+
+# v3.0: 預定義能力選單系統 - 無 NLU/LLM 依賴
+from aiva_common.enums.capabilities import (
+    AttackCapability,
+    ScanCapability,
+    ReconCapability,
+    AnalysisCapability,
+    ForensicCapability,
+    ExploitCapability,
+    ReportCapability,
+    CapabilityParameter,
+    get_capability_config,
+    get_all_capabilities,
+    validate_capability_params,
+)
+from aiva_common.enums.capability_executor import (
+    CapabilityExecutor,
+    ExecutionResult,
+)
 
 
 class AITaskType(str, Enum):
@@ -66,7 +85,7 @@ class AITaskType(str, Enum):
 class AIComponent(str, Enum):
     """AI 組件類型"""
 
-    BIO_NEURON_AGENT = "bio_neuron_agent"  # Python 主控 AI
+    DECISION_ENGINE_5M = "decision_engine_5m"  # 5M 參數決策引擎
     RAG_ENGINE = "rag_engine"  # RAG 引擎
     TRAINING_SYSTEM = "training_system"  # 訓練系統
     MULTILANG_COORDINATOR = "multilang_coordinator"  # 多語言協調器
@@ -106,10 +125,15 @@ class AICommander:
 
         # === 核心 AI 組件 ===
         # 直接初始化，不使用降級邏輯
-        # 1. Python 主控 AI（BioNeuronRAGAgent）
-        logger.info("  Loading BioNeuronRAGAgent...")
-        self.bio_neuron_agent = BioNeuronRAGAgent(codebase_path)
-        logger.info("  ✅ BioNeuronRAGAgent loaded")
+        # 1. 5M 特化神經網路決策引擎（無 LLM/NLU 依賴）
+        logger.info("  Loading 5M Decision Engine...")
+        weights_path = self.data_directory / "weights" / "aiva_real_weights.pth"
+        weights_path.parent.mkdir(parents=True, exist_ok=True)
+        self.decision_engine = RealDecisionEngine(
+            use_5m_model=True,
+            weights_path=str(weights_path) if weights_path.exists() else None
+        )
+        logger.info("  ✅ 5M Decision Engine loaded")
 
         # 2. RAG 系統（知識增強）
         logger.info("  Loading RAG Engine...")
@@ -122,6 +146,7 @@ class AICommander:
             data_directory=self.data_directory / "knowledge",
         )
         self.rag_engine = RAGEngine(knowledge_base=knowledge_base)
+        self.knowledge_base = knowledge_base  # 保存引用以供後續使用
         logger.info("  ✅ RAG Engine loaded")
 
         # 3. 經驗管理和模型訓練 - 簡化版
@@ -180,6 +205,13 @@ class AICommander:
         )
         logger.info(f"  ✅ Mode Manager loaded: {self.mode_manager.get_mode().value}")
 
+        # 9. 能力選單執行器 (v3.0 - 無 NLU/LLM)
+        logger.info("  Loading Capability Executor...")
+        self.capability_executor = CapabilityExecutor(
+            decision_engine=self.decision_engine
+        )
+        logger.info("  ✅ Capability Executor loaded (menu-based, no NLU/LLM)")
+
         # === 指揮狀態 ===
         self.command_history: list[dict[str, Any]] = []
         self.active_tasks: dict[str, dict[str, Any]] = {}
@@ -213,7 +245,8 @@ class AICommander:
 
         logger.info("✅ AI Commander initialized successfully")
         logger.info("   - All components loaded (no fallback mode)")
-        logger.info("   - BioNeuronRAGAgent: ✅")
+        logger.info("   - 5M Decision Engine: ✅")
+        logger.info("   - Capability Executor: ✅ (menu-based)")
         logger.info("   - RAG Engine: ✅")
         logger.info("   - ExperienceManager: ✅")
         logger.info("   - ModelTrainer: ✅")
@@ -221,6 +254,124 @@ class AICommander:
         logger.info("   - Multi-Language Coordinator: ✅")
         logger.info("   - Internal Loop Connector: ✅")
         logger.info(f"   - Mode Manager: ✅ (mode={self.mode_manager.get_mode().value})")
+
+    # =========================================================================
+    # 選單式能力操作 (v3.0) - 無 NLU/LLM 依賴
+    # =========================================================================
+
+    def list_available_capabilities(
+        self, category: str | None = None
+    ) -> dict[str, list[dict[str, Any]]]:
+        """列出所有可用能力選單
+        
+        Args:
+            category: 類別過濾 (attack/scan/recon/analysis/forensic/exploit/report)
+            
+        Returns:
+            按類別分組的能力列表
+        """
+        capabilities = self.capability_executor.list_capabilities(category)
+        
+        # 轉換為字典格式
+        result = {}
+        for cat, cap_list in capabilities.items():
+            result[cat] = [
+                {
+                    "id": cap.id,
+                    "name": cap.name,
+                    "description": cap.description,
+                    "required_params": cap.required_params,
+                    "optional_params": cap.optional_params,
+                    "risk_level": cap.risk_level,
+                }
+                for cap in cap_list
+            ]
+        
+        return result
+
+    async def execute_capability(
+        self,
+        capability: str,
+        target: str,
+        parameters: dict[str, Any] | None = None,
+    ) -> ExecutionResult:
+        """執行選定的能力
+        
+        選單式操作：能力從預定義列表選擇，只需輸入目標和參數
+        
+        Args:
+            capability: 能力 ID (從 list_available_capabilities 選擇)
+            target: 目標 (URL/IP/Domain/Path)
+            parameters: 額外參數
+            
+        Returns:
+            執行結果
+            
+        Example:
+            >>> commander = AICommander()
+            >>> # 1. 列出攻擊能力
+            >>> caps = commander.list_available_capabilities("attack")
+            >>> # 2. 選擇 SQL 注入
+            >>> result = await commander.execute_capability(
+            ...     capability="sql_injection",
+            ...     target="https://example.com/api/users?id=1"
+            ... )
+        """
+        logger.info(f"📋 Menu-based execution: {capability} -> {target}")
+        
+        # 使用能力執行器執行
+        result = await self.capability_executor.execute(
+            capability=capability,
+            target=target,
+            parameters=parameters,
+            use_neural_optimization=True,  # 使用 5M 引擎優化
+        )
+        
+        # 記錄到命令歷史
+        self.command_history.append({
+            "type": "capability_execution",
+            "capability": capability,
+            "target": target,
+            "parameters": parameters,
+            "success": result.success,
+            "timestamp": datetime.now().isoformat(),
+        })
+        
+        return result
+
+    def get_capability_info(self, capability: str) -> dict[str, Any] | None:
+        """獲取單個能力的詳細信息
+        
+        Args:
+            capability: 能力 ID
+            
+        Returns:
+            能力詳細信息
+        """
+        cap_info = self.capability_executor.get_capability_info(capability)
+        if cap_info:
+            return {
+                "id": cap_info.id,
+                "name": cap_info.name,
+                "description": cap_info.description,
+                "category": cap_info.category,
+                "required_params": cap_info.required_params,
+                "optional_params": cap_info.optional_params,
+                "risk_level": cap_info.risk_level,
+                "default_timeout": cap_info.default_timeout,
+            }
+        return None
+
+    def print_capability_menu(self, category: str | None = None) -> str:
+        """生成可讀的能力選單
+        
+        Args:
+            category: 類別過濾
+            
+        Returns:
+            格式化的選單字串
+        """
+        return self.capability_executor.print_menu(category)
 
     def set_execution_mode(
         self,
@@ -378,46 +529,27 @@ class AICommander:
                 else []
             )
 
-            # 3. 使用 BioNeuronRAGAgent 生成計畫
-            plan_prompt = self._build_plan_generation_prompt(
+            # 3. 使用 5M Decision Engine 生成計畫
+            # 將目標和歷史數據編碼為神經網路輸入
+            target_features = self._encode_target_for_neural(target, rag_context)
+            
+            # 調用 5M 決策引擎生成攻擊向量和策略
+            neural_decision = self.decision_engine.generate_decision(
+                target_info=target_features,
+                context={
+                    "objective": objective,
+                    "historical_count": len(historical_experiences),
+                    "constraints": constraints,
+                }
+            )
+
+            # 使用神經網路輸出構建計畫結構
+            plan_response = self._build_plan_from_neural_decision(
+                neural_decision=neural_decision,
                 target=target,
                 objective=objective,
                 rag_context=rag_context,
                 historical_experiences=historical_experiences,
-                constraints=constraints,
-            )
-
-            # 調用 BioNeuron 生成計畫
-            plan_response = await self.bio_neuron_agent.generate_structured_output(
-                prompt=plan_prompt,
-                output_schema={
-                    "type": "object",
-                    "properties": {
-                        "plan_id": {"type": "string"},
-                        "target": {"type": "string"},
-                        "objective": {"type": "string"},
-                        "phases": {
-                            "type": "array",
-                            "items": {
-                                "type": "object",
-                                "properties": {
-                                    "name": {"type": "string"},
-                                    "description": {"type": "string"},
-                                    "steps": {
-                                        "type": "array",
-                                        "items": {"type": "string"},
-                                    },
-                                    "expected_duration": {"type": "string"},
-                                },
-                            },
-                        },
-                        "risk_assessment": {"type": "string"},
-                        "success_criteria": {
-                            "type": "array",
-                            "items": {"type": "string"},
-                        },
-                    },
-                },
             )
 
             # 4. 構建完整的攻擊計畫
@@ -612,6 +744,201 @@ class AICommander:
 🔒 Ensure: Compliance with ethical hacking standards and legal boundaries.
 """
 
+    # ===== 5M Neural Network 輔助方法 =====
+    
+    def _encode_target_for_neural(
+        self, target: str, rag_context: dict[str, Any]
+    ) -> dict[str, Any]:
+        """將目標信息編碼為神經網路輸入特徵
+        
+        5M 參數模型使用預定義特徵向量，而非 LLM 文本理解
+        """
+        import hashlib
+        
+        # 從目標字串提取特徵
+        target_hash = int(hashlib.md5(target.encode()).hexdigest()[:8], 16) / (16**8)
+        
+        # 從 RAG 上下文提取特徵
+        similar_techs = rag_context.get("similar_techniques", [])
+        tech_scores = [t.get("score", 0.5) for t in similar_techs[:5]]
+        avg_similarity = sum(tech_scores) / len(tech_scores) if tech_scores else 0.5
+        
+        return {
+            "target_hash": target_hash,
+            "target_length": len(target) / 100.0,  # 正規化長度
+            "has_ip": 1.0 if any(c.isdigit() for c in target.split('.')) else 0.0,
+            "has_domain": 1.0 if '.' in target else 0.0,
+            "rag_similarity": avg_similarity,
+            "rag_tech_count": len(similar_techs) / 10.0,
+        }
+    
+    def _encode_situation_for_neural(
+        self, situation: dict, options: list, risk_factors: dict
+    ) -> dict[str, Any]:
+        """將情況編碼為神經網路決策輸入"""
+        return {
+            "option_count": len(options) / 10.0,
+            "risk_level": risk_factors.get("overall_risk", 0.5),
+            "urgency": situation.get("urgency", 0.5),
+            "complexity": situation.get("complexity", 0.5),
+            "resource_available": situation.get("resources", 1.0),
+        }
+    
+    def _build_plan_from_neural_decision(
+        self,
+        neural_decision: dict,
+        target: str,
+        objective: str,
+        rag_context: dict[str, Any],
+        historical_experiences: list[dict],
+    ) -> dict[str, Any]:
+        """從神經網路輸出構建完整的攻擊計畫
+        
+        將 5M 模型的向量輸出轉換為結構化計畫
+        """
+        from uuid import uuid4
+        
+        attack_vector = neural_decision.get("attack_vector", "reconnaissance")
+        confidence = neural_decision.get("confidence", 0.5)
+        recommended_tools = neural_decision.get("recommended_tools", [])
+        
+        # 預定義的階段模板（5M 模型選擇而非生成）
+        phase_templates = {
+            "reconnaissance": {
+                "name": "Reconnaissance",
+                "description": "Information gathering and target enumeration",
+                "steps": ["Domain/IP enumeration", "Port scanning", "Service detection", "Technology fingerprinting"],
+                "expected_duration": "1-2 hours"
+            },
+            "vulnerability_scan": {
+                "name": "Vulnerability Analysis",
+                "description": "Identify potential vulnerabilities",
+                "steps": ["Automated vulnerability scan", "Manual verification", "CVE mapping", "Risk assessment"],
+                "expected_duration": "2-4 hours"
+            },
+            "exploitation": {
+                "name": "Exploitation Planning",
+                "description": "Plan and validate attack vectors",
+                "steps": ["Exploit selection", "Payload preparation", "Environment setup", "Attack simulation"],
+                "expected_duration": "3-6 hours"
+            },
+            "reporting": {
+                "name": "Validation & Reporting",
+                "description": "Document findings and recommendations",
+                "steps": ["Finding documentation", "Evidence collection", "Risk scoring", "Remediation advice"],
+                "expected_duration": "2-3 hours"
+            }
+        }
+        
+        # 根據攻擊向量選擇階段組合
+        if attack_vector in ["recon", "reconnaissance", "information_gathering"]:
+            selected_phases = ["reconnaissance", "vulnerability_scan"]
+        elif attack_vector in ["exploit", "attack", "penetration"]:
+            selected_phases = ["reconnaissance", "vulnerability_scan", "exploitation", "reporting"]
+        else:
+            selected_phases = ["reconnaissance", "vulnerability_scan", "reporting"]
+        
+        phases = [phase_templates[p] for p in selected_phases if p in phase_templates]
+        
+        # 根據推薦工具調整步驟
+        if recommended_tools:
+            for phase in phases:
+                if "scan" in phase["name"].lower() and recommended_tools:
+                    phase["steps"].insert(0, f"Use tools: {', '.join(recommended_tools[:3])}")
+        
+        # 風險評估（基於信心度）
+        if confidence > 0.8:
+            risk_assessment = "Low - High confidence in approach based on similar historical cases"
+        elif confidence > 0.6:
+            risk_assessment = "Medium - Moderate confidence, recommend careful monitoring"
+        else:
+            risk_assessment = "High - Lower confidence, consider alternative approaches"
+        
+        return {
+            "plan_id": str(uuid4()),
+            "target": target,
+            "objective": objective,
+            "phases": phases,
+            "risk_assessment": risk_assessment,
+            "success_criteria": [
+                "Complete information gathering for target",
+                "Identify at least 3 potential vulnerabilities",
+                "Validate findings with evidence",
+                "Generate comprehensive report"
+            ],
+            "neural_confidence": confidence,
+            "attack_vector": attack_vector,
+        }
+    
+    def _build_strategy_from_neural_decision(
+        self,
+        neural_decision: dict,
+        situation: dict,
+        options: list,
+        historical_decisions: list[dict],
+        risk_factors: dict,
+    ) -> dict[str, Any]:
+        """從神經網路輸出構建策略決策響應
+        
+        將 5M 模型輸出轉換為決策結構
+        """
+        attack_vector = neural_decision.get("attack_vector", "conservative")
+        confidence = neural_decision.get("confidence", 0.5)
+        recommended_tools = neural_decision.get("recommended_tools", [])
+        
+        # 根據神經網路輸出選擇最佳選項
+        if options:
+            # 使用信心度加權選擇
+            selected_idx = int(confidence * len(options)) % len(options)
+            selected_option = options[selected_idx]
+        else:
+            selected_option = attack_vector
+        
+        # 預定義的推理模板
+        reasoning_templates = {
+            "high_confidence": f"基於 5M 決策引擎分析，{attack_vector} 策略有 {confidence:.1%} 信心度。歷史數據支持此決策。",
+            "medium_confidence": f"5M 引擎建議 {attack_vector} 策略，信心度 {confidence:.1%}。建議謹慎執行並監控結果。",
+            "low_confidence": f"當前情況複雜，5M 引擎信心度為 {confidence:.1%}。建議採取保守的 {attack_vector} 策略。"
+        }
+        
+        if confidence > 0.7:
+            reasoning = reasoning_templates["high_confidence"]
+        elif confidence > 0.4:
+            reasoning = reasoning_templates["medium_confidence"]
+        else:
+            reasoning = reasoning_templates["low_confidence"]
+        
+        # 構建風險列表
+        overall_risk = risk_factors.get("overall_risk", 0.5)
+        risks = []
+        if overall_risk > 0.7:
+            risks.append({
+                "description": "High-risk operation detected",
+                "severity": "high",
+                "mitigation": "Implement staged rollout with manual checkpoints"
+            })
+        if confidence < 0.5:
+            risks.append({
+                "description": "Low confidence decision",
+                "severity": "medium", 
+                "mitigation": "Prepare fallback strategies before execution"
+            })
+        
+        return {
+            "decision": selected_option,
+            "reasoning": reasoning,
+            "confidence": confidence,
+            "alternative_options": [opt for opt in options if opt != selected_option][:3],
+            "risks": risks,
+            "success_indicators": [
+                f"成功執行 {attack_vector} 策略",
+                "達成預期目標",
+                "無意外錯誤或警報"
+            ],
+            "fallback_plan": f"如果 {selected_option} 失敗，考慮 {options[0] if options else 'conservative approach'}",
+            "recommended_tools": recommended_tools,
+        }
+
     def _calculate_plan_confidence(
         self, rag_context: dict[str, Any], historical_experiences: list[dict]
     ) -> float:
@@ -722,46 +1049,33 @@ class AICommander:
             # 2. 風險預評估
             risk_factors = self._assess_risk_factors(situation, constraints)
 
-            # 3. 構建增強型決策提示詞
-            decision_prompt = self._build_strategy_decision_prompt(
-                situation, options, constraints, historical_decisions, risk_factors
+            # 3. 使用 5M Decision Engine 進行策略決策
+            # 將情況編碼為神經網路輸入
+            situation_features = self._encode_situation_for_neural(
+                situation, options, risk_factors
             )
-
-            # 4. 使用 BioNeuronRAGAgent 進行決策
-            decision_response = await self.bio_neuron_agent.generate_structured_output(
-                prompt=decision_prompt,
-                output_schema={
-                    "type": "object",
-                    "properties": {
-                        "decision": {"type": "string"},
-                        "reasoning": {"type": "string"},
-                        "confidence": {"type": "number"},
-                        "alternative_options": {
-                            "type": "array",
-                            "items": {"type": "string"},
-                        },
-                        "risks": {
-                            "type": "array",
-                            "items": {
-                                "type": "object",
-                                "properties": {
-                                    "description": {"type": "string"},
-                                    "severity": {"type": "string"},
-                                    "mitigation": {"type": "string"},
-                                },
-                            },
-                        },
-                        "success_indicators": {
-                            "type": "array",
-                            "items": {"type": "string"},
-                        },
-                        "fallback_plan": {"type": "string"},
-                    },
-                },
+            
+            # 4. 調用 5M 決策引擎
+            neural_decision = self.decision_engine.generate_decision(
+                target_info=situation_features,
+                context={
+                    "options": options,
+                    "constraints": constraints,
+                    "historical_count": len(historical_decisions),
+                }
+            )
+            
+            # 從神經網路輸出構建決策響應
+            decision_response = self._build_strategy_from_neural_decision(
+                neural_decision=neural_decision,
+                situation=situation,
+                options=options,
+                historical_decisions=historical_decisions,
+                risk_factors=risk_factors,
             )
 
             # 5. 多維度信心度計算
-            ai_confidence = decision_response.get("confidence", 0.5)
+            ai_confidence = decision_response.get("confidence", neural_decision.get("confidence", 0.5))
             historical_confidence = self._calculate_historical_confidence(
                 historical_decisions
             )

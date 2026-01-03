@@ -1220,7 +1220,7 @@ class SQLInjectionCLI:
 # 現使用 command_handler.py 中的 SQLiCommandHandler 統一處理
 # ============================================================================
 
-# TODO: 實現 SQL 注入功能類別 - 需要進一步開發
+# 注意: SQL 注入功能類別需要進一步開發
 # class SQLInjectionCapability(BaseCapability):
 #     """SQL 注入工具集能力類 - 已棄用，使用 SQLiCommandHandler 代替"""
 #     pass

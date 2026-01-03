@@ -704,11 +704,7 @@ func processFile(filePath string, outputDir string, stitcher *Stitcher) ([]*Flow
 
 func main() {
 	inputDir := flag.String("input", ".", "輸入目錄")
-	
-	// 獲取路徑配置
-	pathsConfig := GetPathsConfig()
-	defaultOutput := pathsConfig.GetDefaultOutputDir()
-	outputDir := flag.String("output", defaultOutput, "輸出目錄")
+	outputDir := flag.String("output", "./go_analysis", "輸出目錄")
 	
 	flag.Parse()
 

@@ -9,7 +9,7 @@ OWASP A08:2021 - Software and Data Integrity Failures
 import time
 import base64
 import subprocess
-from typing import Dict, List, Optional
+from typing import List, Optional
 from dataclasses import dataclass
 import requests
 
@@ -104,7 +104,7 @@ class DeserializationDetector:
         
         return None
     
-    def generate_detection_payloads(self, language: str) -> Dict[str, bytes]:
+    def generate_detection_payloads(self, language: str) -> dict[str, bytes]:
         """
         生成檢測性 payloads (不執行真實攻擊)
         

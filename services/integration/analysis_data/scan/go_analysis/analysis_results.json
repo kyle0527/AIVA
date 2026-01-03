@@ -1,0 +1,1658 @@
+{
+  "branch_analysis": {
+    "fan_in_nodes": {},
+    "fan_out_nodes": {},
+    "total_connections": 2
+  },
+  "flow_chains": [
+    {
+      "from_script": "C:\\D\\fold7\\AIVA-git\\services\\scan\\go_engine\\cmd\\cspm-scanner\\main.go",
+      "from_func": "main",
+      "to_script": "C:\\D\\fold7\\AIVA-git\\services\\scan\\go_engine\\internal\\cspm\\scanner\\cspm_scanner.go",
+      "to_func": "NewCSPMScanner",
+      "call_expr": "scanner.NewCSPMScanner"
+    },
+    {
+      "from_script": "C:\\D\\fold7\\AIVA-git\\services\\scan\\go_engine\\cmd\\ssrf-scanner\\main.go",
+      "from_func": "main",
+      "to_script": "C:\\D\\fold7\\AIVA-git\\services\\scan\\go_engine\\internal\\cspm\\scanner\\cspm_scanner.go",
+      "to_func": "CSPMScanner.Scan",
+      "call_expr": "scanner.Scan"
+    }
+  ],
+  "functions": [
+    {
+      "source_file": "C:\\D\\fold7\\AIVA-git\\services\\scan\\go_engine\\cmd\\cspm-scanner\\main.go",
+      "function_name": "main",
+      "module": "main",
+      "inputs": [],
+      "outputs": [],
+      "call_targets": [
+        "log.SetOutput",
+        "log.SetFlags",
+        "scanner.NewCSPMScanner",
+        "log.Println",
+        "log.Println"
+      ],
+      "category": "other",
+      "description": "[PLACEHOLDER] main 功能"
+    },
+    {
+      "source_file": "C:\\D\\fold7\\AIVA-git\\services\\scan\\go_engine\\cmd\\sca-scanner\\main.go",
+      "function_name": "main",
+      "module": "main",
+      "inputs": [],
+      "outputs": [],
+      "call_targets": [
+        "log.SetOutput",
+        "log.SetFlags",
+        "scanner.NewSCAScanner",
+        "log.Println",
+        "log.Println"
+      ],
+      "category": "other",
+      "description": "[PLACEHOLDER] main 功能"
+    },
+    {
+      "source_file": "C:\\D\\fold7\\AIVA-git\\services\\scan\\go_engine\\cmd\\ssrf-scanner\\main.go",
+      "function_name": "NewSSRFScanner",
+      "module": "main",
+      "inputs": [
+        "timeout",
+        "concurrency",
+        "oobServer",
+        "deepScan"
+      ],
+      "outputs": [
+        "result_0"
+      ],
+      "call_targets": [],
+      "category": "reconnaissance",
+      "description": "[PLACEHOLDER] NewSSRFScanner 功能"
+    },
+    {
+      "source_file": "C:\\D\\fold7\\AIVA-git\\services\\scan\\go_engine\\cmd\\ssrf-scanner\\main.go",
+      "function_name": "getSSRFPayloads",
+      "module": "main",
+      "inputs": [
+        "oobServer",
+        "deepScan"
+      ],
+      "outputs": [
+        "result_0"
+      ],
+      "call_targets": [
+        "append",
+        "append"
+      ],
+      "category": "other",
+      "description": "[PLACEHOLDER] getSSRFPayloads 功能"
+    },
+    {
+      "source_file": "C:\\D\\fold7\\AIVA-git\\services\\scan\\go_engine\\cmd\\ssrf-scanner\\main.go",
+      "function_name": "SSRFScanner.Scan",
+      "module": "main",
+      "inputs": [
+        "ctx",
+        "req"
+      ],
+      "outputs": [
+        "result_0"
+      ],
+      "call_targets": [
+        "getSSRFPayloads",
+        "make",
+        "make",
+        "wg.Add",
+        "wg.Done",
+        "ctx.Done",
+        "s.testPayload",
+        "make",
+        "mu.Lock",
+        "append",
+        "mu.Unlock",
+        "close",
+        "s.getBaseline",
+        "extractParams",
+        "ctx.Done",
+        "close",
+        "close",
+        "wg.Wait",
+        "close",
+        "len",
+        "len"
+      ],
+      "category": "reconnaissance",
+      "description": "[PLACEHOLDER] SSRFScanner.Scan 功能"
+    },
+    {
+      "source_file": "C:\\D\\fold7\\AIVA-git\\services\\scan\\go_engine\\cmd\\ssrf-scanner\\main.go",
+      "function_name": "SSRFScanner.getBaseline",
+      "module": "main",
+      "inputs": [
+        "ctx",
+        "target",
+        "req"
+      ],
+      "outputs": [
+        "result_0"
+      ],
+      "call_targets": [
+        "http.NewRequestWithContext",
+        "setHeaders",
+        "time.Now",
+        "time.Since",
+        "io.ReadAll",
+        "md5.Sum"
+      ],
+      "category": "reconnaissance",
+      "description": "[PLACEHOLDER] SSRFScanner.getBaseline 功能"
+    },
+    {
+      "source_file": "C:\\D\\fold7\\AIVA-git\\services\\scan\\go_engine\\cmd\\ssrf-scanner\\main.go",
+      "function_name": "SSRFScanner.testPayload",
+      "module": "main",
+      "inputs": [
+        "ctx",
+        "target",
+        "param",
+        "payload",
+        "req"
+      ],
+      "outputs": [
+        "result_0"
+      ],
+      "call_targets": [
+        "url.Parse",
+        "parsedURL.Query",
+        "query.Set",
+        "query.Encode",
+        "parsedURL.String",
+        "http.NewRequestWithContext",
+        "setHeaders",
+        "time.Now",
+        "time.Since",
+        "io.ReadAll",
+        "string"
+      ],
+      "category": "reconnaissance",
+      "description": "[PLACEHOLDER] SSRFScanner.testPayload 功能"
+    },
+    {
+      "source_file": "C:\\D\\fold7\\AIVA-git\\services\\scan\\go_engine\\cmd\\ssrf-scanner\\main.go",
+      "function_name": "SSRFScanner.analyzeResponse",
+      "module": "main",
+      "inputs": [
+        "target",
+        "param",
+        "payload",
+        "statusCode",
+        "body",
+        "responseTime",
+        "baseline"
+      ],
+      "outputs": [
+        "result_0"
+      ],
+      "call_targets": [
+        "strings.ToLower",
+        "md5.Sum",
+        "hex.EncodeToString"
+      ],
+      "category": "reconnaissance",
+      "description": "[PLACEHOLDER] SSRFScanner.analyzeResponse 功能"
+    },
+    {
+      "source_file": "C:\\D\\fold7\\AIVA-git\\services\\scan\\go_engine\\cmd\\ssrf-scanner\\main.go",
+      "function_name": "containsSensitiveContent",
+      "module": "main",
+      "inputs": [
+        "body"
+      ],
+      "outputs": [
+        "result_0"
+      ],
+      "call_targets": [
+        "strings.ToLower"
+      ],
+      "category": "other",
+      "description": "[PLACEHOLDER] containsSensitiveContent 功能"
+    },
+    {
+      "source_file": "C:\\D\\fold7\\AIVA-git\\services\\scan\\go_engine\\cmd\\ssrf-scanner\\main.go",
+      "function_name": "extractParams",
+      "module": "main",
+      "inputs": [
+        "target"
+      ],
+      "outputs": [
+        "result_0"
+      ],
+      "call_targets": [
+        "make",
+        "url.Parse"
+      ],
+      "category": "other",
+      "description": "[PLACEHOLDER] extractParams 功能"
+    },
+    {
+      "source_file": "C:\\D\\fold7\\AIVA-git\\services\\scan\\go_engine\\cmd\\ssrf-scanner\\main.go",
+      "function_name": "setHeaders",
+      "module": "main",
+      "inputs": [
+        "req",
+        "scanReq"
+      ],
+      "outputs": [],
+      "call_targets": [],
+      "category": "other",
+      "description": "[PLACEHOLDER] setHeaders 功能"
+    },
+    {
+      "source_file": "C:\\D\\fold7\\AIVA-git\\services\\scan\\go_engine\\cmd\\ssrf-scanner\\main.go",
+      "function_name": "truncateString",
+      "module": "main",
+      "inputs": [
+        "s",
+        "maxLen"
+      ],
+      "outputs": [
+        "result_0"
+      ],
+      "call_targets": [],
+      "category": "other",
+      "description": "[PLACEHOLDER] truncateString 功能"
+    },
+    {
+      "source_file": "C:\\D\\fold7\\AIVA-git\\services\\scan\\go_engine\\cmd\\ssrf-scanner\\main.go",
+      "function_name": "main",
+      "module": "main",
+      "inputs": [],
+      "outputs": [],
+      "call_targets": [
+        "context.WithCancel",
+        "cancel",
+        "make",
+        "signal.Notify",
+        "log.Println",
+        "cancel",
+        "outputError",
+        "os.Exit",
+        "outputError",
+        "os.Exit",
+        "log.Printf",
+        "NewSSRFScanner",
+        "time.Now",
+        "scanner.Scan",
+        "outputResult",
+        "log.Printf"
+      ],
+      "category": "other",
+      "description": "[PLACEHOLDER] main 功能"
+    },
+    {
+      "source_file": "C:\\D\\fold7\\AIVA-git\\services\\scan\\go_engine\\cmd\\ssrf-scanner\\main.go",
+      "function_name": "outputResult",
+      "module": "main",
+      "inputs": [
+        "result"
+      ],
+      "outputs": [],
+      "call_targets": [
+        "json.NewEncoder",
+        "encoder.SetIndent",
+        "encoder.Encode"
+      ],
+      "category": "other",
+      "description": "[PLACEHOLDER] outputResult 功能"
+    },
+    {
+      "source_file": "C:\\D\\fold7\\AIVA-git\\services\\scan\\go_engine\\cmd\\ssrf-scanner\\main.go",
+      "function_name": "outputError",
+      "module": "main",
+      "inputs": [
+        "message",
+        "err"
+      ],
+      "outputs": [],
+      "call_targets": [
+        "log.Printf",
+        "outputResult"
+      ],
+      "category": "other",
+      "description": "[PLACEHOLDER] outputError 功能"
+    },
+    {
+      "source_file": "C:\\D\\fold7\\AIVA-git\\services\\scan\\go_engine\\internal\\common\\worker_pool.go",
+      "function_name": "NewWorkerPool",
+      "module": "common",
+      "inputs": [
+        "workers"
+      ],
+      "outputs": [
+        "result_0"
+      ],
+      "call_targets": [
+        "context.WithCancel",
+        "pool.worker",
+        "log.Printf"
+      ],
+      "category": "other",
+      "description": "[PLACEHOLDER] NewWorkerPool 功能"
+    },
+    {
+      "source_file": "C:\\D\\fold7\\AIVA-git\\services\\scan\\go_engine\\internal\\common\\worker_pool.go",
+      "function_name": "WorkerPool.worker",
+      "module": "common",
+      "inputs": [
+        "id"
+      ],
+      "outputs": [],
+      "call_targets": [
+        "log.Printf",
+        "log.Printf",
+        "log.Printf",
+        "time.Now",
+        "time.Since"
+      ],
+      "category": "other",
+      "description": "[PLACEHOLDER] WorkerPool.worker 功能"
+    },
+    {
+      "source_file": "C:\\D\\fold7\\AIVA-git\\services\\scan\\go_engine\\internal\\common\\worker_pool.go",
+      "function_name": "WorkerPool.Submit",
+      "module": "common",
+      "inputs": [
+        "task"
+      ],
+      "outputs": [
+        "result_0"
+      ],
+      "call_targets": [],
+      "category": "other",
+      "description": "[PLACEHOLDER] WorkerPool.Submit 功能"
+    },
+    {
+      "source_file": "C:\\D\\fold7\\AIVA-git\\services\\scan\\go_engine\\internal\\common\\worker_pool.go",
+      "function_name": "WorkerPool.Results",
+      "module": "common",
+      "inputs": [],
+      "outputs": [
+        "result_0"
+      ],
+      "call_targets": [],
+      "category": "other",
+      "description": "[PLACEHOLDER] WorkerPool.Results 功能"
+    },
+    {
+      "source_file": "C:\\D\\fold7\\AIVA-git\\services\\scan\\go_engine\\internal\\common\\worker_pool.go",
+      "function_name": "WorkerPool.Close",
+      "module": "common",
+      "inputs": [],
+      "outputs": [],
+      "call_targets": [
+        "close",
+        "close"
+      ],
+      "category": "other",
+      "description": "[PLACEHOLDER] WorkerPool.Close 功能"
+    },
+    {
+      "source_file": "C:\\D\\fold7\\AIVA-git\\services\\scan\\go_engine\\internal\\common\\worker_pool.go",
+      "function_name": "WorkerPool.Shutdown",
+      "module": "common",
+      "inputs": [
+        "timeout"
+      ],
+      "outputs": [
+        "result_0"
+      ],
+      "call_targets": [
+        "log.Printf",
+        "close",
+        "make",
+        "close",
+        "log.Println",
+        "p.cancel",
+        "close",
+        "time.After",
+        "log.Println",
+        "p.cancel",
+        "close"
+      ],
+      "category": "other",
+      "description": "[PLACEHOLDER] WorkerPool.Shutdown 功能"
+    },
+    {
+      "source_file": "C:\\D\\fold7\\AIVA-git\\services\\scan\\go_engine\\internal\\cspm\\audit\\aws.go",
+      "function_name": "NewAWSAuditor",
+      "module": "audit",
+      "inputs": [
+        "ctx",
+        "region"
+      ],
+      "outputs": [
+        "result_0",
+        "result_1"
+      ],
+      "call_targets": [
+        "config.LoadDefaultConfig"
+      ],
+      "category": "other",
+      "description": "[PLACEHOLDER] NewAWSAuditor 功能"
+    },
+    {
+      "source_file": "C:\\D\\fold7\\AIVA-git\\services\\scan\\go_engine\\internal\\cspm\\audit\\aws.go",
+      "function_name": "AWSAuditor.AuditS3Buckets",
+      "module": "audit",
+      "inputs": [],
+      "outputs": [
+        "result_0",
+        "result_1"
+      ],
+      "call_targets": [
+        "log.Printf",
+        "log.Printf",
+        "log.Printf",
+        "append",
+        "log.Printf",
+        "log.Printf",
+        "append",
+        "log.Printf",
+        "log.Printf"
+      ],
+      "category": "other",
+      "description": "[PLACEHOLDER] AWSAuditor.AuditS3Buckets 功能"
+    },
+    {
+      "source_file": "C:\\D\\fold7\\AIVA-git\\services\\scan\\go_engine\\internal\\cspm\\audit\\aws.go",
+      "function_name": "isPublicACL",
+      "module": "audit",
+      "inputs": [
+        "acl"
+      ],
+      "outputs": [
+        "result_0"
+      ],
+      "call_targets": [],
+      "category": "other",
+      "description": "[PLACEHOLDER] isPublicACL 功能"
+    },
+    {
+      "source_file": "C:\\D\\fold7\\AIVA-git\\services\\scan\\go_engine\\internal\\cspm\\audit\\aws.go",
+      "function_name": "AWSAuditor.AuditIAMUsers",
+      "module": "audit",
+      "inputs": [],
+      "outputs": [
+        "result_0",
+        "result_1"
+      ],
+      "call_targets": [
+        "log.Println"
+      ],
+      "category": "other",
+      "description": "[PLACEHOLDER] AWSAuditor.AuditIAMUsers 功能"
+    },
+    {
+      "source_file": "C:\\D\\fold7\\AIVA-git\\services\\scan\\go_engine\\internal\\cspm\\audit\\aws.go",
+      "function_name": "AWSAuditor.AuditSecurityGroups",
+      "module": "audit",
+      "inputs": [],
+      "outputs": [
+        "result_0",
+        "result_1"
+      ],
+      "call_targets": [
+        "log.Println"
+      ],
+      "category": "other",
+      "description": "[PLACEHOLDER] AWSAuditor.AuditSecurityGroups 功能"
+    },
+    {
+      "source_file": "C:\\D\\fold7\\AIVA-git\\services\\scan\\go_engine\\internal\\cspm\\audit\\aws.go",
+      "function_name": "AWSAuditor.AuditCloudTrail",
+      "module": "audit",
+      "inputs": [],
+      "outputs": [
+        "result_0",
+        "result_1"
+      ],
+      "call_targets": [
+        "log.Println"
+      ],
+      "category": "other",
+      "description": "[PLACEHOLDER] AWSAuditor.AuditCloudTrail 功能"
+    },
+    {
+      "source_file": "C:\\D\\fold7\\AIVA-git\\services\\scan\\go_engine\\internal\\cspm\\audit\\aws.go",
+      "function_name": "AWSAuditor.AuditKMSKeys",
+      "module": "audit",
+      "inputs": [],
+      "outputs": [
+        "result_0",
+        "result_1"
+      ],
+      "call_targets": [
+        "log.Println"
+      ],
+      "category": "other",
+      "description": "[PLACEHOLDER] AWSAuditor.AuditKMSKeys 功能"
+    },
+    {
+      "source_file": "C:\\D\\fold7\\AIVA-git\\services\\scan\\go_engine\\internal\\cspm\\audit\\aws.go",
+      "function_name": "AWSAuditor.RunFullAudit",
+      "module": "audit",
+      "inputs": [],
+      "outputs": [
+        "result_0",
+        "result_1"
+      ],
+      "call_targets": [
+        "make",
+        "log.Printf",
+        "log.Printf"
+      ],
+      "category": "other",
+      "description": "[PLACEHOLDER] AWSAuditor.RunFullAudit 功能"
+    },
+    {
+      "source_file": "C:\\D\\fold7\\AIVA-git\\services\\scan\\go_engine\\internal\\cspm\\scanner\\cspm_scanner.go",
+      "function_name": "NewCSPMScanner",
+      "module": "scanner",
+      "inputs": [],
+      "outputs": [
+        "result_0"
+      ],
+      "call_targets": [],
+      "category": "reconnaissance",
+      "description": "[PLACEHOLDER] NewCSPMScanner 功能"
+    },
+    {
+      "source_file": "C:\\D\\fold7\\AIVA-git\\services\\scan\\go_engine\\internal\\cspm\\scanner\\cspm_scanner.go",
+      "function_name": "CSPMScanner.Scan",
+      "module": "scanner",
+      "inputs": [
+        "ctx",
+        "task"
+      ],
+      "outputs": [
+        "result_0",
+        "result_1"
+      ],
+      "call_targets": [
+        "log.Printf",
+        "s.scanAWS",
+        "s.scanAzure",
+        "s.scanGCP",
+        "s.scanKubernetes",
+        "s.scanGeneric",
+        "fmt.Sprintf",
+        "s.createFinding",
+        "append"
+      ],
+      "category": "reconnaissance",
+      "description": "[PLACEHOLDER] CSPMScanner.Scan 功能"
+    },
+    {
+      "source_file": "C:\\D\\fold7\\AIVA-git\\services\\scan\\go_engine\\internal\\cspm\\scanner\\cspm_scanner.go",
+      "function_name": "CSPMScanner.scanAWS",
+      "module": "scanner",
+      "inputs": [
+        "ctx",
+        "task"
+      ],
+      "outputs": [
+        "result_0",
+        "result_1"
+      ],
+      "call_targets": [],
+      "category": "reconnaissance",
+      "description": "[PLACEHOLDER] CSPMScanner.scanAWS 功能"
+    },
+    {
+      "source_file": "C:\\D\\fold7\\AIVA-git\\services\\scan\\go_engine\\internal\\cspm\\scanner\\cspm_scanner.go",
+      "function_name": "CSPMScanner.scanAzure",
+      "module": "scanner",
+      "inputs": [
+        "ctx",
+        "task"
+      ],
+      "outputs": [
+        "result_0",
+        "result_1"
+      ],
+      "call_targets": [],
+      "category": "reconnaissance",
+      "description": "[PLACEHOLDER] CSPMScanner.scanAzure 功能"
+    },
+    {
+      "source_file": "C:\\D\\fold7\\AIVA-git\\services\\scan\\go_engine\\internal\\cspm\\scanner\\cspm_scanner.go",
+      "function_name": "CSPMScanner.scanGCP",
+      "module": "scanner",
+      "inputs": [
+        "ctx",
+        "task"
+      ],
+      "outputs": [
+        "result_0",
+        "result_1"
+      ],
+      "call_targets": [],
+      "category": "reconnaissance",
+      "description": "[PLACEHOLDER] CSPMScanner.scanGCP 功能"
+    },
+    {
+      "source_file": "C:\\D\\fold7\\AIVA-git\\services\\scan\\go_engine\\internal\\cspm\\scanner\\cspm_scanner.go",
+      "function_name": "CSPMScanner.scanKubernetes",
+      "module": "scanner",
+      "inputs": [
+        "ctx",
+        "task"
+      ],
+      "outputs": [
+        "result_0",
+        "result_1"
+      ],
+      "call_targets": [
+        "exec.CommandContext",
+        "cmd.CombinedOutput",
+        "log.Println"
+      ],
+      "category": "reconnaissance",
+      "description": "[PLACEHOLDER] CSPMScanner.scanKubernetes 功能"
+    },
+    {
+      "source_file": "C:\\D\\fold7\\AIVA-git\\services\\scan\\go_engine\\internal\\cspm\\scanner\\cspm_scanner.go",
+      "function_name": "CSPMScanner.scanGeneric",
+      "module": "scanner",
+      "inputs": [
+        "ctx",
+        "task"
+      ],
+      "outputs": [
+        "result_0",
+        "result_1"
+      ],
+      "call_targets": [
+        "exec.CommandContext",
+        "cmd.CombinedOutput",
+        "log.Println"
+      ],
+      "category": "reconnaissance",
+      "description": "[PLACEHOLDER] CSPMScanner.scanGeneric 功能"
+    },
+    {
+      "source_file": "C:\\D\\fold7\\AIVA-git\\services\\scan\\go_engine\\internal\\cspm\\scanner\\cspm_scanner.go",
+      "function_name": "CSPMScanner.scanWithTrivy",
+      "module": "scanner",
+      "inputs": [
+        "ctx",
+        "_",
+        "provider"
+      ],
+      "outputs": [
+        "result_0",
+        "result_1"
+      ],
+      "call_targets": [
+        "exec.CommandContext",
+        "cmd.CombinedOutput",
+        "log.Println"
+      ],
+      "category": "reconnaissance",
+      "description": "[PLACEHOLDER] CSPMScanner.scanWithTrivy 功能"
+    },
+    {
+      "source_file": "C:\\D\\fold7\\AIVA-git\\services\\scan\\go_engine\\internal\\cspm\\scanner\\cspm_scanner.go",
+      "function_name": "CSPMScanner.parseTrivyOutput",
+      "module": "scanner",
+      "inputs": [
+        "output"
+      ],
+      "outputs": [
+        "result_0",
+        "result_1"
+      ],
+      "call_targets": [
+        "append"
+      ],
+      "category": "reconnaissance",
+      "description": "[PLACEHOLDER] CSPMScanner.parseTrivyOutput 功能"
+    },
+    {
+      "source_file": "C:\\D\\fold7\\AIVA-git\\services\\scan\\go_engine\\internal\\cspm\\scanner\\cspm_scanner.go",
+      "function_name": "stringPtr",
+      "module": "scanner",
+      "inputs": [
+        "s"
+      ],
+      "outputs": [
+        "result_0"
+      ],
+      "call_targets": [],
+      "category": "other",
+      "description": "[PLACEHOLDER] stringPtr 功能"
+    },
+    {
+      "source_file": "C:\\D\\fold7\\AIVA-git\\services\\scan\\go_engine\\internal\\cspm\\scanner\\cspm_scanner.go",
+      "function_name": "CSPMScanner.createFinding",
+      "module": "scanner",
+      "inputs": [
+        "taskID",
+        "scanID",
+        "provider",
+        "misconfig"
+      ],
+      "outputs": [
+        "result_0"
+      ],
+      "call_targets": [
+        "fmt.Sprintf",
+        "mapSeverity",
+        "fmt.Sprintf"
+      ],
+      "category": "reconnaissance",
+      "description": "[PLACEHOLDER] CSPMScanner.createFinding 功能"
+    },
+    {
+      "source_file": "C:\\D\\fold7\\AIVA-git\\services\\scan\\go_engine\\internal\\cspm\\scanner\\cspm_scanner.go",
+      "function_name": "mapSeverity",
+      "module": "scanner",
+      "inputs": [
+        "trivySeverity"
+      ],
+      "outputs": [
+        "result_0"
+      ],
+      "call_targets": [],
+      "category": "other",
+      "description": "[PLACEHOLDER] mapSeverity 功能"
+    },
+    {
+      "source_file": "C:\\D\\fold7\\AIVA-git\\services\\scan\\go_engine\\internal\\detectors\\open_redirect.go",
+      "function_name": "NewOpenRedirectDetector",
+      "module": "detectors",
+      "inputs": [],
+      "outputs": [
+        "result_0"
+      ],
+      "call_targets": [],
+      "category": "reconnaissance",
+      "description": "[PLACEHOLDER] NewOpenRedirectDetector 功能"
+    },
+    {
+      "source_file": "C:\\D\\fold7\\AIVA-git\\services\\scan\\go_engine\\internal\\detectors\\open_redirect.go",
+      "function_name": "OpenRedirectDetector.Test",
+      "module": "detectors",
+      "inputs": [
+        "targetURL",
+        "params"
+      ],
+      "outputs": [
+        "result_0"
+      ],
+      "call_targets": [
+        "copyParams",
+        "d.makeRequest",
+        "append"
+      ],
+      "category": "reconnaissance",
+      "description": "[PLACEHOLDER] OpenRedirectDetector.Test 功能"
+    },
+    {
+      "source_file": "C:\\D\\fold7\\AIVA-git\\services\\scan\\go_engine\\internal\\detectors\\open_redirect.go",
+      "function_name": "OpenRedirectDetector.TestWithReferrer",
+      "module": "detectors",
+      "inputs": [
+        "targetURL",
+        "params"
+      ],
+      "outputs": [
+        "result_0"
+      ],
+      "call_targets": [
+        "http.NewRequest",
+        "append"
+      ],
+      "category": "reconnaissance",
+      "description": "[PLACEHOLDER] OpenRedirectDetector.TestWithReferrer 功能"
+    },
+    {
+      "source_file": "C:\\D\\fold7\\AIVA-git\\services\\scan\\go_engine\\internal\\detectors\\open_redirect.go",
+      "function_name": "OpenRedirectDetector.TestCommonParams",
+      "module": "detectors",
+      "inputs": [
+        "targetURL"
+      ],
+      "outputs": [
+        "result_0"
+      ],
+      "call_targets": [
+        "d.Test",
+        "append"
+      ],
+      "category": "reconnaissance",
+      "description": "[PLACEHOLDER] OpenRedirectDetector.TestCommonParams 功能"
+    },
+    {
+      "source_file": "C:\\D\\fold7\\AIVA-git\\services\\scan\\go_engine\\internal\\detectors\\open_redirect.go",
+      "function_name": "OpenRedirectDetector.isRedirect",
+      "module": "detectors",
+      "inputs": [
+        "statusCode"
+      ],
+      "outputs": [
+        "result_0"
+      ],
+      "call_targets": [],
+      "category": "reconnaissance",
+      "description": "[PLACEHOLDER] OpenRedirectDetector.isRedirect 功能"
+    },
+    {
+      "source_file": "C:\\D\\fold7\\AIVA-git\\services\\scan\\go_engine\\internal\\detectors\\open_redirect.go",
+      "function_name": "OpenRedirectDetector.isMaliciousRedirect",
+      "module": "detectors",
+      "inputs": [
+        "location",
+        "payload"
+      ],
+      "outputs": [
+        "result_0"
+      ],
+      "call_targets": [
+        "strings.ToLower",
+        "url.Parse"
+      ],
+      "category": "reconnaissance",
+      "description": "[PLACEHOLDER] OpenRedirectDetector.isMaliciousRedirect 功能"
+    },
+    {
+      "source_file": "C:\\D\\fold7\\AIVA-git\\services\\scan\\go_engine\\internal\\detectors\\open_redirect.go",
+      "function_name": "OpenRedirectDetector.makeRequest",
+      "module": "detectors",
+      "inputs": [
+        "targetURL",
+        "params"
+      ],
+      "outputs": [
+        "result_0",
+        "result_1"
+      ],
+      "call_targets": [
+        "url.Parse",
+        "u.Query",
+        "q.Set",
+        "q.Encode",
+        "http.NewRequest"
+      ],
+      "category": "reconnaissance",
+      "description": "[PLACEHOLDER] OpenRedirectDetector.makeRequest 功能"
+    },
+    {
+      "source_file": "C:\\D\\fold7\\AIVA-git\\services\\scan\\go_engine\\internal\\detectors\\open_redirect.go",
+      "function_name": "copyParams",
+      "module": "detectors",
+      "inputs": [
+        "params"
+      ],
+      "outputs": [
+        "result_0"
+      ],
+      "call_targets": [
+        "make"
+      ],
+      "category": "other",
+      "description": "[PLACEHOLDER] copyParams 功能"
+    },
+    {
+      "source_file": "C:\\D\\fold7\\AIVA-git\\services\\scan\\go_engine\\internal\\fuzzer\\parameter_fuzzer.go",
+      "function_name": "NewParameterFuzzer",
+      "module": "fuzzer",
+      "inputs": [
+        "concurrency",
+        "timeout"
+      ],
+      "outputs": [
+        "result_0"
+      ],
+      "call_targets": [],
+      "category": "other",
+      "description": "[PLACEHOLDER] NewParameterFuzzer 功能"
+    },
+    {
+      "source_file": "C:\\D\\fold7\\AIVA-git\\services\\scan\\go_engine\\internal\\fuzzer\\parameter_fuzzer.go",
+      "function_name": "loadPayloads",
+      "module": "fuzzer",
+      "inputs": [],
+      "outputs": [
+        "result_0"
+      ],
+      "call_targets": [],
+      "category": "other",
+      "description": "[PLACEHOLDER] loadPayloads 功能"
+    },
+    {
+      "source_file": "C:\\D\\fold7\\AIVA-git\\services\\scan\\go_engine\\internal\\fuzzer\\parameter_fuzzer.go",
+      "function_name": "ParameterFuzzer.DetectSQLInjection",
+      "module": "fuzzer",
+      "inputs": [
+        "targetURL",
+        "params"
+      ],
+      "outputs": [
+        "result_0"
+      ],
+      "call_targets": [
+        "f.measureResponseTime",
+        "copyParams",
+        "time.Now",
+        "f.makeRequest",
+        "time.Since",
+        "fmt.Sprintf",
+        "append"
+      ],
+      "category": "reconnaissance",
+      "description": "[PLACEHOLDER] ParameterFuzzer.DetectSQLInjection 功能"
+    },
+    {
+      "source_file": "C:\\D\\fold7\\AIVA-git\\services\\scan\\go_engine\\internal\\fuzzer\\parameter_fuzzer.go",
+      "function_name": "ParameterFuzzer.DetectCommandInjection",
+      "module": "fuzzer",
+      "inputs": [
+        "targetURL",
+        "params"
+      ],
+      "outputs": [
+        "result_0"
+      ],
+      "call_targets": [
+        "f.measureResponseTime",
+        "copyParams",
+        "time.Now",
+        "f.makeRequest",
+        "time.Since",
+        "fmt.Sprintf",
+        "append"
+      ],
+      "category": "reconnaissance",
+      "description": "[PLACEHOLDER] ParameterFuzzer.DetectCommandInjection 功能"
+    },
+    {
+      "source_file": "C:\\D\\fold7\\AIVA-git\\services\\scan\\go_engine\\internal\\fuzzer\\parameter_fuzzer.go",
+      "function_name": "ParameterFuzzer.DetectSSTI",
+      "module": "fuzzer",
+      "inputs": [
+        "targetURL",
+        "params"
+      ],
+      "outputs": [
+        "result_0"
+      ],
+      "call_targets": [
+        "copyParams",
+        "f.makeRequest",
+        "readBody",
+        "append"
+      ],
+      "category": "reconnaissance",
+      "description": "[PLACEHOLDER] ParameterFuzzer.DetectSSTI 功能"
+    },
+    {
+      "source_file": "C:\\D\\fold7\\AIVA-git\\services\\scan\\go_engine\\internal\\fuzzer\\parameter_fuzzer.go",
+      "function_name": "ParameterFuzzer.DetectAll",
+      "module": "fuzzer",
+      "inputs": [
+        "targetURL",
+        "params"
+      ],
+      "outputs": [
+        "result_0"
+      ],
+      "call_targets": [
+        "f.DetectSQLInjection",
+        "append",
+        "f.DetectCommandInjection",
+        "append",
+        "f.DetectSSTI",
+        "append"
+      ],
+      "category": "reconnaissance",
+      "description": "[PLACEHOLDER] ParameterFuzzer.DetectAll 功能"
+    },
+    {
+      "source_file": "C:\\D\\fold7\\AIVA-git\\services\\scan\\go_engine\\internal\\fuzzer\\parameter_fuzzer.go",
+      "function_name": "ParameterFuzzer.measureResponseTime",
+      "module": "fuzzer",
+      "inputs": [
+        "targetURL",
+        "params"
+      ],
+      "outputs": [
+        "result_0"
+      ],
+      "call_targets": [
+        "time.Now",
+        "f.makeRequest",
+        "time.Since"
+      ],
+      "category": "other",
+      "description": "[PLACEHOLDER] ParameterFuzzer.measureResponseTime 功能"
+    },
+    {
+      "source_file": "C:\\D\\fold7\\AIVA-git\\services\\scan\\go_engine\\internal\\fuzzer\\parameter_fuzzer.go",
+      "function_name": "ParameterFuzzer.makeRequest",
+      "module": "fuzzer",
+      "inputs": [
+        "targetURL",
+        "params"
+      ],
+      "outputs": [
+        "result_0",
+        "result_1"
+      ],
+      "call_targets": [
+        "url.Parse",
+        "u.Query",
+        "q.Set",
+        "q.Encode",
+        "http.NewRequest"
+      ],
+      "category": "other",
+      "description": "[PLACEHOLDER] ParameterFuzzer.makeRequest 功能"
+    },
+    {
+      "source_file": "C:\\D\\fold7\\AIVA-git\\services\\scan\\go_engine\\internal\\fuzzer\\parameter_fuzzer.go",
+      "function_name": "copyParams",
+      "module": "fuzzer",
+      "inputs": [
+        "params"
+      ],
+      "outputs": [
+        "result_0"
+      ],
+      "call_targets": [
+        "make"
+      ],
+      "category": "other",
+      "description": "[PLACEHOLDER] copyParams 功能"
+    },
+    {
+      "source_file": "C:\\D\\fold7\\AIVA-git\\services\\scan\\go_engine\\internal\\fuzzer\\parameter_fuzzer.go",
+      "function_name": "readBody",
+      "module": "fuzzer",
+      "inputs": [
+        "resp"
+      ],
+      "outputs": [
+        "result_0"
+      ],
+      "call_targets": [
+        "make"
+      ],
+      "category": "other",
+      "description": "[PLACEHOLDER] readBody 功能"
+    },
+    {
+      "source_file": "C:\\D\\fold7\\AIVA-git\\services\\scan\\go_engine\\internal\\sca\\database\\vuln_database.go",
+      "function_name": "NewVulnDatabase",
+      "module": "database",
+      "inputs": [
+        "dataDir"
+      ],
+      "outputs": [
+        "result_0",
+        "result_1"
+      ],
+      "call_targets": [],
+      "category": "other",
+      "description": "[PLACEHOLDER] NewVulnDatabase 功能"
+    },
+    {
+      "source_file": "C:\\D\\fold7\\AIVA-git\\services\\scan\\go_engine\\internal\\sca\\database\\vuln_database.go",
+      "function_name": "VulnDatabase.LoadFromFiles",
+      "module": "database",
+      "inputs": [],
+      "outputs": [
+        "result_0"
+      ],
+      "call_targets": [
+        "filepath.Join",
+        "fmt.Printf"
+      ],
+      "category": "other",
+      "description": "[PLACEHOLDER] VulnDatabase.LoadFromFiles 功能"
+    },
+    {
+      "source_file": "C:\\D\\fold7\\AIVA-git\\services\\scan\\go_engine\\internal\\sca\\database\\vuln_database.go",
+      "function_name": "VulnDatabase.loadSource",
+      "module": "database",
+      "inputs": [
+        "filePath",
+        "target",
+        "source"
+      ],
+      "outputs": [
+        "result_0"
+      ],
+      "call_targets": [
+        "os.ReadFile",
+        "db.parseRetireJS",
+        "db.parseNVD",
+        "db.parseSnyk",
+        "db.parseGHSA"
+      ],
+      "category": "other",
+      "description": "[PLACEHOLDER] VulnDatabase.loadSource 功能"
+    },
+    {
+      "source_file": "C:\\D\\fold7\\AIVA-git\\services\\scan\\go_engine\\internal\\sca\\database\\vuln_database.go",
+      "function_name": "VulnDatabase.CheckVersion",
+      "module": "database",
+      "inputs": [
+        "lib",
+        "version"
+      ],
+      "outputs": [
+        "result_0"
+      ],
+      "call_targets": [
+        "strings.ToLower",
+        "append"
+      ],
+      "category": "other",
+      "description": "[PLACEHOLDER] VulnDatabase.CheckVersion 功能"
+    },
+    {
+      "source_file": "C:\\D\\fold7\\AIVA-git\\services\\scan\\go_engine\\internal\\sca\\database\\vuln_database.go",
+      "function_name": "VulnDatabase.CheckPackageJSON",
+      "module": "database",
+      "inputs": [
+        "packageJSONPath"
+      ],
+      "outputs": [
+        "result_0",
+        "result_1"
+      ],
+      "call_targets": [
+        "os.ReadFile",
+        "db.CheckVersion",
+        "append",
+        "db.CheckVersion",
+        "append"
+      ],
+      "category": "other",
+      "description": "[PLACEHOLDER] VulnDatabase.CheckPackageJSON 功能"
+    },
+    {
+      "source_file": "C:\\D\\fold7\\AIVA-git\\services\\scan\\go_engine\\internal\\sca\\database\\vuln_database.go",
+      "function_name": "VulnDatabase.CheckRequirementsTxt",
+      "module": "database",
+      "inputs": [
+        "requirementsPath"
+      ],
+      "outputs": [
+        "result_0",
+        "result_1"
+      ],
+      "call_targets": [
+        "os.ReadFile",
+        "strings.Split",
+        "strings.TrimSpace",
+        "strings.FieldsFunc",
+        "strings.TrimSpace",
+        "strings.TrimSpace",
+        "db.CheckVersion",
+        "append"
+      ],
+      "category": "other",
+      "description": "[PLACEHOLDER] VulnDatabase.CheckRequirementsTxt 功能"
+    },
+    {
+      "source_file": "C:\\D\\fold7\\AIVA-git\\services\\scan\\go_engine\\internal\\sca\\database\\vuln_database.go",
+      "function_name": "VulnDatabase.parseRetireJS",
+      "module": "database",
+      "inputs": [
+        "data",
+        "target"
+      ],
+      "outputs": [
+        "result_0"
+      ],
+      "call_targets": [
+        "append"
+      ],
+      "category": "analysis",
+      "description": "[PLACEHOLDER] VulnDatabase.parseRetireJS 功能"
+    },
+    {
+      "source_file": "C:\\D\\fold7\\AIVA-git\\services\\scan\\go_engine\\internal\\sca\\database\\vuln_database.go",
+      "function_name": "VulnDatabase.parseNVD",
+      "module": "database",
+      "inputs": [
+        "data",
+        "target"
+      ],
+      "outputs": [
+        "result_0"
+      ],
+      "call_targets": [],
+      "category": "analysis",
+      "description": "[PLACEHOLDER] VulnDatabase.parseNVD 功能"
+    },
+    {
+      "source_file": "C:\\D\\fold7\\AIVA-git\\services\\scan\\go_engine\\internal\\sca\\database\\vuln_database.go",
+      "function_name": "VulnDatabase.parseSnyk",
+      "module": "database",
+      "inputs": [
+        "data",
+        "target"
+      ],
+      "outputs": [
+        "result_0"
+      ],
+      "call_targets": [],
+      "category": "analysis",
+      "description": "[PLACEHOLDER] VulnDatabase.parseSnyk 功能"
+    },
+    {
+      "source_file": "C:\\D\\fold7\\AIVA-git\\services\\scan\\go_engine\\internal\\sca\\database\\vuln_database.go",
+      "function_name": "VulnDatabase.parseGHSA",
+      "module": "database",
+      "inputs": [
+        "data",
+        "target"
+      ],
+      "outputs": [
+        "result_0"
+      ],
+      "call_targets": [],
+      "category": "analysis",
+      "description": "[PLACEHOLDER] VulnDatabase.parseGHSA 功能"
+    },
+    {
+      "source_file": "C:\\D\\fold7\\AIVA-git\\services\\scan\\go_engine\\internal\\sca\\database\\vuln_database.go",
+      "function_name": "isVersionAffected",
+      "module": "database",
+      "inputs": [
+        "version",
+        "affectedVersions"
+      ],
+      "outputs": [
+        "result_0"
+      ],
+      "call_targets": [],
+      "category": "other",
+      "description": "[PLACEHOLDER] isVersionAffected 功能"
+    },
+    {
+      "source_file": "C:\\D\\fold7\\AIVA-git\\services\\scan\\go_engine\\internal\\sca\\database\\vuln_database.go",
+      "function_name": "deduplicateCVEs",
+      "module": "database",
+      "inputs": [
+        "cves"
+      ],
+      "outputs": [
+        "result_0"
+      ],
+      "call_targets": [
+        "make",
+        "append"
+      ],
+      "category": "other",
+      "description": "[PLACEHOLDER] deduplicateCVEs 功能"
+    },
+    {
+      "source_file": "C:\\D\\fold7\\AIVA-git\\services\\scan\\go_engine\\internal\\sca\\database\\vuln_database.go",
+      "function_name": "cleanVersion",
+      "module": "database",
+      "inputs": [
+        "version"
+      ],
+      "outputs": [
+        "result_0"
+      ],
+      "call_targets": [
+        "strings.TrimPrefix",
+        "strings.TrimPrefix",
+        "strings.TrimPrefix",
+        "strings.TrimPrefix",
+        "strings.TrimPrefix",
+        "strings.TrimPrefix"
+      ],
+      "category": "other",
+      "description": "[PLACEHOLDER] cleanVersion 功能"
+    },
+    {
+      "source_file": "C:\\D\\fold7\\AIVA-git\\services\\scan\\go_engine\\internal\\sca\\database\\vuln_database.go",
+      "function_name": "VulnDatabase.GetStats",
+      "module": "database",
+      "inputs": [],
+      "outputs": [
+        "result_0"
+      ],
+      "call_targets": [],
+      "category": "other",
+      "description": "[PLACEHOLDER] VulnDatabase.GetStats 功能"
+    },
+    {
+      "source_file": "C:\\D\\fold7\\AIVA-git\\services\\scan\\go_engine\\internal\\ssrf\\detector\\cloud_metadata_scanner.go",
+      "function_name": "NewCloudMetadataScanner",
+      "module": "detector",
+      "inputs": [
+        "timeout"
+      ],
+      "outputs": [
+        "result_0"
+      ],
+      "call_targets": [],
+      "category": "reconnaissance",
+      "description": "[PLACEHOLDER] NewCloudMetadataScanner 功能"
+    },
+    {
+      "source_file": "C:\\D\\fold7\\AIVA-git\\services\\scan\\go_engine\\internal\\ssrf\\detector\\cloud_metadata_scanner.go",
+      "function_name": "CloudMetadataScanner.ScanForMetadata",
+      "module": "detector",
+      "inputs": [
+        "ctx",
+        "payloadURL"
+      ],
+      "outputs": [
+        "result_0",
+        "result_1"
+      ],
+      "call_targets": [
+        "fmt.Printf",
+        "s.fetchAwsV2Token",
+        "fmt.Printf",
+        "mu.Lock",
+        "append",
+        "mu.Unlock",
+        "fmt.Printf",
+        "wg.Add",
+        "wg.Done",
+        "context.WithTimeout",
+        "cancel",
+        "s.probeEndpoint",
+        "strings.Contains",
+        "err.Error",
+        "strings.Contains",
+        "err.Error",
+        "fmt.Printf",
+        "strings.Contains",
+        "fmt.Printf",
+        "mu.Lock",
+        "append",
+        "mu.Unlock",
+        "fmt.Printf",
+        "wg.Wait",
+        "fmt.Printf",
+        "fmt.Printf"
+      ],
+      "category": "reconnaissance",
+      "description": "[PLACEHOLDER] CloudMetadataScanner.ScanForMetadata 功能"
+    },
+    {
+      "source_file": "C:\\D\\fold7\\AIVA-git\\services\\scan\\go_engine\\internal\\ssrf\\detector\\cloud_metadata_scanner.go",
+      "function_name": "CloudMetadataScanner.probeEndpoint",
+      "module": "detector",
+      "inputs": [
+        "ctx",
+        "url",
+        "headers",
+        "triggerURL"
+      ],
+      "outputs": [
+        "result_0",
+        "result_1",
+        "result_2"
+      ],
+      "call_targets": [
+        "http.NewRequestWithContext",
+        "fmt.Printf",
+        "fmt.Printf",
+        "io.ReadAll",
+        "string",
+        "fmt.Printf",
+        "fmt.Printf"
+      ],
+      "category": "reconnaissance",
+      "description": "[PLACEHOLDER] CloudMetadataScanner.probeEndpoint 功能"
+    },
+    {
+      "source_file": "C:\\D\\fold7\\AIVA-git\\services\\scan\\go_engine\\internal\\ssrf\\detector\\cloud_metadata_scanner.go",
+      "function_name": "CloudMetadataScanner.fetchAwsV2Token",
+      "module": "detector",
+      "inputs": [
+        "ctx",
+        "endpoint",
+        "triggerURL"
+      ],
+      "outputs": [
+        "result_0",
+        "result_1"
+      ],
+      "call_targets": [
+        "http.NewRequestWithContext",
+        "fmt.Printf",
+        "io.ReadAll",
+        "string"
+      ],
+      "category": "reconnaissance",
+      "description": "[PLACEHOLDER] CloudMetadataScanner.fetchAwsV2Token 功能"
+    },
+    {
+      "source_file": "C:\\D\\fold7\\AIVA-git\\services\\scan\\go_engine\\internal\\ssrf\\detector\\internal_microservice_probe.go",
+      "function_name": "NewInternalServiceProbe",
+      "module": "detector",
+      "inputs": [
+        "timeout"
+      ],
+      "outputs": [
+        "result_0"
+      ],
+      "call_targets": [],
+      "category": "other",
+      "description": "[PLACEHOLDER] NewInternalServiceProbe 功能"
+    },
+    {
+      "source_file": "C:\\D\\fold7\\AIVA-git\\services\\scan\\go_engine\\internal\\ssrf\\detector\\internal_microservice_probe.go",
+      "function_name": "InternalServiceProbe.ProbeTarget",
+      "module": "detector",
+      "inputs": [
+        "ctx",
+        "target",
+        "payloadURL"
+      ],
+      "outputs": [
+        "result_0",
+        "result_1",
+        "result_2"
+      ],
+      "call_targets": [
+        "fmt.Sprintf",
+        "fmt.Sprintf",
+        "fmt.Printf",
+        "http.NewRequestWithContext",
+        "fmt.Printf",
+        "fmt.Printf",
+        "fmt.Printf",
+        "fmt.Printf",
+        "http.StatusText",
+        "fmt.Printf",
+        "fmt.Sprintf"
+      ],
+      "category": "other",
+      "description": "[PLACEHOLDER] InternalServiceProbe.ProbeTarget 功能"
+    },
+    {
+      "source_file": "C:\\D\\fold7\\AIVA-git\\services\\scan\\go_engine\\internal\\ssrf\\detector\\internal_microservice_probe.go",
+      "function_name": "InternalServiceProbe.ProbeCommonPorts",
+      "module": "detector",
+      "inputs": [
+        "ctx",
+        "ip",
+        "payloadURL"
+      ],
+      "outputs": [
+        "result_0"
+      ],
+      "call_targets": [
+        "make",
+        "wg.Add",
+        "wg.Done",
+        "fmt.Sprintf",
+        "context.WithTimeout",
+        "cancel",
+        "p.ProbeTarget",
+        "fmt.Printf",
+        "mu.Lock",
+        "mu.Unlock",
+        "wg.Wait"
+      ],
+      "category": "other",
+      "description": "[PLACEHOLDER] InternalServiceProbe.ProbeCommonPorts 功能"
+    },
+    {
+      "source_file": "C:\\D\\fold7\\AIVA-git\\services\\scan\\go_engine\\tools\\analyze_call_chain.go",
+      "function_name": "main",
+      "module": "main",
+      "inputs": [],
+      "outputs": [],
+      "call_targets": [
+        "fmt.Println",
+        "fmt.Println",
+        "os.Exit",
+        "token.NewFileSet",
+        "parser.ParseFile",
+        "fmt.Printf",
+        "os.Exit",
+        "ast.Inspect",
+        "printAnalysis"
+      ],
+      "category": "other",
+      "description": "[PLACEHOLDER] main 功能"
+    },
+    {
+      "source_file": "C:\\D\\fold7\\AIVA-git\\services\\scan\\go_engine\\tools\\analyze_call_chain.go",
+      "function_name": "analyzeFuncDecl",
+      "module": "main",
+      "inputs": [
+        "fset",
+        "fn",
+        "analysis"
+      ],
+      "outputs": [],
+      "call_targets": [
+        "ast.Inspect"
+      ],
+      "category": "analysis",
+      "description": "[PLACEHOLDER] analyzeFuncDecl 功能"
+    },
+    {
+      "source_file": "C:\\D\\fold7\\AIVA-git\\services\\scan\\go_engine\\tools\\analyze_call_chain.go",
+      "function_name": "analyzeCondition",
+      "module": "main",
+      "inputs": [
+        "fset",
+        "expr"
+      ],
+      "outputs": [
+        "result_0"
+      ],
+      "call_targets": [
+        "exprToString",
+        "exprToString"
+      ],
+      "category": "analysis",
+      "description": "[PLACEHOLDER] analyzeCondition 功能"
+    },
+    {
+      "source_file": "C:\\D\\fold7\\AIVA-git\\services\\scan\\go_engine\\tools\\analyze_call_chain.go",
+      "function_name": "exprToString",
+      "module": "main",
+      "inputs": [
+        "expr"
+      ],
+      "outputs": [
+        "result_0"
+      ],
+      "call_targets": [
+        "fmt.Sprintf",
+        "exprToString",
+        "exprToString",
+        "fmt.Sprintf",
+        "exprToString"
+      ],
+      "category": "other",
+      "description": "[PLACEHOLDER] exprToString 功能"
+    },
+    {
+      "source_file": "C:\\D\\fold7\\AIVA-git\\services\\scan\\go_engine\\tools\\analyze_call_chain.go",
+      "function_name": "hasReturn",
+      "module": "main",
+      "inputs": [
+        "block"
+      ],
+      "outputs": [
+        "result_0"
+      ],
+      "call_targets": [
+        "ast.Inspect"
+      ],
+      "category": "other",
+      "description": "[PLACEHOLDER] hasReturn 功能"
+    },
+    {
+      "source_file": "C:\\D\\fold7\\AIVA-git\\services\\scan\\go_engine\\tools\\analyze_call_chain.go",
+      "function_name": "printAnalysis",
+      "module": "main",
+      "inputs": [
+        "analysis"
+      ],
+      "outputs": [],
+      "call_targets": [
+        "fmt.Println",
+        "fmt.Println",
+        "fmt.Println",
+        "fmt.Println",
+        "fmt.Println",
+        "fmt.Printf",
+        "fmt.Printf",
+        "fmt.Println",
+        "fmt.Println",
+        "fmt.Println",
+        "fmt.Printf",
+        "fmt.Printf",
+        "fmt.Println",
+        "fmt.Printf",
+        "fmt.Printf",
+        "fmt.Printf",
+        "fmt.Println",
+        "fmt.Printf",
+        "fmt.Println",
+        "fmt.Println",
+        "fmt.Println",
+        "fmt.Println",
+        "strings.Split",
+        "fmt.Printf",
+        "fmt.Println",
+        "fmt.Printf",
+        "fmt.Println",
+        "fmt.Println",
+        "fmt.Println"
+      ],
+      "category": "other",
+      "description": "[PLACEHOLDER] printAnalysis 功能"
+    }
+  ],
+  "summary": {
+    "categories": {
+      "analysis": 6,
+      "other": 50,
+      "reconnaissance": 30
+    },
+    "real_connections": 2,
+    "total_files": 14,
+    "total_funcs": 86
+  }
+}

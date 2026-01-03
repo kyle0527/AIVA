@@ -4,7 +4,7 @@
 
 遵循 aiva_common v2.0 規範:
 ✅ 使用統一日誌 (get_logger)
-✅ 使用 Pydantic 模型驗證 (ToolManifest from aiva_common)
+✅ 使用 Pydantic 模型驗證 (ExecutableCapability from aiva_common)
 ✅ 統一錯誤處理
 ✅ 完整類型註解
 
@@ -16,10 +16,10 @@ Design:
 
 import json
 from pathlib import Path
-from typing import Dict, List, Optional
+from typing import List, Optional
 
 from aiva_common.utils.logging import get_logger
-from aiva_common.schemas.capability import ToolManifest
+from aiva_common.schemas.capability import ExecutableCapability
 from aiva_common.error_handling import AIVAError, ErrorType, ErrorSeverity
 
 logger = get_logger(__name__)
@@ -31,19 +31,19 @@ class ManifestLoadError(AIVAError):
     def __init__(self, message: str, file_path: Path | None = None):
         super().__init__(
             message=message,
-            error_type=ErrorType.VALIDATION_ERROR,
+            error_type=ErrorType.VALIDATION,
             severity=ErrorSeverity.MEDIUM
         )
         self.file_path = file_path
 
 
 class ManifestLoader:
-    """Manifest JSON 加載器
+    """能力清單 JSON 加載器
     
     職責:
     1. 從指定目錄加載所有 .json 文件
-    2. 使用 ToolManifest 驗證結構
-    3. 提供按 flow_id 查詢接口
+    2. 使用 ExecutableCapability 驗證結構
+    3. 提供按 capability_id 查詢接口
     4. 錯誤處理和日誌記錄
     
     Usage:
@@ -59,7 +59,7 @@ class ManifestLoader:
             manifests_dir: Manifest JSON 文件目錄
         """
         self.manifests_dir = Path(manifests_dir)
-        self._manifests: Dict[int, ToolManifest] = {}  # flow_id -> ToolManifest
+        self._manifests: dict[str, ExecutableCapability] = {}  # capability_id -> ExecutableCapability
         self._loaded = False
         
         if not self.manifests_dir.exists():
@@ -67,14 +67,14 @@ class ManifestLoader:
                 f"Manifest directory does not exist: {self.manifests_dir}"
             )
     
-    def load_all(self, reload: bool = False) -> Dict[int, ToolManifest]:
-        """加載所有 Manifest 文件
+    def load_all(self, reload: bool = False) -> dict[str, ExecutableCapability]:
+        """加載所有能力清單文件
         
         Args:
             reload: 是否強制重新加載
             
         Returns:
-            {flow_id: ToolManifest} 字典
+            {capability_id: ExecutableCapability} 字典
             
         Raises:
             ManifestLoadError: 加載或驗證失敗
@@ -101,16 +101,16 @@ class ManifestLoader:
         for json_file in json_files:
             try:
                 manifest = self._load_single(json_file)
-                flow_id = manifest.meta.flow_id
+                capability_id = manifest.id  # 從根層級獲取 id 字段
                 
-                if flow_id in self._manifests:
+                if capability_id in self._manifests:
                     logger.warning(
-                        f"⚠️ Duplicate flow_id={flow_id} in {json_file.name}, "
+                        f"⚠️ Duplicate capability_id={capability_id} in {json_file.name}, "
                         f"overwriting previous manifest"
                     )
                 
-                self._manifests[flow_id] = manifest
-                logger.debug(f"✅ Loaded manifest: flow_id={flow_id}, name={manifest.meta.tool_name}")
+                self._manifests[capability_id] = manifest
+                logger.debug(f"✅ Loaded manifest: capability_id={capability_id}, name={manifest.name}")
                 
             except Exception as e:
                 error_msg = f"Failed to load {json_file.name}: {str(e)}"
@@ -122,7 +122,7 @@ class ManifestLoader:
         if errors and not self._manifests:
             # 全部失敗
             raise ManifestLoadError(
-                f"Failed to load any manifests. Errors:\n" + "\n".join(errors)
+                "Failed to load any manifests. Errors:\n" + "\n".join(errors)
             )
         
         logger.info(f"✅ Successfully loaded {len(self._manifests)} manifests")
@@ -131,14 +131,14 @@ class ManifestLoader:
         
         return self._manifests
     
-    def _load_single(self, json_file: Path) -> ToolManifest:
+    def _load_single(self, json_file: Path) -> ExecutableCapability:
         """加載單個 Manifest 文件
         
         Args:
             json_file: JSON 文件路徑
             
         Returns:
-            ToolManifest 實例
+            ExecutableCapability 實例
             
         Raises:
             ManifestLoadError: 加載或驗證失敗
@@ -148,7 +148,7 @@ class ManifestLoader:
                 data = json.load(f)
             
             # Pydantic 自動驗證
-            manifest = ToolManifest(**data)
+            manifest = ExecutableCapability(**data)
             return manifest
             
         except json.JSONDecodeError as e:
@@ -162,48 +162,49 @@ class ManifestLoader:
                 file_path=json_file
             )
     
-    def get_by_flow_id(self, flow_id: int) -> Optional[ToolManifest]:
-        """根據 flow_id 獲取 Manifest
+    def get_by_id(self, capability_id: str) -> ExecutableCapability | None:
+        """根據 capability_id 獲取能力清單
         
         Args:
-            flow_id: 流程 ID (0-839)
+            capability_id: 能力 ID（例：xss.scan.web）
             
         Returns:
-            ToolManifest 或 None
+            ExecutableCapability 或 None
         """
         if not self._loaded:
             self.load_all()
         
-        return self._manifests.get(flow_id)
+        return self._manifests.get(capability_id)
     
-    def list_all_flow_ids(self) -> List[int]:
-        """列出所有已加載的 flow_id
+    def list_all_ids(self) -> list[str]:
+        """列出所有已加載的 capability_id
         
         Returns:
-            flow_id 列表 (已排序)
+            capability_id 列表 (已排序)
         """
         if not self._loaded:
             self.load_all()
         
         return sorted(self._manifests.keys())
     
-    def filter_by_tags(self, required: List[str]) -> List[ToolManifest]:
-        """根據必需標籤過濾 Manifest (簡化版 Hard Mask)
+    def filter_by_tags(self, required: list[str]) -> list[ExecutableCapability]:
+        """根據必需標籤過濾能力
         
         Args:
             required: 必需標籤列表
             
         Returns:
-            匹配的 Manifest 列表
+            匹配的 ExecutableCapability 列表
         """
         if not self._loaded:
             self.load_all()
         
         results = []
-        for manifest in self._manifests.values():
-            manifest_tags = set(manifest.ai_cognitive.tags.required)
-            if manifest_tags.issuperset(required):
-                results.append(manifest)
+        for capability in self._manifests.values():
+            # ExecutableCapability.tags 是 list[str]
+            capability_tags = set(capability.tags)
+            if capability_tags.issuperset(required):
+                results.append(capability)
         
         return results
     
@@ -218,28 +219,25 @@ class ManifestLoader:
         
         # 按語言分組
         lang_distribution = {}
-        # 按模組分組
-        module_distribution = {}
-        # 按風險等級分組
-        risk_distribution = {}
+        # 按標籤分組
+        tag_distribution = {}
         
         for manifest in self._manifests.values():
-            # 語言統計
-            lang = manifest.meta.language.value if hasattr(manifest.meta.language, 'value') else str(manifest.meta.language)
+            # 語言統計 - 從 tags 中推斷
+            lang = "python"  # 預設語言
+            for tag in manifest.tags:
+                if tag in ["python", "rust", "go", "typescript", "javascript"]:
+                    lang = tag
+                    break
             lang_distribution[lang] = lang_distribution.get(lang, 0) + 1
             
-            # 模組統計
-            module = manifest.meta.module or "unknown"
-            module_distribution[module] = module_distribution.get(module, 0) + 1
-            
-            # 風險統計
-            risk = manifest.ai_cognitive.risk_level
-            risk_distribution[risk] = risk_distribution.get(risk, 0) + 1
+            # 標籤統計
+            for tag in manifest.tags:
+                tag_distribution[tag] = tag_distribution.get(tag, 0) + 1
         
         return {
             "total_manifests": len(self._manifests),
-            "flow_id_range": (min(self._manifests.keys()), max(self._manifests.keys())) if self._manifests else (None, None),
+            "manifest_ids": list(self._manifests.keys()),
             "language_distribution": lang_distribution,
-            "module_distribution": module_distribution,
-            "risk_distribution": risk_distribution
+            "tag_distribution": tag_distribution
         }

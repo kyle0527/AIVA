@@ -6,7 +6,7 @@
 import os
 import re
 from pathlib import Path
-from typing import List, Dict, Tuple
+from typing import List, Tuple
 from collections import defaultdict
 
 class ReadmeHierarchyFixer:

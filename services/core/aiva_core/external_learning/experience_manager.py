@@ -368,12 +368,11 @@ class ExperienceManager:
         ]
         
         if len(high_quality_experiences) < batch_size:
-            logger.warning(
-                f"Not enough high-quality experiences "
-                f"(>= {min_reward}): {len(high_quality_experiences)}"
+            raise ValueError(
+                f"高品質經驗不足: 需要 {batch_size} 筆，但只有 {len(high_quality_experiences)} 筆 "
+                f"(獎勵閾值 >= {min_reward})。"
+                "請調低 min_reward 閾值或累積更多高品質經驗。"
             )
-            # 降級為隨機採樣
-            return self.sample(batch_size)
         
         # 按獎勵值降序排序
         sorted_experiences = sorted(

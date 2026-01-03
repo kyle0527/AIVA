@@ -28,7 +28,7 @@ Go 引擎的各個掃描器（SSRF、SCA、CSPM）中存在 RabbitMQ Worker 相�
 
 ## 新架構方案
 
-根據 AIVA 系統的架構升級（移除 RabbitMQ，採用 AI 直接指揮），Go 引擎不再需要實現獨立的 Worker 模式。
+根據 AIVA 系統的架構升級（採用雙軌通信：MessageBroker + CLI），Go 引擎主要通過 CLI 調用，不再需要實現獨立的 Worker 模式。
 
 ### 調用方式
 

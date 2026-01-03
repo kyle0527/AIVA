@@ -267,62 +267,69 @@ class UnifiedFunctionCaller:
     async def _call_python_module(
         self, endpoint: ModuleEndpoint, function_name: str, parameters: dict[str, Any]
     ) -> Any:
-        """調用 Python 模組"""
+        """調用 Python 模組
+        
+        注意：這些模組是可選的，可能尚未實現。使用 try/except 處理導入錯誤。
+        """
         try:
             if endpoint.name == "function_sqli":
-                from services.function.function_sqli.aiva_func_sqli.smart_sqli_detector import (
-                    SmartSQLiDetector,
-                )
-
-                detector = SmartSQLiDetector()
-
-                if function_name == "detect_sqli":
-                    target_url = parameters.get("target_url", "")
-                    # 假設有這個方法，實際需要根據真實接口調整
-                    result = await detector.detect_sql_injection(target_url)
-                    return result
+                try:
+                    from services.function.function_sqli.aiva_func_sqli.smart_sqli_detector import (  # type: ignore[import-not-found]
+                        SmartSQLiDetector,
+                    )
+                    detector = SmartSQLiDetector()
+                    if function_name == "detect_sqli":
+                        target_url = parameters.get("target_url", "")
+                        result = await detector.detect_sql_injection(target_url)
+                        return result
+                except ImportError:
+                    self.logger.warning("function_sqli module not available")
+                    return None
 
             elif endpoint.name == "function_xss":
-                from services.function.function_xss.aiva_func_xss.smart_xss_detector import (
-                    SmartXSSDetector,
-                )
-
-                detector = SmartXSSDetector()
-
-                if function_name == "detect_xss":
-                    target_url = parameters.get("target_url", "")
-                    result = await detector.detect_xss_vulnerabilities(target_url)
-                    return result
+                try:
+                    from services.function.function_xss.aiva_func_xss.smart_xss_detector import (  # type: ignore[import-not-found]
+                        SmartXSSDetector,
+                    )
+                    detector = SmartXSSDetector()
+                    if function_name == "detect_xss":
+                        target_url = parameters.get("target_url", "")
+                        result = await detector.detect_xss_vulnerabilities(target_url)
+                        return result
+                except ImportError:
+                    self.logger.warning("function_xss module not available")
+                    return None
 
             elif endpoint.name == "function_idor":
-                from services.function.function_idor.aiva_func_idor.smart_idor_detector import (
-                    SmartIDORDetector,
-                )
-
-                detector = SmartIDORDetector()
-
-                if function_name == "detect_idor":
-                    target_url = parameters.get("target_url", "")
-                    result = await detector.detect_idor_vulnerabilities(target_url)
-                    return result
+                try:
+                    from services.function.function_idor.aiva_func_idor.smart_idor_detector import (  # type: ignore[import-not-found]
+                        SmartIDORDetector,
+                    )
+                    detector = SmartIDORDetector()
+                    if function_name == "detect_idor":
+                        target_url = parameters.get("target_url", "")
+                        result = await detector.detect_idor_vulnerabilities(target_url)
+                        return result
+                except ImportError:
+                    self.logger.warning("function_idor module not available")
+                    return None
 
             elif endpoint.name == "function_ssrf":
-                from services.function.function_ssrf.aiva_func_ssrf.smart_ssrf_detector import (
-                    SmartSSRFDetector,
-                )
-
-                detector = SmartSSRFDetector()
-
-                if function_name == "detect_ssrf":
-                    target_url = parameters.get("target_url", "")
-                    result = await detector.detect_ssrf_vulnerabilities(target_url)
-                    return result
+                try:
+                    from services.function.function_ssrf.aiva_func_ssrf.smart_ssrf_detector import (  # type: ignore[import-not-found]
+                        SmartSSRFDetector,
+                    )
+                    detector = SmartSSRFDetector()
+                    if function_name == "detect_ssrf":
+                        target_url = parameters.get("target_url", "")
+                        result = await detector.detect_ssrf_vulnerabilities(target_url)
+                        return result
+                except ImportError:
+                    self.logger.warning("function_ssrf module not available")
+                    return None
 
             return None
 
-        except ImportError as e:
-            self.logger.error(f"Python module import failed: {e}")
-            return None
         except Exception as e:
             self.logger.error(f"Python module execution error: {e}")
             return None

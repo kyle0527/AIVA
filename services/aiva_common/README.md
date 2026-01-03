@@ -29,9 +29,9 @@
 
 ## 🏗️ 架構說明 (v2.0)
 
-### AI 直接指揮架構
+### AI 雙軌通信架構
 
-**核心理念**: 移除 RabbitMQ，通過**數據合約**實現模組間通信。
+**核心理念**: 通過 **MessageBroker (異步) + CLI (同步)** 實現靈活的模組間通信。
 
 ```
 User → AI → Command Center → Module Handler → Engine
@@ -39,13 +39,15 @@ User → AI → Command Center → Module Handler → Engine
 輸入  分析    命令路由        解析執行      執行
   ↓      ↓         ↓               ↓            ↓
   ← ← 分析 ← AICommandResult ← 數據合約 ← 結果
+            ↕
+      MessageBroker (RabbitMQ) - 異步消息
 ```
 
 **優勢**:
-- ✅ 無需 RabbitMQ 服務（0 外部依賴）
+- ✅ 雙軌通信（異步事件 + 同步命令）
 - ✅ 直接調用棧（調試效率 ↑50%）
 - ✅ Pydantic 類型安全（錯誤率 ↓80%）
-- ✅ 本機開發友好
+- ✅ 跨語言支援（Python/Rust/Go/TypeScript）
 
 ### 核心組件
 
@@ -270,9 +272,10 @@ POSTGRES_USER = os.getenv("POSTGRES_USER", "...")  # 多餘的認證配置
 - 連接字串: `postgresql://postgres:postgres@localhost:5432/aiva_db`
 - 說明: 本地 PostgreSQL，使用預設帳號密碼
 
-**消息隊列**:
+**消息隊列 (MessageBroker)**:
 - 連接字串: `amqp://guest:guest@localhost:5672/`
-- 說明: 本地 RabbitMQ，使用預設帳號密碼
+- 說明: 本地 RabbitMQ，用於異步消息傳遞
+- 用途: 事件驅動通信、跨模組廣播、長時間任務通知
 
 **運行環境**:
 - 環境: `development`
@@ -593,12 +596,12 @@ print(f"平均執行時間: {stats['avg_execution_time']:.2f}s")
 
 ---
 
-### 5️⃣ 消息隊列 (`mq.py`) - 可選組件
+### 5️⃣ 消息隊列 (`mq.py`) - 核心組件
 
-> **注意**: v2.1.1 架構中，消息隊列已改為**可選組件**。  
-> 預設使用命令系統進行模組間通信，無需 RabbitMQ。
+> **注意**: v2.0 架構採用**雙軌通信**設計。  
+> MessageBroker (RabbitMQ) 用於異步事件驅動通信，CLI 用於同步命令執行。
 
-統一的消息隊列抽象層，支援多種 MQ 後端（用於特殊場景）。
+統一的消息隊列抽象層，支援跨模組的異步消息傳遞。
 
 **主要功能**:
 - 訊息發布/訂閱
@@ -609,24 +612,26 @@ print(f"平均執行時間: {stats['avg_execution_time']:.2f}s")
 **支援的 MQ 系統**:
 - RabbitMQ (必需，需要 aio_pika)
 
-**使用範例** (僅在需要異步消息時):
+**使用範例**:
 ```python
 from aiva_common.mq import get_broker
 from aiva_common.enums import Topic
 
-# 發布訊息（可選，主要用命令系統）
+# 發布異步訊息
 broker = await get_broker()
 await broker.publish(
     topic=Topic.SCAN_START,
     body=json.dumps(scan_payload).encode()
 )
 
-# 訂閱訊息（可選，主要用命令系統）
+# 訂閱異步訊息
 async for message in broker.subscribe(Topic.FINDINGS):
     handle_finding(message.body)
 ```
 
-**v2.0 建議**: 優先使用命令系統（`command_center.py`），消息隊列僅用於特殊異步場景。
+**v2.0 設計**: 
+- **異步場景**: 使用 MessageBroker (事件通知、長時間任務、廣播)
+- **同步場景**: 使用 CLI subprocess (需要返回值、跨語言調用)
 
 ---
 

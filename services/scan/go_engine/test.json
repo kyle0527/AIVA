@@ -1,4 +1,0 @@
-{
-  "targets": ["http://localhost:8080/WebGoat/login"],
-  "config": {}
-}

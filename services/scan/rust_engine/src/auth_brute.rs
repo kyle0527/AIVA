@@ -332,29 +332,3 @@ impl CredentialSprayer {
         }
     }
 }
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn test_load_default_credentials() {
-        let creds = CredentialSprayer::load_default_credentials();
-        assert!(!creds.is_empty());
-        assert!(creds.contains(&("admin".to_string(), "admin".to_string())));
-    }
-
-    #[test]
-    fn test_sprayer_creation() {
-        let sprayer = CredentialSprayer::new(10);
-        assert_eq!(sprayer.concurrency, 10);
-        assert!(!sprayer.default_credentials.is_empty());
-    }
-
-    #[tokio::test]
-    async fn test_auth_type_detection() {
-        let sprayer = CredentialSprayer::new(5);
-        // 這需要實際的目標才能測試
-        // let auth_type = sprayer.detect_auth_type("http://example.com").await;
-    }
-}

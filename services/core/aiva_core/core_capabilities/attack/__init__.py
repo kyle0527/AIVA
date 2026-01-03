@@ -1,31 +1,46 @@
 """
 AIVA Attack Module
-攻擊執行模組
+攻擊編排模組
 
-此模組負責實際的安全測試攻擊執行，包括:
-- 攻擊計劃執行
-- 漏洞利用管理
-- Payload 生成
+此模組負責攻擊流程的編排和協調，包括:
 - 攻擊鏈編排
-- 結果驗證
+- 漏洞利用編排
+- 攻擊驗證
+- 載荷生成
 
-五大模組架構中的核心攻擊模組
+實際文件位置:
+- AttackExecutor: services.features.function_exploit.executor.attack_executor
+- AttackValidator: services.features.function_exploit.validators.attack_validator  
+- PayloadGenerator: services.features.function_exploit.generators.payload_generator
 """
 
+# 本地模組
 from .attack_chain import AttackChain
-from .attack_executor import AttackExecutor
-from .attack_validator import AttackValidator
-from .exploit_orchestrator import ExploitOrchestrator, ExploitManager
-from .payload_generator import PayloadGenerator
+from .exploit_orchestrator import ExploitOrchestrator
+
+# 延遲導入函數 - 避免循環導入
+def get_attack_executor():
+    """獲取 AttackExecutor"""
+    from services.features.function_exploit.executor.attack_executor import AttackExecutor
+    return AttackExecutor
+
+def get_attack_validator():
+    """獲取 AttackValidator"""
+    from services.features.function_exploit.validators.attack_validator import AttackValidator
+    return AttackValidator
+
+def get_payload_generator():
+    """獲取 PayloadGenerator"""
+    from services.features.function_exploit.generators.payload_generator import PayloadGenerator
+    return PayloadGenerator
 
 __all__ = [
-    "AttackExecutor",
-    "ExploitManager",
-    "ExploitOrchestrator",
-    "PayloadGenerator",
     "AttackChain",
-    "AttackValidator",
+    "ExploitOrchestrator",
+    "get_attack_executor",
+    "get_attack_validator",
+    "get_payload_generator",
 ]
 
-__version__ = "1.0.0"
+__version__ = "2.0.0"
 __module_name__ = "aiva_attack"

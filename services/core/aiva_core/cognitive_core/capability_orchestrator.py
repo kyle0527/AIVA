@@ -48,7 +48,7 @@ class TaskRequirement(BaseModel):
     task_type: str = Field(..., description="任務類型: scan, attack, analysis, comprehensive")
     target: str = Field(..., description="目標 URL 或 IP")
     objectives: List[str] = Field(default_factory=list, description="任務目標列表")
-    constraints: Dict[str, Any] = Field(default_factory=dict, description="約束條件")
+    constraints: dict[str, Any] = Field(default_factory=dict, description="約束條件")
     priority: int = Field(default=5, ge=1, le=10, description="優先級 1-10")
 
 
@@ -56,7 +56,7 @@ class CapabilityPlan(BaseModel):
     """能力執行計劃"""
     plan_id: str = Field(..., description="計劃唯一ID")
     task_id: str = Field(..., description="關聯的任務ID")
-    selected_capabilities: List[Dict[str, Any]] = Field(default_factory=list, description="選中的能力列表")
+    selected_capabilities: List[dict[str, Any]] = Field(default_factory=list, description="選中的能力列表")
     execution_sequence: List[str] = Field(default_factory=list, description="執行順序 (capability_id)")
     estimated_duration: int = Field(default=0, description="預計耗時(秒)")
     risk_level: str = Field(default="medium", description="風險等級: low, medium, high")
@@ -72,7 +72,7 @@ class ExecutionResult(BaseModel):
     failed_commands: List[str] = Field(default_factory=list, description="失敗的命令ID")
     results: Dict[str, AICommandResult] = Field(default_factory=dict, description="執行結果映射")
     total_duration: float = Field(default=0.0, description="總耗時(秒)")
-    issues_found: List[Dict[str, Any]] = Field(default_factory=list, description="發現的問題列表")
+    issues_found: List[dict[str, Any]] = Field(default_factory=list, description="發現的問題列表")
 
 
 class CapabilityOrchestrator:
@@ -125,7 +125,7 @@ class CapabilityOrchestrator:
         self.execution_history: List[Tuple[CapabilityPlan, ExecutionResult]] = []
         
         # 能力性能統計 (用於優化選擇)
-        self.capability_performance: Dict[str, Dict[str, Any]] = {}
+        self.capability_performance: dict[str, dict[str, Any]] = {}
         
         logger.info("✅ CapabilityOrchestrator initialized")
     

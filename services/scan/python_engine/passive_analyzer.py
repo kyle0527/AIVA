@@ -8,7 +8,7 @@ OWASP A05:2021 - Security Misconfiguration
 
 import re
 import json
-from typing import Dict, List, Optional
+from typing import List, Optional
 from dataclasses import dataclass
 from urllib.parse import urlparse, parse_qs
 
@@ -214,7 +214,7 @@ class PassiveAnalyzer:
         
         return findings
     
-    def _check_sensitive_params(self, params: Dict[str, List[str]], url: str) -> List[PassiveFinding]:
+    def _check_sensitive_params(self, params: dict[str, List[str]], url: str) -> List[PassiveFinding]:
         """檢查敏感參數名稱"""
         findings = []
         sensitive_param_names = [
@@ -258,7 +258,7 @@ class PassiveAnalyzer:
         
         return findings
     
-    def _check_security_headers(self, headers: Dict[str, str], url: str) -> List[PassiveFinding]:
+    def _check_security_headers(self, headers: dict[str, str], url: str) -> List[PassiveFinding]:
         """檢查安全頭部"""
         findings = []
         

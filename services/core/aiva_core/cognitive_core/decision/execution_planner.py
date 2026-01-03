@@ -125,12 +125,12 @@ class ExecutionPlanner:
         
         if is_new_target:
             # 首次扫描: 使用 Rust 引擎深入扫描
-            return await self._generate_initial_scan_plan(targets, constraints)
+            return self._generate_initial_scan_plan(targets, constraints)
         else:
             # 后续扫描: 基于历史资料决策
-            return await self._generate_informed_scan_plan(targets, constraints, historical_data)
+            return self._generate_informed_scan_plan(targets, constraints, historical_data)
     
-    async def _generate_initial_scan_plan(
+    def _generate_initial_scan_plan(
         self,
         targets: List[str],
         constraints: Dict[str, Any]
@@ -176,7 +176,7 @@ class ExecutionPlanner:
         self.logger.info(f"✅ 计划生成完成: {plan.plan_id}, 预计耗时 {plan.total_estimated_duration}s")
         return plan
     
-    async def _generate_informed_scan_plan(
+    def _generate_informed_scan_plan(
         self,
         targets: List[str],
         constraints: Dict[str, Any],
@@ -311,7 +311,7 @@ class ExecutionPlanner:
             depends_on=[1]
         )
     
-    async def decide_next_phase(
+    def decide_next_phase(
         self,
         rust_scan_result: Dict[str, Any]
     ) -> NextPhaseDecision:

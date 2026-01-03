@@ -1,7 +1,9 @@
 """
 AI Model Manager - AI 模型管理器
 
-統一管理 bio_neuron_core.py 和訓練系統，提供完整的 AI 核心協調功能
+統一管理 5M Decision Engine 和訓練系統，提供完整的 AI 核心協調功能
+
+注意：已移除 LLM/NLU 依賴，僅使用 5M 特化神經網路
 """
 
 from datetime import UTC, datetime
@@ -29,10 +31,12 @@ class AIModelManager:
     """AI 模型管理器
 
     協調和管理所有 AI 相關組件：
-    - BioNeuronRAGAgent (主要決策引擎)
+    - RealDecisionEngine (5M 特化決策引擎)
     - ScalableBioNet (神經網路核心)
     - 訓練系統 (ModelTrainer, ScalableBioTrainer)
     - 經驗管理 (使用 V2 ExperienceRepository 取代 V1 ExperienceManager)
+    
+    ⚠️ 設計限制: 無 LLM/NLU 能力，僅支援結構化決策
     """
 
     def __init__(
@@ -51,16 +55,15 @@ class AIModelManager:
         self.model_dir = model_dir or Path("./ai_models")
         self.model_dir.mkdir(parents=True, exist_ok=True)
 
-        # 延遲導入：在需要時才導入 real_bio_net_adapter，解決循環依賴
-        from .real_bio_net_adapter import (
-            RealBioNeuronRAGAgent as BioNeuronRAGAgent,
-            RealScalableBioNet as ScalableBioNet
-        )
-        self._bio_neuron_rag_agent_class = BioNeuronRAGAgent
+        # 使用 5M Decision Engine (無 LLM/NLU 依賴)
+        from .real_neural_core import RealDecisionEngine, RealAICore
+        from .real_bio_net_adapter import RealScalableBioNet as ScalableBioNet
+        
+        self._decision_engine_class = RealDecisionEngine
         self._scalable_bio_net_class = ScalableBioNet
 
         # 初始化核心組件
-        self.bio_agent: Any | None = None
+        self.decision_engine: RealDecisionEngine | None = None
         self.scalable_net: Any | None = None
 
         # 初始化訓練和管理組件
@@ -91,7 +94,7 @@ class AIModelManager:
         self.is_trained = False
         self.last_update = datetime.now(UTC)
 
-        logger.info(f"AIModelManager initialized with model_dir={self.model_dir}")
+        logger.info(f"AIModelManager initialized with model_dir={self.model_dir} (5M Decision Engine)")
 
     def initialize_models(
         self,
@@ -118,30 +121,29 @@ class AIModelManager:
                 f"ScalableBioNet initialized: {getattr(self.scalable_net, 'total_params', 0):,} parameters"
             )
 
-            # 2. 初始化 BioNeuronRAGAgent (可選)
-            # 注意：BioNeuronRAGAgent 需要 decision_core 參數
+            # 2. 初始化 5M Decision Engine (無 LLM/NLU 依賴)
             try:
-                self.bio_agent = self._bio_neuron_rag_agent_class(
-                    decision_core=self.scalable_net,
-                    input_vector_size=input_size
+                self.decision_engine = self._decision_engine_class(
+                    use_5m_model=True,
+                    weights_path=str(self.model_dir / "aiva_real_weights.pth") if (self.model_dir / "aiva_real_weights.pth").exists() else None
                 )
                 logger.info(
-                    "BioNeuronRAGAgent initialized successfully"
+                    "5M Decision Engine initialized successfully"
                 )
             except Exception as e:
-                logger.warning(f"BioNeuronRAGAgent initialization failed: {e}")
-                self.bio_agent = None
+                logger.warning(f"5M Decision Engine initialization failed: {e}")
+                self.decision_engine = None
 
             # 3. 檢查模型狀態
             result = {
                 "status": "success",
                 "scalable_net_params": getattr(self.scalable_net, 'total_params', 0) if self.scalable_net else 0,
-                "bio_agent_ready": self.bio_agent is not None,
+                "decision_engine_ready": self.decision_engine is not None,
                 "model_version": self.current_version,
                 "initialized_at": self.last_update.isoformat(),
             }
 
-            logger.info("AI models initialization completed successfully")
+            logger.info("AI models initialization completed successfully (5M Engine)")
             return result
 
         except Exception as e:
@@ -354,7 +356,7 @@ class AIModelManager:
                 # 合併結果並檢查一致性
                 decision_result = self._merge_dual_outputs(primary_result, validation_result)
                 
-                logger.info("Decision made using BioNeuronRAGAgent with ScalableBioNet validation")
+                logger.info("Decision made using 5M Decision Engine with ScalableBioNet validation")
             else:
                 # 直接使用 ScalableBioNet
                 if not self.scalable_net:

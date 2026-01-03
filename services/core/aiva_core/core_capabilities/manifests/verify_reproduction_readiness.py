@@ -62,10 +62,8 @@ for name, path in optional_files.items():
         if path.suffix == '.json':
             with open(path, 'r', encoding='utf-8') as f:
                 data = json.load(f)
-            if isinstance(data, dict):
-                print(f"      包含: {len(data)} 項")
-            elif isinstance(data, list):
-                print(f"      包含: {len(data)} 項")
+            # dict 和 list 都使用 len() 計數
+            print(f"      包含: {len(data)} 項")
     else:
         print(f"   ⚠️  {name} - 不存在（可生成）")
 
@@ -134,7 +132,7 @@ if flows_file.exists():
         meta = flows_data['metadata']
         print(f"   生成時間: {meta.get('generated_at', 'N/A')}")
         if 'module_distribution' in meta:
-            print(f"   模組分布:")
+            print("   模組分布:")
             for module, count in meta['module_distribution'].items():
                 print(f"      - {module}: {count}")
     
@@ -148,7 +146,7 @@ if flows_file.exists():
     # 統計路徑長度
     from collections import Counter
     lengths = Counter([f['length'] for f in flows_data['flows']])
-    print(f"   路徑長度分布:")
+    print("   路徑長度分布:")
     for length in sorted(lengths.keys()):
         count = lengths[length]
         print(f"      - {length} 個腳本: {count} 個 flows ({count/len(flows_data['flows'])*100:.1f}%)")

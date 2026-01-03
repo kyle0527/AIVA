@@ -698,15 +698,7 @@ function main() {
     const inputDir = getArg('--input') || '.';
     
     // 導入路徑配置
-    let outputDir: string;
-    try {
-        const pathsConfig = require('./paths.config');
-        outputDir = getArg('--output') || pathsConfig.getDefaultOutputDir();
-    } catch (e: unknown) {
-        // 向後兼容：如果找不到配置文件，使用默認路徑
-        console.warn('配置文件讀取失敗，使用默認設定:', e instanceof Error ? e.message : String(e));
-        outputDir = getArg('--output') || './analysis_output';
-    }
+    let outputDir: string = getArg('--output') || './analysis_output';
 
     console.log("========================================");
     console.log("🚀 AIVA TypeScript 全功能分析器 (ts2mermaid v2.0)");

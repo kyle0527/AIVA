@@ -54,7 +54,7 @@ class ScalableBioTrainer:
         self,
         X_train: np.ndarray,
         y_train: np.ndarray,
-        x_val: np.ndarray | None = None,
+        X_val: np.ndarray | None = None,
         y_val: np.ndarray | None = None,
     ) -> dict[str, Any]:
         """訓練 ScalableBioNet 模型

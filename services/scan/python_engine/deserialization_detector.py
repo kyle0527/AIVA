@@ -8,7 +8,7 @@ OWASP A08:2021 - Software and Data Integrity Failures
 import pickle
 import base64
 import time
-from typing import Dict, List, Optional
+from typing import List, Optional
 from dataclasses import dataclass
 import requests
 
@@ -41,7 +41,7 @@ class DeserializationDetector:
         """
         self.timeout = timeout
     
-    def generate_payloads(self, target_language: str) -> Dict[str, bytes]:
+    def generate_payloads(self, target_language: str) -> dict[str, bytes]:
         """
         生成針對不同語言的 payload
         

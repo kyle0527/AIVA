@@ -245,14 +245,16 @@ def parse_user_input_to_context(user_input: str) -> TaskContext:
             user_input=user_input
         )
     else:
+        # 先創建 AttackTaskContext，然後設定 vulnerability_type
         # 提取目標（XSS/SQLi等）
         objective = "comprehensive_assessment"
+        vulnerability_type = None
         if "xss" in user_input.lower():
             objective = "檢查 XSS 漏洞"
-            context.vulnerability_type = "xss"
+            vulnerability_type = "xss"
         elif "sql" in user_input.lower():
             objective = "檢查 SQL 注入"
-            context.vulnerability_type = "sqli"
+            vulnerability_type = "sqli"
         
         context = AttackTaskContext(
             task_id=str(uuid.uuid4()),
@@ -261,6 +263,10 @@ def parse_user_input_to_context(user_input: str) -> TaskContext:
             objective=objective,
             user_input=user_input
         )
+        
+        # 如果有 vulnerability_type，則設定它
+        if vulnerability_type:
+            context.vulnerability_type = vulnerability_type
     
     # 解析修飾詞
     constraints = TaskConstraints()

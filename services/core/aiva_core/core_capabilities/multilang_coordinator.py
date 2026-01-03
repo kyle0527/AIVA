@@ -21,8 +21,15 @@ from services.aiva_common.cross_language.adapters import (
     GoAdapter, GoConfig, create_go_adapter
 )
 from services.aiva_common.enums.modules import ProgrammingLanguage
+from services.aiva_common.utils import get_logger
 
-from .utils.logging_formatter import get_aiva_logger, log_cross_language_call
+# 嘗試導入 logging_formatter，如果不存在則使用默認的 logger
+try:
+    from .utils.logging_formatter import get_aiva_logger, log_cross_language_call
+except ImportError:
+    get_aiva_logger = get_logger
+    def log_cross_language_call(logger, src, dst, task, kwargs, result, error, duration):
+        logger.info(f"Cross-language call {src}->{dst}: {task}, duration={duration:.3f}s")
 
 logger = get_aiva_logger("multilang_coordinator")
 
@@ -141,25 +148,44 @@ class MultiLanguageAICoordinator:
             }
 
     async def _execute_python_task(self, task: str, **kwargs) -> dict[str, Any]:
-        """執行 Python AI 任務"""
+        """執行 Python AI 任務
+        
+        調用真實的 Python AI 組件執行任務。
+        
+        Raises:
+            RuntimeError: 任務執行失敗時拋出
+        """
         logger.info(f"執行 Python AI 任務: {task}")
 
-        # 這裡可以調用本地的 Python AI 功能
-        # 例如 BioNeuronRAGAgent 或其他 AI 組件
-
-        # 模擬處理
-        import asyncio
-
-        await asyncio.sleep(0.1)  # 模擬處理時間
-
-        return {
-            "success": True,
-            "task": task,
-            "language": "python",
-            "result": f"Python AI 任務 '{task}' 執行完成",
-            "details": kwargs,
-            "processed_by": "MultiLanguageAICoordinator",
-        }
+        # 使用 5M Decision Engine（無 LLM/NLU 依賴）
+        try:
+            from ..cognitive_core.neural.real_neural_core import RealDecisionEngine
+            
+            # 獲取或創建 decision engine 實例
+            if not hasattr(self, '_python_agent') or self._python_agent is None:
+                self._python_agent = RealDecisionEngine(use_5m_model=True)
+            
+            # 執行任務（使用 generate_decision 方法）
+            result = self._python_agent.generate_decision(
+                target_info={"task": task},
+                context=kwargs
+            )
+            
+            return {
+                "success": True,
+                "task": task,
+                "language": "python",
+                "result": result,
+                "details": kwargs,
+                "processed_by": "5M_DecisionEngine",
+            }
+        except ImportError as e:
+            raise RuntimeError(
+                f"Python AI 組件不可用: {e}。"
+                "請確認 cognitive_core.neural.real_neural_core 模組已正確安裝。"
+            ) from e
+        except Exception as e:
+            raise RuntimeError(f"Python AI 任務執行失敗: {e}") from e
 
     def _select_best_language(self, task: str) -> ProgrammingLanguage:
         """根據任務選擇最佳語言"""
@@ -303,12 +329,20 @@ class MultiLanguageAICoordinator:
             self.available_ai_modules[ProgrammingLanguage.TYPESCRIPT] = False
 
     async def call_rust_ai(self, task: str, **kwargs) -> dict[str, Any]:
-        """調用 Rust AI 模組 - 使用 RustAdapter"""
+        """調用 Rust AI 模組 - 使用 RustAdapter
+        
+        Raises:
+            RuntimeError: Rust 模組未啟用或調用失敗時拋出
+        """
         if not self.available_ai_modules[ProgrammingLanguage.RUST]:
-            return {"success": False, "error": "Rust AI 模組未啟用"}
+            raise RuntimeError(
+                "Rust AI 模組未啟用。請確認 Rust 服務已啟動並可連接。"
+            )
 
         if not self.rust_adapter:
-            return {"success": False, "error": "Rust適配器未初始化"}
+            raise RuntimeError(
+                "Rust 適配器未初始化。請先調用 initialize() 方法。"
+            )
 
         start_time = time.time()
         try:
@@ -316,17 +350,14 @@ class MultiLanguageAICoordinator:
             if not self._initialized:
                 await self.initialize()
             
-            # 通過適配器執行任務（當前為佔位符實現）
-            # TODO: 實現完整的 RustAdapter.execute_task 方法
-            # 目前返回模擬結果
-            import asyncio
-            await asyncio.sleep(0)  # 確保函數是異步的
+            # 通過適配器執行任務
+            if not hasattr(self.rust_adapter, 'execute_rust_function'):
+                raise RuntimeError(
+                    "Rust 適配器缺少 execute_rust_function 方法。"
+                    "請確認 RustAdapter 實現完整。"
+                )
             
-            result = {
-                "task": task,
-                "status": "completed",
-                "data": kwargs
-            }
+            result = await self.rust_adapter.execute_rust_function(task, **kwargs)
 
             log_cross_language_call(
                 logger,
@@ -348,7 +379,7 @@ class MultiLanguageAICoordinator:
             }
 
         except Exception as e:
-            error_msg = f"Rust適配器調用異常: {e}"
+            error_msg = f"Rust適配器調用失敗: {e}"
             log_cross_language_call(
                 logger,
                 "python",
@@ -359,13 +390,15 @@ class MultiLanguageAICoordinator:
                 error_msg,
                 time.time() - start_time,
             )
-            logger.error(f"調用 Rust 適配器異常: {e}")
-            return {"success": False, "error": error_msg}
+            raise RuntimeError(error_msg) from e
 
     async def call_go_ai(self, task: str, **kwargs) -> dict[str, Any]:
         """調用 Go AI 模組 - V2 gRPC 版本"""
         if not self.available_ai_modules[ProgrammingLanguage.GO]:
-            return {"success": False, "error": "Go AI 模組未啟用"}
+            raise RuntimeError(
+                "Go AI 模組未啟用。"
+                "請在配置中啟用 Go 語言支持並確保相關依賴已安裝。"
+            )
 
         start_time = time.time()
         try:
@@ -477,12 +510,18 @@ class MultiLanguageAICoordinator:
                 time.time() - start_time,
             )
             logger.error(f"調用 Go gRPC 服務異常: {e}")
-            return {"success": False, "error": error_msg}
+            raise RuntimeError(
+                f"Go gRPC 服務調用失敗: {e}。"
+                "請確認 Go gRPC 服務已啟動並正確配置端點。"
+            ) from e
 
     async def call_typescript_ai(self, task: str, **kwargs) -> dict[str, Any]:
         """調用 TypeScript AI 模組 - V2 gRPC 版本"""
         if not self.available_ai_modules[ProgrammingLanguage.TYPESCRIPT]:
-            return {"success": False, "error": "TypeScript AI 模組未啟用"}
+            raise RuntimeError(
+                "TypeScript AI 模組未啟用。"
+                "請在配置中啟用 TypeScript 語言支持並確保相關依賴已安裝。"
+            )
 
         start_time = time.time()
         try:
@@ -587,4 +626,7 @@ class MultiLanguageAICoordinator:
                 time.time() - start_time,
             )
             logger.error(f"調用 TypeScript gRPC 服務異常: {e}")
-            return {"success": False, "error": error_msg}
+            raise RuntimeError(
+                f"TypeScript gRPC 服務調用失敗: {e}。"
+                "請確認 TypeScript gRPC 服務已啟動並正確配置端點。"
+            ) from e

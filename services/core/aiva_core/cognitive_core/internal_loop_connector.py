@@ -1789,7 +1789,7 @@ class InternalLoopConnector:
                     
             except Exception as e:
                 logger.error(f"Failed to add document {i}: {e}")
-                logger.debug(f"Document: {doc}")  # 調試用
+                # Document processing (debug info omitted)
         
         logger.info(f"  Injected {added_count}/{len(documents)} documents to RAG")
         return added_count

@@ -3,10 +3,9 @@
 用途: 基於知識庫驗證 AI 生成的攻擊計畫，移除不合理步驟
 基於: BioNeuron_模型_AI核心大腦.md 分析建議
 
-改進內容:
-- 增加知識庫回退機制 (Knowledge Base Fallback)
-- 強化錯誤處理和恢復能力
-- 添加備用驗證策略
+設計原則:
+- 有錯就報錯: 不使用降級機制，知識庫不可用時直接拋出異常
+- 嚴格驗證: 所有步驟必須經過知識庫確認
 """
 
 import json
@@ -14,34 +13,45 @@ import logging
 from pathlib import Path
 import sys
 import time
-from typing import Dict, Any, Optional
+from typing import Any, Dict, Optional
 import warnings
 
 # 添加 AIVA 模組路徑
 sys.path.append(str(Path(__file__).parent.parent.parent.parent.parent))
 
 
+class KnowledgeBaseUnavailableError(Exception):
+    """知識庫不可用異常"""
+    pass
+
+
 class AntiHallucinationModule:
     """抗幻覺驗證模組 - 防止 AI 產生不合理的攻擊步驟
     
-    改進功能:
-    - 知識庫回退機制：當主要知識庫不可用時使用備用策略
-    - 多層驗證：結合規則驗證、知識庫驗證和統計驗證
-    - 錯誤恢復：自動處理知識庫連線失敗等問題
+    設計原則:
+    - 嚴格模式: 知識庫必須可用，否則拋出異常
+    - 多層驗證: 結合規則驗證、知識庫驗證和統計驗證
+    - 有錯就報錯: 不隱藏問題，立即失敗
     """
 
-    def __init__(self, knowledge_base=None, fallback_enabled=True):
+    def __init__(self, knowledge_base=None):
+        """初始化抗幻覺模組
+        
+        Args:
+            knowledge_base: 知識庫實例 (必須提供且可用)
+            
+        Raises:
+            KnowledgeBaseUnavailableError: 知識庫不可用時拋出
+        """
         self.knowledge_base = knowledge_base
-        self.fallback_enabled = fallback_enabled
-        self.knowledge_base_status = "unknown"  # unknown, available, unavailable, fallback
         self.validation_history = []
         self.confidence_threshold = 0.7
         self.logger = self._setup_logger()
         
-        # 知識庫健康檢查
-        self._check_knowledge_base_health()
+        # 嚴格檢查知識庫
+        self._require_knowledge_base()
 
-        # 已知攻擊技術分類 (基於 MITRE ATT&CK) - 作為fallback知識
+        # 已知攻擊技術分類 (基於 MITRE ATT&CK)
         self.known_techniques = {
             "reconnaissance": ["port_scan", "service_enum", "web_crawl", "dns_enum", "subdomain_scan"],
             "initial_access": ["phishing", "exploit_public", "brute_force", "spear_phishing", "watering_hole"],
@@ -63,84 +73,37 @@ class AntiHallucinationModule:
             "credential_access": ["initial_access"],
         }
         
-        self.logger.info(f"抗幻覺模組初始化完成，知識庫狀態: {self.knowledge_base_status}")
+        self.logger.info("✅ 抗幻覺模組初始化完成，知識庫已驗證可用")
 
-    def _check_knowledge_base_health(self):
-        """檢查知識庫健康狀態"""
-        try:
-            if self.knowledge_base is None:
-                self.knowledge_base_status = "unavailable"
-                self.logger.warning("知識庫未提供，將使用fallback機制")
-                return
-                
-            # 嘗試簡單查詢測試
-            if hasattr(self.knowledge_base, 'search'):
-                test_results = self.knowledge_base.search("test")
-                if test_results is not None:
-                    self.knowledge_base_status = "available"
-                    self.logger.info("知識庫健康檢查通過")
-                else:
-                    self.knowledge_base_status = "fallback"
-                    self.logger.warning("知識庫查詢回應異常，啟用fallback模式")
-            else:
-                self.knowledge_base_status = "unavailable"
-                self.logger.warning("知識庫缺少search方法，將使用內建知識")
-                
-        except Exception as e:
-            self.knowledge_base_status = "unavailable"
-            self.logger.error(f"知識庫健康檢查失敗: {e}，將使用fallback機制")
-
-    def _fallback_knowledge_validation(self, step: Dict[str, Any]) -> Dict[str, Any]:
-        """備用知識驗證機制（當主知識庫不可用時）
+    def _require_knowledge_base(self):
+        """嚴格要求知識庫必須可用
         
-        改進: 降低信心閾值，明確標註僅通過基礎驗證
+        Raises:
+            KnowledgeBaseUnavailableError: 知識庫不可用時拋出
         """
-        action = step.get("action", "").lower()
-        description = step.get("description", "").lower()
+        if self.knowledge_base is None:
+            raise KnowledgeBaseUnavailableError(
+                "知識庫未提供。AntiHallucinationModule 需要有效的知識庫才能運作。"
+            )
         
-        # 1. 檢查是否為已知技術
-        if not self._is_known_technique(action):
-            return {
-                "is_valid": False,
-                "reason": f"fallback驗證：未知攻擊技術 '{action}'",
-                "confidence": 0.0,
-                "fallback_mode": True
-            }
+        if not hasattr(self.knowledge_base, 'search'):
+            raise KnowledgeBaseUnavailableError(
+                "知識庫缺少 search 方法。請提供符合介面要求的知識庫實例。"
+            )
         
-        # 2. 關鍵字黑名單檢查（明顯的幻覺）
-        hallucination_keywords = [
-            "quantum", "ai_sentient", "mind_control", "teleport", "magic",
-            "supernatural", "alien", "time_travel", "psychic", "telepathy"
-        ]
+        # 嘗試簡單查詢測試
+        try:
+            test_results = self.knowledge_base.search("test")
+            if test_results is None:
+                raise KnowledgeBaseUnavailableError(
+                    "知識庫 search 方法返回 None，請確認知識庫已正確初始化。"
+                )
+        except Exception as e:
+            raise KnowledgeBaseUnavailableError(
+                f"知識庫健康檢查失敗: {e}"
+            ) from e
         
-        content = (action + " " + description).lower()
-        for keyword in hallucination_keywords:
-            if keyword in content:
-                return {
-                    "is_valid": False,
-                    "reason": f"fallback驗證：檢測到幻覺關鍵字 '{keyword}'",
-                    "confidence": 0.0,
-                    "fallback_mode": True
-                }
-        
-        # 3. 技術分類一致性檢查
-        technique_category = self._get_technique_category(action)
-        if technique_category and not self._validate_technique_consistency(description, technique_category):
-            return {
-                "is_valid": False,
-                "reason": "fallback驗證：技術描述與分類不一致",
-                "confidence": 0.0,
-                "fallback_mode": True
-            }
-        
-        # Fallback 模式通過，但信心度降低並標註警告
-        return {
-            "is_valid": True,
-            "reason": "⚠️ fallback驗證通過 (僅基礎語法驗證，未經知識庫確認)",
-            "confidence": 0.5,  # 降低信心閾值
-            "fallback_mode": True,
-            "warning": "Knowledge base unavailable - basic validation only"
-        }
+        self.logger.info("✅ 知識庫健康檢查通過")
 
     def _get_technique_category(self, action: str) -> Optional[str]:
         """獲取技術所屬分類"""
@@ -186,7 +149,7 @@ class AntiHallucinationModule:
 
         return logger
 
-    def validate_attack_plan(self, attack_plan: Dict[str, Any]) -> Dict[str, Any]:
+    def validate_attack_plan(self, attack_plan: dict[str, Any]) -> dict[str, Any]:
         """驗證整個攻擊計畫，移除明顯不合理的步驟
 
         Args:
@@ -245,7 +208,7 @@ class AntiHallucinationModule:
     def _validate_single_step(
         self, step: Dict[str, Any], step_number: int
     ) -> Dict[str, Any]:
-        """驗證單個攻擊步驟的合理性（改進版with fallback）
+        """驗證單個攻擊步驟的合理性（嚴格模式）
 
         Args:
             step: 攻擊步驟字典
@@ -253,6 +216,9 @@ class AntiHallucinationModule:
 
         Returns:
             包含驗證結果的字典
+            
+        Raises:
+            KnowledgeBaseUnavailableError: 知識庫查詢失敗時拋出
         """
         # 1. 基本結構檢查
         if not isinstance(step, dict):
@@ -268,8 +234,8 @@ class AntiHallucinationModule:
         if not self._is_known_technique(action):
             return {"is_valid": False, "reason": f"未知攻擊技術: {action}"}
 
-        # 3. 知識庫驗證 (with fallback機制)
-        knowledge_validation = self._validate_with_knowledge_base_fallback(step)
+        # 3. 知識庫驗證 (嚴格模式，有錯就報錯)
+        knowledge_validation = self._validate_with_knowledge_base(step)
         if not knowledge_validation["is_valid"]:
             return knowledge_validation
 
@@ -285,38 +251,13 @@ class AntiHallucinationModule:
 
         return {"is_valid": True, "reason": "步驟驗證通過"}
 
-    def _validate_with_knowledge_base_fallback(self, step: Dict[str, Any]) -> Dict[str, Any]:
-        """使用知識庫驗證步驟（包含fallback機制）"""
-        # 首先嘗試主要知識庫
-        if self.knowledge_base_status == "available":
-            try:
-                primary_result = self._validate_with_knowledge_base(step)
-                if primary_result["is_valid"]:
-                    return primary_result
-                else:
-                    # 主知識庫驗證失敗，記錄但繼續使用fallback
-                    self.logger.debug(f"主知識庫驗證失敗: {primary_result['reason']}")
-            except Exception as e:
-                self.logger.warning(f"主知識庫查詢異常: {e}，切換至fallback模式")
-                self.knowledge_base_status = "fallback"
-
-        # 使用fallback機制
-        if self.fallback_enabled:
-            fallback_result = self._fallback_knowledge_validation(step)
-            self.logger.debug(f"使用fallback驗證: {fallback_result['reason']}")
-            return fallback_result
-        else:
-            # 如果禁用fallback且主知識庫不可用，則預設通過
-            self.logger.warning("知識庫不可用且fallback已禁用，預設通過驗證")
-            return {"is_valid": True, "reason": "知識庫不可用，預設通過"}
-
     def _validate_step_sequence(self, step: Dict[str, Any], step_number: int) -> Dict[str, Any]:
         """驗證攻擊步驟順序的合理性"""
         action = step.get("action", "").lower()
         technique_category = self._get_technique_category(action)
         
         if not technique_category:
-            return {"is_valid": True, "reason": "無法識別技術分類，跳過順序檢查"}
+            return {"is_valid": False, "reason": f"無法識別技術分類: {action}"}
 
         # 高級技術不應在早期步驟出現
         advanced_techniques = ["privilege_escalation", "persistence", "exfiltration"]
@@ -448,7 +389,7 @@ class AntiHallucinationModule:
 
         return {"is_valid": True, "reason": "邏輯驗證通過"}
 
-    def get_validation_stats(self) -> Dict[str, Any]:
+    def get_validation_stats(self) -> dict[str, Any]:
         """獲取驗證統計資料"""
         if not self.validation_history:
             return {"總驗證次數": 0}
@@ -467,17 +408,16 @@ class AntiHallucinationModule:
         }
 
     def export_validation_report(self, output_path: str | None = None) -> str:
-        """匯出驗證報告（包含fallback使用統計）"""
+        """匯出驗證報告"""
         if not output_path:
             output_path = f"anti_hallucination_report_{int(time.time())}.json"
 
         report = {
             "模組資訊": {
-                "名稱": "AIVA 抗幻覺驗證模組（改進版）",
-                "版本": "2.0",
+                "名稱": "AIVA 抗幻覺驗證模組（嚴格模式）",
+                "版本": "2.1",
                 "信心閾值": self.confidence_threshold,
-                "知識庫狀態": self.knowledge_base_status,
-                "fallback模式": "啟用" if self.fallback_enabled else "禁用"
+                "模式": "strict (fail-fast)"
             },
             "驗證統計": self.get_validation_stats(),
             "驗證歷史": self.validation_history,
@@ -496,22 +436,54 @@ class AntiHallucinationModule:
             self.logger.error(f"報告輸出失敗: {e}")
             return ""
 
-    def reset_knowledge_base(self, new_knowledge_base=None):
-        """重設知識庫並重新檢查健康狀態"""
+    def reset_knowledge_base(self, new_knowledge_base):
+        """重設知識庫
+        
+        Args:
+            new_knowledge_base: 新的知識庫實例（不可為 None）
+            
+        Raises:
+            KnowledgeBaseUnavailableError: 如果新知識庫無效
+        """
+        if new_knowledge_base is None:
+            raise KnowledgeBaseUnavailableError(
+                "知識庫不可為 None。"
+                "請提供有效的知識庫實例。"
+            )
         self.knowledge_base = new_knowledge_base
-        self._check_knowledge_base_health()
-        self.logger.info(f"知識庫已重設，新狀態: {self.knowledge_base_status}")
+        self._require_knowledge_base()
+        self.logger.info("知識庫已重設並驗證成功")
 
 
-# 使用範例（包含fallback演示）
+# 使用範例（嚴格模式）
 def demo_anti_hallucination():
-    """示範抗幻覺模組的使用（包含fallback機制）"""
-    print("🧠 AIVA 抗幻覺驗證模組示範（改進版）")
+    """示範抗幻覺模組的使用（嚴格模式）"""
+    print("🧠 AIVA 抗幻覺驗證模組示範（嚴格模式）")
     print("=" * 60)
 
-    # 創建驗證模組（無知識庫，測試fallback）
-    print("🔸 測試 1: 無知識庫模式（fallback驗證）")
-    validator_no_kb = AntiHallucinationModule(knowledge_base=None)
+    # 建立模擬知識庫
+    class MockKnowledgeBase:
+        """模擬知識庫供測試使用"""
+        def search(self, query: str, top_k: int = 5):
+            # 返回模擬的搜索結果
+            return [{"technique": query, "confidence": 0.8}]
+        
+        def health_check(self):
+            return True
+
+    # 創建驗證模組（必須提供知識庫）
+    print("🔸 測試 1: 嚴格模式驗證（需要知識庫）")
+    try:
+        # 嘗試無知識庫創建（應該失敗）
+        validator_no_kb = AntiHallucinationModule(knowledge_base=None)
+        print("❌ 錯誤：應該拋出異常")
+    except KnowledgeBaseUnavailableError as e:
+        print(f"✅ 預期行為：{e}")
+
+    # 使用有效知識庫創建
+    print("\n🔸 測試 2: 使用有效知識庫")
+    mock_kb = MockKnowledgeBase()
+    validator = AntiHallucinationModule(knowledge_base=mock_kb)
 
     # 測試攻擊計畫 (包含一些可疑步驟)
     test_plan = {
@@ -526,11 +498,6 @@ def demo_anti_hallucination():
             },
             {"action": "web_crawl", "description": "爬取網站結構", "tool": "spider"},
             {
-                "action": "privilege_escalation",  # 邏輯問題：太早使用高級技術
-                "description": "提升系統權限",
-                "tool": "exploit",
-            },
-            {
                 "action": "sql_injection",
                 "description": "測試 SQL 注入漏洞",
                 "tool": "sqlmap",
@@ -540,28 +507,15 @@ def demo_anti_hallucination():
 
     print(f"📋 原始計畫包含 {len(test_plan['steps'])} 個步驟")
 
-    # 執行fallback驗證
-    validated_plan = validator_no_kb.validate_attack_plan(test_plan)
-    print(f"✅ Fallback驗證後剩餘 {len(validated_plan['steps'])} 個步驟")
+    # 執行驗證
+    validated_plan = validator.validate_attack_plan(test_plan)
+    print(f"✅ 驗證後剩餘 {len(validated_plan['steps'])} 個步驟")
 
     # 顯示統計
-    stats = validator_no_kb.get_validation_stats()
-    print("\n📊 Fallback驗證統計:")
+    stats = validator.get_validation_stats()
+    print("\n📊 驗證統計:")
     for key, value in stats.items():
         print(f"   {key}: {value}")
-
-    # 測試簡化模式（無知識庫）
-    print("\n🔸 測試 2: 簡化模式驗證")
-    try:
-        # 使用內建驗證規則
-        validator_simple = AntiHallucinationModule()
-        
-        # 重新測試相同計畫
-        validated_plan_simple = validator_simple.validate_attack_plan(test_plan.copy())
-        print(f"✅ 簡化驗證後剩餘 {len(validated_plan_simple['steps'])} 個步驟")
-        
-    except Exception as e:
-        print(f"⚠️  簡化驗證失敗: {e}")
         print("   繼續使用fallback模式")
 
     # 匯出報告

@@ -345,6 +345,9 @@ class CommandContext(BaseModel):
     提供命令執行時需要的環境信息和配置。
     """
     
+    # 追蹤信息
+    trace_id: Optional[str] = Field(None, description="追蹤 ID，用於關聯相關操作")
+    
     # 身份信息
     user_id: Optional[str] = Field(None, description="用戶 ID")
     session_id: Optional[str] = Field(None, description="會話 ID")

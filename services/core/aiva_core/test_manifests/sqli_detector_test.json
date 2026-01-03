@@ -1,0 +1,33 @@
+{
+  "id": "sqli.detect.api",
+  "name": "SQL Injection Detector",
+  "description": "檢測API的SQL注入漏洞|支援多種資料庫|包含盲注檢測",
+  "command_template": "python -m sqli_detector --endpoint {endpoint} --method {method} --payload-level {level}",
+  "parameters": {
+    "endpoint": {
+      "description": "API端點URL",
+      "type": "string",
+      "required": true
+    },
+    "method": {
+      "description": "HTTP方法",
+      "type": "string",
+      "required": false,
+      "default": "GET",
+      "enum": ["GET", "POST", "PUT", "DELETE"]
+    },
+    "level": {
+      "description": "Payload測試級別",
+      "type": "integer",
+      "required": false,
+      "default": 2,
+      "min_value": 1,
+      "max_value": 5
+    }
+  },
+  "tags": ["security", "database", "sqli", "detector"],
+  "timeout": 180,
+  "category": "security.detector",
+  "language": "python",
+  "version": "1.0.0"
+}

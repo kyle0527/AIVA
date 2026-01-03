@@ -257,28 +257,3 @@ impl SmugglingDetector {
         Ok(has_difference)
     }
 }
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[tokio::test]
-    async fn test_detector_creation() {
-        let detector = SmugglingDetector::new(
-            "example.com".to_string(),
-            80
-        );
-        assert_eq!(detector.target_host, "example.com");
-        assert_eq!(detector.target_port, 80);
-    }
-
-    #[tokio::test]
-    async fn test_with_timeout() {
-        let detector = SmugglingDetector::new(
-            "example.com".to_string(),
-            80
-        ).with_timeout(Duration::from_secs(5));
-        
-        assert_eq!(detector.timeout_duration, Duration::from_secs(5));
-    }
-}

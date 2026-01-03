@@ -129,8 +129,8 @@ class ContinuousLearningEngine:
             except Exception as e:
                 logger.warning(f"Online learning failed: {e}")
         
-        # 3. 檢查是否需要批次訓練
-        batch_result = await self._check_and_trigger_batch_training()
+        # 3. 檢查是否需要批次訓練（同步方法，不需要 await）
+        batch_result = self._check_and_trigger_batch_training()
         
         return {
             "experience_id": exp_id,
@@ -275,7 +275,7 @@ class ContinuousLearningEngine:
         import torch
         
         # 簡化實現：使用獎勵值作為示例
-        # TODO: 實際需要特徵工程和編碼
+        # 注意: 需要實際的特徵工程和編碼實現
         try:
             # 使用狀態和動作的占位表示
             state_tensor = torch.tensor([reward], dtype=torch.float32).unsqueeze(0)

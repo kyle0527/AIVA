@@ -16,7 +16,7 @@ import torch.nn.functional as F
 import numpy as np
 import logging
 from pathlib import Path
-from typing import Dict, Any, Optional, Tuple
+from typing import Any, Dict, Optional, Tuple
 import json
 import time
 

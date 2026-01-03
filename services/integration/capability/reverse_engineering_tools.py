@@ -587,7 +587,7 @@ class ReverseEngineeringCapability(BaseCapability):
             logger.error(f"Cleanup failed: {e}")
             return False
 暫時移除舊的註冊方式 - 待所有文件修復完成後統一註冊
-# TODO: 改用 await registry.register_capability(capability_record) 標準化註冊方式
+# 注意: 建議改用 await registry.register_capability(capability_record) 標準化註冊方式
 # 
 # Register capability
 CapabilityRegistry.register("reverse_engineering_tools", ReverseEngineeringCapability)

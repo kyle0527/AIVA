@@ -507,7 +507,7 @@ class BaseCoordinator(ABC):
                 for evidence in f.finding.evidence
                 if evidence.payload
             ],
-            "failed_payloads": [],  # TODO: 從統計數據中提取
+            "failed_payloads": [],  # 注意: 需要從統計數據中提取
             "target_characteristics": {
                 "response_patterns": [],
                 "waf_detected": False,

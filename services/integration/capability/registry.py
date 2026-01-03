@@ -74,6 +74,9 @@ class CapabilityRegistry:
         self._capabilities: Dict[str, CapabilityRecord] = {}
         self._scorecards: Dict[str, CapabilityScorecard] = {}
         self._evidence_cache: Dict[str, List[CapabilityEvidence]] = {}
+        # 確保資料庫目錄存在
+        db_dir = Path(self.db_path).parent
+        db_dir.mkdir(parents=True, exist_ok=True)
         self._init_database()
     
     def _init_database(self) -> None:
@@ -305,7 +308,7 @@ class CapabilityRegistry:
                 'module': capability.module,
                 'description': capability.description,
                 'language': capability.language if isinstance(capability.language, str) else capability.language.value,
-                'parameters': []  # TODO: 從 config 提取參數定義
+                'parameters': []  # 注意: 需要從 config 提取參數定義
             }
             
             # 構建 invocation_metadata

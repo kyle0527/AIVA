@@ -164,13 +164,13 @@ def create_v3_ui_app() -> FastAPI:
     async def start_sentinel(config: SentinelConfig):
         """啟動 Sentinel 模式"""
         try:
-            # 這裡應該調用實際的 BioNeuronDecisionController
-            # from services.core.aiva_core.cognitive_core.neural import BioNeuronDecisionController
-            # controller = BioNeuronDecisionController(default_mode=OperationMode.SENTINEL)
-            # result = await controller.process_request({
-            #     "action": "start",
-            #     "config": config.dict()
-            # })
+            # 使用 5M Decision Engine 處理 Sentinel 模式
+            # from services.core.aiva_core.cognitive_core.neural.real_neural_core import RealDecisionEngine
+            # engine = RealDecisionEngine(use_5m_model=True)
+            # result = engine.generate_decision(
+            #     target_info={"action": "start", "mode": "sentinel"},
+            #     context=config.dict()
+            # )
 
             app_state["sentinel_running"] = True
             app_state["sentinel_config"] = config.dict()
@@ -395,7 +395,7 @@ def create_v3_ui_app() -> FastAPI:
         if mode not in valid_modes:
             raise HTTPException(status_code=400, detail=f"無效模式: {mode}")
 
-        # 這裡應該調用實際的 BioNeuronDecisionController 切換模式
+        # 使用 5M Decision Engine 切換模式
         logger.info(f"🔄 切換到 {mode.upper()} 模式")
 
         return {"success": True, "mode": mode, "message": f"已切換到 {mode.upper()} 模式"}

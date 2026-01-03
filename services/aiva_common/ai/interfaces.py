@@ -278,11 +278,14 @@ class ICrossLanguageBridge(ABC):
 
 
 class IRAGAgent(ABC):
-    """RAG 檢索代理介面 - 可插拔的知識檢索組件"""
+    """RAG 檢索代理介面 - 可插拔的知識檢索組件
+    
+    注意：此介面用於 RAG 知識檢索，不包含 LLM/NLU 功能
+    """
 
     @abstractmethod
     async def invoke(self, query: RAGQueryPayload) -> RAGResponsePayload:
-        """執行 RAG 查詢 (BioNeuronRAGAgent.invoke() 的抽象介面)
+        """執行 RAG 查詢
 
         Args:
             query: RAG 查詢請求

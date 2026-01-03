@@ -195,6 +195,31 @@ from .security import (
     VulnerabilityType,
 )
 
+# ==================== 預定義能力選單系統 ====================
+# 5M Decision Engine 專用 - 無 NLU/LLM 依賴
+from .capabilities import (
+    AttackCapability,
+    ScanCapability,
+    ReconCapability,
+    AnalysisCapability,
+    ForensicCapability,
+    ExploitCapability,
+    ReportCapability,
+    CapabilityParameter,
+    CAPABILITY_CONFIGS,
+    get_capability_config,
+    get_required_params,
+    get_all_capabilities,
+    validate_capability_params,
+)
+
+from .capability_executor import (
+    CapabilityExecutor,
+    ExecutionResult,
+    CapabilityInfo,
+    InteractiveCapabilityMenu,
+)
+
 # ==================== 用戶界面和用戶體驗 ====================
 # from .ui_ux import (
 #     # UI/UX 相關枚舉暫時註釋
@@ -219,4 +244,4 @@ from .web_api_standards import (
 # __all__ 由於複雜性暫時移除，使用 import * 時會自動導入所有公開符號
 
 # 版本資訊
-__version__ = "2.1.0"
+__version__ = "2.2.0"  # 新增預定義能力選單系統

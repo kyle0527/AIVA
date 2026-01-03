@@ -2,6 +2,15 @@
 """
 能力註冊腳本
 將所有標準化的工具能力註冊到 AIVA 能力註冊中心
+
+整合來源：
+1. 現有工具能力定義 (reverse_engineering_capabilities.py)
+2. 新增選單式能力枚舉 (aiva_common.enums.capabilities)
+
+設計原則：
+- 以修正現有檔案為原則
+- 參考分析資料 (cli_commands_db.json, classification_data.json)
+- 無 NLU/LLM - 使用 5M Decision Engine
 """
 
 import asyncio
@@ -13,6 +22,21 @@ from services.integration.capability.registry import CapabilityRegistry
 from services.integration.capability.capabilities.reverse_engineering_capabilities import (
     REVERSE_ENGINEERING_CAPABILITIES
 )
+from services.integration.capability.models import CapabilityRecord, CapabilityType, InputParameter
+from services.aiva_common.enums import ProgrammingLanguage, TaskStatus
+
+# 導入新的選單式能力定義
+from services.aiva_common.enums.capabilities import (
+    AttackCapability,
+    ScanCapability,
+    ReconCapability,
+    AnalysisCapability,
+    ForensicCapability,
+    ExploitCapability,
+    ReportCapability,
+    CAPABILITY_CONFIGS,
+    get_capability_config,
+)
 
 # 配置日誌
 logging.basicConfig(
@@ -23,11 +47,117 @@ logger = logging.getLogger(__name__)
 
 
 class CapabilityRegistrationManager:
-    """能力註冊管理器"""
+    """能力註冊管理器
+    
+    整合兩種能力來源：
+    1. 現有工具能力 (CapabilityRecord 格式)
+    2. 新選單式能力 (枚舉 + CAPABILITY_CONFIGS)
+    """
     
     def __init__(self):
         self.registry = CapabilityRegistry()
         self.registration_results = []
+    
+    def _convert_menu_capability_to_record(
+        self,
+        capability_enum: AttackCapability | ScanCapability | ReconCapability | AnalysisCapability | ForensicCapability | ExploitCapability | ReportCapability,
+        category: str,
+    ) -> CapabilityRecord:
+        """將選單式能力枚舉轉換為 CapabilityRecord 格式
+        
+        這樣可以統一使用現有的 CapabilityRegistry 系統
+        """
+        cap_id = capability_enum.value
+        config = get_capability_config(cap_id) or {}
+        
+        # 轉換參數為 InputParameter 格式
+        inputs = []
+        for param in config.get("required_params", []):
+            param_name = param.value if hasattr(param, 'value') else str(param)
+            inputs.append(InputParameter(
+                name=param_name,
+                type="string",
+                required=True,
+                description=f"必需參數: {param_name}",
+            ))
+        
+        for param in config.get("optional_params", []):
+            param_name = param.value if hasattr(param, 'value') else str(param)
+            inputs.append(InputParameter(
+                name=param_name,
+                type="string",
+                required=False,
+                description=f"可選參數: {param_name}",
+            ))
+        
+        # 映射能力類型
+        type_mapping = {
+            "attack": CapabilityType.ANALYZER,
+            "scan": CapabilityType.SCANNER,
+            "recon": CapabilityType.DETECTOR,
+            "analysis": CapabilityType.ANALYZER,
+            "forensic": CapabilityType.ANALYZER,
+            "exploit": CapabilityType.UTILITY,
+            "report": CapabilityType.REPORTER,
+        }
+        
+        return CapabilityRecord(
+            id=f"menu.{category}.{cap_id}",
+            name=config.get("name", cap_id.replace("_", " ").title()),
+            description=config.get("description", f"選單式能力: {cap_id}"),
+            version="1.0.0",
+            module="menu_capabilities",
+            language=ProgrammingLanguage.PYTHON,
+            entrypoint=f"services.aiva_common.enums.capability_executor:CapabilityExecutor.execute",
+            capability_type=type_mapping.get(category, CapabilityType.UTILITY),
+            inputs=inputs,
+            outputs=[],
+            tags=[category, "menu-based", "5m-decision-engine"],
+            category=category.capitalize(),
+            priority=config.get("priority", 50),
+            timeout_seconds=config.get("default_timeout", 60),
+            retry_count=2,
+            status=TaskStatus.PENDING,
+            config={
+                "risk_level": config.get("risk_level", "medium"),
+                "menu_based": True,
+                "no_nlu_required": True,
+            }
+        )
+    
+    def _get_menu_capabilities(self) -> list[CapabilityRecord]:
+        """從選單式枚舉生成 CapabilityRecord 列表"""
+        menu_caps = []
+        
+        # Attack capabilities
+        for cap in AttackCapability:
+            menu_caps.append(self._convert_menu_capability_to_record(cap, "attack"))
+        
+        # Scan capabilities
+        for cap in ScanCapability:
+            menu_caps.append(self._convert_menu_capability_to_record(cap, "scan"))
+        
+        # Recon capabilities
+        for cap in ReconCapability:
+            menu_caps.append(self._convert_menu_capability_to_record(cap, "recon"))
+        
+        # Analysis capabilities
+        for cap in AnalysisCapability:
+            menu_caps.append(self._convert_menu_capability_to_record(cap, "analysis"))
+        
+        # Forensic capabilities
+        for cap in ForensicCapability:
+            menu_caps.append(self._convert_menu_capability_to_record(cap, "forensic"))
+        
+        # Exploit capabilities
+        for cap in ExploitCapability:
+            menu_caps.append(self._convert_menu_capability_to_record(cap, "exploit"))
+        
+        # Report capabilities
+        for cap in ReportCapability:
+            menu_caps.append(self._convert_menu_capability_to_record(cap, "report"))
+        
+        return menu_caps
     
     async def register_all_capabilities(self):
         """註冊所有能力"""
@@ -38,13 +168,14 @@ class CapabilityRegistrationManager:
         # 收集所有能力
         all_capabilities = []
         
-        # Reverse Engineering Tools
+        # 1. 現有工具能力 (Reverse Engineering Tools)
         all_capabilities.extend(REVERSE_ENGINEERING_CAPABILITIES)
         logger.info(f"📦 反向工程工具: {len(REVERSE_ENGINEERING_CAPABILITIES)} 個能力")
         
-        # TODO: 添加其他工具能力
-        # all_capabilities.extend(STEGANOGRAPHY_CAPABILITIES)
-        # all_capabilities.extend(FORENSIC_CAPABILITIES)
+        # 2. 新選單式能力 (從枚舉轉換)
+        menu_capabilities = self._get_menu_capabilities()
+        all_capabilities.extend(menu_capabilities)
+        logger.info(f"📋 選單式能力: {len(menu_capabilities)} 個能力")
         
         logger.info(f"\n總計: {len(all_capabilities)} 個能力待註冊\n")
         

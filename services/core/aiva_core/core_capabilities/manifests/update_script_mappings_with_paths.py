@@ -38,15 +38,15 @@ for script_name, mapping in current_mappings.items():
 with open(current_mappings_path, 'w', encoding='utf-8') as f:
     json.dump(updated_mappings, f, indent=2, ensure_ascii=False)
 
-print(f"✅ 已更新 script_mappings.json")
+print("✅ 已更新 script_mappings.json")
 print(f"   包含 {len(updated_mappings)} 個腳本映射")
-print(f"   每個映射現在包含:")
-print(f"   - script_name: 腳本名稱")
-print(f"   - script_file: 文件名")
-print(f"   - script_path: 相對路徑")
-print(f"   - module: Python 模組路徑")
-print(f"   - class/function: 類/函數名")
-print(f"   - method: 方法名")
+print("   每個映射現在包含:")
+print("   - script_name: 腳本名稱")
+print("   - script_file: 文件名")
+print("   - script_path: 相對路徑")
+print("   - module: Python 模組路徑")
+print("   - class/function: 類/函數名")
+print("   - method: 方法名")
 
 # 顯示更新的示例
 print("\n示例（monitoring）:")

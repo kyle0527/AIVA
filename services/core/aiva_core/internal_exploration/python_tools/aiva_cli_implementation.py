@@ -113,17 +113,36 @@ class FlowExecutor:
         
         Args:
             json_path: classification_data.json 的路徑
-                      若為 None，優先使用 latest_classification.json
-                      若不存在則使用預設路徑
+                      若為 None，優先使用 enriched_classification.json
+                      若不存在則使用 latest_classification.json
         """
+        # 支持多個可能的路徑（優先使用 enriched 版本）
+        possible_paths = [
+            Path("C:/Users/User/Downloads/data/internal_exploration/enriched_classification.json"),
+            Path("C:/Users/User/Downloads/data/internal_exploration/latest_classification.json"),
+            Path("C:/D/fold7/AIVA-git/data/internal_exploration/enriched_classification.json"),
+            Path("C:/D/fold7/AIVA-git/data/internal_exploration/latest_classification.json"),
+            Path("C:/D/fold7/AIVA-git/services/integration/data/internal_exploration/enriched_classification.json"),
+            Path("C:/D/fold7/AIVA-git/services/integration/data/internal_exploration/latest_classification.json"),
+            LATEST_DATA_PATH,
+            DEFAULT_JSON_PATH,
+        ]
+        
         if json_path:
             self.json_path = json_path
-        elif LATEST_DATA_PATH.exists():
-            self.json_path = str(LATEST_DATA_PATH)
-            print(f"[Info] 使用最新數據: {LATEST_DATA_PATH.name}")
+            print(f"[Info] 使用指定數據: {json_path}")
         else:
-            self.json_path = str(DEFAULT_JSON_PATH)
-            print(f"[Info] 使用預設數據: {DEFAULT_JSON_PATH}")
+            for path in possible_paths:
+                if path.exists():
+                    self.json_path = str(path)
+                    print(f"[Info] 使用數據: {path.name} (路徑: {path.parent})")
+                    break
+            else:
+                print("[Error] 找不到 latest_classification.json")
+                print("嘗試過的路徑:")
+                for path in possible_paths:
+                    print(f"  - {path}")
+                self.json_path = str(DEFAULT_JSON_PATH)
         
         self.data = self._load_data()
         
@@ -160,6 +179,87 @@ class FlowExecutor:
             if flow["id"] == flow_id:
                 return flow
         return None
+    
+    def search_capabilities(self, query: str, by: str = "all") -> List[Dict[str, Any]]:
+        """
+        搜尋能力
+        
+        Args:
+            query: 搜尋關鍵字
+            by: 搜尋範圍 ("all", "name", "tag", "module", "description")
+            
+        Returns:
+            符合條件的 Flow 列表
+        """
+        results = []
+        query_lower = query.lower()
+        
+        for flow in self.data.get("flows", []):
+            capability = flow.get("capability")
+            if not capability:
+                continue
+            
+            matched = False
+            
+            if by in ["all", "name"]:
+                if query_lower in capability.get("name", "").lower():
+                    matched = True
+            
+            if by in ["all", "tag"]:
+                tags = capability.get("tags", [])
+                if any(query_lower in tag.lower() for tag in tags):
+                    matched = True
+            
+            if by in ["all", "module"]:
+                if query_lower in capability.get("module", "").lower():
+                    matched = True
+                if query_lower in capability.get("module_zh", "").lower():
+                    matched = True
+            
+            if by in ["all", "description"]:
+                if query_lower in capability.get("description", "").lower():
+                    matched = True
+            
+            if matched:
+                results.append(flow)
+        
+        return results
+    
+    def show_capability_info(self, flow_id: int):
+        """
+        顯示 Flow 的詳細能力資訊
+        
+        Args:
+            flow_id: Flow ID
+        """
+        flow = self.get_flow_by_id(flow_id)
+        if not flow:
+            print(f"[Error] Flow {flow_id} 不存在")
+            return
+        
+        capability = flow.get("capability")
+        if not capability:
+            print(f"[Warning] Flow {flow_id} 無能力資訊（可能使用舊版數據）")
+            print(f"路徑: {' -> '.join(flow['path'])}")
+            return
+        
+        print(f"\n{'='*60}")
+        print(f"Flow {flow_id}: {capability['name']}")
+        print(f"{'='*60}")
+        print(f"\n📋 描述:")
+        print(f"   {capability['description']}")
+        print(f"\n🔧 CLI 指令:")
+        print(f"   {capability['command_template']}")
+        print(f"\n🏷️  標籤: {', '.join(capability['tags'])}")
+        print(f"📦 模組: {capability['module_zh']} ({capability['module']})")
+        print(f"📊 複雜度: {capability['complexity']}")
+        print(f"🔀 流程長度: {flow['length']} 步")
+        print(f"\n📍 完整路徑:")
+        for i, step in enumerate(flow['path'], 1):
+            print(f"   {i}. {step}")
+        print(f"\n💡 執行方式:")
+        print(f"   python aiva_cli_implementation.py --flow {flow_id}")
+        print(f"{'='*60}\n")
 
     def _full_path_to_module(self, full_path: str) -> Optional[str]:
         """
@@ -321,7 +421,7 @@ class FlowExecutor:
             except IOError as e:
                 print(f"[Error] 無法寫入文件: {e}")
 
-    def execute_flow(self, flow_id: int, dry_run: bool = False) -> None:
+    def execute_flow(self, flow_id: int, context_data: Optional[Dict[str, Any]] = None, dry_run: bool = False) -> None:
         """
         執行指定 ID 的數據流
         
@@ -337,6 +437,7 @@ class FlowExecutor:
         
         Args:
             flow_id: 要執行的流程 ID
+            context_data: 初始上下文數據（將在第一步傳入）
             dry_run: 若為 True,僅顯示執行計畫,不實際載入模組或執行
         """
         flow = self.get_flow_by_id(flow_id)
@@ -344,14 +445,30 @@ class FlowExecutor:
             print(f"[Error] Flow ID {flow_id} 不存在。請使用 --list 查看可用 ID。")
             return
 
-        print(f"\n=== [AIVA Flow Executor] 開始執行 Flow {flow_id} ===")
-        print(f"路徑預覽: {' -> '.join(flow['path'])}")
-        print("-" * 50)
+        # 顯示能力資訊
+        capability = flow.get("capability")
+        if capability:
+            print(f"\n{'='*60}")
+            print(f"🚀 準備執行 Flow {flow_id}: {capability['name']}")
+            print(f"{'='*60}")
+            print(f"📋 能力描述: {capability['description']}")
+            print(f"🏷️  標籤: {', '.join(capability['tags'])}")
+            print(f"📊 複雜度: {capability['complexity']} | 流程長度: {flow['length']} 步")
+            print(f"📍 路徑: {' -> '.join(flow['path'])}")
+            print(f"{'='*60}\n")
+        else:
+            print(f"\n=== [AIVA Flow Executor] 開始執行 Flow {flow_id} ===")
+            print(f"路徑預覽: {' -> '.join(flow['path'])}")
+            print("-" * 50)
         
         if dry_run:
             print("[Info] Dry Run 模式開啟:僅生成執行計畫,不載入模組或執行代碼。")
-            
-        context_data = None  # 用於在步驟間傳遞數據 (Pipeline)
+        
+        # 使用傳入的 context_data，若無則初始化為空字典
+        if context_data is None:
+            context_data = {}
+        elif context_data:
+            print(f"[Info] 初始上下文數據: {context_data}")
 
         for idx, step_info in enumerate(flow.get("classifications", [])):
             script_name = step_info["script"]

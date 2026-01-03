@@ -6,7 +6,7 @@ OWASP A05:2021 - Security Misconfiguration
 """
 
 import time
-from typing import Dict, List, Optional
+from typing import List, Optional
 from dataclasses import dataclass
 import requests
 from lxml import etree

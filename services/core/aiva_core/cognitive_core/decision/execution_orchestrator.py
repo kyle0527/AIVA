@@ -16,6 +16,7 @@ from services.aiva_common.schemas import (
     AICommandResult,
     CommandStatus,
     CommandContext,
+    CommandPriority,
 )
 from services.aiva_common.utils import get_logger
 
@@ -174,7 +175,7 @@ class ExecutionOrchestrator:
             command_type=step.command_type,
             target_module=step.module,
             payload=step.parameters,
-            priority=1,
+            priority=CommandPriority.LOW,
             timeout=step.estimated_duration,
             trace_id=trace_id,
             session_id=session_id,

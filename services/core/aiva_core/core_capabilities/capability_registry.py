@@ -377,8 +377,10 @@ class CapabilityRegistry:
             
         except Exception as e:
             logger.error(f"Failed to list capabilities from integration registry: {e}")
-            # 降級到本地緩存
-            return self.list_capabilities(module=module)
+            raise RuntimeError(
+                f"能力列表查詢失敗: {e}。"
+                "請確認 integration registry 服務已正確初始化。"
+            ) from e
 
     def list_modules(self) -> list[str]:
         """列出所有模組

@@ -11,7 +11,7 @@ from collections.abc import Sequence
 from dataclasses import dataclass
 from typing import TYPE_CHECKING, Any, Dict
 
-from services.core.aiva_core.adapters import HttpProtocolAdapter, create_http_adapter
+from services.core.aiva_core.service_backbone.adapters import HttpProtocolAdapter, create_http_adapter
 from services.aiva_common.utils import get_logger
 from services.aiva_common.error_handling import (
     AIVAError,
@@ -21,7 +21,7 @@ from services.aiva_common.error_handling import (
 )
 
 if TYPE_CHECKING:
-    from services.core.aiva_core.adapters import ProtocolAdapter
+    from services.core.aiva_core.service_backbone.adapters import ProtocolAdapter
 
 logger = get_logger(__name__)
 

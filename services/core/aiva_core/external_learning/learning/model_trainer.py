@@ -148,7 +148,7 @@ class ModelTrainer:
 
         result = ModelTrainingResult(
             training_id=training_id,
-            config=config,
+            config=config.model_dump(),  # 轉換為 dict
             model_version=new_version,
             training_samples=len(X_train),
             validation_samples=len(X_val),
@@ -217,7 +217,7 @@ class ModelTrainer:
 
         result = ModelTrainingResult(
             training_id=training_id,
-            config=config,
+            config=config.model_dump(),  # 轉換為 dict
             model_version=new_version,
             training_samples=len(samples),
             validation_samples=0,
@@ -351,7 +351,7 @@ class ModelTrainer:
 
         result = ModelTrainingResult(
             training_id=training_id,
-            config=config,
+            config=config.model_dump(),  # 轉換為 dict
             model_version=new_version,
             training_samples=len(samples),
             validation_samples=0,
@@ -515,7 +515,7 @@ class ModelTrainer:
 
         result = ModelTrainingResult(
             training_id=training_id,
-            config=config,
+            config=config.model_dump(),  # 轉換為 dict
             model_version=new_version,
             training_samples=len(samples),
             validation_samples=0,
@@ -578,8 +578,8 @@ class ModelTrainer:
             features = self._extract_features(sample)
             X.append(features)
 
-            # 構建標籤（成功/失敗）
-            label = 1 if sample.label == "success" else 0
+            # 構建標籤（成功/失敗）- 使用 is_positive 屬性
+            label = 1 if sample.is_positive else 0
             y.append(label)
 
         X = np.array(X)
@@ -615,18 +615,19 @@ class ModelTrainer:
         attack_one_hot = [1.0 if t == attack_type else 0.0 for t in attack_types]
         features.extend(attack_one_hot)
 
-        # 2. 計畫複雜度特徵
-        features.append(float(len(sample.plan.steps)))  # 步驟數量
-        features.append(float(len(sample.plan.dependencies)))  # 依賴關係數量
+        # 2. 計畫複雜度特徵（從 context 取得 plan 數據）
+        plan_data = sample.context.get("plan", {})
+        features.append(float(len(plan_data.get("steps", []))))  # 步驟數量
+        features.append(float(len(plan_data.get("dependencies", []))))  # 依賴關係數量
 
-        # 3. 執行指標特徵
-        metrics = sample.metrics
+        # 3. 執行指標特徵（從 context 取得 metrics 數據）
+        metrics = sample.context.get("metrics", {})
         features.extend(
             [
-                metrics.completion_rate,
-                metrics.success_rate,
-                metrics.sequence_accuracy,
-                metrics.total_execution_time / 100.0,  # 標準化
+                metrics.get("completion_rate", 0.0),
+                metrics.get("success_rate", 0.0),
+                metrics.get("sequence_accuracy", 0.0),
+                metrics.get("total_execution_time", 0.0) / 100.0,  # 標準化
             ]
         )
 
@@ -654,7 +655,9 @@ class ModelTrainer:
             actions = []
             rewards = []
 
-            for i, trace in enumerate(sample.trace):
+            # 從 context 取得 trace 數據
+            trace_data = sample.context.get("trace", [])
+            for i, trace in enumerate(trace_data):
                 # State: 當前狀態特徵
                 state = self._build_state_vector(sample, i)
                 states.append(state)
@@ -698,13 +701,18 @@ class ModelTrainer:
         attack_type = sample.context.get("attack_type", "")
         state.extend(self._encode_attack_type(attack_type))
 
+        # 從 context 取得 plan 數據
+        plan_data = sample.context.get("plan", {})
+        plan_steps = plan_data.get("steps", [])
+        
         # 當前進度
-        progress = step_index / max(len(sample.plan.steps), 1)
+        progress = step_index / max(len(plan_steps), 1)
         state.append(progress)
 
-        # 已完成步驟數
-        completed = sum(1 for t in sample.trace[:step_index] if t.status == "success")
-        state.append(completed / max(len(sample.plan.steps), 1))
+        # 已完成步驟數（從 context 取得 trace 數據）
+        trace_data = sample.context.get("trace", [])
+        completed = sum(1 for t in trace_data[:step_index] if isinstance(t, dict) and t.get("status") == "success")
+        state.append(completed / max(len(plan_steps), 1))
 
         return np.array(state, dtype=np.float32)
 
@@ -760,9 +768,12 @@ class ModelTrainer:
             reward -= 0.5
 
         # 順序獎勵：按預期順序執行
-        if step_index < len(sample.plan.steps):
-            expected_step = sample.plan.steps[step_index]
-            if expected_step.step_id == trace.step_id:
+        plan_data = sample.context.get("plan", {})
+        plan_steps = plan_data.get("steps", [])
+        if step_index < len(plan_steps):
+            expected_step = plan_steps[step_index]
+            expected_step_id = expected_step.get("step_id") if isinstance(expected_step, dict) else None
+            if expected_step_id == trace.step_id:
                 reward += 0.5
 
         # 發現獎勵：發現漏洞
@@ -1169,7 +1180,7 @@ class ModelTrainer:
             f"Testing model {self.model_version} on scenario {scenario.scenario_id}"
         )
 
-        # TODO: 實現實際的場景測試邏輯
+        # 注意: 實際場景測試邏輯待實現
         # 這裡需要調用 PlanExecutor 執行生成的計畫
 
         # 模擬測試結果

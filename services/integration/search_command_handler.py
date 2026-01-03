@@ -10,7 +10,7 @@
 
 import asyncio
 import os
-from typing import Dict, Any, List, Optional
+from typing import Any, List, Optional
 from datetime import datetime, UTC
 
 import aiohttp
@@ -38,7 +38,7 @@ class SearchCommandHandler:
     4. 社交工程：Email breach, WHOIS, Domain info
     """
     
-    def __init__(self, config: Optional[Dict[str, Any]] = None):
+    def __init__(self, config: Optional[dict[str, Any]] = None):
         """初始化搜索命令處理器
         
         Args:
@@ -173,7 +173,7 @@ class SearchCommandHandler:
     
     # ===== 搜索引擎實現 =====
     
-    async def _search_google(self, payload: Dict[str, Any]) -> Dict[str, Any]:
+    async def _search_google(self, payload: dict[str, Any]) -> dict[str, Any]:
         """Google Custom Search API 搜索
         
         Args:
@@ -247,7 +247,7 @@ class SearchCommandHandler:
             self.logger.error(f"Google 搜索失敗: {e}")
             raise
     
-    async def _search_duckduckgo(self, payload: Dict[str, Any]) -> Dict[str, Any]:
+    async def _search_duckduckgo(self, payload: dict[str, Any]) -> dict[str, Any]:
         """DuckDuckGo Instant Answer API 搜索
         
         Args:
@@ -340,7 +340,7 @@ class SearchCommandHandler:
                 "related_topics": []
             }
     
-    async def _search_github(self, payload: Dict[str, Any]) -> Dict[str, Any]:
+    async def _search_github(self, payload: dict[str, Any]) -> dict[str, Any]:
         """GitHub Search API 搜索
         
         Args:
@@ -397,7 +397,7 @@ class SearchCommandHandler:
             self.logger.error(f"GitHub 搜索失敗: {e}")
             raise
     
-    def _search_exploitdb(self, payload: Dict[str, Any]) -> Dict[str, Any]:
+    def _search_exploitdb(self, payload: dict[str, Any]) -> dict[str, Any]:
         """ExploitDB 搜索（使用公開 API 或爬蟲）
         
         Args:

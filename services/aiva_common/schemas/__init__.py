@@ -263,10 +263,9 @@ from .messaging import (
 
 # ==================== 能力管理 ====================
 from .capability import (
-    CapabilityInfo,
-    CapabilityScorecard,
-    InputParameter,
-    OutputParameter,
+    ExecutableCapability,
+    ExecutableParameter,
+    ParameterType,
 )
 
 # ==================== CLI 界面 ====================
@@ -507,11 +506,10 @@ __all__ = [
     "RiskFactor",
     "Task",
     "TaskDependency",
-    # 能力管理
-    "CapabilityInfo",
-    "CapabilityScorecard",
-    "InputParameter",
-    "OutputParameter",
+    # 能力管理 (v2.0)
+    "ExecutableCapability",
+    "ExecutableParameter",
+    "ParameterType",
     # 訊息系統
     "AivaMessage",
     "AIVARequest",

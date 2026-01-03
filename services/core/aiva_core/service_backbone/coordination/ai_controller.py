@@ -1,7 +1,9 @@
 """
-AIVA AI 子系統控制器 - BioNeuronMasterController 的專門模組
+AIVA AI 子系統控制器 - 5M Decision Engine 的專門模組
 負責特定 AI 功能的協調，避免與主控制器衝突
 支援插件化的智能分析系統
+
+注意：已移除 BioNeuronRAGAgent/LLM 依賴，改用 5M Decision Engine
 """
 
 import asyncio
@@ -26,7 +28,7 @@ logger = logging.getLogger(__name__)
 class AISubsystemController:
     """AIVA AI 子系統控制器 - 避免與主控制器衝突
     
-    重要：此類不再實例化 BioNeuronRAGAgent，而是使用主控制器共享的實例
+    重要：此類使用 5M Decision Engine，無 LLM/NLU 依賴
     """
 
     def __init__(self, master_controller=None):
@@ -35,9 +37,9 @@ class AISubsystemController:
         Args:
             master_controller: 主控制器實例，用於共享 AI 資源
         """
-        logger.info("🔧 初始化 AIVA AI 子系統控制器...")
+        logger.info("🔧 初始化 AIVA AI 子系統控制器 (5M Engine)...")
 
-        # 重要：不再創建獨立的 AI 實例，避免資源浪費
+        # 重要：使用 5M Decision Engine，不需要外部 LLM
         self.master_controller = master_controller
         self._master_ai = None  # 延遲獲取主控 AI
 
@@ -67,9 +69,9 @@ class AISubsystemController:
     
     @property
     def master_ai(self):
-        """獲取主控 AI（從主控制器共享）"""
-        if self.master_controller and hasattr(self.master_controller, 'bio_neuron_agent'):
-            return self.master_controller.bio_neuron_agent
+        """獲取主控 AI（5M Decision Engine）"""
+        if self.master_controller and hasattr(self.master_controller, 'decision_engine'):
+            return self.master_controller.decision_engine
         return None
 
     async def process_specialized_request(
@@ -102,14 +104,12 @@ class AISubsystemController:
             # 3. 記錄決策（與主控制器共享）
             self._record_specialized_decision(user_input, task_analysis, result)
         except Exception as e:
-            # 根據 Python 最佳實踐：捕獲異常並記錄詳細錯誤信息
+            # 根據 Python 最佳實踐：捕獲異常並記錄詳細錯誤信息，然後重新拋出
             logger.error(f"❌ AI 決策處理失敗: {e}", exc_info=True)
-            result = {
-                "status": "error",
-                "error_type": type(e).__name__,
-                "message": str(e),
-                "fallback": "使用默認處理策略"
-            }
+            raise RuntimeError(
+                f"AI 決策處理失敗: {e}。"
+                f"錯誤類型: {type(e).__name__}"
+            ) from e
 
         # 4. 🔌 插件化摘要生成
         if self.summary_plugin and self.summary_plugin.is_enabled():
@@ -214,12 +214,10 @@ class AISubsystemController:
             修復結果字典
         """
         if not CODE_FIXER_AVAILABLE:
-            logger.warning("⚠️ CodeFixer 不可用，返回模擬結果")
-            return {
-                "status": "unavailable",
-                "message": "CodeFixer 模組不可用，請確認 services.integration 已安裝",
-                "analysis": preprocessed.get("tool_result", {}).get("analysis", ""),
-            }
+            raise RuntimeError(
+                "CodeFixer 模組不可用。"
+                "請確認 services.integration.code_fixer 已正確安裝。"
+            )
 
         # 獲取或創建 CodeFixer 實例
         if not self.ai_components.get("code_fixer"):

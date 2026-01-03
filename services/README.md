@@ -1170,9 +1170,9 @@ RABBITMQ_URL="amqp://guest:guest@localhost:5672/"
 **生產環境部署時**（未來）才需要設置環境變數覆蓋預設值。
 
 **⚠️ v2.0 架構變更**：
-- ✅ 已移除 RabbitMQ 依賴 (改用 Command Center 直接調用)
+- ✅ 雙軌通信設計 (MessageBroker 異步 + CLI 同步)
 - ✅ 已移除 Neo4j 依賴 (改用 NetworkX 圖分析)
-- ✅ 簡化環境配置 (只需 PostgreSQL + Redis)
+- ✅ 簡化環境配置 (只需 PostgreSQL + Redis + RabbitMQ)
 
 #### 4. 啟動服務
 
@@ -1341,8 +1341,8 @@ chore: 雜項
 - **統一配置系統**: `config.py` 集中管理所有資料儲存路徑
 - **維護腳本建立**: `backup.py` (自動備份) + `cleanup.py` (舊資料清理)
 - **配置簡化**: 研發階段無需環境變數，全部使用預設值 (AIVA_INTEGRATION_DATA_DIR 等檔案路徑配置除外)
-- **依賴簡化**: 資料庫依賴從 4 個減少至 2 個 (PostgreSQL + Redis)
-- **架構升級**: v2.0 移除 RabbitMQ，改用 Command Center 直接調用架構 (零消息隊列依賴)
+- **依賴簡化**: 資料庫依賴從 4 個減少至 3 個 (PostgreSQL + Redis + RabbitMQ)
+- **架構升級**: v2.0 採用雙軌通信 (MessageBroker 異步 + CLI 同步)
 
 ### 📦 版本與文檔同步
 - **所有模組**: 升級至 v6.3

@@ -1,7 +1,7 @@
 # services/core/aiva_core/execution/attack_plan_mapper.py
 """AI 攻擊計畫映射器
 
-負責將 AI 生成的抽象攻擊計畫 (來自 BioNeuron) 轉換為
+負責將 AI 生成的抽象攻擊計畫 (來自 5M Decision Engine) 轉換為
 一系列具體的可執行的 FunctionTaskPayload。
 
 **重構說明** (2025-12-26):
@@ -10,6 +10,11 @@
 - 移除不存在的參數: module_name, function_name, config
 - 使用正確的參數: task_id, scan_id, target, context, strategy, test_config
 - 降低認知複雜度
+
+**5M 架構說明**:
+- 無 LLM/NLU 依賴
+- 使用神經網路決策輸出（attack_vector, confidence, tools）
+- 基於預定義模板生成執行計畫
 """
 
 import logging

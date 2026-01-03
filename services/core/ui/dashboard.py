@@ -51,15 +51,15 @@ class Dashboard:
         return mode_map.get(self.mode, "未知模式")
 
     def _init_ai_agent(self) -> None:
-        """初始化 AI 代理."""
+        """初始化 AI 代理 - 使用 5M Decision Engine."""
         try:
-            from ..cognitive_core.neural import BioNeuronRAGAgent
+            from ..cognitive_core.neural.real_neural_core import RealDecisionEngine
 
-            logger.info("\n[AI] 正在初始化 BioNeuronRAGAgent...")
-            self.ai_agent = BioNeuronRAGAgent(codebase_path="c:/D/E/AIVA/AIVA-main")
-            logger.info("[AI] AI 代理初始化成功")
+            logger.info("\n[AI] 正在初始化 5M Decision Engine...")
+            self.ai_agent = RealDecisionEngine(use_5m_model=True)
+            logger.info("[AI] 5M Decision Engine 初始化成功")
         except Exception as e:
-            logger.error(f"[AI] AI 代理初始化失敗: {e}")
+            logger.error(f"[AI] Decision Engine 初始化失敗: {e}")
             if self.mode == "ai":
                 raise
             logger.warning("[AI] 將以純 UI 模式運作")

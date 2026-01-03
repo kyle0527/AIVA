@@ -1,203 +1,336 @@
 """
-AIVA 能力管理相關 Schema
+AIVA 能力管理 Schema - v2.0 極簡版
 
-此模組定義能力管理系統中使用的統一數據模型。
-包含能力定義、評分卡、執行記錄等核心結構。
+專為 AI 動態執行設計，遵循「協議先行」策略。
+只保留 AI 理解和執行命令所需的最小資訊集。
+
+設計原則：
+1. CLI 為中心 - 一切圍繞命令執行
+2. 參數動態化 - 支援 AI 根據情境調整參數
+3. 語言無關 - 支援 Python/Rust/Go/TypeScript/Docker
+4. 去除雜訊 - 移除監控、維運等非執行相關資訊
+
+參考：AIVA_系統架構升級計畫.md
 """
 
 from datetime import datetime
+from enum import Enum
 from typing import Any
 
-from pydantic import BaseModel, Field
-
-from ..enums import ProgrammingLanguage, TaskStatus
+from pydantic import BaseModel, Field, field_validator
 
 
-class InputParameter(BaseModel):
-    """輸入參數定義"""
-
-    name: str = Field(..., description="參數名稱")
-    type: str = Field(..., description="參數類型")
-    required: bool = Field(default=True, description="是否必需")
-    description: str = Field(..., description="參數描述")
-    default: Any | None = Field(None, description="默認值")
+# ==================== v2.0 極簡能力模型 ====================
 
 
-class OutputParameter(BaseModel):
-    """輸出參數定義"""
-
-    name: str = Field(..., description="輸出名稱")
-    type: str = Field(..., description="輸出類型")
-    description: str = Field(..., description="輸出描述")
-
-
-class CapabilityInfo(BaseModel):
-    """能力信息"""
-
-    id: str = Field(..., description="能力唯一標識符")
-    name: str = Field(..., description="能力顯示名稱")
-    description: str | None = Field(None, description="能力詳細描述")
-    version: str = Field(default="1.0.0", description="能力版本")
-
-    # 技術信息
-    language: ProgrammingLanguage = Field(..., description="實現語言")
-    entrypoint: str = Field(..., description="入口點路徑")
-    topic: str = Field(..., description="主題分類")
-
-    # 接口定義
-    inputs: list[InputParameter] | None = Field(None, description="輸入參數列表")
-    outputs: list[OutputParameter] | None = Field(None, description="輸出參數列表")
-
-    # 依賴與前置條件
-    prerequisites: list[str] | None = Field(None, description="前置條件列表")
-    dependencies: list[str] | None = Field(None, description="依賴的其他能力ID")
-
-    # 元數據
-    tags: list[str] | None = Field(None, description="標籤列表")
-    status: TaskStatus = Field(default=TaskStatus.PENDING, description="能力狀態")
-
-    # 時間戳
-    created_at: datetime | None = Field(None, description="創建時間")
-    updated_at: datetime | None = Field(None, description="更新時間")
+class ParameterType(str, Enum):
+    """參數類型枚舉"""
+    STRING = "string"
+    INTEGER = "integer"
+    FLOAT = "float"
+    BOOLEAN = "boolean"
+    ARRAY = "array"
 
 
-class CapabilityScorecard(BaseModel):
-    """能力評分卡"""
-
-    capability_id: str = Field(..., description="能力ID")
-
-    # 7日性能指標
-    success_rate_7d: float = Field(default=0.0, description="7日成功率", ge=0, le=1)
-    avg_latency_ms: float = Field(default=0.0, description="平均延遲(毫秒)", ge=0)
-    availability_7d: float = Field(default=1.0, description="7日可用性", ge=0, le=1)
-    usage_count_7d: int = Field(default=0, description="7日使用次數", ge=0)
-
-    # 時間戳
-    last_used_at: datetime | None = Field(None, description="最後使用時間")
-    last_updated_at: datetime | None = Field(None, description="最後更新時間")
-
-    # 額外指標
-    error_count_7d: int = Field(default=0, description="7日錯誤次數", ge=0)
-    metadata: dict[str, Any] | None = Field(None, description="其他元數據")
-
-
-# ==================== Manifest 架構 (v1.0) ====================
-
-
-from enum import Enum
-
-
-class ParameterMappingStrategy(str, Enum):
-    """參數映射策略"""
-    LINEAR = "linear"  # intensity * (max - min) + min
-    INVERSE = "inverse"  # max - intensity * (max - min)
-    EXPONENTIAL = "exponential"  # min * (max/min) ^ intensity
-    LOGARITHMIC = "logarithmic"  # log-based scaling
-
-
-class TunableParameter(BaseModel):
-    """可調參數定義 (B類參數)
+class ExecutableParameter(BaseModel):
+    """可執行參數定義
     
-    參數值由 AI 強度等級 (0.0-1.0) 映射生成。
-    例如: intensity=0.9 → threads=9 (range 1-10, linear)
+    告訴 AI 如何正確填充參數值。
+    包含類型約束、預設值和可選值列表。
     """
     
-    type: str = Field(..., description="參數類型 (integer/float/boolean/string)")
-    default: Any = Field(..., description="默認值")
-    min: Any | None = Field(None, description="最小值 (數值類型)")
-    max: Any | None = Field(None, description="最大值 (數值類型)")
-    mapping_strategy: ParameterMappingStrategy = Field(
-        default=ParameterMappingStrategy.LINEAR,
-        description="映射策略"
+    description: str = Field(..., description="參數用途說明（簡短功能描述）")
+    type: ParameterType = Field(
+        default=ParameterType.STRING,
+        description="參數類型：string/integer/float/boolean/array"
     )
-    description: str = Field(..., description="參數描述")
-
-
-class AITriggerTags(BaseModel):
-    """AI 觸發標籤 (Hard Mask 過濾)
+    required: bool = Field(default=False, description="是否必填")
+    default: Any | None = Field(None, description="預設值")
+    enum: list[str] | None = Field(None, description="允許的值列表（枚舉）")
     
-    標籤用於能力過濾和觸發判斷。
-    - required: 必須全部匹配
-    - boost: 匹配會提高優先級
-    - exclude: 匹配會排除此能力
+    # 數值範圍約束（用於掃描強度等可調參數）
+    min_value: float | None = Field(None, description="最小值（數值類型）")
+    max_value: float | None = Field(None, description="最大值（數值類型）")
+    
+    @field_validator("type", mode="before")
+    @classmethod
+    def validate_type(cls, v: str | ParameterType) -> ParameterType:
+        """驗證並轉換參數類型"""
+        if isinstance(v, str):
+            return ParameterType(v.lower())
+        return v
+
+
+class ExecutableCapability(BaseModel):
+    """可執行能力清單
+    
+    這是 AI 與底層工具之間的統一協議。
+    AI 通過此協議理解能力、生成命令、調用工具。
+    
+    關鍵特性：
+    - 語言無關：底層可以是 Python/Rust/Go/TypeScript/Docker
+    - 動態參數化：支援 AI 根據情境調整參數
+    - 類型安全：Pydantic 自動驗證參數類型和範圍
+    - RAG 友好：description 和 tags 用於語義檢索
     """
     
-    required: list[str] = Field(default_factory=list, description="必需標籤")
-    boost: list[str] = Field(default_factory=list, description="加分標籤")
-    exclude: list[str] = Field(default_factory=list, description="排除標籤")
-
-
-class ManifestMetadata(BaseModel):
-    """Manifest 元數據"""
+    # === 核心識別 ===
+    id: str = Field(
+        ...,
+        description="唯一標識符，格式建議：{category}.{action}.{target}（例：xss.scan.web, sqli.detect.api）"
+    )
+    name: str = Field(..., description="顯示名稱（人類可讀）")
     
-    flow_id: int = Field(..., description="流程 ID (對應 840 flows)")
-    script_name: str = Field(..., description="腳本名稱 (從 840 flows path 中提取)")
-    script_file: str = Field(..., description="腳本文件名 (例如: monitoring.py)")
-    script_path: str = Field(..., description="腳本相對路徑 (從項目根目錄)")
-    tool_name: str = Field(..., description="工具顯示名稱")
-    description: str = Field(..., description="工具功能描述")
-    language: ProgrammingLanguage = Field(..., description="實現語言")
-    version: str = Field(default="1.0.0", description="Manifest 版本")
-    module: str | None = Field(None, description="所屬模組 (service_backbone/cognitive_core/etc.)")
-
-
-class ManifestExecution(BaseModel):
-    """執行配置"""
+    # === 功能描述（AI 理解用）===
+    description: str = Field(
+        ...,
+        description="功能性描述。格式：動詞+對象|特徵1|特徵2。例：'掃描網頁XSS漏洞|支援DOM分析|檢測反射型存儲型'"
+    )
     
-    binary_path: str = Field(..., description="可執行文件路徑 (相對於項目根目錄)")
+    # === CLI 執行配置 ===
     command_template: str = Field(
         ...,
-        description="CLI 命令模板 (使用 {param_name} 佔位符)"
+        description="CLI 命令模板，使用 {param_name} 作為佔位符。例：'python -m xss_scan --url {target} --depth {depth}'"
     )
-    working_dir: str = Field(default=".", description="工作目錄")
-    timeout_seconds: int = Field(default=300, description="超時時間(秒)", ge=1)
-
-
-class ManifestParameters(BaseModel):
-    """參數配置
     
-    分為兩類:
-    - context_mapping (A類): 從上下文直接獲取，key=manifest參數名, value=context鍵名
-    - tunable (B類): 由 AI 強度等級映射生成
-    """
-    
-    context_mapping: dict[str, str] = Field(
+    # === 參數定義 ===
+    parameters: dict[str, ExecutableParameter] = Field(
         default_factory=dict,
-        description="A類參數: 上下文映射 {manifest_param: context_key}"
+        description="可調參數字典。Key 為模板中的變數名"
     )
-    tunable: dict[str, TunableParameter] = Field(
-        default_factory=dict,
-        description="B類參數: 可調參數定義"
+    
+    # === 分類標籤（RAG 檢索用）===
+    tags: list[str] = Field(
+        default_factory=list,
+        description="功能標籤，用於快速過濾和檢索。例：['web', 'vulnerability', 'attack']"
     )
-
-
-class AICognitive(BaseModel):
-    """AI 認知配置"""
     
-    primary_capability: str = Field(..., description="主要能力類別")
-    risk_level: str = Field(default="low", description="風險等級 (low/medium/high/critical)")
-    tags: AITriggerTags = Field(default_factory=AITriggerTags, description="觸發標籤")
+    # === 執行配置 ===
+    timeout: int = Field(
+        default=300,
+        description="執行超時（秒）",
+        gt=0,
+        le=3600
+    )
+    working_dir: str | None = Field(
+        None,
+        description="執行目錄（相對於專案根目錄）"
+    )
+    
+    # === 元數據（可選）===
+    version: str = Field(default="1.0.0", description="能力版本")
+    created_at: datetime | None = Field(None, description="創建時間")
+    updated_at: datetime | None = Field(None, description="更新時間")
+    
+    @field_validator("id")
+    @classmethod
+    def validate_id(cls, v: str) -> str:
+        """驗證 ID 格式"""
+        if not v or not v.strip():
+            raise ValueError("ID 不能為空")
+        if " " in v:
+            raise ValueError("ID 不能包含空格")
+        return v.strip().lower()
+    
+    @field_validator("command_template")
+    @classmethod
+    def validate_command_template(cls, v: str) -> str:
+        """驗證命令模板"""
+        if not v or not v.strip():
+            raise ValueError("命令模板不能為空")
+        return v.strip()
+    
+    def generate_command(self, params: dict[str, Any]) -> str:
+        """
+        根據參數值生成實際 CLI 命令
+        
+        Args:
+            params: 參數值字典
+            
+        Returns:
+            完整的 CLI 命令字符串
+            
+        Raises:
+            ValueError: 缺少必填參數或參數值不合法
+        """
+        # 驗證必填參數
+        for param_name, param_def in self.parameters.items():
+            if param_def.required and param_name not in params:
+                raise ValueError(f"缺少必填參數: {param_name}")
+        
+        # 填充參數（包含預設值）
+        final_params = {}
+        for param_name, param_def in self.parameters.items():
+            if param_name in params:
+                final_params[param_name] = params[param_name]
+            elif param_def.default is not None:
+                final_params[param_name] = param_def.default
+            else:
+                final_params[param_name] = ""
+        
+        # 生成命令
+        return self.command_template.format(**final_params)
+    
+    def validate_params(self, params: dict[str, Any]) -> dict[str, str]:
+        """
+        驗證參數值是否符合約束
+        
+        Args:
+            params: 待驗證的參數字典
+            
+        Returns:
+            錯誤字典 {param_name: error_message}，無錯誤則返回空字典
+        """
+        errors = {}
+        
+        for param_name, value in params.items():
+            if param_name not in self.parameters:
+                errors[param_name] = f"未知參數: {param_name}"
+                continue
+            
+            param_def = self.parameters[param_name]
+            
+            # 檢查枚舉值
+            if param_def.enum and value not in param_def.enum:
+                errors[param_name] = f"值必須是 {param_def.enum} 之一"
+            
+            # 檢查數值範圍
+            if param_def.type in (ParameterType.INTEGER, ParameterType.FLOAT):
+                try:
+                    num_value = float(value)
+                    if param_def.min_value is not None and num_value < param_def.min_value:
+                        errors[param_name] = f"值必須 >= {param_def.min_value}"
+                    if param_def.max_value is not None and num_value > param_def.max_value:
+                        errors[param_name] = f"值必須 <= {param_def.max_value}"
+                except (ValueError, TypeError):
+                    errors[param_name] = f"必須是 {param_def.type.value} 類型"
+        
+        return errors
 
 
-class ToolManifest(BaseModel):
-    """工具 Manifest 完整定義
-    
-    遵循「這是一個非常關鍵的架構轉折點.md」規範，
-    提供 AI 與 CLI 工具之間的靜態映射。
-    
-    設計理念:
-    1. Static Registry - 每個能力一個 JSON 文件
-    2. AI → Flow ID → Manifest → CommandBuilder → CLI 執行
-    3. 參數分離 (A類: 上下文, B類: AI調節)
-    4. Hard Mask 過濾 (基於標籤)
+# ==================== 輔助函數 ====================
+
+
+def validate_capability(capability_dict: dict) -> ExecutableCapability:
+    """驗證並創建能力清單"""
+    return ExecutableCapability(**capability_dict)
+
+
+def create_capability_from_analysis(
+    analysis_data: dict,
+    mmd_filename: str
+) -> ExecutableCapability:
     """
+    從分析工具產出的數據創建能力清單
     
-    meta: ManifestMetadata = Field(..., description="元數據")
-    ai_cognitive: AICognitive = Field(..., description="AI 認知配置")
-    execution: ManifestExecution = Field(..., description="執行配置")
-    parameters: ManifestParameters = Field(..., description="參數配置")
+    Args:
+        analysis_data: 分析結果中的單個函數數據
+        mmd_filename: Mermaid 圖表文件名（去掉 .mmd）
+        
+    Returns:
+        ExecutableCapability 實例
+    """
+    # 從圖表文件名提取 ID
+    capability_id = mmd_filename
     
-    # 可選擴展
-    dependencies: list[str] = Field(default_factory=list, description="依賴的其他 flow_id")
-    examples: list[dict[str, Any]] = Field(default_factory=list, description="使用示例")
-    notes: str | None = Field(None, description="額外註記")
+    # 從 analysis_data 提取資訊
+    function_name = analysis_data.get("functionName", analysis_data.get("function_name", "unknown"))
+    category = analysis_data.get("category", "other")
+    
+    # 構建參數定義
+    parameters = {}
+    for input_param in analysis_data.get("inputs", []):
+        parameters[input_param] = ExecutableParameter(
+            description=f"參數 {input_param}",
+            type=ParameterType.STRING,
+            required=True,
+            default=None,
+            enum=None,
+            min_value=None,
+            max_value=None
+        )
+    
+    # 構建標籤
+    tags = [category]
+    if "call_targets" in analysis_data:
+        tags.extend(analysis_data["call_targets"][:3])  # 取前3個調用目標作為標籤
+    
+    return ExecutableCapability(
+        id=capability_id,
+        name=function_name,
+        description=analysis_data.get("description", f"執行 {function_name} 功能"),
+        command_template="# 待補充 CLI 命令模板",
+        parameters=parameters,
+        tags=tags,
+        timeout=300,
+        working_dir=None,
+        created_at=None,
+        updated_at=None
+    )
+
+
+# ==================== 範例數據 ====================
+
+
+EXAMPLE_XSS_SCANNER = {
+    "id": "xss.scan.web",
+    "name": "XSS 漏洞掃描器",
+    "description": "掃描網頁XSS漏洞|支援反射型存儲型DOM型|可調深度和並發數",
+    "command_template": "python -m services.features.function_xss.xss_worker --url {target} --depth {depth} --threads {threads}",
+    "parameters": {
+        "target": {
+            "description": "目標URL",
+            "type": "string",
+            "required": True
+        },
+        "depth": {
+            "description": "爬蟲深度",
+            "type": "integer",
+            "default": 2,
+            "min_value": 1,
+            "max_value": 5
+        },
+        "threads": {
+            "description": "並發執行緒",
+            "type": "integer",
+            "default": 10,
+            "min_value": 1,
+            "max_value": 50
+        }
+    },
+    "tags": ["web", "vulnerability", "xss", "scan"],
+    "timeout": 600
+}
+
+
+EXAMPLE_CRYPTO_ANALYZER = {
+    "id": "crypto.analyze.tls",
+    "name": "加密分析器",
+    "description": "分析TLS/SSL配置|檢測加密套件強度|驗證憑證鏈",
+    "command_template": "./bin/crypto_analyzer --target {host} --mode {mode}",
+    "parameters": {
+        "host": {
+            "description": "目標主機",
+            "type": "string",
+            "required": True
+        },
+        "mode": {
+            "description": "分析模式",
+            "type": "string",
+            "default": "fast",
+            "enum": ["fast", "full", "deep"]
+        }
+    },
+    "tags": ["network", "crypto", "analysis"],
+    "timeout": 60,
+    "working_dir": "services/crypto_tools"
+}
+
+
+# ==================== 廢棄說明 ====================
+
+
+# v1.0 模型（ToolManifest, CapabilityInfo 等）已廢棄
+# 不再使用包含監控、評分卡等維運資訊的複雜模型
+# 請使用 ExecutableCapability 作為唯一標準
+

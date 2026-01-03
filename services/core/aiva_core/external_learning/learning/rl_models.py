@@ -476,7 +476,7 @@ class RolloutBuffer:
 
     def compute_returns(
         self, gamma: float = 0.99, gae_lambda: float = 0.95
-    ) -> torch.Tensor:
+    ) -> tuple[torch.Tensor, torch.Tensor]:
         """計算 GAE (Generalized Advantage Estimation) 回報
 
         Args:
@@ -484,7 +484,7 @@ class RolloutBuffer:
             gae_lambda: GAE lambda
 
         Returns:
-            回報張量
+            (回報張量, 優勢張量)
         """
         returns = []
         advantages = []

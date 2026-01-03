@@ -9,11 +9,10 @@
 """
 
 import logging
-from typing import Union, List, Any
+from typing import Any
 
 import numpy as np
-
-NDArray = Union[np.ndarray, List, Any]
+from numpy.typing import NDArray
 
 logger = logging.getLogger(__name__)
 
@@ -22,38 +21,38 @@ class ActivationFunctions:
     """常用激活函數集合"""
 
     @staticmethod
-    def relu(x: NDArray) -> NDArray:
+    def relu(x: NDArray[np.floating[Any]]) -> NDArray[np.floating[Any]]:
         """ReLU 激活函數"""
         return np.maximum(0, x)
 
     @staticmethod
-    def relu_derivative(x: NDArray) -> NDArray:
+    def relu_derivative(x: NDArray[np.floating[Any]]) -> NDArray[np.floating[Any]]:
         """ReLU 導數"""
-        return (x > 0).astype(float)
+        return (x > 0).astype(np.float64)
 
     @staticmethod
-    def sigmoid(x: NDArray) -> NDArray:
+    def sigmoid(x: NDArray[np.floating[Any]]) -> NDArray[np.floating[Any]]:
         """Sigmoid 激活函數"""
         return 1 / (1 + np.exp(-np.clip(x, -250, 250)))
 
     @staticmethod
-    def sigmoid_derivative(x: NDArray) -> NDArray:
+    def sigmoid_derivative(x: NDArray[np.floating[Any]]) -> NDArray[np.floating[Any]]:
         """Sigmoid 導數"""
         s = ActivationFunctions.sigmoid(x)
         return s * (1 - s)
 
     @staticmethod
-    def tanh(x: NDArray) -> NDArray:
+    def tanh(x: NDArray[np.floating[Any]]) -> NDArray[np.floating[Any]]:
         """Tanh 激活函數"""
         return np.tanh(x)
 
     @staticmethod
-    def tanh_derivative(x: NDArray) -> NDArray:
+    def tanh_derivative(x: NDArray[np.floating[Any]]) -> NDArray[np.floating[Any]]:
         """Tanh 導數"""
         return 1 - np.tanh(x) ** 2
 
     @staticmethod
-    def softmax(x: NDArray) -> NDArray:
+    def softmax(x: NDArray[np.floating[Any]]) -> NDArray[np.floating[Any]]:
         """Softmax 激活函數"""
         exp_x = np.exp(x - np.max(x, axis=-1, keepdims=True))
         return exp_x / np.sum(exp_x, axis=-1, keepdims=True)

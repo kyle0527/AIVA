@@ -11,7 +11,7 @@ AIVA 能力註冊系統核心模組
 
 from datetime import datetime
 from enum import Enum
-from typing import Dict, List, Optional, Any, Union
+from typing import List, Optional, Any, Union
 from pydantic import BaseModel, Field, ConfigDict, field_validator
 
 # 遵循 aiva_common 規範 - 使用統一的枚舉定義
@@ -52,7 +52,7 @@ class InputParameter(BaseModel):
     required: bool = Field(default=True, description="是否必需")
     description: str = Field(..., description="參數描述")
     default: Optional[Any] = Field(None, description="默認值")
-    validation_rules: Optional[Dict[str, Any]] = Field(None, description="驗證規則")
+    validation_rules: Optional[dict[str, Any]] = Field(None, description="驗證規則")
 
 
 class OutputParameter(BaseModel):
@@ -111,8 +111,8 @@ class CapabilityRecord(BaseModel):
     updated_at: datetime = Field(default_factory=datetime.utcnow, description="更新時間")
     
     # 配置信息
-    config: Optional[Dict[str, Any]] = Field(None, description="額外配置")
-    environment_vars: Optional[Dict[str, str]] = Field(None, description="環境變量")
+    config: Optional[dict[str, Any]] = Field(None, description="額外配置")
+    environment_vars: Optional[dict[str, str]] = Field(None, description="環境變量")
 
 
 class CapabilityEvidence(BaseModel):
@@ -130,8 +130,8 @@ class CapabilityEvidence(BaseModel):
     cpu_usage_percent: Optional[float] = Field(None, description="CPU使用率(%)", ge=0, le=100)
     
     # 測試數據
-    sample_input: Optional[Dict[str, Any]] = Field(None, description="測試輸入")
-    sample_output: Optional[Dict[str, Any]] = Field(None, description="測試輸出")
+    sample_input: Optional[dict[str, Any]] = Field(None, description="測試輸入")
+    sample_output: Optional[dict[str, Any]] = Field(None, description="測試輸出")
     
     # 錯誤信息
     error_message: Optional[str] = Field(None, description="錯誤消息")
@@ -143,8 +143,8 @@ class CapabilityEvidence(BaseModel):
     span_id: Optional[str] = Field(None, description="跨度ID")
     
     # 額外上下文
-    environment: Optional[Dict[str, str]] = Field(None, description="運行環境")
-    metadata: Optional[Dict[str, Any]] = Field(None, description="額外元數據")
+    environment: Optional[dict[str, str]] = Field(None, description="運行環境")
+    metadata: Optional[dict[str, Any]] = Field(None, description="額外元數據")
 
 
 class CapabilityScorecard(BaseModel):
@@ -173,7 +173,7 @@ class CapabilityScorecard(BaseModel):
     timeout_count: int = Field(..., description="超時次數", ge=0)
     
     # 錯誤分類
-    error_categories: Dict[str, int] = Field(default_factory=dict, description="錯誤分類統計")
+    error_categories: dict[str, int] = Field(default_factory=dict, description="錯誤分類統計")
     recent_errors: List[str] = Field(default_factory=list, description="最近錯誤列表")
     
     # 趨勢分析
@@ -194,8 +194,8 @@ class CLITemplate(BaseModel):
     description: str = Field(..., description="命令描述")
     
     # 參數定義
-    arguments: List[Dict[str, Any]] = Field(default_factory=list, description="命令參數")
-    options: List[Dict[str, Any]] = Field(default_factory=list, description="命令選項")
+    arguments: List[dict[str, Any]] = Field(default_factory=list, description="命令參數")
+    options: List[dict[str, Any]] = Field(default_factory=list, description="命令選項")
     
     # 示例和幫助
     examples: List[str] = Field(default_factory=list, description="使用示例")
@@ -211,7 +211,7 @@ class ExecutionRequest(BaseModel):
     model_config = ConfigDict(str_strip_whitespace=True)
     
     capability_id: str = Field(..., description="要執行的能力ID")
-    parameters: Dict[str, Any] = Field(default_factory=dict, description="執行參數")
+    parameters: dict[str, Any] = Field(default_factory=dict, description="執行參數")
     
     # 執行選項
     timeout_seconds: Optional[int] = Field(None, description="超時時間", gt=0)
@@ -219,13 +219,13 @@ class ExecutionRequest(BaseModel):
     priority: int = Field(default=50, description="執行優先級", ge=0, le=100)
     
     # 上下文信息
-    context: Optional[Dict[str, Any]] = Field(None, description="執行上下文")
+    context: Optional[dict[str, Any]] = Field(None, description="執行上下文")
     trace_id: Optional[str] = Field(None, description="追蹤ID")
     user_id: Optional[str] = Field(None, description="用戶ID")
     
     # 回調配置
     callback_url: Optional[str] = Field(None, description="回調URL")
-    webhook_config: Optional[Dict[str, Any]] = Field(None, description="Webhook配置")
+    webhook_config: Optional[dict[str, Any]] = Field(None, description="Webhook配置")
 
 
 class ExecutionResult(BaseModel):
@@ -240,7 +240,7 @@ class ExecutionResult(BaseModel):
     status: str = Field(..., description="執行狀態")
     
     # 結果數據
-    result: Optional[Dict[str, Any]] = Field(None, description="執行結果")
+    result: Optional[dict[str, Any]] = Field(None, description="執行結果")
     output: Optional[str] = Field(None, description="標準輸出")
     error_output: Optional[str] = Field(None, description="錯誤輸出")
     
@@ -261,7 +261,7 @@ class ExecutionResult(BaseModel):
     span_id: Optional[str] = Field(None, description="跨度ID")
     
     # 元數據
-    metadata: Optional[Dict[str, Any]] = Field(None, description="額外元數據")
+    metadata: Optional[dict[str, Any]] = Field(None, description="額外元數據")
 
 
 # 常用的驗證函數
@@ -297,6 +297,7 @@ def create_sample_capability() -> CapabilityRecord:
                 type="str",
                 required=True,
                 description="目標URL",
+                default=None,
                 validation_rules={"format": "url"}
             ),
             InputParameter(
@@ -319,5 +320,10 @@ def create_sample_capability() -> CapabilityRecord:
         tags=["security", "sqli", "web", "injection"],
         category="vulnerability_scanner",
         prerequisites=["network.connectivity"],
-        timeout_seconds=300
+        timeout_seconds=300,
+        topic="",  # 使用預設空字串
+        last_probe=None,
+        last_success=None,
+        config={},
+        environment_vars={}
     )

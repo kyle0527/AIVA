@@ -36,11 +36,13 @@ SCAN_CONCURRENT = 5
 
 
 # ============================================================================
-# AI 引擎配置
+# AI 引擎配置 - 5M Decision Engine
+# 注意：變數名保留 BIO_NEURON_ 前綴以保持向後兼容
+# 實際架構已改為 5M 特化神經網路，無 LLM/NLU 依賴
 # ============================================================================
 MODEL_CACHE_SIZE = 1000
-BIO_NEURON_INPUT_SIZE = 1024
-BIO_NEURON_HIDDEN_SIZE = 2048
+BIO_NEURON_INPUT_SIZE = 1024   # 用於 5M Decision Engine 輸入維度
+BIO_NEURON_HIDDEN_SIZE = 2048  # 用於 5M Decision Engine 隱藏層維度
 
 
 # ============================================================================
