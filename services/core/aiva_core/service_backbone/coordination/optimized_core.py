@@ -347,8 +347,3 @@ def prove_aiva_independence():
     proof.compare_with_gpt4()
     proof.demonstrate_self_sufficiency()
     proof.final_verdict()
-
-
-if __name__ == "__main__":
-    # 主要展示：AIVA 不需要 GPT-4
-    prove_aiva_independence()

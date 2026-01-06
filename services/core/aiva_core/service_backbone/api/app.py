@@ -31,7 +31,8 @@ from services.aiva_common.enums.modules import Topic
 from services.aiva_common.mq import get_broker
 from services.aiva_common.schemas import AivaMessage, ScanCompletedPayload, Phase0CompletedPayload
 from services.aiva_common.utils import get_logger
-from services.core.aiva_core.external_learning.analysis.dynamic_strategy_adjustment import (
+# 模組整合: external_learning → cognitive_core/learning_system (2026-01-03)
+from services.core.aiva_core.cognitive_core.learning_system.analysis.dynamic_strategy_adjustment import (
     StrategyAdjuster,
 )
 from services.core.aiva_core.core_capabilities.analysis.initial_surface import InitialAttackSurface

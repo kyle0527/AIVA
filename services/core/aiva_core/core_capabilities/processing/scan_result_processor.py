@@ -15,7 +15,8 @@ from services.aiva_common.schemas import ScanCompletedPayload, Phase0CompletedPa
 from services.aiva_common.utils import get_logger
 from services.aiva_common.mq import AbstractBroker
 from services.core.aiva_core.core_capabilities.ingestion.scan_module_interface import ScanModuleInterface
-from services.core.aiva_core.external_learning.analysis.dynamic_strategy_adjustment import StrategyAdjuster
+# 模組整合: external_learning → cognitive_core/learning_system (2026-01-03)
+from services.core.aiva_core.cognitive_core.learning_system.analysis.dynamic_strategy_adjustment import StrategyAdjuster
 from services.core.aiva_core.core_capabilities.analysis.initial_surface import InitialAttackSurface
 from services.core.aiva_core.task_planning.planner.task_generator import TaskGenerator
 from services.core.aiva_core.task_planning.executor.task_queue_manager import TaskQueueManager

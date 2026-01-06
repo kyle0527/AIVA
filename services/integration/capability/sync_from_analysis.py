@@ -1,10 +1,15 @@
-"""從 analysis_data 同步能力到 CapabilityRegistry
+"""從 internal_exploration 同步能力到 CapabilityRegistry
 
 此腳本負責：
-1. 讀取 services/integration/analysis_data/core/capabilities/latest_core_capabilities.json
-2. 將 840 個流程轉換為 CapabilityRecord
+1. 讀取 services/integration/data/internal_exploration/latest_classification.json（唯一數據源）
+2. 將流程轉換為 CapabilityRecord
 3. 註冊到 integration.CapabilityRegistry（單一數據源）
 4. 自動同步到 RAG 向量數據庫
+
+⚠️ 架構更新 (2026-01-03):
+- 簡化路徑：移除 analysis_data 中間層
+- 直接讀取 internal_exploration Pipeline 輸出
+- 五大模組架構（external_learning → cognitive_core.learning_system）
 
 遵循 aiva_common 規範：
 - 單一數據來源 (SOT) 原則
@@ -31,9 +36,12 @@ from services.integration.capability.models import (
 
 logger = get_logger(__name__)
 
-# 路徑常量
-ANALYSIS_DATA_ROOT = Path("services/integration/analysis_data")
-CORE_CAPABILITIES_FILE = ANALYSIS_DATA_ROOT / "core/capabilities/latest_core_capabilities.json"
+# 路徑常量 (2026-01-03 簡化：唯一數據源)
+INTERNAL_EXPLORATION_DATA = Path("services/integration/data/internal_exploration")
+CORE_CAPABILITIES_FILE = INTERNAL_EXPLORATION_DATA / "latest_classification.json"
+
+# 向後相容：舊路徑別名
+ANALYSIS_DATA_ROOT = INTERNAL_EXPLORATION_DATA  # deprecated
 
 
 class CapabilitySyncer:
@@ -46,10 +54,14 @@ class CapabilitySyncer:
         self.errors: List[str] = []
     
     async def sync_from_analysis_data(self, module: str = "core") -> Dict[str, Any]:
-        """從 analysis_data 同步能力
+        """從 internal_exploration 同步能力到 Registry
+        
+        架構更新 (2026-01-04):
+        - 統一使用 latest_classification.json 作為唯一數據源
+        - 支援按 module 過濾（從 primary_module 欄位）
         
         Args:
-            module: 模組名稱 (core, features, scan, integration)
+            module: 模組名稱過濾 (core, features, scan, integration, 或 all)
             
         Returns:
             {
@@ -58,10 +70,10 @@ class CapabilitySyncer:
                 "errors": List[str]
             }
         """
-        logger.info(f"🔄 開始同步 {module} 模組能力...")
+        logger.info(f"🔄 開始同步能力... (過濾: {module})")
         
-        # 讀取分析數據
-        capabilities_file = ANALYSIS_DATA_ROOT / f"{module}/capabilities/latest_{module}_capabilities.json"
+        # 讀取唯一數據源: latest_classification.json
+        capabilities_file = CORE_CAPABILITIES_FILE
         
         if not capabilities_file.exists():
             error_msg = f"找不到能力數據文件: {capabilities_file}"
@@ -78,9 +90,13 @@ class CapabilitySyncer:
             data = json.load(f)
         
         flows = data.get('flows', [])
-        total_flows = len(flows)
         
-        logger.info(f"   發現 {total_flows} 個流程")
+        # 按模組過濾
+        if module != "all":
+            flows = [f for f in flows if f.get('primary_module', '').lower() == module.lower()]
+        
+        total_flows = len(flows)
+        logger.info(f"   發現 {total_flows} 個流程 (過濾後)")
         
         # 轉換並註冊每個流程
         for i, flow in enumerate(flows, 1):

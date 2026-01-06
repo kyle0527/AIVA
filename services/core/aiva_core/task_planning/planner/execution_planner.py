@@ -9,14 +9,16 @@ import logging
 import time
 from typing import Any
 
-# aiva_common 統一錯誤處理
-from aiva_common.error_handling import (
+# 使用 cross_language 統一錯誤處理（符合 aiva_common 規範）
+from aiva_common.cross_language import (
     AIVAError,
-    ErrorType,
+    AIVAErrorCode,
+    AIVAException,
     ErrorSeverity,
-    create_error_context as create_error_ctx,
+    ErrorContext,
+    create_error_context,
+    get_error_handler,
 )
-from aiva_common.cross_language import get_error_handler
 from ..command_router import CommandContext, CommandType, ExecutionResult
 
 MODULE_NAME = "execution_planner"
@@ -216,12 +218,17 @@ class ExecutionPlanner:
 
                 # 檢查資源可用性
                 if not await self._check_resources(plan["resources_required"]):
-                    raise AIVAError(
-                        "Required resources not available",
-                        error_type=ErrorType.SYSTEM,
-                        severity=ErrorSeverity.HIGH,
-                        context=create_error_ctx(module=MODULE_NAME, function="execute_plan")
+                    error_ctx = create_error_context(
+                        service_name=MODULE_NAME,
+                        function_name="execute_plan"
                     )
+                    aiva_err = AIVAError(
+                        error_code=AIVAErrorCode.RESOURCE_EXHAUSTED,
+                        message="Required resources not available",
+                        severity=ErrorSeverity.HIGH,
+                        context=error_ctx
+                    )
+                    raise AIVAException(aiva_err)
 
                 # 執行各個步驟
                 step_results = []
@@ -310,18 +317,19 @@ class ExecutionPlanner:
                 plan["execution_end"] = time.time()
                 plan["error"] = str(e)
 
-                # 創建錯誤上下文
+                # 創建錯誤上下文（使用 cross_language 標準格式）
                 error_context = create_error_context(
-                    service_name="execution_planner",
-                    function_name="execute_plan",
-                    additional_context={
-                        "plan_id": plan_id,
-                        "steps_completed": len(
-                            [r for r in step_results if r.get("status") == "success"]
-                        ),
-                        "total_steps": len(plan["steps"]),
-                    },
+                    service_name=MODULE_NAME,
+                    function_name="execute_plan"
                 )
+                # 添加額外上下文數據
+                error_context.additional_data = {
+                    "plan_id": plan_id,
+                    "steps_completed": len(
+                        [r for r in step_results if r.get("status") == "success"]
+                    ),
+                    "total_steps": len(plan["steps"]),
+                }
 
                 error_handler_instance = get_error_handler()
                 aiva_error = error_handler_instance.handle_error(e, error_context)
@@ -337,7 +345,7 @@ class ExecutionPlanner:
                     },
                 )
 
-    def _check_resources(self, required_resources: list[str]) -> bool:
+    async def _check_resources(self, required_resources: list[str]) -> bool:
         """檢查所需資源是否可用"""
         # 實現資源檢查邏輯
         available = {"ai_engine", "rust_adapter", "scan_engine", "database"}
@@ -366,18 +374,23 @@ class ExecutionPlanner:
             # 默認處理器
             return await self._execute_generic_step(step_context)
 
-    def _validate_input(self, context: dict[str, Any]) -> dict[str, Any]:
+    async def _validate_input(self, context: dict[str, Any]) -> dict[str, Any]:
         """輸入驗證步驟"""
         command_context = context["plan"]["context"]
 
         # 基本驗證邏輯
         if not command_context.command:
-            raise AIVAError(
-                "Command is required",
-                error_type=ErrorType.VALIDATION,
-                severity=ErrorSeverity.MEDIUM,
-                context=create_error_ctx(module=MODULE_NAME, function="_validate_input")
+            error_ctx = create_error_context(
+                service_name=MODULE_NAME,
+                function_name="_validate_input"
             )
+            aiva_err = AIVAError(
+                error_code=AIVAErrorCode.INVALID_ARGUMENT,
+                message="Command is required",
+                severity=ErrorSeverity.MEDIUM,
+                context=error_ctx
+            )
+            raise AIVAException(aiva_err)
 
         return {
             "validation_result": "passed",
@@ -397,7 +410,7 @@ class ExecutionPlanner:
             "message": f"Command '{command_context.command}' executed successfully",
         }
 
-    def _format_output(self, context: dict[str, Any]) -> dict[str, Any]:
+    async def _format_output(self, context: dict[str, Any]) -> dict[str, Any]:
         """格式化輸出"""
         previous_results = context["previous_results"]
 

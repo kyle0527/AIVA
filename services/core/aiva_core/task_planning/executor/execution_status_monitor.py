@@ -81,8 +81,169 @@ class ExecutionContext:
 
 
 class ExecutionMonitor:
-    """執行監控器的別名類，保持向後兼容"""
-    pass
+    """執行監控器 - 追蹤任務執行狀態
+    
+    提供與 TaskExecutor 整合的執行監控功能
+    """
+    
+    def __init__(self) -> None:
+        self._contexts: dict[str, ExecutionContext] = {}
+        self._task_traces: dict[str, list[dict[str, Any]]] = {}
+        self._errors: dict[str, list[str]] = {}
+    
+    def start_task_execution(
+        self,
+        trace_session_id: str,
+        task: Any,
+        tool_decision: Any,
+    ) -> ExecutionContext:
+        """開始任務執行追蹤
+        
+        Args:
+            trace_session_id: 追蹤會話 ID
+            task: 可執行任務
+            tool_decision: 工具決策
+            
+        Returns:
+            ExecutionContext 執行上下文
+        """
+        context = ExecutionContext(
+            session_id=trace_session_id,
+            task_id=getattr(task, 'task_id', str(id(task))),
+            metadata={
+                "tool_decision": str(tool_decision) if tool_decision else None,
+            }
+        )
+        self._contexts[context.task_id] = context
+        self._task_traces[context.task_id] = []
+        logger.debug(f"Started execution tracking for task {context.task_id}")
+        return context
+    
+    def complete_task_execution(
+        self,
+        context: ExecutionContext,
+        output: dict[str, Any],
+        success: bool = True,
+    ) -> None:
+        """完成任務執行追蹤
+        
+        Args:
+            context: 執行上下文
+            output: 輸出結果
+            success: 是否成功
+        """
+        context.metadata["success"] = success
+        context.metadata["output"] = output
+        context.metadata["end_time"] = datetime.now(UTC).isoformat()
+        logger.debug(f"Completed execution tracking for task {context.task_id}: success={success}")
+    
+    def record_error(self, context: ExecutionContext, error_msg: str) -> None:
+        """記錄錯誤
+        
+        Args:
+            context: 執行上下文
+            error_msg: 錯誤訊息
+        """
+        if context.task_id not in self._errors:
+            self._errors[context.task_id] = []
+        self._errors[context.task_id].append(error_msg)
+        logger.error(f"Task {context.task_id} error: {error_msg}")
+    
+    def record_step(
+        self,
+        context: ExecutionContext,
+        step_name: str,
+        parameters: dict[str, Any] | None = None,
+    ) -> None:
+        """記錄執行步驟
+        
+        Args:
+            context: 執行上下文
+            step_name: 步驟名稱
+            parameters: 參數
+        """
+        step_record = {
+            "step_name": step_name,
+            "parameters": parameters or {},
+            "timestamp": datetime.now(UTC).isoformat(),
+        }
+        if context.task_id in self._task_traces:
+            self._task_traces[context.task_id].append(step_record)
+        logger.debug(f"Recorded step {step_name} for task {context.task_id}")
+    
+    def record_decision_point(
+        self,
+        context: ExecutionContext,
+        decision: str,
+        options: list[str] | None = None,
+        selected: str | None = None,
+    ) -> None:
+        """記錄決策點
+        
+        Args:
+            context: 執行上下文
+            decision: 決策描述
+            options: 可選項
+            selected: 選擇的選項
+        """
+        decision_record = {
+            "type": "decision_point",
+            "decision": decision,
+            "options": options or [],
+            "selected": selected,
+            "timestamp": datetime.now(UTC).isoformat(),
+        }
+        if context.task_id in self._task_traces:
+            self._task_traces[context.task_id].append(decision_record)
+        logger.debug(f"Recorded decision point for task {context.task_id}: {decision}")
+    
+    def record_tool_invocation(
+        self,
+        context: ExecutionContext,
+        tool_name: str,
+        parameters: dict[str, Any] | None = None,
+        result: Any = None,
+    ) -> None:
+        """記錄工具調用
+        
+        Args:
+            context: 執行上下文
+            tool_name: 工具名稱
+            parameters: 參數
+            result: 結果
+        """
+        invocation_record = {
+            "type": "tool_invocation",
+            "tool_name": tool_name,
+            "parameters": parameters or {},
+            "result": str(result) if result else None,
+            "timestamp": datetime.now(UTC).isoformat(),
+        }
+        if context.task_id in self._task_traces:
+            self._task_traces[context.task_id].append(invocation_record)
+        logger.debug(f"Recorded tool invocation {tool_name} for task {context.task_id}")
+    
+    def get_task_traces(self, task_id: str) -> list[dict[str, Any]]:
+        """獲取任務追蹤記錄
+        
+        Args:
+            task_id: 任務 ID
+            
+        Returns:
+            追蹤記錄列表
+        """
+        return self._task_traces.get(task_id, [])
+    
+    def get_task_errors(self, task_id: str) -> list[str]:
+        """獲取任務錯誤
+        
+        Args:
+            task_id: 任務 ID
+            
+        Returns:
+            錯誤列表
+        """
+        return self._errors.get(task_id, [])
 
 
 class ExecutionStatusMonitor:

@@ -1,11 +1,12 @@
-"""External Learning Event Listener - 外部學習事件監聽器
+"""Learning System Event Listener - 統一經驗學習事件監聽器
 
 監聽 TASK_COMPLETED 事件並觸發學習流程，實現 AI 從執行經驗中學習
 
-這是外部閉環的關鍵組件，連接執行系統和學習系統
+這是統一經驗學習的關鍵組件，連接執行系統和學習系統
+靶場和實際環境使用同一套學習機制
 
 使用方式:
-    from services.core.aiva_core.external_learning.event_listener import ExternalLearningListener
+    from services.core.aiva_core.cognitive_core.learning_system.event_listener import ExternalLearningListener
     
     listener = ExternalLearningListener()
     await listener.start_listening()
@@ -48,7 +49,8 @@ class ExternalLearningListener:
     def broker(self):
         """延遲加載 MessageBroker"""
         if self._broker is None:
-            from ..service_backbone.messaging.message_broker import MessageBroker
+            # 修復: 正確的相對導入路徑 (learning_system → aiva_core → service_backbone)
+            from ...service_backbone.messaging.message_broker import MessageBroker
             self._broker = MessageBroker()
         return self._broker
     
@@ -56,7 +58,8 @@ class ExternalLearningListener:
     def connector(self):
         """延遲加載 ExternalLoopConnector"""
         if self._connector is None:
-            from ..cognitive_core.external_loop_connector import ExternalLoopConnector
+            # 修復: 正確的相對導入路徑 (learning_system → cognitive_core)
+            from ..external_loop_connector import ExternalLoopConnector
             self._connector = ExternalLoopConnector()
         return self._connector
     

@@ -248,7 +248,8 @@ class ExplorationPipeline:
         # 5. 更新系統指針 (Latest Link)
         self._step_update_link(classification_json)
 
-        # 6. ✅ 新增：同步能力到 integration.CapabilityRegistry
+        # 6. 同步能力到 integration.CapabilityRegistry
+        # 注意：CapabilityRegistry 直接讀取 latest_classification.json（唯一數據源）
         self._step_sync_to_registry(classification_json)
 
         logger.info(f"✨ 管線執行完畢。數據已更新至 {version_name}。")
@@ -389,7 +390,9 @@ class ExplorationPipeline:
 
     def _step_update_link(self, final_json_path):
         """步驟 4: 更新最新數據鏈接"""
-        logger.info(">> [4/5] 更新系統數據指針...")
+    def _step_update_link(self, final_json_path):
+        """步驟 5: 更新最新數據鏈接"""
+        logger.info(">> [5/7] 更新系統數據指針...")
         
         try:
             if final_json_path.exists():
@@ -405,8 +408,12 @@ class ExplorationPipeline:
         except Exception as e:
             logger.error(f"   ❌ 更新失敗: {e}")
     
+    # 已移除 _step_sync_to_analysis_data (2026-01-03)
+    # 原因：簡化資料路徑，CapabilitySyncer 直接讀取 latest_classification.json
+    # 不再需要中間的 analysis_data 層
+    
     def _step_sync_to_registry(self, classification_json):
-        """步驟 5: 同步能力到 integration.CapabilityRegistry
+        """步驟 6: 同步能力到 integration.CapabilityRegistry
         
         ✅ 架構修復 (2025-12-16):
         建立 Internal Exploration → CapabilityRegistry → RAG 的雙向同步機制。

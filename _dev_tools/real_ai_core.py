@@ -1,4 +1,20 @@
 """
+⚠️ 此檔案已棄用 - DEPRECATED
+
+此檔案與 services/core/aiva_core/cognitive_core/neural/real_neural_core.py 功能重複。
+
+正確使用方式:
+    from aiva_core.cognitive_core.neural.real_neural_core import RealDecisionEngine
+    
+或使用命令列:
+    cd services/core
+    python -m aiva_core.cognitive_core.neural.real_neural_core
+
+此檔案僅保留用於向後兼容和參考，未來版本將移除。
+建議所有新代碼使用 cognitive_core 內的正式實現。
+
+---
+原始說明:
 AIVA 真實AI核心實現
 基於網路研究的專業神經網路實作，替換MD5+隨機權重的假AI
 作者: GitHub Copilot

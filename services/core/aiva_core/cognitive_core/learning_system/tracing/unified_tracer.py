@@ -364,6 +364,112 @@ class UnifiedTracer:
         except Exception as e:
             logger.error(f"Failed to fail session {session_id}: {e}")
     
+    def create_session(
+        self,
+        plan_id: str,
+        scan_id: str,
+        steps: list[str],
+        timeout_minutes: int = 30,
+    ) -> SessionState:
+        """創建新的會話狀態（兼容原 trace_logger 介面）
+        
+        Args:
+            plan_id: 計畫 ID
+            scan_id: 掃描 ID
+            steps: 步驟列表
+            timeout_minutes: 超時時間（分鐘）
+            
+        Returns:
+            SessionState 會話狀態
+        """
+        try:
+            from datetime import timedelta
+            
+            session_id = f"session_{uuid4().hex[:12]}"
+            now = datetime.now(UTC)
+            
+            session = SessionState(
+                session_id=session_id,
+                plan_id=plan_id,
+                scan_id=scan_id,
+                status="active",
+                pending_steps=steps,  # 使用 pending_steps 而非 steps
+                started_at=now,
+                timeout_at=now + timedelta(minutes=timeout_minutes),
+            )
+            
+            self.active_sessions[session_id] = session
+            self.current_session_id = session_id
+            
+            # 記錄會話開始
+            self.record_trace(
+                trace_type=TraceType.SESSION_START,
+                module_name=MODULE_NAME,
+                metadata={
+                    "session_id": session_id,
+                    "plan_id": plan_id,
+                    "scan_id": scan_id
+                }
+            )
+            
+            logger.info(f"Created session: {session_id} for plan {plan_id}")
+            return session
+            
+        except Exception as e:
+            raise AIVAError(
+                message=f"Failed to create session for plan {plan_id}",
+                error_type=ErrorType.SYSTEM,
+                severity=ErrorSeverity.MEDIUM,
+                context=ErrorContext(
+                    module=MODULE_NAME,
+                    function="create_session",
+                    additional_data={"plan_id": plan_id, "scan_id": scan_id}
+                ),
+                original_exception=e
+            )
+    
+    def get_session(self, session_id: str) -> Optional[SessionState]:
+        """獲取會話狀態（兼容原 trace_logger 介面）
+        
+        Args:
+            session_id: 會話 ID
+            
+        Returns:
+            SessionState 會話狀態，如果不存在則返回 None
+        """
+        return self.active_sessions.get(session_id)
+    
+    def abort_session(self, session_id: str) -> None:
+        """中止會話（兼容原 trace_logger 介面）
+        
+        Args:
+            session_id: 會話 ID
+        """
+        try:
+            # 記錄會話中止
+            self.record_trace(
+                trace_type=TraceType.ERROR,
+                module_name=MODULE_NAME,
+                metadata={
+                    "session_id": session_id,
+                    "status": "aborted"
+                }
+            )
+            
+            # 更新會話狀態
+            if session_id in self.active_sessions:
+                session = self.active_sessions[session_id]
+                session.status = "aborted"
+                del self.active_sessions[session_id]
+            
+            if self.current_session_id == session_id:
+                self.current_session_id = None
+            
+            logger.info(f"Aborted session: {session_id}")
+            
+        except Exception as e:
+            logger.error(f"Failed to abort session {session_id}: {e}")
+    
     def clear_traces(self) -> None:
         """清除所有追蹤記錄"""
         try:

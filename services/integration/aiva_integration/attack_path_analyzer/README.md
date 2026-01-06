@@ -453,6 +453,6 @@ python -m services.integration.aiva_integration.attack_path_analyzer.engine
 ---
 
 **維護**: Integration Team  
-**最後更新**: 2025-11-16  
-**版本**: v2.0 (NetworkX Migration)  
+**最後更新**: 2026-01-06  
+**版本**: v2.1 (NetworkX Migration)  
 **下一步**: 整合威脅情資 (ThreatIntel)，動態調整風險分數

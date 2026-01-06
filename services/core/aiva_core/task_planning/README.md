@@ -1,10 +1,14 @@
 # 📋 Task Planning - 任務規劃系統
 
-> **版本**: v2.2.0  
+> **版本**: v2.4.0  
 > **狀態**: ✅ 生產就緒  
-> **最後更新**: 2025-12-21  
+> **最後更新**: 2026-01-06  
 > **角色**: AIVA 的智能任務編排和協調引擎  
-> **架構**: 純編排決策，不直接執行具體任務
+> **架構**: 與 CapabilityOrchestrator 整合，支援 AICommand 生成  
+> **檔案數**: 22 個 Python 模組  
+> **能力數**: 48 flows (5.7%)  
+> **數據傳輸**: CommandContext → ExecutionResult 完整流程  
+> **符合規範**: [aiva_common](../../../aiva_common/README.md)
 
 **導航**: [← 返回 AIVA Core](../README.md)
 
@@ -13,10 +17,11 @@
 ## 📋 目錄
 
 - [模組概述](#-模組概述)
+- [子模組文檔](#-子模組文檔)
 - [子系統架構](#-子系統架構)
   - [Planner - 規劃器](#1-planner---規劃器)
   - [Executor - 執行器](#2-executor---執行器)  
-  - [Coordinators - 協調器](#3-coordinators---協調器)
+  - [Commander - 協調器](#3-commander---協調器)
 - [完整工作流程](#-完整工作流程)
 - [性能指標](#-性能指標)
 
@@ -35,34 +40,40 @@ Task Planning 是 AIVA 的任務規劃和執行系統，負責將高層次目標
 
 ---
 
+## 📚 子模組文檔
+
+| 子模組 | 說明 | 文檔 |
+|--------|------|------|
+| **Executor** | 任務執行器，負責執行攻擊計劃 | [executor/README.md](executor/README.md) |
+| **Planner** | 任務規劃器，負責生成執行計劃 | [planner/README.md](planner/README.md) |
+| **Commander** | AI 指揮協調器，負責策略決策 | [commander/README.md](commander/README.md) |
+
+---
+
 ## 🏗️ 子系統架構
 
 ### 1. Planner - 規劃器
 
-**位置**: `task_planning/planner/`
+**位置**: `task_planning/planner/`  
+**詳細文檔**: [planner/README.md](planner/README.md)
 
 **核心組件**：
-- `enhanced_planner.py` - AI 增強任務規劃器（500+ 行）
-- `task_decomposer.py` - 任務分解引擎（300+ 行）
+- `execution_planner.py` - 執行計劃生成器
+- `task_generator.py` - 任務生成器
+- `tool_selector.py` - 工具選擇器
 
 **主要功能**：
 ```python
-from aiva_core.task_planning.planner import EnhancedPlanner
+from aiva_core.task_planning.planner import ExecutionPlanner
 
 # 初始化規劃器
-planner = EnhancedPlanner(neural_core, decision_agent)
+planner = ExecutionPlanner()
 
 # 生成任務計劃
 plan = await planner.create_plan(
     goal="掃描目標網站並發現漏洞",
     constraints={"timeout": 3600, "max_depth": 3}
 )
-
-# 計劃包含
-# - 任務列表 (tasks)
-# - 依賴關係 (dependencies)
-# - 資源需求 (resources)
-# - 預估時間 (estimated_time)
 ```
 
 **特性**：
@@ -75,29 +86,24 @@ plan = await planner.create_plan(
 
 ### 2. Executor - 執行器
 
-**位置**: `task_planning/executor/`
+**位置**: `task_planning/executor/`  
+**詳細文檔**: [executor/README.md](executor/README.md)
 
 **核心組件**：
-- `task_executor.py` - 任務執行引擎（600+ 行）
-- `parallel_executor.py` - 並行執行管理器（400+ 行）
-- `execution_monitor.py` - 執行監控器（250+ 行）
+- `plan_executor.py` - 計劃執行器
+- `task_executor.py` - 任務執行器
+- `attack_plan_mapper.py` - 攻擊計劃映射器
+- `execution_status_monitor.py` - 執行狀態監控器
 
 **主要功能**：
 ```python
-from aiva_core.task_planning.executor import TaskExecutor, ParallelExecutor
+from aiva_core.task_planning.executor import PlanExecutor, TaskExecutor
 
 # 初始化執行器
-executor = TaskExecutor(features_invoker)
-parallel_exec = ParallelExecutor(max_workers=5)
+executor = PlanExecutor(message_broker=broker)
 
-# 執行單個任務
-result = await executor.execute_task(task)
-
-# 並行執行多個任務
-results = await parallel_exec.execute_batch(tasks)
-
-# 監控執行進度
-status = executor.get_execution_status(task_id)
+# 執行攻擊計劃
+result = await executor.execute_plan(plan, sandbox_mode=True)
 ```
 
 **特性**：
@@ -109,7 +115,34 @@ status = executor.get_execution_status(task_id)
 
 ---
 
-### 3. ⭐ UnifiedAttackExecutor - 統一攻擊執行器（新增 2025-12-17）
+### 3. Commander - AI 指揮協調器
+
+**位置**: `task_planning/commander/`  
+**詳細文檔**: [commander/README.md](commander/README.md)  
+**重構驗證**: [COMMANDER_REFACTOR_VERIFICATION.md](../../../../COMMANDER_REFACTOR_VERIFICATION.md)
+
+**核心組件**：
+- `CommanderCoordinator` - 主協調器
+- `CapabilityManager` - 能力管理器
+- `PlanBuilder` - 計劃建構器
+- `StrategyEngine` - 策略引擎
+- `AttackCoordinator` - 攻擊協調器
+- `LearningAdapter` - 學習適配器
+
+**主要功能**：
+```python
+from aiva_core.task_planning.commander import CommanderCoordinator, AITaskType
+
+coordinator = CommanderCoordinator()
+result = await coordinator.execute_command(
+    task_type=AITaskType.ATTACK_PLANNING,
+    context={"target": "example.com"}
+)
+```
+
+---
+
+### 4. ⭐ UnifiedAttackExecutor - 統一攻擊執行器
 
 **位置**: `task_planning/unified_executor.py`
 
@@ -122,27 +155,17 @@ status = executor.get_execution_status(task_id)
 **主要接口**：
 ```python
 from task_planning.unified_executor import UnifiedAttackExecutor
-from external_learning import ExperienceManager
-from external_learning.learning import ModelTrainer
 
-# 初始化（自動學習已內建）
 executor = UnifiedAttackExecutor(
     plan_executor=plan_executor,
     experience_manager=experience_manager,
     model_trainer=model_trainer,
     rag_engine=rag_engine,
-    auto_learn=True,  # 啟用自動學習
-    learn_threshold=100  # 訓練閾值（樣本數）
+    auto_learn=True,
+    learn_threshold=100
 )
 
-# 執行攻擊（自動學習）
 result = await executor.execute_with_learning(
-    plan=attack_plan,
-    context=task_context
-)
-
-# 純執行（不學習）
-result = await executor.execute_without_learning(
     plan=attack_plan,
     context=task_context
 )
@@ -166,7 +189,7 @@ print(f"訓練次數: {stats['training_runs']}")
 - 減少代碼重複和維護成本
 
 **替代說明**：
-> ⚠️ 此組件取代了原有的 `TrainingOrchestrator`（external_learning 模組）  
+> ⚠️ 此組件取代了原有的 `TrainingOrchestrator`（原 external_learning 模組，現為 `cognitive_core/learning_system`）  
 > TrainingOrchestrator 包含 40+ 錯誤且與 AI Commander 存在雙重執行邏輯  
 > 詳見：[架構簡化報告](../_ARCHITECTURE_SIMPLIFICATION_REPORT_2025-12-17.md)
 

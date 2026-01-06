@@ -528,7 +528,3 @@ def main():
     # 匯出 CSV
     visualizer.export_to_csv("permission_matrix.csv")
     print("✅ CSV exported: permission_matrix.csv")
-
-
-if __name__ == "__main__":
-    main()

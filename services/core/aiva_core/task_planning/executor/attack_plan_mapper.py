@@ -130,7 +130,7 @@ class AttackPlanMapper:
 
         # 創建上下文
         context = FunctionTaskContext(
-            environment="default",
+            # 使用預設配置
         )
 
         # 創建測試配置
@@ -173,7 +173,7 @@ class AttackPlanMapper:
         # 創建通用的目標和上下文
         base_target = FunctionTaskTarget(url=target_url, method="GET")
         base_context = FunctionTaskContext(
-            environment="info_gathering"
+            # 信息收集階段使用預設配置
         )
 
         # 1. Web Server Fingerprinting
@@ -270,7 +270,7 @@ class AttackPlanMapper:
         # 如果沒有發現，創建通用掃描任務
         if not findings and target_url:
             tasks.append(self._create_comprehensive_scan_task(
-                target_url, scan_id, scan_context
+                target_url, scan_id
             ))
 
         logger.info(f"Created {len(tasks)} exploitation tasks")
@@ -294,7 +294,7 @@ class AttackPlanMapper:
         
         # 創建上下文
         context = FunctionTaskContext(
-            environment="exploitation",
+            # 利用階段使用預設配置
         )
         
         # 根據漏洞類型創建測試配置
@@ -327,7 +327,7 @@ class AttackPlanMapper:
             priority=5,
             target=FunctionTaskTarget(url=target_url, method="GET"),
             context=FunctionTaskContext(
-                environment="exploitation"
+                # 利用階段使用預設配置
             ),
             strategy="full",
             test_config=FunctionTaskTestConfig(),

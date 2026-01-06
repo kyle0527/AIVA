@@ -681,7 +681,3 @@ def authorize_operation(operation_name: str, risk_level: str = "L0",
     
     decision = guard.authorize_operation(context)
     return decision == AccessDecision.ALLOW
-
-
-if __name__ == "__main__":
-    main()

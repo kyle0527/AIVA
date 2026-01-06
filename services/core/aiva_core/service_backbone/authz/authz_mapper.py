@@ -434,7 +434,3 @@ def main():
     print("\n=== Role Removal Simulation ===")
     impact = mapper.simulate_role_removal("bob", "user")
     print(f"Impact: {impact}")
-
-
-if __name__ == "__main__":
-    main()

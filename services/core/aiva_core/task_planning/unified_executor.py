@@ -148,8 +148,8 @@ class UnifiedAttackExecutor:
     def ai_commander(self):
         """延遲加載 AI Commander"""
         if self._ai_commander is None:
-            from .ai_commander import AICommander
-            self._ai_commander = AICommander(data_directory=self.data_directory / "ai_commander")
+            from .commander import CommanderCoordinator
+            self._ai_commander = CommanderCoordinator(data_directory=self.data_directory / "ai_commander")
         return self._ai_commander
     
     @property
@@ -172,7 +172,8 @@ class UnifiedAttackExecutor:
     def experience_manager(self):
         """延遲加載 Experience Manager"""
         if self._experience_manager is None:
-            from ..external_learning.experience_manager import ExperienceManager
+            # 模組整合: external_learning → cognitive_core/learning_system
+            from ..cognitive_core.learning_system.experience_manager import ExperienceManager
             self._experience_manager = ExperienceManager(capacity=10000)
         return self._experience_manager
     
@@ -180,7 +181,8 @@ class UnifiedAttackExecutor:
     def model_trainer(self):
         """延遲加載 Model Trainer"""
         if self._model_trainer is None:
-            from ..external_learning.learning.model_trainer import ModelTrainer
+            # 模組整合: external_learning → cognitive_core/learning_system
+            from ..cognitive_core.learning_system.learning.model_trainer import ModelTrainer
             self._model_trainer = ModelTrainer()
         return self._model_trainer
     
@@ -473,7 +475,7 @@ class UnifiedAttackExecutor:
         
         # 調用 AI Commander 生成計劃
         try:
-            from .ai_commander import AITaskType
+            from .commander import AITaskType
             plan_result = await self.ai_commander.execute_command(
                 task_type=AITaskType.ATTACK_PLANNING,
                 context=plan_context

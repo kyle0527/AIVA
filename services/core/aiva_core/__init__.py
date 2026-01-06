@@ -1,15 +1,18 @@
 """
 AIVA Core - 核心引擎模組
 
-這是 AIVA 的核心處理引擎，基於六大模組架構設計：
+這是 AIVA 的核心處理引擎，基於五大模組架構設計：
 
-六大模組架構 (v3.0):
-1. 🧠 cognitive_core/      - AI 認知核心 (神經網路、RAG、決策、反幻覺)
-2. 🧭 internal_exploration/ - 對內探索 (自我認知、能力分析)
-3. 📋 task_planning/        - 任務規劃與執行 (規劃器、執行器、指揮官)
-4. 🌍 external_learning/    - 對外學習 (分析、追蹤、訓練、模型)
-5. 🎯 core_capabilities/    - 核心能力 (攻擊鏈、業務邏輯、對話、插件)
-6. 🏗️ service_backbone/     - 服務骨幹 (API、協調、消息、存儲、狀態)
+五大模組架構 (v4.1 - 2026-01-06):
+1. 🧠 cognitive_core/      - AI 認知核心 (神經網路、RAG、決策、反幻覺、學習系統)
+   └─ learning_system/     - 統一經驗學習 (原 external_learning，整合至認知核心)
+2. 🧭 internal_exploration/ - 對內探索 (自我認知、能力分析、自我修復)
+3. 📋 task_planning/        - 任務規劃與執行 (已完成重構 ✅)
+   ├─ commander/           - AI 指揮官系統 (組件化設計)
+   ├─ planner/             - 任務規劃器
+   └─ executor/            - 計劃執行器
+4. 🎯 core_capabilities/    - 核心能力 (攻擊鏈、業務邏輯、對話、插件)
+5. 🏗️ service_backbone/     - 服務骨幹 (API、協調、消息、存儲、狀態)
 
 UI 層:
 - 🎨 ui_panel/             - 使用者介面 (控制台、儀表板、CLI)
@@ -17,6 +20,11 @@ UI 層:
 整合增強功能:
 - migration_controller: Strangler Fig 遷移控制器
 - plugins: 增強插件系統，整合能力註冊和智能編排
+
+最近更新 (v4.1):
+- ✅ Task Planning 錯誤修復完成（unified_tracer, execution_monitor 等）
+- ✅ Commander 組件化重構完成
+- ✅ 新增 task_planning 子模組文檔（commander, planner, executor）
 """
 
 __version__ = "3.0.0-alpha"

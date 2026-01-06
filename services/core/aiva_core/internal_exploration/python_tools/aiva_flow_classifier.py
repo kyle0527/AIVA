@@ -48,14 +48,17 @@ class AIVAFlowClassifier:
     基於 AIVA Core 模組架構進行數據流分類和路徑差異分析
     """
     
-    # 類常量：模組定義
+    # 類常量：模組定義（五大模組架構 - 2026-01-03）
+    # 注意：external_learning 已整合至 cognitive_core.learning_system
     MODULES = {
         "cognitive_core": "認知核心模組",
         "internal_exploration": "內探模組",
         "task_planning": "任務規劃模組",
-        "external_learning": "外學模組",
         "core_capabilities": "核心能力模組",
-        "service_backbone": "服務骨幹模組"
+        "service_backbone": "服務骨幹模組",
+        # 向後相容：external_learning 映射到 cognitive_core
+        "external_learning": "認知核心模組(學習子系統)",
+        "learning_system": "認知核心模組(學習子系統)"
     }
 
     # 腳本詳細說明 (擴展版 - 涵蓋所有關鍵腳本)
@@ -314,17 +317,23 @@ class AIVAFlowClassifier:
         # 標準化路徑分隔符
         filepath_normalized = filepath.replace('\\', '/')
         
-        # 按順序檢查六大模組
+        # 按順序檢查五大模組（external_learning 已整合至 cognitive_core.learning_system）
         for module in [
             'cognitive_core',
             'internal_exploration',
             'task_planning',
-            'external_learning',
             'core_capabilities',
             'service_backbone'
         ]:
             if f'/{module}/' in filepath_normalized or f'\\{module}\\' in filepath:
+                # 檢查是否為 learning_system 子目錄
+                if module == 'cognitive_core' and '/learning_system/' in filepath_normalized:
+                    return 'learning_system'  # 標記為學習子系統
                 return module
+        
+        # 向後相容：檢查舊的 external_learning 路徑
+        if '/external_learning/' in filepath_normalized or '\\external_learning\\' in filepath:
+            return 'learning_system'  # 映射到新的學習子系統
         
         return 'unknown'
     
@@ -803,19 +812,46 @@ class AIVAFlowClassifier:
                 f.write("- **推測**: 路徑 2 可能是快速路徑或直接調用,路徑 1 可能包含更多處理邏輯\n\n")
     
     def _generate_json_export(self, multi_path_analysis: List[Dict]):
-        """生成 JSON 格式完整數據"""
+        """生成 JSON 格式完整數據
+        
+        v3.3 (2026-01-04): 新增 5M AI 專用欄位
+        - parameters: 從函數定義提取
+        - return_type: 從 type hints 提取
+        - cli_command: 根據模組自動生成
+        """
         if not self.output_dir:
             return
         json_file = self.output_dir / "classification_data.json"
+        
+        # v3.3: 為每個 flow 添加 AI 專用欄位
+        enhanced_flows = []
+        for flow in self.flows:
+            enhanced_flow = flow.copy()
+            
+            # 添加 cli_command（基於終點腳本和模組）
+            enhanced_flow['cli_command'] = self._generate_cli_command(flow)
+            
+            # 添加終點函數的 parameters 和 return_type
+            endpoint_info = self._get_endpoint_function_info(flow)
+            enhanced_flow['parameters'] = endpoint_info.get('parameters', [])
+            enhanced_flow['return_type'] = endpoint_info.get('return_type', 'unknown')
+            
+            # 添加結構化標籤（用於 5M AI 向量編碼）
+            enhanced_flow['structured_tags'] = self._generate_structured_tags(flow)
+            
+            enhanced_flows.append(enhanced_flow)
         
         export_data = {
             'metadata': {
                 'generated_at': datetime.now().isoformat(),
                 'total_flows': self.stats['total_flows'],
                 'module_distribution': dict(self.stats['module_distribution']),
-                'component_type_distribution': dict(self.stats['component_type_distribution'])
+                'component_type_distribution': dict(self.stats['component_type_distribution']),
+                # v3.3: 新增版本標記
+                'schema_version': '3.3',
+                'ai_compatible': True  # 標記此格式支援 5M AI
             },
-            'flows': self.flows,
+            'flows': enhanced_flows,
             'multi_path_analysis': multi_path_analysis
         }
         
@@ -824,6 +860,125 @@ class AIVAFlowClassifier:
         
         if self.verbose:
             print(f"生成 JSON 數據導出: {json_file}")
+    
+    def _generate_cli_command(self, flow: Dict) -> str:
+        """根據 flow 生成 CLI 命令
+        
+        v3.3 (2026-01-04): 新增方法
+        格式: python -m <module_path> <action> [--options]
+        """
+        if not flow.get('full_path'):
+            return ""
+        
+        endpoint_path = flow['full_path'][-1] if flow['full_path'] else ""
+        if not endpoint_path:
+            return ""
+        
+        # 從路徑提取模組名稱
+        # 例如: services/core/aiva_core/cognitive_core/rag/vector_store.py
+        # -> services.core.aiva_core.cognitive_core.rag.vector_store
+        normalized = endpoint_path.replace('\\', '/').replace('.py', '')
+        
+        # 找到 services 開始的位置
+        if 'services/' in normalized:
+            module_path = normalized.split('services/')[-1]
+            module_path = 'services.' + module_path.replace('/', '.')
+        else:
+            module_path = normalized.split('/')[-1]
+        
+        # 根據模組類型生成不同的命令格式
+        primary_module = flow.get('primary_module', 'unknown')
+        
+        if primary_module == 'internal_exploration':
+            return f"python -m {module_path} --flow-id {flow.get('id', 0)}"
+        elif primary_module == 'cognitive_core':
+            return f"python -m {module_path} query"
+        elif primary_module == 'task_planning':
+            return f"python -m {module_path} execute"
+        else:
+            return f"python -m {module_path}"
+    
+    def _get_endpoint_function_info(self, flow: Dict) -> Dict:
+        """獲取終點函數的詳細信息
+        
+        v3.3 (2026-01-04): 新增方法
+        """
+        if not flow.get('end'):
+            return {'parameters': [], 'return_type': 'unknown'}
+        
+        endpoint_script = flow['end']
+        
+        # 從 script_functions 獲取函數信息
+        script_info = self.script_functions.get(endpoint_script, {})
+        functions = script_info.get('functions', {})
+        
+        # 優先使用入口點函數
+        entry_points = script_info.get('entry_points', [])
+        target_func = None
+        
+        for ep in entry_points:
+            if ep in functions:
+                target_func = functions[ep]
+                break
+        
+        # 如果沒有入口點，使用第一個函數
+        if not target_func and functions:
+            target_func = list(functions.values())[0]
+        
+        if target_func:
+            return {
+                'parameters': target_func.get('parameters', []),
+                'return_type': target_func.get('return_type', 'unknown')
+            }
+        
+        return {'parameters': [], 'return_type': 'unknown'}
+    
+    def _generate_structured_tags(self, flow: Dict) -> List[str]:
+        """生成結構化標籤（用於 5M AI 向量編碼）
+        
+        v3.3 (2026-01-04): 新增方法
+        
+        標籤格式：
+        - module:<module_name>
+        - type:<component_type>
+        - length:<short|medium|long>
+        - async:<true|false>
+        """
+        tags = []
+        
+        # 模組標籤
+        if flow.get('primary_module'):
+            tags.append(f"module:{flow['primary_module']}")
+        
+        # 組件類型標籤
+        if flow.get('primary_component_type'):
+            comp_type = flow['primary_component_type'].replace('組件', '')
+            tags.append(f"type:{comp_type}")
+        
+        # 長度標籤
+        length = flow.get('length', 0)
+        if length <= 3:
+            tags.append("length:short")
+        elif length <= 7:
+            tags.append("length:medium")
+        else:
+            tags.append("length:long")
+        
+        # 檢查是否包含異步組件
+        has_async = False
+        for classification in flow.get('classifications', []):
+            script_name = classification.get('script', '')
+            script_info = self.script_functions.get(script_name, {})
+            for func_info in script_info.get('functions', {}).values():
+                if func_info.get('is_async', False):
+                    has_async = True
+                    break
+            if has_async:
+                break
+        
+        tags.append(f"async:{str(has_async).lower()}")
+        
+        return tags
     
     def run(self):
         """執行完整分析流程"""

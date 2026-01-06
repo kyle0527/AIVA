@@ -1,7 +1,20 @@
 #!/usr/bin/env python3
 """
-🔗 AIVA 核心能力與5M神經網路串接器
+🔗 AIVA 核心能力與5M神經網路串接器 (開發測試版本)
 
+⚠️ 注意: 此為獨立測試版本，正式實現位於:
+    services/core/aiva_core/cognitive_core/capability_orchestrator.py
+
+此版本用途:
+✅ 獨立測試和驗證能力編排邏輯
+✅ 快速原型開發和實驗
+✅ CLI 介面測試
+
+生產環境請使用:
+    from aiva_core.cognitive_core.capability_orchestrator import CapabilityOrchestrator
+
+---
+功能說明:
 整合AIVA現有的所有核心能力模組：
 - 靜態分析 (程式碼分析、漏洞檢測)
 - 動態掃描 (網路掃描、漏洞掃描)

@@ -1,6 +1,24 @@
 """
 AIVA 極簡能力清單 (Minimal Capability Manifest)
 
+⚠️ 已棄用 (DEPRECATED) - 2026-01-04
+=======================================
+此模組已被 latest_classification.json（自動產出）取代。
+
+原因：
+1. 路徑 A（自動產出）已可提供 AI 所需的所有資訊
+2. 手動維護的 Manifest 格式與自動產出不一致
+3. 5M 特化 AI 不需要自然語言描述，只需要結構化特徵
+
+替代方案：
+- 能力定義：使用 aiva_flow_classifier.py 自動產出
+- 數據源：data/internal_exploration/latest_classification.json
+- 編碼器：使用 capability_encoder.py 將能力轉為 512 維向量
+
+保留此文件僅為向後相容，不應用於新開發。
+=======================================
+
+原說明（歷史紀錄）：
 專為 AI 執行設計，去除所有監控、維運等雜訊資訊。
 只保留 AI 理解能力和執行命令所需的最小資訊集。
 
@@ -10,6 +28,13 @@ AIVA 極簡能力清單 (Minimal Capability Manifest)
 3. 統一參數化 - 所有能力都支援參數調整
 4. 跨語言通用 - Python/Rust/Go/TypeScript 統一格式
 """
+import warnings
+
+warnings.warn(
+    "minimal_manifest.py 已棄用，請使用 latest_classification.json 自動產出的能力定義",
+    DeprecationWarning,
+    stacklevel=2
+)
 
 from typing import Any, Dict, List, Optional
 from pydantic import BaseModel, Field, ConfigDict

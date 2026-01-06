@@ -555,7 +555,11 @@ def process_python_file(file_path: Path, debug_mode: bool = False) -> Graph:
 
 @dataclass 
 class FunctionInfo:
-    """函數詳細信息"""
+    """函數詳細信息
+    
+    v3.3 (2026-01-04) - 新增 parameters 和 return_type 欄位
+    用於支援 5M AI 的結構化能力編碼
+    """
     name: str
     file_path: str
     file_name: str
@@ -564,6 +568,9 @@ class FunctionInfo:
     is_entry_point: bool = False
     called_functions: list[str] = field(default_factory=list)  # 此函數調用的其他函數
     called_by: list[str] = field(default_factory=list)  # 被哪些函數調用
+    # v3.3 新增：參數和返回類型（5M AI 結構化輸入）
+    parameters: list[dict] = field(default_factory=list)  # [{"name": str, "type": str, "default": any}]
+    return_type: str = "unknown"  # 返回類型（從 type hints 或 docstring 推斷）
 
 
 @dataclass 
@@ -657,6 +664,8 @@ class DataFlowStitcher:
         
         複雜度: B (7) - 循環 + 條件 + 函數調用
         返回: (defined_functions, called_functions)
+        
+        v3.3 (2026-01-04): 新增參數和返回類型解析
         """
         defined_functions = []
         called_functions = []
@@ -678,11 +687,127 @@ class DataFlowStitcher:
                 # 分析這個函數內部調用的函數
                 func_info.called_functions = self._analyze_function_calls(node_ast)
                 
+                # v3.3: 解析參數
+                func_info.parameters = self._extract_parameters(node_ast)
+                
+                # v3.3: 解析返回類型
+                func_info.return_type = self._extract_return_type(node_ast)
+                
                 # 存儲函數信息
                 node.functions[func_name] = func_info
                 self.function_map[f"{Path(script_path).stem}.{func_name}"] = func_info
         
         return defined_functions, called_functions
+    
+    def _extract_parameters(self, func_node: ast.FunctionDef | ast.AsyncFunctionDef) -> list[dict]:
+        """從函數節點提取參數信息
+        
+        v3.3 (2026-01-04): 新增方法
+        用於 5M AI 的結構化能力編碼
+        """
+        params = []
+        args = func_node.args
+        
+        # 獲取默認值的數量和位置
+        num_defaults = len(args.defaults)
+        num_args = len(args.args)
+        first_default_idx = num_args - num_defaults
+        
+        for i, arg in enumerate(args.args):
+            param_info = {
+                "name": arg.arg,
+                "type": self._annotation_to_string(arg.annotation) if arg.annotation else "any",
+                "default": None
+            }
+            
+            # 檢查是否有默認值
+            if i >= first_default_idx:
+                default_idx = i - first_default_idx
+                param_info["default"] = self._ast_to_value(args.defaults[default_idx])
+            
+            params.append(param_info)
+        
+        # 處理 *args
+        if args.vararg:
+            params.append({
+                "name": f"*{args.vararg.arg}",
+                "type": self._annotation_to_string(args.vararg.annotation) if args.vararg.annotation else "any",
+                "default": None
+            })
+        
+        # 處理 **kwargs
+        if args.kwarg:
+            params.append({
+                "name": f"**{args.kwarg.arg}",
+                "type": self._annotation_to_string(args.kwarg.annotation) if args.kwarg.annotation else "any",
+                "default": None
+            })
+        
+        return params
+    
+    def _extract_return_type(self, func_node: ast.FunctionDef | ast.AsyncFunctionDef) -> str:
+        """從函數節點提取返回類型
+        
+        v3.3 (2026-01-04): 新增方法
+        用於 5M AI 的結構化能力編碼
+        """
+        if func_node.returns:
+            return self._annotation_to_string(func_node.returns)
+        return "unknown"
+    
+    def _annotation_to_string(self, annotation: ast.AST | None) -> str:
+        """將 AST 類型註解轉為字串
+        
+        v3.3 (2026-01-04): 新增方法
+        """
+        if annotation is None:
+            return "any"
+        
+        if isinstance(annotation, ast.Name):
+            return annotation.id
+        elif isinstance(annotation, ast.Constant):
+            return str(annotation.value)
+        elif isinstance(annotation, ast.Subscript):
+            # 例如: List[str], Dict[str, int]
+            value = self._annotation_to_string(annotation.value)
+            slice_val = self._annotation_to_string(annotation.slice)
+            return f"{value}[{slice_val}]"
+        elif isinstance(annotation, ast.Tuple):
+            elements = [self._annotation_to_string(e) for e in annotation.elts]
+            return f"({', '.join(elements)})"
+        elif isinstance(annotation, ast.Attribute):
+            # 例如: typing.List
+            value = self._annotation_to_string(annotation.value)
+            return f"{value}.{annotation.attr}"
+        elif isinstance(annotation, ast.BinOp) and isinstance(annotation.op, ast.BitOr):
+            # 例如: str | None (Python 3.10+)
+            left = self._annotation_to_string(annotation.left)
+            right = self._annotation_to_string(annotation.right)
+            return f"{left} | {right}"
+        else:
+            return "any"
+    
+    def _ast_to_value(self, node: ast.AST) -> any:
+        """將 AST 常量節點轉為 Python 值
+        
+        v3.3 (2026-01-04): 新增方法
+        """
+        if isinstance(node, ast.Constant):
+            return node.value
+        elif isinstance(node, ast.Name):
+            if node.id == 'None':
+                return None
+            elif node.id == 'True':
+                return True
+            elif node.id == 'False':
+                return False
+            return f"<{node.id}>"  # 變數引用
+        elif isinstance(node, ast.List):
+            return [self._ast_to_value(e) for e in node.elts]
+        elif isinstance(node, ast.Dict):
+            return {self._ast_to_value(k): self._ast_to_value(v) for k, v in zip(node.keys, node.values)}
+        else:
+            return "<complex>"
     
     def _collect_external_calls(self, tree: ast.AST, node: ScriptNode) -> list[str]:
         """收集外部調用
@@ -1341,6 +1466,8 @@ class AIVAFlowAnalyzer:
         """建立函數映射表
         
         複雜度: A (3) - 雙層循環
+        
+        v3.3 (2026-01-04): 新增 parameters 和 return_type 欄位
         """
         function_details = {
             "function_map": {},  # 函數名 -> 檔案信息
@@ -1366,7 +1493,10 @@ class AIVAFlowAnalyzer:
                     "line_number": func_info.line_number,
                     "is_async": func_info.is_async,
                     "is_entry_point": func_info.is_entry_point,
-                    "called_functions": func_info.called_functions
+                    "called_functions": func_info.called_functions,
+                    # v3.3: 新增參數和返回類型
+                    "parameters": func_info.parameters,
+                    "return_type": func_info.return_type
                 }
                 
                 # 按腳本分組的函數信息
@@ -1374,7 +1504,10 @@ class AIVAFlowAnalyzer:
                     "line_number": func_info.line_number,
                     "is_async": func_info.is_async,
                     "is_entry_point": func_info.is_entry_point,
-                    "called_functions": func_info.called_functions
+                    "called_functions": func_info.called_functions,
+                    # v3.3: 新增參數和返回類型
+                    "parameters": func_info.parameters,
+                    "return_type": func_info.return_type
                 }
         
         return function_details

@@ -46,27 +46,21 @@
 
 **導航**: [← 返回 AIVA Core](../README.md)
 
-> **版本**: v3.1.0  
+> **版本**: v3.4.0  
 > **狀態**: ✅ 生產就緒  
-> **最後更新**: 2025-12-21  
-> **角色**: AIVA 的「基礎設施」- 支撐整個系統的核心服務  
-> **架構**: 純基礎服務，不包含業務邏輯執行代碼
-> **🧪 測試狀態**: 階段 7 測試 100% 通過 (3/3 組件)  
-> **角色**: AIVA 的「基礎設施」- 提供消息、存儲、協調、監控等核心服務  
-> **最後更新**: 2025-12-10
-
----
-
-## 🎯 模組概述
-- [核心組件](#核心組件)
-- [使用範例](#使用範例)
-- [開發指南](#開發指南)
+> **最後更新**: 2026-01-06  
+> **角色**: AIVA 的基礎設施服務層  
+> **檔案數**: 33 個 Python 模組  
+> **代碼行數**: 10,578 行  
+> **能力數**: 163 flows (19.4%)  
+> **數據傳輸**: ContextManager + StorageManager 完整流程  
+> **測試代碼**: ✅ 已移除（保持代碼整潔）
 
 ---
 
 ## 🎯 模組概述
 
-**Service Backbone** 是 AIVA 六大模組架構中的基礎設施層，提供所有模組共享的核心服務。包括消息代理、狀態管理、存儲管理、服務協調、性能監控、權限控制等基礎能力，確保整個系統的穩定運行。
+**Service Backbone** 是 AIVA 五大模組架構中的基礎設施層，提供所有模組共享的核心服務。包括消息代理、狀態管理、存儲管理、服務協調、性能監控、權限控制等基礎能力，確保整個系統的穩定運行。
 
 ### 核心職責
 1. **消息通信** - RabbitMQ 消息代理和發布/訂閱
@@ -1030,7 +1024,7 @@ router.register_handler("custom_command", CustomCommandHandler())
 
 - **cognitive_core** - 使用 MessageBroker 和 StateManager
 - **task_planning** - 依賴 TaskDispatcher 和 ExecutionMonitor
-- **external_learning** - 使用 StorageManager 保存經驗
+- **learning_system** - 使用 StorageManager 保存經驗 (位於 cognitive_core)
 - **core_capabilities** - 透過 API Gateway 提供服務
 - **aiva_common** - 提供共享配置和枚舉
 

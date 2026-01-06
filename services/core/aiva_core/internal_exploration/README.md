@@ -1,10 +1,14 @@
 # 🧭 Internal Exploration - 內部探索
 
-> **版本**: v2.1.0  
+> **版本**: v3.1.0  
 > **狀態**: ✅ 生產就緒  
-> **最後更新**: 2025-12-21  
+> **最後更新**: 2026-01-06  
 > **角色**: AIVA 的自我認知系統 - 代碼分析與能力發現  
-> **架構**: CLI工具已移至tools模組，保留分析和管理功能
+> **架構**: 三階段管道產出 v3.3 格式 latest_classification.json  
+> **程式檔案**: 23 個 (Python 17 + Go 2 + Rust 2 + TypeScript 2)  
+> **代碼行數**: 12,063 行  
+> **能力數**: 201 flows (23.9%) - 最大模組  
+> **支援語言**: Python, Go, Rust, TypeScript (4 語言 AST 分析)
 
 **導航**: [← 返回 AIVA Core](../README.md)
 
@@ -118,7 +122,7 @@ Python 工具套件是 AIVA Internal Exploration 的核心基礎,提供最完整
 
 **主要模組**:
 - `aiva_flow_analyzer.py` - AST 解析與 Mermaid 流程圖生成
-- `aiva_flow_classifier.py` - 六大模組架構分類與多路徑分析
+- `aiva_flow_classifier.py` - 五大模組架構分類與多路徑分析
 - `aiva_cli_implementation.py` - 動態流程執行與 CLI 手冊生成
 - `aiva_exploration_pipeline.py` - 完整自動化管線編排
 

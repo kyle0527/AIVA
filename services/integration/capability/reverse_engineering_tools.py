@@ -242,7 +242,7 @@ class Apk2Gold(ReverseEngineeringTool):
         # 標籤化分類
         self.tags = ["android", "decompiler", "apk", "java"]
         # 輸入參數（用於參數提示）
-        from ...aiva_common.schemas.capability import InputParameter
+        from ..models import InputParameter
         self.inputs = [
             InputParameter(
                 name="apk_file",

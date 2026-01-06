@@ -134,10 +134,9 @@ class TaskExecutor:
         # Record decision for service selection
         self.monitor.record_decision_point(
             context=context,
-            decision_type="service_selection",
+            decision=f"service_selection: {service_type}",
             options=["scan", "function", "integration", "core"],
-            chosen_option=service_type,
-            reason=f"Based on task type: {task.task_type}",
+            selected=service_type,
         )
 
         # Execute based on service type (supports dynamic calling after Problem 4 fix)
@@ -203,8 +202,8 @@ class TaskExecutor:
         self.monitor.record_tool_invocation(
             context,
             tool_name="scan_service",
-            input_params=task.parameters,
-            output=result,
+            parameters=task.parameters,
+            result=result,
         )
 
         return result
@@ -248,10 +247,9 @@ class TaskExecutor:
         # 2. 記錄調用
         self.monitor.record_decision_point(
             context=context,
-            decision_type="capability_selection",
+            decision=f"capability_selection: {capability.name}",
             options=[capability.name],
-            chosen_option=capability.name,
-            reason="Dynamic capability call from registry",
+            selected=capability.name,
         )
         
         # 3. 通過 UnifiedFunctionCaller 調用
@@ -265,8 +263,8 @@ class TaskExecutor:
         self.monitor.record_tool_invocation(
             context,
             tool_name=f"{capability.module}.{capability.name}",
-            input_params=parameters,
-            output=call_result.result if call_result.success else {"error": call_result.error},
+            parameters=parameters,
+            result=call_result.result if call_result.success else {"error": call_result.error},
         )
         
         # 5. 處理結果
@@ -335,8 +333,8 @@ class TaskExecutor:
         self.monitor.record_tool_invocation(
             context,
             tool_name=tool_decision.service_type.value,
-            input_params=task.parameters,
-            output=result,
+            parameters=task.parameters,
+            result=result,
         )
 
         return result
@@ -382,8 +380,8 @@ class TaskExecutor:
         self.monitor.record_tool_invocation(
             context,
             tool_name="integration_service",
-            input_params=task.parameters,
-            output=result,
+            parameters=task.parameters,
+            result=result,
         )
 
         return result
@@ -439,8 +437,8 @@ class TaskExecutor:
         self.monitor.record_tool_invocation(
             context,
             tool_name="core_analyzer",
-            input_params=task.parameters,
-            output=result,
+            parameters=task.parameters,
+            result=result,
         )
 
         return result

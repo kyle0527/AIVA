@@ -415,20 +415,21 @@ def show_flows_by_endpoint_module(flows: List[Dict[str, Any]], limit_per_module:
         endpoint_module = flow.get('endpoint_module', 'unknown')
         flows_by_endpoint[endpoint_module].append(flow)
     
-    # 六大模組順序
-    six_modules = [
+    # 五大模組順序 (2026-01-03: external_learning 整合至 cognitive_core.learning_system)
+    five_modules = [
         'cognitive_core',
         'internal_exploration', 
         'task_planning',
-        'external_learning',
         'core_capabilities',
-        'service_backbone'
+        'service_backbone',
+        'learning_system',  # 向後相容：新的學習子系統
+        'external_learning'  # 向後相容：舊的模組名稱
     ]
     
-    click.echo(f"\n📋 按終點模組分類的 Flows (六大模組)\n{'=' * 70}\n")
+    click.echo(f"\n📋 按終點模組分類的 Flows (五大模組)\n{'=' * 70}\n")
     
-    # 按六大模組順序顯示
-    for module in six_modules:
+    # 按五大模組順序顯示
+    for module in five_modules:
         if module in flows_by_endpoint:
             module_flows = flows_by_endpoint[module]
             click.echo(f"🔹 {module.upper()} ({len(module_flows)} 個 flows)")

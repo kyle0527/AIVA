@@ -2,9 +2,13 @@
 
 從文件系統加載和驗證 Tool Manifest JSON。
 
+架構更新 (2026-01-04):
+- 改用 integration 的 MinimalManifest（統一數據來源）
+- internal_exploration 產出 → integration 提供 Schema → core 載入使用
+
 遵循 aiva_common v2.0 規範:
 ✅ 使用統一日誌 (get_logger)
-✅ 使用 Pydantic 模型驗證 (ExecutableCapability from aiva_common)
+✅ 使用 MinimalManifest 驗證結構 (from integration)
 ✅ 統一錯誤處理
 ✅ 完整類型註解
 
@@ -19,8 +23,10 @@ from pathlib import Path
 from typing import List, Optional
 
 from aiva_common.utils.logging import get_logger
-from aiva_common.schemas.capability import ExecutableCapability
 from aiva_common.error_handling import AIVAError, ErrorType, ErrorSeverity
+
+# 統一使用 integration 的 MinimalManifest
+from services.integration.capability.minimal_manifest import MinimalManifest
 
 logger = get_logger(__name__)
 
@@ -42,14 +48,14 @@ class ManifestLoader:
     
     職責:
     1. 從指定目錄加載所有 .json 文件
-    2. 使用 ExecutableCapability 驗證結構
+    2. 使用 MinimalManifest 驗證結構
     3. 提供按 capability_id 查詢接口
     4. 錯誤處理和日誌記錄
     
     Usage:
         loader = ManifestLoader(Path("core_capabilities/manifests/capabilities"))
         manifests = loader.load_all()
-        manifest = loader.get_by_flow_id(0)
+        manifest = loader.get_by_id("xss.scan.web")
     """
     
     def __init__(self, manifests_dir: Path):
@@ -59,7 +65,7 @@ class ManifestLoader:
             manifests_dir: Manifest JSON 文件目錄
         """
         self.manifests_dir = Path(manifests_dir)
-        self._manifests: dict[str, ExecutableCapability] = {}  # capability_id -> ExecutableCapability
+        self._manifests: dict[str, MinimalManifest] = {}  # capability_id -> MinimalManifest
         self._loaded = False
         
         if not self.manifests_dir.exists():
@@ -67,14 +73,14 @@ class ManifestLoader:
                 f"Manifest directory does not exist: {self.manifests_dir}"
             )
     
-    def load_all(self, reload: bool = False) -> dict[str, ExecutableCapability]:
+    def load_all(self, reload: bool = False) -> dict[str, MinimalManifest]:
         """加載所有能力清單文件
         
         Args:
             reload: 是否強制重新加載
             
         Returns:
-            {capability_id: ExecutableCapability} 字典
+            {capability_id: MinimalManifest} 字典
             
         Raises:
             ManifestLoadError: 加載或驗證失敗
@@ -131,14 +137,14 @@ class ManifestLoader:
         
         return self._manifests
     
-    def _load_single(self, json_file: Path) -> ExecutableCapability:
+    def _load_single(self, json_file: Path) -> MinimalManifest:
         """加載單個 Manifest 文件
         
         Args:
             json_file: JSON 文件路徑
             
         Returns:
-            ExecutableCapability 實例
+            MinimalManifest 實例
             
         Raises:
             ManifestLoadError: 加載或驗證失敗
@@ -148,7 +154,7 @@ class ManifestLoader:
                 data = json.load(f)
             
             # Pydantic 自動驗證
-            manifest = ExecutableCapability(**data)
+            manifest = MinimalManifest(**data)
             return manifest
             
         except json.JSONDecodeError as e:
@@ -162,14 +168,14 @@ class ManifestLoader:
                 file_path=json_file
             )
     
-    def get_by_id(self, capability_id: str) -> ExecutableCapability | None:
+    def get_by_id(self, capability_id: str) -> MinimalManifest | None:
         """根據 capability_id 獲取能力清單
         
         Args:
             capability_id: 能力 ID（例：xss.scan.web）
             
         Returns:
-            ExecutableCapability 或 None
+            MinimalManifest 或 None
         """
         if not self._loaded:
             self.load_all()
@@ -187,24 +193,24 @@ class ManifestLoader:
         
         return sorted(self._manifests.keys())
     
-    def filter_by_tags(self, required: list[str]) -> list[ExecutableCapability]:
+    def filter_by_tags(self, required: list[str]) -> list[MinimalManifest]:
         """根據必需標籤過濾能力
         
         Args:
             required: 必需標籤列表
             
         Returns:
-            匹配的 ExecutableCapability 列表
+            匹配的 MinimalManifest 列表
         """
         if not self._loaded:
             self.load_all()
         
         results = []
-        for capability in self._manifests.values():
-            # ExecutableCapability.tags 是 list[str]
-            capability_tags = set(capability.tags)
-            if capability_tags.issuperset(required):
-                results.append(capability)
+        for manifest in self._manifests.values():
+            # MinimalManifest.tags 是 List[str]
+            manifest_tags = set(manifest.tags)
+            if manifest_tags.issuperset(required):
+                results.append(manifest)
         
         return results
     

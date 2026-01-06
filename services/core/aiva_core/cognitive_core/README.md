@@ -1,10 +1,13 @@
 # 🧠 Cognitive Core - 認知核心
 
-> **版本**: v2.2.0  
+> **版本**: v4.1.0  
 > **狀態**: ✅ 生產就緒  
-> **最後更新**: 2025-12-21  
-> **角色**: AIVA 的 AI 認知決策核心  
-> **架構**: 純決策編排，不包含執行代碼
+> **最後更新**: 2026-01-06  
+> **重大變更**: 新增 CapabilityEncoder (512 維)，支援 5M 特化 AI  
+> **角色**: AIVA 的 AI 認知決策與學習核心  
+> **架構**: 5M Decision Engine + 結構化向量編碼，無需 NLU  
+> **檔案數**: 44 個 Python 模組（8 個子目錄）  
+> **能力數**: 223 flows (26.5%)
 
 **導航**: [← 返回 AIVA Core](../README.md)
 
@@ -13,14 +16,16 @@
 ## 📋 目錄
 
 - [模組概述](#-模組概述)
+- [架構變更說明](#-架構變更說明)
 - [目錄結構](#-目錄結構)
 - [子系統架構](#-子系統架構)
   - [Neural - 神經網路核心](#1-neural---神經網路核心)
   - [Decision - 決策支援系統](#2-decision---決策支援系統)
   - [RAG - 檢索增強生成](#3-rag---檢索增強生成)
   - [Anti-Hallucination - 反幻覺模組](#4-anti-hallucination---反幻覺模組)
-  - [Plugin System - 插件系統介面](#5-plugin-system---插件系統介面)
-  - [根目錄核心模組](#6-根目錄核心模組)
+  - [Learning System - 統一經驗學習系統](#5-learning-system---統一經驗學習系統)
+  - [Manifest - 能力清單加載器](#6-manifest---能力清單加載器)
+  - [根目錄核心模組](#7-根目錄核心模組)
 - [整合使用](#-整合使用)
 - [性能指標](#-性能指標)
 
@@ -31,11 +36,18 @@
 Cognitive Core 是 AIVA 的認知智能核心，整合了神經網路推理、智能決策、知識檢索和可靠性驗證四大子系統，提供完整的 AI 認知能力。
 
 **核心職責**：
-- 🧠 **AI決策編排** - 智能決策流程編排和任務分配
-- 🎯 **認知能力管理** - AI 能力註冊和調度管理
-- 🔍 **知識檢索** - RAG 系統提供上下文增強
+- 🧠 **5M AI 決策** - 512 輸入 → 100 輸出的 Decision Engine
+- 🎯 **結構化編碼** - CapabilityEncoder 將能力轉為 512 維向量
+- 🔍 **向量檢索** - VectorStore 512 維相似度搜索
 - 🛡️ **可靠性保障** - 反幻覺機制確保決策準確性
-- 🔗 **跨模組協調** - 統一調度Features模組執行具體任務
+- 🔗 **跨模組協調** - 統一調度 Features 模組執行具體任務
+
+**5M AI 架構**：
+```
+輸入層(512) → 隱藏層[1600,1200,1024,512] → 輸出層(100)
+                     ↓
+           結構化向量 (無需 NLU)
+```
 
 ---
 
@@ -46,30 +58,75 @@ Cognitive Core 是 AIVA 的認知智能核心，整合了神經網路推理、�
 **位置**: `cognitive_core/neural/`
 
 **核心組件**：
-- `real_neural_core.py` - 神經網路核心（800+ 行）
+- `real_neural_core.py` - 5M Decision Engine（800+ 行）
 - `ai_model_manager.py` - 統一 AI 模型管理器（400+ 行）
 - `weight_manager.py` - 權重持久化和版本控制（300+ 行）
 - `real_bio_net_adapter.py` - RAG 適配器（200+ 行）
 - `neural_network.py` - 神經網路基礎類（150+ 行）
 
+**5M Decision Engine 架構**：
+```
+輸入層(512) → 隱藏層[1600,1200,1024,512] → 輸出層(100)
+     ↑
+CapabilityEncoder 512 維向量
+```
+
 **主要功能**：
 ```python
 from aiva_core.cognitive_core.neural import RealNeuralCore
 
-# 神經網路推理
+# 5M 神經網路推理
 neural_core = RealNeuralCore(use_5m_model=True)
 neural_core.load_weights()
-output = neural_core.forward(input_tensor)
+output = neural_core.forward(input_tensor)  # 512 維輸入
 ```
 
 **特性**：
+- ✅ 5M 參數量，512 維輸入
 - ✅ 支援 PyTorch 訓練和推理
 - ✅ 權重自動持久化和版本控制
 - ✅ GPU/CPU 自動切換
 
 ---
 
-### 2. Decision - 決策支援系統
+### 2. CapabilityEncoder - 結構化編碼器 ⭐ 新增
+
+**位置**: `cognitive_core/capability_encoder.py`
+
+**核心功能**：將能力記錄轉換為 512 維向量，供 5M AI 使用
+
+**編碼方法**：
+```python
+from aiva_core.cognitive_core.capability_encoder import CapabilityEncoder
+
+encoder = CapabilityEncoder()
+
+# 編碼單個能力
+capability = {
+    "function_name": "execute_sql_injection",
+    "primary_module": "core_capabilities",
+    "structured_tags": [{"category": "攻擊", "sub_category": "注入"}],
+    "parameters": [{"name": "target", "type": "str", "required": True}],
+    "return_type": "AttackResult"
+}
+vector = encoder.encode(capability)  # → ndarray(512,)
+
+# 批量編碼
+vectors = encoder.encode_batch(capabilities)  # → ndarray(N, 512)
+
+# 相似度搜索
+similar = encoder.find_similar(query_vector, all_vectors, top_k=5)
+```
+
+**特性**：
+- ✅ 512 維結構化向量（匹配 5M Engine）
+- ✅ 無需 NLU/文本嵌入
+- ✅ 確定性編碼（相同輸入 = 相同向量）
+- ✅ 支援批量處理
+
+---
+
+### 3. Decision - 決策支援系統
 
 **位置**: `cognitive_core/decision/`
 
@@ -99,13 +156,14 @@ decision = await agent.make_decision(context, constraints)
 
 ---
 
-### 3. RAG - 檢索增強生成
+### 4. RAG - 檢索增強生成
 
 **位置**: `cognitive_core/rag/`
 
 **核心組件**：
 - `rag_engine.py` - RAG 核心引擎（500+ 行）
 - `knowledge_base.py` - 知識庫管理（400+ 行）
+- `vector_store.py` - 向量存儲（512 維）
 - `unified_vector_store.py` - 統一向量存儲接口（300+ 行）
 - `postgresql_vector_store.py` - PostgreSQL 向量後端（250+ 行）
 
@@ -218,7 +276,7 @@ if validated.is_reliable:
 - **內存佔用**: ~150MB (模型) + ~50MB (運行時)
 
 ### RAG 檢索性能
-- **向量維度**: 768 (BERT-base)
+- **向量維度**: 512 (匹配 5M Engine)
 - **檢索速度**: <10ms (內存), <50ms (PostgreSQL)
 - **知識庫容量**: 10萬+ 文檔
 
@@ -236,9 +294,9 @@ if validated.is_reliable:
 ## 🔗 相關模組
 
 - [Task Planning](../task_planning/README.md) - 使用認知能力進行任務規劃
-- [External Learning](../external_learning/README.md) - 為 RAG 提供外部知識
+- [Learning System](./learning_system/README.md) - 經驗學習系統
 - [Core Capabilities](../core_capabilities/README.md) - 調用認知能力執行具體任務
 
 ---
 
-**最後更新**: 2025-12-01 | **維護者**: AIVA Team
+**最後更新**: 2026-01-06 | **維護者**: AIVA Team

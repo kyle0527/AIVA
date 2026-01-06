@@ -38,17 +38,22 @@
 
 # 🎯 Core Capabilities - 核心能力模組
 
-> **版本**: v3.1.0  
+> **版本**: v3.4.0  
 > **狀態**: ✅ 生產就緒  
-> **最後更新**: 2025-12-21  
+> **最後更新**: 2026-01-06  
 > **角色**: AIVA 的核心能力編排中心  
-> **架構變更**: 攻擊執行模組已移至 Features 模組，保留編排功能
+> **架構變更**: CapabilityRegistry 代理模式，遵循 SOT 原則  
+> **檔案數**: 19 個 Python 模組  
+> **總行數**: 6,480 行代碼  
+> **能力數**: 131 flows (15.6%)  
+> **數據來源**: latest_classification.json v3.3 (唯一數據源)  
+> **清理**: 已移除 10 個測試/分析工具腳本
 
 ---
 
 ## 🎯 模組概述
 
-**Core Capabilities** 是 AIVA 六大模組中負責核心能力編排的模組。整合了攻擊鏈編排、代碼分析、業務邏輯檢測、對話助理、數據攝取和輸出轉換能力，提供完整的能力編排架構。
+**Core Capabilities** 是 AIVA 五大模組中負責核心能力編排的模組。整合了攻擊鏈編排、代碼分析、業務邏輯檢測、對話助理、數據攝取和輸出轉換能力，提供完整的能力編排架構。
 
 ### 核心職責
 
@@ -78,39 +83,46 @@
 
 ```
 core_capabilities/
-├── 📁 attack/                    # 攻擊執行系統 (5 檔案，2015行) - [📖 README](./attack/README.md)
-│   ├── attack_chain.py           # ✅ 攻擊鏈編排器 (166行)
-│   ├── attack_executor.py        # ✅ 攻擊執行器 (562行)
-│   ├── attack_validator.py       # ✅ 攻擊驗證器 (250行)
-│   ├── exploit_manager.py        # ✅ 漏洞利用管理器 (818行)
-│   ├── payload_generator.py      # ✅ Payload 生成器 (332行)
-│   └── __init__.py
+├── 📁 root/                      # 核心組件 (4 檔案，1,487 行)
+│   ├── capability_registry.py    # ✅ 能力註冊表代理 (527 行)
+│   ├── multilang_coordinator.py  # ✅ 多語言協調器 (632 行)
+│   ├── task_context.py           # ✅ 任務上下文 (295 行)
+│   └── __init__.py               # 模組初始化 (33 行)
 │
-├── 📁 analysis/                  # 代碼分析系統 (2 檔案，1181行) - [📖 README](./analysis/README.md)
-│   ├── analysis_engine.py        # ✅ AI 增強代碼分析引擎 (910行)
-│   └── initial_surface.py        # ✅ 初始攻擊面分析 (271行)
+├── 📁 analysis/                  # 代碼分析系統 (2 檔案，1,235 行)
+│   ├── analysis_engine.py        # ✅ AI 增強代碼分析引擎 (914 行)
+│   └── initial_surface.py        # ✅ 初始攻擊面分析 (321 行)
 │
-├── 📁 dialog/                    # 對話助理 (1 檔案，586行) - [📖 README](./dialog/README.md)
-│   └── assistant.py              # ✅ AIVA 對話助理 (586行)
+├── 📁 dialog/                    # 對話助理 (1 檔案，1,002 行)
+│   └── assistant.py              # ✅ AIVA 對話助理 (1,002 行)
 │
-├── 📁 ingestion/                 # 數據攝取 (1 檔案，102行) - [📖 README](./ingestion/README.md)
-│   ├── scan_module_interface.py  # ✅ 掃描模組介面 (102行)
-│   └── __init__.py
+├── 📁 attack/                    # 攻擊執行系統 (3 檔案，588 行)
+│   ├── exploit_orchestrator.py   # ✅ 漏洞利用編排器 (377 行)
+│   ├── attack_chain.py           # ✅ 攻擊鏈管理 (165 行)
+│   └── __init__.py               # 模組初始化 (46 行)
 │
-├── 📁 processing/                # 結果處理 (1 檔案，290行) - [📖 README](./processing/README.md)
-│   ├── scan_result_processor.py  # ✅ 掃描結果處理器 (290行)
-│   └── __init__.py
+├── 📁 orchestration/             # 編排系統 (1 檔案，580 行)
+│   └── two_phase_scan_orchestrator.py  # ✅ 雙階段掃描編排 (580 行)
 │
-├── 📁 output/                    # 輸出轉換 (1 檔案，20行) - [📖 README](./output/README.md)
-│   ├── to_functions.py           # 輸出轉函數調用 (20行)
-│   └── __init__.py
+├── 📁 processing/                # 結果處理 (2 檔案，561 行)
+│   ├── scan_result_processor.py  # ✅ 掃描結果處理器 (556 行)
+│   └── __init__.py               # 模組初始化 (5 行)
 │
-├── 📁 plugins/                   # 插件系統 (1 檔案，617行) - [📖 README](./plugins/README.md)
-│   └── ai_summary_plugin.py      # ✅ AI 摘要插件 (617行)
+├── 📁 cli/                       # CLI 工具 (1 檔案，488 行)
+│   └── aiva_cli.py               # ✅ AIVA CLI 接口 (488 行)
 │
-└── multilang_coordinator.py      # 多語言 AI 協調器
+├── 📁 ingestion/                 # 數據攝取 (2 檔案，321 行)
+│   ├── scan_module_interface.py  # ✅ 掃描模組介面 (311 行)
+│   └── __init__.py               # 模組初始化 (10 行)
+│
+├── 📁 manifests/                 # Manifest 執行器 (1 檔案，181 行)
+│   └── flow_executor.py          # ✅ Flow 執行器 (181 行)
+│
+└── 📁 output/                    # 輸出轉換 (2 檔案，37 行)
+    ├── to_functions.py           # 輸出轉函數調用 (22 行)
+    └── __init__.py               # 模組初始化 (15 行)
 
-總計: 19 個 Python 檔案，約 4800+ 行代碼
+總計: 19 個 Python 檔案，6,480 行代碼
 ```
 
 ### 能力分類
@@ -825,7 +837,7 @@ Worker.register_tester("custom_logic", CustomBusinessLogicTester)
 
 - **cognitive_core** - 提供 AI 決策和 RAG 增強
 - **task_planning** - 接收能力執行請求並編排
-- **external_learning** - 收集執行結果用於學習
+- **learning_system** - 收集執行結果用於學習 (位於 cognitive_core)
 - **service_backbone** - 提供消息隊列和狀態管理
 
 ---

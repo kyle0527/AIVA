@@ -17,8 +17,9 @@ from aiva_common.error_handling import AIVAError, ErrorType, ErrorSeverity, crea
 
 MODULE_NAME = "ai_model_manager"
 
-from ...external_learning.learning.model_trainer import ModelTrainer
-from ...external_learning.learning.scalable_bio_trainer import (
+# 模組整合: external_learning → cognitive_core/learning_system (2026-01-03)
+from ..learning_system.learning.model_trainer import ModelTrainer
+from ..learning_system.learning.scalable_bio_trainer import (
     ScalableBioTrainer,
     ScalableBioTrainingConfig,
 )
@@ -71,8 +72,8 @@ class AIModelManager:
             model_dir=self.model_dir, storage_backend=storage_backend
         )
         # V2 統一經驗管理器 - 必須使用真實實現
-        # 修正：使用正確的絕對導入路徑和參數
-        from services.core.aiva_core.external_learning.experience_manager import ExperienceManager
+        # 模組整合: external_learning → cognitive_core/learning_system
+        from services.core.aiva_core.cognitive_core.learning_system.experience_manager import ExperienceManager
         
         # 不使用 mock，直接實例化真實的 ExperienceManager
         # 使用正確的參數：capacity, auto_persist, persist_batch_size

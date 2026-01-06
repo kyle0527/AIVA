@@ -73,7 +73,8 @@ class ExternalLoopConnector:
     def comparator(self):
         """延遲加載 ASTTraceComparator"""
         if self._comparator is None:
-            from ..external_learning.analysis.ast_trace_comparator import ASTTraceComparator
+            # 模組整合: external_learning → cognitive_core/learning_system
+            from .learning_system.analysis.ast_trace_comparator import ASTTraceComparator
             self._comparator = ASTTraceComparator()
         return self._comparator
     
@@ -81,7 +82,8 @@ class ExternalLoopConnector:
     def trainer(self):
         """延遲加載 ModelTrainer"""
         if self._trainer is None:
-            from ..external_learning.learning.model_trainer import ModelTrainer
+            # 模組整合: external_learning → cognitive_core/learning_system
+            from .learning_system.learning.model_trainer import ModelTrainer
             self._trainer = ModelTrainer()
         return self._trainer
     

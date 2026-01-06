@@ -1,11 +1,19 @@
 #!/usr/bin/env python3
 """
 反向工程工具能力定義
-基於 aiva_common v2.0 規範的標準化能力註冊
+基於 integration 模組的標準化能力註冊
+
+架構更新 (2026-01-04):
+- 統一使用 integration/capability/models.py 的 Schema
+- InputParameter, OutputParameter 從 models.py 引入
 """
 
-from services.aiva_common.schemas.capability import InputParameter, OutputParameter
-from services.integration.capability.models import CapabilityRecord, CapabilityType
+from services.integration.capability.models import (
+    CapabilityRecord,
+    CapabilityType,
+    InputParameter,
+    OutputParameter
+)
 from services.aiva_common.enums import ProgrammingLanguage, TaskStatus
 
 # ================================================

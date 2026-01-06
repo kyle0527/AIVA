@@ -1,5 +1,13 @@
 # AIVA Python 工具套件 - 操作手冊
 
+> **版本**: v3.1.0  
+> **最後更新**: 2026-01-06  
+> **狀態**: ✅ 生產就緒  
+> **檔案數**: 6 個 Python 模組  
+> **代碼行數**: 4,645 行  
+> **輸出格式**: latest_classification.json v3.3  
+> **新增欄位**: cli_command, parameters, return_type, structured_tags
+
 ## 📑 目錄
 
 - [📋 概述](#-概述)
@@ -23,7 +31,38 @@
 
 **AIVA Python Tools** 是 AIVA 專案中用於代碼分析、數據流分類和自動化探索的核心工具套件。包含 4 個主要模組,提供從底層 AST 解析到高階管線編排的完整功能。
 
-### ⚠️ 重要變更通知 (2025-12-15)
+### ⚠️ 重要變更通知 (2026-01-04)
+
+**v3.3 格式升級 - 5M AI 特化**：
+
+新增欄位支援 5M 特化 AI（非 LLM），無需自然語言處理：
+
+```json
+{
+  "flow_id": "flow_123",
+  "function_name": "execute_sql_injection",
+  "primary_module": "core_capabilities",
+  
+  // v3.3 新增欄位
+  "cli_command": "aiva attack sqli --target {target}",
+  "parameters": [
+    {"name": "target", "type": "str", "required": true}
+  ],
+  "return_type": "AttackResult",
+  "structured_tags": [
+    {"category": "攻擊", "sub_category": "注入", "complexity": "medium"}
+  ]
+}
+```
+
+**CapabilityEncoder 整合**：
+- 512 維結構化向量編碼
+- 直接與 5M Decision Engine 匹配
+- 無需文本嵌入或 NLU 處理
+
+---
+
+### ⚠️ 路徑變更通知 (2025-12-15)
 
 **分析結果輸出路徑已重構為統一的模組化結構**：
 
@@ -60,7 +99,7 @@ services/integration/analysis_data/
    - 智能流程組合 (SmartFlowStitcher)
 
 2. **aiva_flow_classifier.py** - AIVA Core 數據流分類分析器
-   - 六大模組架構分類
+   - 五大模組架構分類
    - AI/程式組件標記
    - 多路徑差異分析
 
@@ -325,14 +364,17 @@ stitcher = DataFlowStitcher(
 
 ### 功能概述
 
-基於 AIVA Core 六大模組架構進行數據流分類和路徑差異分析。
+基於 AIVA Core 五大模組架構進行數據流分類和路徑差異分析。
 
-### AIVA Core 六大模組
+> **架構變更 (2026-01)**: 原 `external_learning` 已整合至 `cognitive_core/learning_system`，現為五大模組架構。
+
+### AIVA Core 五大模組
 
 ```
 ┌─────────────────────────────────────────────────────┐
 │  1. cognitive_core (認知核心)                        │
 │     - AI能力查詢、決策代理、神經網路、RAG            │
+│     - learning_system (學習系統，原 external_learning)│
 ├─────────────────────────────────────────────────────┤
 │  2. internal_exploration (內探)                     │
 │     - 自我感知、能力分析、內部監控                   │
@@ -340,13 +382,10 @@ stitcher = DataFlowStitcher(
 │  3. task_planning (任務規劃)                        │
 │     - 計劃執行、任務指揮、智能規劃                   │
 ├─────────────────────────────────────────────────────┤
-│  4. external_learning (外學)                        │
-│     - 訓練管道、模型管理、資源追蹤                   │
-├─────────────────────────────────────────────────────┤
-│  5. core_capabilities (核心能力)                    │
+│  4. core_capabilities (核心能力)                    │
 │     - 攻擊鏈、業務邏輯、插件管理                     │
 ├─────────────────────────────────────────────────────┤
-│  6. service_backbone (服務骨幹)                     │
+│  5. service_backbone (服務骨幹)                     │
 │     - API網關、消息總線、存儲管理                    │
 └─────────────────────────────────────────────────────┘
 ```

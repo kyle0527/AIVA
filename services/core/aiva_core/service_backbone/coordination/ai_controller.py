@@ -997,7 +997,3 @@ async def demonstrate_unified_control():
             f"平均效率: {summary_stats['summary_statistics']['average_efficiency']:.2f}"
         )
         print(f"成功率: {summary_stats['summary_statistics']['success_rate']:.1%}")
-
-
-if __name__ == "__main__":
-    asyncio.run(demonstrate_unified_control())

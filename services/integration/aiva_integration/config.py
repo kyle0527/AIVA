@@ -89,40 +89,38 @@ ANALYSIS_HISTORY_DIR.mkdir(parents=True, exist_ok=True)
 # 最新分類數據快捷方式（InternalLoopConnector 使用）
 LATEST_CLASSIFICATION_JSON = INTERNAL_EXPLORATION_DIR / "latest_classification.json"
 
-# ⚠️ 已廢棄：分析結果目錄（內閉環 RAG 使用的能力數據）
-# 🔄 請改用: ANALYSIS_DATA_ROOT 下的模組化結構 (core/features/scan/integration)
-# 📌 廢棄日期: 2025-12-18
-# 📝 說明: analysis_results/ 目錄已整合至 analysis_data/ 的模組化架構
-ANALYSIS_RESULTS_DIR = INTERNAL_EXPLORATION_DIR / "analysis_results"
-ANALYSIS_RESULTS_DIR.mkdir(parents=True, exist_ok=True)
-
 # ============================================================================
 # 統一分析資料儲存配置 (Analysis Data Structure)
 # ============================================================================
 
-# 分析資料根目錄 (所有模組分析結果的統一儲存位置)
-ANALYSIS_DATA_ROOT = Path(__file__).parent.parent / "analysis_data"
-ANALYSIS_DATA_ROOT.mkdir(parents=True, exist_ok=True)
+# ✅ 2026-01-04 重構：統一使用 data/internal_exploration/ 作為唯一數據源 (SOT)
+# 移除重複的 analysis_data/ 目錄，簡化架構
+# 所有分析結果由 Internal Exploration Pipeline 統一管理
 
-# 各模組分析資料目錄
-ANALYSIS_DATA_CORE = ANALYSIS_DATA_ROOT / "core"
-ANALYSIS_DATA_FEATURES = ANALYSIS_DATA_ROOT / "features"
-ANALYSIS_DATA_SCAN = ANALYSIS_DATA_ROOT / "scan"
-ANALYSIS_DATA_INTEGRATION = ANALYSIS_DATA_ROOT / "integration"
+# 分析結果目錄（內閉環 RAG 使用的能力數據）
+ANALYSIS_RESULTS_DIR = INTERNAL_EXPLORATION_DIR / "analysis_results"
+ANALYSIS_RESULTS_DIR.mkdir(parents=True, exist_ok=True)
 
-# 確保各模組目錄存在
-for module_dir in [ANALYSIS_DATA_CORE, ANALYSIS_DATA_FEATURES, ANALYSIS_DATA_SCAN, ANALYSIS_DATA_INTEGRATION]:
-    module_dir.mkdir(parents=True, exist_ok=True)
-    (module_dir / "capabilities").mkdir(parents=True, exist_ok=True)
-    (module_dir / "flows").mkdir(parents=True, exist_ok=True)
-    (module_dir / "classifications").mkdir(parents=True, exist_ok=True)
+# ⚠️ 已廢棄：analysis_data/ 目錄（2025-12-18 - 2026-01-04）
+# 原因：與 data/internal_exploration/ 功能重疊，造成資料分散
+# 遷移：所有分析資料已遷移至 INTERNAL_EXPLORATION_DIR
+# 
+# 如需模組化分析結果，請使用：
+#   INTERNAL_EXPLORATION_DIR / "analysis_history" / "v{n}" / "{module}_analysis.json"
 
-# 模組名稱映射
+# 向後相容：保留變數名稱，指向統一位置
+ANALYSIS_DATA_ROOT = INTERNAL_EXPLORATION_DIR  # deprecated, use INTERNAL_EXPLORATION_DIR
+ANALYSIS_DATA_CORE = INTERNAL_EXPLORATION_DIR / "analysis_history"
+ANALYSIS_DATA_FEATURES = INTERNAL_EXPLORATION_DIR / "analysis_history"
+ANALYSIS_DATA_SCAN = INTERNAL_EXPLORATION_DIR / "analysis_history"
+ANALYSIS_DATA_INTEGRATION = INTERNAL_EXPLORATION_DIR / "analysis_history"
+
+# 模組名稱映射（向後相容）
 MODULE_ANALYSIS_DIRS = {
-    "core": ANALYSIS_DATA_CORE,
-    "features": ANALYSIS_DATA_FEATURES,
-    "scan": ANALYSIS_DATA_SCAN,
-    "integration": ANALYSIS_DATA_INTEGRATION,
+    "core": INTERNAL_EXPLORATION_DIR,
+    "features": INTERNAL_EXPLORATION_DIR,
+    "scan": INTERNAL_EXPLORATION_DIR,
+    "integration": INTERNAL_EXPLORATION_DIR,
 }
 
 # ============================================================================

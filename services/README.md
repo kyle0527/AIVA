@@ -41,13 +41,12 @@
 - [📋 概述](#-概述)
   - [🎯 核心特性](#-核心特性)
 - [🏗️ 服務架構總覽](#️-服務架構總覽)
-- [📦 六大核心服務](#-六大核心服務)
-  - [🤖 Core - AI 驅動核心引擎](#-core---ai-驅動核心引擎)
+- [📦 五大核心模組](#-五大核心模組)
   - [🔗 Common - Bug Bounty 共享庫](#-common---bug-bounty-共享庫)
+  - [🤖 Core - AI 驅動核心引擎](#-core---ai-驅動核心引擎)
   - [🎯 Features - 多語言安全功能](#-features---多語言安全功能)
   - [🔄 Integration - 企業級整合中樞](#-integration---企業級整合中樞)
   - [🔍 Scan - 多語言統一掃描引擎](#-scan---多語言統一掃描引擎)
-  - [📁 Services Root - 服務管理層](#-services-root---服務管理層)
 - [📊 整體統計](#-整體統計)
   - [代碼規模](#代碼規模)
   - [技術棧分布](#技術棧分布)
@@ -780,7 +779,29 @@ graph TB
 
 ---
 
-## 📦 六大核心服務
+## 📦 五大核心模組
+
+### 🔗 [Common - Bug Bounty 共享庫](aiva_common/README.md)
+
+**定位**: 統一數據合約、跨語言基礎設施、共享工具庫
+
+**核心能力**:
+- 📐 **數據合約**: 200+ Pydantic Schema、統一數據標準
+- 🌐 **跨語言適配**: Go/Rust/TypeScript 適配器
+- 🔧 **工具庫**: 日誌、重試、去重、網路工具
+- 📋 **標準枚舉**: 13 個領域的標準化枚舉定義
+
+**技術棧**: Python 3.11+、Pydantic v2、gRPC、Protobuf
+
+**關鍵特性**:
+- ✅ 數據合約驅動架構（Schema First）
+- ✅ 跨語言通信支援（Python/TypeScript/Rust/Go）
+- ✅ 統一配置管理和錯誤處理
+- ✅ 國際標準支援（CVSS、MITRE ATT&CK、SARIF）
+
+**📖 詳細文檔**: [services/aiva_common/README.md](aiva_common/README.md)
+
+---
 
 ### 🤖 [Core - AI 驅動核心引擎](core/README.md)
 
@@ -1020,26 +1041,7 @@ scan/
 
 ---
 
-### 📁 Services Root - 服務管理層
-
-**位置**: `services/`（根目錄）  
-**用途**: 整體服務協調與配置管理
-
-#### 📦 專案配置 (pyproject.toml)
-- Python 依賴管理
-- 構建配置 
-- 開發工具配置
-
-#### 🐍 Python 包管理 (__init__.py)
-- 服務包初始化
-- 統一匯入管理
-- 版本控制
-
-**📖 詳細文檔**: [services/integration/README.md](integration/README.md)
-
----
-
-### 🔍 [Scan - 多語言統一掃描引擎](scan/README.md)
+### � [Scan - 多語言統一掃描引擎](scan/README.md)
 
 **定位**: 高性能掃描引擎、動態檢測、黑盒測試
 
@@ -1061,18 +1063,30 @@ scan/
 
 ---
 
+> **📁 根目錄管理文件說明**  
+> `services/` 根目錄包含以下管理文件（非獨立模組）：
+> - `README.md` - 服務架構文檔
+> - `pyproject.toml` - Python 專案配置與依賴管理
+> - `__init__.py` - Python 包初始化
+> - `CLEANUP_SUMMARY.md` - 清理報告
+
+---
+
 ## 📊 整體統計
 
 ### 代碼規模
 ```
-🤖 Core:        65+ Python 檔案, 20,000+ 行代碼
-🔗 Common:      100+ Python 檔案, 25,000+ 行代碼  
-🎯 Features:    150+ 多語言檔案, 35,000+ 行代碼
-🔄 Integration: 60+ Python 檔案, 18,000+ 行代碼
-🔍 Scan:        120+ 多語言檔案, 28,000+ 行代碼
-📁 Root:        3個根目錄檔案
-─────────────────────────────────────────────────
-總計:           498+ 檔案,      126,000+ 行代碼
+🔗 Common:      138 個 Python 檔案,  38,323 行代碼 (17%)
+🤖 Core:        161 個 Python 檔案,  55,754 行代碼 (24%)
+🎯 Features:    530 個檔案,        107,796 行代碼 (47%) ← 最大模組
+🔄 Integration:  89 個 Python 檔案,  25,332 行代碼 (11%)
+🔍 Scan:          7 個 Python 檔案 +  2,003 行代碼 (1%)
+                 32 個 Go 檔案
+                 20 個 Rust 檔案
+                983 個 TypeScript 檔案
+─────────────────────────────────────────────────────────
+總計:           925 個 Python 檔案, 229,208 行代碼
+                1035+ 個多語言檔案
 ```
 
 ### 技術棧分布

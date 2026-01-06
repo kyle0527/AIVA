@@ -83,14 +83,16 @@ except ImportError:
     CLI_OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
     print(f"⚠️ Integration 模組未找到，使用預設 CLI 輸出路徑: {CLI_OUTPUT_DIR}")
 
-# 六大模組中文映射
+# 五大模組中文映射（2026-01-03 更新：external_learning 整合至 cognitive_core.learning_system）
 MODULE_MAPPING = {
     "cognitive_core": "認知核心模組",
     "internal_exploration": "內探模組", 
     "task_planning": "任務規劃模組",
-    "external_learning": "外學模組",
     "core_capabilities": "核心能力模組",
-    "service_backbone": "服務骨幹模組"
+    "service_backbone": "服務骨幹模組",
+    # 向後相容
+    "external_learning": "認知核心模組(學習子系統)",
+    "learning_system": "認知核心模組(學習子系統)"
 }
 
 

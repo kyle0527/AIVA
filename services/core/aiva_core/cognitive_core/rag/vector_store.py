@@ -128,18 +128,51 @@ class VectorStore:
 
     def _simple_embedding(self, text: str) -> np.ndarray:
         """簡單的嵌入函數（後備方案）
+        
+        v2.0 (2026-01-04): 重構為結構化特徵編碼
+        
+        現在支援兩種模式：
+        1. 結構化能力編碼 - 如果 text 是 JSON 格式的能力記錄
+        2. 哈希編碼 - 純文本的後備方案
 
         Args:
-            text: 輸入文本
+            text: 輸入文本或 JSON 能力記錄
 
         Returns:
-            嵌入向量
+            嵌入向量 (512 維，與 5M 模型匹配)
         """
-        # 使用字符哈希生成固定維度向量
-        hash_val = hash(text)
-        dim = 384  # 與 all-MiniLM-L6-v2 維度一致
-
-        np.random.seed(hash_val % (2**32))
+        dim = 512  # 更新為 512 維（匹配 5M Decision Engine）
+        
+        # 嘗試解析為 JSON（能力記錄）
+        try:
+            import json
+            flow_data = json.loads(text)
+            
+            # 檢查是否為能力記錄格式
+            if isinstance(flow_data, dict) and ('primary_module' in flow_data or 'structured_tags' in flow_data):
+                # 使用結構化能力編碼器
+                try:
+                    from ..capability_encoder import CapabilityEncoder
+                    encoder = CapabilityEncoder()
+                    return encoder.encode(flow_data)
+                except ImportError:
+                    logger.warning("CapabilityEncoder not available, falling back to hash embedding")
+        except (json.JSONDecodeError, TypeError):
+            pass  # 不是 JSON，使用後備方案
+        
+        # 後備方案：基於哈希的確定性嵌入
+        # 使用更好的哈希方法以提高區分度
+        import hashlib
+        
+        # 多層哈希以增加向量的區分度
+        hash_md5 = hashlib.md5(text.encode()).hexdigest()
+        hash_sha1 = hashlib.sha1(text.encode()).hexdigest()
+        combined_hash = hash_md5 + hash_sha1
+        
+        # 將哈希轉為確定性的偽隨機數
+        seed = int(combined_hash[:8], 16) % (2**31)
+        np.random.seed(seed)
+        
         embedding = np.random.randn(dim).astype(np.float32)
 
         # 歸一化
@@ -148,6 +181,143 @@ class VectorStore:
             embedding = embedding / norm
 
         return embedding
+    
+    def add_capability(
+        self,
+        capability_id: str,
+        capability: dict[str, Any],
+        metadata: dict[str, Any] | None = None,
+    ) -> None:
+        """添加能力記錄到向量存儲（5M AI 專用）
+        
+        v2.0 (2026-01-04): 新增方法
+        使用 CapabilityEncoder 直接編碼，避免文本轉換損失
+        
+        Args:
+            capability_id: 能力 ID（通常為 flow_id）
+            capability: 能力記錄（來自 latest_classification.json）
+            metadata: 額外元數據
+        """
+        try:
+            from ..capability_encoder import CapabilityEncoder
+            encoder = CapabilityEncoder()
+            embedding = encoder.encode(capability)
+        except ImportError:
+            logger.warning("CapabilityEncoder not available, using fallback")
+            import json
+            embedding = self._simple_embedding(json.dumps(capability, ensure_ascii=False))
+        
+        # 合併元數據
+        full_metadata = metadata or {}
+        full_metadata.update({
+            'capability_id': capability_id,
+            'primary_module': capability.get('primary_module', 'unknown'),
+            'primary_component_type': capability.get('primary_component_type', 'unknown'),
+            'length': capability.get('length', 0),
+        })
+        
+        # 存儲
+        self.vectors[capability_id] = embedding
+        self.documents[capability_id] = str(capability.get('id', capability_id))
+        self.metadata[capability_id] = full_metadata
+        
+        logger.debug(f"Added capability {capability_id} to vector store")
+    
+    def add_capabilities_batch(
+        self,
+        capabilities: list[dict[str, Any]],
+    ) -> int:
+        """批量添加能力記錄
+        
+        v2.0 (2026-01-04): 新增方法
+        
+        Args:
+            capabilities: 能力記錄列表
+            
+        Returns:
+            成功添加的數量
+        """
+        try:
+            from ..capability_encoder import CapabilityEncoder
+            encoder = CapabilityEncoder()
+            use_encoder = True
+        except ImportError:
+            logger.warning("CapabilityEncoder not available, using fallback")
+            use_encoder = False
+        
+        count = 0
+        for cap in capabilities:
+            cap_id = f"flow_{cap.get('id', count)}"
+            
+            if use_encoder:
+                embedding = encoder.encode(cap)
+            else:
+                import json
+                embedding = self._simple_embedding(json.dumps(cap, ensure_ascii=False))
+            
+            self.vectors[cap_id] = embedding
+            self.documents[cap_id] = str(cap.get('id', cap_id))
+            self.metadata[cap_id] = {
+                'capability_id': cap_id,
+                'primary_module': cap.get('primary_module', 'unknown'),
+                'primary_component_type': cap.get('primary_component_type', 'unknown'),
+                'length': cap.get('length', 0),
+            }
+            count += 1
+        
+        logger.info(f"Added {count} capabilities to vector store")
+        return count
+    
+    def search_capabilities(
+        self,
+        query_capability: dict[str, Any],
+        top_k: int = 5,
+        filter_module: str | None = None,
+    ) -> list[dict[str, Any]]:
+        """搜索相似能力（5M AI 專用）
+        
+        v2.0 (2026-01-04): 新增方法
+        使用向量相似度而非字串匹配
+        
+        Args:
+            query_capability: 查詢能力記錄
+            top_k: 返回前 k 個結果
+            filter_module: 模組過濾器
+            
+        Returns:
+            相似能力列表
+        """
+        try:
+            from ..capability_encoder import CapabilityEncoder
+            encoder = CapabilityEncoder()
+            query_embedding = encoder.encode(query_capability)
+        except ImportError:
+            import json
+            query_embedding = self._simple_embedding(json.dumps(query_capability, ensure_ascii=False))
+        
+        # 計算相似度
+        results = []
+        
+        for cap_id, embedding in self.vectors.items():
+            # 應用模組過濾
+            if filter_module:
+                cap_module = self.metadata.get(cap_id, {}).get('primary_module', '')
+                if cap_module != filter_module:
+                    continue
+            
+            # 計算餘弦相似度
+            similarity = float(np.dot(query_embedding, embedding))
+            
+            results.append({
+                'capability_id': cap_id,
+                'score': similarity,
+                'metadata': self.metadata.get(cap_id, {}),
+            })
+        
+        # 排序
+        results.sort(key=lambda x: x['score'], reverse=True)
+        
+        return results[:top_k]
 
     async def add_document(
         self,

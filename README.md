@@ -13,9 +13,17 @@
 > 🗂️ **歷史檔案**: 已完成項目和報告請查看 [_archive/](_archive/ARCHIVE_INDEX.md) 目錄  
 > 🏗️ **架構指南**: 完整目錄結構說明請參考 [_PROJECT_ROOT_STRUCTURE_GUIDE.md](_PROJECT_ROOT_STRUCTURE_GUIDE.md)
 
-## 📋 最新進度 (2025-12-XX)
+## 📋 最新進度 (2026-01-03)
 
-### ✅ Phase 3 完成：代碼品質全面提升 (NEW!)
+### ✅ Phase 4 完成：能力系統驗證與架構整理 (NEW!)
+- **能力驗證**: 10個不同模組能力全部驗證通過 ✅
+- **查詢系統**: CLI 工具可搜尋 840 個 flows，支援標籤/模組過濾 ✅
+- **執行驗證**: Dry-run 測試通過，路徑解析正確 ✅
+- **真實執行**: CapabilityOrchestrator 成功執行 4 個核心能力 ✅
+- **資料整理**: 完成根目錄清理與 _dev_tools 整合 ✅
+- **文檔完善**: 建立 12 個階層式 README 文檔 ✅
+
+### ✅ Phase 3 完成：代碼品質全面提升
 - **類型安全**: 100%完成，所有核心組件通過類型檢查 ✅
 - **核心修復**: 6個核心文件，39個真實錯誤全部修復 ✅
 - **生產就緒**: 17個AI核心組件全部可導入並通過驗證 ✅
@@ -56,8 +64,8 @@
 
 ---
 
-> **✅ 當前版本**: v2.1.2 - 代碼品質全面提升 + 生產就緒 (2025-12-XX)  
-> **🎯 系統狀態**: 100%類型安全，0個真實錯誤，17個核心組件全部驗證通過
+> **✅ 當前版本**: v2.1.3 - 能力系統驗證 + 架構整理 (2026-01-03)  
+> **🎯 系統狀態**: 840個能力可查詢，10個模組驗證通過，4個核心能力實際執行成功
 
 ## 📑 目錄
 
@@ -169,13 +177,15 @@ User → 程式決策 → 能力查詢 (PostgreSQL/RAG) → 動態調用 → 結
 | 技術指標 | 數值 | 狀態 |
 |---------|------|
 | **架構版本** | v2.0 (數據合約) | ✅ 升級完成 |
+| **能力系統** | 840 flows | ✅ 全部可查詢 |
+| **模組驗證** | 10/10 模組 | ✅ 全部通過 |
+| **實際執行** | 4 個核心能力 | ✅ 成功執行 |
 | **5M神經網路健康度** | 100% | ✅ 優秀 |
 | **程式決策功能** | 完全正常 | ✅ 優秀 |
 | **指令系統** | 完整實現 | ✅ 完成 |
 | **類型安全** | 0錯誤 | ✅ 優秀 |
 | **語義編碼精準度** | 512維度 | ✅ 達標 |
 | **系統響應時間** | <50ms | ✅ 優秀 |
-| **核心功能驗證** | 100% | ✅ 完成 |
 | **跨語言整合** | 100% | ✅ 完成 |
 | **部署複雜度** | ←90% | ✅ 大幅簡化 |
 
@@ -186,10 +196,17 @@ User → 程式決策 → 能力查詢 (PostgreSQL/RAG) → 動態調用 → 結
 **核心原則**: 實際執行程式本身就是最好的驗證，不需要額外創建測試腳本。
 
 ```bash
-# ✅ 最佳實踐：直接執行功能驗證
-python -m services.scan.engines.python_engine.scanner --target http://example.com
-python -m services.features.function_sqli.detector --url http://test.com
-python -m services.core.aiva_core.cognitive_core.bioneuron_decision_controller
+# ✅ 能力系統驗證
+# 1. 查詢能力
+python aiva_capability_cli.py --list
+python aiva_capability_cli.py --info 51
+python aiva_capability_cli.py --search "attack" --limit 5
+
+# 2. Dry-run 測試（路徑驗證）
+python aiva_cli_implementation.py --flow 51 --dry-run
+
+# 3. 實際執行（能力編排）
+python aiva_capability_orchestrator.py  # 4個核心能力
 
 # ✅ 執行完整系統
 python api/main.py  # 啟動 API 服務
@@ -198,6 +215,12 @@ python -m services.core.aiva_core.ai_commander_v2  # 啟動 AI 指揮中心
 # ⚠️ 次選：必要時才執行測試套件
 pytest tests/services/ -v
 ```
+
+**驗證成果** (2026-01-03):
+- ✅ 10 個不同模組的能力驗證通過
+- ✅ 840 flows 可查詢、搜尋、過濾
+- ✅ 4 個核心能力實際執行成功
+- ✅ 512 維特徵向量提取正常
 
 **為什麼這樣做？**
 - 🎯 直接執行能立即發現實際問題

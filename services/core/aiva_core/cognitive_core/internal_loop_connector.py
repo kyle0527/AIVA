@@ -535,13 +535,13 @@ class InternalLoopConnector:
         target_scope: str = "core",
         target_module: str = "core"
     ) -> InternalLoopSyncResult:
-        """同步能力到 RAG 知識庫 (v11.0 更新 - 使用新路徑結構)
+        """同步能力到 RAG 知識庫 (v12.0 更新 - 統一數據源)
         
-        ⚠️ 架構更新說明 (v11.0):
-        1. 使用新的 analysis_data/{module}/{category}/ 路徑結構
-        2. 支持多模組同步 (core/features/scan/integration)
+        ✅ 架構更新說明 (v12.0):
+        1. 統一使用 data/internal_exploration/latest_classification.json
+        2. 移除 analysis_data/ 中間層，簡化架構
         3. 整合 ExplorationPipeline 自動分析
-        4. 從 latest_{module}_capabilities.json 讀取結果
+        4. 從唯一數據源 (SOT) 讀取分類結果
         
         Args:
             force_refresh: 是否強制重新分析代碼 (觸發 Pipeline)
@@ -571,7 +571,7 @@ class InternalLoopConnector:
                 
                 if success:
                     logger.info("✅ Exploration Pipeline completed successfully.")
-                    logger.info(f"   Results saved to: analysis_data/{target_module}/")
+                    logger.info(f"   Results saved to: data/internal_exploration/")
                 else:
                     logger.error("❌ Exploration Pipeline failed. Using existing data.")
             except ImportError:
@@ -581,13 +581,13 @@ class InternalLoopConnector:
                 import traceback
                 traceback.print_exc()
         
-        # 步驟 2: 從新路徑讀取並轉換 Flow 能力
+        # 步驟 2: 從統一數據源讀取並轉換 Flow 能力
         capabilities = []
         try:
-            logger.info("  Step 2: Loading flow capabilities from analysis_data...")
+            logger.info("  Step 2: Loading flow capabilities from internal_exploration...")
             logger.info(f"   Loading module: {target_module}")
             
-            # 使用新方法從 analysis_data 加載
+            # 從 Internal Exploration 統一數據源加載
             flow_caps = self._load_capabilities_from_analysis_data(target_module)
             capabilities.extend(flow_caps)
             logger.info(f"   -> Loaded {len(flow_caps)} flow capabilities from {target_module}")
@@ -634,7 +634,10 @@ class InternalLoopConnector:
         return result
     
     def _load_capabilities_from_analysis_data(self, module: str = "core") -> List[ModuleCapability]:
-        """從新的 analysis_data 路徑加載能力數據 (v11.0)
+        """從 Internal Exploration 統一數據源加載能力數據 (v12.0)
+        
+        ✅ 2026-01-04 重構：統一使用 data/internal_exploration/latest_classification.json
+        移除對 analysis_data/ 的依賴，簡化為單一數據源 (SOT)
         
         Args:
             module: 模組名稱 (core/features/scan/integration)
@@ -645,19 +648,17 @@ class InternalLoopConnector:
         capabilities = []
         
         try:
-            # 嘗試從新路徑加載
             from pathlib import Path
             import json
             
-            # 構建路徑：services/integration/analysis_data/{module}/capabilities/
+            # ✅ 新路徑：services/integration/data/internal_exploration/latest_classification.json
             project_root = Path(__file__).resolve().parent.parent.parent.parent.parent
-            analysis_data_root = project_root / "services" / "integration" / "analysis_data"
-            module_path = analysis_data_root / module / "capabilities"
-            latest_file = module_path / f"latest_{module}_capabilities.json"
+            internal_exploration_dir = project_root / "services" / "integration" / "data" / "internal_exploration"
+            latest_file = internal_exploration_dir / "latest_classification.json"
             
             if not latest_file.exists():
-                logger.warning(f"No capabilities found at: {latest_file}")
-                logger.info("Falling back to old method...")
+                logger.warning(f"No classification data found at: {latest_file}")
+                logger.info("Falling back to structured scan...")
                 return self._scan_flows_structured()
             
             logger.info(f"Loading from: {latest_file}")
@@ -666,7 +667,13 @@ class InternalLoopConnector:
                 data = json.load(f)
             
             flows = data.get('flows', [])
-            logger.info(f"Found {len(flows)} flows in {module} module")
+            logger.info(f"Found {len(flows)} flows in classification data")
+            
+            # 如果指定模組，過濾出該模組的 flows
+            if module and module != "all":
+                filtered_flows = [f for f in flows if f.get('primary_module') == module]
+                logger.info(f"Filtered to {len(filtered_flows)} flows for module '{module}'")
+                flows = filtered_flows
             
             # 轉換每個 flow 為 ModuleCapability
             for flow in flows:
@@ -677,11 +684,11 @@ class InternalLoopConnector:
                     logger.debug(f"Failed to convert flow {flow.get('id')}: {e}")
                     continue
             
-            logger.info(f"✅ Successfully loaded {len(capabilities)} capabilities from {module}")
+            logger.info(f"✅ Successfully loaded {len(capabilities)} capabilities")
             
         except Exception as e:
-            logger.error(f"Failed to load from analysis_data: {e}")
-            logger.info("Falling back to old method...")
+            logger.error(f"Failed to load from internal_exploration: {e}")
+            logger.info("Falling back to structured scan...")
             capabilities = self._scan_flows_structured()
         
         return capabilities
@@ -1099,7 +1106,9 @@ class InternalLoopConnector:
             "name_keywords": {"default": ["plan", "task", "execute"]},
         },
         "external_learning": {
+            # 向後相容：external_learning 已整合至 cognitive_core.learning_system (2026-01-03)
             "default_entry": "ExternalLoopConnector",
+            "redirect_to": "cognitive_core.learning_system",  # 重定向標記
             "sub_modules": {
                 "analysis": ("analysis", "ExternalLoopConnector"),
                 "tracing": ("tracing", "ExternalLoopConnector"),
@@ -1107,6 +1116,18 @@ class InternalLoopConnector:
                 "experience": ("experience_manager", "ExternalLoopConnector"),
             },
             "name_keywords": {"tracing": ["trace"], "training": ["train"]},
+        },
+        "learning_system": {
+            # 新的學習子系統（位於 cognitive_core 下）
+            "default_entry": "ExternalLoopConnector",
+            "sub_modules": {
+                "analysis": ("analysis", "ExternalLoopConnector"),
+                "learning": ("learning", "ModelTrainer"),
+                "tracing": ("tracing", "ExternalLoopConnector"),
+                "training": ("training", "ExternalLoopConnector"),
+                "experience": ("experience_manager", "ExperienceManager"),
+            },
+            "name_keywords": {"learning": ["train", "model"], "tracing": ["trace"]},
         },
         "core_capabilities": {
             "default_entry": "ScanResultProcessor",

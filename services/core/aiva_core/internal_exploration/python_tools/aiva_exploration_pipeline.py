@@ -284,9 +284,6 @@ class ExplorationPipeline:
                     data = json.load(f)
                     flow_count = len(data.get('flows', []))
                     logger.info(f"   ✅ 發現 {flow_count} 個數據流")
-                    
-                # 保存到分類目錄 (flows)
-                self._save_to_analysis_data(output_json, "flows")
                 return True
             else:
                 logger.error("   ❌ 未生成分析結果文件")
@@ -323,10 +320,6 @@ class ExplorationPipeline:
                     data = json.load(f)
                     total = data.get('metadata', {}).get('total_flows', 0)
                     logger.info(f"   ✅ 分類完成: {total} 個流程")
-                    
-                # 保存到分類目錄 (classifications 和 capabilities)
-                self._save_to_analysis_data(output_json, "classifications")
-                self._save_to_analysis_data(output_json, "capabilities")
                 return True
             else:
                 logger.error("   ❌ 未生成分類結果文件")
@@ -419,42 +412,9 @@ class ExplorationPipeline:
         except Exception as e:
             logger.error(f"   ❌ 更新失敗: {e}")
 
-    def _save_to_analysis_data(self, source_file, category):
-        """保存結果到統一的 analysis_data 結構
-        
-        Args:
-            source_file (Path): 源文件路徑
-            category (str): 類別 ('capabilities', 'flows', 'classifications')
-        """
-        try:
-            # 直接構建路徑，避免循環導入
-            analysis_data_root = SERVICES_ROOT / "integration" / "analysis_data"
-            module_dir = analysis_data_root / self.target_module
-            
-            if not module_dir.exists():
-                logger.warning(f"   ⚠️ 模組目錄不存在: {module_dir}，跳過分類保存")
-                return
-            
-            # 構建目標路徑
-            category_dir = module_dir / category
-            category_dir.mkdir(parents=True, exist_ok=True)
-            
-            # 生成時間戳文件名
-            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-            dest_file = category_dir / f"{self.target_module}_{category}_{timestamp}.json"
-            
-            # 複製文件
-            shutil.copy2(source_file, dest_file)
-            logger.info(f"   📁 已保存到: {category_dir.name}/{dest_file.name}")
-            
-            # 創建最新版本鏈接
-            latest_link = category_dir / f"latest_{self.target_module}_{category}.json"
-            if latest_link.exists():
-                latest_link.unlink()
-            shutil.copy2(source_file, latest_link)
-            
-        except Exception as e:
-            logger.warning(f"   ⚠️ 保存到 analysis_data 失敗: {e}")
+    # ⚠️ 已移除：_save_to_analysis_data (2026-01-04)
+    # 原因：移除 analysis_data/ 中間層，統一使用 data/internal_exploration/
+    # 所有結果已直接保存到 analysis_history/v{n}/ 和 latest_classification.json
 
     def _step_generate_cli_docs(self, classification_json):
         """步驟 5: 生成 CLI 指令文檔"""

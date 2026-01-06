@@ -26,8 +26,8 @@ class ExplorationDispatcher:
     1. 異步消息 (MessageBroker) - 適合事件通知、非阻塞操作
     2. CLI 命令 (subprocess)    - 適合同步執行、跨語言調用
     
-    模組連接:
-        internal_exploration → external_learning (分析結果 → 訓練)
+    模組連接（五大模組架構 - 2026-01-03）:
+        internal_exploration → cognitive_core.learning_system (分析結果 → 訓練)
         internal_exploration → cognitive_core    (問題發現 → 決策)
         internal_exploration → service_backbone  (報告存儲)
         internal_exploration → core_capabilities (執行修復)

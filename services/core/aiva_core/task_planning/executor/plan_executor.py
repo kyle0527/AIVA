@@ -33,7 +33,8 @@ from services.aiva_common.error_handling import (
     ErrorType,
 )
 
-from ...external_learning.tracing.unified_tracer import UnifiedTracer
+# 模組整合: external_learning → cognitive_core/learning_system
+from ...cognitive_core.learning_system.tracing.unified_tracer import UnifiedTracer
 from ...service_backbone.messaging.message_broker import MessageBroker
 
 logger = logging.getLogger(__name__)
@@ -236,7 +237,7 @@ class PlanExecutor:
             trace_records: 執行軌跡
         """
         try:
-            from services.aiva_common.enums import Topic
+            from services.aiva_common.enums import Topic, ModuleName
             from services.aiva_common.schemas import AivaMessage, MessageHeader
             
             # 構建完成事件
@@ -253,9 +254,10 @@ class PlanExecutor:
             message = AivaMessage(
                 header=MessageHeader(
                     message_id=str(uuid4()),
-                    source_module="task_planning.plan_executor",
+                    source_module=ModuleName.CORE,
                     trace_id=plan.plan_id,
                 ),
+                topic=Topic.TASK_COMPLETED,
                 payload=completion_event,
             )
             
@@ -313,7 +315,7 @@ class PlanExecutor:
             execution_time = (datetime.now(UTC) - start_time).total_seconds()
 
             # 記錄成功執行
-            trace = await self.trace_logger.log_task_execution(
+            trace = self.trace_logger.log_task_execution(
                 session_id=session.session_id,
                 plan_id=plan.plan_id,
                 step_id=step.step_id,
@@ -341,7 +343,7 @@ class PlanExecutor:
             )
             logger.error(f"Step {step.step_id}: {str(aiva_error)}")
 
-            trace = await self.trace_logger.log_task_execution(
+            trace = self.trace_logger.log_task_execution(
                 session_id=session.session_id,
                 plan_id=plan.plan_id,
                 step_id=step.step_id,
@@ -350,7 +352,7 @@ class PlanExecutor:
                 result={},
                 status="timeout",
                 execution_time=execution_time,
-                error=error,
+                error=str(e),
             )
 
         except Exception as e:
@@ -370,7 +372,7 @@ class PlanExecutor:
             )
             logger.error(f"Step {step.step_id}: {str(aiva_error)}", exc_info=True)
 
-            trace = await self.trace_logger.log_task_execution(
+            trace = self.trace_logger.log_task_execution(
                 session_id=session.session_id,
                 plan_id=plan.plan_id,
                 step_id=step.step_id,
@@ -379,7 +381,7 @@ class PlanExecutor:
                 result={},
                 status="failed",
                 execution_time=execution_time,
-                error=error,
+                error=str(e),
             )
 
         return trace
@@ -424,18 +426,9 @@ class PlanExecutor:
             custom_payloads=step.parameters.get("custom_payloads"),
         )
 
-        # 在 metadata 中添加會話和計畫資訊
-        if not payload.metadata:
-            payload.metadata = {}
-
-        payload.metadata.update(
-            {
-                "session_id": session.session_id,
-                "plan_id": plan.plan_id,
-                "step_id": step.step_id,
-                "sandbox_mode": sandbox_mode,
-            }
-        )
+        # 將會話和計畫資訊添加到 context 的 related_findings 中
+        # 注意：FunctionTaskPayload 沒有 metadata 屬性
+        # 這些資訊可以通過 task_id 或 scan_id 進行追蹤
 
         return payload
 
@@ -665,7 +658,7 @@ class PlanExecutor:
             plan_id: 計畫 ID
             step: 步驟
         """
-        await self.trace_logger.log_task_execution(
+        self.trace_logger.log_task_execution(
             session_id=session_id,
             plan_id=plan_id,
             step_id=step.step_id,
@@ -804,8 +797,8 @@ class PlanExecutor:
             result: 執行結果
         """
         try:
-            if hasattr(self.storage, "save_execution_result"):
-                await self.storage.save_execution_result(result.model_dump())
+            if self.storage is not None and hasattr(self.storage, "save_execution_result"):
+                await self.storage.save_execution_result(result.model_dump())  # type: ignore
                 logger.debug(f"Persisted result {result.result_id}")
             else:
                 logger.warning("Storage backend does not support save_execution_result")

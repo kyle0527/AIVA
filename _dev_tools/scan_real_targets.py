@@ -32,7 +32,8 @@ async def full_penetration_test(target: str):
         from services.scan.engines.python_engine.strategy_controller import StrategyController
         from services.scan.engines.python_engine.sensitive_data_scanner import SensitiveDataScanner
         from services.scan.engines.python_engine.scope_manager import ScopeManager
-        from services.core.aiva_core.external_learning.experience_manager import ExperienceManager
+        # 模組整合: external_learning → cognitive_core/learning_system
+        from services.core.aiva_core.cognitive_core.learning_system.experience_manager import ExperienceManager
         from aiva_common.schemas import Phase0StartPayload
         
         print("✅ 模組導入成功")
@@ -188,7 +189,8 @@ async def test_individual_capabilities():
         
         # 測試 4: 經驗管理
         print("\n4️⃣ 測試經驗管理...")
-        from services.core.aiva_core.external_learning.experience_manager import ExperienceManager
+        # 模組整合: external_learning → cognitive_core/learning_system
+        from services.core.aiva_core.cognitive_core.learning_system.experience_manager import ExperienceManager
         
         exp_manager = ExperienceManager()
         exp_id = exp_manager.push(
