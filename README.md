@@ -2,8 +2,8 @@
 
 **AIVA (自主智能虛擬助手)** 是一個企業級的程式化安全測試平台，具備程式邏輯決策能力和5百萬參數的Bug Bounty特化神經網路。系統主要通過預設指令、UI選單和API接口進行操作。
 
-![Version](https://img.shields.io/badge/version-v2.1.2-blue)
-![Architecture](https://img.shields.io/badge/architecture-v2.0%20Contract--Driven-brightgreen)
+![Version](https://img.shields.io/badge/version-v2.2.0-blue)
+![Architecture](https://img.shields.io/badge/architecture-v2.1%20Simplified-brightgreen)
 ![Status](https://img.shields.io/badge/status-Production%20Ready-brightgreen)
 ![AI](https://img.shields.io/badge/AI-5M%20Specialized-red)
 ![Languages](https://img.shields.io/badge/languages-Python%2BGo%2BRust%2BTS-orange)
@@ -13,9 +13,21 @@
 > 🗂️ **歷史檔案**: 已完成項目和報告請查看 [_archive/](_archive/ARCHIVE_INDEX.md) 目錄  
 > 🏗️ **架構指南**: 完整目錄結構說明請參考 [_PROJECT_ROOT_STRUCTURE_GUIDE.md](_PROJECT_ROOT_STRUCTURE_GUIDE.md)
 
-## 📋 最新進度 (2026-01-03)
+## 📋 最新進度 (2026-01-12)
 
-### ✅ Phase 4 完成：能力系統驗證與架構整理 (NEW!)
+### ✅ 架構簡化完成 (NEW!)
+- **微服務精簡**: 移除 6 個冗餘 FastAPI 服務，保留唯一核心入口 ✅
+- **單一入口點**: Core API (app.py) 作為系統唯一啟動點 ✅
+- **功能完整**: 所有核心功能保持正常，訊息流暢通 ✅
+- **依賴清理**: 移除 API Gateway、Integration Module、UI Services ✅
+- **註冊表優化**: Capability Registry 改為純 Python 模組 ✅
+
+**架構變更**:
+- 移除前: 7 個獨立 FastAPI 應用（Core API、API Gateway、Integration、UI v3、Legacy UI、Registry API、Optimized Core）
+- 移除後: 1 個入口點（Core API）
+- 結果: 架構更清晰，維護更簡單，啟動更快速
+
+### ✅ Phase 4 完成：能力系統驗證與架構整理
 - **能力驗證**: 10個不同模組能力全部驗證通過 ✅
 - **查詢系統**: CLI 工具可搜尋 840 個 flows，支援標籤/模組過濾 ✅
 - **執行驗證**: Dry-run 測試通過，路徑解析正確 ✅
@@ -64,8 +76,8 @@
 
 ---
 
-> **✅ 當前版本**: v2.1.3 - 能力系統驗證 + 架構整理 (2026-01-03)  
-> **🎯 系統狀態**: 840個能力可查詢，10個模組驗證通過，4個核心能力實際執行成功
+> **✅ 當前版本**: v2.2.0 - 架構簡化（單一入口點）(2026-01-12)  
+> **🎯 系統狀態**: 1 個 Core API 入口，840 個能力可查詢，所有核心功能正常運作
 
 ## 📑 目錄
 

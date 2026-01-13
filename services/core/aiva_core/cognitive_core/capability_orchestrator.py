@@ -6,7 +6,7 @@
 職責:
 1. 查詢 RAG 知識庫,了解可用能力
 2. 根據任務需求,智能選擇和組合能力
-3. 生成 AICommand 序列
+3. 生成 CLI 命令序列 (基於 Manifest 架構)
 4. 監控執行效果,實現自我優化
 
 數據來源:
@@ -16,28 +16,38 @@
 
 架構流程:
     User Input → Orchestrator.plan() → Query RAG → Select Capabilities 
-    → Generate AICommands → Execute → Monitor → Learn → Optimize
+    → Generate CLI Commands → Execute (subprocess) → Monitor → Learn → Optimize
+    
+架構更新 (2026-01-08):
+- ✅ 移除 AICommand 依賴，改用 CLI 直接調用
+- ✅ 基於 CommandBuilder 生成可執行命令
+- ✅ 符合 aiva_common 規範：簡化部署，直接調用
 """
 
 import asyncio
-from datetime import datetime, UTC
-from typing import List, Dict, Any, Optional, Tuple
+from datetime import datetime, timezone
+
+# UTC 兼容性处理（Python 3.11+ 使用 UTC，较旧版本使用 timezone.utc）
+try:
+    from datetime import UTC  # type: ignore
+except ImportError:
+    UTC = timezone.utc  # type: ignore
+from typing import List, Dict, Any, Optional, Tuple, TYPE_CHECKING
 from uuid import uuid4
 
 from pydantic import BaseModel, Field
 
-from aiva_common.schemas import (
-    AICommand,
-    AICommandResult,
-    CommandType,
-    CommandStatus,
-)
 from aiva_common.utils import get_logger
 from aiva_common.error_handling import AIVAError, ErrorType, ErrorSeverity
+from aiva_common.async_utils import AsyncProcessManager, default_process_manager
 
 from .internal_loop_connector import InternalLoopConnector
 from .rag.knowledge_base import KnowledgeBase
 from ..core_capabilities.capability_registry import get_capability_registry
+from ..core_capabilities.risk_policy_manager import RiskPolicyManager
+
+if TYPE_CHECKING:
+    from .learning_system.experience_manager import ExperienceManager
 
 logger = get_logger(__name__)
 
@@ -53,24 +63,24 @@ class TaskRequirement(BaseModel):
 
 
 class CapabilityPlan(BaseModel):
-    """能力執行計劃"""
+    """能力執行計劃 (v2.0 - CLI 架構)"""
     plan_id: str = Field(..., description="計劃唯一ID")
     task_id: str = Field(..., description="關聯的任務ID")
     selected_capabilities: List[dict[str, Any]] = Field(default_factory=list, description="選中的能力列表")
     execution_sequence: List[str] = Field(default_factory=list, description="執行順序 (capability_id)")
     estimated_duration: int = Field(default=0, description="預計耗時(秒)")
     risk_level: str = Field(default="medium", description="風險等級: low, medium, high")
-    commands: List[AICommand] = Field(default_factory=list, description="生成的命令列表")
+    cli_commands: List[str] = Field(default_factory=list, description="生成的 CLI 命令列表")
     reasoning: str = Field(default="", description="AI 決策理由")
 
 
 class ExecutionResult(BaseModel):
-    """執行結果"""
+    """執行結果 (v2.0 - CLI 架構)"""
     plan_id: str = Field(..., description="計劃ID")
     success: bool = Field(default=False, description="是否成功")
-    completed_commands: List[str] = Field(default_factory=list, description="已完成的命令ID")
-    failed_commands: List[str] = Field(default_factory=list, description="失敗的命令ID")
-    results: Dict[str, AICommandResult] = Field(default_factory=dict, description="執行結果映射")
+    completed_commands: List[str] = Field(default_factory=list, description="已完成的命令")
+    failed_commands: List[str] = Field(default_factory=list, description="失敗的命令")
+    command_outputs: Dict[str, dict[str, Any]] = Field(default_factory=dict, description="命令輸出映射 {cmd: {stdout, stderr, exit_code}}")
     total_duration: float = Field(default=0.0, description="總耗時(秒)")
     issues_found: List[dict[str, Any]] = Field(default_factory=list, description="發現的問題列表")
 
@@ -109,17 +119,25 @@ class CapabilityOrchestrator:
     def __init__(
         self,
         rag_kb: Optional[KnowledgeBase] = None,
-        internal_connector: Optional[InternalLoopConnector] = None
+        internal_connector: Optional[InternalLoopConnector] = None,
+        experience_manager: Optional["ExperienceManager"] = None
     ):
         """初始化能力編排器
         
         Args:
             rag_kb: RAG 知識庫實例
             internal_connector: 內部閉環連接器
+            experience_manager: 經驗管理器（用於 RL 學習反饋）
         """
         self.rag_kb = rag_kb
         self.internal_connector = internal_connector or InternalLoopConnector(rag_knowledge_base=rag_kb)
         self.capability_registry = get_capability_registry()
+        
+        # 風險策略管理器（從 YAML 配置讀取風險規則）
+        self.risk_policy_manager = RiskPolicyManager()
+        
+        # 經驗管理器（支援 RL 閉環學習）
+        self.experience_manager = experience_manager
         
         # 執行歷史記錄 (用於學習優化)
         self.execution_history: List[Tuple[CapabilityPlan, ExecutionResult]] = []
@@ -140,7 +158,7 @@ class CapabilityOrchestrator:
         3. 過濾可用且健康的能力
         4. 根據性能歷史排序能力
         5. 生成執行序列
-        6. 轉換為 AICommand
+        6. 轉換為 CLI 命令（基於 Manifest 架構）
         
         Args:
             requirement: 任務需求
@@ -183,16 +201,16 @@ class CapabilityOrchestrator:
             )
             logger.info(f"   Execution sequence: {execution_sequence}")
             
-            # Step 5: 轉換為 AICommand
-            commands = self._capabilities_to_commands(
+            # Step 5: 轉換為 CLI 命令
+            cli_commands = self._capabilities_to_cli_commands(
                 selected_capabilities,
                 execution_sequence,
                 requirement
             )
-            logger.info(f"   Generated {len(commands)} commands")
+            logger.info(f"   Generated {len(cli_commands)} CLI commands")
             
             # Step 6: 評估風險和耗時
-            estimated_duration = sum(c.timeout for c in commands)
+            estimated_duration = len(cli_commands) * 60  # 估計每個命令 60 秒
             risk_level = self._assess_risk_level(selected_capabilities, requirement)
             
             # Step 7: 生成決策理由
@@ -209,7 +227,7 @@ class CapabilityOrchestrator:
                 execution_sequence=execution_sequence,
                 estimated_duration=estimated_duration,
                 risk_level=risk_level,
-                commands=commands,
+                cli_commands=cli_commands,
                 reasoning=reasoning
             )
             
@@ -233,7 +251,7 @@ class CapabilityOrchestrator:
         
         ✅ 架構修復 (2025-12-16):
         改用 InternalLoopConnector.query_capabilities() 方法，
-        該方法專門用於查詢 RAG 中的 840 個能力。
+        該方法專門用於查詢 RAG 中已索引的能力。
         
         使用 RAG 語義搜索找到與任務需求相關的能力
         
@@ -653,15 +671,15 @@ class CapabilityOrchestrator:
         
         return scan_caps + analysis_caps + attack_caps + other_caps
     
-    def _capabilities_to_commands(
+    def _capabilities_to_cli_commands(
         self,
         capabilities: List[Dict[str, Any]],
         execution_sequence: List[str],
         requirement: TaskRequirement
-    ) -> List[AICommand]:
-        """將能力轉換為 AICommand
+    ) -> List[str]:
+        """將能力轉換為 CLI 命令
         
-        這是連接內部分析和實際執行的關鍵步驟
+        這是連接內部分析和實際執行的關鍵步驟（v2.0 - CLI 架構）
         
         Args:
             capabilities: 選中的能力列表
@@ -669,9 +687,12 @@ class CapabilityOrchestrator:
             requirement: 任務需求
             
         Returns:
-            AICommand 列表
+            CLI 命令字符串列表
         """
-        commands = []
+        # 使用能力元數據生成 CLI 命令
+        # 直接從能力元數據構建命令，不依賴外部 Manifest 文件
+        
+        cli_commands = []
         cap_map = {cap["metadata"]["capability_id"]: cap for cap in capabilities}
         
         for cap_id in execution_sequence:
@@ -681,142 +702,110 @@ class CapabilityOrchestrator:
             
             meta = cap["metadata"]
             
-            # 生成命令
-            command = self._build_command_from_capability(meta, requirement)
-            commands.append(command)
+            # 構建參數（從任務需求提取）
+            params = {
+                "target": requirement.target,
+            }
+            
+            # 添加任務特定參數
+            if requirement.constraints:
+                params.update(requirement.constraints)
+            
+            try:
+                # 從能力元數據獲取命令模板
+                # 優先使用 cli_command，其次 entry_point，最後 fallback
+                cli_template = meta.get("cli_command") or meta.get("cli_template")
+                
+                if cli_template:
+                    # 直接使用模板生成命令
+                    cli_cmd = cli_template.format(**params)
+                else:
+                    # Fallback: 使用 entry_point 構建命令
+                    entry_point = meta.get("entry_point", "")
+                    module_path = meta.get("module", "")
+                    
+                    if entry_point:
+                        # 構建 Python 模組調用命令
+                        cli_cmd = f"python -m {module_path}.{entry_point}"
+                        
+                        # 添加參數
+                        if params.get("target"):
+                            cli_cmd += f" --target {params['target']}"
+                        
+                        # 添加其他參數
+                        for key, value in params.items():
+                            if key != "target" and value:
+                                cli_cmd += f" --{key} {value}"
+                    else:
+                        # 最終 Fallback：使用 aiva-cli 統一入口
+                        import json
+                        params_json = json.dumps(params)
+                        cli_cmd = f"aiva-cli {cap_id} --params '{params_json}'"
+                
+                cli_commands.append(cli_cmd)
+                logger.debug(f"   Generated CLI: {cli_cmd[:100]}...")
+                
+            except Exception as e:
+                logger.error(f"   ❌ Failed to build command for {cap_id}: {e}")
+                # 跳過此能力，繼續處理其他能力
+                continue
         
-        return commands
-    
-    def _build_command_from_capability(
-        self,
-        capability_meta: Dict[str, Any],
-        requirement: TaskRequirement
-    ) -> AICommand:
-        """從能力元數據構建 AICommand
-        
-        根據能力類型映射到對應的 CommandType
-        
-        Args:
-            capability_meta: 能力元數據（包含名稱、模組等信息）
-            requirement: 任務需求
-        """
-        cap_name = capability_meta.get("capability_name", "")
-        module = capability_meta.get("module", "")
-        
-        # 映射到 CommandType
-        command_type = self._map_capability_to_command_type(cap_name, module)
-        
-        # 構建 payload
-        payload = self._build_command_payload(capability_meta, requirement)
-        
-        # 創建 AICommand
-        # 將 int priority 轉換為 CommandPriority 枚舉
-        from services.aiva_common.schemas.commands import CommandPriority
-        priority_map = {1: CommandPriority.LOW, 2: CommandPriority.NORMAL, 3: CommandPriority.HIGH, 4: CommandPriority.HIGH}
-        priority_enum = priority_map.get(requirement.priority, CommandPriority.NORMAL)
-        
-        command = AICommand(
-            command_id=f"cmd_{requirement.task_id}_{uuid4().hex[:8]}",
-            command_type=command_type,
-            target_module=self._get_target_module(module),
-            payload=payload,
-            timeout=requirement.constraints.get("timeout", 300),
-            priority=priority_enum,
-            trace_id=requirement.task_id,
-            session_id=requirement.task_id,
-            parent_command_id=None,
-            callback_url=None
-        )
-        
-        return command
-    
-    def _map_capability_to_command_type(
-        self,
-        capability_name: str,
-        module: str
-    ) -> CommandType:
-        """映射能力到命令類型
-        
-        基於能力名稱和模組推斷 CommandType
-        """
-        name_lower = capability_name.lower()
-        
-        # Scan 模組
-        if "scan" in module.lower():
-            if "phase0" in name_lower:
-                return CommandType.SCAN_PHASE0
-            elif "phase1" in name_lower:
-                return CommandType.SCAN_PHASE1
-            else:
-                return CommandType.SCAN_COMPREHENSIVE
-        
-        # Features 模組
-        if "xss" in name_lower:
-            return CommandType.FEATURE_XSS_TEST
-        if "sql" in name_lower or "sqli" in name_lower:
-            return CommandType.FEATURE_SQLI_TEST
-        if "ssrf" in name_lower:
-            return CommandType.FEATURE_SSRF_TEST
-        if "idor" in name_lower:
-            return CommandType.FEATURE_IDOR_TEST
-        
-        # 默認
-        return CommandType.SCAN_COMPREHENSIVE
-    
-    def _build_command_payload(
-        self,
-        capability_meta: Dict[str, Any],
-        requirement: TaskRequirement
-    ) -> Dict[str, Any]:
-        """構建命令 payload
-        
-        根據能力的參數定義和任務需求構建 payload
-        
-        Args:
-            capability_meta: 能力元數據
-            requirement: 任務需求
-        """
-        payload = {
-            "target": requirement.target,
-            "task_id": requirement.task_id,
-            "capability_id": capability_meta.get("capability_id", ""),
-        }
-        
-        # 添加約束條件
-        if requirement.constraints:
-            payload.update(requirement.constraints)
-        
-        return payload
-    
-    def _get_target_module(self, module_path: str) -> str:
-        """從模組路徑提取目標模組名稱"""
-        if "scan" in module_path.lower():
-            return "scan"
-        elif "features" in module_path.lower():
-            return "features"
-        elif "integration" in module_path.lower():
-            return "integration"
-        else:
-            return "core"
+        return cli_commands
     
     def _assess_risk_level(
         self,
-        _capabilities: List[Dict[str, Any]],
+        capabilities: List[Dict[str, Any]],
         requirement: TaskRequirement
     ) -> str:
-        """評估風險等級
+        """評估風險等級（使用 RiskPolicyManager 從 YAML 讀取策略）
         
         Args:
-            _capabilities: 能力列表（保留用於未來擴展）
+            capabilities: 能力列表（用於構建上下文）
             requirement: 任務需求
+            
+        Returns:
+            風險等級字串 (critical/high/medium/low)
         """
-        # 簡單規則: 掃描低風險,攻擊中/高風險
-        if requirement.task_type == "scan":
-            return "low"
-        elif requirement.task_type == "attack":
-            return "high"
-        else:
-            return "medium"
+        # 構建風險評估上下文
+        risk_context = {
+            # 基本信息
+            "task_type": requirement.task_type,
+            "target": requirement.target,
+            
+            # 從 constraints 中提取配置（如果有）
+            "target_type": requirement.constraints.get("target_type", "development"),
+            "authorized": requirement.constraints.get("authorized", True),
+            "scope_verified": requirement.constraints.get("scope_verified", True),
+            "business_hours": requirement.constraints.get("business_hours", False),
+            "time_limit": requirement.constraints.get("time_limit"),
+            
+            # 數據敏感度
+            "contains_pii": requirement.constraints.get("contains_pii", False),
+            "contains_payment_data": requirement.constraints.get("contains_payment_data", False),
+            "contains_sensitive_data": requirement.constraints.get("contains_sensitive_data", False),
+            
+            # 系統關鍵度
+            "system_criticality": requirement.constraints.get("system_criticality", "medium"),
+            
+            # 防護機制
+            "waf_detected": requirement.constraints.get("waf_detected", False),
+            "rate_limit_detected": requirement.constraints.get("rate_limit_detected", False),
+        }
+        
+        # 使用 RiskPolicyManager 評估風險
+        # 支援向後兼容：傳遞 task_type 作為備用
+        risk_level, total_score, applied_rules = self.risk_policy_manager.assess_risk(
+            context=risk_context,
+            task_type=requirement.task_type
+        )
+        
+        logger.info(f"   🎯 風險評估: {risk_level} (總分: {total_score})")
+        if applied_rules:
+            logger.info(f"   應用規則: {len(applied_rules)} 條")
+            for rule in applied_rules[:3]:  # 顯示前 3 條
+                logger.debug(f"      - {rule.get('category')}: {rule.get('description')}")
+        
+        return risk_level
     
     def _generate_reasoning(
         self,
@@ -846,9 +835,13 @@ class CapabilityOrchestrator:
         return "\n".join(reasoning_parts)
     
     async def execute(self, plan: CapabilityPlan) -> ExecutionResult:
-        """執行計劃
+        """執行計劃（基於 CLI 架構）
         
-        這裡應該調用 AICommandCenter 執行命令
+        使用 AsyncProcessManager 執行 CLI 命令
+        - 避免 Event Loop 阻塞
+        - 自動清理殭屍進程
+        - 支援即時輸出串流
+        - 提供遙測數據（HTTP 狀態碼、WAF 檢測等）供 AI 學習
         
         Args:
             plan: 執行計劃
@@ -856,33 +849,67 @@ class CapabilityOrchestrator:
         Returns:
             執行結果
         """
-        logger.info(f"🚀 Executing plan: {plan.plan_id}")
+        import shlex
         
-        from aiva_common.command_center import AICommandCenter
-        command_center = AICommandCenter()
+        logger.info(f"🚀 Executing plan: {plan.plan_id}")
         
         start_time = datetime.now(UTC)
         completed = []
         failed = []
-        results = {}
+        command_outputs = {}
+        
+        # 使用全域進程管理器
+        process_manager = default_process_manager
         
         try:
-            for command in plan.commands:
-                logger.info(f"   Executing: {command.command_id} [{command.command_type.value}]")
+            for cli_cmd in plan.cli_commands:
+                logger.info(f"   Executing CLI: {cli_cmd}")
                 
                 try:
-                    result = await command_center.execute(command)
-                    results[command.command_id] = result
+                    # 解析命令為列表（避免 shell=True）
+                    cmd_list = shlex.split(cli_cmd)
                     
-                    if result.status == CommandStatus.COMPLETED:
-                        completed.append(command.command_id)
+                    # 使用帶遙測的執行方法（供 AI 學習系統使用）
+                    result = await process_manager.run_command_with_telemetry(
+                        cmd=cmd_list,
+                        timeout=plan.estimated_duration,
+                        stream_output=False
+                    )
+                    
+                    command_outputs[cli_cmd] = {
+                        "stdout": result["stdout"],
+                        "stderr": result["stderr"],
+                        "exit_code": result["exit_code"],
+                        "duration": result["duration"],
+                        "timed_out": result["timed_out"],
+                        # 遙測數據（供 AI 學習）
+                        "telemetry": result.get("telemetry", {}),
+                        # 提取關鍵學習信號
+                        "triggered_waf": result.get("telemetry", {}).get("waf_triggered", False),
+                        "bypassed_protection": result.get("telemetry", {}).get("bypassed_protection", False),
+                        "http_status_codes": result.get("telemetry", {}).get("http_status_codes", []),
+                    }
+                    
+                    if result["exit_code"] == 0 and not result["timed_out"]:
+                        completed.append(cli_cmd)
+                        logger.info(f"   ✅ Command succeeded")
                     else:
-                        failed.append(command.command_id)
-                        logger.warning(f"   Command failed: {result.error}")
+                        failed.append(cli_cmd)
+                        if result["timed_out"]:
+                            logger.warning(f"   ⏱️ Command timeout: {cli_cmd}")
+                        else:
+                            logger.warning(f"   ❌ Command failed: {result['stderr']}")
                 
                 except Exception as e:
                     logger.error(f"   Command execution error: {e}")
-                    failed.append(command.command_id)
+                    failed.append(cli_cmd)
+                    command_outputs[cli_cmd] = {
+                        "stdout": "",
+                        "stderr": str(e),
+                        "exit_code": -1,
+                        "duration": 0,
+                        "timed_out": False
+                    }
             
             duration = (datetime.now(UTC) - start_time).total_seconds()
             
@@ -891,12 +918,12 @@ class CapabilityOrchestrator:
                 success=len(failed) == 0,
                 completed_commands=completed,
                 failed_commands=failed,
-                results=results,
+                command_outputs=command_outputs,
                 total_duration=duration,
-                issues_found=self._extract_issues(results)
+                issues_found=self._extract_issues_from_outputs(command_outputs)
             )
             
-            logger.info(f"✅ Execution completed: {len(completed)}/{len(plan.commands)} succeeded")
+            logger.info(f"✅ Execution completed: {len(completed)}/{len(plan.cli_commands)} succeeded")
             
             # 記錄到歷史
             self.execution_history.append((plan, execution_result))
@@ -907,15 +934,26 @@ class CapabilityOrchestrator:
             logger.error(f"❌ Execution failed: {e}", exc_info=True)
             raise
     
-    def _extract_issues(self, results: Dict[str, AICommandResult]) -> List[Dict[str, Any]]:
-        """從執行結果中提取發現的問題"""
+    def _extract_issues_from_outputs(self, command_outputs: Dict[str, dict]) -> List[Dict[str, Any]]:
+        """從命令輸出中提取發現的問題
+        
+        Args:
+            command_outputs: 命令輸出映射 {cmd: {stdout, stderr, exit_code}}
+            
+        Returns:
+            問題列表
+        """
         issues = []
         
-        for cmd_id, result in results.items():
-            if result.status == CommandStatus.COMPLETED:
-                # 從 result.result 提取漏洞信息
-                findings = result.result.get("findings", [])
-                issues.extend(findings)
+        for cmd, output in command_outputs.items():
+            if output["exit_code"] == 0:
+                # 嘗試從 stdout 解析漏洞信息（簡化版）
+                stdout = output.get("stdout", "")
+                if "vulnerability" in stdout.lower() or "issue" in stdout.lower():
+                    issues.append({
+                        "command": cmd,
+                        "output": stdout[:500]  # 截取前500字符
+                    })
         
         return issues
     
@@ -926,7 +964,8 @@ class CapabilityOrchestrator:
     ):
         """從執行結果學習優化
         
-        更新能力性能統計,用於未來的決策優化
+        更新能力性能統計,用於未來的決策優化。
+        同時將經驗推送到 ExperienceManager（如果已配置）以支援 RL 學習。
         
         Args:
             plan: 執行計劃
@@ -934,6 +973,49 @@ class CapabilityOrchestrator:
         """
         logger.info(f"📚 Learning from execution: {plan.plan_id}")
         
+        # === 推送經驗到 ExperienceManager（RL 閉環） ===
+        if self.experience_manager:
+            try:
+                # 計算獎勵：基於成功率和完成度
+                success_rate = len(result.completed_commands) / max(len(plan.cli_commands), 1)
+                reward = success_rate * 0.7 + (0.3 if result.success else 0.0)
+                
+                # 構建經驗轉換
+                state = {
+                    "task_type": plan.task_id.split("_")[0] if plan.task_id else "unknown",
+                    "capabilities_count": len(plan.selected_capabilities),
+                    "plan_id": plan.plan_id,
+                }
+                action = {
+                    "selected_capabilities": [
+                        cap.get("metadata", {}).get("capability_name", "")
+                        for cap in plan.selected_capabilities
+                    ],
+                    "cli_commands": plan.cli_commands,
+                }
+                next_state = {
+                    "success": result.success,
+                    "completed_count": len(result.completed_commands),
+                    "failed_count": len(result.failed_commands),
+                    "issues_found": len(result.issues_found),
+                }
+                
+                exp_id = self.experience_manager.push(
+                    state=state,
+                    action=action,
+                    next_state=next_state,
+                    reward=reward,
+                    metadata={
+                        "plan_id": plan.plan_id,
+                        "duration": result.total_duration,
+                    }
+                )
+                logger.info(f"   💾 Experience saved: {exp_id} (reward: {reward:.2f})")
+                
+            except Exception as e:
+                logger.warning(f"   ⚠️ Failed to save experience: {e}")
+        
+        # === 更新本地性能統計 ===
         for cap in plan.selected_capabilities:
             cap_id = cap["metadata"]["capability_id"]
             
@@ -972,7 +1054,7 @@ class CapabilityOrchestrator:
             
             # 更新延遲 (簡化版)
             if result.total_duration:
-                avg_per_cmd = (result.total_duration * 1000) / len(plan.commands)
+                avg_per_cmd = (result.total_duration * 1000) / len(plan.cli_commands)
                 stats["total_latency_ms"] += avg_per_cmd
                 stats["avg_latency_ms"] = (
                     stats["total_latency_ms"] / stats["total_executions"]

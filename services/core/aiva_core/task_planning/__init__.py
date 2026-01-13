@@ -11,7 +11,7 @@ Task Planning - 任務規劃與執行模組
     - 執行循環: 決策 → 計劃 → 行動
 """
 
-__version__ = "3.0.0-alpha"
-__status__ = "架構搭建中"
+__version__ = "4.1.1"
+__status__ = "生產就緒 - Bug Bounty 配置化完成，Commander 組件化重構完成"
 
 __all__ = []

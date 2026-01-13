@@ -2,9 +2,11 @@
 
 **創建日期**: 2025年11月28日  
 **更新日期**: 2025年12月20日  
+**檢查日期**: 2026年1月10日  
 **適用版本**: AIVA v2.1.2+ (生產就緒)  
 **執行環境**: Windows PowerShell  
 **預估時間**: 15-30 分鐘
+**狀態**: ✅ 路徑已驗證
 
 ---
 
@@ -97,13 +99,32 @@ Test-Path scripts\core\update_self_awareness.py
 
 ## 🔧 環境準備
 
-### 步驟 1: 安裝 Python 依賴
+### ⚠️ 環境狀態 (2026-01-09)
+
+**✅ 當前全局環境已安裝完整依賴**  
+所有必要套件已就緒，包括：chromadb, sentence-transformers, torch, transformers, fastapi, pydantic 等。
+
+**檢查命令**：
+```powershell
+# 快速檢查環境
+python -c "import chromadb, sentence_transformers, torch; print('✅ 完整環境已就緒')"
+```
+
+若檢查通過，**跳過步驟 1**，直接前往 [步驟 2: 驗證核心組件](#步驟-2-驗證核心組件)。
+
+---
+
+### 步驟 1: 安裝 Python 依賴（僅新環境需要）
+
+**僅在以下情況執行**：
+- 新環境/虛擬環境初始化
+- 上述環境檢查失敗
 
 ```powershell
 # 確保在專案根目錄
 cd C:\D\fold7\AIVA-git
 
-# 安裝所有依賴
+# 安裝所有依賴（僅限新環境）
 pip install -r requirements.txt
 
 # 驗證關鍵依賴
@@ -282,20 +303,20 @@ asyncio.run(test_self_awareness_query())
 📄 Answer:
 AIVA 目前擁有以下攻擊能力:
 
-1. SQLi 注入檢測 (健康度: 90%)
-   - 位置: services/core/aiva_core/core_capabilities/attack/sqli_detector.py
+1. 攻擊編排器 (健康度: 90%)
+   - 位置: services/core/aiva_core/core_capabilities/attack/exploit_orchestrator.py
    - 複雜度: 中
-   - 支持: GET/POST 參數注入
+   - 支持: 攻擊鏈統籌
 
-2. XSS 跨站腳本 (健康度: 85%)
-   - 位置: services/core/aiva_core/core_capabilities/attack/xss_detector.py
+2. 自定義攻擊 (健康度: 85%)
+   - 位置: services/core/aiva_core/core_capabilities/attack/custom_exploits_example.py
    - 複雜度: 中
-   - 支持: 反射型/存儲型 XSS
+   - 支持: 自定義攻擊流程
 
-3. IDOR 越權訪問 (健康度: 88%)
-   - 位置: services/core/aiva_core/core_capabilities/attack/bizlogic_attack_executor.py
+3. 攻擊鏈 (健康度: 88%)
+   - 位置: services/core/aiva_core/core_capabilities/attack/attack_chain.py
    - 複雜度: 低
-   - 支持: 用戶 ID 枚舉
+   - 支持: 攻擊流程管理
 
 ...
 
@@ -779,7 +800,7 @@ icacls data\vector_db /grant Everyone:F
 
 2025-11-28 14:30:56 [INFO]   [2/3] 查詢: SQLi 攻擊的健康狀態如何?
 2025-11-28 14:30:57 [INFO]   ✓ 找到相關文檔: 3
-2025-11-28 14:30:57 [INFO]   📝 回答預覽: SQLi 注入檢測能力的健康狀態為 90%，屬於良好狀態。該能力位於 services/core/aiva_core/core_capabilities/attack/sqli_detector.py...
+2025-11-28 14:30:57 [INFO]   📝 回答預覽: 攻擊編排器能力的健康狀態為 90%，屬於良好狀態。該能力位於 services/core/aiva_core/core_capabilities/attack/exploit_orchestrator.py...
 
 2025-11-28 14:30:57 [INFO]   [3/3] 查詢: 推薦優先優化哪個模組?
 2025-11-28 14:30:58 [INFO]   ✓ 找到相關文檔: 4

@@ -24,7 +24,7 @@ project_root = Path(__file__).parent.parent
 sys.path.insert(0, str(project_root))
 
 from services.aiva_common.schemas.commands import AICommand, CommandType, CommandPriority
-from services.features.features_ready.function_bizlogic.command_handler import BizLogicCommandHandler
+from services.features.function_bizlogic.command_handler import BizLogicCommandHandler
 
 
 # 端點常量

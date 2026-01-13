@@ -9,7 +9,7 @@ AIVA 能力註冊中心初始化模組
 - 豐富的監控和診斷功能
 """
 
-from .registry import CapabilityRegistry, registry, app
+from .registry import CapabilityRegistry, registry
 from .models import (
     CapabilityRecord,
     CapabilityEvidence, 

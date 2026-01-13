@@ -1,7 +1,12 @@
 @echo off
+chcp 65001 >nul 2>&1
 REM AIVA Flow 預覽器（Dry Run）
 REM 用法: 預覽Flow.bat [Flow ID]
 REM 只顯示執行計畫，不實際運行
+
+REM 設置 Python 環境
+set PYTHONPATH=C:\D\fold7\AIVA-git\services\core;C:\D\fold7\AIVA-git\services
+set PYTHONIOENCODING=utf-8
 
 echo ========================================
 echo   AIVA Flow 預覽器 (Dry Run)

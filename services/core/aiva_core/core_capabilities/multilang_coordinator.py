@@ -13,7 +13,7 @@
 
 import asyncio
 import time
-from typing import Any
+from typing import Any, Optional
 
 from services.aiva_common.cross_language.core import CrossLanguageService, CrossLanguageConfig
 from services.aiva_common.cross_language.adapters import (
@@ -23,15 +23,41 @@ from services.aiva_common.cross_language.adapters import (
 from services.aiva_common.enums.modules import ProgrammingLanguage
 from services.aiva_common.utils import get_logger
 
-# 嘗試導入 logging_formatter，如果不存在則使用默認的 logger
-try:
-    from .utils.logging_formatter import get_aiva_logger, log_cross_language_call
-except ImportError:
-    get_aiva_logger = get_logger
-    def log_cross_language_call(logger, src, dst, task, kwargs, result, error, duration):
-        logger.info(f"Cross-language call {src}->{dst}: {task}, duration={duration:.3f}s")
+# 使用标准日志工具
+from services.aiva_common.utils.logging import get_logger
 
-logger = get_aiva_logger("multilang_coordinator")
+logger = get_logger("multilang_coordinator")
+
+
+def log_cross_language_call(
+    logger_instance,
+    src: str,
+    dst: str,
+    task: str,
+    kwargs: dict,
+    result: Any,
+    error: Optional[Exception | str],
+    duration: float
+) -> None:
+    """记录跨语言调用日志
+    
+    Args:
+        logger_instance: 日志实例
+        src: 源语言/模块
+        dst: 目标语言/模块
+        task: 任务描述
+        kwargs: 调用参数
+        result: 调用结果
+        error: 错误信息（异常对象或字符串）
+        duration: 执行时长（秒）
+    """
+    status = "ERROR" if error else "SUCCESS"
+    logger_instance.info(
+        f"Cross-language call {src}->{dst}: task={task}, "
+        f"status={status}, duration={duration:.3f}s"
+    )
+    if error:
+        logger_instance.error(f"Error details: {error}")
 
 
 class MultiLanguageAICoordinator:
@@ -157,7 +183,7 @@ class MultiLanguageAICoordinator:
         """
         logger.info(f"執行 Python AI 任務: {task}")
 
-        # 使用 5M Decision Engine（無 LLM/NLU 依賴）
+        # 使用 5M Decision Engine（特化決策引擎）
         try:
             from ..cognitive_core.neural.real_neural_core import RealDecisionEngine
             
@@ -166,9 +192,11 @@ class MultiLanguageAICoordinator:
                 self._python_agent = RealDecisionEngine(use_5m_model=True)
             
             # 執行任務（使用 generate_decision 方法）
+            # task_description: 任務描述，context: 上下文資訊
+            context_str = str(kwargs) if kwargs else ""
             result = self._python_agent.generate_decision(
-                target_info={"task": task},
-                context=kwargs
+                task_description=task,
+                context=context_str
             )
             
             return {

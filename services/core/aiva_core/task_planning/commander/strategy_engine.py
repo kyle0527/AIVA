@@ -5,7 +5,10 @@
 
 import logging
 from datetime import datetime
-from typing import Any
+from typing import Any, Optional
+
+# 導入風險策略管理器（配置化風險評估）
+from .policy_manager import PolicyManager
 
 logger = logging.getLogger(__name__)
 
@@ -13,22 +16,32 @@ logger = logging.getLogger(__name__)
 class StrategyEngine:
     """策略決策引擎
     
-    使用 5M 神經網路進行策略決策
+    使用 5M 神經網路進行策略決策，配置化風險評估
     """
 
     def __init__(
         self,
         decision_engine: Any,
         experience_manager: Any,
+        policy_path: Optional[str] = None,
     ):
         """初始化策略引擎
         
         Args:
             decision_engine: 5M 決策引擎
             experience_manager: 經驗管理器
+            policy_path: 風險策略配置文件路徑（可選，默認使用 config/risk_policies.yaml）
         """
         self.decision_engine = decision_engine
         self.experience_manager = experience_manager
+        
+        # 初始化風險策略管理器（配置化）
+        self.policy_manager = PolicyManager(policy_path)
+        
+        logger.info(
+            f"StrategyEngine initialized with policy: "
+            f"{self.policy_manager.get_policy_info()['policy_name']}"
+        )
 
     async def make_strategy_decision(self, context: dict[str, Any]) -> dict[str, Any]:
         """策略決策
@@ -132,73 +145,42 @@ class StrategyEngine:
     def assess_risk_factors(
         self, situation: dict[str, Any], constraints: dict[str, Any]
     ) -> dict[str, Any]:
-        """評估風險因素
+        """評估風險因素（使用配置化策略）
+
+        Args:
+            situation: 當前情況
+            constraints: 約束條件
 
         Returns:
             風險評估結果
         """
-        factors = []
-        risk_score = 0
-
-        # 1. 目標環境風險
-        if situation.get("target_type") == "production":
-            factors.append("Production environment - High impact potential")
-            risk_score += 3
-        elif situation.get("target_type") == "staging":
-            factors.append("Staging environment - Medium impact")
-            risk_score += 1
-
-        # 2. 時間約束風險
-        if constraints.get("time_limit"):
-            factors.append("Time-constrained operation - Reduced testing window")
-            risk_score += 2
-
-        # 3. 授權範圍風險
-        if not constraints.get("authorized"):
-            factors.append("⚠️ CRITICAL: Unauthorized testing - Legal risk")
-            risk_score += 5
-
-        # 4. 資料敏感度風險
-        if situation.get("contains_sensitive_data"):
-            factors.append("Sensitive data present - Privacy concerns")
-            risk_score += 2
-
-        # 5. 系統關鍵度風險
-        if situation.get("system_criticality") == "high":
-            factors.append("Critical system - Service disruption risk")
-            risk_score += 3
-
-        # 計算總體風險等級
-        if risk_score >= 7:
-            overall_risk = "critical"
-            mitigation_required = True
-        elif risk_score >= 4:
-            overall_risk = "high"
-            mitigation_required = True
-        elif risk_score >= 2:
-            overall_risk = "medium"
-            mitigation_required = False
-        else:
-            overall_risk = "low"
-            mitigation_required = False
-
-        return {
-            "overall_risk": overall_risk,
-            "risk_score": risk_score,
-            "factors": factors,
-            "mitigation_required": mitigation_required,
-        }
+        # 使用 PolicyManager 進行配置化風險評估
+        risk_assessment = self.policy_manager.assess_risk(situation, constraints)
+        
+        logger.info(
+            f"Risk assessment: {risk_assessment['overall_risk']} "
+            f"(score: {risk_assessment['risk_score']}, "
+            f"policy: {risk_assessment['policy_version']})"
+        )
+        
+        return risk_assessment
 
     def _encode_situation_for_neural(
         self, situation: dict, options: list, risk_factors: dict
     ) -> dict[str, Any]:
         """將情況編碼為神經網路決策輸入"""
+        # 獲取風險分數（從配置化評估結果）
+        risk_score = risk_factors.get("risk_score", 0)
+        # 正規化到 0-1 範圍（假設最大分數為 15）
+        normalized_risk = min(risk_score / 15.0, 1.0)
+        
         return {
             "option_count": len(options) / 10.0,
-            "risk_level": risk_factors.get("overall_risk", 0.5),
+            "risk_level": normalized_risk,  # 使用配置化風險分數
             "urgency": situation.get("urgency", 0.5),
             "complexity": situation.get("complexity", 0.5),
             "resource_available": situation.get("resources", 1.0),
+            "mitigation_required": 1.0 if risk_factors.get("mitigation_required") else 0.0,
         }
 
     def _build_strategy_from_neural_decision(

@@ -736,6 +736,39 @@ function main() {
     // 3. Analysis
     const branchStats = stitcher.analyzeBranches();
 
+    /**
+     * 將 realConnections 轉換成 Python FlowExecutor 需要的 flows 格式
+     * 這是為了讓 Python 執行器能夠讀取並執行 TypeScript 分析結果
+     */
+    function convertConnectionsToFlows(connections: Connection[]): any[] {
+        return connections.map((conn, idx) => ({
+            id: idx + 1,
+            path: [conn.fromFunc, conn.toFunc],
+            full_path: [conn.fromScript, conn.toScript],
+            func_names: [conn.fromFunc, conn.toFunc],
+            length: 2,
+            start: conn.fromFunc,
+            end: conn.toFunc,
+            classifications: [
+                {
+                    script: conn.fromFunc,
+                    module: "typescript_module",
+                    component_type: "程式組件",
+                    description: `${conn.fromFunc} - TypeScript 功能`
+                },
+                {
+                    script: conn.toFunc,
+                    module: "typescript_module",
+                    component_type: "程式組件",
+                    description: `${conn.toFunc} - TypeScript 功能`
+                }
+            ],
+            language: "typescript",
+            cli_command: `ts-node ${conn.toScript}`,
+            structured_tags: ["language:typescript", "type:程式"]
+        }));
+    }
+
     // 4. Output
     // System Flow
     fs.writeFileSync(path.join(outputDir, 'system_flow.mmd'), stitcher.generateSystemFlow());
@@ -744,8 +777,24 @@ function main() {
     const classResult = classifier.getResult();
     fs.writeFileSync(path.join(outputDir, 'cli_commands.sh'), generateCLI(classResult));
 
-    // Full JSON Report
+    // Full JSON Report - 統一格式，相容 Python FlowExecutor
+    const flows = convertConnectionsToFlows(stitcher.realConnections);
+    
     const report = {
+        metadata: {
+            tool: "ts2mermaid",
+            version: "2.0",
+            language: "typescript",
+            generated_at: new Date().toISOString(),
+            total_flows: flows.length,
+            total_files: files.length,
+            schema_version: "3.3",
+            ai_compatible: true
+        },
+        // ✅ 新增：FlowExecutor 需要的統一格式
+        flows: flows,
+        
+        // ✅ 保留：TypeScript 工具原有的所有字段
         summary: {
             total_files: files.length,
             total_funcs: allMeta.length,

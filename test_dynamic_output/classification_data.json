@@ -1,0 +1,15 @@
+{
+  "metadata": {
+    "generated_at": "2026-01-13T12:57:02.464442",
+    "total_flows": 0,
+    "total_modules": 0
+  },
+  "discovered_modules": {},
+  "classified_flows": [],
+  "statistics": {
+    "by_module": {},
+    "by_language": {},
+    "by_category": {},
+    "by_attack_type": {}
+  }
+}

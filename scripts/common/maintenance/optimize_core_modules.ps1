@@ -280,9 +280,6 @@ function Invoke-SplitOptimizedCore {
         New-Item -ItemType Directory -Path $optimizationDir -Force | Out-Null
     }
     
-    # 讀取原始文件內容
-    $content = Get-Content $optimizedFile -Raw
-    
     # 創建各個專業化模組
     $modules = @{
         "parallel_processing.py" = "ParallelMessageProcessor"

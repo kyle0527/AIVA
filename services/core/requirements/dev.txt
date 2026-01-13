@@ -1,0 +1,26 @@
+# AIVA Core - 開發環境依賴
+# 用於開發、測試、調試
+# 包含完整依賴 + 開發工具
+
+# 繼承完整依賴
+-r full.txt
+
+# 代碼質量
+black>=23.0.0                   # 代碼格式化
+flake8>=6.0.0                   # 代碼檢查
+mypy>=1.0.0                     # 類型檢查
+pylint>=2.17.0                  # 代碼分析
+
+# 測試
+pytest>=7.3.0                   # 測試框架
+pytest-asyncio>=0.21.0          # 異步測試
+pytest-cov>=4.1.0               # 測試覆蓋率
+pytest-mock>=3.10.0             # Mock 工具
+
+# 文檔
+sphinx>=7.0.0                   # 文檔生成
+sphinx-rtd-theme>=1.2.0         # ReadTheDocs 主題
+
+# 調試
+ipython>=8.12.0                 # 增強 REPL
+ipdb>=0.13.13                   # 調試器

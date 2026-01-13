@@ -3,7 +3,7 @@ AIVA AI 子系統控制器 - 5M Decision Engine 的專門模組
 負責特定 AI 功能的協調，避免與主控制器衝突
 支援插件化的智能分析系統
 
-注意：已移除 BioNeuronRAGAgent/LLM 依賴，改用 5M Decision Engine
+特化 AI 設計：使用 5M Decision Engine 進行安全測試決策
 """
 
 import asyncio
@@ -28,7 +28,7 @@ logger = logging.getLogger(__name__)
 class AISubsystemController:
     """AIVA AI 子系統控制器 - 避免與主控制器衝突
     
-    重要：此類使用 5M Decision Engine，無 LLM/NLU 依賴
+    使用 5M Decision Engine 特化決策引擎
     """
 
     def __init__(self, master_controller=None):
@@ -39,7 +39,7 @@ class AISubsystemController:
         """
         logger.info("🔧 初始化 AIVA AI 子系統控制器 (5M Engine)...")
 
-        # 重要：使用 5M Decision Engine，不需要外部 LLM
+        # 使用 5M Decision Engine
         self.master_controller = master_controller
         self._master_ai = None  # 延遲獲取主控 AI
 
@@ -956,7 +956,7 @@ async def demonstrate_unified_control():
     print("🎯 AIVA 統一 AI 控制展示")
     print("=" * 40)
 
-    controller = UnifiedAIController()
+    controller = AISubsystemController()
 
     test_requests = [
         "讀取 app.py 檔案",

@@ -1,7 +1,12 @@
 @echo off
+chcp 65001 >nul 2>&1
 REM AIVA Flow 執行器
 REM 用法: 執行Flow.bat [Flow ID]
 REM 範例: 執行Flow.bat 11
+
+REM 設置 Python 環境
+set PYTHONPATH=C:\D\fold7\AIVA-git\services\core;C:\D\fold7\AIVA-git\services
+set PYTHONIOENCODING=utf-8
 
 echo ========================================
 echo   AIVA Flow 執行器

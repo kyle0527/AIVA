@@ -13,7 +13,7 @@ SARIF 是業界標準的靜態分析結果格式，支援：
 
 
 
-from datetime import UTC, datetime
+from datetime import datetime, timezone
 import sys
 from pathlib import Path
 
@@ -296,7 +296,7 @@ class SARIFConverter:
             results=results,
             properties={
                 "scan_id": scan_id,
-                "timestamp": datetime.now(UTC).isoformat(),
+                "timestamp": datetime.now(timezone.utc).isoformat(),
             },
         )
 

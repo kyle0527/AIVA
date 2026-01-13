@@ -1,4 +1,4 @@
-from datetime import UTC, datetime
+from datetime import datetime, timezone
 from typing import Any
 
 from services.aiva_common.schemas import ScanCompletedPayload, TaskUpdatePayload
@@ -66,7 +66,7 @@ class SessionStateManager:
         """更新會話上下文資料"""
         if scan_id not in self._sessions:
             self._sessions[scan_id] = {
-                "created_at": datetime.now(UTC).isoformat(),
+                "created_at": datetime.now(timezone.utc).isoformat(),
                 "status": "initialized",
                 "tasks_completed": 0,
                 "tasks_total": 0,
@@ -76,7 +76,7 @@ class SessionStateManager:
 
         # 更新上下文數據
         self._sessions[scan_id].update(context_data)
-        self._sessions[scan_id]["updated_at"] = datetime.now(UTC).isoformat()
+        self._sessions[scan_id]["updated_at"] = datetime.now(timezone.utc).isoformat()
 
         logger.debug(f"Updated context for session {scan_id}")
 
@@ -89,7 +89,7 @@ class SessionStateManager:
         """更新會話狀態"""
         if session_id not in self._sessions:
             self._sessions[session_id] = {
-                "created_at": datetime.now(UTC).isoformat(),
+                "created_at": datetime.now(timezone.utc).isoformat(),
                 "status": "initialized",
                 "tasks_completed": 0,
                 "tasks_total": 0,
@@ -98,7 +98,7 @@ class SessionStateManager:
             self._session_history[session_id] = []
 
         self._sessions[session_id]["status"] = status
-        self._sessions[session_id]["updated_at"] = datetime.now(UTC).isoformat()
+        self._sessions[session_id]["updated_at"] = datetime.now(timezone.utc).isoformat()
 
         if additional_data:
             self._sessions[session_id].update(additional_data)
@@ -106,7 +106,7 @@ class SessionStateManager:
         # 記錄狀態變更歷史
         self._session_history[session_id].append(
             {
-                "timestamp": datetime.now(UTC).isoformat(),
+                "timestamp": datetime.now(timezone.utc).isoformat(),
                 "status": status,
                 "data": additional_data or {},
             }

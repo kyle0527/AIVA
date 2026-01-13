@@ -464,7 +464,7 @@ class AIVACommandProcessor:
         注意: MultiEngineCoordinator 尚在開發中，如果導入失敗則回退到 RAG 搜索
         """
         try:
-            from services.scan.coordinators.multi_engine_coordinator import MultiEngineCoordinator
+            from services.scan.coordinators.multi_engine_coordinator import MultiEngineCoordinator  # type: ignore[import-not-found]
         except ImportError:
             # MultiEngineCoordinator 尚未實現，拋出異常讓調用者使用 RAG 方式
             raise ImportError("MultiEngineCoordinator 尚未實現")

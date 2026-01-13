@@ -1,0 +1,1626 @@
+{
+  "target": "services/features/features_ready/function_bizlogic",
+  "depth": 3,
+  "total_files_processed": 10,
+  "flow_chains": [
+    [
+      "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_bizlogic\\race_condition_scanner.py",
+      "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_bizlogic\\integration_tools\\bizlogic_tools.py"
+    ],
+    [
+      "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_bizlogic\\price_manipulation_scanner.py",
+      "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_bizlogic\\__main__.py"
+    ]
+  ],
+  "combined_flows": {
+    "data_flow_chain_1": {
+      "sequences": [
+        {
+          "sequence": [
+            "race_condition_scanner",
+            "bizlogic_tools"
+          ],
+          "mermaid": "race_condition_scanner → bizlogic_tools",
+          "file_paths": [
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_bizlogic\\race_condition_scanner.py",
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_bizlogic\\integration_tools\\bizlogic_tools.py"
+          ]
+        }
+      ],
+      "total_sequences": 1
+    },
+    "data_flow_chain_2": {
+      "sequences": [
+        {
+          "sequence": [
+            "price_manipulation_scanner",
+            "__main__"
+          ],
+          "mermaid": "price_manipulation_scanner → __main__",
+          "file_paths": [
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_bizlogic\\price_manipulation_scanner.py",
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_bizlogic\\__main__.py"
+          ]
+        }
+      ],
+      "total_sequences": 1
+    }
+  },
+  "summary": {
+    "total_graphs": 10,
+    "total_flow_chains": 2,
+    "real_connections": 2,
+    "script_nodes": 10
+  },
+  "function_details": {
+    "function_map": {
+      "validate_task_id": {
+        "file_name": "business_schemas.py",
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_bizlogic\\business_schemas.py",
+        "script_name": "business_schemas",
+        "line_number": 189,
+        "is_async": false,
+        "is_entry_point": true,
+        "called_functions": [
+          "field_validator",
+          "v.startswith",
+          "AIVAError",
+          "create_error_context"
+        ]
+      },
+      "total_candidates": {
+        "file_name": "business_schemas.py",
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_bizlogic\\business_schemas.py",
+        "script_name": "business_schemas",
+        "line_number": 460,
+        "is_async": false,
+        "is_entry_point": true,
+        "called_functions": [
+          "len",
+          "len",
+          "len",
+          "len"
+        ]
+      },
+      "total_tasks": {
+        "file_name": "business_schemas.py",
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_bizlogic\\business_schemas.py",
+        "script_name": "business_schemas",
+        "line_number": 521,
+        "is_async": false,
+        "is_entry_point": true,
+        "called_functions": [
+          "len",
+          "len",
+          "len",
+          "len"
+        ]
+      },
+      "__init__": {
+        "file_name": "bizlogic_tools.py",
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_bizlogic\\integration_tools\\bizlogic_tools.py",
+        "script_name": "bizlogic_tools",
+        "line_number": 98,
+        "is_async": false,
+        "is_entry_point": true,
+        "called_functions": []
+      },
+      "handle_command": {
+        "file_name": "command_handler.py",
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_bizlogic\\command_handler.py",
+        "script_name": "command_handler",
+        "line_number": 79,
+        "is_async": true,
+        "is_entry_point": true,
+        "called_functions": [
+          "time.time",
+          "payload.get",
+          "payload.get",
+          "payload.get",
+          "payload.get",
+          "int",
+          "AICommandResult",
+          "ValueError",
+          "ValueError",
+          "options_dict.get",
+          "options_dict.get",
+          "options_dict.get",
+          "options_dict.get",
+          "options_dict.get",
+          "options_dict.get",
+          "options_dict.get",
+          "options_dict.get",
+          "options_dict.get",
+          "options_dict.get",
+          "AICommandResult",
+          "AICommandResult",
+          "datetime.fromtimestamp",
+          "datetime.now",
+          "time.time",
+          "scan_result.get",
+          "len",
+          "len",
+          "len",
+          "len",
+          "scan_result.get",
+          "datetime.fromtimestamp",
+          "datetime.now",
+          "str",
+          "datetime.fromtimestamp",
+          "datetime.now",
+          "scan_result.get",
+          "scan_result.get",
+          "scan_result.get",
+          "time.time",
+          "str",
+          "time.time",
+          "str",
+          "str",
+          "type",
+          "scan_result.get"
+        ]
+      },
+      "create_bizlogic_finding": {
+        "file_name": "finding_helper.py",
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_bizlogic\\finding_helper.py",
+        "script_name": "finding_helper",
+        "line_number": 16,
+        "is_async": false,
+        "is_entry_point": true,
+        "called_functions": [
+          "Vulnerability",
+          "FindingTarget",
+          "FindingEvidence",
+          "FindingPayload",
+          "str",
+          "str",
+          "evidence_data.get",
+          "new_id",
+          "evidence_data.get",
+          "evidence_data.get"
+        ]
+      },
+      "_verify_actual_price_change": {
+        "file_name": "price_manipulation_scanner.py",
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_bizlogic\\price_manipulation_scanner.py",
+        "script_name": "price_manipulation_scanner",
+        "line_number": 43,
+        "is_async": false,
+        "is_entry_point": true,
+        "called_functions": [
+          "response_data.get",
+          "response_data.get",
+          "response_data.get",
+          "abs",
+          "float",
+          "float"
+        ]
+      },
+      "_verify_transaction_completed": {
+        "file_name": "price_manipulation_scanner.py",
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_bizlogic\\price_manipulation_scanner.py",
+        "script_name": "price_manipulation_scanner",
+        "line_number": 87,
+        "is_async": true,
+        "is_entry_point": true,
+        "called_functions": [
+          "response_data.get",
+          "response_data.get",
+          "status.lower",
+          "status.lower",
+          "response_data.get",
+          "response_data.get",
+          "response_data.get",
+          "asyncio.sleep",
+          "client.get",
+          "check_response.json",
+          "logger.debug",
+          "check_data.get",
+          "check_data.get",
+          "final_status.lower"
+        ]
+      },
+      "_verify_user_privilege": {
+        "file_name": "price_manipulation_scanner.py",
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_bizlogic\\price_manipulation_scanner.py",
+        "script_name": "price_manipulation_scanner",
+        "line_number": 153,
+        "is_async": false,
+        "is_entry_point": true,
+        "called_functions": [
+          "permission_matrix.get"
+        ]
+      },
+      "_detect_business_limits": {
+        "file_name": "price_manipulation_scanner.py",
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_bizlogic\\price_manipulation_scanner.py",
+        "script_name": "price_manipulation_scanner",
+        "line_number": 187,
+        "is_async": false,
+        "is_entry_point": true,
+        "called_functions": [
+          "response_data.get",
+          "response_data.get",
+          "response_data.get",
+          "abs",
+          "max",
+          "abs",
+          "float",
+          "float",
+          "float"
+        ]
+      },
+      "test_negative_price": {
+        "file_name": "price_manipulation_scanner.py",
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_bizlogic\\price_manipulation_scanner.py",
+        "script_name": "price_manipulation_scanner",
+        "line_number": 235,
+        "is_async": true,
+        "is_entry_point": true,
+        "called_functions": [
+          "httpx.AsyncClient",
+          "client.post",
+          "response.json",
+          "self._verify_actual_price_change",
+          "self._verify_user_privilege",
+          "privilege_check.get",
+          "findings.append",
+          "logger.warning",
+          "logger.debug",
+          "logger.exception",
+          "price_verification.get",
+          "logger.debug",
+          "response_data.get",
+          "response_data.get",
+          "logger.info",
+          "logger.info",
+          "self._verify_transaction_completed",
+          "transaction_verification.get",
+          "logger.debug",
+          "transaction_type.lower",
+          "price_verification.get",
+          "transaction_verification.get",
+          "json.dumps",
+          "price_verification.get",
+          "transaction_verification.get"
+        ]
+      },
+      "test_zero_price": {
+        "file_name": "price_manipulation_scanner.py",
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_bizlogic\\price_manipulation_scanner.py",
+        "script_name": "price_manipulation_scanner",
+        "line_number": 319,
+        "is_async": true,
+        "is_entry_point": true,
+        "called_functions": [
+          "httpx.AsyncClient",
+          "client.post",
+          "response.json",
+          "self._verify_actual_price_change",
+          "self._verify_user_privilege",
+          "privilege_check.get",
+          "findings.append",
+          "logger.warning",
+          "logger.debug",
+          "logger.exception",
+          "price_verification.get",
+          "logger.debug",
+          "response_data.get",
+          "response_data.get",
+          "response_data.get",
+          "logger.info",
+          "logger.info",
+          "self._verify_transaction_completed",
+          "transaction_verification.get",
+          "logger.debug",
+          "response_data.get",
+          "transaction_verification.get",
+          "json.dumps",
+          "price_verification.get",
+          "transaction_verification.get"
+        ]
+      },
+      "test_price_tampering": {
+        "file_name": "price_manipulation_scanner.py",
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_bizlogic\\price_manipulation_scanner.py",
+        "script_name": "price_manipulation_scanner",
+        "line_number": 397,
+        "is_async": true,
+        "is_entry_point": true,
+        "called_functions": [
+          "httpx.AsyncClient",
+          "client.post",
+          "response.json",
+          "self._verify_actual_price_change",
+          "self._verify_user_privilege",
+          "privilege_check.get",
+          "price_verification.get",
+          "findings.append",
+          "logger.warning",
+          "logger.debug",
+          "logger.exception",
+          "price_verification.get",
+          "logger.debug",
+          "logger.info",
+          "self._verify_transaction_completed",
+          "transaction_verification.get",
+          "logger.debug",
+          "transaction_verification.get",
+          "json.dumps",
+          "price_verification.get",
+          "transaction_verification.get"
+        ]
+      },
+      "test_overflow_price": {
+        "file_name": "price_manipulation_scanner.py",
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_bizlogic\\price_manipulation_scanner.py",
+        "script_name": "price_manipulation_scanner",
+        "line_number": 489,
+        "is_async": true,
+        "is_entry_point": true,
+        "called_functions": [
+          "float",
+          "httpx.AsyncClient",
+          "client.post",
+          "findings.append",
+          "logger.warning",
+          "logger.debug"
+        ]
+      },
+      "run_all_tests": {
+        "file_name": "workflow_bypass_scanner.py",
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_bizlogic\\workflow_bypass_scanner.py",
+        "script_name": "workflow_bypass_scanner",
+        "line_number": 287,
+        "is_async": true,
+        "is_entry_point": true,
+        "called_functions": [
+          "logger.info",
+          "logger.info",
+          "asyncio.gather",
+          "isinstance",
+          "self.test_direct_checkout",
+          "self.test_payment_bypass",
+          "self.test_admin_access_bypass",
+          "all_findings.extend",
+          "len"
+        ]
+      },
+      "test_concurrent_requests": {
+        "file_name": "race_condition_scanner.py",
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_bizlogic\\race_condition_scanner.py",
+        "script_name": "race_condition_scanner",
+        "line_number": 36,
+        "is_async": true,
+        "is_entry_point": true,
+        "called_functions": [
+          "httpx.AsyncClient",
+          "datetime.now",
+          "range",
+          "tasks.append",
+          "datetime.now",
+          "sum",
+          "method.upper",
+          "client.post",
+          "asyncio.gather",
+          "findings.append",
+          "logger.warning",
+          "logger.error",
+          "method.upper",
+          "client.get",
+          "client.request",
+          "isinstance"
+        ]
+      },
+      "test_balance_manipulation": {
+        "file_name": "race_condition_scanner.py",
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_bizlogic\\race_condition_scanner.py",
+        "script_name": "race_condition_scanner",
+        "line_number": 104,
+        "is_async": true,
+        "is_entry_point": true,
+        "called_functions": [
+          "httpx.AsyncClient",
+          "client.post",
+          "sum",
+          "client.get",
+          "logger.warning",
+          "logger.error",
+          "range",
+          "asyncio.gather",
+          "client.get",
+          "logger.error",
+          "findings.append",
+          "logger.warning",
+          "balance_response.json",
+          "final_balance_response.json",
+          "isinstance"
+        ]
+      },
+      "test_coupon_reuse": {
+        "file_name": "race_condition_scanner.py",
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_bizlogic\\race_condition_scanner.py",
+        "script_name": "race_condition_scanner",
+        "line_number": 182,
+        "is_async": true,
+        "is_entry_point": true,
+        "called_functions": [
+          "httpx.AsyncClient",
+          "client.post",
+          "sum",
+          "range",
+          "asyncio.gather",
+          "findings.append",
+          "logger.warning",
+          "logger.error",
+          "isinstance"
+        ]
+      },
+      "test_inventory_depletion": {
+        "file_name": "race_condition_scanner.py",
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_bizlogic\\race_condition_scanner.py",
+        "script_name": "race_condition_scanner",
+        "line_number": 231,
+        "is_async": true,
+        "is_entry_point": true,
+        "called_functions": [
+          "httpx.AsyncClient",
+          "client.post",
+          "sum",
+          "range",
+          "asyncio.gather",
+          "findings.append",
+          "logger.warning",
+          "logger.error",
+          "isinstance"
+        ]
+      },
+      "test_step_skipping": {
+        "file_name": "workflow_bypass_scanner.py",
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_bizlogic\\workflow_bypass_scanner.py",
+        "script_name": "workflow_bypass_scanner",
+        "line_number": 34,
+        "is_async": true,
+        "is_entry_point": true,
+        "called_functions": [
+          "httpx.AsyncClient",
+          "range",
+          "len",
+          "logger.error",
+          "client.get",
+          "findings.append",
+          "logger.warning"
+        ]
+      },
+      "test_direct_checkout": {
+        "file_name": "workflow_bypass_scanner.py",
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_bizlogic\\workflow_bypass_scanner.py",
+        "script_name": "workflow_bypass_scanner",
+        "line_number": 79,
+        "is_async": true,
+        "is_entry_point": true,
+        "called_functions": [
+          "httpx.AsyncClient",
+          "client.get",
+          "client.post",
+          "findings.append",
+          "logger.warning",
+          "logger.error",
+          "findings.append",
+          "logger.warning"
+        ]
+      },
+      "test_payment_bypass": {
+        "file_name": "workflow_bypass_scanner.py",
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_bizlogic\\workflow_bypass_scanner.py",
+        "script_name": "workflow_bypass_scanner",
+        "line_number": 133,
+        "is_async": true,
+        "is_entry_point": true,
+        "called_functions": [
+          "httpx.AsyncClient",
+          "client.post",
+          "response.json",
+          "logger.error",
+          "response_data.get",
+          "findings.append",
+          "logger.warning",
+          "response_data.get"
+        ]
+      },
+      "test_verification_bypass": {
+        "file_name": "workflow_bypass_scanner.py",
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_bizlogic\\workflow_bypass_scanner.py",
+        "script_name": "workflow_bypass_scanner",
+        "line_number": 185,
+        "is_async": true,
+        "is_entry_point": true,
+        "called_functions": [
+          "httpx.AsyncClient",
+          "client.post",
+          "register_response.json",
+          "logger.error",
+          "response_data.get",
+          "findings.append",
+          "logger.warning",
+          "asyncio.get_event_loop"
+        ]
+      },
+      "test_admin_access_bypass": {
+        "file_name": "workflow_bypass_scanner.py",
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_bizlogic\\workflow_bypass_scanner.py",
+        "script_name": "workflow_bypass_scanner",
+        "line_number": 238,
+        "is_async": true,
+        "is_entry_point": true,
+        "called_functions": [
+          "httpx.AsyncClient",
+          "client.get",
+          "any",
+          "logger.debug",
+          "findings.append",
+          "logger.warning"
+        ]
+      },
+      "mk_finding_dict": {
+        "file_name": "__main__.py",
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_bizlogic\\__main__.py",
+        "script_name": "__main__",
+        "line_number": 30,
+        "is_async": false,
+        "is_entry_point": false,
+        "called_functions": [
+          "create_bizlogic_finding",
+          "payload.model_dump",
+          "json.dumps",
+          "result.get",
+          "result.get",
+          "result.get"
+        ]
+      },
+      "run_price_test": {
+        "file_name": "__main__.py",
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_bizlogic\\__main__.py",
+        "script_name": "__main__",
+        "line_number": 52,
+        "is_async": true,
+        "is_entry_point": false,
+        "called_functions": [
+          "logger.info",
+          "PriceManipulationTester",
+          "tester.run_all_tests"
+        ]
+      },
+      "run_race_test": {
+        "file_name": "__main__.py",
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_bizlogic\\__main__.py",
+        "script_name": "__main__",
+        "line_number": 59,
+        "is_async": true,
+        "is_entry_point": false,
+        "called_functions": [
+          "logger.info",
+          "RaceConditionTester",
+          "tester.run_all_tests",
+          "json.loads",
+          "logger.error"
+        ]
+      },
+      "run_workflow_test": {
+        "file_name": "__main__.py",
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_bizlogic\\__main__.py",
+        "script_name": "__main__",
+        "line_number": 76,
+        "is_async": true,
+        "is_entry_point": false,
+        "called_functions": [
+          "logger.info",
+          "WorkflowBypassTester",
+          "tester.run_all_tests"
+        ]
+      },
+      "main": {
+        "file_name": "__main__.py",
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_bizlogic\\__main__.py",
+        "script_name": "__main__",
+        "line_number": 89,
+        "is_async": true,
+        "is_entry_point": true,
+        "called_functions": [
+          "argparse.ArgumentParser",
+          "parser.add_argument",
+          "parser.add_argument",
+          "parser.add_argument",
+          "parser.add_argument",
+          "parser.add_argument",
+          "parser.add_subparsers",
+          "subparsers.add_parser",
+          "price_parser.add_argument",
+          "subparsers.add_parser",
+          "race_parser.add_argument",
+          "subparsers.add_parser",
+          "flow_parser.add_argument",
+          "parser.parse_args",
+          "print",
+          "mk_finding_dict",
+          "len",
+          "json.dumps",
+          "logger.error",
+          "print",
+          "sys.exit",
+          "run_price_test",
+          "json.dumps",
+          "run_race_test",
+          "run_workflow_test",
+          "str",
+          "uuid.uuid4",
+          "uuid.uuid4"
+        ]
+      },
+      "__post_init__": {
+        "file_name": "bizlogic_tools.py",
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_bizlogic\\integration_tools\\bizlogic_tools.py",
+        "script_name": "bizlogic_tools",
+        "line_number": 85,
+        "is_async": false,
+        "is_entry_point": true,
+        "called_functions": []
+      },
+      "comprehensive_scan": {
+        "file_name": "bizlogic_tools.py",
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_bizlogic\\integration_tools\\bizlogic_tools.py",
+        "script_name": "bizlogic_tools",
+        "line_number": 103,
+        "is_async": true,
+        "is_entry_point": true,
+        "called_functions": [
+          "datetime.now",
+          "options.get",
+          "options.get",
+          "options.get",
+          "options.get",
+          "options.get",
+          "datetime.now",
+          "end_time.isoformat",
+          "RaceConditionScanner",
+          "options.get",
+          "options.get",
+          "PriceManipulationScanner",
+          "options.get",
+          "options.get",
+          "options.get",
+          "options.get",
+          "WorkflowBypassScanner",
+          "options.get",
+          "options.get",
+          "tasks.append",
+          "len",
+          "start_time.isoformat",
+          "tasks.append",
+          "tasks.append",
+          "tasks.append",
+          "tasks.append",
+          "tasks.append",
+          "self._wrap_workflow_test",
+          "asyncio.gather",
+          "isinstance",
+          "isinstance",
+          "len",
+          "len",
+          "self._wrap_race_condition_test",
+          "self._wrap_price_test",
+          "self._wrap_price_test",
+          "self._wrap_price_test",
+          "self._wrap_workflow_test",
+          "finding.get"
+        ]
+      },
+      "scan_sync": {
+        "file_name": "bizlogic_tools.py",
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_bizlogic\\integration_tools\\bizlogic_tools.py",
+        "script_name": "bizlogic_tools",
+        "line_number": 267,
+        "is_async": false,
+        "is_entry_point": true,
+        "called_functions": [
+          "asyncio.run",
+          "self.comprehensive_scan",
+          "str",
+          "asyncio.get_event_loop",
+          "loop.run_until_complete",
+          "self.comprehensive_scan"
+        ]
+      },
+      "scan": {
+        "file_name": "bizlogic_tools.py",
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_bizlogic\\integration_tools\\bizlogic_tools.py",
+        "script_name": "bizlogic_tools",
+        "line_number": 321,
+        "is_async": true,
+        "is_entry_point": true,
+        "called_functions": [
+          "self.comprehensive_scan"
+        ]
+      },
+      "_wrap_race_condition_test": {
+        "file_name": "bizlogic_tools.py",
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_bizlogic\\integration_tools\\bizlogic_tools.py",
+        "script_name": "bizlogic_tools",
+        "line_number": 355,
+        "is_async": true,
+        "is_entry_point": true,
+        "called_functions": [
+          "scanner.test_concurrent_requests"
+        ]
+      },
+      "_wrap_price_test": {
+        "file_name": "bizlogic_tools.py",
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_bizlogic\\integration_tools\\bizlogic_tools.py",
+        "script_name": "bizlogic_tools",
+        "line_number": 371,
+        "is_async": true,
+        "is_entry_point": true,
+        "called_functions": [
+          "test_func"
+        ]
+      },
+      "_wrap_workflow_test": {
+        "file_name": "bizlogic_tools.py",
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_bizlogic\\integration_tools\\bizlogic_tools.py",
+        "script_name": "bizlogic_tools",
+        "line_number": 383,
+        "is_async": true,
+        "is_entry_point": true,
+        "called_functions": [
+          "test_func"
+        ]
+      }
+    },
+    "script_functions": {
+      "business_schemas": {
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_bizlogic\\business_schemas.py",
+        "functions": {
+          "validate_task_id": {
+            "line_number": 189,
+            "is_async": false,
+            "is_entry_point": true,
+            "called_functions": [
+              "field_validator",
+              "v.startswith",
+              "AIVAError",
+              "create_error_context"
+            ]
+          },
+          "total_candidates": {
+            "line_number": 460,
+            "is_async": false,
+            "is_entry_point": true,
+            "called_functions": [
+              "len",
+              "len",
+              "len",
+              "len"
+            ]
+          },
+          "total_tasks": {
+            "line_number": 521,
+            "is_async": false,
+            "is_entry_point": true,
+            "called_functions": [
+              "len",
+              "len",
+              "len",
+              "len"
+            ]
+          }
+        },
+        "entry_points": [
+          "validate_task_id",
+          "total_candidates",
+          "total_tasks"
+        ],
+        "export_functions": [
+          "validate_task_id",
+          "total_candidates",
+          "total_tasks"
+        ]
+      },
+      "command_handler": {
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_bizlogic\\command_handler.py",
+        "functions": {
+          "__init__": {
+            "line_number": 73,
+            "is_async": false,
+            "is_entry_point": true,
+            "called_functions": [
+              "BizLogicManager"
+            ]
+          },
+          "handle_command": {
+            "line_number": 79,
+            "is_async": true,
+            "is_entry_point": true,
+            "called_functions": [
+              "time.time",
+              "payload.get",
+              "payload.get",
+              "payload.get",
+              "payload.get",
+              "int",
+              "AICommandResult",
+              "ValueError",
+              "ValueError",
+              "options_dict.get",
+              "options_dict.get",
+              "options_dict.get",
+              "options_dict.get",
+              "options_dict.get",
+              "options_dict.get",
+              "options_dict.get",
+              "options_dict.get",
+              "options_dict.get",
+              "options_dict.get",
+              "AICommandResult",
+              "AICommandResult",
+              "datetime.fromtimestamp",
+              "datetime.now",
+              "time.time",
+              "scan_result.get",
+              "len",
+              "len",
+              "len",
+              "len",
+              "scan_result.get",
+              "datetime.fromtimestamp",
+              "datetime.now",
+              "str",
+              "datetime.fromtimestamp",
+              "datetime.now",
+              "scan_result.get",
+              "scan_result.get",
+              "scan_result.get",
+              "time.time",
+              "str",
+              "time.time",
+              "str",
+              "str",
+              "type",
+              "scan_result.get"
+            ]
+          }
+        },
+        "entry_points": [
+          "__init__",
+          "handle_command"
+        ],
+        "export_functions": [
+          "__init__",
+          "handle_command"
+        ]
+      },
+      "finding_helper": {
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_bizlogic\\finding_helper.py",
+        "functions": {
+          "create_bizlogic_finding": {
+            "line_number": 16,
+            "is_async": false,
+            "is_entry_point": true,
+            "called_functions": [
+              "Vulnerability",
+              "FindingTarget",
+              "FindingEvidence",
+              "FindingPayload",
+              "str",
+              "str",
+              "evidence_data.get",
+              "new_id",
+              "evidence_data.get",
+              "evidence_data.get"
+            ]
+          }
+        },
+        "entry_points": [
+          "create_bizlogic_finding"
+        ],
+        "export_functions": [
+          "create_bizlogic_finding"
+        ]
+      },
+      "price_manipulation_scanner": {
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_bizlogic\\price_manipulation_scanner.py",
+        "functions": {
+          "__init__": {
+            "line_number": 25,
+            "is_async": false,
+            "is_entry_point": true,
+            "called_functions": [
+              "logger.warning",
+              "len"
+            ]
+          },
+          "_verify_actual_price_change": {
+            "line_number": 43,
+            "is_async": false,
+            "is_entry_point": true,
+            "called_functions": [
+              "response_data.get",
+              "response_data.get",
+              "response_data.get",
+              "abs",
+              "float",
+              "float"
+            ]
+          },
+          "_verify_transaction_completed": {
+            "line_number": 87,
+            "is_async": true,
+            "is_entry_point": true,
+            "called_functions": [
+              "response_data.get",
+              "response_data.get",
+              "status.lower",
+              "status.lower",
+              "response_data.get",
+              "response_data.get",
+              "response_data.get",
+              "asyncio.sleep",
+              "client.get",
+              "check_response.json",
+              "logger.debug",
+              "check_data.get",
+              "check_data.get",
+              "final_status.lower"
+            ]
+          },
+          "_verify_user_privilege": {
+            "line_number": 153,
+            "is_async": false,
+            "is_entry_point": true,
+            "called_functions": [
+              "permission_matrix.get"
+            ]
+          },
+          "_detect_business_limits": {
+            "line_number": 187,
+            "is_async": false,
+            "is_entry_point": true,
+            "called_functions": [
+              "response_data.get",
+              "response_data.get",
+              "response_data.get",
+              "abs",
+              "max",
+              "abs",
+              "float",
+              "float",
+              "float"
+            ]
+          },
+          "test_negative_price": {
+            "line_number": 235,
+            "is_async": true,
+            "is_entry_point": true,
+            "called_functions": [
+              "httpx.AsyncClient",
+              "client.post",
+              "response.json",
+              "self._verify_actual_price_change",
+              "self._verify_user_privilege",
+              "privilege_check.get",
+              "findings.append",
+              "logger.warning",
+              "logger.debug",
+              "logger.exception",
+              "price_verification.get",
+              "logger.debug",
+              "response_data.get",
+              "response_data.get",
+              "logger.info",
+              "logger.info",
+              "self._verify_transaction_completed",
+              "transaction_verification.get",
+              "logger.debug",
+              "transaction_type.lower",
+              "price_verification.get",
+              "transaction_verification.get",
+              "json.dumps",
+              "price_verification.get",
+              "transaction_verification.get"
+            ]
+          },
+          "test_zero_price": {
+            "line_number": 319,
+            "is_async": true,
+            "is_entry_point": true,
+            "called_functions": [
+              "httpx.AsyncClient",
+              "client.post",
+              "response.json",
+              "self._verify_actual_price_change",
+              "self._verify_user_privilege",
+              "privilege_check.get",
+              "findings.append",
+              "logger.warning",
+              "logger.debug",
+              "logger.exception",
+              "price_verification.get",
+              "logger.debug",
+              "response_data.get",
+              "response_data.get",
+              "response_data.get",
+              "logger.info",
+              "logger.info",
+              "self._verify_transaction_completed",
+              "transaction_verification.get",
+              "logger.debug",
+              "response_data.get",
+              "transaction_verification.get",
+              "json.dumps",
+              "price_verification.get",
+              "transaction_verification.get"
+            ]
+          },
+          "test_price_tampering": {
+            "line_number": 397,
+            "is_async": true,
+            "is_entry_point": true,
+            "called_functions": [
+              "httpx.AsyncClient",
+              "client.post",
+              "response.json",
+              "self._verify_actual_price_change",
+              "self._verify_user_privilege",
+              "privilege_check.get",
+              "price_verification.get",
+              "findings.append",
+              "logger.warning",
+              "logger.debug",
+              "logger.exception",
+              "price_verification.get",
+              "logger.debug",
+              "logger.info",
+              "self._verify_transaction_completed",
+              "transaction_verification.get",
+              "logger.debug",
+              "transaction_verification.get",
+              "json.dumps",
+              "price_verification.get",
+              "transaction_verification.get"
+            ]
+          },
+          "test_overflow_price": {
+            "line_number": 489,
+            "is_async": true,
+            "is_entry_point": true,
+            "called_functions": [
+              "float",
+              "httpx.AsyncClient",
+              "client.post",
+              "findings.append",
+              "logger.warning",
+              "logger.debug"
+            ]
+          },
+          "run_all_tests": {
+            "line_number": 531,
+            "is_async": true,
+            "is_entry_point": true,
+            "called_functions": [
+              "logger.info",
+              "logger.info",
+              "asyncio.gather",
+              "isinstance",
+              "self.test_negative_price",
+              "self.test_zero_price",
+              "self.test_price_tampering",
+              "self.test_overflow_price",
+              "all_findings.extend",
+              "len"
+            ]
+          }
+        },
+        "entry_points": [
+          "__init__",
+          "_verify_actual_price_change",
+          "_verify_transaction_completed",
+          "_verify_user_privilege",
+          "_detect_business_limits",
+          "test_negative_price",
+          "test_zero_price",
+          "test_price_tampering",
+          "test_overflow_price",
+          "run_all_tests"
+        ],
+        "export_functions": [
+          "__init__",
+          "_verify_actual_price_change",
+          "_verify_transaction_completed",
+          "_verify_user_privilege",
+          "_detect_business_limits",
+          "test_negative_price",
+          "test_zero_price",
+          "test_price_tampering",
+          "test_overflow_price",
+          "run_all_tests"
+        ]
+      },
+      "race_condition_scanner": {
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_bizlogic\\race_condition_scanner.py",
+        "functions": {
+          "__init__": {
+            "line_number": 22,
+            "is_async": false,
+            "is_entry_point": true,
+            "called_functions": [
+              "logger.warning",
+              "len"
+            ]
+          },
+          "test_concurrent_requests": {
+            "line_number": 36,
+            "is_async": true,
+            "is_entry_point": true,
+            "called_functions": [
+              "httpx.AsyncClient",
+              "datetime.now",
+              "range",
+              "tasks.append",
+              "datetime.now",
+              "sum",
+              "method.upper",
+              "client.post",
+              "asyncio.gather",
+              "findings.append",
+              "logger.warning",
+              "logger.error",
+              "method.upper",
+              "client.get",
+              "client.request",
+              "isinstance"
+            ]
+          },
+          "test_balance_manipulation": {
+            "line_number": 104,
+            "is_async": true,
+            "is_entry_point": true,
+            "called_functions": [
+              "httpx.AsyncClient",
+              "client.post",
+              "sum",
+              "client.get",
+              "logger.warning",
+              "logger.error",
+              "range",
+              "asyncio.gather",
+              "client.get",
+              "logger.error",
+              "findings.append",
+              "logger.warning",
+              "balance_response.json",
+              "final_balance_response.json",
+              "isinstance"
+            ]
+          },
+          "test_coupon_reuse": {
+            "line_number": 182,
+            "is_async": true,
+            "is_entry_point": true,
+            "called_functions": [
+              "httpx.AsyncClient",
+              "client.post",
+              "sum",
+              "range",
+              "asyncio.gather",
+              "findings.append",
+              "logger.warning",
+              "logger.error",
+              "isinstance"
+            ]
+          },
+          "test_inventory_depletion": {
+            "line_number": 231,
+            "is_async": true,
+            "is_entry_point": true,
+            "called_functions": [
+              "httpx.AsyncClient",
+              "client.post",
+              "sum",
+              "range",
+              "asyncio.gather",
+              "findings.append",
+              "logger.warning",
+              "logger.error",
+              "isinstance"
+            ]
+          },
+          "run_all_tests": {
+            "line_number": 289,
+            "is_async": true,
+            "is_entry_point": true,
+            "called_functions": [
+              "logger.info",
+              "logger.info",
+              "asyncio.gather",
+              "isinstance",
+              "self.test_concurrent_requests",
+              "self.test_coupon_reuse",
+              "all_findings.extend",
+              "test_endpoints.get",
+              "test_endpoints.get",
+              "len"
+            ]
+          }
+        },
+        "entry_points": [
+          "__init__",
+          "test_concurrent_requests",
+          "test_balance_manipulation",
+          "test_coupon_reuse",
+          "test_inventory_depletion",
+          "run_all_tests"
+        ],
+        "export_functions": [
+          "__init__",
+          "test_concurrent_requests",
+          "test_balance_manipulation",
+          "test_coupon_reuse",
+          "test_inventory_depletion",
+          "run_all_tests"
+        ]
+      },
+      "workflow_bypass_scanner": {
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_bizlogic\\workflow_bypass_scanner.py",
+        "functions": {
+          "__init__": {
+            "line_number": 20,
+            "is_async": false,
+            "is_entry_point": true,
+            "called_functions": [
+              "logger.warning",
+              "len"
+            ]
+          },
+          "test_step_skipping": {
+            "line_number": 34,
+            "is_async": true,
+            "is_entry_point": true,
+            "called_functions": [
+              "httpx.AsyncClient",
+              "range",
+              "len",
+              "logger.error",
+              "client.get",
+              "findings.append",
+              "logger.warning"
+            ]
+          },
+          "test_direct_checkout": {
+            "line_number": 79,
+            "is_async": true,
+            "is_entry_point": true,
+            "called_functions": [
+              "httpx.AsyncClient",
+              "client.get",
+              "client.post",
+              "findings.append",
+              "logger.warning",
+              "logger.error",
+              "findings.append",
+              "logger.warning"
+            ]
+          },
+          "test_payment_bypass": {
+            "line_number": 133,
+            "is_async": true,
+            "is_entry_point": true,
+            "called_functions": [
+              "httpx.AsyncClient",
+              "client.post",
+              "response.json",
+              "logger.error",
+              "response_data.get",
+              "findings.append",
+              "logger.warning",
+              "response_data.get"
+            ]
+          },
+          "test_verification_bypass": {
+            "line_number": 185,
+            "is_async": true,
+            "is_entry_point": true,
+            "called_functions": [
+              "httpx.AsyncClient",
+              "client.post",
+              "register_response.json",
+              "logger.error",
+              "response_data.get",
+              "findings.append",
+              "logger.warning",
+              "asyncio.get_event_loop"
+            ]
+          },
+          "test_admin_access_bypass": {
+            "line_number": 238,
+            "is_async": true,
+            "is_entry_point": true,
+            "called_functions": [
+              "httpx.AsyncClient",
+              "client.get",
+              "any",
+              "logger.debug",
+              "findings.append",
+              "logger.warning"
+            ]
+          },
+          "run_all_tests": {
+            "line_number": 287,
+            "is_async": true,
+            "is_entry_point": true,
+            "called_functions": [
+              "logger.info",
+              "logger.info",
+              "asyncio.gather",
+              "isinstance",
+              "self.test_direct_checkout",
+              "self.test_payment_bypass",
+              "self.test_admin_access_bypass",
+              "all_findings.extend",
+              "len"
+            ]
+          }
+        },
+        "entry_points": [
+          "__init__",
+          "test_step_skipping",
+          "test_direct_checkout",
+          "test_payment_bypass",
+          "test_verification_bypass",
+          "test_admin_access_bypass",
+          "run_all_tests"
+        ],
+        "export_functions": [
+          "__init__",
+          "test_step_skipping",
+          "test_direct_checkout",
+          "test_payment_bypass",
+          "test_verification_bypass",
+          "test_admin_access_bypass",
+          "run_all_tests"
+        ]
+      },
+      "__init__": {
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_bizlogic\\integration_tools\\__init__.py",
+        "functions": {},
+        "entry_points": [],
+        "export_functions": []
+      },
+      "__main__": {
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_bizlogic\\__main__.py",
+        "functions": {
+          "mk_finding_dict": {
+            "line_number": 30,
+            "is_async": false,
+            "is_entry_point": false,
+            "called_functions": [
+              "create_bizlogic_finding",
+              "payload.model_dump",
+              "json.dumps",
+              "result.get",
+              "result.get",
+              "result.get"
+            ]
+          },
+          "run_price_test": {
+            "line_number": 52,
+            "is_async": true,
+            "is_entry_point": false,
+            "called_functions": [
+              "logger.info",
+              "PriceManipulationTester",
+              "tester.run_all_tests"
+            ]
+          },
+          "run_race_test": {
+            "line_number": 59,
+            "is_async": true,
+            "is_entry_point": false,
+            "called_functions": [
+              "logger.info",
+              "RaceConditionTester",
+              "tester.run_all_tests",
+              "json.loads",
+              "logger.error"
+            ]
+          },
+          "run_workflow_test": {
+            "line_number": 76,
+            "is_async": true,
+            "is_entry_point": false,
+            "called_functions": [
+              "logger.info",
+              "WorkflowBypassTester",
+              "tester.run_all_tests"
+            ]
+          },
+          "main": {
+            "line_number": 89,
+            "is_async": true,
+            "is_entry_point": true,
+            "called_functions": [
+              "argparse.ArgumentParser",
+              "parser.add_argument",
+              "parser.add_argument",
+              "parser.add_argument",
+              "parser.add_argument",
+              "parser.add_argument",
+              "parser.add_subparsers",
+              "subparsers.add_parser",
+              "price_parser.add_argument",
+              "subparsers.add_parser",
+              "race_parser.add_argument",
+              "subparsers.add_parser",
+              "flow_parser.add_argument",
+              "parser.parse_args",
+              "print",
+              "mk_finding_dict",
+              "len",
+              "json.dumps",
+              "logger.error",
+              "print",
+              "sys.exit",
+              "run_price_test",
+              "json.dumps",
+              "run_race_test",
+              "run_workflow_test",
+              "str",
+              "uuid.uuid4",
+              "uuid.uuid4"
+            ]
+          }
+        },
+        "entry_points": [
+          "main"
+        ],
+        "export_functions": [
+          "mk_finding_dict",
+          "run_price_test",
+          "run_race_test",
+          "run_workflow_test",
+          "main"
+        ]
+      },
+      "bizlogic_tools": {
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_bizlogic\\integration_tools\\bizlogic_tools.py",
+        "functions": {
+          "__post_init__": {
+            "line_number": 85,
+            "is_async": false,
+            "is_entry_point": true,
+            "called_functions": []
+          },
+          "__init__": {
+            "line_number": 98,
+            "is_async": false,
+            "is_entry_point": true,
+            "called_functions": []
+          },
+          "comprehensive_scan": {
+            "line_number": 103,
+            "is_async": true,
+            "is_entry_point": true,
+            "called_functions": [
+              "datetime.now",
+              "options.get",
+              "options.get",
+              "options.get",
+              "options.get",
+              "options.get",
+              "datetime.now",
+              "end_time.isoformat",
+              "RaceConditionScanner",
+              "options.get",
+              "options.get",
+              "PriceManipulationScanner",
+              "options.get",
+              "options.get",
+              "options.get",
+              "options.get",
+              "WorkflowBypassScanner",
+              "options.get",
+              "options.get",
+              "tasks.append",
+              "len",
+              "start_time.isoformat",
+              "tasks.append",
+              "tasks.append",
+              "tasks.append",
+              "tasks.append",
+              "tasks.append",
+              "self._wrap_workflow_test",
+              "asyncio.gather",
+              "isinstance",
+              "isinstance",
+              "len",
+              "len",
+              "self._wrap_race_condition_test",
+              "self._wrap_price_test",
+              "self._wrap_price_test",
+              "self._wrap_price_test",
+              "self._wrap_workflow_test",
+              "finding.get"
+            ]
+          },
+          "scan_sync": {
+            "line_number": 267,
+            "is_async": false,
+            "is_entry_point": true,
+            "called_functions": [
+              "asyncio.run",
+              "self.comprehensive_scan",
+              "str",
+              "asyncio.get_event_loop",
+              "loop.run_until_complete",
+              "self.comprehensive_scan"
+            ]
+          },
+          "scan": {
+            "line_number": 321,
+            "is_async": true,
+            "is_entry_point": true,
+            "called_functions": [
+              "self.comprehensive_scan"
+            ]
+          },
+          "_wrap_race_condition_test": {
+            "line_number": 355,
+            "is_async": true,
+            "is_entry_point": true,
+            "called_functions": [
+              "scanner.test_concurrent_requests"
+            ]
+          },
+          "_wrap_price_test": {
+            "line_number": 371,
+            "is_async": true,
+            "is_entry_point": true,
+            "called_functions": [
+              "test_func"
+            ]
+          },
+          "_wrap_workflow_test": {
+            "line_number": 383,
+            "is_async": true,
+            "is_entry_point": true,
+            "called_functions": [
+              "test_func"
+            ]
+          }
+        },
+        "entry_points": [
+          "__post_init__",
+          "__post_init__",
+          "__post_init__",
+          "__init__",
+          "comprehensive_scan",
+          "scan_sync",
+          "scan",
+          "_wrap_race_condition_test",
+          "_wrap_price_test",
+          "_wrap_workflow_test"
+        ],
+        "export_functions": [
+          "__post_init__",
+          "__post_init__",
+          "__post_init__",
+          "__init__",
+          "comprehensive_scan",
+          "scan_sync",
+          "scan",
+          "_wrap_race_condition_test",
+          "_wrap_price_test",
+          "_wrap_workflow_test"
+        ]
+      }
+    }
+  }
+}

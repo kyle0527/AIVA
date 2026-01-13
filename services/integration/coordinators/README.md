@@ -1,5 +1,27 @@
 # Integration Coordinators - 雙閉環協調器系統
 
+> ⚠️ **重要警告：此組件已實現但從未被使用**  
+> 
+> **實際驗證結果**（2026-01-11）：
+> - ❌ **從未被 AI 調用** - grep 搜索確認無任何調用實例
+> - ❌ **從未被 CLI 使用** - CLI Flow 系統不知道它的存在
+> - ✅ **AI 實際架構** - 直接使用 `subprocess + CLI + JSON`
+> 
+> **代碼驗證**：
+> ```python
+> # AI 實際執行方式（capability_orchestrator.py Line 880-920）
+> result = await process_manager.run_command(cli_cmd)
+> raw_output = json.loads(result["stdout"])  # ← 直接處理 JSON
+> # ❌ 完全沒有 coordinator.collect_result() 調用
+> ```
+> 
+> **文檔狀態**：
+> - 📚 本文檔記錄原始設計理念（優秀的雙閉環概念）
+> - 🔮 未來如需增強分析能力時可參考此設計
+> - ✅ 當前運行架構請參考：[../../AIVA_CLI_ARCHITECTURE_REFACTOR_PLAN.md](../../AIVA_CLI_ARCHITECTURE_REFACTOR_PLAN.md)
+
+---
+
 ## 📑 目錄
 
 - [概述](#概述)

@@ -1,0 +1,1834 @@
+{
+  "metadata": {
+    "generated_at": "2026-01-13T13:03:01.160745",
+    "total_modules": 11,
+    "total_flows": 172
+  },
+  "modules": {
+    "function_bizlogic": {
+      "name": "function_bizlogic",
+      "category": "features",
+      "info": {
+        "type": "business_logic",
+        "category": "logic_flaw",
+        "name": "業務邏輯漏洞"
+      },
+      "path": "module_analysis\\function_bizlogic",
+      "flow_count": 2,
+      "languages": [
+        "Python"
+      ],
+      "flows": [
+        {
+          "id": 1,
+          "path": [
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_bizlogic\\race_condition_scanner.py",
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_bizlogic\\integration_tools\\bizlogic_tools.py"
+          ],
+          "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_bizlogic\\race_condition_scanner.py",
+          "full_path": [
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_bizlogic\\race_condition_scanner.py",
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_bizlogic\\integration_tools\\bizlogic_tools.py"
+          ],
+          "length": 2,
+          "start": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_bizlogic\\race_condition_scanner.py",
+          "end": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_bizlogic\\integration_tools\\bizlogic_tools.py",
+          "target": "services/features/features_ready/function_bizlogic",
+          "module_name": "function_bizlogic",
+          "module_category": "features",
+          "module_info": {
+            "type": "business_logic",
+            "category": "logic_flaw",
+            "name": "業務邏輯漏洞"
+          },
+          "language": "Python"
+        },
+        {
+          "id": 2,
+          "path": [
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_bizlogic\\price_manipulation_scanner.py",
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_bizlogic\\__main__.py"
+          ],
+          "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_bizlogic\\price_manipulation_scanner.py",
+          "full_path": [
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_bizlogic\\price_manipulation_scanner.py",
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_bizlogic\\__main__.py"
+          ],
+          "length": 2,
+          "start": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_bizlogic\\price_manipulation_scanner.py",
+          "end": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_bizlogic\\__main__.py",
+          "target": "services/features/features_ready/function_bizlogic",
+          "module_name": "function_bizlogic",
+          "module_category": "features",
+          "module_info": {
+            "type": "business_logic",
+            "category": "logic_flaw",
+            "name": "業務邏輯漏洞"
+          },
+          "language": "Python"
+        }
+      ]
+    },
+    "function_idor": {
+      "name": "function_idor",
+      "category": "features",
+      "info": {
+        "type": "access_control",
+        "category": "authorization",
+        "name": "IDOR 漏洞檢測"
+      },
+      "path": "module_analysis\\function_idor",
+      "flow_count": 5,
+      "languages": [
+        "Python"
+      ],
+      "flows": [
+        {
+          "id": 1,
+          "path": [
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_idor\\smart_idor_detector.py",
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_idor\\worker.py"
+          ],
+          "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_idor\\smart_idor_detector.py",
+          "full_path": [
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_idor\\smart_idor_detector.py",
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_idor\\worker.py"
+          ],
+          "length": 2,
+          "start": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_idor\\smart_idor_detector.py",
+          "end": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_idor\\worker.py",
+          "target": "services/features/features_ready/function_idor",
+          "module_name": "function_idor",
+          "module_category": "features",
+          "module_info": {
+            "type": "access_control",
+            "category": "authorization",
+            "name": "IDOR 漏洞檢測"
+          },
+          "language": "Python"
+        },
+        {
+          "id": 2,
+          "path": [
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_idor\\engine\\idor_engine.py",
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_idor\\detector\\idor_detector.py"
+          ],
+          "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_idor\\engine\\idor_engine.py",
+          "full_path": [
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_idor\\engine\\idor_engine.py",
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_idor\\detector\\idor_detector.py"
+          ],
+          "length": 2,
+          "start": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_idor\\engine\\idor_engine.py",
+          "end": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_idor\\detector\\idor_detector.py",
+          "target": "services/features/features_ready/function_idor",
+          "module_name": "function_idor",
+          "module_category": "features",
+          "module_info": {
+            "type": "access_control",
+            "category": "authorization",
+            "name": "IDOR 漏洞檢測"
+          },
+          "language": "Python"
+        },
+        {
+          "id": 3,
+          "path": [
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_idor\\engine\\idor_engine.py",
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_idor\\detector\\idor_detector.py",
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_idor\\worker\\idor_worker.py"
+          ],
+          "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_idor\\engine\\idor_engine.py",
+          "full_path": [
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_idor\\engine\\idor_engine.py",
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_idor\\detector\\idor_detector.py",
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_idor\\worker\\idor_worker.py"
+          ],
+          "length": 3,
+          "start": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_idor\\engine\\idor_engine.py",
+          "end": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_idor\\worker\\idor_worker.py",
+          "target": "services/features/features_ready/function_idor",
+          "module_name": "function_idor",
+          "module_category": "features",
+          "module_info": {
+            "type": "access_control",
+            "category": "authorization",
+            "name": "IDOR 漏洞檢測"
+          },
+          "language": "Python"
+        },
+        {
+          "id": 4,
+          "path": [
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_idor\\enhanced_worker.py",
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_idor\\command_handler.py"
+          ],
+          "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_idor\\enhanced_worker.py",
+          "full_path": [
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_idor\\enhanced_worker.py",
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_idor\\command_handler.py"
+          ],
+          "length": 2,
+          "start": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_idor\\enhanced_worker.py",
+          "end": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_idor\\command_handler.py",
+          "target": "services/features/features_ready/function_idor",
+          "module_name": "function_idor",
+          "module_category": "features",
+          "module_info": {
+            "type": "access_control",
+            "category": "authorization",
+            "name": "IDOR 漏洞檢測"
+          },
+          "language": "Python"
+        },
+        {
+          "id": 5,
+          "path": [
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_idor\\enhanced_worker.py",
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_idor\\__main__.py"
+          ],
+          "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_idor\\enhanced_worker.py",
+          "full_path": [
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_idor\\enhanced_worker.py",
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_idor\\__main__.py"
+          ],
+          "length": 2,
+          "start": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_idor\\enhanced_worker.py",
+          "end": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_idor\\__main__.py",
+          "target": "services/features/features_ready/function_idor",
+          "module_name": "function_idor",
+          "module_category": "features",
+          "module_info": {
+            "type": "access_control",
+            "category": "authorization",
+            "name": "IDOR 漏洞檢測"
+          },
+          "language": "Python"
+        }
+      ]
+    },
+    "function_info_leak": {
+      "name": "function_info_leak",
+      "category": "features",
+      "info": {
+        "type": "information_disclosure",
+        "category": "data_protection",
+        "name": "信息洩露檢測"
+      },
+      "path": "module_analysis\\function_info_leak",
+      "flow_count": 0,
+      "languages": [],
+      "flows": []
+    },
+    "function_sqli": {
+      "name": "function_sqli",
+      "category": "features",
+      "info": {
+        "type": "injection",
+        "category": "database_security",
+        "name": "SQL 注入檢測"
+      },
+      "path": "module_analysis\\function_sqli",
+      "flow_count": 48,
+      "languages": [
+        "Python"
+      ],
+      "flows": [
+        {
+          "id": 1,
+          "path": [
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_sqli\\payload_wrapper_encoder.py",
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_sqli\\engines\\boolean_detection_engine.py"
+          ],
+          "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_sqli\\payload_wrapper_encoder.py",
+          "full_path": [
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_sqli\\payload_wrapper_encoder.py",
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_sqli\\engines\\boolean_detection_engine.py"
+          ],
+          "length": 2,
+          "start": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_sqli\\payload_wrapper_encoder.py",
+          "end": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_sqli\\engines\\boolean_detection_engine.py",
+          "target": "services/features/features_ready/function_sqli",
+          "module_name": "function_sqli",
+          "module_category": "features",
+          "module_info": {
+            "type": "injection",
+            "category": "database_security",
+            "name": "SQL 注入檢測"
+          },
+          "language": "Python"
+        },
+        {
+          "id": 2,
+          "path": [
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_sqli\\payload_wrapper_encoder.py",
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_sqli\\engines\\boolean_detection_engine.py",
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_sqli\\worker.py"
+          ],
+          "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_sqli\\payload_wrapper_encoder.py",
+          "full_path": [
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_sqli\\payload_wrapper_encoder.py",
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_sqli\\engines\\boolean_detection_engine.py",
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_sqli\\worker.py"
+          ],
+          "length": 3,
+          "start": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_sqli\\payload_wrapper_encoder.py",
+          "end": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_sqli\\worker.py",
+          "target": "services/features/features_ready/function_sqli",
+          "module_name": "function_sqli",
+          "module_category": "features",
+          "module_info": {
+            "type": "injection",
+            "category": "database_security",
+            "name": "SQL 注入檢測"
+          },
+          "language": "Python"
+        },
+        {
+          "id": 3,
+          "path": [
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_sqli\\payload_wrapper_encoder.py",
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_sqli\\engines\\boolean_detection_engine.py",
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_sqli\\worker.py",
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_sqli\\hackingtool_config.py"
+          ],
+          "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_sqli\\payload_wrapper_encoder.py",
+          "full_path": [
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_sqli\\payload_wrapper_encoder.py",
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_sqli\\engines\\boolean_detection_engine.py",
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_sqli\\worker.py",
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_sqli\\hackingtool_config.py"
+          ],
+          "length": 4,
+          "start": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_sqli\\payload_wrapper_encoder.py",
+          "end": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_sqli\\hackingtool_config.py",
+          "target": "services/features/features_ready/function_sqli",
+          "module_name": "function_sqli",
+          "module_category": "features",
+          "module_info": {
+            "type": "injection",
+            "category": "database_security",
+            "name": "SQL 注入檢測"
+          },
+          "language": "Python"
+        },
+        {
+          "id": 4,
+          "path": [
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_sqli\\payload_wrapper_encoder.py",
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_sqli\\engines\\boolean_detection_engine.py",
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_sqli\\worker.py",
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_sqli\\hackingtool_config.py",
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_sqli\\hackingtool_manager.py"
+          ],
+          "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_sqli\\payload_wrapper_encoder.py",
+          "full_path": [
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_sqli\\payload_wrapper_encoder.py",
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_sqli\\engines\\boolean_detection_engine.py",
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_sqli\\worker.py",
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_sqli\\hackingtool_config.py",
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_sqli\\hackingtool_manager.py"
+          ],
+          "length": 5,
+          "start": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_sqli\\payload_wrapper_encoder.py",
+          "end": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_sqli\\hackingtool_manager.py",
+          "target": "services/features/features_ready/function_sqli",
+          "module_name": "function_sqli",
+          "module_category": "features",
+          "module_info": {
+            "type": "injection",
+            "category": "database_security",
+            "name": "SQL 注入檢測"
+          },
+          "language": "Python"
+        },
+        {
+          "id": 5,
+          "path": [
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_sqli\\payload_wrapper_encoder.py",
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_sqli\\engines\\boolean_detection_engine.py",
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_sqli\\worker.py",
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_sqli\\hackingtool_sql_cli.py"
+          ],
+          "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_sqli\\payload_wrapper_encoder.py",
+          "full_path": [
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_sqli\\payload_wrapper_encoder.py",
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_sqli\\engines\\boolean_detection_engine.py",
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_sqli\\worker.py",
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_sqli\\hackingtool_sql_cli.py"
+          ],
+          "length": 4,
+          "start": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_sqli\\payload_wrapper_encoder.py",
+          "end": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_sqli\\hackingtool_sql_cli.py",
+          "target": "services/features/features_ready/function_sqli",
+          "module_name": "function_sqli",
+          "module_category": "features",
+          "module_info": {
+            "type": "injection",
+            "category": "database_security",
+            "name": "SQL 注入檢測"
+          },
+          "language": "Python"
+        },
+        {
+          "id": 6,
+          "path": [
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_sqli\\payload_wrapper_encoder.py",
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_sqli\\engines\\boolean_detection_engine.py",
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_sqli\\worker.py",
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_sqli\\engines\\hackingtool_engine.py"
+          ],
+          "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_sqli\\payload_wrapper_encoder.py",
+          "full_path": [
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_sqli\\payload_wrapper_encoder.py",
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_sqli\\engines\\boolean_detection_engine.py",
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_sqli\\worker.py",
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_sqli\\engines\\hackingtool_engine.py"
+          ],
+          "length": 4,
+          "start": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_sqli\\payload_wrapper_encoder.py",
+          "end": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_sqli\\engines\\hackingtool_engine.py",
+          "target": "services/features/features_ready/function_sqli",
+          "module_name": "function_sqli",
+          "module_category": "features",
+          "module_info": {
+            "type": "injection",
+            "category": "database_security",
+            "name": "SQL 注入檢測"
+          },
+          "language": "Python"
+        },
+        {
+          "id": 7,
+          "path": [
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_sqli\\payload_wrapper_encoder.py",
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_sqli\\engines\\boolean_detection_engine.py",
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_sqli\\worker.py",
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_sqli\\integration_tools\\bounty_hunter.py"
+          ],
+          "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_sqli\\payload_wrapper_encoder.py",
+          "full_path": [
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_sqli\\payload_wrapper_encoder.py",
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_sqli\\engines\\boolean_detection_engine.py",
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_sqli\\worker.py",
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_sqli\\integration_tools\\bounty_hunter.py"
+          ],
+          "length": 4,
+          "start": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_sqli\\payload_wrapper_encoder.py",
+          "end": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_sqli\\integration_tools\\bounty_hunter.py",
+          "target": "services/features/features_ready/function_sqli",
+          "module_name": "function_sqli",
+          "module_category": "features",
+          "module_info": {
+            "type": "injection",
+            "category": "database_security",
+            "name": "SQL 注入檢測"
+          },
+          "language": "Python"
+        },
+        {
+          "id": 8,
+          "path": [
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_sqli\\payload_wrapper_encoder.py",
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_sqli\\engines\\boolean_detection_engine.py",
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_sqli\\worker.py",
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_sqli\\integration_tools\\sql_tools.py"
+          ],
+          "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_sqli\\payload_wrapper_encoder.py",
+          "full_path": [
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_sqli\\payload_wrapper_encoder.py",
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_sqli\\engines\\boolean_detection_engine.py",
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_sqli\\worker.py",
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_sqli\\integration_tools\\sql_tools.py"
+          ],
+          "length": 4,
+          "start": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_sqli\\payload_wrapper_encoder.py",
+          "end": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_sqli\\integration_tools\\sql_tools.py",
+          "target": "services/features/features_ready/function_sqli",
+          "module_name": "function_sqli",
+          "module_category": "features",
+          "module_info": {
+            "type": "injection",
+            "category": "database_security",
+            "name": "SQL 注入檢測"
+          },
+          "language": "Python"
+        },
+        {
+          "id": 9,
+          "path": [
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_sqli\\payload_wrapper_encoder.py",
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_sqli\\engines\\boolean_detection_engine.py",
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_sqli\\detector\\sqli_detector.py"
+          ],
+          "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_sqli\\payload_wrapper_encoder.py",
+          "full_path": [
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_sqli\\payload_wrapper_encoder.py",
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_sqli\\engines\\boolean_detection_engine.py",
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_sqli\\detector\\sqli_detector.py"
+          ],
+          "length": 3,
+          "start": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_sqli\\payload_wrapper_encoder.py",
+          "end": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_sqli\\detector\\sqli_detector.py",
+          "target": "services/features/features_ready/function_sqli",
+          "module_name": "function_sqli",
+          "module_category": "features",
+          "module_info": {
+            "type": "injection",
+            "category": "database_security",
+            "name": "SQL 注入檢測"
+          },
+          "language": "Python"
+        },
+        {
+          "id": 10,
+          "path": [
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_sqli\\payload_wrapper_encoder.py",
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_sqli\\engines\\boolean_detection_engine.py",
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_sqli\\engines\\error_detection_engine.py"
+          ],
+          "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_sqli\\payload_wrapper_encoder.py",
+          "full_path": [
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_sqli\\payload_wrapper_encoder.py",
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_sqli\\engines\\boolean_detection_engine.py",
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_sqli\\engines\\error_detection_engine.py"
+          ],
+          "length": 3,
+          "start": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_sqli\\payload_wrapper_encoder.py",
+          "end": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_sqli\\engines\\error_detection_engine.py",
+          "target": "services/features/features_ready/function_sqli",
+          "module_name": "function_sqli",
+          "module_category": "features",
+          "module_info": {
+            "type": "injection",
+            "category": "database_security",
+            "name": "SQL 注入檢測"
+          },
+          "language": "Python"
+        }
+      ]
+    },
+    "function_ssrf": {
+      "name": "function_ssrf",
+      "category": "features",
+      "info": {
+        "type": "ssrf",
+        "category": "network_security",
+        "name": "SSRF 漏洞檢測"
+      },
+      "path": "module_analysis\\function_ssrf",
+      "flow_count": 19,
+      "languages": [
+        "Python"
+      ],
+      "flows": [
+        {
+          "id": 1,
+          "path": [
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\result_publisher.py",
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\worker.py"
+          ],
+          "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\result_publisher.py",
+          "full_path": [
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\result_publisher.py",
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\worker.py"
+          ],
+          "length": 2,
+          "start": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\result_publisher.py",
+          "end": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\worker.py",
+          "target": "services/features/features_ready/function_ssrf",
+          "module_name": "function_ssrf",
+          "module_category": "features",
+          "module_info": {
+            "type": "ssrf",
+            "category": "network_security",
+            "name": "SSRF 漏洞檢測"
+          },
+          "language": "Python"
+        },
+        {
+          "id": 2,
+          "path": [
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\result_publisher.py",
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\worker.py",
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\command_handler.py"
+          ],
+          "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\result_publisher.py",
+          "full_path": [
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\result_publisher.py",
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\worker.py",
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\command_handler.py"
+          ],
+          "length": 3,
+          "start": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\result_publisher.py",
+          "end": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\command_handler.py",
+          "target": "services/features/features_ready/function_ssrf",
+          "module_name": "function_ssrf",
+          "module_category": "features",
+          "module_info": {
+            "type": "ssrf",
+            "category": "network_security",
+            "name": "SSRF 漏洞檢測"
+          },
+          "language": "Python"
+        },
+        {
+          "id": 3,
+          "path": [
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\result_publisher.py",
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\worker.py",
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\__main__.py"
+          ],
+          "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\result_publisher.py",
+          "full_path": [
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\result_publisher.py",
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\worker.py",
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\__main__.py"
+          ],
+          "length": 3,
+          "start": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\result_publisher.py",
+          "end": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\__main__.py",
+          "target": "services/features/features_ready/function_ssrf",
+          "module_name": "function_ssrf",
+          "module_category": "features",
+          "module_info": {
+            "type": "ssrf",
+            "category": "network_security",
+            "name": "SSRF 漏洞檢測"
+          },
+          "language": "Python"
+        },
+        {
+          "id": 4,
+          "path": [
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\internal_address_detector.py",
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\smart_ssrf_detector.py"
+          ],
+          "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\internal_address_detector.py",
+          "full_path": [
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\internal_address_detector.py",
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\smart_ssrf_detector.py"
+          ],
+          "length": 2,
+          "start": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\internal_address_detector.py",
+          "end": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\smart_ssrf_detector.py",
+          "target": "services/features/features_ready/function_ssrf",
+          "module_name": "function_ssrf",
+          "module_category": "features",
+          "module_info": {
+            "type": "ssrf",
+            "category": "network_security",
+            "name": "SSRF 漏洞檢測"
+          },
+          "language": "Python"
+        },
+        {
+          "id": 5,
+          "path": [
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\internal_address_detector.py",
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\worker.py"
+          ],
+          "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\internal_address_detector.py",
+          "full_path": [
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\internal_address_detector.py",
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\worker.py"
+          ],
+          "length": 2,
+          "start": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\internal_address_detector.py",
+          "end": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\worker.py",
+          "target": "services/features/features_ready/function_ssrf",
+          "module_name": "function_ssrf",
+          "module_category": "features",
+          "module_info": {
+            "type": "ssrf",
+            "category": "network_security",
+            "name": "SSRF 漏洞檢測"
+          },
+          "language": "Python"
+        },
+        {
+          "id": 6,
+          "path": [
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\internal_address_detector.py",
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\worker.py",
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\command_handler.py"
+          ],
+          "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\internal_address_detector.py",
+          "full_path": [
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\internal_address_detector.py",
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\worker.py",
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\command_handler.py"
+          ],
+          "length": 3,
+          "start": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\internal_address_detector.py",
+          "end": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\command_handler.py",
+          "target": "services/features/features_ready/function_ssrf",
+          "module_name": "function_ssrf",
+          "module_category": "features",
+          "module_info": {
+            "type": "ssrf",
+            "category": "network_security",
+            "name": "SSRF 漏洞檢測"
+          },
+          "language": "Python"
+        },
+        {
+          "id": 7,
+          "path": [
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\internal_address_detector.py",
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\worker.py",
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\__main__.py"
+          ],
+          "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\internal_address_detector.py",
+          "full_path": [
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\internal_address_detector.py",
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\worker.py",
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\__main__.py"
+          ],
+          "length": 3,
+          "start": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\internal_address_detector.py",
+          "end": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\__main__.py",
+          "target": "services/features/features_ready/function_ssrf",
+          "module_name": "function_ssrf",
+          "module_category": "features",
+          "module_info": {
+            "type": "ssrf",
+            "category": "network_security",
+            "name": "SSRF 漏洞檢測"
+          },
+          "language": "Python"
+        },
+        {
+          "id": 8,
+          "path": [
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\internal_address_detector.py",
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\worker\\ssrf_worker.py"
+          ],
+          "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\internal_address_detector.py",
+          "full_path": [
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\internal_address_detector.py",
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\worker\\ssrf_worker.py"
+          ],
+          "length": 2,
+          "start": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\internal_address_detector.py",
+          "end": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\worker\\ssrf_worker.py",
+          "target": "services/features/features_ready/function_ssrf",
+          "module_name": "function_ssrf",
+          "module_category": "features",
+          "module_info": {
+            "type": "ssrf",
+            "category": "network_security",
+            "name": "SSRF 漏洞檢測"
+          },
+          "language": "Python"
+        },
+        {
+          "id": 9,
+          "path": [
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\engine\\ssrf_engine.py",
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\detector\\ssrf_detector.py"
+          ],
+          "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\engine\\ssrf_engine.py",
+          "full_path": [
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\engine\\ssrf_engine.py",
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\detector\\ssrf_detector.py"
+          ],
+          "length": 2,
+          "start": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\engine\\ssrf_engine.py",
+          "end": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\detector\\ssrf_detector.py",
+          "target": "services/features/features_ready/function_ssrf",
+          "module_name": "function_ssrf",
+          "module_category": "features",
+          "module_info": {
+            "type": "ssrf",
+            "category": "network_security",
+            "name": "SSRF 漏洞檢測"
+          },
+          "language": "Python"
+        },
+        {
+          "id": 10,
+          "path": [
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\dns_rebinding_detector.py",
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\param_semantics_analyzer.py"
+          ],
+          "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\dns_rebinding_detector.py",
+          "full_path": [
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\dns_rebinding_detector.py",
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\param_semantics_analyzer.py"
+          ],
+          "length": 2,
+          "start": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\dns_rebinding_detector.py",
+          "end": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\param_semantics_analyzer.py",
+          "target": "services/features/features_ready/function_ssrf",
+          "module_name": "function_ssrf",
+          "module_category": "features",
+          "module_info": {
+            "type": "ssrf",
+            "category": "network_security",
+            "name": "SSRF 漏洞檢測"
+          },
+          "language": "Python"
+        }
+      ]
+    },
+    "function_xss": {
+      "name": "function_xss",
+      "category": "features",
+      "info": {
+        "type": "injection",
+        "category": "web_security",
+        "name": "XSS 漏洞檢測"
+      },
+      "path": "module_analysis\\function_xss",
+      "flow_count": 83,
+      "languages": [
+        "Python"
+      ],
+      "flows": [
+        {
+          "id": 1,
+          "path": [
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_xss\\external_tools\\XSS-LOADER\\entry.py",
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_xss\\external_tools\\XSS-LOADER\\payloader.py"
+          ],
+          "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_xss\\external_tools\\XSS-LOADER\\entry.py",
+          "full_path": [
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_xss\\external_tools\\XSS-LOADER\\entry.py",
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_xss\\external_tools\\XSS-LOADER\\payloader.py"
+          ],
+          "length": 2,
+          "start": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_xss\\external_tools\\XSS-LOADER\\entry.py",
+          "end": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_xss\\external_tools\\XSS-LOADER\\payloader.py",
+          "target": "services/features/features_ready/function_xss",
+          "module_name": "function_xss",
+          "module_category": "features",
+          "module_info": {
+            "type": "injection",
+            "category": "web_security",
+            "name": "XSS 漏洞檢測"
+          },
+          "language": "Python"
+        },
+        {
+          "id": 2,
+          "path": [
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_xss\\payload_generator.py",
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_xss\\worker.py"
+          ],
+          "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_xss\\payload_generator.py",
+          "full_path": [
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_xss\\payload_generator.py",
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_xss\\worker.py"
+          ],
+          "length": 2,
+          "start": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_xss\\payload_generator.py",
+          "end": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_xss\\worker.py",
+          "target": "services/features/features_ready/function_xss",
+          "module_name": "function_xss",
+          "module_category": "features",
+          "module_info": {
+            "type": "injection",
+            "category": "web_security",
+            "name": "XSS 漏洞檢測"
+          },
+          "language": "Python"
+        },
+        {
+          "id": 3,
+          "path": [
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_xss\\payload_generator.py",
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_xss\\worker.py",
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_xss\\command_handler.py"
+          ],
+          "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_xss\\payload_generator.py",
+          "full_path": [
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_xss\\payload_generator.py",
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_xss\\worker.py",
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_xss\\command_handler.py"
+          ],
+          "length": 3,
+          "start": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_xss\\payload_generator.py",
+          "end": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_xss\\command_handler.py",
+          "target": "services/features/features_ready/function_xss",
+          "module_name": "function_xss",
+          "module_category": "features",
+          "module_info": {
+            "type": "injection",
+            "category": "web_security",
+            "name": "XSS 漏洞檢測"
+          },
+          "language": "Python"
+        },
+        {
+          "id": 4,
+          "path": [
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_xss\\payload_generator.py",
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_xss\\worker.py",
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_xss\\__main__.py"
+          ],
+          "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_xss\\payload_generator.py",
+          "full_path": [
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_xss\\payload_generator.py",
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_xss\\worker.py",
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_xss\\__main__.py"
+          ],
+          "length": 3,
+          "start": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_xss\\payload_generator.py",
+          "end": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_xss\\__main__.py",
+          "target": "services/features/features_ready/function_xss",
+          "module_name": "function_xss",
+          "module_category": "features",
+          "module_info": {
+            "type": "injection",
+            "category": "web_security",
+            "name": "XSS 漏洞檢測"
+          },
+          "language": "Python"
+        },
+        {
+          "id": 5,
+          "path": [
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_xss\\payload_generator.py",
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_xss\\worker.py",
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_xss\\integration_tools\\xss_tools.py"
+          ],
+          "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_xss\\payload_generator.py",
+          "full_path": [
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_xss\\payload_generator.py",
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_xss\\worker.py",
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_xss\\integration_tools\\xss_tools.py"
+          ],
+          "length": 3,
+          "start": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_xss\\payload_generator.py",
+          "end": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_xss\\integration_tools\\xss_tools.py",
+          "target": "services/features/features_ready/function_xss",
+          "module_name": "function_xss",
+          "module_category": "features",
+          "module_info": {
+            "type": "injection",
+            "category": "web_security",
+            "name": "XSS 漏洞檢測"
+          },
+          "language": "Python"
+        },
+        {
+          "id": 6,
+          "path": [
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_xss\\payload_generator.py",
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_xss\\worker.py",
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_xss\\external_tools\\XSStrike\\xsstrike.py"
+          ],
+          "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_xss\\payload_generator.py",
+          "full_path": [
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_xss\\payload_generator.py",
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_xss\\worker.py",
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_xss\\external_tools\\XSStrike\\xsstrike.py"
+          ],
+          "length": 3,
+          "start": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_xss\\payload_generator.py",
+          "end": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_xss\\external_tools\\XSStrike\\xsstrike.py",
+          "target": "services/features/features_ready/function_xss",
+          "module_name": "function_xss",
+          "module_category": "features",
+          "module_info": {
+            "type": "injection",
+            "category": "web_security",
+            "name": "XSS 漏洞檢測"
+          },
+          "language": "Python"
+        },
+        {
+          "id": 7,
+          "path": [
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_xss\\payload_generator.py",
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_xss\\worker.py",
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_xss\\external_tools\\XSStrike\\core\\photon.py"
+          ],
+          "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_xss\\payload_generator.py",
+          "full_path": [
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_xss\\payload_generator.py",
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_xss\\worker.py",
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_xss\\external_tools\\XSStrike\\core\\photon.py"
+          ],
+          "length": 3,
+          "start": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_xss\\payload_generator.py",
+          "end": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_xss\\external_tools\\XSStrike\\core\\photon.py",
+          "target": "services/features/features_ready/function_xss",
+          "module_name": "function_xss",
+          "module_category": "features",
+          "module_info": {
+            "type": "injection",
+            "category": "web_security",
+            "name": "XSS 漏洞檢測"
+          },
+          "language": "Python"
+        },
+        {
+          "id": 8,
+          "path": [
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_xss\\payload_generator.py",
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_xss\\worker.py",
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_xss\\external_tools\\XSStrike\\core\\updater.py"
+          ],
+          "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_xss\\payload_generator.py",
+          "full_path": [
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_xss\\payload_generator.py",
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_xss\\worker.py",
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_xss\\external_tools\\XSStrike\\core\\updater.py"
+          ],
+          "length": 3,
+          "start": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_xss\\payload_generator.py",
+          "end": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_xss\\external_tools\\XSStrike\\core\\updater.py",
+          "target": "services/features/features_ready/function_xss",
+          "module_name": "function_xss",
+          "module_category": "features",
+          "module_info": {
+            "type": "injection",
+            "category": "web_security",
+            "name": "XSS 漏洞檢測"
+          },
+          "language": "Python"
+        },
+        {
+          "id": 9,
+          "path": [
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_xss\\payload_generator.py",
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_xss\\worker.py",
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_xss\\external_tools\\XSStrike\\modes\\bruteforcer.py"
+          ],
+          "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_xss\\payload_generator.py",
+          "full_path": [
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_xss\\payload_generator.py",
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_xss\\worker.py",
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_xss\\external_tools\\XSStrike\\modes\\bruteforcer.py"
+          ],
+          "length": 3,
+          "start": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_xss\\payload_generator.py",
+          "end": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_xss\\external_tools\\XSStrike\\modes\\bruteforcer.py",
+          "target": "services/features/features_ready/function_xss",
+          "module_name": "function_xss",
+          "module_category": "features",
+          "module_info": {
+            "type": "injection",
+            "category": "web_security",
+            "name": "XSS 漏洞檢測"
+          },
+          "language": "Python"
+        },
+        {
+          "id": 10,
+          "path": [
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_xss\\payload_generator.py",
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_xss\\worker.py",
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_xss\\external_tools\\XSStrike\\modes\\scan.py"
+          ],
+          "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_xss\\payload_generator.py",
+          "full_path": [
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_xss\\payload_generator.py",
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_xss\\worker.py",
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_xss\\external_tools\\XSStrike\\modes\\scan.py"
+          ],
+          "length": 3,
+          "start": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_xss\\payload_generator.py",
+          "end": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_xss\\external_tools\\XSStrike\\modes\\scan.py",
+          "target": "services/features/features_ready/function_xss",
+          "module_name": "function_xss",
+          "module_category": "features",
+          "module_info": {
+            "type": "injection",
+            "category": "web_security",
+            "name": "XSS 漏洞檢測"
+          },
+          "language": "Python"
+        }
+      ]
+    },
+    "function_crypto": {
+      "name": "function_crypto",
+      "category": "features",
+      "info": {
+        "type": "cryptographic",
+        "category": "encryption",
+        "name": "加密相關漏洞"
+      },
+      "path": "services\\features\\features_ready\\function_crypto\\rust_core\\fixed_analysis",
+      "flow_count": 4,
+      "languages": [
+        "Rust"
+      ],
+      "flows": [
+        {
+          "classifications": [
+            {
+              "component_type": "程式組件",
+              "description": "main - Rust 功能",
+              "module": "rust_module",
+              "script": "main"
+            },
+            {
+              "component_type": "程式組件",
+              "description": "scan_javascript - Rust 功能",
+              "module": "rust_module",
+              "script": "scan_javascript"
+            }
+          ],
+          "cli_command": "cargo run --bin scan_javascript",
+          "end": "scan_javascript",
+          "full_path": [
+            ".\\src\\main.rs",
+            ".\\src\\js_crypto_analyzer.rs"
+          ],
+          "func_names": [
+            "main",
+            "scan_javascript"
+          ],
+          "id": 1,
+          "language": "Rust",
+          "length": 2,
+          "path": [
+            "main",
+            "scan_javascript"
+          ],
+          "start": "main",
+          "structured_tags": [
+            "language:rust",
+            "type:程式"
+          ],
+          "module_name": "function_crypto",
+          "module_category": "features",
+          "module_info": {
+            "type": "cryptographic",
+            "category": "encryption",
+            "name": "加密相關漏洞"
+          }
+        },
+        {
+          "classifications": [
+            {
+              "component_type": "程式組件",
+              "description": "main - Rust 功能",
+              "module": "rust_module",
+              "script": "main"
+            },
+            {
+              "component_type": "程式組件",
+              "description": "analyze_tls - Rust 功能",
+              "module": "rust_module",
+              "script": "analyze_tls"
+            }
+          ],
+          "cli_command": "cargo run --bin analyze_tls",
+          "end": "analyze_tls",
+          "full_path": [
+            ".\\src\\main.rs",
+            ".\\src\\tls_analyzer.rs"
+          ],
+          "func_names": [
+            "main",
+            "analyze_tls"
+          ],
+          "id": 2,
+          "language": "Rust",
+          "length": 2,
+          "path": [
+            "main",
+            "analyze_tls"
+          ],
+          "start": "main",
+          "structured_tags": [
+            "language:rust",
+            "type:程式"
+          ],
+          "module_name": "function_crypto",
+          "module_category": "features",
+          "module_info": {
+            "type": "cryptographic",
+            "category": "encryption",
+            "name": "加密相關漏洞"
+          }
+        },
+        {
+          "classifications": [
+            {
+              "component_type": "程式組件",
+              "description": "main - Rust 功能",
+              "module": "rust_module",
+              "script": "main"
+            },
+            {
+              "component_type": "程式組件",
+              "description": "analyze_cookies - Rust 功能",
+              "module": "rust_module",
+              "script": "analyze_cookies"
+            }
+          ],
+          "cli_command": "cargo run --bin analyze_cookies",
+          "end": "analyze_cookies",
+          "full_path": [
+            ".\\src\\main.rs",
+            ".\\src\\cookie_analyzer.rs"
+          ],
+          "func_names": [
+            "main",
+            "analyze_cookies"
+          ],
+          "id": 3,
+          "language": "Rust",
+          "length": 2,
+          "path": [
+            "main",
+            "analyze_cookies"
+          ],
+          "start": "main",
+          "structured_tags": [
+            "language:rust",
+            "type:程式"
+          ],
+          "module_name": "function_crypto",
+          "module_category": "features",
+          "module_info": {
+            "type": "cryptographic",
+            "category": "encryption",
+            "name": "加密相關漏洞"
+          }
+        },
+        {
+          "classifications": [
+            {
+              "component_type": "程式組件",
+              "description": "main - Rust 功能",
+              "module": "rust_module",
+              "script": "main"
+            },
+            {
+              "component_type": "程式組件",
+              "description": "analyze_headers - Rust 功能",
+              "module": "rust_module",
+              "script": "analyze_headers"
+            }
+          ],
+          "cli_command": "cargo run --bin analyze_headers",
+          "end": "analyze_headers",
+          "full_path": [
+            ".\\src\\main.rs",
+            ".\\src\\header_analyzer.rs"
+          ],
+          "func_names": [
+            "main",
+            "analyze_headers"
+          ],
+          "id": 4,
+          "language": "Rust",
+          "length": 2,
+          "path": [
+            "main",
+            "analyze_headers"
+          ],
+          "start": "main",
+          "structured_tags": [
+            "language:rust",
+            "type:程式"
+          ],
+          "module_name": "function_crypto",
+          "module_category": "features",
+          "module_info": {
+            "type": "cryptographic",
+            "category": "encryption",
+            "name": "加密相關漏洞"
+          }
+        }
+      ]
+    },
+    "function_authn_go": {
+      "name": "function_authn_go",
+      "category": "features",
+      "info": {
+        "type": "authentication",
+        "category": "identity",
+        "name": "身份驗證"
+      },
+      "path": "services\\features\\features_in_development\\function_authn_go\\analysis_output",
+      "flow_count": 4,
+      "languages": [
+        "Go"
+      ],
+      "flows": [
+        {
+          "classifications": [
+            {
+              "component_type": "程式組件",
+              "description": "main - Go 功能",
+              "module": "go_module",
+              "script": "main"
+            },
+            {
+              "component_type": "程式組件",
+              "description": "DialBroker - Go 功能",
+              "module": "go_module",
+              "script": "DialBroker"
+            }
+          ],
+          "cli_command": "go run c:\\D\\fold7\\AIVA-git\\services\\features\\features_in_development\\function_authn_go\\internal\\amqp.go",
+          "end": "DialBroker",
+          "full_path": [
+            "c:\\D\\fold7\\AIVA-git\\services\\features\\features_in_development\\function_authn_go\\cmd\\worker\\main.go",
+            "c:\\D\\fold7\\AIVA-git\\services\\features\\features_in_development\\function_authn_go\\internal\\amqp.go"
+          ],
+          "func_names": [
+            "main",
+            "DialBroker"
+          ],
+          "id": 1,
+          "language": "Go",
+          "length": 2,
+          "path": [
+            "main",
+            "DialBroker"
+          ],
+          "start": "main",
+          "structured_tags": [
+            "language:go",
+            "type:程式"
+          ],
+          "module_name": "function_authn_go",
+          "module_category": "features",
+          "module_info": {
+            "type": "authentication",
+            "category": "identity",
+            "name": "身份驗證"
+          }
+        },
+        {
+          "classifications": [
+            {
+              "component_type": "程式組件",
+              "description": "main - Go 功能",
+              "module": "go_module",
+              "script": "main"
+            },
+            {
+              "component_type": "程式組件",
+              "description": "TopicFromEnv - Go 功能",
+              "module": "go_module",
+              "script": "TopicFromEnv"
+            }
+          ],
+          "cli_command": "go run c:\\D\\fold7\\AIVA-git\\services\\features\\features_in_development\\function_authn_go\\internal\\amqp.go",
+          "end": "TopicFromEnv",
+          "full_path": [
+            "c:\\D\\fold7\\AIVA-git\\services\\features\\features_in_development\\function_authn_go\\cmd\\worker\\main.go",
+            "c:\\D\\fold7\\AIVA-git\\services\\features\\features_in_development\\function_authn_go\\internal\\amqp.go"
+          ],
+          "func_names": [
+            "main",
+            "TopicFromEnv"
+          ],
+          "id": 2,
+          "language": "Go",
+          "length": 2,
+          "path": [
+            "main",
+            "TopicFromEnv"
+          ],
+          "start": "main",
+          "structured_tags": [
+            "language:go",
+            "type:程式"
+          ],
+          "module_name": "function_authn_go",
+          "module_category": "features",
+          "module_info": {
+            "type": "authentication",
+            "category": "identity",
+            "name": "身份驗證"
+          }
+        },
+        {
+          "classifications": [
+            {
+              "component_type": "程式組件",
+              "description": "main - Go 功能",
+              "module": "go_module",
+              "script": "main"
+            },
+            {
+              "component_type": "程式組件",
+              "description": "DefaultConfig - Go 功能",
+              "module": "go_module",
+              "script": "DefaultConfig"
+            }
+          ],
+          "cli_command": "go run c:\\D\\fold7\\AIVA-git\\services\\features\\features_in_development\\function_authn_go\\internal\\config.go",
+          "end": "DefaultConfig",
+          "full_path": [
+            "c:\\D\\fold7\\AIVA-git\\services\\features\\features_in_development\\function_authn_go\\cmd\\worker\\main.go",
+            "c:\\D\\fold7\\AIVA-git\\services\\features\\features_in_development\\function_authn_go\\internal\\config.go"
+          ],
+          "func_names": [
+            "main",
+            "DefaultConfig"
+          ],
+          "id": 3,
+          "language": "Go",
+          "length": 2,
+          "path": [
+            "main",
+            "DefaultConfig"
+          ],
+          "start": "main",
+          "structured_tags": [
+            "language:go",
+            "type:程式"
+          ],
+          "module_name": "function_authn_go",
+          "module_category": "features",
+          "module_info": {
+            "type": "authentication",
+            "category": "identity",
+            "name": "身份驗證"
+          }
+        },
+        {
+          "classifications": [
+            {
+              "component_type": "程式組件",
+              "description": "main - Go 功能",
+              "module": "go_module",
+              "script": "main"
+            },
+            {
+              "component_type": "程式組件",
+              "description": "NewAuthnEngine - Go 功能",
+              "module": "go_module",
+              "script": "NewAuthnEngine"
+            }
+          ],
+          "cli_command": "go run c:\\D\\fold7\\AIVA-git\\services\\features\\features_in_development\\function_authn_go\\internal\\engine.go",
+          "end": "NewAuthnEngine",
+          "full_path": [
+            "c:\\D\\fold7\\AIVA-git\\services\\features\\features_in_development\\function_authn_go\\cmd\\worker\\main.go",
+            "c:\\D\\fold7\\AIVA-git\\services\\features\\features_in_development\\function_authn_go\\internal\\engine.go"
+          ],
+          "func_names": [
+            "main",
+            "NewAuthnEngine"
+          ],
+          "id": 4,
+          "language": "Go",
+          "length": 2,
+          "path": [
+            "main",
+            "NewAuthnEngine"
+          ],
+          "start": "main",
+          "structured_tags": [
+            "language:go",
+            "type:程式"
+          ],
+          "module_name": "function_authn_go",
+          "module_category": "features",
+          "module_info": {
+            "type": "authentication",
+            "category": "identity",
+            "name": "身份驗證"
+          }
+        }
+      ]
+    },
+    "scan_engine": {
+      "name": "scan_engine",
+      "category": "scan",
+      "info": {
+        "type": "scanner",
+        "category": "scanning",
+        "name": "掃描引擎"
+      },
+      "path": "services\\scan\\analysis_output\\python",
+      "flow_count": 0,
+      "languages": [],
+      "flows": []
+    },
+    "typescript_engine": {
+      "name": "typescript_engine",
+      "category": "scan",
+      "info": {
+        "type": "language_engine",
+        "category": "analysis",
+        "name": "TypeScript 分析引擎"
+      },
+      "path": "services\\scan\\typescript_engine\\analysis_output",
+      "flow_count": 3,
+      "languages": [
+        "Typescript"
+      ],
+      "flows": [
+        {
+          "id": 1,
+          "path": [
+            "ScanService.extractNetworkAssets",
+            "NetworkInterceptor.getApiRequests"
+          ],
+          "full_path": [
+            "src\\services\\scan-service.ts",
+            "src\\services\\network-interceptor.service.ts"
+          ],
+          "func_names": [
+            "ScanService.extractNetworkAssets",
+            "NetworkInterceptor.getApiRequests"
+          ],
+          "length": 2,
+          "start": "ScanService.extractNetworkAssets",
+          "end": "NetworkInterceptor.getApiRequests",
+          "classifications": [
+            {
+              "script": "ScanService.extractNetworkAssets",
+              "module": "typescript_module",
+              "component_type": "程式組件",
+              "description": "ScanService.extractNetworkAssets - TypeScript 功能"
+            },
+            {
+              "script": "NetworkInterceptor.getApiRequests",
+              "module": "typescript_module",
+              "component_type": "程式組件",
+              "description": "NetworkInterceptor.getApiRequests - TypeScript 功能"
+            }
+          ],
+          "language": "Typescript",
+          "cli_command": "ts-node src\\services\\network-interceptor.service.ts",
+          "structured_tags": [
+            "language:typescript",
+            "type:程式"
+          ],
+          "module_name": "typescript_engine",
+          "module_category": "scan",
+          "module_info": {
+            "type": "language_engine",
+            "category": "analysis",
+            "name": "TypeScript 分析引擎"
+          }
+        },
+        {
+          "id": 2,
+          "path": [
+            "ScanService.extractNetworkAssets",
+            "NetworkInterceptor.getAjaxRequests"
+          ],
+          "full_path": [
+            "src\\services\\scan-service.ts",
+            "src\\services\\network-interceptor.service.ts"
+          ],
+          "func_names": [
+            "ScanService.extractNetworkAssets",
+            "NetworkInterceptor.getAjaxRequests"
+          ],
+          "length": 2,
+          "start": "ScanService.extractNetworkAssets",
+          "end": "NetworkInterceptor.getAjaxRequests",
+          "classifications": [
+            {
+              "script": "ScanService.extractNetworkAssets",
+              "module": "typescript_module",
+              "component_type": "程式組件",
+              "description": "ScanService.extractNetworkAssets - TypeScript 功能"
+            },
+            {
+              "script": "NetworkInterceptor.getAjaxRequests",
+              "module": "typescript_module",
+              "component_type": "程式組件",
+              "description": "NetworkInterceptor.getAjaxRequests - TypeScript 功能"
+            }
+          ],
+          "language": "Typescript",
+          "cli_command": "ts-node src\\services\\network-interceptor.service.ts",
+          "structured_tags": [
+            "language:typescript",
+            "type:程式"
+          ],
+          "module_name": "typescript_engine",
+          "module_category": "scan",
+          "module_info": {
+            "type": "language_engine",
+            "category": "analysis",
+            "name": "TypeScript 分析引擎"
+          }
+        },
+        {
+          "id": 3,
+          "path": [
+            "ScanService.extractNetworkAssets",
+            "NetworkInterceptor.analyzeRequestPatterns"
+          ],
+          "full_path": [
+            "src\\services\\scan-service.ts",
+            "src\\services\\network-interceptor.service.ts"
+          ],
+          "func_names": [
+            "ScanService.extractNetworkAssets",
+            "NetworkInterceptor.analyzeRequestPatterns"
+          ],
+          "length": 2,
+          "start": "ScanService.extractNetworkAssets",
+          "end": "NetworkInterceptor.analyzeRequestPatterns",
+          "classifications": [
+            {
+              "script": "ScanService.extractNetworkAssets",
+              "module": "typescript_module",
+              "component_type": "程式組件",
+              "description": "ScanService.extractNetworkAssets - TypeScript 功能"
+            },
+            {
+              "script": "NetworkInterceptor.analyzeRequestPatterns",
+              "module": "typescript_module",
+              "component_type": "程式組件",
+              "description": "NetworkInterceptor.analyzeRequestPatterns - TypeScript 功能"
+            }
+          ],
+          "language": "Typescript",
+          "cli_command": "ts-node src\\services\\network-interceptor.service.ts",
+          "structured_tags": [
+            "language:typescript",
+            "type:程式"
+          ],
+          "module_name": "typescript_engine",
+          "module_category": "scan",
+          "module_info": {
+            "type": "language_engine",
+            "category": "analysis",
+            "name": "TypeScript 分析引擎"
+          }
+        }
+      ]
+    },
+    "rust_engine": {
+      "name": "rust_engine",
+      "category": "scan",
+      "info": {
+        "type": "language_engine",
+        "category": "analysis",
+        "name": "Rust 分析引擎"
+      },
+      "path": "services\\scan\\rust_engine\\rust_analysis_output",
+      "flow_count": 4,
+      "languages": [
+        "Rust"
+      ],
+      "flows": [
+        {
+          "classifications": [
+            {
+              "component_type": "程式組件",
+              "description": "scan_single_target - Rust 功能",
+              "module": "rust_module",
+              "script": "scan_single_target"
+            },
+            {
+              "component_type": "程式組件",
+              "description": "EndpointDiscoverer::new - Rust 功能",
+              "module": "rust_module",
+              "script": "EndpointDiscoverer::new"
+            }
+          ],
+          "cli_command": "cargo run --bin EndpointDiscoverer::new",
+          "end": "EndpointDiscoverer::new",
+          "full_path": [
+            ".\\src\\main.rs",
+            ".\\src\\endpoint_discovery.rs"
+          ],
+          "func_names": [
+            "scan_single_target",
+            "EndpointDiscoverer::new"
+          ],
+          "id": 1,
+          "language": "Rust",
+          "length": 2,
+          "path": [
+            "scan_single_target",
+            "EndpointDiscoverer::new"
+          ],
+          "start": "scan_single_target",
+          "structured_tags": [
+            "language:rust",
+            "type:程式"
+          ],
+          "module_name": "rust_engine",
+          "module_category": "scan",
+          "module_info": {
+            "type": "language_engine",
+            "category": "analysis",
+            "name": "Rust 分析引擎"
+          }
+        },
+        {
+          "classifications": [
+            {
+              "component_type": "程式組件",
+              "description": "scan_single_target - Rust 功能",
+              "module": "rust_module",
+              "script": "scan_single_target"
+            },
+            {
+              "component_type": "程式組件",
+              "description": "JsAnalyzer::new - Rust 功能",
+              "module": "rust_module",
+              "script": "JsAnalyzer::new"
+            }
+          ],
+          "cli_command": "cargo run --bin JsAnalyzer::new",
+          "end": "JsAnalyzer::new",
+          "full_path": [
+            ".\\src\\main.rs",
+            ".\\src\\js_analyzer.rs"
+          ],
+          "func_names": [
+            "scan_single_target",
+            "JsAnalyzer::new"
+          ],
+          "id": 2,
+          "language": "Rust",
+          "length": 2,
+          "path": [
+            "scan_single_target",
+            "JsAnalyzer::new"
+          ],
+          "start": "scan_single_target",
+          "structured_tags": [
+            "language:rust",
+            "type:程式"
+          ],
+          "module_name": "rust_engine",
+          "module_category": "scan",
+          "module_info": {
+            "type": "language_engine",
+            "category": "analysis",
+            "name": "Rust 分析引擎"
+          }
+        },
+        {
+          "classifications": [
+            {
+              "component_type": "程式組件",
+              "description": "scan_single_target - Rust 功能",
+              "module": "rust_module",
+              "script": "scan_single_target"
+            },
+            {
+              "component_type": "程式組件",
+              "description": "SensitiveInfoScanner::with_mode - Rust 功能",
+              "module": "rust_module",
+              "script": "SensitiveInfoScanner::with_mode"
+            }
+          ],
+          "cli_command": "cargo run --bin SensitiveInfoScanner::with_mode",
+          "end": "SensitiveInfoScanner::with_mode",
+          "full_path": [
+            ".\\src\\main.rs",
+            ".\\src\\scanner.rs"
+          ],
+          "func_names": [
+            "scan_single_target",
+            "SensitiveInfoScanner::with_mode"
+          ],
+          "id": 3,
+          "language": "Rust",
+          "length": 2,
+          "path": [
+            "scan_single_target",
+            "SensitiveInfoScanner::with_mode"
+          ],
+          "start": "scan_single_target",
+          "structured_tags": [
+            "language:rust",
+            "type:程式"
+          ],
+          "module_name": "rust_engine",
+          "module_category": "scan",
+          "module_info": {
+            "type": "language_engine",
+            "category": "analysis",
+            "name": "Rust 分析引擎"
+          }
+        },
+        {
+          "classifications": [
+            {
+              "component_type": "程式組件",
+              "description": "scan_single_target - Rust 功能",
+              "module": "rust_module",
+              "script": "scan_single_target"
+            },
+            {
+              "component_type": "程式組件",
+              "description": "AttackSurfaceAssessor::new - Rust 功能",
+              "module": "rust_module",
+              "script": "AttackSurfaceAssessor::new"
+            }
+          ],
+          "cli_command": "cargo run --bin AttackSurfaceAssessor::new",
+          "end": "AttackSurfaceAssessor::new",
+          "full_path": [
+            ".\\src\\main.rs",
+            ".\\src\\attack_surface.rs"
+          ],
+          "func_names": [
+            "scan_single_target",
+            "AttackSurfaceAssessor::new"
+          ],
+          "id": 4,
+          "language": "Rust",
+          "length": 2,
+          "path": [
+            "scan_single_target",
+            "AttackSurfaceAssessor::new"
+          ],
+          "start": "scan_single_target",
+          "structured_tags": [
+            "language:rust",
+            "type:程式"
+          ],
+          "module_name": "rust_engine",
+          "module_category": "scan",
+          "module_info": {
+            "type": "language_engine",
+            "category": "analysis",
+            "name": "Rust 分析引擎"
+          }
+        }
+      ]
+    }
+  },
+  "statistics": {
+    "total_modules": 11,
+    "total_flows": 172,
+    "by_module": {
+      "function_bizlogic": 2,
+      "function_idor": 5,
+      "function_sqli": 48,
+      "function_ssrf": 19,
+      "function_xss": 83,
+      "function_crypto": 4,
+      "function_authn_go": 4,
+      "typescript_engine": 3,
+      "rust_engine": 4
+    },
+    "by_category": {
+      "features": 165,
+      "scan": 7
+    },
+    "by_attack_type": {
+      "business_logic": 2,
+      "access_control": 5,
+      "injection": 131,
+      "ssrf": 19,
+      "cryptographic": 4,
+      "authentication": 4,
+      "language_engine": 7
+    },
+    "by_language": {
+      "Python": 157,
+      "Rust": 8,
+      "Go": 4,
+      "Typescript": 3
+    }
+  }
+}

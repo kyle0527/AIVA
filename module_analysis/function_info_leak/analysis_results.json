@@ -1,0 +1,30 @@
+{
+  "target": "services/features/features_ready/function_info_leak",
+  "depth": 3,
+  "total_files_processed": 2,
+  "flow_chains": [],
+  "combined_flows": {},
+  "summary": {
+    "total_graphs": 2,
+    "total_flow_chains": 0,
+    "real_connections": 0,
+    "script_nodes": 2
+  },
+  "function_details": {
+    "function_map": {},
+    "script_functions": {
+      "sensitive_info_detector": {
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_info_leak\\sensitive_info_detector.py",
+        "functions": {},
+        "entry_points": [],
+        "export_functions": []
+      },
+      "__init__": {
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_info_leak\\__init__.py",
+        "functions": {},
+        "entry_points": [],
+        "export_functions": []
+      }
+    }
+  }
+}

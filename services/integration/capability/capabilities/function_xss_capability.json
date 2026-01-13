@@ -1,0 +1,111 @@
+{
+  "meta": {
+    "id": "xss_multi_context",
+    "name": "Multi-Context XSS Detection",
+    "description": "多上下文 XSS 跨站腳本攻擊檢測模組，支援反射型、存儲型和 DOM 型 XSS",
+    "version": "2.0.0",
+    "author": "AIVA Team",
+    "tags": ["xss", "injection", "client-side", "medium-risk"]
+  },
+  "rag_trigger": {
+    "desc": "AI 決策權重表：針對 XSS 漏洞的特徵權重",
+    "weights": {
+      "http_status_200": 0.5,
+      "response_reflects_input": 5.0,
+      "content_type_html": 3.0,
+      "content_type_json": -1.0,
+      "param_name": 2.0,
+      "param_search": 2.5,
+      "param_q": 2.5,
+      "param_message": 2.0,
+      "param_comment": 2.5,
+      "param_callback": 3.0,
+      "param_redirect": 2.0,
+      "param_url": 2.5,
+      "no_csp_header": 3.0,
+      "weak_csp_policy": 2.0,
+      "no_xss_protection": 2.5,
+      "waf_detected": -1.5,
+      "angular_detected": 1.5,
+      "react_detected": 1.0,
+      "vue_detected": 1.0,
+      "jquery_detected": 1.5,
+      "inline_script_allowed": 2.5,
+      "svg_allowed": 2.0,
+      "tech_stack_php": 1.2,
+      "tech_stack_aspnet": 1.0
+    },
+    "threshold": 0.55
+  },
+  "parameters": {
+    "desc": "CLI 互動定義層",
+    "schema": {
+      "level": {
+        "type": "int",
+        "default": 2,
+        "min": 1,
+        "max": 5,
+        "help": "測試深度 (1=基本, 2=標準, 3=包含 DOM, 4=包含盲打, 5=完整測試)"
+      },
+      "risk": {
+        "type": "int",
+        "default": 1,
+        "min": 1,
+        "max": 2,
+        "help": "風險等級 (1=無害, 2=可能觸發告警)"
+      },
+      "context": {
+        "type": "array",
+        "default": ["html", "attribute"],
+        "options": ["html", "attribute", "javascript", "url", "css", "dom"],
+        "help": "測試的注入上下文"
+      },
+      "encode": {
+        "type": "string",
+        "default": "",
+        "options": ["", "html", "url", "unicode", "base64"],
+        "help": "Payload 編碼方式"
+      },
+      "threads": {
+        "type": "int",
+        "default": 3,
+        "min": 1,
+        "max": 10,
+        "help": "併發執行緒數量"
+      },
+      "timeout": {
+        "type": "float",
+        "default": 15.0,
+        "min": 5.0,
+        "max": 60.0,
+        "help": "單次請求超時時間（秒）"
+      }
+    }
+  },
+  "execution": {
+    "desc": "Worker 執行層",
+    "type": "python_module",
+    "module_path": "services.features.features_ready.function_xss.worker",
+    "entry_class": "XssOrchestrator",
+    "entry_function": "run_detection",
+    "timeout_seconds": 180,
+    "resource_limit": {
+      "cpu": "0.5",
+      "memory": "256Mi"
+    }
+  },
+  "feature_vector": {
+    "desc": "預計算的特徵向量",
+    "dimension": 128,
+    "hash_indices": {
+      "response_reflects_input": 0,
+      "content_type_html": 1,
+      "no_csp_header": 2,
+      "param_search": 3,
+      "param_callback": 4,
+      "waf_detected": 5,
+      "inline_script_allowed": 6,
+      "angular_detected": 7
+    }
+  }
+}

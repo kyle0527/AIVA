@@ -14,7 +14,7 @@ AIVA Integration Models - 整合服務模組
 
 
 
-from datetime import UTC, datetime
+from datetime import datetime, timezone
 from typing import Any, Dict, List, Optional
 
 from pydantic import BaseModel, Field
@@ -78,7 +78,7 @@ class SIEMEvent(BaseModel):
 
     # 時間信息
     timestamp: datetime = Field(description="事件時間戳")
-    received_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
+    received_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
     # 事件屬性
     severity: Severity = Field(description="嚴重程度")

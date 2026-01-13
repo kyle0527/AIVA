@@ -3,7 +3,7 @@ AIVA Core - 核心引擎模組
 
 這是 AIVA 的核心處理引擎，基於五大模組架構設計：
 
-五大模組架構 (v4.1 - 2026-01-06):
+五大模組架構 (v4.1.1 - 2026-01-07):
 1. 🧠 cognitive_core/      - AI 認知核心 (神經網路、RAG、決策、反幻覺、學習系統)
    └─ learning_system/     - 統一經驗學習 (原 external_learning，整合至認知核心)
 2. 🧭 internal_exploration/ - 對內探索 (自我認知、能力分析、自我修復)
@@ -21,20 +21,33 @@ UI 層:
 - migration_controller: Strangler Fig 遷移控制器
 - plugins: 增強插件系統，整合能力註冊和智能編排
 
-最近更新 (v4.1):
+最近更新 (v4.1.1):
+- ✅ Bug Bounty 專業化配置升級（風險策略、漏洞定義配置化）
+- ✅ 版本號統一修復完成（v4.1.0 → v4.1.1）
+- ✅ Self-Healing 分析優化（腳本類型識別）
 - ✅ Task Planning 錯誤修復完成（unified_tracer, execution_monitor 等）
 - ✅ Commander 組件化重構完成
 - ✅ 新增 task_planning 子模組文檔（commander, planner, executor）
 """
 
-__version__ = "3.0.0-alpha"
+__version__ = "4.1.1"
 
 import logging
 from typing import Any, Dict, Optional, Set, List
 from enum import Enum
 from datetime import datetime, UTC
 
+# 初始化 logger
 logger = logging.getLogger(__name__)
+
+# 導入 metrics 支持（Prometheus 可觀測性）
+try:
+    from aiva_common.metrics import MetricData, MetricType
+    from aiva_common.observability import MetricsCollector
+    METRICS_AVAILABLE = True
+except ImportError:
+    METRICS_AVAILABLE = False
+    logger.warning("⚠️ Metrics module not available, migration observability disabled")
 
 
 # ==================== Strangler Fig 遷移控制器 ====================
@@ -55,9 +68,15 @@ class FeatureFlag(Enum):
     TOPOLOGICAL_SORTING = "topological_sorting"
 
 class StranglerFigMigrationController:
-    """Strangler Fig 模式遷移控制器 - 整合自 AI 模組"""
+    """Strangler Fig 模式遷移控制器 - 整合自 AI 模組
     
-    def __init__(self):
+    v2.0 更新 (2026-01-07):
+    - ✅ 新增 Prometheus 指標暴露
+    - ✅ 實時監控遷移進度
+    - ✅ 支援 Grafana 儀表板整合
+    """
+    
+    def __init__(self, enable_metrics: bool = True):
         self.current_phase = MigrationPhase.TRANSITION
         self.feature_flags: Dict[FeatureFlag, bool] = {
             FeatureFlag.V1_CAPABILITY_REGISTRY: True,
@@ -76,6 +95,22 @@ class StranglerFigMigrationController:
             'migration_started': datetime.now(UTC).isoformat(),
             'last_update': datetime.now(UTC).isoformat()
         }
+        
+        # Prometheus 指標收集器（可選）
+        self.metrics_enabled = enable_metrics and METRICS_AVAILABLE
+        self.metrics_collector = None
+        
+        if self.metrics_enabled:
+            try:
+                self.metrics_collector = MetricsCollector(
+                    service_name="aiva_core_migration",
+                    enable_prometheus=True
+                )
+                self._register_metrics()
+                logger.info("✅ Migration metrics collector initialized (Prometheus enabled)")
+            except Exception as e:
+                logger.warning(f"⚠️ Failed to initialize metrics: {e}, continuing without metrics")
+                self.metrics_enabled = False
         
         # 路由表 - 決定使用新舊系統
         self.routing_rules: Dict[str, Dict[str, Any]] = {
@@ -101,6 +136,114 @@ class StranglerFigMigrationController:
         
         logger.info(f"🔄 Strangler Fig 遷移控制器啟動 - 當前階段: {self.current_phase.value}")
     
+    def _register_metrics(self):
+        """註冊 Prometheus 指標"""
+        if not self.metrics_collector:
+            return
+        
+        # 遷移階段指標（gauge）
+        self.metrics_collector.register_metric(
+            "migration_phase",
+            MetricType.GAUGE,
+            "Current migration phase (0=legacy, 1=transition, 2=modern, 3=complete)"
+        )
+        
+        # Legacy 調用計數器
+        self.metrics_collector.register_metric(
+            "migration_legacy_calls_total",
+            MetricType.COUNTER,
+            "Total number of legacy system calls"
+        )
+        
+        # Modern 調用計數器
+        self.metrics_collector.register_metric(
+            "migration_modern_calls_total",
+            MetricType.COUNTER,
+            "Total number of modern system calls"
+        )
+        
+        # 遷移進度指標（百分比）
+        self.metrics_collector.register_metric(
+            "migration_progress_percent",
+            MetricType.GAUGE,
+            "Migration progress percentage (0-100)"
+        )
+        
+        # 功能開關狀態
+        for flag in FeatureFlag:
+            self.metrics_collector.register_metric(
+                f"migration_feature_{flag.value}",
+                MetricType.GAUGE,
+                f"Feature flag status for {flag.value} (0=disabled, 1=enabled)"
+            )
+        
+        logger.info(f"✅ Registered {len(self.metrics_collector._metrics)} migration metrics")
+    
+    def _update_metrics(self):
+        """更新 Prometheus 指標"""
+        if not self.metrics_enabled or not self.metrics_collector:
+            return
+        
+        try:
+            # 更新階段指標
+            phase_value = {
+                MigrationPhase.LEGACY: 0,
+                MigrationPhase.TRANSITION: 1,
+                MigrationPhase.MODERN: 2,
+                MigrationPhase.COMPLETE: 3
+            }.get(self.current_phase, 1)
+            
+            self.metrics_collector.record_metric(
+                MetricData(
+                    name="migration_phase",
+                    value=phase_value,
+                    metric_type=MetricType.GAUGE
+                )
+            )
+            
+            # 更新調用計數器
+            self.metrics_collector.record_metric(
+                MetricData(
+                    name="migration_legacy_calls_total",
+                    value=self.migration_stats['legacy_calls'],
+                    metric_type=MetricType.COUNTER
+                )
+            )
+            
+            self.metrics_collector.record_metric(
+                MetricData(
+                    name="migration_modern_calls_total",
+                    value=self.migration_stats['modern_calls'],
+                    metric_type=MetricType.COUNTER
+                )
+            )
+            
+            # 計算遷移進度（基於 modern_calls 比例）
+            total_calls = self.migration_stats['legacy_calls'] + self.migration_stats['modern_calls']
+            progress = (self.migration_stats['modern_calls'] / total_calls * 100) if total_calls > 0 else 0
+            
+            self.metrics_collector.record_metric(
+                MetricData(
+                    name="migration_progress_percent",
+                    value=progress,
+                    metric_type=MetricType.GAUGE
+                )
+            )
+            
+            # 更新功能開關狀態
+            for flag, enabled in self.feature_flags.items():
+                self.metrics_collector.record_metric(
+                    MetricData(
+                        name=f"migration_feature_{flag.value}",
+                        value=1 if enabled else 0,
+                        metric_type=MetricType.GAUGE,
+                        labels={"feature": flag.value}
+                    )
+                )
+                
+        except Exception as e:
+            logger.warning(f"⚠️ Failed to update metrics: {e}")
+    
     def route_request(self, service_name: str, operation: str, **kwargs) -> Any:
         """智能路由請求到新舊系統"""
         
@@ -119,11 +262,15 @@ class StranglerFigMigrationController:
                 # 嘗試使用新系統
                 result = self._call_modern_system(rule['modern_path'], operation, **kwargs)
                 self.migration_stats['modern_calls'] += 1
+                # 更新 Prometheus 指標
+                self._update_metrics()
                 return result
             else:
                 # 使用舊系統
                 result = self._call_legacy_system(rule['legacy_path'], operation, **kwargs)
                 self.migration_stats['legacy_calls'] += 1
+                # 更新 Prometheus 指標
+                self._update_metrics()
                 return result
                 
         except Exception as e:
@@ -181,8 +328,8 @@ class StranglerFigMigrationController:
         self.migration_stats['last_update'] = datetime.now().isoformat()
     
     def get_migration_status(self) -> Dict[str, Any]:
-        """獲取遷移狀態"""
-        return {
+        """獲取遷移狀態 (含 Prometheus 指標)"""
+        status = {
             'current_phase': self.current_phase.value,
             'feature_flags': {flag.value: enabled for flag, enabled in self.feature_flags.items()},
             'stats': self.migration_stats,
@@ -191,8 +338,39 @@ class StranglerFigMigrationController:
                 'modern_path': rule['modern_path'],
                 'feature_enabled': self.feature_flags[rule['feature_flag']],
                 'fallback_strategy': rule['fallback_strategy']
-            } for name, rule in self.routing_rules.items()}
+            } for name, rule in self.routing_rules.items()},
+            'metrics_enabled': self.metrics_collector is not None
         }
+        
+        # 添加計算指標
+        if self.metrics_collector:
+            total_calls = self.migration_stats['legacy_calls'] + self.migration_stats['modern_calls']
+            modern_ratio = (
+                self.migration_stats['modern_calls'] / total_calls * 100
+                if total_calls > 0 else 0
+            )
+            status['computed_metrics'] = {
+                'total_calls': total_calls,
+                'modern_ratio': f"{modern_ratio:.2f}%",
+                'migration_progress_percent': (
+                    self.migration_stats['features_migrated'] / 
+                    len(self.feature_flags) * 100
+                    if self.feature_flags else 0
+                )
+            }
+        
+        return status
+    
+    def get_prometheus_metrics(self) -> str:
+        """獲取 Prometheus 文本格式指標"""
+        if not self.metrics_collector:
+            return "# Prometheus metrics not enabled\n"
+        
+        try:
+            return self.metrics_collector.export_prometheus()
+        except Exception as e:
+            logger.warning(f"⚠️ 導出 Prometheus 指標失敗: {e}")
+            return f"# Error exporting metrics: {e}\n"
 
 # 全域遷移控制器實例
 migration_controller = StranglerFigMigrationController()

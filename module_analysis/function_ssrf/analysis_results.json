@@ -1,0 +1,3308 @@
+{
+  "target": "services/features/features_ready/function_ssrf",
+  "depth": 3,
+  "total_files_processed": 14,
+  "flow_chains": [
+    [
+      "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\result_publisher.py",
+      "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\worker.py"
+    ],
+    [
+      "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\result_publisher.py",
+      "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\worker.py",
+      "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\command_handler.py"
+    ],
+    [
+      "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\result_publisher.py",
+      "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\worker.py",
+      "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\__main__.py"
+    ],
+    [
+      "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\internal_address_detector.py",
+      "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\smart_ssrf_detector.py"
+    ],
+    [
+      "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\internal_address_detector.py",
+      "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\worker.py"
+    ],
+    [
+      "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\internal_address_detector.py",
+      "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\worker.py",
+      "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\command_handler.py"
+    ],
+    [
+      "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\internal_address_detector.py",
+      "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\worker.py",
+      "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\__main__.py"
+    ],
+    [
+      "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\internal_address_detector.py",
+      "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\worker\\ssrf_worker.py"
+    ],
+    [
+      "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\engine\\ssrf_engine.py",
+      "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\detector\\ssrf_detector.py"
+    ],
+    [
+      "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\dns_rebinding_detector.py",
+      "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\param_semantics_analyzer.py"
+    ],
+    [
+      "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\dns_rebinding_detector.py",
+      "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\param_semantics_analyzer.py",
+      "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\command_handler.py"
+    ],
+    [
+      "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\dns_rebinding_detector.py",
+      "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\param_semantics_analyzer.py",
+      "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\smart_ssrf_detector.py"
+    ],
+    [
+      "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\dns_rebinding_detector.py",
+      "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\param_semantics_analyzer.py",
+      "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\worker.py"
+    ],
+    [
+      "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\dns_rebinding_detector.py",
+      "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\param_semantics_analyzer.py",
+      "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\worker.py",
+      "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\command_handler.py"
+    ],
+    [
+      "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\dns_rebinding_detector.py",
+      "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\param_semantics_analyzer.py",
+      "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\worker.py",
+      "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\__main__.py"
+    ],
+    [
+      "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\oast_dispatcher.py",
+      "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\smart_ssrf_detector.py"
+    ],
+    [
+      "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\oast_dispatcher.py",
+      "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\worker.py"
+    ],
+    [
+      "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\oast_dispatcher.py",
+      "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\worker.py",
+      "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\command_handler.py"
+    ],
+    [
+      "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\oast_dispatcher.py",
+      "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\worker.py",
+      "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\__main__.py"
+    ]
+  ],
+  "combined_flows": {
+    "data_flow_chain_1": {
+      "sequences": [
+        {
+          "sequence": [
+            "result_publisher",
+            "worker"
+          ],
+          "mermaid": "result_publisher → worker",
+          "file_paths": [
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\result_publisher.py",
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\worker.py"
+          ]
+        }
+      ],
+      "total_sequences": 1
+    },
+    "data_flow_chain_2": {
+      "sequences": [
+        {
+          "sequence": [
+            "result_publisher",
+            "worker",
+            "command_handler"
+          ],
+          "mermaid": "result_publisher → worker → command_handler",
+          "file_paths": [
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\result_publisher.py",
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\worker.py",
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\command_handler.py"
+          ]
+        }
+      ],
+      "total_sequences": 1
+    },
+    "data_flow_chain_3": {
+      "sequences": [
+        {
+          "sequence": [
+            "result_publisher",
+            "worker",
+            "__main__"
+          ],
+          "mermaid": "result_publisher → worker → __main__",
+          "file_paths": [
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\result_publisher.py",
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\worker.py",
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\__main__.py"
+          ]
+        }
+      ],
+      "total_sequences": 1
+    },
+    "data_flow_chain_4": {
+      "sequences": [
+        {
+          "sequence": [
+            "internal_address_detector",
+            "smart_ssrf_detector"
+          ],
+          "mermaid": "internal_address_detector → smart_ssrf_detector",
+          "file_paths": [
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\internal_address_detector.py",
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\smart_ssrf_detector.py"
+          ]
+        }
+      ],
+      "total_sequences": 1
+    },
+    "data_flow_chain_5": {
+      "sequences": [
+        {
+          "sequence": [
+            "internal_address_detector",
+            "worker"
+          ],
+          "mermaid": "internal_address_detector → worker",
+          "file_paths": [
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\internal_address_detector.py",
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\worker.py"
+          ]
+        }
+      ],
+      "total_sequences": 1
+    },
+    "data_flow_chain_6": {
+      "sequences": [
+        {
+          "sequence": [
+            "internal_address_detector",
+            "worker",
+            "command_handler"
+          ],
+          "mermaid": "internal_address_detector → worker → command_handler",
+          "file_paths": [
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\internal_address_detector.py",
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\worker.py",
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\command_handler.py"
+          ]
+        }
+      ],
+      "total_sequences": 1
+    },
+    "data_flow_chain_7": {
+      "sequences": [
+        {
+          "sequence": [
+            "internal_address_detector",
+            "worker",
+            "__main__"
+          ],
+          "mermaid": "internal_address_detector → worker → __main__",
+          "file_paths": [
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\internal_address_detector.py",
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\worker.py",
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\__main__.py"
+          ]
+        }
+      ],
+      "total_sequences": 1
+    },
+    "data_flow_chain_8": {
+      "sequences": [
+        {
+          "sequence": [
+            "internal_address_detector",
+            "ssrf_worker"
+          ],
+          "mermaid": "internal_address_detector → ssrf_worker",
+          "file_paths": [
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\internal_address_detector.py",
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\worker\\ssrf_worker.py"
+          ]
+        }
+      ],
+      "total_sequences": 1
+    },
+    "data_flow_chain_9": {
+      "sequences": [
+        {
+          "sequence": [
+            "ssrf_engine",
+            "ssrf_detector"
+          ],
+          "mermaid": "ssrf_engine → ssrf_detector",
+          "file_paths": [
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\engine\\ssrf_engine.py",
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\detector\\ssrf_detector.py"
+          ]
+        }
+      ],
+      "total_sequences": 1
+    },
+    "data_flow_chain_10": {
+      "sequences": [
+        {
+          "sequence": [
+            "dns_rebinding_detector",
+            "param_semantics_analyzer"
+          ],
+          "mermaid": "dns_rebinding_detector → param_semantics_analyzer",
+          "file_paths": [
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\dns_rebinding_detector.py",
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\param_semantics_analyzer.py"
+          ]
+        }
+      ],
+      "total_sequences": 1
+    },
+    "data_flow_chain_11": {
+      "sequences": [
+        {
+          "sequence": [
+            "dns_rebinding_detector",
+            "param_semantics_analyzer",
+            "command_handler"
+          ],
+          "mermaid": "dns_rebinding_detector → param_semantics_analyzer → command_handler",
+          "file_paths": [
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\dns_rebinding_detector.py",
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\param_semantics_analyzer.py",
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\command_handler.py"
+          ]
+        }
+      ],
+      "total_sequences": 1
+    },
+    "data_flow_chain_12": {
+      "sequences": [
+        {
+          "sequence": [
+            "dns_rebinding_detector",
+            "param_semantics_analyzer",
+            "smart_ssrf_detector"
+          ],
+          "mermaid": "dns_rebinding_detector → param_semantics_analyzer → smart_ssrf_detector",
+          "file_paths": [
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\dns_rebinding_detector.py",
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\param_semantics_analyzer.py",
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\smart_ssrf_detector.py"
+          ]
+        }
+      ],
+      "total_sequences": 1
+    },
+    "data_flow_chain_13": {
+      "sequences": [
+        {
+          "sequence": [
+            "dns_rebinding_detector",
+            "param_semantics_analyzer",
+            "worker"
+          ],
+          "mermaid": "dns_rebinding_detector → param_semantics_analyzer → worker",
+          "file_paths": [
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\dns_rebinding_detector.py",
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\param_semantics_analyzer.py",
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\worker.py"
+          ]
+        }
+      ],
+      "total_sequences": 1
+    },
+    "data_flow_chain_14": {
+      "sequences": [
+        {
+          "sequence": [
+            "dns_rebinding_detector",
+            "param_semantics_analyzer",
+            "worker",
+            "command_handler"
+          ],
+          "mermaid": "dns_rebinding_detector → param_semantics_analyzer → worker → command_handler",
+          "file_paths": [
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\dns_rebinding_detector.py",
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\param_semantics_analyzer.py",
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\worker.py",
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\command_handler.py"
+          ]
+        }
+      ],
+      "total_sequences": 1
+    },
+    "data_flow_chain_15": {
+      "sequences": [
+        {
+          "sequence": [
+            "dns_rebinding_detector",
+            "param_semantics_analyzer",
+            "worker",
+            "__main__"
+          ],
+          "mermaid": "dns_rebinding_detector → param_semantics_analyzer → worker → __main__",
+          "file_paths": [
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\dns_rebinding_detector.py",
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\param_semantics_analyzer.py",
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\worker.py",
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\__main__.py"
+          ]
+        }
+      ],
+      "total_sequences": 1
+    },
+    "data_flow_chain_16": {
+      "sequences": [
+        {
+          "sequence": [
+            "oast_dispatcher",
+            "smart_ssrf_detector"
+          ],
+          "mermaid": "oast_dispatcher → smart_ssrf_detector",
+          "file_paths": [
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\oast_dispatcher.py",
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\smart_ssrf_detector.py"
+          ]
+        }
+      ],
+      "total_sequences": 1
+    },
+    "data_flow_chain_17": {
+      "sequences": [
+        {
+          "sequence": [
+            "oast_dispatcher",
+            "worker"
+          ],
+          "mermaid": "oast_dispatcher → worker",
+          "file_paths": [
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\oast_dispatcher.py",
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\worker.py"
+          ]
+        }
+      ],
+      "total_sequences": 1
+    },
+    "data_flow_chain_18": {
+      "sequences": [
+        {
+          "sequence": [
+            "oast_dispatcher",
+            "worker",
+            "command_handler"
+          ],
+          "mermaid": "oast_dispatcher → worker → command_handler",
+          "file_paths": [
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\oast_dispatcher.py",
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\worker.py",
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\command_handler.py"
+          ]
+        }
+      ],
+      "total_sequences": 1
+    },
+    "data_flow_chain_19": {
+      "sequences": [
+        {
+          "sequence": [
+            "oast_dispatcher",
+            "worker",
+            "__main__"
+          ],
+          "mermaid": "oast_dispatcher → worker → __main__",
+          "file_paths": [
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\oast_dispatcher.py",
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\worker.py",
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\__main__.py"
+          ]
+        }
+      ],
+      "total_sequences": 1
+    }
+  },
+  "summary": {
+    "total_graphs": 14,
+    "total_flow_chains": 19,
+    "real_connections": 13,
+    "script_nodes": 14
+  },
+  "function_details": {
+    "function_map": {
+      "test_ssrf_handler": {
+        "file_name": "command_handler.py",
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\command_handler.py",
+        "script_name": "command_handler",
+        "line_number": 200,
+        "is_async": true,
+        "is_entry_point": false,
+        "called_functions": [
+          "SSRFCommandHandler",
+          "AICommand",
+          "print",
+          "handler.handle_command"
+        ]
+      },
+      "__init__": {
+        "file_name": "ssrf_engine.py",
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\engine\\ssrf_engine.py",
+        "script_name": "ssrf_engine",
+        "line_number": 17,
+        "is_async": false,
+        "is_entry_point": true,
+        "called_functions": [
+          "httpx.Limits",
+          "httpx.AsyncClient"
+        ]
+      },
+      "handle_command": {
+        "file_name": "command_handler.py",
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\command_handler.py",
+        "script_name": "command_handler",
+        "line_number": 65,
+        "is_async": true,
+        "is_entry_point": true,
+        "called_functions": [
+          "time.time",
+          "payload.get",
+          "payload.get",
+          "payload.get",
+          "FunctionTaskPayload",
+          "ParamSemanticsAnalyzer",
+          "analyzer.analyze",
+          "AICommandResult",
+          "ValueError",
+          "ValueError",
+          "time.time",
+          "len",
+          "AICommandResult",
+          "FunctionTaskTarget",
+          "httpx.AsyncClient",
+          "results.extend",
+          "datetime.now",
+          "datetime.now",
+          "time.time",
+          "str",
+          "datetime.now",
+          "datetime.now",
+          "list",
+          "str",
+          "InternalAddressDetector",
+          "r.get",
+          "r.get",
+          "r.get",
+          "r.get",
+          "r.get",
+          "parameters.keys",
+          "type",
+          "list",
+          "parameters.keys"
+        ]
+      },
+      "generate_vectors": {
+        "file_name": "dns_rebinding_detector.py",
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\dns_rebinding_detector.py",
+        "script_name": "dns_rebinding_detector",
+        "line_number": 52,
+        "is_async": false,
+        "is_entry_point": true,
+        "called_functions": [
+          "self._generate_rebind_it_domain",
+          "vectors.append",
+          "self._generate_rbndr_domain",
+          "vectors.append",
+          "DnsRebindingVector",
+          "DnsRebindingVector",
+          "vectors.append",
+          "DnsRebindingVector"
+        ]
+      },
+      "_generate_rebind_it_domain": {
+        "file_name": "dns_rebinding_detector.py",
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\dns_rebinding_detector.py",
+        "script_name": "dns_rebinding_detector",
+        "line_number": 101,
+        "is_async": false,
+        "is_entry_point": true,
+        "called_functions": [
+          "ip_to_hex",
+          "ip_to_hex",
+          "int",
+          "ValueError",
+          "ip.split"
+        ]
+      },
+      "_generate_rbndr_domain": {
+        "file_name": "dns_rebinding_detector.py",
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\dns_rebinding_detector.py",
+        "script_name": "dns_rebinding_detector",
+        "line_number": 129,
+        "is_async": false,
+        "is_entry_point": true,
+        "called_functions": [
+          "first_ip.split",
+          "second_ip.split"
+        ]
+      },
+      "test_rebinding": {
+        "file_name": "dns_rebinding_detector.py",
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\dns_rebinding_detector.py",
+        "script_name": "dns_rebinding_detector",
+        "line_number": 147,
+        "is_async": true,
+        "is_entry_point": true,
+        "called_functions": [
+          "httpx.AsyncClient",
+          "logger.info",
+          "self._resolve_domain",
+          "logger.debug",
+          "logger.debug",
+          "self._resolve_domain",
+          "logger.debug",
+          "logger.warning",
+          "asyncio.sleep",
+          "logger.warning",
+          "logger.info",
+          "logger.error",
+          "set",
+          "set",
+          "client.aclose",
+          "str"
+        ]
+      },
+      "_resolve_domain": {
+        "file_name": "dns_rebinding_detector.py",
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\dns_rebinding_detector.py",
+        "script_name": "dns_rebinding_detector",
+        "line_number": 220,
+        "is_async": false,
+        "is_entry_point": true,
+        "called_functions": [
+          "socket.getaddrinfo",
+          "list",
+          "domain.split",
+          "domain.split",
+          "logger.debug",
+          "str",
+          "str"
+        ]
+      },
+      "verify_internal_access": {
+        "file_name": "dns_rebinding_detector.py",
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\dns_rebinding_detector.py",
+        "script_name": "dns_rebinding_detector",
+        "line_number": 247,
+        "is_async": true,
+        "is_entry_point": true,
+        "called_functions": [
+          "httpx.AsyncClient",
+          "rebinding_url.rstrip",
+          "logger.debug",
+          "client.get",
+          "logger.info",
+          "logger.debug",
+          "client.aclose",
+          "len",
+          "str"
+        ]
+      },
+      "generate_payloads": {
+        "file_name": "dns_rebinding_detector.py",
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\dns_rebinding_detector.py",
+        "script_name": "dns_rebinding_detector",
+        "line_number": 303,
+        "is_async": false,
+        "is_entry_point": true,
+        "called_functions": [
+          "self.generate_vectors",
+          "payloads.append",
+          "payloads.append"
+        ]
+      },
+      "ip_to_hex": {
+        "file_name": "dns_rebinding_detector.py",
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\dns_rebinding_detector.py",
+        "script_name": "dns_rebinding_detector",
+        "line_number": 113,
+        "is_async": false,
+        "is_entry_point": false,
+        "called_functions": [
+          "int",
+          "ValueError",
+          "ip.split"
+        ]
+      },
+      "summary": {
+        "file_name": "internal_address_detector.py",
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\internal_address_detector.py",
+        "script_name": "internal_address_detector",
+        "line_number": 32,
+        "is_async": false,
+        "is_entry_point": true,
+        "called_functions": []
+      },
+      "analyze": {
+        "file_name": "ssrf_detector.py",
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\detector\\ssrf_detector.py",
+        "script_name": "ssrf_detector",
+        "line_number": 15,
+        "is_async": true,
+        "is_entry_point": true,
+        "called_functions": [
+          "SSRFEngine",
+          "engine.run",
+          "self._issue_to_finding",
+          "engine.close"
+        ]
+      },
+      "_test_internal_services": {
+        "file_name": "internal_address_detector.py",
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\internal_address_detector.py",
+        "script_name": "internal_address_detector",
+        "line_number": 120,
+        "is_async": false,
+        "is_entry_point": true,
+        "called_functions": [
+          "test_function",
+          "self._is_service_response",
+          "self._identify_service_type",
+          "detected_services.append",
+          "logger.info",
+          "logger.debug"
+        ]
+      },
+      "_test_protocol_support": {
+        "file_name": "internal_address_detector.py",
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\internal_address_detector.py",
+        "script_name": "internal_address_detector",
+        "line_number": 158,
+        "is_async": false,
+        "is_entry_point": true,
+        "called_functions": [
+          "test_function",
+          "self._is_protocol_supported",
+          "supported_protocols.append",
+          "logger.info",
+          "logger.debug",
+          "protocol.removesuffix"
+        ]
+      },
+      "_is_successful_response": {
+        "file_name": "internal_address_detector.py",
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\internal_address_detector.py",
+        "script_name": "internal_address_detector",
+        "line_number": 183,
+        "is_async": false,
+        "is_entry_point": true,
+        "called_functions": [
+          "response.lower",
+          "any"
+        ]
+      },
+      "_is_metadata_response": {
+        "file_name": "internal_address_detector.py",
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\internal_address_detector.py",
+        "script_name": "internal_address_detector",
+        "line_number": 207,
+        "is_async": false,
+        "is_entry_point": true,
+        "called_functions": [
+          "metadata_indicators.get",
+          "response.lower",
+          "any",
+          "indicator.lower"
+        ]
+      },
+      "_is_service_response": {
+        "file_name": "internal_address_detector.py",
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\internal_address_detector.py",
+        "script_name": "internal_address_detector",
+        "line_number": 226,
+        "is_async": false,
+        "is_entry_point": true,
+        "called_functions": [
+          "service_indicators.get",
+          "response.lower",
+          "any"
+        ]
+      },
+      "_identify_service_type": {
+        "file_name": "internal_address_detector.py",
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\internal_address_detector.py",
+        "script_name": "internal_address_detector",
+        "line_number": 250,
+        "is_async": false,
+        "is_entry_point": true,
+        "called_functions": [
+          "service_map.get"
+        ]
+      },
+      "_is_protocol_supported": {
+        "file_name": "internal_address_detector.py",
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\internal_address_detector.py",
+        "script_name": "internal_address_detector",
+        "line_number": 265,
+        "is_async": false,
+        "is_entry_point": true,
+        "called_functions": [
+          "protocol_indicators.get",
+          "response.lower",
+          "any"
+        ]
+      },
+      "_assess_risk_level": {
+        "file_name": "internal_address_detector.py",
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\internal_address_detector.py",
+        "script_name": "internal_address_detector",
+        "line_number": 283,
+        "is_async": false,
+        "is_entry_point": true,
+        "called_functions": [
+          "results.get",
+          "results.get",
+          "results.get",
+          "results.get",
+          "len",
+          "len",
+          "len",
+          "len"
+        ]
+      },
+      "_generate_evidence": {
+        "file_name": "internal_address_detector.py",
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\internal_address_detector.py",
+        "script_name": "internal_address_detector",
+        "line_number": 305,
+        "is_async": false,
+        "is_entry_point": true,
+        "called_functions": [
+          "results.get",
+          "results.get",
+          "results.get",
+          "results.get",
+          "len",
+          "evidence.append",
+          "evidence.append",
+          "evidence.append",
+          "evidence.append"
+        ]
+      },
+      "is_internal_address": {
+        "file_name": "internal_address_detector.py",
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\internal_address_detector.py",
+        "script_name": "internal_address_detector",
+        "line_number": 323,
+        "is_async": false,
+        "is_entry_point": true,
+        "called_functions": [
+          "ipaddress.ip_address",
+          "any",
+          "ipaddress.ip_network",
+          "address.lower"
+        ]
+      },
+      "register": {
+        "file_name": "worker.py",
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\worker.py",
+        "script_name": "worker",
+        "line_number": 536,
+        "is_async": true,
+        "is_entry_point": true,
+        "called_functions": []
+      },
+      "fetch_events": {
+        "file_name": "worker.py",
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\worker.py",
+        "script_name": "worker",
+        "line_number": 541,
+        "is_async": true,
+        "is_entry_point": true,
+        "called_functions": []
+      },
+      "_validate_oast_event": {
+        "file_name": "oast_dispatcher.py",
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\oast_dispatcher.py",
+        "script_name": "oast_dispatcher",
+        "line_number": 129,
+        "is_async": false,
+        "is_entry_point": true,
+        "called_functions": [
+          "any",
+          "any",
+          "len"
+        ]
+      },
+      "close": {
+        "file_name": "ssrf_engine.py",
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\engine\\ssrf_engine.py",
+        "script_name": "ssrf_engine",
+        "line_number": 23,
+        "is_async": true,
+        "is_entry_point": true,
+        "called_functions": []
+      },
+      "_resolve_token": {
+        "file_name": "oast_dispatcher.py",
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\oast_dispatcher.py",
+        "script_name": "oast_dispatcher",
+        "line_number": 166,
+        "is_async": false,
+        "is_entry_point": true,
+        "called_functions": [
+          "token.rstrip",
+          "normalized.split",
+          "normalized.startswith",
+          "isinstance"
+        ]
+      },
+      "_get_base_payloads": {
+        "file_name": "param_semantics_analyzer.py",
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\param_semantics_analyzer.py",
+        "script_name": "param_semantics_analyzer",
+        "line_number": 201,
+        "is_async": false,
+        "is_entry_point": true,
+        "called_functions": [
+          "list",
+          "self._build_payloads",
+          "list",
+          "payloads.extend",
+          "self._get_advanced_payloads",
+          "p.strip"
+        ]
+      },
+      "_get_advanced_payloads": {
+        "file_name": "param_semantics_analyzer.py",
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\param_semantics_analyzer.py",
+        "script_name": "param_semantics_analyzer",
+        "line_number": 214,
+        "is_async": false,
+        "is_entry_point": true,
+        "called_functions": [
+          "advanced.extend",
+          "DnsRebindingDetector",
+          "dns_detector.generate_payloads",
+          "advanced.extend",
+          "logger.info",
+          "len"
+        ]
+      },
+      "_add_standard_vectors": {
+        "file_name": "param_semantics_analyzer.py",
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\param_semantics_analyzer.py",
+        "script_name": "param_semantics_analyzer",
+        "line_number": 234,
+        "is_async": false,
+        "is_entry_point": true,
+        "called_functions": [
+          "SsrfTestVector"
+        ]
+      },
+      "_add_semantic_vectors": {
+        "file_name": "param_semantics_analyzer.py",
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\param_semantics_analyzer.py",
+        "script_name": "param_semantics_analyzer",
+        "line_number": 248,
+        "is_async": false,
+        "is_entry_point": true,
+        "called_functions": [
+          "self._add_file_vectors",
+          "self._add_protocol_vectors",
+          "SsrfTestVector"
+        ]
+      },
+      "_add_file_vectors": {
+        "file_name": "param_semantics_analyzer.py",
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\param_semantics_analyzer.py",
+        "script_name": "param_semantics_analyzer",
+        "line_number": 268,
+        "is_async": false,
+        "is_entry_point": true,
+        "called_functions": [
+          "SsrfTestVector"
+        ]
+      },
+      "_add_protocol_vectors": {
+        "file_name": "param_semantics_analyzer.py",
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\param_semantics_analyzer.py",
+        "script_name": "param_semantics_analyzer",
+        "line_number": 281,
+        "is_async": false,
+        "is_entry_point": true,
+        "called_functions": [
+          "SsrfTestVector"
+        ]
+      },
+      "_add_cross_protocol_vectors": {
+        "file_name": "param_semantics_analyzer.py",
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\param_semantics_analyzer.py",
+        "script_name": "param_semantics_analyzer",
+        "line_number": 294,
+        "is_async": false,
+        "is_entry_point": true,
+        "called_functions": [
+          "self._get_selected_protocols",
+          "SsrfTestVector"
+        ]
+      },
+      "_get_selected_protocols": {
+        "file_name": "param_semantics_analyzer.py",
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\param_semantics_analyzer.py",
+        "script_name": "param_semantics_analyzer",
+        "line_number": 312,
+        "is_async": false,
+        "is_entry_point": true,
+        "called_functions": [
+          "headers.get",
+          "set",
+          "p.strip",
+          "protocols_hdr.split",
+          "p.strip",
+          "p.strip"
+        ]
+      },
+      "_add_oast_vector": {
+        "file_name": "param_semantics_analyzer.py",
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\param_semantics_analyzer.py",
+        "script_name": "param_semantics_analyzer",
+        "line_number": 326,
+        "is_async": false,
+        "is_entry_point": true,
+        "called_functions": [
+          "self._should_enable_oast",
+          "SsrfTestVector"
+        ]
+      },
+      "_build_payloads": {
+        "file_name": "param_semantics_analyzer.py",
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\param_semantics_analyzer.py",
+        "script_name": "param_semantics_analyzer",
+        "line_number": 341,
+        "is_async": false,
+        "is_entry_point": true,
+        "called_functions": [
+          "set",
+          "payload.strip",
+          "payload.strip",
+          "payload.strip",
+          "seen.add",
+          "seen.add",
+          "seen.add",
+          "seen.add",
+          "normalized.lower"
+        ]
+      },
+      "_should_enable_oast": {
+        "file_name": "param_semantics_analyzer.py",
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\param_semantics_analyzer.py",
+        "script_name": "param_semantics_analyzer",
+        "line_number": 369,
+        "is_async": false,
+        "is_entry_point": true,
+        "called_functions": [
+          "set",
+          "payload_sources.extend",
+          "payload_sources.extend",
+          "any"
+        ]
+      },
+      "_tokenize": {
+        "file_name": "param_semantics_analyzer.py",
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\param_semantics_analyzer.py",
+        "script_name": "param_semantics_analyzer",
+        "line_number": 385,
+        "is_async": false,
+        "is_entry_point": true,
+        "called_functions": [
+          "re.split",
+          "set",
+          "re.sub"
+        ]
+      },
+      "worker_id": {
+        "file_name": "result_publisher.py",
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\result_publisher.py",
+        "script_name": "result_publisher",
+        "line_number": 34,
+        "is_async": false,
+        "is_entry_point": true,
+        "called_functions": []
+      },
+      "publish_status": {
+        "file_name": "result_publisher.py",
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\result_publisher.py",
+        "script_name": "result_publisher",
+        "line_number": 37,
+        "is_async": true,
+        "is_entry_point": true,
+        "called_functions": [
+          "TaskUpdatePayload",
+          "AivaMessage",
+          "self._publish",
+          "MessageHeader",
+          "payload.model_dump",
+          "new_id"
+        ]
+      },
+      "publish_finding": {
+        "file_name": "result_publisher.py",
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\result_publisher.py",
+        "script_name": "result_publisher",
+        "line_number": 64,
+        "is_async": true,
+        "is_entry_point": true,
+        "called_functions": [
+          "AivaMessage",
+          "self._publish",
+          "MessageHeader",
+          "finding.model_dump",
+          "new_id"
+        ]
+      },
+      "publish_error": {
+        "file_name": "result_publisher.py",
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\result_publisher.py",
+        "script_name": "result_publisher",
+        "line_number": 82,
+        "is_async": true,
+        "is_entry_point": true,
+        "called_functions": [
+          "self.publish_status",
+          "repr"
+        ]
+      },
+      "_publish": {
+        "file_name": "result_publisher.py",
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\result_publisher.py",
+        "script_name": "result_publisher",
+        "line_number": 96,
+        "is_async": true,
+        "is_entry_point": true,
+        "called_functions": [
+          "message.model_dump",
+          "json.dumps"
+        ]
+      },
+      "add_finding": {
+        "file_name": "smart_ssrf_detector.py",
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\smart_ssrf_detector.py",
+        "script_name": "smart_ssrf_detector",
+        "line_number": 51,
+        "is_async": false,
+        "is_entry_point": true,
+        "called_functions": []
+      },
+      "add_error": {
+        "file_name": "smart_ssrf_detector.py",
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\smart_ssrf_detector.py",
+        "script_name": "smart_ssrf_detector",
+        "line_number": 55,
+        "is_async": false,
+        "is_entry_point": true,
+        "called_functions": []
+      },
+      "increment_attempts": {
+        "file_name": "smart_ssrf_detector.py",
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\smart_ssrf_detector.py",
+        "script_name": "smart_ssrf_detector",
+        "line_number": 59,
+        "is_async": false,
+        "is_entry_point": true,
+        "called_functions": []
+      },
+      "add_oast_callbacks": {
+        "file_name": "smart_ssrf_detector.py",
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\smart_ssrf_detector.py",
+        "script_name": "smart_ssrf_detector",
+        "line_number": 63,
+        "is_async": false,
+        "is_entry_point": true,
+        "called_functions": []
+      },
+      "detect_vulnerabilities": {
+        "file_name": "smart_ssrf_detector.py",
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\smart_ssrf_detector.py",
+        "script_name": "smart_ssrf_detector",
+        "line_number": 89,
+        "is_async": true,
+        "is_entry_point": true,
+        "called_functions": [
+          "UnifiedSmartDetectionManager",
+          "SSRFDetectionContext",
+          "analyzer.analyze",
+          "logger.error",
+          "ValueError",
+          "smart_manager.start_detection",
+          "str",
+          "self._prioritize_vectors",
+          "logger.info",
+          "self._execute_detection",
+          "logger.exception",
+          "context.add_error",
+          "str",
+          "smart_manager.get_metrics",
+          "str",
+          "len",
+          "smart_manager.get_metrics"
+        ]
+      },
+      "_prioritize_vectors": {
+        "file_name": "smart_ssrf_detector.py",
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\smart_ssrf_detector.py",
+        "script_name": "smart_ssrf_detector",
+        "line_number": 171,
+        "is_async": false,
+        "is_entry_point": true,
+        "called_functions": [
+          "logger.debug",
+          "any",
+          "cloud_vectors.append",
+          "other_vectors.append",
+          "str",
+          "len",
+          "len"
+        ]
+      },
+      "_execute_detection": {
+        "file_name": "smart_ssrf_detector.py",
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\smart_ssrf_detector.py",
+        "script_name": "smart_ssrf_detector",
+        "line_number": 207,
+        "is_async": true,
+        "is_entry_point": true,
+        "called_functions": [
+          "len",
+          "enumerate",
+          "smart_manager.update_progress",
+          "context.increment_attempts",
+          "smart_manager.should_continue_testing",
+          "logger.info",
+          "self._test_vector",
+          "len"
+        ]
+      },
+      "_test_vector": {
+        "file_name": "smart_ssrf_detector.py",
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\smart_ssrf_detector.py",
+        "script_name": "smart_ssrf_detector",
+        "line_number": 240,
+        "is_async": true,
+        "is_entry_point": true,
+        "called_functions": [
+          "self._resolve_payload",
+          "self._issue_request",
+          "self._verify_internal_service_access",
+          "context.add_error",
+          "logger.warning",
+          "self._build_internal_finding",
+          "context.add_finding",
+          "logger.info",
+          "logger.debug",
+          "asyncio.sleep",
+          "context.add_oast_callbacks",
+          "self._build_oast_finding",
+          "context.add_finding",
+          "logger.info",
+          "len",
+          "detection.summary",
+          "self._extract_token",
+          "str",
+          "str",
+          "detection.summary",
+          "len"
+        ]
+      },
+      "_resolve_payload": {
+        "file_name": "worker.py",
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\worker.py",
+        "script_name": "worker",
+        "line_number": 314,
+        "is_async": true,
+        "is_entry_point": false,
+        "called_functions": [
+          "str",
+          "payload.replace",
+          "dispatcher.register"
+        ]
+      },
+      "_issue_request": {
+        "file_name": "worker.py",
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\worker.py",
+        "script_name": "worker",
+        "line_number": 327,
+        "is_async": true,
+        "is_entry_point": false,
+        "called_functions": [
+          "urlparse",
+          "dict",
+          "dict",
+          "dict",
+          "dict",
+          "urlunparse",
+          "str",
+          "parse_qsl",
+          "dict",
+          "parsed._replace",
+          "client.request",
+          "content.replace"
+        ]
+      },
+      "_parse_target_config": {
+        "file_name": "smart_ssrf_detector.py",
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\smart_ssrf_detector.py",
+        "script_name": "smart_ssrf_detector",
+        "line_number": 374,
+        "is_async": false,
+        "is_entry_point": true,
+        "called_functions": [
+          "urlparse",
+          "str",
+          "dict",
+          "dict",
+          "dict",
+          "dict",
+          "parse_qsl",
+          "dict"
+        ]
+      },
+      "_process_parameter_injection": {
+        "file_name": "smart_ssrf_detector.py",
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\smart_ssrf_detector.py",
+        "script_name": "smart_ssrf_detector",
+        "line_number": 397,
+        "is_async": false,
+        "is_entry_point": true,
+        "called_functions": [
+          "injection_handlers.get",
+          "handler"
+        ]
+      },
+      "_inject_query_parameter": {
+        "file_name": "smart_ssrf_detector.py",
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\smart_ssrf_detector.py",
+        "script_name": "smart_ssrf_detector",
+        "line_number": 420,
+        "is_async": false,
+        "is_entry_point": true,
+        "called_functions": []
+      },
+      "_inject_form_parameter": {
+        "file_name": "smart_ssrf_detector.py",
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\smart_ssrf_detector.py",
+        "script_name": "smart_ssrf_detector",
+        "line_number": 425,
+        "is_async": false,
+        "is_entry_point": true,
+        "called_functions": []
+      },
+      "_inject_json_parameter": {
+        "file_name": "smart_ssrf_detector.py",
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\smart_ssrf_detector.py",
+        "script_name": "smart_ssrf_detector",
+        "line_number": 430,
+        "is_async": false,
+        "is_entry_point": true,
+        "called_functions": []
+      },
+      "_inject_header_parameter": {
+        "file_name": "smart_ssrf_detector.py",
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\smart_ssrf_detector.py",
+        "script_name": "smart_ssrf_detector",
+        "line_number": 436,
+        "is_async": false,
+        "is_entry_point": true,
+        "called_functions": []
+      },
+      "_inject_cookie_parameter": {
+        "file_name": "smart_ssrf_detector.py",
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\smart_ssrf_detector.py",
+        "script_name": "smart_ssrf_detector",
+        "line_number": 441,
+        "is_async": false,
+        "is_entry_point": true,
+        "called_functions": []
+      },
+      "_inject_body_raw_parameter": {
+        "file_name": "smart_ssrf_detector.py",
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\smart_ssrf_detector.py",
+        "script_name": "smart_ssrf_detector",
+        "line_number": 446,
+        "is_async": false,
+        "is_entry_point": true,
+        "called_functions": []
+      },
+      "_execute_http_request": {
+        "file_name": "smart_ssrf_detector.py",
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\smart_ssrf_detector.py",
+        "script_name": "smart_ssrf_detector",
+        "line_number": 453,
+        "is_async": true,
+        "is_entry_point": true,
+        "called_functions": [
+          "urlunparse",
+          "client.request",
+          "client.request",
+          "client.request",
+          "client.request"
+        ]
+      },
+      "_build_internal_finding": {
+        "file_name": "worker.py",
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\worker.py",
+        "script_name": "worker",
+        "line_number": 384,
+        "is_async": false,
+        "is_entry_point": false,
+        "called_functions": [
+          "_severity_from_summary",
+          "FindingEvidence",
+          "FindingPayload",
+          "_safe_elapsed",
+          "_format_request",
+          "_format_response",
+          "new_id",
+          "Vulnerability",
+          "FindingTarget",
+          "FindingImpact",
+          "FindingRecommendation"
+        ]
+      },
+      "_build_oast_finding": {
+        "file_name": "worker.py",
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\worker.py",
+        "script_name": "worker",
+        "line_number": 436,
+        "is_async": false,
+        "is_entry_point": false,
+        "called_functions": [
+          "FindingEvidence",
+          "FindingPayload",
+          "filter",
+          "new_id",
+          "Vulnerability",
+          "FindingTarget",
+          "FindingImpact",
+          "FindingRecommendation",
+          "json.dumps"
+        ]
+      },
+      "_verify_internal_service_access": {
+        "file_name": "smart_ssrf_detector.py",
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\smart_ssrf_detector.py",
+        "script_name": "smart_ssrf_detector",
+        "line_number": 600,
+        "is_async": false,
+        "is_entry_point": true,
+        "called_functions": [
+          "self._verify_service_content",
+          "any",
+          "len",
+          "self._verify_cloud_metadata"
+        ]
+      },
+      "_verify_service_content": {
+        "file_name": "smart_ssrf_detector.py",
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\smart_ssrf_detector.py",
+        "script_name": "smart_ssrf_detector",
+        "line_number": 626,
+        "is_async": false,
+        "is_entry_point": true,
+        "called_functions": [
+          "self._is_valid_json_api",
+          "self._is_admin_interface",
+          "sum"
+        ]
+      },
+      "_verify_cloud_metadata": {
+        "file_name": "smart_ssrf_detector.py",
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\smart_ssrf_detector.py",
+        "script_name": "smart_ssrf_detector",
+        "line_number": 670,
+        "is_async": false,
+        "is_entry_point": true,
+        "called_functions": [
+          "any",
+          "any",
+          "any",
+          "json.loads",
+          "len",
+          "len",
+          "json.loads",
+          "isinstance",
+          "any",
+          "isinstance"
+        ]
+      },
+      "_is_valid_json_api": {
+        "file_name": "smart_ssrf_detector.py",
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\smart_ssrf_detector.py",
+        "script_name": "smart_ssrf_detector",
+        "line_number": 712,
+        "is_async": false,
+        "is_entry_point": true,
+        "called_functions": [
+          "json.loads",
+          "isinstance",
+          "len"
+        ]
+      },
+      "_is_admin_interface": {
+        "file_name": "smart_ssrf_detector.py",
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\smart_ssrf_detector.py",
+        "script_name": "smart_ssrf_detector",
+        "line_number": 730,
+        "is_async": false,
+        "is_entry_point": true,
+        "called_functions": [
+          "any"
+        ]
+      },
+      "_extract_token": {
+        "file_name": "worker.py",
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\worker.py",
+        "script_name": "worker",
+        "line_number": 530,
+        "is_async": false,
+        "is_entry_point": false,
+        "called_functions": [
+          "payload.split"
+        ]
+      },
+      "run": {
+        "file_name": "ssrf_worker.py",
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\worker\\ssrf_worker.py",
+        "script_name": "ssrf_worker",
+        "line_number": 11,
+        "is_async": true,
+        "is_entry_point": true,
+        "called_functions": [
+          "SsrfConfig",
+          "SSRFDetector",
+          "get_broker",
+          "broker.subscribe",
+          "float",
+          "int",
+          "AivaMessage.model_validate_json",
+          "FunctionTaskPayload",
+          "str",
+          "os.getenv",
+          "os.getenv",
+          "new_id",
+          "broker.publish",
+          "detector.analyze",
+          "AivaMessage",
+          "broker.publish",
+          "logger.exception",
+          "broker.publish",
+          "broker.publish",
+          "os.getenv",
+          "os.getenv",
+          "os.getenv",
+          "os.getenv",
+          "os.getenv",
+          "MessageHeader",
+          "f.model_dump",
+          "json.dumps",
+          "json.dumps",
+          "new_id",
+          "json.dumps",
+          "json.dumps",
+          "out.model_dump",
+          "AivaMessage",
+          "AivaMessage",
+          "AivaMessage",
+          "MessageHeader",
+          "MessageHeader",
+          "len",
+          "MessageHeader",
+          "new_id",
+          "new_id",
+          "str",
+          "new_id",
+          "new_id"
+        ]
+      },
+      "_execute_task": {
+        "file_name": "worker.py",
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\worker.py",
+        "script_name": "worker",
+        "line_number": 107,
+        "is_async": true,
+        "is_entry_point": false,
+        "called_functions": [
+          "publisher.publish_status",
+          "logger.info",
+          "publisher.publish_status",
+          "process_task",
+          "logger.exception",
+          "publisher.publish_finding",
+          "publisher.publish_error"
+        ]
+      },
+      "process_task": {
+        "file_name": "worker.py",
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\worker.py",
+        "script_name": "worker",
+        "line_number": 563,
+        "is_async": true,
+        "is_entry_point": false,
+        "called_functions": [
+          "FunctionTaskPayload",
+          "SsrfResultPublisher",
+          "ValueError",
+          "get_broker",
+          "httpx.AsyncClient",
+          "hasattr",
+          "getattr",
+          "getattr",
+          "getattr",
+          "_execute_task"
+        ]
+      },
+      "_format_request": {
+        "file_name": "worker.py",
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\worker.py",
+        "script_name": "worker",
+        "line_number": 489,
+        "is_async": false,
+        "is_entry_point": false,
+        "called_functions": [
+          "lines.append",
+          "lines.append",
+          "lines.append"
+        ]
+      },
+      "_format_response": {
+        "file_name": "worker.py",
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\worker.py",
+        "script_name": "worker",
+        "line_number": 502,
+        "is_async": false,
+        "is_entry_point": false,
+        "called_functions": [
+          "lines.append",
+          "lines.append",
+          "lines.append"
+        ]
+      },
+      "_safe_elapsed": {
+        "file_name": "worker.py",
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\worker.py",
+        "script_name": "worker",
+        "line_number": 513,
+        "is_async": false,
+        "is_entry_point": false,
+        "called_functions": [
+          "elapsed.total_seconds"
+        ]
+      },
+      "_severity_from_summary": {
+        "file_name": "worker.py",
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\worker.py",
+        "script_name": "worker",
+        "line_number": 523,
+        "is_async": false,
+        "is_entry_point": false,
+        "called_functions": [
+          "any"
+        ]
+      },
+      "to_details": {
+        "file_name": "worker.py",
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\worker.py",
+        "script_name": "worker",
+        "line_number": 51,
+        "is_async": false,
+        "is_entry_point": true,
+        "called_functions": []
+      },
+      "_issue_to_finding": {
+        "file_name": "ssrf_detector.py",
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\detector\\ssrf_detector.py",
+        "script_name": "ssrf_detector",
+        "line_number": 31,
+        "is_async": false,
+        "is_entry_point": true,
+        "called_functions": [
+          "Vulnerability",
+          "FindingEvidence",
+          "FindingImpact",
+          "FindingRecommendation",
+          "FindingTarget",
+          "FindingPayload",
+          "str",
+          "new_id",
+          "hasattr"
+        ]
+      },
+      "_resolve_ips": {
+        "file_name": "ssrf_engine.py",
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\engine\\ssrf_engine.py",
+        "script_name": "ssrf_engine",
+        "line_number": 27,
+        "is_async": false,
+        "is_entry_point": true,
+        "called_functions": [
+          "socket.getaddrinfo",
+          "ips.append"
+        ]
+      },
+      "_is_internal_ip": {
+        "file_name": "ssrf_engine.py",
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\engine\\ssrf_engine.py",
+        "script_name": "ssrf_engine",
+        "line_number": 40,
+        "is_async": false,
+        "is_entry_point": true,
+        "called_functions": [
+          "ipaddress.ip_address"
+        ]
+      },
+      "check_internal_access": {
+        "file_name": "ssrf_engine.py",
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\engine\\ssrf_engine.py",
+        "script_name": "ssrf_engine",
+        "line_number": 47,
+        "is_async": true,
+        "is_entry_point": true,
+        "called_functions": [
+          "any",
+          "self._resolve_ips",
+          "self._is_internal_ip",
+          "issues.append",
+          "SSRFIssue",
+          "issues.append",
+          "issues.append",
+          "SSRFIssue",
+          "SSRFIssue",
+          "str",
+          "len",
+          "url.split"
+        ]
+      },
+      "check_cloud_metadata": {
+        "file_name": "ssrf_engine.py",
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\engine\\ssrf_engine.py",
+        "script_name": "ssrf_engine",
+        "line_number": 88,
+        "is_async": true,
+        "is_entry_point": true,
+        "called_functions": [
+          "issues.append",
+          "SSRFIssue",
+          "issues.append",
+          "SSRFIssue",
+          "headers_map.get"
+        ]
+      },
+      "check_file_protocol": {
+        "file_name": "ssrf_engine.py",
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\engine\\ssrf_engine.py",
+        "script_name": "ssrf_engine",
+        "line_number": 127,
+        "is_async": true,
+        "is_entry_point": true,
+        "called_functions": [
+          "issues.append",
+          "url.lower",
+          "SSRFIssue"
+        ]
+      }
+    },
+    "script_functions": {
+      "command_handler": {
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\command_handler.py",
+        "functions": {
+          "test_ssrf_handler": {
+            "line_number": 200,
+            "is_async": true,
+            "is_entry_point": false,
+            "called_functions": [
+              "SSRFCommandHandler",
+              "AICommand",
+              "print",
+              "handler.handle_command"
+            ]
+          },
+          "__init__": {
+            "line_number": 57,
+            "is_async": false,
+            "is_entry_point": true,
+            "called_functions": [
+              "SmartSSRFDetector",
+              "ParamSemanticsAnalyzer",
+              "OastDispatcher"
+            ]
+          },
+          "handle_command": {
+            "line_number": 65,
+            "is_async": true,
+            "is_entry_point": true,
+            "called_functions": [
+              "time.time",
+              "payload.get",
+              "payload.get",
+              "payload.get",
+              "FunctionTaskPayload",
+              "ParamSemanticsAnalyzer",
+              "analyzer.analyze",
+              "AICommandResult",
+              "ValueError",
+              "ValueError",
+              "time.time",
+              "len",
+              "AICommandResult",
+              "FunctionTaskTarget",
+              "httpx.AsyncClient",
+              "results.extend",
+              "datetime.now",
+              "datetime.now",
+              "time.time",
+              "str",
+              "datetime.now",
+              "datetime.now",
+              "list",
+              "str",
+              "InternalAddressDetector",
+              "r.get",
+              "r.get",
+              "r.get",
+              "r.get",
+              "r.get",
+              "parameters.keys",
+              "type",
+              "list",
+              "parameters.keys"
+            ]
+          }
+        },
+        "entry_points": [
+          "__init__",
+          "handle_command"
+        ],
+        "export_functions": [
+          "test_ssrf_handler",
+          "__init__",
+          "handle_command"
+        ]
+      },
+      "dns_rebinding_detector": {
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\dns_rebinding_detector.py",
+        "functions": {
+          "__init__": {
+            "line_number": 43,
+            "is_async": false,
+            "is_entry_point": true,
+            "called_functions": []
+          },
+          "generate_vectors": {
+            "line_number": 52,
+            "is_async": false,
+            "is_entry_point": true,
+            "called_functions": [
+              "self._generate_rebind_it_domain",
+              "vectors.append",
+              "self._generate_rbndr_domain",
+              "vectors.append",
+              "DnsRebindingVector",
+              "DnsRebindingVector",
+              "vectors.append",
+              "DnsRebindingVector"
+            ]
+          },
+          "_generate_rebind_it_domain": {
+            "line_number": 101,
+            "is_async": false,
+            "is_entry_point": true,
+            "called_functions": [
+              "ip_to_hex",
+              "ip_to_hex",
+              "int",
+              "ValueError",
+              "ip.split"
+            ]
+          },
+          "_generate_rbndr_domain": {
+            "line_number": 129,
+            "is_async": false,
+            "is_entry_point": true,
+            "called_functions": [
+              "first_ip.split",
+              "second_ip.split"
+            ]
+          },
+          "test_rebinding": {
+            "line_number": 147,
+            "is_async": true,
+            "is_entry_point": true,
+            "called_functions": [
+              "httpx.AsyncClient",
+              "logger.info",
+              "self._resolve_domain",
+              "logger.debug",
+              "logger.debug",
+              "self._resolve_domain",
+              "logger.debug",
+              "logger.warning",
+              "asyncio.sleep",
+              "logger.warning",
+              "logger.info",
+              "logger.error",
+              "set",
+              "set",
+              "client.aclose",
+              "str"
+            ]
+          },
+          "_resolve_domain": {
+            "line_number": 220,
+            "is_async": false,
+            "is_entry_point": true,
+            "called_functions": [
+              "socket.getaddrinfo",
+              "list",
+              "domain.split",
+              "domain.split",
+              "logger.debug",
+              "str",
+              "str"
+            ]
+          },
+          "verify_internal_access": {
+            "line_number": 247,
+            "is_async": true,
+            "is_entry_point": true,
+            "called_functions": [
+              "httpx.AsyncClient",
+              "rebinding_url.rstrip",
+              "logger.debug",
+              "client.get",
+              "logger.info",
+              "logger.debug",
+              "client.aclose",
+              "len",
+              "str"
+            ]
+          },
+          "generate_payloads": {
+            "line_number": 303,
+            "is_async": false,
+            "is_entry_point": true,
+            "called_functions": [
+              "self.generate_vectors",
+              "payloads.append",
+              "payloads.append"
+            ]
+          },
+          "ip_to_hex": {
+            "line_number": 113,
+            "is_async": false,
+            "is_entry_point": false,
+            "called_functions": [
+              "int",
+              "ValueError",
+              "ip.split"
+            ]
+          }
+        },
+        "entry_points": [
+          "__init__",
+          "generate_vectors",
+          "_generate_rebind_it_domain",
+          "_generate_rbndr_domain",
+          "test_rebinding",
+          "_resolve_domain",
+          "verify_internal_access",
+          "generate_payloads"
+        ],
+        "export_functions": [
+          "__init__",
+          "generate_vectors",
+          "_generate_rebind_it_domain",
+          "_generate_rbndr_domain",
+          "test_rebinding",
+          "_resolve_domain",
+          "verify_internal_access",
+          "generate_payloads",
+          "ip_to_hex"
+        ]
+      },
+      "internal_address_detector": {
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\internal_address_detector.py",
+        "functions": {
+          "summary": {
+            "line_number": 32,
+            "is_async": false,
+            "is_entry_point": true,
+            "called_functions": []
+          },
+          "analyze": {
+            "line_number": 66,
+            "is_async": false,
+            "is_entry_point": true,
+            "called_functions": [
+              "set",
+              "InternalAddressDetection",
+              "isinstance",
+              "re.findall",
+              "self.is_internal_address",
+              "self._is_metadata_response",
+              "self._is_protocol_supported",
+              "indicators.append",
+              "len",
+              "indicators.append",
+              "indicators.append",
+              "indicators.append",
+              "InternalIndicator",
+              "InternalIndicator",
+              "InternalIndicator",
+              "InternalIndicator",
+              "protocol.removesuffix"
+            ]
+          },
+          "_test_internal_services": {
+            "line_number": 120,
+            "is_async": false,
+            "is_entry_point": true,
+            "called_functions": [
+              "test_function",
+              "self._is_service_response",
+              "self._identify_service_type",
+              "detected_services.append",
+              "logger.info",
+              "logger.debug"
+            ]
+          },
+          "_test_protocol_support": {
+            "line_number": 158,
+            "is_async": false,
+            "is_entry_point": true,
+            "called_functions": [
+              "test_function",
+              "self._is_protocol_supported",
+              "supported_protocols.append",
+              "logger.info",
+              "logger.debug",
+              "protocol.removesuffix"
+            ]
+          },
+          "_is_successful_response": {
+            "line_number": 183,
+            "is_async": false,
+            "is_entry_point": true,
+            "called_functions": [
+              "response.lower",
+              "any"
+            ]
+          },
+          "_is_metadata_response": {
+            "line_number": 207,
+            "is_async": false,
+            "is_entry_point": true,
+            "called_functions": [
+              "metadata_indicators.get",
+              "response.lower",
+              "any",
+              "indicator.lower"
+            ]
+          },
+          "_is_service_response": {
+            "line_number": 226,
+            "is_async": false,
+            "is_entry_point": true,
+            "called_functions": [
+              "service_indicators.get",
+              "response.lower",
+              "any"
+            ]
+          },
+          "_identify_service_type": {
+            "line_number": 250,
+            "is_async": false,
+            "is_entry_point": true,
+            "called_functions": [
+              "service_map.get"
+            ]
+          },
+          "_is_protocol_supported": {
+            "line_number": 265,
+            "is_async": false,
+            "is_entry_point": true,
+            "called_functions": [
+              "protocol_indicators.get",
+              "response.lower",
+              "any"
+            ]
+          },
+          "_assess_risk_level": {
+            "line_number": 283,
+            "is_async": false,
+            "is_entry_point": true,
+            "called_functions": [
+              "results.get",
+              "results.get",
+              "results.get",
+              "results.get",
+              "len",
+              "len",
+              "len",
+              "len"
+            ]
+          },
+          "_generate_evidence": {
+            "line_number": 305,
+            "is_async": false,
+            "is_entry_point": true,
+            "called_functions": [
+              "results.get",
+              "results.get",
+              "results.get",
+              "results.get",
+              "len",
+              "evidence.append",
+              "evidence.append",
+              "evidence.append",
+              "evidence.append"
+            ]
+          },
+          "is_internal_address": {
+            "line_number": 323,
+            "is_async": false,
+            "is_entry_point": true,
+            "called_functions": [
+              "ipaddress.ip_address",
+              "any",
+              "ipaddress.ip_network",
+              "address.lower"
+            ]
+          }
+        },
+        "entry_points": [
+          "summary",
+          "analyze",
+          "_test_internal_services",
+          "_test_protocol_support",
+          "_is_successful_response",
+          "_is_metadata_response",
+          "_is_service_response",
+          "_identify_service_type",
+          "_is_protocol_supported",
+          "_assess_risk_level",
+          "_generate_evidence",
+          "is_internal_address"
+        ],
+        "export_functions": [
+          "summary",
+          "analyze",
+          "_test_internal_services",
+          "_test_protocol_support",
+          "_is_successful_response",
+          "_is_metadata_response",
+          "_is_service_response",
+          "_identify_service_type",
+          "_is_protocol_supported",
+          "_assess_risk_level",
+          "_generate_evidence",
+          "is_internal_address"
+        ]
+      },
+      "oast_dispatcher": {
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\oast_dispatcher.py",
+        "functions": {
+          "__init__": {
+            "line_number": 29,
+            "is_async": false,
+            "is_entry_point": true,
+            "called_functions": [
+              "os.getenv"
+            ]
+          },
+          "register": {
+            "line_number": 43,
+            "is_async": true,
+            "is_entry_point": true,
+            "called_functions": [
+              "payload.get",
+              "payload.get",
+              "OastProbe",
+              "httpx.AsyncClient",
+              "response.raise_for_status",
+              "response.json",
+              "RuntimeError",
+              "client.post",
+              "RuntimeError",
+              "payload.get",
+              "client.aclose"
+            ]
+          },
+          "fetch_events": {
+            "line_number": 86,
+            "is_async": true,
+            "is_entry_point": true,
+            "called_functions": [
+              "self._resolve_token",
+              "payload.get",
+              "httpx.AsyncClient",
+              "response.raise_for_status",
+              "response.json",
+              "entry.get",
+              "isinstance",
+              "OastEvent",
+              "self._validate_oast_event",
+              "client.get",
+              "RuntimeError",
+              "json.dumps",
+              "events.append",
+              "client.aclose",
+              "str",
+              "entry.get",
+              "entry.get"
+            ]
+          },
+          "_validate_oast_event": {
+            "line_number": 129,
+            "is_async": false,
+            "is_entry_point": true,
+            "called_functions": [
+              "any",
+              "any",
+              "len"
+            ]
+          },
+          "close": {
+            "line_number": 162,
+            "is_async": true,
+            "is_entry_point": true,
+            "called_functions": []
+          },
+          "_resolve_token": {
+            "line_number": 166,
+            "is_async": false,
+            "is_entry_point": true,
+            "called_functions": [
+              "token.rstrip",
+              "normalized.split",
+              "normalized.startswith",
+              "isinstance"
+            ]
+          }
+        },
+        "entry_points": [
+          "__init__",
+          "register",
+          "fetch_events",
+          "_validate_oast_event",
+          "close",
+          "_resolve_token"
+        ],
+        "export_functions": [
+          "__init__",
+          "register",
+          "fetch_events",
+          "_validate_oast_event",
+          "close",
+          "_resolve_token"
+        ]
+      },
+      "param_semantics_analyzer": {
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\param_semantics_analyzer.py",
+        "functions": {
+          "analyze": {
+            "line_number": 177,
+            "is_async": false,
+            "is_entry_point": true,
+            "called_functions": [
+              "self._tokenize",
+              "AnalysisPlan",
+              "self._get_base_payloads",
+              "self._add_standard_vectors",
+              "self._add_semantic_vectors",
+              "self._add_cross_protocol_vectors",
+              "self._add_oast_vector"
+            ]
+          },
+          "_get_base_payloads": {
+            "line_number": 201,
+            "is_async": false,
+            "is_entry_point": true,
+            "called_functions": [
+              "list",
+              "self._build_payloads",
+              "list",
+              "payloads.extend",
+              "self._get_advanced_payloads",
+              "p.strip"
+            ]
+          },
+          "_get_advanced_payloads": {
+            "line_number": 214,
+            "is_async": false,
+            "is_entry_point": true,
+            "called_functions": [
+              "advanced.extend",
+              "DnsRebindingDetector",
+              "dns_detector.generate_payloads",
+              "advanced.extend",
+              "logger.info",
+              "len"
+            ]
+          },
+          "_add_standard_vectors": {
+            "line_number": 234,
+            "is_async": false,
+            "is_entry_point": true,
+            "called_functions": [
+              "SsrfTestVector"
+            ]
+          },
+          "_add_semantic_vectors": {
+            "line_number": 248,
+            "is_async": false,
+            "is_entry_point": true,
+            "called_functions": [
+              "self._add_file_vectors",
+              "self._add_protocol_vectors",
+              "SsrfTestVector"
+            ]
+          },
+          "_add_file_vectors": {
+            "line_number": 268,
+            "is_async": false,
+            "is_entry_point": true,
+            "called_functions": [
+              "SsrfTestVector"
+            ]
+          },
+          "_add_protocol_vectors": {
+            "line_number": 281,
+            "is_async": false,
+            "is_entry_point": true,
+            "called_functions": [
+              "SsrfTestVector"
+            ]
+          },
+          "_add_cross_protocol_vectors": {
+            "line_number": 294,
+            "is_async": false,
+            "is_entry_point": true,
+            "called_functions": [
+              "self._get_selected_protocols",
+              "SsrfTestVector"
+            ]
+          },
+          "_get_selected_protocols": {
+            "line_number": 312,
+            "is_async": false,
+            "is_entry_point": true,
+            "called_functions": [
+              "headers.get",
+              "set",
+              "p.strip",
+              "protocols_hdr.split",
+              "p.strip",
+              "p.strip"
+            ]
+          },
+          "_add_oast_vector": {
+            "line_number": 326,
+            "is_async": false,
+            "is_entry_point": true,
+            "called_functions": [
+              "self._should_enable_oast",
+              "SsrfTestVector"
+            ]
+          },
+          "_build_payloads": {
+            "line_number": 341,
+            "is_async": false,
+            "is_entry_point": true,
+            "called_functions": [
+              "set",
+              "payload.strip",
+              "payload.strip",
+              "payload.strip",
+              "seen.add",
+              "seen.add",
+              "seen.add",
+              "seen.add",
+              "normalized.lower"
+            ]
+          },
+          "_should_enable_oast": {
+            "line_number": 369,
+            "is_async": false,
+            "is_entry_point": true,
+            "called_functions": [
+              "set",
+              "payload_sources.extend",
+              "payload_sources.extend",
+              "any"
+            ]
+          },
+          "_tokenize": {
+            "line_number": 385,
+            "is_async": false,
+            "is_entry_point": true,
+            "called_functions": [
+              "re.split",
+              "set",
+              "re.sub"
+            ]
+          }
+        },
+        "entry_points": [
+          "analyze",
+          "_get_base_payloads",
+          "_get_advanced_payloads",
+          "_add_standard_vectors",
+          "_add_semantic_vectors",
+          "_add_file_vectors",
+          "_add_protocol_vectors",
+          "_add_cross_protocol_vectors",
+          "_get_selected_protocols",
+          "_add_oast_vector",
+          "_build_payloads",
+          "_should_enable_oast",
+          "_tokenize"
+        ],
+        "export_functions": [
+          "analyze",
+          "_get_base_payloads",
+          "_get_advanced_payloads",
+          "_add_standard_vectors",
+          "_add_semantic_vectors",
+          "_add_file_vectors",
+          "_add_protocol_vectors",
+          "_add_cross_protocol_vectors",
+          "_get_selected_protocols",
+          "_add_oast_vector",
+          "_build_payloads",
+          "_should_enable_oast",
+          "_tokenize"
+        ]
+      },
+      "result_publisher": {
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\result_publisher.py",
+        "functions": {
+          "__init__": {
+            "line_number": 22,
+            "is_async": false,
+            "is_entry_point": true,
+            "called_functions": [
+              "os.getenv",
+              "new_id"
+            ]
+          },
+          "worker_id": {
+            "line_number": 34,
+            "is_async": false,
+            "is_entry_point": true,
+            "called_functions": []
+          },
+          "publish_status": {
+            "line_number": 37,
+            "is_async": true,
+            "is_entry_point": true,
+            "called_functions": [
+              "TaskUpdatePayload",
+              "AivaMessage",
+              "self._publish",
+              "MessageHeader",
+              "payload.model_dump",
+              "new_id"
+            ]
+          },
+          "publish_finding": {
+            "line_number": 64,
+            "is_async": true,
+            "is_entry_point": true,
+            "called_functions": [
+              "AivaMessage",
+              "self._publish",
+              "MessageHeader",
+              "finding.model_dump",
+              "new_id"
+            ]
+          },
+          "publish_error": {
+            "line_number": 82,
+            "is_async": true,
+            "is_entry_point": true,
+            "called_functions": [
+              "self.publish_status",
+              "repr"
+            ]
+          },
+          "_publish": {
+            "line_number": 96,
+            "is_async": true,
+            "is_entry_point": true,
+            "called_functions": [
+              "message.model_dump",
+              "json.dumps"
+            ]
+          }
+        },
+        "entry_points": [
+          "__init__",
+          "worker_id",
+          "publish_status",
+          "publish_finding",
+          "publish_error",
+          "_publish"
+        ],
+        "export_functions": [
+          "__init__",
+          "worker_id",
+          "publish_status",
+          "publish_finding",
+          "publish_error",
+          "_publish"
+        ]
+      },
+      "smart_ssrf_detector": {
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\smart_ssrf_detector.py",
+        "functions": {
+          "add_finding": {
+            "line_number": 51,
+            "is_async": false,
+            "is_entry_point": true,
+            "called_functions": []
+          },
+          "add_error": {
+            "line_number": 55,
+            "is_async": false,
+            "is_entry_point": true,
+            "called_functions": []
+          },
+          "increment_attempts": {
+            "line_number": 59,
+            "is_async": false,
+            "is_entry_point": true,
+            "called_functions": []
+          },
+          "add_oast_callbacks": {
+            "line_number": 63,
+            "is_async": false,
+            "is_entry_point": true,
+            "called_functions": []
+          },
+          "__init__": {
+            "line_number": 71,
+            "is_async": false,
+            "is_entry_point": true,
+            "called_functions": [
+              "logger.info",
+              "SsrfConfig"
+            ]
+          },
+          "detect_vulnerabilities": {
+            "line_number": 89,
+            "is_async": true,
+            "is_entry_point": true,
+            "called_functions": [
+              "UnifiedSmartDetectionManager",
+              "SSRFDetectionContext",
+              "analyzer.analyze",
+              "logger.error",
+              "ValueError",
+              "smart_manager.start_detection",
+              "str",
+              "self._prioritize_vectors",
+              "logger.info",
+              "self._execute_detection",
+              "logger.exception",
+              "context.add_error",
+              "str",
+              "smart_manager.get_metrics",
+              "str",
+              "len",
+              "smart_manager.get_metrics"
+            ]
+          },
+          "_prioritize_vectors": {
+            "line_number": 171,
+            "is_async": false,
+            "is_entry_point": true,
+            "called_functions": [
+              "logger.debug",
+              "any",
+              "cloud_vectors.append",
+              "other_vectors.append",
+              "str",
+              "len",
+              "len"
+            ]
+          },
+          "_execute_detection": {
+            "line_number": 207,
+            "is_async": true,
+            "is_entry_point": true,
+            "called_functions": [
+              "len",
+              "enumerate",
+              "smart_manager.update_progress",
+              "context.increment_attempts",
+              "smart_manager.should_continue_testing",
+              "logger.info",
+              "self._test_vector",
+              "len"
+            ]
+          },
+          "_test_vector": {
+            "line_number": 240,
+            "is_async": true,
+            "is_entry_point": true,
+            "called_functions": [
+              "self._resolve_payload",
+              "self._issue_request",
+              "self._verify_internal_service_access",
+              "context.add_error",
+              "logger.warning",
+              "self._build_internal_finding",
+              "context.add_finding",
+              "logger.info",
+              "logger.debug",
+              "asyncio.sleep",
+              "context.add_oast_callbacks",
+              "self._build_oast_finding",
+              "context.add_finding",
+              "logger.info",
+              "len",
+              "detection.summary",
+              "self._extract_token",
+              "str",
+              "str",
+              "detection.summary",
+              "len"
+            ]
+          },
+          "_resolve_payload": {
+            "line_number": 341,
+            "is_async": true,
+            "is_entry_point": true,
+            "called_functions": [
+              "str",
+              "payload.replace",
+              "dispatcher.register"
+            ]
+          },
+          "_issue_request": {
+            "line_number": 354,
+            "is_async": true,
+            "is_entry_point": true,
+            "called_functions": [
+              "self._parse_target_config",
+              "self._process_parameter_injection",
+              "self._execute_http_request"
+            ]
+          },
+          "_parse_target_config": {
+            "line_number": 374,
+            "is_async": false,
+            "is_entry_point": true,
+            "called_functions": [
+              "urlparse",
+              "str",
+              "dict",
+              "dict",
+              "dict",
+              "dict",
+              "parse_qsl",
+              "dict"
+            ]
+          },
+          "_process_parameter_injection": {
+            "line_number": 397,
+            "is_async": false,
+            "is_entry_point": true,
+            "called_functions": [
+              "injection_handlers.get",
+              "handler"
+            ]
+          },
+          "_inject_query_parameter": {
+            "line_number": 420,
+            "is_async": false,
+            "is_entry_point": true,
+            "called_functions": []
+          },
+          "_inject_form_parameter": {
+            "line_number": 425,
+            "is_async": false,
+            "is_entry_point": true,
+            "called_functions": []
+          },
+          "_inject_json_parameter": {
+            "line_number": 430,
+            "is_async": false,
+            "is_entry_point": true,
+            "called_functions": []
+          },
+          "_inject_header_parameter": {
+            "line_number": 436,
+            "is_async": false,
+            "is_entry_point": true,
+            "called_functions": []
+          },
+          "_inject_cookie_parameter": {
+            "line_number": 441,
+            "is_async": false,
+            "is_entry_point": true,
+            "called_functions": []
+          },
+          "_inject_body_raw_parameter": {
+            "line_number": 446,
+            "is_async": false,
+            "is_entry_point": true,
+            "called_functions": []
+          },
+          "_execute_http_request": {
+            "line_number": 453,
+            "is_async": true,
+            "is_entry_point": true,
+            "called_functions": [
+              "urlunparse",
+              "client.request",
+              "client.request",
+              "client.request",
+              "client.request"
+            ]
+          },
+          "_build_internal_finding": {
+            "line_number": 483,
+            "is_async": false,
+            "is_entry_point": true,
+            "called_functions": [
+              "new_id",
+              "FindingTarget",
+              "FindingEvidence",
+              "FindingImpact",
+              "FindingRecommendation",
+              "str"
+            ]
+          },
+          "_build_oast_finding": {
+            "line_number": 540,
+            "is_async": false,
+            "is_entry_point": true,
+            "called_functions": [
+              "new_id",
+              "FindingTarget",
+              "FindingEvidence",
+              "FindingImpact",
+              "FindingRecommendation",
+              "len",
+              "str"
+            ]
+          },
+          "_verify_internal_service_access": {
+            "line_number": 600,
+            "is_async": false,
+            "is_entry_point": true,
+            "called_functions": [
+              "self._verify_service_content",
+              "any",
+              "len",
+              "self._verify_cloud_metadata"
+            ]
+          },
+          "_verify_service_content": {
+            "line_number": 626,
+            "is_async": false,
+            "is_entry_point": true,
+            "called_functions": [
+              "self._is_valid_json_api",
+              "self._is_admin_interface",
+              "sum"
+            ]
+          },
+          "_verify_cloud_metadata": {
+            "line_number": 670,
+            "is_async": false,
+            "is_entry_point": true,
+            "called_functions": [
+              "any",
+              "any",
+              "any",
+              "json.loads",
+              "len",
+              "len",
+              "json.loads",
+              "isinstance",
+              "any",
+              "isinstance"
+            ]
+          },
+          "_is_valid_json_api": {
+            "line_number": 712,
+            "is_async": false,
+            "is_entry_point": true,
+            "called_functions": [
+              "json.loads",
+              "isinstance",
+              "len"
+            ]
+          },
+          "_is_admin_interface": {
+            "line_number": 730,
+            "is_async": false,
+            "is_entry_point": true,
+            "called_functions": [
+              "any"
+            ]
+          },
+          "_extract_token": {
+            "line_number": 740,
+            "is_async": false,
+            "is_entry_point": true,
+            "called_functions": [
+              "re.search",
+              "re.search",
+              "re.search",
+              "re.search",
+              "match.group",
+              "match.group",
+              "match.group",
+              "match.group",
+              "domain.split",
+              "len",
+              "hashlib.md5",
+              "payload.encode"
+            ]
+          }
+        },
+        "entry_points": [
+          "add_finding",
+          "add_error",
+          "increment_attempts",
+          "add_oast_callbacks",
+          "__init__",
+          "detect_vulnerabilities",
+          "_prioritize_vectors",
+          "_execute_detection",
+          "_test_vector",
+          "_resolve_payload",
+          "_issue_request",
+          "_parse_target_config",
+          "_process_parameter_injection",
+          "_inject_query_parameter",
+          "_inject_form_parameter",
+          "_inject_json_parameter",
+          "_inject_header_parameter",
+          "_inject_cookie_parameter",
+          "_inject_body_raw_parameter",
+          "_execute_http_request",
+          "_build_internal_finding",
+          "_build_oast_finding",
+          "_verify_internal_service_access",
+          "_verify_service_content",
+          "_verify_cloud_metadata",
+          "_is_valid_json_api",
+          "_is_admin_interface",
+          "_extract_token"
+        ],
+        "export_functions": [
+          "add_finding",
+          "add_error",
+          "increment_attempts",
+          "add_oast_callbacks",
+          "__init__",
+          "detect_vulnerabilities",
+          "_prioritize_vectors",
+          "_execute_detection",
+          "_test_vector",
+          "_resolve_payload",
+          "_issue_request",
+          "_parse_target_config",
+          "_process_parameter_injection",
+          "_inject_query_parameter",
+          "_inject_form_parameter",
+          "_inject_json_parameter",
+          "_inject_header_parameter",
+          "_inject_cookie_parameter",
+          "_inject_body_raw_parameter",
+          "_execute_http_request",
+          "_build_internal_finding",
+          "_build_oast_finding",
+          "_verify_internal_service_access",
+          "_verify_service_content",
+          "_verify_cloud_metadata",
+          "_is_valid_json_api",
+          "_is_admin_interface",
+          "_extract_token"
+        ]
+      },
+      "worker": {
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\worker.py",
+        "functions": {
+          "run": {
+            "line_number": 69,
+            "is_async": true,
+            "is_entry_point": true,
+            "called_functions": [
+              "SsrfResultPublisher",
+              "ParamSemanticsAnalyzer",
+              "InternalAddressDetector",
+              "OastDispatcher",
+              "get_broker",
+              "httpx.AsyncClient",
+              "broker.subscribe",
+              "AivaMessage.model_validate_json",
+              "FunctionTaskPayload",
+              "dispatcher.close",
+              "_execute_task"
+            ]
+          },
+          "_execute_task": {
+            "line_number": 107,
+            "is_async": true,
+            "is_entry_point": false,
+            "called_functions": [
+              "publisher.publish_status",
+              "logger.info",
+              "publisher.publish_status",
+              "process_task",
+              "logger.exception",
+              "publisher.publish_finding",
+              "publisher.publish_error"
+            ]
+          },
+          "process_task": {
+            "line_number": 563,
+            "is_async": true,
+            "is_entry_point": false,
+            "called_functions": [
+              "FunctionTaskPayload",
+              "SsrfResultPublisher",
+              "ValueError",
+              "get_broker",
+              "httpx.AsyncClient",
+              "hasattr",
+              "getattr",
+              "getattr",
+              "getattr",
+              "_execute_task"
+            ]
+          },
+          "_resolve_payload": {
+            "line_number": 314,
+            "is_async": true,
+            "is_entry_point": false,
+            "called_functions": [
+              "str",
+              "payload.replace",
+              "dispatcher.register"
+            ]
+          },
+          "_issue_request": {
+            "line_number": 327,
+            "is_async": true,
+            "is_entry_point": false,
+            "called_functions": [
+              "urlparse",
+              "dict",
+              "dict",
+              "dict",
+              "dict",
+              "urlunparse",
+              "str",
+              "parse_qsl",
+              "dict",
+              "parsed._replace",
+              "client.request",
+              "content.replace"
+            ]
+          },
+          "_build_internal_finding": {
+            "line_number": 384,
+            "is_async": false,
+            "is_entry_point": false,
+            "called_functions": [
+              "_severity_from_summary",
+              "FindingEvidence",
+              "FindingPayload",
+              "_safe_elapsed",
+              "_format_request",
+              "_format_response",
+              "new_id",
+              "Vulnerability",
+              "FindingTarget",
+              "FindingImpact",
+              "FindingRecommendation"
+            ]
+          },
+          "_build_oast_finding": {
+            "line_number": 436,
+            "is_async": false,
+            "is_entry_point": false,
+            "called_functions": [
+              "FindingEvidence",
+              "FindingPayload",
+              "filter",
+              "new_id",
+              "Vulnerability",
+              "FindingTarget",
+              "FindingImpact",
+              "FindingRecommendation",
+              "json.dumps"
+            ]
+          },
+          "_format_request": {
+            "line_number": 489,
+            "is_async": false,
+            "is_entry_point": false,
+            "called_functions": [
+              "lines.append",
+              "lines.append",
+              "lines.append"
+            ]
+          },
+          "_format_response": {
+            "line_number": 502,
+            "is_async": false,
+            "is_entry_point": false,
+            "called_functions": [
+              "lines.append",
+              "lines.append",
+              "lines.append"
+            ]
+          },
+          "_safe_elapsed": {
+            "line_number": 513,
+            "is_async": false,
+            "is_entry_point": false,
+            "called_functions": [
+              "elapsed.total_seconds"
+            ]
+          },
+          "_severity_from_summary": {
+            "line_number": 523,
+            "is_async": false,
+            "is_entry_point": false,
+            "called_functions": [
+              "any"
+            ]
+          },
+          "_extract_token": {
+            "line_number": 530,
+            "is_async": false,
+            "is_entry_point": false,
+            "called_functions": [
+              "payload.split"
+            ]
+          },
+          "to_details": {
+            "line_number": 51,
+            "is_async": false,
+            "is_entry_point": true,
+            "called_functions": []
+          },
+          "register": {
+            "line_number": 536,
+            "is_async": true,
+            "is_entry_point": true,
+            "called_functions": []
+          },
+          "fetch_events": {
+            "line_number": 541,
+            "is_async": true,
+            "is_entry_point": true,
+            "called_functions": []
+          },
+          "close": {
+            "line_number": 543,
+            "is_async": true,
+            "is_entry_point": true,
+            "called_functions": []
+          },
+          "__init__": {
+            "line_number": 553,
+            "is_async": false,
+            "is_entry_point": true,
+            "called_functions": [
+              "logger.warning",
+              "OastDispatcher",
+              "InternalAddressDetector",
+              "ParamSemanticsAnalyzer"
+            ]
+          }
+        },
+        "entry_points": [
+          "run",
+          "to_details",
+          "register",
+          "fetch_events",
+          "close",
+          "__init__"
+        ],
+        "export_functions": [
+          "run",
+          "_execute_task",
+          "process_task",
+          "_resolve_payload",
+          "_issue_request",
+          "_build_internal_finding",
+          "_build_oast_finding",
+          "_format_request",
+          "_format_response",
+          "_safe_elapsed",
+          "_severity_from_summary",
+          "_extract_token",
+          "to_details",
+          "register",
+          "fetch_events",
+          "close",
+          "__init__",
+          "process_task"
+        ]
+      },
+      "__init__": {
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\__init__.py",
+        "functions": {},
+        "entry_points": [],
+        "export_functions": []
+      },
+      "__main__": {
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\__main__.py",
+        "functions": {},
+        "entry_points": [],
+        "export_functions": []
+      },
+      "ssrf_config": {
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\config\\ssrf_config.py",
+        "functions": {},
+        "entry_points": [],
+        "export_functions": []
+      },
+      "ssrf_detector": {
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\detector\\ssrf_detector.py",
+        "functions": {
+          "__init__": {
+            "line_number": 12,
+            "is_async": false,
+            "is_entry_point": true,
+            "called_functions": []
+          },
+          "analyze": {
+            "line_number": 15,
+            "is_async": true,
+            "is_entry_point": true,
+            "called_functions": [
+              "SSRFEngine",
+              "engine.run",
+              "self._issue_to_finding",
+              "engine.close"
+            ]
+          },
+          "_issue_to_finding": {
+            "line_number": 31,
+            "is_async": false,
+            "is_entry_point": true,
+            "called_functions": [
+              "Vulnerability",
+              "FindingEvidence",
+              "FindingImpact",
+              "FindingRecommendation",
+              "FindingTarget",
+              "FindingPayload",
+              "str",
+              "new_id",
+              "hasattr"
+            ]
+          }
+        },
+        "entry_points": [
+          "__init__",
+          "analyze",
+          "_issue_to_finding"
+        ],
+        "export_functions": [
+          "__init__",
+          "analyze",
+          "_issue_to_finding"
+        ]
+      },
+      "ssrf_engine": {
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\engine\\ssrf_engine.py",
+        "functions": {
+          "__init__": {
+            "line_number": 17,
+            "is_async": false,
+            "is_entry_point": true,
+            "called_functions": [
+              "httpx.Limits",
+              "httpx.AsyncClient"
+            ]
+          },
+          "close": {
+            "line_number": 23,
+            "is_async": true,
+            "is_entry_point": true,
+            "called_functions": []
+          },
+          "_resolve_ips": {
+            "line_number": 27,
+            "is_async": false,
+            "is_entry_point": true,
+            "called_functions": [
+              "socket.getaddrinfo",
+              "ips.append"
+            ]
+          },
+          "_is_internal_ip": {
+            "line_number": 40,
+            "is_async": false,
+            "is_entry_point": true,
+            "called_functions": [
+              "ipaddress.ip_address"
+            ]
+          },
+          "check_internal_access": {
+            "line_number": 47,
+            "is_async": true,
+            "is_entry_point": true,
+            "called_functions": [
+              "any",
+              "self._resolve_ips",
+              "self._is_internal_ip",
+              "issues.append",
+              "SSRFIssue",
+              "issues.append",
+              "issues.append",
+              "SSRFIssue",
+              "SSRFIssue",
+              "str",
+              "len",
+              "url.split"
+            ]
+          },
+          "check_cloud_metadata": {
+            "line_number": 88,
+            "is_async": true,
+            "is_entry_point": true,
+            "called_functions": [
+              "issues.append",
+              "SSRFIssue",
+              "issues.append",
+              "SSRFIssue",
+              "headers_map.get"
+            ]
+          },
+          "check_file_protocol": {
+            "line_number": 127,
+            "is_async": true,
+            "is_entry_point": true,
+            "called_functions": [
+              "issues.append",
+              "url.lower",
+              "SSRFIssue"
+            ]
+          },
+          "run": {
+            "line_number": 139,
+            "is_async": true,
+            "is_entry_point": true,
+            "called_functions": [
+              "tasks.append",
+              "tasks.append",
+              "tasks.append",
+              "self.check_internal_access",
+              "self.check_cloud_metadata",
+              "self.check_file_protocol",
+              "asyncio.gather",
+              "isinstance",
+              "issues.extend"
+            ]
+          }
+        },
+        "entry_points": [
+          "__init__",
+          "close",
+          "_resolve_ips",
+          "_is_internal_ip",
+          "check_internal_access",
+          "check_cloud_metadata",
+          "check_file_protocol",
+          "run"
+        ],
+        "export_functions": [
+          "__init__",
+          "close",
+          "_resolve_ips",
+          "_is_internal_ip",
+          "check_internal_access",
+          "check_cloud_metadata",
+          "check_file_protocol",
+          "run"
+        ]
+      },
+      "ssrf_worker": {
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_ssrf\\worker\\ssrf_worker.py",
+        "functions": {
+          "run": {
+            "line_number": 11,
+            "is_async": true,
+            "is_entry_point": true,
+            "called_functions": [
+              "SsrfConfig",
+              "SSRFDetector",
+              "get_broker",
+              "broker.subscribe",
+              "float",
+              "int",
+              "AivaMessage.model_validate_json",
+              "FunctionTaskPayload",
+              "str",
+              "os.getenv",
+              "os.getenv",
+              "new_id",
+              "broker.publish",
+              "detector.analyze",
+              "AivaMessage",
+              "broker.publish",
+              "logger.exception",
+              "broker.publish",
+              "broker.publish",
+              "os.getenv",
+              "os.getenv",
+              "os.getenv",
+              "os.getenv",
+              "os.getenv",
+              "MessageHeader",
+              "f.model_dump",
+              "json.dumps",
+              "json.dumps",
+              "new_id",
+              "json.dumps",
+              "json.dumps",
+              "out.model_dump",
+              "AivaMessage",
+              "AivaMessage",
+              "AivaMessage",
+              "MessageHeader",
+              "MessageHeader",
+              "len",
+              "MessageHeader",
+              "new_id",
+              "new_id",
+              "str",
+              "new_id",
+              "new_id"
+            ]
+          }
+        },
+        "entry_points": [
+          "run"
+        ],
+        "export_functions": [
+          "run"
+        ]
+      }
+    }
+  }
+}

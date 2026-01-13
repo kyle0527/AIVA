@@ -68,55 +68,90 @@ class ContextManager:
 
     async def get_context(self, context_id: str) -> dict[str, Any] | None:
         """獲取上下文"""
-        if context_id in self._contexts:
-            async with self._context_locks.get(context_id, asyncio.Lock()):
-                return self._contexts.get(context_id)
-        return None
+        if context_id not in self._contexts:
+            return None
+        
+        # 使用已存在的鎖，避免每次創建新鎖
+        if context_id not in self._context_locks:
+            return self._contexts.get(context_id)
+        
+        async with self._context_locks[context_id]:
+            return self._contexts.get(context_id)
 
     async def update_context(self, context_id: str, updates: dict[str, Any]):
         """更新上下文"""
-        if context_id in self._contexts:
-            async with self._context_locks.get(context_id, asyncio.Lock()):
-                self._contexts[context_id].update(updates)
-                self._contexts[context_id]["updated_at"] = time.time()
+        if context_id not in self._contexts:
+            return
+        
+        if context_id not in self._context_locks:
+            self._contexts[context_id].update(updates)
+            self._contexts[context_id]["updated_at"] = time.time()
+            return
+        
+        async with self._context_locks[context_id]:
+            self._contexts[context_id].update(updates)
+            self._contexts[context_id]["updated_at"] = time.time()
 
     async def set_variable(self, context_id: str, key: str, value: Any):
         """設置上下文變量"""
-        if context_id in self._contexts:
-            async with self._context_locks.get(context_id, asyncio.Lock()):
-                self._contexts[context_id]["variables"][key] = value
+        if context_id not in self._contexts:
+            return
+        
+        if context_id not in self._context_locks:
+            self._contexts[context_id]["variables"][key] = value
+            return
+        
+        async with self._context_locks[context_id]:
+            self._contexts[context_id]["variables"][key] = value
 
     async def get_variable(self, context_id: str, key: str) -> Any:
         """獲取上下文變量"""
-        if context_id in self._contexts:
-            async with self._context_locks.get(context_id, asyncio.Lock()):
-                return self._contexts[context_id]["variables"].get(key)
-        return None
+        if context_id not in self._contexts:
+            return None
+        
+        if context_id not in self._context_locks:
+            return self._contexts[context_id]["variables"].get(key)
+        
+        async with self._context_locks[context_id]:
+            return self._contexts[context_id]["variables"].get(key)
 
     async def add_history(self, context_id: str, entry: dict[str, Any]):
         """添加歷史記錄"""
-        if context_id in self._contexts:
-            async with self._context_locks.get(context_id, asyncio.Lock()):
-                entry["timestamp"] = time.time()
-                self._contexts[context_id]["history"].append(entry)
-
-                # 限制歷史記錄數量，避免內存洩漏
-                if len(self._contexts[context_id]["history"]) > 1000:
-                    self._contexts[context_id]["history"] = self._contexts[context_id][
-                        "history"
-                    ][-500:]
+        if context_id not in self._contexts:
+            return
+        
+        entry["timestamp"] = time.time()
+        
+        if context_id not in self._context_locks:
+            self._contexts[context_id]["history"].append(entry)
+            if len(self._contexts[context_id]["history"]) > 1000:
+                self._contexts[context_id]["history"] = self._contexts[context_id]["history"][-500:]
+            return
+        
+        async with self._context_locks[context_id]:
+            self._contexts[context_id]["history"].append(entry)
+            # 限制歷史記錄數量，避免內存洩漏
+            if len(self._contexts[context_id]["history"]) > 1000:
+                self._contexts[context_id]["history"] = self._contexts[context_id]["history"][-500:]
 
     async def get_context_history(
         self, context_id: str, limit: int | None = None
     ) -> list[dict[str, Any]]:
         """獲取上下文歷史"""
-        if context_id in self._contexts:
-            async with self._context_locks.get(context_id, asyncio.Lock()):
-                history = self._contexts[context_id]["history"]
-                if limit:
-                    return history[-limit:]
-                return history.copy()
-        return []
+        if context_id not in self._contexts:
+            return []
+        
+        if context_id not in self._context_locks:
+            history = self._contexts[context_id]["history"]
+            if limit:
+                return history[-limit:]
+            return history.copy()
+        
+        async with self._context_locks[context_id]:
+            history = self._contexts[context_id]["history"]
+            if limit:
+                return history[-limit:]
+            return history.copy()
 
     async def get_session_contexts(self, session_id: str) -> list[str]:  # type: ignore[misc]
         """獲取會話的所有上下文ID - async保留供未來異步查詢擴展"""
@@ -130,15 +165,17 @@ class ContextManager:
 
     async def cleanup_context(self, context_id: str):
         """清理上下文"""
-        if context_id in self._contexts:
-            async with self._context_locks.get(context_id, asyncio.Lock()):
+        if context_id not in self._contexts:
+            return
+        
+        if context_id in self._context_locks:
+            async with self._context_locks[context_id]:
                 del self._contexts[context_id]
+            del self._context_locks[context_id]
+        else:
+            del self._contexts[context_id]
 
-            # 清理鎖
-            if context_id in self._context_locks:
-                del self._context_locks[context_id]
-
-            self.logger.debug(f"Cleaned up context: {context_id}")
+        self.logger.debug(f"Cleaned up context: {context_id}")
 
     async def cleanup_session(self, session_id: str):
         """清理會話及其相關上下文"""

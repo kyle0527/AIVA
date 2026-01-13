@@ -11,6 +11,15 @@ import json
 from pathlib import Path
 from collections import defaultdict, Counter
 
+# 導入 classify_script_type 函數
+try:
+    from .core_analyzer import classify_script_type
+except ImportError:
+    # 本地測試時的後備導入
+    import sys
+    sys.path.insert(0, str(Path(__file__).parent))
+    from core_analyzer import classify_script_type
+
 def load_analysis_data(results_dir: Path) -> dict:
     """載入分析數據
     
@@ -168,8 +177,32 @@ def print_isolated_modules(modules: list) -> None:
     """列印完全孤立的模組"""
     print("\n  🔴 完全孤立的模組 (可能是工具腳本):")
     top_modules = sorted(modules, key=lambda x: x['exports'], reverse=True)[:10]
+    
+    # 使用 classify_script_type 進行分類
+    categorized = {
+        'tool': [],
+        'entry_point': [],
+        'module': []
+    }
+    
     for stat in top_modules:
-        print(f"    • {stat['name']}: 定義了 {stat['exports']} 個函數但完全未被使用")
+        # 假設腳本路徑可從名稱推斷（需要實際路徑時應從外部傳入）
+        script_type = classify_script_type('', stat['name'])
+        categorized[script_type].append(stat)
+    
+    # 顯示真正的孤立模組（非工具腳本）
+    real_isolated = categorized['module']
+    if real_isolated:
+        print("\n    真正的孤立模組（需要檢查）：")
+        for stat in real_isolated:
+            print(f"    • {stat['name']}: 定義了 {stat['exports']} 個函數但完全未被使用")
+    
+    # 顯示工具腳本（可以忽略）
+    tool_scripts = categorized['tool'] + categorized['entry_point']
+    if tool_scripts:
+        print("\n    工具/入口腳本（正常情況）：")
+        for stat in tool_scripts:
+            print(f"    ℹ️ {stat['name']}: {stat['exports']} 個函數（工具腳本，可忽略）")
 
 def verify_design_principles(connection_stats: list) -> None:
     """驗證設計理念

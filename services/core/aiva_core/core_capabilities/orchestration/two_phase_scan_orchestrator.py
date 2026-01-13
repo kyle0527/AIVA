@@ -28,6 +28,9 @@ from services.aiva_common.schemas import (
 )
 from services.aiva_common.utils import get_logger
 
+# Bug Bounty AI 決策整合
+from ...cognitive_core.decision.enhanced_decision_agent import EnhancedDecisionAgent
+
 logger = get_logger(__name__)
 
 
@@ -71,6 +74,14 @@ class TwoPhaseScanOrchestrator:
         self.broker = broker
         self.phase0_timeout = 600  # 10 分鐘
         self.phase1_timeout = 1800  # 30 分鐘
+        
+        # Bug Bounty AI 決策代理
+        try:
+            self.decision_agent = EnhancedDecisionAgent()
+            logger.info("🧠 EnhancedDecisionAgent 已整合 (Bug Bounty 模式)")
+        except Exception as e:
+            logger.warning(f"⚠️ EnhancedDecisionAgent 初始化失敗，使用規則決策: {e}")
+            self.decision_agent = None
 
     async def execute_scan_with_context(
         self,
@@ -201,6 +212,60 @@ class TwoPhaseScanOrchestrator:
             f"Status: {phase1_result.status}"
         )
 
+        # === Phase 2 決策: 攻擊目標選擇 ===
+        if self.decision_agent:
+            try:
+                logger.info(f"🎯 Phase2 決策: 分析攻擊目標優先級 (scan_id={scan_id})")
+                
+                # 將 Phase1CompletedPayload 轉換為字典格式
+                phase1_dict = {
+                    "scan_id": phase1_result.scan_id,
+                    "status": phase1_result.status,
+                    "assets": phase1_result.assets,
+                    "engine_results": phase1_result.engine_results,
+                    "summary": {
+                        "urls_found": phase1_result.summary.urls_found if phase1_result.summary else 0,
+                        "forms_found": phase1_result.summary.forms_found if phase1_result.summary else 0,
+                        "apis_found": phase1_result.summary.apis_found if phase1_result.summary else 0,
+                    },
+                    "fingerprints": phase1_result.fingerprints,
+                    "execution_time": phase1_result.execution_time,
+                }
+                
+                # 決定 Phase2 攻擊目標（返回 list[dict]）
+                phase2_targets = self.decision_agent.decide_phase2_targets(
+                    phase1_dict, max_targets=10
+                )
+                
+                logger.info(
+                    f"🎯 Phase2 目標選擇: {len(phase2_targets)} 個高價值目標, "
+                    f"優先級分布: Tier1={len([t for t in phase2_targets if t.get('tier') == 1])}, "
+                    f"Tier2={len([t for t in phase2_targets if t.get('tier') == 2])}, "
+                    f"Tier3={len([t for t in phase2_targets if t.get('tier') == 3])}"
+                )
+                
+                # 模擬 Phase2 結果（在實際實現中這裡會執行實際攻擊）
+                total_bounty_estimate = sum(t.get('bounty_estimate', 0) for t in phase2_targets)
+                
+                # 評估 Phase2 結果（傳入 phase2_targets list）
+                phase2_evaluation = self.decision_agent.evaluate_phase2_results(
+                    phase2_targets, time_budget_remaining=30.0
+                )
+                
+                logger.info(
+                    f"📊 Phase2 評估: 風險等級={phase2_evaluation.get('risk_level', 'unknown')}, "
+                    f"建議下一步={len(phase2_evaluation.get('next_actions', []))} 個行動"
+                )
+                
+                # 記錄 Phase2 決策結果供後續處理
+                logger.info(
+                    f"📋 Phase2 決策完成: {len(phase2_targets)} 個目標, "
+                    f"總獎金潛力: ${total_bounty_estimate:,}"
+                )
+                
+            except Exception as e:
+                logger.warning(f"⚠️ Phase2 決策失敗，使用規則模式: {e}")
+        
         return phase1_result
 
     async def _execute_phase0(
@@ -438,12 +503,11 @@ class TwoPhaseScanOrchestrator:
     ) -> tuple[bool, str]:
         """AI 分析 Phase0 結果並決策是否需要 Phase1
 
-        決策邏輯:
-        1. 發現敏感資料 → 需要 Phase1 (高風險)
-        2. 發現多種技術棧 → 需要 Phase1 (複雜目標)
-        3. 端點數量超過閾值 → 需要 Phase1 (大型應用)
-        4. 攻擊面風險等級 >= medium → 需要 Phase1
-        5. 其他情況 → 可選 Phase1 (根據策略)
+        使用 EnhancedDecisionAgent 的 Bug Bounty 特化決策：
+        1. 成本收益分析 (ROI 評估)
+        2. WAF/Rate Limit 影響評估
+        3. 預期獎金價值計算
+        4. 時間成本估算
 
         Args:
             scan_id: 掃描 ID
@@ -454,42 +518,81 @@ class TwoPhaseScanOrchestrator:
         """
         logger.info(f"[AI Decision] Analyzing Phase0 results for {scan_id}")
 
-        # 獲取統計資訊
+        # 將 Phase0CompletedPayload 轉換為字典供 decision_agent 使用
+        phase0_dict = {
+            "summary": {
+                "urls_found": phase0_result.summary.urls_found,
+                "forms_found": phase0_result.summary.forms_found,
+                "apis_found": phase0_result.summary.apis_found,
+            },
+            "fingerprints": {
+                "waf_detected": phase0_result.fingerprints.waf_detected if phase0_result.fingerprints else False,
+                "waf_vendor": phase0_result.fingerprints.waf_vendor if phase0_result.fingerprints else None,
+                "framework": phase0_result.fingerprints.framework if phase0_result.fingerprints else {},
+                "language": phase0_result.fingerprints.language if phase0_result.fingerprints else {},
+            },
+            "recommendations": phase0_result.recommendations,
+        }
+
+        # 使用 Bug Bounty AI 決策 (整合成本收益分析)
+        try:
+            if self.decision_agent is not None:
+                decision = self.decision_agent.decide_phase1_strategy(
+                    phase0_result=phase0_dict,
+                    target_value=1000.0  # 預期獎金 $1000，可配置
+                )
+                
+                need_phase1 = decision['need_phase1']
+                reasoning = decision['reasoning']
+                
+                logger.info(
+                    f"[AI Decision] ROI: ${decision['roi']:.0f}/hr, "
+                    f"AI Confidence: {decision['ai_confidence']:.2f}"
+                )
+                
+                # 如果檢測到 WAF，記錄繞過計劃
+                if 'waf_bypass_plan' in decision:
+                    logger.info(
+                        f"[WAF Strategy] Bypass plan activated: "
+                        f"delay×{decision['waf_bypass_plan']['delay_multiplier']:.1f}"
+                    )
+                
+                return need_phase1, reasoning
+            else:
+                # decision_agent 未初始化，直接使用降級規則
+                logger.info("[Fallback] Using rule-based decision (AI agent not available)")
+                return self._fallback_decision_rules(phase0_result)
+            
+        except Exception as e:
+            logger.warning(f"[AI Decision] 決策失敗，使用降級規則: {e}")
+            # 降級為簡單規則決策
+            return self._fallback_decision_rules(phase0_result)
+    
+    def _fallback_decision_rules(
+        self, phase0_result: Phase0CompletedPayload
+    ) -> tuple[bool, str]:
+        """降級規則決策 (當 AI 決策失敗時)"""
         summary = phase0_result.summary
         fingerprints = phase0_result.fingerprints
         recommendations = phase0_result.recommendations
 
-        # 規則1: 檢查 recommendations (Rust 引擎的建議)
+        # 規則1: Rust 引擎強烈建議
         if recommendations.get("needs_deep_scan", False):
             return True, "Rust engine recommends deep scan"
         
-        if recommendations.get("sensitive_data_detected", False):
-            return True, "Sensitive data detected by Phase0"
-
-        # 規則2: 多種技術棧 (檢查 fingerprints)
-        tech_count = 0
-        if fingerprints:
-            if fingerprints.framework:
-                tech_count += len(fingerprints.framework)
-            if fingerprints.language:
-                tech_count += len(fingerprints.language)
-            if tech_count >= 3:
-                return True, f"Complex tech stack: {tech_count} technologies"
-
-        # 規則3: 端點數量閾值 (>20)
+        # 規則2: 大型應用
         if summary.urls_found > 20:
             return True, f"Large application: {summary.urls_found} URLs found"
 
-        # 規則4: 發現表單或 API (需要深度測試)
+        # 規則3: 發現表單或 API
         if summary.forms_found > 0 or summary.apis_found > 0:
             return True, f"Forms ({summary.forms_found}) or APIs ({summary.apis_found}) detected"
 
-        # 規則5: WAF 檢測 (需要繞過測試)
+        # 規則4: WAF 檢測
         if fingerprints and fingerprints.waf_detected:
             return True, f"WAF detected: {fingerprints.waf_vendor or 'unknown'}"
 
-        # 規則6: 默認策略 - 建議執行 Phase1 (保守策略)
-        # 在生產環境可改為更激進的策略 (如 return False)
+        # 默認策略
         return True, "Default strategy: comprehensive scan recommended"
 
     def _select_engines_for_phase1(

@@ -9,7 +9,7 @@ import logging
 from typing import Any
 
 from ..tracing.trace_recorder import ExecutionTrace, TraceType
-from ...task_planning.planner.ast_parser import AttackFlowGraph, NodeType
+from services.core.aiva_core.task_planning.planner.ast_parser import AttackFlowGraph, NodeType
 
 logger = logging.getLogger(__name__)
 

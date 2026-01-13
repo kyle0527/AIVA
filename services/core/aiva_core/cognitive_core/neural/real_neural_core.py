@@ -20,45 +20,15 @@ from typing import Any, Dict, Optional, Tuple
 import json
 import time
 
-# aiva_common 規範導入 - 使用標準枚舉
-try:
-    from aiva_common.enums.common import Severity, Confidence
-    from aiva_common.enums.security import VulnerabilityType
-    from aiva_common.error_handling import AIVAError, ErrorType, ErrorSeverity, create_error_context
-    AIVA_COMMON_AVAILABLE = True
-except ImportError:
-    # 降級方案：如果 aiva_common 不可用，使用本地常量
-    AIVA_COMMON_AVAILABLE = False
-    logging.warning("aiva_common 不可用，使用本地常量")
-    
-    # 使用模組別名避免類型衝突
-    class _LocalSeverity:
-        CRITICAL = "critical"
-        HIGH = "high"
-        MEDIUM = "medium"
-        LOW = "low"
-    
-    class _LocalConfidence:
-        CERTAIN = "certain"
-        FIRM = "firm" 
-        POSSIBLE = "possible"
-    
-    # 設置別名（僅用於 Severity 和 Confidence）
-    Severity = _LocalSeverity  # type: ignore
-    Confidence = _LocalConfidence  # type: ignore
-    
-    # 錯誤處理降級 - 直接使用標準異常而非重定義
-    # 在降級模式下，仍然使用標準異常，但不會有 AIVAError 的額外功能
+# aiva_common 強制依賴 - 必須正確安裝
+from aiva_common.enums.common import Severity, Confidence
+from aiva_common.enums.security import VulnerabilityType
+from aiva_common.error_handling import AIVAError, ErrorType, ErrorSeverity, create_error_context
 
 MODULE_NAME = "real_neural_core"
 
-# P0 修復: 語意編碼支援
-try:
-    from sentence_transformers import SentenceTransformer
-    SEMANTIC_ENCODING_AVAILABLE = True
-except ImportError:
-    SEMANTIC_ENCODING_AVAILABLE = False
-    logging.warning("sentence-transformers 未安裝，將使用降級編碼方案")
+# P0 修復: 語意編碼支援 - 強制依賴
+from sentence_transformers import SentenceTransformer
 
 logger = logging.getLogger(__name__)
 
@@ -200,7 +170,7 @@ class RealAICore(nn.Module):
                 "雙輸出僅在5M模型模式下支援",
                 error_type=ErrorType.VALIDATION,
                 severity=ErrorSeverity.MEDIUM,
-                context=create_error_context(module=MODULE_NAME, function="dual_forward") if AIVA_COMMON_AVAILABLE else None
+                context=create_error_context(module=MODULE_NAME, function="dual_forward")
             )
             
         # 當前權重檔案不支援雙輸出功能
@@ -208,7 +178,7 @@ class RealAICore(nn.Module):
             "當前權重檔案不支援雙輸出功能",
             error_type=ErrorType.VALIDATION,
             severity=ErrorSeverity.MEDIUM,
-            context=create_error_context(module=MODULE_NAME, function="dual_forward") if AIVA_COMMON_AVAILABLE else None
+            context=create_error_context(module=MODULE_NAME, function="dual_forward")
         )
     
     def save_weights(self, filepath: str) -> None:
@@ -413,14 +383,12 @@ class RealDecisionEngine:
         self.training_history = []
         
         # P0 修復: 初始化語意編碼器
-        self.semantic_encoder = None
-        if SEMANTIC_ENCODING_AVAILABLE:
-            # 使用 all-MiniLM-L6-v2 (輕量級, 384維, 適合代碼)
-            # 不使用降級方案，如果載入失敗就讓錯誤暴露
-            self.semantic_encoder = SentenceTransformer('all-MiniLM-L6-v2')
-            # 移動到相同設備
-            self.semantic_encoder.to(self.device)
-            logger.info("✅ 語意編碼器已載入: all-MiniLM-L6-v2 (384維)")
+        # 使用 all-MiniLM-L6-v2 (輕量級, 384維, 適合代碼)
+        # 不使用降級方案，如果載入失敗就讓錯誤暴露
+        self.semantic_encoder = SentenceTransformer('all-MiniLM-L6-v2')
+        # 移動到相同設備
+        self.semantic_encoder.to(self.device)
+        logger.info("✅ 語意編碼器已載入: all-MiniLM-L6-v2 (384維)")
         
         logger.info(f"真實決策引擎初始化完成 (Device: {self.device})")
         logger.info(f"  編碼模式: {'語意編碼 (Semantic)' if self.semantic_encoder else '字符編碼 (Fallback)'}")
@@ -450,7 +418,6 @@ class RealDecisionEngine:
         bug_bounty_context = self._enhance_bug_bounty_context(text)
         
         # 使用 Sentence Transformers 進行語意編碼
-        # 移除降級邏輯 - semantic_encoder必須正確初始化
         if self.semantic_encoder is None:
             raise RuntimeError(
                 "semantic_encoder 未初始化。請確保模型正確載入。\n"
@@ -460,27 +427,28 @@ class RealDecisionEngine:
                 "3. 初始化過程是否有錯誤"
             )
         
-        embedding = self.semantic_encoder.encode(
+        # 獲取語意向量 (384維)
+        semantic_embedding = self.semantic_encoder.encode(
             bug_bounty_context,
             convert_to_tensor=True,
             show_progress_bar=False,
             device=str(self.device)
         )
         
-        # 調整維度至 512 專為 5M 網絡
-        if embedding.shape[0] != 512:
-            # 使用線性變換而非池化，保持更多語意信息
-            if embedding.shape[0] < 512:
-                # 擴展維度：重複關鍵特徵
-                repeat_factor = 512 // embedding.shape[0] + 1
-                embedding = embedding.repeat(repeat_factor)[:512]
-            else:
-                # 縮減維度：保留最重要特徵
-                embedding = embedding[:512]
-        
-        # 添加 Bug Bounty 專業特徵
+        # 提取 Bug Bounty 專業特徵 (32維)
         bug_bounty_features = self._extract_bug_bounty_features(text)
-        embedding[-32:] = bug_bounty_features  # 最後32維專門用於專業特徵
+        
+        # 拼接語意向量和專業特徵 (384 + 32 = 416維)
+        combined_embedding = torch.cat([semantic_embedding, bug_bounty_features], dim=0)
+        
+        # 透過線性層投影至 512 維（保持語意空間完整性）
+        if not hasattr(self, 'feature_projection'):
+            self.feature_projection = nn.Linear(416, 512).to(self.device)
+            # 初始化權重
+            nn.init.xavier_uniform_(self.feature_projection.weight)
+            nn.init.zeros_(self.feature_projection.bias)
+        
+        embedding = self.feature_projection(combined_embedding)
         
         # 確保形狀正確並歸一化
         embedding = torch.clamp(embedding, -1.0, 1.0)

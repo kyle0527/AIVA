@@ -66,7 +66,11 @@ class OutputParameter(BaseModel):
 
 
 class CapabilityRecord(BaseModel):
-    """統一能力記錄格式"""
+    """統一能力記錄格式
+    
+    v2.1 (2026-01-08): 擴展支援去語意化反射引擎
+    新增 rag_trigger 和 feature_signature 欄位
+    """
     model_config = ConfigDict(
         str_strip_whitespace=True,
         validate_assignment=True,
@@ -113,6 +117,22 @@ class CapabilityRecord(BaseModel):
     # 配置信息
     config: Optional[dict[str, Any]] = Field(None, description="額外配置")
     environment_vars: Optional[dict[str, str]] = Field(None, description="環境變量")
+    
+    # === 去語意化反射引擎欄位（HackOne v2.0 戰略升級） ===
+    rag_trigger: Optional[dict[str, float]] = Field(
+        None,
+        description=(
+            "RAG 觸發權重表 (環境特徵 → 匹配權重)\n"
+            "範例: {'http_403': 1.5, 'waf_pattern': 2.0, 'db_error_mysql': 2.5}"
+        )
+    )
+    feature_signature: Optional[List[str]] = Field(
+        None,
+        description=(
+            "能力特徵簽名列表（用於快速索引）\n"
+            "範例: ['http_status', 'sql_error', 'waf_detection']"
+        )
+    )
 
 
 class CapabilityEvidence(BaseModel):

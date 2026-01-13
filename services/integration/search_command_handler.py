@@ -1,17 +1,31 @@
 """
 網路搜索命令處理器
 
-處理各種網路搜索相關的命令，包括：
+處理各種網路搜索相關的命令，支持兩種調用方式：
+1. **CLI 模式**（推薦）：通過命令行直接調用
+2. **AICommand 模式**（向後兼容）：通過 AICommand 接口調用
+
+支持的搜索類型：
 - 漏洞數據庫搜索（ExploitDB, CVE, CWE）
 - 威脅情報搜索（VirusTotal, AbuseIPDB, AlienVault OTX）
 - 開源情報搜索（Google, DuckDuckGo, GitHub, Shodan）
 - 社交工程搜索（WHOIS, 域名信息）
+
+CLI 使用示例：
+    python -m services.integration.search_command_handler \\
+        --search-type google \\
+        --query "CVE-2024-1234" \\
+        --max-results 10
+
+架構更新（2026-01-08）：
+- ✅ 優先使用 CLI 模式
+- ✅ 保留 AICommand 接口作為向後兼容層
 """
 
 import asyncio
 import os
 from typing import Any, List, Optional
-from datetime import datetime, UTC
+from datetime import datetime, timezone
 
 import aiohttp
 
@@ -145,8 +159,8 @@ class SearchCommandHandler:
                 error_code="",
                 error_details={},
                 execution_time=execution_time,
-                started_at=datetime.fromtimestamp(start_time, tz=UTC),
-                completed_at=datetime.now(UTC),
+                started_at=datetime.fromtimestamp(start_time, tz=timezone.utc),
+                completed_at=datetime.now(timezone.utc),
                 metrics={
                     "search_type": command.command_type.value,
                     "results_count": self._count_results(results)
@@ -167,8 +181,8 @@ class SearchCommandHandler:
                 error_code="SEARCH_EXECUTION_ERROR",
                 error_details={"exception_type": type(e).__name__},
                 execution_time=execution_time,
-                started_at=datetime.fromtimestamp(start_time, tz=UTC),
-                completed_at=datetime.now(UTC)
+                started_at=datetime.fromtimestamp(start_time, tz=timezone.utc),
+                completed_at=datetime.now(timezone.utc)
             )
     
     # ===== 搜索引擎實現 =====
@@ -640,3 +654,126 @@ class SearchCommandHandler:
             return len(results["exploits"])
         else:
             return 0
+
+
+# ==================== CLI 入口點 ====================
+
+async def main_cli():
+    """CLI 主函數
+    
+    提供命令行接口來執行搜索任務，符合 aiva_common 規範
+    
+    使用示例：
+        # Google 搜索
+        python -m services.integration.search_command_handler \\
+            --search-type google --query "CVE-2024-1234"
+        
+        # GitHub 搜索
+        python -m services.integration.search_command_handler \\
+            --search-type github --query "xss vulnerability"
+        
+        # ExploitDB 搜索
+        python -m services.integration.search_command_handler \\
+            --search-type exploitdb --query "linux kernel"
+    """
+    import argparse
+    import json
+    
+    parser = argparse.ArgumentParser(
+        description="AIVA 搜索命令處理器 - CLI 模式",
+        formatter_class=argparse.RawDescriptionHelpFormatter
+    )
+    
+    parser.add_argument(
+        "--search-type",
+        required=True,
+        choices=["google", "duckduckgo", "github", "exploitdb", "cve", "shodan", "threat_intel", "whois", "domain"],
+        help="搜索類型"
+    )
+    
+    parser.add_argument(
+        "--query",
+        required=True,
+        help="搜索查詢字符串"
+    )
+    
+    parser.add_argument(
+        "--max-results",
+        type=int,
+        default=10,
+        help="最大結果數量（默認：10）"
+    )
+    
+    parser.add_argument(
+        "--output",
+        choices=["json", "text"],
+        default="json",
+        help="輸出格式（默認：json）"
+    )
+    
+    parser.add_argument(
+        "--config-file",
+        help="配置文件路徑（JSON 格式）"
+    )
+    
+    args = parser.parse_args()
+    
+    # 加載配置
+    config = {}
+    if args.config_file and os.path.exists(args.config_file):
+        with open(args.config_file, 'r', encoding='utf-8') as f:
+            config = json.load(f)
+    
+    # 創建處理器
+    handler = SearchCommandHandler(config)
+    
+    # 構建 payload
+    payload = {
+        "query": args.query,
+        "max_results": args.max_results
+    }
+    
+    # 映射搜索類型到處理方法
+    search_mapping = {
+        "google": handler._search_google,
+        "duckduckgo": handler._search_duckduckgo,
+        "github": handler._search_github,
+        "exploitdb": handler._search_exploitdb,
+        "cve": handler._search_cve_details,
+        "shodan": handler._search_shodan,
+        "threat_intel": handler._search_threat_intel,
+        "whois": handler._search_whois,
+        "domain": handler._search_domain_info,
+    }
+    
+    try:
+        # 執行搜索
+        logger.info(f"🔍 執行 {args.search_type} 搜索: {args.query}")
+        
+        search_func = search_mapping[args.search_type]
+        results = await search_func(payload)
+        
+        # 輸出結果
+        if args.output == "json":
+            print(json.dumps(results, indent=2, ensure_ascii=False))
+        else:
+            print(f"\n搜索結果（{args.search_type}）:")
+            print(f"查詢: {args.query}")
+            print(f"結果數: {handler._count_results(results)}")
+            print(json.dumps(results, indent=2, ensure_ascii=False))
+        
+        return 0
+    
+    except Exception as e:
+        logger.error(f"❌ 搜索失敗: {e}", exc_info=True)
+        print(json.dumps({
+            "error": str(e),
+            "search_type": args.search_type,
+            "query": args.query
+        }, indent=2), file=__import__('sys').stderr)
+        return 1
+
+
+if __name__ == "__main__":
+    import sys
+    sys.exit(asyncio.run(main_cli()))

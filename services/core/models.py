@@ -14,7 +14,7 @@
 9. 修復建議生成
 """
 
-from datetime import UTC, datetime
+from datetime import datetime, timezone
 from typing import Any
 
 from pydantic import BaseModel, Field, field_validator

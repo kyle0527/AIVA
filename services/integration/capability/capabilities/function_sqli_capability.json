@@ -1,0 +1,128 @@
+{
+  "meta": {
+    "id": "sqli_multi_engine",
+    "name": "Multi-Engine SQL Injection Detection",
+    "description": "多引擎 SQL 注入檢測模組，支援 Error-Based、Boolean-Based、Time-Based、Union-Based 和 OOB 檢測",
+    "version": "2.0.0",
+    "author": "AIVA Team",
+    "tags": ["sqli", "injection", "database", "high-risk"]
+  },
+  "rag_trigger": {
+    "desc": "AI 決策權重表：系統會將目標網站的特徵與此權重表進行點積運算，決定推薦分數",
+    "weights": {
+      "http_status_500": 2.5,
+      "http_status_403": -0.5,
+      "keyword_mysql_error": 5.0,
+      "keyword_postgresql_error": 4.5,
+      "keyword_mssql_error": 4.5,
+      "keyword_oracle_error": 4.0,
+      "keyword_syntax_error": 3.0,
+      "keyword_sql_query": 2.0,
+      "param_id": 2.0,
+      "param_user": 1.5,
+      "param_query": 2.5,
+      "param_search": 2.0,
+      "param_order": 1.8,
+      "param_sort": 1.5,
+      "waf_detected": -2.0,
+      "waf_cloudflare": -1.5,
+      "waf_modsecurity": -1.8,
+      "latency_high": -0.5,
+      "tech_stack_php": 1.5,
+      "tech_stack_aspnet": 1.2,
+      "tech_stack_java": 1.0,
+      "tech_stack_nodejs": 0.8,
+      "response_reflects_input": 1.5,
+      "error_message_verbose": 3.0,
+      "debug_mode_enabled": 2.5
+    },
+    "threshold": 0.6
+  },
+  "parameters": {
+    "desc": "CLI 互動定義層：用於驗證使用者輸入並生成 Help 訊息",
+    "schema": {
+      "level": {
+        "type": "int",
+        "default": 2,
+        "min": 1,
+        "max": 5,
+        "help": "測試深度 (1=基本測試, 2=標準測試, 3=深度測試, 4=包含時間盲注, 5=包含 OOB)"
+      },
+      "risk": {
+        "type": "int",
+        "default": 1,
+        "min": 1,
+        "max": 3,
+        "help": "風險等級 (1=無害只讀, 2=可能觸發錯誤, 3=可能修改數據)"
+      },
+      "engines": {
+        "type": "array",
+        "default": ["error", "boolean"],
+        "options": ["error", "boolean", "time", "union", "oob", "hackingtool"],
+        "help": "啟用的檢測引擎列表"
+      },
+      "tamper": {
+        "type": "string",
+        "default": "",
+        "options": ["", "space2comment", "between", "randomcase", "charencode", "base64encode"],
+        "help": "WAF 繞過腳本名稱"
+      },
+      "dbms": {
+        "type": "string",
+        "default": "auto",
+        "options": ["auto", "mysql", "postgresql", "mssql", "oracle", "sqlite"],
+        "help": "目標資料庫類型（auto 自動檢測）"
+      },
+      "threads": {
+        "type": "int",
+        "default": 1,
+        "min": 1,
+        "max": 10,
+        "help": "併發執行緒數量"
+      },
+      "timeout": {
+        "type": "float",
+        "default": 30.0,
+        "min": 5.0,
+        "max": 120.0,
+        "help": "單次請求超時時間（秒）"
+      },
+      "delay": {
+        "type": "float",
+        "default": 0.0,
+        "min": 0.0,
+        "max": 10.0,
+        "help": "請求間隔延遲（秒）"
+      }
+    }
+  },
+  "execution": {
+    "desc": "Worker 執行層：定義如何調用底層程式碼",
+    "type": "python_module",
+    "module_path": "services.features.features_ready.function_sqli.worker",
+    "entry_class": "SqliOrchestrator",
+    "entry_function": "run_detection",
+    "timeout_seconds": 300,
+    "resource_limit": {
+      "cpu": "1.0",
+      "memory": "512Mi"
+    },
+    "env_vars": {
+      "SQLI_OUTPUT_PATH": "/tmp/aiva_sqli_results"
+    }
+  },
+  "feature_vector": {
+    "desc": "預計算的特徵向量（供快速檢索用）",
+    "dimension": 128,
+    "hash_indices": {
+      "http_status_500": 0,
+      "waf_detected": 1,
+      "keyword_mysql_error": 2,
+      "keyword_syntax_error": 3,
+      "param_id": 4,
+      "param_query": 5,
+      "tech_stack_php": 6,
+      "error_message_verbose": 7
+    }
+  }
+}

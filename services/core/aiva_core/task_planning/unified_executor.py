@@ -136,21 +136,13 @@ class UnifiedAttackExecutor:
         self.data_directory.mkdir(parents=True, exist_ok=True)
         
         # === 延遲初始化組件（避免循環導入）===
-        self._ai_commander = None
         self._rag_engine = None
         self._experience_manager = None
         self._model_trainer = None
-        self._plan_executor = None
+        self._continuous_learning_engine = None  # 統一學習引擎
+        self._message_broker = None  # 用於異步訓練任務
         
         logger.info(f"✅ Unified Executor initialized (learning={'ON' if learning_enabled else 'OFF'})")
-    
-    @property
-    def ai_commander(self):
-        """延遲加載 AI Commander"""
-        if self._ai_commander is None:
-            from .commander import CommanderCoordinator
-            self._ai_commander = CommanderCoordinator(data_directory=self.data_directory / "ai_commander")
-        return self._ai_commander
     
     @property
     def rag_engine(self):
@@ -187,13 +179,36 @@ class UnifiedAttackExecutor:
         return self._model_trainer
     
     @property
-    def plan_executor(self):
-        """延遲加載 Plan Executor"""
-        if self._plan_executor is None:
-            from .executor.plan_executor import PlanExecutor
-            self._plan_executor = PlanExecutor()
-        return self._plan_executor
+    def continuous_learning_engine(self):
+        """延遲加載 Continuous Learning Engine"""
+        if self._continuous_learning_engine is None:
+            from ..cognitive_core.learning_system.learning.continuous_learning import ContinuousLearningEngine
+            self._continuous_learning_engine = ContinuousLearningEngine(
+                experience_manager=self.experience_manager,
+                model_trainer=self.model_trainer
+            )
+        return self._continuous_learning_engine
     
+    @property
+    def message_broker(self):
+        """延遲載入 Message Broker
+        
+        Raises:
+            ImportError: 如果 Message Broker 不可用
+        """
+        if self._message_broker is None:
+            try:
+                from ..service_backbone.messaging import get_broker
+                self._message_broker = get_broker()
+                logger.info("✅ Message Broker 初始化成功")
+            except ImportError as e:
+                raise ImportError(
+                    "❌ 缺少必要依賴 MessageBroker\n"
+                    "異步訓練功能依賴 Message Broker 進行任務佇列\n"
+                    "請確認 services.service_backbone.messaging 模組已實現\n"
+                    f"原始錯誤: {e}"
+                ) from e
+        return self._message_broker    
     async def execute(
         self,
         target: str,
@@ -202,6 +217,8 @@ class UnifiedAttackExecutor:
         constraints: Optional[dict] = None
     ) -> ExecutionResult:
         """統一執行接口 - 靶場和實戰都調用這個
+        
+        使用 CapabilityOrchestrator 進行規劃和執行，統一所有執行路徑。
         
         Args:
             target: 攻擊目標 (localhost:3000 或 example.com)
@@ -214,36 +231,66 @@ class UnifiedAttackExecutor:
         """
         logger.info(f"🚀 Executing unified attack: {target} - {objective}")
         
-        # 1️⃣ 生成攻擊計劃（使用 RAG 增強）
-        attack_plan = await self._generate_enhanced_plan(
-            target=target,
-            objective=objective,
-            scenario=scenario,
-            constraints=constraints
+        # 1️⃣ 使用 CapabilityOrchestrator 生成執行計劃
+        from ..cognitive_core.capability_orchestrator import CapabilityOrchestrator, TaskRequirement
+        
+        orchestrator = CapabilityOrchestrator(
+            rag_kb=self.rag_engine.knowledge_base if hasattr(self, '_rag_engine') and self._rag_engine else None
         )
         
-        logger.info(f"📋 Generated attack plan: {attack_plan.plan_id} ({len(attack_plan.steps)} steps)")
+        # 構建任務需求
+        requirement = TaskRequirement(
+            task_id=f"unified_{int(time.time())}",
+            task_type="attack",  # 或根據 objective 推導
+            target=target,
+            objectives=[objective],
+            constraints=constraints or {},
+            priority=8 if scenario else 5  # 靶場模式優先級較低
+        )
         
-        # 2️⃣ 執行攻擊（靶場和實戰完全相同）
-        execution_result = await self._execute_attack_plan(attack_plan)
+        # 生成計劃
+        capability_plan = await orchestrator.plan(requirement)
+        logger.info(f"📋 Generated capability plan: {capability_plan.plan_id} ({len(capability_plan.cli_commands)} commands)")
         
-        logger.info(f"⚡ Execution completed: success={execution_result.get('success', False)}")
+        # 2️⃣ 執行計劃
+        execution_result = orchestrator.execute(capability_plan)
         
-        # 3️⃣ 智能學習層（自動判斷是否學習）
+        logger.info(f"⚡ Execution completed: success={execution_result.success}")
+        
+        # 3️⃣ 智能學習層（委派給 ContinuousLearningEngine）
         learning_info = None
         if self.learning_enabled:
-            learning_info = await self._learn_from_execution(
-                attack_plan=attack_plan,
-                execution_result=execution_result,
-                scenario=scenario
-            )
+            try:
+                # 將 CapabilityPlan 轉換為學習系統需要的格式
+                learning_context = {
+                    "plan_id": capability_plan.plan_id,
+                    "commands": capability_plan.cli_commands,
+                    "execution_result": {
+                        "success": execution_result.success,
+                        "issues_found": execution_result.issues_found,
+                        "total_duration": execution_result.total_duration
+                    },
+                    "scenario": scenario
+                }
+                
+                learning_info = await self.continuous_learning_engine.learn_from_execution(
+                    attack_plan=None,  # 不再使用 AttackPlan
+                    execution_result=learning_context,
+                    scenario=scenario
+                )
+            except Exception as e:
+                logger.error(f"Learning failed: {e}")
+                learning_info = {"error": str(e)}
         
         # 4️⃣ 返回統一結果
         return ExecutionResult(
-            success=execution_result.get("success", False),
-            vulnerabilities=execution_result.get("vulnerabilities", []),
-            attack_plan=attack_plan,
-            execution_details=execution_result,
+            success=execution_result.success,
+            vulnerabilities=execution_result.issues_found,  # 將 issues 映射為 vulnerabilities
+            attack_plan=None,  # 不再使用 AttackPlan
+            execution_details={
+                "capability_plan": capability_plan,
+                "execution_result": execution_result
+            },
             learning_info=learning_info
         )
     
@@ -687,9 +734,24 @@ class UnifiedAttackExecutor:
                 logger.warning(f"Failed to index experience in RAG: {e}")
     
     async def _auto_train(self) -> bool:
-        """自動訓練模型"""
+        """異步傳遞訓練任務到獨立訓練服務
+        
+        重構目標：
+        - 解決上帝物件問題：拆分 Training 職責
+        - 避免 Event Loop 阻塞：訓練在獨立服務中進行
+        - 避免 OOM 崩潰：大型模型訓練不占用主進程內存
+        
+        架構改進：
+        UnifiedAttackExecutor (生產者)
+            ↓ (publish training task)
+        MessageBroker
+            ↓ (subscribe)
+        Training Worker (消費者) - 獨立進程/容器
+            ↓ (train model)
+        Model Storage
+        """
         try:
-            logger.info("🎓 Starting auto-training...")
+            logger.info("🎓 Preparing training task...")
             
             # 從 buffer 採樣
             batch = self.experience_manager.sample(batch_size=32)
@@ -698,26 +760,53 @@ class UnifiedAttackExecutor:
                 logger.warning("No samples available for training")
                 return False
             
-            # 訓練模型
-            config = ModelTrainingConfig(
-                epochs=10,
-                learning_rate=0.001,
-                batch_size=32
+            # 強制使用 MessageBroker（不可用時拋出異常）
+            # Fail Fast 原則：不降級，有錯就報錯
+            broker = self.message_broker  # 觸發 property，不可用時會拋出 ImportError
+            
+            # 🎯 異步傳遞訓練任務
+            from services.aiva_common.enums import Topic, ModuleName
+            from services.aiva_common.schemas import AivaMessage, MessageHeader
+            from uuid import uuid4
+            
+            training_task = {
+                "task_id": f"train_{uuid4().hex[:12]}",
+                "samples": [s.metadata for s in batch],  # 序列化樣本
+                "config": {
+                    "epochs": 10,
+                    "learning_rate": 0.001,
+                    "batch_size": 32,
+                },
+                "timestamp": datetime.now(UTC).isoformat(),
+            }
+            
+            message = AivaMessage(
+                header=MessageHeader(
+                    message_id=str(uuid4()),
+                    source_module=ModuleName.CORE,
+                ),
+                topic=Topic.TASK_AI_TRAINING_START,
+                payload=training_task,
             )
             
-            result = await self.model_trainer.train(
-                samples=batch,
-                config=config
+            await broker.publish_message(
+                exchange_name="aiva.tasks",
+                routing_key="tasks.ai.training.start",
+                message=message,
             )
             
-            # 更新訓練時間
+            # 更新訓練時間（不等待結果）
             self.last_train_time = time.time()
             
-            logger.info(f"✅ Training completed: loss={result.get('final_loss', 'N/A')}")
+            logger.info(f"✅ Training task published: {training_task['task_id']}")
             return True
             
+        except ImportError:
+            # MessageBroker 不可用，直接失敗不降級
+            logger.error("❌ MessageBroker 不可用，無法執行異步訓練")
+            raise
         except Exception as e:
-            logger.error(f"❌ Auto-training failed: {e}", exc_info=True)
+            logger.error(f"❌ Failed to publish training task: {e}", exc_info=True)
             return False
     
     def get_learning_status(self) -> dict:

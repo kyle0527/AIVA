@@ -68,9 +68,10 @@ class PlanExecutor:
         self.storage = storage_backend
         self.active_sessions: dict[str, SessionState] = {}
 
-        # 任務管理
+        # 任務管理 - 使用事件驅動而非輪詢
         self.running_tasks: dict[str, dict[str, Any]] = {}
         self.completed_tasks: dict[str, dict[str, Any]] = {}
+        self.task_futures: dict[str, asyncio.Future[dict[str, Any]]] = {}  # 事件驅動
 
         logger.info("PlanExecutor initialized")
 
@@ -315,13 +316,22 @@ class PlanExecutor:
             execution_time = (datetime.now(UTC) - start_time).total_seconds()
 
             # 記錄成功執行
+            # 將 Worker 的遙測數據添加到 output_data 供 AI 學習
+            output_data = result.copy()
+            if "telemetry" in result:
+                # 提取關鍵學習信號到 output_data 頂層
+                telemetry = result["telemetry"]
+                output_data["triggered_waf"] = telemetry.get("waf_triggered", False)
+                output_data["bypassed_protection"] = telemetry.get("bypassed_protection", False)
+                output_data["http_status_codes"] = telemetry.get("http_status_codes", [])
+            
             trace = self.trace_logger.log_task_execution(
                 session_id=session.session_id,
                 plan_id=plan.plan_id,
                 step_id=step.step_id,
                 tool_name=step.tool_type,
                 input_params=task_payload.model_dump(),
-                result=result,
+                result=output_data,  # 包含遙測數據
                 status="success",
                 execution_time=execution_time,
             )
@@ -485,7 +495,7 @@ class PlanExecutor:
     async def _wait_for_result(
         self, task_id: str, timeout: float = 30.0
     ) -> dict[str, Any]:
-        """等待任務結果
+        """等待任務結果 - 使用事件驅動而非輪詢
 
         Args:
             task_id: 任務 ID
@@ -497,110 +507,67 @@ class PlanExecutor:
         Raises:
             asyncio.TimeoutError: 超時
         """
-        from datetime import datetime, timedelta
+        from datetime import datetime
 
         logger.info(f"等待任務 {task_id} 結果，超時時間: {timeout}s")
 
-        start_time = datetime.now()
-        end_time = start_time + timedelta(seconds=timeout)
+        # 創建 Future 供 MQ 回調觸發
+        if task_id not in self.task_futures:
+            self.task_futures[task_id] = asyncio.Future()
 
-        # 實際的結果等待邏輯
         try:
-            # 1. 檢查任務是否在執行佇列中
-            if task_id in self.running_tasks:
-                logger.debug(f"任務 {task_id} 正在執行中...")
-
-                # 2. 輪詢等待結果（實際應用中會使用 MQ 或其他異步機制）
-                while datetime.now() < end_time:
-                    # 檢查任務是否完成
-                    if task_id in self.completed_tasks:
-                        result = self.completed_tasks.pop(task_id)
-                        logger.info(
-                            f"任務 {task_id} 完成，狀態: {result.get('status')}"
-                        )
-
-                        # 確保返回結果包含 success 字段
-                        return {
-                            "task_id": task_id,
-                            "success": result.get("status") == "completed",
-                            "status": result.get("status", "completed"),
-                            "findings": result.get("findings", []),
-                            "metadata": result.get("metadata", {}),
-                            "execution_time": result.get("execution_time", 0),
-                            "error": result.get("error"),
-                            "timestamp": datetime.now().isoformat(),
-                        }
-
-                    # 短暫等待後重試
-                    await asyncio.sleep(0.1)
-
-                # 超時處理
-                logger.warning(f"任務 {task_id} 執行超時")
-                return {
-                    "task_id": task_id,
-                    "success": False,
-                    "status": "timeout",
-                    "findings": [],
-                    "metadata": {},
-                    "error": f"Task execution timeout after {timeout}s",
-                    "timestamp": datetime.now().isoformat(),
-                }
-
-            else:
-                # 3. 任務不在執行佇列中，可能已完成或不存在
-                if task_id in self.completed_tasks:
-                    result = self.completed_tasks.pop(task_id)
-                    return {
-                        "task_id": task_id,
-                        "success": result.get("status") == "completed",
-                        "status": result.get("status", "completed"),
-                        "findings": result.get("findings", []),
-                        "metadata": result.get("metadata", {}),
-                        "execution_time": result.get("execution_time", 0),
-                        "timestamp": datetime.now().isoformat(),
-                    }
-                else:
-                    # 4. 任務不存在 - 返回錯誤而非虛假結果
-                    logger.error(f"任務 {task_id} 不存在於執行佇列或完成佇列中")
-                    return {
-                        "task_id": task_id,
-                        "success": False,
-                        "status": "not_found",
-                        "findings": [],
-                        "metadata": {
-                            "error_type": "task_not_found",
-                            "message": "任務不存在或已被清理"
-                        },
-                        "error": f"Task {task_id} not found in execution queues",
-                        "execution_time": 0,
-                        "timestamp": datetime.now().isoformat(),
-                    }
-
-        except TimeoutError:
-            logger.error(f"任務 {task_id} 等待結果超時")
+            # 事件驅動等待 - 當 MQ 收到結果時會設置 Future
+            result = await asyncio.wait_for(
+                self.task_futures[task_id], 
+                timeout=timeout
+            )
+            
+            logger.info(f"任務 {task_id} 完成，狀態: {result.get('status')}")
+            
+            # 提取 Worker 的遙測數據（用於 AI 學習）
+            # Worker 通過 publish_status(details=telemetry.to_details()) 發送
+            telemetry_data = result.get("details", {})
+            
+            return {
+                "task_id": task_id,
+                "success": result.get("status") == "completed",
+                "status": result.get("status", "completed"),
+                "findings": result.get("findings", []),
+                "metadata": result.get("metadata", {}),
+                "execution_time": result.get("execution_time", 0),
+                "error": result.get("error"),
+                "timestamp": datetime.now().isoformat(),
+                # Worker 遙測數據（HTTP 狀態碼、WAF 檢測等）
+                "telemetry": telemetry_data,
+            }
+            
+        except asyncio.TimeoutError:
+            logger.warning(f"任務 {task_id} 執行超時")
             return {
                 "task_id": task_id,
                 "success": False,
                 "status": "timeout",
                 "findings": [],
                 "metadata": {},
-                "error": f"Result waiting timeout after {timeout}s",
+                "error": f"Task execution timeout after {timeout}s",
                 "timestamp": datetime.now().isoformat(),
             }
-
-        except Exception as e:
-            logger.error(f"等待任務 {task_id} 結果時發生異常: {e}")
-            return {
-                "task_id": task_id,
-                "success": False,
-                "status": "error",
-                "findings": [],
-                "metadata": {},
-                "error": str(e),
-                "timestamp": datetime.now().isoformat(),
-            }
-
-
+        finally:
+            # 清理 Future
+            self.task_futures.pop(task_id, None)
+    
+    def _on_task_completed(self, task_id: str, result: dict[str, Any]) -> None:
+        """任務完成回調 - 由 MessageBroker 調用
+        
+        Args:
+            task_id: 任務 ID
+            result: 任務結果
+        """
+        if task_id in self.task_futures and not self.task_futures[task_id].done():
+            self.task_futures[task_id].set_result(result)
+        else:
+            # Fallback: 保存到 completed_tasks
+            self.completed_tasks[task_id] = result
 
     def _check_dependencies(
         self,

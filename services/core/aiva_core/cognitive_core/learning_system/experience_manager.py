@@ -581,14 +581,16 @@ def integrate_with_repository_example():
     """整合範例: ExperienceManager + ExperienceRepository
     
     展示如何將記憶體經驗持久化到資料庫。
+    
+    注意: ExperienceRepository 已移除，此函數僅供參考。
     """
-    from services.integration.aiva_integration.reception import ExperienceRepository
+    # from services.integration.aiva_integration.reception import ExperienceRepository
     
     # 初始化
     manager = ExperienceManager(capacity=10000)
-    repository = ExperienceRepository(
-        database_url="sqlite:///data/integration/experiences/experience.db"
-    )
+    # repository = ExperienceRepository(
+    #     database_url="sqlite:///data/integration/experiences/experience.db"
+    # )
     
     # 記錄經驗 (記憶體)
     _ = manager.push(
@@ -603,15 +605,16 @@ def integrate_with_repository_example():
         # 採樣高品質經驗
         high_quality = manager.prioritized_sample(batch_size=50, min_reward=0.7)
         
-        for exp in high_quality:
-            repository.save_experience(
-                plan_id=exp.metadata.get("plan_id", "unknown"),
-                attack_type=exp.action.get("type", "unknown"),
-                ast_graph=exp.state.get("ast", {}),
-                execution_trace=exp.next_state,
-                metrics={"overall_score": exp.reward},
-                feedback={"reward": exp.reward},
-            )
+        # 註解掉未完成的持久化邏輯
+        # for exp in high_quality:
+        #     repository.save_experience(
+        #         plan_id=exp.metadata.get("plan_id", "unknown"),
+        #         attack_type=exp.action.get("type", "unknown"),
+        #         ast_graph=exp.state.get("ast", {}),
+        #         execution_trace=exp.next_state,
+        #         metrics={"overall_score": exp.reward},
+        #         feedback={"reward": exp.reward},
+        #     )
         
         logger.info(f"Persisted {len(high_quality)} experiences to database")
 

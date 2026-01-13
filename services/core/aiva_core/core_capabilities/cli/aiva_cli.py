@@ -4,8 +4,8 @@ import json
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 
-from services.core.aiva_core.cognitive_core.manifest.manifest_loader import ManifestLoader
-from services.core.aiva_core.task_planning.command_builder import CommandBuilder
+# 統一使用 FlowExecutor（來自 internal_exploration）
+# ManifestLoader 已棄用 - manifests/capabilities 目錄已移除
 
 
 def load_flow_definitions() -> List[Dict[str, Any]]:
@@ -116,12 +116,16 @@ def create_flow_command(flow_id: int, flow_info: Dict[str, Any]):
             executor.execute_flow(flow_id, context_data=context_data, dry_run=False)
             
             click.echo("\n✅ 執行完成")
+            return 0  # 成功退出碼
             
+        except ImportError as e:
+            click.echo(f"\n❌ 依賴缺失: {e}", err=True)
+            return 2  # 系統錯誤退出碼
         except Exception as e:
             click.echo(f"\n❌ 執行失敗: {e}", err=True)
             import traceback
             traceback.print_exc()
-            raise click.Abort()
+            return 1  # 邏輯錯誤退出碼
     
     return flow_command
 
@@ -161,7 +165,7 @@ def register_all_flow_commands(cli_group):
 def aiva():
     """AIVA - AI-powered Vulnerability Analysis System
     
-    基於動態 Flow 架構的統一命令接口，支援 840+ flows 的自動命令生成。
+    基於動態 Flow 架構的統一命令接口，支援自動分析生成的 flows 命令。
     
     使用方式:
         aiva flow<ID> --target <目標> -i <強度>
@@ -172,78 +176,60 @@ def aiva():
 
 
 @aiva.command()
-@click.argument('capability_id', type=str)
+@click.argument('flow_id', type=int)
 @click.option('--context', '-c', help='上下文數據 (JSON 格式)', default='{}')
 @click.option('--intensity', '-i', type=float, default=0.5, help='AI 強度 (0.0-1.0)')
 @click.option('--dry-run', is_flag=True, help='僅顯示將執行的操作，不實際執行')
-def run(capability_id: str, context: str, intensity: float, dry_run: bool):
-    """執行指定能力
+def run(flow_id: int, context: str, intensity: float, dry_run: bool):
+    """執行指定 Flow（基於 flow_id）
+    
+    統一使用 FlowExecutor 執行，不再依賴已棄用的 ManifestLoader。
     
     Examples:
-        aiva run xss.scan.web -c '{"target": "http://example.com"}' -i 0.8
-        aiva run sqli.detect.api -c '{"url": "http://api.example.com"}' -i 0.6
+        aiva run 0 -c '{"query": "find vulnerabilities"}' -i 0.8
+        aiva run 8 -c '{"target_url": "http://example.com"}' -i 0.6
+        aiva run 4 -c '{"training_data_path": "/data/train.npz"}' --dry-run
     """
     try:
         # 解析上下文
         context_data = json.loads(context)
         
-        # 載入 Manifest
-        manifests_dir = Path(__file__).parent.parent / "manifests" / "capabilities"
-        loader = ManifestLoader(manifests_dir)
-        manifest = loader.get_by_id(capability_id)
+        # 使用 FlowExecutor 執行
+        from services.core.aiva_core.internal_exploration.python_tools.aiva_cli_implementation import FlowExecutor
         
-        if not manifest:
-            click.echo(f"❌ 找不到能力 {capability_id} 的 Manifest", err=True)
+        executor = FlowExecutor()
+        flow = executor.get_flow_by_id(flow_id)
+        
+        if not flow:
+            click.echo(f"❌ 找不到 Flow {flow_id}", err=True)
             return 1
         
-        click.echo(f"🚀 執行能力 {capability_id}: {manifest.name}")
-        click.echo(f"   描述: {manifest.description}")
+        # 顯示 flow 資訊
+        path_preview = " -> ".join(flow.get('path', [])[:3])
+        if len(flow.get('path', [])) > 3:
+            path_preview += " ..."
+        
+        click.echo(f"🚀 執行 Flow {flow_id}")
+        click.echo(f"   路徑: {path_preview}")
         click.echo(f"   強度: {intensity}")
         
         if dry_run:
-            click.echo("\n🔍 Dry Run 模式 - 預覽命令:\n")
-            try:
-                command = manifest.generate_command(context_data)
-                click.echo(f"  命令: {command}")
-            except ValueError as e:
-                click.echo(f"  ⚠️ 命令生成失敗: {e}")
+            click.echo("\n🔍 Dry Run 模式 - 預覽執行流程")
+            executor.execute_flow(flow_id, context_data=context_data, dry_run=True)
             return 0
         
-        # 實際執行能力 - 使用 CLI 命令執行
-        import subprocess
-        try:
-            command = manifest.generate_command(context_data)
-            click.echo(f"\n🔧 執行命令: {command}")
-            
-            result = subprocess.run(
-                command,
-                shell=True,
-                capture_output=True,
-                text=True,
-                timeout=manifest.timeout,
-                cwd=manifest.working_dir
-            )
-            
-            if result.returncode == 0:
-                click.echo(f"\n✅ 執行完成")
-                if result.stdout:
-                    click.echo(f"輸出:\n{result.stdout}")
-            else:
-                click.echo(f"\n⚠️ 執行完成 (返回碼: {result.returncode})")
-                if result.stderr:
-                    click.echo(f"錯誤:\n{result.stderr}")
-        except subprocess.TimeoutExpired:
-            click.echo(f"❌ 執行超時 (超過 {manifest.timeout} 秒)")
-            return 1
-        except ValueError as e:
-            click.echo(f"❌ 命令生成失敗: {e}")
-            return 1
+        # 實際執行
+        click.echo("\n⏳ 執行中...")
+        executor.execute_flow(flow_id, context_data=context_data, dry_run=False)
+        click.echo("\n✅ 執行完成")
         
     except json.JSONDecodeError:
         click.echo("❌ 無效的 JSON 格式", err=True)
         return 1
     except Exception as e:
         click.echo(f"❌ 執行失敗: {e}", err=True)
+        import traceback
+        traceback.print_exc()
         return 1
 
 
@@ -451,7 +437,7 @@ def show_flows_by_endpoint_module(flows: List[Dict[str, Any]], limit_per_module:
             click.echo()
     
     # 顯示未分類的
-    other_modules = set(flows_by_endpoint.keys()) - set(six_modules)
+    other_modules = set(flows_by_endpoint.keys()) - set(five_modules)
     if other_modules:
         click.echo(f"🔹 其他模組")
         click.echo("-" * 70)
@@ -461,28 +447,44 @@ def show_flows_by_endpoint_module(flows: List[Dict[str, Any]], limit_per_module:
         click.echo()
 
 
-@aiva.command(name='list-manifests')
-def list_manifests():
-    """列出所有可用的 Manifests (傳統方式)"""
-    manifests_dir = Path(__file__).parent.parent / "manifests" / "capabilities"
-    loader = ManifestLoader(manifests_dir)
-    loader.load_all()
-    
-    all_manifests = loader._manifests
-    click.echo(f"\n📋 可用的 Manifests ({len(all_manifests)} 個):\n")
-    
-    for capability_id in sorted(all_manifests.keys()):
-        manifest = all_manifests[capability_id]
-        click.echo(f"能力 ID: {capability_id}")
-        click.echo(f"         名稱: {manifest.name}")
-        click.echo(f"         描述: {manifest.description}")
-        click.echo(f"         標籤: {', '.join(manifest.tags)}")
-        click.echo()
-
-
 # 🔑 關鍵：在 CLI 啟動時注冊所有動態命令
 register_all_flow_commands(aiva)
 
 
+# ============================================
+# CLI 退出碼規範
+# ============================================
+# 0: 成功
+# 1: 邏輯/業務錯誤 (如：找不到 Flow、參數無效)
+# 2: 系統/運行時錯誤 (如：連接失敗、依賴缺失)
+# 130: 用戶中斷 (Ctrl+C)
+
+EXIT_SUCCESS = 0
+EXIT_LOGIC_ERROR = 1
+EXIT_SYSTEM_ERROR = 2
+EXIT_USER_INTERRUPT = 130
+
+
 if __name__ == "__main__":
-    aiva()
+    import sys
+    
+    try:
+        result = aiva(standalone_mode=False)
+        # Click 命令返回值可能是 None 或整數
+        exit_code = result if isinstance(result, int) else EXIT_SUCCESS
+        sys.exit(exit_code)
+    except click.Abort:
+        # 用戶中斷或 raise click.Abort()
+        sys.exit(EXIT_USER_INTERRUPT)
+    except click.ClickException as e:
+        # Click 框架錯誤
+        e.show()
+        sys.exit(EXIT_LOGIC_ERROR)
+    except KeyboardInterrupt:
+        # Ctrl+C
+        click.echo("\n⚠️ 用戶中斷", err=True)
+        sys.exit(EXIT_USER_INTERRUPT)
+    except Exception as e:
+        # 未預期的系統錯誤
+        click.echo(f"\n❌ 系統錯誤: {e}", err=True)
+        sys.exit(EXIT_SYSTEM_ERROR)

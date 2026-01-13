@@ -3,10 +3,10 @@ AI Model Manager - AI 模型管理器
 
 統一管理 5M Decision Engine 和訓練系統，提供完整的 AI 核心協調功能
 
-注意：已移除 LLM/NLU 依賴，僅使用 5M 特化神經網路
+特化 AI 設計：使用 5M 參數特化神經網路，專注於安全測試決策
 """
 
-from datetime import UTC, datetime
+from datetime import datetime, timezone
 import logging
 from pathlib import Path
 from typing import Any
@@ -37,7 +37,7 @@ class AIModelManager:
     - 訓練系統 (ModelTrainer, ScalableBioTrainer)
     - 經驗管理 (使用 V2 ExperienceRepository 取代 V1 ExperienceManager)
     
-    ⚠️ 設計限制: 無 LLM/NLU 能力，僅支援結構化決策
+    ✅ 特化 AI 設計：專注於結構化決策任務
     """
 
     def __init__(
@@ -56,7 +56,7 @@ class AIModelManager:
         self.model_dir = model_dir or Path("./ai_models")
         self.model_dir.mkdir(parents=True, exist_ok=True)
 
-        # 使用 5M Decision Engine (無 LLM/NLU 依賴)
+        # 使用 5M Decision Engine (特化決策引擎)
         from .real_neural_core import RealDecisionEngine, RealAICore
         from .real_bio_net_adapter import RealScalableBioNet as ScalableBioNet
         
@@ -66,6 +66,7 @@ class AIModelManager:
         # 初始化核心組件
         self.decision_engine: RealDecisionEngine | None = None
         self.scalable_net: Any | None = None
+        self.bio_agent: Any | None = None  # RAG 代理（如果可用）
 
         # 初始化訓練和管理組件
         self.model_trainer = ModelTrainer(
@@ -93,7 +94,7 @@ class AIModelManager:
         # 模型狀態
         self.current_version = "v1.0.0"
         self.is_trained = False
-        self.last_update = datetime.now(UTC)
+        self.last_update = datetime.now(timezone.utc)
 
         logger.info(f"AIModelManager initialized with model_dir={self.model_dir} (5M Decision Engine)")
 
@@ -122,7 +123,7 @@ class AIModelManager:
                 f"ScalableBioNet initialized: {getattr(self.scalable_net, 'total_params', 0):,} parameters"
             )
 
-            # 2. 初始化 5M Decision Engine (無 LLM/NLU 依賴)
+            # 2. 初始化 5M Decision Engine (特化決策引擎)
             try:
                 self.decision_engine = self._decision_engine_class(
                     use_5m_model=True,
@@ -152,7 +153,7 @@ class AIModelManager:
             return {
                 "status": "failed",
                 "error": str(e),
-                "timestamp": datetime.now(UTC).isoformat(),
+                "timestamp": datetime.now(timezone.utc).isoformat(),
             }
 
     async def train_models(
@@ -222,7 +223,7 @@ class AIModelManager:
         return {
             "status": "skipped",
             "reason": "no_training_data",
-            "timestamp": datetime.now(UTC).isoformat(),
+            "timestamp": datetime.now(timezone.utc).isoformat(),
         }
 
     def _setup_training_config(
@@ -293,7 +294,7 @@ class AIModelManager:
     def _update_model_state(self) -> None:
         """更新模型狀態"""
         self.is_trained = True
-        self.last_update = datetime.now(UTC)
+        self.last_update = datetime.now(timezone.utc)
         self.current_version = f"v1.{int(self.current_version.split('.')[-1]) + 1}.0"
 
     def _create_success_result(
@@ -316,7 +317,7 @@ class AIModelManager:
         return {
             "status": "failed",
             "error": str(error),
-            "timestamp": datetime.now(UTC).isoformat(),
+            "timestamp": datetime.now(timezone.utc).isoformat(),
         }
 
     async def make_decision(
@@ -394,7 +395,7 @@ class AIModelManager:
                 "result": decision_result,
                 "validation": validation_result,
                 "model_version": self.current_version,
-                "timestamp": datetime.now(UTC).isoformat(),
+                "timestamp": datetime.now(timezone.utc).isoformat(),
             }
 
         except Exception as e:
@@ -402,7 +403,7 @@ class AIModelManager:
             return {
                 "status": "failed",
                 "error": str(e),
-                "timestamp": datetime.now(UTC).isoformat(),
+                "timestamp": datetime.now(timezone.utc).isoformat(),
             }
 
     def _validate_decision_with_scalable_net(self, query: str) -> dict[str, Any]:
@@ -516,7 +517,7 @@ class AIModelManager:
                     "status": "skipped",
                     "reason": "insufficient_quality_samples",
                     "available_samples": len(samples),
-                    "timestamp": datetime.now(UTC).isoformat(),
+                    "timestamp": datetime.now(timezone.utc).isoformat(),
                 }
 
             # 使用經驗樣本進行訓練
@@ -540,7 +541,7 @@ class AIModelManager:
             return {
                 "status": "failed",
                 "error": str(e),
-                "timestamp": datetime.now(UTC).isoformat(),
+                "timestamp": datetime.now(timezone.utc).isoformat(),
             }
 
     def _save_model(self) -> Path:
@@ -621,7 +622,7 @@ class AIModelManager:
                 "status": "success",
                 "version": self.current_version,
                 "model_path": str(model_path),
-                "timestamp": datetime.now(UTC).isoformat(),
+                "timestamp": datetime.now(timezone.utc).isoformat(),
             }
 
         except Exception as e:
@@ -629,7 +630,7 @@ class AIModelManager:
             return {
                 "status": "failed",
                 "error": str(e),
-                "timestamp": datetime.now(UTC).isoformat(),
+                "timestamp": datetime.now(timezone.utc).isoformat(),
             }
 
     async def predict_batch(self, queries: list[str]) -> list[dict[str, Any]]:
@@ -659,7 +660,7 @@ class AIModelManager:
                 {
                     "success": False,
                     "error": str(e),
-                    "timestamp": datetime.now(UTC).isoformat(),
+                    "timestamp": datetime.now(timezone.utc).isoformat(),
                 }
                 for _ in queries
             ]

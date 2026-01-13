@@ -6,15 +6,28 @@ Knowledge Base - 知識庫類別
 
 import hashlib
 import logging
-from typing import Any, Dict, List, Optional, Union, Protocol, Awaitable
+from datetime import datetime, timezone
+from typing import Any, Dict, List, Optional, Union, Protocol, Awaitable, TYPE_CHECKING
+
+# UTC 兼容性处理（Python 3.11+ 使用 UTC，较旧版本使用 timezone.utc）
+try:
+    from datetime import UTC  # type: ignore
+except ImportError:
+    UTC = timezone.utc  # type: ignore
 
 from .vector_store import VectorStore
+
+if TYPE_CHECKING:
+    from services.aiva_common.schemas.dual_loop import RAGQueryRequest, RAGQueryResult
 
 logger = logging.getLogger(__name__)
 
 
 class VectorStoreProtocol(Protocol):
-    """向量存儲協議接口 - 遵循 aiva_common 標準"""
+    """向量存儲協議接口 - 遵循 aiva_common 標準
+    
+    v2.1 (2026-01-08): 擴展支援去語意化反射引擎方法
+    """
     
     def add_document(
         self,
@@ -32,6 +45,23 @@ class VectorStoreProtocol(Protocol):
         filter_metadata: Optional[Dict[str, Any]] = None
     ) -> Awaitable[List[Dict[str, Any]]]:
         """搜索相似文檔（異步）"""
+        ...
+    
+    def add_capability_from_registry(
+        self,
+        capability: Dict[str, Any],
+        capability_id: Optional[str] = None
+    ) -> None:
+        """從 integration/capability 註冊表添加能力（v2.1 新增）"""
+        ...
+    
+    def search_by_environment(
+        self,
+        environment_features: Dict[str, float],
+        top_k: int = 5,
+        filter_type: Optional[str] = None
+    ) -> List[Dict[str, Any]]:
+        """根據環境特徵搜索最匹配的能力（v2.1 新增 - 去語意化檢索）"""
         ...
 
 
@@ -82,6 +112,76 @@ class KnowledgeBase:
         except Exception as e:
             logger.error(f"Knowledge search failed: {e}")
             return []
+    
+    def query(self, query_request: "RAGQueryRequest") -> "RAGQueryResult":
+        """查詢知識庫（同步接口，供 InternalLoopConnector 使用）
+        
+        這是 search() 的同步包裝，接受 RAGQueryRequest 並返回 RAGQueryResult。
+        用於與 InternalLoopConnector.query_capabilities() 對接。
+        
+        Args:
+            query_request: RAG 查詢請求對象
+            
+        Returns:
+            RAGQueryResult: 查詢結果
+        """
+        import asyncio
+        from services.aiva_common.schemas.dual_loop import RAGQueryResult
+        
+        try:
+            # 使用事件循環執行異步搜索
+            try:
+                loop = asyncio.get_running_loop()
+                # 如果已在異步環境，創建任務
+                import concurrent.futures
+                with concurrent.futures.ThreadPoolExecutor() as executor:
+                    future = executor.submit(
+                        asyncio.run,
+                        self.search(query_request.query, top_k=query_request.top_k)
+                    )
+                    search_results = future.result()
+            except RuntimeError:
+                # 沒有運行中的事件循環，直接運行
+                search_results = asyncio.run(
+                    self.search(query_request.query, top_k=query_request.top_k)
+                )
+            
+            # 應用過濾條件（如果有）
+            if query_request.filters:
+                filtered_results = []
+                for result in search_results:
+                    metadata = result.get("metadata", {})
+                    match = True
+                    for key, value in query_request.filters.items():
+                        if metadata.get(key) != value:
+                            match = False
+                            break
+                    if match:
+                        filtered_results.append(result)
+                search_results = filtered_results
+            
+            # 構建 RAGQueryResult
+            relevance_scores = [
+                r.get("relevance_score", 0.0) for r in search_results
+            ]
+            
+            return RAGQueryResult(
+                query=query_request.query,
+                results=search_results,
+                total_found=len(search_results),
+                relevance_scores=relevance_scores,
+                timestamp=datetime.now(UTC)
+            )
+            
+        except Exception as e:
+            logger.error(f"Knowledge query failed: {e}")
+            return RAGQueryResult(
+                query=query_request.query,
+                results=[],
+                total_found=0,
+                relevance_scores=[],
+                timestamp=datetime.now(UTC)
+            )
     
     async def add_knowledge(self, content: str, metadata: Optional[Dict[str, Any]] = None) -> bool:
         """添加知識到知識庫

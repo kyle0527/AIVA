@@ -1,32 +1,154 @@
 # 🧭 Internal Exploration - 內部探索
 
-> **版本**: v3.1.0  
-> **狀態**: ✅ 生產就緒  
-> **最後更新**: 2026-01-06  
-> **角色**: AIVA 的自我認知系統 - 代碼分析與能力發現  
-> **架構**: 三階段管道產出 v3.3 格式 latest_classification.json  
-> **程式檔案**: 23 個 (Python 17 + Go 2 + Rust 2 + TypeScript 2)  
-> **代碼行數**: 12,063 行  
-> **能力數**: 201 flows (23.9%) - 最大模組  
-> **支援語言**: Python, Go, Rust, TypeScript (4 語言 AST 分析)
+> **路徑**: `internal_exploration/`  
+> **狀態**: ✅ 正常 | **最後更新**: 2026-01-13  
+> **子模組**: 5 個 (Python, Go, Rust, TypeScript, Self-Healing) | **總文件數**: 20  
+> **資料位置**: `services/integration/data/internal_exploration/` | **最新分析**: v15 (Core) + Features分析  
+> **4語言分析**: ✅ 已完成 (Go: 4 flows, TS: 3 flows, Python: 150 flows, Rust: 0 flows[正常])
+
+## 概述
+
+**Internal Exploration** 是 AIVA 的自我認知系統，提供**4種語言**的 AST 分析、數據流追蹤、自動化分類和自我修復能力。支援 **Python、Go、Rust、TypeScript** 的完整代碼分析與JSON輸出統一格式。
+
+**核心職責**：
+- 🔍 **多語言代碼分析** - 支援 4 種語言的 AST 解析與統一JSON輸出
+- 📊 **數據流視覺化** - 自動生成 Mermaid 流程圖
+- 🏷️ **智能分類系統** - 六大類別自動分類
+- 🔧 **自我修復診斷** - 自動檢測數據流斷點和架構問題
+- 📝 **CLI 指令生成** - 自動產生可執行命令腳本
+- 🔗 **JSON格式統一** - schema v3.3，相容 FlowExecutor ⭐
+
+---
+
+## 🎯 最新成果 (2026-01-13)
+
+### **Phase 1 完成：多語言JSON格式統一**
+
+✅ **4語言工具改進完成**：
+- **TypeScript**: 修改 `ts2mermaid.ts`，添加 `metadata` + `flows` 欄位
+- **Go**: 修改 `go2mermaid.go`，添加 `metadata` + `flows` 欄位  
+- **Rust**: 修改 `main.rs`，添加 `metadata` + `flows` 欄位
+- **Python**: 使用 `aiva_flow_classifier_final.py` 轉換舊格式
+
+✅ **實際功能模組分析**：
+| 語言 | 模組 | Flows | 檔案 | 狀態 |
+|------|------|-------|------|------|
+| **Go** | function_authn_go | 4 | 4 | ✅ 已驗證 |
+| **TypeScript** | typescript_engine | 3 | 11 | ✅ 已驗證 |
+| **Python** | features_ready | 150 | 119 | ✅ 已完成 |
+| **Rust** | function_crypto | 0* | 5 | ✅ 正常(工具集) |
+
+*Rust 0 flows 為正常：crypto模組是4個獨立analyzer工具的集合，無跨檔案調用
+
+✅ **統一JSON Schema v3.3**：
+```json
+{
+  "metadata": {
+    "tool": "工具名",
+    "version": "2.0",
+    "language": "語言",
+    "generated_at": "ISO時間",
+    "total_flows": 數量,
+    "schema_version": "3.3",
+    "ai_compatible": true
+  },
+  "flows": [...],  // 新增：統一格式
+  "functions": [...],  // 保留：原始數據
+  // ... 其他原始欄位全部保留
+}
+```
+
+---
+
+## ✅ 模組驗證狀態 (2026-01-13)
+
+**完整性檢查**:
+- ✅ **無測試文件** - 所有 16 個 Python 文件均為功能代碼（無 test*.py, *mock*.py）
+- ✅ **無編譯錯誤** - 全模組編譯通過，無語法錯誤
+- ✅ **功能完整** - 所有文件均為核心能力實現
+- ✅ **多語言支援** - Python (6), Go (2), Rust (2), TypeScript (2)
+
+**FlowExecutor 核心整合** ⭐:
+- ✅ `aiva_cli_implementation.py` - FlowExecutor 類實現 (Line 99-650)
+- ✅ `aiva_exploration_pipeline.py` - 動態調用 FlowExecutor 生成文檔 (Line 442-443)
+- ✅ `latest_classification.json` - 系統指針，始終指向最新版本 (Line 31, 74, 85)
+
+**核心模組整合**:
+- ✅ `core_capabilities.cli.aiva_cli` 導入 FlowExecutor (Line 112, 198)
+- ✅ `cognitive_core.internal_loop_connector` 導入 ExplorationPipeline, FlowExecutor (Line 565, 823)
+- ✅ `core_capabilities.capability_registry` 從 internal_exploration 加載能力 (Line 148)
+- ✅ `task_planning.dispatcher` 請求 internal_exploration 分析 (多個調用點)
+
+**資料存放位置** (2026-01-10 更新):
+- ✅ **正式路徑**: `services/integration/data/internal_exploration/`
+- ✅ **最新版本**: v6 (2026-01-10 09:38)
+- ✅ **latest_classification.json**: 659KB
+- ✅ **CLI 指令文檔**: `analysis_history/v6/CLI_COMMANDS_REFERENCE.md`
+
+---
+
+## 架構
+
+### 子模組結構
+
+| 子模組 | 功能 | 文件數 | 文檔 |
+|--------|------|--------|------|
+| python_tools/ | Python AST 分析、FlowExecutor、CLI 生成 ⭐ | 6 | [README](python_tools/README.md) |
+| self_healing/ | 數據流斷點檢測、缺失連接分析、智能過濾 | 8 | [README](self_healing/README.md) |
+| go_tools/ | Go AST 分析、go2mermaid | 2 | [README](go_tools/README.md) |
+| rust_tools/ | Rust AST 分析、Cargo 集成 | 2 | [README](rust_tools/README.md) |
+| typescript_tools/ | TypeScript AST 分析、ts2mermaid | 2 | [README](typescript_tools/README.md) |
+
+### 根目錄組件 (3 個文件)
+
+- `dispatcher.py` - 內部探索發送器，跨模組通信
+- `modules_config.json` - 模組配置文件
+- `__init__.py` - 模組初始化，導出 CoreAnalyzer
+
+---
+
+## 主要類別
+
+| 類別 | 文件 | 說明 |
+|------|------|------|
+| **`FlowExecutor`** ⭐ | **python_tools/aiva_cli_implementation.py** | **313-318 個 CLI flows 執行器** |
+| `ExplorationDispatcher` | dispatcher.py | 內部探索統一發送器 |
+| `AIVAFlowAnalyzer` | python_tools/aiva_flow_analyzer.py | 流程圖生成與智能組合 |
+| `AIVAFlowClassifier` | python_tools/aiva_flow_classifier.py | 數據流分類分析 |
+| `AIVAExplorationPipeline` | python_tools/aiva_exploration_pipeline.py | 認知更新管線總控 |
+| `CoreAnalyzer` | self_healing/core_analyzer.py | 統一診斷入口 |
+| `PracticalAnalyzer` | self_healing/practical_analyzer.py | 智能過濾和分級 |
+
+---
+
+## 依賴關係
+
+**外部依賴**：
+- `ast` - Python AST 解析
+- `json` - 配置和數據文件
+
+**內部依賴**：
+- `service_backbone.messaging` - 消息代理
+- `cognitive_core.learning_system` - 學習系統
+- `service_backbone.storage` - 報告存儲
+
+**被依賴於** ⭐:
+- `core_capabilities.cli.aiva_cli` - 導入 FlowExecutor 執行 313-318 個 flows
+- `cognitive_core.internal_loop_connector` - 導入 ExplorationPipeline, FlowExecutor
+- `core_capabilities.capability_registry` - 從 internal_exploration 加載能力
+- `task_planning.dispatcher` - 請求 internal_exploration 進行分析
+
+---
 
 **導航**: [← 返回 AIVA Core](../README.md)
 
 ---
 
-> **🔔 重要更新 (2025-12-15)**: 分析結果輸出路徑已重構！  
-> 📖 查看 [更新摘要](python_tools/UPDATE_SUMMARY.md) | [詳細變更日誌](python_tools/CHANGELOG_PATH_MIGRATION.md) | [使用指南](python_tools/README.md#輸出路徑配置)
-
-## 📑 目錄
+## 📑 詳細目錄
 
 - [🎯 模組概述](#-模組概述)
 - [🏗️ 目錄結構](#️-目錄結構)
 - [🛠️ 核心工具套件](#️-核心工具套件)
-  - [Python 工具套件](#python-工具套件)
-  - [TypeScript 工具](#typescript-工具)
-  - [Go 工具](#go-工具)
-  - [Rust 工具](#rust-工具)
-  - [Self-Healing 自我修復模組](#self-healing-自我修復模組)
 - [🚀 快速開始](#-快速開始)
 - [📚 詳細文檔](#-詳細文檔)
 - [📊 統計資訊](#-統計資訊)
@@ -65,18 +187,23 @@ internal_exploration/
 │   ├── aiva_exploration_pipeline.py       # 認知更新管線總控
 │   └── README.md                          # 📘 Python 工具詳細文檔
 │
-│   ⚠️ **重要：輸出路徑架構變更 (2025-12-15)**
+│   ⚠️ **重要：統一資料存放路徑 (2026-01-10)**
 │   
-│   **新路徑結構**: services/integration/analysis_data/{module}/{category}/
-│   - module: core, features, scan, integration
-│   - category: capabilities, flows, classifications
+│   **當前路徑結構**: services/integration/data/internal_exploration/
 │   
-│   **舊路徑**: services/integration/data/internal_exploration/ (保留)
-│   **新路徑**: services/integration/analysis_data/ (統一儲存)
+│   輸出文件：
+│   - latest_classification.json (最新分類數據)
+│   - analysis_history/v{N}/ (版本歷史記錄)
+│     - analysis_results.json
+│     - classification_data.json
+│     - CLI_COMMANDS_REFERENCE.md
+│     - cli_commands_db.json
+│     - classification_summary.md
+│     - complete_flow_details.md
+│     - multi_path_analysis.md
+│     - diff_report.md
 │   
-│   詳見: 
-│   - [Python 工具實作說明](python_tools/README.md#輸出路徑配置)
-│   - [統一路徑文檔](../../../docs/UNIFIED_OUTPUT_PATHS.md)
+│   詳見: [Python 工具完整文檔](python_tools/README.md)
 │
 ├── 📁 typescript_tools/                    # TypeScript AST 分析工具
 │   ├── ts2mermaid.ts                      # TypeScript 統一分析工具
@@ -223,6 +350,99 @@ Self-Healing 模組是 AIVA 的自我診斷系統,提供統一的代碼健康度
 
 ## 🚀 快速開始
 
+### 📋 如何更換分析目標/範圍
+
+所有4語言工具都支援靈活的目標調整，以下說明如何切換分析範圍：
+
+#### **1. TypeScript 工具** (`ts2mermaid.ts`)
+
+```bash
+# 分析整個目錄
+cd /目標專案路徑
+npx ts-node /path/to/ts2mermaid.ts "./src"
+
+# 分析特定模組
+npx ts-node /path/to/ts2mermaid.ts "./src/services/specific-module"
+
+# 分析單一檔案（需在該目錄下）
+npx ts-node /path/to/ts2mermaid.ts "."
+```
+
+**輸出位置**: 自動在當前目錄創建 `analysis_output/analysis_results.json`
+
+#### **2. Go 工具** (`go2mermaid.go`)
+
+```bash
+# 分析整個專案
+cd /Go專案根目錄
+go run /path/to/go2mermaid.go .
+
+# 分析特定package
+cd /Go專案/specific_package
+go run /path/to/go2mermaid.go .
+
+# 分析子目錄
+go run /path/to/go2mermaid.go ./sub/directory
+```
+
+**輸出位置**: 
+- 預設: `/path/to/go_tools/output/analysis_results.json`  
+- 可在當前目錄創建 `analysis_output/` 存放結果
+
+#### **3. Rust 工具** (`main.rs`)
+
+```bash
+# 分析整個Rust專案
+cd /Rust專案目錄
+cargo run --manifest-path /path/to/Cargo.toml -- .
+
+# 分析特定模組目錄
+cd /Rust專案/src/modules/specific
+cargo run --manifest-path /path/to/Cargo.toml -- .
+```
+
+**輸出位置**: 固定路徑 `services/integration/data/internal_exploration/analysis_results/rust/`
+
+**⚠️ 注意**: Rust工具輸出路徑固定，若要改為相對路徑需修改 `src/paths_config.rs`
+
+#### **4. Python 工具** (`aiva_flow_analyzer.py`)
+
+```bash
+# 分析整個目錄
+python _dev_tools/common/development/aiva_flow_analyzer.py \
+  --target "services/features/features_ready" \
+  --output "./features_analysis"
+
+# 分析核心模組
+python _dev_tools/common/development/aiva_flow_analyzer.py \
+  --target "services/core/aiva_core" \
+  --output "./core_analysis"
+
+# 調整深度和路徑數
+python _dev_tools/common/development/aiva_flow_analyzer.py \
+  --target "任意目錄" \
+  --depth 5 \
+  --max-paths 20 \
+  --output "./custom_output"
+```
+
+**參數說明**:
+- `--target`: 分析目標目錄（相對或絕對路徑）
+- `--depth`: 最大追蹤深度（預設3）
+- `--max-paths`: 每個入口點的最大路徑數（預設10）
+- `--output`: 輸出目錄
+
+**輸出位置**: 使用者指定的 `--output` 目錄
+
+#### **5. 分類器** (將舊格式轉為統一JSON)
+
+```bash
+# 對Python分析結果進行分類
+python _dev_tools/common/development/aiva_flow_classifier_final.py \
+  --input "./your_analysis_output" \
+  --output "./classification_results"
+```
+
 ### 環境準備
 
 ```powershell
@@ -234,20 +454,91 @@ $env:PYTHONPATH="C:\D\fold7\AIVA-git\services\common;C:\D\fold7\AIVA-git\service
 
 根據你的目標語言選擇對應工具:
 
-| 分析目標 | 推薦工具 | 快速開始命令 |
-|---------|---------|------------|
-| **Python 代碼** | Python 工具套件 | [查看 Python 工具文檔](python_tools/README.md#-快速開始) |
-| **TypeScript/JavaScript** | TypeScript 工具 | [查看 TypeScript 工具文檔](typescript_tools/README.md#-快速開始) |
-| **Go 代碼** | Go 工具 | [查看 Go 工具文檔](go_tools/README.md#-快速開始) |
-| **Rust 代碼** | Rust 工具 | [查看 Rust 工具文檔](rust_tools/README.md#-快速開始) |
-| **代碼健康度診斷** | Self-Healing 模組 | [查看 Self-Healing 文檔](self_healing/README.md#-快速開始) |
+| 分析目標 | 推薦工具 | 目標參數 | 輸出控制 |
+|---------|---------|---------|---------|
+| **Python 代碼** | `aiva_flow_analyzer.py` | `--target <路徑>` | `--output <目錄>` ✅ |
+| **TypeScript** | `ts2mermaid.ts` | 命令行參數 | 當前目錄固定 ⚠️ |
+| **Go 代碼** | `go2mermaid.go` | 命令行參數 | 固定路徑 ⚠️ |
+| **Rust 代碼** | `main.rs` | 命令行參數 | 固定路徑 ⚠️ |
+| **分類轉換** | `aiva_flow_classifier_final.py` | `--input <目錄>` | `--output <目錄>` ✅ |
 
 ### 典型工作流程
 
-1. **代碼分析階段** - 使用對應語言的工具生成流程圖
-2. **結果檢視階段** - 查看生成的 Mermaid 圖和 JSON 報告
-3. **問題診斷階段** - 使用 Self-Healing 模組檢測健康度問題
-4. **持續整合階段** - 整合到 CI/CD 流程中自動化執行
+#### **完整分析流程 (以Features模組為例)**
+
+```bash
+# 步驟1: Python代碼分析
+cd C:\D\fold7\AIVA-git
+python _dev_tools/common/development/aiva_flow_analyzer.py \
+  --target "services/features/features_ready" \
+  --output "./features_ready_analysis" \
+  --verbose
+
+# 步驟2: 分類轉換為統一JSON格式
+python _dev_tools/common/development/aiva_flow_classifier_final.py \
+  --input "./features_ready_analysis" \
+  --output "./features_classification"
+
+# 步驟3: Go模組分析 (在模組目錄執行)
+cd services/features/features_in_development/function_authn_go
+go run ../../../../core/aiva_core/internal_exploration/go_tools/go2mermaid.go .
+
+# 步驟4: TypeScript模組分析
+cd services/scan/typescript_engine
+npx ts-node --esm ../../../services/core/aiva_core/internal_exploration/typescript_tools/ts2mermaid.ts "./src"
+
+# 步驟5: Rust模組分析
+cd services/features/features_ready/function_crypto/rust_core
+cargo run --manifest-path ../../../../core/aiva_core/internal_exploration/rust_tools/Cargo.toml -- .
+```
+
+#### **結果檢視**
+
+```bash
+# Python結果
+cat features_classification/classification_data.json
+
+# Go結果  
+cat services/features/features_in_development/function_authn_go/analysis_output/analysis_results.json
+
+# TypeScript結果
+cat services/scan/typescript_engine/analysis_output/analysis_results.json
+
+# Rust結果
+cat services/integration/data/internal_exploration/analysis_results/rust/analysis_results.json
+```
+
+#### **輸出格式對比**
+
+所有工具現在都輸出統一的JSON Schema v3.3格式：
+
+```json
+{
+  "metadata": {
+    "tool": "ts2mermaid",        // 工具名稱
+    "version": "2.0",             // 版本
+    "language": "typescript",     // 語言
+    "generated_at": "2026-01-13T...",
+    "total_flows": 3,             // flows數量
+    "total_files": 11,            // 檔案數
+    "schema_version": "3.3",      // ✅ 統一版本
+    "ai_compatible": true         // ✅ AI可讀
+  },
+  "flows": [                      // ✅ 統一欄位
+    {
+      "id": 1,
+      "path": ["從", "到"],
+      "full_path": ["完整路徑1", "完整路徑2"],
+      "classifications": [...],
+      "language": "typescript",
+      "cli_command": "..."
+    }
+  ],
+  "functions": [...],             // 保留原始數據
+  "flow_chains": [...],           // 保留原始數據（Python）
+  "summary": {...}                // 保留原始數據
+}
+```
 
 ---
 
@@ -291,20 +582,102 @@ $env:PYTHONPATH="C:\D\fold7\AIVA-git\services\common;C:\D\fold7\AIVA-git\service
 
 ## 📊 統計資訊
 
-### 工具覆蓋範圍
+### 當前成果記錄 (2026-01-13)
 
-| 語言 | 工具狀態 | 代碼行數 | 核心功能 |
-|------|---------|---------|---------|
-| Python | ✅ 完整 | ~3000 行 | 4 個獨立模組 |
-| TypeScript | ✅ 完整 | 769 行 | 統一工具 |
-| Go | ✅ 完整 | 782 行 | 統一工具 |
-| Rust | ✅ 完整 | 739 行 | 統一工具 |
-| Self-Healing | ✅ 完整 | ~1000 行 | 3 個分析器 |
+**已完成的4語言分析**:
+
+| 語言 | 模組 | 位置 | Flows | 檔案數 | 狀態 |
+|------|------|------|-------|--------|------|
+| **Go** | function_authn_go | features/features_in_development/ | 4 | 4 | ✅ |
+| **TypeScript** | typescript_engine | services/scan/ | 3 | 11 | ✅ |
+| **Python** | features_ready | services/features/ | 150 | 119 | ✅ |
+| **Rust** | function_crypto | features/features_ready/ | 0* | 5 | ✅ |
+
+*Rust 0 flows 為正常情況：crypto模組是4個獨立analyzer的工具集合，無跨檔案調用鏈
+
+**統計總覽**:
+- 總Flows: **157條** (Go: 4 + TS: 3 + Python: 150 + Rust: 0)
+- 總檔案: **139個** (Go: 4 + TS: 11 + Python: 119 + Rust: 5)
+- 支援語言: **4種** (Python, TypeScript, Go, Rust)
+- JSON Schema: **v3.3統一格式**
+
+### 子模組統計
+
+| 子模組 | 檔案數 | 代碼行數 | 說明 | 文檔 |
+|--------|--------|---------|------|------|
+| **python_tools** | 6 | 4,450 | Python AST 分析工具套件 | [README](python_tools/README.md) |
+| **self_healing** | 8 | 3,711 | 自我診斷與健康度檢測 | [README](self_healing/README.md) |
+| **go_tools** | 2 | 891 | Go AST 分析工具 (✅ 已改進) | [README](go_tools/README.md) |
+| **rust_tools** | 2 | 864 | Rust AST 分析工具 (✅ 已改進) | [README](rust_tools/README.md) |
+| **typescript_tools** | 2 | 865 | TypeScript AST 分析工具 (✅ 已改進) | [README](typescript_tools/README.md) |
+| **總計** | **20** | **10,781** | - | - |
 
 ### 分析能力
 
 - **支援語言**: 4 種主流語言 (Python/TypeScript/Go/Rust)
-- **輸出格式**: Mermaid 圖 + JSON 報告 + CLI 腳本
+- **輸出格式**: Mermaid 圖 + **統一JSON Schema v3.3** + CLI 腳本
+- **統一欄位**: metadata, flows, functions (保留所有原始欄位)
+- **AI相容**: ai_compatible=true，可直接供FlowExecutor使用
+
+---
+
+## ❓ 常見問題 (FAQ)
+
+### Q1: 為什麼Rust的flows是0？
+
+**A**: 這是**正常的**！`function_crypto/rust_core` 是4個獨立分析工具的集合：
+- `cookie_analyzer.rs` - Cookie安全分析
+- `header_analyzer.rs` - HTTP標頭分析  
+- `js_crypto_analyzer.rs` - JavaScript密碼學分析
+- `tls_analyzer.rs` - TLS/SSL配置分析
+
+這些analyzer不互相調用，所以沒有跨檔案數據流，0 flows是正確結果。
+
+### Q2: 如何更換分析目標？
+
+**A**: 每個工具都支援目標調整，參數不同：
+- **Python**: `--target <路徑>` 參數
+- **TypeScript/Go/Rust**: 命令行參數指定目錄
+
+詳見上方「📋 如何更換分析目標/範圍」章節。
+
+### Q3: 輸出結果存放在哪裡？
+
+**A**: 
+- **Python**: 自訂 `--output` 目錄
+- **TypeScript**: 當前目錄的 `analysis_output/`
+- **Go**: `go_tools/output/`  
+- **Rust**: 固定路徑 `services/integration/data/internal_exploration/analysis_results/rust/`
+
+### Q4: 如何驗證JSON格式正確？
+
+**A**: 檢查3個關鍵欄位：
+```bash
+# 使用PowerShell檢查
+$json = Get-Content "路徑/analysis_results.json" | ConvertFrom-Json
+$json.metadata.schema_version  # 應為 "3.3"
+$json.metadata.ai_compatible   # 應為 true
+$json.flows.Count              # 應有數字(Python/TS/Go)或0(Rust工具集)
+```
+
+### Q5: 各語言工具可以分析其他專案嗎？
+
+**A**: ✅ **完全可以！**所有工具都是通用的：
+```bash
+# 分析任何Python專案
+python aiva_flow_analyzer.py --target "/path/to/any/python/project"
+
+# 分析任何Go專案
+cd /any/go/project && go run /path/to/go2mermaid.go .
+
+# 分析任何TypeScript專案  
+cd /any/ts/project && npx ts-node /path/to/ts2mermaid.ts "./src"
+
+# 分析任何Rust專案
+cd /any/rust/project && cargo run --manifest-path /path/to/Cargo.toml -- .
+```
+
+---
 - **分類系統**: 6 大功能類別 (偵察/攻擊/分析/報告/持久化/其他)
 - **跨檔案追蹤**: 所有工具支援多檔案數據流串接
 - **自我診斷**: Self-Healing 模組提供零錯誤健康度檢查
@@ -341,7 +714,7 @@ $env:PYTHONPATH="C:\D\fold7\AIVA-git\services\common;C:\D\fold7\AIVA-git\service
 
 ---
 
-**版本**: v10.0.0  
-**最後更新**: 2025-12-10  
+**版本**: v3.2.0  
+**最後更新**: 2026-01-07  
 **維護者**: AIVA Team  
 **授權**: AIVA 專案授權條款

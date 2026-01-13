@@ -1,0 +1,109 @@
+{
+  "meta": {
+    "id": "ssrf_comprehensive",
+    "name": "Comprehensive SSRF Detection",
+    "description": "服務端請求偽造 (SSRF) 檢測模組，支援基本 SSRF、盲 SSRF 和協議走私",
+    "version": "2.0.0",
+    "author": "AIVA Team",
+    "tags": ["ssrf", "server-side", "high-risk", "cloud"]
+  },
+  "rag_trigger": {
+    "desc": "AI 決策權重表：針對 SSRF 漏洞的特徵權重",
+    "weights": {
+      "param_url": 5.0,
+      "param_uri": 4.5,
+      "param_path": 3.5,
+      "param_file": 3.0,
+      "param_src": 3.5,
+      "param_dest": 3.0,
+      "param_redirect": 3.5,
+      "param_domain": 4.0,
+      "param_host": 4.5,
+      "param_feed": 3.0,
+      "param_callback": 3.5,
+      "param_image": 2.5,
+      "param_pdf": 2.5,
+      "url_fetch_functionality": 5.0,
+      "pdf_generation": 3.5,
+      "image_resize": 3.0,
+      "webhook_endpoint": 4.0,
+      "import_functionality": 3.5,
+      "cloud_metadata_accessible": 5.0,
+      "internal_network_hint": 4.0,
+      "waf_detected": -1.0,
+      "tech_stack_java": 1.5,
+      "tech_stack_python": 1.2,
+      "tech_stack_nodejs": 1.0
+    },
+    "threshold": 0.65
+  },
+  "parameters": {
+    "desc": "CLI 互動定義層",
+    "schema": {
+      "level": {
+        "type": "int",
+        "default": 2,
+        "min": 1,
+        "max": 4,
+        "help": "測試深度 (1=基本, 2=包含協議, 3=包含雲元數據, 4=完整)"
+      },
+      "risk": {
+        "type": "int",
+        "default": 2,
+        "min": 1,
+        "max": 3,
+        "help": "風險等級 (1=無害, 2=可能觸發內部請求, 3=可能訪問敏感端點)"
+      },
+      "protocols": {
+        "type": "array",
+        "default": ["http", "https"],
+        "options": ["http", "https", "file", "gopher", "dict", "ftp"],
+        "help": "測試的協議列表"
+      },
+      "targets": {
+        "type": "array",
+        "default": ["localhost", "127.0.0.1"],
+        "options": ["localhost", "127.0.0.1", "169.254.169.254", "internal", "custom"],
+        "help": "測試的內部目標"
+      },
+      "collaborator": {
+        "type": "string",
+        "default": "",
+        "help": "OOB 協作伺服器地址（用於盲 SSRF）"
+      },
+      "timeout": {
+        "type": "float",
+        "default": 20.0,
+        "min": 5.0,
+        "max": 60.0,
+        "help": "單次請求超時時間（秒）"
+      }
+    }
+  },
+  "execution": {
+    "desc": "Worker 執行層",
+    "type": "python_module",
+    "module_path": "services.features.features_ready.function_ssrf.worker",
+    "entry_class": "SsrfOrchestrator",
+    "entry_function": "run_detection",
+    "timeout_seconds": 240,
+    "resource_limit": {
+      "cpu": "0.5",
+      "memory": "256Mi"
+    }
+  },
+  "feature_vector": {
+    "desc": "預計算的特徵向量",
+    "dimension": 128,
+    "hash_indices": {
+      "param_url": 0,
+      "param_host": 1,
+      "url_fetch_functionality": 2,
+      "cloud_metadata_accessible": 3,
+      "webhook_endpoint": 4,
+      "waf_detected": 5,
+      "tech_stack_java": 6,
+      "pdf_generation": 7
+    }
+  }
+}

@@ -1,8 +1,21 @@
 # AIVA Features 模組
 
-> **版本**: v7.0 | **狀態**: ✅ 架構重構完成 | **更新**: 2025-12-20
+> **版本**: v7.1 | **狀態**: ✅ 架構整合完成 | **更新**: 2026-01-09
 
-## 🔔 最新更新 (2025-12-20)
+## 🔔 最新更新 (2026-01-09)
+
+### ✅ 重大進展：AI Commander 整合完成
+
+1. **AttackCoordinator 整合** - [`attack_coordinator.py`](../core/aiva_core/task_planning/commander/attack_coordinator.py)
+   - ✅ 直接調用 Features 功能模組 (sqli/xss/ssrf/idor)
+   - ✅ 整合 AttackExecutor 和 MultiEngineCoordinator
+   - ✅ Phase 2 攻擊流程完整可用
+
+2. **決策引擎連動** - [`enhanced_decision_agent.py`](../core/aiva_core/cognitive_core/decision/enhanced_decision_agent.py)
+   - ✅ `decide_phase2_targets()` 返回攻擊目標優先級
+   - ✅ AI 決策結果直接驅動功能模組執行
+
+### 🔔 歷史更新 (2025-12-20)
 
 ### ✅ 重大架構變更
 
@@ -65,11 +78,13 @@
 
 ---
 
-## 🎯 現況與整合計劃
+## 🎯 現況與整合狀態
 
-### 📌 當前狀態
+### 📌 當前狀態 (2026-01-09 更新)
 
 **功能模組**：✅ 已有完整檢測邏輯（同步實現）
+
+**AI Commander 整合**：✅ **已完成** - AttackCoordinator 直接調用功能模組
 
 ```python
 # services/features/function_xss/integration_tools/xss_tools.py
@@ -79,19 +94,23 @@ class XSSManager:
         return {"vulnerable": True, "payloads": [...]}
 ```
 
-**AI Commander**：⏳ 待整合（直接調用功能模組）
+**AI Commander**：✅ **已整合** (2026-01-09)
 
 ```python
-# services/core/aiva_core/task_planning/security_scanner.py
-import asyncio
-from services.features.function_xss.integration_tools.xss_tools import XSSManager
+# services/core/aiva_core/task_planning/commander/attack_coordinator.py
+# 實際整合代碼 - AttackCoordinator 直接調用功能模組
 
-class SecurityScanner:
-    async def scan_xss(self, target: str) -> dict:
-        # 用 asyncio.to_thread 包裝同步調用
-        xss_manager = XSSManager()
-        result = await asyncio.to_thread(xss_manager.comprehensive_scan, target, {})
-        return result
+class AttackCoordinator:
+    async def detect_vulnerabilities(self, context: dict) -> dict:
+        """調用功能模組檢測漏洞"""
+        module_map = {
+            "sqli": "services.features.function_sqli.worker",
+            "xss": "services.features.function_xss.worker",
+            "ssrf": "services.features.function_ssrf.worker",
+            "idor": "services.features.function_idor.worker",
+        }
+        # 動態導入並執行對應模組
+        ...
 ```
 
 ### 🎯 整合方式

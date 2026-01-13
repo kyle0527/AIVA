@@ -1,0 +1,14 @@
+# AIVA Core - AI能力依賴
+# 用於 AI 決策、強化學習、RAG系統
+# 總大小: ~2.6 GB
+# 啟動時間: ~10秒
+
+# 繼承 Web 依賴
+-r web.txt
+
+# AI/ML 核心（重度依賴）
+torch>=2.0.0                    # 2+ GB - 深度學習框架
+sentence-transformers>=2.2.0    # 500 MB - 語義搜索/RAG
+
+# OpenAI API（可選）
+openai>=1.0.0                   # < 10 MB - 可選，使用 OpenAI 服務時需要

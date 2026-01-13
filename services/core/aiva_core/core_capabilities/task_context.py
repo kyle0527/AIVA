@@ -15,7 +15,13 @@
 from dataclasses import dataclass, field
 from enum import Enum
 from typing import Any, Optional
-from datetime import datetime, UTC
+from datetime import datetime, timezone
+
+# UTC 兼容性处理（Python 3.11+ 使用 UTC，较旧版本使用 timezone.utc）
+try:
+    from datetime import UTC  # type: ignore
+except ImportError:
+    UTC = timezone.utc  # type: ignore
 
 
 class TaskIntent(str, Enum):

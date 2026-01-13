@@ -21,6 +21,7 @@ import (
 	"regexp"
 	"sort"
 	"strings"
+	"time"
 )
 
 // ==========================================
@@ -761,17 +762,70 @@ func main() {
 	cliDocs := GenerateCLI(classResult)
 	os.WriteFile(filepath.Join(*outputDir, "cli_commands.sh"), []byte(cliDocs), 0644)
 
-	// C. 完整 JSON 報告
+	// convertConnectionsToFlows 將 RealConnections 轉換成 Python FlowExecutor 需要的 flows 格式
+	// 這是為了讓 Python 執行器能夠讀取並執行 Go 分析結果
+	convertConnectionsToFlows := func(connections []Connection) []map[string]interface{} {
+		flows := make([]map[string]interface{}, len(connections))
+		
+		for i, conn := range connections {
+			flows[i] = map[string]interface{}{
+				"id":         i + 1,
+				"path":       []string{conn.FromFunc, conn.ToFunc},
+				"full_path":  []string{conn.FromScript, conn.ToScript},
+				"func_names": []string{conn.FromFunc, conn.ToFunc},
+				"length":     2,
+				"start":      conn.FromFunc,
+				"end":        conn.ToFunc,
+				"classifications": []map[string]interface{}{
+					{
+						"script":         conn.FromFunc,
+						"module":         "go_module",
+						"component_type": "程式組件",
+						"description":    fmt.Sprintf("%s - Go 功能", conn.FromFunc),
+					},
+					{
+						"script":         conn.ToFunc,
+						"module":         "go_module",
+						"component_type": "程式組件",
+						"description":    fmt.Sprintf("%s - Go 功能", conn.ToFunc),
+					},
+				},
+				"language":        "go",
+				"cli_command":     fmt.Sprintf("go run %s", conn.ToScript),
+				"structured_tags": []string{"language:go", "type:程式"},
+			}
+		}
+		
+		return flows
+	}
+
+	// C. 完整 JSON 報告 - 統一格式，相容 Python FlowExecutor
+	flows := convertConnectionsToFlows(stitcher.RealConnections)
+	
 	report := map[string]interface{}{
+		"metadata": map[string]interface{}{
+			"tool":           "go2mermaid",
+			"version":        "2.0",
+			"language":       "go",
+			"generated_at":   time.Now().Format(time.RFC3339),
+			"total_flows":    len(flows),
+			"total_files":    len(stitcher.ScriptNodes),
+			"schema_version": "3.3",
+			"ai_compatible":  true,
+		},
+		// ✅ 新增：FlowExecutor 需要的統一格式
+		"flows": flows,
+		
+		// ✅ 保留：Go 工具原有的所有字段
 		"summary": map[string]interface{}{
-			"total_files": len(stitcher.ScriptNodes),
-			"total_funcs": len(allMeta),
+			"total_files":      len(stitcher.ScriptNodes),
+			"total_funcs":      len(allMeta),
 			"real_connections": len(stitcher.RealConnections),
-			"categories": classResult.Summary,
+			"categories":       classResult.Summary,
 		},
 		"branch_analysis": branchStats,
-		"flow_chains": stitcher.RealConnections,
-		"functions": allMeta,
+		"flow_chains":     stitcher.RealConnections,
+		"functions":       allMeta,
 	}
 	
 	jsonData, _ := json.MarshalIndent(report, "", "  ")

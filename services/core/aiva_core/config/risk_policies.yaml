@@ -1,0 +1,136 @@
+# 風險評估策略配置
+# 符合 Bug Bounty 實戰場景的動態風險評分規則
+#
+# 使用說明:
+# 1. 每個規則包含: condition (條件), risk_score (分數), description (描述)
+# 2. risk_score 累加計算總體風險
+# 3. 可針對不同客戶/項目加載不同策略文件
+
+version: "1.0"
+policy_name: "default_risk_policy"
+description: "預設風險評估策略 - 適用於大多數 Bug Bounty 項目"
+
+# 風險評分規則
+rules:
+  # 1. 目標環境風險
+  environment:
+    - condition: "target_type == 'production'"
+      risk_score: 3
+      description: "Production environment - High impact potential"
+      mitigation: "使用非破壞性測試方法，避免影響服務"
+    
+    - condition: "target_type == 'staging'"
+      risk_score: 1
+      description: "Staging environment - Medium impact"
+      mitigation: "可進行更積極的測試，但需避免數據污染"
+    
+    - condition: "target_type == 'development'"
+      risk_score: 0
+      description: "Development environment - Low risk"
+      mitigation: "可進行完整測試，風險可控"
+
+  # 2. 時間約束風險
+  timing:
+    - condition: "time_limit is not None"
+      risk_score: 2
+      description: "Time-constrained operation - Reduced testing window"
+      mitigation: "優先測試高價值漏洞，使用自動化工具"
+    
+    - condition: "business_hours == True"
+      risk_score: 1
+      description: "Testing during business hours - Higher visibility"
+      mitigation: "降低請求頻率，避免觸發監控告警"
+
+  # 3. 授權範圍風險 (最高優先級)
+  authorization:
+    - condition: "authorized == False"
+      risk_score: 5
+      description: "⚠️ CRITICAL: Unauthorized testing - Legal risk"
+      mitigation: "立即停止測試，確認授權後繼續"
+    
+    - condition: "scope_verified == False"
+      risk_score: 3
+      description: "Scope not verified - Potential out-of-scope testing"
+      mitigation: "仔細檢查 scope 文檔，與客戶確認"
+
+  # 4. 資料敏感度風險
+  data_sensitivity:
+    - condition: "contains_pii == True"
+      risk_score: 3
+      description: "Personal Identifiable Information present - Privacy concerns"
+      mitigation: "避免下載或儲存 PII 數據"
+    
+    - condition: "contains_payment_data == True"
+      risk_score: 4
+      description: "Payment data present - High compliance risk"
+      mitigation: "嚴格遵守 PCI-DSS 要求，避免觸碰支付流程"
+    
+    - condition: "contains_sensitive_data == True"
+      risk_score: 2
+      description: "Sensitive data present - Data protection required"
+      mitigation: "使用唯讀測試方法，不修改敏感數據"
+
+  # 5. 系統關鍵度風險
+  criticality:
+    - condition: "system_criticality == 'critical'"
+      risk_score: 3
+      description: "Critical system - Service disruption risk"
+      mitigation: "僅進行被動掃描，避免主動攻擊"
+    
+    - condition: "system_criticality == 'high'"
+      risk_score: 2
+      description: "High-importance system - Moderate disruption risk"
+      mitigation: "控制並發請求數，避免過載"
+    
+    - condition: "system_criticality == 'medium'"
+      risk_score: 1
+      description: "Medium-importance system - Low disruption risk"
+      mitigation: "正常測試流程"
+
+  # 6. WAF/防護機制風險
+  protection:
+    - condition: "waf_detected == True"
+      risk_score: 1
+      description: "WAF protection detected - Increased detection risk"
+      mitigation: "使用 WAF 繞過技術，降低請求頻率"
+    
+    - condition: "rate_limit_detected == True"
+      risk_score: 1
+      description: "Rate limiting active - Request throttling required"
+      mitigation: "實施自適應速率控制"
+
+# 風險等級閾值
+risk_levels:
+  critical:
+    min_score: 7
+    description: "嚴重風險 - 需要立即緩解措施"
+    mitigation_required: true
+    recommended_action: "暫停測試，聯繫客戶確認"
+  
+  high:
+    min_score: 4
+    max_score: 6
+    description: "高風險 - 需要緩解措施"
+    mitigation_required: true
+    recommended_action: "實施風險緩解措施後繼續"
+  
+  medium:
+    min_score: 2
+    max_score: 3
+    description: "中等風險 - 建議緩解措施"
+    mitigation_required: false
+    recommended_action: "注意監控，正常進行"
+  
+  low:
+    min_score: 0
+    max_score: 1
+    description: "低風險 - 可正常進行"
+    mitigation_required: false
+    recommended_action: "正常測試流程"
+
+# 元數據
+metadata:
+  created_at: "2026-01-07"
+  last_updated: "2026-01-07"
+  author: "AIVA Security Team"
+  applicable_to: ["bug_bounty", "penetration_testing", "security_assessment"]

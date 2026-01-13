@@ -1,0 +1,18 @@
+# AIVA Core - 最小依賴配置
+# 用於 CLI 驗證、參數檢查、基礎功能測試
+# 總大小: ~65 MB
+# 啟動時間: <1秒
+
+# 數據驗證（必須）
+pydantic>=2.0.0
+pydantic-settings>=2.0.0
+
+# 日誌（強烈建議）
+loguru>=0.7.0
+
+# 數值計算（必須 - torch 的依賴）
+numpy>=1.24.0
+
+# 時間工具
+python-dateutil>=2.8.0
+pytz>=2023.3

@@ -11,13 +11,9 @@
 import json
 import logging
 from pathlib import Path
-import sys
 import time
 from typing import Any, Dict, Optional
 import warnings
-
-# 添加 AIVA 模組路徑
-sys.path.append(str(Path(__file__).parent.parent.parent.parent.parent))
 
 
 class KnowledgeBaseUnavailableError(Exception):
@@ -453,76 +449,3 @@ class AntiHallucinationModule:
         self.knowledge_base = new_knowledge_base
         self._require_knowledge_base()
         self.logger.info("知識庫已重設並驗證成功")
-
-
-# 使用範例（嚴格模式）
-def demo_anti_hallucination():
-    """示範抗幻覺模組的使用（嚴格模式）"""
-    print("🧠 AIVA 抗幻覺驗證模組示範（嚴格模式）")
-    print("=" * 60)
-
-    # 建立模擬知識庫
-    class MockKnowledgeBase:
-        """模擬知識庫供測試使用"""
-        def search(self, query: str, top_k: int = 5):
-            # 返回模擬的搜索結果
-            return [{"technique": query, "confidence": 0.8}]
-        
-        def health_check(self):
-            return True
-
-    # 創建驗證模組（必須提供知識庫）
-    print("🔸 測試 1: 嚴格模式驗證（需要知識庫）")
-    try:
-        # 嘗試無知識庫創建（應該失敗）
-        validator_no_kb = AntiHallucinationModule(knowledge_base=None)
-        print("❌ 錯誤：應該拋出異常")
-    except KnowledgeBaseUnavailableError as e:
-        print(f"✅ 預期行為：{e}")
-
-    # 使用有效知識庫創建
-    print("\n🔸 測試 2: 使用有效知識庫")
-    mock_kb = MockKnowledgeBase()
-    validator = AntiHallucinationModule(knowledge_base=mock_kb)
-
-    # 測試攻擊計畫 (包含一些可疑步驟)
-    test_plan = {
-        "name": "Web 應用滲透測試",
-        "target": "http://example.com",
-        "steps": [
-            {"action": "port_scan", "description": "掃描目標開放端口", "tool": "nmap"},
-            {
-                "action": "quantum_hack",  # 明顯的幻覺
-                "description": "使用量子算法破解加密",
-                "tool": "quantum_tool",
-            },
-            {"action": "web_crawl", "description": "爬取網站結構", "tool": "spider"},
-            {
-                "action": "sql_injection",
-                "description": "測試 SQL 注入漏洞",
-                "tool": "sqlmap",
-            },
-        ],
-    }
-
-    print(f"📋 原始計畫包含 {len(test_plan['steps'])} 個步驟")
-
-    # 執行驗證
-    validated_plan = validator.validate_attack_plan(test_plan)
-    print(f"✅ 驗證後剩餘 {len(validated_plan['steps'])} 個步驟")
-
-    # 顯示統計
-    stats = validator.get_validation_stats()
-    print("\n📊 驗證統計:")
-    for key, value in stats.items():
-        print(f"   {key}: {value}")
-        print("   繼續使用fallback模式")
-
-    # 匯出報告
-    report_path = validator_no_kb.export_validation_report()
-    if report_path:
-        print(f"\n📄 詳細報告: {report_path}")
-
-
-if __name__ == "__main__":
-    demo_anti_hallucination()

@@ -16,10 +16,6 @@ from typing import Dict, List, Optional, Any, Set
 from pathlib import Path
 import json
 import sqlite3
-from contextlib import asynccontextmanager
-
-from fastapi import FastAPI, HTTPException, BackgroundTasks, Depends
-
 
 
 # 遵循 aiva_common 規範 - 修復 import 路徑
@@ -587,6 +583,171 @@ class CapabilityRegistry:
         
         return discovery_stats
     
+    async def load_capability_from_json(
+        self,
+        json_file_path: str | Path
+    ) -> bool:
+        """從 JSON 檔案載入能力定義
+        
+        v2.1 (2026-01-08): 新增方法 - HackOne 戰略規劃整合
+        
+        支援格式:
+        {
+            "meta": {
+                "id": "security.sqli.boolean_detection",
+                "name": "布爾盲注檢測",
+                "module": "function_sqli",
+                ...
+            },
+            "rag_trigger": {
+                "http_403": 1.5,
+                "db_error_mysql": 2.5,
+                ...
+            },
+            "parameters": {...},
+            "execution": {...}
+        }
+        
+        Args:
+            json_file_path: JSON 檔案路徑
+            
+        Returns:
+            是否成功載入
+        """
+        import asyncio
+        
+        def load_json():
+            file_path = Path(json_file_path)
+            if not file_path.exists():
+                logger.error(f"JSON 檔案不存在: {file_path}")
+                return None
+            
+            with open(file_path, 'r', encoding='utf-8') as f:
+                return json.load(f)
+        
+        try:
+            data = await asyncio.to_thread(load_json)
+            if data is None:
+                return False
+            
+            # 解析 meta 欄位
+            meta = data.get('meta', {})
+            if not meta:
+                logger.error(f"JSON 檔案缺少 meta 欄位: {json_file_path}")
+                return False
+            
+            # 構建 CapabilityRecord
+            capability = CapabilityRecord(
+                id=meta.get('id', f"unknown.{Path(json_file_path).stem}"),
+                name=meta.get('name', 'Unknown'),
+                description=meta.get('description', ''),
+                version=meta.get('version', '1.0.0'),
+                module=meta.get('module', 'unknown'),
+                language=ProgrammingLanguage(meta.get('language', 'python')),
+                entrypoint=meta.get('entrypoint', ''),
+                capability_type=CapabilityType(meta.get('type', 'scanner')),
+                tags=meta.get('tags', []),
+                category=meta.get('category'),
+                prerequisites=meta.get('prerequisites', []),
+                dependencies=meta.get('dependencies', []),
+                # 去語意化特徵（HackOne v2.0）
+                rag_trigger=data.get('rag_trigger'),
+                feature_signature=data.get('feature_signature'),
+                # 參數定義
+                inputs=[
+                    InputParameter(**param) 
+                    for param in data.get('parameters', {}).get('inputs', [])
+                ],
+                outputs=[
+                    OutputParameter(**param)
+                    for param in data.get('parameters', {}).get('outputs', [])
+                ],
+                # 執行配置
+                timeout_seconds=data.get('execution', {}).get('timeout_seconds', 300),
+                retry_count=data.get('execution', {}).get('retry_count', 3),
+                config=data.get('execution', {}).get('config', {}),
+                environment_vars=data.get('execution', {}).get('environment_vars', {})
+            )
+            
+            # 註冊能力
+            success = await self.register_capability(capability)
+            
+            if success:
+                logger.info(f"成功從 JSON 載入能力: {capability.id} ({json_file_path})")
+            
+            return success
+            
+        except Exception as e:
+            logger.error(f"從 JSON 載入能力失敗: {json_file_path} - {e}", exc_info=True)
+            return False
+    
+    async def load_capabilities_from_directory(
+        self,
+        directory_path: str | Path
+    ) -> Dict[str, Any]:
+        """批量載入目錄下的所有 capability.json 檔案
+        
+        v2.1 (2026-01-08): 新增方法
+        
+        Args:
+            directory_path: 目錄路徑（會遞迴搜尋 capability.json）
+            
+        Returns:
+            載入統計:
+            {
+                "total_found": 10,
+                "loaded_success": 8,
+                "loaded_failed": 2,
+                "capabilities": ["id1", "id2", ...]
+            }
+        """
+        import asyncio
+        from pathlib import Path
+        
+        stats = {
+            "total_found": 0,
+            "loaded_success": 0,
+            "loaded_failed": 0,
+            "capabilities": [],
+            "errors": []
+        }
+        
+        def find_capability_files():
+            dir_path = Path(directory_path)
+            if not dir_path.exists():
+                return []
+            return list(dir_path.rglob("capability.json"))
+        
+        try:
+            # 遞迴搜尋 capability.json
+            files = await asyncio.to_thread(find_capability_files)
+            stats["total_found"] = len(files)
+            
+            # 批量載入
+            for file_path in files:
+                success = await self.load_capability_from_json(file_path)
+                if success:
+                    stats["loaded_success"] += 1
+                    # 獲取能力 ID（從檔案讀取）
+                    data = await asyncio.to_thread(lambda: json.load(open(file_path, 'r', encoding='utf-8')))
+                    cap_id = data.get('meta', {}).get('id', file_path.stem)
+                    stats["capabilities"].append(cap_id)
+                else:
+                    stats["loaded_failed"] += 1
+                    stats["errors"].append(str(file_path))
+            
+            logger.info(
+                f"批量載入完成: 找到 {stats['total_found']} 個檔案，"
+                f"成功 {stats['loaded_success']} 個，失敗 {stats['loaded_failed']} 個"
+            )
+            
+        except Exception as e:
+            error_msg = f"批量載入失敗: {e}"
+            stats["errors"].append(error_msg)
+            logger.error(error_msg, exc_info=True)
+        
+        return stats
+    
     async def _discover_python_capabilities(self) -> List[CapabilityRecord]:
         """發現 Python 模組中的能力"""
         discovered = []
@@ -860,87 +1021,3 @@ registry = CapabilityRegistry()
 
 # 導出全局註冊表供其他模組使用
 global_registry = registry
-
-
-# FastAPI 應用程式
-@asynccontextmanager
-async def lifespan(app: FastAPI):
-    """應用程式生命週期管理"""
-    logger.info("AIVA 能力註冊中心啟動")
-    
-    # 啟動時自動發現能力
-    discovery_stats = await registry.discover_capabilities()
-    logger.info("自動發現完成", stats=discovery_stats)
-    
-    yield
-    
-    logger.info("AIVA 能力註冊中心關閉")
-
-
-app = FastAPI(
-    title="AIVA 能力註冊中心",
-    description="統一管理 AIVA 系統中所有模組的能力定義與執行",
-    version="1.0.0",
-    lifespan=lifespan
-)
-
-
-@app.get("/capabilities", response_model=List[CapabilityRecord])
-async def list_capabilities(
-    language: Optional[str] = None,
-    capability_type: Optional[str] = None,
-    status: Optional[str] = None
-):
-    """列出所有已註冊的能力"""
-    
-    # 轉換查詢參數
-    lang_filter = ProgrammingLanguage(language) if language else None
-    type_filter = CapabilityType(capability_type) if capability_type else None
-    status_filter = CapabilityStatus(status) if status else None
-    
-    capabilities = await registry.list_capabilities(
-        language=lang_filter,
-        capability_type=type_filter,
-        status=status_filter
-    )
-    
-    return capabilities
-
-
-@app.post("/capabilities", response_model=dict)
-async def register_capability(capability: CapabilityRecord):
-    """註冊新的能力"""
-    success = await registry.register_capability(capability)
-    
-    if success:
-        return {"message": "能力註冊成功", "capability_id": capability.id}
-    else:
-        raise HTTPException(status_code=400, detail="能力註冊失敗")
-
-
-@app.get("/capabilities/{capability_id}", response_model=CapabilityRecord)
-async def get_capability(capability_id: str):
-    """獲取指定的能力詳情"""
-    capability = await registry.get_capability(capability_id)
-    
-    if not capability:
-        raise HTTPException(status_code=404, detail="能力不存在")
-    
-    return capability
-
-
-@app.get("/stats", response_model=dict)
-async def get_stats():
-    """獲取能力統計資訊"""
-    return await registry.get_capability_stats()
-
-
-@app.post("/discover", response_model=dict)
-async def discover_capabilities():
-    """手動觸發能力發現"""
-    return await registry.discover_capabilities()
-
-
-if __name__ == "__main__":
-    import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8000)

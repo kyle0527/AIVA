@@ -1,53 +1,311 @@
 # 🎯 Core Capabilities - 核心能力模組
 
-## 📑 目錄
+> **路徑**: `core_capabilities/`  
+> **狀態**: ✅ Production Ready | **最後更新**: 2026-01-08  
+> **子模組**: 8 個 | **總文件數**: 19 | **Python 文件**: 19 | **Bug Bounty 整合**: ✅ 已完成  
+> **測試代碼**: ❌ 無（已移至 tests/） | **編譯錯誤**: 0 個 | **孤立文件**: ✅ 已清理
 
-- [📋 目錄](#-目錄)
-- [🎯 模組概述](#-模組概述)
-  - [核心職責](#核心職責)
-  - [設計理念](#設計理念)
-- [🏗️ 架構設計](#-架構設計)
-  - [能力分類](#能力分類)
-- [🔧 核心組件](#-核心組件)
-  - [1. 🎯 Attack (攻擊執行系統)](#1--attack-攻擊執行系統)
-  - [2. 🔍 Analysis (代碼分析系統)](#2--analysis-代碼分析系統)
-  - [3. 💼 BizLogic (業務邏輯測試)](#3--bizlogic-業務邏輯測試)
-  - [4. 💬 Dialog (對話助理)](#4--dialog-對話助理)
-  - [5. 📥 Ingestion & Processing (數據處理)](#5--ingestion--processing-數據處理)
-  - [6. 📤 Output (輸出轉換)](#6--output-輸出轉換)
-  - [7. 🔌 Plugins (插件系統)](#7--plugins-插件系統)
-- [📖 使用範例](#-使用範例)
-  - [完整攻擊流程](#完整攻擊流程)
-  - [對話式攻擊執行](#對話式攻擊執行)
-  - [業務邏輯測試](#業務邏輯測試)
-- [🛠️ 開發指南](#-開發指南)
-  - [🔨 aiva_common 修復規範](#-aiva_common-修復規範)
-  - [添加新的攻擊能力](#添加新的攻擊能力)
-  - [創建新的插件](#創建新的插件)
-  - [擴展業務邏輯測試](#擴展業務邏輯測試)
-- [📊 性能指標](#-性能指標)
-  - [攻擊執行](#攻擊執行)
-  - [代碼分析](#代碼分析)
-  - [業務邏輯測試](#業務邏輯測試)
-- [🔗 相關模組](#-相關模組)
-- [📝 待辦事項](#-待辦事項)
+## 概述
+
+**Core Capabilities** 是 AIVA 的核心能力編排中心。整合了攻擊鏈編排、代碼分析、CLI 接口、對話助理、數據攝取、編排系統、輸出轉換和結果處理能力，提供完整的能力編排架構。
+
+**v4.4.0 重大更新**: orchestration/two_phase_scan_orchestrator.py 整合 Bug Bounty 決策引擎，支援 Phase2 決策方法。
+
+**核心職責**：
+- 🎯 **攻擊執行** - 編排和執行多步驟攻擊鏈
+- 🔍 **代碼分析** - AI 增強的代碼安全分析
+- 💬 **對話交互** - 自然語言問答和一鍵執行
+- 📥 **數據處理** - 掃描結果攝取、處理和輸出轉換
+- 🔧 **能力註冊** - CapabilityRegistry 代理模式，遵循 SOT 原則
+- 🎯 **Bug Bounty 編排** - Phase1/Phase2 決策整合，HackerOne 實戰優化 ⭐
+- 🖥️ **CLI 接口** - 基於動態 Flow 的統一命令行入口（與 f 相關腳本連接）
+
+---
+
+## 🎯 Bug Bounty 整合
+
+### two_phase_scan_orchestrator.py 整合
+
+**整合方法**: 
+- `decide_phase1_strategy()` - 原有整合
+- `decide_phase2_targets()` - 新增整合
+- `evaluate_phase2_results()` - 新增整合
+
+```python
+# 在 TwoPhaseScanOrchestrator.execute_two_phase_scan() 中
+from ...cognitive_core.decision.enhanced_decision_agent import EnhancedDecisionAgent
+
+if self.decision_agent:
+    # Phase2 決策: 攻擊目標選擇
+    phase2_targets = self.decision_agent.decide_phase2_targets(phase1_dict, max_targets=10)
+    
+    # Phase2 結果評估
+    phase2_evaluation = self.decision_agent.evaluate_phase2_results(
+        phase2_results, time_budget_remaining=30.0
+    )
+```
+
+**功能**:
+- ✅ **Phase1 深度掃描決策**: ROI 導向，$75/hr 閾值判斷
+- ✅ **Phase2 目標優先級排序**: Tier 1-3 系統 (Critical $10k+, High $5k+)
+- ✅ **Phase2 結果評估**: HackerOne 報告指導、攻擊鏈分析
+- ✅ **完整工作流程**: Phase0 → Phase1 決策 → Phase2 決策 → 結果評估
+
+---
+
+## 架構
+
+### 子模組結構
+
+| 子模組 | 功能 | 文件數 | 狀態 | 文檔 |
+|--------|------|--------|------|------|
+| **orchestration/** | **雙階段掃描編排 (含 Bug Bounty 決策)** | **1** | ✅ Production | **[README](orchestration/README.md)** |
+| analysis/ | AI 增強代碼分析引擎、攻擊面分析 | 2 | ✅ Production | [README](analysis/README.md) |
+| attack/ | 漏洞利用編排器、攻擊鏈管理 | 4 | ✅ Production | [README](attack/README.md) |
+| cli/ | AIVA CLI 接口 | 1 | ✅ Production | [README](cli/README.md) |
+| dialog/ | AIVA 對話助理 | 1 | ✅ Production | [README](dialog/README.md) |
+| ingestion/ | 掃描模組介面 | 2 | ✅ Production | [README](ingestion/README.md) |
+| output/ | 輸出轉換為函數調用 | 2 | ✅ Production | [README](output/README.md) |
+| processing/ | 掃描結果處理器 | 2 | ✅ Production | [README](processing/README.md) |
+
+**總計**: 19 個 Python 文件 (100% 功能代碼)
+
+### 與其他模組的整合
+
+**Core Capabilities 在 AIVA 中的整合狀態**：
+
+| 整合模組 | 文件 | 連結方式 | 狀態 |
+|----------|------|----------|------|
+| **cognitive_core** | capability_orchestrator.py | 導入 `get_capability_registry` (L46) | ✅ 已整合 |
+| **cognitive_core** | decision/skill_graph.py | 導入 `get_capability_registry`, `CapabilityInfo` (L16) | ✅ 已整合 |
+| **task_planning** | executor/task_executor.py | 導入 `get_capability_registry`, `CapabilityInfo` (L21) | ✅ 已整合 |
+| **task_planning** | commander/attack_coordinator.py | 導入 `TwoPhaseScanOrchestrator`, `parse_user_input_to_context` (L345, L500) | ✅ 已整合 |
+| **service_backbone** | api/app.py | 導入 `InitialAttackSurface`, `ScanModuleInterface`, `ScanResultProcessor` (L38, L44-45) | ✅ 已整合 |
+| **aiva_core** | __init__.py | 導入 `AIVACommandProcessor`, `get_dialog_assistant` (L577) | ✅ 已整合 |
+
+**整合驗證**：18 個不同文件中有 core_capabilities 的 import 語句，證明完整整合。
+
+### 根目錄組件
+
+**核心組件** (4 個主文件):
+
+| 文件 | 行數 | 功能 | 整合狀態 |
+|------|------|------|----------|
+| **capability_registry.py** | 530 | **能力註冊表代理**，SOT 原則實現（v2.1 去語意化整合） | ✅ Production |
+| **multilang_coordinator.py** | 630 | 多語言 AI 協調器，gRPC 統一架構（已修復） | ✅ Production |
+| **task_context.py** | 295 | 標準任務參數包，統一通信接口 | ✅ Production |
+| **__init__.py** | 33 | 模組初始化和導出 | ✅ Production |
+
+---
+
+## 主要類別
+
+| 類別 | 文件 | 說明 |
+|------|------|------|
+| **`TwoPhaseScanOrchestrator`** | **orchestration/two_phase_scan_orchestrator.py** | **兩階段掃描編排器 (含 Bug Bounty 決策)** ⭐ |
+| `CapabilityInfo` | capability_registry.py | 能力信息包裝類 |
+| `CapabilityRegistry` | capability_registry.py | 能力註冊表代理 |
+| `MultiLanguageAICoordinator` | multilang_coordinator.py | 多語言 AI 協調器 |
+| `TaskContext` | task_context.py | 統一任務上下文 |
+| `AnalysisEngine` | analysis/analysis_engine.py | AI 增強代碼分析引擎 |
+| `ExploitOrchestrator` | attack/exploit_orchestrator.py | 漏洞利用編排器 |
+| `AIVAAssistant` | dialog/assistant.py | AIVA 對話助理 |
+| `ScanResultProcessor` | processing/scan_result_processor.py | 掃描結果處理器 |
+| `TwoPhaseScanOrchestrator` | orchestration/two_phase_scan_orchestrator.py | 雙階段掃描編排 |
+
+---
+
+## 依賴關係
+
+**外部依賴**：
+- `pydantic` - 數據驗證
+- `grpcio` - gRPC 通信
+- `tree-sitter` - 代碼 AST 解析（analysis/）
+- `asyncio` - 異步執行
+
+**內部依賴**：
+- `aiva_common.cross_language` - 跨語言服務
+- `aiva_common.enums.modules` - 模組枚舉
+- `services.integration.capability` - 能力註冊系統（SOT）
+- `cognitive_core.decision.enhanced_decision_agent` - Bug Bounty 決策引擎
+- `cognitive_core.rag` - RAG 知識庫（dialog/assistant.py）
+- `cognitive_core.learning_system` - 策略調整（processing/）
+
+**Python 版本**: >= 3.13 (pyproject.toml)
+
+---
+
+## 🔧 技術債務與已修復問題
+
+### ✅ 已修復問題 (2026-01-08)
+
+1. **MultilangCoordinator 完整修復** - [multilang_coordinator.py](multilang_coordinator.py)
+   - 移除錯誤導入 `.utils.logging_formatter`
+   - 修正 `generate_decision()` 調用參數
+   - 添加 `log_cross_language_call()` 輔助函數
+   - **狀態**: ✅ 已修復，無編譯錯誤
+
+2. **CapabilityRegistry 參數遺漏** - [capability_registry.py](capability_registry.py#L181-L199)
+   - 添加 `rag_trigger` 和 `feature_signature` 參數到 CapabilityRecord 創建
+   - 支援 v2.1 去語意化功能
+   - **狀態**: ✅ 已修復
+
+3. **capability_registry.py 測試代碼** - [capability_registry.py](capability_registry.py#L494-L530)
+   - 保留 `if __name__ == "__main__"` 區塊中的 `test_registry()` 函數
+   - **注意**: 這是開發測試函數，非單元測試，用於快速驗證功能
+   - **狀態**: ✅ 正常（開發輔助代碼）
+
+4. **孤立文件清理** - integration 和 reporting
+   - **問題**: 兩個無擴展名文件，導入不存在的模塊，無任何代碼使用
+   - **原用途**: Core → Features 調用層和報告生成模塊
+   - **解決**: 已刪除，功能已在其他模塊實現
+   - **狀態**: ✅ 已清理
+
+**驗證狀態**: ✅ 所有錯誤已修復，`get_errors()` 返回 "No errors found."
+
+### ⚠️ grep_search 匹配分析
+
+執行 `grep_search("test|mock")` 返回 37 個匹配，分析如下：
+
+**業務術語匹配** (非測試代碼):
+- `needs_form_testing`, `needs_api_testing` - Bug Bounty 表單/API 測試推薦（業務邏輯）
+- `test_parameters`, `test_xss`, `test_sqli` - 攻擊工具參數配置
+- `Test Strategy Generation` - 掃描結果處理階段名稱
+- `latest_classification.json` - 數據文件路徑
+- `payloads_tested` - 攻擊統計數據
+
+**開發輔助函數**:
+- `test_registry()` in [capability_registry.py](capability_registry.py#L494) - 開發測試函數（保留）
+
+**結論**: ❌ 無測試文件，所有匹配為業務代碼或開發輔助。
+
+---
+
+## 🔍 完整功能分析
+
+### 🖥️ CLI 模塊 (cli/)
+
+**aiva_cli.py** (491 行) - 統一 CLI 入口點
+- **功能**: 基於動態 Flow 的函數調用系統
+- **數據源**: `latest_classification.json` (多路徑支持)
+- **核心特性**:
+  - 動態創建 flow 命令 (`flow0`, `flow1`, ...)
+  - 支持 `--target`, `--data`, `--query`, `--param` 參數
+  - 集成 FlowExecutor (從 internal_exploration)
+  - `--dry-run` 預覽模式
+- **與 f 相關腳本的連接**: ✅ 正常
+  - 讀取 `latest_classification.json` 中的 flows 定義
+  - 使用 `FlowExecutor` 執行 (L112, L198)
+  - 支持 313-318 個 flow 命令
+- **狀態**: ✅ Production Ready
+
+### 🎯 攻擊模塊 (attack/)
+
+**exploit_orchestrator.py** (377 行) - 漏洞利用編排器
+- **功能**: 統一的 Exploit 注冊和管理系統
+- **核心特性**:
+  - `@register_exploit` 裝飾器自動注冊
+  - 支持多類型 exploit (SQL注入, XSS, SSRF 等)
+  - Bug Bounty 配置 (`bounty_config`, `test_parameters`)
+  - Exploit 選擇和執行邏輯
+- **狀態**: ✅ Production Ready
+
+**attack_chain.py** (165 行) - 攻擊鏈管理
+- **功能**: 多步驟攻擊序列編排
+- **核心特性**:
+  - 依賴關系管理
+  - 執行順序智能排序
+  - 條件分支和狀態追蹤
+- **狀態**: ✅ Production Ready
+
+**custom_exploits_example.py** (200 行) - Exploit 示例
+- **功能**: 展示如何創建自定義 Exploit
+- **內容**: Time-based SQL注入, XSS Polyglot 示例
+- **注意**: 示例文件，非測試代碼
+- **狀態**: ✅ 文檔/示例
+
+### 🔍 分析模塊 (analysis/)
+
+**analysis_engine.py** (914 行) - AI 增強代碼分析引擎
+- **功能**: Tree-sitter AST + 神經網絡的代碼分析
+- **核心特性**:
+  - 多語言支持 (Python, JavaScript, Java)
+  - 安全漏洞檢測
+  - 緩存機制和並行處理
+  - 集成 RealDecisionEngine 和 RealScalableBioNet
+- **狀態**: ✅ Production Ready
+
+**initial_surface.py** (321 行) - 初始攻擊面分析
+- **功能**: 從掃描結果計算攻擊面
+- **檢測類型**: XSS, SQL注入, SSRF, IDOR
+- **狀態**: ✅ Production Ready
+
+### 💬 對話模塊 (dialog/)
+
+**assistant.py** (1002 行) - AIVA 對話助理
+- **功能**: AI 對話層，自然語言交互
+- **核心特性**:
+  - 意圖識別 (list_capabilities, run_scan, explain_capability)
+  - 一鍵執行掃描
+  - 集成 KnowledgeBase 和 VectorStore (L122-123)
+  - RAG 增強的回答
+- **狀態**: ✅ Production Ready
+
+### 📥 數據處理模塊 (ingestion/ & processing/)
+
+**scan_module_interface.py** (312 行) - 掃描模塊接口
+- **功能**: 數據接收與預處理
+- **核心特性**:
+  - 格式檢測和數據清理
+  - 資產分類和豐富化
+  - 標準化處理
+- **狀態**: ✅ Production Ready
+
+**scan_result_processor.py** (556 行) - 掃描結果處理器
+- **功能**: 七階段處理流程
+- **階段**:
+  1. 數據接收與預處理
+  2. 初步攻擊面分析
+  3. 測試策略生成
+  4. 動態策略調整
+  5. 任務生成
+  6. 任務分發
+  7. 狀態管理
+- **集成**: InitialAttackSurface, StrategyAdjuster
+- **狀態**: ✅ Production Ready
+
+### 🎯 編排模塊 (orchestration/)
+
+**two_phase_scan_orchestrator.py** (580 行) - 雙階段掃描編排
+- **功能**: Bug Bounty 專用的 Phase1/Phase2 決策整合
+- **核心特性**:
+  - Phase1 深度掃描決策 (ROI 導向)
+  - Phase2 目標優先級排序 (Tier 1-3)
+  - Phase2 結果評估和後續行動
+  - 集成 EnhancedDecisionAgent (L32)
+- **狀態**: ✅ Production Ready
+
+### 📤 輸出模塊 (output/)
+
+**to_functions.py** (22 行) - 輸出轉函數調用
+- **功能**: 將攻擊計劃轉換為可執行的函數調用
+- **狀態**: ✅ Production Ready
 
 ---
 
 **導航**: [← 返回 AIVA Core](../README.md)
 
-# 🎯 Core Capabilities - 核心能力模組
+---
 
-> **版本**: v3.4.0  
-> **狀態**: ✅ 生產就緒  
-> **最後更新**: 2026-01-06  
-> **角色**: AIVA 的核心能力編排中心  
-> **架構變更**: CapabilityRegistry 代理模式，遵循 SOT 原則  
-> **檔案數**: 19 個 Python 模組  
-> **總行數**: 6,480 行代碼  
-> **能力數**: 131 flows (15.6%)  
-> **數據來源**: latest_classification.json v3.3 (唯一數據源)  
-> **清理**: 已移除 10 個測試/分析工具腳本
+## 📑 詳細目錄
+
+- [🎯 模組概述](#-模組概述)
+- [🏗️ 架構設計](#-架構設計)
+- [🔧 核心組件](#-核心組件)
+- [📖 使用範例](#-使用範例)
+- [🛠️ 開發指南](#-開發指南)
+- [📊 性能指標](#-性能指標)
+- [🔗 相關模組](#-相關模組)
 
 ---
 

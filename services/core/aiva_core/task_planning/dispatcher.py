@@ -326,7 +326,7 @@ class PlanningDispatcher:
         """
         cmd = [
             "python", "-m",
-            "services.core.aiva_core.internal_exploration.aiva_exploration_pipeline",
+            "services.core.aiva_core.internal_exploration.python_tools.aiva_exploration_pipeline",
             "--tool", tool,
             "--source", self.source_module,
             "--params", json.dumps(kwargs)

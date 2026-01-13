@@ -1,8 +1,9 @@
 # 🔗 Common - 通用服務腳本
 
-> **版本**: v1.0  
-> **更新日期**: 2026年1月6日  
-> **檔案數量**: 11 個腳本
+> **版本**: v2.0  
+> **更新日期**: 2026年1月12日  
+> **檔案數量**: 10 個腳本  
+> **架構更新**: 移除多餘 FastAPI 服務，簡化為單一入口點
 
 ---
 
@@ -18,9 +19,8 @@ Common 目錄包含 AIVA 系統的通用服務工具，包括系統啟動、CLI 
 
 | 腳本 | 功能說明 |
 |------|----------|
-| `start_ai_service.py` | 啟動 AI 服務主程序 |
+| `start_ai_service.py` | ✅ 啟動 Core API 服務（系統唯一入口點） |
 | `start_ai_simple.py` | 簡化版 AI 服務啟動器 |
-| `start_ui_v3.py` | 啟動使用者介面 v3 版本 |
 | `run_aiva_cli.bat` | Windows 批次檔啟動 AIVA CLI |
 | `run_aiva_cli.sh` | Linux/Mac shell 啟動 AIVA CLI |
 | `run_capability_cli.bat` | Windows 批次檔啟動能力 CLI |

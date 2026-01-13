@@ -76,7 +76,7 @@ try:
     from integration.aiva_integration.config import CLI_OUTPUTS_PYTHON_DIR
     CLI_OUTPUT_DIR = CLI_OUTPUTS_PYTHON_DIR
     print(f"✅ 使用 Integration 模組 CLI 輸出路徑: {CLI_OUTPUT_DIR}")
-except ImportError:
+except (ImportError, ModuleNotFoundError):
     # 降級方案：直接使用 data/integration 路徑結構
     DATA_ROOT = PROJECT_ROOT.parent.parent.parent / 'data'
     CLI_OUTPUT_DIR = DATA_ROOT / 'integration' / 'cli_outputs' / 'python'
@@ -367,11 +367,13 @@ class FlowExecutor:
         # ⭐ 使用配置化的輸出目錄
         if output_dir is None:
             output_dir = str(CLI_OUTPUT_DIR)
-        output_dir = Path(output_dir)
-        output_dir.mkdir(parents=True, exist_ok=True)
+        
+        # 確保目錄存在
+        output_path = Path(output_dir)
+        output_path.mkdir(parents=True, exist_ok=True)
         
         if output_format == "md":
-            filename = os.path.join(output_dir, "CLI_COMMANDS_REFERENCE.md")
+            filename = str(output_path / "CLI_COMMANDS_REFERENCE.md")
             try:
                 with open(filename, 'w', encoding='utf-8') as f:
                     f.write("# AIVA Core CLI 指令參考手冊\n\n")
@@ -403,7 +405,7 @@ class FlowExecutor:
                 print(f"[Error] 無法寫入文件: {e}")
 
         elif output_format == "json":
-            filename = os.path.join(output_dir, "cli_commands_db.json")
+            filename = str(output_path / "cli_commands_db.json")
             db_records = []
             for flow in flows:
                 record = {

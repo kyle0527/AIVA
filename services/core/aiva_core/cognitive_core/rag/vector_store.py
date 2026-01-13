@@ -94,7 +94,7 @@ class VectorStore:
 
         elif self.backend == "faiss":
             try:
-                import faiss  # noqa: F401
+                import faiss  # noqa: F401  # type: ignore[import-not-found]
 
                 self.persist_directory.mkdir(parents=True, exist_ok=True)
                 self.index = None  # 延遲初始化
@@ -129,11 +129,12 @@ class VectorStore:
     def _simple_embedding(self, text: str) -> np.ndarray:
         """簡單的嵌入函數（後備方案）
         
-        v2.0 (2026-01-04): 重構為結構化特徵編碼
+        v2.1 (2026-01-08): 去語意化反射引擎整合
         
-        現在支援兩種模式：
-        1. 結構化能力編碼 - 如果 text 是 JSON 格式的能力記錄
-        2. 哈希編碼 - 純文本的後備方案
+        現在支援三種模式：
+        1. 去語意化特徵編碼 - 如果 text 包含 rag_trigger 權重表
+        2. 結構化能力編碼 - 如果 text 是 JSON 格式的能力記錄
+        3. 哈希編碼 - 純文本的後備方案
 
         Args:
             text: 輸入文本或 JSON 能力記錄
@@ -148,7 +149,12 @@ class VectorStore:
             import json
             flow_data = json.loads(text)
             
-            # 檢查是否為能力記錄格式
+            # 模式 1: 去語意化特徵編碼（優先級最高）
+            if isinstance(flow_data, dict) and 'rag_trigger' in flow_data:
+                logger.debug("Using de-semanticized feature encoding")
+                return self._encode_rag_trigger(flow_data.get('rag_trigger', {}), dim)
+            
+            # 模式 2: 結構化能力編碼
             if isinstance(flow_data, dict) and ('primary_module' in flow_data or 'structured_tags' in flow_data):
                 # 使用結構化能力編碼器
                 try:
@@ -160,7 +166,7 @@ class VectorStore:
         except (json.JSONDecodeError, TypeError):
             pass  # 不是 JSON，使用後備方案
         
-        # 後備方案：基於哈希的確定性嵌入
+        # 模式 3: 後備方案 - 基於哈希的確定性嵌入
         # 使用更好的哈希方法以提高區分度
         import hashlib
         
@@ -181,6 +187,129 @@ class VectorStore:
             embedding = embedding / norm
 
         return embedding
+    
+    def _encode_rag_trigger(self, rag_trigger: dict[str, float], target_dim: int = 512) -> np.ndarray:
+        """將 RAG 觸發權重表編碼為固定維度向量
+        
+        去語意化反射引擎核心：
+        - 使用確定性哈希映射特徵到固定槽位
+        - 權重值直接映射，不經過語義轉換
+        - 毫秒級編碼速度
+        
+        Args:
+            rag_trigger: 特徵名稱 → 權重的字典
+            target_dim: 目標維度（預設 512）
+            
+        Returns:
+            固定維度的特徵向量
+        """
+        import hashlib
+        
+        # 初始化零向量
+        feature_vector = np.zeros(target_dim, dtype=np.float32)
+        
+        # 將每個特徵映射到固定槽位
+        for feature_name, weight in rag_trigger.items():
+            # 使用 MD5 哈希確定槽位
+            hash_digest = hashlib.md5(feature_name.encode('utf-8')).digest()
+            slot_index = int.from_bytes(hash_digest[:4], 'little') % target_dim
+            
+            # 累加權重（支援多個特徵映射到同一槽位）
+            feature_vector[slot_index] += float(weight)
+        
+        # L2 歸一化（保持向量長度一致）
+        norm = np.linalg.norm(feature_vector)
+        if norm > 0:
+            feature_vector = feature_vector / norm
+        
+        return feature_vector
+    
+    def add_capability_from_registry(
+        self,
+        capability: dict[str, Any],
+        capability_id: str | None = None,
+    ) -> None:
+        """從 integration/capability 註冊表添加能力
+        
+        v2.1 (2026-01-08): 新增方法，支援 CapabilityRecord 格式
+        
+        Args:
+            capability: CapabilityRecord 格式的能力記錄
+            capability_id: 能力 ID（如未提供則使用 capability['id']）
+        """
+        cap_id = capability_id or capability.get('id', 'unknown')
+        
+        # 優先使用 rag_trigger 進行編碼
+        if 'rag_trigger' in capability and capability['rag_trigger']:
+            embedding = self._encode_rag_trigger(capability['rag_trigger'], 512)
+        else:
+            # 後備：使用完整記錄進行編碼
+            import json
+            embedding = self._simple_embedding(json.dumps(capability, ensure_ascii=False))
+        
+        # 存儲
+        self.vectors[cap_id] = embedding
+        self.documents[cap_id] = capability.get('name', cap_id)
+        self.metadata[cap_id] = {
+            'capability_id': cap_id,
+            'module': capability.get('module', 'unknown'),
+            'capability_type': capability.get('capability_type', 'unknown'),
+            'feature_signature': capability.get('feature_signature', []),
+            'tags': capability.get('tags', []),
+        }
+        
+        logger.debug(f"Added capability {cap_id} from registry to vector store")
+    
+    def search_by_environment(
+        self,
+        environment_features: dict[str, float],
+        top_k: int = 5,
+        filter_type: str | None = None,
+    ) -> list[dict[str, Any]]:
+        """根據環境特徵搜索最匹配的能力（去語意化檢索）
+        
+        v2.1 (2026-01-08): 新增方法
+        
+        核心特性：
+        - 不使用語義理解，純向量相似度
+        - 毫秒級檢索速度
+        - 確定性結果（相同輸入 → 相同輸出）
+        
+        Args:
+            environment_features: 環境特徵字典（如 {'http_403': 3, 'waf_cloudflare': 1}）
+            top_k: 返回前 k 個結果
+            filter_type: 能力類型過濾器
+            
+        Returns:
+            匹配能力列表，按相似度排序
+        """
+        # 將環境特徵編碼為查詢向量
+        query_embedding = self._encode_rag_trigger(environment_features, 512)
+        
+        # 計算與所有能力的相似度
+        results = []
+        for cap_id, cap_embedding in self.vectors.items():
+            # 應用類型過濾
+            if filter_type:
+                cap_type = self.metadata.get(cap_id, {}).get('capability_type', '')
+                if cap_type != filter_type:
+                    continue
+            
+            # 計算餘弦相似度
+            similarity = float(np.dot(query_embedding, cap_embedding))
+            
+            results.append({
+                'capability_id': cap_id,
+                'match_score': similarity,
+                'metadata': self.metadata.get(cap_id, {}),
+                'document': self.documents.get(cap_id, ''),
+            })
+        
+        # 排序並返回 top-k
+        results.sort(key=lambda x: x['match_score'], reverse=True)
+        
+        logger.info(f"Environment search found {len(results[:top_k])} matching capabilities")
+        return results[:top_k]
     
     def add_capability(
         self,
@@ -346,6 +475,7 @@ class VectorStore:
             # Memory backend: 手動生成嵌入
             model = self._get_embedding_model()
 
+            embedding: np.ndarray
             # 檢查是否為 SentenceTransformer 模型
             if hasattr(model, 'encode'):
                 # 使用 encode 方法（SentenceTransformer）
@@ -354,19 +484,20 @@ class VectorStore:
                 )
             elif callable(model):
                 # 使用簡單嵌入函數
-                embedding = await asyncio.to_thread(model, text)
+                raw_embedding = await asyncio.to_thread(model, text)
+                embedding = np.asarray(raw_embedding)  # 確保轉換為 numpy array
             else:
                 raise ValueError(f"Unknown embedding model type: {type(model)}")
 
             # 存儲到內存
-            self.vectors[doc_id] = embedding
+            self.vectors[doc_id] = np.asarray(embedding)  # 確保是 numpy array
             self.documents[doc_id] = text
             self.metadata[doc_id] = metadata or {}
             self.metadata[doc_id] = metadata or {}
 
             logger.debug(f"Added document {doc_id} to memory vector store")
 
-    def add_batch(
+    async def add_batch(
         self,
         doc_ids: list[str],
         texts: list[str],
@@ -393,7 +524,7 @@ class VectorStore:
         else:
             # Memory backend: 逐個添加
             for doc_id, text, metadata in zip(doc_ids, texts, metadatas, strict=False):
-                self.add_document(doc_id, text, metadata)
+                await self.add_document(doc_id, text, metadata)  # add_document 是 async 方法
 
             logger.info(f"Added {len(doc_ids)} documents to memory vector store")
 
@@ -451,11 +582,12 @@ class VectorStore:
             # Memory backend: 手動計算相似度
             model = self._get_embedding_model()
 
+            query_embedding: np.ndarray
             # 檢查是否為 SentenceTransformer 模型
             if hasattr(model, 'encode'):
-                query_embedding = model.encode(query, convert_to_numpy=True)
+                query_embedding = np.asarray(model.encode(query, convert_to_numpy=True))
             elif callable(model):
-                query_embedding = model(query)
+                query_embedding = np.asarray(model(query))
             else:
                 raise ValueError(f"Unknown embedding model type: {type(model)}")
 
@@ -533,9 +665,10 @@ class VectorStore:
         save_path = path or self.persist_directory
         save_path.mkdir(parents=True, exist_ok=True)
 
-        # 保存向量
-        vectors_file = save_path / "vectors.npy"
-        np.save(vectors_file, self.vectors)
+        # 保存向量（使用 numpy savez 保存字典）
+        vectors_file = save_path / "vectors.npz"
+        vector_dict = {k: v for k, v in self.vectors.items()}  # 轉換為普通字典
+        np.savez(str(vectors_file), **vector_dict)  # type: ignore[arg-type]  # 解包字典保存為 .npz 格式
 
         # 保存文檔和元數據
         data_file = save_path / "data.json"
@@ -559,10 +692,11 @@ class VectorStore:
         """
         load_path = path or self.persist_directory
 
-        # 加載向量
-        vectors_file = load_path / "vectors.npy"
+        # 加載向量（從 .npz 格式）
+        vectors_file = load_path / "vectors.npz"
         if vectors_file.exists():
-            self.vectors = np.load(vectors_file, allow_pickle=True).item()
+            loaded = np.load(vectors_file)
+            self.vectors = {key: loaded[key] for key in loaded.files}  # 重建字典
 
         # 加載文檔和元數據
         data_file = load_path / "data.json"

@@ -13,7 +13,13 @@ task_planning (執行結果) → ExternalLoopConnector → external_learning (�
 ✅ 完整的類型註解
 """
 
-from datetime import datetime, UTC
+from datetime import datetime, timezone
+
+# UTC 兼容性处理（Python 3.11+ 使用 UTC，较旧版本使用 timezone.utc）
+try:
+    from datetime import UTC  # type: ignore
+except ImportError:
+    UTC = timezone.utc  # type: ignore
 from typing import Any
 from uuid import uuid4
 

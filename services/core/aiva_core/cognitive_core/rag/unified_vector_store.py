@@ -309,6 +309,153 @@ class UnifiedVectorStore:
         """關閉連接"""
         await self.pg_store.close()
 
+    # ==================== v2.1 去語意化反射引擎方法 ====================
+
+    def add_capability_from_registry(
+        self,
+        capability: dict[str, Any],
+        capability_id: str | None = None,
+    ) -> None:
+        """從 integration/capability 註冊表添加能力（同步版本）
+        
+        v2.1 (2026-01-08): 新增方法，支援 CapabilityRecord 格式
+        
+        Args:
+            capability: CapabilityRecord 格式的能力記錄
+            capability_id: 能力 ID（如未提供則使用 capability['id']）
+        """
+        import asyncio
+        import json
+        
+        cap_id = capability_id or capability.get('id', 'unknown')
+        
+        # 優先使用 rag_trigger 進行編碼
+        if 'rag_trigger' in capability and capability['rag_trigger']:
+            # 使用 VectorStore 的 _encode_rag_trigger
+            from .vector_store import VectorStore
+            temp_store = VectorStore(backend="memory")
+            embedding = temp_store._encode_rag_trigger(capability['rag_trigger'], 512)
+        else:
+            # 後備：使用完整記錄進行編碼
+            text = json.dumps(capability, ensure_ascii=False)
+            model = self._get_embedding_model()
+            if callable(model):
+                embedding = model(text)
+            else:
+                embedding = model.encode(text, convert_to_numpy=True)
+            
+            if not isinstance(embedding, np.ndarray):
+                embedding = np.array(embedding)
+        
+        # 構建文檔文本
+        doc_text = capability.get('name', cap_id)
+        
+        # 構建元數據
+        metadata = {
+            'capability_id': cap_id,
+            'module': capability.get('module', 'unknown'),
+            'capability_type': capability.get('capability_type', 'unknown'),
+            'feature_signature': capability.get('feature_signature', []),
+            'tags': capability.get('tags', []),
+        }
+        
+        # 異步添加到 PostgreSQL（在事件循環中執行）
+        try:
+            loop = asyncio.get_running_loop()
+            asyncio.create_task(
+                self.pg_store.add_document(
+                    doc_id=cap_id,
+                    text=doc_text,
+                    embedding=embedding,
+                    metadata=metadata,
+                )
+            )
+        except RuntimeError:
+            # 沒有運行中的事件循環，使用同步方式
+            asyncio.run(
+                self.pg_store.add_document(
+                    doc_id=cap_id,
+                    text=doc_text,
+                    embedding=embedding,
+                    metadata=metadata,
+                )
+            )
+        
+        logger.debug(f"Added capability {cap_id} from registry to unified vector store")
+
+    def search_by_environment(
+        self,
+        environment_features: dict[str, float],
+        top_k: int = 5,
+        filter_type: str | None = None,
+    ) -> list[dict[str, Any]]:
+        """根據環境特徵搜索最匹配的能力（去語意化檢索，同步版本）
+        
+        v2.1 (2026-01-08): 新增方法
+        
+        核心特性：
+        - 不使用語義理解，純向量相似度
+        - 毫秒級檢索速度
+        - 確定性結果（相同輸入 → 相同輸出）
+        
+        Args:
+            environment_features: 環境特徵字典（如 {'http_403': 3, 'waf_cloudflare': 1}）
+            top_k: 返回前 k 個結果
+            filter_type: 能力類型過濾器
+            
+        Returns:
+            匹配能力列表，按相似度排序
+        """
+        import asyncio
+        
+        # 將環境特徵編碼為查詢向量
+        from .vector_store import VectorStore
+        temp_store = VectorStore(backend="memory")
+        query_embedding = temp_store._encode_rag_trigger(environment_features, 512)
+        
+        # 構建元數據過濾器
+        filter_metadata = None
+        if filter_type:
+            filter_metadata = {'capability_type': filter_type}
+        
+        # 執行異步搜索
+        try:
+            loop = asyncio.get_running_loop()
+            # 如果已在異步環境，創建任務
+            import concurrent.futures
+            with concurrent.futures.ThreadPoolExecutor() as executor:
+                future = executor.submit(
+                    asyncio.run,
+                    self.pg_store.search(
+                        query_embedding=query_embedding,
+                        top_k=top_k,
+                        filter_metadata=filter_metadata,
+                    )
+                )
+                results = future.result()
+        except RuntimeError:
+            # 沒有運行中的事件循環，直接運行
+            results = asyncio.run(
+                self.pg_store.search(
+                    query_embedding=query_embedding,
+                    top_k=top_k,
+                    filter_metadata=filter_metadata,
+                )
+            )
+        
+        # 格式化結果
+        formatted_results = []
+        for result in results:
+            formatted_results.append({
+                'capability_id': result['doc_id'],
+                'match_score': float(result['similarity_score']),
+                'metadata': result['metadata'],
+                'document': result['text'],
+            })
+        
+        logger.info(f"Environment search found {len(formatted_results)} matching capabilities")
+        return formatted_results
+
 
 # 工廠函數，方便創建統一向量存儲
 async def create_unified_vector_store(

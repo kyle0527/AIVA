@@ -1,60 +1,93 @@
 # 🏗️ Service Backbone - 服務骨幹
 
-## 📑 目錄
+> **路徑**: `service_backbone/`  
+> **狀態**: ✅ 正常 | **最後更新**: 2026-01-07  
+> **子模組**: 9 個 | **總文件數**: 33
 
-- [📋 目錄](#-目錄)
-- [🎯 模組概述](#-模組概述)
-  - [核心職責](#核心職責)
-  - [設計理念](#設計理念)
-- [🏗️ 架構設計](#-架構設計)
-  - [服務架構](#服務架構)
-- [🔧 核心組件](#-核心組件)
-  - [1. 📨 Messaging (消息系統)](#1--messaging-消息系統)
-  - [2. 📊 State (狀態管理)](#2--state-狀態管理)
-  - [3. 💾 Storage (存儲服務)](#3--storage-存儲服務)
-  - [4. 🎛️ Coordination (服務協調)](#4--coordination-服務協調)
-  - [5. 📈 Performance (性能監控)](#5--performance-性能監控)
-  - [6. 🔐 Authz (權限控制)](#6--authz-權限控制)
-  - [7. 🌐 API (API 網關)](#7--api-api-網關)
-- [📖 使用範例](#-使用範例)
-  - [完整的消息驅動流程](#完整的消息驅動流程)
-  - [服務協調與監控](#服務協調與監控)
-  - [權限檢查流程](#權限檢查流程)
-- [🛠️ 開發指南](#-開發指南)
-  - [🔨 aiva_common 修復規範](#-aiva_common-修復規範)
-  - [添加新的消息主題](#添加新的消息主題)
-  - [擴展存儲後端](#擴展存儲後端)
-  - [添加自定義指標](#添加自定義指標)
-  - [實現自定義命令處理器](#實現自定義命令處理器)
-- [📊 性能指標](#-性能指標)
-  - [消息系統](#消息系統)
-  - [存儲系統](#存儲系統)
-  - [狀態管理](#狀態管理)
-  - [監控系統](#監控系統)
-- [🔗 相關模組](#-相關模組)
-- [📝 配置示例](#-配置示例)
-  - [RabbitMQ 配置](#rabbitmq-配置)
-  - [存儲配置](#存儲配置)
-  - [監控配置](#監控配置)
-- [🚨 故障排查](#-故障排查)
-  - [消息代理連接失敗](#消息代理連接失敗)
-  - [存儲後端錯誤](#存儲後端錯誤)
-  - [狀態管理內存溢出](#狀態管理內存溢出)
-- [📋 待辦事項](#-待辦事項)
+## 概述
+
+**Service Backbone** 是 AIVA 的基礎設施服務層，提供所有模組共享的核心服務。包括消息代理、狀態管理、存儲管理、服務協調、性能監控、權限控制等基礎能力，確保整個系統的穩定運行。
+
+**核心職責**：
+- 📨 **消息通信** - RabbitMQ 消息代理和發布/訂閱
+- 📊 **狀態管理** - 會話狀態追蹤和上下文管理
+- 💾 **存儲服務** - 統一的數據持久化接口
+- 🎛️ **服務協調** - 跨模組協調和命令路由
+- 📈 **性能監控** - 系統指標收集和健康檢查
+- 🔐 **權限控制** - RBAC 權限矩陣和授權管理
+- 🌐 **API 網關** - FastAPI 統一入口
+
+---
+
+## 架構
+
+### 子模組結構
+
+| 子模組 | 功能 | 文件數 | 文檔 |
+|--------|------|--------|------|
+| adapters/ | 協議適配器 | 2 | [README](adapters/README.md) |
+| api/ | FastAPI 應用、統一函數調用 | 3 | [README](api/README.md) |
+| authz/ | 權限矩陣、權限映射、矩陣可視化 | 4 | [README](authz/README.md) |
+| coordination/ | 核心服務協調器、AI 控制器 | 3 | [README](coordination/README.md) |
+| messaging/ | RabbitMQ 消息代理、結果收集、任務分發 | 4 | [README](messaging/README.md) |
+| performance/ | 監控指標收集、並行處理、內存管理 | 4 | [README](performance/README.md) |
+| state/ | 會話狀態管理器 | 2 | [README](state/README.md) |
+| storage/ | 存儲管理器、後端實現、命令存儲 | 7 | [README](storage/README.md) |
+| utils/ | 日誌格式化 | 1 | [README](utils/README.md) |
+
+### 根目錄組件
+
+- `context_manager.py` - 上下文管理器，分布式上下文和會話管理
+- `dispatcher_base.py` - 基礎發送器，所有模組 dispatcher 的基礎類
+- `__init__.py` - 模組初始化
+
+---
+
+## 主要類別
+
+| 類別 | 文件 | 說明 |
+|------|------|------|
+| `ContextManager` | context_manager.py | 分布式上下文和會話管理 |
+| `BaseDispatcher` | dispatcher_base.py | 所有 dispatcher 的抽象基類 |
+| `MessageBroker` | messaging/message_broker.py | RabbitMQ 消息代理 |
+| `SessionStateManager` | state/session_state_manager.py | 會話狀態管理器 |
+| `StorageManager` | storage/storage_manager.py | 存儲管理器 |
+| `CoreServiceCoordinator` | coordination/core_service_coordinator.py | 核心服務協調器 |
+| `PermissionMatrix` | authz/permission_matrix.py | RBAC 權限矩陣 |
+| `Monitoring` | performance/monitoring.py | 監控指標收集 |
+| `FastAPIApp` | api/app.py | FastAPI 應用 |
+
+---
+
+## 依賴關係
+
+**外部依賴**：
+- `aio_pika` - 異步 RabbitMQ
+- `fastapi` - API 框架
+- `pydantic` - 數據驗證
+
+**內部依賴**：
+- `aiva_common.utils` - 通用工具
+- `aiva_common.cross_language` - 跨語言錯誤處理
+- `task_planning.command_router` - 命令上下文
 
 ---
 
 **導航**: [← 返回 AIVA Core](../README.md)
 
-> **版本**: v3.4.0  
-> **狀態**: ✅ 生產就緒  
-> **最後更新**: 2026-01-06  
-> **角色**: AIVA 的基礎設施服務層  
-> **檔案數**: 33 個 Python 模組  
-> **代碼行數**: 10,578 行  
-> **能力數**: 163 flows (19.4%)  
-> **數據傳輸**: ContextManager + StorageManager 完整流程  
-> **測試代碼**: ✅ 已移除（保持代碼整潔）
+---
+
+## 📑 詳細目錄
+
+- [🎯 模組概述](#-模組概述)
+- [🏗️ 架構設計](#-架構設計)
+- [🔧 核心組件](#-核心組件)
+- [📖 使用範例](#-使用範例)
+- [🛠️ 開發指南](#-開發指南)
+- [📊 性能指標](#-性能指標)
+- [🔗 相關模組](#-相關模組)
+- [📝 配置示例](#-配置示例)
+- [🚨 故障排查](#-故障排查)
 
 ---
 

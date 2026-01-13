@@ -9,7 +9,7 @@
 """
 
 import json
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 from services.aiva_common.schemas import ScanCompletedPayload, Phase0CompletedPayload
 from services.aiva_common.utils import get_logger
@@ -21,6 +21,7 @@ from services.core.aiva_core.core_capabilities.analysis.initial_surface import I
 from services.core.aiva_core.task_planning.planner.task_generator import TaskGenerator
 from services.core.aiva_core.task_planning.executor.task_queue_manager import TaskQueueManager
 from services.core.aiva_core.service_backbone.state.session_state_manager import SessionStateManager
+from services.features.function_bizlogic.business_schemas import AttackSurfaceAnalysis
 
 if TYPE_CHECKING:
     pass  # 保留為將來的僅類型檢查導入
@@ -76,7 +77,7 @@ class ScanResultProcessor:
         scan_id = payload.scan_id
         logger.info(f"[🔍] [Stage 1/7] Processing scan results for {scan_id}")
 
-        await self.scan_interface.process_scan_data(payload)
+        self.scan_interface.process_scan_data(payload)  # 同步方法
         self.session_state_manager.update_context(
             scan_id,
             {
@@ -96,7 +97,7 @@ class ScanResultProcessor:
 
     async def stage_2_analyze_surface(
         self, payload: ScanCompletedPayload
-    ) -> dict[str, int]:
+    ) -> AttackSurfaceAnalysis:
         """階段2: 初步攻擊面分析 (Initial Attack Surface Analysis)
 
         Args:
@@ -251,7 +252,7 @@ class ScanResultProcessor:
         Returns:
             已分發的任務數量
         """
-        from services.core.aiva_core.output.to_functions import to_function_message
+        from services.core.aiva_core.core_capabilities.output.to_functions import to_function_message
 
         logger.info(f"[📤] [Stage 6/7] Dispatching tasks for {scan_id}")
 
@@ -368,7 +369,7 @@ class ScanResultProcessor:
         logger.info(f"[Phase0] Processing results for {scan_id}")
 
         # 處理 Phase0 數據
-        processed_data = await self.scan_interface.process_phase0_result(payload)
+        processed_data = self.scan_interface.process_phase0_result(payload)  # 同步方法
 
         # 更新會話上下文
         self.session_state_manager.update_context(

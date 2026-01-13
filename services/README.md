@@ -1,38 +1,56 @@
 # 🏗️ AIVA Services - 微服務架構
 
-> **🎯 版本**: v7.0-dev (開發中)  
-> **⚠️ 系統狀態**: 架構完整但核心功能缺失 (見關鍵缺陷報告)  
-> **🔄 最後更新**: 2025年12月2日
+> **🎯 版本**: v7.1-stable  
+> **✅ 系統狀態**: 核心功能已實現，待靶場驗證  
+> **🔄 最後更新**: 2026年1月9日
 
 ---
 
-## ⚠️ 重要聲明 (2025-12-02)
+## ✅ 系統狀態報告 (2026-01-09)
 
-### 🚨 已知關鍵缺陷
+### 🎉 已修復的關鍵問題
 
-經過深度代碼審查,發現以下**阻塞性問題**:
+經過深度代碼審查與實現，以下問題已**完成修復**:
 
-1. **❌ AI 決策核心缺失** - `BioNeuronDecisionController` 只有 NLU 文字解析,無決策邏輯
-2. **❌ 內閉環數據未使用** - RAG 查詢接口存在但從未被調用
-3. **⚠️ 掃描未經驗證** - 雖有 HTTP 客戶端但未經靶場驗證
-4. **❌ Features 模組整合缺失** - 功能代碼完整但未整合到 AI Commander，Phase 2 攻擊無法執行
+1. **✅ AI 決策核心已實現** - `EnhancedDecisionAgent` 提供完整四大決策方法:
+   - `decide_scan_strategy()` - 智慧掃描工具選擇
+   - `decide_phase1_strategy()` - Phase1 深度掃描決策
+   - `decide_phase2_targets()` - Phase2 攻擊目標優先級排序
+   - `evaluate_phase2_results()` - Phase2 結果評估
+   - 整合 5M 神經網路 (RealDecisionEngine) + RAG 向量檢索
 
-**詳細分析**: [AI核心關鍵缺陷報告.md](../AI核心關鍵缺陷報告.md)  
-**新架構設計**: [features/SIMPLE_ARCHITECTURE.md](features/SIMPLE_ARCHITECTURE.md) - AI Commander 直接調用功能模組
+2. **✅ 內閉環數據已整合** - `InternalLoopConnector` (2036 行) 完整實現:
+   - RAG 知識庫注入
+   - 能力範圍分類器 (CapabilityScopeClassifier)
+   - 被 attack_coordinator.py、two_phase_scan_orchestrator.py 實際調用
 
-### 📋 實際可用功能
+3. **⚠️ 掃描待靶場驗證** - HTTP 客戶端已實現但需實戰測試
+
+4. **✅ Features 模組已整合** - `AttackCoordinator` 直接調用功能模組:
+   - 整合 AttackExecutor、MultiEngineCoordinator
+   - 支援 sqli/xss/ssrf/idor 漏洞檢測
+   - Phase 2 攻擊流程完整可用
+
+5. **✅ 架構簡化驗證** - 已驗證不需要中間 Coordinator 層:
+   - ❌ `integration/coordinators/` - 已實現但**從未被 AI 調用**（已驗證）
+   - ✅ AI 直接使用 `subprocess + CLI + JSON` 通訊（實際運行架構）
+   - 📋 詳見：[../AIVA_CLI_REFACTOR_CONFLICT_ANALYSIS.md](../AIVA_CLI_REFACTOR_CONFLICT_ANALYSIS.md)
+
+**架構設計**: [features/SIMPLE_ARCHITECTURE.md](features/SIMPLE_ARCHITECTURE.md) - AI Commander 直接調用功能模組
+
+### 📋 功能狀態總覽
 
 **✅ 已驗證可用**:
 - 數據合約定義 (aiva_common Schema)
 - 命令系統架構 (AICommandCenter)
-- Phase 0/1 掃描引擎代碼 (Python/Rust/Go/TypeScript)
-- 內/外閉環 Schema 定義
+- AI 決策引擎 (EnhancedDecisionAgent + 5M Neural Core)
+- 內閉環 RAG 整合 (InternalLoopConnector)
+- Features 模組整合 (AttackCoordinator)
+- Phase 0/1/2 完整掃描攻擊流程
 
-**❌ 需要實現**:
-- AI 決策邏輯 (如何生成 AICommand)
-- 內閉環整合 (如何使用 RAG 數據)
-- 外閉環自動觸發 (如何從經驗學習)
-- AI Commander 整合功能模組 (按 [SIMPLE_ARCHITECTURE.md](features/SIMPLE_ARCHITECTURE.md) 設計)
+**⚠️ 待驗證**:
+- 靶場實戰測試 (HTTP 客戶端驗證)
+- 外閉環經驗學習自動觸發
 
 ---
 
@@ -350,24 +368,21 @@ services/                          # 🚀 AIVA Services 根目錄
 │   │   │       ├── intel_aggregator.py
 │   │   │       ├── ioc_enricher.py
 │   │   │       └── mitre_mapper.py
-│   │   ├── ai_operation_recorder.py # AI 操作記錄器
-│   │   ├── app.py                 # 主應用
+│   │   ├── ai_operation_recorder.py # AI 操作記錄器（已移除 FastAPI 依賴）
 │   │   ├── config.py              # 配置管理
 │   │   ├── settings.py            # 設定檔
 │   │   └── system_performance_monitor.py # 系統性能監控
 │   ├── alembic/                   # 🗃️ 資料庫遷移
 │   │   ├── versions/              # 版本控制
 │   │   └── env.py                 # 環境配置
-│   ├── api_gateway/               # 🌐 API 閘道
-│   │   └── api_gateway/
-│   │       └── app.py             # 閘道應用
-│   ├── capability/                # 💪 能力管理
+│   ├── capability/                # 💪 能力管理（純 Python 模組）
 │   │   ├── adapters/              # 適配器
 │   │   │   └── hackingtool_adapter.py
 │   │   ├── payload_templates/     # Payload 模板
 │   │   ├── bug_bounty_reporting.py # Bug Bounty 報告
 │   │   ├── cli.py                 # 命令行介面
 │   │   ├── config.py              # 配置管理
+│   │   ├── registry.py            # 能力註冊表（移除 FastAPI 部分）
 │   │   ├── [15+ specialized tools] # 專業化工具
 │   │   └── wireless_attack_tools.py
 │   ├── coordinators/              # 🤝 協調器
@@ -813,13 +828,14 @@ graph TB
 - 📊 **學習系統**: 經驗積累、模式識別、策略優化
 - 🎯 **Bug Bounty**: 動態檢測專精、黑盒滲透測試
 
-**技術棧**: Python 3.11+、FastAPI、Pydantic v2、sentence-transformers
+**技術棧**: Python 3.11+、Pydantic v2、sentence-transformers
 
 **關鍵特性**:
-- ✅ P0-P2 架構修復完成 (依賴注入、RAG 簡化、命令安全)
-- ✅ RAG1徹底移除 (第五次確認完成，無殘留引用)
-- ✅ execution_tracer模組修復 (建立trace_recorder.py，解決缺失組件)
-- ✅ AI 語義編碼升級 (384維向量、相似度分析)
+- ✅ 架構簡化完成（移除冗餘 FastAPI 服務，保留 Core API 唯一入口）
+- ✅ P0-P2 架構修復完成（依賴注入、RAG 簡化、命令安全）
+- ✅ RAG1 徹底移除（第五次確認完成，無殘留引用）
+- ✅ execution_tracer 模組修復（建立 trace_recorder.py，解決缺失組件）
+- ✅ AI 語義編碼升級（384維向量、相似度分析）
 - ✅ 三層架構: AI Core + AIVA Core + AIVA Core v1
 
 **📖 詳細文檔**: [services/core/README.md](core/README.md)
@@ -935,12 +951,11 @@ integration/
 ├── 📋 reporting/              # 企業報告系統
 ├── 🕵️ threat_intel/           # 威脅情報處理
 ├── 🔧 remediation/            # 智能修復建議
-├── 📥 reception/              # 數據接收層
+├── 📥 reception/              # 數據接收層（已移除 FastAPI）
 ├── 📈 perf_feedback/          # 性能反饋優化
 ├── 👀 observability/          # 可觀測性監控
 ├── 🔐 security/               # 安全模組
-├── 🌐 api_gateway/            # API 閘道
-└── 💪 capability/             # 能力管理
+└── 💪 capability/             # 能力管理（純 Python 模組）
 ```
 
 **核心能力**:
@@ -952,15 +967,15 @@ integration/
 - 📡 **數據整合**: 統一存儲適配、生命週期管理
 - 🤖 **AI操作記錄**: 智能協調核心、經驗累積
 
-**技術棧**: Python 3.11+、FastAPI、PostgreSQL、Redis、NetworkX、Command Center 架構
+**技術棧**: Python 3.11+、PostgreSQL、Redis、NetworkX、Unified Storage Architecture
 
 **關鍵特性**:
-- ✅ 企業級整合中樞、AI驅動協調
+- ✅ 企業級整合中樞、統一數據管理
 - ✅ 多層架構設計、模組化實現
-- ✅ 統一配置系統、環境變數管理
+- ✅ 統一存儲系統、自動備份清理
 - ✅ 完整監控體系、故障排除工具
-- ✅ 資料儲存標準化、自動備份清理
-- ✅ Neo4j → NetworkX遷移 (零外部圖數據庫依賴)
+- ✅ Neo4j → NetworkX遷移（零外部圖數據庫依賴）
+- ✅ 架構簡化（移除冗餘 FastAPI 服務）
 
 **📖 詳細文檔**: [services/integration/README.md](integration/README.md)
 

@@ -12,7 +12,6 @@
 - 降低認知複雜度
 
 **5M 架構說明**:
-- 無 LLM/NLU 依賴
 - 使用神經網路決策輸出（attack_vector, confidence, tools）
 - 基於預定義模板生成執行計畫
 """

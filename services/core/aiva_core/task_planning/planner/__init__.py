@@ -6,7 +6,7 @@
 """
 
 from .ast_parser import ASTParser, AttackFlowGraph, AttackFlowNode
-from .orchestrator import AttackOrchestrator
+# from .orchestrator import AttackOrchestrator  # 模組不存在，已註解
 from .task_converter import ExecutableTask, TaskConverter
 from .tool_selector import ToolDecision, ToolSelector
 
@@ -18,5 +18,5 @@ __all__ = [
     "ExecutableTask",
     "ToolSelector",
     "ToolDecision",
-    "AttackOrchestrator",
+    # "AttackOrchestrator",  # 模組不存在，已從 __all__ 移除
 ]

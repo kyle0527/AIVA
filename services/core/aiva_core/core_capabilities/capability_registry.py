@@ -192,6 +192,9 @@ class CapabilityRegistry:
                         last_probe=datetime.now(),  # 必要參數
                         last_success=datetime.now(),  # 必要參數
                         environment_vars=cap_data.get("environment_vars", {}),  # 必要參數
+                        # v2.1: 去語意化反射引擎參數
+                        rag_trigger=cap_data.get("rag_trigger"),  # 可選：環境特徵權重表
+                        feature_signature=cap_data.get("feature_signature"),  # 可選：特徵簽名列表
                         created_at=datetime.now(),
                         updated_at=datetime.now(),
                         config={

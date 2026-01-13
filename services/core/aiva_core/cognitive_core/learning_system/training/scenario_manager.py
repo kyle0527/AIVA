@@ -16,7 +16,7 @@
 5. 訓練數據集構建
 """
 
-from datetime import UTC, datetime
+from datetime import datetime, timezone
 import json
 import logging
 from pathlib import Path
@@ -106,10 +106,10 @@ class ScenarioManager:
             vulnerability_type=vulnerability_type,
             difficulty_level=difficulty_level,
             target_config=target_config,
-            expected_plan=expected_plan,
+            expected_plan=expected_plan.model_dump(),  # 轉換為 dict 以符合 StandardScenario 的類型
             success_criteria=success_criteria,
             tags=tags or [],
-            created_at=datetime.now(UTC),
+            created_at=datetime.now(timezone.utc),
             metadata=metadata or {},
         )
 
@@ -264,17 +264,18 @@ class ScenarioManager:
                     validation_result["valid"] = False
 
         # 2. 檢查攻擊計畫
-        if not scenario.expected_plan.steps:
+        expected_steps = scenario.expected_plan.get("steps", [])
+        if not expected_steps:
             validation_result["errors"].append("攻擊計畫沒有步驟")
             validation_result["valid"] = False
 
         # 檢查步驟完整性
-        for i, step in enumerate(scenario.expected_plan.steps):
-            if not step.action:
+        for i, step in enumerate(expected_steps):
+            if not step.get("action"):
                 validation_result["errors"].append(f"步驟 {i} 缺少動作描述")
                 validation_result["valid"] = False
 
-            if not step.tool_type:
+            if not step.get("tool_type"):
                 validation_result["errors"].append(f"步驟 {i} 缺少工具類型")
                 validation_result["valid"] = False
 
@@ -283,9 +284,10 @@ class ScenarioManager:
             validation_result["warnings"].append("未定義成功標準")
 
         # 4. 檢查依賴關係
-        if scenario.expected_plan.dependencies:
-            step_ids = {s.step_id for s in scenario.expected_plan.steps}
-            for step_id, deps in scenario.expected_plan.dependencies.items():
+        expected_deps = scenario.expected_plan.get("dependencies", {})
+        if expected_deps:
+            step_ids = {s.get("step_id") for s in expected_steps}
+            for step_id, deps in expected_deps.items():
                 if step_id not in step_ids:
                     validation_result["errors"].append(
                         f"依賴關係引用不存在的步驟: {step_id}"
@@ -324,7 +326,7 @@ class ScenarioManager:
             "response_time_ms": 0,
             "status_code": None,
             "error": None,
-            "checked_at": datetime.now(UTC).isoformat(),
+            "checked_at": datetime.now(timezone.utc).isoformat(),
         }
 
         try:
@@ -337,9 +339,9 @@ class ScenarioManager:
 
             # 執行健康檢查
             async with httpx.AsyncClient(timeout=10.0) as client:
-                start_time = datetime.now(UTC)
+                start_time = datetime.now(timezone.utc)
                 response = await client.get(base_url)
-                end_time = datetime.now(UTC)
+                end_time = datetime.now(timezone.utc)
 
                 health_result["status_code"] = response.status_code
                 health_result["response_time_ms"] = (
@@ -960,7 +962,7 @@ class ScenarioManager:
                 stats["by_tags"][tag] = stats["by_tags"].get(tag, 0) + 1
 
         # 平均步驟數
-        total_steps = sum(len(s.expected_plan.steps) for s in scenarios)
+        total_steps = sum(len(s.expected_plan.get("steps", [])) for s in scenarios)
         stats["average_steps"] = total_steps / len(scenarios)
 
         # 總估算時間

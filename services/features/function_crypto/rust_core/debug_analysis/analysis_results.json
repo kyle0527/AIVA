@@ -1,0 +1,4073 @@
+{
+  "branch_analysis": {
+    "fan_in_nodes": {},
+    "fan_out_nodes": {}
+  },
+  "classification": {
+    "categories": {
+      "analysis": [
+        {
+          "call_targets": [
+            "new",
+            "starts_with",
+            "from_str",
+            "unwrap_or",
+            "extract_cookie_name",
+            "push",
+            "to_string",
+            "to_string",
+            "to_string",
+            "to_string",
+            "Some",
+            "clone",
+            "Some",
+            "to_string",
+            "push",
+            "to_string",
+            "to_string",
+            "to_string",
+            "to_string",
+            "Some",
+            "clone",
+            "Some",
+            "to_string",
+            "push",
+            "to_string",
+            "to_string",
+            "to_string",
+            "to_string",
+            "Some",
+            "Some",
+            "to_string"
+          ],
+          "category": "analysis",
+          "description": "[PLACEHOLDER] analyze_cookies",
+          "external_calls": [
+            {
+              "caller_func": "analyze_cookies",
+              "function_name": "new",
+              "module_alias": "Vec"
+            },
+            {
+              "caller_func": "analyze_cookies",
+              "function_name": "starts_with",
+              "module_alias": "url"
+            },
+            {
+              "caller_func": "analyze_cookies",
+              "function_name": "from_str",
+              "module_alias": "serde_json"
+            },
+            {
+              "caller_func": "analyze_cookies",
+              "function_name": "unwrap_or",
+              "module_alias": ""
+            },
+            {
+              "caller_func": "analyze_cookies",
+              "function_name": "extract_cookie_name",
+              "module_alias": ""
+            },
+            {
+              "caller_func": "analyze_cookies",
+              "function_name": "push",
+              "module_alias": "findings"
+            },
+            {
+              "caller_func": "analyze_cookies",
+              "function_name": "to_string",
+              "module_alias": ""
+            },
+            {
+              "caller_func": "analyze_cookies",
+              "function_name": "to_string",
+              "module_alias": ""
+            },
+            {
+              "caller_func": "analyze_cookies",
+              "function_name": "to_string",
+              "module_alias": ""
+            },
+            {
+              "caller_func": "analyze_cookies",
+              "function_name": "to_string",
+              "module_alias": ""
+            },
+            {
+              "caller_func": "analyze_cookies",
+              "function_name": "Some",
+              "module_alias": ""
+            },
+            {
+              "caller_func": "analyze_cookies",
+              "function_name": "clone",
+              "module_alias": "cookie_name"
+            },
+            {
+              "caller_func": "analyze_cookies",
+              "function_name": "Some",
+              "module_alias": ""
+            },
+            {
+              "caller_func": "analyze_cookies",
+              "function_name": "to_string",
+              "module_alias": "cookie_str"
+            },
+            {
+              "caller_func": "analyze_cookies",
+              "function_name": "push",
+              "module_alias": "findings"
+            },
+            {
+              "caller_func": "analyze_cookies",
+              "function_name": "to_string",
+              "module_alias": ""
+            },
+            {
+              "caller_func": "analyze_cookies",
+              "function_name": "to_string",
+              "module_alias": ""
+            },
+            {
+              "caller_func": "analyze_cookies",
+              "function_name": "to_string",
+              "module_alias": ""
+            },
+            {
+              "caller_func": "analyze_cookies",
+              "function_name": "to_string",
+              "module_alias": ""
+            },
+            {
+              "caller_func": "analyze_cookies",
+              "function_name": "Some",
+              "module_alias": ""
+            },
+            {
+              "caller_func": "analyze_cookies",
+              "function_name": "clone",
+              "module_alias": "cookie_name"
+            },
+            {
+              "caller_func": "analyze_cookies",
+              "function_name": "Some",
+              "module_alias": ""
+            },
+            {
+              "caller_func": "analyze_cookies",
+              "function_name": "to_string",
+              "module_alias": "cookie_str"
+            },
+            {
+              "caller_func": "analyze_cookies",
+              "function_name": "push",
+              "module_alias": "findings"
+            },
+            {
+              "caller_func": "analyze_cookies",
+              "function_name": "to_string",
+              "module_alias": ""
+            },
+            {
+              "caller_func": "analyze_cookies",
+              "function_name": "to_string",
+              "module_alias": ""
+            },
+            {
+              "caller_func": "analyze_cookies",
+              "function_name": "to_string",
+              "module_alias": ""
+            },
+            {
+              "caller_func": "analyze_cookies",
+              "function_name": "to_string",
+              "module_alias": ""
+            },
+            {
+              "caller_func": "analyze_cookies",
+              "function_name": "Some",
+              "module_alias": ""
+            },
+            {
+              "caller_func": "analyze_cookies",
+              "function_name": "Some",
+              "module_alias": ""
+            },
+            {
+              "caller_func": "analyze_cookies",
+              "function_name": "to_string",
+              "module_alias": "cookie_str"
+            }
+          ],
+          "function_name": "analyze_cookies",
+          "inputs": [
+            "cookies_json",
+            "url"
+          ],
+          "module": "cookie_analyzer",
+          "outputs": [],
+          "source_file": ".\\src\\cookie_analyzer.rs"
+        },
+        {
+          "call_targets": [
+            "new",
+            "starts_with",
+            "from_str",
+            "as_object",
+            "collect",
+            "push",
+            "to_string",
+            "to_string",
+            "to_string",
+            "to_string",
+            "to_string",
+            "Some",
+            "clone",
+            "push",
+            "to_string",
+            "to_string",
+            "to_string",
+            "to_string",
+            "Some",
+            "clone",
+            "push",
+            "to_string",
+            "to_string",
+            "to_string",
+            "to_string",
+            "to_string",
+            "Some",
+            "clone",
+            "push",
+            "to_string",
+            "to_string",
+            "to_string",
+            "to_string",
+            "to_string",
+            "push",
+            "to_string",
+            "to_string",
+            "to_string",
+            "to_string",
+            "to_string",
+            "Some",
+            "clone",
+            "push",
+            "to_string",
+            "to_string",
+            "to_string",
+            "to_string",
+            "to_string",
+            "Some",
+            "clone",
+            "push",
+            "to_string",
+            "to_string",
+            "to_string",
+            "to_string",
+            "to_string",
+            "push",
+            "to_string",
+            "to_string",
+            "to_string",
+            "to_string",
+            "to_string"
+          ],
+          "category": "analysis",
+          "description": "[PLACEHOLDER] analyze_headers",
+          "external_calls": [
+            {
+              "caller_func": "analyze_headers",
+              "function_name": "new",
+              "module_alias": "Vec"
+            },
+            {
+              "caller_func": "analyze_headers",
+              "function_name": "starts_with",
+              "module_alias": "url"
+            },
+            {
+              "caller_func": "analyze_headers",
+              "function_name": "from_str",
+              "module_alias": "serde_json"
+            },
+            {
+              "caller_func": "analyze_headers",
+              "function_name": "as_object",
+              "module_alias": "headers"
+            },
+            {
+              "caller_func": "analyze_headers",
+              "function_name": "collect",
+              "module_alias": ""
+            },
+            {
+              "caller_func": "analyze_headers",
+              "function_name": "push",
+              "module_alias": "findings"
+            },
+            {
+              "caller_func": "analyze_headers",
+              "function_name": "to_string",
+              "module_alias": ""
+            },
+            {
+              "caller_func": "analyze_headers",
+              "function_name": "to_string",
+              "module_alias": ""
+            },
+            {
+              "caller_func": "analyze_headers",
+              "function_name": "to_string",
+              "module_alias": ""
+            },
+            {
+              "caller_func": "analyze_headers",
+              "function_name": "to_string",
+              "module_alias": ""
+            },
+            {
+              "caller_func": "analyze_headers",
+              "function_name": "to_string",
+              "module_alias": ""
+            },
+            {
+              "caller_func": "analyze_headers",
+              "function_name": "Some",
+              "module_alias": ""
+            },
+            {
+              "caller_func": "analyze_headers",
+              "function_name": "clone",
+              "module_alias": "hsts"
+            },
+            {
+              "caller_func": "analyze_headers",
+              "function_name": "push",
+              "module_alias": "findings"
+            },
+            {
+              "caller_func": "analyze_headers",
+              "function_name": "to_string",
+              "module_alias": ""
+            },
+            {
+              "caller_func": "analyze_headers",
+              "function_name": "to_string",
+              "module_alias": ""
+            },
+            {
+              "caller_func": "analyze_headers",
+              "function_name": "to_string",
+              "module_alias": ""
+            },
+            {
+              "caller_func": "analyze_headers",
+              "function_name": "to_string",
+              "module_alias": ""
+            },
+            {
+              "caller_func": "analyze_headers",
+              "function_name": "Some",
+              "module_alias": ""
+            },
+            {
+              "caller_func": "analyze_headers",
+              "function_name": "clone",
+              "module_alias": "hsts"
+            },
+            {
+              "caller_func": "analyze_headers",
+              "function_name": "push",
+              "module_alias": "findings"
+            },
+            {
+              "caller_func": "analyze_headers",
+              "function_name": "to_string",
+              "module_alias": ""
+            },
+            {
+              "caller_func": "analyze_headers",
+              "function_name": "to_string",
+              "module_alias": ""
+            },
+            {
+              "caller_func": "analyze_headers",
+              "function_name": "to_string",
+              "module_alias": ""
+            },
+            {
+              "caller_func": "analyze_headers",
+              "function_name": "to_string",
+              "module_alias": ""
+            },
+            {
+              "caller_func": "analyze_headers",
+              "function_name": "to_string",
+              "module_alias": ""
+            },
+            {
+              "caller_func": "analyze_headers",
+              "function_name": "Some",
+              "module_alias": ""
+            },
+            {
+              "caller_func": "analyze_headers",
+              "function_name": "clone",
+              "module_alias": "hsts"
+            },
+            {
+              "caller_func": "analyze_headers",
+              "function_name": "push",
+              "module_alias": "findings"
+            },
+            {
+              "caller_func": "analyze_headers",
+              "function_name": "to_string",
+              "module_alias": ""
+            },
+            {
+              "caller_func": "analyze_headers",
+              "function_name": "to_string",
+              "module_alias": ""
+            },
+            {
+              "caller_func": "analyze_headers",
+              "function_name": "to_string",
+              "module_alias": ""
+            },
+            {
+              "caller_func": "analyze_headers",
+              "function_name": "to_string",
+              "module_alias": ""
+            },
+            {
+              "caller_func": "analyze_headers",
+              "function_name": "to_string",
+              "module_alias": ""
+            },
+            {
+              "caller_func": "analyze_headers",
+              "function_name": "push",
+              "module_alias": "findings"
+            },
+            {
+              "caller_func": "analyze_headers",
+              "function_name": "to_string",
+              "module_alias": ""
+            },
+            {
+              "caller_func": "analyze_headers",
+              "function_name": "to_string",
+              "module_alias": ""
+            },
+            {
+              "caller_func": "analyze_headers",
+              "function_name": "to_string",
+              "module_alias": ""
+            },
+            {
+              "caller_func": "analyze_headers",
+              "function_name": "to_string",
+              "module_alias": ""
+            },
+            {
+              "caller_func": "analyze_headers",
+              "function_name": "to_string",
+              "module_alias": ""
+            },
+            {
+              "caller_func": "analyze_headers",
+              "function_name": "Some",
+              "module_alias": ""
+            },
+            {
+              "caller_func": "analyze_headers",
+              "function_name": "clone",
+              "module_alias": "csp"
+            },
+            {
+              "caller_func": "analyze_headers",
+              "function_name": "push",
+              "module_alias": "findings"
+            },
+            {
+              "caller_func": "analyze_headers",
+              "function_name": "to_string",
+              "module_alias": ""
+            },
+            {
+              "caller_func": "analyze_headers",
+              "function_name": "to_string",
+              "module_alias": ""
+            },
+            {
+              "caller_func": "analyze_headers",
+              "function_name": "to_string",
+              "module_alias": ""
+            },
+            {
+              "caller_func": "analyze_headers",
+              "function_name": "to_string",
+              "module_alias": ""
+            },
+            {
+              "caller_func": "analyze_headers",
+              "function_name": "to_string",
+              "module_alias": ""
+            },
+            {
+              "caller_func": "analyze_headers",
+              "function_name": "Some",
+              "module_alias": ""
+            },
+            {
+              "caller_func": "analyze_headers",
+              "function_name": "clone",
+              "module_alias": "csp"
+            },
+            {
+              "caller_func": "analyze_headers",
+              "function_name": "push",
+              "module_alias": "findings"
+            },
+            {
+              "caller_func": "analyze_headers",
+              "function_name": "to_string",
+              "module_alias": ""
+            },
+            {
+              "caller_func": "analyze_headers",
+              "function_name": "to_string",
+              "module_alias": ""
+            },
+            {
+              "caller_func": "analyze_headers",
+              "function_name": "to_string",
+              "module_alias": ""
+            },
+            {
+              "caller_func": "analyze_headers",
+              "function_name": "to_string",
+              "module_alias": ""
+            },
+            {
+              "caller_func": "analyze_headers",
+              "function_name": "to_string",
+              "module_alias": ""
+            },
+            {
+              "caller_func": "analyze_headers",
+              "function_name": "push",
+              "module_alias": "findings"
+            },
+            {
+              "caller_func": "analyze_headers",
+              "function_name": "to_string",
+              "module_alias": ""
+            },
+            {
+              "caller_func": "analyze_headers",
+              "function_name": "to_string",
+              "module_alias": ""
+            },
+            {
+              "caller_func": "analyze_headers",
+              "function_name": "to_string",
+              "module_alias": ""
+            },
+            {
+              "caller_func": "analyze_headers",
+              "function_name": "to_string",
+              "module_alias": ""
+            },
+            {
+              "caller_func": "analyze_headers",
+              "function_name": "to_string",
+              "module_alias": ""
+            }
+          ],
+          "function_name": "analyze_headers",
+          "inputs": [
+            "headers_json",
+            "url"
+          ],
+          "module": "header_analyzer",
+          "outputs": [],
+          "source_file": ".\\src\\header_analyzer.rs"
+        },
+        {
+          "call_targets": [
+            "new",
+            "empty",
+            "extend",
+            "cloned",
+            "with_no_client_auth",
+            "from",
+            "new",
+            "try_from",
+            "to_owned",
+            "push",
+            "to_string",
+            "to_string",
+            "to_string",
+            "to_string",
+            "to_string",
+            "Some",
+            "to_string",
+            "try_from",
+            "to_string",
+            "to_owned",
+            "push",
+            "to_string",
+            "to_string",
+            "to_string",
+            "to_string",
+            "Some",
+            "to_string",
+            "connect",
+            "push",
+            "to_string",
+            "to_string",
+            "to_string",
+            "to_string",
+            "Some",
+            "connect",
+            "to_string",
+            "push",
+            "to_string",
+            "to_string",
+            "to_string",
+            "to_string",
+            "to_string",
+            "Some",
+            "clone",
+            "Some",
+            "push",
+            "to_string",
+            "to_string",
+            "to_string",
+            "to_string",
+            "Some",
+            "Some"
+          ],
+          "category": "analysis",
+          "description": "[PLACEHOLDER] analyze_tls",
+          "external_calls": [
+            {
+              "caller_func": "analyze_tls",
+              "function_name": "new",
+              "module_alias": "Vec"
+            },
+            {
+              "caller_func": "analyze_tls",
+              "function_name": "empty",
+              "module_alias": "RootCertStore"
+            },
+            {
+              "caller_func": "analyze_tls",
+              "function_name": "extend",
+              "module_alias": "root_store"
+            },
+            {
+              "caller_func": "analyze_tls",
+              "function_name": "cloned",
+              "module_alias": ""
+            },
+            {
+              "caller_func": "analyze_tls",
+              "function_name": "with_no_client_auth",
+              "module_alias": ""
+            },
+            {
+              "caller_func": "analyze_tls",
+              "function_name": "from",
+              "module_alias": "TlsConnector"
+            },
+            {
+              "caller_func": "analyze_tls",
+              "function_name": "new",
+              "module_alias": "Arc"
+            },
+            {
+              "caller_func": "analyze_tls",
+              "function_name": "try_from",
+              "module_alias": "rustls"
+            },
+            {
+              "caller_func": "analyze_tls",
+              "function_name": "to_owned",
+              "module_alias": "name"
+            },
+            {
+              "caller_func": "analyze_tls",
+              "function_name": "push",
+              "module_alias": "findings"
+            },
+            {
+              "caller_func": "analyze_tls",
+              "function_name": "to_string",
+              "module_alias": ""
+            },
+            {
+              "caller_func": "analyze_tls",
+              "function_name": "to_string",
+              "module_alias": ""
+            },
+            {
+              "caller_func": "analyze_tls",
+              "function_name": "to_string",
+              "module_alias": ""
+            },
+            {
+              "caller_func": "analyze_tls",
+              "function_name": "to_string",
+              "module_alias": ""
+            },
+            {
+              "caller_func": "analyze_tls",
+              "function_name": "to_string",
+              "module_alias": ""
+            },
+            {
+              "caller_func": "analyze_tls",
+              "function_name": "Some",
+              "module_alias": ""
+            },
+            {
+              "caller_func": "analyze_tls",
+              "function_name": "to_string",
+              "module_alias": "target"
+            },
+            {
+              "caller_func": "analyze_tls",
+              "function_name": "try_from",
+              "module_alias": "rustls"
+            },
+            {
+              "caller_func": "analyze_tls",
+              "function_name": "to_string",
+              "module_alias": "target"
+            },
+            {
+              "caller_func": "analyze_tls",
+              "function_name": "to_owned",
+              "module_alias": "name"
+            },
+            {
+              "caller_func": "analyze_tls",
+              "function_name": "push",
+              "module_alias": "findings"
+            },
+            {
+              "caller_func": "analyze_tls",
+              "function_name": "to_string",
+              "module_alias": ""
+            },
+            {
+              "caller_func": "analyze_tls",
+              "function_name": "to_string",
+              "module_alias": ""
+            },
+            {
+              "caller_func": "analyze_tls",
+              "function_name": "to_string",
+              "module_alias": ""
+            },
+            {
+              "caller_func": "analyze_tls",
+              "function_name": "to_string",
+              "module_alias": ""
+            },
+            {
+              "caller_func": "analyze_tls",
+              "function_name": "Some",
+              "module_alias": ""
+            },
+            {
+              "caller_func": "analyze_tls",
+              "function_name": "to_string",
+              "module_alias": "target"
+            },
+            {
+              "caller_func": "analyze_tls",
+              "function_name": "connect",
+              "module_alias": "TcpStream"
+            },
+            {
+              "caller_func": "analyze_tls",
+              "function_name": "push",
+              "module_alias": "findings"
+            },
+            {
+              "caller_func": "analyze_tls",
+              "function_name": "to_string",
+              "module_alias": ""
+            },
+            {
+              "caller_func": "analyze_tls",
+              "function_name": "to_string",
+              "module_alias": ""
+            },
+            {
+              "caller_func": "analyze_tls",
+              "function_name": "to_string",
+              "module_alias": ""
+            },
+            {
+              "caller_func": "analyze_tls",
+              "function_name": "to_string",
+              "module_alias": ""
+            },
+            {
+              "caller_func": "analyze_tls",
+              "function_name": "Some",
+              "module_alias": ""
+            },
+            {
+              "caller_func": "analyze_tls",
+              "function_name": "connect",
+              "module_alias": "connector"
+            },
+            {
+              "caller_func": "analyze_tls",
+              "function_name": "to_string",
+              "module_alias": "e"
+            },
+            {
+              "caller_func": "analyze_tls",
+              "function_name": "push",
+              "module_alias": "findings"
+            },
+            {
+              "caller_func": "analyze_tls",
+              "function_name": "to_string",
+              "module_alias": ""
+            },
+            {
+              "caller_func": "analyze_tls",
+              "function_name": "to_string",
+              "module_alias": ""
+            },
+            {
+              "caller_func": "analyze_tls",
+              "function_name": "to_string",
+              "module_alias": ""
+            },
+            {
+              "caller_func": "analyze_tls",
+              "function_name": "to_string",
+              "module_alias": ""
+            },
+            {
+              "caller_func": "analyze_tls",
+              "function_name": "to_string",
+              "module_alias": ""
+            },
+            {
+              "caller_func": "analyze_tls",
+              "function_name": "Some",
+              "module_alias": ""
+            },
+            {
+              "caller_func": "analyze_tls",
+              "function_name": "clone",
+              "module_alias": "addr"
+            },
+            {
+              "caller_func": "analyze_tls",
+              "function_name": "Some",
+              "module_alias": ""
+            },
+            {
+              "caller_func": "analyze_tls",
+              "function_name": "push",
+              "module_alias": "findings"
+            },
+            {
+              "caller_func": "analyze_tls",
+              "function_name": "to_string",
+              "module_alias": ""
+            },
+            {
+              "caller_func": "analyze_tls",
+              "function_name": "to_string",
+              "module_alias": ""
+            },
+            {
+              "caller_func": "analyze_tls",
+              "function_name": "to_string",
+              "module_alias": ""
+            },
+            {
+              "caller_func": "analyze_tls",
+              "function_name": "to_string",
+              "module_alias": ""
+            },
+            {
+              "caller_func": "analyze_tls",
+              "function_name": "Some",
+              "module_alias": ""
+            },
+            {
+              "caller_func": "analyze_tls",
+              "function_name": "Some",
+              "module_alias": ""
+            }
+          ],
+          "function_name": "analyze_tls",
+          "inputs": [
+            "target",
+            "port"
+          ],
+          "module": "tls_analyzer",
+          "outputs": [],
+          "source_file": ".\\src\\tls_analyzer.rs"
+        }
+      ],
+      "other": [
+        {
+          "call_targets": [
+            "to_string"
+          ],
+          "category": "other",
+          "description": "[PLACEHOLDER] extract_cookie_name",
+          "external_calls": [
+            {
+              "caller_func": "extract_cookie_name",
+              "function_name": "to_string",
+              "module_alias": ""
+            }
+          ],
+          "function_name": "extract_cookie_name",
+          "inputs": [
+            "cookie_str"
+          ],
+          "module": "cookie_analyzer",
+          "outputs": [],
+          "source_file": ".\\src\\cookie_analyzer.rs"
+        },
+        {
+          "call_targets": [
+            "to_lowercase",
+            "contains",
+            "contains",
+            "contains",
+            "contains",
+            "contains"
+          ],
+          "category": "other",
+          "description": "[PLACEHOLDER] is_sensitive_cookie",
+          "external_calls": [
+            {
+              "caller_func": "is_sensitive_cookie",
+              "function_name": "to_lowercase",
+              "module_alias": "name"
+            },
+            {
+              "caller_func": "is_sensitive_cookie",
+              "function_name": "contains",
+              "module_alias": "lower"
+            },
+            {
+              "caller_func": "is_sensitive_cookie",
+              "function_name": "contains",
+              "module_alias": "lower"
+            },
+            {
+              "caller_func": "is_sensitive_cookie",
+              "function_name": "contains",
+              "module_alias": "lower"
+            },
+            {
+              "caller_func": "is_sensitive_cookie",
+              "function_name": "contains",
+              "module_alias": "lower"
+            },
+            {
+              "caller_func": "is_sensitive_cookie",
+              "function_name": "contains",
+              "module_alias": "lower"
+            }
+          ],
+          "function_name": "is_sensitive_cookie",
+          "inputs": [
+            "name"
+          ],
+          "module": "cookie_analyzer",
+          "outputs": [],
+          "source_file": ".\\src\\cookie_analyzer.rs"
+        },
+        {
+          "call_targets": [
+            "split",
+            "trim",
+            "Some"
+          ],
+          "category": "other",
+          "description": "[PLACEHOLDER] extract_max_age",
+          "external_calls": [
+            {
+              "caller_func": "extract_max_age",
+              "function_name": "split",
+              "module_alias": "hsts"
+            },
+            {
+              "caller_func": "extract_max_age",
+              "function_name": "trim",
+              "module_alias": "part"
+            },
+            {
+              "caller_func": "extract_max_age",
+              "function_name": "Some",
+              "module_alias": ""
+            }
+          ],
+          "function_name": "extract_max_age",
+          "inputs": [
+            "hsts"
+          ],
+          "module": "header_analyzer",
+          "outputs": [],
+          "source_file": ".\\src\\header_analyzer.rs"
+        },
+        {
+          "call_targets": [
+            "count"
+          ],
+          "category": "other",
+          "description": "[PLACEHOLDER] find_line_number",
+          "external_calls": [
+            {
+              "caller_func": "find_line_number",
+              "function_name": "count",
+              "module_alias": ""
+            }
+          ],
+          "function_name": "find_line_number",
+          "inputs": [
+            "content",
+            "search"
+          ],
+          "module": "js_crypto_analyzer",
+          "outputs": [],
+          "source_file": ".\\src\\js_crypto_analyzer.rs"
+        },
+        {
+          "call_targets": [
+            "to_string"
+          ],
+          "category": "other",
+          "description": "[PLACEHOLDER] mask_key",
+          "external_calls": [
+            {
+              "caller_func": "mask_key",
+              "function_name": "to_string",
+              "module_alias": ""
+            }
+          ],
+          "function_name": "mask_key",
+          "inputs": [
+            "key"
+          ],
+          "module": "js_crypto_analyzer",
+          "outputs": [],
+          "source_file": ".\\src\\js_crypto_analyzer.rs"
+        },
+        {
+          "call_targets": [
+            "len",
+            "as_str"
+          ],
+          "category": "other",
+          "description": "[PLACEHOLDER] Summary::from_findings",
+          "external_calls": [
+            {
+              "caller_func": "Summary::from_findings",
+              "function_name": "len",
+              "module_alias": "findings"
+            },
+            {
+              "caller_func": "Summary::from_findings",
+              "function_name": "as_str",
+              "module_alias": ""
+            }
+          ],
+          "function_name": "Summary::from_findings",
+          "inputs": [],
+          "module": "main",
+          "outputs": [],
+          "source_file": ".\\src\\main.rs"
+        },
+        {
+          "call_targets": [
+            "parse",
+            "scan_javascript",
+            "to_string",
+            "unwrap_or_else",
+            "to_string",
+            "from_findings",
+            "analyze_tls",
+            "to_string",
+            "from_findings",
+            "analyze_cookies",
+            "to_string",
+            "from_findings",
+            "analyze_headers",
+            "to_string",
+            "from_findings",
+            "to_string_pretty"
+          ],
+          "category": "other",
+          "description": "[PLACEHOLDER] main",
+          "external_calls": [
+            {
+              "caller_func": "main",
+              "function_name": "parse",
+              "module_alias": "Cli"
+            },
+            {
+              "caller_func": "main",
+              "function_name": "scan_javascript",
+              "module_alias": "js_crypto_analyzer"
+            },
+            {
+              "caller_func": "main",
+              "function_name": "to_string",
+              "module_alias": ""
+            },
+            {
+              "caller_func": "main",
+              "function_name": "unwrap_or_else",
+              "module_alias": "url"
+            },
+            {
+              "caller_func": "main",
+              "function_name": "to_string",
+              "module_alias": ""
+            },
+            {
+              "caller_func": "main",
+              "function_name": "from_findings",
+              "module_alias": "Summary"
+            },
+            {
+              "caller_func": "main",
+              "function_name": "analyze_tls",
+              "module_alias": "tls_analyzer"
+            },
+            {
+              "caller_func": "main",
+              "function_name": "to_string",
+              "module_alias": ""
+            },
+            {
+              "caller_func": "main",
+              "function_name": "from_findings",
+              "module_alias": "Summary"
+            },
+            {
+              "caller_func": "main",
+              "function_name": "analyze_cookies",
+              "module_alias": "cookie_analyzer"
+            },
+            {
+              "caller_func": "main",
+              "function_name": "to_string",
+              "module_alias": ""
+            },
+            {
+              "caller_func": "main",
+              "function_name": "from_findings",
+              "module_alias": "Summary"
+            },
+            {
+              "caller_func": "main",
+              "function_name": "analyze_headers",
+              "module_alias": "header_analyzer"
+            },
+            {
+              "caller_func": "main",
+              "function_name": "to_string",
+              "module_alias": ""
+            },
+            {
+              "caller_func": "main",
+              "function_name": "from_findings",
+              "module_alias": "Summary"
+            },
+            {
+              "caller_func": "main",
+              "function_name": "to_string_pretty",
+              "module_alias": "serde_json"
+            }
+          ],
+          "function_name": "main",
+          "inputs": [],
+          "module": "main",
+          "outputs": [],
+          "source_file": ".\\src\\main.rs"
+        }
+      ],
+      "reconnaissance": [
+        {
+          "call_targets": [
+            "new",
+            "extend",
+            "detect_hardcoded_keys",
+            "extend",
+            "detect_weak_crypto_usage",
+            "extend",
+            "detect_weak_random",
+            "extend",
+            "detect_jwt_issues",
+            "extend",
+            "detect_insecure_storage"
+          ],
+          "category": "reconnaissance",
+          "description": "[PLACEHOLDER] scan_javascript",
+          "external_calls": [
+            {
+              "caller_func": "scan_javascript",
+              "function_name": "new",
+              "module_alias": "Vec"
+            },
+            {
+              "caller_func": "scan_javascript",
+              "function_name": "extend",
+              "module_alias": "findings"
+            },
+            {
+              "caller_func": "scan_javascript",
+              "function_name": "detect_hardcoded_keys",
+              "module_alias": ""
+            },
+            {
+              "caller_func": "scan_javascript",
+              "function_name": "extend",
+              "module_alias": "findings"
+            },
+            {
+              "caller_func": "scan_javascript",
+              "function_name": "detect_weak_crypto_usage",
+              "module_alias": ""
+            },
+            {
+              "caller_func": "scan_javascript",
+              "function_name": "extend",
+              "module_alias": "findings"
+            },
+            {
+              "caller_func": "scan_javascript",
+              "function_name": "detect_weak_random",
+              "module_alias": ""
+            },
+            {
+              "caller_func": "scan_javascript",
+              "function_name": "extend",
+              "module_alias": "findings"
+            },
+            {
+              "caller_func": "scan_javascript",
+              "function_name": "detect_jwt_issues",
+              "module_alias": ""
+            },
+            {
+              "caller_func": "scan_javascript",
+              "function_name": "extend",
+              "module_alias": "findings"
+            },
+            {
+              "caller_func": "scan_javascript",
+              "function_name": "detect_insecure_storage",
+              "module_alias": ""
+            }
+          ],
+          "function_name": "scan_javascript",
+          "inputs": [
+            "content"
+          ],
+          "module": "js_crypto_analyzer",
+          "outputs": [],
+          "source_file": ".\\src\\js_crypto_analyzer.rs"
+        },
+        {
+          "call_targets": [
+            "new",
+            "unwrap",
+            "captures_iter",
+            "as_str",
+            "contains",
+            "push",
+            "to_string",
+            "to_string",
+            "to_string",
+            "Some",
+            "Some",
+            "mask_key",
+            "unwrap",
+            "find_iter",
+            "as_str",
+            "push",
+            "to_string",
+            "to_string",
+            "to_string",
+            "to_string",
+            "to_string",
+            "Some",
+            "Some",
+            "mask_key",
+            "unwrap",
+            "find_iter",
+            "as_str",
+            "push",
+            "to_string",
+            "to_string",
+            "to_string",
+            "to_string",
+            "to_string",
+            "Some",
+            "Some",
+            "mask_key",
+            "unwrap",
+            "captures_iter",
+            "as_str",
+            "push",
+            "to_string",
+            "to_string",
+            "to_string",
+            "to_string",
+            "to_string",
+            "Some",
+            "Some",
+            "mask_key"
+          ],
+          "category": "reconnaissance",
+          "description": "[PLACEHOLDER] detect_hardcoded_keys",
+          "external_calls": [
+            {
+              "caller_func": "detect_hardcoded_keys",
+              "function_name": "new",
+              "module_alias": "Vec"
+            },
+            {
+              "caller_func": "detect_hardcoded_keys",
+              "function_name": "unwrap",
+              "module_alias": ""
+            },
+            {
+              "caller_func": "detect_hardcoded_keys",
+              "function_name": "captures_iter",
+              "module_alias": "stripe_regex"
+            },
+            {
+              "caller_func": "detect_hardcoded_keys",
+              "function_name": "as_str",
+              "module_alias": ""
+            },
+            {
+              "caller_func": "detect_hardcoded_keys",
+              "function_name": "contains",
+              "module_alias": "key"
+            },
+            {
+              "caller_func": "detect_hardcoded_keys",
+              "function_name": "push",
+              "module_alias": "findings"
+            },
+            {
+              "caller_func": "detect_hardcoded_keys",
+              "function_name": "to_string",
+              "module_alias": ""
+            },
+            {
+              "caller_func": "detect_hardcoded_keys",
+              "function_name": "to_string",
+              "module_alias": ""
+            },
+            {
+              "caller_func": "detect_hardcoded_keys",
+              "function_name": "to_string",
+              "module_alias": ""
+            },
+            {
+              "caller_func": "detect_hardcoded_keys",
+              "function_name": "Some",
+              "module_alias": ""
+            },
+            {
+              "caller_func": "detect_hardcoded_keys",
+              "function_name": "Some",
+              "module_alias": ""
+            },
+            {
+              "caller_func": "detect_hardcoded_keys",
+              "function_name": "mask_key",
+              "module_alias": ""
+            },
+            {
+              "caller_func": "detect_hardcoded_keys",
+              "function_name": "unwrap",
+              "module_alias": ""
+            },
+            {
+              "caller_func": "detect_hardcoded_keys",
+              "function_name": "find_iter",
+              "module_alias": "aws_regex"
+            },
+            {
+              "caller_func": "detect_hardcoded_keys",
+              "function_name": "as_str",
+              "module_alias": "mat"
+            },
+            {
+              "caller_func": "detect_hardcoded_keys",
+              "function_name": "push",
+              "module_alias": "findings"
+            },
+            {
+              "caller_func": "detect_hardcoded_keys",
+              "function_name": "to_string",
+              "module_alias": ""
+            },
+            {
+              "caller_func": "detect_hardcoded_keys",
+              "function_name": "to_string",
+              "module_alias": ""
+            },
+            {
+              "caller_func": "detect_hardcoded_keys",
+              "function_name": "to_string",
+              "module_alias": ""
+            },
+            {
+              "caller_func": "detect_hardcoded_keys",
+              "function_name": "to_string",
+              "module_alias": ""
+            },
+            {
+              "caller_func": "detect_hardcoded_keys",
+              "function_name": "to_string",
+              "module_alias": ""
+            },
+            {
+              "caller_func": "detect_hardcoded_keys",
+              "function_name": "Some",
+              "module_alias": ""
+            },
+            {
+              "caller_func": "detect_hardcoded_keys",
+              "function_name": "Some",
+              "module_alias": ""
+            },
+            {
+              "caller_func": "detect_hardcoded_keys",
+              "function_name": "mask_key",
+              "module_alias": ""
+            },
+            {
+              "caller_func": "detect_hardcoded_keys",
+              "function_name": "unwrap",
+              "module_alias": ""
+            },
+            {
+              "caller_func": "detect_hardcoded_keys",
+              "function_name": "find_iter",
+              "module_alias": "google_regex"
+            },
+            {
+              "caller_func": "detect_hardcoded_keys",
+              "function_name": "as_str",
+              "module_alias": "mat"
+            },
+            {
+              "caller_func": "detect_hardcoded_keys",
+              "function_name": "push",
+              "module_alias": "findings"
+            },
+            {
+              "caller_func": "detect_hardcoded_keys",
+              "function_name": "to_string",
+              "module_alias": ""
+            },
+            {
+              "caller_func": "detect_hardcoded_keys",
+              "function_name": "to_string",
+              "module_alias": ""
+            },
+            {
+              "caller_func": "detect_hardcoded_keys",
+              "function_name": "to_string",
+              "module_alias": ""
+            },
+            {
+              "caller_func": "detect_hardcoded_keys",
+              "function_name": "to_string",
+              "module_alias": ""
+            },
+            {
+              "caller_func": "detect_hardcoded_keys",
+              "function_name": "to_string",
+              "module_alias": ""
+            },
+            {
+              "caller_func": "detect_hardcoded_keys",
+              "function_name": "Some",
+              "module_alias": ""
+            },
+            {
+              "caller_func": "detect_hardcoded_keys",
+              "function_name": "Some",
+              "module_alias": ""
+            },
+            {
+              "caller_func": "detect_hardcoded_keys",
+              "function_name": "mask_key",
+              "module_alias": ""
+            },
+            {
+              "caller_func": "detect_hardcoded_keys",
+              "function_name": "unwrap",
+              "module_alias": ""
+            },
+            {
+              "caller_func": "detect_hardcoded_keys",
+              "function_name": "captures_iter",
+              "module_alias": "generic_regex"
+            },
+            {
+              "caller_func": "detect_hardcoded_keys",
+              "function_name": "as_str",
+              "module_alias": "key_match"
+            },
+            {
+              "caller_func": "detect_hardcoded_keys",
+              "function_name": "push",
+              "module_alias": "findings"
+            },
+            {
+              "caller_func": "detect_hardcoded_keys",
+              "function_name": "to_string",
+              "module_alias": ""
+            },
+            {
+              "caller_func": "detect_hardcoded_keys",
+              "function_name": "to_string",
+              "module_alias": ""
+            },
+            {
+              "caller_func": "detect_hardcoded_keys",
+              "function_name": "to_string",
+              "module_alias": ""
+            },
+            {
+              "caller_func": "detect_hardcoded_keys",
+              "function_name": "to_string",
+              "module_alias": ""
+            },
+            {
+              "caller_func": "detect_hardcoded_keys",
+              "function_name": "to_string",
+              "module_alias": ""
+            },
+            {
+              "caller_func": "detect_hardcoded_keys",
+              "function_name": "Some",
+              "module_alias": ""
+            },
+            {
+              "caller_func": "detect_hardcoded_keys",
+              "function_name": "Some",
+              "module_alias": ""
+            },
+            {
+              "caller_func": "detect_hardcoded_keys",
+              "function_name": "mask_key",
+              "module_alias": ""
+            }
+          ],
+          "function_name": "detect_hardcoded_keys",
+          "inputs": [
+            "content"
+          ],
+          "module": "js_crypto_analyzer",
+          "outputs": [],
+          "source_file": ".\\src\\js_crypto_analyzer.rs"
+        },
+        {
+          "call_targets": [
+            "new",
+            "unwrap",
+            "push",
+            "to_string",
+            "to_string",
+            "to_string",
+            "to_string",
+            "to_string",
+            "unwrap",
+            "push",
+            "to_string",
+            "to_string",
+            "to_string",
+            "to_string",
+            "to_string",
+            "unwrap",
+            "push",
+            "to_string",
+            "to_string",
+            "to_string",
+            "to_string",
+            "to_string",
+            "unwrap",
+            "push",
+            "to_string",
+            "to_string",
+            "to_string",
+            "to_string",
+            "to_string"
+          ],
+          "category": "reconnaissance",
+          "description": "[PLACEHOLDER] detect_weak_crypto_usage",
+          "external_calls": [
+            {
+              "caller_func": "detect_weak_crypto_usage",
+              "function_name": "new",
+              "module_alias": "Vec"
+            },
+            {
+              "caller_func": "detect_weak_crypto_usage",
+              "function_name": "unwrap",
+              "module_alias": ""
+            },
+            {
+              "caller_func": "detect_weak_crypto_usage",
+              "function_name": "push",
+              "module_alias": "findings"
+            },
+            {
+              "caller_func": "detect_weak_crypto_usage",
+              "function_name": "to_string",
+              "module_alias": ""
+            },
+            {
+              "caller_func": "detect_weak_crypto_usage",
+              "function_name": "to_string",
+              "module_alias": ""
+            },
+            {
+              "caller_func": "detect_weak_crypto_usage",
+              "function_name": "to_string",
+              "module_alias": ""
+            },
+            {
+              "caller_func": "detect_weak_crypto_usage",
+              "function_name": "to_string",
+              "module_alias": ""
+            },
+            {
+              "caller_func": "detect_weak_crypto_usage",
+              "function_name": "to_string",
+              "module_alias": ""
+            },
+            {
+              "caller_func": "detect_weak_crypto_usage",
+              "function_name": "unwrap",
+              "module_alias": ""
+            },
+            {
+              "caller_func": "detect_weak_crypto_usage",
+              "function_name": "push",
+              "module_alias": "findings"
+            },
+            {
+              "caller_func": "detect_weak_crypto_usage",
+              "function_name": "to_string",
+              "module_alias": ""
+            },
+            {
+              "caller_func": "detect_weak_crypto_usage",
+              "function_name": "to_string",
+              "module_alias": ""
+            },
+            {
+              "caller_func": "detect_weak_crypto_usage",
+              "function_name": "to_string",
+              "module_alias": ""
+            },
+            {
+              "caller_func": "detect_weak_crypto_usage",
+              "function_name": "to_string",
+              "module_alias": ""
+            },
+            {
+              "caller_func": "detect_weak_crypto_usage",
+              "function_name": "to_string",
+              "module_alias": ""
+            },
+            {
+              "caller_func": "detect_weak_crypto_usage",
+              "function_name": "unwrap",
+              "module_alias": ""
+            },
+            {
+              "caller_func": "detect_weak_crypto_usage",
+              "function_name": "push",
+              "module_alias": "findings"
+            },
+            {
+              "caller_func": "detect_weak_crypto_usage",
+              "function_name": "to_string",
+              "module_alias": ""
+            },
+            {
+              "caller_func": "detect_weak_crypto_usage",
+              "function_name": "to_string",
+              "module_alias": ""
+            },
+            {
+              "caller_func": "detect_weak_crypto_usage",
+              "function_name": "to_string",
+              "module_alias": ""
+            },
+            {
+              "caller_func": "detect_weak_crypto_usage",
+              "function_name": "to_string",
+              "module_alias": ""
+            },
+            {
+              "caller_func": "detect_weak_crypto_usage",
+              "function_name": "to_string",
+              "module_alias": ""
+            },
+            {
+              "caller_func": "detect_weak_crypto_usage",
+              "function_name": "unwrap",
+              "module_alias": ""
+            },
+            {
+              "caller_func": "detect_weak_crypto_usage",
+              "function_name": "push",
+              "module_alias": "findings"
+            },
+            {
+              "caller_func": "detect_weak_crypto_usage",
+              "function_name": "to_string",
+              "module_alias": ""
+            },
+            {
+              "caller_func": "detect_weak_crypto_usage",
+              "function_name": "to_string",
+              "module_alias": ""
+            },
+            {
+              "caller_func": "detect_weak_crypto_usage",
+              "function_name": "to_string",
+              "module_alias": ""
+            },
+            {
+              "caller_func": "detect_weak_crypto_usage",
+              "function_name": "to_string",
+              "module_alias": ""
+            },
+            {
+              "caller_func": "detect_weak_crypto_usage",
+              "function_name": "to_string",
+              "module_alias": ""
+            }
+          ],
+          "function_name": "detect_weak_crypto_usage",
+          "inputs": [
+            "content"
+          ],
+          "module": "js_crypto_analyzer",
+          "outputs": [],
+          "source_file": ".\\src\\js_crypto_analyzer.rs"
+        },
+        {
+          "call_targets": [
+            "new",
+            "unwrap",
+            "push",
+            "to_string",
+            "to_string",
+            "to_string",
+            "to_string",
+            "to_string",
+            "Some",
+            "to_string"
+          ],
+          "category": "reconnaissance",
+          "description": "[PLACEHOLDER] detect_weak_random",
+          "external_calls": [
+            {
+              "caller_func": "detect_weak_random",
+              "function_name": "new",
+              "module_alias": "Vec"
+            },
+            {
+              "caller_func": "detect_weak_random",
+              "function_name": "unwrap",
+              "module_alias": ""
+            },
+            {
+              "caller_func": "detect_weak_random",
+              "function_name": "push",
+              "module_alias": "findings"
+            },
+            {
+              "caller_func": "detect_weak_random",
+              "function_name": "to_string",
+              "module_alias": ""
+            },
+            {
+              "caller_func": "detect_weak_random",
+              "function_name": "to_string",
+              "module_alias": ""
+            },
+            {
+              "caller_func": "detect_weak_random",
+              "function_name": "to_string",
+              "module_alias": ""
+            },
+            {
+              "caller_func": "detect_weak_random",
+              "function_name": "to_string",
+              "module_alias": ""
+            },
+            {
+              "caller_func": "detect_weak_random",
+              "function_name": "to_string",
+              "module_alias": ""
+            },
+            {
+              "caller_func": "detect_weak_random",
+              "function_name": "Some",
+              "module_alias": ""
+            },
+            {
+              "caller_func": "detect_weak_random",
+              "function_name": "to_string",
+              "module_alias": ""
+            }
+          ],
+          "function_name": "detect_weak_random",
+          "inputs": [
+            "content"
+          ],
+          "module": "js_crypto_analyzer",
+          "outputs": [],
+          "source_file": ".\\src\\js_crypto_analyzer.rs"
+        },
+        {
+          "call_targets": [
+            "new",
+            "push",
+            "to_string",
+            "to_string",
+            "to_string",
+            "to_string",
+            "to_string",
+            "Some",
+            "to_string",
+            "push",
+            "to_string",
+            "to_string",
+            "to_string",
+            "to_string",
+            "to_string"
+          ],
+          "category": "reconnaissance",
+          "description": "[PLACEHOLDER] detect_jwt_issues",
+          "external_calls": [
+            {
+              "caller_func": "detect_jwt_issues",
+              "function_name": "new",
+              "module_alias": "Vec"
+            },
+            {
+              "caller_func": "detect_jwt_issues",
+              "function_name": "push",
+              "module_alias": "findings"
+            },
+            {
+              "caller_func": "detect_jwt_issues",
+              "function_name": "to_string",
+              "module_alias": ""
+            },
+            {
+              "caller_func": "detect_jwt_issues",
+              "function_name": "to_string",
+              "module_alias": ""
+            },
+            {
+              "caller_func": "detect_jwt_issues",
+              "function_name": "to_string",
+              "module_alias": ""
+            },
+            {
+              "caller_func": "detect_jwt_issues",
+              "function_name": "to_string",
+              "module_alias": ""
+            },
+            {
+              "caller_func": "detect_jwt_issues",
+              "function_name": "to_string",
+              "module_alias": ""
+            },
+            {
+              "caller_func": "detect_jwt_issues",
+              "function_name": "Some",
+              "module_alias": ""
+            },
+            {
+              "caller_func": "detect_jwt_issues",
+              "function_name": "to_string",
+              "module_alias": ""
+            },
+            {
+              "caller_func": "detect_jwt_issues",
+              "function_name": "push",
+              "module_alias": "findings"
+            },
+            {
+              "caller_func": "detect_jwt_issues",
+              "function_name": "to_string",
+              "module_alias": ""
+            },
+            {
+              "caller_func": "detect_jwt_issues",
+              "function_name": "to_string",
+              "module_alias": ""
+            },
+            {
+              "caller_func": "detect_jwt_issues",
+              "function_name": "to_string",
+              "module_alias": ""
+            },
+            {
+              "caller_func": "detect_jwt_issues",
+              "function_name": "to_string",
+              "module_alias": ""
+            },
+            {
+              "caller_func": "detect_jwt_issues",
+              "function_name": "to_string",
+              "module_alias": ""
+            }
+          ],
+          "function_name": "detect_jwt_issues",
+          "inputs": [
+            "content"
+          ],
+          "module": "js_crypto_analyzer",
+          "outputs": [],
+          "source_file": ".\\src\\js_crypto_analyzer.rs"
+        },
+        {
+          "call_targets": [
+            "new",
+            "unwrap",
+            "push",
+            "to_string",
+            "to_string",
+            "to_string",
+            "to_string",
+            "to_string"
+          ],
+          "category": "reconnaissance",
+          "description": "[PLACEHOLDER] detect_insecure_storage",
+          "external_calls": [
+            {
+              "caller_func": "detect_insecure_storage",
+              "function_name": "new",
+              "module_alias": "Vec"
+            },
+            {
+              "caller_func": "detect_insecure_storage",
+              "function_name": "unwrap",
+              "module_alias": ""
+            },
+            {
+              "caller_func": "detect_insecure_storage",
+              "function_name": "push",
+              "module_alias": "findings"
+            },
+            {
+              "caller_func": "detect_insecure_storage",
+              "function_name": "to_string",
+              "module_alias": ""
+            },
+            {
+              "caller_func": "detect_insecure_storage",
+              "function_name": "to_string",
+              "module_alias": ""
+            },
+            {
+              "caller_func": "detect_insecure_storage",
+              "function_name": "to_string",
+              "module_alias": ""
+            },
+            {
+              "caller_func": "detect_insecure_storage",
+              "function_name": "to_string",
+              "module_alias": ""
+            },
+            {
+              "caller_func": "detect_insecure_storage",
+              "function_name": "to_string",
+              "module_alias": ""
+            }
+          ],
+          "function_name": "detect_insecure_storage",
+          "inputs": [
+            "content"
+          ],
+          "module": "js_crypto_analyzer",
+          "outputs": [],
+          "source_file": ".\\src\\js_crypto_analyzer.rs"
+        }
+      ]
+    },
+    "summary": {
+      "analysis": 3,
+      "other": 7,
+      "reconnaissance": 6
+    },
+    "total_flows": 16
+  },
+  "flow_chains": [],
+  "flows": [],
+  "functions": [
+    {
+      "call_targets": [
+        "new",
+        "starts_with",
+        "from_str",
+        "unwrap_or",
+        "extract_cookie_name",
+        "push",
+        "to_string",
+        "to_string",
+        "to_string",
+        "to_string",
+        "Some",
+        "clone",
+        "Some",
+        "to_string",
+        "push",
+        "to_string",
+        "to_string",
+        "to_string",
+        "to_string",
+        "Some",
+        "clone",
+        "Some",
+        "to_string",
+        "push",
+        "to_string",
+        "to_string",
+        "to_string",
+        "to_string",
+        "Some",
+        "Some",
+        "to_string"
+      ],
+      "category": "analysis",
+      "description": "[PLACEHOLDER] analyze_cookies",
+      "external_calls": [
+        {
+          "caller_func": "analyze_cookies",
+          "function_name": "new",
+          "module_alias": "Vec"
+        },
+        {
+          "caller_func": "analyze_cookies",
+          "function_name": "starts_with",
+          "module_alias": "url"
+        },
+        {
+          "caller_func": "analyze_cookies",
+          "function_name": "from_str",
+          "module_alias": "serde_json"
+        },
+        {
+          "caller_func": "analyze_cookies",
+          "function_name": "unwrap_or",
+          "module_alias": ""
+        },
+        {
+          "caller_func": "analyze_cookies",
+          "function_name": "extract_cookie_name",
+          "module_alias": ""
+        },
+        {
+          "caller_func": "analyze_cookies",
+          "function_name": "push",
+          "module_alias": "findings"
+        },
+        {
+          "caller_func": "analyze_cookies",
+          "function_name": "to_string",
+          "module_alias": ""
+        },
+        {
+          "caller_func": "analyze_cookies",
+          "function_name": "to_string",
+          "module_alias": ""
+        },
+        {
+          "caller_func": "analyze_cookies",
+          "function_name": "to_string",
+          "module_alias": ""
+        },
+        {
+          "caller_func": "analyze_cookies",
+          "function_name": "to_string",
+          "module_alias": ""
+        },
+        {
+          "caller_func": "analyze_cookies",
+          "function_name": "Some",
+          "module_alias": ""
+        },
+        {
+          "caller_func": "analyze_cookies",
+          "function_name": "clone",
+          "module_alias": "cookie_name"
+        },
+        {
+          "caller_func": "analyze_cookies",
+          "function_name": "Some",
+          "module_alias": ""
+        },
+        {
+          "caller_func": "analyze_cookies",
+          "function_name": "to_string",
+          "module_alias": "cookie_str"
+        },
+        {
+          "caller_func": "analyze_cookies",
+          "function_name": "push",
+          "module_alias": "findings"
+        },
+        {
+          "caller_func": "analyze_cookies",
+          "function_name": "to_string",
+          "module_alias": ""
+        },
+        {
+          "caller_func": "analyze_cookies",
+          "function_name": "to_string",
+          "module_alias": ""
+        },
+        {
+          "caller_func": "analyze_cookies",
+          "function_name": "to_string",
+          "module_alias": ""
+        },
+        {
+          "caller_func": "analyze_cookies",
+          "function_name": "to_string",
+          "module_alias": ""
+        },
+        {
+          "caller_func": "analyze_cookies",
+          "function_name": "Some",
+          "module_alias": ""
+        },
+        {
+          "caller_func": "analyze_cookies",
+          "function_name": "clone",
+          "module_alias": "cookie_name"
+        },
+        {
+          "caller_func": "analyze_cookies",
+          "function_name": "Some",
+          "module_alias": ""
+        },
+        {
+          "caller_func": "analyze_cookies",
+          "function_name": "to_string",
+          "module_alias": "cookie_str"
+        },
+        {
+          "caller_func": "analyze_cookies",
+          "function_name": "push",
+          "module_alias": "findings"
+        },
+        {
+          "caller_func": "analyze_cookies",
+          "function_name": "to_string",
+          "module_alias": ""
+        },
+        {
+          "caller_func": "analyze_cookies",
+          "function_name": "to_string",
+          "module_alias": ""
+        },
+        {
+          "caller_func": "analyze_cookies",
+          "function_name": "to_string",
+          "module_alias": ""
+        },
+        {
+          "caller_func": "analyze_cookies",
+          "function_name": "to_string",
+          "module_alias": ""
+        },
+        {
+          "caller_func": "analyze_cookies",
+          "function_name": "Some",
+          "module_alias": ""
+        },
+        {
+          "caller_func": "analyze_cookies",
+          "function_name": "Some",
+          "module_alias": ""
+        },
+        {
+          "caller_func": "analyze_cookies",
+          "function_name": "to_string",
+          "module_alias": "cookie_str"
+        }
+      ],
+      "function_name": "analyze_cookies",
+      "inputs": [
+        "cookies_json",
+        "url"
+      ],
+      "module": "cookie_analyzer",
+      "outputs": [],
+      "source_file": ".\\src\\cookie_analyzer.rs"
+    },
+    {
+      "call_targets": [
+        "to_string"
+      ],
+      "category": "other",
+      "description": "[PLACEHOLDER] extract_cookie_name",
+      "external_calls": [
+        {
+          "caller_func": "extract_cookie_name",
+          "function_name": "to_string",
+          "module_alias": ""
+        }
+      ],
+      "function_name": "extract_cookie_name",
+      "inputs": [
+        "cookie_str"
+      ],
+      "module": "cookie_analyzer",
+      "outputs": [],
+      "source_file": ".\\src\\cookie_analyzer.rs"
+    },
+    {
+      "call_targets": [
+        "to_lowercase",
+        "contains",
+        "contains",
+        "contains",
+        "contains",
+        "contains"
+      ],
+      "category": "other",
+      "description": "[PLACEHOLDER] is_sensitive_cookie",
+      "external_calls": [
+        {
+          "caller_func": "is_sensitive_cookie",
+          "function_name": "to_lowercase",
+          "module_alias": "name"
+        },
+        {
+          "caller_func": "is_sensitive_cookie",
+          "function_name": "contains",
+          "module_alias": "lower"
+        },
+        {
+          "caller_func": "is_sensitive_cookie",
+          "function_name": "contains",
+          "module_alias": "lower"
+        },
+        {
+          "caller_func": "is_sensitive_cookie",
+          "function_name": "contains",
+          "module_alias": "lower"
+        },
+        {
+          "caller_func": "is_sensitive_cookie",
+          "function_name": "contains",
+          "module_alias": "lower"
+        },
+        {
+          "caller_func": "is_sensitive_cookie",
+          "function_name": "contains",
+          "module_alias": "lower"
+        }
+      ],
+      "function_name": "is_sensitive_cookie",
+      "inputs": [
+        "name"
+      ],
+      "module": "cookie_analyzer",
+      "outputs": [],
+      "source_file": ".\\src\\cookie_analyzer.rs"
+    },
+    {
+      "call_targets": [
+        "new",
+        "starts_with",
+        "from_str",
+        "as_object",
+        "collect",
+        "push",
+        "to_string",
+        "to_string",
+        "to_string",
+        "to_string",
+        "to_string",
+        "Some",
+        "clone",
+        "push",
+        "to_string",
+        "to_string",
+        "to_string",
+        "to_string",
+        "Some",
+        "clone",
+        "push",
+        "to_string",
+        "to_string",
+        "to_string",
+        "to_string",
+        "to_string",
+        "Some",
+        "clone",
+        "push",
+        "to_string",
+        "to_string",
+        "to_string",
+        "to_string",
+        "to_string",
+        "push",
+        "to_string",
+        "to_string",
+        "to_string",
+        "to_string",
+        "to_string",
+        "Some",
+        "clone",
+        "push",
+        "to_string",
+        "to_string",
+        "to_string",
+        "to_string",
+        "to_string",
+        "Some",
+        "clone",
+        "push",
+        "to_string",
+        "to_string",
+        "to_string",
+        "to_string",
+        "to_string",
+        "push",
+        "to_string",
+        "to_string",
+        "to_string",
+        "to_string",
+        "to_string"
+      ],
+      "category": "analysis",
+      "description": "[PLACEHOLDER] analyze_headers",
+      "external_calls": [
+        {
+          "caller_func": "analyze_headers",
+          "function_name": "new",
+          "module_alias": "Vec"
+        },
+        {
+          "caller_func": "analyze_headers",
+          "function_name": "starts_with",
+          "module_alias": "url"
+        },
+        {
+          "caller_func": "analyze_headers",
+          "function_name": "from_str",
+          "module_alias": "serde_json"
+        },
+        {
+          "caller_func": "analyze_headers",
+          "function_name": "as_object",
+          "module_alias": "headers"
+        },
+        {
+          "caller_func": "analyze_headers",
+          "function_name": "collect",
+          "module_alias": ""
+        },
+        {
+          "caller_func": "analyze_headers",
+          "function_name": "push",
+          "module_alias": "findings"
+        },
+        {
+          "caller_func": "analyze_headers",
+          "function_name": "to_string",
+          "module_alias": ""
+        },
+        {
+          "caller_func": "analyze_headers",
+          "function_name": "to_string",
+          "module_alias": ""
+        },
+        {
+          "caller_func": "analyze_headers",
+          "function_name": "to_string",
+          "module_alias": ""
+        },
+        {
+          "caller_func": "analyze_headers",
+          "function_name": "to_string",
+          "module_alias": ""
+        },
+        {
+          "caller_func": "analyze_headers",
+          "function_name": "to_string",
+          "module_alias": ""
+        },
+        {
+          "caller_func": "analyze_headers",
+          "function_name": "Some",
+          "module_alias": ""
+        },
+        {
+          "caller_func": "analyze_headers",
+          "function_name": "clone",
+          "module_alias": "hsts"
+        },
+        {
+          "caller_func": "analyze_headers",
+          "function_name": "push",
+          "module_alias": "findings"
+        },
+        {
+          "caller_func": "analyze_headers",
+          "function_name": "to_string",
+          "module_alias": ""
+        },
+        {
+          "caller_func": "analyze_headers",
+          "function_name": "to_string",
+          "module_alias": ""
+        },
+        {
+          "caller_func": "analyze_headers",
+          "function_name": "to_string",
+          "module_alias": ""
+        },
+        {
+          "caller_func": "analyze_headers",
+          "function_name": "to_string",
+          "module_alias": ""
+        },
+        {
+          "caller_func": "analyze_headers",
+          "function_name": "Some",
+          "module_alias": ""
+        },
+        {
+          "caller_func": "analyze_headers",
+          "function_name": "clone",
+          "module_alias": "hsts"
+        },
+        {
+          "caller_func": "analyze_headers",
+          "function_name": "push",
+          "module_alias": "findings"
+        },
+        {
+          "caller_func": "analyze_headers",
+          "function_name": "to_string",
+          "module_alias": ""
+        },
+        {
+          "caller_func": "analyze_headers",
+          "function_name": "to_string",
+          "module_alias": ""
+        },
+        {
+          "caller_func": "analyze_headers",
+          "function_name": "to_string",
+          "module_alias": ""
+        },
+        {
+          "caller_func": "analyze_headers",
+          "function_name": "to_string",
+          "module_alias": ""
+        },
+        {
+          "caller_func": "analyze_headers",
+          "function_name": "to_string",
+          "module_alias": ""
+        },
+        {
+          "caller_func": "analyze_headers",
+          "function_name": "Some",
+          "module_alias": ""
+        },
+        {
+          "caller_func": "analyze_headers",
+          "function_name": "clone",
+          "module_alias": "hsts"
+        },
+        {
+          "caller_func": "analyze_headers",
+          "function_name": "push",
+          "module_alias": "findings"
+        },
+        {
+          "caller_func": "analyze_headers",
+          "function_name": "to_string",
+          "module_alias": ""
+        },
+        {
+          "caller_func": "analyze_headers",
+          "function_name": "to_string",
+          "module_alias": ""
+        },
+        {
+          "caller_func": "analyze_headers",
+          "function_name": "to_string",
+          "module_alias": ""
+        },
+        {
+          "caller_func": "analyze_headers",
+          "function_name": "to_string",
+          "module_alias": ""
+        },
+        {
+          "caller_func": "analyze_headers",
+          "function_name": "to_string",
+          "module_alias": ""
+        },
+        {
+          "caller_func": "analyze_headers",
+          "function_name": "push",
+          "module_alias": "findings"
+        },
+        {
+          "caller_func": "analyze_headers",
+          "function_name": "to_string",
+          "module_alias": ""
+        },
+        {
+          "caller_func": "analyze_headers",
+          "function_name": "to_string",
+          "module_alias": ""
+        },
+        {
+          "caller_func": "analyze_headers",
+          "function_name": "to_string",
+          "module_alias": ""
+        },
+        {
+          "caller_func": "analyze_headers",
+          "function_name": "to_string",
+          "module_alias": ""
+        },
+        {
+          "caller_func": "analyze_headers",
+          "function_name": "to_string",
+          "module_alias": ""
+        },
+        {
+          "caller_func": "analyze_headers",
+          "function_name": "Some",
+          "module_alias": ""
+        },
+        {
+          "caller_func": "analyze_headers",
+          "function_name": "clone",
+          "module_alias": "csp"
+        },
+        {
+          "caller_func": "analyze_headers",
+          "function_name": "push",
+          "module_alias": "findings"
+        },
+        {
+          "caller_func": "analyze_headers",
+          "function_name": "to_string",
+          "module_alias": ""
+        },
+        {
+          "caller_func": "analyze_headers",
+          "function_name": "to_string",
+          "module_alias": ""
+        },
+        {
+          "caller_func": "analyze_headers",
+          "function_name": "to_string",
+          "module_alias": ""
+        },
+        {
+          "caller_func": "analyze_headers",
+          "function_name": "to_string",
+          "module_alias": ""
+        },
+        {
+          "caller_func": "analyze_headers",
+          "function_name": "to_string",
+          "module_alias": ""
+        },
+        {
+          "caller_func": "analyze_headers",
+          "function_name": "Some",
+          "module_alias": ""
+        },
+        {
+          "caller_func": "analyze_headers",
+          "function_name": "clone",
+          "module_alias": "csp"
+        },
+        {
+          "caller_func": "analyze_headers",
+          "function_name": "push",
+          "module_alias": "findings"
+        },
+        {
+          "caller_func": "analyze_headers",
+          "function_name": "to_string",
+          "module_alias": ""
+        },
+        {
+          "caller_func": "analyze_headers",
+          "function_name": "to_string",
+          "module_alias": ""
+        },
+        {
+          "caller_func": "analyze_headers",
+          "function_name": "to_string",
+          "module_alias": ""
+        },
+        {
+          "caller_func": "analyze_headers",
+          "function_name": "to_string",
+          "module_alias": ""
+        },
+        {
+          "caller_func": "analyze_headers",
+          "function_name": "to_string",
+          "module_alias": ""
+        },
+        {
+          "caller_func": "analyze_headers",
+          "function_name": "push",
+          "module_alias": "findings"
+        },
+        {
+          "caller_func": "analyze_headers",
+          "function_name": "to_string",
+          "module_alias": ""
+        },
+        {
+          "caller_func": "analyze_headers",
+          "function_name": "to_string",
+          "module_alias": ""
+        },
+        {
+          "caller_func": "analyze_headers",
+          "function_name": "to_string",
+          "module_alias": ""
+        },
+        {
+          "caller_func": "analyze_headers",
+          "function_name": "to_string",
+          "module_alias": ""
+        },
+        {
+          "caller_func": "analyze_headers",
+          "function_name": "to_string",
+          "module_alias": ""
+        }
+      ],
+      "function_name": "analyze_headers",
+      "inputs": [
+        "headers_json",
+        "url"
+      ],
+      "module": "header_analyzer",
+      "outputs": [],
+      "source_file": ".\\src\\header_analyzer.rs"
+    },
+    {
+      "call_targets": [
+        "split",
+        "trim",
+        "Some"
+      ],
+      "category": "other",
+      "description": "[PLACEHOLDER] extract_max_age",
+      "external_calls": [
+        {
+          "caller_func": "extract_max_age",
+          "function_name": "split",
+          "module_alias": "hsts"
+        },
+        {
+          "caller_func": "extract_max_age",
+          "function_name": "trim",
+          "module_alias": "part"
+        },
+        {
+          "caller_func": "extract_max_age",
+          "function_name": "Some",
+          "module_alias": ""
+        }
+      ],
+      "function_name": "extract_max_age",
+      "inputs": [
+        "hsts"
+      ],
+      "module": "header_analyzer",
+      "outputs": [],
+      "source_file": ".\\src\\header_analyzer.rs"
+    },
+    {
+      "call_targets": [
+        "new",
+        "extend",
+        "detect_hardcoded_keys",
+        "extend",
+        "detect_weak_crypto_usage",
+        "extend",
+        "detect_weak_random",
+        "extend",
+        "detect_jwt_issues",
+        "extend",
+        "detect_insecure_storage"
+      ],
+      "category": "reconnaissance",
+      "description": "[PLACEHOLDER] scan_javascript",
+      "external_calls": [
+        {
+          "caller_func": "scan_javascript",
+          "function_name": "new",
+          "module_alias": "Vec"
+        },
+        {
+          "caller_func": "scan_javascript",
+          "function_name": "extend",
+          "module_alias": "findings"
+        },
+        {
+          "caller_func": "scan_javascript",
+          "function_name": "detect_hardcoded_keys",
+          "module_alias": ""
+        },
+        {
+          "caller_func": "scan_javascript",
+          "function_name": "extend",
+          "module_alias": "findings"
+        },
+        {
+          "caller_func": "scan_javascript",
+          "function_name": "detect_weak_crypto_usage",
+          "module_alias": ""
+        },
+        {
+          "caller_func": "scan_javascript",
+          "function_name": "extend",
+          "module_alias": "findings"
+        },
+        {
+          "caller_func": "scan_javascript",
+          "function_name": "detect_weak_random",
+          "module_alias": ""
+        },
+        {
+          "caller_func": "scan_javascript",
+          "function_name": "extend",
+          "module_alias": "findings"
+        },
+        {
+          "caller_func": "scan_javascript",
+          "function_name": "detect_jwt_issues",
+          "module_alias": ""
+        },
+        {
+          "caller_func": "scan_javascript",
+          "function_name": "extend",
+          "module_alias": "findings"
+        },
+        {
+          "caller_func": "scan_javascript",
+          "function_name": "detect_insecure_storage",
+          "module_alias": ""
+        }
+      ],
+      "function_name": "scan_javascript",
+      "inputs": [
+        "content"
+      ],
+      "module": "js_crypto_analyzer",
+      "outputs": [],
+      "source_file": ".\\src\\js_crypto_analyzer.rs"
+    },
+    {
+      "call_targets": [
+        "new",
+        "unwrap",
+        "captures_iter",
+        "as_str",
+        "contains",
+        "push",
+        "to_string",
+        "to_string",
+        "to_string",
+        "Some",
+        "Some",
+        "mask_key",
+        "unwrap",
+        "find_iter",
+        "as_str",
+        "push",
+        "to_string",
+        "to_string",
+        "to_string",
+        "to_string",
+        "to_string",
+        "Some",
+        "Some",
+        "mask_key",
+        "unwrap",
+        "find_iter",
+        "as_str",
+        "push",
+        "to_string",
+        "to_string",
+        "to_string",
+        "to_string",
+        "to_string",
+        "Some",
+        "Some",
+        "mask_key",
+        "unwrap",
+        "captures_iter",
+        "as_str",
+        "push",
+        "to_string",
+        "to_string",
+        "to_string",
+        "to_string",
+        "to_string",
+        "Some",
+        "Some",
+        "mask_key"
+      ],
+      "category": "reconnaissance",
+      "description": "[PLACEHOLDER] detect_hardcoded_keys",
+      "external_calls": [
+        {
+          "caller_func": "detect_hardcoded_keys",
+          "function_name": "new",
+          "module_alias": "Vec"
+        },
+        {
+          "caller_func": "detect_hardcoded_keys",
+          "function_name": "unwrap",
+          "module_alias": ""
+        },
+        {
+          "caller_func": "detect_hardcoded_keys",
+          "function_name": "captures_iter",
+          "module_alias": "stripe_regex"
+        },
+        {
+          "caller_func": "detect_hardcoded_keys",
+          "function_name": "as_str",
+          "module_alias": ""
+        },
+        {
+          "caller_func": "detect_hardcoded_keys",
+          "function_name": "contains",
+          "module_alias": "key"
+        },
+        {
+          "caller_func": "detect_hardcoded_keys",
+          "function_name": "push",
+          "module_alias": "findings"
+        },
+        {
+          "caller_func": "detect_hardcoded_keys",
+          "function_name": "to_string",
+          "module_alias": ""
+        },
+        {
+          "caller_func": "detect_hardcoded_keys",
+          "function_name": "to_string",
+          "module_alias": ""
+        },
+        {
+          "caller_func": "detect_hardcoded_keys",
+          "function_name": "to_string",
+          "module_alias": ""
+        },
+        {
+          "caller_func": "detect_hardcoded_keys",
+          "function_name": "Some",
+          "module_alias": ""
+        },
+        {
+          "caller_func": "detect_hardcoded_keys",
+          "function_name": "Some",
+          "module_alias": ""
+        },
+        {
+          "caller_func": "detect_hardcoded_keys",
+          "function_name": "mask_key",
+          "module_alias": ""
+        },
+        {
+          "caller_func": "detect_hardcoded_keys",
+          "function_name": "unwrap",
+          "module_alias": ""
+        },
+        {
+          "caller_func": "detect_hardcoded_keys",
+          "function_name": "find_iter",
+          "module_alias": "aws_regex"
+        },
+        {
+          "caller_func": "detect_hardcoded_keys",
+          "function_name": "as_str",
+          "module_alias": "mat"
+        },
+        {
+          "caller_func": "detect_hardcoded_keys",
+          "function_name": "push",
+          "module_alias": "findings"
+        },
+        {
+          "caller_func": "detect_hardcoded_keys",
+          "function_name": "to_string",
+          "module_alias": ""
+        },
+        {
+          "caller_func": "detect_hardcoded_keys",
+          "function_name": "to_string",
+          "module_alias": ""
+        },
+        {
+          "caller_func": "detect_hardcoded_keys",
+          "function_name": "to_string",
+          "module_alias": ""
+        },
+        {
+          "caller_func": "detect_hardcoded_keys",
+          "function_name": "to_string",
+          "module_alias": ""
+        },
+        {
+          "caller_func": "detect_hardcoded_keys",
+          "function_name": "to_string",
+          "module_alias": ""
+        },
+        {
+          "caller_func": "detect_hardcoded_keys",
+          "function_name": "Some",
+          "module_alias": ""
+        },
+        {
+          "caller_func": "detect_hardcoded_keys",
+          "function_name": "Some",
+          "module_alias": ""
+        },
+        {
+          "caller_func": "detect_hardcoded_keys",
+          "function_name": "mask_key",
+          "module_alias": ""
+        },
+        {
+          "caller_func": "detect_hardcoded_keys",
+          "function_name": "unwrap",
+          "module_alias": ""
+        },
+        {
+          "caller_func": "detect_hardcoded_keys",
+          "function_name": "find_iter",
+          "module_alias": "google_regex"
+        },
+        {
+          "caller_func": "detect_hardcoded_keys",
+          "function_name": "as_str",
+          "module_alias": "mat"
+        },
+        {
+          "caller_func": "detect_hardcoded_keys",
+          "function_name": "push",
+          "module_alias": "findings"
+        },
+        {
+          "caller_func": "detect_hardcoded_keys",
+          "function_name": "to_string",
+          "module_alias": ""
+        },
+        {
+          "caller_func": "detect_hardcoded_keys",
+          "function_name": "to_string",
+          "module_alias": ""
+        },
+        {
+          "caller_func": "detect_hardcoded_keys",
+          "function_name": "to_string",
+          "module_alias": ""
+        },
+        {
+          "caller_func": "detect_hardcoded_keys",
+          "function_name": "to_string",
+          "module_alias": ""
+        },
+        {
+          "caller_func": "detect_hardcoded_keys",
+          "function_name": "to_string",
+          "module_alias": ""
+        },
+        {
+          "caller_func": "detect_hardcoded_keys",
+          "function_name": "Some",
+          "module_alias": ""
+        },
+        {
+          "caller_func": "detect_hardcoded_keys",
+          "function_name": "Some",
+          "module_alias": ""
+        },
+        {
+          "caller_func": "detect_hardcoded_keys",
+          "function_name": "mask_key",
+          "module_alias": ""
+        },
+        {
+          "caller_func": "detect_hardcoded_keys",
+          "function_name": "unwrap",
+          "module_alias": ""
+        },
+        {
+          "caller_func": "detect_hardcoded_keys",
+          "function_name": "captures_iter",
+          "module_alias": "generic_regex"
+        },
+        {
+          "caller_func": "detect_hardcoded_keys",
+          "function_name": "as_str",
+          "module_alias": "key_match"
+        },
+        {
+          "caller_func": "detect_hardcoded_keys",
+          "function_name": "push",
+          "module_alias": "findings"
+        },
+        {
+          "caller_func": "detect_hardcoded_keys",
+          "function_name": "to_string",
+          "module_alias": ""
+        },
+        {
+          "caller_func": "detect_hardcoded_keys",
+          "function_name": "to_string",
+          "module_alias": ""
+        },
+        {
+          "caller_func": "detect_hardcoded_keys",
+          "function_name": "to_string",
+          "module_alias": ""
+        },
+        {
+          "caller_func": "detect_hardcoded_keys",
+          "function_name": "to_string",
+          "module_alias": ""
+        },
+        {
+          "caller_func": "detect_hardcoded_keys",
+          "function_name": "to_string",
+          "module_alias": ""
+        },
+        {
+          "caller_func": "detect_hardcoded_keys",
+          "function_name": "Some",
+          "module_alias": ""
+        },
+        {
+          "caller_func": "detect_hardcoded_keys",
+          "function_name": "Some",
+          "module_alias": ""
+        },
+        {
+          "caller_func": "detect_hardcoded_keys",
+          "function_name": "mask_key",
+          "module_alias": ""
+        }
+      ],
+      "function_name": "detect_hardcoded_keys",
+      "inputs": [
+        "content"
+      ],
+      "module": "js_crypto_analyzer",
+      "outputs": [],
+      "source_file": ".\\src\\js_crypto_analyzer.rs"
+    },
+    {
+      "call_targets": [
+        "new",
+        "unwrap",
+        "push",
+        "to_string",
+        "to_string",
+        "to_string",
+        "to_string",
+        "to_string",
+        "unwrap",
+        "push",
+        "to_string",
+        "to_string",
+        "to_string",
+        "to_string",
+        "to_string",
+        "unwrap",
+        "push",
+        "to_string",
+        "to_string",
+        "to_string",
+        "to_string",
+        "to_string",
+        "unwrap",
+        "push",
+        "to_string",
+        "to_string",
+        "to_string",
+        "to_string",
+        "to_string"
+      ],
+      "category": "reconnaissance",
+      "description": "[PLACEHOLDER] detect_weak_crypto_usage",
+      "external_calls": [
+        {
+          "caller_func": "detect_weak_crypto_usage",
+          "function_name": "new",
+          "module_alias": "Vec"
+        },
+        {
+          "caller_func": "detect_weak_crypto_usage",
+          "function_name": "unwrap",
+          "module_alias": ""
+        },
+        {
+          "caller_func": "detect_weak_crypto_usage",
+          "function_name": "push",
+          "module_alias": "findings"
+        },
+        {
+          "caller_func": "detect_weak_crypto_usage",
+          "function_name": "to_string",
+          "module_alias": ""
+        },
+        {
+          "caller_func": "detect_weak_crypto_usage",
+          "function_name": "to_string",
+          "module_alias": ""
+        },
+        {
+          "caller_func": "detect_weak_crypto_usage",
+          "function_name": "to_string",
+          "module_alias": ""
+        },
+        {
+          "caller_func": "detect_weak_crypto_usage",
+          "function_name": "to_string",
+          "module_alias": ""
+        },
+        {
+          "caller_func": "detect_weak_crypto_usage",
+          "function_name": "to_string",
+          "module_alias": ""
+        },
+        {
+          "caller_func": "detect_weak_crypto_usage",
+          "function_name": "unwrap",
+          "module_alias": ""
+        },
+        {
+          "caller_func": "detect_weak_crypto_usage",
+          "function_name": "push",
+          "module_alias": "findings"
+        },
+        {
+          "caller_func": "detect_weak_crypto_usage",
+          "function_name": "to_string",
+          "module_alias": ""
+        },
+        {
+          "caller_func": "detect_weak_crypto_usage",
+          "function_name": "to_string",
+          "module_alias": ""
+        },
+        {
+          "caller_func": "detect_weak_crypto_usage",
+          "function_name": "to_string",
+          "module_alias": ""
+        },
+        {
+          "caller_func": "detect_weak_crypto_usage",
+          "function_name": "to_string",
+          "module_alias": ""
+        },
+        {
+          "caller_func": "detect_weak_crypto_usage",
+          "function_name": "to_string",
+          "module_alias": ""
+        },
+        {
+          "caller_func": "detect_weak_crypto_usage",
+          "function_name": "unwrap",
+          "module_alias": ""
+        },
+        {
+          "caller_func": "detect_weak_crypto_usage",
+          "function_name": "push",
+          "module_alias": "findings"
+        },
+        {
+          "caller_func": "detect_weak_crypto_usage",
+          "function_name": "to_string",
+          "module_alias": ""
+        },
+        {
+          "caller_func": "detect_weak_crypto_usage",
+          "function_name": "to_string",
+          "module_alias": ""
+        },
+        {
+          "caller_func": "detect_weak_crypto_usage",
+          "function_name": "to_string",
+          "module_alias": ""
+        },
+        {
+          "caller_func": "detect_weak_crypto_usage",
+          "function_name": "to_string",
+          "module_alias": ""
+        },
+        {
+          "caller_func": "detect_weak_crypto_usage",
+          "function_name": "to_string",
+          "module_alias": ""
+        },
+        {
+          "caller_func": "detect_weak_crypto_usage",
+          "function_name": "unwrap",
+          "module_alias": ""
+        },
+        {
+          "caller_func": "detect_weak_crypto_usage",
+          "function_name": "push",
+          "module_alias": "findings"
+        },
+        {
+          "caller_func": "detect_weak_crypto_usage",
+          "function_name": "to_string",
+          "module_alias": ""
+        },
+        {
+          "caller_func": "detect_weak_crypto_usage",
+          "function_name": "to_string",
+          "module_alias": ""
+        },
+        {
+          "caller_func": "detect_weak_crypto_usage",
+          "function_name": "to_string",
+          "module_alias": ""
+        },
+        {
+          "caller_func": "detect_weak_crypto_usage",
+          "function_name": "to_string",
+          "module_alias": ""
+        },
+        {
+          "caller_func": "detect_weak_crypto_usage",
+          "function_name": "to_string",
+          "module_alias": ""
+        }
+      ],
+      "function_name": "detect_weak_crypto_usage",
+      "inputs": [
+        "content"
+      ],
+      "module": "js_crypto_analyzer",
+      "outputs": [],
+      "source_file": ".\\src\\js_crypto_analyzer.rs"
+    },
+    {
+      "call_targets": [
+        "new",
+        "unwrap",
+        "push",
+        "to_string",
+        "to_string",
+        "to_string",
+        "to_string",
+        "to_string",
+        "Some",
+        "to_string"
+      ],
+      "category": "reconnaissance",
+      "description": "[PLACEHOLDER] detect_weak_random",
+      "external_calls": [
+        {
+          "caller_func": "detect_weak_random",
+          "function_name": "new",
+          "module_alias": "Vec"
+        },
+        {
+          "caller_func": "detect_weak_random",
+          "function_name": "unwrap",
+          "module_alias": ""
+        },
+        {
+          "caller_func": "detect_weak_random",
+          "function_name": "push",
+          "module_alias": "findings"
+        },
+        {
+          "caller_func": "detect_weak_random",
+          "function_name": "to_string",
+          "module_alias": ""
+        },
+        {
+          "caller_func": "detect_weak_random",
+          "function_name": "to_string",
+          "module_alias": ""
+        },
+        {
+          "caller_func": "detect_weak_random",
+          "function_name": "to_string",
+          "module_alias": ""
+        },
+        {
+          "caller_func": "detect_weak_random",
+          "function_name": "to_string",
+          "module_alias": ""
+        },
+        {
+          "caller_func": "detect_weak_random",
+          "function_name": "to_string",
+          "module_alias": ""
+        },
+        {
+          "caller_func": "detect_weak_random",
+          "function_name": "Some",
+          "module_alias": ""
+        },
+        {
+          "caller_func": "detect_weak_random",
+          "function_name": "to_string",
+          "module_alias": ""
+        }
+      ],
+      "function_name": "detect_weak_random",
+      "inputs": [
+        "content"
+      ],
+      "module": "js_crypto_analyzer",
+      "outputs": [],
+      "source_file": ".\\src\\js_crypto_analyzer.rs"
+    },
+    {
+      "call_targets": [
+        "new",
+        "push",
+        "to_string",
+        "to_string",
+        "to_string",
+        "to_string",
+        "to_string",
+        "Some",
+        "to_string",
+        "push",
+        "to_string",
+        "to_string",
+        "to_string",
+        "to_string",
+        "to_string"
+      ],
+      "category": "reconnaissance",
+      "description": "[PLACEHOLDER] detect_jwt_issues",
+      "external_calls": [
+        {
+          "caller_func": "detect_jwt_issues",
+          "function_name": "new",
+          "module_alias": "Vec"
+        },
+        {
+          "caller_func": "detect_jwt_issues",
+          "function_name": "push",
+          "module_alias": "findings"
+        },
+        {
+          "caller_func": "detect_jwt_issues",
+          "function_name": "to_string",
+          "module_alias": ""
+        },
+        {
+          "caller_func": "detect_jwt_issues",
+          "function_name": "to_string",
+          "module_alias": ""
+        },
+        {
+          "caller_func": "detect_jwt_issues",
+          "function_name": "to_string",
+          "module_alias": ""
+        },
+        {
+          "caller_func": "detect_jwt_issues",
+          "function_name": "to_string",
+          "module_alias": ""
+        },
+        {
+          "caller_func": "detect_jwt_issues",
+          "function_name": "to_string",
+          "module_alias": ""
+        },
+        {
+          "caller_func": "detect_jwt_issues",
+          "function_name": "Some",
+          "module_alias": ""
+        },
+        {
+          "caller_func": "detect_jwt_issues",
+          "function_name": "to_string",
+          "module_alias": ""
+        },
+        {
+          "caller_func": "detect_jwt_issues",
+          "function_name": "push",
+          "module_alias": "findings"
+        },
+        {
+          "caller_func": "detect_jwt_issues",
+          "function_name": "to_string",
+          "module_alias": ""
+        },
+        {
+          "caller_func": "detect_jwt_issues",
+          "function_name": "to_string",
+          "module_alias": ""
+        },
+        {
+          "caller_func": "detect_jwt_issues",
+          "function_name": "to_string",
+          "module_alias": ""
+        },
+        {
+          "caller_func": "detect_jwt_issues",
+          "function_name": "to_string",
+          "module_alias": ""
+        },
+        {
+          "caller_func": "detect_jwt_issues",
+          "function_name": "to_string",
+          "module_alias": ""
+        }
+      ],
+      "function_name": "detect_jwt_issues",
+      "inputs": [
+        "content"
+      ],
+      "module": "js_crypto_analyzer",
+      "outputs": [],
+      "source_file": ".\\src\\js_crypto_analyzer.rs"
+    },
+    {
+      "call_targets": [
+        "new",
+        "unwrap",
+        "push",
+        "to_string",
+        "to_string",
+        "to_string",
+        "to_string",
+        "to_string"
+      ],
+      "category": "reconnaissance",
+      "description": "[PLACEHOLDER] detect_insecure_storage",
+      "external_calls": [
+        {
+          "caller_func": "detect_insecure_storage",
+          "function_name": "new",
+          "module_alias": "Vec"
+        },
+        {
+          "caller_func": "detect_insecure_storage",
+          "function_name": "unwrap",
+          "module_alias": ""
+        },
+        {
+          "caller_func": "detect_insecure_storage",
+          "function_name": "push",
+          "module_alias": "findings"
+        },
+        {
+          "caller_func": "detect_insecure_storage",
+          "function_name": "to_string",
+          "module_alias": ""
+        },
+        {
+          "caller_func": "detect_insecure_storage",
+          "function_name": "to_string",
+          "module_alias": ""
+        },
+        {
+          "caller_func": "detect_insecure_storage",
+          "function_name": "to_string",
+          "module_alias": ""
+        },
+        {
+          "caller_func": "detect_insecure_storage",
+          "function_name": "to_string",
+          "module_alias": ""
+        },
+        {
+          "caller_func": "detect_insecure_storage",
+          "function_name": "to_string",
+          "module_alias": ""
+        }
+      ],
+      "function_name": "detect_insecure_storage",
+      "inputs": [
+        "content"
+      ],
+      "module": "js_crypto_analyzer",
+      "outputs": [],
+      "source_file": ".\\src\\js_crypto_analyzer.rs"
+    },
+    {
+      "call_targets": [
+        "count"
+      ],
+      "category": "other",
+      "description": "[PLACEHOLDER] find_line_number",
+      "external_calls": [
+        {
+          "caller_func": "find_line_number",
+          "function_name": "count",
+          "module_alias": ""
+        }
+      ],
+      "function_name": "find_line_number",
+      "inputs": [
+        "content",
+        "search"
+      ],
+      "module": "js_crypto_analyzer",
+      "outputs": [],
+      "source_file": ".\\src\\js_crypto_analyzer.rs"
+    },
+    {
+      "call_targets": [
+        "to_string"
+      ],
+      "category": "other",
+      "description": "[PLACEHOLDER] mask_key",
+      "external_calls": [
+        {
+          "caller_func": "mask_key",
+          "function_name": "to_string",
+          "module_alias": ""
+        }
+      ],
+      "function_name": "mask_key",
+      "inputs": [
+        "key"
+      ],
+      "module": "js_crypto_analyzer",
+      "outputs": [],
+      "source_file": ".\\src\\js_crypto_analyzer.rs"
+    },
+    {
+      "call_targets": [
+        "len",
+        "as_str"
+      ],
+      "category": "other",
+      "description": "[PLACEHOLDER] Summary::from_findings",
+      "external_calls": [
+        {
+          "caller_func": "Summary::from_findings",
+          "function_name": "len",
+          "module_alias": "findings"
+        },
+        {
+          "caller_func": "Summary::from_findings",
+          "function_name": "as_str",
+          "module_alias": ""
+        }
+      ],
+      "function_name": "Summary::from_findings",
+      "inputs": [],
+      "module": "main",
+      "outputs": [],
+      "source_file": ".\\src\\main.rs"
+    },
+    {
+      "call_targets": [
+        "parse",
+        "scan_javascript",
+        "to_string",
+        "unwrap_or_else",
+        "to_string",
+        "from_findings",
+        "analyze_tls",
+        "to_string",
+        "from_findings",
+        "analyze_cookies",
+        "to_string",
+        "from_findings",
+        "analyze_headers",
+        "to_string",
+        "from_findings",
+        "to_string_pretty"
+      ],
+      "category": "other",
+      "description": "[PLACEHOLDER] main",
+      "external_calls": [
+        {
+          "caller_func": "main",
+          "function_name": "parse",
+          "module_alias": "Cli"
+        },
+        {
+          "caller_func": "main",
+          "function_name": "scan_javascript",
+          "module_alias": "js_crypto_analyzer"
+        },
+        {
+          "caller_func": "main",
+          "function_name": "to_string",
+          "module_alias": ""
+        },
+        {
+          "caller_func": "main",
+          "function_name": "unwrap_or_else",
+          "module_alias": "url"
+        },
+        {
+          "caller_func": "main",
+          "function_name": "to_string",
+          "module_alias": ""
+        },
+        {
+          "caller_func": "main",
+          "function_name": "from_findings",
+          "module_alias": "Summary"
+        },
+        {
+          "caller_func": "main",
+          "function_name": "analyze_tls",
+          "module_alias": "tls_analyzer"
+        },
+        {
+          "caller_func": "main",
+          "function_name": "to_string",
+          "module_alias": ""
+        },
+        {
+          "caller_func": "main",
+          "function_name": "from_findings",
+          "module_alias": "Summary"
+        },
+        {
+          "caller_func": "main",
+          "function_name": "analyze_cookies",
+          "module_alias": "cookie_analyzer"
+        },
+        {
+          "caller_func": "main",
+          "function_name": "to_string",
+          "module_alias": ""
+        },
+        {
+          "caller_func": "main",
+          "function_name": "from_findings",
+          "module_alias": "Summary"
+        },
+        {
+          "caller_func": "main",
+          "function_name": "analyze_headers",
+          "module_alias": "header_analyzer"
+        },
+        {
+          "caller_func": "main",
+          "function_name": "to_string",
+          "module_alias": ""
+        },
+        {
+          "caller_func": "main",
+          "function_name": "from_findings",
+          "module_alias": "Summary"
+        },
+        {
+          "caller_func": "main",
+          "function_name": "to_string_pretty",
+          "module_alias": "serde_json"
+        }
+      ],
+      "function_name": "main",
+      "inputs": [],
+      "module": "main",
+      "outputs": [],
+      "source_file": ".\\src\\main.rs"
+    },
+    {
+      "call_targets": [
+        "new",
+        "empty",
+        "extend",
+        "cloned",
+        "with_no_client_auth",
+        "from",
+        "new",
+        "try_from",
+        "to_owned",
+        "push",
+        "to_string",
+        "to_string",
+        "to_string",
+        "to_string",
+        "to_string",
+        "Some",
+        "to_string",
+        "try_from",
+        "to_string",
+        "to_owned",
+        "push",
+        "to_string",
+        "to_string",
+        "to_string",
+        "to_string",
+        "Some",
+        "to_string",
+        "connect",
+        "push",
+        "to_string",
+        "to_string",
+        "to_string",
+        "to_string",
+        "Some",
+        "connect",
+        "to_string",
+        "push",
+        "to_string",
+        "to_string",
+        "to_string",
+        "to_string",
+        "to_string",
+        "Some",
+        "clone",
+        "Some",
+        "push",
+        "to_string",
+        "to_string",
+        "to_string",
+        "to_string",
+        "Some",
+        "Some"
+      ],
+      "category": "analysis",
+      "description": "[PLACEHOLDER] analyze_tls",
+      "external_calls": [
+        {
+          "caller_func": "analyze_tls",
+          "function_name": "new",
+          "module_alias": "Vec"
+        },
+        {
+          "caller_func": "analyze_tls",
+          "function_name": "empty",
+          "module_alias": "RootCertStore"
+        },
+        {
+          "caller_func": "analyze_tls",
+          "function_name": "extend",
+          "module_alias": "root_store"
+        },
+        {
+          "caller_func": "analyze_tls",
+          "function_name": "cloned",
+          "module_alias": ""
+        },
+        {
+          "caller_func": "analyze_tls",
+          "function_name": "with_no_client_auth",
+          "module_alias": ""
+        },
+        {
+          "caller_func": "analyze_tls",
+          "function_name": "from",
+          "module_alias": "TlsConnector"
+        },
+        {
+          "caller_func": "analyze_tls",
+          "function_name": "new",
+          "module_alias": "Arc"
+        },
+        {
+          "caller_func": "analyze_tls",
+          "function_name": "try_from",
+          "module_alias": "rustls"
+        },
+        {
+          "caller_func": "analyze_tls",
+          "function_name": "to_owned",
+          "module_alias": "name"
+        },
+        {
+          "caller_func": "analyze_tls",
+          "function_name": "push",
+          "module_alias": "findings"
+        },
+        {
+          "caller_func": "analyze_tls",
+          "function_name": "to_string",
+          "module_alias": ""
+        },
+        {
+          "caller_func": "analyze_tls",
+          "function_name": "to_string",
+          "module_alias": ""
+        },
+        {
+          "caller_func": "analyze_tls",
+          "function_name": "to_string",
+          "module_alias": ""
+        },
+        {
+          "caller_func": "analyze_tls",
+          "function_name": "to_string",
+          "module_alias": ""
+        },
+        {
+          "caller_func": "analyze_tls",
+          "function_name": "to_string",
+          "module_alias": ""
+        },
+        {
+          "caller_func": "analyze_tls",
+          "function_name": "Some",
+          "module_alias": ""
+        },
+        {
+          "caller_func": "analyze_tls",
+          "function_name": "to_string",
+          "module_alias": "target"
+        },
+        {
+          "caller_func": "analyze_tls",
+          "function_name": "try_from",
+          "module_alias": "rustls"
+        },
+        {
+          "caller_func": "analyze_tls",
+          "function_name": "to_string",
+          "module_alias": "target"
+        },
+        {
+          "caller_func": "analyze_tls",
+          "function_name": "to_owned",
+          "module_alias": "name"
+        },
+        {
+          "caller_func": "analyze_tls",
+          "function_name": "push",
+          "module_alias": "findings"
+        },
+        {
+          "caller_func": "analyze_tls",
+          "function_name": "to_string",
+          "module_alias": ""
+        },
+        {
+          "caller_func": "analyze_tls",
+          "function_name": "to_string",
+          "module_alias": ""
+        },
+        {
+          "caller_func": "analyze_tls",
+          "function_name": "to_string",
+          "module_alias": ""
+        },
+        {
+          "caller_func": "analyze_tls",
+          "function_name": "to_string",
+          "module_alias": ""
+        },
+        {
+          "caller_func": "analyze_tls",
+          "function_name": "Some",
+          "module_alias": ""
+        },
+        {
+          "caller_func": "analyze_tls",
+          "function_name": "to_string",
+          "module_alias": "target"
+        },
+        {
+          "caller_func": "analyze_tls",
+          "function_name": "connect",
+          "module_alias": "TcpStream"
+        },
+        {
+          "caller_func": "analyze_tls",
+          "function_name": "push",
+          "module_alias": "findings"
+        },
+        {
+          "caller_func": "analyze_tls",
+          "function_name": "to_string",
+          "module_alias": ""
+        },
+        {
+          "caller_func": "analyze_tls",
+          "function_name": "to_string",
+          "module_alias": ""
+        },
+        {
+          "caller_func": "analyze_tls",
+          "function_name": "to_string",
+          "module_alias": ""
+        },
+        {
+          "caller_func": "analyze_tls",
+          "function_name": "to_string",
+          "module_alias": ""
+        },
+        {
+          "caller_func": "analyze_tls",
+          "function_name": "Some",
+          "module_alias": ""
+        },
+        {
+          "caller_func": "analyze_tls",
+          "function_name": "connect",
+          "module_alias": "connector"
+        },
+        {
+          "caller_func": "analyze_tls",
+          "function_name": "to_string",
+          "module_alias": "e"
+        },
+        {
+          "caller_func": "analyze_tls",
+          "function_name": "push",
+          "module_alias": "findings"
+        },
+        {
+          "caller_func": "analyze_tls",
+          "function_name": "to_string",
+          "module_alias": ""
+        },
+        {
+          "caller_func": "analyze_tls",
+          "function_name": "to_string",
+          "module_alias": ""
+        },
+        {
+          "caller_func": "analyze_tls",
+          "function_name": "to_string",
+          "module_alias": ""
+        },
+        {
+          "caller_func": "analyze_tls",
+          "function_name": "to_string",
+          "module_alias": ""
+        },
+        {
+          "caller_func": "analyze_tls",
+          "function_name": "to_string",
+          "module_alias": ""
+        },
+        {
+          "caller_func": "analyze_tls",
+          "function_name": "Some",
+          "module_alias": ""
+        },
+        {
+          "caller_func": "analyze_tls",
+          "function_name": "clone",
+          "module_alias": "addr"
+        },
+        {
+          "caller_func": "analyze_tls",
+          "function_name": "Some",
+          "module_alias": ""
+        },
+        {
+          "caller_func": "analyze_tls",
+          "function_name": "push",
+          "module_alias": "findings"
+        },
+        {
+          "caller_func": "analyze_tls",
+          "function_name": "to_string",
+          "module_alias": ""
+        },
+        {
+          "caller_func": "analyze_tls",
+          "function_name": "to_string",
+          "module_alias": ""
+        },
+        {
+          "caller_func": "analyze_tls",
+          "function_name": "to_string",
+          "module_alias": ""
+        },
+        {
+          "caller_func": "analyze_tls",
+          "function_name": "to_string",
+          "module_alias": ""
+        },
+        {
+          "caller_func": "analyze_tls",
+          "function_name": "Some",
+          "module_alias": ""
+        },
+        {
+          "caller_func": "analyze_tls",
+          "function_name": "Some",
+          "module_alias": ""
+        }
+      ],
+      "function_name": "analyze_tls",
+      "inputs": [
+        "target",
+        "port"
+      ],
+      "module": "tls_analyzer",
+      "outputs": [],
+      "source_file": ".\\src\\tls_analyzer.rs"
+    }
+  ],
+  "metadata": {
+    "ai_compatible": true,
+    "generated_at": "2026-01-13T03:52:55.493557800+00:00",
+    "language": "rust",
+    "schema_version": "3.3",
+    "tool": "rs2mermaid",
+    "total_files": 5,
+    "total_flows": 0,
+    "version": "2.0"
+  },
+  "summary": {
+    "real_connections": 0,
+    "total_files": 5,
+    "total_funcs": 16
+  }
+}

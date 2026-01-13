@@ -1,0 +1,176 @@
+{
+  "metadata": {
+    "generated_at": "2026-01-13T13:00:20.841963",
+    "total_flows": 5,
+    "total_modules": 1
+  },
+  "discovered_modules": {
+    "function_idor": {
+      "category": "features",
+      "info": {
+        "type": "access_control",
+        "category": "authorization",
+        "name": "IDOR 漏洞檢測"
+      },
+      "count": 5,
+      "languages": [
+        "Python"
+      ]
+    }
+  },
+  "classified_flows": [
+    {
+      "id": 1,
+      "path": [
+        "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_idor\\smart_idor_detector.py",
+        "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_idor\\worker.py"
+      ],
+      "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_idor\\smart_idor_detector.py",
+      "full_path": [
+        "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_idor\\smart_idor_detector.py",
+        "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_idor\\worker.py"
+      ],
+      "length": 2,
+      "start": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_idor\\smart_idor_detector.py",
+      "end": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_idor\\worker.py",
+      "language": "Python",
+      "target": "services/features/features_ready/function_idor",
+      "function_module": "function_idor",
+      "module_category": "features",
+      "function_module_desc": "IDOR 漏洞檢測",
+      "attack_type": "access_control",
+      "security_category": "authorization",
+      "entry_points": [
+        "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_idor\\smart_idor_detector.py"
+      ],
+      "has_entry_point": true,
+      "cli_command": "python C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_idor\\smart_idor_detector.py"
+    },
+    {
+      "id": 2,
+      "path": [
+        "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_idor\\engine\\idor_engine.py",
+        "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_idor\\detector\\idor_detector.py"
+      ],
+      "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_idor\\engine\\idor_engine.py",
+      "full_path": [
+        "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_idor\\engine\\idor_engine.py",
+        "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_idor\\detector\\idor_detector.py"
+      ],
+      "length": 2,
+      "start": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_idor\\engine\\idor_engine.py",
+      "end": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_idor\\detector\\idor_detector.py",
+      "language": "Python",
+      "target": "services/features/features_ready/function_idor",
+      "function_module": "function_idor",
+      "module_category": "features",
+      "function_module_desc": "IDOR 漏洞檢測",
+      "attack_type": "access_control",
+      "security_category": "authorization",
+      "entry_points": [
+        "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_idor\\engine\\idor_engine.py",
+        "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_idor\\detector\\idor_detector.py"
+      ],
+      "has_entry_point": true,
+      "cli_command": "python C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_idor\\engine\\idor_engine.py"
+    },
+    {
+      "id": 3,
+      "path": [
+        "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_idor\\engine\\idor_engine.py",
+        "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_idor\\detector\\idor_detector.py",
+        "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_idor\\worker\\idor_worker.py"
+      ],
+      "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_idor\\engine\\idor_engine.py",
+      "full_path": [
+        "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_idor\\engine\\idor_engine.py",
+        "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_idor\\detector\\idor_detector.py",
+        "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_idor\\worker\\idor_worker.py"
+      ],
+      "length": 3,
+      "start": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_idor\\engine\\idor_engine.py",
+      "end": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_idor\\worker\\idor_worker.py",
+      "language": "Python",
+      "target": "services/features/features_ready/function_idor",
+      "function_module": "function_idor",
+      "module_category": "features",
+      "function_module_desc": "IDOR 漏洞檢測",
+      "attack_type": "access_control",
+      "security_category": "authorization",
+      "entry_points": [
+        "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_idor\\engine\\idor_engine.py",
+        "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_idor\\detector\\idor_detector.py"
+      ],
+      "has_entry_point": true,
+      "cli_command": "python C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_idor\\engine\\idor_engine.py"
+    },
+    {
+      "id": 4,
+      "path": [
+        "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_idor\\enhanced_worker.py",
+        "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_idor\\command_handler.py"
+      ],
+      "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_idor\\enhanced_worker.py",
+      "full_path": [
+        "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_idor\\enhanced_worker.py",
+        "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_idor\\command_handler.py"
+      ],
+      "length": 2,
+      "start": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_idor\\enhanced_worker.py",
+      "end": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_idor\\command_handler.py",
+      "language": "Python",
+      "target": "services/features/features_ready/function_idor",
+      "function_module": "function_idor",
+      "module_category": "features",
+      "function_module_desc": "IDOR 漏洞檢測",
+      "attack_type": "access_control",
+      "security_category": "authorization",
+      "entry_points": [
+        "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_idor\\command_handler.py"
+      ],
+      "has_entry_point": true,
+      "cli_command": "python C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_idor\\enhanced_worker.py"
+    },
+    {
+      "id": 5,
+      "path": [
+        "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_idor\\enhanced_worker.py",
+        "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_idor\\__main__.py"
+      ],
+      "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_idor\\enhanced_worker.py",
+      "full_path": [
+        "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_idor\\enhanced_worker.py",
+        "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_idor\\__main__.py"
+      ],
+      "length": 2,
+      "start": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_idor\\enhanced_worker.py",
+      "end": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_idor\\__main__.py",
+      "language": "Python",
+      "target": "services/features/features_ready/function_idor",
+      "function_module": "function_idor",
+      "module_category": "features",
+      "function_module_desc": "IDOR 漏洞檢測",
+      "attack_type": "access_control",
+      "security_category": "authorization",
+      "entry_points": [
+        "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_idor\\__main__.py"
+      ],
+      "has_entry_point": true,
+      "cli_command": "python C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_idor\\enhanced_worker.py"
+    }
+  ],
+  "statistics": {
+    "by_module": {
+      "function_idor": 5
+    },
+    "by_language": {
+      "Python": 5
+    },
+    "by_category": {
+      "features": 5
+    },
+    "by_attack_type": {
+      "access_control": 5
+    }
+  }
+}

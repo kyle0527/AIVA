@@ -177,6 +177,48 @@ class AnalysisReport:
                 f.write(f"{i}. {rec}\n")
 
 
+def classify_script_type(script_path: str, script_name: str) -> str:
+    """
+    識別腳本類型，避免將工具腳本誤判為孤立模組
+    
+    Args:
+        script_path: 腳本的完整路徑
+        script_name: 腳本名稱（不含 .py）
+        
+    Returns:
+        'tool': 工具腳本（CLI/可視化/演示）
+        'entry_point': 入口程序（含 main）
+        'module': 普通模組
+    """
+    # 1. 檢查文件名模式
+    tool_keywords = ['cli', 'main', 'demo', 'example', 'test', 'visualizer', 
+                     'visualize', 'show', 'display', 'run', 'launch', 'start']
+    if any(keyword in script_name.lower() for keyword in tool_keywords):
+        return 'tool'
+    
+    # 2. 檢查文件內容
+    try:
+        with open(script_path, 'r', encoding='utf-8') as f:
+            content = f.read()
+            
+            # 檢查是否有 if __name__ == "__main__"
+            if 'if __name__ == "__main__"' in content or "if __name__ == '__main__'" in content:
+                return 'entry_point'
+            
+            # 檢查是否有 main() 函數定義
+            if 'def main(' in content:
+                return 'entry_point'
+            
+            # 檢查是否有 argparse/click/typer（CLI 框架）
+            if any(cli_lib in content for cli_lib in ['import argparse', 'import click', 'import typer']):
+                return 'tool'
+    
+    except Exception:
+        pass  # 讀取失敗時默認為 module
+    
+    return 'module'
+
+
 class CoreAnalyzer:
     """
     核心分析器 - 統一入口

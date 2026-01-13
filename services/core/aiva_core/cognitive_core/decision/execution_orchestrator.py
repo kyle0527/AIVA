@@ -1,22 +1,42 @@
 """执行编排器
 
-职责:
+⚠️ DEPRECATED: 此模組已廢棄，請使用 PlanExecutor 代替
+   路徑: aiva_core.task_planning.executor.plan_executor.PlanExecutor
+   
+原因:
+- ExecutionOrchestrator 使用本地 CLI 架構（subprocess）
+- PlanExecutor 使用分布式微服務架構（MessageBroker + RabbitMQ）
+- 兩套系統並存導致狀態不對等和架構衝突
+
+建議:
+- 新代碼請使用 PlanExecutor
+- 現有代碼請逐步遷移到 PlanExecutor
+- 此模組將在未來版本中移除
+
+职责（舊）:
 1. 接收执行计划
 2. 下令给各模块执行 (通过CLI命令)
 3. 监控执行状态
 4. 收集执行结果
 """
 
+import warnings
+
+# 發出廢棄警告
+warnings.warn(
+    "ExecutionOrchestrator is deprecated. Use PlanExecutor instead: "
+    "from aiva_core.task_planning.executor.plan_executor import PlanExecutor",
+    DeprecationWarning,
+    stacklevel=2
+)
+
 from typing import Dict, Any, List, Optional
 from datetime import datetime, timezone
+import subprocess
+import json
 
-from services.aiva_common.command_center import get_command_center
 from services.aiva_common.schemas import (
-    AICommand,
-    AICommandResult,
-    CommandStatus,
     CommandContext,
-    CommandPriority,
 )
 from services.aiva_common.utils import get_logger
 
@@ -26,20 +46,20 @@ logger = get_logger(__name__)
 
 
 class ExecutionResult:
-    """执行结果"""
+    """执行结果（CLI 架構）"""
     def __init__(
         self,
         plan_id: str,
         success: bool,
         steps_executed: int,
-        results: List[AICommandResult],
+        command_outputs: List[Dict[str, Any]],
         execution_time: float = 0.0,
         error: Optional[str] = None
     ):
         self.plan_id = plan_id
         self.success = success
         self.steps_executed = steps_executed
-        self.results = results
+        self.command_outputs = command_outputs  # {step_id, stdout, stderr, exit_code, cli_cmd}
         self.execution_time = execution_time
         self.error = error
         self.completed_at = datetime.now(timezone.utc)
@@ -53,7 +73,6 @@ class ExecutionOrchestrator:
     """
     
     def __init__(self):
-        self.command_center = get_command_center()
         self.logger = logger
         self._active_executions: Dict[str, Dict[str, Any]] = {}
     
@@ -98,22 +117,41 @@ class ExecutionOrchestrator:
                     self.logger.warning(f"⚠️  步骤 {step.step_id} 依赖未满足，跳过")
                     continue
                 
-                # 构建 AI 命令
-                command = self._build_command(step, plan.plan_id, context)
+                # 构建 CLI 命令
+                cli_cmd = self._build_cli_command(step, plan.plan_id, context)
                 
-                # 执行命令
+                # 执行命令 (使用 subprocess)
                 try:
-                    result = await self.command_center.execute(command, context)
-                    results.append(result)
+                    result = subprocess.run(
+                        cli_cmd,
+                        shell=True,
+                        capture_output=True,
+                        text=True,
+                        timeout=step.estimated_duration
+                    )
                     
-                    if result.status == CommandStatus.FAILED:
-                        self.logger.error(f"❌ 步骤 {step.step_id} 执行失败: {result.error}")
+                    output = {
+                        "step_id": step.step_id,
+                        "cli_cmd": cli_cmd,
+                        "stdout": result.stdout,
+                        "stderr": result.stderr,
+                        "exit_code": result.returncode
+                    }
+                    results.append(output)
+                    
+                    if result.returncode != 0:
+                        self.logger.error(f"❌ 步骤 {step.step_id} 执行失败: {result.stderr}")
                         success = False
-                        error_msg = result.error
+                        error_msg = result.stderr
                         break  # 失败则停止执行
                     
                     self.logger.info(f"✅ 步骤 {step.step_id} 执行成功")
                     
+                except subprocess.TimeoutExpired:
+                    self.logger.error(f"⏱️ 步骤 {step.step_id} 超時")
+                    success = False
+                    error_msg = "Command timeout"
+                    break
                 except Exception as e:
                     self.logger.error(f"❌ 步骤 {step.step_id} 执行异常: {e}")
                     success = False
@@ -131,7 +169,7 @@ class ExecutionOrchestrator:
                 plan_id=plan.plan_id,
                 success=success,
                 steps_executed=len(results),
-                results=results,
+                command_outputs=results,
                 execution_time=execution_time,
                 error=error_msg
             )
@@ -151,57 +189,54 @@ class ExecutionOrchestrator:
                 plan_id=plan.plan_id,
                 success=False,
                 steps_executed=len(results),
-                results=results,
+                command_outputs=results,
                 error=str(e)
             )
     
-    def _build_command(
+    def _build_cli_command(
         self,
         step: ExecutionStep,
         plan_id: str,
         context: Optional[CommandContext]
-    ) -> AICommand:
-        """构建 AI 命令
+    ) -> str:
+        """构建 CLI 命令（基於 Manifest 架構）
         
-        这里生成的命令将通过 CLI 执行：
-        python scripts/ui/aiva_cli.py --attack "..."
+        生成符合 aiva_common 規範的 CLI 命令：
+        aiva-cli <capability_id> --target <target> [--param value ...]
         """
-        # 從 context 提取追蹤信息（如果有）
-        trace_id = context.trace_id if context else None
-        session_id = context.session_id if context else None
+        # 基本命令結構
+        params_json = json.dumps(step.parameters)
         
-        command = AICommand(
-            command_id=f"{plan_id}_step_{step.step_id}",
-            command_type=step.command_type,
-            target_module=step.module,
-            payload=step.parameters,
-            priority=CommandPriority.LOW,
-            timeout=step.estimated_duration,
-            trace_id=trace_id,
-            session_id=session_id,
-            parent_command_id=plan_id,
-            callback_url=None
-        )
+        # 構建 CLI 命令（使用能力 ID）
+        cli_cmd = f"aiva-cli {step.capability} --params '{params_json}'"
         
-        self.logger.debug(f"🔨 构建命令: {command.command_id}")
-        self.logger.debug(f"   类型: {command.command_type}")
-        self.logger.debug(f"   模块: {command.target_module}")
+        # 添加追蹤信息（如果有）
+        if context:
+            if context.trace_id:
+                cli_cmd += f" --trace-id {context.trace_id}"
+            if context.session_id:
+                cli_cmd += f" --session-id {context.session_id}"
         
-        return command
+        self.logger.debug(f"🔨 构建 CLI 命令: {cli_cmd}")
+        self.logger.debug(f"   能力: {step.capability}")
+        self.logger.debug(f"   模块: {step.module}")
+        
+        return cli_cmd
     
     def _check_dependencies(
         self,
         step: ExecutionStep,
-        completed_results: List[AICommandResult]
+        completed_results: List[Dict[str, Any]]
     ) -> bool:
-        """检查步骤依赖是否满足"""
+        """检查步骤依赖是否满足（CLI 架構）"""
         if not step.depends_on:
             return True
         
+        # 從 CLI 輸出中提取已完成的步驟 ID
         completed_step_ids = [
-            int(result.command_id.split("_step_")[1])
+            result["step_id"]
             for result in completed_results
-            if result.status == CommandStatus.COMPLETED
+            if result.get("exit_code") == 0
         ]
         
         for dep_id in step.depends_on:

@@ -19,7 +19,13 @@ internal_exploration (三階段分析管道) → InternalLoopConnector → RAG K
 ✅ 詳細的能力分類系統
 """
 
-from datetime import datetime, UTC
+from datetime import datetime, timezone
+
+# UTC 兼容性处理（Python 3.11+ 使用 UTC，较旧版本使用 timezone.utc）
+try:
+    from datetime import UTC  # type: ignore
+except ImportError:
+    UTC = timezone.utc  # type: ignore
 from pathlib import Path
 from typing import Any, List, Dict, Optional
 from uuid import uuid4

@@ -2,14 +2,14 @@
 AIVA Features - 高價值功能模組
 
 這是 AIVA 的增強功能模組包，符合 aiva_common 規範，包含專門針對 Bug Bounty 
-和滲透測試設計的高價值安全檢測功能。所有模組都已集成 aiva_common 命令系統。
+和滲透測試設計的高價值安全檢測功能。所有模組都支持 CLI 調用。
 
 ✅ **已符合 aiva_common 規範的模組**:
-- function_xss: XSS 漏洞檢測 (已有 CommandHandler)
-- function_sqli: SQL 注入檢測 (已有 CommandHandler) 
-- function_ssrf: SSRF 漏洞檢測 (已有 CommandHandler)
-- function_forensic: 數字取證分析 (已有 CommandHandler)
-- function_wordlist_generator: 字典生成器 (已有 CommandHandler)
+- function_xss: XSS 漏洞檢測 (CLI + CommandHandler)
+- function_sqli: SQL 注入檢測 (CLI + CommandHandler) 
+- function_ssrf: SSRF 漏洞檢測 (CLI + CommandHandler)
+- function_forensic: 數字取證分析 (CLI + CommandHandler)
+- function_wordlist_generator: 字典生成器 (CLI + CommandHandler)
 
 🔧 **待完善命令系統集成的模組**:
 - function_reverse_engineering: 逆向工程分析
@@ -25,16 +25,21 @@ AIVA Features - 高價值功能模組
 - function_ddos: DDoS 測試
 - function_authn_go: 認證測試 (Go)
 
-🎯 **直接功能調用**:
-所有模組都可以直接調用，無需註冊系統:
+🎯 **推薦使用方式（CLI 模式）**:
 
+    # 方式 1: 直接通過 CLI 調用（推薦）
+    aiva-cli function_xss_test --target https://example.com --params '{"check_reflected": true}'
+    
+    # 方式 2: 通過 Python 模組調用
+    python -m services.features.function_xss.xss_detector --target https://example.com
+
+📦 **向後兼容（AICommand 模式）**:
+
+    # 仍然支持 AICommand 接口（向後兼容）
     from services.features.function_xss.command_handler import XSSCommandHandler
     from services.aiva_common.schemas.commands import AICommand, CommandType
     
-    # 直接創建處理器
     xss_handler = XSSCommandHandler()
-    
-    # 執行功能測試
     command = AICommand(
         command_type=CommandType.FEATURE_XSS_TEST,
         payload={"target_url": "https://example.com"},
@@ -44,6 +49,11 @@ AIVA Features - 高價值功能模組
 
 🔒 **安全注意事項**:
 使用前請確保設置適當的目標白名單以避免意外掃描！
+
+架構更新（2026-01-08）：
+- ✅ 優先使用 CLI 模式調用（符合 aiva_common 規範）
+- ✅ 保留 AICommand 接口作為向後兼容層
+- ✅ 所有能力通過 Manifest 註冊和發現
 """
 
 __version__ = "2.0.0"  # 升級到 v2.0，符合 aiva_common 規範

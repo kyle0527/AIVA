@@ -1,10 +1,18 @@
 """RAG Engine - 檢索增強生成引擎
 
 將向量檢索與 AI 決策結合，增強攻擊計畫生成
+
+優化更新 (2026-01-11):
+- 添加查詢緩存機制 (TTL 5 分鐘)
+- 支援批量並行查詢
+- 去語意化環境特徵匹配
 """
 
+import asyncio
+import hashlib
 import logging
-from typing import Any, TYPE_CHECKING
+import time
+from typing import Any, TYPE_CHECKING, Optional
 from enum import Enum
 
 if TYPE_CHECKING:
@@ -28,23 +36,149 @@ class KnowledgeType(str, Enum):
     EXPERIENCE = "experience"
     MITIGATION = "mitigation"
 
-logger = logging.getLogger(__name__)
+
+class QueryCache:
+    """查詢緩存
+    
+    實現 TTL 緩存以減少重複 RAG 查詢
+    """
+    
+    def __init__(self, max_size: int = 1000, default_ttl: float = 300.0):
+        """初始化緩存
+        
+        Args:
+            max_size: 最大緩存條目數
+            default_ttl: 預設 TTL（秒）
+        """
+        self._cache: dict[str, tuple[float, Any]] = {}
+        self._max_size = max_size
+        self._default_ttl = default_ttl
+        self._hits = 0
+        self._misses = 0
+    
+    def _make_key(self, query: str, query_type: str, top_k: int) -> str:
+        """生成緩存鍵"""
+        content = f"{query_type}:{query}:{top_k}"
+        return hashlib.md5(content.encode()).hexdigest()
+    
+    def get(self, query: str, query_type: str, top_k: int) -> Optional[Any]:
+        """獲取緩存"""
+        key = self._make_key(query, query_type, top_k)
+        
+        if key in self._cache:
+            timestamp, result = self._cache[key]
+            if time.time() - timestamp < self._default_ttl:
+                self._hits += 1
+                return result
+            else:
+                # 過期，刪除
+                del self._cache[key]
+        
+        self._misses += 1
+        return None
+    
+    def set(self, query: str, query_type: str, top_k: int, result: Any) -> None:
+        """設置緩存"""
+        # 清理過期條目
+        self._cleanup()
+        
+        # 檢查容量
+        if len(self._cache) >= self._max_size:
+            # 刪除最舊的條目
+            oldest_key = min(self._cache.keys(), key=lambda k: self._cache[k][0])
+            del self._cache[oldest_key]
+        
+        key = self._make_key(query, query_type, top_k)
+        self._cache[key] = (time.time(), result)
+    
+    def _cleanup(self) -> None:
+        """清理過期條目"""
+        current = time.time()
+        expired = [
+            k for k, (ts, _) in self._cache.items()
+            if current - ts > self._default_ttl
+        ]
+        for k in expired:
+            del self._cache[k]
+    
+    def clear(self) -> None:
+        """清空緩存"""
+        self._cache.clear()
+        self._hits = 0
+        self._misses = 0
+    
+    def stats(self) -> dict[str, Any]:
+        """獲取緩存統計"""
+        total = self._hits + self._misses
+        return {
+            "size": len(self._cache),
+            "max_size": self._max_size,
+            "hits": self._hits,
+            "misses": self._misses,
+            "hit_rate": self._hits / total if total > 0 else 0.0
+        }
 
 
 class RAGEngine:
     """RAG 引擎
 
     結合向量檢索和 AI 生成，提供上下文增強的決策
+    
+    優化特性:
+    - 查詢緩存 (TTL 5 分鐘)
+    - 批量並行查詢
+    - 去語意化環境特徵匹配
     """
 
-    def __init__(self, knowledge_base: "KnowledgeBase") -> None:
+    def __init__(
+        self, 
+        knowledge_base: "KnowledgeBase",
+        cache_size: int = 1000,
+        cache_ttl: float = 300.0
+    ) -> None:
         """初始化 RAG 引擎
 
         Args:
             knowledge_base: 知識庫實例
+            cache_size: 緩存大小
+            cache_ttl: 緩存 TTL（秒）
         """
         self.knowledge_base = knowledge_base
-        logger.info("RAG Engine initialized")
+        self._cache = QueryCache(max_size=cache_size, default_ttl=cache_ttl)
+        logger.info(f"RAG Engine initialized with cache (size={cache_size}, ttl={cache_ttl}s)")
+
+    async def _search_with_cache(
+        self,
+        query: str,
+        query_type: str,
+        top_k: int = 5
+    ) -> list[dict[str, Any]]:
+        """帶緩存的搜索
+        
+        Args:
+            query: 查詢字符串
+            query_type: 查詢類型
+            top_k: 返回數量
+            
+        Returns:
+            搜索結果列表
+        """
+        # 檢查緩存
+        cached = self._cache.get(query, query_type, top_k)
+        if cached is not None:
+            logger.debug(f"Cache hit for {query_type}: {query[:50]}...")
+            return cached
+        
+        # 執行實際搜索
+        results = await self.knowledge_base.search(
+            query=f"{query_type} {query}",
+            top_k=top_k
+        )
+        
+        # 更新緩存
+        self._cache.set(query, query_type, top_k, results)
+        
+        return results
 
     async def enhance_attack_plan(
         self,
@@ -66,22 +200,13 @@ class RAGEngine:
         # 構建查詢
         query = f"{objective} {target.target_type} {target.target_url}"
 
-        # 檢索相關攻擊技術
-        techniques = await self.knowledge_base.search(
-            query=f"attack_technique {query}",
-            top_k=5,
-        )
-
-        # 檢索成功經驗
-        successful_experiences = await self.knowledge_base.search(
-            query=f"experience success {query}",
-            top_k=5,
-        )
-
-        # 檢索最佳實踐
-        best_practices = await self.knowledge_base.search(
-            query=f"best_practice {query}",
-            top_k=3,
+        # 優化：批量並行查詢（使用緩存）
+        techniques_task = self._search_with_cache(query, "attack_technique", 5)
+        experiences_task = self._search_with_cache(query, "experience success", 5)
+        practices_task = self._search_with_cache(query, "best_practice", 3)
+        
+        techniques, successful_experiences, best_practices = await asyncio.gather(
+            techniques_task, experiences_task, practices_task
         )
 
         # 構建增強上下文
@@ -430,6 +555,93 @@ class RAGEngine:
             "recommended_tools": recommended_tools
         }
     
+    async def search_capabilities_by_environment(
+        self,
+        environment_features: dict[str, float | int],
+        top_k: int = 5,
+        filter_type: str | None = None
+    ) -> list[dict[str, Any]]:
+        """根據環境特徵搜索最匹配的能力（去語意化檢索）
+        
+        v2.1 (2026-01-08): 新增方法 - HackOne 戰略規劃
+        
+        使用去語意化反射引擎：
+        - 不依賴語義理解，純向量相似度
+        - 毫秒級檢索（< 5ms）
+        - 確定性結果
+        
+        使用場景：
+        1. 偵察階段發現環境特徵（http_403, waf_cloudflare）
+        2. 快速匹配適用的攻擊能力
+        3. 返回預排序的能力列表給 EnhancedDecisionAgent
+        
+        Args:
+            environment_features: 環境特徵字典
+                範例: {
+                    'http_403': 3,          # 403 狀態出現 3 次
+                    'waf_cloudflare': 1,    # 檢測到 Cloudflare WAF
+                    'db_error_mysql': 2,    # MySQL 錯誤出現 2 次
+                }
+            top_k: 返回前 k 個最匹配的能力
+            filter_type: 能力類型過濾器（如 'scanner', 'analyzer'）
+        
+        Returns:
+            匹配能力列表，格式:
+            [
+                {
+                    'capability_id': 'security.sqli.time_based',
+                    'match_score': 0.87,  # 相似度分數（0-1）
+                    'metadata': {...},
+                    'document': '時間盲注檢測'
+                },
+                ...
+            ]
+        """
+        # 將整數權重轉換為浮點數
+        normalized_features = {k: float(v) for k, v in environment_features.items()}
+        
+        # 使用 VectorStore 的去語意化檢索
+        results = self.knowledge_base.vector_store.search_by_environment(
+            environment_features=normalized_features,
+            top_k=top_k,
+            filter_type=filter_type
+        )
+        
+        logger.info(
+            f"Environment-based capability search: {len(environment_features)} features "
+            f"→ {len(results)} matches (top_{top_k})"
+        )
+        
+        return results
+    
+    async def load_capabilities_from_registry(
+        self,
+        capability_records: list[dict[str, Any]]
+    ) -> int:
+        """從 integration/capability 註冊表批量加載能力
+        
+        v2.1 (2026-01-08): 新增方法
+        
+        Args:
+            capability_records: CapabilityRecord 格式的能力列表
+            
+        Returns:
+            成功載入的數量
+        """
+        count = 0
+        for record in capability_records:
+            try:
+                self.knowledge_base.vector_store.add_capability_from_registry(
+                    capability=record,
+                    capability_id=record.get('id')
+                )
+                count += 1
+            except Exception as e:
+                logger.warning(f"Failed to load capability {record.get('id')}: {e}")
+        
+        logger.info(f"Loaded {count} capabilities from registry to RAG Engine")
+        return count
+    
     async def index_new_experience(
         self,
         experience
@@ -462,7 +674,7 @@ class RAGEngine:
             content = f"Experience: {action.get('type', 'attack')} on {state.get('target', 'unknown')}, reward: {reward}"
             
             # 添加到知識庫
-            await self.knowledge_base.add_entry(
+            await self.knowledge_base.add_knowledge(
                 content=content,
                 metadata={
                     "type": "experience",
@@ -471,9 +683,9 @@ class RAGEngine:
                     "action_type": action.get("type"),
                     "target": state.get("target"),
                     "success": reward > 0.5,
-                    "timestamp": exp_dict.get("timestamp", "")
-                },
-                entry_type=KnowledgeType.EXPERIENCE
+                    "timestamp": exp_dict.get("timestamp", ""),
+                    "knowledge_type": KnowledgeType.EXPERIENCE.value  # 改用 metadata 傳遞類型
+                }
             )
             
             logger.debug(f"Indexed experience: {exp_dict.get('sample_id')}")

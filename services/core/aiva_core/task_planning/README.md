@@ -1,52 +1,197 @@
 # 📋 Task Planning - 任務規劃系統
 
-> **版本**: v2.4.0  
-> **狀態**: ✅ 生產就緒  
-> **最後更新**: 2026-01-06  
-> **角色**: AIVA 的智能任務編排和協調引擎  
-> **架構**: 與 CapabilityOrchestrator 整合，支援 AICommand 生成  
-> **檔案數**: 22 個 Python 模組  
-> **能力數**: 48 flows (5.7%)  
-> **數據傳輸**: CommandContext → ExecutionResult 完整流程  
-> **符合規範**: [aiva_common](../../../aiva_common/README.md)
+> **路徑**: `task_planning/`  
+> **狀態**: ✅ 正常 | **最後更新**: 2026-01-09  
+> **子模組**: 3 個 | **總文件數**: 28 | **Bug Bounty 整合**: ✅ 已完成
+
+## 概述
+
+**Task Planning** 是 AIVA 的任務規劃和執行系統，負責將高層次目標分解為可執行的子任務，並通過 CLI 命令協調執行過程。採用 CLI 命令執行架構（subprocess），已移除 AICommand 依賴。
+
+**v4.4.0 重大更新**: Bug Bounty 決策引擎完全整合，attack_coordinator.py 整合 `decide_scan_strategy()` 決策方法。
+
+**核心職責**：
+- 📋 **智能規劃** - 將複雜任務分解為可執行步驟和編排流程
+- ⚡ **CLI 執行** - 使用 subprocess 直接執行 CLI 命令
+- 🎯 **Bug Bounty 決策** - 智慧掃描工具選擇，HackerOne 實戰優化 ⭐
+- 🔄 **動態調整** - 根據 AI 分析結果動態調整計劃
+- 📊 **進度追蹤** - 實時監控任務編排狀態和結果收集
+- 🔗 **Internal Exploration 整合** - 與 internal_exploration 分析引擎深度整合 ⭐
+
+---
+
+## ✅ 模組驗證狀態 (2026-01-09)
+
+**完整性檢查**:
+- ✅ **無測試文件** - 所有 28 個文件均為功能代碼（無 test*.py, *mock*.py）
+- ✅ **無編譯錯誤** - 全模組編譯通過，無語法錯誤
+- ✅ **功能完整** - 所有文件均為核心能力實現
+- ✅ **代碼註釋** - 已移除硬編碼 Mock 實現（見 task_executor.py 註釋）
+
+**Internal Exploration 整合點**:
+- ✅ `dispatcher.py` - 請求 internal_exploration 進行分析（Line 159, 317, 412）
+- ✅ `command_builder.py` - internal_exploration 產出 → integration 提供 Schema → core 執行命令（Line 8）
+- ✅ 動態調用 `services.core.aiva_core.internal_exploration.python_tools.aiva_exploration_pipeline`
+
+**核心模組整合**:
+- ✅ `cognitive_core.decision.execution_orchestrator` 導入 `PlanExecutor` (Line 28)
+- ✅ `core_capabilities.processing.scan_result_processor` 導入 `TaskGenerator`, `TaskQueueManager`
+- ✅ `service_backbone.context_manager` 導入 `CommandContext`
+- ✅ `service_backbone.api.app` 導入 `ExecutionStatusMonitor`, `TaskGenerator`, `TaskQueueManager`
+
+---
+
+## 🎯 Bug Bounty 整合
+
+### attack_coordinator.py 整合 
+
+**整合方法**: `decide_scan_strategy()` (Line 508)
+
+```python
+# 在 AttackCoordinator.handle_scan_command() 中
+from ...cognitive_core.decision.enhanced_decision_agent import EnhancedDecisionAgent
+decision_agent = EnhancedDecisionAgent()
+ai_decision = decision_agent.decide_scan_strategy(scan_context)
+```
+
+**功能**:
+- ✅ **智慧掃描工具選擇**: 自動選擇 nmap/masscan
+- ✅ **目標分析**: 分析目標特徵，適配掃描策略
+- ✅ **WAF 檢測**: Cloudflare/Imperva/AWS WAF 檢測和繞過
+- ✅ **時間預估**: 預估掃描時間，優化資源使用
+
+**決策流程**:
+1. 解析用戶輸入 → ScanTaskContext
+2. AI 決策選擇掃描工具
+3. 設定掃描參數和策略
+4. 執行統一掃描流程
+
+---
+
+## 架構
+
+### 子模組結構
+
+| 子模組 | 功能 | 文件數 | 文檔 |
+|--------|------|--------|------|
+| **commander/** | **AI 指揮協調器、Bug Bounty 決策整合** | **9** | **[README](commander/README.md)** |
+| executor/ | 計劃執行器、任務執行、狀態監控 | 7 | [README](executor/README.md) |
+| planner/ | 執行計劃生成、任務生成、工具選擇 | 9 | [README](planner/README.md) |
+| persistence/ | 任務狀態持久化、斷點續傳 (P0-3) | 2 | - |
+
+### 根目錄組件 (6 個文件)
+
+- `unified_executor.py` - 統一攻擊執行器，靶場與實戰統一 (841 行)
+- `command_builder.py` - AI 決策到 CLI 命令生成器
+- `command_router.py` - 智能命令路由系統
+- `dispatcher.py` - 任務規劃發送器，跨模組通信，整合 internal_exploration
+- `mode_manager.py` - 執行模式管理器（sandbox/production）
+- `__init__.py` - 模組初始化
+
+---
+
+## 主要類別
+
+| 類別 | 文件 | 說明 |
+|------|------|------|
+| **`AttackCoordinator`** | **commander/attack_coordinator.py** | **攻擊協調器 (含 Bug Bounty 決策)** ⭐ |
+| `UnifiedAttackExecutor` | unified_executor.py | 統一攻擊執行器，持續學習 |
+| `CommandBuilder` | command_builder.py | AI 決策到 CLI 命令生成 |
+| `CommandRouter` | command_router.py | 智能命令路由器 |
+| `PlanningDispatcher` | dispatcher.py | 任務規劃統一發送器 |
+| `ModeManager` | mode_manager.py | 執行模式管理器 |
+| `StrategyEngine` | commander/strategy_engine.py | 策略引擎 |
+| `PlanExecutor` | executor/plan_executor.py | 計劃執行器 |
+| `TaskExecutor` | executor/task_executor.py | 任務執行器 |
+| `ExecutionPlanner` | planner/execution_planner.py | 執行計劃生成器 |
+| `TaskGenerator` | planner/task_generator.py | 任務生成器 |
+
+---
+
+## 依賴關係
+
+**外部依賴**：
+- `subprocess` - CLI 命令執行
+- `asyncio` - 異步執行
+- `pydantic` - 數據驗證
+
+**內部依賴**：
+- `aiva_common.utils` - 通用工具
+- `aiva_common.error_handling` - 錯誤處理
+- `service_backbone.messaging` - 消息代理
+- `services.integration.capability` - 能力註冊
+- `internal_exploration` - 分析引擎和 Python 工具 ⭐
+
+---
 
 **導航**: [← 返回 AIVA Core](../README.md)
 
 ---
 
-## 📋 目錄
+## 📋 詳細目錄
 
 - [模組概述](#-模組概述)
+- [架構變更說明](#-架構變更說明)
 - [子模組文檔](#-子模組文檔)
 - [子系統架構](#-子系統架構)
-  - [Planner - 規劃器](#1-planner---規劃器)
-  - [Executor - 執行器](#2-executor---執行器)  
-  - [Commander - 協調器](#3-commander---協調器)
 - [完整工作流程](#-完整工作流程)
 - [性能指標](#-性能指標)
 
 ---
 
+## 🏗️ 架構變更說明 (2026-01-08)
+
+### ⭐ AICommand → CLI 架構遷移
+
+**影響文件**：
+- `decision/execution_orchestrator.py` - 移除 AICommand，改用 subprocess
+
+**數據模型更新**：
+```python
+# 舊架構 (已移除)
+class ExecutionResult:
+    results: List[AICommandResult]
+
+# 新架構 (當前)
+class ExecutionResult:
+    command_outputs: List[Dict[str, Any]]  # [{step_id, stdout, stderr, exit_code, cli_cmd}]
+```
+
+**執行方式更新**：
+```python
+# 舊架構
+command = self._build_command(step, plan_id, context)
+result = await self.command_center.execute(command, context)
+
+# 新架構
+cli_cmd = self._build_cli_command(step, plan_id, context)
+result = subprocess.run(cli_cmd, shell=True, capture_output=True, text=True)
+```
+
+---
+
 ## 🎯 模組概述
 
-Task Planning 是 AIVA 的任務規劃和執行系統，負責將高層次目標分解為可執行的子任務，並協調執行過程。
+Task Planning 是 AIVA 的任務規劃和執行系統，負責將高層次目標分解為可執行的子任務，並通過 CLI 命令協調執行過程。
 
 **核心職責**：
 - 📋 **智能規劃** - 將複雜任務分解為可執行步驟和編排流程
-- ⚡ **任務編排** - 支援多任務並行和依賴管理編排
+- ⚡ **CLI 執行** - 使用 subprocess 直接執行 CLI 命令
 - 🔄 **動態調整** - 根據AI分析結果動態調整計劃
 - 📊 **進度追蹤** - 實時監控任務編排狀態和結果收集
-- 🎯 **攻擊計劃映射** - AI決策映射為具體Features模組任務
+- 🎯 **攻擊計劃映射** - AI決策映射為 CLI 命令序列
 
 ---
 
 ## 📚 子模組文檔
 
-| 子模組 | 說明 | 文檔 |
-|--------|------|------|
-| **Executor** | 任務執行器，負責執行攻擊計劃 | [executor/README.md](executor/README.md) |
-| **Planner** | 任務規劃器，負責生成執行計劃 | [planner/README.md](planner/README.md) |
-| **Commander** | AI 指揮協調器，負責策略決策 | [commander/README.md](commander/README.md) |
+| 子模組 | 檔案數 | 代碼行數 | 說明 | 文檔 |
+|--------|--------|---------|------|------|
+| **commander** | 8 | 2,029 | AI 指揮協調器，策略決策 | [README](commander/README.md) |
+| **executor** | 6 | 2,134 | 任務執行器，計劃執行 | [README](executor/README.md) |
+| **planner** | 8 | 1,869 | 任務規劃器，計劃生成 | [README](planner/README.md) |
+| **其他** | 6 | 1,976 | 統一執行器等根目錄模組 | - |
+| **總計** | **28** | **8,008** | - | - |
 
 ---
 

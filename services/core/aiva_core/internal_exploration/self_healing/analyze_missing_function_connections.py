@@ -268,12 +268,25 @@ class MissingConnectionAnalyzer:
         """找出有明確入口出口但孤立的函數"""
         print("\n🔍 查找有入口出口但孤立的函數...")
         
+        # 導入 classify_script_type
+        try:
+            from .core_analyzer import classify_script_type
+        except ImportError:
+            classify_script_type = None
+        
         orphaned_count = 0
         
         for key, sig in self.function_signatures.items():
             # 跳過私有函數和特殊函數
             if sig.name.startswith('_') and sig.name not in ['__init__', '__call__']:
                 continue
+            
+            # 如果可用，檢查腳本類型（跳過工具腳本和入口程序）
+            if classify_script_type:
+                script_name = Path(sig.file_name).stem
+                script_type = classify_script_type(sig.file_name, script_name)
+                if script_type in ['tool', 'entry_point']:
+                    continue  # 跳過工具腳本和入口程序
             
             # 有參數(入口)或有返回值(出口)
             has_interface = len(sig.parameters) > 0 or sig.has_return

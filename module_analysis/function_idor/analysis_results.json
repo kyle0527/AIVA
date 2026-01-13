@@ -1,0 +1,2038 @@
+{
+  "target": "services/features/features_ready/function_idor",
+  "depth": 3,
+  "total_files_processed": 11,
+  "flow_chains": [
+    [
+      "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_idor\\smart_idor_detector.py",
+      "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_idor\\worker.py"
+    ],
+    [
+      "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_idor\\engine\\idor_engine.py",
+      "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_idor\\detector\\idor_detector.py"
+    ],
+    [
+      "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_idor\\engine\\idor_engine.py",
+      "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_idor\\detector\\idor_detector.py",
+      "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_idor\\worker\\idor_worker.py"
+    ],
+    [
+      "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_idor\\enhanced_worker.py",
+      "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_idor\\command_handler.py"
+    ],
+    [
+      "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_idor\\enhanced_worker.py",
+      "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_idor\\__main__.py"
+    ]
+  ],
+  "combined_flows": {
+    "data_flow_chain_1": {
+      "sequences": [
+        {
+          "sequence": [
+            "smart_idor_detector",
+            "worker"
+          ],
+          "mermaid": "smart_idor_detector → worker",
+          "file_paths": [
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_idor\\smart_idor_detector.py",
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_idor\\worker.py"
+          ]
+        }
+      ],
+      "total_sequences": 1
+    },
+    "data_flow_chain_2": {
+      "sequences": [
+        {
+          "sequence": [
+            "idor_engine",
+            "idor_detector"
+          ],
+          "mermaid": "idor_engine → idor_detector",
+          "file_paths": [
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_idor\\engine\\idor_engine.py",
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_idor\\detector\\idor_detector.py"
+          ]
+        }
+      ],
+      "total_sequences": 1
+    },
+    "data_flow_chain_3": {
+      "sequences": [
+        {
+          "sequence": [
+            "idor_engine",
+            "idor_detector",
+            "idor_worker"
+          ],
+          "mermaid": "idor_engine → idor_detector → idor_worker",
+          "file_paths": [
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_idor\\engine\\idor_engine.py",
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_idor\\detector\\idor_detector.py",
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_idor\\worker\\idor_worker.py"
+          ]
+        }
+      ],
+      "total_sequences": 1
+    },
+    "data_flow_chain_4": {
+      "sequences": [
+        {
+          "sequence": [
+            "enhanced_worker",
+            "command_handler"
+          ],
+          "mermaid": "enhanced_worker → command_handler",
+          "file_paths": [
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_idor\\enhanced_worker.py",
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_idor\\command_handler.py"
+          ]
+        }
+      ],
+      "total_sequences": 1
+    },
+    "data_flow_chain_5": {
+      "sequences": [
+        {
+          "sequence": [
+            "enhanced_worker",
+            "__main__"
+          ],
+          "mermaid": "enhanced_worker → __main__",
+          "file_paths": [
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_idor\\enhanced_worker.py",
+            "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_idor\\__main__.py"
+          ]
+        }
+      ],
+      "total_sequences": 1
+    }
+  },
+  "summary": {
+    "total_graphs": 11,
+    "total_flow_chains": 5,
+    "real_connections": 5,
+    "script_nodes": 11
+  },
+  "function_details": {
+    "function_map": {
+      "test_idor_handler": {
+        "file_name": "command_handler.py",
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_idor\\command_handler.py",
+        "script_name": "command_handler",
+        "line_number": 196,
+        "is_async": true,
+        "is_entry_point": false,
+        "called_functions": [
+          "IDORCommandHandler",
+          "AICommand",
+          "print",
+          "handler.handle_command"
+        ]
+      },
+      "__init__": {
+        "file_name": "idor_engine.py",
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_idor\\engine\\idor_engine.py",
+        "script_name": "idor_engine",
+        "line_number": 23,
+        "is_async": false,
+        "is_entry_point": true,
+        "called_functions": [
+          "httpx.AsyncClient"
+        ]
+      },
+      "handle_command": {
+        "file_name": "command_handler.py",
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_idor\\command_handler.py",
+        "script_name": "command_handler",
+        "line_number": 65,
+        "is_async": true,
+        "is_entry_point": true,
+        "called_functions": [
+          "time.time",
+          "payload.get",
+          "payload.get",
+          "payload.get",
+          "payload.get",
+          "FunctionTaskPayload",
+          "any",
+          "AICommandResult",
+          "ValueError",
+          "ValueError",
+          "httpx.AsyncClient",
+          "CrossUserTester",
+          "VerticalEscalationTester",
+          "time.time",
+          "AICommandResult",
+          "FunctionTaskTarget",
+          "r.get",
+          "datetime.now",
+          "datetime.now",
+          "time.time",
+          "str",
+          "datetime.now",
+          "datetime.now",
+          "len",
+          "str",
+          "hasattr",
+          "r.get",
+          "r.get",
+          "r.get",
+          "type",
+          "isinstance"
+        ]
+      },
+      "run": {
+        "file_name": "idor_worker.py",
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_idor\\worker\\idor_worker.py",
+        "script_name": "idor_worker",
+        "line_number": 14,
+        "is_async": true,
+        "is_entry_point": true,
+        "called_functions": [
+          "_topic",
+          "_topic",
+          "_topic",
+          "IdorConfig",
+          "IDORDetector",
+          "broker.subscribe",
+          "get_broker",
+          "getattr",
+          "getattr",
+          "getattr",
+          "int",
+          "float",
+          "AivaMessage.model_validate_json",
+          "FunctionTaskPayload",
+          "os.getenv",
+          "os.getenv",
+          "new_id",
+          "broker.publish",
+          "detector.analyze",
+          "AivaMessage",
+          "broker.publish",
+          "logger.exception",
+          "broker.publish",
+          "broker.publish",
+          "os.getenv",
+          "os.getenv",
+          "os.getenv",
+          "os.getenv",
+          "MessageHeader",
+          "f.model_dump",
+          "json.dumps",
+          "json.dumps",
+          "new_id",
+          "getattr",
+          "json.dumps",
+          "json.dumps",
+          "out.model_dump",
+          "AivaMessage",
+          "AivaMessage",
+          "AivaMessage",
+          "MessageHeader",
+          "MessageHeader",
+          "str",
+          "len",
+          "MessageHeader",
+          "new_id",
+          "getattr",
+          "new_id",
+          "getattr",
+          "str",
+          "new_id",
+          "new_id",
+          "getattr"
+        ]
+      },
+      "process_task": {
+        "file_name": "worker.py",
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_idor\\worker.py",
+        "script_name": "worker",
+        "line_number": 533,
+        "is_async": true,
+        "is_entry_point": true,
+        "called_functions": [
+          "hasattr",
+          "FunctionTaskPayload",
+          "ValueError",
+          "f.model_dump",
+          "len",
+          "len",
+          "len",
+          "getattr",
+          "getattr",
+          "getattr"
+        ]
+      },
+      "to_details": {
+        "file_name": "enhanced_worker.py",
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_idor\\enhanced_worker.py",
+        "script_name": "enhanced_worker",
+        "line_number": 53,
+        "is_async": false,
+        "is_entry_point": true,
+        "called_functions": []
+      },
+      "_execute_task": {
+        "file_name": "enhanced_worker.py",
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_idor\\enhanced_worker.py",
+        "script_name": "enhanced_worker",
+        "line_number": 140,
+        "is_async": true,
+        "is_entry_point": true,
+        "called_functions": [
+          "logger.info",
+          "get_broker",
+          "logger.info",
+          "self.process_task",
+          "AivaMessage",
+          "logger.exception",
+          "broker.publish",
+          "MessageHeader",
+          "finding.model_dump",
+          "len",
+          "len",
+          "new_id",
+          "json.dumps",
+          "out.model_dump"
+        ]
+      },
+      "_convert_to_finding_payloads": {
+        "file_name": "enhanced_worker.py",
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_idor\\enhanced_worker.py",
+        "script_name": "enhanced_worker",
+        "line_number": 314,
+        "is_async": false,
+        "is_entry_point": true,
+        "called_functions": [
+          "FindingPayload",
+          "findings.append",
+          "finding_data.get",
+          "finding_data.get",
+          "finding_data.get"
+        ]
+      },
+      "extract_from_url": {
+        "file_name": "resource_id_extractor.py",
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_idor\\resource_id_extractor.py",
+        "script_name": "resource_id_extractor",
+        "line_number": 62,
+        "is_async": false,
+        "is_entry_point": true,
+        "called_functions": [
+          "path.split",
+          "url.split",
+          "query.split",
+          "re.fullmatch",
+          "url.split",
+          "param.split",
+          "ids.append",
+          "re.fullmatch",
+          "ResourceId",
+          "ids.append",
+          "ResourceId"
+        ]
+      },
+      "generate_test_ids": {
+        "file_name": "resource_id_extractor.py",
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_idor\\resource_id_extractor.py",
+        "script_name": "resource_id_extractor",
+        "line_number": 124,
+        "is_async": false,
+        "is_entry_point": true,
+        "called_functions": [
+          "int",
+          "range",
+          "parts.copy",
+          "test_ids.append",
+          "len",
+          "range",
+          "test_ids.append",
+          "len",
+          "test_ids.append",
+          "set",
+          "test_ids.extend",
+          "str",
+          "random.randint",
+          "list",
+          "random.randint",
+          "len",
+          "char.isdigit",
+          "unique_ids.add",
+          "hashlib.md5",
+          "hashlib.sha256",
+          "str",
+          "random_str.encode",
+          "random_str.encode",
+          "random.randint"
+        ]
+      },
+      "replace_id_in_url": {
+        "file_name": "idor_engine.py",
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_idor\\engine\\idor_engine.py",
+        "script_name": "idor_engine",
+        "line_number": 50,
+        "is_async": false,
+        "is_entry_point": true,
+        "called_functions": [
+          "url.replace"
+        ]
+      },
+      "add_finding": {
+        "file_name": "smart_idor_detector.py",
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_idor\\smart_idor_detector.py",
+        "script_name": "smart_idor_detector",
+        "line_number": 54,
+        "is_async": false,
+        "is_entry_point": true,
+        "called_functions": []
+      },
+      "add_error": {
+        "file_name": "smart_idor_detector.py",
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_idor\\smart_idor_detector.py",
+        "script_name": "smart_idor_detector",
+        "line_number": 58,
+        "is_async": false,
+        "is_entry_point": true,
+        "called_functions": []
+      },
+      "increment_attempts": {
+        "file_name": "smart_idor_detector.py",
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_idor\\smart_idor_detector.py",
+        "script_name": "smart_idor_detector",
+        "line_number": 62,
+        "is_async": false,
+        "is_entry_point": true,
+        "called_functions": []
+      },
+      "detect_vulnerabilities": {
+        "file_name": "smart_idor_detector.py",
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_idor\\smart_idor_detector.py",
+        "script_name": "smart_idor_detector",
+        "line_number": 90,
+        "is_async": true,
+        "is_entry_point": true,
+        "called_functions": [
+          "UnifiedSmartDetectionManager",
+          "IDORDetectionContext",
+          "smart_manager.start_detection",
+          "str",
+          "logger.info",
+          "logger.info",
+          "self._extract_resource_ids",
+          "logger.debug",
+          "logger.exception",
+          "context.add_error",
+          "self._execute_horizontal_testing",
+          "self._execute_vertical_testing",
+          "smart_manager.get_metrics",
+          "str",
+          "len",
+          "len",
+          "smart_manager.get_metrics",
+          "smart_manager.get_metrics"
+        ]
+      },
+      "_calculate_total_steps": {
+        "file_name": "smart_idor_detector.py",
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_idor\\smart_idor_detector.py",
+        "script_name": "smart_idor_detector",
+        "line_number": 181,
+        "is_async": false,
+        "is_entry_point": true,
+        "called_functions": []
+      },
+      "_extract_resource_ids": {
+        "file_name": "smart_idor_detector.py",
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_idor\\smart_idor_detector.py",
+        "script_name": "smart_idor_detector",
+        "line_number": 193,
+        "is_async": true,
+        "is_entry_point": true,
+        "called_functions": [
+          "str",
+          "logger.debug",
+          "asyncio.sleep",
+          "resource_ids.extend",
+          "resource_ids.extend",
+          "context.add_error",
+          "logger.warning",
+          "len",
+          "str"
+        ]
+      },
+      "_execute_horizontal_testing": {
+        "file_name": "smart_idor_detector.py",
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_idor\\smart_idor_detector.py",
+        "script_name": "smart_idor_detector",
+        "line_number": 251,
+        "is_async": true,
+        "is_entry_point": true,
+        "called_functions": [
+          "len",
+          "range",
+          "smart_manager.should_continue_testing",
+          "smart_manager.update_progress",
+          "self._test_horizontal_access"
+        ]
+      },
+      "_execute_vertical_testing": {
+        "file_name": "smart_idor_detector.py",
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_idor\\smart_idor_detector.py",
+        "script_name": "smart_idor_detector",
+        "line_number": 277,
+        "is_async": true,
+        "is_entry_point": true,
+        "called_functions": [
+          "len",
+          "len",
+          "smart_manager.should_continue_testing",
+          "smart_manager.update_progress",
+          "self._test_vertical_access"
+        ]
+      },
+      "_test_horizontal_access": {
+        "file_name": "smart_idor_detector.py",
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_idor\\smart_idor_detector.py",
+        "script_name": "smart_idor_detector",
+        "line_number": 305,
+        "is_async": true,
+        "is_entry_point": true,
+        "called_functions": [
+          "context.increment_attempts",
+          "isinstance",
+          "self._build_horizontal_finding",
+          "context.add_finding",
+          "smart_manager.report_vulnerability_found",
+          "logger.info",
+          "context.add_error",
+          "logger.warning",
+          "str",
+          "str"
+        ]
+      },
+      "_test_vertical_access": {
+        "file_name": "smart_idor_detector.py",
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_idor\\smart_idor_detector.py",
+        "script_name": "smart_idor_detector",
+        "line_number": 359,
+        "is_async": true,
+        "is_entry_point": true,
+        "called_functions": [
+          "context.increment_attempts",
+          "isinstance",
+          "self._build_vertical_finding",
+          "context.add_finding",
+          "smart_manager.report_vulnerability_found",
+          "logger.info",
+          "context.add_error",
+          "logger.warning",
+          "str",
+          "str"
+        ]
+      },
+      "_build_horizontal_finding": {
+        "file_name": "smart_idor_detector.py",
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_idor\\smart_idor_detector.py",
+        "script_name": "smart_idor_detector",
+        "line_number": 418,
+        "is_async": false,
+        "is_entry_point": true,
+        "called_functions": [
+          "new_id",
+          "FindingTarget",
+          "FindingEvidence",
+          "FindingImpact",
+          "FindingRecommendation",
+          "str"
+        ]
+      },
+      "_build_vertical_finding": {
+        "file_name": "worker.py",
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_idor\\worker.py",
+        "script_name": "worker",
+        "line_number": 314,
+        "is_async": false,
+        "is_entry_point": true,
+        "called_functions": [
+          "FindingPayload",
+          "new_id",
+          "Vulnerability",
+          "FindingTarget",
+          "FindingEvidence",
+          "FindingImpact",
+          "FindingRecommendation",
+          "hasattr"
+        ]
+      },
+      "_validated_http_url": {
+        "file_name": "worker.py",
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_idor\\worker.py",
+        "script_name": "worker",
+        "line_number": 60,
+        "is_async": false,
+        "is_entry_point": false,
+        "called_functions": [
+          "_HTTP_URL_VALIDATOR.validate_python"
+        ]
+      },
+      "detect_idor": {
+        "file_name": "worker.py",
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_idor\\worker.py",
+        "script_name": "worker",
+        "line_number": 140,
+        "is_async": true,
+        "is_entry_point": true,
+        "called_functions": [
+          "str",
+          "logger.info",
+          "logger.info",
+          "logger.info",
+          "self._extract_auth",
+          "self._get_test_user_auth",
+          "logger.debug",
+          "len",
+          "logger.warning",
+          "logger.warning",
+          "findings.append",
+          "len",
+          "self._build_finding",
+          "_validated_http_url"
+        ]
+      },
+      "detect_vertical_escalation": {
+        "file_name": "worker.py",
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_idor\\worker.py",
+        "script_name": "worker",
+        "line_number": 215,
+        "is_async": true,
+        "is_entry_point": true,
+        "called_functions": [
+          "str",
+          "self._infer_required_privilege",
+          "self._extract_auth",
+          "logger.debug",
+          "logger.warning",
+          "hasattr",
+          "logger.warning",
+          "logger.warning",
+          "findings.append",
+          "self._build_vertical_finding",
+          "_validated_http_url"
+        ]
+      },
+      "_infer_required_privilege": {
+        "file_name": "worker.py",
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_idor\\worker.py",
+        "script_name": "worker",
+        "line_number": 284,
+        "is_async": false,
+        "is_entry_point": true,
+        "called_functions": [
+          "url.lower",
+          "any",
+          "any",
+          "any"
+        ]
+      },
+      "_build_finding": {
+        "file_name": "worker.py",
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_idor\\worker.py",
+        "script_name": "worker",
+        "line_number": 367,
+        "is_async": false,
+        "is_entry_point": true,
+        "called_functions": [
+          "FindingPayload",
+          "new_id",
+          "Vulnerability",
+          "FindingTarget",
+          "FindingEvidence",
+          "FindingImpact",
+          "FindingRecommendation"
+        ]
+      },
+      "_extract_auth": {
+        "file_name": "worker.py",
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_idor\\worker.py",
+        "script_name": "worker",
+        "line_number": 421,
+        "is_async": false,
+        "is_entry_point": true,
+        "called_functions": [
+          "quote",
+          "str"
+        ]
+      },
+      "_get_test_user_auth": {
+        "file_name": "worker.py",
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_idor\\worker.py",
+        "script_name": "worker",
+        "line_number": 451,
+        "is_async": false,
+        "is_entry_point": true,
+        "called_functions": [
+          "self._extract_auth_config",
+          "self._build_auth_from_config"
+        ]
+      },
+      "_extract_auth_config": {
+        "file_name": "worker.py",
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_idor\\worker.py",
+        "script_name": "worker",
+        "line_number": 472,
+        "is_async": false,
+        "is_entry_point": true,
+        "called_functions": [
+          "getattr",
+          "isinstance",
+          "hasattr"
+        ]
+      },
+      "_build_auth_from_config": {
+        "file_name": "worker.py",
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_idor\\worker.py",
+        "script_name": "worker",
+        "line_number": 480,
+        "is_async": false,
+        "is_entry_point": true,
+        "called_functions": [
+          "auth_config.get",
+          "self._build_bearer_auth",
+          "self._build_cookie_auth",
+          "self._build_api_key_auth",
+          "self._build_basic_auth"
+        ]
+      },
+      "_build_bearer_auth": {
+        "file_name": "worker.py",
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_idor\\worker.py",
+        "script_name": "worker",
+        "line_number": 495,
+        "is_async": false,
+        "is_entry_point": true,
+        "called_functions": [
+          "config.get"
+        ]
+      },
+      "_build_cookie_auth": {
+        "file_name": "worker.py",
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_idor\\worker.py",
+        "script_name": "worker",
+        "line_number": 500,
+        "is_async": false,
+        "is_entry_point": true,
+        "called_functions": [
+          "config.get"
+        ]
+      },
+      "_build_api_key_auth": {
+        "file_name": "worker.py",
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_idor\\worker.py",
+        "script_name": "worker",
+        "line_number": 505,
+        "is_async": false,
+        "is_entry_point": true,
+        "called_functions": [
+          "config.get",
+          "config.get"
+        ]
+      },
+      "_build_basic_auth": {
+        "file_name": "worker.py",
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_idor\\worker.py",
+        "script_name": "worker",
+        "line_number": 513,
+        "is_async": false,
+        "is_entry_point": true,
+        "called_functions": [
+          "config.get",
+          "config.get",
+          "base64.b64encode"
+        ]
+      },
+      "analyze": {
+        "file_name": "idor_detector.py",
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_idor\\detector\\idor_detector.py",
+        "script_name": "idor_detector",
+        "line_number": 15,
+        "is_async": true,
+        "is_entry_point": true,
+        "called_functions": [
+          "IDOREngine",
+          "str",
+          "engine.extract_ids_from_url",
+          "findings.extend",
+          "findings.extend",
+          "engine.close",
+          "self._perform_horizontal_tests",
+          "self._perform_vertical_tests"
+        ]
+      },
+      "_perform_horizontal_tests": {
+        "file_name": "idor_detector.py",
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_idor\\detector\\idor_detector.py",
+        "script_name": "idor_detector",
+        "line_number": 41,
+        "is_async": true,
+        "is_entry_point": true,
+        "called_functions": [
+          "engine.generate_variants",
+          "engine.replace_id_in_url",
+          "engine.test_horizontal",
+          "findings.append",
+          "self._to_finding"
+        ]
+      },
+      "_perform_vertical_tests": {
+        "file_name": "idor_detector.py",
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_idor\\detector\\idor_detector.py",
+        "script_name": "idor_detector",
+        "line_number": 63,
+        "is_async": true,
+        "is_entry_point": true,
+        "called_functions": [
+          "engine.test_vertical",
+          "findings.append",
+          "self._to_finding"
+        ]
+      },
+      "_to_finding": {
+        "file_name": "idor_detector.py",
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_idor\\detector\\idor_detector.py",
+        "script_name": "idor_detector",
+        "line_number": 81,
+        "is_async": false,
+        "is_entry_point": true,
+        "called_functions": [
+          "self._determine_severity",
+          "self._create_vulnerability",
+          "FindingEvidence",
+          "FindingImpact",
+          "FindingRecommendation",
+          "FindingTarget",
+          "FindingPayload",
+          "str",
+          "new_id"
+        ]
+      },
+      "_determine_severity": {
+        "file_name": "idor_detector.py",
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_idor\\detector\\idor_detector.py",
+        "script_name": "idor_detector",
+        "line_number": 115,
+        "is_async": false,
+        "is_entry_point": true,
+        "called_functions": []
+      },
+      "_create_vulnerability": {
+        "file_name": "idor_detector.py",
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_idor\\detector\\idor_detector.py",
+        "script_name": "idor_detector",
+        "line_number": 124,
+        "is_async": false,
+        "is_entry_point": true,
+        "called_functions": [
+          "Vulnerability"
+        ]
+      },
+      "close": {
+        "file_name": "idor_engine.py",
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_idor\\engine\\idor_engine.py",
+        "script_name": "idor_engine",
+        "line_number": 28,
+        "is_async": true,
+        "is_entry_point": true,
+        "called_functions": []
+      },
+      "extract_ids_from_url": {
+        "file_name": "idor_engine.py",
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_idor\\engine\\idor_engine.py",
+        "script_name": "idor_engine",
+        "line_number": 32,
+        "is_async": false,
+        "is_entry_point": true,
+        "called_functions": [
+          "re.finditer",
+          "ids.append",
+          "IdCandidate",
+          "m.group",
+          "m.span"
+        ]
+      },
+      "generate_variants": {
+        "file_name": "idor_engine.py",
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_idor\\engine\\idor_engine.py",
+        "script_name": "idor_engine",
+        "line_number": 39,
+        "is_async": false,
+        "is_entry_point": true,
+        "called_functions": [
+          "int",
+          "range",
+          "list",
+          "dict.fromkeys",
+          "str",
+          "str",
+          "max"
+        ]
+      },
+      "test_horizontal": {
+        "file_name": "idor_engine.py",
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_idor\\engine\\idor_engine.py",
+        "script_name": "idor_engine",
+        "line_number": 53,
+        "is_async": true,
+        "is_entry_point": true,
+        "called_functions": [
+          "IDORIssue",
+          "self._is_public_resource",
+          "self._has_shared_access",
+          "self._calculate_sensitivity",
+          "IDORIssue",
+          "len",
+          "IDORIssue",
+          "len",
+          "len"
+        ]
+      },
+      "test_vertical": {
+        "file_name": "idor_engine.py",
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_idor\\engine\\idor_engine.py",
+        "script_name": "idor_engine",
+        "line_number": 89,
+        "is_async": true,
+        "is_entry_point": true,
+        "called_functions": [
+          "IDORIssue",
+          "self._calculate_sensitivity",
+          "IDORIssue",
+          "IDORIssue"
+        ]
+      },
+      "_is_public_resource": {
+        "file_name": "idor_engine.py",
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_idor\\engine\\idor_engine.py",
+        "script_name": "idor_engine",
+        "line_number": 111,
+        "is_async": false,
+        "is_entry_point": true,
+        "called_functions": [
+          "response_text.lower",
+          "url.lower",
+          "indicator.lower"
+        ]
+      },
+      "_has_shared_access": {
+        "file_name": "idor_engine.py",
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_idor\\engine\\idor_engine.py",
+        "script_name": "idor_engine",
+        "line_number": 152,
+        "is_async": false,
+        "is_entry_point": true,
+        "called_functions": [
+          "user_b_text.lower",
+          "json.loads",
+          "json.loads",
+          "data_a.get",
+          "data_a.get",
+          "data_a.get",
+          "data_b.get",
+          "data_b.get",
+          "data_b.get",
+          "user_a_text.strip",
+          "user_b_text.strip"
+        ]
+      },
+      "_calculate_sensitivity": {
+        "file_name": "idor_engine.py",
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_idor\\engine\\idor_engine.py",
+        "script_name": "idor_engine",
+        "line_number": 193,
+        "is_async": false,
+        "is_entry_point": true,
+        "called_functions": [
+          "response_text.lower",
+          "sensitive_fields.items",
+          "max"
+        ]
+      },
+      "_topic": {
+        "file_name": "idor_worker.py",
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_idor\\worker\\idor_worker.py",
+        "script_name": "idor_worker",
+        "line_number": 11,
+        "is_async": false,
+        "is_entry_point": false,
+        "called_functions": [
+          "os.getenv"
+        ]
+      }
+    },
+    "script_functions": {
+      "command_handler": {
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_idor\\command_handler.py",
+        "functions": {
+          "test_idor_handler": {
+            "line_number": 196,
+            "is_async": true,
+            "is_entry_point": false,
+            "called_functions": [
+              "IDORCommandHandler",
+              "AICommand",
+              "print",
+              "handler.handle_command"
+            ]
+          },
+          "__init__": {
+            "line_number": 58,
+            "is_async": false,
+            "is_entry_point": true,
+            "called_functions": [
+              "SmartIDORDetector",
+              "ResourceIdExtractor"
+            ]
+          },
+          "handle_command": {
+            "line_number": 65,
+            "is_async": true,
+            "is_entry_point": true,
+            "called_functions": [
+              "time.time",
+              "payload.get",
+              "payload.get",
+              "payload.get",
+              "payload.get",
+              "FunctionTaskPayload",
+              "any",
+              "AICommandResult",
+              "ValueError",
+              "ValueError",
+              "httpx.AsyncClient",
+              "CrossUserTester",
+              "VerticalEscalationTester",
+              "time.time",
+              "AICommandResult",
+              "FunctionTaskTarget",
+              "r.get",
+              "datetime.now",
+              "datetime.now",
+              "time.time",
+              "str",
+              "datetime.now",
+              "datetime.now",
+              "len",
+              "str",
+              "hasattr",
+              "r.get",
+              "r.get",
+              "r.get",
+              "type",
+              "isinstance"
+            ]
+          }
+        },
+        "entry_points": [
+          "__init__",
+          "handle_command"
+        ],
+        "export_functions": [
+          "test_idor_handler",
+          "__init__",
+          "handle_command"
+        ]
+      },
+      "enhanced_worker": {
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_idor\\enhanced_worker.py",
+        "functions": {
+          "run": {
+            "line_number": 109,
+            "is_async": true,
+            "is_entry_point": true,
+            "called_functions": [
+              "ResourceIdExtractor",
+              "get_broker",
+              "httpx.AsyncClient",
+              "CrossUserTester",
+              "VerticalEscalationTester",
+              "broker.subscribe",
+              "AivaMessage.model_validate_json",
+              "FunctionTaskPayload",
+              "logger.exception",
+              "self._execute_task"
+            ]
+          },
+          "process_task": {
+            "line_number": 205,
+            "is_async": true,
+            "is_entry_point": true,
+            "called_functions": [
+              "logger.info",
+              "StatisticsCollector",
+              "range",
+              "range",
+              "range",
+              "stats_collector.set_module_specific",
+              "stats_collector.set_module_specific",
+              "stats_collector.set_module_specific",
+              "self._convert_to_finding_payloads",
+              "stats_collector.get_summary",
+              "detection_metrics.get",
+              "EnhancedIdorTelemetry",
+              "logger.info",
+              "EnhancedIdorTaskExecutionResult",
+              "stats_collector.record_request",
+              "stats_collector.record_request",
+              "detection_metrics.get",
+              "stats_collector.record_request",
+              "finding.get",
+              "vuln.get",
+              "escalation_type.lower",
+              "len",
+              "escalation_type.lower",
+              "detection_metrics.get",
+              "detection_metrics.get",
+              "detection_metrics.get",
+              "len"
+            ]
+          },
+          "to_details": {
+            "line_number": 53,
+            "is_async": false,
+            "is_entry_point": true,
+            "called_functions": []
+          },
+          "__init__": {
+            "line_number": 85,
+            "is_async": false,
+            "is_entry_point": true,
+            "called_functions": [
+              "SmartIDORDetector",
+              "logger.info",
+              "IdorConfig"
+            ]
+          },
+          "_execute_task": {
+            "line_number": 140,
+            "is_async": true,
+            "is_entry_point": true,
+            "called_functions": [
+              "logger.info",
+              "get_broker",
+              "logger.info",
+              "self.process_task",
+              "AivaMessage",
+              "logger.exception",
+              "broker.publish",
+              "MessageHeader",
+              "finding.model_dump",
+              "len",
+              "len",
+              "new_id",
+              "json.dumps",
+              "out.model_dump"
+            ]
+          },
+          "_convert_to_finding_payloads": {
+            "line_number": 314,
+            "is_async": false,
+            "is_entry_point": true,
+            "called_functions": [
+              "FindingPayload",
+              "findings.append",
+              "finding_data.get",
+              "finding_data.get",
+              "finding_data.get"
+            ]
+          }
+        },
+        "entry_points": [
+          "run",
+          "process_task",
+          "to_details",
+          "__init__",
+          "run",
+          "_execute_task",
+          "process_task",
+          "_convert_to_finding_payloads"
+        ],
+        "export_functions": [
+          "run",
+          "process_task",
+          "to_details",
+          "__init__",
+          "run",
+          "_execute_task",
+          "process_task",
+          "_convert_to_finding_payloads"
+        ]
+      },
+      "resource_id_extractor": {
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_idor\\resource_id_extractor.py",
+        "functions": {
+          "extract_from_url": {
+            "line_number": 62,
+            "is_async": false,
+            "is_entry_point": true,
+            "called_functions": [
+              "path.split",
+              "url.split",
+              "query.split",
+              "re.fullmatch",
+              "url.split",
+              "param.split",
+              "ids.append",
+              "re.fullmatch",
+              "ResourceId",
+              "ids.append",
+              "ResourceId"
+            ]
+          },
+          "generate_test_ids": {
+            "line_number": 124,
+            "is_async": false,
+            "is_entry_point": true,
+            "called_functions": [
+              "int",
+              "range",
+              "parts.copy",
+              "test_ids.append",
+              "len",
+              "range",
+              "test_ids.append",
+              "len",
+              "test_ids.append",
+              "set",
+              "test_ids.extend",
+              "str",
+              "random.randint",
+              "list",
+              "random.randint",
+              "len",
+              "char.isdigit",
+              "unique_ids.add",
+              "hashlib.md5",
+              "hashlib.sha256",
+              "str",
+              "random_str.encode",
+              "random_str.encode",
+              "random.randint"
+            ]
+          },
+          "replace_id_in_url": {
+            "line_number": 210,
+            "is_async": false,
+            "is_entry_point": true,
+            "called_functions": [
+              "urlparse",
+              "parse_qsl",
+              "urlencode",
+              "urlunparse"
+            ]
+          }
+        },
+        "entry_points": [
+          "extract_from_url",
+          "generate_test_ids",
+          "replace_id_in_url"
+        ],
+        "export_functions": [
+          "extract_from_url",
+          "generate_test_ids",
+          "replace_id_in_url"
+        ]
+      },
+      "smart_idor_detector": {
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_idor\\smart_idor_detector.py",
+        "functions": {
+          "add_finding": {
+            "line_number": 54,
+            "is_async": false,
+            "is_entry_point": true,
+            "called_functions": []
+          },
+          "add_error": {
+            "line_number": 58,
+            "is_async": false,
+            "is_entry_point": true,
+            "called_functions": []
+          },
+          "increment_attempts": {
+            "line_number": 62,
+            "is_async": false,
+            "is_entry_point": true,
+            "called_functions": []
+          },
+          "__init__": {
+            "line_number": 70,
+            "is_async": false,
+            "is_entry_point": true,
+            "called_functions": [
+              "logger.info",
+              "IdorConfig"
+            ]
+          },
+          "detect_vulnerabilities": {
+            "line_number": 90,
+            "is_async": true,
+            "is_entry_point": true,
+            "called_functions": [
+              "UnifiedSmartDetectionManager",
+              "IDORDetectionContext",
+              "smart_manager.start_detection",
+              "str",
+              "logger.info",
+              "logger.info",
+              "self._extract_resource_ids",
+              "logger.debug",
+              "logger.exception",
+              "context.add_error",
+              "self._execute_horizontal_testing",
+              "self._execute_vertical_testing",
+              "smart_manager.get_metrics",
+              "str",
+              "len",
+              "len",
+              "smart_manager.get_metrics",
+              "smart_manager.get_metrics"
+            ]
+          },
+          "_calculate_total_steps": {
+            "line_number": 181,
+            "is_async": false,
+            "is_entry_point": true,
+            "called_functions": []
+          },
+          "_extract_resource_ids": {
+            "line_number": 193,
+            "is_async": true,
+            "is_entry_point": true,
+            "called_functions": [
+              "str",
+              "logger.debug",
+              "asyncio.sleep",
+              "resource_ids.extend",
+              "resource_ids.extend",
+              "context.add_error",
+              "logger.warning",
+              "len",
+              "str"
+            ]
+          },
+          "_execute_horizontal_testing": {
+            "line_number": 251,
+            "is_async": true,
+            "is_entry_point": true,
+            "called_functions": [
+              "len",
+              "range",
+              "smart_manager.should_continue_testing",
+              "smart_manager.update_progress",
+              "self._test_horizontal_access"
+            ]
+          },
+          "_execute_vertical_testing": {
+            "line_number": 277,
+            "is_async": true,
+            "is_entry_point": true,
+            "called_functions": [
+              "len",
+              "len",
+              "smart_manager.should_continue_testing",
+              "smart_manager.update_progress",
+              "self._test_vertical_access"
+            ]
+          },
+          "_test_horizontal_access": {
+            "line_number": 305,
+            "is_async": true,
+            "is_entry_point": true,
+            "called_functions": [
+              "context.increment_attempts",
+              "isinstance",
+              "self._build_horizontal_finding",
+              "context.add_finding",
+              "smart_manager.report_vulnerability_found",
+              "logger.info",
+              "context.add_error",
+              "logger.warning",
+              "str",
+              "str"
+            ]
+          },
+          "_test_vertical_access": {
+            "line_number": 359,
+            "is_async": true,
+            "is_entry_point": true,
+            "called_functions": [
+              "context.increment_attempts",
+              "isinstance",
+              "self._build_vertical_finding",
+              "context.add_finding",
+              "smart_manager.report_vulnerability_found",
+              "logger.info",
+              "context.add_error",
+              "logger.warning",
+              "str",
+              "str"
+            ]
+          },
+          "_build_horizontal_finding": {
+            "line_number": 418,
+            "is_async": false,
+            "is_entry_point": true,
+            "called_functions": [
+              "new_id",
+              "FindingTarget",
+              "FindingEvidence",
+              "FindingImpact",
+              "FindingRecommendation",
+              "str"
+            ]
+          },
+          "_build_vertical_finding": {
+            "line_number": 474,
+            "is_async": false,
+            "is_entry_point": true,
+            "called_functions": [
+              "new_id",
+              "FindingTarget",
+              "FindingEvidence",
+              "FindingImpact",
+              "FindingRecommendation",
+              "str",
+              "getattr",
+              "getattr"
+            ]
+          }
+        },
+        "entry_points": [
+          "add_finding",
+          "add_error",
+          "increment_attempts",
+          "__init__",
+          "detect_vulnerabilities",
+          "_calculate_total_steps",
+          "_extract_resource_ids",
+          "_execute_horizontal_testing",
+          "_execute_vertical_testing",
+          "_test_horizontal_access",
+          "_test_vertical_access",
+          "_build_horizontal_finding",
+          "_build_vertical_finding"
+        ],
+        "export_functions": [
+          "add_finding",
+          "add_error",
+          "increment_attempts",
+          "__init__",
+          "detect_vulnerabilities",
+          "_calculate_total_steps",
+          "_extract_resource_ids",
+          "_execute_horizontal_testing",
+          "_execute_vertical_testing",
+          "_test_horizontal_access",
+          "_test_vertical_access",
+          "_build_horizontal_finding",
+          "_build_vertical_finding"
+        ]
+      },
+      "worker": {
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_idor\\worker.py",
+        "functions": {
+          "_validated_http_url": {
+            "line_number": 60,
+            "is_async": false,
+            "is_entry_point": false,
+            "called_functions": [
+              "_HTTP_URL_VALIDATOR.validate_python"
+            ]
+          },
+          "run": {
+            "line_number": 65,
+            "is_async": true,
+            "is_entry_point": true,
+            "called_functions": [
+              "IdorWorker",
+              "get_broker",
+              "broker.subscribe",
+              "AivaMessage.model_validate_json",
+              "FunctionTaskPayload",
+              "logger.info",
+              "logger.info",
+              "worker.detect_idor",
+              "worker.detect_vertical_escalation",
+              "AivaMessage",
+              "logger.exception",
+              "broker.publish",
+              "MessageHeader",
+              "finding.model_dump",
+              "len",
+              "len",
+              "len",
+              "new_id",
+              "json.dumps",
+              "out.model_dump"
+            ]
+          },
+          "__init__": {
+            "line_number": 530,
+            "is_async": false,
+            "is_entry_point": true,
+            "called_functions": [
+              "IdorWorker"
+            ]
+          },
+          "detect_idor": {
+            "line_number": 140,
+            "is_async": true,
+            "is_entry_point": true,
+            "called_functions": [
+              "str",
+              "logger.info",
+              "logger.info",
+              "logger.info",
+              "self._extract_auth",
+              "self._get_test_user_auth",
+              "logger.debug",
+              "len",
+              "logger.warning",
+              "logger.warning",
+              "findings.append",
+              "len",
+              "self._build_finding",
+              "_validated_http_url"
+            ]
+          },
+          "detect_vertical_escalation": {
+            "line_number": 215,
+            "is_async": true,
+            "is_entry_point": true,
+            "called_functions": [
+              "str",
+              "self._infer_required_privilege",
+              "self._extract_auth",
+              "logger.debug",
+              "logger.warning",
+              "hasattr",
+              "logger.warning",
+              "logger.warning",
+              "findings.append",
+              "self._build_vertical_finding",
+              "_validated_http_url"
+            ]
+          },
+          "_infer_required_privilege": {
+            "line_number": 284,
+            "is_async": false,
+            "is_entry_point": true,
+            "called_functions": [
+              "url.lower",
+              "any",
+              "any",
+              "any"
+            ]
+          },
+          "_build_vertical_finding": {
+            "line_number": 314,
+            "is_async": false,
+            "is_entry_point": true,
+            "called_functions": [
+              "FindingPayload",
+              "new_id",
+              "Vulnerability",
+              "FindingTarget",
+              "FindingEvidence",
+              "FindingImpact",
+              "FindingRecommendation",
+              "hasattr"
+            ]
+          },
+          "_build_finding": {
+            "line_number": 367,
+            "is_async": false,
+            "is_entry_point": true,
+            "called_functions": [
+              "FindingPayload",
+              "new_id",
+              "Vulnerability",
+              "FindingTarget",
+              "FindingEvidence",
+              "FindingImpact",
+              "FindingRecommendation"
+            ]
+          },
+          "_extract_auth": {
+            "line_number": 421,
+            "is_async": false,
+            "is_entry_point": true,
+            "called_functions": [
+              "quote",
+              "str"
+            ]
+          },
+          "_get_test_user_auth": {
+            "line_number": 451,
+            "is_async": false,
+            "is_entry_point": true,
+            "called_functions": [
+              "self._extract_auth_config",
+              "self._build_auth_from_config"
+            ]
+          },
+          "_extract_auth_config": {
+            "line_number": 472,
+            "is_async": false,
+            "is_entry_point": true,
+            "called_functions": [
+              "getattr",
+              "isinstance",
+              "hasattr"
+            ]
+          },
+          "_build_auth_from_config": {
+            "line_number": 480,
+            "is_async": false,
+            "is_entry_point": true,
+            "called_functions": [
+              "auth_config.get",
+              "self._build_bearer_auth",
+              "self._build_cookie_auth",
+              "self._build_api_key_auth",
+              "self._build_basic_auth"
+            ]
+          },
+          "_build_bearer_auth": {
+            "line_number": 495,
+            "is_async": false,
+            "is_entry_point": true,
+            "called_functions": [
+              "config.get"
+            ]
+          },
+          "_build_cookie_auth": {
+            "line_number": 500,
+            "is_async": false,
+            "is_entry_point": true,
+            "called_functions": [
+              "config.get"
+            ]
+          },
+          "_build_api_key_auth": {
+            "line_number": 505,
+            "is_async": false,
+            "is_entry_point": true,
+            "called_functions": [
+              "config.get",
+              "config.get"
+            ]
+          },
+          "_build_basic_auth": {
+            "line_number": 513,
+            "is_async": false,
+            "is_entry_point": true,
+            "called_functions": [
+              "config.get",
+              "config.get",
+              "base64.b64encode"
+            ]
+          },
+          "process_task": {
+            "line_number": 533,
+            "is_async": true,
+            "is_entry_point": true,
+            "called_functions": [
+              "hasattr",
+              "FunctionTaskPayload",
+              "ValueError",
+              "f.model_dump",
+              "len",
+              "len",
+              "len",
+              "getattr",
+              "getattr",
+              "getattr"
+            ]
+          }
+        },
+        "entry_points": [
+          "run",
+          "__init__",
+          "detect_idor",
+          "detect_vertical_escalation",
+          "_infer_required_privilege",
+          "_build_vertical_finding",
+          "_build_finding",
+          "_extract_auth",
+          "_get_test_user_auth",
+          "_extract_auth_config",
+          "_build_auth_from_config",
+          "_build_bearer_auth",
+          "_build_cookie_auth",
+          "_build_api_key_auth",
+          "_build_basic_auth",
+          "__init__",
+          "process_task"
+        ],
+        "export_functions": [
+          "_validated_http_url",
+          "run",
+          "__init__",
+          "detect_idor",
+          "detect_vertical_escalation",
+          "_infer_required_privilege",
+          "_build_vertical_finding",
+          "_build_finding",
+          "_extract_auth",
+          "_get_test_user_auth",
+          "_extract_auth_config",
+          "_build_auth_from_config",
+          "_build_bearer_auth",
+          "_build_cookie_auth",
+          "_build_api_key_auth",
+          "_build_basic_auth",
+          "__init__",
+          "process_task"
+        ]
+      },
+      "__init__": {
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_idor\\__init__.py",
+        "functions": {},
+        "entry_points": [],
+        "export_functions": []
+      },
+      "__main__": {
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_idor\\__main__.py",
+        "functions": {},
+        "entry_points": [],
+        "export_functions": []
+      },
+      "idor_config": {
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_idor\\config\\idor_config.py",
+        "functions": {},
+        "entry_points": [],
+        "export_functions": []
+      },
+      "idor_detector": {
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_idor\\detector\\idor_detector.py",
+        "functions": {
+          "__init__": {
+            "line_number": 12,
+            "is_async": false,
+            "is_entry_point": true,
+            "called_functions": []
+          },
+          "analyze": {
+            "line_number": 15,
+            "is_async": true,
+            "is_entry_point": true,
+            "called_functions": [
+              "IDOREngine",
+              "str",
+              "engine.extract_ids_from_url",
+              "findings.extend",
+              "findings.extend",
+              "engine.close",
+              "self._perform_horizontal_tests",
+              "self._perform_vertical_tests"
+            ]
+          },
+          "_perform_horizontal_tests": {
+            "line_number": 41,
+            "is_async": true,
+            "is_entry_point": true,
+            "called_functions": [
+              "engine.generate_variants",
+              "engine.replace_id_in_url",
+              "engine.test_horizontal",
+              "findings.append",
+              "self._to_finding"
+            ]
+          },
+          "_perform_vertical_tests": {
+            "line_number": 63,
+            "is_async": true,
+            "is_entry_point": true,
+            "called_functions": [
+              "engine.test_vertical",
+              "findings.append",
+              "self._to_finding"
+            ]
+          },
+          "_to_finding": {
+            "line_number": 81,
+            "is_async": false,
+            "is_entry_point": true,
+            "called_functions": [
+              "self._determine_severity",
+              "self._create_vulnerability",
+              "FindingEvidence",
+              "FindingImpact",
+              "FindingRecommendation",
+              "FindingTarget",
+              "FindingPayload",
+              "str",
+              "new_id"
+            ]
+          },
+          "_determine_severity": {
+            "line_number": 115,
+            "is_async": false,
+            "is_entry_point": true,
+            "called_functions": []
+          },
+          "_create_vulnerability": {
+            "line_number": 124,
+            "is_async": false,
+            "is_entry_point": true,
+            "called_functions": [
+              "Vulnerability"
+            ]
+          }
+        },
+        "entry_points": [
+          "__init__",
+          "analyze",
+          "_perform_horizontal_tests",
+          "_perform_vertical_tests",
+          "_to_finding",
+          "_determine_severity",
+          "_create_vulnerability"
+        ],
+        "export_functions": [
+          "__init__",
+          "analyze",
+          "_perform_horizontal_tests",
+          "_perform_vertical_tests",
+          "_to_finding",
+          "_determine_severity",
+          "_create_vulnerability"
+        ]
+      },
+      "idor_engine": {
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_idor\\engine\\idor_engine.py",
+        "functions": {
+          "__init__": {
+            "line_number": 23,
+            "is_async": false,
+            "is_entry_point": true,
+            "called_functions": [
+              "httpx.AsyncClient"
+            ]
+          },
+          "close": {
+            "line_number": 28,
+            "is_async": true,
+            "is_entry_point": true,
+            "called_functions": []
+          },
+          "extract_ids_from_url": {
+            "line_number": 32,
+            "is_async": false,
+            "is_entry_point": true,
+            "called_functions": [
+              "re.finditer",
+              "ids.append",
+              "IdCandidate",
+              "m.group",
+              "m.span"
+            ]
+          },
+          "generate_variants": {
+            "line_number": 39,
+            "is_async": false,
+            "is_entry_point": true,
+            "called_functions": [
+              "int",
+              "range",
+              "list",
+              "dict.fromkeys",
+              "str",
+              "str",
+              "max"
+            ]
+          },
+          "replace_id_in_url": {
+            "line_number": 50,
+            "is_async": false,
+            "is_entry_point": true,
+            "called_functions": [
+              "url.replace"
+            ]
+          },
+          "test_horizontal": {
+            "line_number": 53,
+            "is_async": true,
+            "is_entry_point": true,
+            "called_functions": [
+              "IDORIssue",
+              "self._is_public_resource",
+              "self._has_shared_access",
+              "self._calculate_sensitivity",
+              "IDORIssue",
+              "len",
+              "IDORIssue",
+              "len",
+              "len"
+            ]
+          },
+          "test_vertical": {
+            "line_number": 89,
+            "is_async": true,
+            "is_entry_point": true,
+            "called_functions": [
+              "IDORIssue",
+              "self._calculate_sensitivity",
+              "IDORIssue",
+              "IDORIssue"
+            ]
+          },
+          "_is_public_resource": {
+            "line_number": 111,
+            "is_async": false,
+            "is_entry_point": true,
+            "called_functions": [
+              "response_text.lower",
+              "url.lower",
+              "indicator.lower"
+            ]
+          },
+          "_has_shared_access": {
+            "line_number": 152,
+            "is_async": false,
+            "is_entry_point": true,
+            "called_functions": [
+              "user_b_text.lower",
+              "json.loads",
+              "json.loads",
+              "data_a.get",
+              "data_a.get",
+              "data_a.get",
+              "data_b.get",
+              "data_b.get",
+              "data_b.get",
+              "user_a_text.strip",
+              "user_b_text.strip"
+            ]
+          },
+          "_calculate_sensitivity": {
+            "line_number": 193,
+            "is_async": false,
+            "is_entry_point": true,
+            "called_functions": [
+              "response_text.lower",
+              "sensitive_fields.items",
+              "max"
+            ]
+          }
+        },
+        "entry_points": [
+          "__init__",
+          "close",
+          "extract_ids_from_url",
+          "generate_variants",
+          "replace_id_in_url",
+          "test_horizontal",
+          "test_vertical",
+          "_is_public_resource",
+          "_has_shared_access",
+          "_calculate_sensitivity"
+        ],
+        "export_functions": [
+          "__init__",
+          "close",
+          "extract_ids_from_url",
+          "generate_variants",
+          "replace_id_in_url",
+          "test_horizontal",
+          "test_vertical",
+          "_is_public_resource",
+          "_has_shared_access",
+          "_calculate_sensitivity"
+        ]
+      },
+      "idor_worker": {
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_idor\\worker\\idor_worker.py",
+        "functions": {
+          "_topic": {
+            "line_number": 11,
+            "is_async": false,
+            "is_entry_point": false,
+            "called_functions": [
+              "os.getenv"
+            ]
+          },
+          "run": {
+            "line_number": 14,
+            "is_async": true,
+            "is_entry_point": true,
+            "called_functions": [
+              "_topic",
+              "_topic",
+              "_topic",
+              "IdorConfig",
+              "IDORDetector",
+              "broker.subscribe",
+              "get_broker",
+              "getattr",
+              "getattr",
+              "getattr",
+              "int",
+              "float",
+              "AivaMessage.model_validate_json",
+              "FunctionTaskPayload",
+              "os.getenv",
+              "os.getenv",
+              "new_id",
+              "broker.publish",
+              "detector.analyze",
+              "AivaMessage",
+              "broker.publish",
+              "logger.exception",
+              "broker.publish",
+              "broker.publish",
+              "os.getenv",
+              "os.getenv",
+              "os.getenv",
+              "os.getenv",
+              "MessageHeader",
+              "f.model_dump",
+              "json.dumps",
+              "json.dumps",
+              "new_id",
+              "getattr",
+              "json.dumps",
+              "json.dumps",
+              "out.model_dump",
+              "AivaMessage",
+              "AivaMessage",
+              "AivaMessage",
+              "MessageHeader",
+              "MessageHeader",
+              "str",
+              "len",
+              "MessageHeader",
+              "new_id",
+              "getattr",
+              "new_id",
+              "getattr",
+              "str",
+              "new_id",
+              "new_id",
+              "getattr"
+            ]
+          }
+        },
+        "entry_points": [
+          "run"
+        ],
+        "export_functions": [
+          "_topic",
+          "run"
+        ]
+      }
+    }
+  }
+}

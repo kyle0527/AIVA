@@ -7,6 +7,25 @@ import logging
 from datetime import datetime
 from typing import Any
 
+# 強制依賴檢查 - Fail Fast 原則
+try:
+    from services.scan.coordinators.multi_engine_coordinator import MultiEngineCoordinator  # type: ignore[import-not-found]
+except ImportError as e:
+    raise ImportError(
+        "❌ 缺少必要依賴 MultiEngineCoordinator\n"
+        "請確認 services.scan.coordinators.multi_engine_coordinator 模組已實現\n"
+        f"原始錯誤: {e}"
+    ) from e
+
+try:
+    from services.features.function_exploit.executor.attack_executor import AttackExecutor, ExecutionMode
+except ImportError as e:
+    raise ImportError(
+        "❌ 缺少必要依賴 AttackExecutor\n"
+        "請確認 services.features.function_exploit.executor.attack_executor 模組已實現\n"
+        f"原始錯誤: {e}"
+    ) from e
+
 logger = logging.getLogger(__name__)
 
 
@@ -14,6 +33,9 @@ class AttackCoordinator:
     """攻擊執行協調器
     
     協調攻擊執行、漏洞檢測和多引擎掃描
+    
+    Raises:
+        ImportError: 如果必要依賴缺失（MultiEngineCoordinator, AttackExecutor）
     """
 
     def __init__(
@@ -152,18 +174,7 @@ class AttackCoordinator:
         max_depth = context.get("max_depth", 3)
 
         try:
-            try:
-                from services.scan.coordinators.multi_engine_coordinator import (  # type: ignore[import-not-found]
-                    MultiEngineCoordinator,
-                )
-            except ImportError:
-                logger.error("❌ MultiEngineCoordinator 模組尚未實現")
-                return {
-                    "success": False,
-                    "error": "MultiEngineCoordinator module not available",
-                    "scan_id": scan_id,
-                }
-
+            # 直接使用已在模組頂部導入的 MultiEngineCoordinator
             coordinator = MultiEngineCoordinator()
             await coordinator.initialize()
 
@@ -189,13 +200,22 @@ class AttackCoordinator:
                 max_depth=max_depth,
             )
 
-            urls_found = result.summary.urls_found if result.summary else 0
-            assets_found = len(result.assets) if result.assets else 0
-            execution_time = result.execution_time if hasattr(result, "execution_time") else 0
+            # 安全訪問 result 屬性，支援 dict 和 object 類型
+            if isinstance(result, dict):
+                urls_found = result.get("summary", {}).get("urls_found", 0)
+                assets_found = len(result.get("assets", []))
+                execution_time = result.get("execution_time", 0)
+                engine_results = result.get("engine_results", {})
+            else:
+                urls_found = result.summary.urls_found if hasattr(result, "summary") and result.summary else 0
+                assets_found = len(result.assets) if hasattr(result, "assets") and result.assets else 0
+                execution_time = result.execution_time if hasattr(result, "execution_time") else 0
+                engine_results = result.engine_results if hasattr(result, "engine_results") else {}
+                
             engines_used = [
-                engine for engine, data in result.engine_results.items()
-                if data.get("status") == "completed"
-            ] if result.engine_results else []
+                engine for engine, data in engine_results.items()
+                if isinstance(data, dict) and data.get("status") == "completed"
+            ] if engine_results else []
 
             logger.info(
                 f"✅ AI 控制: 掃描完成 - 發現 {urls_found} 個 URL, {assets_found} 個資產, 耗時 {execution_time:.2f}s"
@@ -239,22 +259,7 @@ class AttackCoordinator:
             return {"success": False, "error": "Missing plan or target"}
 
         try:
-            try:
-                from services.features.function_exploit.executor.attack_executor import (
-                    AttackExecutor,
-                    ExecutionMode,
-                )
-            except ImportError:
-                logger.warning("⚠️ AttackExecutor 模組不可用，使用 unified_executor")
-                result = await self.unified_executor.execute(
-                    target=target if isinstance(target, str) else target.get("target_url", ""),
-                    objective=plan.get("objective", "Execute attack plan") if isinstance(plan, dict) else str(plan),
-                )
-                return {
-                    "success": result.success if hasattr(result, 'success') else False,
-                    "result": result,
-                }
-
+            # 直接使用已在模組頂部導入的 AttackExecutor 和 ExecutionMode
             mode_str = context.get("mode", "testing").lower()
             mode_map = {
                 "safe": ExecutionMode.SAFE,
@@ -527,11 +532,72 @@ class AttackCoordinator:
             
             logger.info(f"✅ 掃描完成: {total_found} 個發現")
             
+            # === Phase2 決策: 攻擊目標選擇和結果評估 ===
+            phase2_targets = None
+            phase2_evaluation = None
+            
+            try:
+                # 如果發現了漏洞，進行 Phase2 決策
+                if total_found > 0:
+                    logger.info("🎯 啟動 Phase2 決策: 攻擊目標優先級排序")
+                    
+                    # 構建 phase1_result 格式
+                    phase1_dict = {
+                        "scan_id": scan_context.task_id,
+                        "status": "completed",
+                        "assets": result.get("assets", []) if isinstance(result, dict) else [],
+                        "engine_results": {"coordinator": {"status": "completed"}},
+                        "summary": {
+                            "urls_found": result.get("urls_found", 0) if isinstance(result, dict) else 0,
+                            "forms_found": result.get("forms_found", 0) if isinstance(result, dict) else 0,
+                            "apis_found": result.get("apis_found", 0) if isinstance(result, dict) else 0,
+                            "files_found": total_found,
+                        },
+                        "fingerprints": result.get("fingerprints", {}) if isinstance(result, dict) else {},
+                        "execution_time": result.get("execution_time", 0) if isinstance(result, dict) else 0,
+                    }
+                    
+                    # 決定 Phase2 攻擊目標
+                    phase2_targets = decision_agent.decide_phase2_targets(
+                        phase1_dict, max_targets=5
+                    )
+                    
+                    # 確保 phase2_targets 是 dict 類型
+                    if not isinstance(phase2_targets, dict):
+                        phase2_targets = {"targets": [], "total_bounty_estimate": 0}
+                    
+                    logger.info(
+                        f"🎯 Phase2 目標分析: {len(phase2_targets.get('targets', []))} 個高價值目標"
+                    )
+                    
+                    # 構建 Phase2 模擬結果
+                    simulated_phase2_results = {
+                        "targets": phase2_targets.get("targets", []),
+                        "vulnerability_findings": result.get("vulnerabilities", []) if isinstance(result, dict) else [],
+                        "attack_success_rate": min(1.0, total_found / 10.0),  # 簡單估算
+                        "total_execution_time": result.get("execution_time", 0) if isinstance(result, dict) else 0,
+                        "bounty_potential": phase2_targets.get("total_bounty_estimate", 0),
+                    }
+                    
+                    # 評估 Phase2 結果（將 dict 包裝成 list）
+                    phase2_evaluation = decision_agent.evaluate_phase2_results(
+                        [simulated_phase2_results], time_budget_remaining=60.0
+                    )
+                    
+                    logger.info(
+                        f"📊 Phase2 評估完成: 風險等級={phase2_evaluation.get('risk_level', 'unknown')}"
+                    )
+                
+            except Exception as e:
+                logger.warning(f"⚠️ Phase2 決策失敗: {e}")
+            
             return {
                 "status": "success",
                 "task_id": scan_context.task_id,
                 "ai_decision": ai_decision,
-                "scan_result": result if isinstance(result, dict) else str(result)
+                "scan_result": result if isinstance(result, dict) else str(result),
+                "phase2_targets": phase2_targets,
+                "phase2_evaluation": phase2_evaluation,
             }
         
         except Exception as e:

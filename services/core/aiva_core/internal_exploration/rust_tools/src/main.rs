@@ -14,6 +14,7 @@ use std::fs;
 use std::path::{Path, PathBuf};
 use std::env;
 use syn::{visit::Visit, *};
+use chrono;
 
 mod paths_config;
 use paths_config::PathsConfig;
@@ -261,11 +262,12 @@ impl Stitcher {
                     // 匹配邏輯：
                     // 1. 完全匹配: "my_func" == "my_func"
                     // 2. 結構體匹配: "MyStruct::my_method" vs 調用 "my_method" (如果 alias 符合)
-                    // 3. 完整路徑: "mod::func"
+                    // 3. 模組匹配: "mod::func" 調用 vs "func" 定義 (如果模組名符合)
                     
                     let is_match = if !call.module_alias.is_empty() {
-                        // 檢查 Struct::Method 定義
-                        def == &format!("{}::{}", call.module_alias, call.function_name)
+                        // 檢查完整路徑或者模組匹配
+                        def == &format!("{}::{}", call.module_alias, call.function_name) ||
+                        (def == &call.function_name && target_node.module_name == call.module_alias)
                     } else {
                         def == &call.function_name
                     };
@@ -361,6 +363,7 @@ struct FlowMetadata {
     inputs: Vec<String>,
     outputs: Vec<String>,
     call_targets: Vec<String>,
+    external_calls: Vec<ExternalCall>,  // 添加此欄位
     category: String,
     description: String,
 }
@@ -389,6 +392,7 @@ impl<'a> Builder<'a> {
                 inputs: Vec::new(),
                 outputs: Vec::new(),
                 call_targets: Vec::new(),
+                external_calls: Vec::new(),  // 初始化
                 category: String::new(),
                 description: String::new(),
             },
@@ -664,6 +668,7 @@ fn main() -> std::io::Result<()> {
                 let mut meta = builder.metadata.clone();
                 meta.source_file = file_name.clone();
                 meta.module = module_name.clone();
+                meta.external_calls = builder.external_calls.clone();  // 添加此行
                 
                 classifier.classify(&mut meta);
                 all_meta.push(meta);
@@ -692,6 +697,7 @@ fn main() -> std::io::Result<()> {
                         let mut meta = builder.metadata.clone();
                         meta.source_file = file_name.clone();
                         meta.module = module_name.clone();
+                        meta.external_calls = builder.external_calls.clone();  // 添加此行
                         
                         classifier.classify(&mut meta);
                         all_meta.push(meta);
@@ -712,6 +718,43 @@ fn main() -> std::io::Result<()> {
     // 3. Analysis Phase
     let branch_stats = stitcher.analyze_branches();
 
+    /// 將 real_connections 轉換成 Python FlowExecutor 需要的 flows 格式
+    /// 這是為了讓 Python 執行器能夠讀取並執行 Rust 分析結果
+    fn convert_connections_to_flows(connections: &[Connection]) -> Vec<serde_json::Value> {
+        connections
+            .iter()
+            .enumerate()
+            .map(|(i, conn)| {
+                serde_json::json!({
+                    "id": i + 1,
+                    "path": [&conn.from_func, &conn.to_func],
+                    "full_path": [&conn.from_script, &conn.to_script],
+                    "func_names": [&conn.from_func, &conn.to_func],
+                    "length": 2,
+                    "start": &conn.from_func,
+                    "end": &conn.to_func,
+                    "classifications": [
+                        {
+                            "script": &conn.from_func,
+                            "module": "rust_module",
+                            "component_type": "程式組件",
+                            "description": format!("{} - Rust 功能", &conn.from_func)
+                        },
+                        {
+                            "script": &conn.to_func,
+                            "module": "rust_module",
+                            "component_type": "程式組件",
+                            "description": format!("{} - Rust 功能", &conn.to_func)
+                        }
+                    ],
+                    "language": "rust",
+                    "cli_command": format!("cargo run --bin {}", &conn.to_func),
+                    "structured_tags": ["language:rust", "type:程式"]
+                })
+            })
+            .collect()
+    }
+
     // 4. Output Results
     // A. 系統全圖
     let system_flow = stitcher.generate_system_flow();
@@ -722,8 +765,24 @@ fn main() -> std::io::Result<()> {
     let cli_docs = generate_cli(&class_result);
     fs::write(Path::new(output_dir).join("cli_commands.sh"), cli_docs)?;
 
-    // C. 完整 JSON 報告
+    // C. 完整 JSON 報告 - 統一格式，相容 Python FlowExecutor
+    let flows = convert_connections_to_flows(&stitcher.real_connections);
+    
     let final_report = serde_json::json!({
+        "metadata": {
+            "tool": "rs2mermaid",
+            "version": "2.0",
+            "language": "rust",
+            "generated_at": chrono::Utc::now().to_rfc3339(),
+            "total_flows": flows.len(),
+            "total_files": files.len(),
+            "schema_version": "3.3",
+            "ai_compatible": true
+        },
+        // ✅ 新增：FlowExecutor 需要的統一格式
+        "flows": flows,
+        
+        // ✅ 保留：Rust 工具原有的所有字段
         "summary": {
             "total_files": files.len(),
             "total_funcs": all_meta.len(),

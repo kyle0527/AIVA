@@ -17,7 +17,7 @@
 """
 
 import sys
-from datetime import datetime, UTC
+from datetime import datetime, timezone
 from pathlib import Path
 
 # 添加 services 路徑到 sys.path
@@ -227,7 +227,7 @@ def backfill_to_postgresql(capabilities: list[ModuleCapability]) -> dict:
             "updated": result.get("modified", 0),  # 'modified' 對應 'updated'
             "deleted": result.get("deleted", 0),
             "unchanged": result.get("unchanged", 0),
-            "timestamp": datetime.now(UTC).isoformat()
+            "timestamp": datetime.now(timezone.utc).isoformat()
         }
         
         logger.info("✅ Backfill completed:")
