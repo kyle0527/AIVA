@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "generated_at": "2026-01-14T00:30:15.159915",
+    "generated_at": "2026-01-14T00:45:25.998623",
     "generator": "aiva_external_classifier.py",
     "description": "外部模組多語言整合分類數據",
     "total_flows": 210,
@@ -64,7 +64,7 @@
           "length": 2,
           "start": "_check_go_availability",
           "end": "_find_go_binary",
-          "use_case": "用於檢測身份驗證漏洞，適合測試登錄、會話管理等"
+          "use_case": "[認證通用] 身份驗證漏洞檢測，測試登錄、會話、權限"
         },
         {
           "id": 2,
@@ -84,7 +84,7 @@
           "length": 2,
           "start": "get_engine_info",
           "end": "_find_go_binary",
-          "use_case": "用於檢測身份驗證漏洞，適合測試登錄、會話管理等"
+          "use_case": "[認證通用] 身份驗證漏洞檢測，測試登錄、會話、權限"
         },
         {
           "id": 3,
@@ -104,7 +104,7 @@
           "length": 2,
           "start": "scan_target",
           "end": "AuthnManager",
-          "use_case": "用於檢測身份驗證漏洞，適合測試登錄、會話管理等 - 主動掃描模式"
+          "use_case": "[認證通用] 身份驗證漏洞檢測，測試登錄、會話、權限"
         },
         {
           "id": 4,
@@ -124,7 +124,7 @@
           "length": 2,
           "start": "scan_authentication",
           "end": "_find_go_binary",
-          "use_case": "用於檢測身份驗證漏洞，適合測試登錄、會話管理等 - 主動掃描模式"
+          "use_case": "[認證通用] 身份驗證漏洞檢測，測試登錄、會話、權限"
         }
       ]
     },
@@ -156,7 +156,7 @@
           "length": 2,
           "start": "BizLogicManager.comprehensive_scan",
           "end": "RaceConditionScanner",
-          "use_case": "用於檢測業務邏輯漏洞，適合測試支付流程、競態條件等 - 主動掃描模式"
+          "use_case": "[業務邏輯-競態] 檢測競態條件漏洞，同時發送多個請求測試鎖機制"
         },
         {
           "id": 6,
@@ -176,7 +176,7 @@
           "length": 2,
           "start": "BizLogicManager.comprehensive_scan",
           "end": "PriceManipulationScanner",
-          "use_case": "用於檢測業務邏輯漏洞，適合測試支付流程、競態條件等 - 主動掃描模式"
+          "use_case": "[業務邏輯-價格] 檢測價格操縱漏洞，嘗試修改金額、折扣、數量等"
         },
         {
           "id": 7,
@@ -196,7 +196,7 @@
           "length": 2,
           "start": "BizLogicManager.comprehensive_scan",
           "end": "WorkflowBypassScanner",
-          "use_case": "用於檢測業務邏輯漏洞，適合測試支付流程、競態條件等 - 主動掃描模式"
+          "use_case": "[業務邏輯-流程] 檢測工作流繞過，嘗試跳過必要步驟（如支付驗證）"
         },
         {
           "id": 8,
@@ -216,7 +216,7 @@
           "length": 2,
           "start": "main",
           "end": "run_price_test",
-          "use_case": "用於檢測業務邏輯漏洞，適合測試支付流程、競態條件等"
+          "use_case": "[業務邏輯-價格] 檢測價格操縱漏洞，嘗試修改金額、折扣、數量等"
         },
         {
           "id": 9,
@@ -236,7 +236,7 @@
           "length": 2,
           "start": "main",
           "end": "run_race_test",
-          "use_case": "用於檢測業務邏輯漏洞，適合測試支付流程、競態條件等"
+          "use_case": "[業務邏輯-競態] 檢測競態條件漏洞，同時發送多個請求測試鎖機制"
         },
         {
           "id": 10,
@@ -256,7 +256,7 @@
           "length": 2,
           "start": "main",
           "end": "run_workflow_test",
-          "use_case": "用於檢測業務邏輯漏洞，適合測試支付流程、競態條件等"
+          "use_case": "[業務邏輯-流程] 檢測工作流繞過，嘗試跳過必要步驟（如支付驗證）"
         },
         {
           "id": 11,
@@ -278,7 +278,7 @@
           "length": 3,
           "start": "main",
           "end": "create_bizlogic_finding",
-          "use_case": "用於檢測業務邏輯漏洞，適合測試支付流程、競態條件等"
+          "use_case": "[業務邏輯通用] 業務流程漏洞檢測，測試支付、訂單等關鍵業務"
         },
         {
           "id": 12,
@@ -298,7 +298,7 @@
           "length": 2,
           "start": "BizLogicCommandHandler.__init__",
           "end": "BizLogicManager",
-          "use_case": "用於檢測業務邏輯漏洞，適合測試支付流程、競態條件等"
+          "use_case": "[業務邏輯通用] 業務流程漏洞檢測，測試支付、訂單等關鍵業務"
         }
       ]
     },
@@ -341,7 +341,7 @@
           "length": 2,
           "start": "IdorWorkerService.__init__",
           "end": "IdorWorker",
-          "use_case": "用於檢測越權訪問(IDOR)漏洞，適合測試資源 ID 和權限控制"
+          "use_case": "[IDOR異步掃描] 後台 Worker 模式，適合大量資源 ID 的批量測試"
         },
         {
           "id": 14,
@@ -361,7 +361,7 @@
           "length": 2,
           "start": "SmartIDORDetector.__init__",
           "end": "IdorConfig",
-          "use_case": "用於檢測越權訪問(IDOR)漏洞，適合測試資源 ID 和權限控制 - 被動檢測模式"
+          "use_case": "[IDOR通用] 越權訪問檢測，測試資源 ID 的權限控制"
         },
         {
           "id": 15,
@@ -381,7 +381,7 @@
           "length": 2,
           "start": "EnhancedIDORWorker.run",
           "end": "ResourceIdExtractor",
-          "use_case": "用於檢測越權訪問(IDOR)漏洞，適合測試資源 ID 和權限控制"
+          "use_case": "[IDOR資源提取] 從 URL 和響應中提取資源 ID（如 /user/123, /order/456）"
         },
         {
           "id": 16,
@@ -401,7 +401,7 @@
           "length": 2,
           "start": "SmartIDORDetector.detect_vulnerabilities",
           "end": "IDORDetectionContext",
-          "use_case": "用於檢測越權訪問(IDOR)漏洞，適合測試資源 ID 和權限控制 - 被動檢測模式"
+          "use_case": "[IDOR上下文檢測] 分析資源訪問上下文，判斷權限控制是否正確"
         },
         {
           "id": 17,
@@ -421,7 +421,7 @@
           "length": 2,
           "start": "process_task",
           "end": "ResourceIdExtractor",
-          "use_case": "用於檢測越權訪問(IDOR)漏洞，適合測試資源 ID 和權限控制"
+          "use_case": "[IDOR資源提取] 從 URL 和響應中提取資源 ID（如 /user/123, /order/456）"
         },
         {
           "id": 18,
@@ -441,7 +441,7 @@
           "length": 2,
           "start": "process_task",
           "end": "EnhancedIDORWorker",
-          "use_case": "用於檢測越權訪問(IDOR)漏洞，適合測試資源 ID 和權限控制"
+          "use_case": "[IDOR異步掃描] 後台 Worker 模式，適合大量資源 ID 的批量測試"
         },
         {
           "id": 19,
@@ -461,7 +461,7 @@
           "length": 2,
           "start": "test_idor_handler",
           "end": "IDORCommandHandler",
-          "use_case": "用於檢測越權訪問(IDOR)漏洞，適合測試資源 ID 和權限控制 - 測試驗證模式"
+          "use_case": "[IDOR通用] 越權訪問檢測，測試資源 ID 的權限控制"
         },
         {
           "id": 20,
@@ -481,7 +481,7 @@
           "length": 2,
           "start": "EnhancedIDORWorker.process_task",
           "end": "EnhancedIdorTelemetry",
-          "use_case": "用於檢測越權訪問(IDOR)漏洞，適合測試資源 ID 和權限控制"
+          "use_case": "[IDOR遙測記錄] 記錄越權測試的詳細數據和結果"
         },
         {
           "id": 21,
@@ -501,7 +501,7 @@
           "length": 2,
           "start": "IDORDetector.analyze",
           "end": "IDOREngine",
-          "use_case": "用於檢測越權訪問(IDOR)漏洞，適合測試資源 ID 和權限控制 - 被動檢測模式"
+          "use_case": "[IDOR檢測引擎] 核心越權檢測邏輯，嘗試不同用戶訪問相同資源"
         },
         {
           "id": 22,
@@ -521,7 +521,7 @@
           "length": 2,
           "start": "IdorWorker.__init__",
           "end": "ResourceIdExtractor",
-          "use_case": "用於檢測越權訪問(IDOR)漏洞，適合測試資源 ID 和權限控制"
+          "use_case": "[IDOR資源提取] 從 URL 和響應中提取資源 ID（如 /user/123, /order/456）"
         },
         {
           "id": 23,
@@ -541,7 +541,7 @@
           "length": 2,
           "start": "EnhancedIDORWorker.__init__",
           "end": "IdorConfig",
-          "use_case": "用於檢測越權訪問(IDOR)漏洞，適合測試資源 ID 和權限控制"
+          "use_case": "[IDOR通用] 越權訪問檢測，測試資源 ID 的權限控制"
         },
         {
           "id": 24,
@@ -561,7 +561,7 @@
           "length": 2,
           "start": "EnhancedIDORWorker.__init__",
           "end": "SmartIDORDetector",
-          "use_case": "用於檢測越權訪問(IDOR)漏洞，適合測試資源 ID 和權限控制"
+          "use_case": "[IDOR通用] 越權訪問檢測，測試資源 ID 的權限控制"
         },
         {
           "id": 25,
@@ -581,7 +581,7 @@
           "length": 2,
           "start": "IDORCommandHandler.__init__",
           "end": "SmartIDORDetector",
-          "use_case": "用於檢測越權訪問(IDOR)漏洞，適合測試資源 ID 和權限控制"
+          "use_case": "[IDOR通用] 越權訪問檢測，測試資源 ID 的權限控制"
         },
         {
           "id": 26,
@@ -601,7 +601,7 @@
           "length": 2,
           "start": "IDORCommandHandler.__init__",
           "end": "ResourceIdExtractor",
-          "use_case": "用於檢測越權訪問(IDOR)漏洞，適合測試資源 ID 和權限控制"
+          "use_case": "[IDOR資源提取] 從 URL 和響應中提取資源 ID（如 /user/123, /order/456）"
         },
         {
           "id": 27,
@@ -621,7 +621,7 @@
           "length": 2,
           "start": "run",
           "end": "EnhancedIDORWorker",
-          "use_case": "用於檢測越權訪問(IDOR)漏洞，適合測試資源 ID 和權限控制"
+          "use_case": "[IDOR異步掃描] 後台 Worker 模式，適合大量資源 ID 的批量測試"
         },
         {
           "id": 28,
@@ -641,7 +641,7 @@
           "length": 2,
           "start": "run",
           "end": "IdorWorker",
-          "use_case": "用於檢測越權訪問(IDOR)漏洞，適合測試資源 ID 和權限控制"
+          "use_case": "[IDOR異步掃描] 後台 Worker 模式，適合大量資源 ID 的批量測試"
         },
         {
           "id": 29,
@@ -661,7 +661,7 @@
           "length": 2,
           "start": "run",
           "end": "_topic",
-          "use_case": "用於檢測越權訪問(IDOR)漏洞，適合測試資源 ID 和權限控制"
+          "use_case": "[IDOR通用] 越權訪問檢測，測試資源 ID 的權限控制"
         },
         {
           "id": 30,
@@ -681,7 +681,7 @@
           "length": 2,
           "start": "run",
           "end": "IdorConfig",
-          "use_case": "用於檢測越權訪問(IDOR)漏洞，適合測試資源 ID 和權限控制"
+          "use_case": "[IDOR通用] 越權訪問檢測，測試資源 ID 的權限控制"
         },
         {
           "id": 31,
@@ -701,7 +701,7 @@
           "length": 2,
           "start": "run",
           "end": "IDORDetector",
-          "use_case": "用於檢測越權訪問(IDOR)漏洞，適合測試資源 ID 和權限控制"
+          "use_case": "[IDOR通用] 越權訪問檢測，測試資源 ID 的權限控制"
         }
       ]
     },
@@ -733,7 +733,7 @@
           "length": 2,
           "start": "_consume_queue",
           "end": "_execute_task",
-          "use_case": "用於檢測 SQL 注入漏洞，適合測試數據庫查詢接口和參數"
+          "use_case": "[SQLi通用] SQL 注入漏洞檢測，測試資料庫查詢接口"
         },
         {
           "id": 33,
@@ -753,7 +753,7 @@
           "length": 2,
           "start": "SQLInjectionManager.__init__",
           "end": "SqlmapIntegration",
-          "use_case": "用於檢測 SQL 注入漏洞，適合測試數據庫查詢接口和參數"
+          "use_case": "[SQLi工具整合] 調用 SQLMap 進行深度 SQL 注入測試，支持多種資料庫"
         },
         {
           "id": 34,
@@ -773,7 +773,7 @@
           "length": 2,
           "start": "SQLInjectionManager.__init__",
           "end": "CustomSQLInjectionScanner",
-          "use_case": "用於檢測 SQL 注入漏洞，適合測試數據庫查詢接口和參數"
+          "use_case": "[SQLi通用] SQL 注入漏洞檢測，測試資料庫查詢接口"
         },
         {
           "id": 35,
@@ -793,7 +793,7 @@
           "length": 2,
           "start": "SQLInjectionManager.__init__",
           "end": "NoSQLInjectionScanner",
-          "use_case": "用於檢測 SQL 注入漏洞，適合測試數據庫查詢接口和參數"
+          "use_case": "[NoSQL注入] 檢測 MongoDB/Redis 等 NoSQL 資料庫的注入漏洞"
         },
         {
           "id": 36,
@@ -813,7 +813,7 @@
           "length": 2,
           "start": "SQLInjectionManager.__init__",
           "end": "BlindSQLInjectionScanner",
-          "use_case": "用於檢測 SQL 注入漏洞，適合測試數據庫查詢接口和參數"
+          "use_case": "[SQLi盲注] 使用時間延遲或布爾盲注技術，適合無錯誤訊息的場景"
         },
         {
           "id": 37,
@@ -833,7 +833,7 @@
           "length": 2,
           "start": "OOBDetectionEngine.detect",
           "end": "PayloadWrapperEncoder",
-          "use_case": "用於檢測 SQL 注入漏洞，適合測試數據庫查詢接口和參數 - 被動檢測模式"
+          "use_case": "[SQLi編碼繞過] 對 payload 進行編碼和混淆，用於繞過 WAF"
         },
         {
           "id": 38,
@@ -853,7 +853,7 @@
           "length": 2,
           "start": "SqlmapIntegration._parse_sqlmap_output",
           "end": "SQLInjectionResult",
-          "use_case": "用於檢測 SQL 注入漏洞，適合測試數據庫查詢接口和參數"
+          "use_case": "[SQLi工具整合] 調用 SQLMap 進行深度 SQL 注入測試，支持多種資料庫"
         },
         {
           "id": 39,
@@ -873,7 +873,7 @@
           "length": 2,
           "start": "BountyHunterManager.__init__",
           "end": "BountyHunterScanner",
-          "use_case": "用於檢測 SQL 注入漏洞，適合測試數據庫查詢接口和參數"
+          "use_case": "[SQLi賞金模式] 針對高價值目標的深度測試，使用高級繞過技術"
         },
         {
           "id": 40,
@@ -893,7 +893,7 @@
           "length": 2,
           "start": "BooleanDetectionEngine.detect",
           "end": "PayloadWrapperEncoder",
-          "use_case": "用於檢測 SQL 注入漏洞，適合測試數據庫查詢接口和參數 - 被動檢測模式"
+          "use_case": "[SQLi編碼繞過] 對 payload 進行編碼和混淆，用於繞過 WAF"
         },
         {
           "id": 41,
@@ -913,7 +913,7 @@
           "length": 2,
           "start": "BountyHunterManager.add_high_value_target",
           "end": "HighValueTarget",
-          "use_case": "用於檢測 SQL 注入漏洞，適合測試數據庫查詢接口和參數"
+          "use_case": "[SQLi賞金模式] 針對高價值目標的深度測試，使用高級繞過技術"
         },
         {
           "id": 42,
@@ -933,7 +933,7 @@
           "length": 2,
           "start": "run",
           "end": "SqliResultBinderPublisher",
-          "use_case": "用於檢測 SQL 注入漏洞，適合測試數據庫查詢接口和參數"
+          "use_case": "[SQLi通用] SQL 注入漏洞檢測，測試資料庫查詢接口"
         },
         {
           "id": 43,
@@ -953,7 +953,7 @@
           "length": 2,
           "start": "run",
           "end": "SqliTaskQueue",
-          "use_case": "用於檢測 SQL 注入漏洞，適合測試數據庫查詢接口和參數"
+          "use_case": "[SQLi通用] SQL 注入漏洞檢測，測試資料庫查詢接口"
         },
         {
           "id": 44,
@@ -973,7 +973,7 @@
           "length": 2,
           "start": "run",
           "end": "SqliWorkerService",
-          "use_case": "用於檢測 SQL 注入漏洞，適合測試數據庫查詢接口和參數"
+          "use_case": "[SQLi通用] SQL 注入漏洞檢測，測試資料庫查詢接口"
         },
         {
           "id": 45,
@@ -993,7 +993,7 @@
           "length": 2,
           "start": "BountyHunterScanner._analyze_bounty_response",
           "end": "BountyVulnerability",
-          "use_case": "用於檢測 SQL 注入漏洞，適合測試數據庫查詢接口和參數 - 主動掃描模式"
+          "use_case": "[SQLi賞金模式] 針對高價值目標的深度測試，使用高級繞過技術"
         },
         {
           "id": 46,
@@ -1013,7 +1013,7 @@
           "length": 2,
           "start": "SQLiCommandHandler.handle_command",
           "end": "SQLTarget",
-          "use_case": "用於檢測 SQL 注入漏洞，適合測試數據庫查詢接口和參數"
+          "use_case": "[SQLi通用] SQL 注入漏洞檢測，測試資料庫查詢接口"
         },
         {
           "id": 47,
@@ -1033,7 +1033,7 @@
           "length": 2,
           "start": "HackingToolDetectionEngine._convert_to_detection_result",
           "end": "DetectionResult",
-          "use_case": "用於檢測 SQL 注入漏洞，適合測試數據庫查詢接口和參數 - 被動檢測模式"
+          "use_case": "[SQLi通用] SQL 注入漏洞檢測，測試資料庫查詢接口"
         },
         {
           "id": 48,
@@ -1053,7 +1053,7 @@
           "length": 2,
           "start": "main",
           "end": "HackingToolSQLCLI",
-          "use_case": "用於檢測 SQL 注入漏洞，適合測試數據庫查詢接口和參數"
+          "use_case": "[SQLi通用] SQL 注入漏洞檢測，測試資料庫查詢接口"
         },
         {
           "id": 49,
@@ -1073,7 +1073,7 @@
           "length": 2,
           "start": "main",
           "end": "BountyHunterCLI",
-          "use_case": "用於檢測 SQL 注入漏洞，適合測試數據庫查詢接口和參數"
+          "use_case": "[SQLi賞金模式] 針對高價值目標的深度測試，使用高級繞過技術"
         },
         {
           "id": 50,
@@ -1093,7 +1093,7 @@
           "length": 2,
           "start": "SQLiCommandHandler.__init__",
           "end": "SQLInjectionManager",
-          "use_case": "用於檢測 SQL 注入漏洞，適合測試數據庫查詢接口和參數"
+          "use_case": "[SQLi通用] SQL 注入漏洞檢測，測試資料庫查詢接口"
         },
         {
           "id": 51,
@@ -1113,7 +1113,7 @@
           "length": 2,
           "start": "SqliWorkerService.__init__",
           "end": "SqliOrchestrator",
-          "use_case": "用於檢測 SQL 注入漏洞，適合測試數據庫查詢接口和參數"
+          "use_case": "[SQLi通用] SQL 注入漏洞檢測，測試資料庫查詢接口"
         },
         {
           "id": 52,
@@ -1133,7 +1133,7 @@
           "length": 2,
           "start": "SqliWorkerService.__init__",
           "end": "SqliEngineConfig",
-          "use_case": "用於檢測 SQL 注入漏洞，適合測試數據庫查詢接口和參數"
+          "use_case": "[SQLi通用] SQL 注入漏洞檢測，測試資料庫查詢接口"
         },
         {
           "id": 53,
@@ -1153,7 +1153,7 @@
           "length": 2,
           "start": "ErrorDetectionEngine.detect",
           "end": "PayloadWrapperEncoder",
-          "use_case": "用於檢測 SQL 注入漏洞，適合測試數據庫查詢接口和參數 - 被動檢測模式"
+          "use_case": "[SQLi編碼繞過] 對 payload 進行編碼和混淆，用於繞過 WAF"
         },
         {
           "id": 54,
@@ -1173,7 +1173,7 @@
           "length": 2,
           "start": "process_task",
           "end": "SqliWorkerService",
-          "use_case": "用於檢測 SQL 注入漏洞，適合測試數據庫查詢接口和參數"
+          "use_case": "[SQLi通用] SQL 注入漏洞檢測，測試資料庫查詢接口"
         },
         {
           "id": 55,
@@ -1193,7 +1193,7 @@
           "length": 2,
           "start": "SqliOrchestrator._setup_default_engines",
           "end": "SqliConfig",
-          "use_case": "用於檢測 SQL 注入漏洞，適合測試數據庫查詢接口和參數"
+          "use_case": "[SQLi通用] SQL 注入漏洞檢測，測試資料庫查詢接口"
         },
         {
           "id": 56,
@@ -1213,7 +1213,7 @@
           "length": 2,
           "start": "TimeDetectionEngine.detect",
           "end": "PayloadWrapperEncoder",
-          "use_case": "用於檢測 SQL 注入漏洞，適合測試數據庫查詢接口和參數 - 被動檢測模式"
+          "use_case": "[SQLi編碼繞過] 對 payload 進行編碼和混淆，用於繞過 WAF"
         },
         {
           "id": 57,
@@ -1233,7 +1233,7 @@
           "length": 2,
           "start": "SqliOrchestrator.__init__",
           "end": "SqliEngineConfig",
-          "use_case": "用於檢測 SQL 注入漏洞，適合測試數據庫查詢接口和參數"
+          "use_case": "[SQLi通用] SQL 注入漏洞檢測，測試資料庫查詢接口"
         },
         {
           "id": 58,
@@ -1253,7 +1253,7 @@
           "length": 2,
           "start": "BountyHunterCLI.__init__",
           "end": "BountyHunterManager",
-          "use_case": "用於檢測 SQL 注入漏洞，適合測試數據庫查詢接口和參數"
+          "use_case": "[SQLi賞金模式] 針對高價值目標的深度測試，使用高級繞過技術"
         },
         {
           "id": 59,
@@ -1273,7 +1273,7 @@
           "length": 2,
           "start": "UnionDetectionEngine.detect",
           "end": "PayloadWrapperEncoder",
-          "use_case": "用於檢測 SQL 注入漏洞，適合測試數據庫查詢接口和參數 - 被動檢測模式"
+          "use_case": "[SQLi編碼繞過] 對 payload 進行編碼和混淆，用於繞過 WAF"
         },
         {
           "id": 60,
@@ -1293,7 +1293,7 @@
           "length": 2,
           "start": "HackingToolDetectionEngine._create_detection_result",
           "end": "DetectionResult",
-          "use_case": "用於檢測 SQL 注入漏洞，適合測試數據庫查詢接口和參數 - 被動檢測模式"
+          "use_case": "[SQLi通用] SQL 注入漏洞檢測，測試資料庫查詢接口"
         },
         {
           "id": 61,
@@ -1313,7 +1313,7 @@
           "length": 2,
           "start": "SqliWorkerService.process_task",
           "end": "SqliOrchestrator",
-          "use_case": "用於檢測 SQL 注入漏洞，適合測試數據庫查詢接口和參數"
+          "use_case": "[SQLi通用] SQL 注入漏洞檢測，測試資料庫查詢接口"
         },
         {
           "id": 62,
@@ -1333,7 +1333,7 @@
           "length": 2,
           "start": "SqliWorkerService.process_task",
           "end": "SqliContext",
-          "use_case": "用於檢測 SQL 注入漏洞，適合測試數據庫查詢接口和參數"
+          "use_case": "[SQLi通用] SQL 注入漏洞檢測，測試資料庫查詢接口"
         },
         {
           "id": 63,
@@ -1353,7 +1353,7 @@
           "length": 2,
           "start": "SQLInjectionBountyCapability.__init__",
           "end": "BountyHunterManager",
-          "use_case": "用於檢測 SQL 注入漏洞，適合測試數據庫查詢接口和參數"
+          "use_case": "[SQLi賞金模式] 針對高價值目標的深度測試，使用高級繞過技術"
         }
       ]
     },
@@ -1385,7 +1385,7 @@
           "length": 2,
           "start": "SsrfWorkerService.process_task",
           "end": "SsrfResultPublisher",
-          "use_case": "用於檢測服務器端請求偽造(SSRF)漏洞，適合測試 URL 參數和內部請求"
+          "use_case": "[SSRF通用] 服務器端請求偽造檢測，測試後端 URL 請求功能"
         },
         {
           "id": 65,
@@ -1409,7 +1409,7 @@
           "length": 4,
           "start": "SsrfWorkerService.process_task",
           "end": "ParamSemanticsAnalyzer",
-          "use_case": "用於檢測服務器端請求偽造(SSRF)漏洞，適合測試 URL 參數和內部請求"
+          "use_case": "[SSRF參數語義] 分析參數語義判斷是否可能觸發後端請求（如 url=, callback= 等）"
         },
         {
           "id": 66,
@@ -1433,7 +1433,7 @@
           "length": 4,
           "start": "SsrfWorkerService.process_task",
           "end": "InternalAddressDetector",
-          "use_case": "用於檢測服務器端請求偽造(SSRF)漏洞，適合測試 URL 參數和內部請求"
+          "use_case": "[SSRF內網探測] 檢測是否可以訪問內部網路（127.0.0.1, 192.168.x.x, 10.x.x.x）"
         },
         {
           "id": 67,
@@ -1457,7 +1457,7 @@
           "length": 4,
           "start": "SsrfWorkerService.process_task",
           "end": "OastDispatcher",
-          "use_case": "用於檢測服務器端請求偽造(SSRF)漏洞，適合測試 URL 參數和內部請求"
+          "use_case": "[SSRF帶外檢測] 使用 OAST 技術驗證盲 SSRF，通過 DNS/HTTP 回調確認"
         },
         {
           "id": 68,
@@ -1481,7 +1481,7 @@
           "length": 4,
           "start": "SsrfWorkerService.process_task",
           "end": "SsrfTelemetry",
-          "use_case": "用於檢測服務器端請求偽造(SSRF)漏洞，適合測試 URL 參數和內部請求"
+          "use_case": "[SSRF遙測記錄] 記錄 SSRF 測試的詳細數據，用於分析和報告"
         },
         {
           "id": 69,
@@ -1505,7 +1505,7 @@
           "length": 4,
           "start": "SsrfWorkerService.process_task",
           "end": "_resolve_payload",
-          "use_case": "用於檢測服務器端請求偽造(SSRF)漏洞，適合測試 URL 參數和內部請求"
+          "use_case": "[SSRF Payload 生成] 根據目標環境生成最佳 SSRF payload"
         },
         {
           "id": 70,
@@ -1529,7 +1529,7 @@
           "length": 4,
           "start": "SsrfWorkerService.process_task",
           "end": "_issue_request",
-          "use_case": "用於檢測服務器端請求偽造(SSRF)漏洞，適合測試 URL 參數和內部請求"
+          "use_case": "[SSRF請求發送] 實際發送 SSRF 測試請求並分析響應"
         },
         {
           "id": 71,
@@ -1549,7 +1549,7 @@
           "length": 2,
           "start": "test_ssrf_handler",
           "end": "SSRFCommandHandler",
-          "use_case": "用於檢測服務器端請求偽造(SSRF)漏洞，適合測試 URL 參數和內部請求 - 測試驗證模式"
+          "use_case": "[SSRF通用] 服務器端請求偽造檢測，測試後端 URL 請求功能"
         },
         {
           "id": 72,
@@ -1569,7 +1569,7 @@
           "length": 2,
           "start": "run",
           "end": "SsrfResultPublisher",
-          "use_case": "用於檢測服務器端請求偽造(SSRF)漏洞，適合測試 URL 參數和內部請求"
+          "use_case": "[SSRF通用] 服務器端請求偽造檢測，測試後端 URL 請求功能"
         },
         {
           "id": 73,
@@ -1589,7 +1589,7 @@
           "length": 2,
           "start": "run",
           "end": "ParamSemanticsAnalyzer",
-          "use_case": "用於檢測服務器端請求偽造(SSRF)漏洞，適合測試 URL 參數和內部請求"
+          "use_case": "[SSRF參數語義] 分析參數語義判斷是否可能觸發後端請求（如 url=, callback= 等）"
         },
         {
           "id": 74,
@@ -1609,7 +1609,7 @@
           "length": 2,
           "start": "run",
           "end": "InternalAddressDetector",
-          "use_case": "用於檢測服務器端請求偽造(SSRF)漏洞，適合測試 URL 參數和內部請求"
+          "use_case": "[SSRF內網探測] 檢測是否可以訪問內部網路（127.0.0.1, 192.168.x.x, 10.x.x.x）"
         },
         {
           "id": 75,
@@ -1629,7 +1629,7 @@
           "length": 2,
           "start": "run",
           "end": "OastDispatcher",
-          "use_case": "用於檢測服務器端請求偽造(SSRF)漏洞，適合測試 URL 參數和內部請求"
+          "use_case": "[SSRF帶外檢測] 使用 OAST 技術驗證盲 SSRF，通過 DNS/HTTP 回調確認"
         },
         {
           "id": 76,
@@ -1653,7 +1653,7 @@
           "length": 4,
           "start": "run",
           "end": "ParamSemanticsAnalyzer",
-          "use_case": "用於檢測服務器端請求偽造(SSRF)漏洞，適合測試 URL 參數和內部請求"
+          "use_case": "[SSRF參數語義] 分析參數語義判斷是否可能觸發後端請求（如 url=, callback= 等）"
         },
         {
           "id": 77,
@@ -1677,7 +1677,7 @@
           "length": 4,
           "start": "run",
           "end": "InternalAddressDetector",
-          "use_case": "用於檢測服務器端請求偽造(SSRF)漏洞，適合測試 URL 參數和內部請求"
+          "use_case": "[SSRF內網探測] 檢測是否可以訪問內部網路（127.0.0.1, 192.168.x.x, 10.x.x.x）"
         },
         {
           "id": 78,
@@ -1701,7 +1701,7 @@
           "length": 4,
           "start": "run",
           "end": "OastDispatcher",
-          "use_case": "用於檢測服務器端請求偽造(SSRF)漏洞，適合測試 URL 參數和內部請求"
+          "use_case": "[SSRF帶外檢測] 使用 OAST 技術驗證盲 SSRF，通過 DNS/HTTP 回調確認"
         },
         {
           "id": 79,
@@ -1725,7 +1725,7 @@
           "length": 4,
           "start": "run",
           "end": "SsrfTelemetry",
-          "use_case": "用於檢測服務器端請求偽造(SSRF)漏洞，適合測試 URL 參數和內部請求"
+          "use_case": "[SSRF遙測記錄] 記錄 SSRF 測試的詳細數據，用於分析和報告"
         },
         {
           "id": 80,
@@ -1749,7 +1749,7 @@
           "length": 4,
           "start": "run",
           "end": "_resolve_payload",
-          "use_case": "用於檢測服務器端請求偽造(SSRF)漏洞，適合測試 URL 參數和內部請求"
+          "use_case": "[SSRF Payload 生成] 根據目標環境生成最佳 SSRF payload"
         },
         {
           "id": 81,
@@ -1773,7 +1773,7 @@
           "length": 4,
           "start": "run",
           "end": "_issue_request",
-          "use_case": "用於檢測服務器端請求偽造(SSRF)漏洞，適合測試 URL 參數和內部請求"
+          "use_case": "[SSRF請求發送] 實際發送 SSRF 測試請求並分析響應"
         },
         {
           "id": 82,
@@ -1793,7 +1793,7 @@
           "length": 2,
           "start": "run",
           "end": "SsrfConfig",
-          "use_case": "用於檢測服務器端請求偽造(SSRF)漏洞，適合測試 URL 參數和內部請求"
+          "use_case": "[SSRF通用] 服務器端請求偽造檢測，測試後端 URL 請求功能"
         },
         {
           "id": 83,
@@ -1813,7 +1813,7 @@
           "length": 2,
           "start": "run",
           "end": "SSRFDetector",
-          "use_case": "用於檢測服務器端請求偽造(SSRF)漏洞，適合測試 URL 參數和內部請求"
+          "use_case": "[SSRF通用] 服務器端請求偽造檢測，測試後端 URL 請求功能"
         },
         {
           "id": 84,
@@ -1833,7 +1833,7 @@
           "length": 2,
           "start": "_build_internal_finding",
           "end": "_severity_from_summary",
-          "use_case": "用於檢測服務器端請求偽造(SSRF)漏洞，適合測試 URL 參數和內部請求"
+          "use_case": "[SSRF通用] 服務器端請求偽造檢測，測試後端 URL 請求功能"
         },
         {
           "id": 85,
@@ -1853,7 +1853,7 @@
           "length": 2,
           "start": "SmartSSRFDetector.detect_vulnerabilities",
           "end": "SSRFDetectionContext",
-          "use_case": "用於檢測服務器端請求偽造(SSRF)漏洞，適合測試 URL 參數和內部請求 - 被動檢測模式"
+          "use_case": "[SSRF通用] 服務器端請求偽造檢測，測試後端 URL 請求功能"
         },
         {
           "id": 86,
@@ -1873,7 +1873,7 @@
           "length": 2,
           "start": "SSRFCommandHandler.handle_command",
           "end": "ParamSemanticsAnalyzer",
-          "use_case": "用於檢測服務器端請求偽造(SSRF)漏洞，適合測試 URL 參數和內部請求"
+          "use_case": "[SSRF參數語義] 分析參數語義判斷是否可能觸發後端請求（如 url=, callback= 等）"
         },
         {
           "id": 87,
@@ -1893,7 +1893,7 @@
           "length": 2,
           "start": "OastDispatcher.fetch_events",
           "end": "OastEvent",
-          "use_case": "用於檢測服務器端請求偽造(SSRF)漏洞，適合測試 URL 參數和內部請求"
+          "use_case": "[SSRF帶外檢測] 使用 OAST 技術驗證盲 SSRF，通過 DNS/HTTP 回調確認"
         },
         {
           "id": 88,
@@ -1913,7 +1913,7 @@
           "length": 2,
           "start": "SSRFCommandHandler.__init__",
           "end": "SmartSSRFDetector",
-          "use_case": "用於檢測服務器端請求偽造(SSRF)漏洞，適合測試 URL 參數和內部請求"
+          "use_case": "[SSRF通用] 服務器端請求偽造檢測，測試後端 URL 請求功能"
         },
         {
           "id": 89,
@@ -1933,7 +1933,7 @@
           "length": 2,
           "start": "SSRFCommandHandler.__init__",
           "end": "ParamSemanticsAnalyzer",
-          "use_case": "用於檢測服務器端請求偽造(SSRF)漏洞，適合測試 URL 參數和內部請求"
+          "use_case": "[SSRF參數語義] 分析參數語義判斷是否可能觸發後端請求（如 url=, callback= 等）"
         },
         {
           "id": 90,
@@ -1953,7 +1953,7 @@
           "length": 2,
           "start": "SSRFCommandHandler.__init__",
           "end": "OastDispatcher",
-          "use_case": "用於檢測服務器端請求偽造(SSRF)漏洞，適合測試 URL 參數和內部請求"
+          "use_case": "[SSRF帶外檢測] 使用 OAST 技術驗證盲 SSRF，通過 DNS/HTTP 回調確認"
         },
         {
           "id": 91,
@@ -1973,7 +1973,7 @@
           "length": 2,
           "start": "SsrfWorkerService.__init__",
           "end": "OastDispatcher",
-          "use_case": "用於檢測服務器端請求偽造(SSRF)漏洞，適合測試 URL 參數和內部請求"
+          "use_case": "[SSRF帶外檢測] 使用 OAST 技術驗證盲 SSRF，通過 DNS/HTTP 回調確認"
         },
         {
           "id": 92,
@@ -1993,7 +1993,7 @@
           "length": 2,
           "start": "SsrfWorkerService.__init__",
           "end": "InternalAddressDetector",
-          "use_case": "用於檢測服務器端請求偽造(SSRF)漏洞，適合測試 URL 參數和內部請求"
+          "use_case": "[SSRF內網探測] 檢測是否可以訪問內部網路（127.0.0.1, 192.168.x.x, 10.x.x.x）"
         },
         {
           "id": 93,
@@ -2013,7 +2013,7 @@
           "length": 2,
           "start": "SsrfWorkerService.__init__",
           "end": "ParamSemanticsAnalyzer",
-          "use_case": "用於檢測服務器端請求偽造(SSRF)漏洞，適合測試 URL 參數和內部請求"
+          "use_case": "[SSRF參數語義] 分析參數語義判斷是否可能觸發後端請求（如 url=, callback= 等）"
         },
         {
           "id": 94,
@@ -2033,7 +2033,7 @@
           "length": 2,
           "start": "SmartSSRFDetector.__init__",
           "end": "SsrfConfig",
-          "use_case": "用於檢測服務器端請求偽造(SSRF)漏洞，適合測試 URL 參數和內部請求 - 被動檢測模式"
+          "use_case": "[SSRF通用] 服務器端請求偽造檢測，測試後端 URL 請求功能"
         },
         {
           "id": 95,
@@ -2053,7 +2053,7 @@
           "length": 2,
           "start": "ParamSemanticsAnalyzer._get_advanced_payloads",
           "end": "DnsRebindingDetector",
-          "use_case": "用於檢測服務器端請求偽造(SSRF)漏洞，適合測試 URL 參數和內部請求"
+          "use_case": "[SSRF參數語義] 分析參數語義判斷是否可能觸發後端請求（如 url=, callback= 等）"
         },
         {
           "id": 96,
@@ -2073,7 +2073,7 @@
           "length": 2,
           "start": "ParamSemanticsAnalyzer.analyze",
           "end": "AnalysisPlan",
-          "use_case": "用於檢測服務器端請求偽造(SSRF)漏洞，適合測試 URL 參數和內部請求"
+          "use_case": "[SSRF參數語義] 分析參數語義判斷是否可能觸發後端請求（如 url=, callback= 等）"
         },
         {
           "id": 97,
@@ -2093,7 +2093,7 @@
           "length": 2,
           "start": "SSRFDetector.analyze",
           "end": "SSRFEngine",
-          "use_case": "用於檢測服務器端請求偽造(SSRF)漏洞，適合測試 URL 參數和內部請求 - 被動檢測模式"
+          "use_case": "[SSRF通用] 服務器端請求偽造檢測，測試後端 URL 請求功能"
         },
         {
           "id": 98,
@@ -2113,7 +2113,7 @@
           "length": 2,
           "start": "OastDispatcher.register",
           "end": "OastProbe",
-          "use_case": "用於檢測服務器端請求偽造(SSRF)漏洞，適合測試 URL 參數和內部請求"
+          "use_case": "[SSRF帶外檢測] 使用 OAST 技術驗證盲 SSRF，通過 DNS/HTTP 回調確認"
         }
       ]
     },
@@ -2147,7 +2147,7 @@
           "length": 3,
           "start": "CrossLanguageXSSEngine._detect_language_environments",
           "end": "fillHoles",
-          "use_case": "用於檢測跨站腳本(XSS)漏洞，適合掃描 Web 應用的輸入點和輸出點 - 被動檢測模式"
+          "use_case": "[XSS環境偵測] 檢測目標使用的程式語言和框架，用於選擇最佳 payload"
         },
         {
           "id": 100,
@@ -2167,7 +2167,7 @@
           "length": 2,
           "start": "CrossLanguageXSSEngine._detect_language_environments",
           "end": "LanguageEnvironment",
-          "use_case": "用於檢測跨站腳本(XSS)漏洞，適合掃描 Web 應用的輸入點和輸出點 - 被動檢測模式"
+          "use_case": "[XSS環境偵測] 檢測目標使用的程式語言和框架，用於選擇最佳 payload"
         },
         {
           "id": 101,
@@ -2187,7 +2187,7 @@
           "length": 2,
           "start": "bruteforcer",
           "end": "getUrl",
-          "use_case": "用於檢測跨站腳本(XSS)漏洞，適合掃描 Web 應用的輸入點和輸出點"
+          "use_case": "[XSS暴力測試] 從目標提取所有可測試 URL，用於批量掃描多個端點"
         },
         {
           "id": 102,
@@ -2207,7 +2207,7 @@
           "length": 2,
           "start": "bruteforcer",
           "end": "getParams",
-          "use_case": "用於檢測跨站腳本(XSS)漏洞，適合掃描 Web 應用的輸入點和輸出點"
+          "use_case": "[XSS參數提取] 提取 URL 中的所有參數，用於識別潛在注入點"
         },
         {
           "id": 103,
@@ -2229,7 +2229,7 @@
           "length": 3,
           "start": "bruteforcer",
           "end": "converter",
-          "use_case": "用於檢測跨站腳本(XSS)漏洞，適合掃描 Web 應用的輸入點和輸出點"
+          "use_case": "[XSS編碼轉換] 將 payload 進行各種編碼，用於繞過 WAF 和過濾器"
         },
         {
           "id": 104,
@@ -2249,7 +2249,7 @@
           "length": 2,
           "start": "StoredXSSDetector._check_stored_execution",
           "end": "XSSVulnerability",
-          "use_case": "用於檢測跨站腳本(XSS)漏洞，適合掃描 Web 應用的輸入點和輸出點 - 被動檢測模式"
+          "use_case": "[XSS存儲型] 檢測存儲型 XSS，payload 會保存到資料庫並在其他頁面觸發"
         },
         {
           "id": 105,
@@ -2269,7 +2269,7 @@
           "length": 2,
           "start": "BlindXSSDetector.scan_blind_xss",
           "end": "XSSVulnerability",
-          "use_case": "用於檢測跨站腳本(XSS)漏洞，適合掃描 Web 應用的輸入點和輸出點 - 主動掃描模式"
+          "use_case": "[XSS盲注] 使用 OAST 技術檢測盲 XSS，適合無法直接觀察輸出的場景"
         },
         {
           "id": 106,
@@ -2289,7 +2289,7 @@
           "length": 2,
           "start": "_simple_match",
           "end": "deJSON",
-          "use_case": "用於檢測跨站腳本(XSS)漏洞，適合掃描 Web 應用的輸入點和輸出點"
+          "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
         },
         {
           "id": 107,
@@ -2309,7 +2309,7 @@
           "length": 2,
           "start": "XSSCommandHandler.__init__",
           "end": "XSSManager",
-          "use_case": "用於檢測跨站腳本(XSS)漏洞，適合掃描 Web 應用的輸入點和輸出點"
+          "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
         },
         {
           "id": 108,
@@ -2329,7 +2329,7 @@
           "length": 2,
           "start": "BlindXssListenerValidator.__init__",
           "end": "OastHttpCallbackStore",
-          "use_case": "用於檢測跨站腳本(XSS)漏洞，適合掃描 Web 應用的輸入點和輸出點"
+          "use_case": "[XSS盲注] 使用 OAST 技術檢測盲 XSS，適合無法直接觀察輸出的場景"
         },
         {
           "id": 109,
@@ -2349,7 +2349,7 @@
           "length": 2,
           "start": "_test_xss_command_handler",
           "end": "XSSCommandHandler",
-          "use_case": "用於檢測跨站腳本(XSS)漏洞，適合掃描 Web 應用的輸入點和輸出點 - 測試驗證模式"
+          "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
         },
         {
           "id": 110,
@@ -2369,7 +2369,7 @@
           "length": 2,
           "start": "log_red_line",
           "end": "_switch_to_no_format_loggers",
-          "use_case": "用於檢測跨站腳本(XSS)漏洞，適合掃描 Web 應用的輸入點和輸出點"
+          "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
         },
         {
           "id": 111,
@@ -2389,7 +2389,7 @@
           "length": 2,
           "start": "log_red_line",
           "end": "_get_level_and_log",
-          "use_case": "用於檢測跨站腳本(XSS)漏洞，適合掃描 Web 應用的輸入點和輸出點"
+          "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
         },
         {
           "id": 112,
@@ -2409,7 +2409,7 @@
           "length": 2,
           "start": "log_red_line",
           "end": "_switch_to_default_loggers",
-          "use_case": "用於檢測跨站腳本(XSS)漏洞，適合掃描 Web 應用的輸入點和輸出點"
+          "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
         },
         {
           "id": 113,
@@ -2429,7 +2429,7 @@
           "length": 2,
           "start": "xssFind",
           "end": "get_user_agent",
-          "use_case": "用於檢測跨站腳本(XSS)漏洞，適合掃描 Web 應用的輸入點和輸出點"
+          "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
         },
         {
           "id": 114,
@@ -2449,7 +2449,7 @@
           "length": 2,
           "start": "DOMXSSDetector._analyze_javascript",
           "end": "XSSVulnerability",
-          "use_case": "用於檢測跨站腳本(XSS)漏洞，適合掃描 Web 應用的輸入點和輸出點 - 被動檢測模式"
+          "use_case": "[XSS DOM型] 檢測 DOM-based XSS，payload 在客戶端 JavaScript 中觸發"
         },
         {
           "id": 115,
@@ -2471,7 +2471,7 @@
           "length": 3,
           "start": "main",
           "end": "XssPayloadGenerator",
-          "use_case": "用於檢測跨站腳本(XSS)漏洞，適合掃描 Web 應用的輸入點和輸出點"
+          "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
         },
         {
           "id": 116,
@@ -2493,7 +2493,7 @@
           "length": 3,
           "start": "main",
           "end": "TraditionalXssDetector",
-          "use_case": "用於檢測跨站腳本(XSS)漏洞，適合掃描 Web 應用的輸入點和輸出點"
+          "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
         },
         {
           "id": 117,
@@ -2515,7 +2515,7 @@
           "length": 3,
           "start": "main",
           "end": "DomXssDetector",
-          "use_case": "用於檢測跨站腳本(XSS)漏洞，適合掃描 Web 應用的輸入點和輸出點"
+          "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
         },
         {
           "id": 118,
@@ -2537,7 +2537,7 @@
           "length": 3,
           "start": "main",
           "end": "XssPayloadGenerator",
-          "use_case": "用於檢測跨站腳本(XSS)漏洞，適合掃描 Web 應用的輸入點和輸出點"
+          "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
         },
         {
           "id": 119,
@@ -2559,7 +2559,7 @@
           "length": 3,
           "start": "main",
           "end": "StoredXssDetector",
-          "use_case": "用於檢測跨站腳本(XSS)漏洞，適合掃描 Web 應用的輸入點和輸出點"
+          "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
         },
         {
           "id": 120,
@@ -2579,7 +2579,7 @@
           "length": 2,
           "start": "main",
           "end": "run_xss_test",
-          "use_case": "用於檢測跨站腳本(XSS)漏洞，適合掃描 Web 應用的輸入點和輸出點"
+          "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
         },
         {
           "id": 121,
@@ -2599,7 +2599,7 @@
           "length": 2,
           "start": "CrossLanguageXSSEngine.__init__",
           "end": "get_xss_tools_config",
-          "use_case": "用於檢測跨站腳本(XSS)漏洞，適合掃描 Web 應用的輸入點和輸出點"
+          "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
         },
         {
           "id": 122,
@@ -2619,7 +2619,7 @@
           "length": 2,
           "start": "retireJs",
           "end": "js_extractor",
-          "use_case": "用於檢測跨站腳本(XSS)漏洞，適合掃描 Web 應用的輸入點和輸出點"
+          "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
         },
         {
           "id": 123,
@@ -2639,7 +2639,7 @@
           "length": 2,
           "start": "retireJs",
           "end": "updateVar",
-          "use_case": "用於檢測跨站腳本(XSS)漏洞，適合掃描 Web 應用的輸入點和輸出點"
+          "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
         },
         {
           "id": 124,
@@ -2659,7 +2659,7 @@
           "length": 2,
           "start": "retireJs",
           "end": "handle_anchor",
-          "use_case": "用於檢測跨站腳本(XSS)漏洞，適合掃描 Web 應用的輸入點和輸出點"
+          "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
         },
         {
           "id": 125,
@@ -2681,7 +2681,7 @@
           "length": 3,
           "start": "retireJs",
           "end": "converter",
-          "use_case": "用於檢測跨站腳本(XSS)漏洞，適合掃描 Web 應用的輸入點和輸出點"
+          "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
         },
         {
           "id": 126,
@@ -2703,7 +2703,7 @@
           "length": 3,
           "start": "retireJs",
           "end": "getVar",
-          "use_case": "用於檢測跨站腳本(XSS)漏洞，適合掃描 Web 應用的輸入點和輸出點"
+          "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
         },
         {
           "id": 127,
@@ -2731,7 +2731,7 @@
           "length": 6,
           "start": "retireJs",
           "end": "converter",
-          "use_case": "用於檢測跨站腳本(XSS)漏洞，適合掃描 Web 應用的輸入點和輸出點"
+          "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
         },
         {
           "id": 128,
@@ -2757,7 +2757,7 @@
           "length": 5,
           "start": "retireJs",
           "end": "dom",
-          "use_case": "用於檢測跨站腳本(XSS)漏洞，適合掃描 Web 應用的輸入點和輸出點"
+          "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
         },
         {
           "id": 129,
@@ -2783,7 +2783,7 @@
           "length": 5,
           "start": "retireJs",
           "end": "getUrl",
-          "use_case": "用於檢測跨站腳本(XSS)漏洞，適合掃描 Web 應用的輸入點和輸出點"
+          "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
         },
         {
           "id": 130,
@@ -2809,7 +2809,7 @@
           "length": 5,
           "start": "retireJs",
           "end": "getParams",
-          "use_case": "用於檢測跨站腳本(XSS)漏洞，適合掃描 Web 應用的輸入點和輸出點"
+          "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
         },
         {
           "id": 131,
@@ -2839,7 +2839,7 @@
           "length": 7,
           "start": "retireJs",
           "end": "converter",
-          "use_case": "用於檢測跨站腳本(XSS)漏洞，適合掃描 Web 應用的輸入點和輸出點"
+          "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
         },
         {
           "id": 132,
@@ -2867,7 +2867,7 @@
           "length": 6,
           "start": "retireJs",
           "end": "isBadContext",
-          "use_case": "用於檢測跨站腳本(XSS)漏洞，適合掃描 Web 應用的輸入點和輸出點"
+          "use_case": "[XSS上下文分析] 分析 payload 插入位置的 HTML/JS 上下文，選擇合適的注入方式"
         },
         {
           "id": 133,
@@ -2897,7 +2897,7 @@
           "length": 7,
           "start": "retireJs",
           "end": "fillHoles",
-          "use_case": "用於檢測跨站腳本(XSS)漏洞，適合掃描 Web 應用的輸入點和輸出點"
+          "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
         },
         {
           "id": 134,
@@ -2925,7 +2925,7 @@
           "length": 6,
           "start": "retireJs",
           "end": "extractScripts",
-          "use_case": "用於檢測跨站腳本(XSS)漏洞，適合掃描 Web 應用的輸入點和輸出點"
+          "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
         },
         {
           "id": 135,
@@ -2953,7 +2953,7 @@
           "length": 6,
           "start": "retireJs",
           "end": "genGen",
-          "use_case": "用於檢測跨站腳本(XSS)漏洞，適合掃描 Web 應用的輸入點和輸出點"
+          "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
         },
         {
           "id": 136,
@@ -2983,7 +2983,7 @@
           "length": 7,
           "start": "retireJs",
           "end": "stripper",
-          "use_case": "用於檢測跨站腳本(XSS)漏洞，適合掃描 Web 應用的輸入點和輸出點"
+          "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
         },
         {
           "id": 137,
@@ -3011,7 +3011,7 @@
           "length": 6,
           "start": "retireJs",
           "end": "fillHoles",
-          "use_case": "用於檢測跨站腳本(XSS)漏洞，適合掃描 Web 應用的輸入點和輸出點"
+          "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
         },
         {
           "id": 138,
@@ -3039,7 +3039,7 @@
           "length": 6,
           "start": "retireJs",
           "end": "converter",
-          "use_case": "用於檢測跨站腳本(XSS)漏洞，適合掃描 Web 應用的輸入點和輸出點"
+          "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
         },
         {
           "id": 139,
@@ -3065,7 +3065,7 @@
           "length": 5,
           "start": "retireJs",
           "end": "dom",
-          "use_case": "用於檢測跨站腳本(XSS)漏洞，適合掃描 Web 應用的輸入點和輸出點"
+          "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
         },
         {
           "id": 140,
@@ -3091,7 +3091,7 @@
           "length": 5,
           "start": "retireJs",
           "end": "getUrl",
-          "use_case": "用於檢測跨站腳本(XSS)漏洞，適合掃描 Web 應用的輸入點和輸出點"
+          "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
         },
         {
           "id": 141,
@@ -3117,7 +3117,7 @@
           "length": 5,
           "start": "retireJs",
           "end": "getParams",
-          "use_case": "用於檢測跨站腳本(XSS)漏洞，適合掃描 Web 應用的輸入點和輸出點"
+          "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
         },
         {
           "id": 142,
@@ -3147,7 +3147,7 @@
           "length": 7,
           "start": "retireJs",
           "end": "converter",
-          "use_case": "用於檢測跨站腳本(XSS)漏洞，適合掃描 Web 應用的輸入點和輸出點"
+          "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
         },
         {
           "id": 143,
@@ -3175,7 +3175,7 @@
           "length": 6,
           "start": "retireJs",
           "end": "isBadContext",
-          "use_case": "用於檢測跨站腳本(XSS)漏洞，適合掃描 Web 應用的輸入點和輸出點"
+          "use_case": "[XSS上下文分析] 分析 payload 插入位置的 HTML/JS 上下文，選擇合適的注入方式"
         },
         {
           "id": 144,
@@ -3205,7 +3205,7 @@
           "length": 7,
           "start": "retireJs",
           "end": "fillHoles",
-          "use_case": "用於檢測跨站腳本(XSS)漏洞，適合掃描 Web 應用的輸入點和輸出點"
+          "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
         },
         {
           "id": 145,
@@ -3233,7 +3233,7 @@
           "length": 6,
           "start": "retireJs",
           "end": "extractScripts",
-          "use_case": "用於檢測跨站腳本(XSS)漏洞，適合掃描 Web 應用的輸入點和輸出點"
+          "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
         },
         {
           "id": 146,
@@ -3261,7 +3261,7 @@
           "length": 6,
           "start": "retireJs",
           "end": "genGen",
-          "use_case": "用於檢測跨站腳本(XSS)漏洞，適合掃描 Web 應用的輸入點和輸出點"
+          "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
         },
         {
           "id": 147,
@@ -3291,7 +3291,7 @@
           "length": 7,
           "start": "retireJs",
           "end": "stripper",
-          "use_case": "用於檢測跨站腳本(XSS)漏洞，適合掃描 Web 應用的輸入點和輸出點"
+          "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
         },
         {
           "id": 148,
@@ -3319,7 +3319,7 @@
           "length": 6,
           "start": "retireJs",
           "end": "fillHoles",
-          "use_case": "用於檢測跨站腳本(XSS)漏洞，適合掃描 Web 應用的輸入點和輸出點"
+          "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
         },
         {
           "id": 149,
@@ -3343,7 +3343,7 @@
           "length": 4,
           "start": "retireJs",
           "end": "_scanhash",
-          "use_case": "用於檢測跨站腳本(XSS)漏洞，適合掃描 Web 應用的輸入點和輸出點"
+          "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
         },
         {
           "id": 150,
@@ -3365,7 +3365,7 @@
           "length": 3,
           "start": "singleFuzz",
           "end": "converter",
-          "use_case": "用於檢測跨站腳本(XSS)漏洞，適合掃描 Web 應用的輸入點和輸出點"
+          "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
         },
         {
           "id": 151,
@@ -3385,7 +3385,7 @@
           "length": 2,
           "start": "singleFuzz",
           "end": "getUrl",
-          "use_case": "用於檢測跨站腳本(XSS)漏洞，適合掃描 Web 應用的輸入點和輸出點"
+          "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
         },
         {
           "id": 152,
@@ -3405,7 +3405,7 @@
           "length": 2,
           "start": "singleFuzz",
           "end": "getParams",
-          "use_case": "用於檢測跨站腳本(XSS)漏洞，適合掃描 Web 應用的輸入點和輸出點"
+          "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
         },
         {
           "id": 153,
@@ -3429,7 +3429,7 @@
           "length": 4,
           "start": "singleFuzz",
           "end": "converter",
-          "use_case": "用於檢測跨站腳本(XSS)漏洞，適合掃描 Web 應用的輸入點和輸出點"
+          "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
         },
         {
           "id": 154,
@@ -3451,7 +3451,7 @@
           "length": 3,
           "start": "singleFuzz",
           "end": "counter",
-          "use_case": "用於檢測跨站腳本(XSS)漏洞，適合掃描 Web 應用的輸入點和輸出點"
+          "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
         },
         {
           "id": 155,
@@ -3473,7 +3473,7 @@
           "length": 3,
           "start": "singleFuzz",
           "end": "replaceValue",
-          "use_case": "用於檢測跨站腳本(XSS)漏洞，適合掃描 Web 應用的輸入點和輸出點"
+          "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
         },
         {
           "id": 156,
@@ -3497,7 +3497,7 @@
           "length": 4,
           "start": "singleFuzz",
           "end": "converter",
-          "use_case": "用於檢測跨站腳本(XSS)漏洞，適合掃描 Web 應用的輸入點和輸出點"
+          "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
         },
         {
           "id": 157,
@@ -3521,7 +3521,7 @@
           "length": 4,
           "start": "_consume_queue",
           "end": "XssPayloadGenerator",
-          "use_case": "用於檢測跨站腳本(XSS)漏洞，適合掃描 Web 應用的輸入點和輸出點"
+          "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
         },
         {
           "id": 158,
@@ -3547,7 +3547,7 @@
           "length": 5,
           "start": "_consume_queue",
           "end": "BlindXssListenerValidator",
-          "use_case": "用於檢測跨站腳本(XSS)漏洞，適合掃描 Web 應用的輸入點和輸出點"
+          "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
         },
         {
           "id": 159,
@@ -3571,7 +3571,7 @@
           "length": 4,
           "start": "_consume_queue",
           "end": "_build_payloads",
-          "use_case": "用於檢測跨站腳本(XSS)漏洞，適合掃描 Web 應用的輸入點和輸出點"
+          "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
         },
         {
           "id": 160,
@@ -3595,7 +3595,7 @@
           "length": 4,
           "start": "_consume_queue",
           "end": "XssExecutionTelemetry",
-          "use_case": "用於檢測跨站腳本(XSS)漏洞，適合掃描 Web 應用的輸入點和輸出點"
+          "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
         },
         {
           "id": 161,
@@ -3619,7 +3619,7 @@
           "length": 4,
           "start": "_consume_queue",
           "end": "TraditionalXssDetector",
-          "use_case": "用於檢測跨站腳本(XSS)漏洞，適合掃描 Web 應用的輸入點和輸出點"
+          "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
         },
         {
           "id": 162,
@@ -3645,7 +3645,7 @@
           "length": 5,
           "start": "_consume_queue",
           "end": "_handle_detection_errors",
-          "use_case": "用於檢測跨站腳本(XSS)漏洞，適合掃描 Web 應用的輸入點和輸出點"
+          "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
         },
         {
           "id": 163,
@@ -3669,7 +3669,7 @@
           "length": 4,
           "start": "_consume_queue",
           "end": "_get_dom_engine",
-          "use_case": "用於檢測跨站腳本(XSS)漏洞，適合掃描 Web 應用的輸入點和輸出點"
+          "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
         },
         {
           "id": 164,
@@ -3695,7 +3695,7 @@
           "length": 5,
           "start": "_consume_queue",
           "end": "_analyze_detection_with_dom",
-          "use_case": "用於檢測跨站腳本(XSS)漏洞，適合掃描 Web 應用的輸入點和輸出點"
+          "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
         },
         {
           "id": 165,
@@ -3721,7 +3721,7 @@
           "length": 5,
           "start": "_consume_queue",
           "end": "StoredXssDetector",
-          "use_case": "用於檢測跨站腳本(XSS)漏洞，適合掃描 Web 應用的輸入點和輸出點"
+          "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
         },
         {
           "id": 166,
@@ -3745,7 +3745,7 @@
           "length": 4,
           "start": "_consume_queue",
           "end": "_collect_blind_callbacks",
-          "use_case": "用於檢測跨站腳本(XSS)漏洞，適合掃描 Web 應用的輸入點和輸出點"
+          "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
         },
         {
           "id": 167,
@@ -3769,7 +3769,7 @@
           "length": 4,
           "start": "_consume_queue",
           "end": "_finalize_statistics",
-          "use_case": "用於檢測跨站腳本(XSS)漏洞，適合掃描 Web 應用的輸入點和輸出點"
+          "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
         },
         {
           "id": 168,
@@ -3789,7 +3789,7 @@
           "length": 2,
           "start": "XssTaskQueue.put",
           "end": "QueuedTask",
-          "use_case": "用於檢測跨站腳本(XSS)漏洞，適合掃描 Web 應用的輸入點和輸出點"
+          "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
         },
         {
           "id": 169,
@@ -3809,7 +3809,7 @@
           "length": 2,
           "start": "XssTaskQueue.put",
           "end": "_QueueEntry",
-          "use_case": "用於檢測跨站腳本(XSS)漏洞，適合掃描 Web 應用的輸入點和輸出點"
+          "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
         },
         {
           "id": 170,
@@ -3829,7 +3829,7 @@
           "length": 2,
           "start": "_build_finding",
           "end": "_validated_http_url",
-          "use_case": "用於檢測跨站腳本(XSS)漏洞，適合掃描 Web 應用的輸入點和輸出點"
+          "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
         },
         {
           "id": 171,
@@ -3849,7 +3849,7 @@
           "length": 2,
           "start": "DalfoxIntegration._parse_dalfox_output",
           "end": "XSSVulnerability",
-          "use_case": "用於檢測跨站腳本(XSS)漏洞，適合掃描 Web 應用的輸入點和輸出點"
+          "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
         },
         {
           "id": 172,
@@ -3869,7 +3869,7 @@
           "length": 2,
           "start": "XSSManager.__init__",
           "end": "DalfoxIntegration",
-          "use_case": "用於檢測跨站腳本(XSS)漏洞，適合掃描 Web 應用的輸入點和輸出點"
+          "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
         },
         {
           "id": 173,
@@ -3889,7 +3889,7 @@
           "length": 2,
           "start": "XSSManager.__init__",
           "end": "XSSPayloadGenerator",
-          "use_case": "用於檢測跨站腳本(XSS)漏洞，適合掃描 Web 應用的輸入點和輸出點"
+          "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
         },
         {
           "id": 174,
@@ -3909,7 +3909,7 @@
           "length": 2,
           "start": "XSSManager.__init__",
           "end": "DOMXSSDetector",
-          "use_case": "用於檢測跨站腳本(XSS)漏洞，適合掃描 Web 應用的輸入點和輸出點"
+          "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
         },
         {
           "id": 175,
@@ -3929,7 +3929,7 @@
           "length": 2,
           "start": "XSSManager.__init__",
           "end": "StoredXSSDetector",
-          "use_case": "用於檢測跨站腳本(XSS)漏洞，適合掃描 Web 應用的輸入點和輸出點"
+          "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
         },
         {
           "id": 176,
@@ -3949,7 +3949,7 @@
           "length": 2,
           "start": "XSSManager.__init__",
           "end": "BlindXSSDetector",
-          "use_case": "用於檢測跨站腳本(XSS)漏洞，適合掃描 Web 應用的輸入點和輸出點"
+          "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
         },
         {
           "id": 177,
@@ -3969,7 +3969,7 @@
           "length": 2,
           "start": "XSSManager._custom_xss_scan",
           "end": "XSSVulnerability",
-          "use_case": "用於檢測跨站腳本(XSS)漏洞，適合掃描 Web 應用的輸入點和輸出點 - 主動掃描模式"
+          "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
         },
         {
           "id": 178,
@@ -3991,7 +3991,7 @@
           "length": 3,
           "start": "crawl",
           "end": "converter",
-          "use_case": "用於檢測跨站腳本(XSS)漏洞，適合掃描 Web 應用的輸入點和輸出點"
+          "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
         },
         {
           "id": 179,
@@ -4013,7 +4013,7 @@
           "length": 3,
           "start": "crawl",
           "end": "isBadContext",
-          "use_case": "用於檢測跨站腳本(XSS)漏洞，適合掃描 Web 應用的輸入點和輸出點"
+          "use_case": "[XSS上下文分析] 分析 payload 插入位置的 HTML/JS 上下文，選擇合適的注入方式"
         },
         {
           "id": 180,
@@ -4037,7 +4037,7 @@
           "length": 4,
           "start": "crawl",
           "end": "fillHoles",
-          "use_case": "用於檢測跨站腳本(XSS)漏洞，適合掃描 Web 應用的輸入點和輸出點"
+          "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
         },
         {
           "id": 181,
@@ -4059,7 +4059,7 @@
           "length": 3,
           "start": "crawl",
           "end": "extractScripts",
-          "use_case": "用於檢測跨站腳本(XSS)漏洞，適合掃描 Web 應用的輸入點和輸出點"
+          "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
         },
         {
           "id": 182,
@@ -4081,7 +4081,7 @@
           "length": 3,
           "start": "crawl",
           "end": "genGen",
-          "use_case": "用於檢測跨站腳本(XSS)漏洞，適合掃描 Web 應用的輸入點和輸出點"
+          "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
         },
         {
           "id": 183,
@@ -4105,7 +4105,7 @@
           "length": 4,
           "start": "crawl",
           "end": "stripper",
-          "use_case": "用於檢測跨站腳本(XSS)漏洞，適合掃描 Web 應用的輸入點和輸出點"
+          "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
         },
         {
           "id": 184,
@@ -4125,7 +4125,7 @@
           "length": 2,
           "start": "_is_at_or_above",
           "end": "_to_comparable",
-          "use_case": "用於檢測跨站腳本(XSS)漏洞，適合掃描 Web 應用的輸入點和輸出點"
+          "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
         },
         {
           "id": 185,
@@ -4149,7 +4149,7 @@
           "length": 4,
           "start": "scan_filename",
           "end": "converter",
-          "use_case": "用於檢測跨站腳本(XSS)漏洞，適合掃描 Web 應用的輸入點和輸出點 - 主動掃描模式"
+          "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
         },
         {
           "id": 186,
@@ -4171,7 +4171,7 @@
           "length": 3,
           "start": "scan_filename",
           "end": "dom",
-          "use_case": "用於檢測跨站腳本(XSS)漏洞，適合掃描 Web 應用的輸入點和輸出點 - 主動掃描模式"
+          "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
         },
         {
           "id": 187,
@@ -4193,7 +4193,7 @@
           "length": 3,
           "start": "scan_filename",
           "end": "getUrl",
-          "use_case": "用於檢測跨站腳本(XSS)漏洞，適合掃描 Web 應用的輸入點和輸出點 - 主動掃描模式"
+          "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
         },
         {
           "id": 188,
@@ -4215,7 +4215,7 @@
           "length": 3,
           "start": "scan_filename",
           "end": "getParams",
-          "use_case": "用於檢測跨站腳本(XSS)漏洞，適合掃描 Web 應用的輸入點和輸出點 - 主動掃描模式"
+          "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
         },
         {
           "id": 189,
@@ -4241,7 +4241,7 @@
           "length": 5,
           "start": "scan_filename",
           "end": "converter",
-          "use_case": "用於檢測跨站腳本(XSS)漏洞，適合掃描 Web 應用的輸入點和輸出點 - 主動掃描模式"
+          "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
         },
         {
           "id": 190,
@@ -4265,7 +4265,7 @@
           "length": 4,
           "start": "scan_filename",
           "end": "isBadContext",
-          "use_case": "用於檢測跨站腳本(XSS)漏洞，適合掃描 Web 應用的輸入點和輸出點 - 主動掃描模式"
+          "use_case": "[XSS上下文分析] 分析 payload 插入位置的 HTML/JS 上下文，選擇合適的注入方式"
         },
         {
           "id": 191,
@@ -4291,7 +4291,7 @@
           "length": 5,
           "start": "scan_filename",
           "end": "fillHoles",
-          "use_case": "用於檢測跨站腳本(XSS)漏洞，適合掃描 Web 應用的輸入點和輸出點 - 主動掃描模式"
+          "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
         },
         {
           "id": 192,
@@ -4315,7 +4315,7 @@
           "length": 4,
           "start": "scan_filename",
           "end": "extractScripts",
-          "use_case": "用於檢測跨站腳本(XSS)漏洞，適合掃描 Web 應用的輸入點和輸出點 - 主動掃描模式"
+          "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
         },
         {
           "id": 193,
@@ -4339,7 +4339,7 @@
           "length": 4,
           "start": "scan_filename",
           "end": "genGen",
-          "use_case": "用於檢測跨站腳本(XSS)漏洞，適合掃描 Web 應用的輸入點和輸出點 - 主動掃描模式"
+          "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
         },
         {
           "id": 194,
@@ -4365,7 +4365,7 @@
           "length": 5,
           "start": "scan_filename",
           "end": "stripper",
-          "use_case": "用於檢測跨站腳本(XSS)漏洞，適合掃描 Web 應用的輸入點和輸出點 - 主動掃描模式"
+          "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
         },
         {
           "id": 195,
@@ -4389,7 +4389,7 @@
           "length": 4,
           "start": "scan_filename",
           "end": "fillHoles",
-          "use_case": "用於檢測跨站腳本(XSS)漏洞，適合掃描 Web 應用的輸入點和輸出點 - 主動掃描模式"
+          "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
         },
         {
           "id": 196,
@@ -4409,7 +4409,7 @@
           "length": 2,
           "start": "DOMXSSDetector._test_dom_payloads",
           "end": "XSSVulnerability",
-          "use_case": "用於檢測跨站腳本(XSS)漏洞，適合掃描 Web 應用的輸入點和輸出點 - 被動檢測模式"
+          "use_case": "[XSS DOM型] 檢測 DOM-based XSS，payload 在客戶端 JavaScript 中觸發"
         },
         {
           "id": 197,
@@ -4429,7 +4429,7 @@
           "length": 2,
           "start": "dorkFind",
           "end": "get_user_agent",
-          "use_case": "用於檢測跨站腳本(XSS)漏洞，適合掃描 Web 應用的輸入點和輸出點"
+          "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
         },
         {
           "id": 198,
@@ -4449,7 +4449,7 @@
           "length": 2,
           "start": "log_no_format",
           "end": "_switch_to_no_format_loggers",
-          "use_case": "用於檢測跨站腳本(XSS)漏洞，適合掃描 Web 應用的輸入點和輸出點"
+          "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
         },
         {
           "id": 199,
@@ -4469,7 +4469,7 @@
           "length": 2,
           "start": "log_no_format",
           "end": "_get_level_and_log",
-          "use_case": "用於檢測跨站腳本(XSS)漏洞，適合掃描 Web 應用的輸入點和輸出點"
+          "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
         },
         {
           "id": 200,
@@ -4489,7 +4489,7 @@
           "length": 2,
           "start": "log_no_format",
           "end": "_switch_to_default_loggers",
-          "use_case": "用於檢測跨站腳本(XSS)漏洞，適合掃描 Web 應用的輸入點和輸出點"
+          "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
         },
         {
           "id": 201,
@@ -4509,7 +4509,7 @@
           "length": 2,
           "start": "setup_logger",
           "end": "CustomStreamHandler",
-          "use_case": "用於檢測跨站腳本(XSS)漏洞，適合掃描 Web 應用的輸入點和輸出點"
+          "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
         },
         {
           "id": 202,
@@ -4529,7 +4529,7 @@
           "length": 2,
           "start": "TraditionalXssDetector._build_request_parts",
           "end": "_inject_query",
-          "use_case": "用於檢測跨站腳本(XSS)漏洞，適合掃描 Web 應用的輸入點和輸出點 - 被動檢測模式"
+          "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
         },
         {
           "id": 203,
@@ -4549,7 +4549,7 @@
           "length": 2,
           "start": "TraditionalXssDetector._build_request_parts",
           "end": "_inject_mapping",
-          "use_case": "用於檢測跨站腳本(XSS)漏洞，適合掃描 Web 應用的輸入點和輸出點 - 被動檢測模式"
+          "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
         },
         {
           "id": 204,
@@ -4571,7 +4571,7 @@
           "length": 3,
           "start": "detect_xss",
           "end": "CrossLanguageXSSEngine",
-          "use_case": "用於檢測跨站腳本(XSS)漏洞，適合掃描 Web 應用的輸入點和輸出點 - 被動檢測模式"
+          "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
         },
         {
           "id": 205,
@@ -4591,7 +4591,7 @@
           "length": 2,
           "start": "run",
           "end": "XssResultPublisher",
-          "use_case": "用於檢測跨站腳本(XSS)漏洞，適合掃描 Web 應用的輸入點和輸出點"
+          "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
         },
         {
           "id": 206,
@@ -4611,7 +4611,7 @@
           "length": 2,
           "start": "run",
           "end": "XssTaskQueue",
-          "use_case": "用於檢測跨站腳本(XSS)漏洞，適合掃描 Web 應用的輸入點和輸出點"
+          "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
         },
         {
           "id": 207,
@@ -4631,7 +4631,7 @@
           "length": 2,
           "start": "_replacement_match",
           "end": "deJSON",
-          "use_case": "用於檢測跨站腳本(XSS)漏洞，適合掃描 Web 應用的輸入點和輸出點"
+          "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
         }
       ]
     },
@@ -4663,7 +4663,7 @@
           "length": 2,
           "start": "ScanService.extractNetworkAssets",
           "end": "NetworkInterceptor.getApiRequests",
-          "use_case": "用於分析前端代碼和網路請求，適合檢測客戶端漏洞 - 主動掃描模式"
+          "use_case": "[前端-網路資產] 提取前端代碼中的所有網路請求（API、AJAX、Fetch）"
         },
         {
           "id": 209,
@@ -4683,7 +4683,7 @@
           "length": 2,
           "start": "ScanService.extractNetworkAssets",
           "end": "NetworkInterceptor.getAjaxRequests",
-          "use_case": "用於分析前端代碼和網路請求，適合檢測客戶端漏洞 - 主動掃描模式"
+          "use_case": "[前端-網路資產] 提取前端代碼中的所有網路請求（API、AJAX、Fetch）"
         },
         {
           "id": 210,
@@ -4703,7 +4703,7 @@
           "length": 2,
           "start": "ScanService.extractNetworkAssets",
           "end": "NetworkInterceptor.analyzeRequestPatterns",
-          "use_case": "用於分析前端代碼和網路請求，適合檢測客戶端漏洞 - 主動掃描模式"
+          "use_case": "[前端-網路資產] 提取前端代碼中的所有網路請求（API、AJAX、Fetch）"
         }
       ]
     }
@@ -4727,7 +4727,7 @@
       "length": 2,
       "start": "_check_go_availability",
       "end": "_find_go_binary",
-      "use_case": "用於檢測身份驗證漏洞，適合測試登錄、會話管理等"
+      "use_case": "[認證通用] 身份驗證漏洞檢測，測試登錄、會話、權限"
     },
     {
       "id": 2,
@@ -4747,7 +4747,7 @@
       "length": 2,
       "start": "get_engine_info",
       "end": "_find_go_binary",
-      "use_case": "用於檢測身份驗證漏洞，適合測試登錄、會話管理等"
+      "use_case": "[認證通用] 身份驗證漏洞檢測，測試登錄、會話、權限"
     },
     {
       "id": 3,
@@ -4767,7 +4767,7 @@
       "length": 2,
       "start": "scan_target",
       "end": "AuthnManager",
-      "use_case": "用於檢測身份驗證漏洞，適合測試登錄、會話管理等 - 主動掃描模式"
+      "use_case": "[認證通用] 身份驗證漏洞檢測，測試登錄、會話、權限"
     },
     {
       "id": 4,
@@ -4787,7 +4787,7 @@
       "length": 2,
       "start": "scan_authentication",
       "end": "_find_go_binary",
-      "use_case": "用於檢測身份驗證漏洞，適合測試登錄、會話管理等 - 主動掃描模式"
+      "use_case": "[認證通用] 身份驗證漏洞檢測，測試登錄、會話、權限"
     },
     {
       "id": 5,
@@ -4807,7 +4807,7 @@
       "length": 2,
       "start": "BizLogicManager.comprehensive_scan",
       "end": "RaceConditionScanner",
-      "use_case": "用於檢測業務邏輯漏洞，適合測試支付流程、競態條件等 - 主動掃描模式"
+      "use_case": "[業務邏輯-競態] 檢測競態條件漏洞，同時發送多個請求測試鎖機制"
     },
     {
       "id": 6,
@@ -4827,7 +4827,7 @@
       "length": 2,
       "start": "BizLogicManager.comprehensive_scan",
       "end": "PriceManipulationScanner",
-      "use_case": "用於檢測業務邏輯漏洞，適合測試支付流程、競態條件等 - 主動掃描模式"
+      "use_case": "[業務邏輯-價格] 檢測價格操縱漏洞，嘗試修改金額、折扣、數量等"
     },
     {
       "id": 7,
@@ -4847,7 +4847,7 @@
       "length": 2,
       "start": "BizLogicManager.comprehensive_scan",
       "end": "WorkflowBypassScanner",
-      "use_case": "用於檢測業務邏輯漏洞，適合測試支付流程、競態條件等 - 主動掃描模式"
+      "use_case": "[業務邏輯-流程] 檢測工作流繞過，嘗試跳過必要步驟（如支付驗證）"
     },
     {
       "id": 8,
@@ -4867,7 +4867,7 @@
       "length": 2,
       "start": "main",
       "end": "run_price_test",
-      "use_case": "用於檢測業務邏輯漏洞，適合測試支付流程、競態條件等"
+      "use_case": "[業務邏輯-價格] 檢測價格操縱漏洞，嘗試修改金額、折扣、數量等"
     },
     {
       "id": 9,
@@ -4887,7 +4887,7 @@
       "length": 2,
       "start": "main",
       "end": "run_race_test",
-      "use_case": "用於檢測業務邏輯漏洞，適合測試支付流程、競態條件等"
+      "use_case": "[業務邏輯-競態] 檢測競態條件漏洞，同時發送多個請求測試鎖機制"
     },
     {
       "id": 10,
@@ -4907,7 +4907,7 @@
       "length": 2,
       "start": "main",
       "end": "run_workflow_test",
-      "use_case": "用於檢測業務邏輯漏洞，適合測試支付流程、競態條件等"
+      "use_case": "[業務邏輯-流程] 檢測工作流繞過，嘗試跳過必要步驟（如支付驗證）"
     },
     {
       "id": 11,
@@ -4929,7 +4929,7 @@
       "length": 3,
       "start": "main",
       "end": "create_bizlogic_finding",
-      "use_case": "用於檢測業務邏輯漏洞，適合測試支付流程、競態條件等"
+      "use_case": "[業務邏輯通用] 業務流程漏洞檢測，測試支付、訂單等關鍵業務"
     },
     {
       "id": 12,
@@ -4949,7 +4949,7 @@
       "length": 2,
       "start": "BizLogicCommandHandler.__init__",
       "end": "BizLogicManager",
-      "use_case": "用於檢測業務邏輯漏洞，適合測試支付流程、競態條件等"
+      "use_case": "[業務邏輯通用] 業務流程漏洞檢測，測試支付、訂單等關鍵業務"
     },
     {
       "id": 13,
@@ -4969,7 +4969,7 @@
       "length": 2,
       "start": "IdorWorkerService.__init__",
       "end": "IdorWorker",
-      "use_case": "用於檢測越權訪問(IDOR)漏洞，適合測試資源 ID 和權限控制"
+      "use_case": "[IDOR異步掃描] 後台 Worker 模式，適合大量資源 ID 的批量測試"
     },
     {
       "id": 14,
@@ -4989,7 +4989,7 @@
       "length": 2,
       "start": "SmartIDORDetector.__init__",
       "end": "IdorConfig",
-      "use_case": "用於檢測越權訪問(IDOR)漏洞，適合測試資源 ID 和權限控制 - 被動檢測模式"
+      "use_case": "[IDOR通用] 越權訪問檢測，測試資源 ID 的權限控制"
     },
     {
       "id": 15,
@@ -5009,7 +5009,7 @@
       "length": 2,
       "start": "EnhancedIDORWorker.run",
       "end": "ResourceIdExtractor",
-      "use_case": "用於檢測越權訪問(IDOR)漏洞，適合測試資源 ID 和權限控制"
+      "use_case": "[IDOR資源提取] 從 URL 和響應中提取資源 ID（如 /user/123, /order/456）"
     },
     {
       "id": 16,
@@ -5029,7 +5029,7 @@
       "length": 2,
       "start": "SmartIDORDetector.detect_vulnerabilities",
       "end": "IDORDetectionContext",
-      "use_case": "用於檢測越權訪問(IDOR)漏洞，適合測試資源 ID 和權限控制 - 被動檢測模式"
+      "use_case": "[IDOR上下文檢測] 分析資源訪問上下文，判斷權限控制是否正確"
     },
     {
       "id": 17,
@@ -5049,7 +5049,7 @@
       "length": 2,
       "start": "process_task",
       "end": "ResourceIdExtractor",
-      "use_case": "用於檢測越權訪問(IDOR)漏洞，適合測試資源 ID 和權限控制"
+      "use_case": "[IDOR資源提取] 從 URL 和響應中提取資源 ID（如 /user/123, /order/456）"
     },
     {
       "id": 18,
@@ -5069,7 +5069,7 @@
       "length": 2,
       "start": "process_task",
       "end": "EnhancedIDORWorker",
-      "use_case": "用於檢測越權訪問(IDOR)漏洞，適合測試資源 ID 和權限控制"
+      "use_case": "[IDOR異步掃描] 後台 Worker 模式，適合大量資源 ID 的批量測試"
     },
     {
       "id": 19,
@@ -5089,7 +5089,7 @@
       "length": 2,
       "start": "test_idor_handler",
       "end": "IDORCommandHandler",
-      "use_case": "用於檢測越權訪問(IDOR)漏洞，適合測試資源 ID 和權限控制 - 測試驗證模式"
+      "use_case": "[IDOR通用] 越權訪問檢測，測試資源 ID 的權限控制"
     },
     {
       "id": 20,
@@ -5109,7 +5109,7 @@
       "length": 2,
       "start": "EnhancedIDORWorker.process_task",
       "end": "EnhancedIdorTelemetry",
-      "use_case": "用於檢測越權訪問(IDOR)漏洞，適合測試資源 ID 和權限控制"
+      "use_case": "[IDOR遙測記錄] 記錄越權測試的詳細數據和結果"
     },
     {
       "id": 21,
@@ -5129,7 +5129,7 @@
       "length": 2,
       "start": "IDORDetector.analyze",
       "end": "IDOREngine",
-      "use_case": "用於檢測越權訪問(IDOR)漏洞，適合測試資源 ID 和權限控制 - 被動檢測模式"
+      "use_case": "[IDOR檢測引擎] 核心越權檢測邏輯，嘗試不同用戶訪問相同資源"
     },
     {
       "id": 22,
@@ -5149,7 +5149,7 @@
       "length": 2,
       "start": "IdorWorker.__init__",
       "end": "ResourceIdExtractor",
-      "use_case": "用於檢測越權訪問(IDOR)漏洞，適合測試資源 ID 和權限控制"
+      "use_case": "[IDOR資源提取] 從 URL 和響應中提取資源 ID（如 /user/123, /order/456）"
     },
     {
       "id": 23,
@@ -5169,7 +5169,7 @@
       "length": 2,
       "start": "EnhancedIDORWorker.__init__",
       "end": "IdorConfig",
-      "use_case": "用於檢測越權訪問(IDOR)漏洞，適合測試資源 ID 和權限控制"
+      "use_case": "[IDOR通用] 越權訪問檢測，測試資源 ID 的權限控制"
     },
     {
       "id": 24,
@@ -5189,7 +5189,7 @@
       "length": 2,
       "start": "EnhancedIDORWorker.__init__",
       "end": "SmartIDORDetector",
-      "use_case": "用於檢測越權訪問(IDOR)漏洞，適合測試資源 ID 和權限控制"
+      "use_case": "[IDOR通用] 越權訪問檢測，測試資源 ID 的權限控制"
     },
     {
       "id": 25,
@@ -5209,7 +5209,7 @@
       "length": 2,
       "start": "IDORCommandHandler.__init__",
       "end": "SmartIDORDetector",
-      "use_case": "用於檢測越權訪問(IDOR)漏洞，適合測試資源 ID 和權限控制"
+      "use_case": "[IDOR通用] 越權訪問檢測，測試資源 ID 的權限控制"
     },
     {
       "id": 26,
@@ -5229,7 +5229,7 @@
       "length": 2,
       "start": "IDORCommandHandler.__init__",
       "end": "ResourceIdExtractor",
-      "use_case": "用於檢測越權訪問(IDOR)漏洞，適合測試資源 ID 和權限控制"
+      "use_case": "[IDOR資源提取] 從 URL 和響應中提取資源 ID（如 /user/123, /order/456）"
     },
     {
       "id": 27,
@@ -5249,7 +5249,7 @@
       "length": 2,
       "start": "run",
       "end": "EnhancedIDORWorker",
-      "use_case": "用於檢測越權訪問(IDOR)漏洞，適合測試資源 ID 和權限控制"
+      "use_case": "[IDOR異步掃描] 後台 Worker 模式，適合大量資源 ID 的批量測試"
     },
     {
       "id": 28,
@@ -5269,7 +5269,7 @@
       "length": 2,
       "start": "run",
       "end": "IdorWorker",
-      "use_case": "用於檢測越權訪問(IDOR)漏洞，適合測試資源 ID 和權限控制"
+      "use_case": "[IDOR異步掃描] 後台 Worker 模式，適合大量資源 ID 的批量測試"
     },
     {
       "id": 29,
@@ -5289,7 +5289,7 @@
       "length": 2,
       "start": "run",
       "end": "_topic",
-      "use_case": "用於檢測越權訪問(IDOR)漏洞，適合測試資源 ID 和權限控制"
+      "use_case": "[IDOR通用] 越權訪問檢測，測試資源 ID 的權限控制"
     },
     {
       "id": 30,
@@ -5309,7 +5309,7 @@
       "length": 2,
       "start": "run",
       "end": "IdorConfig",
-      "use_case": "用於檢測越權訪問(IDOR)漏洞，適合測試資源 ID 和權限控制"
+      "use_case": "[IDOR通用] 越權訪問檢測，測試資源 ID 的權限控制"
     },
     {
       "id": 31,
@@ -5329,7 +5329,7 @@
       "length": 2,
       "start": "run",
       "end": "IDORDetector",
-      "use_case": "用於檢測越權訪問(IDOR)漏洞，適合測試資源 ID 和權限控制"
+      "use_case": "[IDOR通用] 越權訪問檢測，測試資源 ID 的權限控制"
     },
     {
       "id": 32,
@@ -5349,7 +5349,7 @@
       "length": 2,
       "start": "_consume_queue",
       "end": "_execute_task",
-      "use_case": "用於檢測 SQL 注入漏洞，適合測試數據庫查詢接口和參數"
+      "use_case": "[SQLi通用] SQL 注入漏洞檢測，測試資料庫查詢接口"
     },
     {
       "id": 33,
@@ -5369,7 +5369,7 @@
       "length": 2,
       "start": "SQLInjectionManager.__init__",
       "end": "SqlmapIntegration",
-      "use_case": "用於檢測 SQL 注入漏洞，適合測試數據庫查詢接口和參數"
+      "use_case": "[SQLi工具整合] 調用 SQLMap 進行深度 SQL 注入測試，支持多種資料庫"
     },
     {
       "id": 34,
@@ -5389,7 +5389,7 @@
       "length": 2,
       "start": "SQLInjectionManager.__init__",
       "end": "CustomSQLInjectionScanner",
-      "use_case": "用於檢測 SQL 注入漏洞，適合測試數據庫查詢接口和參數"
+      "use_case": "[SQLi通用] SQL 注入漏洞檢測，測試資料庫查詢接口"
     },
     {
       "id": 35,
@@ -5409,7 +5409,7 @@
       "length": 2,
       "start": "SQLInjectionManager.__init__",
       "end": "NoSQLInjectionScanner",
-      "use_case": "用於檢測 SQL 注入漏洞，適合測試數據庫查詢接口和參數"
+      "use_case": "[NoSQL注入] 檢測 MongoDB/Redis 等 NoSQL 資料庫的注入漏洞"
     },
     {
       "id": 36,
@@ -5429,7 +5429,7 @@
       "length": 2,
       "start": "SQLInjectionManager.__init__",
       "end": "BlindSQLInjectionScanner",
-      "use_case": "用於檢測 SQL 注入漏洞，適合測試數據庫查詢接口和參數"
+      "use_case": "[SQLi盲注] 使用時間延遲或布爾盲注技術，適合無錯誤訊息的場景"
     },
     {
       "id": 37,
@@ -5449,7 +5449,7 @@
       "length": 2,
       "start": "OOBDetectionEngine.detect",
       "end": "PayloadWrapperEncoder",
-      "use_case": "用於檢測 SQL 注入漏洞，適合測試數據庫查詢接口和參數 - 被動檢測模式"
+      "use_case": "[SQLi編碼繞過] 對 payload 進行編碼和混淆，用於繞過 WAF"
     },
     {
       "id": 38,
@@ -5469,7 +5469,7 @@
       "length": 2,
       "start": "SqlmapIntegration._parse_sqlmap_output",
       "end": "SQLInjectionResult",
-      "use_case": "用於檢測 SQL 注入漏洞，適合測試數據庫查詢接口和參數"
+      "use_case": "[SQLi工具整合] 調用 SQLMap 進行深度 SQL 注入測試，支持多種資料庫"
     },
     {
       "id": 39,
@@ -5489,7 +5489,7 @@
       "length": 2,
       "start": "BountyHunterManager.__init__",
       "end": "BountyHunterScanner",
-      "use_case": "用於檢測 SQL 注入漏洞，適合測試數據庫查詢接口和參數"
+      "use_case": "[SQLi賞金模式] 針對高價值目標的深度測試，使用高級繞過技術"
     },
     {
       "id": 40,
@@ -5509,7 +5509,7 @@
       "length": 2,
       "start": "BooleanDetectionEngine.detect",
       "end": "PayloadWrapperEncoder",
-      "use_case": "用於檢測 SQL 注入漏洞，適合測試數據庫查詢接口和參數 - 被動檢測模式"
+      "use_case": "[SQLi編碼繞過] 對 payload 進行編碼和混淆，用於繞過 WAF"
     },
     {
       "id": 41,
@@ -5529,7 +5529,7 @@
       "length": 2,
       "start": "BountyHunterManager.add_high_value_target",
       "end": "HighValueTarget",
-      "use_case": "用於檢測 SQL 注入漏洞，適合測試數據庫查詢接口和參數"
+      "use_case": "[SQLi賞金模式] 針對高價值目標的深度測試，使用高級繞過技術"
     },
     {
       "id": 42,
@@ -5549,7 +5549,7 @@
       "length": 2,
       "start": "run",
       "end": "SqliResultBinderPublisher",
-      "use_case": "用於檢測 SQL 注入漏洞，適合測試數據庫查詢接口和參數"
+      "use_case": "[SQLi通用] SQL 注入漏洞檢測，測試資料庫查詢接口"
     },
     {
       "id": 43,
@@ -5569,7 +5569,7 @@
       "length": 2,
       "start": "run",
       "end": "SqliTaskQueue",
-      "use_case": "用於檢測 SQL 注入漏洞，適合測試數據庫查詢接口和參數"
+      "use_case": "[SQLi通用] SQL 注入漏洞檢測，測試資料庫查詢接口"
     },
     {
       "id": 44,
@@ -5589,7 +5589,7 @@
       "length": 2,
       "start": "run",
       "end": "SqliWorkerService",
-      "use_case": "用於檢測 SQL 注入漏洞，適合測試數據庫查詢接口和參數"
+      "use_case": "[SQLi通用] SQL 注入漏洞檢測，測試資料庫查詢接口"
     },
     {
       "id": 45,
@@ -5609,7 +5609,7 @@
       "length": 2,
       "start": "BountyHunterScanner._analyze_bounty_response",
       "end": "BountyVulnerability",
-      "use_case": "用於檢測 SQL 注入漏洞，適合測試數據庫查詢接口和參數 - 主動掃描模式"
+      "use_case": "[SQLi賞金模式] 針對高價值目標的深度測試，使用高級繞過技術"
     },
     {
       "id": 46,
@@ -5629,7 +5629,7 @@
       "length": 2,
       "start": "SQLiCommandHandler.handle_command",
       "end": "SQLTarget",
-      "use_case": "用於檢測 SQL 注入漏洞，適合測試數據庫查詢接口和參數"
+      "use_case": "[SQLi通用] SQL 注入漏洞檢測，測試資料庫查詢接口"
     },
     {
       "id": 47,
@@ -5649,7 +5649,7 @@
       "length": 2,
       "start": "HackingToolDetectionEngine._convert_to_detection_result",
       "end": "DetectionResult",
-      "use_case": "用於檢測 SQL 注入漏洞，適合測試數據庫查詢接口和參數 - 被動檢測模式"
+      "use_case": "[SQLi通用] SQL 注入漏洞檢測，測試資料庫查詢接口"
     },
     {
       "id": 48,
@@ -5669,7 +5669,7 @@
       "length": 2,
       "start": "main",
       "end": "HackingToolSQLCLI",
-      "use_case": "用於檢測 SQL 注入漏洞，適合測試數據庫查詢接口和參數"
+      "use_case": "[SQLi通用] SQL 注入漏洞檢測，測試資料庫查詢接口"
     },
     {
       "id": 49,
@@ -5689,7 +5689,7 @@
       "length": 2,
       "start": "main",
       "end": "BountyHunterCLI",
-      "use_case": "用於檢測 SQL 注入漏洞，適合測試數據庫查詢接口和參數"
+      "use_case": "[SQLi賞金模式] 針對高價值目標的深度測試，使用高級繞過技術"
     },
     {
       "id": 50,
@@ -5709,7 +5709,7 @@
       "length": 2,
       "start": "SQLiCommandHandler.__init__",
       "end": "SQLInjectionManager",
-      "use_case": "用於檢測 SQL 注入漏洞，適合測試數據庫查詢接口和參數"
+      "use_case": "[SQLi通用] SQL 注入漏洞檢測，測試資料庫查詢接口"
     },
     {
       "id": 51,
@@ -5729,7 +5729,7 @@
       "length": 2,
       "start": "SqliWorkerService.__init__",
       "end": "SqliOrchestrator",
-      "use_case": "用於檢測 SQL 注入漏洞，適合測試數據庫查詢接口和參數"
+      "use_case": "[SQLi通用] SQL 注入漏洞檢測，測試資料庫查詢接口"
     },
     {
       "id": 52,
@@ -5749,7 +5749,7 @@
       "length": 2,
       "start": "SqliWorkerService.__init__",
       "end": "SqliEngineConfig",
-      "use_case": "用於檢測 SQL 注入漏洞，適合測試數據庫查詢接口和參數"
+      "use_case": "[SQLi通用] SQL 注入漏洞檢測，測試資料庫查詢接口"
     },
     {
       "id": 53,
@@ -5769,7 +5769,7 @@
       "length": 2,
       "start": "ErrorDetectionEngine.detect",
       "end": "PayloadWrapperEncoder",
-      "use_case": "用於檢測 SQL 注入漏洞，適合測試數據庫查詢接口和參數 - 被動檢測模式"
+      "use_case": "[SQLi編碼繞過] 對 payload 進行編碼和混淆，用於繞過 WAF"
     },
     {
       "id": 54,
@@ -5789,7 +5789,7 @@
       "length": 2,
       "start": "process_task",
       "end": "SqliWorkerService",
-      "use_case": "用於檢測 SQL 注入漏洞，適合測試數據庫查詢接口和參數"
+      "use_case": "[SQLi通用] SQL 注入漏洞檢測，測試資料庫查詢接口"
     },
     {
       "id": 55,
@@ -5809,7 +5809,7 @@
       "length": 2,
       "start": "SqliOrchestrator._setup_default_engines",
       "end": "SqliConfig",
-      "use_case": "用於檢測 SQL 注入漏洞，適合測試數據庫查詢接口和參數"
+      "use_case": "[SQLi通用] SQL 注入漏洞檢測，測試資料庫查詢接口"
     },
     {
       "id": 56,
@@ -5829,7 +5829,7 @@
       "length": 2,
       "start": "TimeDetectionEngine.detect",
       "end": "PayloadWrapperEncoder",
-      "use_case": "用於檢測 SQL 注入漏洞，適合測試數據庫查詢接口和參數 - 被動檢測模式"
+      "use_case": "[SQLi編碼繞過] 對 payload 進行編碼和混淆，用於繞過 WAF"
     },
     {
       "id": 57,
@@ -5849,7 +5849,7 @@
       "length": 2,
       "start": "SqliOrchestrator.__init__",
       "end": "SqliEngineConfig",
-      "use_case": "用於檢測 SQL 注入漏洞，適合測試數據庫查詢接口和參數"
+      "use_case": "[SQLi通用] SQL 注入漏洞檢測，測試資料庫查詢接口"
     },
     {
       "id": 58,
@@ -5869,7 +5869,7 @@
       "length": 2,
       "start": "BountyHunterCLI.__init__",
       "end": "BountyHunterManager",
-      "use_case": "用於檢測 SQL 注入漏洞，適合測試數據庫查詢接口和參數"
+      "use_case": "[SQLi賞金模式] 針對高價值目標的深度測試，使用高級繞過技術"
     },
     {
       "id": 59,
@@ -5889,7 +5889,7 @@
       "length": 2,
       "start": "UnionDetectionEngine.detect",
       "end": "PayloadWrapperEncoder",
-      "use_case": "用於檢測 SQL 注入漏洞，適合測試數據庫查詢接口和參數 - 被動檢測模式"
+      "use_case": "[SQLi編碼繞過] 對 payload 進行編碼和混淆，用於繞過 WAF"
     },
     {
       "id": 60,
@@ -5909,7 +5909,7 @@
       "length": 2,
       "start": "HackingToolDetectionEngine._create_detection_result",
       "end": "DetectionResult",
-      "use_case": "用於檢測 SQL 注入漏洞，適合測試數據庫查詢接口和參數 - 被動檢測模式"
+      "use_case": "[SQLi通用] SQL 注入漏洞檢測，測試資料庫查詢接口"
     },
     {
       "id": 61,
@@ -5929,7 +5929,7 @@
       "length": 2,
       "start": "SqliWorkerService.process_task",
       "end": "SqliOrchestrator",
-      "use_case": "用於檢測 SQL 注入漏洞，適合測試數據庫查詢接口和參數"
+      "use_case": "[SQLi通用] SQL 注入漏洞檢測，測試資料庫查詢接口"
     },
     {
       "id": 62,
@@ -5949,7 +5949,7 @@
       "length": 2,
       "start": "SqliWorkerService.process_task",
       "end": "SqliContext",
-      "use_case": "用於檢測 SQL 注入漏洞，適合測試數據庫查詢接口和參數"
+      "use_case": "[SQLi通用] SQL 注入漏洞檢測，測試資料庫查詢接口"
     },
     {
       "id": 63,
@@ -5969,7 +5969,7 @@
       "length": 2,
       "start": "SQLInjectionBountyCapability.__init__",
       "end": "BountyHunterManager",
-      "use_case": "用於檢測 SQL 注入漏洞，適合測試數據庫查詢接口和參數"
+      "use_case": "[SQLi賞金模式] 針對高價值目標的深度測試，使用高級繞過技術"
     },
     {
       "id": 64,
@@ -5989,7 +5989,7 @@
       "length": 2,
       "start": "SsrfWorkerService.process_task",
       "end": "SsrfResultPublisher",
-      "use_case": "用於檢測服務器端請求偽造(SSRF)漏洞，適合測試 URL 參數和內部請求"
+      "use_case": "[SSRF通用] 服務器端請求偽造檢測，測試後端 URL 請求功能"
     },
     {
       "id": 65,
@@ -6013,7 +6013,7 @@
       "length": 4,
       "start": "SsrfWorkerService.process_task",
       "end": "ParamSemanticsAnalyzer",
-      "use_case": "用於檢測服務器端請求偽造(SSRF)漏洞，適合測試 URL 參數和內部請求"
+      "use_case": "[SSRF參數語義] 分析參數語義判斷是否可能觸發後端請求（如 url=, callback= 等）"
     },
     {
       "id": 66,
@@ -6037,7 +6037,7 @@
       "length": 4,
       "start": "SsrfWorkerService.process_task",
       "end": "InternalAddressDetector",
-      "use_case": "用於檢測服務器端請求偽造(SSRF)漏洞，適合測試 URL 參數和內部請求"
+      "use_case": "[SSRF內網探測] 檢測是否可以訪問內部網路（127.0.0.1, 192.168.x.x, 10.x.x.x）"
     },
     {
       "id": 67,
@@ -6061,7 +6061,7 @@
       "length": 4,
       "start": "SsrfWorkerService.process_task",
       "end": "OastDispatcher",
-      "use_case": "用於檢測服務器端請求偽造(SSRF)漏洞，適合測試 URL 參數和內部請求"
+      "use_case": "[SSRF帶外檢測] 使用 OAST 技術驗證盲 SSRF，通過 DNS/HTTP 回調確認"
     },
     {
       "id": 68,
@@ -6085,7 +6085,7 @@
       "length": 4,
       "start": "SsrfWorkerService.process_task",
       "end": "SsrfTelemetry",
-      "use_case": "用於檢測服務器端請求偽造(SSRF)漏洞，適合測試 URL 參數和內部請求"
+      "use_case": "[SSRF遙測記錄] 記錄 SSRF 測試的詳細數據，用於分析和報告"
     },
     {
       "id": 69,
@@ -6109,7 +6109,7 @@
       "length": 4,
       "start": "SsrfWorkerService.process_task",
       "end": "_resolve_payload",
-      "use_case": "用於檢測服務器端請求偽造(SSRF)漏洞，適合測試 URL 參數和內部請求"
+      "use_case": "[SSRF Payload 生成] 根據目標環境生成最佳 SSRF payload"
     },
     {
       "id": 70,
@@ -6133,7 +6133,7 @@
       "length": 4,
       "start": "SsrfWorkerService.process_task",
       "end": "_issue_request",
-      "use_case": "用於檢測服務器端請求偽造(SSRF)漏洞，適合測試 URL 參數和內部請求"
+      "use_case": "[SSRF請求發送] 實際發送 SSRF 測試請求並分析響應"
     },
     {
       "id": 71,
@@ -6153,7 +6153,7 @@
       "length": 2,
       "start": "test_ssrf_handler",
       "end": "SSRFCommandHandler",
-      "use_case": "用於檢測服務器端請求偽造(SSRF)漏洞，適合測試 URL 參數和內部請求 - 測試驗證模式"
+      "use_case": "[SSRF通用] 服務器端請求偽造檢測，測試後端 URL 請求功能"
     },
     {
       "id": 72,
@@ -6173,7 +6173,7 @@
       "length": 2,
       "start": "run",
       "end": "SsrfResultPublisher",
-      "use_case": "用於檢測服務器端請求偽造(SSRF)漏洞，適合測試 URL 參數和內部請求"
+      "use_case": "[SSRF通用] 服務器端請求偽造檢測，測試後端 URL 請求功能"
     },
     {
       "id": 73,
@@ -6193,7 +6193,7 @@
       "length": 2,
       "start": "run",
       "end": "ParamSemanticsAnalyzer",
-      "use_case": "用於檢測服務器端請求偽造(SSRF)漏洞，適合測試 URL 參數和內部請求"
+      "use_case": "[SSRF參數語義] 分析參數語義判斷是否可能觸發後端請求（如 url=, callback= 等）"
     },
     {
       "id": 74,
@@ -6213,7 +6213,7 @@
       "length": 2,
       "start": "run",
       "end": "InternalAddressDetector",
-      "use_case": "用於檢測服務器端請求偽造(SSRF)漏洞，適合測試 URL 參數和內部請求"
+      "use_case": "[SSRF內網探測] 檢測是否可以訪問內部網路（127.0.0.1, 192.168.x.x, 10.x.x.x）"
     },
     {
       "id": 75,
@@ -6233,7 +6233,7 @@
       "length": 2,
       "start": "run",
       "end": "OastDispatcher",
-      "use_case": "用於檢測服務器端請求偽造(SSRF)漏洞，適合測試 URL 參數和內部請求"
+      "use_case": "[SSRF帶外檢測] 使用 OAST 技術驗證盲 SSRF，通過 DNS/HTTP 回調確認"
     },
     {
       "id": 76,
@@ -6257,7 +6257,7 @@
       "length": 4,
       "start": "run",
       "end": "ParamSemanticsAnalyzer",
-      "use_case": "用於檢測服務器端請求偽造(SSRF)漏洞，適合測試 URL 參數和內部請求"
+      "use_case": "[SSRF參數語義] 分析參數語義判斷是否可能觸發後端請求（如 url=, callback= 等）"
     },
     {
       "id": 77,
@@ -6281,7 +6281,7 @@
       "length": 4,
       "start": "run",
       "end": "InternalAddressDetector",
-      "use_case": "用於檢測服務器端請求偽造(SSRF)漏洞，適合測試 URL 參數和內部請求"
+      "use_case": "[SSRF內網探測] 檢測是否可以訪問內部網路（127.0.0.1, 192.168.x.x, 10.x.x.x）"
     },
     {
       "id": 78,
@@ -6305,7 +6305,7 @@
       "length": 4,
       "start": "run",
       "end": "OastDispatcher",
-      "use_case": "用於檢測服務器端請求偽造(SSRF)漏洞，適合測試 URL 參數和內部請求"
+      "use_case": "[SSRF帶外檢測] 使用 OAST 技術驗證盲 SSRF，通過 DNS/HTTP 回調確認"
     },
     {
       "id": 79,
@@ -6329,7 +6329,7 @@
       "length": 4,
       "start": "run",
       "end": "SsrfTelemetry",
-      "use_case": "用於檢測服務器端請求偽造(SSRF)漏洞，適合測試 URL 參數和內部請求"
+      "use_case": "[SSRF遙測記錄] 記錄 SSRF 測試的詳細數據，用於分析和報告"
     },
     {
       "id": 80,
@@ -6353,7 +6353,7 @@
       "length": 4,
       "start": "run",
       "end": "_resolve_payload",
-      "use_case": "用於檢測服務器端請求偽造(SSRF)漏洞，適合測試 URL 參數和內部請求"
+      "use_case": "[SSRF Payload 生成] 根據目標環境生成最佳 SSRF payload"
     },
     {
       "id": 81,
@@ -6377,7 +6377,7 @@
       "length": 4,
       "start": "run",
       "end": "_issue_request",
-      "use_case": "用於檢測服務器端請求偽造(SSRF)漏洞，適合測試 URL 參數和內部請求"
+      "use_case": "[SSRF請求發送] 實際發送 SSRF 測試請求並分析響應"
     },
     {
       "id": 82,
@@ -6397,7 +6397,7 @@
       "length": 2,
       "start": "run",
       "end": "SsrfConfig",
-      "use_case": "用於檢測服務器端請求偽造(SSRF)漏洞，適合測試 URL 參數和內部請求"
+      "use_case": "[SSRF通用] 服務器端請求偽造檢測，測試後端 URL 請求功能"
     },
     {
       "id": 83,
@@ -6417,7 +6417,7 @@
       "length": 2,
       "start": "run",
       "end": "SSRFDetector",
-      "use_case": "用於檢測服務器端請求偽造(SSRF)漏洞，適合測試 URL 參數和內部請求"
+      "use_case": "[SSRF通用] 服務器端請求偽造檢測，測試後端 URL 請求功能"
     },
     {
       "id": 84,
@@ -6437,7 +6437,7 @@
       "length": 2,
       "start": "_build_internal_finding",
       "end": "_severity_from_summary",
-      "use_case": "用於檢測服務器端請求偽造(SSRF)漏洞，適合測試 URL 參數和內部請求"
+      "use_case": "[SSRF通用] 服務器端請求偽造檢測，測試後端 URL 請求功能"
     },
     {
       "id": 85,
@@ -6457,7 +6457,7 @@
       "length": 2,
       "start": "SmartSSRFDetector.detect_vulnerabilities",
       "end": "SSRFDetectionContext",
-      "use_case": "用於檢測服務器端請求偽造(SSRF)漏洞，適合測試 URL 參數和內部請求 - 被動檢測模式"
+      "use_case": "[SSRF通用] 服務器端請求偽造檢測，測試後端 URL 請求功能"
     },
     {
       "id": 86,
@@ -6477,7 +6477,7 @@
       "length": 2,
       "start": "SSRFCommandHandler.handle_command",
       "end": "ParamSemanticsAnalyzer",
-      "use_case": "用於檢測服務器端請求偽造(SSRF)漏洞，適合測試 URL 參數和內部請求"
+      "use_case": "[SSRF參數語義] 分析參數語義判斷是否可能觸發後端請求（如 url=, callback= 等）"
     },
     {
       "id": 87,
@@ -6497,7 +6497,7 @@
       "length": 2,
       "start": "OastDispatcher.fetch_events",
       "end": "OastEvent",
-      "use_case": "用於檢測服務器端請求偽造(SSRF)漏洞，適合測試 URL 參數和內部請求"
+      "use_case": "[SSRF帶外檢測] 使用 OAST 技術驗證盲 SSRF，通過 DNS/HTTP 回調確認"
     },
     {
       "id": 88,
@@ -6517,7 +6517,7 @@
       "length": 2,
       "start": "SSRFCommandHandler.__init__",
       "end": "SmartSSRFDetector",
-      "use_case": "用於檢測服務器端請求偽造(SSRF)漏洞，適合測試 URL 參數和內部請求"
+      "use_case": "[SSRF通用] 服務器端請求偽造檢測，測試後端 URL 請求功能"
     },
     {
       "id": 89,
@@ -6537,7 +6537,7 @@
       "length": 2,
       "start": "SSRFCommandHandler.__init__",
       "end": "ParamSemanticsAnalyzer",
-      "use_case": "用於檢測服務器端請求偽造(SSRF)漏洞，適合測試 URL 參數和內部請求"
+      "use_case": "[SSRF參數語義] 分析參數語義判斷是否可能觸發後端請求（如 url=, callback= 等）"
     },
     {
       "id": 90,
@@ -6557,7 +6557,7 @@
       "length": 2,
       "start": "SSRFCommandHandler.__init__",
       "end": "OastDispatcher",
-      "use_case": "用於檢測服務器端請求偽造(SSRF)漏洞，適合測試 URL 參數和內部請求"
+      "use_case": "[SSRF帶外檢測] 使用 OAST 技術驗證盲 SSRF，通過 DNS/HTTP 回調確認"
     },
     {
       "id": 91,
@@ -6577,7 +6577,7 @@
       "length": 2,
       "start": "SsrfWorkerService.__init__",
       "end": "OastDispatcher",
-      "use_case": "用於檢測服務器端請求偽造(SSRF)漏洞，適合測試 URL 參數和內部請求"
+      "use_case": "[SSRF帶外檢測] 使用 OAST 技術驗證盲 SSRF，通過 DNS/HTTP 回調確認"
     },
     {
       "id": 92,
@@ -6597,7 +6597,7 @@
       "length": 2,
       "start": "SsrfWorkerService.__init__",
       "end": "InternalAddressDetector",
-      "use_case": "用於檢測服務器端請求偽造(SSRF)漏洞，適合測試 URL 參數和內部請求"
+      "use_case": "[SSRF內網探測] 檢測是否可以訪問內部網路（127.0.0.1, 192.168.x.x, 10.x.x.x）"
     },
     {
       "id": 93,
@@ -6617,7 +6617,7 @@
       "length": 2,
       "start": "SsrfWorkerService.__init__",
       "end": "ParamSemanticsAnalyzer",
-      "use_case": "用於檢測服務器端請求偽造(SSRF)漏洞，適合測試 URL 參數和內部請求"
+      "use_case": "[SSRF參數語義] 分析參數語義判斷是否可能觸發後端請求（如 url=, callback= 等）"
     },
     {
       "id": 94,
@@ -6637,7 +6637,7 @@
       "length": 2,
       "start": "SmartSSRFDetector.__init__",
       "end": "SsrfConfig",
-      "use_case": "用於檢測服務器端請求偽造(SSRF)漏洞，適合測試 URL 參數和內部請求 - 被動檢測模式"
+      "use_case": "[SSRF通用] 服務器端請求偽造檢測，測試後端 URL 請求功能"
     },
     {
       "id": 95,
@@ -6657,7 +6657,7 @@
       "length": 2,
       "start": "ParamSemanticsAnalyzer._get_advanced_payloads",
       "end": "DnsRebindingDetector",
-      "use_case": "用於檢測服務器端請求偽造(SSRF)漏洞，適合測試 URL 參數和內部請求"
+      "use_case": "[SSRF參數語義] 分析參數語義判斷是否可能觸發後端請求（如 url=, callback= 等）"
     },
     {
       "id": 96,
@@ -6677,7 +6677,7 @@
       "length": 2,
       "start": "ParamSemanticsAnalyzer.analyze",
       "end": "AnalysisPlan",
-      "use_case": "用於檢測服務器端請求偽造(SSRF)漏洞，適合測試 URL 參數和內部請求"
+      "use_case": "[SSRF參數語義] 分析參數語義判斷是否可能觸發後端請求（如 url=, callback= 等）"
     },
     {
       "id": 97,
@@ -6697,7 +6697,7 @@
       "length": 2,
       "start": "SSRFDetector.analyze",
       "end": "SSRFEngine",
-      "use_case": "用於檢測服務器端請求偽造(SSRF)漏洞，適合測試 URL 參數和內部請求 - 被動檢測模式"
+      "use_case": "[SSRF通用] 服務器端請求偽造檢測，測試後端 URL 請求功能"
     },
     {
       "id": 98,
@@ -6717,7 +6717,7 @@
       "length": 2,
       "start": "OastDispatcher.register",
       "end": "OastProbe",
-      "use_case": "用於檢測服務器端請求偽造(SSRF)漏洞，適合測試 URL 參數和內部請求"
+      "use_case": "[SSRF帶外檢測] 使用 OAST 技術驗證盲 SSRF，通過 DNS/HTTP 回調確認"
     },
     {
       "id": 99,
@@ -6739,7 +6739,7 @@
       "length": 3,
       "start": "CrossLanguageXSSEngine._detect_language_environments",
       "end": "fillHoles",
-      "use_case": "用於檢測跨站腳本(XSS)漏洞，適合掃描 Web 應用的輸入點和輸出點 - 被動檢測模式"
+      "use_case": "[XSS環境偵測] 檢測目標使用的程式語言和框架，用於選擇最佳 payload"
     },
     {
       "id": 100,
@@ -6759,7 +6759,7 @@
       "length": 2,
       "start": "CrossLanguageXSSEngine._detect_language_environments",
       "end": "LanguageEnvironment",
-      "use_case": "用於檢測跨站腳本(XSS)漏洞，適合掃描 Web 應用的輸入點和輸出點 - 被動檢測模式"
+      "use_case": "[XSS環境偵測] 檢測目標使用的程式語言和框架，用於選擇最佳 payload"
     },
     {
       "id": 101,
@@ -6779,7 +6779,7 @@
       "length": 2,
       "start": "bruteforcer",
       "end": "getUrl",
-      "use_case": "用於檢測跨站腳本(XSS)漏洞，適合掃描 Web 應用的輸入點和輸出點"
+      "use_case": "[XSS暴力測試] 從目標提取所有可測試 URL，用於批量掃描多個端點"
     },
     {
       "id": 102,
@@ -6799,7 +6799,7 @@
       "length": 2,
       "start": "bruteforcer",
       "end": "getParams",
-      "use_case": "用於檢測跨站腳本(XSS)漏洞，適合掃描 Web 應用的輸入點和輸出點"
+      "use_case": "[XSS參數提取] 提取 URL 中的所有參數，用於識別潛在注入點"
     },
     {
       "id": 103,
@@ -6821,7 +6821,7 @@
       "length": 3,
       "start": "bruteforcer",
       "end": "converter",
-      "use_case": "用於檢測跨站腳本(XSS)漏洞，適合掃描 Web 應用的輸入點和輸出點"
+      "use_case": "[XSS編碼轉換] 將 payload 進行各種編碼，用於繞過 WAF 和過濾器"
     },
     {
       "id": 104,
@@ -6841,7 +6841,7 @@
       "length": 2,
       "start": "StoredXSSDetector._check_stored_execution",
       "end": "XSSVulnerability",
-      "use_case": "用於檢測跨站腳本(XSS)漏洞，適合掃描 Web 應用的輸入點和輸出點 - 被動檢測模式"
+      "use_case": "[XSS存儲型] 檢測存儲型 XSS，payload 會保存到資料庫並在其他頁面觸發"
     },
     {
       "id": 105,
@@ -6861,7 +6861,7 @@
       "length": 2,
       "start": "BlindXSSDetector.scan_blind_xss",
       "end": "XSSVulnerability",
-      "use_case": "用於檢測跨站腳本(XSS)漏洞，適合掃描 Web 應用的輸入點和輸出點 - 主動掃描模式"
+      "use_case": "[XSS盲注] 使用 OAST 技術檢測盲 XSS，適合無法直接觀察輸出的場景"
     },
     {
       "id": 106,
@@ -6881,7 +6881,7 @@
       "length": 2,
       "start": "_simple_match",
       "end": "deJSON",
-      "use_case": "用於檢測跨站腳本(XSS)漏洞，適合掃描 Web 應用的輸入點和輸出點"
+      "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
     },
     {
       "id": 107,
@@ -6901,7 +6901,7 @@
       "length": 2,
       "start": "XSSCommandHandler.__init__",
       "end": "XSSManager",
-      "use_case": "用於檢測跨站腳本(XSS)漏洞，適合掃描 Web 應用的輸入點和輸出點"
+      "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
     },
     {
       "id": 108,
@@ -6921,7 +6921,7 @@
       "length": 2,
       "start": "BlindXssListenerValidator.__init__",
       "end": "OastHttpCallbackStore",
-      "use_case": "用於檢測跨站腳本(XSS)漏洞，適合掃描 Web 應用的輸入點和輸出點"
+      "use_case": "[XSS盲注] 使用 OAST 技術檢測盲 XSS，適合無法直接觀察輸出的場景"
     },
     {
       "id": 109,
@@ -6941,7 +6941,7 @@
       "length": 2,
       "start": "_test_xss_command_handler",
       "end": "XSSCommandHandler",
-      "use_case": "用於檢測跨站腳本(XSS)漏洞，適合掃描 Web 應用的輸入點和輸出點 - 測試驗證模式"
+      "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
     },
     {
       "id": 110,
@@ -6961,7 +6961,7 @@
       "length": 2,
       "start": "log_red_line",
       "end": "_switch_to_no_format_loggers",
-      "use_case": "用於檢測跨站腳本(XSS)漏洞，適合掃描 Web 應用的輸入點和輸出點"
+      "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
     },
     {
       "id": 111,
@@ -6981,7 +6981,7 @@
       "length": 2,
       "start": "log_red_line",
       "end": "_get_level_and_log",
-      "use_case": "用於檢測跨站腳本(XSS)漏洞，適合掃描 Web 應用的輸入點和輸出點"
+      "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
     },
     {
       "id": 112,
@@ -7001,7 +7001,7 @@
       "length": 2,
       "start": "log_red_line",
       "end": "_switch_to_default_loggers",
-      "use_case": "用於檢測跨站腳本(XSS)漏洞，適合掃描 Web 應用的輸入點和輸出點"
+      "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
     },
     {
       "id": 113,
@@ -7021,7 +7021,7 @@
       "length": 2,
       "start": "xssFind",
       "end": "get_user_agent",
-      "use_case": "用於檢測跨站腳本(XSS)漏洞，適合掃描 Web 應用的輸入點和輸出點"
+      "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
     },
     {
       "id": 114,
@@ -7041,7 +7041,7 @@
       "length": 2,
       "start": "DOMXSSDetector._analyze_javascript",
       "end": "XSSVulnerability",
-      "use_case": "用於檢測跨站腳本(XSS)漏洞，適合掃描 Web 應用的輸入點和輸出點 - 被動檢測模式"
+      "use_case": "[XSS DOM型] 檢測 DOM-based XSS，payload 在客戶端 JavaScript 中觸發"
     },
     {
       "id": 115,
@@ -7063,7 +7063,7 @@
       "length": 3,
       "start": "main",
       "end": "XssPayloadGenerator",
-      "use_case": "用於檢測跨站腳本(XSS)漏洞，適合掃描 Web 應用的輸入點和輸出點"
+      "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
     },
     {
       "id": 116,
@@ -7085,7 +7085,7 @@
       "length": 3,
       "start": "main",
       "end": "TraditionalXssDetector",
-      "use_case": "用於檢測跨站腳本(XSS)漏洞，適合掃描 Web 應用的輸入點和輸出點"
+      "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
     },
     {
       "id": 117,
@@ -7107,7 +7107,7 @@
       "length": 3,
       "start": "main",
       "end": "DomXssDetector",
-      "use_case": "用於檢測跨站腳本(XSS)漏洞，適合掃描 Web 應用的輸入點和輸出點"
+      "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
     },
     {
       "id": 118,
@@ -7129,7 +7129,7 @@
       "length": 3,
       "start": "main",
       "end": "XssPayloadGenerator",
-      "use_case": "用於檢測跨站腳本(XSS)漏洞，適合掃描 Web 應用的輸入點和輸出點"
+      "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
     },
     {
       "id": 119,
@@ -7151,7 +7151,7 @@
       "length": 3,
       "start": "main",
       "end": "StoredXssDetector",
-      "use_case": "用於檢測跨站腳本(XSS)漏洞，適合掃描 Web 應用的輸入點和輸出點"
+      "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
     },
     {
       "id": 120,
@@ -7171,7 +7171,7 @@
       "length": 2,
       "start": "main",
       "end": "run_xss_test",
-      "use_case": "用於檢測跨站腳本(XSS)漏洞，適合掃描 Web 應用的輸入點和輸出點"
+      "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
     },
     {
       "id": 121,
@@ -7191,7 +7191,7 @@
       "length": 2,
       "start": "CrossLanguageXSSEngine.__init__",
       "end": "get_xss_tools_config",
-      "use_case": "用於檢測跨站腳本(XSS)漏洞，適合掃描 Web 應用的輸入點和輸出點"
+      "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
     },
     {
       "id": 122,
@@ -7211,7 +7211,7 @@
       "length": 2,
       "start": "retireJs",
       "end": "js_extractor",
-      "use_case": "用於檢測跨站腳本(XSS)漏洞，適合掃描 Web 應用的輸入點和輸出點"
+      "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
     },
     {
       "id": 123,
@@ -7231,7 +7231,7 @@
       "length": 2,
       "start": "retireJs",
       "end": "updateVar",
-      "use_case": "用於檢測跨站腳本(XSS)漏洞，適合掃描 Web 應用的輸入點和輸出點"
+      "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
     },
     {
       "id": 124,
@@ -7251,7 +7251,7 @@
       "length": 2,
       "start": "retireJs",
       "end": "handle_anchor",
-      "use_case": "用於檢測跨站腳本(XSS)漏洞，適合掃描 Web 應用的輸入點和輸出點"
+      "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
     },
     {
       "id": 125,
@@ -7273,7 +7273,7 @@
       "length": 3,
       "start": "retireJs",
       "end": "converter",
-      "use_case": "用於檢測跨站腳本(XSS)漏洞，適合掃描 Web 應用的輸入點和輸出點"
+      "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
     },
     {
       "id": 126,
@@ -7295,7 +7295,7 @@
       "length": 3,
       "start": "retireJs",
       "end": "getVar",
-      "use_case": "用於檢測跨站腳本(XSS)漏洞，適合掃描 Web 應用的輸入點和輸出點"
+      "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
     },
     {
       "id": 127,
@@ -7323,7 +7323,7 @@
       "length": 6,
       "start": "retireJs",
       "end": "converter",
-      "use_case": "用於檢測跨站腳本(XSS)漏洞，適合掃描 Web 應用的輸入點和輸出點"
+      "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
     },
     {
       "id": 128,
@@ -7349,7 +7349,7 @@
       "length": 5,
       "start": "retireJs",
       "end": "dom",
-      "use_case": "用於檢測跨站腳本(XSS)漏洞，適合掃描 Web 應用的輸入點和輸出點"
+      "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
     },
     {
       "id": 129,
@@ -7375,7 +7375,7 @@
       "length": 5,
       "start": "retireJs",
       "end": "getUrl",
-      "use_case": "用於檢測跨站腳本(XSS)漏洞，適合掃描 Web 應用的輸入點和輸出點"
+      "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
     },
     {
       "id": 130,
@@ -7401,7 +7401,7 @@
       "length": 5,
       "start": "retireJs",
       "end": "getParams",
-      "use_case": "用於檢測跨站腳本(XSS)漏洞，適合掃描 Web 應用的輸入點和輸出點"
+      "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
     },
     {
       "id": 131,
@@ -7431,7 +7431,7 @@
       "length": 7,
       "start": "retireJs",
       "end": "converter",
-      "use_case": "用於檢測跨站腳本(XSS)漏洞，適合掃描 Web 應用的輸入點和輸出點"
+      "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
     },
     {
       "id": 132,
@@ -7459,7 +7459,7 @@
       "length": 6,
       "start": "retireJs",
       "end": "isBadContext",
-      "use_case": "用於檢測跨站腳本(XSS)漏洞，適合掃描 Web 應用的輸入點和輸出點"
+      "use_case": "[XSS上下文分析] 分析 payload 插入位置的 HTML/JS 上下文，選擇合適的注入方式"
     },
     {
       "id": 133,
@@ -7489,7 +7489,7 @@
       "length": 7,
       "start": "retireJs",
       "end": "fillHoles",
-      "use_case": "用於檢測跨站腳本(XSS)漏洞，適合掃描 Web 應用的輸入點和輸出點"
+      "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
     },
     {
       "id": 134,
@@ -7517,7 +7517,7 @@
       "length": 6,
       "start": "retireJs",
       "end": "extractScripts",
-      "use_case": "用於檢測跨站腳本(XSS)漏洞，適合掃描 Web 應用的輸入點和輸出點"
+      "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
     },
     {
       "id": 135,
@@ -7545,7 +7545,7 @@
       "length": 6,
       "start": "retireJs",
       "end": "genGen",
-      "use_case": "用於檢測跨站腳本(XSS)漏洞，適合掃描 Web 應用的輸入點和輸出點"
+      "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
     },
     {
       "id": 136,
@@ -7575,7 +7575,7 @@
       "length": 7,
       "start": "retireJs",
       "end": "stripper",
-      "use_case": "用於檢測跨站腳本(XSS)漏洞，適合掃描 Web 應用的輸入點和輸出點"
+      "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
     },
     {
       "id": 137,
@@ -7603,7 +7603,7 @@
       "length": 6,
       "start": "retireJs",
       "end": "fillHoles",
-      "use_case": "用於檢測跨站腳本(XSS)漏洞，適合掃描 Web 應用的輸入點和輸出點"
+      "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
     },
     {
       "id": 138,
@@ -7631,7 +7631,7 @@
       "length": 6,
       "start": "retireJs",
       "end": "converter",
-      "use_case": "用於檢測跨站腳本(XSS)漏洞，適合掃描 Web 應用的輸入點和輸出點"
+      "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
     },
     {
       "id": 139,
@@ -7657,7 +7657,7 @@
       "length": 5,
       "start": "retireJs",
       "end": "dom",
-      "use_case": "用於檢測跨站腳本(XSS)漏洞，適合掃描 Web 應用的輸入點和輸出點"
+      "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
     },
     {
       "id": 140,
@@ -7683,7 +7683,7 @@
       "length": 5,
       "start": "retireJs",
       "end": "getUrl",
-      "use_case": "用於檢測跨站腳本(XSS)漏洞，適合掃描 Web 應用的輸入點和輸出點"
+      "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
     },
     {
       "id": 141,
@@ -7709,7 +7709,7 @@
       "length": 5,
       "start": "retireJs",
       "end": "getParams",
-      "use_case": "用於檢測跨站腳本(XSS)漏洞，適合掃描 Web 應用的輸入點和輸出點"
+      "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
     },
     {
       "id": 142,
@@ -7739,7 +7739,7 @@
       "length": 7,
       "start": "retireJs",
       "end": "converter",
-      "use_case": "用於檢測跨站腳本(XSS)漏洞，適合掃描 Web 應用的輸入點和輸出點"
+      "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
     },
     {
       "id": 143,
@@ -7767,7 +7767,7 @@
       "length": 6,
       "start": "retireJs",
       "end": "isBadContext",
-      "use_case": "用於檢測跨站腳本(XSS)漏洞，適合掃描 Web 應用的輸入點和輸出點"
+      "use_case": "[XSS上下文分析] 分析 payload 插入位置的 HTML/JS 上下文，選擇合適的注入方式"
     },
     {
       "id": 144,
@@ -7797,7 +7797,7 @@
       "length": 7,
       "start": "retireJs",
       "end": "fillHoles",
-      "use_case": "用於檢測跨站腳本(XSS)漏洞，適合掃描 Web 應用的輸入點和輸出點"
+      "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
     },
     {
       "id": 145,
@@ -7825,7 +7825,7 @@
       "length": 6,
       "start": "retireJs",
       "end": "extractScripts",
-      "use_case": "用於檢測跨站腳本(XSS)漏洞，適合掃描 Web 應用的輸入點和輸出點"
+      "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
     },
     {
       "id": 146,
@@ -7853,7 +7853,7 @@
       "length": 6,
       "start": "retireJs",
       "end": "genGen",
-      "use_case": "用於檢測跨站腳本(XSS)漏洞，適合掃描 Web 應用的輸入點和輸出點"
+      "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
     },
     {
       "id": 147,
@@ -7883,7 +7883,7 @@
       "length": 7,
       "start": "retireJs",
       "end": "stripper",
-      "use_case": "用於檢測跨站腳本(XSS)漏洞，適合掃描 Web 應用的輸入點和輸出點"
+      "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
     },
     {
       "id": 148,
@@ -7911,7 +7911,7 @@
       "length": 6,
       "start": "retireJs",
       "end": "fillHoles",
-      "use_case": "用於檢測跨站腳本(XSS)漏洞，適合掃描 Web 應用的輸入點和輸出點"
+      "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
     },
     {
       "id": 149,
@@ -7935,7 +7935,7 @@
       "length": 4,
       "start": "retireJs",
       "end": "_scanhash",
-      "use_case": "用於檢測跨站腳本(XSS)漏洞，適合掃描 Web 應用的輸入點和輸出點"
+      "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
     },
     {
       "id": 150,
@@ -7957,7 +7957,7 @@
       "length": 3,
       "start": "singleFuzz",
       "end": "converter",
-      "use_case": "用於檢測跨站腳本(XSS)漏洞，適合掃描 Web 應用的輸入點和輸出點"
+      "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
     },
     {
       "id": 151,
@@ -7977,7 +7977,7 @@
       "length": 2,
       "start": "singleFuzz",
       "end": "getUrl",
-      "use_case": "用於檢測跨站腳本(XSS)漏洞，適合掃描 Web 應用的輸入點和輸出點"
+      "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
     },
     {
       "id": 152,
@@ -7997,7 +7997,7 @@
       "length": 2,
       "start": "singleFuzz",
       "end": "getParams",
-      "use_case": "用於檢測跨站腳本(XSS)漏洞，適合掃描 Web 應用的輸入點和輸出點"
+      "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
     },
     {
       "id": 153,
@@ -8021,7 +8021,7 @@
       "length": 4,
       "start": "singleFuzz",
       "end": "converter",
-      "use_case": "用於檢測跨站腳本(XSS)漏洞，適合掃描 Web 應用的輸入點和輸出點"
+      "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
     },
     {
       "id": 154,
@@ -8043,7 +8043,7 @@
       "length": 3,
       "start": "singleFuzz",
       "end": "counter",
-      "use_case": "用於檢測跨站腳本(XSS)漏洞，適合掃描 Web 應用的輸入點和輸出點"
+      "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
     },
     {
       "id": 155,
@@ -8065,7 +8065,7 @@
       "length": 3,
       "start": "singleFuzz",
       "end": "replaceValue",
-      "use_case": "用於檢測跨站腳本(XSS)漏洞，適合掃描 Web 應用的輸入點和輸出點"
+      "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
     },
     {
       "id": 156,
@@ -8089,7 +8089,7 @@
       "length": 4,
       "start": "singleFuzz",
       "end": "converter",
-      "use_case": "用於檢測跨站腳本(XSS)漏洞，適合掃描 Web 應用的輸入點和輸出點"
+      "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
     },
     {
       "id": 157,
@@ -8113,7 +8113,7 @@
       "length": 4,
       "start": "_consume_queue",
       "end": "XssPayloadGenerator",
-      "use_case": "用於檢測跨站腳本(XSS)漏洞，適合掃描 Web 應用的輸入點和輸出點"
+      "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
     },
     {
       "id": 158,
@@ -8139,7 +8139,7 @@
       "length": 5,
       "start": "_consume_queue",
       "end": "BlindXssListenerValidator",
-      "use_case": "用於檢測跨站腳本(XSS)漏洞，適合掃描 Web 應用的輸入點和輸出點"
+      "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
     },
     {
       "id": 159,
@@ -8163,7 +8163,7 @@
       "length": 4,
       "start": "_consume_queue",
       "end": "_build_payloads",
-      "use_case": "用於檢測跨站腳本(XSS)漏洞，適合掃描 Web 應用的輸入點和輸出點"
+      "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
     },
     {
       "id": 160,
@@ -8187,7 +8187,7 @@
       "length": 4,
       "start": "_consume_queue",
       "end": "XssExecutionTelemetry",
-      "use_case": "用於檢測跨站腳本(XSS)漏洞，適合掃描 Web 應用的輸入點和輸出點"
+      "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
     },
     {
       "id": 161,
@@ -8211,7 +8211,7 @@
       "length": 4,
       "start": "_consume_queue",
       "end": "TraditionalXssDetector",
-      "use_case": "用於檢測跨站腳本(XSS)漏洞，適合掃描 Web 應用的輸入點和輸出點"
+      "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
     },
     {
       "id": 162,
@@ -8237,7 +8237,7 @@
       "length": 5,
       "start": "_consume_queue",
       "end": "_handle_detection_errors",
-      "use_case": "用於檢測跨站腳本(XSS)漏洞，適合掃描 Web 應用的輸入點和輸出點"
+      "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
     },
     {
       "id": 163,
@@ -8261,7 +8261,7 @@
       "length": 4,
       "start": "_consume_queue",
       "end": "_get_dom_engine",
-      "use_case": "用於檢測跨站腳本(XSS)漏洞，適合掃描 Web 應用的輸入點和輸出點"
+      "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
     },
     {
       "id": 164,
@@ -8287,7 +8287,7 @@
       "length": 5,
       "start": "_consume_queue",
       "end": "_analyze_detection_with_dom",
-      "use_case": "用於檢測跨站腳本(XSS)漏洞，適合掃描 Web 應用的輸入點和輸出點"
+      "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
     },
     {
       "id": 165,
@@ -8313,7 +8313,7 @@
       "length": 5,
       "start": "_consume_queue",
       "end": "StoredXssDetector",
-      "use_case": "用於檢測跨站腳本(XSS)漏洞，適合掃描 Web 應用的輸入點和輸出點"
+      "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
     },
     {
       "id": 166,
@@ -8337,7 +8337,7 @@
       "length": 4,
       "start": "_consume_queue",
       "end": "_collect_blind_callbacks",
-      "use_case": "用於檢測跨站腳本(XSS)漏洞，適合掃描 Web 應用的輸入點和輸出點"
+      "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
     },
     {
       "id": 167,
@@ -8361,7 +8361,7 @@
       "length": 4,
       "start": "_consume_queue",
       "end": "_finalize_statistics",
-      "use_case": "用於檢測跨站腳本(XSS)漏洞，適合掃描 Web 應用的輸入點和輸出點"
+      "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
     },
     {
       "id": 168,
@@ -8381,7 +8381,7 @@
       "length": 2,
       "start": "XssTaskQueue.put",
       "end": "QueuedTask",
-      "use_case": "用於檢測跨站腳本(XSS)漏洞，適合掃描 Web 應用的輸入點和輸出點"
+      "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
     },
     {
       "id": 169,
@@ -8401,7 +8401,7 @@
       "length": 2,
       "start": "XssTaskQueue.put",
       "end": "_QueueEntry",
-      "use_case": "用於檢測跨站腳本(XSS)漏洞，適合掃描 Web 應用的輸入點和輸出點"
+      "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
     },
     {
       "id": 170,
@@ -8421,7 +8421,7 @@
       "length": 2,
       "start": "_build_finding",
       "end": "_validated_http_url",
-      "use_case": "用於檢測跨站腳本(XSS)漏洞，適合掃描 Web 應用的輸入點和輸出點"
+      "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
     },
     {
       "id": 171,
@@ -8441,7 +8441,7 @@
       "length": 2,
       "start": "DalfoxIntegration._parse_dalfox_output",
       "end": "XSSVulnerability",
-      "use_case": "用於檢測跨站腳本(XSS)漏洞，適合掃描 Web 應用的輸入點和輸出點"
+      "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
     },
     {
       "id": 172,
@@ -8461,7 +8461,7 @@
       "length": 2,
       "start": "XSSManager.__init__",
       "end": "DalfoxIntegration",
-      "use_case": "用於檢測跨站腳本(XSS)漏洞，適合掃描 Web 應用的輸入點和輸出點"
+      "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
     },
     {
       "id": 173,
@@ -8481,7 +8481,7 @@
       "length": 2,
       "start": "XSSManager.__init__",
       "end": "XSSPayloadGenerator",
-      "use_case": "用於檢測跨站腳本(XSS)漏洞，適合掃描 Web 應用的輸入點和輸出點"
+      "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
     },
     {
       "id": 174,
@@ -8501,7 +8501,7 @@
       "length": 2,
       "start": "XSSManager.__init__",
       "end": "DOMXSSDetector",
-      "use_case": "用於檢測跨站腳本(XSS)漏洞，適合掃描 Web 應用的輸入點和輸出點"
+      "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
     },
     {
       "id": 175,
@@ -8521,7 +8521,7 @@
       "length": 2,
       "start": "XSSManager.__init__",
       "end": "StoredXSSDetector",
-      "use_case": "用於檢測跨站腳本(XSS)漏洞，適合掃描 Web 應用的輸入點和輸出點"
+      "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
     },
     {
       "id": 176,
@@ -8541,7 +8541,7 @@
       "length": 2,
       "start": "XSSManager.__init__",
       "end": "BlindXSSDetector",
-      "use_case": "用於檢測跨站腳本(XSS)漏洞，適合掃描 Web 應用的輸入點和輸出點"
+      "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
     },
     {
       "id": 177,
@@ -8561,7 +8561,7 @@
       "length": 2,
       "start": "XSSManager._custom_xss_scan",
       "end": "XSSVulnerability",
-      "use_case": "用於檢測跨站腳本(XSS)漏洞，適合掃描 Web 應用的輸入點和輸出點 - 主動掃描模式"
+      "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
     },
     {
       "id": 178,
@@ -8583,7 +8583,7 @@
       "length": 3,
       "start": "crawl",
       "end": "converter",
-      "use_case": "用於檢測跨站腳本(XSS)漏洞，適合掃描 Web 應用的輸入點和輸出點"
+      "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
     },
     {
       "id": 179,
@@ -8605,7 +8605,7 @@
       "length": 3,
       "start": "crawl",
       "end": "isBadContext",
-      "use_case": "用於檢測跨站腳本(XSS)漏洞，適合掃描 Web 應用的輸入點和輸出點"
+      "use_case": "[XSS上下文分析] 分析 payload 插入位置的 HTML/JS 上下文，選擇合適的注入方式"
     },
     {
       "id": 180,
@@ -8629,7 +8629,7 @@
       "length": 4,
       "start": "crawl",
       "end": "fillHoles",
-      "use_case": "用於檢測跨站腳本(XSS)漏洞，適合掃描 Web 應用的輸入點和輸出點"
+      "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
     },
     {
       "id": 181,
@@ -8651,7 +8651,7 @@
       "length": 3,
       "start": "crawl",
       "end": "extractScripts",
-      "use_case": "用於檢測跨站腳本(XSS)漏洞，適合掃描 Web 應用的輸入點和輸出點"
+      "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
     },
     {
       "id": 182,
@@ -8673,7 +8673,7 @@
       "length": 3,
       "start": "crawl",
       "end": "genGen",
-      "use_case": "用於檢測跨站腳本(XSS)漏洞，適合掃描 Web 應用的輸入點和輸出點"
+      "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
     },
     {
       "id": 183,
@@ -8697,7 +8697,7 @@
       "length": 4,
       "start": "crawl",
       "end": "stripper",
-      "use_case": "用於檢測跨站腳本(XSS)漏洞，適合掃描 Web 應用的輸入點和輸出點"
+      "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
     },
     {
       "id": 184,
@@ -8717,7 +8717,7 @@
       "length": 2,
       "start": "_is_at_or_above",
       "end": "_to_comparable",
-      "use_case": "用於檢測跨站腳本(XSS)漏洞，適合掃描 Web 應用的輸入點和輸出點"
+      "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
     },
     {
       "id": 185,
@@ -8741,7 +8741,7 @@
       "length": 4,
       "start": "scan_filename",
       "end": "converter",
-      "use_case": "用於檢測跨站腳本(XSS)漏洞，適合掃描 Web 應用的輸入點和輸出點 - 主動掃描模式"
+      "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
     },
     {
       "id": 186,
@@ -8763,7 +8763,7 @@
       "length": 3,
       "start": "scan_filename",
       "end": "dom",
-      "use_case": "用於檢測跨站腳本(XSS)漏洞，適合掃描 Web 應用的輸入點和輸出點 - 主動掃描模式"
+      "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
     },
     {
       "id": 187,
@@ -8785,7 +8785,7 @@
       "length": 3,
       "start": "scan_filename",
       "end": "getUrl",
-      "use_case": "用於檢測跨站腳本(XSS)漏洞，適合掃描 Web 應用的輸入點和輸出點 - 主動掃描模式"
+      "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
     },
     {
       "id": 188,
@@ -8807,7 +8807,7 @@
       "length": 3,
       "start": "scan_filename",
       "end": "getParams",
-      "use_case": "用於檢測跨站腳本(XSS)漏洞，適合掃描 Web 應用的輸入點和輸出點 - 主動掃描模式"
+      "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
     },
     {
       "id": 189,
@@ -8833,7 +8833,7 @@
       "length": 5,
       "start": "scan_filename",
       "end": "converter",
-      "use_case": "用於檢測跨站腳本(XSS)漏洞，適合掃描 Web 應用的輸入點和輸出點 - 主動掃描模式"
+      "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
     },
     {
       "id": 190,
@@ -8857,7 +8857,7 @@
       "length": 4,
       "start": "scan_filename",
       "end": "isBadContext",
-      "use_case": "用於檢測跨站腳本(XSS)漏洞，適合掃描 Web 應用的輸入點和輸出點 - 主動掃描模式"
+      "use_case": "[XSS上下文分析] 分析 payload 插入位置的 HTML/JS 上下文，選擇合適的注入方式"
     },
     {
       "id": 191,
@@ -8883,7 +8883,7 @@
       "length": 5,
       "start": "scan_filename",
       "end": "fillHoles",
-      "use_case": "用於檢測跨站腳本(XSS)漏洞，適合掃描 Web 應用的輸入點和輸出點 - 主動掃描模式"
+      "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
     },
     {
       "id": 192,
@@ -8907,7 +8907,7 @@
       "length": 4,
       "start": "scan_filename",
       "end": "extractScripts",
-      "use_case": "用於檢測跨站腳本(XSS)漏洞，適合掃描 Web 應用的輸入點和輸出點 - 主動掃描模式"
+      "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
     },
     {
       "id": 193,
@@ -8931,7 +8931,7 @@
       "length": 4,
       "start": "scan_filename",
       "end": "genGen",
-      "use_case": "用於檢測跨站腳本(XSS)漏洞，適合掃描 Web 應用的輸入點和輸出點 - 主動掃描模式"
+      "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
     },
     {
       "id": 194,
@@ -8957,7 +8957,7 @@
       "length": 5,
       "start": "scan_filename",
       "end": "stripper",
-      "use_case": "用於檢測跨站腳本(XSS)漏洞，適合掃描 Web 應用的輸入點和輸出點 - 主動掃描模式"
+      "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
     },
     {
       "id": 195,
@@ -8981,7 +8981,7 @@
       "length": 4,
       "start": "scan_filename",
       "end": "fillHoles",
-      "use_case": "用於檢測跨站腳本(XSS)漏洞，適合掃描 Web 應用的輸入點和輸出點 - 主動掃描模式"
+      "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
     },
     {
       "id": 196,
@@ -9001,7 +9001,7 @@
       "length": 2,
       "start": "DOMXSSDetector._test_dom_payloads",
       "end": "XSSVulnerability",
-      "use_case": "用於檢測跨站腳本(XSS)漏洞，適合掃描 Web 應用的輸入點和輸出點 - 被動檢測模式"
+      "use_case": "[XSS DOM型] 檢測 DOM-based XSS，payload 在客戶端 JavaScript 中觸發"
     },
     {
       "id": 197,
@@ -9021,7 +9021,7 @@
       "length": 2,
       "start": "dorkFind",
       "end": "get_user_agent",
-      "use_case": "用於檢測跨站腳本(XSS)漏洞，適合掃描 Web 應用的輸入點和輸出點"
+      "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
     },
     {
       "id": 198,
@@ -9041,7 +9041,7 @@
       "length": 2,
       "start": "log_no_format",
       "end": "_switch_to_no_format_loggers",
-      "use_case": "用於檢測跨站腳本(XSS)漏洞，適合掃描 Web 應用的輸入點和輸出點"
+      "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
     },
     {
       "id": 199,
@@ -9061,7 +9061,7 @@
       "length": 2,
       "start": "log_no_format",
       "end": "_get_level_and_log",
-      "use_case": "用於檢測跨站腳本(XSS)漏洞，適合掃描 Web 應用的輸入點和輸出點"
+      "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
     },
     {
       "id": 200,
@@ -9081,7 +9081,7 @@
       "length": 2,
       "start": "log_no_format",
       "end": "_switch_to_default_loggers",
-      "use_case": "用於檢測跨站腳本(XSS)漏洞，適合掃描 Web 應用的輸入點和輸出點"
+      "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
     },
     {
       "id": 201,
@@ -9101,7 +9101,7 @@
       "length": 2,
       "start": "setup_logger",
       "end": "CustomStreamHandler",
-      "use_case": "用於檢測跨站腳本(XSS)漏洞，適合掃描 Web 應用的輸入點和輸出點"
+      "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
     },
     {
       "id": 202,
@@ -9121,7 +9121,7 @@
       "length": 2,
       "start": "TraditionalXssDetector._build_request_parts",
       "end": "_inject_query",
-      "use_case": "用於檢測跨站腳本(XSS)漏洞，適合掃描 Web 應用的輸入點和輸出點 - 被動檢測模式"
+      "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
     },
     {
       "id": 203,
@@ -9141,7 +9141,7 @@
       "length": 2,
       "start": "TraditionalXssDetector._build_request_parts",
       "end": "_inject_mapping",
-      "use_case": "用於檢測跨站腳本(XSS)漏洞，適合掃描 Web 應用的輸入點和輸出點 - 被動檢測模式"
+      "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
     },
     {
       "id": 204,
@@ -9163,7 +9163,7 @@
       "length": 3,
       "start": "detect_xss",
       "end": "CrossLanguageXSSEngine",
-      "use_case": "用於檢測跨站腳本(XSS)漏洞，適合掃描 Web 應用的輸入點和輸出點 - 被動檢測模式"
+      "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
     },
     {
       "id": 205,
@@ -9183,7 +9183,7 @@
       "length": 2,
       "start": "run",
       "end": "XssResultPublisher",
-      "use_case": "用於檢測跨站腳本(XSS)漏洞，適合掃描 Web 應用的輸入點和輸出點"
+      "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
     },
     {
       "id": 206,
@@ -9203,7 +9203,7 @@
       "length": 2,
       "start": "run",
       "end": "XssTaskQueue",
-      "use_case": "用於檢測跨站腳本(XSS)漏洞，適合掃描 Web 應用的輸入點和輸出點"
+      "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
     },
     {
       "id": 207,
@@ -9223,7 +9223,7 @@
       "length": 2,
       "start": "_replacement_match",
       "end": "deJSON",
-      "use_case": "用於檢測跨站腳本(XSS)漏洞，適合掃描 Web 應用的輸入點和輸出點"
+      "use_case": "[XSS通用] 跨站腳本漏洞檢測，掃描 Web 應用的輸入/輸出點"
     },
     {
       "id": 208,
@@ -9243,7 +9243,7 @@
       "length": 2,
       "start": "ScanService.extractNetworkAssets",
       "end": "NetworkInterceptor.getApiRequests",
-      "use_case": "用於分析前端代碼和網路請求，適合檢測客戶端漏洞 - 主動掃描模式"
+      "use_case": "[前端-網路資產] 提取前端代碼中的所有網路請求（API、AJAX、Fetch）"
     },
     {
       "id": 209,
@@ -9263,7 +9263,7 @@
       "length": 2,
       "start": "ScanService.extractNetworkAssets",
       "end": "NetworkInterceptor.getAjaxRequests",
-      "use_case": "用於分析前端代碼和網路請求，適合檢測客戶端漏洞 - 主動掃描模式"
+      "use_case": "[前端-網路資產] 提取前端代碼中的所有網路請求（API、AJAX、Fetch）"
     },
     {
       "id": 210,
@@ -9283,7 +9283,7 @@
       "length": 2,
       "start": "ScanService.extractNetworkAssets",
       "end": "NetworkInterceptor.analyzeRequestPatterns",
-      "use_case": "用於分析前端代碼和網路請求，適合檢測客戶端漏洞 - 主動掃描模式"
+      "use_case": "[前端-網路資產] 提取前端代碼中的所有網路請求（API、AJAX、Fetch）"
     }
   ]
 }

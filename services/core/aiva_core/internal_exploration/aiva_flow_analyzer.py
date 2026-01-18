@@ -695,7 +695,11 @@ class AIVAFlowAnalyzer:
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="AIVA Flow Analyzer v3")
     parser.add_argument("target_dir", help="Directory to analyze")
-    parser.add_argument("--output", default="aiva_flow_analysis_v3.json", help="Output JSON file")
+    parser.add_argument("--output", default="output", help="Output directory for analysis results")
     
     args = parser.parse_args()
-    analyze_and_generate(args.target_dir, args.output)
+    
+    # 使用新的API：創建分析器並保存到目錄
+    analyzer = AIVAFlowAnalyzer()
+    analyzer.analyze_directory(args.target_dir)
+    analyzer.save_results(args.output)

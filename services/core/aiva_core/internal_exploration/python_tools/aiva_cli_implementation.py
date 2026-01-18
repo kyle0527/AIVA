@@ -75,13 +75,13 @@ if str(PROJECT_ROOT) not in sys.path:
 try:
     from integration.aiva_integration.config import CLI_OUTPUTS_PYTHON_DIR
     CLI_OUTPUT_DIR = CLI_OUTPUTS_PYTHON_DIR
-    print(f"✅ 使用 Integration 模組 CLI 輸出路徑: {CLI_OUTPUT_DIR}")
+    print(f"[OK] 使用 Integration 模組 CLI 輸出路徑: {CLI_OUTPUT_DIR}")
 except (ImportError, ModuleNotFoundError):
     # 降級方案：直接使用 data/integration 路徑結構
     DATA_ROOT = PROJECT_ROOT.parent.parent.parent / 'data'
     CLI_OUTPUT_DIR = DATA_ROOT / 'integration' / 'cli_outputs' / 'python'
     CLI_OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
-    print(f"⚠️ Integration 模組未找到，使用預設 CLI 輸出路徑: {CLI_OUTPUT_DIR}")
+    print(f"[WARN] Integration 模組未找到，使用預設 CLI 輸出路徑: {CLI_OUTPUT_DIR}")
 
 # 五大模組中文映射（2026-01-03 更新：external_learning 整合至 cognitive_core.learning_system）
 MODULE_MAPPING = {
