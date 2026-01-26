@@ -3,8 +3,7 @@ Cryptographic Security Command Handler
 
 This module provides the command handler for the `function_crypto` module,
 enabling the AI Commander to execute cryptographic security checks.
-It currently acts as a Python wrapper, intending to interface with the high-performance
-Rust core for actual cryptographic operations.
+It strictly interfaces with the high-performance Rust core (`crypto_analyzer`).
 """
 
 import time
@@ -30,17 +29,23 @@ class CryptoCommandHandler(CommandHandler):
     """
     Handles cryptographic security check commands.
 
-    Wraps the Rust-based crypto analyzer (future implementation) or performs
-    basic Python-based checks.
+    This handler requires the Rust-based `crypto_analyzer` binary to be present.
+    No fallback or degradation to Python-based heuristics is permitted.
     """
 
     def __init__(self):
         self.logger = logger
         self.logger.info("✅ CryptoCommandHandler initialized")
-        # Path to the compiled Rust binary (placeholder)
+        # Path to the compiled Rust binary
         self.rust_binary_path = os.path.join(
             os.path.dirname(__file__), "rust_core", "target", "release", "crypto_analyzer"
         )
+        # Strict validation on initialization
+        if not os.path.exists(self.rust_binary_path):
+             self.logger.warning(
+                 f"⚠️ Critical: Rust binary not found at {self.rust_binary_path}. "
+                 "Execution will fail if called."
+             )
 
     async def handle_command(
         self,
@@ -52,17 +57,21 @@ class CryptoCommandHandler(CommandHandler):
 
         Payload expected:
         {
-            "target": "string", (e.g., hash, ciphertext, or file path)
-            "check_type": "string", (e.g., "identify", "weakness_check")
+            "target": "string",
+            "check_type": "string"
         }
         """
         start_time = time.time()
 
         try:
-            # 1. Validate Command
-            # Note: We assume a generic FEATURE_CRYPTO_TEST type or similar exists
-            # For now, we accept general commands if routed here.
+            # 1. Validate Binary Existence (Strict)
+            if not os.path.exists(self.rust_binary_path):
+                raise FileNotFoundError(
+                    f"Rust binary 'crypto_analyzer' not found at {self.rust_binary_path}. "
+                    "Please compile the Rust core to use this feature."
+                )
 
+            # 2. Validate Command Inputs
             payload = command.payload or {}
             target = payload.get("target")
             check_type = payload.get("check_type", "identify")
@@ -72,10 +81,10 @@ class CryptoCommandHandler(CommandHandler):
 
             self.logger.info(f"🔒 Starting Crypto Check: {check_type} on target")
 
-            # 2. Execute Logic (Simulated for now, as Rust bin might not exist)
-            result_data = self._execute_check(target, check_type)
+            # 3. Execute Logic via Rust Binary
+            result_data = self._run_rust_binary(target, check_type)
 
-            # 3. Build Result
+            # 4. Build Result
             execution_time = time.time() - start_time
 
             return AICommandResult(
@@ -88,7 +97,8 @@ class CryptoCommandHandler(CommandHandler):
                 completed_at=datetime.now(),
                 metrics={
                     "check_type": check_type,
-                    "target_length": len(str(target))
+                    "target_length": len(str(target)),
+                    "engine": "rust_crypto_analyzer"
                 }
             )
 
@@ -106,47 +116,17 @@ class CryptoCommandHandler(CommandHandler):
                 error_code="CRYPTO_EXECUTION_ERROR"
             )
 
-    def _execute_check(self, target: str, check_type: str) -> Dict[str, Any]:
-        """
-        Internal execution logic.
-        Prioritizes Rust binary if available, falls back to Python heuristics.
-        """
-        if os.path.exists(self.rust_binary_path):
-            return self._run_rust_binary(target, check_type)
-        else:
-            return self._run_python_fallback(target, check_type)
-
     def _run_rust_binary(self, target: str, check_type: str) -> Dict[str, Any]:
         """Runs the compiled Rust binary."""
         try:
-            # Example CLI: ./crypto_analyzer --target <target> --check <type> --json
             cmd = [self.rust_binary_path, "--target", target, "--check", check_type, "--json"]
             result = subprocess.run(cmd, capture_output=True, text=True, check=True)
             return json.loads(result.stdout)
         except subprocess.CalledProcessError as e:
-            self.logger.warning(f"Rust binary failed: {e.stderr}")
-            return {"error": "Rust binary execution failed", "details": e.stderr}
-        except json.JSONDecodeError:
-            return {"error": "Invalid JSON output from Rust binary"}
-
-    def _run_python_fallback(self, target: str, check_type: str) -> Dict[str, Any]:
-        """Basic Python implementation when Rust is missing."""
-        results = {"findings": [], "engine": "python_fallback"}
-
-        # Simple heuristics
-        if check_type == "identify":
-            length = len(target)
-            if length == 32:
-                results["findings"].append({"type": "hash_id", "algo": "MD5", "confidence": "Medium"})
-            elif length == 40:
-                results["findings"].append({"type": "hash_id", "algo": "SHA1", "confidence": "Medium"})
-            elif length == 64:
-                results["findings"].append({"type": "hash_id", "algo": "SHA256", "confidence": "Medium"})
-            else:
-                results["findings"].append({"type": "unknown", "msg": "Could not identify based on length"})
-
-        elif check_type == "weakness_check":
-             # Placeholder for weakness checks (e.g., checking for weak keys, padding, etc.)
-             results["findings"].append({"type": "info", "msg": "Weakness check not fully implemented in Python fallback"})
-
-        return results
+            error_msg = f"Rust binary execution failed: {e.stderr}"
+            self.logger.error(error_msg)
+            raise RuntimeError(error_msg)
+        except json.JSONDecodeError as e:
+            error_msg = f"Invalid JSON output from Rust binary: {e}"
+            self.logger.error(error_msg)
+            raise RuntimeError(error_msg)
