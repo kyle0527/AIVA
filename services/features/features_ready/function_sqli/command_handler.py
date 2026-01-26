@@ -112,18 +112,28 @@ class SQLiCommandHandler(CommandHandler):
             )
             
             # 4. 執行檢測
+            # 增強：解析並映射新的 AI 請求的引擎選項到後端配置
+            options = {
+                "use_sqlmap": "sqlmap" in detection_engines,
+                "use_custom_scanner": any(e in detection_engines for e in ["boolean", "time", "union", "error"]),
+                "use_nosql": "nosql" in detection_engines,
+                "deep_scan": deep_scan,
+                "sqlmap_options": {
+                    "level": 3 if deep_scan else 1,
+                    "risk": 3 if deep_scan else 1
+                },
+                # 新增：更細粒度的引擎控制
+                "custom_engine_config": {
+                    "use_boolean": "boolean" in detection_engines,
+                    "use_time": "time" in detection_engines,
+                    "use_union": "union" in detection_engines,
+                    "use_error": "error" in detection_engines
+                }
+            }
+
             result = await self.sqli_manager.comprehensive_scan(
                 target_url=target_url,
-                options={
-                    "use_sqlmap": "sqlmap" in detection_engines,
-                    "use_custom_scanner": "boolean" in detection_engines or "time" in detection_engines,
-                    "use_nosql": "nosql" in detection_engines,
-                    "deep_scan": deep_scan,
-                    "sqlmap_options": {
-                        "level": 3 if deep_scan else 1,
-                        "risk": 3 if deep_scan else 1
-                    }
-                }
+                options=options
             )
             
             # 5. 格式化結果
@@ -135,6 +145,12 @@ class SQLiCommandHandler(CommandHandler):
                 len(result.get("nosql_results", []))
             )
             
+            # 增強：結構化摘要，方便 AI 理解
+            summary_text = (
+                f"檢測完成。發現 {vulnerabilities_found} 個漏洞。"
+                f"引擎覆蓋: {', '.join(detection_engines)}。"
+            )
+
             return AICommandResult(
                 command_id=command.command_id,
                 status=CommandStatus.COMPLETED,
@@ -142,6 +158,7 @@ class SQLiCommandHandler(CommandHandler):
                 result={
                     "vulnerability_found": vulnerabilities_found > 0,
                     "vulnerabilities_count": vulnerabilities_found,
+                    "summary": summary_text,  # 新增
                     "sqlmap_results": result.get("sqlmap_results", []),
                     "custom_results": result.get("custom_scan_results", []),
                     "nosql_results": result.get("nosql_results", []),
@@ -156,7 +173,11 @@ class SQLiCommandHandler(CommandHandler):
                 completed_at=datetime.now(UTC),
                 error=None,
                 error_code=None,
-                error_details=None
+                error_details=None,
+                metrics={  # 新增
+                    "scan_depth": "deep" if deep_scan else "standard",
+                    "engines_used": len(detection_engines)
+                }
             )
             
         except Exception as e:
