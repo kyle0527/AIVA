@@ -212,92 +212,24 @@ services/                          # 🚀 AIVA Services 根目錄
 │   └── [core modules]             # 核心模組
 │
 ├── features/                      # 🎯 多語言安全功能
+│   ├── features_ready/            # ✅ 已就緒功能 (核心檢測模組)
+│   │   ├── function_sqli/         # 💉 SQL 注入功能
+│   │   │   ├── engines/           # SQL 注入引擎集 (6個引擎)
+│   │   │   ├── integration_tools/ # 整合工具
+│   │   │   └── worker.py          # SQL 注入工作器
+│   │   ├── function_xss/          # ⚡ XSS 功能
+│   │   │   ├── engines/           # XSS 引擎
+│   │   │   └── worker.py          # XSS 工作器
+│   │   ├── function_ssrf/         # 🔗 SSRF 功能
+│   │   ├── function_idor/         # 🔓 IDOR 檢測功能
+│   │   ├── function_crypto/       # 🔒 加密功能 (Python+Rust)
+│   │   ├── function_bizlogic/     # 🏢 業務邏輯功能
+│   │   └── function_info_leak/    # 💧 信息洩露檢測
+│   ├── features_in_development/   # 🚧 開發中功能
 │   ├── common/                    # 🔗 通用功能
 │   │   ├── go/                    # 🐹 Go 通用功能
-│   │   │   └── aiva_common_go/    # Go 共享庫
-│   │   │       ├── config/        # 配置管理
-│   │   │       ├── logger/        # 日誌系統
-│   │   │       ├── metrics/       # 指標收集
-│   │   │       ├── mq/            # 消息隊列
-│   │   │       └── schemas/       # Go Schema
-│   │   ├── worker_statistics.py  # 工作器統計
-│   │   └── __init__.py
+│   │   └── worker_statistics.py   # 工作器統計
 │   ├── docs/                      # 📚 功能文檔
-│   │   ├── development/           # 開發文檔
-│   │   ├── go/                    # Go 文檔
-│   │   ├── issues/                # 問題追蹤
-│   │   ├── python/                # Python 文檔
-│   │   └── security/              # 安全文檔
-│   ├── function_authn_go/         # 🔐 Go 認證功能
-│   │   ├── cmd/worker/            # 認證工作器
-│   │   └── internal/              # 內部實現
-│   ├── function_bizlogic/         # 🏢 業務邏輯功能
-│   │   ├── business_schemas.py    # 業務 Schema
-│   │   ├── finding_helper.py      # 發現助手
-│   │   └── worker.py              # 業務工作器
-│   ├── function_crypto/           # 🔒 加密功能
-│   │   ├── config/                # 加密配置
-│   │   ├── detector/              # 加密檢測器
-│   │   ├── python_wrapper/        # Python 包裝器
-│   │   ├── rust_core/             # Rust 核心
-│   │   └── worker/                # 加密工作器
-│   ├── function_ddos/             # 💥 DDoS 功能
-│   │   └── integration_tools/     # 整合工具
-│   ├── function_idor/             # 🔓 IDOR 檢測功能
-│   │   ├── config/                # IDOR 配置
-│   │   ├── detector/              # IDOR 檢測器
-│   │   ├── engine/                # IDOR 引擎
-│   │   ├── worker/                # IDOR 工作器
-│   │   ├── enhanced_worker.py     # 增強工作器
-│   │   ├── resource_id_extractor.py # 資源 ID 提取器
-│   │   ├── smart_idor_detector.py # 智能 IDOR 檢測
-│   │   └── worker.py              # 基礎工作器
-│   ├── function_postex/           # 🎯 後滲透功能
-│   │   ├── config/                # 後滲透配置
-│   │   ├── detector/              # 後滲透檢測器
-│   │   ├── engines/               # 後滲透引擎
-│   │   │   ├── lateral_engine.py  # 橫向移動引擎
-│   │   │   ├── persistence_engine.py # 持久化引擎
-│   │   │   └── privilege_engine.py # 權限提升引擎
-│   │   ├── tests/                 # 測試套件
-│   │   └── worker/                # 後滲透工作器
-│   ├── function_sqli/             # 💉 SQL 注入功能
-│   │   ├── config/                # SQL 注入配置
-│   │   ├── detector/              # SQL 注入檢測器
-│   │   ├── engines/               # SQL 注入引擎集 (6個引擎)
-│   │   │   ├── boolean_detection_engine.py # 布林盲注引擎
-│   │   │   ├── error_detection_engine.py   # 錯誤注入引擎
-│   │   │   ├── hackingtool_engine.py       # Hackingtool 引擎
-│   │   │   ├── oob_detection_engine.py     # 帶外檢測引擎
-│   │   │   ├── time_detection_engine.py    # 時間盲注引擎
-│   │   │   └── union_detection_engine.py   # 聯合查詢引擎
-│   │   ├── integration_tools/     # 整合工具
-│   │   │   ├── bounty_hunter.py   # Bug Bounty 獵人工具
-│   │   │   └── sql_tools.py       # SQL 工具集
-│   │   ├── [15+ specialized modules] # 專業化模組
-│   │   └── worker.py              # SQL 注入工作器
-│   ├── function_ssrf/             # 🔗 SSRF 功能
-│   │   ├── config/                # SSRF 配置
-│   │   ├── detector/              # SSRF 檢測器
-│   │   ├── engine/                # SSRF 引擎
-│   │   ├── worker/                # SSRF 工作器
-│   │   ├── internal_address_detector.py # 內網地址檢測
-│   │   ├── oast_dispatcher.py     # 帶外檢測調度器
-│   │   ├── param_semantics_analyzer.py # 參數語義分析器
-│   │   ├── result_publisher.py    # 結果發布器
-│   │   ├── smart_ssrf_detector.py # 智能 SSRF 檢測
-│   │   └── worker.py              # 基礎工作器
-│   ├── function_web_scanner/      # 🌐 Web 掃描功能
-│   │   └── integration_tools/     # Web 掃描工具
-│   ├── function_xss/              # ⚡ XSS 功能
-│   │   ├── engines/               # XSS 引擎
-│   │   ├── integration_tools/     # XSS 工具
-│   │   ├── blind_xss_listener_validator.py # 盲 XSS 監聽驗證
-│   │   ├── dom_xss_detector.py    # DOM XSS 檢測器
-│   │   ├── payload_generator.py   # Payload 生成器
-│   │   ├── stored_detector.py     # 存儲型 XSS 檢測
-│   │   ├── traditional_detector.py # 傳統 XSS 檢測
-│   │   └── worker.py              # XSS 工作器
 │   ├── feature_step_executor.py   # 功能步驟執行器
 │   ├── high_value_manager.py      # 高價值管理器
 │   └── smart_detection_manager.py # 智能檢測管理器
@@ -380,98 +312,23 @@ services/                          # 🚀 AIVA Services 根目錄
 │   └── models.py                  # 數據模型
 │
 ├── scan/                          # 🔍 多語言統一掃描引擎
-│   ├── aiva_scan/                 # Python 掃描核心
+│   ├── python_engine/             # 🐍 Python 掃描核心 (原 aiva_scan)
 │   │   ├── core_crawling_engine/  # 🕷️ 核心爬蟲引擎
-│   │   │   ├── http_client_hi.py  # 高級 HTTP 客戶端
-│   │   │   ├── static_content_parser.py # 靜態內容解析器
-│   │   │   └── url_queue_manager.py # URL 隊列管理器
 │   │   ├── dynamic_engine/        # ⚡ 動態掃描引擎
-│   │   │   ├── ajax_api_handler.py # AJAX API 處理器
-│   │   │   ├── dynamic_content_extractor.py # 動態內容提取器
-│   │   │   ├── headless_browser_pool.py # 無頭瀏覽器池
-│   │   │   └── js_interaction_simulator.py # JS 互動模擬器
-│   │   ├── examples/              # 📚 使用範例
-│   │   │   ├── example_browser_pool.py
-│   │   │   ├── example_extractor.py
-│   │   │   └── example_usage.py
 │   │   ├── info_gatherer/         # 🔍 情報收集器
-│   │   │   ├── javascript_source_analyzer.py # JS 源碼分析器
-│   │   │   ├── passive_fingerprinter.py # 被動指紋識別
-│   │   │   └── sensitive_info_detector.py # 敏感信息檢測器
-│   │   ├── authentication_manager.py # 認證管理器
-│   │   ├── config_control_center.py # 配置控制中心
-│   │   ├── fingerprint_manager.py # 指紋管理器
-│   │   ├── header_configuration.py # 請求頭配置
-│   │   ├── javascript_analyzer.py # JavaScript 分析器
-│   │   ├── network_scanner.py     # 網路掃描器
-│   │   ├── optimized_security_scanner.py # 優化安全掃描器
-│   │   ├── scan_context.py        # 掃描上下文
-│   │   ├── scan_orchestrator.py   # 掃描編排器
-│   │   ├── scope_manager.py       # 範圍管理器
-│   │   ├── sensitive_data_scanner.py # 敏感數據掃描器
-│   │   ├── service_detector.py    # 服務檢測器
-│   │   ├── strategy_controller.py # 策略控制器
-│   │   ├── target_environment_detector.py # 目標環境檢測器
-│   │   ├── vulnerability_scanner.py # 漏洞掃描器
-│   │   └── worker.py              # 掃描工作器
-│   ├── aiva_scan_node/            # TypeScript 掃描核心
+│   │   └── [scan modules]         # 掃描模組
+│   ├── typescript_engine/         # 📘 TypeScript 動態掃描 (原 aiva_scan_node)
 │   │   ├── src/                   # TypeScript 源碼
-│   │   │   ├── interfaces/        # TypeScript 介面
-│   │   │   │   └── dynamic-scan.interfaces.ts
-│   │   │   ├── services/          # TypeScript 服務
-│   │   │   │   ├── enhanced-content-extractor.service.ts
-│   │   │   │   ├── enhanced-dynamic-scan.service.ts
-│   │   │   │   ├── interaction-simulator.service.ts
-│   │   │   │   ├── network-interceptor.service.ts
-│   │   │   │   └── scan-service.ts
-│   │   │   ├── utils/             # TypeScript 工具
-│   │   │   │   └── logger.ts
-│   │   │   └── index.ts           # 入口點
 │   │   ├── types/                 # TypeScript 類型定義
-│   │   │   └── playwright.d.ts
 │   │   └── phase-i-integration.service.ts
-│   ├── go_scanners/               # Go 掃描器集合
+│   ├── go_engine/                 # 🐹 Go 掃描器集合 (原 go_scanners)
 │   │   ├── common/                # Go 通用模組
-│   │   │   ├── amqp_client.go     # AMQP 客戶端
-│   │   │   ├── sarif_converter.go # SARIF 轉換器
-│   │   │   └── scanner_base.go    # 掃描器基類
 │   │   ├── cspm_scanner/          # 雲安全掃描器
-│   │   │   ├── cmd/worker/        # 工作器命令
-│   │   │   ├── internal/scanner/  # 內部掃描器
-│   │   │   ├── cloud_detector.go  # 雲檢測器
-│   │   │   └── main.go            # 主程式
-│   │   ├── sca_scanner/           # 軟體組成分析掃描器
-│   │   │   ├── cmd/worker/        # 工作器命令
-│   │   │   ├── internal/          # 內部模組
-│   │   │   │   ├── analyzer/      # 分析器
-│   │   │   │   └── scanner/       # 掃描器
-│   │   │   └── sca_scanner.go     # SCA 掃描器
+│   │   ├── sca_scanner/           # 軟體組成分析
 │   │   ├── secrets_scanner/       # 機密掃描器
-│   │   │   ├── cmd/worker/        # 工作器命令
-│   │   │   ├── internal/scanner/  # 內部掃描器
-│   │   │   ├── patterns_detector.go # 模式檢測器
-│   │   │   └── main.go            # 主程式
-│   │   └── vulndb_scanner/        # 漏洞資料庫掃描器
-│   │       ├── cmd/worker/        # 工作器命令
-│   │       ├── internal/scanner/  # 內部掃描器
-│   │       ├── cve_matcher.go     # CVE 匹配器
-│   │       └── main.go            # 主程式
-│   ├── info_gatherer_rust/        # Rust 情報收集器
+│   │   └── vulndb_scanner/        # 漏洞資料庫掃描
+│   ├── rust_engine/               # 🦀 Rust 情報收集器 (原 info_gatherer_rust)
 │   │   ├── src/                   # Rust 源碼
-│   │   │   ├── modules/           # Rust 模組
-│   │   │   │   ├── dns_resolver.rs # DNS 解析器
-│   │   │   │   ├── port_scanner.rs # 端口掃描器
-│   │   │   │   ├── service_detector.rs # 服務檢測器
-│   │   │   │   ├── subdomain_enumerator.rs # 子域名枚舉器
-│   │   │   │   └── vulnerability_matcher.rs # 漏洞匹配器
-│   │   │   ├── schemas/           # Rust Schema
-│   │   │   │   └── generated/     # 自動生成 Schema
-│   │   │   ├── utils/             # Rust 工具
-│   │   │   │   ├── config.rs      # 配置管理
-│   │   │   │   ├── logger.rs      # 日誌系統
-│   │   │   │   └── network.rs     # 網路工具
-│   │   │   ├── lib.rs             # 庫入口
-│   │   │   └── main.rs            # 主程式
 │   │   ├── Cargo.toml             # Rust 專案配置
 │   │   └── README.md              # Rust 模組文檔
 │   ├── [root scan modules]        # 掃描根模組
@@ -879,16 +736,19 @@ aiva_common/
 **核心功能架構**:
 ```
 features/
-├── 🔐 function_authn_go/      # Go 認證檢測
-├── 🔒 function_crypto/        # Rust 加密檢測
-├── 💉 function_sqli/          # SQL注入 (6引擎)
-├── ⚡ function_xss/           # XSS檢測套件
-├── 🔗 function_ssrf/          # SSRF智能檢測
-├── 🔓 function_idor/          # IDOR權限檢測
-├── 🎯 function_postex/        # 後滲透工具
-├── 🏢 function_bizlogic/      # 業務邏輯檢測
-├── 💥 function_ddos/          # DDoS檢測
-├── 🌐 function_web_scanner/   # Web掃描工具
+├── features_ready/            # ✅ 已就緒功能
+│   ├── 🔐 function_authn_go/      # Go 認證檢測
+│   ├── 🔒 function_crypto/        # Rust 加密檢測
+│   ├── 💉 function_sqli/          # SQL注入 (6引擎)
+│   ├── ⚡ function_xss/           # XSS檢測套件
+│   ├── 🔗 function_ssrf/          # SSRF智能檢測
+│   ├── 🔓 function_idor/          # IDOR權限檢測
+│   ├── 🏢 function_bizlogic/      # 業務邏輯檢測
+│   └── 💧 function_info_leak/    # 信息洩露檢測
+├── features_in_development/   # 🚧 開發中功能
+│   ├── 🎯 function_postex/        # 後滲透工具
+│   ├── 💥 function_ddos/          # DDoS檢測
+│   └── 🌐 function_web_scanner/   # Web掃描工具
 ├── 🐹 common/go/             # Go共享庫
 └── 📚 docs/                   # 功能文檔
 ```
@@ -975,21 +835,21 @@ integration/
 **多語言掃描架構**:
 ```
 scan/
-├── 🐍 aiva_scan/              # Python 掃描核心
+├── 🐍 python_engine/          # Python 掃描核心 (原 aiva_scan)
 │   ├── 🕷️ core_crawling_engine/    # 核心爬蟲引擎
 │   ├── ⚡ dynamic_engine/           # 動態掃描引擎  
 │   ├── 🔍 info_gatherer/           # 情報收集器
-│   └── [20+ scan modules]          # 掃描模組
-├── 📘 aiva_scan_node/         # TypeScript 動態掃描
+│   └── [scan modules]              # 掃描模組
+├── 📘 typescript_engine/      # TypeScript 動態掃描 (原 aiva_scan_node)
 │   ├── src/services/              # TS 掃描服務
 │   ├── src/interfaces/            # TS 介面定義
 │   └── types/                     # TS 類型定義
-├── 🐹 go_scanners/            # Go 高性能掃描器
+├── 🐹 go_engine/              # Go 高性能掃描器 (原 go_scanners)
 │   ├── cspm_scanner/              # 雲安全掃描器
 │   ├── sca_scanner/               # 軟體組成分析
 │   ├── secrets_scanner/           # 機密掃描器
 │   └── vulndb_scanner/            # 漏洞資料庫掃描
-├── 🦀 info_gatherer_rust/     # Rust 情報收集器
+├── 🦀 rust_engine/            # Rust 情報收集器 (原 info_gatherer_rust)
 │   ├── src/modules/               # 高性能模組
 │   └── src/utils/                 # Rust 工具集
 └── [scan root modules]        # 掃描協調器
