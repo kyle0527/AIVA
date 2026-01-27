@@ -12,30 +12,22 @@ class PlanBuilder:
     """攻擊計劃建構器
     
     負責使用 RAG 和 5M 引擎生成攻擊計畫
+    使用 CLI 執行架構（subprocess），不直接依賴其他模組
     """
 
     def __init__(
         self,
-        rag_engine: Any,
-        decision_engine: Any,
-        experience_manager: Any,
-        feedback_history: list | None = None,
-        strategy_performance: dict | None = None,
+        data_directory: Any = None,
     ):
         """初始化計劃建構器
         
         Args:
-            rag_engine: RAG 引擎
-            decision_engine: 5M 決策引擎
-            experience_manager: 經驗管理器
-            feedback_history: 歷史反饋數據列表
-            strategy_performance: 策略性能記錄
+            data_directory: 數據目錄路徑（用於存儲計劃）
         """
-        self.rag_engine = rag_engine
-        self.decision_engine = decision_engine
-        self.experience_manager = experience_manager
-        self.feedback_history = feedback_history or []
-        self.strategy_performance = strategy_performance or {}
+        self.data_directory = data_directory
+        # CLI 架構 - 透過 subprocess 調用 RAG/5M 服務
+        self.feedback_history = []
+        self.strategy_performance = {}
 
     async def plan_attack(self, context: dict[str, Any]) -> dict[str, Any]:
         """生成攻擊計畫（RAG 增強）

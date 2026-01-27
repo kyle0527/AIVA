@@ -16,30 +16,23 @@ class LearningAdapter:
     """學習系統適配器
     
     連接經驗管理器、模型訓練器和 RAG 引擎
+    使用 CLI 執行架構（subprocess），不直接依賴其他模組
     """
 
     def __init__(
         self,
-        experience_manager: Any,
-        model_trainer: Any,
-        rag_engine: Any,
-        unified_executor: Any,
-        data_directory: Path,
+        data_directory: Any = None,
+        enabled: bool = True,
     ):
         """初始化學習適配器
         
         Args:
-            experience_manager: 經驗管理器
-            model_trainer: 模型訓練器
-            rag_engine: RAG 引擎
-            unified_executor: 統一執行器
-            data_directory: 數據目錄
+            data_directory: 數據目錄路徑（用於存儲學習數據）
+            enabled: 是否啟用學習功能
         """
-        self.experience_manager = experience_manager
-        self.model_trainer = model_trainer
-        self.rag_engine = rag_engine
-        self.unified_executor = unified_executor
         self.data_directory = data_directory
+        self.enabled = enabled
+        # CLI 架構 - 透過 subprocess 調用學習服務
 
     def learn_from_experience(self, context: dict[str, Any]) -> dict[str, Any]:
         """從經驗中學習

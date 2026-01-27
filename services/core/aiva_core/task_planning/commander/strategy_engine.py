@@ -17,37 +17,30 @@ class StrategyEngine:
     """策略決策引擎
     
     使用 5M 神經網路進行策略決策，配置化風險評估
+    使用 CLI 執行架構（subprocess），不直接依賴其他模組
     """
 
     def __init__(
         self,
-        decision_engine: Any,
-        experience_manager: Any,
+        data_directory: Any = None,
         policy_path: Optional[str] = None,
-        feedback_history: list = None,
-        strategy_performance: dict = None,
     ):
         """初始化策略引擎
         
         Args:
-            decision_engine: 5M 決策引擎
-            experience_manager: 經驗管理器
+            data_directory: 數據目錄路徑（用於存儲策略決策）
             policy_path: 風險策略配置文件路徑（可選，默認使用 config/risk_policies.yaml）
-            feedback_history: 歷史反饋數據列表
-            strategy_performance: 策略性能記錄
         """
-        self.decision_engine = decision_engine
-        self.experience_manager = experience_manager
-        self.feedback_history = feedback_history or []
-        self.strategy_performance = strategy_performance or {}
+        self.data_directory = data_directory
+        self.feedback_history = []
+        self.strategy_performance = {}
         
         # 初始化風險策略管理器（配置化）
         self.policy_manager = PolicyManager(policy_path)
         
         logger.info(
             f"StrategyEngine initialized with policy: "
-            f"{self.policy_manager.get_policy_info()['policy_name']}, "
-            f"feedback_records: {len(self.feedback_history)}"
+            f"{self.policy_manager.get_policy_info()['policy_name']}"
         )
 
     async def make_strategy_decision(self, context: dict[str, Any]) -> dict[str, Any]:

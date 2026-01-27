@@ -43,6 +43,7 @@ class AttackCoordinator:
     """攻擊執行協調器
     
     協調攻擊執行、漏洞檢測和多引擎掃描
+    使用 CLI 命令執行架構（subprocess），不直接依賴其他模組
     
     Raises:
         ImportError: 如果必要依賴缺失（MultiEngineCoordinator, AttackExecutor）
@@ -50,20 +51,77 @@ class AttackCoordinator:
 
     def __init__(
         self,
-        unified_executor: Any,
-        multilang_coordinator: Any,
-        internal_loop: Any,
+        data_directory: Any = None,
+        dispatcher: Any = None,
     ):
         """初始化攻擊協調器
         
         Args:
-            unified_executor: 統一執行器
-            multilang_coordinator: 多語言協調器
-            internal_loop: 內部循環連接器
+            data_directory: 數據目錄路徑（用於存儲攻擊結果）
+            dispatcher: 任務分發器（用於 CLI 命令執行）
         """
-        self.unified_executor = unified_executor
-        self.multilang_coordinator = multilang_coordinator
-        self.internal_loop = internal_loop
+        self.data_directory = data_directory
+        self.dispatcher = dispatcher
+        
+        # CLI 執行架構 - 透過 subprocess 調用外部模組
+        self._cli_executor = self._init_cli_executor()
+    
+    def _init_cli_executor(self) -> dict[str, Any]:
+        """初始化 CLI 執行器配置
+        
+        Returns:
+            CLI 執行器配置字典
+        """
+        import subprocess
+        return {
+            "subprocess": subprocess,
+            "timeout": 300,  # 默認超時 5 分鐘
+            "encoding": "utf-8"
+        }
+    
+    def _execute_cli_command(self, command: list[str], timeout: int | None = None) -> dict[str, Any]:
+        """執行 CLI 命令
+        
+        Args:
+            command: CLI 命令列表
+            timeout: 超時秒數
+            
+        Returns:
+            執行結果字典 {"success": bool, "stdout": str, "stderr": str, "returncode": int}
+        """
+        import json
+        subprocess = self._cli_executor["subprocess"]
+        timeout = timeout or self._cli_executor["timeout"]
+        
+        try:
+            result = subprocess.run(
+                command,
+                capture_output=True,
+                text=True,
+                timeout=timeout,
+                encoding=self._cli_executor["encoding"]
+            )
+            
+            return {
+                "success": result.returncode == 0,
+                "stdout": result.stdout,
+                "stderr": result.stderr,
+                "returncode": result.returncode
+            }
+        except subprocess.TimeoutExpired:
+            return {
+                "success": False,
+                "stdout": "",
+                "stderr": f"Command timeout after {timeout}s",
+                "returncode": -1
+            }
+        except Exception as e:
+            return {
+                "success": False,
+                "stdout": "",
+                "stderr": str(e),
+                "returncode": -1
+            }
 
     async def detect_vulnerabilities(self, context: dict[str, Any]) -> dict[str, Any]:
         """檢測漏洞（直接調用核心檢測器）

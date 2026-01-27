@@ -84,7 +84,13 @@ class CommanderCoordinator:
     def attack_coordinator(self) -> AttackCoordinator:
         """延遲加載攻擊協調器"""
         if self._attack_coordinator is None:
-            self._attack_coordinator = AttackCoordinator(data_directory=self.data_directory / "attacks")
+            # 使用 CLI 執行架構：傳入 data_directory 和 dispatcher
+            from ..dispatcher import TaskDispatcher
+            dispatcher = TaskDispatcher(source_module="commander")
+            self._attack_coordinator = AttackCoordinator(
+                data_directory=self.data_directory / "attacks",
+                dispatcher=dispatcher
+            )
         return self._attack_coordinator
     
     @property
