@@ -698,7 +698,7 @@ def main():
         print("-" * 60)
         flows = executor.data.get("flows", [])
         for f in flows[:20]:
-            print(f"ID: {f['id']:<4} | Len: {f['length']} | Path: {' -> '.join(f['path'])}")
+            print(f"ID: {f['id']:<4} | Len: {f.get('length', 0)} | Path: {' -> '.join(f['path'])}")
         if len(flows) > 20:
             print(f"... (還有 {len(flows) - 20} 條流程)")
             
