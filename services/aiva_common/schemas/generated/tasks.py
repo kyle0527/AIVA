@@ -10,7 +10,7 @@ AIVA跨語言Schema統一定義 - 以手動維護版本為準
 """
 
 from __future__ import annotations
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Dict, List, Literal, Optional, Union
 from datetime import datetime
 from pydantic import BaseModel, Field
 
@@ -35,7 +35,7 @@ class FunctionTaskPayload(BaseModel):
     context: FunctionTaskContext
     """任務上下文"""
 
-    strategy: str = Field(values=['fast', 'deep', 'aggressive', 'stealth'])
+    strategy: Literal['fast', 'deep', 'aggressive', 'stealth'] = Field(default='fast')
     """掃描策略"""
 
     custom_payloads: List[str] = Field(default_factory=list)
@@ -50,7 +50,7 @@ class FunctionTaskTarget(BaseModel):
 
     # 繼承自: Target
 
-    parameter_location: str = Field(values=['url', 'query', 'form', 'json', 'header', 'cookie'])
+    parameter_location: Literal['url', 'query', 'form', 'json', 'header', 'cookie'] = Field(default='query')
     """參數位置"""
 
     cookies: Dict[str, str] = Field(default_factory=dict)
@@ -66,7 +66,7 @@ class FunctionTaskTarget(BaseModel):
 class FunctionTaskContext(BaseModel):
     """功能任務上下文"""
 
-    db_type_hint: Optional[str] = Field(values=['mysql', 'postgresql', 'mssql', 'oracle', 'sqlite', 'mongodb'], default=None)
+    db_type_hint: Optional[Literal['mysql', 'postgresql', 'mssql', 'oracle', 'sqlite', 'mongodb']] = Field(default=None)
     """資料庫類型提示"""
 
     waf_detected: bool = Field(default=False)
@@ -110,7 +110,7 @@ class ScanTaskPayload(BaseModel):
     target: Target
     """掃描目標 (包含URL)"""
 
-    scan_type: str = Field(values=['sca', 'sast', 'secret', 'license', 'dependency'])
+    scan_type: Literal['sca', 'sast', 'secret', 'license', 'dependency'] = Field(default='sca')
     """掃描類型"""
 
     repository_info: Optional[Dict[str, Any]] = None

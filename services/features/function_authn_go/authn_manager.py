@@ -126,8 +126,8 @@ class AuthnManager:
         username = options.get("username", "admin")
         test_types = options.get("test_types", ["weak_password"])
         timeout = options.get("timeout", 30)
-        task_id = options.get("task_id", new_id("authn_task"))
-        scan_id = options.get("scan_id", new_id("authn_scan"))
+        task_id = options.get("task_id", new_id("task"))
+        scan_id = options.get("scan_id", new_id("scan"))
         
         try:
             logger.info(

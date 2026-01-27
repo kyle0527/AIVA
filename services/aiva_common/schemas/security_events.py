@@ -5,7 +5,7 @@ AIVA 安全事件統一標準模型
 確保跨服務的一致性和可維護性。
 """
 
-from datetime import datetime, UTC
+from datetime import datetime, timezone
 from enum import Enum
 from typing import Any
 
@@ -79,7 +79,7 @@ class BaseSIEMEvent(BaseModel):
     # 時間信息
     timestamp: datetime = Field(description="事件發生時間戳 (UTC)")
     received_at: datetime = Field(
-        default_factory=lambda: datetime.now(UTC),
+        default_factory=lambda: datetime.now(timezone.utc),
         description="事件接收處理時間 (UTC)"
     )
     
@@ -248,11 +248,11 @@ class BaseAttackPath(BaseModel):
     
     # 時間信息
     discovered_at: datetime = Field(
-        default_factory=lambda: datetime.now(UTC),
+        default_factory=lambda: datetime.now(timezone.utc),
         description="路徑發現時間"
     )
     last_updated: datetime = Field(
-        default_factory=lambda: datetime.now(UTC),
+        default_factory=lambda: datetime.now(timezone.utc),
         description="最後更新時間"
     )
     
@@ -332,7 +332,7 @@ class LegacySIEMEventAdapter:
             event_id=legacy_data.get("event_id", ""),
             event_type=legacy_data.get("event_type", ""),
             source_system=legacy_data.get("source_system", ""),
-            timestamp=legacy_data.get("timestamp", datetime.now(UTC)),
+            timestamp=legacy_data.get("timestamp", datetime.now(timezone.utc)),
             severity=legacy_data.get("severity", Severity.MEDIUM),
             category=legacy_data.get("category", ""),
             subcategory=legacy_data.get("subcategory"),
@@ -352,7 +352,7 @@ class LegacySIEMEventAdapter:
             event_id=legacy_data.get("event_id", ""),
             event_type=legacy_data.get("event_type", ""),
             source_system=legacy_data.get("source_system", ""),
-            timestamp=legacy_data.get("timestamp", datetime.now(UTC)),
+            timestamp=legacy_data.get("timestamp", datetime.now(timezone.utc)),
             severity=legacy_data.get("severity", Severity.MEDIUM),
             category=legacy_data.get("category", ""),
             subcategory=legacy_data.get("subcategory"),

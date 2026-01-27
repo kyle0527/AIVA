@@ -1,0 +1,3282 @@
+{
+  "graphs": [
+    {
+      "name": "AuthnManager",
+      "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\function_authn_go\\authn_manager.py",
+      "type": "class",
+      "nodes": [
+        {
+          "id": "AuthnManager_1",
+          "label": "AuthnManager",
+          "kind": "start",
+          "nexts": [
+            "AuthnManager_2"
+          ],
+          "metadata": {
+            "type": "head",
+            "name": "AuthnManager",
+            "docstring": "認證測試管理器 - Python 同步接口",
+            "is_class": true
+          }
+        },
+        {
+          "id": "AuthnManager_2",
+          "label": "End",
+          "kind": "end",
+          "nexts": [],
+          "metadata": {}
+        }
+      ],
+      "start_node_id": "AuthnManager_1",
+      "end_node_id": "AuthnManager_2"
+    },
+    {
+      "name": "AuthnManager.__init__",
+      "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\function_authn_go\\authn_manager.py",
+      "type": "method",
+      "nodes": [
+        {
+          "id": "AuthnManager___init___1",
+          "label": "AuthnManager.__init__",
+          "kind": "start",
+          "nexts": [
+            "AuthnManager___init___3"
+          ],
+          "metadata": {
+            "type": "head",
+            "name": "AuthnManager.__init__",
+            "parameters": [],
+            "docstring": "初始化認證測試管理器",
+            "return_type": "any"
+          }
+        },
+        {
+          "id": "AuthnManager___init___2",
+          "label": "End",
+          "kind": "end",
+          "nexts": [],
+          "metadata": {}
+        },
+        {
+          "id": "AuthnManager___init___3",
+          "label": "Call: self._find_go_binary",
+          "kind": "call",
+          "nexts": [
+            "AuthnManager___init___4"
+          ],
+          "metadata": {
+            "type": "tail",
+            "target_func": "self._find_go_binary"
+          }
+        },
+        {
+          "id": "AuthnManager___init___4",
+          "label": "Call: self._check_go_engine_availability",
+          "kind": "call",
+          "nexts": [
+            "AuthnManager___init___5"
+          ],
+          "metadata": {
+            "type": "tail",
+            "target_func": "self._check_go_engine_availability"
+          }
+        },
+        {
+          "id": "AuthnManager___init___5",
+          "label": "Call: logger.info",
+          "kind": "call",
+          "nexts": [
+            "AuthnManager___init___2"
+          ],
+          "metadata": {
+            "type": "tail",
+            "target_func": "logger.info"
+          }
+        }
+      ],
+      "start_node_id": "AuthnManager___init___1",
+      "end_node_id": "AuthnManager___init___2"
+    },
+    {
+      "name": "AuthnManager._find_go_binary",
+      "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\function_authn_go\\authn_manager.py",
+      "type": "method",
+      "nodes": [
+        {
+          "id": "AuthnManager__find_go_binary_1",
+          "label": "AuthnManager._find_go_binary",
+          "kind": "start",
+          "nexts": [
+            "AuthnManager__find_go_binary_3"
+          ],
+          "metadata": {
+            "type": "head",
+            "name": "AuthnManager._find_go_binary",
+            "parameters": [],
+            "docstring": "尋找編譯好的 Go 二進制文件",
+            "return_type": "Optional[Path]"
+          }
+        },
+        {
+          "id": "AuthnManager__find_go_binary_2",
+          "label": "End",
+          "kind": "end",
+          "nexts": [],
+          "metadata": {}
+        },
+        {
+          "id": "AuthnManager__find_go_binary_3",
+          "label": "Call: Path",
+          "kind": "call",
+          "nexts": [
+            "AuthnManager__find_go_binary_4"
+          ],
+          "metadata": {
+            "type": "tail",
+            "target_func": "Path"
+          }
+        },
+        {
+          "id": "AuthnManager__find_go_binary_4",
+          "label": "for path in possible_paths",
+          "kind": "cond",
+          "nexts": [
+            "AuthnManager__find_go_binary_5",
+            "AuthnManager__find_go_binary_9"
+          ],
+          "metadata": {}
+        },
+        {
+          "id": "AuthnManager__find_go_binary_5",
+          "label": "if path.exists() and path.is_file()",
+          "kind": "cond",
+          "nexts": [
+            "AuthnManager__find_go_binary_6",
+            "AuthnManager__find_go_binary_8"
+          ],
+          "metadata": {}
+        },
+        {
+          "id": "AuthnManager__find_go_binary_6",
+          "label": "Call: logger.info",
+          "kind": "call",
+          "nexts": [
+            "AuthnManager__find_go_binary_7"
+          ],
+          "metadata": {
+            "type": "tail",
+            "target_func": "logger.info"
+          }
+        },
+        {
+          "id": "AuthnManager__find_go_binary_7",
+          "label": "return path",
+          "kind": "op",
+          "nexts": [
+            "AuthnManager__find_go_binary_2",
+            "AuthnManager__find_go_binary_8"
+          ],
+          "metadata": {}
+        },
+        {
+          "id": "AuthnManager__find_go_binary_8",
+          "label": "",
+          "kind": "op",
+          "nexts": [
+            "AuthnManager__find_go_binary_4"
+          ],
+          "metadata": {}
+        },
+        {
+          "id": "AuthnManager__find_go_binary_9",
+          "label": "",
+          "kind": "op",
+          "nexts": [
+            "AuthnManager__find_go_binary_10"
+          ],
+          "metadata": {}
+        },
+        {
+          "id": "AuthnManager__find_go_binary_10",
+          "label": "Call: logger.warning",
+          "kind": "call",
+          "nexts": [
+            "AuthnManager__find_go_binary_11"
+          ],
+          "metadata": {
+            "type": "tail",
+            "target_func": "logger.warning"
+          }
+        },
+        {
+          "id": "AuthnManager__find_go_binary_11",
+          "label": "return None",
+          "kind": "op",
+          "nexts": [
+            "AuthnManager__find_go_binary_2"
+          ],
+          "metadata": {}
+        }
+      ],
+      "start_node_id": "AuthnManager__find_go_binary_1",
+      "end_node_id": "AuthnManager__find_go_binary_2"
+    },
+    {
+      "name": "AuthnManager._check_go_engine_availability",
+      "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\function_authn_go\\authn_manager.py",
+      "type": "method",
+      "nodes": [
+        {
+          "id": "AuthnManager__check_go_engine_availability_1",
+          "label": "AuthnManager._check_go_engine_availability",
+          "kind": "start",
+          "nexts": [
+            "AuthnManager__check_go_engine_availability_3"
+          ],
+          "metadata": {
+            "type": "head",
+            "name": "AuthnManager._check_go_engine_availability",
+            "parameters": [],
+            "docstring": "檢查 Go 引擎是否可用",
+            "return_type": "bool"
+          }
+        },
+        {
+          "id": "AuthnManager__check_go_engine_availability_2",
+          "label": "End",
+          "kind": "end",
+          "nexts": [],
+          "metadata": {}
+        },
+        {
+          "id": "AuthnManager__check_go_engine_availability_3",
+          "label": "if self._go_binary_path and self._go_binary_path.exists()",
+          "kind": "cond",
+          "nexts": [
+            "AuthnManager__check_go_engine_availability_4",
+            "AuthnManager__check_go_engine_availability_6"
+          ],
+          "metadata": {}
+        },
+        {
+          "id": "AuthnManager__check_go_engine_availability_4",
+          "label": "Call: logger.info",
+          "kind": "call",
+          "nexts": [
+            "AuthnManager__check_go_engine_availability_5"
+          ],
+          "metadata": {
+            "type": "tail",
+            "target_func": "logger.info"
+          }
+        },
+        {
+          "id": "AuthnManager__check_go_engine_availability_5",
+          "label": "return True",
+          "kind": "op",
+          "nexts": [
+            "AuthnManager__check_go_engine_availability_2",
+            "AuthnManager__check_go_engine_availability_8"
+          ],
+          "metadata": {}
+        },
+        {
+          "id": "AuthnManager__check_go_engine_availability_6",
+          "label": "Call: logger.warning",
+          "kind": "call",
+          "nexts": [
+            "AuthnManager__check_go_engine_availability_7"
+          ],
+          "metadata": {
+            "type": "tail",
+            "target_func": "logger.warning"
+          }
+        },
+        {
+          "id": "AuthnManager__check_go_engine_availability_7",
+          "label": "return False",
+          "kind": "op",
+          "nexts": [
+            "AuthnManager__check_go_engine_availability_2",
+            "AuthnManager__check_go_engine_availability_8"
+          ],
+          "metadata": {}
+        },
+        {
+          "id": "AuthnManager__check_go_engine_availability_8",
+          "label": "",
+          "kind": "op",
+          "nexts": [
+            "AuthnManager__check_go_engine_availability_2"
+          ],
+          "metadata": {}
+        }
+      ],
+      "start_node_id": "AuthnManager__check_go_engine_availability_1",
+      "end_node_id": "AuthnManager__check_go_engine_availability_2"
+    },
+    {
+      "name": "AuthnManager.scan",
+      "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\function_authn_go\\authn_manager.py",
+      "type": "method",
+      "nodes": [
+        {
+          "id": "AuthnManager_scan_1",
+          "label": "AuthnManager.scan",
+          "kind": "start",
+          "nexts": [
+            "AuthnManager_scan_3"
+          ],
+          "metadata": {
+            "type": "head",
+            "name": "AuthnManager.scan",
+            "parameters": [
+              {
+                "name": "target_url",
+                "type": "str",
+                "default": null,
+                "required": true,
+                "kind": "positional_or_keyword"
+              },
+              {
+                "name": "options",
+                "type": "Optional[Dict[str, Any]]",
+                "default": null,
+                "required": false,
+                "kind": "positional_or_keyword"
+              }
+            ],
+            "docstring": "執行認證測試（同步接口）\n\nArgs:\n    target_url: 目標 URL（登入端點）\n    options: 測試選項\n        - username: str - 測試用戶名（預設: \"admin\"）\n        - test_types: List[str] - 測試類型列表\n            * \"weak_password\": 弱密碼測試\n            * \"2fa_bypass\": 2FA 繞過測試\n            * \"session_hijack\": 會話劫持測試\n        - timeout: int - 超時秒數（預設: 30）\n        - task_id: str - 任務 ID\n        - scan_id: str - 掃描 ID\n\nReturns:\n    dict: 測試結果\n        {\n            \"success\": bool,\n            \"target\": str,\n            \"findings\": list[dict],\n            \"summary\": dict,\n            \"engine_status\": str  # \"go\" 或 \"python_fallback\"\n        }\n\nExample:\n    >>> manager = AuthnManager()\n    >>> result = manager.scan(\"https://example.com/login\", {\n    ...     \"username\": \"test_user\",\n    ...     \"test_types\": [\"weak_password\"]\n    ... })",
+            "return_type": "dict"
+          }
+        },
+        {
+          "id": "AuthnManager_scan_2",
+          "label": "End",
+          "kind": "end",
+          "nexts": [],
+          "metadata": {}
+        },
+        {
+          "id": "AuthnManager_scan_3",
+          "label": "Call: options.get",
+          "kind": "call",
+          "nexts": [
+            "AuthnManager_scan_4"
+          ],
+          "metadata": {
+            "type": "tail",
+            "target_func": "options.get"
+          }
+        },
+        {
+          "id": "AuthnManager_scan_4",
+          "label": "Call: options.get",
+          "kind": "call",
+          "nexts": [
+            "AuthnManager_scan_5"
+          ],
+          "metadata": {
+            "type": "tail",
+            "target_func": "options.get"
+          }
+        },
+        {
+          "id": "AuthnManager_scan_5",
+          "label": "Call: options.get",
+          "kind": "call",
+          "nexts": [
+            "AuthnManager_scan_6"
+          ],
+          "metadata": {
+            "type": "tail",
+            "target_func": "options.get"
+          }
+        },
+        {
+          "id": "AuthnManager_scan_6",
+          "label": "Call: options.get",
+          "kind": "call",
+          "nexts": [
+            "AuthnManager_scan_7"
+          ],
+          "metadata": {
+            "type": "tail",
+            "target_func": "options.get"
+          }
+        },
+        {
+          "id": "AuthnManager_scan_7",
+          "label": "Call: options.get",
+          "kind": "call",
+          "nexts": [
+            "AuthnManager_scan_8"
+          ],
+          "metadata": {
+            "type": "tail",
+            "target_func": "options.get"
+          }
+        },
+        {
+          "id": "AuthnManager_scan_8",
+          "label": "Call: logger.info",
+          "kind": "call",
+          "nexts": [
+            "AuthnManager_scan_9"
+          ],
+          "metadata": {
+            "type": "tail",
+            "target_func": "logger.info"
+          }
+        },
+        {
+          "id": "AuthnManager_scan_9",
+          "label": "if self._go_binary_path",
+          "kind": "cond",
+          "nexts": [
+            "AuthnManager_scan_10",
+            "AuthnManager_scan_13"
+          ],
+          "metadata": {}
+        },
+        {
+          "id": "AuthnManager_scan_10",
+          "label": "Call: self._run_go_engine",
+          "kind": "call",
+          "nexts": [
+            "AuthnManager_scan_11"
+          ],
+          "metadata": {
+            "type": "tail",
+            "target_func": "self._run_go_engine"
+          }
+        },
+        {
+          "id": "AuthnManager_scan_11",
+          "label": "Call: logger.warning",
+          "kind": "call",
+          "nexts": [
+            "AuthnManager_scan_12"
+          ],
+          "metadata": {
+            "type": "tail",
+            "target_func": "logger.warning"
+          }
+        },
+        {
+          "id": "AuthnManager_scan_12",
+          "label": "Call: self._python_fallback",
+          "kind": "call",
+          "nexts": [
+            "AuthnManager_scan_14"
+          ],
+          "metadata": {
+            "type": "tail",
+            "target_func": "self._python_fallback"
+          }
+        },
+        {
+          "id": "AuthnManager_scan_13",
+          "label": "Call: self._python_fallback",
+          "kind": "call",
+          "nexts": [
+            "AuthnManager_scan_14"
+          ],
+          "metadata": {
+            "type": "tail",
+            "target_func": "self._python_fallback"
+          }
+        },
+        {
+          "id": "AuthnManager_scan_14",
+          "label": "",
+          "kind": "op",
+          "nexts": [
+            "AuthnManager_scan_15"
+          ],
+          "metadata": {}
+        },
+        {
+          "id": "AuthnManager_scan_15",
+          "label": "Call: self._generate_summary",
+          "kind": "call",
+          "nexts": [
+            "AuthnManager_scan_16"
+          ],
+          "metadata": {
+            "type": "tail",
+            "target_func": "self._generate_summary"
+          }
+        },
+        {
+          "id": "AuthnManager_scan_16",
+          "label": "return {'success': True, 'target': target_url, 'findings': [f.model_dump() for f in findings], 'summary': summary, 'engine_status': engine_status, 'task_id': task_id, 'scan_id': scan_id}",
+          "kind": "op",
+          "nexts": [
+            "AuthnManager_scan_2",
+            "AuthnManager_scan_17"
+          ],
+          "metadata": {}
+        },
+        {
+          "id": "AuthnManager_scan_17",
+          "label": "Call: logger.error",
+          "kind": "call",
+          "nexts": [
+            "AuthnManager_scan_18"
+          ],
+          "metadata": {
+            "type": "tail",
+            "target_func": "logger.error"
+          }
+        },
+        {
+          "id": "AuthnManager_scan_18",
+          "label": "return {'success': False, 'error': str(e), 'target': target_url}",
+          "kind": "op",
+          "nexts": [
+            "AuthnManager_scan_2"
+          ],
+          "metadata": {}
+        }
+      ],
+      "start_node_id": "AuthnManager_scan_1",
+      "end_node_id": "AuthnManager_scan_2"
+    },
+    {
+      "name": "AuthnManager._run_go_engine",
+      "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\function_authn_go\\authn_manager.py",
+      "type": "method",
+      "nodes": [
+        {
+          "id": "AuthnManager__run_go_engine_1",
+          "label": "AuthnManager._run_go_engine",
+          "kind": "start",
+          "nexts": [
+            "AuthnManager__run_go_engine_3"
+          ],
+          "metadata": {
+            "type": "head",
+            "name": "AuthnManager._run_go_engine",
+            "parameters": [
+              {
+                "name": "target_url",
+                "type": "str",
+                "default": null,
+                "required": true,
+                "kind": "positional_or_keyword"
+              },
+              {
+                "name": "username",
+                "type": "str",
+                "default": null,
+                "required": true,
+                "kind": "positional_or_keyword"
+              },
+              {
+                "name": "test_types",
+                "type": "List[str]",
+                "default": null,
+                "required": true,
+                "kind": "positional_or_keyword"
+              },
+              {
+                "name": "timeout",
+                "type": "int",
+                "default": null,
+                "required": true,
+                "kind": "positional_or_keyword"
+              },
+              {
+                "name": "task_id",
+                "type": "str",
+                "default": null,
+                "required": true,
+                "kind": "positional_or_keyword"
+              },
+              {
+                "name": "scan_id",
+                "type": "str",
+                "default": null,
+                "required": true,
+                "kind": "positional_or_keyword"
+              }
+            ],
+            "docstring": "運行 Go 引擎",
+            "return_type": "List[FindingPayload]"
+          }
+        },
+        {
+          "id": "AuthnManager__run_go_engine_2",
+          "label": "End",
+          "kind": "end",
+          "nexts": [],
+          "metadata": {}
+        },
+        {
+          "id": "AuthnManager__run_go_engine_3",
+          "label": "Call: subprocess.run",
+          "kind": "call",
+          "nexts": [
+            "AuthnManager__run_go_engine_4"
+          ],
+          "metadata": {
+            "type": "tail",
+            "target_func": "subprocess.run"
+          }
+        },
+        {
+          "id": "AuthnManager__run_go_engine_4",
+          "label": "if result.returncode != 0",
+          "kind": "cond",
+          "nexts": [
+            "AuthnManager__run_go_engine_5",
+            "AuthnManager__run_go_engine_6"
+          ],
+          "metadata": {}
+        },
+        {
+          "id": "AuthnManager__run_go_engine_5",
+          "label": "Call: RuntimeError",
+          "kind": "call",
+          "nexts": [
+            "AuthnManager__run_go_engine_6"
+          ],
+          "metadata": {
+            "type": "tail",
+            "target_func": "RuntimeError"
+          }
+        },
+        {
+          "id": "AuthnManager__run_go_engine_6",
+          "label": "",
+          "kind": "op",
+          "nexts": [
+            "AuthnManager__run_go_engine_7"
+          ],
+          "metadata": {}
+        },
+        {
+          "id": "AuthnManager__run_go_engine_7",
+          "label": "Call: json.loads",
+          "kind": "call",
+          "nexts": [
+            "AuthnManager__run_go_engine_8"
+          ],
+          "metadata": {
+            "type": "tail",
+            "target_func": "json.loads"
+          }
+        },
+        {
+          "id": "AuthnManager__run_go_engine_8",
+          "label": "for go_finding in go_findings",
+          "kind": "cond",
+          "nexts": [
+            "AuthnManager__run_go_engine_9",
+            "AuthnManager__run_go_engine_11"
+          ],
+          "metadata": {}
+        },
+        {
+          "id": "AuthnManager__run_go_engine_9",
+          "label": "Call: self._convert_go_finding_to_payload",
+          "kind": "call",
+          "nexts": [
+            "AuthnManager__run_go_engine_10"
+          ],
+          "metadata": {
+            "type": "tail",
+            "target_func": "self._convert_go_finding_to_payload"
+          }
+        },
+        {
+          "id": "AuthnManager__run_go_engine_10",
+          "label": "Call: findings.append",
+          "kind": "call",
+          "nexts": [
+            "AuthnManager__run_go_engine_8"
+          ],
+          "metadata": {
+            "type": "tail",
+            "target_func": "findings.append"
+          }
+        },
+        {
+          "id": "AuthnManager__run_go_engine_11",
+          "label": "",
+          "kind": "op",
+          "nexts": [
+            "AuthnManager__run_go_engine_12"
+          ],
+          "metadata": {}
+        },
+        {
+          "id": "AuthnManager__run_go_engine_12",
+          "label": "return findings",
+          "kind": "op",
+          "nexts": [
+            "AuthnManager__run_go_engine_2"
+          ],
+          "metadata": {}
+        }
+      ],
+      "start_node_id": "AuthnManager__run_go_engine_1",
+      "end_node_id": "AuthnManager__run_go_engine_2"
+    },
+    {
+      "name": "AuthnManager._python_fallback",
+      "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\function_authn_go\\authn_manager.py",
+      "type": "method",
+      "nodes": [
+        {
+          "id": "AuthnManager__python_fallback_1",
+          "label": "AuthnManager._python_fallback",
+          "kind": "start",
+          "nexts": [
+            "AuthnManager__python_fallback_3"
+          ],
+          "metadata": {
+            "type": "head",
+            "name": "AuthnManager._python_fallback",
+            "parameters": [
+              {
+                "name": "target_url",
+                "type": "str",
+                "default": null,
+                "required": true,
+                "kind": "positional_or_keyword"
+              },
+              {
+                "name": "username",
+                "type": "str",
+                "default": null,
+                "required": true,
+                "kind": "positional_or_keyword"
+              },
+              {
+                "name": "test_types",
+                "type": "List[str]",
+                "default": null,
+                "required": true,
+                "kind": "positional_or_keyword"
+              },
+              {
+                "name": "task_id",
+                "type": "str",
+                "default": null,
+                "required": true,
+                "kind": "positional_or_keyword"
+              },
+              {
+                "name": "scan_id",
+                "type": "str",
+                "default": null,
+                "required": true,
+                "kind": "positional_or_keyword"
+              }
+            ],
+            "docstring": "Python 回退實現（基礎檢測）",
+            "return_type": "List[FindingPayload]"
+          }
+        },
+        {
+          "id": "AuthnManager__python_fallback_2",
+          "label": "End",
+          "kind": "end",
+          "nexts": [],
+          "metadata": {}
+        },
+        {
+          "id": "AuthnManager__python_fallback_3",
+          "label": "if 'weak_password' in test_types",
+          "kind": "cond",
+          "nexts": [
+            "AuthnManager__python_fallback_4",
+            "AuthnManager__python_fallback_6"
+          ],
+          "metadata": {}
+        },
+        {
+          "id": "AuthnManager__python_fallback_4",
+          "label": "Call: self._create_finding",
+          "kind": "call",
+          "nexts": [
+            "AuthnManager__python_fallback_5"
+          ],
+          "metadata": {
+            "type": "tail",
+            "target_func": "self._create_finding"
+          }
+        },
+        {
+          "id": "AuthnManager__python_fallback_5",
+          "label": "Call: findings.append",
+          "kind": "call",
+          "nexts": [
+            "AuthnManager__python_fallback_6"
+          ],
+          "metadata": {
+            "type": "tail",
+            "target_func": "findings.append"
+          }
+        },
+        {
+          "id": "AuthnManager__python_fallback_6",
+          "label": "",
+          "kind": "op",
+          "nexts": [
+            "AuthnManager__python_fallback_7"
+          ],
+          "metadata": {}
+        },
+        {
+          "id": "AuthnManager__python_fallback_7",
+          "label": "if '2fa_bypass' in test_types",
+          "kind": "cond",
+          "nexts": [
+            "AuthnManager__python_fallback_8",
+            "AuthnManager__python_fallback_10"
+          ],
+          "metadata": {}
+        },
+        {
+          "id": "AuthnManager__python_fallback_8",
+          "label": "Call: self._create_finding",
+          "kind": "call",
+          "nexts": [
+            "AuthnManager__python_fallback_9"
+          ],
+          "metadata": {
+            "type": "tail",
+            "target_func": "self._create_finding"
+          }
+        },
+        {
+          "id": "AuthnManager__python_fallback_9",
+          "label": "Call: findings.append",
+          "kind": "call",
+          "nexts": [
+            "AuthnManager__python_fallback_10"
+          ],
+          "metadata": {
+            "type": "tail",
+            "target_func": "findings.append"
+          }
+        },
+        {
+          "id": "AuthnManager__python_fallback_10",
+          "label": "",
+          "kind": "op",
+          "nexts": [
+            "AuthnManager__python_fallback_11"
+          ],
+          "metadata": {}
+        },
+        {
+          "id": "AuthnManager__python_fallback_11",
+          "label": "if 'session_hijack' in test_types",
+          "kind": "cond",
+          "nexts": [
+            "AuthnManager__python_fallback_12",
+            "AuthnManager__python_fallback_14"
+          ],
+          "metadata": {}
+        },
+        {
+          "id": "AuthnManager__python_fallback_12",
+          "label": "Call: self._create_finding",
+          "kind": "call",
+          "nexts": [
+            "AuthnManager__python_fallback_13"
+          ],
+          "metadata": {
+            "type": "tail",
+            "target_func": "self._create_finding"
+          }
+        },
+        {
+          "id": "AuthnManager__python_fallback_13",
+          "label": "Call: findings.append",
+          "kind": "call",
+          "nexts": [
+            "AuthnManager__python_fallback_14"
+          ],
+          "metadata": {
+            "type": "tail",
+            "target_func": "findings.append"
+          }
+        },
+        {
+          "id": "AuthnManager__python_fallback_14",
+          "label": "",
+          "kind": "op",
+          "nexts": [
+            "AuthnManager__python_fallback_15"
+          ],
+          "metadata": {}
+        },
+        {
+          "id": "AuthnManager__python_fallback_15",
+          "label": "Call: logger.info",
+          "kind": "call",
+          "nexts": [
+            "AuthnManager__python_fallback_16"
+          ],
+          "metadata": {
+            "type": "tail",
+            "target_func": "logger.info"
+          }
+        },
+        {
+          "id": "AuthnManager__python_fallback_16",
+          "label": "return findings",
+          "kind": "op",
+          "nexts": [
+            "AuthnManager__python_fallback_2"
+          ],
+          "metadata": {}
+        }
+      ],
+      "start_node_id": "AuthnManager__python_fallback_1",
+      "end_node_id": "AuthnManager__python_fallback_2"
+    },
+    {
+      "name": "AuthnManager._create_finding",
+      "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\function_authn_go\\authn_manager.py",
+      "type": "method",
+      "nodes": [
+        {
+          "id": "AuthnManager__create_finding_1",
+          "label": "AuthnManager._create_finding",
+          "kind": "start",
+          "nexts": [
+            "AuthnManager__create_finding_3"
+          ],
+          "metadata": {
+            "type": "head",
+            "name": "AuthnManager._create_finding",
+            "parameters": [
+              {
+                "name": "name",
+                "type": "VulnerabilityType",
+                "default": null,
+                "required": true,
+                "kind": "positional_or_keyword"
+              },
+              {
+                "name": "severity",
+                "type": "Severity",
+                "default": null,
+                "required": true,
+                "kind": "positional_or_keyword"
+              },
+              {
+                "name": "confidence",
+                "type": "Confidence",
+                "default": null,
+                "required": true,
+                "kind": "positional_or_keyword"
+              },
+              {
+                "name": "description",
+                "type": "str",
+                "default": null,
+                "required": true,
+                "kind": "positional_or_keyword"
+              },
+              {
+                "name": "recommendation",
+                "type": "str",
+                "default": null,
+                "required": true,
+                "kind": "positional_or_keyword"
+              },
+              {
+                "name": "evidence",
+                "type": "str",
+                "default": null,
+                "required": true,
+                "kind": "positional_or_keyword"
+              },
+              {
+                "name": "task_id",
+                "type": "str",
+                "default": null,
+                "required": true,
+                "kind": "positional_or_keyword"
+              },
+              {
+                "name": "scan_id",
+                "type": "str",
+                "default": null,
+                "required": true,
+                "kind": "positional_or_keyword"
+              },
+              {
+                "name": "target_url",
+                "type": "str",
+                "default": null,
+                "required": true,
+                "kind": "positional_or_keyword"
+              }
+            ],
+            "docstring": "創建標準化的 Finding",
+            "return_type": "FindingPayload"
+          }
+        },
+        {
+          "id": "AuthnManager__create_finding_2",
+          "label": "End",
+          "kind": "end",
+          "nexts": [],
+          "metadata": {}
+        },
+        {
+          "id": "AuthnManager__create_finding_3",
+          "label": "Call: Vulnerability",
+          "kind": "call",
+          "nexts": [
+            "AuthnManager__create_finding_4"
+          ],
+          "metadata": {
+            "type": "tail",
+            "target_func": "Vulnerability"
+          }
+        },
+        {
+          "id": "AuthnManager__create_finding_4",
+          "label": "Call: FindingEvidence",
+          "kind": "call",
+          "nexts": [
+            "AuthnManager__create_finding_5"
+          ],
+          "metadata": {
+            "type": "tail",
+            "target_func": "FindingEvidence"
+          }
+        },
+        {
+          "id": "AuthnManager__create_finding_5",
+          "label": "Call: FindingImpact",
+          "kind": "call",
+          "nexts": [
+            "AuthnManager__create_finding_6"
+          ],
+          "metadata": {
+            "type": "tail",
+            "target_func": "FindingImpact"
+          }
+        },
+        {
+          "id": "AuthnManager__create_finding_6",
+          "label": "Call: FindingRecommendation",
+          "kind": "call",
+          "nexts": [
+            "AuthnManager__create_finding_7"
+          ],
+          "metadata": {
+            "type": "tail",
+            "target_func": "FindingRecommendation"
+          }
+        },
+        {
+          "id": "AuthnManager__create_finding_7",
+          "label": "Call: FindingTarget",
+          "kind": "call",
+          "nexts": [
+            "AuthnManager__create_finding_8"
+          ],
+          "metadata": {
+            "type": "tail",
+            "target_func": "FindingTarget"
+          }
+        },
+        {
+          "id": "AuthnManager__create_finding_8",
+          "label": "return FindingPayload(finding_id=new_id('finding'), task_id=task_id, scan_id=scan_id, status='potential', vulnerability=vulnerability, target=target, strategy='authentication_testing', evidence=finding_evidence, impact=impact, recommendation=finding_recommendation)",
+          "kind": "op",
+          "nexts": [
+            "AuthnManager__create_finding_2"
+          ],
+          "metadata": {}
+        }
+      ],
+      "start_node_id": "AuthnManager__create_finding_1",
+      "end_node_id": "AuthnManager__create_finding_2"
+    },
+    {
+      "name": "AuthnManager._convert_go_finding_to_payload",
+      "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\function_authn_go\\authn_manager.py",
+      "type": "method",
+      "nodes": [
+        {
+          "id": "AuthnManager__convert_go_finding_to_payload_1",
+          "label": "AuthnManager._convert_go_finding_to_payload",
+          "kind": "start",
+          "nexts": [
+            "AuthnManager__convert_go_finding_to_payload_3"
+          ],
+          "metadata": {
+            "type": "head",
+            "name": "AuthnManager._convert_go_finding_to_payload",
+            "parameters": [
+              {
+                "name": "go_finding",
+                "type": "dict",
+                "default": null,
+                "required": true,
+                "kind": "positional_or_keyword"
+              },
+              {
+                "name": "task_id",
+                "type": "str",
+                "default": null,
+                "required": true,
+                "kind": "positional_or_keyword"
+              },
+              {
+                "name": "scan_id",
+                "type": "str",
+                "default": null,
+                "required": true,
+                "kind": "positional_or_keyword"
+              },
+              {
+                "name": "target_url",
+                "type": "str",
+                "default": null,
+                "required": true,
+                "kind": "positional_or_keyword"
+              }
+            ],
+            "docstring": "將 Go 引擎的結果轉換為標準 FindingPayload",
+            "return_type": "FindingPayload"
+          }
+        },
+        {
+          "id": "AuthnManager__convert_go_finding_to_payload_2",
+          "label": "End",
+          "kind": "end",
+          "nexts": [],
+          "metadata": {}
+        },
+        {
+          "id": "AuthnManager__convert_go_finding_to_payload_3",
+          "label": "Call: severity_map.get",
+          "kind": "call",
+          "nexts": [
+            "AuthnManager__convert_go_finding_to_payload_4"
+          ],
+          "metadata": {
+            "type": "tail",
+            "target_func": "severity_map.get"
+          }
+        },
+        {
+          "id": "AuthnManager__convert_go_finding_to_payload_4",
+          "label": "return self._create_finding(name=VulnerabilityType.WEAK_AUTH, severity=severity, confidence=Confidence.CERTAIN, description=go_finding.get('Description', '認證問題'), recommendation=go_finding.get('Recommendation', '修復認證漏洞'), evidence=go_finding.get('Evidence', ''), task_id=task_id, scan_id=scan_id, target_url=target_url)",
+          "kind": "op",
+          "nexts": [
+            "AuthnManager__convert_go_finding_to_payload_2"
+          ],
+          "metadata": {}
+        }
+      ],
+      "start_node_id": "AuthnManager__convert_go_finding_to_payload_1",
+      "end_node_id": "AuthnManager__convert_go_finding_to_payload_2"
+    },
+    {
+      "name": "AuthnManager._generate_summary",
+      "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\function_authn_go\\authn_manager.py",
+      "type": "method",
+      "nodes": [
+        {
+          "id": "AuthnManager__generate_summary_1",
+          "label": "AuthnManager._generate_summary",
+          "kind": "start",
+          "nexts": [
+            "AuthnManager__generate_summary_3"
+          ],
+          "metadata": {
+            "type": "head",
+            "name": "AuthnManager._generate_summary",
+            "parameters": [
+              {
+                "name": "findings",
+                "type": "List[FindingPayload]",
+                "default": null,
+                "required": true,
+                "kind": "positional_or_keyword"
+              }
+            ],
+            "docstring": "生成測試摘要",
+            "return_type": "dict"
+          }
+        },
+        {
+          "id": "AuthnManager__generate_summary_2",
+          "label": "End",
+          "kind": "end",
+          "nexts": [],
+          "metadata": {}
+        },
+        {
+          "id": "AuthnManager__generate_summary_3",
+          "label": "if not findings",
+          "kind": "cond",
+          "nexts": [
+            "AuthnManager__generate_summary_4",
+            "AuthnManager__generate_summary_5"
+          ],
+          "metadata": {}
+        },
+        {
+          "id": "AuthnManager__generate_summary_4",
+          "label": "return {'total_findings': 0, 'message': '未發現明顯的認證問題'}",
+          "kind": "op",
+          "nexts": [
+            "AuthnManager__generate_summary_2",
+            "AuthnManager__generate_summary_5"
+          ],
+          "metadata": {}
+        },
+        {
+          "id": "AuthnManager__generate_summary_5",
+          "label": "",
+          "kind": "op",
+          "nexts": [
+            "AuthnManager__generate_summary_6"
+          ],
+          "metadata": {}
+        },
+        {
+          "id": "AuthnManager__generate_summary_6",
+          "label": "for finding in findings",
+          "kind": "cond",
+          "nexts": [
+            "AuthnManager__generate_summary_7",
+            "AuthnManager__generate_summary_8"
+          ],
+          "metadata": {}
+        },
+        {
+          "id": "AuthnManager__generate_summary_7",
+          "label": "Call: severity_counts.get",
+          "kind": "call",
+          "nexts": [
+            "AuthnManager__generate_summary_6"
+          ],
+          "metadata": {
+            "type": "tail",
+            "target_func": "severity_counts.get"
+          }
+        },
+        {
+          "id": "AuthnManager__generate_summary_8",
+          "label": "",
+          "kind": "op",
+          "nexts": [
+            "AuthnManager__generate_summary_9"
+          ],
+          "metadata": {}
+        },
+        {
+          "id": "AuthnManager__generate_summary_9",
+          "label": "return {'total_findings': len(findings), 'severity_breakdown': severity_counts, 'critical_high': severity_counts.get('CRITICAL', 0) + severity_counts.get('HIGH', 0), 'recommendations': ['實施多因素認證 (MFA/2FA)', '使用強密碼策略', '定期審計認證日誌', '實施帳戶鎖定機制']}",
+          "kind": "op",
+          "nexts": [
+            "AuthnManager__generate_summary_2"
+          ],
+          "metadata": {}
+        }
+      ],
+      "start_node_id": "AuthnManager__generate_summary_1",
+      "end_node_id": "AuthnManager__generate_summary_2"
+    },
+    {
+      "name": "scan_target",
+      "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\function_authn_go\\authn_manager.py",
+      "type": "function",
+      "nodes": [
+        {
+          "id": "scan_target_1",
+          "label": "scan_target",
+          "kind": "start",
+          "nexts": [
+            "scan_target_3"
+          ],
+          "metadata": {
+            "type": "head",
+            "name": "scan_target",
+            "parameters": [
+              {
+                "name": "target_url",
+                "type": "str",
+                "default": null,
+                "required": true,
+                "kind": "positional_or_keyword"
+              },
+              {
+                "name": "options",
+                "type": "Optional[Dict[str, Any]]",
+                "default": null,
+                "required": false,
+                "kind": "positional_or_keyword"
+              }
+            ],
+            "docstring": "快捷函數：執行認證測試\n\nArgs:\n    target_url: 目標 URL\n    options: 測試選項\n\nReturns:\n    dict: 測試結果\n\nExample:\n    >>> from services.features.function_authn_go.authn_manager import scan_target\n    >>> result = scan_target(\"https://example.com/login\")",
+            "return_type": "dict"
+          }
+        },
+        {
+          "id": "scan_target_2",
+          "label": "End",
+          "kind": "end",
+          "nexts": [],
+          "metadata": {}
+        },
+        {
+          "id": "scan_target_3",
+          "label": "Call: AuthnManager",
+          "kind": "call",
+          "nexts": [
+            "scan_target_4"
+          ],
+          "metadata": {
+            "type": "tail",
+            "target_func": "AuthnManager",
+            "connected_to": "AuthnManager"
+          }
+        },
+        {
+          "id": "scan_target_4",
+          "label": "return manager.scan(target_url, options)",
+          "kind": "op",
+          "nexts": [
+            "scan_target_2"
+          ],
+          "metadata": {}
+        }
+      ],
+      "start_node_id": "scan_target_1",
+      "end_node_id": "scan_target_2"
+    },
+    {
+      "name": "_find_go_binary",
+      "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\function_authn_go\\authn_wrapper.py",
+      "type": "function",
+      "nodes": [
+        {
+          "id": "n__find_go_binary_1",
+          "label": "_find_go_binary",
+          "kind": "start",
+          "nexts": [
+            "n__find_go_binary_3"
+          ],
+          "metadata": {
+            "type": "head",
+            "name": "_find_go_binary",
+            "parameters": [],
+            "docstring": "尋找編譯好的 Go 二進制文件",
+            "return_type": "Optional[Path]"
+          }
+        },
+        {
+          "id": "n__find_go_binary_2",
+          "label": "End",
+          "kind": "end",
+          "nexts": [],
+          "metadata": {}
+        },
+        {
+          "id": "n__find_go_binary_3",
+          "label": "Call: Path",
+          "kind": "call",
+          "nexts": [
+            "n__find_go_binary_4"
+          ],
+          "metadata": {
+            "type": "tail",
+            "target_func": "Path"
+          }
+        },
+        {
+          "id": "n__find_go_binary_4",
+          "label": "for path in possible_paths",
+          "kind": "cond",
+          "nexts": [
+            "n__find_go_binary_5",
+            "n__find_go_binary_9"
+          ],
+          "metadata": {}
+        },
+        {
+          "id": "n__find_go_binary_5",
+          "label": "if path.exists() and path.is_file()",
+          "kind": "cond",
+          "nexts": [
+            "n__find_go_binary_6",
+            "n__find_go_binary_8"
+          ],
+          "metadata": {}
+        },
+        {
+          "id": "n__find_go_binary_6",
+          "label": "Call: logger.info",
+          "kind": "call",
+          "nexts": [
+            "n__find_go_binary_7"
+          ],
+          "metadata": {
+            "type": "tail",
+            "target_func": "logger.info"
+          }
+        },
+        {
+          "id": "n__find_go_binary_7",
+          "label": "return path",
+          "kind": "op",
+          "nexts": [
+            "n__find_go_binary_2",
+            "n__find_go_binary_8"
+          ],
+          "metadata": {}
+        },
+        {
+          "id": "n__find_go_binary_8",
+          "label": "",
+          "kind": "op",
+          "nexts": [
+            "n__find_go_binary_4"
+          ],
+          "metadata": {}
+        },
+        {
+          "id": "n__find_go_binary_9",
+          "label": "",
+          "kind": "op",
+          "nexts": [
+            "n__find_go_binary_10"
+          ],
+          "metadata": {}
+        },
+        {
+          "id": "n__find_go_binary_10",
+          "label": "Call: logger.error",
+          "kind": "call",
+          "nexts": [
+            "n__find_go_binary_11"
+          ],
+          "metadata": {
+            "type": "tail",
+            "target_func": "logger.error"
+          }
+        },
+        {
+          "id": "n__find_go_binary_11",
+          "label": "return None",
+          "kind": "op",
+          "nexts": [
+            "n__find_go_binary_2"
+          ],
+          "metadata": {}
+        }
+      ],
+      "start_node_id": "n__find_go_binary_1",
+      "end_node_id": "n__find_go_binary_2"
+    },
+    {
+      "name": "_check_go_availability",
+      "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\function_authn_go\\authn_wrapper.py",
+      "type": "function",
+      "nodes": [
+        {
+          "id": "n__check_go_availability_1",
+          "label": "_check_go_availability",
+          "kind": "start",
+          "nexts": [
+            "n__check_go_availability_3"
+          ],
+          "metadata": {
+            "type": "head",
+            "name": "_check_go_availability",
+            "parameters": [],
+            "docstring": "檢查 Go 引擎是否可用",
+            "return_type": "bool"
+          }
+        },
+        {
+          "id": "n__check_go_availability_2",
+          "label": "End",
+          "kind": "end",
+          "nexts": [],
+          "metadata": {}
+        },
+        {
+          "id": "n__check_go_availability_3",
+          "label": "Call: _find_go_binary",
+          "kind": "call",
+          "nexts": [
+            "n__check_go_availability_4"
+          ],
+          "metadata": {
+            "type": "tail",
+            "target_func": "_find_go_binary",
+            "connected_to": "_find_go_binary"
+          }
+        },
+        {
+          "id": "n__check_go_availability_4",
+          "label": "if go_binary and go_binary.exists()",
+          "kind": "cond",
+          "nexts": [
+            "n__check_go_availability_5",
+            "n__check_go_availability_7"
+          ],
+          "metadata": {}
+        },
+        {
+          "id": "n__check_go_availability_5",
+          "label": "Call: logger.info",
+          "kind": "call",
+          "nexts": [
+            "n__check_go_availability_6"
+          ],
+          "metadata": {
+            "type": "tail",
+            "target_func": "logger.info"
+          }
+        },
+        {
+          "id": "n__check_go_availability_6",
+          "label": "return True",
+          "kind": "op",
+          "nexts": [
+            "n__check_go_availability_2",
+            "n__check_go_availability_9"
+          ],
+          "metadata": {}
+        },
+        {
+          "id": "n__check_go_availability_7",
+          "label": "Call: logger.error",
+          "kind": "call",
+          "nexts": [
+            "n__check_go_availability_8"
+          ],
+          "metadata": {
+            "type": "tail",
+            "target_func": "logger.error"
+          }
+        },
+        {
+          "id": "n__check_go_availability_8",
+          "label": "return False",
+          "kind": "op",
+          "nexts": [
+            "n__check_go_availability_2",
+            "n__check_go_availability_9"
+          ],
+          "metadata": {}
+        },
+        {
+          "id": "n__check_go_availability_9",
+          "label": "",
+          "kind": "op",
+          "nexts": [
+            "n__check_go_availability_2"
+          ],
+          "metadata": {}
+        }
+      ],
+      "start_node_id": "n__check_go_availability_1",
+      "end_node_id": "n__check_go_availability_2"
+    },
+    {
+      "name": "scan_authentication",
+      "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\function_authn_go\\authn_wrapper.py",
+      "type": "function",
+      "nodes": [
+        {
+          "id": "scan_authentication_1",
+          "label": "scan_authentication",
+          "kind": "start",
+          "nexts": [
+            "scan_authentication_3"
+          ],
+          "metadata": {
+            "type": "head",
+            "name": "scan_authentication",
+            "parameters": [
+              {
+                "name": "target",
+                "type": "str",
+                "default": null,
+                "required": true,
+                "kind": "positional_or_keyword"
+              },
+              {
+                "name": "options",
+                "type": "Optional[Dict[str, Any]]",
+                "default": null,
+                "required": false,
+                "kind": "positional_or_keyword"
+              }
+            ],
+            "docstring": "執行認證漏洞掃描（同步接口）\n\n這是功能模組的主要接口，提供同步調用方式。\nAI Commander 將使用 asyncio.to_thread() 來包裝此方法。\n\nArgs:\n    target: 登入端點 URL\n    options: 掃描選項（可選）\n        - username: str - 測試用戶名（默認: \"admin\"）\n        - test_types: List[str] - 測試類型列表\n            * \"weak_password\" - 弱密碼測試\n            * \"default_credentials\" - 默認憑證測試\n            * \"password_spray\" - 密碼噴灑測試\n            * \"credential_stuffing\" - 憑證填充測試\n        - timeout: int - 超時時間（秒，默認: 30）\n        - wordlist: str - 密碼字典文件路徑\n        \nReturns:\n    Dict: 掃描結果\n        {\n            \"vulnerabilities\": [\n                {\n                    \"type\": \"weak_password\",\n                    \"severity\": \"high\",\n                    \"confidence\": \"high\",\n                    \"username\": \"admin\",\n                    \"password\": \"admin123\",\n                    \"description\": \"發現弱密碼\",\n                    \"impact\": \"攻擊者可以使用此憑證登入系統\",\n                    \"remediation\": \"使用強密碼策略\"\n                }\n            ],\n            \"scan_info\": {\n                \"target\": \"https://example.com/login\",\n                \"tests_performed\": [\"weak_password\", \"default_credentials\"],\n                \"duration\": 12.5,\n                \"timestamp\": \"2025-12-17T10:00:00\",\n                \"go_engine_version\": \"1.0.0\"\n            },\n            \"total_vulnerabilities\": 1\n        }\n        \nRaises:\n    RuntimeError: 當 Go 引擎未編譯時\n    subprocess.CalledProcessError: 當 Go 程序執行失敗時\n    \nExample:\n    >>> result = scan_authentication(\n    ...     \"https://example.com/login\",\n    ...     {\"username\": \"admin\", \"test_types\": [\"weak_password\"]}\n    ... )\n    >>> print(f\"Found {result['total_vulnerabilities']} vulnerabilities\")",
+            "return_type": "Dict[str, Any]"
+          }
+        },
+        {
+          "id": "scan_authentication_2",
+          "label": "End",
+          "kind": "end",
+          "nexts": [],
+          "metadata": {}
+        },
+        {
+          "id": "scan_authentication_3",
+          "label": "Call: datetime.now",
+          "kind": "call",
+          "nexts": [
+            "scan_authentication_4"
+          ],
+          "metadata": {
+            "type": "tail",
+            "target_func": "datetime.now"
+          }
+        },
+        {
+          "id": "scan_authentication_4",
+          "label": "if options is None",
+          "kind": "cond",
+          "nexts": [
+            "scan_authentication_5"
+          ],
+          "metadata": {}
+        },
+        {
+          "id": "scan_authentication_5",
+          "label": "",
+          "kind": "op",
+          "nexts": [
+            "scan_authentication_6"
+          ],
+          "metadata": {}
+        },
+        {
+          "id": "scan_authentication_6",
+          "label": "Call: _find_go_binary",
+          "kind": "call",
+          "nexts": [
+            "scan_authentication_7"
+          ],
+          "metadata": {
+            "type": "tail",
+            "target_func": "_find_go_binary",
+            "connected_to": "_find_go_binary"
+          }
+        },
+        {
+          "id": "scan_authentication_7",
+          "label": "if not go_binary",
+          "kind": "cond",
+          "nexts": [
+            "scan_authentication_8",
+            "scan_authentication_9"
+          ],
+          "metadata": {}
+        },
+        {
+          "id": "scan_authentication_8",
+          "label": "Call: RuntimeError",
+          "kind": "call",
+          "nexts": [
+            "scan_authentication_9"
+          ],
+          "metadata": {
+            "type": "tail",
+            "target_func": "RuntimeError"
+          }
+        },
+        {
+          "id": "scan_authentication_9",
+          "label": "",
+          "kind": "op",
+          "nexts": [
+            "scan_authentication_10"
+          ],
+          "metadata": {}
+        },
+        {
+          "id": "scan_authentication_10",
+          "label": "Call: options.get",
+          "kind": "call",
+          "nexts": [
+            "scan_authentication_11"
+          ],
+          "metadata": {
+            "type": "tail",
+            "target_func": "options.get"
+          }
+        },
+        {
+          "id": "scan_authentication_11",
+          "label": "Call: options.get",
+          "kind": "call",
+          "nexts": [
+            "scan_authentication_12"
+          ],
+          "metadata": {
+            "type": "tail",
+            "target_func": "options.get"
+          }
+        },
+        {
+          "id": "scan_authentication_12",
+          "label": "Call: options.get",
+          "kind": "call",
+          "nexts": [
+            "scan_authentication_13"
+          ],
+          "metadata": {
+            "type": "tail",
+            "target_func": "options.get"
+          }
+        },
+        {
+          "id": "scan_authentication_13",
+          "label": "Call: options.get",
+          "kind": "call",
+          "nexts": [
+            "scan_authentication_14"
+          ],
+          "metadata": {
+            "type": "tail",
+            "target_func": "options.get"
+          }
+        },
+        {
+          "id": "scan_authentication_14",
+          "label": "Call: str",
+          "kind": "call",
+          "nexts": [
+            "scan_authentication_15"
+          ],
+          "metadata": {
+            "type": "tail",
+            "target_func": "str"
+          }
+        },
+        {
+          "id": "scan_authentication_15",
+          "label": "Call: str",
+          "kind": "call",
+          "nexts": [
+            "scan_authentication_16"
+          ],
+          "metadata": {
+            "type": "tail",
+            "target_func": "str"
+          }
+        },
+        {
+          "id": "scan_authentication_16",
+          "label": "for test_type in test_types",
+          "kind": "cond",
+          "nexts": [
+            "scan_authentication_17",
+            "scan_authentication_18"
+          ],
+          "metadata": {}
+        },
+        {
+          "id": "scan_authentication_17",
+          "label": "Call: cmd.extend",
+          "kind": "call",
+          "nexts": [
+            "scan_authentication_16"
+          ],
+          "metadata": {
+            "type": "tail",
+            "target_func": "cmd.extend"
+          }
+        },
+        {
+          "id": "scan_authentication_18",
+          "label": "",
+          "kind": "op",
+          "nexts": [
+            "scan_authentication_19"
+          ],
+          "metadata": {}
+        },
+        {
+          "id": "scan_authentication_19",
+          "label": "if wordlist",
+          "kind": "cond",
+          "nexts": [
+            "scan_authentication_20",
+            "scan_authentication_21"
+          ],
+          "metadata": {}
+        },
+        {
+          "id": "scan_authentication_20",
+          "label": "Call: cmd.extend",
+          "kind": "call",
+          "nexts": [
+            "scan_authentication_21"
+          ],
+          "metadata": {
+            "type": "tail",
+            "target_func": "cmd.extend"
+          }
+        },
+        {
+          "id": "scan_authentication_21",
+          "label": "",
+          "kind": "op",
+          "nexts": [
+            "scan_authentication_22"
+          ],
+          "metadata": {}
+        },
+        {
+          "id": "scan_authentication_22",
+          "label": "Call: logger.info",
+          "kind": "call",
+          "nexts": [
+            "scan_authentication_23"
+          ],
+          "metadata": {
+            "type": "tail",
+            "target_func": "logger.info"
+          }
+        },
+        {
+          "id": "scan_authentication_23",
+          "label": "Call: logger.debug",
+          "kind": "call",
+          "nexts": [
+            "scan_authentication_24"
+          ],
+          "metadata": {
+            "type": "tail",
+            "target_func": "logger.debug"
+          }
+        },
+        {
+          "id": "scan_authentication_24",
+          "label": "Call: subprocess.run",
+          "kind": "call",
+          "nexts": [
+            "scan_authentication_25"
+          ],
+          "metadata": {
+            "type": "tail",
+            "target_func": "subprocess.run"
+          }
+        },
+        {
+          "id": "scan_authentication_25",
+          "label": "Call: json.loads",
+          "kind": "call",
+          "nexts": [
+            "scan_authentication_26"
+          ],
+          "metadata": {
+            "type": "tail",
+            "target_func": "json.loads"
+          }
+        },
+        {
+          "id": "scan_authentication_26",
+          "label": "Call: logger.error",
+          "kind": "call",
+          "nexts": [
+            "scan_authentication_27"
+          ],
+          "metadata": {
+            "type": "tail",
+            "target_func": "logger.error"
+          }
+        },
+        {
+          "id": "scan_authentication_27",
+          "label": "Call: logger.error",
+          "kind": "call",
+          "nexts": [
+            "scan_authentication_28"
+          ],
+          "metadata": {
+            "type": "tail",
+            "target_func": "logger.error"
+          }
+        },
+        {
+          "id": "scan_authentication_28",
+          "label": "Call: ValueError",
+          "kind": "call",
+          "nexts": [
+            "scan_authentication_29"
+          ],
+          "metadata": {
+            "type": "tail",
+            "target_func": "ValueError"
+          }
+        },
+        {
+          "id": "scan_authentication_29",
+          "label": "Call: unknown_call.total_seconds",
+          "kind": "call",
+          "nexts": [
+            "scan_authentication_30"
+          ],
+          "metadata": {
+            "type": "tail",
+            "target_func": "unknown_call.total_seconds"
+          }
+        },
+        {
+          "id": "scan_authentication_30",
+          "label": "if 'scan_info' not in scan_result",
+          "kind": "cond",
+          "nexts": [
+            "scan_authentication_31"
+          ],
+          "metadata": {}
+        },
+        {
+          "id": "scan_authentication_31",
+          "label": "",
+          "kind": "op",
+          "nexts": [
+            "scan_authentication_32"
+          ],
+          "metadata": {}
+        },
+        {
+          "id": "scan_authentication_32",
+          "label": "Call: start_time.isoformat",
+          "kind": "call",
+          "nexts": [
+            "scan_authentication_33"
+          ],
+          "metadata": {
+            "type": "tail",
+            "target_func": "start_time.isoformat"
+          }
+        },
+        {
+          "id": "scan_authentication_33",
+          "label": "Call: scan_result.get",
+          "kind": "call",
+          "nexts": [
+            "scan_authentication_34"
+          ],
+          "metadata": {
+            "type": "tail",
+            "target_func": "scan_result.get"
+          }
+        },
+        {
+          "id": "scan_authentication_34",
+          "label": "Call: len",
+          "kind": "call",
+          "nexts": [
+            "scan_authentication_35"
+          ],
+          "metadata": {
+            "type": "tail",
+            "target_func": "len"
+          }
+        },
+        {
+          "id": "scan_authentication_35",
+          "label": "Call: logger.info",
+          "kind": "call",
+          "nexts": [
+            "scan_authentication_36"
+          ],
+          "metadata": {
+            "type": "tail",
+            "target_func": "logger.info"
+          }
+        },
+        {
+          "id": "scan_authentication_36",
+          "label": "return scan_result",
+          "kind": "op",
+          "nexts": [
+            "scan_authentication_2",
+            "scan_authentication_37"
+          ],
+          "metadata": {}
+        },
+        {
+          "id": "scan_authentication_37",
+          "label": "Call: logger.error",
+          "kind": "call",
+          "nexts": [
+            "scan_authentication_38"
+          ],
+          "metadata": {
+            "type": "tail",
+            "target_func": "logger.error"
+          }
+        },
+        {
+          "id": "scan_authentication_38",
+          "label": "Call: RuntimeError",
+          "kind": "call",
+          "nexts": [
+            "scan_authentication_39"
+          ],
+          "metadata": {
+            "type": "tail",
+            "target_func": "RuntimeError"
+          }
+        },
+        {
+          "id": "scan_authentication_39",
+          "label": "Call: logger.error",
+          "kind": "call",
+          "nexts": [
+            "scan_authentication_40"
+          ],
+          "metadata": {
+            "type": "tail",
+            "target_func": "logger.error"
+          }
+        },
+        {
+          "id": "scan_authentication_40",
+          "label": "Call: logger.error",
+          "kind": "call",
+          "nexts": [
+            "scan_authentication_41"
+          ],
+          "metadata": {
+            "type": "tail",
+            "target_func": "logger.error"
+          }
+        },
+        {
+          "id": "scan_authentication_41",
+          "label": "Call: logger.error",
+          "kind": "call",
+          "nexts": [
+            "scan_authentication_42"
+          ],
+          "metadata": {
+            "type": "tail",
+            "target_func": "logger.error"
+          }
+        },
+        {
+          "id": "scan_authentication_42",
+          "label": "Call: str",
+          "kind": "call",
+          "nexts": [
+            "scan_authentication_43"
+          ],
+          "metadata": {
+            "type": "tail",
+            "target_func": "str"
+          }
+        },
+        {
+          "id": "scan_authentication_43",
+          "label": "Call: RuntimeError",
+          "kind": "call",
+          "nexts": [
+            "scan_authentication_44"
+          ],
+          "metadata": {
+            "type": "tail",
+            "target_func": "RuntimeError"
+          }
+        },
+        {
+          "id": "scan_authentication_44",
+          "label": "Call: logger.error",
+          "kind": "call",
+          "nexts": [
+            "scan_authentication_2"
+          ],
+          "metadata": {
+            "type": "tail",
+            "target_func": "logger.error"
+          }
+        }
+      ],
+      "start_node_id": "scan_authentication_1",
+      "end_node_id": "scan_authentication_2"
+    },
+    {
+      "name": "get_engine_info",
+      "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\function_authn_go\\authn_wrapper.py",
+      "type": "function",
+      "nodes": [
+        {
+          "id": "get_engine_info_1",
+          "label": "get_engine_info",
+          "kind": "start",
+          "nexts": [
+            "get_engine_info_3"
+          ],
+          "metadata": {
+            "type": "head",
+            "name": "get_engine_info",
+            "parameters": [],
+            "docstring": "獲取 Go 引擎信息\n\nReturns:\n    Dict: 引擎信息\n        {\n            \"available\": bool,\n            \"binary_path\": str or None,\n            \"version\": str or None\n        }",
+            "return_type": "Dict[str, Any]"
+          }
+        },
+        {
+          "id": "get_engine_info_2",
+          "label": "End",
+          "kind": "end",
+          "nexts": [],
+          "metadata": {}
+        },
+        {
+          "id": "get_engine_info_3",
+          "label": "Call: _find_go_binary",
+          "kind": "call",
+          "nexts": [
+            "get_engine_info_4"
+          ],
+          "metadata": {
+            "type": "tail",
+            "target_func": "_find_go_binary",
+            "connected_to": "_find_go_binary"
+          }
+        },
+        {
+          "id": "get_engine_info_4",
+          "label": "Call: str",
+          "kind": "call",
+          "nexts": [
+            "get_engine_info_5"
+          ],
+          "metadata": {
+            "type": "tail",
+            "target_func": "str"
+          }
+        },
+        {
+          "id": "get_engine_info_5",
+          "label": "if go_binary",
+          "kind": "cond",
+          "nexts": [
+            "get_engine_info_6",
+            "get_engine_info_11"
+          ],
+          "metadata": {}
+        },
+        {
+          "id": "get_engine_info_6",
+          "label": "Call: subprocess.run",
+          "kind": "call",
+          "nexts": [
+            "get_engine_info_7"
+          ],
+          "metadata": {
+            "type": "tail",
+            "target_func": "subprocess.run"
+          }
+        },
+        {
+          "id": "get_engine_info_7",
+          "label": "if result.returncode == 0",
+          "kind": "cond",
+          "nexts": [
+            "get_engine_info_8",
+            "get_engine_info_9"
+          ],
+          "metadata": {}
+        },
+        {
+          "id": "get_engine_info_8",
+          "label": "Call: result.stdout.strip",
+          "kind": "call",
+          "nexts": [
+            "get_engine_info_9"
+          ],
+          "metadata": {
+            "type": "tail",
+            "target_func": "result.stdout.strip"
+          }
+        },
+        {
+          "id": "get_engine_info_9",
+          "label": "",
+          "kind": "op",
+          "nexts": [
+            "get_engine_info_10"
+          ],
+          "metadata": {}
+        },
+        {
+          "id": "get_engine_info_10",
+          "label": "Call: logger.warning",
+          "kind": "call",
+          "nexts": [
+            "get_engine_info_11"
+          ],
+          "metadata": {
+            "type": "tail",
+            "target_func": "logger.warning"
+          }
+        },
+        {
+          "id": "get_engine_info_11",
+          "label": "",
+          "kind": "op",
+          "nexts": [
+            "get_engine_info_12"
+          ],
+          "metadata": {}
+        },
+        {
+          "id": "get_engine_info_12",
+          "label": "return info",
+          "kind": "op",
+          "nexts": [
+            "get_engine_info_2"
+          ],
+          "metadata": {}
+        }
+      ],
+      "start_node_id": "get_engine_info_1",
+      "end_node_id": "get_engine_info_2"
+    }
+  ],
+  "connections": [
+    {
+      "source_graph": "scan_target",
+      "source_node_id": "scan_target_3",
+      "target_graph": "AuthnManager",
+      "target_node_id": "AuthnManager_1",
+      "type": "call"
+    },
+    {
+      "source_graph": "_check_go_availability",
+      "source_node_id": "n__check_go_availability_3",
+      "target_graph": "_find_go_binary",
+      "target_node_id": "n__find_go_binary_1",
+      "type": "call"
+    },
+    {
+      "source_graph": "scan_authentication",
+      "source_node_id": "scan_authentication_6",
+      "target_graph": "_find_go_binary",
+      "target_node_id": "n__find_go_binary_1",
+      "type": "call"
+    },
+    {
+      "source_graph": "get_engine_info",
+      "source_node_id": "get_engine_info_3",
+      "target_graph": "_find_go_binary",
+      "target_node_id": "n__find_go_binary_1",
+      "type": "call"
+    }
+  ],
+  "flow_chains": [
+    [
+      "_check_go_availability",
+      "_find_go_binary"
+    ],
+    [
+      "scan_authentication",
+      "_find_go_binary"
+    ],
+    [
+      "scan_target",
+      "AuthnManager"
+    ],
+    [
+      "get_engine_info",
+      "_find_go_binary"
+    ]
+  ],
+  "function_details": {
+    "function_map": {
+      "AuthnManager": {
+        "file_name": "authn_manager.py",
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\function_authn_go\\authn_manager.py",
+        "script_name": "authn_manager",
+        "line_number": 0,
+        "is_async": false,
+        "is_entry_point": true,
+        "is_class": true,
+        "parameters": [],
+        "docstring": "認證測試管理器 - Python 同步接口",
+        "return_type": "any",
+        "called_functions": []
+      },
+      "AuthnManager.__init__": {
+        "file_name": "authn_manager.py",
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\function_authn_go\\authn_manager.py",
+        "script_name": "authn_manager",
+        "line_number": 0,
+        "is_async": false,
+        "is_entry_point": false,
+        "is_class": false,
+        "parameters": [],
+        "docstring": "初始化認證測試管理器",
+        "return_type": "any",
+        "called_functions": [
+          "self._find_go_binary",
+          "self._check_go_engine_availability",
+          "logger.info"
+        ]
+      },
+      "AuthnManager._find_go_binary": {
+        "file_name": "authn_manager.py",
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\function_authn_go\\authn_manager.py",
+        "script_name": "authn_manager",
+        "line_number": 0,
+        "is_async": false,
+        "is_entry_point": false,
+        "is_class": false,
+        "parameters": [],
+        "docstring": "尋找編譯好的 Go 二進制文件",
+        "return_type": "Optional[Path]",
+        "called_functions": [
+          "Path",
+          "logger.info",
+          "logger.warning"
+        ]
+      },
+      "AuthnManager._check_go_engine_availability": {
+        "file_name": "authn_manager.py",
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\function_authn_go\\authn_manager.py",
+        "script_name": "authn_manager",
+        "line_number": 0,
+        "is_async": false,
+        "is_entry_point": false,
+        "is_class": false,
+        "parameters": [],
+        "docstring": "檢查 Go 引擎是否可用",
+        "return_type": "bool",
+        "called_functions": [
+          "logger.info",
+          "logger.warning"
+        ]
+      },
+      "AuthnManager.scan": {
+        "file_name": "authn_manager.py",
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\function_authn_go\\authn_manager.py",
+        "script_name": "authn_manager",
+        "line_number": 0,
+        "is_async": false,
+        "is_entry_point": false,
+        "is_class": false,
+        "parameters": [
+          {
+            "name": "target_url",
+            "type": "str",
+            "default": null,
+            "required": true,
+            "kind": "positional_or_keyword"
+          },
+          {
+            "name": "options",
+            "type": "Optional[Dict[str, Any]]",
+            "default": null,
+            "required": false,
+            "kind": "positional_or_keyword"
+          }
+        ],
+        "docstring": "執行認證測試（同步接口）\n\nArgs:\n    target_url: 目標 URL（登入端點）\n    options: 測試選項\n        - username: str - 測試用戶名（預設: \"admin\"）\n        - test_types: List[str] - 測試類型列表\n            * \"weak_password\": 弱密碼測試\n            * \"2fa_bypass\": 2FA 繞過測試\n            * \"session_hijack\": 會話劫持測試\n        - timeout: int - 超時秒數（預設: 30）\n        - task_id: str - 任務 ID\n        - scan_id: str - 掃描 ID\n\nReturns:\n    dict: 測試結果\n        {\n            \"success\": bool,\n            \"target\": str,\n            \"findings\": list[dict],\n            \"summary\": dict,\n            \"engine_status\": str  # \"go\" 或 \"python_fallback\"\n        }\n\nExample:\n    >>> manager = AuthnManager()\n    >>> result = manager.scan(\"https://example.com/login\", {\n    ...     \"username\": \"test_user\",\n    ...     \"test_types\": [\"weak_password\"]\n    ... })",
+        "return_type": "dict",
+        "called_functions": [
+          "options.get",
+          "options.get",
+          "options.get",
+          "options.get",
+          "options.get",
+          "logger.info",
+          "self._run_go_engine",
+          "logger.warning",
+          "self._python_fallback",
+          "self._python_fallback",
+          "self._generate_summary",
+          "logger.error"
+        ]
+      },
+      "AuthnManager._run_go_engine": {
+        "file_name": "authn_manager.py",
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\function_authn_go\\authn_manager.py",
+        "script_name": "authn_manager",
+        "line_number": 0,
+        "is_async": false,
+        "is_entry_point": false,
+        "is_class": false,
+        "parameters": [
+          {
+            "name": "target_url",
+            "type": "str",
+            "default": null,
+            "required": true,
+            "kind": "positional_or_keyword"
+          },
+          {
+            "name": "username",
+            "type": "str",
+            "default": null,
+            "required": true,
+            "kind": "positional_or_keyword"
+          },
+          {
+            "name": "test_types",
+            "type": "List[str]",
+            "default": null,
+            "required": true,
+            "kind": "positional_or_keyword"
+          },
+          {
+            "name": "timeout",
+            "type": "int",
+            "default": null,
+            "required": true,
+            "kind": "positional_or_keyword"
+          },
+          {
+            "name": "task_id",
+            "type": "str",
+            "default": null,
+            "required": true,
+            "kind": "positional_or_keyword"
+          },
+          {
+            "name": "scan_id",
+            "type": "str",
+            "default": null,
+            "required": true,
+            "kind": "positional_or_keyword"
+          }
+        ],
+        "docstring": "運行 Go 引擎",
+        "return_type": "List[FindingPayload]",
+        "called_functions": [
+          "subprocess.run",
+          "RuntimeError",
+          "json.loads",
+          "self._convert_go_finding_to_payload",
+          "findings.append"
+        ]
+      },
+      "AuthnManager._python_fallback": {
+        "file_name": "authn_manager.py",
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\function_authn_go\\authn_manager.py",
+        "script_name": "authn_manager",
+        "line_number": 0,
+        "is_async": false,
+        "is_entry_point": false,
+        "is_class": false,
+        "parameters": [
+          {
+            "name": "target_url",
+            "type": "str",
+            "default": null,
+            "required": true,
+            "kind": "positional_or_keyword"
+          },
+          {
+            "name": "username",
+            "type": "str",
+            "default": null,
+            "required": true,
+            "kind": "positional_or_keyword"
+          },
+          {
+            "name": "test_types",
+            "type": "List[str]",
+            "default": null,
+            "required": true,
+            "kind": "positional_or_keyword"
+          },
+          {
+            "name": "task_id",
+            "type": "str",
+            "default": null,
+            "required": true,
+            "kind": "positional_or_keyword"
+          },
+          {
+            "name": "scan_id",
+            "type": "str",
+            "default": null,
+            "required": true,
+            "kind": "positional_or_keyword"
+          }
+        ],
+        "docstring": "Python 回退實現（基礎檢測）",
+        "return_type": "List[FindingPayload]",
+        "called_functions": [
+          "self._create_finding",
+          "findings.append",
+          "self._create_finding",
+          "findings.append",
+          "self._create_finding",
+          "findings.append",
+          "logger.info"
+        ]
+      },
+      "AuthnManager._create_finding": {
+        "file_name": "authn_manager.py",
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\function_authn_go\\authn_manager.py",
+        "script_name": "authn_manager",
+        "line_number": 0,
+        "is_async": false,
+        "is_entry_point": false,
+        "is_class": false,
+        "parameters": [
+          {
+            "name": "name",
+            "type": "VulnerabilityType",
+            "default": null,
+            "required": true,
+            "kind": "positional_or_keyword"
+          },
+          {
+            "name": "severity",
+            "type": "Severity",
+            "default": null,
+            "required": true,
+            "kind": "positional_or_keyword"
+          },
+          {
+            "name": "confidence",
+            "type": "Confidence",
+            "default": null,
+            "required": true,
+            "kind": "positional_or_keyword"
+          },
+          {
+            "name": "description",
+            "type": "str",
+            "default": null,
+            "required": true,
+            "kind": "positional_or_keyword"
+          },
+          {
+            "name": "recommendation",
+            "type": "str",
+            "default": null,
+            "required": true,
+            "kind": "positional_or_keyword"
+          },
+          {
+            "name": "evidence",
+            "type": "str",
+            "default": null,
+            "required": true,
+            "kind": "positional_or_keyword"
+          },
+          {
+            "name": "task_id",
+            "type": "str",
+            "default": null,
+            "required": true,
+            "kind": "positional_or_keyword"
+          },
+          {
+            "name": "scan_id",
+            "type": "str",
+            "default": null,
+            "required": true,
+            "kind": "positional_or_keyword"
+          },
+          {
+            "name": "target_url",
+            "type": "str",
+            "default": null,
+            "required": true,
+            "kind": "positional_or_keyword"
+          }
+        ],
+        "docstring": "創建標準化的 Finding",
+        "return_type": "FindingPayload",
+        "called_functions": [
+          "Vulnerability",
+          "FindingEvidence",
+          "FindingImpact",
+          "FindingRecommendation",
+          "FindingTarget"
+        ]
+      },
+      "AuthnManager._convert_go_finding_to_payload": {
+        "file_name": "authn_manager.py",
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\function_authn_go\\authn_manager.py",
+        "script_name": "authn_manager",
+        "line_number": 0,
+        "is_async": false,
+        "is_entry_point": false,
+        "is_class": false,
+        "parameters": [
+          {
+            "name": "go_finding",
+            "type": "dict",
+            "default": null,
+            "required": true,
+            "kind": "positional_or_keyword"
+          },
+          {
+            "name": "task_id",
+            "type": "str",
+            "default": null,
+            "required": true,
+            "kind": "positional_or_keyword"
+          },
+          {
+            "name": "scan_id",
+            "type": "str",
+            "default": null,
+            "required": true,
+            "kind": "positional_or_keyword"
+          },
+          {
+            "name": "target_url",
+            "type": "str",
+            "default": null,
+            "required": true,
+            "kind": "positional_or_keyword"
+          }
+        ],
+        "docstring": "將 Go 引擎的結果轉換為標準 FindingPayload",
+        "return_type": "FindingPayload",
+        "called_functions": [
+          "severity_map.get"
+        ]
+      },
+      "AuthnManager._generate_summary": {
+        "file_name": "authn_manager.py",
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\function_authn_go\\authn_manager.py",
+        "script_name": "authn_manager",
+        "line_number": 0,
+        "is_async": false,
+        "is_entry_point": false,
+        "is_class": false,
+        "parameters": [
+          {
+            "name": "findings",
+            "type": "List[FindingPayload]",
+            "default": null,
+            "required": true,
+            "kind": "positional_or_keyword"
+          }
+        ],
+        "docstring": "生成測試摘要",
+        "return_type": "dict",
+        "called_functions": [
+          "severity_counts.get"
+        ]
+      },
+      "scan_target": {
+        "file_name": "authn_manager.py",
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\function_authn_go\\authn_manager.py",
+        "script_name": "authn_manager",
+        "line_number": 0,
+        "is_async": false,
+        "is_entry_point": true,
+        "is_class": false,
+        "parameters": [
+          {
+            "name": "target_url",
+            "type": "str",
+            "default": null,
+            "required": true,
+            "kind": "positional_or_keyword"
+          },
+          {
+            "name": "options",
+            "type": "Optional[Dict[str, Any]]",
+            "default": null,
+            "required": false,
+            "kind": "positional_or_keyword"
+          }
+        ],
+        "docstring": "快捷函數：執行認證測試\n\nArgs:\n    target_url: 目標 URL\n    options: 測試選項\n\nReturns:\n    dict: 測試結果\n\nExample:\n    >>> from services.features.function_authn_go.authn_manager import scan_target\n    >>> result = scan_target(\"https://example.com/login\")",
+        "return_type": "dict",
+        "called_functions": [
+          "AuthnManager"
+        ]
+      },
+      "_find_go_binary": {
+        "file_name": "authn_wrapper.py",
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\function_authn_go\\authn_wrapper.py",
+        "script_name": "authn_wrapper",
+        "line_number": 0,
+        "is_async": false,
+        "is_entry_point": true,
+        "is_class": false,
+        "parameters": [],
+        "docstring": "尋找編譯好的 Go 二進制文件",
+        "return_type": "Optional[Path]",
+        "called_functions": [
+          "Path",
+          "logger.info",
+          "logger.error"
+        ]
+      },
+      "_check_go_availability": {
+        "file_name": "authn_wrapper.py",
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\function_authn_go\\authn_wrapper.py",
+        "script_name": "authn_wrapper",
+        "line_number": 0,
+        "is_async": false,
+        "is_entry_point": true,
+        "is_class": false,
+        "parameters": [],
+        "docstring": "檢查 Go 引擎是否可用",
+        "return_type": "bool",
+        "called_functions": [
+          "_find_go_binary",
+          "logger.info",
+          "logger.error"
+        ]
+      },
+      "scan_authentication": {
+        "file_name": "authn_wrapper.py",
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\function_authn_go\\authn_wrapper.py",
+        "script_name": "authn_wrapper",
+        "line_number": 0,
+        "is_async": false,
+        "is_entry_point": true,
+        "is_class": false,
+        "parameters": [
+          {
+            "name": "target",
+            "type": "str",
+            "default": null,
+            "required": true,
+            "kind": "positional_or_keyword"
+          },
+          {
+            "name": "options",
+            "type": "Optional[Dict[str, Any]]",
+            "default": null,
+            "required": false,
+            "kind": "positional_or_keyword"
+          }
+        ],
+        "docstring": "執行認證漏洞掃描（同步接口）\n\n這是功能模組的主要接口，提供同步調用方式。\nAI Commander 將使用 asyncio.to_thread() 來包裝此方法。\n\nArgs:\n    target: 登入端點 URL\n    options: 掃描選項（可選）\n        - username: str - 測試用戶名（默認: \"admin\"）\n        - test_types: List[str] - 測試類型列表\n            * \"weak_password\" - 弱密碼測試\n            * \"default_credentials\" - 默認憑證測試\n            * \"password_spray\" - 密碼噴灑測試\n            * \"credential_stuffing\" - 憑證填充測試\n        - timeout: int - 超時時間（秒，默認: 30）\n        - wordlist: str - 密碼字典文件路徑\n        \nReturns:\n    Dict: 掃描結果\n        {\n            \"vulnerabilities\": [\n                {\n                    \"type\": \"weak_password\",\n                    \"severity\": \"high\",\n                    \"confidence\": \"high\",\n                    \"username\": \"admin\",\n                    \"password\": \"admin123\",\n                    \"description\": \"發現弱密碼\",\n                    \"impact\": \"攻擊者可以使用此憑證登入系統\",\n                    \"remediation\": \"使用強密碼策略\"\n                }\n            ],\n            \"scan_info\": {\n                \"target\": \"https://example.com/login\",\n                \"tests_performed\": [\"weak_password\", \"default_credentials\"],\n                \"duration\": 12.5,\n                \"timestamp\": \"2025-12-17T10:00:00\",\n                \"go_engine_version\": \"1.0.0\"\n            },\n            \"total_vulnerabilities\": 1\n        }\n        \nRaises:\n    RuntimeError: 當 Go 引擎未編譯時\n    subprocess.CalledProcessError: 當 Go 程序執行失敗時\n    \nExample:\n    >>> result = scan_authentication(\n    ...     \"https://example.com/login\",\n    ...     {\"username\": \"admin\", \"test_types\": [\"weak_password\"]}\n    ... )\n    >>> print(f\"Found {result['total_vulnerabilities']} vulnerabilities\")",
+        "return_type": "Dict[str, Any]",
+        "called_functions": [
+          "datetime.now",
+          "_find_go_binary",
+          "RuntimeError",
+          "options.get",
+          "options.get",
+          "options.get",
+          "options.get",
+          "str",
+          "str",
+          "cmd.extend",
+          "cmd.extend",
+          "logger.info",
+          "logger.debug",
+          "subprocess.run",
+          "json.loads",
+          "logger.error",
+          "logger.error",
+          "ValueError",
+          "unknown_call.total_seconds",
+          "start_time.isoformat",
+          "scan_result.get",
+          "len",
+          "logger.info",
+          "logger.error",
+          "RuntimeError",
+          "logger.error",
+          "logger.error",
+          "logger.error",
+          "str",
+          "RuntimeError",
+          "logger.error"
+        ]
+      },
+      "get_engine_info": {
+        "file_name": "authn_wrapper.py",
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\function_authn_go\\authn_wrapper.py",
+        "script_name": "authn_wrapper",
+        "line_number": 0,
+        "is_async": false,
+        "is_entry_point": true,
+        "is_class": false,
+        "parameters": [],
+        "docstring": "獲取 Go 引擎信息\n\nReturns:\n    Dict: 引擎信息\n        {\n            \"available\": bool,\n            \"binary_path\": str or None,\n            \"version\": str or None\n        }",
+        "return_type": "Dict[str, Any]",
+        "called_functions": [
+          "_find_go_binary",
+          "str",
+          "subprocess.run",
+          "result.stdout.strip",
+          "logger.warning"
+        ]
+      }
+    },
+    "script_functions": {
+      "authn_manager": {
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\function_authn_go\\authn_manager.py",
+        "functions": {
+          "AuthnManager": {
+            "line_number": 0,
+            "is_async": false,
+            "is_entry_point": true,
+            "parameters": [],
+            "called_functions": []
+          },
+          "AuthnManager.__init__": {
+            "line_number": 0,
+            "is_async": false,
+            "is_entry_point": false,
+            "parameters": [],
+            "called_functions": [
+              "self._find_go_binary",
+              "self._check_go_engine_availability",
+              "logger.info"
+            ]
+          },
+          "AuthnManager._find_go_binary": {
+            "line_number": 0,
+            "is_async": false,
+            "is_entry_point": false,
+            "parameters": [],
+            "called_functions": [
+              "Path",
+              "logger.info",
+              "logger.warning"
+            ]
+          },
+          "AuthnManager._check_go_engine_availability": {
+            "line_number": 0,
+            "is_async": false,
+            "is_entry_point": false,
+            "parameters": [],
+            "called_functions": [
+              "logger.info",
+              "logger.warning"
+            ]
+          },
+          "AuthnManager.scan": {
+            "line_number": 0,
+            "is_async": false,
+            "is_entry_point": false,
+            "parameters": [
+              {
+                "name": "target_url",
+                "type": "str",
+                "default": null,
+                "required": true,
+                "kind": "positional_or_keyword"
+              },
+              {
+                "name": "options",
+                "type": "Optional[Dict[str, Any]]",
+                "default": null,
+                "required": false,
+                "kind": "positional_or_keyword"
+              }
+            ],
+            "called_functions": [
+              "options.get",
+              "options.get",
+              "options.get",
+              "options.get",
+              "options.get",
+              "logger.info",
+              "self._run_go_engine",
+              "logger.warning",
+              "self._python_fallback",
+              "self._python_fallback",
+              "self._generate_summary",
+              "logger.error"
+            ]
+          },
+          "AuthnManager._run_go_engine": {
+            "line_number": 0,
+            "is_async": false,
+            "is_entry_point": false,
+            "parameters": [
+              {
+                "name": "target_url",
+                "type": "str",
+                "default": null,
+                "required": true,
+                "kind": "positional_or_keyword"
+              },
+              {
+                "name": "username",
+                "type": "str",
+                "default": null,
+                "required": true,
+                "kind": "positional_or_keyword"
+              },
+              {
+                "name": "test_types",
+                "type": "List[str]",
+                "default": null,
+                "required": true,
+                "kind": "positional_or_keyword"
+              },
+              {
+                "name": "timeout",
+                "type": "int",
+                "default": null,
+                "required": true,
+                "kind": "positional_or_keyword"
+              },
+              {
+                "name": "task_id",
+                "type": "str",
+                "default": null,
+                "required": true,
+                "kind": "positional_or_keyword"
+              },
+              {
+                "name": "scan_id",
+                "type": "str",
+                "default": null,
+                "required": true,
+                "kind": "positional_or_keyword"
+              }
+            ],
+            "called_functions": [
+              "subprocess.run",
+              "RuntimeError",
+              "json.loads",
+              "self._convert_go_finding_to_payload",
+              "findings.append"
+            ]
+          },
+          "AuthnManager._python_fallback": {
+            "line_number": 0,
+            "is_async": false,
+            "is_entry_point": false,
+            "parameters": [
+              {
+                "name": "target_url",
+                "type": "str",
+                "default": null,
+                "required": true,
+                "kind": "positional_or_keyword"
+              },
+              {
+                "name": "username",
+                "type": "str",
+                "default": null,
+                "required": true,
+                "kind": "positional_or_keyword"
+              },
+              {
+                "name": "test_types",
+                "type": "List[str]",
+                "default": null,
+                "required": true,
+                "kind": "positional_or_keyword"
+              },
+              {
+                "name": "task_id",
+                "type": "str",
+                "default": null,
+                "required": true,
+                "kind": "positional_or_keyword"
+              },
+              {
+                "name": "scan_id",
+                "type": "str",
+                "default": null,
+                "required": true,
+                "kind": "positional_or_keyword"
+              }
+            ],
+            "called_functions": [
+              "self._create_finding",
+              "findings.append",
+              "self._create_finding",
+              "findings.append",
+              "self._create_finding",
+              "findings.append",
+              "logger.info"
+            ]
+          },
+          "AuthnManager._create_finding": {
+            "line_number": 0,
+            "is_async": false,
+            "is_entry_point": false,
+            "parameters": [
+              {
+                "name": "name",
+                "type": "VulnerabilityType",
+                "default": null,
+                "required": true,
+                "kind": "positional_or_keyword"
+              },
+              {
+                "name": "severity",
+                "type": "Severity",
+                "default": null,
+                "required": true,
+                "kind": "positional_or_keyword"
+              },
+              {
+                "name": "confidence",
+                "type": "Confidence",
+                "default": null,
+                "required": true,
+                "kind": "positional_or_keyword"
+              },
+              {
+                "name": "description",
+                "type": "str",
+                "default": null,
+                "required": true,
+                "kind": "positional_or_keyword"
+              },
+              {
+                "name": "recommendation",
+                "type": "str",
+                "default": null,
+                "required": true,
+                "kind": "positional_or_keyword"
+              },
+              {
+                "name": "evidence",
+                "type": "str",
+                "default": null,
+                "required": true,
+                "kind": "positional_or_keyword"
+              },
+              {
+                "name": "task_id",
+                "type": "str",
+                "default": null,
+                "required": true,
+                "kind": "positional_or_keyword"
+              },
+              {
+                "name": "scan_id",
+                "type": "str",
+                "default": null,
+                "required": true,
+                "kind": "positional_or_keyword"
+              },
+              {
+                "name": "target_url",
+                "type": "str",
+                "default": null,
+                "required": true,
+                "kind": "positional_or_keyword"
+              }
+            ],
+            "called_functions": [
+              "Vulnerability",
+              "FindingEvidence",
+              "FindingImpact",
+              "FindingRecommendation",
+              "FindingTarget"
+            ]
+          },
+          "AuthnManager._convert_go_finding_to_payload": {
+            "line_number": 0,
+            "is_async": false,
+            "is_entry_point": false,
+            "parameters": [
+              {
+                "name": "go_finding",
+                "type": "dict",
+                "default": null,
+                "required": true,
+                "kind": "positional_or_keyword"
+              },
+              {
+                "name": "task_id",
+                "type": "str",
+                "default": null,
+                "required": true,
+                "kind": "positional_or_keyword"
+              },
+              {
+                "name": "scan_id",
+                "type": "str",
+                "default": null,
+                "required": true,
+                "kind": "positional_or_keyword"
+              },
+              {
+                "name": "target_url",
+                "type": "str",
+                "default": null,
+                "required": true,
+                "kind": "positional_or_keyword"
+              }
+            ],
+            "called_functions": [
+              "severity_map.get"
+            ]
+          },
+          "AuthnManager._generate_summary": {
+            "line_number": 0,
+            "is_async": false,
+            "is_entry_point": false,
+            "parameters": [
+              {
+                "name": "findings",
+                "type": "List[FindingPayload]",
+                "default": null,
+                "required": true,
+                "kind": "positional_or_keyword"
+              }
+            ],
+            "called_functions": [
+              "severity_counts.get"
+            ]
+          },
+          "scan_target": {
+            "line_number": 0,
+            "is_async": false,
+            "is_entry_point": true,
+            "parameters": [
+              {
+                "name": "target_url",
+                "type": "str",
+                "default": null,
+                "required": true,
+                "kind": "positional_or_keyword"
+              },
+              {
+                "name": "options",
+                "type": "Optional[Dict[str, Any]]",
+                "default": null,
+                "required": false,
+                "kind": "positional_or_keyword"
+              }
+            ],
+            "called_functions": [
+              "AuthnManager"
+            ]
+          }
+        },
+        "entry_points": [],
+        "export_functions": [
+          "AuthnManager",
+          "scan_target"
+        ]
+      },
+      "authn_wrapper": {
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\function_authn_go\\authn_wrapper.py",
+        "functions": {
+          "_find_go_binary": {
+            "line_number": 0,
+            "is_async": false,
+            "is_entry_point": true,
+            "parameters": [],
+            "called_functions": [
+              "Path",
+              "logger.info",
+              "logger.error"
+            ]
+          },
+          "_check_go_availability": {
+            "line_number": 0,
+            "is_async": false,
+            "is_entry_point": true,
+            "parameters": [],
+            "called_functions": [
+              "_find_go_binary",
+              "logger.info",
+              "logger.error"
+            ]
+          },
+          "scan_authentication": {
+            "line_number": 0,
+            "is_async": false,
+            "is_entry_point": true,
+            "parameters": [
+              {
+                "name": "target",
+                "type": "str",
+                "default": null,
+                "required": true,
+                "kind": "positional_or_keyword"
+              },
+              {
+                "name": "options",
+                "type": "Optional[Dict[str, Any]]",
+                "default": null,
+                "required": false,
+                "kind": "positional_or_keyword"
+              }
+            ],
+            "called_functions": [
+              "datetime.now",
+              "_find_go_binary",
+              "RuntimeError",
+              "options.get",
+              "options.get",
+              "options.get",
+              "options.get",
+              "str",
+              "str",
+              "cmd.extend",
+              "cmd.extend",
+              "logger.info",
+              "logger.debug",
+              "subprocess.run",
+              "json.loads",
+              "logger.error",
+              "logger.error",
+              "ValueError",
+              "unknown_call.total_seconds",
+              "start_time.isoformat",
+              "scan_result.get",
+              "len",
+              "logger.info",
+              "logger.error",
+              "RuntimeError",
+              "logger.error",
+              "logger.error",
+              "logger.error",
+              "str",
+              "RuntimeError",
+              "logger.error"
+            ]
+          },
+          "get_engine_info": {
+            "line_number": 0,
+            "is_async": false,
+            "is_entry_point": true,
+            "parameters": [],
+            "called_functions": [
+              "_find_go_binary",
+              "str",
+              "subprocess.run",
+              "result.stdout.strip",
+              "logger.warning"
+            ]
+          }
+        },
+        "entry_points": [],
+        "export_functions": [
+          "_find_go_binary",
+          "_check_go_availability",
+          "scan_authentication",
+          "get_engine_info"
+        ]
+      }
+    }
+  },
+  "summary": {
+    "total_files": 3,
+    "total_graphs": 15,
+    "total_connections": 4,
+    "total_flow_chains": 4
+  }
+}

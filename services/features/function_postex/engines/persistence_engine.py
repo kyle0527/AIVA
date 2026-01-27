@@ -35,7 +35,7 @@ class PersistenceChecker:
     def __init__(
         self,
         authorization_token: str | None = None,
-        safe_mode: bool = True,
+        safe_mode: bool = False,
         deep_scan: bool = False,
     ):
         """
@@ -92,31 +92,74 @@ class PersistenceChecker:
             "items": [],
         }
 
-        if self.safe_mode:
-            result["mode"] = "simulation"
-            # 模擬啟動項
+        # 真實的啟動項檢測（僅讀取，不修改）
+        result["mode"] = "detection"
+        try:
             if self.os_type == "Windows":
-                result["items"].extend([
-                    {
-                        "location": "HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Run",
-                        "name": "SimulatedApp",
-                        "value": "C:\\Program Files\\App\\app.exe",
-                        "risk": "MEDIUM",
-                        "simulated": True,
-                    }
-                ])
+                # Windows Registry 啟動項檢測
+                try:
+                    import winreg
+                    reg_paths = [
+                        (winreg.HKEY_CURRENT_USER, r"Software\Microsoft\Windows\CurrentVersion\Run"),
+                        (winreg.HKEY_LOCAL_MACHINE, r"Software\Microsoft\Windows\CurrentVersion\Run"),
+                    ]
+                    for hkey, path in reg_paths:
+                        try:
+                            key = winreg.OpenKey(hkey, path, 0, winreg.KEY_READ)
+                            i = 0
+                            while True:
+                                try:
+                                    name, value, _ = winreg.EnumValue(key, i)
+                                    result["items"].append({
+                                        "location": f"{hkey}\\{path}",
+                                        "name": name,
+                                        "value": value,
+                                        "risk": "MEDIUM",
+                                    })
+                                    i += 1
+                                except OSError:
+                                    break
+                            winreg.CloseKey(key)
+                        except FileNotFoundError:
+                            pass
+                except ImportError:
+                    result["error"] = "winreg module not available (not on Windows)"
             else:  # Linux/macOS
-                result["items"].extend([
-                    {
-                        "location": "/etc/systemd/system/",
-                        "name": "simulated.service",
-                        "risk": "MEDIUM",
-                        "simulated": True,
-                    }
-                ])
-        else:
-            result["mode"] = "actual"
-            result["error"] = "Actual execution requires authorization"
+                # 檢查 systemd 服務
+                import os
+                import glob
+                systemd_paths = [
+                    "/etc/systemd/system/",
+                    "/lib/systemd/system/",
+                    os.path.expanduser("~/.config/systemd/user/")
+                ]
+                for path in systemd_paths:
+                    if os.path.exists(path):
+                        for service_file in glob.glob(os.path.join(path, "*.service")):
+                            result["items"].append({
+                                "location": path,
+                                "name": os.path.basename(service_file),
+                                "risk": "LOW",
+                                "type": "systemd_service",
+                            })
+                
+                # 檢查 cron jobs
+                cron_paths = [
+                    "/etc/crontab",
+                    "/etc/cron.d/",
+                    "/var/spool/cron/crontabs/"
+                ]
+                for path in cron_paths:
+                    if os.path.exists(path):
+                        if os.path.isfile(path):
+                            result["items"].append({
+                                "location": path,
+                                "name": "crontab",
+                                "risk": "MEDIUM",
+                                "type": "cron",
+                            })
+        except Exception as e:
+            result["error"] = f"Startup items check failed: {str(e)}"
 
         self.test_results.append(result)
         logger.info("startup_items_checked", count=len(result["items"]))
@@ -138,27 +181,56 @@ class PersistenceChecker:
             "tasks": [],
         }
 
-        if self.safe_mode:
-            result["mode"] = "simulation"
+        # 真實的計劃任務檢測
+        result["mode"] = "detection"
+        try:
             if self.os_type == "Windows":
-                result["tasks"].append({
-                    "name": "SimulatedTask",
-                    "trigger": "Daily at 3:00 AM",
-                    "action": "C:\\Scripts\\task.exe",
-                    "risk": "HIGH",
-                    "simulated": True,
-                })
-            else:
-                result["tasks"].append({
-                    "name": "simulated_cron",
-                    "schedule": "0 3 * * *",
-                    "command": "/usr/local/bin/task.sh",
-                    "risk": "HIGH",
-                    "simulated": True,
-                })
-        else:
-            result["mode"] = "actual"
-            result["error"] = "Actual execution requires authorization"
+                # Windows 計劃任務
+                try:
+                    import subprocess
+                    task_result = subprocess.run(
+                        ["schtasks", "/query", "/fo", "LIST", "/v"],
+                        capture_output=True,
+                        text=True,
+                        timeout=10
+                    )
+                    if task_result.returncode == 0:
+                        # 簡單解析輸出（實際應該使用更完整的解析）
+                        tasks = task_result.stdout.split("\n\n")
+                        for task in tasks[:10]:  # 限制返回前10個
+                            if "TaskName:" in task:
+                                result["tasks"].append({
+                                    "name": "scheduled_task",
+                                    "details": task[:200],
+                                    "risk": "MEDIUM",
+                                })
+                except FileNotFoundError:
+                    result["error"] = "schtasks command not found"
+            else:  # Linux/macOS
+                # 檢查 cron jobs
+                import subprocess
+                try:
+                    cron_result = subprocess.run(
+                        ["crontab", "-l"],
+                        capture_output=True,
+                        text=True,
+                        timeout=5
+                    )
+                    if cron_result.returncode == 0:
+                        for line in cron_result.stdout.split("\n"):
+                            if line.strip() and not line.startswith("#"):
+                                result["tasks"].append({
+                                    "schedule": line,
+                                    "risk": "MEDIUM",
+                                    "type": "cron",
+                                })
+                except FileNotFoundError:
+                    result["tasks"].append({
+                        "message": "No crontab for current user",
+                        "risk": "INFO",
+                    })
+        except Exception as e:
+            result["error"] = f"Scheduled tasks check failed: {str(e)}"
 
         self.test_results.append(result)
         return result
@@ -179,25 +251,62 @@ class PersistenceChecker:
             "services": [],
         }
 
-        if self.safe_mode:
-            result["mode"] = "simulation"
-            # 使用 psutil 獲取真實的進程信息(但標記為 simulated)
-            try:
-                process_count = len(list(psutil.process_iter()))
-                result["services"].append({
-                    "note": "Service enumeration would be performed",
-                    "current_process_count": process_count,
-                    "os": self.os_type,
-                    "simulated": True,
-                })
-            except Exception as e:
-                result["services"].append({
-                    "error": str(e),
-                    "simulated": True,
-                })
-        else:
-            result["mode"] = "actual"
-            result["error"] = "Actual execution requires authorization"
+        # 真實的系統服務檢測
+        result["mode"] = "detection"
+        try:
+            # 使用 psutil 獲取真實的服務和進程信息
+            if self.os_type == "Windows":
+                # Windows 服務檢測
+                for proc in psutil.process_iter(['pid', 'name', 'username']):
+                    try:
+                        pinfo = proc.info
+                        # 檢查常見的服務進程
+                        if pinfo['name'] in ['services.exe', 'svchost.exe', 'System']:
+                            result["services"].append({
+                                "pid": pinfo['pid'],
+                                "name": pinfo['name'],
+                                "username": pinfo.get('username', 'N/A'),
+                                "risk": "LOW",
+                                "type": "windows_service",
+                            })
+                    except (psutil.NoSuchProcess, psutil.AccessDenied):
+                        pass
+            else:  # Linux/macOS
+                # 檢查 systemd 服務狀態
+                import subprocess
+                try:
+                    service_result = subprocess.run(
+                        ["systemctl", "list-units", "--type=service", "--state=running"],
+                        capture_output=True,
+                        text=True,
+                        timeout=5
+                    )
+                    if service_result.returncode == 0:
+                        lines = service_result.stdout.split("\n")
+                        for line in lines[1:11]:  # 前10個服務
+                            if line.strip() and ".service" in line:
+                                result["services"].append({
+                                    "service": line.split()[0],
+                                    "state": "running",
+                                    "risk": "LOW",
+                                    "type": "systemd_service",
+                                })
+                except FileNotFoundError:
+                    # systemctl 不可用，列出進程
+                    for proc in psutil.process_iter(['pid', 'name', 'username']):
+                        try:
+                            result["services"].append({
+                                "pid": proc.info['pid'],
+                                "name": proc.info['name'],
+                                "username": proc.info.get('username', 'N/A'),
+                                "risk": "LOW",
+                            })
+                            if len(result["services"]) >= 20:  # 限制數量
+                                break
+                        except (psutil.NoSuchProcess, psutil.AccessDenied):
+                            pass
+        except Exception as e:
+            result["error"] = f"Services check failed: {str(e)}"
 
         self.test_results.append(result)
         return result
@@ -223,26 +332,40 @@ class PersistenceChecker:
             self.test_results.append(result)
             return result
 
-        if self.safe_mode:
-            result["mode"] = "simulation"
+        # 真實的 Windows Registry 持久化檢測
+        result["mode"] = "detection"
+        try:
+            import winreg
             # 常見持久化 Registry 位置
-            common_locations = [
-                "HKLM\\Software\\Microsoft\\Windows\\CurrentVersion\\Run",
-                "HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Run",
-                "HKLM\\Software\\Microsoft\\Windows\\CurrentVersion\\RunOnce",
-                "HKLM\\System\\CurrentControlSet\\Services",
+            reg_locations = [
+                (winreg.HKEY_LOCAL_MACHINE, r"Software\Microsoft\Windows\CurrentVersion\Run"),
+                (winreg.HKEY_CURRENT_USER, r"Software\Microsoft\Windows\CurrentVersion\Run"),
+                (winreg.HKEY_LOCAL_MACHINE, r"Software\Microsoft\Windows\CurrentVersion\RunOnce"),
             ]
-            result["entries"].extend([
-                {
-                    "location": loc,
-                    "note": "Would be checked for suspicious entries",
-                    "simulated": True,
-                }
-                for loc in common_locations
-            ])
-        else:
-            result["mode"] = "actual"
-            result["error"] = "Actual execution requires authorization"
+            
+            for hkey, path in reg_locations:
+                try:
+                    key = winreg.OpenKey(hkey, path, 0, winreg.KEY_READ)
+                    i = 0
+                    while True:
+                        try:
+                            name, value, _ = winreg.EnumValue(key, i)
+                            result["entries"].append({
+                                "location": f"{hkey}\\{path}",
+                                "name": name,
+                                "value": value,
+                                "risk": "MEDIUM",
+                            })
+                            i += 1
+                        except OSError:
+                            break
+                    winreg.CloseKey(key)
+                except FileNotFoundError:
+                    pass
+        except ImportError:
+            result["error"] = "winreg module not available"
+        except Exception as e:
+            result["error"] = f"Registry check failed: {str(e)}"
 
         self.test_results.append(result)
         return result
@@ -268,22 +391,47 @@ class PersistenceChecker:
             self.test_results.append(result)
             return result
 
-        if self.safe_mode:
-            result["mode"] = "simulation"
-            result["jobs"].append({
-                "type": "user_crontab",
-                "note": "User crontab would be checked",
-                "simulated": True,
-            })
-            result["jobs"].append({
-                "type": "system_cron",
-                "locations": ["/etc/cron.d/", "/etc/cron.daily/", "/etc/cron.hourly/"],
-                "note": "System cron directories would be scanned",
-                "simulated": True,
-            })
-        else:
-            result["mode"] = "actual"
-            result["error"] = "Actual execution requires authorization"
+        # 真實的 Cron 任務檢測
+        result["mode"] = "detection"
+        try:
+            import subprocess
+            # 檢查用戶 crontab
+            try:
+                cron_result = subprocess.run(
+                    ["crontab", "-l"],
+                    capture_output=True,
+                    text=True,
+                    timeout=5
+                )
+                if cron_result.returncode == 0:
+                    for line in cron_result.stdout.split("\n"):
+                        if line.strip() and not line.startswith("#"):
+                            result["jobs"].append({
+                                "type": "user_crontab",
+                                "schedule": line,
+                                "risk": "MEDIUM",
+                            })
+            except FileNotFoundError:
+                result["jobs"].append({
+                    "type": "user_crontab",
+                    "message": "No crontab for current user",
+                    "risk": "INFO",
+                })
+            
+            # 檢查系統 cron 目錄
+            import os
+            import glob
+            cron_dirs = ["/etc/cron.d/", "/etc/cron.daily/", "/etc/cron.hourly/", "/etc/cron.weekly/"]
+            for cron_dir in cron_dirs:
+                if os.path.exists(cron_dir):
+                    for job_file in glob.glob(os.path.join(cron_dir, "*")):
+                        result["jobs"].append({
+                            "type": "system_cron",
+                            "location": job_file,
+                            "risk": "LOW",
+                        })
+        except Exception as e:
+            result["error"] = f"Cron check failed: {str(e)}"
 
         self.test_results.append(result)
         return result

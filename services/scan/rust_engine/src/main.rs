@@ -19,14 +19,16 @@ mod endpoint_discovery;
 mod js_analyzer;
 mod attack_surface;
 
-// OWASP 漏洞檢測模組
-mod smuggling_detector;  // OWASP A05 - HTTP Request Smuggling
-mod auth_brute;          // OWASP A07 - Credential Spraying
+// OWASP 漏洞檢測模組 - Enhanced Version
+mod smuggling_detector_v2;  // OWASP A05 - HTTP Request Smuggling (Enhanced)
+mod auth_brute_v2;           // OWASP A07 - Credential Spraying (Enhanced)
 
 use endpoint_discovery::{EndpointDiscoverer, DiscoveredEndpoint};
 use js_analyzer::JsAnalyzer;
 use attack_surface::AttackSurfaceAssessor;
 use scanner::{SensitiveInfoScanner, ScanMode};
+use smuggling_detector_v2::SmugglingDetector;
+use auth_brute_v2::{AuthBruteForcer, AuthProtocol, RateLimitStrategy};
 
 /// 掃描模式
 #[derive(Debug, Clone, Copy, ValueEnum)]

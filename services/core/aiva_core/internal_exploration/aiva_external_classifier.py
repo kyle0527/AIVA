@@ -1,22 +1,33 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-AIVA External Module Multi-Language Classifier
-==============================================
+AIVA External Module Multi-Language Classifier (v3.3)
+======================================================
 整合所有語言的外部模組分析結果，生成統一的 classification_data.json
+
+版本歷史:
+---------
+v3.3 (2026-01-21) - 🔧 統一路徑配置
+  - 整合 paths_config.py 作為路徑的單一數據源 (SOT)
+  - 外部分類輸出至 external_classification.json
+  
+v3.2 - 多語言支援完善
 
 功能：
 1. 掃描所有外部模組的 analysis_results.json
-   - module_analysis/function_xss/analysis_results.json (Python)
-   - module_analysis/function_sqli/analysis_results.json (Python)
-   - module_analysis/function_crypto/analysis_results.json (Rust)
-   - module_analysis/function_authn_go/analysis_output/analysis_results.json (Go)
-   - services/scan/typescript_engine/analysis_output/analysis_results.json (TypeScript)
+   - services/features/function_* (Python/Rust)
+   - services/scan/*_engine (TypeScript)
 
 2. 整合所有 flows 到統一格式
 
-3. 生成 features_classification/classification_data.json
+3. 生成 external_classification.json (SOT)
    讓 aiva_external_executor.py 可以執行
+
+數據存放位置:
+-------------
+輸出目錄: services/integration/data/internal_exploration/
+分類文件: external_classification.json
+摘要文件: external_classification_summary.md
 
 架構位置：
 - internal_exploration/aiva_external_classifier.py  (本文件 - 多語言整合)
@@ -29,11 +40,33 @@ AIVA External Module Multi-Language Classifier
 
 import json
 import re
+import sys
 from pathlib import Path
-from typing import Dict, List, Any
+from typing import Dict, List, Any, Optional
 from collections import defaultdict
 from datetime import datetime
 import argparse
+
+# ==========================================
+# 路徑配置導入
+# ==========================================
+
+try:
+    PATHS_CONFIG_DIR = Path(__file__).resolve().parent.parent.parent.parent / "integration" / "data" / "internal_exploration"
+    sys.path.insert(0, str(PATHS_CONFIG_DIR.parent.parent.parent))
+    
+    from services.integration.data.internal_exploration.paths_config import (
+        ExternalPaths,
+        CombinedPaths,
+        DATA_ROOT,
+        PROJECT_ROOT,
+        ensure_all_dirs,
+    )
+    USING_NEW_PATHS = True
+except ImportError:
+    USING_NEW_PATHS = False
+    PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent.parent.parent
+    DATA_ROOT = Path(__file__).resolve().parent / "features_classification"
 
 # ==========================================
 # 模組類型推斷規則
@@ -60,12 +93,109 @@ LANGUAGE_EXTENSIONS = {
     ".js": "JavaScript"
 }
 
+# ==========================================
+# 多語言能力識別原則 (基於原則.md)
+# ==========================================
+# 5大原則: 邊界原則、序列化原則、拓撲學原則、命名慣例、框架約定
+
+CAPABILITY_PRINCIPLES = {
+    "Python": {
+        "boundary": "動態導入邊界 - 透過 importlib 動態載入 services.features 下的模組",
+        "serialization": "基本型別 - CLI 參數解析為 str, int, bool, List, Dict",
+        "topology": "模組入口 - 尋找 is_entry_point=True 的頂層函數",
+        "naming": "操作型命名 - 如 run_reflected_test，動詞明確",
+        "framework": "features 目錄 - 位於 services/features/ 下的模組",
+        
+        # 判斷標準
+        "include_criteria": [
+            "參數無 self 或 self 可透過無參建構子初始化",
+            "參數類型有 Type Hint 且為基本型別 (str, int, bool, List, Dict)",
+            "函數名非 _ 開頭",
+        ],
+        "exclude_criteria": [
+            "參數包含無法解析的物件 (如 Request 物件, Session 實例)",
+            "位於 __init__.py 但無具體邏輯",
+            "裝飾器顯示依賴 Web Context (如 @app.route 的 request 參數)",
+        ],
+    },
+    "Rust": {
+        "boundary": "CLI 參數邊界 - 透過 clap 接收命令行參數 (--url)",
+        "serialization": "字串化輸入 - 所有輸入 (cookies-json, url) 都是可序列化的字串或 JSON",
+        "topology": "Manifest Target - Cargo.toml 定義的 binary target",
+        "naming": "子命令映射 - 如 scan-js, analyze-cookies，使用祈使句動詞",
+        "framework": "rust_core 目錄 - 位於特定子目錄且有 Cargo.toml",
+        
+        # 判斷標準
+        "include_criteria": [
+            "函數參數為基本型別 (String, u32, Vec<u8>)",
+            "結構體有 #[derive(Deserialize)] (表示可從 JSON 構建)",
+        ],
+        "exclude_criteria": [
+            "參數包含 &mut self 且該 Struct 無法簡單 new()",
+            "參數包含 Lifetime 標記 'a 且指向非靜態資源",
+        ],
+    },
+    "Go": {
+        "boundary": "Stdin/Struct 邊界 - 接收 JSON 輸入，解析 Request struct",
+        "serialization": "JSON Struct - 利用 Go 的 struct tag (json:\"field\") 定義輸入",
+        "topology": "Main Package - go run 只能執行 main package 中的入口檔案",
+        "naming": "服務命名 - 如 DialBroker，描述具體動作而非狀態",
+        "framework": "微服務結構 - 獨立的 Go 模組資料夾",
+        
+        # 判斷標準
+        "include_criteria": [
+            "函數接收 Struct (且該 Struct 有 json tag) 或基本型別",
+            "函數簽名不包含 interface{} 或 chan",
+            "位於 main package 或 public (大寫開頭) 的 Library 函數",
+        ],
+        "exclude_criteria": [
+            "函數接收 context.Context 作為唯一參數",
+            "函數接收 *sql.DB, *http.Client (依賴熱狀態)",
+            "函數返回 func() (閉包)",
+        ],
+    },
+    "TypeScript": {
+        "boundary": "Script 參數邊界 - 透過 process.argv 接收參數",
+        "serialization": "CLI Args - 參數如 --target 都是純文字",
+        "topology": "執行腳本 - 執行具體的 .ts 檔案，而非被 import 的模組",
+        "naming": "功能命名 - 如 analyzeClientSideAuthBypass，描述具體分析行為",
+        "framework": "engine 目錄 - 以 _engine 結尾的目錄被識別為掃描引擎",
+        
+        # 判斷標準
+        "include_criteria": [
+            "Export 的函數",
+            "參數為 JSON 可序列化型別",
+            "無 callback 參數",
+        ],
+        "exclude_criteria": [
+            "參數包含 DOM 元素 (HTMLElement) 或 Node Stream",
+            "依賴閉包變數",
+        ],
+    },
+}
+
+# 語言執行機制
+LANGUAGE_EXECUTION_MECHANISM = {
+    "Python": "動態導入 (Dynamic Import) - 利用 importlib 直接載入模組",
+    "Go": "結構映射 (Struct Mapping) - AST 讀取 Request struct，參數轉 JSON 灌入",
+    "Rust": "Manifest 驅動 - 透過 cargo run 指向特定 target",
+    "TypeScript": "直接執行 (Direct Exec) - 利用 ts-node 直接執行腳本",
+}
+
 
 class MultiLanguageClassifier:
     """多語言外部模組分類器
     
-    整合 Python/Rust/Go/TypeScript 的分析結果
-    生成統一的 classification_data.json
+    ⚠️ 重要架構說明：
+    
+    外部分類器需要讀取 4 個語言的分析結果：
+    1. Python:     services/features/function_*/analysis_results.json
+    2. Rust:       services/features/function_crypto/analysis_results.json  
+    3. Go:         services/features/function_authn_go/analysis_results.json
+    4. TypeScript: services/scan/typescript_engine/analysis_results.json
+    
+    然後整合輸出至 external_classification.json (SOT)
+    外部執行器只需要讀取這個文件
     """
     
     def __init__(self, workspace_root: str, output_dir: str, verbose: bool = False):
@@ -76,33 +206,100 @@ class MultiLanguageClassifier:
         self.all_modules = {}  # {module_name: module_data}
         self.all_flows = []    # 統一的流程列表
         self.flow_id_counter = 1
+        # 分語言計數器 (每種語言獨立編號)
+        self.lang_counters = {
+            'Python': 1,
+            'Go': 1,
+            'TypeScript': 1,
+            'Rust': 1,
+            'JavaScript': 1
+        }
+        
+        # 定義 4 個語言的輸入路徑
+        self._setup_input_paths()
+        
+    def _setup_input_paths(self):
+        """設置 4 個語言的分析結果輸入路徑"""
+        if USING_NEW_PATHS:
+            self.analysis_inputs = ExternalPaths.ANALYSIS_INPUTS
+        else:
+            # 降級方案：手動定義
+            features_dir = self.workspace_root / "services" / "features"
+            scan_dir = self.workspace_root / "services" / "scan"
+            
+            self.analysis_inputs = {
+                "python": [
+                    features_dir / "function_xss" / "analysis_results.json",
+                    features_dir / "function_sqli" / "analysis_results.json",
+                    features_dir / "function_ssrf" / "analysis_results.json",
+                    features_dir / "function_idor" / "analysis_results.json",
+                    features_dir / "function_infoleak" / "analysis_results.json",
+                    features_dir / "function_bizlogic" / "analysis_results.json",
+                ],
+                "rust": [
+                    features_dir / "function_crypto" / "analysis_results.json",
+                ],
+                "go": [
+                    features_dir / "function_authn_go" / "analysis_results.json",
+                ],
+                "typescript": [
+                    scan_dir / "typescript_engine" / "analysis_results.json",
+                ],
+            }
         
     def scan_all_modules(self) -> List[tuple]:
         """掃描所有外部模組的分析結果
+        
+        讀取 4 個語言的分析結果文件
         
         Returns:
             List[tuple]: [(module_path, language), ...]
         """
         modules = []
         
-        # 1. Python 模組: module_analysis/function_*
-        module_analysis = self.workspace_root / "module_analysis"
-        if module_analysis.exists():
-            for path in module_analysis.iterdir():
+        if self.verbose:
+            print("\n[掃描] 讀取 4 個語言的分析結果:")
+        
+        # 遍歷每種語言的輸入路徑
+        for lang, paths in self.analysis_inputs.items():
+            lang_display = lang.capitalize() if lang != "typescript" else "TypeScript"
+            
+            for analysis_file in paths:
+                if analysis_file.exists():
+                    module_path = analysis_file.parent
+                    modules.append((module_path, lang_display))
+                    if self.verbose:
+                        print(f"  ✅ [{lang_display}] {module_path.name}")
+                else:
+                    if self.verbose:
+                        print(f"  ⚠️  [{lang_display}] 找不到: {analysis_file.name}")
+        
+        # 額外掃描：尋找其他可能的模組
+        features_dir = self.workspace_root / "services" / "features"
+        if features_dir.exists():
+            for path in features_dir.iterdir():
                 if path.is_dir() and path.name.startswith("function_"):
                     analysis_file = path / "analysis_results.json"
                     if analysis_file.exists():
-                        lang = self._detect_module_language(path)
-                        modules.append((path, lang))
-                        if self.verbose:
-                            print(f"  [發現] {path.name} ({lang})")
+                        # 檢查是否已經在列表中
+                        if not any(m[0] == path for m in modules):
+                            lang = self._detect_module_language(path)
+                            modules.append((path, lang))
+                            if self.verbose:
+                                print(f"  ➕ [額外發現] {path.name} ({lang})")
         
-        # 2. TypeScript 引擎: services/scan/typescript_engine
-        ts_engine = self.workspace_root / "services" / "scan" / "typescript_engine" / "analysis_output"
-        if (ts_engine / "analysis_results.json").exists():
-            modules.append((ts_engine.parent, "TypeScript"))
-            if self.verbose:
-                print(f"  [發現] typescript_engine (TypeScript)")
+        # 掃描 Scan 引擎
+        scan_dir = self.workspace_root / "services" / "scan"
+        if scan_dir.exists():
+            for path in scan_dir.iterdir():
+                if path.is_dir() and path.name.endswith("_engine"):
+                    analysis_file = path / "analysis_results.json"
+                    if analysis_file.exists():
+                        if not any(m[0] == path for m in modules):
+                            lang = self._detect_module_language(path)
+                            modules.append((path, lang))
+                            if self.verbose:
+                                print(f"  ➕ [額外發現] {path.name} ({lang})")
         
         return modules
     
@@ -135,10 +332,8 @@ class MultiLanguageClassifier:
     
     def process_module(self, module_path: Path, language: str) -> Dict[str, Any]:
         """處理單個模組的分析結果"""
-        # 找到 analysis_results.json
+        # 找到 analysis_results.json（直接在模組根目錄）
         analysis_file = module_path / "analysis_results.json"
-        if not analysis_file.exists():
-            analysis_file = module_path / "analysis_output" / "analysis_results.json"
         
         if not analysis_file.exists():
             if self.verbose:
@@ -153,10 +348,32 @@ class MultiLanguageClassifier:
             module_name = module_path.name
             module_info = self._infer_module_info(module_name)
             
-            # 處理 flows
-            flows = data.get('flows', [])
-            if not flows and 'flow_chains' in data:
-                flows = self._convert_flow_chains(data['flow_chains'])
+            # 處理 flows - 優先從 function_details 提取有調用鏈的入口點
+            flows = []
+            
+            # ✅ 新增：優先處理 function_details（有真實調用鏈的入口點）
+            if 'function_details' in data:
+                flows = self._extract_entry_points_from_function_details(data['function_details'], language)
+                if flows and self.verbose:
+                    print(f"    [function_details] 提取 {len(flows)} 個入口點（有調用鏈）")
+            
+            # 如果沒有 function_details，fallback 到舊邏輯
+            if not flows:
+                flows = data.get('flows', [])
+                
+                # 處理舊格式的 graphs（不做任何過濾，全部轉換）
+                if not flows and 'graphs' in data:
+                    flows = self._convert_graphs_to_flows(data['graphs'], data.get('connections', []))
+                    if self.verbose:
+                        print(f"    [graphs] 轉換 {len(data.get('graphs', []))} → {len(flows)} flows")
+                
+                if not flows and 'flow_chains' in data:
+                    # 從 flow_chains 和 function_details 構建完整的 flows
+                    flows = self._convert_flow_chains(data['flow_chains'], data.get('function_details', []))
+            
+            # ✅ 新增：處理有結構體定義但無流程的 Go 模組（stdin JSON 模式）
+            if not flows and 'struct_definitions' in data and language == 'Go':
+                flows = self._convert_struct_to_flows(data['struct_definitions'], data.get('function_details', []))
             
             # 整合到統一格式
             classified_flows = []
@@ -184,14 +401,53 @@ class MultiLanguageClassifier:
             return {}
     
     def _normalize_flow(self, flow: Dict, module_name: str, module_info: Dict, language: str) -> Dict:
-        """將不同語言的 flow 標準化為統一格式"""
+        """將不同語言的 flow 標準化為統一格式
+        
+        命名規則（按層級分類）：
+        1. 頂層模組分類：features 或 scan
+        2. 子模組名稱：xss, sqli, ssrf, idor, bizlogic, web_scanner 等
+        3. 流程編號：該子模組內的流程序號
+        
+        格式：aiva_{top_module}_{sub_module}_{flow_num}
+        範例：
+        - aiva_features_xss_1
+        - aiva_features_sqli_1
+        - aiva_scan_python_1
+        - aiva_scan_typescript_1
+        """
+        # 全局唯一 ID
         flow_id = self.flow_id_counter
         self.flow_id_counter += 1
+        
+        # 判斷頂層模組（features 或 scan）
+        if module_name.startswith('function_'):
+            top_module = 'features'
+            sub_module = module_name.replace('function_', '')  # function_xss -> xss
+        elif module_name.endswith('_engine'):
+            top_module = 'scan'
+            sub_module = module_name.replace('_engine', '')  # python_engine -> python
+        else:
+            top_module = 'unknown'
+            sub_module = module_name
+        
+        # 為每個子模組維護獨立的計數器
+        counter_key = f"{top_module}_{sub_module}"
+        if counter_key not in self.lang_counters:
+            self.lang_counters[counter_key] = 1
+        
+        flow_num = self.lang_counters[counter_key]
+        self.lang_counters[counter_key] += 1
+        
+        # 統一命名格式：aiva_{top_module}_{sub_module}_{num}
+        unified_name = f"aiva_{top_module}_{sub_module}_{flow_num}"
         
         # 統一的 flow 格式
         normalized = {
             'id': flow_id,
-            'module': module_name,
+            'name': unified_name,  # 層級命名: aiva_features_xss_1, aiva_scan_python_1
+            'top_module': top_module,  # features 或 scan
+            'sub_module': sub_module,  # xss, sqli, python, typescript 等
+            'module': module_name,  # 原始模組名: function_xss, python_engine
             'module_type': module_info['type'],
             'module_category': module_info['category'],
             'module_description': module_info['name'],
@@ -207,16 +463,151 @@ class MultiLanguageClassifier:
         if 'description' in flow:
             normalized['description'] = flow['description']
         
-        # 保留原始數據（可選）
+        # ✅ 保留來源檔案資訊（用於執行器定位類/函數）
         if 'file_path' in flow:
             normalized['file_path'] = flow['file_path']
+        if 'file_name' in flow:
+            normalized['file_name'] = flow['file_name']
+        if 'script_name' in flow:
+            normalized['script_name'] = flow['script_name']
         if 'target' in flow:
             normalized['target'] = flow['target']
+        
+        # ✅ 提取參數資訊（支援所有語言）
+        normalized['parameters'] = self._extract_parameters(flow)
+        
+        # ✅ 判斷是否為可操作的能力（基於原則.md）
+        normalized['is_operable'] = self._is_operable_capability(flow, language)
+        normalized['operability_reason'] = self._get_operability_reason(flow, language)
         
         # 推斷使用場景
         normalized['use_case'] = self._infer_use_case(module_name, normalized['start'], normalized['end'])
         
         return normalized
+    
+    def _is_operable_capability(self, flow: Dict, language: str) -> bool:
+        """判斷能力是否可操作（基於原則.md 的判斷標準）
+        
+        根據5大原則判斷：
+        - 邊界原則：數據來源是否可序列化
+        - 序列化原則：參數類型是否為基本型別
+        - 拓撲學原則：是否為入口函數
+        - 命名慣例：函數名是否明確表達操作
+        - 框架約定：是否符合目錄結構規範
+        """
+        if language not in CAPABILITY_PRINCIPLES:
+            return True  # 未知語言預設可操作
+        
+        principles = CAPABILITY_PRINCIPLES[language]
+        exclude_criteria = principles.get('exclude_criteria', [])
+        
+        # 獲取函數資訊
+        start_func = flow.get('start', '')
+        params = flow.get('parameters', flow.get('inputs', []))
+        
+        # Python 排除標準
+        if language == 'Python':
+            # 檢查是否依賴 Web Context
+            if any(p in str(params) for p in ['request', 'Request', 'session', 'Session']):
+                return False
+            # 檢查是否為私有函數
+            func_name = start_func.split('.')[-1] if '.' in start_func else start_func
+            if func_name.startswith('_') and not func_name.startswith('__'):
+                return False
+        
+        # Go 排除標準
+        elif language == 'Go':
+            # 檢查是否僅接收 context
+            if params == ['context.Context'] or params == ['ctx']:
+                return False
+            # 檢查是否依賴熱狀態
+            if any(p in str(params) for p in ['*sql.DB', '*http.Client']):
+                return False
+        
+        # Rust 排除標準
+        elif language == 'Rust':
+            # 檢查是否有 lifetime 標記指向非靜態資源
+            if "'a" in str(params) and 'static' not in str(params).lower():
+                return False
+        
+        # TypeScript 排除標準
+        elif language == 'TypeScript':
+            # 檢查是否依賴 DOM
+            if any(p in str(params) for p in ['HTMLElement', 'Document', 'Window']):
+                return False
+        
+        return True
+    
+    def _get_operability_reason(self, flow: Dict, language: str) -> str:
+        """獲取可操作性判斷的原因"""
+        if language not in CAPABILITY_PRINCIPLES:
+            return "未知語言，預設可操作"
+        
+        start_func = flow.get('start', '')
+        params = flow.get('parameters', flow.get('inputs', []))
+        
+        if language == 'Python':
+            if any(p in str(params) for p in ['request', 'Request', 'session', 'Session']):
+                return "❌ 依賴 Web Context (request/session 參數)"
+            func_name = start_func.split('.')[-1] if '.' in start_func else start_func
+            if func_name.startswith('_') and not func_name.startswith('__'):
+                return "❌ 私有函數 (以 _ 開頭)"
+        
+        elif language == 'Go':
+            if params == ['context.Context'] or params == ['ctx']:
+                return "❌ 僅接收 context.Context 參數"
+            if any(p in str(params) for p in ['*sql.DB', '*http.Client']):
+                return "❌ 依賴熱狀態 (sql.DB/http.Client)"
+        
+        elif language == 'Rust':
+            if "'a" in str(params) and 'static' not in str(params).lower():
+                return "❌ Lifetime 指向非靜態資源"
+        
+        elif language == 'TypeScript':
+            if any(p in str(params) for p in ['HTMLElement', 'Document', 'Window']):
+                return "❌ 依賴 DOM 元素"
+        
+        return "✅ 可操作 - 符合序列化原則"
+
+    def _extract_parameters(self, flow: Dict) -> Dict[str, Any]:
+        """提取流程的參數資訊（支援所有語言）
+        
+        從原始分析結果中提取參數，格式化為統一的參數描述
+        支援 Python, Go, Rust, TypeScript 等所有語言
+        
+        Returns:
+            Dict: {
+                'start_function_params': [...],  # 起點函數的參數
+                'end_function_params': [...],    # 終點函數的參數
+                'all_params': [...],             # 流程中所有參數的合集
+                'has_params': bool               # 是否有參數
+            }
+        """
+        params_info = {
+            'start_function_params': [],
+            'end_function_params': [],
+            'all_params': [],
+            'has_params': False
+        }
+        
+        # 從 flow 中提取參數（如果有的話）
+        if 'start_params' in flow:
+            params_info['start_function_params'] = flow['start_params']
+            params_info['has_params'] = True
+        
+        if 'end_params' in flow:
+            params_info['end_function_params'] = flow['end_params']
+            params_info['has_params'] = True
+        
+        # 嘗試從其他欄位提取（不同語言的分析器可能放在不同位置）
+        if 'parameters' in flow:
+            params_info['all_params'] = flow['parameters']
+            params_info['has_params'] = True
+        elif 'inputs' in flow:
+            params_info['all_params'] = flow['inputs']
+            params_info['has_params'] = True
+        
+        return params_info
     
     def _infer_use_case(self, module_name: str, start: str, end: str) -> str:
         """根據模組、起點和終點函數名稱推斷詳細使用場景
@@ -233,6 +624,7 @@ class MultiLanguageClassifier:
         
         # === XSS 模組詳細場景 ===
         if module_name == 'function_xss':
+            return f"XSS testing from {start} to {end}"
             if 'bruteforcer' in start_lower:
                 if 'url' in end_lower and 'get' in end_lower:
                     return '[XSS暴力測試] 從目標提取所有可測試 URL，用於批量掃描多個端點'
@@ -349,19 +741,276 @@ class MultiLanguageClassifier:
         else:
             return f'[{module_name}] 安全檢測功能'
     
-    def _convert_flow_chains(self, flow_chains: List[List[str]]) -> List[Dict]:
-        """轉換 flow_chains 為標準 flows 格式"""
+    def _extract_entry_points_from_function_details(self, function_details: Dict, language: str) -> List[Dict]:
+        """從 function_details 提取有調用鏈的入口點
+        
+        function_details 結構: {module_type: {func_name: func_data, ...}, ...}
+        例如: {'function_map': {'run_reflected_test': {...}, ...}, 'script_functions': {...}}
+        
+        Args:
+            function_details: 函數詳細資訊字典
+            language: 語言類型
+        
+        Returns:
+            有調用鏈的入口點列表
+        """
+        flows = []
+        
+        # 從 function_map 提取函數
+        function_map = function_details.get('function_map', {})
+        
+        for func_name, func_data in function_map.items():
+            called_functions = func_data.get('called_functions', [])
+            
+            # 過濾：只保留有調用鏈的函數
+            if not called_functions or len(called_functions) == 0:
+                continue
+            
+            # 過濾標準庫調用
+            valid_calls = [
+                call for call in called_functions
+                if not any(call.startswith(x) for x in [
+                    'unknown_call', 're.', 'json.', 'os.', 'sys.',
+                    'asyncio.', 'aiohttp.', 'httpx.', 'subprocess.',
+                    'logger.', 'console.', 'time.', 'urlparse',
+                    'len', 'sum', 'int', 'str', 'any', 'bool', 'list', 'dict'
+                ])
+            ]
+            
+            # 如果沒有有效調用，跳過
+            if not valid_calls:
+                continue
+            
+            # 構建調用鏈
+            call_chain = valid_calls[:10]  # 最多保留前 10 個調用
+            
+            # 提取參數
+            parameters = func_data.get('parameters', [])
+            is_entry_point = func_data.get('is_entry_point', False)
+            is_async = func_data.get('is_async', False)
+            
+            # ✅ 提取檔案資訊（來自 AST 分析結果）
+            file_name = func_data.get('file_name', '')
+            file_path = func_data.get('file_path', '')
+            script_name = func_data.get('script_name', '')
+            
+            # 構建 flow
+            flow = {
+                'id': len(flows) + 1,
+                'path': [func_name] + call_chain[:5],  # 路徑包含起點和前5個調用
+                'full_path': [func_name] + call_chain,
+                'length': len(call_chain) + 1,
+                'start': func_name,
+                'end': call_chain[-1] if call_chain else func_name,
+                'call_chain': call_chain,  # ✅ 關鍵：保留完整調用鏈
+                'parameters': parameters,
+                'parameter_count': len(parameters),
+                'is_entry_point': is_entry_point,
+                'is_async': is_async,
+                'language': language,
+                'source': 'function_details',  # 標記來源
+                'file_name': file_name,        # ✅ 新增：來源檔名
+                'file_path': file_path,        # ✅ 新增：來源完整路徑
+                'script_name': script_name,    # ✅ 新增：腳本模組名（無 .py）
+            }
+            
+            flows.append(flow)
+        
+        return flows
+    
+    def _convert_struct_to_flows(self, struct_definitions: List[Dict], function_details: Optional[List[Dict]] = None) -> List[Dict]:
+        """將 Go struct 定義轉換為標準 flows 格式（用於 stdin JSON 微服務模式）
+        
+        對於使用 JSON stdin/stdout 模式的 Go 微服務，struct 欄位定義就是參數定義。
+        此方法將這些 struct 定義轉換為統一的 flow 格式，讓 AI 可以理解如何呼叫這些服務。
+        
+        Args:
+            struct_definitions: Go struct 定義列表，每個包含 struct_name, fields, source_file
+            function_details: 函數詳細資訊（可選，用於補充說明）
+        
+        Returns:
+            包含路徑、參數和使用說明的 flows 列表
+        """
+        flows = []
+        
+        # 只處理 Request/Config 類型的 struct（這些是輸入參數定義）
+        for struct_def in struct_definitions:
+            struct_name = struct_def.get('struct_name', '')
+            
+            # 識別這是否為請求/配置結構（輸入參數）
+            if not any(keyword in struct_name.lower() for keyword in ['request', 'config', 'input', 'param']):
+                continue  # 跳過 Response/Result 等輸出結構
+            
+            fields = struct_def.get('fields', [])
+            source_file = struct_def.get('source_file', '')
+            
+            # 從檔案路徑提取掃描器名稱（例如 ssrf-scanner, sca-scanner）
+            scanner_name = 'unknown'
+            if 'cmd' in source_file:
+                parts = source_file.split('\\')
+                cmd_idx = parts.index('cmd') if 'cmd' in parts else -1
+                if cmd_idx >= 0 and cmd_idx + 1 < len(parts):
+                    scanner_name = parts[cmd_idx + 1]
+            
+            # 將 struct fields 轉換為參數格式
+            parameters = []
+            for field in fields:
+                param = {
+                    'name': field.get('json_tag', field.get('name', '')),  # 優先使用 json_tag
+                    'type': field.get('type', 'string'),
+                    'description': field.get('description', f"{field.get('name', '')} 參數"),
+                    'required': field.get('name', '').lower() in ['scanid', 'targets'],  # 假設這些為必填
+                    'kind': 'json_field'  # 標記為 JSON 欄位
+                }
+                parameters.append(param)
+            
+            # 建立 flow 物件（模擬 Python 函數呼叫的格式）
+            flow = {
+                'id': len(flows) + 1,
+                'path': [f'{scanner_name}_stdin'],  # 路徑表示這是 stdin 模式
+                'full_path': [f'{scanner_name}_stdin'],
+                'length': 1,
+                'start': f'{scanner_name}_stdin',
+                'end': f'{scanner_name}_stdout',
+                'parameters': parameters,  # ✅ 關鍵：將 struct fields 作為參數
+                'cli_usage': f'echo \'{{"targets":["url"],...}}\' | ./{scanner_name}',  # stdin JSON 使用範例
+                'method': 'stdin_json',  # 標記呼叫方式
+                'struct_name': struct_name,  # 保留原始 struct 名稱
+                'source_file': source_file
+            }
+            
+            flows.append(flow)
+        
+        return flows
+    
+    def _convert_graphs_to_flows(self, graphs: List[Dict], connections: Optional[List[Dict]] = None) -> List[Dict]:
+        """轉換舊格式的 graphs 為標準 flows 格式（全部轉換，不過濾）
+        
+        Args:
+            graphs: 圖結構列表，每個 graph 包含 nodes
+            connections: 連接列表（可選）
+        
+        Returns:
+            包含路徑和參數資訊的 flows 列表
+        """
+        flows = []
+        
+        for i, graph in enumerate(graphs, 1):
+            graph_name = graph.get('name', f'graph_{i}')
+            graph_type = graph.get('type', 'unknown')
+            nodes = graph.get('nodes', [])
+            file_path = graph.get('file_path', '')
+            
+            # 提取路徑（從節點中提取調用鏈）
+            path = [graph_name]  # 起點是 graph 名稱
+            
+            # 找出所有 call 節點
+            for node in nodes:
+                if node.get('kind') == 'call':
+                    call_label = node.get('label', '')
+                    if call_label and call_label not in path:
+                        # 清理 call 標籤（移除 "Call: " 前綴）
+                        clean_label = call_label.replace('Call: ', '').strip()
+                        path.append(clean_label)
+            
+            # 如果沒有 call 節點，就只有起點本身
+            if len(path) == 1:
+                path.append(f'{graph_name}_end')
+            
+            # 提取參數資訊
+            start_node = next((n for n in nodes if n.get('kind') == 'start'), None)
+            parameters = []
+            
+            if start_node and 'metadata' in start_node:
+                meta = start_node['metadata']
+                # 提取函數參數
+                if 'parameters' in meta:
+                    parameters = meta['parameters']
+                # 提取返回類型
+                return_type = meta.get('return_type', '')
+                docstring = meta.get('docstring', '')
+            
+            # 構建 flow
+            flow_dict = {
+                'id': i,
+                'path': path,
+                'full_path': path,
+                'length': len(path),
+                'start': path[0],
+                'end': path[-1],
+                'graph_type': graph_type,  # 保留原始類型
+                'source_file': Path(file_path).name if file_path else '',
+                'node_count': len(nodes),  # 記錄節點數量
+            }
+            
+            # 添加參數資訊
+            if parameters:
+                flow_dict['start_params'] = parameters
+                flow_dict['parameters'] = parameters
+            
+            if return_type:
+                flow_dict['return_type'] = return_type
+            
+            if docstring:
+                flow_dict['docstring'] = docstring
+            
+            flows.append(flow_dict)
+        
+        return flows
+    
+    def _convert_flow_chains(self, flow_chains: List[List[str]], function_details: Optional[List[Dict]] = None) -> List[Dict]:
+        """轉換 flow_chains 為標準 flows 格式，並附加參數資訊
+        
+        Args:
+            flow_chains: 函數調用鏈列表
+            function_details: 函數詳細資訊（可能是字典結構）
+        
+        Returns:
+            包含路徑和參數資訊的 flows 列表
+        """
+        # 建立函數名稱到參數的映射
+        func_params_map = {}
+        if function_details:
+            # Python 分析器的格式：{'function_map': {函數名: 資訊}}
+            if isinstance(function_details, dict):
+                func_map = function_details.get('function_map', function_details)
+                for func_name, func_info in func_map.items():
+                    if isinstance(func_info, dict):
+                        params = func_info.get('parameters', [])
+                        if params:
+                            func_params_map[func_name] = params
+            # Go/Rust 格式：[{name: ..., inputs: ...}]
+            elif isinstance(function_details, list):
+                for func in function_details:
+                    if isinstance(func, dict):
+                        func_name = func.get('function_name') or func.get('name', '')
+                        params = func.get('inputs', func.get('parameters', []))
+                        if func_name and params:
+                            func_params_map[func_name] = params
+        
         flows = []
         for i, chain in enumerate(flow_chains, 1):
             if chain:
-                flows.append({
+                # 提取起點和終點函數的參數
+                start_func = chain[0] if chain else ''
+                end_func = chain[-1] if chain else ''
+                
+                flow_dict = {
                     'id': i,
                     'path': chain,
                     'full_path': chain,
                     'length': len(chain),
-                    'start': chain[0] if chain else '',
-                    'end': chain[-1] if chain else ''
-                })
+                    'start': start_func,
+                    'end': end_func
+                }
+                
+                # 添加參數資訊
+                if start_func in func_params_map:
+                    flow_dict['start_params'] = func_params_map[start_func]
+                if end_func in func_params_map:
+                    flow_dict['end_params'] = func_params_map[end_func]
+                
+                flows.append(flow_dict)
         return flows
     
     def _infer_module_info(self, module_name: str) -> Dict[str, str]:
@@ -379,6 +1028,11 @@ class MultiLanguageClassifier:
     def generate_classification_data(self):
         """生成統一的 classification_data.json
         
+        v3.3 (2026-01-21): 統一路徑配置
+        - 輸出至 external_classification.json (SOT)
+        - 同時輸出至 output_dir/classification_data.json (向後相容)
+        - 新增可操作性統計（基於原則.md判斷標準）
+        
         格式與內部分類器產生的相同，讓執行器可以使用
         """
         self.output_dir.mkdir(parents=True, exist_ok=True)
@@ -389,44 +1043,110 @@ class MultiLanguageClassifier:
         by_module = defaultdict(int)
         by_type = defaultdict(int)
         
+        # v3.3: 可操作性統計（基於原則.md判斷標準）
+        operable_count = 0
+        non_operable_count = 0
+        operable_by_language = defaultdict(int)
+        non_operable_by_language = defaultdict(int)
+        non_operable_reasons = defaultdict(int)
+        
         for flow in self.all_flows:
             by_language[flow['language']] += 1
             by_module[flow['module']] += 1
             by_type[flow['module_type']] += 1
+            
+            # 統計可操作性
+            if flow.get('is_operable', True):
+                operable_count += 1
+                operable_by_language[flow['language']] += 1
+            else:
+                non_operable_count += 1
+                non_operable_by_language[flow['language']] += 1
+                reason = flow.get('operability_reason', '未知原因')
+                non_operable_reasons[reason] += 1
         
         # 生成分類數據
         classification_data = {
             'metadata': {
                 'generated_at': datetime.now().isoformat(),
                 'generator': 'aiva_external_classifier.py',
+                'version': '3.3',
                 'description': '外部模組多語言整合分類數據',
                 'total_flows': len(self.all_flows),
                 'total_modules': len(self.all_modules),
                 'languages': list(by_language.keys()),
+                'classification_type': 'external',  # 標記為外部分類
+                'schema_version': '3.3',
+                'ai_compatible': True,
                 'statistics': {
                     'by_language': dict(by_language),
                     'by_module': dict(by_module),
                     'by_type': dict(by_type)
+                },
+                # v3.3: 可操作性統計（基於原則.md 的5大判斷原則）
+                'operability': {
+                    'total_operable': operable_count,
+                    'total_non_operable': non_operable_count,
+                    'operable_rate': round(operable_count / len(self.all_flows) * 100, 2) if self.all_flows else 0,
+                    'by_language': {
+                        'operable': dict(operable_by_language),
+                        'non_operable': dict(non_operable_by_language)
+                    },
+                    'non_operable_reasons': dict(non_operable_reasons),
+                    'judgment_principles': [
+                        '邊界原則 - 數據來源邊界',
+                        '序列化原則 - 參數類型判斷', 
+                        '拓撲學原則 - 入口函數識別',
+                        '命名慣例 - 函數名稱規範',
+                        '框架約定 - 目錄結構規範'
+                    ]
                 }
             },
             'modules': self.all_modules,
             'flows': self.all_flows
         }
         
-        # 寫入文件
+        # 寫入到 output_dir (向後相容)
         with open(output_file, 'w', encoding='utf-8') as f:
             json.dump(classification_data, f, indent=2, ensure_ascii=False)
+        
+        # v3.3: 同時輸出到統一路徑 (SOT)
+        if USING_NEW_PATHS:
+            sot_file = ExternalPaths.CLASSIFICATION_FILE
+            sot_file.parent.mkdir(parents=True, exist_ok=True)
+            with open(sot_file, 'w', encoding='utf-8') as f:
+                json.dump(classification_data, f, indent=2, ensure_ascii=False)
+            if self.verbose:
+                print(f"\n[OK] 生成 external_classification.json (SOT)")
+                print(f"    檔案: {sot_file}")
         
         if self.verbose:
             print(f"\n[OK] 生成 classification_data.json")
             print(f"    檔案: {output_file}")
             print(f"    總流程: {len(self.all_flows)}")
+            print(f"    可操作: {operable_count} ({round(operable_count / len(self.all_flows) * 100, 1) if self.all_flows else 0}%)")
             print(f"    總模組: {len(self.all_modules)}")
             print(f"    語言: {', '.join(by_language.keys())}")
     
     def generate_summary_report(self):
-        """生成摘要報告（可選）"""
+        """生成摘要報告（可選）
+        
+        v3.3: 新增可操作性分析區段
+        """
         output_file = self.output_dir / "classification_summary.md"
+        
+        # 計算可操作性統計
+        operable_count = sum(1 for f in self.all_flows if f.get('is_operable', True))
+        non_operable_count = len(self.all_flows) - operable_count
+        
+        # 按語言統計可操作性
+        operable_by_lang = defaultdict(int)
+        non_operable_by_lang = defaultdict(int)
+        for flow in self.all_flows:
+            if flow.get('is_operable', True):
+                operable_by_lang[flow['language']] += 1
+            else:
+                non_operable_by_lang[flow['language']] += 1
         
         with open(output_file, 'w', encoding='utf-8') as f:
             f.write("# 外部模組多語言分類報告\n\n")
@@ -437,6 +1157,25 @@ class MultiLanguageClassifier:
             f.write("## 總體統計\n\n")
             f.write(f"- **總模組數**: {len(self.all_modules)}\n")
             f.write(f"- **總流程數**: {len(self.all_flows)}\n\n")
+            
+            # v3.3: 可操作性統計（基於原則.md）
+            f.write("## 可操作性分析\n\n")
+            f.write("> 基於原則.md 的5大判斷原則（邊界、序列化、拓撲學、命名慣例、框架約定）\n\n")
+            f.write(f"- ✅ **可操作流程**: {operable_count} ({round(operable_count / len(self.all_flows) * 100, 1) if self.all_flows else 0}%)\n")
+            f.write(f"- ❌ **不可操作流程**: {non_operable_count} ({round(non_operable_count / len(self.all_flows) * 100, 1) if self.all_flows else 0}%)\n\n")
+            
+            # 按語言分類
+            f.write("### 按語言分類\n\n")
+            f.write("| 語言 | 可操作 | 不可操作 | 可操作率 |\n")
+            f.write("|------|--------|----------|----------|\n")
+            all_languages = set(operable_by_lang.keys()) | set(non_operable_by_lang.keys())
+            for lang in sorted(all_languages):
+                op = operable_by_lang.get(lang, 0)
+                non_op = non_operable_by_lang.get(lang, 0)
+                total = op + non_op
+                rate = round(op / total * 100, 1) if total > 0 else 0
+                f.write(f"| {lang} | {op} | {non_op} | {rate}% |\n")
+            f.write("\n")
             
             # 模組列表
             f.write("## 模組列表\n\n")
@@ -483,19 +1222,50 @@ class MultiLanguageClassifier:
 
 def main():
     parser = argparse.ArgumentParser(
-        description='外部模組多語言分類器 - 整合所有語言的分析結果'
+        description='外部模組多語言分類器 (v3.3) - 整合所有語言的分析結果',
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        epilog="""
+⚠️ 注意: 此分類器用於外部模組 (Features/Scan) 的多語言整合
+        內部模組請使用 aiva_internal_classifier.py
+
+數據存放位置:
+  services/integration/data/internal_exploration/
+  ├── external_classification.json      # 分類數據 (SOT)
+  ├── external_classification_summary.md   # 摘要報告
+  └── analysis_results/external/        # 詳細分析
+
+示例:
+  # 使用預設路徑 (推薦)
+  python aiva_external_classifier.py
+  
+  # 指定工作區和輸出目錄
+  python aiva_external_classifier.py -w /path/to/workspace -o ./custom_output -v
+        """
     )
+    
+    # 設定預設路徑
+    if USING_NEW_PATHS:
+        default_workspace = str(PROJECT_ROOT)
+        default_output = str(ExternalPaths.OUTPUT_DIR)
+    else:
+        default_workspace = '.'
+        default_output = 'features_classification'
+    
     parser.add_argument('-w', '--workspace', 
-                       default='.',
-                       help='工作區根目錄 (預設: 當前目錄)')
+                       default=default_workspace,
+                       help=f'工作區根目錄 (預設: {default_workspace})')
     parser.add_argument('-o', '--output', 
-                       default='features_classification',
-                       help='輸出目錄 (預設: features_classification)')
+                       default=default_output,
+                       help=f'輸出目錄 (預設: {default_output})')
     parser.add_argument('-v', '--verbose', 
                        action='store_true',
                        help='顯示詳細訊息')
     
     args = parser.parse_args()
+    
+    # 確保目錄存在
+    if USING_NEW_PATHS:
+        ensure_all_dirs()
     
     try:
         classifier = MultiLanguageClassifier(

@@ -16,7 +16,7 @@ AIVA Common Schemas Package - Domain-Driven Design (DDD) Architecture
     _base ← domains ← interfaces
     (避免循環依賴，單向依賴流)
 
-🔄 向後相容性:
+[Backward] 向後相容性:
     完全保持原有API，現有代碼無需修改
 
 使用方式:
@@ -97,35 +97,21 @@ from .security import (
     FindingRecommendation,
     FindingPayload,
     SensitiveMatch,
+    # 漏洞發現 (security/findings.py) - 只包含真正存在的類別
+    Vulnerability,
+    Target,
+    FindingEvidence,
+    FindingImpact,
+    FindingRecommendation,
+    FindingPayload,
+    SensitiveMatch,
+    JavaScriptAnalysisResult,  # 新增缺失的類別
     VulnerabilityCorrelation,
     VulnerabilityScorecard,
     CodeLevelRootCause,
     # SASTDASTCorrelation,  # Removed - external SAST not needed
     AIVerificationRequest,
     AIVerificationResult,
-    LowValueVulnerabilityType,
-    VulnerabilityPattern,
-    InfoDisclosurePattern,
-    ErrorMessageDisclosure,
-    DebugInfoDisclosure,
-    XSSPattern,
-    ReflectedXSSBasic,
-    DOMXSSSimple,
-    CSRFPattern,
-    CSRFMissingToken,
-    CSRFJSONBypass,
-    IDORPattern,
-    IDORSimpleID,
-    IDORUserData,
-    OpenRedirectPattern,
-    HostHeaderInjectionPattern,
-    CORSMisconfigurationPattern,
-    ClickjackingPattern,
-    LowValueVulnerabilityTest,
-    LowValueVulnerabilityResult,
-    BugBountyStrategy,
-    BountyPrediction,
-    ROIAnalysis,
     STIXDomainObject,
     STIXRelationshipObject,
     AttackPattern,
@@ -152,7 +138,7 @@ from .security import (
     ThreatIntelligenceReport,
     IOCEnrichment,
     BugBountyIntelligence,
-    LowValueVulnerabilityPattern,
+    # LowValueVulnerabilityPattern,  # 已刪除沒用的定義
 )
 
 # ==================== AI 相關 ====================
@@ -324,31 +310,32 @@ from .languages import (
 )
 
 # ==================== 低價值高概率漏洞 ====================
-from .low_value_vulnerabilities import (  # 低價值漏洞相關模型
-    BountyPrediction,
-    BugBountyStrategy,
-    ClickjackingPattern,
-    CORSMisconfigurationPattern,
-    CSRFJSONBypass,
-    CSRFMissingToken,
-    CSRFPattern,
-    DebugInfoDisclosure,
-    DOMXSSSimple,
-    ErrorMessageDisclosure,
-    HostHeaderInjectionPattern,
-    IDORPattern,
-    IDORSimpleID,
-    IDORUserData,
-    InfoDisclosurePattern,
-    LowValueVulnerabilityResult,
-    LowValueVulnerabilityTest,
-    LowValueVulnerabilityType,
-    OpenRedirectPattern,
-    ReflectedXSSBasic,
-    ROIAnalysis,
-    VulnerabilityPattern,
-    XSSPattern,
-)
+# 暫時註解掉缺少的模組導入
+# from .low_value_vulnerabilities import (  # 低價值漏洞相關模型
+#     BountyPrediction,
+#     BugBountyStrategy,
+#     ClickjackingPattern,
+#     CORSMisconfigurationPattern,
+#     CSRFJSONBypass,
+#     CSRFMissingToken,
+#     CSRFPattern,
+#     DebugInfoDisclosure,
+#     DOMXSSSimple,
+#     ErrorMessageDisclosure,
+#     HostHeaderInjectionPattern,
+#     IDORPattern,
+#     IDORSimpleID,
+#     IDORUserData,
+#     InfoDisclosurePattern,
+#     LowValueVulnerabilityResult,
+#     LowValueVulnerabilityTest,
+#     LowValueVulnerabilityType,
+#     OpenRedirectPattern,
+#     ReflectedXSSBasic,
+#     ROIAnalysis,
+#     VulnerabilityPattern,
+#     XSSPattern,
+# )  # 註解結束
 
 # ==================== 訊息系統 ====================
 from .messaging import (
@@ -418,7 +405,7 @@ from .tasks import (
     FunctionTaskTarget,
     FunctionTaskTestConfig,
     PostExTestPayload,
-    PostExResultPayload,  # ✅ 修復: 補充遺漏的導入
+    PostExResultPayload,  # [Fixed] 修復: 補充遺漏的導入
     RemediationGeneratePayload,
     RemediationResultPayload,
     ScanCompletedPayload,
@@ -710,30 +697,6 @@ __all__ = [
     "GraphQLDirectiveDefinition",
     "APISecurityTest",
     "APIVulnerabilityFinding",
-    # 低價值高概率漏洞
-    "LowValueVulnerabilityType",
-    "VulnerabilityPattern",
-    "InfoDisclosurePattern",
-    "ErrorMessageDisclosure",
-    "DebugInfoDisclosure",
-    "XSSPattern",
-    "ReflectedXSSBasic",
-    "DOMXSSSimple",
-    "CSRFPattern",
-    "CSRFMissingToken",
-    "CSRFJSONBypass",
-    "IDORPattern",
-    "IDORSimpleID",
-    "IDORUserData",
-    "OpenRedirectPattern",
-    "HostHeaderInjectionPattern",
-    "CORSMisconfigurationPattern",
-    "ClickjackingPattern",
-    "LowValueVulnerabilityTest",
-    "LowValueVulnerabilityResult",
-    "BugBountyStrategy",
-    "BountyPrediction",
-    "ROIAnalysis",
     # 決策數據合約 (問題三修復)
     "IntentType",
     "TargetInfo",

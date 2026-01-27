@@ -11,7 +11,7 @@ API 標準 Schema 模型 - 基於 OpenAPI 3.1、AsyncAPI 3.0、GraphQL 等官方
 - JSON Schema Draft 2020-12 (https://json-schema.org/draft/2020-12/schema)
 """
 
-from datetime import UTC, datetime
+from datetime import datetime, timezone
 from enum import Enum
 from typing import Any, Literal, Optional, Union
 
@@ -912,7 +912,7 @@ class APISecurityTest(BaseModel):
     )
     max_test_time_hours: float = Field(default=2.0, description="最大測試時間（小時）")
 
-    created_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
 
 class APIVulnerabilityFinding(BaseModel):
@@ -949,7 +949,7 @@ class APIVulnerabilityFinding(BaseModel):
     reproduction_steps: list[str] = Field(description="重現步驟")
     mitigation: str = Field(description="緩解建議")
 
-    discovered_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
+    discovered_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
 
 # 前向引用解決

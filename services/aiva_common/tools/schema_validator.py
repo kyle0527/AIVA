@@ -116,6 +116,9 @@ class SchemaValidator:
                     f"  ✅ {py_file.name}: 找到 {len(schema_classes)} 個Schema類別"
                 )
                 return True
+            
+            # spec or spec.loader is None
+            return False
 
         except ImportError as e:
             self.warnings.append(f"{py_file.name}: 導入警告 - {e}")

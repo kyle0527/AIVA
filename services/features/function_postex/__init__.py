@@ -20,13 +20,12 @@ from services.features.function_postex.postex_manager import (
 
 __all__ = ["PostExManager", "scan_target"]
 
-__version__ = "1.2.0"
-__status__ = "in_development"
-__last_updated__ = "2025-12-17"
+__version__ = "3.0.0"
+__status__ = "production"
+__architecture__ = "manager-based"
+__last_updated__ = "2026-01-23"
 
-# 整合狀態 (2025-12-17)
-# ✅ PostExManager 架構已完成
-# ✅ scan_target 函數已完成
-# ⏳ 檢測邏輯需要增強 (lateral_movement, persistence, privilege_escalation)
-# ⏳ CommandHandler 待開發
-# ⏳ AI Commander 整合待開發
+# 架構說明 (2026-01-23)
+# ✅ Manager-based 架構（統一管理器）
+# ✅ PostExManager 與 scan_target 可直接調用
+# ❌ Worker 層已移除（不需要）

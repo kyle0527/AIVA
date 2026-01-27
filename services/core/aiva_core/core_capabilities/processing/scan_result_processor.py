@@ -6,6 +6,8 @@
 同時支援兩階段掃描 (Phase0/Phase1) 流程:
 - Phase0: 快速偵察 (5-10 分鐘)
 - Phase1: 深度掃描 (10-30 分鐘)
+
+[2026-01-19] 整合 EnhancedDecisionAgent - AI 真正決策
 """
 
 import json
@@ -14,6 +16,7 @@ from typing import TYPE_CHECKING, Any
 from services.aiva_common.schemas import ScanCompletedPayload, Phase0CompletedPayload
 from services.aiva_common.utils import get_logger
 from services.aiva_common.mq import AbstractBroker
+from services.aiva_common.enums import RiskLevel
 from services.core.aiva_core.core_capabilities.ingestion.scan_module_interface import ScanModuleInterface
 # 模組整合: external_learning → cognitive_core/learning_system (2026-01-03)
 from services.core.aiva_core.cognitive_core.learning_system.analysis.dynamic_strategy_adjustment import StrategyAdjuster
@@ -22,6 +25,12 @@ from services.core.aiva_core.task_planning.planner.task_generator import TaskGen
 from services.core.aiva_core.task_planning.executor.task_queue_manager import TaskQueueManager
 from services.core.aiva_core.service_backbone.state.session_state_manager import SessionStateManager
 from services.features.function_bizlogic.business_schemas import AttackSurfaceAnalysis
+
+# [2026-01-19] 整合 AI 決策引擎
+from services.core.aiva_core.cognitive_core.decision.enhanced_decision_agent import (
+    EnhancedDecisionAgent,
+    DecisionContext,
+)
 
 if TYPE_CHECKING:
     pass  # 保留為將來的僅類型檢查導入
@@ -67,6 +76,10 @@ class ScanResultProcessor:
         self.task_generator = task_generator
         self.task_queue_manager = task_queue_manager
         self.session_state_manager = session_state_manager
+        
+        # [2026-01-19] 整合 AI 決策代理 - 雙CLI架構 + embedded_knowledge
+        self.decision_agent = EnhancedDecisionAgent()
+        logger.info("✅ EnhancedDecisionAgent 已整合到 ScanResultProcessor")
 
     async def stage_1_ingest_data(self, payload: ScanCompletedPayload) -> None:
         """階段1: 資料接收與預處理 (Data Ingestion)
@@ -429,12 +442,8 @@ class ScanResultProcessor:
     ) -> tuple[bool, str]:
         """AI 分析 Phase0 結果並決策是否需要 Phase1
 
-        決策規則:
-        1. 發現敏感資料 → 需要 Phase1 (高風險)
-        2. 發現多種技術棧 (≥3) → 需要 Phase1 (複雜目標)
-        3. 端點數量大 (>20) → 需要 Phase1 (大型應用)
-        4. 攻擊面風險 ≥ medium → 需要 Phase1
-        5. 默認策略 → 建議 Phase1 (保守)
+        [2026-01-19] 使用 EnhancedDecisionAgent 進行真正的 AI 決策
+        整合：神經網路 + RAG + embedded_knowledge + 規則引擎
 
         Args:
             scan_id: 掃描 ID
@@ -444,53 +453,110 @@ class ScanResultProcessor:
         Returns:
             (需要Phase1, 原因)
         """
+        logger.info(f"🧠 [AI Decision] 開始 Phase0 分析 - {scan_id}")
+        
+        # 構建 AI 決策上下文
+        context = DecisionContext()
+        
+        # 映射風險等級
+        risk_map = {
+            "low": RiskLevel.LOW,
+            "medium": RiskLevel.MEDIUM,
+            "high": RiskLevel.HIGH,
+            "critical": RiskLevel.CRITICAL
+        }
+        context.risk_level = risk_map.get(processed_data["risk_level"], RiskLevel.MEDIUM)
+        
+        # 設定目標信息
+        context.target_info = {
+            "type": "web",
+            "value": payload.target_url if hasattr(payload, 'target_url') else scan_id,
+            "id": scan_id,
+            "tech_count": processed_data["tech_count"],
+            "endpoint_count": processed_data["endpoint_count"],
+            "sensitive_count": processed_data["sensitive_count"],
+            "discovered_technologies": processed_data.get("discovered_technologies", [])
+        }
+        
+        # 設定已發現漏洞
+        context.discovered_vulns = processed_data.get("discovered_vulns", [])
+        
+        # 設定可用工具
+        context.available_tools = ["nmap", "nikto", "sqlmap", "xsser", "dirb"]
+        
+        try:
+            # 使用 AI 增強決策
+            decision = await self.decision_agent.make_enhanced_decision(
+                context=context,
+                use_embedded_knowledge=True
+            )
+            
+            logger.info(
+                f"🧠 [AI Decision] {scan_id} - "
+                f"Action: {decision.action}, "
+                f"Confidence: {decision.confidence:.2%}, "
+                f"Sources: {decision.params.get('knowledge_sources', [])}"
+            )
+            
+            # AI 決策解釋：根據 action 和 confidence 決定是否需要 Phase1
+            need_phase1 = True  # 預設需要
+            
+            # 如果 AI 建議停止操作（風險太高）
+            if decision.action == "STOP_OPERATION":
+                need_phase1 = False
+                reason = f"AI Decision: Stop - {decision.reasoning}"
+            # 如果 AI 建議切換模式（需要用戶確認）
+            elif decision.action == "SWITCH_MODE":
+                need_phase1 = True
+                reason = f"AI Decision: Need Phase1 (user confirmation required) - {decision.reasoning}"
+            # 正常情況：根據 confidence 決定
+            elif decision.confidence >= 0.7:
+                need_phase1 = True
+                reason = f"AI Decision (High Confidence {decision.confidence:.0%}): {decision.action} - {decision.reasoning}"
+            elif decision.confidence >= 0.4:
+                need_phase1 = True
+                reason = f"AI Decision (Medium Confidence {decision.confidence:.0%}): Recommend Phase1 - {decision.reasoning}"
+            else:
+                # 低置信度：回退到規則
+                need_phase1, reason = self._fallback_rule_decision(processed_data)
+                reason = f"AI Low Confidence, Fallback: {reason}"
+            
+            return need_phase1, reason
+            
+        except Exception as e:
+            logger.warning(f"⚠️ AI Decision failed for {scan_id}: {e}, using fallback rules")
+            return self._fallback_rule_decision(processed_data)
+    
+    def _fallback_rule_decision(self, processed_data: dict) -> tuple[bool, str]:
+        """規則回退：當 AI 失敗時使用"""
         # 規則1: 敏感資料
         if processed_data["sensitive_count"] > 0:
-            return (
-                True,
-                f"Sensitive data detected: {processed_data['sensitive_count']} items",
-            )
+            return True, f"Sensitive data detected: {processed_data['sensitive_count']} items"
 
         # 規則2: 複雜技術棧
         if processed_data["tech_count"] >= 3:
-            return (
-                True,
-                f"Complex tech stack: {processed_data['tech_count']} technologies",
-            )
+            return True, f"Complex tech stack: {processed_data['tech_count']} technologies"
 
         # 規則3: 大型應用
         if processed_data["endpoint_count"] > 20:
-            return (
-                True,
-                f"Large application: {processed_data['endpoint_count']} endpoints",
-            )
+            return True, f"Large application: {processed_data['endpoint_count']} endpoints"
 
         # 規則4: 風險等級
         risk_level = processed_data["risk_level"]
         if risk_level in ["high", "critical"]:
             return True, f"High risk level: {risk_level}"
-        if risk_level == "medium":
-            # Medium 風險需考慮其他因素
-            if (
-                processed_data["tech_count"] >= 2
-                or processed_data["endpoint_count"] > 10
-            ):
-                return True, "Medium risk with additional complexity"
+        if risk_level == "medium" and (processed_data["tech_count"] >= 2 or processed_data["endpoint_count"] > 10):
+            return True, "Medium risk with additional complexity"
 
-        # 規則5: 默認策略 (保守,建議全面掃描)
         return True, "Default strategy: comprehensive scan recommended"
 
     async def _select_engines_for_phase1(
         self, scan_id: str, payload: Phase0CompletedPayload
     ) -> list[str]:
-        """引擎選擇決策樹
+        """引擎選擇決策樹 - [2026-01-19] 整合 AI 決策
 
-        決策規則:
-        1. JavaScript/TypeScript → 添加 "typescript" 引擎
-        2. 表單或 API → 添加 "python" 引擎
-        3. URL 數量大 (>50) → 添加 "go" 引擎 (並發優勢)
-        4. 高風險或敏感資料 → 添加 "rust" 引擎 (快速掃描)
-        5. 默認 → "python" 引擎
+        使用 EnhancedDecisionAgent 分析目標並選擇最適合的引擎
+        同時使用 embedded_knowledge 分析 WAF 和架構
 
         Args:
             scan_id: 掃描 ID
@@ -500,6 +566,51 @@ class ScanResultProcessor:
             引擎列表
         """
         selected: list[str] = []
+        
+        # [AI 分析] 使用 embedded_knowledge 分析目標架構
+        try:
+            fingerprints = payload.fingerprints
+            if fingerprints:
+                # 準備響應頭用於架構分析
+                response_headers = {}
+                if hasattr(fingerprints, 'server') and fingerprints.server:
+                    response_headers['Server'] = fingerprints.server
+                if hasattr(fingerprints, 'powered_by') and fingerprints.powered_by:
+                    response_headers['X-Powered-By'] = fingerprints.powered_by
+                
+                # 使用 AI 分析架構
+                arch_result = self.decision_agent.analyze_web_architecture(
+                    response_headers=response_headers,
+                    response_body="",
+                    endpoints=[]
+                )
+                
+                if "architecture_type" in arch_result:
+                    logger.info(f"🧠 [AI Engine Selection] {scan_id} - Architecture: {arch_result['architecture_type']}")
+                    
+                    # 根據架構類型選擇引擎
+                    arch_type = arch_result.get("architecture_type", "")
+                    if arch_type in ["graphql", "GRAPHQL"]:
+                        selected.append("python")  # GraphQL 需要 Python 引擎
+                        logger.info(f"[Engine] {scan_id} - Added 'python' (GraphQL detected by AI)")
+                    elif arch_type in ["grpc", "GRPC"]:
+                        selected.append("go")  # gRPC 需要 Go 引擎
+                        logger.info(f"[Engine] {scan_id} - Added 'go' (gRPC detected by AI)")
+                
+                # 檢查 WAF 並選擇合適引擎
+                if hasattr(fingerprints, 'waf_detected') and fingerprints.waf_detected:
+                    waf_bypass = self.decision_agent.generate_waf_bypass_payloads(
+                        vuln_type="sqli",
+                        waf_type=str(fingerprints.waf_detected).lower() if fingerprints.waf_detected else None
+                    )
+                    if waf_bypass:
+                        logger.info(f"🛡️ [AI WAF Bypass] {scan_id} - Got {len(waf_bypass)} bypass techniques")
+                        # WAF 環境需要更隱蔽的引擎
+                        if "rust" not in selected:
+                            selected.append("rust")
+                            logger.info(f"[Engine] {scan_id} - Added 'rust' (WAF detected, need stealth)")
+        except Exception as e:
+            logger.warning(f"⚠️ AI engine analysis failed for {scan_id}: {e}")
 
         # 獲取 Phase0 結果的正確欄位
         fingerprints = payload.fingerprints

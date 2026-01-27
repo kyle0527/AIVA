@@ -91,6 +91,32 @@ class ModelTrainingConfig:
     validation_split: float = 0.2
 
 
+@dataclass
+class AttackFeedback:
+    """攻擊反饋數據"""
+    feedback_id: str
+    attack_id: str
+    timestamp: datetime
+    success_rate: float  # 0.0 - 1.0
+    vulnerabilities_found: int
+    execution_time: float  # 秒
+    strategies_used: list[str]
+    effectiveness_score: float  # 綜合效能分數
+    error_rate: float  # 錯誤率
+    waf_triggered: bool  # 是否觸發 WAF
+    metadata: dict[str, Any] = field(default_factory=dict)
+
+
+@dataclass
+class StrategyOptimization:
+    """策略優化建議"""
+    strategy_name: str
+    current_score: float
+    recommended_adjustments: dict[str, Any]
+    priority: int  # 1-10，10 最高
+    reason: str
+
+
 # === 核心執行器 ===
 
 class UnifiedAttackExecutor:
@@ -141,6 +167,11 @@ class UnifiedAttackExecutor:
         self._model_trainer = None
         self._continuous_learning_engine = None  # 統一學習引擎
         self._message_broker = None  # 用於異步訓練任務
+        self._feedback_optimizer = None  # 反饋優化引擎
+        
+        # 反饋歷史記錄
+        self._feedback_history: list[AttackFeedback] = []
+        self._strategy_performance: dict[str, list[float]] = {}  # 策略名稱 -> 效能分數列表
         
         logger.info(f"✅ Unified Executor initialized (learning={'ON' if learning_enabled else 'OFF'})")
     
@@ -208,7 +239,17 @@ class UnifiedAttackExecutor:
                     "請確認 services.service_backbone.messaging 模組已實現\n"
                     f"原始錯誤: {e}"
                 ) from e
-        return self._message_broker    
+        return self._message_broker
+    
+    @property
+    def feedback_optimizer(self):
+        """延遲載入反饋優化引擎"""
+        if self._feedback_optimizer is None:
+            self._feedback_optimizer = FeedbackOptimizer(
+                feedback_history=self._feedback_history,
+                strategy_performance=self._strategy_performance
+            )
+        return self._feedback_optimizer
     async def execute(
         self,
         target: str,
@@ -231,6 +272,9 @@ class UnifiedAttackExecutor:
         """
         logger.info(f"🚀 Executing unified attack: {target} - {objective}")
         
+        # 記錄開始時間
+        start_time = time.time()
+        
         # 1️⃣ 使用 CapabilityOrchestrator 生成執行計劃
         from ..cognitive_core.capability_orchestrator import CapabilityOrchestrator, TaskRequirement
         
@@ -252,10 +296,21 @@ class UnifiedAttackExecutor:
         capability_plan = await orchestrator.plan(requirement)
         logger.info(f"📋 Generated capability plan: {capability_plan.plan_id} ({len(capability_plan.cli_commands)} commands)")
         
-        # 2️⃣ 執行計劃
-        execution_result = orchestrator.execute(capability_plan)
+        # 記錄使用的策略
+        strategies_used = []
+        for cmd in capability_plan.cli_commands:
+            if isinstance(cmd, dict):
+                strategies_used.append(cmd.get("strategy", "default"))
+            else:
+                strategies_used.append("default")
         
-        logger.info(f"⚡ Execution completed: success={execution_result.success}")
+        # 2️⃣ 執行計劃
+        execution_result = await orchestrator.execute(capability_plan)
+        
+        # 計算執行時間
+        execution_time = time.time() - start_time
+        
+        logger.info(f"⚡ Execution completed: success={execution_result.success} in {execution_time:.2f}s")
         
         # 3️⃣ 智能學習層（委派給 ContinuousLearningEngine）
         learning_info = None
@@ -283,7 +338,7 @@ class UnifiedAttackExecutor:
                 learning_info = {"error": str(e)}
         
         # 4️⃣ 返回統一結果
-        return ExecutionResult(
+        result = ExecutionResult(
             success=execution_result.success,
             vulnerabilities=execution_result.issues_found,  # 將 issues 映射為 vulnerabilities
             attack_plan=None,  # 不再使用 AttackPlan
@@ -293,6 +348,20 @@ class UnifiedAttackExecutor:
             },
             learning_info=learning_info
         )
+        
+        # 5️⃣ 收集反饋並優化（新增）
+        if self.learning_enabled:
+            try:
+                await self.collect_feedback(
+                    attack_id=capability_plan.plan_id,
+                    execution_result=result,
+                    execution_time=execution_time,
+                    strategies_used=strategies_used
+                )
+            except Exception as e:
+                logger.error(f"Feedback collection failed: {e}")
+        
+        return result
     
     async def execute_with_context(
         self,
@@ -821,3 +890,381 @@ class UnifiedAttackExecutor:
             "last_train_time": datetime.fromtimestamp(self.last_train_time).isoformat(),
             "time_since_last_train": int(time.time() - self.last_train_time)
         }
+    
+    async def collect_feedback(
+        self,
+        attack_id: str,
+        execution_result: ExecutionResult,
+        execution_time: float,
+        strategies_used: list[str]
+    ) -> AttackFeedback:
+        """收集攻擊反饋並進行優化分析
+        
+        Args:
+            attack_id: 攻擊 ID
+            execution_result: 執行結果
+            execution_time: 執行時間（秒）
+            strategies_used: 使用的策略列表
+        
+        Returns:
+            AttackFeedback 反饋數據
+        """
+        logger.info(f"📊 Collecting feedback for attack: {attack_id}")
+        
+        # 計算成功率
+        success_rate = 1.0 if execution_result.success else 0.0
+        
+        # 計算效能分數
+        effectiveness_score = self._calculate_effectiveness_score(
+            success_rate=success_rate,
+            vulns_found=len(execution_result.vulnerabilities),
+            execution_time=execution_time
+        )
+        
+        # 檢查是否觸發 WAF
+        waf_triggered = any(
+            detail.get("waf_triggered", False)
+            for detail in execution_result.execution_details.get("traces", [])
+        )
+        
+        # 計算錯誤率
+        error_rate = self._calculate_error_rate(execution_result.execution_details)
+        
+        # 創建反饋對象
+        feedback = AttackFeedback(
+            feedback_id=f"feedback_{int(time.time())}",
+            attack_id=attack_id,
+            timestamp=datetime.now(UTC),
+            success_rate=success_rate,
+            vulnerabilities_found=len(execution_result.vulnerabilities),
+            execution_time=execution_time,
+            strategies_used=strategies_used,
+            effectiveness_score=effectiveness_score,
+            error_rate=error_rate,
+            waf_triggered=waf_triggered,
+            metadata={
+                "execution_details": execution_result.execution_details,
+                "learning_info": execution_result.learning_info
+            }
+        )
+        
+        # 保存反饋歷史
+        self._feedback_history.append(feedback)
+        
+        # 更新策略性能記錄
+        for strategy in strategies_used:
+            if strategy not in self._strategy_performance:
+                self._strategy_performance[strategy] = []
+            self._strategy_performance[strategy].append(effectiveness_score)
+        
+        # 觸發優化分析
+        if len(self._feedback_history) >= 10:  # 累積 10 次反饋後進行優化
+            await self._optimize_strategies()
+        
+        logger.info(
+            f"✅ Feedback collected: effectiveness={effectiveness_score:.2f}, "
+            f"success={success_rate}, vulns={len(execution_result.vulnerabilities)}"
+        )
+        
+        return feedback
+    
+    def _calculate_effectiveness_score(
+        self,
+        success_rate: float,
+        vulns_found: int,
+        execution_time: float
+    ) -> float:
+        """計算攻擊效能分數
+        
+        考慮因素：
+        - 成功率（40%）
+        - 發現的漏洞數量（40%）
+        - 執行效率（20%）
+        """
+        # 成功率分數
+        success_score = success_rate * 0.4
+        
+        # 漏洞數量分數（歸一化）
+        vuln_score = min(vulns_found / 5.0, 1.0) * 0.4
+        
+        # 效率分數（越快越好，假設理想時間為 10 秒）
+        efficiency_score = max(0, 1.0 - (execution_time / 60.0)) * 0.2
+        
+        return success_score + vuln_score + efficiency_score
+    
+    def _calculate_error_rate(self, execution_details: dict) -> float:
+        """計算錯誤率"""
+        traces = execution_details.get("traces", [])
+        if not traces:
+            return 0.0
+        
+        error_count = sum(
+            1 for trace in traces
+            if trace.get("error") or trace.get("failed")
+        )
+        
+        return error_count / len(traces)
+    
+    async def _optimize_strategies(self):
+        """基於反饋優化攻擊策略"""
+        logger.info("🔧 Optimizing attack strategies based on feedback...")
+        
+        try:
+            # 使用優化引擎分析
+            optimizations = await self.feedback_optimizer.analyze_and_optimize()
+            
+            if optimizations:
+                logger.info(f"📈 Generated {len(optimizations)} optimization recommendations")
+                
+                # 應用優化建議
+                for opt in optimizations:
+                    logger.info(
+                        f"  • {opt.strategy_name}: {opt.reason} "
+                        f"(priority={opt.priority}, score={opt.current_score:.2f})"
+                    )
+                    await self._apply_optimization(opt)
+            else:
+                logger.info("✓ No optimizations needed at this time")
+                
+        except Exception as e:
+            logger.error(f"Strategy optimization failed: {e}", exc_info=True)
+    
+    async def _apply_optimization(self, optimization: StrategyOptimization):
+        """應用優化建議"""
+        try:
+            # 更新 RAG 知識庫中的策略配置
+            await self.rag_engine.update_strategy_config(
+                strategy_name=optimization.strategy_name,
+                adjustments=optimization.recommended_adjustments
+            )
+            
+            logger.info(f"✅ Applied optimization for: {optimization.strategy_name}")
+            
+        except Exception as e:
+            logger.warning(f"Failed to apply optimization: {e}")
+    
+    def get_optimization_report(self) -> dict:
+        """獲取優化報告"""
+        report = {
+            "total_feedbacks": len(self._feedback_history),
+            "strategies_tracked": len(self._strategy_performance),
+            "strategy_performance": {},
+            "recent_optimizations": []
+        }
+        
+        # 計算每個策略的平均性能
+        for strategy, scores in self._strategy_performance.items():
+            if scores:
+                report["strategy_performance"][strategy] = {
+                    "avg_score": sum(scores) / len(scores),
+                    "best_score": max(scores),
+                    "worst_score": min(scores),
+                    "total_uses": len(scores),
+                    "trend": "improving" if len(scores) > 1 and scores[-1] > scores[0] else "stable"
+                }
+        
+        # 最近的反饋
+        if self._feedback_history:
+            recent = self._feedback_history[-5:]
+            report["recent_feedbacks"] = [
+                {
+                    "attack_id": f.attack_id,
+                    "effectiveness": f.effectiveness_score,
+                    "success": f.success_rate,
+                    "vulns_found": f.vulnerabilities_found,
+                    "time": f.timestamp.isoformat()
+                }
+                for f in recent
+            ]
+        
+        return report
+
+
+class FeedbackOptimizer:
+    """反饋優化引擎
+    
+    負責分析攻擊反饋並生成策略優化建議
+    """
+    
+    def __init__(
+        self,
+        feedback_history: list[AttackFeedback],
+        strategy_performance: dict[str, list[float]]
+    ):
+        self.feedback_history = feedback_history
+        self.strategy_performance = strategy_performance
+        self.logger = get_logger(__name__)
+    
+    async def analyze_and_optimize(self) -> list[StrategyOptimization]:
+        """分析反饋並生成優化建議"""
+        optimizations = []
+        
+        # 1. 識別表現不佳的策略
+        poor_strategies = self._identify_poor_strategies()
+        for strategy in poor_strategies:
+            opt = await self._generate_optimization(strategy, "underperforming")
+            if opt:
+                optimizations.append(opt)
+        
+        # 2. 識別高頻錯誤模式
+        error_patterns = self._identify_error_patterns()
+        for pattern in error_patterns:
+            opt = await self._generate_error_fix(pattern)
+            if opt:
+                optimizations.append(opt)
+        
+        # 3. 識別 WAF 繞過機會
+        waf_opportunities = self._identify_waf_bypass_opportunities()
+        for opp in waf_opportunities:
+            opt = await self._generate_waf_bypass_optimization(opp)
+            if opt:
+                optimizations.append(opt)
+        
+        # 4. 按優先級排序
+        optimizations.sort(key=lambda x: x.priority, reverse=True)
+        
+        return optimizations
+    
+    def _identify_poor_strategies(self) -> list[str]:
+        """識別表現不佳的策略（平均分數 < 0.5）"""
+        poor = []
+        for strategy, scores in self.strategy_performance.items():
+            if scores and sum(scores) / len(scores) < 0.5:
+                poor.append(strategy)
+        return poor
+    
+    def _identify_error_patterns(self) -> list[dict]:
+        """識別高頻錯誤模式"""
+        patterns = []
+        
+        # 分析最近的反饋
+        recent = self.feedback_history[-20:] if len(self.feedback_history) > 20 else self.feedback_history
+        
+        # 統計錯誤類型
+        error_types = {}
+        for feedback in recent:
+            if feedback.error_rate > 0.3:  # 錯誤率超過 30%
+                for strategy in feedback.strategies_used:
+                    if strategy not in error_types:
+                        error_types[strategy] = 0
+                    error_types[strategy] += 1
+        
+        # 識別高頻錯誤
+        for strategy, count in error_types.items():
+            if count >= 3:  # 至少出現 3 次
+                patterns.append({
+                    "strategy": strategy,
+                    "error_count": count,
+                    "frequency": count / len(recent)
+                })
+        
+        return patterns
+    
+    def _identify_waf_bypass_opportunities(self) -> list[dict]:
+        """識別 WAF 繞過機會"""
+        opportunities = []
+        
+        # 分析最近的 WAF 觸發情況
+        recent = self.feedback_history[-10:]
+        waf_triggers = [f for f in recent if f.waf_triggered]
+        
+        if len(waf_triggers) >= 3:  # WAF 觸發頻率較高
+            # 分析哪些策略容易觸發 WAF
+            strategy_waf_rate = {}
+            for feedback in recent:
+                for strategy in feedback.strategies_used:
+                    if strategy not in strategy_waf_rate:
+                        strategy_waf_rate[strategy] = {"total": 0, "waf": 0}
+                    strategy_waf_rate[strategy]["total"] += 1
+                    if feedback.waf_triggered:
+                        strategy_waf_rate[strategy]["waf"] += 1
+            
+            # 識別需要改進的策略
+            for strategy, stats in strategy_waf_rate.items():
+                waf_rate = stats["waf"] / stats["total"]
+                if waf_rate > 0.5:  # WAF 觸發率超過 50%
+                    opportunities.append({
+                        "strategy": strategy,
+                        "waf_rate": waf_rate,
+                        "total_attempts": stats["total"]
+                    })
+        
+        return opportunities
+    
+    async def _generate_optimization(
+        self,
+        strategy: str,
+        reason_type: str
+    ) -> Optional[StrategyOptimization]:
+        """生成策略優化建議"""
+        scores = self.strategy_performance.get(strategy, [])
+        if not scores:
+            return None
+        
+        avg_score = sum(scores) / len(scores)
+        
+        # 根據原因類型生成調整建議
+        if reason_type == "underperforming":
+            adjustments = {
+                "increase_timeout": True,
+                "add_retry_logic": True,
+                "adjust_payload_encoding": True,
+                "diversify_attack_vectors": True
+            }
+            reason = f"策略平均效能低於預期 ({avg_score:.2f})"
+            priority = 8
+        else:
+            adjustments = {}
+            reason = "需要優化"
+            priority = 5
+        
+        return StrategyOptimization(
+            strategy_name=strategy,
+            current_score=avg_score,
+            recommended_adjustments=adjustments,
+            priority=priority,
+            reason=reason
+        )
+    
+    async def _generate_error_fix(self, pattern: dict) -> Optional[StrategyOptimization]:
+        """生成錯誤修復建議"""
+        strategy = pattern["strategy"]
+        
+        adjustments = {
+            "add_error_handling": True,
+            "validate_inputs": True,
+            "add_fallback_strategy": True,
+            "reduce_concurrency": True
+        }
+        
+        return StrategyOptimization(
+            strategy_name=strategy,
+            current_score=0.0,  # 錯誤情況分數為 0
+            recommended_adjustments=adjustments,
+            priority=9,  # 高優先級
+            reason=f"高頻錯誤模式 (出現 {pattern['error_count']} 次)"
+        )
+    
+    async def _generate_waf_bypass_optimization(
+        self,
+        opportunity: dict
+    ) -> Optional[StrategyOptimization]:
+        """生成 WAF 繞過優化建議"""
+        strategy = opportunity["strategy"]
+        waf_rate = opportunity["waf_rate"]
+        
+        adjustments = {
+            "use_obfuscation": True,
+            "add_delay_between_requests": True,
+            "rotate_user_agents": True,
+            "use_encoding_variations": True,
+            "split_payload": True
+        }
+        
+        return StrategyOptimization(
+            strategy_name=strategy,
+            current_score=1.0 - waf_rate,
+            recommended_adjustments=adjustments,
+            priority=10,  # 最高優先級
+            reason=f"WAF 觸發率過高 ({waf_rate*100:.1f}%)"
+        )

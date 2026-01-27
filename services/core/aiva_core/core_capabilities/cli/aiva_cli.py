@@ -109,7 +109,7 @@ def create_flow_command(flow_id: int, flow_info: Dict[str, Any]):
         
         # 執行 Flow
         try:
-            from services.core.aiva_core.internal_exploration.python_tools.aiva_cli_implementation import FlowExecutor
+            from services.core.aiva_core.internal_exploration.aiva_internal_executor import FlowExecutor
             
             executor = FlowExecutor()
             click.echo("\n⏳ 執行中...")
@@ -195,7 +195,7 @@ def run(flow_id: int, context: str, intensity: float, dry_run: bool):
         context_data = json.loads(context)
         
         # 使用 FlowExecutor 執行
-        from services.core.aiva_core.internal_exploration.python_tools.aiva_cli_implementation import FlowExecutor
+        from services.core.aiva_core.internal_exploration.aiva_internal_executor import FlowExecutor
         
         executor = FlowExecutor()
         flow = executor.get_flow_by_id(flow_id)

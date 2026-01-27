@@ -13,7 +13,6 @@ AIVA Security Domain Schemas
 
 from .events import *
 from .findings import *
-from .vulnerabilities import *
 from .threat_intel import *
 
 __all__ = [
@@ -30,45 +29,22 @@ __all__ = [
     "AttackPathEdgeType",
     "LegacySIEMEventAdapter",
     "LegacyAttackPathAdapter",
-    # 漏洞發現 (findings.py)
+    # 漏洞發現 (findings.py) - 只包含真正存在的類別
     "Vulnerability",
     "Target",
-    "FindingTarget",
+    "FindingTarget",  # 別名指向Target
     "FindingEvidence",
     "FindingImpact", 
     "FindingRecommendation",
     "FindingPayload",
     "SensitiveMatch",
+    "JavaScriptAnalysisResult",
     "VulnerabilityCorrelation",
     "VulnerabilityScorecard",
     "CodeLevelRootCause",
     "SASTDASTCorrelation",
     "AIVerificationRequest", 
     "AIVerificationResult",
-    # 低價值漏洞 (low_value_vulnerabilities.py)
-    "LowValueVulnerabilityType",
-    "VulnerabilityPattern", 
-    "InfoDisclosurePattern",
-    "ErrorMessageDisclosure",
-    "DebugInfoDisclosure",
-    "XSSPattern",
-    "ReflectedXSSBasic",
-    "DOMXSSSimple",
-    "CSRFPattern",
-    "CSRFMissingToken",
-    "CSRFJSONBypass",
-    "IDORPattern",
-    "IDORSimpleID", 
-    "IDORUserData",
-    "OpenRedirectPattern",
-    "HostHeaderInjectionPattern",
-    "CORSMisconfigurationPattern",
-    "ClickjackingPattern",
-    "LowValueVulnerabilityTest",
-    "LowValueVulnerabilityResult",
-    "BugBountyStrategy",
-    "BountyPrediction",
-    "ROIAnalysis",
     # 威脅情報 (threat_intelligence.py)
     "STIXDomainObject",
     "STIXRelationshipObject",
@@ -79,7 +55,7 @@ __all__ = [
     "IntrusionSet",
     "Campaign",
     "CourseOfAction",
-    "STIXVulnerability",
+    "Vulnerability",
     "Tool",
     "ObservedData",
     "Report",

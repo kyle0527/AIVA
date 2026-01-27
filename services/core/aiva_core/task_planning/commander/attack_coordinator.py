@@ -6,6 +6,7 @@
 import logging
 from datetime import datetime
 from typing import Any
+import httpx
 
 # 強制依賴檢查 - Fail Fast 原則
 try:
@@ -25,6 +26,15 @@ except ImportError as e:
         "請確認 services.features.function_exploit.executor.attack_executor 模組已實現\n"
         f"原始錯誤: {e}"
     ) from e
+
+# 核心檢測器導入
+from services.features.function_xss.traditional_detector import TraditionalXssDetector
+from services.features.function_xss.payload_generator import XssPayloadGenerator
+from services.features.function_sqli.detector.sqli_detector import SqliDetector
+from services.aiva_common.schemas.tasks import FunctionTaskPayload, FunctionTaskTarget
+from services.aiva_common.schemas.findings import FindingPayload, Vulnerability, FindingEvidence, FindingTarget
+from services.aiva_common.enums import VulnerabilityType, Severity, Confidence
+from services.aiva_common.utils import new_id
 
 logger = logging.getLogger(__name__)
 
@@ -56,7 +66,7 @@ class AttackCoordinator:
         self.internal_loop = internal_loop
 
     async def detect_vulnerabilities(self, context: dict[str, Any]) -> dict[str, Any]:
-        """檢測漏洞（調用功能模組）
+        """檢測漏洞（直接調用核心檢測器）
 
         Args:
             context: 檢測上下文 {
@@ -74,7 +84,7 @@ class AttackCoordinator:
         if not target:
             return {"success": False, "error": "No target specified"}
 
-        vuln_types = context.get("vulnerability_types", ["sqli", "xss", "ssrf", "idor"])
+        vuln_types = context.get("vulnerability_types", ["sqli", "xss"])
         deep_scan = context.get("deep_scan", False)
 
         results = {
@@ -86,62 +96,118 @@ class AttackCoordinator:
         }
 
         try:
-            module_map = {
-                "sqli": "services.features.function_sqli.worker",
-                "xss": "services.features.function_xss.worker",
-                "ssrf": "services.features.function_ssrf.worker",
-                "idor": "services.features.function_idor.worker",
-            }
-
-            for vuln_type in vuln_types:
-                if vuln_type not in module_map:
-                    logger.warning(f"⚠️ 未知漏洞類型: {vuln_type}")
-                    continue
-
-                try:
-                    module_path = module_map[vuln_type]
-                    module = __import__(module_path, fromlist=["*"])
-                    
-                    worker_class_name = f"{vuln_type.capitalize()}WorkerService"
-                    if vuln_type == "sqli":
-                        worker_class_name = "SqliWorkerService"
-                    elif vuln_type == "xss":
-                        worker_class_name = "XssWorkerService"
-                    elif vuln_type == "ssrf":
-                        worker_class_name = "SsrfWorkerService"
-                    elif vuln_type == "idor":
-                        worker_class_name = "IdorWorkerService"
-                    
-                    worker_class = getattr(module, worker_class_name)
-                    worker = worker_class()
-
-                    from services.aiva_common.schemas.tasks import (
-                        FunctionTaskPayload,
-                        FunctionTaskTarget,
-                    )
-
-                    task = FunctionTaskPayload(
-                        task_id=f"task_ai_{vuln_type}_{datetime.now().strftime('%Y%m%d%H%M%S')}",
-                        scan_id=f"scan_ai_{datetime.now().strftime('%Y%m%d%H%M%S')}",
-                        target=FunctionTaskTarget(url=target, method="GET"),
-                        priority=8 if deep_scan else 5,
-                    )
-
-                    logger.info(f"   🎯 執行 {vuln_type.upper()} 檢測...")
-                    detection_result = await worker.process_task(task)
-
-                    if detection_result:
-                        findings_count = len(detection_result.get("findings", []))
-                        results["vulnerabilities_found"].extend(
-                            detection_result.get("findings", [])
+            # 創建 HTTP 客戶端
+            async with httpx.AsyncClient(
+                follow_redirects=True,
+                timeout=30.0 if not deep_scan else 60.0
+            ) as client:
+                
+                # XSS 檢測
+                if "xss" in vuln_types:
+                    try:
+                        logger.info("   🎯 執行 XSS 檢測...")
+                        
+                        # 創建任務 payload
+                        task = FunctionTaskPayload(
+                            task_id=f"task_ai_xss_{datetime.now().strftime('%Y%m%d%H%M%S')}",
+                            scan_id=f"scan_ai_{datetime.now().strftime('%Y%m%d%H%M%S')}",
+                            target=FunctionTaskTarget(url=target, method="GET"),
+                            priority=8 if deep_scan else 5,
                         )
-                        results["modules_executed"].append(vuln_type)
+                        
+                        # 生成 payload
+                        payload_gen = XssPayloadGenerator()
+                        if deep_scan:
+                            payloads = payload_gen.generate_all_payloads()
+                        else:
+                            payloads = payload_gen.generate_basic_payloads()
+                        
+                        # 執行檢測
+                        detector = TraditionalXssDetector(
+                            task=task,
+                            timeout=30.0,
+                            retries=3 if deep_scan else 1,
+                            client=client
+                        )
+                        
+                        xss_results = await detector.execute(payloads)
+                        
+                        # 轉換為標準格式
+                        findings_count = len(xss_results)
+                        for xss_result in xss_results:
+                            vulnerability = Vulnerability(
+                                name=VulnerabilityType.XSS,
+                                severity=Severity.HIGH,
+                                confidence=Confidence.FIRM,
+                                description=f"XSS vulnerability detected with payload: {xss_result.payload}"
+                            )
+                            
+                            evidence = FindingEvidence(
+                                payload=xss_result.payload,
+                                request=str(xss_result.request.url) if xss_result.request else None,
+                                response=xss_result.response_text[:500] if xss_result.response_text else None
+                            )
+                            
+                            finding = FindingPayload(
+                                finding_id=new_id("finding"),
+                                task_id=task.task_id,
+                                scan_id=task.scan_id,
+                                status="confirmed",
+                                vulnerability=vulnerability,
+                                target=FindingTarget(url=str(task.target.url)),
+                                evidence=evidence
+                            )
+                            results["vulnerabilities_found"].append(finding)
+                        
+                        results["modules_executed"].append("xss")
                         results["total_findings"] += findings_count
-                        logger.info(f"   ✅ {vuln_type.upper()}: 發現 {findings_count} 個漏洞")
-
-                except Exception as e:
-                    logger.error(f"   ❌ {vuln_type.upper()} 模組執行失敗: {e}")
-                    results[vuln_type + "_error"] = str(e)
+                        logger.info(f"   ✅ XSS: 發現 {findings_count} 個漏洞")
+                        
+                    except Exception as e:
+                        logger.error(f"   ❌ XSS 模組執行失敗: {e}")
+                        results["xss_error"] = str(e)
+                
+                # SQL 注入檢測
+                if "sqli" in vuln_types:
+                    try:
+                        logger.info("   🎯 執行 SQL 注入檢測...")
+                        
+                        # 創建任務 payload
+                        task = FunctionTaskPayload(
+                            task_id=f"task_ai_sqli_{datetime.now().strftime('%Y%m%d%H%M%S')}",
+                            scan_id=f"scan_ai_{datetime.now().strftime('%Y%m%d%H%M%S')}",
+                            target=FunctionTaskTarget(url=target, method="GET"),
+                            priority=8 if deep_scan else 5,
+                        )
+                        
+                        # 執行檢測
+                        detector = SqliDetector()
+                        sqli_results = await detector.detect_sqli(
+                            target=target,
+                            params={"db_fingerprint": context.get("db_type")}
+                        )
+                        
+                        # 轉換為標準格式
+                        findings_count = len(sqli_results)
+                        for sqli_result in sqli_results:
+                            finding = FindingPayload(
+                                finding_id=new_id("finding"),
+                                task_id=task.task_id,
+                                scan_id=task.scan_id,
+                                status="confirmed",
+                                vulnerability=sqli_result.vulnerability,
+                                target=sqli_result.target,
+                                evidence=sqli_result.evidence if hasattr(sqli_result, 'evidence') else None
+                            )
+                            results["vulnerabilities_found"].append(finding)
+                        
+                        results["modules_executed"].append("sqli")
+                        results["total_findings"] += findings_count
+                        logger.info(f"   ✅ SQL 注入: 發現 {findings_count} 個漏洞")
+                        
+                    except Exception as e:
+                        logger.error(f"   ❌ SQL 注入模組執行失敗: {e}")
+                        results["sqli_error"] = str(e)
 
             logger.info(
                 f"✅ AI 控制: 漏洞檢測完成 - 共發現 {results['total_findings']} 個漏洞"
@@ -414,7 +480,8 @@ class AttackCoordinator:
         logger.info(f"🧠 AI Commander querying self capabilities: '{query}'")
         
         try:
-            rag_result = self.internal_loop.query_capabilities(
+            # 使用 await 調用內部循環的異步方法
+            rag_result = await self.internal_loop.query_capabilities_async(
                 query=query,
                 filters=filters,
                 top_k=top_k
@@ -455,8 +522,7 @@ class AttackCoordinator:
     async def unified_attack(
         self,
         target: str,
-        objective: str,
-        user_input: str | None = None
+        objective: str
     ) -> dict[str, Any]:
         """統一攻擊執行接口
 
@@ -564,7 +630,7 @@ class AttackCoordinator:
                     
                     # 確保 phase2_targets 是 dict 類型
                     if not isinstance(phase2_targets, dict):
-                        phase2_targets = {"targets": [], "total_bounty_estimate": 0}
+                        phase2_targets = {"targets": []}
                     
                     logger.info(
                         f"🎯 Phase2 目標分析: {len(phase2_targets.get('targets', []))} 個高價值目標"
@@ -576,7 +642,6 @@ class AttackCoordinator:
                         "vulnerability_findings": result.get("vulnerabilities", []) if isinstance(result, dict) else [],
                         "attack_success_rate": min(1.0, total_found / 10.0),  # 簡單估算
                         "total_execution_time": result.get("execution_time", 0) if isinstance(result, dict) else 0,
-                        "bounty_potential": phase2_targets.get("total_bounty_estimate", 0),
                     }
                     
                     # 評估 Phase2 結果（將 dict 包裝成 list）

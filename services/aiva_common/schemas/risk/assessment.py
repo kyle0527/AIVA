@@ -4,7 +4,7 @@
 此模組定義了風險評估、攻擊路徑分析等相關的資料模型。
 """
 
-from datetime import UTC, datetime
+from datetime import datetime, timezone
 from typing import Any
 
 from pydantic import BaseModel, Field
@@ -46,7 +46,7 @@ class RiskAssessmentResult(BaseModel):
     business_impact: dict[str, Any] = Field(default_factory=dict)
     recommendations: list[str] = Field(default_factory=list)
     estimated_effort: str | None = None
-    timestamp: datetime = Field(default_factory=lambda: datetime.now(UTC))
+    timestamp: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
 
 class RiskTrendAnalysis(BaseModel):
@@ -94,7 +94,7 @@ class AttackPathPayload(BaseModel):
     total_risk_score: float
     path_length: int
     description: str | None = None
-    timestamp: datetime = Field(default_factory=lambda: datetime.now(UTC))
+    timestamp: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
 
 class AttackPathRecommendation(BaseModel):
@@ -111,4 +111,4 @@ class AttackPathRecommendation(BaseModel):
     affected_assets: list[str] = Field(default_factory=list)
     estimated_effort: str
     estimated_risk_reduction: float
-    timestamp: datetime = Field(default_factory=lambda: datetime.now(UTC))
+    timestamp: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))

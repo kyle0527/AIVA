@@ -1,11 +1,9 @@
 # 🤖 AIVA Core - AI 核心系統
 
-> **版本**: v4.4.0 | **狀態**: ✅ 生產就緒 | **最後更新**: 2026-01-09  
+> **版本**: v4.4.0 | **狀態**: ✅ 生產就緒 | **最後更新**: 2026-01-21  
 > **角色**: AIVA 的程式化核心服務，提供 AI 認知、任務規劃、能力管理等核心功能  
 > **架構**: 5M 特化 AI + CLI 命令執行 + 事件驅動執行 + Bug Bounty 決策引擎  
-> **檔案數**: 138 個 Python 模組 | **模組狀態**: 4/4 ✅ | **驗證狀態**: ✅ 全部通過
-
-**導航**: [← 返回 Services](../../README.md)
+> **檔案數**: 150 個 Python 模組 | **模組狀態**: 5/5 ✅ | **驗證狀態**: ✅ 全部通過
 
 ---
 
@@ -18,7 +16,7 @@
   - [📋 Task Planning - 任務規劃](#-task-planning---任務規劃)
   - [🎯 Core Capabilities - 核心能力](#-core-capabilities---核心能力)
   - [🏗️ Service Backbone - 服務骨幹](#-service-backbone---服務骨幹)
-- [🎯 Bug Bounty 決策引擎](#-bug-bounty-決策引擎)
+- [Bug Bounty 決策引擎](#-bug-bounty-決策引擎)
 - [架構特點](#-架構特點)
 - [快速開始](#-快速開始)
 - [系統統計](#-系統統計)
@@ -28,11 +26,7 @@
 
 ## 🎯 系統概述
 
-AIVA Core 是整個 AIVA 系統的核心大腦，採用**四大模組架構**設計，每個模組負責特定的核心功能，共同構成完整的 AI 決策和執行系統。
-
-> **架構變更 (2026-01)**: 原 `external_learning` 已整合至 `cognitive_core/learning_system`，現為四大模組架構。  
-> **重大更新 (2026-01-07)**: 完成四大 Bug Bounty 決策方法整合，實現完整 HackerOne/Bugcrowd 工作流程。  
-> **模組驗證 (2026-01-09)**: 四大核心模組全部通過驗證，104 個文件無測試/mock，無編譯錯誤 ⭐
+AIVA Core 是整個 AIVA 系統的核心大腦，採用**五大模組架構**設計，每個模組負責特定的核心功能，共同構成完整的 AI 決策和執行系統。
 
 ### 架構原則
 - ✅ **單一數據源 (SOT)**: 遵循 aiva_common 規範，避免數據重複
@@ -42,22 +36,9 @@ AIVA Core 是整個 AIVA 系統的核心大腦，採用**四大模組架構**設
 - ✅ **真實執行**: 所有 840 個能力真實註冊，無模擬數據
 - ✅ **Bug Bounty 優化**: 四大決策方法針對 HackerOne 實戰優化
 
-### v4.4.0 重大更新 (2026-01-07)
-- ✅ **Bug Bounty 決策引擎完成**: 四大決策方法全部實現並整合
-  - `decide_scan_strategy()` - 智慧掃描工具選擇 (nmap/masscan)
-  - `decide_phase1_strategy()` - Phase1 深度掃描決策 (ROI 導向)
-  - `decide_phase2_targets()` - Phase2 攻擊目標優先級排序 (Tier 1-3)
-  - `evaluate_phase2_results()` - Phase2 結果評估和後續行動
-- ✅ **HackerOne/Bugcrowd 實戰優化**: 獎金表、CVSS 評分、WAF 繞過策略
-- ✅ **完整編排器整合**: attack_coordinator.py 和 two_phase_scan_orchestrator.py
-- ✅ **5M 神經網絡增強**: 語意向量 (384) + 特徵向量 (32) + Bug Bounty 決策
-- ✅ **移除降級邏輯**: real_neural_core.py 不再包含 fallback 代碼
-- ✅ **事件驅動執行**: plan_executor.py 使用 asyncio.Future 取代 polling
-- ✅ **模組檢測**: 24/24 核心模組全部通過導入測試
-
 ---
 
-## 🏛️ 四大核心模組
+## 🏛️ 五大核心模組
 
 ### 🧠 Cognitive Core - 認知核心
 **[📖 查看詳細文檔](cognitive_core/README.md)**
@@ -66,50 +47,28 @@ AI 認知智能核心，整合神經網路、決策支援、知識檢索和可�
 
 **核心功能**:
 - 🧠 神經網路推理 (RealAICore, 5M 參數, PyTorch)
-- 🎯 **智能決策支援** (CapabilityOrchestrator + EnhancedDecisionAgent)
-  - ✅ **RAG 向量檢索** (384 維語意向量)
-  - ✅ **非硬編碼**: 基於向量相似度選擇能力
-  - ✅ 動態能力發現（新增能力自動索引）
-- 🔍 RAG 檢索增強 (InternalLoopConnector)
+- 🎯 智能決策支援 (CapabilityOrchestrator + EnhancedDecisionAgent)
+- 🔍 RAG 向量檢索 (384 維語意向量 + 經驗同步)
 - 🛡️ 反幻覺機制
-- **🎯 Bug Bounty 決策引擎** (四大決策方法) ⭐
+- 📚 嵌入式安全知識庫 (SQLi/XSS/SSRF/CVE/WAF)
+- 📈 統一經驗學習系統（含 knowledge/ 子模組）
 
-**關鍵組件**:
-- `neural/real_neural_core.py` - 神經網路核心 (5M 參數, sentence-transformers 384 維)
-- `decision/enhanced_decision_agent.py` - **Bug Bounty 決策代理** (2200+ 行) ⭐
-- `capability_orchestrator.py` - 能力編排器
-- `capability_encoder.py` - **512 維結構化編碼器** 
-- `internal_loop_connector.py` - RAG 查詢接口 (v11.0)
-- `rag/vector_store.py` - 向量資料庫 (512 維)
-- `learning_system/experience_manager.py` - 經驗學習管理器
-
-**Bug Bounty 決策方法**:
-1. `decide_scan_strategy()` - 智慧掃描工具選擇 (整合至 attack_coordinator.py)
-2. `decide_phase1_strategy()` - Phase1 深度掃描決策 (整合至 two_phase_scan_orchestrator.py)
-3. `decide_phase2_targets()` - Phase2 攻擊目標優先級排序 (Tier 1-3 系統)
-4. `evaluate_phase2_results()` - Phase2 結果評估和後續行動 (HackerOne 標準)
-
-**統計**: 41 個文件, 18,486+ 行代碼 (+2200 行決策引擎) | **驗證**: ✅ v2.1 去語意化完成
+**統計**: 48 個 Python 文件, 7 個子模組 | **驗證**: ✅ v2.1 去語意化完成
 
 ---
 
 ### 🧭 Internal Exploration - 內部探索
 **[📖 查看詳細文檔](internal_exploration/README.md)**
 
-自我分析和能力發現系統，通過三階段分析管道實現自我認知。
+自我分析和能力發現系統，提供多語言 AST 分析、數據流追蹤、自動化分類。
 
 **核心功能**:
-- 📊 代碼流程分析 (ExplorationPipeline)
-- 🏷️ 能力自動分類 (五大模組分類)
-- 🔄 能力註冊同步
-- 📈 系統健康自檢
+- 📊 多語言 AST 解析 (Python, Go, Rust, TypeScript)
+- 🏷️ 能力自動分類 (內部/外部模組)
+- 🔧 自我修復診斷
+- ⚡ 動態執行系統
 
-**三階段管道**:
-1. **Analyzer** - AST 分析與數據流發現
-2. **Classifier** - 數據流分類與統計
-3. **Diff** - 增量更新與變化檢測
-
-**統計**: 16 個文件, 8,695 行代碼 | **驗證**: ✅ FlowExecutor 核心實現 (313-318 flows)
+**統計**: 16 個文件, 2 個子模組 | **驗證**: ✅ FlowExecutor 核心實現 (313-318 flows)
 
 ---
 
@@ -122,7 +81,7 @@ AI 認知智能核心，整合神經網路、決策支援、知識檢索和可�
 - 📋 AI 驅動的任務分解
 - ⚡ 並行執行管理
 - 🔄 動態計劃調整
-- 📊 執行進度追蹤
+- 🎯 Bug Bounty 決策整合
 
 **子模組架構**:
 | 子模組 | 說明 | 文檔 |
@@ -130,18 +89,9 @@ AI 認知智能核心，整合神經網路、決策支援、知識檢索和可�
 | **commander** | AI 指揮官與策略引擎 | [README](task_planning/commander/README.md) |
 | **planner** | 任務規劃與生成器 | [README](task_planning/planner/README.md) |
 | **executor** | 計劃執行與任務處理 | [README](task_planning/executor/README.md) |
+| **persistence** | 任務狀態持久化 | - |
 
-**關鍵組件**:
-- `ai_commander.py` - AI 指揮官（已重構）
-- `commander/attack_coordinator.py` - **攻擊協調器** (含 decide_scan_strategy 整合) ⭐
-- `planner/execution_planner.py` - 任務規劃器
-- `executor/task_executor.py` - 任務執行器
-- `command_router.py` - 命令路由器
-- `unified_executor.py` - 統一執行器（含學習功能）
-
-**統計**: 28 個文件, 8,008+ 行代碼 | **驗證**: ✅ internal_exploration 整合完成
-
-> **架構說明**: 學習功能已整合至 `unified_executor.py`，原 `external_learning` 已合併至 `cognitive_core/learning_system`。Commander 於 2026-01-06 完成重構，2026-01-07 完成 Bug Bounty 決策整合。
+**統計**: 28 個文件, 4 個子模組 | **驗證**: ✅ internal_exploration 整合完成
 
 ---
 
@@ -154,17 +104,44 @@ AI 認知智能核心，整合神經網路、決策支援、知識檢索和可�
 - 📦 能力註冊管理 (CapabilityRegistry 代理)
 - 🔍 能力查詢和發現
 - 🎭 攻擊和分析能力
+- � 對話助理、智能選單
 - 🔌 插件系統整合
 
-**關鍵組件**:
-- `capability_registry.py` - 能力註冊表 (SOT 代理模式)
-- `orchestration/two_phase_scan_orchestrator.py` - **兩階段掃描編排器** (含 Phase2 決策整合) ⭐
-- `attack/` - 攻擊能力實現
-- `analysis/` - 分析能力實現
+**子模組架構**:
+| 子模組 | 說明 | 文檔 |
+|--------|------|------|
+| **analysis** | AI 增強代碼分析、業務邏輯掃描 | [README](core_capabilities/analysis/README.md) |
+| **attack** | 漏洞利用編排器 | [README](core_capabilities/attack/README.md) |
+| **cli** | AIVA CLI 接口 | [README](core_capabilities/cli/README.md) |
+| **dialog** | 對話助理、智能選單 | [README](core_capabilities/dialog/README.md) |
+| **orchestration** | 兩階段掃描編排 | [README](core_capabilities/orchestration/README.md) |
 
-**統計**: 19 個文件, 5,914+ 行代碼 | **驗證**: ✅ 刪除 2 個孤立文件，CLI 整合完成
+**統計**: 21 個文件, 8 個子模組 | **驗證**: ✅ CLI 整合完成
 
-**重要更新**: CapabilityRegistry 現在作為 integration.CapabilityRegistry 的代理，遵循 SOT 原則。數據來源為 latest_classification.json v3.3。
+---
+
+### 🏗️ Service Backbone - 服務骨幹
+**[📖 查看詳細文檔](service_backbone/README.md)**
+
+基礎設施服務層，提供 API、協調、效能監控和存儲支援。
+
+**核心功能**:
+- 🔌 RESTful API 服務
+- 🔄 組件協調管理
+- 📊 效能監控和健康檢查
+- 💾 存儲服務整合
+- 🔧 系統修復工具
+
+**子模組架構**:
+| 子模組 | 說明 | 文檔 |
+|--------|------|------|
+| **api** | API 路由和服務 | [README](service_backbone/api/README.md) |
+| **coordination** | 組件協調 | [README](service_backbone/coordination/README.md) |
+| **performance** | 效能監控、健康檢查 | [README](service_backbone/performance/README.md) |
+| **storage** | 存儲服務 | [README](service_backbone/storage/README.md) |
+| **utils** | 工具集、修復工具 | [README](service_backbone/utils/README.md) |
+
+**統計**: 37 個文件, 5 個子模組 | **驗證**: ✅ 基礎設施服務層完成
 
 ---
 
@@ -239,17 +216,31 @@ evaluation = agent.evaluate_phase2_results(phase2_results, time_budget=120.0)
 
 ---
 
-## ✅ 模組驗證狀態 (2026-01-09)
+## ✅ 模組驗證狀態 (2026-01-21)
 
-### 四大核心模組全部通過 ⭐
+### 五大核心模組全部通過 ⭐
 
-| 模組 | 文件數 | 驗證項目 | 狀態 |
-|------|--------|----------|------|
-| **cognitive_core** | 41 | 無測試文件、無編譯錯誤、v2.1 去語意化完成 | ✅ |
-| **core_capabilities** | 19 | 無測試文件、無編譯錯誤、刪除 2 個孤立文件 | ✅ |
-| **task_planning** | 28 | 無測試文件、無編譯錯誤、internal_exploration 整合 | ✅ |
-| **internal_exploration** | 16 | 無測試文件、無編譯錯誤、FlowExecutor 核心實現 | ✅ |
-| **總計** | **104** | **全部通過** | **✅** |
+| 模組 | 文件數 | 驗證項目 | 狀態 | 文檔 |
+|------|--------|----------|------|------|
+| **cognitive_core** | 48 | 無測試文件、v2.1 去語意化完成、嵌入式知識庫 | ✅ | [README](cognitive_core/README.md) |
+| **core_capabilities** | 21 | 無測試文件、新增智能選單/業務邏輯掃描 | ✅ | [README](core_capabilities/README.md) |
+| **task_planning** | 28 | 無測試文件、internal_exploration 整合 | ✅ | [README](task_planning/README.md) |
+| **internal_exploration** | 16 | 無測試文件、FlowExecutor 核心實現 | ✅ | [README](internal_exploration/README.md) |
+| **service_backbone** | 37 | 無測試文件、新增健康檢查/修復工具 | ✅ | [README](service_backbone/README.md) |
+| **總計** | **150** | **全部通過** | **✅** | - |
+
+### 2026-01-21 更新
+
+**新增文件**:
+- `cognitive_core/rag/sync_experiences.py` - 經驗同步工具
+- `cognitive_core/learning_system/knowledge/` - 知識管理子模組
+- `core_capabilities/dialog/ai_menu.py` - 智能選單 (696 行)
+- `core_capabilities/analysis/bizlogic_scanner.py` - 業務邏輯掃描
+- `service_backbone/api/ai_service.py` - AI 服務接口
+- `service_backbone/coordination/ai_manager.py` - AI 組件管理
+- `service_backbone/performance/health_check.py` - 健康檢查
+- `service_backbone/performance/diagnose.py` - 診斷工具
+- `service_backbone/utils/repair_tool.py` - 系統修復工具
 
 ### 驗證細節
 
@@ -302,7 +293,7 @@ cognitive_core.capability_orchestrator
 
 ---
 
-## 🏛️ 四大核心模組
+### 🏗️ Service Backbone - 服務骨幹
 **[📖 查看詳細文檔](service_backbone/README.md)**
 
 基礎設施層，提供消息、存儲、協調、監控等核心服務。

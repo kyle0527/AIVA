@@ -1,0 +1,51 @@
+{
+  "subdomain_scanner": {
+    "passive_sources": [
+      "crtsh",
+      "virustotal",
+      "securitytrails",
+      "threatcrowd"
+    ],
+    "bruteforce": {
+      "enabled": true,
+      "wordlist": "wordlists/subdomains.txt",
+      "max_attempts": 1000
+    },
+    "dns_zone_transfer": {
+      "enabled": true,
+      "timeout": 5
+    }
+  },
+  "directory_bruteforcer": {
+    "wordlist": "wordlists/directories.txt",
+    "threads": 10,
+    "timeout": 5,
+    "extensions": [".php", ".asp", ".aspx", ".jsp", ".txt", ".bak", ".old", ".config", ".sql"],
+    "interesting_codes": [200, 301, 302, 401, 403],
+    "max_urls": 5000
+  },
+  "tech_detector": {
+    "methods": [
+      "headers",
+      "html_patterns",
+      "cookies",
+      "meta_tags",
+      "scripts",
+      "favicon_hash"
+    ],
+    "timeout": 10
+  },
+  "port_scanner": {
+    "common_ports": [21, 22, 23, 25, 53, 80, 110, 143, 443, 445, 3306, 3389, 8080, 8443],
+    "threads": 50,
+    "timeout": 1,
+    "banner_grab": true
+  },
+  "web_crawler": {
+    "max_depth": 3,
+    "max_pages": 100,
+    "respect_robots_txt": true,
+    "extract_forms": true,
+    "extract_parameters": true
+  }
+}

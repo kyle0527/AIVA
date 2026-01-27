@@ -108,18 +108,29 @@ class VectorStore:
                 self.backend = "memory"
 
     def _get_embedding_model(self) -> Any:
-        """獲取嵌入模型（延遲加載）"""
+        """獲取嵌入模型（延遲加載）- AIVA 自研版本"""
         if self._embedding_model is None:
             try:
-                from sentence_transformers import SentenceTransformer
+                # 導入 AIVA 自研 Embedding 層
+                import sys
+                from pathlib import Path
+                
+                # 確保可以導入 aiva_embedding
+                neural_path = Path(__file__).parent.parent / "neural"
+                if str(neural_path) not in sys.path:
+                    sys.path.insert(0, str(neural_path))
+                
+                from aiva_embedding import AIVAEmbedding
 
-                self._embedding_model = SentenceTransformer(self.embedding_model_name)
-                logger.info(f"Loaded embedding model: {self.embedding_model_name}")
+                self._embedding_model = AIVAEmbedding(
+                    model_name_or_path=self.embedding_model_name
+                )
+                logger.info(f"✅ AIVA Embedding 已載入: {self.embedding_model_name} (AIVA 架構)")
 
-            except ImportError:
+            except ImportError as e:
                 logger.warning(
-                    "sentence-transformers not installed. "
-                    "Install with: pip install sentence-transformers"
+                    f"Failed to load AIVA Embedding: {e}. "
+                    "Using simple embedding fallback."
                 )
                 # 使用簡單的嵌入作為後備
                 self._embedding_model = self._simple_embedding

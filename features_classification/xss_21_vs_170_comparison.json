@@ -1,0 +1,33 @@
+{
+  "original_21": [
+    "run_reflected_test",
+    "run_dom_test",
+    "run_stored_test",
+    "XSSManager.comprehensive_scan",
+    "StoredXssDetector.execute",
+    "TraditionalXssDetector.execute",
+    "_execute_task",
+    "_execute_traditional_detection",
+    "_execute_stored_xss",
+    "CrossLanguageXSSEngine._execute_parallel_detection",
+    "CrossLanguageXSSEngine._execute_tool_detection",
+    "CrossLanguageXSSEngine._execute_go_tool",
+    "CrossLanguageXSSEngine._execute_ruby_tool",
+    "CrossLanguageXSSEngine._execute_python_tool",
+    "CrossLanguageXSSEngine._execute_rust_tool",
+    "DalfoxIntegration.scan_target",
+    "DOMXSSDetector.scan_dom_xss",
+    "StoredXSSDetector.scan_stored_xss",
+    "BlindXSSDetector.scan_blind_xss",
+    "process_task",
+    "XssWorkerService.process_task"
+  ],
+  "found_in_new": 22,
+  "new_total": 170,
+  "unique_starts": 170,
+  "categories": {
+    "原始 21 個入口點": 21,
+    "內部輔助函數": 100,
+    "其他函數": 49
+  }
+}

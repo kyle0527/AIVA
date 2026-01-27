@@ -14,7 +14,7 @@ KILL_CHAIN_DESC = "Kill Chain 階段"
 FIRST_SEEN_DESC = "首次發現時間"
 LAST_SEEN_DESC = "最後活動時間"
 
-from datetime import UTC, datetime
+from datetime import datetime, timezone
 from typing import Any, ClassVar, Literal
 from uuid import uuid4
 
@@ -33,10 +33,10 @@ class STIXDomainObject(BaseModel):
     spec_version: str = Field(default="2.1", description="STIX 規範版本")
     id: str = Field(description="STIX 物件唯一標識符，格式: {type}--{UUID}")
     created: datetime = Field(
-        default_factory=lambda: datetime.now(UTC), description="建立時間"
+        default_factory=lambda: datetime.now(timezone.utc), description="建立時間"
     )
     modified: datetime = Field(
-        default_factory=lambda: datetime.now(UTC), description="最後修改時間"
+        default_factory=lambda: datetime.now(timezone.utc), description="最後修改時間"
     )
     created_by_ref: str | None = Field(default=None, description="建立者引用")
     revoked: bool = Field(default=False, description="是否已撤銷")
@@ -76,8 +76,8 @@ class STIXRelationshipObject(BaseModel):
     type: Literal["relationship"] = "relationship"
     spec_version: str = Field(default="2.1", description="STIX 規範版本")
     id: str = Field(description="關係物件唯一標識符")
-    created: datetime = Field(default_factory=lambda: datetime.now(UTC))
-    modified: datetime = Field(default_factory=lambda: datetime.now(UTC))
+    created: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    modified: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     relationship_type: str = Field(description="關係類型")
     source_ref: str = Field(description="來源物件引用")
     target_ref: str = Field(description="目標物件引用")
@@ -173,7 +173,7 @@ class Indicator(STIXDomainObject):
     pattern_type: str = Field(default="stix", description="模式類型")
     pattern_version: str | None = Field(default=None, description="模式版本")
     valid_from: datetime = Field(
-        default_factory=lambda: datetime.now(UTC), description="有效起始時間"
+        default_factory=lambda: datetime.now(timezone.utc), description="有效起始時間"
     )
     valid_until: datetime | None = Field(default=None, description="有效結束時間")
     kill_chain_phases: list[KillChainPhase] = Field(
@@ -335,8 +335,8 @@ class Sighting(BaseModel):
     type: Literal["sighting"] = "sighting"
     spec_version: str = Field(default="2.1")
     id: str = Field(description="目擊物件唯一標識符")
-    created: datetime = Field(default_factory=lambda: datetime.now(UTC))
-    modified: datetime = Field(default_factory=lambda: datetime.now(UTC))
+    created: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    modified: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     sighting_of_ref: str = Field(description="目擊對象引用")
     observed_data_refs: list[str] = Field(
         default_factory=list, description="觀察數據引用"
@@ -468,8 +468,8 @@ class ThreatIntelligenceReport(BaseModel):
 
     # 時間資訊
     intelligence_date: datetime = Field(description="情報日期")
-    created_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
-    updated_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
     # TAXII 相關
     collection_id: str | None = Field(
@@ -552,8 +552,8 @@ class LowValueVulnerabilityPattern(BaseModel):
     suitable_program_types: list[str] = Field(description="適合的程式類型")
     excluded_domains: list[str] = Field(default_factory=list, description="排除域名")
 
-    created_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
-    updated_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
 
 class BugBountyIntelligence(BaseModel):
@@ -586,5 +586,5 @@ class BugBountyIntelligence(BaseModel):
     recommended_approach: str = Field(description="推薦方法")
     priority_score: float = Field(ge=0.0, le=10.0, description="優先級分數")
 
-    created_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
-    updated_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))

@@ -1090,27 +1090,3 @@ class XSSManager:
 # CapabilityRegistry.register("xss_attack_tools", XSSCapability)
 
 
-if __name__ == "__main__":
-    # 測試用例 - 需要更新為使用 CommandHandler 接口
-    # async def test_xss_tools():
-    #     capability = XSSCapability()
-    #     await capability.initialize()
-    #     
-    #     # 測試綜合掃描
-    #     result = await capability.execute("comprehensive_scan", {
-    #         "target_url": "http://testhtml5.vulnweb.com/",
-    #         "options": {
-    #             "use_dalfox": True,
-    #             "scan_dom": True,
-    #             "scan_stored": True,
-    #             "custom_scan": True
-    #         }
-    #     })
-    #     
-    #     console.print(json.dumps(result, indent=2, ensure_ascii=False))
-    #     
-    #     await capability.cleanup()
-    # 
-    # # 運行測試
-    # asyncio.run(test_xss_tools())
-    pass

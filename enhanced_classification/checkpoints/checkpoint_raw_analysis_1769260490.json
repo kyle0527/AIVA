@@ -1,0 +1,10 @@
+{
+  "stage": "ProcessingStage.RAW_ANALYSIS",
+  "timestamp": "2026-01-24T21:14:50.377293",
+  "data_hash": "c7d3d961b3c8a4d332c520c34fa8a765",
+  "metadata": {
+    "flows_count": 635
+  },
+  "progress": 100,
+  "output_path": "C:\\D\\fold7\\AIVA-git\\enhanced_classification\\1_raw_analysis\\raw_analysis_results.json"
+}

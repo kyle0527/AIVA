@@ -1,11 +1,16 @@
 #!/usr/bin/env python3
 """
-AIVA Core 數據流分類分析器 (完整版 v3.2)
+AIVA Core 數據流分類分析器 (完整版 v3.3)
 ========================================
-基於 AIVA Core 六大模組架構進行數據流分類和路徑差異分析
+基於 AIVA Core 五大模組架構進行數據流分類和路徑差異分析
 
 版本歷史:
 ---------
+v3.3 (2026-01-21) - 🔧 統一路徑配置
+  - 整合 paths_config.py 作為路徑的單一數據源 (SOT)
+  - 內部分類輸出至 internal_classification.json
+  - 修復舊路徑引用問題
+  
 v3.2 (2026-01-01) - 🔧 修復模組分類算法
   - 使用文件路徑而非腳本名稱進行模組分類
   - 添加 _classify_module_from_path() 方法
@@ -15,12 +20,20 @@ v3.1 - 初始版本（存在分類錯誤）
 
 架構說明:
 ---------
-1. 認知核心模組 (cognitive_core) - AI認知、神經網路、RAG、決策
+⚠️ 重要：此分類器僅用於 AI Core 內部模組（純 Python）
+外部模組請使用 aiva_external_classifier.py
+
+1. 認知核心模組 (cognitive_core) - AI認知、神經網路、RAG、決策、學習系統 (整合自 external_learning)
 2. 內探模組 (internal_exploration) - 自我認知、能力分析、內部監控
 3. 任務規劃模組 (task_planning) - 規劃器、執行器、指揮官
-4. 外學模組 (external_learning) - 分析、追蹤、訓練、模型
-5. 核心能力模組 (core_capabilities) - 攻擊鏈、業務邏輯、對話、插件
-6. 服務骨幹模組 (service_backbone) - API、協調、消息、存儲、狀態
+4. 核心能力模組 (core_capabilities) - 攻擊鏈、業務邏輯、對話、插件
+5. 服務骨幹模組 (service_backbone) - API、協調、消息、存儲、狀態
+
+數據存放位置:
+-------------
+輸出目錄: services/integration/data/internal_exploration/
+分類文件: internal_classification.json
+摘要文件: internal_classification_summary.md
 
 功能:
 -----
@@ -33,10 +46,33 @@ v3.1 - 初始版本（存在分類錯誤）
 
 import json
 import argparse
+import sys
 from pathlib import Path
-from typing import Any, Dict, List, Tuple, Set
+from typing import Any, Dict, List, Tuple, Set, Optional
 from collections import defaultdict
 from datetime import datetime
+
+# ==========================================
+# 路徑配置導入
+# ==========================================
+# 嘗試導入統一路徑配置，失敗則使用舊邏輯
+
+try:
+    # 添加路徑以便導入
+    PATHS_CONFIG_DIR = Path(__file__).resolve().parent.parent.parent.parent / "integration" / "data" / "internal_exploration"
+    sys.path.insert(0, str(PATHS_CONFIG_DIR.parent.parent.parent))
+    
+    from services.integration.data.internal_exploration.paths_config import (
+        InternalPaths,
+        CombinedPaths,
+        DATA_ROOT,
+        ensure_all_dirs,
+    )
+    USING_NEW_PATHS = True
+except ImportError:
+    USING_NEW_PATHS = False
+    # 定義舊路徑作為後備
+    DATA_ROOT = Path(__file__).resolve().parent / "classification_results"
 
 # 常量定義
 SECTION_SEPARATOR = "---\n\n"
@@ -214,6 +250,8 @@ class AIVAFlowClassifier:
             "total_flows": len(self.flows) if flows else 0,
             "module_distribution": defaultdict(int),
             "component_type_distribution": defaultdict(int),
+            "loop_type_distribution": defaultdict(int),  # ✅ 新增：循環類型統計
+            "ai_notification_required": defaultdict(int),  # ✅ 新增：AI通知需求統計
             "multi_path_endpoints": defaultdict(list)
         }
     
@@ -320,6 +358,7 @@ class AIVAFlowClassifier:
             
             flow_data = {
                 'id': idx,
+                'name': f'{idx}',          # 內部直接用數字 ID
                 'path': scripts,           # 腳本名稱列表
                 'full_path': full_paths,   # 完整檔案路徑列表
                 'func_names': chain,       # 原始函數名稱列表
@@ -550,6 +589,68 @@ class AIVAFlowClassifier:
             else:
                 return "程式組件"
     
+    def _classify_loop_type(self, flow) -> str:
+        """分類數據流的循環類型（用於雙循環AI優化系統）
+        
+        Args:
+            flow: 包含路徑和模組資訊的數據流
+            
+        Returns:
+            loop_type: 'internal_loop' | 'external_loop' | 'hybrid_loop' | 'no_loop'
+            
+        分類規則:
+        - internal_loop: 內部循環，用於自我認知和內部分析
+        - external_loop: 外部循環，用於實戰學習和外部反饋  
+        - hybrid_loop: 混合循環，同時涉及內外部
+        - no_loop: 非循環流程
+        """
+        # 獲取流程路徑和模組
+        path_str = ' → '.join(flow.get('path', []))
+        modules = flow.get('modules', [])
+        endpoint_module = flow.get('primary_module', '')
+        
+        # 內部循環關鍵詞
+        internal_keywords = [
+            'system_self_explorer', 'internal_exploration', 'cognitive_core',
+            'self_analysis', 'internal_monitor', 'system_health', 'capability_check',
+            'neural', 'rag', 'learning_system', 'experience_manager',
+            'ai_analysis', 'self_optimization', 'internal_feedback'
+        ]
+        
+        # 外部循環關鍵詞  
+        external_keywords = [
+            'scan_engine', 'attack_engine', 'target_', 'external_',
+            'penetration', 'vulnerability', 'exploit', 'battle_',
+            'ssrf', 'sqli', 'xss', 'rce', 'auth_bypass',
+            'external_feedback', 'target_analysis', 'war_feedback'
+        ]
+        
+        # 檢查路徑字串中的關鍵詞
+        path_lower = path_str.lower()
+        internal_count = sum(1 for keyword in internal_keywords if keyword in path_lower)
+        external_count = sum(1 for keyword in external_keywords if keyword in path_lower)
+        
+        # 檢查模組類型
+        has_cognitive = 'cognitive_core' in modules
+        has_internal_exploration = 'internal_exploration' in modules  
+        has_scan_or_attack = any(module in ['scan_engine', 'attack_engine'] for module in modules)
+        
+        # 分類邏輯
+        if internal_count > 0 and external_count > 0:
+            return 'hybrid_loop'
+        elif internal_count > 0 or has_cognitive or has_internal_exploration:
+            return 'internal_loop'
+        elif external_count > 0 or has_scan_or_attack:
+            return 'external_loop'
+        else:
+            # 基於終點模組判斷
+            if endpoint_module in ['cognitive_core', 'internal_exploration']:
+                return 'internal_loop'
+            elif endpoint_module in ['scan_engine', 'attack_engine']:
+                return 'external_loop'
+            else:
+                return 'no_loop'
+    
     def classify_flows(self):
         """對所有數據流進行分類
         
@@ -641,6 +742,20 @@ class AIVAFlowClassifier:
             # 記錄終點用於多路徑分析
             if flow['end']:
                 self.stats['multi_path_endpoints'][flow['end']].append(flow['id'])
+            
+            # ✅ 新增：分類循環類型（用於雙循環AI優化系統）
+            flow['loop_type'] = self._classify_loop_type(flow)
+            
+            # ✅ 新增：AI通知配置（基於循環類型）
+            flow['ai_notification'] = {
+                'required': flow['loop_type'] in ['internal_loop', 'external_loop'],
+                'connector': 'InternalLoopConnector' if flow['loop_type'] == 'internal_loop' else 'ExternalLoopConnector' if flow['loop_type'] == 'external_loop' else None,
+                'priority': 'high' if flow['loop_type'] == 'internal_loop' else 'medium' if flow['loop_type'] == 'external_loop' else 'low'
+            }
+            
+            # ✅ 更新統計信息
+            self.stats['loop_type_distribution'][flow['loop_type']] += 1
+            self.stats['ai_notification_required'][flow['ai_notification']['required']] += 1
         
         if self.verbose:
             print(f"分類完成: {len(self.flows)} 條數據流")
@@ -1042,6 +1157,10 @@ class AIVAFlowClassifier:
     def _generate_json_export(self, multi_path_analysis: List[Dict]):
         """生成 JSON 格式完整數據
         
+        v3.3 (2026-01-21): 統一路徑配置
+        - 輸出至 internal_classification.json (SOT)
+        - 同時輸出至 output_dir/classification_data.json (向後相容)
+        
         v3.3 (2026-01-04): 新增 5M AI 專用欄位
         - parameters: 從函數定義提取
         - return_type: 從 type hints 提取
@@ -1049,7 +1168,6 @@ class AIVAFlowClassifier:
         """
         if not self.output_dir:
             return
-        json_file = self.output_dir / "classification_data.json"
         
         # v3.3: 為每個 flow 添加 AI 專用欄位
         enhanced_flows = []
@@ -1075,16 +1193,30 @@ class AIVAFlowClassifier:
                 'total_flows': self.stats['total_flows'],
                 'module_distribution': dict(self.stats['module_distribution']),
                 'component_type_distribution': dict(self.stats['component_type_distribution']),
-                # v3.3: 新增版本標記
+                # v3.3: 版本標記
                 'schema_version': '3.3',
-                'ai_compatible': True  # 標記此格式支援 5M AI
+                'ai_compatible': True,  # 標記此格式支援 5M AI
+                'classification_type': 'internal',  # 標記為內部分類
+                'target_modules': ['cognitive_core', 'internal_exploration', 'task_planning', 
+                                   'core_capabilities', 'service_backbone']
             },
             'flows': enhanced_flows,
             'multi_path_analysis': multi_path_analysis
         }
         
+        # 輸出到 output_dir (向後相容)
+        json_file = self.output_dir / "classification_data.json"
         with open(json_file, 'w', encoding='utf-8') as f:
             json.dump(export_data, f, indent=2, ensure_ascii=False)
+        
+        # v3.3: 同時輸出到統一路徑 (SOT)
+        if USING_NEW_PATHS:
+            sot_file = InternalPaths.CLASSIFICATION_FILE
+            sot_file.parent.mkdir(parents=True, exist_ok=True)
+            with open(sot_file, 'w', encoding='utf-8') as f:
+                json.dump(export_data, f, indent=2, ensure_ascii=False)
+            if self.verbose:
+                print(f"生成 JSON 數據 (SOT): {sot_file}")
         
         if self.verbose:
             print(f"生成 JSON 數據導出: {json_file}")
@@ -1257,13 +1389,32 @@ class AIVAFlowClassifier:
 def main():
     """主函數"""
     parser = argparse.ArgumentParser(
-        description='AIVA Core 數據流分類分析器',
+        description='AIVA Core 數據流分類分析器 (內部模組專用)',
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
+⚠️ 注意: 此分類器僅用於 AI Core 內部模組 (純 Python)
+        外部模組請使用 aiva_external_classifier.py
+
+數據存放位置:
+  services/integration/data/internal_exploration/
+  ├── internal_classification.json     # 分類數據
+  ├── internal_classification_summary.md  # 摘要報告
+  └── analysis_results/internal/       # 詳細分析
+
 示例:
-  python aiva_flow_classifier_final.py --input ./aiva_core_analysis_v4 --output ./classification_results --verbose
+  # 使用預設路徑 (推薦)
+  python aiva_internal_classifier.py --input ./aiva_core_analysis
+  
+  # 指定輸出目錄
+  python aiva_internal_classifier.py --input ./analysis --output ./custom_output --verbose
         """
     )
+    
+    # 設定預設路徑
+    if USING_NEW_PATHS:
+        default_output = str(InternalPaths.OUTPUT_DIR)
+    else:
+        default_output = './classification_results'
     
     parser.add_argument(
         '--input',
@@ -1275,8 +1426,8 @@ def main():
     parser.add_argument(
         '--output',
         type=str,
-        default='./classification_results',
-        help='輸出目錄 (默認: ./classification_results)'
+        default=default_output,
+        help=f'輸出目錄 (默認: {default_output})'
     )
     
     parser.add_argument(
@@ -1286,6 +1437,10 @@ def main():
     )
     
     args = parser.parse_args()
+    
+    # 確保目錄存在
+    if USING_NEW_PATHS:
+        ensure_all_dirs()
     
     # 創建分類器並執行
     classifier = AIVAFlowClassifier(

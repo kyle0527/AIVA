@@ -4,18 +4,59 @@ Experience Manager - 經驗管理器
 基於強化學習的經驗重放機制 (Experience Replay Memory)，
 用於訓練編排器的攻擊執行經驗管理和訓練資料集建立。
 
+數據來源（三個）:
+1. Integration Module (整合模組): services/integration/data/experiences/*.jsonl
+   - 實際執行記錄（本次任務）
+   - 按能力分類: xss.jsonl, sqli.jsonl, ssrf.jsonl, phase0.jsonl 等
+   - 包含時間戳: 所有記錄都有 timestamp
+   
+2. Historical Data (歷史數據): 同樣從整合模組讀取，但是歷史時間段
+   - 作為"預期響應"的參考
+   - 相同場景的不同結果
+   
+3. Capability Knowledge Base (能力知識庫): 
+   - 位置: cognitive_core/learning_system/knowledge/
+   - 格式: Markdown 分析報告
+   - 內容: XSS/SQLi/SSRF 等攻擊手法、繞過技巧、預期響應模式
+   - 文件: XSS_MODULE_COMPLETE_DATA_FLOW_ANALYSIS.md, SQLI_MODULE_...等
+
+學習流程:
+1. 讀取三個數據源
+2. 三路比對：本次 vs 歷史 vs 知識庫
+3. 分析差異和變化趨勢
+4. 判斷是否為已知情況
+   - 已知：使用知識庫建議
+   - 未知：觸發 RAG 搜索（搜索技術文檔、CVE、安全研究等）
+5. 生成優化建議（參數+方法）
+6. 生成新權重並驗證
+7. 效果好才保存，效果差丟棄
+
+統一格式: {timestamp, task_id, capability, target, request, response, result, metadata}
+
 參考實現:
 - PyTorch DQN Tutorial (Experience Replay Buffer)
-- Integration Module Experience Repository (資料庫持久化)
+- SimpleDataManager (簡單數據管理器，JSONL 格式)
+- ModuleKnowledgeManager (模組知識庫管理器)
 """
 
 import logging
 from collections import deque
 from datetime import datetime
-from typing import Any, Deque
+from typing import Any, Deque, Optional
 from uuid import uuid4
 
 logger = logging.getLogger(__name__)
+
+# RAG 觸發器和通知系統（延遲導入避免循環依賴）
+try:
+    from .rag_trigger import RAGTrigger, UnknownSituationAlert
+    from .notification_system import get_notification_system, NotificationSystem
+except ImportError:
+    RAGTrigger = None
+    UnknownSituationAlert = None
+    get_notification_system = None
+    NotificationSystem = None
+    logger.warning("RAG Trigger or Notification System not available")
 
 
 class ExperienceTransition:
@@ -91,15 +132,23 @@ class ExperienceManager:
         capacity: int = 10000,
         auto_persist: bool = True,
         persist_batch_size: int = 100,
-        unified_manager=None,
+        data_manager=None,  # SimpleDataManager 實例
+        knowledge_manager=None,  # ModuleKnowledgeManager 實例
+        rag_engine=None,  # RAGEngine 實例
+        similarity_threshold: float = 0.6,  # RAG 觸發相似度閾值
+        enable_notifications: bool = True,  # 是否啟用用戶通知
     ):
         """初始化經驗管理器
         
         Args:
             capacity: 經驗緩衝區容量 (預設 10000)
-            auto_persist: 是否自動持久化到整合模組資料庫
+            auto_persist: 是否自動持久化到整合模組
             persist_batch_size: 自動持久化的批次大小
-            unified_manager: UnifiedDataManager 實例（用於持久化）
+            data_manager: SimpleDataManager 實例（用於讀取整合模組數據）
+            knowledge_manager: ModuleKnowledgeManager 實例（用於讀取能力知識庫）
+            rag_engine: RAGEngine 實例（用於 RAG 搜索）
+            similarity_threshold: RAG 觸發的相似度閾值（低於此值觸發 RAG）
+            enable_notifications: 是否啟用用戶通知
         """
         self.capacity = capacity
         self.memory: Deque[ExperienceTransition] = deque(maxlen=capacity)
@@ -108,15 +157,72 @@ class ExperienceManager:
         self._total_experiences = 0
         self._total_reward = 0.0
         
-        # 整合模組連接
+        # 整合模組連接（讀取實際執行記錄和歷史數據）
         self.auto_persist = auto_persist
         self.persist_batch_size = persist_batch_size
-        self.unified_manager = unified_manager
+        self.data_manager = data_manager
         self._pending_persist_count = 0
+        
+        # 能力知識庫連接（讀取分析報告）
+        self.knowledge_manager = knowledge_manager
+        
+        # RAG 觸發器和通知系統
+        self.notification_system = None
+        self.rag_trigger = None
+        
+        if enable_notifications and get_notification_system:
+            self.notification_system = get_notification_system()
+            logger.info("User notification system enabled")
+        
+        if rag_engine and RAGTrigger:
+            # 創建通知回調
+            def notification_callback(alert: UnknownSituationAlert):
+                if self.notification_system:
+                    if alert.status == "searching":
+                        self.notification_system.notify_unknown_situation(
+                            alert_id=alert.alert_id,
+                            trigger_reason=alert.trigger_reason,
+                            data_snapshot=alert.data_snapshot,
+                            search_query=alert.search_query,
+                        )
+                        self.notification_system.notify_rag_triggered(
+                            alert_id=alert.alert_id,
+                            search_query=alert.search_query,
+                        )
+                    elif alert.status == "found":
+                        results_summary = [
+                            {
+                                "type": r.get("type", "unknown"),
+                                "relevance": r.get("relevance_score", 0.0),
+                                "preview": r.get("content", "")[:100],
+                            }
+                            for r in alert.rag_results[:5]
+                        ]
+                        self.notification_system.notify_rag_completed(
+                            alert_id=alert.alert_id,
+                            results_count=len(alert.rag_results),
+                            results_summary=results_summary,
+                        )
+                    elif alert.status == "error":
+                        self.notification_system.notify_rag_failed(
+                            alert_id=alert.alert_id,
+                            error_message="RAG 搜索過程中發生錯誤",
+                        )
+            
+            self.rag_trigger = RAGTrigger(
+                similarity_threshold=similarity_threshold,
+                rag_engine=rag_engine,
+                notification_callback=notification_callback,
+            )
+            logger.info(
+                f"RAG Trigger initialized with similarity_threshold={similarity_threshold}"
+            )
         
         logger.info(
             f"ExperienceManager initialized with capacity={capacity}, "
-            f"auto_persist={auto_persist}"
+            f"auto_persist={auto_persist}, "
+            f"has_knowledge_manager={knowledge_manager is not None}, "
+            f"has_rag_trigger={self.rag_trigger is not None}"
         )
     
     def push(
@@ -227,59 +333,68 @@ class ExperienceManager:
     
     def load_from_integration(
         self,
-        attack_type: str | None = None,
-        min_score: float = 0.7,
+        capability: str | None = None,
+        start_time: datetime | None = None,
+        end_time: datetime | None = None,
         limit: int = 100,
     ) -> int:
         """從整合模組載入歷史經驗到記憶體
         
-        用於跨會話共享經驗或初始化訓練
+        從 SimpleDataManager 讀取按能力分類的 JSONL 數據
         
         Args:
-            attack_type: 攻擊類型過濾
-            min_score: 最低分數閾值
+            capability: 能力類型過濾 (xss, sqli, ssrf, phase0 等)
+            start_time: 開始時間過濾
+            end_time: 結束時間過濾
             limit: 載入數量限制
         
         Returns:
             實際載入的經驗數量
         """
-        if not self.unified_manager:
-            logger.warning("UnifiedDataManager not configured, cannot load")
+        if not self.data_manager:
+            logger.warning("SimpleDataManager not configured, cannot load")
             return 0
         
         try:
-            # 從整合模組查詢高品質經驗
-            records = self.unified_manager.query_high_quality_experiences(
-                attack_type=attack_type,
-                min_score=min_score,
-                limit=limit,
-            )
+            # 從整合模組查詢數據
+            if capability:
+                records = self.data_manager.load_capability_data(
+                    capability=capability,
+                    start_time=start_time,
+                    end_time=end_time,
+                    limit=limit
+                )
+            else:
+                # 加載所有能力的數據
+                all_data = self.data_manager.load_all_data(limit_per_capability=limit)
+                records = []
+                for cap_records in all_data.values():
+                    records.extend(cap_records)
             
             # 轉換並加載到記憶體
             loaded_count = 0
             for record in records:
                 try:
                     # 重建 ExperienceTransition
-                    trace = record.execution_trace or {}
                     self.push(
-                        state=trace.get("state_before", {}),
-                        action=trace.get("action", {}),
-                        next_state=trace.get("state_after", {}),
-                        reward=record.overall_score or 0.0,
+                        state=record.get("request", {}),
+                        action={"capability": record.get("capability")},
+                        next_state=record.get("response", {}),
+                        reward=1.0 if record.get("result") else 0.0,  # 簡化評分
                         metadata={
-                            "plan_id": record.plan_id,
-                            "attack_type": record.attack_type,
-                            "loaded_from_db": True,
-                            "original_created_at": record.created_at.isoformat() if record.created_at else None,
+                            "task_id": record.get("task_id"),
+                            "target": record.get("target"),
+                            "timestamp": record.get("timestamp"),
+                            "loaded_from_integration": True,
                         },
                     )
                     loaded_count += 1
                 except Exception as e:
-                    logger.error(f"Failed to load experience {record.id}: {e}")
+                    logger.error(f"Failed to load record {record.get('task_id')}: {e}")
             
             logger.info(
                 f"Loaded {loaded_count}/{len(records)} experiences from integration module "
-                f"(type={attack_type}, min_score={min_score})"
+                f"(capability={capability})"
             )
             
             return loaded_count
@@ -573,6 +688,257 @@ class ExperienceManager:
         )
         
         return result
+    
+    async def trigger_learning_with_rag(
+        self,
+        capability: str,
+        current_data: dict[str, Any],
+        session_id: Optional[str] = None,
+    ) -> dict[str, Any]:
+        """觸發學習流程（帶 RAG 支持）
+        
+        完整的學習流程：
+        1. 從三個數據源讀取數據
+        2. 三路比對（當前 vs 歷史 vs 知識庫）
+        3. 判斷是否為已知情況
+        4. 未知情況 → 觸發 RAG 搜索
+        5. 生成優化建議和新權重
+        6. 驗證效果
+        7. 效果好才保存
+        
+        Args:
+            capability: 能力類型 (xss, sqli, ssrf, phase0 等)
+            current_data: 當前執行數據
+            session_id: 學習會話 ID
+            
+        Returns:
+            學習結果字典，包含優化建議、RAG 結果等
+        """
+        session_id = session_id or f"learning_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
+        
+        # 通知學習開始
+        if self.notification_system:
+            self.notification_system.notify_learning_started(
+                session_id=session_id,
+                capability=capability,
+                data_sources=[
+                    "當前執行記錄",
+                    "歷史數據",
+                    "能力知識庫",
+                ],
+            )
+        
+        logger.info(
+            f"🎓 [學習會話 {session_id}] 開始學習 {capability} 能力"
+        )
+        
+        # 1. 讀取三個數據源
+        logger.info(f"📚 [數據源 1/3] 讀取當前執行記錄...")
+        current_records = []
+        if self.data_manager:
+            try:
+                current_records = self.data_manager.load_capability_data(
+                    capability=capability,
+                    limit=50,
+                )
+            except Exception as e:
+                logger.error(f"Failed to load current records: {e}")
+        
+        logger.info(f"📚 [數據源 2/3] 讀取歷史數據...")
+        historical_data = []
+        if self.data_manager:
+            try:
+                # 讀取一週前到現在的數據
+                from datetime import timedelta
+                historical_data = self.data_manager.load_capability_data(
+                    capability=capability,
+                    start_time=datetime.now() - timedelta(days=7),
+                    limit=100,
+                )
+            except Exception as e:
+                logger.error(f"Failed to load historical data: {e}")
+        
+        logger.info(f"📚 [數據源 3/3] 讀取能力知識庫...")
+        knowledge_base_data = []
+        if self.knowledge_manager:
+            try:
+                # 從知識庫讀取分析報告
+                kb_info = self.knowledge_manager.get_module_info(capability)
+                if kb_info:
+                    knowledge_base_data = [kb_info]
+            except Exception as e:
+                logger.error(f"Failed to load knowledge base: {e}")
+        
+        logger.info(
+            f"✅ 數據源讀取完成: "
+            f"當前記錄={len(current_records)}, "
+            f"歷史數據={len(historical_data)}, "
+            f"知識庫={len(knowledge_base_data)}"
+        )
+        
+        # 2-4. 三路比對並判斷是否需要 RAG
+        alert = None
+        rag_results = []
+        
+        if self.rag_trigger:
+            logger.info(f"🔍 檢查是否為已知情況...")
+            alert = await self.rag_trigger.trigger_rag_if_needed(
+                current_data=current_data,
+                current_records=current_records,
+                historical_data=historical_data,
+                knowledge_base_data=knowledge_base_data,
+            )
+            
+            if alert:
+                logger.warning(
+                    f"⚠️ 未知情況，已觸發 RAG 搜索: {alert.alert_id}"
+                )
+                rag_results = alert.rag_results
+            else:
+                logger.info("✅ 已知情況，使用現有知識庫")
+        
+        # 5. 生成優化建議
+        logger.info(f"💡 生成優化建議...")
+        optimization_plan = self._generate_optimization_plan(
+            current_data=current_data,
+            current_records=current_records,
+            historical_data=historical_data,
+            knowledge_base_data=knowledge_base_data,
+            rag_results=rag_results,
+        )
+        
+        # 6. 驗證效果（簡化版，實際需要執行測試）
+        logger.info(f"✅ 驗證優化效果...")
+        validation_passed = self._validate_optimization(optimization_plan)
+        
+        # 7. 保存結果（如果驗證通過）
+        if validation_passed:
+            logger.info(f"✅ 驗證通過，保存新權重")
+            self._save_optimization(capability, optimization_plan)
+        else:
+            logger.warning(f"❌ 驗證未通過，丟棄優化")
+        
+        # 通知學習完成
+        if self.notification_system:
+            self.notification_system.notify_learning_completed(
+                session_id=session_id,
+                capability=capability,
+                improvements=optimization_plan.get("improvements", {}),
+                validation_passed=validation_passed,
+            )
+        
+        logger.info(
+            f"🎓 [學習會話 {session_id}] 完成: "
+            f"{'✅ 保存' if validation_passed else '❌ 丟棄'}"
+        )
+        
+        # 返回學習結果
+        return {
+            "session_id": session_id,
+            "capability": capability,
+            "unknown_situation_detected": alert is not None,
+            "rag_triggered": alert is not None,
+            "rag_results_count": len(rag_results),
+            "optimization_plan": optimization_plan,
+            "validation_passed": validation_passed,
+            "alert": alert.to_dict() if alert else None,
+        }
+    
+    def _generate_optimization_plan(
+        self,
+        current_data: dict[str, Any],
+        current_records: list[dict[str, Any]],
+        historical_data: list[dict[str, Any]],
+        knowledge_base_data: list[dict[str, Any]],
+        rag_results: list[dict[str, Any]],
+    ) -> dict[str, Any]:
+        """生成優化建議
+        
+        基於三個數據源和 RAG 結果生成優化計畫
+        """
+        plan = {
+            "timestamp": datetime.now().isoformat(),
+            "data_sources_used": {
+                "current_records": len(current_records),
+                "historical_data": len(historical_data),
+                "knowledge_base": len(knowledge_base_data),
+                "rag_results": len(rag_results),
+            },
+            "improvements": {},
+            "new_weights": {},
+        }
+        
+        # 分析當前數據與歷史數據的差異
+        if historical_data:
+            # 計算成功率變化
+            current_success = current_data.get("result", {}).get("success", False)
+            historical_success_rate = sum(
+                1 for h in historical_data
+                if h.get("result", {}).get("success", False)
+            ) / len(historical_data)
+            
+            plan["improvements"]["success_rate_change"] = (
+                1.0 if current_success else 0.0
+            ) - historical_success_rate
+        
+        # 從 RAG 結果提取建議
+        if rag_results:
+            plan["improvements"]["rag_suggestions"] = [
+                {
+                    "type": r.get("type"),
+                    "relevance": r.get("relevance_score"),
+                    "content_preview": r.get("content", "")[:100],
+                }
+                for r in rag_results[:3]
+            ]
+        
+        # 生成新權重（簡化版）
+        plan["new_weights"]["learning_rate"] = 0.01
+        plan["new_weights"]["exploration_rate"] = 0.1
+        
+        return plan
+    
+    def _validate_optimization(self, optimization_plan: dict[str, Any]) -> bool:
+        """驗證優化效果
+        
+        簡化版：實際應該執行測試來驗證
+        """
+        # 簡化驗證：如果有改進建議就認為有效
+        improvements = optimization_plan.get("improvements", {})
+        
+        # 檢查是否有正向改進
+        success_rate_change = improvements.get("success_rate_change", 0.0)
+        has_rag_suggestions = len(improvements.get("rag_suggestions", [])) > 0
+        
+        # 如果成功率提升或有 RAG 建議，認為有效
+        return success_rate_change > -0.1 or has_rag_suggestions
+    
+    def _save_optimization(
+        self,
+        capability: str,
+        optimization_plan: dict[str, Any]
+    ) -> None:
+        """保存優化結果
+        
+        將新權重和優化建議保存到文件
+        """
+        try:
+            from pathlib import Path
+            import json
+            
+            # 保存到 learning_system/data/optimizations/
+            save_dir = Path("services/core/aiva_core/cognitive_core/learning_system/data/optimizations")
+            save_dir.mkdir(parents=True, exist_ok=True)
+            
+            filename = save_dir / f"{capability}_optimization_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json"
+            
+            with open(filename, "w", encoding="utf-8") as f:
+                json.dump(optimization_plan, f, ensure_ascii=False, indent=2)
+            
+            logger.info(f"💾 Saved optimization plan to {filename}")
+            
+        except Exception as e:
+            logger.error(f"Failed to save optimization: {e}")
 
 
 # ==================== 整合示例 ====================

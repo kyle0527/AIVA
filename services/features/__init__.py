@@ -1,8 +1,7 @@
 """
-AIVA Features - 高價值功能模組
+AIVA Features - 功能模組
 
-這是 AIVA 的增強功能模組包，符合 aiva_common 規範，包含專門針對 Bug Bounty 
-和滲透測試設計的高價值安全檢測功能。所有模組都支持 CLI 調用。
+這是 AIVA 的增強功能模組包，符合 aiva_common 規範，包含安全檢測功能。所有模組都支持 CLI 調用。
 
 ✅ **已符合 aiva_common 規範的模組**:
 - function_xss: XSS 漏洞檢測 (CLI + CommandHandler)

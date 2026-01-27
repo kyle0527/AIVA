@@ -820,7 +820,7 @@ class InternalLoopConnector:
             List[ModuleCapability]: 結構化能力列表
         """
         try:
-            from ..internal_exploration.python_tools.aiva_cli_implementation import FlowExecutor
+            from ..internal_exploration.aiva_internal_executor import FlowExecutor
             from pathlib import Path
             
             # 自動讀取 latest_classification.json

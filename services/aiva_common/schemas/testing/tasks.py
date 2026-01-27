@@ -5,7 +5,7 @@
 威脅情報查詢任務等。
 """
 
-from datetime import UTC, datetime
+from datetime import datetime, timezone
 from typing import Any
 
 from pydantic import BaseModel, Field, HttpUrl, field_validator
@@ -197,7 +197,7 @@ class ThreatIntelResultPayload(BaseModel):
     sources: dict[str, Any] = Field(default_factory=dict)
     mitre_techniques: list[str] = Field(default_factory=list)
     enrichment_data: dict[str, Any] = Field(default_factory=dict)
-    timestamp: datetime = Field(default_factory=lambda: datetime.now(UTC))
+    timestamp: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
 
 # ==================== 權限檢查任務 ====================
@@ -231,7 +231,7 @@ class AuthZResultPayload(BaseModel):
     decision: str  # "allow", "deny", "conditional"
     analysis: dict[str, Any] = Field(default_factory=dict)
     recommendations: list[str] = Field(default_factory=list)
-    timestamp: datetime = Field(default_factory=lambda: datetime.now(UTC))
+    timestamp: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
 
 # ==================== 修復任務 ====================
@@ -261,7 +261,7 @@ class RemediationResultPayload(BaseModel):
     instructions: list[str] = Field(default_factory=list)
     verification_steps: list[str] = Field(default_factory=list)
     risk_assessment: dict[str, Any] = Field(default_factory=dict)
-    timestamp: datetime = Field(default_factory=lambda: datetime.now(UTC))
+    timestamp: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
 
 # ==================== 後滲透測試任務 ====================
@@ -289,7 +289,7 @@ class PostExResultPayload(BaseModel):
     risk_level: ThreatLevel
     safe_mode: bool
     authorization_verified: bool = False
-    timestamp: datetime = Field(default_factory=lambda: datetime.now(UTC))
+    timestamp: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
 
 # ==================== 業務邏輯測試任務 ====================
@@ -316,7 +316,7 @@ class BizLogicResultPayload(BaseModel):
     status: str  # completed, failed, error
     findings: list[dict[str, Any]] = Field(default_factory=list)
     statistics: dict[str, Any] = Field(default_factory=dict)
-    timestamp: datetime = Field(default_factory=lambda: datetime.now(UTC))
+    timestamp: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
 
 # ==================== API 測試任務 ====================
@@ -378,7 +378,7 @@ class EASMDiscoveryResult(BaseModel):
     status: str  # "completed", "in_progress", "failed"
     discovered_assets: list[dict[str, Any]] = Field(default_factory=list)
     statistics: dict[str, Any] = Field(default_factory=dict)
-    timestamp: datetime = Field(default_factory=lambda: datetime.now(UTC))
+    timestamp: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
 
 # ============================================================================
@@ -407,7 +407,7 @@ class ScenarioResult(BaseModel):
     success: bool
     score: float = 0.0
     findings: list[dict[str, Any]] = Field(default_factory=list)
-    completed_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
+    completed_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     metadata: dict[str, Any] = Field(default_factory=dict)
 
 
@@ -423,7 +423,7 @@ class StandardScenario(BaseModel):
     expected_plan: dict[str, Any]  # 預期的最佳攻擊計畫 (簡化為 dict 避免循環引用)
     success_criteria: dict[str, Any]  # 成功標準
     tags: list[str] = Field(default_factory=list)
-    created_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     metadata: dict[str, Any] = Field(default_factory=dict)
 
 
@@ -440,7 +440,7 @@ class ScenarioTestResult(BaseModel):
     score: float  # 綜合評分 (0.0 - 100.0)
     comparison: dict[str, Any]  # 與預期計畫的對比
     passed: bool
-    tested_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
+    tested_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     metadata: dict[str, Any] = Field(default_factory=dict)
 
 
@@ -488,7 +488,7 @@ class TestExecution(BaseModel):
 
     # 執行狀態
     status: TestStatus = Field(description="執行狀態")
-    start_time: datetime = Field(default_factory=lambda: datetime.now(UTC))
+    start_time: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     end_time: datetime | None = Field(default=None, description="結束時間")
     duration: float | None = Field(default=None, ge=0.0, description="執行時間(秒)")
 
@@ -546,7 +546,7 @@ class ExploitResult(BaseModel):
     retest_required: bool = Field(default=True, description="是否需要重測")
 
     # 時間戳
-    executed_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
+    executed_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
     metadata: dict[str, Any] = Field(default_factory=dict, description="元數據")
 
@@ -585,6 +585,6 @@ class TestStrategy(BaseModel):
     success_rate: float = Field(ge=0.0, le=1.0, description="成功率")
 
     # 時間戳
-    created_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
     metadata: dict[str, Any] = Field(default_factory=dict, description="元數據")

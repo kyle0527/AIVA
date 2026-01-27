@@ -385,3 +385,16 @@ __all__ = [
     "default_logger",
     "default_metrics",
 ]
+
+# 延遲導入以避免循環依賴
+def __getattr__(name):
+    if name in ("MonitoringService", "get_monitoring_service", "LogEntry"):
+        from .monitoring import MonitoringService, get_monitoring_service, LogEntry
+        return locals()[name]
+    if name in ("MetricData", "WorkerMetrics", "SeverityLevel"):
+        from .metrics import MetricData, WorkerMetrics, SeverityLevel
+        return locals()[name]
+    if name == "MonitoringLogHandler":
+        from .monitoring_log_handler import MonitoringLogHandler
+        return MonitoringLogHandler
+    raise AttributeError(f"module {__name__!r} has no attribute {name!r}")

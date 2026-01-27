@@ -12,8 +12,8 @@ AI Analysis Models - 分析相關的AI模型
 # 由於ai.py較大，暫時先保持原導入關係
 # 後續會進一步重構
 
-# 暫時從原ai.py導入分析相關模型
-from ...ai import (
+# 從schemas/ai.py導入分析相關模型
+from ..ai import (
     AITrainingStartPayload,
     AITrainingProgressPayload, 
     AITrainingCompletedPayload,

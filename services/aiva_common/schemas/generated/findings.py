@@ -10,7 +10,7 @@ AIVA跨語言Schema統一定義 - 以手動維護版本為準
 """
 
 from __future__ import annotations
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Dict, List, Literal, Optional, Union
 from datetime import datetime
 from pydantic import BaseModel, Field
 
@@ -29,7 +29,7 @@ class FindingPayload(BaseModel):
     scan_id: str
     """掃描識別碼"""
 
-    status: str = Field(values=['new', 'confirmed', 'false_positive', 'fixed', 'ignored'])
+    status: Literal['new', 'confirmed', 'false_positive', 'fixed', 'ignored'] = Field(default='new')
     """發現狀態"""
 
     vulnerability: Vulnerability
@@ -107,7 +107,7 @@ class FindingRecommendation(BaseModel):
     fix: Optional[str] = None
     """修復方法"""
 
-    priority: Optional[str] = Field(values=['critical', 'high', 'medium', 'low'], default=None)
+    priority: Optional[Literal['critical', 'high', 'medium', 'low']] = Field(default=None)
     """修復優先級"""
 
     remediation_steps: List[str] = Field(default_factory=list)
@@ -123,7 +123,7 @@ class TokenTestResult(BaseModel):
     vulnerable: bool
     """是否存在漏洞"""
 
-    token_type: str = Field(values=['jwt', 'session', 'api', 'bearer', 'oauth', 'custom'])
+    token_type: Literal['jwt', 'session', 'api', 'bearer', 'oauth', 'custom'] = Field(default='custom')
     """Token 類型 (jwt, session, api, etc.)"""
 
     issue: str
@@ -135,9 +135,9 @@ class TokenTestResult(BaseModel):
     decoded_payload: Optional[Dict[str, Any]] = None
     """解碼後的載荷內容"""
 
-    severity: str = Field(values=['HIGH', 'MEDIUM', 'LOW', 'INFO'], default="MEDIUM")
+    severity: Literal['HIGH', 'MEDIUM', 'LOW', 'INFO'] = Field(default="MEDIUM")
     """漏洞嚴重程度"""
 
-    test_type: str = Field(values=['weak_token', 'expired_token', 'malformed_token', 'privilege_escalation', 'session_fixation'])
+    test_type: Literal['weak_token', 'expired_token', 'malformed_token', 'privilege_escalation', 'session_fixation'] = Field(default='weak_token')
     """測試類型"""
 

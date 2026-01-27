@@ -1,24 +1,23 @@
 # 🧠 Cognitive Core - 認知核心
 
 > **路徑**: `cognitive_core/`  
-> **狀態**: ✅ Production Ready | **最後更新**: 2026-01-08  
-> **子模組**: 5 個 | **總文件數**: 41 | **Python 文件**: 38 | **Bug Bounty 決策引擎**: ✅ 已整合  
-> **5M 神經網路**: ✅ v2.1 去語意化完成 | **測試代碼**: ❌ 無（已移至 tests/）
+> **狀態**: ✅ Production Ready | **最後更新**: 2026-01-21  
+> **子模組**: 7 個 | **總文件數**: 58 | **Python 文件**: 48 | **Bug Bounty 決策引擎**: ✅ 已整合  
+> **5M 神經網路**: ✅ v2.1 去語意化完成 | **嵌入式安全知識**: ✅ v1.0.0 完成  
+> **父模組**: [AIVA Core](../README.md)
 
 ## 概述
 
-**Cognitive Core** 是 AIVA 的認知智能核心，整合了神經網路推理、智能決策、知識檢索、可靠性驗證和經驗學習五大子系統，提供完整的 AI 認知能力。採用 5M Decision Engine 架構，支援 CLI 命令直接執行（subprocess）。
-
-**v4.4.0 重大更新**: 新增 **Bug Bounty 決策引擎**，專門針對 HackerOne/Bugcrowd 實戰場景優化。  
-**v2.1 重大更新**: 完成 **去語意化反射引擎 (De-semanticized Reflex Engine)**，整合 Feature Hashing (512維) + 環境特徵檢索。
+**Cognitive Core** 是 AIVA 五大核心模組之一，作為認知智能核心。整合了神經網路推理、智能決策、知識檢索、可靠性驗證、經驗學習和**嵌入式安全知識**六大子系統，提供完整的 AI 認知能力。採用 5M Decision Engine 架構，支援 CLI 命令直接執行（subprocess）。
 
 **核心職責**：
 - 🧠 **5M AI 決策** - 512 輸入 → 100 輸出的 Decision Engine
-- 🎯 **Bug Bounty 決策** - 四大決策方法支援 HackerOne 工作流程 ⭐
-- 🔍 **向量檢索** - VectorStore 512 維相似度搜索 + 去語意化檢索 ⭐
+- 🎯 **Bug Bounty 決策** - 四大決策方法支援 HackerOne 工作流程
+- 🔍 **向量檢索** - VectorStore 512 維相似度搜索 + 去語意化檢索
 - 🛡️ **可靠性保障** - 反幻覺機制確保決策準確性
+- 📚 **嵌入式知識** - SQLi/XSS/SSRF/CVE/WAF 繞過專家知識
 - 🔗 **CLI 命令執行** - subprocess 直接執行 CLI 命令
-- 📚 **經驗學習** - 統一學習系統（分析/學習/追蹤/訓練四大子系統）
+- 📈 **經驗學習** - 統一學習系統（分析/學習/追蹤/訓練/知識五大子系統）
 
 ---
 
@@ -28,13 +27,15 @@
 
 | 子模組 | 功能 | 文件數 | 狀態 | 文檔 |
 |--------|------|--------|------|------|
-| **decision/** | **Bug Bounty 決策支援、執行編排** | **5** | ✅ Production | **[README](decision/README.md)** |
-| neural/ | 5M 神經網路核心、權重管理 | 5 | ✅ Production | [README](neural/README.md) |
-| rag/ | 檢索增強生成、向量存儲（v2.1去語意化） | 6 | ✅ Production | [README](rag/README.md) |
-| learning_system/ | 統一經驗學習系統（分析/學習/追蹤/訓練） | 16 | ✅ Production | [README](learning_system/README.md) |
-| anti_hallucination/ | 反幻覺驗證機制 | 2 | ✅ Production | [README](anti_hallucination/README.md) |
+| **decision/** | Bug Bounty 決策支援、執行編排 | 7 | ✅ Production | [README](decision/README.md) |
+| **embedded_knowledge/** | 嵌入式安全知識庫 (v1.0.0) | 8 | ✅ Production | [README](embedded_knowledge/README.md) |
+| **neural/** | 5M 神經網路核心、權重管理 | 5 | ✅ Production | [README](neural/README.md) |
+| **rag/** | 檢索增強生成、向量存儲、經驗同步 ⭐ | 7 | ✅ Production | [README](rag/README.md) |
+| **learning_system/** | 統一經驗學習系統（含 knowledge/ 子模組）⭐ | 18 | ✅ Production | [README](learning_system/README.md) |
+| **anti_hallucination/** | 反幻覺驗證機制 | 3 | ✅ Production | [README](anti_hallucination/README.md) |
+| **external_knowledge/** | 外部知識文檔 (Markdown) | 4 | 📖 Reference | - |
 
-**總計**: 38 個 Python 文件 + 3 個 README（不含 `__init__.py`）
+**總計**: 48 個 Python 文件 + 4 個 Markdown 文檔 + 6 個 README
 
 ### 與其他模組的整合
 
@@ -214,6 +215,10 @@ python verify_desemantization_integration.py
 | 類別 | 文件 | 說明 | 行數 | 狀態 |
 |------|------|------|------|------|
 | **`EnhancedDecisionAgent`** | **[decision/enhanced_decision_agent.py](decision/enhanced_decision_agent.py)** | **Bug Bounty 決策代理 (v4.4.0)** | 2200+ | ✅ Production |
+| **`VulnerabilityDetector`** ⭐ 新增 | **[embedded_knowledge/vulnerability_detection.py](embedded_knowledge/vulnerability_detection.py)** | **SQLi/XSS/SSRF/IDOR 檢測引擎 (v1.0.0)** | 889 | ✅ Production |
+| **`CVEIdentifier`** ⭐ 新增 | **[embedded_knowledge/cve_identification.py](embedded_knowledge/cve_identification.py)** | **高危 CVE 識別 (8 個 CVSS≥9.0)** | 367 | ✅ Production |
+| **`WAFBypassEngine`** ⭐ 新增 | **[embedded_knowledge/waf_bypass.py](embedded_knowledge/waf_bypass.py)** | **WAF 繞過技術引擎 (20+ 技術)** | 566 | ✅ Production |
+| **`WebArchitectureAnalyzer`** ⭐ 新增 | **[embedded_knowledge/web_architecture.py](embedded_knowledge/web_architecture.py)** | **現代架構安全 (GraphQL/JWT/BOLA)** | 978 | ✅ Production |
 | `CapabilityOrchestrator` | [capability_orchestrator.py](capability_orchestrator.py) | **AI 決策引擎核心（RAG 向量檢索 384維）** | 1200+ | ✅ Production |
 | `CapabilityEncoder` | [capability_encoder.py](capability_encoder.py) | **512 維向量編碼器 (v2.1 去語意化)** | 850+ | ✅ Production |
 | `AICapabilityQuery` | [ai_capability_query.py](ai_capability_query.py) | AI 能力查詢接口 | 720+ | ✅ Production |
@@ -226,6 +231,162 @@ python verify_desemantization_integration.py
 | `AntiHallucinationModule` | [anti_hallucination/anti_hallucination_module.py](anti_hallucination/anti_hallucination_module.py) | 反幻覺驗證 | 350+ | ✅ Production |
 | `ExperienceManager` | [learning_system/experience_manager.py](learning_system/experience_manager.py) | 經驗管理器（強化學習） | 400+ | ✅ Production |
 | `UnifiedTracer` | [learning_system/tracing/unified_tracer.py](learning_system/tracing/unified_tracer.py) | 統一執行追蹤器 | 300+ | ✅ Production |
+
+---
+
+## 📚 嵌入式安全知識庫 (v1.0.0) ⭐ 新增
+
+**發布日期**: 2026-01-19  
+**模組位置**: `cognitive_core/embedded_knowledge/`  
+**設計理念**: 為 AI 決策系統提供零延遲、確定性的專家級安全知識
+
+### 核心功能矩陣
+
+#### 1️⃣ VulnerabilityDetector (漏洞檢測)
+
+| 漏洞類型 | 檢測方法 | 特性 | 指紋庫 |
+|---------|---------|------|--------|
+| **SQLi (Error-Based)** | `check_sqli()` | 400+ 數據庫錯誤指紋 | MySQL/PostgreSQL/MSSQL/Oracle |
+| **SQLi (Time-Based)** | `check_sqli()` | 響應時間分析 | 全數據庫支援 |
+| **XSS (Reflected)** | `check_xss()` | 反射檢測 + CSP 檢測 | 50+ XSS payload |
+| **SSRF** | `check_ssrf()` | AWS/GCP/Azure 元數據檢測 | 雲服務商指紋 |
+| **IDOR** | `check_idor()` | 成對測試 + 相似度分析 | 響應對比算法 |
+
+**亮點**: 
+- ✅ 自動 WAF 檢測 (18 種簽名)
+- ✅ 數據庫指紋識別
+- ✅ 誤報風險評估 (`false_positive_risk`)
+
+#### 2️⃣ CVEIdentifier (CVE 識別)
+
+**內建 8 個高危 CVE** (CVSS ≥ 9.0):
+
+| CVE ID | 名稱 | CVSS | 影響 |
+|--------|------|------|------|
+| CVE-2021-44228 | Log4Shell | 10.0 | Log4j RCE |
+| CVE-2022-22965 | Spring4Shell | 9.8 | Spring RCE |
+| CVE-2022-26134 | Confluence OGNL | 9.8 | Confluence RCE |
+| CVE-2021-34473 | ProxyShell | 9.8 | Exchange RCE |
+| CVE-2022-1388 | F5 BIG-IP | 9.8 | F5 Auth Bypass |
+| CVE-2023-4966 | Citrix Bleed | 9.4 | Citrix 信息洩露 |
+| CVE-2024-23897 | Jenkins CLI | 9.8 | Jenkins RCE |
+| CVE-2023-46805 | Ivanti Chain | 9.1 | Ivanti Auth Bypass |
+
+**三層信號架構**:
+- **Tier 3** (概率): 技術棧觸發 (如 "java", "log4j")
+- **Tier 2** (確定性): Payload 響應驗證
+- **Tier 1** (絕對): 漏洞利用成功證據
+
+#### 3️⃣ WAFBypassEngine (WAF 繞過)
+
+**支援 6 大 WAF 廠商**:
+- Cloudflare, AWS WAF, Imperva, Akamai, ModSecurity, F5 BIG-IP
+
+**20+ 繞過技術**:
+| 類別 | 技術 | 目標 WAF |
+|------|------|----------|
+| 編碼混淆 | IBM037, Double URL, Unicode | AWS WAF, ModSecurity |
+| HTTP 協議層 | Chunked Transfer, Header Spoofing | Imperva, Cloudflare |
+| 特定廠商 | AWS 8KB 限制, Cloudflare 屬性超載 | AWS, Cloudflare |
+| Payload 變形 | SQL 註釋注入, XSS 實體編碼 | 全部 |
+
+**功能**:
+- `detect_waf()`: 自動識別 WAF 類型
+- `get_bypass_techniques()`: 獲取針對性繞過方法
+- `mutate_payload()`: 自動 payload 變形 (6 種變形類型)
+- `generate_chunked_body()`: 生成分塊編碼
+
+#### 4️⃣ WebArchitectureAnalyzer (現代架構)
+
+| 架構類型 | 檢測能力 | 方法 |
+|---------|---------|------|
+| **GraphQL** | Introspection 暴露、敏感字段分析 | `detect_graphql_introspection()` |
+| **JWT** | None Algorithm, 弱算法, kid injection | `analyze_jwt()` |
+| **REST API** | BOLA/IDOR, 相似度分析 | `check_bola()` |
+| **WebSocket** | 劫持, Origin 繞過, 認證檢測 | `check_websocket_security()` |
+| **通用** | 架構指紋識別 (gRPC/SSE/SOAP) | `identify_architecture()` |
+
+**JWT 攻擊支援**:
+- None algorithm bypass
+- Algorithm confusion (RS256 → HS256)
+- kid header SQL injection
+- jku/jwk injection
+
+### AI 決策系統整合
+
+```python
+from services.core.aiva_core.cognitive_core.embedded_knowledge import (
+    VulnerabilityDetector,
+    CVEIdentifier,
+    WAFBypassEngine,
+    WebArchitectureAnalyzer,
+)
+
+# 在 EnhancedDecisionAgent 中使用
+class EnhancedDecisionAgent:
+    def decide_next_action(self, attack_result: dict) -> dict:
+        # 1. 檢測漏洞
+        detection = VulnerabilityDetector.check_sqli(
+            response_body=attack_result["response"],
+            response_time=attack_result["time"],
+        )
+        
+        # 2. AI 可讀的結構化數據
+        if detection.should_exploit(risk_threshold=0.8):
+            # 3. 檢測 WAF
+            is_waf, vendor, _ = WAFBypassEngine.detect_waf(...)
+            
+            if is_waf:
+                # 4. 獲取繞過策略
+                techniques = WAFBypassEngine.get_bypass_techniques(
+                    waf_vendor=vendor,
+                    attack_type="sqli",
+                )
+                return {"action": "bypass_waf", "techniques": techniques}
+            
+            return {"action": "exploit", "confidence": detection.confidence_score}
+        
+        return {"action": "try_different_payload"}
+```
+
+### 與現有模組的關係
+
+**embedded_knowledge 與其他模組的定位差異**:
+
+| 模組 | 定位 | 用途 |
+|------|------|------|
+| **embedded_knowledge/** | **AI 決策知識庫** | 為 AI 提供專家級檢測判斷邏輯 |
+| features/function_sqli/ | SQLi 掃描引擎 | 實際執行 SQL 注入攻擊 |
+| scan/go_engine/ | Go 掃描引擎 | 高性能掃描和模糊測試 |
+| initial_surface.py | 攻擊面分析 | 從掃描結果識別潛在目標 |
+
+**數據流**:
+```
+掃描結果 (features/scan)
+    ↓
+初步分析 (initial_surface.py)
+    ↓
+AI 決策 (EnhancedDecisionAgent + embedded_knowledge) ← 零延遲知識查詢
+    ↓
+執行攻擊 (features/function_sqli)
+```
+
+### 性能指標
+
+| 指標 | 值 |
+|-----|-----|
+| 響應延遲 | < 1ms (無網絡請求) |
+| 內存佔用 | ~8MB (指紋庫 + CVE 數據) |
+| 並發安全 | 是 (無狀態 classmethod) |
+| SQLi 指紋數 | 400+ |
+| WAF 簽名數 | 18 |
+| CVE 數量 | 8 (可擴展) |
+| 代碼量 | ~3,200 行 |
+
+### 文檔
+
+- [README.md](embedded_knowledge/README.md) - 模組概述、功能矩陣
+- [USAGE.md](embedded_knowledge/USAGE.md) - 詳細使用指南、API 文檔
 
 ---
 
@@ -252,7 +413,17 @@ python verify_desemantization_integration.py
 
 ## 🔧 技術債務與已修復問題
 
-### ✅ 已修復問題 (2026-01-08)
+### ✅ 已修復問題
+
+#### v5.0.0 (2026-01-19)
+
+1. **嵌入式安全知識庫創建** ⭐
+   - 創建 `embedded_knowledge/` 模組 (8 個文件, ~3,200 行)
+   - 實現 4 大核心類: VulnerabilityDetector, CVEIdentifier, WAFBypassEngine, WebArchitectureAnalyzer
+   - 整合 4 個外部知識文檔到內嵌 Python 代碼
+   - **優勢**: 零延遲、確定性、AI 可直接調用
+
+#### v4.4.0 (2026-01-08)
 
 1. **UTC 兼容性問題** - 5 個文件修復
    - [knowledge_base.py](rag/knowledge_base.py#L9-L15)
@@ -284,6 +455,43 @@ python verify_desemantization_integration.py
 
 **驗證狀態**: ✅ 所有錯誤已修復，`get_errors()` 返回 "No errors found."
 
+### ⚠️ 設計決策
+
+#### 為何選擇 Embedded 而非 RAG?
+
+| 方案 | 延遲 | 確定性 | AI 可讀性 | 離線可用 |
+|------|------|--------|----------|---------|
+| **Embedded** ✅ | < 1ms | 100% | 優秀 (dataclass) | 是 |
+| RAG | 50-200ms | 不確定 | 中等 (文本) | 否 |
+
+**結論**: 對於關鍵決策邏輯（如漏洞檢測判斷），embedded 方案更適合。
+
+#### embedded_knowledge vs features/scan 模組職責劃分
+
+```
+┌─────────────────────────────────────────┐
+│ embedded_knowledge (認知層)              │
+│ - 提供決策知識和判斷邏輯                  │
+│ - 告訴 AI "這是 SQLi" / "應該繞過 WAF"   │
+│ - 零延遲、確定性、結構化                  │
+└─────────────────┬───────────────────────┘
+                  │ 知識支援
+                  ↓
+┌─────────────────────────────────────────┐
+│ EnhancedDecisionAgent (決策層)          │
+│ - 調用 embedded_knowledge 進行判斷       │
+│ - 結合 5M 神經網絡做決策                  │
+└─────────────────┬───────────────────────┘
+                  │ 決策指令
+                  ↓
+┌─────────────────────────────────────────┐
+│ features/function_sqli (執行層)         │
+│ - 實際發送 HTTP 請求                     │
+│ - 執行 SQLi 攻擊                         │
+│ - 返回執行結果                           │
+└─────────────────────────────────────────┘
+```
+
 ### ⚠️ 空目錄占位符
 
 - `plugins/` 和 `plugin_system/` - 預留未來擴展，目前為空
@@ -291,9 +499,17 @@ python verify_desemantization_integration.py
 
 ---
 
-**導航**: [← 返回 AIVA Core](../README.md)
+## 版本歷史
+
+- **v5.0.0** (2026-01-19) - 新增嵌入式安全知識庫 (embedded_knowledge)
+- **v4.4.0** (2026-01-08) - Bug Bounty 決策引擎 + UTC 修復
+- **v2.1** (2025-12) - 去語意化反射引擎
+- **v2.0** (2025-11) - 5M 神經網絡整合
+- **v1.0** (2025-10) - 初始版本
 
 ---
+
+**導航**: [← 返回 AIVA Core](../README.md)
 
 ## 📋 詳細目錄
 

@@ -173,9 +173,10 @@ services/                          # 🚀 AIVA Services 根目錄
 │   │   └── aiva_client.py         # AIVA 客戶端
 │   └── [30+ core modules]         # 核心功能模組
 │
-├── core/                          # 🤖 AI 核心引擎
-│   ├── aiva_core/                 # AI 核心實現
-│   │   ├── cognitive_core/        # 🧠 認知核心
+├── core/                          # 🤖 核心系统
+│   ├── app.py                     # 🚪 系统唯一对外入口 (已移出 AI)
+│   ├── aiva_core/                 # AI 核心系统（完整 AI 功能）
+│   │   ├── cognitive_core/        # 🧠 认知核心（AI 大脑）
 │   │   │   ├── anti_hallucination/ # 🛡️ 反幻覺模組
 │   │   │   ├── decision/          # 🎯 決策引擎
 │   │   │   ├── neural/            # 🧠 神經網路
@@ -183,7 +184,7 @@ services/                          # 🚀 AIVA Services 根目錄
 │   │   │   ├── external_loop_connector.py
 │   │   │   ├── internal_loop_connector.py
 │   │   │   └── nlg_system.py      # 自然語言生成
-│   │   ├── core_capabilities/     # 💪 核心能力
+│   │   ├── core_capabilities/     # 💪 核心能力（AI 的能力系统）
 │   │   │   ├── analysis/          # 🔍 分析引擎
 │   │   │   ├── attack/            # ⚔️ 攻擊能力
 │   │   │   ├── dialog/            # 💬 對話系統

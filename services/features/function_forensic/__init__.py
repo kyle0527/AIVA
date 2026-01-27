@@ -36,5 +36,8 @@ __all__ = [
     "TimelineEvent",
 ]
 
-__version__ = "1.0.0"
+__version__ = "3.0.0"
+__status__ = "production"
+__architecture__ = "manager-based"
 __risk_level__ = "L0"
+__last_updated__ = "2026-01-23"

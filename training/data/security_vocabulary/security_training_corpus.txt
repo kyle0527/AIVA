@@ -1,0 +1,177 @@
+現代 Web 架構安全性深度剖析：針對 GraphQL、REST API、WebSocket 與 JWT 之自動化漏洞檢測與防禦機制研究報告 ## 1. 執行摘要與架構典範轉移 隨著 Web 應用程式
+術——GraphQL、REST API、WebSocket 以及 JSON Web Tokens (JWT)——進行詳盡的安全分析。研究重點在於剖析五種高風險漏洞：GraphQL 內省機制暴露 (Intro
+失效 (Broken Object Level Authorization, BOLA/IDOR)、JWT 的 "None" 演算法攻擊，以及跨站 WebSocket 劫持 (Cross-Site WebS
+# 現代 Web 架構安全性深度剖析：針對 GraphQL、REST API、WebSocket 與 JWT 之自動化漏洞檢測與防禦機制研究報告 ## 1.
+的新型攻擊面 <sup>1</sup>。 本研究報告旨在針對現代 Web 架構中的四大核心技術——GraphQL、REST API、WebSocket 以及 JSON Web Tokens (JWT)——進行詳盡
+JSON Web Tokens (JWT)——進行詳盡的安全分析。研究重點在於剖析五種高風險漏洞：GraphQL 內省機制暴露 (Introspection)、REST API 的大量賦值 (Mass Assig
+Payload，因為漏洞是由前端 JavaScript 在運行時動態修改 DOM 造成的（從 Source 到 Sink）。因此，靜態分析響應體是無效的。AI 掃描器必須集成無頭瀏覽器（如 Puppetee
+"verification_logic": { "step1": "identify_resource_id", "step2": "replace_id_with_victim_id", "s
+」（Unauthenticated Remote Code Execution, Pre-Auth RCE）漏洞，已成為攻擊者進入企業核心網路的首選途徑。這類漏洞允許攻擊者繞過所有的身份驗證機制，直接在伺服
+egatives）。特別是在處理上下文依賴極強的漏洞——如 SQL 注入（SQLi）、跨站腳本攻擊（XSS）、伺服器端請求偽造（SSRF）以及不安全的直接物件參照（IDOR）時，傳統掃描器缺乏對業務邏輯與應
+限控制模型。目標是產出標準化的 JSON 邏輯模組（function_sqli, function_xss, function_ssrf, function_idor），使 AI 代理（Agent）能夠在掃
+indicators": } } ## 3. Cross-Site Scripting (XSS)：瀏覽器渲染層的動態驗證 XSS 漏洞的檢測場域在於瀏覽器端（Client-Side）。與 SQ
+# 現代 Web 架構安全性深度剖析：針對 GraphQL、REST API、WebSocket 與 JWT 之自動化漏洞檢測與防禦機制研究報告 ## 1. 執行摘要與架構典範轉移 隨著 We
+p>。 本研究報告旨在針對現代 Web 架構中的四大核心技術——GraphQL、REST API、WebSocket 以及 JSON Web Tokens (JWT)——進行詳盡的安全分析。研究重點在於剖析五種高風險
+Authorization, BOLA/IDOR)、JWT 的 "None" 演算法攻擊，以及跨站 WebSocket 劫持 (Cross-Site WebSocket Hijacking, CSWSH)。 本報告的
+的攔截頁面被誤認為是應用程式的錯誤或盲注的延遲。 - **WAF 攔截特徵：** - **Cloudflare:** 響應中包含 Attention Required!, Cloudflare Ray ID,
+* - **Cloudflare:** 響應中包含 Attention Required!, Cloudflare Ray ID, Error 1020 <sup>9</sup>。 - **Akamai:**
+p>8</sup> Oracle Docs - DBMS_PIPE - <sup>9</sup> Cloudflare Docs - Gateway Block Page - <sup>10</sup> Akamai
+L 注入（SQLi）、跨站腳本攻擊（XSS）、伺服器端請求偽造（SSRF）以及不安全的直接物件參照（IDOR）時，傳統掃描器缺乏對業務邏輯與應用狀態的深層理解。 本研究報告旨在為下一代 AI 驅動的自動化漏
+ction_sqli, function_xss, function_ssrf, function_idor），使 AI 代理（Agent）能夠在掃描過程中進行類似人類專家的決策推理，從而實現精確的漏洞驗證與
+} } ## 5. Insecure Direct Object References (IDOR)：業務邏輯層的權限漏洞 IDOR 是一種邏輯漏洞，無法像 SQLi 或 XSS 那樣僅憑特定的
+ence OGNL Injection、Microsoft Exchange ProxyShell、F5 BIG-IP iControl Bypass、Citrix NetScaler Bleed、Jen
+odiscover/autodiscover.json 或 /cli；特定的 Header 如 X-F5-Auth-Token。 | 識別目標資產類型，提高關注度，但不觸發告警。 | | **Tier 2
+| ### 2.2 協議層面的異常分析 高危險組件的識別往往依賴於對協議細微差別的理解。例如，F5 的漏洞利用了 HTTP Header 在反向代理轉發時的處理差異；Citrix Bleed 則利用
+含 AkamaiGHost, Reference \# <sup>10</sup>。 - **Imperva (Incapsula):** 包含 Request unsuccessful, Incapsula
+t unsuccessful, Incapsula incident ID, Powered by Imperva <sup>11</sup>。 - **通用行為：** 狀態碼為 403 或 406，且頁面結
+tp/docs/customize-error-pages) 11. How to Bypass Imperva Incapsula for Web Scraping (2026) - ZenRows, 檢索日期
+69.254/opc/v1/instance/", "required_headers": {"Authorization": "Bearer Oracle"}, "indicators": } \], "
+缺失」，即伺服器驗證了「你是誰」（Authentication），但未驗證「你是否有權訪問此資源」（Authorization）。因此，自動化檢測 IDOR 需要一種全新的策略——差異化分析（Differential Anal
+ader 組合 這個漏洞的識別特徵非常具體，依賴於一組特定的 Header 組合： 1. **Authorization:** Basic YWRtaW46 (Base64 解碼為 admin:)，即使沒有密碼，後端也可
+處理上下文依賴極強的漏洞——如 SQL 注入（SQLi）、跨站腳本攻擊（XSS）、伺服器端請求偽造（SSRF）以及不安全的直接物件參照（IDOR）時，傳統掃描器缺乏對業務邏輯與應用狀態的深層理解。 本研究報
+的 JSON 邏輯模組（function_sqli, function_xss, function_ssrf, function_idor），使 AI 代理（Agent）能夠在掃描過程中進行類似人類專家的決策
+ors": } } ## 4. Server-Side Request Forgery (SSRF)：雲端基礎設施的穿透與利用 SSRF 漏洞允許攻擊者強制伺服器向任意目標發起請求。在雲端時代，S
+lted in an out-of-range value 也是常見特徵。 #### 2.1.4 Oracle Database 的 ORA 代碼體系 Oracle 的錯誤訊息具有最標準化的格式，均以 ORA
+e 也是常見特徵。 #### 2.1.4 Oracle Database 的 ORA 代碼體系 Oracle 的錯誤訊息具有最標準化的格式，均以 ORA- 代碼開頭，這使得自動化識別極為精確。 - **引號
+中最常遇到的錯誤，表明單引號注入成功 <sup>1</sup>。 - **關鍵字缺失：** 由於 Oracle 強制要求 SELECT 語句必須包含 FROM 子句（通常是 FROM dual），注入 UNIO
+深入到底層協議的解析差異、編碼轉換的邊界情況，以及針對特定 WAF 架構（如 Cloudflare、AWS WAF、Imperva）的邏輯漏洞 <sup>1</sup>。 本報告旨在提供一份詳盡的深度研究，剖析當
+求進行與後端應用程式完全一致的深度解析。這種「解析上的不對稱性」正是攻擊者得以利用的關鍵縫隙。例如，AWS WAF 對請求主體 (Body) 的檢查長度限制、Cloudflare 對特定 HTML 屬性的解析忽略，
+### 2.3 下一代 WAF：行為分析與 AI 現代的主流 WAF（如 Cloudflare、AWS WAF）已演進為**下一代 WAF (NGWAF)**，整合了行為分析與機器學習技術。 - **行為指紋
+ent)、物件層級授權失效 (Broken Object Level Authorization, BOLA/IDOR)、JWT 的 "None" 演算法攻擊，以及跨站 WebSocket 劫持 (Cross
+中 <sup>1</sup>。 此外，現代漏洞更多表現為「邏輯缺陷」而非單純的「語法錯誤」。例如，BOLA 漏洞並非源於輸入驗證不足導致的注入，而是源於伺服器端對請求者權限驗證的缺失；大量賦值漏洞則源於框架
+parate DTO classes." } } } ## 5. 物件層級授權失效 (BOLA/IDOR) 物件層級授權失效（Broken Object Level Authorization
+類專家的決策推理，從而實現精確的漏洞驗證與利用鏈（Exploit Chain）構建。 ## 2. SQL Injection (SQLi)：資料庫交互層的深度解析與自動化判定 SQL 注入漏洞依然是 Web 安全中最具破壞
+合。 ## 附錄：參考文獻來源索引 - <sup>1</sup> Swissky Repo - SQL Injection Payloads - <sup>7</sup> Akto - SQL Injection Che
+o - SQL Injection Payloads - <sup>7</sup> Akto - SQL Injection Cheat Sheet - <sup>2</sup> NetSPI - SQL Injectio
+ing Framework (Spring4Shell)、Atlassian Confluence OGNL Injection、Microsoft Exchange ProxyShell、F5 BIG-IP
+e 的屬性，應視為攻擊進行中。 ## 5. 深度剖析：Atlassian Confluence (OGNL Injection) CVE 編號: CVE-2022-26134 風險等級: Critica
+2）在處理 HTTP 請求 URL 時存在缺陷。WebWork 會將 URL 中的某些部分解析為 OGNL（Object-Graph Navigation Language）表達式。OGNL 是一種強大的表
+器必須維護一個詳盡的 DBMS 錯誤指紋庫，並理解這些錯誤產生的底層原因。 #### 2.1.1 MySQL 與 MariaDB 的解析器錯誤特徵 MySQL 的錯誤處理機制傾向於將語法解析失敗的具體位置回
+些錯誤產生的底層原因。 #### 2.1.1 MySQL 與 MariaDB 的解析器錯誤特徵 MySQL 的錯誤處理機制傾向於將語法解析失敗的具體位置回顯給客戶端。這類錯誤通常源於詞法分析器（Lexer）
+syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near <
+ad 特徵與利用階段 - **Email 參數:** 攻擊者會在 URL 的 Email 參數或 Cookie 中注入目標後端地址。 - **PST 導出:** 最終的 RCE Payload 是一段 Pow
+送給客戶端。這些洩露的記憶體中通常包含其他用戶的有效 Session Token（NSC_AAAC Cookie）<sup>25</sup>。 ### 8.2 攻擊向量與觸發路徑分析 - **觸發 URL:*
+露:** 訪問 /system/system-information 端點且未提供 Session Cookie，卻成功返回包含 serial-number、hardware-model 的 JSON 數據，確認
+漏洞：GraphQL 內省機制暴露 (Introspection)、REST API 的大量賦值 (Mass Assignment)、物件層級授權失效 (Broken Object Level Authorization, BOL
+les: }));" } } } ## 4. REST API 漏洞分析：大量賦值 (Mass Assignment) 大量賦值（又稱自動綁定 Auto-Binding）是現代 Web 框架（如 Ruby on R
+的 <sup>14</sup>。 ### 4.3 自動化檢測之 JSON 輸出規範 **表 2：Mass Assignment 漏洞 JSON 輸出規範** > JSON { "vulnerability_report
+制 Header:** 請求必須包含 Metadata: true。此外，Azure 明確禁止包含 X-Forwarded-For Header 的請求訪問 IMDS，以防止通過代理的誤訪問 <sup>25</sup>。 - *
+s:** 這是最常見的攻擊位置。Web 伺服器通常會記錄 User-Agent、Referer 和 X-Forwarded-For 等 Header 以進行流量分析或除錯。攻擊者只需將 Payload 放入這些 Header 中發
+- **IP 偽造**：WAF 通常會信任來自內部網路或特定可信代理的流量。攻擊者可在請求中加入 X-Forwarded-For: 127.0.0.1、X-Originating-IP: 127.0.0.1 或 Client-I
+utodiscover/autodiscover.json 或 /cli；特定的 Header 如 X-F5-Auth-Token。 | 識別目標資產類型，提高關注度，但不觸發告警。 | | **Tier 2: 確定性載荷 (De
+的管理介面使用 Apache 作為反向代理，後端連接 Jetty 服務。通常，Apache 會驗證 X-F5-Auth-Token。然而，攻擊者可以在請求中加入 Connection: X-F5-Auth-Token Header
+he 會驗證 X-F5-Auth-Token。然而，攻擊者可以在請求中加入 Connection: X-F5-Auth-Token Header。根據 HTTP 規範，代理伺服器（Apache）在轉發請求前應刪除 Connecti
+，以分析注入點的具體語法環境。 #### 2.1.3 Microsoft SQL Server (MSSQL) 的驅動層錯誤特徵 MSSQL 的錯誤訊息經常暴露出底層數據訪問組件（如 ODBC 或 OLE
+#### 2.1.3 Microsoft SQL Server (MSSQL) 的驅動層錯誤特徵 MSSQL 的錯誤訊息經常暴露出底層數據訪問組件（如 ODBC 或 OLE DB）的資訊。利用 convert
+數進行強制類型轉換錯誤（Error-Based Information Retrieval）是針對 MSSQL 的主要檢測手段。 - **閉合錯誤：** Unclosed quotation mark aft
+ng-citrix-netscaler-adc-and-gateway-vulnerability-cve-2023-4966-citrix-bleed</u>](https://www.cisa.gov/guidance-a
+ng-citrix-netscaler-adc-and-gateway-vulnerability-cve-2023-4966-citrix-bleed) 26. Citrix Bleed: Leaking Session
+research/citrix-bleed-leaking-session-tokens-with-cve-2023-4966</u>](https://www.assetnote.io/resources/research/
+供的一個名為「訊息查找」（Message Lookup）的功能，特別是對 Java 命名與目錄介面（JNDI）的支援。在預設配置下，當 Log4j2 記錄一條包含特定格式字串（如 \${jndi:ldap:/
+的日誌時，它不會將其視為純文本，而是會解析該字串並嘗試執行其中的指令 <sup>1</sup>。 JNDI 是一個 Java API，允許應用程式查找和存取各種命名和目錄服務。該漏洞的關鍵在於 LDAP（輕
+目錄存取協議）向量。攻擊者可以架設一個惡意的 LDAP 伺服器，當受害伺服器的 Log4j2 解析 JNDI 字串並連接到攻擊者的 LDAP 伺服器時，攻擊者可以返回一個惡意的 Java 類別（Class）檔
+可確認漏洞存在。若兩者皆延遲，則極可能是網路問題或 WAF 攔截導致的處理滯後。 ### 2.3 Polyglots：通用攻擊載荷的構建 為了減少掃描請求的總量（Request Count），現代掃描器廣泛使用 P
+s：通用攻擊載荷的構建 為了減少掃描請求的總量（Request Count），現代掃描器廣泛使用 Polyglots——即能夠同時在多種語境（單引號、雙引號、無引號）和多種資料庫中觸發異常的混合載荷。 - 引號逃逸
+payload_delay - network_jitter_allowance" }, "polyglots": }, "false_positive_indicators": } } ##
+Boolean-based 盲注的邊緣測試中 <sup>1</sup>。 #### 2.1.2 PostgreSQL 的嚴格類型錯誤特徵 PostgreSQL 以其嚴謹的類型系統著稱。與 MySQL 的隱式類型轉換
+中 <sup>1</sup>。 #### 2.1.2 PostgreSQL 的嚴格類型錯誤特徵 PostgreSQL 以其嚴謹的類型系統著稱。與 MySQL 的隱式類型轉換不同，PostgreSQL 在面對類型不匹配
+格類型錯誤特徵 PostgreSQL 以其嚴謹的類型系統著稱。與 MySQL 的隱式類型轉換不同，PostgreSQL 在面對類型不匹配時會直接拋出異常，這為自動化檢測提供了極佳的切入點。 - **語法與引號錯誤：*
+檢測時，需排除以下情況： - **MIME 類型不匹配:** Payload 雖回顯，但響應頭為 Content-Type: application/json 或 text/plain。除非瀏覽器存在 MIME Sniff
+片/靜態資源代理:** 許多功能（如「加載遠程圖片」）本質上就是 SSRF，但若其嚴格限制了響應的 Content-Type 為圖片，且無法讀取文本（Metadata），則風險較低。 - **通用網路錯誤:** 伺服器返回
+T 請求，因為需要發送大量的參數來配置日誌屬性，但 GET 請求在某些情況下也是可能的。 - **Content-Type:** 攻擊載荷通常以 application/x-www-form-urlencoded 格式發送
+urity.com/resource/blog/simulating-and-preventing-cve-2021-44228-apache-log4j-rce-exploits</u>](https://www.picuss
+urity.com/resource/blog/simulating-and-preventing-cve-2021-44228-apache-log4j-rce-exploits) 2. CVE-2021-44228 De
+1月 19, 2026， [<u>https://nvd.nist.gov/vuln/detail/cve-2021-44228</u>](https://nvd.nist.gov/vuln/detail/cve-2021-44
+s)** | 包含違反協議規範的語法、已知惡意原語（Primitives）或異常的字符序列。 | \${jndi:ldap:// 字串、異常超長的 Host Header、路徑遍歷序列 ../../。 | 判定為高
+命名與目錄介面（JNDI）的支援。在預設配置下，當 Log4j2 記錄一條包含特定格式字串（如 \${jndi:ldap://...}）的日誌時，它不會將其視為純文本，而是會解析該字串並嘗試執行其中的指令 <su
+Parameters）。攻擊者可以構造包含 Payload 的 URL，例如 /search?q=\${jndi:ldap://...}。 - **身份驗證欄位:** 登入表單中的用戶名（Username）是一個
+sitives）與漏報率（False Negatives）。特別是在處理上下文依賴極強的漏洞——如 SQL 注入（SQLi）、跨站腳本攻擊（XSS）、伺服器端請求偽造（SSRF）以及不安全的直接物件參照（IDOR
+建。 ## 2. SQL Injection (SQLi)：資料庫交互層的深度解析與自動化判定 SQL 注入漏洞依然是 Web 安全中最具破壞性的威脅之一。其本質在於應用程式未能將使用者輸入數據與 SQL 指
+擊的主要目標。Web Application Firewall (WAF) 作為防禦應用層攻擊（如 SQL 注入、跨站腳本攻擊 XSS、遠端代碼執行 RCE）的第一道防線，其角色至關重要。然而，2024 年至 2
+8. 深度剖析：Citrix NetScaler (Citrix Bleed) CVE 編號: CVE-2023-4966 風險等級: Critical (CVSS 9.4) 影響範圍: NetScaler ADC 和
+URI 是否為管理 API。確認指標為命令執行回顯。" }, { "cve_id": "CVE-2023-4966", "name": "Citrix NetScaler Bleed", "vulnerab
+ng Citrix NetScaler ADC and Gateway Vulnerability CVE-2023-4966, Citrix Bleed \| CISA, 檢索日期：1月 19, 2026， [<u>http
+om/blog/detection-and-guidance-for-the-confluence-cve-2022-26134-zero-day</u>](https://www.darktrace.com/blog/dete
+om/blog/detection-and-guidance-for-the-confluence-cve-2022-26134-zero-day) 14. Atlassian Confluence OGNL Injectio
+injection-remote-code-execution-rce-vulnerability-cve-2022-26134</u>](https://blog.qualys.com/qualys-insights/2022
+：1月 19, 2026， [<u>https://www.hackthebox.com/blog/cve-2024-23897</u>](https://www.hackthebox.com/blog/cve-2024-238
+e-2024-23897</u>](https://www.hackthebox.com/blog/cve-2024-23897) 29. Security Insights: Jenkins CVE-2024-23897 R
+com/en_us/blog/security/security-insights-jenkins-cve-2024-23897-rce.html</u>](https://www.splunk.com/en_us/blog/s
+RL:** /mgmt/tm/util/bash。這是 F5 提供的用於執行系統 Bash 命令的 REST API 端點，本應受到嚴格保護 <sup>22</sup>。 ### 7.3 Payload 特徵與 H
+# 現代 Web 架構安全性深度剖析：針對 GraphQL、REST API、WebSocket 與 JWT 之自動化漏洞檢測與防禦機制研究報告 ## 1. 執行摘要與架構典
+sup>1</sup>。 本研究報告旨在針對現代 Web 架構中的四大核心技術——GraphQL、REST API、WebSocket 以及 JSON Web Tokens (JWT)——進行詳盡的安全分析。研究重
+DELAY '0:0:10'--。 | <sup>4</sup> | | **Oracle** | dbms_pipe.receive_message(('a'),N) | 利用管道接收訊息的超時機制。這是 Oracl
+GCP Metadata Quirks - <sup>8</sup> Oracle Docs - DBMS_PIPE - <sup>9</sup> Cloudflare Docs - Gateway Block P
+/www.akto.io/blog/sql-injection-cheat-sheet) 8. DBMS_PIPE - Oracle Help Center, 檢索日期：1月 18, 2026， [<u>https
+—即能夠同時在多種語境（單引號、雙引號、無引號）和多種資料庫中觸發異常的混合載荷。 - 引號逃逸 Polyglot: 攻擊者無法預知後端 SQL 是用單引號還是雙引號包裹輸入。因此，Payload 必須同時
+計為能同時逃逸多種上下文（HTML, Attribute, Script, URL）。 - 經典 Polyglot 範例: javascript:/\*--\>\</title\>\</style\>\</
+tps://www.zenrows.com/blog/incapsula-bypass) 12. Polyglot XSS - Payloads All The Things, 檢索日期：1月 18, 2026，
+4. 深度剖析：Spring Framework (Spring4Shell) CVE 編號: CVE-2022-22965 風險等級: Critical (CVSS 9.8) 影響範圍: Spring Framewor
+頭，並結合混淆解碼邏輯。確認指標依賴於出站流量關聯。" }, { "cve_id": "CVE-2022-22965", "name": "Spring4Shell", "vulnerability_type
+advisory/) 5. Keysight's Take on Spring4Shell - CVE-2022-22965, 檢索日期：1月 19, 2026， [<u>https://www.keysight.com/b
+剖析：F5 BIG-IP (iControl REST Auth Bypass) CVE 編號: CVE-2022-1388 風險等級: Critical (CVSS 9.8) 影響範圍: F5 BIG-IP 多個版本
+er 路徑混淆模式。確認指標為繞過驗證訪問後端服務。" }, { "cve_id": "CVE-2022-1388", "name": "F5 BIG-IP iControl REST Auth Bypass"
+crosoft-exchange-servers) 22. Am I I(n)-Control? CVE-2022-1388 Advisory - Hunters Security, 檢索日期：1月 19, 2026， [<
+. 深度剖析：Jenkins CLI (Arbitrary File Read) CVE 編號: CVE-2024-23897 風險等級: Critical (CVSS 9.8) 影響範圍: Jenkins 2.441 及
+認指標為回應中洩露的 NSC_AAAC Token。" }, { "cve_id": "CVE-2024-23897", "name": "Jenkins CLI Arbitrary File Read",
+s) 28. Reading arbitrary files via Jenkins' CLI: CVE-2024-23897 explained, 檢索日期：1月 19, 2026， [<u>https://www.hack
+剖析：Atlassian Confluence (OGNL Injection) CVE 編號: CVE-2022-26134 風險等級: Critical (CVSS 9.8) 影響範圍: Confluence Serv
+er 的特定屬性修改鏈。確認指標為新檔案生成及訪問。" }, { "cve_id": "CVE-2022-26134", "name": "Atlassian Confluence OGNL Injection"
+bility-overview-and-remediation/) 13. Confluence CVE-2022-26134 Zero-Day: Detection & Guidance - Darktrace, 檢索日期：
+6. 深度剖析：Microsoft Exchange (ProxyShell) CVE 編號: CVE-2021-34473, CVE-2021-34523, CVE-2021-31207 風險等級: Critical (
+並非單一漏洞，而是一條由三個漏洞組成的攻擊鏈，完美展示了現代複雜系統中的邏輯缺陷： 1. **CVE-2021-34473 (Pre-Auth Path Confusion):** Exchange 的前端（Client
+me 調用。確認指標為回應 Header 中的回顯。" }, { "cve_id": "CVE-2021-34473", "name": "Microsoft Exchange ProxyShell", "v
+Connect Secure (Auth Bypass & RCE Chain) CVE 編號: CVE-2023-46805 & CVE-2024-21887 風險等級: Critical (Chain CVSS 9.1)
+S) 9.x, 22.x ### 10.1 技術根源與架構缺陷 這是一套組合拳： 1. **CVE-2023-46805 (Auth Bypass):** 系統在處理 URL 時存在路徑遍歷漏洞。攻擊者可以通過 /api
+以 '@' 開頭的參數。確認指標為回應中的檔案內容。" }, { "cve_id": "CVE-2023-46805", "name": "Ivanti Connect Secure Chain", "vul
+19, 2026， [<u>https://unit42.paloaltonetworks.com/cve-2022-22965-springshell/</u>](https://unit42.paloaltonetworks
+ngshell/</u>](https://unit42.paloaltonetworks.com/cve-2022-22965-springshell/) 7. Dissecting Spring4Shell - Outp
+sentire-threat-intelligence-advisory-spring4shell-cve-2022-22965</u>](https://www.esentire.com/security-advisories
+hunters.security/en/blog/advisory-am-i-in-control-cve-2022-1388</u>](https://www.hunters.security/en/blog/advisor
+hunters.security/en/blog/advisory-am-i-in-control-cve-2022-1388) 23. F5 BIG-IP Remote Code Execution Vulnerabili
+log/f5-big-ip-remote-code-execution-vulnerability-cve-2022-1388/</u>](https://cyble.com/blog/f5-big-ip-remote-cod
+於資訊洩露或探測), iiop, 或 ldaps <sup>1</sup>。 - **混淆技術 (Obfuscation):** 為了繞過簡單的 WAF 規則，攻擊者大量使用 Log4j 的嵌套查找功能進行混淆。
+(\\ibm037\\)'" }, { "category": "Encoding & Obfuscation", "method": "Double URL Encoding", "target":
+"payloads": }, { "category": "Encoding & Obfuscation", "method": "SQL Injection Obfuscation", "tar
+面對類型不匹配時會直接拋出異常，這為自動化檢測提供了極佳的切入點。 - **語法與引號錯誤：** ERROR: syntax error at or near 是最常見的通用錯誤。更具特異性的是 ERROR: u
+ERROR: syntax error at or near 是最常見的通用錯誤。更具特異性的是 ERROR: unterminated quoted string at or near，這直接表明注入的單引號未
+的鐵證 <sup>1</sup>。 - **類型轉換錯誤：** 嘗試將字串注入整數欄位時，會觸發 ERROR: invalid input syntax for type integer。 - **函數執行錯誤
+隱藏 webdriver 屬性 }); }); 此外，還需偽造 User-Agent，並確保 chrome.runtime 等物件在 Headless 模式下的表現與正常 Chrome
+部分中。 - **HTTP Headers:** 這是最常見的攻擊位置。Web 伺服器通常會記錄 User-Agent、Referer 和 X-Forwarded-For 等 Header 以進行流量分析或除錯。攻擊者
+（Rate Limiting）、TLS 握手時的指紋（JA3/JA4）、瀏覽器指紋（Canvas, User-Agent, Headers 順序）等。 - **威脅情報整合**：利用全球網路的威脅情報，即時封鎖來自惡意
+）。 ## 3. 深度剖析：Apache Log4j2 (Log4Shell) CVE 編號： CVE-2021-44228 風險等級： Critical (CVSS 10.0) 影響範圍： Apache Log4j 2
+源索引： 1 #### 引用的著作 1. Simulating and Preventing CVE-2021-44228 Apache Log4j RCE ..., 檢索日期：1月 19, 2026， [<u>https
+ng-cve-2021-44228-apache-log4j-rce-exploits) 2. CVE-2021-44228 Detail - NVD, 檢索日期：1月 19, 2026， [<u>https://nvd.n
+ft Exchange (ProxyShell) CVE 編號: CVE-2021-34473, CVE-2021-34523, CVE-2021-31207 風險等級: Critical (Chain) ### 6.1
+因為信任前端，將其視為已驗證的 System 用戶請求 <sup>16</sup>。 2. **CVE-2021-34523 (Privilege Escalation):** 利用上述路徑混淆，攻擊者可以注入 X-Rps-
+ace on Microsoft Exchange Server (CVE-2021-34473, CVE-2021-34523, CVE-2021-31207) - Qualys ThreatPROTECT, 檢索日期：1月
+xyShell) CVE 編號: CVE-2021-34473, CVE-2021-34523, CVE-2021-31207 風險等級: Critical (Chain) ### 6.1 技術根源與架構缺陷 Proxy
+er，將自己提升為 Exchange Admin 權限 <sup>18</sup>。 3. **CVE-2021-31207 (Post-Auth Arbitrary File Write):** 獲得 Admin 權限後，
+Exchange Server (CVE-2021-34473, CVE-2021-34523, CVE-2021-31207) - Qualys ThreatPROTECT, 檢索日期：1月 19, 2026， [<u>ht
+uth Bypass & RCE Chain) CVE 編號: CVE-2023-46805 & CVE-2024-21887 風險等級: Critical (Chain CVSS 9.1) 影響範圍: Ivanti Co
+樣的路徑繞過身份驗證檢查，訪問本應受保護的系統 API <sup>31</sup>。 2. **CVE-2024-21887 (Command Injection):** 在繞過驗證後，攻擊者訪問 /api/v1/licen
+-23897-case-study) 31. Ivanti CVE-2023-46805 and CVE-2024-21887 Zero-Day Vulnerabilities Actively Exploited, 檢索日期
+acle 強制要求 SELECT 語句必須包含 FROM 子句（通常是 FROM dual），注入 UNION SELECT 1,2 而遺漏 FROM dual 會觸發 ORA-00923: FROM keyword not
+</sup>。 **Python 實現範例**： > Python payload = "1 UNION SELECT 1, version()--" headers = {'Content-Type': 'app
+於 SLEEP 被禁用時。 | <sup>5</sup> | | **PostgreSQL** | pg_sleep(N) | 內建函數，接受秒數作為參數。Payload 如 ; SELECT pg_sleep(10
+| pg_sleep(N) | 內建函數，接受秒數作為參數。Payload 如 ; SELECT pg_sleep(10)--。 | <sup>4</sup> | | **MSSQL** | WAITFOR DEL
+CT pg_sleep(10)--。 | <sup>4</sup> | | **MSSQL** | WAITFOR DELAY '00:00:N' | T-SQL 專用指令，指定暫停的時間長度。Payload 如 '; WAI
+LAY '00:00:N' | T-SQL 專用指令，指定暫停的時間長度。Payload 如 '; WAITFOR DELAY '0:0:10'--。 | <sup>4</sup> | | **Oracle** | dbms_
+盡的 DBMS 錯誤指紋庫，並理解這些錯誤產生的底層原因。 #### 2.1.1 MySQL 與 MariaDB 的解析器錯誤特徵 MySQL 的錯誤處理機制傾向於將語法解析失敗的具體位置回顯給客戶端。這類錯誤
+** | **引用來源** | |----|----|----|----| | **MySQL / MariaDB** | SLEEP(N) | SLEEP() 函數會讓當前執行緒暫停 N 秒。Payload 如
+a-new-attack-surface-on-microsoft-exchange-server-cve-2021-34473-cve-2021-34523-cve-2021-31207/</u>](https://threa
+a-new-attack-surface-on-microsoft-exchange-server-cve-2021-34473-cve-2021-34523-cve-2021-31207/) 21. PST, Want a
+rface-on-microsoft-exchange-server-cve-2021-34473-cve-2021-34523-cve-2021-31207/</u>](https://threatprotect.qualys
+rface-on-microsoft-exchange-server-cve-2021-34473-cve-2021-34523-cve-2021-31207/) 21. PST, Want a Shell? ProxyShe
+oft-exchange-server-cve-2021-34473-cve-2021-34523-cve-2021-31207/</u>](https://threatprotect.qualys.com/2021/08/10
+oft-exchange-server-cve-2021-34473-cve-2021-34523-cve-2021-31207/) 21. PST, Want a Shell? ProxyShell Exploiting M
+ttps://www.picussecurity.com/resource/blog/ivanti-cve-2023-46805-and-cve-2024-21887-zero-day-vulnerabilities</u>](
+ttps://www.picussecurity.com/resource/blog/ivanti-cve-2023-46805-and-cve-2024-21887-zero-day-vulnerabilities) 32.
+urity.com/resource/blog/ivanti-cve-2023-46805-and-cve-2024-21887-zero-day-vulnerabilities</u>](https://www.picusse
+urity.com/resource/blog/ivanti-cve-2023-46805-and-cve-2024-21887-zero-day-vulnerabilities) 32. CitrixBleed Mitiga
+i Connect Secure Chain", "vulnerability_type": "Path Traversal / Auth Bypass / RCE", "trigger_vectors":, "pa
+錯會進行多次解碼），最終將還原出單引號，觸發注入 <sup>7</sup>。 - **路徑遍歷 (Path Traversal)**：對於路徑遍歷攻擊（如 ../），攻擊者可使用 %252e%252e%252f。WAF 解碼一
+注入惡意 OGNL 表達式，從而調用 java.lang.Runtime.getRuntime().exec() 來執行任意系統命令 <sup>13</sup>。 ### 5.2 攻擊向量與觸發路徑分析 攻
+- 原始 Payload: \${@java.lang.Runtime@getRuntime().exec("command")} - 編碼後特徵: %24%7B%40java.lang.Runtime
+dshake）本質上是一個 HTTP 請求，這使其繼承了 HTTP 的部分弱點，特別是跨站請求偽造（CSRF）的變體——跨站 WebSocket 劫持（CSWSH）<sup>26</sup>。 ### 7.
+e-based authentication without SameSite=Strict or CSRF tokens." }, "remediation": { "action": "Val

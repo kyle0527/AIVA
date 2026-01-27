@@ -10,11 +10,12 @@ AIVA跨語言Schema統一定義 - 以手動維護版本為準
 """
 
 from __future__ import annotations
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional, Union, Literal
 from datetime import datetime
 from pydantic import BaseModel, Field
 
 from .base_types import *
+from ...enums import AsyncTaskStatus
 
 
 class RetryConfig(BaseModel):
@@ -157,7 +158,7 @@ class AsyncBatchResult(BaseModel):
     task_results: List[AsyncTaskResult] = Field(default_factory=list)
     """任務結果列表"""
 
-    batch_status: str = Field(values=['pending', 'running', 'completed', 'failed', 'cancelled', 'partial'])
+    batch_status: Literal['pending', 'running', 'completed', 'failed', 'cancelled', 'partial'] = Field(default='pending')
     """批次狀態"""
 
     start_time: datetime

@@ -1,0 +1,63 @@
+jwt
+graphql
+rce
+xss
+websocket
+cloudflare
+idor
+f5
+imperva
+authorization
+ssrf
+oracle
+aws waf
+bola
+sql injection
+ognl
+mysql
+cookie
+mass assignment
+x-forwarded-for
+x-f5-auth-token
+mssql
+cve-2023-4966
+jndi
+polyglots
+postgresql
+content-type
+cve-2021-44228
+${jndi:
+sql 注入
+CVE-2023-4966
+cve-2022-26134
+cve-2024-23897
+rest api
+dbms_pipe
+polyglot
+CVE-2022-22965
+CVE-2022-1388
+CVE-2024-23897
+CVE-2022-26134
+CVE-2021-34473
+CVE-2023-46805
+cve-2022-22965
+cve-2022-1388
+obfuscation
+error: 
+user-agent
+CVE-2021-44228
+CVE-2021-34523
+CVE-2021-31207
+CVE-2024-21887
+union select
+pg_sleep
+waitfor delay
+mariadb
+cve-2021-34473
+cve-2021-34523
+cve-2021-31207
+cve-2023-46805
+cve-2024-21887
+path traversal
+exec(
+csrf

@@ -96,9 +96,10 @@ type Connection struct {
 
 // Stitcher 負責將孤立的檔案串接成系統
 type Stitcher struct {
-	ScriptNodes     map[string]*ScriptNode // FilePath -> Node
-	PackageMap      map[string][]string    // PackageName -> [FilePaths]
-	RealConnections []Connection           `json:"real_connections"`
+	ScriptNodes     map[string]*ScriptNode    // FilePath -> Node
+	PackageMap      map[string][]string       // PackageName -> [FilePaths]
+	RealConnections []Connection              `json:"real_connections"`
+	StructDefs      []map[string]interface{}  `json:"struct_definitions"` // ✅ 新增：結構體定義
 }
 
 func NewStitcher() *Stitcher {
@@ -106,6 +107,7 @@ func NewStitcher() *Stitcher {
 		ScriptNodes:     make(map[string]*ScriptNode),
 		PackageMap:      make(map[string][]string),
 		RealConnections: []Connection{},
+		StructDefs:      []map[string]interface{}{}, // ✅ 初始化
 	}
 }
 
@@ -672,8 +674,29 @@ func processFile(filePath string, outputDir string, stitcher *Stitcher) ([]*Flow
 	var metaList []*FlowMetadata
 	var definedFuncs []string
 	var allCalls []ExternalCall
+	var structDefs []map[string]interface{} // ✅ 新增：收集結構體定義
 
 	for _, decl := range node.Decls {
+		// ✅ 新增：處理結構體定義（特別是 XXXRequest 類型）
+		if genDecl, ok := decl.(*ast.GenDecl); ok && genDecl.Tok == token.TYPE {
+			for _, spec := range genDecl.Specs {
+				if typeSpec, ok := spec.(*ast.TypeSpec); ok {
+					if structType, ok := typeSpec.Type.(*ast.StructType); ok {
+						structName := typeSpec.Name.Name
+						// 提取結構體欄位
+						fields := extractStructFields(structType)
+						if len(fields) > 0 {
+							structDefs = append(structDefs, map[string]interface{}{
+								"struct_name": structName,
+								"fields":      fields,
+								"source_file": filePath,
+							})
+						}
+					}
+				}
+			}
+		}
+		
 		if fn, ok := decl.(*ast.FuncDecl); ok {
 			funcName := getFunctionName(fn)
 			definedFuncs = append(definedFuncs, funcName)
@@ -699,8 +722,78 @@ func processFile(filePath string, outputDir string, stitcher *Stitcher) ([]*Flow
 
 	// 加入 Stitcher 進行後續串接
 	stitcher.AddScript(filePath, pkgName, imports, definedFuncs, allCalls)
+	
+	// ✅ 將結構體定義存儲到 stitcher 中
+	stitcher.StructDefs = append(stitcher.StructDefs, structDefs...)
 
 	return metaList, nil
+}
+
+// extractStructFields 提取結構體欄位資訊（包含 JSON tag）
+func extractStructFields(structType *ast.StructType) []map[string]interface{} {
+	var fields []map[string]interface{}
+	
+	for _, field := range structType.Fields.List {
+		// 取得欄位類型
+		fieldType := ""
+		if field.Type != nil {
+			fieldType = formatType(field.Type)
+		}
+		
+		// 取得 JSON tag
+		jsonTag := ""
+		description := ""
+		if field.Tag != nil {
+			tag := strings.Trim(field.Tag.Value, "`")
+			// 解析 json:"field_name"
+			if strings.Contains(tag, "json:") {
+				parts := strings.Split(tag, "json:")
+				if len(parts) > 1 {
+					jsonPart := strings.TrimSpace(parts[1])
+					jsonPart = strings.Trim(jsonPart, "\"")
+					jsonTag = strings.Split(jsonPart, ",")[0] // 取 field_name，忽略 omitempty 等
+				}
+			}
+		}
+		
+		// 取得欄位註解
+		if field.Comment != nil {
+			description = strings.TrimSpace(field.Comment.Text())
+		} else if field.Doc != nil {
+			description = strings.TrimSpace(field.Doc.Text())
+		}
+		
+		// 處理每個欄位名稱（可能一行定義多個）
+		for _, name := range field.Names {
+			fieldInfo := map[string]interface{}{
+				"name":        name.Name,
+				"type":        fieldType,
+				"json_tag":    jsonTag,
+				"description": description,
+			}
+			fields = append(fields, fieldInfo)
+		}
+	}
+	
+	return fields
+}
+
+// formatType 將 AST 類型轉為字串
+func formatType(expr ast.Expr) string {
+	switch t := expr.(type) {
+	case *ast.Ident:
+		return t.Name
+	case *ast.ArrayType:
+		return "[]" + formatType(t.Elt)
+	case *ast.MapType:
+		return fmt.Sprintf("map[%s]%s", formatType(t.Key), formatType(t.Value))
+	case *ast.StarExpr:
+		return "*" + formatType(t.X)
+	case *ast.SelectorExpr:
+		return fmt.Sprintf("%s.%s", formatType(t.X), t.Sel.Name)
+	default:
+		return "interface{}"
+	}
 }
 
 func main() {
@@ -826,6 +919,8 @@ func main() {
 		"branch_analysis": branchStats,
 		"flow_chains":     stitcher.RealConnections,
 		"functions":       allMeta,
+		"function_details": allMeta, // ✅ 新增：與 Python 分類器期望的欄位名稱一致
+		"struct_definitions": stitcher.StructDefs, // ✅ 新增：結構體參數定義
 	}
 	
 	jsonData, _ := json.MarshalIndent(report, "", "  ")

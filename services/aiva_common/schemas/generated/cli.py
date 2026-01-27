@@ -10,7 +10,7 @@ AIVA跨語言Schema統一定義 - 以手動維護版本為準
 """
 
 from __future__ import annotations
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Dict, List, Literal, Optional, Union
 from datetime import datetime
 from pydantic import BaseModel, Field
 
@@ -23,7 +23,7 @@ class CLIParameter(BaseModel):
     name: str
     """參數名稱"""
 
-    type: str = Field(values=['string', 'integer', 'float', 'boolean', 'choice', 'file', 'directory'])
+    type: Literal['string', 'integer', 'float', 'boolean', 'choice', 'file', 'directory'] = Field(default='string')
     """參數類型"""
 
     description: str
@@ -60,7 +60,7 @@ class CLICommand(BaseModel):
     description: str
     """命令描述"""
 
-    category: str = Field(values=['general', 'scan', 'security', 'analysis', 'reporting', 'config', 'admin', 'debug', 'plugin', 'utility'], default="general")
+    category: Literal['general', 'scan', 'security', 'analysis', 'reporting', 'config', 'admin', 'debug', 'plugin', 'utility'] = Field(default="general")
     """命令分類"""
 
     parameters: List[CLIParameter] = Field(default_factory=list)

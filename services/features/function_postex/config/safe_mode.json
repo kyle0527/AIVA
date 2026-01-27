@@ -1,0 +1,36 @@
+{
+  "safe_mode": {
+    "enabled": true,
+    "description": "安全模式：僅檢測漏洞，不執行攻擊操作",
+    "restrictions": {
+      "no_file_writes": true,
+      "no_command_execution": true,
+      "no_network_attacks": true,
+      "no_privilege_escalation": true,
+      "read_only_operations": true
+    }
+  },
+  "allowed_operations": [
+    "file_stat",
+    "file_permissions_check",
+    "network_port_scan",
+    "dns_lookup",
+    "http_request",
+    "process_list",
+    "environment_variables"
+  ],
+  "blocked_operations": [
+    "file_write",
+    "file_delete",
+    "command_exec",
+    "privilege_change",
+    "user_creation",
+    "service_modification",
+    "registry_modification"
+  ],
+  "logging": {
+    "log_all_operations": true,
+    "log_blocked_attempts": true,
+    "alert_on_violation": true
+  }
+}

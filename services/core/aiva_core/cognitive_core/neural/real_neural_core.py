@@ -27,8 +27,8 @@ from aiva_common.error_handling import AIVAError, ErrorType, ErrorSeverity, crea
 
 MODULE_NAME = "real_neural_core"
 
-# P0 修復: 語意編碼支援 - 強制依賴
-from sentence_transformers import SentenceTransformer
+# AIVA 自研 Embedding 層 - 使用 all-MiniLM-L6-v2 的權重但架構自主可控
+from .aiva_embedding import AIVAEmbedding
 
 logger = logging.getLogger(__name__)
 
@@ -383,12 +383,14 @@ class RealDecisionEngine:
         self.training_history = []
         
         # P0 修復: 初始化語意編碼器
-        # 使用 all-MiniLM-L6-v2 (輕量級, 384維, 適合代碼)
-        # 不使用降級方案，如果載入失敗就讓錯誤暴露
-        self.semantic_encoder = SentenceTransformer('all-MiniLM-L6-v2')
-        # 移動到相同設備
-        self.semantic_encoder.to(self.device)
-        logger.info("✅ 語意編碼器已載入: all-MiniLM-L6-v2 (384維)")
+        # AIVA 自研 Embedding 層 - 使用 all-MiniLM-L6-v2 的預訓練權重
+        # 但架構完全由 AIVA 掌控，不依賴 sentence-transformers 庫
+        logger.info("🔧 初始化 AIVA 自研 Embedding 層...")
+        self.semantic_encoder = AIVAEmbedding(
+            model_name_or_path='sentence-transformers/all-MiniLM-L6-v2',
+            device=str(self.device)
+        )
+        logger.info("✅ AIVA Embedding 層已載入: 使用 all-MiniLM-L6-v2 權重 (384維, AIVA 架構)")
         
         logger.info(f"真實決策引擎初始化完成 (Device: {self.device})")
         logger.info(f"  編碼模式: {'語意編碼 (Semantic)' if self.semantic_encoder else '字符編碼 (Fallback)'}")
@@ -417,26 +419,31 @@ class RealDecisionEngine:
         # Bug Bounty 上下文增強
         bug_bounty_context = self._enhance_bug_bounty_context(text)
         
-        # 使用 Sentence Transformers 進行語意編碼
+        # 使用 AIVA 自研 Embedding 層進行語意編碼
         if self.semantic_encoder is None:
             raise RuntimeError(
-                "semantic_encoder 未初始化。請確保模型正確載入。\n"
+                "AIVA Embedding 層未初始化。請確保模型正確載入。\n"
                 "檢查項目：\n"
-                "1. sentence-transformers 套件是否已安裝\n"
+                "1. transformers 套件是否已安裝\n"
                 "2. 模型路徑是否正確\n"
                 "3. 初始化過程是否有錯誤"
             )
         
-        # 獲取語意向量 (384維)
+        # 獲取語意向量 (384維) - 使用 AIVA 自己的實現
         semantic_embedding = self.semantic_encoder.encode(
             bug_bounty_context,
             convert_to_tensor=True,
-            show_progress_bar=False,
             device=str(self.device)
         )
         
         # 提取 Bug Bounty 專業特徵 (32維)
         bug_bounty_features = self._extract_bug_bounty_features(text)
+        
+        # 確保兩個張量類型一致
+        if not isinstance(semantic_embedding, torch.Tensor):
+            semantic_embedding = torch.from_numpy(semantic_embedding)
+        if not isinstance(bug_bounty_features, torch.Tensor):
+            bug_bounty_features = torch.from_numpy(bug_bounty_features)
         
         # 拼接語意向量和專業特徵 (384 + 32 = 416維)
         combined_embedding = torch.cat([semantic_embedding, bug_bounty_features], dim=0)

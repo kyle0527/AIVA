@@ -8,6 +8,7 @@ from .knowledge_base import KnowledgeBase
 from .rag_engine import RAGEngine
 from .unified_vector_store import UnifiedVectorStore, create_unified_vector_store
 from .vector_store import VectorStore
+from .sync_experiences import sync_experiences_to_vector_store
 
 __all__ = [
     "KnowledgeBase",
@@ -15,4 +16,5 @@ __all__ = [
     "VectorStore",
     "UnifiedVectorStore",
     "create_unified_vector_store",
+    "sync_experiences_to_vector_store",
 ]

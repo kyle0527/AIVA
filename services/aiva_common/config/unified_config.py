@@ -130,6 +130,10 @@ class UnifiedSettings(BaseModel):
     # 核心監控配置
     core_monitor_interval: int = int(os.getenv("CORE_MONITOR_INTERVAL", "30"))
 
+    # MQ 配置（可選，預設為空表示禁用）
+    rabbitmq_url: str = os.getenv("RABBITMQ_URL", "")
+    exchange_name: str = os.getenv("RABBITMQ_EXCHANGE", "aiva_exchange")
+
     # 功能開關
     enable_strategy_generator: bool = (
         os.getenv("ENABLE_STRATEGY_GEN", "true").lower() == "true"

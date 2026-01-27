@@ -15,6 +15,7 @@ from datetime import datetime
 from pydantic import BaseModel, Field
 
 from .base_types import *
+from ...enums import PluginType, PluginStatus
 
 
 class PluginManifest(BaseModel):

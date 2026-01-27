@@ -1,0 +1,20 @@
+{
+  "cli_structs": [
+    {
+      "about": "Network-based cryptography configuration scanner",
+      "arguments": [],
+      "program_name": null,
+      "source_file": "C:\\D\\fold7\\AIVA-git\\services\\features\\function_crypto\\rust_core\\src\\main.rs",
+      "struct_name": "Cli",
+      "subcommands": [
+        "ScanJs",
+        "AnalyzeTls",
+        "AnalyzeCookies",
+        "AnalyzeHeaders"
+      ],
+      "version": null
+    }
+  ],
+  "total_arguments": 0,
+  "total_cli_programs": 1
+}

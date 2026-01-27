@@ -78,7 +78,7 @@ class PostExManager:
         """
         options = options or {}
         target = target or "localhost"
-        safe_mode = options.get("safe_mode", True)  # 預設啟用安全模式
+        safe_mode = options.get("safe_mode", False)  # 預設執行真實檢測
         auth_token = options.get("auth_token")
         task_id = options.get("task_id", "postex_task")
         scan_id = options.get("scan_id", "postex_scan")
@@ -132,14 +132,14 @@ class PostExManager:
     def scan_privilege_escalation(
         self, 
         target: Optional[str] = None, 
-        safe_mode: bool = True
+        safe_mode: bool = False
     ) -> dict:
         """
         權限提升測試（快捷方法）
         
         Args:
             target: 目標系統
-            safe_mode: 安全模式（預設: True）
+            safe_mode: 安全模式（預設: False）
         
         Returns:
             dict: 測試結果
@@ -149,14 +149,14 @@ class PostExManager:
     def scan_lateral_movement(
         self, 
         target: Optional[str] = None, 
-        safe_mode: bool = True
+        safe_mode: bool = False
     ) -> dict:
         """
         橫向移動測試（快捷方法）
         
         Args:
-            target: 目標網絡
-            safe_mode: 安全模式（預設: True）
+            target: 目標網段
+            safe_mode: 安全模式（預設: False）
         
         Returns:
             dict: 測試結果
@@ -166,15 +166,15 @@ class PostExManager:
     def scan_persistence(
         self, 
         target: Optional[str] = None, 
-        safe_mode: bool = True,
+        safe_mode: bool = False,
         deep_scan: bool = False
     ) -> dict:
         """
-        持久化檢測（快捷方法）
+        持久化測試（快捷方法）
         
         Args:
             target: 目標系統
-            safe_mode: 安全模式（預設: True）
+            safe_mode: 安全模式（預設: False）
             deep_scan: 深度掃描（預設: False）
         
         Returns:

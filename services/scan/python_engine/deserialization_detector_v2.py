@@ -624,25 +624,4 @@ args: [5]'''
 
 
 # 使用示例
-if __name__ == "__main__":
-    detector = DeserializationDetector(
-        ysoserial_path="/path/to/ysoserial.jar"
-    )
-    
-    # 測試 Java 反序列化
-    findings = detector.test_deserialization(
-        url="http://example.com/api/process",
-        param="data",
-        language="java",
-        method="POST"
-    )
-    
-    for finding in findings:
-        print(f"[{finding.severity}] {finding.type}")
-        print(f"  Language: {finding.language}")
-        print(f"  Payload Type: {finding.payload_type}")
-        print(f"  Parameter: {finding.parameter}")
-        print(f"  Evidence: {finding.evidence}")
-        if finding.gadget_chain:
-            print(f"  Gadget Chain: {finding.gadget_chain}")
-        print()
+

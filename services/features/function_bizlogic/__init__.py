@@ -24,12 +24,16 @@ from .race_condition_scanner import RaceConditionScanner
 # 導入整合工具
 from .integration_tools.bizlogic_tools import BizLogicManager
 
-# 導入命令處理器
-from .command_handler import BizLogicCommandHandler
+# 安全導入命令處理器
+try:
+    from .command_handler import BizLogicCommandHandler
+except ImportError:
+    BizLogicCommandHandler = None
 
-__version__ = "1.1.0"
-__status__ = "ready_for_integration"
-__last_updated__ = "2025-12-17"
+__version__ = "3.0.0"
+__status__ = "production"
+__architecture__ = "manager-based"
+__last_updated__ = "2026-01-23"
 
 __all__ = [
     "PriceManipulationScanner",

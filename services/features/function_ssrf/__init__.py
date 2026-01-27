@@ -12,10 +12,12 @@ from .config.ssrf_config import SsrfConfig
 
 __all__ = ["SSRFDetector", "SSRFEngine", "SSRFIssue", "SsrfConfig"]
 
-# 整合狀態 (2025-12-17)
-# ✅ 核心檢測器已完成 (safe mode support)
-# ⏳ 需要確認同步接口
-# ⏳ CommandHandler 待確認
-__version__ = "1.0.0"
-__status__ = "ready_for_integration"
-__last_updated__ = "2025-12-17"
+__version__ = "3.0.0"
+__status__ = "production"
+__architecture__ = "detector-based"
+__last_updated__ = "2026-01-23"
+
+# 架構說明 (2026-01-23)
+# ✅ Detector-based 架構（直接調用檢測器）
+# ✅ 支援 safe mode SSRF 檢測
+# ❌ Worker 層已移除（不需要）

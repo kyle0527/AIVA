@@ -1,24 +1,37 @@
 # 🎯 Core Capabilities - 核心能力模組
 
 > **路徑**: `core_capabilities/`  
-> **狀態**: ✅ Production Ready | **最後更新**: 2026-01-08  
-> **子模組**: 8 個 | **總文件數**: 19 | **Python 文件**: 19 | **Bug Bounty 整合**: ✅ 已完成  
-> **測試代碼**: ❌ 無（已移至 tests/） | **編譯錯誤**: 0 個 | **孤立文件**: ✅ 已清理
+> **狀態**: ✅ Production Ready | **最後更新**: 2026-01-21  
+> **子模組**: 8 個 | **總文件數**: 21 | **Python 文件**: 21 | **Bug Bounty 整合**: ✅ 已完成  
+> **父模組**: [AIVA Core](../README.md)
 
 ## 概述
 
-**Core Capabilities** 是 AIVA 的核心能力編排中心。整合了攻擊鏈編排、代碼分析、CLI 接口、對話助理、數據攝取、編排系統、輸出轉換和結果處理能力，提供完整的能力編排架構。
-
-**v4.4.0 重大更新**: orchestration/two_phase_scan_orchestrator.py 整合 Bug Bounty 決策引擎，支援 Phase2 決策方法。
+**Core Capabilities** 是 AIVA 五大核心模組之一，作為核心能力編排中心。整合了攻擊鏈編排、代碼分析、CLI 接口、對話助理、數據攝取、編排系統、輸出轉換和結果處理能力，提供完整的能力編排架構。
 
 **核心職責**：
 - 🎯 **攻擊執行** - 編排和執行多步驟攻擊鏈
-- 🔍 **代碼分析** - AI 增強的代碼安全分析
-- 💬 **對話交互** - 自然語言問答和一鍵執行
+- 🔍 **代碼分析** - AI 增強的代碼安全分析、業務邏輯掃描 ⭐ 新增
+- 💬 **對話交互** - 自然語言問答、智能選單和一鍵執行 ⭐ 新增
 - 📥 **數據處理** - 掃描結果攝取、處理和輸出轉換
 - 🔧 **能力註冊** - CapabilityRegistry 代理模式，遵循 SOT 原則
-- 🎯 **Bug Bounty 編排** - Phase1/Phase2 決策整合，HackerOne 實戰優化 ⭐
-- 🖥️ **CLI 接口** - 基於動態 Flow 的統一命令行入口（與 f 相關腳本連接）
+- 🎯 **Bug Bounty 編排** - Phase1/Phase2 決策整合，HackerOne 實戰優化
+- 🖥️ **CLI 接口** - 基於動態 Flow 的統一命令行入口
+
+---
+
+## 子模組結構
+
+| 子模組 | 功能 | 文件數 | 文檔 |
+|--------|------|--------|------|
+| [analysis/](analysis/README.md) | AI 增強代碼分析、業務邏輯掃描 ⭐ | 4 | [README](analysis/README.md) |
+| [attack/](attack/README.md) | 漏洞利用編排器、攻擊鏈管理 | 4 | [README](attack/README.md) |
+| [cli/](cli/README.md) | AIVA CLI 接口 | 1 | [README](cli/README.md) |
+| [dialog/](dialog/README.md) | AIVA 對話助理、智能選單 ⭐ | 3 | [README](dialog/README.md) |
+| [ingestion/](ingestion/README.md) | 掃描模組介面 | 2 | [README](ingestion/README.md) |
+| [orchestration/](orchestration/README.md) | 雙階段掃描編排 (含 Bug Bounty 決策) | 1 | [README](orchestration/README.md) |
+| [output/](output/README.md) | 輸出轉換為函數調用 | 2 | [README](output/README.md) |
+| [processing/](processing/README.md) | 掃描結果處理器 | 2 | [README](processing/README.md) |
 
 ---
 

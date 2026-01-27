@@ -6,4 +6,8 @@ Information Leak Detection Module
 from .sensitive_info_detector import SensitiveInfoDetector, SensitiveMatch
 
 __all__ = ['SensitiveInfoDetector', 'SensitiveMatch']
-__version__ = '1.0.0'
+
+__version__ = "3.0.0"
+__status__ = "production"
+__architecture__ = "detector-based"
+__last_updated__ = "2026-01-23"

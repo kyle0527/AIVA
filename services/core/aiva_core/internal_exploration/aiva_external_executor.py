@@ -1,37 +1,50 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-AIVA Multi-Language CLI Executor
+AIVA Multi-Language CLI Executor (v3.3)
 多語言統一 CLI 執行器
 
+版本歷史:
+---------
+v3.3 (2026-01-21) - 🔧 統一路徑配置
+  - 只讀取 external_classification.json (由分類器產出)
+  - 不再直接讀取各語言分析結果
+  
 支援 4 種語言的能力調用：
 - Python: 動態導入與執行
 - Rust: cargo run 調用
 - Go: go run 調用
 - TypeScript: npx ts-node 調用
 
+⚠️ 重要架構說明：
+- 外部分類器: 讀取 4 個語言的分析結果 → 輸出 external_classification.json
+- 外部執行器: 只讀取 external_classification.json → 執行能力
+
+數據來源:
+  services/integration/data/internal_exploration/external_classification.json
+  
 使用方式:
     # 列出所有可用能力
-    python multilang_cli_executor.py --list
+    python aiva_external_executor.py --list
     
     # 列出特定語言的能力
-    python multilang_cli_executor.py --list --lang python
-    python multilang_cli_executor.py --list --lang rust
+    python aiva_external_executor.py --list --lang python
+    python aiva_external_executor.py --list --lang rust
     
     # 執行 Python 能力
-    python multilang_cli_executor.py --lang python --flow 1
+    python aiva_external_executor.py --lang python --flow 1
     
     # 執行 Rust 能力（帶參數）
-    python multilang_cli_executor.py --lang rust --func analyze_cookies --cookies-json '[]' --url 'https://example.com'
+    python aiva_external_executor.py --lang rust --func analyze_cookies --cookies-json '[]' --url 'https://example.com'
     
     # 執行 Go 能力
-    python multilang_cli_executor.py --lang go --func DialBroker --broker-url 'amqp://localhost'
+    python aiva_external_executor.py --lang go --func DialBroker --broker-url 'amqp://localhost'
     
     # 執行 TypeScript 能力
-    python multilang_cli_executor.py --lang typescript --func analyzeClientSideAuthBypass --target 'https://example.com'
+    python aiva_external_executor.py --lang typescript --func analyzeClientSideAuthBypass --target 'https://example.com'
     
     # Dry run 模式（僅顯示命令，不執行）
-    python multilang_cli_executor.py --lang rust --func analyze_cookies --dry-run
+    python aiva_external_executor.py --lang rust --func analyze_cookies --dry-run
 """
 
 import sys
@@ -46,21 +59,41 @@ from datetime import datetime
 import importlib
 
 # ==========================================
-# 設定與常數
+# 路徑配置
 # ==========================================
 
 # PROJECT_ROOT: internal_exploration → aiva_core → core → services → AIVA-git
 PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent.parent.parent
 
-# 各語言分析結果位置 - 統一從 classification_data.json 讀取
-CLASSIFICATION_DATA = PROJECT_ROOT / "features_classification" / "classification_data.json"
+# 常量定義
+DRY_RUN_MESSAGE = "[Dry Run] 不實際執行"
+
+# 嘗試導入統一路徑配置
+try:
+    sys.path.insert(0, str(PROJECT_ROOT))
+    from services.integration.data.internal_exploration.paths_config import (
+        ExternalPaths,
+        DATA_ROOT,
+        ensure_all_dirs,
+    )
+    USING_NEW_PATHS = True
+    # ✅ 外部執行器只讀取這個文件 (由分類器產出)
+    CLASSIFICATION_DATA = ExternalPaths.CLASSIFICATION_FILE
+except ImportError:
+    USING_NEW_PATHS = False
+    # 降級方案
+    CLASSIFICATION_DATA = PROJECT_ROOT / "services" / "integration" / "data" / "internal_exploration" / "external_classification.json"
 
 # Rust 專案路徑
 RUST_PROJECT_PATH = PROJECT_ROOT / "services" / "features" / "function_crypto" / "rust_core"
 
 
 class MultiLangExecutor:
-    """多語言統一執行器"""
+    """多語言統一執行器
+    
+    ⚠️ 重要：此執行器只讀取 external_classification.json
+    不直接讀取各語言的 analysis_results.json
+    """
     
     def __init__(self):
         self.capabilities = {
@@ -78,10 +111,15 @@ class MultiLangExecutor:
         self._load_all_capabilities()
     
     def _load_all_capabilities(self):
-        """載入所有語言的能力定義（從統一的 classification_data.json）"""
+        """載入所有語言的能力定義
+        
+        ⚠️ 只從 external_classification.json 讀取
+        此文件由 aiva_external_classifier.py 產生
+        """
         if not CLASSIFICATION_DATA.exists():
-            print(f"[ERROR] 找不到 classification_data.json: {CLASSIFICATION_DATA}")
-            print(f"[提示] 請先執行: python aiva_external_classifier.py")
+            print("[ERROR] 找不到分類數據: {CLASSIFICATION_DATA}")
+            print("[提示] 請先執行分類器:")
+            print("       python aiva_external_classifier.py")
             return
         
         try:
@@ -90,8 +128,10 @@ class MultiLangExecutor:
             
             # 從 metadata 獲取統計
             metadata = data.get("metadata", {})
-            stats = metadata.get("statistics", {})
-            by_language = stats.get("by_language", {})
+            # stats 未使用但保留结构以备将来使用
+            # stats = metadata.get("statistics", {})
+            # by_language 未使用，但保留以備將來使用
+            # by_language = stats.get("by_language", {})
             
             # 從 flows 中按語言分組
             all_flows = data.get("flows", [])
@@ -112,7 +152,7 @@ class MultiLangExecutor:
                     }
                     print(f"[OK] 載入 {lang.upper()}: {len(flows)} 個流程")
             
-            print(f"\n[OK] 成功載入統一分類數據")
+            print("\n[OK] 成功載入統一分類數據")
             print(f"     總流程: {metadata.get('total_flows', 0)}")
             print(f"     總模組: {metadata.get('total_modules', 0)}")
             print(f"     語言: {', '.join(metadata.get('languages', []))}")
@@ -145,9 +185,15 @@ class MultiLangExecutor:
                 })
     
     def _load_compiled_lang_capabilities(self, lang: str, data: Dict):
-        """載入編譯型語言能力（Rust/Go/TypeScript）"""
+        """載入編譯型語言能力（Rust/Go/TypeScript）
+        
+        Args:
+            lang: 語言名稱（未使用，保留以備將來使用）
+            data: 分類數據
+        """
         functions = data.get("functions", [])
-        flows = data.get("flows", [])
+        # flows 變量未使用，但保留以備將來使用
+        # flows = data.get("flows", [])
         
         # 從 functions 提取能力
         for func in functions:
@@ -158,7 +204,7 @@ class MultiLangExecutor:
                 "category": func.get("category", "other"),
                 "source_file": func.get("source_file", ""),
                 "inputs": func.get("inputs", []),
-                "parameters": self._extract_lang_params(lang, func)
+                "parameters": self._extract_lang_params(func)
             }
             self.capabilities[lang].append(capability)
     
@@ -182,8 +228,15 @@ class MultiLangExecutor:
         
         return params
     
-    def _extract_lang_params(self, lang: str, func: Dict) -> List[Dict]:
-        """提取編譯型語言的參數"""
+    def _extract_lang_params(self, func: Dict) -> List[Dict]:
+        """提取編譯型語言的參數
+        
+        Args:
+            func: 函數字典
+            
+        Returns:
+            參數列表
+        """
         inputs = func.get("inputs", [])
         params = []
         
@@ -297,11 +350,11 @@ class MultiLangExecutor:
             print(f"\n{'='*60}")
             print("  Dry Run 模式 - 不實際執行")
             print(f"{'='*60}\n")
-            print(f"[說明] 這個流程將會：")
+            print("[說明] 這個流程將會：")
             print(f"  1. 導入模組: services/features/{module_name}")
             print(f"  2. 執行入口: {start_func}")
             print(f"  3. 測試目標: {target}")
-            print(f"\n[建議] 何時使用此流程：")
+            print("\n[建議] 何時使用此流程：")
             use_case = cap.get('use_case', '')
             if use_case:
                 print(f"  {use_case}")
@@ -311,15 +364,316 @@ class MultiLangExecutor:
         print(f"\n{'='*60}")
         print("  開始執行")
         print(f"{'='*60}\n")
-        print("[提示] 完整的執行邏輯待實現（需要動態導入和實例化）")
+        
+        try:
+            # 根據函數名稱動態導入並執行
+            # 模式 1: 頂層函數（如 run_reflected_test）
+            if '.' not in start_func:
+                return self._execute_python_top_level_function(module_name, start_func, target, kwargs, cap)
+            
+            # 模式 2: 類方法（如 XSSManager.comprehensive_scan）
+            else:
+                class_name, method_name = start_func.rsplit('.', 1)
+                return self._execute_python_class_method(module_name, class_name, method_name, target, kwargs, cap)
+                
+        except Exception as e:
+            print(f"[錯誤] 執行失敗: {e}")
+            import traceback
+            traceback.print_exc()
+            return False
+    
+    def _execute_python_top_level_function(self, module_name: str, func_name: str, target: str, kwargs: Dict, cap: Dict | None = None) -> bool:
+        """執行 Python 頂層函數
+        
+        Args:
+            module_name: 模組名稱
+            func_name: 函數名稱
+            target: 目標地址
+            kwargs: 關鍵字參數
+            cap: 能力字典（可選）
+            
+        Returns:
+            是否執行成功
+        """
+        print(f"[執行] 頂層函數: {func_name}")
+        print(f"[模組] {module_name}")
+        
+        # 構建模組路徑
+        # module_name 格式如: function_xss
+        # 實際路徑: services/features/function_xss/...
+        
+        # ✅ 優先使用分類資料中的 script_name（來自 AST 分析）
+        script_name = cap.get('script_name', '') if cap else ''
+        
+        # 嘗試幾種導入路徑（優先使用精確路徑）
+        import_paths = []
+        if script_name:
+            # 優先：使用 AST 分析的精確來源檔案
+            import_paths.append(f"services.features.{module_name}.{script_name}")
+        
+        # 備選：標準模組入口
+        import_paths.extend([
+            f"services.features.{module_name}.__main__",
+            f"services.features.{module_name}.main",
+            f"services.features.{module_name}.cli",
+            f"services.features.{module_name}.worker",
+        ])
+        
+        for import_path in import_paths:
+            try:
+                print(f"[嘗試] 導入: {import_path}")
+                mod = importlib.import_module(import_path)
+                
+                if hasattr(mod, func_name):
+                    func_obj = getattr(mod, func_name)
+                    print(f"[成功] 找到函數: {func_name}")
+                    
+                    # 檢查是否為 async 函數
+                    import inspect
+                    is_async = inspect.iscoroutinefunction(func_obj)
+                    
+                    # ✅ 智能參數處理：檢查函數簽名
+                    sig = inspect.signature(func_obj)
+                    param_names = list(sig.parameters.keys())
+                    print(f"[簽名] {func_name}({', '.join(param_names)})")
+                    
+                    # 根據簽名決定如何調用
+                    call_args = []
+                    call_kwargs = {}
+                    
+                    for param_name, param in sig.parameters.items():
+                        param_type = param.annotation
+                        
+                        # 嘗試匹配常見參數模式
+                        if param_name == 'args':
+                            # argparse.Namespace 模式
+                            from argparse import Namespace
+                            args = Namespace(
+                                url=target,
+                                target=target,
+                                param=kwargs.get('param', 'q'),
+                                method=kwargs.get('method', 'GET'),
+                                location=kwargs.get('location', 'query'),
+                                timeout=kwargs.get('timeout', 30)
+                            )
+                            call_args.append(args)
+                        elif param_name == 'target' or param_name == 'url':
+                            call_kwargs[param_name] = target
+                        elif param_name in kwargs:
+                            call_kwargs[param_name] = kwargs[param_name]
+                        elif 'TaskPayload' in str(param_type) or 'Payload' in str(param_type):
+                            # 嘗試構建 TaskPayload 物件
+                            try:
+                                from services.aiva_common.schemas import FunctionTaskPayload, FunctionTaskTarget
+                                task_payload = FunctionTaskPayload(
+                                    task_id=kwargs.get('task_id', 'task_executor_001'),
+                                    scan_id=kwargs.get('scan_id', 'scan_executor_001'),
+                                    target=FunctionTaskTarget(url=target)
+                                )
+                                call_kwargs[param_name] = task_payload
+                                print(f"[構建] {param_name} = FunctionTaskPayload(target={target})")
+                            except Exception as e:
+                                print(f"[警告] 無法構建 TaskPayload: {e}")
+                        elif param.default is not inspect.Parameter.empty:
+                            # 有預設值，跳過
+                            pass
+                    
+                    # 執行函數
+                    if call_args:
+                        print(f"[執行] 調用 {func_name}(args) {'[ASYNC]' if is_async else ''}")
+                        if is_async:
+                            import asyncio
+                            result = asyncio.run(func_obj(*call_args, **call_kwargs))
+                        else:
+                            result = func_obj(*call_args, **call_kwargs)
+                    else:
+                        print(f"[執行] 調用 {func_name}({', '.join(f'{k}=...' for k in call_kwargs.keys())}) {'[ASYNC]' if is_async else ''}")
+                        if is_async:
+                            import asyncio
+                            result = asyncio.run(func_obj(**call_kwargs))
+                        else:
+                            result = func_obj(**call_kwargs)
+                    
+                    print(f"\n[結果] {result}")
+                    return True
+                    
+            except (ImportError, AttributeError) as e:
+                continue
+            except Exception as e:
+                print(f"[錯誤] {import_path}: {e}")
+                import traceback
+                traceback.print_exc()
+                continue
+        
+        print(f"[錯誤] 無法找到函數: {func_name}")
+        print(f"[建議] 檢查模組路徑: services/features/{module_name}/")
+        return False
+    
+    def _execute_python_class_method(self, module_name: str, class_name: str, method_name: str, target: str, kwargs: Dict, cap: Dict | None = None) -> bool:
+        """執行 Python 類方法
+        
+        Args:
+            module_name: 模組名稱
+            class_name: 類名稱
+            method_name: 方法名稱
+            target: 目標地址
+            kwargs: 關鍵字參數
+            cap: 能力字典（可選）
+            
+        Returns:
+            是否執行成功
+        """
+        print(f"[執行] 類方法: {class_name}.{method_name}")
+        print(f"[模組] {module_name}")
+        
+        # ✅ 優先使用分類資料中的 script_name（來自 AST 分析）
+        script_name = cap.get('script_name', '') if cap else ''
+        if script_name:
+            print(f"[來源] {script_name}.py")
+        
+        # 嘗試幾種導入路徑（優先使用精確路徑）
+        import_paths = []
+        if script_name:
+            # 優先：使用 AST 分析的精確來源檔案
+            import_paths.append(f"services.features.{module_name}.{script_name}")
+        
+        # 備選：猜測路徑
+        import_paths.extend([
+            f"services.features.{module_name}.{class_name.lower()}",
+            f"services.features.{module_name}.main",
+            f"services.features.{module_name}.core",
+        ])
+        
+        for import_path in import_paths:
+            try:
+                print(f"[嘗試] 導入: {import_path}")
+                mod = importlib.import_module(import_path)
+                
+                if hasattr(mod, class_name):
+                    cls = getattr(mod, class_name)
+                    print(f"[成功] 找到類: {class_name}")
+                    
+                    # 實例化類
+                    if method_name == '__init__':
+                        print(f"[執行] 實例化 {class_name}()")
+                        try:
+                            instance = cls()  # 先嘗試無參數
+                        except TypeError:
+                            # 嘗試傳入 target 或 target_url
+                            try:
+                                instance = cls(target_url=target)
+                            except TypeError:
+                                try:
+                                    instance = cls(target=target)
+                                except TypeError:
+                                    instance = cls(**kwargs)
+                        print(f"[結果] {instance}")
+                        return True
+                    else:
+                        # ✅ 智能調用方法：檢查方法簽名決定如何傳參
+                        try:
+                            instance = cls()
+                        except TypeError:
+                            try:
+                                instance = cls(target_url=target)
+                            except TypeError:
+                                try:
+                                    instance = cls(target=target)
+                                except TypeError:
+                                    instance = cls()
+                        method = getattr(instance, method_name)
+                        
+                        import inspect
+                        sig = inspect.signature(method)
+                        param_names = list(sig.parameters.keys())
+                        
+                        print(f"[簽名] {method_name}({', '.join(param_names)})")
+                        
+                        # 檢查是否為 async 方法
+                        is_async = inspect.iscoroutinefunction(method)
+                        
+                        # 根據簽名智能構建參數
+                        call_kwargs = {}
+                        missing_required = []
+                        
+                        for param_name, param in sig.parameters.items():
+                            param_type = param.annotation
+                            
+                            # 嘗試匹配常見參數模式
+                            if param_name == 'target' or param_name == 'url':
+                                call_kwargs[param_name] = target
+                            elif param_name == 'payload':
+                                # 提供測試用 payload
+                                call_kwargs[param_name] = kwargs.get('payload', '<script>alert(1)</script>')
+                            elif param_name == 'document' or param_name == 'html' or param_name == 'content':
+                                # 提供測試用 document
+                                call_kwargs[param_name] = kwargs.get('document', f'<html><body>Test from {target}</body></html>')
+                            elif param_name == 'response' or param_name == 'data':
+                                # 提供測試用 response
+                                call_kwargs[param_name] = kwargs.get('response', {'status': 200, 'body': 'test'})
+                            elif param_name == 'tool_name' or param_name == 'name':
+                                # 提供測試用工具名稱
+                                call_kwargs[param_name] = kwargs.get('tool_name', 'sqlmap')
+                            elif param_name == 'query' or param_name == 'sql':
+                                # 提供測試用查詢
+                                call_kwargs[param_name] = kwargs.get('query', "SELECT * FROM users WHERE id=1")
+                            elif param_name in kwargs:
+                                call_kwargs[param_name] = kwargs[param_name]
+                            elif 'TaskPayload' in str(param_type) or 'Payload' in str(param_type):
+                                # 嘗試構建 TaskPayload 物件
+                                try:
+                                    from services.aiva_common.schemas import FunctionTaskPayload, FunctionTaskTarget
+                                    task_payload = FunctionTaskPayload(
+                                        task_id=kwargs.get('task_id', 'task_executor_001'),
+                                        scan_id=kwargs.get('scan_id', 'scan_executor_001'),
+                                        target=FunctionTaskTarget(url=target)
+                                    )
+                                    call_kwargs[param_name] = task_payload
+                                    print(f"[構建] {param_name} = FunctionTaskPayload(target={target})")
+                                except Exception as e:
+                                    print(f"[警告] 無法構建 TaskPayload: {e}")
+                            elif param.default is not inspect.Parameter.empty:
+                                # 有預設值，跳過
+                                pass
+                            elif param.kind not in (inspect.Parameter.VAR_POSITIONAL, inspect.Parameter.VAR_KEYWORD):
+                                # 必要參數但無法提供
+                                missing_required.append(param_name)
+                        
+                        if missing_required:
+                            print(f"[警告] 缺少必要參數: {', '.join(missing_required)}")
+                        
+                        print(f"[執行] {class_name}().{method_name}({', '.join(f'{k}=...' for k in call_kwargs.keys())}) {'[ASYNC]' if is_async else ''}")
+                        
+                        if is_async:
+                            import asyncio
+                            result = asyncio.run(method(**call_kwargs))
+                        else:
+                            result = method(**call_kwargs)
+                        
+                        print(f"\n[結果] {result}")
+                        return True
+                        
+            except (ImportError, AttributeError) as e:
+                continue
+            except Exception as e:
+                print(f"[錯誤] {import_path}: {e}")
+                import traceback
+                traceback.print_exc()
+                continue
+        
+        print(f"[錯誤] 無法找到類: {class_name}")
+        print(f"[建議] 檢查模組路徑: services/features/{module_name}/")
         return False
     
     def execute_rust(self, func_name: str, dry_run: bool = False, **kwargs):
         """執行 Rust 能力"""
-        caps = [c for c in self.capabilities["rust"] if c.get("name") == func_name]
+        # 支援用 end 欄位（函數名稱）或 name 欄位匹配
+        caps = [c for c in self.capabilities["rust"] 
+                if c.get("end") == func_name or c.get("name") == func_name]
         
         if not caps:
             print(f"[錯誤] 找不到 Rust 函數: {func_name}")
+            print(f"[可用] {[c.get('end', '?') for c in self.capabilities['rust']]}")
             return
         
         cap = caps[0]
@@ -337,12 +691,18 @@ class MultiLangExecutor:
             subcommand = cmd_map.get(func_name, "")
             cmd = f"cargo run --manifest-path {RUST_PROJECT_PATH}/Cargo.toml -- {subcommand}"
             
-            # 添加參數
-            for param in cap.get('parameters', []):
-                param_name = param['name'].replace('_', '-')
-                value = kwargs.get(param['name'], kwargs.get(param_name, ''))
+            # 添加參數（從 kwargs 直接獲取）
+            param_mapping = {
+                'url': '--url',
+                'cookies_json': '--cookies-json',
+                'headers_json': '--headers-json',
+                'content': '--content',
+                'port': '--port'
+            }
+            for kwarg_name, cli_flag in param_mapping.items():
+                value = kwargs.get(kwarg_name, '')
                 if value:
-                    cmd += f" --{param_name} \"{value}\""
+                    cmd += f" {cli_flag} '{value}'"
         else:
             # analyzer 的輔助函數
             source_file = cap.get('source_file', '')
@@ -352,7 +712,7 @@ class MultiLangExecutor:
         print(f"[指令] {cmd}\n")
         
         if dry_run:
-            print("[Dry Run] 不實際執行")
+            print(DRY_RUN_MESSAGE)
             return
         
         # 實際執行
@@ -372,10 +732,13 @@ class MultiLangExecutor:
     
     def execute_go(self, func_name: str, dry_run: bool = False, **kwargs):
         """執行 Go 能力"""
-        caps = [c for c in self.capabilities["go"] if c.get("name") == func_name]
+        # 支援用 end 欄位（函數名稱）或 name 欄位匹配
+        caps = [c for c in self.capabilities["go"] 
+                if c.get("end") == func_name or c.get("name") == func_name]
         
         if not caps:
             print(f"[錯誤] 找不到 Go 函數: {func_name}")
+            print(f"[可用] {[c.get('end', '?') for c in self.capabilities['go']]}")
             return
         
         cap = caps[0]
@@ -395,8 +758,8 @@ class MultiLangExecutor:
         print(f"[指令] {cmd}\n")
         
         if dry_run:
-            print("[Dry Run] 不實際執行")
-            return
+            print(DRY_RUN_MESSAGE)
+            return {"success": True, "result": None, "type": "dry_run"}
         
         # 實際執行
         try:
@@ -411,32 +774,34 @@ class MultiLangExecutor:
     
     def execute_typescript(self, func_name: str, dry_run: bool = False, **kwargs):
         """執行 TypeScript 能力"""
-        caps = [c for c in self.capabilities["typescript"] if c.get("name") == func_name]
+        # 支援用 end 欄位（函數名稱）或 name 欄位匹配
+        caps = [c for c in self.capabilities["typescript"] 
+                if c.get("end") == func_name or c.get("name") == func_name]
         
         if not caps:
             print(f"[錯誤] 找不到 TypeScript 函數: {func_name}")
+            print(f"[可用] {[c.get('end', '?') for c in self.capabilities['typescript']]}")
             return
         
         cap = caps[0]
-        source_file = cap.get('source_file', '')
+        full_path = cap.get('full_path', [])
+        source_file = full_path[0] if full_path else ''
         
         # 構建 npx ts-node 命令
         ts_engine_path = PROJECT_ROOT / "services" / "scan" / "typescript_engine"
         cmd = f"npx ts-node {source_file} --func {func_name}"
         
-        # 添加參數
-        for param in cap.get('parameters', []):
-            param_name = param['name']
-            value = kwargs.get(param_name, '')
+        # 添加參數（從 kwargs 直接獲取）
+        for kwarg_name, value in kwargs.items():
             if value:
-                cmd += f" --{param_name}=\"{value}\""
+                cmd += f" --{kwarg_name}=\"{value}\""
         
         print(f"\n[執行] TypeScript 能力: {func_name}")
         print(f"[指令] {cmd}\n")
         
         if dry_run:
-            print("[Dry Run] 不實際執行")
-            return
+            print(DRY_RUN_MESSAGE)
+            return {"success": True, "result": None, "type": "dry_run"}
         
         # 實際執行
         try:
@@ -460,17 +825,19 @@ class MultiLangExecutor:
             output_format: 輸出格式 'md' 或 'json'
             output_dir: 輸出目錄，預設為 features_classification
         """
+        # 創建 Path 對象
+        output_path: Path
         if output_dir is None:
-            output_dir = PROJECT_ROOT / "features_classification"
+            output_path = PROJECT_ROOT / "features_classification"
         else:
-            output_dir = Path(output_dir)
+            output_path = Path(output_dir)
         
-        output_dir.mkdir(parents=True, exist_ok=True)
+        output_path.mkdir(parents=True, exist_ok=True)
         
         if output_format == "md":
-            self._generate_markdown_reference(output_dir)
+            self._generate_markdown_reference(output_path)
         elif output_format == "json":
-            self._generate_json_database(output_dir)
+            self._generate_json_database(output_path)
     
     def _generate_markdown_reference(self, output_dir: Path):
         """生成 Markdown 參考手冊"""
@@ -481,7 +848,7 @@ class MultiLangExecutor:
                 # 標題和元數據
                 f.write("# AIVA 外部模組 CLI 指令參考手冊\n\n")
                 f.write(f"> 生成時間: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n")
-                f.write(f"> 資料來源: classification_data.json\n")
+                f.write("> 資料來源: classification_data.json\n")
                 
                 # 統計總覽
                 total_flows = sum(len(caps) for caps in self.capabilities.values())
@@ -493,7 +860,7 @@ class MultiLangExecutor:
                 
                 for lang, caps in self.capabilities.items():
                     if caps:
-                        modules = set(c.get('module', '') for c in caps)
+                        modules = {c.get('module', '') for c in caps}
                         f.write(f"| {lang.upper()} | {len(caps)} | {len(modules)} |\n")
                 
                 f.write("\n---\n\n")
@@ -571,7 +938,7 @@ class MultiLangExecutor:
                         attack_types[attack_type].append(cap)
                 
                 for attack_type, caps in sorted(attack_types.items()):
-                    modules = set(c.get('module', '') for c in caps)
+                    modules = {c.get('module', '') for c in caps}
                     f.write(f"- **{attack_type}**: {len(caps)} 個流程，涵蓋 {', '.join(sorted(modules))}\n")
             
             print(f"[成功] Markdown 參考文件已生成: {filename}")
@@ -580,7 +947,7 @@ class MultiLangExecutor:
             print(f"[錯誤] 無法寫入文件: {e}")
     
     def _generate_json_database(self, output_dir: Path):
-        """生成 JSON 資料庫"""
+        """生成 JSON 資料庫（包含參數資訊）"""
         filename = output_dir / "external_cli_commands_db.json"
         
         db_records = []
@@ -597,6 +964,9 @@ class MultiLangExecutor:
                 else:
                     cli_command = f"python aiva_external_executor.py --lang {lang} --func {start}"
                 
+                # ✅ 提取參數資訊（從 classification_data.json）
+                parameters = cap.get('parameters', {})
+                
                 record = {
                     "flow_id": flow_id,
                     "language": lang,
@@ -609,7 +979,8 @@ class MultiLangExecutor:
                     "length": cap.get('length', 0),
                     "cli_command": cli_command,
                     "start_function": start,
-                    "end_function": end
+                    "end_function": end,
+                    "parameters": parameters  # ✅ 新增：包含完整參數資訊
                 }
                 db_records.append(record)
         
@@ -874,7 +1245,7 @@ def main():
     parser.add_argument("--headers-json", help="Headers JSON 字串")
     parser.add_argument("--url", help="URL")
     parser.add_argument("--content", help="內容（用於 JS 分析）")
-    parser.add_argument("--port", type=int, default=443, help="端口（用於 TLS 分析）")
+    parser.add_argument("--port", type=int, help="端口（用於 TLS 分析）")
     parser.add_argument("--broker-url", help="Message broker URL")
     
     args, unknown = parser.parse_known_args()

@@ -8,6 +8,7 @@ import { chromium, Browser } from 'playwright-core';
 import * as amqp from 'amqplib';
 import { logger } from './utils/logger.js';
 import { ScanService } from './services/scan-service.js';
+import { DOMSecurityAnalyzer } from './dom-security-analyzer.js';
 // import { EnhancedDynamicScanService } from './services/enhanced-dynamic-scan.service';
 // import { DynamicScanTask, DynamicScanResult } from './interfaces/dynamic-scan.interfaces';
 
@@ -70,6 +71,32 @@ async function consumeTasks(): Promise<void> {
 
       // 執行掃描
       const result = await scanService.scan(task);
+
+      // 執行 DOM 安全分析（如果啟用 JavaScript）
+      if (task.enable_javascript && browser) {
+        logger.info({ scan_id: task.scan_id }, '🔍 執行 DOM 安全分析...');
+        const page = await browser.newPage();
+        const domAnalyzer = new DOMSecurityAnalyzer(page);
+        
+        try {
+          const domFindings = await domAnalyzer.analyze(task.target_url);
+          
+          // 將 DOM 發現添加到結果中
+          if (domFindings.length > 0) {
+            logger.info(
+              { scan_id: task.scan_id, findings: domFindings.length },
+              '✅ DOM 安全分析完成'
+            );
+            
+            // 將發現添加到結果（可以擴展 result 結構）
+            (result as any).dom_security_findings = domFindings;
+          }
+        } catch (error) {
+          logger.error({ error }, '❌ DOM 安全分析失敗');
+        } finally {
+          await page.close();
+        }
+      }
 
       logger.info(
         { scan_id: task.scan_id, assets: result.assets.length },

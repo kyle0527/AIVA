@@ -1,12 +1,13 @@
 # 🏗️ Service Backbone - 服務骨幹
 
 > **路徑**: `service_backbone/`  
-> **狀態**: ✅ 正常 | **最後更新**: 2026-01-07  
-> **子模組**: 9 個 | **總文件數**: 33
+> **狀態**: ✅ 正常 | **最後更新**: 2026-01-21  
+> **子模組**: 9 個 | **總文件數**: 37  
+> **父模組**: [AIVA Core](../README.md)
 
 ## 概述
 
-**Service Backbone** 是 AIVA 的基礎設施服務層，提供所有模組共享的核心服務。包括消息代理、狀態管理、存儲管理、服務協調、性能監控、權限控制等基礎能力，確保整個系統的穩定運行。
+**Service Backbone** 是 AIVA 五大核心模組之一，作為基礎設施服務層，提供所有模組共享的核心服務。包括消息代理、狀態管理、存儲管理、服務協調、性能監控、權限控制等基礎能力，確保整個系統的穩定運行。
 
 **核心職責**：
 - 📨 **消息通信** - RabbitMQ 消息代理和發布/訂閱
@@ -16,24 +17,23 @@
 - 📈 **性能監控** - 系統指標收集和健康檢查
 - 🔐 **權限控制** - RBAC 權限矩陣和授權管理
 - 🌐 **API 網關** - FastAPI 統一入口
+- 🔧 **系統修復** - 診斷和修復工具 ⭐ 新增
 
 ---
 
-## 架構
-
-### 子模組結構
+## 子模組結構
 
 | 子模組 | 功能 | 文件數 | 文檔 |
 |--------|------|--------|------|
-| adapters/ | 協議適配器 | 2 | [README](adapters/README.md) |
-| api/ | FastAPI 應用、統一函數調用 | 3 | [README](api/README.md) |
-| authz/ | 權限矩陣、權限映射、矩陣可視化 | 4 | [README](authz/README.md) |
-| coordination/ | 核心服務協調器、AI 控制器 | 3 | [README](coordination/README.md) |
-| messaging/ | RabbitMQ 消息代理、結果收集、任務分發 | 4 | [README](messaging/README.md) |
-| performance/ | 監控指標收集、並行處理、內存管理 | 4 | [README](performance/README.md) |
-| state/ | 會話狀態管理器 | 2 | [README](state/README.md) |
-| storage/ | 存儲管理器、後端實現、命令存儲 | 7 | [README](storage/README.md) |
-| utils/ | 日誌格式化 | 1 | [README](utils/README.md) |
+| [adapters/](adapters/README.md) | 協議適配器 | 2 | [README](adapters/README.md) |
+| [api/](api/README.md) | FastAPI 應用、統一函數調用、AI 服務 ⭐ | 6 | [README](api/README.md) |
+| [authz/](authz/README.md) | 權限矩陣、權限映射、矩陣可視化 | 4 | [README](authz/README.md) |
+| [coordination/](coordination/README.md) | 核心服務協調器、AI 控制器、組件管理 ⭐ | 4 | [README](coordination/README.md) |
+| [messaging/](messaging/README.md) | RabbitMQ 消息代理、結果收集、任務分發 | 4 | [README](messaging/README.md) |
+| [performance/](performance/README.md) | 監控指標收集、並行處理、健康檢查、診斷 ⭐ | 6 | [README](performance/README.md) |
+| [state/](state/README.md) | 會話狀態管理器 | 2 | [README](state/README.md) |
+| [storage/](storage/README.md) | 存儲管理器、後端實現、命令存儲 | 7 | [README](storage/README.md) |
+| [utils/](utils/README.md) | 日誌格式化、系統修復 ⭐ | 3 | [README](utils/README.md) |
 
 ### 根目錄組件
 
@@ -47,6 +47,8 @@
 
 | 類別 | 文件 | 說明 |
 |------|------|------|
+| `AIService` | api/ai_service.py | AI 持續運行服務 ⭐ 新增 |
+| `AIComponentManager` | coordination/ai_manager.py | AI 組件管理器 ⭐ 新增 |
 | `ContextManager` | context_manager.py | 分布式上下文和會話管理 |
 | `BaseDispatcher` | dispatcher_base.py | 所有 dispatcher 的抽象基類 |
 | `MessageBroker` | messaging/message_broker.py | RabbitMQ 消息代理 |
@@ -55,7 +57,7 @@
 | `CoreServiceCoordinator` | coordination/core_service_coordinator.py | 核心服務協調器 |
 | `PermissionMatrix` | authz/permission_matrix.py | RBAC 權限矩陣 |
 | `Monitoring` | performance/monitoring.py | 監控指標收集 |
-| `FastAPIApp` | api/app.py | FastAPI 應用 |
+| `AIVASystemRepair` | utils/repair_tool.py | 系統修復工具 ⭐ 新增 |
 
 ---
 
@@ -65,6 +67,7 @@
 - `aio_pika` - 異步 RabbitMQ
 - `fastapi` - API 框架
 - `pydantic` - 數據驗證
+- `psutil` - 系統監控 (可選)
 
 **內部依賴**：
 - `aiva_common.utils` - 通用工具

@@ -5,7 +5,7 @@
 
 import asyncio
 from collections.abc import Callable
-from datetime import UTC, datetime
+from datetime import datetime, timezone
 import json
 import logging
 from typing import Any
@@ -301,7 +301,7 @@ class ResultCollector:
         """
         self.pending_results[result_id] = {
             "result": result,
-            "timestamp": datetime.now(UTC).isoformat(),
+            "timestamp": datetime.now(timezone.utc).isoformat(),
         }
         logger.debug(f"Set pending result for {result_id}")
 
@@ -375,7 +375,7 @@ class ResultCollector:
                 event: len(handlers) for event, handlers in self.result_handlers.items()
             },
             "pending_results": len(self.pending_results),
-            "timestamp": datetime.now(UTC).isoformat(),
+            "timestamp": datetime.now(timezone.utc).isoformat(),
         }
 
         # 從儲存後端獲取額外統計

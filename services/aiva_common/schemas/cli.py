@@ -4,7 +4,7 @@ CLI 界面 Schema 定義
 此模組定義了命令行界面相關的資料模型，包括命令定義、參數、執行結果等。
 """
 
-from datetime import UTC, datetime
+from datetime import datetime, timezone
 from typing import Any
 
 from pydantic import BaseModel, Field, field_validator
@@ -72,10 +72,10 @@ class CLICommand(BaseModel):
     permissions: list[str] = Field(default_factory=list, description="所需權限")
     tags: list[str] = Field(default_factory=list, description="標籤")
     created_at: datetime = Field(
-        default_factory=lambda: datetime.now(UTC), description="創建時間"
+        default_factory=lambda: datetime.now(timezone.utc), description="創建時間"
     )
     updated_at: datetime = Field(
-        default_factory=lambda: datetime.now(UTC), description="更新時間"
+        default_factory=lambda: datetime.now(timezone.utc), description="更新時間"
     )
 
     @field_validator("command_name")
@@ -119,7 +119,7 @@ class CLIExecutionResult(BaseModel):
     stderr: str = Field(default="", description="標準錯誤")
     execution_time_ms: float = Field(ge=0, description="執行時間(毫秒)")
     start_time: datetime = Field(
-        default_factory=lambda: datetime.now(UTC), description="開始時間"
+        default_factory=lambda: datetime.now(timezone.utc), description="開始時間"
     )
     end_time: datetime | None = Field(default=None, description="結束時間")
     user_id: str | None = Field(default=None, description="執行用戶ID")
@@ -155,7 +155,7 @@ class CLISession(BaseModel):
     session_id: str = Field(description="會話ID")
     user_id: str | None = Field(default=None, description="用戶ID")
     start_time: datetime = Field(
-        default_factory=lambda: datetime.now(UTC), description="開始時間"
+        default_factory=lambda: datetime.now(timezone.utc), description="開始時間"
     )
     end_time: datetime | None = Field(default=None, description="結束時間")
     commands_executed: list[str] = Field(
@@ -171,7 +171,7 @@ class CLISession(BaseModel):
     )
     status: str = Field(default="active", description="會話狀態")
     last_activity: datetime = Field(
-        default_factory=lambda: datetime.now(UTC), description="最後活動時間"
+        default_factory=lambda: datetime.now(timezone.utc), description="最後活動時間"
     )
 
     @field_validator("status")
@@ -208,10 +208,10 @@ class CLIConfiguration(BaseModel):
         default_factory=dict, description="日誌設置"
     )
     created_at: datetime = Field(
-        default_factory=lambda: datetime.now(UTC), description="創建時間"
+        default_factory=lambda: datetime.now(timezone.utc), description="創建時間"
     )
     updated_at: datetime = Field(
-        default_factory=lambda: datetime.now(UTC), description="更新時間"
+        default_factory=lambda: datetime.now(timezone.utc), description="更新時間"
     )
     version: str = Field(default="1.0.0", description="配置版本")
 
@@ -248,10 +248,10 @@ class CLIMetrics(BaseModel):
         default_factory=dict, description="資源使用統計"
     )
     start_time: datetime = Field(
-        default_factory=lambda: datetime.now(UTC), description="統計開始時間"
+        default_factory=lambda: datetime.now(timezone.utc), description="統計開始時間"
     )
     end_time: datetime = Field(
-        default_factory=lambda: datetime.now(UTC), description="統計結束時間"
+        default_factory=lambda: datetime.now(timezone.utc), description="統計結束時間"
     )
 
     @field_validator("time_period")

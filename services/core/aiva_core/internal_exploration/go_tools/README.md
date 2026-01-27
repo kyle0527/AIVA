@@ -1,23 +1,52 @@
-# AIVA Go AST 分析工具使用手冊
+# AIVA Go AST 分析工具
 
-> **版本**: v2.2.0  
-> **最後更新**: 2026-01-07  
-> **狀態**: ✅ 生產就緒  
-> **檔案數**: 2 個 Go 模組  
+> **版本**: v3.1  
+> **最後更新**: 2026-01-20  
+> **狀態**: ✅ 生產就緒（已修復 struct 參數提取）  
+> **核心文件**: go2mermaid.go  
 > **代碼行數**: 891 行  
 > **執行檔**: go2mermaid.exe
+
+## ⚡ 最新更新 (2026-01-20)
+
+### 修復：Struct 參數提取
+
+**問題**：`go_engine` 分析結果原本是 0 flows，因為缺少 struct 參數提取
+
+**原因**：
+- Go 微服務使用 stdin JSON 接收參數
+- 參數定義在 struct 欄位（如 `ScanRequest`）
+- 舊版 go2mermaid 只分析函數參數，忽略 struct 欄位
+
+**解決方案**：新增 `_convert_struct_to_flows()` 方法
+```go
+// 將 struct 定義轉換為虛擬流程
+// ScanRequest struct → 8 個參數欄位
+func _convert_struct_to_flows(structDef StructDefinition) {
+    // Target, Options, PayloadType, CustomPayload...
+}
+```
+
+**結果**：
+- ✅ go_engine: 0 flows → 1 flow
+- ✅ 成功提取 8 個參數（Target, Options, PayloadType, etc.）
+- ✅ 分類器可正確識別為 "AI Core - 啟動"
+
+**技術細節**：
+- 使用 Go 標準庫 `go/ast` 解析 struct tags
+- 支援 `json:"field_name"` tag 提取
+- 轉換為統一的 function_details 格式
 
 ## 📑 目錄
 
 - [📋 概述](#-概述)
+- [🎯 設計定位](#-設計定位)
 - [🚀 快速開始](#-快速開始)
 - [📊 輸出檔案說明](#-輸出檔案說明)
-- [🎯 實際應用場景](#-實際應用場景)
-- [🔍 分析結果解讀](#-分析結果解讀)
-- [🛠️ 進階技巧](#️-進階技巧)
+- [🔧 與其他語言工具對比](#-與其他語言工具對比)
+- [📝 使用注意事項](#-使用注意事項)
 - [⚙️ 重新編譯](#️-重新編譯)
-- [📝 注意事項](#-注意事項)
-- [🆚 與 Python 工具對比](#-與-python-工具對比)
+- [🤝 與 AIVA 核心整合](#-與-aiva-核心整合)
 - [🐛 疑難排解](#-疑難排解)
 - [📚 延伸閱讀](#-延伸閱讀)
 - [📄 授權與維護](#-授權與維護)
@@ -26,13 +55,39 @@
 
 ## 📋 概述
 
-`go2mermaid.exe` 是一個整合式 Go 程式碼分析工具，整合了 5 大功能模組：
+**go_tools/** 是 AIVA 多語言 AST 分析工具套件的 Go 語言實現，專注於 **Go 代碼的 AST 解析與數據流分析**。
 
-1. **AST 解析與流程圖生成** (對標 Python `aiva_flow_analyzer.py`)
-2. **跨檔案數據流串接** (Data Flow Stitching)
-3. **功能分類與統計** (對標 Python `aiva_flow_classifier.py`)
-4. **CLI 指令手冊生成** (對標 Python `aiva_cli_implementation.py`)
-5. **系統瓶頸分析** (識別高耦合模組)
+---
+
+## 🎯 設計定位
+
+根據 AIVA **雙 CLI 架構設計**，本工具專注於 **語言層** 的 AST 解析：
+
+```
+┌─────────────────────────────────────┐
+│  語言工具層（AST 解析）            │
+│  ├─ python_tools/                  │
+│  ├─ go_tools/      ← 本工具        │
+│  ├─ rust_tools/                    │
+│  └─ typescript_tools/              │
+└─────────────────────────────────────┘
+              ↓ 輸出 JSON
+┌─────────────────────────────────────┐
+│  業務邏輯層（分類與執行）          │
+│  ├─ aiva_internal_classifier.py   │
+│  ├─ aiva_internal_executor.py     │
+│  ├─ aiva_external_classifier.py   │
+│  └─ aiva_external_executor.py     │
+└─────────────────────────────────────┘
+```
+
+**職責範圍**：
+- ✅ Go AST 解析
+- ✅ 函數調用關係提取
+- ✅ 數據流串接（Stitching）
+- ✅ 輸出統一 JSON 格式（Schema v3.3）
+- ❌ 不包含分類邏輯（由 aiva_external_classifier.py 負責）
+- ❌ 不包含執行邏輯（由 aiva_external_executor.py 負責）
 
 ---
 
@@ -45,7 +100,7 @@
 .\go2mermaid.exe
 
 # 指定輸入和輸出目錄
-.\go2mermaid.exe --input "目標路徑" --output "輸出路徑"
+.\go2mermaid.exe --input "目標路徑" --output "./output"
 ```
 
 ### 參數說明
@@ -59,144 +114,103 @@
 
 ## 📊 輸出檔案說明
 
-執行後會在輸出目錄生成以下檔案：
+執行後會在輸出目錄生成：
 
-### 1. 函數級流程圖 (`.mmd` 檔案)
+### analysis_results.json
 
-**格式**: `<檔名>_<函數名>.mmd`
-
-**範例**: `go2mermaid.go_main.mmd`
-
-**內容**: 單一函數的 Mermaid 流程圖，包含：
-- 條件分支 (if/else)
-- 迴圈結構 (for/range)
-- 函數調用
-- 返回語句
-
-**使用方式**:
-```powershell
-# 用 VS Code Mermaid 擴充套件預覽
-code go2mermaid.go_main.mmd
-```
-
-### 2. 系統架構圖 (`system_flow.mmd`)
-
-**內容**: 跨檔案數據流關係圖，顯示：
-- 檔案間的調用關係
-- 數據流向
-- 模組依賴
-
-**範例**:
-```mermaid
-flowchart TB
-    file_a.go["file_a.go"]
-    file_b.go["file_b.go"]
-    file_a.go -->|utils.Helper| file_b.go
-```
-
-### 3. 完整分析報告 (`analysis_results.json`)
-
-**JSON 結構**:
+**JSON 結構**（Schema v3.3）:
 ```json
 {
-  "summary": {
-    "total_files": 3,
-    "total_funcs": 25,
-    "real_connections": 12,
-    "categories": {
-      "reconnaissance": 5,
-      "analysis": 8,
-      "other": 12
-    }
+  "metadata": {
+    "tool": "go2mermaid",
+    "version": "3.0",
+    "language": "go",
+    "generated_at": "2026-01-18T10:30:00",
+    "total_flows": 4,
+    "schema_version": "3.3",
+    "ai_compatible": true
   },
-  "branch_analysis": {
-    "fan_out_nodes": {"file_a.go": 5},
-    "fan_in_nodes": {"file_b.go": 3},
-    "total_connections": 12
-  },
-  "flow_chains": [
+  "flows": [
     {
-      "from_script": "file_a.go",
-      "from_func": "Process",
-      "to_script": "file_b.go",
-      "to_func": "Helper",
-      "call_expr": "utils.Helper"
+      "flow_id": 1,
+      "start": {
+        "module": "main",
+        "function": "StartBroker"
+      },
+      "end": {
+        "module": "messaging",
+        "function": "DialBroker"
+      },
+      "steps": [...],
+      "call_chain": ["StartBroker", "DialBroker"]
     }
   ],
-  "functions": [...]
+  "functions": [
+    {
+      "name": "StartBroker",
+      "module": "main",
+      "file_path": "services/features/function_authn_go/main.go",
+      "parameters": ["ctx context.Context", "config *BrokerConfig"],
+      "calls": ["messaging.DialBroker"],
+      "is_async": false
+    }
+  ]
 }
 ```
 
-**欄位說明**:
-- `summary`: 總體統計
-- `branch_analysis`: 瓶頸分析 (扇入/扇出 > 2 的節點)
-- `flow_chains`: 跨檔案調用鏈
-- `functions`: 所有函數的詳細元數據
-
-### 4. CLI 指令手冊 (`cli_commands.sh`)
-
-**內容**: 自動生成的執行指令，按分類組織
-
-**範例**:
-```bash
-## Category: RECONNAISSANCE
-# [PLACEHOLDER] ScanNetwork 功能
-go run scanner.go --func=ScanNetwork
-
-## Category: ANALYSIS
-# [PLACEHOLDER] ParseData 功能
-go run parser.go --func=ParseData
-```
-
-**重要說明**:
-- 註解中的 `[PLACEHOLDER]` 標記表示功能描述預留位置
-- 實際描述需要由 **大語言模型 (LLM)** 分析程式碼後填入
-- 工具只負責提取函數結構和分類，具體功能說明由 LLM 補充
+**重要說明**：
+- ✅ 本工具只輸出 **analysis_results.json**
+- ❌ 不包含分類信息（由 aiva_external_classifier.py 處理）
+- ❌ 不包含 CLI 命令（由 aiva_external_executor.py 生成）
+- ❌ 不包含 Mermaid 圖表（可選功能，非核心輸出）
 
 ---
 
-## 🎯 實際應用場景
+## 🔧 與其他語言工具對比
 
-### 場景 1: 分析 Python 工具目錄
+| 特性 | Python | Go | Rust | TypeScript |
+|------|--------|----|----|-----------|
+| **核心文件** | aiva_flow_analyzer.py | go2mermaid.go | main.rs | ts2mermaid.ts |
+| **代碼行數** | 701 | 891 | 864 | 865 |
+| **輸出格式** | JSON | JSON | JSON | JSON |
+| **AST 解析** | ✅ ast 模組 | ✅ go/parser | ✅ syn crate | ✅ typescript API |
+| **數據流串接** | ✅ | ✅ | ✅ | ✅ |
+| **執行方式** | python | .exe | .exe | npx ts-node |
+| **職責** | AST 解析 | AST 解析 | AST 解析 | AST 解析 |
 
-```powershell
-cd c:\D\fold7\AIVA-git\services\core\aiva_core\internal_exploration\go_tools
+**統一特點**：
+- 所有語言工具只負責 AST 解析
+- 輸出統一 JSON Schema v3.3
+- 不包含分類和執行邏輯
+- 保持架構對稱性
 
-.\go2mermaid.exe `
-  --input "c:\D\fold7\AIVA-git\services\core\aiva_core\internal_exploration\python_tools" `
-  --output "./python_analysis"
-```
+---
 
-**目的**: 
-- 視覺化 Python 工具的程式碼結構
-- 發現模組間的依賴關係
-- 識別重複或冗餘的功能
+## 📝 使用注意事項
 
-### 場景 2: 分析整個 services 目錄
+### ✅ 應該做的
 
-```powershell
-.\go2mermaid.exe `
-  --input "c:\D\fold7\AIVA-git\services" `
-  --output "./services_analysis"
-```
+1. **只用於 AST 解析**
+   - 分析 Go 代碼結構
+   - 提取函數調用關係
+   - 生成標準 JSON 輸出
 
-**目的**:
-- 理解整個服務架構
-- 找出高耦合的瓶頸模組
-- 生成系統級架構文檔
+2. **作為語言層工具**
+   - 專注於 Go 語法分析
+   - 不涉及業務邏輯
+   - 輸出給上層使用
 
-### 場景 3: 分析特定功能模組
+### ❌ 不應該做的
 
-```powershell
-.\go2mermaid.exe `
-  --input "c:\D\fold7\AIVA-git\services\core\aiva_core" `
-  --output "./core_analysis"
-```
+1. **不要用於分類**
+   - 攻擊類型分類 → 使用 `aiva_external_classifier.py`
 
-**目的**:
-- 深入了解核心模組
-- 評估程式碼複雜度
-- 規劃重構方向
+2. **不要用於執行**
+   - Go 模組執行 → 使用 `aiva_external_executor.py --lang go`
+
+3. **不要修改輸出格式**
+   - 必須保持 JSON Schema v3.3 兼容性
+   - 確保與其他語言工具輸出一致
 
 ---
 

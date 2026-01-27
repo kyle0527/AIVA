@@ -222,37 +222,4 @@ def scan_target(target: str, options: Optional[Dict[str, Any]] = None) -> dict:
     return manager.scan(target, options)
 
 
-if __name__ == "__main__":
-    # 測試代碼（純同步實現）
-    import json
-    
-    print("=== Web Scanner Manager 測試（同步模式）===\n")
-    
-    manager = WebScannerManager()
-    
-    # 測試：完整掃描（純同步）
-    print("測試 1: 完整 Web 掃描（同步執行）")
-    result = manager.scan("https://example.com", {
-        "subdomain_scan": True,
-        "directory_scan": True,
-        "tech_detect": True
-    })
-    print(json.dumps(result, indent=2, ensure_ascii=False))
-    print("\n✅ 測試完成 - 純同步實現，無 async/await")
-    
-    # 測試 1: 完整掃描
-    print("測試 1: 完整 Web 掃描")
-    result = manager.scan("https://example.com", {
-        "subdomain_scan": True,
-        "directory_scan": True,
-        "technology_scan": True,
-        "vulnerability_scan": False  # 演示環境中跳過漏洞掃描
-    })
-    print(json.dumps(result, indent=2, ensure_ascii=False))
-    
-    print("\n" + "="*50 + "\n")
-    
-    # 測試 2: 僅子域名掃描
-    print("測試 2: 子域名掃描")
-    result = manager.scan_subdomains("example.com")
-    print(json.dumps(result, indent=2, ensure_ascii=False))
+

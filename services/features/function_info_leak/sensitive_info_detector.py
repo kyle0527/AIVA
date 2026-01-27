@@ -12,7 +12,7 @@ logger = get_logger(__name__)
 
 @dataclass
 class SensitiveMatch:
-    """靽⊥寥蝯"""
+    """TODO: Add docstring"""
 
     info_type: SensitiveInfoType
     value: str
@@ -24,14 +24,14 @@ class SensitiveMatch:
     recommendation: str = ""
 
     def __post_init__(self):
-        """芸閮剔蔭膩遣霅""
+        """TODO: Add docstring"""
         if not self.description:
             self.description = self._get_default_description()
         if not self.recommendation:
             self.recommendation = self._get_default_recommendation()
 
     def _get_default_description(self) -> str:
-        """脣暺膩"""
+        """TODO: Add docstring"""
         descriptions = {
             SensitiveInfoType.API_KEY: "API key exposed in response",
             SensitiveInfoType.ACCESS_TOKEN: "Access token exposed in response",
@@ -48,7 +48,7 @@ class SensitiveMatch:
         return descriptions.get(self.info_type, f"{self.info_type.value} exposed")
 
     def _get_default_recommendation(self) -> str:
-        """脣暺撱箄降"""
+        """TODO: Add docstring"""
         if self.info_type in [
             SensitiveInfoType.API_KEY,
             SensitiveInfoType.ACCESS_TOKEN,
@@ -79,7 +79,7 @@ class SensitiveMatch:
 
 @dataclass
 class DetectionResult:
-    """瑼Ｘ葫蝯"""
+    """TODO: Add docstring"""
 
     url: str
     matches: list[SensitiveMatch] = field(default_factory=list)
@@ -87,7 +87,7 @@ class DetectionResult:
     scan_errors: list[str] = field(default_factory=list)
 
     def get_stats(self) -> dict[str, Any]:
-        """脣蝯梯靽⊥"""
+        """TODO: Add docstring"""
         return {
             "total_matches": len(self.matches),
             "critical_issues": len(
@@ -101,7 +101,7 @@ class DetectionResult:
         }
 
     def _count_by_type(self) -> dict[str, int]:
-        """絞閮""
+        """TODO: Add docstring"""
         counts: dict[str, int] = {}
         for match in self.matches:
             key = match.info_type.value
@@ -109,7 +109,7 @@ class DetectionResult:
         return counts
 
     def _count_by_location(self) -> dict[str, int]:
-        """蝵桃絞閮""
+        """TODO: Add docstring"""
         counts: dict[str, int] = {}
         for match in self.matches:
             key = match.location.value
@@ -119,27 +119,24 @@ class DetectionResult:
 
 class SensitiveInfoDetector:
     """
-    瑼Ｘ葫批捆銝剔靽⊥瘣拚
+    Detect批捆銝剔info瘣拚
     銝餉:
-    - 瑼Ｘ葫 API keys, tokens, passwords 蝑霅霅    - 瑼Ｘ葫犖霅靽⊥ (PII): email, phone, SSN, credit card
-    - 瑼Ｘ葫脫霅(AWS, GCP, Azure)
-    - 瑼Ｘ葫豢摨恍摮泵銝    - 瑼Ｘ葫折頝臬頂蝯曹縑    - 瑼Ｘ葫 debug 靽⊥隤文璉    - 瑼Ｘ葫 HTML 閮駁銝剔靽⊥
+    - Detect API keys, tokens, passwords 蝑霅霅    - Detect犖霅info (PII): email, phone, SSN, credit card
+    - Detect脫霅(AWS, GCP, Azure)
+    - Detect豢摨恍摮泵銝    - Detect折頝臬頂result曹縑    - Detect debug info隤文璉    - Detect HTML 閮駁銝剔info
 
     雿輻蝭:
         detector = SensitiveInfoDetector()
 
-        # 瑼Ｘ葫 HTML 批捆
+        # Detect HTML 批捆
         result = detector.detect_in_html(html_content, url="https://example.com")
 
-        # 瑼Ｘ葫踵        result = detector.detect_in_headers(headers, url="https://example.com")
+        # Detect踵        result = detector.detect_in_headers(headers, url="https://example.com")
 
-        # 瑼Ｘ葫 JavaScript
+        # Detect JavaScript
         result = detector.detect_in_javascript(js_code, url="https://example.com/app.js")
-    """
-
-    def __init__(self, *, min_severity: AlertSeverity = AlertSeverity.INFORMATIONAL):
-        """
-        炎皜砍
+    """TODO: Add docstring"""
+        Initialize detector
 
         Args:
             min_severity: 雿摨雿甇斤亦寥撠◤蕪
@@ -148,30 +145,21 @@ class SensitiveInfoDetector:
         self._patterns = self._build_patterns()
 
     def detect_in_html(self, html_content: str, url: str = "") -> DetectionResult:
-        """
-        瑼Ｘ葫 HTML 批捆銝剔靽⊥
-
-        Args:
-            html_content: HTML 批捆
-            url:  URL
-
-        Returns:
-            DetectionResult: 瑼Ｘ葫蝯
-        """
+        """TODO: Add docstring"""
         result = DetectionResult(url=url)
 
         if not html_content:
             return result
 
-        # 瑼Ｘ葫 HTML 閮駁
+        # Detect HTML 閮駁
         result.matches.extend(self._detect_html_comments(html_content))
 
-        # 瑼Ｘ葫 JavaScript 隞Ⅳ憛        result.matches.extend(self._detect_script_blocks(html_content))
+        # Detect JavaScript 隞Ⅳ憛        result.matches.extend(self._detect_script_blocks(html_content))
 
-        # 瑼Ｘ葫 meta 璅惜
+        # Detect meta 璅惜
         result.matches.extend(self._detect_meta_tags(html_content))
 
-        # 瑼Ｘ葫 HTML body 銝剔靽⊥
+        # Detect HTML body 銝剔info
         result.matches.extend(self._detect_in_text(html_content, Location.HTML_BODY))
 
         # 蕪雿摨衣寥
@@ -183,21 +171,14 @@ class SensitiveInfoDetector:
     def detect_in_headers(
         self, headers: dict[str, str], url: str = ""
     ) -> DetectionResult:
-        """
-        瑼Ｘ葫 HTTP 踵凋葉縑
-        Args:
-            headers: HTTP 踵            url: 隢 URL
-
-        Returns:
-            DetectionResult: 瑼Ｘ葫蝯
-        """
+        """TODO: Add docstring"""
         result = DetectionResult(url=url)
 
         if not headers:
             return result
 
         for header_name, header_value in headers.items():
-            # 瑼Ｘ葫 Set-Cookie 銝剔 token
+            # Detect Set-Cookie 銝剔 token
             if header_name.lower() == "set-cookie" and re.search(
                 r"(token|auth|session|jwt)=([a-zA-Z0-9._-]{20,})",
                 header_value,
@@ -213,7 +194,7 @@ class SensitiveInfoDetector:
                     )
                 )
 
-            # 瑼Ｘ葫嗡靽⊥
+            # Detect嗡info
             combined = f"{header_name}: {header_value}"
             for match in self._detect_in_text(combined, Location.RESPONSE_HEADER):
                 result.matches.append(match)
@@ -223,16 +204,7 @@ class SensitiveInfoDetector:
         return result
 
     def detect_in_javascript(self, js_code: str, url: str = "") -> DetectionResult:
-        """
-        瑼Ｘ葫 JavaScript 隞Ⅳ銝剔靽⊥
-
-        Args:
-            js_code: JavaScript 隞Ⅳ
-            url: 單 URL
-
-        Returns:
-            DetectionResult: 瑼Ｘ葫蝯
-        """
+        """TODO: Add docstring"""
         result = DetectionResult(url=url)
 
         if not js_code:
@@ -249,19 +221,11 @@ class SensitiveInfoDetector:
     def detect_in_response(
         self, response_body: str, headers: dict[str, str] | None = None, url: str = ""
     ) -> DetectionResult:
-        """
-        瑼Ｘ葫摰HTTP 踵
-
-        Args:
-            response_body: 踵擃            headers: 踵哨舫嚗            url: 隢 URL
-
-        Returns:
-            DetectionResult: 瑼Ｘ葫蝯
-        """
+        """TODO: Add docstring"""
         result = DetectionResult(url=url)
 
-        # 瑼Ｘ葫踵擃        if response_body:
-            # 岫雿 HTML 瑼Ｘ葫
+        # Detect踵擃        if response_body:
+            # 岫雿 HTML Detect
             if "<html" in response_body.lower() or "<body" in response_body.lower():
                 html_result = self.detect_in_html(response_body, url)
                 result.matches.extend(html_result.matches)
@@ -271,7 +235,7 @@ class SensitiveInfoDetector:
                 )
                 result.matches.extend(body_matches)
 
-        # 瑼Ｘ葫踵        if headers:
+        # Detect踵        if headers:
             header_result = self.detect_in_headers(headers, url)
             result.matches.extend(header_result.matches)
 
@@ -280,7 +244,7 @@ class SensitiveInfoDetector:
         return result
 
     def _detect_html_comments(self, html: str) -> list[SensitiveMatch]:
-        """瑼Ｘ葫 HTML 閮駁銝剔靽⊥"""
+        """TODO: Add docstring"""
         matches: list[SensitiveMatch] = []
 
         # HTML 閮駁
@@ -288,7 +252,7 @@ class SensitiveInfoDetector:
         for comment_match in re.finditer(comment_pattern, html, re.DOTALL):
             comment_text = comment_match.group(1)
 
-            # 瑼Ｘ閮駁臬靽⊥
+            # 瑼Ｘ閮駁臬info
             for match in self._detect_in_text(comment_text, Location.HTML_COMMENT):
                 # 湔湧蝔漲嚗酉葉援脫湧嚗                if match.severity == AlertSeverity.NOTICE:
                     match.severity = AlertSeverity.WARNING
@@ -300,7 +264,7 @@ class SensitiveInfoDetector:
         return matches
 
     def _detect_script_blocks(self, html: str) -> list[SensitiveMatch]:
-        """瑼Ｘ葫 <script> 璅惜銝剔靽⊥"""
+        """TODO: Add docstring"""
         matches: list[SensitiveMatch] = []
 
         # script 璅惜
@@ -316,7 +280,7 @@ class SensitiveInfoDetector:
         return matches
 
     def _detect_meta_tags(self, html: str) -> list[SensitiveMatch]:
-        """瑼Ｘ葫 meta 璅惜銝剔靽⊥"""
+        """TODO: Add docstring"""
         matches: list[SensitiveMatch] = []
 
         #  meta 璅惜
@@ -330,7 +294,7 @@ class SensitiveInfoDetector:
         return matches
 
     def _detect_in_text(self, text: str, location: Location) -> list[SensitiveMatch]:
-        """冽砌葉瑼Ｘ葫靽⊥"""
+        """TODO: Add docstring"""
         matches: list[SensitiveMatch] = []
 
         lines = text.split("\n")
@@ -364,7 +328,7 @@ class SensitiveInfoDetector:
     def _filter_by_severity(
         self, matches: list[SensitiveMatch]
     ) -> list[SensitiveMatch]:
-        """寞雿摨阡瞈曉""
+        """TODO: Add docstring"""
         severity_order = {
             AlertSeverity.INFORMATIONAL: 0,
             AlertSeverity.NOTICE: 1,
@@ -377,7 +341,7 @@ class SensitiveInfoDetector:
         return [m for m in matches if severity_order[m.severity] >= min_level]
 
     def _build_patterns(self) -> dict[SensitiveInfoType, dict[str, Any]]:
-        """瑽遣瑼Ｘ葫璅∪"""
+        """TODO: Add docstring"""
         return {
             # API Keys and Tokens
             SensitiveInfoType.API_KEY: {
@@ -492,7 +456,7 @@ class SensitiveInfoDetector:
         }
 
     def format_report(self, result: DetectionResult) -> str:
-        """澆炎皜砍""
+        """TODO: Add docstring"""
         lines = []
         lines.append("Sensitive Information Detection Report")
         lines.append(f"URL: {result.url}")
@@ -536,11 +500,11 @@ class SensitiveInfoDetector:
         return "\n".join(lines)
 
     def get_critical_issues(self, result: DetectionResult) -> list[SensitiveMatch]:
-        """脣"""
+        """TODO: Add docstring"""
         return [m for m in result.matches if m.severity == AlertSeverity.ERROR]
 
     def get_high_risk_issues(self, result: DetectionResult) -> list[SensitiveMatch]:
-        """脣擃◢芸憿""
+        """TODO: Add docstring"""
         return [
             m for m in result.matches if m.severity in [AlertSeverity.ERROR, AlertSeverity.CRITICAL]
         ]

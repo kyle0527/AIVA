@@ -187,16 +187,37 @@ class PrivilegeEscalator:
             "findings": [],
         }
 
-        if self.safe_mode:
-            result["mode"] = "simulation"
-            result["findings"].append({
-                "type": "simulated",
-                "message": "SUID binary check would be performed here",
-                "risk": "HIGH",
-            })
-        else:
-            result["mode"] = "actual"
-            result["error"] = "Actual execution requires authorization"
+        # 真實的 SUID/SGID 檢測（僅讀取，不修改）
+        result["mode"] = "detection"
+        try:
+            if platform.system() == "Linux":
+                # 在 Linux 上檢查常見的危險 SUID 二進制文件
+                dangerous_paths = [
+                    "/usr/bin/passwd", "/usr/bin/sudo", "/usr/bin/su",
+                    "/usr/bin/mount", "/usr/bin/umount", "/usr/bin/chsh",
+                    "/usr/bin/newgrp", "/usr/bin/chfn", "/bin/ping"
+                ]
+                import os
+                import stat
+                for path in dangerous_paths:
+                    if os.path.exists(path):
+                        st = os.stat(path)
+                        if st.st_mode & stat.S_ISUID or st.st_mode & stat.S_ISGID:
+                            result["findings"].append({
+                                "type": "suid_binary",
+                                "path": path,
+                                "permissions": oct(st.st_mode)[-4:],
+                                "risk": "HIGH" if "sudo" in path or "su" in path else "MEDIUM",
+                                "owner": st.st_uid,
+                            })
+            else:
+                result["findings"].append({
+                    "type": "not_applicable",
+                    "message": "SUID check only applicable on Linux systems",
+                    "risk": "INFO",
+                })
+        except Exception as e:
+            result["error"] = f"SUID check failed: {str(e)}"
 
         self.test_results.append(result)
         logger.info("suid_check_completed", findings_count=len(result["findings"]))
@@ -217,16 +238,58 @@ class PrivilegeEscalator:
             "findings": [],
         }
 
-        if self.safe_mode:
-            result["mode"] = "simulation"
-            result["findings"].append({
-                "type": "simulated",
-                "message": "Sudo configuration analysis would be performed here",
-                "checks": ["NOPASSWD entries", "Wildcards", "Dangerous commands"],
-            })
-        else:
-            result["mode"] = "actual"
-            result["error"] = "Actual execution requires authorization"
+        # 真實的 Sudo 配置檢測（僅讀取，不修改）
+        result["mode"] = "detection"
+        try:
+            import subprocess
+            if platform.system() == "Linux":
+                # 嘗試讀取 sudo 配置
+                try:
+                    sudo_result = subprocess.run(
+                        ["sudo", "-l"],
+                        capture_output=True,
+                        text=True,
+                        timeout=5
+                    )
+                    if sudo_result.returncode == 0:
+                        output = sudo_result.stdout
+                        # 檢查危險配置
+                        if "NOPASSWD" in output:
+                            result["findings"].append({
+                                "type": "sudo_nopasswd",
+                                "message": "Found NOPASSWD entries in sudo config",
+                                "risk": "HIGH",
+                                "details": output[:500],
+                            })
+                        if "ALL" in output:
+                            result["findings"].append({
+                                "type": "sudo_all",
+                                "message": "Found ALL permission in sudo config",
+                                "risk": "CRITICAL",
+                                "details": output[:500],
+                            })
+                    else:
+                        result["findings"].append({
+                            "type": "no_sudo_access",
+                            "message": "Current user has no sudo privileges",
+                            "risk": "INFO",
+                        })
+                except subprocess.TimeoutExpired:
+                    result["error"] = "Sudo check timed out"
+                except FileNotFoundError:
+                    result["findings"].append({
+                        "type": "sudo_not_installed",
+                        "message": "Sudo command not found",
+                        "risk": "INFO",
+                    })
+            else:
+                result["findings"].append({
+                    "type": "not_applicable",
+                    "message": "Sudo check only applicable on Linux systems",
+                    "risk": "INFO",
+                })
+        except Exception as e:
+            result["error"] = f"Sudo check failed: {str(e)}"
 
         self.test_results.append(result)
         return result

@@ -4,7 +4,7 @@
 此模組包含與漏洞發現、證據收集、影響評估等相關的資料模型。
 """
 
-from datetime import UTC, datetime
+from datetime import datetime, timezone
 from typing import Any
 
 from pydantic import BaseModel, Field, field_validator
@@ -114,8 +114,8 @@ class FindingPayload(BaseModel):
     impact: FindingImpact | None = None
     recommendation: FindingRecommendation | None = None
     metadata: dict[str, Any] = Field(default_factory=dict)
-    created_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
-    updated_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
     @field_validator("finding_id")
     @classmethod
@@ -190,7 +190,7 @@ class JavaScriptAnalysisResult(BaseModel):
     risk_score: float = Field(ge=0.0, le=10.0, default=0.0)  # 0.0 - 10.0
     security_score: int = Field(ge=0, le=100, default=100)  # 0-100 分
 
-    timestamp: datetime = Field(default_factory=lambda: datetime.now(UTC))
+    timestamp: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
 
 # ==================== 漏洞關聯分析 ====================
@@ -206,7 +206,7 @@ class VulnerabilityCorrelation(BaseModel):
     root_cause: str | None = None
     common_components: list[str] = Field(default_factory=list)
     explanation: str | None = None
-    timestamp: datetime = Field(default_factory=lambda: datetime.now(UTC))
+    timestamp: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
 
 class CodeLevelRootCause(BaseModel):
@@ -259,7 +259,7 @@ class AIVerificationResult(BaseModel):
     test_steps: list[str] = Field(default_factory=list)
     observations: list[str] = Field(default_factory=list)
     recommendations: list[str] = Field(default_factory=list)
-    timestamp: datetime = Field(default_factory=lambda: datetime.now(UTC))
+    timestamp: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
 
 class VulnerabilityScorecard(BaseModel):
@@ -293,7 +293,7 @@ class VulnerabilityScorecard(BaseModel):
 
     # 元數據
     created_at: datetime = Field(
-        default_factory=lambda: datetime.now(UTC), description="評分卡創建時間"
+        default_factory=lambda: datetime.now(timezone.utc), description="評分卡創建時間"
     )
     updated_at: datetime | None = Field(default=None, description="最後更新時間")
     evaluator_version: str | None = Field(default=None, description="評估器版本")

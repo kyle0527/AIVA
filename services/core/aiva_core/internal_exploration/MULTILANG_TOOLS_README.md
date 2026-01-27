@@ -1,23 +1,58 @@
 # 多語言 AST 分析工具套件
 
-**版本**: v10.0.0  
-**更新日期**: 2025-12-10  
+**版本**: v3.0  
+**更新日期**: 2026-01-18  
 **狀態**: ✅ 生產就緒
+**設計定位**: 語言層 AST 解析器（只輸出 JSON，不含分類/執行邏輯）
+
+---
+
+## 🎯 設計理念
+
+本目錄的語言工具只負責 **AST 分析**，輸出統一的 JSON Schema v3.3 格式，不包含：
+- ❌ 分類邏輯（由 aiva_internal_classifier.py / aiva_external_classifier.py 處理）
+- ❌ 執行邏輯（由 aiva_internal_executor.py / aiva_external_executor.py 處理）
+- ❌ CLI 生成（由執行器處理）
+
+### 架構分層
+
+```
+語言層 (Language Layer)
+  │
+  ├── python_tools/aiva_flow_analyzer.py    → analysis_results.json
+  ├── go_tools/go2mermaid.go               → analysis_results.json
+  ├── rust_tools/src/main.rs               → analysis_results.json
+  └── typescript_tools/ts2mermaid.ts       → analysis_results.json
+                │
+                ↓ JSON Schema v3.3
+                │
+業務邏輯層 (Business Logic Layer)
+  │
+  ├── aiva_internal_classifier.py  (分類 AI Core 數據流)
+  ├── aiva_internal_executor.py    (執行 AI Core flows)
+  ├── aiva_external_classifier.py  (分類 Features/Scan 數據流)
+  └── aiva_external_executor.py    (執行 Features/Scan flows)
+```
 
 ---
 
 ## 📋 工具概覽
 
-本目錄包含四種語言版本的 AST 分析與 Mermaid 流程圖生成工具，支援：
-- 🐍 **Python** (`aiva_flow_analyzer.py`) - 原生 AIVA 版本
-- 🔷 **Go** (`go2mermaid.go`) - 高性能並發處理
-- 📘 **TypeScript** (`ts2mermaid.ts`) - 前端專案分析
-- 🦀 **Rust** (`rs2mermaid.rs`) - 系統級代碼分析
+本目錄包含四種語言版本的 AST 分析工具，支援：
+- 🐍 **Python** (`python_tools/aiva_flow_analyzer.py`) - Python 代碼 AST 分析
+- 🔷 **Go** (`go_tools/go2mermaid.go`) - Go 代碼 AST 分析
+- 📘 **TypeScript** (`typescript_tools/ts2mermaid.ts`) - TypeScript/JavaScript AST 分析
+- 🦀 **Rust** (`rust_tools/src/main.rs`) - Rust 代碼 AST 分析
 
-所有工具都支援三大核心功能：
-1. **產圖** - 生成 Mermaid 流程圖
-2. **分類** - 按功能自動分類代碼流
-3. **CLI 產生** - 自動生成執行命令腳本
+**核心功能**：
+1. ✅ **AST 解析** - 分析代碼結構，提取函數調用關係
+2. ✅ **JSON 輸出** - 統一 Schema v3.3 格式，供上層業務邏輯使用
+3. ✅ **Mermaid 圖表** - 可選生成 .mmd 流程圖檔案
+
+**不包含的功能** (由上層腳本處理):
+- ❌ 分類數據流到模組
+- ❌ 生成 CLI 命令
+- ❌ 執行代碼流程
 
 ---
 
@@ -144,80 +179,84 @@ cargo run --bin rs2mermaid -- \
 
 ---
 
-## 📊 輸出格式
+## 📊 統一輸出格式 (JSON Schema v3.3)
 
-所有工具生成相同格式的輸出：
+所有語言工具輸出相同的 `analysis_results.json`：
 
-### 1. Mermaid 流程圖 (`.mmd`)
-```mermaid
-flowchart TB
-    n1([開始])
-    n2[函數: example]
-    n3{if condition}
-    n4[處理邏輯]
-    n5([結束])
-    
-    n1 --> n2
-    n2 --> n3
-    n3 -->|Yes| n4
-    n3 -->|No| n5
-    n4 --> n5
-```
-
-### 2. 分類數據 (`classification_data.json`)
 ```json
 {
-  "total_flows": 125,
-  "categories": {
-    "reconnaissance": [...],
-    "exploitation": [...],
-    "analysis": [...],
-    "reporting": [...],
-    "persistence": [...],
-    "other": [...]
+  "metadata": {
+    "tool": "python_analyzer | go2mermaid | rs2mermaid | ts2mermaid",
+    "version": "3.0",
+    "language": "python | go | rust | typescript",
+    "generated_at": "2026-01-18T10:30:00+08:00",
+    "total_flows": 157,
+    "total_files": 119,
+    "schema_version": "3.3",
+    "ai_compatible": true
   },
-  "summary": {
-    "reconnaissance": 25,
-    "exploitation": 30,
-    "analysis": 20,
-    "reporting": 15,
-    "persistence": 10,
-    "other": 25
+  "flows": [
+    {
+      "id": 1,
+      "path": ["from_function", "to_function"],
+      "full_path": ["module.submodule.from_func", "module.submodule.to_func"],
+      "func_names": ["from_func", "to_func"],
+      "length": 2,
+      "start": "from_function",
+      "end": "to_function",
+      "from_script": "path/to/file1.py",
+      "to_script": "path/to/file2.py"
+    }
+  ],
+  "functions": {
+    "path/to/file.py": [
+      {
+        "name": "function_name",
+        "type": "function",
+        "line": 42,
+        "calls": ["other_function"]
+      }
+    ]
   }
 }
 ```
 
-### 3. CLI 命令 (`cli_commands.sh`)
-```bash
-# AIVA Flow Analysis CLI Commands
+### 可選輸出
 
-## Execute by Category
-
-# Reconnaissance
-python aiva_flow_analyzer.py --category=reconnaissance --execute
-
-# Exploitation
-python aiva_flow_analyzer.py --category=exploitation --execute
-
-# Analysis
-python aiva_flow_analyzer.py --category=analysis --execute
-```
+部分工具可選生成 Mermaid 流程圖（`.mmd`），但主要輸出為 JSON。
 
 ---
 
-## 🎯 分類邏輯
+## 🔗 與上層腳本的集成
 
-所有工具使用相同的分類規則（基於函數名）：
+語言工具輸出的 JSON 由上層腳本處理：
 
-| 分類 | 關鍵字 | 說明 |
-|------|--------|------|
-| **reconnaissance** | scan, detect, discover | 偵察和掃描功能 |
-| **exploitation** | exploit, attack, inject | 漏洞利用和攻擊 |
-| **analysis** | analyze, parse, inspect | 代碼分析和解析 |
-| **reporting** | report, generate, export | 報告生成 |
-| **persistence** | store, save, persist | 數據持久化 |
-| **other** | (其他) | 未分類功能 |
+### Internal CLI 流程（AI Core 模組）
+```bash
+# 1. AST 分析
+python python_tools/aiva_flow_analyzer.py --target services/core/aiva_core
 
+# 2. 分類（由分類器讀取 analysis_results.json）
+python aiva_internal_classifier.py
+
+# 3. 執行（由執行器讀取 classification_data.json）
+python aiva_internal_executor.py --flow 11
+```
+
+### External CLI 流程（Features/Scan 模組）
+```bash
+# 1. 多語言 AST 分析（各語言工具分別執行）
+python python_tools/aiva_flow_analyzer.py --target services/features/function_xss
+go run go_tools/go2mermaid.go --input services/features/function_authn_go
+cargo run --bin rs2mermaid -- --input services/features/function_crypto
+npx ts-node typescript_tools/ts2mermaid.ts --input services/scan/typescript_engine
+
+# 2. 整合分類（讀取所有 analysis_results.json）
+python aiva_external_classifier.py
+
+# 3. 執行（讀取整合後的 classification_data.json）
+python aiva_external_executor.py --lang python --flow 1
+```
 ---
 
 ## 🔧 參數說明
@@ -229,9 +268,9 @@ python aiva_flow_analyzer.py --category=analysis --execute
 | `--input` | 輸入目錄路徑 | `.` | `--input=../../services` |
 | `--output` | 輸出目錄路徑 | `./analysis_output` | `--output=./my_analysis` |
 | `--max-files` | 最大處理文件數 | `100` | `--max-files=500` |
-| `--direction` | 流程圖方向 | `TB` | `--direction=LR` |
+| `--direction` | 流程圖方向（可選） | `TB` | `--direction=LR` |
 
-### 流程圖方向選項
+### 流程圖方向選項（僅用於 .mmd 生成）
 - `TB` / `TD` - 從上到下 (Top to Bottom)
 - `BT` - 從下到上 (Bottom to Top)
 - `LR` - 從左到右 (Left to Right)
@@ -239,71 +278,56 @@ python aiva_flow_analyzer.py --category=analysis --execute
 
 ---
 
-## 🚀 快速開始
+## 📈 語言工具對比
 
-### 一鍵分析所有語言
-```bash
-# Python
-python aiva_flow_analyzer.py --input=../../ --output=./py_analysis
+| 語言 | 核心檔案 | 輸出格式 | 執行方式 | 適用場景 |
+|------|---------|---------|---------|---------|
+| **Python** | `aiva_flow_analyzer.py` | JSON v3.3 | `python` 直接執行 | AI Core 模組分析 |
+| **Go** | `go2mermaid.go` | JSON v3.3 | 編譯或 `go run` | 認證模組 (function_authn_go) |
+| **Rust** | `src/main.rs` | JSON v3.3 | `cargo run` | 加密模組 (function_crypto) |
+| **TypeScript** | `ts2mermaid.ts` | JSON v3.3 | `npx ts-node` | 掃描引擎 (typescript_engine) |
 
-# Go
-go run go2mermaid.go --input=../../ --output=./go_analysis
-
-# TypeScript
-npx ts-node ts2mermaid.ts --input=../../ --output=./ts_analysis
-
-# Rust
-cargo run --bin rs2mermaid -- --input=../../ --output=./rs_analysis
-```
-
-### 批量分析腳本 (Windows PowerShell)
-```powershell
-# 分析所有語言
-Write-Host "開始多語言分析..."
-
-# Python
-python aiva_flow_analyzer.py --input=..\..\..\ --output=.\analysis\python
-
-# Go  
-go run go2mermaid.go --input=..\..\..\tools --output=.\analysis\go
-
-# TypeScript
-npx ts-node ts2mermaid.ts --input=..\..\..\web --output=.\analysis\typescript
-
-# Rust
-cargo run --bin rs2mermaid -- --input=..\..\..\tools --output=.\analysis\rust
-
-Write-Host "分析完成！"
-```
-
-### 批量分析腳本 (Linux/Mac)
-```bash
-#!/bin/bash
-echo "開始多語言分析..."
-
-# Python
-python3 aiva_flow_analyzer.py --input=../../ --output=./analysis/python
-
-# Go
-go run go2mermaid.go --input=../../ --output=./analysis/go
-
-# TypeScript
-npx ts-node ts2mermaid.ts --input=../../ --output=./analysis/typescript
-
-# Rust
-cargo run --bin rs2mermaid -- --input=../../ --output=./analysis/rust
-
-echo "分析完成！"
-```
+**所有工具**：
+- ✅ 輸出統一 JSON Schema v3.3
+- ✅ 支援大型專案分析
+- ✅ AI 相容格式
+- ⚠️ 不包含分類/執行邏輯（由上層腳本處理）
 
 ---
 
-## 📈 性能對比
+## 📝 使用注意事項
 
-基於 1000 個文件的測試：
+### ✅ 應該做的事
+- 使用語言工具只做 AST 分析
+- 輸出 JSON 給上層分類器/執行器使用
+- 保持各語言工具輸出格式一致
+- 針對不同語言的模組選用對應工具
 
-| 語言 | 處理時間 | 記憶體使用 | 適用場景 |
-|------|----------|-----------|---------|
+### ❌ 不應該做的事
+- 不要在語言工具中加入分類邏輯（屬於 classifier 職責）
+- 不要在語言工具中加入執行邏輯（屬於 executor 職責）
+- 不要直接執行語言工具輸出的流程（需經過 classifier）
+- 不要混用不同語言的輸出格式
+
+---
+
+## 🔄 工作流程總覽
+
+```
+Step 1: 語言層 AST 分析
+  Python → analysis_results.json (JSON v3.3)
+  Go     → analysis_results.json (JSON v3.3)
+  Rust   → analysis_results.json (JSON v3.3)
+  TS     → analysis_results.json (JSON v3.3)
+           ↓
+Step 2: 業務邏輯層分類
+  Internal → aiva_internal_classifier.py  → classification_data.json
+  External → aiva_external_classifier.py  → classification_data.json
+           ↓
+Step 3: 執行層
+  Internal → aiva_internal_executor.py    → Execute flows
+  External → aiva_external_executor.py    → Execute flows
+```
 | **Python** | ~60s | 200MB | 通用分析，原型開發 |
 | **Go** | ~15s | 100MB | 大型專案，並發處理 |
 | **TypeScript** | ~45s | 250MB | 前端專案，Node.js 應用 |

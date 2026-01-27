@@ -26,6 +26,26 @@ import contextlib
 # 導入新增的通用模組
 from . import enums, utils
 from . import schemas as common_schemas
+
+# 重新導出核心模組以支持舊的導入路徑
+from .core import error_handling
+from .config import config_manager
+from .observability import monitoring, monitoring_log_handler
+from .security import security, security_config, security_middleware
+from .services import service_discovery
+from .pipeline import data_pipeline, stream_processor
+from .messaging import mq
+
+# 導出 error_handling 的核心類別
+from .core.error_handling import (
+    AIVAError,
+    ErrorContext,
+    ErrorHandler,
+    ErrorSeverity,
+    ErrorType,
+    create_error_context,
+)
+
 from .enums import (
     AccessDecision,
     AssetExposure,
@@ -177,7 +197,7 @@ except ImportError:
 
 # 新增的跨語言架構模組
 try:
-    from .config_manager import (
+    from .config.config_manager import (
         ConfigManager,
         ConfigSchema,
         ConfigScope,
@@ -190,7 +210,7 @@ except ImportError:
     _has_config_manager = False
 
 try:
-    from .service_discovery import (
+    from .services.service_discovery import (
         HealthCheck,
         HealthCheckType,
         ServiceDiscoveryManager,
@@ -207,7 +227,7 @@ except ImportError:
 
 # 數據處理管道
 try:
-    from .data_pipeline import (
+    from .pipeline.data_pipeline import (
         DataPipeline,
         FileDataSink,
         FileDataSource,
@@ -225,7 +245,7 @@ except ImportError:
 
 # 流處理器
 try:
-    from .stream_processor import (
+    from .pipeline.stream_processor import (
         StreamAggregations,
         StreamProcessor,
         WindowType,
@@ -238,7 +258,7 @@ except ImportError:
 
 # 監控和日誌系統
 try:
-    from .monitoring import (
+    from .observability.monitoring import (
         Alert,
         AlertManager,
         AlertSeverity,
@@ -267,7 +287,7 @@ except ImportError:
 
 # 監控日誌處理器
 try:
-    from .monitoring_log_handler import (
+    from .observability.monitoring_log_handler import (
         MonitoringLogHandler,
         TraceLoggerAdapter,
         create_trace_logger,
@@ -502,7 +522,7 @@ if _has_monitoring_handler:
 
 # 安全系統模組 - 先嘗試導入以定義變數
 try:
-    from .security import (
+    from .security.security import (
         AuthenticationService,
         AuthenticationType,
         AuthorizationService,
@@ -525,7 +545,7 @@ except ImportError:
 
 # 安全中間件模組 - 先嘗試導入以定義變數
 try:
-    from .security_middleware import (
+    from .security.security_middleware import (
         CORSHandler,
         RateLimiter,
         RateLimitRule,

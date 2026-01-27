@@ -366,18 +366,4 @@ class XXEDetector:
 
 
 # 使用示例
-if __name__ == "__main__":
-    detector = XXEDetector(callback_server="http://your-callback-server.com")
-    
-    # 測試 XXE
-    findings = detector.test_xxe(
-        url="http://example.com/api/upload",
-        param="xml_data",
-        method="POST"
-    )
-    
-    for finding in findings:
-        print(f"[{finding.severity}] {finding.type}")
-        print(f"  Parameter: {finding.parameter}")
-        print(f"  Evidence: {finding.evidence}")
-        print()
+

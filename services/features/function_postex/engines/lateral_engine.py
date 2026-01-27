@@ -35,7 +35,7 @@ class LateralMovementTester:
         self,
         authorization_token: str | None = None,
         target_network: str | None = None,
-        safe_mode: bool = True,
+        safe_mode: bool = False,
     ):
         """
         初始化橫向移動測試器

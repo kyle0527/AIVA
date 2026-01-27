@@ -14,7 +14,7 @@
 - 輔助能力 (Utility): 編碼/解碼、加密/解密、數據轉換
 """
 
-from datetime import datetime, UTC
+from datetime import datetime, timezone
 from typing import Any, Literal, List, Dict
 from pydantic import BaseModel, Field, field_validator
 from enum import Enum
@@ -255,7 +255,7 @@ class DataFlowAnalysisSnapshot(BaseModel):
     保存某一時刻的完整分析結果,支援增量更新
     """
     snapshot_id: str = Field(..., description="快照唯一標識")
-    timestamp: datetime = Field(default_factory=lambda: datetime.now(UTC), description="分析時間")
+    timestamp: datetime = Field(default_factory=lambda: datetime.now(timezone.utc), description="分析時間")
     total_files_analyzed: int = Field(..., description="分析的檔案總數")
     total_functions_found: int = Field(..., description="發現的函數總數")
     entry_points: List[str] = Field(..., description="所有入口點列表")
@@ -305,7 +305,7 @@ class ModuleCapability(BaseModel):
     記錄 AI 系統可用的所有能力，包括：
     - 能力基本信息（名稱、描述、位置）
     - 能力分類（類別、子類別、複雜度）
-    - 六大模組分類（aiva_module, sub_module, entry_point）
+    - 五大模組分類（aiva_module, sub_module, entry_point）
     - 使用方法（參數、返回值、範例）
     - 健康狀態（可用性、性能、錯誤率）
     """
@@ -328,10 +328,10 @@ class ModuleCapability(BaseModel):
     )
     tags: list[str] = Field(default_factory=list, description="標籤列表")
     
-    # 六大模組分類（新增）
+    # 五大模組分類（cognitive_core 整合了 external_learning）
     aiva_module: str | None = Field(
         None,
-        description="AIVA 六大模組分類: cognitive_core, internal_exploration, task_planning, external_learning, core_capabilities, service_backbone"
+        description="AIVA 五大模組分類: cognitive_core (含 learning_system), internal_exploration, task_planning, core_capabilities, service_backbone"
     )
     sub_module: str | None = Field(
         None,
@@ -424,11 +424,11 @@ class ModuleCapability(BaseModel):
     
     # 元數據
     created_at: datetime = Field(
-        default_factory=lambda: datetime.now(UTC), 
+        default_factory=lambda: datetime.now(timezone.utc), 
         description="創建時間"
     )
     updated_at: datetime = Field(
-        default_factory=lambda: datetime.now(UTC), 
+        default_factory=lambda: datetime.now(timezone.utc), 
         description="更新時間"
     )
     version: str = Field(default="1.0.0", description="能力版本")
@@ -452,7 +452,7 @@ class InternalLoopSyncResult(BaseModel):
     summary: CapabilitySummary | None = Field(None, description="能力摘要")
     documents_added: int = Field(..., description="添加到 RAG 的文檔數", ge=0)
     timestamp: datetime = Field(
-        default_factory=lambda: datetime.now(UTC),
+        default_factory=lambda: datetime.now(timezone.utc),
         description="同步時間"
     )
     success: bool = Field(..., description="是否成功")
@@ -519,7 +519,7 @@ class SystemIssue(BaseModel):
         description="問題狀態"
     )
     created_at: datetime = Field(
-        default_factory=lambda: datetime.now(UTC),
+        default_factory=lambda: datetime.now(timezone.utc),
         description="發現時間"
     )
     resolved_at: datetime | None = Field(None, description="解決時間")
@@ -547,7 +547,7 @@ class RAGQueryResult(BaseModel):
     total_found: int = Field(..., description="總找到結果數", ge=0)
     relevance_scores: list[float] = Field(..., description="相關性分數列表")
     timestamp: datetime = Field(
-        default_factory=lambda: datetime.now(UTC),
+        default_factory=lambda: datetime.now(timezone.utc),
         description="查詢時間"
     )
 
@@ -571,7 +571,7 @@ class ExecutionPlan(BaseModel):
     steps: list[ExecutionStep] = Field(..., description="計劃步驟")
     expected_duration: float | None = Field(None, description="預期總耗時(秒)", ge=0)
     created_at: datetime = Field(
-        default_factory=lambda: datetime.now(UTC),
+        default_factory=lambda: datetime.now(timezone.utc),
         description="創建時間"
     )
     metadata: dict[str, Any] | None = Field(None, description="元數據")
@@ -633,7 +633,7 @@ class DeviationRecord(BaseModel):
     recommendations: list[str] = Field(default_factory=list, description="改進建議")
     
     timestamp: datetime = Field(
-        default_factory=lambda: datetime.now(UTC),
+        default_factory=lambda: datetime.now(timezone.utc),
         description="記錄時間"
     )
 
@@ -646,7 +646,7 @@ class DeviationAnalysisResult(BaseModel):
     is_significant: bool = Field(..., description="是否顯著（需要訓練）")
     significance_score: float = Field(..., description="顯著性分數", ge=0)
     analysis_timestamp: datetime = Field(
-        default_factory=lambda: datetime.now(UTC),
+        default_factory=lambda: datetime.now(timezone.utc),
         description="分析時間"
     )
 
@@ -664,7 +664,7 @@ class TrainingDataSample(BaseModel):
         description="結果"
     )
     created_at: datetime = Field(
-        default_factory=lambda: datetime.now(UTC),
+        default_factory=lambda: datetime.now(timezone.utc),
         description="創建時間"
     )
 
@@ -679,7 +679,7 @@ class ModelTrainingResult(BaseModel):
     new_weights_version: str | None = Field(None, description="新權重版本號")
     improvements: dict[str, float] | None = Field(None, description="改進指標")
     timestamp: datetime = Field(
-        default_factory=lambda: datetime.now(UTC),
+        default_factory=lambda: datetime.now(timezone.utc),
         description="訓練時間"
     )
 
@@ -695,7 +695,7 @@ class ExternalLoopProcessResult(BaseModel):
     weights_updated: bool = Field(..., description="權重是否更新")
     new_weights_version: str | None = Field(None, description="新權重版本")
     timestamp: datetime = Field(
-        default_factory=lambda: datetime.now(UTC),
+        default_factory=lambda: datetime.now(timezone.utc),
         description="處理時間"
     )
     success: bool = Field(..., description="是否成功")
@@ -723,7 +723,7 @@ class DualLoopCommand(BaseModel):
     ] = Field(..., description="命令類型")
     parameters: dict[str, Any] = Field(..., description="命令參數")
     timestamp: datetime = Field(
-        default_factory=lambda: datetime.now(UTC),
+        default_factory=lambda: datetime.now(timezone.utc),
         description="命令時間"
     )
     metadata: dict[str, Any] | None = Field(None, description="元數據")
@@ -737,6 +737,6 @@ class DualLoopCommandResult(BaseModel):
     error: str | None = Field(None, description="錯誤信息")
     execution_time: float = Field(..., description="執行耗時(秒)", ge=0)
     timestamp: datetime = Field(
-        default_factory=lambda: datetime.now(UTC),
+        default_factory=lambda: datetime.now(timezone.utc),
         description="完成時間"
     )

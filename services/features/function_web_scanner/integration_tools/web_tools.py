@@ -1073,13 +1073,3 @@ async def register_capability():
         return False
 
 
-if __name__ == "__main__":
-    async def main():
-        """主函數 - 用於測試"""
-        capability = WebAttackCapability()
-        await capability.initialize()
-        
-        # 測試交互式介面
-        await capability.execute('interactive')
-    
-    asyncio.run(main())

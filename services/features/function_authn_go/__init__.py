@@ -32,5 +32,6 @@ from .authn_wrapper import scan_authentication, get_engine_info
 __all__ = ["scan_authentication", "get_engine_info"]
 
 __version__ = "1.2.0"
-__status__ = "needs_compilation"
-__last_updated__ = "2025-12-17"
+__status__ = "production"
+__architecture__ = "go-cli-wrapper"
+__last_updated__ = "2026-01-23"

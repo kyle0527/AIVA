@@ -1,0 +1,63 @@
+{
+  "privilege_escalation": {
+    "linux": {
+      "suid_binaries": [
+        "find", "vim", "nmap", "perl", "python", "python3", "ruby", 
+        "gdb", "cp", "mv", "wget", "curl", "nc", "netcat", "bash", "sh"
+      ],
+      "writable_paths": [
+        "/etc/passwd", "/etc/shadow", "/etc/sudoers", "/etc/crontab",
+        "/root/.ssh/authorized_keys", "/etc/ld.so.preload"
+      ],
+      "kernel_exploits": {
+        "3.13.0": ["CVE-2016-5195"],
+        "4.4.0": ["CVE-2017-16995"],
+        "4.8.0": ["CVE-2017-1000112"]
+      }
+    },
+    "windows": {
+      "services": [
+        "unquoted_service_path",
+        "weak_service_permissions",
+        "service_dll_hijacking"
+      ],
+      "registry": [
+        "AlwaysInstallElevated",
+        "AutoRun",
+        "Run",
+        "RunOnce"
+      ],
+      "scheduled_tasks": true,
+      "token_impersonation": true
+    }
+  },
+  "lateral_movement": {
+    "protocols": {
+      "smb": {"port": 445, "severity": "high"},
+      "ssh": {"port": 22, "severity": "medium"},
+      "rdp": {"port": 3389, "severity": "high"},
+      "winrm": {"ports": [5985, 5986], "severity": "high"},
+      "psexec": {"port": 445, "severity": "critical"},
+      "wmi": {"port": 135, "severity": "high"}
+    }
+  },
+  "persistence": {
+    "linux": [
+      "cron_jobs",
+      "systemd_services",
+      "bashrc",
+      "profile",
+      "ssh_keys",
+      "ld_preload",
+      "init_scripts"
+    ],
+    "windows": [
+      "registry_run_keys",
+      "startup_folder",
+      "scheduled_tasks",
+      "windows_services",
+      "wmi_subscriptions",
+      "dll_hijacking"
+    ]
+  }
+}

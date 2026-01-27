@@ -19,9 +19,9 @@ from services.aiva_common.detection import (
     DetectionPhase,
 )
 from .config.idor_config import IdorConfig
-from services.features.common.testers.cross_user_tester import CrossUserTester, CrossUserTestResult
-from services.features.function_idor.resource_id_extractor import ResourceId, ResourceIdExtractor
-from services.features.common.testers.vertical_escalation_tester import (
+from .testers.cross_user_tester import CrossUserTester, CrossUserTestResult
+from .resource_id_extractor import ResourceId, ResourceIdExtractor
+from .testers.vertical_escalation_tester import (
     PrivilegeLevel,
     VerticalEscalationTester,
     VerticalTestResult,

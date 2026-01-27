@@ -307,45 +307,4 @@ class XSSCommandHandler(CommandHandler):
         return default_options
 
 
-# ==================== 快速測試 ====================
 
-async def _test_xss_command_handler():
-    """測試 XSS 命令處理器"""
-    handler = XSSCommandHandler()
-    
-    # 創建測試命令
-    command = AICommand(
-        command_id="test_xss_001",
-        command_type=CommandType.FEATURE_XSS_TEST,
-        target_module="features.xss",
-        trace_id=f"trace_{int(time.time())}",
-        session_id="test_session",
-        parent_command_id=None,
-        callback_url=None,
-        payload={
-            "target_url": "https://example.com?search=test",
-            "scan_type": "custom",
-            "options": {
-                "use_dalfox": False,
-                "scan_dom": False,
-                "scan_stored": False,
-                "custom_scan": True,
-            }
-        }
-    )
-    
-    # 執行命令
-    result = await handler.handle_command(command)
-    
-    # 打印結果
-    print(f"狀態: {result.status}")
-    print(f"執行時間: {result.execution_time:.2f}s")
-    if result.status == CommandStatus.COMPLETED:
-        print(f"發現漏洞: {result.result['summary']['total_vulnerabilities']} 個")
-    else:
-        print(f"錯誤: {result.error}")
-
-
-if __name__ == "__main__":
-    # 運行測試
-    asyncio.run(_test_xss_command_handler())

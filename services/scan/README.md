@@ -36,43 +36,167 @@ Python (Intelligence) → XXE、反序列化、被動分析 (複雜邏輯)
 
 ---
 
-## 🏗️ 當前架構
+## 🏗️ 當前架構（無協調器設計）
 
 ```
 services/scan/
-├── go_engine/              # Go 掃描引擎 (參數模糊測試)
-├── rust_engine/            # Rust 掃描引擎 (HTTP Smuggling)
+├── go_engine/              # Go 掃描引擎 (SSRF, SCA, CSPM)
+├── rust_engine/            # Rust 掃描引擎 (端口掃描, 信息收集)
 ├── typescript_engine/      # TypeScript 掃描引擎 (DOM XSS, SPA)
 ├── python_engine/          # Python 智能引擎 (XXE, 反序列化, 被動分析)
-├── command_handler.py      # CLI 命令處理
-└── README.md              # 本文件
+│   ├── xxe_detector.py
+│   ├── deserialization_detector_v2.py
+│   └── passive_analyzer.py
+└── README.md
+
+✅ **無協調器** - 每個引擎完全獨立，AI 直接調用
+✅ **無中間層** - 最大化性能，最小化複雜度
+✅ **純 CLI 模式** - subprocess 直接調用二進制
 ```
 
 ---
 
-## 📊 引擎狀態
+## 📊 引擎狀態與加強方向
 
-| 引擎 | 語言 | 狀態 | 架構模式 | 用途 |
-|------|------|------|----------|------|
-| **Go Engine** | Go 1.23.1 | ⚠️ 需編譯 | CLI | 參數模糊測試、SSRF、SCA、CSPM |
-| **Rust Engine** | Rust 2021 | ⚠️ 需編譯 | CLI | HTTP Smuggling、認證爆破、端點發現 |
-| **TypeScript Engine** | Node 20+ | ⚠️ 需安裝瀏覽器 | RabbitMQ | DOM XSS、SPA 爬蟲、動態掃描 |
-| **Python Engine** | Python 3.11+ | ✅ **95% 完成** | 獨立模組 | XXE、反序列化、被動分析 |
+| 引擎 | 語言 | 狀態 | 當前功能 | 🎯 加強方向 |
+|------|------|------|----------|------------|
+| **Go Engine** | Go 1.23.1 | ⚠️ 需編譯 | SSRF、SCA、CSPM | ✅ **完善** - 已實現基線比對、OOB回調、雲端metadata掃描 |
+| **Rust Engine** | Rust 2021 | ✅ **已加強** | 端口掃描、HTTP Smuggling、認證爆破 | ✅ **完成** - 已添加 CL.TE/TE.CL/TE.TE 檢測 + 智能速率控制 |
+| **TypeScript Engine** | Node 20+ | ✅ **已加強** | DOM XSS、SPA路由、WebSocket安全 | ✅ **完成** - Source-to-Sink追蹤、PostMessage檢測、DOM Clobbering |
+| **Python Engine** | Python 3.11+ | ✅ **95% 完成** | XXE、反序列化、被動分析 | ✅ **優秀** - 無需加強，可作為參考標準 |
 
-### Python Engine (最新更新 2025-12-26)
+### 🔧 詳細加強建議
 
-**實現狀態**:
-- ✅ **XXE 檢測器** (95% 完成) - 7 種攻擊類型，12 種檢測模式，306 行代碼，6 測試
-- ✅ **反序列化檢測器 v2** (90% 完成) - 4 語言支持，15+ Java Gadget Chains，675 行代碼，10 測試
-- ✅ **被動流量分析器** (100% 完成) - 8 類敏感數據，6 個安全頭部，456 行代碼，15 測試
-- ✅ **測試套件** (85% 覆蓋) - 35+ 測試用例，580+ 行代碼
+#### 1. **Go Engine - SSRF 掃描器** ✅ 已優化
+**當前實現** (基於 OWASP WSTG-INPV-19):
+- ✅ 基線響應比對（MD5 hash + body length）
+- ✅ OOB 回調支持（Burp Collaborator 集成）
+- ✅ 雲端 Metadata 掃描（AWS/Azure/GCP）
+- ✅ 常見繞過技巧（IP進制轉換、URL語義攻擊）
+- ✅ DNS Rebinding 檢測
+- ✅ 內部服務探測
 
-**OWASP 覆蓋**:
-- A02:2021 - 敏感數據洩露、錯誤信息洩露
-- A05:2021 - XXE、安全頭部缺失、Cookie 安全
-- A08:2021 - 不安全反序列化
+**無需加強** - 已達到 PortSwigger + OWASP 標準
 
-**詳細文檔**: [Python Engine README](./python_engine/README.md) | [完整文檔 (7000+ 行)](./python_engine/README_v2.md)
+#### 2. **Rust Engine** ✅ 已完成加強
+**當前狀態**: 高性能掃描 + HTTP Smuggling 檢測 + 智能認證爆破
+
+**新增功能**:
+```rust
+// ✅ HTTP Request Smuggling 檢測器 v2.0 (smuggling_detector_v2.rs)
+pub struct SmugglingDetector {
+    // CL.TE (Content-Length vs Transfer-Encoding)
+    async fn detect_cl_te() -> Option<SmugglingFinding>
+    
+    // TE.CL (Transfer-Encoding vs Content-Length)
+    async fn detect_te_cl() -> Option<SmugglingFinding>
+    
+    // TE.TE (雙重 Transfer-Encoding 混淆)
+    async fn detect_te_te() -> Option<SmugglingFinding>
+    
+    // Chunk 編碼混淆檢測
+    async fn detect_chunk_obfuscation() -> Option<SmugglingFinding>
+    
+    // 時間差異檢測（與基線比對）
+    async fn measure_baseline() -> Duration
+}
+
+// ✅ 增強認證爆破器 v2.0 (auth_brute_v2.rs)
+pub struct AuthBruteForcer {
+    // 智能速率控制策略
+    rate_limit_strategy: RateLimitStrategy // Fixed, ExponentialBackoff, Adaptive
+    
+    // 多協議支持
+    protocol: AuthProtocol // HTTP, HTTPBasic, HTTPDigest, FormBased, JWT, OAuth2
+    
+    // 自適應速率調整（根據響應時間）
+    fn adjust_adaptive_rate() -> Duration
+    
+    // 統計信息收集
+    fn get_statistics() -> HashMap<String, String>
+}
+```
+
+**OWASP 映射**:
+- OWASP A05:2021 - Security Misconfiguration (HTTP Smuggling)
+- OWASP A07:2021 - Identification and Authentication Failures (Brute Force)
+
+**參考資源**:
+- [HTTP Smuggling Research by Albinowax](https://portswigger.net/research/http-desync-attacks-request-smuggling-reborn)
+- OWASP: Testing for HTTP Splitting/Smuggling (WSTG-INPV-15)
+
+#### 3. **TypeScript Engine** ✅ 已完成加強
+**當前狀態**: Playwright 動態掃描 + DOM 安全分析 + SPA 路由檢測
+
+**新增功能**:
+```typescript
+// ✅ DOM 安全分析器 v2.0 (dom-security-analyzer.ts)
+export class DOMSecurityAnalyzer {
+    // Source-to-Sink 數據流追蹤
+    async analyzeSourceToSink(): Promise<void>
+    
+    // PostMessage 安全檢測（Origin 驗證）
+    async analyzePostMessage(): Promise<void>
+    
+    // DOM Clobbering 檢測
+    async analyzeDOMClobbering(): Promise<void>
+    
+    // WebSocket 安全分析
+    async analyzeWebSocket(): Promise<void>
+    
+    // SPA 路由安全分析
+    async analyzeSPARoutes(): Promise<void>
+}
+
+// ✅ WebSocket 安全分析器 (websocket-security-analyzer.ts)
+export class WebSocketSecurityAnalyzer {
+    // WebSocket 連接監控
+    async injectWebSocketMonitor(): Promise<void>
+    
+    // 敏感數據洩露檢測
+    containsSensitiveData(data: string): boolean
+    
+    // Origin 驗證檢查
+    analyzeConnection(conn: any): void
+}
+
+// ✅ SPA 路由安全分析器 (spa-route-analyzer.ts)
+export class SPARouteSecurityAnalyzer {
+    // 自動發現 SPA 框架 (React/Vue/Angular/Next.js)
+    async detectSPAFramework(): Promise<string | null>
+    
+    // 路由遍歷攻擊測試（../admin, /%2e%2e/admin）
+    async testRouteTraversal(): Promise<void>
+    
+    // 客戶端繞過檢測
+    async testClientSideBypass(): Promise<void>
+    
+    // 未授權訪問測試
+    async testUnauthorizedAccess(): Promise<void>
+}
+```
+
+**OWASP 映射**:
+- OWASP A03:2021 - Injection (DOM XSS)
+- OWASP A01:2021 - Broken Access Control (SPA Route)
+- OWASP A05:2021 - Security Misconfiguration (WebSocket)
+
+**參考資源**:
+- [Playwright Best Practices](https://playwright.dev/docs/best-practices)
+- OWASP: Testing for DOM XSS (WSTG-INPV-01)
+
+#### 4. **Python Engine** ✅ 參考標準
+**當前實現**:
+- ✅ XXE 檢測器: 7種攻擊類型，完整證據收集
+- ✅ 反序列化檢測器: Java/Python/PHP/.NET，15+ Gadget Chains
+- ✅ 被動分析器: 8類敏感數據，完整 OWASP 映射
+
+**優秀實踐**（其他引擎可參考）:
+1. 完整的 dataclass 結構
+2. 詳細的 OWASP 標籤
+3. 多層次證據收集
+4. 完善的錯誤處理
+5. 時間基礎檢測
 
 ---
 

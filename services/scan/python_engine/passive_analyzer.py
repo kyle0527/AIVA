@@ -433,23 +433,4 @@ class PassiveAnalyzer:
 
 
 # 使用示例
-if __name__ == "__main__":
-    analyzer = PassiveAnalyzer()
-    
-    # 分析 HAR 文件
-    findings = analyzer.analyze_har('traffic.har')
-    
-    # 按嚴重程度分組
-    by_severity = {}
-    for finding in findings:
-        by_severity.setdefault(finding.severity, []).append(finding)
-    
-    # 打印結果
-    for severity in ['Critical', 'High', 'Medium', 'Low', 'Info']:
-        if severity in by_severity:
-            print(f"\n{severity} Findings ({len(by_severity[severity])}):")
-            for finding in by_severity[severity]:
-                print(f"  [{finding.owasp}] {finding.description}")
-                print(f"    Evidence: {finding.evidence}")
-                if finding.url:
-                    print(f"    URL: {finding.url}")
+

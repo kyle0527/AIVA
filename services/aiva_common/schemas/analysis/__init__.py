@@ -12,8 +12,18 @@ AIVA Analysis Domain Schemas
 
 from .results import *
 from .language_support import *
-# ai_models導入使用TYPE_CHECKING模式，遵循PEP-484循環導入最佳實踐
-# from .ai_models import *  # 使用TYPE_CHECKING避免循環導入
+# 從ai_models導入分析相關的AI模型
+from .ai_models import (
+    AITrainingStartPayload,
+    AITrainingProgressPayload,
+    AITrainingCompletedPayload,
+    ModelTrainingConfig,
+    ExperienceSample,
+    TraceRecord,
+    RAGKnowledgeUpdatePayload,
+    RAGQueryPayload,
+    RAGResponsePayload,
+)
 
 __all__ = [
     # 分析結果標準 (analysis.py)

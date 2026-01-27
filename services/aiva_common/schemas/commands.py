@@ -14,7 +14,7 @@ vs 舊架構:
     User → Core (AI) → RabbitMQ → Module Worker → RabbitMQ → Core (AI)
 """
 
-from datetime import UTC, datetime
+from datetime import datetime, timezone
 from enum import Enum
 from typing import Any, Dict, List, Optional, Union, Protocol, runtime_checkable
 
@@ -209,7 +209,7 @@ class AICommand(BaseModel):
     
     # 元數據
     metadata: Dict[str, Any] = Field(default_factory=dict, description="額外的元數據")
-    created_at: datetime = Field(default_factory=lambda: datetime.now(UTC), description="創建時間")
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc), description="創建時間")
     
     # ===== 回調配置 (擴展) =====
     enable_callbacks: bool = Field(
@@ -320,7 +320,7 @@ class AICommandBatch(BaseModel):
     continue_on_error: bool = Field(default=False, description="遇到錯誤是否繼續執行")
     
     # 元數據
-    created_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
 
 class AICommandBatchResult(BaseModel):

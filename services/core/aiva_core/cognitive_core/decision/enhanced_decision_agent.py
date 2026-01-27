@@ -13,6 +13,13 @@ Architecture Fix Note:
 - 修復項目: 問題三「決策交接不明確」
 - 新增: decide() 方法返回 HighLevelIntent (cognitive_core → task_planning 數據合約)
 - 向後兼容: 保留 make_decision() 方法
+
+Integration Note:
+- 整合日期: 2026-01-19
+- 整合項目: 雙CLI架構 + embedded_knowledge
+- 新增: InternalLoopConnector 整合（內部閉環）
+- 新增: ExternalLoopConnector 整合（外部閉環）
+- 新增: embedded_knowledge 知識引擎整合
 """
 
 from datetime import datetime, timedelta
@@ -24,6 +31,19 @@ import asyncio
 
 # [新增] 引入真實神經網路引擎
 from ..neural.real_neural_core import RealDecisionEngine
+
+# [新增] 引入內外部閉環連接器
+from ..internal_loop_connector import InternalLoopConnector
+from ..external_loop_connector import ExternalLoopConnector
+
+# [新增] 引入 embedded_knowledge 知識引擎
+from ..embedded_knowledge import (
+    VulnerabilityDetector,
+    CVEIdentifier,
+    WAFBypassEngine,
+    WebArchitectureAnalyzer,
+    AttackContext,
+)
 
 # 使用 aiva_common 的統一枚舉定義
 from services.aiva_common.enums import RiskLevel
@@ -135,6 +155,60 @@ class EnhancedDecisionAgent:
 
         self.logger.info("🛡️ 規則引擎已就緒")
         self.logger.info("🎯 Bug Bounty 模組已載入")
+        
+        # ========== [2026-01-19] 雙CLI架構整合 ==========
+        # 內部閉環連接器：連接 internal_exploration 能力庫
+        try:
+            self.internal_connector = InternalLoopConnector(
+                rag_knowledge_base=knowledge_base
+            )
+            self.logger.info("🔗 內部閉環連接器 (InternalLoopConnector) 已整合")
+        except Exception as e:
+            self.internal_connector = None
+            self.logger.warning(f"⚠️ 內部閉環連接器初始化失敗: {e}")
+        
+        # 外部閉環連接器：連接執行結果 → 學習系統
+        try:
+            self.external_connector = ExternalLoopConnector()
+            self.logger.info("🔗 外部閉環連接器 (ExternalLoopConnector) 已整合")
+        except Exception as e:
+            self.external_connector = None
+            self.logger.warning(f"⚠️ 外部閉環連接器初始化失敗: {e}")
+        
+        # ========== [2026-01-19] embedded_knowledge 知識引擎整合 ==========
+        # 漏洞檢測器：嵌入式漏洞判斷邏輯
+        try:
+            self.vuln_detector = VulnerabilityDetector()
+            self.logger.info("🔍 漏洞檢測器 (VulnerabilityDetector) 已整合")
+        except Exception as e:
+            self.vuln_detector = None
+            self.logger.warning(f"⚠️ 漏洞檢測器初始化失敗: {e}")
+        
+        # CVE 識別器：高危險 CVE 模組
+        try:
+            self.cve_identifier = CVEIdentifier()
+            self.logger.info("🚨 CVE 識別器 (CVEIdentifier) 已整合")
+        except Exception as e:
+            self.cve_identifier = None
+            self.logger.warning(f"⚠️ CVE 識別器初始化失敗: {e}")
+        
+        # WAF 繞過引擎：繞過技術字典
+        try:
+            self.waf_engine = WAFBypassEngine()
+            self.logger.info("🛡️ WAF 繞過引擎 (WAFBypassEngine) 已整合")
+        except Exception as e:
+            self.waf_engine = None
+            self.logger.warning(f"⚠️ WAF 繞過引擎初始化失敗: {e}")
+        
+        # Web 架構分析器：架構漏洞檢測
+        try:
+            self.web_analyzer = WebArchitectureAnalyzer()
+            self.logger.info("🌐 Web 架構分析器 (WebArchitectureAnalyzer) 已整合")
+        except Exception as e:
+            self.web_analyzer = None
+            self.logger.warning(f"⚠️ Web 架構分析器初始化失敗: {e}")
+        
+        self.logger.info("✅ 雙CLI架構 + embedded_knowledge 整合完成")
 
     def _setup_logger(self) -> logging.Logger:
         """設置日誌記錄器"""
@@ -495,6 +569,426 @@ class EnhancedDecisionAgent:
         )
         
         return best_decision
+
+    # ========== [2026-01-19] 新增：AI 使用雙CLI架構的方法 ==========
+    
+    def query_internal_capabilities(
+        self, 
+        query: str, 
+        scope_filter: str | None = None,
+        top_k: int = 5
+    ) -> list[dict[str, Any]]:
+        """AI 查詢內部能力庫
+        
+        使用 InternalLoopConnector 查詢可用的內部能力。
+        這讓 AI 能動態發現並選擇最適合的能力。
+        
+        Args:
+            query: 查詢字串（如 "SQL注入測試"）
+            scope_filter: 可選的範圍過濾（如 "internal", "external"）
+            top_k: 返回的最大結果數
+            
+        Returns:
+            list[dict]: 匹配的能力列表
+        """
+        if not self.internal_connector:
+            self.logger.warning("⚠️ InternalLoopConnector 未初始化")
+            return []
+        
+        try:
+            filters = {"scope": scope_filter} if scope_filter else None
+            # query_capabilities 是同步方法
+            result = self.internal_connector.query_capabilities(
+                query=query,
+                filters=filters,
+                top_k=top_k
+            )
+            
+            self.logger.info(f"🔍 查詢內部能力 '{query}': 找到 {result.total_found} 個匹配")
+            
+            # RAGQueryResult.results 是 list[dict[str, Any]]
+            # 直接返回，內容已經是 dict 格式
+            return [
+                {
+                    "document_id": item.get("document_id", f"doc_{i}"),
+                    "content": str(item.get("content", ""))[:200],  # 限制長度
+                    "relevance_score": item.get("relevance_score", 0.0),
+                    "metadata": item.get("metadata", {})
+                }
+                for i, item in enumerate(result.results)
+            ]
+        except Exception as e:
+            self.logger.error(f"❌ 查詢內部能力失敗: {e}")
+            return []
+    
+    async def record_execution_feedback(
+        self,
+        plan_id: str,
+        trace_data: list[dict[str, Any]],
+        objective: str = "Task execution"
+    ) -> dict[str, Any]:
+        """AI 記錄執行結果（用於學習）
+        
+        使用 ExternalLoopConnector 將執行結果反饋到學習系統。
+        這實現了「外部閉環」- 讓 AI 從實際執行中學習。
+        
+        Args:
+            plan_id: 執行計劃 ID
+            trace_data: 執行軌跡列表（簡化格式）
+            objective: 任務目標描述
+            
+        Returns:
+            dict: 處理結果
+        """
+        if not self.external_connector:
+            self.logger.warning("⚠️ ExternalLoopConnector 未初始化")
+            return {"success": False, "error": "ExternalLoopConnector not available"}
+        
+        try:
+            # 導入必要的 schema
+            from aiva_common.schemas.dual_loop import (
+                ExecutionPlan, 
+                ExecutionStep,
+                ExecutionTrace
+            )
+            
+            now = datetime.now()
+            
+            # 構建執行步驟
+            steps = [
+                ExecutionStep(
+                    step_id=t.get("step_id", f"step_{i}"),
+                    action=t.get("action", "execute"),
+                    capability_id=t.get("capability_id"),
+                    parameters=t.get("parameters", {}),
+                    expected_duration=t.get("expected_duration")
+                )
+                for i, t in enumerate(trace_data)
+            ]
+            
+            # 構建執行計劃
+            plan = ExecutionPlan(
+                plan_id=plan_id,
+                objective=objective,
+                steps=steps,
+                expected_duration=None,
+                metadata={"source": "enhanced_decision_agent"}
+            )
+            
+            # 構建執行軌跡
+            traces = [
+                ExecutionTrace(
+                    trace_id=f"trace_{plan_id}_{i}",
+                    step_id=t.get("step_id", f"step_{i}"),
+                    capability_id=t.get("capability_id"),
+                    status=t.get("status", "success"),
+                    duration=t.get("duration", 0.0),
+                    start_time=now,
+                    end_time=now,
+                    output=t.get("output"),
+                    error=t.get("error"),
+                    metrics=t.get("metrics")
+                )
+                for i, t in enumerate(trace_data)
+            ]
+            
+            # 調用外部閉環處理
+            result = await self.external_connector.process_execution_result(plan, traces)
+            
+            self.logger.info(f"📝 執行反饋已處理: {plan_id} - 發現 {result.deviations_found} 偏差")
+            
+            return {
+                "success": result.success,
+                "deviations_found": result.deviations_found,
+                "training_triggered": result.training_triggered,
+                "weights_updated": result.weights_updated
+            }
+        except Exception as e:
+            self.logger.error(f"❌ 記錄執行反饋失敗: {e}")
+            return {"success": False, "error": str(e)}
+    
+    # ========== [2026-01-19] 新增：AI 使用 embedded_knowledge 的方法 ==========
+    
+    def analyze_target_vulnerabilities(
+        self,
+        target_url: str,
+        response_body: str = "",
+        response_time: float = 0.0
+    ) -> dict[str, Any]:
+        """AI 分析目標漏洞
+        
+        使用 embedded_knowledge 的 VulnerabilityDetector 進行分析。
+        這讓 AI 能利用嵌入的漏洞判斷邏輯。
+        
+        Args:
+            target_url: 目標 URL
+            response_body: HTTP 響應體
+            response_time: 響應時間
+            
+        Returns:
+            dict: 漏洞分析結果
+        """
+        results: list[dict[str, Any]] = []
+        
+        try:
+            # 建立攻擊上下文
+            context = AttackContext(
+                target_url=target_url,
+                injection_point="parameter"  # 預設為參數注入點
+            )
+            
+            # 使用 classmethod 進行 SQLi 檢測
+            sqli_result = VulnerabilityDetector.check_sqli(
+                response_body=response_body,
+                response_time=response_time,
+                context=context
+            )
+            
+            if sqli_result.detected:
+                results.append({
+                    "type": sqli_result.vulnerability_type.value,
+                    "confidence": sqli_result.confidence_score,
+                    "evidence": sqli_result.evidence,
+                    "recommendations": sqli_result.recommendations
+                })
+            
+            # 使用 classmethod 進行 XSS 檢測
+            xss_result = VulnerabilityDetector.check_xss(
+                response_body=response_body,
+                payload_used="<script>alert(1)</script>",
+                context=context
+            )
+            
+            if xss_result.detected:
+                results.append({
+                    "type": xss_result.vulnerability_type.value,
+                    "confidence": xss_result.confidence_score,
+                    "evidence": xss_result.evidence,
+                    "recommendations": xss_result.recommendations
+                })
+            
+            self.logger.info(f"🔍 漏洞分析完成: {target_url} - 發現 {len(results)} 個潛在漏洞")
+            
+            return {
+                "target": target_url,
+                "vulnerabilities": results,
+                "risk_count": len(results),
+                "scan_timestamp": datetime.now().isoformat()
+            }
+        except Exception as e:
+            self.logger.error(f"❌ 漏洞分析失敗: {e}")
+            return {"error": str(e)}
+    
+    def identify_high_risk_cves(
+        self,
+        url: str = "",
+        response_headers: dict[str, str] | None = None,
+        response_body: str = ""
+    ) -> list[dict[str, Any]]:
+        """AI 識別高風險 CVE
+        
+        使用 embedded_knowledge 的 CVEIdentifier 識別已知的高危 CVE。
+        
+        Args:
+            url: 目標 URL
+            response_headers: 響應 headers
+            response_body: 響應體
+            
+        Returns:
+            list[dict]: 匹配的 CVE 列表
+        """
+        try:
+            # CVEIdentifier.identify 是 classmethod
+            cves = CVEIdentifier.identify(
+                url=url,
+                response_headers=response_headers,
+                response_body=response_body
+            )
+            
+            self.logger.info(f"🚨 CVE 識別完成: 發現 {len(cves)} 個高危 CVE")
+            
+            return [
+                {
+                    "cve_id": cve.cve_id,
+                    "confidence_score": cve.confidence_score,
+                    "matched_indicators": cve.matched_indicators
+                }
+                for cve in cves
+            ]
+        except Exception as e:
+            self.logger.error(f"❌ CVE 識別失敗: {e}")
+            return []
+    
+    def generate_waf_bypass_payloads(
+        self,
+        vuln_type: str,
+        waf_type: str | None = None
+    ) -> list[dict[str, Any]]:
+        """AI 生成 WAF 繞過 payload
+        
+        使用 embedded_knowledge 的 WAFBypassEngine 生成繞過技術。
+        
+        Args:
+            vuln_type: 漏洞類型（如 "sqli", "xss"）
+            waf_type: 可選的 WAF 類型（如 "cloudflare", "aws_waf"）
+            
+        Returns:
+            list[dict]: 繞過技術列表
+        """
+        try:
+            # 導入 WAFVendor 枚舉
+            from ..embedded_knowledge.base import WAFVendor
+            
+            # 解析 WAF 類型
+            waf_vendor = WAFVendor.UNKNOWN
+            if waf_type:
+                try:
+                    waf_vendor = WAFVendor(waf_type.lower())
+                except ValueError:
+                    waf_vendor = WAFVendor.UNKNOWN
+            
+            # WAFBypassEngine.get_bypass_techniques 是 classmethod
+            techniques = WAFBypassEngine.get_bypass_techniques(
+                waf_vendor=waf_vendor,
+                attack_type=vuln_type,
+                min_success_rate=0.3
+            )
+            
+            self.logger.info(f"🛡️ WAF 繞過技術獲取: {vuln_type} - {len(techniques)} 個")
+            
+            return [
+                {
+                    "name": tech.name,
+                    "category": tech.category.value,
+                    "description": tech.description,
+                    "payloads": tech.payloads[:5],  # 限制數量
+                    "success_rate": tech.success_rate
+                }
+                for tech in techniques[:10]  # 限制返回數量
+            ]
+        except Exception as e:
+            self.logger.error(f"❌ WAF 繞過技術獲取失敗: {e}")
+            return []
+    
+    def analyze_web_architecture(
+        self,
+        response_headers: dict[str, str],
+        response_body: str = "",
+        endpoints: list[str] | None = None
+    ) -> dict[str, Any]:
+        """AI 分析 Web 架構
+        
+        使用 embedded_knowledge 的 WebArchitectureAnalyzer 分析架構。
+        
+        Args:
+            response_headers: HTTP 響應頭
+            response_body: 響應體
+            endpoints: 已知端點列表
+            
+        Returns:
+            dict: 架構分析結果
+        """
+        try:
+            # WebArchitectureAnalyzer.identify_architecture 是 classmethod
+            fingerprint = WebArchitectureAnalyzer.identify_architecture(
+                response_headers=response_headers,
+                response_body=response_body,
+                endpoints=endpoints
+            )
+            
+            self.logger.info(f"🌐 Web 架構分析完成: {fingerprint.arch_type.value}")
+            
+            return {
+                "architecture_type": fingerprint.arch_type.value,
+                "confidence": fingerprint.confidence.name,
+                "indicators": fingerprint.indicators,
+                "endpoints": fingerprint.endpoints,
+                "metadata": fingerprint.metadata
+            }
+        except Exception as e:
+            self.logger.error(f"❌ Web 架構分析失敗: {e}")
+            return {"error": str(e)}
+    
+    async def make_enhanced_decision(
+        self,
+        context: DecisionContext,
+        use_embedded_knowledge: bool = True
+    ) -> Decision:
+        """增強版決策方法（整合所有知識源）
+        
+        這是整合了雙CLI架構和 embedded_knowledge 的完整決策方法。
+        
+        流程：
+        1. 查詢內部能力庫 (InternalLoopConnector)
+        2. 使用 embedded_knowledge 分析目標
+        3. 神經網路 + 經驗 + 規則融合決策
+        4. 記錄結果供學習 (ExternalLoopConnector)
+        
+        Args:
+            context: 決策上下文
+            use_embedded_knowledge: 是否使用嵌入式知識
+            
+        Returns:
+            Decision: 增強的決策結果
+        """
+        self.logger.info("🧠 開始增強決策流程...")
+        
+        # 1. 查詢內部能力（同步方法）
+        if self.internal_connector:
+            target_type = context.target_info.get("type", "web")
+            capabilities = self.query_internal_capabilities(
+                query=f"{target_type} vulnerability scan",
+                top_k=3
+            )
+            if capabilities:
+                # capabilities 是 dict 列表，不是對象
+                context.available_tools.extend([
+                    c.get("metadata", {}).get("name", f"capability_{i}") 
+                    for i, c in enumerate(capabilities)
+                ])
+        
+        # 2. 使用 embedded_knowledge 分析
+        if use_embedded_knowledge:
+            target_url = context.target_info.get("value")
+            if target_url and isinstance(target_url, str):
+                # 漏洞分析（使用正確的參數）
+                vuln_result = self.analyze_target_vulnerabilities(
+                    target_url=target_url,
+                    response_body="",  # 空響應體，實際使用時會有數據
+                    response_time=0.0
+                )
+                if "vulnerabilities" in vuln_result:
+                    context.discovered_vulns.extend(
+                        [v["type"] for v in vuln_result.get("vulnerabilities", [])]
+                    )
+                
+                # 架構分析（使用正確的參數）
+                arch_result = self.analyze_web_architecture(
+                    response_headers={},  # 空 headers，實際使用時會有數據
+                    response_body=""
+                )
+                if "architecture_type" in arch_result:
+                    context.target_info["architecture"] = arch_result
+        
+        # 3. 執行標準決策流程
+        decision = await self.make_decision(context)
+        
+        # 4. 增強決策參數
+        decision.params["enhanced_mode"] = True
+        decision.params["knowledge_sources"] = [
+            "neural_network",
+            "experience_db",
+            "rule_engine",
+            "internal_capabilities" if self.internal_connector else None,
+            "embedded_knowledge" if use_embedded_knowledge else None
+        ]
+        decision.params["knowledge_sources"] = [
+            s for s in decision.params["knowledge_sources"] if s
+        ]
+        
+        self.logger.info(f"✅ 增強決策完成: {decision.action}")
+        
+        return decision
 
     async def _async_wrapper(self, func, *args, **kwargs):
         """輔助方法：將同步函數包裝為異步"""

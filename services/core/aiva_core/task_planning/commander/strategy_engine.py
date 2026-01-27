@@ -24,6 +24,8 @@ class StrategyEngine:
         decision_engine: Any,
         experience_manager: Any,
         policy_path: Optional[str] = None,
+        feedback_history: list = None,
+        strategy_performance: dict = None,
     ):
         """初始化策略引擎
         
@@ -31,16 +33,21 @@ class StrategyEngine:
             decision_engine: 5M 決策引擎
             experience_manager: 經驗管理器
             policy_path: 風險策略配置文件路徑（可選，默認使用 config/risk_policies.yaml）
+            feedback_history: 歷史反饋數據列表
+            strategy_performance: 策略性能記錄
         """
         self.decision_engine = decision_engine
         self.experience_manager = experience_manager
+        self.feedback_history = feedback_history or []
+        self.strategy_performance = strategy_performance or {}
         
         # 初始化風險策略管理器（配置化）
         self.policy_manager = PolicyManager(policy_path)
         
         logger.info(
             f"StrategyEngine initialized with policy: "
-            f"{self.policy_manager.get_policy_info()['policy_name']}"
+            f"{self.policy_manager.get_policy_info()['policy_name']}, "
+            f"feedback_records: {len(self.feedback_history)}"
         )
 
     async def make_strategy_decision(self, context: dict[str, Any]) -> dict[str, Any]:
@@ -65,9 +72,16 @@ class StrategyEngine:
             # 2. 風險預評估
             risk_factors = self.assess_risk_factors(situation, constraints)
 
-            # 3. 使用 5M Decision Engine 進行策略決策
+            # 2.5. 反饋驅動的策略調整
+            feedback_adjustments = self._get_feedback_driven_adjustments(
+                situation=situation,
+                options=options
+            )
+            logger.info(f"📊 Feedback-driven adjustments: {feedback_adjustments.get('summary', 'No adjustments')}")
+
+            # 3. 使用 5M Decision Engine 進行策略決策（包含反饋調整）
             situation_features = self._encode_situation_for_neural(
-                situation, options, risk_factors
+                situation, options, risk_factors, feedback_adjustments
             )
             
             # 4. 調用 5M 決策引擎

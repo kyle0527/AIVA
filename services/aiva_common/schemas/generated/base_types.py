@@ -58,10 +58,10 @@ class Target(BaseModel):
     method: Optional[str] = None
     """"""
 
-    headers: Dict[str, Any] = None
+    headers: Optional[Dict[str, Any]] = None
     """"""
 
-    params: Dict[str, Any] = None
+    params: Optional[Dict[str, Any]] = None
     """"""
 
     body: Optional[str] = None
@@ -111,7 +111,7 @@ class Asset(BaseModel):
     value: str
     """"""
 
-    parameters: List[str] = None
+    parameters: Optional[List[str]] = None
     """"""
 
     has_form: bool = False
@@ -124,7 +124,7 @@ class Authentication(BaseModel):
     method: str = "none"
     """"""
 
-    credentials: Dict[str, Any] = None
+    credentials: Optional[Dict[str, Any]] = None
     """"""
 
 
@@ -146,7 +146,7 @@ class ExecutionError(BaseModel):
     vector: Optional[str] = None
     """"""
 
-    timestamp: datetime = None
+    timestamp: Optional[datetime] = None
     """"""
 
     attempts: int = 1
@@ -156,13 +156,13 @@ class ExecutionError(BaseModel):
 class Fingerprints(BaseModel):
     """技術指紋"""
 
-    web_server: Dict[str, Any] = None
+    web_server: Optional[Dict[str, Any]] = None
     """"""
 
-    framework: Dict[str, Any] = None
+    framework: Optional[Dict[str, Any]] = None
     """"""
 
-    language: Dict[str, Any] = None
+    language: Optional[Dict[str, Any]] = None
     """"""
 
     waf_detected: bool = False
@@ -201,13 +201,13 @@ class RiskFactor(BaseModel):
 class ScanScope(BaseModel):
     """掃描範圍"""
 
-    exclusions: List[str] = None
+    exclusions: Optional[List[str]] = None
     """"""
 
     include_subdomains: bool = True
     """"""
 
-    allowed_hosts: List[str] = None
+    allowed_hosts: Optional[List[str]] = None
     """"""
 
 
@@ -267,7 +267,7 @@ class AIVerificationRequest(BaseModel):
     verification_mode: str = "non_destructive"
     """"""
 
-    context: Dict[str, Any] = None
+    context: Optional[Dict[str, Any]] = None
     """"""
 
 
@@ -289,16 +289,16 @@ class AIVerificationResult(BaseModel):
     verification_method: str
     """"""
 
-    test_steps: List[str] = None
+    test_steps: Optional[List[str]] = None
     """"""
 
-    observations: List[str] = None
+    observations: Optional[List[str]] = None
     """"""
 
-    recommendations: List[str] = None
+    recommendations: Optional[List[str]] = None
     """"""
 
-    timestamp: datetime = None
+    timestamp: Optional[datetime] = None
     """"""
 
 
@@ -336,10 +336,10 @@ class FindingTarget(BaseModel):
     method: Optional[str] = None
     """"""
 
-    headers: Dict[str, Any] = None
+    headers: Optional[Dict[str, Any]] = None
     """"""
 
-    params: Dict[str, Any] = None
+    params: Optional[Dict[str, Any]] = None
     """"""
 
     body: Optional[str] = None
@@ -358,25 +358,25 @@ class JavaScriptAnalysisResult(BaseModel):
     source_size_bytes: int
     """"""
 
-    dangerous_functions: List[str] = None
+    dangerous_functions: Optional[List[str]] = None
     """"""
 
-    external_resources: List[str] = None
+    external_resources: Optional[List[str]] = None
     """"""
 
-    data_leaks: Dict[str, Any] = None
+    data_leaks: Optional[Dict[str, Any]] = None
     """"""
 
-    findings: List[str] = None
+    findings: Optional[List[str]] = None
     """"""
 
-    apis_called: List[str] = None
+    apis_called: Optional[List[str]] = None
     """"""
 
-    ajax_endpoints: List[str] = None
+    ajax_endpoints: Optional[List[str]] = None
     """"""
 
-    suspicious_patterns: List[str] = None
+    suspicious_patterns: Optional[List[str]] = None
     """"""
 
     risk_score: float = 0.0
@@ -385,7 +385,7 @@ class JavaScriptAnalysisResult(BaseModel):
     security_score: int = 100
     """"""
 
-    timestamp: datetime = None
+    timestamp: Optional[datetime] = None
     """"""
 
 
@@ -463,12 +463,12 @@ class VulnerabilityCorrelation(BaseModel):
     root_cause: Optional[str] = None
     """"""
 
-    common_components: List[str] = None
+    common_components: Optional[List[str]] = None
     """"""
 
     explanation: Optional[str] = None
     """"""
 
-    timestamp: datetime = None
+    timestamp: Optional[datetime] = None
     """"""
 

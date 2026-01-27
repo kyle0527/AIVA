@@ -52,6 +52,7 @@ import inspect
 import datetime
 from pathlib import Path
 from typing import Any, Dict, List, Optional
+from glob import glob
 
 # ==========================================
 # 設定與常數
@@ -71,17 +72,21 @@ PROJECT_ROOT = CURRENT_DIR.parent.parent
 if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
-# ✅ 修復：使用 Integration 模組統一配置（僅調整輸出路徑）
+# ✅ Integration 模組配置：定義基礎路徑（修正：使用正確的專案根目錄）
+AIVA_ROOT = CURRENT_DIR.parent.parent.parent.parent  # 向上4層到達 AIVA-git
+INTEGRATION_BASE_PATH = AIVA_ROOT / "services" / "integration" / "data" / "internal_exploration"
+ANALYSIS_RESULTS_PATH = INTEGRATION_BASE_PATH / "analysis_results" / "external"
+
 try:
-    from integration.aiva_integration.config import CLI_OUTPUTS_PYTHON_DIR
-    CLI_OUTPUT_DIR = CLI_OUTPUTS_PYTHON_DIR
+    # 正確的 integration 模組路徑
+    from services.integration.capability.config import CapabilityConfig
+    CLI_OUTPUT_DIR = AIVA_ROOT / "services" / "integration" / "cli_outputs"
+    CLI_OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
     print(f"[OK] 使用 Integration 模組 CLI 輸出路徑: {CLI_OUTPUT_DIR}")
 except (ImportError, ModuleNotFoundError):
-    # 降級方案：直接使用 data/integration 路徑結構
-    DATA_ROOT = PROJECT_ROOT.parent.parent.parent / 'data'
-    CLI_OUTPUT_DIR = DATA_ROOT / 'integration' / 'cli_outputs' / 'python'
+    CLI_OUTPUT_DIR = AIVA_ROOT / "services" / "integration" / "cli_outputs" 
     CLI_OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
-    print(f"[WARN] Integration 模組未找到，使用預設 CLI 輸出路徑: {CLI_OUTPUT_DIR}")
+    print(f"[INFO] 使用預設 Integration CLI 輸出路徑: {CLI_OUTPUT_DIR}")
 
 # 五大模組中文映射（2026-01-03 更新：external_learning 整合至 cognitive_core.learning_system）
 MODULE_MAPPING = {
@@ -94,6 +99,50 @@ MODULE_MAPPING = {
     "external_learning": "認知核心模組(學習子系統)",
     "learning_system": "認知核心模組(學習子系統)"
 }
+
+
+def find_latest_classification_file() -> Optional[Path]:
+    """
+    在 integration 目錄中找到最新的分類檔案
+    支援多種可能的檔案名稱和位置，自動選擇最新修改的檔案
+    
+    Returns:
+        Path: 最新分類檔案的路徑，如果找不到則返回 None
+    """
+    # 定義可能的檔案模式和位置
+    search_patterns = [
+        # 最新的分類檔案（多種可能的名稱）
+        INTEGRATION_BASE_PATH / "external_classification.json",
+        INTEGRATION_BASE_PATH / "latest_classification.json", 
+        INTEGRATION_BASE_PATH / "enriched_classification.json",
+        INTEGRATION_BASE_PATH / "*classification*.json",
+        
+        # analysis_results 目錄下的檔案
+        ANALYSIS_RESULTS_PATH / "classification_data.json",
+        ANALYSIS_RESULTS_PATH / "latest_classification.json",
+        ANALYSIS_RESULTS_PATH / "*classification*.json",
+        
+        # 可能的其他位置
+        INTEGRATION_BASE_PATH / "analysis_history" / "external" / "*classification*.json",
+    ]
+    
+    all_files = []
+    for pattern in search_patterns:
+        if "*" in str(pattern):
+            # 使用 glob 模式
+            matched_files = glob(str(pattern))
+            all_files.extend([Path(f) for f in matched_files])
+        else:
+            # 直接檢查檔案存在
+            if pattern.exists():
+                all_files.append(pattern)
+    
+    if not all_files:
+        return None
+    
+    # 按修改時間排序，返回最新的檔案
+    latest_file = max(all_files, key=lambda f: f.stat().st_mtime)
+    return latest_file
 
 
 class FlowExecutor:
@@ -118,17 +167,24 @@ class FlowExecutor:
                       若為 None，優先使用 enriched_classification.json
                       若不存在則使用 latest_classification.json
         """
-        # 支持多個可能的路徑（優先使用 enriched 版本）
-        possible_paths = [
-            Path("C:/Users/User/Downloads/data/internal_exploration/enriched_classification.json"),
-            Path("C:/Users/User/Downloads/data/internal_exploration/latest_classification.json"),
-            Path("C:/D/fold7/AIVA-git/data/internal_exploration/enriched_classification.json"),
-            Path("C:/D/fold7/AIVA-git/data/internal_exploration/latest_classification.json"),
-            Path("C:/D/fold7/AIVA-git/services/integration/data/internal_exploration/enriched_classification.json"),
-            Path("C:/D/fold7/AIVA-git/services/integration/data/internal_exploration/latest_classification.json"),
-            LATEST_DATA_PATH,
+        # ✅ 自動尋找最新的分類檔案（支援多種可能的輸出檔案）
+        latest_file = find_latest_classification_file()
+        
+        # 備選路徑列表（按優先級排序）
+        possible_paths = []
+        
+        # 如果找到最新檔案，優先使用
+        if latest_file:
+            possible_paths.append(latest_file)
+            
+        # 備選的固定路徑
+        possible_paths.extend([
+            INTEGRATION_BASE_PATH / "external_classification.json",
+            ANALYSIS_RESULTS_PATH / "classification_data.json", 
+            Path("C:/D/fold7/AIVA-git/features_classification/classification_data.json"),
             DEFAULT_JSON_PATH,
-        ]
+            LATEST_DATA_PATH,
+        ])
         
         if json_path:
             self.json_path = json_path
@@ -137,13 +193,22 @@ class FlowExecutor:
             for path in possible_paths:
                 if path.exists():
                     self.json_path = str(path)
-                    print(f"[Info] 使用數據: {path.name} (路徑: {path.parent})")
+                    # 顯示檔案修改時間以確認使用最新版本
+                    mtime = path.stat().st_mtime
+                    mod_time = datetime.datetime.fromtimestamp(mtime).strftime('%Y-%m-%d %H:%M:%S')
+                    print(f"[Info] 使用數據: {path.name} (修改時間: {mod_time})")
+                    print(f"[Info] 檔案路徑: {path.parent}")
                     break
             else:
-                print("[Error] 找不到 latest_classification.json")
+                print("[Error] 找不到任何分類檔案")
                 print("嘗試過的路徑:")
                 for path in possible_paths:
                     print(f"  - {path}")
+                print("\n請確認以下任一檔案存在:")
+                print(f"  1. {INTEGRATION_BASE_PATH}/external_classification.json (最新檔案)")
+                print(f"  2. {ANALYSIS_RESULTS_PATH}/classification_data.json (分析結果)")
+                print(f"  3. 使用 --data 參數指定正確路徑")
+                print(f"\n注意: 系統會自動讀取最新修改的檔案")
                 self.json_path = str(DEFAULT_JSON_PATH)
         
         self.data = self._load_data()
@@ -611,7 +676,7 @@ def main():
         "--data",
         type=str,
         default=None,
-        help=f"指定 classification_data.json 的路徑\n預設: latest_classification.json 或 {DEFAULT_JSON_PATH}"
+        help=f"指定 classification_data.json 的路徑\n預設: 自動讀取最新的分類檔案 (integration 目錄中最新修改的 *classification*.json)\n支援多種檔案名稱: external_classification.json, latest_classification.json, enriched_classification.json 等"
     )
 
     args = parser.parse_args()

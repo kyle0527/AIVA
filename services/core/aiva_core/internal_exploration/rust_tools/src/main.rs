@@ -1,5 +1,5 @@
 // rs2mermaid.rs - All-in-One Rust AST Analysis Tool
-// Version: 2.0 (Feature Parity with Python/Go)
+// Version: 2.1 (Feature Parity with Python/Go + Clap Macro Support)
 //
 // 功能整合：
 // 1. AST 解析與流程圖生成 (基礎功能)
@@ -7,6 +7,12 @@
 // 3. 功能分類與統計 (對標 aiva_flow_classifier.py)
 // 4. CLI 指令手冊生成 (對標 aiva_cli_implementation.py)
 // 5. 系統瓶頸分析 (對標 aiva_flow_analyzer.py 統計)
+// 6. [NEW] Clap CLI 巨集解析 (透過 derive attribute 分析)
+//
+// ⚠️ 限制說明：
+// syn crate 只能解析 AST，無法展開 derive 巨集。因此 Clap 的
+// #[derive(Parser)] 和 #[arg] attribute 需要特殊處理。
+// 本工具透過字串匹配 + attribute 分析來推斷 CLI 參數結構。
 
 use serde::{Deserialize, Serialize};
 use std::collections::{HashMap, HashSet};
@@ -15,9 +21,308 @@ use std::path::{Path, PathBuf};
 use std::env;
 use syn::{visit::Visit, *};
 use chrono;
+use quote::ToTokens;
 
 mod paths_config;
 use paths_config::PathsConfig;
+
+// ==========================================
+// Part 0: Clap CLI 巨集分析器 (NEW)
+// ==========================================
+
+/// CLI 參數的元數據結構
+#[derive(Debug, Clone, Serialize, Deserialize)]
+struct CliArgument {
+    name: String,
+    short: Option<char>,
+    long: Option<String>,
+    arg_type: String,
+    default_value: Option<String>,
+    help: Option<String>,
+    required: bool,
+    is_flag: bool,
+}
+
+/// Clap CLI 結構的完整信息
+#[derive(Debug, Clone, Serialize, Deserialize)]
+struct ClapCliInfo {
+    struct_name: String,
+    source_file: String,
+    program_name: Option<String>,
+    about: Option<String>,
+    version: Option<String>,
+    arguments: Vec<CliArgument>,
+    subcommands: Vec<String>,
+}
+
+/// Clap 巨集分析器
+struct ClapAnalyzer {
+    cli_structs: Vec<ClapCliInfo>,
+}
+
+impl ClapAnalyzer {
+    fn new() -> Self {
+        ClapAnalyzer { cli_structs: Vec::new() }
+    }
+    
+    /// 分析單個檔案中的所有 Clap 結構體
+    fn analyze_file(&mut self, content: &str, file_path: &str) {
+        // 檢查是否使用 clap
+        if !content.contains("clap::") && !content.contains("use clap") {
+            return;
+        }
+        
+        // 解析 AST
+        if let Ok(syntax) = syn::parse_file(content) {
+            for item in &syntax.items {
+                if let Item::Struct(s) = item {
+                    if self.has_clap_derive(&s.attrs) {
+                        let cli_info = self.extract_cli_info(s, file_path);
+                        self.cli_structs.push(cli_info);
+                    }
+                }
+                // 也處理 enum (用於 subcommand)
+                if let Item::Enum(e) = item {
+                    if self.has_clap_derive(&e.attrs) {
+                        // 將 enum variants 記錄為 subcommands
+                        self.extract_subcommands(e, file_path);
+                    }
+                }
+            }
+        }
+    }
+    
+    /// 檢查是否有 clap derive 屬性
+    fn has_clap_derive(&self, attrs: &[Attribute]) -> bool {
+        for attr in attrs {
+            if attr.path().is_ident("derive") {
+                let tokens = attr.meta.to_token_stream().to_string();
+                if tokens.contains("Parser") || tokens.contains("Args") || 
+                   tokens.contains("Subcommand") || tokens.contains("ValueEnum") {
+                    return true;
+                }
+            }
+        }
+        false
+    }
+    
+    /// 從結構體中提取 CLI 信息
+    fn extract_cli_info(&self, s: &ItemStruct, file_path: &str) -> ClapCliInfo {
+        let mut cli_info = ClapCliInfo {
+            struct_name: s.ident.to_string(),
+            source_file: file_path.to_string(),
+            program_name: None,
+            about: None,
+            version: None,
+            arguments: Vec::new(),
+            subcommands: Vec::new(),
+        };
+        
+        // 從 #[command(...)] 提取頂層信息
+        for attr in &s.attrs {
+            if attr.path().is_ident("command") || attr.path().is_ident("clap") {
+                let tokens = attr.meta.to_token_stream().to_string();
+                cli_info.program_name = Self::extract_attr_value(&tokens, "name");
+                cli_info.about = Self::extract_attr_value(&tokens, "about");
+                cli_info.version = Self::extract_attr_value(&tokens, "version");
+            }
+        }
+        
+        // 從 fields 提取參數
+        if let Fields::Named(fields) = &s.fields {
+            for field in &fields.named {
+                if let Some(arg) = self.extract_field_arg(field) {
+                    cli_info.arguments.push(arg);
+                }
+            }
+        }
+        
+        cli_info
+    }
+    
+    /// 從欄位中提取 CLI 參數信息
+    fn extract_field_arg(&self, field: &Field) -> Option<CliArgument> {
+        let name = field.ident.as_ref()?.to_string();
+        let arg_type = self.type_to_string(&field.ty);
+        
+        // 檢查是否是 subcommand 而不是普通參數
+        for attr in &field.attrs {
+            let tokens = attr.meta.to_token_stream().to_string();
+            if tokens.contains("subcommand") {
+                return None; // subcommand 不作為參數處理
+            }
+        }
+        
+        let mut arg = CliArgument {
+            name: name.clone(),
+            short: None,
+            long: Some(name.replace('_', "-")), // Rust 慣例轉換
+            arg_type,
+            default_value: None,
+            help: None,
+            required: !self.is_option_type(&field.ty),
+            is_flag: self.is_bool_type(&field.ty),
+        };
+        
+        // 從 #[arg(...)] 提取詳細信息
+        for attr in &field.attrs {
+            if attr.path().is_ident("arg") || attr.path().is_ident("clap") {
+                let tokens = attr.meta.to_token_stream().to_string();
+                
+                // 提取 short
+                if let Some(short_str) = Self::extract_attr_value(&tokens, "short") {
+                    arg.short = short_str.chars().next();
+                }
+                
+                // 提取 long
+                if let Some(long) = Self::extract_attr_value(&tokens, "long") {
+                    arg.long = Some(long);
+                }
+                
+                // 提取 default_value
+                if let Some(default) = Self::extract_attr_value(&tokens, "default_value") {
+                    arg.default_value = Some(default);
+                    arg.required = false;
+                }
+                
+                // 提取 help
+                if let Some(help) = Self::extract_attr_value(&tokens, "help") {
+                    arg.help = Some(help);
+                }
+            }
+            
+            // 也檢查 doc comments 作為 help
+            if attr.path().is_ident("doc") {
+                if let Meta::NameValue(nv) = &attr.meta {
+                    if let Expr::Lit(ExprLit { lit: Lit::Str(s), .. }) = &nv.value {
+                        let doc = s.value().trim().to_string();
+                        if !doc.is_empty() && arg.help.is_none() {
+                            arg.help = Some(doc);
+                        }
+                    }
+                }
+            }
+        }
+        
+        Some(arg)
+    }
+    
+    /// 從屬性字串中提取特定值
+    fn extract_attr_value(tokens: &str, key: &str) -> Option<String> {
+        // 匹配 key = "value" 或 key = 'value' 或 key(...)
+        let patterns = [
+            format!(r#"{} = "([^"]*)""#, key),
+            format!(r#"{} = '([^']*)'"#, key),
+        ];
+        
+        for pattern in &patterns {
+            if let Ok(re) = regex::Regex::new(pattern) {
+                if let Some(caps) = re.captures(tokens) {
+                    return caps.get(1).map(|m| m.as_str().to_string());
+                }
+            }
+        }
+        None
+    }
+    
+    /// 將類型轉換為字串
+    fn type_to_string(&self, ty: &Type) -> String {
+        match ty {
+            Type::Path(type_path) => {
+                type_path.path.segments.iter()
+                    .map(|seg| seg.ident.to_string())
+                    .collect::<Vec<_>>()
+                    .join("::")
+            }
+            _ => "unknown".to_string(),
+        }
+    }
+    
+    /// 檢查是否為 Option 類型
+    fn is_option_type(&self, ty: &Type) -> bool {
+        if let Type::Path(type_path) = ty {
+            if let Some(seg) = type_path.path.segments.first() {
+                return seg.ident == "Option";
+            }
+        }
+        false
+    }
+    
+    /// 檢查是否為 bool 類型
+    fn is_bool_type(&self, ty: &Type) -> bool {
+        if let Type::Path(type_path) = ty {
+            if let Some(seg) = type_path.path.segments.first() {
+                return seg.ident == "bool";
+            }
+        }
+        false
+    }
+    
+    /// 提取 enum 中的 subcommands
+    fn extract_subcommands(&mut self, e: &ItemEnum, file_path: &str) {
+        let struct_name = e.ident.to_string();
+        let subcommands: Vec<String> = e.variants.iter()
+            .map(|v| v.ident.to_string())
+            .collect();
+        
+        // 將 subcommand enum 資訊添加到現有的 CLI struct 中
+        for cli in &mut self.cli_structs {
+            if cli.source_file == file_path {
+                cli.subcommands.extend(subcommands.clone());
+            }
+        }
+    }
+    
+    /// 生成 CLI 使用說明文檔
+    fn generate_cli_docs(&self) -> String {
+        let mut docs = String::from("# Rust CLI Commands Reference\n\n");
+        docs.push_str("*Auto-generated by rs2mermaid v2.1 Clap Analyzer*\n\n");
+        
+        for cli in &self.cli_structs {
+            docs.push_str(&format!("## {}\n", cli.struct_name));
+            docs.push_str(&format!("**Source:** `{}`\n\n", cli.source_file));
+            
+            if let Some(about) = &cli.about {
+                docs.push_str(&format!("*{}*\n\n", about));
+            }
+            
+            docs.push_str("### Arguments\n\n");
+            docs.push_str("| Name | Short | Long | Type | Required | Default | Help |\n");
+            docs.push_str("|------|-------|------|------|----------|---------|------|\n");
+            
+            for arg in &cli.arguments {
+                let short = arg.short.map(|c| format!("-{}", c)).unwrap_or_default();
+                let long = arg.long.as_ref().map(|l| format!("--{}", l)).unwrap_or_default();
+                let default = arg.default_value.as_deref().unwrap_or("-");
+                let help = arg.help.as_deref().unwrap_or("-");
+                let required = if arg.required { "✅" } else { "❌" };
+                
+                docs.push_str(&format!("| {} | {} | {} | {} | {} | {} | {} |\n",
+                    arg.name, short, long, arg.arg_type, required, default, help));
+            }
+            
+            if !cli.subcommands.is_empty() {
+                docs.push_str("\n### Subcommands\n\n");
+                for cmd in &cli.subcommands {
+                    docs.push_str(&format!("- `{}`\n", cmd));
+                }
+            }
+            
+            docs.push_str("\n---\n\n");
+        }
+        
+        docs
+    }
+    
+    /// 導出為 JSON 格式
+    fn to_json(&self) -> serde_json::Value {
+        serde_json::json!({
+            "cli_structs": self.cli_structs,
+            "total_cli_programs": self.cli_structs.len(),
+            "total_arguments": self.cli_structs.iter().map(|c| c.arguments.len()).sum::<usize>(),
+        })
+    }
+}
 
 // ==========================================
 // Part 1: 基礎數據結構 (Graph & Nodes)
@@ -623,7 +928,7 @@ fn main() -> std::io::Result<()> {
         .map(|a| &a[9..])
         .unwrap_or(default_output.to_str().unwrap_or("./analysis_output"));
 
-    println!("🚀 開始 AIVA Rust 全功能分析...");
+    println!("🚀 開始 AIVA Rust 全功能分析 (v2.1)...");
     println!("📂 輸入: {}", input_dir);
     println!("📂 輸出: {}", output_dir);
 
@@ -635,6 +940,7 @@ fn main() -> std::io::Result<()> {
 
     let mut stitcher = Stitcher::new();
     let mut classifier = Classifier::new();
+    let mut clap_analyzer = ClapAnalyzer::new();  // NEW: Clap 分析器
     let mut all_meta = Vec::new();
 
     // 1. Scanning Phase
@@ -642,6 +948,9 @@ fn main() -> std::io::Result<()> {
         let content = fs::read_to_string(file_path);
         if content.is_err() { continue; }
         let content = content.unwrap();
+        
+        // NEW: Clap 巨集分析
+        clap_analyzer.analyze_file(&content, &file_path.to_string_lossy());
         
         let syntax = syn::parse_file(&content);
         if syntax.is_err() { 
@@ -668,7 +977,7 @@ fn main() -> std::io::Result<()> {
                 let mut meta = builder.metadata.clone();
                 meta.source_file = file_name.clone();
                 meta.module = module_name.clone();
-                meta.external_calls = builder.external_calls.clone();  // 添加此行
+                meta.external_calls = builder.external_calls.clone();
                 
                 classifier.classify(&mut meta);
                 all_meta.push(meta);
@@ -697,7 +1006,7 @@ fn main() -> std::io::Result<()> {
                         let mut meta = builder.metadata.clone();
                         meta.source_file = file_name.clone();
                         meta.module = module_name.clone();
-                        meta.external_calls = builder.external_calls.clone();  // 添加此行
+                        meta.external_calls = builder.external_calls.clone();
                         
                         classifier.classify(&mut meta);
                         all_meta.push(meta);
@@ -760,26 +1069,38 @@ fn main() -> std::io::Result<()> {
     let system_flow = stitcher.generate_system_flow();
     fs::write(Path::new(output_dir).join("system_flow.mmd"), system_flow)?;
 
-    // B. CLI 手冊
+    // B. CLI 手冊 (傳統分析)
     let class_result = classifier.get_result();
     let cli_docs = generate_cli(&class_result);
     fs::write(Path::new(output_dir).join("cli_commands.sh"), cli_docs)?;
+    
+    // C. NEW: Clap CLI 文檔 (巨集分析)
+    let clap_docs = clap_analyzer.generate_cli_docs();
+    fs::write(Path::new(output_dir).join("clap_cli_reference.md"), clap_docs)?;
+    
+    // D. NEW: Clap 分析結果 JSON
+    let clap_json = clap_analyzer.to_json();
+    fs::write(
+        Path::new(output_dir).join("clap_analysis.json"),
+        serde_json::to_string_pretty(&clap_json)?
+    )?;
 
-    // C. 完整 JSON 報告 - 統一格式，相容 Python FlowExecutor
+    // E. 完整 JSON 報告 - 統一格式，相容 Python FlowExecutor
     let flows = convert_connections_to_flows(&stitcher.real_connections);
     
     let final_report = serde_json::json!({
         "metadata": {
             "tool": "rs2mermaid",
-            "version": "2.0",
+            "version": "2.1",
             "language": "rust",
             "generated_at": chrono::Utc::now().to_rfc3339(),
             "total_flows": flows.len(),
             "total_files": files.len(),
-            "schema_version": "3.3",
-            "ai_compatible": true
+            "schema_version": "3.4",
+            "ai_compatible": true,
+            "features": ["ast_analysis", "clap_macro_analysis", "cross_file_stitching"]
         },
-        // ✅ 新增：FlowExecutor 需要的統一格式
+        // ✅ FlowExecutor 需要的統一格式
         "flows": flows,
         
         // ✅ 保留：Rust 工具原有的所有字段
@@ -787,11 +1108,15 @@ fn main() -> std::io::Result<()> {
             "total_files": files.len(),
             "total_funcs": all_meta.len(),
             "real_connections": stitcher.real_connections.len(),
+            "cli_programs": clap_analyzer.cli_structs.len(),  // NEW
         },
         "classification": class_result,
         "branch_analysis": branch_stats,
         "flow_chains": stitcher.real_connections,
-        "functions": all_meta
+        "functions": all_meta,
+        
+        // ✅ NEW: Clap CLI 分析結果
+        "cli_analysis": clap_json
     });
 
     fs::write(
@@ -803,6 +1128,16 @@ fn main() -> std::io::Result<()> {
     println!("   📄 系統架構圖: {}/system_flow.mmd", output_dir);
     println!("   📄 完整數據報告: {}/analysis_results.json", output_dir);
     println!("   📄 CLI 指令手冊: {}/cli_commands.sh", output_dir);
+    println!("   📄 Clap CLI 參考: {}/clap_cli_reference.md", output_dir);  // NEW
+    println!("   📄 Clap 分析 JSON: {}/clap_analysis.json", output_dir);  // NEW
+    
+    // 額外輸出 Clap 分析摘要
+    if !clap_analyzer.cli_structs.is_empty() {
+        println!("\n🔧 Clap CLI 分析結果:");
+        for cli in &clap_analyzer.cli_structs {
+            println!("   - {} ({} 個參數)", cli.struct_name, cli.arguments.len());
+        }
+    }
 
     Ok(())
 }

@@ -1,70 +1,21 @@
 # 📋 Task Planning - 任務規劃系統
 
 > **路徑**: `task_planning/`  
-> **狀態**: ✅ 正常 | **最後更新**: 2026-01-09  
-> **子模組**: 3 個 | **總文件數**: 28 | **Bug Bounty 整合**: ✅ 已完成
+> **狀態**: ✅ Production Ready | **最後更新**: 2026-01-21  
+> **子模組**: 4 個 | **總文件數**: 28 | **Bug Bounty 整合**: ✅ 已完成  
+> **父模組**: [AIVA Core](../README.md)
 
 ## 概述
 
-**Task Planning** 是 AIVA 的任務規劃和執行系統，負責將高層次目標分解為可執行的子任務，並通過 CLI 命令協調執行過程。採用 CLI 命令執行架構（subprocess），已移除 AICommand 依賴。
-
-**v4.4.0 重大更新**: Bug Bounty 決策引擎完全整合，attack_coordinator.py 整合 `decide_scan_strategy()` 決策方法。
+**Task Planning** 是 AIVA 五大核心模組之一，作為任務規劃和執行系統。負責將高層次目標分解為可執行的子任務，並通過 CLI 命令協調執行過程。採用 CLI 命令執行架構（subprocess）。
 
 **核心職責**：
 - 📋 **智能規劃** - 將複雜任務分解為可執行步驟和編排流程
 - ⚡ **CLI 執行** - 使用 subprocess 直接執行 CLI 命令
-- 🎯 **Bug Bounty 決策** - 智慧掃描工具選擇，HackerOne 實戰優化 ⭐
+- 🎯 **Bug Bounty 決策** - 智慧掃描工具選擇，HackerOne 實戰優化
 - 🔄 **動態調整** - 根據 AI 分析結果動態調整計劃
 - 📊 **進度追蹤** - 實時監控任務編排狀態和結果收集
-- 🔗 **Internal Exploration 整合** - 與 internal_exploration 分析引擎深度整合 ⭐
-
----
-
-## ✅ 模組驗證狀態 (2026-01-09)
-
-**完整性檢查**:
-- ✅ **無測試文件** - 所有 28 個文件均為功能代碼（無 test*.py, *mock*.py）
-- ✅ **無編譯錯誤** - 全模組編譯通過，無語法錯誤
-- ✅ **功能完整** - 所有文件均為核心能力實現
-- ✅ **代碼註釋** - 已移除硬編碼 Mock 實現（見 task_executor.py 註釋）
-
-**Internal Exploration 整合點**:
-- ✅ `dispatcher.py` - 請求 internal_exploration 進行分析（Line 159, 317, 412）
-- ✅ `command_builder.py` - internal_exploration 產出 → integration 提供 Schema → core 執行命令（Line 8）
-- ✅ 動態調用 `services.core.aiva_core.internal_exploration.python_tools.aiva_exploration_pipeline`
-
-**核心模組整合**:
-- ✅ `cognitive_core.decision.execution_orchestrator` 導入 `PlanExecutor` (Line 28)
-- ✅ `core_capabilities.processing.scan_result_processor` 導入 `TaskGenerator`, `TaskQueueManager`
-- ✅ `service_backbone.context_manager` 導入 `CommandContext`
-- ✅ `service_backbone.api.app` 導入 `ExecutionStatusMonitor`, `TaskGenerator`, `TaskQueueManager`
-
----
-
-## 🎯 Bug Bounty 整合
-
-### attack_coordinator.py 整合 
-
-**整合方法**: `decide_scan_strategy()` (Line 508)
-
-```python
-# 在 AttackCoordinator.handle_scan_command() 中
-from ...cognitive_core.decision.enhanced_decision_agent import EnhancedDecisionAgent
-decision_agent = EnhancedDecisionAgent()
-ai_decision = decision_agent.decide_scan_strategy(scan_context)
-```
-
-**功能**:
-- ✅ **智慧掃描工具選擇**: 自動選擇 nmap/masscan
-- ✅ **目標分析**: 分析目標特徵，適配掃描策略
-- ✅ **WAF 檢測**: Cloudflare/Imperva/AWS WAF 檢測和繞過
-- ✅ **時間預估**: 預估掃描時間，優化資源使用
-
-**決策流程**:
-1. 解析用戶輸入 → ScanTaskContext
-2. AI 決策選擇掃描工具
-3. 設定掃描參數和策略
-4. 執行統一掃描流程
+- 🔗 **Internal Exploration 整合** - 與 internal_exploration 分析引擎深度整合
 
 ---
 
@@ -74,10 +25,14 @@ ai_decision = decision_agent.decide_scan_strategy(scan_context)
 
 | 子模組 | 功能 | 文件數 | 文檔 |
 |--------|------|--------|------|
-| **commander/** | **AI 指揮協調器、Bug Bounty 決策整合** | **9** | **[README](commander/README.md)** |
-| executor/ | 計劃執行器、任務執行、狀態監控 | 7 | [README](executor/README.md) |
-| planner/ | 執行計劃生成、任務生成、工具選擇 | 9 | [README](planner/README.md) |
+| [commander/](commander/README.md) | AI 指揮協調器、Bug Bounty 決策整合 | 9 | [README](commander/README.md) |
+| [executor/](executor/README.md) | 計劃執行器、任務執行、狀態監控 | 7 | [README](executor/README.md) |
+| [planner/](planner/README.md) | 執行計劃生成、任務生成、工具選擇 | 9 | [README](planner/README.md) |
 | persistence/ | 任務狀態持久化、斷點續傳 (P0-3) | 2 | - |
+
+---
+
+## 🎯 Bug Bounty 整合
 
 ### 根目錄組件 (6 個文件)
 

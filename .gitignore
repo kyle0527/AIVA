@@ -66,6 +66,16 @@ cache/
 *.bak
 *.backup
 
+# Internal Exploration 輸出 (應輸出到整合模組)
+services/core/aiva_core/internal_exploration/output/
+services/core/aiva_core/internal_exploration/**/output/
+services/core/aiva_core/internal_exploration/**/analysis_results/
+services/core/aiva_core/internal_exploration/**/analysis_output/
+services/core/aiva_core/internal_exploration/**/*.json
+!services/core/aiva_core/internal_exploration/modules_config.json
+!services/core/aiva_core/internal_exploration/**/package.json
+!services/core/aiva_core/internal_exploration/**/package-lock.json
+
 # Documentation files - 本次不提交
 *.md
 *.mmd

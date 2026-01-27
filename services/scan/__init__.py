@@ -1,29 +1,34 @@
 """
-AIVA Scan - 純 CLI 掃描引擎集合
+AIVA Scan - 多語言掃描引擎（無協調層架構）
 
-v3.0 架構：直接 CLI 調用，無需任何 Python 協調層
+架構原則：每個引擎完全獨立，AI 直接調用
 
-各引擎完全獨立：
-  ✅ Rust:       ./rust_engine/target/release/aiva-info-gatherer.exe
-  ✅ Go SSRF:    ./go_engine/bin/ssrf-scanner.exe  
-  ✅ Go CSPM:    ./go_engine/bin/cspm-scanner.exe
-  ✅ Go SCA:     ./go_engine/bin/sca-scanner.exe
-  ✅ TypeScript: node ./typescript_engine/dist/index.js
-  ✅ Python:     python ./python_engine/main.py
+引擎列表：
+  ✅ Rust Engine:       端口掃描、服務識別、快速信息收集
+  ✅ Go Engine:         SSRF、SCA、CSPM 掃描器
+  ✅ TypeScript Engine: DOM XSS、SPA 爬蟲、動態掃描
+  ✅ Python Engine:     XXE、反序列化、被動分析
 
-特點：
-  - 🚀 無協調器，直接 CLI 調用
-  - 🔧 每個引擎獨立編譯部署
-  - 📦 無 Python 依賴管理復雜性
-  - ⚡ AI 直接調用，性能最優
+使用方式：
+  1. 編譯各語言引擎：cargo build / go build / npm build
+  2. AI 通過 subprocess 直接調用 CLI
+  3. 無需任何 Python 協調器或中間層
 
-部署方式：
-  1. 各引擎獨立編譯：cargo build、go build、npm run build
-  2. AI 直接通過 subprocess 調用 CLI
-  3. 無需啟動任何服務或協調器
-
-這是最簡潔高效的架構！
+Python 檢測器可直接導入：
+  from services.scan.python_engine import XXEDetector, DeserializationDetector, PassiveAnalyzer
 """
 
-# CLI 架構下，無需導出任何 Python 模組
-__all__ = []
+# Python 檢測器導出（可選）
+from .python_engine import (
+    XXEDetector,
+    DeserializationDetector, 
+    PassiveAnalyzer
+)
+
+__all__ = [
+    "XXEDetector",
+    "DeserializationDetector",
+    "PassiveAnalyzer",
+]
+
+__version__ = "3.1.0"

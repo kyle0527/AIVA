@@ -1,0 +1,149 @@
+scenario_id,scenario_text,teacher_vulnerability_type,teacher_severity,teacher_confidence,difficulty_level
+graphql_introspection_medium_6529,在 HTTP 響應中發現 Schema 暴露 相關的 __type 模式,graphql_introspection,0.6,0.85,medium
+idor_medium_7441,在 HTTP 響應中發現 直接對象引用 相關的 object reference 模式,idor,0.7,0.85,medium
+graphql_introspection_medium_7395,在 HTTP 響應中發現 內省查詢 相關的 introspection 模式,graphql_introspection,0.6,0.85,medium
+graphql_introspection_easy_3377,檢測到 Schema 暴露 特徵：introspection,graphql_introspection,0.6,0.95,easy
+xss_medium_4993,在 HTTP 響應中發現 腳本注入 相關的 onerror= 模式,xss,0.75,0.85,medium
+rce_medium_4436,在 HTTP 響應中發現 表達式解析 相關的 exec( 模式,rce,0.95,0.85,medium
+ssrf_medium_2756,在 HTTP 響應中發現 內部服務 相關的 metadata 模式,ssrf,0.8,0.85,medium
+xss_medium_7618,在 HTTP 響應中發現 事件處理器 相關的 document.cookie 模式,xss,0.75,0.85,medium
+graphql_introspection_hard_8435,通過分析請求參數與響應差異，識別出 內省查詢 漏洞，關鍵指標為 __schema,graphql_introspection,0.6,0.75,hard
+ssrf_medium_1001,在 HTTP 響應中發現 雲端元數據 相關的 metadata 模式,ssrf,0.8,0.85,medium
+ssrf_medium_6299,在 HTTP 響應中發現 文件協議 相關的 metadata 模式,ssrf,0.8,0.85,medium
+sql_injection_medium_2351,在 HTTP 響應中發現 UNION 查詢 相關的 SLEEP( 模式,sql_injection,0.85,0.85,medium
+jwt_attack_medium_8608,在 HTTP 響應中發現 令牌偽造 相關的 eyJ 模式,jwt_attack,0.8,0.85,medium
+jwt_attack_hard_1829,"通過分析請求參數與響應差異，識別出 令牌偽造 漏洞，關鍵指標為 ""alg"":""none""",jwt_attack,0.8,0.75,hard
+jwt_attack_hard_5510,"通過分析請求參數與響應差異，識別出 簽名繞過 漏洞，關鍵指標為 ""alg"":""none""",jwt_attack,0.8,0.75,hard
+real_87_1858,面對類型不匹配時會直接拋出異常，這為自動化檢測提供了極佳的切入點。 - **語法與引號錯誤：** ERROR: syntax error at or near 是最常見的通用錯誤。更具特異性的是 ER,sql_injection,0.85,0.8,medium
+xss_easy_9000,檢測到 DOM 操作 特徵：javascript:,xss,0.75,0.95,easy
+graphql_introspection_easy_4836,檢測到 內省查詢 特徵：__schema,graphql_introspection,0.6,0.95,easy
+graphql_introspection_medium_5390,在 HTTP 響應中發現 API 偵查 相關的 GraphQL 模式,graphql_introspection,0.6,0.85,medium
+idor_easy_5446,檢測到 直接對象引用 特徵：account=,idor,0.7,0.95,easy
+sql_injection_hard_1194,通過分析請求參數與響應差異，識別出 UNION 查詢 漏洞，關鍵指標為 error in your sql,sql_injection,0.85,0.75,hard
+xss_medium_7211,在 HTTP 響應中發現 DOM 操作 相關的 <script> 模式,xss,0.75,0.85,medium
+idor_medium_7611,在 HTTP 響應中發現 橫向越權 相關的 user_id= 模式,idor,0.7,0.85,medium
+xss_easy_4525,檢測到 腳本注入 特徵：innerHTML,xss,0.75,0.95,easy
+sql_injection_medium_9412,在 HTTP 響應中發現 時間延遲 相關的 syntax error 模式,sql_injection,0.85,0.85,medium
+sql_injection_medium_1971,在 HTTP 響應中發現 數據庫錯誤訊息 相關的 SLEEP( 模式,sql_injection,0.85,0.85,medium
+graphql_introspection_medium_7858,在 HTTP 響應中發現 內省查詢 相關的 __schema 模式,graphql_introspection,0.6,0.85,medium
+idor_hard_1785,通過分析請求參數與響應差異，識別出 橫向越權 漏洞，關鍵指標為 unauthorized access,idor,0.7,0.75,hard
+sql_injection_hard_8366,通過分析請求參數與響應差異，識別出 UNION 查詢 漏洞，關鍵指標為 UNION SELECT,sql_injection,0.85,0.75,hard
+idor_easy_7072,檢測到 權限繞過 特徵：unauthorized access,idor,0.7,0.95,easy
+xss_medium_8667,在 HTTP 響應中發現 事件處理器 相關的 <script> 模式,xss,0.75,0.85,medium
+graphql_introspection_easy_1562,檢測到 Schema 暴露 特徵：__type,graphql_introspection,0.6,0.95,easy
+ssrf_medium_7115,在 HTTP 響應中發現 內部服務 相關的 169.254.169.254 模式,ssrf,0.8,0.85,medium
+idor_easy_8917,檢測到 直接對象引用 特徵：user_id=,idor,0.7,0.95,easy
+real_3_3526,送給客戶端。這些洩露的記憶體中通常包含其他用戶的有效 Session Token（NSC_AAAC Cookie）<sup>25</sup>。 ### 8.2 攻擊向量與觸發路徑分析 - **觸發 U,jwt_attack,0.8,0.8,medium
+jwt_attack_easy_5388,檢測到 算法混淆 特徵：token,jwt_attack,0.8,0.95,easy
+xss_hard_6585,通過分析請求參數與響應差異，識別出 腳本注入 漏洞，關鍵指標為 <script>,xss,0.75,0.75,hard
+jwt_attack_easy_8270,檢測到 令牌偽造 特徵：JWT,jwt_attack,0.8,0.95,easy
+xss_medium_5031,在 HTTP 響應中發現 DOM 操作 相關的 javascript: 模式,xss,0.75,0.85,medium
+rce_medium_3343,在 HTTP 響應中發現 代碼執行 相關的 exec( 模式,rce,0.95,0.85,medium
+sql_injection_medium_7646,在 HTTP 響應中發現 數據庫錯誤訊息 相關的 SLEEP( 模式,sql_injection,0.85,0.85,medium
+jwt_attack_medium_5964,在 HTTP 響應中發現 簽名繞過 相關的 bearer 模式,jwt_attack,0.8,0.85,medium
+idor_medium_7844,在 HTTP 響應中發現 直接對象引用 相關的 unauthorized access 模式,idor,0.7,0.85,medium
+graphql_introspection_hard_1450,通過分析請求參數與響應差異，識別出 內省查詢 漏洞，關鍵指標為 GraphQL,graphql_introspection,0.6,0.75,hard
+idor_medium_6285,在 HTTP 響應中發現 直接對象引用 相關的 object reference 模式,idor,0.7,0.85,medium
+sql_injection_hard_6361,通過分析請求參數與響應差異，識別出 UNION 查詢 漏洞，關鍵指標為 ORA-,sql_injection,0.85,0.75,hard
+idor_easy_3563,檢測到 直接對象引用 特徵：object reference,idor,0.7,0.95,easy
+ssrf_easy_9608,檢測到 雲端元數據 特徵：metadata,ssrf,0.8,0.95,easy
+rce_easy_6930,檢測到 表達式解析 特徵：exec(,rce,0.95,0.95,easy
+xss_medium_5737,在 HTTP 響應中發現 腳本注入 相關的 document.cookie 模式,xss,0.75,0.85,medium
+xss_medium_8448,在 HTTP 響應中發現 DOM 操作 相關的 <script> 模式,xss,0.75,0.85,medium
+xss_easy_9286,檢測到 事件處理器 特徵：<script>,xss,0.75,0.95,easy
+idor_easy_8475,檢測到 橫向越權 特徵：account=,idor,0.7,0.95,easy
+rce_easy_4281,檢測到 代碼執行 特徵：OGNL,rce,0.95,0.95,easy
+rce_medium_2075,在 HTTP 響應中發現 表達式解析 相關的 OGNL 模式,rce,0.95,0.85,medium
+real_135_6227,術——GraphQL、REST API、WebSocket 以及 JSON Web Tokens (JWT)——進行詳盡的安全分析。研究重點在於剖析五種高風險漏洞：GraphQL 內省機制暴露 (In,jwt_attack,0.8,0.8,medium
+graphql_introspection_easy_6867,檢測到 API 偵查 特徵：introspection,graphql_introspection,0.6,0.95,easy
+ssrf_medium_8744,在 HTTP 響應中發現 雲端元數據 相關的 metadata 模式,ssrf,0.8,0.85,medium
+ssrf_easy_8417,檢測到 文件協議 特徵：127.0.0.1,ssrf,0.8,0.95,easy
+rce_medium_7803,在 HTTP 響應中發現 命令注入 相關的 exec( 模式,rce,0.95,0.85,medium
+ssrf_medium_2472,在 HTTP 響應中發現 內部服務 相關的 169.254.169.254 模式,ssrf,0.8,0.85,medium
+xss_easy_8887,檢測到 DOM 操作 特徵：javascript:,xss,0.75,0.95,easy
+jwt_attack_medium_4512,在 HTTP 響應中發現 令牌偽造 相關的 token 模式,jwt_attack,0.8,0.85,medium
+rce_hard_1142,通過分析請求參數與響應差異，識別出 表達式解析 漏洞，關鍵指標為 ${jndi:,rce,0.95,0.75,hard
+rce_medium_1397,在 HTTP 響應中發現 代碼執行 相關的 eval( 模式,rce,0.95,0.85,medium
+xss_hard_2852,通過分析請求參數與響應差異，識別出 事件處理器 漏洞，關鍵指標為 innerHTML,xss,0.75,0.75,hard
+real_5_4496,} } ## 5. Insecure Direct Object References (IDOR)：業務邏輯層的權限漏洞 IDOR 是一種邏輯漏洞，無法像 SQLi 或 XSS 那樣僅憑特定的,idor,0.7,0.8,medium
+graphql_introspection_medium_5132,在 HTTP 響應中發現 內省查詢 相關的 __schema 模式,graphql_introspection,0.6,0.85,medium
+sql_injection_medium_1414,在 HTTP 響應中發現 時間延遲 相關的 mysql_fetch 模式,sql_injection,0.85,0.85,medium
+rce_medium_3722,在 HTTP 響應中發現 表達式解析 相關的 exec( 模式,rce,0.95,0.85,medium
+ssrf_medium_5064,在 HTTP 響應中發現 雲端元數據 相關的 metadata 模式,ssrf,0.8,0.85,medium
+idor_medium_5097,在 HTTP 響應中發現 直接對象引用 相關的 user_id= 模式,idor,0.7,0.85,medium
+idor_medium_9368,在 HTTP 響應中發現 直接對象引用 相關的 account= 模式,idor,0.7,0.85,medium
+xss_medium_9806,在 HTTP 響應中發現 DOM 操作 相關的 <script> 模式,xss,0.75,0.85,medium
+rce_hard_5690,通過分析請求參數與響應差異，識別出 命令注入 漏洞，關鍵指標為 system(,rce,0.95,0.75,hard
+jwt_attack_medium_6133,在 HTTP 響應中發現 令牌偽造 相關的 JWT 模式,jwt_attack,0.8,0.85,medium
+ssrf_medium_9450,在 HTTP 響應中發現 內部服務 相關的 metadata 模式,ssrf,0.8,0.85,medium
+xss_medium_6489,在 HTTP 響應中發現 事件處理器 相關的 onerror= 模式,xss,0.75,0.85,medium
+idor_medium_2408,在 HTTP 響應中發現 權限繞過 相關的 unauthorized access 模式,idor,0.7,0.85,medium
+rce_easy_4086,檢測到 命令注入 特徵：OGNL,rce,0.95,0.95,easy
+rce_medium_5348,在 HTTP 響應中發現 命令注入 相關的 ${jndi: 模式,rce,0.95,0.85,medium
+graphql_introspection_medium_9409,在 HTTP 響應中發現 Schema 暴露 相關的 __schema 模式,graphql_introspection,0.6,0.85,medium
+sql_injection_medium_6531,在 HTTP 響應中發現 時間延遲 相關的 mysql_fetch 模式,sql_injection,0.85,0.85,medium
+rce_medium_9026,在 HTTP 響應中發現 代碼執行 相關的 OGNL 模式,rce,0.95,0.85,medium
+ssrf_hard_9960,通過分析請求參數與響應差異，識別出 內部服務 漏洞，關鍵指標為 127.0.0.1,ssrf,0.8,0.75,hard
+jwt_attack_easy_2702,"檢測到 算法混淆 特徵：""alg"":""none""",jwt_attack,0.8,0.95,easy
+graphql_introspection_medium_3054,在 HTTP 響應中發現 Schema 暴露 相關的 __type 模式,graphql_introspection,0.6,0.85,medium
+jwt_attack_medium_8696,在 HTTP 響應中發現 簽名繞過 相關的 bearer 模式,jwt_attack,0.8,0.85,medium
+idor_easy_8463,檢測到 橫向越權 特徵：object reference,idor,0.7,0.95,easy
+idor_easy_7276,檢測到 橫向越權 特徵：user_id=,idor,0.7,0.95,easy
+rce_easy_6406,檢測到 命令注入 特徵：SpEL,rce,0.95,0.95,easy
+idor_medium_4656,在 HTTP 響應中發現 橫向越權 相關的 user_id= 模式,idor,0.7,0.85,medium
+sql_injection_easy_5846,檢測到 UNION 查詢 特徵：UNION SELECT,sql_injection,0.85,0.95,easy
+rce_medium_3509,在 HTTP 響應中發現 代碼執行 相關的 SpEL 模式,rce,0.95,0.85,medium
+xss_medium_2465,在 HTTP 響應中發現 DOM 操作 相關的 innerHTML 模式,xss,0.75,0.85,medium
+jwt_attack_medium_2053,"在 HTTP 響應中發現 令牌偽造 相關的 ""alg"":""none"" 模式",jwt_attack,0.8,0.85,medium
+sql_injection_medium_8371,在 HTTP 響應中發現 數據庫錯誤訊息 相關的 SLEEP( 模式,sql_injection,0.85,0.85,medium
+xss_easy_3661,檢測到 事件處理器 特徵：onerror=,xss,0.75,0.95,easy
+sql_injection_easy_9805,檢測到 UNION 查詢 特徵：SLEEP(,sql_injection,0.85,0.95,easy
+xss_easy_3717,檢測到 腳本注入 特徵：document.cookie,xss,0.75,0.95,easy
+sql_injection_medium_8012,在 HTTP 響應中發現 UNION 查詢 相關的 SLEEP( 模式,sql_injection,0.85,0.85,medium
+real_96_9826,注入惡意 OGNL 表達式，從而調用 java.lang.Runtime.getRuntime().exec() 來執行任意系統命令 <sup>13</sup>。 ### 5.2 攻擊向量與觸發路徑分,rce,0.95,0.8,medium
+graphql_introspection_easy_2863,檢測到 Schema 暴露 特徵：__schema,graphql_introspection,0.6,0.95,easy
+ssrf_easy_9384,檢測到 雲端元數據 特徵：metadata,ssrf,0.8,0.95,easy
+xss_easy_9963,檢測到 腳本注入 特徵：innerHTML,xss,0.75,0.95,easy
+rce_medium_8800,在 HTTP 響應中發現 命令注入 相關的 ${jndi: 模式,rce,0.95,0.85,medium
+ssrf_hard_6310,通過分析請求參數與響應差異，識別出 雲端元數據 漏洞，關鍵指標為 metadata,ssrf,0.8,0.75,hard
+real_113_9327,"69.254/opc/v1/instance/"", ""required_headers"": {""Authorization"": ""Bearer Oracle""}, ""indicators"": } \]",jwt_attack,0.8,0.8,medium
+idor_easy_9831,檢測到 權限繞過 特徵：account=,idor,0.7,0.95,easy
+graphql_introspection_medium_7005,在 HTTP 響應中發現 API 偵查 相關的 __type 模式,graphql_introspection,0.6,0.85,medium
+jwt_attack_medium_1872,在 HTTP 響應中發現 算法混淆 相關的 token 模式,jwt_attack,0.8,0.85,medium
+sql_injection_medium_9324,在 HTTP 響應中發現 時間延遲 相關的 mysql_fetch 模式,sql_injection,0.85,0.85,medium
+sql_injection_easy_4629,檢測到 時間延遲 特徵：SLEEP(,sql_injection,0.85,0.95,easy
+sql_injection_medium_2117,在 HTTP 響應中發現 UNION 查詢 相關的 SLEEP( 模式,sql_injection,0.85,0.85,medium
+jwt_attack_easy_7624,檢測到 簽名繞過 特徵：bearer,jwt_attack,0.8,0.95,easy
+ssrf_easy_4192,檢測到 內部服務 特徵：127.0.0.1,ssrf,0.8,0.95,easy
+idor_easy_2105,檢測到 橫向越權 特徵：account=,idor,0.7,0.95,easy
+ssrf_easy_8700,檢測到 雲端元數據 特徵：file://,ssrf,0.8,0.95,easy
+rce_medium_5486,在 HTTP 響應中發現 代碼執行 相關的 eval( 模式,rce,0.95,0.85,medium
+jwt_attack_medium_3082,在 HTTP 響應中發現 令牌偽造 相關的 bearer 模式,jwt_attack,0.8,0.85,medium
+xss_hard_3407,通過分析請求參數與響應差異，識別出 DOM 操作 漏洞，關鍵指標為 innerHTML,xss,0.75,0.75,hard
+real_38_7373,p>。 本研究報告旨在針對現代 Web 架構中的四大核心技術——GraphQL、REST API、WebSocket 以及 JSON Web Tokens (JWT)——進行詳盡的安全分析。研究重點在,jwt_attack,0.8,0.8,medium
+rce_easy_8785,檢測到 代碼執行 特徵：system(,rce,0.95,0.95,easy
+rce_hard_9284,通過分析請求參數與響應差異，識別出 命令注入 漏洞，關鍵指標為 eval(,rce,0.95,0.75,hard
+ssrf_easy_2410,檢測到 內部服務 特徵：169.254.169.254,ssrf,0.8,0.95,easy
+ssrf_hard_7614,通過分析請求參數與響應差異，識別出 內部服務 漏洞，關鍵指標為 metadata,ssrf,0.8,0.75,hard
+rce_easy_7869,檢測到 代碼執行 特徵：OGNL,rce,0.95,0.95,easy
+idor_easy_1291,檢測到 直接對象引用 特徵：unauthorized access,idor,0.7,0.95,easy
+xss_easy_9863,檢測到 DOM 操作 特徵：javascript:,xss,0.75,0.95,easy
+graphql_introspection_medium_9608,在 HTTP 響應中發現 API 偵查 相關的 __schema 模式,graphql_introspection,0.6,0.85,medium
+sql_injection_easy_1008,檢測到 UNION 查詢 特徵：UNION SELECT,sql_injection,0.85,0.95,easy
+sql_injection_medium_2347,在 HTTP 響應中發現 UNION 查詢 相關的 error in your sql 模式,sql_injection,0.85,0.85,medium
+jwt_attack_easy_6943,檢測到 令牌偽造 特徵：eyJ,jwt_attack,0.8,0.95,easy
+sql_injection_medium_8017,在 HTTP 響應中發現 數據庫錯誤訊息 相關的 error in your sql 模式,sql_injection,0.85,0.85,medium
+jwt_attack_medium_5158,在 HTTP 響應中發現 簽名繞過 相關的 eyJ 模式,jwt_attack,0.8,0.85,medium
+graphql_introspection_hard_4927,通過分析請求參數與響應差異，識別出 Schema 暴露 漏洞，關鍵指標為 __type,graphql_introspection,0.6,0.75,hard
+xss_medium_4093,在 HTTP 響應中發現 DOM 操作 相關的 document.cookie 模式,xss,0.75,0.85,medium
+idor_easy_1788,檢測到 直接對象引用 特徵：account=,idor,0.7,0.95,easy
+rce_medium_2922,在 HTTP 響應中發現 代碼執行 相關的 OGNL 模式,rce,0.95,0.85,medium
+rce_easy_8455,檢測到 命令注入 特徵：eval(,rce,0.95,0.95,easy
+graphql_introspection_medium_9059,在 HTTP 響應中發現 API 偵查 相關的 GraphQL 模式,graphql_introspection,0.6,0.85,medium
+xss_medium_8612,在 HTTP 響應中發現 事件處理器 相關的 javascript: 模式,xss,0.75,0.85,medium
+ssrf_medium_6577,在 HTTP 響應中發現 文件協議 相關的 metadata 模式,ssrf,0.8,0.85,medium
+sql_injection_medium_5072,在 HTTP 響應中發現 時間延遲 相關的 error in your sql 模式,sql_injection,0.85,0.85,medium
+graphql_introspection_medium_2910,在 HTTP 響應中發現 API 偵查 相關的 GraphQL 模式,graphql_introspection,0.6,0.85,medium
+jwt_attack_hard_1929,"通過分析請求參數與響應差異，識別出 令牌偽造 漏洞，關鍵指標為 ""alg"":""none""",jwt_attack,0.8,0.75,hard
+jwt_attack_easy_8707,檢測到 簽名繞過 特徵：eyJ,jwt_attack,0.8,0.95,easy
+ssrf_easy_5526,檢測到 內部服務 特徵：metadata,ssrf,0.8,0.95,easy

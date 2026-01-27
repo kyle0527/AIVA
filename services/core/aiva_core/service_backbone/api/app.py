@@ -1,24 +1,68 @@
-"""AIVA Core API - 系統唯一入口點
+"""AIVA Core API - 程序與 AI 的溝通接口
 
 職責:
-1. FastAPI 應用程序主入口 - 系統的唯一啟動點
+1. FastAPI 應用程序 - 程序與 AI 溝通的接口（可插拔式設計）
 2. 持有 CoreServiceCoordinator 作為狀態管理器
-3. 提供 RESTful API 端點
-4. 啟動內部閉環和外部學習後台任務
+3. 持有 EnhancedDecisionAgent 作為認知核心（AI 決策引擎）
+4. 提供 RESTful API 端點（接收 main.py 轉發的請求）
+5. 啟動內部閉環和外部學習後台任務
+6. 監聽 MQ 結果並觸發 AI 決策
 
-架構層次:
-    app.py (FastAPI)          ← 唯一主入口
+架構層次（三層）:
+    main.py                         ← 整個程序對外接收信息
+        ↓ 轉發
+    app.py (本模塊)                  ← 程序與 AI 溝通接口
         ↓ 持有
-    CoreServiceCoordinator    ← 狀態管理器和服務工廠
-        ↓ 管理
-    各功能服務 (Decision, Planning, Execution...)
+    ┌─ CoreServiceCoordinator       ← 狀態管理器和服務工廠
+    │       ↓ 管理
+    │   各功能服務 (Decision, Planning, Execution...)
+    │
+    └─ EnhancedDecisionAgent        ← 認知核心（AI 決策引擎）
+            ↓ 整合
+        雙CLI架構 + embedded_knowledge
+
+完整掃描流程（雙路分離）:
+    0. 外部 → main.py → 轉發給 app.py
+    1. POST /scan 接收 main.py 轉發的請求
+    2. 雙路處理（分離執行）:
+       ├─ 路徑1: 整合模組存儲（實時記錄所有數據）
+       └─ 路徑2: EnhancedDecisionAgent AI 分析 → 下令執行
+    3. 發送 Phase0 命令到 MQ
+    4. 掃描 Workers 執行並返回結果到 MQ
+    5. process_phase0_results() 監聽結果
+    6. 調用 ScanResultProcessor (含 AI 決策)
+    7. AI 決定是否需要 Phase1 深度掃描
+    8. 發送 Phase1 命令或生成報告
+
+學習系統（異步獨立）:
+    - 任務結束後，從整合模組讀取完整數據（訓練+實際，統一格式）
+    - 本次記錄與歷史記錄比對和評估
+    - 學習目標：如何調整參數才能讓響應變好
+    - 參數優化：掃描參數、Payload 調整、檢測閾值等
+    - 不在任務執行期間介入（安全考慮，避免修改運行中的代碼）
+    - 離線優化模型和知識庫
+
+[2026-01-20] 明確學習目標：參數優化以改善響應品質
+[2026-01-20] 明確雙路分離架構：存儲與規劃獨立，學習系統異步比對評估歷史數據
+[2026-01-19] 新增 POST /scan 端點，整合認知核心 AI 決策
+
+[2026-01-20] 明確雙路分離架構：存儲與規劃獨立，學習系統異步運行
+[2026-01-19] 新增 POST /scan 端點，整合認知核心 AI 決策
 """
 
 import asyncio
 from collections import Counter
 from typing import Any
+from uuid import uuid4
 
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
+
+# 整合模块数据管理
+import sys
+from pathlib import Path
+sys.path.insert(0, str(Path(__file__).parents[6]))  # 添加项目根目录到路径
+from services.integration.simple_data_manager import get_data_manager
+from pydantic import BaseModel, HttpUrl
 from tenacity import (
     RetryError,
     retry,
@@ -45,6 +89,12 @@ from services.core.aiva_core.core_capabilities.ingestion.scan_module_interface i
 from services.core.aiva_core.core_capabilities.processing import ScanResultProcessor
 from services.core.aiva_core.service_backbone.state.session_state_manager import SessionStateManager
 
+# ✅ 引入認知核心 - AI 決策引擎
+from services.core.aiva_core.cognitive_core.decision.enhanced_decision_agent import (
+    EnhancedDecisionAgent,
+    DecisionContext,
+)
+
 # ✅ 引入 CoreServiceCoordinator 作為狀態管理器
 from services.core.aiva_core.service_backbone.coordination.core_service_coordinator import (
     AIVACoreServiceCoordinator,
@@ -59,6 +109,25 @@ from services.core.aiva_core.service_backbone.coordination.core_service_coordina
 #     ExternalLoopConnector,
 # )
 
+# ==================== 請求/響應模型 ====================
+
+class ScanRequest(BaseModel):
+    """掃描請求"""
+    target: str
+    scan_type: str = "comprehensive"  # comprehensive, quick, deep
+    max_depth: int = 3
+    timeout: int = 1800
+
+class ScanResponse(BaseModel):
+    """掃描響應"""
+    scan_id: str
+    status: str
+    message: str
+    target: str
+    estimated_time: int  # 預估時間（秒）
+
+# ==================== FastAPI 應用 ====================
+
 app = FastAPI(
     title="AIVA Core Engine - 智慧分析與協調中心",
     description="核心分析引擎：攻擊面分析、策略生成、任務協調 (系統唯一入口)",
@@ -68,6 +137,9 @@ logger = get_logger(__name__)
 
 # ✅ 全局協調器實例（狀態管理器，非主線程）
 coordinator: AIVACoreServiceCoordinator | None = None
+
+# ✅ 全局認知核心實例（AI 決策引擎）
+decision_agent: EnhancedDecisionAgent | None = None
 
 # ✅ 全局後台任務引用（防止垃圾回收）
 _background_tasks: list[asyncio.Task] = []
@@ -113,13 +185,14 @@ async def startup() -> None:
     
     啟動流程:
     1. 初始化 CoreServiceCoordinator（狀態管理器）
-    2. 啟動內部閉環更新（後台任務）
-    3. 啟動外部學習監聽器（後台任務）
-    4. 啟動掃描結果處理（後台任務）
-    5. 啟動功能結果處理（後台任務）
-    6. 啟動執行狀態監控（後台任務）
+    2. 初始化 EnhancedDecisionAgent（認知核心）
+    3. 啟動內部閉環更新（後台任務）
+    4. 啟動外部學習監聽器（後台任務）
+    5. 啟動掃描結果處理（後台任務）
+    6. 啟動功能結果處理（後台任務）
+    7. 啟動執行狀態監控（後台任務）
     """
-    global coordinator
+    global coordinator, decision_agent
     
     logger.info("🚀 [啟動] AIVA Core Engine starting up...")
     
@@ -127,6 +200,10 @@ async def startup() -> None:
     coordinator = AIVACoreServiceCoordinator()
     await coordinator.start()
     logger.info("✅ [啟動] CoreServiceCoordinator initialized (state manager mode)")
+    
+    # ✅ Step 2: 初始化認知核心（AI 決策引擎）
+    decision_agent = EnhancedDecisionAgent()
+    logger.info("✅ [啟動] EnhancedDecisionAgent initialized (AI decision engine)")
     
     # ⚠️ Step 2-3: 內部閉環和外部學習（暫時禁用 - 模組尚未實現）
     # _background_tasks.append(asyncio.create_task(
@@ -206,6 +283,108 @@ async def health_check() -> dict[str, Any]:
 async def get_scan_status(scan_id: str) -> dict[str, str]:
     """獲取掃描狀態"""
     return session_state_manager.get_session_status(scan_id)
+
+
+@app.post("/scan", response_model=ScanResponse)
+async def start_scan(request: ScanRequest) -> ScanResponse:
+    """啟動掃描 - 程序與 AI 的溝通接口
+    
+    數據流: main.py → app.py (本函數) → AI 內部
+    
+    流程:
+    1. 接收 main.py 轉發的目標網址
+    2. 傳給認知核心（EnhancedDecisionAgent）進行 AI 分析
+    3. 根據 AI 決策發送 Phase0 命令到 MQ
+    4. 返回 scan_id 供後續查詢
+    """
+    if not decision_agent:
+        raise HTTPException(status_code=503, detail="Decision agent not initialized")
+    
+    # 生成 scan_id
+    scan_id = f"scan_{uuid4().hex[:8]}"
+    trace_id = f"trace_{uuid4().hex[:8]}"
+    
+    logger.info(f"🎯 [app.py 接收 main.py 轉發] {scan_id} - Target: {request.target}")
+    
+    try:
+        # ============ 第一路：整合模組存儲 ============
+        data_manager = get_data_manager()
+        data_manager.save_task_data(
+            capability="phase0",  # 按能力分类
+            task_id=scan_id,
+            target=request.target,
+            request_data={
+                "scan_type": request.scan_type,
+                "max_depth": request.max_depth,
+                "timeout": request.timeout
+            },
+            metadata={
+                "trace_id": trace_id,
+                "source": "external_request"
+            }
+        )
+        logger.info(f"💾 [存儲] {scan_id} - 已保存到整合模組")
+        
+        # ============ 第二路：AI 分析決策 ============
+        # 構建決策上下文
+        context = DecisionContext()
+        context.target_info = {
+            "type": "web",
+            "value": request.target,
+            "id": scan_id,
+            "scan_type": request.scan_type,
+        }
+        context.available_tools = ["nmap", "nikto", "sqlmap", "xsser", "dirb"]
+        
+        # 🧠 調用認知核心進行初步分析
+        logger.info(f"🧠 [AI Analysis] {scan_id} - Analyzing target with cognitive core...")
+        initial_decision = await decision_agent.make_enhanced_decision(
+            context=context,
+            use_embedded_knowledge=True
+        )
+        
+        logger.info(
+            f"🧠 [AI Decision] {scan_id} - "
+            f"Action: {initial_decision.action}, "
+            f"Confidence: {initial_decision.confidence:.0%}"
+        )
+        
+        # 根據 AI 決策發送 Phase0 命令到 MQ
+        broker = await get_broker()
+        await scan_interface.send_phase0_command(
+            broker=broker,
+            scan_id=scan_id,
+            targets=[request.target],
+            trace_id=trace_id,
+            timeout_seconds=request.timeout,
+        )
+        
+        # 初始化會話狀態
+        session_state_manager.update_session_status(
+            session_id=scan_id,
+            status="phase0_started",
+            additional_data={
+                "target": request.target,
+                "scan_type": request.scan_type,
+                "ai_decision": initial_decision.action,
+                "confidence": initial_decision.confidence,
+                "reasoning": initial_decision.reasoning,
+            },
+        )
+        
+        logger.info(f"✅ [Scan Started] {scan_id} - Phase0 command sent to MQ")
+        
+        return ScanResponse(
+            scan_id=scan_id,
+            status="started",
+            message=f"Scan initiated with AI decision: {initial_decision.action}",
+            target=request.target,
+            estimated_time=600,  # Phase0 預估 10 分鐘
+        )
+        
+    except Exception as e:
+        logger.error(f"❌ [Scan Failed] {scan_id} - {e}", exc_info=True)
+        raise HTTPException(status_code=500, detail=f"Failed to start scan: {str(e)}")
 
 
 @retry(
