@@ -39,7 +39,7 @@ from aiva_common.schemas.dual_loop import (
 )
 
 # ✅ 修復 4: 使用統一錯誤處理
-from aiva_common.error_handling import (
+from aiva_common.core.error_handling import (
     AIVAError,
     ErrorType,
     ErrorSeverity,

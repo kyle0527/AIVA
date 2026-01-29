@@ -28,7 +28,7 @@ except ImportError:
 
 # 使用 5M Decision Engine 替代 BioNeuronRAGAgent
 from ...cognitive_core.neural.real_neural_core import RealDecisionEngine
-from aiva_common.error_handling import AIVAError, ErrorType, ErrorSeverity, create_error_context
+from aiva_common.core.error_handling import AIVAError, ErrorType, ErrorSeverity, create_error_context
 
 MODULE_NAME = "ai_analysis.analysis_engine"
 

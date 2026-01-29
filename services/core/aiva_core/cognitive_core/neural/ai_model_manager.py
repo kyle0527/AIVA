@@ -13,7 +13,7 @@ from typing import Any
 import numpy as np
 
 # 統一錯誤處理
-from aiva_common.error_handling import AIVAError, ErrorType, ErrorSeverity, create_error_context
+from aiva_common.core.error_handling import AIVAError, ErrorType, ErrorSeverity, create_error_context
 
 MODULE_NAME = "ai_model_manager"
 

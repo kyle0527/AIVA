@@ -29,7 +29,7 @@ from aiva_common.enums import (
     Severity,
     TaskStatus,
 )
-from aiva_common.error_handling import AIVAError, ErrorType, ErrorSeverity, create_error_context
+from aiva_common.core.error_handling import AIVAError, ErrorType, ErrorSeverity, create_error_context
 
 MODULE_NAME = "models"
 from aiva_common.schemas import (

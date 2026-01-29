@@ -85,8 +85,9 @@ class CommanderCoordinator:
         """延遲加載攻擊協調器"""
         if self._attack_coordinator is None:
             # 使用 CLI 執行架構：傳入 data_directory 和 dispatcher
-            from ..dispatcher import TaskDispatcher
-            dispatcher = TaskDispatcher(source_module="commander")
+            from ..dispatcher import PlanningDispatcher
+            dispatcher = PlanningDispatcher()
+            dispatcher.source_module = "commander"
 
             # 初始化依賴
             # UnifiedExecutor

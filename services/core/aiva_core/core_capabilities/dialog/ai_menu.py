@@ -39,7 +39,7 @@ except ImportError:
     console = None
 
 # 使用相對導入
-from .assistant import AIVADialogAssistant
+from .assistant import AIVACommandProcessor
 from ...cognitive_core.ai_capability_query import AICapabilityQuery
 from services.integration.capability.registry import registry as capability_registry
 
@@ -56,7 +56,7 @@ class AIVAIntelligentMenu:
     """
     
     def __init__(self):
-        self.ai_assistant = AIVADialogAssistant()
+        self.ai_assistant = AIVACommandProcessor()
         self.capability_query = AICapabilityQuery()
         self.running = True
         self.session_history: List[Dict[str, Any]] = []

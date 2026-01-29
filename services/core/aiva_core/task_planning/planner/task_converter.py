@@ -15,7 +15,7 @@ from typing import Any
 from uuid import uuid4
 
 from services.aiva_common.enums.common import TaskStatus
-from services.aiva_common.error_handling import (
+from aiva_common.core.error_handling import (
     AIVAError,
     ErrorSeverity,
     ErrorType,

@@ -21,7 +21,7 @@ from typing import Any, Dict, Optional, Union, Tuple
 from dataclasses import dataclass
 from datetime import datetime
 import shutil
-from aiva_common.error_handling import AIVAError, ErrorType, ErrorSeverity, create_error_context
+from aiva_common.core.error_handling import AIVAError, ErrorType, ErrorSeverity, create_error_context
 
 MODULE_NAME = "ai_engine.weight_manager"
 

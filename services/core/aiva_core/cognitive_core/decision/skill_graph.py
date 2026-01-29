@@ -19,7 +19,7 @@ from services.core.aiva_core.core_capabilities.capability_registry import (
 
 # 常量定義
 ERROR_MSG_GRAPH_NOT_INITIALIZED = "技能圖未初始化"
-from aiva_common.error_handling import (
+from aiva_common.core.error_handling import (
     AIVAError,
     ErrorSeverity,
     ErrorType,

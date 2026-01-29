@@ -20,7 +20,7 @@ from aio_pika.abc import (
 )
 from typing import Any, Dict  # 添加缺少的類型
 
-from aiva_common.error_handling import AIVAError, ErrorType, ErrorSeverity, create_error_context
+from aiva_common.core.error_handling import AIVAError, ErrorType, ErrorSeverity, create_error_context
 from services.aiva_common.config import get_settings
 from services.aiva_common.enums.modules import ModuleName
 from services.aiva_common.schemas import AivaMessage

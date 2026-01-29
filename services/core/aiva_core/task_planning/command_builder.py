@@ -29,7 +29,7 @@ from pathlib import Path
 from typing import Any  # 只需要 Any，不需要 Dict
 
 from aiva_common.utils.logging import get_logger
-from aiva_common.error_handling import AIVAError, ErrorType, ErrorSeverity
+from aiva_common.core.error_handling import AIVAError, ErrorType, ErrorSeverity
 
 # 統一使用 integration 的 MinimalManifest 和 generate_cli_command
 from services.integration.capability.minimal_manifest import (
