@@ -53,15 +53,24 @@ class AttackCoordinator:
         self,
         data_directory: Any = None,
         dispatcher: Any = None,
+        unified_executor: Any = None,
+        multilang_coordinator: Any = None,
+        internal_loop: Any = None,
     ):
         """初始化攻擊協調器
         
         Args:
             data_directory: 數據目錄路徑（用於存儲攻擊結果）
             dispatcher: 任務分發器（用於 CLI 命令執行）
+            unified_executor: 統一執行器
+            multilang_coordinator: 多語言協調器
+            internal_loop: 內部閉環連接器
         """
         self.data_directory = data_directory
         self.dispatcher = dispatcher
+        self.unified_executor = unified_executor
+        self.multilang_coordinator = multilang_coordinator
+        self.internal_loop = internal_loop
         
         # CLI 執行架構 - 透過 subprocess 調用外部模組
         self._cli_executor = self._init_cli_executor()
@@ -298,9 +307,11 @@ class AttackCoordinator:
         max_depth = context.get("max_depth", 3)
 
         try:
-            # 直接使用已在模組頂部導入的 MultiEngineCoordinator
-            coordinator = MultiEngineCoordinator()
-            await coordinator.initialize()
+            # 優先使用傳入的協調器，否則降級為本地實例化
+            coordinator = self.multilang_coordinator
+            if coordinator is None:
+                coordinator = MultiEngineCoordinator()
+                await coordinator.initialize()
 
             logger.info(f"   🎯 使用策略: {strategy}")
             logger.info(f"   🎯 目標數量: {len(targets)}")
@@ -538,6 +549,9 @@ class AttackCoordinator:
         logger.info(f"🧠 AI Commander querying self capabilities: '{query}'")
         
         try:
+            if not self.internal_loop:
+                return {"success": False, "error": "Internal Loop Connector not initialized"}
+
             # 使用 await 調用內部循環的異步方法
             rag_result = await self.internal_loop.query_capabilities_async(
                 query=query,
@@ -594,6 +608,9 @@ class AttackCoordinator:
         """
         logger.info(f"🚀 Unified Attack: {target} - {objective}")
         
+        if not self.unified_executor:
+            return {"success": False, "error": "Unified Executor not initialized"}
+
         try:
             result = await self.unified_executor.execute(
                 target=target,
@@ -643,6 +660,9 @@ class AttackCoordinator:
             logger.info(f"🎯 AI 決策: {ai_decision['selected_tool']} "
                        f"(信心度 {ai_decision['confidence']:.2f})")
             
+            if not self.unified_executor:
+                return {"status": "error", "error": "Unified Executor not initialized"}
+
             result = await self.unified_executor.execute(
                 target=scan_context.target,
                 objective=scan_context.intent,

@@ -561,31 +561,12 @@ class InternalLoopConnector:
         
         # 步驟 1: 如果強制刷新，觸發外部管線進行代碼分析
         if force_refresh:
-            try:
-                from ..internal_exploration.python_tools.aiva_exploration_pipeline import ExplorationPipeline
-                logger.info("⚙️ Force refresh requested. Triggering Exploration Pipeline...")
-                logger.info(f"   Target scope: {target_scope}")
-                logger.info(f"   Target module: {target_module}")
-                
-                # 在異步環境中運行同步的 Pipeline（使用新的 target_module 參數）
-                import asyncio
-                pipeline = ExplorationPipeline(
-                    target_path=target_scope,
-                    target_module=target_module
-                )
-                success = await asyncio.to_thread(pipeline.run)
-                
-                if success:
-                    logger.info("✅ Exploration Pipeline completed successfully.")
-                    logger.info(f"   Results saved to: data/internal_exploration/")
-                else:
-                    logger.error("❌ Exploration Pipeline failed. Using existing data.")
-            except ImportError:
-                logger.warning("⚠️ ExplorationPipeline module not found. Skipping analysis.")
-            except Exception as e:
-                logger.error(f"❌ Pipeline execution error: {e}")
-                import traceback
-                traceback.print_exc()
+            logger.info("⚙️ Force refresh requested.")
+            logger.warning("⚠️ Automatic analysis pipeline is currently disabled in favor of manual execution of aiva_flow_analyzer and aiva_internal_classifier due to architectural changes.")
+            # Note: Previously used aiva_exploration_pipeline, which is now removed.
+            # Analysis should be performed by running:
+            # 1. python_tools/aiva_flow_analyzer.py
+            # 2. aiva_internal_classifier.py
         
         # 步驟 2: 從統一數據源讀取並轉換 Flow 能力
         capabilities = []
