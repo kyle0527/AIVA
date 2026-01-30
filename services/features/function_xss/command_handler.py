@@ -6,7 +6,7 @@ XSS 功能模組命令處理器
 
 Usage:
     from services.features.function_xss.command_handler import XSSCommandHandler
-    from services.aiva_common.schemas.commands import AICommand, CommandType
+    from aiva_common.schemas.commands import AICommand, CommandType
     
     # 直接創建處理器
     xss_handler = XSSCommandHandler()
@@ -28,15 +28,15 @@ from typing import Any, Dict, Optional
 from datetime import datetime
 
 # aiva_common 標準導入
-from services.aiva_common.command_center import CommandHandler
-from services.aiva_common.schemas.commands import (
+from aiva_common.core.command_center import CommandHandler
+from aiva_common.schemas.commands import (
     AICommand,
     AICommandResult,
     CommandStatus,
     CommandContext,
     CommandType,
 )
-from services.aiva_common.utils import get_logger
+from aiva_common.utils import get_logger
 
 # 現有 XSS 功能導入
 try:

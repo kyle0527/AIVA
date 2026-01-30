@@ -31,10 +31,10 @@ except ImportError as e:
 from services.features.function_xss.traditional_detector import TraditionalXssDetector
 from services.features.function_xss.payload_generator import XssPayloadGenerator
 from services.features.function_sqli.detector.sqli_detector import SqliDetector
-from services.aiva_common.schemas.tasks import FunctionTaskPayload, FunctionTaskTarget
-from services.aiva_common.schemas.findings import FindingPayload, Vulnerability, FindingEvidence, FindingTarget
-from services.aiva_common.enums import VulnerabilityType, Severity, Confidence
-from services.aiva_common.utils import new_id
+from aiva_common.schemas.tasks import FunctionTaskPayload, FunctionTaskTarget
+from aiva_common.schemas.findings import FindingPayload, Vulnerability, FindingEvidence, FindingTarget
+from aiva_common.enums import VulnerabilityType, Severity, Confidence
+from aiva_common.utils import new_id
 
 logger = logging.getLogger(__name__)
 
@@ -53,15 +53,24 @@ class AttackCoordinator:
         self,
         data_directory: Any = None,
         dispatcher: Any = None,
+        unified_executor: Any = None,
+        multilang_coordinator: Any = None,
+        internal_loop: Any = None,
     ):
         """初始化攻擊協調器
         
         Args:
             data_directory: 數據目錄路徑（用於存儲攻擊結果）
             dispatcher: 任務分發器（用於 CLI 命令執行）
+            unified_executor: 統一執行器
+            multilang_coordinator: 多語言協調器
+            internal_loop: 內部閉環連接器
         """
         self.data_directory = data_directory
         self.dispatcher = dispatcher
+        self.unified_executor = unified_executor
+        self.multilang_coordinator = multilang_coordinator
+        self.internal_loop = internal_loop
         
         # CLI 執行架構 - 透過 subprocess 調用外部模組
         self._cli_executor = self._init_cli_executor()

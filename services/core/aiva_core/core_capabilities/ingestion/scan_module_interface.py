@@ -2,15 +2,15 @@ import json
 from typing import Any
 
 from pydantic import HttpUrl
-from services.aiva_common.enums import Topic
-from services.aiva_common.mq import AbstractBroker
-from services.aiva_common.schemas import (
+from aiva_common.enums import Topic
+from aiva_common.mq import AbstractBroker
+from aiva_common.schemas import (
     ScanCompletedPayload,
     Phase0StartPayload,
     Phase0CompletedPayload,
     Phase1StartPayload,
 )
-from services.aiva_common.utils import get_logger
+from aiva_common.utils import get_logger
 
 logger = get_logger(__name__)
 
@@ -309,3 +309,4 @@ class ScanModuleInterface:
         )
 
         return processed
+

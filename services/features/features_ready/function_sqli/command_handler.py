@@ -6,7 +6,7 @@ SQLi 功能模組命令處理器
 
 Usage:
     from services.features.function_sqli.command_handler import SQLiCommandHandler
-    from services.aiva_common.schemas.commands import AICommand, CommandType
+    from aiva_common.schemas.commands import AICommand, CommandType
     
     # 直接創建處理器
     sqli_handler = SQLiCommandHandler()
@@ -29,15 +29,15 @@ from datetime import datetime, timezone
 UTC = timezone.utc
 
 # aiva_common 標準導入
-from services.aiva_common.command_center import CommandHandler
-from services.aiva_common.schemas.commands import (
+from aiva_common.command_center import CommandHandler
+from aiva_common.schemas.commands import (
     AICommand,
     AICommandResult,
     CommandStatus,
     CommandContext,
     CommandType,
 )
-from services.aiva_common.utils import get_logger
+from aiva_common.utils import get_logger
 
 # 現有 SQLi 功能導入 - 使用真實實現
 from .integration_tools.sql_tools import SQLInjectionManager, SQLTarget
@@ -195,3 +195,4 @@ class SQLiCommandHandler(CommandHandler):
                 error_code="SQLI_EXECUTION_ERROR",
                 error_details={"exception_type": type(e).__name__, "message": str(e)}
             )
+

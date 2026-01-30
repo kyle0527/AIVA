@@ -21,8 +21,8 @@
 """
 
 from typing import Any, Dict, List, Optional
-from services.aiva_common.schemas.findings import FindingPayload
-from services.aiva_common.utils import get_logger
+from aiva_common.schemas.findings import FindingPayload
+from aiva_common.utils import get_logger
 
 logger = get_logger(__name__)
 
@@ -327,3 +327,4 @@ async def record_experience(
     """
     helper = get_integration_helper()
     return await helper.record_experience(task_id, action, outcome, metadata)
+

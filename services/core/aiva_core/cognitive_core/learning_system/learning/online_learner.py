@@ -20,7 +20,7 @@ import torch
 import torch.nn as nn
 import torch.optim as optim
 
-from services.aiva_common.utils import get_logger
+from aiva_common.utils import get_logger
 
 logger = get_logger(__name__)
 
@@ -239,3 +239,4 @@ def create_online_learner(
         learning_rate=learning_rate,
         device=device
     )
+

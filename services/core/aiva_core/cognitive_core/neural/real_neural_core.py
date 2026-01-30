@@ -23,7 +23,7 @@ import time
 # aiva_common 強制依賴 - 必須正確安裝
 from aiva_common.enums.common import Severity, Confidence
 from aiva_common.enums.security import VulnerabilityType
-from aiva_common.error_handling import AIVAError, ErrorType, ErrorSeverity, create_error_context
+from aiva_common.core.error_handling import AIVAError, ErrorType, ErrorSeverity, create_error_context
 
 MODULE_NAME = "real_neural_core"
 

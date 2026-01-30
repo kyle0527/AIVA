@@ -23,8 +23,8 @@ from pathlib import Path
 from typing import Any
 from uuid import uuid4
 
-from services.aiva_common.enums import VulnerabilityType
-from services.aiva_common.schemas import (
+from aiva_common.enums import VulnerabilityType
+from aiva_common.schemas import (
     AttackPlan,
     AttackStep,
     StandardScenario,
@@ -971,3 +971,4 @@ class ScenarioManager:
         )
 
         return stats
+

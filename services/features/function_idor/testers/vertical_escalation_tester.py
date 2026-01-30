@@ -14,7 +14,7 @@ from enum import Enum
 import httpx
 from pydantic import HttpUrl
 
-from services.aiva_common.schemas import FunctionTaskPayload
+from aiva_common.schemas import FunctionTaskPayload
 
 
 class PrivilegeLevel(Enum):

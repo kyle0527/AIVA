@@ -32,8 +32,8 @@ from rich.progress import Progress, SpinnerColumn, TextColumn
 from rich.table import Table
 from rich.text import Text
 
-from services.aiva_common.schemas import APIResponse
-from services.aiva_common.utils import get_logger
+from aiva_common.schemas import APIResponse
+from aiva_common.utils import get_logger
 
 # 嘗試導入能力系統基類
 try:
@@ -1071,5 +1071,6 @@ async def register_capability():
     except Exception as e:
         logger.error(f"註冊網絡攻擊能力時發生錯誤: {e}")
         return False
+
 
 

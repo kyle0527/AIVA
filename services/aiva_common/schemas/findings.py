@@ -57,7 +57,7 @@ class Vulnerability(BaseModel):
 
 # Target 模型已移除重複定義，統一使用 services.aiva_common.schemas.security.findings.Target
 # 原 findings.py 中的 Target 於 2024-12-19 移除，避免與 security/findings.py 衝突
-# 請使用: from services.aiva_common.schemas.security.findings import Target
+# 請使用: from aiva_common.schemas.security.findings import Target
 
 # 保持向後相容的別名
 from .security.findings import Target
@@ -282,3 +282,4 @@ class VulnerabilityScorecard(BaseModel):
     )
     updated_at: datetime | None = Field(default=None, description="最後更新時間")
     evaluator_version: str | None = Field(default=None, description="評估器版本")
+

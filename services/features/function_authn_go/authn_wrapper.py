@@ -23,7 +23,7 @@ from datetime import datetime
 
 # 日誌
 try:
-    from services.aiva_common.utils import get_logger
+    from aiva_common.utils import get_logger
     logger = get_logger(__name__)
 except ImportError:
     import logging
@@ -286,3 +286,4 @@ if __name__ == "__main__":
     else:
         print("\n❌ Go 引擎不可用，請先編譯")
         print("參考 BUILD_GUIDE.md 獲取編譯指引")
+

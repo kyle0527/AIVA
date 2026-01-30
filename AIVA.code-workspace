@@ -3,6 +3,9 @@
 		{
 			"path": ".",
 			"name": "AIVA"
+		},
+		{
+			"path": "../../../Users/User/Downloads/AIVA-main"
 		}
 	],
 	"settings": {

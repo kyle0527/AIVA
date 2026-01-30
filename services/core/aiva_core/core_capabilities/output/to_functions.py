@@ -1,6 +1,6 @@
-from services.aiva_common.enums.modules import ModuleName, Topic
-from services.aiva_common.schemas import AivaMessage, FunctionTaskPayload, MessageHeader
-from services.aiva_common.utils import new_id
+from aiva_common.enums.modules import ModuleName, Topic
+from aiva_common.schemas import AivaMessage, FunctionTaskPayload, MessageHeader
+from aiva_common.utils import new_id
 
 
 def to_function_message(
@@ -20,3 +20,4 @@ def to_function_message(
         topic=topic,
         payload=payload.model_dump(),
     )
+

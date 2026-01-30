@@ -8,8 +8,8 @@ from enum import Enum
 from typing import Optional, Dict, Any
 from pathlib import Path
 
-from services.aiva_common.enums import VulnerabilityType, Severity, Confidence
-from services.aiva_common.utils.logging import get_logger
+from aiva_common.enums import VulnerabilityType, Severity, Confidence
+from aiva_common.utils.logging import get_logger
 
 logger = get_logger(__name__)
 
@@ -257,3 +257,4 @@ class DetectionResult:
     suspicious_regions: list = field(default_factory=list)
     
     timestamp: datetime = field(default_factory=datetime.now)
+

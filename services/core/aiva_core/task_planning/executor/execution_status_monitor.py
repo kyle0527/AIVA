@@ -4,7 +4,7 @@ from datetime import UTC, datetime, timedelta
 from enum import Enum
 from typing import Any, Literal
 
-from services.aiva_common.utils import get_logger
+from aiva_common.utils import get_logger
 
 logger = get_logger(__name__)
 
@@ -482,3 +482,4 @@ class ExecutionStatusMonitor:
 
             except Exception as e:
                 logger.error(f"Error in monitoring loop: {e}")
+

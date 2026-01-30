@@ -180,7 +180,7 @@ class AIService:
     async def run_interactive_mode(self):
         """交互式模式 - AI 對話交互"""
         from services.core.aiva_core.core_capabilities.dialog.assistant import AIVADialogAssistant
-        from services.aiva_common.command_center import get_command_center
+        from aiva_common.command_center import get_command_center
         
         logger.info("💬 AIVA AI 交互模式啟動")
         logger.info("[AI] 正在初始化 AI 對話助理...")
@@ -223,7 +223,7 @@ class AIService:
                 if response.get('executable') and response.get('task_plan'):
                     logger.info("🚀 AI 開始執行任務...")
                     try:
-                        from services.aiva_common.models import AICommand
+                        from aiva_common.models import AICommand
                         # 將任務計劃轉換為 CommandCenter 可執行的指令
                         command = AICommand(
                             action=response['task_plan'].get('action', 'execute'),
@@ -367,3 +367,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+

@@ -10,7 +10,7 @@ import logging
 from typing import Any
 from uuid import uuid4
 
-from services.aiva_common.schemas import (
+from aiva_common.schemas import (
     AivaMessage,
     AttackPlan,
     AttackStep,
@@ -19,7 +19,7 @@ from services.aiva_common.schemas import (
     MessageHeader,
     ScanStartPayload,
 )
-from services.aiva_common.enums.modules import ModuleName, Topic
+from aiva_common.enums.modules import ModuleName, Topic
 
 from .message_broker import MessageBroker
 
@@ -509,3 +509,4 @@ class TaskDispatcher:
 
             finally:
                 self.unregister_callback(task_id)
+

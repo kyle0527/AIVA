@@ -17,8 +17,8 @@ from datetime import datetime
 from pathlib import Path
 from typing import Dict, List, Optional, Any, Tuple
 
-from services.aiva_common.utils.logging import get_logger
-from services.aiva_common.utils.ids import new_id
+from aiva_common.utils.logging import get_logger
+from aiva_common.utils.ids import new_id
 
 from .hackingtool_config import (
     HACKINGTOOL_SQL_CONFIGS, HackingToolSQLConfig,

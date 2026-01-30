@@ -6,7 +6,7 @@ Training Module - 訓練和場景管理模組
 注意: TrainingOrchestrator 已移除，訓練功能整合至 ContinuousLearningEngine
 """
 
-from services.aiva_common.schemas import Scenario, ScenarioResult
+from aiva_common.schemas import Scenario, ScenarioResult
 
 from .scenario_manager import ScenarioManager
 
@@ -15,3 +15,4 @@ __all__ = [
     "ScenarioManager",
     "ScenarioResult",
 ]
+

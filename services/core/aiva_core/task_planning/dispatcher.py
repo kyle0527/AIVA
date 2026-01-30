@@ -314,23 +314,33 @@ class PlanningDispatcher:
         timeout: int = 120,
         **kwargs
     ) -> subprocess.CompletedProcess:
-        """同步調用 internal_exploration
+        """同步調用 internal_exploration（新架構）
         
         Args:
-            tool: 工具名稱
+            tool: 工具名稱 (list/execute/analyze)
             timeout: 超時秒數
-            **kwargs: 工具參數
+            **kwargs: 工具參數 (flow_id, dry_run)
             
         Returns:
             subprocess.CompletedProcess 包含 stdout/stderr/returncode
         """
         cmd = [
             "python", "-m",
-            "services.core.aiva_core.internal_exploration.python_tools.aiva_exploration_pipeline",
-            "--tool", tool,
-            "--source", self.source_module,
-            "--params", json.dumps(kwargs)
+            "services.core.aiva_core.internal_exploration.aiva_internal_executor"
         ]
+        
+        # 支援新參數格式
+        if tool == "list":
+            cmd.append("--list")
+        elif tool == "execute":
+            if "flow_id" in kwargs:
+                cmd.extend(["--flow", str(kwargs["flow_id"])])
+            if kwargs.get("dry_run"):
+                cmd.append("--dry-run")
+        elif tool == "analyze":
+            # 保留向後兼容
+            pass
+            
         return subprocess.run(
             cmd, 
             capture_output=True, 

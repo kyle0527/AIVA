@@ -84,9 +84,9 @@ class VulnerabilityCategory(Enum):
 
 # VulnerabilityFinding 已移除重複定義，統一使用 aiva_common.schemas.vulnerability_finding
 # 原 bug_bounty_reporting.py 中的 VulnerabilityFinding 於 2024-12-19 移除
-# 請使用: from services.aiva_common.schemas.vulnerability_finding import VulnerabilityFinding
+# 請使用: from aiva_common.schemas.vulnerability_finding import VulnerabilityFinding
 
-from services.aiva_common.schemas.vulnerability_finding import VulnerabilityFinding
+from aiva_common.schemas.vulnerability_finding import VulnerabilityFinding
 
 
 @dataclass 

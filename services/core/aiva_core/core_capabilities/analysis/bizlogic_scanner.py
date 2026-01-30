@@ -23,7 +23,7 @@ import json
 
 logger = logging.getLogger(__name__)
 
-from services.aiva_common.schemas.commands import AICommand, CommandType, CommandPriority
+from aiva_common.schemas.commands import AICommand, CommandType, CommandPriority
 from services.features.function_bizlogic.command_handler import BizLogicCommandHandler
 
 
@@ -369,3 +369,4 @@ async def main():
 if __name__ == "__main__":
     exit_code = asyncio.run(main())
     sys.exit(exit_code)
+

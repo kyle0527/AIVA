@@ -615,7 +615,7 @@ class ExperienceManager:
             >>> for sample in samples:
             >>>     self.experience_manager.add_sample(sample)
         """
-        from services.aiva_common.schemas import ExperienceSample
+        from aiva_common.schemas import ExperienceSample
         
         # 檢查類型
         if not isinstance(sample, ExperienceSample):
@@ -1012,3 +1012,4 @@ if __name__ == "__main__":
     # 測試資料集建立
     dataset = manager.create_dataset(name="test_dataset", min_reward=0.6, max_samples=5)
     print(f"\n資料集樣本數: {dataset['actual_samples']}")
+

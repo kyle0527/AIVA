@@ -31,9 +31,9 @@ import shutil
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 
-from services.aiva_common.utils import get_logger, new_id
-from services.aiva_common.enums import Severity, Confidence, VulnerabilityType
-from services.aiva_common.schemas import (
+from aiva_common.utils import get_logger, new_id
+from aiva_common.enums import Severity, Confidence, VulnerabilityType
+from aiva_common.schemas import (
     FindingPayload, 
     Vulnerability, 
     FindingEvidence,
@@ -438,3 +438,4 @@ if __name__ == "__main__":
     print("\n提示：要使用 Go 引擎，請先編譯：")
     print("  cd services/features/function_authn_go")
     print("  go build -o bin/authn-worker cmd/worker/main.go")
+

@@ -14,7 +14,7 @@ import re
 import httpx
 from pydantic import HttpUrl
 
-from services.aiva_common.schemas import FunctionTaskPayload
+from aiva_common.schemas import FunctionTaskPayload
 
 
 @dataclass
@@ -157,3 +157,4 @@ class CrossUserTester:
             resource_id=resource_id,
             method=task.target.method or "GET"
         )
+

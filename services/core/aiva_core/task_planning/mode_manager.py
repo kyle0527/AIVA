@@ -20,7 +20,7 @@ import threading
 from pathlib import Path
 from typing import Literal
 
-from services.aiva_common.utils import get_logger
+from aiva_common.utils import get_logger
 from .executor.execution_status_monitor import EnvironmentType
 
 logger = get_logger(__name__)
@@ -192,3 +192,4 @@ def get_mode_manager(config_path: Path | None = None) -> ModeManager:
                 _mode_manager_instance = ModeManager(config_path)
     
     return _mode_manager_instance
+

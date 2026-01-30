@@ -12,7 +12,7 @@ from datetime import datetime, timezone
 from uuid import uuid4
 from enum import Enum
 
-from services.aiva_common.schemas import (
+from aiva_common.schemas import (
     CommandType,
     Phase0StartPayload,
     Phase1StartPayload,
@@ -20,7 +20,7 @@ from services.aiva_common.schemas import (
     Authentication,
     RateLimit,
 )
-from services.aiva_common.utils import get_logger
+from aiva_common.utils import get_logger
 
 logger = get_logger(__name__)
 
@@ -407,3 +407,4 @@ class ExecutionPlanner:
             missing.append("未发现表单")
         
         return ", ".join(missing) if missing else "信息完整"
+

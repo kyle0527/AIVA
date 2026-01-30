@@ -17,7 +17,7 @@ from collections import deque
 from datetime import datetime
 
 # 使用 aiva_common 的統一枚舉
-from services.aiva_common.enums import RiskLevel
+from aiva_common.enums import RiskLevel
 
 logger = logging.getLogger(__name__)
 
@@ -411,3 +411,4 @@ __all__ = [
     "get_adaptive_weight_manager",
     "get_dynamic_weights"
 ]
+

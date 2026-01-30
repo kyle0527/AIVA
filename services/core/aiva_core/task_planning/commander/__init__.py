@@ -85,11 +85,31 @@ class CommanderCoordinator:
         """延遲加載攻擊協調器"""
         if self._attack_coordinator is None:
             # 使用 CLI 執行架構：傳入 data_directory 和 dispatcher
-            from ..dispatcher import TaskDispatcher
-            dispatcher = TaskDispatcher(source_module="commander")
+            from ..dispatcher import PlanningDispatcher
+            dispatcher = PlanningDispatcher()
+            dispatcher.source_module = "commander"
+            
+            # 初始化所有依賴
+            from services.core.aiva_core.task_planning.unified_executor import UnifiedAttackExecutor
+            unified_executor = UnifiedAttackExecutor()
+            
+            from services.core.aiva_core.cognitive_core.internal_loop_connector import InternalLoopConnector
+            internal_loop = InternalLoopConnector()
+            
+            # MultiEngineCoordinator 可能不存在，需要容錯
+            try:
+                from services.scan.coordinators.multi_engine_coordinator import MultiEngineCoordinator
+                multilang_coordinator = MultiEngineCoordinator()
+            except ImportError:
+                logger.warning("MultiEngineCoordinator not found, passing None")
+                multilang_coordinator = None
+            
             self._attack_coordinator = AttackCoordinator(
                 data_directory=self.data_directory / "attacks",
-                dispatcher=dispatcher
+                dispatcher=dispatcher,
+                unified_executor=unified_executor,
+                multilang_coordinator=multilang_coordinator,
+                internal_loop=internal_loop
             )
         return self._attack_coordinator
     

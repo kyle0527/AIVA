@@ -159,7 +159,7 @@ class CapabilityRegistry:
                 UnifiedVectorStore,
             )
             from services.integration.capability.models import CapabilityRecord, CapabilityType, CapabilityStatus
-            from services.aiva_common.enums.modules import ProgrammingLanguage
+            from aiva_common.enums.modules import ProgrammingLanguage
             from datetime import datetime
 
             # 初始化 vector_store 和 knowledge_base
@@ -528,3 +528,4 @@ if __name__ == "__main__":
         print("\n✅ Test completed!")
 
     asyncio.run(test_registry())
+

@@ -15,9 +15,9 @@ from dataclasses import dataclass, asdict
 from datetime import datetime
 from typing import Dict, List, Optional, Any
 
-from services.aiva_common.schemas import APIResponse
-from services.aiva_common.enums import Severity
-from services.aiva_common.schemas.tasks import FunctionTaskPayload
+from aiva_common.schemas import APIResponse
+from aiva_common.enums import Severity
+from aiva_common.schemas.tasks import FunctionTaskPayload
 
 # 導入掃描器
 from ..race_condition_scanner import RaceConditionScanner
@@ -391,3 +391,4 @@ class BizLogicManager:
         except Exception as e:
             self.logger.error(f"工作流程測試失敗: {e}")
             return []
+

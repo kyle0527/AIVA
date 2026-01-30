@@ -15,16 +15,16 @@ import asyncio
 import time
 from typing import Any, Optional
 
-from services.aiva_common.cross_language.core import CrossLanguageService, CrossLanguageConfig
-from services.aiva_common.cross_language.adapters import (
+from aiva_common.cross_language.core import CrossLanguageService, CrossLanguageConfig
+from aiva_common.cross_language.adapters import (
     RustAdapter, RustConfig, create_rust_adapter,
     GoAdapter, GoConfig, create_go_adapter
 )
-from services.aiva_common.enums.modules import ProgrammingLanguage
-from services.aiva_common.utils import get_logger
+from aiva_common.enums.modules import ProgrammingLanguage
+from aiva_common.utils import get_logger
 
 # 使用标准日志工具
-from services.aiva_common.utils.logging import get_logger
+from aiva_common.utils.logging import get_logger
 
 logger = get_logger("multilang_coordinator")
 
@@ -440,8 +440,8 @@ class MultiLanguageAICoordinator:
             # 根據任務類型選擇服務
             if "data_analysis" in task.lower() or "analyze" in task.lower():
                 # 使用數據分析服務
-                from services.aiva_common.protocols.aiva_services_pb2 import DataAnalysisRequest  # type: ignore[attr-defined]
-                from services.aiva_common.protocols.aiva_services_pb2_grpc import DataAnalyzerStub  # type: ignore[attr-defined]
+                from aiva_common.protocols.aiva_services_pb2 import DataAnalysisRequest  # type: ignore[attr-defined]
+                from aiva_common.protocols.aiva_services_pb2_grpc import DataAnalyzerStub  # type: ignore[attr-defined]
                 
                 request = DataAnalysisRequest(
                     analysis_id=kwargs.get("analysis_id", f"go_{int(time.time())}"),
@@ -463,8 +463,8 @@ class MultiLanguageAICoordinator:
                 
             elif "code" in task.lower():
                 # 使用代碼生成服務
-                from services.aiva_common.protocols.aiva_services_pb2 import CodeGenerationRequest  # type: ignore[attr-defined]
-                from services.aiva_common.protocols.aiva_services_pb2_grpc import CodeGeneratorStub  # type: ignore[attr-defined]
+                from aiva_common.protocols.aiva_services_pb2 import CodeGenerationRequest  # type: ignore[attr-defined]
+                from aiva_common.protocols.aiva_services_pb2_grpc import CodeGeneratorStub  # type: ignore[attr-defined]
                 
                 request = CodeGenerationRequest(
                     generation_id=kwargs.get("generation_id", f"go_{int(time.time())}"),
@@ -487,8 +487,8 @@ class MultiLanguageAICoordinator:
                 
             else:
                 # 默認 AI 推理
-                from services.aiva_common.protocols.aiva_services_pb2 import ReasoningRequest  # type: ignore[attr-defined]
-                from services.aiva_common.protocols.aiva_services_pb2_grpc import AIServiceStub  # type: ignore[attr-defined]
+                from aiva_common.protocols.aiva_services_pb2 import ReasoningRequest  # type: ignore[attr-defined]
+                from aiva_common.protocols.aiva_services_pb2_grpc import AIServiceStub  # type: ignore[attr-defined]
                 
                 request = ReasoningRequest(
                     query=kwargs.get("query", task),
@@ -563,8 +563,8 @@ class MultiLanguageAICoordinator:
             # 根據任務類型選擇服務（TypeScript 主要用於 Web 相關任務）
             if "web" in task.lower() or "http" in task.lower():
                 # 使用 Web 服務
-                from services.aiva_common.protocols.aiva_services_pb2 import ScanRequest, ScanConfig  # type: ignore[attr-defined]
-                from services.aiva_common.protocols.aiva_services_pb2_grpc import WebServiceStub  # type: ignore[attr-defined]
+                from aiva_common.protocols.aiva_services_pb2 import ScanRequest, ScanConfig  # type: ignore[attr-defined]
+                from aiva_common.protocols.aiva_services_pb2_grpc import WebServiceStub  # type: ignore[attr-defined]
                 
                 config = ScanConfig(
                     max_depth=kwargs.get("max_depth", 5),
@@ -600,8 +600,8 @@ class MultiLanguageAICoordinator:
                     
             else:
                 # 默認使用 AI 服務進行命令分析
-                from services.aiva_common.protocols.aiva_services_pb2 import CommandAnalysisRequest  # type: ignore[attr-defined]
-                from services.aiva_common.protocols.aiva_services_pb2_grpc import AIServiceStub  # type: ignore[attr-defined]
+                from aiva_common.protocols.aiva_services_pb2 import CommandAnalysisRequest  # type: ignore[attr-defined]
+                from aiva_common.protocols.aiva_services_pb2_grpc import AIServiceStub  # type: ignore[attr-defined]
                 
                 request = CommandAnalysisRequest(
                     command=task,
@@ -658,3 +658,4 @@ class MultiLanguageAICoordinator:
                 f"TypeScript gRPC 服務調用失敗: {e}。"
                 "請確認 TypeScript gRPC 服務已啟動並正確配置端點。"
             ) from e
+

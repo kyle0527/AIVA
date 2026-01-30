@@ -8,7 +8,7 @@ OWASP A05:2021 - Security Misconfiguration
 
 import re
 import json
-from typing import List, Optional
+from typing import List, Optional, Dict, Any
 from dataclasses import dataclass
 from urllib.parse import urlparse, parse_qs
 

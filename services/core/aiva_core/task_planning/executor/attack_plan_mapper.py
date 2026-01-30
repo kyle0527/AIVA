@@ -21,8 +21,8 @@ from typing import Any
 from urllib.parse import urlparse
 import uuid
 
-from services.aiva_common.schemas import AivaMessage
-from services.aiva_common.schemas.tasks import (
+from aiva_common.schemas import AivaMessage
+from aiva_common.schemas.tasks import (
     FunctionTaskContext,
     FunctionTaskPayload,
     FunctionTaskTarget,
@@ -439,3 +439,4 @@ class AttackPlanMapper:
             "jwt": "full",
         }
         return strategy_map.get(vuln_type, "full")
+

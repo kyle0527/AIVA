@@ -12,15 +12,15 @@ from typing import Any
 from pydantic import BaseModel, Field, field_validator
 
 # aiva_common 統一錯誤處理
-from aiva_common.error_handling import (
+from aiva_common.core.error_handling import (
     AIVAError,
     ErrorType,
     ErrorSeverity,
     create_error_context,
 )
-from services.aiva_common.enums import Severity, TestStatus
-from services.aiva_common.enums.modules import ModuleName
-from services.aiva_common.schemas.ai import CVSSv3Metrics
+from aiva_common.enums import Severity, TestStatus
+from aiva_common.enums.modules import ModuleName
+from aiva_common.schemas.ai import CVSSv3Metrics
 
 MODULE_NAME = "business_schemas"
 
@@ -552,3 +552,4 @@ __all__ = [
     "StrategyGenerationConfig",
     "VulnerabilityTestStrategy",
 ]
+

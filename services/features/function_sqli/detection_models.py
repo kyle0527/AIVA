@@ -7,7 +7,7 @@ SQLi 檢測結果模型
 
 from dataclasses import dataclass
 
-from services.aiva_common.schemas import (
+from aiva_common.schemas import (
     FindingEvidence,
     FindingImpact,
     FindingRecommendation,
@@ -90,3 +90,4 @@ class DetectionModels:
             message=message,
             engine_name=engine_name
         )
+

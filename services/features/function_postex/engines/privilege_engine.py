@@ -22,8 +22,8 @@ from typing import Any
 import structlog
 from typing import Dict, Any
 from datetime import datetime
-from services.aiva_common.utils.logging import get_logger
-from services.aiva_common.enums import VulnerabilityType, Severity, Confidence
+from aiva_common.utils.logging import get_logger
+from aiva_common.enums import VulnerabilityType, Severity, Confidence
 
 logger = get_logger(__name__)
 
@@ -420,3 +420,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+

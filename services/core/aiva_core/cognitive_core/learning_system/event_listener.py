@@ -25,8 +25,8 @@ import json
 import logging
 from typing import Any, Dict
 
-from services.aiva_common.enums import Topic
-from services.aiva_common.schemas import AivaMessage, FindingPayload
+from aiva_common.enums import Topic
+from aiva_common.schemas import AivaMessage, FindingPayload
 
 logger = logging.getLogger(__name__)
 
@@ -299,3 +299,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+

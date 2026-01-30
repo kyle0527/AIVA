@@ -46,10 +46,10 @@ from ..embedded_knowledge import (
 )
 
 # 使用 aiva_common 的統一枚舉定義
-from services.aiva_common.enums import RiskLevel
+from aiva_common.enums import RiskLevel
 
 # 使用 aiva_common 的決策數據合約 (問題三修復)
-from services.aiva_common.schemas import (
+from aiva_common.schemas import (
     HighLevelIntent,
     IntentType,
     TargetInfo,
@@ -1268,8 +1268,8 @@ class EnhancedDecisionAgent:
         
         # 直接使用 AICommandCenter 下達命令
         try:
-            from services.aiva_common.command_center import get_command_center
-            from services.aiva_common.schemas import AICommand, CommandType
+            from aiva_common.command_center import get_command_center
+            from aiva_common.schemas import AICommand, CommandType
             import uuid
             
             command_center = get_command_center()
@@ -1326,8 +1326,8 @@ class EnhancedDecisionAgent:
         self.logger.info(f"   🎯 對目標 {target} 執行漏洞測試")
         
         try:
-            from services.aiva_common.command_center import get_command_center
-            from services.aiva_common.schemas import AICommand, CommandType
+            from aiva_common.command_center import get_command_center
+            from aiva_common.schemas import AICommand, CommandType
             import uuid
             
             command_center = get_command_center()
@@ -2722,3 +2722,4 @@ def demo_enhanced_decision_agent():
 
 if __name__ == "__main__":
     demo_enhanced_decision_agent()
+

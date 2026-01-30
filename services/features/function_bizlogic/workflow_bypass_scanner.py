@@ -9,7 +9,7 @@ from typing import Any
 
 import httpx
 
-from services.aiva_common.enums import VulnerabilityType, Severity, Confidence
+from aiva_common.enums import VulnerabilityType, Severity, Confidence
 
 logger = logging.getLogger(__name__)
 
@@ -310,3 +310,4 @@ class WorkflowBypassScanner:
         logger.info(f"✅ Workflow bypass tests completed: {len(all_findings)} findings")
         
         return all_findings
+

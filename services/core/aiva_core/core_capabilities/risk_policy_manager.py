@@ -9,7 +9,7 @@ from pathlib import Path
 from typing import Any, Optional
 import yaml
 
-from services.aiva_common.enums import RiskLevel
+from aiva_common.enums import RiskLevel
 
 logger = logging.getLogger(__name__)
 
@@ -248,3 +248,4 @@ class RiskPolicyManager:
             "specific_mitigations": mitigations,
             "description": level_config.get("description", "")
         }
+

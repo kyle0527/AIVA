@@ -13,10 +13,10 @@
 import json
 from typing import TYPE_CHECKING, Any
 
-from services.aiva_common.schemas import ScanCompletedPayload, Phase0CompletedPayload
-from services.aiva_common.utils import get_logger
-from services.aiva_common.mq import AbstractBroker
-from services.aiva_common.enums import RiskLevel
+from aiva_common.schemas import ScanCompletedPayload, Phase0CompletedPayload
+from aiva_common.utils import get_logger
+from aiva_common.mq import AbstractBroker
+from aiva_common.enums import RiskLevel
 from services.core.aiva_core.core_capabilities.ingestion.scan_module_interface import ScanModuleInterface
 # 模組整合: external_learning → cognitive_core/learning_system (2026-01-03)
 from services.core.aiva_core.cognitive_core.learning_system.analysis.dynamic_strategy_adjustment import StrategyAdjuster
@@ -666,3 +666,4 @@ class ScanResultProcessor:
             logger.info(f"[Engine] {scan_id} - Added 'python' (default)")
 
         return selected
+

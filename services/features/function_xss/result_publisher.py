@@ -4,16 +4,16 @@ import json
 import os
 from typing import Any
 
-from services.aiva_common.enums import ModuleName, Topic
-from services.aiva_common.mq import AbstractBroker
-from services.aiva_common.schemas import (
+from aiva_common.enums import ModuleName, Topic
+from aiva_common.mq import AbstractBroker
+from aiva_common.schemas import (
     AivaMessage,
     FindingPayload,
     FunctionTaskPayload,
     MessageHeader,
     TaskUpdatePayload,
 )
-from services.aiva_common.utils import new_id
+from aiva_common.utils import new_id
 
 
 class XssResultPublisher:
@@ -96,3 +96,4 @@ class XssResultPublisher:
     async def _publish(self, topic: Topic, message: AivaMessage) -> None:
         payload = message.model_dump(mode="json")
         await self._broker.publish(topic, json.dumps(payload).encode("utf-8"))
+

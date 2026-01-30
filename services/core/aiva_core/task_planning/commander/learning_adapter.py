@@ -89,7 +89,7 @@ class LearningAdapter:
             }
         
         # 使用 ModelTrainer 訓練
-        from services.aiva_common.schemas import ModelTrainingConfig
+        from aiva_common.schemas import ModelTrainingConfig
         from uuid import uuid4
         
         config = ModelTrainingConfig(
@@ -210,3 +210,4 @@ class LearningAdapter:
             logger.error(f"  Failed to save experiences: {e}")
 
         logger.info("✅ Learning state saved")
+

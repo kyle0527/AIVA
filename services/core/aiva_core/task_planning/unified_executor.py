@@ -21,7 +21,7 @@ from datetime import datetime, UTC
 from pathlib import Path
 from typing import Any, Optional
 
-from services.aiva_common.utils import get_logger
+from aiva_common.utils import get_logger
 
 logger = get_logger(__name__)
 
@@ -834,8 +834,8 @@ class UnifiedAttackExecutor:
             broker = self.message_broker  # 觸發 property，不可用時會拋出 ImportError
             
             # 🎯 異步傳遞訓練任務
-            from services.aiva_common.enums import Topic, ModuleName
-            from services.aiva_common.schemas import AivaMessage, MessageHeader
+            from aiva_common.enums import Topic, ModuleName
+            from aiva_common.schemas import AivaMessage, MessageHeader
             from uuid import uuid4
             
             training_task = {
@@ -1268,3 +1268,4 @@ class FeedbackOptimizer:
             priority=10,  # 最高優先級
             reason=f"WAF 觸發率過高 ({waf_rate*100:.1f}%)"
         )
+

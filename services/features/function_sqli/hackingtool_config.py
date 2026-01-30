@@ -13,8 +13,8 @@ import subprocess
 import shutil
 from pathlib import Path
 
-from services.aiva_common.enums import ProgrammingLanguage, Severity, Confidence
-from services.aiva_common.schemas import APIResponse
+from aiva_common.enums import ProgrammingLanguage, Severity, Confidence
+from aiva_common.schemas import APIResponse
 from services.integration.capability.models import CapabilityRecord, CapabilityType, CapabilityStatus
 
 

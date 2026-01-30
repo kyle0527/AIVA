@@ -20,10 +20,10 @@ from aio_pika.abc import (
 )
 from typing import Any, Dict  # 添加缺少的類型
 
-from aiva_common.error_handling import AIVAError, ErrorType, ErrorSeverity, create_error_context
-from services.aiva_common.config import get_settings
-from services.aiva_common.enums.modules import ModuleName
-from services.aiva_common.schemas import AivaMessage
+from aiva_common.core.error_handling import AIVAError, ErrorType, ErrorSeverity, create_error_context
+from aiva_common.config import get_settings
+from aiva_common.enums.modules import ModuleName
+from aiva_common.schemas import AivaMessage
 
 logger = logging.getLogger(__name__)
 MODULE_NAME = "message_broker"
@@ -784,3 +784,4 @@ async def subscribe_aiva_events(module_name: str,
     """
     broker = get_enhanced_message_broker()
     return await broker.subscribe_event(module_name, event_types, handler)
+

@@ -6,7 +6,7 @@ Wordlist Generator 功能模組命令處理器
 
 Usage:
     from services.features.function_wordlist_generator.handler import WordlistGeneratorCommandHandler
-    from services.aiva_common.schemas.commands import AICommand, CommandType
+    from aiva_common.schemas.commands import AICommand, CommandType
     
     # 直接創建處理器
     wordlist_handler = WordlistGeneratorCommandHandler()
@@ -28,15 +28,15 @@ from typing import Any, Dict, Optional, List
 from datetime import datetime
 
 # aiva_common 標準導入
-from services.aiva_common.command_center import CommandHandler
-from services.aiva_common.schemas.commands import (
-    AICommand,
-    AICommandResult,
-    CommandStatus,
-    CommandContext,
-    CommandType,
+from aiva_common.command_center import CommandHandler
+from aiva_common.schemas.commands import (
+    AICommand, 
+    CommandType
 )
-from services.aiva_common.utils import get_logger
+from aiva_common.utils import get_logger
+from aiva_common.schemas.commands import AICommandResult, CommandStatus, CommandContext
+from aiva_common.core.command_center import CommandHandler
+from aiva_common.utils import get_logger
 
 # 現有 Wordlist Generator 功能導入
 from .manager import WordlistGeneratorManager
@@ -357,3 +357,4 @@ class WordlistGeneratorCommandHandler(CommandHandler):
 REQUIRED_COMMAND_TYPES = [
     ("FEATURE_WORDLIST_GENERATE", "feature_wordlist_generate", "生成和管理字典文件"),
 ]
+

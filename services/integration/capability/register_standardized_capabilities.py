@@ -23,10 +23,10 @@ from services.integration.capability.capabilities.reverse_engineering_capabiliti
     REVERSE_ENGINEERING_CAPABILITIES
 )
 from services.integration.capability.models import CapabilityRecord, CapabilityType, InputParameter
-from services.aiva_common.enums import ProgrammingLanguage, TaskStatus
+from aiva_common.enums import ProgrammingLanguage, TaskStatus
 
 # 導入新的選單式能力定義
-from services.aiva_common.enums.capabilities import (
+from aiva_common.enums.capabilities import (
     AttackCapability,
     ScanCapability,
     ReconCapability,
@@ -301,3 +301,4 @@ async def main():
 if __name__ == "__main__":
     exit_code = asyncio.run(main())
     exit(exit_code)
+

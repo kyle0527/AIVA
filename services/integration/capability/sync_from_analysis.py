@@ -25,8 +25,8 @@ from pathlib import Path
 from datetime import datetime
 from typing import List, Dict, Any
 
-from services.aiva_common.utils.logging import get_logger
-from services.aiva_common.enums.modules import ProgrammingLanguage
+from aiva_common.utils.logging import get_logger
+from aiva_common.enums.modules import ProgrammingLanguage
 from services.integration.capability.registry import registry as global_registry
 from services.integration.capability.models import (
     CapabilityRecord,
@@ -259,3 +259,4 @@ async def main():
 if __name__ == "__main__":
     success = asyncio.run(main())
     sys.exit(0 if success else 1)
+

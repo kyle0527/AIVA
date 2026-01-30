@@ -18,8 +18,8 @@ from enum import Enum
 from dataclasses import dataclass
 import logging
 
-from services.aiva_common.enums import Topic, ModuleName
-from services.aiva_common.schemas.generated.messaging import AivaMessage
+from aiva_common.enums import Topic, ModuleName
+from aiva_common.schemas.generated.messaging import AivaMessage
 
 logger = logging.getLogger(__name__)
 
@@ -185,7 +185,7 @@ class UnifiedTopicManager:
         """
         import uuid
         from datetime import datetime
-        from services.aiva_common.schemas.generated.base_types import MessageHeader
+        from aiva_common.schemas.generated.base_types import MessageHeader
         
         # 標準化 Topic
         normalized_topic = self.normalize_topic(topic)

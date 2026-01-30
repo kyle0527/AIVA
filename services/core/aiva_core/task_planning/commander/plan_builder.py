@@ -49,7 +49,7 @@ class PlanBuilder:
 
         try:
             # 1. 使用 RAG 檢索相關知識
-            from services.aiva_common.schemas import AttackTarget
+            from aiva_common.schemas import AttackTarget
             attack_target = AttackTarget(
                 target_id=f"target_{uuid4().hex[:12]}",
                 target_url=target,
@@ -764,4 +764,5 @@ class PlanBuilder:
             "max_error_rate": 0.3,
             "waf_bypass_required": False,
         }
+
 

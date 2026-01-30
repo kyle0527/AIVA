@@ -9,8 +9,8 @@ import time
 
 import httpx
 
-from services.aiva_common.schemas import FunctionTaskPayload
-from services.aiva_common.utils import get_logger
+from aiva_common.schemas import FunctionTaskPayload
+from aiva_common.utils import get_logger
 
 from ..detection_models import DetectionResult
 from ..payload_wrapper_encoder import PayloadWrapperEncoder
@@ -175,8 +175,8 @@ class TimeDetectionEngine:
         task: FunctionTaskPayload,
     ) -> DetectionResult:
         """構建檢測結果"""
-        from services.aiva_common.enums import Confidence, Severity, VulnerabilityType
-        from services.aiva_common.schemas import (
+        from aiva_common.enums import Confidence, Severity, VulnerabilityType
+        from aiva_common.schemas import (
             FindingEvidence,
             FindingImpact,
             FindingRecommendation,
@@ -244,3 +244,4 @@ class TimeDetectionEngine:
             payload_used=payload,
             confidence_score=confidence,
         )
+

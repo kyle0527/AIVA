@@ -4,15 +4,15 @@ import json
 from typing import Any
 import uuid
 
-from services.aiva_common.enums import ModuleName, Topic
-from services.aiva_common.mq import AbstractBroker
-from services.aiva_common.schemas import (
+from aiva_common.enums import ModuleName, Topic
+from aiva_common.mq import AbstractBroker
+from aiva_common.schemas import (
     AivaMessage,
     FindingPayload,
     MessageHeader,
     TaskUpdatePayload,
 )
-from services.aiva_common.utils import new_id
+from aiva_common.utils import new_id
 
 
 class SqliResultBinderPublisher:
@@ -70,3 +70,4 @@ class SqliResultBinderPublisher:
             topic,
             json.dumps(message.model_dump()).encode("utf-8"),
         )
+

@@ -16,7 +16,7 @@ import logging
 import time
 from typing import Any, Optional
 
-from services.aiva_common.utils import get_logger
+from aiva_common.utils import get_logger
 from ..experience_manager import ExperienceManager
 from .model_trainer import ModelTrainer
 from .online_learner import OnlineLearner
@@ -331,3 +331,4 @@ def create_continuous_learning_engine(
         experience_manager=experience_manager,
         model_trainer=model_trainer
     )
+

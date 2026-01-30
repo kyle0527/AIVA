@@ -8,7 +8,7 @@ from typing import Any
 
 import structlog
 
-from services.aiva_common.enums import AccessDecision
+from aiva_common.enums import AccessDecision
 from .permission_matrix import PermissionMatrix
 
 logger = structlog.get_logger(__name__)
@@ -434,3 +434,4 @@ def main():
     print("\n=== Role Removal Simulation ===")
     impact = mapper.simulate_role_removal("bob", "user")
     print(f"Impact: {impact}")
+

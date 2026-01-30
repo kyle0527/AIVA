@@ -41,8 +41,8 @@ CONSOLE_PROMPTS = {
     'GOODBYE': "[bold yellow]感謝使用 AIVA SQL 注入工具集![/bold yellow]"
 }
 
-from services.aiva_common.schemas import APIResponse
-from services.aiva_common.utils import get_logger
+from aiva_common.schemas import APIResponse
+from aiva_common.utils import get_logger
 
 
 logger = get_logger(__name__)

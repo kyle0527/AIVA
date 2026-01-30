@@ -6,7 +6,7 @@ import os
 
 import httpx
 
-from services.aiva_common.schemas import FunctionTaskPayload
+from aiva_common.schemas import FunctionTaskPayload
 
 
 @dataclass
@@ -176,3 +176,4 @@ class OastDispatcher:
 
         parts = normalized.split("/")
         return parts[-1] if parts else token
+

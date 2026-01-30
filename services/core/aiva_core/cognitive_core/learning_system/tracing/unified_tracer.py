@@ -11,11 +11,11 @@ from typing import Any, Dict, List, Optional
 from dataclasses import dataclass
 from uuid import uuid4
 
-from services.aiva_common.schemas import (
+from aiva_common.schemas import (
     SessionState,
     TraceRecord,
 )
-from services.aiva_common.error_handling import (
+from aiva_common.core.error_handling import (
     AIVAError,
     ErrorContext,
     ErrorSeverity,

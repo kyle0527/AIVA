@@ -9,7 +9,7 @@ import json
 import logging
 from typing import Any
 
-from services.aiva_common.observability import LogLevel
+from aiva_common.observability import LogLevel
 
 
 class AIVALogFormatter(logging.Formatter):
@@ -305,3 +305,4 @@ _default_log_manager = CrossLanguageLogManager("aiva-core")
 def get_aiva_logger(module_name: str) -> logging.Logger:
     """獲取 AIVA 核心日誌器（便捷函數）"""
     return _default_log_manager.get_logger(module_name)
+

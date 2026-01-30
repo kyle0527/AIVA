@@ -11,7 +11,7 @@ from typing import List, Optional
 
 import httpx
 
-from services.aiva_common.utils import get_logger
+from aiva_common.utils import get_logger
 
 logger = get_logger(__name__)
 
@@ -332,3 +332,4 @@ class DnsRebindingDetector:
                     )
         
         return payloads
+

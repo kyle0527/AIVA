@@ -13,15 +13,15 @@ import os
 from typing import Optional, Dict, Any
 from datetime import datetime
 
-from services.aiva_common.command_center import CommandHandler
-from services.aiva_common.schemas.commands import (
+from aiva_common.command_center import CommandHandler
+from aiva_common.schemas.commands import (
     AICommand,
     AICommandResult,
     CommandStatus,
     CommandContext,
     CommandType,
 )
-from services.aiva_common.utils import get_logger
+from aiva_common.utils import get_logger
 
 logger = get_logger(__name__)
 
@@ -130,3 +130,4 @@ class CryptoCommandHandler(CommandHandler):
             error_msg = f"Invalid JSON output from Rust binary: {e}"
             self.logger.error(error_msg)
             raise RuntimeError(error_msg)
+

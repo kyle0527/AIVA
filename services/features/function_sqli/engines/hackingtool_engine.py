@@ -16,11 +16,11 @@ from pathlib import Path
 
 import httpx
 
-from services.aiva_common.utils.logging import get_logger
-from services.aiva_common.utils.ids import new_id
-from services.aiva_common.enums.common import Severity, Confidence
-from services.aiva_common.enums.security import VulnerabilityType
-from services.aiva_common.schemas import (
+from aiva_common.utils.logging import get_logger
+from aiva_common.utils.ids import new_id
+from aiva_common.enums.common import Severity, Confidence
+from aiva_common.enums.security import VulnerabilityType
+from aiva_common.schemas import (
     FindingEvidence, FindingImpact, FindingRecommendation, 
     FindingTarget, Vulnerability, FunctionTaskPayload
 )

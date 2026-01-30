@@ -23,7 +23,7 @@ function_postex 使用 PostExDetector，不需要統一的 Manager 模式。
 
 from typing import Any, Dict, Optional
 
-from services.aiva_common.utils import get_logger
+from aiva_common.utils import get_logger
 from services.features.function_postex.detector.postex_detector import PostExDetector
 
 logger = get_logger(__name__)
@@ -270,3 +270,4 @@ if __name__ == "__main__":
     
     print("\n" + "="*50)
     print("\n✅ 所有測試完成（安全模式）")
+

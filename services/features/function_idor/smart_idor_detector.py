@@ -12,9 +12,9 @@ from typing import Any
 
 import httpx
 
-from services.aiva_common.schemas import FunctionTaskPayload
-from services.aiva_common.utils import get_logger
-from services.aiva_common.detection import (
+from aiva_common.schemas import FunctionTaskPayload
+from aiva_common.utils import get_logger
+from aiva_common.detection import (
     UnifiedSmartDetectionManager,
     DetectionPhase,
 )
@@ -422,14 +422,14 @@ class SmartIDORDetector:
         test_result: CrossUserTestResult,
     ) -> dict[str, Any]:
         """構建水平 IDOR 檢測結果"""
-        from services.aiva_common.enums import Confidence, Severity, VulnerabilityType
-        from services.aiva_common.schemas import (
+        from aiva_common.enums import Confidence, Severity, VulnerabilityType
+        from aiva_common.schemas import (
             FindingEvidence,
             FindingImpact,
             FindingRecommendation,
             FindingTarget,
         )
-        from services.aiva_common.utils import new_id
+        from aiva_common.utils import new_id
 
         return {
             "finding_id": new_id("finding"),
@@ -479,14 +479,14 @@ class SmartIDORDetector:
         privilege_level: PrivilegeLevel,
     ) -> dict[str, Any]:
         """構建垂直 IDOR 檢測結果"""
-        from services.aiva_common.enums import Confidence, Severity, VulnerabilityType
-        from services.aiva_common.schemas import (
+        from aiva_common.enums import Confidence, Severity, VulnerabilityType
+        from aiva_common.schemas import (
             FindingEvidence,
             FindingImpact,
             FindingRecommendation,
             FindingTarget,
         )
-        from services.aiva_common.utils import new_id
+        from aiva_common.utils import new_id
 
         return {
             "finding_id": new_id("finding"),
@@ -529,3 +529,4 @@ class SmartIDORDetector:
                 ),
             ),
         }
+

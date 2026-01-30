@@ -16,7 +16,7 @@ project_root = os.path.abspath(os.path.join(current_dir, "..", "..", ".."))
 if project_root not in sys.path:
     sys.path.insert(0, project_root)
 
-from services.aiva_common.schemas import FunctionTaskPayload, FunctionTaskTarget, FunctionTaskTestConfig
+from aiva_common.schemas import FunctionTaskPayload, FunctionTaskTarget, FunctionTaskTestConfig
 from services.features.function_xss.traditional_detector import TraditionalXssDetector
 from services.features.function_xss.dom_xss_detector import DomXssDetector
 from services.features.function_xss.payload_generator import XssPayloadGenerator

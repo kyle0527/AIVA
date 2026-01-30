@@ -36,7 +36,7 @@ AIVA Features - 功能模組
 
     # 仍然支持 AICommand 接口（向後兼容）
     from services.features.function_xss.command_handler import XSSCommandHandler
-    from services.aiva_common.schemas.commands import AICommand, CommandType
+    from aiva_common.schemas.commands import AICommand, CommandType
     
     xss_handler = XSSCommandHandler()
     command = AICommand(
@@ -58,14 +58,14 @@ AIVA Features - 功能模組
 __version__ = "2.0.0"  # 升級到 v2.0，符合 aiva_common 規範
 
 # ==================== 從 aiva_common 導入共享基礎設施 ====================
-from services.aiva_common.enums import (
+from aiva_common.enums import (
     Confidence,
     Severity, 
     ThreatLevel,  # 使用統一的 ThreatLevel
     TaskStatus,
     VulnerabilityType,
 )
-from services.aiva_common.schemas import (
+from aiva_common.schemas import (
     AuthZAnalysisPayload,
     AuthZCheckPayload,
     AuthZResultPayload,
@@ -221,3 +221,4 @@ else:
     def create_feature_executor(**kwargs):
         """空實現"""
         raise ImportError("base 模組不可用，無法創建 FeatureStepExecutor")
+

@@ -14,9 +14,9 @@ from typing import Any
 
 import httpx
 
-from services.aiva_common.schemas import FunctionTaskPayload
-from services.aiva_common.utils import get_logger
-from services.aiva_common.detection import UnifiedSmartDetectionManager, DetectionPhase
+from aiva_common.schemas import FunctionTaskPayload
+from aiva_common.utils import get_logger
+from aiva_common.detection import UnifiedSmartDetectionManager, DetectionPhase
 from .config.ssrf_config import SsrfConfig
 
 from .internal_address_detector import InternalAddressDetector, InternalAddressDetection
@@ -490,14 +490,14 @@ class SmartSSRFDetector:
         detection_summary: str,
     ) -> dict[str, Any]:
         """構建內部地址檢測結果"""
-        from services.aiva_common.enums import Confidence, Severity, VulnerabilityType
-        from services.aiva_common.schemas import (
+        from aiva_common.enums import Confidence, Severity, VulnerabilityType
+        from aiva_common.schemas import (
             FindingEvidence,
             FindingImpact,
             FindingRecommendation,
             FindingTarget,
         )
-        from services.aiva_common.utils import new_id
+        from aiva_common.utils import new_id
 
         return {
             "finding_id": new_id("finding"),
@@ -546,14 +546,14 @@ class SmartSSRFDetector:
         events: list[OastEvent],
     ) -> dict[str, Any]:
         """構建 OAST 檢測結果"""
-        from services.aiva_common.enums import Confidence, Severity, VulnerabilityType
-        from services.aiva_common.schemas import (
+        from aiva_common.enums import Confidence, Severity, VulnerabilityType
+        from aiva_common.schemas import (
             FindingEvidence,
             FindingImpact,
             FindingRecommendation,
             FindingTarget,
         )
-        from services.aiva_common.utils import new_id
+        from aiva_common.utils import new_id
 
         callbacks_info = f"{len(events)} callback(s) received"
 
@@ -768,3 +768,4 @@ class SmartSSRFDetector:
         # 如果無法提取，返回payload的hash作為唯一標識
         import hashlib
         return hashlib.md5(payload.encode()).hexdigest()[:8]
+

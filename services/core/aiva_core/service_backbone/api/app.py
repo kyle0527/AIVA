@@ -70,11 +70,11 @@ from tenacity import (
     wait_exponential,
 )
 
-from services.aiva_common.config import get_settings
-from services.aiva_common.enums.modules import Topic
-from services.aiva_common.mq import get_broker
-from services.aiva_common.schemas import AivaMessage, ScanCompletedPayload, Phase0CompletedPayload
-from services.aiva_common.utils import get_logger
+from aiva_common.config import get_settings
+from aiva_common.enums.modules import Topic
+from aiva_common.mq import get_broker
+from aiva_common.schemas import AivaMessage, ScanCompletedPayload, Phase0CompletedPayload
+from aiva_common.utils import get_logger
 # 模組整合: external_learning → cognitive_core/learning_system (2026-01-03)
 from services.core.aiva_core.cognitive_core.learning_system.analysis.dynamic_strategy_adjustment import (
     StrategyAdjuster,
@@ -609,3 +609,4 @@ async def monitor_execution_status() -> None:
 
         except Exception as e:
             logger.error(f"[失敗] Error in status monitoring: {e}")
+

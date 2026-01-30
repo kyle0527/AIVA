@@ -38,8 +38,8 @@ except ImportError:
     RICH_AVAILABLE = False
     console = None
 
-# 使用相對導入
-from .assistant import AIVADialogAssistant
+# 使用相對導入 (使用延遲初始化接口以符合 assistant.py)
+from .assistant import get_dialog_assistant, dialog_assistant
 from ...cognitive_core.ai_capability_query import AICapabilityQuery
 from services.integration.capability.registry import registry as capability_registry
 
@@ -56,7 +56,11 @@ class AIVAIntelligentMenu:
     """
     
     def __init__(self):
-        self.ai_assistant = AIVADialogAssistant()
+        # 使用延遲初始化的單例取得對話助理
+        try:
+            self.ai_assistant = get_dialog_assistant()
+        except Exception:
+            self.ai_assistant = dialog_assistant
         self.capability_query = AICapabilityQuery()
         self.running = True
         self.session_history: List[Dict[str, Any]] = []

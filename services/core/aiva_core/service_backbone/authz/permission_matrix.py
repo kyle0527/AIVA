@@ -12,7 +12,7 @@ import structlog
 # 直接導入pandas - 缺少依賴時應明確報錯，不使用降級邏輯
 import pandas as pd
 
-from services.aiva_common.enums import AccessDecision
+from aiva_common.enums import AccessDecision
 
 logger = structlog.get_logger(__name__)
 
@@ -681,3 +681,4 @@ def authorize_operation(operation_name: str, risk_level: str = "L0",
     
     decision = guard.authorize_operation(context)
     return decision == AccessDecision.ALLOW
+

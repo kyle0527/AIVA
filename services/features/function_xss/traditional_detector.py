@@ -10,7 +10,7 @@ from urllib.parse import unquote_plus, urlencode, urlparse, urlunparse
 
 import httpx
 
-from services.aiva_common.schemas import FunctionTaskPayload
+from aiva_common.schemas import FunctionTaskPayload
 
 
 @dataclass

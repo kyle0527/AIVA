@@ -39,7 +39,7 @@ from aiva_common.schemas.dual_loop import (
 )
 
 # ✅ 修復 4: 使用統一錯誤處理
-from aiva_common.error_handling import (
+from aiva_common.core.error_handling import (
     AIVAError,
     ErrorType,
     ErrorSeverity,
@@ -335,7 +335,7 @@ class ExternalLoopConnector:
             訓練結果
         """
         try:
-            from services.aiva_common.schemas import ExperienceSample, ModelTrainingConfig
+            from aiva_common.schemas import ExperienceSample, ModelTrainingConfig
             
             # 將偏差轉換為經驗樣本
             samples = []
@@ -444,3 +444,4 @@ class ExternalLoopConnector:
             },
             "last_processing": None
         }
+

@@ -1,8 +1,8 @@
 from __future__ import annotations
 from typing import List
-from services.aiva_common.enums import Confidence, Severity, VulnerabilityType
-from services.aiva_common.schemas import FindingPayload, Vulnerability, FindingEvidence, FindingImpact, FindingRecommendation, FindingTarget, FunctionTaskPayload
-from services.aiva_common.utils import new_id, get_logger
+from aiva_common.enums import Confidence, Severity, VulnerabilityType
+from aiva_common.schemas import FindingPayload, Vulnerability, FindingEvidence, FindingImpact, FindingRecommendation, FindingTarget, FunctionTaskPayload
+from aiva_common.utils import new_id, get_logger
 from ..config.idor_config import IdorConfig
 from ..engine.idor_engine import IDOREngine, IDORIssue
 
@@ -138,3 +138,4 @@ class IDORDetector:
             description=issue.description,
             cwe=issue.cwe
         )
+

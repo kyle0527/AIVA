@@ -12,8 +12,8 @@ from dataclasses import dataclass
 from typing import TYPE_CHECKING, Any, Dict
 
 from services.core.aiva_core.service_backbone.adapters import HttpProtocolAdapter, create_http_adapter
-from services.aiva_common.utils import get_logger
-from services.aiva_common.error_handling import (
+from aiva_common.utils import get_logger
+from aiva_common.core.error_handling import (
     AIVAError,
     ErrorType,
     ErrorSeverity,

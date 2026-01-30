@@ -1,8 +1,8 @@
 from __future__ import annotations
 from typing import List
-from services.aiva_common.enums import Confidence, Severity, VulnerabilityType
-from services.aiva_common.schemas import FindingPayload, Vulnerability, FindingEvidence, FindingImpact, FindingRecommendation, FindingTarget
-from services.aiva_common.utils import new_id, get_logger
+from aiva_common.enums import Confidence, Severity, VulnerabilityType
+from aiva_common.schemas import FindingPayload, Vulnerability, FindingEvidence, FindingImpact, FindingRecommendation, FindingTarget
+from aiva_common.utils import new_id, get_logger
 from ..config.ssrf_config import SsrfConfig
 from ..engine.ssrf_engine import SSRFEngine, SSRFIssue
 
@@ -52,3 +52,4 @@ class SSRFDetector:
             vulnerability=vul, target=target, strategy="ssrf_analysis",
             evidence=evidence, impact=impact, recommendation=rec
         )
+

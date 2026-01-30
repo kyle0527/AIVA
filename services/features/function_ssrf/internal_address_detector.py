@@ -8,7 +8,7 @@ from typing import Any
 
 import httpx
 
-from services.aiva_common.utils import get_logger
+from aiva_common.utils import get_logger
 
 logger = get_logger(__name__)
 
@@ -337,3 +337,4 @@ class InternalAddressDetector:
             return any(domain in address.lower() for domain in internal_domains)
 
         return False
+

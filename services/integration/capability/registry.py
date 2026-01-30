@@ -19,14 +19,14 @@ import sqlite3
 
 
 # 遵循 aiva_common 規範 - 修復 import 路徑
-from services.aiva_common.enums import (
+from aiva_common.enums import (
     Severity,
     Confidence,
     TaskStatus,
     ModuleName,
     Topic
 )
-from services.aiva_common.schemas import (
+from aiva_common.schemas import (
     AivaMessage,
     MessageHeader,
     FunctionTaskPayload,
@@ -51,7 +51,7 @@ logger = logging.getLogger(__name__)
 
 # 定義程式語言枚舉
 # 遵循 aiva_common 單一事實來源原則
-from services.aiva_common.enums.modules import ProgrammingLanguage
+from aiva_common.enums.modules import ProgrammingLanguage
 
 
 class CapabilityRegistry:

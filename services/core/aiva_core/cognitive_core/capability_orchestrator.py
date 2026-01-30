@@ -38,7 +38,7 @@ from uuid import uuid4
 from pydantic import BaseModel, Field
 
 from aiva_common.utils import get_logger
-from aiva_common.error_handling import AIVAError, ErrorType, ErrorSeverity
+from aiva_common.core.error_handling import AIVAError, ErrorType, ErrorSeverity
 from aiva_common.async_utils import AsyncProcessManager, default_process_manager
 
 from .internal_loop_connector import InternalLoopConnector

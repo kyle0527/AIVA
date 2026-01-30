@@ -7,7 +7,7 @@ import re
 from typing import Any
 from pathlib import Path
 
-from services.aiva_common.utils.logging import get_logger
+from aiva_common.utils.logging import get_logger
 from services.integration.capability import CapabilityRegistry
 from services.integration.capability.registry import registry as global_registry
 
@@ -1000,3 +1000,4 @@ class _LazyDialogAssistant:
         return get_dialog_assistant()
 
 dialog_assistant = _LazyDialogAssistant()
+

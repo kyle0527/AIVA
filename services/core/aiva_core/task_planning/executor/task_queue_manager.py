@@ -3,9 +3,9 @@ from datetime import UTC, datetime
 from queue import PriorityQueue
 from typing import Any
 
-from services.aiva_common.enums.modules import Topic
-from services.aiva_common.schemas import FunctionTaskPayload
-from services.aiva_common.utils import get_logger
+from aiva_common.enums.modules import Topic
+from aiva_common.schemas import FunctionTaskPayload
+from aiva_common.utils import get_logger
 
 logger = get_logger(__name__)
 
@@ -203,3 +203,4 @@ class TaskQueueManager:
             "running_tasks": running_tasks,
             "queue_health": "healthy" if pending_tasks < 1000 else "overloaded",
         }
+

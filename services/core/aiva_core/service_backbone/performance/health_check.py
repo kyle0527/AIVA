@@ -31,9 +31,9 @@ if not os.getenv("ENVIRONMENT"):
 def check_schemas():
     """檢查 AIVA Common Schemas 可用性"""
     try:
-        from services.aiva_common.schemas.base import MessageHeader
-        from services.aiva_common.schemas.security.findings import Target, Vulnerability
-        from services.aiva_common.enums import ModuleName
+        from aiva_common.schemas.base import MessageHeader
+        from aiva_common.schemas.security.findings import Target, Vulnerability
+        from aiva_common.enums import ModuleName
         
         # 測試建立實例
         MessageHeader(

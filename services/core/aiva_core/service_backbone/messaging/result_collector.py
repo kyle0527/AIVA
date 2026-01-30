@@ -12,7 +12,7 @@ from typing import Any
 
 from aio_pika.abc import AbstractIncomingMessage
 
-from services.aiva_common.schemas import (
+from aiva_common.schemas import (
     FindingPayload,
     ScanCompletedPayload,
     TaskUpdatePayload,
@@ -387,3 +387,4 @@ class ResultCollector:
                 logger.error(f"Failed to get storage statistics: {e}")
 
         return stats
+

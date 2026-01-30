@@ -39,8 +39,8 @@ from rich.table import Table
 from rich.text import Text
 
 # 本地導入 - 已更新為 Features 模組路徑
-from services.aiva_common.schemas import APIResponse
-from services.aiva_common.enums import Severity
+from aiva_common.schemas import APIResponse
+from aiva_common.enums import Severity
 # BaseCapability 待更新為 Features 專用 Base
 
 console = Console()
@@ -1088,5 +1088,6 @@ class XSSManager:
 
 # 註冊能力 - 已棄用,改用 aiva_common CommandHandler 接口
 # CapabilityRegistry.register("xss_attack_tools", XSSCapability)
+
 
 

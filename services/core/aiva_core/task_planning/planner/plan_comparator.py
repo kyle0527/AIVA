@@ -7,7 +7,7 @@ from datetime import UTC, datetime
 import logging
 from typing import Any
 
-from services.aiva_common.schemas import (
+from aiva_common.schemas import (
     AttackPlan,
     AttackStep,
     PlanExecutionMetrics,
@@ -530,3 +530,4 @@ class PlanComparator:
             recommendations.append("執行表現良好，無需特別調整")
 
         return recommendations
+

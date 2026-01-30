@@ -15,7 +15,7 @@ import logging
 from typing import Any
 from uuid import uuid4
 
-from services.aiva_common.schemas import (
+from aiva_common.schemas import (
     AttackPlan,
     AttackStep,
     FindingPayload,
@@ -26,7 +26,7 @@ from services.aiva_common.schemas import (
     SessionState,
     TraceRecord,
 )
-from services.aiva_common.error_handling import (
+from aiva_common.core.error_handling import (
     AIVAError,
     ErrorContext,
     ErrorSeverity,
@@ -238,8 +238,8 @@ class PlanExecutor:
             trace_records: 執行軌跡
         """
         try:
-            from services.aiva_common.enums import Topic, ModuleName
-            from services.aiva_common.schemas import AivaMessage, MessageHeader
+            from aiva_common.enums import Topic, ModuleName
+            from aiva_common.schemas import AivaMessage, MessageHeader
             
             # 構建完成事件
             completion_event = {
@@ -791,3 +791,4 @@ class PlanExecutor:
         """
         self.trace_logger.abort_session(session_id)
         logger.info(f"Session {session_id} aborted")
+

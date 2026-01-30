@@ -464,7 +464,7 @@ class MultiLangExecutor:
                         elif 'TaskPayload' in str(param_type) or 'Payload' in str(param_type):
                             # 嘗試構建 TaskPayload 物件
                             try:
-                                from services.aiva_common.schemas import FunctionTaskPayload, FunctionTaskTarget
+                                from aiva_common.schemas import FunctionTaskPayload, FunctionTaskTarget
                                 task_payload = FunctionTaskPayload(
                                     task_id=kwargs.get('task_id', 'task_executor_001'),
                                     scan_id=kwargs.get('scan_id', 'scan_executor_001'),
@@ -622,7 +622,7 @@ class MultiLangExecutor:
                             elif 'TaskPayload' in str(param_type) or 'Payload' in str(param_type):
                                 # 嘗試構建 TaskPayload 物件
                                 try:
-                                    from services.aiva_common.schemas import FunctionTaskPayload, FunctionTaskTarget
+                                    from aiva_common.schemas import FunctionTaskPayload, FunctionTaskTarget
                                     task_payload = FunctionTaskPayload(
                                         task_id=kwargs.get('task_id', 'task_executor_001'),
                                         scan_id=kwargs.get('scan_id', 'scan_executor_001'),
@@ -1318,3 +1318,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+

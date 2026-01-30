@@ -18,7 +18,7 @@ except ImportError:
 from .vector_store import VectorStore
 
 if TYPE_CHECKING:
-    from services.aiva_common.schemas.dual_loop import RAGQueryRequest, RAGQueryResult
+    from aiva_common.schemas.dual_loop import RAGQueryRequest, RAGQueryResult
 
 logger = logging.getLogger(__name__)
 
@@ -126,7 +126,7 @@ class KnowledgeBase:
             RAGQueryResult: 查詢結果
         """
         import asyncio
-        from services.aiva_common.schemas.dual_loop import RAGQueryResult
+        from aiva_common.schemas.dual_loop import RAGQueryResult
         
         try:
             # 使用事件循環執行異步搜索

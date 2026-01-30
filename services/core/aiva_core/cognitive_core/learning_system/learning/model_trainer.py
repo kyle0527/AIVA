@@ -10,13 +10,13 @@ from pathlib import Path
 from typing import Any
 from uuid import uuid4
 
-from services.aiva_common.error_handling import (
+from aiva_common.core.error_handling import (
     AIVAError,
     ErrorSeverity,
     ErrorType,
     create_error_context,
 )
-from services.aiva_common.schemas import (
+from aiva_common.schemas import (
     ExperienceSample,
     ModelTrainingConfig,
     ModelTrainingResult,
@@ -1232,3 +1232,4 @@ class ModelTrainer:
                 logger.debug(f"Persisted training result {result.training_id}")
         except Exception as e:
             logger.error(f"Failed to persist training result: {e}")
+

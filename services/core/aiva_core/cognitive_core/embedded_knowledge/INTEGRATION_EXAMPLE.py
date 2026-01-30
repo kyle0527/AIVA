@@ -64,7 +64,7 @@ class EnhancedDecisionWithKnowledge(EnhancedDecisionAgent):
                               f"(置信度: {sqli_result.confidence.value})")
             context.discovered_vulns.append("sql_injection")
             # 更新风险等级
-            from services.aiva_common.enums import RiskLevel
+            from aiva_common.enums import RiskLevel
             context.risk_level = RiskLevel.HIGH
         
         # 3. 检测 XSS
@@ -78,7 +78,7 @@ class EnhancedDecisionWithKnowledge(EnhancedDecisionAgent):
         if ssrf_result.is_vulnerable:
             self.logger.critical(f"🔥 SSRF 检测: {ssrf_result.vulnerability_type}")
             context.discovered_vulns.append("ssrf")
-            from services.aiva_common.enums import RiskLevel
+            from aiva_common.enums import RiskLevel
             context.risk_level = RiskLevel.CRITICAL
         
         # 5. 调用原始决策流程
@@ -321,3 +321,4 @@ if __name__ == "__main__":
     print("\n" + "=" * 60)
     print("✅ 所有示例运行完成")
     print("=" * 60)
+

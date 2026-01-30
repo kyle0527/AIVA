@@ -4,7 +4,7 @@ from dataclasses import dataclass
 from typing import Any
 from urllib.parse import parse_qsl, urlencode, urlparse, urlunparse
 
-from services.aiva_common.schemas import FunctionTaskPayload
+from aiva_common.schemas import FunctionTaskPayload
 
 
 @dataclass
@@ -107,3 +107,4 @@ class PayloadWrapperEncoder:
         query_pairs[parameter] = value
         parts[4] = urlencode(query_pairs, doseq=True)
         return urlunparse(parts)
+

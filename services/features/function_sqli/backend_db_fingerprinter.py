@@ -5,7 +5,7 @@ from typing import Any
 
 import httpx
 
-from services.aiva_common.utils import get_logger
+from aiva_common.utils import get_logger
 
 logger = get_logger(__name__)
 
@@ -251,3 +251,4 @@ class BackendDbFingerprinter:
 
         self._version_patterns[db_name].append(pattern)
         logger.info(f"Added custom version pattern for {db_name}: {pattern}")
+

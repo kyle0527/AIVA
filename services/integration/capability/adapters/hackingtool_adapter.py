@@ -20,7 +20,7 @@ from pathlib import Path
 from datetime import datetime
 from dataclasses import dataclass
 
-from services.aiva_common.models import (
+from aiva_common.models import (
     CapabilityRecord,
     CapabilityType,
     CapabilityStatus,
@@ -28,8 +28,8 @@ from services.aiva_common.models import (
     InputParameter,
     OutputParameter
 )
-from services.aiva_common.utils.logging import get_logger
-from services.aiva_common.utils.ids import new_id
+from aiva_common.utils.logging import get_logger
+from aiva_common.utils.ids import new_id
 
 logger = get_logger(__name__)
 

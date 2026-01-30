@@ -26,7 +26,7 @@ AI Commander 可以用 asyncio.to_thread() 處理異步調度，不需要額外�
 from typing import Any, Dict, Optional, List
 import requests
 
-from services.aiva_common.utils import get_logger
+from aiva_common.utils import get_logger
 
 logger = get_logger(__name__)
 
@@ -220,6 +220,7 @@ def scan_target(target: str, options: Optional[Dict[str, Any]] = None) -> dict:
     """
     manager = WebScannerManager()
     return manager.scan(target, options)
+
 
 
 

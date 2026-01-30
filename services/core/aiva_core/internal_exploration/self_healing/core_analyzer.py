@@ -23,7 +23,7 @@ import sys
 try:
     parent_parent = Path(__file__).parent.parent.parent.parent.parent
     sys.path.insert(0, str(parent_parent))
-    from services.aiva_common.config.paths import (
+    from aiva_common.config.paths import (
         SELF_HEALING_DIR,
         ensure_directories
     )
@@ -567,3 +567,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+

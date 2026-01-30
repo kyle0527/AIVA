@@ -3,14 +3,14 @@
 
 from typing import Any
 
-from services.aiva_common.enums import Confidence, Severity, VulnerabilityType
-from services.aiva_common.schemas import (
+from aiva_common.enums import Confidence, Severity, VulnerabilityType
+from aiva_common.schemas import (
     FindingEvidence,
     FindingPayload,
     FindingTarget,
     Vulnerability,
 )
-from services.aiva_common.utils import new_id
+from aiva_common.utils import new_id
 
 
 def create_bizlogic_finding(
@@ -65,3 +65,4 @@ def create_bizlogic_finding(
         target=target,
         evidence=evidence,
     )
+

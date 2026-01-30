@@ -18,7 +18,7 @@ from enum import Enum
 if TYPE_CHECKING:
     from .knowledge_base import KnowledgeBase
 
-from services.aiva_common.schemas import (
+from aiva_common.schemas import (
     AttackPlan,
     AttackStep,
     AttackTarget,
@@ -710,3 +710,4 @@ class RAGEngine:
             "rag_engine": "active",
             "vector_store": type(self.knowledge_base.vector_store).__name__
         }
+

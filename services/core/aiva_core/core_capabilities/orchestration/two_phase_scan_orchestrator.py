@@ -18,15 +18,15 @@ import json
 from typing import Any
 from uuid import uuid4
 
-from services.aiva_common.enums import Topic
-from services.aiva_common.mq import AbstractBroker
-from services.aiva_common.schemas import (
+from aiva_common.enums import Topic
+from aiva_common.mq import AbstractBroker
+from aiva_common.schemas import (
     Phase0StartPayload,
     Phase0CompletedPayload,
     Phase1StartPayload,
     Phase1CompletedPayload,
 )
-from services.aiva_common.utils import get_logger
+from aiva_common.utils import get_logger
 
 # Bug Bounty AI 決策整合
 from ...cognitive_core.decision.enhanced_decision_agent import EnhancedDecisionAgent
@@ -360,7 +360,7 @@ class TwoPhaseScanOrchestrator:
                 timeout_task.cancel()
         
         # 超時或錯誤返回
-        from services.aiva_common.schemas import Summary
+        from aiva_common.schemas import Summary
         return Phase0CompletedPayload(
             scan_id=scan_id,
             status="timeout",
@@ -479,7 +479,7 @@ class TwoPhaseScanOrchestrator:
                 timeout_task.cancel()
         
         # 超時或錯誤返回
-        from services.aiva_common.schemas import Summary
+        from aiva_common.schemas import Summary
         return Phase1CompletedPayload(
             scan_id=scan_id,
             status="timeout",
@@ -681,3 +681,4 @@ class TwoPhaseScanOrchestrator:
     # _build_engine_criteria 方法已被移除
     # 引擎選擇邏輯已整合到 _select_engines_for_phase1 中
     # 直接使用 Phase0CompletedPayload 的欄位進行決策
+

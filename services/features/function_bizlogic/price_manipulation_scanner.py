@@ -13,7 +13,7 @@ import time
 
 import httpx
 
-from services.aiva_common.enums import VulnerabilityType, Severity, Confidence
+from aiva_common.enums import VulnerabilityType, Severity, Confidence
 from .finding_helper import create_bizlogic_finding
 
 logger = logging.getLogger(__name__)
@@ -558,3 +558,4 @@ class PriceManipulationScanner:
         logger.info(f"✅ Price manipulation tests completed: {len(all_findings)} findings")
         
         return all_findings
+

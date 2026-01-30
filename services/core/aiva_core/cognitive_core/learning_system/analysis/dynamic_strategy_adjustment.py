@@ -1,6 +1,6 @@
 from typing import Any
 
-from services.aiva_common.utils import get_logger
+from aiva_common.utils import get_logger
 
 logger = get_logger(__name__)
 
@@ -181,3 +181,4 @@ class StrategyAdjuster:
                     task["priority"] = max(task.get("priority", 5) - 1, 1)
 
         return plan
+

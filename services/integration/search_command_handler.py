@@ -29,7 +29,7 @@ from datetime import datetime, timezone
 
 import aiohttp
 
-from services.aiva_common.schemas.commands import (
+from aiva_common.schemas.commands import (
     AICommand,
     AICommandResult,
     CommandStatus,
@@ -37,7 +37,7 @@ from services.aiva_common.schemas.commands import (
     CommandType,
     CommandCallback
 )
-from services.aiva_common.utils import get_logger
+from aiva_common.utils import get_logger
 
 logger = get_logger(__name__)
 

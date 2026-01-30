@@ -4,8 +4,8 @@
 """
 import asyncpg
 from urllib.parse import urlparse
-from services.aiva_common.config.settings import get_settings
-from services.aiva_common.utils.logging import get_logger
+from aiva_common.config.settings import get_settings
+from aiva_common.utils.logging import get_logger
 
 logger = get_logger(__name__)
 
@@ -82,3 +82,4 @@ def get_db_config() -> dict:
         'password': parsed.password or 'postgres',
         'database': parsed.path.lstrip('/') or 'aiva_db'
     }
+

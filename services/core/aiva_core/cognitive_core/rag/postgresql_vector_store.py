@@ -10,7 +10,7 @@ from typing import Any
 import asyncpg
 import numpy as np
 
-from services.aiva_common.error_handling import (
+from aiva_common.core.error_handling import (
     AIVAError,
     ErrorSeverity,
     ErrorType,

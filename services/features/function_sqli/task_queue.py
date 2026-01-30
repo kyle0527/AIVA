@@ -3,7 +3,7 @@
 import asyncio
 from dataclasses import dataclass
 
-from services.aiva_common.schemas import FunctionTaskPayload
+from aiva_common.schemas import FunctionTaskPayload
 
 
 @dataclass
@@ -34,3 +34,4 @@ class SqliTaskQueue:
             return
         self._closed = True
         await self._queue.put(None)
+

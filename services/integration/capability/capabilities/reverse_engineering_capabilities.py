@@ -14,7 +14,7 @@ from services.integration.capability.models import (
     InputParameter,
     OutputParameter
 )
-from services.aiva_common.enums import ProgrammingLanguage, TaskStatus
+from aiva_common.enums import ProgrammingLanguage, TaskStatus
 
 # ================================================
 # Reverse Engineering Tools Capabilities
@@ -181,3 +181,4 @@ def get_runnable_capabilities() -> list[CapabilityRecord]:
     """獲取所有可運行的能力"""
     return [cap for cap in REVERSE_ENGINEERING_CAPABILITIES 
             if cap.config.get("runnable", False)]
+

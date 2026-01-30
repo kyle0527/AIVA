@@ -35,10 +35,10 @@ from datetime import datetime, timezone
 import subprocess
 import json
 
-from services.aiva_common.schemas import (
+from aiva_common.schemas import (
     CommandContext,
 )
-from services.aiva_common.utils import get_logger
+from aiva_common.utils import get_logger
 
 from .execution_planner import ExecutionPlan, ExecutionStep
 
@@ -257,3 +257,4 @@ class ExecutionOrchestrator:
             for plan_id, info in self._active_executions.items()
             if info["status"] == "running"
         ]
+

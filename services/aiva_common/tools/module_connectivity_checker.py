@@ -106,8 +106,8 @@ class AIVAModuleConnectivityChecker:
         try:
             # 使用新Schema創建消息
             # 導入枚舉
-            from services.aiva_common.enums import ModuleName, Topic
-            from services.aiva_common.schemas import AivaMessage, MessageHeader
+            from aiva_common.enums import ModuleName, Topic
+            from aiva_common.schemas import AivaMessage, MessageHeader
 
             # 創建消息標頭
             header = MessageHeader(
@@ -478,3 +478,4 @@ async def main():
 
 if __name__ == "__main__":
     sys.exit(asyncio.run(main()))
+

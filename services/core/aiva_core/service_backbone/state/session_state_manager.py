@@ -1,8 +1,8 @@
 from datetime import datetime, timezone
 from typing import Any
 
-from services.aiva_common.schemas import ScanCompletedPayload, TaskUpdatePayload
-from services.aiva_common.utils import get_logger
+from aiva_common.schemas import ScanCompletedPayload, TaskUpdatePayload
+from aiva_common.utils import get_logger
 
 logger = get_logger(__name__)
 
@@ -113,3 +113,4 @@ class SessionStateManager:
         )
 
         logger.info(f"Updated session {session_id} status to: {status}")
+

@@ -1,7 +1,7 @@
 from collections.abc import Iterable
 
-from services.aiva_common.enums.modules import Topic
-from services.aiva_common.schemas import (
+from aiva_common.enums.modules import Topic
+from aiva_common.schemas import (
     FunctionTaskPayload,
     FunctionTaskTarget,
     ScanCompletedPayload,
@@ -67,3 +67,4 @@ class TaskGenerator:
                 )
             )
         return tasks
+

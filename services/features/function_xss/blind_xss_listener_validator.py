@@ -9,8 +9,8 @@ from urllib.parse import urlparse
 
 import httpx
 
-from services.aiva_common.schemas import FunctionTaskPayload
-from services.aiva_common.utils import new_id
+from aiva_common.schemas import FunctionTaskPayload
+from aiva_common.utils import new_id
 
 
 @dataclass
@@ -173,3 +173,4 @@ class BlindXssListenerValidator:
 
         events = await self._store.fetch_events(self._token)
         return list(events)
+

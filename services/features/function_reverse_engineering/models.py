@@ -8,7 +8,7 @@ from enum import Enum
 from typing import List, Dict, Optional, Any
 
 # 使用 aiva_common 標準枚舉
-from services.aiva_common.enums import ThreatLevel
+from aiva_common.enums import ThreatLevel
 
 
 # ==================== Enums ====================
@@ -165,3 +165,4 @@ class CodeAnalysisResult:
     code_smells: List[Dict[str, Any]] = field(default_factory=list)
     
     timestamp: datetime = field(default_factory=datetime.now)
+

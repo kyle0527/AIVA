@@ -20,9 +20,9 @@ import json
 import logging
 import uuid
 
-from services.aiva_common.schemas.generated.messaging import AivaMessage, AIVARequest, AIVAResponse
-from services.aiva_common.schemas.generated.base_types import MessageHeader
-from services.aiva_common.messaging.unified_topic_manager import topic_manager, RoutingStrategy
+from aiva_common.schemas.generated.messaging import AivaMessage, AIVARequest, AIVAResponse
+from aiva_common.schemas.generated.base_types import MessageHeader
+from aiva_common.messaging.unified_topic_manager import topic_manager, RoutingStrategy
 
 logger = logging.getLogger(__name__)
 
