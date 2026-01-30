@@ -28,7 +28,7 @@
 ---
 
 
-**基於網路資源整理 | 日期**: 2026-01-01
+**基於網路資源整理 | 日期**: 2026-01-21 (Updated)
 
 ## 來源參考
 
@@ -93,7 +93,7 @@
 
 **適用於 AIVA**:
 - cognitive_core → task_planning (決策通知)
-- internal_exploration → external_learning (分析結果)
+- internal_exploration → cognitive_core/learning_system (分析結果)
 - 任何事件通知場景
 
 ### 方案二：CLI/subprocess ✅ 推薦
@@ -266,10 +266,10 @@ message = {
 │         ├────────────────────────────────────────┤          │
 │         │                                        │          │
 │  ┌──────┴──────┐     ┌──────┴──────┐     ┌──────┴──────┐   │
-│  │  internal   │     │  external   │     │  service    │   │
-│  │ _exploration│     │  _learning  │     │  _backbone  │   │
-│  │(Python/Rust/│     │  (Python)   │     │  (Python)   │   │
-│  │  Go/TS)     │     │             │     │             │   │
+│  │  internal   │     │  cognitive  │     │  service    │   │
+│  │ _exploration│     │  _core/     │     │  _backbone  │   │
+│  │(Python/Rust/│     │  learning_  │     │  (Python)   │   │
+│  │  Go/TS)     │     │  system     │     │             │   │
 │  └─────────────┘     └─────────────┘     └─────────────┘   │
 │                                                              │
 └─────────────────────────────────────────────────────────────┘
