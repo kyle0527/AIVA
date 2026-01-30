@@ -1,0 +1,10 @@
+{
+  "stage": "ProcessingStage.STANDARDIZATION",
+  "timestamp": "2026-01-24T17:18:14.665402",
+  "data_hash": "c7d3d961b3c8a4d332c520c34fa8a765",
+  "metadata": {
+    "modules_processed": 5
+  },
+  "progress": 100,
+  "output_path": "test_enhanced_output\\4_standardization\\module_grouped_capabilities.json"
+}

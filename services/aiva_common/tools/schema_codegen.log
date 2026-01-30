@@ -1,0 +1,13 @@
+2025-10-27 13:23:47,217 - ERROR - ❌ SOT 檔案不存在: core_schema_sot.yaml
+2025-10-27 13:23:51,600 - INFO - ✅ 成功載入 SOT 檔案: ..\core_schema_sot.yaml
+2025-10-27 13:23:51,603 - INFO - ✅ 生成 Python 基礎類型: services\aiva_common\schemas\generated\base_types.py
+2025-10-27 13:23:51,604 - INFO - ✅ 生成 Python messaging Schema: services\aiva_common\schemas\generated\messaging.py
+2025-10-27 13:23:51,605 - INFO - ✅ 生成 Python tasks Schema: services\aiva_common\schemas\generated\tasks.py
+2025-10-27 13:23:51,606 - INFO - ✅ 生成 Python findings Schema: services\aiva_common\schemas\generated\findings.py
+2025-10-27 13:24:00,350 - INFO - ✅ 成功載入 SOT 檔案: ..\core_schema_sot.yaml
+2025-10-27 13:24:00,354 - INFO - ✅ 生成 Rust Schema: services\scan\info_gatherer_rust\src\schemas\generated\mod.rs
+2025-10-27 13:25:09,781 - INFO - ✅ 成功載入 SOT 檔案: ..\core_schema_sot.yaml
+2025-10-27 13:25:09,784 - INFO - ✅ 生成 Rust Schema: services\scan\info_gatherer_rust\src\schemas\generated\mod.rs
+2025-10-27 13:30:35,667 - INFO - ✅ 成功載入 SOT 檔案: ..\core_schema_sot.yaml
+2025-10-27 13:30:35,669 - INFO - ✅ 生成 Rust Schema: services\scan\info_gatherer_rust\src\schemas\generated\mod.rs
+2025-10-27 13:40:35,138 - ERROR - ❌ SOT 檔案不存在: services\aiva_common\core_schema_sot.yaml

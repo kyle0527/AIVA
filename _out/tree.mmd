@@ -1,0 +1,150 @@
+# AIVA 專案架構圖
+
+## 1. 多語言架構概覽
+
+```mermaid
+graph TB
+    subgraph "🐍 Python Layer"
+        PY_API[FastAPI Web API]
+        PY_CORE[核心引擎]
+        PY_SCAN[掃描服務]
+        PY_INTG[整合層]
+    end
+
+    subgraph "🔷 Go Layer"
+        GO_AUTH[身份驗證檢測]
+        GO_CSPM[雲端安全]
+        GO_SCA[軟體組成分析]
+        GO_SSRF[SSRF 檢測]
+    end
+
+    subgraph "🦀 Rust Layer"
+        RS_SAST[靜態分析引擎]
+        RS_INFO[資訊收集器]
+    end
+
+    subgraph "📘 TypeScript Layer"
+        TS_SCAN[Playwright 掃描]
+    end
+
+    subgraph "🗄️ Data Layer"
+        DB[(PostgreSQL)]
+        MQ[RabbitMQ]
+    end
+
+    PY_API --> PY_CORE
+    PY_CORE --> PY_SCAN
+    PY_SCAN --> PY_INTG
+
+    PY_INTG -->|RPC| GO_AUTH
+    PY_INTG -->|RPC| GO_CSPM
+    PY_INTG -->|RPC| GO_SCA
+    PY_INTG -->|RPC| GO_SSRF
+    PY_INTG -->|RPC| RS_SAST
+    PY_INTG -->|RPC| RS_INFO
+    PY_INTG -->|RPC| TS_SCAN
+
+    GO_AUTH --> MQ
+    GO_CSPM --> MQ
+    GO_SCA --> MQ
+    GO_SSRF --> MQ
+    RS_SAST --> MQ
+    RS_INFO --> MQ
+    TS_SCAN --> MQ
+
+    MQ --> DB
+    PY_CORE --> DB
+
+    style PY_API fill:#3776ab
+    style GO_AUTH fill:#00ADD8
+    style RS_SAST fill:#CE422B
+    style TS_SCAN fill:#3178C6
+```
+
+## 2. 程式碼分布統計
+
+```mermaid
+pie title 程式碼行數分布
+    "Python (24%)" : 312865
+    "Go (0.5%)" : 6044
+    "Rust (0.7%)" : 8874
+    "TypeScript/JS (0.5%)" : 6694
+    "其他" : 967487
+```
+
+## 3. 模組關係圖
+
+```mermaid
+graph LR
+    subgraph "services"
+        aiva_common[aiva_common<br/>共用模組]
+        core[core<br/>核心引擎]
+        function[function<br/>功能模組]
+        integration[integration<br/>整合層]
+        scan[scan<br/>掃描引擎]
+    end
+
+    subgraph "function 子模組"
+        func_py[Python 模組]
+        func_go[Go 模組]
+        func_rs[Rust 模組]
+    end
+
+    subgraph "scan 子模組"
+        scan_py[Python 掃描]
+        scan_ts[Node.js 掃描]
+    end
+
+    core --> aiva_common
+    scan --> aiva_common
+    function --> aiva_common
+    integration --> aiva_common
+
+    integration --> function
+    integration --> scan
+
+    function --> func_py
+    function --> func_go
+    function --> func_rs
+
+    scan --> scan_py
+    scan --> scan_ts
+
+    style aiva_common fill:#90EE90
+    style core fill:#FFD700
+    style function fill:#87CEEB
+    style integration fill:#FFA07A
+    style scan fill:#DDA0DD
+```
+
+## 4. 技術棧選擇流程圖
+
+```mermaid
+flowchart TD
+    Start([新功能需求]) --> Perf{需要高效能?}
+    Perf -->|是| Memory{需要記憶體安全?}
+    Perf -->|否| Web{是 Web API?}
+
+    Memory -->|是| Rust[使用 Rust<br/>靜態分析/資訊收集]
+    Memory -->|否| Go[使用 Go<br/>認證/雲端安全/SCA]
+
+    Web -->|是| Python[使用 Python<br/>FastAPI/核心邏輯]
+    Web -->|否| Browser{需要瀏覽器?}
+
+    Browser -->|是| TS[使用 TypeScript<br/>Playwright 掃描]
+    Browser -->|否| Python
+
+    Rust --> MQ[Message Queue]
+    Go --> MQ
+    Python --> MQ
+    TS --> MQ
+
+    MQ --> Deploy([部署模組])
+
+    style Rust fill:#CE422B
+    style Go fill:#00ADD8
+    style Python fill:#3776ab
+    style TS fill:#3178C6
+```
+
+生成時間: 2026-01-24 13:21:02

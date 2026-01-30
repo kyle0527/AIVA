@@ -19,34 +19,16 @@ coverage/
 
 # Rust
 target/
-Cargo.lock
 
 # Go
-*.sum
+# *.sum
 
 # TypeScript
 *.tsbuildinfo
-package-lock.json
 
-
-# Test databases
-test_data/
-*.db
-aiva_experience.db
-
-# Security - 敏感資訊和測試資料
-**/SECRET_DETECTOR_RULES.md
-**/secret_detector_rules.*
-**/*secret*test*
-**/*token*test*
-**/*key*test*
-**/test_secrets.*
-**/example_secrets.*
-**/*credential*test*
+# Security - 敏感資訊
 secrets/
 test_credentials/
-.env.local
-.env.production
 *.pem
 *.key
 *.crt
@@ -54,28 +36,11 @@ test_credentials/
 # 大型日誌文件
 logs/*.log
 logs/**/*.log
-*.log
 
 # 暫存和緩存文件
 tmp/
 temp/
-cache/
 .cache/
 *.tmp
 *.temp
-*.bak
 *.backup
-
-# Internal Exploration 輸出 (應輸出到整合模組)
-services/core/aiva_core/internal_exploration/output/
-services/core/aiva_core/internal_exploration/**/output/
-services/core/aiva_core/internal_exploration/**/analysis_results/
-services/core/aiva_core/internal_exploration/**/analysis_output/
-services/core/aiva_core/internal_exploration/**/*.json
-!services/core/aiva_core/internal_exploration/modules_config.json
-!services/core/aiva_core/internal_exploration/**/package.json
-!services/core/aiva_core/internal_exploration/**/package-lock.json
-
-# Documentation files - 本次不提交
-*.md
-*.mmd
