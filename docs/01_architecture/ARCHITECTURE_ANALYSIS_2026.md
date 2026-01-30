@@ -291,9 +291,14 @@ scan/
 
 ---
 
-## 🔄 模組整合歷史
+## 🔄 模組整合與清理說明
 
-### 2026-01-03: external_learning → cognitive_core/learning_system
+### 系統清理 (2026-01-21)
+- **已移除**: `services/core/aiva_core/ai_learning/` (空目錄，解決模組數量歧義)
+- **已移除**: `services/core/aiva_core/external_learning/` (已完全遷移)
+
+### 整合歷史
+**external_learning → cognitive_core/learning_system**
 
 **原因**: 學習功能屬於認知核心，統一管理 AI 訓練和模型
 
@@ -318,6 +323,7 @@ external_learning/
 1. ✅ 統一命名規範已建立
 2. ✅ 執行器整合完成
 3. ✅ 文檔已更新反映"五大模組"架構
+4. ✅ 檔案系統清理完成 (移除遺留目錄)
 
 ### 待完善
 1. 外部模組 AST 分析結果生成
