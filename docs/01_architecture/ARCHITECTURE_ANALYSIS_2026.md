@@ -1,7 +1,7 @@
 # Services 目錄架構分析報告
 
-**分析日期**: 2026-01-20
-**架構版本**: 五大模組 (已整合 external_learning → cognitive_core/learning_system)
+**分析日期**: 2026-01-21
+**架構版本**: 五大核心模組 (Cognitive Core, Internal Exploration, Task Planning, Core Capabilities, Service Backbone)
 
 ---
 
@@ -11,7 +11,7 @@
 services/
 ├── core/                          # 核心 AIVA 系統
 │   └── aiva_core/                 # AIVA 五大核心模組
-│       ├── cognitive_core/        # ✅ 1. 認知核心模組
+│       ├── cognitive_core/        # ✅ 1. 認知核心模組 (含學習系統)
 │       ├── internal_exploration/  # ✅ 2. 內部探索模組
 │       ├── task_planning/         # ✅ 3. 任務規劃模組
 │       ├── core_capabilities/     # ✅ 4. 核心能力模組
@@ -63,8 +63,8 @@ cognitive_core/
 ├── decision/                  # AI 決策
 │   ├── skill_graph.py        # 技能圖譜
 │   ├── enhanced_decision_agent.py  # 增強決策代理
-│   └── ai_decision_core.py   # AI 決策核心 (新增)
-├── learning_system/          # 學習子系統 (整合自 external_learning)
+│   └── ai_decision_core.py   # AI 決策核心
+├── learning_system/          # 學習子系統 (原 external_learning 已整合至此)
 │   ├── training/             # 訓練管道
 │   ├── models/               # AI 模型
 │   ├── tracking/             # 模型追蹤
@@ -78,9 +78,8 @@ cognitive_core/
 
 **功能**: AI 認知、決策、學習、RAG、神經網路
 
-**整合說明**:
-- ✅ `external_learning` 已於 2026-01-03 整合到 `cognitive_core/learning_system`
-- ✅ 五大模組架構已確立
+**架構說明**:
+- 學習功能已統一整合至 `cognitive_core/learning_system`，不再作為獨立的頂層模組。
 
 ---
 
@@ -298,12 +297,11 @@ scan/
 
 **原因**: 學習功能屬於認知核心，統一管理 AI 訓練和模型
 
-**影響**:
-- ✅ 六大模組 → 五大模組
-- ✅ 代碼遷移完成
-- ⚠️ 文檔仍有部分未更新 (需要批量修正)
+**現狀**:
+- ✅ 架構已確認為五大核心模組
+- ✅ 代碼遷移完成，所有學習相關功能位於 `services/core/aiva_core/cognitive_core/learning_system/`
 
-**遷移路徑**:
+**遷移路徑 (Legacy → Current)**:
 ```
 external_learning/
 ├── training/          → cognitive_core/learning_system/training/
@@ -316,10 +314,10 @@ external_learning/
 
 ## 🎯 優先事項
 
-### 立即處理
+### 當前狀態
 1. ✅ 統一命名規範已建立
 2. ✅ 執行器整合完成
-3. ⚠️ 需批量更新"六大模組"文檔 → "五大模組"
+3. ✅ 文檔已更新反映"五大模組"架構
 
 ### 待完善
 1. 外部模組 AST 分析結果生成
@@ -331,10 +329,9 @@ external_learning/
 ## 📄 相關文檔
 
 - [UNIFIED_NAMING_CONVENTION.md](../UNIFIED_NAMING_CONVENTION.md) - 統一命名規範
-- [AI_EXECUTOR_INTEGRATION_COMPLETE.md](../AI_EXECUTOR_INTEGRATION_COMPLETE.md) - 執行器整合報告
 - [services/README.md](README.md) - Services 總覽
 
 ---
 
-**最後更新**: 2026-01-20
+**最後更新**: 2026-01-21
 **維護者**: AIVA 開發團隊
