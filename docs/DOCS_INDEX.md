@@ -2,17 +2,17 @@
 
 本目錄包含 AIVA 專案的完整文檔集合，按照功能和用途進行分類組織。
 
-## 📢 最新更新 (2026-01-14)
+## 📢 最新更新 (2026-01-21)
+
+### 🏗️ 架構更新：五大核心模組
+- ✅ **[Services 架構分析報告 (2026)](01_architecture/ARCHITECTURE_ANALYSIS_2026.md)** - 詳細說明五大核心模組架構 (整合 external_learning 到 cognitive_core)
+- ✅ **[操作手冊更新](01_user_documentation/user-guides/OPERATION_MANUAL.md)** - 更新為雙層架構 (Language Layer + Business Logic Layer) 及新 CLI 用法
 
 ### 🎯 多語言能力測試完成
 - ✅ [多語言能力測試報告](MULTI_LANGUAGE_CAPABILITY_TESTING_REPORT.md) - Python/Go/TypeScript 模塊實戰測試
 - ✅ Python XSS 模塊完整驗證（15+ HTTP 請求，3種攻擊模式）
 - ✅ 自動化測試腳本 `test_multi_capabilities.ps1` 創建完成
 - ✅ 210個 flows 分類數據生成與驗證
-
-### 📊 系統狀態報告
-- 📄 [外部模塊系統狀態報告](../logs/status_reports/status_20260114_external_modules.md)
-- 詳細記錄 8 個模塊的執行狀態和測試覆蓋率
 
 ## 目錄結構概覽
 
@@ -34,10 +34,11 @@
 - 功能分析報告
 - 性能評估報告
 - 技術調研文檔
+- [內部工作流分析](03_analysis_reports/AI_INTERNAL_WORKFLOW_ANALYSIS.md)
 
 ### 04_capability_documentation/ - 能力文檔
 模組能力詳細說明和分類
-- 六大模組完整說明
+- 五大模組完整說明
 - 能力分類清單
 - 數據流分析文檔
 - 模組功能索引
@@ -97,4 +98,4 @@
 - **格式標準**: Markdown (.md)
 - **命名規範**: 使用描述性英文名稱，中文文檔保持原名
 
-最後更新: 2026-01-07
+最後更新: 2026-01-21

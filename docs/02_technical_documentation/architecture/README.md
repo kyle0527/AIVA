@@ -1,8 +1,8 @@
 # 📚 AIVA 架構設計文檔中心
 
-**最後更新**: 2025-12-31  
-**文檔總數**: 28 份  
-**總計大小**: ~530 KB
+**最後更新**: 2026-01-21
+**文檔總數**: 25 份
+**總計大小**: ~450 KB
 
 ---
 
@@ -14,9 +14,8 @@
 |------|------|--------|
 | [01_core_architecture/](01_core_architecture/) | 核心架構設計 | 5 |
 | [02_dual_loop/](02_dual_loop/) | 雙閉環架構 | 5 |
-| [03_modules_capabilities/](03_modules_capabilities/) | 模組與能力 | 7 |
+| [03_modules_capabilities/](03_modules_capabilities/) | 模組與能力 | 6 |
 | [04_cli_system/](04_cli_system/) | CLI 系統設計 | 4 |
-| [05_implementation_plans/](05_implementation_plans/) | 實施計劃 | 2 |
 | [06_design_philosophy/](06_design_philosophy/) | 設計哲學 | 4 |
 
 ---
@@ -60,11 +59,10 @@ AIVA 的核心運作機制：內閉環（自我認知）+ 外閉環（執行學�
 
 ## 📦 03_modules_capabilities/ - 模組與能力
 
-六大核心模組的能力分析與 CLI 整合。
+五大核心模組的能力分析與 CLI 整合。
 
 | 文件 | 大小 | 說明 |
 |------|------|------|
-| [SIX_MODULES_CAPABILITIES_AND_CLI_GUIDE.md](03_modules_capabilities/SIX_MODULES_CAPABILITIES_AND_CLI_GUIDE.md) | 30.4 KB | 六大模組能力與 CLI 指南（核心） |
 | [00_FIVE_MODULES_SUMMARY.md](03_modules_capabilities/00_FIVE_MODULES_SUMMARY.md) | 17.3 KB | 五大模組總覽 |
 | [01_CORE_MODULE_ANALYSIS.md](03_modules_capabilities/01_CORE_MODULE_ANALYSIS.md) | 19.8 KB | Core 模組分析 |
 | [02_AIVA_COMMON_MODULE_ANALYSIS.md](03_modules_capabilities/02_AIVA_COMMON_MODULE_ANALYSIS.md) | 19.2 KB | AIVA Common 模組分析 |
@@ -72,13 +70,12 @@ AIVA 的核心運作機制：內閉環（自我認知）+ 外閉環（執行學�
 | [04_SCAN_MODULE_ANALYSIS.md](03_modules_capabilities/04_SCAN_MODULE_ANALYSIS.md) | 10.1 KB | Scan 模組分析 |
 | [05_INTEGRATION_MODULE_ANALYSIS.md](03_modules_capabilities/05_INTEGRATION_MODULE_ANALYSIS.md) | 9.7 KB | Integration 模組分析 |
 
-**六大模組**:
-1. **Core** - AI 決策與調度
-2. **AIVA Common** - 共享組件與 Schema
-3. **Features** - 安全測試功能
-4. **Scan** - 掃描引擎
-5. **Integration** - 數據整合
-6. **External Tools** - 外部工具整合
+**五大模組**:
+1. **Cognitive Core** - 認知核心 (含學習系統)
+2. **Internal Exploration** - 內部探索
+3. **Task Planning** - 任務規劃
+4. **Core Capabilities** - 核心能力
+5. **Service Backbone** - 服務骨幹
 
 ---
 
@@ -92,17 +89,6 @@ AIVA 的命令行接口設計與使用指南。
 | [CLI_COMPLETE_GUIDE.md](04_cli_system/CLI_COMPLETE_GUIDE.md) | 13.9 KB | CLI 完整使用指南 |
 | [CLI_GUIDE.md](04_cli_system/CLI_GUIDE.md) | 13.2 KB | CLI 基礎指南 |
 | [AIVA_CLI_USAGE_GUIDE.md](04_cli_system/AIVA_CLI_USAGE_GUIDE.md) | 5.9 KB | CLI 使用指南 |
-
----
-
-## 📋 05_implementation_plans/ - 實施計劃
-
-從設計到部署的完整實施路線圖。
-
-| 文件 | 大小 | 說明 |
-|------|------|------|
-| [AI_MODULE_INTEGRATION_IMPLEMENTATION_PLAN.md](05_implementation_plans/AI_MODULE_INTEGRATION_IMPLEMENTATION_PLAN.md) | 38.6 KB | AI 模組整合實施計劃 |
-| [AI_MODULE_INTEGRATION_QUICKSTART.md](05_implementation_plans/AI_MODULE_INTEGRATION_QUICKSTART.md) | 18.9 KB | 快速開始指南 |
 
 ---
 
@@ -132,9 +118,8 @@ AIVA 的設計理念與模組化思想。
 3. [EXTERNAL_LOOP_ACTIVATION_PLAN.md](02_dual_loop/EXTERNAL_LOOP_ACTIVATION_PLAN.md) - 外閉環啟動
 
 ### 深入開發
-1. [SIX_MODULES_CAPABILITIES_AND_CLI_GUIDE.md](03_modules_capabilities/SIX_MODULES_CAPABILITIES_AND_CLI_GUIDE.md) - 模組能力
-2. [CLI_COMMANDS_ARCHITECTURE_ANALYSIS.md](04_cli_system/CLI_COMMANDS_ARCHITECTURE_ANALYSIS.md) - CLI 架構
-3. [MODULE_DESIGN_PHILOSOPHY.md](06_design_philosophy/MODULE_DESIGN_PHILOSOPHY.md) - 設計哲學
+1. [CLI_COMMANDS_ARCHITECTURE_ANALYSIS.md](04_cli_system/CLI_COMMANDS_ARCHITECTURE_ANALYSIS.md) - CLI 架構
+2. [MODULE_DESIGN_PHILOSOPHY.md](06_design_philosophy/MODULE_DESIGN_PHILOSOPHY.md) - 設計哲學
 
 ---
 
