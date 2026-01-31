@@ -98,29 +98,29 @@ class UnifiedExecutorController:
         if self._initialized:
             return
         
-        print("🔧 初始化統一執行器控制層...")
+        print("初始化統一執行器控制層...")
         
         # 1. 導入並初始化內部執行器
         try:
             from aiva_core.internal_exploration.aiva_internal_executor import FlowExecutor
             self.internal_executor = FlowExecutor()
-            print("   ✓ 內部執行器 (aiva_internal_executor) 已載入")
+            print("   - 內部執行器 (aiva_internal_executor) 已載入")
         except Exception as e:
-            print(f"   ✗ 內部執行器載入失敗: {e}")
+            print(f"   - 內部執行器載入失敗: {e}")
         
         # 2. 導入並初始化外部執行器
         try:
             from aiva_core.internal_exploration.aiva_external_executor import MultiLangExecutor
             self.external_executor = MultiLangExecutor()
-            print("   ✓ 外部執行器 (aiva_external_executor) 已載入")
+            print("   - 外部執行器 (aiva_external_executor) 已載入")
         except Exception as e:
-            print(f"   ✗ 外部執行器載入失敗: {e}")
+            print(f"   - 外部執行器載入失敗: {e}")
         
         # 3. 載入能力映射
         self._load_capability_mappings()
         
         self._initialized = True
-        print("✅ 統一執行器控制層初始化完成\n")
+        print("統一執行器控制層初始化完成\n")
     
     def _load_capability_mappings(self):
         """從兩個數據源載入能力映射：
@@ -165,12 +165,12 @@ class UnifiedExecutorController:
                             internal_count += 1
                             break
                 
-                print(f"   ✓ 內部能力: 載入 {internal_count} 個映射")
+                print(f"   - 內部能力: 載入 {internal_count} 個映射")
                 
             except Exception as e:
-                print(f"   ⚠ 載入內部能力映射失敗: {e}")
+                print(f"   - 載入內部能力映射失敗: {e}")
         else:
-            print(f"   ⚠ 找不到內部探索數據: {internal_file}")
+            print(f"   - 找不到內部探索數據: {internal_file}")
         
         # === 2. 載入外部攻擊模組 (classification_data.json) ===
         external_file = PROJECT_ROOT / "features_classification" / "classification_data.json"
@@ -222,14 +222,14 @@ class UnifiedExecutorController:
                             external_count += 1
                             break
                 
-                print(f"   ✓ 外部模組: 載入 {external_count} 個映射")
+                print(f"   - 外部模組: 載入 {external_count} 個映射")
                 
             except Exception as e:
-                print(f"   ⚠ 載入外部模組映射失敗: {e}")
+                print(f"   - 載入外部模組映射失敗: {e}")
         else:
-            print(f"   ⚠ 找不到外部模組數據: {external_file}")
+            print(f"   - 找不到外部模組數據: {external_file}")
         
-        print(f"   ✓ 總計: {len(self.capability_flow_map)} 種能力，{internal_count + external_count} 個映射")
+        print(f"   - 總計: {len(self.capability_flow_map)} 種能力，{internal_count + external_count} 個映射")
     
     def execute_capability(
         self,
@@ -260,7 +260,7 @@ class UnifiedExecutorController:
         if executor_type == "auto":
             executor_type = self.capability_executor_map.get(capability, "external")
         
-        print(f"🎯 執行能力: {capability}")
+        print(f"執行能力: {capability}")
         print(f"   執行器: {executor_type}")
         print(f"   目標: {target or 'N/A'}")
         print(f"   Dry Run: {dry_run}")
@@ -481,7 +481,7 @@ class UnifiedExecutorController:
                 self._menu_capability_details()
             
             else:
-                print("❌ 無效選擇")
+                print("- 無效選擇")
     
     def _menu_external_capabilities(self):
         """外部攻擊能力選單"""
@@ -523,7 +523,7 @@ class UnifiedExecutorController:
                         print(f"  錯誤: {result.error}")
         
         except ValueError:
-            print("❌ 無效輸入")
+            print("- 無效輸入")
     
     def _menu_internal_capabilities(self):
         """內部探索能力選單"""
@@ -548,7 +548,7 @@ class UnifiedExecutorController:
                     )
                     print(f"\n執行結果: {result.success}")
                 except ValueError:
-                    print("❌ 無效的 Flow ID")
+                    print("- 無效的 Flow ID")
             return
         
         for i, cap in enumerate(caps, 1):
@@ -570,7 +570,7 @@ class UnifiedExecutorController:
                     )
                     print(f"\n執行結果: {result.success}")
             except ValueError:
-                print("❌ 無效輸入")
+                print("- 無效輸入")
     
     def _menu_list_capabilities(self):
         """列出所有能力"""
@@ -580,17 +580,17 @@ class UnifiedExecutorController:
         
         all_caps = self.list_capabilities()
         
-        print("\n🎯 外部攻擊能力:")
+        print("\n- 外部攻擊能力:")
         for cap in all_caps["external"]:
             flow_ids = self.capability_flow_map.get(cap, [])
             flow_info = f" (Flow: {flow_ids[0]})" if flow_ids else ""
-            print(f"  • {cap}{flow_info}")
+            print(f"  - {cap}{flow_info}")
         
-        print("\n🔍 內部探索能力:")
+        print("\n- 內部探索能力:")
         for cap in all_caps["internal"]:
             flow_ids = self.capability_flow_map.get(cap, [])
             flow_info = f" (Flow: {flow_ids[0]})" if flow_ids else ""
-            print(f"  • {cap}{flow_info}")
+            print(f"  - {cap}{flow_info}")
         
         input("\n按 Enter 繼續...")
     
@@ -660,10 +660,10 @@ def main():
         caps = controller.list_capabilities()
         print("\n外部攻擊能力:")
         for cap in caps["external"]:
-            print(f"  • {cap}")
+            print(f"  - {cap}")
         print("\n內部探索能力:")
         for cap in caps["internal"]:
-            print(f"  • {cap}")
+            print(f"  - {cap}")
     
     elif args.capability or args.flow:
         result = controller.execute_capability(

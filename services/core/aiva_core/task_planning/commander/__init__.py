@@ -70,7 +70,21 @@ class CommanderCoordinator:
     def plan_builder(self) -> PlanBuilder:
         """延遲加載計劃建構器"""
         if self._plan_builder is None:
-            self._plan_builder = PlanBuilder(data_directory=self.data_directory / "plans")
+            # 初始化 PlanBuilder 所需的依賴
+            from services.core.aiva_core.cognitive_core.rag.rag_handler import RAGHandler
+            from services.core.aiva_core.cognitive_core.decision.enhanced_decision_agent import EnhancedDecisionAgent
+            from services.core.aiva_core.cognitive_core.learning_system.experience_manager import ExperienceManager
+
+            rag_engine = RAGHandler()
+            decision_engine = EnhancedDecisionAgent()
+            experience_manager = ExperienceManager()
+
+            self._plan_builder = PlanBuilder(
+                data_directory=self.data_directory / "plans",
+                rag_engine=rag_engine,
+                decision_engine=decision_engine,
+                experience_manager=experience_manager,
+            )
         return self._plan_builder
     
     @property

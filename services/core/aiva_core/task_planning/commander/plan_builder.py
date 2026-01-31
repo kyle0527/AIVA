@@ -18,13 +18,22 @@ class PlanBuilder:
     def __init__(
         self,
         data_directory: Any = None,
+        rag_engine: Any = None,
+        decision_engine: Any = None,
+        experience_manager: Any = None,
     ):
         """初始化計劃建構器
         
         Args:
             data_directory: 數據目錄路徑（用於存儲計劃）
+            rag_engine: RAG 引擎實例
+            decision_engine: 決策引擎實例
+            experience_manager: 經驗管理器實例
         """
         self.data_directory = data_directory
+        self.rag_engine = rag_engine
+        self.decision_engine = decision_engine
+        self.experience_manager = experience_manager
         # CLI 架構 - 透過 subprocess 調用 RAG/5M 服務
         self.feedback_history = []
         self.strategy_performance = {}
