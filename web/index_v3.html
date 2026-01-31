@@ -511,19 +511,112 @@
         </div>
     </div>
 
+    <!-- 參數設定模態框 -->
+    <div class="modal fade" id="runModuleModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content" style="background: #1a1a2e; border: 1px solid rgba(102, 126, 234, 0.3); color: #e2e8f0;">
+                <div class="modal-header" style="border-bottom: 1px solid rgba(255, 255, 255, 0.1);">
+                    <h5 class="modal-title" id="moduleModalTitle">模組參數設定</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="moduleModalBody">
+                    <!-- 動態生成參數表單 -->
+                </div>
+                <div class="modal-footer" style="border-top: 1px solid rgba(255, 255, 255, 0.1);">
+                    <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">取消</button>
+                    <button type="button" class="btn btn-aiva btn-sm" id="confirmRunBtn">
+                        <i class="bi bi-play-fill"></i> 執行
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         // Module Configuration
         const moduleConfig = [
-            { id: 'price_manipulation', name: '價格操縱 (Price Manipulation)', desc: '檢測負數價格、零價格漏洞' },
-            { id: 'idor', name: '越權訪問 (IDOR)', desc: '用戶資源枚舉檢測' },
-            { id: 'workflow_bypass', name: '工作流繞過 (Workflow Bypass)', desc: '跳過付款步驟檢測' },
-            { id: 'race_condition', name: '競態條件 (Race Condition)', desc: '並發優惠券使用檢測' },
-            { id: 'xss_detection', name: 'XSS 檢測 (XSS Detection)', desc: 'DOM/Stored/Reflected XSS 檢測' },
-            { id: 'sql_injection', name: 'SQL 注入 (SQL Injection)', desc: '智能 SQL 注入檢測' },
-            { id: 'ssrf_detection', name: 'SSRF 檢測 (SSRF Detection)', desc: '服務端請求偽造檢測' },
-            { id: 'web_scanner', name: 'Web 掃描器 (Web Scanner)', desc: '綜合 Web 漏洞掃描' }
+            {
+                id: 'price_manipulation',
+                name: '價格操縱 (Price Manipulation)',
+                desc: '檢測負數價格、零價格漏洞',
+                params: [
+                    { name: 'url', label: '目標 URL', type: 'url', default: 'http://localhost:3000/api/checkout' },
+                    { name: 'product_id', label: '商品 ID', type: 'text', default: '1001' },
+                    { name: 'price_param', label: '價格參數名', type: 'text', default: 'price' }
+                ]
+            },
+            {
+                id: 'idor',
+                name: '越權訪問 (IDOR)',
+                desc: '用戶資源枚舉檢測',
+                params: [
+                    { name: 'url', label: '目標 URL', type: 'url', default: 'http://localhost:3000/api/users/' },
+                    { name: 'param', label: 'ID 參數', type: 'text', default: 'id' },
+                    { name: 'range', label: '枚舉範圍 (e.g. 1-100)', type: 'text', default: '1-50' }
+                ]
+            },
+            {
+                id: 'workflow_bypass',
+                name: '工作流繞過 (Workflow Bypass)',
+                desc: '跳過付款步驟檢測',
+                params: [
+                    { name: 'url', label: '目標 URL', type: 'url', default: 'http://localhost:3000' },
+                    { name: 'flow', label: '工作流順序', type: 'text', default: 'cart,shipping,payment,success' }
+                ]
+            },
+            {
+                id: 'race_condition',
+                name: '競態條件 (Race Condition)',
+                desc: '並發優惠券使用檢測',
+                params: [
+                    { name: 'url', label: '目標 URL', type: 'url', default: 'http://localhost:3000/api/coupon' },
+                    { name: 'coupon', label: '優惠券代碼', type: 'text', default: 'WELCOME2025' },
+                    { name: 'threads', label: '並發線程數', type: 'number', default: '10' }
+                ]
+            },
+            {
+                id: 'xss_detection',
+                name: 'XSS 檢測 (XSS Detection)',
+                desc: 'DOM/Stored/Reflected XSS 檢測',
+                params: [
+                    { name: 'url', label: '目標 URL', type: 'url', default: 'http://localhost:3000/search' },
+                    { name: 'type', label: '檢測類型', type: 'select', options: ['reflected', 'dom', 'stored'], default: 'reflected' },
+                    { name: 'param', label: '注入參數', type: 'text', default: 'q' }
+                ]
+            },
+            {
+                id: 'sql_injection',
+                name: 'SQL 注入 (SQL Injection)',
+                desc: '智能 SQL 注入檢測',
+                params: [
+                    { name: 'url', label: '目標 URL', type: 'url', default: 'http://localhost:3000/login' },
+                    { name: 'level', label: '檢測深度 (1-5)', type: 'number', default: '1' }
+                ]
+            },
+            {
+                id: 'ssrf_detection',
+                name: 'SSRF 檢測 (SSRF Detection)',
+                desc: '服務端請求偽造檢測',
+                params: [
+                    { name: 'url', label: '目標 URL', type: 'url', default: 'http://localhost:3000/proxy' },
+                    { name: 'param', label: '目標參數', type: 'text', default: 'url' }
+                ]
+            },
+            {
+                id: 'web_scanner',
+                name: 'Web 掃描器 (Web Scanner)',
+                desc: '綜合 Web 漏洞掃描',
+                params: [
+                    { name: 'url', label: '目標 URL', type: 'url', default: 'http://localhost:3000' },
+                    { name: 'full_scan', label: '完整掃描', type: 'checkbox', default: true }
+                ]
+            }
         ];
+
+        // Global state for current module
+        let currentModuleId = null;
+        let moduleModal = null;
 
         // Render Modules
         function renderModuleList() {
@@ -539,8 +632,8 @@
                             <strong>${module.name}</strong>
                             <div class="text-muted small">${module.desc}</div>
                         </div>
-                        <button class="btn btn-sm btn-aiva" onclick="runModule('${module.id}')">
-                            <i class="bi bi-play-circle"></i> 執行
+                        <button class="btn btn-sm btn-aiva" onclick="openModuleModal('${module.id}')">
+                            <i class="bi bi-gear-fill"></i> 執行
                         </button>
                     </div>
                 `;
@@ -553,6 +646,84 @@
                 countEl.textContent = moduleConfig.length;
             }
         }
+
+        function openModuleModal(moduleId) {
+            currentModuleId = moduleId;
+            const module = moduleConfig.find(m => m.id === moduleId);
+            if (!module) return;
+
+            document.getElementById('moduleModalTitle').textContent = `設定參數 - ${module.name}`;
+            const body = document.getElementById('moduleModalBody');
+            body.innerHTML = '';
+
+            // Generate form fields
+            module.params.forEach(param => {
+                const mb = document.createElement('div');
+                mb.className = 'mb-3';
+
+                const label = document.createElement('label');
+                label.className = 'form-label text-muted small';
+                label.textContent = param.label;
+                mb.appendChild(label);
+
+                if (param.type === 'select') {
+                    const select = document.createElement('select');
+                    select.className = 'form-select form-select-sm bg-dark text-light border-secondary param-input';
+                    select.dataset.name = param.name;
+                    param.options.forEach(opt => {
+                        const option = document.createElement('option');
+                        option.value = opt;
+                        option.textContent = opt;
+                        if (opt === param.default) option.selected = true;
+                        select.appendChild(option);
+                    });
+                    mb.appendChild(select);
+                } else if (param.type === 'checkbox') {
+                    const div = document.createElement('div');
+                    div.className = 'form-check form-switch';
+                    div.innerHTML = `
+                        <input class="form-check-input param-input" type="checkbox" data-name="${param.name}" ${param.default ? 'checked' : ''}>
+                    `;
+                    mb.appendChild(div);
+                } else {
+                    const input = document.createElement('input');
+                    input.type = param.type;
+                    input.className = 'form-control form-control-sm bg-dark text-light border-secondary param-input';
+                    input.value = param.default;
+                    input.dataset.name = param.name;
+                    mb.appendChild(input);
+                }
+
+                body.appendChild(mb);
+            });
+
+            if (!moduleModal) {
+                moduleModal = new bootstrap.Modal(document.getElementById('runModuleModal'));
+            }
+            moduleModal.show();
+        }
+
+        // Handle Confirm Run
+        document.getElementById('confirmRunBtn').addEventListener('click', function() {
+            if (!currentModuleId) return;
+
+            // Collect params
+            const params = {};
+            document.querySelectorAll('.param-input').forEach(input => {
+                const name = input.dataset.name;
+                if (input.type === 'checkbox') {
+                    params[name] = input.checked;
+                } else {
+                    params[name] = input.value;
+                }
+            });
+
+            // Run
+            runModule(currentModuleId, params);
+
+            // Close modal
+            if (moduleModal) moduleModal.hide();
+        });
 
         // Initialize
         document.addEventListener('DOMContentLoaded', renderModuleList);
@@ -589,8 +760,9 @@
         }
 
         // 安全模組執行
-        function runModule(type) {
-            addLog('info', `開始執行 ${type} 檢測`);
+        function runModule(type, params = {}) {
+            const paramStr = JSON.stringify(params);
+            addLog('info', `開始執行 ${type} 檢測 (Params: ${paramStr})`);
             setTimeout(() => {
                 addLog('success', `${type} 檢測完成`);
             }, 2000);
