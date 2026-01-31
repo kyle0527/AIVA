@@ -218,6 +218,13 @@
             font-size: 0.85rem;
         }
 
+        /* 模組列表容器 */
+        .module-list-container {
+            max-height: 600px;
+            overflow-y: auto;
+            padding-right: 10px;
+        }
+
         /* 響應式 */
         @media (max-width: 768px) {
             .mode-selector {
@@ -285,8 +292,8 @@
             <div class="col-md-3 mb-3">
                 <div class="stat-card" style="background: linear-gradient(135deg, #3b82f6, #2563eb);">
                     <i class="bi bi-bug-fill" style="font-size: 2rem;"></i>
-                    <div class="stat-value" id="bizlogic-types">8</div>
-                    <div class="stat-label">業務邏輯攻擊類型</div>
+                    <div class="stat-value" id="module-count">16</div>
+                    <div class="stat-label">可用功能模組</div>
                 </div>
             </div>
             <div class="col-md-3 mb-3">
@@ -416,76 +423,114 @@
                 </div>
             </div>
 
-            <!-- 右側面板 - 業務邏輯攻擊 -->
+            <!-- 右側面板 - 安全檢測模組 -->
             <div class="col-lg-6 mb-4">
                 <div class="dashboard-card p-4">
                     <h5 class="mb-3">
-                        <i class="bi bi-bug"></i>
-                        💼 業務邏輯攻擊模組
+                        <i class="bi bi-shield-check"></i>
+                        🛡️ 安全檢測模組
                     </h5>
 
-                    <div class="bizlogic-module">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <div>
-                                <strong>價格操縱 (Price Manipulation)</strong>
-                                <div class="text-muted small">檢測負數價格、零價格漏洞</div>
+                    <div class="module-list-container">
+                        <div class="bizlogic-module">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <strong>價格操縱 (Price Manipulation)</strong>
+                                    <div class="text-muted small">檢測負數價格、零價格漏洞</div>
+                                </div>
+                                <button class="btn btn-sm btn-aiva" onclick="runModule('price_manipulation')">
+                                    <i class="bi bi-play-circle"></i> 執行
+                                </button>
                             </div>
-                            <button class="btn btn-sm btn-aiva" onclick="runBizLogic('price_manipulation')">
-                                <i class="bi bi-play-circle"></i> 執行
-                            </button>
                         </div>
-                    </div>
 
-                    <div class="bizlogic-module">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <div>
-                                <strong>越權訪問 (IDOR)</strong>
-                                <div class="text-muted small">用戶資源枚舉檢測</div>
+                        <div class="bizlogic-module">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <strong>越權訪問 (IDOR)</strong>
+                                    <div class="text-muted small">用戶資源枚舉檢測</div>
+                                </div>
+                                <button class="btn btn-sm btn-aiva" onclick="runModule('idor')">
+                                    <i class="bi bi-play-circle"></i> 執行
+                                </button>
                             </div>
-                            <button class="btn btn-sm btn-aiva" onclick="runBizLogic('idor')">
-                                <i class="bi bi-play-circle"></i> 執行
-                            </button>
                         </div>
-                    </div>
 
-                    <div class="bizlogic-module">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <div>
-                                <strong>工作流繞過 (Workflow Bypass)</strong>
-                                <div class="text-muted small">跳過付款步驟檢測</div>
+                        <div class="bizlogic-module">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <strong>工作流繞過 (Workflow Bypass)</strong>
+                                    <div class="text-muted small">跳過付款步驟檢測</div>
+                                </div>
+                                <button class="btn btn-sm btn-aiva" onclick="runModule('workflow_bypass')">
+                                    <i class="bi bi-play-circle"></i> 執行
+                                </button>
                             </div>
-                            <button class="btn btn-sm btn-aiva" onclick="runBizLogic('workflow_bypass')">
-                                <i class="bi bi-play-circle"></i> 執行
-                            </button>
                         </div>
-                    </div>
 
-                    <div class="bizlogic-module">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <div>
-                                <strong>競態條件 (Race Condition)</strong>
-                                <div class="text-muted small">並發優惠券使用檢測</div>
+                        <div class="bizlogic-module">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <strong>競態條件 (Race Condition)</strong>
+                                    <div class="text-muted small">並發優惠券使用檢測</div>
+                                </div>
+                                <button class="btn btn-sm btn-aiva" onclick="runModule('race_condition')">
+                                    <i class="bi bi-play-circle"></i> 執行
+                                </button>
                             </div>
-                            <button class="btn btn-sm btn-aiva" onclick="runBizLogic('race_condition')">
-                                <i class="bi bi-play-circle"></i> 執行
-                            </button>
                         </div>
-                    </div>
 
-                    <div class="bizlogic-module">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <div>
-                                <strong>優惠券濫用 (Coupon Abuse)</strong>
-                                <div class="text-muted small">重複使用檢測</div>
+                        <div class="bizlogic-module">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <strong>XSS 檢測 (XSS Detection)</strong>
+                                    <div class="text-muted small">DOM/Stored/Reflected XSS 檢測</div>
+                                </div>
+                                <button class="btn btn-sm btn-aiva" onclick="runModule('xss_detection')">
+                                    <i class="bi bi-play-circle"></i> 執行
+                                </button>
                             </div>
-                            <button class="btn btn-sm btn-aiva" onclick="runBizLogic('coupon_abuse')">
-                                <i class="bi bi-play-circle"></i> 執行
-                            </button>
+                        </div>
+
+                        <div class="bizlogic-module">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <strong>SQL 注入 (SQL Injection)</strong>
+                                    <div class="text-muted small">智能 SQL 注入檢測</div>
+                                </div>
+                                <button class="btn btn-sm btn-aiva" onclick="runModule('sql_injection')">
+                                    <i class="bi bi-play-circle"></i> 執行
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="bizlogic-module">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <strong>SSRF 檢測 (SSRF Detection)</strong>
+                                    <div class="text-muted small">服務端請求偽造檢測</div>
+                                </div>
+                                <button class="btn btn-sm btn-aiva" onclick="runModule('ssrf_detection')">
+                                    <i class="bi bi-play-circle"></i> 執行
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="bizlogic-module">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <strong>Web 掃描器 (Web Scanner)</strong>
+                                    <div class="text-muted small">綜合 Web 漏洞掃描</div>
+                                </div>
+                                <button class="btn btn-sm btn-aiva" onclick="runModule('web_scanner')">
+                                    <i class="bi bi-play-circle"></i> 執行
+                                </button>
+                            </div>
                         </div>
                     </div>
 
                     <div class="text-center mt-3">
-                        <button class="btn btn-aiva" onclick="runAllBizLogic()">
+                        <button class="btn btn-aiva" onclick="runAllModules()">
                             <i class="bi bi-collection-play"></i> 執行全部檢測
                         </button>
                     </div>
@@ -593,16 +638,16 @@
             addLog('warning', `移除監控目標 #${index}`);
         }
 
-        // 業務邏輯攻擊
-        function runBizLogic(type) {
+        // 安全模組執行
+        function runModule(type) {
             addLog('info', `開始執行 ${type} 檢測`);
             setTimeout(() => {
                 addLog('success', `${type} 檢測完成`);
             }, 2000);
         }
 
-        function runAllBizLogic() {
-            addLog('info', '開始執行全部業務邏輯檢測...');
+        function runAllModules() {
+            addLog('info', '開始執行全部安全模組檢測...');
         }
 
         // 日誌系統
