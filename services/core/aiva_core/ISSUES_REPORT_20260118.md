@@ -23,78 +23,71 @@
 
 ### 問題 1: 舊版 aiva_exploration_pipeline 引用
 
-**位置 1**: `task_planning/dispatcher.py` (Line 329)
+**更新狀態 (2026-01-31)**: ⚠️ **部分已修復**
+
+**✅ 位置 1 (已修復)**: `task_planning/dispatcher.py` (Line 328-341)
 
 ```python
-# ❌ 錯誤引用
-"services.core.aiva_core.internal_exploration.python_tools.aiva_exploration_pipeline",
+# ✅ 已修復：改用新架構
+cmd = [
+    "python", "-m",
+    "services.core.aiva_core.internal_exploration.aiva_internal_executor"
+]
 ```
 
-**位置 2**: `cognitive_core/internal_loop_connector.py` (Line 565)
+**❌ 位置 2 (尚未修復)**: `cognitive_core/internal_loop_connector.py` (Line 565)
 
 ```python
-# ❌ 錯誤引用
+# ❌ 仍然錯誤：引用不存在的文件
 from ..internal_exploration.python_tools.aiva_exploration_pipeline import ExplorationPipeline
 ```
 
 **問題描述**:
-- 引用已移除的文件（已移至 Downloads）
-- 使用舊版單體架構 API
-- 可能導致運行時 `ImportError`
+- ❌ `aiva_exploration_pipeline.py` 文件不存在（已移除或移至他處）
+- ⚠️ `internal_loop_connector.py` 在 `force_refresh=True` 時會導致 `ImportError`
+- ✅ `dispatcher.py` 已正確使用新架構 (aiva_internal_executor)
 
-**影響**:
-- ⚠️ Internal Loop 同步功能可能失效
-- ⚠️ Dispatcher 工具調用失敗
-- ⚠️ 與新架構不一致
+**實際影響**:
+- ✅ Dispatcher 工具調用正常
+- ❌ Internal Loop 強制刷新功能會崩潰
+- ⚠️ 如果未使用 `force_refresh` 參數，則不影響日常運行
 
 **修復方案**:
 
-#### 方案 A: 更新為新架構（推薦）
+#### 修復方案: 更新 internal_loop_connector.py 為新架構
+
+**需要修改的文件**: `cognitive_core/internal_loop_connector.py` (Line 562-580)
 
 ```python
-# dispatcher.py - 使用新的 classifier + executor
-def _run_tool_subprocess(self, tool: str, timeout: int = 300, **kwargs):
-    """使用新架構執行工具"""
-    # 1. 先執行分類
-    cmd_classify = [
-        "python", 
-        "services/core/aiva_core/internal_exploration/aiva_internal_classifier.py"
-    ]
-    subprocess.run(cmd_classify, capture_output=True, text=True)
-    
-    # 2. 執行特定流程
-    cmd_execute = [
-        "python",
-        "services/core/aiva_core/internal_exploration/aiva_internal_executor.py",
-        "--tool", tool,
-        "--params", json.dumps(kwargs)
-    ]
-    return subprocess.run(cmd_execute, capture_output=True, text=True, timeout=timeout)
-```
-
-```python
-# internal_loop_connector.py - 使用新架構
+# 步驟 1: 如果強制刷新，觸發外部管線進行代碼分析
 if force_refresh:
-    from ..internal_exploration.aiva_internal_classifier import AIVAFlowClassifier
-    from ..internal_exploration.aiva_internal_executor import FlowExecutor
-    
-    # 分類
-    classifier = AIVAFlowClassifier(
-        analysis_results_path=f"./analysis_results_{target_module}.json"
-    )
-    classifier.classify_flows()
-    
-    # 執行特定流程
-    executor = FlowExecutor()
-    # ... 執行邏輯
+    try:
+        # ❌ 移除舊版引用
+        # from ..internal_exploration.python_tools.aiva_exploration_pipeline import ExplorationPipeline
+        
+        # ✅ 改用新架構：使用 classifier + executor
+        from ..internal_exploration.aiva_internal_classifier import AIVAFlowClassifier
+        
+        logger.info("⚙️ Force refresh requested. Running classifier...")
+        logger.info(f"   Target scope: {target_scope}")
+        logger.info(f"   Target module: {target_module}")
+        
+        # 執行分類器
+        classifier = AIVAFlowClassifier(
+            target_path=target_scope,
+            output_dir="data/internal_exploration/classification_results"
+        )
+        success = await asyncio.to_thread(classifier.classify_all_flows)
+        
+        if success:
+            logger.info("✅ Flow classification completed successfully.")
+            logger.info(f"   Results: data/internal_exploration/classification_results/")
 ```
 
-#### 方案 B: 保留舊檔但更新路徑（臨時）
-
-如果舊版 `aiva_exploration_pipeline.py` 仍有功能需求：
-1. 從 Downloads 複製回 python_tools/
-2. 標記為 deprecated
-3. 逐步遷移到新架構
+**修改理由**:
+- ✅ 使用現有的 `AIVAFlowClassifier`（已驗證存在）
+- ✅ 符合新架構設計（classifier → executor 分離）
+- ✅ 避免引用不存在的文件
 
 ---
 

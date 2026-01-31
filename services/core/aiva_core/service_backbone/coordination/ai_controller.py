@@ -271,7 +271,7 @@ class AISubsystemController:
                 "analysis": preprocessed.get("tool_result", {}).get("analysis", ""),
             }
 
-    def _coordinated_detection(
+    async def _coordinated_detection(
         self, user_input: str, context: dict
     ) -> dict[str, Any]:
         """協調漏洞檢測 - 統一調度多檢測引擎"""
@@ -279,15 +279,43 @@ class AISubsystemController:
 
         # 主控 AI 分析檢測需求
         detection_plan = self.master_ai.invoke(f"規劃檢測策略: {user_input}", **context)
+        
+        # 提取目標（假設從 context 或 input 解析，這裡做簡單處理）
+        # 在實際場景中，應該有更嚴謹的目標解析邏輯
+        targets = context.get("targets", [])
+        if not targets and "http" in user_input:
+             # 簡單提取 url
+             words = user_input.split()
+             for w in words:
+                 if w.startswith("http"):
+                     targets.append(w)
+        
+        if not targets:
+            return {
+                "status": "error", 
+                "message": "無法識別目標 URL，請在輸入中包含 URL",
+                "processing_method": "coordinated_detection"
+            }
 
-        # 實際調用檢測引擎 (TODO: 接入真實的 scan_orchestrator)
-        # 目前返回空狀態,避免虛假報告
-        detection_results = {
-            "sqli_results": {"vulnerabilities_found": 0, "confidence": 0.0, "status": "pending"},
-            "xss_results": {"vulnerabilities_found": 0, "confidence": 0.0, "status": "pending"},
-            "ssrf_results": {"vulnerabilities_found": 0, "confidence": 0.0, "status": "pending"},
-            "note": "等待實際掃描引擎執行"
-        }
+        # 實際調用檢測引擎
+        scan_id = context.get("scan_id", f"scan_{int(datetime.now().timestamp())}")
+        
+        # 動態加載協調器 (避免循環導入)
+        try:
+            from services.scan.coordinators.multi_engine_coordinator import MultiEngineCoordinator
+            if not hasattr(self, "scan_coordinator") or self.scan_coordinator is None:
+                self.scan_coordinator = MultiEngineCoordinator()
+                await self.scan_coordinator.initialize()
+                
+            # 使用 Smart 策略執行
+            detection_results = await self.scan_coordinator.execute_strategy_smart(
+                scan_id=scan_id,
+                targets=targets,
+                max_depth=3
+            )
+        except Exception as e:
+            logger.error(f"掃描執行失敗: {e}")
+            detection_results = {"error": str(e), "status": "failed"}
 
         # 主控 AI 整合結果
         integration = self.master_ai.invoke(

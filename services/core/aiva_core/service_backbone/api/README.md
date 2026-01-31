@@ -33,6 +33,8 @@
   - 統一的錯誤處理
   - 結果封裝
 
+**注意**: 實際檔案名為 `unified_function_caller.py` (不是 `enhanced_unified_api.py`)
+
 ### enhanced_unified_caller.py
 - `FunctionCallResult` - 增強版調用結果
 - `ModuleEndpoint` - 增強版端點配置

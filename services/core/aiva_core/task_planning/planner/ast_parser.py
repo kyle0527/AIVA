@@ -5,6 +5,7 @@
 """
 
 from dataclasses import dataclass, field
+from datetime import datetime
 from enum import Enum
 import logging
 from typing import Any
@@ -206,19 +207,91 @@ class ASTParser:
 
     def parse_text(self, ast_text: str) -> AttackFlowGraph:
         """從文本格式解析 AST
-
-        支持簡單的文本格式，例如：
-        START -> SCAN(url=target) -> ANALYZE -> EXPLOIT -> VALIDATE -> END
-
+        
+        支持箭頭格式，例如：
+        START -> SCAN(url=target, depth=2) -> ANALYZE -> EXPLOIT -> VALIDATE -> END
+        
         Args:
             ast_text: AST 文本描述
-
+            
         Returns:
             AttackFlowGraph 實例
         """
-        # TODO: 實現文本解析邏輯
-        logger.warning("Text parsing not fully implemented yet")
-        graph = AttackFlowGraph(graph_id="text_parsed")
+        import re
+        
+        graph_id = f"text_parsed_{int(datetime.now().timestamp())}"
+        graph = AttackFlowGraph(graph_id=graph_id)
+        
+        # 移除空白並分割節點
+        # 使用正則表達式分割 "->" 但忽略參數括號內的內容
+        # 簡單起見，我們先假設用戶輸入格式規範
+        raw_nodes = [n.strip() for n in ast_text.split("->") if n.strip()]
+        
+        previous_node_id = None
+        
+        for i, raw_node in enumerate(raw_nodes):
+            # 解析 節點類型(參數)
+            # 例如: SCAN(url=http://target.com) 或 SCAN
+            match = re.match(r"^([A-Z_]+)(?:\((.*)\))?$", raw_node)
+            
+            if not match:
+                logger.warning(f"無法解析節點文本: {raw_node}")
+                continue
+                
+            node_type_str = match.group(1).upper()
+            params_str = match.group(2)
+            
+            # 驗證節點類型
+            try:
+                node_type = NodeType(node_type_str.lower())
+            except ValueError:
+                # 嘗試自動修正或默認
+                logger.warning(f"未知節點類型: {node_type_str}，嘗試映射...")
+                if "SCAN" in node_type_str: node_type = NodeType.SCAN
+                elif "ATTACK" in node_type_str: node_type = NodeType.EXPLOIT
+                else: node_type = NodeType.ANALYZE
+            
+            # 解析參數
+            parameters = {}
+            if params_str:
+                # 簡單的 key=value 解析
+                for param in params_str.split(","):
+                    if "=" in param:
+                        key, value = param.split("=", 1)
+                        parameters[key.strip()] = value.strip()
+            
+            # 創建節點
+            node_id = f"n{i}_{node_type.value}"
+            # 特殊處理 START/END 避免重複? 這裡暫時依賴順序生成唯一ID
+            
+            action = f"Execute {node_type.value}"
+            if "url" in parameters:
+                action += f" on {parameters['url']}"
+                
+            node = AttackFlowNode(
+                node_id=node_id,
+                node_type=node_type,
+                action=action,
+                parameters=parameters
+            )
+            graph.add_node(node)
+            
+            # 創建連接上一節點的邊
+            if previous_node_id:
+                edge = AttackFlowEdge(
+                    from_node=previous_node_id,
+                    to_node=node_id
+                )
+                graph.add_edge(edge)
+                
+            previous_node_id = node_id
+            
+        # 驗證並返回
+        is_valid, errors = graph.validate()
+        if not is_valid:
+             logger.warning(f"解析後的圖驗證失敗: {errors}")
+             
+        logger.info(f"成功解析文本 AST，包含 {len(graph.nodes)} 個節點")
         return graph
 
     def create_example_sqli_flow(self) -> AttackFlowGraph:

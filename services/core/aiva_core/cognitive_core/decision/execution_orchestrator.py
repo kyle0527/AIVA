@@ -40,7 +40,7 @@ from aiva_common.schemas import (
 )
 from aiva_common.utils import get_logger
 
-from .execution_planner import ExecutionPlan, ExecutionStep
+from .scan_execution_planner import ExecutionPlan, ExecutionStep
 
 logger = get_logger(__name__)
 

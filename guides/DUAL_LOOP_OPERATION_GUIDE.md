@@ -78,7 +78,8 @@ services/core/aiva_core/
 │   ├── python_tools/                 # Python 代碼分析
 │   │   ├── aiva_flow_analyzer.py    # 流程分析器
 │   │   ├── aiva_flow_classifier.py  # 流程分類器
-│   │   └── aiva_cli_implementation.py # CLI 生成器
+│   │   ├── aiva_internal_executor.py # 內部執行器核心
+│   │   └── python_tools/             # 輔助工具
 │   ├── typescript_tools/             # TypeScript 工具
 │   ├── go_tools/                     # Go 工具
 │   └── rust_tools/                   # Rust 工具
@@ -250,7 +251,10 @@ await connector.sync_capabilities_to_rag()
        └─> cognitive_core/rag/knowledge_base (存儲)
 
 3. CLI 生成
-   └─> aiva_cli_implementation.py (生成命令)
+   └─> aiva_internal_executor.py (執行邏輯)
+         ^
+         |
+      aiva_cli.py (統一入口)
        └─> CLI_COMMANDS_REFERENCE.md (文檔)
 ```
 

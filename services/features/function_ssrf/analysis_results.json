@@ -9963,2401 +9963,6 @@
       "end_node_id": "SmartSSRFDetector__extract_token_2"
     },
     {
-      "name": "SsrfTelemetry",
-      "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\function_ssrf\\worker.py",
-      "type": "class",
-      "nodes": [
-        {
-          "id": "SsrfTelemetry_1",
-          "label": "SsrfTelemetry",
-          "kind": "start",
-          "nexts": [
-            "SsrfTelemetry_3"
-          ],
-          "metadata": {
-            "type": "head",
-            "name": "SsrfTelemetry",
-            "docstring": "",
-            "is_class": true
-          }
-        },
-        {
-          "id": "SsrfTelemetry_2",
-          "label": "End",
-          "kind": "end",
-          "nexts": [],
-          "metadata": {}
-        },
-        {
-          "id": "SsrfTelemetry_3",
-          "label": "Call: field",
-          "kind": "call",
-          "nexts": [
-            "SsrfTelemetry_2"
-          ],
-          "metadata": {
-            "type": "tail",
-            "target_func": "field"
-          }
-        }
-      ],
-      "start_node_id": "SsrfTelemetry_1",
-      "end_node_id": "SsrfTelemetry_2"
-    },
-    {
-      "name": "SsrfTelemetry.to_details",
-      "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\function_ssrf\\worker.py",
-      "type": "method",
-      "nodes": [
-        {
-          "id": "SsrfTelemetry_to_details_1",
-          "label": "SsrfTelemetry.to_details",
-          "kind": "start",
-          "nexts": [
-            "SsrfTelemetry_to_details_3"
-          ],
-          "metadata": {
-            "type": "head",
-            "name": "SsrfTelemetry.to_details",
-            "parameters": [],
-            "docstring": "",
-            "return_type": "dict[str, Any]"
-          }
-        },
-        {
-          "id": "SsrfTelemetry_to_details_2",
-          "label": "End",
-          "kind": "end",
-          "nexts": [],
-          "metadata": {}
-        },
-        {
-          "id": "SsrfTelemetry_to_details_3",
-          "label": "if self.errors",
-          "kind": "cond",
-          "nexts": [
-            "SsrfTelemetry_to_details_4"
-          ],
-          "metadata": {}
-        },
-        {
-          "id": "SsrfTelemetry_to_details_4",
-          "label": "",
-          "kind": "op",
-          "nexts": [
-            "SsrfTelemetry_to_details_5"
-          ],
-          "metadata": {}
-        },
-        {
-          "id": "SsrfTelemetry_to_details_5",
-          "label": "return details",
-          "kind": "op",
-          "nexts": [
-            "SsrfTelemetry_to_details_2"
-          ],
-          "metadata": {}
-        }
-      ],
-      "start_node_id": "SsrfTelemetry_to_details_1",
-      "end_node_id": "SsrfTelemetry_to_details_2"
-    },
-    {
-      "name": "TaskExecutionResult",
-      "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\function_ssrf\\worker.py",
-      "type": "class",
-      "nodes": [
-        {
-          "id": "TaskExecutionResult_1",
-          "label": "TaskExecutionResult",
-          "kind": "start",
-          "nexts": [
-            "TaskExecutionResult_2"
-          ],
-          "metadata": {
-            "type": "head",
-            "name": "TaskExecutionResult",
-            "docstring": "",
-            "is_class": true
-          }
-        },
-        {
-          "id": "TaskExecutionResult_2",
-          "label": "End",
-          "kind": "end",
-          "nexts": [],
-          "metadata": {}
-        }
-      ],
-      "start_node_id": "TaskExecutionResult_1",
-      "end_node_id": "TaskExecutionResult_2"
-    },
-    {
-      "name": "run",
-      "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\function_ssrf\\worker.py",
-      "type": "function",
-      "nodes": [
-        {
-          "id": "run_1",
-          "label": "run",
-          "kind": "start",
-          "nexts": [
-            "run_3"
-          ],
-          "metadata": {
-            "type": "head",
-            "name": "run",
-            "parameters": [],
-            "docstring": "運行 SSRF Worker - 從 MQ 訂閱並處理 SSRF 檢測任務\n\nNote: subscribe() 返回 AsyncIterator，類型檢查器可能誤報迭代錯誤",
-            "return_type": "None"
-          }
-        },
-        {
-          "id": "run_2",
-          "label": "End",
-          "kind": "end",
-          "nexts": [],
-          "metadata": {}
-        },
-        {
-          "id": "run_3",
-          "label": "Call: get_broker",
-          "kind": "call",
-          "nexts": [
-            "run_4"
-          ],
-          "metadata": {
-            "type": "tail",
-            "target_func": "get_broker"
-          }
-        },
-        {
-          "id": "run_4",
-          "label": "Call: SsrfResultPublisher",
-          "kind": "call",
-          "nexts": [
-            "run_5"
-          ],
-          "metadata": {
-            "type": "tail",
-            "target_func": "SsrfResultPublisher",
-            "connected_to": "SsrfResultPublisher"
-          }
-        },
-        {
-          "id": "run_5",
-          "label": "Call: ParamSemanticsAnalyzer",
-          "kind": "call",
-          "nexts": [
-            "run_6"
-          ],
-          "metadata": {
-            "type": "tail",
-            "target_func": "ParamSemanticsAnalyzer",
-            "connected_to": "ParamSemanticsAnalyzer"
-          }
-        },
-        {
-          "id": "run_6",
-          "label": "Call: InternalAddressDetector",
-          "kind": "call",
-          "nexts": [
-            "run_7"
-          ],
-          "metadata": {
-            "type": "tail",
-            "target_func": "InternalAddressDetector",
-            "connected_to": "InternalAddressDetector"
-          }
-        },
-        {
-          "id": "run_7",
-          "label": "Call: OastDispatcher",
-          "kind": "call",
-          "nexts": [
-            "run_8"
-          ],
-          "metadata": {
-            "type": "tail",
-            "target_func": "OastDispatcher",
-            "connected_to": "OastDispatcher"
-          }
-        },
-        {
-          "id": "run_8",
-          "label": "Call: httpx.AsyncClient",
-          "kind": "call",
-          "nexts": [
-            "run_9"
-          ],
-          "metadata": {
-            "type": "tail",
-            "target_func": "httpx.AsyncClient"
-          }
-        },
-        {
-          "id": "run_9",
-          "label": "Call: broker.subscribe",
-          "kind": "call",
-          "nexts": [
-            "run_10"
-          ],
-          "metadata": {
-            "type": "tail",
-            "target_func": "broker.subscribe"
-          }
-        },
-        {
-          "id": "run_10",
-          "label": "Call: AivaMessage.model_validate_json",
-          "kind": "call",
-          "nexts": [
-            "run_11"
-          ],
-          "metadata": {
-            "type": "tail",
-            "target_func": "AivaMessage.model_validate_json"
-          }
-        },
-        {
-          "id": "run_11",
-          "label": "Call: FunctionTaskPayload",
-          "kind": "call",
-          "nexts": [
-            "run_12"
-          ],
-          "metadata": {
-            "type": "tail",
-            "target_func": "FunctionTaskPayload"
-          }
-        },
-        {
-          "id": "run_12",
-          "label": "Call: _execute_task",
-          "kind": "call",
-          "nexts": [
-            "run_13"
-          ],
-          "metadata": {
-            "type": "tail",
-            "target_func": "_execute_task",
-            "connected_to": "_execute_task"
-          }
-        },
-        {
-          "id": "run_13",
-          "label": "Call: dispatcher.close",
-          "kind": "call",
-          "nexts": [
-            "run_2"
-          ],
-          "metadata": {
-            "type": "tail",
-            "target_func": "dispatcher.close"
-          }
-        }
-      ],
-      "start_node_id": "run_1",
-      "end_node_id": "run_2"
-    },
-    {
-      "name": "_execute_task",
-      "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\function_ssrf\\worker.py",
-      "type": "function",
-      "nodes": [
-        {
-          "id": "n__execute_task_1",
-          "label": "_execute_task",
-          "kind": "start",
-          "nexts": [
-            "n__execute_task_3"
-          ],
-          "metadata": {
-            "type": "head",
-            "name": "_execute_task",
-            "parameters": [
-              {
-                "name": "task",
-                "type": "FunctionTaskPayload",
-                "default": null,
-                "required": true,
-                "kind": "positional_or_keyword"
-              }
-            ],
-            "docstring": "",
-            "return_type": "None"
-          }
-        },
-        {
-          "id": "n__execute_task_2",
-          "label": "End",
-          "kind": "end",
-          "nexts": [],
-          "metadata": {}
-        },
-        {
-          "id": "n__execute_task_3",
-          "label": "Call: publisher.publish_status",
-          "kind": "call",
-          "nexts": [
-            "n__execute_task_4"
-          ],
-          "metadata": {
-            "type": "tail",
-            "target_func": "publisher.publish_status"
-          }
-        },
-        {
-          "id": "n__execute_task_4",
-          "label": "Call: process_task",
-          "kind": "call",
-          "nexts": [
-            "n__execute_task_5"
-          ],
-          "metadata": {
-            "type": "tail",
-            "target_func": "process_task",
-            "connected_to": "process_task"
-          }
-        },
-        {
-          "id": "n__execute_task_5",
-          "label": "Call: logger.exception",
-          "kind": "call",
-          "nexts": [
-            "n__execute_task_6"
-          ],
-          "metadata": {
-            "type": "tail",
-            "target_func": "logger.exception"
-          }
-        },
-        {
-          "id": "n__execute_task_6",
-          "label": "Call: publisher.publish_error",
-          "kind": "call",
-          "nexts": [
-            "n__execute_task_7"
-          ],
-          "metadata": {
-            "type": "tail",
-            "target_func": "publisher.publish_error"
-          }
-        },
-        {
-          "id": "n__execute_task_7",
-          "label": "return None",
-          "kind": "op",
-          "nexts": [
-            "n__execute_task_2",
-            "n__execute_task_8"
-          ],
-          "metadata": {}
-        },
-        {
-          "id": "n__execute_task_8",
-          "label": "for finding in result.findings",
-          "kind": "cond",
-          "nexts": [
-            "n__execute_task_9",
-            "n__execute_task_10"
-          ],
-          "metadata": {}
-        },
-        {
-          "id": "n__execute_task_9",
-          "label": "Call: publisher.publish_finding",
-          "kind": "call",
-          "nexts": [
-            "n__execute_task_8"
-          ],
-          "metadata": {
-            "type": "tail",
-            "target_func": "publisher.publish_finding"
-          }
-        },
-        {
-          "id": "n__execute_task_10",
-          "label": "",
-          "kind": "op",
-          "nexts": [
-            "n__execute_task_11"
-          ],
-          "metadata": {}
-        },
-        {
-          "id": "n__execute_task_11",
-          "label": "if result.statistics_summary",
-          "kind": "cond",
-          "nexts": [
-            "n__execute_task_12",
-            "n__execute_task_13"
-          ],
-          "metadata": {}
-        },
-        {
-          "id": "n__execute_task_12",
-          "label": "Call: logger.info",
-          "kind": "call",
-          "nexts": [
-            "n__execute_task_13"
-          ],
-          "metadata": {
-            "type": "tail",
-            "target_func": "logger.info"
-          }
-        },
-        {
-          "id": "n__execute_task_13",
-          "label": "",
-          "kind": "op",
-          "nexts": [
-            "n__execute_task_14"
-          ],
-          "metadata": {}
-        },
-        {
-          "id": "n__execute_task_14",
-          "label": "Call: publisher.publish_status",
-          "kind": "call",
-          "nexts": [
-            "n__execute_task_2"
-          ],
-          "metadata": {
-            "type": "tail",
-            "target_func": "publisher.publish_status"
-          }
-        }
-      ],
-      "start_node_id": "n__execute_task_1",
-      "end_node_id": "n__execute_task_2"
-    },
-    {
-      "name": "process_task",
-      "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\function_ssrf\\worker.py",
-      "type": "function",
-      "nodes": [
-        {
-          "id": "process_task_1",
-          "label": "process_task",
-          "kind": "start",
-          "nexts": [
-            "process_task_3"
-          ],
-          "metadata": {
-            "type": "head",
-            "name": "process_task",
-            "parameters": [
-              {
-                "name": "task",
-                "type": "FunctionTaskPayload",
-                "default": null,
-                "required": true,
-                "kind": "positional_or_keyword"
-              }
-            ],
-            "docstring": "",
-            "return_type": "TaskExecutionResult"
-          }
-        },
-        {
-          "id": "process_task_2",
-          "label": "End",
-          "kind": "end",
-          "nexts": [],
-          "metadata": {}
-        },
-        {
-          "id": "process_task_3",
-          "label": "Call: ParamSemanticsAnalyzer",
-          "kind": "call",
-          "nexts": [
-            "process_task_4"
-          ],
-          "metadata": {
-            "type": "tail",
-            "target_func": "ParamSemanticsAnalyzer",
-            "connected_to": "ParamSemanticsAnalyzer"
-          }
-        },
-        {
-          "id": "process_task_4",
-          "label": "Call: InternalAddressDetector",
-          "kind": "call",
-          "nexts": [
-            "process_task_5"
-          ],
-          "metadata": {
-            "type": "tail",
-            "target_func": "InternalAddressDetector",
-            "connected_to": "InternalAddressDetector"
-          }
-        },
-        {
-          "id": "process_task_5",
-          "label": "Call: isinstance",
-          "kind": "call",
-          "nexts": [
-            "process_task_6"
-          ],
-          "metadata": {
-            "type": "tail",
-            "target_func": "isinstance"
-          }
-        },
-        {
-          "id": "process_task_6",
-          "label": "Call: OastDispatcher",
-          "kind": "call",
-          "nexts": [
-            "process_task_7"
-          ],
-          "metadata": {
-            "type": "tail",
-            "target_func": "OastDispatcher",
-            "connected_to": "OastDispatcher"
-          }
-        },
-        {
-          "id": "process_task_7",
-          "label": "Call: analyzer.analyze",
-          "kind": "call",
-          "nexts": [
-            "process_task_8"
-          ],
-          "metadata": {
-            "type": "tail",
-            "target_func": "analyzer.analyze"
-          }
-        },
-        {
-          "id": "process_task_8",
-          "label": "Call: SsrfTelemetry",
-          "kind": "call",
-          "nexts": [
-            "process_task_9"
-          ],
-          "metadata": {
-            "type": "tail",
-            "target_func": "SsrfTelemetry",
-            "connected_to": "SsrfTelemetry"
-          }
-        },
-        {
-          "id": "process_task_9",
-          "label": "if not plan.vectors",
-          "kind": "cond",
-          "nexts": [
-            "process_task_10",
-            "process_task_12"
-          ],
-          "metadata": {}
-        },
-        {
-          "id": "process_task_10",
-          "label": "Call: logger.error",
-          "kind": "call",
-          "nexts": [
-            "process_task_11"
-          ],
-          "metadata": {
-            "type": "tail",
-            "target_func": "logger.error"
-          }
-        },
-        {
-          "id": "process_task_11",
-          "label": "Call: ValueError",
-          "kind": "call",
-          "nexts": [
-            "process_task_12"
-          ],
-          "metadata": {
-            "type": "tail",
-            "target_func": "ValueError"
-          }
-        },
-        {
-          "id": "process_task_12",
-          "label": "",
-          "kind": "op",
-          "nexts": [
-            "process_task_13"
-          ],
-          "metadata": {}
-        },
-        {
-          "id": "process_task_13",
-          "label": "for vector in plan.vectors",
-          "kind": "cond",
-          "nexts": [
-            "process_task_14",
-            "process_task_39"
-          ],
-          "metadata": {}
-        },
-        {
-          "id": "process_task_14",
-          "label": "Call: _resolve_payload",
-          "kind": "call",
-          "nexts": [
-            "process_task_15"
-          ],
-          "metadata": {
-            "type": "tail",
-            "target_func": "_resolve_payload",
-            "connected_to": "_resolve_payload"
-          }
-        },
-        {
-          "id": "process_task_15",
-          "label": "Call: _issue_request",
-          "kind": "call",
-          "nexts": [
-            "process_task_16"
-          ],
-          "metadata": {
-            "type": "tail",
-            "target_func": "_issue_request",
-            "connected_to": "_issue_request"
-          }
-        },
-        {
-          "id": "process_task_16",
-          "label": "Call: str",
-          "kind": "call",
-          "nexts": [
-            "process_task_17"
-          ],
-          "metadata": {
-            "type": "tail",
-            "target_func": "str"
-          }
-        },
-        {
-          "id": "process_task_17",
-          "label": "Call: logger.error",
-          "kind": "call",
-          "nexts": [
-            "process_task_18"
-          ],
-          "metadata": {
-            "type": "tail",
-            "target_func": "logger.error"
-          }
-        },
-        {
-          "id": "process_task_18",
-          "label": "Call: RuntimeError",
-          "kind": "call",
-          "nexts": [
-            "process_task_19"
-          ],
-          "metadata": {
-            "type": "tail",
-            "target_func": "RuntimeError"
-          }
-        },
-        {
-          "id": "process_task_19",
-          "label": "Call: str",
-          "kind": "call",
-          "nexts": [
-            "process_task_20"
-          ],
-          "metadata": {
-            "type": "tail",
-            "target_func": "str"
-          }
-        },
-        {
-          "id": "process_task_20",
-          "label": "Call: logger.error",
-          "kind": "call",
-          "nexts": [
-            "process_task_21"
-          ],
-          "metadata": {
-            "type": "tail",
-            "target_func": "logger.error"
-          }
-        },
-        {
-          "id": "process_task_21",
-          "label": "Call: RuntimeError",
-          "kind": "call",
-          "nexts": [
-            "process_task_22"
-          ],
-          "metadata": {
-            "type": "tail",
-            "target_func": "RuntimeError"
-          }
-        },
-        {
-          "id": "process_task_22",
-          "label": "Call: str",
-          "kind": "call",
-          "nexts": [
-            "process_task_23"
-          ],
-          "metadata": {
-            "type": "tail",
-            "target_func": "str"
-          }
-        },
-        {
-          "id": "process_task_23",
-          "label": "Call: logger.error",
-          "kind": "call",
-          "nexts": [
-            "process_task_24"
-          ],
-          "metadata": {
-            "type": "tail",
-            "target_func": "logger.error"
-          }
-        },
-        {
-          "id": "process_task_24",
-          "label": "Call: RuntimeError",
-          "kind": "call",
-          "nexts": [
-            "process_task_25"
-          ],
-          "metadata": {
-            "type": "tail",
-            "target_func": "RuntimeError"
-          }
-        },
-        {
-          "id": "process_task_25",
-          "label": "Call: detector.analyze",
-          "kind": "call",
-          "nexts": [
-            "process_task_26"
-          ],
-          "metadata": {
-            "type": "tail",
-            "target_func": "detector.analyze"
-          }
-        },
-        {
-          "id": "process_task_26",
-          "label": "if detection.matched",
-          "kind": "cond",
-          "nexts": [
-            "process_task_27",
-            "process_task_28"
-          ],
-          "metadata": {}
-        },
-        {
-          "id": "process_task_27",
-          "label": "Call: findings.append",
-          "kind": "call",
-          "nexts": [
-            "process_task_28"
-          ],
-          "metadata": {
-            "type": "tail",
-            "target_func": "findings.append"
-          }
-        },
-        {
-          "id": "process_task_28",
-          "label": "",
-          "kind": "op",
-          "nexts": [
-            "process_task_29"
-          ],
-          "metadata": {}
-        },
-        {
-          "id": "process_task_29",
-          "label": "if vector.requires_oast",
-          "kind": "cond",
-          "nexts": [
-            "process_task_30",
-            "process_task_38"
-          ],
-          "metadata": {}
-        },
-        {
-          "id": "process_task_30",
-          "label": "Call: dispatcher.fetch_events",
-          "kind": "call",
-          "nexts": [
-            "process_task_31"
-          ],
-          "metadata": {
-            "type": "tail",
-            "target_func": "dispatcher.fetch_events"
-          }
-        },
-        {
-          "id": "process_task_31",
-          "label": "if not events",
-          "kind": "cond",
-          "nexts": [
-            "process_task_32",
-            "process_task_33"
-          ],
-          "metadata": {}
-        },
-        {
-          "id": "process_task_32",
-          "label": "Call: dispatcher.fetch_events",
-          "kind": "call",
-          "nexts": [
-            "process_task_33"
-          ],
-          "metadata": {
-            "type": "tail",
-            "target_func": "dispatcher.fetch_events"
-          }
-        },
-        {
-          "id": "process_task_33",
-          "label": "",
-          "kind": "op",
-          "nexts": [
-            "process_task_34"
-          ],
-          "metadata": {}
-        },
-        {
-          "id": "process_task_34",
-          "label": "if events",
-          "kind": "cond",
-          "nexts": [
-            "process_task_35",
-            "process_task_37"
-          ],
-          "metadata": {}
-        },
-        {
-          "id": "process_task_35",
-          "label": "Call: len",
-          "kind": "call",
-          "nexts": [
-            "process_task_36"
-          ],
-          "metadata": {
-            "type": "tail",
-            "target_func": "len"
-          }
-        },
-        {
-          "id": "process_task_36",
-          "label": "Call: findings.append",
-          "kind": "call",
-          "nexts": [
-            "process_task_37"
-          ],
-          "metadata": {
-            "type": "tail",
-            "target_func": "findings.append"
-          }
-        },
-        {
-          "id": "process_task_37",
-          "label": "",
-          "kind": "op",
-          "nexts": [
-            "process_task_38"
-          ],
-          "metadata": {}
-        },
-        {
-          "id": "process_task_38",
-          "label": "",
-          "kind": "op",
-          "nexts": [
-            "process_task_13"
-          ],
-          "metadata": {}
-        },
-        {
-          "id": "process_task_39",
-          "label": "",
-          "kind": "op",
-          "nexts": [
-            "process_task_40"
-          ],
-          "metadata": {}
-        },
-        {
-          "id": "process_task_40",
-          "label": "return TaskExecutionResult(findings=findings, telemetry=telemetry)",
-          "kind": "op",
-          "nexts": [
-            "process_task_2"
-          ],
-          "metadata": {}
-        }
-      ],
-      "start_node_id": "process_task_1",
-      "end_node_id": "process_task_2"
-    },
-    {
-      "name": "_resolve_payload",
-      "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\function_ssrf\\worker.py",
-      "type": "function",
-      "nodes": [
-        {
-          "id": "n__resolve_payload_1",
-          "label": "_resolve_payload",
-          "kind": "start",
-          "nexts": [
-            "n__resolve_payload_3"
-          ],
-          "metadata": {
-            "type": "head",
-            "name": "_resolve_payload",
-            "parameters": [
-              {
-                "name": "vector",
-                "type": "SsrfTestVector",
-                "default": null,
-                "required": true,
-                "kind": "positional_or_keyword"
-              },
-              {
-                "name": "dispatcher",
-                "type": "'OastDispatcherLike'",
-                "default": null,
-                "required": true,
-                "kind": "positional_or_keyword"
-              },
-              {
-                "name": "task",
-                "type": "FunctionTaskPayload",
-                "default": null,
-                "required": true,
-                "kind": "positional_or_keyword"
-              }
-            ],
-            "docstring": "",
-            "return_type": "str"
-          }
-        },
-        {
-          "id": "n__resolve_payload_2",
-          "label": "End",
-          "kind": "end",
-          "nexts": [],
-          "metadata": {}
-        },
-        {
-          "id": "n__resolve_payload_3",
-          "label": "if vector.requires_oast",
-          "kind": "cond",
-          "nexts": [
-            "n__resolve_payload_4",
-            "n__resolve_payload_6"
-          ],
-          "metadata": {}
-        },
-        {
-          "id": "n__resolve_payload_4",
-          "label": "Call: dispatcher.register",
-          "kind": "call",
-          "nexts": [
-            "n__resolve_payload_5"
-          ],
-          "metadata": {
-            "type": "tail",
-            "target_func": "dispatcher.register"
-          }
-        },
-        {
-          "id": "n__resolve_payload_5",
-          "label": "Call: payload.replace",
-          "kind": "call",
-          "nexts": [
-            "n__resolve_payload_6"
-          ],
-          "metadata": {
-            "type": "tail",
-            "target_func": "payload.replace"
-          }
-        },
-        {
-          "id": "n__resolve_payload_6",
-          "label": "",
-          "kind": "op",
-          "nexts": [
-            "n__resolve_payload_7"
-          ],
-          "metadata": {}
-        },
-        {
-          "id": "n__resolve_payload_7",
-          "label": "return str(payload)",
-          "kind": "op",
-          "nexts": [
-            "n__resolve_payload_2"
-          ],
-          "metadata": {}
-        }
-      ],
-      "start_node_id": "n__resolve_payload_1",
-      "end_node_id": "n__resolve_payload_2"
-    },
-    {
-      "name": "_issue_request",
-      "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\function_ssrf\\worker.py",
-      "type": "function",
-      "nodes": [
-        {
-          "id": "n__issue_request_1",
-          "label": "_issue_request",
-          "kind": "start",
-          "nexts": [
-            "n__issue_request_3"
-          ],
-          "metadata": {
-            "type": "head",
-            "name": "_issue_request",
-            "parameters": [
-              {
-                "name": "client",
-                "type": "httpx.AsyncClient",
-                "default": null,
-                "required": true,
-                "kind": "positional_or_keyword"
-              },
-              {
-                "name": "task",
-                "type": "FunctionTaskPayload",
-                "default": null,
-                "required": true,
-                "kind": "positional_or_keyword"
-              },
-              {
-                "name": "vector",
-                "type": "SsrfTestVector",
-                "default": null,
-                "required": true,
-                "kind": "positional_or_keyword"
-              },
-              {
-                "name": "payload",
-                "type": "str",
-                "default": null,
-                "required": true,
-                "kind": "positional_or_keyword"
-              }
-            ],
-            "docstring": "",
-            "return_type": "httpx.Response"
-          }
-        },
-        {
-          "id": "n__issue_request_2",
-          "label": "End",
-          "kind": "end",
-          "nexts": [],
-          "metadata": {}
-        },
-        {
-          "id": "n__issue_request_3",
-          "label": "Call: unknown_call.upper",
-          "kind": "call",
-          "nexts": [
-            "n__issue_request_4"
-          ],
-          "metadata": {
-            "type": "tail",
-            "target_func": "unknown_call.upper"
-          }
-        },
-        {
-          "id": "n__issue_request_4",
-          "label": "Call: unknown_call.lower",
-          "kind": "call",
-          "nexts": [
-            "n__issue_request_5"
-          ],
-          "metadata": {
-            "type": "tail",
-            "target_func": "unknown_call.lower"
-          }
-        },
-        {
-          "id": "n__issue_request_5",
-          "label": "Call: urlparse",
-          "kind": "call",
-          "nexts": [
-            "n__issue_request_6"
-          ],
-          "metadata": {
-            "type": "tail",
-            "target_func": "urlparse"
-          }
-        },
-        {
-          "id": "n__issue_request_6",
-          "label": "Call: dict",
-          "kind": "call",
-          "nexts": [
-            "n__issue_request_7"
-          ],
-          "metadata": {
-            "type": "tail",
-            "target_func": "dict"
-          }
-        },
-        {
-          "id": "n__issue_request_7",
-          "label": "Call: dict",
-          "kind": "call",
-          "nexts": [
-            "n__issue_request_8"
-          ],
-          "metadata": {
-            "type": "tail",
-            "target_func": "dict"
-          }
-        },
-        {
-          "id": "n__issue_request_8",
-          "label": "Call: dict",
-          "kind": "call",
-          "nexts": [
-            "n__issue_request_9"
-          ],
-          "metadata": {
-            "type": "tail",
-            "target_func": "dict"
-          }
-        },
-        {
-          "id": "n__issue_request_9",
-          "label": "Call: dict",
-          "kind": "call",
-          "nexts": [
-            "n__issue_request_10"
-          ],
-          "metadata": {
-            "type": "tail",
-            "target_func": "dict"
-          }
-        },
-        {
-          "id": "n__issue_request_10",
-          "label": "Call: dict",
-          "kind": "call",
-          "nexts": [
-            "n__issue_request_11"
-          ],
-          "metadata": {
-            "type": "tail",
-            "target_func": "dict"
-          }
-        },
-        {
-          "id": "n__issue_request_11",
-          "label": "if location in {'query', 'url'} and parameter",
-          "kind": "cond",
-          "nexts": [
-            "n__issue_request_12",
-            "n__issue_request_25"
-          ],
-          "metadata": {}
-        },
-        {
-          "id": "n__issue_request_12",
-          "label": "if location in {'body', 'form'} and parameter",
-          "kind": "cond",
-          "nexts": [
-            "n__issue_request_13",
-            "n__issue_request_24"
-          ],
-          "metadata": {}
-        },
-        {
-          "id": "n__issue_request_13",
-          "label": "if location == 'json' and parameter",
-          "kind": "cond",
-          "nexts": [
-            "n__issue_request_14",
-            "n__issue_request_23"
-          ],
-          "metadata": {}
-        },
-        {
-          "id": "n__issue_request_14",
-          "label": "if location == 'header' and parameter",
-          "kind": "cond",
-          "nexts": [
-            "n__issue_request_15",
-            "n__issue_request_22"
-          ],
-          "metadata": {}
-        },
-        {
-          "id": "n__issue_request_15",
-          "label": "if location == 'cookie' and parameter",
-          "kind": "cond",
-          "nexts": [
-            "n__issue_request_16",
-            "n__issue_request_21"
-          ],
-          "metadata": {}
-        },
-        {
-          "id": "n__issue_request_16",
-          "label": "if location == 'body_raw'",
-          "kind": "cond",
-          "nexts": [
-            "n__issue_request_17",
-            "n__issue_request_20"
-          ],
-          "metadata": {}
-        },
-        {
-          "id": "n__issue_request_17",
-          "label": "if parameter and content",
-          "kind": "cond",
-          "nexts": [
-            "n__issue_request_18",
-            "n__issue_request_19"
-          ],
-          "metadata": {}
-        },
-        {
-          "id": "n__issue_request_18",
-          "label": "Call: content.replace",
-          "kind": "call",
-          "nexts": [
-            "n__issue_request_19"
-          ],
-          "metadata": {
-            "type": "tail",
-            "target_func": "content.replace"
-          }
-        },
-        {
-          "id": "n__issue_request_19",
-          "label": "",
-          "kind": "op",
-          "nexts": [
-            "n__issue_request_20"
-          ],
-          "metadata": {}
-        },
-        {
-          "id": "n__issue_request_20",
-          "label": "",
-          "kind": "op",
-          "nexts": [
-            "n__issue_request_21"
-          ],
-          "metadata": {}
-        },
-        {
-          "id": "n__issue_request_21",
-          "label": "",
-          "kind": "op",
-          "nexts": [
-            "n__issue_request_22"
-          ],
-          "metadata": {}
-        },
-        {
-          "id": "n__issue_request_22",
-          "label": "",
-          "kind": "op",
-          "nexts": [
-            "n__issue_request_23"
-          ],
-          "metadata": {}
-        },
-        {
-          "id": "n__issue_request_23",
-          "label": "",
-          "kind": "op",
-          "nexts": [
-            "n__issue_request_24"
-          ],
-          "metadata": {}
-        },
-        {
-          "id": "n__issue_request_24",
-          "label": "",
-          "kind": "op",
-          "nexts": [
-            "n__issue_request_25"
-          ],
-          "metadata": {}
-        },
-        {
-          "id": "n__issue_request_25",
-          "label": "",
-          "kind": "op",
-          "nexts": [
-            "n__issue_request_26"
-          ],
-          "metadata": {}
-        },
-        {
-          "id": "n__issue_request_26",
-          "label": "Call: urlunparse",
-          "kind": "call",
-          "nexts": [
-            "n__issue_request_27"
-          ],
-          "metadata": {
-            "type": "tail",
-            "target_func": "urlunparse"
-          }
-        },
-        {
-          "id": "n__issue_request_27",
-          "label": "Call: client.request",
-          "kind": "call",
-          "nexts": [
-            "n__issue_request_28"
-          ],
-          "metadata": {
-            "type": "tail",
-            "target_func": "client.request"
-          }
-        },
-        {
-          "id": "n__issue_request_28",
-          "label": "return response",
-          "kind": "op",
-          "nexts": [
-            "n__issue_request_2"
-          ],
-          "metadata": {}
-        }
-      ],
-      "start_node_id": "n__issue_request_1",
-      "end_node_id": "n__issue_request_2"
-    },
-    {
-      "name": "_build_internal_finding",
-      "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\function_ssrf\\worker.py",
-      "type": "function",
-      "nodes": [
-        {
-          "id": "n__build_internal_finding_1",
-          "label": "_build_internal_finding",
-          "kind": "start",
-          "nexts": [
-            "n__build_internal_finding_3"
-          ],
-          "metadata": {
-            "type": "head",
-            "name": "_build_internal_finding",
-            "parameters": [],
-            "docstring": "",
-            "return_type": "FindingPayload"
-          }
-        },
-        {
-          "id": "n__build_internal_finding_2",
-          "label": "End",
-          "kind": "end",
-          "nexts": [],
-          "metadata": {}
-        },
-        {
-          "id": "n__build_internal_finding_3",
-          "label": "Call: _severity_from_summary",
-          "kind": "call",
-          "nexts": [
-            "n__build_internal_finding_4"
-          ],
-          "metadata": {
-            "type": "tail",
-            "target_func": "_severity_from_summary",
-            "connected_to": "_severity_from_summary"
-          }
-        },
-        {
-          "id": "n__build_internal_finding_4",
-          "label": "Call: FindingEvidence",
-          "kind": "call",
-          "nexts": [
-            "n__build_internal_finding_5"
-          ],
-          "metadata": {
-            "type": "tail",
-            "target_func": "FindingEvidence"
-          }
-        },
-        {
-          "id": "n__build_internal_finding_5",
-          "label": "return FindingPayload(finding_id=new_id('finding'), task_id=task.task_id, scan_id=task.scan_id, status='VULNERABILITY_FOUND', vulnerability=Vulnerability(name=VulnerabilityType.SSRF, severity=severity, confidence=Confidence.CERTAIN), target=FindingTarget(url=task.target.url, parameter=vector.parameter or task.target.parameter, method=task.target.method), strategy=task.strategy, evidence=evidence, impact=FindingImpact(description='Internal resource accessible through server-side request.', business_impact='Potential exposure of internal services or cloud metadata endpoints.'), recommendation=FindingRecommendation(fix='Validate and sanitize user supplied URLs, restrict outbound network access, and enforce allow-lists for reachable services.', priority='High' if severity is Severity.HIGH else 'Medium'))",
-          "kind": "op",
-          "nexts": [
-            "n__build_internal_finding_2"
-          ],
-          "metadata": {}
-        }
-      ],
-      "start_node_id": "n__build_internal_finding_1",
-      "end_node_id": "n__build_internal_finding_2"
-    },
-    {
-      "name": "_build_oast_finding",
-      "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\function_ssrf\\worker.py",
-      "type": "function",
-      "nodes": [
-        {
-          "id": "n__build_oast_finding_1",
-          "label": "_build_oast_finding",
-          "kind": "start",
-          "nexts": [
-            "n__build_oast_finding_3"
-          ],
-          "metadata": {
-            "type": "head",
-            "name": "_build_oast_finding",
-            "parameters": [],
-            "docstring": "",
-            "return_type": "FindingPayload"
-          }
-        },
-        {
-          "id": "n__build_oast_finding_2",
-          "label": "End",
-          "kind": "end",
-          "nexts": [],
-          "metadata": {}
-        },
-        {
-          "id": "n__build_oast_finding_3",
-          "label": "Call: unknown_call.join",
-          "kind": "call",
-          "nexts": [
-            "n__build_oast_finding_4"
-          ],
-          "metadata": {
-            "type": "tail",
-            "target_func": "unknown_call.join"
-          }
-        },
-        {
-          "id": "n__build_oast_finding_4",
-          "label": "Call: FindingEvidence",
-          "kind": "call",
-          "nexts": [
-            "n__build_oast_finding_5"
-          ],
-          "metadata": {
-            "type": "tail",
-            "target_func": "FindingEvidence"
-          }
-        },
-        {
-          "id": "n__build_oast_finding_5",
-          "label": "return FindingPayload(finding_id=new_id('finding'), task_id=task.task_id, scan_id=task.scan_id, status='VULNERABILITY_FOUND', vulnerability=Vulnerability(name=VulnerabilityType.SSRF, severity=Severity.HIGH, confidence=Confidence.CERTAIN), target=FindingTarget(url=task.target.url, parameter=vector.parameter or task.target.parameter, method=task.target.method), strategy=task.strategy, evidence=evidence, impact=FindingImpact(description='Blind SSRF confirmed via out-of-band callback.', business_impact='Enables attackers to pivot into internal network or exfiltrate sensitive metadata through secondary services.'), recommendation=FindingRecommendation(fix='Implement strict allow-lists for outbound requests and segregate internal services from user controlled fetchers.', priority='Critical'))",
-          "kind": "op",
-          "nexts": [
-            "n__build_oast_finding_2"
-          ],
-          "metadata": {}
-        }
-      ],
-      "start_node_id": "n__build_oast_finding_1",
-      "end_node_id": "n__build_oast_finding_2"
-    },
-    {
-      "name": "_format_request",
-      "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\function_ssrf\\worker.py",
-      "type": "function",
-      "nodes": [
-        {
-          "id": "n__format_request_1",
-          "label": "_format_request",
-          "kind": "start",
-          "nexts": [
-            "n__format_request_3"
-          ],
-          "metadata": {
-            "type": "head",
-            "name": "_format_request",
-            "parameters": [
-              {
-                "name": "request",
-                "type": "httpx.Request",
-                "default": null,
-                "required": true,
-                "kind": "positional_or_keyword"
-              }
-            ],
-            "docstring": "",
-            "return_type": "str"
-          }
-        },
-        {
-          "id": "n__format_request_2",
-          "label": "End",
-          "kind": "end",
-          "nexts": [],
-          "metadata": {}
-        },
-        {
-          "id": "n__format_request_3",
-          "label": "if request is None",
-          "kind": "cond",
-          "nexts": [
-            "n__format_request_4",
-            "n__format_request_5"
-          ],
-          "metadata": {}
-        },
-        {
-          "id": "n__format_request_4",
-          "label": "return ''",
-          "kind": "op",
-          "nexts": [
-            "n__format_request_2",
-            "n__format_request_5"
-          ],
-          "metadata": {}
-        },
-        {
-          "id": "n__format_request_5",
-          "label": "",
-          "kind": "op",
-          "nexts": [
-            "n__format_request_6"
-          ],
-          "metadata": {}
-        },
-        {
-          "id": "n__format_request_6",
-          "label": "for (key, value) in request.headers.items()",
-          "kind": "cond",
-          "nexts": [
-            "n__format_request_7",
-            "n__format_request_8"
-          ],
-          "metadata": {}
-        },
-        {
-          "id": "n__format_request_7",
-          "label": "Call: lines.append",
-          "kind": "call",
-          "nexts": [
-            "n__format_request_6"
-          ],
-          "metadata": {
-            "type": "tail",
-            "target_func": "lines.append"
-          }
-        },
-        {
-          "id": "n__format_request_8",
-          "label": "",
-          "kind": "op",
-          "nexts": [
-            "n__format_request_9"
-          ],
-          "metadata": {}
-        },
-        {
-          "id": "n__format_request_9",
-          "label": "Call: request.content.decode",
-          "kind": "call",
-          "nexts": [
-            "n__format_request_10"
-          ],
-          "metadata": {
-            "type": "tail",
-            "target_func": "request.content.decode"
-          }
-        },
-        {
-          "id": "n__format_request_10",
-          "label": "if body",
-          "kind": "cond",
-          "nexts": [
-            "n__format_request_11",
-            "n__format_request_13"
-          ],
-          "metadata": {}
-        },
-        {
-          "id": "n__format_request_11",
-          "label": "Call: lines.append",
-          "kind": "call",
-          "nexts": [
-            "n__format_request_12"
-          ],
-          "metadata": {
-            "type": "tail",
-            "target_func": "lines.append"
-          }
-        },
-        {
-          "id": "n__format_request_12",
-          "label": "Call: lines.append",
-          "kind": "call",
-          "nexts": [
-            "n__format_request_13"
-          ],
-          "metadata": {
-            "type": "tail",
-            "target_func": "lines.append"
-          }
-        },
-        {
-          "id": "n__format_request_13",
-          "label": "",
-          "kind": "op",
-          "nexts": [
-            "n__format_request_14"
-          ],
-          "metadata": {}
-        },
-        {
-          "id": "n__format_request_14",
-          "label": "return '\\n'.join(lines)",
-          "kind": "op",
-          "nexts": [
-            "n__format_request_2"
-          ],
-          "metadata": {}
-        }
-      ],
-      "start_node_id": "n__format_request_1",
-      "end_node_id": "n__format_request_2"
-    },
-    {
-      "name": "_format_response",
-      "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\function_ssrf\\worker.py",
-      "type": "function",
-      "nodes": [
-        {
-          "id": "n__format_response_1",
-          "label": "_format_response",
-          "kind": "start",
-          "nexts": [
-            "n__format_response_3"
-          ],
-          "metadata": {
-            "type": "head",
-            "name": "_format_response",
-            "parameters": [
-              {
-                "name": "response",
-                "type": "httpx.Response",
-                "default": null,
-                "required": true,
-                "kind": "positional_or_keyword"
-              }
-            ],
-            "docstring": "",
-            "return_type": "str"
-          }
-        },
-        {
-          "id": "n__format_response_2",
-          "label": "End",
-          "kind": "end",
-          "nexts": [],
-          "metadata": {}
-        },
-        {
-          "id": "n__format_response_3",
-          "label": "for (key, value) in response.headers.items()",
-          "kind": "cond",
-          "nexts": [
-            "n__format_response_4",
-            "n__format_response_5"
-          ],
-          "metadata": {}
-        },
-        {
-          "id": "n__format_response_4",
-          "label": "Call: lines.append",
-          "kind": "call",
-          "nexts": [
-            "n__format_response_3"
-          ],
-          "metadata": {
-            "type": "tail",
-            "target_func": "lines.append"
-          }
-        },
-        {
-          "id": "n__format_response_5",
-          "label": "",
-          "kind": "op",
-          "nexts": [
-            "n__format_response_6"
-          ],
-          "metadata": {}
-        },
-        {
-          "id": "n__format_response_6",
-          "label": "if snippet",
-          "kind": "cond",
-          "nexts": [
-            "n__format_response_7",
-            "n__format_response_9"
-          ],
-          "metadata": {}
-        },
-        {
-          "id": "n__format_response_7",
-          "label": "Call: lines.append",
-          "kind": "call",
-          "nexts": [
-            "n__format_response_8"
-          ],
-          "metadata": {
-            "type": "tail",
-            "target_func": "lines.append"
-          }
-        },
-        {
-          "id": "n__format_response_8",
-          "label": "Call: lines.append",
-          "kind": "call",
-          "nexts": [
-            "n__format_response_9"
-          ],
-          "metadata": {
-            "type": "tail",
-            "target_func": "lines.append"
-          }
-        },
-        {
-          "id": "n__format_response_9",
-          "label": "",
-          "kind": "op",
-          "nexts": [
-            "n__format_response_10"
-          ],
-          "metadata": {}
-        },
-        {
-          "id": "n__format_response_10",
-          "label": "return '\\n'.join(lines)",
-          "kind": "op",
-          "nexts": [
-            "n__format_response_2"
-          ],
-          "metadata": {}
-        }
-      ],
-      "start_node_id": "n__format_response_1",
-      "end_node_id": "n__format_response_2"
-    },
-    {
-      "name": "_safe_elapsed",
-      "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\function_ssrf\\worker.py",
-      "type": "function",
-      "nodes": [
-        {
-          "id": "n__safe_elapsed_1",
-          "label": "_safe_elapsed",
-          "kind": "start",
-          "nexts": [
-            "n__safe_elapsed_3"
-          ],
-          "metadata": {
-            "type": "head",
-            "name": "_safe_elapsed",
-            "parameters": [
-              {
-                "name": "response",
-                "type": "httpx.Response",
-                "default": null,
-                "required": true,
-                "kind": "positional_or_keyword"
-              }
-            ],
-            "docstring": "",
-            "return_type": "float | None"
-          }
-        },
-        {
-          "id": "n__safe_elapsed_2",
-          "label": "End",
-          "kind": "end",
-          "nexts": [],
-          "metadata": {}
-        },
-        {
-          "id": "n__safe_elapsed_3",
-          "label": "return None",
-          "kind": "op",
-          "nexts": [
-            "n__safe_elapsed_2",
-            "n__safe_elapsed_4"
-          ],
-          "metadata": {}
-        },
-        {
-          "id": "n__safe_elapsed_4",
-          "label": "if not elapsed",
-          "kind": "cond",
-          "nexts": [
-            "n__safe_elapsed_5",
-            "n__safe_elapsed_6"
-          ],
-          "metadata": {}
-        },
-        {
-          "id": "n__safe_elapsed_5",
-          "label": "return None",
-          "kind": "op",
-          "nexts": [
-            "n__safe_elapsed_2",
-            "n__safe_elapsed_6"
-          ],
-          "metadata": {}
-        },
-        {
-          "id": "n__safe_elapsed_6",
-          "label": "",
-          "kind": "op",
-          "nexts": [
-            "n__safe_elapsed_7"
-          ],
-          "metadata": {}
-        },
-        {
-          "id": "n__safe_elapsed_7",
-          "label": "return elapsed.total_seconds()",
-          "kind": "op",
-          "nexts": [
-            "n__safe_elapsed_2"
-          ],
-          "metadata": {}
-        }
-      ],
-      "start_node_id": "n__safe_elapsed_1",
-      "end_node_id": "n__safe_elapsed_2"
-    },
-    {
-      "name": "_severity_from_summary",
-      "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\function_ssrf\\worker.py",
-      "type": "function",
-      "nodes": [
-        {
-          "id": "n__severity_from_summary_1",
-          "label": "_severity_from_summary",
-          "kind": "start",
-          "nexts": [
-            "n__severity_from_summary_3"
-          ],
-          "metadata": {
-            "type": "head",
-            "name": "_severity_from_summary",
-            "parameters": [
-              {
-                "name": "summary",
-                "type": "str",
-                "default": null,
-                "required": true,
-                "kind": "positional_or_keyword"
-              }
-            ],
-            "docstring": "",
-            "return_type": "Severity"
-          }
-        },
-        {
-          "id": "n__severity_from_summary_2",
-          "label": "End",
-          "kind": "end",
-          "nexts": [],
-          "metadata": {}
-        },
-        {
-          "id": "n__severity_from_summary_3",
-          "label": "if any((keyword in summary for keyword in keywords))",
-          "kind": "cond",
-          "nexts": [
-            "n__severity_from_summary_4",
-            "n__severity_from_summary_5"
-          ],
-          "metadata": {}
-        },
-        {
-          "id": "n__severity_from_summary_4",
-          "label": "return Severity.HIGH",
-          "kind": "op",
-          "nexts": [
-            "n__severity_from_summary_2",
-            "n__severity_from_summary_5"
-          ],
-          "metadata": {}
-        },
-        {
-          "id": "n__severity_from_summary_5",
-          "label": "",
-          "kind": "op",
-          "nexts": [
-            "n__severity_from_summary_6"
-          ],
-          "metadata": {}
-        },
-        {
-          "id": "n__severity_from_summary_6",
-          "label": "return Severity.MEDIUM",
-          "kind": "op",
-          "nexts": [
-            "n__severity_from_summary_2"
-          ],
-          "metadata": {}
-        }
-      ],
-      "start_node_id": "n__severity_from_summary_1",
-      "end_node_id": "n__severity_from_summary_2"
-    },
-    {
-      "name": "_extract_token",
-      "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\function_ssrf\\worker.py",
-      "type": "function",
-      "nodes": [
-        {
-          "id": "n__extract_token_1",
-          "label": "_extract_token",
-          "kind": "start",
-          "nexts": [
-            "n__extract_token_3"
-          ],
-          "metadata": {
-            "type": "head",
-            "name": "_extract_token",
-            "parameters": [
-              {
-                "name": "payload",
-                "type": "str",
-                "default": null,
-                "required": true,
-                "kind": "positional_or_keyword"
-              }
-            ],
-            "docstring": "",
-            "return_type": "str"
-          }
-        },
-        {
-          "id": "n__extract_token_2",
-          "label": "End",
-          "kind": "end",
-          "nexts": [],
-          "metadata": {}
-        },
-        {
-          "id": "n__extract_token_3",
-          "label": "return payload.split('/')[-1]",
-          "kind": "op",
-          "nexts": [
-            "n__extract_token_2"
-          ],
-          "metadata": {}
-        }
-      ],
-      "start_node_id": "n__extract_token_1",
-      "end_node_id": "n__extract_token_2"
-    },
-    {
-      "name": "OastDispatcherLike",
-      "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\function_ssrf\\worker.py",
-      "type": "class",
-      "nodes": [
-        {
-          "id": "OastDispatcherLike_1",
-          "label": "OastDispatcherLike",
-          "kind": "start",
-          "nexts": [
-            "OastDispatcherLike_2"
-          ],
-          "metadata": {
-            "type": "head",
-            "name": "OastDispatcherLike",
-            "docstring": "",
-            "is_class": true
-          }
-        },
-        {
-          "id": "OastDispatcherLike_2",
-          "label": "End",
-          "kind": "end",
-          "nexts": [],
-          "metadata": {}
-        }
-      ],
-      "start_node_id": "OastDispatcherLike_1",
-      "end_node_id": "OastDispatcherLike_2"
-    },
-    {
-      "name": "OastDispatcherLike.register",
-      "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\function_ssrf\\worker.py",
-      "type": "method",
-      "nodes": [
-        {
-          "id": "OastDispatcherLike_register_1",
-          "label": "OastDispatcherLike.register",
-          "kind": "start",
-          "nexts": [
-            "OastDispatcherLike_register_2"
-          ],
-          "metadata": {
-            "type": "head",
-            "name": "OastDispatcherLike.register",
-            "parameters": [
-              {
-                "name": "task",
-                "type": "FunctionTaskPayload",
-                "default": null,
-                "required": true,
-                "kind": "positional_or_keyword"
-              }
-            ],
-            "docstring": "",
-            "return_type": "Any"
-          }
-        },
-        {
-          "id": "OastDispatcherLike_register_2",
-          "label": "End",
-          "kind": "end",
-          "nexts": [],
-          "metadata": {}
-        }
-      ],
-      "start_node_id": "OastDispatcherLike_register_1",
-      "end_node_id": "OastDispatcherLike_register_2"
-    },
-    {
-      "name": "OastDispatcherLike.fetch_events",
-      "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\function_ssrf\\worker.py",
-      "type": "method",
-      "nodes": [
-        {
-          "id": "OastDispatcherLike_fetch_events_1",
-          "label": "OastDispatcherLike.fetch_events",
-          "kind": "start",
-          "nexts": [
-            "OastDispatcherLike_fetch_events_2"
-          ],
-          "metadata": {
-            "type": "head",
-            "name": "OastDispatcherLike.fetch_events",
-            "parameters": [
-              {
-                "name": "token",
-                "type": "str",
-                "default": null,
-                "required": true,
-                "kind": "positional_or_keyword"
-              }
-            ],
-            "docstring": "",
-            "return_type": "list[OastEvent]"
-          }
-        },
-        {
-          "id": "OastDispatcherLike_fetch_events_2",
-          "label": "End",
-          "kind": "end",
-          "nexts": [],
-          "metadata": {}
-        }
-      ],
-      "start_node_id": "OastDispatcherLike_fetch_events_1",
-      "end_node_id": "OastDispatcherLike_fetch_events_2"
-    },
-    {
-      "name": "OastDispatcherLike.close",
-      "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\function_ssrf\\worker.py",
-      "type": "method",
-      "nodes": [
-        {
-          "id": "OastDispatcherLike_close_1",
-          "label": "OastDispatcherLike.close",
-          "kind": "start",
-          "nexts": [
-            "OastDispatcherLike_close_2"
-          ],
-          "metadata": {
-            "type": "head",
-            "name": "OastDispatcherLike.close",
-            "parameters": [],
-            "docstring": "",
-            "return_type": "None"
-          }
-        },
-        {
-          "id": "OastDispatcherLike_close_2",
-          "label": "End",
-          "kind": "end",
-          "nexts": [],
-          "metadata": {}
-        }
-      ],
-      "start_node_id": "OastDispatcherLike_close_1",
-      "end_node_id": "OastDispatcherLike_close_2"
-    },
-    {
-      "name": "SsrfWorkerService",
-      "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\function_ssrf\\worker.py",
-      "type": "class",
-      "nodes": [
-        {
-          "id": "SsrfWorkerService_1",
-          "label": "SsrfWorkerService",
-          "kind": "start",
-          "nexts": [
-            "SsrfWorkerService_2"
-          ],
-          "metadata": {
-            "type": "head",
-            "name": "SsrfWorkerService",
-            "docstring": "SSRF Worker 服務類 - 提供統一的任務處理接口\n\nNote: 這個類已經被棄用，請直接使用 run_worker() 函數\n保留此類僅為向後兼容",
-            "is_class": true
-          }
-        },
-        {
-          "id": "SsrfWorkerService_2",
-          "label": "End",
-          "kind": "end",
-          "nexts": [],
-          "metadata": {}
-        }
-      ],
-      "start_node_id": "SsrfWorkerService_1",
-      "end_node_id": "SsrfWorkerService_2"
-    },
-    {
-      "name": "SsrfWorkerService.__init__",
-      "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\function_ssrf\\worker.py",
-      "type": "method",
-      "nodes": [
-        {
-          "id": "SsrfWorkerService___init___1",
-          "label": "SsrfWorkerService.__init__",
-          "kind": "start",
-          "nexts": [
-            "SsrfWorkerService___init___3"
-          ],
-          "metadata": {
-            "type": "head",
-            "name": "SsrfWorkerService.__init__",
-            "parameters": [],
-            "docstring": "初始化 SSRF Worker 服務（已棄用）",
-            "return_type": "any"
-          }
-        },
-        {
-          "id": "SsrfWorkerService___init___2",
-          "label": "End",
-          "kind": "end",
-          "nexts": [],
-          "metadata": {}
-        },
-        {
-          "id": "SsrfWorkerService___init___3",
-          "label": "Call: logger.warning",
-          "kind": "call",
-          "nexts": [
-            "SsrfWorkerService___init___4"
-          ],
-          "metadata": {
-            "type": "tail",
-            "target_func": "logger.warning"
-          }
-        },
-        {
-          "id": "SsrfWorkerService___init___4",
-          "label": "Call: OastDispatcher",
-          "kind": "call",
-          "nexts": [
-            "SsrfWorkerService___init___5"
-          ],
-          "metadata": {
-            "type": "tail",
-            "target_func": "OastDispatcher",
-            "connected_to": "OastDispatcher"
-          }
-        },
-        {
-          "id": "SsrfWorkerService___init___5",
-          "label": "Call: InternalAddressDetector",
-          "kind": "call",
-          "nexts": [
-            "SsrfWorkerService___init___6"
-          ],
-          "metadata": {
-            "type": "tail",
-            "target_func": "InternalAddressDetector",
-            "connected_to": "InternalAddressDetector"
-          }
-        },
-        {
-          "id": "SsrfWorkerService___init___6",
-          "label": "Call: ParamSemanticsAnalyzer",
-          "kind": "call",
-          "nexts": [
-            "SsrfWorkerService___init___2"
-          ],
-          "metadata": {
-            "type": "tail",
-            "target_func": "ParamSemanticsAnalyzer",
-            "connected_to": "ParamSemanticsAnalyzer"
-          }
-        }
-      ],
-      "start_node_id": "SsrfWorkerService___init___1",
-      "end_node_id": "SsrfWorkerService___init___2"
-    },
-    {
-      "name": "SsrfWorkerService.process_task",
-      "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\function_ssrf\\worker.py",
-      "type": "method",
-      "nodes": [
-        {
-          "id": "SsrfWorkerService_process_task_1",
-          "label": "SsrfWorkerService.process_task",
-          "kind": "start",
-          "nexts": [
-            "SsrfWorkerService_process_task_3"
-          ],
-          "metadata": {
-            "type": "head",
-            "name": "SsrfWorkerService.process_task",
-            "parameters": [
-              {
-                "name": "task",
-                "type": "any",
-                "default": null,
-                "required": true,
-                "kind": "positional_or_keyword"
-              }
-            ],
-            "docstring": "處理 SSRF 檢測任務（已棄用）\n\n建議使用 process_task() 函數替代此方法",
-            "return_type": "dict"
-          }
-        },
-        {
-          "id": "SsrfWorkerService_process_task_2",
-          "label": "End",
-          "kind": "end",
-          "nexts": [],
-          "metadata": {}
-        },
-        {
-          "id": "SsrfWorkerService_process_task_3",
-          "label": "if not hasattr(task, 'target') or not task.target",
-          "kind": "cond",
-          "nexts": [
-            "SsrfWorkerService_process_task_4",
-            "SsrfWorkerService_process_task_5"
-          ],
-          "metadata": {}
-        },
-        {
-          "id": "SsrfWorkerService_process_task_4",
-          "label": "Call: ValueError",
-          "kind": "call",
-          "nexts": [
-            "SsrfWorkerService_process_task_5"
-          ],
-          "metadata": {
-            "type": "tail",
-            "target_func": "ValueError"
-          }
-        },
-        {
-          "id": "SsrfWorkerService_process_task_5",
-          "label": "",
-          "kind": "op",
-          "nexts": [
-            "SsrfWorkerService_process_task_6"
-          ],
-          "metadata": {}
-        },
-        {
-          "id": "SsrfWorkerService_process_task_6",
-          "label": "Call: FunctionTaskPayload",
-          "kind": "call",
-          "nexts": [
-            "SsrfWorkerService_process_task_7"
-          ],
-          "metadata": {
-            "type": "tail",
-            "target_func": "FunctionTaskPayload"
-          }
-        },
-        {
-          "id": "SsrfWorkerService_process_task_7",
-          "label": "Call: get_broker",
-          "kind": "call",
-          "nexts": [
-            "SsrfWorkerService_process_task_8"
-          ],
-          "metadata": {
-            "type": "tail",
-            "target_func": "get_broker"
-          }
-        },
-        {
-          "id": "SsrfWorkerService_process_task_8",
-          "label": "Call: SsrfResultPublisher",
-          "kind": "call",
-          "nexts": [
-            "SsrfWorkerService_process_task_9"
-          ],
-          "metadata": {
-            "type": "tail",
-            "target_func": "SsrfResultPublisher",
-            "connected_to": "SsrfResultPublisher"
-          }
-        },
-        {
-          "id": "SsrfWorkerService_process_task_9",
-          "label": "Call: httpx.AsyncClient",
-          "kind": "call",
-          "nexts": [
-            "SsrfWorkerService_process_task_10"
-          ],
-          "metadata": {
-            "type": "tail",
-            "target_func": "httpx.AsyncClient"
-          }
-        },
-        {
-          "id": "SsrfWorkerService_process_task_10",
-          "label": "Call: _execute_task",
-          "kind": "call",
-          "nexts": [
-            "SsrfWorkerService_process_task_11"
-          ],
-          "metadata": {
-            "type": "tail",
-            "target_func": "_execute_task",
-            "connected_to": "_execute_task"
-          }
-        },
-        {
-          "id": "SsrfWorkerService_process_task_11",
-          "label": "return {'status': 'completed', 'task_id': task.task_id}",
-          "kind": "op",
-          "nexts": [
-            "SsrfWorkerService_process_task_2"
-          ],
-          "metadata": {}
-        }
-      ],
-      "start_node_id": "SsrfWorkerService_process_task_1",
-      "end_node_id": "SsrfWorkerService_process_task_2"
-    },
-    {
       "name": "SsrfConfig",
       "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\function_ssrf\\config\\ssrf_config.py",
       "type": "class",
@@ -13685,238 +11290,6 @@
       ],
       "start_node_id": "SSRFEngine_run_1",
       "end_node_id": "SSRFEngine_run_2"
-    },
-    {
-      "name": "run",
-      "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\function_ssrf\\worker\\ssrf_worker.py",
-      "type": "function",
-      "nodes": [
-        {
-          "id": "run_1",
-          "label": "run",
-          "kind": "start",
-          "nexts": [
-            "run_3"
-          ],
-          "metadata": {
-            "type": "head",
-            "name": "run",
-            "parameters": [],
-            "docstring": "",
-            "return_type": "any"
-          }
-        },
-        {
-          "id": "run_2",
-          "label": "End",
-          "kind": "end",
-          "nexts": [],
-          "metadata": {}
-        },
-        {
-          "id": "run_3",
-          "label": "Call: get_broker",
-          "kind": "call",
-          "nexts": [
-            "run_4"
-          ],
-          "metadata": {
-            "type": "tail",
-            "target_func": "get_broker"
-          }
-        },
-        {
-          "id": "run_4",
-          "label": "Call: SsrfConfig",
-          "kind": "call",
-          "nexts": [
-            "run_5"
-          ],
-          "metadata": {
-            "type": "tail",
-            "target_func": "SsrfConfig",
-            "connected_to": "SsrfConfig"
-          }
-        },
-        {
-          "id": "run_5",
-          "label": "Call: SSRFDetector",
-          "kind": "call",
-          "nexts": [
-            "run_6"
-          ],
-          "metadata": {
-            "type": "tail",
-            "target_func": "SSRFDetector",
-            "connected_to": "SSRFDetector"
-          }
-        },
-        {
-          "id": "run_6",
-          "label": "Call: broker.subscribe",
-          "kind": "call",
-          "nexts": [
-            "run_7"
-          ],
-          "metadata": {
-            "type": "tail",
-            "target_func": "broker.subscribe"
-          }
-        },
-        {
-          "id": "run_7",
-          "label": "Call: AivaMessage.model_validate_json",
-          "kind": "call",
-          "nexts": [
-            "run_8"
-          ],
-          "metadata": {
-            "type": "tail",
-            "target_func": "AivaMessage.model_validate_json"
-          }
-        },
-        {
-          "id": "run_8",
-          "label": "Call: FunctionTaskPayload",
-          "kind": "call",
-          "nexts": [
-            "run_9"
-          ],
-          "metadata": {
-            "type": "tail",
-            "target_func": "FunctionTaskPayload"
-          }
-        },
-        {
-          "id": "run_9",
-          "label": "Call: new_id",
-          "kind": "call",
-          "nexts": [
-            "run_10"
-          ],
-          "metadata": {
-            "type": "tail",
-            "target_func": "new_id"
-          }
-        },
-        {
-          "id": "run_10",
-          "label": "Call: str",
-          "kind": "call",
-          "nexts": [
-            "run_11"
-          ],
-          "metadata": {
-            "type": "tail",
-            "target_func": "str"
-          }
-        },
-        {
-          "id": "run_11",
-          "label": "Call: broker.publish",
-          "kind": "call",
-          "nexts": [
-            "run_12"
-          ],
-          "metadata": {
-            "type": "tail",
-            "target_func": "broker.publish"
-          }
-        },
-        {
-          "id": "run_12",
-          "label": "Call: detector.analyze",
-          "kind": "call",
-          "nexts": [
-            "run_13"
-          ],
-          "metadata": {
-            "type": "tail",
-            "target_func": "detector.analyze"
-          }
-        },
-        {
-          "id": "run_13",
-          "label": "for f in findings",
-          "kind": "cond",
-          "nexts": [
-            "run_14",
-            "run_16"
-          ],
-          "metadata": {}
-        },
-        {
-          "id": "run_14",
-          "label": "Call: AivaMessage",
-          "kind": "call",
-          "nexts": [
-            "run_15"
-          ],
-          "metadata": {
-            "type": "tail",
-            "target_func": "AivaMessage"
-          }
-        },
-        {
-          "id": "run_15",
-          "label": "Call: broker.publish",
-          "kind": "call",
-          "nexts": [
-            "run_13"
-          ],
-          "metadata": {
-            "type": "tail",
-            "target_func": "broker.publish"
-          }
-        },
-        {
-          "id": "run_16",
-          "label": "",
-          "kind": "op",
-          "nexts": [
-            "run_17"
-          ],
-          "metadata": {}
-        },
-        {
-          "id": "run_17",
-          "label": "Call: broker.publish",
-          "kind": "call",
-          "nexts": [
-            "run_18"
-          ],
-          "metadata": {
-            "type": "tail",
-            "target_func": "broker.publish"
-          }
-        },
-        {
-          "id": "run_18",
-          "label": "Call: logger.exception",
-          "kind": "call",
-          "nexts": [
-            "run_19"
-          ],
-          "metadata": {
-            "type": "tail",
-            "target_func": "logger.exception"
-          }
-        },
-        {
-          "id": "run_19",
-          "label": "Call: broker.publish",
-          "kind": "call",
-          "nexts": [
-            "run_2"
-          ],
-          "metadata": {
-            "type": "tail",
-            "target_func": "broker.publish"
-          }
-        }
-      ],
-      "start_node_id": "run_1",
-      "end_node_id": "run_2"
     }
   ],
   "connections": [
@@ -13963,297 +11336,41 @@
       "type": "call"
     },
     {
-      "source_graph": "run",
-      "source_node_id": "run_4",
-      "target_graph": "SsrfResultPublisher",
-      "target_node_id": "SsrfResultPublisher_1",
-      "type": "call"
-    },
-    {
-      "source_graph": "run",
-      "source_node_id": "run_5",
-      "target_graph": "ParamSemanticsAnalyzer",
-      "target_node_id": "ParamSemanticsAnalyzer_1",
-      "type": "call"
-    },
-    {
-      "source_graph": "run",
-      "source_node_id": "run_6",
-      "target_graph": "InternalAddressDetector",
-      "target_node_id": "InternalAddressDetector_1",
-      "type": "call"
-    },
-    {
-      "source_graph": "run",
-      "source_node_id": "run_7",
-      "target_graph": "OastDispatcher",
-      "target_node_id": "OastDispatcher_1",
-      "type": "call"
-    },
-    {
-      "source_graph": "run",
-      "source_node_id": "run_12",
-      "target_graph": "_execute_task",
-      "target_node_id": "n__execute_task_1",
-      "type": "call"
-    },
-    {
-      "source_graph": "_execute_task",
-      "source_node_id": "n__execute_task_4",
-      "target_graph": "process_task",
-      "target_node_id": "process_task_1",
-      "type": "call"
-    },
-    {
-      "source_graph": "process_task",
-      "source_node_id": "process_task_3",
-      "target_graph": "ParamSemanticsAnalyzer",
-      "target_node_id": "ParamSemanticsAnalyzer_1",
-      "type": "call"
-    },
-    {
-      "source_graph": "process_task",
-      "source_node_id": "process_task_4",
-      "target_graph": "InternalAddressDetector",
-      "target_node_id": "InternalAddressDetector_1",
-      "type": "call"
-    },
-    {
-      "source_graph": "process_task",
-      "source_node_id": "process_task_6",
-      "target_graph": "OastDispatcher",
-      "target_node_id": "OastDispatcher_1",
-      "type": "call"
-    },
-    {
-      "source_graph": "process_task",
-      "source_node_id": "process_task_8",
-      "target_graph": "SsrfTelemetry",
-      "target_node_id": "SsrfTelemetry_1",
-      "type": "call"
-    },
-    {
-      "source_graph": "process_task",
-      "source_node_id": "process_task_14",
-      "target_graph": "_resolve_payload",
-      "target_node_id": "n__resolve_payload_1",
-      "type": "call"
-    },
-    {
-      "source_graph": "process_task",
-      "source_node_id": "process_task_15",
-      "target_graph": "_issue_request",
-      "target_node_id": "n__issue_request_1",
-      "type": "call"
-    },
-    {
-      "source_graph": "_build_internal_finding",
-      "source_node_id": "n__build_internal_finding_3",
-      "target_graph": "_severity_from_summary",
-      "target_node_id": "n__severity_from_summary_1",
-      "type": "call"
-    },
-    {
-      "source_graph": "SsrfWorkerService.__init__",
-      "source_node_id": "SsrfWorkerService___init___4",
-      "target_graph": "OastDispatcher",
-      "target_node_id": "OastDispatcher_1",
-      "type": "call"
-    },
-    {
-      "source_graph": "SsrfWorkerService.__init__",
-      "source_node_id": "SsrfWorkerService___init___5",
-      "target_graph": "InternalAddressDetector",
-      "target_node_id": "InternalAddressDetector_1",
-      "type": "call"
-    },
-    {
-      "source_graph": "SsrfWorkerService.__init__",
-      "source_node_id": "SsrfWorkerService___init___6",
-      "target_graph": "ParamSemanticsAnalyzer",
-      "target_node_id": "ParamSemanticsAnalyzer_1",
-      "type": "call"
-    },
-    {
-      "source_graph": "SsrfWorkerService.process_task",
-      "source_node_id": "SsrfWorkerService_process_task_8",
-      "target_graph": "SsrfResultPublisher",
-      "target_node_id": "SsrfResultPublisher_1",
-      "type": "call"
-    },
-    {
-      "source_graph": "SsrfWorkerService.process_task",
-      "source_node_id": "SsrfWorkerService_process_task_10",
-      "target_graph": "_execute_task",
-      "target_node_id": "n__execute_task_1",
-      "type": "call"
-    },
-    {
       "source_graph": "SSRFDetector.analyze",
       "source_node_id": "SSRFDetector_analyze_3",
       "target_graph": "SSRFEngine",
       "target_node_id": "SSRFEngine_1",
       "type": "call"
-    },
-    {
-      "source_graph": "run",
-      "source_node_id": "run_4",
-      "target_graph": "SsrfConfig",
-      "target_node_id": "SsrfConfig_1",
-      "type": "call"
-    },
-    {
-      "source_graph": "run",
-      "source_node_id": "run_5",
-      "target_graph": "SSRFDetector",
-      "target_node_id": "SSRFDetector_1",
-      "type": "call"
     }
   ],
   "flow_chains": [
     [
-      "SSRFDetector.analyze",
-      "SSRFEngine"
-    ],
-    [
-      "OastDispatcher.register",
-      "OastProbe"
-    ],
-    [
       "SmartSSRFDetector.__init__",
       "SsrfConfig"
-    ],
-    [
-      "run",
-      "SsrfResultPublisher"
-    ],
-    [
-      "run",
-      "ParamSemanticsAnalyzer"
-    ],
-    [
-      "run",
-      "InternalAddressDetector"
-    ],
-    [
-      "run",
-      "OastDispatcher"
-    ],
-    [
-      "run",
-      "_execute_task",
-      "process_task",
-      "ParamSemanticsAnalyzer"
-    ],
-    [
-      "run",
-      "_execute_task",
-      "process_task",
-      "InternalAddressDetector"
-    ],
-    [
-      "run",
-      "_execute_task",
-      "process_task",
-      "OastDispatcher"
-    ],
-    [
-      "run",
-      "_execute_task",
-      "process_task",
-      "SsrfTelemetry"
-    ],
-    [
-      "run",
-      "_execute_task",
-      "process_task",
-      "_resolve_payload"
-    ],
-    [
-      "run",
-      "_execute_task",
-      "process_task",
-      "_issue_request"
-    ],
-    [
-      "run",
-      "SsrfConfig"
-    ],
-    [
-      "run",
-      "SSRFDetector"
-    ],
-    [
-      "_build_internal_finding",
-      "_severity_from_summary"
-    ],
-    [
-      "ParamSemanticsAnalyzer.analyze",
-      "AnalysisPlan"
-    ],
-    [
-      "SsrfWorkerService.process_task",
-      "SsrfResultPublisher"
-    ],
-    [
-      "SsrfWorkerService.process_task",
-      "_execute_task",
-      "process_task",
-      "ParamSemanticsAnalyzer"
-    ],
-    [
-      "SsrfWorkerService.process_task",
-      "_execute_task",
-      "process_task",
-      "InternalAddressDetector"
-    ],
-    [
-      "SsrfWorkerService.process_task",
-      "_execute_task",
-      "process_task",
-      "OastDispatcher"
-    ],
-    [
-      "SsrfWorkerService.process_task",
-      "_execute_task",
-      "process_task",
-      "SsrfTelemetry"
-    ],
-    [
-      "SsrfWorkerService.process_task",
-      "_execute_task",
-      "process_task",
-      "_resolve_payload"
-    ],
-    [
-      "SsrfWorkerService.process_task",
-      "_execute_task",
-      "process_task",
-      "_issue_request"
-    ],
-    [
-      "SmartSSRFDetector.detect_vulnerabilities",
-      "SSRFDetectionContext"
     ],
     [
       "ParamSemanticsAnalyzer._get_advanced_payloads",
       "DnsRebindingDetector"
     ],
     [
-      "SsrfWorkerService.__init__",
-      "OastDispatcher"
-    ],
-    [
-      "SsrfWorkerService.__init__",
-      "InternalAddressDetector"
-    ],
-    [
-      "SsrfWorkerService.__init__",
-      "ParamSemanticsAnalyzer"
+      "OastDispatcher.register",
+      "OastProbe"
     ],
     [
       "OastDispatcher.fetch_events",
       "OastEvent"
+    ],
+    [
+      "SmartSSRFDetector.detect_vulnerabilities",
+      "SSRFDetectionContext"
+    ],
+    [
+      "ParamSemanticsAnalyzer.analyze",
+      "AnalysisPlan"
+    ],
+    [
+      "SSRFDetector.analyze",
+      "SSRFEngine"
     ]
   ],
   "function_details": {
@@ -14268,6 +11385,7 @@
         "is_class": true,
         "parameters": [],
         "docstring": "DNS Rebinding 測試向量",
+        "module_doc": "",
         "return_type": "any",
         "called_functions": []
       },
@@ -14281,6 +11399,7 @@
         "is_class": true,
         "parameters": [],
         "docstring": "DNS Rebinding 檢測器",
+        "module_doc": "",
         "return_type": "any",
         "called_functions": []
       },
@@ -14302,6 +11421,7 @@
           }
         ],
         "docstring": "初始化 DNS Rebinding 檢測器\n\nArgs:\n    timeout: 請求超時時間（秒）",
+        "module_doc": "",
         "return_type": "any",
         "called_functions": []
       },
@@ -14330,6 +11450,7 @@
           }
         ],
         "docstring": "生成 DNS rebinding 測試向量\n\nArgs:\n    target_internal_ip: 目標內部 IP（要訪問的內部服務）\n    attacker_ip: 攻擊者控制的外部 IP\n\nReturns:\n    DNS rebinding 測試向量列表",
+        "module_doc": "",
         "return_type": "List[DnsRebindingVector]",
         "called_functions": [
           "self._generate_rebind_it_domain",
@@ -14364,6 +11485,7 @@
           }
         ],
         "docstring": "生成 rebind.it 格式的域名\n格式: <first_ip_hex>.1time.<second_ip_hex>.1time.repeat.rebind.it\n\nArgs:\n    first_ip: 第一次解析的 IP\n    second_ip: 第二次解析的 IP（rebind target）\n\nReturns:\n    rebind.it 格式的域名",
+        "module_doc": "",
         "return_type": "str",
         "called_functions": [
           "ip_to_hex",
@@ -14395,6 +11517,7 @@
           }
         ],
         "docstring": "生成 rbndr.us 格式的域名\n格式: A.B.C.D.E.F.G.H.rbndr.us (first IP: A.B.C.D, second IP: E.F.G.H)\n\nArgs:\n    first_ip: 第一次解析的 IP\n    second_ip: 第二次解析的 IP（rebind target）\n\nReturns:\n    rbndr.us 格式的域名",
+        "module_doc": "",
         "return_type": "str",
         "called_functions": [
           "first_ip.split",
@@ -14427,6 +11550,7 @@
           }
         ],
         "docstring": "測試 DNS rebinding 是否成功\n\nArgs:\n    vector: DNS rebinding 測試向量\n    client: HTTP 客戶端（可選）\n\nReturns:\n    True 如果檢測到 rebinding 行為",
+        "module_doc": "",
         "return_type": "bool",
         "called_functions": [
           "httpx.AsyncClient",
@@ -14464,6 +11588,7 @@
           }
         ],
         "docstring": "解析域名為 IP 列表\n\nArgs:\n    domain: 域名（可能包含 http:// 前綴）\n\nReturns:\n    IP 地址列表",
+        "module_doc": "",
         "return_type": "List[str]",
         "called_functions": [
           "domain.split",
@@ -14505,6 +11630,7 @@
           }
         ],
         "docstring": "驗證通過 DNS rebinding 是否能訪問內部服務\n\nArgs:\n    rebinding_url: DNS rebinding URL\n    internal_path: 內部服務路徑\n    client: HTTP 客戶端（可選）\n\nReturns:\n    True 如果成功訪問內部服務",
+        "module_doc": "",
         "return_type": "bool",
         "called_functions": [
           "httpx.AsyncClient",
@@ -14534,6 +11660,7 @@
           }
         ],
         "docstring": "生成用於 SSRF 測試的 DNS rebinding payloads\n\nArgs:\n    parameter_name: 參數名稱\n    internal_targets: 內部目標 IP 列表（可選）\n\nReturns:\n    Payload 列表",
+        "module_doc": "",
         "return_type": "List[str]",
         "called_functions": [
           "self.generate_vectors",
@@ -14551,6 +11678,7 @@
         "is_class": true,
         "parameters": [],
         "docstring": "Represents a single hint that an internal resource was contacted.",
+        "module_doc": "",
         "return_type": "any",
         "called_functions": []
       },
@@ -14564,6 +11692,7 @@
         "is_class": true,
         "parameters": [],
         "docstring": "Aggregated result returned by :class:`InternalAddressDetector`.",
+        "module_doc": "",
         "return_type": "any",
         "called_functions": [
           "field"
@@ -14579,6 +11708,7 @@
         "is_class": false,
         "parameters": [],
         "docstring": "",
+        "module_doc": "",
         "return_type": "str",
         "called_functions": []
       },
@@ -14592,6 +11722,7 @@
         "is_class": true,
         "parameters": [],
         "docstring": "Detect internal addresses and assess SSRF risk.\n\nThis class provides helper methods to analyze a probe response and\ndetermine whether internal addresses, cloud metadata or internal\nservices are accessible.",
+        "module_doc": "",
         "return_type": "any",
         "called_functions": [
           "field",
@@ -14617,6 +11748,7 @@
           }
         ],
         "docstring": "Analyze a probe response and return structured findings.",
+        "module_doc": "",
         "return_type": "InternalAddressDetection",
         "called_functions": [
           "isinstance",
@@ -14666,6 +11798,7 @@
           }
         ],
         "docstring": "Probe common internal service ports using the provided callable.",
+        "module_doc": "",
         "return_type": "list[dict[str, Any]]",
         "called_functions": [
           "test_function",
@@ -14713,6 +11846,7 @@
           }
         ],
         "docstring": "Check whether special protocol schemes are honoured by the target.",
+        "module_doc": "",
         "return_type": "list[str]",
         "called_functions": [
           "test_function",
@@ -14739,6 +11873,7 @@
           }
         ],
         "docstring": "Determine whether the supplied response looks like a\nsuccessful HTTP reply.",
+        "module_doc": "",
         "return_type": "bool",
         "called_functions": [
           "response.lower"
@@ -14769,6 +11904,7 @@
           }
         ],
         "docstring": "Verify if the response body contains indicators of\ncloud metadata endpoints.",
+        "module_doc": "",
         "return_type": "bool",
         "called_functions": [
           "metadata_indicators.get",
@@ -14800,6 +11936,7 @@
           }
         ],
         "docstring": "Verify if the response matches heuristics for a service\nlistening on the given port.",
+        "module_doc": "",
         "return_type": "bool",
         "called_functions": [
           "service_indicators.get",
@@ -14824,6 +11961,7 @@
           }
         ],
         "docstring": "",
+        "module_doc": "",
         "return_type": "str",
         "called_functions": []
       },
@@ -14852,6 +11990,7 @@
           }
         ],
         "docstring": "",
+        "module_doc": "",
         "return_type": "bool",
         "called_functions": [
           "protocol_indicators.get",
@@ -14876,6 +12015,7 @@
           }
         ],
         "docstring": "",
+        "module_doc": "",
         "return_type": "str",
         "called_functions": [
           "len",
@@ -14902,6 +12042,7 @@
           }
         ],
         "docstring": "",
+        "module_doc": "",
         "return_type": "list[str]",
         "called_functions": [
           "len",
@@ -14929,6 +12070,7 @@
           }
         ],
         "docstring": "",
+        "module_doc": "",
         "return_type": "bool",
         "called_functions": [
           "ipaddress.ip_address"
@@ -14944,6 +12086,7 @@
         "is_class": true,
         "parameters": [],
         "docstring": "",
+        "module_doc": "",
         "return_type": "any",
         "called_functions": []
       },
@@ -14957,6 +12100,7 @@
         "is_class": true,
         "parameters": [],
         "docstring": "",
+        "module_doc": "",
         "return_type": "any",
         "called_functions": []
       },
@@ -14970,6 +12114,7 @@
         "is_class": true,
         "parameters": [],
         "docstring": "Thin client for the shared OAST service used for blind SSRF validation.",
+        "module_doc": "",
         "return_type": "any",
         "called_functions": []
       },
@@ -14983,6 +12128,7 @@
         "is_class": false,
         "parameters": [],
         "docstring": "",
+        "module_doc": "",
         "return_type": "None",
         "called_functions": [
           "unknown_call.rstrip"
@@ -15006,6 +12152,7 @@
           }
         ],
         "docstring": "",
+        "module_doc": "",
         "return_type": "OastProbe",
         "called_functions": [
           "httpx.AsyncClient",
@@ -15039,6 +12186,7 @@
           }
         ],
         "docstring": "",
+        "module_doc": "",
         "return_type": "list[OastEvent]",
         "called_functions": [
           "self._resolve_token",
@@ -15073,6 +12221,7 @@
           }
         ],
         "docstring": "驗證 OAST 事件是否為真實 SSRF，過濾虛假回呼",
+        "module_doc": "",
         "return_type": "bool",
         "called_functions": []
       },
@@ -15086,6 +12235,7 @@
         "is_class": false,
         "parameters": [],
         "docstring": "",
+        "module_doc": "",
         "return_type": "None",
         "called_functions": [
           "self._client.aclose"
@@ -15109,6 +12259,7 @@
           }
         ],
         "docstring": "",
+        "module_doc": "",
         "return_type": "str",
         "called_functions": [
           "token.rstrip",
@@ -15125,6 +12276,7 @@
         "is_class": true,
         "parameters": [],
         "docstring": "",
+        "module_doc": "",
         "return_type": "any",
         "called_functions": []
       },
@@ -15138,6 +12290,7 @@
         "is_class": true,
         "parameters": [],
         "docstring": "",
+        "module_doc": "",
         "return_type": "any",
         "called_functions": [
           "field"
@@ -15153,6 +12306,7 @@
         "is_class": true,
         "parameters": [],
         "docstring": "Inspect task metadata and derive SSRF payload candidates.",
+        "module_doc": "",
         "return_type": "any",
         "called_functions": []
       },
@@ -15174,6 +12328,7 @@
           }
         ],
         "docstring": "Coordinator: build SSRF test plan from task semantics.",
+        "module_doc": "",
         "return_type": "AnalysisPlan",
         "called_functions": [
           "unknown_call.strip",
@@ -15205,6 +12360,7 @@
           }
         ],
         "docstring": "Get base payloads with advanced/DNS extensions.",
+        "module_doc": "",
         "return_type": "list[str]",
         "called_functions": [
           "list",
@@ -15238,6 +12394,7 @@
           }
         ],
         "docstring": "Get advanced payloads (IP bypass, DNS rebinding).",
+        "module_doc": "",
         "return_type": "list[str]",
         "called_functions": [
           "advanced.extend",
@@ -15286,6 +12443,7 @@
           }
         ],
         "docstring": "Add standard SSRF probe vectors.",
+        "module_doc": "",
         "return_type": "None",
         "called_functions": [
           "plan.vectors.append"
@@ -15330,6 +12488,7 @@
           }
         ],
         "docstring": "Add vectors based on parameter semantics.",
+        "module_doc": "",
         "return_type": "None",
         "called_functions": [
           "plan.vectors.append",
@@ -15369,6 +12528,7 @@
           }
         ],
         "docstring": "Add file:// scheme vectors.",
+        "module_doc": "",
         "return_type": "None",
         "called_functions": [
           "plan.vectors.append"
@@ -15406,6 +12566,7 @@
           }
         ],
         "docstring": "Add alternate protocol vectors.",
+        "module_doc": "",
         "return_type": "None",
         "called_functions": [
           "plan.vectors.append"
@@ -15450,6 +12611,7 @@
           }
         ],
         "docstring": "Add cross-protocol vectors based on configuration.",
+        "module_doc": "",
         "return_type": "None",
         "called_functions": [
           "self._get_selected_protocols",
@@ -15474,6 +12636,7 @@
           }
         ],
         "docstring": "Determine which cross-protocol vectors to include.",
+        "module_doc": "",
         "return_type": "set[str]",
         "called_functions": [
           "unknown_call.lower",
@@ -15526,6 +12689,7 @@
           }
         ],
         "docstring": "Add OAST vector if enabled.",
+        "module_doc": "",
         "return_type": "None",
         "called_functions": [
           "plan.vectors.append"
@@ -15549,6 +12713,7 @@
           }
         ],
         "docstring": "",
+        "module_doc": "",
         "return_type": "Iterable[str]",
         "called_functions": [
           "set",
@@ -15586,6 +12751,7 @@
           }
         ],
         "docstring": "",
+        "module_doc": "",
         "return_type": "bool",
         "called_functions": [
           "set",
@@ -15611,6 +12777,7 @@
           }
         ],
         "docstring": "",
+        "module_doc": "",
         "return_type": "set[str]",
         "called_functions": [
           "unknown_call.lower",
@@ -15627,6 +12794,7 @@
         "is_class": true,
         "parameters": [],
         "docstring": "Publish status updates and findings for the SSRF worker.",
+        "module_doc": "",
         "return_type": "any",
         "called_functions": []
       },
@@ -15648,6 +12816,7 @@
           }
         ],
         "docstring": "",
+        "module_doc": "",
         "return_type": "None",
         "called_functions": [
           "os.getenv",
@@ -15664,6 +12833,7 @@
         "is_class": false,
         "parameters": [],
         "docstring": "",
+        "module_doc": "",
         "return_type": "str",
         "called_functions": []
       },
@@ -15692,6 +12862,7 @@
           }
         ],
         "docstring": "",
+        "module_doc": "",
         "return_type": "None",
         "called_functions": [
           "TaskUpdatePayload",
@@ -15717,6 +12888,7 @@
           }
         ],
         "docstring": "",
+        "module_doc": "",
         "return_type": "None",
         "called_functions": [
           "AivaMessage",
@@ -15748,6 +12920,7 @@
           }
         ],
         "docstring": "",
+        "module_doc": "",
         "return_type": "None",
         "called_functions": [
           "self.publish_status"
@@ -15778,6 +12951,7 @@
           }
         ],
         "docstring": "",
+        "module_doc": "",
         "return_type": "None",
         "called_functions": [
           "message.model_dump",
@@ -15794,6 +12968,7 @@
         "is_class": true,
         "parameters": [],
         "docstring": "SSRF 檢測上下文",
+        "module_doc": "",
         "return_type": "any",
         "called_functions": [
           "field",
@@ -15819,6 +12994,7 @@
           }
         ],
         "docstring": "添加發現的漏洞",
+        "module_doc": "",
         "return_type": "None",
         "called_functions": [
           "self.findings.append"
@@ -15842,6 +13018,7 @@
           }
         ],
         "docstring": "添加錯誤",
+        "module_doc": "",
         "return_type": "None",
         "called_functions": [
           "self.errors.append"
@@ -15857,6 +13034,7 @@
         "is_class": false,
         "parameters": [],
         "docstring": "增加嘗試次數",
+        "module_doc": "",
         "return_type": "None",
         "called_functions": []
       },
@@ -15878,6 +13056,7 @@
           }
         ],
         "docstring": "添加 OAST 回調數量",
+        "module_doc": "",
         "return_type": "None",
         "called_functions": []
       },
@@ -15891,6 +13070,7 @@
         "is_class": true,
         "parameters": [],
         "docstring": "智能 SSRF 檢測器",
+        "module_doc": "",
         "return_type": "any",
         "called_functions": []
       },
@@ -15912,6 +13092,7 @@
           }
         ],
         "docstring": "初始化智能 SSRF 檢測器\n\nArgs:\n    config: SSRF 檢測配置，如果未提供則使用默認配置",
+        "module_doc": "",
         "return_type": "None",
         "called_functions": [
           "SsrfConfig",
@@ -15936,6 +13117,7 @@
           }
         ],
         "docstring": "執行智能 SSRF 檢測\n\nArgs:\n    task: 功能任務載荷\n    client: HTTP 客戶端\n    analyzer: 參數語義分析器\n    detector: 內部地址檢測器\n    dispatcher: OAST 調度器\n\nReturns:\n    檢測到的漏洞列表和檢測指標",
+        "module_doc": "",
         "return_type": "tuple[list[dict[str, Any]], dict[str, Any]]",
         "called_functions": [
           "UnifiedSmartDetectionManager",
@@ -15972,6 +13154,7 @@
           }
         ],
         "docstring": "優先級排序測試向量\n\nArgs:\n    vectors: 原始測試向量列表\n\nReturns:\n    按優先級排序的測試向量列表",
+        "module_doc": "",
         "return_type": "list[SsrfTestVector]",
         "called_functions": [
           "unknown_call.lower",
@@ -16013,6 +13196,7 @@
           }
         ],
         "docstring": "執行檢測邏輯\n\nArgs:\n    context: 檢測上下文\n    vectors: 測試向量列表\n    smart_manager: 智能檢測管理器",
+        "module_doc": "",
         "return_type": "None",
         "called_functions": [
           "len",
@@ -16047,6 +13231,7 @@
           }
         ],
         "docstring": "測試單個 SSRF 向量\n\nArgs:\n    context: 檢測上下文\n    vector: 測試向量",
+        "module_doc": "",
         "return_type": "None",
         "called_functions": [
           "self._resolve_payload",
@@ -16099,6 +13284,7 @@
           }
         ],
         "docstring": "解析載荷，處理 OAST 占位符",
+        "module_doc": "",
         "return_type": "str",
         "called_functions": [
           "dispatcher.register",
@@ -16144,6 +13330,7 @@
           }
         ],
         "docstring": "發送 HTTP 請求 - 重構後複雜度 ≤15\n\nNote: timeout 已在 client 初始化時設定，無需在此處理",
+        "module_doc": "",
         "return_type": "httpx.Response",
         "called_functions": [
           "self._parse_target_config",
@@ -16175,6 +13362,7 @@
           }
         ],
         "docstring": "解析目標配置 - 複雜度 8",
+        "module_doc": "",
         "return_type": "dict",
         "called_functions": [
           "unknown_call.upper",
@@ -16207,6 +13395,7 @@
           }
         ],
         "docstring": "處理參數注入邏輯 - 使用策略模式重構，複雜度 ≤15",
+        "module_doc": "",
         "return_type": "dict",
         "called_functions": [
           "injection_handlers.get",
@@ -16245,6 +13434,7 @@
           }
         ],
         "docstring": "注入查詢參數 - 複雜度 2",
+        "module_doc": "",
         "return_type": "None",
         "called_functions": []
       },
@@ -16280,6 +13470,7 @@
           }
         ],
         "docstring": "注入表單參數 - 複雜度 2",
+        "module_doc": "",
         "return_type": "None",
         "called_functions": []
       },
@@ -16315,6 +13506,7 @@
           }
         ],
         "docstring": "注入JSON參數 - 複雜度 3",
+        "module_doc": "",
         "return_type": "None",
         "called_functions": []
       },
@@ -16350,6 +13542,7 @@
           }
         ],
         "docstring": "注入頭部參數 - 複雜度 2",
+        "module_doc": "",
         "return_type": "None",
         "called_functions": []
       },
@@ -16385,6 +13578,7 @@
           }
         ],
         "docstring": "注入Cookie參數 - 複雜度 2",
+        "module_doc": "",
         "return_type": "None",
         "called_functions": []
       },
@@ -16420,6 +13614,7 @@
           }
         ],
         "docstring": "注入原始Body參數 - 複雜度 4",
+        "module_doc": "",
         "return_type": "None",
         "called_functions": [
           "unknown_call.replace"
@@ -16450,6 +13645,7 @@
           }
         ],
         "docstring": "執行 HTTP 請求 - 複雜度 8\n\nNote: timeout 已經在 client 初始化時設定，不需要作為參數傳遞",
+        "module_doc": "",
         "return_type": "httpx.Response",
         "called_functions": [
           "urlunparse"
@@ -16465,6 +13661,7 @@
         "is_class": false,
         "parameters": [],
         "docstring": "構建內部地址檢測結果",
+        "module_doc": "",
         "return_type": "dict[str, Any]",
         "called_functions": []
       },
@@ -16478,6 +13675,7 @@
         "is_class": false,
         "parameters": [],
         "docstring": "構建 OAST 檢測結果",
+        "module_doc": "",
         "return_type": "dict[str, Any]",
         "called_functions": [
           "len"
@@ -16508,6 +13706,7 @@
           }
         ],
         "docstring": "驗證是否為真實的內部服務訪問，過濾虛假內部地址檢測",
+        "module_doc": "",
         "return_type": "bool",
         "called_functions": [
           "self._verify_service_content"
@@ -16531,6 +13730,7 @@
           }
         ],
         "docstring": "驗證服務內容的真實性",
+        "module_doc": "",
         "return_type": "bool",
         "called_functions": [
           "response.text.lower",
@@ -16555,6 +13755,7 @@
           }
         ],
         "docstring": "驗證雲端 metadata 服務回應的真實性",
+        "module_doc": "",
         "return_type": "bool",
         "called_functions": [
           "json.loads",
@@ -16579,6 +13780,7 @@
           }
         ],
         "docstring": "檢查是否為有效的 JSON API 回應",
+        "module_doc": "",
         "return_type": "bool",
         "called_functions": [
           "unknown_call.lower",
@@ -16603,6 +13805,7 @@
           }
         ],
         "docstring": "檢查是否為管理介面",
+        "module_doc": "",
         "return_type": "bool",
         "called_functions": []
       },
@@ -16624,6 +13827,7 @@
           }
         ],
         "docstring": "從載荷中提取 token",
+        "module_doc": "",
         "return_type": "str",
         "called_functions": [
           "re.search",
@@ -16632,517 +13836,6 @@
           "re.search",
           "match.group",
           "domain.split"
-        ]
-      },
-      "SsrfTelemetry": {
-        "file_name": "worker.py",
-        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\function_ssrf\\worker.py",
-        "script_name": "worker",
-        "line_number": 0,
-        "is_async": false,
-        "is_entry_point": true,
-        "is_class": true,
-        "parameters": [],
-        "docstring": "",
-        "return_type": "any",
-        "called_functions": [
-          "field"
-        ]
-      },
-      "SsrfTelemetry.to_details": {
-        "file_name": "worker.py",
-        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\function_ssrf\\worker.py",
-        "script_name": "worker",
-        "line_number": 0,
-        "is_async": false,
-        "is_entry_point": false,
-        "is_class": false,
-        "parameters": [],
-        "docstring": "",
-        "return_type": "dict[str, Any]",
-        "called_functions": []
-      },
-      "TaskExecutionResult": {
-        "file_name": "worker.py",
-        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\function_ssrf\\worker.py",
-        "script_name": "worker",
-        "line_number": 0,
-        "is_async": false,
-        "is_entry_point": true,
-        "is_class": true,
-        "parameters": [],
-        "docstring": "",
-        "return_type": "any",
-        "called_functions": []
-      },
-      "run": {
-        "file_name": "ssrf_worker.py",
-        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\function_ssrf\\worker\\ssrf_worker.py",
-        "script_name": "ssrf_worker",
-        "line_number": 0,
-        "is_async": false,
-        "is_entry_point": true,
-        "is_class": false,
-        "parameters": [],
-        "docstring": "",
-        "return_type": "any",
-        "called_functions": [
-          "get_broker",
-          "SsrfConfig",
-          "SSRFDetector",
-          "broker.subscribe",
-          "AivaMessage.model_validate_json",
-          "FunctionTaskPayload",
-          "new_id",
-          "str",
-          "broker.publish",
-          "detector.analyze",
-          "AivaMessage",
-          "broker.publish",
-          "broker.publish",
-          "logger.exception",
-          "broker.publish"
-        ]
-      },
-      "_execute_task": {
-        "file_name": "worker.py",
-        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\function_ssrf\\worker.py",
-        "script_name": "worker",
-        "line_number": 0,
-        "is_async": false,
-        "is_entry_point": true,
-        "is_class": false,
-        "parameters": [
-          {
-            "name": "task",
-            "type": "FunctionTaskPayload",
-            "default": null,
-            "required": true,
-            "kind": "positional_or_keyword"
-          }
-        ],
-        "docstring": "",
-        "return_type": "None",
-        "called_functions": [
-          "publisher.publish_status",
-          "process_task",
-          "logger.exception",
-          "publisher.publish_error",
-          "publisher.publish_finding",
-          "logger.info",
-          "publisher.publish_status"
-        ]
-      },
-      "process_task": {
-        "file_name": "worker.py",
-        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\function_ssrf\\worker.py",
-        "script_name": "worker",
-        "line_number": 0,
-        "is_async": false,
-        "is_entry_point": true,
-        "is_class": false,
-        "parameters": [
-          {
-            "name": "task",
-            "type": "FunctionTaskPayload",
-            "default": null,
-            "required": true,
-            "kind": "positional_or_keyword"
-          }
-        ],
-        "docstring": "",
-        "return_type": "TaskExecutionResult",
-        "called_functions": [
-          "ParamSemanticsAnalyzer",
-          "InternalAddressDetector",
-          "isinstance",
-          "OastDispatcher",
-          "analyzer.analyze",
-          "SsrfTelemetry",
-          "logger.error",
-          "ValueError",
-          "_resolve_payload",
-          "_issue_request",
-          "str",
-          "logger.error",
-          "RuntimeError",
-          "str",
-          "logger.error",
-          "RuntimeError",
-          "str",
-          "logger.error",
-          "RuntimeError",
-          "detector.analyze",
-          "findings.append",
-          "dispatcher.fetch_events",
-          "dispatcher.fetch_events",
-          "len",
-          "findings.append"
-        ]
-      },
-      "_resolve_payload": {
-        "file_name": "worker.py",
-        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\function_ssrf\\worker.py",
-        "script_name": "worker",
-        "line_number": 0,
-        "is_async": false,
-        "is_entry_point": true,
-        "is_class": false,
-        "parameters": [
-          {
-            "name": "vector",
-            "type": "SsrfTestVector",
-            "default": null,
-            "required": true,
-            "kind": "positional_or_keyword"
-          },
-          {
-            "name": "dispatcher",
-            "type": "'OastDispatcherLike'",
-            "default": null,
-            "required": true,
-            "kind": "positional_or_keyword"
-          },
-          {
-            "name": "task",
-            "type": "FunctionTaskPayload",
-            "default": null,
-            "required": true,
-            "kind": "positional_or_keyword"
-          }
-        ],
-        "docstring": "",
-        "return_type": "str",
-        "called_functions": [
-          "dispatcher.register",
-          "payload.replace"
-        ]
-      },
-      "_issue_request": {
-        "file_name": "worker.py",
-        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\function_ssrf\\worker.py",
-        "script_name": "worker",
-        "line_number": 0,
-        "is_async": false,
-        "is_entry_point": true,
-        "is_class": false,
-        "parameters": [
-          {
-            "name": "client",
-            "type": "httpx.AsyncClient",
-            "default": null,
-            "required": true,
-            "kind": "positional_or_keyword"
-          },
-          {
-            "name": "task",
-            "type": "FunctionTaskPayload",
-            "default": null,
-            "required": true,
-            "kind": "positional_or_keyword"
-          },
-          {
-            "name": "vector",
-            "type": "SsrfTestVector",
-            "default": null,
-            "required": true,
-            "kind": "positional_or_keyword"
-          },
-          {
-            "name": "payload",
-            "type": "str",
-            "default": null,
-            "required": true,
-            "kind": "positional_or_keyword"
-          }
-        ],
-        "docstring": "",
-        "return_type": "httpx.Response",
-        "called_functions": [
-          "unknown_call.upper",
-          "unknown_call.lower",
-          "urlparse",
-          "dict",
-          "dict",
-          "dict",
-          "dict",
-          "dict",
-          "content.replace",
-          "urlunparse",
-          "client.request"
-        ]
-      },
-      "_build_internal_finding": {
-        "file_name": "worker.py",
-        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\function_ssrf\\worker.py",
-        "script_name": "worker",
-        "line_number": 0,
-        "is_async": false,
-        "is_entry_point": true,
-        "is_class": false,
-        "parameters": [],
-        "docstring": "",
-        "return_type": "FindingPayload",
-        "called_functions": [
-          "_severity_from_summary",
-          "FindingEvidence"
-        ]
-      },
-      "_build_oast_finding": {
-        "file_name": "worker.py",
-        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\function_ssrf\\worker.py",
-        "script_name": "worker",
-        "line_number": 0,
-        "is_async": false,
-        "is_entry_point": true,
-        "is_class": false,
-        "parameters": [],
-        "docstring": "",
-        "return_type": "FindingPayload",
-        "called_functions": [
-          "unknown_call.join",
-          "FindingEvidence"
-        ]
-      },
-      "_format_request": {
-        "file_name": "worker.py",
-        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\function_ssrf\\worker.py",
-        "script_name": "worker",
-        "line_number": 0,
-        "is_async": false,
-        "is_entry_point": true,
-        "is_class": false,
-        "parameters": [
-          {
-            "name": "request",
-            "type": "httpx.Request",
-            "default": null,
-            "required": true,
-            "kind": "positional_or_keyword"
-          }
-        ],
-        "docstring": "",
-        "return_type": "str",
-        "called_functions": [
-          "lines.append",
-          "request.content.decode",
-          "lines.append",
-          "lines.append"
-        ]
-      },
-      "_format_response": {
-        "file_name": "worker.py",
-        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\function_ssrf\\worker.py",
-        "script_name": "worker",
-        "line_number": 0,
-        "is_async": false,
-        "is_entry_point": true,
-        "is_class": false,
-        "parameters": [
-          {
-            "name": "response",
-            "type": "httpx.Response",
-            "default": null,
-            "required": true,
-            "kind": "positional_or_keyword"
-          }
-        ],
-        "docstring": "",
-        "return_type": "str",
-        "called_functions": [
-          "lines.append",
-          "lines.append",
-          "lines.append"
-        ]
-      },
-      "_safe_elapsed": {
-        "file_name": "worker.py",
-        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\function_ssrf\\worker.py",
-        "script_name": "worker",
-        "line_number": 0,
-        "is_async": false,
-        "is_entry_point": true,
-        "is_class": false,
-        "parameters": [
-          {
-            "name": "response",
-            "type": "httpx.Response",
-            "default": null,
-            "required": true,
-            "kind": "positional_or_keyword"
-          }
-        ],
-        "docstring": "",
-        "return_type": "float | None",
-        "called_functions": []
-      },
-      "_severity_from_summary": {
-        "file_name": "worker.py",
-        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\function_ssrf\\worker.py",
-        "script_name": "worker",
-        "line_number": 0,
-        "is_async": false,
-        "is_entry_point": true,
-        "is_class": false,
-        "parameters": [
-          {
-            "name": "summary",
-            "type": "str",
-            "default": null,
-            "required": true,
-            "kind": "positional_or_keyword"
-          }
-        ],
-        "docstring": "",
-        "return_type": "Severity",
-        "called_functions": []
-      },
-      "_extract_token": {
-        "file_name": "worker.py",
-        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\function_ssrf\\worker.py",
-        "script_name": "worker",
-        "line_number": 0,
-        "is_async": false,
-        "is_entry_point": true,
-        "is_class": false,
-        "parameters": [
-          {
-            "name": "payload",
-            "type": "str",
-            "default": null,
-            "required": true,
-            "kind": "positional_or_keyword"
-          }
-        ],
-        "docstring": "",
-        "return_type": "str",
-        "called_functions": []
-      },
-      "OastDispatcherLike": {
-        "file_name": "worker.py",
-        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\function_ssrf\\worker.py",
-        "script_name": "worker",
-        "line_number": 0,
-        "is_async": false,
-        "is_entry_point": true,
-        "is_class": true,
-        "parameters": [],
-        "docstring": "",
-        "return_type": "any",
-        "called_functions": []
-      },
-      "OastDispatcherLike.register": {
-        "file_name": "worker.py",
-        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\function_ssrf\\worker.py",
-        "script_name": "worker",
-        "line_number": 0,
-        "is_async": false,
-        "is_entry_point": false,
-        "is_class": false,
-        "parameters": [
-          {
-            "name": "task",
-            "type": "FunctionTaskPayload",
-            "default": null,
-            "required": true,
-            "kind": "positional_or_keyword"
-          }
-        ],
-        "docstring": "",
-        "return_type": "Any",
-        "called_functions": []
-      },
-      "OastDispatcherLike.fetch_events": {
-        "file_name": "worker.py",
-        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\function_ssrf\\worker.py",
-        "script_name": "worker",
-        "line_number": 0,
-        "is_async": false,
-        "is_entry_point": false,
-        "is_class": false,
-        "parameters": [
-          {
-            "name": "token",
-            "type": "str",
-            "default": null,
-            "required": true,
-            "kind": "positional_or_keyword"
-          }
-        ],
-        "docstring": "",
-        "return_type": "list[OastEvent]",
-        "called_functions": []
-      },
-      "OastDispatcherLike.close": {
-        "file_name": "worker.py",
-        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\function_ssrf\\worker.py",
-        "script_name": "worker",
-        "line_number": 0,
-        "is_async": false,
-        "is_entry_point": false,
-        "is_class": false,
-        "parameters": [],
-        "docstring": "",
-        "return_type": "None",
-        "called_functions": []
-      },
-      "SsrfWorkerService": {
-        "file_name": "worker.py",
-        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\function_ssrf\\worker.py",
-        "script_name": "worker",
-        "line_number": 0,
-        "is_async": false,
-        "is_entry_point": true,
-        "is_class": true,
-        "parameters": [],
-        "docstring": "SSRF Worker 服務類 - 提供統一的任務處理接口\n\nNote: 這個類已經被棄用，請直接使用 run_worker() 函數\n保留此類僅為向後兼容",
-        "return_type": "any",
-        "called_functions": []
-      },
-      "SsrfWorkerService.__init__": {
-        "file_name": "worker.py",
-        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\function_ssrf\\worker.py",
-        "script_name": "worker",
-        "line_number": 0,
-        "is_async": false,
-        "is_entry_point": false,
-        "is_class": false,
-        "parameters": [],
-        "docstring": "初始化 SSRF Worker 服務（已棄用）",
-        "return_type": "any",
-        "called_functions": [
-          "logger.warning",
-          "OastDispatcher",
-          "InternalAddressDetector",
-          "ParamSemanticsAnalyzer"
-        ]
-      },
-      "SsrfWorkerService.process_task": {
-        "file_name": "worker.py",
-        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\function_ssrf\\worker.py",
-        "script_name": "worker",
-        "line_number": 0,
-        "is_async": false,
-        "is_entry_point": false,
-        "is_class": false,
-        "parameters": [
-          {
-            "name": "task",
-            "type": "any",
-            "default": null,
-            "required": true,
-            "kind": "positional_or_keyword"
-          }
-        ],
-        "docstring": "處理 SSRF 檢測任務（已棄用）\n\n建議使用 process_task() 函數替代此方法",
-        "return_type": "dict",
-        "called_functions": [
-          "ValueError",
-          "FunctionTaskPayload",
-          "get_broker",
-          "SsrfResultPublisher",
-          "httpx.AsyncClient",
-          "_execute_task"
         ]
       },
       "SsrfConfig": {
@@ -17155,6 +13848,7 @@
         "is_class": true,
         "parameters": [],
         "docstring": "",
+        "module_doc": "",
         "return_type": "any",
         "called_functions": []
       },
@@ -17168,6 +13862,7 @@
         "is_class": true,
         "parameters": [],
         "docstring": "",
+        "module_doc": "",
         "return_type": "any",
         "called_functions": []
       },
@@ -17189,6 +13884,7 @@
           }
         ],
         "docstring": "",
+        "module_doc": "",
         "return_type": "any",
         "called_functions": []
       },
@@ -17210,6 +13906,7 @@
           }
         ],
         "docstring": "",
+        "module_doc": "",
         "return_type": "List[FindingPayload]",
         "called_functions": [
           "SSRFEngine",
@@ -17242,6 +13939,7 @@
           }
         ],
         "docstring": "",
+        "module_doc": "",
         "return_type": "FindingPayload",
         "called_functions": [
           "Vulnerability",
@@ -17261,6 +13959,7 @@
         "is_class": true,
         "parameters": [],
         "docstring": "",
+        "module_doc": "",
         "return_type": "any",
         "called_functions": []
       },
@@ -17274,6 +13973,7 @@
         "is_class": true,
         "parameters": [],
         "docstring": "",
+        "module_doc": "",
         "return_type": "any",
         "called_functions": []
       },
@@ -17287,6 +13987,7 @@
         "is_class": false,
         "parameters": [],
         "docstring": "",
+        "module_doc": "",
         "return_type": "any",
         "called_functions": [
           "httpx.Limits",
@@ -17303,6 +14004,7 @@
         "is_class": false,
         "parameters": [],
         "docstring": "",
+        "module_doc": "",
         "return_type": "any",
         "called_functions": [
           "self.client.aclose"
@@ -17326,6 +14028,7 @@
           }
         ],
         "docstring": "",
+        "module_doc": "",
         "return_type": "list[str]",
         "called_functions": [
           "socket.getaddrinfo",
@@ -17350,6 +14053,7 @@
           }
         ],
         "docstring": "",
+        "module_doc": "",
         "return_type": "bool",
         "called_functions": [
           "ipaddress.ip_address"
@@ -17373,6 +14077,7 @@
           }
         ],
         "docstring": "",
+        "module_doc": "",
         "return_type": "list[SSRFIssue]",
         "called_functions": [
           "unknown_call.split",
@@ -17394,6 +14099,7 @@
         "is_class": false,
         "parameters": [],
         "docstring": "",
+        "module_doc": "",
         "return_type": "list[SSRFIssue]",
         "called_functions": [
           "issues.append",
@@ -17419,6 +14125,7 @@
           }
         ],
         "docstring": "",
+        "module_doc": "",
         "return_type": "list[SSRFIssue]",
         "called_functions": [
           "issues.append"
@@ -17434,6 +14141,7 @@
         "is_class": false,
         "parameters": [],
         "docstring": "",
+        "module_doc": "",
         "return_type": "list[SSRFIssue]",
         "called_functions": [
           "tasks.append",
@@ -17453,6 +14161,7 @@
             "is_async": false,
             "is_entry_point": true,
             "parameters": [],
+            "module_doc": "",
             "called_functions": []
           },
           "DnsRebindingDetector": {
@@ -17460,6 +14169,7 @@
             "is_async": false,
             "is_entry_point": true,
             "parameters": [],
+            "module_doc": "",
             "called_functions": []
           },
           "DnsRebindingDetector.__init__": {
@@ -17475,6 +14185,7 @@
                 "kind": "positional_or_keyword"
               }
             ],
+            "module_doc": "",
             "called_functions": []
           },
           "DnsRebindingDetector.generate_vectors": {
@@ -17497,6 +14208,7 @@
                 "kind": "positional_or_keyword"
               }
             ],
+            "module_doc": "",
             "called_functions": [
               "self._generate_rebind_it_domain",
               "vectors.append",
@@ -17525,6 +14237,7 @@
                 "kind": "positional_or_keyword"
               }
             ],
+            "module_doc": "",
             "called_functions": [
               "ip_to_hex",
               "ip_to_hex"
@@ -17550,6 +14263,7 @@
                 "kind": "positional_or_keyword"
               }
             ],
+            "module_doc": "",
             "called_functions": [
               "first_ip.split",
               "second_ip.split",
@@ -17576,6 +14290,7 @@
                 "kind": "positional_or_keyword"
               }
             ],
+            "module_doc": "",
             "called_functions": [
               "httpx.AsyncClient",
               "logger.info",
@@ -17607,6 +14322,7 @@
                 "kind": "positional_or_keyword"
               }
             ],
+            "module_doc": "",
             "called_functions": [
               "domain.split",
               "domain.split",
@@ -17642,6 +14358,7 @@
                 "kind": "positional_or_keyword"
               }
             ],
+            "module_doc": "",
             "called_functions": [
               "httpx.AsyncClient",
               "rebinding_url.rstrip",
@@ -17665,6 +14382,7 @@
                 "kind": "positional_or_keyword"
               }
             ],
+            "module_doc": "",
             "called_functions": [
               "self.generate_vectors",
               "payloads.append",
@@ -17686,6 +14404,7 @@
             "is_async": false,
             "is_entry_point": true,
             "parameters": [],
+            "module_doc": "",
             "called_functions": []
           },
           "InternalAddressDetection": {
@@ -17693,6 +14412,7 @@
             "is_async": false,
             "is_entry_point": true,
             "parameters": [],
+            "module_doc": "",
             "called_functions": [
               "field"
             ]
@@ -17702,6 +14422,7 @@
             "is_async": false,
             "is_entry_point": false,
             "parameters": [],
+            "module_doc": "",
             "called_functions": []
           },
           "InternalAddressDetector": {
@@ -17709,6 +14430,7 @@
             "is_async": false,
             "is_entry_point": true,
             "parameters": [],
+            "module_doc": "",
             "called_functions": [
               "field",
               "field",
@@ -17728,6 +14450,7 @@
                 "kind": "positional_or_keyword"
               }
             ],
+            "module_doc": "",
             "called_functions": [
               "isinstance",
               "set",
@@ -17771,6 +14494,7 @@
                 "kind": "var_keyword"
               }
             ],
+            "module_doc": "",
             "called_functions": [
               "test_function",
               "self._identify_service_type",
@@ -17812,6 +14536,7 @@
                 "kind": "var_keyword"
               }
             ],
+            "module_doc": "",
             "called_functions": [
               "test_function",
               "supported_protocols.append",
@@ -17832,6 +14557,7 @@
                 "kind": "positional_or_keyword"
               }
             ],
+            "module_doc": "",
             "called_functions": [
               "response.lower"
             ]
@@ -17856,6 +14582,7 @@
                 "kind": "positional_or_keyword"
               }
             ],
+            "module_doc": "",
             "called_functions": [
               "metadata_indicators.get",
               "response.lower"
@@ -17881,6 +14608,7 @@
                 "kind": "positional_or_keyword"
               }
             ],
+            "module_doc": "",
             "called_functions": [
               "service_indicators.get",
               "response.lower"
@@ -17899,6 +14627,7 @@
                 "kind": "positional_or_keyword"
               }
             ],
+            "module_doc": "",
             "called_functions": []
           },
           "InternalAddressDetector._is_protocol_supported": {
@@ -17921,6 +14650,7 @@
                 "kind": "positional_or_keyword"
               }
             ],
+            "module_doc": "",
             "called_functions": [
               "protocol_indicators.get",
               "response.lower"
@@ -17939,6 +14669,7 @@
                 "kind": "positional_or_keyword"
               }
             ],
+            "module_doc": "",
             "called_functions": [
               "len",
               "len",
@@ -17959,6 +14690,7 @@
                 "kind": "positional_or_keyword"
               }
             ],
+            "module_doc": "",
             "called_functions": [
               "len",
               "evidence.append",
@@ -17980,6 +14712,7 @@
                 "kind": "positional_or_keyword"
               }
             ],
+            "module_doc": "",
             "called_functions": [
               "ipaddress.ip_address"
             ]
@@ -18000,6 +14733,7 @@
             "is_async": false,
             "is_entry_point": true,
             "parameters": [],
+            "module_doc": "",
             "called_functions": []
           },
           "OastEvent": {
@@ -18007,6 +14741,7 @@
             "is_async": false,
             "is_entry_point": true,
             "parameters": [],
+            "module_doc": "",
             "called_functions": []
           },
           "OastDispatcher": {
@@ -18014,6 +14749,7 @@
             "is_async": false,
             "is_entry_point": true,
             "parameters": [],
+            "module_doc": "",
             "called_functions": []
           },
           "OastDispatcher.__init__": {
@@ -18021,6 +14757,7 @@
             "is_async": false,
             "is_entry_point": false,
             "parameters": [],
+            "module_doc": "",
             "called_functions": [
               "unknown_call.rstrip"
             ]
@@ -18038,6 +14775,7 @@
                 "kind": "positional_or_keyword"
               }
             ],
+            "module_doc": "",
             "called_functions": [
               "httpx.AsyncClient",
               "client.post",
@@ -18065,6 +14803,7 @@
                 "kind": "positional_or_keyword"
               }
             ],
+            "module_doc": "",
             "called_functions": [
               "self._resolve_token",
               "httpx.AsyncClient",
@@ -18093,6 +14832,7 @@
                 "kind": "positional_or_keyword"
               }
             ],
+            "module_doc": "",
             "called_functions": []
           },
           "OastDispatcher.close": {
@@ -18100,6 +14840,7 @@
             "is_async": false,
             "is_entry_point": false,
             "parameters": [],
+            "module_doc": "",
             "called_functions": [
               "self._client.aclose"
             ]
@@ -18117,6 +14858,7 @@
                 "kind": "positional_or_keyword"
               }
             ],
+            "module_doc": "",
             "called_functions": [
               "token.rstrip",
               "normalized.split"
@@ -18138,6 +14880,7 @@
             "is_async": false,
             "is_entry_point": true,
             "parameters": [],
+            "module_doc": "",
             "called_functions": []
           },
           "AnalysisPlan": {
@@ -18145,6 +14888,7 @@
             "is_async": false,
             "is_entry_point": true,
             "parameters": [],
+            "module_doc": "",
             "called_functions": [
               "field"
             ]
@@ -18154,6 +14898,7 @@
             "is_async": false,
             "is_entry_point": true,
             "parameters": [],
+            "module_doc": "",
             "called_functions": []
           },
           "ParamSemanticsAnalyzer.analyze": {
@@ -18169,6 +14914,7 @@
                 "kind": "positional_or_keyword"
               }
             ],
+            "module_doc": "",
             "called_functions": [
               "unknown_call.strip",
               "unknown_call.lower",
@@ -18194,6 +14940,7 @@
                 "kind": "positional_or_keyword"
               }
             ],
+            "module_doc": "",
             "called_functions": [
               "list",
               "list",
@@ -18221,6 +14968,7 @@
                 "kind": "positional_or_keyword"
               }
             ],
+            "module_doc": "",
             "called_functions": [
               "advanced.extend",
               "DnsRebindingDetector",
@@ -18263,6 +15011,7 @@
                 "kind": "positional_or_keyword"
               }
             ],
+            "module_doc": "",
             "called_functions": [
               "plan.vectors.append"
             ]
@@ -18301,6 +15050,7 @@
                 "kind": "positional_or_keyword"
               }
             ],
+            "module_doc": "",
             "called_functions": [
               "plan.vectors.append",
               "self._add_file_vectors",
@@ -18334,6 +15084,7 @@
                 "kind": "positional_or_keyword"
               }
             ],
+            "module_doc": "",
             "called_functions": [
               "plan.vectors.append"
             ]
@@ -18365,6 +15116,7 @@
                 "kind": "positional_or_keyword"
               }
             ],
+            "module_doc": "",
             "called_functions": [
               "plan.vectors.append"
             ]
@@ -18403,6 +15155,7 @@
                 "kind": "positional_or_keyword"
               }
             ],
+            "module_doc": "",
             "called_functions": [
               "self._get_selected_protocols",
               "plan.vectors.append"
@@ -18421,6 +15174,7 @@
                 "kind": "positional_or_keyword"
               }
             ],
+            "module_doc": "",
             "called_functions": [
               "unknown_call.lower",
               "headers.get"
@@ -18467,6 +15221,7 @@
                 "kind": "positional_or_keyword"
               }
             ],
+            "module_doc": "",
             "called_functions": [
               "plan.vectors.append"
             ]
@@ -18484,6 +15239,7 @@
                 "kind": "positional_or_keyword"
               }
             ],
+            "module_doc": "",
             "called_functions": [
               "set",
               "payload.strip",
@@ -18515,6 +15271,7 @@
                 "kind": "positional_or_keyword"
               }
             ],
+            "module_doc": "",
             "called_functions": [
               "set",
               "payload_sources.extend",
@@ -18534,6 +15291,7 @@
                 "kind": "positional_or_keyword"
               }
             ],
+            "module_doc": "",
             "called_functions": [
               "unknown_call.lower",
               "re.split"
@@ -18555,6 +15313,7 @@
             "is_async": false,
             "is_entry_point": true,
             "parameters": [],
+            "module_doc": "",
             "called_functions": []
           },
           "SsrfResultPublisher.__init__": {
@@ -18570,6 +15329,7 @@
                 "kind": "positional_or_keyword"
               }
             ],
+            "module_doc": "",
             "called_functions": [
               "os.getenv",
               "new_id"
@@ -18580,6 +15340,7 @@
             "is_async": false,
             "is_entry_point": false,
             "parameters": [],
+            "module_doc": "",
             "called_functions": []
           },
           "SsrfResultPublisher.publish_status": {
@@ -18602,6 +15363,7 @@
                 "kind": "positional_or_keyword"
               }
             ],
+            "module_doc": "",
             "called_functions": [
               "TaskUpdatePayload",
               "AivaMessage",
@@ -18621,6 +15383,7 @@
                 "kind": "positional_or_keyword"
               }
             ],
+            "module_doc": "",
             "called_functions": [
               "AivaMessage",
               "self._publish"
@@ -18646,6 +15409,7 @@
                 "kind": "positional_or_keyword"
               }
             ],
+            "module_doc": "",
             "called_functions": [
               "self.publish_status"
             ]
@@ -18670,6 +15434,7 @@
                 "kind": "positional_or_keyword"
               }
             ],
+            "module_doc": "",
             "called_functions": [
               "message.model_dump",
               "self._broker.publish"
@@ -18689,6 +15454,7 @@
             "is_async": false,
             "is_entry_point": true,
             "parameters": [],
+            "module_doc": "",
             "called_functions": [
               "field",
               "field",
@@ -18708,6 +15474,7 @@
                 "kind": "positional_or_keyword"
               }
             ],
+            "module_doc": "",
             "called_functions": [
               "self.findings.append"
             ]
@@ -18725,6 +15492,7 @@
                 "kind": "positional_or_keyword"
               }
             ],
+            "module_doc": "",
             "called_functions": [
               "self.errors.append"
             ]
@@ -18734,6 +15502,7 @@
             "is_async": false,
             "is_entry_point": false,
             "parameters": [],
+            "module_doc": "",
             "called_functions": []
           },
           "SSRFDetectionContext.add_oast_callbacks": {
@@ -18749,6 +15518,7 @@
                 "kind": "positional_or_keyword"
               }
             ],
+            "module_doc": "",
             "called_functions": []
           },
           "SmartSSRFDetector": {
@@ -18756,6 +15526,7 @@
             "is_async": false,
             "is_entry_point": true,
             "parameters": [],
+            "module_doc": "",
             "called_functions": []
           },
           "SmartSSRFDetector.__init__": {
@@ -18771,6 +15542,7 @@
                 "kind": "positional_or_keyword"
               }
             ],
+            "module_doc": "",
             "called_functions": [
               "SsrfConfig",
               "logger.info"
@@ -18789,6 +15561,7 @@
                 "kind": "positional_or_keyword"
               }
             ],
+            "module_doc": "",
             "called_functions": [
               "UnifiedSmartDetectionManager",
               "SSRFDetectionContext",
@@ -18819,6 +15592,7 @@
                 "kind": "positional_or_keyword"
               }
             ],
+            "module_doc": "",
             "called_functions": [
               "unknown_call.lower",
               "any",
@@ -18854,6 +15628,7 @@
                 "kind": "positional_or_keyword"
               }
             ],
+            "module_doc": "",
             "called_functions": [
               "len",
               "logger.info",
@@ -18882,6 +15657,7 @@
                 "kind": "positional_or_keyword"
               }
             ],
+            "module_doc": "",
             "called_functions": [
               "self._resolve_payload",
               "self._issue_request",
@@ -18928,6 +15704,7 @@
                 "kind": "positional_or_keyword"
               }
             ],
+            "module_doc": "",
             "called_functions": [
               "dispatcher.register",
               "payload.replace"
@@ -18967,6 +15744,7 @@
                 "kind": "positional_or_keyword"
               }
             ],
+            "module_doc": "",
             "called_functions": [
               "self._parse_target_config",
               "self._process_parameter_injection"
@@ -18992,6 +15770,7 @@
                 "kind": "positional_or_keyword"
               }
             ],
+            "module_doc": "",
             "called_functions": [
               "unknown_call.upper",
               "unknown_call.lower",
@@ -19018,6 +15797,7 @@
                 "kind": "positional_or_keyword"
               }
             ],
+            "module_doc": "",
             "called_functions": [
               "injection_handlers.get",
               "handler"
@@ -19050,6 +15830,7 @@
                 "kind": "positional_or_keyword"
               }
             ],
+            "module_doc": "",
             "called_functions": []
           },
           "SmartSSRFDetector._inject_form_parameter": {
@@ -19079,6 +15860,7 @@
                 "kind": "positional_or_keyword"
               }
             ],
+            "module_doc": "",
             "called_functions": []
           },
           "SmartSSRFDetector._inject_json_parameter": {
@@ -19108,6 +15890,7 @@
                 "kind": "positional_or_keyword"
               }
             ],
+            "module_doc": "",
             "called_functions": []
           },
           "SmartSSRFDetector._inject_header_parameter": {
@@ -19137,6 +15920,7 @@
                 "kind": "positional_or_keyword"
               }
             ],
+            "module_doc": "",
             "called_functions": []
           },
           "SmartSSRFDetector._inject_cookie_parameter": {
@@ -19166,6 +15950,7 @@
                 "kind": "positional_or_keyword"
               }
             ],
+            "module_doc": "",
             "called_functions": []
           },
           "SmartSSRFDetector._inject_body_raw_parameter": {
@@ -19195,6 +15980,7 @@
                 "kind": "positional_or_keyword"
               }
             ],
+            "module_doc": "",
             "called_functions": [
               "unknown_call.replace"
             ]
@@ -19219,6 +16005,7 @@
                 "kind": "positional_or_keyword"
               }
             ],
+            "module_doc": "",
             "called_functions": [
               "urlunparse"
             ]
@@ -19228,6 +16015,7 @@
             "is_async": false,
             "is_entry_point": false,
             "parameters": [],
+            "module_doc": "",
             "called_functions": []
           },
           "SmartSSRFDetector._build_oast_finding": {
@@ -19235,6 +16023,7 @@
             "is_async": false,
             "is_entry_point": false,
             "parameters": [],
+            "module_doc": "",
             "called_functions": [
               "len"
             ]
@@ -19259,6 +16048,7 @@
                 "kind": "positional_or_keyword"
               }
             ],
+            "module_doc": "",
             "called_functions": [
               "self._verify_service_content"
             ]
@@ -19276,6 +16066,7 @@
                 "kind": "positional_or_keyword"
               }
             ],
+            "module_doc": "",
             "called_functions": [
               "response.text.lower",
               "sum"
@@ -19294,6 +16085,7 @@
                 "kind": "positional_or_keyword"
               }
             ],
+            "module_doc": "",
             "called_functions": [
               "json.loads",
               "json.loads"
@@ -19312,6 +16104,7 @@
                 "kind": "positional_or_keyword"
               }
             ],
+            "module_doc": "",
             "called_functions": [
               "unknown_call.lower",
               "json.loads"
@@ -19330,6 +16123,7 @@
                 "kind": "positional_or_keyword"
               }
             ],
+            "module_doc": "",
             "called_functions": []
           },
           "SmartSSRFDetector._extract_token": {
@@ -19345,6 +16139,7 @@
                 "kind": "positional_or_keyword"
               }
             ],
+            "module_doc": "",
             "called_functions": [
               "re.search",
               "re.search",
@@ -19361,405 +16156,6 @@
           "SmartSSRFDetector"
         ]
       },
-      "worker": {
-        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\function_ssrf\\worker.py",
-        "functions": {
-          "SsrfTelemetry": {
-            "line_number": 0,
-            "is_async": false,
-            "is_entry_point": true,
-            "parameters": [],
-            "called_functions": [
-              "field"
-            ]
-          },
-          "SsrfTelemetry.to_details": {
-            "line_number": 0,
-            "is_async": false,
-            "is_entry_point": false,
-            "parameters": [],
-            "called_functions": []
-          },
-          "TaskExecutionResult": {
-            "line_number": 0,
-            "is_async": false,
-            "is_entry_point": true,
-            "parameters": [],
-            "called_functions": []
-          },
-          "run": {
-            "line_number": 0,
-            "is_async": false,
-            "is_entry_point": true,
-            "parameters": [],
-            "called_functions": [
-              "get_broker",
-              "SsrfResultPublisher",
-              "ParamSemanticsAnalyzer",
-              "InternalAddressDetector",
-              "OastDispatcher",
-              "httpx.AsyncClient",
-              "broker.subscribe",
-              "AivaMessage.model_validate_json",
-              "FunctionTaskPayload",
-              "_execute_task",
-              "dispatcher.close"
-            ]
-          },
-          "_execute_task": {
-            "line_number": 0,
-            "is_async": false,
-            "is_entry_point": true,
-            "parameters": [
-              {
-                "name": "task",
-                "type": "FunctionTaskPayload",
-                "default": null,
-                "required": true,
-                "kind": "positional_or_keyword"
-              }
-            ],
-            "called_functions": [
-              "publisher.publish_status",
-              "process_task",
-              "logger.exception",
-              "publisher.publish_error",
-              "publisher.publish_finding",
-              "logger.info",
-              "publisher.publish_status"
-            ]
-          },
-          "process_task": {
-            "line_number": 0,
-            "is_async": false,
-            "is_entry_point": true,
-            "parameters": [
-              {
-                "name": "task",
-                "type": "FunctionTaskPayload",
-                "default": null,
-                "required": true,
-                "kind": "positional_or_keyword"
-              }
-            ],
-            "called_functions": [
-              "ParamSemanticsAnalyzer",
-              "InternalAddressDetector",
-              "isinstance",
-              "OastDispatcher",
-              "analyzer.analyze",
-              "SsrfTelemetry",
-              "logger.error",
-              "ValueError",
-              "_resolve_payload",
-              "_issue_request",
-              "str",
-              "logger.error",
-              "RuntimeError",
-              "str",
-              "logger.error",
-              "RuntimeError",
-              "str",
-              "logger.error",
-              "RuntimeError",
-              "detector.analyze",
-              "findings.append",
-              "dispatcher.fetch_events",
-              "dispatcher.fetch_events",
-              "len",
-              "findings.append"
-            ]
-          },
-          "_resolve_payload": {
-            "line_number": 0,
-            "is_async": false,
-            "is_entry_point": true,
-            "parameters": [
-              {
-                "name": "vector",
-                "type": "SsrfTestVector",
-                "default": null,
-                "required": true,
-                "kind": "positional_or_keyword"
-              },
-              {
-                "name": "dispatcher",
-                "type": "'OastDispatcherLike'",
-                "default": null,
-                "required": true,
-                "kind": "positional_or_keyword"
-              },
-              {
-                "name": "task",
-                "type": "FunctionTaskPayload",
-                "default": null,
-                "required": true,
-                "kind": "positional_or_keyword"
-              }
-            ],
-            "called_functions": [
-              "dispatcher.register",
-              "payload.replace"
-            ]
-          },
-          "_issue_request": {
-            "line_number": 0,
-            "is_async": false,
-            "is_entry_point": true,
-            "parameters": [
-              {
-                "name": "client",
-                "type": "httpx.AsyncClient",
-                "default": null,
-                "required": true,
-                "kind": "positional_or_keyword"
-              },
-              {
-                "name": "task",
-                "type": "FunctionTaskPayload",
-                "default": null,
-                "required": true,
-                "kind": "positional_or_keyword"
-              },
-              {
-                "name": "vector",
-                "type": "SsrfTestVector",
-                "default": null,
-                "required": true,
-                "kind": "positional_or_keyword"
-              },
-              {
-                "name": "payload",
-                "type": "str",
-                "default": null,
-                "required": true,
-                "kind": "positional_or_keyword"
-              }
-            ],
-            "called_functions": [
-              "unknown_call.upper",
-              "unknown_call.lower",
-              "urlparse",
-              "dict",
-              "dict",
-              "dict",
-              "dict",
-              "dict",
-              "content.replace",
-              "urlunparse",
-              "client.request"
-            ]
-          },
-          "_build_internal_finding": {
-            "line_number": 0,
-            "is_async": false,
-            "is_entry_point": true,
-            "parameters": [],
-            "called_functions": [
-              "_severity_from_summary",
-              "FindingEvidence"
-            ]
-          },
-          "_build_oast_finding": {
-            "line_number": 0,
-            "is_async": false,
-            "is_entry_point": true,
-            "parameters": [],
-            "called_functions": [
-              "unknown_call.join",
-              "FindingEvidence"
-            ]
-          },
-          "_format_request": {
-            "line_number": 0,
-            "is_async": false,
-            "is_entry_point": true,
-            "parameters": [
-              {
-                "name": "request",
-                "type": "httpx.Request",
-                "default": null,
-                "required": true,
-                "kind": "positional_or_keyword"
-              }
-            ],
-            "called_functions": [
-              "lines.append",
-              "request.content.decode",
-              "lines.append",
-              "lines.append"
-            ]
-          },
-          "_format_response": {
-            "line_number": 0,
-            "is_async": false,
-            "is_entry_point": true,
-            "parameters": [
-              {
-                "name": "response",
-                "type": "httpx.Response",
-                "default": null,
-                "required": true,
-                "kind": "positional_or_keyword"
-              }
-            ],
-            "called_functions": [
-              "lines.append",
-              "lines.append",
-              "lines.append"
-            ]
-          },
-          "_safe_elapsed": {
-            "line_number": 0,
-            "is_async": false,
-            "is_entry_point": true,
-            "parameters": [
-              {
-                "name": "response",
-                "type": "httpx.Response",
-                "default": null,
-                "required": true,
-                "kind": "positional_or_keyword"
-              }
-            ],
-            "called_functions": []
-          },
-          "_severity_from_summary": {
-            "line_number": 0,
-            "is_async": false,
-            "is_entry_point": true,
-            "parameters": [
-              {
-                "name": "summary",
-                "type": "str",
-                "default": null,
-                "required": true,
-                "kind": "positional_or_keyword"
-              }
-            ],
-            "called_functions": []
-          },
-          "_extract_token": {
-            "line_number": 0,
-            "is_async": false,
-            "is_entry_point": true,
-            "parameters": [
-              {
-                "name": "payload",
-                "type": "str",
-                "default": null,
-                "required": true,
-                "kind": "positional_or_keyword"
-              }
-            ],
-            "called_functions": []
-          },
-          "OastDispatcherLike": {
-            "line_number": 0,
-            "is_async": false,
-            "is_entry_point": true,
-            "parameters": [],
-            "called_functions": []
-          },
-          "OastDispatcherLike.register": {
-            "line_number": 0,
-            "is_async": false,
-            "is_entry_point": false,
-            "parameters": [
-              {
-                "name": "task",
-                "type": "FunctionTaskPayload",
-                "default": null,
-                "required": true,
-                "kind": "positional_or_keyword"
-              }
-            ],
-            "called_functions": []
-          },
-          "OastDispatcherLike.fetch_events": {
-            "line_number": 0,
-            "is_async": false,
-            "is_entry_point": false,
-            "parameters": [
-              {
-                "name": "token",
-                "type": "str",
-                "default": null,
-                "required": true,
-                "kind": "positional_or_keyword"
-              }
-            ],
-            "called_functions": []
-          },
-          "OastDispatcherLike.close": {
-            "line_number": 0,
-            "is_async": false,
-            "is_entry_point": false,
-            "parameters": [],
-            "called_functions": []
-          },
-          "SsrfWorkerService": {
-            "line_number": 0,
-            "is_async": false,
-            "is_entry_point": true,
-            "parameters": [],
-            "called_functions": []
-          },
-          "SsrfWorkerService.__init__": {
-            "line_number": 0,
-            "is_async": false,
-            "is_entry_point": false,
-            "parameters": [],
-            "called_functions": [
-              "logger.warning",
-              "OastDispatcher",
-              "InternalAddressDetector",
-              "ParamSemanticsAnalyzer"
-            ]
-          },
-          "SsrfWorkerService.process_task": {
-            "line_number": 0,
-            "is_async": false,
-            "is_entry_point": false,
-            "parameters": [
-              {
-                "name": "task",
-                "type": "any",
-                "default": null,
-                "required": true,
-                "kind": "positional_or_keyword"
-              }
-            ],
-            "called_functions": [
-              "ValueError",
-              "FunctionTaskPayload",
-              "get_broker",
-              "SsrfResultPublisher",
-              "httpx.AsyncClient",
-              "_execute_task"
-            ]
-          }
-        },
-        "entry_points": [],
-        "export_functions": [
-          "SsrfTelemetry",
-          "TaskExecutionResult",
-          "run",
-          "_execute_task",
-          "process_task",
-          "_resolve_payload",
-          "_issue_request",
-          "_build_internal_finding",
-          "_build_oast_finding",
-          "_format_request",
-          "_format_response",
-          "_safe_elapsed",
-          "_severity_from_summary",
-          "_extract_token",
-          "OastDispatcherLike",
-          "SsrfWorkerService"
-        ]
-      },
       "ssrf_config": {
         "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\function_ssrf\\config\\ssrf_config.py",
         "functions": {
@@ -19768,6 +16164,7 @@
             "is_async": false,
             "is_entry_point": true,
             "parameters": [],
+            "module_doc": "",
             "called_functions": []
           }
         },
@@ -19784,6 +16181,7 @@
             "is_async": false,
             "is_entry_point": true,
             "parameters": [],
+            "module_doc": "",
             "called_functions": []
           },
           "SSRFDetector.__init__": {
@@ -19799,6 +16197,7 @@
                 "kind": "positional_or_keyword"
               }
             ],
+            "module_doc": "",
             "called_functions": []
           },
           "SSRFDetector.analyze": {
@@ -19814,6 +16213,7 @@
                 "kind": "positional_or_keyword"
               }
             ],
+            "module_doc": "",
             "called_functions": [
               "SSRFEngine",
               "engine.run",
@@ -19840,6 +16240,7 @@
                 "kind": "positional_or_keyword"
               }
             ],
+            "module_doc": "",
             "called_functions": [
               "Vulnerability",
               "FindingEvidence",
@@ -19862,6 +16263,7 @@
             "is_async": false,
             "is_entry_point": true,
             "parameters": [],
+            "module_doc": "",
             "called_functions": []
           },
           "SSRFEngine": {
@@ -19869,6 +16271,7 @@
             "is_async": false,
             "is_entry_point": true,
             "parameters": [],
+            "module_doc": "",
             "called_functions": []
           },
           "SSRFEngine.__init__": {
@@ -19876,6 +16279,7 @@
             "is_async": false,
             "is_entry_point": false,
             "parameters": [],
+            "module_doc": "",
             "called_functions": [
               "httpx.Limits",
               "httpx.AsyncClient"
@@ -19886,6 +16290,7 @@
             "is_async": false,
             "is_entry_point": false,
             "parameters": [],
+            "module_doc": "",
             "called_functions": [
               "self.client.aclose"
             ]
@@ -19903,6 +16308,7 @@
                 "kind": "positional_or_keyword"
               }
             ],
+            "module_doc": "",
             "called_functions": [
               "socket.getaddrinfo",
               "ips.append"
@@ -19921,6 +16327,7 @@
                 "kind": "positional_or_keyword"
               }
             ],
+            "module_doc": "",
             "called_functions": [
               "ipaddress.ip_address"
             ]
@@ -19938,6 +16345,7 @@
                 "kind": "positional_or_keyword"
               }
             ],
+            "module_doc": "",
             "called_functions": [
               "unknown_call.split",
               "self._resolve_ips",
@@ -19953,6 +16361,7 @@
             "is_async": false,
             "is_entry_point": false,
             "parameters": [],
+            "module_doc": "",
             "called_functions": [
               "issues.append",
               "self.client.get",
@@ -19972,6 +16381,7 @@
                 "kind": "positional_or_keyword"
               }
             ],
+            "module_doc": "",
             "called_functions": [
               "issues.append"
             ]
@@ -19981,6 +16391,7 @@
             "is_async": false,
             "is_entry_point": false,
             "parameters": [],
+            "module_doc": "",
             "called_functions": [
               "tasks.append",
               "tasks.append",
@@ -19995,45 +16406,13 @@
           "SSRFIssue",
           "SSRFEngine"
         ]
-      },
-      "ssrf_worker": {
-        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\function_ssrf\\worker\\ssrf_worker.py",
-        "functions": {
-          "run": {
-            "line_number": 0,
-            "is_async": false,
-            "is_entry_point": true,
-            "parameters": [],
-            "called_functions": [
-              "get_broker",
-              "SsrfConfig",
-              "SSRFDetector",
-              "broker.subscribe",
-              "AivaMessage.model_validate_json",
-              "FunctionTaskPayload",
-              "new_id",
-              "str",
-              "broker.publish",
-              "detector.analyze",
-              "AivaMessage",
-              "broker.publish",
-              "broker.publish",
-              "logger.exception",
-              "broker.publish"
-            ]
-          }
-        },
-        "entry_points": [],
-        "export_functions": [
-          "run"
-        ]
       }
     }
   },
   "summary": {
-    "total_files": 12,
-    "total_graphs": 125,
-    "total_connections": 27,
-    "total_flow_chains": 30
+    "total_files": 10,
+    "total_graphs": 102,
+    "total_connections": 7,
+    "total_flow_chains": 7
   }
 }

@@ -22,6 +22,9 @@ class PlanBuilder:
         decision_engine: Any = None,
         experience_manager: Any = None,
     ):
+        from .capability_matcher import CapabilityMatcher
+        self.matcher = CapabilityMatcher()
+
         """初始化計劃建構器
         
         Args:
@@ -237,6 +240,24 @@ class PlanBuilder:
             for phase in phases:
                 if "scan" in phase["name"].lower() and recommended_tools:
                     phase["steps"].insert(0, f"Use tools: {', '.join(recommended_tools[:3])}")
+        
+        # [NEW] 增強: 為每個步驟匹配 CLI 指令
+        target_url = target
+        for phase in phases:
+            new_steps = []
+            for step in phase["steps"]:
+                # 嘗試匹配能力
+                matched_flows = self.matcher.match_intent(step, top_k=1)
+                if matched_flows:
+                    flow = matched_flows[0]
+                    cmd = self.matcher.format_command(flow, target_url)
+                    # 將指令附加到步驟描述
+                    step_with_cmd = f"{step} (✅ Command: `{cmd}`)"
+                    new_steps.append(step_with_cmd)
+                else:
+                    new_steps.append(step)
+            phase["steps"] = new_steps
+
         
         # 風險評估
         if confidence > 0.8:

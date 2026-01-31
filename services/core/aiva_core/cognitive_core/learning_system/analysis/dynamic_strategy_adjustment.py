@@ -1,8 +1,42 @@
+"""動態策略調整器 (RL 整合版)
+
+基於回饋結果、指紋識別、WAF檢測等資訊進行策略調整，
+實現自適應測試策略優化。
+
+整合 RL 學習機制：
+- 根據模組執行結果計算獎勵（透過 MQ 回傳的業務結果）
+- 建議最佳 CLI 參數組合（在發送指令前）
+- 支援 13 步驟流程整合
+
+參考：LEARNING_INTEGRATION_WITH_13STEPS.md
+"""
+
+from dataclasses import dataclass, field
 from typing import Any
 
 from aiva_common.utils import get_logger
 
 logger = get_logger(__name__)
+
+
+@dataclass
+class RewardConfig:
+    """執行結果的獎勵配置
+    
+    根據 LEARNING_INTEGRATION_WITH_13STEPS.md Step 8a 定義
+    獎勵計算基於 MQ 回傳的業務結果（vulnerability, waf_status 等）
+    """
+    # 正向獎勵
+    VULN_CONFIRMED: float = 10.0       # 確認高危漏洞 (CONFIRMED confidence)
+    VULN_HIGH: float = 8.0             # 高危漏洞 (HIGH severity)
+    VULN_MEDIUM: float = 5.0           # 中危漏洞 (MEDIUM severity)
+    VULN_LOW: float = 2.0              # 低危漏洞 (LOW/INFO severity)
+    WAF_BYPASS: float = 15.0           # 成功繞過 WAF
+    
+    # 懲罰
+    SOFT_BLOCK: float = -1.0           # 被 WAF 軟封鎖
+    EXECUTION_FAILURE: float = -5.0    # 執行失敗
+    NO_RESULT: float = -2.0            # 無結果
 
 
 class StrategyAdjuster:
@@ -12,10 +46,15 @@ class StrategyAdjuster:
     實現自適應測試策略優化。
     """
 
-    def __init__(self) -> None:
+    def __init__(self, reward_config: RewardConfig | None = None) -> None:
         self._learning_data: dict[str, list[dict[str, Any]]] = {}
         self._waf_patterns: dict[str, list[str]] = {}
         self._success_patterns: dict[str, list[dict[str, Any]]] = {}
+        
+        # RL 整合 (LEARNING_INTEGRATION_WITH_13STEPS.md)
+        self.reward_config = reward_config or RewardConfig()
+        self._parameter_history: dict[str, list[dict[str, Any]]] = {}  # 參數歷史
+        self._reward_history: list[dict[str, Any]] = []  # 獎勵歷史
 
     def adjust(self, plan: dict[str, Any], context: dict[str, Any]) -> dict[str, Any]:
         """動態調整測試策略
@@ -51,9 +90,18 @@ class StrategyAdjuster:
 
     def learn_from_result(self, feedback_data: dict[str, Any]) -> None:
         """從測試結果中學習，更新策略知識庫
+        
+        整合 RL 獎勵計算 (Step 8a)
+        結果透過 MQ 回傳，包含業務欄位而非 CLI stdout
 
         Args:
-            feedback_data: 回饋數據
+            feedback_data: 回饋數據，應包含：
+                - scan_id: 掃描 ID
+                - module: 模組名稱
+                - success: 是否成功 (bool)
+                - vulnerability: 漏洞資訊 (dict, 可選)
+                - waf_status: WAF 狀態 (str, 可選)
+                - parameters_used: 使用的 CLI 參數 (dict, 可選)
         """
         scan_id = feedback_data.get("scan_id")
         module = feedback_data.get("module")
@@ -74,9 +122,157 @@ class StrategyAdjuster:
                 self._success_patterns[module] = []
             self._success_patterns[module].append(feedback_data)
 
+        # ===== RL 獎勵計算 (Step 8a) =====
+        # 從 MQ 回傳的業務結果計算獎勵
+        reward = self.calculate_reward(feedback_data)
+        parameters_used = feedback_data.get("parameters_used", {})
+        
+        # 記錄獎勵歷史（用於 RL 訓練）
+        self._reward_history.append({
+            "scan_id": scan_id,
+            "module": module,
+            "parameters": parameters_used,
+            "reward": reward,
+            "success": success,
+        })
+        
+        # 記錄參數歷史（用於參數優化）
+        if parameters_used:
+            if module not in self._parameter_history:
+                self._parameter_history[module] = []
+            self._parameter_history[module].append({
+                "parameters": parameters_used,
+                "reward": reward,
+            })
+        
         logger.info(
-            f"Learned from {module} result: {'success' if success else 'failure'}"
+            f"RL: {module} reward={reward:.2f}, success={success}"
         )
+
+    def calculate_reward(self, feedback_data: dict[str, Any]) -> float:
+        """根據模組執行結果計算獎勵
+        
+        實現 LEARNING_INTEGRATION_WITH_13STEPS.md Step 8a:
+        從 MQ 回傳的業務結果計算獎勵
+        
+        Args:
+            feedback_data: 包含以下欄位:
+                - success: 是否成功 (bool)
+                - vulnerability: 漏洞資訊 (dict)
+                    - severity: 嚴重性 (str)
+                    - confidence: 可信度 (str)
+                - waf_status: WAF 狀態 (str, 可選)
+            
+        Returns:
+            獎勵值
+        """
+        cfg = self.reward_config
+        reward = 0.0
+        
+        # 1. 執行失敗懲罰
+        if not feedback_data.get("success", False):
+            return cfg.EXECUTION_FAILURE
+        
+        # 2. 漏洞獎勵
+        vulnerability = feedback_data.get("vulnerability", {})
+        if vulnerability:
+            severity = str(vulnerability.get("severity", "")).upper()
+            confidence = str(vulnerability.get("confidence", "")).upper()
+            
+            # 已確認的漏洞給予最高獎勵
+            if confidence == "CONFIRMED":
+                reward += cfg.VULN_CONFIRMED
+            elif severity in ("HIGH", "CRITICAL"):
+                reward += cfg.VULN_HIGH
+            elif severity == "MEDIUM":
+                reward += cfg.VULN_MEDIUM
+            elif severity in ("LOW", "INFO"):
+                reward += cfg.VULN_LOW
+        else:
+            # 沒有發現漏洞
+            reward += cfg.NO_RESULT
+        
+        # 3. WAF 繞過獎勵
+        waf_status = str(feedback_data.get("waf_status", "unknown")).lower()
+        if waf_status == "bypassed":
+            reward += cfg.WAF_BYPASS
+        elif waf_status == "blocked":
+            reward += cfg.SOFT_BLOCK
+        
+        return reward
+
+    def suggest_parameters(
+        self, module: str, context: dict[str, Any] | None = None
+    ) -> dict[str, Any]:
+        """根據歷史經驗建議最佳 CLI 參數
+        
+        實現 LEARNING_INTEGRATION_WITH_13STEPS.md Step 9:
+        策略修正 - 參數變異，Bandit 根據歷史經驗選擇參數
+        
+        此方法應在發送 CLI 指令前呼叫，讓 Task Planning 獲取建議參數
+        
+        Args:
+            module: 模組名稱 (e.g., "xss", "sqli", "scanner")
+            context: 目標上下文（可選）
+                - fingerprints: 技術棧資訊
+                - waf_detected: 是否偵測到 WAF
+            
+        Returns:
+            建議的 CLI 參數字典
+        """
+        # 獲取此模組的參數歷史
+        history = self._parameter_history.get(module, [])
+        
+        if not history:
+            # 沒有歷史數據，返回預設參數
+            return self._get_default_parameters(module)
+        
+        # 找出獎勵最高的參數組合
+        best_entry = max(history, key=lambda x: x.get("reward", 0))
+        best_params = dict(best_entry.get("parameters", {}))  # 複製避免修改原資料
+        
+        # 根據 context 調整參數
+        if context:
+            # WAF 檢測到時，調整為 stealth 模式
+            if context.get("waf_detected"):
+                best_params["mode"] = "stealth"
+                best_params["delay"] = max(best_params.get("delay", 0), 500)
+            
+            # 根據技術棧調整
+            tech_stack = context.get("fingerprints", {})
+            if "php" in str(tech_stack.get("language", {})).lower():
+                best_params["payload_type"] = "php_specific"
+        
+        logger.info(f"Suggested params for {module}: {best_params}")
+        return best_params
+
+    def _get_default_parameters(self, module: str) -> dict[str, Any]:
+        """獲取預設 CLI 參數"""
+        defaults = {
+            "scanner": {"mode": "quick", "concurrency": 5, "depth": 2},
+            "xss": {"mode": "quick", "payload": "basic"},
+            "sqli": {"mode": "quick", "payload": "basic", "technique": "BEUST"},
+            "ssrf": {"mode": "quick", "timeout": 10},
+        }
+        return defaults.get(module, {"mode": "quick"})
+
+    def get_reward_statistics(self) -> dict[str, Any]:
+        """獲取 RL 獎勵統計
+        
+        Returns:
+            統計資訊
+        """
+        if not self._reward_history:
+            return {"total_episodes": 0, "avg_reward": 0.0}
+        
+        rewards = [entry["reward"] for entry in self._reward_history]
+        return {
+            "total_episodes": len(rewards),
+            "avg_reward": sum(rewards) / len(rewards),
+            "max_reward": max(rewards),
+            "min_reward": min(rewards),
+            "positive_rate": sum(1 for r in rewards if r > 0) / len(rewards),
+        }
 
     def _adjust_for_waf(
         self, plan: dict[str, Any], context: dict[str, Any]

@@ -34,12 +34,16 @@
   - 任務隊列管理
   - 併發控制
 
+**注意**: 實際檔案名為 `parallel_processor.py` (不是 `parallel_executor.py`)
+
 ### unified_memory_manager.py
 - `UnifiedMemoryManager` - 統一記憶體管理器
   - 記憶體分配和釋放
   - 記憶體池管理
   - 垃圾回收優化
   - 記憶體使用統計
+
+**注意**: 實際檔案名為 `unified_memory_manager.py` (不是 `unified_resource_manager.py`)
 
 - `ComponentPool` - 組件池
   - 組件實例池化

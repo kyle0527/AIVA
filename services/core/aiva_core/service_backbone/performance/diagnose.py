@@ -16,6 +16,7 @@ AIVA 系統診斷工具
 """
 
 import asyncio
+import sys
 import subprocess
 import logging
 from pathlib import Path

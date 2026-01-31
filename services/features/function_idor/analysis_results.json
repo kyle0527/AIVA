@@ -1,1155 +1,6 @@
 {
   "graphs": [
     {
-      "name": "EnhancedIdorTelemetry",
-      "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\function_idor\\enhanced_worker.py",
-      "type": "class",
-      "nodes": [
-        {
-          "id": "EnhancedIdorTelemetry_1",
-          "label": "EnhancedIdorTelemetry",
-          "kind": "start",
-          "nexts": [
-            "EnhancedIdorTelemetry_3"
-          ],
-          "metadata": {
-            "type": "head",
-            "name": "EnhancedIdorTelemetry",
-            "docstring": "增強版 IDOR 遙測數據",
-            "is_class": true
-          }
-        },
-        {
-          "id": "EnhancedIdorTelemetry_2",
-          "label": "End",
-          "kind": "end",
-          "nexts": [],
-          "metadata": {}
-        },
-        {
-          "id": "EnhancedIdorTelemetry_3",
-          "label": "Call: field",
-          "kind": "call",
-          "nexts": [
-            "EnhancedIdorTelemetry_2"
-          ],
-          "metadata": {
-            "type": "tail",
-            "target_func": "field"
-          }
-        }
-      ],
-      "start_node_id": "EnhancedIdorTelemetry_1",
-      "end_node_id": "EnhancedIdorTelemetry_2"
-    },
-    {
-      "name": "EnhancedIdorTelemetry.to_details",
-      "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\function_idor\\enhanced_worker.py",
-      "type": "method",
-      "nodes": [
-        {
-          "id": "EnhancedIdorTelemetry_to_details_1",
-          "label": "EnhancedIdorTelemetry.to_details",
-          "kind": "start",
-          "nexts": [
-            "EnhancedIdorTelemetry_to_details_3"
-          ],
-          "metadata": {
-            "type": "head",
-            "name": "EnhancedIdorTelemetry.to_details",
-            "parameters": [],
-            "docstring": "轉換為詳細信息字典",
-            "return_type": "dict[str, Any]"
-          }
-        },
-        {
-          "id": "EnhancedIdorTelemetry_to_details_2",
-          "label": "End",
-          "kind": "end",
-          "nexts": [],
-          "metadata": {}
-        },
-        {
-          "id": "EnhancedIdorTelemetry_to_details_3",
-          "label": "if self.errors",
-          "kind": "cond",
-          "nexts": [
-            "EnhancedIdorTelemetry_to_details_4"
-          ],
-          "metadata": {}
-        },
-        {
-          "id": "EnhancedIdorTelemetry_to_details_4",
-          "label": "",
-          "kind": "op",
-          "nexts": [
-            "EnhancedIdorTelemetry_to_details_5"
-          ],
-          "metadata": {}
-        },
-        {
-          "id": "EnhancedIdorTelemetry_to_details_5",
-          "label": "return details",
-          "kind": "op",
-          "nexts": [
-            "EnhancedIdorTelemetry_to_details_2"
-          ],
-          "metadata": {}
-        }
-      ],
-      "start_node_id": "EnhancedIdorTelemetry_to_details_1",
-      "end_node_id": "EnhancedIdorTelemetry_to_details_2"
-    },
-    {
-      "name": "EnhancedIdorTaskExecutionResult",
-      "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\function_idor\\enhanced_worker.py",
-      "type": "class",
-      "nodes": [
-        {
-          "id": "EnhancedIdorTaskExecutionResult_1",
-          "label": "EnhancedIdorTaskExecutionResult",
-          "kind": "start",
-          "nexts": [
-            "EnhancedIdorTaskExecutionResult_2"
-          ],
-          "metadata": {
-            "type": "head",
-            "name": "EnhancedIdorTaskExecutionResult",
-            "docstring": "增強版 IDOR 任務執行結果",
-            "is_class": true
-          }
-        },
-        {
-          "id": "EnhancedIdorTaskExecutionResult_2",
-          "label": "End",
-          "kind": "end",
-          "nexts": [],
-          "metadata": {}
-        }
-      ],
-      "start_node_id": "EnhancedIdorTaskExecutionResult_1",
-      "end_node_id": "EnhancedIdorTaskExecutionResult_2"
-    },
-    {
-      "name": "EnhancedIDORWorker",
-      "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\function_idor\\enhanced_worker.py",
-      "type": "class",
-      "nodes": [
-        {
-          "id": "EnhancedIDORWorker_1",
-          "label": "EnhancedIDORWorker",
-          "kind": "start",
-          "nexts": [
-            "EnhancedIDORWorker_2"
-          ],
-          "metadata": {
-            "type": "head",
-            "name": "EnhancedIDORWorker",
-            "docstring": "增強版 IDOR 工作器 - 維持四大模組架構",
-            "is_class": true
-          }
-        },
-        {
-          "id": "EnhancedIDORWorker_2",
-          "label": "End",
-          "kind": "end",
-          "nexts": [],
-          "metadata": {}
-        }
-      ],
-      "start_node_id": "EnhancedIDORWorker_1",
-      "end_node_id": "EnhancedIDORWorker_2"
-    },
-    {
-      "name": "EnhancedIDORWorker.__init__",
-      "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\function_idor\\enhanced_worker.py",
-      "type": "method",
-      "nodes": [
-        {
-          "id": "EnhancedIDORWorker___init___1",
-          "label": "EnhancedIDORWorker.__init__",
-          "kind": "start",
-          "nexts": [
-            "EnhancedIDORWorker___init___3"
-          ],
-          "metadata": {
-            "type": "head",
-            "name": "EnhancedIDORWorker.__init__",
-            "parameters": [
-              {
-                "name": "config",
-                "type": "IdorConfig | None",
-                "default": null,
-                "required": false,
-                "kind": "positional_or_keyword"
-              }
-            ],
-            "docstring": "初始化增強版 IDOR 工作器\n\nArgs:\n    config: IDOR 檢測配置",
-            "return_type": "None"
-          }
-        },
-        {
-          "id": "EnhancedIDORWorker___init___2",
-          "label": "End",
-          "kind": "end",
-          "nexts": [],
-          "metadata": {}
-        },
-        {
-          "id": "EnhancedIDORWorker___init___3",
-          "label": "Call: IdorConfig",
-          "kind": "call",
-          "nexts": [
-            "EnhancedIDORWorker___init___4"
-          ],
-          "metadata": {
-            "type": "tail",
-            "target_func": "IdorConfig",
-            "connected_to": "IdorConfig"
-          }
-        },
-        {
-          "id": "EnhancedIDORWorker___init___4",
-          "label": "Call: SmartIDORDetector",
-          "kind": "call",
-          "nexts": [
-            "EnhancedIDORWorker___init___5"
-          ],
-          "metadata": {
-            "type": "tail",
-            "target_func": "SmartIDORDetector",
-            "connected_to": "SmartIDORDetector"
-          }
-        },
-        {
-          "id": "EnhancedIDORWorker___init___5",
-          "label": "Call: logger.info",
-          "kind": "call",
-          "nexts": [
-            "EnhancedIDORWorker___init___2"
-          ],
-          "metadata": {
-            "type": "tail",
-            "target_func": "logger.info"
-          }
-        }
-      ],
-      "start_node_id": "EnhancedIDORWorker___init___1",
-      "end_node_id": "EnhancedIDORWorker___init___2"
-    },
-    {
-      "name": "EnhancedIDORWorker.run",
-      "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\function_idor\\enhanced_worker.py",
-      "type": "method",
-      "nodes": [
-        {
-          "id": "EnhancedIDORWorker_run_1",
-          "label": "EnhancedIDORWorker.run",
-          "kind": "start",
-          "nexts": [
-            "EnhancedIDORWorker_run_3"
-          ],
-          "metadata": {
-            "type": "head",
-            "name": "EnhancedIDORWorker.run",
-            "parameters": [],
-            "docstring": "運行增強版 IDOR 工作器",
-            "return_type": "None"
-          }
-        },
-        {
-          "id": "EnhancedIDORWorker_run_2",
-          "label": "End",
-          "kind": "end",
-          "nexts": [],
-          "metadata": {}
-        },
-        {
-          "id": "EnhancedIDORWorker_run_3",
-          "label": "Call: get_broker",
-          "kind": "call",
-          "nexts": [
-            "EnhancedIDORWorker_run_4"
-          ],
-          "metadata": {
-            "type": "tail",
-            "target_func": "get_broker"
-          }
-        },
-        {
-          "id": "EnhancedIDORWorker_run_4",
-          "label": "Call: ResourceIdExtractor",
-          "kind": "call",
-          "nexts": [
-            "EnhancedIDORWorker_run_5"
-          ],
-          "metadata": {
-            "type": "tail",
-            "target_func": "ResourceIdExtractor",
-            "connected_to": "ResourceIdExtractor"
-          }
-        },
-        {
-          "id": "EnhancedIDORWorker_run_5",
-          "label": "Call: httpx.AsyncClient",
-          "kind": "call",
-          "nexts": [
-            "EnhancedIDORWorker_run_6"
-          ],
-          "metadata": {
-            "type": "tail",
-            "target_func": "httpx.AsyncClient"
-          }
-        },
-        {
-          "id": "EnhancedIDORWorker_run_6",
-          "label": "Call: CrossUserTester",
-          "kind": "call",
-          "nexts": [
-            "EnhancedIDORWorker_run_7"
-          ],
-          "metadata": {
-            "type": "tail",
-            "target_func": "CrossUserTester"
-          }
-        },
-        {
-          "id": "EnhancedIDORWorker_run_7",
-          "label": "Call: VerticalEscalationTester",
-          "kind": "call",
-          "nexts": [
-            "EnhancedIDORWorker_run_8"
-          ],
-          "metadata": {
-            "type": "tail",
-            "target_func": "VerticalEscalationTester"
-          }
-        },
-        {
-          "id": "EnhancedIDORWorker_run_8",
-          "label": "Call: broker.subscribe",
-          "kind": "call",
-          "nexts": [
-            "EnhancedIDORWorker_run_9"
-          ],
-          "metadata": {
-            "type": "tail",
-            "target_func": "broker.subscribe"
-          }
-        },
-        {
-          "id": "EnhancedIDORWorker_run_9",
-          "label": "Call: AivaMessage.model_validate_json",
-          "kind": "call",
-          "nexts": [
-            "EnhancedIDORWorker_run_10"
-          ],
-          "metadata": {
-            "type": "tail",
-            "target_func": "AivaMessage.model_validate_json"
-          }
-        },
-        {
-          "id": "EnhancedIDORWorker_run_10",
-          "label": "Call: FunctionTaskPayload",
-          "kind": "call",
-          "nexts": [
-            "EnhancedIDORWorker_run_11"
-          ],
-          "metadata": {
-            "type": "tail",
-            "target_func": "FunctionTaskPayload"
-          }
-        },
-        {
-          "id": "EnhancedIDORWorker_run_11",
-          "label": "Call: self._execute_task",
-          "kind": "call",
-          "nexts": [
-            "EnhancedIDORWorker_run_12"
-          ],
-          "metadata": {
-            "type": "tail",
-            "target_func": "self._execute_task"
-          }
-        },
-        {
-          "id": "EnhancedIDORWorker_run_12",
-          "label": "Call: logger.exception",
-          "kind": "call",
-          "nexts": [
-            "EnhancedIDORWorker_run_2"
-          ],
-          "metadata": {
-            "type": "tail",
-            "target_func": "logger.exception"
-          }
-        }
-      ],
-      "start_node_id": "EnhancedIDORWorker_run_1",
-      "end_node_id": "EnhancedIDORWorker_run_2"
-    },
-    {
-      "name": "EnhancedIDORWorker._execute_task",
-      "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\function_idor\\enhanced_worker.py",
-      "type": "method",
-      "nodes": [
-        {
-          "id": "EnhancedIDORWorker__execute_task_1",
-          "label": "EnhancedIDORWorker._execute_task",
-          "kind": "start",
-          "nexts": [
-            "EnhancedIDORWorker__execute_task_3"
-          ],
-          "metadata": {
-            "type": "head",
-            "name": "EnhancedIDORWorker._execute_task",
-            "parameters": [
-              {
-                "name": "task",
-                "type": "FunctionTaskPayload",
-                "default": null,
-                "required": true,
-                "kind": "positional_or_keyword"
-              }
-            ],
-            "docstring": "執行任務",
-            "return_type": "None"
-          }
-        },
-        {
-          "id": "EnhancedIDORWorker__execute_task_2",
-          "label": "End",
-          "kind": "end",
-          "nexts": [],
-          "metadata": {}
-        },
-        {
-          "id": "EnhancedIDORWorker__execute_task_3",
-          "label": "Call: get_broker",
-          "kind": "call",
-          "nexts": [
-            "EnhancedIDORWorker__execute_task_4"
-          ],
-          "metadata": {
-            "type": "tail",
-            "target_func": "get_broker"
-          }
-        },
-        {
-          "id": "EnhancedIDORWorker__execute_task_4",
-          "label": "Call: logger.info",
-          "kind": "call",
-          "nexts": [
-            "EnhancedIDORWorker__execute_task_5"
-          ],
-          "metadata": {
-            "type": "tail",
-            "target_func": "logger.info"
-          }
-        },
-        {
-          "id": "EnhancedIDORWorker__execute_task_5",
-          "label": "Call: self.process_task",
-          "kind": "call",
-          "nexts": [
-            "EnhancedIDORWorker__execute_task_6"
-          ],
-          "metadata": {
-            "type": "tail",
-            "target_func": "self.process_task"
-          }
-        },
-        {
-          "id": "EnhancedIDORWorker__execute_task_6",
-          "label": "for finding in result.findings",
-          "kind": "cond",
-          "nexts": [
-            "EnhancedIDORWorker__execute_task_7",
-            "EnhancedIDORWorker__execute_task_9"
-          ],
-          "metadata": {}
-        },
-        {
-          "id": "EnhancedIDORWorker__execute_task_7",
-          "label": "Call: AivaMessage",
-          "kind": "call",
-          "nexts": [
-            "EnhancedIDORWorker__execute_task_8"
-          ],
-          "metadata": {
-            "type": "tail",
-            "target_func": "AivaMessage"
-          }
-        },
-        {
-          "id": "EnhancedIDORWorker__execute_task_8",
-          "label": "Call: broker.publish",
-          "kind": "call",
-          "nexts": [
-            "EnhancedIDORWorker__execute_task_6"
-          ],
-          "metadata": {
-            "type": "tail",
-            "target_func": "broker.publish"
-          }
-        },
-        {
-          "id": "EnhancedIDORWorker__execute_task_9",
-          "label": "",
-          "kind": "op",
-          "nexts": [
-            "EnhancedIDORWorker__execute_task_10"
-          ],
-          "metadata": {}
-        },
-        {
-          "id": "EnhancedIDORWorker__execute_task_10",
-          "label": "Call: logger.info",
-          "kind": "call",
-          "nexts": [
-            "EnhancedIDORWorker__execute_task_11"
-          ],
-          "metadata": {
-            "type": "tail",
-            "target_func": "logger.info"
-          }
-        },
-        {
-          "id": "EnhancedIDORWorker__execute_task_11",
-          "label": "Call: logger.exception",
-          "kind": "call",
-          "nexts": [
-            "EnhancedIDORWorker__execute_task_2"
-          ],
-          "metadata": {
-            "type": "tail",
-            "target_func": "logger.exception"
-          }
-        }
-      ],
-      "start_node_id": "EnhancedIDORWorker__execute_task_1",
-      "end_node_id": "EnhancedIDORWorker__execute_task_2"
-    },
-    {
-      "name": "EnhancedIDORWorker.process_task",
-      "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\function_idor\\enhanced_worker.py",
-      "type": "method",
-      "nodes": [
-        {
-          "id": "EnhancedIDORWorker_process_task_1",
-          "label": "EnhancedIDORWorker.process_task",
-          "kind": "start",
-          "nexts": [
-            "EnhancedIDORWorker_process_task_3"
-          ],
-          "metadata": {
-            "type": "head",
-            "name": "EnhancedIDORWorker.process_task",
-            "parameters": [
-              {
-                "name": "task",
-                "type": "FunctionTaskPayload",
-                "default": null,
-                "required": true,
-                "kind": "positional_or_keyword"
-              }
-            ],
-            "docstring": "處理任務（使用智能檢測器）\n\nArgs:\n    task: 功能任務載荷\n    client: HTTP 客戶端\n    id_extractor: 資源 ID 提取器\n    cross_user_tester: 跨用戶測試器\n    vertical_tester: 垂直權限提升測試器\n\nReturns:\n    增強版 IDOR 任務執行結果",
-            "return_type": "EnhancedIdorTaskExecutionResult"
-          }
-        },
-        {
-          "id": "EnhancedIDORWorker_process_task_2",
-          "label": "End",
-          "kind": "end",
-          "nexts": [],
-          "metadata": {}
-        },
-        {
-          "id": "EnhancedIDORWorker_process_task_3",
-          "label": "Call: logger.info",
-          "kind": "call",
-          "nexts": [
-            "EnhancedIDORWorker_process_task_4"
-          ],
-          "metadata": {
-            "type": "tail",
-            "target_func": "logger.info"
-          }
-        },
-        {
-          "id": "EnhancedIDORWorker_process_task_4",
-          "label": "Call: StatisticsCollector",
-          "kind": "call",
-          "nexts": [
-            "EnhancedIDORWorker_process_task_5"
-          ],
-          "metadata": {
-            "type": "tail",
-            "target_func": "StatisticsCollector"
-          }
-        },
-        {
-          "id": "EnhancedIDORWorker_process_task_5",
-          "label": "Call: self.smart_detector.detect_vulnerabilities",
-          "kind": "call",
-          "nexts": [
-            "EnhancedIDORWorker_process_task_6"
-          ],
-          "metadata": {
-            "type": "tail",
-            "target_func": "self.smart_detector.detect_vulnerabilities"
-          }
-        },
-        {
-          "id": "EnhancedIDORWorker_process_task_6",
-          "label": "for _ in range(detection_metrics['total_requests'] - detection_metrics['failed_requests'])",
-          "kind": "cond",
-          "nexts": [
-            "EnhancedIDORWorker_process_task_7",
-            "EnhancedIDORWorker_process_task_8"
-          ],
-          "metadata": {}
-        },
-        {
-          "id": "EnhancedIDORWorker_process_task_7",
-          "label": "Call: stats_collector.record_request",
-          "kind": "call",
-          "nexts": [
-            "EnhancedIDORWorker_process_task_6"
-          ],
-          "metadata": {
-            "type": "tail",
-            "target_func": "stats_collector.record_request"
-          }
-        },
-        {
-          "id": "EnhancedIDORWorker_process_task_8",
-          "label": "",
-          "kind": "op",
-          "nexts": [
-            "EnhancedIDORWorker_process_task_9"
-          ],
-          "metadata": {}
-        },
-        {
-          "id": "EnhancedIDORWorker_process_task_9",
-          "label": "for _ in range(detection_metrics['failed_requests'])",
-          "kind": "cond",
-          "nexts": [
-            "EnhancedIDORWorker_process_task_10",
-            "EnhancedIDORWorker_process_task_11"
-          ],
-          "metadata": {}
-        },
-        {
-          "id": "EnhancedIDORWorker_process_task_10",
-          "label": "Call: stats_collector.record_request",
-          "kind": "call",
-          "nexts": [
-            "EnhancedIDORWorker_process_task_9"
-          ],
-          "metadata": {
-            "type": "tail",
-            "target_func": "stats_collector.record_request"
-          }
-        },
-        {
-          "id": "EnhancedIDORWorker_process_task_11",
-          "label": "",
-          "kind": "op",
-          "nexts": [
-            "EnhancedIDORWorker_process_task_12"
-          ],
-          "metadata": {}
-        },
-        {
-          "id": "EnhancedIDORWorker_process_task_12",
-          "label": "for _ in range(detection_metrics.get('timeout_requests', 0))",
-          "kind": "cond",
-          "nexts": [
-            "EnhancedIDORWorker_process_task_13",
-            "EnhancedIDORWorker_process_task_14"
-          ],
-          "metadata": {}
-        },
-        {
-          "id": "EnhancedIDORWorker_process_task_13",
-          "label": "Call: stats_collector.record_request",
-          "kind": "call",
-          "nexts": [
-            "EnhancedIDORWorker_process_task_12"
-          ],
-          "metadata": {
-            "type": "tail",
-            "target_func": "stats_collector.record_request"
-          }
-        },
-        {
-          "id": "EnhancedIDORWorker_process_task_14",
-          "label": "",
-          "kind": "op",
-          "nexts": [
-            "EnhancedIDORWorker_process_task_15"
-          ],
-          "metadata": {}
-        },
-        {
-          "id": "EnhancedIDORWorker_process_task_15",
-          "label": "for finding in findings_data",
-          "kind": "cond",
-          "nexts": [
-            "EnhancedIDORWorker_process_task_16",
-            "EnhancedIDORWorker_process_task_22"
-          ],
-          "metadata": {}
-        },
-        {
-          "id": "EnhancedIDORWorker_process_task_16",
-          "label": "Call: finding.get",
-          "kind": "call",
-          "nexts": [
-            "EnhancedIDORWorker_process_task_17"
-          ],
-          "metadata": {
-            "type": "tail",
-            "target_func": "finding.get"
-          }
-        },
-        {
-          "id": "EnhancedIDORWorker_process_task_17",
-          "label": "Call: vuln.get",
-          "kind": "call",
-          "nexts": [
-            "EnhancedIDORWorker_process_task_18"
-          ],
-          "metadata": {
-            "type": "tail",
-            "target_func": "vuln.get"
-          }
-        },
-        {
-          "id": "EnhancedIDORWorker_process_task_18",
-          "label": "if 'horizontal' in escalation_type.lower()",
-          "kind": "cond",
-          "nexts": [
-            "EnhancedIDORWorker_process_task_19",
-            "EnhancedIDORWorker_process_task_21"
-          ],
-          "metadata": {}
-        },
-        {
-          "id": "EnhancedIDORWorker_process_task_19",
-          "label": "if 'vertical' in escalation_type.lower()",
-          "kind": "cond",
-          "nexts": [
-            "EnhancedIDORWorker_process_task_20"
-          ],
-          "metadata": {}
-        },
-        {
-          "id": "EnhancedIDORWorker_process_task_20",
-          "label": "",
-          "kind": "op",
-          "nexts": [
-            "EnhancedIDORWorker_process_task_21"
-          ],
-          "metadata": {}
-        },
-        {
-          "id": "EnhancedIDORWorker_process_task_21",
-          "label": "",
-          "kind": "op",
-          "nexts": [
-            "EnhancedIDORWorker_process_task_15"
-          ],
-          "metadata": {}
-        },
-        {
-          "id": "EnhancedIDORWorker_process_task_22",
-          "label": "",
-          "kind": "op",
-          "nexts": [
-            "EnhancedIDORWorker_process_task_23"
-          ],
-          "metadata": {}
-        },
-        {
-          "id": "EnhancedIDORWorker_process_task_23",
-          "label": "Call: stats_collector.set_module_specific",
-          "kind": "call",
-          "nexts": [
-            "EnhancedIDORWorker_process_task_24"
-          ],
-          "metadata": {
-            "type": "tail",
-            "target_func": "stats_collector.set_module_specific"
-          }
-        },
-        {
-          "id": "EnhancedIDORWorker_process_task_24",
-          "label": "Call: stats_collector.set_module_specific",
-          "kind": "call",
-          "nexts": [
-            "EnhancedIDORWorker_process_task_25"
-          ],
-          "metadata": {
-            "type": "tail",
-            "target_func": "stats_collector.set_module_specific"
-          }
-        },
-        {
-          "id": "EnhancedIDORWorker_process_task_25",
-          "label": "Call: stats_collector.set_module_specific",
-          "kind": "call",
-          "nexts": [
-            "EnhancedIDORWorker_process_task_26"
-          ],
-          "metadata": {
-            "type": "tail",
-            "target_func": "stats_collector.set_module_specific"
-          }
-        },
-        {
-          "id": "EnhancedIDORWorker_process_task_26",
-          "label": "Call: self._convert_to_finding_payloads",
-          "kind": "call",
-          "nexts": [
-            "EnhancedIDORWorker_process_task_27"
-          ],
-          "metadata": {
-            "type": "tail",
-            "target_func": "self._convert_to_finding_payloads"
-          }
-        },
-        {
-          "id": "EnhancedIDORWorker_process_task_27",
-          "label": "Call: stats_collector.get_summary",
-          "kind": "call",
-          "nexts": [
-            "EnhancedIDORWorker_process_task_28"
-          ],
-          "metadata": {
-            "type": "tail",
-            "target_func": "stats_collector.get_summary"
-          }
-        },
-        {
-          "id": "EnhancedIDORWorker_process_task_28",
-          "label": "Call: detection_metrics.get",
-          "kind": "call",
-          "nexts": [
-            "EnhancedIDORWorker_process_task_29"
-          ],
-          "metadata": {
-            "type": "tail",
-            "target_func": "detection_metrics.get"
-          }
-        },
-        {
-          "id": "EnhancedIDORWorker_process_task_29",
-          "label": "Call: EnhancedIdorTelemetry",
-          "kind": "call",
-          "nexts": [
-            "EnhancedIDORWorker_process_task_30"
-          ],
-          "metadata": {
-            "type": "tail",
-            "target_func": "EnhancedIdorTelemetry",
-            "connected_to": "EnhancedIdorTelemetry"
-          }
-        },
-        {
-          "id": "EnhancedIDORWorker_process_task_30",
-          "label": "Call: logger.info",
-          "kind": "call",
-          "nexts": [
-            "EnhancedIDORWorker_process_task_31"
-          ],
-          "metadata": {
-            "type": "tail",
-            "target_func": "logger.info"
-          }
-        },
-        {
-          "id": "EnhancedIDORWorker_process_task_31",
-          "label": "return EnhancedIdorTaskExecutionResult(findings=findings, telemetry=telemetry)",
-          "kind": "op",
-          "nexts": [
-            "EnhancedIDORWorker_process_task_2"
-          ],
-          "metadata": {}
-        }
-      ],
-      "start_node_id": "EnhancedIDORWorker_process_task_1",
-      "end_node_id": "EnhancedIDORWorker_process_task_2"
-    },
-    {
-      "name": "EnhancedIDORWorker._convert_to_finding_payloads",
-      "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\function_idor\\enhanced_worker.py",
-      "type": "method",
-      "nodes": [
-        {
-          "id": "EnhancedIDORWorker__convert_to_finding_payloads_1",
-          "label": "EnhancedIDORWorker._convert_to_finding_payloads",
-          "kind": "start",
-          "nexts": [
-            "EnhancedIDORWorker__convert_to_finding_payloads_3"
-          ],
-          "metadata": {
-            "type": "head",
-            "name": "EnhancedIDORWorker._convert_to_finding_payloads",
-            "parameters": [
-              {
-                "name": "findings_data",
-                "type": "list[dict[str, Any]]",
-                "default": null,
-                "required": true,
-                "kind": "positional_or_keyword"
-              },
-              {
-                "name": "task",
-                "type": "FunctionTaskPayload",
-                "default": null,
-                "required": true,
-                "kind": "positional_or_keyword"
-              }
-            ],
-            "docstring": "轉換檢測結果為 FindingPayload 對象\n\nArgs:\n    findings_data: 檢測結果數據列表\n    task: 任務載荷，用於提取 task_id 和 scan_id\n\nReturns:\n    FindingPayload 對象列表",
-            "return_type": "list[FindingPayload]"
-          }
-        },
-        {
-          "id": "EnhancedIDORWorker__convert_to_finding_payloads_2",
-          "label": "End",
-          "kind": "end",
-          "nexts": [],
-          "metadata": {}
-        },
-        {
-          "id": "EnhancedIDORWorker__convert_to_finding_payloads_3",
-          "label": "for finding_data in findings_data",
-          "kind": "cond",
-          "nexts": [
-            "EnhancedIDORWorker__convert_to_finding_payloads_4",
-            "EnhancedIDORWorker__convert_to_finding_payloads_6"
-          ],
-          "metadata": {}
-        },
-        {
-          "id": "EnhancedIDORWorker__convert_to_finding_payloads_4",
-          "label": "Call: FindingPayload",
-          "kind": "call",
-          "nexts": [
-            "EnhancedIDORWorker__convert_to_finding_payloads_5"
-          ],
-          "metadata": {
-            "type": "tail",
-            "target_func": "FindingPayload"
-          }
-        },
-        {
-          "id": "EnhancedIDORWorker__convert_to_finding_payloads_5",
-          "label": "Call: findings.append",
-          "kind": "call",
-          "nexts": [
-            "EnhancedIDORWorker__convert_to_finding_payloads_3"
-          ],
-          "metadata": {
-            "type": "tail",
-            "target_func": "findings.append"
-          }
-        },
-        {
-          "id": "EnhancedIDORWorker__convert_to_finding_payloads_6",
-          "label": "",
-          "kind": "op",
-          "nexts": [
-            "EnhancedIDORWorker__convert_to_finding_payloads_7"
-          ],
-          "metadata": {}
-        },
-        {
-          "id": "EnhancedIDORWorker__convert_to_finding_payloads_7",
-          "label": "return findings",
-          "kind": "op",
-          "nexts": [
-            "EnhancedIDORWorker__convert_to_finding_payloads_2"
-          ],
-          "metadata": {}
-        }
-      ],
-      "start_node_id": "EnhancedIDORWorker__convert_to_finding_payloads_1",
-      "end_node_id": "EnhancedIDORWorker__convert_to_finding_payloads_2"
-    },
-    {
-      "name": "run",
-      "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\function_idor\\enhanced_worker.py",
-      "type": "function",
-      "nodes": [
-        {
-          "id": "run_1",
-          "label": "run",
-          "kind": "start",
-          "nexts": [
-            "run_3"
-          ],
-          "metadata": {
-            "type": "head",
-            "name": "run",
-            "parameters": [],
-            "docstring": "運行增強版 IDOR 工作器（兼容性入口點）",
-            "return_type": "None"
-          }
-        },
-        {
-          "id": "run_2",
-          "label": "End",
-          "kind": "end",
-          "nexts": [],
-          "metadata": {}
-        },
-        {
-          "id": "run_3",
-          "label": "Call: EnhancedIDORWorker",
-          "kind": "call",
-          "nexts": [
-            "run_4"
-          ],
-          "metadata": {
-            "type": "tail",
-            "target_func": "EnhancedIDORWorker",
-            "connected_to": "EnhancedIDORWorker"
-          }
-        },
-        {
-          "id": "run_4",
-          "label": "Call: worker.run",
-          "kind": "call",
-          "nexts": [
-            "run_2"
-          ],
-          "metadata": {
-            "type": "tail",
-            "target_func": "worker.run"
-          }
-        }
-      ],
-      "start_node_id": "run_1",
-      "end_node_id": "run_2"
-    },
-    {
-      "name": "process_task",
-      "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\function_idor\\enhanced_worker.py",
-      "type": "function",
-      "nodes": [
-        {
-          "id": "process_task_1",
-          "label": "process_task",
-          "kind": "start",
-          "nexts": [
-            "process_task_3"
-          ],
-          "metadata": {
-            "type": "head",
-            "name": "process_task",
-            "parameters": [
-              {
-                "name": "task",
-                "type": "FunctionTaskPayload",
-                "default": null,
-                "required": true,
-                "kind": "positional_or_keyword"
-              }
-            ],
-            "docstring": "處理任務（兼容性函數）\n\nArgs:\n    task: 功能任務載荷\n    client: HTTP 客戶端\n    id_extractor: 資源 ID 提取器\n    cross_user_tester: 跨用戶測試器\n    vertical_tester: 垂直權限提升測試器\n\nReturns:\n    任務執行結果",
-            "return_type": "dict[str, Any]"
-          }
-        },
-        {
-          "id": "process_task_2",
-          "label": "End",
-          "kind": "end",
-          "nexts": [],
-          "metadata": {}
-        },
-        {
-          "id": "process_task_3",
-          "label": "Call: ResourceIdExtractor",
-          "kind": "call",
-          "nexts": [
-            "process_task_4"
-          ],
-          "metadata": {
-            "type": "tail",
-            "target_func": "ResourceIdExtractor",
-            "connected_to": "ResourceIdExtractor"
-          }
-        },
-        {
-          "id": "process_task_4",
-          "label": "Call: CrossUserTester",
-          "kind": "call",
-          "nexts": [
-            "process_task_5"
-          ],
-          "metadata": {
-            "type": "tail",
-            "target_func": "CrossUserTester"
-          }
-        },
-        {
-          "id": "process_task_5",
-          "label": "Call: VerticalEscalationTester",
-          "kind": "call",
-          "nexts": [
-            "process_task_6"
-          ],
-          "metadata": {
-            "type": "tail",
-            "target_func": "VerticalEscalationTester"
-          }
-        },
-        {
-          "id": "process_task_6",
-          "label": "Call: EnhancedIDORWorker",
-          "kind": "call",
-          "nexts": [
-            "process_task_7"
-          ],
-          "metadata": {
-            "type": "tail",
-            "target_func": "EnhancedIDORWorker",
-            "connected_to": "EnhancedIDORWorker"
-          }
-        },
-        {
-          "id": "process_task_7",
-          "label": "Call: worker.process_task",
-          "kind": "call",
-          "nexts": [
-            "process_task_8"
-          ],
-          "metadata": {
-            "type": "tail",
-            "target_func": "worker.process_task"
-          }
-        },
-        {
-          "id": "process_task_8",
-          "label": "return {'findings': result.findings, 'telemetry': result.telemetry}",
-          "kind": "op",
-          "nexts": [
-            "process_task_2"
-          ],
-          "metadata": {}
-        }
-      ],
-      "start_node_id": "process_task_1",
-      "end_node_id": "process_task_2"
-    },
-    {
       "name": "ResourceId",
       "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\function_idor\\resource_id_extractor.py",
       "type": "class",
@@ -6082,372 +4933,9 @@
       ],
       "start_node_id": "IDOREngine__calculate_sensitivity_1",
       "end_node_id": "IDOREngine__calculate_sensitivity_2"
-    },
-    {
-      "name": "_topic",
-      "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\function_idor\\worker\\idor_worker.py",
-      "type": "function",
-      "nodes": [
-        {
-          "id": "n__topic_1",
-          "label": "_topic",
-          "kind": "start",
-          "nexts": [
-            "n__topic_3"
-          ],
-          "metadata": {
-            "type": "head",
-            "name": "_topic",
-            "parameters": [
-              {
-                "name": "env_name",
-                "type": "str",
-                "default": null,
-                "required": true,
-                "kind": "positional_or_keyword"
-              },
-              {
-                "name": "default",
-                "type": "str",
-                "default": null,
-                "required": true,
-                "kind": "positional_or_keyword"
-              }
-            ],
-            "docstring": "",
-            "return_type": "any"
-          }
-        },
-        {
-          "id": "n__topic_2",
-          "label": "End",
-          "kind": "end",
-          "nexts": [],
-          "metadata": {}
-        },
-        {
-          "id": "n__topic_3",
-          "label": "return os.getenv(env_name, default)",
-          "kind": "op",
-          "nexts": [
-            "n__topic_2"
-          ],
-          "metadata": {}
-        }
-      ],
-      "start_node_id": "n__topic_1",
-      "end_node_id": "n__topic_2"
-    },
-    {
-      "name": "run",
-      "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\function_idor\\worker\\idor_worker.py",
-      "type": "function",
-      "nodes": [
-        {
-          "id": "run_1",
-          "label": "run",
-          "kind": "start",
-          "nexts": [
-            "run_3"
-          ],
-          "metadata": {
-            "type": "head",
-            "name": "run",
-            "parameters": [],
-            "docstring": "",
-            "return_type": "any"
-          }
-        },
-        {
-          "id": "run_2",
-          "label": "End",
-          "kind": "end",
-          "nexts": [],
-          "metadata": {}
-        },
-        {
-          "id": "run_3",
-          "label": "Call: get_broker",
-          "kind": "call",
-          "nexts": [
-            "run_4"
-          ],
-          "metadata": {
-            "type": "tail",
-            "target_func": "get_broker"
-          }
-        },
-        {
-          "id": "run_4",
-          "label": "Call: _topic",
-          "kind": "call",
-          "nexts": [
-            "run_5"
-          ],
-          "metadata": {
-            "type": "tail",
-            "target_func": "_topic",
-            "connected_to": "_topic"
-          }
-        },
-        {
-          "id": "run_5",
-          "label": "Call: _topic",
-          "kind": "call",
-          "nexts": [
-            "run_6"
-          ],
-          "metadata": {
-            "type": "tail",
-            "target_func": "_topic",
-            "connected_to": "_topic"
-          }
-        },
-        {
-          "id": "run_6",
-          "label": "Call: _topic",
-          "kind": "call",
-          "nexts": [
-            "run_7"
-          ],
-          "metadata": {
-            "type": "tail",
-            "target_func": "_topic",
-            "connected_to": "_topic"
-          }
-        },
-        {
-          "id": "run_7",
-          "label": "Call: IdorConfig",
-          "kind": "call",
-          "nexts": [
-            "run_8"
-          ],
-          "metadata": {
-            "type": "tail",
-            "target_func": "IdorConfig",
-            "connected_to": "IdorConfig"
-          }
-        },
-        {
-          "id": "run_8",
-          "label": "Call: IDORDetector",
-          "kind": "call",
-          "nexts": [
-            "run_9"
-          ],
-          "metadata": {
-            "type": "tail",
-            "target_func": "IDORDetector",
-            "connected_to": "IDORDetector"
-          }
-        },
-        {
-          "id": "run_9",
-          "label": "Call: broker.subscribe",
-          "kind": "call",
-          "nexts": [
-            "run_10"
-          ],
-          "metadata": {
-            "type": "tail",
-            "target_func": "broker.subscribe"
-          }
-        },
-        {
-          "id": "run_10",
-          "label": "Call: AivaMessage.model_validate_json",
-          "kind": "call",
-          "nexts": [
-            "run_11"
-          ],
-          "metadata": {
-            "type": "tail",
-            "target_func": "AivaMessage.model_validate_json"
-          }
-        },
-        {
-          "id": "run_11",
-          "label": "Call: FunctionTaskPayload",
-          "kind": "call",
-          "nexts": [
-            "run_12"
-          ],
-          "metadata": {
-            "type": "tail",
-            "target_func": "FunctionTaskPayload"
-          }
-        },
-        {
-          "id": "run_12",
-          "label": "Call: new_id",
-          "kind": "call",
-          "nexts": [
-            "run_13"
-          ],
-          "metadata": {
-            "type": "tail",
-            "target_func": "new_id"
-          }
-        },
-        {
-          "id": "run_13",
-          "label": "Call: broker.publish",
-          "kind": "call",
-          "nexts": [
-            "run_14"
-          ],
-          "metadata": {
-            "type": "tail",
-            "target_func": "broker.publish"
-          }
-        },
-        {
-          "id": "run_14",
-          "label": "Call: detector.analyze",
-          "kind": "call",
-          "nexts": [
-            "run_15"
-          ],
-          "metadata": {
-            "type": "tail",
-            "target_func": "detector.analyze"
-          }
-        },
-        {
-          "id": "run_15",
-          "label": "for f in findings",
-          "kind": "cond",
-          "nexts": [
-            "run_16",
-            "run_18"
-          ],
-          "metadata": {}
-        },
-        {
-          "id": "run_16",
-          "label": "Call: AivaMessage",
-          "kind": "call",
-          "nexts": [
-            "run_17"
-          ],
-          "metadata": {
-            "type": "tail",
-            "target_func": "AivaMessage"
-          }
-        },
-        {
-          "id": "run_17",
-          "label": "Call: broker.publish",
-          "kind": "call",
-          "nexts": [
-            "run_15"
-          ],
-          "metadata": {
-            "type": "tail",
-            "target_func": "broker.publish"
-          }
-        },
-        {
-          "id": "run_18",
-          "label": "",
-          "kind": "op",
-          "nexts": [
-            "run_19"
-          ],
-          "metadata": {}
-        },
-        {
-          "id": "run_19",
-          "label": "Call: broker.publish",
-          "kind": "call",
-          "nexts": [
-            "run_20"
-          ],
-          "metadata": {
-            "type": "tail",
-            "target_func": "broker.publish"
-          }
-        },
-        {
-          "id": "run_20",
-          "label": "Call: logger.exception",
-          "kind": "call",
-          "nexts": [
-            "run_21"
-          ],
-          "metadata": {
-            "type": "tail",
-            "target_func": "logger.exception"
-          }
-        },
-        {
-          "id": "run_21",
-          "label": "Call: broker.publish",
-          "kind": "call",
-          "nexts": [
-            "run_2"
-          ],
-          "metadata": {
-            "type": "tail",
-            "target_func": "broker.publish"
-          }
-        }
-      ],
-      "start_node_id": "run_1",
-      "end_node_id": "run_2"
     }
   ],
   "connections": [
-    {
-      "source_graph": "EnhancedIDORWorker.__init__",
-      "source_node_id": "EnhancedIDORWorker___init___3",
-      "target_graph": "IdorConfig",
-      "target_node_id": "IdorConfig_1",
-      "type": "call"
-    },
-    {
-      "source_graph": "EnhancedIDORWorker.__init__",
-      "source_node_id": "EnhancedIDORWorker___init___4",
-      "target_graph": "SmartIDORDetector",
-      "target_node_id": "SmartIDORDetector_1",
-      "type": "call"
-    },
-    {
-      "source_graph": "EnhancedIDORWorker.run",
-      "source_node_id": "EnhancedIDORWorker_run_4",
-      "target_graph": "ResourceIdExtractor",
-      "target_node_id": "ResourceIdExtractor_1",
-      "type": "call"
-    },
-    {
-      "source_graph": "EnhancedIDORWorker.process_task",
-      "source_node_id": "EnhancedIDORWorker_process_task_29",
-      "target_graph": "EnhancedIdorTelemetry",
-      "target_node_id": "EnhancedIdorTelemetry_1",
-      "type": "call"
-    },
-    {
-      "source_graph": "run",
-      "source_node_id": "run_3",
-      "target_graph": "EnhancedIDORWorker",
-      "target_node_id": "EnhancedIDORWorker_1",
-      "type": "call"
-    },
-    {
-      "source_graph": "process_task",
-      "source_node_id": "process_task_3",
-      "target_graph": "ResourceIdExtractor",
-      "target_node_id": "ResourceIdExtractor_1",
-      "type": "call"
-    },
-    {
-      "source_graph": "process_task",
-      "source_node_id": "process_task_6",
-      "target_graph": "EnhancedIDORWorker",
-      "target_node_id": "EnhancedIDORWorker_1",
-      "type": "call"
-    },
     {
       "source_graph": "SmartIDORDetector.__init__",
       "source_node_id": "SmartIDORDetector___init___3",
@@ -6468,358 +4956,24 @@
       "target_graph": "IDOREngine",
       "target_node_id": "IDOREngine_1",
       "type": "call"
-    },
-    {
-      "source_graph": "run",
-      "source_node_id": "run_4",
-      "target_graph": "_topic",
-      "target_node_id": "n__topic_1",
-      "type": "call"
-    },
-    {
-      "source_graph": "run",
-      "source_node_id": "run_5",
-      "target_graph": "_topic",
-      "target_node_id": "n__topic_1",
-      "type": "call"
-    },
-    {
-      "source_graph": "run",
-      "source_node_id": "run_6",
-      "target_graph": "_topic",
-      "target_node_id": "n__topic_1",
-      "type": "call"
-    },
-    {
-      "source_graph": "run",
-      "source_node_id": "run_7",
-      "target_graph": "IdorConfig",
-      "target_node_id": "IdorConfig_1",
-      "type": "call"
-    },
-    {
-      "source_graph": "run",
-      "source_node_id": "run_8",
-      "target_graph": "IDORDetector",
-      "target_node_id": "IDORDetector_1",
-      "type": "call"
     }
   ],
   "flow_chains": [
     [
-      "SmartIDORDetector.__init__",
-      "IdorConfig"
-    ],
-    [
-      "run",
-      "EnhancedIDORWorker"
-    ],
-    [
-      "run",
-      "_topic"
-    ],
-    [
-      "run",
-      "IdorConfig"
-    ],
-    [
-      "run",
-      "IDORDetector"
-    ],
-    [
-      "EnhancedIDORWorker.__init__",
-      "IdorConfig"
-    ],
-    [
-      "EnhancedIDORWorker.__init__",
-      "SmartIDORDetector"
-    ],
-    [
-      "EnhancedIDORWorker.process_task",
-      "EnhancedIdorTelemetry"
+      "SmartIDORDetector.detect_vulnerabilities",
+      "IDORDetectionContext"
     ],
     [
       "IDORDetector.analyze",
       "IDOREngine"
     ],
     [
-      "SmartIDORDetector.detect_vulnerabilities",
-      "IDORDetectionContext"
-    ],
-    [
-      "process_task",
-      "ResourceIdExtractor"
-    ],
-    [
-      "process_task",
-      "EnhancedIDORWorker"
-    ],
-    [
-      "EnhancedIDORWorker.run",
-      "ResourceIdExtractor"
+      "SmartIDORDetector.__init__",
+      "IdorConfig"
     ]
   ],
   "function_details": {
     "function_map": {
-      "EnhancedIdorTelemetry": {
-        "file_name": "enhanced_worker.py",
-        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\function_idor\\enhanced_worker.py",
-        "script_name": "enhanced_worker",
-        "line_number": 0,
-        "is_async": false,
-        "is_entry_point": true,
-        "is_class": true,
-        "parameters": [],
-        "docstring": "增強版 IDOR 遙測數據",
-        "return_type": "any",
-        "called_functions": [
-          "field"
-        ]
-      },
-      "EnhancedIdorTelemetry.to_details": {
-        "file_name": "enhanced_worker.py",
-        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\function_idor\\enhanced_worker.py",
-        "script_name": "enhanced_worker",
-        "line_number": 0,
-        "is_async": false,
-        "is_entry_point": false,
-        "is_class": false,
-        "parameters": [],
-        "docstring": "轉換為詳細信息字典",
-        "return_type": "dict[str, Any]",
-        "called_functions": []
-      },
-      "EnhancedIdorTaskExecutionResult": {
-        "file_name": "enhanced_worker.py",
-        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\function_idor\\enhanced_worker.py",
-        "script_name": "enhanced_worker",
-        "line_number": 0,
-        "is_async": false,
-        "is_entry_point": true,
-        "is_class": true,
-        "parameters": [],
-        "docstring": "增強版 IDOR 任務執行結果",
-        "return_type": "any",
-        "called_functions": []
-      },
-      "EnhancedIDORWorker": {
-        "file_name": "enhanced_worker.py",
-        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\function_idor\\enhanced_worker.py",
-        "script_name": "enhanced_worker",
-        "line_number": 0,
-        "is_async": false,
-        "is_entry_point": true,
-        "is_class": true,
-        "parameters": [],
-        "docstring": "增強版 IDOR 工作器 - 維持四大模組架構",
-        "return_type": "any",
-        "called_functions": []
-      },
-      "EnhancedIDORWorker.__init__": {
-        "file_name": "enhanced_worker.py",
-        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\function_idor\\enhanced_worker.py",
-        "script_name": "enhanced_worker",
-        "line_number": 0,
-        "is_async": false,
-        "is_entry_point": false,
-        "is_class": false,
-        "parameters": [
-          {
-            "name": "config",
-            "type": "IdorConfig | None",
-            "default": null,
-            "required": false,
-            "kind": "positional_or_keyword"
-          }
-        ],
-        "docstring": "初始化增強版 IDOR 工作器\n\nArgs:\n    config: IDOR 檢測配置",
-        "return_type": "None",
-        "called_functions": [
-          "IdorConfig",
-          "SmartIDORDetector",
-          "logger.info"
-        ]
-      },
-      "EnhancedIDORWorker.run": {
-        "file_name": "enhanced_worker.py",
-        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\function_idor\\enhanced_worker.py",
-        "script_name": "enhanced_worker",
-        "line_number": 0,
-        "is_async": false,
-        "is_entry_point": false,
-        "is_class": false,
-        "parameters": [],
-        "docstring": "運行增強版 IDOR 工作器",
-        "return_type": "None",
-        "called_functions": [
-          "get_broker",
-          "ResourceIdExtractor",
-          "httpx.AsyncClient",
-          "CrossUserTester",
-          "VerticalEscalationTester",
-          "broker.subscribe",
-          "AivaMessage.model_validate_json",
-          "FunctionTaskPayload",
-          "self._execute_task",
-          "logger.exception"
-        ]
-      },
-      "EnhancedIDORWorker._execute_task": {
-        "file_name": "enhanced_worker.py",
-        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\function_idor\\enhanced_worker.py",
-        "script_name": "enhanced_worker",
-        "line_number": 0,
-        "is_async": false,
-        "is_entry_point": false,
-        "is_class": false,
-        "parameters": [
-          {
-            "name": "task",
-            "type": "FunctionTaskPayload",
-            "default": null,
-            "required": true,
-            "kind": "positional_or_keyword"
-          }
-        ],
-        "docstring": "執行任務",
-        "return_type": "None",
-        "called_functions": [
-          "get_broker",
-          "logger.info",
-          "self.process_task",
-          "AivaMessage",
-          "broker.publish",
-          "logger.info",
-          "logger.exception"
-        ]
-      },
-      "EnhancedIDORWorker.process_task": {
-        "file_name": "enhanced_worker.py",
-        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\function_idor\\enhanced_worker.py",
-        "script_name": "enhanced_worker",
-        "line_number": 0,
-        "is_async": false,
-        "is_entry_point": false,
-        "is_class": false,
-        "parameters": [
-          {
-            "name": "task",
-            "type": "FunctionTaskPayload",
-            "default": null,
-            "required": true,
-            "kind": "positional_or_keyword"
-          }
-        ],
-        "docstring": "處理任務（使用智能檢測器）\n\nArgs:\n    task: 功能任務載荷\n    client: HTTP 客戶端\n    id_extractor: 資源 ID 提取器\n    cross_user_tester: 跨用戶測試器\n    vertical_tester: 垂直權限提升測試器\n\nReturns:\n    增強版 IDOR 任務執行結果",
-        "return_type": "EnhancedIdorTaskExecutionResult",
-        "called_functions": [
-          "logger.info",
-          "StatisticsCollector",
-          "self.smart_detector.detect_vulnerabilities",
-          "stats_collector.record_request",
-          "stats_collector.record_request",
-          "stats_collector.record_request",
-          "finding.get",
-          "vuln.get",
-          "stats_collector.set_module_specific",
-          "stats_collector.set_module_specific",
-          "stats_collector.set_module_specific",
-          "self._convert_to_finding_payloads",
-          "stats_collector.get_summary",
-          "detection_metrics.get",
-          "EnhancedIdorTelemetry",
-          "logger.info"
-        ]
-      },
-      "EnhancedIDORWorker._convert_to_finding_payloads": {
-        "file_name": "enhanced_worker.py",
-        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\function_idor\\enhanced_worker.py",
-        "script_name": "enhanced_worker",
-        "line_number": 0,
-        "is_async": false,
-        "is_entry_point": false,
-        "is_class": false,
-        "parameters": [
-          {
-            "name": "findings_data",
-            "type": "list[dict[str, Any]]",
-            "default": null,
-            "required": true,
-            "kind": "positional_or_keyword"
-          },
-          {
-            "name": "task",
-            "type": "FunctionTaskPayload",
-            "default": null,
-            "required": true,
-            "kind": "positional_or_keyword"
-          }
-        ],
-        "docstring": "轉換檢測結果為 FindingPayload 對象\n\nArgs:\n    findings_data: 檢測結果數據列表\n    task: 任務載荷，用於提取 task_id 和 scan_id\n\nReturns:\n    FindingPayload 對象列表",
-        "return_type": "list[FindingPayload]",
-        "called_functions": [
-          "FindingPayload",
-          "findings.append"
-        ]
-      },
-      "run": {
-        "file_name": "idor_worker.py",
-        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\function_idor\\worker\\idor_worker.py",
-        "script_name": "idor_worker",
-        "line_number": 0,
-        "is_async": false,
-        "is_entry_point": true,
-        "is_class": false,
-        "parameters": [],
-        "docstring": "",
-        "return_type": "any",
-        "called_functions": [
-          "get_broker",
-          "_topic",
-          "_topic",
-          "_topic",
-          "IdorConfig",
-          "IDORDetector",
-          "broker.subscribe",
-          "AivaMessage.model_validate_json",
-          "FunctionTaskPayload",
-          "new_id",
-          "broker.publish",
-          "detector.analyze",
-          "AivaMessage",
-          "broker.publish",
-          "broker.publish",
-          "logger.exception",
-          "broker.publish"
-        ]
-      },
-      "process_task": {
-        "file_name": "enhanced_worker.py",
-        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\function_idor\\enhanced_worker.py",
-        "script_name": "enhanced_worker",
-        "line_number": 0,
-        "is_async": false,
-        "is_entry_point": true,
-        "is_class": false,
-        "parameters": [
-          {
-            "name": "task",
-            "type": "FunctionTaskPayload",
-            "default": null,
-            "required": true,
-            "kind": "positional_or_keyword"
-          }
-        ],
-        "docstring": "處理任務（兼容性函數）\n\nArgs:\n    task: 功能任務載荷\n    client: HTTP 客戶端\n    id_extractor: 資源 ID 提取器\n    cross_user_tester: 跨用戶測試器\n    vertical_tester: 垂直權限提升測試器\n\nReturns:\n    任務執行結果",
-        "return_type": "dict[str, Any]",
-        "called_functions": [
-          "ResourceIdExtractor",
-          "CrossUserTester",
-          "VerticalEscalationTester",
-          "EnhancedIDORWorker",
-          "worker.process_task"
-        ]
-      },
       "ResourceId": {
         "file_name": "resource_id_extractor.py",
         "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\function_idor\\resource_id_extractor.py",
@@ -6830,6 +4984,7 @@
         "is_class": true,
         "parameters": [],
         "docstring": "Resource identifier information extracted from URL.\n\nAttributes:\n    value: The actual ID value (e.g., \"123\", \"abc-def-456\")\n    pattern: The detected pattern type\n    position: Where the ID was found (\"path\", \"query\", \"body\")\n    parameter_name: Parameter name if found in query/body, None otherwise",
+        "module_doc": "",
         "return_type": "any",
         "called_functions": []
       },
@@ -6843,6 +4998,7 @@
         "is_class": true,
         "parameters": [],
         "docstring": "Extracts resource identifiers from URLs and generates test variations.\n\nSupports detection of:\n- Numeric IDs (e.g., /users/123)\n- UUIDs (e.g., /orders/a1b2c3d4-e5f6-7890-abcd-1234567890ab)\n- Hashes (e.g., /sessions/5f4dcc3b5aa765d61d8327deb882cf99)\n- Mixed alphanumeric (e.g., /items/abc123def456)\n\nExample:\n    >>> extractor = ResourceIdExtractor()\n    >>> ids = extractor.extract_from_url(\"https://api.example.com/users/123\")\n    >>> print(ids[0].value)\n    '123'\n    >>> print(ids[0].pattern)\n    'numeric'",
+        "module_doc": "",
         "return_type": "any",
         "called_functions": []
       },
@@ -6864,6 +5020,7 @@
           }
         ],
         "docstring": "Extract resource IDs from URL path and query parameters.\n\nArgs:\n    url: The URL to extract IDs from\n\nReturns:\n    List of ResourceId objects found in the URL\n\nExample:\n    >>> extractor = ResourceIdExtractor()\n    >>> ids = extractor.extract_from_url(\"https://api.example.com/users/123?order=456\")\n    >>> len(ids)\n    2\n    >>> ids[0].value\n    '123'\n    >>> ids[1].value\n    '456'",
+        "module_doc": "",
         "return_type": "list[ResourceId]",
         "called_functions": [
           "url.split",
@@ -6899,6 +5056,7 @@
           }
         ],
         "docstring": "Generate test ID variations based on the original ID pattern.\n\nArgs:\n    original_id: The original ResourceId to base variations on\n    count: Maximum number of test IDs to generate (default: 5)\n\nReturns:\n    List of test ID strings\n\nExample:\n    >>> extractor = ResourceIdExtractor()\n    >>> rid = ResourceId(value=\"123\", pattern=\"numeric\", position=\"path\")\n    >>> test_ids = extractor.generate_test_ids(rid, count=3)\n    >>> len(test_ids)\n    3\n    >>> int(test_ids[0]) != 123\n    True",
+        "module_doc": "",
         "return_type": "list[str]",
         "called_functions": [
           "int",
@@ -6950,6 +5108,7 @@
           }
         ],
         "docstring": "Replace an ID in URL with a new ID.\n\nArgs:\n    url: Original URL\n    old_id: ID to replace\n    new_id: New ID value\n\nReturns:\n    URL with replaced ID\n\nExample:\n    >>> extractor = ResourceIdExtractor()\n    >>> url = \"https://api.example.com/users/123\"\n    >>> new_url = extractor.replace_id_in_url(url, \"123\", \"456\")\n    >>> \"456\" in new_url\n    True",
+        "module_doc": "",
         "return_type": "str",
         "called_functions": [
           "urlparse",
@@ -6970,6 +5129,7 @@
         "is_class": true,
         "parameters": [],
         "docstring": "IDOR 檢測上下文",
+        "module_doc": "",
         "return_type": "any",
         "called_functions": [
           "field",
@@ -6995,6 +5155,7 @@
           }
         ],
         "docstring": "添加發現的漏洞",
+        "module_doc": "",
         "return_type": "None",
         "called_functions": [
           "self.findings.append"
@@ -7018,6 +5179,7 @@
           }
         ],
         "docstring": "添加錯誤",
+        "module_doc": "",
         "return_type": "None",
         "called_functions": [
           "self.errors.append"
@@ -7033,6 +5195,7 @@
         "is_class": false,
         "parameters": [],
         "docstring": "增加嘗試次數",
+        "module_doc": "",
         "return_type": "None",
         "called_functions": []
       },
@@ -7046,6 +5209,7 @@
         "is_class": true,
         "parameters": [],
         "docstring": "智能 IDOR 檢測器 - 基於統一檢測管理器",
+        "module_doc": "",
         "return_type": "any",
         "called_functions": []
       },
@@ -7067,6 +5231,7 @@
           }
         ],
         "docstring": "初始化智能 IDOR 檢測器\n\nArgs:\n    config: IDOR 檢測配置，如果未提供則使用默認配置",
+        "module_doc": "",
         "return_type": "None",
         "called_functions": [
           "IdorConfig",
@@ -7091,6 +5256,7 @@
           }
         ],
         "docstring": "執行智能 IDOR 檢測\n\nArgs:\n    task: 功能任務載荷\n    client: HTTP 客戶端\n    id_extractor: 資源 ID 提取器\n    cross_user_tester: 跨用戶測試器\n    vertical_tester: 垂直權限提升測試器\n\nReturns:\n    檢測到的漏洞列表和檢測指標",
+        "module_doc": "",
         "return_type": "tuple[list[dict[str, Any]], dict[str, Any]]",
         "called_functions": [
           "UnifiedSmartDetectionManager",
@@ -7121,6 +5287,7 @@
         "is_class": false,
         "parameters": [],
         "docstring": "計算總檢測步驟數",
+        "module_doc": "",
         "return_type": "int",
         "called_functions": []
       },
@@ -7142,6 +5309,7 @@
           }
         ],
         "docstring": "提取資源 ID\n\nArgs:\n    context: 檢測上下文\n\nReturns:\n    提取到的資源 ID 列表",
+        "module_doc": "",
         "return_type": "list[ResourceId]",
         "called_functions": [
           "str",
@@ -7189,6 +5357,7 @@
           }
         ],
         "docstring": "執行水平權限測試\n\nArgs:\n    context: 檢測上下文\n    resource_ids: 資源 ID 列表\n    smart_manager: 智能檢測管理器",
+        "module_doc": "",
         "return_type": "None",
         "called_functions": [
           "len",
@@ -7228,6 +5397,7 @@
           }
         ],
         "docstring": "執行垂直權限測試\n\nArgs:\n    context: 檢測上下文\n    resource_ids: 資源 ID 列表\n    smart_manager: 智能檢測管理器",
+        "module_doc": "",
         "return_type": "None",
         "called_functions": [
           "len",
@@ -7268,6 +5438,7 @@
           }
         ],
         "docstring": "測試水平權限訪問\n\nArgs:\n    context: 檢測上下文\n    resource_id: 資源 ID\n    smart_manager: 智能檢測管理器",
+        "module_doc": "",
         "return_type": "None",
         "called_functions": [
           "context.cross_user_tester.test_horizontal_idor",
@@ -7319,6 +5490,7 @@
           }
         ],
         "docstring": "測試垂直權限訪問\n\nArgs:\n    context: 檢測上下文\n    resource_id: 資源 ID\n    privilege_level: 權限級別\n    smart_manager: 智能檢測管理器",
+        "module_doc": "",
         "return_type": "None",
         "called_functions": [
           "context.vertical_tester.test_vertical_escalation",
@@ -7363,6 +5535,7 @@
           }
         ],
         "docstring": "構建水平 IDOR 檢測結果",
+        "module_doc": "",
         "return_type": "dict[str, Any]",
         "called_functions": []
       },
@@ -7405,6 +5578,7 @@
           }
         ],
         "docstring": "構建垂直 IDOR 檢測結果",
+        "module_doc": "",
         "return_type": "dict[str, Any]",
         "called_functions": []
       },
@@ -7418,6 +5592,7 @@
         "is_class": true,
         "parameters": [],
         "docstring": "",
+        "module_doc": "",
         "return_type": "any",
         "called_functions": [
           "Field"
@@ -7433,6 +5608,7 @@
         "is_class": true,
         "parameters": [],
         "docstring": "",
+        "module_doc": "",
         "return_type": "any",
         "called_functions": []
       },
@@ -7454,6 +5630,7 @@
           }
         ],
         "docstring": "",
+        "module_doc": "",
         "return_type": "any",
         "called_functions": []
       },
@@ -7475,6 +5652,7 @@
           }
         ],
         "docstring": "IDOR漏洞分析 - 重構版本（降低複雜度）",
+        "module_doc": "",
         "return_type": "List[FindingPayload]",
         "called_functions": [
           "IDOREngine",
@@ -7526,6 +5704,7 @@
           }
         ],
         "docstring": "執行水平IDOR測試——降低 analyze 複雜度",
+        "module_doc": "",
         "return_type": "List[FindingPayload]",
         "called_functions": [
           "engine.replace_id_in_url",
@@ -7558,6 +5737,7 @@
           }
         ],
         "docstring": "執行垂直IDOR測試——降低 analyze 複雜度",
+        "module_doc": "",
         "return_type": "List[FindingPayload]",
         "called_functions": [
           "engine.test_vertical",
@@ -7596,6 +5776,7 @@
           }
         ],
         "docstring": "將 IDOR 問題轉換為 Finding 物件——簡化版本",
+        "module_doc": "",
         "return_type": "FindingPayload",
         "called_functions": [
           "self._determine_severity",
@@ -7624,6 +5805,7 @@
           }
         ],
         "docstring": "根據 IDOR 類型決定嚴重程度",
+        "module_doc": "",
         "return_type": "Severity",
         "called_functions": []
       },
@@ -7652,6 +5834,7 @@
           }
         ],
         "docstring": "創建漏洞物件",
+        "module_doc": "",
         "return_type": "Vulnerability",
         "called_functions": []
       },
@@ -7665,6 +5848,7 @@
         "is_class": true,
         "parameters": [],
         "docstring": "",
+        "module_doc": "",
         "return_type": "any",
         "called_functions": []
       },
@@ -7678,6 +5862,7 @@
         "is_class": true,
         "parameters": [],
         "docstring": "",
+        "module_doc": "",
         "return_type": "any",
         "called_functions": []
       },
@@ -7691,6 +5876,7 @@
         "is_class": true,
         "parameters": [],
         "docstring": "",
+        "module_doc": "",
         "return_type": "any",
         "called_functions": []
       },
@@ -7704,6 +5890,7 @@
         "is_class": false,
         "parameters": [],
         "docstring": "",
+        "module_doc": "",
         "return_type": "any",
         "called_functions": [
           "httpx.AsyncClient"
@@ -7719,6 +5906,7 @@
         "is_class": false,
         "parameters": [],
         "docstring": "",
+        "module_doc": "",
         "return_type": "any",
         "called_functions": [
           "self.client.aclose"
@@ -7742,6 +5930,7 @@
           }
         ],
         "docstring": "",
+        "module_doc": "",
         "return_type": "List[IdCandidate]",
         "called_functions": [
           "ids.append"
@@ -7772,6 +5961,7 @@
           }
         ],
         "docstring": "",
+        "module_doc": "",
         "return_type": "List[str]",
         "called_functions": [
           "int",
@@ -7811,6 +6001,7 @@
           }
         ],
         "docstring": "",
+        "module_doc": "",
         "return_type": "str",
         "called_functions": []
       },
@@ -7846,6 +6037,7 @@
           }
         ],
         "docstring": "",
+        "module_doc": "",
         "return_type": "Optional[IDORIssue]",
         "called_functions": [
           "self.client.get",
@@ -7879,6 +6071,7 @@
           }
         ],
         "docstring": "",
+        "module_doc": "",
         "return_type": "Optional[IDORIssue]",
         "called_functions": [
           "self.client.get",
@@ -7910,6 +6103,7 @@
           }
         ],
         "docstring": "檢查是否為公開資源\n\nArgs:\n    response_text: 響應內容\n    url: URL\n    \nReturns:\n    bool: True 表示公開資源",
+        "module_doc": "",
         "return_type": "bool",
         "called_functions": [
           "response_text.lower",
@@ -7941,6 +6135,7 @@
           }
         ],
         "docstring": "檢查是否有團隊/組織共享關係\n\nArgs:\n    user_a_text: 用戶 A 的響應\n    user_b_text: 用戶 B 的響應\n    \nReturns:\n    bool: True 表示可能有共享關係",
+        "module_doc": "",
         "return_type": "bool",
         "called_functions": [
           "unknown_call.startswith",
@@ -7974,233 +6169,15 @@
           }
         ],
         "docstring": "計算數據敏感度 (1-5)\n\nArgs:\n    response_text: 響應內容\n    \nReturns:\n    int: 敏感度評分 1-5",
+        "module_doc": "",
         "return_type": "int",
         "called_functions": [
           "response_text.lower",
           "max"
         ]
-      },
-      "_topic": {
-        "file_name": "idor_worker.py",
-        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\function_idor\\worker\\idor_worker.py",
-        "script_name": "idor_worker",
-        "line_number": 0,
-        "is_async": false,
-        "is_entry_point": true,
-        "is_class": false,
-        "parameters": [
-          {
-            "name": "env_name",
-            "type": "str",
-            "default": null,
-            "required": true,
-            "kind": "positional_or_keyword"
-          },
-          {
-            "name": "default",
-            "type": "str",
-            "default": null,
-            "required": true,
-            "kind": "positional_or_keyword"
-          }
-        ],
-        "docstring": "",
-        "return_type": "any",
-        "called_functions": []
       }
     },
     "script_functions": {
-      "enhanced_worker": {
-        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\function_idor\\enhanced_worker.py",
-        "functions": {
-          "EnhancedIdorTelemetry": {
-            "line_number": 0,
-            "is_async": false,
-            "is_entry_point": true,
-            "parameters": [],
-            "called_functions": [
-              "field"
-            ]
-          },
-          "EnhancedIdorTelemetry.to_details": {
-            "line_number": 0,
-            "is_async": false,
-            "is_entry_point": false,
-            "parameters": [],
-            "called_functions": []
-          },
-          "EnhancedIdorTaskExecutionResult": {
-            "line_number": 0,
-            "is_async": false,
-            "is_entry_point": true,
-            "parameters": [],
-            "called_functions": []
-          },
-          "EnhancedIDORWorker": {
-            "line_number": 0,
-            "is_async": false,
-            "is_entry_point": true,
-            "parameters": [],
-            "called_functions": []
-          },
-          "EnhancedIDORWorker.__init__": {
-            "line_number": 0,
-            "is_async": false,
-            "is_entry_point": false,
-            "parameters": [
-              {
-                "name": "config",
-                "type": "IdorConfig | None",
-                "default": null,
-                "required": false,
-                "kind": "positional_or_keyword"
-              }
-            ],
-            "called_functions": [
-              "IdorConfig",
-              "SmartIDORDetector",
-              "logger.info"
-            ]
-          },
-          "EnhancedIDORWorker.run": {
-            "line_number": 0,
-            "is_async": false,
-            "is_entry_point": false,
-            "parameters": [],
-            "called_functions": [
-              "get_broker",
-              "ResourceIdExtractor",
-              "httpx.AsyncClient",
-              "CrossUserTester",
-              "VerticalEscalationTester",
-              "broker.subscribe",
-              "AivaMessage.model_validate_json",
-              "FunctionTaskPayload",
-              "self._execute_task",
-              "logger.exception"
-            ]
-          },
-          "EnhancedIDORWorker._execute_task": {
-            "line_number": 0,
-            "is_async": false,
-            "is_entry_point": false,
-            "parameters": [
-              {
-                "name": "task",
-                "type": "FunctionTaskPayload",
-                "default": null,
-                "required": true,
-                "kind": "positional_or_keyword"
-              }
-            ],
-            "called_functions": [
-              "get_broker",
-              "logger.info",
-              "self.process_task",
-              "AivaMessage",
-              "broker.publish",
-              "logger.info",
-              "logger.exception"
-            ]
-          },
-          "EnhancedIDORWorker.process_task": {
-            "line_number": 0,
-            "is_async": false,
-            "is_entry_point": false,
-            "parameters": [
-              {
-                "name": "task",
-                "type": "FunctionTaskPayload",
-                "default": null,
-                "required": true,
-                "kind": "positional_or_keyword"
-              }
-            ],
-            "called_functions": [
-              "logger.info",
-              "StatisticsCollector",
-              "self.smart_detector.detect_vulnerabilities",
-              "stats_collector.record_request",
-              "stats_collector.record_request",
-              "stats_collector.record_request",
-              "finding.get",
-              "vuln.get",
-              "stats_collector.set_module_specific",
-              "stats_collector.set_module_specific",
-              "stats_collector.set_module_specific",
-              "self._convert_to_finding_payloads",
-              "stats_collector.get_summary",
-              "detection_metrics.get",
-              "EnhancedIdorTelemetry",
-              "logger.info"
-            ]
-          },
-          "EnhancedIDORWorker._convert_to_finding_payloads": {
-            "line_number": 0,
-            "is_async": false,
-            "is_entry_point": false,
-            "parameters": [
-              {
-                "name": "findings_data",
-                "type": "list[dict[str, Any]]",
-                "default": null,
-                "required": true,
-                "kind": "positional_or_keyword"
-              },
-              {
-                "name": "task",
-                "type": "FunctionTaskPayload",
-                "default": null,
-                "required": true,
-                "kind": "positional_or_keyword"
-              }
-            ],
-            "called_functions": [
-              "FindingPayload",
-              "findings.append"
-            ]
-          },
-          "run": {
-            "line_number": 0,
-            "is_async": false,
-            "is_entry_point": true,
-            "parameters": [],
-            "called_functions": [
-              "EnhancedIDORWorker",
-              "worker.run"
-            ]
-          },
-          "process_task": {
-            "line_number": 0,
-            "is_async": false,
-            "is_entry_point": true,
-            "parameters": [
-              {
-                "name": "task",
-                "type": "FunctionTaskPayload",
-                "default": null,
-                "required": true,
-                "kind": "positional_or_keyword"
-              }
-            ],
-            "called_functions": [
-              "ResourceIdExtractor",
-              "CrossUserTester",
-              "VerticalEscalationTester",
-              "EnhancedIDORWorker",
-              "worker.process_task"
-            ]
-          }
-        },
-        "entry_points": [],
-        "export_functions": [
-          "EnhancedIdorTelemetry",
-          "EnhancedIdorTaskExecutionResult",
-          "EnhancedIDORWorker",
-          "run",
-          "process_task"
-        ]
-      },
       "resource_id_extractor": {
         "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\function_idor\\resource_id_extractor.py",
         "functions": {
@@ -8209,6 +6186,7 @@
             "is_async": false,
             "is_entry_point": true,
             "parameters": [],
+            "module_doc": "",
             "called_functions": []
           },
           "ResourceIdExtractor": {
@@ -8216,6 +6194,7 @@
             "is_async": false,
             "is_entry_point": true,
             "parameters": [],
+            "module_doc": "",
             "called_functions": []
           },
           "ResourceIdExtractor.extract_from_url": {
@@ -8231,6 +6210,7 @@
                 "kind": "positional_or_keyword"
               }
             ],
+            "module_doc": "",
             "called_functions": [
               "url.split",
               "path.split",
@@ -8260,6 +6240,7 @@
                 "kind": "positional_or_keyword"
               }
             ],
+            "module_doc": "",
             "called_functions": [
               "int",
               "test_ids.append",
@@ -8305,6 +6286,7 @@
                 "kind": "positional_or_keyword"
               }
             ],
+            "module_doc": "",
             "called_functions": [
               "urlparse",
               "parsed.path.split",
@@ -8329,6 +6311,7 @@
             "is_async": false,
             "is_entry_point": true,
             "parameters": [],
+            "module_doc": "",
             "called_functions": [
               "field",
               "field",
@@ -8348,6 +6331,7 @@
                 "kind": "positional_or_keyword"
               }
             ],
+            "module_doc": "",
             "called_functions": [
               "self.findings.append"
             ]
@@ -8365,6 +6349,7 @@
                 "kind": "positional_or_keyword"
               }
             ],
+            "module_doc": "",
             "called_functions": [
               "self.errors.append"
             ]
@@ -8374,6 +6359,7 @@
             "is_async": false,
             "is_entry_point": false,
             "parameters": [],
+            "module_doc": "",
             "called_functions": []
           },
           "SmartIDORDetector": {
@@ -8381,6 +6367,7 @@
             "is_async": false,
             "is_entry_point": true,
             "parameters": [],
+            "module_doc": "",
             "called_functions": []
           },
           "SmartIDORDetector.__init__": {
@@ -8396,6 +6383,7 @@
                 "kind": "positional_or_keyword"
               }
             ],
+            "module_doc": "",
             "called_functions": [
               "IdorConfig",
               "logger.info"
@@ -8414,6 +6402,7 @@
                 "kind": "positional_or_keyword"
               }
             ],
+            "module_doc": "",
             "called_functions": [
               "UnifiedSmartDetectionManager",
               "IDORDetectionContext",
@@ -8438,6 +6427,7 @@
             "is_async": false,
             "is_entry_point": false,
             "parameters": [],
+            "module_doc": "",
             "called_functions": []
           },
           "SmartIDORDetector._extract_resource_ids": {
@@ -8453,6 +6443,7 @@
                 "kind": "positional_or_keyword"
               }
             ],
+            "module_doc": "",
             "called_functions": [
               "str",
               "asyncio.sleep",
@@ -8494,6 +6485,7 @@
                 "kind": "positional_or_keyword"
               }
             ],
+            "module_doc": "",
             "called_functions": [
               "len",
               "self._test_horizontal_access",
@@ -8527,6 +6519,7 @@
                 "kind": "positional_or_keyword"
               }
             ],
+            "module_doc": "",
             "called_functions": [
               "len",
               "len",
@@ -8561,6 +6554,7 @@
                 "kind": "positional_or_keyword"
               }
             ],
+            "module_doc": "",
             "called_functions": [
               "context.cross_user_tester.test_horizontal_idor",
               "self._build_horizontal_finding",
@@ -8606,6 +6600,7 @@
                 "kind": "positional_or_keyword"
               }
             ],
+            "module_doc": "",
             "called_functions": [
               "context.vertical_tester.test_vertical_escalation",
               "self._build_vertical_finding",
@@ -8644,6 +6639,7 @@
                 "kind": "positional_or_keyword"
               }
             ],
+            "module_doc": "",
             "called_functions": []
           },
           "SmartIDORDetector._build_vertical_finding": {
@@ -8680,6 +6676,7 @@
                 "kind": "positional_or_keyword"
               }
             ],
+            "module_doc": "",
             "called_functions": []
           }
         },
@@ -8697,6 +6694,7 @@
             "is_async": false,
             "is_entry_point": true,
             "parameters": [],
+            "module_doc": "",
             "called_functions": [
               "Field"
             ]
@@ -8715,6 +6713,7 @@
             "is_async": false,
             "is_entry_point": true,
             "parameters": [],
+            "module_doc": "",
             "called_functions": []
           },
           "IDORDetector.__init__": {
@@ -8730,6 +6729,7 @@
                 "kind": "positional_or_keyword"
               }
             ],
+            "module_doc": "",
             "called_functions": []
           },
           "IDORDetector.analyze": {
@@ -8745,6 +6745,7 @@
                 "kind": "positional_or_keyword"
               }
             ],
+            "module_doc": "",
             "called_functions": [
               "IDOREngine",
               "str",
@@ -8790,6 +6791,7 @@
                 "kind": "positional_or_keyword"
               }
             ],
+            "module_doc": "",
             "called_functions": [
               "engine.replace_id_in_url",
               "engine.test_horizontal",
@@ -8816,6 +6818,7 @@
                 "kind": "positional_or_keyword"
               }
             ],
+            "module_doc": "",
             "called_functions": [
               "engine.test_vertical",
               "findings.append"
@@ -8848,6 +6851,7 @@
                 "kind": "positional_or_keyword"
               }
             ],
+            "module_doc": "",
             "called_functions": [
               "self._determine_severity",
               "self._create_vulnerability",
@@ -8870,6 +6874,7 @@
                 "kind": "positional_or_keyword"
               }
             ],
+            "module_doc": "",
             "called_functions": []
           },
           "IDORDetector._create_vulnerability": {
@@ -8892,6 +6897,7 @@
                 "kind": "positional_or_keyword"
               }
             ],
+            "module_doc": "",
             "called_functions": []
           }
         },
@@ -8908,6 +6914,7 @@
             "is_async": false,
             "is_entry_point": true,
             "parameters": [],
+            "module_doc": "",
             "called_functions": []
           },
           "IDORIssue": {
@@ -8915,6 +6922,7 @@
             "is_async": false,
             "is_entry_point": true,
             "parameters": [],
+            "module_doc": "",
             "called_functions": []
           },
           "IDOREngine": {
@@ -8922,6 +6930,7 @@
             "is_async": false,
             "is_entry_point": true,
             "parameters": [],
+            "module_doc": "",
             "called_functions": []
           },
           "IDOREngine.__init__": {
@@ -8929,6 +6938,7 @@
             "is_async": false,
             "is_entry_point": false,
             "parameters": [],
+            "module_doc": "",
             "called_functions": [
               "httpx.AsyncClient"
             ]
@@ -8938,6 +6948,7 @@
             "is_async": false,
             "is_entry_point": false,
             "parameters": [],
+            "module_doc": "",
             "called_functions": [
               "self.client.aclose"
             ]
@@ -8955,6 +6966,7 @@
                 "kind": "positional_or_keyword"
               }
             ],
+            "module_doc": "",
             "called_functions": [
               "ids.append"
             ]
@@ -8979,6 +6991,7 @@
                 "kind": "positional_or_keyword"
               }
             ],
+            "module_doc": "",
             "called_functions": [
               "int",
               "str",
@@ -9012,6 +7025,7 @@
                 "kind": "positional_or_keyword"
               }
             ],
+            "module_doc": "",
             "called_functions": []
           },
           "IDOREngine.test_horizontal": {
@@ -9041,6 +7055,7 @@
                 "kind": "positional_or_keyword"
               }
             ],
+            "module_doc": "",
             "called_functions": [
               "self.client.get",
               "self.client.get",
@@ -9068,6 +7083,7 @@
                 "kind": "positional_or_keyword"
               }
             ],
+            "module_doc": "",
             "called_functions": [
               "self.client.get",
               "self._calculate_sensitivity"
@@ -9093,6 +7109,7 @@
                 "kind": "positional_or_keyword"
               }
             ],
+            "module_doc": "",
             "called_functions": [
               "response_text.lower",
               "url.lower"
@@ -9118,6 +7135,7 @@
                 "kind": "positional_or_keyword"
               }
             ],
+            "module_doc": "",
             "called_functions": [
               "unknown_call.startswith",
               "json.loads",
@@ -9145,6 +7163,7 @@
                 "kind": "positional_or_keyword"
               }
             ],
+            "module_doc": "",
             "called_functions": [
               "response_text.lower",
               "max"
@@ -9157,70 +7176,13 @@
           "IDORIssue",
           "IDOREngine"
         ]
-      },
-      "idor_worker": {
-        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\function_idor\\worker\\idor_worker.py",
-        "functions": {
-          "_topic": {
-            "line_number": 0,
-            "is_async": false,
-            "is_entry_point": true,
-            "parameters": [
-              {
-                "name": "env_name",
-                "type": "str",
-                "default": null,
-                "required": true,
-                "kind": "positional_or_keyword"
-              },
-              {
-                "name": "default",
-                "type": "str",
-                "default": null,
-                "required": true,
-                "kind": "positional_or_keyword"
-              }
-            ],
-            "called_functions": []
-          },
-          "run": {
-            "line_number": 0,
-            "is_async": false,
-            "is_entry_point": true,
-            "parameters": [],
-            "called_functions": [
-              "get_broker",
-              "_topic",
-              "_topic",
-              "_topic",
-              "IdorConfig",
-              "IDORDetector",
-              "broker.subscribe",
-              "AivaMessage.model_validate_json",
-              "FunctionTaskPayload",
-              "new_id",
-              "broker.publish",
-              "detector.analyze",
-              "AivaMessage",
-              "broker.publish",
-              "broker.publish",
-              "logger.exception",
-              "broker.publish"
-            ]
-          }
-        },
-        "entry_points": [],
-        "export_functions": [
-          "_topic",
-          "run"
-        ]
       }
     }
   },
   "summary": {
-    "total_files": 10,
-    "total_graphs": 55,
-    "total_connections": 15,
-    "total_flow_chains": 13
+    "total_files": 8,
+    "total_graphs": 42,
+    "total_connections": 3,
+    "total_flow_chains": 3
   }
 }

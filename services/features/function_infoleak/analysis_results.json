@@ -1,0 +1,15 @@
+{
+  "graphs": [],
+  "connections": [],
+  "flow_chains": [],
+  "function_details": {
+    "function_map": {},
+    "script_functions": {}
+  },
+  "summary": {
+    "total_files": 0,
+    "total_graphs": 0,
+    "total_connections": 0,
+    "total_flow_chains": 0
+  }
+}

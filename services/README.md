@@ -181,7 +181,6 @@ services/                          # 🚀 AIVA Services 根目錄
 │   │   │   ├── decision/          # 🎯 決策引擎
 │   │   │   ├── neural/            # 🧠 神經網路
 │   │   │   ├── rag/               # 📚 檢索增強生成
-│   │   │   ├── external_loop_connector.py
 │   │   │   ├── internal_loop_connector.py
 │   │   │   └── nlg_system.py      # 自然語言生成
 │   │   ├── core_capabilities/     # 💪 核心能力（AI 的能力系统）
@@ -194,14 +193,6 @@ services/                          # 🚀 AIVA Services 根目錄
 │   │   │   ├── processing/        # ⚙️ 處理引擎
 │   │   │   ├── capability_registry.py
 │   │   │   └── multilang_coordinator.py
-│   │   ├── external_learning/     # 🎓 外部學習
-│   │   │   ├── ai_model/          # 🤖 AI 模型
-│   │   │   ├── analysis/          # 📊 分析學習
-│   │   │   ├── learning/          # 📖 機器學習
-│   │   │   ├── tracing/           # 🔍 執行追蹤
-│   │   │   ├── training/          # 🏋️ 訓練管理
-│   │   │   ├── event_listener.py
-│   │   │   └── experience_manager.py
 │   │   ├── internal_exploration/  # 🔬 內部探索
 │   │   │   ├── capability_analyzer.py
 │   │   │   ├── language_extractors.py
@@ -722,7 +713,7 @@ services/
 
 ## 🏗️ 服務架構總覽
 
-AIVA Services 採用**多語言微服務架構**，六大核心服務協同作業：
+AIVA Services 採用**多語言微服務架構**，五大核心模組協同作業：
 
 ```mermaid
 graph TB
@@ -1336,7 +1327,7 @@ chore: 雜項
 ## 🎯 2025年11月更新摘要
 
 ### 🎯 Services README 全面更新 (2025-11-17)
-- **六大核心服務**: 更新為六大服務架構 (新增Services Root管理層)
+- **五大核心模組**: 更新為五大模組架構 (cognitive_core, internal_exploration, task_planning, core_capabilities, service_backbone)
 - **完整目錄結構**: 基於最新目錄樹完整更新 (498+檔案, 126,000+行代碼)
 - **多語言架構圖**: Mermaid流程圖展示服務間協作關係
 - **詳細功能分析**: 每個服務的組件架構與技術棧說明

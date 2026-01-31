@@ -36,6 +36,24 @@ AIVA Core 是整個 AIVA 系統的核心大腦，採用**五大模組架構**設
 - ✅ **真實執行**: 所有 840 個能力真實註冊，無模擬數據
 - ✅ **Bug Bounty 優化**: 四大決策方法針對 HackerOne 實戰優化
 
+### 核心根層級組件
+
+**`ai_executor_interface.py`** - 執行器標準介面定義
+- 定義所有執行器的統一介面規範 (Interface/Protocol)
+- 確保 TaskExecutor, PlanExecutor 等執行器行為一致性
+- 遵循里氏替換原則 (LSP)，支援執行器可替換性
+- 提供標準方法簽名：`execute()`, `validate()`, `get_status()`
+
+**使用範例**:
+```python
+from aiva_core.ai_executor_interface import AIExecutorInterface
+
+class CustomExecutor(AIExecutorInterface):
+    async def execute(self, task):
+        # 實現執行邏輯
+        pass
+```
+
 ---
 
 ## 🏛️ 五大核心模組

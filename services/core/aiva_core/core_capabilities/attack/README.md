@@ -25,11 +25,13 @@
   - 編排 Features 模組執行測試
   - 從 Integration 收集和分析結果
 
-### custom_exploits_example.py
+### custom_exploits_example.py ⚠️ 範例代碼
 - `TimeBasedSQLiExploit` - 時間盲注 SQL 注入利用示例
 - `MongoDBInjectionExploit` - MongoDB 注入利用示例
 - `Jinja2SSTIExploit` - Jinja2 SSTI 模板注入示例
 - `CustomAuthBypassExploit` - 認證繞過利用示例
+
+**注意**: 此檔案為範例代碼，建議移動至 `examples/` 目錄或在生產環境部署時排除。
 
 ## 架構流程
 

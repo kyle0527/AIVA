@@ -1,0 +1,585 @@
+{
+  "graphs": [
+    {
+      "name": "SQLiCommandHandler",
+      "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_sqli\\command_handler.py",
+      "type": "class",
+      "nodes": [
+        {
+          "id": "SQLiCommandHandler_1",
+          "label": "SQLiCommandHandler",
+          "kind": "start",
+          "nexts": [
+            "SQLiCommandHandler_2"
+          ],
+          "metadata": {
+            "type": "head",
+            "name": "SQLiCommandHandler",
+            "docstring": "SQLi 命令處理器\n\n實現 aiva_common.CommandHandler 協議,處理 FEATURE_SQLI_TEST 命令。\n包裝現有的 SqliManager 功能,提供標準化接口。",
+            "is_class": true
+          }
+        },
+        {
+          "id": "SQLiCommandHandler_2",
+          "label": "End",
+          "kind": "end",
+          "nexts": [],
+          "metadata": {}
+        }
+      ],
+      "start_node_id": "SQLiCommandHandler_1",
+      "end_node_id": "SQLiCommandHandler_2"
+    },
+    {
+      "name": "SQLiCommandHandler.__init__",
+      "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_sqli\\command_handler.py",
+      "type": "method",
+      "nodes": [
+        {
+          "id": "SQLiCommandHandler___init___1",
+          "label": "SQLiCommandHandler.__init__",
+          "kind": "start",
+          "nexts": [
+            "SQLiCommandHandler___init___3"
+          ],
+          "metadata": {
+            "type": "head",
+            "name": "SQLiCommandHandler.__init__",
+            "parameters": [],
+            "docstring": "初始化 SQLi 命令處理器",
+            "return_type": "any"
+          }
+        },
+        {
+          "id": "SQLiCommandHandler___init___2",
+          "label": "End",
+          "kind": "end",
+          "nexts": [],
+          "metadata": {}
+        },
+        {
+          "id": "SQLiCommandHandler___init___3",
+          "label": "Call: SQLInjectionManager",
+          "kind": "call",
+          "nexts": [
+            "SQLiCommandHandler___init___4"
+          ],
+          "metadata": {
+            "type": "tail",
+            "target_func": "SQLInjectionManager"
+          }
+        },
+        {
+          "id": "SQLiCommandHandler___init___4",
+          "label": "Call: self.logger.info",
+          "kind": "call",
+          "nexts": [
+            "SQLiCommandHandler___init___2"
+          ],
+          "metadata": {
+            "type": "tail",
+            "target_func": "self.logger.info"
+          }
+        }
+      ],
+      "start_node_id": "SQLiCommandHandler___init___1",
+      "end_node_id": "SQLiCommandHandler___init___2"
+    },
+    {
+      "name": "SQLiCommandHandler.handle_command",
+      "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_sqli\\command_handler.py",
+      "type": "method",
+      "nodes": [
+        {
+          "id": "SQLiCommandHandler_handle_command_1",
+          "label": "SQLiCommandHandler.handle_command",
+          "kind": "start",
+          "nexts": [
+            "SQLiCommandHandler_handle_command_3"
+          ],
+          "metadata": {
+            "type": "head",
+            "name": "SQLiCommandHandler.handle_command",
+            "parameters": [
+              {
+                "name": "command",
+                "type": "AICommand",
+                "default": null,
+                "required": true,
+                "kind": "positional_or_keyword"
+              },
+              {
+                "name": "context",
+                "type": "Optional[CommandContext]",
+                "default": null,
+                "required": false,
+                "kind": "positional_or_keyword"
+              }
+            ],
+            "docstring": "處理 AI 命令\n\nArgs:\n    command: AI 命令\n        - command_type: 必須是 FEATURE_SQLI_TEST\n        - payload: {\n            \"target_url\": \"https://example.com/login\",\n            \"method\": \"POST\",\n            \"parameters\": {\"username\": \"admin\", \"password\": \"test\"},\n            \"detection_engines\": [\"boolean\", \"time\", \"union\", \"error\"],\n            \"deep_scan\": false\n        }\n        \n    context: 執行上下文\n        \nReturns:\n    AICommandResult: 標準命令結果",
+            "return_type": "AICommandResult"
+          }
+        },
+        {
+          "id": "SQLiCommandHandler_handle_command_2",
+          "label": "End",
+          "kind": "end",
+          "nexts": [],
+          "metadata": {}
+        },
+        {
+          "id": "SQLiCommandHandler_handle_command_3",
+          "label": "Call: time.time",
+          "kind": "call",
+          "nexts": [
+            "SQLiCommandHandler_handle_command_4"
+          ],
+          "metadata": {
+            "type": "tail",
+            "target_func": "time.time"
+          }
+        },
+        {
+          "id": "SQLiCommandHandler_handle_command_4",
+          "label": "if command.command_type != CommandType.FEATURE_SQLI_TEST",
+          "kind": "cond",
+          "nexts": [
+            "SQLiCommandHandler_handle_command_5",
+            "SQLiCommandHandler_handle_command_6"
+          ],
+          "metadata": {}
+        },
+        {
+          "id": "SQLiCommandHandler_handle_command_5",
+          "label": "Call: ValueError",
+          "kind": "call",
+          "nexts": [
+            "SQLiCommandHandler_handle_command_6"
+          ],
+          "metadata": {
+            "type": "tail",
+            "target_func": "ValueError"
+          }
+        },
+        {
+          "id": "SQLiCommandHandler_handle_command_6",
+          "label": "",
+          "kind": "op",
+          "nexts": [
+            "SQLiCommandHandler_handle_command_7"
+          ],
+          "metadata": {}
+        },
+        {
+          "id": "SQLiCommandHandler_handle_command_7",
+          "label": "Call: payload.get",
+          "kind": "call",
+          "nexts": [
+            "SQLiCommandHandler_handle_command_8"
+          ],
+          "metadata": {
+            "type": "tail",
+            "target_func": "payload.get"
+          }
+        },
+        {
+          "id": "SQLiCommandHandler_handle_command_8",
+          "label": "if not target_url",
+          "kind": "cond",
+          "nexts": [
+            "SQLiCommandHandler_handle_command_9",
+            "SQLiCommandHandler_handle_command_10"
+          ],
+          "metadata": {}
+        },
+        {
+          "id": "SQLiCommandHandler_handle_command_9",
+          "label": "Call: ValueError",
+          "kind": "call",
+          "nexts": [
+            "SQLiCommandHandler_handle_command_10"
+          ],
+          "metadata": {
+            "type": "tail",
+            "target_func": "ValueError"
+          }
+        },
+        {
+          "id": "SQLiCommandHandler_handle_command_10",
+          "label": "",
+          "kind": "op",
+          "nexts": [
+            "SQLiCommandHandler_handle_command_11"
+          ],
+          "metadata": {}
+        },
+        {
+          "id": "SQLiCommandHandler_handle_command_11",
+          "label": "Call: payload.get",
+          "kind": "call",
+          "nexts": [
+            "SQLiCommandHandler_handle_command_12"
+          ],
+          "metadata": {
+            "type": "tail",
+            "target_func": "payload.get"
+          }
+        },
+        {
+          "id": "SQLiCommandHandler_handle_command_12",
+          "label": "Call: payload.get",
+          "kind": "call",
+          "nexts": [
+            "SQLiCommandHandler_handle_command_13"
+          ],
+          "metadata": {
+            "type": "tail",
+            "target_func": "payload.get"
+          }
+        },
+        {
+          "id": "SQLiCommandHandler_handle_command_13",
+          "label": "Call: payload.get",
+          "kind": "call",
+          "nexts": [
+            "SQLiCommandHandler_handle_command_14"
+          ],
+          "metadata": {
+            "type": "tail",
+            "target_func": "payload.get"
+          }
+        },
+        {
+          "id": "SQLiCommandHandler_handle_command_14",
+          "label": "Call: payload.get",
+          "kind": "call",
+          "nexts": [
+            "SQLiCommandHandler_handle_command_15"
+          ],
+          "metadata": {
+            "type": "tail",
+            "target_func": "payload.get"
+          }
+        },
+        {
+          "id": "SQLiCommandHandler_handle_command_15",
+          "label": "Call: self.logger.info",
+          "kind": "call",
+          "nexts": [
+            "SQLiCommandHandler_handle_command_16"
+          ],
+          "metadata": {
+            "type": "tail",
+            "target_func": "self.logger.info"
+          }
+        },
+        {
+          "id": "SQLiCommandHandler_handle_command_16",
+          "label": "Call: SQLTarget",
+          "kind": "call",
+          "nexts": [
+            "SQLiCommandHandler_handle_command_17"
+          ],
+          "metadata": {
+            "type": "tail",
+            "target_func": "SQLTarget"
+          }
+        },
+        {
+          "id": "SQLiCommandHandler_handle_command_17",
+          "label": "Call: any",
+          "kind": "call",
+          "nexts": [
+            "SQLiCommandHandler_handle_command_18"
+          ],
+          "metadata": {
+            "type": "tail",
+            "target_func": "any"
+          }
+        },
+        {
+          "id": "SQLiCommandHandler_handle_command_18",
+          "label": "Call: self.sqli_manager.comprehensive_scan",
+          "kind": "call",
+          "nexts": [
+            "SQLiCommandHandler_handle_command_19"
+          ],
+          "metadata": {
+            "type": "tail",
+            "target_func": "self.sqli_manager.comprehensive_scan"
+          }
+        },
+        {
+          "id": "SQLiCommandHandler_handle_command_19",
+          "label": "Call: time.time",
+          "kind": "call",
+          "nexts": [
+            "SQLiCommandHandler_handle_command_20"
+          ],
+          "metadata": {
+            "type": "tail",
+            "target_func": "time.time"
+          }
+        },
+        {
+          "id": "SQLiCommandHandler_handle_command_20",
+          "label": "Call: len",
+          "kind": "call",
+          "nexts": [
+            "SQLiCommandHandler_handle_command_21"
+          ],
+          "metadata": {
+            "type": "tail",
+            "target_func": "len"
+          }
+        },
+        {
+          "id": "SQLiCommandHandler_handle_command_21",
+          "label": "Call: len",
+          "kind": "call",
+          "nexts": [
+            "SQLiCommandHandler_handle_command_22"
+          ],
+          "metadata": {
+            "type": "tail",
+            "target_func": "len"
+          }
+        },
+        {
+          "id": "SQLiCommandHandler_handle_command_22",
+          "label": "Call: len",
+          "kind": "call",
+          "nexts": [
+            "SQLiCommandHandler_handle_command_23"
+          ],
+          "metadata": {
+            "type": "tail",
+            "target_func": "len"
+          }
+        },
+        {
+          "id": "SQLiCommandHandler_handle_command_23",
+          "label": "Call: unknown_call.join",
+          "kind": "call",
+          "nexts": [
+            "SQLiCommandHandler_handle_command_24"
+          ],
+          "metadata": {
+            "type": "tail",
+            "target_func": "unknown_call.join"
+          }
+        },
+        {
+          "id": "SQLiCommandHandler_handle_command_24",
+          "label": "return AICommandResult(command_id=command.command_id, status=CommandStatus.COMPLETED, success=True, result={'vulnerability_found': vulnerabilities_found > 0, 'vulnerabilities_count': vulnerabilities_found, 'summary': summary_text, 'sqlmap_results': result.get('sqlmap_results', []), 'custom_results': result.get('custom_scan_results', []), 'nosql_results': result.get('nosql_results', []), 'target_info': {'url': target.url, 'method': target.method, 'parameters': list(target.parameters.keys())}}, execution_time=execution_time, started_at=datetime.now(UTC), completed_at=datetime.now(UTC), error=None, error_code=None, error_details=None, metrics={'scan_depth': 'deep' if deep_scan else 'standard', 'engines_used': len(detection_engines)})",
+          "kind": "op",
+          "nexts": [
+            "SQLiCommandHandler_handle_command_2",
+            "SQLiCommandHandler_handle_command_25"
+          ],
+          "metadata": {}
+        },
+        {
+          "id": "SQLiCommandHandler_handle_command_25",
+          "label": "Call: time.time",
+          "kind": "call",
+          "nexts": [
+            "SQLiCommandHandler_handle_command_26"
+          ],
+          "metadata": {
+            "type": "tail",
+            "target_func": "time.time"
+          }
+        },
+        {
+          "id": "SQLiCommandHandler_handle_command_26",
+          "label": "Call: self.logger.error",
+          "kind": "call",
+          "nexts": [
+            "SQLiCommandHandler_handle_command_27"
+          ],
+          "metadata": {
+            "type": "tail",
+            "target_func": "self.logger.error"
+          }
+        },
+        {
+          "id": "SQLiCommandHandler_handle_command_27",
+          "label": "return AICommandResult(command_id=command.command_id, status=CommandStatus.FAILED, success=False, error=str(e), execution_time=execution_time, started_at=datetime.now(UTC), completed_at=datetime.now(UTC), error_code='SQLI_EXECUTION_ERROR', error_details={'exception_type': type(e).__name__, 'message': str(e)})",
+          "kind": "op",
+          "nexts": [
+            "SQLiCommandHandler_handle_command_2"
+          ],
+          "metadata": {}
+        }
+      ],
+      "start_node_id": "SQLiCommandHandler_handle_command_1",
+      "end_node_id": "SQLiCommandHandler_handle_command_2"
+    }
+  ],
+  "connections": [],
+  "flow_chains": [],
+  "function_details": {
+    "function_map": {
+      "SQLiCommandHandler": {
+        "file_name": "command_handler.py",
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_sqli\\command_handler.py",
+        "script_name": "command_handler",
+        "line_number": 0,
+        "is_async": false,
+        "is_entry_point": true,
+        "is_class": true,
+        "parameters": [],
+        "docstring": "SQLi 命令處理器\n\n實現 aiva_common.CommandHandler 協議,處理 FEATURE_SQLI_TEST 命令。\n包裝現有的 SqliManager 功能,提供標準化接口。",
+        "module_doc": "",
+        "return_type": "any",
+        "called_functions": []
+      },
+      "SQLiCommandHandler.__init__": {
+        "file_name": "command_handler.py",
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_sqli\\command_handler.py",
+        "script_name": "command_handler",
+        "line_number": 0,
+        "is_async": false,
+        "is_entry_point": false,
+        "is_class": false,
+        "parameters": [],
+        "docstring": "初始化 SQLi 命令處理器",
+        "module_doc": "",
+        "return_type": "any",
+        "called_functions": [
+          "SQLInjectionManager",
+          "self.logger.info"
+        ]
+      },
+      "SQLiCommandHandler.handle_command": {
+        "file_name": "command_handler.py",
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_sqli\\command_handler.py",
+        "script_name": "command_handler",
+        "line_number": 0,
+        "is_async": false,
+        "is_entry_point": false,
+        "is_class": false,
+        "parameters": [
+          {
+            "name": "command",
+            "type": "AICommand",
+            "default": null,
+            "required": true,
+            "kind": "positional_or_keyword"
+          },
+          {
+            "name": "context",
+            "type": "Optional[CommandContext]",
+            "default": null,
+            "required": false,
+            "kind": "positional_or_keyword"
+          }
+        ],
+        "docstring": "處理 AI 命令\n\nArgs:\n    command: AI 命令\n        - command_type: 必須是 FEATURE_SQLI_TEST\n        - payload: {\n            \"target_url\": \"https://example.com/login\",\n            \"method\": \"POST\",\n            \"parameters\": {\"username\": \"admin\", \"password\": \"test\"},\n            \"detection_engines\": [\"boolean\", \"time\", \"union\", \"error\"],\n            \"deep_scan\": false\n        }\n        \n    context: 執行上下文\n        \nReturns:\n    AICommandResult: 標準命令結果",
+        "module_doc": "",
+        "return_type": "AICommandResult",
+        "called_functions": [
+          "time.time",
+          "ValueError",
+          "payload.get",
+          "ValueError",
+          "payload.get",
+          "payload.get",
+          "payload.get",
+          "payload.get",
+          "self.logger.info",
+          "SQLTarget",
+          "any",
+          "self.sqli_manager.comprehensive_scan",
+          "time.time",
+          "len",
+          "len",
+          "len",
+          "unknown_call.join",
+          "time.time",
+          "self.logger.error"
+        ]
+      }
+    },
+    "script_functions": {
+      "command_handler": {
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\features_ready\\function_sqli\\command_handler.py",
+        "functions": {
+          "SQLiCommandHandler": {
+            "line_number": 0,
+            "is_async": false,
+            "is_entry_point": true,
+            "parameters": [],
+            "module_doc": "",
+            "called_functions": []
+          },
+          "SQLiCommandHandler.__init__": {
+            "line_number": 0,
+            "is_async": false,
+            "is_entry_point": false,
+            "parameters": [],
+            "module_doc": "",
+            "called_functions": [
+              "SQLInjectionManager",
+              "self.logger.info"
+            ]
+          },
+          "SQLiCommandHandler.handle_command": {
+            "line_number": 0,
+            "is_async": false,
+            "is_entry_point": false,
+            "parameters": [
+              {
+                "name": "command",
+                "type": "AICommand",
+                "default": null,
+                "required": true,
+                "kind": "positional_or_keyword"
+              },
+              {
+                "name": "context",
+                "type": "Optional[CommandContext]",
+                "default": null,
+                "required": false,
+                "kind": "positional_or_keyword"
+              }
+            ],
+            "module_doc": "",
+            "called_functions": [
+              "time.time",
+              "ValueError",
+              "payload.get",
+              "ValueError",
+              "payload.get",
+              "payload.get",
+              "payload.get",
+              "payload.get",
+              "self.logger.info",
+              "SQLTarget",
+              "any",
+              "self.sqli_manager.comprehensive_scan",
+              "time.time",
+              "len",
+              "len",
+              "len",
+              "unknown_call.join",
+              "time.time",
+              "self.logger.error"
+            ]
+          }
+        },
+        "entry_points": [],
+        "export_functions": [
+          "SQLiCommandHandler"
+        ]
+      }
+    }
+  },
+  "summary": {
+    "total_files": 1,
+    "total_graphs": 3,
+    "total_connections": 0,
+    "total_flow_chains": 0
+  }
+}

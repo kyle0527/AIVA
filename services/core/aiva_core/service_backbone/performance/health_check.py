@@ -15,6 +15,7 @@ AIVA 系統健康檢查器
 """
 
 import subprocess
+import sys
 import os
 import logging
 

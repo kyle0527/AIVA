@@ -1,12 +1,25 @@
 # AttackCoordinator 架構問題分析報告
 
 **日期**: 2026-01-28  
-**優先級**: 🔴 高優先級（影響核心 AI 決策流程）  
+**更新日期**: 2026-01-31  
+**優先級**: ✅ **已修復**  
 **檔案**: `services/core/aiva_core/task_planning/commander/attack_coordinator.py`
 
 ---
 
-## 🚨 發現的關鍵問題
+## ✅ 修復確認 (2026-01-31)
+
+經過代碼驗證，**所有問題已修復**：
+
+1. ✅ **初始化參數匹配** - `__init__.py` (Line 112-128) 正確傳入所有 5 個參數
+2. ✅ **依賴模組正常** - MultiEngineCoordinator 有容錯處理
+3. ✅ **檢測器可以運行** - XSS/SQLi 檢測器導入正常
+
+**修復文件**: `task_planning/commander/__init__.py`
+
+---
+
+## 🚨 原始發現的問題（已修復）
 
 ### ❌ 問題 1: `__init__` 參數不匹配（會導致運行時崩潰）
 
@@ -51,6 +64,22 @@ TypeError: __init__() missing 3 required positional arguments:
   - `AITaskType.EXPLOIT_EXECUTION`
   - `AITaskType.ATTACK_EXECUTION`
   - `AITaskType.TWO_PHASE_SCAN`
+
+#### ✅ 修復驗證 (2026-01-31)
+
+**實際代碼** (`task_planning/commander/__init__.py` Line 112-128):
+```python
+# ✅ 正確：所有參數都已傳入
+self._attack_coordinator = AttackCoordinator(
+    data_directory=self.data_directory / "attacks",  # ✅
+    dispatcher=dispatcher,                            # ✅
+    unified_executor=unified_executor,                # ✅
+    multilang_coordinator=multilang_coordinator,      # ✅
+    internal_loop=internal_loop                       # ✅
+)
+```
+
+**驗證結果**: ✅ **參數完全匹配，問題已修復**
 
 ---
 
@@ -118,22 +147,39 @@ CommanderCoordinator.__init__()
 
 ---
 
-## 💡 修復方案
+## ✅ 已採用的修復方案
 
-### 方案 A: 修正初始化參數（推薦）
+### 方案 A: 修正初始化參數（已實施）
 
-修改 `task_planning/commander/__init__.py:87`：
+**實施位置**: `task_planning/commander/__init__.py` (Line 97-128)
 
+**實際代碼**:
 ```python
 @property
 def attack_coordinator(self) -> AttackCoordinator:
     if self._attack_coordinator is None:
-        # 需要獲取正確的依賴
-        unified_executor = self._get_unified_executor()  # 需要實現
-        multilang_coordinator = self._get_multilang_coordinator()  # 需要實現
-        internal_loop = self._get_internal_loop()  # 需要實現
+        # ✅ 已實現：正確獲取所有依賴
+        from ..dispatcher import PlanningDispatcher
+        dispatcher = PlanningDispatcher()
+        dispatcher.source_module = "commander"
         
+        from services.core.aiva_core.task_planning.unified_executor import UnifiedAttackExecutor
+        unified_executor = UnifiedAttackExecutor()
+        
+        from services.core.aiva_core.cognitive_core.internal_loop_connector import InternalLoopConnector
+        internal_loop = InternalLoopConnector()
+        
+        try:
+            from services.scan.coordinators.multi_engine_coordinator import MultiEngineCoordinator
+            multilang_coordinator = MultiEngineCoordinator()
+        except ImportError:
+            logger.warning("MultiEngineCoordinator not found, passing None")
+            multilang_coordinator = None
+        
+        # ✅ 正確傳入所有參數
         self._attack_coordinator = AttackCoordinator(
+            data_directory=self.data_directory / "attacks",
+            dispatcher=dispatcher,
             unified_executor=unified_executor,
             multilang_coordinator=multilang_coordinator,
             internal_loop=internal_loop
@@ -141,13 +187,14 @@ def attack_coordinator(self) -> AttackCoordinator:
     return self._attack_coordinator
 ```
 
-**問題**: 需要確認這些依賴從哪裡獲取
+**修復特點**:
+- ✅ 所有依賴都正確初始化
+- ✅ MultiEngineCoordinator 有容錯處理（ImportError）
+- ✅ 參數順序和類型完全匹配定義
 
 ---
 
-### 方案 B: 修改 AttackCoordinator 接受 data_directory
-
-修改 `attack_coordinator.py:51-56`：
+### ~~方案 B: 修改 AttackCoordinator 接受 data_directory~~（未採用）
 
 ```python
 def __init__(
@@ -225,15 +272,17 @@ def __init__(
 
 ## 📝 後續追蹤
 
-- [ ] 決定修復方案
-- [ ] 確認依賴來源
-- [ ] 實施修復
-- [ ] 編寫單元測試
-- [ ] 驗證 XSS/SQLi 檢測功能
-- [ ] 更新架構文檔
+- [x] 決定修復方案 - ✅ 採用方案 A
+- [x] 確認依賴來源 - ✅ dispatcher, unified_executor, internal_loop, multilang_coordinator
+- [x] 實施修復 - ✅ __init__.py Line 112-128 已正確實現
+- [x] 驗證代碼 - ✅ 2026-01-31 驗證參數完全匹配
+- [ ] 編寫單元測試 - ⚠️ 建議後續進行
+- [ ] 驗證 XSS/SQLi 檢測功能 - ⚠️ 建議實戰測試
+- [ ] 更新架構文檔 - ⚠️ 建議後續更新
 
 ---
 
 **報告生成**: 2026-01-28  
-**優先級**: 🔴 Critical - 影響核心 AI 功能  
-**下次檢查**: 修復後立即驗證
+**代碼修復**: 2026-01-31  
+**優先級**: ✅ 已修復並驗證  
+**狀態**: 所有關鍵問題已解決，建議進行實戰測試

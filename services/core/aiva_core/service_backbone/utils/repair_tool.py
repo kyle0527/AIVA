@@ -17,6 +17,7 @@ AIVA 系統修復工具
 """
 
 import subprocess
+import sys
 import json
 import shutil
 import logging

@@ -58,7 +58,7 @@ from ...task_planning.command_router import (
     get_command_router,
 )
 from ..context_manager import get_context_manager
-from ...task_planning.planner.execution_planner import get_execution_planner
+from ...task_planning.planner.task_execution_planner import get_execution_planner
 
 
 class AIVACoreServiceCoordinator:

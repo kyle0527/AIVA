@@ -100,13 +100,14 @@ data = json.loads(result.stdout)  # ← 直接解析，無中間層
 | 檔案 | 功能 | 調用目標 |
 |------|------|---------|
 | `啟動AIVA系統.bat` | 啟動完整系統 | app.py (uvicorn) |
-| `啟動能力選單.bat` | 互動式能力選單 | aiva_cli_implementation.py --menu |
-| `執行Flow.bat` | 執行指定流程 | aiva_cli_implementation.py --flow [ID] |
-| `預覽Flow.bat` | 預覽執行計畫 | aiva_cli_implementation.py --dry-run |
+| `啟動能力選單.bat` | 互動式能力選單 | aiva_cli.py --menu |
+| `執行Flow.bat` | 執行指定流程 | aiva_cli.py --flow [ID] |
+| `預覽Flow.bat` | 預覽執行計畫 | aiva_cli.py --dry-run |
 
 ### CLI 實現
 
-**核心腳本**: `services/core/aiva_core/internal_exploration/python_tools/aiva_cli_implementation.py`
+**核心腳本**: `services/core/aiva_core/internal_exploration/aiva_internal_executor.py`
+(由 `services/core/aiva_core/core_capabilities/cli/aiva_cli.py` 統一調用)
 
 **功能**：
 - 讀取能力表 JSON（動態，數量隨時變動）
@@ -116,16 +117,17 @@ data = json.loads(result.stdout)  # ← 直接解析，無中間層
 
 ```bash
 # 列出可用能力
-python aiva_cli_implementation.py --list
+# 列出可用能力
+python -m aiva_core.core_capabilities.cli.aiva_cli --list
 
 # 搜尋能力
-python aiva_cli_implementation.py --search xss
+python -m aiva_core.core_capabilities.cli.aiva_cli --search xss
 
 # 執行指定 Flow
-python aiva_cli_implementation.py --flow 11
+python -m aiva_core.core_capabilities.cli.aiva_cli --flow 11
 
 # 預覽執行（不實際執行）
-python aiva_cli_implementation.py --flow 11 --dry-run
+python -m aiva_core.core_capabilities.cli.aiva_cli --flow 11 --dry-run
 ```
 
 ---
