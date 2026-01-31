@@ -1,6 +1,6 @@
 # AIVA General Documentation
 
-> **Version**: 2.0 | **Updated**: 2026-05-24
+> **Version**: 2.0 | **Updated**: 2026-01-31
 
 ## 1. System Architecture (Five Core Modules)
 
