@@ -40,39 +40,55 @@ class PassiveAnalyzer:
         # 敏感數據模式
         self.sensitive_patterns = {
             'email': (
-                r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b',
+                re.compile(r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b', re.IGNORECASE),
                 'Email address exposed'
             ),
             'ssn': (
-                r'\b\d{3}-\d{2}-\d{4}\b',
+                re.compile(r'\b\d{3}-\d{2}-\d{4}\b', re.IGNORECASE),
                 'Social Security Number exposed'
             ),
             'credit_card': (
-                r'\b(?:\d{4}[-\s]?){3}\d{4}\b',
+                re.compile(r'\b(?:\d{4}[-\s]?){3}\d{4}\b', re.IGNORECASE),
                 'Credit card number exposed'
             ),
             'api_key': (
-                r'\b[A-Za-z0-9_-]{32,}\b',
+                re.compile(r'\b[A-Za-z0-9_-]{32,}\b', re.IGNORECASE),
                 'Possible API key exposed'
             ),
             'jwt': (
-                r'eyJ[A-Za-z0-9_-]*\.eyJ[A-Za-z0-9_-]*\.[A-Za-z0-9_-]*',
+                re.compile(r'eyJ[A-Za-z0-9_-]*\.eyJ[A-Za-z0-9_-]*\.[A-Za-z0-9_-]*', re.IGNORECASE),
                 'JWT token exposed'
             ),
             'aws_key': (
-                r'AKIA[0-9A-Z]{16}',
+                re.compile(r'AKIA[0-9A-Z]{16}', re.IGNORECASE),
                 'AWS Access Key ID exposed'
             ),
             'private_key': (
-                r'-----BEGIN (?:RSA |EC |DSA )?PRIVATE KEY-----',
+                re.compile(r'-----BEGIN (?:RSA |EC |DSA )?PRIVATE KEY-----', re.IGNORECASE),
                 'Private key exposed'
             ),
             'password': (
-                r'password["\']?\s*[:=]\s*["\'][^"\']{3,}["\']',
+                re.compile(r'password["\']?\s*[:=]\s*["\'][^"\']{3,}["\']', re.IGNORECASE),
                 'Password in response'
             )
         }
         
+        # 錯誤披露模式
+        self.stack_trace_patterns = [
+            re.compile(r'at\s+[\w\.<>]+\s*\([^)]+\.java:\d+\)'),  # Java
+            re.compile(r'File\s+"[^"]+\.py",\s+line\s+\d+'),  # Python
+            re.compile(r'at\s+[\w\.<>]+\s*\([^)]+\.cs:\d+\)'),  # C#
+            re.compile(r'Error\s+in\s+/[\w/]+\.php\s+on\s+line\s+\d+'),  # PHP
+        ]
+
+        self.db_error_patterns = [
+            re.compile(r'SQL syntax.*MySQL', re.IGNORECASE),
+            re.compile(r'Warning.*mysql_', re.IGNORECASE),
+            re.compile(r'PostgreSQL.*ERROR', re.IGNORECASE),
+            re.compile(r'Oracle.*ORA-\d+', re.IGNORECASE),
+            re.compile(r'Microsoft SQL Server.*\d+', re.IGNORECASE),
+        ]
+
         # 安全頭部
         self.security_headers = {
             'strict-transport-security': {
@@ -200,7 +216,7 @@ class PassiveAnalyzer:
         findings = []
         
         for pattern_name, (pattern, description) in self.sensitive_patterns.items():
-            matches = re.finditer(pattern, url, re.IGNORECASE)
+            matches = pattern.finditer(url)
             for match in matches:
                 findings.append(PassiveFinding(
                     category='Sensitive Data in URL',
@@ -242,7 +258,7 @@ class PassiveAnalyzer:
         findings = []
         
         for pattern_name, (pattern, description) in self.sensitive_patterns.items():
-            matches = re.finditer(pattern, body, re.IGNORECASE)
+            matches = pattern.finditer(body)
             count = sum(1 for _ in matches)
             
             if count > 0:
@@ -387,15 +403,8 @@ class PassiveAnalyzer:
         status = response.get('status', 0)
         
         # 檢查堆棧跟踪
-        stack_trace_patterns = [
-            r'at\s+[\w\.<>]+\s*\([^)]+\.java:\d+\)',  # Java
-            r'File\s+"[^"]+\.py",\s+line\s+\d+',  # Python
-            r'at\s+[\w\.<>]+\s*\([^)]+\.cs:\d+\)',  # C#
-            r'Error\s+in\s+/[\w/]+\.php\s+on\s+line\s+\d+',  # PHP
-        ]
-        
-        for pattern in stack_trace_patterns:
-            if re.search(pattern, content):
+        for pattern in self.stack_trace_patterns:
+            if pattern.search(content):
                 findings.append(PassiveFinding(
                     category='Stack Trace Disclosure',
                     severity='Medium',
@@ -408,16 +417,8 @@ class PassiveAnalyzer:
                 break
         
         # 檢查數據庫錯誤
-        db_error_patterns = [
-            r'SQL syntax.*MySQL',
-            r'Warning.*mysql_',
-            r'PostgreSQL.*ERROR',
-            r'Oracle.*ORA-\d+',
-            r'Microsoft SQL Server.*\d+',
-        ]
-        
-        for pattern in db_error_patterns:
-            if re.search(pattern, content, re.IGNORECASE):
+        for pattern in self.db_error_patterns:
+            if pattern.search(content):
                 findings.append(PassiveFinding(
                     category='Database Error Disclosure',
                     severity='High',
