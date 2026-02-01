@@ -37,56 +37,66 @@ class PassiveAnalyzer:
     
     def _setup_patterns(self):
         """設置檢測模式"""
-        # 敏感數據模式
-        self.sensitive_patterns = {
+        # 敏感數據模式 - 預編譯正則表達式
+        # Note: We store (compiled_regex, description) tuple
+        raw_sensitive_patterns = {
             'email': (
-                re.compile(r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b', re.IGNORECASE),
+                r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b',
                 'Email address exposed'
             ),
             'ssn': (
-                re.compile(r'\b\d{3}-\d{2}-\d{4}\b', re.IGNORECASE),
+                r'\b\d{3}-\d{2}-\d{4}\b',
                 'Social Security Number exposed'
             ),
             'credit_card': (
-                re.compile(r'\b(?:\d{4}[-\s]?){3}\d{4}\b', re.IGNORECASE),
+                r'\b(?:\d{4}[-\s]?){3}\d{4}\b',
                 'Credit card number exposed'
             ),
             'api_key': (
-                re.compile(r'\b[A-Za-z0-9_-]{32,}\b', re.IGNORECASE),
+                r'\b[A-Za-z0-9_-]{32,}\b',
                 'Possible API key exposed'
             ),
             'jwt': (
-                re.compile(r'eyJ[A-Za-z0-9_-]*\.eyJ[A-Za-z0-9_-]*\.[A-Za-z0-9_-]*', re.IGNORECASE),
+                r'eyJ[A-Za-z0-9_-]*\.eyJ[A-Za-z0-9_-]*\.[A-Za-z0-9_-]*',
                 'JWT token exposed'
             ),
             'aws_key': (
-                re.compile(r'AKIA[0-9A-Z]{16}', re.IGNORECASE),
+                r'AKIA[0-9A-Z]{16}',
                 'AWS Access Key ID exposed'
             ),
             'private_key': (
-                re.compile(r'-----BEGIN (?:RSA |EC |DSA )?PRIVATE KEY-----', re.IGNORECASE),
+                r'-----BEGIN (?:RSA |EC |DSA )?PRIVATE KEY-----',
                 'Private key exposed'
             ),
             'password': (
-                re.compile(r'password["\']?\s*[:=]\s*["\'][^"\']{3,}["\']', re.IGNORECASE),
+                r'password["\']?\s*[:=]\s*["\'][^"\']{3,}["\']',
                 'Password in response'
             )
         }
         
+        self.sensitive_patterns = {
+            name: (re.compile(pattern, re.IGNORECASE), description)
+            for name, (pattern, description) in raw_sensitive_patterns.items()
+        }
+
         # 錯誤披露模式
         self.stack_trace_patterns = [
-            re.compile(r'at\s+[\w\.<>]+\s*\([^)]+\.java:\d+\)'),  # Java
-            re.compile(r'File\s+"[^"]+\.py",\s+line\s+\d+'),  # Python
-            re.compile(r'at\s+[\w\.<>]+\s*\([^)]+\.cs:\d+\)'),  # C#
-            re.compile(r'Error\s+in\s+/[\w/]+\.php\s+on\s+line\s+\d+'),  # PHP
+            re.compile(p) for p in [
+                r'at\s+[\w\.<>]+\s*\([^)]+\.java:\d+\)',  # Java
+                r'File\s+"[^"]+\.py",\s+line\s+\d+',  # Python
+                r'at\s+[\w\.<>]+\s*\([^)]+\.cs:\d+\)',  # C#
+                r'Error\s+in\s+/[\w/]+\.php\s+on\s+line\s+\d+',  # PHP
+            ]
         ]
 
         self.db_error_patterns = [
-            re.compile(r'SQL syntax.*MySQL', re.IGNORECASE),
-            re.compile(r'Warning.*mysql_', re.IGNORECASE),
-            re.compile(r'PostgreSQL.*ERROR', re.IGNORECASE),
-            re.compile(r'Oracle.*ORA-\d+', re.IGNORECASE),
-            re.compile(r'Microsoft SQL Server.*\d+', re.IGNORECASE),
+            re.compile(p, re.IGNORECASE) for p in [
+                r'SQL syntax.*MySQL',
+                r'Warning.*mysql_',
+                r'PostgreSQL.*ERROR',
+                r'Oracle.*ORA-\d+',
+                r'Microsoft SQL Server.*\d+',
+            ]
         ]
 
         # 安全頭部
@@ -431,7 +441,3 @@ class PassiveAnalyzer:
                 break
         
         return findings
-
-
-# 使用示例
-
