@@ -72,7 +72,7 @@ from tenacity import (
 
 from aiva_common.config import get_settings
 from aiva_common.enums.modules import Topic
-from aiva_common.mq import get_broker
+from aiva_common.messaging.mq import get_broker
 from aiva_common.schemas import AivaMessage, ScanCompletedPayload, Phase0CompletedPayload
 from aiva_common.utils import get_logger
 # 模組整合: external_learning → cognitive_core/learning_system (2026-01-03)

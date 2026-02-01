@@ -5,7 +5,7 @@
 ## 📢 最新更新 (2026-01-31)
 
 ### 🎯 架構文檔更新
-- ✅ [AIVA General Documentation](guides/general.md) - 更新為「五大核心模組」架構說明 (Version 2.0)
+- ✅ [AIVA 架構概述 (英文)](../guides/general/OVERVIEW_EN.md) - 更新為「五大核心模組」架構說明
 - ✅ 舊有「六大模組」與「External Learning」文檔已歸檔至 `_archive/`
 
 ### 🎯 多語言能力測試完成 (2026-01-14)
@@ -37,7 +37,7 @@
 
 ### 04_capability_documentation/ - 能力文檔
 模組能力詳細說明和分類
-- 五大核心模組完整說明 (參見 guides/general.md)
+- 五大核心模組完整說明 (參見 [英文概述](../guides/general/OVERVIEW_EN.md))
 - 能力分類清單
 
 ### 05_implementation_guides/ - 實作指南
