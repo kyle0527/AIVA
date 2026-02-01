@@ -9,6 +9,7 @@ import re
 import requests
 from urllib.parse import urljoin, urlparse, parse_qs
 from typing import Set, List, Dict
+from collections import deque
 from dataclasses import dataclass
 from bs4 import BeautifulSoup
 
@@ -59,11 +60,11 @@ class WebCrawler:
             List[CrawlResult]: 爬取結果
         """
         results = []
-        to_visit = [(start_url, 0)]  # (url, depth)
+        to_visit = deque([(start_url, 0)])  # (url, depth)
         base_domain = urlparse(start_url).netloc
         
         while to_visit and len(results) < self.max_pages:
-            url, depth = to_visit.pop(0)
+            url, depth = to_visit.popleft()
             
             if url in self.visited or depth > self.max_depth:
                 continue
