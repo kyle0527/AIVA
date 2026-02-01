@@ -15,19 +15,25 @@ from aiva_common.utils import get_logger
 logger = get_logger(__name__)
 
 
-@dataclass
+@dataclass(frozen=True)
 class Technology:
     """檢測到的技術"""
     name: str
     version: str = None
     category: str = None  # framework, server, cms, language, etc.
     confidence: int = 100  # 0-100
-    evidence: List[str] = None
+    evidence: tuple = None
 
 
 class TechDetector:
     """技術棧檢測器"""
     
+    # Pre-compiled regex patterns for script analysis
+    _SCRIPT_SRC_PATTERN = re.compile(r'<script[^>]+src=["\']([^"\']+)["\']', re.IGNORECASE)
+    _JQUERY_VERSION_PATTERN = re.compile(r'jquery[.-](\d+\.[\d.]+)')
+    _VUE_VERSION_PATTERN = re.compile(r'vue[.-](\d+\.[\d.]+)')
+    _BOOTSTRAP_VERSION_PATTERN = re.compile(r'bootstrap[.-](\d+\.[\d.]+)')
+
     def __init__(self):
         """初始化技術檢測器"""
         self.session = requests.Session()
@@ -162,7 +168,7 @@ class TechDetector:
                             version=version,
                             category='server' if header == 'Server' else 'framework',
                             confidence=100,
-                            evidence=[f"{header}: {value}"]
+                            evidence=(f"{header}: {value}",)
                         ))
         
         return technologies
@@ -187,7 +193,7 @@ class TechDetector:
                     name=tech_name,
                     category=category,
                     confidence=min(confidence, 100),
-                    evidence=evidence
+                    evidence=tuple(evidence)
                 ))
         
         return technologies
@@ -205,7 +211,7 @@ class TechDetector:
                         name=tech_name,
                         category=category,
                         confidence=100,
-                        evidence=[f"Cookie: {cookie_name}"]
+                        evidence=(f"Cookie: {cookie_name}",)
                     ))
         
         return technologies
@@ -231,7 +237,7 @@ class TechDetector:
                     version=version,
                     category='cms',
                     confidence=100,
-                    evidence=[f"Meta generator: {generator}"]
+                    evidence=(f"Meta generator: {generator}",)
                 ))
         
         return technologies
@@ -241,20 +247,20 @@ class TechDetector:
         technologies = set()
         
         # Extract script sources
-        script_srcs = re.findall(r'<script[^>]+src=["\']([^"\']+)["\']', html, re.IGNORECASE)
+        script_srcs = self._SCRIPT_SRC_PATTERN.findall(html)
         
         for src in script_srcs:
             src_lower = src.lower()
             
             # Check for common libraries
             if 'jquery' in src_lower:
-                version_match = re.search(r'jquery[.-](\d+\.[\d.]+)', src_lower)
+                version_match = self._JQUERY_VERSION_PATTERN.search(src_lower)
                 technologies.add(Technology(
                     name='jQuery',
                     version=version_match.group(1) if version_match else None,
                     category='library',
                     confidence=100,
-                    evidence=[f"Script: {src}"]
+                    evidence=(f"Script: {src}",)
                 ))
             
             elif 'react' in src_lower:
@@ -262,17 +268,17 @@ class TechDetector:
                     name='React',
                     category='framework',
                     confidence=90,
-                    evidence=[f"Script: {src}"]
+                    evidence=(f"Script: {src}",)
                 ))
             
             elif 'vue' in src_lower:
-                version_match = re.search(r'vue[.-](\d+\.[\d.]+)', src_lower)
+                version_match = self._VUE_VERSION_PATTERN.search(src_lower)
                 technologies.add(Technology(
                     name='Vue.js',
                     version=version_match.group(1) if version_match else None,
                     category='framework',
                     confidence=90,
-                    evidence=[f"Script: {src}"]
+                    evidence=(f"Script: {src}",)
                 ))
             
             elif 'angular' in src_lower:
@@ -280,17 +286,17 @@ class TechDetector:
                     name='Angular',
                     category='framework',
                     confidence=90,
-                    evidence=[f"Script: {src}"]
+                    evidence=(f"Script: {src}",)
                 ))
             
             elif 'bootstrap' in src_lower:
-                version_match = re.search(r'bootstrap[.-](\d+\.[\d.]+)', src_lower)
+                version_match = self._BOOTSTRAP_VERSION_PATTERN.search(src_lower)
                 technologies.add(Technology(
                     name='Bootstrap',
                     version=version_match.group(1) if version_match else None,
                     category='ui_framework',
                     confidence=100,
-                    evidence=[f"Script: {src}"]
+                    evidence=(f"Script: {src}",)
                 ))
         
         return technologies
