@@ -37,8 +37,9 @@ class PassiveAnalyzer:
     
     def _setup_patterns(self):
         """設置檢測模式"""
-        # 敏感數據模式
-        self.sensitive_patterns = {
+        # 敏感數據模式 - 預編譯正則表達式
+        # Note: We store (compiled_regex, description) tuple
+        raw_sensitive_patterns = {
             'email': (
                 r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b',
                 'Email address exposed'
@@ -73,6 +74,31 @@ class PassiveAnalyzer:
             )
         }
         
+        self.sensitive_patterns = {
+            name: (re.compile(pattern, re.IGNORECASE), description)
+            for name, (pattern, description) in raw_sensitive_patterns.items()
+        }
+
+        # 錯誤信息模式 - 預編譯
+        self.stack_trace_patterns = [
+            re.compile(p) for p in [
+                r'at\s+[\w\.<>]+\s*\([^)]+\.java:\d+\)',  # Java
+                r'File\s+"[^"]+\.py",\s+line\s+\d+',  # Python
+                r'at\s+[\w\.<>]+\s*\([^)]+\.cs:\d+\)',  # C#
+                r'Error\s+in\s+/[\w/]+\.php\s+on\s+line\s+\d+',  # PHP
+            ]
+        ]
+
+        self.db_error_patterns = [
+            re.compile(p, re.IGNORECASE) for p in [
+                r'SQL syntax.*MySQL',
+                r'Warning.*mysql_',
+                r'PostgreSQL.*ERROR',
+                r'Oracle.*ORA-\d+',
+                r'Microsoft SQL Server.*\d+',
+            ]
+        ]
+
         # 安全頭部
         self.security_headers = {
             'strict-transport-security': {
@@ -200,7 +226,8 @@ class PassiveAnalyzer:
         findings = []
         
         for pattern_name, (pattern, description) in self.sensitive_patterns.items():
-            matches = re.finditer(pattern, url, re.IGNORECASE)
+            # pattern is now a compiled regex object
+            matches = pattern.finditer(url)
             for match in matches:
                 findings.append(PassiveFinding(
                     category='Sensitive Data in URL',
@@ -242,7 +269,8 @@ class PassiveAnalyzer:
         findings = []
         
         for pattern_name, (pattern, description) in self.sensitive_patterns.items():
-            matches = re.finditer(pattern, body, re.IGNORECASE)
+            # pattern is now a compiled regex object
+            matches = pattern.finditer(body)
             count = sum(1 for _ in matches)
             
             if count > 0:
@@ -387,15 +415,8 @@ class PassiveAnalyzer:
         status = response.get('status', 0)
         
         # 檢查堆棧跟踪
-        stack_trace_patterns = [
-            r'at\s+[\w\.<>]+\s*\([^)]+\.java:\d+\)',  # Java
-            r'File\s+"[^"]+\.py",\s+line\s+\d+',  # Python
-            r'at\s+[\w\.<>]+\s*\([^)]+\.cs:\d+\)',  # C#
-            r'Error\s+in\s+/[\w/]+\.php\s+on\s+line\s+\d+',  # PHP
-        ]
-        
-        for pattern in stack_trace_patterns:
-            if re.search(pattern, content):
+        for pattern in self.stack_trace_patterns:
+            if pattern.search(content):
                 findings.append(PassiveFinding(
                     category='Stack Trace Disclosure',
                     severity='Medium',
@@ -408,16 +429,8 @@ class PassiveAnalyzer:
                 break
         
         # 檢查數據庫錯誤
-        db_error_patterns = [
-            r'SQL syntax.*MySQL',
-            r'Warning.*mysql_',
-            r'PostgreSQL.*ERROR',
-            r'Oracle.*ORA-\d+',
-            r'Microsoft SQL Server.*\d+',
-        ]
-        
-        for pattern in db_error_patterns:
-            if re.search(pattern, content, re.IGNORECASE):
+        for pattern in self.db_error_patterns:
+            if pattern.search(content):
                 findings.append(PassiveFinding(
                     category='Database Error Disclosure',
                     severity='High',
