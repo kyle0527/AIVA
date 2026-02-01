@@ -226,7 +226,6 @@ class PassiveAnalyzer:
         findings = []
         
         for pattern_name, (pattern, description) in self.sensitive_patterns.items():
-            # pattern is now a compiled regex object
             matches = pattern.finditer(url)
             for match in matches:
                 findings.append(PassiveFinding(
@@ -443,7 +442,3 @@ class PassiveAnalyzer:
                 break
         
         return findings
-
-
-# 使用示例
-
