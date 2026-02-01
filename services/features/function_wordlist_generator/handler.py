@@ -28,13 +28,13 @@ from typing import Any, Dict, Optional, List
 from datetime import datetime
 
 # aiva_common 標準導入
-from aiva_common.command_center import CommandHandler
 from aiva_common.schemas.commands import (
     AICommand, 
-    CommandType
+    CommandType,
+    AICommandResult,
+    CommandStatus,
+    CommandContext
 )
-from aiva_common.utils import get_logger
-from aiva_common.schemas.commands import AICommandResult, CommandStatus, CommandContext
 from aiva_common.core.command_center import CommandHandler
 from aiva_common.utils import get_logger
 

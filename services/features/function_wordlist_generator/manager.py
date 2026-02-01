@@ -4,6 +4,7 @@ Wordlist Generator Manager
 
 import os
 import logging
+import aiofiles
 from typing import List, Optional
 from datetime import datetime
 
@@ -113,11 +114,72 @@ class WordlistGeneratorManager:
         try:
             logger.info(f"Analyzing wordlist: {file_path}")
             
-            # TODO: 實現分析邏輯
+            if not os.path.exists(file_path):
+                raise FileNotFoundError(f"File not found: {file_path}")
+
+            file_size_mb = os.path.getsize(file_path) / (1024 * 1024)
+
+            total_words = 0
+            unique_words_set = set()
+            min_length = float('inf')
+            max_length = 0
+            total_length = 0
+
+            has_lowercase = False
+            has_uppercase = False
+            has_digits = False
+            has_special = False
             
+            async with aiofiles.open(file_path, 'r', encoding='utf-8', errors='ignore') as f:
+                async for line in f:
+                    word = line.strip()
+                    if not word:
+                        continue
+
+                    total_words += 1
+                    unique_words_set.add(word)
+
+                    length = len(word)
+                    min_length = min(min_length, length)
+                    max_length = max(max_length, length)
+                    total_length += length
+
+                    # Check character types if not all found yet
+                    if not (has_lowercase and has_uppercase and has_digits and has_special):
+                        if not has_lowercase and any(c.islower() for c in word):
+                            has_lowercase = True
+                        if not has_uppercase and any(c.isupper() for c in word):
+                            has_uppercase = True
+                        if not has_digits and any(c.isdigit() for c in word):
+                            has_digits = True
+                        if not has_special and not word.isalnum():
+                            has_special = True
+
+            if total_words == 0:
+                min_length = 0
+                avg_length = 0.0
+            else:
+                avg_length = total_length / total_words
+
+            complexity_score = 0.0
+            if has_lowercase: complexity_score += 0.25
+            if has_uppercase: complexity_score += 0.25
+            if has_digits: complexity_score += 0.25
+            if has_special: complexity_score += 0.25
+
             return WordlistStats(
                 file_path=file_path,
-                total_words=0
+                total_words=total_words,
+                unique_words=len(unique_words_set),
+                file_size_mb=round(file_size_mb, 4),
+                min_length=min_length,
+                max_length=max_length,
+                avg_length=round(avg_length, 2),
+                has_lowercase=has_lowercase,
+                has_uppercase=has_uppercase,
+                has_digits=has_digits,
+                has_special=has_special,
+                complexity_score=complexity_score
             )
             
         except Exception as e:
