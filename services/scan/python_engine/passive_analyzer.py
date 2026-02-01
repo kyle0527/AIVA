@@ -79,7 +79,7 @@ class PassiveAnalyzer:
             for name, (pattern, description) in raw_sensitive_patterns.items()
         }
 
-        # 錯誤披露模式
+        # 錯誤信息模式 - 預編譯
         self.stack_trace_patterns = [
             re.compile(p) for p in [
                 r'at\s+[\w\.<>]+\s*\([^)]+\.java:\d+\)',  # Java
@@ -268,6 +268,7 @@ class PassiveAnalyzer:
         findings = []
         
         for pattern_name, (pattern, description) in self.sensitive_patterns.items():
+            # pattern is now a compiled regex object
             matches = pattern.finditer(body)
             count = sum(1 for _ in matches)
             

@@ -47,34 +47,44 @@ class TechDetector:
         Returns:
             List[Technology]: 檢測到的技術列表
         """
-        technologies = set()
+        technologies = []
         
         try:
             response = self.session.get(url, timeout=10, verify=False)
             
             # 1. HTTP Headers
-            technologies.update(self._analyze_headers(response.headers))
+            technologies.extend(self._analyze_headers(response.headers))
             
             # 2. HTML Content
-            technologies.update(self._analyze_html(response.text))
+            technologies.extend(self._analyze_html(response.text))
             
             # 3. Cookies
-            technologies.update(self._analyze_cookies(response.cookies))
+            technologies.extend(self._analyze_cookies(response.cookies))
             
             # 4. Meta Tags
-            technologies.update(self._analyze_meta_tags(response.text))
+            technologies.extend(self._analyze_meta_tags(response.text))
             
             # 5. JavaScript Files
-            technologies.update(self._analyze_scripts(response.text, url))
+            technologies.extend(self._analyze_scripts(response.text, url))
         
         except Exception as e:
             logger.error(f"技術檢測錯誤: {e}")
         
-        logger.info(f"檢測到 {len(technologies)} 項技術")
-        return list(technologies)
+        # Deduplicate
+        unique_technologies = []
+        for t in technologies:
+            if t not in unique_technologies:
+                unique_technologies.append(t)
+
+        logger.info(f"檢測到 {len(unique_technologies)} 項技術")
+        return unique_technologies
     
     def _load_fingerprints(self):
         """加載技術指紋庫"""
+        # Helper to compile patterns
+        def compile_patterns(patterns):
+            return [re.compile(p, re.IGNORECASE) for p in patterns]
+
         self.fingerprints = {
             'headers': {
                 'X-Powered-By': {
@@ -93,46 +103,46 @@ class TechDetector:
                 }
             },
             'html_patterns': {
-                'WordPress': [
+                'WordPress': compile_patterns([
                     r'/wp-content/',
                     r'/wp-includes/',
                     r'wp-json'
-                ],
-                'Joomla': [
+                ]),
+                'Joomla': compile_patterns([
                     r'/components/com_',
                     r'Joomla!'
-                ],
-                'Drupal': [
+                ]),
+                'Drupal': compile_patterns([
                     r'Drupal',
                     r'/sites/default/'
-                ],
-                'Laravel': [
+                ]),
+                'Laravel': compile_patterns([
                     r'laravel',
                     r'csrf-token'
-                ],
-                'Django': [
+                ]),
+                'Django': compile_patterns([
                     r'csrfmiddlewaretoken'
-                ],
-                'React': [
+                ]),
+                'React': compile_patterns([
                     r'react',
                     r'__REACT'
-                ],
-                'Vue.js': [
+                ]),
+                'Vue.js': compile_patterns([
                     r'vue\.js',
                     r'v-if=',
                     r'v-for='
-                ],
-                'Angular': [
+                ]),
+                'Angular': compile_patterns([
                     r'ng-app',
                     r'ng-controller'
-                ],
-                'jQuery': [
+                ]),
+                'jQuery': compile_patterns([
                     r'jquery'
-                ],
-                'Bootstrap': [
+                ]),
+                'Bootstrap': compile_patterns([
                     r'bootstrap',
                     r'class="container'
-                ]
+                ])
             },
             'cookies': {
                 'PHPSESSID': ('PHP', 'language'),
@@ -143,9 +153,9 @@ class TechDetector:
             }
         }
     
-    def _analyze_headers(self, headers: Dict) -> Set[Technology]:
+    def _analyze_headers(self, headers: Dict) -> List[Technology]:
         """分析 HTTP 標頭"""
-        technologies = set()
+        technologies = []
         
         for header, value in headers.items():
             if header in self.fingerprints['headers']:
@@ -157,62 +167,68 @@ class TechDetector:
                         version_match = re.search(r'(\d+\.[\d.]+)', value)
                         version = version_match.group(1) if version_match else None
                         
-                        technologies.add(Technology(
+                        tech = Technology(
                             name=tech_name,
                             version=version,
                             category='server' if header == 'Server' else 'framework',
                             confidence=100,
                             evidence=[f"{header}: {value}"]
-                        ))
+                        )
+                        if tech not in technologies:
+                            technologies.append(tech)
         
         return technologies
     
-    def _analyze_html(self, html: str) -> Set[Technology]:
+    def _analyze_html(self, html: str) -> List[Technology]:
         """分析 HTML 內容"""
-        technologies = set()
+        technologies = []
         
         for tech_name, patterns in self.fingerprints['html_patterns'].items():
             confidence = 0
             evidence = []
             
             for pattern in patterns:
-                if re.search(pattern, html, re.IGNORECASE):
+                if pattern.search(html):
                     confidence += 50
-                    evidence.append(f"Pattern matched: {pattern}")
+                    evidence.append(f"Pattern matched: {pattern.pattern}")
             
             if confidence > 0:
                 category = 'cms' if tech_name in ['WordPress', 'Joomla', 'Drupal'] else 'framework'
                 
-                technologies.add(Technology(
+                tech = Technology(
                     name=tech_name,
                     category=category,
                     confidence=min(confidence, 100),
                     evidence=evidence
-                ))
+                )
+                if tech not in technologies:
+                    technologies.append(tech)
         
         return technologies
     
-    def _analyze_cookies(self, cookies: requests.cookies.RequestsCookieJar) -> Set[Technology]:
+    def _analyze_cookies(self, cookies: requests.cookies.RequestsCookieJar) -> List[Technology]:
         """分析 Cookies"""
-        technologies = set()
+        technologies = []
         
         for cookie in cookies:
             cookie_name = cookie.name
             
             for pattern, (tech_name, category) in self.fingerprints['cookies'].items():
                 if pattern in cookie_name:
-                    technologies.add(Technology(
+                    tech = Technology(
                         name=tech_name,
                         category=category,
                         confidence=100,
                         evidence=[f"Cookie: {cookie_name}"]
-                    ))
+                    )
+                    if tech not in technologies:
+                        technologies.append(tech)
         
         return technologies
     
-    def _analyze_meta_tags(self, html: str) -> Set[Technology]:
+    def _analyze_meta_tags(self, html: str) -> List[Technology]:
         """分析 Meta 標籤"""
-        technologies = set()
+        technologies = []
         
         # Extract generator meta tag
         generator_match = re.search(r'<meta\s+name=["\']generator["\']\s+content=["\']([^"\']+)["\']', html, re.IGNORECASE)
@@ -226,19 +242,21 @@ class TechDetector:
                 name = tech_match.group(1)
                 version = tech_match.group(2)
                 
-                technologies.add(Technology(
+                tech = Technology(
                     name=name,
                     version=version,
                     category='cms',
                     confidence=100,
                     evidence=[f"Meta generator: {generator}"]
-                ))
+                )
+                if tech not in technologies:
+                    technologies.append(tech)
         
         return technologies
     
-    def _analyze_scripts(self, html: str, base_url: str) -> Set[Technology]:
+    def _analyze_scripts(self, html: str, base_url: str) -> List[Technology]:
         """分析 JavaScript 文件"""
-        technologies = set()
+        technologies = []
         
         # Extract script sources
         script_srcs = re.findall(r'<script[^>]+src=["\']([^"\']+)["\']', html, re.IGNORECASE)
@@ -249,48 +267,58 @@ class TechDetector:
             # Check for common libraries
             if 'jquery' in src_lower:
                 version_match = re.search(r'jquery[.-](\d+\.[\d.]+)', src_lower)
-                technologies.add(Technology(
+                tech = Technology(
                     name='jQuery',
                     version=version_match.group(1) if version_match else None,
                     category='library',
                     confidence=100,
                     evidence=[f"Script: {src}"]
-                ))
+                )
+                if tech not in technologies:
+                    technologies.append(tech)
             
             elif 'react' in src_lower:
-                technologies.add(Technology(
+                tech = Technology(
                     name='React',
                     category='framework',
                     confidence=90,
                     evidence=[f"Script: {src}"]
-                ))
+                )
+                if tech not in technologies:
+                    technologies.append(tech)
             
             elif 'vue' in src_lower:
                 version_match = re.search(r'vue[.-](\d+\.[\d.]+)', src_lower)
-                technologies.add(Technology(
+                tech = Technology(
                     name='Vue.js',
                     version=version_match.group(1) if version_match else None,
                     category='framework',
                     confidence=90,
                     evidence=[f"Script: {src}"]
-                ))
+                )
+                if tech not in technologies:
+                    technologies.append(tech)
             
             elif 'angular' in src_lower:
-                technologies.add(Technology(
+                tech = Technology(
                     name='Angular',
                     category='framework',
                     confidence=90,
                     evidence=[f"Script: {src}"]
-                ))
+                )
+                if tech not in technologies:
+                    technologies.append(tech)
             
             elif 'bootstrap' in src_lower:
                 version_match = re.search(r'bootstrap[.-](\d+\.[\d.]+)', src_lower)
-                technologies.add(Technology(
+                tech = Technology(
                     name='Bootstrap',
                     version=version_match.group(1) if version_match else None,
                     category='ui_framework',
                     confidence=100,
                     evidence=[f"Script: {src}"]
-                ))
+                )
+                if tech not in technologies:
+                    technologies.append(tech)
         
         return technologies
