@@ -251,8 +251,9 @@ class ScanOrchestrator:
                 result = executor.execute_flow(flow_id, dry_run=True)
                 print(f"   ✓ 預覽完成")
                 
-                # TODO: 實際執行
-                # result = executor.execute_flow(flow_id, dry_run=False)
+                # 實際執行
+                print(f"   ⚡ 正在執行實際攻擊...")
+                result = executor.execute_flow(flow_id, dry_run=False)
                 
             except Exception as e:
                 print(f"   ✗ 執行失敗: {e}")
