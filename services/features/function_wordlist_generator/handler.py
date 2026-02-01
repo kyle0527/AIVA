@@ -28,7 +28,6 @@ from typing import Any, Dict, Optional, List
 from datetime import datetime
 
 # aiva_common 標準導入
-from aiva_common.command_center import CommandHandler
 from aiva_common.schemas.commands import (
     AICommand, 
     CommandType

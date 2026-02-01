@@ -3,6 +3,7 @@ Wordlist Generator Manager
 """
 
 import os
+import itertools
 import logging
 from typing import List, Optional
 from datetime import datetime
@@ -32,15 +33,42 @@ class WordlistGeneratorManager:
         output_file: str
     ) -> GeneratorResult:
         """生成組合字典"""
+        start_time = datetime.now()
         try:
             logger.info(f"Generating combination wordlist: {min_length}-{max_length} chars")
             
-            # TODO: 實現組合生成邏輯
+            if not charset:
+                raise ValueError("Charset cannot be empty")
+            if min_length < 1:
+                raise ValueError("min_length must be at least 1")
+            if max_length < min_length:
+                raise ValueError("max_length must be greater than or equal to min_length")
+
+            # Deduplicate and sort charset for consistent results
+            unique_charset = "".join(sorted(list(set(charset))))
+
+            total_words = 0
             
+            with open(output_file, 'w', encoding='utf-8') as f:
+                for length in range(min_length, max_length + 1):
+                    for combo in itertools.product(unique_charset, repeat=length):
+                        word = "".join(combo)
+                        f.write(word + '\n')
+                        total_words += 1
+
+            end_time = datetime.now()
+            file_size_mb = os.path.getsize(output_file) / (1024 * 1024)
+            generation_time = (end_time - start_time).total_seconds()
+
             return GeneratorResult(
-                success=False,
+                success=True,
                 output_file=output_file,
-                error="Implementation pending"
+                total_words=total_words,
+                unique_words=total_words,
+                file_size_mb=file_size_mb,
+                generation_time=generation_time,
+                start_time=start_time,
+                end_time=end_time
             )
             
         except Exception as e:
@@ -48,7 +76,9 @@ class WordlistGeneratorManager:
             return GeneratorResult(
                 success=False,
                 output_file=output_file,
-                error=str(e)
+                error=str(e),
+                start_time=start_time,
+                end_time=datetime.now()
             )
     
     async def generate_cupp_wordlist(
