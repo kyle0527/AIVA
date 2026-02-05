@@ -309,6 +309,47 @@ class MultiLangExecutor:
                 
                 print()
     
+    def execute_flow(self, flow_id: int, dry_run: bool = False, **kwargs):
+        """根據 Flow ID 執行任意語言的能力"""
+        # 1. 查找 Flow
+        target_flow = None
+        target_lang = None
+
+        for lang, flows in self.capabilities.items():
+            for flow in flows:
+                if flow.get('id') == flow_id:
+                    target_flow = flow
+                    target_lang = lang
+                    break
+            if target_flow:
+                break
+
+        if not target_flow:
+            print(f"[錯誤] 找不到 Flow ID: {flow_id}")
+            return False
+
+        # 2. 分發執行
+        if target_lang == "python":
+            return self.execute_python(flow_id=flow_id, dry_run=dry_run, **kwargs)
+
+        # 對於其他語言，使用 func_name (通常對應 end 欄位)
+        func_name = target_flow.get('end')
+        # 如果 end 是路徑形式 (module.func)，只取最後一部分
+        if func_name and '.' in func_name:
+            func_name = func_name.split('.')[-1]
+
+        if target_lang == "rust":
+            return self.execute_rust(func_name=func_name, dry_run=dry_run, **kwargs)
+        elif target_lang == "go":
+            # Go 可能使用 start 作為函數名 (根據 external_classification.json 觀察)
+            # 但 execute_go 也是匹配 end 或 name
+            return self.execute_go(func_name=func_name, dry_run=dry_run, **kwargs)
+        elif target_lang == "typescript":
+            return self.execute_typescript(func_name=func_name, dry_run=dry_run, **kwargs)
+        else:
+            print(f"[錯誤] 不支持的語言: {target_lang}")
+            return False
+
     def execute_python(self, flow_id: Optional[int] = None, func_name: Optional[str] = None, 
                       dry_run: bool = False, **kwargs):
         """執行 Python 能力"""
