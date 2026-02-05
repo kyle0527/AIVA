@@ -203,11 +203,11 @@ export class SPARouteSecurityAnalyzer {
 ## 🔗 相關模組
 
 ### 功能模組 (實際檢測邏輯)
-- **[XSS 檢測](../features/features_ready/function_xss/README.md)** - XSStrike/Dalfox
-- **[SQLI 檢測](../features/features_ready/function_sqli/README.md)** - 6 種引擎並行
-- **[IDOR 檢測](../features/features_ready/function_idor/README.md)** - 水平/垂直權限測試
-- **[SSRF 檢測](../features/features_ready/function_ssrf/README.md)** - 內網探測+OAST
-- **[信息洩露檢測](../features/features_ready/function_info_leak/README.md)** - 敏感信息檢測
+- **[XSS 檢測](../features/function_xss/README.md)** - XSStrike/Dalfox
+- **[SQLI 檢測](../features/function_sqli/README.md)** - 6 種引擎並行
+- **[IDOR 檢測](../features/function_idor/README.md)** - 水平/垂直權限測試
+- **[SSRF 檢測](../features/function_ssrf/README.md)** - 內網探測+OAST
+- **[信息洩露檢測](../features/function_info_leak/README.md)** - 敏感信息檢測
 
 ### 核心模組
 - **[AI Core](../core/aiva_core/README.md)** - AI 命令中心

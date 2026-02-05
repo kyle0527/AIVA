@@ -1,0 +1,12 @@
+flowchart TD
+    n1(["Start"])
+    n2(["End"])
+    n3{"If Condition"}
+    n4["Then"]
+    n5[""]
+
+    n1 --> n3
+    n3 -->|Yes| n4
+    n3 -->|No| n5
+    n4 --> n5
+    n5 --> n2

@@ -4,19 +4,22 @@ AIDecisionCore - AI 決策核心
 雙閉環架構的大腦，負責：
 1. 整合內部探索 (SystemSelfExplorer)
 2. 整合 RAG 知識庫 (RAGTrigger)
-3. 整合外部反饋 (ExternalFeedbackLoop - 可選)
-4. 生成智能掃描策略
+3. 生成智能掃描策略
 
 實現日期: 2026-01-20
+更新日期: 2026-02-02 - 移除未使用的 ExternalFeedbackLoop
 """
 
-from typing import Optional
+from typing import Optional, TYPE_CHECKING
 from dataclasses import dataclass, field
 
 from aiva_common.utils import get_logger
 
-logger = get_logger(__name__)
+if TYPE_CHECKING:
+    from aiva_core.internal_exploration.system_self_explorer import SystemSelfExplorer
+    from aiva_core.cognitive_core.learning_system.rag_trigger import RAGTrigger
 
+logger = get_logger(__name__)
 
 @dataclass
 class UserConstraints:
@@ -30,7 +33,6 @@ class UserConstraints:
     scope_include: list[str] = field(default_factory=list)  # 包含路徑
     scope_exclude: list[str] = field(default_factory=list)  # 排除路徑
 
-
 @dataclass
 class ScanStrategy:
     """掃描策略"""
@@ -41,7 +43,6 @@ class ScanStrategy:
     priority_targets: list[str]          # 優先目標
     attack_payloads: dict = field(default_factory=dict)  # 攻擊 payload
     reasoning: str = ""                  # 決策理由
-
 
 class AIDecisionCore:
     """AI 決策核心
@@ -66,9 +67,8 @@ class AIDecisionCore:
     def __init__(self):
         """初始化 AI 決策核心"""
         self._initialized = False
-        self.system_explorer = None
-        self.rag_trigger = None
-        self.external_feedback = None
+        self.system_explorer: Optional['SystemSelfExplorer'] = None
+        self.rag_trigger: Optional['RAGTrigger'] = None
     
     async def initialize(self) -> None:
         """初始化決策核心，加載依賴組件"""
@@ -78,29 +78,16 @@ class AIDecisionCore:
         try:
             from aiva_core.internal_exploration.system_self_explorer import SystemSelfExplorer
             self.system_explorer = SystemSelfExplorer()
-            await self.system_explorer.initialize()
+            self.system_explorer.initialize()  # 改為同步調用
             logger.info("   ✓ SystemSelfExplorer 已加載")
         except Exception as e:
             logger.error(f"   ✗ SystemSelfExplorer 加載失敗: {e}")
             raise
         
-        # 2. 初始化 RAG 觸發器 (可選)
-        try:
-            from aiva_core.cognitive_core.learning_system.rag_trigger import RAGTrigger
-            self.rag_trigger = RAGTrigger()
-            logger.info("   ✓ RAGTrigger 已加載")
-        except Exception as e:
-            logger.warning(f"   ⚠ RAGTrigger 加載失敗 (非關鍵): {e}")
-            self.rag_trigger = None
-        
-        # 3. 初始化外部反饋循環 (可選 - MVP 階段可能不存在)
-        try:
-            from aiva_core.cognitive_core.learning_system.external_feedback_loop import ExternalFeedbackLoop
-            self.external_feedback = ExternalFeedbackLoop()
-            logger.info("   ✓ ExternalFeedbackLoop 已加載")
-        except Exception as e:
-            logger.warning(f"   ⚠ ExternalFeedbackLoop 不可用 (非關鍵): {e}")
-            self.external_feedback = None
+        # 2. 初始化 RAG 觸發器（必需組件）
+        from aiva_core.cognitive_core.learning_system.rag_trigger import RAGTrigger
+        self.rag_trigger = RAGTrigger()
+        logger.info("   ✓ RAGTrigger 已加載")
         
         self._initialized = True
         logger.info("✅ AIDecisionCore 初始化完成")
@@ -108,15 +95,13 @@ class AIDecisionCore:
     async def decide_scan_strategy(
         self, 
         constraints: UserConstraints,
-        use_rag: bool = True,
-        use_history: bool = False
+        use_rag: bool = True
     ) -> ScanStrategy:
         """決定掃描策略
         
         Args:
             constraints: 用戶限制條件
             use_rag: 是否使用 RAG 搜索建議
-            use_history: 是否使用歷史數據 (需要 ExternalFeedbackLoop)
             
         Returns:
             ScanStrategy: 掃描策略
@@ -128,8 +113,9 @@ class AIDecisionCore:
         
         # ===== 步驟 1: 查詢內部能力 =====
         logger.info("   [1/3] 查詢系統可用能力...")
-        available_attacks = await self.system_explorer.get_available_attacks()
-        available_engines = await self.system_explorer.get_available_engines()
+        assert self.system_explorer is not None, "system_explorer 未初始化"
+        available_attacks = self.system_explorer.get_available_attacks()
+        available_engines = self.system_explorer.get_available_engines()
         
         logger.info(f"        系統可用攻擊: {list(available_attacks.keys())}")
         logger.info(f"        系統可用引擎: {list(available_engines.keys())}")
@@ -289,7 +275,8 @@ class AIDecisionCore:
         """
         execution_plan = []
         
-        available_attacks = await self.system_explorer.get_available_attacks()
+        assert self.system_explorer is not None, "system_explorer 未初始化"
+        available_attacks = self.system_explorer.get_available_attacks()
         
         for cap_type in strategy.selected_capabilities:
             cap_info = available_attacks.get(cap_type)
@@ -330,7 +317,6 @@ class AIDecisionCore:
                 "action": "execute_flow",
                 "params": {
                     "target": constraints.target,
-                    "dry_run": False
                 },
                 "expected_output": "vulnerability_report",
                 "timeout": 60
@@ -360,7 +346,6 @@ class AIDecisionCore:
         
         return plan
 
-
 # ==================== 便利函數 ====================
 
 async def quick_decision(
@@ -388,7 +373,6 @@ async def quick_decision(
     )
     
     return await core.decide_scan_strategy(constraints)
-
 
 if __name__ == "__main__":
     import asyncio
@@ -421,7 +405,7 @@ if __name__ == "__main__":
         print("\n【測試 2】允許所有攻擊")
         constraints2 = UserConstraints(
             target="http://vulnerable-site.com",
-            allowed_capabilities=[],  # 空列表 = 全部
+            allowed_capabilities=[],
             forbidden_capabilities=[]
         )
         

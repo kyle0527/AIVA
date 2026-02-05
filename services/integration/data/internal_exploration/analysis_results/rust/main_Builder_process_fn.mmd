@@ -1,0 +1,33 @@
+flowchart TB
+    n1(["Start"])
+    n2(["End"])
+    n3["Method: .to_string()"]
+    n4["Method: .clone()"]
+    n5{"If Condition"}
+    n6["Then"]
+    n7{"If Condition"}
+    n8["Then"]
+    n9["Method: .push()"]
+    n10["Method: .to_string()"]
+    n11[""]
+    n12[""]
+    n13["Method: .visit_block()"]
+    n14["Method: .clone()"]
+    n15["Method: .link()"]
+
+    n1 --> n3
+    n3 --> n4
+    n4 --> n5
+    n5 -->|Yes| n6
+    n5 -->|No| n12
+    n6 --> n7
+    n7 -->|Yes| n8
+    n7 -->|No| n11
+    n8 --> n9
+    n9 --> n10
+    n10 --> n11
+    n11 --> n12
+    n12 --> n13
+    n13 --> n14
+    n14 --> n15
+    n15 --> n2

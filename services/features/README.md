@@ -52,7 +52,7 @@ from services.features.function_xss import XSSManager  # 不推薦
 
 ### ✅ 重大架構變更
 
-1. **新增功能模組** - [`function_info_leak`](features_ready/function_info_leak/README.md)
+1. **新增功能模組** - [`function_info_leak`](function_info_leak/README.md)
 
    - ✅ 從 Scan 模組移入敏感信息檢測器（547 lines）
    - ✅ 支持 API 密鑰、JWT、憑證、信用卡等檢測
@@ -164,23 +164,24 @@ class AttackCoordinator:
 > **架構**: 同步函數提供 `scan(target, options) -> dict` 接口
 > **範圍**: 不包含需人工操作的模組（social_engineering、forensic 等）
 > **⚠️ 重組通知**: 2025-12-17 已按完成度重組目錄結構，詳見 [_FEATURES_REORGANIZATION.md](_FEATURES_REORGANIZATION.md)
+> **🗑️ 清理通知**: 2026-02-03 移除 `features_ready/` 目錄（僅包含 2 個過時 CommandHandler 檔案）
 
-### ✅ 高完成度 - 可直接整合 (7個) → `features_ready/`
+### ✅ 高完成度 - 可直接整合 (7個)
 
 | 模組                         | 完成度 | 整合狀態  | 核心功能                       | 文檔連結                                           |
 | ---------------------------- | ------ | --------- | ------------------------------ | -------------------------------------------------- |
-| **function_sqli**      | 95%    | ✅ v2.1.0 | 6種檢測引擎、CommandHandler    | [README](features_ready/function_sqli/README.md)      |
-| **function_xss**       | 90%    | ✅ v2.1.0 | 4種檢測器、外部工具整合        | [README](features_ready/function_xss/README.md)       |
-| **function_ssrf**      | 85%    | ✅ v2.0.0 | 內網探測、OAST技術             | [README](features_ready/function_ssrf/README.md)      |
-| **function_idor**      | 80%    | ✅ v1.0.0 | 權限矩陣、資源ID提取           | [README](features_ready/function_idor/README.md)      |
-| **function_bizlogic**  | 70%    | ✅ v1.1.0 | 價格操縱/競態/工作流繞過       | [README](features_ready/function_bizlogic/README.md)  |
-| **function_crypto**    | 50%    | ⏳ v2.0.0 | Rust CLI（需編譯）             | [README](features_ready/function_crypto/README.md)    |
-| **function_info_leak** | 100%   | ✅ v1.0.0 | ⭐ 敏感信息檢測（API密鑰/JWT） | [README](features_ready/function_info_leak/README.md) |
+| **function_sqli**      | 95%    | ✅ v2.1.0 | 6種檢測引擎                    | [README](function_sqli/README.md)      |
+| **function_xss**       | 90%    | ✅ v2.1.0 | 4種檢測器、外部工具整合、CLI驅動 | [README](function_xss/README.md)       |
+| **function_ssrf**      | 85%    | ✅ v2.0.0 | 內網探測、OAST技術             | [README](function_ssrf/README.md)      |
+| **function_idor**      | 80%    | ✅ v1.0.0 | 權限矩陣、資源ID提取           | [README](function_idor/README.md)      |
+| **function_bizlogic**  | 70%    | ✅ v1.1.0 | 價格操縱/競態/工作流繞過       | [README](function_bizlogic/README.md)  |
+| **function_crypto**    | 50%    | ⏳ v2.0.0 | Rust CLI（需編譯）             | [README](function_crypto/README.md)    |
+| **function_info_leak** | 100%   | ✅ v1.0.0 | ⭐ 敏感信息檢測（API密鑰/JWT） | [README](function_info_leak/README.md) |
 
 **特徵**：
 
 - ✅ 完整的檢測邏輯實現
-- ✅ 有工作器（worker.py）或統一接口
+- ✅ 統一通過 CLI 執行器調用（aiva_external_executor.py）
 - ✅ **2025-12-20 新增**: function_info_leak 從 Scan 模組移入（547 lines）
 - ✅ 所有模組功能完整，無重複代碼
 
@@ -298,7 +299,7 @@ class SecurityScanner:
 
 ### 🎯 整合優先級
 
-**Phase 1 - 立即整合** (2-3 週) - `features_ready/`：
+**Phase 1 - 立即整合** (2-3 週)：
 
 1. function_sqli - 6種引擎，95%完成，✅ README 已完整
 2. function_crypto - 純 Rust CLI（v2.0），95%完成 ✅
@@ -307,7 +308,7 @@ class SecurityScanner:
 5. function_idor - 權限檢測，80%完成
 
 **Phase 2 - 短期完善** (2-4 週) - `features_in_development/`：
-6. function_bizlogic - 業務邏輯測試（已在 features_ready，需整合）
+6. function_bizlogic - 業務邏輯測試（需整合 CLI 執行器）
 7. **function_authn_go** - 🔴 **必須編譯 Go 引擎** → 不提供 Python 回退
 8. function_postex - 完善引擎檢測邏輯（使用 PostExDetector）
 9. function_web_scanner - 完善檢測邏輯（使用 WebAttackManager）
@@ -353,10 +354,10 @@ class SecurityScanner:
 
 ### 📚 核心功能模組
 
-#### ✅ 高完成度 (6個) - `features_ready/`
+#### ✅ 高完成度 (6個)
 
-- ⚡️ **[SQL注入檢測](features_ready/function_sqli/README.md)** - 6種引擎、多資料庫支援
-- 🔒 **[密碼學檢測](features_ready/function_crypto/README.md)** - 純 Rust CLI（v2.0）、TLS/Cookie/Headers/JS 分析
+- ⚡️ **[SQL注入檢測](function_sqli/README.md)** - 6種引擎、多資料庫支援
+- 🔒 **[密碼學檢測](function_crypto/README.md)** - 純 Rust CLI（v2.0）、TLS/Cookie/Headers/JS 分析
 - 🎭 **[XSS檢測](features_ready/function_xss/README.md)** - 反射型/存儲型/DOM XSS、Blind XSS
 - 🌐 **[SSRF檢測](features_ready/function_ssrf/README.md)** - 內網探測、OAST技術、語義分析
 - 🔐 **[IDOR檢測](features_ready/function_idor/README.md)** - 權限矩陣、資源ID提取

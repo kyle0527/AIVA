@@ -32,11 +32,11 @@ __version__ = "3.0.0"
 __architecture__ = "detector-based"
 __risk_level__ = "L2"
 __status__ = "production_ready"
-__last_updated__ = "2026-01-23"
+__last_updated__ = "2026-02-03"
 
-# 整合狀態 (2026-01-23)
-# ✅ CommandHandler 已完成 (XSSCommandHandler)
+# 整合狀態 (2026-02-03)
+# ✅ CommandHandler 保留中 (XSSCommandHandler - 過渡期)
 # ✅ 核心檢測器架構 (直接調用)
 # ✅ 4種檢測器已完成
-# ✅ AI Commander 直接整合
-# ❌ Worker 層已移除（不需要）
+# ✅ AI Commander 透過 CLI 執行器調用
+# ⚠️ 逐步遷移至純 CLI 驅動架構

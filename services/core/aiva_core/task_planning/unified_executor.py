@@ -25,13 +25,8 @@ from aiva_common.utils import get_logger
 
 logger = get_logger(__name__)
 
-# v2.0: 統一反饋架構支援
-try:
-    from .executor.execution_status_monitor import ExecutionContext, EnvironmentType
-    _EXECUTION_CONTEXT_AVAILABLE = True
-except ImportError:
-    _EXECUTION_CONTEXT_AVAILABLE = False
-    logger.warning("ExecutionContext not available, context-aware execution disabled")
+# ExecutionContext 是核心依賴，必須可用
+from .executor.execution_status_monitor import ExecutionContext
 
 
 # === 數據模型定義 ===
@@ -371,86 +366,106 @@ class UnifiedAttackExecutor:
         scenario: Optional[dict] = None,
         constraints: Optional[dict] = None
     ) -> ExecutionResult:
-        """環境感知執行接口（v2.0 統一反饋架構）
+        """統一執行接口（v2.1 環境無關設計）
         
-        根據執行環境（sandbox/production）自動調整執行策略：
-        - Sandbox: 探索式執行（嘗試多種策略，即時學習）
-        - Production: 保守式執行（使用最佳已知策略，選擇性學習）
+        設計理念：
+        - 實際執行絕大部分是黑盒測試，不區分 sandbox/production
+        - 策略選擇基於「目標敏感度」而非「執行環境」
+        - 確保學習經驗可直接遷移
         
         Args:
             target: 攻擊目標
             objective: 攻擊目標
-            execution_context: 執行上下文（包含環境類型）
+            execution_context: 執行上下文（提取 target_sensitivity）
             scenario: 可選的場景配置
             constraints: 約束條件
         
         Returns:
             ExecutionResult 包含攻擊結果和學習狀態
         """
-        if not _EXECUTION_CONTEXT_AVAILABLE:
-            logger.warning("ExecutionContext not available, falling back to standard execute")
-            return await self.execute(target, objective, scenario, constraints)
+        # v2.1: 從 context 提取目標敏感度
+        target_sensitivity = getattr(execution_context, 'target_sensitivity', 0.5)
+        risk_tolerance = getattr(execution_context, 'risk_tolerance', 0.5)
         
-        env = execution_context.environment
         logger.info(
-            f"🚀 Context-aware execution: {target} - {objective} "
-            f"[env={env.value if env else 'unknown'}]"
+            "🚀 Unified execution: %s - %s [sensitivity=%.1f, risk_tolerance=%.1f]",
+            target, objective, target_sensitivity, risk_tolerance
         )
         
-        # 根據環境選擇執行策略
-        if env == EnvironmentType.SANDBOX:
-            return await self._sandbox_execution(
-                target, objective, execution_context, scenario, constraints
-            )
-        elif env == EnvironmentType.PRODUCTION:
-            return await self._production_execution(
-                target, objective, execution_context, scenario, constraints
-            )
-        else:
-            # 未指定環境：使用標準執行
-            logger.warning("Environment type not specified, using standard execution")
-            return await self.execute(target, objective, scenario, constraints)
+        # v2.1: 統一執行路徑，所有執行都走同一邏輯
+        return await self._unified_execution(
+            target, objective, 
+            target_sensitivity=target_sensitivity,
+            risk_tolerance=risk_tolerance,
+            scenario=scenario, 
+            constraints=constraints
+        )
     
-    async def _sandbox_execution(
+    async def _unified_execution(
         self,
         target: str,
         objective: str,
-        execution_context: 'ExecutionContext',
+        target_sensitivity: float,
+        risk_tolerance: float,  # 預留用於未來風險評估
         scenario: Optional[dict],
         constraints: Optional[dict]
     ) -> ExecutionResult:
-        """靶場環境執行：探索式策略
+        """統一執行邏輯（v2.1 黑盒測試導向）
+        
+        根據目標敏感度自動調整策略，所有執行都學習：
+        - 低敏感 (0.0-0.3): 激進策略，多策略並行
+        - 中敏感 (0.3-0.7): 平衡策略
+        - 高敏感 (0.7-1.0): 保守策略
         
         特點：
-        - 嘗試多種攻擊策略（探索）
-        - 即時學習所有結果
-        - 高風險容忍度
-        """
-        logger.info(
-            f"🔬 Sandbox execution: exploratory mode "
-            f"(risk_tolerance={execution_context.risk_tolerance})"
-        )
+        - 無 sandbox/production 區分
+        - 所有執行結果都可學習
+        - 學習經驗直接可遷移
         
-        # 1. 生成多個攻擊方案（探索不同策略）
+        Args:
+            risk_tolerance: 預留參數，未來用於動態風險調整
+        """
+        # 使用 risk_tolerance 調整策略（預留邏輯）
+        adjusted_sensitivity = min(1.0, target_sensitivity + (1.0 - risk_tolerance) * 0.1)
+        
+        # 根據敏感度決定探索程度
+        if adjusted_sensitivity <= 0.3:
+            # 低敏感：可以多策略探索
+            num_strategies = 3
+            logger.info("🔬 Low sensitivity target: exploring %d strategies", num_strategies)
+        elif adjusted_sensitivity <= 0.7:
+            # 中敏感：適度探索
+            num_strategies = 2
+            logger.info("⚖️ Medium sensitivity target: exploring %d strategies", num_strategies)
+        else:
+            # 高敏感：單一最佳策略
+            num_strategies = 1
+            logger.info("🛡️ High sensitivity target: using best strategy only")
+        
+        # 生成攻擊方案
         plans = []
-        for strategy_variant in range(3):  # 生成 3 種策略變體
+        for strategy_variant in range(num_strategies):
             plan = await self._generate_enhanced_plan(
                 target=target,
                 objective=objective,
-                scenario={**(scenario or {}), "strategy_variant": strategy_variant},
+                scenario={
+                    **(scenario or {}), 
+                    "strategy_variant": strategy_variant,
+                    "target_sensitivity": target_sensitivity  # 傳遞敏感度，不是環境
+                },
                 constraints=constraints
             )
             plans.append(plan)
         
-        logger.info(f"📋 Generated {len(plans)} strategy variants for exploration")
+        logger.info(f"📋 Generated {len(plans)} attack plans")
         
-        # 2. 並行執行所有方案（靶場環境安全）
+        # 執行所有方案
         results = []
         for plan in plans:
             result = await self._execute_attack_plan(plan)
             results.append((plan, result))
         
-        # 3. 選擇最佳結果
+        # 選擇最佳結果
         best_result = max(
             results,
             key=lambda x: len(x[1].get("vulnerabilities", []))
@@ -459,23 +474,26 @@ class UnifiedAttackExecutor:
         
         logger.info(f"⚡ Best result: {len(execution_result.get('vulnerabilities', []))} vulns found")
         
-        # 4. 即時學習（靶場環境總是學習）
+        # 統一學習邏輯（所有執行都學習，不區分環境）
         learning_info = None
         if self.learning_enabled:
-            # 從所有嘗試中學習（包括失敗的）
             all_samples = []
             for plan, result in results:
                 samples = await self._learn_from_execution(
                     attack_plan=plan,
                     execution_result=result,
-                    scenario={**(scenario or {}), "environment": "sandbox"}
+                    scenario={
+                        **(scenario or {}), 
+                        "target_sensitivity": target_sensitivity  # 記錄敏感度而非環境
+                    }
                 )
                 all_samples.append(samples)
             
             learning_info = {
                 "samples_collected": sum(s.get("samples_collected", 0) for s in all_samples),
                 "strategies_explored": len(plans),
-                "immediate_learning": True
+                "target_sensitivity": target_sensitivity,
+                "transferable": True  # 標記經驗可遷移
             }
         
         return ExecutionResult(
@@ -486,6 +504,37 @@ class UnifiedAttackExecutor:
             learning_info=learning_info
         )
     
+    # === 向後兼容：保留舊方法但標記為已棄用 ===
+    
+    async def _sandbox_execution(
+        self,
+        target: str,
+        objective: str,
+        execution_context: 'ExecutionContext',
+        scenario: Optional[dict],
+        constraints: Optional[dict]
+    ) -> ExecutionResult:
+        """[已棄用] 靶場環境執行
+        
+        警告：此方法基於 sandbox/production 區分，已不推薦使用
+        請使用 execute_with_context() 的統一執行路徑
+        """
+        import warnings
+        warnings.warn(
+            "_sandbox_execution() is deprecated. "
+            "Use execute_with_context() with target_sensitivity instead.",
+            DeprecationWarning,
+            stacklevel=2
+        )
+        # 映射到統一執行：sandbox → 低敏感度
+        return await self._unified_execution(
+            target, objective,
+            target_sensitivity=0.2,  # sandbox 映射為低敏感
+            risk_tolerance=getattr(execution_context, 'risk_tolerance', 0.8),
+            scenario=scenario,
+            constraints=constraints
+        )
+    
     async def _production_execution(
         self,
         target: str,
@@ -494,71 +543,30 @@ class UnifiedAttackExecutor:
         scenario: Optional[dict],
         constraints: Optional[dict]
     ) -> ExecutionResult:
-        """生產環境執行：保守式策略
+        """[已棄用] 生產環境執行
         
-        特點：
-        - 使用最佳已知策略（不探索）
-        - 僅在結果顯著偏離預期時學習
-        - 低風險容忍度
+        警告：此方法基於 sandbox/production 區分，已不推薦使用
+        請使用 execute_with_context() 的統一執行路徑
         """
-        logger.info(
-            f"🛡️ Production execution: conservative mode "
-            f"(risk_tolerance={execution_context.risk_tolerance})"
+        import warnings
+        warnings.warn(
+            "_production_execution() is deprecated. "
+            "Use execute_with_context() with target_sensitivity instead.",
+            DeprecationWarning,
+            stacklevel=2
         )
-        
-        # 1. 生成單一最優方案（基於歷史最佳）
-        attack_plan = await self._generate_enhanced_plan(
-            target=target,
-            objective=objective,
-            scenario={**(scenario or {}), "use_best_strategy": True},
-            constraints={**(constraints or {}), "conservative_mode": True}
-        )
-        
-        logger.info(f"📋 Using best known strategy: {attack_plan.plan_id}")
-        
-        # 2. 執行攻擊
-        execution_result = await self._execute_attack_plan(attack_plan)
-        
-        logger.info(f"⚡ Execution completed: success={execution_result.get('success', False)}")
-        
-        # 3. 選擇性學習（僅在顯著偏離時）
-        learning_info = None
-        if self.learning_enabled:
-            # 評估結果是否值得學習
-            should_learn = self._should_learn_from_production(execution_result)
-            
-            if should_learn:
-                logger.info("📚 Production result worth learning, updating knowledge")
-                learning_info = await self._learn_from_execution(
-                    attack_plan=attack_plan,
-                    execution_result=execution_result,
-                    scenario={**(scenario or {}), "environment": "production"}
-                )
-            else:
-                logger.info("✓ Production result as expected, no learning needed")
-                learning_info = {"selective_learning": True, "learned": False}
-        
-        return ExecutionResult(
-            success=execution_result.get("success", False),
-            vulnerabilities=execution_result.get("vulnerabilities", []),
-            attack_plan=attack_plan,
-            execution_details=execution_result,
-            learning_info=learning_info
+        # 映射到統一執行：production → 高敏感度
+        return await self._unified_execution(
+            target, objective,
+            target_sensitivity=0.8,  # production 映射為高敏感
+            risk_tolerance=getattr(execution_context, 'risk_tolerance', 0.3),
+            scenario=scenario,
+            constraints=constraints
         )
     
-    def _should_learn_from_production(self, execution_result: dict) -> bool:
-        """判斷生產環境結果是否值得學習
-        
-        學習條件：
-        - 發現了意外的漏洞（新發現）
-        - 出現了未預期的錯誤（失敗案例）
-        - 性能顯著優於預期（效率提升）
-        """
-        # 簡化邏輯：發現漏洞或失敗都值得學習
-        has_vulns = len(execution_result.get("vulnerabilities", [])) > 0
-        has_errors = not execution_result.get("success", False)
-        
-        return has_vulns or has_errors
+    # _should_learn_from_production 已移除
+    # v2.1: 所有執行結果都學習，不區分環境
+    # 學習經驗基於 target_sensitivity 分類，確保可遷移
 
     async def _generate_enhanced_plan(
         self,
@@ -567,26 +575,46 @@ class UnifiedAttackExecutor:
         scenario: Optional[dict],
         constraints: Optional[dict]
     ) -> AttackPlan:
-        """生成 RAG 增強的攻擊計劃"""
+        """生成 RAG 增強的攻擊計劃
         
-        # 查詢 RAG：尋找相似的成功案例
-        try:
-            rag_context = await self.rag_engine.retrieve_similar_cases(
-                target=target,
-                objective=objective
-            )
-            logger.info(f"🔍 RAG found {len(rag_context.get('similar_cases', []))} similar cases")
-        except Exception as e:
-            logger.warning(f"RAG retrieval failed: {e}, using fallback")
-            rag_context = {}
+        現在支持策略變體:
+        - variant 0: 保守策略 (低噪音、高隱蔽)
+        - variant 1: 平衡策略 (中等覆蓋)
+        - variant 2: 激進策略 (全面測試)
+        """
         
-        # 使用 AI Commander 生成計劃
+        # 獲取策略配置
+        from .strategy_profiles import get_strategy_profile
+        strategy_variant = scenario.get("strategy_variant", 0) if scenario else 0
+        strategy_profile = get_strategy_profile(strategy_variant)
+        
+        logger.info(f"🎯 Using strategy: {strategy_profile.name} (intensity={strategy_profile.attack_intensity})")
+        
+        # 查詢 RAG：尋找相似的成功案例（必需）
+        rag_context = await self.rag_engine.retrieve_similar_cases(
+            target=target,
+            objective=objective
+        )
+        logger.info(f"🔍 RAG found {len(rag_context.get('similar_cases', []))} similar cases")
+        
+        # 使用 AI Commander 生成計劃 (注入策略配置)
         plan_context = {
             "target": target,
             "objective": objective,
             "rag_context": rag_context,
             "scenario": scenario,
-            "constraints": constraints or {}
+            "constraints": constraints or {},
+            "strategy_profile": {
+                "name": strategy_profile.name,
+                "intensity": strategy_profile.attack_intensity,
+                "techniques": strategy_profile.techniques,
+                "payload_count": strategy_profile.payload_count,
+                "concurrent_attacks": strategy_profile.concurrent_attacks,
+                "timing_delay": strategy_profile.timing_delay,
+                "evasion_techniques": strategy_profile.evasion_techniques,
+                "risk_level": strategy_profile.risk_level,
+                "metadata": strategy_profile.metadata
+            }
         }
         
         # 調用 AI Commander 生成計劃
@@ -600,30 +628,65 @@ class UnifiedAttackExecutor:
             if plan_result.get("success"):
                 plan_data = plan_result.get("plan", {})
                 return AttackPlan(
-                    plan_id=plan_data.get("plan_id", f"plan_{int(time.time())}"),
+                    plan_id=plan_data.get("plan_id", f"plan_{strategy_profile.name}_{int(time.time())}"),
                     target=AttackTarget(url=target),
                     objective=objective,
                     steps=plan_data.get("phases", []),
                     metadata={
                         "scenario_id": scenario.get("id") if scenario else None,
                         "rag_enhanced": bool(rag_context),
-                        "constraints": constraints
+                        "constraints": constraints,
+                        "strategy_profile": strategy_profile.name,
+                        "attack_intensity": strategy_profile.attack_intensity,
+                        "techniques": strategy_profile.techniques
                     }
                 )
         except Exception as e:
-            logger.warning(f"AI Commander plan generation failed: {e}, using simple plan")
+            logger.warning(f"AI Commander plan generation failed: {e}, using strategy-based fallback")
         
-        # 降級：創建簡單計劃
+        # 降級：創建基於策略配置的計劃
+        steps = []
+        
+        # 根據策略配置生成步驟
+        if strategy_profile.attack_intensity < 0.5:
+            # 保守策略：基礎偵查 + 少量測試
+            steps = [
+                {"name": "passive_recon", "description": "Passive reconnaissance"},
+                {"name": "basic_scan", "description": f"Basic {objective} scan", 
+                 "techniques": strategy_profile.techniques[:2]},  # 只用前2種技術
+            ]
+        elif strategy_profile.attack_intensity < 0.8:
+            # 平衡策略：完整流程
+            steps = [
+                {"name": "reconnaissance", "description": "Active reconnaissance"},
+                {"name": "vulnerability_scan", "description": f"Scan for {objective}",
+                 "techniques": strategy_profile.techniques},
+                {"name": "exploitation", "description": "Test found vulnerabilities"}
+            ]
+        else:
+            # 激進策略：深度測試
+            steps = [
+                {"name": "comprehensive_recon", "description": "Comprehensive reconnaissance"},
+                {"name": "deep_scan", "description": f"Deep scan for {objective}",
+                 "techniques": strategy_profile.techniques},
+                {"name": "advanced_exploitation", "description": "Advanced exploitation attempts"},
+                {"name": "evasion_testing", "description": "Test evasion techniques",
+                 "evasion_techniques": strategy_profile.evasion_techniques}
+            ]
+        
         return AttackPlan(
-            plan_id=f"simple_plan_{int(time.time())}",
+            plan_id=f"{strategy_profile.name}_fallback_{int(time.time())}",
             target=AttackTarget(url=target),
             objective=objective,
-            steps=[
-                {"name": "reconnaissance", "description": "Initial recon"},
-                {"name": "vulnerability_scan", "description": f"Scan for {objective}"},
-                {"name": "exploitation", "description": "Exploit found vulnerabilities"}
-            ],
-            metadata={"fallback": True}
+            steps=steps,
+            metadata={
+                "fallback": True,
+                "strategy_profile": strategy_profile.name,
+                "attack_intensity": strategy_profile.attack_intensity,
+                "payload_count": strategy_profile.payload_count,
+                "concurrent_attacks": strategy_profile.concurrent_attacks,
+                "timing_delay": strategy_profile.timing_delay
+            }
         )
     
     async def _execute_attack_plan(self, attack_plan: AttackPlan) -> dict[str, Any]:

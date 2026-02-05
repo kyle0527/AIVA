@@ -13,7 +13,7 @@ import os
 from typing import Optional, Dict, Any
 from datetime import datetime
 
-from aiva_common.command_center import CommandHandler
+from aiva_common.core.command_center import CommandHandler
 from aiva_common.schemas.commands import (
     AICommand,
     AICommandResult,

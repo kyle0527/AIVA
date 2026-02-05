@@ -17,8 +17,11 @@ from rich.progress import (
 from rich.prompt import Confirm
 from rich.align import Align
 from rich.text import Text
-from .rich_console import console
+from .rich_console import get_console
 from .themes import TABLE_STYLES, PANEL_STYLES, ICONS
+
+# 使用函數獲取 console，確保主題正確套用
+console = get_console()
 
 def show_banner(
     title: str = "AIVA",

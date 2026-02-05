@@ -1,0 +1,5517 @@
+{
+  "graphs": [
+    {
+      "name": "SensitiveInfoType",
+      "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\function_info_leak\\sensitive_info_detector.py",
+      "type": "class",
+      "nodes": [
+        {
+          "id": "SensitiveInfoType_1",
+          "label": "SensitiveInfoType",
+          "kind": "start",
+          "nexts": [
+            "SensitiveInfoType_2"
+          ],
+          "metadata": {
+            "type": "head",
+            "name": "SensitiveInfoType",
+            "docstring": "敏感資訊類型 - 擴展至 50+ 種",
+            "is_class": true
+          }
+        },
+        {
+          "id": "SensitiveInfoType_2",
+          "label": "End",
+          "kind": "end",
+          "nexts": [],
+          "metadata": {}
+        }
+      ],
+      "start_node_id": "SensitiveInfoType_1",
+      "end_node_id": "SensitiveInfoType_2"
+    },
+    {
+      "name": "AlertSeverity",
+      "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\function_info_leak\\sensitive_info_detector.py",
+      "type": "class",
+      "nodes": [
+        {
+          "id": "AlertSeverity_1",
+          "label": "AlertSeverity",
+          "kind": "start",
+          "nexts": [
+            "AlertSeverity_2"
+          ],
+          "metadata": {
+            "type": "head",
+            "name": "AlertSeverity",
+            "docstring": "警報嚴重性等級",
+            "is_class": true
+          }
+        },
+        {
+          "id": "AlertSeverity_2",
+          "label": "End",
+          "kind": "end",
+          "nexts": [],
+          "metadata": {}
+        }
+      ],
+      "start_node_id": "AlertSeverity_1",
+      "end_node_id": "AlertSeverity_2"
+    },
+    {
+      "name": "Location",
+      "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\function_info_leak\\sensitive_info_detector.py",
+      "type": "class",
+      "nodes": [
+        {
+          "id": "Location_1",
+          "label": "Location",
+          "kind": "start",
+          "nexts": [
+            "Location_2"
+          ],
+          "metadata": {
+            "type": "head",
+            "name": "Location",
+            "docstring": "資訊位置",
+            "is_class": true
+          }
+        },
+        {
+          "id": "Location_2",
+          "label": "End",
+          "kind": "end",
+          "nexts": [],
+          "metadata": {}
+        }
+      ],
+      "start_node_id": "Location_1",
+      "end_node_id": "Location_2"
+    },
+    {
+      "name": "SensitiveMatch",
+      "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\function_info_leak\\sensitive_info_detector.py",
+      "type": "class",
+      "nodes": [
+        {
+          "id": "SensitiveMatch_1",
+          "label": "SensitiveMatch",
+          "kind": "start",
+          "nexts": [
+            "SensitiveMatch_2"
+          ],
+          "metadata": {
+            "type": "head",
+            "name": "SensitiveMatch",
+            "docstring": "敏感資訊匹配結果",
+            "is_class": true
+          }
+        },
+        {
+          "id": "SensitiveMatch_2",
+          "label": "End",
+          "kind": "end",
+          "nexts": [],
+          "metadata": {}
+        }
+      ],
+      "start_node_id": "SensitiveMatch_1",
+      "end_node_id": "SensitiveMatch_2"
+    },
+    {
+      "name": "SensitiveMatch.__post_init__",
+      "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\function_info_leak\\sensitive_info_detector.py",
+      "type": "method",
+      "nodes": [
+        {
+          "id": "SensitiveMatch___post_init___1",
+          "label": "SensitiveMatch.__post_init__",
+          "kind": "start",
+          "nexts": [
+            "SensitiveMatch___post_init___3"
+          ],
+          "metadata": {
+            "type": "head",
+            "name": "SensitiveMatch.__post_init__",
+            "parameters": [],
+            "docstring": "計算匹配項的 hash",
+            "return_type": "any"
+          }
+        },
+        {
+          "id": "SensitiveMatch___post_init___2",
+          "label": "End",
+          "kind": "end",
+          "nexts": [],
+          "metadata": {}
+        },
+        {
+          "id": "SensitiveMatch___post_init___3",
+          "label": "if not self.hash",
+          "kind": "cond",
+          "nexts": [
+            "SensitiveMatch___post_init___4",
+            "SensitiveMatch___post_init___5"
+          ],
+          "metadata": {}
+        },
+        {
+          "id": "SensitiveMatch___post_init___4",
+          "label": "Call: unknown_call.hexdigest",
+          "kind": "call",
+          "nexts": [
+            "SensitiveMatch___post_init___5"
+          ],
+          "metadata": {
+            "type": "tail",
+            "target_func": "unknown_call.hexdigest"
+          }
+        },
+        {
+          "id": "SensitiveMatch___post_init___5",
+          "label": "",
+          "kind": "op",
+          "nexts": [
+            "SensitiveMatch___post_init___2"
+          ],
+          "metadata": {}
+        }
+      ],
+      "start_node_id": "SensitiveMatch___post_init___1",
+      "end_node_id": "SensitiveMatch___post_init___2"
+    },
+    {
+      "name": "RiskScore",
+      "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\function_info_leak\\sensitive_info_detector.py",
+      "type": "class",
+      "nodes": [
+        {
+          "id": "RiskScore_1",
+          "label": "RiskScore",
+          "kind": "start",
+          "nexts": [
+            "RiskScore_2"
+          ],
+          "metadata": {
+            "type": "head",
+            "name": "RiskScore",
+            "docstring": "風險評分",
+            "is_class": true
+          }
+        },
+        {
+          "id": "RiskScore_2",
+          "label": "End",
+          "kind": "end",
+          "nexts": [],
+          "metadata": {}
+        }
+      ],
+      "start_node_id": "RiskScore_1",
+      "end_node_id": "RiskScore_2"
+    },
+    {
+      "name": "RiskScore.calculate",
+      "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\function_info_leak\\sensitive_info_detector.py",
+      "type": "method",
+      "nodes": [
+        {
+          "id": "RiskScore_calculate_1",
+          "label": "RiskScore.calculate",
+          "kind": "start",
+          "nexts": [
+            "RiskScore_calculate_3"
+          ],
+          "metadata": {
+            "type": "head",
+            "name": "RiskScore.calculate",
+            "parameters": [
+              {
+                "name": "matches",
+                "type": "List[SensitiveMatch]",
+                "default": null,
+                "required": true,
+                "kind": "positional_or_keyword"
+              }
+            ],
+            "docstring": "計算風險評分",
+            "return_type": "None"
+          }
+        },
+        {
+          "id": "RiskScore_calculate_2",
+          "label": "End",
+          "kind": "end",
+          "nexts": [],
+          "metadata": {}
+        },
+        {
+          "id": "RiskScore_calculate_3",
+          "label": "for match in matches",
+          "kind": "cond",
+          "nexts": [
+            "RiskScore_calculate_4",
+            "RiskScore_calculate_12"
+          ],
+          "metadata": {}
+        },
+        {
+          "id": "RiskScore_calculate_4",
+          "label": "if match.severity == AlertSeverity.CRITICAL",
+          "kind": "cond",
+          "nexts": [
+            "RiskScore_calculate_5",
+            "RiskScore_calculate_11"
+          ],
+          "metadata": {}
+        },
+        {
+          "id": "RiskScore_calculate_5",
+          "label": "if match.severity == AlertSeverity.HIGH",
+          "kind": "cond",
+          "nexts": [
+            "RiskScore_calculate_6",
+            "RiskScore_calculate_10"
+          ],
+          "metadata": {}
+        },
+        {
+          "id": "RiskScore_calculate_6",
+          "label": "if match.severity == AlertSeverity.MEDIUM",
+          "kind": "cond",
+          "nexts": [
+            "RiskScore_calculate_7",
+            "RiskScore_calculate_9"
+          ],
+          "metadata": {}
+        },
+        {
+          "id": "RiskScore_calculate_7",
+          "label": "if match.severity == AlertSeverity.LOW",
+          "kind": "cond",
+          "nexts": [
+            "RiskScore_calculate_8"
+          ],
+          "metadata": {}
+        },
+        {
+          "id": "RiskScore_calculate_8",
+          "label": "",
+          "kind": "op",
+          "nexts": [
+            "RiskScore_calculate_9"
+          ],
+          "metadata": {}
+        },
+        {
+          "id": "RiskScore_calculate_9",
+          "label": "",
+          "kind": "op",
+          "nexts": [
+            "RiskScore_calculate_10"
+          ],
+          "metadata": {}
+        },
+        {
+          "id": "RiskScore_calculate_10",
+          "label": "",
+          "kind": "op",
+          "nexts": [
+            "RiskScore_calculate_11"
+          ],
+          "metadata": {}
+        },
+        {
+          "id": "RiskScore_calculate_11",
+          "label": "",
+          "kind": "op",
+          "nexts": [
+            "RiskScore_calculate_3"
+          ],
+          "metadata": {}
+        },
+        {
+          "id": "RiskScore_calculate_12",
+          "label": "",
+          "kind": "op",
+          "nexts": [
+            "RiskScore_calculate_13"
+          ],
+          "metadata": {}
+        },
+        {
+          "id": "RiskScore_calculate_13",
+          "label": "Call: min",
+          "kind": "call",
+          "nexts": [
+            "RiskScore_calculate_14"
+          ],
+          "metadata": {
+            "type": "tail",
+            "target_func": "min"
+          }
+        },
+        {
+          "id": "RiskScore_calculate_14",
+          "label": "if self.critical_count > 0 or self.total_score >= 75",
+          "kind": "cond",
+          "nexts": [
+            "RiskScore_calculate_15",
+            "RiskScore_calculate_19"
+          ],
+          "metadata": {}
+        },
+        {
+          "id": "RiskScore_calculate_15",
+          "label": "if self.high_count > 0 or self.total_score >= 50",
+          "kind": "cond",
+          "nexts": [
+            "RiskScore_calculate_16",
+            "RiskScore_calculate_18"
+          ],
+          "metadata": {}
+        },
+        {
+          "id": "RiskScore_calculate_16",
+          "label": "if self.medium_count > 0 or self.total_score >= 25",
+          "kind": "cond",
+          "nexts": [
+            "RiskScore_calculate_17"
+          ],
+          "metadata": {}
+        },
+        {
+          "id": "RiskScore_calculate_17",
+          "label": "",
+          "kind": "op",
+          "nexts": [
+            "RiskScore_calculate_18"
+          ],
+          "metadata": {}
+        },
+        {
+          "id": "RiskScore_calculate_18",
+          "label": "",
+          "kind": "op",
+          "nexts": [
+            "RiskScore_calculate_19"
+          ],
+          "metadata": {}
+        },
+        {
+          "id": "RiskScore_calculate_19",
+          "label": "",
+          "kind": "op",
+          "nexts": [
+            "RiskScore_calculate_2"
+          ],
+          "metadata": {}
+        }
+      ],
+      "start_node_id": "RiskScore_calculate_1",
+      "end_node_id": "RiskScore_calculate_2"
+    },
+    {
+      "name": "DetectionResult",
+      "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\function_info_leak\\sensitive_info_detector.py",
+      "type": "class",
+      "nodes": [
+        {
+          "id": "DetectionResult_1",
+          "label": "DetectionResult",
+          "kind": "start",
+          "nexts": [
+            "DetectionResult_3"
+          ],
+          "metadata": {
+            "type": "head",
+            "name": "DetectionResult",
+            "docstring": "檢測結果",
+            "is_class": true
+          }
+        },
+        {
+          "id": "DetectionResult_2",
+          "label": "End",
+          "kind": "end",
+          "nexts": [],
+          "metadata": {}
+        },
+        {
+          "id": "DetectionResult_3",
+          "label": "Call: field",
+          "kind": "call",
+          "nexts": [
+            "DetectionResult_4"
+          ],
+          "metadata": {
+            "type": "tail",
+            "target_func": "field"
+          }
+        },
+        {
+          "id": "DetectionResult_4",
+          "label": "Call: field",
+          "kind": "call",
+          "nexts": [
+            "DetectionResult_5"
+          ],
+          "metadata": {
+            "type": "tail",
+            "target_func": "field"
+          }
+        },
+        {
+          "id": "DetectionResult_5",
+          "label": "Call: field",
+          "kind": "call",
+          "nexts": [
+            "DetectionResult_6"
+          ],
+          "metadata": {
+            "type": "tail",
+            "target_func": "field"
+          }
+        },
+        {
+          "id": "DetectionResult_6",
+          "label": "Call: field",
+          "kind": "call",
+          "nexts": [
+            "DetectionResult_2"
+          ],
+          "metadata": {
+            "type": "tail",
+            "target_func": "field"
+          }
+        }
+      ],
+      "start_node_id": "DetectionResult_1",
+      "end_node_id": "DetectionResult_2"
+    },
+    {
+      "name": "DetectionResult.__post_init__",
+      "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\function_info_leak\\sensitive_info_detector.py",
+      "type": "method",
+      "nodes": [
+        {
+          "id": "DetectionResult___post_init___1",
+          "label": "DetectionResult.__post_init__",
+          "kind": "start",
+          "nexts": [
+            "DetectionResult___post_init___3"
+          ],
+          "metadata": {
+            "type": "head",
+            "name": "DetectionResult.__post_init__",
+            "parameters": [],
+            "docstring": "計算風險評分",
+            "return_type": "any"
+          }
+        },
+        {
+          "id": "DetectionResult___post_init___2",
+          "label": "End",
+          "kind": "end",
+          "nexts": [],
+          "metadata": {}
+        },
+        {
+          "id": "DetectionResult___post_init___3",
+          "label": "Call: self.risk_score.calculate",
+          "kind": "call",
+          "nexts": [
+            "DetectionResult___post_init___2"
+          ],
+          "metadata": {
+            "type": "tail",
+            "target_func": "self.risk_score.calculate"
+          }
+        }
+      ],
+      "start_node_id": "DetectionResult___post_init___1",
+      "end_node_id": "DetectionResult___post_init___2"
+    },
+    {
+      "name": "DetectionResult.to_dict",
+      "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\function_info_leak\\sensitive_info_detector.py",
+      "type": "method",
+      "nodes": [
+        {
+          "id": "DetectionResult_to_dict_1",
+          "label": "DetectionResult.to_dict",
+          "kind": "start",
+          "nexts": [
+            "DetectionResult_to_dict_3"
+          ],
+          "metadata": {
+            "type": "head",
+            "name": "DetectionResult.to_dict",
+            "parameters": [],
+            "docstring": "轉換為字典格式",
+            "return_type": "dict"
+          }
+        },
+        {
+          "id": "DetectionResult_to_dict_2",
+          "label": "End",
+          "kind": "end",
+          "nexts": [],
+          "metadata": {}
+        },
+        {
+          "id": "DetectionResult_to_dict_3",
+          "label": "return {'url': self.url, 'scan_time': self.scan_time, 'total_matches': len(self.matches), 'risk_score': {'total': round(self.risk_score.total_score, 2), 'level': self.risk_score.risk_level, 'critical': self.risk_score.critical_count, 'high': self.risk_score.high_count, 'medium': self.risk_score.medium_count, 'low': self.risk_score.low_count, 'info': self.risk_score.info_count}, 'matches': [{'type': match.info_type.value, 'location': match.location.value, 'severity': match.severity.value, 'confidence': round(match.confidence, 2), 'value': match.value[:50] + '...' if len(match.value) > 50 else match.value, 'context': match.context[:100] + '...' if len(match.context) > 100 else match.context, 'line': match.line_number, 'column': match.column_number, 'description': match.description, 'recommendation': match.recommendation, 'entropy': round(match.entropy, 3) if match.entropy else None, 'hash': match.hash} for match in self.matches], 'metadata': self.metadata}",
+          "kind": "op",
+          "nexts": [
+            "DetectionResult_to_dict_2"
+          ],
+          "metadata": {}
+        }
+      ],
+      "start_node_id": "DetectionResult_to_dict_1",
+      "end_node_id": "DetectionResult_to_dict_2"
+    },
+    {
+      "name": "DetectionResult.to_sarif",
+      "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\function_info_leak\\sensitive_info_detector.py",
+      "type": "method",
+      "nodes": [
+        {
+          "id": "DetectionResult_to_sarif_1",
+          "label": "DetectionResult.to_sarif",
+          "kind": "start",
+          "nexts": [
+            "DetectionResult_to_sarif_3"
+          ],
+          "metadata": {
+            "type": "head",
+            "name": "DetectionResult.to_sarif",
+            "parameters": [],
+            "docstring": "轉換為 SARIF 格式 (Static Analysis Results Interchange Format)",
+            "return_type": "dict"
+          }
+        },
+        {
+          "id": "DetectionResult_to_sarif_2",
+          "label": "End",
+          "kind": "end",
+          "nexts": [],
+          "metadata": {}
+        },
+        {
+          "id": "DetectionResult_to_sarif_3",
+          "label": "for match in self.matches",
+          "kind": "cond",
+          "nexts": [
+            "DetectionResult_to_sarif_4",
+            "DetectionResult_to_sarif_10"
+          ],
+          "metadata": {}
+        },
+        {
+          "id": "DetectionResult_to_sarif_4",
+          "label": "if rule_id not in rules",
+          "kind": "cond",
+          "nexts": [
+            "DetectionResult_to_sarif_5",
+            "DetectionResult_to_sarif_7"
+          ],
+          "metadata": {}
+        },
+        {
+          "id": "DetectionResult_to_sarif_5",
+          "label": "Call: unknown_call.title",
+          "kind": "call",
+          "nexts": [
+            "DetectionResult_to_sarif_6"
+          ],
+          "metadata": {
+            "type": "tail",
+            "target_func": "unknown_call.title"
+          }
+        },
+        {
+          "id": "DetectionResult_to_sarif_6",
+          "label": "Call: self._sarif_level",
+          "kind": "call",
+          "nexts": [
+            "DetectionResult_to_sarif_7"
+          ],
+          "metadata": {
+            "type": "tail",
+            "target_func": "self._sarif_level"
+          }
+        },
+        {
+          "id": "DetectionResult_to_sarif_7",
+          "label": "",
+          "kind": "op",
+          "nexts": [
+            "DetectionResult_to_sarif_8"
+          ],
+          "metadata": {}
+        },
+        {
+          "id": "DetectionResult_to_sarif_8",
+          "label": "Call: self._sarif_level",
+          "kind": "call",
+          "nexts": [
+            "DetectionResult_to_sarif_9"
+          ],
+          "metadata": {
+            "type": "tail",
+            "target_func": "self._sarif_level"
+          }
+        },
+        {
+          "id": "DetectionResult_to_sarif_9",
+          "label": "Call: results.append",
+          "kind": "call",
+          "nexts": [
+            "DetectionResult_to_sarif_3"
+          ],
+          "metadata": {
+            "type": "tail",
+            "target_func": "results.append"
+          }
+        },
+        {
+          "id": "DetectionResult_to_sarif_10",
+          "label": "",
+          "kind": "op",
+          "nexts": [
+            "DetectionResult_to_sarif_11"
+          ],
+          "metadata": {}
+        },
+        {
+          "id": "DetectionResult_to_sarif_11",
+          "label": "return {'$schema': 'https://raw.githubusercontent.com/oasis-tcs/sarif-spec/master/Schemata/sarif-schema-2.1.0.json', 'version': '2.1.0', 'runs': [{'tool': {'driver': {'name': 'AIVA Sensitive Info Detector', 'version': '2.0.0', 'informationUri': 'https://github.com/kyle0527/AIVA', 'rules': list(rules.values())}}, 'results': results, 'properties': {'risk_score': self.risk_score.total_score, 'risk_level': self.risk_score.risk_level, 'scan_time': self.scan_time}}]}",
+          "kind": "op",
+          "nexts": [
+            "DetectionResult_to_sarif_2"
+          ],
+          "metadata": {}
+        }
+      ],
+      "start_node_id": "DetectionResult_to_sarif_1",
+      "end_node_id": "DetectionResult_to_sarif_2"
+    },
+    {
+      "name": "DetectionResult._sarif_level",
+      "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\function_info_leak\\sensitive_info_detector.py",
+      "type": "method",
+      "nodes": [
+        {
+          "id": "DetectionResult__sarif_level_1",
+          "label": "DetectionResult._sarif_level",
+          "kind": "start",
+          "nexts": [
+            "DetectionResult__sarif_level_3"
+          ],
+          "metadata": {
+            "type": "head",
+            "name": "DetectionResult._sarif_level",
+            "parameters": [
+              {
+                "name": "severity",
+                "type": "AlertSeverity",
+                "default": null,
+                "required": true,
+                "kind": "positional_or_keyword"
+              }
+            ],
+            "docstring": "轉換嚴重性等級為 SARIF 格式",
+            "return_type": "str"
+          }
+        },
+        {
+          "id": "DetectionResult__sarif_level_2",
+          "label": "End",
+          "kind": "end",
+          "nexts": [],
+          "metadata": {}
+        },
+        {
+          "id": "DetectionResult__sarif_level_3",
+          "label": "return mapping.get(severity, 'warning')",
+          "kind": "op",
+          "nexts": [
+            "DetectionResult__sarif_level_2"
+          ],
+          "metadata": {}
+        }
+      ],
+      "start_node_id": "DetectionResult__sarif_level_1",
+      "end_node_id": "DetectionResult__sarif_level_2"
+    },
+    {
+      "name": "SensitiveInfoDetector",
+      "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\function_info_leak\\sensitive_info_detector.py",
+      "type": "class",
+      "nodes": [
+        {
+          "id": "SensitiveInfoDetector_1",
+          "label": "SensitiveInfoDetector",
+          "kind": "start",
+          "nexts": [
+            "SensitiveInfoDetector_2"
+          ],
+          "metadata": {
+            "type": "head",
+            "name": "SensitiveInfoDetector",
+            "docstring": "敏感資訊檢測器 - 專業級實現\n\n功能:\n- 檢測 50+ 種認證資訊 (API keys, tokens, passwords)\n- 檢測個人識別資訊 (PII): email, phone, SSN, credit card (國際化)\n- 檢測雲端憑證 (AWS, GCP, Azure, GitHub, GitLab, Slack, Stripe, etc.)\n- 檢測資料庫連線字串 (MySQL, PostgreSQL, MongoDB, Redis, etc.)\n- 檢測內部路徑與系統配置資訊\n- 檢測 debug info 與錯誤訊息\n- 檢測 HTML 註釋中的敏感資訊\n- 熵值分析 (檢測高隨機性密鑰)\n- 上下文感知誤報過濾\n- 信心度評分\n- SARIF 格式輸出\n\n使用範例:\n    detector = SensitiveInfoDetector()\n    \n    # 檢測 HTML 內容\n    result = detector.detect_in_html(html_content, url=\"https://example.com\")\n    \n    # 檢測標頭\n    result = detector.detect_in_headers(headers, url=\"https://example.com\")\n    \n    # 檢測 JavaScript\n    result = detector.detect_in_javascript(js_code, url=\"https://example.com/app.js\")\n    \n    # 輸出 SARIF 格式\n    sarif_report = result.to_sarif()\n    \n    # 輸出 JSON 格式\n    json_report = result.to_dict()",
+            "is_class": true
+          }
+        },
+        {
+          "id": "SensitiveInfoDetector_2",
+          "label": "End",
+          "kind": "end",
+          "nexts": [],
+          "metadata": {}
+        }
+      ],
+      "start_node_id": "SensitiveInfoDetector_1",
+      "end_node_id": "SensitiveInfoDetector_2"
+    },
+    {
+      "name": "SensitiveInfoDetector.__init__",
+      "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\function_info_leak\\sensitive_info_detector.py",
+      "type": "method",
+      "nodes": [
+        {
+          "id": "SensitiveInfoDetector___init___1",
+          "label": "SensitiveInfoDetector.__init__",
+          "kind": "start",
+          "nexts": [
+            "SensitiveInfoDetector___init___3"
+          ],
+          "metadata": {
+            "type": "head",
+            "name": "SensitiveInfoDetector.__init__",
+            "parameters": [
+              {
+                "name": "min_severity",
+                "type": "AlertSeverity",
+                "default": "AlertSeverity.INFO",
+                "required": false,
+                "kind": "positional_or_keyword"
+              },
+              {
+                "name": "enable_entropy_check",
+                "type": "bool",
+                "default": true,
+                "required": false,
+                "kind": "positional_or_keyword"
+              },
+              {
+                "name": "entropy_threshold",
+                "type": "float",
+                "default": 4.5,
+                "required": false,
+                "kind": "positional_or_keyword"
+              },
+              {
+                "name": "min_confidence",
+                "type": "float",
+                "default": 0.3,
+                "required": false,
+                "kind": "positional_or_keyword"
+              },
+              {
+                "name": "custom_patterns",
+                "type": "Optional[Dict]",
+                "default": null,
+                "required": false,
+                "kind": "positional_or_keyword"
+              }
+            ],
+            "docstring": "初始化檢測器\n\nArgs:\n    min_severity: 最小嚴重性等級過濾閾值\n    enable_entropy_check: 啟用熵值檢測\n    entropy_threshold: 熵值閾值 (default: 4.5)\n    min_confidence: 最小信心度閾值 (default: 0.3)\n    custom_patterns: 自訂檢測模式",
+            "return_type": "any"
+          }
+        },
+        {
+          "id": "SensitiveInfoDetector___init___2",
+          "label": "End",
+          "kind": "end",
+          "nexts": [],
+          "metadata": {}
+        },
+        {
+          "id": "SensitiveInfoDetector___init___3",
+          "label": "Call: self._build_patterns",
+          "kind": "call",
+          "nexts": [
+            "SensitiveInfoDetector___init___4"
+          ],
+          "metadata": {
+            "type": "tail",
+            "target_func": "self._build_patterns"
+          }
+        },
+        {
+          "id": "SensitiveInfoDetector___init___4",
+          "label": "if custom_patterns",
+          "kind": "cond",
+          "nexts": [
+            "SensitiveInfoDetector___init___5",
+            "SensitiveInfoDetector___init___6"
+          ],
+          "metadata": {}
+        },
+        {
+          "id": "SensitiveInfoDetector___init___5",
+          "label": "Call: self._patterns.update",
+          "kind": "call",
+          "nexts": [
+            "SensitiveInfoDetector___init___6"
+          ],
+          "metadata": {
+            "type": "tail",
+            "target_func": "self._patterns.update"
+          }
+        },
+        {
+          "id": "SensitiveInfoDetector___init___6",
+          "label": "",
+          "kind": "op",
+          "nexts": [
+            "SensitiveInfoDetector___init___7"
+          ],
+          "metadata": {}
+        },
+        {
+          "id": "SensitiveInfoDetector___init___7",
+          "label": "Call: set",
+          "kind": "call",
+          "nexts": [
+            "SensitiveInfoDetector___init___8"
+          ],
+          "metadata": {
+            "type": "tail",
+            "target_func": "set"
+          }
+        },
+        {
+          "id": "SensitiveInfoDetector___init___8",
+          "label": "Call: logger.info",
+          "kind": "call",
+          "nexts": [
+            "SensitiveInfoDetector___init___2"
+          ],
+          "metadata": {
+            "type": "tail",
+            "target_func": "logger.info"
+          }
+        }
+      ],
+      "start_node_id": "SensitiveInfoDetector___init___1",
+      "end_node_id": "SensitiveInfoDetector___init___2"
+    },
+    {
+      "name": "SensitiveInfoDetector._build_patterns",
+      "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\function_info_leak\\sensitive_info_detector.py",
+      "type": "method",
+      "nodes": [
+        {
+          "id": "SensitiveInfoDetector__build_patterns_1",
+          "label": "SensitiveInfoDetector._build_patterns",
+          "kind": "start",
+          "nexts": [
+            "SensitiveInfoDetector__build_patterns_3"
+          ],
+          "metadata": {
+            "type": "head",
+            "name": "SensitiveInfoDetector._build_patterns",
+            "parameters": [],
+            "docstring": "建立檢測模式 - 擴展至 50+ 種",
+            "return_type": "Dict[SensitiveInfoType, Dict]"
+          }
+        },
+        {
+          "id": "SensitiveInfoDetector__build_patterns_2",
+          "label": "End",
+          "kind": "end",
+          "nexts": [],
+          "metadata": {}
+        },
+        {
+          "id": "SensitiveInfoDetector__build_patterns_3",
+          "label": "return {SensitiveInfoType.AWS_KEY: {'pattern': re.compile('\\\\b(AKIA[0-9A-Z]{16})\\\\b'), 'severity': AlertSeverity.CRITICAL, 'description': 'AWS Access Key ID detected', 'recommendation': 'Revoke this key immediately and rotate credentials via IAM console'}, SensitiveInfoType.AWS_SECRET: {'pattern': re.compile('(?i)aws.{0,20}?[\\\\\\'\"][0-9a-zA-Z/+=]{40}[\\\\\\'\"]'), 'severity': AlertSeverity.CRITICAL, 'description': 'AWS Secret Access Key detected', 'recommendation': 'Revoke this secret key immediately'}, SensitiveInfoType.AWS_SESSION_TOKEN: {'pattern': re.compile('(?i)aws.{0,20}?session[\\\\\\'\"]?\\\\s*[:=]\\\\s*[\\\\\\'\"]?([A-Za-z0-9+/]{100,})[\\\\\\'\"]?'), 'severity': AlertSeverity.HIGH, 'description': 'AWS Session Token detected', 'recommendation': 'Session tokens are temporary but should not be exposed'}, SensitiveInfoType.GCP_API_KEY: {'pattern': re.compile('\\\\b(AIza[0-9A-Za-z_-]{35})\\\\b'), 'severity': AlertSeverity.HIGH, 'description': 'Google Cloud API key detected', 'recommendation': 'Restrict API key usage and rotate if compromised'}, SensitiveInfoType.GCP_SERVICE_ACCOUNT: {'pattern': re.compile('\"type\"\\\\s*:\\\\s*\"service_account\"'), 'severity': AlertSeverity.CRITICAL, 'description': 'GCP Service Account JSON detected', 'recommendation': 'Remove service account credentials from code immediately'}, SensitiveInfoType.AZURE_KEY: {'pattern': re.compile('(?i)azure.{0,20}?key[\\\\\\'\"]?\\\\s*[:=]\\\\s*[\\\\\\'\"]?([a-zA-Z0-9+/]{40,}={0,2})[\\\\\\'\"]?'), 'severity': AlertSeverity.HIGH, 'description': 'Azure API key detected', 'recommendation': 'Rotate Azure keys via Azure Portal'}, SensitiveInfoType.AZURE_CONNECTION_STRING: {'pattern': re.compile('(?i)DefaultEndpointsProtocol=https;AccountName=[^;]+;AccountKey=[^;]+'), 'severity': AlertSeverity.CRITICAL, 'description': 'Azure Storage connection string detected', 'recommendation': 'Use managed identities instead of connection strings'}, SensitiveInfoType.GITHUB_TOKEN: {'pattern': re.compile('\\\\b(gh[puso]_[A-Za-z0-9_]{36,})\\\\b'), 'severity': AlertSeverity.HIGH, 'description': 'GitHub Personal Access Token detected', 'recommendation': 'Revoke token at https://github.com/settings/tokens'}, SensitiveInfoType.GITHUB_APP_TOKEN: {'pattern': re.compile('\\\\b(ghs_[A-Za-z0-9]{36})\\\\b'), 'severity': AlertSeverity.HIGH, 'description': 'GitHub App Token detected', 'recommendation': 'Regenerate GitHub App installation token'}, SensitiveInfoType.GITLAB_TOKEN: {'pattern': re.compile('\\\\b(glpat-[A-Za-z0-9_-]{20,})\\\\b'), 'severity': AlertSeverity.HIGH, 'description': 'GitLab Personal Access Token detected', 'recommendation': 'Revoke token in GitLab profile settings'}, SensitiveInfoType.SLACK_TOKEN: {'pattern': re.compile('\\\\b(xox[baprs]-[0-9]{10,13}-[0-9]{10,13}-[a-zA-Z0-9]{24,})\\\\b'), 'severity': AlertSeverity.HIGH, 'description': 'Slack API Token detected', 'recommendation': 'Rotate Slack token at https://api.slack.com/apps'}, SensitiveInfoType.SLACK_WEBHOOK: {'pattern': re.compile('https://hooks\\\\.slack\\\\.com/services/T[A-Z0-9]{8,}/B[A-Z0-9]{8,}/[A-Za-z0-9]{24,}'), 'severity': AlertSeverity.MEDIUM, 'description': 'Slack Webhook URL detected', 'recommendation': 'Regenerate webhook URL if compromised'}, SensitiveInfoType.DISCORD_TOKEN: {'pattern': re.compile('\\\\b([MN][A-Za-z\\\\d]{23}\\\\.[A-Za-z\\\\d]{6}\\\\.[A-Za-z\\\\d_-]{27})\\\\b'), 'severity': AlertSeverity.HIGH, 'description': 'Discord Bot Token detected', 'recommendation': 'Regenerate bot token in Discord Developer Portal'}, SensitiveInfoType.TELEGRAM_BOT_TOKEN: {'pattern': re.compile('\\\\b(\\\\d{8,10}:[A-Za-z0-9_-]{35})\\\\b'), 'severity': AlertSeverity.MEDIUM, 'description': 'Telegram Bot Token detected', 'recommendation': 'Regenerate bot token via BotFather'}, SensitiveInfoType.STRIPE_KEY: {'pattern': re.compile('\\\\b(sk_live_[0-9a-zA-Z]{24,})\\\\b'), 'severity': AlertSeverity.CRITICAL, 'description': 'Stripe Secret Key detected', 'recommendation': 'Immediately rotate Stripe secret key'}, SensitiveInfoType.STRIPE_SECRET: {'pattern': re.compile('\\\\b(rk_live_[0-9a-zA-Z]{24,})\\\\b'), 'severity': AlertSeverity.CRITICAL, 'description': 'Stripe Restricted Key detected', 'recommendation': 'Rotate Stripe restricted key'}, SensitiveInfoType.PAYPAL_TOKEN: {'pattern': re.compile('(?i)paypal.{0,20}?(access_token|auth)[\\\\\\'\"]?\\\\s*[:=]\\\\s*[\\\\\\'\"]?([A-Za-z0-9_-]{20,})[\\\\\\'\"]?'), 'severity': AlertSeverity.HIGH, 'description': 'PayPal Access Token detected', 'recommendation': 'Rotate PayPal API credentials'}, SensitiveInfoType.MONGODB_URI: {'pattern': re.compile('mongodb(\\\\+srv)?://[^\\\\s:]+:[^\\\\s@]+@[^\\\\s/]+'), 'severity': AlertSeverity.CRITICAL, 'description': 'MongoDB connection string with credentials detected', 'recommendation': 'Use environment variables for database credentials'}, SensitiveInfoType.POSTGRES_URI: {'pattern': re.compile('postgres(?:ql)?://[^\\\\s:]+:[^\\\\s@]+@[^\\\\s/]+'), 'severity': AlertSeverity.CRITICAL, 'description': 'PostgreSQL connection string with credentials detected', 'recommendation': 'Use environment variables for database credentials'}, SensitiveInfoType.MYSQL_URI: {'pattern': re.compile('mysql://[^\\\\s:]+:[^\\\\s@]+@[^\\\\s/]+'), 'severity': AlertSeverity.CRITICAL, 'description': 'MySQL connection string with credentials detected', 'recommendation': 'Use environment variables for database credentials'}, SensitiveInfoType.REDIS_URI: {'pattern': re.compile('redis(?:s)?://(?:[^\\\\s:]+:[^\\\\s@]+@)?[^\\\\s/]+'), 'severity': AlertSeverity.HIGH, 'description': 'Redis connection string detected', 'recommendation': 'Secure Redis with authentication and TLS'}, SensitiveInfoType.JWT_TOKEN: {'pattern': re.compile('\\\\b(eyJ[a-zA-Z0-9_-]*\\\\.eyJ[a-zA-Z0-9_-]*\\\\.[a-zA-Z0-9_-]*)\\\\b'), 'severity': AlertSeverity.HIGH, 'description': 'JWT token detected', 'recommendation': 'Ensure tokens are not exposed in public responses and implement short expiry'}, SensitiveInfoType.BEARER_TOKEN: {'pattern': re.compile('(?i)bearer\\\\s+([a-zA-Z0-9_\\\\-\\\\.]{20,})'), 'severity': AlertSeverity.HIGH, 'description': 'Bearer token detected', 'recommendation': 'Use secure token storage and transmission'}, SensitiveInfoType.BASIC_AUTH: {'pattern': re.compile('(?i)basic\\\\s+([A-Za-z0-9+/]{20,}={0,2})'), 'severity': AlertSeverity.HIGH, 'description': 'Basic authentication credentials detected', 'recommendation': 'Use OAuth 2.0 or API keys instead of basic auth'}, SensitiveInfoType.PRIVATE_KEY: {'pattern': re.compile('-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----'), 'severity': AlertSeverity.CRITICAL, 'description': 'Private key detected', 'recommendation': 'Remove private keys from code immediately and rotate'}, SensitiveInfoType.PGP_PRIVATE_KEY: {'pattern': re.compile('-----BEGIN PGP PRIVATE KEY BLOCK-----'), 'severity': AlertSeverity.CRITICAL, 'description': 'PGP private key detected', 'recommendation': 'Remove PGP private keys from code'}, SensitiveInfoType.PASSWORD: {'pattern': re.compile('(?i)(?:password|passwd|pwd)[\"\\\\\\']?\\\\s*[:=]\\\\s*[\"\\\\\\']([^\"\\\\\\'\\\\s]{6,})[\"\\\\\\']'), 'severity': AlertSeverity.HIGH, 'description': 'Hardcoded password detected', 'recommendation': 'Use environment variables or secure vaults for passwords'}, SensitiveInfoType.API_KEY: {'pattern': re.compile('(?i)(?:api[_-]?key|apikey)[\"\\\\\\']?\\\\s*[:=]\\\\s*[\"\\\\\\']?([a-zA-Z0-9_\\\\-]{20,})[\"\\\\\\']?'), 'severity': AlertSeverity.HIGH, 'description': 'Generic API key detected', 'recommendation': 'Verify if this is a valid API key and rotate if necessary'}, SensitiveInfoType.TWILIO_KEY: {'pattern': re.compile('\\\\b(SK[a-f0-9]{32})\\\\b'), 'severity': AlertSeverity.HIGH, 'description': 'Twilio API Key detected', 'recommendation': 'Rotate Twilio API key'}, SensitiveInfoType.SENDGRID_KEY: {'pattern': re.compile('\\\\b(SG\\\\.[a-zA-Z0-9_-]{22}\\\\.[a-zA-Z0-9_-]{43})\\\\b'), 'severity': AlertSeverity.HIGH, 'description': 'SendGrid API Key detected', 'recommendation': 'Rotate SendGrid API key'}, SensitiveInfoType.MAILGUN_KEY: {'pattern': re.compile('\\\\b(key-[a-f0-9]{32})\\\\b'), 'severity': AlertSeverity.HIGH, 'description': 'Mailgun API Key detected', 'recommendation': 'Rotate Mailgun API key'}, SensitiveInfoType.NPM_TOKEN: {'pattern': re.compile('\\\\b(npm_[a-zA-Z0-9]{36})\\\\b'), 'severity': AlertSeverity.MEDIUM, 'description': 'NPM Access Token detected', 'recommendation': 'Revoke NPM token and use .npmrc with environment variables'}, SensitiveInfoType.PYPI_TOKEN: {'pattern': re.compile('\\\\b(pypi-[A-Za-z0-9_-]{60,})\\\\b'), 'severity': AlertSeverity.MEDIUM, 'description': 'PyPI API Token detected', 'recommendation': 'Revoke PyPI token in account settings'}, SensitiveInfoType.HEROKU_KEY: {'pattern': re.compile('\\\\b([a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12})\\\\b'), 'severity': AlertSeverity.MEDIUM, 'description': 'Potential Heroku API Key (UUID format) detected', 'recommendation': \"Verify and rotate if it's a Heroku API key\"}, SensitiveInfoType.EMAIL: {'pattern': re.compile('\\\\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\\\.[A-Z|a-z]{2,}\\\\b'), 'severity': AlertSeverity.LOW, 'description': 'Email address detected', 'recommendation': 'Verify if email disclosure is intentional and complies with privacy policies'}, SensitiveInfoType.CREDIT_CARD: {'pattern': re.compile('\\\\b(?:\\\\d{4}[-\\\\s]?){3}\\\\d{4}\\\\b'), 'severity': AlertSeverity.CRITICAL, 'description': 'Potential credit card number detected', 'recommendation': 'Never expose credit card numbers in responses'}, SensitiveInfoType.SSN: {'pattern': re.compile('\\\\b\\\\d{3}-\\\\d{2}-\\\\d{4}\\\\b'), 'severity': AlertSeverity.CRITICAL, 'description': 'Social Security Number (SSN) detected', 'recommendation': 'Remove SSN immediately - major privacy violation'}, SensitiveInfoType.PHONE: {'pattern': re.compile('\\\\b(?:\\\\+\\\\d{1,3}[-.\\\\s]?)?\\\\(?\\\\d{3}\\\\)?[-.\\\\s]?\\\\d{3}[-.\\\\s]?\\\\d{4}\\\\b'), 'severity': AlertSeverity.LOW, 'description': 'Phone number detected', 'recommendation': 'Verify if phone number disclosure is intentional'}, SensitiveInfoType.INTERNAL_PATH: {'pattern': re.compile('(?:[C-Z]:\\\\\\\\|/(?:home|root|var|etc|usr|opt)/)[\\\\w\\\\\\\\/.-]+', re.IGNORECASE), 'severity': AlertSeverity.MEDIUM, 'description': 'Internal file path detected', 'recommendation': 'Avoid exposing internal system paths'}, SensitiveInfoType.STACK_TRACE: {'pattern': re.compile('(?i)(?:traceback|stack trace|exception):.*?(?:\\\\n\\\\s+at\\\\s|File\\\\s\")', re.DOTALL), 'severity': AlertSeverity.MEDIUM, 'description': 'Stack trace detected', 'recommendation': 'Disable detailed error messages in production'}, SensitiveInfoType.SQL_QUERY: {'pattern': re.compile('(?i)(?:SELECT|INSERT|UPDATE|DELETE|DROP|CREATE)\\\\s+.{0,100}(?:FROM|INTO|TABLE)', re.DOTALL), 'severity': AlertSeverity.LOW, 'description': 'SQL query detected', 'recommendation': 'Avoid exposing SQL queries in responses'}}",
+          "kind": "op",
+          "nexts": [
+            "SensitiveInfoDetector__build_patterns_2"
+          ],
+          "metadata": {}
+        }
+      ],
+      "start_node_id": "SensitiveInfoDetector__build_patterns_1",
+      "end_node_id": "SensitiveInfoDetector__build_patterns_2"
+    },
+    {
+      "name": "SensitiveInfoDetector.calculate_entropy",
+      "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\function_info_leak\\sensitive_info_detector.py",
+      "type": "method",
+      "nodes": [
+        {
+          "id": "SensitiveInfoDetector_calculate_entropy_1",
+          "label": "SensitiveInfoDetector.calculate_entropy",
+          "kind": "start",
+          "nexts": [
+            "SensitiveInfoDetector_calculate_entropy_3"
+          ],
+          "metadata": {
+            "type": "head",
+            "name": "SensitiveInfoDetector.calculate_entropy",
+            "parameters": [
+              {
+                "name": "data",
+                "type": "str",
+                "default": null,
+                "required": true,
+                "kind": "positional_or_keyword"
+              }
+            ],
+            "docstring": "計算字符串的香農熵值\n\nArgs:\n    data: 輸入字符串\n    \nReturns:\n    float: 熵值 (0-8, 越高越隨機)",
+            "return_type": "float"
+          }
+        },
+        {
+          "id": "SensitiveInfoDetector_calculate_entropy_2",
+          "label": "End",
+          "kind": "end",
+          "nexts": [],
+          "metadata": {}
+        },
+        {
+          "id": "SensitiveInfoDetector_calculate_entropy_3",
+          "label": "if not data",
+          "kind": "cond",
+          "nexts": [
+            "SensitiveInfoDetector_calculate_entropy_4",
+            "SensitiveInfoDetector_calculate_entropy_5"
+          ],
+          "metadata": {}
+        },
+        {
+          "id": "SensitiveInfoDetector_calculate_entropy_4",
+          "label": "return 0.0",
+          "kind": "op",
+          "nexts": [
+            "SensitiveInfoDetector_calculate_entropy_2",
+            "SensitiveInfoDetector_calculate_entropy_5"
+          ],
+          "metadata": {}
+        },
+        {
+          "id": "SensitiveInfoDetector_calculate_entropy_5",
+          "label": "",
+          "kind": "op",
+          "nexts": [
+            "SensitiveInfoDetector_calculate_entropy_6"
+          ],
+          "metadata": {}
+        },
+        {
+          "id": "SensitiveInfoDetector_calculate_entropy_6",
+          "label": "Call: Counter",
+          "kind": "call",
+          "nexts": [
+            "SensitiveInfoDetector_calculate_entropy_7"
+          ],
+          "metadata": {
+            "type": "tail",
+            "target_func": "Counter"
+          }
+        },
+        {
+          "id": "SensitiveInfoDetector_calculate_entropy_7",
+          "label": "Call: len",
+          "kind": "call",
+          "nexts": [
+            "SensitiveInfoDetector_calculate_entropy_8"
+          ],
+          "metadata": {
+            "type": "tail",
+            "target_func": "len"
+          }
+        },
+        {
+          "id": "SensitiveInfoDetector_calculate_entropy_8",
+          "label": "for count in counter.values()",
+          "kind": "cond",
+          "nexts": [
+            "SensitiveInfoDetector_calculate_entropy_9",
+            "SensitiveInfoDetector_calculate_entropy_10"
+          ],
+          "metadata": {}
+        },
+        {
+          "id": "SensitiveInfoDetector_calculate_entropy_9",
+          "label": "Call: math.log2",
+          "kind": "call",
+          "nexts": [
+            "SensitiveInfoDetector_calculate_entropy_8"
+          ],
+          "metadata": {
+            "type": "tail",
+            "target_func": "math.log2"
+          }
+        },
+        {
+          "id": "SensitiveInfoDetector_calculate_entropy_10",
+          "label": "",
+          "kind": "op",
+          "nexts": [
+            "SensitiveInfoDetector_calculate_entropy_11"
+          ],
+          "metadata": {}
+        },
+        {
+          "id": "SensitiveInfoDetector_calculate_entropy_11",
+          "label": "return entropy",
+          "kind": "op",
+          "nexts": [
+            "SensitiveInfoDetector_calculate_entropy_2"
+          ],
+          "metadata": {}
+        }
+      ],
+      "start_node_id": "SensitiveInfoDetector_calculate_entropy_1",
+      "end_node_id": "SensitiveInfoDetector_calculate_entropy_2"
+    },
+    {
+      "name": "SensitiveInfoDetector._is_false_positive",
+      "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\function_info_leak\\sensitive_info_detector.py",
+      "type": "method",
+      "nodes": [
+        {
+          "id": "SensitiveInfoDetector__is_false_positive_1",
+          "label": "SensitiveInfoDetector._is_false_positive",
+          "kind": "start",
+          "nexts": [
+            "SensitiveInfoDetector__is_false_positive_3"
+          ],
+          "metadata": {
+            "type": "head",
+            "name": "SensitiveInfoDetector._is_false_positive",
+            "parameters": [
+              {
+                "name": "value",
+                "type": "str",
+                "default": null,
+                "required": true,
+                "kind": "positional_or_keyword"
+              },
+              {
+                "name": "context",
+                "type": "str",
+                "default": null,
+                "required": true,
+                "kind": "positional_or_keyword"
+              }
+            ],
+            "docstring": "檢查是否為誤報\n\nArgs:\n    value: 匹配的值\n    context: 上下文\n    \nReturns:\n    Tuple[bool, float]: (是否誤報, 信心度調整係數)",
+            "return_type": "Tuple[bool, float]"
+          }
+        },
+        {
+          "id": "SensitiveInfoDetector__is_false_positive_2",
+          "label": "End",
+          "kind": "end",
+          "nexts": [],
+          "metadata": {}
+        },
+        {
+          "id": "SensitiveInfoDetector__is_false_positive_3",
+          "label": "Call: value.lower",
+          "kind": "call",
+          "nexts": [
+            "SensitiveInfoDetector__is_false_positive_4"
+          ],
+          "metadata": {
+            "type": "tail",
+            "target_func": "value.lower"
+          }
+        },
+        {
+          "id": "SensitiveInfoDetector__is_false_positive_4",
+          "label": "Call: context.lower",
+          "kind": "call",
+          "nexts": [
+            "SensitiveInfoDetector__is_false_positive_5"
+          ],
+          "metadata": {
+            "type": "tail",
+            "target_func": "context.lower"
+          }
+        },
+        {
+          "id": "SensitiveInfoDetector__is_false_positive_5",
+          "label": "for keyword in self.FALSE_POSITIVE_KEYWORDS",
+          "kind": "cond",
+          "nexts": [
+            "SensitiveInfoDetector__is_false_positive_6",
+            "SensitiveInfoDetector__is_false_positive_9"
+          ],
+          "metadata": {}
+        },
+        {
+          "id": "SensitiveInfoDetector__is_false_positive_6",
+          "label": "if keyword in value_lower or keyword in context_lower",
+          "kind": "cond",
+          "nexts": [
+            "SensitiveInfoDetector__is_false_positive_7",
+            "SensitiveInfoDetector__is_false_positive_8"
+          ],
+          "metadata": {}
+        },
+        {
+          "id": "SensitiveInfoDetector__is_false_positive_7",
+          "label": "return (True, 0.0)",
+          "kind": "op",
+          "nexts": [
+            "SensitiveInfoDetector__is_false_positive_2",
+            "SensitiveInfoDetector__is_false_positive_8"
+          ],
+          "metadata": {}
+        },
+        {
+          "id": "SensitiveInfoDetector__is_false_positive_8",
+          "label": "",
+          "kind": "op",
+          "nexts": [
+            "SensitiveInfoDetector__is_false_positive_5"
+          ],
+          "metadata": {}
+        },
+        {
+          "id": "SensitiveInfoDetector__is_false_positive_9",
+          "label": "",
+          "kind": "op",
+          "nexts": [
+            "SensitiveInfoDetector__is_false_positive_10"
+          ],
+          "metadata": {}
+        },
+        {
+          "id": "SensitiveInfoDetector__is_false_positive_10",
+          "label": "for var_name in self.COMMON_VARIABLE_NAMES",
+          "kind": "cond",
+          "nexts": [
+            "SensitiveInfoDetector__is_false_positive_11",
+            "SensitiveInfoDetector__is_false_positive_13"
+          ],
+          "metadata": {}
+        },
+        {
+          "id": "SensitiveInfoDetector__is_false_positive_11",
+          "label": "if var_name == value_lower",
+          "kind": "cond",
+          "nexts": [
+            "SensitiveInfoDetector__is_false_positive_12"
+          ],
+          "metadata": {}
+        },
+        {
+          "id": "SensitiveInfoDetector__is_false_positive_12",
+          "label": "",
+          "kind": "op",
+          "nexts": [
+            "SensitiveInfoDetector__is_false_positive_10"
+          ],
+          "metadata": {}
+        },
+        {
+          "id": "SensitiveInfoDetector__is_false_positive_13",
+          "label": "",
+          "kind": "op",
+          "nexts": [
+            "SensitiveInfoDetector__is_false_positive_14"
+          ],
+          "metadata": {}
+        },
+        {
+          "id": "SensitiveInfoDetector__is_false_positive_14",
+          "label": "if any((marker in context_lower for marker in ['example:', 'e.g.', 'sample:', '範例:', '例如:']))",
+          "kind": "cond",
+          "nexts": [
+            "SensitiveInfoDetector__is_false_positive_15"
+          ],
+          "metadata": {}
+        },
+        {
+          "id": "SensitiveInfoDetector__is_false_positive_15",
+          "label": "",
+          "kind": "op",
+          "nexts": [
+            "SensitiveInfoDetector__is_false_positive_16"
+          ],
+          "metadata": {}
+        },
+        {
+          "id": "SensitiveInfoDetector__is_false_positive_16",
+          "label": "for pattern in placeholder_patterns",
+          "kind": "cond",
+          "nexts": [
+            "SensitiveInfoDetector__is_false_positive_17",
+            "SensitiveInfoDetector__is_false_positive_20"
+          ],
+          "metadata": {}
+        },
+        {
+          "id": "SensitiveInfoDetector__is_false_positive_17",
+          "label": "if re.search(pattern, value)",
+          "kind": "cond",
+          "nexts": [
+            "SensitiveInfoDetector__is_false_positive_18",
+            "SensitiveInfoDetector__is_false_positive_19"
+          ],
+          "metadata": {}
+        },
+        {
+          "id": "SensitiveInfoDetector__is_false_positive_18",
+          "label": "return (True, 0.0)",
+          "kind": "op",
+          "nexts": [
+            "SensitiveInfoDetector__is_false_positive_2",
+            "SensitiveInfoDetector__is_false_positive_19"
+          ],
+          "metadata": {}
+        },
+        {
+          "id": "SensitiveInfoDetector__is_false_positive_19",
+          "label": "",
+          "kind": "op",
+          "nexts": [
+            "SensitiveInfoDetector__is_false_positive_16"
+          ],
+          "metadata": {}
+        },
+        {
+          "id": "SensitiveInfoDetector__is_false_positive_20",
+          "label": "",
+          "kind": "op",
+          "nexts": [
+            "SensitiveInfoDetector__is_false_positive_21"
+          ],
+          "metadata": {}
+        },
+        {
+          "id": "SensitiveInfoDetector__is_false_positive_21",
+          "label": "if len(value) > 10",
+          "kind": "cond",
+          "nexts": [
+            "SensitiveInfoDetector__is_false_positive_22",
+            "SensitiveInfoDetector__is_false_positive_25"
+          ],
+          "metadata": {}
+        },
+        {
+          "id": "SensitiveInfoDetector__is_false_positive_22",
+          "label": "Call: self.calculate_entropy",
+          "kind": "call",
+          "nexts": [
+            "SensitiveInfoDetector__is_false_positive_23"
+          ],
+          "metadata": {
+            "type": "tail",
+            "target_func": "self.calculate_entropy"
+          }
+        },
+        {
+          "id": "SensitiveInfoDetector__is_false_positive_23",
+          "label": "if entropy < 3.0",
+          "kind": "cond",
+          "nexts": [
+            "SensitiveInfoDetector__is_false_positive_24"
+          ],
+          "metadata": {}
+        },
+        {
+          "id": "SensitiveInfoDetector__is_false_positive_24",
+          "label": "",
+          "kind": "op",
+          "nexts": [
+            "SensitiveInfoDetector__is_false_positive_25"
+          ],
+          "metadata": {}
+        },
+        {
+          "id": "SensitiveInfoDetector__is_false_positive_25",
+          "label": "",
+          "kind": "op",
+          "nexts": [
+            "SensitiveInfoDetector__is_false_positive_26"
+          ],
+          "metadata": {}
+        },
+        {
+          "id": "SensitiveInfoDetector__is_false_positive_26",
+          "label": "return (False, confidence_multiplier)",
+          "kind": "op",
+          "nexts": [
+            "SensitiveInfoDetector__is_false_positive_2"
+          ],
+          "metadata": {}
+        }
+      ],
+      "start_node_id": "SensitiveInfoDetector__is_false_positive_1",
+      "end_node_id": "SensitiveInfoDetector__is_false_positive_2"
+    },
+    {
+      "name": "SensitiveInfoDetector.detect_in_html",
+      "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\function_info_leak\\sensitive_info_detector.py",
+      "type": "method",
+      "nodes": [
+        {
+          "id": "SensitiveInfoDetector_detect_in_html_1",
+          "label": "SensitiveInfoDetector.detect_in_html",
+          "kind": "start",
+          "nexts": [
+            "SensitiveInfoDetector_detect_in_html_3"
+          ],
+          "metadata": {
+            "type": "head",
+            "name": "SensitiveInfoDetector.detect_in_html",
+            "parameters": [
+              {
+                "name": "html_content",
+                "type": "str",
+                "default": null,
+                "required": true,
+                "kind": "positional_or_keyword"
+              },
+              {
+                "name": "url",
+                "type": "str",
+                "default": "",
+                "required": false,
+                "kind": "positional_or_keyword"
+              }
+            ],
+            "docstring": "檢測 HTML 內容中的敏感資訊\n\nArgs:\n    html_content: HTML 內容\n    url: 來源 URL\n    \nReturns:\n    DetectionResult: 檢測結果",
+            "return_type": "DetectionResult"
+          }
+        },
+        {
+          "id": "SensitiveInfoDetector_detect_in_html_2",
+          "label": "End",
+          "kind": "end",
+          "nexts": [],
+          "metadata": {}
+        },
+        {
+          "id": "SensitiveInfoDetector_detect_in_html_3",
+          "label": "Call: DetectionResult",
+          "kind": "call",
+          "nexts": [
+            "SensitiveInfoDetector_detect_in_html_4"
+          ],
+          "metadata": {
+            "type": "tail",
+            "target_func": "DetectionResult"
+          }
+        },
+        {
+          "id": "SensitiveInfoDetector_detect_in_html_4",
+          "label": "if not html_content",
+          "kind": "cond",
+          "nexts": [
+            "SensitiveInfoDetector_detect_in_html_5",
+            "SensitiveInfoDetector_detect_in_html_6"
+          ],
+          "metadata": {}
+        },
+        {
+          "id": "SensitiveInfoDetector_detect_in_html_5",
+          "label": "return result",
+          "kind": "op",
+          "nexts": [
+            "SensitiveInfoDetector_detect_in_html_2",
+            "SensitiveInfoDetector_detect_in_html_6"
+          ],
+          "metadata": {}
+        },
+        {
+          "id": "SensitiveInfoDetector_detect_in_html_6",
+          "label": "",
+          "kind": "op",
+          "nexts": [
+            "SensitiveInfoDetector_detect_in_html_7"
+          ],
+          "metadata": {}
+        },
+        {
+          "id": "SensitiveInfoDetector_detect_in_html_7",
+          "label": "Call: result.matches.extend",
+          "kind": "call",
+          "nexts": [
+            "SensitiveInfoDetector_detect_in_html_8"
+          ],
+          "metadata": {
+            "type": "tail",
+            "target_func": "result.matches.extend"
+          }
+        },
+        {
+          "id": "SensitiveInfoDetector_detect_in_html_8",
+          "label": "Call: result.matches.extend",
+          "kind": "call",
+          "nexts": [
+            "SensitiveInfoDetector_detect_in_html_9"
+          ],
+          "metadata": {
+            "type": "tail",
+            "target_func": "result.matches.extend"
+          }
+        },
+        {
+          "id": "SensitiveInfoDetector_detect_in_html_9",
+          "label": "Call: result.matches.extend",
+          "kind": "call",
+          "nexts": [
+            "SensitiveInfoDetector_detect_in_html_10"
+          ],
+          "metadata": {
+            "type": "tail",
+            "target_func": "result.matches.extend"
+          }
+        },
+        {
+          "id": "SensitiveInfoDetector_detect_in_html_10",
+          "label": "Call: result.matches.extend",
+          "kind": "call",
+          "nexts": [
+            "SensitiveInfoDetector_detect_in_html_11"
+          ],
+          "metadata": {
+            "type": "tail",
+            "target_func": "result.matches.extend"
+          }
+        },
+        {
+          "id": "SensitiveInfoDetector_detect_in_html_11",
+          "label": "Call: self._filter_by_severity",
+          "kind": "call",
+          "nexts": [
+            "SensitiveInfoDetector_detect_in_html_12"
+          ],
+          "metadata": {
+            "type": "tail",
+            "target_func": "self._filter_by_severity"
+          }
+        },
+        {
+          "id": "SensitiveInfoDetector_detect_in_html_12",
+          "label": "Call: logger.info",
+          "kind": "call",
+          "nexts": [
+            "SensitiveInfoDetector_detect_in_html_13"
+          ],
+          "metadata": {
+            "type": "tail",
+            "target_func": "logger.info"
+          }
+        },
+        {
+          "id": "SensitiveInfoDetector_detect_in_html_13",
+          "label": "return result",
+          "kind": "op",
+          "nexts": [
+            "SensitiveInfoDetector_detect_in_html_2"
+          ],
+          "metadata": {}
+        }
+      ],
+      "start_node_id": "SensitiveInfoDetector_detect_in_html_1",
+      "end_node_id": "SensitiveInfoDetector_detect_in_html_2"
+    },
+    {
+      "name": "SensitiveInfoDetector.detect_in_headers",
+      "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\function_info_leak\\sensitive_info_detector.py",
+      "type": "method",
+      "nodes": [
+        {
+          "id": "SensitiveInfoDetector_detect_in_headers_1",
+          "label": "SensitiveInfoDetector.detect_in_headers",
+          "kind": "start",
+          "nexts": [
+            "SensitiveInfoDetector_detect_in_headers_3"
+          ],
+          "metadata": {
+            "type": "head",
+            "name": "SensitiveInfoDetector.detect_in_headers",
+            "parameters": [
+              {
+                "name": "headers",
+                "type": "Dict[str, str]",
+                "default": null,
+                "required": true,
+                "kind": "positional_or_keyword"
+              },
+              {
+                "name": "url",
+                "type": "str",
+                "default": "",
+                "required": false,
+                "kind": "positional_or_keyword"
+              }
+            ],
+            "docstring": "檢測 HTTP 標頭中的敏感資訊",
+            "return_type": "DetectionResult"
+          }
+        },
+        {
+          "id": "SensitiveInfoDetector_detect_in_headers_2",
+          "label": "End",
+          "kind": "end",
+          "nexts": [],
+          "metadata": {}
+        },
+        {
+          "id": "SensitiveInfoDetector_detect_in_headers_3",
+          "label": "Call: DetectionResult",
+          "kind": "call",
+          "nexts": [
+            "SensitiveInfoDetector_detect_in_headers_4"
+          ],
+          "metadata": {
+            "type": "tail",
+            "target_func": "DetectionResult"
+          }
+        },
+        {
+          "id": "SensitiveInfoDetector_detect_in_headers_4",
+          "label": "if not headers",
+          "kind": "cond",
+          "nexts": [
+            "SensitiveInfoDetector_detect_in_headers_5",
+            "SensitiveInfoDetector_detect_in_headers_6"
+          ],
+          "metadata": {}
+        },
+        {
+          "id": "SensitiveInfoDetector_detect_in_headers_5",
+          "label": "return result",
+          "kind": "op",
+          "nexts": [
+            "SensitiveInfoDetector_detect_in_headers_2",
+            "SensitiveInfoDetector_detect_in_headers_6"
+          ],
+          "metadata": {}
+        },
+        {
+          "id": "SensitiveInfoDetector_detect_in_headers_6",
+          "label": "",
+          "kind": "op",
+          "nexts": [
+            "SensitiveInfoDetector_detect_in_headers_7"
+          ],
+          "metadata": {}
+        },
+        {
+          "id": "SensitiveInfoDetector_detect_in_headers_7",
+          "label": "for (header_name, header_value) in headers.items()",
+          "kind": "cond",
+          "nexts": [
+            "SensitiveInfoDetector_detect_in_headers_8",
+            "SensitiveInfoDetector_detect_in_headers_13"
+          ],
+          "metadata": {}
+        },
+        {
+          "id": "SensitiveInfoDetector_detect_in_headers_8",
+          "label": "if header_name.lower() == 'set-cookie' and re.search('(token|auth|session|jwt)=([a-zA-Z0-9._-]{20,})', header_value, re.IGNORECASE)",
+          "kind": "cond",
+          "nexts": [
+            "SensitiveInfoDetector_detect_in_headers_9",
+            "SensitiveInfoDetector_detect_in_headers_10"
+          ],
+          "metadata": {}
+        },
+        {
+          "id": "SensitiveInfoDetector_detect_in_headers_9",
+          "label": "Call: result.matches.append",
+          "kind": "call",
+          "nexts": [
+            "SensitiveInfoDetector_detect_in_headers_10"
+          ],
+          "metadata": {
+            "type": "tail",
+            "target_func": "result.matches.append"
+          }
+        },
+        {
+          "id": "SensitiveInfoDetector_detect_in_headers_10",
+          "label": "",
+          "kind": "op",
+          "nexts": [
+            "SensitiveInfoDetector_detect_in_headers_11"
+          ],
+          "metadata": {}
+        },
+        {
+          "id": "SensitiveInfoDetector_detect_in_headers_11",
+          "label": "Call: self._detect_in_text",
+          "kind": "call",
+          "nexts": [
+            "SensitiveInfoDetector_detect_in_headers_12"
+          ],
+          "metadata": {
+            "type": "tail",
+            "target_func": "self._detect_in_text"
+          }
+        },
+        {
+          "id": "SensitiveInfoDetector_detect_in_headers_12",
+          "label": "Call: result.matches.extend",
+          "kind": "call",
+          "nexts": [
+            "SensitiveInfoDetector_detect_in_headers_7"
+          ],
+          "metadata": {
+            "type": "tail",
+            "target_func": "result.matches.extend"
+          }
+        },
+        {
+          "id": "SensitiveInfoDetector_detect_in_headers_13",
+          "label": "",
+          "kind": "op",
+          "nexts": [
+            "SensitiveInfoDetector_detect_in_headers_14"
+          ],
+          "metadata": {}
+        },
+        {
+          "id": "SensitiveInfoDetector_detect_in_headers_14",
+          "label": "Call: self._filter_by_severity",
+          "kind": "call",
+          "nexts": [
+            "SensitiveInfoDetector_detect_in_headers_15"
+          ],
+          "metadata": {
+            "type": "tail",
+            "target_func": "self._filter_by_severity"
+          }
+        },
+        {
+          "id": "SensitiveInfoDetector_detect_in_headers_15",
+          "label": "Call: logger.info",
+          "kind": "call",
+          "nexts": [
+            "SensitiveInfoDetector_detect_in_headers_16"
+          ],
+          "metadata": {
+            "type": "tail",
+            "target_func": "logger.info"
+          }
+        },
+        {
+          "id": "SensitiveInfoDetector_detect_in_headers_16",
+          "label": "return result",
+          "kind": "op",
+          "nexts": [
+            "SensitiveInfoDetector_detect_in_headers_2"
+          ],
+          "metadata": {}
+        }
+      ],
+      "start_node_id": "SensitiveInfoDetector_detect_in_headers_1",
+      "end_node_id": "SensitiveInfoDetector_detect_in_headers_2"
+    },
+    {
+      "name": "SensitiveInfoDetector.detect_in_response",
+      "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\function_info_leak\\sensitive_info_detector.py",
+      "type": "method",
+      "nodes": [
+        {
+          "id": "SensitiveInfoDetector_detect_in_response_1",
+          "label": "SensitiveInfoDetector.detect_in_response",
+          "kind": "start",
+          "nexts": [
+            "SensitiveInfoDetector_detect_in_response_3"
+          ],
+          "metadata": {
+            "type": "head",
+            "name": "SensitiveInfoDetector.detect_in_response",
+            "parameters": [
+              {
+                "name": "response_body",
+                "type": "str",
+                "default": null,
+                "required": true,
+                "kind": "positional_or_keyword"
+              },
+              {
+                "name": "headers",
+                "type": "Optional[Dict[str, str]]",
+                "default": null,
+                "required": false,
+                "kind": "positional_or_keyword"
+              },
+              {
+                "name": "url",
+                "type": "str",
+                "default": "",
+                "required": false,
+                "kind": "positional_or_keyword"
+              }
+            ],
+            "docstring": "檢測 HTTP 響應中的敏感資訊",
+            "return_type": "DetectionResult"
+          }
+        },
+        {
+          "id": "SensitiveInfoDetector_detect_in_response_2",
+          "label": "End",
+          "kind": "end",
+          "nexts": [],
+          "metadata": {}
+        },
+        {
+          "id": "SensitiveInfoDetector_detect_in_response_3",
+          "label": "Call: DetectionResult",
+          "kind": "call",
+          "nexts": [
+            "SensitiveInfoDetector_detect_in_response_4"
+          ],
+          "metadata": {
+            "type": "tail",
+            "target_func": "DetectionResult"
+          }
+        },
+        {
+          "id": "SensitiveInfoDetector_detect_in_response_4",
+          "label": "if response_body",
+          "kind": "cond",
+          "nexts": [
+            "SensitiveInfoDetector_detect_in_response_5",
+            "SensitiveInfoDetector_detect_in_response_11"
+          ],
+          "metadata": {}
+        },
+        {
+          "id": "SensitiveInfoDetector_detect_in_response_5",
+          "label": "if '<html' in response_body.lower() or '<body' in response_body.lower()",
+          "kind": "cond",
+          "nexts": [
+            "SensitiveInfoDetector_detect_in_response_6",
+            "SensitiveInfoDetector_detect_in_response_8"
+          ],
+          "metadata": {}
+        },
+        {
+          "id": "SensitiveInfoDetector_detect_in_response_6",
+          "label": "Call: self.detect_in_html",
+          "kind": "call",
+          "nexts": [
+            "SensitiveInfoDetector_detect_in_response_7"
+          ],
+          "metadata": {
+            "type": "tail",
+            "target_func": "self.detect_in_html"
+          }
+        },
+        {
+          "id": "SensitiveInfoDetector_detect_in_response_7",
+          "label": "Call: result.matches.extend",
+          "kind": "call",
+          "nexts": [
+            "SensitiveInfoDetector_detect_in_response_10"
+          ],
+          "metadata": {
+            "type": "tail",
+            "target_func": "result.matches.extend"
+          }
+        },
+        {
+          "id": "SensitiveInfoDetector_detect_in_response_8",
+          "label": "Call: self._detect_in_text",
+          "kind": "call",
+          "nexts": [
+            "SensitiveInfoDetector_detect_in_response_9"
+          ],
+          "metadata": {
+            "type": "tail",
+            "target_func": "self._detect_in_text"
+          }
+        },
+        {
+          "id": "SensitiveInfoDetector_detect_in_response_9",
+          "label": "Call: result.matches.extend",
+          "kind": "call",
+          "nexts": [
+            "SensitiveInfoDetector_detect_in_response_10"
+          ],
+          "metadata": {
+            "type": "tail",
+            "target_func": "result.matches.extend"
+          }
+        },
+        {
+          "id": "SensitiveInfoDetector_detect_in_response_10",
+          "label": "",
+          "kind": "op",
+          "nexts": [
+            "SensitiveInfoDetector_detect_in_response_11"
+          ],
+          "metadata": {}
+        },
+        {
+          "id": "SensitiveInfoDetector_detect_in_response_11",
+          "label": "",
+          "kind": "op",
+          "nexts": [
+            "SensitiveInfoDetector_detect_in_response_12"
+          ],
+          "metadata": {}
+        },
+        {
+          "id": "SensitiveInfoDetector_detect_in_response_12",
+          "label": "if headers",
+          "kind": "cond",
+          "nexts": [
+            "SensitiveInfoDetector_detect_in_response_13",
+            "SensitiveInfoDetector_detect_in_response_15"
+          ],
+          "metadata": {}
+        },
+        {
+          "id": "SensitiveInfoDetector_detect_in_response_13",
+          "label": "Call: self.detect_in_headers",
+          "kind": "call",
+          "nexts": [
+            "SensitiveInfoDetector_detect_in_response_14"
+          ],
+          "metadata": {
+            "type": "tail",
+            "target_func": "self.detect_in_headers"
+          }
+        },
+        {
+          "id": "SensitiveInfoDetector_detect_in_response_14",
+          "label": "Call: result.matches.extend",
+          "kind": "call",
+          "nexts": [
+            "SensitiveInfoDetector_detect_in_response_15"
+          ],
+          "metadata": {
+            "type": "tail",
+            "target_func": "result.matches.extend"
+          }
+        },
+        {
+          "id": "SensitiveInfoDetector_detect_in_response_15",
+          "label": "",
+          "kind": "op",
+          "nexts": [
+            "SensitiveInfoDetector_detect_in_response_16"
+          ],
+          "metadata": {}
+        },
+        {
+          "id": "SensitiveInfoDetector_detect_in_response_16",
+          "label": "Call: self._filter_by_severity",
+          "kind": "call",
+          "nexts": [
+            "SensitiveInfoDetector_detect_in_response_17"
+          ],
+          "metadata": {
+            "type": "tail",
+            "target_func": "self._filter_by_severity"
+          }
+        },
+        {
+          "id": "SensitiveInfoDetector_detect_in_response_17",
+          "label": "Call: logger.info",
+          "kind": "call",
+          "nexts": [
+            "SensitiveInfoDetector_detect_in_response_18"
+          ],
+          "metadata": {
+            "type": "tail",
+            "target_func": "logger.info"
+          }
+        },
+        {
+          "id": "SensitiveInfoDetector_detect_in_response_18",
+          "label": "return result",
+          "kind": "op",
+          "nexts": [
+            "SensitiveInfoDetector_detect_in_response_2"
+          ],
+          "metadata": {}
+        }
+      ],
+      "start_node_id": "SensitiveInfoDetector_detect_in_response_1",
+      "end_node_id": "SensitiveInfoDetector_detect_in_response_2"
+    },
+    {
+      "name": "SensitiveInfoDetector._detect_html_comments",
+      "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\function_info_leak\\sensitive_info_detector.py",
+      "type": "method",
+      "nodes": [
+        {
+          "id": "SensitiveInfoDetector__detect_html_comments_1",
+          "label": "SensitiveInfoDetector._detect_html_comments",
+          "kind": "start",
+          "nexts": [
+            "SensitiveInfoDetector__detect_html_comments_3"
+          ],
+          "metadata": {
+            "type": "head",
+            "name": "SensitiveInfoDetector._detect_html_comments",
+            "parameters": [
+              {
+                "name": "html",
+                "type": "str",
+                "default": null,
+                "required": true,
+                "kind": "positional_or_keyword"
+              }
+            ],
+            "docstring": "檢測 HTML 註釋中的敏感資訊",
+            "return_type": "List[SensitiveMatch]"
+          }
+        },
+        {
+          "id": "SensitiveInfoDetector__detect_html_comments_2",
+          "label": "End",
+          "kind": "end",
+          "nexts": [],
+          "metadata": {}
+        },
+        {
+          "id": "SensitiveInfoDetector__detect_html_comments_3",
+          "label": "for comment_match in re.finditer(comment_pattern, html, re.DOTALL)",
+          "kind": "cond",
+          "nexts": [
+            "SensitiveInfoDetector__detect_html_comments_4",
+            "SensitiveInfoDetector__detect_html_comments_14"
+          ],
+          "metadata": {}
+        },
+        {
+          "id": "SensitiveInfoDetector__detect_html_comments_4",
+          "label": "Call: comment_match.group",
+          "kind": "call",
+          "nexts": [
+            "SensitiveInfoDetector__detect_html_comments_5"
+          ],
+          "metadata": {
+            "type": "tail",
+            "target_func": "comment_match.group"
+          }
+        },
+        {
+          "id": "SensitiveInfoDetector__detect_html_comments_5",
+          "label": "for match in self._detect_in_text(comment_text, Location.HTML_COMMENT)",
+          "kind": "cond",
+          "nexts": [
+            "SensitiveInfoDetector__detect_html_comments_6",
+            "SensitiveInfoDetector__detect_html_comments_13"
+          ],
+          "metadata": {}
+        },
+        {
+          "id": "SensitiveInfoDetector__detect_html_comments_6",
+          "label": "if match.severity == AlertSeverity.INFO",
+          "kind": "cond",
+          "nexts": [
+            "SensitiveInfoDetector__detect_html_comments_7",
+            "SensitiveInfoDetector__detect_html_comments_11"
+          ],
+          "metadata": {}
+        },
+        {
+          "id": "SensitiveInfoDetector__detect_html_comments_7",
+          "label": "if match.severity == AlertSeverity.LOW",
+          "kind": "cond",
+          "nexts": [
+            "SensitiveInfoDetector__detect_html_comments_8",
+            "SensitiveInfoDetector__detect_html_comments_10"
+          ],
+          "metadata": {}
+        },
+        {
+          "id": "SensitiveInfoDetector__detect_html_comments_8",
+          "label": "if match.severity == AlertSeverity.MEDIUM",
+          "kind": "cond",
+          "nexts": [
+            "SensitiveInfoDetector__detect_html_comments_9"
+          ],
+          "metadata": {}
+        },
+        {
+          "id": "SensitiveInfoDetector__detect_html_comments_9",
+          "label": "",
+          "kind": "op",
+          "nexts": [
+            "SensitiveInfoDetector__detect_html_comments_10"
+          ],
+          "metadata": {}
+        },
+        {
+          "id": "SensitiveInfoDetector__detect_html_comments_10",
+          "label": "",
+          "kind": "op",
+          "nexts": [
+            "SensitiveInfoDetector__detect_html_comments_11"
+          ],
+          "metadata": {}
+        },
+        {
+          "id": "SensitiveInfoDetector__detect_html_comments_11",
+          "label": "",
+          "kind": "op",
+          "nexts": [
+            "SensitiveInfoDetector__detect_html_comments_12"
+          ],
+          "metadata": {}
+        },
+        {
+          "id": "SensitiveInfoDetector__detect_html_comments_12",
+          "label": "Call: matches.append",
+          "kind": "call",
+          "nexts": [
+            "SensitiveInfoDetector__detect_html_comments_5"
+          ],
+          "metadata": {
+            "type": "tail",
+            "target_func": "matches.append"
+          }
+        },
+        {
+          "id": "SensitiveInfoDetector__detect_html_comments_13",
+          "label": "",
+          "kind": "op",
+          "nexts": [
+            "SensitiveInfoDetector__detect_html_comments_3"
+          ],
+          "metadata": {}
+        },
+        {
+          "id": "SensitiveInfoDetector__detect_html_comments_14",
+          "label": "",
+          "kind": "op",
+          "nexts": [
+            "SensitiveInfoDetector__detect_html_comments_15"
+          ],
+          "metadata": {}
+        },
+        {
+          "id": "SensitiveInfoDetector__detect_html_comments_15",
+          "label": "return matches",
+          "kind": "op",
+          "nexts": [
+            "SensitiveInfoDetector__detect_html_comments_2"
+          ],
+          "metadata": {}
+        }
+      ],
+      "start_node_id": "SensitiveInfoDetector__detect_html_comments_1",
+      "end_node_id": "SensitiveInfoDetector__detect_html_comments_2"
+    },
+    {
+      "name": "SensitiveInfoDetector._detect_script_blocks",
+      "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\function_info_leak\\sensitive_info_detector.py",
+      "type": "method",
+      "nodes": [
+        {
+          "id": "SensitiveInfoDetector__detect_script_blocks_1",
+          "label": "SensitiveInfoDetector._detect_script_blocks",
+          "kind": "start",
+          "nexts": [
+            "SensitiveInfoDetector__detect_script_blocks_3"
+          ],
+          "metadata": {
+            "type": "head",
+            "name": "SensitiveInfoDetector._detect_script_blocks",
+            "parameters": [
+              {
+                "name": "html",
+                "type": "str",
+                "default": null,
+                "required": true,
+                "kind": "positional_or_keyword"
+              }
+            ],
+            "docstring": "檢測 script 標籤中的敏感資訊",
+            "return_type": "List[SensitiveMatch]"
+          }
+        },
+        {
+          "id": "SensitiveInfoDetector__detect_script_blocks_2",
+          "label": "End",
+          "kind": "end",
+          "nexts": [],
+          "metadata": {}
+        },
+        {
+          "id": "SensitiveInfoDetector__detect_script_blocks_3",
+          "label": "for script_match in re.finditer(script_pattern, html, re.DOTALL | re.IGNORECASE)",
+          "kind": "cond",
+          "nexts": [
+            "SensitiveInfoDetector__detect_script_blocks_4",
+            "SensitiveInfoDetector__detect_script_blocks_8"
+          ],
+          "metadata": {}
+        },
+        {
+          "id": "SensitiveInfoDetector__detect_script_blocks_4",
+          "label": "Call: script_match.group",
+          "kind": "call",
+          "nexts": [
+            "SensitiveInfoDetector__detect_script_blocks_5"
+          ],
+          "metadata": {
+            "type": "tail",
+            "target_func": "script_match.group"
+          }
+        },
+        {
+          "id": "SensitiveInfoDetector__detect_script_blocks_5",
+          "label": "for match in self._detect_in_text(script_text, Location.SCRIPT_TAG)",
+          "kind": "cond",
+          "nexts": [
+            "SensitiveInfoDetector__detect_script_blocks_6",
+            "SensitiveInfoDetector__detect_script_blocks_7"
+          ],
+          "metadata": {}
+        },
+        {
+          "id": "SensitiveInfoDetector__detect_script_blocks_6",
+          "label": "Call: matches.append",
+          "kind": "call",
+          "nexts": [
+            "SensitiveInfoDetector__detect_script_blocks_5"
+          ],
+          "metadata": {
+            "type": "tail",
+            "target_func": "matches.append"
+          }
+        },
+        {
+          "id": "SensitiveInfoDetector__detect_script_blocks_7",
+          "label": "",
+          "kind": "op",
+          "nexts": [
+            "SensitiveInfoDetector__detect_script_blocks_3"
+          ],
+          "metadata": {}
+        },
+        {
+          "id": "SensitiveInfoDetector__detect_script_blocks_8",
+          "label": "",
+          "kind": "op",
+          "nexts": [
+            "SensitiveInfoDetector__detect_script_blocks_9"
+          ],
+          "metadata": {}
+        },
+        {
+          "id": "SensitiveInfoDetector__detect_script_blocks_9",
+          "label": "return matches",
+          "kind": "op",
+          "nexts": [
+            "SensitiveInfoDetector__detect_script_blocks_2"
+          ],
+          "metadata": {}
+        }
+      ],
+      "start_node_id": "SensitiveInfoDetector__detect_script_blocks_1",
+      "end_node_id": "SensitiveInfoDetector__detect_script_blocks_2"
+    },
+    {
+      "name": "SensitiveInfoDetector._detect_meta_tags",
+      "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\function_info_leak\\sensitive_info_detector.py",
+      "type": "method",
+      "nodes": [
+        {
+          "id": "SensitiveInfoDetector__detect_meta_tags_1",
+          "label": "SensitiveInfoDetector._detect_meta_tags",
+          "kind": "start",
+          "nexts": [
+            "SensitiveInfoDetector__detect_meta_tags_3"
+          ],
+          "metadata": {
+            "type": "head",
+            "name": "SensitiveInfoDetector._detect_meta_tags",
+            "parameters": [
+              {
+                "name": "html",
+                "type": "str",
+                "default": null,
+                "required": true,
+                "kind": "positional_or_keyword"
+              }
+            ],
+            "docstring": "檢測 meta 標籤中的敏感資訊",
+            "return_type": "List[SensitiveMatch]"
+          }
+        },
+        {
+          "id": "SensitiveInfoDetector__detect_meta_tags_2",
+          "label": "End",
+          "kind": "end",
+          "nexts": [],
+          "metadata": {}
+        },
+        {
+          "id": "SensitiveInfoDetector__detect_meta_tags_3",
+          "label": "for meta_match in re.finditer(meta_pattern, html, re.IGNORECASE)",
+          "kind": "cond",
+          "nexts": [
+            "SensitiveInfoDetector__detect_meta_tags_4",
+            "SensitiveInfoDetector__detect_meta_tags_8"
+          ],
+          "metadata": {}
+        },
+        {
+          "id": "SensitiveInfoDetector__detect_meta_tags_4",
+          "label": "Call: meta_match.group",
+          "kind": "call",
+          "nexts": [
+            "SensitiveInfoDetector__detect_meta_tags_5"
+          ],
+          "metadata": {
+            "type": "tail",
+            "target_func": "meta_match.group"
+          }
+        },
+        {
+          "id": "SensitiveInfoDetector__detect_meta_tags_5",
+          "label": "for match in self._detect_in_text(content, Location.META_TAG)",
+          "kind": "cond",
+          "nexts": [
+            "SensitiveInfoDetector__detect_meta_tags_6",
+            "SensitiveInfoDetector__detect_meta_tags_7"
+          ],
+          "metadata": {}
+        },
+        {
+          "id": "SensitiveInfoDetector__detect_meta_tags_6",
+          "label": "Call: matches.append",
+          "kind": "call",
+          "nexts": [
+            "SensitiveInfoDetector__detect_meta_tags_5"
+          ],
+          "metadata": {
+            "type": "tail",
+            "target_func": "matches.append"
+          }
+        },
+        {
+          "id": "SensitiveInfoDetector__detect_meta_tags_7",
+          "label": "",
+          "kind": "op",
+          "nexts": [
+            "SensitiveInfoDetector__detect_meta_tags_3"
+          ],
+          "metadata": {}
+        },
+        {
+          "id": "SensitiveInfoDetector__detect_meta_tags_8",
+          "label": "",
+          "kind": "op",
+          "nexts": [
+            "SensitiveInfoDetector__detect_meta_tags_9"
+          ],
+          "metadata": {}
+        },
+        {
+          "id": "SensitiveInfoDetector__detect_meta_tags_9",
+          "label": "return matches",
+          "kind": "op",
+          "nexts": [
+            "SensitiveInfoDetector__detect_meta_tags_2"
+          ],
+          "metadata": {}
+        }
+      ],
+      "start_node_id": "SensitiveInfoDetector__detect_meta_tags_1",
+      "end_node_id": "SensitiveInfoDetector__detect_meta_tags_2"
+    },
+    {
+      "name": "SensitiveInfoDetector._detect_in_text",
+      "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\function_info_leak\\sensitive_info_detector.py",
+      "type": "method",
+      "nodes": [
+        {
+          "id": "SensitiveInfoDetector__detect_in_text_1",
+          "label": "SensitiveInfoDetector._detect_in_text",
+          "kind": "start",
+          "nexts": [
+            "SensitiveInfoDetector__detect_in_text_3"
+          ],
+          "metadata": {
+            "type": "head",
+            "name": "SensitiveInfoDetector._detect_in_text",
+            "parameters": [
+              {
+                "name": "text",
+                "type": "str",
+                "default": null,
+                "required": true,
+                "kind": "positional_or_keyword"
+              },
+              {
+                "name": "location",
+                "type": "Location",
+                "default": null,
+                "required": true,
+                "kind": "positional_or_keyword"
+              }
+            ],
+            "docstring": "在文本中檢測敏感資訊 (含熵值分析和誤報過濾)",
+            "return_type": "List[SensitiveMatch]"
+          }
+        },
+        {
+          "id": "SensitiveInfoDetector__detect_in_text_2",
+          "label": "End",
+          "kind": "end",
+          "nexts": [],
+          "metadata": {}
+        },
+        {
+          "id": "SensitiveInfoDetector__detect_in_text_3",
+          "label": "if not text",
+          "kind": "cond",
+          "nexts": [
+            "SensitiveInfoDetector__detect_in_text_4",
+            "SensitiveInfoDetector__detect_in_text_5"
+          ],
+          "metadata": {}
+        },
+        {
+          "id": "SensitiveInfoDetector__detect_in_text_4",
+          "label": "return matches",
+          "kind": "op",
+          "nexts": [
+            "SensitiveInfoDetector__detect_in_text_2",
+            "SensitiveInfoDetector__detect_in_text_5"
+          ],
+          "metadata": {}
+        },
+        {
+          "id": "SensitiveInfoDetector__detect_in_text_5",
+          "label": "",
+          "kind": "op",
+          "nexts": [
+            "SensitiveInfoDetector__detect_in_text_6"
+          ],
+          "metadata": {}
+        },
+        {
+          "id": "SensitiveInfoDetector__detect_in_text_6",
+          "label": "Call: text.split",
+          "kind": "call",
+          "nexts": [
+            "SensitiveInfoDetector__detect_in_text_7"
+          ],
+          "metadata": {
+            "type": "tail",
+            "target_func": "text.split"
+          }
+        },
+        {
+          "id": "SensitiveInfoDetector__detect_in_text_7",
+          "label": "for (line_number, line) in enumerate(lines, start=1)",
+          "kind": "cond",
+          "nexts": [
+            "SensitiveInfoDetector__detect_in_text_8",
+            "SensitiveInfoDetector__detect_in_text_28"
+          ],
+          "metadata": {}
+        },
+        {
+          "id": "SensitiveInfoDetector__detect_in_text_8",
+          "label": "for (info_type, pattern_info) in self._patterns.items()",
+          "kind": "cond",
+          "nexts": [
+            "SensitiveInfoDetector__detect_in_text_9",
+            "SensitiveInfoDetector__detect_in_text_27"
+          ],
+          "metadata": {}
+        },
+        {
+          "id": "SensitiveInfoDetector__detect_in_text_9",
+          "label": "for regex_match in re.finditer(pattern, line)",
+          "kind": "cond",
+          "nexts": [
+            "SensitiveInfoDetector__detect_in_text_10",
+            "SensitiveInfoDetector__detect_in_text_26"
+          ],
+          "metadata": {}
+        },
+        {
+          "id": "SensitiveInfoDetector__detect_in_text_10",
+          "label": "Call: regex_match.group",
+          "kind": "call",
+          "nexts": [
+            "SensitiveInfoDetector__detect_in_text_11"
+          ],
+          "metadata": {
+            "type": "tail",
+            "target_func": "regex_match.group"
+          }
+        },
+        {
+          "id": "SensitiveInfoDetector__detect_in_text_11",
+          "label": "Call: max",
+          "kind": "call",
+          "nexts": [
+            "SensitiveInfoDetector__detect_in_text_12"
+          ],
+          "metadata": {
+            "type": "tail",
+            "target_func": "max"
+          }
+        },
+        {
+          "id": "SensitiveInfoDetector__detect_in_text_12",
+          "label": "Call: min",
+          "kind": "call",
+          "nexts": [
+            "SensitiveInfoDetector__detect_in_text_13"
+          ],
+          "metadata": {
+            "type": "tail",
+            "target_func": "min"
+          }
+        },
+        {
+          "id": "SensitiveInfoDetector__detect_in_text_13",
+          "label": "Call: self._is_false_positive",
+          "kind": "call",
+          "nexts": [
+            "SensitiveInfoDetector__detect_in_text_14"
+          ],
+          "metadata": {
+            "type": "tail",
+            "target_func": "self._is_false_positive"
+          }
+        },
+        {
+          "id": "SensitiveInfoDetector__detect_in_text_14",
+          "label": "if is_fp",
+          "kind": "cond",
+          "nexts": [
+            "SensitiveInfoDetector__detect_in_text_15",
+            "SensitiveInfoDetector__detect_in_text_16"
+          ],
+          "metadata": {}
+        },
+        {
+          "id": "SensitiveInfoDetector__detect_in_text_15",
+          "label": "Call: logger.debug",
+          "kind": "call",
+          "nexts": [
+            "SensitiveInfoDetector__detect_in_text_16"
+          ],
+          "metadata": {
+            "type": "tail",
+            "target_func": "logger.debug"
+          }
+        },
+        {
+          "id": "SensitiveInfoDetector__detect_in_text_16",
+          "label": "",
+          "kind": "op",
+          "nexts": [
+            "SensitiveInfoDetector__detect_in_text_17"
+          ],
+          "metadata": {}
+        },
+        {
+          "id": "SensitiveInfoDetector__detect_in_text_17",
+          "label": "Call: self.calculate_entropy",
+          "kind": "call",
+          "nexts": [
+            "SensitiveInfoDetector__detect_in_text_18"
+          ],
+          "metadata": {
+            "type": "tail",
+            "target_func": "self.calculate_entropy"
+          }
+        },
+        {
+          "id": "SensitiveInfoDetector__detect_in_text_18",
+          "label": "Call: min",
+          "kind": "call",
+          "nexts": [
+            "SensitiveInfoDetector__detect_in_text_19"
+          ],
+          "metadata": {
+            "type": "tail",
+            "target_func": "min"
+          }
+        },
+        {
+          "id": "SensitiveInfoDetector__detect_in_text_19",
+          "label": "if confidence < self.min_confidence",
+          "kind": "cond",
+          "nexts": [
+            "SensitiveInfoDetector__detect_in_text_20"
+          ],
+          "metadata": {}
+        },
+        {
+          "id": "SensitiveInfoDetector__detect_in_text_20",
+          "label": "",
+          "kind": "op",
+          "nexts": [
+            "SensitiveInfoDetector__detect_in_text_21"
+          ],
+          "metadata": {}
+        },
+        {
+          "id": "SensitiveInfoDetector__detect_in_text_21",
+          "label": "Call: SensitiveMatch",
+          "kind": "call",
+          "nexts": [
+            "SensitiveInfoDetector__detect_in_text_22"
+          ],
+          "metadata": {
+            "type": "tail",
+            "target_func": "SensitiveMatch"
+          }
+        },
+        {
+          "id": "SensitiveInfoDetector__detect_in_text_22",
+          "label": "if match.hash not in self._seen_hashes",
+          "kind": "cond",
+          "nexts": [
+            "SensitiveInfoDetector__detect_in_text_23",
+            "SensitiveInfoDetector__detect_in_text_25"
+          ],
+          "metadata": {}
+        },
+        {
+          "id": "SensitiveInfoDetector__detect_in_text_23",
+          "label": "Call: self._seen_hashes.add",
+          "kind": "call",
+          "nexts": [
+            "SensitiveInfoDetector__detect_in_text_24"
+          ],
+          "metadata": {
+            "type": "tail",
+            "target_func": "self._seen_hashes.add"
+          }
+        },
+        {
+          "id": "SensitiveInfoDetector__detect_in_text_24",
+          "label": "Call: matches.append",
+          "kind": "call",
+          "nexts": [
+            "SensitiveInfoDetector__detect_in_text_25"
+          ],
+          "metadata": {
+            "type": "tail",
+            "target_func": "matches.append"
+          }
+        },
+        {
+          "id": "SensitiveInfoDetector__detect_in_text_25",
+          "label": "",
+          "kind": "op",
+          "nexts": [
+            "SensitiveInfoDetector__detect_in_text_9"
+          ],
+          "metadata": {}
+        },
+        {
+          "id": "SensitiveInfoDetector__detect_in_text_26",
+          "label": "",
+          "kind": "op",
+          "nexts": [
+            "SensitiveInfoDetector__detect_in_text_8"
+          ],
+          "metadata": {}
+        },
+        {
+          "id": "SensitiveInfoDetector__detect_in_text_27",
+          "label": "",
+          "kind": "op",
+          "nexts": [
+            "SensitiveInfoDetector__detect_in_text_7"
+          ],
+          "metadata": {}
+        },
+        {
+          "id": "SensitiveInfoDetector__detect_in_text_28",
+          "label": "",
+          "kind": "op",
+          "nexts": [
+            "SensitiveInfoDetector__detect_in_text_29"
+          ],
+          "metadata": {}
+        },
+        {
+          "id": "SensitiveInfoDetector__detect_in_text_29",
+          "label": "if self.enable_entropy_check",
+          "kind": "cond",
+          "nexts": [
+            "SensitiveInfoDetector__detect_in_text_30",
+            "SensitiveInfoDetector__detect_in_text_31"
+          ],
+          "metadata": {}
+        },
+        {
+          "id": "SensitiveInfoDetector__detect_in_text_30",
+          "label": "Call: matches.extend",
+          "kind": "call",
+          "nexts": [
+            "SensitiveInfoDetector__detect_in_text_31"
+          ],
+          "metadata": {
+            "type": "tail",
+            "target_func": "matches.extend"
+          }
+        },
+        {
+          "id": "SensitiveInfoDetector__detect_in_text_31",
+          "label": "",
+          "kind": "op",
+          "nexts": [
+            "SensitiveInfoDetector__detect_in_text_32"
+          ],
+          "metadata": {}
+        },
+        {
+          "id": "SensitiveInfoDetector__detect_in_text_32",
+          "label": "return matches",
+          "kind": "op",
+          "nexts": [
+            "SensitiveInfoDetector__detect_in_text_2"
+          ],
+          "metadata": {}
+        }
+      ],
+      "start_node_id": "SensitiveInfoDetector__detect_in_text_1",
+      "end_node_id": "SensitiveInfoDetector__detect_in_text_2"
+    },
+    {
+      "name": "SensitiveInfoDetector._detect_high_entropy_strings",
+      "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\function_info_leak\\sensitive_info_detector.py",
+      "type": "method",
+      "nodes": [
+        {
+          "id": "SensitiveInfoDetector__detect_high_entropy_strings_1",
+          "label": "SensitiveInfoDetector._detect_high_entropy_strings",
+          "kind": "start",
+          "nexts": [
+            "SensitiveInfoDetector__detect_high_entropy_strings_3"
+          ],
+          "metadata": {
+            "type": "head",
+            "name": "SensitiveInfoDetector._detect_high_entropy_strings",
+            "parameters": [
+              {
+                "name": "text",
+                "type": "str",
+                "default": null,
+                "required": true,
+                "kind": "positional_or_keyword"
+              },
+              {
+                "name": "location",
+                "type": "Location",
+                "default": null,
+                "required": true,
+                "kind": "positional_or_keyword"
+              }
+            ],
+            "docstring": "檢測高熵值字符串 (可能是密鑰)",
+            "return_type": "List[SensitiveMatch]"
+          }
+        },
+        {
+          "id": "SensitiveInfoDetector__detect_high_entropy_strings_2",
+          "label": "End",
+          "kind": "end",
+          "nexts": [],
+          "metadata": {}
+        },
+        {
+          "id": "SensitiveInfoDetector__detect_high_entropy_strings_3",
+          "label": "Call: re.findall",
+          "kind": "call",
+          "nexts": [
+            "SensitiveInfoDetector__detect_high_entropy_strings_4"
+          ],
+          "metadata": {
+            "type": "tail",
+            "target_func": "re.findall"
+          }
+        },
+        {
+          "id": "SensitiveInfoDetector__detect_high_entropy_strings_4",
+          "label": "for key in potential_keys",
+          "kind": "cond",
+          "nexts": [
+            "SensitiveInfoDetector__detect_high_entropy_strings_5",
+            "SensitiveInfoDetector__detect_high_entropy_strings_16"
+          ],
+          "metadata": {}
+        },
+        {
+          "id": "SensitiveInfoDetector__detect_high_entropy_strings_5",
+          "label": "Call: self.calculate_entropy",
+          "kind": "call",
+          "nexts": [
+            "SensitiveInfoDetector__detect_high_entropy_strings_6"
+          ],
+          "metadata": {
+            "type": "tail",
+            "target_func": "self.calculate_entropy"
+          }
+        },
+        {
+          "id": "SensitiveInfoDetector__detect_high_entropy_strings_6",
+          "label": "if entropy >= self.entropy_threshold",
+          "kind": "cond",
+          "nexts": [
+            "SensitiveInfoDetector__detect_high_entropy_strings_7",
+            "SensitiveInfoDetector__detect_high_entropy_strings_15"
+          ],
+          "metadata": {}
+        },
+        {
+          "id": "SensitiveInfoDetector__detect_high_entropy_strings_7",
+          "label": "Call: self._is_false_positive",
+          "kind": "call",
+          "nexts": [
+            "SensitiveInfoDetector__detect_high_entropy_strings_8"
+          ],
+          "metadata": {
+            "type": "tail",
+            "target_func": "self._is_false_positive"
+          }
+        },
+        {
+          "id": "SensitiveInfoDetector__detect_high_entropy_strings_8",
+          "label": "if is_fp or confidence < 0.3",
+          "kind": "cond",
+          "nexts": [
+            "SensitiveInfoDetector__detect_high_entropy_strings_9"
+          ],
+          "metadata": {}
+        },
+        {
+          "id": "SensitiveInfoDetector__detect_high_entropy_strings_9",
+          "label": "",
+          "kind": "op",
+          "nexts": [
+            "SensitiveInfoDetector__detect_high_entropy_strings_10"
+          ],
+          "metadata": {}
+        },
+        {
+          "id": "SensitiveInfoDetector__detect_high_entropy_strings_10",
+          "label": "Call: SensitiveMatch",
+          "kind": "call",
+          "nexts": [
+            "SensitiveInfoDetector__detect_high_entropy_strings_11"
+          ],
+          "metadata": {
+            "type": "tail",
+            "target_func": "SensitiveMatch"
+          }
+        },
+        {
+          "id": "SensitiveInfoDetector__detect_high_entropy_strings_11",
+          "label": "if match.hash not in self._seen_hashes",
+          "kind": "cond",
+          "nexts": [
+            "SensitiveInfoDetector__detect_high_entropy_strings_12",
+            "SensitiveInfoDetector__detect_high_entropy_strings_14"
+          ],
+          "metadata": {}
+        },
+        {
+          "id": "SensitiveInfoDetector__detect_high_entropy_strings_12",
+          "label": "Call: self._seen_hashes.add",
+          "kind": "call",
+          "nexts": [
+            "SensitiveInfoDetector__detect_high_entropy_strings_13"
+          ],
+          "metadata": {
+            "type": "tail",
+            "target_func": "self._seen_hashes.add"
+          }
+        },
+        {
+          "id": "SensitiveInfoDetector__detect_high_entropy_strings_13",
+          "label": "Call: matches.append",
+          "kind": "call",
+          "nexts": [
+            "SensitiveInfoDetector__detect_high_entropy_strings_14"
+          ],
+          "metadata": {
+            "type": "tail",
+            "target_func": "matches.append"
+          }
+        },
+        {
+          "id": "SensitiveInfoDetector__detect_high_entropy_strings_14",
+          "label": "",
+          "kind": "op",
+          "nexts": [
+            "SensitiveInfoDetector__detect_high_entropy_strings_15"
+          ],
+          "metadata": {}
+        },
+        {
+          "id": "SensitiveInfoDetector__detect_high_entropy_strings_15",
+          "label": "",
+          "kind": "op",
+          "nexts": [
+            "SensitiveInfoDetector__detect_high_entropy_strings_4"
+          ],
+          "metadata": {}
+        },
+        {
+          "id": "SensitiveInfoDetector__detect_high_entropy_strings_16",
+          "label": "",
+          "kind": "op",
+          "nexts": [
+            "SensitiveInfoDetector__detect_high_entropy_strings_17"
+          ],
+          "metadata": {}
+        },
+        {
+          "id": "SensitiveInfoDetector__detect_high_entropy_strings_17",
+          "label": "return matches",
+          "kind": "op",
+          "nexts": [
+            "SensitiveInfoDetector__detect_high_entropy_strings_2"
+          ],
+          "metadata": {}
+        }
+      ],
+      "start_node_id": "SensitiveInfoDetector__detect_high_entropy_strings_1",
+      "end_node_id": "SensitiveInfoDetector__detect_high_entropy_strings_2"
+    },
+    {
+      "name": "SensitiveInfoDetector._filter_by_severity",
+      "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\function_info_leak\\sensitive_info_detector.py",
+      "type": "method",
+      "nodes": [
+        {
+          "id": "SensitiveInfoDetector__filter_by_severity_1",
+          "label": "SensitiveInfoDetector._filter_by_severity",
+          "kind": "start",
+          "nexts": [
+            "SensitiveInfoDetector__filter_by_severity_3"
+          ],
+          "metadata": {
+            "type": "head",
+            "name": "SensitiveInfoDetector._filter_by_severity",
+            "parameters": [
+              {
+                "name": "matches",
+                "type": "List[SensitiveMatch]",
+                "default": null,
+                "required": true,
+                "kind": "positional_or_keyword"
+              }
+            ],
+            "docstring": "根據最小嚴重性等級過濾結果",
+            "return_type": "List[SensitiveMatch]"
+          }
+        },
+        {
+          "id": "SensitiveInfoDetector__filter_by_severity_2",
+          "label": "End",
+          "kind": "end",
+          "nexts": [],
+          "metadata": {}
+        },
+        {
+          "id": "SensitiveInfoDetector__filter_by_severity_3",
+          "label": "return [match for match in matches if severity_order[match.severity] <= min_level]",
+          "kind": "op",
+          "nexts": [
+            "SensitiveInfoDetector__filter_by_severity_2"
+          ],
+          "metadata": {}
+        }
+      ],
+      "start_node_id": "SensitiveInfoDetector__filter_by_severity_1",
+      "end_node_id": "SensitiveInfoDetector__filter_by_severity_2"
+    },
+    {
+      "name": "SensitiveInfoDetector.format_report",
+      "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\function_info_leak\\sensitive_info_detector.py",
+      "type": "method",
+      "nodes": [
+        {
+          "id": "SensitiveInfoDetector_format_report_1",
+          "label": "SensitiveInfoDetector.format_report",
+          "kind": "start",
+          "nexts": [
+            "SensitiveInfoDetector_format_report_3"
+          ],
+          "metadata": {
+            "type": "head",
+            "name": "SensitiveInfoDetector.format_report",
+            "parameters": [
+              {
+                "name": "result",
+                "type": "DetectionResult",
+                "default": null,
+                "required": true,
+                "kind": "positional_or_keyword"
+              },
+              {
+                "name": "format",
+                "type": "str",
+                "default": "text",
+                "required": false,
+                "kind": "positional_or_keyword"
+              }
+            ],
+            "docstring": "格式化檢測報告\n\nArgs:\n    result: 檢測結果\n    format: 輸出格式 ('text', 'json', 'sarif')\n    \nReturns:\n    str: 格式化後的報告",
+            "return_type": "str"
+          }
+        },
+        {
+          "id": "SensitiveInfoDetector_format_report_2",
+          "label": "End",
+          "kind": "end",
+          "nexts": [],
+          "metadata": {}
+        },
+        {
+          "id": "SensitiveInfoDetector_format_report_3",
+          "label": "if format == 'json'",
+          "kind": "cond",
+          "nexts": [
+            "SensitiveInfoDetector_format_report_4",
+            "SensitiveInfoDetector_format_report_5"
+          ],
+          "metadata": {}
+        },
+        {
+          "id": "SensitiveInfoDetector_format_report_4",
+          "label": "return json.dumps(result.to_dict(), indent=2, ensure_ascii=False)",
+          "kind": "op",
+          "nexts": [
+            "SensitiveInfoDetector_format_report_2",
+            "SensitiveInfoDetector_format_report_8"
+          ],
+          "metadata": {}
+        },
+        {
+          "id": "SensitiveInfoDetector_format_report_5",
+          "label": "if format == 'sarif'",
+          "kind": "cond",
+          "nexts": [
+            "SensitiveInfoDetector_format_report_6",
+            "SensitiveInfoDetector_format_report_7"
+          ],
+          "metadata": {}
+        },
+        {
+          "id": "SensitiveInfoDetector_format_report_6",
+          "label": "return json.dumps(result.to_sarif(), indent=2, ensure_ascii=False)",
+          "kind": "op",
+          "nexts": [
+            "SensitiveInfoDetector_format_report_2",
+            "SensitiveInfoDetector_format_report_7"
+          ],
+          "metadata": {}
+        },
+        {
+          "id": "SensitiveInfoDetector_format_report_7",
+          "label": "",
+          "kind": "op",
+          "nexts": [
+            "SensitiveInfoDetector_format_report_8"
+          ],
+          "metadata": {}
+        },
+        {
+          "id": "SensitiveInfoDetector_format_report_8",
+          "label": "",
+          "kind": "op",
+          "nexts": [
+            "SensitiveInfoDetector_format_report_9"
+          ],
+          "metadata": {}
+        },
+        {
+          "id": "SensitiveInfoDetector_format_report_9",
+          "label": "Call: len",
+          "kind": "call",
+          "nexts": [
+            "SensitiveInfoDetector_format_report_10"
+          ],
+          "metadata": {
+            "type": "tail",
+            "target_func": "len"
+          }
+        },
+        {
+          "id": "SensitiveInfoDetector_format_report_10",
+          "label": "if result.matches",
+          "kind": "cond",
+          "nexts": [
+            "SensitiveInfoDetector_format_report_11",
+            "SensitiveInfoDetector_format_report_32"
+          ],
+          "metadata": {}
+        },
+        {
+          "id": "SensitiveInfoDetector_format_report_11",
+          "label": "Call: sorted",
+          "kind": "call",
+          "nexts": [
+            "SensitiveInfoDetector_format_report_12"
+          ],
+          "metadata": {
+            "type": "tail",
+            "target_func": "sorted"
+          }
+        },
+        {
+          "id": "SensitiveInfoDetector_format_report_12",
+          "label": "for (idx, match) in enumerate(sorted_matches, 1)",
+          "kind": "cond",
+          "nexts": [
+            "SensitiveInfoDetector_format_report_13",
+            "SensitiveInfoDetector_format_report_31"
+          ],
+          "metadata": {}
+        },
+        {
+          "id": "SensitiveInfoDetector_format_report_13",
+          "label": "Call: severity_icons.get",
+          "kind": "call",
+          "nexts": [
+            "SensitiveInfoDetector_format_report_14"
+          ],
+          "metadata": {
+            "type": "tail",
+            "target_func": "severity_icons.get"
+          }
+        },
+        {
+          "id": "SensitiveInfoDetector_format_report_14",
+          "label": "Call: lines.append",
+          "kind": "call",
+          "nexts": [
+            "SensitiveInfoDetector_format_report_15"
+          ],
+          "metadata": {
+            "type": "tail",
+            "target_func": "lines.append"
+          }
+        },
+        {
+          "id": "SensitiveInfoDetector_format_report_15",
+          "label": "Call: lines.append",
+          "kind": "call",
+          "nexts": [
+            "SensitiveInfoDetector_format_report_16"
+          ],
+          "metadata": {
+            "type": "tail",
+            "target_func": "lines.append"
+          }
+        },
+        {
+          "id": "SensitiveInfoDetector_format_report_16",
+          "label": "if match.line_number",
+          "kind": "cond",
+          "nexts": [
+            "SensitiveInfoDetector_format_report_17",
+            "SensitiveInfoDetector_format_report_18"
+          ],
+          "metadata": {}
+        },
+        {
+          "id": "SensitiveInfoDetector_format_report_17",
+          "label": "Call: lines.append",
+          "kind": "call",
+          "nexts": [
+            "SensitiveInfoDetector_format_report_18"
+          ],
+          "metadata": {
+            "type": "tail",
+            "target_func": "lines.append"
+          }
+        },
+        {
+          "id": "SensitiveInfoDetector_format_report_18",
+          "label": "",
+          "kind": "op",
+          "nexts": [
+            "SensitiveInfoDetector_format_report_19"
+          ],
+          "metadata": {}
+        },
+        {
+          "id": "SensitiveInfoDetector_format_report_19",
+          "label": "if match.column_number",
+          "kind": "cond",
+          "nexts": [
+            "SensitiveInfoDetector_format_report_20",
+            "SensitiveInfoDetector_format_report_21"
+          ],
+          "metadata": {}
+        },
+        {
+          "id": "SensitiveInfoDetector_format_report_20",
+          "label": "Call: lines.append",
+          "kind": "call",
+          "nexts": [
+            "SensitiveInfoDetector_format_report_21"
+          ],
+          "metadata": {
+            "type": "tail",
+            "target_func": "lines.append"
+          }
+        },
+        {
+          "id": "SensitiveInfoDetector_format_report_21",
+          "label": "",
+          "kind": "op",
+          "nexts": [
+            "SensitiveInfoDetector_format_report_22"
+          ],
+          "metadata": {}
+        },
+        {
+          "id": "SensitiveInfoDetector_format_report_22",
+          "label": "Call: lines.append",
+          "kind": "call",
+          "nexts": [
+            "SensitiveInfoDetector_format_report_23"
+          ],
+          "metadata": {
+            "type": "tail",
+            "target_func": "lines.append"
+          }
+        },
+        {
+          "id": "SensitiveInfoDetector_format_report_23",
+          "label": "Call: lines.append",
+          "kind": "call",
+          "nexts": [
+            "SensitiveInfoDetector_format_report_24"
+          ],
+          "metadata": {
+            "type": "tail",
+            "target_func": "lines.append"
+          }
+        },
+        {
+          "id": "SensitiveInfoDetector_format_report_24",
+          "label": "Call: lines.append",
+          "kind": "call",
+          "nexts": [
+            "SensitiveInfoDetector_format_report_25"
+          ],
+          "metadata": {
+            "type": "tail",
+            "target_func": "lines.append"
+          }
+        },
+        {
+          "id": "SensitiveInfoDetector_format_report_25",
+          "label": "if match.entropy",
+          "kind": "cond",
+          "nexts": [
+            "SensitiveInfoDetector_format_report_26",
+            "SensitiveInfoDetector_format_report_27"
+          ],
+          "metadata": {}
+        },
+        {
+          "id": "SensitiveInfoDetector_format_report_26",
+          "label": "Call: lines.append",
+          "kind": "call",
+          "nexts": [
+            "SensitiveInfoDetector_format_report_27"
+          ],
+          "metadata": {
+            "type": "tail",
+            "target_func": "lines.append"
+          }
+        },
+        {
+          "id": "SensitiveInfoDetector_format_report_27",
+          "label": "",
+          "kind": "op",
+          "nexts": [
+            "SensitiveInfoDetector_format_report_28"
+          ],
+          "metadata": {}
+        },
+        {
+          "id": "SensitiveInfoDetector_format_report_28",
+          "label": "Call: lines.append",
+          "kind": "call",
+          "nexts": [
+            "SensitiveInfoDetector_format_report_29"
+          ],
+          "metadata": {
+            "type": "tail",
+            "target_func": "lines.append"
+          }
+        },
+        {
+          "id": "SensitiveInfoDetector_format_report_29",
+          "label": "Call: lines.append",
+          "kind": "call",
+          "nexts": [
+            "SensitiveInfoDetector_format_report_30"
+          ],
+          "metadata": {
+            "type": "tail",
+            "target_func": "lines.append"
+          }
+        },
+        {
+          "id": "SensitiveInfoDetector_format_report_30",
+          "label": "Call: lines.append",
+          "kind": "call",
+          "nexts": [
+            "SensitiveInfoDetector_format_report_12"
+          ],
+          "metadata": {
+            "type": "tail",
+            "target_func": "lines.append"
+          }
+        },
+        {
+          "id": "SensitiveInfoDetector_format_report_31",
+          "label": "",
+          "kind": "op",
+          "nexts": [
+            "SensitiveInfoDetector_format_report_32"
+          ],
+          "metadata": {}
+        },
+        {
+          "id": "SensitiveInfoDetector_format_report_32",
+          "label": "",
+          "kind": "op",
+          "nexts": [
+            "SensitiveInfoDetector_format_report_33"
+          ],
+          "metadata": {}
+        },
+        {
+          "id": "SensitiveInfoDetector_format_report_33",
+          "label": "Call: lines.append",
+          "kind": "call",
+          "nexts": [
+            "SensitiveInfoDetector_format_report_34"
+          ],
+          "metadata": {
+            "type": "tail",
+            "target_func": "lines.append"
+          }
+        },
+        {
+          "id": "SensitiveInfoDetector_format_report_34",
+          "label": "Call: lines.append",
+          "kind": "call",
+          "nexts": [
+            "SensitiveInfoDetector_format_report_35"
+          ],
+          "metadata": {
+            "type": "tail",
+            "target_func": "lines.append"
+          }
+        },
+        {
+          "id": "SensitiveInfoDetector_format_report_35",
+          "label": "Call: lines.append",
+          "kind": "call",
+          "nexts": [
+            "SensitiveInfoDetector_format_report_36"
+          ],
+          "metadata": {
+            "type": "tail",
+            "target_func": "lines.append"
+          }
+        },
+        {
+          "id": "SensitiveInfoDetector_format_report_36",
+          "label": "return '\\n'.join(lines)",
+          "kind": "op",
+          "nexts": [
+            "SensitiveInfoDetector_format_report_2"
+          ],
+          "metadata": {}
+        }
+      ],
+      "start_node_id": "SensitiveInfoDetector_format_report_1",
+      "end_node_id": "SensitiveInfoDetector_format_report_2"
+    },
+    {
+      "name": "SensitiveInfoDetector.export_report",
+      "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\function_info_leak\\sensitive_info_detector.py",
+      "type": "method",
+      "nodes": [
+        {
+          "id": "SensitiveInfoDetector_export_report_1",
+          "label": "SensitiveInfoDetector.export_report",
+          "kind": "start",
+          "nexts": [
+            "SensitiveInfoDetector_export_report_3"
+          ],
+          "metadata": {
+            "type": "head",
+            "name": "SensitiveInfoDetector.export_report",
+            "parameters": [
+              {
+                "name": "result",
+                "type": "DetectionResult",
+                "default": null,
+                "required": true,
+                "kind": "positional_or_keyword"
+              },
+              {
+                "name": "output_file",
+                "type": "str",
+                "default": null,
+                "required": true,
+                "kind": "positional_or_keyword"
+              },
+              {
+                "name": "format",
+                "type": "str",
+                "default": "json",
+                "required": false,
+                "kind": "positional_or_keyword"
+              }
+            ],
+            "docstring": "導出檢測報告到文件\n\nArgs:\n    result: 檢測結果\n    output_file: 輸出文件路徑\n    format: 輸出格式 ('text', 'json', 'sarif')",
+            "return_type": "None"
+          }
+        },
+        {
+          "id": "SensitiveInfoDetector_export_report_2",
+          "label": "End",
+          "kind": "end",
+          "nexts": [],
+          "metadata": {}
+        },
+        {
+          "id": "SensitiveInfoDetector_export_report_3",
+          "label": "Call: self.format_report",
+          "kind": "call",
+          "nexts": [
+            "SensitiveInfoDetector_export_report_4"
+          ],
+          "metadata": {
+            "type": "tail",
+            "target_func": "self.format_report"
+          }
+        },
+        {
+          "id": "SensitiveInfoDetector_export_report_4",
+          "label": "Call: open",
+          "kind": "call",
+          "nexts": [
+            "SensitiveInfoDetector_export_report_5"
+          ],
+          "metadata": {
+            "type": "tail",
+            "target_func": "open"
+          }
+        },
+        {
+          "id": "SensitiveInfoDetector_export_report_5",
+          "label": "Call: f.write",
+          "kind": "call",
+          "nexts": [
+            "SensitiveInfoDetector_export_report_6"
+          ],
+          "metadata": {
+            "type": "tail",
+            "target_func": "f.write"
+          }
+        },
+        {
+          "id": "SensitiveInfoDetector_export_report_6",
+          "label": "Call: logger.info",
+          "kind": "call",
+          "nexts": [
+            "SensitiveInfoDetector_export_report_2"
+          ],
+          "metadata": {
+            "type": "tail",
+            "target_func": "logger.info"
+          }
+        }
+      ],
+      "start_node_id": "SensitiveInfoDetector_export_report_1",
+      "end_node_id": "SensitiveInfoDetector_export_report_2"
+    },
+    {
+      "name": "SensitiveInfoDetector.get_statistics",
+      "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\function_info_leak\\sensitive_info_detector.py",
+      "type": "method",
+      "nodes": [
+        {
+          "id": "SensitiveInfoDetector_get_statistics_1",
+          "label": "SensitiveInfoDetector.get_statistics",
+          "kind": "start",
+          "nexts": [
+            "SensitiveInfoDetector_get_statistics_3"
+          ],
+          "metadata": {
+            "type": "head",
+            "name": "SensitiveInfoDetector.get_statistics",
+            "parameters": [
+              {
+                "name": "results",
+                "type": "List[DetectionResult]",
+                "default": null,
+                "required": true,
+                "kind": "positional_or_keyword"
+              }
+            ],
+            "docstring": "生成統計資訊\n\nArgs:\n    results: 多個檢測結果列表\n    \nReturns:\n    Dict: 統計資訊",
+            "return_type": "Dict[str, Any]"
+          }
+        },
+        {
+          "id": "SensitiveInfoDetector_get_statistics_2",
+          "label": "End",
+          "kind": "end",
+          "nexts": [],
+          "metadata": {}
+        },
+        {
+          "id": "SensitiveInfoDetector_get_statistics_3",
+          "label": "Call: sum",
+          "kind": "call",
+          "nexts": [
+            "SensitiveInfoDetector_get_statistics_4"
+          ],
+          "metadata": {
+            "type": "tail",
+            "target_func": "sum"
+          }
+        },
+        {
+          "id": "SensitiveInfoDetector_get_statistics_4",
+          "label": "Call: sum",
+          "kind": "call",
+          "nexts": [
+            "SensitiveInfoDetector_get_statistics_5"
+          ],
+          "metadata": {
+            "type": "tail",
+            "target_func": "sum"
+          }
+        },
+        {
+          "id": "SensitiveInfoDetector_get_statistics_5",
+          "label": "Call: sum",
+          "kind": "call",
+          "nexts": [
+            "SensitiveInfoDetector_get_statistics_6"
+          ],
+          "metadata": {
+            "type": "tail",
+            "target_func": "sum"
+          }
+        },
+        {
+          "id": "SensitiveInfoDetector_get_statistics_6",
+          "label": "Call: sum",
+          "kind": "call",
+          "nexts": [
+            "SensitiveInfoDetector_get_statistics_7"
+          ],
+          "metadata": {
+            "type": "tail",
+            "target_func": "sum"
+          }
+        },
+        {
+          "id": "SensitiveInfoDetector_get_statistics_7",
+          "label": "Call: sum",
+          "kind": "call",
+          "nexts": [
+            "SensitiveInfoDetector_get_statistics_8"
+          ],
+          "metadata": {
+            "type": "tail",
+            "target_func": "sum"
+          }
+        },
+        {
+          "id": "SensitiveInfoDetector_get_statistics_8",
+          "label": "Call: sum",
+          "kind": "call",
+          "nexts": [
+            "SensitiveInfoDetector_get_statistics_9"
+          ],
+          "metadata": {
+            "type": "tail",
+            "target_func": "sum"
+          }
+        },
+        {
+          "id": "SensitiveInfoDetector_get_statistics_9",
+          "label": "Call: Counter",
+          "kind": "call",
+          "nexts": [
+            "SensitiveInfoDetector_get_statistics_10"
+          ],
+          "metadata": {
+            "type": "tail",
+            "target_func": "Counter"
+          }
+        },
+        {
+          "id": "SensitiveInfoDetector_get_statistics_10",
+          "label": "for result in results",
+          "kind": "cond",
+          "nexts": [
+            "SensitiveInfoDetector_get_statistics_11",
+            "SensitiveInfoDetector_get_statistics_13"
+          ],
+          "metadata": {}
+        },
+        {
+          "id": "SensitiveInfoDetector_get_statistics_11",
+          "label": "for match in result.matches",
+          "kind": "cond",
+          "nexts": [
+            "SensitiveInfoDetector_get_statistics_11",
+            "SensitiveInfoDetector_get_statistics_12"
+          ],
+          "metadata": {}
+        },
+        {
+          "id": "SensitiveInfoDetector_get_statistics_12",
+          "label": "",
+          "kind": "op",
+          "nexts": [
+            "SensitiveInfoDetector_get_statistics_10"
+          ],
+          "metadata": {}
+        },
+        {
+          "id": "SensitiveInfoDetector_get_statistics_13",
+          "label": "",
+          "kind": "op",
+          "nexts": [
+            "SensitiveInfoDetector_get_statistics_14"
+          ],
+          "metadata": {}
+        },
+        {
+          "id": "SensitiveInfoDetector_get_statistics_14",
+          "label": "Call: sum",
+          "kind": "call",
+          "nexts": [
+            "SensitiveInfoDetector_get_statistics_15"
+          ],
+          "metadata": {
+            "type": "tail",
+            "target_func": "sum"
+          }
+        },
+        {
+          "id": "SensitiveInfoDetector_get_statistics_15",
+          "label": "Call: len",
+          "kind": "call",
+          "nexts": [
+            "SensitiveInfoDetector_get_statistics_16"
+          ],
+          "metadata": {
+            "type": "tail",
+            "target_func": "len"
+          }
+        },
+        {
+          "id": "SensitiveInfoDetector_get_statistics_16",
+          "label": "return {'total_scans': len(results), 'total_matches': total_matches, 'average_risk_score': round(avg_risk_score, 2), 'severity_distribution': {'critical': total_critical, 'high': total_high, 'medium': total_medium, 'low': total_low, 'info': total_info}, 'top_issues': dict(type_counter.most_common(10)), 'scanned_urls': [r.url for r in results]}",
+          "kind": "op",
+          "nexts": [
+            "SensitiveInfoDetector_get_statistics_2"
+          ],
+          "metadata": {}
+        }
+      ],
+      "start_node_id": "SensitiveInfoDetector_get_statistics_1",
+      "end_node_id": "SensitiveInfoDetector_get_statistics_2"
+    },
+    {
+      "name": "quick_scan",
+      "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\function_info_leak\\sensitive_info_detector.py",
+      "type": "function",
+      "nodes": [
+        {
+          "id": "quick_scan_1",
+          "label": "quick_scan",
+          "kind": "start",
+          "nexts": [
+            "quick_scan_3"
+          ],
+          "metadata": {
+            "type": "head",
+            "name": "quick_scan",
+            "parameters": [
+              {
+                "name": "content",
+                "type": "str",
+                "default": null,
+                "required": true,
+                "kind": "positional_or_keyword"
+              },
+              {
+                "name": "content_type",
+                "type": "str",
+                "default": "text",
+                "required": false,
+                "kind": "positional_or_keyword"
+              },
+              {
+                "name": "url",
+                "type": "str",
+                "default": "",
+                "required": false,
+                "kind": "positional_or_keyword"
+              }
+            ],
+            "docstring": "快速掃描內容\n\nArgs:\n    content: 要掃描的內容\n    content_type: 內容類型 ('text', 'html', 'json', 'headers')\n    url: 來源 URL\n    \nReturns:\n    DetectionResult: 檢測結果",
+            "return_type": "DetectionResult"
+          }
+        },
+        {
+          "id": "quick_scan_2",
+          "label": "End",
+          "kind": "end",
+          "nexts": [],
+          "metadata": {}
+        },
+        {
+          "id": "quick_scan_3",
+          "label": "Call: SensitiveInfoDetector",
+          "kind": "call",
+          "nexts": [
+            "quick_scan_4"
+          ],
+          "metadata": {
+            "type": "tail",
+            "target_func": "SensitiveInfoDetector"
+          }
+        },
+        {
+          "id": "quick_scan_4",
+          "label": "if content_type == 'html'",
+          "kind": "cond",
+          "nexts": [
+            "quick_scan_5",
+            "quick_scan_6"
+          ],
+          "metadata": {}
+        },
+        {
+          "id": "quick_scan_5",
+          "label": "return detector.detect_in_html(content, url=url)",
+          "kind": "op",
+          "nexts": [
+            "quick_scan_2",
+            "quick_scan_13"
+          ],
+          "metadata": {}
+        },
+        {
+          "id": "quick_scan_6",
+          "label": "if content_type == 'json'",
+          "kind": "cond",
+          "nexts": [
+            "quick_scan_7",
+            "quick_scan_11"
+          ],
+          "metadata": {}
+        },
+        {
+          "id": "quick_scan_7",
+          "label": "Call: json.loads",
+          "kind": "call",
+          "nexts": [
+            "quick_scan_8"
+          ],
+          "metadata": {
+            "type": "tail",
+            "target_func": "json.loads"
+          }
+        },
+        {
+          "id": "quick_scan_8",
+          "label": "Call: json.dumps",
+          "kind": "call",
+          "nexts": [
+            "quick_scan_9"
+          ],
+          "metadata": {
+            "type": "tail",
+            "target_func": "json.dumps"
+          }
+        },
+        {
+          "id": "quick_scan_9",
+          "label": "return detector.detect_in_response(json_str, url=url)",
+          "kind": "op",
+          "nexts": [
+            "quick_scan_2",
+            "quick_scan_10"
+          ],
+          "metadata": {}
+        },
+        {
+          "id": "quick_scan_10",
+          "label": "return detector.detect_in_response(content, url=url)",
+          "kind": "op",
+          "nexts": [
+            "quick_scan_2",
+            "quick_scan_12"
+          ],
+          "metadata": {}
+        },
+        {
+          "id": "quick_scan_11",
+          "label": "return detector.detect_in_response(content, url=url)",
+          "kind": "op",
+          "nexts": [
+            "quick_scan_2",
+            "quick_scan_12"
+          ],
+          "metadata": {}
+        },
+        {
+          "id": "quick_scan_12",
+          "label": "",
+          "kind": "op",
+          "nexts": [
+            "quick_scan_13"
+          ],
+          "metadata": {}
+        },
+        {
+          "id": "quick_scan_13",
+          "label": "",
+          "kind": "op",
+          "nexts": [
+            "quick_scan_2"
+          ],
+          "metadata": {}
+        }
+      ],
+      "start_node_id": "quick_scan_1",
+      "end_node_id": "quick_scan_2"
+    },
+    {
+      "name": "batch_scan",
+      "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\function_info_leak\\sensitive_info_detector.py",
+      "type": "function",
+      "nodes": [
+        {
+          "id": "batch_scan_1",
+          "label": "batch_scan",
+          "kind": "start",
+          "nexts": [
+            "batch_scan_3"
+          ],
+          "metadata": {
+            "type": "head",
+            "name": "batch_scan",
+            "parameters": [
+              {
+                "name": "targets",
+                "type": "List[Tuple[str, str]]",
+                "default": null,
+                "required": true,
+                "kind": "positional_or_keyword"
+              },
+              {
+                "name": "output_dir",
+                "type": "str",
+                "default": "scan_reports",
+                "required": false,
+                "kind": "positional_or_keyword"
+              }
+            ],
+            "docstring": "批次掃描多個目標\n\nArgs:\n    targets: [(content, url), ...] 列表\n    output_dir: 報告輸出目錄\n    \nReturns:\n    List[DetectionResult]: 所有掃描結果",
+            "return_type": "List[DetectionResult]"
+          }
+        },
+        {
+          "id": "batch_scan_2",
+          "label": "End",
+          "kind": "end",
+          "nexts": [],
+          "metadata": {}
+        },
+        {
+          "id": "batch_scan_3",
+          "label": "Call: os.makedirs",
+          "kind": "call",
+          "nexts": [
+            "batch_scan_4"
+          ],
+          "metadata": {
+            "type": "tail",
+            "target_func": "os.makedirs"
+          }
+        },
+        {
+          "id": "batch_scan_4",
+          "label": "Call: SensitiveInfoDetector",
+          "kind": "call",
+          "nexts": [
+            "batch_scan_5"
+          ],
+          "metadata": {
+            "type": "tail",
+            "target_func": "SensitiveInfoDetector"
+          }
+        },
+        {
+          "id": "batch_scan_5",
+          "label": "for (idx, (content, url)) in enumerate(targets, 1)",
+          "kind": "cond",
+          "nexts": [
+            "batch_scan_6",
+            "batch_scan_12"
+          ],
+          "metadata": {}
+        },
+        {
+          "id": "batch_scan_6",
+          "label": "Call: logger.info",
+          "kind": "call",
+          "nexts": [
+            "batch_scan_7"
+          ],
+          "metadata": {
+            "type": "tail",
+            "target_func": "logger.info"
+          }
+        },
+        {
+          "id": "batch_scan_7",
+          "label": "Call: detector.detect_in_response",
+          "kind": "call",
+          "nexts": [
+            "batch_scan_8"
+          ],
+          "metadata": {
+            "type": "tail",
+            "target_func": "detector.detect_in_response"
+          }
+        },
+        {
+          "id": "batch_scan_8",
+          "label": "Call: results.append",
+          "kind": "call",
+          "nexts": [
+            "batch_scan_9"
+          ],
+          "metadata": {
+            "type": "tail",
+            "target_func": "results.append"
+          }
+        },
+        {
+          "id": "batch_scan_9",
+          "label": "Call: re.sub",
+          "kind": "call",
+          "nexts": [
+            "batch_scan_10"
+          ],
+          "metadata": {
+            "type": "tail",
+            "target_func": "re.sub"
+          }
+        },
+        {
+          "id": "batch_scan_10",
+          "label": "Call: os.path.join",
+          "kind": "call",
+          "nexts": [
+            "batch_scan_11"
+          ],
+          "metadata": {
+            "type": "tail",
+            "target_func": "os.path.join"
+          }
+        },
+        {
+          "id": "batch_scan_11",
+          "label": "Call: detector.export_report",
+          "kind": "call",
+          "nexts": [
+            "batch_scan_5"
+          ],
+          "metadata": {
+            "type": "tail",
+            "target_func": "detector.export_report"
+          }
+        },
+        {
+          "id": "batch_scan_12",
+          "label": "",
+          "kind": "op",
+          "nexts": [
+            "batch_scan_13"
+          ],
+          "metadata": {}
+        },
+        {
+          "id": "batch_scan_13",
+          "label": "Call: detector.get_statistics",
+          "kind": "call",
+          "nexts": [
+            "batch_scan_14"
+          ],
+          "metadata": {
+            "type": "tail",
+            "target_func": "detector.get_statistics"
+          }
+        },
+        {
+          "id": "batch_scan_14",
+          "label": "Call: os.path.join",
+          "kind": "call",
+          "nexts": [
+            "batch_scan_15"
+          ],
+          "metadata": {
+            "type": "tail",
+            "target_func": "os.path.join"
+          }
+        },
+        {
+          "id": "batch_scan_15",
+          "label": "Call: open",
+          "kind": "call",
+          "nexts": [
+            "batch_scan_16"
+          ],
+          "metadata": {
+            "type": "tail",
+            "target_func": "open"
+          }
+        },
+        {
+          "id": "batch_scan_16",
+          "label": "Call: json.dumps",
+          "kind": "call",
+          "nexts": [
+            "batch_scan_17"
+          ],
+          "metadata": {
+            "type": "tail",
+            "target_func": "json.dumps"
+          }
+        },
+        {
+          "id": "batch_scan_17",
+          "label": "Call: logger.info",
+          "kind": "call",
+          "nexts": [
+            "batch_scan_18"
+          ],
+          "metadata": {
+            "type": "tail",
+            "target_func": "logger.info"
+          }
+        },
+        {
+          "id": "batch_scan_18",
+          "label": "return results",
+          "kind": "op",
+          "nexts": [
+            "batch_scan_2"
+          ],
+          "metadata": {}
+        }
+      ],
+      "start_node_id": "batch_scan_1",
+      "end_node_id": "batch_scan_2"
+    }
+  ],
+  "connections": [],
+  "flow_chains": [],
+  "function_details": {
+    "function_map": {
+      "SensitiveInfoType": {
+        "file_name": "sensitive_info_detector.py",
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\function_info_leak\\sensitive_info_detector.py",
+        "script_name": "sensitive_info_detector",
+        "line_number": 0,
+        "is_async": false,
+        "is_entry_point": true,
+        "is_class": true,
+        "parameters": [],
+        "docstring": "敏感資訊類型 - 擴展至 50+ 種",
+        "return_type": "any",
+        "called_functions": []
+      },
+      "AlertSeverity": {
+        "file_name": "sensitive_info_detector.py",
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\function_info_leak\\sensitive_info_detector.py",
+        "script_name": "sensitive_info_detector",
+        "line_number": 0,
+        "is_async": false,
+        "is_entry_point": true,
+        "is_class": true,
+        "parameters": [],
+        "docstring": "警報嚴重性等級",
+        "return_type": "any",
+        "called_functions": []
+      },
+      "Location": {
+        "file_name": "sensitive_info_detector.py",
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\function_info_leak\\sensitive_info_detector.py",
+        "script_name": "sensitive_info_detector",
+        "line_number": 0,
+        "is_async": false,
+        "is_entry_point": true,
+        "is_class": true,
+        "parameters": [],
+        "docstring": "資訊位置",
+        "return_type": "any",
+        "called_functions": []
+      },
+      "SensitiveMatch": {
+        "file_name": "sensitive_info_detector.py",
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\function_info_leak\\sensitive_info_detector.py",
+        "script_name": "sensitive_info_detector",
+        "line_number": 0,
+        "is_async": false,
+        "is_entry_point": true,
+        "is_class": true,
+        "parameters": [],
+        "docstring": "敏感資訊匹配結果",
+        "return_type": "any",
+        "called_functions": []
+      },
+      "SensitiveMatch.__post_init__": {
+        "file_name": "sensitive_info_detector.py",
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\function_info_leak\\sensitive_info_detector.py",
+        "script_name": "sensitive_info_detector",
+        "line_number": 0,
+        "is_async": false,
+        "is_entry_point": false,
+        "is_class": false,
+        "parameters": [],
+        "docstring": "計算匹配項的 hash",
+        "return_type": "any",
+        "called_functions": [
+          "unknown_call.hexdigest"
+        ]
+      },
+      "RiskScore": {
+        "file_name": "sensitive_info_detector.py",
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\function_info_leak\\sensitive_info_detector.py",
+        "script_name": "sensitive_info_detector",
+        "line_number": 0,
+        "is_async": false,
+        "is_entry_point": true,
+        "is_class": true,
+        "parameters": [],
+        "docstring": "風險評分",
+        "return_type": "any",
+        "called_functions": []
+      },
+      "RiskScore.calculate": {
+        "file_name": "sensitive_info_detector.py",
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\function_info_leak\\sensitive_info_detector.py",
+        "script_name": "sensitive_info_detector",
+        "line_number": 0,
+        "is_async": false,
+        "is_entry_point": false,
+        "is_class": false,
+        "parameters": [
+          {
+            "name": "matches",
+            "type": "List[SensitiveMatch]",
+            "default": null,
+            "required": true,
+            "kind": "positional_or_keyword"
+          }
+        ],
+        "docstring": "計算風險評分",
+        "return_type": "None",
+        "called_functions": [
+          "min"
+        ]
+      },
+      "DetectionResult": {
+        "file_name": "sensitive_info_detector.py",
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\function_info_leak\\sensitive_info_detector.py",
+        "script_name": "sensitive_info_detector",
+        "line_number": 0,
+        "is_async": false,
+        "is_entry_point": true,
+        "is_class": true,
+        "parameters": [],
+        "docstring": "檢測結果",
+        "return_type": "any",
+        "called_functions": [
+          "field",
+          "field",
+          "field",
+          "field"
+        ]
+      },
+      "DetectionResult.__post_init__": {
+        "file_name": "sensitive_info_detector.py",
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\function_info_leak\\sensitive_info_detector.py",
+        "script_name": "sensitive_info_detector",
+        "line_number": 0,
+        "is_async": false,
+        "is_entry_point": false,
+        "is_class": false,
+        "parameters": [],
+        "docstring": "計算風險評分",
+        "return_type": "any",
+        "called_functions": [
+          "self.risk_score.calculate"
+        ]
+      },
+      "DetectionResult.to_dict": {
+        "file_name": "sensitive_info_detector.py",
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\function_info_leak\\sensitive_info_detector.py",
+        "script_name": "sensitive_info_detector",
+        "line_number": 0,
+        "is_async": false,
+        "is_entry_point": false,
+        "is_class": false,
+        "parameters": [],
+        "docstring": "轉換為字典格式",
+        "return_type": "dict",
+        "called_functions": []
+      },
+      "DetectionResult.to_sarif": {
+        "file_name": "sensitive_info_detector.py",
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\function_info_leak\\sensitive_info_detector.py",
+        "script_name": "sensitive_info_detector",
+        "line_number": 0,
+        "is_async": false,
+        "is_entry_point": false,
+        "is_class": false,
+        "parameters": [],
+        "docstring": "轉換為 SARIF 格式 (Static Analysis Results Interchange Format)",
+        "return_type": "dict",
+        "called_functions": [
+          "unknown_call.title",
+          "self._sarif_level",
+          "self._sarif_level",
+          "results.append"
+        ]
+      },
+      "DetectionResult._sarif_level": {
+        "file_name": "sensitive_info_detector.py",
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\function_info_leak\\sensitive_info_detector.py",
+        "script_name": "sensitive_info_detector",
+        "line_number": 0,
+        "is_async": false,
+        "is_entry_point": false,
+        "is_class": false,
+        "parameters": [
+          {
+            "name": "severity",
+            "type": "AlertSeverity",
+            "default": null,
+            "required": true,
+            "kind": "positional_or_keyword"
+          }
+        ],
+        "docstring": "轉換嚴重性等級為 SARIF 格式",
+        "return_type": "str",
+        "called_functions": []
+      },
+      "SensitiveInfoDetector": {
+        "file_name": "sensitive_info_detector.py",
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\function_info_leak\\sensitive_info_detector.py",
+        "script_name": "sensitive_info_detector",
+        "line_number": 0,
+        "is_async": false,
+        "is_entry_point": true,
+        "is_class": true,
+        "parameters": [],
+        "docstring": "敏感資訊檢測器 - 專業級實現\n\n功能:\n- 檢測 50+ 種認證資訊 (API keys, tokens, passwords)\n- 檢測個人識別資訊 (PII): email, phone, SSN, credit card (國際化)\n- 檢測雲端憑證 (AWS, GCP, Azure, GitHub, GitLab, Slack, Stripe, etc.)\n- 檢測資料庫連線字串 (MySQL, PostgreSQL, MongoDB, Redis, etc.)\n- 檢測內部路徑與系統配置資訊\n- 檢測 debug info 與錯誤訊息\n- 檢測 HTML 註釋中的敏感資訊\n- 熵值分析 (檢測高隨機性密鑰)\n- 上下文感知誤報過濾\n- 信心度評分\n- SARIF 格式輸出\n\n使用範例:\n    detector = SensitiveInfoDetector()\n    \n    # 檢測 HTML 內容\n    result = detector.detect_in_html(html_content, url=\"https://example.com\")\n    \n    # 檢測標頭\n    result = detector.detect_in_headers(headers, url=\"https://example.com\")\n    \n    # 檢測 JavaScript\n    result = detector.detect_in_javascript(js_code, url=\"https://example.com/app.js\")\n    \n    # 輸出 SARIF 格式\n    sarif_report = result.to_sarif()\n    \n    # 輸出 JSON 格式\n    json_report = result.to_dict()",
+        "return_type": "any",
+        "called_functions": []
+      },
+      "SensitiveInfoDetector.__init__": {
+        "file_name": "sensitive_info_detector.py",
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\function_info_leak\\sensitive_info_detector.py",
+        "script_name": "sensitive_info_detector",
+        "line_number": 0,
+        "is_async": false,
+        "is_entry_point": false,
+        "is_class": false,
+        "parameters": [
+          {
+            "name": "min_severity",
+            "type": "AlertSeverity",
+            "default": "AlertSeverity.INFO",
+            "required": false,
+            "kind": "positional_or_keyword"
+          },
+          {
+            "name": "enable_entropy_check",
+            "type": "bool",
+            "default": true,
+            "required": false,
+            "kind": "positional_or_keyword"
+          },
+          {
+            "name": "entropy_threshold",
+            "type": "float",
+            "default": 4.5,
+            "required": false,
+            "kind": "positional_or_keyword"
+          },
+          {
+            "name": "min_confidence",
+            "type": "float",
+            "default": 0.3,
+            "required": false,
+            "kind": "positional_or_keyword"
+          },
+          {
+            "name": "custom_patterns",
+            "type": "Optional[Dict]",
+            "default": null,
+            "required": false,
+            "kind": "positional_or_keyword"
+          }
+        ],
+        "docstring": "初始化檢測器\n\nArgs:\n    min_severity: 最小嚴重性等級過濾閾值\n    enable_entropy_check: 啟用熵值檢測\n    entropy_threshold: 熵值閾值 (default: 4.5)\n    min_confidence: 最小信心度閾值 (default: 0.3)\n    custom_patterns: 自訂檢測模式",
+        "return_type": "any",
+        "called_functions": [
+          "self._build_patterns",
+          "self._patterns.update",
+          "set",
+          "logger.info"
+        ]
+      },
+      "SensitiveInfoDetector._build_patterns": {
+        "file_name": "sensitive_info_detector.py",
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\function_info_leak\\sensitive_info_detector.py",
+        "script_name": "sensitive_info_detector",
+        "line_number": 0,
+        "is_async": false,
+        "is_entry_point": false,
+        "is_class": false,
+        "parameters": [],
+        "docstring": "建立檢測模式 - 擴展至 50+ 種",
+        "return_type": "Dict[SensitiveInfoType, Dict]",
+        "called_functions": []
+      },
+      "SensitiveInfoDetector.calculate_entropy": {
+        "file_name": "sensitive_info_detector.py",
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\function_info_leak\\sensitive_info_detector.py",
+        "script_name": "sensitive_info_detector",
+        "line_number": 0,
+        "is_async": false,
+        "is_entry_point": false,
+        "is_class": false,
+        "parameters": [
+          {
+            "name": "data",
+            "type": "str",
+            "default": null,
+            "required": true,
+            "kind": "positional_or_keyword"
+          }
+        ],
+        "docstring": "計算字符串的香農熵值\n\nArgs:\n    data: 輸入字符串\n    \nReturns:\n    float: 熵值 (0-8, 越高越隨機)",
+        "return_type": "float",
+        "called_functions": [
+          "Counter",
+          "len",
+          "math.log2"
+        ]
+      },
+      "SensitiveInfoDetector._is_false_positive": {
+        "file_name": "sensitive_info_detector.py",
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\function_info_leak\\sensitive_info_detector.py",
+        "script_name": "sensitive_info_detector",
+        "line_number": 0,
+        "is_async": false,
+        "is_entry_point": false,
+        "is_class": false,
+        "parameters": [
+          {
+            "name": "value",
+            "type": "str",
+            "default": null,
+            "required": true,
+            "kind": "positional_or_keyword"
+          },
+          {
+            "name": "context",
+            "type": "str",
+            "default": null,
+            "required": true,
+            "kind": "positional_or_keyword"
+          }
+        ],
+        "docstring": "檢查是否為誤報\n\nArgs:\n    value: 匹配的值\n    context: 上下文\n    \nReturns:\n    Tuple[bool, float]: (是否誤報, 信心度調整係數)",
+        "return_type": "Tuple[bool, float]",
+        "called_functions": [
+          "value.lower",
+          "context.lower",
+          "self.calculate_entropy"
+        ]
+      },
+      "SensitiveInfoDetector.detect_in_html": {
+        "file_name": "sensitive_info_detector.py",
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\function_info_leak\\sensitive_info_detector.py",
+        "script_name": "sensitive_info_detector",
+        "line_number": 0,
+        "is_async": false,
+        "is_entry_point": false,
+        "is_class": false,
+        "parameters": [
+          {
+            "name": "html_content",
+            "type": "str",
+            "default": null,
+            "required": true,
+            "kind": "positional_or_keyword"
+          },
+          {
+            "name": "url",
+            "type": "str",
+            "default": "",
+            "required": false,
+            "kind": "positional_or_keyword"
+          }
+        ],
+        "docstring": "檢測 HTML 內容中的敏感資訊\n\nArgs:\n    html_content: HTML 內容\n    url: 來源 URL\n    \nReturns:\n    DetectionResult: 檢測結果",
+        "return_type": "DetectionResult",
+        "called_functions": [
+          "DetectionResult",
+          "result.matches.extend",
+          "result.matches.extend",
+          "result.matches.extend",
+          "result.matches.extend",
+          "self._filter_by_severity",
+          "logger.info"
+        ]
+      },
+      "SensitiveInfoDetector.detect_in_headers": {
+        "file_name": "sensitive_info_detector.py",
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\function_info_leak\\sensitive_info_detector.py",
+        "script_name": "sensitive_info_detector",
+        "line_number": 0,
+        "is_async": false,
+        "is_entry_point": false,
+        "is_class": false,
+        "parameters": [
+          {
+            "name": "headers",
+            "type": "Dict[str, str]",
+            "default": null,
+            "required": true,
+            "kind": "positional_or_keyword"
+          },
+          {
+            "name": "url",
+            "type": "str",
+            "default": "",
+            "required": false,
+            "kind": "positional_or_keyword"
+          }
+        ],
+        "docstring": "檢測 HTTP 標頭中的敏感資訊",
+        "return_type": "DetectionResult",
+        "called_functions": [
+          "DetectionResult",
+          "result.matches.append",
+          "self._detect_in_text",
+          "result.matches.extend",
+          "self._filter_by_severity",
+          "logger.info"
+        ]
+      },
+      "SensitiveInfoDetector.detect_in_response": {
+        "file_name": "sensitive_info_detector.py",
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\function_info_leak\\sensitive_info_detector.py",
+        "script_name": "sensitive_info_detector",
+        "line_number": 0,
+        "is_async": false,
+        "is_entry_point": false,
+        "is_class": false,
+        "parameters": [
+          {
+            "name": "response_body",
+            "type": "str",
+            "default": null,
+            "required": true,
+            "kind": "positional_or_keyword"
+          },
+          {
+            "name": "headers",
+            "type": "Optional[Dict[str, str]]",
+            "default": null,
+            "required": false,
+            "kind": "positional_or_keyword"
+          },
+          {
+            "name": "url",
+            "type": "str",
+            "default": "",
+            "required": false,
+            "kind": "positional_or_keyword"
+          }
+        ],
+        "docstring": "檢測 HTTP 響應中的敏感資訊",
+        "return_type": "DetectionResult",
+        "called_functions": [
+          "DetectionResult",
+          "self.detect_in_html",
+          "result.matches.extend",
+          "self._detect_in_text",
+          "result.matches.extend",
+          "self.detect_in_headers",
+          "result.matches.extend",
+          "self._filter_by_severity",
+          "logger.info"
+        ]
+      },
+      "SensitiveInfoDetector._detect_html_comments": {
+        "file_name": "sensitive_info_detector.py",
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\function_info_leak\\sensitive_info_detector.py",
+        "script_name": "sensitive_info_detector",
+        "line_number": 0,
+        "is_async": false,
+        "is_entry_point": false,
+        "is_class": false,
+        "parameters": [
+          {
+            "name": "html",
+            "type": "str",
+            "default": null,
+            "required": true,
+            "kind": "positional_or_keyword"
+          }
+        ],
+        "docstring": "檢測 HTML 註釋中的敏感資訊",
+        "return_type": "List[SensitiveMatch]",
+        "called_functions": [
+          "comment_match.group",
+          "matches.append"
+        ]
+      },
+      "SensitiveInfoDetector._detect_script_blocks": {
+        "file_name": "sensitive_info_detector.py",
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\function_info_leak\\sensitive_info_detector.py",
+        "script_name": "sensitive_info_detector",
+        "line_number": 0,
+        "is_async": false,
+        "is_entry_point": false,
+        "is_class": false,
+        "parameters": [
+          {
+            "name": "html",
+            "type": "str",
+            "default": null,
+            "required": true,
+            "kind": "positional_or_keyword"
+          }
+        ],
+        "docstring": "檢測 script 標籤中的敏感資訊",
+        "return_type": "List[SensitiveMatch]",
+        "called_functions": [
+          "script_match.group",
+          "matches.append"
+        ]
+      },
+      "SensitiveInfoDetector._detect_meta_tags": {
+        "file_name": "sensitive_info_detector.py",
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\function_info_leak\\sensitive_info_detector.py",
+        "script_name": "sensitive_info_detector",
+        "line_number": 0,
+        "is_async": false,
+        "is_entry_point": false,
+        "is_class": false,
+        "parameters": [
+          {
+            "name": "html",
+            "type": "str",
+            "default": null,
+            "required": true,
+            "kind": "positional_or_keyword"
+          }
+        ],
+        "docstring": "檢測 meta 標籤中的敏感資訊",
+        "return_type": "List[SensitiveMatch]",
+        "called_functions": [
+          "meta_match.group",
+          "matches.append"
+        ]
+      },
+      "SensitiveInfoDetector._detect_in_text": {
+        "file_name": "sensitive_info_detector.py",
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\function_info_leak\\sensitive_info_detector.py",
+        "script_name": "sensitive_info_detector",
+        "line_number": 0,
+        "is_async": false,
+        "is_entry_point": false,
+        "is_class": false,
+        "parameters": [
+          {
+            "name": "text",
+            "type": "str",
+            "default": null,
+            "required": true,
+            "kind": "positional_or_keyword"
+          },
+          {
+            "name": "location",
+            "type": "Location",
+            "default": null,
+            "required": true,
+            "kind": "positional_or_keyword"
+          }
+        ],
+        "docstring": "在文本中檢測敏感資訊 (含熵值分析和誤報過濾)",
+        "return_type": "List[SensitiveMatch]",
+        "called_functions": [
+          "text.split",
+          "regex_match.group",
+          "max",
+          "min",
+          "self._is_false_positive",
+          "logger.debug",
+          "self.calculate_entropy",
+          "min",
+          "SensitiveMatch",
+          "self._seen_hashes.add",
+          "matches.append",
+          "matches.extend"
+        ]
+      },
+      "SensitiveInfoDetector._detect_high_entropy_strings": {
+        "file_name": "sensitive_info_detector.py",
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\function_info_leak\\sensitive_info_detector.py",
+        "script_name": "sensitive_info_detector",
+        "line_number": 0,
+        "is_async": false,
+        "is_entry_point": false,
+        "is_class": false,
+        "parameters": [
+          {
+            "name": "text",
+            "type": "str",
+            "default": null,
+            "required": true,
+            "kind": "positional_or_keyword"
+          },
+          {
+            "name": "location",
+            "type": "Location",
+            "default": null,
+            "required": true,
+            "kind": "positional_or_keyword"
+          }
+        ],
+        "docstring": "檢測高熵值字符串 (可能是密鑰)",
+        "return_type": "List[SensitiveMatch]",
+        "called_functions": [
+          "re.findall",
+          "self.calculate_entropy",
+          "self._is_false_positive",
+          "SensitiveMatch",
+          "self._seen_hashes.add",
+          "matches.append"
+        ]
+      },
+      "SensitiveInfoDetector._filter_by_severity": {
+        "file_name": "sensitive_info_detector.py",
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\function_info_leak\\sensitive_info_detector.py",
+        "script_name": "sensitive_info_detector",
+        "line_number": 0,
+        "is_async": false,
+        "is_entry_point": false,
+        "is_class": false,
+        "parameters": [
+          {
+            "name": "matches",
+            "type": "List[SensitiveMatch]",
+            "default": null,
+            "required": true,
+            "kind": "positional_or_keyword"
+          }
+        ],
+        "docstring": "根據最小嚴重性等級過濾結果",
+        "return_type": "List[SensitiveMatch]",
+        "called_functions": []
+      },
+      "SensitiveInfoDetector.format_report": {
+        "file_name": "sensitive_info_detector.py",
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\function_info_leak\\sensitive_info_detector.py",
+        "script_name": "sensitive_info_detector",
+        "line_number": 0,
+        "is_async": false,
+        "is_entry_point": false,
+        "is_class": false,
+        "parameters": [
+          {
+            "name": "result",
+            "type": "DetectionResult",
+            "default": null,
+            "required": true,
+            "kind": "positional_or_keyword"
+          },
+          {
+            "name": "format",
+            "type": "str",
+            "default": "text",
+            "required": false,
+            "kind": "positional_or_keyword"
+          }
+        ],
+        "docstring": "格式化檢測報告\n\nArgs:\n    result: 檢測結果\n    format: 輸出格式 ('text', 'json', 'sarif')\n    \nReturns:\n    str: 格式化後的報告",
+        "return_type": "str",
+        "called_functions": [
+          "len",
+          "sorted",
+          "severity_icons.get",
+          "lines.append",
+          "lines.append",
+          "lines.append",
+          "lines.append",
+          "lines.append",
+          "lines.append",
+          "lines.append",
+          "lines.append",
+          "lines.append",
+          "lines.append",
+          "lines.append",
+          "lines.append",
+          "lines.append",
+          "lines.append"
+        ]
+      },
+      "SensitiveInfoDetector.export_report": {
+        "file_name": "sensitive_info_detector.py",
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\function_info_leak\\sensitive_info_detector.py",
+        "script_name": "sensitive_info_detector",
+        "line_number": 0,
+        "is_async": false,
+        "is_entry_point": false,
+        "is_class": false,
+        "parameters": [
+          {
+            "name": "result",
+            "type": "DetectionResult",
+            "default": null,
+            "required": true,
+            "kind": "positional_or_keyword"
+          },
+          {
+            "name": "output_file",
+            "type": "str",
+            "default": null,
+            "required": true,
+            "kind": "positional_or_keyword"
+          },
+          {
+            "name": "format",
+            "type": "str",
+            "default": "json",
+            "required": false,
+            "kind": "positional_or_keyword"
+          }
+        ],
+        "docstring": "導出檢測報告到文件\n\nArgs:\n    result: 檢測結果\n    output_file: 輸出文件路徑\n    format: 輸出格式 ('text', 'json', 'sarif')",
+        "return_type": "None",
+        "called_functions": [
+          "self.format_report",
+          "open",
+          "f.write",
+          "logger.info"
+        ]
+      },
+      "SensitiveInfoDetector.get_statistics": {
+        "file_name": "sensitive_info_detector.py",
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\function_info_leak\\sensitive_info_detector.py",
+        "script_name": "sensitive_info_detector",
+        "line_number": 0,
+        "is_async": false,
+        "is_entry_point": false,
+        "is_class": false,
+        "parameters": [
+          {
+            "name": "results",
+            "type": "List[DetectionResult]",
+            "default": null,
+            "required": true,
+            "kind": "positional_or_keyword"
+          }
+        ],
+        "docstring": "生成統計資訊\n\nArgs:\n    results: 多個檢測結果列表\n    \nReturns:\n    Dict: 統計資訊",
+        "return_type": "Dict[str, Any]",
+        "called_functions": [
+          "sum",
+          "sum",
+          "sum",
+          "sum",
+          "sum",
+          "sum",
+          "Counter",
+          "sum",
+          "len"
+        ]
+      },
+      "quick_scan": {
+        "file_name": "sensitive_info_detector.py",
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\function_info_leak\\sensitive_info_detector.py",
+        "script_name": "sensitive_info_detector",
+        "line_number": 0,
+        "is_async": false,
+        "is_entry_point": true,
+        "is_class": false,
+        "parameters": [
+          {
+            "name": "content",
+            "type": "str",
+            "default": null,
+            "required": true,
+            "kind": "positional_or_keyword"
+          },
+          {
+            "name": "content_type",
+            "type": "str",
+            "default": "text",
+            "required": false,
+            "kind": "positional_or_keyword"
+          },
+          {
+            "name": "url",
+            "type": "str",
+            "default": "",
+            "required": false,
+            "kind": "positional_or_keyword"
+          }
+        ],
+        "docstring": "快速掃描內容\n\nArgs:\n    content: 要掃描的內容\n    content_type: 內容類型 ('text', 'html', 'json', 'headers')\n    url: 來源 URL\n    \nReturns:\n    DetectionResult: 檢測結果",
+        "return_type": "DetectionResult",
+        "called_functions": [
+          "SensitiveInfoDetector",
+          "json.loads",
+          "json.dumps"
+        ]
+      },
+      "batch_scan": {
+        "file_name": "sensitive_info_detector.py",
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\function_info_leak\\sensitive_info_detector.py",
+        "script_name": "sensitive_info_detector",
+        "line_number": 0,
+        "is_async": false,
+        "is_entry_point": true,
+        "is_class": false,
+        "parameters": [
+          {
+            "name": "targets",
+            "type": "List[Tuple[str, str]]",
+            "default": null,
+            "required": true,
+            "kind": "positional_or_keyword"
+          },
+          {
+            "name": "output_dir",
+            "type": "str",
+            "default": "scan_reports",
+            "required": false,
+            "kind": "positional_or_keyword"
+          }
+        ],
+        "docstring": "批次掃描多個目標\n\nArgs:\n    targets: [(content, url), ...] 列表\n    output_dir: 報告輸出目錄\n    \nReturns:\n    List[DetectionResult]: 所有掃描結果",
+        "return_type": "List[DetectionResult]",
+        "called_functions": [
+          "os.makedirs",
+          "SensitiveInfoDetector",
+          "logger.info",
+          "detector.detect_in_response",
+          "results.append",
+          "re.sub",
+          "os.path.join",
+          "detector.export_report",
+          "detector.get_statistics",
+          "os.path.join",
+          "open",
+          "json.dumps",
+          "logger.info"
+        ]
+      }
+    },
+    "script_functions": {
+      "sensitive_info_detector": {
+        "file_path": "C:\\D\\fold7\\AIVA-git\\services\\features\\function_info_leak\\sensitive_info_detector.py",
+        "functions": {
+          "SensitiveInfoType": {
+            "line_number": 0,
+            "is_async": false,
+            "is_entry_point": true,
+            "parameters": [],
+            "called_functions": []
+          },
+          "AlertSeverity": {
+            "line_number": 0,
+            "is_async": false,
+            "is_entry_point": true,
+            "parameters": [],
+            "called_functions": []
+          },
+          "Location": {
+            "line_number": 0,
+            "is_async": false,
+            "is_entry_point": true,
+            "parameters": [],
+            "called_functions": []
+          },
+          "SensitiveMatch": {
+            "line_number": 0,
+            "is_async": false,
+            "is_entry_point": true,
+            "parameters": [],
+            "called_functions": []
+          },
+          "SensitiveMatch.__post_init__": {
+            "line_number": 0,
+            "is_async": false,
+            "is_entry_point": false,
+            "parameters": [],
+            "called_functions": [
+              "unknown_call.hexdigest"
+            ]
+          },
+          "RiskScore": {
+            "line_number": 0,
+            "is_async": false,
+            "is_entry_point": true,
+            "parameters": [],
+            "called_functions": []
+          },
+          "RiskScore.calculate": {
+            "line_number": 0,
+            "is_async": false,
+            "is_entry_point": false,
+            "parameters": [
+              {
+                "name": "matches",
+                "type": "List[SensitiveMatch]",
+                "default": null,
+                "required": true,
+                "kind": "positional_or_keyword"
+              }
+            ],
+            "called_functions": [
+              "min"
+            ]
+          },
+          "DetectionResult": {
+            "line_number": 0,
+            "is_async": false,
+            "is_entry_point": true,
+            "parameters": [],
+            "called_functions": [
+              "field",
+              "field",
+              "field",
+              "field"
+            ]
+          },
+          "DetectionResult.__post_init__": {
+            "line_number": 0,
+            "is_async": false,
+            "is_entry_point": false,
+            "parameters": [],
+            "called_functions": [
+              "self.risk_score.calculate"
+            ]
+          },
+          "DetectionResult.to_dict": {
+            "line_number": 0,
+            "is_async": false,
+            "is_entry_point": false,
+            "parameters": [],
+            "called_functions": []
+          },
+          "DetectionResult.to_sarif": {
+            "line_number": 0,
+            "is_async": false,
+            "is_entry_point": false,
+            "parameters": [],
+            "called_functions": [
+              "unknown_call.title",
+              "self._sarif_level",
+              "self._sarif_level",
+              "results.append"
+            ]
+          },
+          "DetectionResult._sarif_level": {
+            "line_number": 0,
+            "is_async": false,
+            "is_entry_point": false,
+            "parameters": [
+              {
+                "name": "severity",
+                "type": "AlertSeverity",
+                "default": null,
+                "required": true,
+                "kind": "positional_or_keyword"
+              }
+            ],
+            "called_functions": []
+          },
+          "SensitiveInfoDetector": {
+            "line_number": 0,
+            "is_async": false,
+            "is_entry_point": true,
+            "parameters": [],
+            "called_functions": []
+          },
+          "SensitiveInfoDetector.__init__": {
+            "line_number": 0,
+            "is_async": false,
+            "is_entry_point": false,
+            "parameters": [
+              {
+                "name": "min_severity",
+                "type": "AlertSeverity",
+                "default": "AlertSeverity.INFO",
+                "required": false,
+                "kind": "positional_or_keyword"
+              },
+              {
+                "name": "enable_entropy_check",
+                "type": "bool",
+                "default": true,
+                "required": false,
+                "kind": "positional_or_keyword"
+              },
+              {
+                "name": "entropy_threshold",
+                "type": "float",
+                "default": 4.5,
+                "required": false,
+                "kind": "positional_or_keyword"
+              },
+              {
+                "name": "min_confidence",
+                "type": "float",
+                "default": 0.3,
+                "required": false,
+                "kind": "positional_or_keyword"
+              },
+              {
+                "name": "custom_patterns",
+                "type": "Optional[Dict]",
+                "default": null,
+                "required": false,
+                "kind": "positional_or_keyword"
+              }
+            ],
+            "called_functions": [
+              "self._build_patterns",
+              "self._patterns.update",
+              "set",
+              "logger.info"
+            ]
+          },
+          "SensitiveInfoDetector._build_patterns": {
+            "line_number": 0,
+            "is_async": false,
+            "is_entry_point": false,
+            "parameters": [],
+            "called_functions": []
+          },
+          "SensitiveInfoDetector.calculate_entropy": {
+            "line_number": 0,
+            "is_async": false,
+            "is_entry_point": false,
+            "parameters": [
+              {
+                "name": "data",
+                "type": "str",
+                "default": null,
+                "required": true,
+                "kind": "positional_or_keyword"
+              }
+            ],
+            "called_functions": [
+              "Counter",
+              "len",
+              "math.log2"
+            ]
+          },
+          "SensitiveInfoDetector._is_false_positive": {
+            "line_number": 0,
+            "is_async": false,
+            "is_entry_point": false,
+            "parameters": [
+              {
+                "name": "value",
+                "type": "str",
+                "default": null,
+                "required": true,
+                "kind": "positional_or_keyword"
+              },
+              {
+                "name": "context",
+                "type": "str",
+                "default": null,
+                "required": true,
+                "kind": "positional_or_keyword"
+              }
+            ],
+            "called_functions": [
+              "value.lower",
+              "context.lower",
+              "self.calculate_entropy"
+            ]
+          },
+          "SensitiveInfoDetector.detect_in_html": {
+            "line_number": 0,
+            "is_async": false,
+            "is_entry_point": false,
+            "parameters": [
+              {
+                "name": "html_content",
+                "type": "str",
+                "default": null,
+                "required": true,
+                "kind": "positional_or_keyword"
+              },
+              {
+                "name": "url",
+                "type": "str",
+                "default": "",
+                "required": false,
+                "kind": "positional_or_keyword"
+              }
+            ],
+            "called_functions": [
+              "DetectionResult",
+              "result.matches.extend",
+              "result.matches.extend",
+              "result.matches.extend",
+              "result.matches.extend",
+              "self._filter_by_severity",
+              "logger.info"
+            ]
+          },
+          "SensitiveInfoDetector.detect_in_headers": {
+            "line_number": 0,
+            "is_async": false,
+            "is_entry_point": false,
+            "parameters": [
+              {
+                "name": "headers",
+                "type": "Dict[str, str]",
+                "default": null,
+                "required": true,
+                "kind": "positional_or_keyword"
+              },
+              {
+                "name": "url",
+                "type": "str",
+                "default": "",
+                "required": false,
+                "kind": "positional_or_keyword"
+              }
+            ],
+            "called_functions": [
+              "DetectionResult",
+              "result.matches.append",
+              "self._detect_in_text",
+              "result.matches.extend",
+              "self._filter_by_severity",
+              "logger.info"
+            ]
+          },
+          "SensitiveInfoDetector.detect_in_response": {
+            "line_number": 0,
+            "is_async": false,
+            "is_entry_point": false,
+            "parameters": [
+              {
+                "name": "response_body",
+                "type": "str",
+                "default": null,
+                "required": true,
+                "kind": "positional_or_keyword"
+              },
+              {
+                "name": "headers",
+                "type": "Optional[Dict[str, str]]",
+                "default": null,
+                "required": false,
+                "kind": "positional_or_keyword"
+              },
+              {
+                "name": "url",
+                "type": "str",
+                "default": "",
+                "required": false,
+                "kind": "positional_or_keyword"
+              }
+            ],
+            "called_functions": [
+              "DetectionResult",
+              "self.detect_in_html",
+              "result.matches.extend",
+              "self._detect_in_text",
+              "result.matches.extend",
+              "self.detect_in_headers",
+              "result.matches.extend",
+              "self._filter_by_severity",
+              "logger.info"
+            ]
+          },
+          "SensitiveInfoDetector._detect_html_comments": {
+            "line_number": 0,
+            "is_async": false,
+            "is_entry_point": false,
+            "parameters": [
+              {
+                "name": "html",
+                "type": "str",
+                "default": null,
+                "required": true,
+                "kind": "positional_or_keyword"
+              }
+            ],
+            "called_functions": [
+              "comment_match.group",
+              "matches.append"
+            ]
+          },
+          "SensitiveInfoDetector._detect_script_blocks": {
+            "line_number": 0,
+            "is_async": false,
+            "is_entry_point": false,
+            "parameters": [
+              {
+                "name": "html",
+                "type": "str",
+                "default": null,
+                "required": true,
+                "kind": "positional_or_keyword"
+              }
+            ],
+            "called_functions": [
+              "script_match.group",
+              "matches.append"
+            ]
+          },
+          "SensitiveInfoDetector._detect_meta_tags": {
+            "line_number": 0,
+            "is_async": false,
+            "is_entry_point": false,
+            "parameters": [
+              {
+                "name": "html",
+                "type": "str",
+                "default": null,
+                "required": true,
+                "kind": "positional_or_keyword"
+              }
+            ],
+            "called_functions": [
+              "meta_match.group",
+              "matches.append"
+            ]
+          },
+          "SensitiveInfoDetector._detect_in_text": {
+            "line_number": 0,
+            "is_async": false,
+            "is_entry_point": false,
+            "parameters": [
+              {
+                "name": "text",
+                "type": "str",
+                "default": null,
+                "required": true,
+                "kind": "positional_or_keyword"
+              },
+              {
+                "name": "location",
+                "type": "Location",
+                "default": null,
+                "required": true,
+                "kind": "positional_or_keyword"
+              }
+            ],
+            "called_functions": [
+              "text.split",
+              "regex_match.group",
+              "max",
+              "min",
+              "self._is_false_positive",
+              "logger.debug",
+              "self.calculate_entropy",
+              "min",
+              "SensitiveMatch",
+              "self._seen_hashes.add",
+              "matches.append",
+              "matches.extend"
+            ]
+          },
+          "SensitiveInfoDetector._detect_high_entropy_strings": {
+            "line_number": 0,
+            "is_async": false,
+            "is_entry_point": false,
+            "parameters": [
+              {
+                "name": "text",
+                "type": "str",
+                "default": null,
+                "required": true,
+                "kind": "positional_or_keyword"
+              },
+              {
+                "name": "location",
+                "type": "Location",
+                "default": null,
+                "required": true,
+                "kind": "positional_or_keyword"
+              }
+            ],
+            "called_functions": [
+              "re.findall",
+              "self.calculate_entropy",
+              "self._is_false_positive",
+              "SensitiveMatch",
+              "self._seen_hashes.add",
+              "matches.append"
+            ]
+          },
+          "SensitiveInfoDetector._filter_by_severity": {
+            "line_number": 0,
+            "is_async": false,
+            "is_entry_point": false,
+            "parameters": [
+              {
+                "name": "matches",
+                "type": "List[SensitiveMatch]",
+                "default": null,
+                "required": true,
+                "kind": "positional_or_keyword"
+              }
+            ],
+            "called_functions": []
+          },
+          "SensitiveInfoDetector.format_report": {
+            "line_number": 0,
+            "is_async": false,
+            "is_entry_point": false,
+            "parameters": [
+              {
+                "name": "result",
+                "type": "DetectionResult",
+                "default": null,
+                "required": true,
+                "kind": "positional_or_keyword"
+              },
+              {
+                "name": "format",
+                "type": "str",
+                "default": "text",
+                "required": false,
+                "kind": "positional_or_keyword"
+              }
+            ],
+            "called_functions": [
+              "len",
+              "sorted",
+              "severity_icons.get",
+              "lines.append",
+              "lines.append",
+              "lines.append",
+              "lines.append",
+              "lines.append",
+              "lines.append",
+              "lines.append",
+              "lines.append",
+              "lines.append",
+              "lines.append",
+              "lines.append",
+              "lines.append",
+              "lines.append",
+              "lines.append"
+            ]
+          },
+          "SensitiveInfoDetector.export_report": {
+            "line_number": 0,
+            "is_async": false,
+            "is_entry_point": false,
+            "parameters": [
+              {
+                "name": "result",
+                "type": "DetectionResult",
+                "default": null,
+                "required": true,
+                "kind": "positional_or_keyword"
+              },
+              {
+                "name": "output_file",
+                "type": "str",
+                "default": null,
+                "required": true,
+                "kind": "positional_or_keyword"
+              },
+              {
+                "name": "format",
+                "type": "str",
+                "default": "json",
+                "required": false,
+                "kind": "positional_or_keyword"
+              }
+            ],
+            "called_functions": [
+              "self.format_report",
+              "open",
+              "f.write",
+              "logger.info"
+            ]
+          },
+          "SensitiveInfoDetector.get_statistics": {
+            "line_number": 0,
+            "is_async": false,
+            "is_entry_point": false,
+            "parameters": [
+              {
+                "name": "results",
+                "type": "List[DetectionResult]",
+                "default": null,
+                "required": true,
+                "kind": "positional_or_keyword"
+              }
+            ],
+            "called_functions": [
+              "sum",
+              "sum",
+              "sum",
+              "sum",
+              "sum",
+              "sum",
+              "Counter",
+              "sum",
+              "len"
+            ]
+          },
+          "quick_scan": {
+            "line_number": 0,
+            "is_async": false,
+            "is_entry_point": true,
+            "parameters": [
+              {
+                "name": "content",
+                "type": "str",
+                "default": null,
+                "required": true,
+                "kind": "positional_or_keyword"
+              },
+              {
+                "name": "content_type",
+                "type": "str",
+                "default": "text",
+                "required": false,
+                "kind": "positional_or_keyword"
+              },
+              {
+                "name": "url",
+                "type": "str",
+                "default": "",
+                "required": false,
+                "kind": "positional_or_keyword"
+              }
+            ],
+            "called_functions": [
+              "SensitiveInfoDetector",
+              "json.loads",
+              "json.dumps"
+            ]
+          },
+          "batch_scan": {
+            "line_number": 0,
+            "is_async": false,
+            "is_entry_point": true,
+            "parameters": [
+              {
+                "name": "targets",
+                "type": "List[Tuple[str, str]]",
+                "default": null,
+                "required": true,
+                "kind": "positional_or_keyword"
+              },
+              {
+                "name": "output_dir",
+                "type": "str",
+                "default": "scan_reports",
+                "required": false,
+                "kind": "positional_or_keyword"
+              }
+            ],
+            "called_functions": [
+              "os.makedirs",
+              "SensitiveInfoDetector",
+              "logger.info",
+              "detector.detect_in_response",
+              "results.append",
+              "re.sub",
+              "os.path.join",
+              "detector.export_report",
+              "detector.get_statistics",
+              "os.path.join",
+              "open",
+              "json.dumps",
+              "logger.info"
+            ]
+          }
+        },
+        "entry_points": [],
+        "export_functions": [
+          "SensitiveInfoType",
+          "AlertSeverity",
+          "Location",
+          "SensitiveMatch",
+          "RiskScore",
+          "DetectionResult",
+          "SensitiveInfoDetector",
+          "quick_scan",
+          "batch_scan"
+        ]
+      }
+    }
+  },
+  "summary": {
+    "total_files": 2,
+    "total_graphs": 31,
+    "total_connections": 0,
+    "total_flow_chains": 0
+  }
+}

@@ -5,7 +5,7 @@ import os
 from typing import Any
 
 from aiva_common.enums import ModuleName, Topic
-from aiva_common.mq import AbstractBroker
+from aiva_common.messaging import AbstractBroker
 from aiva_common.schemas import (
     AivaMessage,
     FindingPayload,

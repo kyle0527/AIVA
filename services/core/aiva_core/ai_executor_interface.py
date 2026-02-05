@@ -36,7 +36,6 @@ PROJECT_ROOT = Path(__file__).parent.parent.parent.parent
 sys.path.insert(0, str(PROJECT_ROOT / "services" / "core"))
 sys.path.insert(0, str(PROJECT_ROOT / "services"))
 
-
 @dataclass
 class SimpleExecutionResult:
     """簡化的執行結果 (給 AI 使用)"""
@@ -46,7 +45,6 @@ class SimpleExecutionResult:
     flow_id: Optional[int] = None
     timestamp: str = field(default_factory=lambda: datetime.now().isoformat())
     details: dict = field(default_factory=dict)
-
 
 class AIExecutorInterface:
     """AI 執行器接口
@@ -86,7 +84,6 @@ class AIExecutorInterface:
         capability: str,
         target: Optional[str] = None,
         flow_id: Optional[int] = None,
-        dry_run: bool = False,
         **kwargs
     ) -> SimpleExecutionResult:
         """執行單個能力 (AI 調用的主要方法)
@@ -95,7 +92,6 @@ class AIExecutorInterface:
             capability: 能力名稱，如 "sqli", "xss"
             target: 目標 URL (外部攻擊需要)
             flow_id: 指定 Flow ID (可選)
-            dry_run: 是否 Dry Run 模式 (默認 False)
             **kwargs: 其他參數
             
         Returns:
@@ -121,7 +117,6 @@ class AIExecutorInterface:
                 capability=capability,
                 target=target,
                 flow_id=flow_id,
-                dry_run=dry_run,
                 executor_type="auto",  # 自動選擇執行器
                 **kwargs
             )
@@ -135,7 +130,6 @@ class AIExecutorInterface:
                 details={
                     "executor": result.executor,
                     "target": target,
-                    "dry_run": dry_run
                 }
             )
             
@@ -275,7 +269,6 @@ class AIExecutorInterface:
         """清空執行歷史"""
         self._execution_history.clear()
 
-
 # ==================== 快速函數 (給 AI 使用) ====================
 
 # 全局單例
@@ -294,7 +287,6 @@ def get_executor(verbose: bool = False) -> AIExecutorInterface:
     if _global_executor is None:
         _global_executor = AIExecutorInterface(verbose=verbose)
     return _global_executor
-
 
 def quick_execute(capability: str, target: Optional[str] = None, **kwargs) -> bool:
     """快速執行 (簡化版本，只返回成功/失敗)
@@ -315,7 +307,6 @@ def quick_execute(capability: str, target: Optional[str] = None, **kwargs) -> bo
     result = executor.execute(capability, target=target, **kwargs)
     return result.success
 
-
 def list_capabilities() -> Dict[str, List[str]]:
     """列出所有可用能力 (快速函數)
     
@@ -329,7 +320,6 @@ def list_capabilities() -> Dict[str, List[str]]:
     """
     executor = get_executor()
     return executor.get_available_capabilities()
-
 
 # ==================== 測試 ====================
 
@@ -348,13 +338,10 @@ if __name__ == "__main__":
     print(f"外部攻擊能力數: {len(caps['external'])}")
     print(f"內部探索能力數: {len(caps['internal'])}")
     
-    # 測試 2: 執行單個能力 (Dry Run)
-    print("\n【測試 2】執行單個能力 (Dry Run)")
     print("-" * 60)
     result = ai_executor.execute(
         capability="sqli",
         target="http://test.com",
-        dry_run=True
     )
     print(f"執行結果: {'成功' if result.success else '失敗'}")
     print(f"消息: {result.message}")
@@ -363,8 +350,6 @@ if __name__ == "__main__":
     print("\n【測試 3】批次執行多個能力")
     print("-" * 60)
     tasks = [
-        {"capability": "sqli", "target": "http://test.com", "dry_run": True},
-        {"capability": "xss", "target": "http://test.com", "dry_run": True},
     ]
     results = ai_executor.execute_batch(tasks)
     

@@ -22,6 +22,13 @@ from typing import Dict, Any, List
 import json
 import logging
 
+# ✅ 遵循 aiva_common 規範 - 使用統一日誌和 HTTP 客戶端
+try:
+    import httpx
+    HTTPX_AVAILABLE = True
+except ImportError:
+    HTTPX_AVAILABLE = False
+
 logger = logging.getLogger(__name__)
 
 try:
@@ -54,6 +61,9 @@ class AIVAIntelligentMenu:
     - 工作流推薦與自動執行
     - 系統監控與統計
     """
+    
+    # ✅ 遵循 aiva_common 規範 - API 端點配置
+    AIVA_CORE_API = "http://localhost:8000"  # app.py 的 HTTP 端點
     
     def __init__(self):
         # 使用延遲初始化的單例取得對話助理
@@ -248,7 +258,7 @@ class AIVAIntelligentMenu:
                 await self._execute_capability(selected)
     
     async def handle_one_click_attack(self):
-        """處理一鍵攻擊執行"""
+        """處理一鍵攻擊執行 - 通過 HTTP API 調用 app.py"""
         if RICH_AVAILABLE and console:
             console.print("\n[bold cyan]⚡ 一鍵攻擊執行[/bold cyan]\n")
             target = Prompt.ask("請輸入目標 URL")
@@ -262,6 +272,141 @@ class AIVAIntelligentMenu:
             target = input("請輸入目標 URL: ")
             attack_type = input("攻擊類型 (auto/scan/sqli/xss/full) [auto]: ") or "auto"
         
+        # ✅ 遵循 aiva_common 規範 - 使用 HTTP API 調用 app.py
+        if HTTPX_AVAILABLE:
+            await self._execute_via_http_api(target, attack_type)
+        else:
+            # 降級方案：使用原有的 AI 助理
+            logger.warning("httpx 不可用，使用降級方案（AI 助理）")
+            await self._execute_via_ai_assistant(target, attack_type)
+    
+    async def _execute_via_http_api(self, target: str, attack_type: str):
+        """通過 HTTP API 執行掃描（連接到 app.py）
+        
+        Args:
+            target: 目標 URL
+            attack_type: 攻擊類型 (auto/scan/sqli/xss/full)
+        """
+        # 映射攻擊類型到掃描類型
+        scan_type_mapping = {
+            "auto": "full",
+            "scan": "full",
+            "sqli": "sqli",
+            "xss": "xss",
+            "full": "full"
+        }
+        scan_type = scan_type_mapping.get(attack_type, "full")
+        
+        # 構建請求數據
+        request_data = {
+            "target": target,
+            "scan_type": scan_type,
+            "max_depth": 3,
+            "timeout": 600
+        }
+        
+        try:
+            # 執行 HTTP 請求
+            if RICH_AVAILABLE:
+                with Progress(
+                    SpinnerColumn(),
+                    TextColumn("[progress.description]{task.description}"),
+                    console=console
+                ) as progress:
+                    task = progress.add_task(f"執行中: {attack_type} -> {target}", total=None)
+                    async with httpx.AsyncClient(timeout=30.0) as client:
+                        response = await client.post(
+                            f"{self.AIVA_CORE_API}/scan",
+                            json=request_data
+                        )
+                    progress.update(task, completed=True)
+            else:
+                print(f"執行中: {attack_type} -> {target}")
+                async with httpx.AsyncClient(timeout=30.0) as client:
+                    response = await client.post(
+                        f"{self.AIVA_CORE_API}/scan",
+                        json=request_data
+                    )
+            
+            if response.status_code == 200:
+                result = response.json()
+                scan_id = result.get('scan_id')
+                message = result.get('message', '掃描已啟動')
+                
+                # 記錄到歷史
+                self.session_history.append({
+                    'timestamp': asyncio.get_event_loop().time(),
+                    'action': 'one_click_attack',
+                    'target': target,
+                    'attack_type': attack_type,
+                    'scan_id': scan_id,
+                    'status': 'success',
+                    'message': message
+                })
+                
+                # 顯示結果
+                if RICH_AVAILABLE and console:
+                    console.print(Panel(
+                        f"✅ 掃描已啟動\n\n"
+                        f"掃描ID: {scan_id}\n"
+                        f"目標: {target}\n"
+                        f"類型: {scan_type}\n\n"
+                        f"{message}\n\n"
+                        f"💡 提示: 使用選項 [8] 查看執行歷史",
+                        title="[bold green]執行成功[/bold green]",
+                        border_style="green"
+                    ))
+                else:
+                    print(f"\n✅ 掃描已啟動\n")
+                    print(f"掃描ID: {scan_id}")
+                    print(f"目標: {target}")
+                    print(f"類型: {scan_type}\n")
+            else:
+                error_detail = response.json().get('detail', '未知錯誤')
+                logger.error(f"HTTP API 返回錯誤: {response.status_code} - {error_detail}")
+                
+                if RICH_AVAILABLE and console:
+                    console.print(Panel(
+                        f"❌ 掃描啟動失敗\n\n"
+                        f"錯誤: {error_detail}\n"
+                        f"狀態碼: {response.status_code}",
+                        title="[bold red]執行失敗[/bold red]",
+                        border_style="red"
+                    ))
+                else:
+                    print(f"\n❌ 掃描啟動失敗: {error_detail}\n")
+                    
+        except httpx.TimeoutException:
+            error_msg = "連接超時 - app.py 可能未啟動"
+            logger.error(error_msg)
+            if RICH_AVAILABLE and console:
+                console.print(Panel(
+                    f"❌ {error_msg}\n\n"
+                    f"請確認 app.py (Port 8000) 已啟動：\n"
+                    f"cd services/core && python aiva_core/service_backbone/api/app.py",
+                    title="[bold red]連接錯誤[/bold red]",
+                    border_style="red"
+                ))
+            else:
+                print(f"\n❌ {error_msg}\n")
+        except Exception as e:
+            logger.error(f"HTTP API 調用失敗: {e}", exc_info=True)
+            if RICH_AVAILABLE and console:
+                console.print(Panel(
+                    f"❌ 執行失敗: {str(e)}",
+                    title="[bold red]錯誤[/bold red]",
+                    border_style="red"
+                ))
+            else:
+                print(f"\n❌ 執行失敗: {str(e)}\n")
+    
+    async def _execute_via_ai_assistant(self, target: str, attack_type: str):
+        """通過 AI 助理執行（降級方案）
+        
+        Args:
+            target: 目標 URL
+            attack_type: 攻擊類型
+        """
         # 構建 AI 指令
         if attack_type == "auto":
             command = f"幫我對 {target} 執行智能掃描並自動選擇攻擊策略"

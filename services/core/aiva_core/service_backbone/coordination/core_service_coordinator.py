@@ -32,10 +32,8 @@ from aiva_common.config.config_manager import (
     ConfigChangeEvent,
     get_config_manager,
 )
-from aiva_common.cross_language import (
-    error_handler,
-    get_cross_language_service,
-)
+from aiva_common.cross_language import error_handler
+# 注意: gRPC 跨語言服務已移除，改為使用 CLI subprocess 執行 (Rust: cargo run, Go: go run, TypeScript: npx ts-node)
 from aiva_common.core.error_handling import (
     AIVAError,
     ErrorSeverity,
@@ -44,8 +42,8 @@ from aiva_common.core.error_handling import (
 )
 from aiva_common.observability.monitoring import (
     MetricType,
+    TraceContext,
     get_monitoring_service,
-    trace_operation,
 )
 from aiva_common.observability.monitoring_log_handler import setup_monitoring_logging
 from aiva_common.security import get_security_manager
@@ -123,8 +121,11 @@ class AIVACoreServiceCoordinator:
             self.config_manager = get_config_manager()
             self.config_manager.add_change_listener(self._on_config_changed)
 
-            # 跨語言服務
-            self.cross_lang_service = get_cross_language_service()
+            # v2.0: 跨語言服務改為 CLI subprocess 模式
+            # Rust: cargo run --bin <module>
+            # Go: go run <module>.go  
+            # TypeScript: npx ts-node <module>.ts
+            self.cross_lang_service = None  # 不再使用 gRPC 服務
 
             # 監控系統
             self.monitoring_service = get_monitoring_service()
@@ -240,14 +241,18 @@ class AIVACoreServiceCoordinator:
             raise
 
     async def _start_shared_services(self):
-        """啟動共享服務"""
-        # 啟動跨語言服務
-        await self.cross_lang_service.start_server([])
+        """啟動共享服務
+        
+        v2.0 架構變更:
+        - gRPC 跨語言服務已移除
+        - 改為 CLI subprocess 模式按需執行
+        - 不需要預先啟動 gRPC server
+        """
+        # v2.0: 跨語言服務改為 CLI subprocess，不需要啟動 server
+        # 原: await self.cross_lang_service.start_server([])
 
         # 初始化監控服務（aiva_common API）
-        if hasattr(self.monitoring_service, 'initialize'):
-            await self.monitoring_service.initialize()
-        elif hasattr(self.monitoring_service, 'start'):
+        if hasattr(self.monitoring_service, 'start'):
             await self.monitoring_service.start()
 
         # 初始化安全管理器（aiva_common API）
@@ -271,10 +276,9 @@ class AIVACoreServiceCoordinator:
         except Exception as e:
             self.logger.warning(f"上下文管理器檢查失敗: {e}")
 
-        # 檢查執行計劃器（處理同步/異步方法）
+        # 檢查執行計劃器
         try:
-            exec_stats_result = self.execution_planner.get_execution_stats()
-            exec_stats = await exec_stats_result if hasattr(exec_stats_result, '__await__') else exec_stats_result
+            exec_stats = self.execution_planner.get_execution_stats()
             self.logger.debug(f"執行計劃器就緒: {exec_stats}")
         except Exception as e:
             self.logger.warning(f"執行計劃器檢查失敗: {e}")
@@ -322,30 +326,24 @@ class AIVACoreServiceCoordinator:
 
     async def _stop_shared_services(self):
         """停止共享服務"""
-        # 停止安全管理器（如果有 stop 方法）
-        if hasattr(self.security_manager, 'stop'):
-            await self.security_manager.stop()
-
-        # 停止跨語言服務
-        await self.cross_lang_service.stop_server()
+        # SecurityManager 不需要顯式 stop()
+        
+        # v2.0: 跨語言服務改為 CLI subprocess，不需要停止 server
+        # 原: await self.cross_lang_service.stop_server()
 
         # 停止監控服務（最後停止）
         if hasattr(self.monitoring_service, 'stop'):
             await self.monitoring_service.stop()
-        elif hasattr(self.monitoring_service, 'shutdown'):
-            await self.monitoring_service.shutdown()
 
         self.logger.debug("共享服務停止完成")
 
     async def _cleanup_on_failure(self):
         """失敗時清理資源"""
         try:
-            if hasattr(self, "monitoring_service"):
+            if hasattr(self, "monitoring_service") and hasattr(self.monitoring_service, 'stop'):
                 await self.monitoring_service.stop()
-            if hasattr(self, "security_manager"):
-                await self.security_manager.stop()
-            if hasattr(self, "cross_lang_service"):
-                await self.cross_lang_service.stop_server()
+            # SecurityManager 不需要顯式 stop()
+            # v2.0: 跨語言服務改為 CLI subprocess，無需清理
         except Exception:
             pass  # 忽略清理過程中的錯誤
 
@@ -375,7 +373,8 @@ class AIVACoreServiceCoordinator:
             request_id=f"req_{int(time.time())}_{id(self)}",
         )
 
-        with trace_operation("process_command", {"command": command}):
+        with TraceContext("process_command", self.monitoring_service) as span:
+            span.add_tag("command", command)
             try:
                 # 1. 智能路由命令
                 route_info = self.command_router.route_command(context)
@@ -388,7 +387,7 @@ class AIVACoreServiceCoordinator:
                 context_id = await self.context_manager.create_context(context)
 
                 # 3. 創建執行計劃
-                plan = await self.execution_planner.create_execution_plan(
+                plan = self.execution_planner.create_execution_plan(
                     context, route_info
                 )
                 self.logger.debug(
@@ -446,7 +445,7 @@ class AIVACoreServiceCoordinator:
 
         # 獲取各組件狀態
         context_stats = await self.context_manager.get_context_stats()
-        execution_stats = await self.execution_planner.get_execution_stats()
+        execution_stats = self.execution_planner.get_execution_stats()
         command_stats = self.command_router.get_command_stats()
 
         return {
@@ -505,7 +504,7 @@ class AIVACoreServiceCoordinator:
 
         # 檢查執行計劃器
         try:
-            exec_stats = await self.execution_planner.get_execution_stats()
+            exec_stats = self.execution_planner.get_execution_stats()
             health_status["checks"]["execution_planner"] = {
                 "status": "pass",
                 "message": f"Success rate: {exec_stats['success_rate']:.1f}%",
@@ -535,7 +534,7 @@ def get_core_service_coordinator() -> AIVACoreServiceCoordinator:
 # 便捷函數
 async def process_command(
     command: str,
-    args: dict[str, Any] = None,
+    args: dict[str, Any] | None = None,
     user_id: str | None = None,
     session_id: str | None = None,
 ) -> ExecutionResult:

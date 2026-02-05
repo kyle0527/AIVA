@@ -34,14 +34,15 @@
 
 ## 🎯 Bug Bounty 整合
 
-### 根目錄組件 (6 個文件)
+### 根目錄組件 (5 個文件)
 
 - `unified_executor.py` - 統一攻擊執行器，靶場與實戰統一 (841 行)
 - `command_builder.py` - AI 決策到 CLI 命令生成器
 - `command_router.py` - 智能命令路由系統
 - `dispatcher.py` - 任務規劃發送器，跨模組通信，整合 internal_exploration
-- `mode_manager.py` - 執行模式管理器（sandbox/production）
 - `__init__.py` - 模組初始化
+
+> **注意**: `mode_manager.py` 已棄用，攻擊強度現由 `target_sensitivity` (0.0-1.0) 參數控制。
 
 ---
 
@@ -54,7 +55,6 @@
 | `CommandBuilder` | command_builder.py | AI 決策到 CLI 命令生成 |
 | `CommandRouter` | command_router.py | 智能命令路由器 |
 | `PlanningDispatcher` | dispatcher.py | 任務規劃統一發送器 |
-| `ModeManager` | mode_manager.py | 執行模式管理器 |
 | `StrategyEngine` | commander/strategy_engine.py | 策略引擎 |
 | `PlanExecutor` | executor/plan_executor.py | 計劃執行器 |
 | `TaskExecutor` | executor/task_executor.py | 任務執行器 |

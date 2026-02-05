@@ -1,0 +1,218 @@
+flowchart TB
+    n1(["Start"])
+    n2(["End"])
+    n3["Method: .collect()"]
+    n4["Method: .unwrap_or()"]
+    n5["Call: new"]
+    n6["Method: .get_default_output_dir()"]
+    n7["Method: .unwrap_or()"]
+    n8["Method: .unwrap_or()"]
+    n9["Call: create_dir_all"]
+    n10["Call: new"]
+    n11["Call: scan_files"]
+    n12["Call: new"]
+    n13["Call: new"]
+    n14["Call: new"]
+    n15["Call: new"]
+    n16["Call: new"]
+    n17["Call: read_to_string"]
+    n18{"If Condition"}
+    n19["Then"]
+    n20[""]
+    n21["Method: .unwrap()"]
+    n22["Method: .analyze_file()"]
+    n23["Method: .to_string_lossy()"]
+    n24["Call: parse_file"]
+    n25{"If Condition"}
+    n26["Then"]
+    n27[""]
+    n28["Method: .unwrap()"]
+    n29["Method: .to_string()"]
+    n30["Method: .to_string()"]
+    n31["Call: new"]
+    n32["Call: new"]
+    n33{"If Condition"}
+    n34["Then"]
+    n35["Call: new"]
+    n36["Method: .to_string()"]
+    n37["Method: .to_string()"]
+    n38["Method: .process_fn()"]
+    n39["Call: write"]
+    n40["Method: .join()"]
+    n41["Method: .to_mermaid()"]
+    n42["Method: .clone()"]
+    n43["Method: .clone()"]
+    n44["Method: .clone()"]
+    n45["Method: .clone()"]
+    n46["Method: .classify()"]
+    n47["Method: .push()"]
+    n48["Method: .push()"]
+    n49["Method: .clone()"]
+    n50["Method: .extend()"]
+    n51[""]
+    n52{"If Condition"}
+    n53["Then"]
+    n54{"If Condition"}
+    n55["Then"]
+    n56["Method: .to_string()"]
+    n57["Else"]
+    n58["Method: .to_string()"]
+    n59[""]
+    n60{"If Condition"}
+    n61["Then"]
+    n62["Call: new"]
+    n63["Method: .to_string()"]
+    n64["Method: .to_string()"]
+    n65["Method: .process_method()"]
+    n66["Call: write"]
+    n67["Method: .join()"]
+    n68["Method: .to_mermaid()"]
+    n69["Method: .clone()"]
+    n70["Method: .clone()"]
+    n71["Method: .clone()"]
+    n72["Method: .clone()"]
+    n73["Method: .classify()"]
+    n74["Method: .push()"]
+    n75["Method: .push()"]
+    n76["Method: .clone()"]
+    n77["Method: .extend()"]
+    n78[""]
+    n79[""]
+    n80["Method: .add_script()"]
+    n81["Method: .resolve_connections()"]
+    n82["Method: .analyze_branches()"]
+    n83["Method: .collect()"]
+    n84["Method: .generate_system_flow()"]
+    n85["Call: write"]
+    n86["Method: .join()"]
+    n87["Method: .get_result()"]
+    n88["Call: generate_cli"]
+    n89["Call: write"]
+    n90["Method: .join()"]
+    n91["Method: .generate_cli_docs()"]
+    n92["Call: write"]
+    n93["Method: .join()"]
+    n94["Method: .to_json()"]
+    n95["Call: write"]
+    n96["Method: .join()"]
+    n97["Call: to_string_pretty"]
+    n98["Call: convert_connections_to_flows"]
+    n99["Call: write"]
+    n100["Method: .join()"]
+    n101["Call: to_string_pretty"]
+    n102{"If Condition"}
+    n103["Then"]
+    n104[""]
+    n105["Call: Ok"]
+
+    n1 --> n3
+    n3 --> n4
+    n4 --> n5
+    n5 --> n6
+    n6 --> n7
+    n7 --> n8
+    n8 --> n9
+    n9 --> n10
+    n10 --> n11
+    n11 --> n12
+    n12 --> n13
+    n13 --> n14
+    n14 --> n15
+    n15 --> n16
+    n16 --> n17
+    n17 --> n18
+    n18 -->|Yes| n19
+    n18 -->|No| n20
+    n19 --> n20
+    n20 --> n21
+    n21 --> n22
+    n22 --> n23
+    n23 --> n24
+    n24 --> n25
+    n25 -->|Yes| n26
+    n25 -->|No| n27
+    n26 --> n27
+    n27 --> n28
+    n28 --> n29
+    n29 --> n30
+    n30 --> n31
+    n31 --> n32
+    n32 --> n33
+    n33 -->|Yes| n34
+    n33 -->|No| n51
+    n34 --> n35
+    n35 --> n36
+    n36 --> n37
+    n37 --> n38
+    n38 --> n39
+    n39 --> n40
+    n40 --> n41
+    n41 --> n42
+    n42 --> n43
+    n43 --> n44
+    n44 --> n45
+    n45 --> n46
+    n46 --> n47
+    n47 --> n48
+    n48 --> n49
+    n49 --> n50
+    n50 --> n51
+    n51 --> n52
+    n52 -->|Yes| n53
+    n52 -->|No| n79
+    n53 --> n54
+    n54 -->|Yes| n55
+    n54 -->|No| n57
+    n55 --> n56
+    n56 --> n59
+    n57 --> n58
+    n58 --> n59
+    n59 --> n60
+    n60 -->|Yes| n61
+    n60 -->|No| n78
+    n61 --> n62
+    n62 --> n63
+    n63 --> n64
+    n64 --> n65
+    n65 --> n66
+    n66 --> n67
+    n67 --> n68
+    n68 --> n69
+    n69 --> n70
+    n70 --> n71
+    n71 --> n72
+    n72 --> n73
+    n73 --> n74
+    n74 --> n75
+    n75 --> n76
+    n76 --> n77
+    n77 --> n78
+    n78 --> n79
+    n79 --> n80
+    n80 --> n81
+    n81 --> n82
+    n82 --> n83
+    n83 --> n84
+    n84 --> n85
+    n85 --> n86
+    n86 --> n87
+    n87 --> n88
+    n88 --> n89
+    n89 --> n90
+    n90 --> n91
+    n91 --> n92
+    n92 --> n93
+    n93 --> n94
+    n94 --> n95
+    n95 --> n96
+    n96 --> n97
+    n97 --> n98
+    n98 --> n99
+    n99 --> n100
+    n100 --> n101
+    n101 --> n102
+    n102 -->|Yes| n103
+    n102 -->|No| n104
+    n103 --> n104
+    n104 --> n105
+    n105 --> n2

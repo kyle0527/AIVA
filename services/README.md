@@ -2,11 +2,18 @@
 
 > **🎯 版本**: v7.1-stable  
 > **✅ 系統狀態**: 核心功能已實現，待靶場驗證  
-> **🔄 最後更新**: 2026年1月9日
+> **🔄 最後更新**: 2026年2月1日
 
 ---
 
-## ✅ 系統狀態報告 (2026-01-09)
+## ✅ 系統狀態報告 (2026-02-01)
+
+### 🔧 最新修復 (2026-02-01)
+
+1. **✅ internal_loop_connector.py 引用錯誤已修復** (v11.1):
+   - 移除不存在的 `aiva_exploration_pipeline` 引用
+   - 改用 `AIVAFlowClassifier` 進行流程分類
+   - `force_refresh=True` 功能現已正常運作
 
 ### 🎉 已修復的關鍵問題
 
@@ -19,9 +26,10 @@
    - `evaluate_phase2_results()` - Phase2 結果評估
    - 整合 5M 神經網路 (RealDecisionEngine) + RAG 向量檢索
 
-2. **✅ 內閉環數據已整合** - `InternalLoopConnector` (2036 行) 完整實現:
+2. **✅ 內閉環數據已整合** - `InternalLoopConnector` (v11.1 - 2036 行) 完整實現:
    - RAG 知識庫注入
    - 能力範圍分類器 (CapabilityScopeClassifier)
+   - Force refresh 功能使用 AIVAFlowClassifier
    - 被 attack_coordinator.py、two_phase_scan_orchestrator.py 實際調用
 
 3. **⚠️ 掃描待靶場驗證** - HTTP 客戶端已實現但需實戰測試

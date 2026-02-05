@@ -1,0 +1,75 @@
+flowchart TD
+    n1(["Start"])
+    n2(["End"])
+    n3{"If Condition"}
+    n4["Then"]
+    n5["Else"]
+    n6{"If Condition"}
+    n7["Then"]
+    n8["Else"]
+    n9{"If Condition"}
+    n10["Then"]
+    n11["Else"]
+    n12{"If Condition"}
+    n13["Then"]
+    n14["Else"]
+    n15{"If Condition"}
+    n16["Then"]
+    n17["Else"]
+    n18{"If Condition"}
+    n19["Then"]
+    n20["Else"]
+    n21{"If Condition"}
+    n22["Then"]
+    n23["Else"]
+    n24{"If Condition"}
+    n25["Then"]
+    n26[""]
+    n27[""]
+    n28[""]
+    n29[""]
+    n30[""]
+    n31[""]
+    n32[""]
+    n33[""]
+
+    n1 --> n3
+    n3 -->|Yes| n4
+    n3 -->|No| n5
+    n4 --> n33
+    n5 --> n6
+    n6 -->|Yes| n7
+    n6 -->|No| n8
+    n7 --> n32
+    n8 --> n9
+    n9 -->|Yes| n10
+    n9 -->|No| n11
+    n10 --> n31
+    n11 --> n12
+    n12 -->|Yes| n13
+    n12 -->|No| n14
+    n13 --> n30
+    n14 --> n15
+    n15 -->|Yes| n16
+    n15 -->|No| n17
+    n16 --> n29
+    n17 --> n18
+    n18 -->|Yes| n19
+    n18 -->|No| n20
+    n19 --> n28
+    n20 --> n21
+    n21 -->|Yes| n22
+    n21 -->|No| n23
+    n22 --> n27
+    n23 --> n24
+    n24 -->|Yes| n25
+    n24 -->|No| n26
+    n25 --> n26
+    n26 --> n27
+    n27 --> n28
+    n28 --> n29
+    n29 --> n30
+    n30 --> n31
+    n31 --> n32
+    n32 --> n33
+    n33 --> n2

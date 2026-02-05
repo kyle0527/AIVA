@@ -445,6 +445,14 @@ class RealDecisionEngine:
         if not isinstance(bug_bounty_features, torch.Tensor):
             bug_bounty_features = torch.from_numpy(bug_bounty_features)
         
+        # P0 修復: 確保維度一致 (AIVAEmbedding 返回 2D tensor)
+        # semantic_embedding: 可能是 (1, 384) 或 (384,)
+        # bug_bounty_features: 固定是 (32,)
+        if semantic_embedding.ndim == 2:
+            semantic_embedding = semantic_embedding.squeeze(0)  # (1, 384) -> (384,)
+        if bug_bounty_features.ndim == 2:
+            bug_bounty_features = bug_bounty_features.squeeze(0)
+        
         # 拼接語意向量和專業特徵 (384 + 32 = 416維)
         combined_embedding = torch.cat([semantic_embedding, bug_bounty_features], dim=0)
         

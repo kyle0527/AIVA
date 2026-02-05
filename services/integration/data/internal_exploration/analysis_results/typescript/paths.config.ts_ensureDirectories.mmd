@@ -1,0 +1,12 @@
+flowchart TD
+    n1(["Start"])
+    n2(["End"])
+    n3{"Loop"}
+    n4["Body"]
+    n5[""]
+
+    n1 --> n3
+    n3 -->|Yes| n4
+    n3 -->|No| n5
+    n4 -->|Next| n3
+    n5 --> n2

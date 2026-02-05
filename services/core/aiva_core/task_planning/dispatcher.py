@@ -18,7 +18,6 @@ from datetime import datetime
 from typing import Any, Dict, List, Optional
 from uuid import uuid4
 
-
 class PlanningDispatcher:
     """任務規劃統一發送器
     
@@ -319,7 +318,6 @@ class PlanningDispatcher:
         Args:
             tool: 工具名稱 (list/execute/analyze)
             timeout: 超時秒數
-            **kwargs: 工具參數 (flow_id, dry_run)
             
         Returns:
             subprocess.CompletedProcess 包含 stdout/stderr/returncode
@@ -335,8 +333,6 @@ class PlanningDispatcher:
         elif tool == "execute":
             if "flow_id" in kwargs:
                 cmd.extend(["--flow", str(kwargs["flow_id"])])
-            if kwargs.get("dry_run"):
-                cmd.append("--dry-run")
         elif tool == "analyze":
             # 保留向後兼容
             pass
@@ -424,7 +420,6 @@ class PlanningDispatcher:
             "methods": ["async_message", "cli_subprocess"]
         }
 
-
 # ========================================
 # 模組層級的便捷函數
 # ========================================
@@ -438,21 +433,17 @@ def get_dispatcher() -> PlanningDispatcher:
         _dispatcher = PlanningDispatcher()
     return _dispatcher
 
-
 async def dispatch_to_core_capabilities(step: Dict, capability_id: str):
     """快速發送到 core_capabilities"""
     return await get_dispatcher().execute_plan_step(step, capability_id)
-
 
 async def dispatch_to_cognitive_core(plan: Dict, question: str):
     """快速請求 cognitive_core 確認"""
     return await get_dispatcher().confirm_decision(plan, question)
 
-
 def execute_attack(attack_type: str, target: str, **kwargs):
     """快速執行攻擊（同步）"""
     return get_dispatcher().execute_attack_sync(attack_type, target, **kwargs)
-
 
 def execute_scan(scan_type: str, target: str, **kwargs):
     """快速執行掃描（同步）"""

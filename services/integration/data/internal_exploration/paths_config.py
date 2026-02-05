@@ -19,6 +19,13 @@ from pathlib import Path
 from typing import Dict, Optional
 
 # ==========================================
+# 常量定義
+# ==========================================
+
+# CLI 命令文件名稱常量
+EXTERNAL_COMMANDS_FILENAME = "external_commands.md"
+
+# ==========================================
 # 基礎路徑定義
 # ==========================================
 
@@ -102,25 +109,45 @@ class ExternalPaths:
     # ==========================================
     # 多語言分析結果輸入路徑 (分類器讀取)
     # ==========================================
-    # 外部分類器需要讀取這 4 個地方的分析結果
+    # ⚠️ 新架構: 所有分析結果已集中到 integration/data/internal_exploration/analysis_results/external/
+    # 分類器從整合目錄讀取所有語言的分析結果
+    
+    # 整合目錄 (SOT)
+    OUTPUT_DIR = DATA_ROOT / "analysis_results" / "external"
+    PYTHON_OUTPUT = OUTPUT_DIR / "python"
+    GO_OUTPUT = OUTPUT_DIR / "go"
+    RUST_OUTPUT = OUTPUT_DIR / "rust"
+    TYPESCRIPT_OUTPUT = OUTPUT_DIR / "typescript"
     
     ANALYSIS_INPUTS = {
         "python": [
-            FEATURES_DIR / "function_xss" / "analysis_results.json",
-            FEATURES_DIR / "function_sqli" / "analysis_results.json",
-            FEATURES_DIR / "function_ssrf" / "analysis_results.json",
-            FEATURES_DIR / "function_idor" / "analysis_results.json",
-            FEATURES_DIR / "function_infoleak" / "analysis_results.json",
-            FEATURES_DIR / "function_bizlogic" / "analysis_results.json",
-        ],
-        "rust": [
-            FEATURES_DIR / "function_crypto" / "analysis_results.json",
+            # Features 模組 - 中高完成度 (8個)
+            PYTHON_OUTPUT / "function_bizlogic.json",      # 業務邏輯 (75%)
+            PYTHON_OUTPUT / "function_idor.json",          # IDOR (80%)
+            PYTHON_OUTPUT / "function_info_leak.json",     # 信息洩露 (100%)
+            PYTHON_OUTPUT / "function_postex.json",        # 後滲透 (50%)
+            PYTHON_OUTPUT / "function_sqli.json",          # SQL注入 (95%)
+            PYTHON_OUTPUT / "function_ssrf.json",          # SSRF (85%)
+            PYTHON_OUTPUT / "function_web_scanner.json",   # Web掃描 (35%)
+            PYTHON_OUTPUT / "function_xss.json",           # XSS (90%)
+            # Scan 模組 (1個)
+            PYTHON_OUTPUT / "python_engine.json",
         ],
         "go": [
-            FEATURES_DIR / "function_authn_go" / "analysis_results.json",
+            # Features 模組 - 中完成度 (1個)
+            GO_OUTPUT / "function_authn_go.json",          # 認證繞過 (70%)
+            # Scan 模組 (1個)
+            GO_OUTPUT / "go_engine.json",
+        ],
+        "rust": [
+            # Features 模組 - 高完成度 (1個)
+            RUST_OUTPUT / "function_crypto.json",          # 密碼學 (95%)
+            # Scan 模組 (1個)
+            RUST_OUTPUT / "rust_engine.json",
         ],
         "typescript": [
-            SCAN_DIR / "typescript_engine" / "analysis_results.json",
+            # Scan 模組 (1個)
+            TYPESCRIPT_OUTPUT / "typescript_engine.json",
         ],
     }
     
@@ -129,38 +156,19 @@ class ExternalPaths:
     # ==========================================
     # 外部執行器只需要讀取這個文件
     
-    # 主要輸出 (SOT) - 執行器讀取這個
-    CLASSIFICATION_FILE = DATA_ROOT / "external_classification.json"
-    CLASSIFICATION_SUMMARY = DATA_ROOT / "external_classification_summary.md"
-    
-    # 輸出目錄 (按語言分)
-    OUTPUT_DIR = DATA_ROOT / "analysis_results" / "external"
-    PYTHON_OUTPUT = OUTPUT_DIR / "python"
-    GO_OUTPUT = OUTPUT_DIR / "go"
-    RUST_OUTPUT = OUTPUT_DIR / "rust"
-    TYPESCRIPT_OUTPUT = OUTPUT_DIR / "typescript"
-    
     # 分類數據 (SOT)
     CLASSIFICATION_FILE = DATA_ROOT / "external_classification.json"
     CLASSIFICATION_SUMMARY = DATA_ROOT / "external_classification_summary.md"
-    
-    # 各語言的分析結果
-    ANALYSIS_RESULTS = {
-        "python": PYTHON_OUTPUT / "analysis_results.json",
-        "go": GO_OUTPUT / "analysis_results.json",
-        "rust": RUST_OUTPUT / "analysis_results.json",
-        "typescript": TYPESCRIPT_OUTPUT / "analysis_results.json",
-    }
     
     # 歷史版本
     HISTORY_DIR = DATA_ROOT / "analysis_history" / "external"
     
     # CLI 輸出
     CLI_COMMANDS = {
-        "python": INTEGRATION_ROOT / "data" / "cli_outputs" / "python" / "external_commands.md",
-        "go": INTEGRATION_ROOT / "data" / "cli_outputs" / "go" / "external_commands.md",
-        "rust": INTEGRATION_ROOT / "data" / "cli_outputs" / "rust" / "external_commands.md",
-        "typescript": INTEGRATION_ROOT / "data" / "cli_outputs" / "typescript" / "external_commands.md",
+        "python": INTEGRATION_ROOT / "data" / "cli_outputs" / "python" / EXTERNAL_COMMANDS_FILENAME,
+        "go": INTEGRATION_ROOT / "data" / "cli_outputs" / "go" / EXTERNAL_COMMANDS_FILENAME,
+        "rust": INTEGRATION_ROOT / "data" / "cli_outputs" / "rust" / EXTERNAL_COMMANDS_FILENAME,
+        "typescript": INTEGRATION_ROOT / "data" / "cli_outputs" / "typescript" / EXTERNAL_COMMANDS_FILENAME,
     }
     
     @classmethod
@@ -241,20 +249,20 @@ def print_paths_summary():
     print("=" * 60)
     print("AIVA Internal Exploration 路徑配置")
     print("=" * 60)
-    print(f"\n[專案根目錄]")
+    print("\n[專案根目錄]")
     print(f"  PROJECT_ROOT: {PROJECT_ROOT}")
     
-    print(f"\n[內部模組路徑] (AI Core - Python Only)")
+    print("\n[內部模組路徑] (AI Core - Python Only)")
     print(f"  TARGET_DIR: {InternalPaths.TARGET_DIR}")
     print(f"  OUTPUT_DIR: {InternalPaths.OUTPUT_DIR}")
     print(f"  CLASSIFICATION: {InternalPaths.CLASSIFICATION_FILE}")
     
-    print(f"\n[外部模組路徑] (Features/Scan - Multi-Language)")
+    print("\n[外部模組路徑] (Features/Scan - Multi-Language)")
     print(f"  FEATURES_DIR: {ExternalPaths.FEATURES_DIR}")
     print(f"  SCAN_DIR: {ExternalPaths.SCAN_DIR}")
     print(f"  CLASSIFICATION: {ExternalPaths.CLASSIFICATION_FILE}")
     
-    print(f"\n[統一路徑]")
+    print("\n[統一路徑]")
     print(f"  LATEST: {CombinedPaths.LATEST_CLASSIFICATION}")
     print(f"  COMBINED: {CombinedPaths.COMBINED_CLASSIFICATION}")
     

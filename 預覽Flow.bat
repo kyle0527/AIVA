@@ -13,7 +13,7 @@ echo   AIVA Flow 預覽器 (Dry Run)
 echo ========================================
 echo.
 
-cd /d "C:\D\fold7\AIVA-git\services\core\aiva_core\internal_exploration\python_tools"
+cd /d "C:\D\fold7\AIVA-git\services\core"
 
 if "%1"=="" (
     echo 用法: 預覽Flow.bat [Flow ID]
@@ -22,10 +22,10 @@ if "%1"=="" (
     echo 此功能只顯示執行計畫，不實際運行代碼
     echo.
     echo 可用 Flow 列表:
-    python aiva_cli_implementation.py --list
+    python -m aiva_core.internal_exploration.aiva_internal_executor --list
 ) else (
     echo 預覽 Flow %1 的執行計畫...
-    python aiva_cli_implementation.py --flow %1 --dry-run
+    python -m aiva_core.internal_exploration.aiva_internal_executor --flow %1 --dry-run
 )
 
 pause

@@ -1,9 +1,9 @@
 # 🤖 AIVA Core - AI 核心系統
 
-> **版本**: v4.4.0 | **狀態**: ✅ 生產就緒 | **最後更新**: 2026-01-21  
+> **版本**: v4.4.1 | **狀態**: ✅ 生產就緒 | **最後更新**: 2026-02-04  
 > **角色**: AIVA 的程式化核心服務，提供 AI 認知、任務規劃、能力管理等核心功能  
-> **架構**: 5M 特化 AI + CLI 命令執行 + 事件驅動執行 + Bug Bounty 決策引擎  
-> **檔案數**: 150 個 Python 模組 | **模組狀態**: 5/5 ✅ | **驗證狀態**: ✅ 全部通過
+> **架構**: 5M 特化 AI + CLI 命令執行 + 事件驅動執行 + Bug Bounty 決策引擎 + **RAG 智能攻擊系統**  
+> **檔案數**: 153 個 Python 模組 | **模組狀態**: 5/5 ✅ | **驗證狀態**: ✅ 全部通過
 
 ---
 
@@ -70,6 +70,11 @@ AI 認知智能核心，整合神經網路、決策支援、知識檢索和可�
 - 🛡️ 反幻覺機制
 - 📚 嵌入式安全知識庫 (SQLi/XSS/SSRF/CVE/WAF)
 - 📈 統一經驗學習系統（含 knowledge/ 子模組）
+- 🤖 **RAG 智能攻擊系統 (v4.4.1 新增)**
+  - CLIDecisionEngine: 基於 525 個攻擊 flows 的智能決策
+  - FlowExecutorAdapter: 決策與執行的橋接層
+  - 支援 XSS (48), SQLi (68), SSRF (28), Scanner (27), PostEx (28) 能力
+  - 自動根據掃描結果推薦和執行攻擊流程
 
 **統計**: 48 個 Python 文件, 7 個子模組 | **驗證**: ✅ v2.1 去語意化完成
 
@@ -163,9 +168,49 @@ AI 認知智能核心，整合神經網路、決策支援、知識檢索和可�
 
 ---
 
-## 🎯 Bug Bounty 決策引擎
+## 🎯 Bug Bounty 決策引擎 + RAG 智能攻擊系統
 
-AIVA v4.4.0 引入了完整的 Bug Bounty 決策引擎，針對 HackerOne/Bugcrowd 實戰場景進行專業優化。
+AIVA v4.4.1 引入了完整的 Bug Bounty 決策引擎和 RAG 智能攻擊系統，針對 HackerOne/Bugcrowd 實戰場景進行專業優化。
+
+### 🤖 RAG 智能攻擊系統 (v4.4.1 新增)
+
+**核心組件**:
+
+1. **CLIDecisionEngine** (`cognitive_core/learning_system/cli_decision_engine.py`)
+   - 載入 525 個攻擊 flows（287 個可操作）
+   - 支援 14 個攻擊模組（XSS, SQLi, SSRF, Scanner, PostEx, IDOR等）
+   - 基於 AST 分析的攻擊能力分類
+   - 智能檢索和推薦系統
+
+2. **FlowExecutorAdapter** (`cognitive_core/learning_system/flow_executor_adapter.py`)
+   - 決策引擎與執行器的橋接層
+   - 參數轉換和執行協調
+   - 結果標準化處理
+
+3. **AttackCoordinator 整合** (`task_planning/commander/attack_coordinator.py`)
+   - `rag_smart_attack()`: 根據掃描結果自動選擇攻擊
+   - `rag_targeted_attack()`: 指定能力直接攻擊
+
+**統計數據**:
+```
+總 Flows: 525 個
+可操作: 287 個 (54.7%)
+├─ XSS: 48/97
+├─ SQLi: 68/115
+├─ SSRF: 28/64
+├─ Scanner: 27/74
+├─ PostEx: 28/49
+├─ BizLogic: 46/53
+├─ IDOR: 14/25
+└─ InfoLeak: 14/20
+```
+
+**核心特性**:
+- ✅ 直接使用 external_classification.json（無需 JSONL 轉換）
+- ✅ 智能推薦：根據漏洞類型自動選擇攻擊流程
+- ✅ 關鍵字搜索：支援使用場景和技術棧匹配
+- ✅ 多模式執行：auto / aggressive / cautious
+- ✅ 真實執行：已移除 Dry Run，直接靶場驗證
 
 ### 🚀 四大決策方法
 
@@ -397,6 +442,110 @@ scan_context = {
 scan_decision = agent.decide_scan_strategy(scan_context)
 print(f"選擇工具: {scan_decision['selected_tool']} (信心度: {scan_decision['confidence']:.2f})")
 # 選擇工具: nmap (信心度: 0.85)
+```
+
+### RAG 智能攻擊系統使用 (v4.4.1 新增)
+
+```python
+# 1. 智能攻擊決策與執行
+from services.core.aiva_core.task_planning.commander.attack_coordinator import AttackCoordinator
+
+# 初始化協調器（自動載入 RAG 決策引擎）
+attack_coordinator = AttackCoordinator()
+
+# 模擬掃描結果
+scan_results = {
+    "target_info": {"url": "https://testphp.vulnweb.com"},
+    "vulnerabilities": [
+        {
+            "type": "XSS",
+            "url": "https://testphp.vulnweb.com/search.php",
+            "parameter": "searchFor",
+            "method": "GET",
+            "confidence": "high",
+            "severity": "medium"
+        },
+        {
+            "type": "SQLi",
+            "url": "https://testphp.vulnweb.com/listproducts.php",
+            "parameter": "cat",
+            "method": "GET",
+            "confidence": "high",
+            "severity": "critical"
+        }
+    ]
+}
+
+# 執行智能攻擊（自動選擇和執行攻擊流程）
+result = await attack_coordinator.rag_smart_attack(
+    scan_results=scan_results,
+    attack_mode="auto"  # auto / aggressive / cautious
+)
+
+print(f"執行結果: {result['flows_executed']} 個流程")
+print(f"成功率: {result['summary']['success_rate']:.2%}")
+# 執行結果: 4 個流程
+# 成功率: 75.00%
+
+# 2. 定向攻擊（指定攻擊類型）
+result = await attack_coordinator.rag_targeted_attack(
+    capability="xss",
+    target_url="https://testphp.vulnweb.com/search.php",
+    keywords=["反射", "檢測"],
+    limit=3
+)
+
+print(f"XSS 攻擊: {result['success_count']}/{result['flows_executed']} 成功")
+
+# 3. 查看可用攻擊能力
+from services.core.aiva_core.cognitive_core.learning_system.cli_decision_engine import (
+    CLIDecisionEngine,
+    AttackCapability
+)
+
+engine = CLIDecisionEngine()
+stats = engine.get_module_statistics()
+
+print("可用攻擊模組:")
+for module, stat in stats.items():
+    print(f"  {module}: {stat['operable']}/{stat['total']} 可操作")
+# function_xss: 48/97 可操作
+# function_sqli: 68/115 可操作
+# function_ssrf: 28/64 可操作
+
+# 4. 搜索特定攻擊流程
+xss_flows = engine.search_flows(
+    capability=AttackCapability.XSS,
+    keywords=["反射", "DOM"],
+    only_operable=True,
+    limit=5
+)
+
+print(f"找到 {len(xss_flows)} 個 XSS 攻擊流程:")
+for flow in xss_flows:
+    print(f"  - Flow {flow.flow_id}: {flow.entry_point}")
+    print(f"    使用場景: {flow.use_case[:50]}...")
+```
+
+### Bug Bounty 決策引擎使用
+
+```python
+# 1. 初始化決策代理
+from services.core.aiva_core.cognitive_core.decision.enhanced_decision_agent import EnhancedDecisionAgent
+
+agent = EnhancedDecisionAgent()
+
+# 2. 智慧掃描工具選擇
+from services.core.aiva_core.core_capabilities.task_context import ScanContext
+
+scan_context = ScanContext(
+    target="https://example.com",
+    intent="find_vulnerabilities"
+)
+
+scan_decision = agent.decide_scan_strategy(scan_context)
+print(f"選擇工具: {scan_decision['selected_tool']} (信心度: {scan_decision['confidence']:.2f})")
+# 選擇工具: nmap (信心度: 0.85)
 
 # 3. Phase1 深度掃描決策 (ROI 導向)
 phase0_result = {
@@ -480,19 +629,6 @@ print(f"決策理由: {plan.reasoning}")
 
 # 4. 執行任務
 result = await orchestrator.execute(plan)
-    internal_connector=connector
-)
-
-commander = AICommander(capability_orchestrator=orchestrator)
-plan = await commander.generate_plan(
-    goal="掃描目標網站",
-    target="https://example.com"
-)
-
-# 4. 執行任務
-from services.core.aiva_core.task_planning.executor.task_executor import TaskExecutor
-
-executor = TaskExecutor()
 results = await executor.execute_plan(plan)
 
 print(f"執行完成: {len(results)} 個任務")

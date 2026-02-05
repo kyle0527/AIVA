@@ -697,8 +697,9 @@ function main() {
 
     const inputDir = getArg('--input') || '.';
     
-    // 導入路徑配置
-    let outputDir: string = getArg('--output') || './analysis_output';
+    // 使用統一路徑配置
+    const defaultOutputDir = getDefaultOutputDir();
+    let outputDir: string = getArg('--output') || defaultOutputDir;
 
     console.log("========================================");
     console.log("🚀 AIVA TypeScript 全功能分析器 (ts2mermaid v2.0)");

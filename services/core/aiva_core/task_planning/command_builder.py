@@ -39,7 +39,6 @@ from services.integration.capability.minimal_manifest import (
 
 logger = get_logger(__name__)
 
-
 class CommandBuildError(AIVAError):
     """命令生成錯誤"""
     
@@ -50,7 +49,6 @@ class CommandBuildError(AIVAError):
             severity=ErrorSeverity.MEDIUM
         )
         self.flow_id = flow_id
-
 
 class CommandBuilder:
     """命令構建器
@@ -82,14 +80,12 @@ class CommandBuilder:
         self,
         capability_id: str,
         params: dict[str, Any],
-        dry_run: bool = False
     ) -> str:
         """構建 CLI 命令
         
         Args:
             capability_id: 能力 ID（例：xss.scan.web）
             params: 參數字典（必須提供所有必填參數）
-            dry_dun: 是否為乾運行 (添加 --dry-run 標誌)
             
         Returns:
             完整的 CLI 命令字符串
@@ -111,9 +107,6 @@ class CommandBuilder:
             command = generate_cli_command(manifest, params)
             
             # 添加乾運行標誌
-            if dry_run:
-                command += " --dry-run"
-            
             logger.info(
                 f"✅ Built command for capability={capability_id}: {command}"
             )

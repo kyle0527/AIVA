@@ -1,0 +1,67 @@
+flowchart TB
+    n1(["Start"])
+    n2(["End"])
+    n3["Method: .add()"]
+    n4["Method: .to_string()"]
+    n5["Method: .link()"]
+    n6["Method: .clone()"]
+    n7["Method: .add()"]
+    n8["Method: .to_string()"]
+    n9["Method: .link()"]
+    n10["Call: Some"]
+    n11["Method: .visit_block()"]
+    n12["Method: .clone()"]
+    n13{"If Condition"}
+    n14["Then"]
+    n15["Method: .add()"]
+    n16["Method: .to_string()"]
+    n17["Method: .link()"]
+    n18["Call: Some"]
+    n19["Method: .visit_expr()"]
+    n20["Call: Some"]
+    n21["Method: .clone()"]
+    n22[""]
+    n23["Method: .add()"]
+    n24["Call: new"]
+    n25["Method: .link()"]
+    n26{"If Condition"}
+    n27["Then"]
+    n28["Method: .link()"]
+    n29["Else"]
+    n30["Method: .link()"]
+    n31["Call: Some"]
+    n32[""]
+
+    n1 --> n3
+    n3 --> n4
+    n4 --> n5
+    n5 --> n6
+    n6 --> n7
+    n7 --> n8
+    n8 --> n9
+    n9 --> n10
+    n10 --> n11
+    n11 --> n12
+    n12 --> n13
+    n13 -->|Yes| n14
+    n13 -->|No| n22
+    n14 --> n15
+    n15 --> n16
+    n16 --> n17
+    n17 --> n18
+    n18 --> n19
+    n19 --> n20
+    n20 --> n21
+    n21 --> n22
+    n22 --> n23
+    n23 --> n24
+    n24 --> n25
+    n25 --> n26
+    n26 -->|Yes| n27
+    n26 -->|No| n29
+    n27 --> n28
+    n28 --> n32
+    n29 --> n30
+    n30 --> n31
+    n31 --> n32
+    n32 --> n2

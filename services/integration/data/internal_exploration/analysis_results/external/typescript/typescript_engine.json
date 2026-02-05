@@ -1,0 +1,1167 @@
+{
+  "metadata": {
+    "tool": "ts2mermaid",
+    "version": "2.0",
+    "language": "typescript",
+    "generated_at": "2026-02-02T07:13:49.902Z",
+    "total_flows": 0,
+    "total_files": 2,
+    "schema_version": "3.3",
+    "ai_compatible": true
+  },
+  "flows": [],
+  "summary": {
+    "total_files": 2,
+    "total_funcs": 36,
+    "real_connections": 0
+  },
+  "classification": {
+    "total_flows": 36,
+    "categories": {
+      "other": [
+        {
+          "sourceFile": "paths.config.ts",
+          "functionName": "ensureDirectories",
+          "module": "paths.config.ts",
+          "inputs": [],
+          "outputs": [],
+          "callTargets": [],
+          "category": "other",
+          "description": "[PLACEHOLDER] ensureDirectories in paths.config.ts"
+        },
+        {
+          "sourceFile": "paths.config.ts",
+          "functionName": "getAnalysisOutputDir",
+          "module": "paths.config.ts",
+          "inputs": [
+            "toolName"
+          ],
+          "outputs": [
+            "result"
+          ],
+          "callTargets": [
+            "path.join"
+          ],
+          "category": "other",
+          "description": "[PLACEHOLDER] getAnalysisOutputDir in paths.config.ts"
+        },
+        {
+          "sourceFile": "paths.config.ts",
+          "functionName": "getDefaultOutputDir",
+          "module": "paths.config.ts",
+          "inputs": [],
+          "outputs": [
+            "result"
+          ],
+          "callTargets": [],
+          "category": "other",
+          "description": "[PLACEHOLDER] getDefaultOutputDir in paths.config.ts"
+        },
+        {
+          "sourceFile": "paths.config.ts",
+          "functionName": "getConfigSummary",
+          "module": "paths.config.ts",
+          "inputs": [],
+          "outputs": [
+            "result"
+          ],
+          "callTargets": [],
+          "category": "other",
+          "description": "[PLACEHOLDER] getConfigSummary in paths.config.ts"
+        },
+        {
+          "sourceFile": "ts2mermaid.ts",
+          "functionName": "GraphNode.sanitizeId",
+          "module": "ts2mermaid.ts",
+          "inputs": [
+            "idStr"
+          ],
+          "outputs": [
+            "result"
+          ],
+          "callTargets": [
+            "idStr.replaceAll",
+            "cleaned.replaceAll"
+          ],
+          "category": "other",
+          "description": "[PLACEHOLDER] GraphNode.sanitizeId in ts2mermaid.ts"
+        },
+        {
+          "sourceFile": "ts2mermaid.ts",
+          "functionName": "Graph.add",
+          "module": "ts2mermaid.ts",
+          "inputs": [
+            "kind",
+            "label"
+          ],
+          "outputs": [
+            "result"
+          ],
+          "callTargets": [
+            "push"
+          ],
+          "category": "other",
+          "description": "[PLACEHOLDER] Graph.add in ts2mermaid.ts"
+        },
+        {
+          "sourceFile": "ts2mermaid.ts",
+          "functionName": "Graph.link",
+          "module": "ts2mermaid.ts",
+          "inputs": [
+            "fromId",
+            "toId",
+            "label",
+            "style"
+          ],
+          "outputs": [],
+          "callTargets": [
+            "find"
+          ],
+          "category": "other",
+          "description": "[PLACEHOLDER] Graph.link in ts2mermaid.ts"
+        },
+        {
+          "sourceFile": "ts2mermaid.ts",
+          "functionName": "Graph.toMermaid",
+          "module": "ts2mermaid.ts",
+          "inputs": [],
+          "outputs": [
+            "result"
+          ],
+          "callTargets": [
+            "lines.push"
+          ],
+          "category": "other",
+          "description": "[PLACEHOLDER] Graph.toMermaid in ts2mermaid.ts"
+        },
+        {
+          "sourceFile": "ts2mermaid.ts",
+          "functionName": "Graph.formatNode",
+          "module": "ts2mermaid.ts",
+          "inputs": [
+            "node"
+          ],
+          "outputs": [],
+          "callTargets": [
+            "replaceAll",
+            "text.substring"
+          ],
+          "category": "other",
+          "description": "[PLACEHOLDER] Graph.formatNode in ts2mermaid.ts"
+        },
+        {
+          "sourceFile": "ts2mermaid.ts",
+          "functionName": "Graph.formatEdge",
+          "module": "ts2mermaid.ts",
+          "inputs": [
+            "from",
+            "toId",
+            "index"
+          ],
+          "outputs": [
+            "result"
+          ],
+          "callTargets": [
+            "get"
+          ],
+          "category": "other",
+          "description": "[PLACEHOLDER] Graph.formatEdge in ts2mermaid.ts"
+        },
+        {
+          "sourceFile": "ts2mermaid.ts",
+          "functionName": "Stitcher.addScript",
+          "module": "ts2mermaid.ts",
+          "inputs": [
+            "filePath",
+            "moduleName",
+            "imports",
+            "funcs",
+            "calls"
+          ],
+          "outputs": [],
+          "callTargets": [
+            "set",
+            "push"
+          ],
+          "category": "other",
+          "description": "[PLACEHOLDER] Stitcher.addScript in ts2mermaid.ts"
+        },
+        {
+          "sourceFile": "ts2mermaid.ts",
+          "functionName": "Stitcher.resolveConnections",
+          "module": "ts2mermaid.ts",
+          "inputs": [],
+          "outputs": [],
+          "callTargets": [
+            "console.log",
+            "console.log"
+          ],
+          "category": "other",
+          "description": "[PLACEHOLDER] Stitcher.resolveConnections in ts2mermaid.ts"
+        },
+        {
+          "sourceFile": "ts2mermaid.ts",
+          "functionName": "Stitcher.findProvider",
+          "module": "ts2mermaid.ts",
+          "inputs": [
+            "sourcePath",
+            "call",
+            "fileHint"
+          ],
+          "outputs": [],
+          "callTargets": [
+            "Array.from",
+            "keys",
+            "checkCandidates"
+          ],
+          "category": "other",
+          "description": "[PLACEHOLDER] Stitcher.findProvider in ts2mermaid.ts"
+        },
+        {
+          "sourceFile": "ts2mermaid.ts",
+          "functionName": "Stitcher.checkCandidates",
+          "module": "ts2mermaid.ts",
+          "inputs": [
+            "sourcePath",
+            "call",
+            "candidates"
+          ],
+          "outputs": [],
+          "callTargets": [],
+          "category": "other",
+          "description": "[PLACEHOLDER] Stitcher.checkCandidates in ts2mermaid.ts"
+        },
+        {
+          "sourceFile": "ts2mermaid.ts",
+          "functionName": "Stitcher.sanitizeId",
+          "module": "ts2mermaid.ts",
+          "inputs": [
+            "id"
+          ],
+          "outputs": [
+            "result"
+          ],
+          "callTargets": [],
+          "category": "other",
+          "description": "[PLACEHOLDER] Stitcher.sanitizeId in ts2mermaid.ts"
+        },
+        {
+          "sourceFile": "ts2mermaid.ts",
+          "functionName": "Builder.build",
+          "module": "ts2mermaid.ts",
+          "inputs": [
+            "node"
+          ],
+          "outputs": [],
+          "callTargets": [],
+          "category": "other",
+          "description": "[PLACEHOLDER] Builder.build in ts2mermaid.ts"
+        },
+        {
+          "sourceFile": "ts2mermaid.ts",
+          "functionName": "Builder.extractParams",
+          "module": "ts2mermaid.ts",
+          "inputs": [
+            "node"
+          ],
+          "outputs": [],
+          "callTargets": [],
+          "category": "other",
+          "description": "[PLACEHOLDER] Builder.extractParams in ts2mermaid.ts"
+        },
+        {
+          "sourceFile": "ts2mermaid.ts",
+          "functionName": "Builder.visitBlock",
+          "module": "ts2mermaid.ts",
+          "inputs": [
+            "block"
+          ],
+          "outputs": [],
+          "callTargets": [],
+          "category": "other",
+          "description": "[PLACEHOLDER] Builder.visitBlock in ts2mermaid.ts"
+        },
+        {
+          "sourceFile": "ts2mermaid.ts",
+          "functionName": "Builder.visitNode",
+          "module": "ts2mermaid.ts",
+          "inputs": [
+            "node"
+          ],
+          "outputs": [],
+          "callTargets": [],
+          "category": "other",
+          "description": "[PLACEHOLDER] Builder.visitNode in ts2mermaid.ts"
+        },
+        {
+          "sourceFile": "ts2mermaid.ts",
+          "functionName": "Builder.handleIf",
+          "module": "ts2mermaid.ts",
+          "inputs": [
+            "node"
+          ],
+          "outputs": [],
+          "callTargets": [
+            "add",
+            "link",
+            "add",
+            "link",
+            "visitNode",
+            "add",
+            "link"
+          ],
+          "category": "other",
+          "description": "[PLACEHOLDER] Builder.handleIf in ts2mermaid.ts"
+        },
+        {
+          "sourceFile": "ts2mermaid.ts",
+          "functionName": "Builder.handleLoop",
+          "module": "ts2mermaid.ts",
+          "inputs": [
+            "node"
+          ],
+          "outputs": [],
+          "callTargets": [
+            "add",
+            "link",
+            "add",
+            "link",
+            "link",
+            "add",
+            "link"
+          ],
+          "category": "other",
+          "description": "[PLACEHOLDER] Builder.handleLoop in ts2mermaid.ts"
+        },
+        {
+          "sourceFile": "ts2mermaid.ts",
+          "functionName": "Builder.handleReturn",
+          "module": "ts2mermaid.ts",
+          "inputs": [
+            "node"
+          ],
+          "outputs": [],
+          "callTargets": [
+            "add",
+            "link",
+            "link"
+          ],
+          "category": "other",
+          "description": "[PLACEHOLDER] Builder.handleReturn in ts2mermaid.ts"
+        },
+        {
+          "sourceFile": "ts2mermaid.ts",
+          "functionName": "Builder.handleCall",
+          "module": "ts2mermaid.ts",
+          "inputs": [
+            "node"
+          ],
+          "outputs": [],
+          "callTargets": [
+            "forEach"
+          ],
+          "category": "other",
+          "description": "[PLACEHOLDER] Builder.handleCall in ts2mermaid.ts"
+        },
+        {
+          "sourceFile": "ts2mermaid.ts",
+          "functionName": "Classifier.classify",
+          "module": "ts2mermaid.ts",
+          "inputs": [
+            "metadata"
+          ],
+          "outputs": [],
+          "callTargets": [
+            "toLowerCase",
+            "set",
+            "push"
+          ],
+          "category": "other",
+          "description": "[PLACEHOLDER] Classifier.classify in ts2mermaid.ts"
+        },
+        {
+          "sourceFile": "ts2mermaid.ts",
+          "functionName": "Classifier.getResult",
+          "module": "ts2mermaid.ts",
+          "inputs": [],
+          "outputs": [
+            "result"
+          ],
+          "callTargets": [],
+          "category": "other",
+          "description": "[PLACEHOLDER] Classifier.getResult in ts2mermaid.ts"
+        },
+        {
+          "sourceFile": "ts2mermaid.ts",
+          "functionName": "getAllFiles",
+          "module": "ts2mermaid.ts",
+          "inputs": [
+            "dir",
+            "files"
+          ],
+          "outputs": [
+            "result"
+          ],
+          "callTargets": [],
+          "category": "other",
+          "description": "[PLACEHOLDER] getAllFiles in ts2mermaid.ts"
+        },
+        {
+          "sourceFile": "ts2mermaid.ts",
+          "functionName": "visit",
+          "module": "ts2mermaid.ts",
+          "inputs": [
+            "node"
+          ],
+          "outputs": [],
+          "callTargets": [
+            "ts.forEachChild"
+          ],
+          "category": "other",
+          "description": "[PLACEHOLDER] visit in ts2mermaid.ts"
+        },
+        {
+          "sourceFile": "ts2mermaid.ts",
+          "functionName": "processFile",
+          "module": "ts2mermaid.ts",
+          "inputs": [
+            "filePath",
+            "outputDir",
+            "stitcher"
+          ],
+          "outputs": [
+            "result"
+          ],
+          "callTargets": [
+            "fs.readFileSync",
+            "ts.createSourceFile",
+            "parseImports",
+            "visit",
+            "stitcher.addScript",
+            "path.basename"
+          ],
+          "category": "other",
+          "description": "[PLACEHOLDER] processFile in ts2mermaid.ts"
+        },
+        {
+          "sourceFile": "ts2mermaid.ts",
+          "functionName": "visit",
+          "module": "ts2mermaid.ts",
+          "inputs": [
+            "node"
+          ],
+          "outputs": [],
+          "callTargets": [
+            "ts.forEachChild"
+          ],
+          "category": "other",
+          "description": "[PLACEHOLDER] visit in ts2mermaid.ts"
+        },
+        {
+          "sourceFile": "ts2mermaid.ts",
+          "functionName": "main",
+          "module": "ts2mermaid.ts",
+          "inputs": [],
+          "outputs": [],
+          "callTargets": [
+            "slice",
+            "getArg",
+            "getArg",
+            "console.log",
+            "console.log",
+            "console.log",
+            "console.log",
+            "console.log",
+            "getAllFiles",
+            "console.log",
+            "stitcher.resolveConnections",
+            "stitcher.analyzeBranches",
+            "fs.writeFileSync",
+            "path.join",
+            "stitcher.generateSystemFlow",
+            "classifier.getResult",
+            "fs.writeFileSync",
+            "path.join",
+            "generateCLI",
+            "convertConnectionsToFlows",
+            "fs.writeFileSync",
+            "path.join",
+            "JSON.stringify",
+            "console.log",
+            "console.log",
+            "console.log",
+            "console.log"
+          ],
+          "category": "other",
+          "description": "[PLACEHOLDER] main in ts2mermaid.ts"
+        },
+        {
+          "sourceFile": "ts2mermaid.ts",
+          "functionName": "getArg",
+          "module": "ts2mermaid.ts",
+          "inputs": [
+            "name"
+          ],
+          "outputs": [
+            "result"
+          ],
+          "callTargets": [
+            "args.find"
+          ],
+          "category": "other",
+          "description": "[PLACEHOLDER] getArg in ts2mermaid.ts"
+        },
+        {
+          "sourceFile": "ts2mermaid.ts",
+          "functionName": "convertConnectionsToFlows",
+          "module": "ts2mermaid.ts",
+          "inputs": [
+            "connections"
+          ],
+          "outputs": [
+            "result"
+          ],
+          "callTargets": [],
+          "category": "other",
+          "description": "[PLACEHOLDER] convertConnectionsToFlows in ts2mermaid.ts"
+        }
+      ],
+      "reporting": [
+        {
+          "sourceFile": "ts2mermaid.ts",
+          "functionName": "Stitcher.generateSystemFlow",
+          "module": "ts2mermaid.ts",
+          "inputs": [],
+          "outputs": [
+            "result"
+          ],
+          "callTargets": [],
+          "category": "reporting",
+          "description": "[PLACEHOLDER] Stitcher.generateSystemFlow in ts2mermaid.ts"
+        },
+        {
+          "sourceFile": "ts2mermaid.ts",
+          "functionName": "generateCLI",
+          "module": "ts2mermaid.ts",
+          "inputs": [
+            "result"
+          ],
+          "outputs": [
+            "result"
+          ],
+          "callTargets": [],
+          "category": "reporting",
+          "description": "[PLACEHOLDER] generateCLI in ts2mermaid.ts"
+        }
+      ],
+      "analysis": [
+        {
+          "sourceFile": "ts2mermaid.ts",
+          "functionName": "Stitcher.analyzeBranches",
+          "module": "ts2mermaid.ts",
+          "inputs": [],
+          "outputs": [
+            "result"
+          ],
+          "callTargets": [
+            "forEach",
+            "forEach"
+          ],
+          "category": "analysis",
+          "description": "[PLACEHOLDER] Stitcher.analyzeBranches in ts2mermaid.ts"
+        },
+        {
+          "sourceFile": "ts2mermaid.ts",
+          "functionName": "parseImports",
+          "module": "ts2mermaid.ts",
+          "inputs": [
+            "sourceFile"
+          ],
+          "outputs": [
+            "result"
+          ],
+          "callTargets": [
+            "visit"
+          ],
+          "category": "analysis",
+          "description": "[PLACEHOLDER] parseImports in ts2mermaid.ts"
+        }
+      ]
+    },
+    "summary": {
+      "other": 32,
+      "reporting": 2,
+      "analysis": 2
+    }
+  },
+  "branch_analysis": {
+    "fan_out_nodes": {},
+    "fan_in_nodes": {}
+  },
+  "flow_chains": [],
+  "functions": [
+    {
+      "sourceFile": "paths.config.ts",
+      "functionName": "ensureDirectories",
+      "module": "paths.config.ts",
+      "inputs": [],
+      "outputs": [],
+      "callTargets": [],
+      "category": "other",
+      "description": "[PLACEHOLDER] ensureDirectories in paths.config.ts"
+    },
+    {
+      "sourceFile": "paths.config.ts",
+      "functionName": "getAnalysisOutputDir",
+      "module": "paths.config.ts",
+      "inputs": [
+        "toolName"
+      ],
+      "outputs": [
+        "result"
+      ],
+      "callTargets": [
+        "path.join"
+      ],
+      "category": "other",
+      "description": "[PLACEHOLDER] getAnalysisOutputDir in paths.config.ts"
+    },
+    {
+      "sourceFile": "paths.config.ts",
+      "functionName": "getDefaultOutputDir",
+      "module": "paths.config.ts",
+      "inputs": [],
+      "outputs": [
+        "result"
+      ],
+      "callTargets": [],
+      "category": "other",
+      "description": "[PLACEHOLDER] getDefaultOutputDir in paths.config.ts"
+    },
+    {
+      "sourceFile": "paths.config.ts",
+      "functionName": "getConfigSummary",
+      "module": "paths.config.ts",
+      "inputs": [],
+      "outputs": [
+        "result"
+      ],
+      "callTargets": [],
+      "category": "other",
+      "description": "[PLACEHOLDER] getConfigSummary in paths.config.ts"
+    },
+    {
+      "sourceFile": "ts2mermaid.ts",
+      "functionName": "GraphNode.sanitizeId",
+      "module": "ts2mermaid.ts",
+      "inputs": [
+        "idStr"
+      ],
+      "outputs": [
+        "result"
+      ],
+      "callTargets": [
+        "idStr.replaceAll",
+        "cleaned.replaceAll"
+      ],
+      "category": "other",
+      "description": "[PLACEHOLDER] GraphNode.sanitizeId in ts2mermaid.ts"
+    },
+    {
+      "sourceFile": "ts2mermaid.ts",
+      "functionName": "Graph.add",
+      "module": "ts2mermaid.ts",
+      "inputs": [
+        "kind",
+        "label"
+      ],
+      "outputs": [
+        "result"
+      ],
+      "callTargets": [
+        "push"
+      ],
+      "category": "other",
+      "description": "[PLACEHOLDER] Graph.add in ts2mermaid.ts"
+    },
+    {
+      "sourceFile": "ts2mermaid.ts",
+      "functionName": "Graph.link",
+      "module": "ts2mermaid.ts",
+      "inputs": [
+        "fromId",
+        "toId",
+        "label",
+        "style"
+      ],
+      "outputs": [],
+      "callTargets": [
+        "find"
+      ],
+      "category": "other",
+      "description": "[PLACEHOLDER] Graph.link in ts2mermaid.ts"
+    },
+    {
+      "sourceFile": "ts2mermaid.ts",
+      "functionName": "Graph.toMermaid",
+      "module": "ts2mermaid.ts",
+      "inputs": [],
+      "outputs": [
+        "result"
+      ],
+      "callTargets": [
+        "lines.push"
+      ],
+      "category": "other",
+      "description": "[PLACEHOLDER] Graph.toMermaid in ts2mermaid.ts"
+    },
+    {
+      "sourceFile": "ts2mermaid.ts",
+      "functionName": "Graph.formatNode",
+      "module": "ts2mermaid.ts",
+      "inputs": [
+        "node"
+      ],
+      "outputs": [],
+      "callTargets": [
+        "replaceAll",
+        "text.substring"
+      ],
+      "category": "other",
+      "description": "[PLACEHOLDER] Graph.formatNode in ts2mermaid.ts"
+    },
+    {
+      "sourceFile": "ts2mermaid.ts",
+      "functionName": "Graph.formatEdge",
+      "module": "ts2mermaid.ts",
+      "inputs": [
+        "from",
+        "toId",
+        "index"
+      ],
+      "outputs": [
+        "result"
+      ],
+      "callTargets": [
+        "get"
+      ],
+      "category": "other",
+      "description": "[PLACEHOLDER] Graph.formatEdge in ts2mermaid.ts"
+    },
+    {
+      "sourceFile": "ts2mermaid.ts",
+      "functionName": "Stitcher.addScript",
+      "module": "ts2mermaid.ts",
+      "inputs": [
+        "filePath",
+        "moduleName",
+        "imports",
+        "funcs",
+        "calls"
+      ],
+      "outputs": [],
+      "callTargets": [
+        "set",
+        "push"
+      ],
+      "category": "other",
+      "description": "[PLACEHOLDER] Stitcher.addScript in ts2mermaid.ts"
+    },
+    {
+      "sourceFile": "ts2mermaid.ts",
+      "functionName": "Stitcher.resolveConnections",
+      "module": "ts2mermaid.ts",
+      "inputs": [],
+      "outputs": [],
+      "callTargets": [
+        "console.log",
+        "console.log"
+      ],
+      "category": "other",
+      "description": "[PLACEHOLDER] Stitcher.resolveConnections in ts2mermaid.ts"
+    },
+    {
+      "sourceFile": "ts2mermaid.ts",
+      "functionName": "Stitcher.findProvider",
+      "module": "ts2mermaid.ts",
+      "inputs": [
+        "sourcePath",
+        "call",
+        "fileHint"
+      ],
+      "outputs": [],
+      "callTargets": [
+        "Array.from",
+        "keys",
+        "checkCandidates"
+      ],
+      "category": "other",
+      "description": "[PLACEHOLDER] Stitcher.findProvider in ts2mermaid.ts"
+    },
+    {
+      "sourceFile": "ts2mermaid.ts",
+      "functionName": "Stitcher.checkCandidates",
+      "module": "ts2mermaid.ts",
+      "inputs": [
+        "sourcePath",
+        "call",
+        "candidates"
+      ],
+      "outputs": [],
+      "callTargets": [],
+      "category": "other",
+      "description": "[PLACEHOLDER] Stitcher.checkCandidates in ts2mermaid.ts"
+    },
+    {
+      "sourceFile": "ts2mermaid.ts",
+      "functionName": "Stitcher.generateSystemFlow",
+      "module": "ts2mermaid.ts",
+      "inputs": [],
+      "outputs": [
+        "result"
+      ],
+      "callTargets": [],
+      "category": "reporting",
+      "description": "[PLACEHOLDER] Stitcher.generateSystemFlow in ts2mermaid.ts"
+    },
+    {
+      "sourceFile": "ts2mermaid.ts",
+      "functionName": "Stitcher.analyzeBranches",
+      "module": "ts2mermaid.ts",
+      "inputs": [],
+      "outputs": [
+        "result"
+      ],
+      "callTargets": [
+        "forEach",
+        "forEach"
+      ],
+      "category": "analysis",
+      "description": "[PLACEHOLDER] Stitcher.analyzeBranches in ts2mermaid.ts"
+    },
+    {
+      "sourceFile": "ts2mermaid.ts",
+      "functionName": "Stitcher.sanitizeId",
+      "module": "ts2mermaid.ts",
+      "inputs": [
+        "id"
+      ],
+      "outputs": [
+        "result"
+      ],
+      "callTargets": [],
+      "category": "other",
+      "description": "[PLACEHOLDER] Stitcher.sanitizeId in ts2mermaid.ts"
+    },
+    {
+      "sourceFile": "ts2mermaid.ts",
+      "functionName": "Builder.build",
+      "module": "ts2mermaid.ts",
+      "inputs": [
+        "node"
+      ],
+      "outputs": [],
+      "callTargets": [],
+      "category": "other",
+      "description": "[PLACEHOLDER] Builder.build in ts2mermaid.ts"
+    },
+    {
+      "sourceFile": "ts2mermaid.ts",
+      "functionName": "Builder.extractParams",
+      "module": "ts2mermaid.ts",
+      "inputs": [
+        "node"
+      ],
+      "outputs": [],
+      "callTargets": [],
+      "category": "other",
+      "description": "[PLACEHOLDER] Builder.extractParams in ts2mermaid.ts"
+    },
+    {
+      "sourceFile": "ts2mermaid.ts",
+      "functionName": "Builder.visitBlock",
+      "module": "ts2mermaid.ts",
+      "inputs": [
+        "block"
+      ],
+      "outputs": [],
+      "callTargets": [],
+      "category": "other",
+      "description": "[PLACEHOLDER] Builder.visitBlock in ts2mermaid.ts"
+    },
+    {
+      "sourceFile": "ts2mermaid.ts",
+      "functionName": "Builder.visitNode",
+      "module": "ts2mermaid.ts",
+      "inputs": [
+        "node"
+      ],
+      "outputs": [],
+      "callTargets": [],
+      "category": "other",
+      "description": "[PLACEHOLDER] Builder.visitNode in ts2mermaid.ts"
+    },
+    {
+      "sourceFile": "ts2mermaid.ts",
+      "functionName": "Builder.handleIf",
+      "module": "ts2mermaid.ts",
+      "inputs": [
+        "node"
+      ],
+      "outputs": [],
+      "callTargets": [
+        "add",
+        "link",
+        "add",
+        "link",
+        "visitNode",
+        "add",
+        "link"
+      ],
+      "category": "other",
+      "description": "[PLACEHOLDER] Builder.handleIf in ts2mermaid.ts"
+    },
+    {
+      "sourceFile": "ts2mermaid.ts",
+      "functionName": "Builder.handleLoop",
+      "module": "ts2mermaid.ts",
+      "inputs": [
+        "node"
+      ],
+      "outputs": [],
+      "callTargets": [
+        "add",
+        "link",
+        "add",
+        "link",
+        "link",
+        "add",
+        "link"
+      ],
+      "category": "other",
+      "description": "[PLACEHOLDER] Builder.handleLoop in ts2mermaid.ts"
+    },
+    {
+      "sourceFile": "ts2mermaid.ts",
+      "functionName": "Builder.handleReturn",
+      "module": "ts2mermaid.ts",
+      "inputs": [
+        "node"
+      ],
+      "outputs": [],
+      "callTargets": [
+        "add",
+        "link",
+        "link"
+      ],
+      "category": "other",
+      "description": "[PLACEHOLDER] Builder.handleReturn in ts2mermaid.ts"
+    },
+    {
+      "sourceFile": "ts2mermaid.ts",
+      "functionName": "Builder.handleCall",
+      "module": "ts2mermaid.ts",
+      "inputs": [
+        "node"
+      ],
+      "outputs": [],
+      "callTargets": [
+        "forEach"
+      ],
+      "category": "other",
+      "description": "[PLACEHOLDER] Builder.handleCall in ts2mermaid.ts"
+    },
+    {
+      "sourceFile": "ts2mermaid.ts",
+      "functionName": "Classifier.classify",
+      "module": "ts2mermaid.ts",
+      "inputs": [
+        "metadata"
+      ],
+      "outputs": [],
+      "callTargets": [
+        "toLowerCase",
+        "set",
+        "push"
+      ],
+      "category": "other",
+      "description": "[PLACEHOLDER] Classifier.classify in ts2mermaid.ts"
+    },
+    {
+      "sourceFile": "ts2mermaid.ts",
+      "functionName": "Classifier.getResult",
+      "module": "ts2mermaid.ts",
+      "inputs": [],
+      "outputs": [
+        "result"
+      ],
+      "callTargets": [],
+      "category": "other",
+      "description": "[PLACEHOLDER] Classifier.getResult in ts2mermaid.ts"
+    },
+    {
+      "sourceFile": "ts2mermaid.ts",
+      "functionName": "generateCLI",
+      "module": "ts2mermaid.ts",
+      "inputs": [
+        "result"
+      ],
+      "outputs": [
+        "result"
+      ],
+      "callTargets": [],
+      "category": "reporting",
+      "description": "[PLACEHOLDER] generateCLI in ts2mermaid.ts"
+    },
+    {
+      "sourceFile": "ts2mermaid.ts",
+      "functionName": "getAllFiles",
+      "module": "ts2mermaid.ts",
+      "inputs": [
+        "dir",
+        "files"
+      ],
+      "outputs": [
+        "result"
+      ],
+      "callTargets": [],
+      "category": "other",
+      "description": "[PLACEHOLDER] getAllFiles in ts2mermaid.ts"
+    },
+    {
+      "sourceFile": "ts2mermaid.ts",
+      "functionName": "parseImports",
+      "module": "ts2mermaid.ts",
+      "inputs": [
+        "sourceFile"
+      ],
+      "outputs": [
+        "result"
+      ],
+      "callTargets": [
+        "visit"
+      ],
+      "category": "analysis",
+      "description": "[PLACEHOLDER] parseImports in ts2mermaid.ts"
+    },
+    {
+      "sourceFile": "ts2mermaid.ts",
+      "functionName": "visit",
+      "module": "ts2mermaid.ts",
+      "inputs": [
+        "node"
+      ],
+      "outputs": [],
+      "callTargets": [
+        "ts.forEachChild"
+      ],
+      "category": "other",
+      "description": "[PLACEHOLDER] visit in ts2mermaid.ts"
+    },
+    {
+      "sourceFile": "ts2mermaid.ts",
+      "functionName": "processFile",
+      "module": "ts2mermaid.ts",
+      "inputs": [
+        "filePath",
+        "outputDir",
+        "stitcher"
+      ],
+      "outputs": [
+        "result"
+      ],
+      "callTargets": [
+        "fs.readFileSync",
+        "ts.createSourceFile",
+        "parseImports",
+        "visit",
+        "stitcher.addScript",
+        "path.basename"
+      ],
+      "category": "other",
+      "description": "[PLACEHOLDER] processFile in ts2mermaid.ts"
+    },
+    {
+      "sourceFile": "ts2mermaid.ts",
+      "functionName": "visit",
+      "module": "ts2mermaid.ts",
+      "inputs": [
+        "node"
+      ],
+      "outputs": [],
+      "callTargets": [
+        "ts.forEachChild"
+      ],
+      "category": "other",
+      "description": "[PLACEHOLDER] visit in ts2mermaid.ts"
+    },
+    {
+      "sourceFile": "ts2mermaid.ts",
+      "functionName": "main",
+      "module": "ts2mermaid.ts",
+      "inputs": [],
+      "outputs": [],
+      "callTargets": [
+        "slice",
+        "getArg",
+        "getArg",
+        "console.log",
+        "console.log",
+        "console.log",
+        "console.log",
+        "console.log",
+        "getAllFiles",
+        "console.log",
+        "stitcher.resolveConnections",
+        "stitcher.analyzeBranches",
+        "fs.writeFileSync",
+        "path.join",
+        "stitcher.generateSystemFlow",
+        "classifier.getResult",
+        "fs.writeFileSync",
+        "path.join",
+        "generateCLI",
+        "convertConnectionsToFlows",
+        "fs.writeFileSync",
+        "path.join",
+        "JSON.stringify",
+        "console.log",
+        "console.log",
+        "console.log",
+        "console.log"
+      ],
+      "category": "other",
+      "description": "[PLACEHOLDER] main in ts2mermaid.ts"
+    },
+    {
+      "sourceFile": "ts2mermaid.ts",
+      "functionName": "getArg",
+      "module": "ts2mermaid.ts",
+      "inputs": [
+        "name"
+      ],
+      "outputs": [
+        "result"
+      ],
+      "callTargets": [
+        "args.find"
+      ],
+      "category": "other",
+      "description": "[PLACEHOLDER] getArg in ts2mermaid.ts"
+    },
+    {
+      "sourceFile": "ts2mermaid.ts",
+      "functionName": "convertConnectionsToFlows",
+      "module": "ts2mermaid.ts",
+      "inputs": [
+        "connections"
+      ],
+      "outputs": [
+        "result"
+      ],
+      "callTargets": [],
+      "category": "other",
+      "description": "[PLACEHOLDER] convertConnectionsToFlows in ts2mermaid.ts"
+    }
+  ]
+}

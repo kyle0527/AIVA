@@ -1,0 +1,73 @@
+flowchart TD
+    n1(["Start"])
+    n2(["End"])
+    n3["Call: slice"]
+    n4["Call: getArg"]
+    n5["Call: getArg"]
+    n6["Call: console.log"]
+    n7["Call: console.log"]
+    n8["Call: console.log"]
+    n9["Call: console.log"]
+    n10["Call: console.log"]
+    n11{"If Condition"}
+    n12["Then"]
+    n13[""]
+    n14["Call: getAllFiles"]
+    n15["Call: console.log"]
+    n16{"Loop"}
+    n17["Body"]
+    n18[""]
+    n19["Call: stitcher.resolveConnections"]
+    n20["Call: stitcher.analyzeBranches"]
+    n21["Call: fs.writeFileSync"]
+    n22["Call: path.join"]
+    n23["Call: stitcher.generateSystemFlow"]
+    n24["Call: classifier.getResult"]
+    n25["Call: fs.writeFileSync"]
+    n26["Call: path.join"]
+    n27["Call: generateCLI"]
+    n28["Call: convertConnectionsToFlows"]
+    n29["Call: fs.writeFileSync"]
+    n30["Call: path.join"]
+    n31["Call: JSON.stringify"]
+    n32["Call: console.log"]
+    n33["Call: console.log"]
+    n34["Call: console.log"]
+    n35["Call: console.log"]
+
+    n1 --> n3
+    n3 --> n4
+    n4 --> n5
+    n5 --> n6
+    n6 --> n7
+    n7 --> n8
+    n8 --> n9
+    n9 --> n10
+    n10 --> n11
+    n11 -->|Yes| n12
+    n11 -->|No| n13
+    n12 --> n13
+    n13 --> n14
+    n14 --> n15
+    n15 --> n16
+    n16 -->|Yes| n17
+    n16 -->|No| n18
+    n17 -->|Next| n16
+    n18 --> n19
+    n19 --> n20
+    n20 --> n21
+    n21 --> n22
+    n22 --> n23
+    n23 --> n24
+    n24 --> n25
+    n25 --> n26
+    n26 --> n27
+    n27 --> n28
+    n28 --> n29
+    n29 --> n30
+    n30 --> n31
+    n31 --> n32
+    n32 --> n33
+    n33 --> n34
+    n34 --> n35
+    n35 --> n2

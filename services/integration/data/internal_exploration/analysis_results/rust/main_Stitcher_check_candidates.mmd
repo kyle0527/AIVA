@@ -1,0 +1,66 @@
+flowchart TB
+    n1(["Start"])
+    n2(["End"])
+    n3{"If Condition"}
+    n4["Then"]
+    n5[""]
+    n6{"If Condition"}
+    n7["Then"]
+    n8{"If Condition"}
+    n9["Then"]
+    n10["Else"]
+    n11[""]
+    n12{"If Condition"}
+    n13["Then"]
+    n14["Method: .to_string()"]
+    n15["Method: .clone()"]
+    n16["Method: .clone()"]
+    n17["Method: .clone()"]
+    n18{"If Condition"}
+    n19["Then"]
+    n20["Method: .clone()"]
+    n21["Else"]
+    n22[""]
+    n23{"If Condition"}
+    n24["Then"]
+    n25["Method: .push()"]
+    n26[""]
+    n27["Return"]
+    n28[""]
+    n29[""]
+
+    n1 --> n3
+    n3 -->|Yes| n4
+    n3 -->|No| n5
+    n4 --> n5
+    n5 --> n6
+    n6 -->|Yes| n7
+    n6 -->|No| n29
+    n7 --> n8
+    n8 -->|Yes| n9
+    n8 -->|No| n10
+    n9 --> n11
+    n10 --> n11
+    n11 --> n12
+    n12 -->|Yes| n13
+    n12 -->|No| n28
+    n13 --> n14
+    n14 --> n15
+    n15 --> n16
+    n16 --> n17
+    n17 --> n18
+    n18 -->|Yes| n19
+    n18 -->|No| n21
+    n19 --> n20
+    n20 --> n22
+    n21 --> n22
+    n22 --> n23
+    n23 -->|Yes| n24
+    n23 -->|No| n26
+    n24 --> n25
+    n25 --> n26
+    n26 --> n27
+    n27 --> n2
+    n27 --> n28
+    n28 --> n29
+    n29 --> n2

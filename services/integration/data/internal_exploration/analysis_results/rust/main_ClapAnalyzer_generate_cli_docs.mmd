@@ -1,0 +1,60 @@
+flowchart TB
+    n1(["Start"])
+    n2(["End"])
+    n3["Call: from"]
+    n4["Method: .push_str()"]
+    n5["Method: .push_str()"]
+    n6["Method: .push_str()"]
+    n7{"If Condition"}
+    n8["Then"]
+    n9["Method: .push_str()"]
+    n10[""]
+    n11["Method: .push_str()"]
+    n12["Method: .push_str()"]
+    n13["Method: .push_str()"]
+    n14["Method: .unwrap_or_default()"]
+    n15["Method: .unwrap_or_default()"]
+    n16["Method: .unwrap_or()"]
+    n17["Method: .unwrap_or()"]
+    n18{"If Condition"}
+    n19["Then"]
+    n20["Else"]
+    n21[""]
+    n22["Method: .push_str()"]
+    n23{"If Condition"}
+    n24["Then"]
+    n25["Method: .push_str()"]
+    n26["Method: .push_str()"]
+    n27[""]
+    n28["Method: .push_str()"]
+
+    n1 --> n3
+    n3 --> n4
+    n4 --> n5
+    n5 --> n6
+    n6 --> n7
+    n7 -->|Yes| n8
+    n7 -->|No| n10
+    n8 --> n9
+    n9 --> n10
+    n10 --> n11
+    n11 --> n12
+    n12 --> n13
+    n13 --> n14
+    n14 --> n15
+    n15 --> n16
+    n16 --> n17
+    n17 --> n18
+    n18 -->|Yes| n19
+    n18 -->|No| n20
+    n19 --> n21
+    n20 --> n21
+    n21 --> n22
+    n22 --> n23
+    n23 -->|Yes| n24
+    n23 -->|No| n27
+    n24 --> n25
+    n25 --> n26
+    n26 --> n27
+    n27 --> n28
+    n28 --> n2

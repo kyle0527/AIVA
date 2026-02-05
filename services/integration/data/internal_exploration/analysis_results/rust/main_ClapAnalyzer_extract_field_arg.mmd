@@ -1,0 +1,110 @@
+flowchart TB
+    n1(["Start"])
+    n2(["End"])
+    n3["Method: .to_string()"]
+    n4["Method: .type_to_string()"]
+    n5["Method: .to_string()"]
+    n6{"If Condition"}
+    n7["Then"]
+    n8["Return"]
+    n9[""]
+    n10["Method: .clone()"]
+    n11["Call: Some"]
+    n12["Method: .replace()"]
+    n13["Method: .is_option_type()"]
+    n14["Method: .is_bool_type()"]
+    n15{"If Condition"}
+    n16["Then"]
+    n17["Method: .to_string()"]
+    n18{"If Condition"}
+    n19["Then"]
+    n20["Method: .next()"]
+    n21[""]
+    n22{"If Condition"}
+    n23["Then"]
+    n24["Call: Some"]
+    n25[""]
+    n26{"If Condition"}
+    n27["Then"]
+    n28["Call: Some"]
+    n29[""]
+    n30{"If Condition"}
+    n31["Then"]
+    n32["Call: Some"]
+    n33[""]
+    n34[""]
+    n35{"If Condition"}
+    n36["Then"]
+    n37{"If Condition"}
+    n38["Then"]
+    n39{"If Condition"}
+    n40["Then"]
+    n41["Method: .to_string()"]
+    n42{"If Condition"}
+    n43["Then"]
+    n44["Call: Some"]
+    n45[""]
+    n46[""]
+    n47[""]
+    n48[""]
+    n49["Call: Some"]
+
+    n1 --> n3
+    n3 --> n4
+    n4 --> n5
+    n5 --> n6
+    n6 -->|Yes| n7
+    n6 -->|No| n9
+    n7 --> n8
+    n8 --> n2
+    n8 --> n9
+    n9 --> n10
+    n10 --> n11
+    n11 --> n12
+    n12 --> n13
+    n13 --> n14
+    n14 --> n15
+    n15 -->|Yes| n16
+    n15 -->|No| n34
+    n16 --> n17
+    n17 --> n18
+    n18 -->|Yes| n19
+    n18 -->|No| n21
+    n19 --> n20
+    n20 --> n21
+    n21 --> n22
+    n22 -->|Yes| n23
+    n22 -->|No| n25
+    n23 --> n24
+    n24 --> n25
+    n25 --> n26
+    n26 -->|Yes| n27
+    n26 -->|No| n29
+    n27 --> n28
+    n28 --> n29
+    n29 --> n30
+    n30 -->|Yes| n31
+    n30 -->|No| n33
+    n31 --> n32
+    n32 --> n33
+    n33 --> n34
+    n34 --> n35
+    n35 -->|Yes| n36
+    n35 -->|No| n48
+    n36 --> n37
+    n37 -->|Yes| n38
+    n37 -->|No| n47
+    n38 --> n39
+    n39 -->|Yes| n40
+    n39 -->|No| n46
+    n40 --> n41
+    n41 --> n42
+    n42 -->|Yes| n43
+    n42 -->|No| n45
+    n43 --> n44
+    n44 --> n45
+    n45 --> n46
+    n46 --> n47
+    n47 --> n48
+    n48 --> n49
+    n49 --> n2

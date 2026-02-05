@@ -150,8 +150,7 @@ task_planning/
 ├── unified_executor.py        # 統一攻擊執行器 (841 行)
 ├── command_builder.py         # AI 決策 → CLI 命令轉換
 ├── command_router.py          # 智能命令路由
-├── dispatcher.py              # 任務派發器（整合 internal_exploration）
-└── mode_manager.py            # 執行模式管理（sandbox/production）
+└── dispatcher.py              # 任務派發器（整合 internal_exploration）
 ```
 
 #### 核心職責
@@ -405,20 +404,8 @@ class PlanningDispatcher:
     """
 ```
 
-#### 5. mode_manager.py
-
-**職責**: 執行模式管理器
-
-```python
-class ModeManager:
-    """管理執行模式
-    
-    模式:
-    - sandbox: 靶場測試
-    - production: 實戰執行
-    - aggressive: 激進攻擊
-    """
-```
+> **注意**: mode_manager.py 已廢棄，攻擊強度現由 `target_sensitivity` (0.0-1.0) 控制。
+> 請參考 [sensitivity_manager.py](./sensitivity/sensitivity_manager.py)。
 
 ---
 

@@ -1,0 +1,16 @@
+flowchart TD
+    n1(["Start"])
+    n2(["End"])
+    n3["Call: set"]
+    n4{"If Condition"}
+    n5["Then"]
+    n6[""]
+    n7["Call: push"]
+
+    n1 --> n3
+    n3 --> n4
+    n4 -->|Yes| n5
+    n4 -->|No| n6
+    n5 --> n6
+    n6 --> n7
+    n7 --> n2

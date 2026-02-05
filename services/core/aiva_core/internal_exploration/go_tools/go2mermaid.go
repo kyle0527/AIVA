@@ -797,8 +797,12 @@ func formatType(expr ast.Expr) string {
 }
 
 func main() {
+	// 使用統一路徑配置
+	pathsConfig := GetPathsConfig()
+	defaultOutputDir := pathsConfig.GetDefaultOutputDir()
+	
 	inputDir := flag.String("input", ".", "輸入目錄")
-	outputDir := flag.String("output", "./go_analysis", "輸出目錄")
+	outputDir := flag.String("output", defaultOutputDir, "輸出目錄 (預設: integration/data/internal_exploration/analysis_results/go)")
 	
 	flag.Parse()
 

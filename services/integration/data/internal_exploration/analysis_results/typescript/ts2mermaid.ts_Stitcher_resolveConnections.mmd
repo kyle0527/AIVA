@@ -1,0 +1,16 @@
+flowchart TD
+    n1(["Start"])
+    n2(["End"])
+    n3["Call: console.log"]
+    n4{"Loop"}
+    n5["Body"]
+    n6[""]
+    n7["Call: console.log"]
+
+    n1 --> n3
+    n3 --> n4
+    n4 -->|Yes| n5
+    n4 -->|No| n6
+    n5 -->|Next| n4
+    n6 --> n7
+    n7 --> n2

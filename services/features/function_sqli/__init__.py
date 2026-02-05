@@ -36,9 +36,9 @@ __risk_level__ = "L2"
 __status__ = "production_ready"
 __last_updated__ = "2026-01-23"
 
-# 整合狀態 (2026-01-23)
-# ✅ CommandHandler 已完成 (SQLiCommandHandler)
+# 整合狀態 (2026-02-03)
 # ✅ 核心檢測器架構 (SqliDetector)
 # ✅ 6種檢測引擎已完成
-# ✅ AI Commander 直接整合
-# ❌ Worker 層已移除（不需要）
+# ✅ AI Commander 透過 CLI 執行器調用
+# ✅ 統一執行器架構 (aiva_external_executor.py)
+# ❌ CommandHandler 架構已淘汰（改用 CLI 驅動）

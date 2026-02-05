@@ -69,6 +69,12 @@ except ImportError:
     DATA_ROOT = Path(__file__).resolve().parent / "features_classification"
 
 # ==========================================
+# 常量定義
+# ==========================================
+
+ANALYSIS_RESULTS_JSON = "analysis_results.json"
+
+# ==========================================
 # 模組類型推斷規則
 # ==========================================
 
@@ -229,21 +235,21 @@ class MultiLanguageClassifier:
             
             self.analysis_inputs = {
                 "python": [
-                    features_dir / "function_xss" / "analysis_results.json",
-                    features_dir / "function_sqli" / "analysis_results.json",
-                    features_dir / "function_ssrf" / "analysis_results.json",
-                    features_dir / "function_idor" / "analysis_results.json",
-                    features_dir / "function_infoleak" / "analysis_results.json",
-                    features_dir / "function_bizlogic" / "analysis_results.json",
+                    features_dir / "function_xss" / ANALYSIS_RESULTS_JSON,
+                    features_dir / "function_sqli" / ANALYSIS_RESULTS_JSON,
+                    features_dir / "function_ssrf" / ANALYSIS_RESULTS_JSON,
+                    features_dir / "function_idor" / ANALYSIS_RESULTS_JSON,
+                    features_dir / "function_infoleak" / ANALYSIS_RESULTS_JSON,
+                    features_dir / "function_bizlogic" / ANALYSIS_RESULTS_JSON,
                 ],
                 "rust": [
-                    features_dir / "function_crypto" / "analysis_results.json",
+                    features_dir / "function_crypto" / ANALYSIS_RESULTS_JSON,
                 ],
                 "go": [
-                    features_dir / "function_authn_go" / "analysis_results.json",
+                    features_dir / "function_authn_go" / ANALYSIS_RESULTS_JSON,
                 ],
                 "typescript": [
-                    scan_dir / "typescript_engine" / "analysis_results.json",
+                    scan_dir / "typescript_engine" / ANALYSIS_RESULTS_JSON,
                 ],
             }
         
@@ -253,7 +259,7 @@ class MultiLanguageClassifier:
         讀取 4 個語言的分析結果文件
         
         Returns:
-            List[tuple]: [(module_path, language), ...]
+            List[tuple]: [(analysis_file_path, language), ...]
         """
         modules = []
         
@@ -266,40 +272,17 @@ class MultiLanguageClassifier:
             
             for analysis_file in paths:
                 if analysis_file.exists():
-                    module_path = analysis_file.parent
-                    modules.append((module_path, lang_display))
+                    # ✅ 修正：直接傳文件路徑而不是 parent 目錄
+                    modules.append((analysis_file, lang_display))
                     if self.verbose:
-                        print(f"  ✅ [{lang_display}] {module_path.name}")
+                        print(f"  ✅ [{lang_display}] {analysis_file.stem}")
                 else:
                     if self.verbose:
                         print(f"  ⚠️  [{lang_display}] 找不到: {analysis_file.name}")
         
-        # 額外掃描：尋找其他可能的模組
-        features_dir = self.workspace_root / "services" / "features"
-        if features_dir.exists():
-            for path in features_dir.iterdir():
-                if path.is_dir() and path.name.startswith("function_"):
-                    analysis_file = path / "analysis_results.json"
-                    if analysis_file.exists():
-                        # 檢查是否已經在列表中
-                        if not any(m[0] == path for m in modules):
-                            lang = self._detect_module_language(path)
-                            modules.append((path, lang))
-                            if self.verbose:
-                                print(f"  ➕ [額外發現] {path.name} ({lang})")
-        
-        # 掃描 Scan 引擎
-        scan_dir = self.workspace_root / "services" / "scan"
-        if scan_dir.exists():
-            for path in scan_dir.iterdir():
-                if path.is_dir() and path.name.endswith("_engine"):
-                    analysis_file = path / "analysis_results.json"
-                    if analysis_file.exists():
-                        if not any(m[0] == path for m in modules):
-                            lang = self._detect_module_language(path)
-                            modules.append((path, lang))
-                            if self.verbose:
-                                print(f"  ➕ [額外發現] {path.name} ({lang})")
+        # ⚠️ 移除額外掃描邏輯（已通過 ANALYSIS_INPUTS 集中管理）
+        # 所有分析結果已集中到 integration/data/.../external/ 目錄
+        # 不再需要從原始模組目錄掃描
         
         return modules
     
@@ -330,22 +313,24 @@ class MultiLanguageClassifier:
         # 預設 Python
         return "Python"
     
-    def process_module(self, module_path: Path, language: str) -> Dict[str, Any]:
-        """處理單個模組的分析結果"""
-        # 找到 analysis_results.json（直接在模組根目錄）
-        analysis_file = module_path / "analysis_results.json"
+    def process_module(self, analysis_file: Path, language: str) -> Dict[str, Any]:
+        """處理單個模組的分析結果
         
+        Args:
+            analysis_file: 分析結果 JSON 文件的完整路徑
+            language: 模組語言
+        """
         if not analysis_file.exists():
             if self.verbose:
-                print(f"    [跳過] 找不到 analysis_results.json: {module_path.name}")
+                print(f"    [跳過] 找不到分析文件: {analysis_file.name}")
             return {}
         
         try:
             with open(analysis_file, 'r', encoding='utf-8') as f:
                 data = json.load(f)
             
-            # 提取模組資訊
-            module_name = module_path.name
+            # 提取模組資訊（從文件名推斷）
+            module_name = analysis_file.stem  # 例如 function_sqli
             module_info = self._infer_module_info(module_name)
             
             # 處理 flows - 優先從 function_details 提取有調用鏈的入口點
@@ -363,7 +348,7 @@ class MultiLanguageClassifier:
                 
                 # 處理舊格式的 graphs（不做任何過濾，全部轉換）
                 if not flows and 'graphs' in data:
-                    flows = self._convert_graphs_to_flows(data['graphs'], data.get('connections', []))
+                    flows = self._convert_graphs_to_flows(data['graphs'])
                     if self.verbose:
                         print(f"    [graphs] 轉換 {len(data.get('graphs', []))} → {len(flows)} flows")
                 
@@ -397,7 +382,9 @@ class MultiLanguageClassifier:
             
         except Exception as e:
             if self.verbose:
-                print(f"    [錯誤] {module_path.name}: {e}")
+                print(f"    [錯誤] {analysis_file.stem}: {e}")
+            import traceback
+            traceback.print_exc()
             return {}
     
     def _normalize_flow(self, flow: Dict, module_name: str, module_info: Dict, language: str) -> Dict:
@@ -497,9 +484,6 @@ class MultiLanguageClassifier:
         """
         if language not in CAPABILITY_PRINCIPLES:
             return True  # 未知語言預設可操作
-        
-        principles = CAPABILITY_PRINCIPLES[language]
-        exclude_criteria = principles.get('exclude_criteria', [])
         
         # 獲取函數資訊
         start_func = flow.get('start', '')
@@ -624,7 +608,6 @@ class MultiLanguageClassifier:
         
         # === XSS 模組詳細場景 ===
         if module_name == 'function_xss':
-            return f"XSS testing from {start} to {end}"
             if 'bruteforcer' in start_lower:
                 if 'url' in end_lower and 'get' in end_lower:
                     return '[XSS暴力測試] 從目標提取所有可測試 URL，用於批量掃描多個端點'
@@ -738,17 +721,17 @@ class MultiLanguageClassifier:
                 return '[前端通用] 前端代碼和網路請求分析，檢測客戶端漏洞'
         
         # === 通用場景（fallback）===
-        else:
-            return f'[{module_name}] 安全檢測功能'
+        return f'[{module_name}] 安全檢測功能'
     
-    def _extract_entry_points_from_function_details(self, function_details: Dict, language: str) -> List[Dict]:
+    def _extract_entry_points_from_function_details(self, function_details, language: str) -> List[Dict]:
         """從 function_details 提取有調用鏈的入口點
         
-        function_details 結構: {module_type: {func_name: func_data, ...}, ...}
-        例如: {'function_map': {'run_reflected_test': {...}, ...}, 'script_functions': {...}}
+        function_details 結構: 
+        - Python: {module_type: {func_name: func_data, ...}, ...}
+        - Go/Rust: [{name: ..., inputs: ...}, ...]
         
         Args:
-            function_details: 函數詳細資訊字典
+            function_details: 函數詳細資訊（dict 或 list）
             language: 語言類型
         
         Returns:
@@ -756,7 +739,11 @@ class MultiLanguageClassifier:
         """
         flows = []
         
-        # 從 function_map 提取函數
+        # Go/Rust 使用 list 格式，直接返回空（它們沒有 Python 式的調用鏈分析）
+        if isinstance(function_details, list):
+            return []
+        
+        # Python: 從 function_map 提取函數
         function_map = function_details.get('function_map', {})
         
         for func_name, func_data in function_map.items():
@@ -826,11 +813,13 @@ class MultiLanguageClassifier:
         
         Args:
             struct_definitions: Go struct 定義列表，每個包含 struct_name, fields, source_file
-            function_details: 函數詳細資訊（可選，用於補充說明）
+            function_details: 可選的函數詳細資訊，用於補充額外的上下文
         
         Returns:
             包含路徑、參數和使用說明的 flows 列表
         """
+        if function_details is None:
+            function_details = []
         flows = []
         
         # 只處理 Request/Config 類型的 struct（這些是輸入參數定義）
@@ -883,12 +872,11 @@ class MultiLanguageClassifier:
         
         return flows
     
-    def _convert_graphs_to_flows(self, graphs: List[Dict], connections: Optional[List[Dict]] = None) -> List[Dict]:
+    def _convert_graphs_to_flows(self, graphs: List[Dict]) -> List[Dict]:
         """轉換舊格式的 graphs 為標準 flows 格式（全部轉換，不過濾）
         
         Args:
             graphs: 圖結構列表，每個 graph 包含 nodes
-            connections: 連接列表（可選）
         
         Returns:
             包含路徑和參數資訊的 flows 列表
@@ -1117,11 +1105,11 @@ class MultiLanguageClassifier:
             with open(sot_file, 'w', encoding='utf-8') as f:
                 json.dump(classification_data, f, indent=2, ensure_ascii=False)
             if self.verbose:
-                print(f"\n[OK] 生成 external_classification.json (SOT)")
+                print("\n[OK] 生成 external_classification.json (SOT)")
                 print(f"    檔案: {sot_file}")
         
         if self.verbose:
-            print(f"\n[OK] 生成 classification_data.json")
+            print("\n[OK] 生成 classification_data.json")
             print(f"    檔案: {output_file}")
             print(f"    總流程: {len(self.all_flows)}")
             print(f"    可操作: {operable_count} ({round(operable_count / len(self.all_flows) * 100, 1) if self.all_flows else 0}%)")
@@ -1205,16 +1193,16 @@ class MultiLanguageClassifier:
             return
         
         print(f"\n[執行] 處理 {len(modules)} 個模組...")
-        for module_path, language in modules:
-            module_data = self.process_module(module_path, language)
+        for analysis_file, language in modules:
+            module_data = self.process_module(analysis_file, language)
             if module_data:
                 self.all_modules[module_data['name']] = module_data
         
-        print(f"\n[執行] 生成統一分類數據...")
+        print("\n[執行] 生成統一分類數據...")
         self.generate_classification_data()
         self.generate_summary_report()
         
-        print(f"\n[完成] 多語言整合分類完成!")
+        print("\n[完成] 多語言整合分類完成!")
         print(f"    處理模組: {len(self.all_modules)}")
         print(f"    總流程數: {len(self.all_flows)}")
         print(f"    輸出目錄: {self.output_dir}")

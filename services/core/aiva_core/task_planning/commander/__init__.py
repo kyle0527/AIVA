@@ -33,22 +33,38 @@ class CommanderCoordinator:
     
     協調所有子模組，提供統一的 execute_command 介面。
     這是 AICommander 的完全替代品（方案 B）。
+    
+    依賴注入設計：接收外部創建的執行器實例，確保指揮鏈完整。
     """
     
     def __init__(
         self,
         data_directory: Optional[Path] = None,
         learning_enabled: bool = True,
+        unified_executor: Optional[Any] = None,        # ✅ 接收統一執行器
+        multilang_coordinator: Optional[Any] = None,   # ✅ 接收多語言協調器
+        internal_loop_connector: Optional[Any] = None, # ✅ 接收內部閉環連接器
+        session_state_manager: Optional[Any] = None,   # ✅ 接收會話狀態管理器
     ):
         """初始化協調器
         
         Args:
             data_directory: 數據目錄
             learning_enabled: 是否啟用學習
+            unified_executor: 統一攻擊執行器（依賴注入）
+            multilang_coordinator: 多語言引擎協調器（依賴注入）
+            internal_loop_connector: 內部閉環連接器（依賴注入）
+            session_state_manager: 會話狀態管理器（進度追蹤）
         """
         self.data_directory = data_directory or Path("./data/commander")
         self.data_directory.mkdir(parents=True, exist_ok=True)
         self.learning_enabled = learning_enabled
+        
+        # ✅ 保存注入的依賴（核心修復）
+        self.unified_executor = unified_executor
+        self.multilang_coordinator = multilang_coordinator
+        self.internal_loop = internal_loop_connector
+        self.session_state_manager = session_state_manager
         
         # 延遲初始化子模組
         self._capability_manager: Optional[CapabilityManager] = None
@@ -57,7 +73,7 @@ class CommanderCoordinator:
         self._attack_coordinator: Optional[AttackCoordinator] = None
         self._learning_adapter: Optional[LearningAdapter] = None
         
-        logger.info(f"✅ Commander Coordinator initialized")
+        logger.info("✅ Commander Coordinator initialized with injected dependencies")
     
     @property
     def capability_manager(self) -> CapabilityManager:
@@ -98,33 +114,16 @@ class CommanderCoordinator:
     def attack_coordinator(self) -> AttackCoordinator:
         """延遲加載攻擊協調器"""
         if self._attack_coordinator is None:
-            # 使用 CLI 執行架構：傳入 data_directory 和 dispatcher
-            from ..dispatcher import PlanningDispatcher
-            dispatcher = PlanningDispatcher()
-            dispatcher.source_module = "commander"
+            logger.info("🔧 Initializing AttackCoordinator with injected dependencies...")
             
-            # 初始化所有依賴
-            from services.core.aiva_core.task_planning.unified_executor import UnifiedAttackExecutor
-            unified_executor = UnifiedAttackExecutor()
-            
-            from services.core.aiva_core.cognitive_core.internal_loop_connector import InternalLoopConnector
-            internal_loop = InternalLoopConnector()
-            
-            # MultiEngineCoordinator 可能不存在，需要容錯
-            try:
-                from services.scan.coordinators.multi_engine_coordinator import MultiEngineCoordinator
-                multilang_coordinator = MultiEngineCoordinator()
-            except ImportError:
-                logger.warning("MultiEngineCoordinator not found, passing None")
-                multilang_coordinator = None
-            
+            # ✅ 傳遞四個核心依賴（包含狀態管理器）
             self._attack_coordinator = AttackCoordinator(
-                data_directory=self.data_directory / "attacks",
-                dispatcher=dispatcher,
-                unified_executor=unified_executor,
-                multilang_coordinator=multilang_coordinator,
-                internal_loop=internal_loop
+                unified_executor=self.unified_executor,
+                multilang_coordinator=self.multilang_coordinator,
+                internal_loop=self.internal_loop,
+                session_state_manager=self.session_state_manager
             )
+            logger.info("✅ AttackCoordinator ready with complete command chain")
         return self._attack_coordinator
     
     @property

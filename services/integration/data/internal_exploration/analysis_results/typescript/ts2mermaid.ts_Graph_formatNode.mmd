@@ -1,0 +1,16 @@
+flowchart TD
+    n1(["Start"])
+    n2(["End"])
+    n3["Call: replaceAll"]
+    n4{"If Condition"}
+    n5["Then"]
+    n6["Call: text.substring"]
+    n7[""]
+
+    n1 --> n3
+    n3 --> n4
+    n4 -->|Yes| n5
+    n4 -->|No| n7
+    n5 --> n6
+    n6 --> n7
+    n7 --> n2

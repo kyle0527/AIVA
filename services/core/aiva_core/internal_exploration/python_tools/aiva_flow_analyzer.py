@@ -346,7 +346,12 @@ class FlowStitcher:
         # 例如: self.registry[f"{module_name}.{graph.name}"] = graph
 
     def stitch(self) -> List[Dict]:
-        """執行尾接頭：遍歷所有 Call，若 target_func 存在於 registry，則建立連接"""
+        """
+        執行尾接頭：遍歷所有 Call，若 target_func 存在於 registry，則建立連接
+        
+        ⚠️ 重要：只連接**跨脚本**的調用，忽略同脚本内的函數調用
+        原因：設計目標是分析不同脚本間的數據流連接，同脚本内的調用是實現細節
+        """
         self.connections = []
         self.adjacency = {}
         
@@ -357,6 +362,11 @@ class FlowStitcher:
                 # --- 核心邏輯：完全匹配 (Exact Match) ---
                 if target_name in self.registry:
                     target_graph = self.registry[target_name]
+                    
+                    # 🔥 關鍵過濾：只連接跨脚本的調用
+                    if source_graph.file_path == target_graph.file_path:
+                        # 同脚本内的調用，跳過
+                        continue
                     
                     # 建立邏輯連接 (在 JSON 中表現為一條邊)
                     connection = {
@@ -491,7 +501,6 @@ class FlowStitcher:
             # 從 Graph 的 start node 提取參數資訊
             params = graph.start.metadata.get("parameters", [])
             docstring = graph.start.metadata.get("docstring", "")
-            module_doc = graph.start.metadata.get("module_doc", "")  # ✅ 新增：從 Metadata 獲取 README 資訊
             return_type = graph.start.metadata.get("return_type", "any")
             is_class = graph.start.metadata.get("is_class", False)
             
@@ -512,7 +521,6 @@ class FlowStitcher:
                 "is_class": is_class,
                 "parameters": params,
                 "docstring": docstring,
-                "module_doc": module_doc, # ✅ 新增
                 "return_type": return_type,
                 "called_functions": called_functions
             }
@@ -523,7 +531,6 @@ class FlowStitcher:
                 "is_async": False,
                 "is_entry_point": graph.type in ["function", "class"],
                 "parameters": params,
-                "module_doc": module_doc, # ✅ 新增
                 "called_functions": called_functions
             }
             
@@ -536,80 +543,6 @@ class FlowStitcher:
             "function_map": function_map,
             "script_functions": script_functions
         }
-
-# ==========================================
-# Part 5: 主程序與相容層
-# ==========================================
-
-# ==========================================
-# Part 4.5: README 提取器 (ReadmeExtractor)
-# ==========================================
-
-class ReadmeExtractor:
-    """
-    負責提取目錄下的 README.md 內容
-    """
-    def __init__(self):
-        self._cache = {}  # dir_path -> readme_content
-
-    def get_readme_content(self, file_path: str) -> Optional[str]:
-        """
-        嘗試獲取檔案所在目錄（或上層）的 README 內容
-        
-        Args:
-            file_path: Python 檔案路徑
-            
-        Returns:
-            README 內容摘要 (第一段或描述)
-        """
-        path = Path(file_path).resolve()
-        dir_path = path.parent
-        
-        if dir_path in self._cache:
-            return self._cache[dir_path]
-            
-        # 嘗試在當前目錄尋找 README.md
-        readme_path = dir_path / "README.md"
-        content = None
-        
-        if readme_path.exists():
-            try:
-                raw_content = readme_path.read_text(encoding='utf-8')
-                content = self._extract_summary(raw_content)
-            except Exception as e:
-                print(f"Error reading README at {readme_path}: {e}")
-        else:
-            # 如果當前目錄沒有，嘗試往上一層找 (由調用者決定是否需要遞歸，這裡暫時只找當前)
-            # 視需求可擴展遞歸邏輯
-            pass
-            
-        self._cache[dir_path] = content
-        return content
-
-    def _extract_summary(self, content: str) -> str:
-        """提取 README 的摘要 (標題 + 第一段描述)"""
-        lines = content.splitlines()
-        summary = []
-        capture = False
-        
-        for line in lines:
-            line = line.strip()
-            if not line: continue
-            
-            # 標題
-            if line.startswith('# '):
-                summary.append(line.replace('# ', '').strip())
-                capture = True
-                continue
-                
-            # 二級標題，停止抓取
-            if line.startswith('## '):
-                break
-                
-            if capture:
-                summary.append(line)
-        
-        return " - ".join(summary[:3])  # 只取前幾行作為簡述
 
 # ==========================================
 # Part 5: 主程序與相容層
@@ -630,10 +563,9 @@ def analyze_and_generate(target_dir: str, output_file: Optional[str] = "aiva_flo
     """
     root_path = Path(target_dir)
     stitcher = FlowStitcher()
-    readme_extractor = ReadmeExtractor() # 初始化 README 提取器
     files = list(root_path.rglob("*.py"))
     
-    print(f"1. Scanning {len(files)} files in {root_path} (Included README extraction)...")
+    print(f"1. Scanning {len(files)} files in {root_path}...")
     
     # --- Phase 1: AST 解析 (一張張分析，暫存到 registry) ---
     for file_path in files:
@@ -643,27 +575,17 @@ def analyze_and_generate(target_dir: str, output_file: Optional[str] = "aiva_flo
             content = file_path.read_text(encoding='utf-8')
             tree = ast.parse(content)
             
-            # 獲取該檔案對應的 README 描述
-            readme_desc = readme_extractor.get_readme_content(str(file_path))
-            
             # 遍歷頂層節點，為每個 Function 和 Class 建立獨立的 Graph
             for node in tree.body:
                 if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
                     builder = FlowBuilder(node.name, str(file_path), "function")
                     graph = builder.build(node)
-                    
-                    # 注入 README 資訊到 Metadata
-                    if readme_desc:
-                        graph.start.metadata["module_doc"] = readme_desc
-                        
                     stitcher.register_graph(graph)
                     
                 elif isinstance(node, ast.ClassDef):
                     # 1. 為 Class 本身建立 Graph (處理 Constructor)
                     class_builder = FlowBuilder(node.name, str(file_path), "class")
                     class_graph = class_builder.build(node)
-                    if readme_desc:
-                        class_graph.start.metadata["module_doc"] = readme_desc
                     stitcher.register_graph(class_graph)
                     
                     # 2. 為 Class 的每個方法建立 Graph
@@ -673,8 +595,6 @@ def analyze_and_generate(target_dir: str, output_file: Optional[str] = "aiva_flo
                             method_name = f"{node.name}.{item.name}"
                             builder = FlowBuilder(method_name, str(file_path), "method")
                             graph = builder.build(item)
-                            if readme_desc:
-                                graph.start.metadata["module_doc"] = readme_desc
                             stitcher.register_graph(graph)
                             
         except Exception as e:
@@ -729,11 +649,17 @@ def analyze_and_generate(target_dir: str, output_file: Optional[str] = "aiva_flo
 
 class AIVAFlowAnalyzer:
     """
-    相容層：為 aiva_exploration_pipeline.py 提供相容的 API
+    AIVA 流程分析器 - 提供統一的分析接口
     
-    內部流程：
-    1. analyze_directory() - 執行 AST 分析、縫合、組圖
-    2. save_results() - 輸出 flow_chains、function_details、Mermaid 流程圖
+    用途：
+    - 被 CoreAnalyzer (self_healing/core_analyzer.py) 調用進行 AST 分析
+    - 為其他分析工具提供標準化的數據流分析功能
+    
+    核心功能：
+    1. analyze_directory() - 執行完整的 AST 分析、函數連接、數據流組裝
+    2. save_results() - 輸出標準化的 analysis_results.json
+    
+    內部委託給 analyze_and_generate() 函數執行實際分析工作。
     """
     
     def __init__(self, target_dir: str = "."):

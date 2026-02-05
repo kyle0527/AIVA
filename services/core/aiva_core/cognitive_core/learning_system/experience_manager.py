@@ -64,7 +64,12 @@ class ExperienceTransition:
     
     表示單一攻擊執行的狀態轉換，對應 RL 中的 (state, action, next_state, reward)
     
-    v2.0 擴展：支援統一反饋架構的環境標記
+    v2.0 重新設計：移除環境標記，改用目標敏感度
+    
+    設計原則（基於 Transfer Learning 最佳實踐）：
+    - 經驗標記基於「目標屬性」而非「執行環境」
+    - 確保學習結果可直接遷移到相同敏感度的目標
+    - 沒有 sandbox vs production 的 domain gap
     
     Attributes:
         experience_id: 經驗唯一識別碼
@@ -72,8 +77,8 @@ class ExperienceTransition:
         action: 執行的攻擊動作 (攻擊類型、參數、配置)
         next_state: 下一狀態 (執行結果、新發現)
         reward: 獎勵值 (基於成功率、完成度、評分)
-        metadata: 額外元資料 (時間戳、執行軌跡)
-        environment: 環境標記 (sandbox/production) - v2.0 新增
+        metadata: 額外元資料 (時間戳、執行軌跡、target_sensitivity)
+        environment: [已棄用] 保留作為向後兼容
     """
     
     def __init__(
@@ -83,7 +88,8 @@ class ExperienceTransition:
         next_state: dict[str, Any],
         reward: float,
         metadata: dict[str, Any] | None = None,
-        environment: str | None = None,  # v2.0: 環境標記
+        environment: str | None = None,  # [已棄用] 保留向後兼容
+        target_sensitivity: float | None = None,  # v2.0: 新增目標敏感度
     ):
         self.experience_id = f"exp_{uuid4().hex[:8]}"
         self.state = state
@@ -91,7 +97,15 @@ class ExperienceTransition:
         self.next_state = next_state
         self.reward = reward
         self.metadata = metadata or {}
-        self.environment = environment  # v2.0: 保存環境資訊
+        
+        # v2.0: 優先使用目標敏感度，環境標記作為向後兼容
+        if target_sensitivity is not None:
+            self.metadata["target_sensitivity"] = target_sensitivity
+        elif environment is not None:
+            # 從舊的環境標記推導敏感度（向後兼容）
+            self.metadata["target_sensitivity"] = 0.2 if environment == "sandbox" else 0.8
+            
+        self.environment = environment  # [已棄用] 保留向後兼容
         self.timestamp = datetime.now()
     
     def to_dict(self) -> dict[str, Any]:
@@ -102,8 +116,8 @@ class ExperienceTransition:
             "action": self.action,
             "next_state": self.next_state,
             "reward": self.reward,
-            "metadata": self.metadata,
-            "environment": self.environment,  # v2.0
+            "metadata": self.metadata,  # 包含 target_sensitivity
+            "environment": self.environment,  # [已棄用] 向後兼容
             "timestamp": self.timestamp.isoformat(),
         }
 
@@ -403,40 +417,79 @@ class ExperienceManager:
             logger.error(f"Failed to load from integration: {e}")
             return 0
     
-    def get_experiences_by_environment(
+    def get_experiences_by_target_sensitivity(
         self,
-        environment: str,
+        sensitivity_min: float,
+        sensitivity_max: float,
         limit: int | None = None
     ) -> list[ExperienceTransition]:
-        """按環境類型過濾經驗（v2.0 新增）
+        """按目標敏感度過濾經驗（v2.0 重新設計）
         
-        用於統一反饋架構：分別獲取 sandbox 或 production 經驗
+        環境無關設計：基於目標敏感度而非執行環境過濾
+        確保學習經驗可直接遷移到相同敏感度的其他目標
         
         Args:
-            environment: 環境類型 ("sandbox" 或 "production")
+            sensitivity_min: 最低敏感度 (0.0-1.0)
+            sensitivity_max: 最高敏感度 (0.0-1.0)
             limit: 返回數量限制（None 表示返回全部）
         
         Returns:
-            匹配環境的經驗列表
+            匹配敏感度範圍的經驗列表
         
         Example:
             >>> manager = ExperienceManager()
-            >>> sandbox_exps = manager.get_experiences_by_environment("sandbox")
-            >>> production_exps = manager.get_experiences_by_environment("production", limit=100)
+            >>> # 獲取低敏感目標的經驗 (可用於任何低敏感目標)
+            >>> low_sens_exps = manager.get_experiences_by_target_sensitivity(0.0, 0.3)
+            >>> # 獲取高敏感目標的經驗
+            >>> high_sens_exps = manager.get_experiences_by_target_sensitivity(0.7, 1.0, limit=100)
         """
         filtered = [
             exp for exp in self.memory
-            if exp.environment == environment
+            if (exp.metadata.get("target_sensitivity", 0.5) >= sensitivity_min
+                and exp.metadata.get("target_sensitivity", 0.5) <= sensitivity_max)
         ]
         
         if limit is not None:
             filtered = filtered[-limit:]  # 返回最近的 N 個
         
         logger.debug(
-            f"Filtered {len(filtered)} experiences by environment={environment}"
+            f"Filtered {len(filtered)} experiences by sensitivity=[{sensitivity_min}, {sensitivity_max}]"
         )
         
         return filtered
+    
+    # 保留舊方法作為向後兼容，但標記為已棄用
+    def get_experiences_by_environment(
+        self,
+        environment: str,
+        limit: int | None = None
+    ) -> list[ExperienceTransition]:
+        """[已棄用] 按環境類型過濾經驗
+        
+        警告：此方法基於 sandbox/production 區分，已不推薦使用
+        請改用 get_experiences_by_target_sensitivity()，基於目標敏感度過濾
+        這樣學習經驗才能直接遷移
+        
+        Args:
+            environment: 環境類型 ("sandbox" 或 "production")
+            limit: 返回數量限制
+        
+        Returns:
+            匹配環境的經驗列表
+        """
+        import warnings
+        warnings.warn(
+            "get_experiences_by_environment() is deprecated. "
+            "Use get_experiences_by_target_sensitivity() instead for better transfer learning.",
+            DeprecationWarning,
+            stacklevel=2
+        )
+        
+        # 映射舊環境類型到敏感度範圍
+        if environment == "sandbox":
+            return self.get_experiences_by_target_sensitivity(0.0, 0.3, limit)
+        else:  # production
+            return self.get_experiences_by_target_sensitivity(0.7, 1.0, limit)
     
     def sample(self, batch_size: int) -> list[ExperienceTransition]:
         """隨機採樣經驗批次

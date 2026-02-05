@@ -1,38 +1,43 @@
 """
-AIVA 系统对外入口（安全防护层）
+AIVA 系统对外入口（安全防护層）
 ====================================
 
-版本: 1.0.0
+版本: 2.0.0
 作用: 整个程序的对外 HTTP 入口，提供第一道安全防线
 
-架构设计（可插拔式 AI + 安全防护）:
-- main.py (本脚本): 第一道安全防线，检测恶意请求后转发
-- app.py: 程序与 AI 沟通的接口（AI 可插拔，实现双路分离）
-- AI 内部: aiva_core/* 中的其他文件
+架构設計（統一入口點 + 雙層安全）:
+- main.py (本脚本 Port 9000): 第一道安全防线，检测恶意请求后转发
+- app.py (AI核心 Port 8000): 程序與 AI 溝通的接口（AI 可插拔，实现双路分离）
 
-安全职责（为什么分两个脚本）:
-  ✓ 检测恶意请求（木马、注入攻击、异常参数）
-  ✓ 速率限制和访问控制
-  ✓ 请求白名单/黑名单
-  ✓ 保护 AI 系统不受污染
+✅ v2.0 更新 (2026-02-03):
+  - main.py 啟動時自動檢查 app.py 是否就緒
+  - 提供統一的啟動腳本建議
+  - 整合 ai_menu.py CLI 介面說明
+  - 連接到 scan 模組的 MultiEngineCoordinator
 
-数据流（三层架构 + 双路分离）:
-  外部 HTTP 请求
-      ↓
-  main.py (第一道防线 - 安全检测)
-      ↓ 通过检测后转发
-      ↓
-  app.py (程序与 AI 的沟通接口 - 可插拔)
-      ↓
-  双路分离处理:
-    ├─ 路径1: 整合模块存储（实时记录）
-    └─ 路径2: AI 内部文件 → 任务规划与下令 → 执行模块
+安全职責（為什麼分兩個脚本）:
+  ✓ 檢測惡意請求（木馬、注入攻擊、異常參數）
+  ✓ 速率限制和訪問控制
+  ✓ 請求白名單/黑名單
+  ✓ 保護 AI 系統不受污染
 
-学习系统（异步独立）:
-  - 任务结束后从整合模块读取完整数据
-  - 本次记录与历史记录比对和评估
-  - 学习目标：如何调整参数才能让响应变好
-  - 不在任务执行期间介入（安全设计）
+數據流（三層架構 + 雙路分離）:
+  外部 HTTP 請求 / CLI 選單
+      ↓
+  main.py (Port 9000 - 第一道防線)
+      ↓ 通過檢測後轉發
+      ↓
+  app.py (Port 8000 - AI 核心服務)
+      ↓
+  雙路分離處理:
+    ├─ 路徑1: 整合模組存儲（實時記錄）
+    ├─ 路徑2: AI 決策引擎 → scan 模組 → 執行
+    └─ 路徑3: Internal/External Loop（學習系統）
+
+三種使用方式:
+  1. HTTP API: 外部系統 → main.py (9000) → app.py (8000)
+  2. CLI 選單: python ai_menu.py → app.py (8000) 直接調用
+  3. 直接調用: 測試環境 → app.py (8000) 直接訪問
 """
 
 from fastapi import FastAPI, HTTPException
@@ -41,6 +46,9 @@ from pydantic import BaseModel, Field
 import httpx
 from typing import Optional
 import logging
+import asyncio
+import sys
+from pathlib import Path
 
 # 配置日志
 logging.basicConfig(level=logging.INFO)
@@ -49,12 +57,56 @@ logger = logging.getLogger(__name__)
 # FastAPI 应用
 app = FastAPI(
     title="AIVA 系统入口",
-    version="1.0.0",
-    description="AIVA 智能渗透测试系统的唯一对外入口"
+    version="2.0.0",
+    description="AIVA 智能渗透测试系统的唯一对外入口（安全網關層）"
 )
 
 # AI 系统地址（内部）
 AI_CORE_URL = "http://localhost:8000"  # AI 系统运行在 8000 端口
+
+
+# ============================================================================
+# 启动前置检查
+# ============================================================================
+
+async def check_app_py_availability() -> bool:
+    """檢查 app.py (Port 8000) 是否就緒
+    
+    Returns:
+        bool: app.py 是否可用
+    """
+    try:
+        async with httpx.AsyncClient() as client:
+            response = await client.get(f"{AI_CORE_URL}/health", timeout=5.0)
+            return response.status_code == 200
+    except Exception:
+        return False
+
+
+@app.on_event("startup")
+async def startup_checks():
+    """啟動前置檢查 - 確保 app.py 已啟動"""
+    logger.info("🚀 [main.py] AIVA External Gateway starting up...")
+    logger.info(f"🔗 [main.py] Checking app.py availability at {AI_CORE_URL}...")
+    
+    # 檢查 app.py 是否就緒
+    app_py_ready = await check_app_py_availability()
+    
+    if not app_py_ready:
+        logger.warning("⚠️  [main.py] app.py (Port 8000) is NOT running!")
+        logger.warning("⚠️  [main.py] main.py will start but requests will fail")
+        logger.warning("")
+        logger.warning("📋 [建議] 請先啟動 app.py:")
+        logger.warning("   1. 打開新的終端")
+        logger.warning("   2. cd services/core")
+        logger.warning("   3. python aiva_core/service_backbone/api/app.py")
+        logger.warning("")
+        logger.warning("💡 [提示] 或者使用 CLI 選單模式:")
+        logger.warning("   python services/core/aiva_core/core_capabilities/dialog/ai_menu.py")
+        logger.warning("")
+    else:
+        logger.info("✅ [main.py] app.py (Port 8000) is ready!")
+        logger.info("✅ [main.py] AIVA External Gateway is ready to accept requests")
 
 
 # ============================================================================

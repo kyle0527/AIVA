@@ -49,52 +49,52 @@ AIVA_THEME = Theme({
     "mark.info": f"bold {COLORS['info']}",
 })
 
-# 表格樣式配置
+# 表格樣式配置 - 使用直接顏色值而非主題變數
 TABLE_STYLES = {
     "main_menu": {
         "box": box.ROUNDED,
-        "border_style": "aiva.primary",
-        "header_style": "bold aiva.accent",
-        "title_style": "aiva.title",
+        "border_style": COLORS["primary"],
+        "header_style": f"bold {COLORS['accent']}",
+        "title_style": f"bold {COLORS['primary']}",
     },
     "data": {
         "box": box.SIMPLE,
-        "border_style": "aiva.info",
+        "border_style": COLORS["info"],
         "header_style": "bold",
         "show_lines": False,
     },
     "status": {
         "box": box.MINIMAL,
-        "border_style": "aiva.muted",
-        "header_style": "bold aiva.primary",
+        "border_style": COLORS["muted"],
+        "header_style": f"bold {COLORS['primary']}",
     }
 }
 
-# 面板樣式配置
+# 面板樣式配置 - 使用直接顏色值
 PANEL_STYLES = {
     "banner": {
         "box": box.DOUBLE,
-        "border_style": "aiva.primary",
+        "border_style": COLORS["primary"],
         "padding": (1, 2),
     },
     "info": {
         "box": box.ROUNDED,
-        "border_style": "aiva.info",
+        "border_style": COLORS["info"],
         "padding": (1, 2),
     },
     "success": {
         "box": box.ROUNDED,
-        "border_style": "aiva.success",
+        "border_style": COLORS["success"],
         "padding": (1, 2),
     },
     "warning": {
         "box": box.ROUNDED,
-        "border_style": "aiva.warning",
+        "border_style": COLORS["warning"],
         "padding": (1, 2),
     },
     "error": {
         "box": box.ROUNDED,
-        "border_style": "aiva.error",
+        "border_style": COLORS["error"],
         "padding": (1, 2),
     }
 }

@@ -1,28 +1,23 @@
 import asyncio
+import os
 from dataclasses import dataclass, field
 from datetime import UTC, datetime, timedelta
-from enum import Enum
-from typing import Any, Literal
+from typing import Any
 
 from aiva_common.utils import get_logger
 
 logger = get_logger(__name__)
 
 
-class EnvironmentType(str, Enum):
-    """環境類型 - 用於統一反饋架構"""
-    SANDBOX = "sandbox"      # 靶場環境（探索式學習）
-    PRODUCTION = "production"  # 生產環境（保守式執行）
-
-
 @dataclass
 class ExecutionContext:
     """執行上下文 - 追蹤任務執行的環境信息
     
-    v2.0 擴展：支援統一反饋架構
-    - 新增環境類型欄位（sandbox/production）
-    - 自動配置環境相關參數
-    - 保持向後兼容（environment 預設為 None）
+    設計理念：
+    - 實際執行絕大部分是黑盒測試
+    - 使用 target_sensitivity 決定策略強度
+    - 所有執行都學習，經驗直接可遷移
+    - 支援環境變數 AIVA_TARGET_SENSITIVITY 覆寫預設值
     """
     
     session_id: str
@@ -30,29 +25,22 @@ class ExecutionContext:
     start_time: str = field(default_factory=lambda: datetime.now(UTC).isoformat())
     metadata: dict[str, Any] = field(default_factory=dict)
     
-    # v2.0 新增：環境類型支援
-    environment: EnvironmentType | None = None
+    # 目標敏感度：0.0-1.0，越高越敏感（可透過環境變數覆寫預設值）
+    target_sensitivity: float = field(
+        default_factory=lambda: float(os.getenv("AIVA_TARGET_SENSITIVITY", "0.5"))
+    )
+    
+    # 衍生參數（由 target_sensitivity 計算）
     risk_tolerance: float = field(init=False)
     exploration_enabled: bool = field(init=False)
     immediate_learning: bool = field(init=False)
     
     def __post_init__(self):
-        """初始化後自動配置環境相關參數"""
-        if self.environment == EnvironmentType.SANDBOX:
-            # 靶場環境：高風險容忍度、探索模式、即時學習
-            self.risk_tolerance = 0.9
-            self.exploration_enabled = True
-            self.immediate_learning = True
-        elif self.environment == EnvironmentType.PRODUCTION:
-            # 生產環境：低風險容忍度、保守模式、選擇性學習
-            self.risk_tolerance = 0.3
-            self.exploration_enabled = False
-            self.immediate_learning = False
-        else:
-            # 未指定環境：中等設定（向後兼容）
-            self.risk_tolerance = 0.5
-            self.exploration_enabled = False
-            self.immediate_learning = False
+        """初始化後自動配置參數"""
+        # 根據 target_sensitivity 計算衍生參數
+        self.risk_tolerance = 1.0 - self.target_sensitivity  # 敏感度高 → 風險容忍度低
+        self.exploration_enabled = self.target_sensitivity <= 0.3  # 低敏感才探索
+        self.immediate_learning = True  # 所有執行都學習
     
     def to_dict(self) -> dict[str, Any]:
         """轉換為字典"""
@@ -61,7 +49,7 @@ class ExecutionContext:
             "task_id": self.task_id,
             "start_time": self.start_time,
             "metadata": self.metadata,
-            "environment": self.environment.value if self.environment else None,
+            "target_sensitivity": self.target_sensitivity,
             "risk_tolerance": self.risk_tolerance,
             "exploration_enabled": self.exploration_enabled,
             "immediate_learning": self.immediate_learning,
@@ -70,13 +58,12 @@ class ExecutionContext:
     @classmethod
     def from_dict(cls, data: dict[str, Any]) -> "ExecutionContext":
         """從字典創建"""
-        env_str = data.get("environment")
         return cls(
             session_id=data["session_id"],
             task_id=data["task_id"],
             start_time=data.get("start_time", datetime.now(UTC).isoformat()),
             metadata=data.get("metadata", {}),
-            environment=EnvironmentType(env_str) if env_str else None,
+            target_sensitivity=data.get("target_sensitivity", 0.5),
         )
 
 

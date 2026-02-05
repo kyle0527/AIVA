@@ -1,0 +1,49 @@
+flowchart TB
+    n1(["Start"])
+    n2(["End"])
+    n3["Call: new"]
+    n4["Call: new"]
+    n5["Method: .to_string()"]
+    n6["Method: .to_string()"]
+    n7["Method: .or_insert()"]
+    n8["Method: .or_insert()"]
+    n9["Call: new"]
+    n10["Call: new"]
+    n11{"If Condition"}
+    n12["Then"]
+    n13["Method: .insert()"]
+    n14[""]
+    n15["Method: .insert()"]
+    n16["Method: .to_string()"]
+    n17["Call: new"]
+    n18{"If Condition"}
+    n19["Then"]
+    n20["Method: .insert()"]
+    n21[""]
+    n22["Method: .insert()"]
+    n23["Method: .to_string()"]
+
+    n1 --> n3
+    n3 --> n4
+    n4 --> n5
+    n5 --> n6
+    n6 --> n7
+    n7 --> n8
+    n8 --> n9
+    n9 --> n10
+    n10 --> n11
+    n11 -->|Yes| n12
+    n11 -->|No| n14
+    n12 --> n13
+    n13 --> n14
+    n14 --> n15
+    n15 --> n16
+    n16 --> n17
+    n17 --> n18
+    n18 -->|Yes| n19
+    n18 -->|No| n21
+    n19 --> n20
+    n20 --> n21
+    n21 --> n22
+    n22 --> n23
+    n23 --> n2

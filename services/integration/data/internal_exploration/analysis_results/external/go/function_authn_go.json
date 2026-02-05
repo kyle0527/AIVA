@@ -1,0 +1,1681 @@
+{
+  "branch_analysis": {
+    "fan_in_nodes": {},
+    "fan_out_nodes": {},
+    "total_connections": 0
+  },
+  "flow_chains": [],
+  "flows": [],
+  "function_details": [
+    {
+      "source_file": "go2mermaid.go",
+      "function_name": "NewStitcher",
+      "module": "main",
+      "inputs": [],
+      "outputs": [
+        "result_0"
+      ],
+      "call_targets": [],
+      "category": "other",
+      "description": "[PLACEHOLDER] NewStitcher 功能"
+    },
+    {
+      "source_file": "go2mermaid.go",
+      "function_name": "Stitcher.AddScript",
+      "module": "main",
+      "inputs": [
+        "filePath",
+        "pkgName",
+        "imports",
+        "funcs",
+        "calls"
+      ],
+      "outputs": [],
+      "call_targets": [
+        "append"
+      ],
+      "category": "other",
+      "description": "[PLACEHOLDER] Stitcher.AddScript 功能"
+    },
+    {
+      "source_file": "go2mermaid.go",
+      "function_name": "Stitcher.ResolveConnections",
+      "module": "main",
+      "inputs": [],
+      "outputs": [],
+      "call_targets": [
+        "fmt.Println",
+        "s.findProviderInPackage",
+        "s.findProviderInPackage",
+        "fmt.Printf"
+      ],
+      "category": "other",
+      "description": "[PLACEHOLDER] Stitcher.ResolveConnections 功能"
+    },
+    {
+      "source_file": "go2mermaid.go",
+      "function_name": "Stitcher.findProviderInPackage",
+      "module": "main",
+      "inputs": [
+        "sourcePath",
+        "callerFunc",
+        "targetPkg",
+        "targetFunc",
+        "callExpr"
+      ],
+      "outputs": [],
+      "call_targets": [
+        "append"
+      ],
+      "category": "other",
+      "description": "[PLACEHOLDER] Stitcher.findProviderInPackage 功能"
+    },
+    {
+      "source_file": "go2mermaid.go",
+      "function_name": "Stitcher.AnalyzeBranches",
+      "module": "main",
+      "inputs": [],
+      "outputs": [
+        "result_0"
+      ],
+      "call_targets": [
+        "make",
+        "make",
+        "filepath.Base",
+        "filepath.Base",
+        "make",
+        "make"
+      ],
+      "category": "analysis",
+      "description": "[PLACEHOLDER] Stitcher.AnalyzeBranches 功能"
+    },
+    {
+      "source_file": "go2mermaid.go",
+      "function_name": "Stitcher.GenerateSystemFlow",
+      "module": "main",
+      "inputs": [],
+      "outputs": [
+        "result_0"
+      ],
+      "call_targets": [
+        "sb.WriteString",
+        "sb.WriteString",
+        "make",
+        "filepath.Base",
+        "filepath.Base",
+        "sanitizeID",
+        "sanitizeID",
+        "sb.WriteString",
+        "sb.WriteString",
+        "sb.WriteString"
+      ],
+      "category": "reporting",
+      "description": "[PLACEHOLDER] Stitcher.GenerateSystemFlow 功能"
+    },
+    {
+      "source_file": "go2mermaid.go",
+      "function_name": "NewClassifier",
+      "module": "main",
+      "inputs": [],
+      "outputs": [
+        "result_0"
+      ],
+      "call_targets": [],
+      "category": "other",
+      "description": "[PLACEHOLDER] NewClassifier 功能"
+    },
+    {
+      "source_file": "go2mermaid.go",
+      "function_name": "Classifier.Classify",
+      "module": "main",
+      "inputs": [
+        "metadata"
+      ],
+      "outputs": [],
+      "call_targets": [
+        "strings.ToLower",
+        "strings.ToLower",
+        "strings.Contains",
+        "strings.Contains",
+        "strings.Contains",
+        "strings.Contains",
+        "strings.Contains",
+        "strings.Contains",
+        "strings.Contains",
+        "strings.Contains",
+        "strings.Contains",
+        "fmt.Sprintf",
+        "append"
+      ],
+      "category": "other",
+      "description": "[PLACEHOLDER] Classifier.Classify 功能"
+    },
+    {
+      "source_file": "go2mermaid.go",
+      "function_name": "Classifier.GetResult",
+      "module": "main",
+      "inputs": [],
+      "outputs": [
+        "result_0"
+      ],
+      "call_targets": [
+        "make",
+        "len",
+        "len"
+      ],
+      "category": "other",
+      "description": "[PLACEHOLDER] Classifier.GetResult 功能"
+    },
+    {
+      "source_file": "go2mermaid.go",
+      "function_name": "GenerateCLI",
+      "module": "main",
+      "inputs": [
+        "result"
+      ],
+      "outputs": [
+        "result_0"
+      ],
+      "call_targets": [
+        "sb.WriteString",
+        "sb.WriteString",
+        "make",
+        "append",
+        "sort.Strings",
+        "sb.WriteString",
+        "sb.WriteString",
+        "sb.WriteString",
+        "sb.WriteString"
+      ],
+      "category": "reporting",
+      "description": "[PLACEHOLDER] GenerateCLI 功能"
+    },
+    {
+      "source_file": "go2mermaid.go",
+      "function_name": "NewBuilder",
+      "module": "main",
+      "inputs": [
+        "title",
+        "direction"
+      ],
+      "outputs": [
+        "result_0"
+      ],
+      "call_targets": [],
+      "category": "other",
+      "description": "[PLACEHOLDER] NewBuilder 功能"
+    },
+    {
+      "source_file": "go2mermaid.go",
+      "function_name": "Builder.BuildFunction",
+      "module": "main",
+      "inputs": [
+        "fn"
+      ],
+      "outputs": [
+        "result_0"
+      ],
+      "call_targets": [
+        "getFunctionName",
+        "append",
+        "append",
+        "b.buildStmt"
+      ],
+      "category": "other",
+      "description": "[PLACEHOLDER] Builder.BuildFunction 功能"
+    },
+    {
+      "source_file": "go2mermaid.go",
+      "function_name": "Builder.buildStmt",
+      "module": "main",
+      "inputs": [
+        "stmt"
+      ],
+      "outputs": [],
+      "call_targets": [
+        "b.inspectBlock",
+        "b.inspectStmt",
+        "b.inspectBlock",
+        "b.inspectBlock",
+        "b.inspectExpr",
+        "b.inspectExpr",
+        "b.inspectStmt"
+      ],
+      "category": "other",
+      "description": "[PLACEHOLDER] Builder.buildStmt 功能"
+    },
+    {
+      "source_file": "go2mermaid.go",
+      "function_name": "Builder.inspectBlock",
+      "module": "main",
+      "inputs": [
+        "stmts"
+      ],
+      "outputs": [],
+      "call_targets": [
+        "b.buildStmt"
+      ],
+      "category": "other",
+      "description": "[PLACEHOLDER] Builder.inspectBlock 功能"
+    },
+    {
+      "source_file": "go2mermaid.go",
+      "function_name": "Builder.inspectStmt",
+      "module": "main",
+      "inputs": [
+        "stmt"
+      ],
+      "outputs": [],
+      "call_targets": [
+        "ast.Inspect"
+      ],
+      "category": "other",
+      "description": "[PLACEHOLDER] Builder.inspectStmt 功能"
+    },
+    {
+      "source_file": "go2mermaid.go",
+      "function_name": "Builder.inspectExpr",
+      "module": "main",
+      "inputs": [
+        "expr"
+      ],
+      "outputs": [],
+      "call_targets": [
+        "append",
+        "append",
+        "fmt.Sprintf",
+        "append",
+        "append"
+      ],
+      "category": "other",
+      "description": "[PLACEHOLDER] Builder.inspectExpr 功能"
+    },
+    {
+      "source_file": "go2mermaid.go",
+      "function_name": "getFunctionName",
+      "module": "main",
+      "inputs": [
+        "fn"
+      ],
+      "outputs": [
+        "result_0"
+      ],
+      "call_targets": [],
+      "category": "other",
+      "description": "[PLACEHOLDER] getFunctionName 功能"
+    },
+    {
+      "source_file": "go2mermaid.go",
+      "function_name": "NewGraph",
+      "module": "main",
+      "inputs": [
+        "title",
+        "direction"
+      ],
+      "outputs": [
+        "result_0"
+      ],
+      "call_targets": [
+        "g.Add",
+        "g.Add"
+      ],
+      "category": "other",
+      "description": "[PLACEHOLDER] NewGraph 功能"
+    },
+    {
+      "source_file": "go2mermaid.go",
+      "function_name": "Graph.Add",
+      "module": "main",
+      "inputs": [
+        "kind",
+        "label"
+      ],
+      "outputs": [
+        "result_0"
+      ],
+      "call_targets": [
+        "append"
+      ],
+      "category": "other",
+      "description": "[PLACEHOLDER] Graph.Add 功能"
+    },
+    {
+      "source_file": "go2mermaid.go",
+      "function_name": "Graph.Link",
+      "module": "main",
+      "inputs": [
+        "from",
+        "to",
+        "label",
+        "style"
+      ],
+      "outputs": [],
+      "call_targets": [
+        "append"
+      ],
+      "category": "other",
+      "description": "[PLACEHOLDER] Graph.Link 功能"
+    },
+    {
+      "source_file": "go2mermaid.go",
+      "function_name": "Graph.ToMermaid",
+      "module": "main",
+      "inputs": [],
+      "outputs": [
+        "result_0"
+      ],
+      "call_targets": [
+        "sb.WriteString",
+        "sb.WriteString",
+        "sb.WriteString",
+        "sb.WriteString"
+      ],
+      "category": "other",
+      "description": "[PLACEHOLDER] Graph.ToMermaid 功能"
+    },
+    {
+      "source_file": "go2mermaid.go",
+      "function_name": "formatNode",
+      "module": "main",
+      "inputs": [
+        "n"
+      ],
+      "outputs": [
+        "result_0"
+      ],
+      "call_targets": [
+        "sanitizeText",
+        "fmt.Sprintf",
+        "fmt.Sprintf",
+        "fmt.Sprintf"
+      ],
+      "category": "other",
+      "description": "[PLACEHOLDER] formatNode 功能"
+    },
+    {
+      "source_file": "go2mermaid.go",
+      "function_name": "formatEdge",
+      "module": "main",
+      "inputs": [
+        "from",
+        "to",
+        "index"
+      ],
+      "outputs": [
+        "result_0"
+      ],
+      "call_targets": [],
+      "category": "other",
+      "description": "[PLACEHOLDER] formatEdge 功能"
+    },
+    {
+      "source_file": "go2mermaid.go",
+      "function_name": "sanitizeText",
+      "module": "main",
+      "inputs": [
+        "text"
+      ],
+      "outputs": [
+        "result_0"
+      ],
+      "call_targets": [
+        "strings.ReplaceAll"
+      ],
+      "category": "other",
+      "description": "[PLACEHOLDER] sanitizeText 功能"
+    },
+    {
+      "source_file": "go2mermaid.go",
+      "function_name": "sanitizeID",
+      "module": "main",
+      "inputs": [
+        "id"
+      ],
+      "outputs": [
+        "result_0"
+      ],
+      "call_targets": [
+        "regexp.MustCompile"
+      ],
+      "category": "other",
+      "description": "[PLACEHOLDER] sanitizeID 功能"
+    },
+    {
+      "source_file": "go2mermaid.go",
+      "function_name": "processFile",
+      "module": "main",
+      "inputs": [
+        "filePath",
+        "outputDir",
+        "stitcher"
+      ],
+      "outputs": [
+        "result_0",
+        "result_1"
+      ],
+      "call_targets": [
+        "token.NewFileSet",
+        "parser.ParseFile",
+        "make",
+        "strings.Trim",
+        "strings.Split",
+        "len",
+        "extractStructFields",
+        "append",
+        "getFunctionName",
+        "append",
+        "NewBuilder",
+        "builder.BuildFunction",
+        "append",
+        "filepath.Join",
+        "os.WriteFile",
+        "append",
+        "stitcher.AddScript",
+        "append"
+      ],
+      "category": "other",
+      "description": "[PLACEHOLDER] processFile 功能"
+    },
+    {
+      "source_file": "go2mermaid.go",
+      "function_name": "extractStructFields",
+      "module": "main",
+      "inputs": [
+        "structType"
+      ],
+      "outputs": [
+        "result_0"
+      ],
+      "call_targets": [
+        "formatType",
+        "strings.Trim",
+        "strings.Split",
+        "strings.TrimSpace",
+        "strings.Trim",
+        "strings.TrimSpace",
+        "strings.TrimSpace",
+        "append"
+      ],
+      "category": "other",
+      "description": "[PLACEHOLDER] extractStructFields 功能"
+    },
+    {
+      "source_file": "go2mermaid.go",
+      "function_name": "formatType",
+      "module": "main",
+      "inputs": [
+        "expr"
+      ],
+      "outputs": [
+        "result_0"
+      ],
+      "call_targets": [
+        "formatType",
+        "fmt.Sprintf",
+        "formatType",
+        "formatType",
+        "formatType",
+        "fmt.Sprintf",
+        "formatType"
+      ],
+      "category": "other",
+      "description": "[PLACEHOLDER] formatType 功能"
+    },
+    {
+      "source_file": "go2mermaid.go",
+      "function_name": "main",
+      "module": "main",
+      "inputs": [],
+      "outputs": [],
+      "call_targets": [
+        "flag.String",
+        "flag.String",
+        "flag.Parse",
+        "fmt.Println",
+        "fmt.Printf",
+        "os.MkdirAll",
+        "NewStitcher",
+        "NewClassifier",
+        "filepath.Walk",
+        "fmt.Printf",
+        "fmt.Printf",
+        "stitcher.ResolveConnections",
+        "stitcher.AnalyzeBranches",
+        "stitcher.GenerateSystemFlow",
+        "os.WriteFile",
+        "classifier.GetResult",
+        "GenerateCLI",
+        "os.WriteFile",
+        "convertConnectionsToFlows",
+        "json.MarshalIndent",
+        "os.WriteFile",
+        "fmt.Println",
+        "fmt.Printf",
+        "fmt.Printf",
+        "fmt.Printf"
+      ],
+      "category": "other",
+      "description": "[PLACEHOLDER] main 功能"
+    },
+    {
+      "source_file": "paths_config.go",
+      "function_name": "GetPathsConfig",
+      "module": "main",
+      "inputs": [],
+      "outputs": [
+        "result_0"
+      ],
+      "call_targets": [
+        "os.Getwd",
+        "filepath.Join",
+        "filepath.Abs",
+        "filepath.Join",
+        "filepath.Join",
+        "filepath.Join",
+        "filepath.Join"
+      ],
+      "category": "other",
+      "description": "[PLACEHOLDER] GetPathsConfig 功能"
+    },
+    {
+      "source_file": "paths_config.go",
+      "function_name": "PathsConfig.EnsureDirectories",
+      "module": "main",
+      "inputs": [],
+      "outputs": [
+        "result_0"
+      ],
+      "call_targets": [],
+      "category": "other",
+      "description": "[PLACEHOLDER] PathsConfig.EnsureDirectories 功能"
+    },
+    {
+      "source_file": "paths_config.go",
+      "function_name": "PathsConfig.GetAnalysisOutputDir",
+      "module": "main",
+      "inputs": [
+        "toolName"
+      ],
+      "outputs": [
+        "result_0"
+      ],
+      "call_targets": [
+        "filepath.Join",
+        "os.MkdirAll"
+      ],
+      "category": "other",
+      "description": "[PLACEHOLDER] PathsConfig.GetAnalysisOutputDir 功能"
+    },
+    {
+      "source_file": "paths_config.go",
+      "function_name": "PathsConfig.GetDefaultOutputDir",
+      "module": "main",
+      "inputs": [],
+      "outputs": [
+        "result_0"
+      ],
+      "call_targets": [
+        "pc.EnsureDirectories"
+      ],
+      "category": "other",
+      "description": "[PLACEHOLDER] PathsConfig.GetDefaultOutputDir 功能"
+    }
+  ],
+  "functions": [
+    {
+      "source_file": "go2mermaid.go",
+      "function_name": "NewStitcher",
+      "module": "main",
+      "inputs": [],
+      "outputs": [
+        "result_0"
+      ],
+      "call_targets": [],
+      "category": "other",
+      "description": "[PLACEHOLDER] NewStitcher 功能"
+    },
+    {
+      "source_file": "go2mermaid.go",
+      "function_name": "Stitcher.AddScript",
+      "module": "main",
+      "inputs": [
+        "filePath",
+        "pkgName",
+        "imports",
+        "funcs",
+        "calls"
+      ],
+      "outputs": [],
+      "call_targets": [
+        "append"
+      ],
+      "category": "other",
+      "description": "[PLACEHOLDER] Stitcher.AddScript 功能"
+    },
+    {
+      "source_file": "go2mermaid.go",
+      "function_name": "Stitcher.ResolveConnections",
+      "module": "main",
+      "inputs": [],
+      "outputs": [],
+      "call_targets": [
+        "fmt.Println",
+        "s.findProviderInPackage",
+        "s.findProviderInPackage",
+        "fmt.Printf"
+      ],
+      "category": "other",
+      "description": "[PLACEHOLDER] Stitcher.ResolveConnections 功能"
+    },
+    {
+      "source_file": "go2mermaid.go",
+      "function_name": "Stitcher.findProviderInPackage",
+      "module": "main",
+      "inputs": [
+        "sourcePath",
+        "callerFunc",
+        "targetPkg",
+        "targetFunc",
+        "callExpr"
+      ],
+      "outputs": [],
+      "call_targets": [
+        "append"
+      ],
+      "category": "other",
+      "description": "[PLACEHOLDER] Stitcher.findProviderInPackage 功能"
+    },
+    {
+      "source_file": "go2mermaid.go",
+      "function_name": "Stitcher.AnalyzeBranches",
+      "module": "main",
+      "inputs": [],
+      "outputs": [
+        "result_0"
+      ],
+      "call_targets": [
+        "make",
+        "make",
+        "filepath.Base",
+        "filepath.Base",
+        "make",
+        "make"
+      ],
+      "category": "analysis",
+      "description": "[PLACEHOLDER] Stitcher.AnalyzeBranches 功能"
+    },
+    {
+      "source_file": "go2mermaid.go",
+      "function_name": "Stitcher.GenerateSystemFlow",
+      "module": "main",
+      "inputs": [],
+      "outputs": [
+        "result_0"
+      ],
+      "call_targets": [
+        "sb.WriteString",
+        "sb.WriteString",
+        "make",
+        "filepath.Base",
+        "filepath.Base",
+        "sanitizeID",
+        "sanitizeID",
+        "sb.WriteString",
+        "sb.WriteString",
+        "sb.WriteString"
+      ],
+      "category": "reporting",
+      "description": "[PLACEHOLDER] Stitcher.GenerateSystemFlow 功能"
+    },
+    {
+      "source_file": "go2mermaid.go",
+      "function_name": "NewClassifier",
+      "module": "main",
+      "inputs": [],
+      "outputs": [
+        "result_0"
+      ],
+      "call_targets": [],
+      "category": "other",
+      "description": "[PLACEHOLDER] NewClassifier 功能"
+    },
+    {
+      "source_file": "go2mermaid.go",
+      "function_name": "Classifier.Classify",
+      "module": "main",
+      "inputs": [
+        "metadata"
+      ],
+      "outputs": [],
+      "call_targets": [
+        "strings.ToLower",
+        "strings.ToLower",
+        "strings.Contains",
+        "strings.Contains",
+        "strings.Contains",
+        "strings.Contains",
+        "strings.Contains",
+        "strings.Contains",
+        "strings.Contains",
+        "strings.Contains",
+        "strings.Contains",
+        "fmt.Sprintf",
+        "append"
+      ],
+      "category": "other",
+      "description": "[PLACEHOLDER] Classifier.Classify 功能"
+    },
+    {
+      "source_file": "go2mermaid.go",
+      "function_name": "Classifier.GetResult",
+      "module": "main",
+      "inputs": [],
+      "outputs": [
+        "result_0"
+      ],
+      "call_targets": [
+        "make",
+        "len",
+        "len"
+      ],
+      "category": "other",
+      "description": "[PLACEHOLDER] Classifier.GetResult 功能"
+    },
+    {
+      "source_file": "go2mermaid.go",
+      "function_name": "GenerateCLI",
+      "module": "main",
+      "inputs": [
+        "result"
+      ],
+      "outputs": [
+        "result_0"
+      ],
+      "call_targets": [
+        "sb.WriteString",
+        "sb.WriteString",
+        "make",
+        "append",
+        "sort.Strings",
+        "sb.WriteString",
+        "sb.WriteString",
+        "sb.WriteString",
+        "sb.WriteString"
+      ],
+      "category": "reporting",
+      "description": "[PLACEHOLDER] GenerateCLI 功能"
+    },
+    {
+      "source_file": "go2mermaid.go",
+      "function_name": "NewBuilder",
+      "module": "main",
+      "inputs": [
+        "title",
+        "direction"
+      ],
+      "outputs": [
+        "result_0"
+      ],
+      "call_targets": [],
+      "category": "other",
+      "description": "[PLACEHOLDER] NewBuilder 功能"
+    },
+    {
+      "source_file": "go2mermaid.go",
+      "function_name": "Builder.BuildFunction",
+      "module": "main",
+      "inputs": [
+        "fn"
+      ],
+      "outputs": [
+        "result_0"
+      ],
+      "call_targets": [
+        "getFunctionName",
+        "append",
+        "append",
+        "b.buildStmt"
+      ],
+      "category": "other",
+      "description": "[PLACEHOLDER] Builder.BuildFunction 功能"
+    },
+    {
+      "source_file": "go2mermaid.go",
+      "function_name": "Builder.buildStmt",
+      "module": "main",
+      "inputs": [
+        "stmt"
+      ],
+      "outputs": [],
+      "call_targets": [
+        "b.inspectBlock",
+        "b.inspectStmt",
+        "b.inspectBlock",
+        "b.inspectBlock",
+        "b.inspectExpr",
+        "b.inspectExpr",
+        "b.inspectStmt"
+      ],
+      "category": "other",
+      "description": "[PLACEHOLDER] Builder.buildStmt 功能"
+    },
+    {
+      "source_file": "go2mermaid.go",
+      "function_name": "Builder.inspectBlock",
+      "module": "main",
+      "inputs": [
+        "stmts"
+      ],
+      "outputs": [],
+      "call_targets": [
+        "b.buildStmt"
+      ],
+      "category": "other",
+      "description": "[PLACEHOLDER] Builder.inspectBlock 功能"
+    },
+    {
+      "source_file": "go2mermaid.go",
+      "function_name": "Builder.inspectStmt",
+      "module": "main",
+      "inputs": [
+        "stmt"
+      ],
+      "outputs": [],
+      "call_targets": [
+        "ast.Inspect"
+      ],
+      "category": "other",
+      "description": "[PLACEHOLDER] Builder.inspectStmt 功能"
+    },
+    {
+      "source_file": "go2mermaid.go",
+      "function_name": "Builder.inspectExpr",
+      "module": "main",
+      "inputs": [
+        "expr"
+      ],
+      "outputs": [],
+      "call_targets": [
+        "append",
+        "append",
+        "fmt.Sprintf",
+        "append",
+        "append"
+      ],
+      "category": "other",
+      "description": "[PLACEHOLDER] Builder.inspectExpr 功能"
+    },
+    {
+      "source_file": "go2mermaid.go",
+      "function_name": "getFunctionName",
+      "module": "main",
+      "inputs": [
+        "fn"
+      ],
+      "outputs": [
+        "result_0"
+      ],
+      "call_targets": [],
+      "category": "other",
+      "description": "[PLACEHOLDER] getFunctionName 功能"
+    },
+    {
+      "source_file": "go2mermaid.go",
+      "function_name": "NewGraph",
+      "module": "main",
+      "inputs": [
+        "title",
+        "direction"
+      ],
+      "outputs": [
+        "result_0"
+      ],
+      "call_targets": [
+        "g.Add",
+        "g.Add"
+      ],
+      "category": "other",
+      "description": "[PLACEHOLDER] NewGraph 功能"
+    },
+    {
+      "source_file": "go2mermaid.go",
+      "function_name": "Graph.Add",
+      "module": "main",
+      "inputs": [
+        "kind",
+        "label"
+      ],
+      "outputs": [
+        "result_0"
+      ],
+      "call_targets": [
+        "append"
+      ],
+      "category": "other",
+      "description": "[PLACEHOLDER] Graph.Add 功能"
+    },
+    {
+      "source_file": "go2mermaid.go",
+      "function_name": "Graph.Link",
+      "module": "main",
+      "inputs": [
+        "from",
+        "to",
+        "label",
+        "style"
+      ],
+      "outputs": [],
+      "call_targets": [
+        "append"
+      ],
+      "category": "other",
+      "description": "[PLACEHOLDER] Graph.Link 功能"
+    },
+    {
+      "source_file": "go2mermaid.go",
+      "function_name": "Graph.ToMermaid",
+      "module": "main",
+      "inputs": [],
+      "outputs": [
+        "result_0"
+      ],
+      "call_targets": [
+        "sb.WriteString",
+        "sb.WriteString",
+        "sb.WriteString",
+        "sb.WriteString"
+      ],
+      "category": "other",
+      "description": "[PLACEHOLDER] Graph.ToMermaid 功能"
+    },
+    {
+      "source_file": "go2mermaid.go",
+      "function_name": "formatNode",
+      "module": "main",
+      "inputs": [
+        "n"
+      ],
+      "outputs": [
+        "result_0"
+      ],
+      "call_targets": [
+        "sanitizeText",
+        "fmt.Sprintf",
+        "fmt.Sprintf",
+        "fmt.Sprintf"
+      ],
+      "category": "other",
+      "description": "[PLACEHOLDER] formatNode 功能"
+    },
+    {
+      "source_file": "go2mermaid.go",
+      "function_name": "formatEdge",
+      "module": "main",
+      "inputs": [
+        "from",
+        "to",
+        "index"
+      ],
+      "outputs": [
+        "result_0"
+      ],
+      "call_targets": [],
+      "category": "other",
+      "description": "[PLACEHOLDER] formatEdge 功能"
+    },
+    {
+      "source_file": "go2mermaid.go",
+      "function_name": "sanitizeText",
+      "module": "main",
+      "inputs": [
+        "text"
+      ],
+      "outputs": [
+        "result_0"
+      ],
+      "call_targets": [
+        "strings.ReplaceAll"
+      ],
+      "category": "other",
+      "description": "[PLACEHOLDER] sanitizeText 功能"
+    },
+    {
+      "source_file": "go2mermaid.go",
+      "function_name": "sanitizeID",
+      "module": "main",
+      "inputs": [
+        "id"
+      ],
+      "outputs": [
+        "result_0"
+      ],
+      "call_targets": [
+        "regexp.MustCompile"
+      ],
+      "category": "other",
+      "description": "[PLACEHOLDER] sanitizeID 功能"
+    },
+    {
+      "source_file": "go2mermaid.go",
+      "function_name": "processFile",
+      "module": "main",
+      "inputs": [
+        "filePath",
+        "outputDir",
+        "stitcher"
+      ],
+      "outputs": [
+        "result_0",
+        "result_1"
+      ],
+      "call_targets": [
+        "token.NewFileSet",
+        "parser.ParseFile",
+        "make",
+        "strings.Trim",
+        "strings.Split",
+        "len",
+        "extractStructFields",
+        "append",
+        "getFunctionName",
+        "append",
+        "NewBuilder",
+        "builder.BuildFunction",
+        "append",
+        "filepath.Join",
+        "os.WriteFile",
+        "append",
+        "stitcher.AddScript",
+        "append"
+      ],
+      "category": "other",
+      "description": "[PLACEHOLDER] processFile 功能"
+    },
+    {
+      "source_file": "go2mermaid.go",
+      "function_name": "extractStructFields",
+      "module": "main",
+      "inputs": [
+        "structType"
+      ],
+      "outputs": [
+        "result_0"
+      ],
+      "call_targets": [
+        "formatType",
+        "strings.Trim",
+        "strings.Split",
+        "strings.TrimSpace",
+        "strings.Trim",
+        "strings.TrimSpace",
+        "strings.TrimSpace",
+        "append"
+      ],
+      "category": "other",
+      "description": "[PLACEHOLDER] extractStructFields 功能"
+    },
+    {
+      "source_file": "go2mermaid.go",
+      "function_name": "formatType",
+      "module": "main",
+      "inputs": [
+        "expr"
+      ],
+      "outputs": [
+        "result_0"
+      ],
+      "call_targets": [
+        "formatType",
+        "fmt.Sprintf",
+        "formatType",
+        "formatType",
+        "formatType",
+        "fmt.Sprintf",
+        "formatType"
+      ],
+      "category": "other",
+      "description": "[PLACEHOLDER] formatType 功能"
+    },
+    {
+      "source_file": "go2mermaid.go",
+      "function_name": "main",
+      "module": "main",
+      "inputs": [],
+      "outputs": [],
+      "call_targets": [
+        "flag.String",
+        "flag.String",
+        "flag.Parse",
+        "fmt.Println",
+        "fmt.Printf",
+        "os.MkdirAll",
+        "NewStitcher",
+        "NewClassifier",
+        "filepath.Walk",
+        "fmt.Printf",
+        "fmt.Printf",
+        "stitcher.ResolveConnections",
+        "stitcher.AnalyzeBranches",
+        "stitcher.GenerateSystemFlow",
+        "os.WriteFile",
+        "classifier.GetResult",
+        "GenerateCLI",
+        "os.WriteFile",
+        "convertConnectionsToFlows",
+        "json.MarshalIndent",
+        "os.WriteFile",
+        "fmt.Println",
+        "fmt.Printf",
+        "fmt.Printf",
+        "fmt.Printf"
+      ],
+      "category": "other",
+      "description": "[PLACEHOLDER] main 功能"
+    },
+    {
+      "source_file": "paths_config.go",
+      "function_name": "GetPathsConfig",
+      "module": "main",
+      "inputs": [],
+      "outputs": [
+        "result_0"
+      ],
+      "call_targets": [
+        "os.Getwd",
+        "filepath.Join",
+        "filepath.Abs",
+        "filepath.Join",
+        "filepath.Join",
+        "filepath.Join",
+        "filepath.Join"
+      ],
+      "category": "other",
+      "description": "[PLACEHOLDER] GetPathsConfig 功能"
+    },
+    {
+      "source_file": "paths_config.go",
+      "function_name": "PathsConfig.EnsureDirectories",
+      "module": "main",
+      "inputs": [],
+      "outputs": [
+        "result_0"
+      ],
+      "call_targets": [],
+      "category": "other",
+      "description": "[PLACEHOLDER] PathsConfig.EnsureDirectories 功能"
+    },
+    {
+      "source_file": "paths_config.go",
+      "function_name": "PathsConfig.GetAnalysisOutputDir",
+      "module": "main",
+      "inputs": [
+        "toolName"
+      ],
+      "outputs": [
+        "result_0"
+      ],
+      "call_targets": [
+        "filepath.Join",
+        "os.MkdirAll"
+      ],
+      "category": "other",
+      "description": "[PLACEHOLDER] PathsConfig.GetAnalysisOutputDir 功能"
+    },
+    {
+      "source_file": "paths_config.go",
+      "function_name": "PathsConfig.GetDefaultOutputDir",
+      "module": "main",
+      "inputs": [],
+      "outputs": [
+        "result_0"
+      ],
+      "call_targets": [
+        "pc.EnsureDirectories"
+      ],
+      "category": "other",
+      "description": "[PLACEHOLDER] PathsConfig.GetDefaultOutputDir 功能"
+    }
+  ],
+  "metadata": {
+    "ai_compatible": true,
+    "generated_at": "2026-02-02T15:08:56+08:00",
+    "language": "go",
+    "schema_version": "3.3",
+    "tool": "go2mermaid",
+    "total_files": 2,
+    "total_flows": 0,
+    "version": "2.0"
+  },
+  "struct_definitions": [
+    {
+      "fields": [
+        {
+          "description": "",
+          "json_tag": "",
+          "name": "ID",
+          "type": "string"
+        },
+        {
+          "description": "",
+          "json_tag": "",
+          "name": "Label",
+          "type": "string"
+        },
+        {
+          "description": "op, cond, start, end",
+          "json_tag": "",
+          "name": "Kind",
+          "type": "string"
+        },
+        {
+          "description": "",
+          "json_tag": "",
+          "name": "Nexts",
+          "type": "[]*Node"
+        },
+        {
+          "description": "",
+          "json_tag": "",
+          "name": "EdgeInfo",
+          "type": "map[string]EdgeStyle"
+        }
+      ],
+      "source_file": "go2mermaid.go",
+      "struct_name": "Node"
+    },
+    {
+      "fields": [
+        {
+          "description": "",
+          "json_tag": "",
+          "name": "Label",
+          "type": "string"
+        },
+        {
+          "description": "",
+          "json_tag": "",
+          "name": "Style",
+          "type": "string"
+        }
+      ],
+      "source_file": "go2mermaid.go",
+      "struct_name": "EdgeStyle"
+    },
+    {
+      "fields": [
+        {
+          "description": "",
+          "json_tag": "",
+          "name": "Title",
+          "type": "string"
+        },
+        {
+          "description": "",
+          "json_tag": "",
+          "name": "Direction",
+          "type": "string"
+        },
+        {
+          "description": "",
+          "json_tag": "",
+          "name": "Nodes",
+          "type": "[]*Node"
+        },
+        {
+          "description": "",
+          "json_tag": "",
+          "name": "Counter",
+          "type": "int"
+        },
+        {
+          "description": "",
+          "json_tag": "",
+          "name": "Start",
+          "type": "*Node"
+        },
+        {
+          "description": "",
+          "json_tag": "",
+          "name": "End",
+          "type": "*Node"
+        }
+      ],
+      "source_file": "go2mermaid.go",
+      "struct_name": "Graph"
+    },
+    {
+      "fields": [
+        {
+          "description": "",
+          "json_tag": "source_file",
+          "name": "SourceFile",
+          "type": "string"
+        },
+        {
+          "description": "",
+          "json_tag": "function_name",
+          "name": "FunctionName",
+          "type": "string"
+        },
+        {
+          "description": "",
+          "json_tag": "module",
+          "name": "Module",
+          "type": "string"
+        },
+        {
+          "description": "",
+          "json_tag": "inputs",
+          "name": "Inputs",
+          "type": "[]string"
+        },
+        {
+          "description": "",
+          "json_tag": "outputs",
+          "name": "Outputs",
+          "type": "[]string"
+        },
+        {
+          "description": "記錄此函數內部調用了誰",
+          "json_tag": "call_targets",
+          "name": "CallTargets",
+          "type": "[]string"
+        },
+        {
+          "description": "",
+          "json_tag": "category",
+          "name": "Category",
+          "type": "string"
+        },
+        {
+          "description": "自動生成的描述",
+          "json_tag": "description",
+          "name": "Description",
+          "type": "string"
+        }
+      ],
+      "source_file": "go2mermaid.go",
+      "struct_name": "FlowMetadata"
+    },
+    {
+      "fields": [
+        {
+          "description": "e.g. \"Println\" or \"MyFunc\"",
+          "json_tag": "function_name",
+          "name": "FunctionName",
+          "type": "string"
+        },
+        {
+          "description": "e.g. \"fmt\" or \"utils\"",
+          "json_tag": "package_alias",
+          "name": "PackageAlias",
+          "type": "string"
+        },
+        {
+          "description": "誰調用的",
+          "json_tag": "caller_func",
+          "name": "CallerFunc",
+          "type": "string"
+        }
+      ],
+      "source_file": "go2mermaid.go",
+      "struct_name": "ExternalCall"
+    },
+    {
+      "fields": [
+        {
+          "description": "",
+          "json_tag": "file_path",
+          "name": "FilePath",
+          "type": "string"
+        },
+        {
+          "description": "",
+          "json_tag": "package_name",
+          "name": "PackageName",
+          "type": "string"
+        },
+        {
+          "description": "alias -\u003e full_path",
+          "json_tag": "imports",
+          "name": "Imports",
+          "type": "map[string]string"
+        },
+        {
+          "description": "此檔案定義的函數",
+          "json_tag": "defined_funcs",
+          "name": "DefinedFuncs",
+          "type": "[]string"
+        },
+        {
+          "description": "此檔案發出的調用",
+          "json_tag": "external_calls",
+          "name": "ExternalCalls",
+          "type": "[]ExternalCall"
+        }
+      ],
+      "source_file": "go2mermaid.go",
+      "struct_name": "ScriptNode"
+    },
+    {
+      "fields": [
+        {
+          "description": "",
+          "json_tag": "from_script",
+          "name": "FromScript",
+          "type": "string"
+        },
+        {
+          "description": "",
+          "json_tag": "from_func",
+          "name": "FromFunc",
+          "type": "string"
+        },
+        {
+          "description": "",
+          "json_tag": "to_script",
+          "name": "ToScript",
+          "type": "string"
+        },
+        {
+          "description": "",
+          "json_tag": "to_func",
+          "name": "ToFunc",
+          "type": "string"
+        },
+        {
+          "description": "e.g. \"utils.Helper\"",
+          "json_tag": "call_expr",
+          "name": "CallExpr",
+          "type": "string"
+        }
+      ],
+      "source_file": "go2mermaid.go",
+      "struct_name": "Connection"
+    },
+    {
+      "fields": [
+        {
+          "description": "FilePath -\u003e Node",
+          "json_tag": "",
+          "name": "ScriptNodes",
+          "type": "map[string]*ScriptNode"
+        },
+        {
+          "description": "PackageName -\u003e [FilePaths]",
+          "json_tag": "",
+          "name": "PackageMap",
+          "type": "map[string][]string"
+        },
+        {
+          "description": "",
+          "json_tag": "real_connections",
+          "name": "RealConnections",
+          "type": "[]Connection"
+        },
+        {
+          "description": "✅ 新增：結構體定義",
+          "json_tag": "struct_definitions",
+          "name": "StructDefs",
+          "type": "[]map[string]interface{}"
+        }
+      ],
+      "source_file": "go2mermaid.go",
+      "struct_name": "Stitcher"
+    },
+    {
+      "fields": [
+        {
+          "description": "",
+          "json_tag": "total_flows",
+          "name": "TotalFlows",
+          "type": "int"
+        },
+        {
+          "description": "",
+          "json_tag": "categories",
+          "name": "Categories",
+          "type": "map[string][]FlowMetadata"
+        },
+        {
+          "description": "",
+          "json_tag": "summary",
+          "name": "Summary",
+          "type": "map[string]int"
+        }
+      ],
+      "source_file": "go2mermaid.go",
+      "struct_name": "ClassificationResult"
+    },
+    {
+      "fields": [
+        {
+          "description": "",
+          "json_tag": "",
+          "name": "categories",
+          "type": "map[string][]FlowMetadata"
+        }
+      ],
+      "source_file": "go2mermaid.go",
+      "struct_name": "Classifier"
+    },
+    {
+      "fields": [
+        {
+          "description": "",
+          "json_tag": "",
+          "name": "graph",
+          "type": "*Graph"
+        },
+        {
+          "description": "",
+          "json_tag": "",
+          "name": "current",
+          "type": "*Node"
+        },
+        {
+          "description": "",
+          "json_tag": "",
+          "name": "metadata",
+          "type": "*FlowMetadata"
+        },
+        {
+          "description": "",
+          "json_tag": "",
+          "name": "externalCalls",
+          "type": "[]ExternalCall"
+        }
+      ],
+      "source_file": "go2mermaid.go",
+      "struct_name": "Builder"
+    },
+    {
+      "fields": [
+        {
+          "description": "",
+          "json_tag": "",
+          "name": "ProjectRoot",
+          "type": "string"
+        },
+        {
+          "description": "",
+          "json_tag": "",
+          "name": "ServicesRoot",
+          "type": "string"
+        },
+        {
+          "description": "",
+          "json_tag": "",
+          "name": "IntegrationRoot",
+          "type": "string"
+        },
+        {
+          "description": "",
+          "json_tag": "",
+          "name": "IntegrationDataRoot",
+          "type": "string"
+        },
+        {
+          "description": "Internal Exploration 路徑",
+          "json_tag": "",
+          "name": "InternalExplorationData",
+          "type": "string"
+        },
+        {
+          "description": "",
+          "json_tag": "",
+          "name": "AnalysisResultsDir",
+          "type": "string"
+        },
+        {
+          "description": "",
+          "json_tag": "",
+          "name": "AnalysisHistoryDir",
+          "type": "string"
+        },
+        {
+          "description": "",
+          "json_tag": "",
+          "name": "SelfHealingDir",
+          "type": "string"
+        },
+        {
+          "description": "其他整合模組路徑",
+          "json_tag": "",
+          "name": "AttackPathsDir",
+          "type": "string"
+        },
+        {
+          "description": "",
+          "json_tag": "",
+          "name": "ExperiencesDir",
+          "type": "string"
+        },
+        {
+          "description": "",
+          "json_tag": "",
+          "name": "TrainingDataDir",
+          "type": "string"
+        },
+        {
+          "description": "環境變量控制",
+          "json_tag": "",
+          "name": "UseIntegratedPaths",
+          "type": "bool"
+        }
+      ],
+      "source_file": "paths_config.go",
+      "struct_name": "PathsConfig"
+    }
+  ],
+  "summary": {
+    "categories": {
+      "analysis": 1,
+      "other": 30,
+      "reporting": 2
+    },
+    "real_connections": 0,
+    "total_files": 2,
+    "total_funcs": 33
+  }
+}

@@ -19,7 +19,7 @@ from typing import Any
 from uuid import uuid4
 
 from aiva_common.enums import Topic
-from aiva_common.mq import AbstractBroker
+from aiva_common.messaging import AbstractBroker
 from aiva_common.schemas import (
     Phase0StartPayload,
     Phase0CompletedPayload,

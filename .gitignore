@@ -26,6 +26,12 @@ target/
 # TypeScript
 *.tsbuildinfo
 
+# Internal Exploration 工具輸出 (應使用 integration/data 路徑)
+services/core/aiva_core/internal_exploration/go_tools/go_analysis/
+services/core/aiva_core/internal_exploration/typescript_tools/analysis_output/
+services/core/aiva_core/internal_exploration/rust_tools/target/
+services/core/aiva_core/internal_exploration/typescript_tools/node_modules/
+
 # Security - 敏感資訊
 secrets/
 test_credentials/

@@ -57,10 +57,21 @@ from uuid import uuid4
 
 from fastapi import FastAPI, HTTPException
 
-# 整合模块数据管理
+# 路徑自動處理（支援直接運行和透過 __main__.py 運行）
 import sys
 from pathlib import Path
-sys.path.insert(0, str(Path(__file__).parents[6]))  # 添加项目根目录到路径
+
+_THIS_FILE = Path(__file__).resolve()
+_PROJECT_ROOT = _THIS_FILE.parents[5]  # AIVA-git/ (app.py -> api -> service_backbone -> aiva_core -> core -> services -> AIVA-git)
+_SERVICES_DIR = _PROJECT_ROOT / "services"
+_CORE_DIR = _SERVICES_DIR / "core"
+
+# 智能路徑添加：僅在需要時添加
+for p in [str(_CORE_DIR), str(_SERVICES_DIR), str(_PROJECT_ROOT)]:
+    if p not in sys.path:
+        sys.path.insert(0, p)
+
+# 整合模块数据管理
 from services.integration.simple_data_manager import get_data_manager
 from pydantic import BaseModel, HttpUrl
 from tenacity import (
@@ -71,9 +82,8 @@ from tenacity import (
 )
 
 from aiva_common.config import get_settings
-from aiva_common.enums.modules import Topic
-from aiva_common.messaging.mq import get_broker
 from aiva_common.schemas import AivaMessage, ScanCompletedPayload, Phase0CompletedPayload
+from aiva_common.schemas.commands import AICommand, AICommandResult, CommandType, CommandStatus, CommandPriority
 from aiva_common.utils import get_logger
 # 模組整合: external_learning → cognitive_core/learning_system (2026-01-03)
 from services.core.aiva_core.cognitive_core.learning_system.analysis.dynamic_strategy_adjustment import (
@@ -141,6 +151,12 @@ coordinator: AIVACoreServiceCoordinator | None = None
 # ✅ 全局認知核心實例（AI 決策引擎）
 decision_agent: EnhancedDecisionAgent | None = None
 
+# ✅ 全局指揮官實例（任務指揮中心）
+commander: Any = None
+
+# ✅ 全局消息代理實例（RabbitMQ）
+broker: Any = None
+
 # ✅ 全局後台任務引用（防止垃圾回收）
 _background_tasks: list[asyncio.Task] = []
 
@@ -181,18 +197,19 @@ scan_result_processor = ScanResultProcessor(
 
 @app.on_event("startup")
 async def startup() -> None:
-    """啟動核心引擎服務 - 系統唯一啟動點
+    """啟動核心引擎服務 - 系統唯一啟動點（修正版）
     
-    啟動流程:
+    啟動流程（修正指揮鏈）:
     1. 初始化 CoreServiceCoordinator（狀態管理器）
-    2. 初始化 EnhancedDecisionAgent（認知核心）
-    3. 啟動內部閉環更新（後台任務）
-    4. 啟動外部學習監聽器（後台任務）
-    5. 啟動掃描結果處理（後台任務）
-    6. 啟動功能結果處理（後台任務）
-    7. 啟動執行狀態監控（後台任務）
+    2. 初始化 EnhancedDecisionAgent（認知核心 - 大腦）
+    3. 初始化 RabbitMQ Broker（消息隊列）
+    4. 初始化執行能力（UnifiedExecutor, MultiEngineCoordinator - 四肢）
+    5. 初始化 CommanderCoordinator（指揮官 - 神經中樞）
+    6. 連接大腦、四肢到指揮官（修復指揮鏈斷裂）
+    7. 啟動內部閉環更新（後台任務）
+    8. 啟動執行狀態監控（後台任務）
     """
-    global coordinator, decision_agent
+    global coordinator, decision_agent, commander, broker
     
     logger.info("🚀 [啟動] AIVA Core Engine starting up...")
     
@@ -201,61 +218,149 @@ async def startup() -> None:
     await coordinator.start()
     logger.info("✅ [啟動] CoreServiceCoordinator initialized (state manager mode)")
     
-    # ✅ Step 2: 初始化認知核心（AI 決策引擎）
+    # ✅ Step 2: 初始化認知核心（AI 決策引擎 - 大腦）
     decision_agent = EnhancedDecisionAgent()
-    logger.info("✅ [啟動] EnhancedDecisionAgent initialized (AI decision engine)")
+    logger.info("✅ [啟動] EnhancedDecisionAgent initialized (Cognitive Core - Brain)")
     
-    # ⚠️ Step 2-3: 內部閉環和外部學習（暫時禁用 - 模組尚未實現）
-    # _background_tasks.append(asyncio.create_task(
-    #     periodic_update(),
-    #     name="internal_loop_update"
-    # ))
-    # logger.info("✅ [啟動] Internal exploration loop started")
-    # 
-    # external_connector = ExternalLoopConnector()
-    # _background_tasks.append(asyncio.create_task(
-    #     external_connector.start_listening(),
-    #     name="external_learning_loop"
-    # ))
-    # logger.info("✅ [啟動] External learning listener started")
-    logger.info("⚠️  [啟動] Internal/External loops disabled (modules not implemented)")
+    # ✅ Step 3: 初始化 RabbitMQ Broker（消息隊列）- 可選，5秒超時
+    logger.info("🔧 [啟動] Initializing RabbitMQ Broker (optional, 5s timeout)...")
+    import asyncio
+    import os
+    broker = None  # 預設為 None，沒有 RabbitMQ 也能運行
     
-    # ✅ Step 4-6: 啟動核心處理循環
+    try:
+        # 先檢查 RabbitMQ 端口是否可達
+        import socket
+        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        sock.settimeout(2)
+        result = sock.connect_ex(('localhost', 5672))
+        sock.close()
+        
+        if result != 0:
+            logger.warning("⚠️  [啟動] RabbitMQ 端口 5672 無法連接，跳過消息隊列初始化")
+            logger.info("📝 [啟動] 系統將在本地直接執行模式下運行（不需要 RabbitMQ）")
+        else:
+            from aiva_common.messaging import RabbitBroker
+            
+            # 設置環境變量（如果未設置）
+            if 'RABBITMQ_URL' not in os.environ:
+                os.environ['RABBITMQ_URL'] = 'amqp://guest:guest@localhost:5672/'
+            
+            broker = RabbitBroker()
+            await asyncio.wait_for(broker.connect(), timeout=5.0)
+            logger.info(f"✅ [啟動] RabbitMQ Broker connected: {os.environ['RABBITMQ_URL']}")
+    except asyncio.TimeoutError:
+        logger.warning("⚠️  [啟動] RabbitMQ 連接超時（5秒），跳過")
+        broker = None
+    except Exception as e:
+        logger.warning(f"⚠️  [啟動] RabbitMQ 初始化失敗: {e}")
+        broker = None
+    
+    if broker is None:
+        logger.info("📝 [啟動] 系統將使用本地直接執行模式（無需消息隊列）")
+    
+    # ✅ Step 4: 初始化執行能力（四肢） - 核心修復！
+    logger.info("🔧 [啟動] Initializing execution capabilities (Limbs)...")
+    try:
+        from services.core.aiva_core.task_planning.unified_executor import UnifiedAttackExecutor
+        unified_executor = UnifiedAttackExecutor()
+        logger.info("✅ [啟動] UnifiedAttackExecutor initialized")
+    except Exception as e:
+        logger.warning(f"⚠️  [啟動] UnifiedAttackExecutor failed: {e}, using None")
+        unified_executor = None
+    
+    try:
+        from services.scan.coordinators.multi_engine_coordinator import MultiEngineCoordinator
+        multilang_coordinator = MultiEngineCoordinator()
+        logger.info("✅ [啟動] MultiEngineCoordinator initialized")
+    except Exception as e:
+        logger.warning(f"⚠️  [啟動] MultiEngineCoordinator failed: {e}, using None")
+        multilang_coordinator = None
+    
+    # ✅ Step 5: 初始化指揮官（神經中樞） - 核心修復！
+    logger.info("🔧 [啟動] Initializing CommanderCoordinator (Command Center)...")
+    try:
+        from services.core.aiva_core.task_planning.commander import CommanderCoordinator
+        
+        # ✅ 依賴注入：將大腦、四肢、狀態管理器連接到指揮官
+        commander = CommanderCoordinator(
+            data_directory=_CORE_DIR / "data" / "commander",
+            learning_enabled=True,
+            unified_executor=unified_executor,              # ✅ 注入執行器
+            multilang_coordinator=multilang_coordinator,    # ✅ 注入多語言協調器
+            internal_loop_connector=decision_agent.internal_connector if decision_agent else None,  # ✅ 注入內部閉環
+            session_state_manager=session_state_manager,    # ✅ 注入狀態管理器（進度追蹤）
+        )
+        
+        # Commander 已經初始化完成，直接可用（不需要註冊到 coordinator）
+        logger.info("✅ [啟動] CommanderCoordinator ready - Command chain is complete!")
+    except Exception as e:
+        logger.error(f"❌ [啟動] CommanderCoordinator initialization failed: {e}")
+        commander = None
+    
+    # ✅ Step 3: 啟動內部閉環（Internal Loop）
+    # 內部閉環已在 EnhancedDecisionAgent 中初始化 (self.internal_connector)
+    if decision_agent.internal_connector is not None:
+        try:
+            # 執行一次同步以確保 RAG 知識庫是最新的
+            logger.info("🔄 [啟動] Syncing Internal Loop RAG knowledge base...")
+            # ✅ 使用正確的方法名稱: sync_capabilities_to_rag
+            sync_result = await decision_agent.internal_connector.sync_capabilities_to_rag(
+                force_refresh=False  # 啟動時不強制刷新
+            )
+            
+            if sync_result.success:
+                logger.info(
+                    f"✅ [啟動] Internal Loop synced successfully - "
+                    f"Capabilities found: {sync_result.capabilities_found}, "
+                    f"Documents added: {sync_result.documents_added}"
+                )
+            else:
+                logger.warning(f"⚠️  [啟動] Internal Loop sync failed: {sync_result.error}")
+                
+        except Exception as e:
+            logger.warning(f"⚠️  [啟動] Internal Loop sync failed: {e}")
+    else:
+        logger.info("⚠️  [啟動] Internal Loop connector not available (fallback mode)")
+    
+    # ⚠️ Step 4: 外部學習（External Loop） - 延後啟用
+    # 外部閉環已在 EnhancedDecisionAgent 中初始化 (self.external_connector)
+    # 但學習循環需要執行結果數據，暫時不啟動背景任務
+    if decision_agent.external_connector is not None:
+        logger.info("✅ [啟動] External Loop connector available (on-demand mode)")
+    else:
+        logger.info("⚠️  [啟動] External Loop connector not available")
+    
+    # ✅ Step 5: 啟動執行狀態監控（唯一的背景任務）
     logger.info("[統計] Initializing analysis components...")
-    logger.info("[循環] Starting message processing loops...")
     
-    # Phase0 結果處理器 (優先於標準掃描)
-    _background_tasks.append(asyncio.create_task(
-        process_phase0_results(),
-        name="phase0_results_processor"
-    ))
-    
-    # 標準掃描結果處理器 (處理 Phase1 和傳統掃描)
-    _background_tasks.append(asyncio.create_task(
-        process_scan_results(),
-        name="scan_results_processor"
-    ))
-    
-    _background_tasks.append(asyncio.create_task(
-        process_function_results(),
-        name="function_results_processor"
-    ))
-    
+    # v2.0: 移除 MQ 監聽循環，改用 AICommand 直接執行
+    # 只保留執行狀態監控
     _background_tasks.append(asyncio.create_task(
         monitor_execution_status(),
         name="execution_monitor"
     ))
     
-    logger.info("✅ [啟動] All background tasks started (including Phase0 processor)")
+    logger.info("✅ [啟動] Background monitor started (v2.0 AICommand mode)")
     logger.info("🎉 [啟動] AIVA Core Engine ready to accept requests!")
 
 
 @app.on_event("shutdown")
 async def shutdown() -> None:
     """關閉核心引擎服務"""
-    global coordinator
+    global coordinator, _background_tasks
     
     logger.info("🛑 [關閉] AIVA Core Engine shutting down...")
+    
+    # 取消所有背景任務
+    for task in _background_tasks:
+        if not task.done():
+            task.cancel()
+    
+    # 等待任務完成
+    if _background_tasks:
+        await asyncio.gather(*_background_tasks, return_exceptions=True)
+        logger.info("✅ [關閉] Background tasks cancelled")
     
     if coordinator:
         await coordinator.stop()
@@ -287,304 +392,411 @@ async def get_scan_status(scan_id: str) -> dict[str, str]:
 
 @app.post("/scan", response_model=ScanResponse)
 async def start_scan(request: ScanRequest) -> ScanResponse:
-    """啟動掃描 - 程序與 AI 的溝通接口
+    """啟動掃描 - AI 自主運作模式
     
-    數據流: main.py → app.py (本函數) → AI 內部
+    數據流: main.py → app.py (本函數) → Commander → AI 決策 → 執行器
     
-    流程:
+    流程（符合手冊規範）:
     1. 接收 main.py 轉發的目標網址
-    2. 傳給認知核心（EnhancedDecisionAgent）進行 AI 分析
-    3. 根據 AI 決策發送 Phase0 命令到 MQ
-    4. 返回 scan_id 供後續查詢
+    2. 委託給 Commander（指揮官）
+    3. Commander 詢問 DecisionAgent（AI 大腦）
+    4. AI 決策後，Commander 指揮執行器（四肢）
+    5. 這就是真正的「AI 自主運作」
     """
-    if not decision_agent:
-        raise HTTPException(status_code=503, detail="Decision agent not initialized")
-    
     # 生成 scan_id
     scan_id = f"scan_{uuid4().hex[:8]}"
     trace_id = f"trace_{uuid4().hex[:8]}"
     
-    logger.info(f"🎯 [app.py 接收 main.py 轉發] {scan_id} - Target: {request.target}")
+    logger.info(f"🎯 [Scan Request] {scan_id} - Target: {request.target}")
     
-    try:
-        # ============ 第一路：整合模組存儲 ============
-        data_manager = get_data_manager()
-        data_manager.save_task_data(
-            capability="phase0",  # 按能力分类
-            task_id=scan_id,
-            target=request.target,
-            request_data={
+    # ============ 模式選擇：Commander 自主模式 vs 舊模式 ============
+    if commander:
+        # ✅ 新模式：完整 AI 自主運作（符合手冊規範）
+        logger.info(f"🎖️ [Commander Mode] {scan_id} - AI autonomous operation enabled")
+        
+        try:
+            # 保存到整合模組
+            data_manager = get_data_manager()
+            data_manager.save_task_data(
+                capability="two_phase_scan",
+                task_id=scan_id,
+                target=request.target,
+                request_data={
+                    "scan_type": request.scan_type,
+                    "max_depth": request.max_depth,
+                    "timeout": request.timeout
+                },
+                metadata={
+                    "trace_id": trace_id,
+                    "source": "external_request",
+                    "mode": "commander_autonomous"
+                }
+            )
+            logger.info(f"💾 [Storage] {scan_id} - Saved to integration module")
+            
+            # 構建 Commander 執行上下文
+            from services.core.aiva_core.task_planning.commander.types import AITaskType
+            
+            command_context = {
+                "user_input": f"Scan target {request.target} with {request.scan_type} mode",
+                "target": request.target,
+                "targets": [request.target],  # ✅ 修復：添加targets列表
+                "broker": broker,  # ✅ 修復：添加broker實例
+                "scan_id": scan_id,
+                "trace_id": trace_id,
                 "scan_type": request.scan_type,
                 "max_depth": request.max_depth,
-                "timeout": request.timeout
-            },
-            metadata={
-                "trace_id": trace_id,
-                "source": "external_request"
+                "timeout": request.timeout,
             }
+            
+            # 🎖️ 委託給 Commander：讓 AI 接管一切
+            # Commander 會：
+            # 1. 詢問 DecisionAgent（AI 大腦）該怎麼做
+            # 2. 根據 AI 決策選擇工具和策略
+            # 3. 指揮 UnifiedExecutor（四肢）執行
+            logger.info(f"🎖️ [Delegating] {scan_id} - Handing over to Commander...")
+            
+            # 任務完成回調：記錄結果或錯誤
+            def task_done_callback(task: asyncio.Task) -> None:
+                try:
+                    result = task.result()
+                    logger.info(f"✅ [Task Complete] {scan_id} - Result: success={result.get('success', False)}")
+                    if result.get('vulnerabilities'):
+                        logger.info(f"   🔍 Found {len(result['vulnerabilities'])} vulnerabilities")
+                except asyncio.CancelledError:
+                    logger.warning(f"⚠️ [Task Cancelled] {scan_id}")
+                    session_state_manager.update_session_status(scan_id, "cancelled")
+                except Exception as e:
+                    logger.error(f"❌ [Task Failed] {scan_id} - Error: {e}")
+                    session_state_manager.update_session_status(scan_id, "failed", {"error": str(e)})
+            
+            # 保存 task 引用以防止被垃圾回收
+            scan_task = asyncio.create_task(
+                commander.execute_command(
+                    task_type=AITaskType.TWO_PHASE_SCAN,
+                    context=command_context
+                ),
+                name=f"commander_scan_{scan_id}"
+            )
+            # 將 task 加入集合以防止過早回收
+            if not hasattr(app.state, 'background_tasks'):
+                app.state.background_tasks = set()
+            app.state.background_tasks.add(scan_task)
+            scan_task.add_done_callback(task_done_callback)
+            scan_task.add_done_callback(app.state.background_tasks.discard)
+            
+            return ScanResponse(
+                scan_id=scan_id,
+                status="started",
+                message="AI Autonomous Scan Initiated (Commander Mode)",
+                target=request.target,
+                estimated_time=600
+            )
+            
+        except Exception as e:
+            logger.error(f"❌ [Commander Error] {scan_id} - {e}")
+            raise HTTPException(status_code=500, detail=f"Commander execution failed: {str(e)}")
+    
+    else:
+        # ⚠️ 舊模式：降級處理（向後兼容）
+        logger.warning(f"⚠️  [Legacy Mode] {scan_id} - Commander not available, using direct execution")
+        
+        if not decision_agent:
+            raise HTTPException(status_code=503, detail="System not fully initialized")
+        
+        try:
+            # ============ 第一路：整合模組存儲 ============
+            data_manager = get_data_manager()
+            data_manager.save_task_data(
+                capability="phase0",  # 按能力分类
+                task_id=scan_id,
+                target=request.target,
+                request_data={
+                    "scan_type": request.scan_type,
+                    "max_depth": request.max_depth,
+                    "timeout": request.timeout
+                },
+                metadata={
+                    "trace_id": trace_id,
+                    "source": "external_request",
+                    "mode": "legacy_direct"
+                }
+            )
+            logger.info(f"💾 [存儲] {scan_id} - 已保存到整合模組")
+            
+            # ============ 第二路：AI 分析決策 ============
+            # 構建決策上下文
+            context = DecisionContext()
+            context.target_info = {
+                "type": "web",
+                "value": request.target,
+                "id": scan_id,
+                "scan_type": request.scan_type,
+            }
+            context.available_tools = ["nmap", "nikto", "sqlmap", "xsser", "dirb"]
+            
+            # 🧠 調用認知核心進行初步分析
+            logger.info(f"🧠 [AI Analysis] {scan_id} - Analyzing target with cognitive core...")
+            initial_decision = await decision_agent.make_enhanced_decision(
+                context=context,
+                use_embedded_knowledge=True
+            )
+            
+            logger.info(
+                f"🧠 [AI Decision] {scan_id} - "
+                f"Action: {initial_decision.action}, "
+                f"Confidence: {initial_decision.confidence:.0%}"
+            )
+            
+            # v2.0: 使用 AICommand 直接執行（取代 MQ）
+            command = AICommand(
+                command_id=f"{scan_id}_phase0",
+                command_type=CommandType.SCAN_PHASE0,
+                target_module="scan",
+                payload={
+                    "scan_id": scan_id,
+                    "targets": [request.target],
+                    "trace_id": trace_id,
+                    "timeout": request.timeout,
+                    "ai_decision": initial_decision.action,
+                },
+                priority=CommandPriority.NORMAL,  # ✅ 使用枚舉值
+                timeout=request.timeout,
+                # ✅ 添加必要的參數
+                trace_id=trace_id,
+                session_id=scan_id,
+                parent_command_id=None,
+                callback_url=None,
+            )
+            
+            # 異步執行 Phase0（不阻塞響應）
+            # ✅ 保存 task 以防止過早被垃圾回收
+            task = asyncio.create_task(
+                _execute_phase0_async(command, scan_id, request.target),
+                name=f"phase0_{scan_id}"
+            )
+            _background_tasks.append(task)
+            
+            # 初始化會話狀態
+            session_state_manager.update_session_status(
+                session_id=scan_id,
+                status="phase0_started",
+                additional_data={
+                    "target": request.target,
+                    "scan_type": request.scan_type,
+                    "ai_decision": initial_decision.action,
+                    "confidence": initial_decision.confidence,
+                    "reasoning": initial_decision.reasoning,
+                },
+            )
+            
+            logger.info(f"✅ [Scan Started] {scan_id} - Phase0 task created (Legacy AICommand mode)")
+            
+            return ScanResponse(
+                scan_id=scan_id,
+                status="started",
+                message=f"Scan initiated (Legacy Mode) with AI decision: {initial_decision.action}",
+                target=request.target,
+                estimated_time=600,  # Phase0 預估 10 分鐘
+            )
+            
+        except Exception as e:
+            logger.error(f"❌ [Scan Failed] {scan_id} - {e}", exc_info=True)
+            raise HTTPException(status_code=500, detail=f"Failed to start scan: {str(e)}")
+
+
+# ==================== v2.0 AICommand 異步執行函數 ====================
+
+async def _execute_phase0_async(command: AICommand, scan_id: str, target: str) -> None:
+    """異步執行 Phase0 掃描
+    
+    v2.0 架構：使用 AICommand 直接執行，取代 MQ 監聽
+    
+    Args:
+        command: Phase0 掃描命令
+        scan_id: 掃描 ID
+        target: 目標 URL
+    """
+    import subprocess
+    import json
+    from datetime import datetime
+    
+    logger.info(f"[Phase0] Starting async execution for {scan_id}")
+    start_time = datetime.now()
+    
+    try:
+        # 使用 CLI 執行器進行 Phase0 掃描
+        # 這裡調用 scan_interface 的內部方法直接執行
+        result = await scan_interface.execute_phase0_direct(
+            scan_id=scan_id,
+            targets=[target],
+            timeout=command.timeout or 600,
         )
-        logger.info(f"💾 [存儲] {scan_id} - 已保存到整合模組")
         
-        # ============ 第二路：AI 分析決策 ============
-        # 構建決策上下文
-        context = DecisionContext()
-        context.target_info = {
-            "type": "web",
-            "value": request.target,
-            "id": scan_id,
-            "scan_type": request.scan_type,
-        }
-        context.available_tools = ["nmap", "nikto", "sqlmap", "xsser", "dirb"]
+        execution_time = (datetime.now() - start_time).total_seconds()
         
-        # 🧠 調用認知核心進行初步分析
-        logger.info(f"🧠 [AI Analysis] {scan_id} - Analyzing target with cognitive core...")
-        initial_decision = await decision_agent.make_enhanced_decision(
-            context=context,
-            use_embedded_knowledge=True
+        # 構建 AICommandResult
+        command_result = AICommandResult(
+            command_id=command.command_id,
+            status=CommandStatus.COMPLETED if result.get("success") else CommandStatus.FAILED,
+            success=result.get("success", False),
+            result=result,
+            execution_time=execution_time,
+            started_at=start_time,
+            completed_at=datetime.now(),
+            # ✅ 添加必要的錯誤參數
+            error=str(result.get("error")) if not result.get("success") else None,
+            error_code=None,
+            error_details=None,
         )
         
         logger.info(
-            f"🧠 [AI Decision] {scan_id} - "
-            f"Action: {initial_decision.action}, "
-            f"Confidence: {initial_decision.confidence:.0%}"
+            f"[Phase0] Completed for {scan_id} - "
+            f"Success: {command_result.success}, "
+            f"Time: {execution_time:.1f}s"
         )
         
-        # 根據 AI 決策發送 Phase0 命令到 MQ
-        broker = await get_broker()
-        await scan_interface.send_phase0_command(
-            broker=broker,
-            scan_id=scan_id,
-            targets=[request.target],
-            trace_id=trace_id,
-            timeout_seconds=request.timeout,
-        )
-        
-        # 初始化會話狀態
-        session_state_manager.update_session_status(
-            session_id=scan_id,
-            status="phase0_started",
-            additional_data={
-                "target": request.target,
-                "scan_type": request.scan_type,
-                "ai_decision": initial_decision.action,
-                "confidence": initial_decision.confidence,
-                "reasoning": initial_decision.reasoning,
-            },
-        )
-        
-        logger.info(f"✅ [Scan Started] {scan_id} - Phase0 command sent to MQ")
-        
-        return ScanResponse(
-            scan_id=scan_id,
-            status="started",
-            message=f"Scan initiated with AI decision: {initial_decision.action}",
-            target=request.target,
-            estimated_time=600,  # Phase0 預估 10 分鐘
-        )
+        # 處理 Phase0 結果並決策是否需要 Phase1
+        await _process_phase0_result(scan_id, result)
         
     except Exception as e:
-        logger.error(f"❌ [Scan Failed] {scan_id} - {e}", exc_info=True)
-        raise HTTPException(status_code=500, detail=f"Failed to start scan: {str(e)}")
+        execution_time = (datetime.now() - start_time).total_seconds()
+        logger.error(f"[Phase0] Failed for {scan_id}: {e}", exc_info=True)
+        
+        session_state_manager.update_session_status(
+            scan_id,
+            "phase0_failed",
+            {"error": str(e), "error_type": type(e).__name__},
+        )
 
 
-@retry(
-    stop=stop_after_attempt(3),
-    wait=wait_exponential(multiplier=1, min=4, max=10),
-    reraise=True,
-)
-async def _process_single_scan_with_retry(
-    payload: ScanCompletedPayload, trace_id: str
-) -> None:
-    """可重試的掃描處理邏輯
-
-    Args:
-        payload: 掃描完成載荷
-        trace_id: 追蹤 ID
-
-    Raises:
-        Exception: 當所有重試都失敗時拋出
-    """
-    broker = await get_broker()
-    await scan_result_processor.process(payload, broker, trace_id)
-
-
-async def process_phase0_results() -> None:
-    """處理 Phase0 快速偵察結果 - AI 決策與引擎選擇
+async def _process_phase0_result(scan_id: str, result: dict) -> None:
+    """處理 Phase0 結果並決策是否需要 Phase1
     
-    流程:
-    1. 接收 Phase0 結果 (scan.phase0.completed)
-    2. AI 分析決策是否需要 Phase1
-    3. 如果需要 Phase1, 選擇適合的引擎
-    4. 發送 Phase1 命令 (tasks.scan.phase1)
+    Args:
+        scan_id: 掃描 ID
+        result: Phase0 執行結果
     """
-    logger.info("[Phase0] Starting Phase0 results processor...")
-    broker = await get_broker()
-
-    aiterator = broker.subscribe(Topic.RESULTS_SCAN_PHASE0_COMPLETED)
-    if hasattr(aiterator, "__await__"):
-        aiterator = await aiterator  # type: ignore[misc]
-
-    async for mqmsg in aiterator:  # type: ignore[misc]
-        msg = AivaMessage.model_validate_json(mqmsg.body)
-        payload = Phase0CompletedPayload(**msg.payload)
-        scan_id = payload.scan_id
-
-        try:
-            # 根据 aiva_common/schemas/tasks.py 的实际字段结构
-            assets_count = len(payload.assets) if payload.assets else 0
-            fingerprints = payload.fingerprints.model_dump() if payload.fingerprints else {}
-            tech_count = len(fingerprints.get("technologies", []))
-            
-            logger.info(
-                f"[Phase0] Received results for {scan_id} - "
-                f"Assets: {assets_count}, "
-                f"Technologies: {tech_count}, "
-                f"Status: {payload.status}"
-            )
-
-            # 處理 Phase0 結果並決策
-            need_phase1, reason, selected_engines = await scan_result_processor.process_phase0(
-                payload, broker, msg.header.trace_id
-            )
-
-            if not need_phase1:
-                logger.info(
-                    f"[Phase0] Scan {scan_id} does not need Phase1. Reason: {reason}"
-                )
-                # 輕量級分析流程：Phase0 結果已足夠，直接生成報告
-                logger.info(f"[Phase0] Generating lightweight report for {scan_id}")
-                continue
-
-            logger.info(
-                f"[Phase0] Scan {scan_id} needs Phase1 with engines: {selected_engines}. Reason: {reason}"
-            )
-
-            # 發送 Phase1 命令
-            # 從 Phase0 payload 的 assets 中提取目標 URL (使用 value 字段)
-            targets = [asset.value for asset in payload.assets if asset.value] if payload.assets else []
-            
-            # Fallback: 從會話上下文獲取
-            if not targets:
-                session_context = session_state_manager.get_session_context(scan_id)
-                targets = session_context.get("targets", [])
-
-            await scan_interface.send_phase1_command(
-                broker=broker,
-                scan_id=scan_id,
-                targets=targets,
-                trace_id=msg.header.trace_id,
-                phase0_result=payload,
-                selected_engines=selected_engines,
-                max_depth=3,
-                max_urls=1000,
-            )
-
-            logger.info(
-                f"[Phase0] Phase1 command sent for {scan_id} with engines {selected_engines}"
-            )
-
-        except Exception as e:
-            logger.error(
-                f"[Phase0] Error processing Phase0 result for {scan_id}: {e}",
-                exc_info=True,
-            )
-            session_state_manager.update_session_status(
-                scan_id,
-                "phase0_failed",
-                {"error": str(e), "error_type": type(e).__name__},
-            )
-
-
-async def process_scan_results() -> None:
-    """處理掃描模組回傳的結果 - 核心分析與策略生成
-    這是第3階段: 核心分析與建議的主要邏輯
-    """
-    logger.info("[API] Starting scan results processor...")
-    broker = await get_broker()
-
-    aiterator = broker.subscribe(Topic.RESULTS_SCAN_COMPLETED)
-    if hasattr(aiterator, "__await__"):
-        aiterator = await aiterator  # type: ignore[misc]
-
-    async for mqmsg in aiterator:  # type: ignore[misc]
-        msg = AivaMessage.model_validate_json(mqmsg.body)
-        payload = ScanCompletedPayload(**msg.payload)
-        scan_id = payload.scan_id
-
-        try:
-            # 使用重試機制處理掃描結果
-            await _process_single_scan_with_retry(payload, msg.header.trace_id)
-
-        except RetryError as retry_err:
-            # 所有重試都失敗
-            logger.error(
-                f"[失敗] All retries exhausted for scan {scan_id}: {retry_err}",
-                exc_info=True,
-            )
-            # 更新掃描狀態為失敗
-            session_state_manager.update_session_status(
-                scan_id,
-                "failed",
-                {
-                    "error": str(retry_err),
-                    "error_type": "retry_exhausted",
-                    "retry_attempts": 3,
-                },
-            )
-
-        except Exception as e:
-            # 非預期的錯誤
-            logger.error(
-                f"[失敗] Unexpected error processing scan {scan_id}: {e}",
-                exc_info=True,
-            )
-            # 更新掃描狀態為失敗
-            session_state_manager.update_session_status(
-                scan_id,
-                "failed",
-                {
-                    "error": str(e),
-                    "error_type": type(e).__name__,
-                },
-            )
-
-
-async def process_function_results() -> None:
-    """處理功能模組回傳的結果 - 用於下一輪優化
-    實現動態學習與策略調整
-    """
-    logger.info("[循環] Starting function results processor...")
-    broker = await get_broker()
-
-    # 監聽所有功能模組的結果
-    aiterator = broker.subscribe(Topic.LOG_RESULTS_ALL)
-    if hasattr(aiterator, "__await__"):
-        aiterator = await aiterator  # type: ignore[misc]
-
-    async for mqmsg in aiterator:  # type: ignore[misc]
-        try:
-            msg = AivaMessage.model_validate_json(mqmsg.body)
-            result_data = msg.payload
-
-            # 提取相關資訊
-            scan_id = result_data.get("scan_id")
-            vulnerability_info = result_data.get("vulnerability", {})
-
-            logger.info(f"[統計] Received result from {msg.header.source_module}")
-
-            # 回饋給策略調整器，用於改善下次決策
-            feedback_data = {
+    try:
+        assets = result.get("assets", [])
+        technologies = result.get("technologies", [])
+        
+        logger.info(
+            f"[Phase0] Processing results for {scan_id} - "
+            f"Assets: {len(assets)}, Technologies: {len(technologies)}"
+        )
+        
+        # AI 決策是否需要 Phase1
+        if decision_agent:
+            context = DecisionContext()
+            context.target_info = {
+                "type": "phase0_result",
                 "scan_id": scan_id,
-                "module": msg.header.source_module,
-                "vulnerability": vulnerability_info,
-                "success": vulnerability_info.get("confidence") == "CONFIRMED",
+                "assets_count": len(assets),
+                "technologies": technologies,
             }
+            
+            decision = await decision_agent.make_enhanced_decision(
+                context=context,
+                use_embedded_knowledge=True
+            )
+            
+            need_phase1 = decision.confidence > 0.5 and len(assets) > 0
+            
+            if need_phase1:
+                logger.info(f"[Phase0] {scan_id} needs Phase1 scan")
+                # 創建 Phase1 任務
+                phase1_command = AICommand(
+                    command_id=f"{scan_id}_phase1",
+                    command_type=CommandType.SCAN_PHASE1,
+                    target_module="scan",
+                    payload={
+                        "scan_id": scan_id,
+                        "targets": [a.get("value", a) if isinstance(a, dict) else a for a in assets],
+                        "phase0_result": result,
+                        "selected_engines": decision.params.get("engines", ["nikto", "dirb"]),
+                    },
+                    priority=CommandPriority.NORMAL,  # ✅ 使用枚舉值
+                    timeout=1800,
+                    # ✅ 添加必要的參數
+                    trace_id=f"trace_{scan_id}",
+                    session_id=scan_id,
+                    parent_command_id=f"{scan_id}_phase0",
+                    callback_url=None,
+                )
+                # ✅ 保存 task 以防止過早被垃圾回收
+                task = asyncio.create_task(
+                    _execute_phase1_async(phase1_command, scan_id),
+                    name=f"phase1_{scan_id}"
+                )
+                _background_tasks.append(task)
+                session_state_manager.update_session_status(
+                    scan_id, "phase1_started", {"engines": decision.params.get("engines", [])}
+                )
+            else:
+                logger.info(f"[Phase0] {scan_id} completed, no Phase1 needed")
+                session_state_manager.update_session_status(
+                    scan_id, "completed", {"result": "phase0_sufficient"}
+                )
+        else:
+            # 沒有 AI 決策代理時，預設完成
+            session_state_manager.update_session_status(
+                scan_id, "completed", {"result": "phase0_only"}
+            )
+            
+    except Exception as e:
+        logger.error(f"[Phase0] Error processing result for {scan_id}: {e}", exc_info=True)
+        session_state_manager.update_session_status(
+            scan_id, "failed", {"error": str(e)}
+        )
 
-            # 更新長期知識庫
-            strategy_adjuster.learn_from_result(feedback_data)
 
-        except Exception as e:
-            logger.error(f"[失敗] Error processing function result: {e}")
+async def _execute_phase1_async(command: AICommand, scan_id: str) -> None:
+    """異步執行 Phase1 深度掃描
+    
+    Args:
+        command: Phase1 掃描命令
+        scan_id: 掃描 ID
+    """
+    from datetime import datetime
+    
+    logger.info(f"[Phase1] Starting async execution for {scan_id}")
+    start_time = datetime.now()
+    
+    try:
+        payload = command.payload or {}
+        result = await scan_interface.execute_phase1_direct(
+            scan_id=scan_id,
+            targets=payload.get("targets", []),
+            engines=payload.get("selected_engines", []),
+            timeout=command.timeout or 1800,
+        )
+        
+        execution_time = (datetime.now() - start_time).total_seconds()
+        
+        logger.info(
+            f"[Phase1] Completed for {scan_id} - "
+            f"Time: {execution_time:.1f}s"
+        )
+        
+        # 更新狀態
+        session_state_manager.update_session_status(
+            scan_id, "completed", {"phase1_result": result}
+        )
+        
+        # 回饋學習
+        strategy_adjuster.learn_from_result({
+            "scan_id": scan_id,
+            "phase": "phase1",
+            "result": result,
+            "execution_time": execution_time,
+        })
+        
+    except Exception as e:
+        logger.error(f"[Phase1] Failed for {scan_id}: {e}", exc_info=True)
+        session_state_manager.update_session_status(
+            scan_id, "phase1_failed", {"error": str(e)}
+        )
 
 
 async def monitor_execution_status() -> None:
@@ -609,4 +821,38 @@ async def monitor_execution_status() -> None:
 
         except Exception as e:
             logger.error(f"[失敗] Error in status monitoring: {e}")
+
+
+# ============================================================================
+# 啟動配置
+# ============================================================================
+
+if __name__ == "__main__":
+    import uvicorn
+    import argparse
+    
+    parser = argparse.ArgumentParser(description="AIVA AI 內部服務")
+    parser.add_argument("--port", "-p", type=int, default=8000, help="服務端口")
+    parser.add_argument("--host", "-H", type=str, default="0.0.0.0", help="綁定地址")
+    parser.add_argument("--reload", "-r", action="store_true", help="開發模式（自動重載）")
+    args = parser.parse_args()
+    
+    print(f"""
+╔══════════════════════════════════════════════════════════════╗
+║              AIVA AI 內部服務                                ║
+║                                                              ║
+║  地址: http://{args.host}:{args.port:<44}║
+║  API 文檔: http://{args.host}:{args.port}/docs{' ':<38}║
+╚══════════════════════════════════════════════════════════════╝
+""")
+    
+    # 直接傳入 app 對象（不用字串路徑，避免模組找不到的問題）
+    uvicorn.run(
+        app,  # 直接用 app 對象
+        host=args.host,
+        port=args.port,
+        # reload 模式需要字串路徑，但會有 Windows 子進程問題，所以禁用
+        log_level="info"
+    )
+
 

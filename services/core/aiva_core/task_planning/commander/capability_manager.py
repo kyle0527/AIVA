@@ -5,7 +5,7 @@
 
 import logging
 from datetime import datetime
-from typing import Any, Literal
+from typing import Any
 
 from aiva_common.enums.capability_executor import CapabilityExecutor, ExecutionResult
 
@@ -20,17 +20,14 @@ class CapabilityManager:
 
     def __init__(
         self,
-        capability_executor: CapabilityExecutor,
-        mode_manager: Any,
+        capability_executor: CapabilityExecutor | None = None,
     ):
         """初始化能力管理器
         
         Args:
-            capability_executor: 能力執行器
-            mode_manager: 模式管理器
+            capability_executor: 能力執行器（可選）
         """
         self.capability_executor = capability_executor
-        self.mode_manager = mode_manager
         self.command_history: list[dict[str, Any]] = []
 
     def list_available_capabilities(
@@ -146,36 +143,3 @@ class CapabilityManager:
             格式化的選單字串
         """
         return self.capability_executor.print_menu(category)
-
-    def set_execution_mode(
-        self,
-        mode: Literal["sandbox", "production"],
-        persist: bool = True
-    ) -> None:
-        """設定執行模式（手動切換）
-        
-        Args:
-            mode: 目標模式 ("sandbox" 或 "production")
-            persist: 是否持久化到設定檔（預設 True）
-        
-        Raises:
-            ValueError: 模式名稱無效
-        
-        使用範例:
-            >>> manager.set_execution_mode("sandbox")  # 切換到靶場模式
-            >>> manager.set_execution_mode("production")  # 切換到生產模式
-        """
-        self.mode_manager.set_mode(mode, persist=persist)
-        logger.info(f"🔄 Execution mode set to: {mode}")
-    
-    def get_execution_mode(self) -> str:
-        """獲取當前執行模式
-        
-        Returns:
-            當前模式字串 ("sandbox" 或 "production")
-        
-        使用範例:
-            >>> mode = manager.get_execution_mode()
-            >>> print(f"Current mode: {mode}")
-        """
-        return self.mode_manager.get_mode().value

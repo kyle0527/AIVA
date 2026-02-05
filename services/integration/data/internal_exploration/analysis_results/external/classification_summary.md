@@ -1,29 +1,28 @@
 # 外部模組多語言分類報告
 
-生成時間: 2026-01-31 01:15:35
+生成時間: 2026-02-02 15:23:12
 
 ---
 
 ## 總體統計
 
-- **總模組數**: 13
-- **總流程數**: 524
+- **總模組數**: 14
+- **總流程數**: 525
 
 ## 可操作性分析
 
 > 基於原則.md 的5大判斷原則（邊界、序列化、拓撲學、命名慣例、框架約定）
 
-- ✅ **可操作流程**: 291 (55.5%)
-- ❌ **不可操作流程**: 233 (44.5%)
+- ✅ **可操作流程**: 287 (54.7%)
+- ❌ **不可操作流程**: 238 (45.3%)
 
 ### 按語言分類
 
 | 語言 | 可操作 | 不可操作 | 可操作率 |
 |------|--------|----------|----------|
-| Go | 13 | 0 | 100.0% |
-| Python | 270 | 233 | 53.7% |
-| Rust | 4 | 0 | 100.0% |
-| TypeScript | 4 | 0 | 100.0% |
+| Go | 2 | 0 | 100.0% |
+| Python | 283 | 238 | 54.3% |
+| Rust | 2 | 0 | 100.0% |
 
 ## 模組列表
 
@@ -34,12 +33,13 @@
 | function_web_scanner | Python | unknown | 74 |
 | function_ssrf | Python | ssrf | 64 |
 | function_bizlogic | Python | business_logic | 53 |
-| function_postex | Python | unknown | 51 |
+| function_postex | Python | unknown | 49 |
 | function_idor | Python | access_control | 25 |
 | python_engine | Python | unknown | 24 |
-| function_authn_go | Go | authentication | 13 |
-| function_crypto | Rust | cryptographic | 4 |
-| typescript_engine | TypeScript | language_engine | 4 |
-| function_infoleak | Python | information_disclosure | 0 |
-| function_info_leak | Python | unknown | 0 |
+| function_info_leak | Python | unknown | 20 |
+| function_authn_go | Go | authentication | 1 |
+| go_engine | Go | unknown | 1 |
+| function_crypto | Rust | cryptographic | 1 |
+| rust_engine | Rust | unknown | 1 |
+| typescript_engine | TypeScript | language_engine | 0 |
 

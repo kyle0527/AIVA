@@ -1,0 +1,18 @@
+flowchart TD
+    n1(["Start"])
+    n2(["End"])
+    n3["Call: idStr.replaceAll"]
+    n4{"If Condition"}
+    n5["Then"]
+    n6[""]
+    n7["Call: cleaned.replaceAll"]
+    n8["Return"]
+
+    n1 --> n3
+    n3 --> n4
+    n4 -->|Yes| n5
+    n4 -->|No| n6
+    n5 --> n6
+    n6 --> n7
+    n7 --> n8
+    n8 --> n2

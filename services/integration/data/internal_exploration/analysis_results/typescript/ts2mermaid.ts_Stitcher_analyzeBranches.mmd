@@ -1,0 +1,18 @@
+flowchart TD
+    n1(["Start"])
+    n2(["End"])
+    n3{"Loop"}
+    n4["Body"]
+    n5[""]
+    n6["Call: forEach"]
+    n7["Call: forEach"]
+    n8["Return"]
+
+    n1 --> n3
+    n3 -->|Yes| n4
+    n3 -->|No| n5
+    n4 -->|Next| n3
+    n5 --> n6
+    n6 --> n7
+    n7 --> n8
+    n8 --> n2

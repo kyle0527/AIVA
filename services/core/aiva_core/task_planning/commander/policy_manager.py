@@ -71,7 +71,10 @@ class PolicyManager:
         """加載風險策略配置"""
         try:
             if not self.policy_path.exists():
-                logger.warning(f"Policy file not found: {self.policy_path}, using fallback")
+                raise FileNotFoundError(
+                    f"❌ Policy file not found: {self.policy_path}\n"
+                    f"   請創建策略配置文件"
+                )
                 self._use_fallback_policy()
                 return
             
@@ -109,38 +112,10 @@ class PolicyManager:
             )
             
         except Exception as e:
-            logger.error(f"Failed to load policy from {self.policy_path}: {e}")
-            self._use_fallback_policy()
-
-    def _use_fallback_policy(self):
-        """使用降級策略（硬編碼的基本規則）"""
-        logger.warning("Using fallback risk policy (hardcoded rules)")
-        
-        # 基本規則（與原來的硬編碼邏輯相同）
-        self.rules = {
-            'environment': [
-                RiskRule('target_type == "production"', 3, 
-                        'Production environment - High impact potential',
-                        'Use non-destructive testing methods')
-            ],
-            'authorization': [
-                RiskRule('authorized == False', 5,
-                        '⚠️ CRITICAL: Unauthorized testing - Legal risk',
-                        'STOP immediately and verify authorization')
-            ]
-        }
-        
-        # 基本風險等級
-        self.risk_levels = {
-            'critical': RiskLevel('critical', 7, None, 
-                                 'Critical risk', True, 'Stop and review'),
-            'high': RiskLevel('high', 4, 6, 
-                             'High risk', True, 'Implement mitigation'),
-            'medium': RiskLevel('medium', 2, 3, 
-                               'Medium risk', False, 'Proceed with caution'),
-            'low': RiskLevel('low', 0, 1, 
-                            'Low risk', False, 'Normal operation')
-        }
+            raise RuntimeError(
+                f"❌ Failed to load policy from {self.policy_path}: {e}\n"
+                f"   策略文件必須存在且格式正確"
+            ) from e
 
     def assess_risk(self, situation: Dict[str, Any], constraints: Dict[str, Any]) -> Dict[str, Any]:
         """評估風險因素

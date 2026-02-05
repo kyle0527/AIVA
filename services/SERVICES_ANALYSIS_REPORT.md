@@ -210,9 +210,10 @@ task_planning/
 │  ├── workflow_planner.py
 │  └── dependency_resolver.py
 ├── executor/
-│  ├── unified_executor.py      # 统一执行器
-│  └── mode_manager.py
+│  └── unified_executor.py      # 统一执行器
 └── persistence/                 # 任务持久化
+
+> **注意**: `mode_manager.py` 已废弃，攻击强度由 `target_sensitivity` (0.0-1.0) 控制。
 ```
 
 **AttackCoordinator** (核心):

@@ -4,11 +4,11 @@ AIVA Features - 功能模組
 這是 AIVA 的增強功能模組包，符合 aiva_common 規範，包含安全檢測功能。所有模組都支持 CLI 調用。
 
 ✅ **已符合 aiva_common 規範的模組**:
-- function_xss: XSS 漏洞檢測 (CLI + CommandHandler)
-- function_sqli: SQL 注入檢測 (CLI + CommandHandler) 
-- function_ssrf: SSRF 漏洞檢測 (CLI + CommandHandler)
-- function_forensic: 數字取證分析 (CLI + CommandHandler)
-- function_wordlist_generator: 字典生成器 (CLI + CommandHandler)
+- function_xss: XSS 漏洞檢測 (CLI 驅動，保留 CommandHandler 過渡期)
+- function_sqli: SQL 注入檢測 (CLI 驅動)
+- function_ssrf: SSRF 漏洞檢測 (CLI 驅動)
+- function_forensic: 數字取證分析 (CLI 驅動)
+- function_wordlist_generator: 字典生成器 (CLI 驅動)
 
 🔧 **待完善命令系統集成的模組**:
 - function_reverse_engineering: 逆向工程分析

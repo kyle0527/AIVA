@@ -1,12 +1,79 @@
 # RAG 系統待辦清單
 
-## 當前狀態
+## 當前狀態（2026-02-04 更新）
 - ✅ 已完成 RAG 架構設計分析
 - ✅ 已決定使用 JSONL（不使用 SQLite）
 - ✅ 已設計 CLI 指令庫結構
 - ✅ **重大發現**: Internal Exploration 已有 286 個數據流！
 - ✅ 已識別攻擊相關流程：attack_coordinator, unified_attack_executor
-- ⏳ 待實現：RAG 決策層整合 Internal Exploration
+- ✅ **P0 完成**: RAG 決策層整合 External Exploration（525 flows）
+- ✅ **CLI Decision Engine 已實現**
+- ✅ **FlowExecutorAdapter 已實現**
+- ✅ **AttackCoordinator 整合完成**
+
+---
+
+## 🎉 P0 階段完成總結
+
+### 已實現組件
+
+1. **CLIDecisionEngine** (`services/core/aiva_core/cognitive_core/learning_system/cli_decision_engine.py`)
+   - ✅ 直接讀取 `external_classification.json`
+   - ✅ 載入 525 個攻擊 flows（287 個可操作）
+   - ✅ 支援能力檢索（XSS, SQLi, SSRF, Scanner, PostEx）
+   - ✅ 根據掃描上下文推薦攻擊流程
+   - ✅ 關鍵字搜索和優先級排序
+
+2. **FlowExecutorAdapter** (`services/core/aiva_core/cognitive_core/learning_system/flow_executor_adapter.py`)
+   - ✅ 橋接 CLIDecisionEngine 和 FlowExecutor
+   - ✅ 參數轉換（AttackFlow → 執行參數）
+   - ✅ 執行協調和結果標準化
+   - ✅ 移除 Dry Run，直接真實執行
+
+3. **AttackCoordinator 整合** (`services/core/aiva_core/task_planning/commander/attack_coordinator.py`)
+   - ✅ 新增 `rag_smart_attack()` 方法
+   - ✅ 新增 `rag_targeted_attack()` 方法
+   - ✅ 根據掃描結果自動選擇攻擊流程
+   - ✅ 支援多種攻擊模式（auto, aggressive, cautious）
+   - ✅ 移除 dry_run 模式
+
+### 測試結果
+
+執行 `test_rag_smart_attack.py` 完成 5 個測試：
+- ✅ CLI 決策引擎基本功能
+- ✅ FlowExecutorAdapter 參數轉換
+- ✅ 定向攻擊（指定能力）
+- ✅ 多能力攻擊（XSS + SQLi + SSRF）
+- ✅ 完整整合流程
+
+**關鍵數據**:
+- 載入 525 個攻擊 flows
+- 287 個可操作flows（54.7%）
+- XSS: 48/97 可操作
+- SQLi: 68/115 可操作
+- SSRF: 28/64 可操作
+
+---
+
+## 📋 後續優化方向（P1-P3）
+
+### P1: 實際執行與驗證
+- [x] 移除 Dry Run 模式，執行真實攻擊
+- [ ] 靶場驗證（testphp.vulnweb.com）
+- [ ] 收集執行結果和錯誤處理
+- [ ] 優化超時和重試策略
+
+### P2: 優化決策算法
+- [ ] 根據掃描結果調整優先級算法
+- [ ] 考慮目標指紋（技術棧、WAF、防護等級）
+- [ ] 學習成功率，動態調整推薦
+- [ ] 實現 Vector Store 語義搜索（可選）
+
+### P3: 擴展功能
+- [ ] 支援更多攻擊能力（XXE, File Upload, Deserialization）
+- [ ] 實現攻擊鏈組合（Phase1 → Phase2 → PostEx）
+- [ ] 結果反饋循環（成功率統計）
+- [ ] AI 自然語言查詢接口
 
 ---
 

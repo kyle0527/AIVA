@@ -7,7 +7,6 @@ from typing import Any, Dict, List, Optional
 # 統一使用 FlowExecutor（來自 internal_exploration）
 # ManifestLoader 已棄用 - manifests/capabilities 目錄已移除
 
-
 def load_flow_definitions() -> List[Dict[str, Any]]:
     """從 latest_classification.json 讀取所有 flows
     
@@ -36,7 +35,6 @@ def load_flow_definitions() -> List[Dict[str, Any]]:
     click.echo("⚠️  未找到 flow 定義文件", err=True)
     return []
 
-
 def create_flow_command(flow_id: int, flow_info: Dict[str, Any]):
     """為指定 flow_id 創建命令函數
     
@@ -60,8 +58,7 @@ def create_flow_command(flow_id: int, flow_info: Dict[str, Any]):
     @click.option('--param', '-p', multiple=True, help='額外參數 (key=value 格式)')
     @click.option('--intensity', '-i', type=float, default=0.5, 
                   help='AI 強度 (0.0-1.0)')
-    @click.option('--dry-run', is_flag=True, help='預覽模式，不實際執行')
-    def flow_command(target, data, query, param, intensity, dry_run):
+    def flow_command(target, data, query, param, intensity):
         """執行指定 Flow
         
         根據 flow_id 執行對應的 Flow 工作流程。
@@ -103,17 +100,13 @@ def create_flow_command(flow_id: int, flow_info: Dict[str, Any]):
         if context_data:
             click.echo(f"   參數: {json.dumps(context_data, ensure_ascii=False)}")
         
-        if dry_run:
-            click.echo("\n🔍 Dry Run 模式 - 僅預覽，不執行")
-            return
-        
         # 執行 Flow
         try:
             from services.core.aiva_core.internal_exploration.aiva_internal_executor import FlowExecutor
             
             executor = FlowExecutor()
             click.echo("\n⏳ 執行中...")
-            executor.execute_flow(flow_id, context_data=context_data, dry_run=False)
+            executor.execute_flow(flow_id, context_data=context_data)
             
             click.echo("\n✅ 執行完成")
             return 0  # 成功退出碼
@@ -128,7 +121,6 @@ def create_flow_command(flow_id: int, flow_info: Dict[str, Any]):
             return 1  # 邏輯錯誤退出碼
     
     return flow_command
-
 
 def register_all_flow_commands(cli_group):
     """為所有 flows 注冊動態命令
@@ -160,7 +152,6 @@ def register_all_flow_commands(cli_group):
     if registered_count > 0:
         click.echo(f"✅ 已注冊 {registered_count} 個動態命令 (flow0 - flow{registered_count-1})\n")
 
-
 @click.group()
 def aiva():
     """AIVA - AI-powered Vulnerability Analysis System
@@ -169,18 +160,15 @@ def aiva():
     
     使用方式:
         aiva flow<ID> --target <目標> -i <強度>
-        aiva flow<ID> --data <路徑> --dry-run
         aiva list-flows  # 查看所有可用 flows
     """
     pass
-
 
 @aiva.command()
 @click.argument('flow_id', type=int)
 @click.option('--context', '-c', help='上下文數據 (JSON 格式)', default='{}')
 @click.option('--intensity', '-i', type=float, default=0.5, help='AI 強度 (0.0-1.0)')
-@click.option('--dry-run', is_flag=True, help='僅顯示將執行的操作，不實際執行')
-def run(flow_id: int, context: str, intensity: float, dry_run: bool):
+def run(flow_id: int, context: str, intensity: float):
     """執行指定 Flow（基於 flow_id）
     
     統一使用 FlowExecutor 執行，不再依賴已棄用的 ManifestLoader。
@@ -188,7 +176,6 @@ def run(flow_id: int, context: str, intensity: float, dry_run: bool):
     Examples:
         aiva run 0 -c '{"query": "find vulnerabilities"}' -i 0.8
         aiva run 8 -c '{"target_url": "http://example.com"}' -i 0.6
-        aiva run 4 -c '{"training_data_path": "/data/train.npz"}' --dry-run
     """
     try:
         # 解析上下文
@@ -213,14 +200,9 @@ def run(flow_id: int, context: str, intensity: float, dry_run: bool):
         click.echo(f"   路徑: {path_preview}")
         click.echo(f"   強度: {intensity}")
         
-        if dry_run:
-            click.echo("\n🔍 Dry Run 模式 - 預覽執行流程")
-            executor.execute_flow(flow_id, context_data=context_data, dry_run=True)
-            return 0
-        
         # 實際執行
         click.echo("\n⏳ 執行中...")
-        executor.execute_flow(flow_id, context_data=context_data, dry_run=False)
+        executor.execute_flow(flow_id, context_data=context_data)
         click.echo("\n✅ 執行完成")
         
     except json.JSONDecodeError:
@@ -232,7 +214,6 @@ def run(flow_id: int, context: str, intensity: float, dry_run: bool):
         traceback.print_exc()
         return 1
 
-
 @aiva.command()
 @click.argument('query_text')
 @click.option('--intensity', '-i', type=float, default=0.5)
@@ -243,8 +224,7 @@ def query(query_text: str, intensity: float):
     """
     context = json.dumps({"query": query_text})
     ctx = click.get_current_context()
-    ctx.invoke(run, flow_id=0, context=context, intensity=intensity, dry_run=False)
-
+    ctx.invoke(run, flow_id=0, context=context, intensity=intensity)
 
 @aiva.command()
 @click.argument('data_path')
@@ -256,8 +236,7 @@ def train(data_path: str, intensity: float):
     """
     context = json.dumps({"training_data_path": data_path})
     ctx = click.get_current_context()
-    ctx.invoke(run, flow_id=4, context=context, intensity=intensity, dry_run=False)
-
+    ctx.invoke(run, flow_id=4, context=context, intensity=intensity)
 
 @aiva.command()
 @click.argument('target_url')
@@ -269,8 +248,7 @@ def scan(target_url: str, intensity: float):
     """
     context = json.dumps({"target_url": target_url})
     ctx = click.get_current_context()
-    ctx.invoke(run, flow_id=8, context=context, intensity=intensity, dry_run=False)
-
+    ctx.invoke(run, flow_id=8, context=context, intensity=intensity)
 
 @aiva.command()
 @click.argument('scan_id')
@@ -281,8 +259,7 @@ def status(scan_id: str):
     """
     context = json.dumps({"scan_id": scan_id})
     ctx = click.get_current_context()
-    ctx.invoke(run, flow_id=2, context=context, intensity=0.0, dry_run=False)
-
+    ctx.invoke(run, flow_id=2, context=context, intensity=0.0)
 
 @aiva.command()
 def health():
@@ -291,8 +268,7 @@ def health():
     Example: aiva health
     """
     ctx = click.get_current_context()
-    ctx.invoke(run, flow_id=1, context='{}', intensity=0.0, dry_run=False)
-
+    ctx.invoke(run, flow_id=1, context='{}', intensity=0.0)
 
 @aiva.command(name='list-flows')
 @click.option('--limit', '-l', type=int, default=20, help='顯示數量限制')
@@ -350,7 +326,6 @@ def list_flows(limit, module, by_endpoint, stats):
         click.echo(f"\n使用 'aiva list-flows --limit {len(flows)}' 查看全部")
         click.echo("使用 'aiva flow<ID> --help' 查看特定 flow 的詳情")
 
-
 def show_flow_statistics(flows: List[Dict[str, Any]]):
     """顯示 Flow 統計信息"""
     from collections import Counter
@@ -389,7 +364,6 @@ def show_flow_statistics(flows: List[Dict[str, Any]]):
         click.echo(f"  {comp_type:15s}: {count:4d} ({percentage:5.1f}%)")
     
     click.echo()
-
 
 def show_flows_by_endpoint_module(flows: List[Dict[str, Any]], limit_per_module: int):
     """按終點模組（六大模組）分類顯示 Flows"""
@@ -446,10 +420,8 @@ def show_flows_by_endpoint_module(flows: List[Dict[str, Any]], limit_per_module:
             click.echo(f"  {module}: {len(module_flows)} 個 flows")
         click.echo()
 
-
 # 🔑 關鍵：在 CLI 啟動時注冊所有動態命令
 register_all_flow_commands(aiva)
-
 
 # ============================================
 # CLI 退出碼規範
@@ -463,7 +435,6 @@ EXIT_SUCCESS = 0
 EXIT_LOGIC_ERROR = 1
 EXIT_SYSTEM_ERROR = 2
 EXIT_USER_INTERRUPT = 130
-
 
 if __name__ == "__main__":
     import sys

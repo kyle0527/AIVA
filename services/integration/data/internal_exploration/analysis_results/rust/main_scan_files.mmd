@@ -1,0 +1,43 @@
+flowchart TB
+    n1(["Start"])
+    n2(["End"])
+    n3{"If Condition"}
+    n4["Then"]
+    n5["Method: .flatten()"]
+    n6["Method: .path()"]
+    n7{"If Condition"}
+    n8["Then"]
+    n9{"If Condition"}
+    n10["Then"]
+    n11["Call: scan_files"]
+    n12[""]
+    n13["Else"]
+    n14{"If Condition"}
+    n15["Then"]
+    n16["Method: .push()"]
+    n17[""]
+    n18[""]
+    n19[""]
+
+    n1 --> n3
+    n3 -->|Yes| n4
+    n3 -->|No| n19
+    n4 --> n5
+    n5 --> n6
+    n6 --> n7
+    n7 -->|Yes| n8
+    n7 -->|No| n13
+    n8 --> n9
+    n9 -->|Yes| n10
+    n9 -->|No| n12
+    n10 --> n11
+    n11 --> n12
+    n12 --> n18
+    n13 --> n14
+    n14 -->|Yes| n15
+    n14 -->|No| n17
+    n15 --> n16
+    n16 --> n17
+    n17 --> n18
+    n18 --> n19
+    n19 --> n2

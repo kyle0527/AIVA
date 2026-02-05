@@ -8,7 +8,6 @@ AIVA CLI Implementation - Dynamic Flow Executor & Documentation Generator
    - 讀取 classification_data.json 中的數據流定義
    - 動態導入模組、實例化類別、自動偵測並執行入口方法
    - 支援步驟間的 Pipeline 數據傳遞
-   - 提供 Dry Run 模式預覽執行計畫
 
 2. **指令手冊生成 (Documentation Generation)**:
    - 生成 Markdown 格式的 CLI 指令參考手冊 (適合人類閱讀)
@@ -16,10 +15,10 @@ AIVA CLI Implementation - Dynamic Flow Executor & Documentation Generator
 
 核心特性:
 - 自動處理 Windows 絕對路徑與 Python 模組路徑轉換
-- 智能類別名稱推斷 (snake_case → CamelCase)
-- 啟發式入口方法偵測 (train, execute, run, process, analyze 等)
-- 容錯機制: 找不到類別時自動搜尋模組內其他類別
+- 使用分類器提取的精確類別名和方法名（func_names）
+- 啟發式入口方法偵測 (僅在 func_names 未指定方法時使用)
 - Pipeline 執行: 自動在步驟間傳遞輸出數據
+- 嚴格模式: 不猜測類別名，確保執行準確性
 
 使用方式:
     # 生成 Markdown 參考手冊
@@ -29,7 +28,6 @@ AIVA CLI Implementation - Dynamic Flow Executor & Documentation Generator
     python -m aiva_core.internal_exploration.aiva_cli_implementation --list
     
     # 預覽執行計畫 (不實際執行)
-    python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 11 --dry-run
     
     # 實際執行流程
     python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 11
@@ -100,7 +98,6 @@ MODULE_MAPPING = {
     "learning_system": "認知核心模組(學習子系統)"
 }
 
-
 def find_latest_classification_file() -> Optional[Path]:
     """
     在 integration 目錄中找到最新的分類檔案
@@ -144,7 +141,6 @@ def find_latest_classification_file() -> Optional[Path]:
     latest_file = max(all_files, key=lambda f: f.stat().st_mtime)
     return latest_file
 
-
 class FlowExecutor:
     """
     動態流程執行器
@@ -154,7 +150,6 @@ class FlowExecutor:
     - 動態模組導入與類別實例化
     - 啟發式入口方法偵測
     - Pipeline 數據傳遞
-    - Dry Run 模式
     - 文件生成 (Markdown/JSON)
     """
     
@@ -451,10 +446,15 @@ class FlowExecutor:
                     f.write("| ID | 任務路徑 (Path) | 主要模組 | CLI 指令 |\n")
                     f.write("|:---:|---|---|---|\n")
                     
+                    # 收集 CLI 命令
                     for flow in flows:
+                        # 跳過被合併的flow
+                        if 'merged_into' in flow:
+                            continue
+                        
                         f_id = flow['id']
                         # 簡化顯示路徑 (只取頭尾或前三個,避免過長)
-                        path_str = " -> ".join(flow['path'])
+                        path_str = " -> ".join(flow.get('path', ['N/A']))
                         
                         # 找出主要模組
                         primary_mod = flow.get('primary_module', 'unknown')
@@ -473,13 +473,17 @@ class FlowExecutor:
             filename = str(output_path / "cli_commands_db.json")
             db_records = []
             for flow in flows:
+                # 跳過被合併的flow
+                if 'merged_into' in flow:
+                    continue
+                
                 record = {
                     "flow_id": flow['id'],
-                    "description": f"Execute flow: {' -> '.join(flow['path'])}",
+                    "description": f"Execute flow: {' -> '.join(flow.get('path', ['N/A']))}",
                     "cli_command": f"python -m aiva_core.internal_exploration.aiva_cli_implementation --flow {flow['id']}",
                     "modules_involved": list(set(flow.get('modules', []))),
                     "steps": flow.get('path', []),
-                    "length": flow.get('length', 0)
+                    "length": flow.get('length', len(flow.get('path', [])))
                 }
                 db_records.append(record)
             
@@ -490,7 +494,7 @@ class FlowExecutor:
             except IOError as e:
                 print(f"[Error] 無法寫入文件: {e}")
 
-    def execute_flow(self, flow_id: int, context_data: Optional[Dict[str, Any]] = None, dry_run: bool = False) -> None:
+    def execute_flow(self, flow_id: int, context_data: Optional[Dict[str, Any]] = None) -> None:
         """
         執行指定 ID 的數據流
         
@@ -507,13 +511,17 @@ class FlowExecutor:
         Args:
             flow_id: 要執行的流程 ID
             context_data: 初始上下文數據（將在第一步傳入）
-            dry_run: 若為 True,僅顯示執行計畫,不實際載入模組或執行
         """
         flow = self.get_flow_by_id(flow_id)
         if not flow:
             print(f"[Error] Flow ID {flow_id} 不存在。請使用 --list 查看可用 ID。")
             return
 
+        # 跳過被合併的flow
+        if 'merged_into' in flow:
+            print(f"[Error] Flow {flow_id} 已合併到 Flow {flow['merged_into']}，請執行主flow")
+            return
+        
         # 顯示能力資訊
         capability = flow.get("capability")
         if capability:
@@ -522,16 +530,13 @@ class FlowExecutor:
             print(f"{'='*60}")
             print(f"📋 能力描述: {capability['description']}")
             print(f"🏷️  標籤: {', '.join(capability['tags'])}")
-            print(f"📊 複雜度: {capability['complexity']} | 流程長度: {flow['length']} 步")
-            print(f"📍 路徑: {' -> '.join(flow['path'])}")
+            print(f"📊 複雜度: {capability['complexity']} | 流程長度: {flow.get('length', len(flow.get('path', [])))} 步")
+            print(f"📍 路徑: {' -> '.join(flow.get('path', ['N/A']))}")
             print(f"{'='*60}\n")
         else:
-            print(f"\n=== [AIVA Flow Executor] 開始執行 Flow {flow_id} ===")
-            print(f"路徑預覽: {' -> '.join(flow['path'])}")
+            print(f"\n=== [AIVA Flow Executor] 開始執行 Flow {flow_id} ===\n")
+            print(f"路徑預覽: {' -> '.join(flow.get('path', ['N/A']))}")
             print("-" * 50)
-        
-        if dry_run:
-            print("[Info] Dry Run 模式開啟:僅生成執行計畫,不載入模組或執行代碼。")
         
         # 使用傳入的 context_data，若無則初始化為空字典
         if context_data is None:
@@ -539,22 +544,31 @@ class FlowExecutor:
         elif context_data:
             print(f"[Info] 初始上下文數據: {context_data}")
 
-        for idx, step_info in enumerate(flow.get("classifications", [])):
-            script_name = step_info["script"]
-            full_path = flow["full_path"][idx]
+        classifications = flow.get("classifications", [])
+        full_paths = flow.get("full_path", [])
+        
+        if not classifications or not full_paths:
+            print("[Error] Flow 缺少必要的執行資訊（classifications 或 full_path）")
+            return
+        
+        for idx, step_info in enumerate(classifications):
+            script_name = step_info.get("script", "unknown")
+            full_path = full_paths[idx] if idx < len(full_paths) else ""
+            
+            if not full_path:
+                print(f"\n[Error] Step {idx+1} 缺少文件路徑")
+                continue
             
             # 解析模組路徑與類別名稱
             module_path = self._full_path_to_module(full_path)
-            class_name = self._snake_to_camel(script_name)
+            # ✅ 使用分析器提取的真實類別/函數名稱，而不是猜測
+            func_names = flow.get('func_names', [])
+            class_name = func_names[idx] if idx < len(func_names) else self._snake_to_camel(script_name)
 
-            print(f"\n>> [Step {idx+1}/{len(flow['path'])}] {script_name}")
+            print(f"\n>> [Step {idx+1}/{len(flow.get('path', []))}] {script_name}")
             print(f"   - File: {full_path}")
             print(f"   - Module: {module_path}")
             print(f"   - Class: {class_name}")
-
-            # Dry Run 模式下,到此為止
-            if dry_run:
-                continue
 
             # 實際執行邏輯
             if not module_path:
@@ -565,26 +579,49 @@ class FlowExecutor:
                 # 1. 動態導入模組
                 module = importlib.import_module(module_path)
                 
-                # 2. 獲取類別
-                if hasattr(module, class_name):
-                    cls = getattr(module, class_name)
+                # 2. 解析類別名和方法名（從 func_names）
+                func_name = func_names[idx] if idx < len(func_names) else ""
+                target_class_name = None
+                target_method_name = None
+                
+                if '.' in func_name:
+                    # 格式: "ClassName.method_name"
+                    parts = func_name.split('.', 1)
+                    target_class_name = parts[0]
+                    target_method_name = parts[1] if len(parts) > 1 else None
                 else:
-                    # 容錯:如果找不到 CamelCase 類別,嘗試搜尋模組內定義的任何類別
-                    print(f"   [Warning] 模組內找不到 {class_name},嘗試搜尋其他類別...")
-                    classes = [m[1] for m in inspect.getmembers(module, inspect.isclass) 
-                               if m[1].__module__ == module.__name__]
-                    if classes:
-                        cls = classes[0]
-                        print(f"   -> 改用類別: {cls.__name__}")
-                    else:
-                        raise ImportError(f"在 {module_path} 中找不到任何可用的類別")
-
-                # 3. 實例化類別
+                    # 只有類別名
+                    target_class_name = func_name
+                
+                # 3. 獲取類別
+                if not target_class_name:
+                    print(f"   [Error] func_names 資料缺失，無法執行")
+                    continue
+                    
+                if not hasattr(module, target_class_name):
+                    print(f"   [Error] 模組中找不到類別 '{target_class_name}'")
+                    print(f"   提示: 請更新分類數據或檢查模組結構")
+                    continue
+                
+                cls = getattr(module, target_class_name)
+                print(f"   -> 找到類別: {cls.__name__}")
+                
+                # 4. 實例化類別
                 print(f"   -> 正在實例化 {cls.__name__}...")
                 instance = cls()
                 
-                # 4. 尋找並執行入口方法
-                method = self._find_entry_method(instance, idx)
+                # 5. 獲取要執行的方法
+                if target_method_name:
+                    # func_names 明確指定了方法名
+                    if hasattr(instance, target_method_name):
+                        method = getattr(instance, target_method_name)
+                        print(f"   -> 使用指定方法: {target_method_name}()")
+                    else:
+                        print(f"   [Error] 類別中找不到方法 '{target_method_name}'")
+                        continue
+                else:
+                    # 沒有指定方法，使用啟發式查找
+                    method = self._find_entry_method(instance, idx)
                 
                 if method:
                     print(f"   -> 呼叫方法: {method.__name__}()")
@@ -625,11 +662,9 @@ class FlowExecutor:
                 print(f"   [System Error] 發生未預期的錯誤: {e}")
                 break
 
-        if not dry_run:
-            print(f"\n=== Flow {flow_id} 執行完畢 ===")
-            if context_data:
-                print(f"最終輸出: {context_data}")
-
+        print(f"\n=== Flow {flow_id} 執行完畢 ===")
+        if context_data:
+            print(f"最終輸出: {context_data}")
 
 def main():
     """
@@ -667,12 +702,6 @@ def main():
     )
     
     parser.add_argument(
-        "--dry-run", 
-        action="store_true", 
-        help="[配合 --flow 使用] 僅顯示執行計畫,不實際載入模組或運行代碼"
-    )
-    
-    parser.add_argument(
         "--data",
         type=str,
         default=None,
@@ -697,18 +726,25 @@ def main():
         print("可用 Flow 列表 (顯示前 20 筆):")
         print("-" * 60)
         flows = executor.data.get("flows", [])
-        for f in flows[:20]:
-            print(f"ID: {f['id']:<4} | Len: {f['length']} | Path: {' -> '.join(f['path'])}")
-        if len(flows) > 20:
-            print(f"... (還有 {len(flows) - 20} 條流程)")
+        count = 0
+        for f in flows:
+            # 跳過被合併的 flow（這些只是占位符）
+            if 'merged_into' in f:
+                continue
+            if count >= 20:
+                break
+            print(f"ID: {f['id']:<4} | Len: {f.get('length', len(f.get('path', [])))} | Path: {' -> '.join(f.get('path', ['N/A']))}")
+            count += 1
+        remaining = len([f for f in flows if 'merged_into' not in f]) - count
+        if remaining > 0:
+            print(f"... (還有 {remaining} 條流程)")
             
     elif args.generate_doc:
         print(f"正在生成 {args.generate_doc.upper()} 格式的參考文件...")
         executor.generate_reference_docs(output_format=args.generate_doc)
         
     elif args.flow:
-        executor.execute_flow(args.flow, dry_run=args.dry_run)
-
+        executor.execute_flow(args.flow)
 
 class InteractiveMenu:
     """
@@ -731,6 +767,10 @@ class InteractiveMenu:
         self.module_groups = defaultdict(lambda: defaultdict(list))
         
         for flow in self.flows:
+            # 跳過被合併的flow
+            if 'merged_into' in flow:
+                continue
+            
             mod = flow.get("primary_module", "other")
             start = flow.get("start", "?")
             end = flow.get("end", "?")
@@ -806,39 +846,33 @@ class InteractiveMenu:
             print(f"\n=== 執行路徑: {cap_key[0]} -> {cap_key[1]} ===")
             print("-" * 80)
             
-            # 按長度排序
-            flows.sort(key=lambda x: x['length'])
+            # 按長度排序（使用安全訪問）
+            flows.sort(key=lambda x: x.get('length', len(x.get('path', []))))
             
             for i, flow in enumerate(flows):
-                mid = flow['path'][1:-1]
+                path = flow.get('path', [])
+                mid = path[1:-1] if len(path) > 2 else []
                 mid_str = " -> ".join(mid) if mid else "(直連)"
-                print(f" [{i+1}] Flow {flow['id']} (步數:{flow['length']}): ... -> {mid_str} -> ...")
+                length = flow.get('length', len(path))
+                print(f" [{i+1}] Flow {flow['id']} (步數:{length}): ... -> {mid_str} -> ...")
             
             print("-" * 80)
-            print(" [b] 返回  [輸入數字] 執行  [v 數字] 預覽")
+            print(" [b] 返回  [輸入數字] 執行")
             
             cmd = input("\n> ").strip()
             if cmd == 'b':
                 break
             
-            is_view = False
-            idx = -1
-            
-            if cmd.startswith('v '):
-                is_view = True
-                try:
-                    idx = int(cmd.split()[1]) - 1
-                except (ValueError, IndexError):
-                    pass
-            elif cmd.isdigit():
+            if cmd.isdigit():
                 idx = int(cmd) - 1
+            else:
+                continue
                 
             if 0 <= idx < len(flows):
                 target = flows[idx]
                 print("\n" + "=" * 30)
-                self.executor.execute_flow(target['id'], dry_run=is_view)
+                self.executor.execute_flow(target['id'])
                 input("\n[按 Enter 繼續...]")
-
 
 if __name__ == "__main__":
     main()

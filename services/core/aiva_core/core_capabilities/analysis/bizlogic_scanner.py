@@ -18,13 +18,22 @@
 
 import asyncio
 import logging
+import sys
 from datetime import datetime
 import json
+from pathlib import Path
+
+# 定義專案根目錄
+project_root = Path(__file__).resolve().parent.parent.parent.parent.parent
 
 logger = logging.getLogger(__name__)
 
 from aiva_common.schemas.commands import AICommand, CommandType, CommandPriority
-from services.features.function_bizlogic.command_handler import BizLogicCommandHandler
+
+# CLI 驅動架構：不再使用 CommandHandler，改用 CLI 直接調用
+# 舊架構: from services.features.function_bizlogic.command_handler import BizLogicCommandHandler
+# 新架構: 透過 CLI 執行，參見 services/integration/cli/
+BizLogicCommandHandler = None  # 暫時設為 None，待 CLI 整合完成
 
 
 # 端點常量
@@ -137,7 +146,9 @@ def _print_vulnerability_details(scan_result: dict):
         print(f"       證據: {vuln.get('evidence')}")
 
 
-async def scan_target(handler: BizLogicCommandHandler, target_key: str, target_config: dict):
+from typing import Any
+
+async def scan_target(handler: Any, target_key: str, target_config: dict[str, Any]):
     """掃描單個靶場"""
     _print_scan_header(target_config)
     
@@ -301,12 +312,10 @@ async def main():
     
     # 初始化處理器
     print("\n📌 初始化 BizLogic Command Handler...")
-    try:
-        handler = BizLogicCommandHandler()
-        print("✅ Handler 初始化成功")
-    except Exception as e:
-        print(f"❌ Handler 初始化失敗: {e}")
-        return 1
+    # TODO: CLI 驅動架構下，不再使用 CommandHandler
+    # 請使用 aiva_cli 命令行工具執行採描
+    print("⚠️  CLI 驅動模式，請使用 aiva_cli 命令工具")
+    handler = None  # 不再需要 handler 實例
     
     # 檢測可用靶場
     available_targets = await _detect_available_targets()

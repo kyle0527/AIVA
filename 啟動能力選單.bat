@@ -12,8 +12,8 @@ echo   AIVA 能力執行選單
 echo ========================================
 echo.
 
-cd /d "C:\D\fold7\AIVA-git\services\core\aiva_core\internal_exploration\python_tools"
+cd /d "C:\D\fold7\AIVA-git\services\core"
 
-python aiva_cli_implementation.py --menu
+python -m aiva_core.internal_exploration.aiva_internal_executor --menu
 
 pause

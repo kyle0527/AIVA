@@ -535,6 +535,58 @@ class InternalLoopConnector:
                 timestamp=datetime.now(UTC)
             )
     
+    async def _run_internal_classifier(self, target_scope: str) -> None:
+        """運行內部分類器 (AI Core 內部模組)"""
+        import asyncio
+        try:
+            from ..internal_exploration.aiva_internal_classifier import AIVAFlowClassifier
+            logger.info("📊 Running internal classifier (AI Core modules)...")
+            
+            internal_classifier = AIVAFlowClassifier(
+                target_path=target_scope,
+                output_dir="data/internal_exploration/classification_results"
+            )
+            
+            internal_success = await asyncio.to_thread(internal_classifier.classify_all_flows)
+            
+            if internal_success:
+                logger.info("✅ Internal classification completed.")
+            else:
+                logger.warning("⚠️ Internal classification failed. Using existing data.")
+        except ImportError as ie:
+            logger.warning(f"⚠️ AIVAFlowClassifier not found: {ie}")
+        except Exception as e:
+            logger.error(f"❌ Internal classifier error: {e}")
+            import traceback
+            traceback.print_exc()
+    
+    async def _run_external_classifier(self) -> None:
+        """運行外部分類器 (Features + Scan 模組)"""
+        import asyncio
+        try:
+            from ..internal_exploration.aiva_external_classifier import ExternalModuleClassifier
+            logger.info("📊 Running external classifier (Features/Scan modules)...")
+            
+            external_classifier = ExternalModuleClassifier(
+                features_path="services/features",
+                scan_path="services/scan",
+                output_dir="services/integration/data/internal_exploration"
+            )
+            
+            external_success = await asyncio.to_thread(external_classifier.classify_all_modules)
+            
+            if external_success:
+                logger.info("✅ External classification completed.")
+                logger.info("   Results: services/integration/data/internal_exploration/external_classification.json")
+            else:
+                logger.warning("⚠️ External classification failed. Using existing data.")
+        except ImportError as ie:
+            logger.warning(f"⚠️ ExternalModuleClassifier not found: {ie}")
+        except Exception as e:
+            logger.error(f"❌ External classifier error: {e}")
+            import traceback
+            traceback.print_exc()
+    
     async def sync_capabilities_to_rag(
         self, 
         force_refresh: bool = False,
@@ -557,35 +609,16 @@ class InternalLoopConnector:
         Returns:
             InternalLoopSyncResult: 同步結果（Pydantic 模型）
         """
-        logger.info(f"🔄 Starting internal loop synchronization (v11.0 - Module: {target_module})...")
+        logger.info(f"🔄 Starting internal loop synchronization (v12.0 - Module: {target_module})...")
         
-        # 步驟 1: 如果強制刷新，觸發外部管線進行代碼分析
+        # 步驟 1: 如果強制刷新，觸發分類器進行代碼分析
         if force_refresh:
-            try:
-                from ..internal_exploration.python_tools.aiva_exploration_pipeline import ExplorationPipeline
-                logger.info("⚙️ Force refresh requested. Triggering Exploration Pipeline...")
-                logger.info(f"   Target scope: {target_scope}")
-                logger.info(f"   Target module: {target_module}")
-                
-                # 在異步環境中運行同步的 Pipeline（使用新的 target_module 參數）
-                import asyncio
-                pipeline = ExplorationPipeline(
-                    target_path=target_scope,
-                    target_module=target_module
-                )
-                success = await asyncio.to_thread(pipeline.run)
-                
-                if success:
-                    logger.info("✅ Exploration Pipeline completed successfully.")
-                    logger.info(f"   Results saved to: data/internal_exploration/")
-                else:
-                    logger.error("❌ Exploration Pipeline failed. Using existing data.")
-            except ImportError:
-                logger.warning("⚠️ ExplorationPipeline module not found. Skipping analysis.")
-            except Exception as e:
-                logger.error(f"❌ Pipeline execution error: {e}")
-                import traceback
-                traceback.print_exc()
+            logger.info("⚙️ Force refresh requested. Running classifiers...")
+            logger.info(f"   Target scope: {target_scope}")
+            logger.info(f"   Target module: {target_module}")
+            
+            await self._run_internal_classifier(target_scope)
+            await self._run_external_classifier()
         
         # 步驟 2: 從統一數據源讀取並轉換 Flow 能力
         capabilities = []

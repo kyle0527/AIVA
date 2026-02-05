@@ -1,0 +1,59 @@
+flowchart TB
+    n1(["Start"])
+    n2(["End"])
+    n3["Assignment"]
+    n4["Assignment"]
+    n5{"Loop"}
+    n6["Body"]
+    n7["Assignment"]
+    n8["Assignment"]
+    n9[""]
+    n10["Assignment"]
+    n11["Assignment"]
+    n12{"Loop"}
+    n13["Body"]
+    n14{"If Condition"}
+    n15["Then"]
+    n16["Assignment"]
+    n17[""]
+    n18[""]
+    n19{"Loop"}
+    n20["Body"]
+    n21{"If Condition"}
+    n22["Then"]
+    n23["Assignment"]
+    n24[""]
+    n25[""]
+    n26["Return"]
+
+    n1 --> n3
+    n3 --> n4
+    n4 --> n5
+    n5 -->|Yes| n6
+    n5 -->|No| n9
+    n6 --> n7
+    n7 --> n8
+    n8 -->|Next| n5
+    n9 --> n10
+    n10 --> n11
+    n11 --> n12
+    n12 -->|Yes| n13
+    n12 -->|No| n18
+    n13 --> n14
+    n14 -->|Yes| n15
+    n14 -->|No| n17
+    n15 --> n16
+    n16 --> n17
+    n17 -->|Next| n12
+    n18 --> n19
+    n19 -->|Yes| n20
+    n19 -->|No| n25
+    n20 --> n21
+    n21 -->|Yes| n22
+    n21 -->|No| n24
+    n22 --> n23
+    n23 --> n24
+    n24 -->|Next| n19
+    n25 --> n26
+    n26 --> n2
+    n26 --> n2

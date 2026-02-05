@@ -1,0 +1,39 @@
+flowchart TD
+    n1(["Start"])
+    n2(["End"])
+    n3{"If Condition"}
+    n4["Then"]
+    n5["Else"]
+    n6{"If Condition"}
+    n7["Then"]
+    n8["Else"]
+    n9{"If Condition"}
+    n10["Then"]
+    n11[""]
+    n12[""]
+    n13[""]
+    n14{"If Condition"}
+    n15["Then"]
+    n16[""]
+    n17["Call: ts.forEachChild"]
+
+    n1 --> n3
+    n3 -->|Yes| n4
+    n3 -->|No| n5
+    n4 --> n13
+    n5 --> n6
+    n6 -->|Yes| n7
+    n6 -->|No| n8
+    n7 --> n12
+    n8 --> n9
+    n9 -->|Yes| n10
+    n9 -->|No| n11
+    n10 --> n11
+    n11 --> n12
+    n12 --> n13
+    n13 --> n14
+    n14 -->|Yes| n15
+    n14 -->|No| n16
+    n15 --> n16
+    n16 --> n17
+    n17 --> n2

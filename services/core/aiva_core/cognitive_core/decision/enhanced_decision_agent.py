@@ -1268,7 +1268,7 @@ class EnhancedDecisionAgent:
         
         # 直接使用 AICommandCenter 下達命令
         try:
-            from aiva_common.command_center import get_command_center
+            from aiva_common.core.command_center import get_command_center
             from aiva_common.schemas import AICommand, CommandType
             import uuid
             
@@ -1554,13 +1554,11 @@ class EnhancedDecisionAgent:
             stealth_level = scan_context.constraints.stealth_level
             rate_limit = scan_context.constraints.rate_limit
             target = scan_context.target
-            intent = getattr(scan_context, 'intent', 'reconnaissance')
         else:
             constraints = scan_context.get('constraints', {})
             stealth_level = constraints.get('stealth_level', 'medium')
             rate_limit = constraints.get('rate_limit', 1000)
             target = scan_context.get('target', '')
-            intent = scan_context.get('intent', 'reconnaissance')
         
         # 目標分析
         target_analysis = self._analyze_scan_target(target)
@@ -1742,7 +1740,7 @@ class EnhancedDecisionAgent:
         
         return params
     
-    def _estimate_scan_time(self, tool: str, strategy: str, target_analysis: dict) -> int:
+    def _estimate_scan_time(self, tool: str, strategy: str) -> int:
         """預估掃描時間 (秒)"""
         base_time = 300  # 5分鐘基礎時間
         
@@ -1821,7 +1819,6 @@ class EnhancedDecisionAgent:
         technologies = fingerprints.get("technologies", [])
         
         # === 2. Program Scope 合規檢查 ===
-        scope_violations = []
         testing_restrictions = {}
         if program_scope:
             testing_restrictions = program_scope.get("testing_restrictions", {})
@@ -2076,7 +2073,6 @@ class EnhancedDecisionAgent:
         program_context = program_context or {}
         bounty_table = program_context.get("bounty_table", self._get_default_bounty_table())
         duplicate_intel = set(program_context.get("duplicate_intel", []))
-        waf_info = phase1_result.get("waf_info", {})
         
         # === HackerOne/Bugcrowd 漏洞優先級映射 ===
         vuln_tier_mapping = {
@@ -2503,7 +2499,7 @@ class EnhancedDecisionAgent:
         
         return {
             "base_score": base_scores.get(severity, 5.5),
-            "vector_string": f"CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:N",  # 簡化範例
+            "vector_string": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:N",  # 簡化範例
             "severity_rating": severity
         }
     
@@ -2644,7 +2640,7 @@ class EnhancedDecisionAgent:
         # ... 其他特徵
         return features
     
-    def _encode_asset_features(self, asset: dict) -> Any:
+    def _encode_asset_features(self) -> Any:
         """將資產編碼為神經網路輸入（簡化版）"""
         import torch
         return torch.zeros(512)  # 簡化實現
@@ -2664,7 +2660,7 @@ class EnhancedDecisionAgent:
             return 0.7
         return 0.5
     
-    def _calculate_waf_interference(self, asset: dict, phase1_result: dict) -> float:
+    def _calculate_waf_interference(self, phase1_result: dict) -> float:
         """計算 WAF 干擾評分 (0-1, 越高越糟)"""
         fingerprints = phase1_result.get("fingerprints", {})
         if fingerprints.get("waf_detected"):
@@ -2681,7 +2677,7 @@ class EnhancedDecisionAgent:
                 pass
         return 0.5  # 預設中等成功率
     
-    def _generate_next_steps(self, action: str, results: list) -> list[str]:
+    def _generate_next_steps(self, action: str) -> list[str]:
         """生成下一步建議"""
         if action == "SUBMIT_REPORT":
             return [

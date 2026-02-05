@@ -1,9 +1,22 @@
 # 📘 AIVA 使用者手冊 - 第 2 冊：AI 決策流程
 
-> **版本**: v3.0  
-> **最後更新**: 2026-02-01  
+> **版本**: v3.2  
+> **最後更新**: 2026-02-05  
 > **適用對象**: 安全研究員、Bug Hunter、滲透測試人員  
 > **閱讀時間**: 約 20 分鐘
+
+---
+
+## ⚠️ 重要更新提示（v2.0+）
+
+**如果您使用 AIVA v2.0 或更新版本，策略系統已進行重大更新**：
+
+- ❌ **已移除**: `AIVA_ENV`、`scan_type`、`mode` 等舊參數
+- ✅ **新增**: `target_sensitivity` (0.0-1.0) 和 4 維度策略模型
+
+**請先閱讀**: [第 2-1 冊：策略系統更新指南](使用者手冊_第2-1冊_策略系統更新指南.md)
+
+> 💡 **提示**: 本冊部分範例代碼使用舊參數（如 `scan_type: "aggressive"`），僅供理解決策邏輯。實際使用請參考第 2-1 冊的新參數。
 
 ---
 
@@ -27,31 +40,55 @@
 
 ### 方式一：互動式選單（推薦新手）
 
-```bash
-# 雙擊執行
+```powershell
+# 方法 A：雙擊執行 bat 檔案（在專案根目錄）
 啟動能力選單.bat
 
-# 按照提示選擇掃描類型
+# 方法 B：從命令行執行
+cd C:\D\fold7\AIVA-git
+.\啟動能力選單.bat
 ```
 
-### 方式二：命令行（推薦熟練用戶）
+**選單功能**：
+- 列出所有可用的 Flow（數據流）
+- 選擇並執行特定 Flow
+- 查看 Flow 詳細資訊
 
-```bash
-# 基本掃描
-aiva scan https://example.com
+### 方式二：Flow 執行器（推薦熟練用戶）
 
-# 高強度掃描
-aiva scan https://example.com -i 0.8
+```powershell
+# 1. 進入專案目錄
+cd C:\D\fold7\AIVA-git\services\core
 
-# 指定參數
-aiva scan https://example.com --param max_depth=5
+# 2. 執行特定 Flow（以 Flow 8 為例）
+python -m aiva_core.internal_exploration.aiva_internal_executor --flow 8
+
+# 3. Dry Run 模式（預覽不執行）
+
+# 4. 列出所有 Flow
+python -m aiva_core.internal_exploration.aiva_internal_executor --list
+
+# 5. 啟動互動式選單（可用於瀏覽和搜尋能力）
+python -m aiva_core.internal_exploration.aiva_internal_executor --menu
 ```
 
 ### 方式三：HTTP API（推薦自動化）
 
-```bash
-curl -X POST http://localhost:9000/scan \
-  -H "Content-Type: application/json" \
+> ⚠️ 需先啟動 API 服務（參見第1冊）
+
+```powershell
+# 本機啟動後（Port 8000）
+curl -X POST http://localhost:8000/scan `
+  -H "Content-Type: application/json" `
+  -d '{
+    "target": "https://example.com",
+    "scan_type": "full",
+    "max_depth": 3
+  }'
+
+# Docker 啟動後（Port 9000 via Gateway）
+curl -X POST http://localhost:9000/scan `
+  -H "Content-Type: application/json" `
   -d '{
     "target": "https://example.com",
     "scan_type": "full",
@@ -61,43 +98,49 @@ curl -X POST http://localhost:9000/scan \
 
 ---
 
-## 2. CLI 命令使用指南
+## 2. API 與 Flow 命令使用指南
 
-### 2.1 基本命令
+### 2.1 HTTP API 端點
 
-| 命令 | 說明 | 範例 |
-|------|------|------|
-| `aiva scan <target>` | 啟動掃描 | `aiva scan https://example.com` |
-| `aiva status <scan_id>` | 查詢掃描狀態 | `aiva status scan_abc123` |
-| `aiva health` | 系統健康檢查 | `aiva health` |
-| `aiva list-flows` | 列出可用功能 | `aiva list-flows --stats` |
+| 端點 | 方法 | 說明 | 範例 |
+|------|------|------|------|
+| `/health` | GET | 系統健康檢查 | `curl http://localhost:8000/health` |
+| `/status/{scan_id}` | GET | 查詢掃描狀態 | `curl http://localhost:8000/status/scan_abc123` |
+| `/scan` | POST | 啟動掃描 | 見上方範例 |
 
-### 2.2 進階參數
+### 2.2 Flow 執行器參數
 
-```bash
-# 調整 AI 強度（0.0-1.0）
-aiva scan https://example.com -i 0.9
+```powershell
+# 基本執行
+python -m aiva_core.internal_exploration.aiva_internal_executor --flow <ID>
 
-# 傳遞額外參數
-aiva scan https://example.com \
-  --param stealth_level=high \
-  --param rate_limit=500
-
-# 預覽模式（不實際執行）
-aiva scan https://example.com --dry-run
+# 可用參數
+--flow <ID>           # 執行指定 Flow
+--list                # 列出前 20 個可用的 Flow
+--menu                # 啟動互動式選單（按模組和能力瀏覽）
+--generate-doc {md,json}  # 生成 CLI 參考文件
+--data <路徑>         # 指定分類數據檔案路徑
 ```
 
-### 2.3 常用 Flow 命令
+### 2.3 常用 Flow 範例
 
-```bash
-# Flow 0: 內部查詢
-aiva query "find SQL injection vulnerabilities"
+```powershell
+# 進入工作目錄
+cd C:\D\fold7\AIVA-git\services\core
 
-# Flow 8: 攻擊面掃描
-aiva flow8 --target https://example.com -i 0.8
+# 列出所有可用 Flow
+python -m aiva_core.internal_exploration.aiva_internal_executor --list
 
-# Flow 列表
-aiva list-flows --by-endpoint
+# 啟動互動式選單（推薦）
+python -m aiva_core.internal_exploration.aiva_internal_executor --menu
+
+# 執行特定 Flow（如 Flow 8）
+python -m aiva_core.internal_exploration.aiva_internal_executor --flow 8
+
+# Dry Run 模式預覽
+
+# 生成 CLI 參考文件（Markdown 格式）
+python -m aiva_core.internal_exploration.aiva_internal_executor --generate-doc md
 ```
 
 ---
@@ -159,6 +202,41 @@ aiva list-flows --by-endpoint
 
 ## 4. AI 決策流程概述
 
+### 4.0 核心模組檔案一覽
+
+AI 決策流程由以下核心檔案實現：
+
+| 檔案 | 位置 | 職責 |
+|------|------|------|
+| `ai_decision_core.py` | `cognitive_core/` | 決策核心邏輯，負責三階段決策判斷 |
+| `enhanced_decision_agent.py` | `cognitive_core/decision/` | 增強決策代理，整合多種決策方法 |
+| `adaptive_weight_manager.py` | `cognitive_core/decision/` | 動態權重管理，根據實戰結果調整決策權重 |
+| `anti_hallucination_module.py` | `cognitive_core/anti_hallucination/` | 防幻覺模組，確保 AI 決策基於真實數據 |
+
+#### 核心模組調用關係
+
+```
+用戶請求
+    ↓
+ai_decision_core.py          ← 決策入口
+    ├── enhanced_decision_agent.py   ← 增強決策
+    │       └── adaptive_weight_manager.py  ← 權重調整
+    └── anti_hallucination_module.py ← 結果驗證
+    ↓
+決策輸出 (JSON)
+```
+
+#### 關鍵方法說明
+
+| 模組 | 方法 | 說明 |
+|------|------|------|
+| `ai_decision_core` | `decide_phase1_scan()` | Phase 0→1 決策 |
+| `ai_decision_core` | `decide_phase2_targets()` | Phase 1→2 決策 |
+| `ai_decision_core` | `decide_submit_or_continue()` | Phase 2 後決策 |
+| `enhanced_decision_agent` | `make_decision()` | 整合決策入口 |
+| `adaptive_weight_manager` | `update_weights()` | 根據結果更新權重 |
+| `anti_hallucination_module` | `validate_decision()` | 驗證決策可靠性 |
+
 ### 4.1 核心理念
 
 當您執行 `aiva scan https://example.com` 時，系統內部會自動執行一個複雜的三階段決策流程：
@@ -203,31 +281,52 @@ AI 決策 3: 提交報告還是繼續深挖？
 
 **目標**: 快速了解目標的基本情況
 
+**黑盒測試策略**: 因為不知道目標情況，所以規劃多路並行探查
+
 ```
 Step 0: 接收用戶輸入
   ↓
 Step 1-2: 解析目標，創建任務計劃
   ↓
-Step 3-4: 執行快速偵察
-  - 發現開放端口
-  - 識別 Web 技術棧
-  - 檢測 WAF 存在
-  - 發現子域名和 API 端點
+Step 3: 規劃多路並行探查任務（黑盒策略）
+  - 規劃 HTTP 基礎探測
+  - 規劃端口掃描任務
+  - 規劃 WAF 檢測任務
+  - 規劃技術棧指紋識別
+  - 規劃目錄發現任務
+  （5+ 個並行任務）
   ↓
-Step 5: 整合偵察結果
+Step 4: 執行並行探查（Rust 引擎高性能執行）
+  - 所有任務同時執行
+  - 收集多路探查結果
+  ↓
+Step 5: 整合多路探查結果
+  - 合併端口信息
+  - 合併技術棧信息
+  - 統一情報視圖
 ```
 
-**輸出範例**：
+**多路探查輸出範例**：
 ```json
 {
-  "urls_found": 127,
-  "apis_found": 15,
-  "forms_found": 8,
-  "technologies": ["PHP", "Laravel", "MySQL"],
+  "open_ports": [80, 443, 3306],
+  "technologies": ["PHP", "Laravel", "MySQL", "Express.js"],
   "waf_detected": true,
-  "waf_vendor": "Cloudflare"
+  "waf_vendor": "Cloudflare",
+  "directories_found": ["/admin", "/api", "/upload"],
+  "http_info": {
+    "status_code": 200,
+    "headers": {"server": "nginx", "x-powered-by": "Express"}
+  },
+  "tasks_executed": 5,
+  "successful_probes": 4
 }
 ```
+
+**關鍵點**:
+- ✅ **並行執行**: 5 個探查任務同時進行，節省時間
+- ✅ **互補性**: HTTP 探測 + 端口掃描 + WAF 檢測，多角度了解目標
+- ✅ **容錯性**: 即使某個探查失敗，其他探查仍可提供情報
 
 ---
 
@@ -456,9 +555,11 @@ ROI = (預估獎金 × 成功率) / 預估時間成本
 |------|------|------|
 | 第1冊 | 系統入門與架構 | [前往](使用者手冊_第1冊_系統入門與架構.md) |
 | **第2冊** | AI 決策流程（本冊） | - |
+| 第2-2冊 | 13 步驟黑盒測試架構詳解 | [前往](使用者手冊_第2-2冊_13步驟黑盒測試架構詳解.md) |
 | 第3冊 | 執行與適應 | [前往](使用者手冊_第3冊_執行與適應.md) |
 | 第4冊 | 功能模組操作 | [前往](使用者手冊_第4冊_功能模組操作.md) |
-| 第5冊 | 進階開發 | [前往](使用者手冊_第5冊_進階開發.md) |
+| 第5冊 | 數據流分析與執行器 | [前往](使用者手冊_第5冊_數據流分析與執行器.md) |
+| 第6冊 | 進階開發 | [前往](使用者手冊_第6冊_進階開發.md) |
 
 ---
 
@@ -472,10 +573,18 @@ A: AI 決策基於 5M 參數神經網路和 HackerOne/Bugcrowd 實戰經驗，�
 
 **Q2: 我可以覆蓋 AI 決策嗎？**
 
-A: 可以。使用 `--param` 參數手動指定策略，例如:
-```bash
-aiva scan https://example.com --param scan_strategy=aggressive
+A: 可以。透過 HTTP API 傳入自定義參數：
+```powershell
+curl -X POST http://localhost:8000/scan `
+  -H "Content-Type: application/json" `
+  -d '{
+    "target": "https://example.com",
+    "scan_type": "aggressive",
+    "ai_intensity": 0.9
+  }'
 ```
+
+或在 Flow 執行時使用 context_data 傳入自定義策略。
 
 **Q3: AI 決策需要多長時間？**
 
@@ -483,5 +592,5 @@ A: 每個決策點通常在 1-3 秒內完成。整個三階段流程取決於目
 
 ---
 
-**更新日期**: 2026-02-01  
+**更新日期**: 2026-02-02  
 **維護者**: AIVA Development Team

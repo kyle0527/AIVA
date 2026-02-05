@@ -110,13 +110,13 @@ class AIVAFlowClassifier:
         "capability_orchestrator", "task_commander", "planner", "plan_executor"
     ]
 
-    # 腳本詳細說明 (擴展版 - 涵蓋所有關鍵腳本)
-    # 注意：只有經過實際執行驗證成功的能力才應該有詳細描述
+    # AI 能力類型字串常量
+    AI_INTERNAL_TYPE = "AI內部能力"
+    AI_EXTERNAL_TYPE = "AI對外能力"
+    AI_COMPONENT_TYPE = "AI組件"
+
+    # 腳本詳細說明：只有經過實際執行驗證成功的能力才應該有詳細描述
     SCRIPT_DESCRIPTIONS = {
-        # ============ 已驗證的描述 ============
-        # (目前為空，需要逐一驗證後添加)
-        
-        # ============ 待驗證的描述（暫時使用基本描述）============
         # AI 內部能力候選
         "internal_loop_connector": "internal_loop_connector - 功能組件",
         "capability_orchestrator": "capability_orchestrator - 功能組件",
@@ -218,13 +218,13 @@ class AIVAFlowClassifier:
             verbose: 是否顯示詳細信息
             module_config_path: 模組配置文件路徑
             flows: 直接傳入的 flows 列表（可選，用於重新分類現有數據）
-            merge_duplicate_flows: 是否合併相同起終點的數據流（預設True）
+            merge_duplicate_flows: 是否合併相同起終點的數據流（預設False，因為中間路徑不同會產生不同結果）
         """
         # 基本參數
         self.input_dir = Path(input_dir) if input_dir else None
         self.output_dir = Path(output_dir) if output_dir else None
         self.verbose = verbose
-        self.merge_duplicate_flows = merge_duplicate_flows if merge_duplicate_flows is not None else True
+        self.merge_duplicate_flows = merge_duplicate_flows if merge_duplicate_flows is not None else False
         
         # 動態配置載入
         self.module_config_path = module_config_path
@@ -495,9 +495,9 @@ class AIVAFlowClassifier:
             '非AI能力': 純程式邏輯組件
         """
         if script_name in self.AI_INTERNAL_CAPABILITIES:
-            return "AI內部能力"
+            return self.AI_INTERNAL_TYPE
         elif script_name in self.AI_EXTERNAL_CAPABILITIES:
-            return "AI對外能力"
+            return self.AI_EXTERNAL_TYPE
         else:
             return "非AI能力"
     
@@ -651,6 +651,36 @@ class AIVAFlowClassifier:
             else:
                 return 'no_loop'
     
+    def _get_connector_type(self, loop_type: str) -> Optional[str]:
+        """根據循環類型返回對應的連接器
+        
+        Args:
+            loop_type: 循環類型 (internal_loop/external_loop/no_loop等)
+            
+        Returns:
+            對應的連接器類名或 None
+        """
+        if loop_type == 'internal_loop':
+            return 'InternalLoopConnector'
+        elif loop_type == 'external_loop':
+            return 'ExternalLoopConnector'
+        return None
+    
+    def _get_notification_priority(self, loop_type: str) -> str:
+        """根據循環類型返回通知優先級
+        
+        Args:
+            loop_type: 循環類型
+            
+        Returns:
+            優先級字符串 (high/medium/low)
+        """
+        if loop_type == 'internal_loop':
+            return 'high'
+        elif loop_type == 'external_loop':
+            return 'medium'
+        return 'low'
+    
     def classify_flows(self):
         """對所有數據流進行分類
         
@@ -735,7 +765,11 @@ class AIVAFlowClassifier:
                 flow['endpoint_component_type'] = endpoint_component
                 
                 # 標記是否為AI能力
-                flow['is_ai_capability'] = endpoint_component in ['AI內部能力', 'AI對外能力', 'AI組件']
+                flow['is_ai_capability'] = endpoint_component in [
+                    self.AI_INTERNAL_TYPE, 
+                    self.AI_EXTERNAL_TYPE, 
+                    self.AI_COMPONENT_TYPE
+                ]
                 
                 self.stats['component_type_distribution'][endpoint_component] += 1
             
@@ -747,10 +781,13 @@ class AIVAFlowClassifier:
             flow['loop_type'] = self._classify_loop_type(flow)
             
             # ✅ 新增：AI通知配置（基於循環類型）
+            connector = self._get_connector_type(flow['loop_type'])
+            priority = self._get_notification_priority(flow['loop_type'])
+            
             flow['ai_notification'] = {
                 'required': flow['loop_type'] in ['internal_loop', 'external_loop'],
-                'connector': 'InternalLoopConnector' if flow['loop_type'] == 'internal_loop' else 'ExternalLoopConnector' if flow['loop_type'] == 'external_loop' else None,
-                'priority': 'high' if flow['loop_type'] == 'internal_loop' else 'medium' if flow['loop_type'] == 'external_loop' else 'low'
+                'connector': connector,
+                'priority': priority
             }
             
             # ✅ 更新統計信息
@@ -863,15 +900,15 @@ class AIVAFlowClassifier:
                 
                 # AI能力分類統計（新增）
                 f.write("## AI能力分類統計\n\n")
-                ai_internal = len([f for f in active_flows if f.get('is_ai_capability') and f.get('endpoint_component_type') == 'AI內部能力'])
-                ai_external = len([f for f in active_flows if f.get('is_ai_capability') and f.get('endpoint_component_type') == 'AI對外能力'])
+                ai_internal = len([f for f in active_flows if f.get('is_ai_capability') and f.get('endpoint_component_type') == self.AI_INTERNAL_TYPE])
+                ai_external = len([f for f in active_flows if f.get('is_ai_capability') and f.get('endpoint_component_type') == self.AI_EXTERNAL_TYPE])
                 non_ai = len(active_flows) - ai_internal - ai_external
                 
                 total = len(active_flows)
                 f.write("| 能力類型 | 數量 | 占比 | 說明 |\n")
                 f.write("|---------|------|------|------|\n")
-                f.write(f"| AI內部能力 | {ai_internal} | {ai_internal/total*100:.1f}% | 神經網路、訓練、RAG等內部處理 |\n")
-                f.write(f"| AI對外能力 | {ai_external} | {ai_external/total*100:.1f}% | 查詢、決策、執行等對外服務 |\n")
+                f.write(f"| {self.AI_INTERNAL_TYPE} | {ai_internal} | {ai_internal/total*100:.1f}% | 神經網路、訓練、RAG等內部處理 |\n")
+                f.write(f"| {self.AI_EXTERNAL_TYPE} | {ai_external} | {ai_external/total*100:.1f}% | 查詢、決策、執行等對外服務 |\n")
                 f.write(f"| 非AI能力 | {non_ai} | {non_ai/total*100:.1f}% | 純程式邏輯組件 |\n\n")
             
             # 模組分布
@@ -908,12 +945,12 @@ class AIVAFlowClassifier:
                     continue
                 
                 # 統計AI類型
-                ai_internal = len([f for f in module_flows if f.get('endpoint_component_type') == 'AI內部能力'])
-                ai_external = len([f for f in module_flows if f.get('endpoint_component_type') == 'AI對外能力'])
+                ai_internal = len([f for f in module_flows if f.get('endpoint_component_type') == self.AI_INTERNAL_TYPE])
+                ai_external = len([f for f in module_flows if f.get('endpoint_component_type') == self.AI_EXTERNAL_TYPE])
                 non_ai = len(module_flows) - ai_internal - ai_external
                 
                 # 統計能力種類（唯一的起終點組合）
-                unique_capabilities = len(set((f['start'], f['end']) for f in module_flows))
+                unique_capabilities = len({(f['start'], f['end']) for f in module_flows})
                 
                 # 統計有路徑變體的能力數量
                 with_variants = len([f for f in module_flows if f.get('variant_count', 1) > 1])
@@ -1446,7 +1483,8 @@ def main():
     classifier = AIVAFlowClassifier(
         input_dir=args.input,
         output_dir=args.output,
-        verbose=args.verbose
+        verbose=args.verbose,
+        merge_duplicate_flows=False  # 不合併，因為中間路徑不同會產生不同結果
     )
     
     return classifier.run()
