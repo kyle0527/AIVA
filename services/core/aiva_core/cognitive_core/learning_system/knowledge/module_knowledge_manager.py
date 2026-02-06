@@ -195,20 +195,125 @@ class ModuleKnowledgeManager:
         4. 5個因果場景
         5. 學習點
         """
-        # TODO: 實現Markdown解析邏輯
-        # 目前返回骨架結構
+        try:
+            content = md_file.read_text(encoding='utf-8')
+            result = self._create_empty_knowledge_structure(
+                self._extract_module_name(md_file.name), 
+                str(md_file)
+            )
+            
+            # 分析 Markdown 結構
+            lines = content.split('\n')
+            current_section = None
+            current_list = []
+            
+            for line in lines:
+                line_stripped = line.strip()
+                
+                # 識別章節標題
+                if line_stripped.startswith('##'):
+                    # 儲存前一個章節的內容
+                    if current_section and current_list:
+                        self._store_section_data(result, current_section, current_list)
+                        current_list = []
+                    
+                    # 更新當前章節
+                    section_title = line_stripped.replace('#', '').strip()
+                    current_section = self._identify_section_type(section_title)
+                
+                # 收集列表項目
+                elif line_stripped.startswith('-') or line_stripped.startswith('*'):
+                    item_text = self._extract_list_item(line_stripped)
+                    if current_section and item_text:
+                        current_list.append(item_text)
+                
+                # 收集表格數據（簡化處理）
+                elif '|' in line_stripped and current_section == 'params':
+                    param_data = self._parse_table_param_line(line_stripped)
+                    if param_data:
+                        param_name, param_value = param_data
+                        result['adjustable_params'][param_name] = param_value
+            
+            # 儲存最後一個章節
+            if current_section and current_list:
+                self._store_section_data(result, current_section, current_list)
+            
+            self._log_parse_success(md_file.name, result)
+            return result
+            
+        except Exception as e:
+            logger.warning(f"⚠️ 解析 Markdown 報告失敗 {md_file.name}: {e}")
+            return self._create_empty_knowledge_structure(
+                self._extract_module_name(md_file.name), 
+                str(md_file)
+            )
+    
+    def _create_empty_knowledge_structure(self, module_name: str, report_file: str) -> Dict[str, Any]:
+        """建立空白的知識結構"""
         return {
-            'module': self._extract_module_name(md_file.name),
-            'report_file': str(md_file),
+            'module': module_name,
+            'report_file': report_file,
             'scenarios': {
-                'success': [],    # 成功情況
-                'suspicious': [], # 可疑情況
-                'failure': []     # 失敗情況
+                'success': [],
+                'suspicious': [],
+                'failure': []
             },
             'adjustable_params': {},
             'causality_scenarios': [],
             'learning_points': []
         }
+    
+    def _identify_section_type(self, section_title: str) -> Optional[str]:
+        """識別章節類型"""
+        title_lower = section_title.lower()
+        
+        if '成功' in title_lower or 'success' in title_lower:
+            return 'success'
+        elif '可疑' in title_lower or 'suspicious' in title_lower:
+            return 'suspicious'
+        elif '失敗' in title_lower or 'failure' in title_lower or '錯誤' in title_lower:
+            return 'failure'
+        elif '參數' in title_lower or 'parameter' in title_lower:
+            return 'params'
+        elif '因果' in title_lower or 'causality' in title_lower:
+            return 'causality'
+        elif '學習' in title_lower or 'learning' in title_lower:
+            return 'learning'
+        else:
+            return None
+    
+    def _extract_list_item(self, line: str) -> str:
+        """從Markdown列表行中提取內容"""
+        return line.lstrip('-*').strip()
+    
+    def _parse_table_param_line(self, line: str) -> Optional[Tuple[str, str]]:
+        """解析表格參數行
+        
+        Returns:
+            (param_name, param_value) 或 None 如果無效
+        """
+        parts = [p.strip() for p in line.split('|') if p.strip()]
+        if len(parts) >= 2 and not parts[0].startswith('-'):
+            param_name = parts[0]
+            param_value = parts[1] if len(parts) > 1 else ''
+            return (param_name, param_value)
+        return None
+    
+    def _log_parse_success(self, filename: str, result: Dict[str, Any]) -> None:
+        """記錄解析成功資訊"""
+        logger.info(f"✅ 成功解析 {filename}: "
+                   f"成功={len(result['scenarios']['success'])}, "
+                   f"可疑={len(result['scenarios']['suspicious'])}, "
+                   f"失敗={len(result['scenarios']['failure'])}")
+    
+    def _store_section_data(self, result: Dict[str, Any], section: str, data: List[str]) -> None:
+        """儲存章節數據到結果結構"""
+        if section in ['success', 'suspicious', 'failure']:
+            result['scenarios'][section].extend(data)
+        elif section == 'causality':
+            result['causality_scenarios'].extend(data)
+        elif section == 'learning':
+            result['learning_points'].extend(data)
     
     def _build_scenario_index(self, module_name: str, knowledge: Dict[str, Any]) -> None:
         """建立情況索引"""
@@ -476,15 +581,94 @@ class ModuleKnowledgeManager:
         return " | ".join(query_parts)
     
     def _query_rag(self, query: str, context: ExecutionContext) -> List[Dict[str, Any]]:
-        """執行RAG搜索"""
+        """執行RAG搜索
+        
+        Args:
+            query: 查詢字符串（包含模組、發送和接收數據）
+            context: 執行上下文
+            
+        Returns:
+            RAG搜索結果列表
+        """
         try:
-            # TODO: 實現RAG客戶端調用
-            # results = self.rag_client.search(query, context=context)
-            # return self._parse_rag_results(results)
-            return []
+            if not self.rag_client:
+                logger.debug("RAG client not available, skipping RAG search")
+                return []
+            
+            # 構建查詢上下文
+            enhanced_query = f"Module: {context.module_name} | {query}"
+            
+            # 根據 rag_client 的類型調用不同的方法
+            if hasattr(self.rag_client, 'search'):
+                # 同步搜索接口
+                results = self.rag_client.search(
+                    query=enhanced_query,
+                    top_k=5,
+                    metadata_filter={'module': context.module_name}
+                )
+            elif hasattr(self.rag_client, 'query'):
+                # 替代查詢接口
+                results = self.rag_client.query(
+                    query=enhanced_query,
+                    limit=5
+                )
+            else:
+                logger.warning(f"RAG client does not have search() or query() method")
+                return []
+            
+            # 解析結果
+            parsed_results = self._parse_rag_results(results)
+            
+            logger.info(f"✅ RAG搜索完成: 找到 {len(parsed_results)} 個相關結果")
+            return parsed_results
+            
         except Exception as e:
-            logger.error(f"RAG query failed: {e}")
+            logger.error(f"❌ RAG查詢失敗: {e}", exc_info=True)
             return []
+    
+    def _parse_rag_results(self, results: Any) -> List[Dict[str, Any]]:
+        """解析RAG搜索結果
+        
+        Args:
+            results: 原始RAG結果
+            
+        Returns:
+            標準化的結果列表
+        """
+        parsed = []
+        
+        try:
+            # 處理不同格式的結果
+            if isinstance(results, list):
+                for item in results:
+                    if isinstance(item, dict):
+                        parsed.append({
+                            'text': item.get('text', item.get('content', '')),
+                            'score': item.get('score', item.get('similarity', 0.0)),
+                            'metadata': item.get('metadata', {}),
+                            'source': item.get('source', 'unknown')
+                        })
+                    elif hasattr(item, '__dict__'):
+                        # 對象類型
+                        parsed.append({
+                            'text': getattr(item, 'text', getattr(item, 'content', '')),
+                            'score': getattr(item, 'score', getattr(item, 'similarity', 0.0)),
+                            'metadata': getattr(item, 'metadata', {}),
+                            'source': getattr(item, 'source', 'unknown')
+                        })
+            elif isinstance(results, dict):
+                # 單個結果
+                parsed.append({
+                    'text': results.get('text', results.get('content', '')),
+                    'score': results.get('score', results.get('similarity', 0.0)),
+                    'metadata': results.get('metadata', {}),
+                    'source': results.get('source', 'unknown')
+                })
+        
+        except Exception as e:
+            logger.warning(f"⚠️ 解析RAG結果時出錯: {e}")
+        
+        return parsed
     
     def _generate_recommendation_id(self, context: ExecutionContext) -> str:
         """生成建議ID"""

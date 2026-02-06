@@ -179,10 +179,7 @@ class UnifiedAttackExecutor:
                 backend="memory",
                 persist_directory=self.data_directory / "vectors"
             )
-            knowledge_base = KnowledgeBase(
-                vector_store=vector_store,
-                data_directory=self.data_directory / "knowledge"
-            )
+            knowledge_base = KnowledgeBase(vector_store=vector_store)
             self._rag_engine = RAGEngine(knowledge_base=knowledge_base)
         return self._rag_engine
     
@@ -273,9 +270,15 @@ class UnifiedAttackExecutor:
         # 1️⃣ 使用 CapabilityOrchestrator 生成執行計劃
         from ..cognitive_core.capability_orchestrator import CapabilityOrchestrator, TaskRequirement
         
-        orchestrator = CapabilityOrchestrator(
-            rag_kb=self.rag_engine.knowledge_base if hasattr(self, '_rag_engine') and self._rag_engine else None
-        )
+        # 確保 RAG engine 已初始化，然後傳遞 knowledge base
+        rag_kb = None
+        try:
+            rag_kb = self.rag_engine.knowledge_base
+            logger.info("✅ 使用現有 RAG Knowledge Base")
+        except Exception as e:
+            logger.warning(f"⚠️ RAG engine 初始化問題: {e}")
+        
+        orchestrator = CapabilityOrchestrator(rag_kb=rag_kb)
         
         # 構建任務需求
         requirement = TaskRequirement(

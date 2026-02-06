@@ -4,10 +4,14 @@
 整合 CLIDecisionEngine 和 FlowExecutorAdapter 實現智能攻擊決策
 """
 
+import asyncio
 import logging
 from datetime import datetime
 from typing import Any, Optional
 import httpx
+
+# 初始化 logger（必須在任何使用 logger 的地方之前）
+logger = logging.getLogger(__name__)
 
 # RAG 決策引擎整合
 try:
@@ -51,8 +55,6 @@ from aiva_common.schemas.tasks import FunctionTaskPayload, FunctionTaskTarget
 from aiva_common.schemas.findings import FindingPayload, Vulnerability, FindingEvidence, FindingTarget
 from aiva_common.enums import VulnerabilityType, Severity, Confidence
 from aiva_common.utils import new_id
-
-logger = logging.getLogger(__name__)
 
 
 class AttackCoordinator:
@@ -680,7 +682,7 @@ class AttackCoordinator:
         
         return final_result
 
-    async def _plan_phase0_tasks(self, target: str) -> list[dict[str, Any]]:
+    def _plan_phase0_tasks(self, target: str) -> list[dict[str, Any]]:
         """步驟 3: 規劃 Phase 0 多路並行探查任務
         
         黑盒測試策略：因為不知道目標情況，所以規劃多個不同角度的探查
@@ -727,36 +729,71 @@ class AttackCoordinator:
     async def _execute_parallel_tasks(self, tasks: list[dict[str, Any]]) -> list[dict[str, Any]]:
         """步驟 4: 並行執行多個探查任務
         
-        使用 UnifiedExecutor 或直接調用工具（降級模式）
+        使用 asyncio.gather 真正並行執行，提升性能
         """
-        results = []
+        logger.info(f"   🚀 並行執行 {len(tasks)} 個探查任務...")
         
         # 如果有 UnifiedExecutor，使用它來執行
         if self.unified_executor:
-            logger.info(f"   🚀 使用 UnifiedExecutor 執行 {len(tasks)} 個任務")
-            # TODO: 實際應該並行執行，這裡先順序執行
-            for task in tasks:
-                try:
-                    # 調用 unified_executor（需要適配接口）
-                    result = await self._execute_single_task(task)
-                    results.append(result)
-                except Exception as e:
-                    logger.warning(f"   ⚠️ 任務 {task['task_id']} 失敗: {e}")
-                    results.append({
-                        "task_id": task["task_id"],
+            logger.info(f"   ✅ 使用 UnifiedExecutor 引擎")
+            # 真正的並行執行
+            task_coroutines = [
+                self._execute_single_task_safe(task) 
+                for task in tasks
+            ]
+            results = await asyncio.gather(*task_coroutines, return_exceptions=True)
+            
+            # 處理可能的異常結果
+            processed_results = []
+            for i, result in enumerate(results):
+                if isinstance(result, Exception):
+                    logger.warning(f"   ⚠️ 任務 {tasks[i]['task_id']} 失敗: {result}")
+                    processed_results.append({
+                        "task_id": tasks[i]["task_id"],
                         "success": False,
-                        "error": str(e)
+                        "error": str(result)
                     })
+                else:
+                    processed_results.append(result)
+            
+            return processed_results
         else:
-            # 降級模式：使用簡化的本地執行
-            logger.warning(f"   ⚠️ UnifiedExecutor 不可用，使用降級模式")
-            for task in tasks:
-                result = await self._fallback_execute_task(task)
-                results.append(result)
-        
-        return results
+            # 降級模式：使用本地工具並行執行
+            logger.info(f"   ⚙️ 使用降級模式（本地工具）")
+            task_coroutines = [
+                self._fallback_execute_task(task) 
+                for task in tasks
+            ]
+            results = await asyncio.gather(*task_coroutines, return_exceptions=True)
+            
+            # 處理可能的異常結果
+            processed_results = []
+            for i, result in enumerate(results):
+                if isinstance(result, Exception):
+                    logger.warning(f"   ⚠️ 任務 {tasks[i]['task_id']} 失敗: {result}")
+                    processed_results.append({
+                        "task_id": tasks[i]["task_id"],
+                        "success": False,
+                        "error": str(result)
+                    })
+                else:
+                    processed_results.append(result)
+            
+            return processed_results
     
-    async def _execute_single_task(self, task: dict[str, Any]) -> dict[str, Any]:
+    async def _execute_single_task_safe(self, task: dict[str, Any]) -> dict[str, Any]:
+        """安全執行單個任務（包含異常處理）"""
+        try:
+            return await self._execute_single_task(task)
+        except Exception as e:
+            logger.warning(f"   ⚠️ 任務 {task['task_id']} 執行失敗: {e}")
+            return {
+                "task_id": task["task_id"],
+                "success": False,
+                "error": str(e)
+            }
+    
+    def _execute_single_task(self, task: dict[str, Any]) -> dict[str, Any]:
         """執行單個探查任務（通過 UnifiedExecutor）"""
         # 這裡需要調用 unified_executor 的實際接口
         # 暫時返回模擬結果
@@ -768,40 +805,186 @@ class AttackCoordinator:
         }
     
     async def _fallback_execute_task(self, task: dict[str, Any]) -> dict[str, Any]:
-        """降級模式：簡化執行單個任務"""
+        """降級模式：使用本地工具執行任務
+        
+        將任務分派到對應的工具處理器
+        """
+        tool = task["tool"]
+        
+        # 工具處理器映射
+        handlers = {
+            "httpx": self._execute_httpx_tool,
+            "port_scanner": self._execute_port_scanner_tool,
+            "waf_detector": self._execute_waf_detector_tool,
+            "tech_stack": self._execute_tech_stack_tool,
+            "directory_scanner": self._execute_directory_scanner_tool,
+        }
+        
+        handler = handlers.get(tool)
+        if handler:
+            try:
+                return await handler(task)
+            except Exception as e:
+                return self._create_error_result(task, str(e))
+        else:
+            return self._create_error_result(task, f"Tool {tool} not implemented in fallback mode")
+    
+    def _create_error_result(self, task: dict[str, Any], error: str) -> dict[str, Any]:
+        """創建錯誤結果"""
+        return {
+            "task_id": task["task_id"],
+            "success": False,
+            "error": error
+        }
+    
+    async def _execute_httpx_tool(self, task: dict[str, Any]) -> dict[str, Any]:
+        """執行 HTTP 基礎探測"""
         import httpx
         
-        tool = task["tool"]
         target = task["parameters"].get("target", "")
-        
-        try:
-            if tool == "httpx":
-                async with httpx.AsyncClient(timeout=10.0, follow_redirects=True) as client:
-                    response = await client.get(target)
-                    return {
-                        "task_id": task["task_id"],
-                        "success": True,
-                        "data": {
-                            "status_code": response.status_code,
-                            "headers": dict(response.headers),
-                            "content_length": len(response.text)
-                        }
-                    }
-            else:
-                # 其他工具暫時返回空結果
-                return {
-                    "task_id": task["task_id"],
-                    "success": False,
-                    "error": f"Tool {tool} not implemented in fallback mode"
-                }
-        except Exception as e:
+        async with httpx.AsyncClient(timeout=10.0, follow_redirects=True) as client:
+            response = await client.get(target)
             return {
                 "task_id": task["task_id"],
-                "success": False,
-                "error": str(e)
+                "success": True,
+                "tool": "httpx",
+                "data": {
+                    "status_code": response.status_code,
+                    "headers": dict(response.headers),
+                    "content_length": len(response.text),
+                    "final_url": str(response.url)
+                }
             }
     
-    async def _integrate_phase0_results(self, results: list[dict[str, Any]]) -> dict[str, Any]:
+    async def _execute_port_scanner_tool(self, task: dict[str, Any]) -> dict[str, Any]:
+        """執行端口掃描"""
+        import httpx
+        from urllib.parse import urlparse
+        
+        target = task["parameters"].get("target", "")
+        parsed = urlparse(target if "://" in target else f"http://{target}")
+        hostname = parsed.hostname or target
+        
+        # 掃描常見端口
+        common_ports = [80, 443, 8080, 8443, 3000, 5000, 8000]
+        open_ports = []
+        
+        async with httpx.AsyncClient(timeout=2.0) as client:
+            for port in common_ports:
+                try:
+                    test_url = f"http://{hostname}:{port}"
+                    await client.get(test_url)
+                    open_ports.append(port)
+                except (httpx.RequestError, httpx.HTTPStatusError):
+                    pass
+        
+        return {
+            "task_id": task["task_id"],
+            "success": True,
+            "tool": "port_scanner",
+            "data": {
+                "open_ports": open_ports,
+                "target": hostname
+            }
+        }
+    
+    async def _execute_waf_detector_tool(self, task: dict[str, Any]) -> dict[str, Any]:
+        """執行 WAF 檢測"""
+        import httpx
+        
+        target = task["parameters"].get("target", "")
+        async with httpx.AsyncClient(timeout=10.0) as client:
+            test_payload = "' OR '1'='1"
+            try:
+                response = await client.get(f"{target}?id={test_payload}")
+                
+                # 檢測 WAF 特徵
+                waf_detected = False
+                headers_lower = {k.lower(): v for k, v in response.headers.items()}
+                
+                if "x-waf" in headers_lower or "x-firewall" in headers_lower:
+                    waf_detected = True
+                elif response.status_code in [403, 406, 429, 503]:
+                    waf_detected = True
+                
+                return {
+                    "task_id": task["task_id"],
+                    "success": True,
+                    "tool": "waf_detector",
+                    "data": {
+                        "waf_detected": waf_detected,
+                        "waf_type": None,
+                        "response_code": response.status_code
+                    }
+                }
+            except (httpx.RequestError, httpx.HTTPStatusError) as e:
+                logger.debug(f"WAF 檢測請求失敗: {e}")
+                return {
+                    "task_id": task["task_id"],
+                    "success": True,
+                    "tool": "waf_detector",
+                    "data": {"waf_detected": False}
+                }
+    
+    async def _execute_tech_stack_tool(self, task: dict[str, Any]) -> dict[str, Any]:
+        """執行技術棧指紋識別"""
+        import httpx
+        
+        target = task["parameters"].get("target", "")
+        async with httpx.AsyncClient(timeout=10.0) as client:
+            response = await client.get(target)
+            
+            technologies = []
+            headers = response.headers
+            
+            # 分析 headers
+            if "server" in headers:
+                technologies.append(headers["server"])
+            if "x-powered-by" in headers:
+                technologies.append(headers["x-powered-by"])
+            if "x-aspnet-version" in headers:
+                technologies.append(f"ASP.NET {headers['x-aspnet-version']}")
+            
+            return {
+                "task_id": task["task_id"],
+                "success": True,
+                "tool": "tech_stack",
+                "data": {
+                    "technologies": technologies
+                }
+            }
+    
+    async def _execute_directory_scanner_tool(self, task: dict[str, Any]) -> dict[str, Any]:
+        """執行目錄掃描"""
+        import httpx
+        
+        target = task["parameters"].get("target", "")
+        common_dirs = ["/admin", "/api", "/login", "/dashboard", "/config", "/backup"]
+        found_dirs = []
+        
+        async with httpx.AsyncClient(timeout=5.0, follow_redirects=False) as client:
+            for dir_path in common_dirs:
+                try:
+                    url = f"{target.rstrip('/')}{dir_path}"
+                    response = await client.get(url)
+                    if response.status_code not in [404, 410]:
+                        found_dirs.append({
+                            "path": dir_path,
+                            "status_code": response.status_code
+                        })
+                except (httpx.RequestError, httpx.HTTPStatusError):
+                    pass
+        
+        return {
+            "task_id": task["task_id"],
+            "success": True,
+            "tool": "directory_scanner",
+            "data": {
+                "directories": found_dirs
+            }
+        }
+    
+    def _integrate_phase0_results(self, results: list[dict[str, Any]]) -> dict[str, Any]:
         """步驟 5: 整合多路探查結果
         
         將多個並行探查的結果整合成統一的情報
@@ -898,7 +1081,7 @@ class AttackCoordinator:
             "scan_coverage": "comprehensive",
         }
 
-    async def _ai_decide_phase2_targets(self, phase1_result: dict) -> list[dict]:
+    def _ai_decide_phase2_targets(self, phase1_result: dict) -> list[dict]:
         """AI 決策: 選擇 Phase 2 攻擊目標"""
         targets = []
         
@@ -915,7 +1098,7 @@ class AttackCoordinator:
         targets.sort(key=lambda x: x.get("priority", 99))
         return targets[:10]  # 最多 10 個目標
 
-    async def _attack_test(self, target: str, phase2_targets: list) -> dict[str, Any]:
+    def _attack_test(self, target: str, phase2_targets: list) -> dict[str, Any]:
         """Phase 2: 攻擊測試"""
         confirmed_vulns = []
         
@@ -934,7 +1117,7 @@ class AttackCoordinator:
             "total_confirmed": len(confirmed_vulns),
         }
 
-    async def _ai_evaluate_results(self, phase2_result: dict) -> dict[str, Any]:
+    def _ai_evaluate_results(self, phase2_result: dict) -> dict[str, Any]:
         """AI 決策: 評估結果"""
         vulns = phase2_result.get("vulnerabilities", [])
         
