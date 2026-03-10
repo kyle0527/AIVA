@@ -1,8 +1,28 @@
 # AIVA Integration 模組技術手冊
 
-**版本**: v2.1.0
-**狀態**: Production Ready
-**路徑**: `services/integration/`
+**版本**: v2.1.0 | **狀態**: ✅ Enterprise-Grade Ready | **路徑**: `services/integration/`
+
+---
+
+## 目錄
+
+1. [模組概述](#1-模組概述)
+2. [七層架構](#2-七層架構)
+3. [核心元件](#3-核心元件)
+   - 3.1 [AI Operation Recorder（中央協調器）](#31-ai-operation-recorder中央協調器)
+   - 3.2 [核心檔案](#32-核心檔案)
+   - 3.3 [攻擊路徑圖（NetworkX）](#33-攻擊路徑圖networkx)
+   - 3.4 [經驗儲存庫](#34-經驗儲存庫)
+4. [資料儲存架構](#4-資料儲存架構)
+5. [資料流](#5-資料流)
+6. [效能指標](#6-效能指標)
+7. [完成狀態](#7-完成狀態)
+   - 7.1 [已完成功能](#71-已完成功能-)
+   - 7.2 [待完成 / 目標功能](#72-待完成--目標功能-)
+8. [雙閉環角色](#8-雙閉環角色)
+9. [BaseCoordinator 介面](#9-basecoordinator-介面)
+10. [與其他模組的整合](#10-與其他模組的整合)
+11. [搭配閱讀](#11-搭配閱讀)
 
 ---
 
@@ -10,7 +30,7 @@
 
 Integration 模組是 AIVA 的企業級智能協調中樞，負責收集所有模組的執行結果、協調分析流程、管理經驗學習資料，並生成最終報告。
 
-**規模**：7 層架構（實際目錄深度達 7 層），整合服務 README 達 49KB。
+**規模**：7 層架構（實際目錄深度達 7 層），服務 README 達 49KB。
 
 ---
 
@@ -73,7 +93,7 @@ Layer 7: Persistence & Monitoring Layer
 
 | 檔案 | 大小 | 功能 |
 |---|---|---|
-| `search_command_handler.py` | 28.9KB | 搜尋指令處理（最大單一檔案） |
+| `search_command_handler.py` | 28.9KB | 搜尋指令處理（最大單一檔案）|
 | `models.py` | 4.5KB | 資料模型定義 |
 | `simple_data_manager.py` | 6.8KB | 輕量資料管理器 |
 | `__init__.py` | 2.4KB | 模組初始化 |
@@ -91,12 +111,12 @@ data/integration/attack_paths/attack_graph.pkl  # NetworkX 圖序列化
 邊：攻擊路徑、依賴關係、橫向移動路徑
 ```
 
-### 3.4 經驗儲存庫（Experience Repository）
+### 3.4 經驗儲存庫
 
 ```
 data/integration/experiences/experience.db     # SQLite 經驗資料庫
 data/integration/training_datasets/           # JSONL/CSV 訓練資料
-data/integration/cli_outputs/                 # CLI 參考輸出
+data/integration/cli_outputs/                 # CLI 參考輸出（新功能）
 ```
 
 ---
@@ -115,7 +135,7 @@ data/integration/cli_outputs/                 # CLI 參考輸出
 
 ## 5. 資料流
 
-### 5.1 輸入流（來自各模組）
+### 5.1 輸入流
 
 ```
 core/      ─┐
@@ -143,13 +163,59 @@ Layer 3 (AI Operation Recorder)
 ```
 Integration
   ├── → 最終報告（PDF/HTML/JSON）
-  ├── → 經驗資料 → core/cognitive_core/rag/ (學習回饋)
+  ├── → 經驗資料 → core/cognitive_core/rag/（學習回饋）
   └── → 訓練資料集（後續模型優化）
 ```
 
 ---
 
-## 6. 雙閉環角色
+## 6. 效能指標
+
+| 指標 | 目前 | 目標 |
+|---|---|---|
+| AI Recorder 延遲 | ~200ms | <100ms |
+| 系統可用性 | 99.5% | 99.9% |
+| 資料準確率 | 99.5% | >99.9% |
+
+---
+
+## 7. 完成狀態
+
+### 7.1 已完成功能 ✅
+
+| 功能 | 說明 |
+|---|---|
+| 7 層分散式架構 | 完整實作，目錄深度達 7 層 |
+| AI Operation Recorder | 中央協調器，生產就緒 |
+| 4 種服務整合 | Analysis, Reception, Reporting, Feedback |
+| 資料儲存標準化 | PostgreSQL + NetworkX + SQLite |
+| 效能基準框架 | Prometheus + Grafana 就緒 |
+| 監控與可觀測性 | 完整實作 |
+| Zero Trust 安全架構 | 完整實作 |
+| 配置管理 | 統一 .env 系統 |
+| 攻擊路徑圖 | NetworkX，本地持久化 |
+| 經驗資料庫 | SQLite + JSONL/CSV |
+| CLI Outputs 參考 | 新功能，完成 |
+| 內部探索分析 v5 | 18.37MB 歷史 + 2.18MB 最新 |
+
+### 7.2 待完成 / 目標功能 🎯
+
+| 功能 | 優先級 | 說明 |
+|---|---|---|
+| AI Recorder 延遲優化 | P1 | 目標 <100ms（目前 ~200ms）|
+| 智能路由優化 | P1 | 動態負載均衡，根據引擎負載分配請求 |
+| 錯誤處理強化 | P1 | 邊緣情況處理，自動重試機制 |
+| 系統可用性提升 | P2 | 99.5% → 99.9%（加入 circuit breaker）|
+| Gateway 叢集擴展 | P2 | 多節點 Gateway，橫向擴展 |
+| 資料準確率提升 | P2 | 99.5% → >99.9%，加強驗證邏輯 |
+| 報告格式擴展 | P2 | 新增 CycloneDX、SARIF 格式輸出 |
+| 威脅情報整合 | P3 | 連接外部 CTI（MITRE ATT&CK 等）|
+| 攻擊路徑圖視覺化 | P3 | Web UI 顯示 NetworkX 圖 |
+| 多租戶支援 | P3 | 隔離不同 Bug Bounty 專案的資料 |
+
+---
+
+## 8. 雙閉環角色
 
 Integration 模組在雙閉環架構中扮演關鍵角色：
 
@@ -165,7 +231,7 @@ Integration 模組在雙閉環架構中扮演關鍵角色：
 
 ---
 
-## 7. BaseCoordinator 介面
+## 9. BaseCoordinator 介面
 
 所有協調元件繼承自 BaseCoordinator：
 
@@ -179,7 +245,7 @@ class BaseCoordinator:
 
 ---
 
-## 8. 與其他模組的整合
+## 10. 與其他模組的整合
 
 | 模組 | 關係 | 介面 |
 |---|---|---|
@@ -191,7 +257,7 @@ class BaseCoordinator:
 
 ---
 
-## 9. 搭配閱讀
+## 11. 搭配閱讀
 
 - **操作手冊**：`guides/user_manuals/使用者手冊_第5冊_數據流分析與執行器.md`
 - **操作手冊**：`guides/user_manuals/使用者手冊_第3冊_執行與適應.md`

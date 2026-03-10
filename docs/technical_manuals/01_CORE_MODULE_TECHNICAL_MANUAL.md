@@ -1,8 +1,27 @@
 # AIVA Core 模組技術手冊
 
-**版本**: v4.1.1
-**狀態**: Production Ready
-**路徑**: `services/core/`
+**版本**: v4.1.1 | **狀態**: ✅ Production Ready | **路徑**: `services/core/`
+
+---
+
+## 目錄
+
+1. [模組概述](#1-模組概述)
+2. [架構設計](#2-架構設計)
+   - 2.1 [四種操作模式](#21-四種操作模式)
+   - 2.2 [13 步驟工作流](#22-13-步驟工作流)
+3. [核心元件](#3-核心元件)
+   - 3.1 [關鍵檔案](#31-關鍵檔案)
+   - 3.2 [Bug Bounty 決策引擎](#32-bug-bounty-決策引擎-v440)
+   - 3.3 [神經網路決策引擎](#33-神經網路決策引擎)
+4. [資料流](#4-資料流)
+5. [完成狀態](#5-完成狀態)
+   - 5.1 [已完成功能](#51-已完成功能-)
+   - 5.2 [待完成 / 目標功能](#52-待完成--目標功能-)
+6. [反幻覺機制](#6-反幻覺機制)
+7. [依賴配置](#7-依賴配置)
+8. [與其他模組的整合](#8-與其他模組的整合)
+9. [搭配閱讀](#9-搭配閱讀)
 
 ---
 
@@ -41,11 +60,11 @@ Core 模組是 AIVA 系統的主要 AI 決策中樞，負責接收任務指令�
 
 ```
 Phase 0 接收與偵察
-  Step 0: CLI 執行模式 (276 flows)
+  Step 0: CLI 執行模式（276 flows 已分類）
   Step 1: 目標接收與初始化
 
 Phase 1 深度掃描 + AI 決策 1
-  Step 2: 端口掃描 (nmap/masscan AI 選擇)
+  Step 2: 端口掃描（nmap/masscan AI 選擇）
   Step 3: 服務識別與技術棧分析
   Step 4: AI 決策點 1 → decide_scan_strategy()
   Step 5: 深度漏洞掃描
@@ -97,6 +116,7 @@ evaluate_phase2_results()   # 結果評估與後續行動（CVSS 指引）
 - **參數量**：5M
 - **輸入特徵**：從 `capability_encoder.py` 產生的 512 維去語意化向量
 - **輸出**：攻擊策略優先度分數矩陣
+- **權重檔案**：`aiva_real_weights.pth`（已存在）
 
 ---
 
@@ -111,7 +131,7 @@ cognitive_core/capability_orchestrator.py
       │  ← 執行 5M Neural 決策
       │  ← 呼叫 embedded_knowledge
       ▼
-planner/orchestrator.py (攻擊計畫生成)
+planner/orchestrator.py（攻擊計畫生成）
       │
       ▼
 execution/plan_executor.py
@@ -121,20 +141,42 @@ execution/plan_executor.py
 結果 → integration/ → 報告
       │
       ▼
-learning_system/ (經驗寫回)
+learning_system/（經驗寫回）
 ```
 
 ---
 
-## 5. 與其他模組的整合
+## 5. 完成狀態
 
-| 模組 | 關係 | 介面 |
+### 5.1 已完成功能 ✅
+
+| 功能 | 版本 | 說明 |
 |---|---|---|
-| `features/` | 呼叫方 | `feature_step_executor.py` |
-| `scan/` | 呼叫方 | 各引擎 CLI 介面 |
-| `integration/` | 結果傳送 | `ai_executor_interface.py` |
-| `aiva_common/` | 依賴 | schemas, enums, config |
-| `cognitive_core/rag/` | 內部依賴 | `rag_engine.py` |
+| 5M 神經網路決策引擎 | v4.1.1 | 512→100 輸出，生產就緒 |
+| Bug Bounty 決策引擎 | v4.4.0 | 4 大決策方法，HackerOne/Bugcrowd 優化 |
+| 去語意化反射引擎 | v2.1 | 12/12 驗證測試通過 |
+| 嵌入式安全知識庫 | v1.0.0 | 400+ SQLi 指紋，20+ WAF 繞過技術 |
+| RAG 整合 | ✅ | 512 維向量檢索，P0 階段完成 |
+| 反幻覺模組 | ✅ | >95% 事實驗證精度 |
+| 學習系統 | ✅ | 經驗重放記憶體，持續學習管線 |
+| P0-P2 架構修復 | 2025-11-15 | 所有跨模組 AI 協同問題已解決 |
+| UTC 相容性修復 | ✅ | 5 個檔案已修復 |
+| 13 步驟工作流 | ✅ | 276 flows 已分類可呼叫 |
+
+### 5.2 待完成 / 目標功能 🎯
+
+| 功能 | 優先級 | 說明 |
+|---|---|---|
+| AI Recorder 延遲優化 | P1 | 目標 <100ms（目前 ~200ms） |
+| RAG P1 實際執行驗證 | P1 | 對真實目標實測，收集錯誤並優化 |
+| 多目標並行編排 | P2 | 同時處理多個 Bug Bounty 目標 |
+| 自動 PoC 生成 | P2 | 漏洞確認後自動產生概念驗證程式碼 |
+| 攻擊鏈組合決策 | P2 | Phase1 → Phase2 → PostEx 自動串接 |
+| 目標指紋識別強化 | P2 | 基於目標技術棧自動調整決策參數 |
+| 模型線上微調 | P3 | 基於執行回饋的即時權重更新 |
+| 多平台 Bug Bounty 支援 | P3 | 擴展至 Intigriti、YesWeHack 等平台 |
+| Tier 4 漏洞分類 | P3 | 支援 Info/N/A 類漏洞的 ROI 計算 |
+| Web UI 決策視覺化 | P3 | 即時顯示 AI 決策理由與信心分數 |
 
 ---
 
@@ -148,7 +190,7 @@ learning_system/ (經驗寫回)
 
 ---
 
-## 7. 依賴配置（4 層）
+## 7. 依賴配置
 
 | 層級 | 大小 | 用途 |
 |---|---|---|
@@ -159,8 +201,22 @@ learning_system/ (經驗寫回)
 
 ---
 
-## 8. 搭配閱讀
+## 8. 與其他模組的整合
+
+| 模組 | 關係 | 介面 |
+|---|---|---|
+| `features/` | 呼叫方 | `feature_step_executor.py` |
+| `scan/` | 呼叫方 | 各引擎 CLI 介面 |
+| `integration/` | 結果傳送 | `ai_executor_interface.py` |
+| `aiva_common/` | 依賴 | schemas, enums, config |
+| `cognitive_core/rag/` | 內部依賴 | `rag_engine.py` |
+
+---
+
+## 9. 搭配閱讀
 
 - **操作手冊**：`guides/user_manuals/使用者手冊_第2冊_AI決策流程.md`
 - **操作手冊**：`guides/user_manuals/使用者手冊_第3冊_執行與適應.md`
 - **操作手冊**：`guides/user_manuals/使用者手冊_第2-2冊_13步驟黑盒測試架構詳解.md`
+- **技術手冊**：`docs/technical_manuals/06_COGNITIVE_CORE_TECHNICAL_MANUAL.md`
+- **技術手冊**：`docs/technical_manuals/07_RAG_SYSTEM_TECHNICAL_MANUAL.md`

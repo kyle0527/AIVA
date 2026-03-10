@@ -1,8 +1,26 @@
 # AIVA Scan 模組技術手冊
 
-**版本**: v3.1
-**狀態**: Production Ready
-**路徑**: `services/scan/`
+**版本**: v3.1 | **狀態**: ✅ Production Ready | **路徑**: `services/scan/`
+
+---
+
+## 目錄
+
+1. [模組概述](#1-模組概述)
+2. [四大引擎架構](#2-四大引擎架構)
+3. [各引擎技術細節](#3-各引擎技術細節)
+   - 3.1 [Go Engine — 高速掃描](#31-go-engine--高速掃描)
+   - 3.2 [Rust Engine — 高精度攻擊檢測](#32-rust-engine--高精度攻擊檢測)
+   - 3.3 [TypeScript Engine — 現代 Web 應用](#33-typescript-engine--現代-web-應用)
+   - 3.4 [Python Engine — 參考標準實作](#34-python-engine--參考標準實作)
+4. [智能速率控制](#4-智能速率控制)
+5. [引擎選擇邏輯](#5-引擎選擇邏輯)
+6. [輸出格式](#6-輸出格式)
+7. [完成狀態](#7-完成狀態)
+   - 7.1 [已完成功能](#71-已完成功能-)
+   - 7.2 [待完成 / 目標功能](#72-待完成--目標功能-)
+8. [與其他模組的整合](#8-與其他模組的整合)
+9. [搭配閱讀](#9-搭配閱讀)
 
 ---
 
@@ -11,6 +29,8 @@
 Scan 模組是 AIVA 的多語言掃描引擎調度層，負責管理 Go、Rust、TypeScript、Python 四個獨立掃描引擎。
 
 **架構原則**：無中央協調器——各引擎獨立運作，由 Core 模組根據目標特性選擇引擎組合。
+
+**OWASP WSTG 合規**：所有引擎遵循 OWASP Web Security Testing Guide 標準。
 
 ---
 
@@ -25,10 +45,12 @@ Scan 模組是 AIVA 的多語言掃描引擎調度層，負責管理 Go、Rust�
 │  │ Fast SSRF  │  │ HTTP Smug  │  │  DOM XSS       │  │
 │  │ SCA / CSPM │  │ Auth Brute │  │  SPA Routing   │  │
 │  └────────────┘  └────────────┘  │  WebSocket     │  │
-│                                  └────────────────┘  │
+│  ⚠️ 需編譯      ✅ 生產就緒      └────────────────┘  │
+│                                  ✅ 生產就緒          │
 │  ┌──────────────────────────────────────────────┐    │
-│  │              Python Engine (Reference)       │    │
+│  │          Python Engine（Reference Standard）  │    │
 │  │   XXE / Deserialization / Passive Analysis   │    │
+│  │                    95% 完成                   │    │
 │  └──────────────────────────────────────────────┘    │
 └──────────────────────────────────────────────────────┘
 ```
@@ -38,6 +60,8 @@ Scan 模組是 AIVA 的多語言掃描引擎調度層，負責管理 Go、Rust�
 ## 3. 各引擎技術細節
 
 ### 3.1 Go Engine — 高速掃描
+
+**狀態**：⚠️ 功能完整，需編譯後使用
 
 **適用場景**：大規模快速掃描
 
@@ -50,11 +74,14 @@ Scan 模組是 AIVA 的多語言掃描引擎調度層，負責管理 Go、Rust�
 **技術優勢**：Go 並發模型，掃描速度遠優於 Python
 
 ```bash
-# 執行範例
+# 需先編譯
+cd services/scan/go_engine && go build -o scan_go .
 ./scan_go --target https://target.com --mode ssrf --concurrency 100
 ```
 
 ### 3.2 Rust Engine — 高精度攻擊檢測
+
+**狀態**：✅ 生產就緒（已增強）
 
 **適用場景**：精確漏洞驗證，需要高效能記憶體安全
 
@@ -71,13 +98,13 @@ TE.TE：雙 Transfer-Encoding header 混淆
 Chunk：Chunked 編碼注入
 ```
 
-```bash
-./scan_rust --target https://target.com --mode http-smuggling
-```
-
 ### 3.3 TypeScript Engine — 現代 Web 應用
 
+**狀態**：✅ 生產就緒（已增強）
+
 **適用場景**：SPA、動態渲染、WebSocket 應用
+
+**依賴工具**：Playwright（headless Chrome/Firefox）
 
 | 功能 | 說明 |
 |---|---|
@@ -87,15 +114,9 @@ Chunk：Chunked 編碼注入
 | PostMessage 偵測 | 跨源通信安全檢測 |
 | 客戶端繞過 | 前端驗證邏輯繞過測試 |
 
-**依賴工具**：Playwright（headless Chrome/Firefox）
-
-```bash
-npx ts-node scan_ts.ts --target https://spa-app.com --mode dom-xss
-```
-
 ### 3.4 Python Engine — 參考標準實作
 
-**完成度**：95%（作為其他引擎的參考標準）
+**狀態**：✅ 95% 完成（作為其他引擎的參考標準）
 
 | 功能 | 說明 |
 |---|---|
@@ -131,6 +152,8 @@ if target.has_api:
     engines += ["go", "rust"]
 if target.has_websocket:
     engines += ["typescript"]
+if target.is_large_scope:
+    engines += ["go"]  # 高並發掃描
 ```
 
 ---
@@ -154,7 +177,42 @@ if target.has_websocket:
 
 ---
 
-## 7. 與其他模組的整合
+## 7. 完成狀態
+
+### 7.1 已完成功能 ✅
+
+| 功能 | 引擎 | 說明 |
+|---|---|---|
+| HTTP Smuggling（CL.TE, TE.CL, TE.TE）| Rust | 增強版，已測試 |
+| 自適應認證爆破 | Rust | 智能速率控制 |
+| DOM XSS 偵測 | TypeScript | Playwright 真實瀏覽器 |
+| SPA 路由遍歷 | TypeScript | 客戶端安全測試 |
+| WebSocket 安全分析 | TypeScript | PostMessage 偵測 |
+| XXE 注入偵測 | Python | 95% 完成 |
+| 反序列化漏洞 | Python | Java/Python/PHP 覆蓋 |
+| SSRF 快速掃描 | Go | 功能完整，需編譯 |
+| SCA 軟體成分分析 | Go | 功能完整，需編譯 |
+| OWASP WSTG 合規 | 全引擎 | 測試標準對齊 |
+
+### 7.2 待完成 / 目標功能 🎯
+
+| 功能 | 優先級 | 說明 |
+|---|---|---|
+| Go Engine CI/CD 自動編譯 | P1 | 整合到建置流程，無需手動編譯 |
+| Rust Engine CI/CD 整合 | P1 | 同上 |
+| Browser 依賴自動安裝 | P1 | TypeScript Engine Playwright 瀏覽器自動設定 |
+| Python Engine 剩餘 5% | P1 | 補齊被動分析邊緣案例 |
+| CORS 安全測試引擎 | P2 | 新增跨域資源共享配置錯誤掃描 |
+| GraphQL 安全掃描 | P2 | GraphQL introspection、注入、越權 |
+| gRPC 協定掃描 | P2 | gRPC 服務的安全測試 |
+| Cloud API 掃描擴展 | P2 | AWS/GCP/Azure API 特化掃描 |
+| 分散式掃描協調 | P3 | 多節點並行掃描，超大規模目標 |
+| 掃描結果去重算法 | P3 | 多引擎同時掃描時避免重複漏洞報告 |
+| 自動速率校準 | P3 | 根據目標歷史行為自動設定初始速率 |
+
+---
+
+## 8. 與其他模組的整合
 
 | 模組 | 關係 |
 |---|---|
@@ -165,7 +223,7 @@ if target.has_websocket:
 
 ---
 
-## 8. 搭配閱讀
+## 9. 搭配閱讀
 
 - **操作手冊**：`guides/user_manuals/使用者手冊_第5冊_數據流分析與執行器.md`
 - **技術手冊**：`docs/technical_manuals/01_CORE_MODULE_TECHNICAL_MANUAL.md`（調度方）
