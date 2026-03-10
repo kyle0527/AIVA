@@ -14,8 +14,8 @@
 | 03 | [Scan 模組技術手冊](./03_SCAN_MODULE_TECHNICAL_MANUAL.md) | `services/scan/` |
 | 04 | [Integration 模組技術手冊](./04_INTEGRATION_MODULE_TECHNICAL_MANUAL.md) | `services/integration/` |
 | 05 | [AIVA Common 技術手冊](./05_AIVA_COMMON_TECHNICAL_MANUAL.md) | `services/aiva_common/` |
-| 06 | [Cognitive Core 技術手冊](./06_COGNITIVE_CORE_TECHNICAL_MANUAL.md) | `cognitive_core/` |
-| 07 | [RAG 系統技術手冊](./07_RAG_SYSTEM_TECHNICAL_MANUAL.md) | `cognitive_core/rag/` |
+| 06 | [Cognitive Core 技術手冊](./06_COGNITIVE_CORE_TECHNICAL_MANUAL.md) | `services/core/aiva_core/cognitive_core/` |
+| 07 | [RAG 系統技術手冊](./07_RAG_SYSTEM_TECHNICAL_MANUAL.md) | `services/core/aiva_core/cognitive_core/rag/` |
 | 08 | [雙閉環系統技術手冊](./08_DUAL_LOOP_TECHNICAL_MANUAL.md) | 跨模組 |
 
 ---
