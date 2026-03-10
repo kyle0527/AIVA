@@ -1,9 +1,16 @@
 """AI Commander 類型定義
 
-包含 AI 任務類型和組件類型枚舉
+包含 AI 任務類型和組件類型枚舉，以及 CLI 命令模型導入
 """
 
 from enum import Enum
+
+# 導入新架構的 CLI 命令模型（階段 1：CLI 參數包驅動架構）
+from aiva_common.schemas.commands import CLICommand
+
+
+# 重新導出 CLICommand 供其他模組使用
+__all__ = ["AITaskType", "AIComponent", "CLICommand"]
 
 
 class AITaskType(str, Enum):

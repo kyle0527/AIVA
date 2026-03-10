@@ -20,10 +20,9 @@ from rich.table import Table
 from rich.theme import Theme
 from rich.text import Text
 
-# Local imports
-from ...core.base_capability import BaseCapability
-from ...core.registry import CapabilityRegistry
-from ...aiva_common.schemas import APIResponse
+# Local imports - 使用正確的導入路徑
+from .models import CapabilityRecord, CapabilityType, CapabilityStatus, BaseCapability
+from .registry import CapabilityRegistry
 
 # Setup theme and console
 _theme = Theme({"purple": "#7B61FF"})
@@ -48,65 +47,69 @@ class ForensicResult:
 
 class ForensicTool:
     """Base forensic tool class - equivalent to HackingTool"""
-    
+
     def __init__(self):
         self.name = ""
         self.description = ""
-        self.install_commands = []
-        self.run_commands = []
+        self.install_commands: list[str] = []
+        self.run_commands: list[str] = []
         self.project_url = ""
         self.installable = True
         self.runnable = True
-    
+
+    def custom_run(self) -> None:
+        """Override this method in subclasses for custom execution logic"""
+        pass
+
     def is_installed(self) -> bool:
         """Check if tool is installed"""
         if not self.run_commands:
             return False
-        
+
         # Extract main command
         main_cmd = self.run_commands[0].split()[0]
         if main_cmd.startswith("sudo "):
             main_cmd = main_cmd.replace("sudo ", "")
-        
+
         try:
             result = subprocess.run(
-                ["which", main_cmd], 
-                capture_output=True, 
+                ["which", main_cmd],
+                capture_output=True,
                 timeout=5
             )
             return result.returncode == 0
         except Exception:
             return False
-    
+
     def install(self) -> bool:
         """Install tool"""
         if not self.installable:
             console.print(f"[yellow]{self.name} is not installable via this interface[/yellow]")
             return False
-            
+
         console.print(f"[cyan]Installing {self.name}...[/cyan]")
         console.print("[yellow]⚠️  For authorized forensic analysis only![/yellow]")
-        
+
         if not Confirm.ask(f"Confirm install {self.name}?"):
             return False
-        
+
         success = True
         for cmd in self.install_commands:
             try:
                 console.print(f"[yellow]Executing: {cmd}[/yellow]")
                 result = subprocess.run(
-                    cmd, 
-                    shell=True, 
+                    cmd,
+                    shell=True,
                     timeout=300,
                     capture_output=True,
                     text=True
                 )
-                
+
                 if result.returncode != 0:
                     console.print(f"[red]Install command failed: {result.stderr}[/red]")
                     success = False
                     break
-                    
+
             except subprocess.TimeoutExpired:
                 console.print(f"[red]Install timeout: {cmd}[/red]")
                 success = False
@@ -115,19 +118,19 @@ class ForensicTool:
                 console.print(f"[red]Install error: {e}[/red]")
                 success = False
                 break
-        
+
         if success:
             console.print(f"[green]✅ {self.name} installed successfully[/green]")
         else:
             console.print(f"[red]❌ {self.name} installation failed[/red]")
-        
+
         return success
-    
+
     def run(self) -> ForensicResult:
         """Run tool"""
         console.print(f"[bold green]🔍 Running {self.name}[/bold green]")
         console.print("[yellow]⚠️  For authorized forensic analysis only![/yellow]")
-        
+
         if not self.runnable:
             console.print(f"[yellow]{self.name} requires manual setup or GUI interface[/yellow]")
             return ForensicResult(
@@ -139,7 +142,7 @@ class ForensicTool:
                 success=False,
                 error_details="Tool not runnable via CLI"
             )
-        
+
         if not Confirm.ask(f"Confirm run {self.name}?"):
             return ForensicResult(
                 tool_name=self.name,
@@ -150,9 +153,9 @@ class ForensicTool:
                 success=False,
                 error_details="User cancelled"
             )
-        
+
         start_time = datetime.now()
-        
+
         try:
             # Run custom method if exists, otherwise run standard commands
             if hasattr(self, 'custom_run'):
@@ -161,11 +164,11 @@ class ForensicTool:
                 for cmd in self.run_commands:
                     console.print(f"[yellow]Executing: {cmd}[/yellow]")
                     subprocess.run(cmd, shell=True)
-        
+
         except Exception as e:
             end_time = datetime.now()
             duration = (end_time - start_time).total_seconds()
-            
+
             return ForensicResult(
                 tool_name=self.name,
                 command=str(self.run_commands),
@@ -175,10 +178,10 @@ class ForensicTool:
                 success=False,
                 error_details=str(e)
             )
-        
+
         end_time = datetime.now()
         duration = (end_time - start_time).total_seconds()
-        
+
         return ForensicResult(
             tool_name=self.name,
             command=str(self.run_commands),
@@ -191,7 +194,7 @@ class ForensicTool:
 
 class Autopsy(ForensicTool):
     """Autopsy Digital Forensics Platform - Direct port from HackingTool"""
-    
+
     def __init__(self):
         super().__init__()
         self.name = "Autopsy"
@@ -207,7 +210,7 @@ class Autopsy(ForensicTool):
 
 class Wireshark(ForensicTool):
     """Wireshark Network Protocol Analyzer - Direct port from HackingTool"""
-    
+
     def __init__(self):
         super().__init__()
         self.name = "Wireshark"
@@ -222,7 +225,7 @@ class Wireshark(ForensicTool):
 
 class BulkExtractor(ForensicTool):
     """Bulk Extractor - Direct port from HackingTool"""
-    
+
     def __init__(self):
         super().__init__()
         self.name = "Bulk extractor"
@@ -230,7 +233,7 @@ class BulkExtractor(ForensicTool):
         self.project_url = "https://github.com/simsong/bulk_extractor"
         self.installable = False
         self.runnable = False
-    
+
     def gui_mode(self):
         """GUI Mode implementation"""
         console.print(Panel(Text(self.name, justify="center"), style=PURPLE_STYLE))
@@ -249,15 +252,15 @@ class BulkExtractor(ForensicTool):
         console.print("[magenta]Showing bulk_extractor help and options:[/]")
         os.system("bulk_extractor -h")
         os.system('echo "bulk_extractor [options] imagefile" | boxes -d headline | lolcat')
-    
+
     def custom_run(self):
         """Custom run with mode selection"""
         console.print(f"[bold cyan]{self.name} Mode Selection[/bold cyan]")
         console.print("1. GUI Mode (Download required)")
         console.print("2. CLI Mode")
-        
+
         choice = Prompt.ask("Select mode", choices=["1", "2"], default="2")
-        
+
         if choice == "1":
             self.gui_mode()
         else:
@@ -266,7 +269,7 @@ class BulkExtractor(ForensicTool):
 
 class Guymager(ForensicTool):
     """Guymager Forensic Imager - Direct port from HackingTool"""
-    
+
     def __init__(self):
         super().__init__()
         self.name = "Disk Clone and ISO Image Acquire"
@@ -279,7 +282,7 @@ class Guymager(ForensicTool):
 
 class Toolsley(ForensicTool):
     """Toolsley Online Forensic Tools - Direct port from HackingTool"""
-    
+
     def __init__(self):
         super().__init__()
         self.name = "Toolsley"
@@ -296,16 +299,16 @@ class Toolsley(ForensicTool):
         self.project_url = "https://www.toolsley.com/"
         self.installable = False
         self.runnable = False
-    
+
     def custom_run(self):
         """Open Toolsley website"""
         console.print(f"[cyan]Opening {self.name} website...[/cyan]")
         console.print(f"[blue]Visit: {self.project_url}[/blue]")
-        
+
         # Cross-platform URL opening
         import platform
         system = platform.system().lower()
-        
+
         if system == "windows":
             os.system(f"start {self.project_url}")
         elif system == "darwin":
@@ -316,7 +319,7 @@ class Toolsley(ForensicTool):
 
 class ForensicManager:
     """Forensic tools manager - equivalent to HackingToolsCollection"""
-    
+
     def __init__(self):
         self.name = "Forensic tools"
         self.description = "Digital forensics and incident response tools"
@@ -328,10 +331,10 @@ class ForensicManager:
             Toolsley()
         ]
         self.forensic_results = []
-    
+
     def _get_attr(self, obj, *names, default=""):
         """獲取屬性（支持多種命名習慣）。
-        
+
         嘗試多個可能的屬性名稱，以支持不同工具的命名規範。
         這是兼容性處理，不是降級邏輯。
         """
@@ -386,7 +389,7 @@ class ForensicManager:
         try:
             choice = Prompt.ask("[bold cyan]Select a tool to run[/bold cyan]", default="99")
             choice = int(choice)
-            
+
             if 1 <= choice <= len(self.tools):
                 selected = self.tools[choice - 1]
                 self._handle_tool_selection(selected)
@@ -400,15 +403,15 @@ class ForensicManager:
                 console.print("[bold red]Invalid choice. Try again.[/bold red]")
         except Exception as e:
             console.print(f"[bold red]Error: {e}[/bold red]")
-        
+
         return self.show_options(parent=parent)
-    
+
     def _handle_tool_selection(self, tool: ForensicTool):
         """Handle tool selection"""
         console.print(f"\n[bold green]Selected: {tool.name}[/bold green]")
         console.print(f"[cyan]Description: {tool.description}[/cyan]")
         console.print(f"[blue]Project URL: {getattr(tool, 'PROJECT_URL', 'N/A')}[/blue]")
-        
+
         if tool.installable and not tool.is_installed():
             console.print(f"[yellow]{tool.name} is not installed[/yellow]")
             if Confirm.ask("Install now?"):
@@ -419,34 +422,34 @@ class ForensicManager:
                     return
             else:
                 return
-        
+
         if Confirm.ask(f"Run {tool.name}?"):
             result = tool.run()
             self.forensic_results.append(result)
-            
+
             if result.success:
                 console.print(f"[green]✅ {tool.name} completed![/green]")
             else:
                 console.print(f"[red]❌ {tool.name} failed: {result.error_details}[/red]")
-    
+
     def _show_forensic_results(self):
         """Show forensic analysis results"""
         if not self.forensic_results:
             console.print("[yellow]No forensic analysis results available[/yellow]")
             return
-        
+
         table = Table(title="🔍 Forensic Analysis Results")
         table.add_column("Tool", style="cyan")
         table.add_column("Result", style="green")
         table.add_column("Duration", style="blue")
         table.add_column("Time", style="magenta")
         table.add_column("Evidence", style="yellow")
-        
+
         for result in self.forensic_results:
             status = "✅ Success" if result.success else "❌ Failed"
             start_time = result.start_time.split('T')[1][:8]
             evidence = result.evidence_path or "N/A"
-            
+
             table.add_row(
                 result.tool_name,
                 status,
@@ -454,13 +457,13 @@ class ForensicManager:
                 start_time,
                 evidence[:20] + "..." if len(evidence) > 20 else evidence
             )
-        
+
         console.print(table)
 
 
 class ForensicCapability(BaseCapability):
     """Forensic analysis capability - AIVA integration"""
-    
+
     def __init__(self):
         super().__init__()
         self.name = "forensic_tools"
@@ -468,27 +471,27 @@ class ForensicCapability(BaseCapability):
         self.description = "Digital Forensics Toolkit - Direct port from HackingTool"
         self.dependencies = ["wireshark", "autopsy", "bulk-extractor"]
         self.manager = ForensicManager()
-    
+
     async def initialize(self) -> bool:
         """Initialize capability"""
         try:
             console.print("[yellow]Initializing forensic analysis toolkit...[/yellow]")
             console.print("[red]⚠️  For authorized forensic analysis only![/red]")
             console.print("[cyan]Digital forensics and incident response tools[/cyan]")
-            
+
             return True
-            
+
         except Exception as e:
             logger.error(f"Initialization failed: {e}")
             return False
-    
+
     async def execute(self, command: str, parameters: Dict[str, Any]) -> Dict[str, Any]:
         """Execute command"""
         try:
             if command == "interactive_menu":
                 self.manager.show_options()
                 return {"success": True, "message": "Interactive menu completed"}
-            
+
             elif command == "list_tools":
                 tools_info = []
                 for tool in self.manager.tools:
@@ -499,31 +502,31 @@ class ForensicCapability(BaseCapability):
                         "installed": tool.is_installed()
                     })
                 return {"success": True, "data": {"tools": tools_info}}
-            
+
             elif command == "show_details":
                 self.manager.pretty_print()
                 return {"success": True, "message": "Tool details displayed"}
-                
+
             elif command == "run_tool":
                 tool_name = parameters.get('tool_name')
                 if not tool_name:
                     return {"success": False, "error": "Missing tool_name parameter"}
-                
+
                 tool = next((t for t in self.manager.tools if t.name == tool_name), None)
                 if not tool:
                     return {"success": False, "error": f"Tool {tool_name} not found"}
-                
+
                 result = tool.run()
                 self.manager.forensic_results.append(result)
                 return {"success": True, "data": asdict(result)}
-            
+
             else:
                 return {"success": False, "error": f"Unknown command: {command}"}
-                
+
         except Exception as e:
             logger.error(f"Command execution failed: {e}")
             return {"success": False, "error": str(e)}
-    
+
     async def cleanup(self) -> bool:
         """Cleanup resources"""
         try:
@@ -534,8 +537,9 @@ class ForensicCapability(BaseCapability):
             return False
 
 
-# Register capability
-CapabilityRegistry.register("forensic_tools", ForensicCapability)
+# Note: Registration is now handled via async registration function
+# See register_standardized_capabilities.py for proper registration flow
+# CapabilityRegistry.register("forensic_tools", ForensicCapability)
 
 
 if __name__ == "__main__":
@@ -543,15 +547,15 @@ if __name__ == "__main__":
     async def test_forensic_tools():
         capability = ForensicCapability()
         await capability.initialize()
-        
+
         console.print("[bold red]⚠️  Digital forensics toolkit - Direct port from HackingTool![/bold red]")
         console.print("[yellow]For authorized forensic analysis only![/yellow]")
-        
+
         # Show tools and start interactive menu
         capability.manager.pretty_print()
         capability.manager.show_options()
-        
+
         await capability.cleanup()
-    
+
     # Run test
     asyncio.run(test_forensic_tools())

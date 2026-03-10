@@ -1,14 +1,24 @@
 """Tool Selector - 工具選擇器
 
 根據任務類型和參數決定使用哪個功能服務/工具來執行
+
+架構升級（v2.0 - 2026-02-09）:
+- 支持 CLI 參數包驅動架構
+- 從 internal_classification.json 動態加載 flows
+- AI 產出 CLICommand，執行器轉換為實際 CLI 調用
 """
 
 from dataclasses import dataclass
 from enum import Enum
+import json
 import logging
-from typing import Any
+from pathlib import Path
+from typing import Any, Optional, Dict, List
 
 from .task_converter import ExecutableTask
+
+# 導入 CLI 命令模型
+from aiva_common.schemas.commands import CLICommand
 
 logger = logging.getLogger(__name__)
 
@@ -216,3 +226,162 @@ class ToolSelector:
         }
 
         return routing_key_map.get(service_type)
+
+    # ========== CLI 架構擴展（v2.0）==========
+
+    def select_cli_command(
+        self,
+        intent: str,
+        target: str,
+        context: Optional[Dict[str, Any]] = None
+    ) -> Optional[CLICommand]:
+        """根據意圖選擇 CLI 命令（新架構）
+
+        Args:
+            intent: AI 意圖（scan, exploit, analyze 等）
+            target: 目標 URL/IP
+            context: 上下文信息（包含 intensity, mode 等）
+
+        Returns:
+            CLICommand 或 None（未找到匹配的 flow）
+
+        Examples:
+            >>> selector = ToolSelector()
+            >>> cmd = selector.select_cli_command(
+            ...     intent="sqli_detection",
+            ...     target="https://example.com",
+            ...     context={"intensity": 0.8, "mode": "stealth"}
+            ... )
+            >>> print(cmd.to_shell_command())
+            'python -m services.core.aiva_core.core_capabilities.cli.aiva_cli flow8 --target https://example.com --intensity 0.8 --mode stealth'
+        """
+        context = context or {}
+
+        # 加載 flow 定義
+        flows = self._load_internal_flows()
+        if not flows:
+            logger.warning("未找到可用的 flows")
+            return None
+
+        # 根據意圖匹配 flow
+        matched_flow = self._match_flow_by_intent(intent, flows)
+        if not matched_flow:
+            logger.warning(f"未找到匹配意圖的 flow: {intent}")
+            return None
+
+        # 構建 CLI 命令
+        flow_id = matched_flow.get("id")
+        flags = {
+            "intensity": context.get("intensity", 0.5),
+            "mode": context.get("mode", "normal")
+        }
+
+        # 添加額外參數
+        for key in ["data", "query", "param", "concurrency"]:
+            if key in context:
+                flags[key] = context[key]
+
+        cmd = CLICommand(
+            flow_id=f"flow_{flow_id}",
+            target=target,
+            flags=flags,
+            metadata={
+                "intent": intent,
+                "flow_name": matched_flow.get("name"),
+                "primary_module": matched_flow.get("primary_module"),
+                "component_type": matched_flow.get("component_type")
+            }
+        )
+
+        logger.info(f"✅ 選擇 CLI 命令: {cmd.flow_id} for {intent}")
+        return cmd
+
+    def _load_internal_flows(self) -> List[Dict[str, Any]]:
+        """加載內部 flows 定義
+
+        Returns:
+            Flow 定義列表
+        """
+        # 嘗試多個可能路徑
+        possible_paths = [
+            Path("C:/D/fold7/AIVA-git/services/integration/data/internal_exploration/internal_classification.json"),
+            Path("services/integration/data/internal_exploration/internal_classification.json"),
+            Path("../../../integration/data/internal_exploration/internal_classification.json"),
+        ]
+
+        for path in possible_paths:
+            if path.exists():
+                try:
+                    with open(path, encoding='utf-8') as f:
+                        data = json.load(f)
+                        flows = data.get('flows', [])
+                        if flows:
+                            logger.info(f"📋 已載入 {len(flows)} 個 internal flows")
+                            return flows
+                except Exception as e:
+                    logger.warning(f"讀取 {path} 失敗: {e}")
+                    continue
+
+        logger.error("未找到 internal_classification.json")
+        return []
+
+    def _match_flow_by_intent(self, intent: str, flows: List[Dict[str, Any]]) -> Optional[Dict[str, Any]]:
+        """根據意圖匹配最佳 flow
+
+        Args:
+            intent: 意圖字符串
+            flows: Flow 列表
+
+        Returns:
+            匹配的 flow 或 None
+        """
+        # 意圖關鍵字映射
+        intent_keywords = {
+            "sqli": ["sql", "injection", "sqli"],
+            "xss": ["xss", "cross", "script"],
+            "scan": ["scan", "nmap", "port"],
+            "exploit": ["exploit", "attack"],
+            "analyze": ["analyze", "analysis"],
+            "learning": ["learn", "train", "model"],
+            "rag": ["rag", "retrieval", "knowledge"]
+        }
+
+        # 提取意圖類型
+        intent_lower = intent.lower()
+        intent_type = None
+        for key, keywords in intent_keywords.items():
+            if any(kw in intent_lower for kw in keywords):
+                intent_type = key
+                break
+
+        if not intent_type:
+            # 降級：返回第一個可操作的 flow
+            for flow in flows:
+                if flow.get("component_type") in ["AI對外能力", "混合組件"]:
+                    return flow
+            return flows[0] if flows else None
+
+        # 匹配對應模組的 flow
+        module_mapping = {
+            "sqli": "function_sqli",
+            "xss": "function_xss",
+            "scan": "scan",
+            "exploit": "task_planning",
+            "analyze": "cognitive_core",
+            "learning": "learning_system",
+            "rag": "cognitive_core"
+        }
+
+        target_module = module_mapping.get(intent_type)
+        if target_module:
+            for flow in flows:
+                primary = flow.get("primary_module", "")
+                if target_module in primary:
+                    return flow
+
+        # 降級：返回匹配組件類型的 flow
+        for flow in flows:
+            if flow.get("component_type") == "AI對外能力":
+                return flow
+
+        return flows[0] if flows else None

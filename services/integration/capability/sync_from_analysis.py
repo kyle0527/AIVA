@@ -181,6 +181,12 @@ class CapabilitySyncer:
             status=CapabilityStatus.HEALTHY,  # 初始狀態為 HEALTHY
             created_at=datetime.now(),
             updated_at=datetime.now(),
+            topic=flow.get('category', 'general'),
+            last_probe=None,
+            last_success=None,
+            environment_vars={},
+            rag_trigger={k: 1.0 for k in classifications[:5]} if classifications else {},
+            feature_signature=classifications[:3] if classifications else [],
             config={
                 "flow_id": flow_id,
                 "path": path,

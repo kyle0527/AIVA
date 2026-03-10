@@ -6,22 +6,18 @@
 
 import asyncio
 import time
-
-import httpx
-
-from aiva_common.schemas import FunctionTaskPayload
-from aiva_common.utils import get_logger
-
+import aiohttp
+from typing import Dict, List, Tuple
+from ..config import SqliConfig
 from ..detection_models import DetectionResult
 from ..payload_wrapper_encoder import PayloadWrapperEncoder
+from .base_detector import BaseDetector
 
-logger = get_logger(__name__)
-
-
-class TimeDetectionEngine:
+class TimeDetectionEngine(BaseDetector):
     """時間檢測引擎 - 檢測基於時間延遲的SQL注入"""
 
-    def __init__(self):
+    def __init__(self, session: aiohttp.ClientSession, config: SqliConfig, payload_encoder: PayloadWrapperEncoder):
+        super().__init__(session, config, payload_encoder)
         self.time_payloads = {
             "mysql": [
                 "'; SELECT SLEEP(5); --",
@@ -52,18 +48,15 @@ class TimeDetectionEngine:
         self.max_baseline_time = 2.0  # 基準請求最大時間
 
     async def detect(
-        self, task: FunctionTaskPayload, client: httpx.AsyncClient
+        self, target_url: str, params: Dict[str, str], method: str = "GET"
     ) -> list[DetectionResult]:
         """執行時間檢測"""
         results: list[DetectionResult] = []
-        encoder = PayloadWrapperEncoder(task)
 
-        logger.debug(f"Starting time-based detection for task {task.task_id}")
+        logger.debug(f"Starting time-based detection for {target_url}")
 
         # 測量基準回應時間
-        baseline_times = await self._measure_baseline_times(
-            client, encoder, samples=3
-        )
+        baseline_times = await self._measure_baseline_times(samples=3)
         if not baseline_times:
             logger.warning("Failed to establish baseline timing")
             return results
@@ -81,11 +74,13 @@ class TimeDetectionEngine:
         # 測試時間載荷
         for db_type, payloads in self.time_payloads.items():
             for payload in payloads:
+                # 應用 Tamper
+                tampered_payloads = self.payload_encoder.apply_tamper(payload, self.config.waf_evasion_level)
+                final_payload = tampered_payloads[-1] if tampered_payloads else payload
+
                 try:
                     # 測量載荷回應時間
-                    payload_time = await self._measure_payload_time(
-                        payload, encoder, client
-                    )
+                    payload_time = await self._measure_payload_time(final_payload)
 
                     if payload_time is None:
                         continue
@@ -94,11 +89,12 @@ class TimeDetectionEngine:
                     delay = payload_time - avg_baseline
                     if delay >= self.delay_threshold:
                         result = self._build_detection_result(
-                            payload=payload,
+                            payload=final_payload,
                             db_type=db_type,
                             baseline_time=avg_baseline,
                             payload_time=payload_time,
-                            task=task,
+                            url=target_url,
+                            method=method
                         )
                         results.append(result)
                         logger.info(
@@ -107,7 +103,7 @@ class TimeDetectionEngine:
 
                 except Exception as e:
                     logger.warning(
-                        f"Time detection failed for payload '{payload}': {e}"
+                        f"Time detection failed for payload '{final_payload}': {e}"
                     )
                     continue
 
@@ -116,24 +112,26 @@ class TimeDetectionEngine:
         )
         return results
 
-    async def _measure_baseline_times(
-        self,
-        client: httpx.AsyncClient,
-        encoder: PayloadWrapperEncoder,
-        samples: int,
-    ) -> list[float]:
+    async def _measure_baseline_times(self, samples: int) -> list[float]:
         """測量基準回應時間"""
         times = []
         for _ in range(samples):
             try:
                 start_time = time.time()
-                encoded = encoder.encode("")  # 空載荷
-                response = await client.request(
-                    method=encoded.method, url=encoded.url, **encoded.request_kwargs
-                )
+                encoded = self.payload_encoder.encode("")  # 空載荷
+
+                if encoded.method == "GET":
+                     async with self.session.get(encoded.url, **encoded.request_kwargs) as resp:
+                         await resp.text() # Consume
+                         status_code = resp.status
+                else:
+                     async with self.session.post(encoded.url, **encoded.request_kwargs) as resp:
+                         await resp.text()
+                         status_code = resp.status
+
                 end_time = time.time()
 
-                if response.status_code < 500:  # 排除伺服器錯誤
+                if status_code < 500:  # 排除伺服器錯誤
                     times.append(end_time - start_time)
 
                 # 在測量間稍作等待
@@ -145,20 +143,25 @@ class TimeDetectionEngine:
 
         return times
 
-    async def _measure_payload_time(
-        self, payload: str, encoder: PayloadWrapperEncoder, client: httpx.AsyncClient
-    ) -> float | None:
+    async def _measure_payload_time(self, payload: str) -> float | None:
         """測量載荷回應時間"""
         try:
             start_time = time.time()
-            encoded = encoder.encode(payload)
-            response = await client.request(
-                method=encoded.method, url=encoded.url, **encoded.request_kwargs
-            )
+            encoded = self.payload_encoder.encode(payload)
+
+            if encoded.method == "GET":
+                 async with self.session.get(encoded.url, **encoded.request_kwargs) as resp:
+                     await resp.text()
+                     status_code = resp.status
+            else:
+                 async with self.session.post(encoded.url, **encoded.request_kwargs) as resp:
+                     await resp.text()
+                     status_code = resp.status
+
             end_time = time.time()
 
             # 只有成功的回應才計算時間
-            if response.status_code < 500:
+            if status_code < 500:
                 return end_time - start_time
 
         except Exception as e:
@@ -172,7 +175,8 @@ class TimeDetectionEngine:
         db_type: str,
         baseline_time: float,
         payload_time: float,
-        task: FunctionTaskPayload,
+        url: str,
+        method: str
     ) -> DetectionResult:
         """構建檢測結果"""
         from aiva_common.enums import Confidence, Severity, VulnerabilityType
@@ -195,7 +199,7 @@ class TimeDetectionEngine:
 
         evidence = FindingEvidence(
             payload=payload,
-            request=f"Payload: {payload}",
+            request=f"Payload: {payload}, Method: {method}",
             response=(
                 f"Baseline time: {baseline_time:.2f}s, "
                 f"Payload time: {payload_time:.2f}s, Delay: {delay:.2f}s"
@@ -228,9 +232,9 @@ class TimeDetectionEngine:
         )
 
         target = FindingTarget(
-            url=task.target.url,
-            method=task.target.method,
-            parameter=task.target.parameter,
+            url=url,
+            method=method,
+            parameter="unknown",
         )
 
         return DetectionResult(

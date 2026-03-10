@@ -1,0 +1,28 @@
+# AIVA Dashboard 依賴套件清單
+#
+# 安裝方式：
+#   pip install -r requirements-dashboard.txt
+#
+# 或者使用 AIVA 主 requirements.txt（如果已包含這些套件）
+
+# ==================== Streamlit 核心 ====================
+streamlit>=1.31.0
+streamlit-autorefresh>=1.0.1      # 自動刷新功能
+
+# ==================== API 通訊 ====================
+requests>=2.31.0                   # HTTP 客戶端
+urllib3>=2.1.0                     # URL 處理
+sse-starlette>=1.8.2               # FastAPI SSE 支援（服務端）
+
+# ==================== 資料處理 ====================
+pandas>=2.1.0                      # 數據表格處理
+pyyaml>=6.0.1                      # YAML 配置檔解析
+
+# ==================== 視覺化（可選，Phase 3 實作時安裝） ====================
+# plotly>=5.18.0                   # 互動圖表
+# graphviz>=0.20.1                 # 攻擊路徑圖
+# matplotlib>=3.8.0                # 基礎圖表
+# seaborn>=0.13.0                  # 統計圖表
+
+# ==================== 工具 ====================
+python-dotenv>=1.0.0               # 環境變數載入

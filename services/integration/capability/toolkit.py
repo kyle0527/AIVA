@@ -66,24 +66,19 @@ class CapabilityToolkit:
             
             if result["success"]:
                 logger.info(
-                    "能力模式驗證通過",
-                    capability_id=capability.id
+                    f"能力模式驗證通過: {capability.id}"
                 )
                 return True, []
             else:
                 errors = result.get("errors", [result.get("error", "未知錯誤")])
                 logger.warning(
-                    "能力模式驗證失敗",
-                    capability_id=capability.id,
-                    errors=errors
+                    f"能力模式驗證失敗: {capability.id}, 錯誤: {errors}"
                 )
                 return False, errors
                 
         except Exception as e:
             logger.error(
-                "模式驗證過程中出現異常",
-                capability_id=capability.id,
-                error=str(e),
+                f"模式驗證過程中出現異常: {capability.id} - {str(e)}",
                 exc_info=True
             )
             return False, [f"驗證異常: {str(e)}"]
@@ -131,31 +126,15 @@ class CapabilityToolkit:
                     
                     if result["success"]:
                         bindings[lang.value] = result.get("generated_code", "")
-                        logger.info(
-                            f"成功產生 {lang.value} 綁定",
-                            capability_id=capability.id
-                        )
+                        logger.info(f"成功產生 {lang.value} 綁定 (capability_id={capability.id})")
                     else:
-                        logger.warning(
-                            f"產生 {lang.value} 綁定失敗",
-                            capability_id=capability.id,
-                            error=result.get("error")
-                        )
+                        logger.warning(f"產生 {lang.value} 綁定失敗 (capability_id={capability.id}, error={result.get('error')})")
                         
                 except Exception as e:
-                    logger.error(
-                        f"產生 {lang.value} 綁定時發生異常",
-                        capability_id=capability.id,
-                        error=str(e)
-                    )
+                    logger.error(f"產生 {lang.value} 綁定時發生異常 (capability_id={capability.id}, error={str(e)})")
             
         except Exception as e:
-            logger.error(
-                "跨語言程式碼產生過程中出現異常",
-                capability_id=capability.id,
-                error=str(e),
-                exc_info=True
-            )
+            logger.error(f"跨語言程式碼產生過程中出現異常 (capability_id={capability.id}, error={str(e)})", exc_info=True)
         
         return bindings
     
@@ -214,13 +193,7 @@ class CapabilityToolkit:
                 }
             )
             
-            logger.info(
-                "連接性測試完成",
-                capability_id=capability.id,
-                success=evidence.success,
-                latency_ms=evidence.latency_ms,
-                trace_id=trace_id
-            )
+            logger.info(f"連接性測試完成 (capability_id={capability.id}, success={evidence.success}, latency_ms={evidence.latency_ms}, trace_id={trace_id})")
             
             return evidence
             
@@ -228,13 +201,7 @@ class CapabilityToolkit:
             end_time = datetime.utcnow()
             latency_ms = int((end_time - start_time).total_seconds() * 1000)
             
-            logger.error(
-                "連接性測試失敗",
-                capability_id=capability.id,
-                error=str(e),
-                trace_id=trace_id,
-                exc_info=True
-            )
+            logger.error(f"連接性測試失敗 (capability_id={capability.id}, error={str(e)}, trace_id={trace_id})", exc_info=True)
             
             return CapabilityEvidence(
                 capability_id=capability.id,

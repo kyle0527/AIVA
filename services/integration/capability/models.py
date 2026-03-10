@@ -32,6 +32,8 @@ class CapabilityStatus(str, Enum):
     DEGRADED = "degraded"
     FAILED = "failed"
     UNKNOWN = "unknown"
+    UNAVAILABLE = "unavailable"
+    DISCOVERED = "discovered"
 
 
 class CapabilityType(str, Enum):
@@ -41,24 +43,35 @@ class CapabilityType(str, Enum):
     ANALYZER = "analyzer"
     REPORTER = "reporter"
     UTILITY = "utility"
+    # 安全工具擴展類型
+    VULNERABILITY_SCANNER = "vulnerability_scanner"
+    RECONNAISSANCE = "reconnaissance"
+    EXPLOIT_GENERATOR = "exploit_generator"
+    POST_EXPLOITATION = "post_exploitation"
+    FORENSICS = "forensics"
+    ATTACK_SIMULATION = "attack_simulation"
+    NETWORK_SCANNER = "network_scanner"
+    CRYPTOGRAPHY = "cryptography"
+    REVERSE_ENGINEERING = "reverse_engineering"
+    SECURITY_TOOL = "security_tool"
 
 
 class InputParameter(BaseModel):
     """輸入參數定義"""
     model_config = ConfigDict(str_strip_whitespace=True)
-    
+
     name: str = Field(..., description="參數名稱")
     type: str = Field(..., description="參數類型")
     required: bool = Field(default=True, description="是否必需")
     description: str = Field(..., description="參數描述")
-    default: Optional[Any] = Field(None, description="默認值")
-    validation_rules: Optional[dict[str, Any]] = Field(None, description="驗證規則")
+    default: Optional[Any] = Field(default=None, description="默認值")
+    validation_rules: Optional[dict[str, Any]] = Field(default=None, description="驗證規則")
 
 
 class OutputParameter(BaseModel):
     """輸出參數定義"""
     model_config = ConfigDict(str_strip_whitespace=True)
-    
+
     name: str = Field(..., description="輸出名稱")
     type: str = Field(..., description="輸出類型")
     description: str = Field(..., description="輸出描述")
@@ -67,7 +80,7 @@ class OutputParameter(BaseModel):
 
 class CapabilityRecord(BaseModel):
     """統一能力記錄格式
-    
+
     v2.1 (2026-01-08): 擴展支援去語意化反射引擎
     新增 rag_trigger 和 feature_signature 欄位
     """
@@ -76,48 +89,48 @@ class CapabilityRecord(BaseModel):
         validate_assignment=True,
         use_enum_values=True
     )
-    
+
     # 基本信息
     id: str = Field(..., description="能力唯一標識符", min_length=1)
     name: str = Field(..., description="能力顯示名稱")
     description: str = Field(..., description="能力詳細描述")
     version: str = Field(default="1.0.0", description="能力版本")
-    
+
     # 技術信息
     module: str = Field(..., description="所屬模組名稱")
     language: ProgrammingLanguage = Field(..., description="實現語言")
     entrypoint: str = Field(..., description="入口點路徑")
     capability_type: CapabilityType = Field(..., description="能力類型")
-    
+
     # 接口定義
     inputs: List[InputParameter] = Field(default_factory=list, description="輸入參數列表")
     outputs: List[OutputParameter] = Field(default_factory=list, description="輸出參數列表")
-    
+
     # 依賴與前置條件
     prerequisites: List[str] = Field(default_factory=list, description="前置條件列表")
     dependencies: List[str] = Field(default_factory=list, description="依賴的其他能力ID")
-    
+
     # 元數據
     tags: List[str] = Field(default_factory=list, description="標籤列表")
     category: Optional[str] = Field(None, description="分類")
     priority: int = Field(default=50, description="優先級 (0-100)", ge=0, le=100)
-    
+
     # 運行時信息
     topic: Optional[str] = Field(None, description="消息隊列主題")
     timeout_seconds: int = Field(default=300, description="超時時間(秒)", gt=0)
     retry_count: int = Field(default=3, description="重試次數", ge=0)
-    
+
     # 狀態信息
     status: CapabilityStatus = Field(default=CapabilityStatus.UNKNOWN, description="當前狀態")
     last_probe: Optional[datetime] = Field(None, description="最後探測時間")
     last_success: Optional[datetime] = Field(None, description="最後成功時間")
     created_at: datetime = Field(default_factory=datetime.utcnow, description="創建時間")
     updated_at: datetime = Field(default_factory=datetime.utcnow, description="更新時間")
-    
+
     # 配置信息
     config: Optional[dict[str, Any]] = Field(None, description="額外配置")
     environment_vars: Optional[dict[str, str]] = Field(None, description="環境變量")
-    
+
     # === 去語意化反射引擎欄位（HackOne v2.0 戰略升級） ===
     rag_trigger: Optional[dict[str, float]] = Field(
         None,
@@ -138,68 +151,68 @@ class CapabilityRecord(BaseModel):
 class CapabilityEvidence(BaseModel):
     """能力探測證據"""
     model_config = ConfigDict(str_strip_whitespace=True)
-    
+
     capability_id: str = Field(..., description="能力ID")
     timestamp: datetime = Field(default_factory=datetime.utcnow, description="探測時間")
     probe_type: str = Field(..., description="探測類型")
     success: bool = Field(..., description="是否成功")
-    
+
     # 性能指標
-    latency_ms: Optional[int] = Field(None, description="延遲時間(毫秒)", ge=0)
-    memory_usage_mb: Optional[float] = Field(None, description="內存使用(MB)", ge=0)
-    cpu_usage_percent: Optional[float] = Field(None, description="CPU使用率(%)", ge=0, le=100)
-    
+    latency_ms: Optional[int] = Field(default=None, description="延遲時間(毫秒)", ge=0)
+    memory_usage_mb: Optional[float] = Field(default=None, description="內存使用(MB)", ge=0)
+    cpu_usage_percent: Optional[float] = Field(default=None, description="CPU使用率(%)", ge=0, le=100)
+
     # 測試數據
-    sample_input: Optional[dict[str, Any]] = Field(None, description="測試輸入")
-    sample_output: Optional[dict[str, Any]] = Field(None, description="測試輸出")
-    
+    sample_input: Optional[dict[str, Any]] = Field(default=None, description="測試輸入")
+    sample_output: Optional[dict[str, Any]] = Field(default=None, description="測試輸出")
+
     # 錯誤信息
-    error_message: Optional[str] = Field(None, description="錯誤消息")
-    error_code: Optional[str] = Field(None, description="錯誤代碼")
-    stack_trace: Optional[str] = Field(None, description="堆棧跟蹤")
-    
+    error_message: Optional[str] = Field(default=None, description="錯誤消息")
+    error_code: Optional[str] = Field(default=None, description="錯誤代碼")
+    stack_trace: Optional[str] = Field(default=None, description="堆棧跟蹤")
+
     # 追蹤信息
-    trace_id: Optional[str] = Field(None, description="追蹤ID")
-    span_id: Optional[str] = Field(None, description="跨度ID")
-    
+    trace_id: Optional[str] = Field(default=None, description="追蹤ID")
+    span_id: Optional[str] = Field(default=None, description="跨度ID")
+
     # 額外上下文
-    environment: Optional[dict[str, str]] = Field(None, description="運行環境")
-    metadata: Optional[dict[str, Any]] = Field(None, description="額外元數據")
+    environment: Optional[dict[str, str]] = Field(default=None, description="運行環境")
+    metadata: Optional[dict[str, Any]] = Field(default=None, description="額外元數據")
 
 
 class CapabilityScorecard(BaseModel):
     """能力記分卡"""
     model_config = ConfigDict(str_strip_whitespace=True)
-    
+
     capability_id: str = Field(..., description="能力ID")
     evaluation_period: str = Field(..., description="評估週期")
-    
+
     # 可用性指標
     availability_percent: float = Field(..., description="可用性百分比", ge=0, le=100)
     success_rate_percent: float = Field(..., description="成功率百分比", ge=0, le=100)
-    
+
     # 性能指標
     avg_latency_ms: float = Field(..., description="平均延遲(毫秒)", ge=0)
     p95_latency_ms: float = Field(..., description="95%延遲(毫秒)", ge=0)
     p99_latency_ms: float = Field(..., description="99%延遲(毫秒)", ge=0)
-    
+
     # 資源使用
     avg_memory_mb: Optional[float] = Field(None, description="平均內存使用(MB)", ge=0)
     avg_cpu_percent: Optional[float] = Field(None, description="平均CPU使用(%)", ge=0, le=100)
-    
+
     # 錯誤統計
     total_executions: int = Field(..., description="總執行次數", ge=0)
     error_count: int = Field(..., description="錯誤次數", ge=0)
     timeout_count: int = Field(..., description="超時次數", ge=0)
-    
+
     # 錯誤分類
     error_categories: dict[str, int] = Field(default_factory=dict, description="錯誤分類統計")
     recent_errors: List[str] = Field(default_factory=list, description="最近錯誤列表")
-    
+
     # 趨勢分析
     performance_trend: str = Field(..., description="性能趨勢 (improving/stable/degrading)")
     reliability_score: float = Field(..., description="可靠性評分 (0-100)", ge=0, le=100)
-    
+
     # 時間戳
     last_updated: datetime = Field(default_factory=datetime.utcnow, description="最後更新時間")
     next_evaluation: datetime = Field(..., description="下次評估時間")
@@ -208,19 +221,19 @@ class CapabilityScorecard(BaseModel):
 class CLITemplate(BaseModel):
     """CLI模板定義"""
     model_config = ConfigDict(str_strip_whitespace=True)
-    
+
     capability_id: str = Field(..., description="能力ID")
     command: str = Field(..., description="CLI命令")
     description: str = Field(..., description="命令描述")
-    
+
     # 參數定義
     arguments: List[dict[str, Any]] = Field(default_factory=list, description="命令參數")
     options: List[dict[str, Any]] = Field(default_factory=list, description="命令選項")
-    
+
     # 示例和幫助
     examples: List[str] = Field(default_factory=list, description="使用示例")
     help_text: str = Field(..., description="幫助文本")
-    
+
     # 生成信息
     template_version: str = Field(default="1.0", description="模板版本")
     generated_at: datetime = Field(default_factory=datetime.utcnow, description="生成時間")
@@ -229,20 +242,20 @@ class CLITemplate(BaseModel):
 class ExecutionRequest(BaseModel):
     """執行請求"""
     model_config = ConfigDict(str_strip_whitespace=True)
-    
+
     capability_id: str = Field(..., description="要執行的能力ID")
     parameters: dict[str, Any] = Field(default_factory=dict, description="執行參數")
-    
+
     # 執行選項
     timeout_seconds: Optional[int] = Field(None, description="超時時間", gt=0)
     retry_count: Optional[int] = Field(None, description="重試次數", ge=0)
     priority: int = Field(default=50, description="執行優先級", ge=0, le=100)
-    
+
     # 上下文信息
     context: Optional[dict[str, Any]] = Field(None, description="執行上下文")
     trace_id: Optional[str] = Field(None, description="追蹤ID")
     user_id: Optional[str] = Field(None, description="用戶ID")
-    
+
     # 回調配置
     callback_url: Optional[str] = Field(None, description="回調URL")
     webhook_config: Optional[dict[str, Any]] = Field(None, description="Webhook配置")
@@ -251,37 +264,100 @@ class ExecutionRequest(BaseModel):
 class ExecutionResult(BaseModel):
     """執行結果"""
     model_config = ConfigDict(str_strip_whitespace=True)
-    
+
     request_id: str = Field(..., description="請求ID")
     capability_id: str = Field(..., description="能力ID")
-    
+
     # 執行狀態
     success: bool = Field(..., description="是否成功")
     status: str = Field(..., description="執行狀態")
-    
+
     # 結果數據
     result: Optional[dict[str, Any]] = Field(None, description="執行結果")
     output: Optional[str] = Field(None, description="標準輸出")
     error_output: Optional[str] = Field(None, description="錯誤輸出")
-    
+
     # 錯誤信息
     error_message: Optional[str] = Field(None, description="錯誤消息")
     error_code: Optional[str] = Field(None, description="錯誤代碼")
-    
+
     # 性能指標
     execution_time_ms: int = Field(..., description="執行時間(毫秒)", ge=0)
     memory_peak_mb: Optional[float] = Field(None, description="內存峰值(MB)", ge=0)
-    
+
     # 時間戳
     started_at: datetime = Field(..., description="開始時間")
     completed_at: datetime = Field(..., description="完成時間")
-    
+
     # 追蹤信息
     trace_id: Optional[str] = Field(None, description="追蹤ID")
     span_id: Optional[str] = Field(None, description="跨度ID")
-    
+
     # 元數據
     metadata: Optional[dict[str, Any]] = Field(None, description="額外元數據")
+
+
+# 基礎能力抽象類
+class BaseCapability:
+    """基礎能力類 - 所有能力實現的基類"""
+
+    def __init__(self):
+        self._name: str = ""
+        self._version: str = "1.0.0"
+        self._description: str = ""
+        self._dependencies: List[str] = []
+
+    @property
+    def name(self) -> str:
+        """能力名稱"""
+        return self._name
+
+    @name.setter
+    def name(self, value: str):
+        self._name = value
+
+    @property
+    def version(self) -> str:
+        """能力版本"""
+        return self._version
+
+    @version.setter
+    def version(self, value: str):
+        self._version = value
+
+    @property
+    def description(self) -> str:
+        """能力描述"""
+        return self._description
+
+    @description.setter
+    def description(self, value: str):
+        self._description = value
+
+    @property
+    def dependencies(self) -> List[str]:
+        """能力依賴"""
+        return self._dependencies
+
+    @dependencies.setter
+    def dependencies(self, value: List[str]):
+        self._dependencies = value
+
+    def initialize(self) -> bool:
+        """初始化能力 - 子類可覆寫為 async"""
+        return True
+
+    async def execute(self, command: str, parameters: Optional[dict[str, Any]] = None) -> dict[str, Any]:
+        """執行能力"""
+        raise NotImplementedError("子類必須實現 execute 方法")
+
+    def cleanup(self) -> bool:
+        """清理資源 - 子類可覆寫為 async"""
+        return True
+
+    def health_check(self) -> bool:
+        """健康檢查 - 子類可覆寫為 async"""
+        return True
 
 
 # 常用的驗證函數
@@ -289,7 +365,7 @@ def validate_capability_id(capability_id: str) -> bool:
     """驗證能力ID格式"""
     if not capability_id:
         return False
-    
+
     # 格式：category.module.function
     parts = capability_id.split('.')
     return len(parts) >= 2 and all(part.isidentifier() for part in parts)
@@ -345,5 +421,8 @@ def create_sample_capability() -> CapabilityRecord:
         last_probe=None,
         last_success=None,
         config={},
-        environment_vars={}
+        environment_vars={},
+        # HackOne v2.0 去語意化反射引擎欄位
+        rag_trigger={"sql_error": 2.0, "db_error_mysql": 2.5},
+        feature_signature=["sql_error", "database_response"]
     )

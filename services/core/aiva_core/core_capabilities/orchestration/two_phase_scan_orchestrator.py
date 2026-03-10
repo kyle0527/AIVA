@@ -504,10 +504,10 @@ class TwoPhaseScanOrchestrator:
         """AI 分析 Phase0 結果並決策是否需要 Phase1
 
         使用 EnhancedDecisionAgent 的 Bug Bounty 特化決策：
-        1. 成本收益分析 (ROI 評估)
+        1. 高價值目標評估 (技術棧風險分析)
         2. WAF/Rate Limit 影響評估
-        3. 預期獎金價值計算
-        4. 時間成本估算
+        3. AI 信心度評估
+        4. 時間預算估算
 
         Args:
             scan_id: 掃描 ID
@@ -534,20 +534,19 @@ class TwoPhaseScanOrchestrator:
             "recommendations": phase0_result.recommendations,
         }
 
-        # 使用 Bug Bounty AI 決策 (整合成本收益分析)
+        # 使用 Bug Bounty AI 決策 (整合風險分析)
         try:
             if self.decision_agent is not None:
                 decision = self.decision_agent.decide_phase1_strategy(
                     phase0_result=phase0_dict,
-                    target_value=1000.0  # 預期獎金 $1000，可配置
                 )
                 
                 need_phase1 = decision['need_phase1']
                 reasoning = decision['reasoning']
                 
                 logger.info(
-                    f"[AI Decision] ROI: ${decision['roi']:.0f}/hr, "
-                    f"AI Confidence: {decision['ai_confidence']:.2f}"
+                    f"[AI Decision] AI Confidence: {decision['ai_confidence']:.2f}, "
+                    f"High Value Score: {decision['high_value_score']:.2f}"
                 )
                 
                 # 如果檢測到 WAF，記錄繞過計劃

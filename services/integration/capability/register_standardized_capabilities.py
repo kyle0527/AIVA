@@ -22,7 +22,9 @@ from services.integration.capability.registry import CapabilityRegistry
 from services.integration.capability.capabilities.reverse_engineering_capabilities import (
     REVERSE_ENGINEERING_CAPABILITIES
 )
-from services.integration.capability.models import CapabilityRecord, CapabilityType, InputParameter
+from services.integration.capability.models import (
+    CapabilityRecord, CapabilityType, CapabilityStatus, InputParameter
+)
 from aiva_common.enums import ProgrammingLanguage, TaskStatus
 
 # 導入新的選單式能力定義
@@ -114,10 +116,16 @@ class CapabilityRegistrationManager:
             outputs=[],
             tags=[category, "menu-based", "5m-decision-engine"],
             category=category.capitalize(),
+            topic="menu-capability",
+            last_probe=None,
+            last_success=None,
+            environment_vars={},
+            rag_trigger={cap_id: 1.5},
+            feature_signature=[f"menu.{category}.{cap_id}"],
             priority=config.get("priority", 50),
             timeout_seconds=config.get("default_timeout", 60),
             retry_count=2,
-            status=TaskStatus.PENDING,
+            status=CapabilityStatus.DISCOVERED,
             config={
                 "risk_level": config.get("risk_level", "medium"),
                 "menu_based": True,
@@ -235,15 +243,15 @@ class CapabilityRegistrationManager:
         logger.info("\n驗證註冊結果...")
         
         # 按標籤查詢
-        android_tools = await self.registry.query_by_tags(["android"])
+        android_tools = await self.registry.list_capabilities(tags=["android"])
         logger.info(f"Android 工具: {len(android_tools)} 個")
         
         # 按類型查詢
-        utilities = await self.registry.query_by_type("utility")
+        utilities = await self.registry.list_capabilities(capability_type=CapabilityType.UTILITY)
         logger.info(f"工具類能力: {len(utilities)} 個")
         
         # 列出所有已註冊的能力
-        all_caps = await self.registry.list_all_capabilities()
+        all_caps = await self.registry.list_capabilities()
         logger.info(f"\n已註冊的能力列表:")
         for cap in all_caps:
             logger.info(f"  - {cap.id}: {cap.name} ({cap.status})")

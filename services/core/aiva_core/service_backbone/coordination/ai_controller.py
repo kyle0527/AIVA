@@ -10,30 +10,43 @@ import asyncio
 from datetime import datetime
 import json
 import logging
-from typing import Any
+from typing import Any, Protocol, Optional
+
+# 錯誤消息常量
+ERROR_AI_ENGINE_UNAVAILABLE = "AI 決策引擎不可用"
+
+# 插件類型定義（用於類型檢查）
+class AISummaryPluginProtocol(Protocol):
+    """摘要插件協議"""
+    def is_enabled(self) -> bool: ...
+    def enable(self) -> None: ...
+    def disable(self) -> None: ...
+    async def generate_summary(self, *args: Any, **kwargs: Any) -> dict[str, Any]: ...
+    def get_status(self) -> dict[str, Any]: ...
+    def configure(self, **settings: Any) -> dict[str, Any]: ...
+    def get_statistics(self) -> dict[str, Any]: ...
+    def reset(self) -> None: ...
+    def unload(self) -> None: ...
 
 try:
     from .plugins.ai_summary_plugin import AISummaryPlugin
-
     SUMMARY_PLUGIN_AVAILABLE = True
 except ImportError:
     SUMMARY_PLUGIN_AVAILABLE = False
-
-# CodeFixer 已移除，代碼修復功能由 aiva_core 的特化 AI 處理
-CODE_FIXER_AVAILABLE = False
+    AISummaryPlugin = None  # type: ignore
 
 logger = logging.getLogger(__name__)
 
 
 class AISubsystemController:
     """AIVA AI 子系統控制器 - 避免與主控制器衝突
-    
+
     使用 5M Decision Engine 特化決策引擎
     """
 
     def __init__(self, master_controller=None):
         """初始化 AI 子系統控制器
-        
+
         Args:
             master_controller: 主控制器實例，用於共享 AI 資源
         """
@@ -51,13 +64,26 @@ class AISubsystemController:
         }
 
         # AI 決策歷史 (與主控制器共享)
-        self.decision_history = []
-        
+        self.decision_history: list[dict[str, Any]] = []
+
+        # 摘要相關屬性
+        self.summary_history: list[dict[str, Any]] = []
+        self.summary_config: dict[str, bool] = {
+            "include_basic_info": True,
+            "include_ai_insights": True,
+            "include_processing_summary": True,
+            "include_recommendations": True,
+            "include_learning_points": True,
+        }
+
+        # 掃描協調器 (延遲初始化)
+        self.scan_coordinator: Optional[Any] = None
+
         # 🔌 插件系統 - 摘要功能
-        self.summary_plugin: AISummaryPlugin | None = None
-        if SUMMARY_PLUGIN_AVAILABLE:
+        self.summary_plugin: Optional[AISummaryPluginProtocol] = None
+        if SUMMARY_PLUGIN_AVAILABLE and AISummaryPlugin is not None:
             try:
-                self.summary_plugin = AISummaryPlugin(enabled=True)
+                self.summary_plugin = AISummaryPlugin(enabled=True)  # type: ignore
                 logger.info("🔌 摘要插件已載入")
             except Exception as e:
                 logger.warning(f"⚠️ 摘要插件載入失敗: {e}")
@@ -66,7 +92,7 @@ class AISubsystemController:
             logger.info("ℹ️ 摘要插件不可用")
 
         logger.info("✅ AI 子系統控制器初始化完成")
-    
+
     @property
     def master_ai(self):
         """獲取主控 AI（5M Decision Engine）"""
@@ -97,7 +123,7 @@ class AISubsystemController:
             elif task_analysis["needs_code_fixing"]:
                 result = self._coordinated_code_fixing(user_input, context)
             elif task_analysis["needs_specialized_detection"]:
-                result = self._coordinated_detection(user_input, context)
+                result = await self._coordinated_detection(user_input, context)
             else:
                 result = self._multi_ai_coordination(user_input, context)
 
@@ -123,6 +149,24 @@ class AISubsystemController:
                 logger.error(f"❌ 摘要插件執行失敗: {e}")
 
         return result
+
+    def _record_specialized_decision(self, user_input: str, task_analysis: dict, result: dict):
+        """記錄專門決策歷史"""
+        decision_record = {
+            "timestamp": datetime.now().isoformat(),
+            "user_input": user_input,
+            "task_analysis": task_analysis,
+            "processing_method": result.get("processing_method"),
+            "status": result.get("status"),
+            "ai_conflicts_avoided": result.get("ai_conflicts", 0) == 0,
+            "unified_control_maintained": result.get("unified_control", False),
+        }
+
+        self.decision_history.append(decision_record)
+
+        # 保持歷史記錄在合理範圍
+        if len(self.decision_history) > 100:
+            self.decision_history.pop(0)
 
     def _analyze_task_complexity(
         self, user_input: str, context: dict
@@ -165,6 +209,13 @@ class AISubsystemController:
         """主控 AI 直接處理"""
         logger.info("📋 主控 AI 直接處理任務")
 
+        if not self.master_ai:
+            return {
+                "status": "error",
+                "message": ERROR_AI_ENGINE_UNAVAILABLE,
+                "processing_method": "direct_master_ai",
+            }
+
         result = self.master_ai.invoke(user_input, **context)
 
         return {
@@ -181,11 +232,27 @@ class AISubsystemController:
         """協調程式碼修復 - 主控 AI 監督下的修復"""
         logger.info("🔧 協調程式碼修復 (主控 AI 監督)")
 
+        if not self.master_ai:
+            return {
+                "status": "error",
+                "message": ERROR_AI_ENGINE_UNAVAILABLE,
+                "processing_method": "coordinated_code_fixing",
+            }
+
         # 主控 AI 預處理
         preprocessed = self.master_ai.invoke(f"分析修復需求: {user_input}", **context)
 
         # 實際調用 CodeFixer 進行真實修復
         fix_result = self._execute_code_fixing(user_input, preprocessed, context)
+
+        if not self.master_ai:
+            return {
+                "status": "partial_success",
+                "processing_method": "coordinated_code_fixing",
+                "original_analysis": preprocessed,
+                "fix_result": fix_result,
+                "validation": "AI 驗證不可用",
+            }
 
         # 主控 AI 驗證結果
         validation = self.master_ai.invoke(f"驗證修復結果: {fix_result}", **context)
@@ -204,72 +271,39 @@ class AISubsystemController:
         self, user_input: str, preprocessed: dict, context: dict
     ) -> dict[str, Any]:
         """執行真實的代碼修復
-        
+
         Args:
             user_input: 用戶輸入
             preprocessed: 主控 AI 預處理結果
             context: 上下文信息
-            
+
         Returns:
             修復結果字典
         """
-        if not CODE_FIXER_AVAILABLE:
-            raise RuntimeError(
-                "CodeFixer 模組不可用。"
-                "請確認 services.integration.code_fixer 已正確安裝。"
-            )
+        # CodeFixer 已移除，代碼修復功能由 aiva_core 的特化 AI 處理
+        logger.warning("⚠️ CodeFixer 模組不可用，通過主控 AI 進行修復建議")
 
-        # 獲取或創建 CodeFixer 實例
-        if not self.ai_components.get("code_fixer"):
+        # 使用主控 AI 提供修復建議
+        if self.master_ai:
             try:
-                # 從環境變量或配置獲取 API 密鑰
-                api_key = context.get("api_key") or None
-                self.ai_components["code_fixer"] = CodeFixer(
-                    api_key=api_key,
-                    model="gpt-4",
-                    use_litellm=True
+                fix_suggestion = self.master_ai.invoke(
+                    f"分析並提供修復建議: {user_input}\n上下文: {context}",
+                    **context
                 )
-                logger.info("✅ CodeFixer 實例已創建")
-            except Exception as e:
-                logger.error(f"❌ CodeFixer 初始化失敗: {e}")
                 return {
-                    "status": "error",
-                    "message": f"CodeFixer 初始化失敗: {str(e)}",
+                    "status": "suggestion_provided",
+                    "message": "已提供修復建議（通過主控 AI）",
+                    "fix_suggestion": fix_suggestion,
                     "analysis": preprocessed.get("tool_result", {}).get("analysis", ""),
                 }
+            except Exception as e:
+                logger.error(f"AI 修復建議失敗: {e}")
 
-        code_fixer = self.ai_components["code_fixer"]
-        
-        # 從上下文提取代碼和漏洞信息
-        code = context.get("code", "")
-        vulnerability_type = context.get("vulnerability_type", "unknown")
-        language = context.get("language", "python")
-        
-        if not code:
-            logger.warning("⚠️ 未提供代碼，無法執行修復")
-            return {
-                "status": "error",
-                "message": "未提供需要修復的代碼",
-                "analysis": preprocessed.get("tool_result", {}).get("analysis", ""),
-            }
-
-        # 執行修復
-        try:
-            fix_result = code_fixer.fix_vulnerability(
-                code=code,
-                vulnerability_type=vulnerability_type,
-                language=language,
-                context=user_input
-            )
-            logger.info(f"✅ 代碼修復完成: {fix_result.get('fix_id')}")
-            return fix_result
-        except Exception as e:
-            logger.error(f"❌ 代碼修復執行失敗: {e}", exc_info=True)
-            return {
-                "status": "error",
-                "message": f"代碼修復執行失敗: {str(e)}",
-                "analysis": preprocessed.get("tool_result", {}).get("analysis", ""),
-            }
+        return {
+            "status": "not_implemented",
+            "message": "CodeFixer 模組不可用。請使用 aiva_core 的特化 AI 進行代碼修復。",
+            "analysis": preprocessed.get("tool_result", {}).get("analysis", ""),
+        }
 
     async def _coordinated_detection(
         self, user_input: str, context: dict
@@ -277,9 +311,16 @@ class AISubsystemController:
         """協調漏洞檢測 - 統一調度多檢測引擎"""
         logger.info("🔍 協調漏洞檢測 (統一調度)")
 
+        if not self.master_ai:
+            return {
+                "status": "error",
+                "message": ERROR_AI_ENGINE_UNAVAILABLE,
+                "processing_method": "coordinated_detection",
+            }
+
         # 主控 AI 分析檢測需求
         detection_plan = self.master_ai.invoke(f"規劃檢測策略: {user_input}", **context)
-        
+
         # 提取目標（假設從 context 或 input 解析，這裡做簡單處理）
         # 在實際場景中，應該有更嚴謹的目標解析邏輯
         targets = context.get("targets", [])
@@ -289,24 +330,24 @@ class AISubsystemController:
              for w in words:
                  if w.startswith("http"):
                      targets.append(w)
-        
+
         if not targets:
             return {
-                "status": "error", 
+                "status": "error",
                 "message": "無法識別目標 URL，請在輸入中包含 URL",
                 "processing_method": "coordinated_detection"
             }
 
         # 實際調用檢測引擎
         scan_id = context.get("scan_id", f"scan_{int(datetime.now().timestamp())}")
-        
+
         # 動態加載協調器 (避免循環導入)
         try:
             from services.scan.coordinators.multi_engine_coordinator import MultiEngineCoordinator
             if not hasattr(self, "scan_coordinator") or self.scan_coordinator is None:
                 self.scan_coordinator = MultiEngineCoordinator()
                 await self.scan_coordinator.initialize()
-                
+
             # 使用 Smart 策略執行
             detection_results = await self.scan_coordinator.execute_strategy_smart(
                 scan_id=scan_id,
@@ -316,6 +357,15 @@ class AISubsystemController:
         except Exception as e:
             logger.error(f"掃描執行失敗: {e}")
             detection_results = {"error": str(e), "status": "failed"}
+
+        if not self.master_ai:
+            return {
+                "status": "partial_success",
+                "processing_method": "coordinated_detection",
+                "detection_plan": detection_plan,
+                "detection_results": detection_results,
+                "integration": "AI 整合不可用",
+            }
 
         # 主控 AI 整合結果
         integration = self.master_ai.invoke(
@@ -339,6 +389,15 @@ class AISubsystemController:
         logger.info("🤝 多 AI 協同處理 (主控統籌)")
 
         # 主控 AI 制定協同計畫
+        if not self.master_ai:
+            logger.error(f"❌ {ERROR_AI_ENGINE_UNAVAILABLE}")
+            return {
+                "status": "error",
+                "processing_method": "multi_ai_coordination",
+                "error": ERROR_AI_ENGINE_UNAVAILABLE,
+                "unified_control": True,
+            }
+
         coordination_plan = self.master_ai.invoke(
             f"制定協同計畫: {user_input}", **context
         )
@@ -350,6 +409,15 @@ class AISubsystemController:
             "detectors_role": "安全漏洞檢測",
             # 移除硬編碼效率分數,應由實際執行時間計算
         }
+
+        if not self.master_ai:
+            return {
+                "status": "partial_success",
+                "processing_method": "multi_ai_coordination",
+                "coordination_plan": coordination_plan,
+                "coordination_results": coordination_results,
+                "final_result": "AI 整合不可用",
+            }
 
         # 主控 AI 最終整合
         final_result = self.master_ai.invoke(
@@ -385,7 +453,11 @@ class AISubsystemController:
 
         if not self.summary_plugin:
             try:
-                self.summary_plugin = AISummaryPlugin(enabled=True)
+                # 檢查插件類是否可用
+                if AISummaryPlugin is None:
+                    return {"error": "摘要插件類未導入"}
+                # 使用 type: ignore 因為我們已經在運行時檢查
+                self.summary_plugin = AISummaryPlugin(enabled=True)  # type: ignore
                 return {"status": "success", "message": "摘要插件已啟用"}
             except Exception as e:
                 return {"error": f"摘要插件啟用失敗: {e}"}
@@ -503,7 +575,7 @@ class AISubsystemController:
 
     def _calculate_efficiency_score(self, result: dict) -> float:
         """計算處理效率分數
-        
+
         Args:
             result: 處理結果字典
         """
@@ -546,7 +618,7 @@ class AISubsystemController:
         self, task_analysis: dict, result: dict
     ) -> list[str]:
         """識別學習要點
-        
+
         Args:
             task_analysis: 任務分析結果
             result: 處理結果
@@ -731,7 +803,7 @@ class AISubsystemController:
 
         # 分析最常見的請求類型
         if request_types:
-            most_common = max(request_types, key=request_types.get)
+            most_common = max(request_types, key=lambda k: request_types[k])
             recommendations.append(f"最常處理「{most_common}」類型請求，可針對性優化")
 
         return recommendations
@@ -809,12 +881,12 @@ class AISubsystemController:
         # 使用主控 AI 進行綜合分析
         analysis_prompt = f"""
         請對以下 AIVA AI 系統的處理摘要進行綜合分析:
-        
+
         分析數據量: {len(data_to_analyze)} 條記錄
         時間期間: {time_period}
-        
+
         摘要數據: {json.dumps(data_to_analyze, ensure_ascii=False, indent=2)}
-        
+
         請提供:
         1. 系統性能趨勢分析
         2. 處理效率評估
@@ -824,7 +896,7 @@ class AISubsystemController:
         """
 
         try:
-            ai_comprehensive_analysis = self.master_ai.invoke(analysis_prompt)
+            ai_comprehensive_analysis = self.master_ai.invoke(analysis_prompt) if self.master_ai else {"error": "AI 不可用"}
 
             comprehensive_summary = {
                 "analysis_metadata": {
@@ -996,27 +1068,10 @@ async def demonstrate_unified_control():
 
     for request in test_requests:
         print(f"\n👤 用戶請求: {request}")
-        result = await controller.process_unified_request(request)
-        print(f"🤖 處理方式: {result['processing_method']}")
-        print(f"✅ 統一控制: {result['unified_control']}")
-        print(f"🔄 AI 衝突: {result['ai_conflicts']}")
-
-        # 顯示 AI 摘要
-        if "ai_summary" in result:
-            summary = result["ai_summary"]
-            print(
-                f"📋 AI 摘要: {summary.get('basic_info', {}).get('request_type', 'N/A')}"
-            )
-            print(
-                f"⚡ 效率分數: {summary.get('processing_summary', {}).get('efficiency_score', 0):.2f}"
-            )
-
-    print("\n📊 統一控制統計:")
-    stats = controller.get_control_statistics()
-    print(f"統一控制率: {stats['unified_control_rate']:.1%}")
-    print(f"無衝突率: {stats['conflict_free_rate']:.1%}")
-    print(f"建議: {stats['recommendation']}")
-
+        result = await controller.process_specialized_request(request)
+        print(f"🤖 處理方式: {result.get('processing_method', 'unknown')}")
+        print(f"✅ 統一控制: {result.get('unified_control', False)}")
+        print(f"🔄 AI 衝突: {result.get('ai_conflicts', 0)}")
     print("\n📈 摘要統計:")
     summary_stats = controller.get_ai_summary_statistics()
     if "no_summaries" not in summary_stats:

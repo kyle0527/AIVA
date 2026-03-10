@@ -24,7 +24,7 @@
 
 ### 第一部分：用戶視角（必讀）
 1. [快速開始：一分鐘發起掃描](#1-快速開始一分鐘發起掃描)
-2. [CLI 命令使用指南](#2-cli-命令使用指南)
+2. [API 與 Flow 命令使用指南](#2-api-與-flow-命令使用指南)
 3. [掃描結果解讀](#3-掃描結果解讀)
 
 ### 第二部分：內部運作（可選閱讀）
@@ -41,12 +41,11 @@
 ### 方式一：互動式選單（推薦新手）
 
 ```powershell
-# 方法 A：雙擊執行 bat 檔案（在專案根目錄）
-啟動能力選單.bat
+# 進入專案目錄
+cd C:\D\fold7\AIVA-git\services\core
 
-# 方法 B：從命令行執行
-cd C:\D\fold7\AIVA-git
-.\啟動能力選單.bat
+# 啟動互動式選單
+python -m aiva_core.internal_exploration.aiva_internal_executor --menu
 ```
 
 **選單功能**：
@@ -77,7 +76,7 @@ python -m aiva_core.internal_exploration.aiva_internal_executor --menu
 > ⚠️ 需先啟動 API 服務（參見第1冊）
 
 ```powershell
-# 本機啟動後（Port 8000）
+# HTTP API 模式
 curl -X POST http://localhost:8000/scan `
   -H "Content-Type: application/json" `
   -d '{
@@ -86,14 +85,8 @@ curl -X POST http://localhost:8000/scan `
     "max_depth": 3
   }'
 
-# Docker 啟動後（Port 9000 via Gateway）
-curl -X POST http://localhost:9000/scan `
-  -H "Content-Type: application/json" `
-  -d '{
-    "target": "https://example.com",
-    "scan_type": "full",
-    "max_depth": 3
-  }'
+# CLI 直接掃描模式（最簡單）
+python services\core\aiva_core\service_backbone\api\app.py --target https://example.com
 ```
 
 ---

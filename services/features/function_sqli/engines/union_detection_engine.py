@@ -5,22 +5,24 @@
 
 
 import re
+import aiohttp
+from typing import Dict, List, Tuple
 
-import httpx
-
-from aiva_common.schemas import FunctionTaskPayload
 from aiva_common.utils import get_logger
 
+from ..config import SqliConfig
 from ..detection_models import DetectionResult
 from ..payload_wrapper_encoder import PayloadWrapperEncoder
+from .base_detector import BaseDetector
 
 logger = get_logger(__name__)
 
 
-class UnionDetectionEngine:
+class UnionDetectionEngine(BaseDetector):
     """聯合檢測引擎 - 檢測基於UNION的SQL注入"""
 
-    def __init__(self):
+    def __init__(self, session: aiohttp.ClientSession, config: SqliConfig, payload_encoder: PayloadWrapperEncoder):
+        super().__init__(session, config, payload_encoder)
         # UNION載荷 - 測試不同欄位數量
         self.union_payloads = [
             "' UNION SELECT NULL --",
@@ -64,31 +66,49 @@ class UnionDetectionEngine:
         ]
 
     async def detect(
-        self, task: FunctionTaskPayload, client: httpx.AsyncClient
+        self, target_url: str, params: Dict[str, str], method: str = "GET"
     ) -> list[DetectionResult]:
         """執行UNION檢測"""
         results: list[DetectionResult] = []
-        encoder = PayloadWrapperEncoder(task)
 
-        logger.debug(f"Starting UNION detection for task {task.task_id}")
+        logger.debug(f"Starting UNION detection for {target_url}")
 
         # 獲取基準回應以進行比較
-        baseline_response = await self._get_baseline_response(client, encoder)
+        baseline_response = await self._get_baseline_response()
         if not baseline_response:
             logger.warning("Failed to get baseline response")
             return results
 
-        baseline_content = baseline_response.text or ""
+        baseline_content = baseline_response.text or "" # aiohttp text is coroutine, but handled in helper
+
+        # Need to read text from baseline response which is a ClientResponse
+        # Helper _get_baseline_response returns ClientResponse but we need text
+        # Let's adjust helper to return text or handle it here.
+        # Actually _get_baseline_response in my new code will return (text, status) or response object?
+        # Let's let it return response object but ensure we await .text()
+
+        # NOTE: aiohttp response.text() is a coroutine.
+        # But wait, if I use my helper `_get_baseline_response`, I should implement it to return needed data or use `self.session` directly.
 
         for payload in self.union_payloads:
+            # 應用 Tamper
+            tampered_payloads = self.payload_encoder.apply_tamper(payload, self.config.waf_evasion_level)
+            final_payload = tampered_payloads[-1] if tampered_payloads else payload
+
             try:
                 # 發送UNION載荷
-                encoded = encoder.encode(payload)
-                response = await client.request(
-                    method=encoded.method, url=encoded.url, **encoded.request_kwargs
-                )
+                encoded = self.payload_encoder.encode(final_payload)
 
-                response_content = response.text or ""
+                if encoded.method == "GET":
+                     async with self.session.get(encoded.url, **encoded.request_kwargs) as resp:
+                         response_content = await resp.text()
+                         conn_status = resp.status
+                         response_url = str(resp.url)
+                else:
+                     async with self.session.post(encoded.url, **encoded.request_kwargs) as resp:
+                         response_content = await resp.text()
+                         conn_status = resp.status
+                         response_url = str(resp.url)
 
                 # 檢查UNION成功指示
                 union_success = self._check_union_success(response_content)
@@ -99,35 +119,50 @@ class UnionDetectionEngine:
 
                 if union_success or column_error or content_change:
                     result = self._build_detection_result(
-                        payload=payload,
-                        response=response,
-                        baseline_response=baseline_response,
+                        payload=final_payload,
+                        response_url=response_url,
+                        response_status=conn_status,
+                        response_len=len(response_content),
+                        baseline_len=len(baseline_content),
                         detection_type=self._get_detection_type(
                             union_success, column_error, content_change
                         ),
-                        task=task,
+                        method=method
                     )
                     results.append(result)
-                    logger.info(f"UNION SQL injection detected with payload: {payload}")
+                    logger.info(f"UNION SQL injection detected with payload: {final_payload}")
 
             except Exception as e:
-                logger.warning(f"UNION detection failed for payload '{payload}': {e}")
+                logger.warning(f"UNION detection failed for payload '{final_payload}': {e}")
                 continue
 
         logger.debug(f"UNION detection completed. Found {len(results)} vulnerabilities")
         return results
 
-    async def _get_baseline_response(
-        self,
-        client: httpx.AsyncClient,
-        encoder: PayloadWrapperEncoder,
-    ) -> httpx.Response | None:
+    async def _get_baseline_response(self):
         """獲取基準回應"""
         try:
-            encoded = encoder.encode("")  # 空載荷
-            return await client.request(
-                method=encoded.method, url=encoded.url, **encoded.request_kwargs
-            )
+            encoded = self.payload_encoder.encode("")  # 空載荷
+            if encoded.method == "GET":
+                 resp = await self.session.get(encoded.url, **encoded.request_kwargs)
+            else:
+                 resp = await self.session.post(encoded.url, **encoded.request_kwargs)
+
+            # Since we need text content multiple times and we can't seek/read stream twice easily in aiohttp depending on release,
+            # we will read it into a property or just return a simple object properly.
+            # But here we just need .text() once for baseline content.
+            # Note: The caller needs access to .text().
+            # So I will read it here and mock a response object or just return a struct.
+
+            text = await resp.text()
+
+            class BaselineResp:
+                def __init__(self, text, status):
+                    self.text = text
+                    self.status = status
+
+            return BaselineResp(text, resp.status)
+
         except Exception as e:
             logger.error(f"Failed to get baseline response: {e}")
             return None
@@ -189,10 +224,12 @@ class UnionDetectionEngine:
     def _build_detection_result(
         self,
         payload: str,
-        response: httpx.Response,
-        baseline_response: httpx.Response,
+        response_url: str,
+        response_status: int,
+        response_len: int,
+        baseline_len: int,
         detection_type: str,
-        task: FunctionTaskPayload,
+        method: str
     ) -> DetectionResult:
         """構建檢測結果"""
         from aiva_common.enums import Confidence, Severity, VulnerabilityType
@@ -238,11 +275,12 @@ class UnionDetectionEngine:
             )
 
         evidence = FindingEvidence(
-            request=f"Payload: {payload}",
+            payload=payload,
+            request=f"Payload: {payload}, Method: {method}",
             response=(
-                f"Status: {response.status_code}, "
-                f"Length: {len(response.text or '')}, "
-                f"Baseline length: {len(baseline_response.text or '')}"
+                f"Status: {response_status}, "
+                f"Length: {response_len}, "
+                f"Baseline length: {baseline_len}"
             ),
             proof=evidence_desc,
         )
@@ -263,9 +301,9 @@ class UnionDetectionEngine:
         )
 
         target = FindingTarget(
-            url=str(response.url),
-            method=task.target.method,
-            parameter=task.target.parameter,
+            url=response_url,
+            method=method,
+            parameter="unknown",
         )
 
         return DetectionResult(

@@ -902,13 +902,7 @@ class APISecurityTest(BaseModel):
         default=None, description="排除的端點"
     )
 
-    # HackerOne 優化設定
-    focus_low_hanging_fruit: bool = Field(
-        default=True, description="專注於低價值高概率漏洞"
-    )
-    target_bounty_range: str = Field(
-        default="50-500", description="目標獎金範圍（美元）"
-    )
+    # 測試時間設定
     max_test_time_hours: float = Field(default=2.0, description="最大測試時間（小時）")
 
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))

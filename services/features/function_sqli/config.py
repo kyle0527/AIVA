@@ -42,6 +42,12 @@ class SqliConfig:
     min_confidence_score: float = 0.7  # 最小置信度分數
     include_debug_info: bool = False  # 是否包含調試信息
 
+    # Advanced Features (Phase 2 Refactoring)
+    waf_evasion_level: int = 0  # 0=None, 1=Low, 2=Medium, 3=High
+    stability_threshold: float = 0.9  # Page stability score (0.0-1.0)
+    oast_domain: str = "interact.sh"  # Default OAST domain for OOB detection
+    fuzzy_similarity_threshold: float = 0.85  # Fuzzy match threshold for boolean detection
+
     def validate(self) -> None:
         """配置驗證"""
         if self.timeout_seconds <= 0:

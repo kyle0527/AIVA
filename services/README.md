@@ -749,13 +749,17 @@ graph TB
         Core --> UI[🖥️ UI面板]
     end
     
-    subgraph "🎯 Features - 專業檢測"
-        Features --> Auth[🔐 認證檢測Go]
-        Features --> Crypto[🔒 加密檢測Rust]
-        Features --> SQLi[💉 SQL注入6引擎]
-        Features --> XSS[⚡ XSS多引擎]
-        Features --> SSRF[🔗 SSRF智能檢測]
-        Features --> IDOR[🔓 IDOR檢測]
+    subgraph "🎯 Features - 專業檢測 (10個核心模組)"
+        Features --> SQLi[💉 SQL注入45%]
+        Features --> Crypto[🔒 密碼学95%]
+        Features --> XSS[⚡ XSS90%]
+        Features --> SSRF[🔗 SSRF85%]
+        Features --> IDOR[🔓 IDOR80%]
+        Features --> BizLogic[🏢 業務邏輯75%]
+        Features --> InfoLeak[📄 信息洩漏100%]
+        Features --> Authn[🔐 認證70%]
+        Features --> PostEx[🎯 後滲透50%]
+        Features --> WebScan[🌐 Web掃描35%]
     end
     
     subgraph "🔄 Integration - 企業整合"
@@ -766,11 +770,11 @@ graph TB
         Integration --> Remediation[🔧 修復建議]
     end
     
-    subgraph "🔍 Scan - 多語言掃描"
-        Scan --> PythonScan[🐍 Python爬蟲]
-        Scan --> TypeScriptScan[📘 TS動態掃描]
-        Scan --> GoScan[🐹 Go高性能掃描]
-        Scan --> RustInfo[🦀 Rust情報收集]
+    subgraph "🔍 Scan - 多語言掃描 (4個引擎)"
+        Scan --> GoEngine[🐹 Go - SSRF/SCA/CSPM]
+        Scan --> RustEngine[🦀 Rust - Smuggling/PortScan]
+        Scan --> TSEngine[📘 TS - DOM XSS/SPA]
+        Scan --> PyEngine[🐍 Python - XXE/反序列化]
     end
     
     Common -.-> Core
@@ -783,14 +787,19 @@ graph TB
     Scan --> Integration
 ```
 
-### 🌐 多語言技術棧分布
+### 多語言技術棧分布 (10+4 實戰模組)
 
-| 語言 | 主要用途 | 核心組件 | 性能特點 |
-|------|----------|----------|----------|
-| **🐍 Python** | AI協調、業務邏輯 | Core, Integration, 部分Features | AI模型、靈活開發 |
-| **🐹 Go** | 高並發掃描 | go_scanners/, function_authn_go/ | 高並發、低延遲 |
-| **📘 TypeScript** | 動態掃描、前端 | aiva_scan_node/ | 瀏覽器互動 |
-| **🦀 Rust** | 高性能計算 | function_crypto/, info_gatherer_rust/ | 記憶體安全、極致性能 |
+| 語言 | 用途 | 功能模組 | 掃描引擎 | 性能特點 |
+|------|----------|----------|----------|----------|
+| **🐍 Python** | AI協調、業務邏輯 | 7個 (SQLi/XSS/SSRF/IDOR/BizLogic/InfoLeak/PostEx) | 1個 (XXE/反序列化) | 靈活開發、AI模型 |
+| **🐹 Go** | 高並發掃描 | 1個 (Authn認證) | 1個 (SSRF/SCA/CSPM/Secrets) | 高並發、低延遲 |
+| **🦀 Rust** | 高性能計算 | 1個 (Crypto密碼學) | 1個 (HTTP Smuggling/Port/Auth) | 記憶體安全、極致性能 |
+| **📘 TypeScript** | 動態分析 | 1個 (WebScanner) | 1個 (DOM XSS/SPA/WebSocket) | 瀏覽器互動 |
+
+**模組統計**:
+- 功能模組：10個（7個高完成度 + 3個開發中）
+- 掃描引擎：4個（Go/Rust/TypeScript/Python）
+- 總計：14個實戰模組
 
 ---
 
@@ -884,55 +893,56 @@ aiva_common/
 
 ---
 
-### 🎯 [Features - 多語言安全功能](features/README.md)
+### 🎯 [Features - 多語言安全功能](features/README.md) - **10個實戰模組**
 
-**位置**: `services/features/`  
-**語言**: Python, Go, Rust, TypeScript  
+**位置**: `services/features/`
+**語言**: Python, Go, Rust
 **定位**: 專業化漏洞檢測與滲透測試功能集
 
 > **📐 最新架構設計**: [SIMPLE_ARCHITECTURE.md](features/SIMPLE_ARCHITECTURE.md) - AI Commander 直接調用，功能模組按最佳實踐實現
 
-**核心功能架構**:
+**🎯 10個實戰功能模組**:
+
+**✅ 高完成度模組 (7個)** - 可直接使用：
 ```
-features/
-├── 🔐 function_authn_go/      # Go 認證檢測
-├── 🔒 function_crypto/        # Rust 加密檢測
-├── 💉 function_sqli/          # SQL注入 (6引擎)
-├── ⚡ function_xss/           # XSS檢測套件
-├── 🔗 function_ssrf/          # SSRF智能檢測
-├── 🔓 function_idor/          # IDOR權限檢測
-├── 🎯 function_postex/        # 後滲透工具
-├── 🏢 function_bizlogic/      # 業務邏輯檢測
-├── 💥 function_ddos/          # DDoS檢測
-├── 🌐 function_web_scanner/   # Web掃描工具
-├── 🐹 common/go/             # Go共享庫
-└── 📚 docs/                   # 功能文檔
+1. 💉 function_sqli (95%)         # SQL注入檢測，6種引擎
+2. 🔒 function_crypto (95%)       # 密碼學檢測，Rust CLI
+3. ⚡ function_xss (90%)          # XSS檢測，多種類型
+4. 🔗 function_ssrf (85%)         # SSRF檢測，OAST技術
+5. 🔓 function_idor (80%)         # IDOR權限檢測
+6. 🏢 function_bizlogic (75%)     # 業務邏輯測試
+7. 📄 function_info_leak (100%)   # 敏感信息檢測
+```
+
+**⚠️ 開發中模組 (3個)** - 持續完善：
+```
+8. 🔐 function_authn_go (70%)     # 認證檢測，Go語言
+9. 🎯 function_postex (50%)       # 後滲透測試
+10. 🌐 function_web_scanner (35%) # Web綜合掃描
 ```
 
 **核心能力**:
-- 💉 **SQL 注入**: 6個專業檢測引擎 (布林/錯誤/時間/聯合/帶外/工具整合)
-- ⚡ **XSS 檢測**: DOM/存儲型/反射型、盲XSS監聽
-- 🔗 **SSRF 檢測**: 內網探測、語義分析、OAST技術
-- 🔓 **IDOR 檢測**: 智能權限矩陣、資源ID提取
-- 🔐 **認證檢測**: Go微服務、OAuth/JWT/Session安全
-- 🔒 **加密檢測**: Rust高性能、密碼學漏洞分析
-- 🎯 **後滲透**: 橫向移動、持久化、權限提升
+- 💉 **SQL 注入** (95%): 6個專業檢測引擎 (布林/錯誤/時間/聯合/帶外/工具整合)
+- 🔒 **密碼學** (95%): Rust高性能、TLS/Cookie/Headers/JS分析
+- ⚡ **XSS 檢測** (90%): DOM/存儲型/反射型、盲XSS監聽
+- 🔗 **SSRF 檢測** (85%): 內網探測、語義分析、OAST技術
+- 🔓 **IDOR 檢測** (80%): 智能權限矩陣、資源ID提取
+- 🏢 **業務邏輯** (75%): 價格操控、競態條件、流程繞過
+- 📄 **信息洩漏** (100%): API密鑰、JWT、憑證檢測
 
-**技術棧特點**:
-- **Python**: 業務邏輯、AI協調 (SQLi, XSS, SSRF, IDOR)
-- **Go**: 高並發認證檢測、共享庫
-- **Rust**: 高性能加密計算
-- **TypeScript**: 動態內容處理
+**技術棧分布**:
+- **Python** (7個): SQLi, XSS, SSRF, IDOR, BizLogic, InfoLeak, PostEx
+- **Rust** (1個): Crypto (高性能CLI)
+- **Go** (1個): Authn (高並發)
 
 **關鍵特性**:
-- ✅ 10個完整實現功能模組
-- ✅ 多語言協同設計 (4種語言技術棧)
-- ✅ 專業Bug Bounty工具整合
-- ✅ 可擴展架構、模組化設計
-- ✅ 智能檢測算法 (語義分析、機器學習)
+- ✅ 10個實戰模組，7個高完成度可直接使用
+- ✅ 涵蓋 OWASP Top 10 + 業務邏輯漏洞
+- ✅ AI Commander 已整合，可直接調用
+- ✅ 統一執行器架構，628個流程已分類
 
 **📖 詳細文檔**: 
-- [services/features/README.md](features/README.md) - 功能模組現況
+- [services/features/README.md](features/README.md) - 功能模組詳細狀態
 - [services/features/SIMPLE_ARCHITECTURE.md](features/SIMPLE_ARCHITECTURE.md) - ⭐ 最新架構設計
 
 ---
@@ -981,72 +991,80 @@ integration/
 
 ---
 
-### 🔍 [Scan - 多語言統一掃描引擎](scan/README.md)
+### 🔍 [Scan - 多語言統一掃描引擎](scan/README.md) - **4個核心引擎**
 
 **位置**: `services/scan/`  
 **語言**: Python, TypeScript, Go, Rust  
-**定位**: 多語言協同的統一掃描引擎，提供高性能、全面的安全掃描能力
+**定位**: 多語言掃描引擎調度器，提供高性能並發掃描能力
 
-**多語言掃描架構**:
+**🎯 4個核心掃描引擎**:
+
+```
+1. 🐹 Go Engine          # 高並發 - SSRF/SCA/CSPM/Secrets
+2. 🦀 Rust Engine        # 極致性能 - HTTP Smuggling/認證爆破/端口掃描
+3. 📘 TypeScript Engine  # 動態分析 - DOM XSS/SPA爬蟲/WebSocket
+4. 🐍 Python Engine      # 複雜邏輯 - XXE/反序列化/被動分析
+```
+
+**引擎架構**:
 ```
 scan/
-├── 🐍 aiva_scan/              # Python 掃描核心
-│   ├── 🕷️ core_crawling_engine/    # 核心爬蟲引擎
-│   ├── ⚡ dynamic_engine/           # 動態掃描引擎  
-│   ├── 🔍 info_gatherer/           # 情報收集器
-│   └── [20+ scan modules]          # 掃描模組
-├── 📘 aiva_scan_node/         # TypeScript 動態掃描
-│   ├── src/services/              # TS 掃描服務
-│   ├── src/interfaces/            # TS 介面定義
-│   └── types/                     # TS 類型定義
-├── 🐹 go_scanners/            # Go 高性能掃描器
-│   ├── cspm_scanner/              # 雲安全掃描器
-│   ├── sca_scanner/               # 軟體組成分析
-│   ├── secrets_scanner/           # 機密掃描器
-│   └── vulndb_scanner/            # 漏洞資料庫掃描
-├── 🦀 info_gatherer_rust/     # Rust 情報收集器
-│   ├── src/modules/               # 高性能模組
-│   └── src/utils/                 # Rust 工具集
-└── [scan root modules]        # 掃描協調器
+├── 🐹 go_engine/          # Go 掃描引擎
+│   ├── ssrf_scanner       # SSRF檢測（OOB回調、雲Metadata）
+│   ├── sca_scanner        # 軟體組成分析
+│   ├── cspm_scanner       # 雲安全掃描
+│   └── secrets_scanner    # 機密掃描
+│
+├── 🦀 rust_engine/        # Rust 掃描引擎
+│   ├── smuggling_detector # HTTP Smuggling（CL.TE/TE.CL/TE.TE）
+│   ├── port_scanner       # 端口掃描
+│   ├── auth_bruteforcer   # 認證爆破
+│   └── info_gatherer      # 信息收集
+│
+├── 📘 typescript_engine/  # TypeScript 掃描引擎
+│   ├── dom_xss_detector   # DOM XSS檢測
+│   ├── spa_crawler        # SPA爬蟲
+│   ├── websocket_scanner  # WebSocket安全
+│   └── postmessage_detect # PostMessage檢測
+│
+└── 🐍 python_engine/      # Python 掃描引擎
+    ├── xxe_detector       # XXE檢測
+    ├── deserialization    # 反序列化檢測
+    └── passive_analyzer   # 被動分析
 ```
 
-**🐍 Python 掃描核心**:
-- **🕷️ 爬蟲引擎**: 反反爬蟲、會話管理、智能URL隊列
-- **⚡ 動態引擎**: 無頭瀏覽器池、AJAX處理、JS互動模擬
-- **🔍 情報收集**: JavaScript分析、被動指紋、敏感信息檢測
+**引擎特性**:
 
-**📘 TypeScript 動態掃描**:
-- **SPA/PWA支援**: 單頁應用深度掃描
-- **互動模擬**: 表單自動填寫、事件觸發
-- **網路攔截**: HTTP/HTTPS流量實時分析
+**🐹 Go Engine** - 廉價並發：
+- ✅ SSRF檢測（基線比對、OOB回調、雲Metadata）
+- ✅ SCA掃描（依賴漏洞、許可證合規）
+- ✅ CSPM掃描（AWS/Azure/GCP配置）
+- ✅ 機密掃描（API key、密碼、證書）
 
-**🐹 Go 高性能掃描器**:
-- **雲安全掃描**: AWS/Azure/GCP配置檢查
-- **軟體組成分析**: 依賴漏洞、許可證合規
-- **機密掃描**: API key、密碼、證書檢測
-- **漏洞匹配**: CVE資料庫、版本對比
+**🦀 Rust Engine** - 極致性能：
+- ✅ HTTP Smuggling（CL.TE/TE.CL/TE.TE/Chunk混淆）
+- ✅ 端口掃描（記憶體安全、高速掃描）
+- ✅ 認證爆破（智能速率控制）
+- ✅ 信息收集（DNS解析、服務檢測）
 
-**🦀 Rust 極致性能**:
-- **DNS解析器**: 高並發域名解析
-- **端口掃描**: 記憶體安全的高速掃描
-- **服務檢測**: 指紋識別、版本檢測
-- **子域枚舉**: 字典攻擊、暴力枚舉
+**📘 TypeScript Engine** - 瀏覽器環境：
+- ✅ DOM XSS（Source-to-Sink追蹤）
+- ✅ SPA爬蟲（單頁應用深度掃描）
+- ✅ WebSocket安全（消息攔截分析）
+- ✅ PostMessage檢測（DOM Clobbering）
 
-**核心能力**:
-- 🚀 **多語言協同**: 4種語言優勢互補，性能與功能並重
-- 🕷️ **智能爬蟲**: 反檢測、深度爬取、動靜結合
-- ⚡ **動態分析**: 真實瀏覽器環境、JavaScript執行
-- 🔍 **情報收集**: 被動掃描、主動探測、綜合分析
-- 📊 **統一輸出**: SARIF標準、多格式支援
+**🐍 Python Engine** - 複雜邏輯：
+- ✅ XXE檢測（實體注入、文件讀取）
+- ✅ 反序列化（Pickle/YAML/JSON漏洞）
+- ✅ 被動分析（流量分析、指紋識別）
 
-**技術棧特點**:
-- **Python**: 協調邏輯、AI整合、靈活開發
-- **TypeScript**: 瀏覽器環境、動態內容處理
-- **Go**: 高並發掃描、系統級性能
-- **Rust**: 極致性能、記憶體安全
+**架構設計**:
+- ✅ **無協調器** - 每個引擎完全獨立，AI直接調用
+- ✅ **無中間層** - 最大化性能，最小化複雜度
+- ✅ **純CLI模式** - subprocess直接調用二進制
 
 **關鍵特性**:
-- ✅ 4語言協同架構、統一掃描介面
+- ✅ 4語言協同，各司其職（Go並發/Rust性能/TS動態/Python邏輯）
 - ✅ 智能化掃描策略、AI輔助決策
 - ✅ 企業級性能、高可用性設計
 - ✅ 標準化輸出、多格式報告
@@ -1087,7 +1105,15 @@ scan/
 
 ---
 
-## 📊 整體統計
+## 📊 實戰模組統計
+
+### 核心實戰能力 (10+4 模組)
+- **功能模組**: 10個
+  - 高完成度：7個 (SQLi/Crypto/XSS/SSRF/IDOR/BizLogic/InfoLeak)
+  - 開發中：3個 (Authn/PostEx/WebScanner)
+- **掃描引擎**: 4個 (Go/Rust/TypeScript/Python)
+- **檢測類型**: 涵蓋 OWASP Top 10 + 業務邏輯
+- **整合狀態**: AI Commander 已整合，可直接調用
 
 ### 代碼規模
 ```

@@ -33,7 +33,89 @@ class EncodedPayload:
         return "\n".join(lines)
 
 
-class PayloadWrapperEncoder:
+
+@dataclass
+class TamperProfile:
+    name: str
+    description: str
+    func: callable
+
+
+class PayloadTamperMixin:
+    """Tamper 混淆邏輯 Mixin"""
+
+    def _register_tampers(self) -> list[TamperProfile]:
+        """註冊所有可用的 Tamper 函數"""
+        return [
+            TamperProfile("space2comment", "Replaces space with /**/", self._tamper_space2comment),
+            TamperProfile("randomcase", "Randomizes case", self._tamper_randomcase),
+            TamperProfile("urlencode", "Double URL Encode", self._tamper_urlencode),
+            TamperProfile("between", "Replaces > with BETWEEN", self._tamper_between),
+            TamperProfile("version_comment", "MySQL inline comment", self._tamper_version_comment),
+        ]
+
+    def apply_tamper(self, payload: str, evasion_level: int = 0) -> list[str]:
+        """
+        根據當前的 Evasion Level，對原始 Payload 進行變形
+        """
+        if evasion_level == 0:
+            return [payload]
+
+        tampered_payloads = [payload]
+
+        # 低混淆: 隨機大小寫
+        if evasion_level >= 1:
+            tampered_payloads.append(self._tamper_randomcase(payload))
+
+        # 中混淆: 空格替換 + 註釋
+        if evasion_level >= 2:
+            p = self._tamper_space2comment(payload)
+            tampered_payloads.append(p)
+            tampered_payloads.append(self._tamper_version_comment(payload))
+
+        # 高混淆: 雙重編碼 + 組合拳
+        if evasion_level >= 3:
+            p = self._tamper_space2comment(payload)
+            p = self._tamper_urlencode(p)
+            tampered_payloads.append(p)
+
+            p2 = self._tamper_between(payload)
+            tampered_payloads.append(p2)
+
+        return list(set(tampered_payloads))
+
+    def _tamper_space2comment(self, payload: str) -> str:
+        """SELECT * FROM -> SELECT/**/FROM"""
+        return payload.replace(" ", "/**/")
+
+    def _tamper_randomcase(self, payload: str) -> str:
+        """SELECT -> SeLeCT"""
+        import random
+        ret = []
+        for char in payload:
+            if char.isalpha() and random.choice([True, False]):
+                ret.append(char.swapcase())
+            else:
+                ret.append(char)
+        return "".join(ret)
+
+    def _tamper_urlencode(self, payload: str) -> str:
+        """Double URL Encode"""
+        import urllib.parse
+        return urllib.parse.quote(urllib.parse.quote(payload))
+
+    def _tamper_between(self, payload: str) -> str:
+        """ > 5 -> BETWEEN 5 AND 5 """
+        if ">" in payload and "BETWEEN" not in payload:
+            return payload.replace(">", " BETWEEN ")
+        return payload
+
+    def _tamper_version_comment(self, payload: str) -> str:
+        """UNION SELECT -> /*!UNION*/ SELECT"""
+        return payload.replace("UNION", "/*!UNION*/").replace("SELECT", "/*!SELECT*/")
+
+
+class PayloadWrapperEncoder(PayloadTamperMixin):
     """
     Payload 包裝和編碼器
 
@@ -107,4 +189,3 @@ class PayloadWrapperEncoder:
         query_pairs[parameter] = value
         parts[4] = urlencode(query_pairs, doseq=True)
         return urlunparse(parts)
-

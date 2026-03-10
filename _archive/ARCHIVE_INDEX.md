@@ -37,6 +37,19 @@
 3. 保持清晰的命名約定
 4. 定期清理和組織歸檔內容
 
-更新時間: 2026-01-07 10:30:41  
-**檢查日期**: 2026年1月10日  
+更新時間: 2026-02-11
+**檢查日期**: 2026年2月11日
 **狀態**: ✅ 目錄結構已驗證，9個子目錄均存在
+
+---
+
+## 最近封存紀錄
+
+### 2026-02-11: 整合層清理
+- 封存 `services/integration/alembic/` (未使用的 PostgreSQL 遷移)
+- 封存 4 個已廢棄的 Manager 類別:
+  - `minimal_manifest.py` (已由自動產出取代)
+  - `scanner_manager.py` (請使用 WebAttackManager)
+  - `postex_manager.py` (請使用 PostExDetector)
+  - `authn_manager.py` (請直接調用 Go 引擎)
+- 詳見: [09_integration_archive/ARCHIVE_INDEX.md](09_integration_archive/ARCHIVE_INDEX.md)

@@ -4,7 +4,7 @@ AIVA CLI Implementation - Dynamic Flow Executor & Documentation Generator
 動態流程執行器與指令手冊生成工具
 
 這個模組整合了兩大功能:
-1. **動態流程執行 (Flow Execution)**: 
+1. **動態流程執行 (Flow Execution)**:
    - 讀取 classification_data.json 中的數據流定義
    - 動態導入模組、實例化類別、自動偵測並執行入口方法
    - 支援步驟間的 Pipeline 數據傳遞
@@ -23,12 +23,12 @@ AIVA CLI Implementation - Dynamic Flow Executor & Documentation Generator
 使用方式:
     # 生成 Markdown 參考手冊
     python -m aiva_core.internal_exploration.aiva_cli_implementation --generate-doc md
-    
+
     # 列出可用流程
     python -m aiva_core.internal_exploration.aiva_cli_implementation --list
-    
+
     # 預覽執行計畫 (不實際執行)
-    
+
     # 實際執行流程
     python -m aiva_core.internal_exploration.aiva_cli_implementation --flow 11
 
@@ -53,15 +53,45 @@ from typing import Any, Dict, List, Optional
 from glob import glob
 
 # ==========================================
+# 引入 Rich UI 組件
+# ==========================================
+# 計算 services/core 的路徑並加入 sys.path
+_THIS_FILE = Path(__file__).resolve()
+_CORE_DIR = _THIS_FILE.parents[2]  # 向上兩層到達 services/core
+if str(_CORE_DIR) not in sys.path:
+    sys.path.insert(0, str(_CORE_DIR))
+
+from ui import (
+    console,
+    init_console,
+    show_banner,
+    show_menu,
+    show_table,
+    show_panel,
+    show_success,
+    show_error,
+    show_warning,
+    show_info,
+    clear_screen,
+    print_divider,
+)
+
+
+# ==========================================
 # 設定與常數
 # ==========================================
+
+# 定義常用的檔案名稱常數（避免重複字串）
+FILENAME_LATEST_CLASSIFICATION = "latest_classification.json"
+FILENAME_CLASSIFICATION_DATA = "classification_data.json"
+GLOB_CLASSIFICATION_PATTERN = "*classification*.json"
 
 # 設定預設的 JSON 資料來源路徑
 # 優先使用 latest_classification.json (由 pipeline 自動更新)
 # 後備方案使用 services_classification_v9_new/classification_data.json
 CURRENT_DIR = Path(__file__).resolve().parent
-LATEST_DATA_PATH = CURRENT_DIR / "latest_classification.json"
-DEFAULT_JSON_PATH = CURRENT_DIR / "services_classification_v9_new" / "classification_data.json"
+LATEST_DATA_PATH = CURRENT_DIR / FILENAME_LATEST_CLASSIFICATION
+DEFAULT_JSON_PATH = CURRENT_DIR / "services_classification_v9_new" / FILENAME_CLASSIFICATION_DATA
 
 # 設定專案根目錄 (讓 Python 能找到 aiva_core 套件)
 # 假設腳本位於: .../aiva_core/internal_exploration/python_tools/aiva_cli_implementation.py
@@ -77,19 +107,19 @@ ANALYSIS_RESULTS_PATH = INTEGRATION_BASE_PATH / "analysis_results" / "external"
 
 try:
     # 正確的 integration 模組路徑
-    from services.integration.capability.config import CapabilityConfig
+    from services.integration.capability.config import CapabilityRegistryConfig  # noqa: F401
     CLI_OUTPUT_DIR = AIVA_ROOT / "services" / "integration" / "cli_outputs"
     CLI_OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
     print(f"[OK] 使用 Integration 模組 CLI 輸出路徑: {CLI_OUTPUT_DIR}")
-except (ImportError, ModuleNotFoundError):
-    CLI_OUTPUT_DIR = AIVA_ROOT / "services" / "integration" / "cli_outputs" 
+except ImportError:
+    CLI_OUTPUT_DIR = AIVA_ROOT / "services" / "integration" / "cli_outputs"
     CLI_OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
     print(f"[INFO] 使用預設 Integration CLI 輸出路徑: {CLI_OUTPUT_DIR}")
 
 # 五大模組中文映射（2026-01-03 更新：external_learning 整合至 cognitive_core.learning_system）
 MODULE_MAPPING = {
     "cognitive_core": "認知核心模組",
-    "internal_exploration": "內探模組", 
+    "internal_exploration": "內探模組",
     "task_planning": "任務規劃模組",
     "core_capabilities": "核心能力模組",
     "service_backbone": "服務骨幹模組",
@@ -102,7 +132,7 @@ def find_latest_classification_file() -> Optional[Path]:
     """
     在 integration 目錄中找到最新的分類檔案
     支援多種可能的檔案名稱和位置，自動選擇最新修改的檔案
-    
+
     Returns:
         Path: 最新分類檔案的路徑，如果找不到則返回 None
     """
@@ -110,19 +140,19 @@ def find_latest_classification_file() -> Optional[Path]:
     search_patterns = [
         # 最新的分類檔案（多種可能的名稱）
         INTEGRATION_BASE_PATH / "external_classification.json",
-        INTEGRATION_BASE_PATH / "latest_classification.json", 
+        INTEGRATION_BASE_PATH / FILENAME_LATEST_CLASSIFICATION,
         INTEGRATION_BASE_PATH / "enriched_classification.json",
-        INTEGRATION_BASE_PATH / "*classification*.json",
-        
+        INTEGRATION_BASE_PATH / GLOB_CLASSIFICATION_PATTERN,
+
         # analysis_results 目錄下的檔案
-        ANALYSIS_RESULTS_PATH / "classification_data.json",
-        ANALYSIS_RESULTS_PATH / "latest_classification.json",
-        ANALYSIS_RESULTS_PATH / "*classification*.json",
-        
+        ANALYSIS_RESULTS_PATH / FILENAME_CLASSIFICATION_DATA,
+        ANALYSIS_RESULTS_PATH / FILENAME_LATEST_CLASSIFICATION,
+        ANALYSIS_RESULTS_PATH / GLOB_CLASSIFICATION_PATTERN,
+
         # 可能的其他位置
-        INTEGRATION_BASE_PATH / "analysis_history" / "external" / "*classification*.json",
+        INTEGRATION_BASE_PATH / "analysis_history" / "external" / GLOB_CLASSIFICATION_PATTERN,
     ]
-    
+
     all_files = []
     for pattern in search_patterns:
         if "*" in str(pattern):
@@ -133,10 +163,10 @@ def find_latest_classification_file() -> Optional[Path]:
             # 直接檢查檔案存在
             if pattern.exists():
                 all_files.append(pattern)
-    
+
     if not all_files:
         return None
-    
+
     # 按修改時間排序，返回最新的檔案
     latest_file = max(all_files, key=lambda f: f.stat().st_mtime)
     return latest_file
@@ -144,7 +174,7 @@ def find_latest_classification_file() -> Optional[Path]:
 class FlowExecutor:
     """
     動態流程執行器
-    
+
     負責讀取 classification_data.json 並執行定義的數據流。
     支援:
     - 動態模組導入與類別實例化
@@ -152,11 +182,11 @@ class FlowExecutor:
     - Pipeline 數據傳遞
     - 文件生成 (Markdown/JSON)
     """
-    
+
     def __init__(self, json_path: Optional[str] = None):
         """
         初始化 FlowExecutor
-        
+
         Args:
             json_path: classification_data.json 的路徑
                       若為 None，優先使用 enriched_classification.json
@@ -164,23 +194,23 @@ class FlowExecutor:
         """
         # ✅ 自動尋找最新的分類檔案（支援多種可能的輸出檔案）
         latest_file = find_latest_classification_file()
-        
+
         # 備選路徑列表（按優先級排序）
         possible_paths = []
-        
+
         # 如果找到最新檔案，優先使用
         if latest_file:
             possible_paths.append(latest_file)
-            
+
         # 備選的固定路徑
         possible_paths.extend([
             INTEGRATION_BASE_PATH / "external_classification.json",
-            ANALYSIS_RESULTS_PATH / "classification_data.json", 
-            Path("C:/D/fold7/AIVA-git/features_classification/classification_data.json"),
+            ANALYSIS_RESULTS_PATH / FILENAME_CLASSIFICATION_DATA,
+            Path("C:/D/fold7/AIVA-git/features_classification") / FILENAME_CLASSIFICATION_DATA,
             DEFAULT_JSON_PATH,
             LATEST_DATA_PATH,
         ])
-        
+
         if json_path:
             self.json_path = json_path
             print(f"[Info] 使用指定數據: {json_path}")
@@ -201,17 +231,17 @@ class FlowExecutor:
                     print(f"  - {path}")
                 print("\n請確認以下任一檔案存在:")
                 print(f"  1. {INTEGRATION_BASE_PATH}/external_classification.json (最新檔案)")
-                print(f"  2. {ANALYSIS_RESULTS_PATH}/classification_data.json (分析結果)")
-                print(f"  3. 使用 --data 參數指定正確路徑")
-                print(f"\n注意: 系統會自動讀取最新修改的檔案")
+                print(f"  2. {ANALYSIS_RESULTS_PATH}/{FILENAME_CLASSIFICATION_DATA} (分析結果)")
+                print("  3. 使用 --data 參數指定正確路徑")
+                print("\n注意: 系統會自動讀取最新修改的檔案")
                 self.json_path = str(DEFAULT_JSON_PATH)
-        
+
         self.data = self._load_data()
-        
+
     def _load_data(self) -> Dict[str, Any]:
         """
         載入分類數據 JSON
-        
+
         Returns:
             包含所有流程定義的字典,若載入失敗則返回空字典
         """
@@ -219,7 +249,7 @@ class FlowExecutor:
             print(f"[Error] 找不到設定檔: {self.json_path}")
             print("請確認檔案是否存在,或使用 --data 參數指定正確路徑。")
             return {}
-        
+
         try:
             with open(self.json_path, 'r', encoding='utf-8') as f:
                 return json.load(f)
@@ -230,10 +260,10 @@ class FlowExecutor:
     def get_flow_by_id(self, flow_id: int) -> Optional[Dict[str, Any]]:
         """
         根據 ID 獲取 Flow 定義
-        
+
         Args:
             flow_id: 流程 ID
-            
+
         Returns:
             流程定義字典,若不存在則返回 None
         """
@@ -241,56 +271,56 @@ class FlowExecutor:
             if flow["id"] == flow_id:
                 return flow
         return None
-    
+
     def search_capabilities(self, query: str, by: str = "all") -> List[Dict[str, Any]]:
         """
         搜尋能力
-        
+
         Args:
             query: 搜尋關鍵字
             by: 搜尋範圍 ("all", "name", "tag", "module", "description")
-            
+
         Returns:
             符合條件的 Flow 列表
         """
         results = []
         query_lower = query.lower()
-        
+
         for flow in self.data.get("flows", []):
             capability = flow.get("capability")
             if not capability:
                 continue
-            
+
             matched = False
-            
+
             if by in ["all", "name"]:
                 if query_lower in capability.get("name", "").lower():
                     matched = True
-            
+
             if by in ["all", "tag"]:
                 tags = capability.get("tags", [])
                 if any(query_lower in tag.lower() for tag in tags):
                     matched = True
-            
+
             if by in ["all", "module"]:
                 if query_lower in capability.get("module", "").lower():
                     matched = True
                 if query_lower in capability.get("module_zh", "").lower():
                     matched = True
-            
+
             if by in ["all", "description"]:
                 if query_lower in capability.get("description", "").lower():
                     matched = True
-            
+
             if matched:
                 results.append(flow)
-        
+
         return results
-    
+
     def show_capability_info(self, flow_id: int):
         """
         顯示 Flow 的詳細能力資訊
-        
+
         Args:
             flow_id: Flow ID
         """
@@ -298,13 +328,13 @@ class FlowExecutor:
         if not flow:
             print(f"[Error] Flow {flow_id} 不存在")
             return
-        
+
         capability = flow.get("capability")
         if not capability:
             print(f"[Warning] Flow {flow_id} 無能力資訊（可能使用舊版數據）")
             print(f"路徑: {' -> '.join(flow['path'])}")
             return
-        
+
         print(f"\n{'='*60}")
         print(f"Flow {flow_id}: {capability['name']}")
         print(f"{'='*60}")
@@ -326,44 +356,44 @@ class FlowExecutor:
     def _full_path_to_module(self, full_path: str) -> Optional[str]:
         """
         將絕對檔案路徑轉換為 Python 模組路徑
-        
-        例如: C:\\...\\aiva_core\\external_learning\\xx.py 
+
+        例如: C:\\...\\aiva_core\\external_learning\\xx.py
               -> aiva_core.external_learning.xx
-        
+
         Args:
             full_path: Windows 絕對檔案路徑
-            
+
         Returns:
             Python 模組路徑,若無法轉換則返回 None
         """
         # 統一將 Windows 反斜線轉換為正斜線,方便處理
         path_str = str(full_path).replace("\\", "/")
-        
+
         # 關鍵: 找到 'aiva_core' 在路徑中的位置作為錨點
         target_marker = "aiva_core"
         if target_marker in path_str:
             # 取得從 aiva_core 開始的子路徑
             idx = path_str.find(target_marker)
             rel_path = path_str[idx:]
-            
+
             # 去掉 .py 副檔名
             if rel_path.endswith(".py"):
                 rel_path = rel_path[:-3]
-                
+
             # 將路徑分隔符換成 Python 的模組分隔符 '.'
             return rel_path.replace("/", ".")
-            
+
         return None
 
     def _snake_to_camel(self, snake_str: str) -> str:
         """
         將 snake_case (檔案名) 轉為 CamelCase (類別名)
-        
+
         例如: scalable_bio_trainer -> ScalableBioTrainer
-        
+
         Args:
             snake_str: snake_case 格式的字串
-            
+
         Returns:
             CamelCase 格式的字串
         """
@@ -372,132 +402,129 @@ class FlowExecutor:
     def _find_entry_method(self, instance: Any, step_index: int) -> Optional[Any]:
         """
         啟發式尋找類別的入口方法
-        
+
         根據命名慣例與步驟順序來猜測應該呼叫哪個函數:
         - 常用執行入口: execute, process, run, analyze, start
         - 第一步優先: train, generate, load, initialize
         - 最後一步可能: save, export, output
-        
+
         Args:
             instance: 類別實例
             step_index: 當前步驟索引 (從 0 開始)
-            
+
         Returns:
             找到的方法物件,若找不到則返回 None
         """
         # 獲取該實例所有公開的方法名稱
-        methods = [m[0] for m in inspect.getmembers(instance, predicate=inspect.ismethod) 
+        methods = [m[0] for m in inspect.getmembers(instance, predicate=inspect.ismethod)
                    if not m[0].startswith('_')]
-        
+
         # 定義優先順序列表
         # 1. 常用執行入口
         priority_methods = ['execute', 'process', 'run', 'analyze', 'start']
-        
+
         # 2. 如果是第一步,通常涉及初始化或訓練
         if step_index == 0:
             priority_methods = ['train', 'generate', 'load', 'initialize'] + priority_methods
-        
+
         # 3. 如果是最後一步,可能涉及儲存或輸出
         # (這裡暫不實作特定邏輯,通用優先順序通常足夠)
 
         for method_name in priority_methods:
             if method_name in methods:
                 return getattr(instance, method_name)
-        
+
         # 如果常用的都沒找到,嘗試尋找任何看起來像主邏輯的方法 (排除 helper)
         # 這裡可以根據專案具體情況擴充
         return None
 
+    def _generate_markdown_doc(self, output_path: Path, flows: list) -> None:
+        """生成 Markdown 格式的 CLI 參考文件"""
+        filename = str(output_path / "CLI_COMMANDS_REFERENCE.md")
+        try:
+            with open(filename, 'w', encoding='utf-8') as f:
+                f.write("# AIVA Core CLI 指令參考手冊\n\n")
+                f.write(f"> 生成時間: {datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n")
+                f.write(f"> 來源設定檔: {os.path.basename(self.json_path)}\n")
+                f.write(f"> 總流程數: {len(flows)}\n\n")
+
+                f.write("## 快速指令索引\n\n")
+                f.write("此表格列出所有可用流程及其對應的 CLI 執行指令。AI 代理可根據需求檢索此表。\n\n")
+                f.write("| ID | 任務路徑 (Path) | 主要模組 | CLI 指令 |\n")
+                f.write("|:---:|---|---|---|\n")
+
+                for flow in flows:
+                    if 'merged_into' in flow:
+                        continue
+
+                    f_id = flow['id']
+                    path_str = " -> ".join(flow.get('path', ['N/A']))
+                    primary_mod = flow.get('primary_module', 'unknown')
+                    cli_command = f"`python -m aiva_core.internal_exploration.aiva_cli_implementation --flow {f_id}`"
+                    f.write(f"| {f_id} | {path_str} | {primary_mod} | {cli_command} |\n")
+
+            print(f"[Success] Markdown 參考文件已生成: {filename}")
+        except IOError as e:
+            print(f"[Error] 無法寫入文件: {e}")
+
+    def _generate_json_doc(self, output_path: Path, flows: list) -> None:
+        """生成 JSON 格式的 CLI 參考文件"""
+        filename = str(output_path / "cli_commands_db.json")
+        db_records = []
+        for flow in flows:
+            if 'merged_into' in flow:
+                continue
+
+            record = {
+                "flow_id": flow['id'],
+                "description": f"Execute flow: {' -> '.join(flow.get('path', ['N/A']))}",
+                "cli_command": f"python -m aiva_core.internal_exploration.aiva_cli_implementation --flow {flow['id']}",
+                "modules_involved": list(set(flow.get('modules', []))),
+                "steps": flow.get('path', []),
+                "length": flow.get('length', len(flow.get('path', [])))
+            }
+            db_records.append(record)
+
+        try:
+            with open(filename, 'w', encoding='utf-8') as f:
+                json.dump(db_records, f, indent=2, ensure_ascii=False)
+            print(f"[Success] JSON 資料庫文件已生成: {filename}")
+        except IOError as e:
+            print(f"[Error] 無法寫入文件: {e}")
+
     def generate_reference_docs(self, output_format: str = "md", output_dir: Optional[str] = None) -> None:
         """
         生成完整的 CLI 指令參考文件
-        
+
         支援兩種格式:
         - Markdown (.md): 適合人類閱讀,包含表格與格式化
         - JSON (.json): 適合 AI 檢索,結構化數據
-        
+
         ⭐ 輸出位置：默認使用配置的 CLI_OUTPUT_DIR（Integration 模組）
-        
+
         Args:
             output_format: 輸出格式,'md' 或 'json'
             output_dir: 自定義輸出目錄，若為 None 則使用 CLI_OUTPUT_DIR
         """
         flows = self.data.get("flows", [])
-        
+
         # ⭐ 使用配置化的輸出目錄
         if output_dir is None:
             output_dir = str(CLI_OUTPUT_DIR)
-        
+
         # 確保目錄存在
         output_path = Path(output_dir)
         output_path.mkdir(parents=True, exist_ok=True)
-        
-        if output_format == "md":
-            filename = str(output_path / "CLI_COMMANDS_REFERENCE.md")
-            try:
-                with open(filename, 'w', encoding='utf-8') as f:
-                    f.write("# AIVA Core CLI 指令參考手冊\n\n")
-                    f.write(f"> 生成時間: {datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n")
-                    f.write(f"> 來源設定檔: {os.path.basename(self.json_path)}\n")
-                    f.write(f"> 總流程數: {len(flows)}\n\n")
-                    
-                    f.write("## 快速指令索引\n\n")
-                    f.write("此表格列出所有可用流程及其對應的 CLI 執行指令。AI 代理可根據需求檢索此表。\n\n")
-                    f.write("| ID | 任務路徑 (Path) | 主要模組 | CLI 指令 |\n")
-                    f.write("|:---:|---|---|---|\n")
-                    
-                    # 收集 CLI 命令
-                    for flow in flows:
-                        # 跳過被合併的flow
-                        if 'merged_into' in flow:
-                            continue
-                        
-                        f_id = flow['id']
-                        # 簡化顯示路徑 (只取頭尾或前三個,避免過長)
-                        path_str = " -> ".join(flow.get('path', ['N/A']))
-                        
-                        # 找出主要模組
-                        primary_mod = flow.get('primary_module', 'unknown')
-                        
-                        # 生成指令
-                        cli_command = f"`python -m aiva_core.internal_exploration.aiva_cli_implementation --flow {f_id}`"
-                        
-                        f.write(f"| {f_id} | {path_str} | {primary_mod} | {cli_command} |\n")
-                
-                print(f"[Success] Markdown 參考文件已生成: {filename}")
-                
-            except IOError as e:
-                print(f"[Error] 無法寫入文件: {e}")
 
+        if output_format == "md":
+            self._generate_markdown_doc(output_path, flows)
         elif output_format == "json":
-            filename = str(output_path / "cli_commands_db.json")
-            db_records = []
-            for flow in flows:
-                # 跳過被合併的flow
-                if 'merged_into' in flow:
-                    continue
-                
-                record = {
-                    "flow_id": flow['id'],
-                    "description": f"Execute flow: {' -> '.join(flow.get('path', ['N/A']))}",
-                    "cli_command": f"python -m aiva_core.internal_exploration.aiva_cli_implementation --flow {flow['id']}",
-                    "modules_involved": list(set(flow.get('modules', []))),
-                    "steps": flow.get('path', []),
-                    "length": flow.get('length', len(flow.get('path', [])))
-                }
-                db_records.append(record)
-            
-            try:
-                with open(filename, 'w', encoding='utf-8') as f:
-                    json.dump(db_records, f, indent=2, ensure_ascii=False)
-                print(f"[Success] JSON 資料庫文件已生成: {filename}")
-            except IOError as e:
-                print(f"[Error] 無法寫入文件: {e}")
+            self._generate_json_doc(output_path, flows)
 
     def execute_flow(self, flow_id: int, context_data: Optional[Dict[str, Any]] = None) -> None:
         """
         執行指定 ID 的數據流
-        
+
         執行流程:
         1. 讀取流程定義
         2. 對每個步驟:
@@ -507,7 +534,7 @@ class FlowExecutor:
            d. 尋找並執行入口方法
            e. 在步驟間傳遞輸出數據 (Pipeline)
         3. 顯示最終輸出
-        
+
         Args:
             flow_id: 要執行的流程 ID
             context_data: 初始上下文數據（將在第一步傳入）
@@ -521,7 +548,7 @@ class FlowExecutor:
         if 'merged_into' in flow:
             print(f"[Error] Flow {flow_id} 已合併到 Flow {flow['merged_into']}，請執行主flow")
             return
-        
+
         # 顯示能力資訊
         capability = flow.get("capability")
         if capability:
@@ -537,7 +564,7 @@ class FlowExecutor:
             print(f"\n=== [AIVA Flow Executor] 開始執行 Flow {flow_id} ===\n")
             print(f"路徑預覽: {' -> '.join(flow.get('path', ['N/A']))}")
             print("-" * 50)
-        
+
         # 使用傳入的 context_data，若無則初始化為空字典
         if context_data is None:
             context_data = {}
@@ -546,19 +573,19 @@ class FlowExecutor:
 
         classifications = flow.get("classifications", [])
         full_paths = flow.get("full_path", [])
-        
+
         if not classifications or not full_paths:
             print("[Error] Flow 缺少必要的執行資訊（classifications 或 full_path）")
             return
-        
+
         for idx, step_info in enumerate(classifications):
             script_name = step_info.get("script", "unknown")
             full_path = full_paths[idx] if idx < len(full_paths) else ""
-            
+
             if not full_path:
                 print(f"\n[Error] Step {idx+1} 缺少文件路徑")
                 continue
-            
+
             # 解析模組路徑與類別名稱
             module_path = self._full_path_to_module(full_path)
             # ✅ 使用分析器提取的真實類別/函數名稱，而不是猜測
@@ -578,12 +605,12 @@ class FlowExecutor:
             try:
                 # 1. 動態導入模組
                 module = importlib.import_module(module_path)
-                
+
                 # 2. 解析類別名和方法名（從 func_names）
                 func_name = func_names[idx] if idx < len(func_names) else ""
                 target_class_name = None
                 target_method_name = None
-                
+
                 if '.' in func_name:
                     # 格式: "ClassName.method_name"
                     parts = func_name.split('.', 1)
@@ -592,24 +619,24 @@ class FlowExecutor:
                 else:
                     # 只有類別名
                     target_class_name = func_name
-                
+
                 # 3. 獲取類別
                 if not target_class_name:
-                    print(f"   [Error] func_names 資料缺失，無法執行")
+                    print("   [Error] func_names 資料缺失，無法執行")
                     continue
-                    
+
                 if not hasattr(module, target_class_name):
                     print(f"   [Error] 模組中找不到類別 '{target_class_name}'")
-                    print(f"   提示: 請更新分類數據或檢查模組結構")
+                    print("   提示: 請更新分類數據或檢查模組結構")
                     continue
-                
+
                 cls = getattr(module, target_class_name)
                 print(f"   -> 找到類別: {cls.__name__}")
-                
+
                 # 4. 實例化類別
                 print(f"   -> 正在實例化 {cls.__name__}...")
                 instance = cls()
-                
+
                 # 5. 獲取要執行的方法
                 if target_method_name:
                     # func_names 明確指定了方法名
@@ -622,14 +649,14 @@ class FlowExecutor:
                 else:
                     # 沒有指定方法，使用啟發式查找
                     method = self._find_entry_method(instance, idx)
-                
+
                 if method:
                     print(f"   -> 呼叫方法: {method.__name__}()")
-                    
+
                     # 檢查該方法是否接受參數
                     sig = inspect.signature(method)
                     params = sig.parameters
-                    
+
                     try:
                         # 簡單的 Pipeline 邏輯:
                         # 如果上一步有輸出 (context_data),且當前方法接受參數,則傳入
@@ -639,7 +666,7 @@ class FlowExecutor:
                             result = method(context_data)
                         else:
                             result = method()
-                        
+
                         # 更新 Context
                         # 如果有回傳值,就更新 context;否則保留上一步的數據
                         if result is not None:
@@ -647,14 +674,14 @@ class FlowExecutor:
                             print(f"   -> 執行成功,獲得輸出: {type(result).__name__}")
                         else:
                             print("   -> 執行成功,無回傳值")
-                            
+
                     except Exception as e:
                         print(f"   [Execution Error] 執行方法時發生錯誤: {e}")
                         # 選擇是否要中斷流程
                         break
                 else:
                     print("   [Warning] 找不到適合的入口方法 (如 execute, train, run),跳過執行。")
-                    
+
             except ImportError as e:
                 print(f"   [Import Error] 導入模組失敗: {e}")
                 break
@@ -674,53 +701,55 @@ def main():
         description="AIVA Core 動態流程執行器與文件生成工具",
         formatter_class=argparse.RawTextHelpFormatter
     )
-    
+
     parser.add_argument(
-        "--flow", 
-        type=int, 
+        "--flow",
+        type=int,
         help="執行指定 ID 的數據流。\n範例: python aiva_cli_implementation.py --flow 11"
     )
-    
+
     parser.add_argument(
-        "--generate-doc", 
-        choices=['md', 'json'], 
+        "--generate-doc",
+        choices=['md', 'json'],
         help="生成指令參考文件。\n"
              "  md   : 生成 Markdown 文件 (適合人類閱讀)\n"
              "  json : 生成 JSON 資料庫 (適合 AI 檢索)"
     )
-    
+
     parser.add_argument(
-        "--list", 
-        action="store_true", 
+        "--list",
+        action="store_true",
         help="列出前 20 個可用的 Flow ID 與路徑"
     )
-    
+
     parser.add_argument(
         "--menu",
         action="store_true",
         help="啟動互動式選單 (按模組和能力瀏覽)"
     )
-    
+
     parser.add_argument(
         "--data",
         type=str,
         default=None,
-        help=f"指定 classification_data.json 的路徑\n預設: 自動讀取最新的分類檔案 (integration 目錄中最新修改的 *classification*.json)\n支援多種檔案名稱: external_classification.json, latest_classification.json, enriched_classification.json 等"
+        help=("指定 classification_data.json 的路徑\n"
+              "預設: 自動讀取最新的分類檔案 (integration 目錄中最新修改的 *classification*.json)\n"
+              "支援多種檔案名稱: external_classification.json, latest_classification.json, enriched_classification.json 等")
     )
 
     args = parser.parse_args()
-    
+
     # 初始化執行器
     executor = FlowExecutor(json_path=args.data)
-    
+
     # 如果沒有任何參數，預設啟動互動選單
     if not any([args.flow, args.generate_doc, args.list, args.menu]):
         InteractiveMenu(executor).run()
         return
-    
+
     if args.menu:
         InteractiveMenu(executor).run()
-            
+
     elif args.list:
         print(f"載入設定檔: {executor.json_path}")
         print("可用 Flow 列表 (顯示前 20 筆):")
@@ -738,24 +767,24 @@ def main():
         remaining = len([f for f in flows if 'merged_into' not in f]) - count
         if remaining > 0:
             print(f"... (還有 {remaining} 條流程)")
-            
+
     elif args.generate_doc:
         print(f"正在生成 {args.generate_doc.upper()} 格式的參考文件...")
         executor.generate_reference_docs(output_format=args.generate_doc)
-        
+
     elif args.flow:
         executor.execute_flow(args.flow)
 
 class InteractiveMenu:
     """
     互動式選單介面
-    
+
     提供雙層聚合顯示:
     1. 第一層: 按六大模組分類
     2. 第二層: 按「起點->終點」聚合能力
     3. 第三層: 顯示具體路徑變體
     """
-    
+
     def __init__(self, executor: FlowExecutor):
         self.executor = executor
         self.flows = executor.data.get("flows", [])
@@ -765,12 +794,12 @@ class InteractiveMenu:
         """建立雙層索引: [Module][(Start, End)] -> [Flows]"""
         from collections import defaultdict
         self.module_groups = defaultdict(lambda: defaultdict(list))
-        
+
         for flow in self.flows:
             # 跳過被合併的flow
             if 'merged_into' in flow:
                 continue
-            
+
             mod = flow.get("primary_module", "other")
             start = flow.get("start", "?")
             end = flow.get("end", "?")
@@ -786,14 +815,14 @@ class InteractiveMenu:
             self.clear()
             meta = self.executor.data.get("metadata", {})
             total = meta.get("total_flows", len(self.flows))
-            
+
             print("=" * 60)
             print(f" AIVA CORE - 任務控制台 (Flows: {total})")
             print("=" * 60)
-            
+
             # 按六大模組順序顯示
             all_mods = sorted(
-                self.module_groups.keys(), 
+                self.module_groups.keys(),
                 key=lambda x: list(MODULE_MAPPING.keys()).index(x) if x in MODULE_MAPPING else 99
             )
 
@@ -801,12 +830,12 @@ class InteractiveMenu:
                 cn_name = MODULE_MAPPING.get(mod, mod)
                 unique_caps = len(self.module_groups[mod])
                 total_flows = sum(len(v) for v in self.module_groups[mod].values())
-                
+
                 print(f" [{i+1}] {cn_name:<15} | {unique_caps} 種能力 ({total_flows} 路徑)")
-            
+
             print(" [0] 離開")
             choice = input("\n> 請選擇模組: ").strip()
-            
+
             if choice == "0":
                 break
             if choice.isdigit() and 0 < int(choice) <= len(all_mods):
@@ -816,25 +845,25 @@ class InteractiveMenu:
         """顯示能力的聚合列表 (起點->終點)"""
         caps = self.module_groups[module_name]
         sorted_caps = sorted(caps.keys())
-        
+
         while True:
             self.clear()
             cn_name = MODULE_MAPPING.get(module_name, module_name)
             print(f"\n=== {cn_name} 能力清單 ===")
             print(f"{'No.':<4} | {'起點 (Start)':<25} -> {'終點 (End)':<25} | {'變體數'}")
             print("-" * 80)
-            
+
             for i, (start, end) in enumerate(sorted_caps):
                 count = len(caps[(start, end)])
                 print(f" [{i+1:<2}] | {start:<25} -> {end:<25} | {count}")
-            
+
             print("-" * 80)
             print(" [b] 返回  [輸入數字] 選擇能力")
-            
+
             choice = input("\n> ").strip()
             if choice == 'b':
                 break
-            
+
             if choice.isdigit() and 0 < int(choice) <= len(sorted_caps):
                 key = sorted_caps[int(choice)-1]
                 self._show_variant_menu(key, caps[key])
@@ -845,29 +874,29 @@ class InteractiveMenu:
             self.clear()
             print(f"\n=== 執行路徑: {cap_key[0]} -> {cap_key[1]} ===")
             print("-" * 80)
-            
+
             # 按長度排序（使用安全訪問）
             flows.sort(key=lambda x: x.get('length', len(x.get('path', []))))
-            
+
             for i, flow in enumerate(flows):
                 path = flow.get('path', [])
                 mid = path[1:-1] if len(path) > 2 else []
                 mid_str = " -> ".join(mid) if mid else "(直連)"
                 length = flow.get('length', len(path))
                 print(f" [{i+1}] Flow {flow['id']} (步數:{length}): ... -> {mid_str} -> ...")
-            
+
             print("-" * 80)
             print(" [b] 返回  [輸入數字] 執行")
-            
+
             cmd = input("\n> ").strip()
             if cmd == 'b':
                 break
-            
+
             if cmd.isdigit():
                 idx = int(cmd) - 1
             else:
                 continue
-                
+
             if 0 <= idx < len(flows):
                 target = flows[idx]
                 print("\n" + "=" * 30)

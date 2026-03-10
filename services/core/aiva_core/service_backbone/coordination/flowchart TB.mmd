@@ -1,0 +1,63 @@
+flowchart TB
+    subgraph Core["services/core (核心系統)"]
+        AC["AttackCoordinator<br/>攻擊協調器"]
+        CP["CoreCapabilities<br/>核心能力"]
+    end
+    
+    subgraph Features["services/features"]
+        FE["FeatureStepExecutor<br/>功能步驟執行器<br/>(Line 113: FeatureRegistry.get)"]
+        
+        subgraph Base["base/ 資料夾 ✅ 必須保留"]
+            FR["FeatureRegistry<br/>功能註冊表<br/>(137行)"]
+            RS["result_schema.py<br/>結果數據結構<br/>(198行)<br/>Finding, FeatureResult"]
+            IH["IntegrationHelper<br/>整合助手<br/>(331行)"]
+        end
+        
+        F1["function_xss<br/>XSS檢測"]
+        F2["function_sqli<br/>SQL注入"]
+        F3["function_ssrf<br/>SSRF"]
+        F4["function_crypto<br/>密碼學"]
+        F5["...其他6個功能模組"]
+    end
+    
+    subgraph Integration["services/integration"]
+        UDM["UnifiedDataManager<br/>統一數據管理器"]
+        DB[(PostgreSQL<br/>Database)]
+    end
+    
+    %% 執行流程
+    AC -->|"1️⃣ 調用檢測"| F1
+    AC -->|"調用檢測"| F2
+    CP -->|"調用檢測"| F3
+    
+    %% FeatureStepExecutor 調用流程
+    AC -->|"2️⃣ execute(step)"| FE
+    FE -->|"3️⃣ FeatureRegistry.get(tool_name)"| FR
+    FR -->|"4️⃣ 返回 Feature Class"| FE
+    FE -->|"5️⃣ 實例化並執行"| F1
+    
+    %% 結果回傳流程
+    F1 -->|"6️⃣ return FeatureResult"| FE
+    F2 -->|"return FeatureResult"| FE
+    F3 -->|"return FeatureResult"| RS
+    
+    %% 數據分發流程
+    FE -->|"7️⃣ on_trace(trace_data)"| AC
+    FE -->|"8️⃣ on_experience(findings)"| AC
+    FE -->|"9️⃣ on_emit(command_record)"| AC
+    
+    %% 可選的整合流程
+    F1 -.->|"🔟 save_finding (可選)"| IH
+    IH -.->|"1️⃣1️⃣ 調用"| UDM
+    UDM -.->|"1️⃣2️⃣ 儲存"| DB
+    
+    %% 樣式
+    classDef coreClass fill:#e1f5ff,stroke:#01579b,stroke-width:2px
+    classDef baseClass fill:#c8e6c9,stroke:#2e7d32,stroke-width:3px
+    classDef funcClass fill:#fff9c4,stroke:#f57f17,stroke-width:2px
+    classDef integClass fill:#f3e5f5,stroke:#4a148c,stroke-width:2px
+    
+    class AC,CP,FE coreClass
+    class FR,RS,IH baseClass
+    class F1,F2,F3,F4,F5 funcClass
+    class UDM,DB integClass

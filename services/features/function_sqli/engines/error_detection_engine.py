@@ -5,22 +5,24 @@
 
 
 import re
+import aiohttp
+from typing import Dict, List, Tuple
 
-import httpx
-
-from aiva_common.schemas import FunctionTaskPayload
 from aiva_common.utils import get_logger
 
+from ..config import SqliConfig
 from ..detection_models import DetectionResult
 from ..payload_wrapper_encoder import PayloadWrapperEncoder
+from .base_detector import BaseDetector
 
 logger = get_logger(__name__)
 
 
-class ErrorDetectionEngine:
+class ErrorDetectionEngine(BaseDetector):
     """錯誤檢測引擎 - 檢測SQL錯誤訊息"""
 
-    def __init__(self):
+    def __init__(self, session: aiohttp.ClientSession, config: SqliConfig, payload_encoder: PayloadWrapperEncoder):
+        super().__init__(session, config, payload_encoder)
         self.error_patterns = {
             "mysql": [
                 r"You have an error in your SQL syntax",
@@ -57,44 +59,68 @@ class ErrorDetectionEngine:
         ]
 
     async def detect(
-        self, task: FunctionTaskPayload, client: httpx.AsyncClient
+        self, target_url: str, params: Dict[str, str], method: str = "GET"
     ) -> list[DetectionResult]:
         """執行錯誤檢測"""
         results = []
-        encoder = PayloadWrapperEncoder(task)
 
-        logger.debug(f"Starting error detection for task {task.task_id}")
+        # params is passed but mostly managed by task in encoder.
+        # BaseDetector signature has params, but for now we rely on the pre-configured encoder.
+
+        logger.debug(f"Starting error detection for {target_url}")
 
         for payload in self.error_payloads:
+            # 應用 Tamper
+            tampered_payloads = self.payload_encoder.apply_tamper(payload, self.config.waf_evasion_level)
+            final_payload = tampered_payloads[-1] if tampered_payloads else payload
+
             try:
                 # 編碼載荷
-                encoded = encoder.encode(payload)
+                encoded = self.payload_encoder.encode(final_payload)
 
                 # 發送請求
-                response = await client.request(
-                    method=encoded.method, url=encoded.url, **encoded.request_kwargs
-                )
+                # 使用 BaseDetector._send_request 邏輯?
+                # _send_request 返回 (text, status).
+                # 但這裡是調用 client.request.
+                # 我們應該直接使用 self.session.
+
+                # 相容舊邏輯，使用 encoder 的 url 和 kwargs
+                if encoded.method == "GET":
+                     async with self.session.get(encoded.url, **encoded.request_kwargs) as resp:
+                         text = await resp.text()
+                         conn_status = resp.status
+                         response = resp # Keep ref for url
+                else:
+                     async with self.session.post(encoded.url, **encoded.request_kwargs) as resp:
+                         text = await resp.text()
+                         conn_status = resp.status
+                         response = resp
 
                 # 分析回應中的錯誤
-                db_type, error_found = self._analyze_error_response(response.text or "")
+                db_type, error_found = self._analyze_error_response(text)
 
                 if error_found:
                     result = self._build_detection_result(
-                        payload=payload, response=response, db_type=db_type, task=task
+                        payload=final_payload,
+                        response_url=str(response.url),
+                        response_status=conn_status,
+                        db_type=db_type,
+                        method=method,
+                        param="unknown"
                     )
                     results.append(result)
                     logger.info(
-                        f"SQL error detected: {db_type} with payload '{payload}'"
+                        f"SQL error detected: {db_type} with payload '{final_payload}'"
                     )
 
             except Exception as e:
-                logger.warning(f"Error detection failed for payload '{payload}': {e}")
+                logger.warning(f"Error detection failed for payload '{final_payload}': {e}")
                 continue
 
         logger.debug(f"Error detection completed. Found {len(results)} vulnerabilities")
         return results
 
-    def _analyze_error_response(self, response_text: str) -> tuple[str, bool]:
+    def _analyze_error_response(self, response_text: str) -> Tuple[str, bool]:
         """分析回應中的SQL錯誤"""
         for db_type, patterns in self.error_patterns.items():
             for pattern in patterns:
@@ -106,9 +132,11 @@ class ErrorDetectionEngine:
     def _build_detection_result(
         self,
         payload: str,
-        response: httpx.Response,
+        response_url: str,
+        response_status: int,
         db_type: str,
-        task: FunctionTaskPayload,
+        method: str,
+        param: str
     ) -> DetectionResult:
         """構建檢測結果"""
         from aiva_common.enums import Confidence, Severity, VulnerabilityType
@@ -128,8 +156,8 @@ class ErrorDetectionEngine:
 
         evidence = FindingEvidence(
             payload=payload,
-            request=f"Method: {task.target.method}, URL: {task.target.url}",
-            response=f"Status: {response.status_code}, Error type: {db_type}",
+            request=f"Method: {method}, URL: {response_url}",
+            response=f"Status: {response_status}, Error type: {db_type}",
             proof=(
                 f"The payload '{payload}' triggered a {db_type} database "
                 f"error, indicating SQL injection vulnerability."
@@ -155,9 +183,9 @@ class ErrorDetectionEngine:
         )
 
         target = FindingTarget(
-            url=str(response.url),
-            method=task.target.method,
-            parameter=task.target.parameter,
+            url=response_url,
+            method=method,
+            parameter=param,
         )
 
         return DetectionResult(

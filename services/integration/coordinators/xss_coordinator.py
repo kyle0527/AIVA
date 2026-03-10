@@ -230,7 +230,6 @@ class XSSCoordinator(BaseCoordinator):
         }
         verified_count = 0
         false_positive_count = 0
-        bounty_eligible_count = 0
         
         for finding in result.findings:
             severity = finding.finding.severity
@@ -239,8 +238,6 @@ class XSSCoordinator(BaseCoordinator):
                 verified_count += 1
             if finding.false_positive_probability > 0.7:
                 false_positive_count += 1
-            if finding.bounty_info and finding.bounty_info.eligible:
-                bounty_eligible_count += 1
         
         # OWASP 分類
         owasp_coverage = {
@@ -269,35 +266,10 @@ class XSSCoordinator(BaseCoordinator):
             verified_findings=verified_count,
             unverified_findings=len(result.findings) - verified_count,
             false_positives=false_positive_count,
-            bounty_eligible_count=bounty_eligible_count,
-            estimated_total_value=self._estimate_bounty_value(result.findings),
             findings=result.findings,
             owasp_coverage=owasp_coverage,
             cwe_distribution=cwe_distribution,
         )
-    
-    def _estimate_bounty_value(self, findings: List[CoordinatorFinding]) -> Optional[str]:
-        """估算總賞金價值"""
-        total_min = 0
-        total_max = 0
-        
-        bounty_ranges = {
-            Severity.CRITICAL: (2000, 10000),
-            Severity.HIGH: (500, 2000),
-            Severity.MEDIUM: (100, 500),
-            Severity.LOW: (50, 100),
-        }
-        
-        for finding in findings:
-            if finding.verified and finding.bounty_info and finding.bounty_info.eligible:
-                severity = finding.finding.severity
-                min_val, max_val = bounty_ranges.get(severity, (0, 0))
-                total_min += min_val
-                total_max += max_val
-        
-        if total_min > 0:
-            return f"${total_min}-${total_max}"
-        return None
     
     async def _verify_findings(
         self, result: FeatureResult

@@ -12,46 +12,113 @@
 - 完整的類型標註
 - 結構化的錯誤處理
 - 詳細的文檔字符串
+
+⚠️ DEPRECATION NOTE (2026-02-09):
+   base 資料夾已歸檔，FeatureRegistry/FeatureResult 改用內部 stub 類別。
+   原因：10 個功能模組都未使用標準接口，改用 CommandHandler/CLI/Detector 架構。
+   此模組保留但無法正常運作，直到功能模組統一遷移。
 """
 
 import time
-from typing import Any, Callable, Dict, List, Optional, Set
+import logging
+from typing import Any, Callable, Dict, List, Optional, Set, Type
+from dataclasses import dataclass, field
 
-from .base.feature_registry import FeatureRegistry
-from .base.result_schema import FeatureResult
+
+# ==================== Stub Classes (替代已歸檔的 base 模組) ====================
+
+class FeatureRegistry:
+    """功能模組註冊表（Stub）
+
+    NOTE: 原 base/feature_registry.py 已歸檔。
+    此為 stub 實現，等待功能模組統一遷移。
+    """
+    _registry: Dict[str, Type[Any]] = {}
+
+    @classmethod
+    def register(cls, name: str, feature_class: Type[Any]) -> None:
+        """註冊功能模組"""
+        cls._registry[name] = feature_class
+
+    @classmethod
+    def get(cls, name: str) -> Optional[Type[Any]]:
+        """取得功能模組類別"""
+        return cls._registry.get(name)
+
+    @classmethod
+    def list_features(cls) -> List[str]:
+        """列出所有已註冊功能"""
+        return list(cls._registry.keys())
+
+
+@dataclass
+class FeatureResult:
+    """功能模組執行結果（Stub）
+
+    NOTE: 原 base/result_schema.py 已歸檔。
+    此為 stub 實現，僅提供基本結構。
+    包含 feature_step_executor.py 使用的所有必要屬性。
+    """
+    success: bool = True
+    ok: bool = True  # 別名，部分程式碼使用 ok 而非 success
+    findings: List[Dict[str, Any]] = field(default_factory=list)
+    error: Optional[str] = None
+    metadata: Dict[str, Any] = field(default_factory=dict)
+    feature: str = ""  # 功能模組名稱
+    command_record: Dict[str, Any] = field(default_factory=dict)  # 執行記錄
+
+    def to_dict(self) -> Dict[str, Any]:
+        """轉換為字典"""
+        return {
+            "success": self.success,
+            "ok": self.ok,
+            "findings": self.findings,
+            "error": self.error,
+            "metadata": self.metadata,
+            "feature": self.feature,
+            "command_record": self.command_record,
+        }
+
+    def has_critical_findings(self) -> bool:
+        """是否有 Critical 級別發現"""
+        return any(f.get("severity") == "critical" for f in self.findings)
+
+    def has_high_findings(self) -> bool:
+        """是否有 High 級別發現"""
+        return any(f.get("severity") == "high" for f in self.findings)
 
 
 class FeatureStepExecutor:
     """
     功能步驟執行器
-    
+
     負責：
     1. 將攻擊步驟轉換為功能模組調用
     2. 執行功能模組並收集結果
     3. 將結果分發到各個系統組件（追蹤、經驗庫、面板）
-    
+
     設計原則：
     - 統一介面：所有功能模組都通過相同的方式調用
     - 錯誤隔離：單個功能模組的失敗不影響整體流程
     - 可觀測性：完整的執行追蹤和性能監控
     - 可擴展性：輕鬆添加新的回調和處理邏輯
-    
+
     Attributes:
         on_trace: 追蹤回調函數
         on_experience: 經驗庫回調函數
         on_emit: 面板發送回調函數
         execution_stats: 執行統計資訊
     """
-    
+
     def __init__(
-        self, 
+        self,
         on_trace: Optional[Callable[[Dict[str, Any]], None]] = None,
         on_experience: Optional[Callable[[Dict[str, Any]], None]] = None,
         on_emit: Optional[Callable[[Dict[str, Any]], None]] = None
     ) -> None:
         """
         初始化功能步驟執行器
-        
+
         Args:
             on_trace: 追蹤回調函數，接收執行追蹤資料
             on_experience: 經驗庫回調函數，接收學習資料
@@ -67,11 +134,11 @@ class FeatureStepExecutor:
             "features_used": set(),
             "total_findings": 0
         }
-    
+
     def execute(self, step: Dict[str, Any]) -> Dict[str, Any]:
         """
         執行功能步驟
-        
+
         Args:
             step: 攻擊步驟字典，包含：
               - tool_type: "feature"
@@ -79,13 +146,13 @@ class FeatureStepExecutor:
               - params: 功能模組參數
               - step_id: 可選，步驟ID
               - description: 可選，步驟描述
-              
+
         Returns:
             執行結果字典，包含執行狀態和結果資料
         """
         start_time = time.time()
         self.execution_stats["total_executions"] += 1
-        
+
         # 驗證步驟格式
         if step.get("tool_type") != "feature":
             error_result = {
@@ -96,7 +163,7 @@ class FeatureStepExecutor:
             }
             self._handle_error(step, error_result)
             return error_result
-        
+
         tool_name = step.get("tool_name", "")
         if not tool_name:
             error_result = {
@@ -107,18 +174,18 @@ class FeatureStepExecutor:
             }
             self._handle_error(step, error_result)
             return error_result
-        
+
         try:
             # 取得功能模組類別
             feature_class = FeatureRegistry.get(tool_name)
             if feature_class is None:
                 raise KeyError(f"功能模組 '{tool_name}' 未註冊")
             self.execution_stats["features_used"].add(tool_name)
-            
+
             # 執行功能模組
             feature_instance = feature_class()
             params = step.get("params", {})
-            
+
             # 添加執行上下文到參數中
             execution_context = {
                 "step_id": step.get("step_id"),
@@ -126,22 +193,22 @@ class FeatureStepExecutor:
                 "executor_version": "2.0.0"
             }
             params["_execution_context"] = execution_context
-            
+
             result: FeatureResult = feature_instance.run(params)
             execution_time = time.time() - start_time
-            
+
             # 轉換為字典格式
             result_dict = result.to_dict()
             result_dict["execution_time"] = execution_time
             result_dict["step_id"] = step.get("step_id")
-            
+
             # 更新統計資訊
             self.execution_stats["successful_executions"] += 1
             self.execution_stats["total_findings"] += len(result.findings)
-            
+
             # 分發結果到各個系統組件
             self._distribute_result(step, result, result_dict)
-            
+
             return {
                 "ok": True,
                 "result": result_dict,
@@ -152,7 +219,7 @@ class FeatureStepExecutor:
                 "has_critical": result.has_critical_findings(),
                 "has_high": result.has_high_findings()
             }
-            
+
         except KeyError as e:
             error_result = {
                 "ok": False,
@@ -163,7 +230,7 @@ class FeatureStepExecutor:
             }
             self._handle_error(step, error_result)
             return error_result
-            
+
         except Exception as e:
             error_result = {
                 "ok": False,
@@ -174,16 +241,16 @@ class FeatureStepExecutor:
             }
             self._handle_error(step, error_result)
             return error_result
-    
+
     def _distribute_result(
-        self, 
-        step: Dict[str, Any], 
-        result: FeatureResult, 
+        self,
+        step: Dict[str, Any],
+        result: FeatureResult,
         result_dict: Dict[str, Any]
     ) -> None:
         """
         將結果分發到各個系統組件
-        
+
         Args:
             step: 原始步驟
             result: 功能模組結果
@@ -198,13 +265,14 @@ class FeatureStepExecutor:
                 "timestamp": time.time()
             }
             self.on_trace(trace_data)
-            
+
             # 如果有發現，發送到經驗庫
             if result.findings:
                 experience_data = {
                     "type": "feature_findings",
                     "feature": result.feature,
-                    "findings": [f.to_dict() for f in result.findings],
+                    # findings 已是 List[Dict]，直接使用
+                    "findings": result.findings,
                     "params": step.get("params", {}),
                     "success_indicators": {
                         "has_critical": result.has_critical_findings(),
@@ -214,7 +282,7 @@ class FeatureStepExecutor:
                     "timestamp": time.time()
                 }
                 self.on_experience(experience_data)
-            
+
             # 發送命令記錄到面板
             command_record = result.command_record.copy()
             command_record.update({
@@ -223,21 +291,21 @@ class FeatureStepExecutor:
                 "success": result.ok
             })
             self.on_emit(command_record)
-            
+
         except Exception as e:
             # 分發失敗不應該影響主要執行流程
             print(f"結果分發失敗: {e}")
-    
+
     def _handle_error(self, step: Dict[str, Any], error_result: Dict[str, Any]) -> None:
         """
         處理執行錯誤
-        
+
         Args:
             step: 原始步驟
             error_result: 錯誤結果
         """
         self.execution_stats["failed_executions"] += 1
-        
+
         try:
             # 發送錯誤到追蹤系統
             trace_data = {
@@ -247,7 +315,7 @@ class FeatureStepExecutor:
                 "timestamp": time.time()
             }
             self.on_trace(trace_data)
-            
+
             # 發送錯誤到面板
             error_command = {
                 "command": f"{step.get('tool_name', 'unknown')}.error",
@@ -256,14 +324,14 @@ class FeatureStepExecutor:
                 "timestamp": time.time()
             }
             self.on_emit(error_command)
-            
+
         except Exception as e:
             print(f"錯誤處理失敗: {e}")
-    
+
     def get_stats(self) -> Dict[str, Any]:
         """
         取得執行統計資訊
-        
+
         Returns:
             包含執行統計的字典
         """
@@ -276,7 +344,7 @@ class FeatureStepExecutor:
             stats["total_findings"] / max(stats["successful_executions"], 1)
         )
         return stats
-    
+
     def reset_stats(self) -> None:
         """重置執行統計"""
         self.execution_stats = {
@@ -290,18 +358,18 @@ class FeatureStepExecutor:
 
 # 便利函數：快速創建執行器
 def create_executor(
-    trace_callback: Optional[Callable[[Dict[str, Any]], None]] = None, 
-    experience_callback: Optional[Callable[[Dict[str, Any]], None]] = None, 
+    trace_callback: Optional[Callable[[Dict[str, Any]], None]] = None,
+    experience_callback: Optional[Callable[[Dict[str, Any]], None]] = None,
     emit_callback: Optional[Callable[[Dict[str, Any]], None]] = None
 ) -> FeatureStepExecutor:
     """
     快速創建功能步驟執行器
-    
+
     Args:
         trace_callback: 追蹤回調
         experience_callback: 經驗回調
         emit_callback: 發送回調
-        
+
     Returns:
         配置好的執行器實例
     """

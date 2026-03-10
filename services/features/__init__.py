@@ -142,83 +142,11 @@ __all__ = [
     # "BizLogicResultPayload",
     # "SensitiveMatch",
     # "JavaScriptAnalysisResult",
-    # ==================== 高價值功能模組（預留，待實現 base 模組） ====================
-    # "FeatureBase",
-    # "FeatureRegistry",
-    # "SafeHttp",
-    # "FeatureResult",
-    # "Finding",
-    "FeatureStepExecutor",
-    "get_available_features",
-    "create_feature_executor",
 ]
 
-# 導入基礎架構
-try:
-    from .base import FeatureRegistry, FeatureResult, Finding
-    from .feature_step_executor import FeatureStepExecutor
-    
-    _BASE_AVAILABLE = True
-except ImportError as e:
-    # 如果 base 模組不可用，提供基本功能
-    _BASE_AVAILABLE = False
-    FeatureStepExecutor = None
-    
-    def _register_high_value_features() -> list[str]:
-        """空實現，當 base 模組不可用時"""
-        return []
-    
-    def get_available_features() -> dict:
-        """空實現，當 base 模組不可用時"""
-        return {}
-
-if _BASE_AVAILABLE:
-    def _register_high_value_features() -> list[str]:
-        """
-        自動註冊所有高價值功能模組
-        
-        Returns:
-            已註冊的功能模組名稱列表
-        """
-        from .base import get_global_registry
-        
-        registry = get_global_registry()
-        registered = registry.list_features()
-        
-        if registered:
-            print(f"[OK] 已註冊 {len(registered)} 個高價值功能模組: {', '.join(registered)}")
-        
-        return registered
-    
-    # 執行註冊
-    _available_features = _register_high_value_features()
-    
-    def get_available_features() -> dict:
-        """
-        取得所有可用的功能模組列表
-        
-        Returns:
-            功能名稱到功能類別的映射字典
-        """
-        from .base import get_global_registry
-        return get_global_registry().list_features()
-    
-    def create_feature_executor(**kwargs):
-        """
-        創建功能執行器的便利函數
-        
-        Args:
-            **kwargs: 傳遞給 FeatureStepExecutor 的參數
-            
-        Returns:
-            配置好的 FeatureStepExecutor 實例
-        """
-        if FeatureStepExecutor:
-            return FeatureStepExecutor(**kwargs)
-        else:
-            raise ImportError("FeatureStepExecutor 不可用")
-else:
-    def create_feature_executor(**kwargs):
-        """空實現"""
-        raise ImportError("base 模組不可用，無法創建 FeatureStepExecutor")
+# 📝 註記 (2026-02-09)
+# base 資料夾已歸檔至 _archive/base_feature_infrastructure/
+# 原因：10 個功能模組都未使用 FeatureRegistry、FeatureResult 等標準接口
+# 各功能模組使用各自的架構：CommandHandler、純CLI、Detector 等
+# FeatureStepExecutor 因無註冊模組而無法使用，已一併歸檔
 

@@ -1,0 +1,84 @@
+# AIVA Dashboard 配置檔
+
+# API 連線設定
+api:
+  base_url: http://localhost:8000
+  timeout: 30
+  retry_attempts: 3
+  retry_delay: 1
+
+# Dashboard 設定
+dashboard:
+  title: AIVA Security Dashboard
+  port: 8501
+  host: 0.0.0.0
+  theme: dark  # dark | light
+  
+  # 頁面配置
+  pages:
+    - id: scan_console
+      title: 掃描控制台
+      icon: 🎯
+      enabled: true
+    
+    - id: monitoring
+      title: 即時監控
+      icon: 📊
+      enabled: true
+    
+    - id: results
+      title: 結果分析
+      icon: 🔍
+      enabled: true
+    
+    - id: history
+      title: 歷史記錄
+      icon: 📜
+      enabled: true
+
+# 掃描預設設定
+scan_defaults:
+  scan_type: comprehensive
+  max_depth: 3
+  timeout: 1800
+  concurrent_limit: 5
+
+# 視覺化設定
+visualization:
+  chart_theme: plotly  # plotly | seaborn
+  color_scheme: aiva   # 使用 AIVA_THEME 配色
+  
+  attack_graph:
+    layout: LR  # LR (左右) | TB (上下)
+    node_shape: box
+    edge_style: solid
+  
+  # AIVA 主題配色（對應 services/core/ui/themes.py）
+  colors:
+    primary: "#00D9FF"    # 青色
+    accent: "#FF00FF"     # 洋紅
+    success: "#00FF00"    # 綠色
+    warning: "#FFAA00"    # 橘色
+    error: "#FF0000"      # 紅色
+    info: "#00D9FF"       # 青色
+    muted: "#666666"      # 灰色
+
+# 效能設定
+performance:
+  cache_ttl: 300  # 快取 5 分鐘
+  log_buffer_size: 1000  # 最多顯示 1000 行日誌
+  status_refresh_interval: 2  # 狀態更新間隔（秒）
+  auto_refresh: true  # 自動刷新
+
+# 匯出設定
+export:
+  formats: [json, html, pdf]
+  output_dir: data/dashboard/exports/
+  template_dir: services/dashboard/templates/
+
+# 日誌設定
+logging:
+  level: INFO
+  file: logs/dashboard.log
+  max_size: 10485760  # 10MB
+  backup_count: 5

@@ -161,10 +161,6 @@ class ReportData(BaseModel):
     unverified_findings: int = 0
     false_positives: int = 0
     
-    # Bug Bounty 相關
-    bounty_eligible_count: int = 0
-    estimated_total_value: Optional[str] = None
-    
     # 詳細發現（使用 Coordinator 擴展模型）
     findings: List[CoordinatorFinding]
     

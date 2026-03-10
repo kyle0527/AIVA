@@ -476,12 +476,12 @@ class FunctionReconManager:
         
         LOGGER.info("功能偵察管理器已初始化")
     
-    def create_target(self, target: str, target_type: ReconTargetType, description: str = None) -> ReconTarget:
+    def create_target(self, target: str, target_type: ReconTargetType, description: Optional[str] = None) -> ReconTarget:
         """創建偵察目標"""
         return ReconTarget(
             target=target,
             target_type=target_type,
-            description=description
+            description=description or ""
         )
     
     async def comprehensive_scan(self, target: ReconTarget) -> List[ReconResult]:
@@ -991,7 +991,15 @@ async def register_recon_capabilities():
         entrypoint="NetworkScanner",
         capability_type=CapabilityType.SCANNER,
         dependencies=["nmap"],
-        tags=["reconnaissance", "network", "security"]
+        tags=["reconnaissance", "network", "security"],
+        category="network_scanner",
+        topic="",
+        last_probe=None,
+        last_success=None,
+        config={},
+        environment_vars={},
+        rag_trigger=None,
+        feature_signature=None
     )
     await registry.register_capability(network_capability)
     
@@ -1005,7 +1013,15 @@ async def register_recon_capabilities():
         entrypoint="DNSRecon",
         capability_type=CapabilityType.ANALYZER,
         dependencies=["dnspython"],
-        tags=["reconnaissance", "dns", "network"]
+        tags=["reconnaissance", "dns", "network"],
+        category="dns_tools",
+        topic="",
+        last_probe=None,
+        last_success=None,
+        config={},
+        environment_vars={},
+        rag_trigger=None,
+        feature_signature=None
     )
     await registry.register_capability(dns_capability)
     
@@ -1019,7 +1035,15 @@ async def register_recon_capabilities():
         entrypoint="WebRecon",
         capability_type=CapabilityType.SCANNER,
         dependencies=["requests"],
-        tags=["reconnaissance", "web", "osint"]
+        tags=["reconnaissance", "web", "osint"],
+        category="web_tools",
+        topic="",
+        last_probe=None,
+        last_success=None,
+        config={},
+        environment_vars={},
+        rag_trigger=None,
+        feature_signature=None
     )
     await registry.register_capability(web_capability)
     
@@ -1033,7 +1057,15 @@ async def register_recon_capabilities():
         entrypoint="OSINTRecon",
         capability_type=CapabilityType.ANALYZER,
         dependencies=["requests", "dnspython"],
-        tags=["reconnaissance", "osint", "intelligence"]
+        tags=["reconnaissance", "osint", "intelligence"],
+        category="osint_tools",
+        topic="",
+        last_probe=None,
+        last_success=None,
+        config={},
+        environment_vars={},
+        rag_trigger=None,
+        feature_signature=None
     )
     await registry.register_capability(osint_capability)
     
@@ -1047,7 +1079,15 @@ async def register_recon_capabilities():
         entrypoint="FunctionReconManager",
         capability_type=CapabilityType.UTILITY,
         dependencies=["nmap", "requests", "dnspython"],
-        tags=["reconnaissance", "management", "orchestration"]
+        tags=["reconnaissance", "management", "orchestration"],
+        category="recon_management",
+        topic="",
+        last_probe=None,
+        last_success=None,
+        config={},
+        environment_vars={},
+        rag_trigger=None,
+        feature_signature=None
     )
     await registry.register_capability(manager_capability)
     
@@ -1066,7 +1106,7 @@ async def main():
     ))
     
     # 註冊能力
-    register_recon_capabilities()
+    await register_recon_capabilities()
     
     # 創建CLI並運行
     cli = ReconCLI()

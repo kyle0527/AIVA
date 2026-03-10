@@ -26,8 +26,9 @@ from datetime import datetime, timedelta
 import json
 import logging
 from pathlib import Path
-from typing import Any, Optional
+from typing import Any, Optional, TYPE_CHECKING
 import asyncio
+import uuid
 
 # [新增] 引入真實神經網路引擎
 from ..neural.real_neural_core import RealDecisionEngine
@@ -44,6 +45,14 @@ from ..embedded_knowledge import (
     WebArchitectureAnalyzer,
     AttackContext,
 )
+
+# [Split] 拆分模組
+from .bounty_strategy_agent import BountyStrategyAgent
+from .knowledge_decision_mixin import KnowledgeDecisionMixin
+
+# TYPE_CHECKING 前向引用
+if TYPE_CHECKING:
+    from aiva_common.schemas.commands import CLICommand
 
 # 使用 aiva_common 的統一枚舉定義
 from aiva_common.enums import RiskLevel
@@ -63,7 +72,7 @@ OperationMode = Literal["ui", "ai", "chat"]
 
 class DecisionContext:
     """決策上下文
-    
+
     v2.1 (2026-01-08): 支援去語意化反射引擎
     """
 
@@ -82,14 +91,14 @@ class DecisionContext:
 
 class Decision:
     """決策結果
-    
+
     v2.1 (2026-01-08): 支援 RAG 檢索建議
     """
 
     def __init__(
-        self, 
-        action: str, 
-        params: dict[str, Any] | None = None, 
+        self,
+        action: str,
+        params: dict[str, Any] | None = None,
         confidence: float = 0.5,
         rag_suggestions: list[dict[str, Any]] | None = None
     ):
@@ -103,8 +112,8 @@ class Decision:
         self.rag_suggestions = rag_suggestions or []
 
 
-class EnhancedDecisionAgent:
-    """增強的決策代理"""
+class EnhancedDecisionAgent(KnowledgeDecisionMixin):
+    """增強的決策代理（繼承 KnowledgeDecisionMixin 取得知識決策方法）"""
 
     def __init__(self, knowledge_base=None, experience_manager=None):
         self.knowledge_base = knowledge_base
@@ -115,7 +124,7 @@ class EnhancedDecisionAgent:
 
         # 設定日誌
         self.logger = self._setup_logger()
-        
+
         # 初始化 RAG 引擎（去語意化反射引擎整合）
         if knowledge_base is not None:
             from ..rag.rag_engine import RAGEngine
@@ -147,15 +156,17 @@ class EnhancedDecisionAgent:
             "web_scan": ["nikto", "dirb", "wpscan"],
             "brute_force": ["hydra", "medusa", "john"],
         }
-        
-        # Bug Bounty 特化配置
-        self.waf_bypass_strategies = self._initialize_waf_strategies()
-        self.rate_limit_profiles = self._initialize_rate_profiles()
-        self.bounty_value_matrix = self._initialize_bounty_matrix()
+
+        # Bug Bounty 策略代理（委派 Phase 1/2 決策）
+        self.bounty_agent = BountyStrategyAgent(
+            neural_engine=self.neural_engine,
+            experience_manager=self.experience_manager,
+            use_neural_decision=self.use_neural_decision,
+        )
 
         self.logger.info("🛡️ 規則引擎已就緒")
-        self.logger.info("🎯 Bug Bounty 模組已載入")
-        
+        self.logger.info("🎯 Bug Bounty 策略代理已載入")
+
         # ========== [2026-01-19] 雙CLI架構整合 ==========
         # 內部閉環連接器：連接 internal_exploration 能力庫
         try:
@@ -166,7 +177,7 @@ class EnhancedDecisionAgent:
         except Exception as e:
             self.internal_connector = None
             self.logger.warning(f"⚠️ 內部閉環連接器初始化失敗: {e}")
-        
+
         # 外部閉環連接器：連接執行結果 → 學習系統
         try:
             self.external_connector = ExternalLoopConnector()
@@ -174,7 +185,7 @@ class EnhancedDecisionAgent:
         except Exception as e:
             self.external_connector = None
             self.logger.warning(f"⚠️ 外部閉環連接器初始化失敗: {e}")
-        
+
         # ========== [2026-01-19] embedded_knowledge 知識引擎整合 ==========
         # 漏洞檢測器：嵌入式漏洞判斷邏輯
         try:
@@ -183,7 +194,7 @@ class EnhancedDecisionAgent:
         except Exception as e:
             self.vuln_detector = None
             self.logger.warning(f"⚠️ 漏洞檢測器初始化失敗: {e}")
-        
+
         # CVE 識別器：高危險 CVE 模組
         try:
             self.cve_identifier = CVEIdentifier()
@@ -191,7 +202,7 @@ class EnhancedDecisionAgent:
         except Exception as e:
             self.cve_identifier = None
             self.logger.warning(f"⚠️ CVE 識別器初始化失敗: {e}")
-        
+
         # WAF 繞過引擎：繞過技術字典
         try:
             self.waf_engine = WAFBypassEngine()
@@ -199,7 +210,7 @@ class EnhancedDecisionAgent:
         except Exception as e:
             self.waf_engine = None
             self.logger.warning(f"⚠️ WAF 繞過引擎初始化失敗: {e}")
-        
+
         # Web 架構分析器：架構漏洞檢測
         try:
             self.web_analyzer = WebArchitectureAnalyzer()
@@ -207,7 +218,7 @@ class EnhancedDecisionAgent:
         except Exception as e:
             self.web_analyzer = None
             self.logger.warning(f"⚠️ Web 架構分析器初始化失敗: {e}")
-        
+
         self.logger.info("✅ 雙CLI架構 + embedded_knowledge 整合完成")
 
     def _setup_logger(self) -> logging.Logger:
@@ -271,33 +282,162 @@ class EnhancedDecisionAgent:
             },
         ]
 
-    def decide(self, context: DecisionContext) -> HighLevelIntent:
-        """做出高階決策 - 返回 HighLevelIntent (問題三修復)
-        
+    def decide(self, context: DecisionContext, return_cli_command: bool = False) -> "HighLevelIntent | CLICommand":
+        """做出高階決策 - 返回 HighLevelIntent 或 CLICommand
+
+        架構升級（v2.0 - 2026-02-09）:
+        - 支持返回 CLICommand（CLI 參數包驅動架構）
+        - 保留 HighLevelIntent 向後兼容
+
         這是 cognitive_core → task_planning 的標準接口
-        
+
         職責劃分：
         - cognitive_core (此方法): 決定「做什麼」(What) 和「為什麼」(Why)
-        - task_planning: 決定「怎麼做」(How) - 生成具體的 AST
-        
+        - task_planning: 決定「怎麼做」(How) - 生成具體的 AST 或執行 CLI
+
         Args:
             context: 決策上下文
-            
+            return_cli_command: 是否返回 CLICommand（新架構）
+
         Returns:
-            HighLevelIntent: 高階意圖 (包含目標、參數、約束、推理等)
+            HighLevelIntent（舊架構）或 CLICommand（新架構）
         """
         self.logger.info(f"🤔 開始高階決策分析 - 風險等級: {context.risk_level.value}")
-        
-        # 使用現有的決策邏輯（支援 async）
+
+        # 新架構：返回 CLICommand
+        if return_cli_command:
+            return self._decide_cli_command(context)
+
+        # 舊架構：返回 HighLevelIntent（向後兼容）
         legacy_decision = self._sync_make_decision(context)
-        
-        # 將 Legacy Decision 轉換為 HighLevelIntent
         intent = self._convert_decision_to_intent(legacy_decision, context)
-        
+
         self.logger.info(f"✅ 生成高階意圖: {intent.intent_type.value} (信心度: {intent.confidence:.2f})")
-        
+
         return intent
-    
+
+    def _decide_cli_command(self, context: DecisionContext) -> 'CLICommand':
+        """生成 CLI 命令（新架構）
+
+        從決策上下文中提取信息，產出標準化的 CLICommand。
+
+        Args:
+            context: 決策上下文
+
+        Returns:
+            CLICommand: CLI 參數包
+        """
+        from aiva_common.schemas.commands import CLICommand
+        from ...task_planning.planner.tool_selector import ToolSelector
+
+        # 1. 分析上下文提取意圖
+        intent = self._extract_intent_from_context(context)
+        target = context.target_info.get("url", "unknown")
+
+        # 2. 使用 tool_selector 選擇 CLI 命令
+        selector = ToolSelector()
+        cli_cmd = selector.select_cli_command(
+            intent=intent,
+            target=target,
+            context={
+                "intensity": self._calculate_intensity(context),
+                "mode": self._determine_mode(context),
+                "risk_level": context.risk_level.value
+            }
+        )
+
+        if cli_cmd is None:
+            # 降級：生成默認命令
+            self.logger.warning("tool_selector 未返回命令，使用降級策略")
+            cli_cmd = CLICommand(
+                flow_id="flow_1",  # 默認 flow
+                target=target,
+                flags={
+                    "intensity": 0.5,
+                    "mode": "normal"
+                },
+                command_id=str(uuid.uuid4()),
+                trace_id=str(uuid.uuid4()),
+                metadata={
+                    "intent": intent,
+                    "fallback": True,
+                    "risk_level": context.risk_level.value
+                }
+            )
+
+        self.logger.info(f"✅ 生成 CLI 命令: {cli_cmd.flow_id} for {intent}")
+        return cli_cmd
+
+    def _extract_intent_from_context(self, context: DecisionContext) -> str:
+        """從上下文提取意圖
+
+        Args:
+            context: 決策上下文
+
+        Returns:
+            意圖字符串（scan, sqli, xss, exploit 等）
+        """
+        # 檢查已發現的漏洞
+        if context.discovered_vulns:
+            for vuln in context.discovered_vulns:
+                if "sql" in vuln.lower():
+                    return "sqli_exploit"
+                elif "xss" in vuln.lower():
+                    return "xss_exploit"
+                elif "ssrf" in vuln.lower():
+                    return "ssrf_exploit"
+
+        # 檢查可用工具
+        available_tools_str = " ".join(str(t).lower() for t in context.available_tools)
+        if "sql" in available_tools_str:
+            return "sqli_detection"
+        elif "xss" in available_tools_str:
+            return "xss_detection"
+        elif "scan" in available_tools_str:
+            return "port_scan"
+
+        # 默認：通用掃描
+        return "general_scan"
+
+    def _calculate_intensity(self, context: DecisionContext) -> float:
+        """計算攻擊強度
+
+        Args:
+            context: 決策上下文
+
+        Returns:
+            強度值 0.0-1.0
+        """
+        base_intensity = 0.5
+
+        # 根據風險等級調整
+        if context.risk_level == RiskLevel.HIGH:
+            base_intensity = 0.3  # 高風險降低強度
+        elif context.risk_level == RiskLevel.LOW:
+            base_intensity = 0.8  # 低風險提高強度
+
+        # 根據失敗次數調整
+        if context.attempts_without_success > 3:
+            base_intensity = min(base_intensity + 0.2, 1.0)
+
+        return base_intensity
+
+    def _determine_mode(self, context: DecisionContext) -> str:
+        """決定執行模式
+
+        Args:
+            context: 決策上下文
+
+        Returns:
+            模式字符串（stealth, normal, aggressive）
+        """
+        if context.risk_level in [RiskLevel.HIGH, RiskLevel.CRITICAL]:
+            return "stealth"  # 高風險使用隱匿模式
+        elif context.attempts_without_success > 5:
+            return "aggressive"  # 多次失敗使用激進模式
+        else:
+            return "normal"
+
     def _sync_make_decision(self, context: DecisionContext) -> Decision:
         """同步包裝的 make_decision 方法"""
         try:
@@ -314,12 +454,12 @@ class EnhancedDecisionAgent:
         except RuntimeError:
             # 沒有 event loop，創建新的
             return asyncio.run(self.make_decision(context))
-    
+
     def _convert_decision_to_intent(
         self, decision: Decision, context: DecisionContext
     ) -> HighLevelIntent:
         """將 Legacy Decision 轉換為 HighLevelIntent
-        
+
         這是過渡期的轉換方法，未來可以直接生成 HighLevelIntent
         """
         # 映射 action 到 IntentType
@@ -330,11 +470,11 @@ class EnhancedDecisionAgent:
             "CHANGE_STRATEGY": IntentType.ANALYZE_RESULTS,
             "STOP_OPERATION": IntentType.ANALYZE_RESULTS,
         }
-        
+
         intent_type = action_to_intent_type.get(
             decision.action, IntentType.SCAN_SURFACE
         )
-        
+
         # 構建目標信息
         target = TargetInfo(
             target_id=str(context.target_info.get("id", "unknown")),
@@ -342,7 +482,7 @@ class EnhancedDecisionAgent:
             target_value=context.target_info.get("value", "unknown"),
             context=context.target_info,
         )
-        
+
         # 構建約束條件
         constraints = DecisionConstraints(
             time_limit=context.time_constraints,
@@ -351,7 +491,7 @@ class EnhancedDecisionAgent:
             resource_limits={},
             forbidden_actions=[],
         )
-        
+
         # 構建高階意圖
         intent = HighLevelIntent(
             intent_type=intent_type,
@@ -370,15 +510,15 @@ class EnhancedDecisionAgent:
                 "previous_results": context.previous_results[:5],  # 只保留最近 5 個
             },
         )
-        
+
         return intent
 
     async def make_decision(self, context: DecisionContext) -> Decision:
         """基於多模態評估做出智能決策
         邏輯：神經網路(直覺) + 經驗庫(記憶) + 規則引擎(安全邊界) + RAG檢索(去語意化)
-        
+
         v2.1 (2026-01-08): 整合 HackOne 去語意化反射引擎
-        
+
         注意: 新代碼應使用 decide() 方法返回 HighLevelIntent
 
         Args:
@@ -402,7 +542,7 @@ class EnhancedDecisionAgent:
                 self.logger.info(f"🔍 RAG 檢索建議: {len(rag_suggestions)} 個能力")
             except Exception as e:
                 self.logger.warning(f"RAG 檢索失敗: {e}")
-        
+
         # 1. 安全煞車 (規則優先 - 最高優先級)
         # 如果觸發高風險規則，直接攔截，不經過 AI
         risk_decision = self._assess_risk_decision(context)
@@ -434,12 +574,12 @@ class EnhancedDecisionAgent:
         return final_decision
 
     async def _make_neural_decision(
-        self, 
+        self,
         context: DecisionContext,
         rag_suggestions: list[dict[str, Any]] | None = None
     ) -> Optional[Decision]:
         """[新增] 基於 5M 神經網路的真實 AI 決策
-        
+
         v2.1 (2026-01-08): 整合 RAG 建議到神經決策
         """
         # neural_engine 必須存在，不使用降級方案
@@ -452,7 +592,7 @@ class EnhancedDecisionAgent:
                 f"FailCount: {context.attempts_without_success} | "
                 f"AvailableTools: {','.join(context.available_tools[:3])}"
             )
-            
+
             # 整合 RAG 建議（去語意化特徵匹配結果）
             if rag_suggestions:
                 top_capability = rag_suggestions[0]
@@ -466,7 +606,7 @@ class EnhancedDecisionAgent:
             # 注意：這裡使用 run_in_executor 避免阻塞 Event Loop
             loop = asyncio.get_event_loop()
             ai_result = await loop.run_in_executor(
-                None, 
+                None,
                 lambda: self.neural_engine.generate_decision(
                     task_description="determine_optimal_action",
                     context=state_description
@@ -476,7 +616,7 @@ class EnhancedDecisionAgent:
             # C. 解析輸出張量
             confidence = ai_result.get("confidence", 0.0)
             attack_vector = ai_result.get("attack_vector")
-            
+
             # 過濾低信心度結果
             if confidence < 0.55:
                 return None
@@ -490,9 +630,9 @@ class EnhancedDecisionAgent:
                 "reconnaissance": "RUN_TOOL",
                 "file_upload": "WEB_ATTACK"
             }
-            
+
             mapped_action = action_map.get(attack_vector or "", "RUN_TOOL")
-            
+
             # 參數綁定
             tools = ai_result.get("recommended_tools", [])
             selected_tool = tools[0] if tools else "manual"
@@ -500,7 +640,7 @@ class EnhancedDecisionAgent:
             decision = Decision(
                 action=mapped_action,
                 params={
-                    "tool": selected_tool, 
+                    "tool": selected_tool,
                     "target_vuln": attack_vector,
                     "source": "neural_network_5m"
                 },
@@ -514,15 +654,15 @@ class EnhancedDecisionAgent:
             return None
 
     def _ensemble_decision(
-        self, 
-        neural: Optional[Decision], 
-        experience: Optional[Decision], 
-        rule: Optional[Decision], 
+        self,
+        neural: Optional[Decision],
+        experience: Optional[Decision],
+        rule: Optional[Decision],
         context: DecisionContext,
         rag_suggestions: list[dict[str, Any]] | None = None
     ) -> Decision:
         """加權決策融合算法
-        
+
         v2.1 (2026-01-08): 整合 RAG 建議到決策過程
         """
         candidates: list[tuple[Decision, float]] = []
@@ -542,16 +682,16 @@ class EnhancedDecisionAgent:
             if rag_suggestions and len(rag_suggestions) > 0:
                 score += 0.05  # RAG 匹配給予小加成
             candidates.append((neural, score))
-            
+
         if experience:
             score = experience.confidence * W_EXPERIENCE
             candidates.append((experience, score))
-            
+
         if rule:
             score = rule.confidence * W_RULE
             # 規則通常是兜底，分數較低，但如果是高優先級規則則例外
             if rule.action == "REQUIRE_CONFIRMATION":
-                score += 0.5 
+                score += 0.5
             candidates.append((rule, score))
 
         # 2. 決策選擇
@@ -561,378 +701,44 @@ class EnhancedDecisionAgent:
 
         # 選出分數最高的決策
         best_decision = max(candidates, key=lambda x: x[1])[0]
-        
+
         self.logger.info(
             f"✅ 最終決策: {best_decision.action} "
             f"(來源: {best_decision.params.get('source', 'rule/exp')}, "
             f"加權分數: {getattr(best_decision, 'score', 0):.2f})"
         )
-        
+
         return best_decision
 
-    # ========== [2026-01-19] 新增：AI 使用雙CLI架構的方法 ==========
-    
-    def query_internal_capabilities(
-        self, 
-        query: str, 
-        scope_filter: str | None = None,
-        top_k: int = 5
-    ) -> list[dict[str, Any]]:
-        """AI 查詢內部能力庫
-        
-        使用 InternalLoopConnector 查詢可用的內部能力。
-        這讓 AI 能動態發現並選擇最適合的能力。
-        
-        Args:
-            query: 查詢字串（如 "SQL注入測試"）
-            scope_filter: 可選的範圍過濾（如 "internal", "external"）
-            top_k: 返回的最大結果數
-            
-        Returns:
-            list[dict]: 匹配的能力列表
-        """
-        if not self.internal_connector:
-            self.logger.warning("⚠️ InternalLoopConnector 未初始化")
-            return []
-        
-        try:
-            filters = {"scope": scope_filter} if scope_filter else None
-            # query_capabilities 是同步方法
-            result = self.internal_connector.query_capabilities(
-                query=query,
-                filters=filters,
-                top_k=top_k
-            )
-            
-            self.logger.info(f"🔍 查詢內部能力 '{query}': 找到 {result.total_found} 個匹配")
-            
-            # RAGQueryResult.results 是 list[dict[str, Any]]
-            # 直接返回，內容已經是 dict 格式
-            return [
-                {
-                    "document_id": item.get("document_id", f"doc_{i}"),
-                    "content": str(item.get("content", ""))[:200],  # 限制長度
-                    "relevance_score": item.get("relevance_score", 0.0),
-                    "metadata": item.get("metadata", {})
-                }
-                for i, item in enumerate(result.results)
-            ]
-        except Exception as e:
-            self.logger.error(f"❌ 查詢內部能力失敗: {e}")
-            return []
-    
-    async def record_execution_feedback(
-        self,
-        plan_id: str,
-        trace_data: list[dict[str, Any]],
-        objective: str = "Task execution"
-    ) -> dict[str, Any]:
-        """AI 記錄執行結果（用於學習）
-        
-        使用 ExternalLoopConnector 將執行結果反饋到學習系統。
-        這實現了「外部閉環」- 讓 AI 從實際執行中學習。
-        
-        Args:
-            plan_id: 執行計劃 ID
-            trace_data: 執行軌跡列表（簡化格式）
-            objective: 任務目標描述
-            
-        Returns:
-            dict: 處理結果
-        """
-        if not self.external_connector:
-            self.logger.warning("⚠️ ExternalLoopConnector 未初始化")
-            return {"success": False, "error": "ExternalLoopConnector not available"}
-        
-        try:
-            # 導入必要的 schema
-            from aiva_common.schemas.dual_loop import (
-                ExecutionPlan, 
-                ExecutionStep,
-                ExecutionTrace
-            )
-            
-            now = datetime.now()
-            
-            # 構建執行步驟
-            steps = [
-                ExecutionStep(
-                    step_id=t.get("step_id", f"step_{i}"),
-                    action=t.get("action", "execute"),
-                    capability_id=t.get("capability_id"),
-                    parameters=t.get("parameters", {}),
-                    expected_duration=t.get("expected_duration")
-                )
-                for i, t in enumerate(trace_data)
-            ]
-            
-            # 構建執行計劃
-            plan = ExecutionPlan(
-                plan_id=plan_id,
-                objective=objective,
-                steps=steps,
-                expected_duration=None,
-                metadata={"source": "enhanced_decision_agent"}
-            )
-            
-            # 構建執行軌跡
-            traces = [
-                ExecutionTrace(
-                    trace_id=f"trace_{plan_id}_{i}",
-                    step_id=t.get("step_id", f"step_{i}"),
-                    capability_id=t.get("capability_id"),
-                    status=t.get("status", "success"),
-                    duration=t.get("duration", 0.0),
-                    start_time=now,
-                    end_time=now,
-                    output=t.get("output"),
-                    error=t.get("error"),
-                    metrics=t.get("metrics")
-                )
-                for i, t in enumerate(trace_data)
-            ]
-            
-            # 調用外部閉環處理
-            result = await self.external_connector.process_execution_result(plan, traces)
-            
-            self.logger.info(f"📝 執行反饋已處理: {plan_id} - 發現 {result.deviations_found} 偏差")
-            
-            return {
-                "success": result.success,
-                "deviations_found": result.deviations_found,
-                "training_triggered": result.training_triggered,
-                "weights_updated": result.weights_updated
-            }
-        except Exception as e:
-            self.logger.error(f"❌ 記錄執行反饋失敗: {e}")
-            return {"success": False, "error": str(e)}
-    
-    # ========== [2026-01-19] 新增：AI 使用 embedded_knowledge 的方法 ==========
-    
-    def analyze_target_vulnerabilities(
-        self,
-        target_url: str,
-        response_body: str = "",
-        response_time: float = 0.0
-    ) -> dict[str, Any]:
-        """AI 分析目標漏洞
-        
-        使用 embedded_knowledge 的 VulnerabilityDetector 進行分析。
-        這讓 AI 能利用嵌入的漏洞判斷邏輯。
-        
-        Args:
-            target_url: 目標 URL
-            response_body: HTTP 響應體
-            response_time: 響應時間
-            
-        Returns:
-            dict: 漏洞分析結果
-        """
-        results: list[dict[str, Any]] = []
-        
-        try:
-            # 建立攻擊上下文
-            context = AttackContext(
-                target_url=target_url,
-                injection_point="parameter"  # 預設為參數注入點
-            )
-            
-            # 使用 classmethod 進行 SQLi 檢測
-            sqli_result = VulnerabilityDetector.check_sqli(
-                response_body=response_body,
-                response_time=response_time,
-                context=context
-            )
-            
-            if sqli_result.detected:
-                results.append({
-                    "type": sqli_result.vulnerability_type.value,
-                    "confidence": sqli_result.confidence_score,
-                    "evidence": sqli_result.evidence,
-                    "recommendations": sqli_result.recommendations
-                })
-            
-            # 使用 classmethod 進行 XSS 檢測
-            xss_result = VulnerabilityDetector.check_xss(
-                response_body=response_body,
-                payload_used="<script>alert(1)</script>",
-                context=context
-            )
-            
-            if xss_result.detected:
-                results.append({
-                    "type": xss_result.vulnerability_type.value,
-                    "confidence": xss_result.confidence_score,
-                    "evidence": xss_result.evidence,
-                    "recommendations": xss_result.recommendations
-                })
-            
-            self.logger.info(f"🔍 漏洞分析完成: {target_url} - 發現 {len(results)} 個潛在漏洞")
-            
-            return {
-                "target": target_url,
-                "vulnerabilities": results,
-                "risk_count": len(results),
-                "scan_timestamp": datetime.now().isoformat()
-            }
-        except Exception as e:
-            self.logger.error(f"❌ 漏洞分析失敗: {e}")
-            return {"error": str(e)}
-    
-    def identify_high_risk_cves(
-        self,
-        url: str = "",
-        response_headers: dict[str, str] | None = None,
-        response_body: str = ""
-    ) -> list[dict[str, Any]]:
-        """AI 識別高風險 CVE
-        
-        使用 embedded_knowledge 的 CVEIdentifier 識別已知的高危 CVE。
-        
-        Args:
-            url: 目標 URL
-            response_headers: 響應 headers
-            response_body: 響應體
-            
-        Returns:
-            list[dict]: 匹配的 CVE 列表
-        """
-        try:
-            # CVEIdentifier.identify 是 classmethod
-            cves = CVEIdentifier.identify(
-                url=url,
-                response_headers=response_headers,
-                response_body=response_body
-            )
-            
-            self.logger.info(f"🚨 CVE 識別完成: 發現 {len(cves)} 個高危 CVE")
-            
-            return [
-                {
-                    "cve_id": cve.cve_id,
-                    "confidence_score": cve.confidence_score,
-                    "matched_indicators": cve.matched_indicators
-                }
-                for cve in cves
-            ]
-        except Exception as e:
-            self.logger.error(f"❌ CVE 識別失敗: {e}")
-            return []
-    
-    def generate_waf_bypass_payloads(
-        self,
-        vuln_type: str,
-        waf_type: str | None = None
-    ) -> list[dict[str, Any]]:
-        """AI 生成 WAF 繞過 payload
-        
-        使用 embedded_knowledge 的 WAFBypassEngine 生成繞過技術。
-        
-        Args:
-            vuln_type: 漏洞類型（如 "sqli", "xss"）
-            waf_type: 可選的 WAF 類型（如 "cloudflare", "aws_waf"）
-            
-        Returns:
-            list[dict]: 繞過技術列表
-        """
-        try:
-            # 導入 WAFVendor 枚舉
-            from ..embedded_knowledge.base import WAFVendor
-            
-            # 解析 WAF 類型
-            waf_vendor = WAFVendor.UNKNOWN
-            if waf_type:
-                try:
-                    waf_vendor = WAFVendor(waf_type.lower())
-                except ValueError:
-                    waf_vendor = WAFVendor.UNKNOWN
-            
-            # WAFBypassEngine.get_bypass_techniques 是 classmethod
-            techniques = WAFBypassEngine.get_bypass_techniques(
-                waf_vendor=waf_vendor,
-                attack_type=vuln_type,
-                min_success_rate=0.3
-            )
-            
-            self.logger.info(f"🛡️ WAF 繞過技術獲取: {vuln_type} - {len(techniques)} 個")
-            
-            return [
-                {
-                    "name": tech.name,
-                    "category": tech.category.value,
-                    "description": tech.description,
-                    "payloads": tech.payloads[:5],  # 限制數量
-                    "success_rate": tech.success_rate
-                }
-                for tech in techniques[:10]  # 限制返回數量
-            ]
-        except Exception as e:
-            self.logger.error(f"❌ WAF 繞過技術獲取失敗: {e}")
-            return []
-    
-    def analyze_web_architecture(
-        self,
-        response_headers: dict[str, str],
-        response_body: str = "",
-        endpoints: list[str] | None = None
-    ) -> dict[str, Any]:
-        """AI 分析 Web 架構
-        
-        使用 embedded_knowledge 的 WebArchitectureAnalyzer 分析架構。
-        
-        Args:
-            response_headers: HTTP 響應頭
-            response_body: 響應體
-            endpoints: 已知端點列表
-            
-        Returns:
-            dict: 架構分析結果
-        """
-        try:
-            # WebArchitectureAnalyzer.identify_architecture 是 classmethod
-            fingerprint = WebArchitectureAnalyzer.identify_architecture(
-                response_headers=response_headers,
-                response_body=response_body,
-                endpoints=endpoints
-            )
-            
-            self.logger.info(f"🌐 Web 架構分析完成: {fingerprint.arch_type.value}")
-            
-            return {
-                "architecture_type": fingerprint.arch_type.value,
-                "confidence": fingerprint.confidence.name,
-                "indicators": fingerprint.indicators,
-                "endpoints": fingerprint.endpoints,
-                "metadata": fingerprint.metadata
-            }
-        except Exception as e:
-            self.logger.error(f"❌ Web 架構分析失敗: {e}")
-            return {"error": str(e)}
-    
+    # ========== 知識決策方法已移至 KnowledgeDecisionMixin ==========
+    # query_internal_capabilities, record_execution_feedback,
+    # analyze_target_vulnerabilities, identify_high_risk_cves,
+    # generate_waf_bypass_payloads, analyze_web_architecture
+
     async def make_enhanced_decision(
         self,
         context: DecisionContext,
         use_embedded_knowledge: bool = True
     ) -> Decision:
         """增強版決策方法（整合所有知識源）
-        
+
         這是整合了雙CLI架構和 embedded_knowledge 的完整決策方法。
-        
+
         流程：
         1. 查詢內部能力庫 (InternalLoopConnector)
         2. 使用 embedded_knowledge 分析目標
         3. 神經網路 + 經驗 + 規則融合決策
         4. 記錄結果供學習 (ExternalLoopConnector)
-        
+
         Args:
             context: 決策上下文
             use_embedded_knowledge: 是否使用嵌入式知識
-            
+
         Returns:
             Decision: 增強的決策結果
         """
         self.logger.info("🧠 開始增強決策流程...")
-        
+
         # 1. 查詢內部能力（同步方法）
         if self.internal_connector:
             target_type = context.target_info.get("type", "web")
@@ -943,10 +749,10 @@ class EnhancedDecisionAgent:
             if capabilities:
                 # capabilities 是 dict 列表，不是對象
                 context.available_tools.extend([
-                    c.get("metadata", {}).get("name", f"capability_{i}") 
+                    c.get("metadata", {}).get("name", f"capability_{i}")
                     for i, c in enumerate(capabilities)
                 ])
-        
+
         # 2. 使用 embedded_knowledge 分析
         if use_embedded_knowledge:
             target_url = context.target_info.get("value")
@@ -961,7 +767,7 @@ class EnhancedDecisionAgent:
                     context.discovered_vulns.extend(
                         [v["type"] for v in vuln_result.get("vulnerabilities", [])]
                     )
-                
+
                 # 架構分析（使用正確的參數）
                 arch_result = self.analyze_web_architecture(
                     response_headers={},  # 空 headers，實際使用時會有數據
@@ -969,10 +775,10 @@ class EnhancedDecisionAgent:
                 )
                 if "architecture_type" in arch_result:
                     context.target_info["architecture"] = arch_result
-        
+
         # 3. 執行標準決策流程
         decision = await self.make_decision(context)
-        
+
         # 4. 增強決策參數
         decision.params["enhanced_mode"] = True
         decision.params["knowledge_sources"] = [
@@ -985,9 +791,9 @@ class EnhancedDecisionAgent:
         decision.params["knowledge_sources"] = [
             s for s in decision.params["knowledge_sources"] if s
         ]
-        
+
         self.logger.info(f"✅ 增強決策完成: {decision.action}")
-        
+
         return decision
 
     async def _async_wrapper(self, func, *args, **kwargs):
@@ -1062,7 +868,7 @@ class EnhancedDecisionAgent:
             # 沒有經驗管理器時，返回空列表而非假數據
             self.logger.debug("Experience manager not available, no historical data")
             return []
-        
+
         try:
             # 查詢條件構建
             query_params = {
@@ -1071,10 +877,10 @@ class EnhancedDecisionAgent:
                 "risk_level": context.risk_level.value,
                 "min_success_score": 0.6,
             }
-            
+
             # 實際查詢經驗管理器
             experiences = self.experience_manager.query_similar_experiences(query_params)
-            
+
             # 計算相似度並排序
             similar = []
             for exp in experiences:
@@ -1082,9 +888,9 @@ class EnhancedDecisionAgent:
                 if similarity > 0.6:
                     exp["similarity"] = similarity
                     similar.append(exp)
-            
+
             return sorted(similar, key=lambda x: x["similarity"], reverse=True)
-            
+
         except Exception as e:
             self.logger.error(f"Failed to query experience manager: {e}")
             return []
@@ -1215,42 +1021,42 @@ class EnhancedDecisionAgent:
 
     async def execute_decision(self, decision: Decision, context: DecisionContext) -> dict[str, Any]:
         """執行 AI 決策（實際調用模組）
-        
+
         這是 AI 決策 → 實際執行的橋梁
-        
+
         Args:
             decision: AI 決策結果
             context: 決策上下文
-            
+
         Returns:
             執行結果
         """
         self.logger.info(f"🚀 執行 AI 決策: {decision.action}")
-        
+
         try:
             # 根據決策動作執行對應操作
             if decision.action == "RUN_TOOL":
                 return await self._execute_tool_decision(decision, context)
-            
+
             elif decision.action in ["EXPLOIT_SQL_INJECTION", "WEB_ATTACK"]:
                 return await self._execute_vulnerability_test(decision, context)
-            
+
             elif decision.action == "SWITCH_MODE":
                 return self._execute_mode_switch(decision, context)
-            
+
             elif decision.action == "CHANGE_APPROACH":
                 return self._execute_strategy_change(decision, context)
-            
+
             elif decision.action == "STOP_OPERATION":
                 return self._execute_stop(decision, context)
-            
+
             else:
                 self.logger.warning(f"⚠️ 未知決策動作: {decision.action}")
                 return {
                     "success": False,
                     "error": f"Unknown decision action: {decision.action}"
                 }
-                
+
         except Exception as e:
             self.logger.error(f"❌ 決策執行失敗: {e}", exc_info=True)
             return {
@@ -1258,27 +1064,27 @@ class EnhancedDecisionAgent:
                 "error": str(e),
                 "decision": decision.action
             }
-    
+
     async def _execute_tool_decision(self, decision: Decision, context: DecisionContext) -> dict[str, Any]:
         """執行工具相關決策"""
         tool = decision.params.get("tool")
         target_vuln = decision.params.get("target_vuln")
-        
+
         self.logger.info(f"   🔧 使用工具: {tool}, 目標漏洞: {target_vuln}")
-        
+
         # 直接使用 AICommandCenter 下達命令
         try:
             from aiva_common.core.command_center import get_command_center
             from aiva_common.schemas import AICommand, CommandType
             import uuid
-            
+
             command_center = get_command_center()
             target = context.target_info.get("value", "http://localhost:3000")
-            
+
             # 生成唯一的 scan_id
             scan_id = f"scan_{uuid.uuid4().hex[:12]}"
             command_id = f"{scan_id}_phase0"
-            
+
             # 構建符合 Phase0StartPayload schema 的命令
             command = AICommand(
                 command_id=command_id,
@@ -1298,16 +1104,16 @@ class EnhancedDecisionAgent:
                 parent_command_id=None,
                 callback_url=None
             )
-            
+
             # 執行命令
             result = await command_center.execute(command)
-            
+
             return {
                 "success": result.success,
                 "data": result.result,  # 修正：使用 result 而非 result_data
                 "error": result.error
             }
-            
+
         except Exception as e:
             self.logger.error(f"❌ Command execution failed: {e}")
             # 返回實際失敗狀態，不再偽裝成功
@@ -1318,27 +1124,27 @@ class EnhancedDecisionAgent:
                 "message": "Command execution failed - CommandCenter not available or error occurred",
                 "requires_user_action": True
             }
-    
+
     async def _execute_vulnerability_test(self, decision: Decision, context: DecisionContext) -> dict[str, Any]:
         """執行漏洞測試"""
         target = context.target_info.get("value", "http://localhost:3000")
-        
+
         self.logger.info(f"   🎯 對目標 {target} 執行漏洞測試")
-        
+
         try:
-            from aiva_common.command_center import get_command_center
+            from aiva_common.core.command_center import get_command_center
             from aiva_common.schemas import AICommand, CommandType
             import uuid
-            
+
             command_center = get_command_center()
-            
+
             # 生成唯一的 scan_id
             scan_id = f"scan_{uuid.uuid4().hex[:12]}"
             command_id = f"{scan_id}_phase0"
-            
+
             # 決定掃描深度（SQLi 需要更深入）
             max_depth = 5 if decision.action == "EXPLOIT_SQL_INJECTION" else 3
-            
+
             # 構建符合 Phase0StartPayload schema 的命令
             command = AICommand(
                 command_id=command_id,
@@ -1357,16 +1163,16 @@ class EnhancedDecisionAgent:
                 parent_command_id=None,
                 callback_url=None
             )
-            
+
             # 執行命令
             result = await command_center.execute(command)
-            
+
             return {
                 "success": result.success,
                 "data": result.result,  # 修正：使用 result 而非 result_data
                 "error": result.error
             }
-            
+
         except Exception as e:
             self.logger.error(f"❌ Test execution failed: {e}")
             # 返回實際失敗狀態，不再偽裝成功
@@ -1376,14 +1182,14 @@ class EnhancedDecisionAgent:
                 "message": "Vulnerability test execution failed",
                 "requires_user_action": True
             }
-    
+
     def _execute_mode_switch(self, decision: Decision, context: DecisionContext) -> dict[str, Any]:
         """執行模式切換"""
         new_mode = decision.params.get("mode")
         message = decision.params.get("message", "Mode switch")
-        
+
         self.logger.info(f"   🔄 切換模式到: {new_mode}")
-        
+
         return {
             "success": True,
             "action": "mode_switch",
@@ -1391,26 +1197,26 @@ class EnhancedDecisionAgent:
             "message": message,
             "requires_user_action": True,
         }
-    
+
     def _execute_strategy_change(self, decision: Decision, context: DecisionContext) -> dict[str, Any]:
         """執行策略變更"""
         new_strategy = decision.params.get("new_strategy")
-        
+
         self.logger.info(f"   🔄 變更策略到: {new_strategy}")
-        
+
         return {
             "success": True,
             "action": "strategy_change",
             "new_strategy": new_strategy,
             "reasoning": decision.reasoning,
         }
-    
+
     def _execute_stop(self, decision: Decision, context: DecisionContext) -> dict[str, Any]:
         """執行停止操作"""
         reason = decision.params.get("reason", "Safety measure")
-        
+
         self.logger.warning(f"   ⛔ 停止操作: {reason}")
-        
+
         return {
             "success": True,
             "action": "stop",
@@ -1529,23 +1335,23 @@ class EnhancedDecisionAgent:
         except Exception as e:
             self.logger.error(f"報告輸出失敗: {e}")
             return ""
-    
+
     def decide_scan_strategy(self, scan_context) -> dict[str, Any]:
         """智能掃描策略決策 (增強版)
-        
+
         基於目標特徵、技術棧、安全設備等多因素智能選擇最佳掃描策略。
         整合了 Bug Bounty 經驗和神經網路決策。
-        
+
         Args:
             scan_context: ScanTaskContext 或包含相關信息的字典
-        
+
         Returns:
             決策結果 {
                 "selected_tool": str,     # 主要掃描工具
                 "confidence": float,      # 決策信心度
                 "reasoning": str,         # 決策理由
                 "suggested_params": dict, # 建議參數
-                "scan_strategy": str,     # 掃描策略 
+                "scan_strategy": str,     # 掃描策略
                 "estimated_time": int     # 預計耗時(秒)
             }
         """
@@ -1559,19 +1365,19 @@ class EnhancedDecisionAgent:
             stealth_level = constraints.get('stealth_level', 'medium')
             rate_limit = constraints.get('rate_limit', 1000)
             target = scan_context.get('target', '')
-        
+
         # 目標分析
         target_analysis = self._analyze_scan_target(target)
         is_web_app = target_analysis['is_web_app']
         has_waf = target_analysis['has_waf']
         tech_stack = target_analysis['tech_stack']
-        
+
         # 智能決策邏輯
         selected_tool = "nmap"  # 默認
         confidence = 0.7
         reasoning_parts = []
         scan_strategy = "standard"
-        
+
         # === 規則 1: 基於目標類型選擇工具 ===
         if is_web_app:
             # Web 應用偏向使用更精細的掃描
@@ -1587,7 +1393,7 @@ class EnhancedDecisionAgent:
                 selected_tool = "nmap"
                 scan_strategy = "web_comprehensive"
                 reasoning_parts.append("Web 應用全面掃描")
-        
+
         # === 規則 2: 基於隱匿需求調整 ===
         stealth = str(stealth_level).lower()
         if stealth in ['high', 'paranoid']:
@@ -1600,7 +1406,7 @@ class EnhancedDecisionAgent:
             scan_strategy = "fast_discovery"
             confidence = min(0.9, confidence + 0.15)
             reasoning_parts.append(f"高速發現模式({rate_limit} pps)")
-        
+
         # === 規則 3: WAF 檢測調整策略 ===
         if has_waf:
             if selected_tool == "masscan":
@@ -1610,7 +1416,7 @@ class EnhancedDecisionAgent:
             else:
                 scan_strategy = "waf_evasion"
                 reasoning_parts.append("WAF 環境，啟用規避技術")
-        
+
         # === 規則 4: 神經網路增強決策 ===
         if self.use_neural_decision:
             try:
@@ -1621,41 +1427,41 @@ class EnhancedDecisionAgent:
                     f"Stealth: {stealth} | Rate: {rate_limit} | "
                     f"Tech: {','.join(tech_stack[:3]) if tech_stack else 'unknown'}"
                 )
-                
+
                 ai_result = self.neural_engine.generate_decision(
                     task_description="intelligent_scan_strategy",
                     context=neural_context
                 )
-                
+
                 ai_confidence = ai_result.get("confidence", 0)
                 ai_tool = ai_result.get("recommended_tool", "")
-                
+
                 # AI 信心度高於當前規則時採用 AI 建議
                 if ai_confidence > confidence + 0.1:
                     if ai_tool.lower() in ['nmap', 'masscan']:
                         selected_tool = ai_tool.lower()
                         confidence = ai_confidence
                         reasoning_parts.append(f"AI 推薦: {ai_result.get('reasoning', 'Neural decision')}")
-                
+
             except Exception as e:
                 self.logger.debug(f"神經網路決策失敗: {e}")
-        
+
         # === 構建掃描參數 ===
         suggested_params = self._build_scan_params(
             selected_tool, scan_strategy, stealth_level, rate_limit, has_waf
         )
-        
+
         # === 預估掃描時間 ===
         estimated_time = self._estimate_scan_time(
-            selected_tool, scan_strategy, target_analysis
+            selected_tool, scan_strategy
         )
-        
+
         reasoning = " | ".join(reasoning_parts) if reasoning_parts else "標準掃描策略"
-        
+
         self.logger.info(
             f"🎯 智能掃描策略: {selected_tool}({scan_strategy}) 信心度:{confidence:.2f} 預計:{estimated_time//60}分鐘"
         )
-        
+
         return {
             "selected_tool": selected_tool,
             "confidence": confidence,
@@ -1664,19 +1470,19 @@ class EnhancedDecisionAgent:
             "scan_strategy": scan_strategy,
             "estimated_time": estimated_time
         }
-    
+
     def _analyze_scan_target(self, target: str) -> dict[str, Any]:
         """分析掃描目標特徵"""
         target_lower = target.lower()
-        
+
         # 判斷是否為 Web 應用
         web_indicators = ['http', 'www', 'api', 'app', 'web', 'portal']
         is_web_app = any(indicator in target_lower for indicator in web_indicators)
-        
+
         # 簡單 WAF 檢測 (基於域名)
         waf_indicators = ['cloudflare', 'akamai', 'incapsula', 'aws']
         has_waf = any(indicator in target_lower for indicator in waf_indicators)
-        
+
         # 技術棧推測
         tech_indicators = {
             'nodejs': ['node', 'npm', 'express'],
@@ -1686,23 +1492,23 @@ class EnhancedDecisionAgent:
             'react': ['react', 'redux'],
             'angular': ['angular', 'ng']
         }
-        
+
         tech_stack = []
         for tech, indicators in tech_indicators.items():
             if any(ind in target_lower for ind in indicators):
                 tech_stack.append(tech)
-        
+
         return {
             'is_web_app': is_web_app,
             'has_waf': has_waf,
             'tech_stack': tech_stack,
             'target_type': 'web' if is_web_app else 'infrastructure'
         }
-    
+
     def _build_scan_params(self, tool: str, strategy: str, stealth: str, rate: int, has_waf: bool) -> dict:
         """構建掃描參數"""
         params = {}
-        
+
         if tool == "nmap":
             if strategy == "stealth" or has_waf:
                 params = {
@@ -1730,26 +1536,26 @@ class EnhancedDecisionAgent:
                     "timing": "-T4",
                     "flags": ["-Pn"]
                 }
-        
+
         elif tool == "masscan":
             params = {
                 "rate": min(rate, 10000 if not has_waf else 1000),
                 "wait": 0 if rate > 5000 else 1,
                 "ports": "1-65535" if strategy != "fast_discovery" else "80,443,22,21,25,53,110,143,993,995"
             }
-        
+
         return params
-    
+
     def _estimate_scan_time(self, tool: str, strategy: str) -> int:
         """預估掃描時間 (秒)"""
         base_time = 300  # 5分鐘基礎時間
-        
+
         if tool == "masscan":
             if strategy == "fast_discovery":
                 return 60  # 1分鐘快速發現
             else:
                 return 180  # 3分鐘全端口
-        
+
         elif tool == "nmap":
             if strategy == "stealth":
                 return 1800  # 30分鐘隱匿掃描
@@ -1759,950 +1565,55 @@ class EnhancedDecisionAgent:
                 return 300   # 5分鐘 API 掃描
             else:
                 return base_time
-        
+
         return base_time
-    
+
     # ═══════════════════════════════════════════════════════════════
-    # Bug Bounty 特化決策方法 (對應 13 步驟外閉環)
+    # Bug Bounty 特化決策方法（委派至 BountyStrategyAgent）
     # ═══════════════════════════════════════════════════════════════
-    
+
     def decide_phase1_strategy(
         self,
         phase0_result: dict[str, Any],
-        target_value: float = 1000.0,
-        program_scope: dict[str, Any] | None = None
+        program_scope: dict[str, Any] | None = None,
     ) -> dict[str, Any]:
-        """步驟 6: AI 決策是否需要 Phase1 深度掃描 (HackerOne/Bugcrowd 實戰優化版)
-        
-        實際 Bug Bounty 場景考量：
-        1. Program Scope 限制（必須遵守範圍）
-        2. Rate Limiting 和 WAF 檢測（避免被封禁）
-        3. 高價值漏洞類型優先（SSRF > SQLi > XSS）
-        4. 時間投資回報率（專業 Hunter 的核心指標）
-        5. 歷史數據：同類型目標成功率
-        
-        OWASP WSTG 對應：
-        - 4.1 Information Gathering → Phase0
-        - 4.2 Configuration Testing → Phase1 起點
-        - 4.7 Input Validation Testing → Phase1 核心
-        
-        Args:
-            phase0_result: Phase0 偵察結果
-                - summary: {urls_found, forms_found, apis_found, subdomains_found}
-                - fingerprints: {technologies, waf_detected, waf_vendor, server_type}
-                - endpoints: [{url, method, params, response_info}]
-                - recommendations: {priority_targets, needs_deep_scan}
-            target_value: 預期獎金價值 (美元)，基於 Program 歷史支付
-            program_scope: Program 範圍限制
-                - in_scope: [domain patterns]
-                - out_of_scope: [excluded patterns]
-                - vulnerability_types: [accepted vuln types]
-                - testing_restrictions: {rate_limit, no_automated_tools, etc}
-            
-        Returns:
-            決策結果字典
-        """
-        self.logger.info("🧠 [Step 6: Phase1 Strategy] 開始 AI 決策...")
-        
-        # === 1. 提取 Phase0 情報 ===
-        summary = phase0_result.get("summary", {})
-        fingerprints = phase0_result.get("fingerprints", {})
-        recommendations = phase0_result.get("recommendations", {})
-        endpoints = phase0_result.get("endpoints", [])
-        
-        urls_found = summary.get("urls_found", 0)
-        forms_found = summary.get("forms_found", 0)
-        apis_found = summary.get("apis_found", 0)
-        subdomains_found = summary.get("subdomains_found", 0)
-        waf_detected = fingerprints.get("waf_detected", False)
-        waf_vendor = fingerprints.get("waf_vendor")
-        technologies = fingerprints.get("technologies", [])
-        
-        # === 2. Program Scope 合規檢查 ===
-        testing_restrictions = {}
-        if program_scope:
-            testing_restrictions = program_scope.get("testing_restrictions", {})
-            # 檢查是否有禁止自動化測試
-            if testing_restrictions.get("no_automated_tools"):
-                self.logger.warning("   ⚠️ Program 禁止自動化工具，切換為手動輔助模式")
-        
-        # === 3. 高價值目標識別 (OWASP Top 10 + Bug Bounty 熱門) ===
-        high_value_indicators = {
-            "api_endpoints": apis_found,  # API 通常有 IDOR/Auth 問題
-            "file_upload_forms": sum(1 for e in endpoints if "upload" in e.get("url", "").lower()),
-            "auth_endpoints": sum(1 for e in endpoints if any(k in e.get("url", "").lower() for k in ["login", "auth", "oauth", "token", "session"])),
-            "admin_panels": sum(1 for e in endpoints if any(k in e.get("url", "").lower() for k in ["admin", "dashboard", "manage", "config"])),
-            "payment_flows": sum(1 for e in endpoints if any(k in e.get("url", "").lower() for k in ["payment", "checkout", "billing", "subscription"])),
-            "user_input_heavy": forms_found,
-            "graphql_endpoints": sum(1 for e in endpoints if "graphql" in e.get("url", "").lower()),
-        }
-        
-        # 計算高價值評分 (0-1)
-        high_value_score = min(1.0, (
-            high_value_indicators["api_endpoints"] * 0.15 +
-            high_value_indicators["file_upload_forms"] * 0.2 +  # 文件上傳是高價值目標
-            high_value_indicators["auth_endpoints"] * 0.15 +
-            high_value_indicators["admin_panels"] * 0.2 +  # Admin 面板通常獎金高
-            high_value_indicators["payment_flows"] * 0.25 +  # 支付相關最高價值
-            high_value_indicators["graphql_endpoints"] * 0.1
-        ) / 5.0)
-        
-        self.logger.info(f"   📊 高價值目標評分: {high_value_score:.2f}")
-        self.logger.info(f"   📊 發現: {apis_found} APIs, {forms_found} Forms, {subdomains_found} Subdomains")
-        
-        # === 4. 技術棧風險評估 ===
-        tech_risk_multiplier = 1.0
-        tech_insights = []
-        
-        # 高風險技術棧 (基於歷史 CVE 和 Bug Bounty 統計)
-        high_risk_techs = {
-            "php": 1.3,  # 歷史上大量漏洞
-            "wordpress": 1.4,  # 插件生態系統問題
-            "struts": 1.5,  # Apache Struts 歷史漏洞
-            "spring": 1.2,  # Spring4Shell 等
-            "laravel": 1.1,
-            "rails": 1.1,
-            "node": 1.0,
-            "java": 1.2,
-            "asp.net": 1.1,
-        }
-        
-        for tech in technologies:
-            tech_lower = tech.lower()
-            for risk_tech, multiplier in high_risk_techs.items():
-                if risk_tech in tech_lower:
-                    tech_risk_multiplier = max(tech_risk_multiplier, multiplier)
-                    tech_insights.append(f"{tech} (風險係數 {multiplier})")
-        
-        # === 5. 神經網路決策 (5M 專用模型) ===
-        ai_confidence = 0.5
-        ai_attack_vector = "reconnaissance"
-        ai_recommended_focus = []
-        
-        if self.use_neural_decision:
-            try:
-                # 構建 Bug Bounty 專用上下文
-                neural_context = (
-                    f"Program: {program_scope.get('name', 'unknown') if program_scope else 'unknown'} | "
-                    f"Scope: {urls_found} URLs, {apis_found} APIs, {forms_found} Forms | "
-                    f"Tech: {','.join(technologies[:5])} | "
-                    f"WAF: {waf_vendor if waf_detected else 'None'} | "
-                    f"HighValue: {high_value_score:.2f} | "
-                    f"Upload: {high_value_indicators['file_upload_forms']}, Admin: {high_value_indicators['admin_panels']}"
-                )
-                
-                ai_result = self.neural_engine.generate_decision(
-                    task_description="decide_phase1_strategy",
-                    context=neural_context
-                )
-                
-                ai_confidence = ai_result.get("confidence", 0.5)
-                ai_attack_vector = ai_result.get("attack_vector", "reconnaissance")
-                ai_recommended_focus = ai_result.get("recommended_tools", [])
-                
-                self.logger.info(f"   🧠 AI 信心度: {ai_confidence:.2f}, 推薦向量: {ai_attack_vector}")
-                
-            except Exception as e:
-                self.logger.warning(f"   ⚠️ 神經網路決策回退: {e}")
-        
-        # === 6. ROI 計算 (實際 Bug Bounty 經濟學) ===
-        estimated_time_hours = self._estimate_phase1_time(phase0_result) / 3600.0
-        
-        # 基於高價值目標和技術風險調整預期獎金
-        adjusted_target_value = target_value * high_value_score * tech_risk_multiplier
-        
-        # WAF 會降低成功率約 30-50%
-        if waf_detected:
-            adjusted_target_value *= 0.6
-        
-        expected_value = adjusted_target_value * ai_confidence
-        roi = expected_value / max(estimated_time_hours, 0.5)
-        
-        self.logger.info(f"   💰 預期價值: ${expected_value:.0f}, ROI: ${roi:.0f}/hr")
-        
-        # === 7. 決策邏輯 (多因素加權) ===
-        need_phase1 = False
-        reasoning_parts = []
-        priority_targets = []
-        
-        # 規則 1: 高價值目標檢測
-        if high_value_score > 0.5:
-            need_phase1 = True
-            reasoning_parts.append(f"高價值目標評分 {high_value_score:.2f}")
-            
-            # 識別優先測試目標
-            if high_value_indicators["payment_flows"] > 0:
-                priority_targets.append({"type": "payment", "priority": 1, "vuln_focus": ["idor", "logic_bypass", "race_condition"]})
-            if high_value_indicators["admin_panels"] > 0:
-                priority_targets.append({"type": "admin", "priority": 2, "vuln_focus": ["auth_bypass", "privilege_escalation"]})
-            if high_value_indicators["file_upload_forms"] > 0:
-                priority_targets.append({"type": "upload", "priority": 3, "vuln_focus": ["file_upload_rce", "path_traversal"]})
-            if high_value_indicators["api_endpoints"] > 3:
-                priority_targets.append({"type": "api", "priority": 4, "vuln_focus": ["idor", "mass_assignment", "rate_limit_bypass"]})
-        
-        # 規則 2: 攻擊面評估
-        attack_surface_score = (urls_found * 0.01 + forms_found * 0.05 + apis_found * 0.1)
-        if attack_surface_score > 1.0:
-            need_phase1 = True
-            reasoning_parts.append(f"廣大攻擊面 (surface={attack_surface_score:.2f})")
-        
-        # 規則 3: WAF 策略
-        if waf_detected:
-            reasoning_parts.append(f"WAF: {waf_vendor or 'unknown'}")
-            if ai_confidence > 0.65:  # 提高門檻，因為 WAF 增加難度
-                need_phase1 = True
-                reasoning_parts.append("AI 建議嘗試 WAF 繞過")
-            else:
-                reasoning_parts.append("WAF 存在，謹慎評估")
-        
-        # 規則 4: ROI 門檻 (專業 Hunter 標準)
-        if roi > 75:  # $75/hr 是專業 Hunter 的參考門檻
-            need_phase1 = True
-            reasoning_parts.append(f"高 ROI: ${roi:.0f}/hr")
-        elif roi < 30:
-            if not high_value_score > 0.7:  # 除非有超高價值目標
-                need_phase1 = False
-                reasoning_parts.append(f"低 ROI: ${roi:.0f}/hr")
-        
-        # 規則 5: 技術棧風險
-        if tech_risk_multiplier > 1.2:
-            need_phase1 = True
-            reasoning_parts.append(f"高風險技術棧: {', '.join(tech_insights)}")
-        
-        # 規則 6: Program 推薦
-        if recommendations.get("needs_deep_scan") or recommendations.get("priority_high"):
-            need_phase1 = True
-            reasoning_parts.append("Phase0 強烈建議深度掃描")
-        
-        reasoning = " | ".join(reasoning_parts) if reasoning_parts else "預設保守策略"
-        
-        # === 8. 構建返回結果 ===
-        result = {
-            "need_phase1": need_phase1,
-            "reasoning": reasoning,
-            "decision_source": "neural_network" if ai_confidence > 0.6 else "rule_engine",
-            
-            # 經濟指標
-            "roi": roi,
-            "estimated_time_hours": estimated_time_hours,
-            "expected_value": expected_value,
-            "adjusted_target_value": adjusted_target_value,
-            
-            # AI 分析
-            "ai_confidence": ai_confidence,
-            "ai_attack_vector": ai_attack_vector,
-            "ai_recommended_focus": ai_recommended_focus,
-            
-            # 目標分析
-            "high_value_score": high_value_score,
-            "high_value_indicators": high_value_indicators,
-            "priority_targets": priority_targets,
-            
-            # 技術分析
-            "tech_risk_multiplier": tech_risk_multiplier,
-            "tech_insights": tech_insights,
-            "technologies_detected": technologies,
-            
-            # Phase1 執行配置
-            "phase1_config": {
-                "scan_depth": "intensive" if high_value_score > 0.7 else "standard",
-                "focus_areas": [t["type"] for t in priority_targets[:3]],
-                "time_budget_minutes": int(estimated_time_hours * 60),
-                "parallel_workers": 3 if not waf_detected else 1,
-            }
-        }
-        
-        # WAF 繞過策略
-        if waf_detected:
-            result["waf_bypass_plan"] = self._decide_waf_bypass(waf_vendor, ai_confidence)
-            result["phase1_config"]["stealth_mode"] = True
-            result["phase1_config"]["delay_between_requests"] = result["waf_bypass_plan"].get("delay_multiplier", 2.0)
-            self.logger.info(f"   🛡️ WAF 繞過策略已配置: delay×{result['waf_bypass_plan'].get('delay_multiplier', 1)}")
-        
-        self.logger.info(f"   ✅ 決策: {'執行 Phase1 (優先: {})'.format(','.join([t['type'] for t in priority_targets[:2]])) if need_phase1 else '跳過 Phase1'}")
-        return result
-    
+        """步驟 6: AI 決策 Phase1 策略 — 委派至 BountyStrategyAgent"""
+        return self.bounty_agent.decide_phase1_strategy(
+            phase0_result, program_scope
+        )
+
     def decide_phase2_targets(
         self,
         phase1_result: dict[str, Any],
         max_targets: int = 10,
-        program_context: dict[str, Any] | None = None
+        program_context: dict[str, Any] | None = None,
     ) -> list[dict[str, Any]]:
-        """步驟 9: AI 決策 Phase2 攻擊目標優先級排序 (HackerOne/Bugcrowd 實戰優化版)
-        
-        實際 Bug Bounty 目標優先級邏輯 (基於專業 Hunter 經驗):
-        
-        優先級 Tier 1 (Critical 獎金 $10k+):
-        - Account Takeover (ATO) 鏈
-        - RCE/SSRF 到內部服務
-        - 支付/金融繞過
-        - PII 大規模洩露
-        
-        優先級 Tier 2 (High 獎金 $3k-$10k):
-        - SQL Injection (有數據影響)
-        - IDOR 到敏感資源
-        - Auth Bypass
-        - Privilege Escalation
-        
-        優先級 Tier 3 (Medium 獎金 $500-$3k):
-        - XSS (Stored > DOM > Reflected)
-        - CSRF (敏感操作)
-        - 信息洩露 (API keys, credentials)
-        
-        OWASP WSTG 對應：
-        - 4.6 Session Management → Session Fixation, Cookie 問題
-        - 4.7 Input Validation → SQLi, XSS, Command Injection
-        - 4.10 Business Logic → 邏輯漏洞、競態條件
-        
-        Args:
-            phase1_result: Phase1 掃描結果
-            max_targets: 最大返回目標數量
-            program_context: Program 上下文 (獎金表、重複情報等)
-            
-        Returns:
-            排序後的目標列表
-        """
-        self.logger.info("🎯 [Step 9: Phase2 Targets] 開始智慧目標優先級排序...")
-        
-        assets = phase1_result.get("assets", [])
-        if not assets:
-            self.logger.warning("   ⚠️ Phase1 未發現任何資產")
-            return []
-        
-        # Program 上下文
-        program_context = program_context or {}
-        bounty_table = program_context.get("bounty_table", self._get_default_bounty_table())
-        duplicate_intel = set(program_context.get("duplicate_intel", []))
-        
-        # === HackerOne/Bugcrowd 漏洞優先級映射 ===
-        vuln_tier_mapping = {
-            # Tier 1: Critical ($10k+)
-            "rce": 1, "remote_code_execution": 1, "command_injection": 1,
-            "ssrf": 1, "server_side_request_forgery": 1,
-            "account_takeover": 1, "ato": 1,
-            "payment_bypass": 1, "financial_manipulation": 1,
-            # Tier 2: High ($3k-$10k)
-            "sql_injection": 2, "sqli": 2,
-            "idor": 2, "insecure_direct_object_reference": 2,
-            "auth_bypass": 2, "authentication_bypass": 2,
-            "privilege_escalation": 2, "xxe": 2, "ssti": 2,
-            "path_traversal": 2, "lfi": 2, "rfi": 2,
-            # Tier 3: Medium ($500-$3k)
-            "xss_stored": 3, "stored_xss": 3,
-            "xss_dom": 3, "xss_reflected": 3,
-            "csrf": 3, "api_key_disclosure": 3,
-            "cors_misconfiguration": 3, "open_redirect": 3,
-        }
-        
-        targets_with_scores = []
-        
-        for asset in assets[:100]:  # 限制分析前 100 個資產
-            vuln_type = asset.get("vuln_type", "unknown").lower().replace(" ", "_")
-            tier = vuln_tier_mapping.get(vuln_type, 4)
-            if tier == 4:  # 跳過低價值漏洞
-                continue
-            
-            # 計算多維度評分
-            bounty_value_score = bounty_table.get(vuln_type, 500) / 10000
-            waf_interference_score = self._calculate_waf_interference(asset, phase1_result)
-            historical_success_score = self._query_historical_success(asset)
-            duplicate_risk = 0.5 if vuln_type in duplicate_intel else 0.0
-            
-            # AI 神經網路評分
-            ai_score = 0.5
-            attack_vector = vuln_type
-            recommended_tools = self._get_default_tools_for_vuln(vuln_type)
-            
-            if self.use_neural_decision:
-                try:
-                    ai_result = self.neural_engine.generate_decision(
-                        task_description="target_prioritization",
-                        context=f"Target: {asset.get('url', '')[:80]} | VulnType: {vuln_type} | Tier: {tier}"
-                    )
-                    ai_score = ai_result.get("confidence", 0.5)
-                    attack_vector = ai_result.get("attack_vector", vuln_type)
-                    recommended_tools = ai_result.get("recommended_tools", recommended_tools)
-                except Exception as e:
-                    self.logger.debug(f"   AI 評分失敗: {e}")
-            
-            # 綜合評分 (加權)
-            final_score = (
-                ai_score * 0.35 +
-                bounty_value_score * 0.25 +
-                (1.0 - waf_interference_score) * 0.15 +
-                historical_success_score * 0.10 +
-                (1.0 - duplicate_risk) * 0.15
-            )
-            
-            # Tier 加權
-            if tier == 1:
-                final_score *= 1.3
-            elif tier == 2:
-                final_score *= 1.1
-            
-            targets_with_scores.append({
-                "asset": asset,
-                "score": min(1.0, final_score),
-                "tier": tier,
-                "cvss_estimate": {1: 9.0, 2: 7.5, 3: 5.5}.get(tier, 5.0),
-                "attack_vector": attack_vector,
-                "recommended_tools": recommended_tools,
-                "estimated_bounty": bounty_table.get(vuln_type, 500),
-                "duplicate_risk": duplicate_risk,
-                "reasoning": f"Tier{tier}|AI:{ai_score:.2f}|獎金:{bounty_value_score:.2f}|WAF干擾:{waf_interference_score:.2f}"
-            })
-        
-        # 排序: 先 Tier，再 score
-        targets_with_scores.sort(key=lambda x: (x['tier'], -x['score']))
-        top_targets = targets_with_scores[:max_targets]
-        
-        self.logger.info(f"   ✅ 已選出 {len(top_targets)} 個高優先級目標")
-        for idx, t in enumerate(top_targets[:3], 1):
-            tier_icon = {1: "🔴", 2: "🟠", 3: "🟡"}.get(t['tier'], "⚪")
-            self.logger.info(f"   {tier_icon} #{idx} Tier{t['tier']} {t['asset'].get('url', 'N/A')[:40]}... (分數: {t['score']:.2f})")
-        
-        return top_targets
-    
-    def _get_default_tools_for_vuln(self, vuln_type: str) -> list[str]:
-        """獲取漏洞類型對應的默認工具"""
-        return {
-            "sql_injection": ["sqlmap", "burp_intruder"], "sqli": ["sqlmap", "burp_intruder"],
-            "xss_stored": ["xsstrike", "dalfox"], "xss_dom": ["domdig"], "xss_reflected": ["xsstrike"],
-            "ssrf": ["ssrfmap", "burp_collaborator"], "rce": ["nuclei", "custom_payload"],
-            "idor": ["autorize", "burp_match_replace"], "csrf": ["burp_csrf_poc"],
-            "xxe": ["xxeinjector"], "ssti": ["tplmap"],
-        }.get(vuln_type, ["burp_suite", "manual_analysis"])
-    
-    def _get_default_bounty_table(self) -> dict[str, int]:
-        """默認獎金表 (基於 HackerOne 平均值)"""
-        return {
-            "rce": 15000, "ssrf": 8000, "account_takeover": 12000,
-            "sql_injection": 5000, "sqli": 5000, "idor": 3000,
-            "auth_bypass": 4000, "privilege_escalation": 3500,
-            "xxe": 3000, "ssti": 4000, "path_traversal": 2000,
-            "xss_stored": 1500, "xss_dom": 1000, "xss_reflected": 500,
-            "csrf": 1000, "api_key_disclosure": 1500,
-            "cors_misconfiguration": 500, "open_redirect": 300,
-        }
-    
+        """步驟 9: AI 決策 Phase2 目標 — 委派至 BountyStrategyAgent"""
+        return self.bounty_agent.decide_phase2_targets(
+            phase1_result, max_targets, program_context
+        )
+
     def evaluate_phase2_results(
         self,
         phase2_results: list[dict[str, Any]],
         time_budget_remaining: float,
-        program_info: dict[str, Any] | None = None
+        program_info: dict[str, Any] | None = None,
     ) -> dict[str, Any]:
-        """步驟 11: AI 評估 Phase2 結果並決定後續行動 (HackerOne 實戰優化版)
-        
-        決策選項 (基於 HackerOne 經驗):
-        1. SUBMIT_REPORT - 提交報告
-           - 高信心漏洞 (confidence > 0.85)
-           - 可複現 POC 已準備
-           - CVSS 評分已評估
-        
-        2. CONTINUE_DEEP_DIVE - 繼續深挖
-           - 發現潛在攻擊鏈
-           - 時間允許進一步探索
-           - 可能提升漏洞嚴重性
-        
-        3. CHAIN_VULNERABILITIES - 串聯漏洞 (新增)
-           - 發現多個低/中危漏洞
-           - 可以組合成高危攻擊鏈
-           - 例: XSS + CSRF = ATO
-        
-        4. SWITCH_STRATEGY - 切換策略
-           - 當前攻擊向量無效
-           - WAF 持續封鎖
-           - 需要嘗試其他方法
-        
-        5. ABANDON_TARGET - 放棄目標
-           - ROI 過低
-           - 疑似 honeypot
-           - 重複風險過高
-        
-        HackerOne 報告品質考量:
-        - 清晰的重現步驟
-        - 商業影響說明
-        - 修復建議
-        - CVSS 評分合理性
-        
-        Args:
-            phase2_results: Phase2 測試結果列表
-                - [{vuln_type, severity, confidence, poc_ready, reproducible, url, params}]
-            time_budget_remaining: 剩餘時間預算（秒）
-            program_info: Program 資訊
-                - avg_response_time_days: 平均響應時間
-                - duplicate_rate: 重複率
-                - avg_bounty_by_severity: {CRITICAL: $, HIGH: $, ...}
-            
-        Returns:
-            評估結果字典
-        """
-        self.logger.info("📊 [Step 11: Phase2 Evaluation] 評估攻擊結果...")
-        
-        program_info = program_info or {}
-        duplicate_rate = program_info.get("duplicate_rate", 0.3)
-        
-        # === 1. 詳細統計分析 ===
-        total_findings = len(phase2_results)
-        
-        # 按嚴重性分類
-        severity_counts = {
-            "CRITICAL": 0, "HIGH": 0, "MEDIUM": 0, "LOW": 0, "INFO": 0
-        }
-        for r in phase2_results:
-            sev = r.get("severity", "INFO").upper()
-            if sev in severity_counts:
-                severity_counts[sev] += 1
-        
-        critical_high_count = severity_counts["CRITICAL"] + severity_counts["HIGH"]
-        
-        # POC 準備度
-        poc_ready_count = sum(1 for r in phase2_results if r.get("poc_ready", False))
-        reproducible_count = sum(1 for r in phase2_results if r.get("reproducible", False))
-        
-        # 平均信心度
-        avg_confidence = (
-            sum(r.get("confidence", 0) for r in phase2_results) / max(total_findings, 1)
+        """步驟 11: AI 評估 Phase2 結果 — 委派至 BountyStrategyAgent"""
+        return self.bounty_agent.evaluate_phase2_results(
+            phase2_results, time_budget_remaining, program_info
         )
-        
-        # 預估獎金
-        bounty_table = program_info.get("avg_bounty_by_severity", {
-            "CRITICAL": 10000, "HIGH": 3000, "MEDIUM": 500, "LOW": 100
-        })
-        estimated_total_bounty = sum(
-            bounty_table.get(r.get("severity", "LOW").upper(), 100) * r.get("confidence", 0.5)
-            for r in phase2_results
-        )
-        
-        self.logger.info(f"   📈 發現: {total_findings} 個漏洞")
-        self.logger.info(f"   🔴 Critical: {severity_counts['CRITICAL']}, High: {severity_counts['HIGH']}")
-        self.logger.info(f"   🟠 Medium: {severity_counts['MEDIUM']}, Low: {severity_counts['LOW']}")
-        self.logger.info(f"   📋 POC 已準備: {poc_ready_count}/{total_findings}")
-        self.logger.info(f"   📈 平均信心度: {avg_confidence:.2f}")
-        self.logger.info(f"   💰 預估獎金: ${estimated_total_bounty:.0f}")
-        self.logger.info(f"   ⏱️ 剩餘時間: {time_budget_remaining / 60:.1f} 分鐘")
-        
-        # === 2. 攻擊鏈潛力分析 ===
-        chain_potential = self._analyze_vulnerability_chains(phase2_results)
-        
-        # === 3. 神經網路決策輔助 ===
-        ai_recommendation = None
-        if self.use_neural_decision and phase2_results:
-            try:
-                context = (
-                    f"Findings: {total_findings} | "
-                    f"Critical/High: {critical_high_count} | "
-                    f"Confidence: {avg_confidence:.2f} | "
-                    f"POC Ready: {poc_ready_count} | "
-                    f"ChainPotential: {chain_potential['score']:.2f} | "
-                    f"TimeRemaining: {time_budget_remaining/3600:.1f}h | "
-                    f"DuplicateRate: {duplicate_rate:.2f}"
-                )
-                ai_result = self.neural_engine.generate_decision(
-                    task_description="evaluate_phase2_results",
-                    context=context
-                )
-                ai_recommendation = ai_result.get("attack_vector", "continue")
-            except Exception as e:
-                self.logger.debug(f"   AI 決策失敗: {e}")
-        
-        # === 4. 決策邏輯 (多因素加權) ===
-        action = "CONTINUE_DEEP_DIVE"  # 預設行動
-        reasoning_parts = []
-        priority = "NORMAL"
-        
-        # 規則 1: 發現高價值可報告漏洞
-        if critical_high_count >= 1 and poc_ready_count >= 1 and avg_confidence > 0.85:
-            action = "SUBMIT_REPORT"
-            priority = "HIGH"
-            reasoning_parts.append(f"發現 {critical_high_count} 個高危漏洞，POC 已準備")
-        
-        # 規則 2: 可串聯漏洞提升價值
-        elif chain_potential["can_chain"] and chain_potential["score"] > 0.7:
-            action = "CHAIN_VULNERABILITIES"
-            priority = "HIGH"
-            reasoning_parts.append(f"可串聯漏洞: {chain_potential['chain_description']}")
-        
-        # 規則 3: 多個中危漏洞，建議合併報告
-        elif severity_counts["MEDIUM"] >= 3 and poc_ready_count >= 2:
-            action = "SUBMIT_REPORT"
-            priority = "MEDIUM"
-            reasoning_parts.append("多個中危漏洞，建議整合報告")
-        
-        # 規則 4: 時間緊迫
-        elif time_budget_remaining < 1800:  # 少於 30 分鐘
-            if critical_high_count >= 1 or (total_findings > 0 and avg_confidence > 0.7):
-                action = "SUBMIT_REPORT"
-                priority = "URGENT"
-                reasoning_parts.append("時間緊迫，提交現有發現")
-            else:
-                action = "ABANDON_TARGET"
-                reasoning_parts.append("時間不足且收穫有限")
-        
-        # 規則 5: 效果不佳，切換策略
-        elif avg_confidence < 0.4 and total_findings < 3:
-            action = "SWITCH_STRATEGY"
-            reasoning_parts.append("當前方法效果不佳")
-            
-            # AI 建議新策略
-            if ai_recommendation:
-                reasoning_parts.append(f"AI 建議: 嘗試 {ai_recommendation}")
-        
-        # 規則 6: 發現潛力，繼續深挖
-        elif total_findings > 0 and time_budget_remaining > 3600:
-            # 檢查是否值得繼續
-            hourly_rate = estimated_total_bounty / max(1, (24 * 3600 - time_budget_remaining) / 3600)
-            if hourly_rate > 50:  # $50/hr 門檻
-                action = "CONTINUE_DEEP_DIVE"
-                reasoning_parts.append(f"ROI 良好 (${hourly_rate:.0f}/hr)，繼續深挖")
-            else:
-                action = "SWITCH_STRATEGY"
-                reasoning_parts.append(f"ROI 偏低 (${hourly_rate:.0f}/hr)，建議切換")
-        
-        # 規則 7: 重複風險評估
-        elif duplicate_rate > 0.6 and severity_counts["MEDIUM"] + severity_counts["LOW"] > critical_high_count:
-            action = "ABANDON_TARGET"
-            reasoning_parts.append(f"高重複風險 ({duplicate_rate*100:.0f}%)")
-        
-        # 規則 8: 無有效發現
-        else:
-            action = "ABANDON_TARGET"
-            reasoning_parts.append("未發現可利用漏洞")
-        
-        reasoning = " | ".join(reasoning_parts)
-        
-        # === 5. 生成下一步建議 ===
-        next_steps = self._generate_next_steps(action, phase2_results)
-        
-        # === 6. 報告準備建議 (如果是 SUBMIT_REPORT) ===
-        report_guidance = None
-        if action == "SUBMIT_REPORT":
-            report_guidance = self._generate_report_guidance(phase2_results, program_info)
-        
-        result = {
-            "action": action,
-            "priority": priority,
-            "reasoning": reasoning,
-            "findings_summary": {
-                "total": total_findings,
-                "by_severity": severity_counts,
-                "critical_high": critical_high_count,
-                "poc_ready": poc_ready_count,
-                "reproducible": reproducible_count,
-                "avg_confidence": avg_confidence,
-                "estimated_bounty": estimated_total_bounty
-            },
-            "chain_analysis": chain_potential,
-            "next_steps": next_steps,
-            "report_guidance": report_guidance,
-            "ai_recommendation": ai_recommendation,
-            "time_metrics": {
-                "remaining_minutes": time_budget_remaining / 60,
-                "recommended_action_time": self._estimate_action_time(action)
-            }
-        }
-        
-        self.logger.info(f"   ✅ 建議行動: {action} (優先級: {priority})")
-        return result
-    
-    def _analyze_vulnerability_chains(self, results: list[dict[str, Any]]) -> dict[str, Any]:
-        """分析漏洞串聯潛力"""
-        vuln_types = [r.get("vuln_type", "").lower() for r in results]
-        
-        # 已知攻擊鏈模式
-        chain_patterns = [
-            {
-                "components": ["xss", "csrf"],
-                "result": "Account Takeover",
-                "severity_boost": "CRITICAL",
-                "description": "XSS + CSRF → 帳戶劫持"
-            },
-            {
-                "components": ["ssrf", "rce"],
-                "result": "Remote Code Execution Chain",
-                "severity_boost": "CRITICAL",
-                "description": "SSRF → 內部服務 → RCE"
-            },
-            {
-                "components": ["idor", "information_disclosure"],
-                "result": "Mass Data Exposure",
-                "severity_boost": "HIGH",
-                "description": "IDOR + 信息洩露 → 批量數據提取"
-            },
-            {
-                "components": ["sql_injection", "auth_bypass"],
-                "result": "Full Database Access",
-                "severity_boost": "CRITICAL",
-                "description": "SQLi → 認證繞過 → 完整數據庫訪問"
-            },
-            {
-                "components": ["open_redirect", "oauth"],
-                "result": "OAuth Token Theft",
-                "severity_boost": "HIGH",
-                "description": "開放重定向 + OAuth → Token 竊取"
-            }
-        ]
-        
-        can_chain = False
-        best_chain = None
-        chain_score = 0.0
-        
-        for pattern in chain_patterns:
-            components = pattern["components"]
-            matches = sum(1 for c in components if any(c in vt for vt in vuln_types))
-            if matches >= len(components):
-                can_chain = True
-                score = matches / len(components)
-                if score > chain_score:
-                    chain_score = score
-                    best_chain = pattern
-        
-        return {
-            "can_chain": can_chain,
-            "score": chain_score,
-            "chain_description": best_chain["description"] if best_chain else None,
-            "severity_boost": best_chain["severity_boost"] if best_chain else None,
-            "matched_pattern": best_chain
-        }
-    
-    def _generate_report_guidance(
-        self,
-        results: list[dict[str, Any]],
-        program_info: dict[str, Any]
-    ) -> dict[str, Any]:
-        """生成 HackerOne 報告撰寫指南"""
-        top_finding = max(results, key=lambda x: x.get("confidence", 0)) if results else {}
-        
-        return {
-            "title_template": f"[{top_finding.get('severity', 'Medium')}] {top_finding.get('vuln_type', 'Vulnerability')} in {top_finding.get('url', 'application')[:50]}",
-            "sections": [
-                "Summary (1-2 sentences)",
-                "Steps to Reproduce (numbered list)",
-                "Impact (business perspective)",
-                "Proof of Concept (code/screenshots)",
-                "Suggested Fix",
-                "References (CVE, OWASP)"
-            ],
-            "cvss_estimate": self._calculate_cvss(top_finding),
-            "tips": [
-                "使用清晰的重現步驟",
-                "強調商業影響",
-                "提供修復建議",
-                "附上視頻 POC 可提升報告品質"
-            ]
-        }
-    
-    def _calculate_cvss(self, finding: dict[str, Any]) -> dict[str, Any]:
-        """計算 CVSS 3.1 評分估計"""
-        severity = finding.get("severity", "MEDIUM").upper()
-        base_scores = {"CRITICAL": 9.0, "HIGH": 7.5, "MEDIUM": 5.5, "LOW": 3.0, "INFO": 0.0}
-        
-        return {
-            "base_score": base_scores.get(severity, 5.5),
-            "vector_string": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:N",  # 簡化範例
-            "severity_rating": severity
-        }
-    
-    def _estimate_action_time(self, action: str) -> int:
-        """估計各行動所需時間（分鐘）"""
-        time_estimates = {
-            "SUBMIT_REPORT": 30,      # 撰寫報告
-            "CONTINUE_DEEP_DIVE": 60, # 繼續測試
-            "CHAIN_VULNERABILITIES": 45,  # 串聯攻擊
-            "SWITCH_STRATEGY": 15,    # 切換策略
-            "ABANDON_TARGET": 5       # 放棄
-        }
-        return time_estimates.get(action, 30)
-    
-    # ═══════════════════════════════════════════════════════════════
-    # WAF/Rate Limit 自適應策略（輔助方法）
-    # ═══════════════════════════════════════════════════════════════
-    
-    def _decide_waf_bypass(
-        self,
-        waf_vendor: Optional[str],
-        base_confidence: float
-    ) -> dict[str, Any]:
-        """基於 WAF 類型和 AI 信心度決定繞過策略"""
-        vendor = (waf_vendor or "unknown").lower()
-        strategy = self.waf_bypass_strategies.get(vendor, self.waf_bypass_strategies["unknown"])
-        
-        # AI 調整策略激進度
-        delay_multiplier = strategy['delay_multiplier']
-        if base_confidence > 0.8:
-            delay_multiplier *= 0.8  # 高信心 → 更快
-        elif base_confidence < 0.5:
-            delay_multiplier *= 1.5  # 低信心 → 更保守
-        
-        return {
-            **strategy,
-            'delay_multiplier': delay_multiplier,
-            'confidence_adjusted': True
-        }
-    
+
     def adaptive_rate_limiting(
         self,
         target_url: str,
         phase: str,
-        waf_detected: bool
+        waf_detected: bool,
     ) -> dict[str, float]:
-        """自適應速率限制策略
-        
-        Args:
-            target_url: 目標 URL
-            phase: 階段 (phase0/phase1/phase2)
-            waf_detected: 是否檢測到 WAF
-            
-        Returns:
-            速率限制配置
-        """
-        profile = self.rate_limit_profiles.get(phase, self.rate_limit_profiles["phase1"])
-        
-        base_rate = profile['requests_per_second']
-        
-        # WAF 檢測 → 大幅降速
-        if waf_detected:
-            base_rate *= 0.2
-        
-        # 查詢歷史封禁率（如果有經驗管理器）
-        if self.experience_manager:
-            try:
-                historical_ban_rate = self.experience_manager.get_ban_rate(target_url)
-                if historical_ban_rate > 0.5:
-                    base_rate *= 0.5
-            except Exception:
-                pass
-        
-        return {
-            'requests_per_second': base_rate,
-            'burst_size': int(base_rate * 2),
-            'retry_after_429': 60,
-            'backoff_multiplier': 2.0
-        }
-    
-    # ═══════════════════════════════════════════════════════════════
-    # 初始化和輔助方法
-    # ═══════════════════════════════════════════════════════════════
-    
-    def _initialize_waf_strategies(self) -> dict[str, dict]:
-        """初始化 WAF 繞過策略庫"""
-        return {
-            'cloudflare': {
-                'delay_multiplier': 3.0,
-                'payload_encoding': ['unicode', 'hex', 'double_url'],
-                'user_agent_rotation': True,
-                'header_randomization': True
-            },
-            'imperva': {
-                'delay_multiplier': 2.5,
-                'payload_encoding': ['case_swap', 'comment_injection'],
-                'chunk_encoding': True
-            },
-            'aws_waf': {
-                'delay_multiplier': 2.0,
-                'payload_encoding': ['null_byte', 'newline'],
-                'ip_rotation': True
-            },
-            'unknown': {
-                'delay_multiplier': 2.0,
-                'payload_encoding': ['basic'],
-                'conservative_mode': True
-            }
-        }
-    
-    def _initialize_rate_profiles(self) -> dict[str, dict]:
-        """初始化速率限制配置文件"""
-        return {
-            'phase0': {'requests_per_second': 100},
-            'phase1': {'requests_per_second': 50},
-            'phase2': {'requests_per_second': 20}
-        }
-    
-    def _initialize_bounty_matrix(self) -> dict[str, float]:
-        """初始化獎金價值矩陣（歸一化 0-1）"""
-        return {
-            'authentication_bypass': 0.9,
-            'sql_injection': 0.8,
-            'server_side_request_forgery': 0.85,
-            'cross_site_scripting': 0.5,
-            'idor': 0.7,
-            'reconnaissance': 0.1
-        }
-    
-    def _encode_phase0_features(self, phase0_result: dict) -> Any:
-        """將 Phase0 結果編碼為神經網路輸入（簡化版）"""
-        import torch
-        features = torch.zeros(512)
-        summary = phase0_result.get("summary", {})
-        features[0] = summary.get("urls_found", 0) / 1000.0
-        features[1] = summary.get("forms_found", 0) / 50.0
-        features[2] = summary.get("apis_found", 0) / 20.0
-        # ... 其他特徵
-        return features
-    
-    def _encode_asset_features(self) -> Any:
-        """將資產編碼為神經網路輸入（簡化版）"""
-        import torch
-        return torch.zeros(512)  # 簡化實現
-    
-    def _estimate_phase1_time(self, phase0_result: dict) -> float:
-        """估算 Phase1 所需時間（秒）"""
-        urls = phase0_result.get("summary", {}).get("urls_found", 0)
-        return min(1800 + urls * 10, 7200)  # 30分鐘 + 每個URL 10秒，最多2小時
-    
-    def _calculate_bounty_value(self, asset: dict) -> float:
-        """計算資產的獎金價值評分 (0-1)"""
-        # 簡化實現：根據 URL 特徵評估
-        url = asset.get("url", "").lower()
-        if "admin" in url or "api" in url:
-            return 0.8
-        elif "login" in url or "auth" in url:
-            return 0.7
-        return 0.5
-    
-    def _calculate_waf_interference(self, phase1_result: dict) -> float:
-        """計算 WAF 干擾評分 (0-1, 越高越糟)"""
-        fingerprints = phase1_result.get("fingerprints", {})
-        if fingerprints.get("waf_detected"):
-            return 0.8
-        return 0.2
-    
-    def _query_historical_success(self, asset: dict) -> float:
-        """查詢歷史成功率 (0-1)"""
-        # 需要經驗管理器支援
-        if self.experience_manager:
-            try:
-                return self.experience_manager.get_success_rate(asset.get("url", ""))
-            except Exception:
-                pass
-        return 0.5  # 預設中等成功率
-    
-    def _generate_next_steps(self, action: str) -> list[str]:
-        """生成下一步建議"""
-        if action == "SUBMIT_REPORT":
-            return [
-                "1. 驗證所有高危漏洞的可重現性",
-                "2. 撰寫詳細的 PoC 和影響說明",
-                "3. 提交到 HackerOne 平台"
-            ]
-        elif action == "CONTINUE_DEEP_DIVE":
-            return [
-                "1. 針對高優先級目標進行手動測試",
-                "2. 嘗試 WAF 繞過技術",
-                "3. 探索邊緣案例和業務邏輯漏洞"
-            ]
-        elif action == "SWITCH_STRATEGY":
-            return [
-                "1. 切換到更隱蔽的掃描模式",
-                "2. 嘗試不同的 payload 編碼",
-                "3. 調整攻擊向量"
-            ]
-        else:  # ABANDON_TARGET
-            return [
-                "1. 記錄失敗原因和學習經驗",
-                "2. 切換到下一個目標",
-                "3. 更新目標篩選策略"
-            ]
+        """自適應速率限制策略 — 委派至 BountyStrategyAgent"""
+        return self.bounty_agent.adaptive_rate_limiting(
+            target_url, phase, waf_detected
+        )
 
 
 # 使用範例和測試

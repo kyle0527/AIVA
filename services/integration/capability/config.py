@@ -74,7 +74,7 @@ class LoggingConfig(BaseModel):
     """日誌配置"""
     level: str = Field(default="INFO", description="日誌級別")
     format: str = Field(default="structured", description="日誌格式")
-    output_file: Optional[str] = Field(None, description="日誌輸出檔案")
+    output_file: Optional[str] = Field(default=None, description="日誌輸出檔案")
     rotate_enabled: bool = Field(default=True, description="是否啟用日誌輪轉")
     max_file_size_mb: int = Field(default=100, description="最大檔案大小(MB)")
     max_files: int = Field(default=10, description="最大檔案數量")
@@ -89,8 +89,8 @@ class SecurityConfig(BaseModel):
         description="允許的來源"
     )
     ssl_enabled: bool = Field(default=False, description="是否啟用 SSL")
-    ssl_cert_path: Optional[str] = Field(None, description="SSL 證書路徑")
-    ssl_key_path: Optional[str] = Field(None, description="SSL 私鑰路徑")
+    ssl_cert_path: Optional[str] = Field(default=None, description="SSL 證書路徑")
+    ssl_key_path: Optional[str] = Field(default=None, description="SSL 私鑰路徑")
 
 
 class CapabilityRegistryConfig(BaseModel):
@@ -102,12 +102,12 @@ class CapabilityRegistryConfig(BaseModel):
     environment: str = Field(default="development", description="運行環境")
     
     # 各子模組配置
-    database: DatabaseConfig = Field(default_factory=DatabaseConfig)
-    discovery: DiscoveryConfig = Field(default_factory=DiscoveryConfig)
-    monitoring: MonitoringConfig = Field(default_factory=MonitoringConfig)
-    api: APIConfig = Field(default_factory=APIConfig)
-    logging: LoggingConfig = Field(default_factory=LoggingConfig)
-    security: SecurityConfig = Field(default_factory=SecurityConfig)
+    database: DatabaseConfig = Field(default_factory=lambda: DatabaseConfig())
+    discovery: DiscoveryConfig = Field(default_factory=lambda: DiscoveryConfig())
+    monitoring: MonitoringConfig = Field(default_factory=lambda: MonitoringConfig())
+    api: APIConfig = Field(default_factory=lambda: APIConfig())
+    logging: LoggingConfig = Field(default_factory=lambda: LoggingConfig())
+    security: SecurityConfig = Field(default_factory=lambda: SecurityConfig())
     
     # 整合配置
     aiva_common_path: str = Field(

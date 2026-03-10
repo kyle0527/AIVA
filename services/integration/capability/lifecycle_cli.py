@@ -460,7 +460,7 @@ async def main():
         console.print("\n\n👋 程式已中斷")
     except Exception as e:
         console.print(f"❌ 執行錯誤: {str(e)}")
-        logger.error("CLI 執行錯誤", error=str(e), exc_info=True)
+        logger.error(f"CLI 執行錯誤: {str(e)}", exc_info=True)
 
 
 if __name__ == "__main__":
