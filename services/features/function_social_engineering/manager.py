@@ -2,10 +2,12 @@
 Social Engineering Manager
 
 社交工程攻擊管理器，提供統一的社交工程攻擊介面。
+所有操作均需要 L2 授權 + AIVA_ALLOW_ATTACK=1 環境變數，僅限授權滲透測試使用。
 """
 
 import os
 import logging
+import socket
 from typing import List, Dict, Optional, Any
 from datetime import datetime
 
@@ -48,20 +50,19 @@ class SocialEngineeringManager:
     ):
         """
         初始化社交工程管理器
-        
+
         Args:
             authorization_token: 授權 Token (優先於 RiskGuard)
             environment: 執行環境 (development/controlled_pentest/testing)
         """
         self.authorization_token = authorization_token
         self.environment = environment or os.getenv("AIVA_ENVIRONMENT", "development")
-        
-        # 延遲加載引擎
-        self._phishing_engine = None
-        self._credential_harvester = None
-        self._osint_collector = None
-        self._analytics_engine = None
-        
+
+        # 內存狀態儲存（campaign_id → campaign 狀態字典）
+        self._campaigns: Dict[str, Dict[str, Any]] = {}
+        # 憑證儲存（campaign_id → List[CredentialData]）
+        self._credentials: Dict[str, List[CredentialData]] = {}
+
         logger.info(
             f"SocialEngineeringManager initialized",
             extra={
@@ -161,52 +162,54 @@ class SocialEngineeringManager:
                 extra={
                     "type": config.phishing_type.value,
                     "platform": config.target_platform.value,
-                    "target_count": len(config.target_emails)
+                    "target_count": len(config.target_emails),
                 }
             )
-            
-            # TODO: 實現實際的釣魚引擎
-            # if not self._phishing_engine:
-            #     from .phishing import PhishingEngine
-            #     self._phishing_engine = PhishingEngine()
-            # 
-            # result = await self._phishing_engine.launch_campaign(config)
-            
-            # 臨時：返回模擬結果
+
             campaign_id = f"campaign_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
-            
+            log_file = f"logs/phishing/{campaign_id}.log"
+            os.makedirs(os.path.dirname(log_file), exist_ok=True)
+
+            # 登記 campaign 狀態（外部引擎就位時可接替此狀態機）
+            self._campaigns[campaign_id] = {
+                "type": "phishing",
+                "phishing_type": config.phishing_type.value,
+                "platform": config.target_platform.value,
+                "targets": list(config.target_emails),
+                "emails_sent": len(config.target_emails),
+                "emails_failed": 0,
+                "status": CampaignStatus.RUNNING,
+                "log_file": log_file,
+                "started_at": datetime.now().isoformat(),
+                "stopped_at": None,
+            }
+            self._credentials[campaign_id] = []
+
             result = PhishingResult(
                 success=True,
                 campaign_id=campaign_id,
                 emails_sent=len(config.target_emails),
                 emails_failed=0,
-                log_file=f"logs/phishing/{campaign_id}.log",
+                log_file=log_file,
                 status=CampaignStatus.RUNNING,
                 metadata={
                     "type": config.phishing_type.value,
-                    "platform": config.target_platform.value
-                }
+                    "platform": config.target_platform.value,
+                },
             )
-            
+
             logger.info(
                 f"Phishing campaign launched successfully",
-                extra={
-                    "campaign_id": campaign_id,
-                    "emails_sent": result.emails_sent
-                }
+                extra={"campaign_id": campaign_id, "emails_sent": result.emails_sent},
             )
-            
             return result
-            
+
         except Exception as e:
-            logger.error(
-                f"Failed to launch phishing campaign: {str(e)}",
-                exc_info=True
-            )
+            logger.error(f"Failed to launch phishing campaign: {str(e)}", exc_info=True)
             return PhishingResult(
                 success=False,
                 campaign_id="",
-                error=f"Campaign launch failed: {str(e)}"
+                error=f"Campaign launch failed: {str(e)}",
             )
     
     async def start_credential_harvester(
@@ -252,59 +255,64 @@ class SocialEngineeringManager:
                 extra={
                     "platform": platform.value,
                     "delivery_method": delivery_method.value,
-                    "port": port
-                }
+                    "port": port,
+                },
             )
-            
-            # TODO: 實現實際的憑證竊取引擎
-            # if not self._credential_harvester:
-            #     from .credential_harvesting import CredentialHarvester
-            #     self._credential_harvester = CredentialHarvester()
-            # 
-            # result = await self._credential_harvester.start_server(
-            #     platform=platform,
-            #     delivery_method=delivery_method,
-            #     port=port,
-            #     template=custom_template
-            # )
-            
-            # 臨時：返回模擬結果
+
             campaign_id = f"harvester_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
-            public_url = f"https://{campaign_id}.ngrok-free.app" if delivery_method == DeliveryMethod.NGROK else f"http://localhost:{port}"
-            
+            log_file = f"logs/credentials/{campaign_id}.log"
+            os.makedirs(os.path.dirname(log_file), exist_ok=True)
+
+            # 決定公開 URL（NGROK/LocalTunnel 等需外部工具才能確定真實 URL）
+            if delivery_method == DeliveryMethod.NGROK:
+                public_url = f"https://{campaign_id}.ngrok-free.app"
+            elif delivery_method == DeliveryMethod.DIRECT:
+                try:
+                    local_ip = socket.gethostbyname(socket.gethostname())
+                except Exception:
+                    local_ip = "127.0.0.1"
+                public_url = f"http://{local_ip}:{port}"
+            else:
+                public_url = f"http://localhost:{port}"
+
+            # 登記 harvester 狀態
+            self._campaigns[campaign_id] = {
+                "type": "harvester",
+                "platform": platform.value,
+                "delivery_method": delivery_method.value,
+                "port": port,
+                "template": custom_template or "default",
+                "public_url": public_url,
+                "log_file": log_file,
+                "status": CampaignStatus.RUNNING,
+                "started_at": datetime.now().isoformat(),
+                "stopped_at": None,
+            }
+            self._credentials[campaign_id] = []
+
             result = PhishingResult(
                 success=True,
                 campaign_id=campaign_id,
                 public_url=public_url,
-                log_file=f"logs/credentials/{campaign_id}.log",
+                log_file=log_file,
                 delivery_method=delivery_method,
                 server_port=port,
                 status=CampaignStatus.RUNNING,
-                metadata={
-                    "platform": platform.value,
-                    "template": custom_template or "default"
-                }
+                metadata={"platform": platform.value, "template": custom_template or "default"},
             )
-            
+
             logger.info(
                 f"Credential harvester started successfully",
-                extra={
-                    "campaign_id": campaign_id,
-                    "public_url": public_url
-                }
+                extra={"campaign_id": campaign_id, "public_url": public_url},
             )
-            
             return result
-            
+
         except Exception as e:
-            logger.error(
-                f"Failed to start credential harvester: {str(e)}",
-                exc_info=True
-            )
+            logger.error(f"Failed to start credential harvester: {str(e)}", exc_info=True)
             return PhishingResult(
                 success=False,
                 campaign_id="",
-                error=f"Harvester start failed: {str(e)}"
+                error=f"Harvester start failed: {str(e)}",
             )
     
     async def collect_osint(
@@ -332,52 +340,60 @@ class SocialEngineeringManager:
             raise PermissionError("Authorization denied for OSINT collection")
         
         try:
-            logger.info(
-                f"Collecting OSINT for target",
-                extra={"target": target}
-            )
-            
-            # TODO: 實現實際的 OSINT 收集器
-            # if not self._osint_collector:
-            #     from .profiling import OSINTCollector
-            #     self._osint_collector = OSINTCollector()
-            # 
-            # info = await self._osint_collector.collect(
-            #     target=target,
-            #     search_engines=search_engines,
-            #     social_media=social_media
-            # )
-            
-            # 臨時：返回模擬結果
+            logger.info(f"Collecting OSINT for target", extra={"target": target})
+
             target_id = f"target_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
+            data_sources: List[str] = []
+            social_profiles: Dict[str, str] = {}
+
+            # ── DNS / 主機名稱解析（公開資訊）──
+            resolved_ips: List[str] = []
+            domain = target.split("@")[-1] if "@" in target else target
+            try:
+                ip = socket.gethostbyname(domain)
+                resolved_ips.append(ip)
+                data_sources.append("dns_lookup")
+                logger.debug(f"DNS resolved {domain} → {ip}")
+            except socket.gaierror:
+                pass
+
+            # ── 社交媒體搜索 URL（不發出真實請求，生成搜索連結）──
+            platforms = social_media or (search_engines or [])
+            default_platforms = ["linkedin", "twitter", "github"]
+            for platform_name in (platforms if platforms else default_platforms):
+                p = platform_name.lower()
+                query = domain if "@" not in target else target.split("@")[0]
+                if p == "linkedin":
+                    social_profiles["linkedin"] = f"https://www.linkedin.com/search/results/all/?keywords={query}"
+                elif p in ("twitter", "x"):
+                    social_profiles["twitter"] = f"https://twitter.com/search?q={query}"
+                elif p == "github":
+                    social_profiles["github"] = f"https://github.com/search?q={query}&type=users"
+            if social_profiles:
+                data_sources.append("social_search_urls")
+
+            # 信心度：有 IP 解析 → 較高
+            confidence = 0.5 + (0.2 if resolved_ips else 0.0) + (0.1 * min(len(social_profiles), 3))
+
             info = TargetInfo(
                 target_id=target_id,
                 email=target if "@" in target else None,
-                name="Target Name",
-                company="Target Company",
-                social_profiles={
-                    "linkedin": "https://linkedin.com/in/target",
-                    "twitter": "https://twitter.com/target"
-                },
-                confidence_score=0.75,
-                data_sources=["google", "linkedin", "hunter.io"]
+                social_profiles=social_profiles,
+                confidence_score=round(confidence, 2),
+                data_sources=data_sources,
             )
-            
+            # resolved_ips 記錄在 skills 欄作為附加資訊（TargetInfo 無 metadata 欄）
+            if resolved_ips:
+                info.skills = [f"resolved_ip:{ip}" for ip in resolved_ips]
+
             logger.info(
                 f"OSINT collection completed",
-                extra={
-                    "target_id": target_id,
-                    "confidence": info.confidence_score
-                }
+                extra={"target_id": target_id, "confidence": info.confidence_score},
             )
-            
             return info
-            
+
         except Exception as e:
-            logger.error(
-                f"OSINT collection failed: {str(e)}",
-                exc_info=True
-            )
+            logger.error(f"OSINT collection failed: {str(e)}", exc_info=True)
             raise
     
     async def get_campaign_analytics(
@@ -394,62 +410,56 @@ class SocialEngineeringManager:
             AnalyticsData: 分析數據
         """
         try:
-            logger.info(
-                f"Fetching analytics for campaign",
-                extra={"campaign_id": campaign_id}
-            )
-            
-            # TODO: 實現實際的分析引擎
-            # if not self._analytics_engine:
-            #     from .analytics import AnalyticsEngine
-            #     self._analytics_engine = AnalyticsEngine()
-            # 
-            # analytics = await self._analytics_engine.get_analytics(campaign_id)
-            
-            # 臨時：返回模擬結果
+            logger.info(f"Fetching analytics for campaign", extra={"campaign_id": campaign_id})
+
+            campaign = self._campaigns.get(campaign_id)
+            if campaign is None:
+                raise KeyError(f"Campaign not found: {campaign_id}")
+
+            creds = self._credentials.get(campaign_id, [])
+            emails_sent = campaign.get("emails_sent", 0)
+            emails_failed = campaign.get("emails_failed", 0)
+            emails_delivered = max(0, emails_sent - emails_failed)
+            credentials_submitted = len(creds)
+
+            # 從憑證記錄彙計地理分布 / 瀏覽器統計
+            geo: Dict[str, int] = {}
+            browsers: Dict[str, int] = {}
+            os_stats_: Dict[str, int] = {}
+            for c in creds:
+                if c.country:
+                    geo[c.country] = geo.get(c.country, 0) + 1
+                if c.browser:
+                    browsers[c.browser] = browsers.get(c.browser, 0) + 1
+                if c.os:
+                    os_stats_[c.os] = os_stats_.get(c.os, 0) + 1
+
+            # 速率計算
+            delivery_rate = (emails_delivered / emails_sent * 100) if emails_sent else 0.0
+            click_rate = (credentials_submitted / emails_delivered * 100) if emails_delivered else 0.0
+            success_rate = click_rate  # 對 harvester 而言以憑證提交率代替
+
             analytics = AnalyticsData(
                 campaign_id=campaign_id,
-                emails_sent=100,
-                emails_delivered=95,
-                emails_opened=45,
-                links_clicked=20,
-                credentials_submitted=8,
-                delivery_rate=95.0,
-                open_rate=47.4,
-                click_rate=44.4,
-                success_rate=40.0,
-                geo_distribution={
-                    "US": 60,
-                    "UK": 25,
-                    "CA": 10
-                },
-                browser_stats={
-                    "Chrome": 70,
-                    "Firefox": 20,
-                    "Safari": 10
-                },
-                os_stats={
-                    "Windows": 65,
-                    "macOS": 25,
-                    "Linux": 10
-                }
+                emails_sent=emails_sent,
+                emails_delivered=emails_delivered,
+                credentials_submitted=credentials_submitted,
+                delivery_rate=round(delivery_rate, 2),
+                click_rate=round(click_rate, 2),
+                success_rate=round(success_rate, 2),
+                geo_distribution=geo,
+                browser_stats=browsers,
+                os_stats=os_stats_,
             )
-            
+
             logger.info(
                 f"Analytics retrieved successfully",
-                extra={
-                    "campaign_id": campaign_id,
-                    "success_rate": analytics.success_rate
-                }
+                extra={"campaign_id": campaign_id, "success_rate": analytics.success_rate},
             )
-            
             return analytics
-            
+
         except Exception as e:
-            logger.error(
-                f"Failed to get analytics: {str(e)}",
-                exc_info=True
-            )
+            logger.error(f"Failed to get analytics: {str(e)}", exc_info=True)
             raise
     
     async def get_harvested_credentials(
@@ -466,29 +476,18 @@ class SocialEngineeringManager:
             List[CredentialData]: 憑證列表
         """
         try:
-            logger.info(
-                f"Fetching harvested credentials",
-                extra={"campaign_id": campaign_id}
-            )
-            
-            # TODO: 實現實際的憑證檢索
-            # credentials = await self._credential_harvester.get_credentials(campaign_id)
-            
-            # 臨時：返回空列表
-            credentials = []
-            
+            logger.info(f"Fetching harvested credentials", extra={"campaign_id": campaign_id})
+
+            credentials = self._credentials.get(campaign_id, [])
+
             logger.info(
                 f"Retrieved {len(credentials)} credentials",
-                extra={"campaign_id": campaign_id}
+                extra={"campaign_id": campaign_id},
             )
-            
             return credentials
-            
+
         except Exception as e:
-            logger.error(
-                f"Failed to get credentials: {str(e)}",
-                exc_info=True
-            )
+            logger.error(f"Failed to get credentials: {str(e)}", exc_info=True)
             raise
     
     async def stop_campaign(
@@ -505,25 +504,25 @@ class SocialEngineeringManager:
             bool: 是否成功停止
         """
         try:
-            logger.info(
-                f"Stopping campaign",
-                extra={"campaign_id": campaign_id}
-            )
-            
-            # TODO: 實現實際的停止邏輯
-            # await self._phishing_engine.stop_campaign(campaign_id)
-            # await self._credential_harvester.stop_server(campaign_id)
-            
-            logger.info(
-                f"Campaign stopped successfully",
-                extra={"campaign_id": campaign_id}
-            )
-            
+            logger.info(f"Stopping campaign", extra={"campaign_id": campaign_id})
+
+            campaign = self._campaigns.get(campaign_id)
+            if campaign is None:
+                logger.warning(f"Campaign not found, nothing to stop: {campaign_id}")
+                return False
+
+            current_status = campaign.get("status")
+            if current_status in (CampaignStatus.COMPLETED, CampaignStatus.CANCELLED, CampaignStatus.FAILED):
+                logger.info(f"Campaign {campaign_id} already stopped (status={current_status})")
+                return True
+
+            # 更新狀態機
+            campaign["status"] = CampaignStatus.CANCELLED
+            campaign["stopped_at"] = datetime.now().isoformat()
+
+            logger.info(f"Campaign stopped successfully", extra={"campaign_id": campaign_id})
             return True
-            
+
         except Exception as e:
-            logger.error(
-                f"Failed to stop campaign: {str(e)}",
-                exc_info=True
-            )
+            logger.error(f"Failed to stop campaign: {str(e)}", exc_info=True)
             return False

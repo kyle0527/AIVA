@@ -876,7 +876,7 @@ class AttackCoordinator:
                     await client.get(test_url)
                     open_ports.append(port)
                 except (httpx.RequestError, httpx.HTTPStatusError):
-                    pass
+                    logger.debug(f"Port {port} closed or unreachable on {hostname}")
         
         return {
             "task_id": task["task_id"],
@@ -973,8 +973,8 @@ class AttackCoordinator:
                             "status_code": response.status_code
                         })
                 except (httpx.RequestError, httpx.HTTPStatusError):
-                    pass
-        
+                    logger.debug(f"Directory probe failed for {dir_path} on {target}")
+
         return {
             "task_id": task["task_id"],
             "success": True,

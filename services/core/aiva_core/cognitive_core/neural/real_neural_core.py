@@ -91,11 +91,14 @@ class RealAICore(nn.Module):
         self.hidden2 = nn.Linear(1200, 1024)
         self.hidden3 = nn.Linear(1024, 512)
         self.output_layer = nn.Linear(512, 100)
-        
+        # 輔助輸出頭：從 hidden3 輸出(512) 分支到輔助維度(aux_output_size)
+        # 此層不含於原始 aiva_real_weights.pth，載入時使用 Xavier 初始化值
+        self.aux_output_layer = nn.Linear(512, self.aux_output_size)
+
         # 激活函數和正則化
         self.activation = nn.ReLU()
         self.dropout = nn.Dropout(0.2)
-        
+
         # 權重初始化
         self._initialize_weights()
         
@@ -157,11 +160,15 @@ class RealAICore(nn.Module):
             return self.network(x)
     
     def forward_with_aux(self, x: torch.Tensor) -> tuple[torch.Tensor, torch.Tensor]:
-        """前向傳播並返回雙輸出 - 改進版（僅5M模型支援）
-        
+        """前向傳播並返回雙輸出 - 共用主幹，分支雙頭（僅5M模型支援）
+
+        主幹：input_layer → hidden1 → hidden2 → hidden3
+        主輸出頭：output_layer     [batch, 100]  ← 決策輸出
+        輔助輸出頭：aux_output_layer [batch, aux_output_size] ← 上下文理解
+
         Args:
             x: 輸入張量 [batch_size, input_size]
-            
+
         Returns:
             (main_output, aux_output): 主輸出和輔助輸出
         """
@@ -172,14 +179,21 @@ class RealAICore(nn.Module):
                 severity=ErrorSeverity.MEDIUM,
                 context=create_error_context(module=MODULE_NAME, function="dual_forward")
             )
-            
-        # 當前權重檔案不支援雙輸出功能
-        raise AIVAError(
-            "當前權重檔案不支援雙輸出功能",
-            error_type=ErrorType.VALIDATION,
-            severity=ErrorSeverity.MEDIUM,
-            context=create_error_context(module=MODULE_NAME, function="dual_forward")
-        )
+
+        # 共用主幹前向傳播
+        x = self.activation(self.input_layer(x))
+        x = self.dropout(x)
+        x = self.activation(self.hidden1(x))
+        x = self.dropout(x)
+        x = self.activation(self.hidden2(x))
+        x = self.dropout(x)
+        x = self.activation(self.hidden3(x))
+        x = self.dropout(x)
+
+        # 雙頭分支輸出
+        main_output = self.output_layer(x)
+        aux_output = self.aux_output_layer(x)
+        return main_output, aux_output
     
     def save_weights(self, filepath: str) -> None:
         """儲存真實的權重檔案"""
@@ -294,10 +308,18 @@ class RealAICore(nn.Module):
         logger.info("✅ Key 映射完成: network.N → layer_name")
         return new_state_dict
     
+    # aux_output_layer 是後加的雙頭分支，不存在於舊版 aiva_real_weights.pth
+    # 允許這些 key 缺失並使用 Xavier 初始化值，其餘缺失仍視為錯誤
+    _AUX_LAYER_KEYS = {"aux_output_layer.weight", "aux_output_layer.bias"}
+
     def _load_with_partial_match(self, state_dict: dict) -> None:
-        """使用部分匹配模式載入權重，並檢查結果"""
+        """使用部分匹配模式載入權重，並檢查結果
+
+        aux_output_layer 的 keys 允許缺失（舊版權重檔不含該層，
+        以 Xavier 初始化值為準），其他關鍵層缺失才報錯。
+        """
         missing_keys, unexpected_keys = self.load_state_dict(state_dict, strict=False)
-        
+
         # 記錄缺失和未預期的 keys
         if missing_keys:
             keys_preview = missing_keys[:5] if len(missing_keys) > 5 else missing_keys
@@ -305,15 +327,22 @@ class RealAICore(nn.Module):
         if unexpected_keys:
             keys_preview = unexpected_keys[:5] if len(unexpected_keys) > 5 else unexpected_keys
             logger.warning(f"⚠️  未預期的 keys: {keys_preview}{'...' if len(unexpected_keys) > 5 else ''}")
-        
+
+        # aux_output_layer 缺失為預期行為（舊版權重），不納入錯誤判斷
+        critical_missing = [k for k in missing_keys if k not in self._AUX_LAYER_KEYS]
+        if critical_missing:
+            logger.warning(f"aux_output_layer 使用 Xavier 初始化（舊版權重不含此層）")
+
         # 判斷載入結果
         if not missing_keys and not unexpected_keys:
             logger.info("✅ 權重載入成功（經 key 映射）")
+        elif not critical_missing:
+            logger.info("✅ 權重載入成功，aux_output_layer 使用 Xavier 初始化")
         elif not missing_keys:
             logger.info("✅ 權重部分載入成功，忽略未預期的 keys")
         else:
             logger.error("❌ 權重載入不完整，缺少關鍵層")
-            raise RuntimeError(f"無法載入所需的權重，缺少: {missing_keys}")
+            raise RuntimeError(f"無法載入所需的權重，缺少: {critical_missing}")
     
     def _log_weight_info(self, filepath: str) -> None:
         """記錄權重檔案信息"""
