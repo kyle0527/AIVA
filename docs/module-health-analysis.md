@@ -151,6 +151,7 @@
 | 1 | 缺少 `__init__.py` | `function_exploit` | 無法匯入 |
 | 2 | 引用不存在的 `postex_manager.py` | `function_postex` | `ModuleNotFoundError` |
 | 3 | 引用不存在的 `scanner_manager.py` | `function_web_scanner` | `ModuleNotFoundError` |
+| 4 | ~~`commander/__init__.py:90` 引用不存在的 `rag_handler.py`~~ ✅ 已修復 | `task_planning` | 存取 `plan_builder` 時 `ImportError` |
 
 ### 功能待完成 (P1)
 
