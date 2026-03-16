@@ -5,7 +5,7 @@
 **實際有使用**: 39 個
 **完全未使用**: 8 個
 **可合併/替代**: 4 組
-**缺少宣告**: 1 個
+**缺少宣告**: 2 個
 
 ---
 
@@ -180,6 +180,7 @@
 | 套件 | 引用數 | 說明 |
 |------|--------|------|
 | `streamlit` | **5 檔** | dashboard 使用但未列在 requirements.txt |
+| `PyYAML` | **5 檔** | config_manager, dashboard config, risk_policy, exploit_orchestrator, policy_manager 皆使用 `import yaml` |
 
 ---
 
@@ -188,7 +189,7 @@
 ### 可立即行動
 1. **移除 8 個未使用依賴**：`openai`、`nltk`、`spacy`、`sentence-transformers`、`gymnasium`、`passlib`、`python-dotenv`、`orjson`
 2. **移除 1 個重疊依賴**：`python-jose`（PyJWT 已覆蓋）
-3. **補上缺少的依賴**：`streamlit`
+3. **補上缺少的依賴**：`streamlit`、`PyYAML`
 4. **移至 optional**：`grpcio-tools`（建置工具）、`alembic`（封存）
 
 ### 中期規劃
@@ -198,5 +199,5 @@
 
 ### 依賴精簡後
 - **移除前**: 57 個依賴
-- **移除後**: ~45 個依賴（含新增 streamlit）
+- **移除後**: ~45 個依賴（含新增 streamlit + PyYAML）
 - **節省空間**: ~1-2GB（主要來自 spacy/nltk/sentence-transformers）
