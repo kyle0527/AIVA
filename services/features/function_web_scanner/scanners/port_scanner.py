@@ -129,5 +129,5 @@ class PortScanner:
             sock.settimeout(0.5)
             banner = sock.recv(1024).decode('utf-8', errors='ignore').strip()
             return banner if banner else None
-        except:
+        except OSError:
             return None

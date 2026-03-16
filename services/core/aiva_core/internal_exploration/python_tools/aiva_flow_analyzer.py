@@ -142,13 +142,13 @@ class ParameterExtractor:
         try:
             if isinstance(node, ast.Constant): return node.value
             return ast.unparse(node)
-        except: return "<complex>"
+        except Exception: return "<complex>"
 
     def _annotation_to_string(self, annotation: Optional[ast.AST]) -> str:
         if annotation is None: return "any"
         try:
             return ast.unparse(annotation)
-        except: return "complex"
+        except Exception: return "complex"
 
 # ==========================================
 # Part 3: 流程構建器 (AST Builder - 核心邏輯)
@@ -230,7 +230,7 @@ class FlowBuilder(ast.NodeVisitor):
     def visit_If(self, node: ast.If):
         try:
             cond_text = ast.unparse(node.test)
-        except:
+        except Exception:
             cond_text = "condition"
             
         cond_node = self.graph.add("cond", f"if {cond_text}")
@@ -263,7 +263,7 @@ class FlowBuilder(ast.NodeVisitor):
     def visit_While(self, node: ast.While):
         try:
             cond_text = ast.unparse(node.test)
-        except: cond_text = "loop"
+        except Exception: cond_text = "loop"
             
         cond_node = self.graph.add("cond", f"while {cond_text}")
         self.graph.link(self.current_node, cond_node)
@@ -281,7 +281,7 @@ class FlowBuilder(ast.NodeVisitor):
             target = ast.unparse(node.target)
             iter_ = ast.unparse(node.iter)
             label = f"for {target} in {iter_}"
-        except: label = "for loop"
+        except Exception: label = "for loop"
         
         for_node = self.graph.add("cond", label)
         self.graph.link(self.current_node, for_node)
@@ -297,7 +297,7 @@ class FlowBuilder(ast.NodeVisitor):
     def visit_Return(self, node: ast.Return):
         try:
             val = ast.unparse(node.value) if node.value else "None"
-        except: val = "..."
+        except Exception: val = "..."
         
         return_node = self.graph.add("op", f"return {val}")
         self.graph.link(self.current_node, return_node)

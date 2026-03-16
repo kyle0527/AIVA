@@ -17,16 +17,18 @@
 
 ---
 
-## 2. 裸異常捕獲 (P1) — 11 處
+## 2. ~~裸異常捕獲~~ ✅ 已修復 (P1) — 11 處
 
-以下檔案使用 `except:` 而非指定具體異常類型：
+已於 2026-03-16 將 `services/` 下全部 11 處 `except:` 替換為具體異常類型：
 
-- `aiva_flow_analyzer.py` — 5 處
-- `port_scanner.py`、`subdomain_scanner.py`
-- `lateral_movement.py`、`hackingtool_engine.py`
-- `deserialization_detector.py`
+- `aiva_flow_analyzer.py` — 6 處 → `except Exception:`（AST 解析容錯）
+- `deserialization_detector.py` — 1 處 → `except (requests.RequestException, OSError):`
+- `hackingtool_engine.py` — 1 處 → `except Exception:`（動態生成的腳本模板）
+- `lateral_movement.py` — 1 處 → `except OSError:`（TCP socket）
+- `subdomain_scanner.py` — 1 處 → `except Exception:`（DNS 解析）
+- `port_scanner.py` — 1 處 → `except OSError:`（socket banner grab）
 
-裸 `except:` 會吞掉 `KeyboardInterrupt`、`SystemExit` 等關鍵異常。
+> 封存碼（`_archive/`、`_dev_tools/`）中仍有裸 `except:`，但不影響生產環境。
 
 ---
 
@@ -99,7 +101,7 @@ Go 引擎中 7 處 `log.Printf("[DEBUG]")` 已於 2026-03-16 清除：
 | **P0** | ~~依賴清理~~ ✅ 已修復 | 移除 9 個、新增 2 個、57→46 |
 | **P0** | 依賴版本未鎖定 | 部署不可重現 |
 | **P1** | CI/CD 不完整 | 缺乏自動化品質閘門 |
-| **P1** | 裸異常捕獲 | 隱藏錯誤、除錯困難 |
+| **P1** | ~~裸異常捕獲~~ ✅ 已修復 | 11 處 `except:` → 具體異常類型 |
 | **P2** | ~~清理 DEBUG 日誌~~ ✅ 已修復 | 7 處 Go DEBUG log 已清除 |
 | **P2** | 完成 TODO 項目 | 功能不完整 |
 | **P3** | 加強 Lint 設定 | 長期程式碼品質 |

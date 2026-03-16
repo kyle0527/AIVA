@@ -524,7 +524,7 @@ for payload in payloads:
             results.append({{'payload': payload, 'vulnerable': True}})
         else:
             results.append({{'payload': payload, 'vulnerable': False}})
-    except:
+    except Exception:
         results.append({{'payload': payload, 'vulnerable': False, 'error': 'Request failed'}})
 print(json.dumps(results))
 """]

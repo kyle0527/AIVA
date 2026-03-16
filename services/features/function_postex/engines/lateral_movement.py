@@ -95,7 +95,7 @@ class LateralMovementEngine:
                 if result == 0:
                     return True
             return False
-        except:
+        except OSError:
             return False
     
     def _check_smb_access(self, host: str) -> List[LateralMovementVector]:
