@@ -93,6 +93,19 @@ Go 引擎中 7 處 `log.Printf("[DEBUG]")` 已於 2026-03-16 清除：
 
 ---
 
+## 9. 功能模組健康度 (P0/P1) — 3 個模組匯入失敗
+
+詳見 [`docs/module-health-analysis.md`](module-health-analysis.md)。
+
+| 狀態 | 模組數 | 說明 |
+|------|--------|------|
+| COMPLETE | 11 | 可正常匯入執行 |
+| PARTIAL | 2 | 缺外部依賴或 Handler 未實現 |
+| STUB | 1 | 純 Rust CLI |
+| **BROKEN** | **3** | `function_exploit`（缺 `__init__.py`）、`function_postex`（缺 `postex_manager.py`）、`function_web_scanner`（缺 `scanner_manager.py`） |
+
+---
+
 ## 優先修復建議
 
 | 優先級 | 問題 | 影響 |
@@ -103,5 +116,6 @@ Go 引擎中 7 處 `log.Printf("[DEBUG]")` 已於 2026-03-16 清除：
 | **P1** | CI/CD 不完整 | 缺乏自動化品質閘門 |
 | **P1** | ~~裸異常捕獲~~ ✅ 已修復 | 11 處 `except:` → 具體異常類型 |
 | **P2** | ~~清理 DEBUG 日誌~~ ✅ 已修復 | 7 處 Go DEBUG log 已清除 |
+| **P0** | 3 個模組匯入失敗 | exploit/postex/web_scanner 無法載入 |
 | **P2** | 完成 TODO 項目 | 功能不完整 |
 | **P3** | 加強 Lint 設定 | 長期程式碼品質 |
