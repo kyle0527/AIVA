@@ -56,12 +56,12 @@
 
 ---
 
-## 5. 生產環境殘留除錯程式碼 (P2)
+## 5. ~~生產環境殘留除錯程式碼~~ ✅ 已修復 (P2)
 
-Go 引擎中有 7 處 `log.Printf("[DEBUG]")` 未清理：
-- `aws.go` — 2 處
-- `worker_pool.go` — 3 處
-- `ssrf.go` — 2 處
+Go 引擎中 7 處 `log.Printf("[DEBUG]")` 已於 2026-03-16 清除：
+- `aws.go` — 移除 2 處 DEBUG log
+- `worker_pool.go` — 移除 3 處 DEBUG log
+- `ssrf.go` — 移除 2 處 DEBUG log + 修復殘留的 zap 語法碎片
 
 ---
 
@@ -100,6 +100,6 @@ Go 引擎中有 7 處 `log.Printf("[DEBUG]")` 未清理：
 | **P0** | 依賴版本未鎖定 | 部署不可重現 |
 | **P1** | CI/CD 不完整 | 缺乏自動化品質閘門 |
 | **P1** | 裸異常捕獲 | 隱藏錯誤、除錯困難 |
-| **P2** | 清理 DEBUG 日誌 | 生產環境日誌汙染 |
+| **P2** | ~~清理 DEBUG 日誌~~ ✅ 已修復 | 7 處 Go DEBUG log 已清除 |
 | **P2** | 完成 TODO 項目 | 功能不完整 |
 | **P3** | 加強 Lint 設定 | 長期程式碼品質 |

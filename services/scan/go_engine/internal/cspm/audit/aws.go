@@ -60,8 +60,6 @@ func (a *AWSAuditor) AuditS3Buckets() ([]string, error) {
 
 	for _, bucket := range output.Buckets {
 		name := *bucket.Name
-		log.Printf("[DEBUG] [AWS Auditor] Auditing bucket: %s\n", name)
-
 		// 2. 檢查 Bucket ACL 配置
 		acl, err := a.client.GetBucketAcl(a.ctx, &s3.GetBucketAclInput{Bucket: &name})
 		if err != nil {
@@ -78,7 +76,6 @@ func (a *AWSAuditor) AuditS3Buckets() ([]string, error) {
 		// 3. 檢查 Public Access Block 配置
 		pab, err := a.client.GetPublicAccessBlock(a.ctx, &s3.GetPublicAccessBlockInput{Bucket: &name})
 		if err != nil {
-			log.Printf("[DEBUG] No Public Access Block for bucket %s (may be default): %v\n", name, err)
 			// 沒有 PAB 配置可能意味著使用預設設置,不一定是風險
 		} else if pab.PublicAccessBlockConfiguration == nil ||
 			!*pab.PublicAccessBlockConfiguration.BlockPublicAcls ||
