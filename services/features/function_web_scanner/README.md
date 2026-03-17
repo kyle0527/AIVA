@@ -1,360 +1,260 @@
 # function_web_scanner - Web 應用綜合掃描器
 
-> **版本**: v1.3.0 | **狀態**: ✅ 完成 | **語言**: Python | **更新**: 2026-01-20
+> **版本**: v2.0.0 | **狀態**: 🔧 開發中 (85%) | **語言**: Python | **更新**: 2026-03-17
 
 ## 🎯 模組概述
 
-綜合性 Web 應用掃描器，整合子域名發現、目錄爆破、技術棧識別等多種偵察技術，為後續漏洞檢測提供完整的攻擊面。
+綜合性 Web 應用掃描器，整合子域名發現、目錄掃描、漏洞偵測、技術棧識別、端口掃描與網站爬蟲，為滲透測試的偵察階段提供完整的攻擊面映射。
 
-### 核心功能
+### 功能完成狀態
 
-✅ **子域名掃描** - 多種方法發現子域名（DNS查詢、證書透明度、搜索引擎）  
-✅ **目錄爆破** - 智能字典生成、自適應路徑發現  
-✅ **技術棧識別** - Web 框架、CMS、服務器、WAF 檢測  
-✅ **端口掃描** - 快速服務識別、版本檢測  
-✅ **爬蟲引擎** - 深度爬取、JavaScript 渲染支持  
-✅ **API 端點發現** - REST/GraphQL/WebSocket 端點識別  
+| 功能 | 狀態 | 說明 |
+|------|------|------|
+| 子域名枚舉 | ✅ 完成 | crt.sh、DNS 暴力、Bing/DDG/RapidDNS 搜尋引擎 |
+| 目錄爆破 | ✅ 完成 | 並行掃描（20 連線），30 個常用路徑字典 |
+| 漏洞偵測 | ✅ 完成 | XSS/SQLi/LFI/CORS/Open Redirect/敏感檔案 |
+| 技術棧識別 | ✅ 完成 | HTTP 標頭、HTML 模式、Cookie、Meta tag、JS 函式庫 |
+| 端口掃描 | ✅ 完成 | Socket 掃描 19 個常用埠、Banner 擷取 |
+| 網站爬蟲 | ✅ 完成 | 廣度優先爬蟲、表單/連結/參數萃取 |
+| 外部工具整合 | ⏳ 待實作 | Amass/FFuf/Nmap/Wappalyzer（尚未串接） |
+| 速率限制 | ⏳ 待實作 | 目前無請求間隔，可能觸發 WAF/IDS |
 
-## 📐 架構設計
+## 📐 實際架構
 
 ```
 function_web_scanner/
 ├── integration_tools/
-│   └── web_tools.py             # 核心掃描引擎
-├── engines/
-│   ├── subdomain_scanner.py     # 子域名掃描引擎
-│   ├── directory_bruteforcer.py # 目錄爆破引擎
-│   ├── tech_detector.py         # 技術棧識別引擎
-│   ├── port_scanner.py          # 端口掃描引擎
-│   └── crawler_engine.py        # 爬蟲引擎
-├── wordlists/
-│   ├── common_directories.txt   # 常見目錄字典
-│   ├── api_endpoints.txt        # API 端點字典
-│   └── tech_fingerprints.json   # 技術指紋庫
-├── scanner_manager.py           # 管理接口（已廢棄）
+│   ├── __init__.py                  # 匯出 WebAttackManager 等核心類別
+│   └── web_tools.py                 # 全部核心實作（1,100+ 行）
+├── scanners/
+│   ├── __init__.py
+│   ├── subdomain_scanner.py         # SubdomainScanner（基於 crt.sh + DNS）
+│   ├── directory_bruteforcer.py     # DirectoryBruteforcer（5000 路徑字典）
+│   ├── tech_detector.py             # TechDetector（HTTP 標頭 + HTML 模式）
+│   ├── port_scanner.py              # PortScanner（Socket，19 埠）
+│   └── web_crawler.py               # WebCrawler（廣度優先）
+├── __init__.py                      # 模組入口
 └── README.md
 ```
 
+> **注意**：`wordlists/`、`engines/` 目錄**不存在**。字典硬編碼於 `web_tools.py` 與各 scanner 檔案中。
+
 ## 🚀 快速開始
 
-### 基本使用
+### 基本使用（推薦入口）
 
 ```python
-from services.features.function_web_scanner.integration_tools.web_tools import WebAttackManager
+import asyncio
+from services.features.function_web_scanner import WebAttackManager
 
-# 創建掃描器
-manager = WebAttackManager()
+async def main():
+    manager = WebAttackManager()
 
-# 綜合掃描
-result = await manager.comprehensive_scan(
-    target="https://example.com",
-    options={
-        "subdomain_scan": True,
-        "directory_scan": True,
-        "tech_detect": True,
-        "port_scan": True
-    }
-)
+    # 綜合掃描（唯一完整入口）
+    result = await manager.comprehensive_scan(
+        target_url="https://example.com",
+        options={
+            "subdomain_scan": True,      # 子域名枚舉
+            "directory_scan": True,      # 目錄爆破
+            "vulnerability_scan": True,  # 漏洞偵測
+            "technology_scan": True,     # 技術棧識別
+        }
+    )
 
-print(f"發現 {len(result['subdomains'])} 個子域名")
-print(f"發現 {len(result['directories'])} 個目錄")
-print(f"識別 {len(result['technologies'])} 個技術")
+    print(f"子域名: {len(result['subdomains'])}")
+    print(f"目錄:   {len(result['directories'])}")
+    print(f"漏洞:   {len(result['vulnerabilities'])}")
+    print(f"技術棧: {len(result['technologies'])}")
+
+asyncio.run(main())
 ```
 
-### CLI 調用
+### 單獨使用子掃描器
 
-```bash
-# external_executor 調用
-python aiva_external_executor.py \
-    --lang python \
-    --module web_scanner \
-    --target https://example.com \
-    --comprehensive
+```python
+import asyncio
+from services.features.function_web_scanner import (
+    SubdomainScanner,
+    DirectoryBruteforcer,
+    TechDetector,
+    PortScanner,
+    WebCrawler,
+)
+
+async def main():
+    # 子域名枚舉
+    scanner = SubdomainScanner()
+    subdomains = await scanner.enumerate("example.com")
+
+    # 目錄掃描
+    brute = DirectoryBruteforcer()
+    dirs = await brute.scan("https://example.com")
+
+    # 技術棧識別
+    tech = TechDetector()
+    techs = await tech.detect("https://example.com")
+
+    # 端口掃描
+    port = PortScanner()
+    ports = await port.scan("example.com")
+
+    # 網站爬蟲
+    crawler = WebCrawler()
+    links = await crawler.crawl("https://example.com", max_depth=2)
+
+asyncio.run(main())
 ```
 
 ## 🔧 功能詳解
 
-### 1. 子域名掃描
+### 1. 子域名枚舉（SubdomainEnumerator）
 
-多種方法發現目標子域名：
+並行執行 4 種枚舉方法（30 秒總超時）：
 
-**被動掃描**:
-- 證書透明度日誌 (crt.sh)
-- DNS 數據庫查詢 (DNSDumpster)
-- 搜索引擎爬取 (Google, Bing)
-- 第三方 API (VirusTotal, SecurityTrails)
+| 方法 | 資料來源 |
+|------|---------|
+| Certificate Transparency | crt.sh JSON API |
+| DNS 暴力破解 | 20 個常見前綴（www/mail/api/dev/test/shop 等） |
+| 搜尋引擎 | Bing、DuckDuckGo HTML、RapidDNS |
+| 常見子域名 HTTP 探測 | 16 個常見子域名直接 HTTP 連線驗證 |
 
-**主動掃描**:
-- DNS 暴力破解
-- DNS 區域傳輸測試
-- DNSSEC 枚舉
+### 2. 目錄爆破（DirectoryScanner）
 
-```python
-# 子域名掃描
-result = await manager.scan_subdomains(
-    domain="example.com",
-    options={
-        "passive": True,      # 被動掃描
-        "active": True,       # 主動掃描
-        "wordlist": "subdomains-top1million.txt",
-        "recursive": True,    # 遞歸掃描發現的子域名
-        "dns_server": "8.8.8.8"
-    }
-)
+- 並行 20 連線，逾時 5 秒/請求
+- 預設 30 個路徑：`admin/`、`wp-admin/`、`phpmyadmin/`、`robots.txt`、`.htaccess`、`phpinfo.php` 等
+- 回報狀態碼 200 / 301 / 302 / 403 的路徑
 
-for subdomain in result['subdomains']:
-    print(f"{subdomain['name']} -> {subdomain['ip']}")
-```
+### 3. 漏洞偵測（VulnerabilityScanner / WebVulnerabilityScanner）
 
-### 2. 目錄爆破
+並行執行 8 類漏洞掃描，含基線比對減少誤報：
 
-智能目錄和文件發現：
+| 掃描類型 | 方法 | 信心度 |
+|----------|------|--------|
+| Reflected XSS | 4 個 payload，驗證未編碼反射，排除 HTML 轉義 | High |
+| SQL Injection (Error-based) | 10+ SQL 錯誤模式比對 | High |
+| SQL Injection (Boolean-based) | 回應長度與基線差異 > 15% 且狀態碼不同 | Medium |
+| Directory Traversal / LFI | 4 個路徑 + 2 個以上內容指標驗證 | High |
+| CORS 配置錯誤 | 任意來源反射 / 萬用字元 + credentials / null origin | High |
+| Open Redirect | 9 個常見重定向參數測試 | High |
+| Missing Security Headers | HSTS/CSP/X-Frame-Options/X-Content-Type 等 6 項 | High |
+| Sensitive File Exposure | `.env`/`.git/config`/`phpinfo.php`/`.htpasswd` 等 7 個路徑 | High |
 
-**特性**:
-- 自適應字典（根據已發現內容調整）
-- 模糊匹配（404 頁面檢測）
-- 遞歸掃描（發現目錄後深入掃描）
-- 狀態碼分析（200/301/302/403/500）
-- 響應大小過濾（識別真實內容）
+> `WebVulnerabilityScanner` 為 `VulnerabilityScanner` 的別名，兩者完全相同。
 
-```python
-# 目錄爆破
-result = await manager.scan_directories(
-    target="https://example.com",
-    options={
-        "wordlist": "common.txt",
-        "extensions": [".php", ".jsp", ".asp"],
-        "recursive": True,
-        "recursive_depth": 2,
-        "threads": 20,
-        "timeout": 10
-    }
-)
+### 4. 技術棧識別（TechDetector）
 
-for directory in result['found']:
-    print(f"{directory['path']} [{directory['status_code']}]")
-```
+| 類別 | 偵測內容 |
+|------|---------|
+| Web 服務器 | Server 標頭（Apache/Nginx/IIS/Caddy 等） |
+| 框架/CMS | WordPress/Drupal/Joomla/Laravel/Django（HTML 模式） |
+| JavaScript 框架 | React/Vue/Angular（腳本名稱/標籤） |
+| JavaScript 函式庫 | jQuery/Bootstrap/Lodash/Moment.js |
+| CSS 框架 | Bootstrap/Foundation/Bulma |
+| Cookie 特徵 | PHPSESSID → PHP；JSESSIONID → Java Servlet |
+| Meta 標籤 | generator 標籤 |
 
-### 3. 技術棧識別
+### 5. 端口掃描（PortScanner）
 
-識別目標使用的技術和服務：
+Socket 連線掃描 19 個常用埠：`21 22 23 25 53 80 110 143 443 465 587 993 995 3306 3389 5432 6379 8080 8443`
 
-**檢測內容**:
-- **Web 服務器**: Apache, Nginx, IIS, Tomcat
-- **Web 框架**: Django, Flask, Laravel, Spring Boot
-- **CMS**: WordPress, Drupal, Joomla
-- **編程語言**: PHP, Python, Ruby, Java, .NET
-- **JavaScript 框架**: React, Vue, Angular
-- **WAF**: Cloudflare, AWS WAF, Akamai
-- **CDN**: Cloudflare, Fastly, Akamai
+**輸出**：每個開放埠的埠號、服務名稱、Banner 字串（若有）
 
-```python
-# 技術棧識別
-result = await manager.detect_technologies(
-    target="https://example.com",
-    options={
-        "detailed": True,      # 詳細檢測
-        "version_detect": True # 版本識別
-    }
-)
+### 6. 網站爬蟲（WebCrawler）
 
-for tech in result['technologies']:
-    print(f"{tech['name']} {tech['version']}")
-    print(f"  置信度: {tech['confidence']}%")
-    print(f"  已知漏洞: {len(tech['known_cves'])}")
-```
-
-### 4. 端口掃描
-
-快速服務識別和版本檢測：
-
-**掃描模式**:
-- **快速掃描**: Top 100 常用端口
-- **標準掃描**: Top 1000 端口
-- **全面掃描**: 所有 65535 端口
-- **服務掃描**: 識別服務類型和版本
-
-```python
-# 端口掃描
-result = await manager.scan_ports(
-    target="example.com",
-    options={
-        "mode": "standard",    # fast/standard/full
-        "service_detection": True,
-        "version_detection": True,
-        "script_scan": False   # Nmap 腳本掃描
-    }
-)
-
-for port in result['open_ports']:
-    print(f"{port['number']}/tcp {port['service']} {port['version']}")
-```
-
-### 5. 爬蟲引擎
-
-深度爬取目標網站：
-
-**特性**:
-- JavaScript 渲染支持（Playwright）
-- 表單參數提取
-- API 端點發現
-- 鏈接關係圖
-- 敏感路徑識別
-
-```python
-# 網站爬蟲
-result = await manager.crawl_website(
-    target="https://example.com",
-    options={
-        "max_depth": 3,
-        "max_pages": 500,
-        "js_rendering": True,
-        "extract_forms": True,
-        "extract_apis": True,
-        "follow_external": False
-    }
-)
-
-print(f"爬取 {result['total_pages']} 個頁面")
-print(f"發現 {len(result['forms'])} 個表單")
-print(f"發現 {len(result['api_endpoints'])} 個 API 端點")
-```
+廣度優先爬蟲，萃取：
+- 所有超連結（`<a href>`）
+- 表單（`<form action>`、表單欄位）
+- URL 中的查詢參數
+- 腳本與資源路徑
 
 ## 📊 輸出格式
 
+`comprehensive_scan()` 回傳 dict：
+
 ```json
 {
-  "success": true,
   "target": "https://example.com",
-  "scan_time": "45.2s",
-  "results": {
-    "subdomains": [
-      {
-        "name": "api.example.com",
-        "ip": "192.0.2.1",
-        "source": "crt.sh",
-        "status": "active"
-      }
-    ],
-    "directories": [
-      {
-        "path": "/admin",
-        "status_code": 403,
-        "size": 1024,
-        "redirect": null
-      }
-    ],
-    "technologies": [
-      {
-        "name": "Nginx",
-        "version": "1.21.0",
-        "category": "web_server",
-        "confidence": 100,
-        "known_cves": ["CVE-2021-23017"]
-      }
-    ],
-    "open_ports": [
-      {
-        "number": 443,
-        "service": "https",
-        "version": "OpenSSL 1.1.1"
-      }
-    ]
-  },
-  "summary": {
-    "total_subdomains": 12,
-    "total_directories": 45,
-    "total_technologies": 8,
-    "total_open_ports": 3
+  "timestamp": "2026-03-17T12:00:00",
+  "subdomains": ["api.example.com", "mail.example.com"],
+  "directories": [
+    {
+      "path": "admin/",
+      "url": "https://example.com/admin/",
+      "status": 403,
+      "size": 0
+    }
+  ],
+  "vulnerabilities": [
+    {
+      "type": "Missing Security Header",
+      "severity": "Medium",
+      "confidence": "High",
+      "location": "https://example.com",
+      "payload": "",
+      "description": "Missing Strict-Transport-Security header - Enforces HTTPS",
+      "recommendation": "Add Strict-Transport-Security: max-age=..."
+    }
+  ],
+  "technologies": ["Server: nginx/1.21.0", "Framework: WordPress"],
+  "scan_summary": {
+    "total_subdomains": 2,
+    "total_directories": 5,
+    "total_vulnerabilities": 3,
+    "total_technologies": 4,
+    "high_severity_vulns": 1,
+    "medium_severity_vulns": 2,
+    "low_severity_vulns": 0
   }
 }
 ```
 
-## 🎯 掃描策略
+## ⏳ 待實作功能
 
-### 快速掃描（Bug Bounty 初步偵察）
+以下功能在現有 README 或代碼中曾被提及，但**尚未實作**：
 
-```python
-result = await manager.quick_scan(
-    target="https://example.com",
-    options={
-        "timeout": 300  # 5分鐘快速掃描
-    }
-)
-# 包含: 子域名、常見目錄、技術棧
-```
-
-### 深度掃描（完整攻擊面映射）
-
-```python
-result = await manager.deep_scan(
-    target="https://example.com",
-    options={
-        "timeout": 3600  # 1小時深度掃描
-    }
-)
-# 包含: 所有功能 + 遞歸掃描 + JS 渲染
-```
-
-### 隱蔽掃描（規避 WAF/IDS）
-
-```python
-result = await manager.stealth_scan(
-    target="https://example.com",
-    options={
-        "rate_limit": 5,      # 每秒5個請求
-        "user_agent_rotate": True,
-        "proxy": "socks5://127.0.0.1:1080"
-    }
-)
-```
-
-## 🛡️ 防護規避
-
-- **速率限制**: 智能延遲避免觸發 WAF
-- **UA 輪換**: 模擬不同瀏覽器
-- **代理支持**: HTTP/SOCKS5 代理鏈
-- **Headers 偽裝**: 隨機化請求頭
-- **錯誤重試**: 自動處理 429/503
+- **外部工具整合**：Amass、Subfinder、FFuf、Wappalyzer、Nmap、Playwright（README 曾錯誤宣稱已整合）
+- **速率限制**：目前掃描不含請求間隔，可能觸發 WAF/IDS
+- **隱蔽掃描模式**（`stealth_scan()`）：不存在，切勿在程式碼中呼叫
+- **快速/深度掃描捷徑**（`quick_scan()`、`deep_scan()`）：不存在，請使用 `comprehensive_scan()` 並調整 `options`
+- **搜尋引擎枚舉進階**（Google dork、VirusTotal API）：需 API 金鑰
+- **DNS 區域傳輸測試**
+- **遞歸目錄掃描**
+- **JavaScript 渲染**（Playwright）
 
 ## 🎯 適用場景
 
-✅ **Bug Bounty** - 初步偵察和攻擊面映射  
-✅ **滲透測試** - 信息收集階段  
-✅ **安全審計** - 暴露面分析  
-✅ **Red Team** - 外部偵察  
+✅ **Bug Bounty** — 偵察階段攻擊面映射
+✅ **滲透測試** — 資訊收集與漏洞初步探測
+✅ **安全審計** — 暴露面分析
+✅ **Red Team** — 外部偵察
 
-## 📈 性能優化
+## 🔗 相關標準
 
-- ⚡ **異步並發**: 同時處理多個目標
-- 🎯 **智能去重**: 避免重複掃描
-- 💾 **結果緩存**: 加速重複查詢
-- 🔄 **斷點續掃**: 支持暫停/恢復
-
-## 🔗 整合工具
-
-內建整合：
-- **Amass** - 子域名發現
-- **Subfinder** - 被動子域名掃描
-- **FFuf** - 目錄爆破
-- **Wappalyzer** - 技術棧識別
-- **Nmap** - 端口掃描
-- **Playwright** - JavaScript 渲染
+- [OWASP Testing Guide - Information Gathering](https://owasp.org/www-project-web-security-testing-guide/stable/4-Web_Application_Security_Testing/01-Information_Gathering/)
+- [OWASP Top 10](https://owasp.org/www-project-top-ten/)
+- [WSTG-INPV-01 (XSS)](https://owasp.org/www-project-web-security-testing-guide/stable/4-Web_Application_Security_Testing/07-Input_Validation_Testing/01-Testing_for_Reflected_Cross_Site_Scripting)
+- [WSTG-INPV-05 (SQLi)](https://owasp.org/www-project-web-security-testing-guide/stable/4-Web_Application_Security_Testing/07-Input_Validation_Testing/05-Testing_for_SQL_Injection)
 
 ## 📝 更新日誌
 
+### v2.0.0 (2026-03-17)
+- ✅ 新增 `WebVulnerabilityScanner` 別名（修正 import 錯誤）
+- ✅ 新增 `SubdomainResult`、`DirectoryScanResult` dataclass（修正 import 缺失）
+- ✅ 實作 `_enumerate_search_engines()`（Bing/DuckDuckGo/RapidDNS）
+- ✅ 全面重寫 `VulnerabilityScanner`：基線比對、結果去重、信心度
+- ✅ 新增 CORS 配置錯誤偵測
+- ✅ 新增開放重定向偵測（9 個常見參數）
+- ✅ 新增敏感檔案暴露偵測（.env/.git/phpinfo 等）
+- ✅ 改進 XSS 偵測（反射驗證 + HTML 轉義排除）
+- ✅ 改進 SQLi 偵測（錯誤訊息模式 + Boolean 差異分析）
+- ✅ 更正 README（移除不存在的功能宣稱、修正架構圖）
+
 ### v1.3.0 (2026-01-20)
-- ✅ 創建完整 README 文檔
-- ✅ 移除 scanner_manager.py 統一包裝層
-- ✅ 完善子域名掃描引擎
-- ✅ 完善目錄爆破引擎
-- ✅ 完善技術棧識別引擎
-- ✅ 添加端口掃描功能
-- ✅ 添加爬蟲引擎
+- ✅ 移除 `scanner_manager.py`（廢棄）
+- ✅ 完善子域名、目錄、技術棧、端口、爬蟲引擎
 
 ### v1.2.0 (2025-12-17)
-- ✅ WebScannerManager 架構完成
-- ⚠️ 缺少 README
+- ✅ WebAttackManager 架構完成
 
 ---
 
