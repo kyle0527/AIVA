@@ -13,7 +13,7 @@
 | COMPLETE (功能完整) | 11 | 可正常匯入與執行 |
 | PARTIAL (部分完成) | 2 | 缺外部依賴或 Handler 未實現 |
 | STUB (佔位) | 1 | 僅有 Rust CLI，無 Python 實現 |
-| BROKEN (匯入失敗) | 3 | `__init__.py` 缺失或引用不存在的模組 |
+| ~~BROKEN~~ ✅ 已修復 | 0 | 原 3 個模組已全部修復 (2026-03-17) |
 
 ---
 
@@ -47,29 +47,21 @@
 |------|------|------|
 | `function_crypto` | 密碼學分析 | 純 Rust CLI，Python `__init__.py` 為空殼 |
 
-### BROKEN — 3 個模組 (需立即修復)
+### ~~BROKEN~~ ✅ 已修復 — 原 3 個模組 (2026-03-17 修復)
 
-| 模組 | 問題 | 影響 |
+| 模組 | 原問題 | 修復方式 |
 |------|------|------|
-| `function_exploit` | **缺少 `__init__.py`** | 無法作為 Python package 匯入 |
-| `function_postex` | `__init__.py` 引用不存在的 `postex_manager.py` | `ModuleNotFoundError` |
-| `function_web_scanner` | `__init__.py` 引用不存在的 `scanner_manager.py` | `ModuleNotFoundError` |
+| `function_exploit` | ~~缺少 `__init__.py`~~ | ✅ 新增 `__init__.py`，匯出 `ExploitManager` |
+| `function_postex` | ~~引用已廢棄的 `postex_manager.py`~~ | ✅ 改為匯入 `PostExDetector` + 三引擎 (依 README v1.3.0) |
+| `function_web_scanner` | ~~引用已廢棄的 `scanner_manager.py`~~ | ✅ 改為匯入 `WebAttackManager` + 5 掃描器 (依 README v1.3.0) |
 
-**詳細說明：**
+**修復說明：**
 
-1. **function_exploit** — 有 5 個 Python 檔（`exploit_manager.py`, `attack_executor.py`, `payload_generator.py`, `attack_validator.py`, `bizlogic_attack_executor.py`），但完全沒有 `__init__.py`，無法被其他模組匯入。
+1. **function_exploit** — 新增 `__init__.py`，匯出 `ExploitManager`（來自 `exploit_manager.py`）。
 
-2. **function_postex** — `__init__.py` 第 16 行：
-   ```python
-   from services.features.function_postex.postex_manager import PostExManager, scan_target
-   ```
-   但 `postex_manager.py` 不存在。現有檔案結構有 `detector/`、`engines/`、`config/` 等子目錄，疑似重構不完整。
+2. **function_postex** — README v1.3.0 明確說明 `postex_manager.py` 已廢棄移除。新入口為 `detector/postex_detector.py` 的 `PostExDetector`，搭配 `engines/` 下三引擎。
 
-3. **function_web_scanner** — `__init__.py` 第 21 行：
-   ```python
-   from services.features.function_web_scanner.scanner_manager import WebScannerManager, scan_target
-   ```
-   但 `scanner_manager.py` 不存在。`scanners/` 下有 5 個掃描器，但缺少統一管理器。
+3. **function_web_scanner** — README v1.3.0 明確說明 `scanner_manager.py` 已廢棄移除。新入口為 `integration_tools/web_tools.py` 的 `WebAttackManager`，搭配 `scanners/` 下 5 個掃描引擎。
 
 ---
 
@@ -146,12 +138,12 @@
 
 ### 需立即修復 (P0)
 
-| # | 問題 | 模組 | 影響 |
+| # | 問題 | 模組 | 狀態 |
 |---|------|------|------|
-| 1 | 缺少 `__init__.py` | `function_exploit` | 無法匯入 |
-| 2 | 引用不存在的 `postex_manager.py` | `function_postex` | `ModuleNotFoundError` |
-| 3 | 引用不存在的 `scanner_manager.py` | `function_web_scanner` | `ModuleNotFoundError` |
-| 4 | ~~`commander/__init__.py:90` 引用不存在的 `rag_handler.py`~~ ✅ 已修復 | `task_planning` | 存取 `plan_builder` 時 `ImportError` |
+| 1 | ~~缺少 `__init__.py`~~ | `function_exploit` | ✅ 已修復 |
+| 2 | ~~引用已廢棄的 `postex_manager.py`~~ | `function_postex` | ✅ 已修復 |
+| 3 | ~~引用已廢棄的 `scanner_manager.py`~~ | `function_web_scanner` | ✅ 已修復 |
+| 4 | ~~`commander/__init__.py:90` 引用不存在的 `rag_handler.py`~~ | `task_planning` | ✅ 已修復 |
 
 ### 功能待完成 (P1)
 
