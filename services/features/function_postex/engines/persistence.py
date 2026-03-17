@@ -237,15 +237,187 @@ class PersistenceEngine:
     def _check_windows_persistence(self) -> List[PersistenceVector]:
         """Windows 持久性檢查"""
         vectors = []
-        
-        logger.info("Windows persistence checks not fully implemented")
-        
-        # Windows persistence mechanisms:
+
         # 1. Registry Run Keys
+        vectors.extend(self._check_registry_run_keys())
+
         # 2. Startup Folder
+        vectors.extend(self._check_startup_folder())
+
         # 3. Scheduled Tasks
+        vectors.extend(self._check_windows_scheduled_tasks_persistence())
+
         # 4. Windows Services
-        # 5. WMI Event Subscriptions
-        # 6. DLL Hijacking
-        
+        vectors.extend(self._check_windows_services_persistence())
+
+        return vectors
+
+    def _check_registry_run_keys(self) -> List[PersistenceVector]:
+        """檢查 Registry Run Keys 持久性機會"""
+        import subprocess
+        vectors = []
+
+        run_keys = [
+            (r"HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Run", "Current User Run", Severity.HIGH),
+            (r"HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\RunOnce", "Current User RunOnce", Severity.HIGH),
+            (r"HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Run", "Local Machine Run", Severity.CRITICAL),
+            (r"HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\RunOnce", "Local Machine RunOnce", Severity.CRITICAL),
+        ]
+
+        for reg_path, description, severity in run_keys:
+            try:
+                # Check if we can write to this registry key
+                result = subprocess.run(
+                    ["reg", "query", reg_path],
+                    capture_output=True, text=True, timeout=10
+                )
+                if result.returncode == 0:
+                    # Try a harmless write test (query only, assess by hive)
+                    is_hkcu = reg_path.startswith("HKCU")
+                    if is_hkcu:
+                        # HKCU is always writable by the current user
+                        vectors.append(PersistenceVector(
+                            id=f"PERSIST-WIN-REGRUN-{description.replace(' ', '_').upper()}",
+                            severity=severity,
+                            confidence=Confidence.HIGH,
+                            title=f"Writable Registry Run Key: {description}",
+                            description=f"Registry key {reg_path} is writable, allowing auto-start persistence",
+                            evidence={"registry_path": reg_path, "writable": True},
+                            recommendation="Monitor registry Run keys for unauthorized entries",
+                            technique="registry_run",
+                            persistence_commands=[
+                                f'reg add "{reg_path}" /v Backdoor /t REG_SZ /d "C:\\Windows\\Temp\\payload.exe" /f',
+                                "# Payload executes on every user login"
+                            ]
+                        ))
+                    else:
+                        # HKLM requires admin; check existing entries for suspicious items
+                        entries = result.stdout.strip()
+                        if entries:
+                            vectors.append(PersistenceVector(
+                                id=f"PERSIST-WIN-REGRUN-{description.replace(' ', '_').upper()}",
+                                severity=Severity.MEDIUM,
+                                confidence=Confidence.MEDIUM,
+                                title=f"Registry Run Key Exists: {description}",
+                                description=f"Registry key {reg_path} has entries; verify all are legitimate",
+                                evidence={"registry_path": reg_path, "entries": entries[:500]},
+                                recommendation="Audit all entries in registry Run keys",
+                                technique="registry_run",
+                                persistence_commands=[
+                                    f'reg add "{reg_path}" /v Backdoor /t REG_SZ /d "C:\\Windows\\Temp\\payload.exe" /f'
+                                ]
+                            ))
+            except FileNotFoundError:
+                logger.debug("reg command not available")
+            except Exception as e:
+                logger.debug(f"Registry check failed for {reg_path}: {e}")
+
+        return vectors
+
+    def _check_startup_folder(self) -> List[PersistenceVector]:
+        """檢查啟動資料夾持久性"""
+        vectors = []
+
+        startup_paths = []
+        # User startup folder
+        appdata = os.environ.get("APPDATA", "")
+        if appdata:
+            startup_paths.append(
+                (os.path.join(appdata, "Microsoft", "Windows", "Start Menu", "Programs", "Startup"),
+                 "User Startup Folder", Severity.HIGH)
+            )
+        # All Users startup folder
+        programdata = os.environ.get("PROGRAMDATA", r"C:\ProgramData")
+        startup_paths.append(
+            (os.path.join(programdata, "Microsoft", "Windows", "Start Menu", "Programs", "Startup"),
+             "All Users Startup Folder", Severity.CRITICAL)
+        )
+
+        for startup_path, description, severity in startup_paths:
+            if os.path.exists(startup_path) and os.access(startup_path, os.W_OK):
+                vectors.append(PersistenceVector(
+                    id=f"PERSIST-WIN-STARTUP-{description.replace(' ', '_').upper()}",
+                    severity=severity,
+                    confidence=Confidence.HIGH,
+                    title=f"Writable {description}",
+                    description=f"Startup folder {startup_path} is writable, programs placed here execute on login",
+                    evidence={"path": startup_path, "writable": True},
+                    recommendation="Restrict write access to startup folders and monitor for changes",
+                    technique="startup_folder",
+                    persistence_commands=[
+                        f'copy payload.exe "{startup_path}\\payload.exe"',
+                        "# Payload runs on next user login"
+                    ]
+                ))
+
+        return vectors
+
+    def _check_windows_scheduled_tasks_persistence(self) -> List[PersistenceVector]:
+        """檢查排程工作持久性機會"""
+        import subprocess
+        vectors = []
+
+        try:
+            # Check if we can create scheduled tasks
+            result = subprocess.run(
+                ["schtasks", "/query", "/fo", "CSV"],
+                capture_output=True, text=True, timeout=30
+            )
+            if result.returncode == 0:
+                # User can query tasks; check if creation is possible
+                vectors.append(PersistenceVector(
+                    id="PERSIST-WIN-SCHTASK",
+                    severity=Severity.HIGH,
+                    confidence=Confidence.MEDIUM,
+                    title="Scheduled Task Creation Possible",
+                    description="Current user can query scheduled tasks; task creation may be available for persistence",
+                    evidence={"schtasks_accessible": True},
+                    recommendation="Restrict schtasks access and monitor for unauthorized task creation",
+                    technique="scheduled_task",
+                    persistence_commands=[
+                        'schtasks /create /tn "Backdoor" /tr "C:\\Windows\\Temp\\payload.exe" /sc onlogon /ru SYSTEM',
+                        "# Task runs as SYSTEM on every logon"
+                    ]
+                ))
+        except FileNotFoundError:
+            logger.debug("schtasks not available")
+        except Exception as e:
+            logger.debug(f"Scheduled tasks check failed: {e}")
+
+        return vectors
+
+    def _check_windows_services_persistence(self) -> List[PersistenceVector]:
+        """檢查 Windows 服務持久性機會"""
+        import subprocess
+        vectors = []
+
+        try:
+            # Check if sc.exe is accessible for service creation
+            result = subprocess.run(
+                ["sc", "query", "state=", "all"],
+                capture_output=True, text=True, timeout=30
+            )
+            if result.returncode == 0:
+                # Count services to provide context
+                service_count = result.stdout.count("SERVICE_NAME:")
+                vectors.append(PersistenceVector(
+                    id="PERSIST-WIN-SERVICE",
+                    severity=Severity.HIGH,
+                    confidence=Confidence.MEDIUM,
+                    title="Windows Service Management Accessible",
+                    description=f"Can query {service_count} services; service creation may be available for persistence",
+                    evidence={"service_count": service_count, "sc_accessible": True},
+                    recommendation="Restrict service creation permissions and monitor for new services",
+                    technique="windows_service",
+                    persistence_commands=[
+                        'sc create Backdoor binPath= "C:\\Windows\\Temp\\payload.exe" start= auto',
+                        "sc start Backdoor",
+                        "# Service runs with SYSTEM privileges on boot"
+                    ]
+                ))
+        except FileNotFoundError:
+            logger.debug("sc command not available")
+        except Exception as e:
+            logger.debug(f"Service check failed: {e}")
+
         return vectors

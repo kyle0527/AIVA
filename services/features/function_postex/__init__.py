@@ -5,7 +5,7 @@ Post-Exploitation Module
 
 ⚠️ 警告: 僅用於授權測試
 架構: Detector + 多引擎
-模組版本: 1.3.0
+模組版本: 2.0.0
 
 使用方式:
     from services.features.function_postex import PostExDetector
@@ -35,7 +35,7 @@ __all__ = [
     "PersistenceEngine",
 ]
 
-__version__ = "1.3.0"
+__version__ = "2.0.0"
 __status__ = "in_development"
 __architecture__ = "detector-based"
 __last_updated__ = "2026-03-17"
@@ -43,4 +43,7 @@ __last_updated__ = "2026-03-17"
 # 架構說明 (2026-03-17)
 # ✅ Detector-based 架構（PostExDetector 為主入口）
 # ✅ 三引擎: PrivilegeEscalation / LateralMovement / Persistence
+# ✅ detectors/ 路徑已統一至 detector/（重新匯出以維持相容）
+# ✅ engines/__init__.py 匯出兩組引擎（結構化 + 整合）
+# ✅ Windows 權限提升與持久化已實作
 # ❌ postex_manager.py 已廢棄 (v1.3.0 移除)

@@ -112,6 +112,28 @@ class WebTarget:
 
 
 @dataclass
+class SubdomainResult:
+    """子域名枚舉結果"""
+    domain: str
+    subdomain: str
+    ip_addresses: List[str] = field(default_factory=list)
+    source: str = ""
+    confidence: float = 0.0
+
+
+@dataclass
+class DirectoryScanResult:
+    """目錄掃描結果"""
+    path: str
+    url: str
+    status_code: int = 0
+    content_length: int = 0
+    content_type: str = ""
+    redirect_url: str = ""
+    severity: str = "info"
+
+
+@dataclass
 class ScanResult:
     """掃描結果資料結構"""
     target: str
@@ -196,10 +218,62 @@ class SubdomainEnumerator:
                 continue
     
     async def _enumerate_search_engines(self, domain: str) -> None:
-        """搜索引擎枚舉 (模擬)"""
-        # 這裡可以實現 Google、Bing 等搜索引擎的查詢邏輯
-        # 由於 API 限制，這裡僅作為示例結構
-        pass
+        """搜索引擎枚舉 — 透過公開搜尋 API 發現子域名"""
+        if not self.session:
+            return
+
+        # 1. Bing Search (不需要 API key 的公開搜尋)
+        try:
+            bing_url = f"https://www.bing.com/search?q=site%3A{domain}&count=50"
+            headers = {
+                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
+            }
+            async with self.session.get(bing_url, headers=headers) as response:
+                if response.status == 200:
+                    content = await response.text()
+                    # 從搜尋結果中萃取子域名
+                    pattern = re.compile(
+                        r'https?://([a-zA-Z0-9][-a-zA-Z0-9]*\.' + re.escape(domain) + r')'
+                    )
+                    matches = pattern.findall(content)
+                    for match in matches:
+                        self.found_subdomains.add(match)
+        except Exception as e:
+            logger.debug(f"Bing 搜尋枚舉失敗: {e}")
+
+        # 2. DuckDuckGo HTML search
+        try:
+            ddg_url = f"https://html.duckduckgo.com/html/?q=site%3A{domain}"
+            headers = {
+                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
+            }
+            async with self.session.get(ddg_url, headers=headers) as response:
+                if response.status == 200:
+                    content = await response.text()
+                    pattern = re.compile(
+                        r'https?://([a-zA-Z0-9][-a-zA-Z0-9]*\.' + re.escape(domain) + r')'
+                    )
+                    matches = pattern.findall(content)
+                    for match in matches:
+                        self.found_subdomains.add(match)
+        except Exception as e:
+            logger.debug(f"DuckDuckGo 搜尋枚舉失敗: {e}")
+
+        # 3. RapidDNS (免費子域名資料庫)
+        try:
+            rapiddns_url = f"https://rapiddns.io/subdomain/{domain}?full=1"
+            async with self.session.get(rapiddns_url) as response:
+                if response.status == 200:
+                    content = await response.text()
+                    pattern = re.compile(
+                        r'([a-zA-Z0-9][-a-zA-Z0-9]*\.' + re.escape(domain) + r')'
+                    )
+                    matches = pattern.findall(content)
+                    for match in matches:
+                        if match.endswith(domain):
+                            self.found_subdomains.add(match)
+        except Exception as e:
+            logger.debug(f"RapidDNS 枚舉失敗: {e}")
     
     async def _enumerate_common_subdomains(self, domain: str) -> None:
         """枚舉常見子域名"""
@@ -288,147 +362,369 @@ class DirectoryScanner:
 
 
 class VulnerabilityScanner:
-    """漏洞掃描器"""
-    
+    """漏洞掃描器 — 執行多類型 Web 漏洞檢測並分析回應"""
+
     def __init__(self):
         self.vulnerabilities: List[Dict[str, Any]] = []
-        
+        self.session: Optional[aiohttp.ClientSession] = None
+        self._baseline_content: str = ""
+        self._baseline_status: int = 0
+
     async def scan_vulnerabilities(self, target_url: str) -> List[Dict[str, Any]]:
         """掃描常見漏洞"""
         try:
             self.vulnerabilities.clear()
-            
-            # 並行執行不同類型的漏洞掃描
-            tasks = [
-                self._scan_xss(target_url),
-                self._scan_sql_injection(target_url),
-                self._scan_directory_traversal(target_url),
-                self._scan_security_headers(target_url),
-                self._scan_clickjacking(target_url)
-            ]
-            
-            async with aiohttp.ClientSession(timeout=aiohttp.ClientTimeout(total=10)) as session:
+
+            async with aiohttp.ClientSession(timeout=aiohttp.ClientTimeout(total=15)) as session:
                 self.session = session
+
+                # 取得基線回應（用於比較）
+                await self._get_baseline(target_url)
+
+                # 並行執行不同類型的漏洞掃描
+                tasks = [
+                    self._scan_xss(target_url),
+                    self._scan_sql_injection(target_url),
+                    self._scan_directory_traversal(target_url),
+                    self._scan_security_headers(target_url),
+                    self._scan_clickjacking(target_url),
+                    self._scan_cors_misconfiguration(target_url),
+                    self._scan_open_redirect(target_url),
+                    self._scan_sensitive_files(target_url),
+                ]
+
                 await asyncio.gather(*tasks, return_exceptions=True)
-            
+
+            # 去重（同類型同 payload 只保留一筆）
+            seen = set()
+            deduped = []
+            for vuln in self.vulnerabilities:
+                key = (vuln.get('type', ''), vuln.get('payload', ''))
+                if key not in seen:
+                    seen.add(key)
+                    deduped.append(vuln)
+            self.vulnerabilities = deduped
+
             return self.vulnerabilities
-            
+
         except Exception as e:
             logger.error(f"漏洞掃描失敗: {e}")
             return []
-    
+
+    async def _get_baseline(self, target_url: str) -> None:
+        """取得基線回應用於比較"""
+        try:
+            if not self.session:
+                return
+            async with self.session.get(target_url) as response:
+                self._baseline_content = await response.text()
+                self._baseline_status = response.status
+        except Exception:
+            self._baseline_content = ""
+            self._baseline_status = 0
+
+    def _is_reflected(self, payload: str, content: str) -> bool:
+        """檢查 payload 是否在回應中被反射（未編碼）"""
+        return payload in content
+
+    def _response_differs(self, content: str) -> bool:
+        """檢查回應是否與基線有顯著差異"""
+        if not self._baseline_content:
+            return False
+        baseline_len = len(self._baseline_content)
+        if baseline_len == 0:
+            return len(content) > 0
+        diff_ratio = abs(len(content) - baseline_len) / baseline_len
+        return diff_ratio > 0.15
+
     async def _scan_xss(self, target_url: str) -> None:
-        """XSS 漏洞掃描"""
+        """XSS 漏洞掃描 — 驗證 payload 是否在回應中未編碼反射"""
         payloads = [
             "<script>alert('XSS')</script>",
             "'\"><script>alert('XSS')</script>",
-            "javascript:alert('XSS')",
-            "<img src=x onerror=alert('XSS')>"
+            "<img src=x onerror=alert('XSS')>",
+            "<svg onload=alert('XSS')>",
         ]
-        
+
         for payload in payloads:
             try:
-                # 嘗試 GET 參數注入
                 test_url = f"{target_url}?test={urllib.parse.quote(payload)}"
+                if not self.session:
+                    continue
                 async with self.session.get(test_url) as response:
                     content = await response.text()
-                    if payload in content or 'alert(' in content:
-                        self.vulnerabilities.append({
-                            'type': 'XSS',
-                            'severity': 'Medium',
-                            'location': test_url,
-                            'payload': payload,
-                            'description': 'Possible XSS vulnerability detected'
-                        })
+                    # 真正的反射驗證：payload 必須在回應中出現（未被編碼）
+                    if self._is_reflected(payload, content):
+                        # 排除誤報：檢查是否在 HTML 屬性中被正確轉義
+                        html_encoded = payload.replace('<', '&lt;').replace('>', '&gt;')
+                        if html_encoded not in content:
+                            self.vulnerabilities.append({
+                                'type': 'Reflected XSS',
+                                'severity': 'High',
+                                'confidence': 'High',
+                                'location': test_url,
+                                'payload': payload,
+                                'description': f'XSS payload reflected without encoding in response (HTTP {response.status})',
+                                'recommendation': 'Implement output encoding and Content-Security-Policy'
+                            })
+                            break  # 一個反射點足以確認漏洞
             except Exception:
                 continue
-    
+
     async def _scan_sql_injection(self, target_url: str) -> None:
-        """SQL 注入漏洞掃描"""
-        payloads = ["'", "1' OR '1'='1", "'; DROP TABLE users; --", "1' UNION SELECT NULL--"]
-        
-        for payload in payloads:
+        """SQL 注入漏洞掃描 — 基於錯誤訊息與回應差異分析"""
+        # Error-based detection
+        error_payloads = ["'", "\"", "1' OR '1'='1", "1 AND 1=CONVERT(int,@@version)--"]
+
+        sql_error_patterns = [
+            'you have an error in your sql syntax',
+            'unclosed quotation mark',
+            'quoted string not properly terminated',
+            'mysql_fetch', 'mysql_num_rows', 'mysql_query',
+            'pg_query', 'pg_exec',
+            'ora-01756', 'ora-00933',
+            'microsoft ole db provider for sql server',
+            'syntax error at or near',
+            'sqlstate[',
+            'sqlite3::',
+        ]
+
+        for payload in error_payloads:
             try:
                 test_url = f"{target_url}?id={urllib.parse.quote(payload)}"
+                if not self.session:
+                    continue
                 async with self.session.get(test_url) as response:
                     content = await response.text()
                     content_lower = content.lower()
-                    error_indicators = ['sql', 'mysql', 'oracle', 'postgresql', 'syntax error']
-                    
-                    if any(indicator in content_lower for indicator in error_indicators):
+
+                    matched_errors = [p for p in sql_error_patterns if p in content_lower]
+                    if matched_errors:
                         self.vulnerabilities.append({
-                            'type': 'SQL Injection',
-                            'severity': 'High',
+                            'type': 'SQL Injection (Error-based)',
+                            'severity': 'Critical',
+                            'confidence': 'High',
                             'location': test_url,
                             'payload': payload,
-                            'description': 'Possible SQL injection vulnerability detected'
+                            'description': f'SQL error message detected: {matched_errors[0]}',
+                            'recommendation': 'Use parameterized queries / prepared statements'
                         })
+                        return  # 一個錯誤就足以確認
+
+                    # Boolean-based: 回應長度與基線比較
+                    if self._response_differs(content) and response.status != self._baseline_status:
+                        self.vulnerabilities.append({
+                            'type': 'SQL Injection (Boolean-based)',
+                            'severity': 'High',
+                            'confidence': 'Medium',
+                            'location': test_url,
+                            'payload': payload,
+                            'description': f'Response differs significantly from baseline (status {response.status} vs {self._baseline_status})',
+                            'recommendation': 'Use parameterized queries / prepared statements'
+                        })
+                        return
             except Exception:
                 continue
-    
+
     async def _scan_directory_traversal(self, target_url: str) -> None:
         """目錄遍歷漏洞掃描"""
-        payloads = ["../../../etc/passwd", "..\\..\\..\\windows\\system32\\drivers\\etc\\hosts"]
-        
-        for payload in payloads:
+        payloads = [
+            ("../../../etc/passwd", ["root:", "/bin/bash", "/bin/sh"]),
+            ("....//....//....//etc/passwd", ["root:", "/bin/bash"]),
+            ("..\\..\\..\\windows\\system32\\drivers\\etc\\hosts", ["127.0.0.1", "localhost"]),
+            ("..%2f..%2f..%2fetc%2fpasswd", ["root:", "/bin/bash"]),
+        ]
+
+        for payload, indicators in payloads:
             try:
                 test_url = f"{target_url}?file={urllib.parse.quote(payload)}"
+                if not self.session:
+                    continue
                 async with self.session.get(test_url) as response:
                     content = await response.text()
-                    if 'root:' in content or '[drivers]' in content:
+                    matched = [i for i in indicators if i in content]
+                    if len(matched) >= 2:
                         self.vulnerabilities.append({
-                            'type': 'Directory Traversal',
-                            'severity': 'High',
+                            'type': 'Directory Traversal / LFI',
+                            'severity': 'Critical',
+                            'confidence': 'High',
                             'location': test_url,
                             'payload': payload,
-                            'description': 'Directory traversal vulnerability detected'
+                            'description': f'File content indicators found: {", ".join(matched)}',
+                            'recommendation': 'Validate and sanitize file path inputs; use allowlists'
                         })
+                        return
             except Exception:
                 continue
-    
+
     async def _scan_security_headers(self, target_url: str) -> None:
         """安全標頭檢查"""
         try:
+            if not self.session:
+                return
             async with self.session.get(target_url) as response:
                 headers = response.headers
-                missing_headers = []
-                
+
                 security_headers = {
-                    'X-Content-Type-Options': 'nosniff',
-                    'X-Frame-Options': 'DENY',
-                    'X-XSS-Protection': '1; mode=block',
-                    'Strict-Transport-Security': 'max-age=31536000',
-                    'Content-Security-Policy': '*'
+                    'X-Content-Type-Options': ('nosniff', 'Low', 'Prevents MIME type sniffing'),
+                    'X-Frame-Options': ('DENY/SAMEORIGIN', 'Medium', 'Prevents clickjacking'),
+                    'Strict-Transport-Security': ('max-age=...', 'Medium', 'Enforces HTTPS'),
+                    'Content-Security-Policy': ('policy', 'Medium', 'Prevents XSS and data injection'),
+                    'Referrer-Policy': ('no-referrer', 'Low', 'Controls referrer information'),
+                    'Permissions-Policy': ('policy', 'Low', 'Controls browser features'),
                 }
-                
-                for header, expected in security_headers.items():
+
+                for header, (expected, severity, desc) in security_headers.items():
                     if header not in headers:
-                        missing_headers.append(header)
-                
-                if missing_headers:
-                    self.vulnerabilities.append({
-                        'type': 'Missing Security Headers',
-                        'severity': 'Low',
-                        'location': target_url,
-                        'description': f'Missing headers: {", ".join(missing_headers)}'
-                    })
+                        self.vulnerabilities.append({
+                            'type': 'Missing Security Header',
+                            'severity': severity,
+                            'confidence': 'High',
+                            'location': target_url,
+                            'payload': '',
+                            'description': f'Missing {header} header - {desc}',
+                            'recommendation': f'Add {header}: {expected}'
+                        })
         except Exception:
             pass
-    
+
     async def _scan_clickjacking(self, target_url: str) -> None:
         """點擊劫持檢查"""
         try:
+            if not self.session:
+                return
             async with self.session.get(target_url) as response:
                 headers = response.headers
-                if 'X-Frame-Options' not in headers and 'Content-Security-Policy' not in headers:
+                has_xfo = 'X-Frame-Options' in headers
+                has_csp_fa = False
+                csp = headers.get('Content-Security-Policy', '')
+                if 'frame-ancestors' in csp:
+                    has_csp_fa = True
+
+                if not has_xfo and not has_csp_fa:
                     self.vulnerabilities.append({
                         'type': 'Clickjacking',
                         'severity': 'Medium',
+                        'confidence': 'High',
                         'location': target_url,
-                        'description': 'Website may be vulnerable to clickjacking attacks'
+                        'payload': '',
+                        'description': 'No X-Frame-Options or CSP frame-ancestors directive found',
+                        'recommendation': "Add X-Frame-Options: DENY or CSP frame-ancestors 'self'"
                     })
         except Exception:
             pass
+
+    async def _scan_cors_misconfiguration(self, target_url: str) -> None:
+        """CORS 配置錯誤檢查"""
+        try:
+            if not self.session:
+                return
+            evil_origin = "https://evil-attacker.com"
+            headers_to_send = {"Origin": evil_origin}
+            async with self.session.get(target_url, headers=headers_to_send) as response:
+                acao = response.headers.get("Access-Control-Allow-Origin", "")
+                acac = response.headers.get("Access-Control-Allow-Credentials", "")
+
+                if acao == "*" and acac.lower() == "true":
+                    self.vulnerabilities.append({
+                        'type': 'CORS Misconfiguration',
+                        'severity': 'High',
+                        'confidence': 'High',
+                        'location': target_url,
+                        'payload': evil_origin,
+                        'description': 'CORS allows all origins with credentials (wildcard + credentials)',
+                        'recommendation': 'Restrict Access-Control-Allow-Origin to specific trusted domains'
+                    })
+                elif acao == evil_origin:
+                    self.vulnerabilities.append({
+                        'type': 'CORS Misconfiguration',
+                        'severity': 'High',
+                        'confidence': 'High',
+                        'location': target_url,
+                        'payload': evil_origin,
+                        'description': f'CORS reflects arbitrary origin: {evil_origin}',
+                        'recommendation': 'Validate Origin header against allowlist'
+                    })
+                elif acao == "null":
+                    self.vulnerabilities.append({
+                        'type': 'CORS Misconfiguration',
+                        'severity': 'Medium',
+                        'confidence': 'Medium',
+                        'location': target_url,
+                        'payload': 'null',
+                        'description': 'CORS allows null origin (exploitable via sandboxed iframes)',
+                        'recommendation': 'Do not allow null origin in CORS configuration'
+                    })
+        except Exception:
+            pass
+
+    async def _scan_open_redirect(self, target_url: str) -> None:
+        """開放重定向檢查"""
+        redirect_params = ["url", "redirect", "next", "return", "returnTo", "goto", "target", "rurl", "dest"]
+        evil_url = "https://evil-attacker.com/"
+
+        for param in redirect_params:
+            try:
+                test_url = f"{target_url}?{param}={urllib.parse.quote(evil_url)}"
+                if not self.session:
+                    continue
+                async with self.session.get(test_url, allow_redirects=False) as response:
+                    if response.status in (301, 302, 303, 307, 308):
+                        location = response.headers.get("Location", "")
+                        if evil_url in location or location.startswith("//evil-attacker.com"):
+                            self.vulnerabilities.append({
+                                'type': 'Open Redirect',
+                                'severity': 'Medium',
+                                'confidence': 'High',
+                                'location': test_url,
+                                'payload': f'{param}={evil_url}',
+                                'description': f'Open redirect via {param} parameter (redirects to {location})',
+                                'recommendation': 'Validate redirect targets against allowlist of trusted domains'
+                            })
+                            return
+            except Exception:
+                continue
+
+    async def _scan_sensitive_files(self, target_url: str) -> None:
+        """敏感檔案暴露檢查"""
+        sensitive_paths = [
+            (".env", ["DB_PASSWORD", "SECRET_KEY", "API_KEY", "DATABASE_URL"]),
+            (".git/config", ["[core]", "[remote", "repositoryformatversion"]),
+            ("wp-config.php.bak", ["DB_NAME", "DB_USER", "DB_PASSWORD"]),
+            (".htpasswd", [":"]),
+            ("server-status", ["Apache Server Status", "Server Version"]),
+            ("debug/", ["Traceback", "DEBUG", "Stack Trace"]),
+            ("phpinfo.php", ["PHP Version", "php.ini", "Configuration"]),
+        ]
+
+        parsed = urllib.parse.urlparse(target_url)
+        base_url = f"{parsed.scheme}://{parsed.netloc}"
+
+        for path, indicators in sensitive_paths:
+            try:
+                test_url = f"{base_url}/{path}"
+                if not self.session:
+                    continue
+                async with self.session.get(test_url) as response:
+                    if response.status == 200:
+                        content = await response.text()
+                        matched = [i for i in indicators if i in content]
+                        if matched:
+                            self.vulnerabilities.append({
+                                'type': 'Sensitive File Exposure',
+                                'severity': 'High' if any(k in path for k in ['.env', '.git', 'wp-config', '.htpasswd']) else 'Medium',
+                                'confidence': 'High',
+                                'location': test_url,
+                                'payload': path,
+                                'description': f'Sensitive file accessible: {path} (indicators: {", ".join(matched[:3])})',
+                                'recommendation': f'Block access to {path} via web server configuration'
+                            })
+            except Exception:
+                continue
+
+
+# 向後相容別名
+WebVulnerabilityScanner = VulnerabilityScanner
 
 
 class TechnologyDetector:

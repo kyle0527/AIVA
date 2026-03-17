@@ -1,6 +1,6 @@
 # function_authn_go - 認證繞過與漏洞檢測
 
-> **版本**: v1.3.0 | **狀態**: ✅ 完成 | **語言**: Go + Python Wrapper | **更新**: 2026-01-20
+> **版本**: v2.0.0 | **狀態**: 🔧 開發中 | **語言**: Go + Python Wrapper | **更新**: 2026-03-17
 
 ## 🎯 模組概述
 
@@ -8,12 +8,12 @@ Go語言實現的高性能認證安全測試引擎，專注於Web應用認證機
 
 ### 核心功能
 
-✅ **弱密碼檢測** - 測試常見弱密碼組合  
-✅ **默認憑證測試** - 檢測未修改的默認帳號密碼  
-✅ **密碼噴灑攻擊** - 單密碼多帳號測試（避免帳號鎖定）  
-✅ **JWT 令牌分析** - JWT 簽名算法漏洞、密鑰爆破  
-✅ **Session 劫持測試** - Session 固定、會話令牌可預測性  
-✅ **OAuth/SSO 漏洞** - OAuth 2.0 流程繞過、CSRF攻擊  
+✅ **弱密碼檢測** - 真實 HTTP POST 登入測試，支援帳號鎖定偵測與速率限制
+✅ **Session 安全分析** - Cookie 安全屬性檢查（HttpOnly/Secure/SameSite/熵值）
+✅ **2FA 繞過測試** - 直接存取繞過、空碼/零碼測試、API 狀態洩漏
+⏳ **JWT 令牌分析** - 待實作
+⏳ **OAuth/SSO 漏洞** - 待實作
+⏳ **密碼噴灑攻擊** - 待實作
 
 ## 📐 架構設計
 
@@ -21,18 +21,14 @@ Go語言實現的高性能認證安全測試引擎，專注於Web應用認證機
 function_authn_go/
 ├── cmd/
 │   └── worker/
-│       └── main.go          # Go 主程序入口
+│       └── main.go          # Go AMQP Worker 入口
 ├── internal/
-│   ├── detector/
-│   │   ├── weak_password.go
-│   │   ├── jwt_analyzer.go
-│   │   └── session_hijack.go
-│   └── wordlist/
-│       └── passwords.go
-├── bin/
-│   └── authn-worker.exe     # 編譯後的二進制文件
+│   ├── engine.go            # 核心測試引擎（弱密碼/Session/2FA）
+│   ├── config.go            # 測試配置
+│   └── amqp.go              # RabbitMQ 訊息中介
 ├── authn_wrapper.py         # Python 包裝器（CLI 調用入口）
-├── authn_manager.py         # 高級管理接口
+├── __init__.py              # 模組入口
+├── Dockerfile               # 容器化構建
 └── README.md
 ```
 
@@ -94,38 +90,32 @@ result = scan_authentication(
 )
 ```
 
-### JWT 令牌分析
+### Session 安全分析
 
-檢測 JWT 安全問題：
-- **算法混淆攻擊** (alg=none, RS256→HS256)
-- **弱密鑰爆破** (常見密鑰字典攻擊)
-- **過期時間驗證繞過**
-- **敏感信息洩露** (JWT payload 分析)
-
-```python
-result = scan_authentication(
-    target="https://api.example.com",
-    options={
-        "test_types": ["jwt_analysis"],
-        "jwt_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
-    }
-)
-```
-
-### Session 劫持測試
-
-- **Session Fixation** - 會話固定攻擊
-- **Predictable Session ID** - 可預測的會話令牌
-- **Session Token in URL** - URL中的敏感令牌
-- **Missing HTTPOnly/Secure Flags** - Cookie 安全標誌缺失
+檢測 Session Cookie 安全問題：
+- **Missing HttpOnly** - Cookie 可被 JavaScript 讀取（XSS 風險）
+- **Missing Secure Flag** - HTTPS 站點 Cookie 可能透過 HTTP 傳輸
+- **Missing SameSite** - 缺少 CSRF 防護屬性
+- **Short Session ID** - Session ID 長度不足（可預測性風險）
 
 ```python
 result = scan_authentication(
     target="https://example.com",
-    options={
-        "test_types": ["session_hijack"],
-        "cookies": {"PHPSESSID": "abc123def456"}
-    }
+    options={"test_types": ["session_security"]}
+)
+```
+
+### 2FA 繞過測試
+
+測試常見的雙因素驗證繞過：
+- **直接存取繞過** - 跳過 2FA 步驟直接存取受保護頁面
+- **空碼/零碼測試** - 測試空值、000000、null 等 OTP 碼
+- **API 狀態洩漏** - 檢查 API 端點是否暴露 2FA 配置
+
+```python
+result = scan_authentication(
+    target="https://example.com/login",
+    options={"test_types": ["2fa_bypass"]}
 )
 ```
 
@@ -200,11 +190,18 @@ result = scan_authentication(
 
 ## 📝 更新日誌
 
+### v2.0.0 (2026-03-17)
+- ✅ 實作真實 HTTP 弱密碼測試（取代 stub 佔位邏輯）
+- ✅ 實作 Session Cookie 安全分析（HttpOnly/Secure/SameSite/熵值）
+- ✅ 實作 2FA 繞過測試（直接存取/空碼/API 洩漏）
+- ✅ 增加帳號鎖定偵測與速率限制
+- ✅ 擴充預設密碼字典至 20 組
+- ⏳ JWT 令牌分析（待實作）
+- ⏳ OAuth/SSO 漏洞（待實作）
+
 ### v1.3.0 (2026-01-20)
 - ✅ 移除不必要的 worker.py 包裝層
 - ✅ 直接使用 Go 引擎，無 Python 回退
-- ✅ 完善 JWT 令牌分析功能
-- ✅ 添加 OAuth/SSO 漏洞檢測
 
 ### v1.2.0 (2025-12-17)
 - ✅ 創建 BUILD_GUIDE.md
