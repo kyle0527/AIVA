@@ -45,17 +45,13 @@ func NewWorkerPool(workers int) *WorkerPool {
 func (p *WorkerPool) worker(id int) {
 	defer p.wg.Done()
 
-	log.Printf("[DEBUG] Worker started: id=%d\n", id)
-
 	for {
 		select {
 		case <-p.ctx.Done():
-			log.Printf("[DEBUG] Worker stopped: id=%d\n", id)
 			return
 
 		case task, ok := <-p.taskQueue:
 			if !ok {
-				log.Printf("[DEBUG] Worker exiting: id=%d (channel closed)\n", id)
 				return
 			}
 

@@ -172,9 +172,6 @@ func (d *SSRFDetector) scanSingleTarget(ctx context.Context, target string) ([]c
 			// 構造測試 URL
 			testURL := d.buildTestURL(parsedURL, param, payload.url)
 
-			// Debug log
-			log.Printf("[DEBUG] Testing URL: %s, param: %s, payload: %s", testURL, param, payload.name)
-
 			// 執行請求並分析響應
 			if asset := d.testSSRF(ctx, testURL, target, param, payload); asset != nil {
 				assets = append(assets, *asset)
@@ -212,44 +209,21 @@ func (d *SSRFDetector) testSSRF(
 	// 創建請求
 	req, err := http.NewRequestWithContext(ctx, "GET", testURL, nil)
 	if err != nil {
-		// Debug log removed)
 		return nil
 	}
 
 	// 設置 User-Agent
 	req.Header.Set("User-Agent", "AIVA-SSRF-Scanner/1.0")
 
-	// 🔍 診斷:檢查請求前的狀態
-	// Debug log
-	log.Printf("[DEBUG] Sending request - url: %s, host: %s", req.URL.String(), req.Host)
-
 	// 執行請求
 	startTime := time.Now()
 	resp, err := d.client.Do(req)
 	duration := time.Since(startTime)
 
-	// 🔍 診斷:記錄請求結果
-	// Debug log removed,
-		zap.Bool("has_error", err != nil),
-		zap.String("error", fmt.Sprintf("%v", err)),
-		zap.Bool("has_response", resp != nil),
-	)
-
 	// ✅ 修正: 錯誤檢查後立即註冊 defer，避免連接洩漏
 	if err != nil {
-		// 🔍 診斷: 記錄請求失敗
 		d.requestsFailed.Add(1)
-
-		log.Printf("[ERROR] 🚨 HTTP 請求失敗\n"),
-			zap.Duration("duration", duration),
-			zap.Error(err),
-		)
-		
-		if d.isSSRFIndicatorError(err) {
-			// Debug log removed),
-				zap.String("payload", payload.name),
-			)
-		}
+		log.Printf("[WARN] HTTP request failed: url=%s, duration=%v, error=%v\n", testURL, duration, err)
 		// resp 為 nil，無需關閉
 		return nil
 	}
@@ -271,9 +245,7 @@ func (d *SSRFDetector) testSSRF(
 	// 讀取響應內容
 	body, err := io.ReadAll(io.LimitReader(resp.Body, 1024*1024)) // 限制 1MB
 	if err != nil {
-		// Debug log removed,
-			zap.Error(err),
-		)
+		log.Printf("[WARN] Failed to read response body: url=%s, error=%v\n", testURL, err)
 		return nil
 	}
 	bodyStr := string(body)

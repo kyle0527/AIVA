@@ -87,11 +87,11 @@ class CommanderCoordinator:
         """延遲加載計劃建構器"""
         if self._plan_builder is None:
             # 初始化 PlanBuilder 所需的依賴
-            from services.core.aiva_core.cognitive_core.rag.rag_handler import RAGHandler
+            from services.core.aiva_core.cognitive_core.rag.rag_engine import RAGEngine
             from services.core.aiva_core.cognitive_core.decision.enhanced_decision_agent import EnhancedDecisionAgent
             from services.core.aiva_core.cognitive_core.learning_system.experience_manager import ExperienceManager
 
-            rag_engine = RAGHandler()
+            rag_engine = RAGEngine()
             decision_engine = EnhancedDecisionAgent()
             experience_manager = ExperienceManager()
 

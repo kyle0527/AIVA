@@ -177,7 +177,7 @@ class SubdomainScanner:
         try:
             answers = self.resolver.resolve(domain, 'A')
             return [str(rdata) for rdata in answers]
-        except:
+        except Exception:
             return []
     
     def _get_default_wordlist(self) -> str:

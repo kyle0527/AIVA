@@ -1,5 +1,5 @@
 # AIVA Platform Dependencies
-# Updated: 2026-02-06
+# Updated: 2026-03-16
 # Python >= 3.13 | AIVA v7.1-stable
 
 # ══════════════════════════════════════════════
@@ -9,8 +9,6 @@ fastapi>=0.115.0                # API framework
 uvicorn[standard]>=0.30.0       # ASGI server
 pydantic>=2.7.0                 # Data validation
 pydantic-settings>=2.2.0        # Settings management (BaseSettings)
-python-dotenv>=1.0.1            # Environment variables (.env loading)
-orjson>=3.10.0                  # Fast JSON serialization
 
 # ══════════════════════════════════════════════
 #  Message Queue & Async Communication
@@ -25,15 +23,12 @@ httpx>=0.27.0                   # Modern async HTTP client
 # ══════════════════════════════════════════════
 sqlalchemy>=2.0.31              # ORM / database toolkit
 asyncpg>=0.29.0                 # Async PostgreSQL driver
-psycopg2-binary>=2.9.0          # PostgreSQL adapter (sync)
-alembic>=1.13.2                 # Database migrations
 redis>=5.0.0                    # In-memory cache / pub-sub
 
 # ══════════════════════════════════════════════
 #  Cross-Language Communication (gRPC)
 # ══════════════════════════════════════════════
 grpcio>=1.60.0                  # gRPC runtime (Python ↔ Rust/Go/TS)
-grpcio-tools>=1.60.0            # Protobuf compiler tools
 protobuf>=4.25.0                # Protocol Buffers
 
 # ══════════════════════════════════════════════
@@ -41,26 +36,17 @@ protobuf>=4.25.0                # Protocol Buffers
 # ══════════════════════════════════════════════
 torch>=2.1.0                    # PyTorch - 5M bio neural network & RL
 numpy>=1.24.0                   # Numerical computing
-scikit-learn>=1.3.0             # ML utilities
+scikit-learn>=1.3.0             # ML utilities (model_trainer)
 
 # ══════════════════════════════════════════════
 #  NLP & Embeddings (RAG / Cognitive Core)
 # ══════════════════════════════════════════════
 transformers>=4.30.0            # Hugging Face (embedding model download)
-sentence-transformers>=2.2.0    # Semantic text embeddings for RAG
-openai>=1.0.0                   # OpenAI API client
-nltk>=3.8.0                     # Natural Language Toolkit
-spacy>=3.6.0                    # Industrial-strength NLP
-
-# ══════════════════════════════════════════════
-#  Reinforcement Learning
-# ══════════════════════════════════════════════
-gymnasium>=0.29.0               # RL environment interface (DQN/PPO)
 
 # ══════════════════════════════════════════════
 #  Web Scraping & Scanning
 # ══════════════════════════════════════════════
-requests>=2.31.0                # HTTP client (sync)
+requests>=2.31.0                # HTTP client (sync, 14 檔使用中)
 beautifulsoup4>=4.12.2          # HTML parsing
 lxml>=5.0.0                     # XML/HTML processing
 dnspython>=2.4.0                # DNS resolver (subdomain scanning)
@@ -69,8 +55,6 @@ dnspython>=2.4.0                # DNS resolver (subdomain scanning)
 #  Security & Authentication
 # ══════════════════════════════════════════════
 PyJWT>=2.8.0                    # JWT token handling
-python-jose[cryptography]>=3.3.0  # JWT w/ cryptographic backends
-passlib[bcrypt]>=1.7.4          # Password hashing
 cryptography>=42.0.0            # Cryptographic operations
 
 # ══════════════════════════════════════════════
@@ -87,16 +71,29 @@ click>=8.1.0                    # CLI framework
 rich>=13.0.0                    # Rich terminal output & progress bars
 
 # ══════════════════════════════════════════════
+#  Configuration & Serialization
+# ══════════════════════════════════════════════
+PyYAML>=6.0                     # YAML configuration parsing
+jinja2>=3.1.0                   # Template engine (report generation)
+
+# ══════════════════════════════════════════════
 #  Monitoring & Utilities
 # ══════════════════════════════════════════════
 structlog>=24.1.0               # Structured logging
 psutil>=5.9.6                   # System monitoring
 tenacity>=8.3.0                 # Retry / resilience patterns
-jinja2>=3.1.0                   # Template engine (report generation)
+
+# ══════════════════════════════════════════════
+#  Dashboard
+# ══════════════════════════════════════════════
+streamlit>=1.28.0               # Dashboard UI framework
 
 # ══════════════════════════════════════════════
 #  Optional / Feature-specific
 # ══════════════════════════════════════════════
+# grpcio-tools>=1.60.0          # Protobuf compiler tools (建置時才需要)
+# alembic>=1.13.2               # Database migrations (目前僅封存碼使用)
+# psycopg2-binary>=2.9.0        # PostgreSQL sync adapter (已被 asyncpg 取代)
 # python-docx>=0.8.11           # DOCX → Markdown conversion (install if needed)
 # selenium>=4.10.0              # Browser automation (bug bounty reporting)
 # chromadb>=0.4.0               # Vector DB for RAG (planned)
@@ -113,6 +110,7 @@ ruff>=0.3.0                     # Fast linter
 mypy>=1.8.0                     # Static type checking
 pre-commit>=3.6.0               # Git pre-commit hooks
 types-requests>=2.31.0          # Type stubs for requests
+grpcio-tools>=1.60.0            # Protobuf compiler tools
 
 # ══════════════════════════════════════════════
 #  Installation Notes

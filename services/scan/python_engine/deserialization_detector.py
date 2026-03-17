@@ -272,7 +272,7 @@ args: ['sleep 5']
             start = time.time()
             requests.get(url, params=params, timeout=self.timeout)
             return time.time() - start
-        except:
+        except (requests.RequestException, OSError):
             return 1.0  # 默認基準時間
     
     def _check_deserialization_error(self, response_text: str, language: str) -> bool:

