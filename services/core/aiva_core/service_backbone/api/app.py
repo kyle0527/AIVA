@@ -237,6 +237,11 @@ async def startup() -> None:
 
     logger.info("🚀 [啟動] AIVA Core Engine starting up...")
 
+    from ...core_capabilities.capability_registry import get_capability_registry
+    registry = get_capability_registry()
+    await registry.sync_from_integration_registry()
+    logger.info("✅ [啟動] CapabilityRegistry synchronized")
+
     # ✅ Step 1: 初始化協調器（作為狀態管理器，非主線程）
     coordinator = AIVACoreServiceCoordinator()
     await coordinator.start()

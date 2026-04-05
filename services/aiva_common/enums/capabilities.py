@@ -280,10 +280,14 @@ class CapabilityParameter(str, Enum):
 
 
 CAPABILITY_CONFIGS: dict[str, dict[str, Any]] = {
-    # SQL Injection
+
     AttackCapability.SQL_INJECTION.value: {
         "name": "SQL 注入攻擊",
         "description": "檢測並利用 SQL 注入漏洞",
+        "module": "services.features.function_sqli.smart_detection_manager",
+        "class_name": "SmartDetectionManager",
+        "method": "scan_target",
+        "entrypoint": "services/features/function_sqli/smart_detection_manager.py",
         "required_params": [CapabilityParameter.TARGET_URL],
         "optional_params": [CapabilityParameter.COOKIE, CapabilityParameter.TIMEOUT],
         "default_timeout": 30,
@@ -292,16 +296,34 @@ CAPABILITY_CONFIGS: dict[str, dict[str, Any]] = {
     AttackCapability.SQL_INJECTION_BLIND.value: {
         "name": "盲注 SQL 注入",
         "description": "基於時間或布林的盲注攻擊",
+        "module": "services.features.function_sqli.engines.boolean_detection_engine",
+        "class_name": "BooleanDetectionEngine",
+        "method": "detect",
+        "entrypoint": "services/features/function_sqli/engines/boolean_detection_engine.py",
         "required_params": [CapabilityParameter.TARGET_URL],
         "optional_params": [CapabilityParameter.COOKIE, CapabilityParameter.TIMEOUT],
         "default_timeout": 60,
         "risk_level": "high",
     },
-    
-    # XSS
+    AttackCapability.SQL_INJECTION_TIME_BASED.value: {
+        "module": "services.features.function_sqli.engines.time_detection_engine",
+        "class_name": "TimeDetectionEngine",
+        "method": "detect",
+        "entrypoint": "services/features/function_sqli/engines/time_detection_engine.py",
+    },
+    AttackCapability.SQL_INJECTION_UNION.value: {
+        "module": "services.features.function_sqli.engines.union_detection_engine",
+        "class_name": "UnionDetectionEngine",
+        "method": "detect",
+        "entrypoint": "services/features/function_sqli/engines/union_detection_engine.py",
+    },
     AttackCapability.XSS_REFLECTED.value: {
         "name": "反射型 XSS",
         "description": "檢測反射型跨站腳本漏洞",
+        "module": "services.features.function_xss.traditional_detector",
+        "class_name": "TraditionalXssDetector",
+        "method": "execute",
+        "entrypoint": "services/features/function_xss/traditional_detector.py",
         "required_params": [CapabilityParameter.TARGET_URL],
         "optional_params": [CapabilityParameter.COOKIE],
         "default_timeout": 30,
@@ -310,16 +332,46 @@ CAPABILITY_CONFIGS: dict[str, dict[str, Any]] = {
     AttackCapability.XSS_STORED.value: {
         "name": "存儲型 XSS",
         "description": "檢測存儲型跨站腳本漏洞",
+        "module": "services.features.function_xss.stored_detector",
+        "class_name": "StoredXssDetector",
+        "method": "execute",
+        "entrypoint": "services/features/function_xss/stored_detector.py",
         "required_params": [CapabilityParameter.TARGET_URL],
         "optional_params": [CapabilityParameter.COOKIE, CapabilityParameter.TOKEN],
         "default_timeout": 60,
         "risk_level": "high",
     },
-    
-    # Port Scan
+    AttackCapability.XSS_DOM.value: {
+        "module": "services.features.function_xss.dom_xss_detector",
+        "class_name": "DomXssDetector",
+        "method": "analyze",
+        "entrypoint": "services/features/function_xss/dom_xss_detector.py",
+    },
+    AttackCapability.SSRF_BASIC.value: {
+        "module": "services.features.function_ssrf.detector.ssrf_detector",
+        "class_name": "SSRFDetector",
+        "method": "analyze",
+        "entrypoint": "services/features/function_ssrf/detector/ssrf_detector.py",
+    },
+    AttackCapability.SSRF_BLIND.value: {
+        "module": "services.features.function_ssrf.oast_dispatcher",
+        "class_name": "OastDispatcher",
+        "method": "register",
+        "entrypoint": "services/features/function_ssrf/oast_dispatcher.py",
+    },
+    AttackCapability.IDOR.value: {
+        "module": "services.features.function_idor.detector.idor_detector",
+        "class_name": "IDORDetector",
+        "method": "analyze",
+        "entrypoint": "services/features/function_idor/detector/idor_detector.py",
+    },
     ScanCapability.PORT_SCAN_TCP.value: {
         "name": "TCP 端口掃描",
         "description": "掃描目標的 TCP 端口",
+        "module": "services.features.function_web_scanner.scanners.port_scanner",
+        "class_name": "PortScanner",
+        "method": "scan",
+        "entrypoint": "services/features/function_web_scanner/scanners/port_scanner.py",
         "required_params": [CapabilityParameter.TARGET_IP],
         "optional_params": [CapabilityParameter.TARGET_PORT_RANGE, CapabilityParameter.THREADS],
         "default_timeout": 120,
@@ -328,26 +380,34 @@ CAPABILITY_CONFIGS: dict[str, dict[str, Any]] = {
     ScanCapability.PORT_SCAN_FULL.value: {
         "name": "完整端口掃描",
         "description": "掃描所有 65535 個端口",
+        "module": "services.features.function_web_scanner.scanners.port_scanner",
+        "class_name": "PortScanner",
+        "method": "scan",
+        "entrypoint": "services/features/function_web_scanner/scanners/port_scanner.py",
         "required_params": [CapabilityParameter.TARGET_IP],
         "optional_params": [CapabilityParameter.THREADS],
         "default_timeout": 600,
         "risk_level": "low",
     },
-    
-    # Vulnerability Scan
     ScanCapability.VULNERABILITY_SCAN.value: {
         "name": "漏洞掃描",
         "description": "全面漏洞掃描",
+        "module": "services.features.function_web_scanner.integration_tools.web_tools",
+        "class_name": "WebAttackManager",
+        "method": "comprehensive_scan",
+        "entrypoint": "services/features/function_web_scanner/integration_tools/web_tools.py",
         "required_params": [CapabilityParameter.TARGET_URL],
         "optional_params": [CapabilityParameter.DEPTH, CapabilityParameter.TIMEOUT],
         "default_timeout": 300,
         "risk_level": "medium",
     },
-    
-    # Recon
     ReconCapability.WHOIS_LOOKUP.value: {
         "name": "WHOIS 查詢",
         "description": "查詢域名註冊資訊",
+        "module": None,
+        "class_name": None,
+        "method": None,
+        "entrypoint": None,
         "required_params": [CapabilityParameter.TARGET_DOMAIN],
         "optional_params": [],
         "default_timeout": 30,
@@ -356,6 +416,10 @@ CAPABILITY_CONFIGS: dict[str, dict[str, Any]] = {
     ReconCapability.DNS_LOOKUP.value: {
         "name": "DNS 查詢",
         "description": "查詢 DNS 記錄",
+        "module": None,
+        "class_name": None,
+        "method": None,
+        "entrypoint": None,
         "required_params": [CapabilityParameter.TARGET_DOMAIN],
         "optional_params": [],
         "default_timeout": 30,
@@ -364,17 +428,41 @@ CAPABILITY_CONFIGS: dict[str, dict[str, Any]] = {
     ReconCapability.SUBDOMAIN_ENUMERATION.value: {
         "name": "子域名枚舉",
         "description": "發現目標的子域名",
+        "module": "services.features.function_web_scanner.scanners.subdomain_scanner",
+        "class_name": "SubdomainScanner",
+        "method": "scan",
+        "entrypoint": "services/features/function_web_scanner/scanners/subdomain_scanner.py",
         "required_params": [CapabilityParameter.TARGET_DOMAIN],
         "optional_params": [CapabilityParameter.WORDLIST, CapabilityParameter.THREADS],
         "default_timeout": 300,
         "risk_level": "info",
     },
-    
-    # Analysis
+    ScanCapability.DIRECTORY_BRUTEFORCE.value: {
+        "module": "services.features.function_web_scanner.scanners.directory_bruteforcer",
+        "class_name": "DirectoryBruteforcer",
+        "method": "scan",
+        "entrypoint": "services/features/function_web_scanner/scanners/directory_bruteforcer.py",
+    },
+    ScanCapability.WEB_CRAWLER.value: {
+        "module": "services.features.function_web_scanner.scanners.web_crawler",
+        "class_name": "WebCrawler",
+        "method": "crawl",
+        "entrypoint": "services/features/function_web_scanner/scanners/web_crawler.py",
+    },
+    ScanCapability.TECHNOLOGY_DETECTION.value: {
+        "module": "services.features.function_web_scanner.scanners.tech_detector",
+        "class_name": "TechDetector",
+        "method": "detect",
+        "entrypoint": "services/features/function_web_scanner/scanners/tech_detector.py",
+    },
     AnalysisCapability.SAST_SCAN.value: {
         "name": "靜態應用安全測試",
         "description": "原始碼安全分析",
-        "required_params": [CapabilityParameter.OUTPUT_PATH],  # 原始碼路徑
+        "module": None,
+        "class_name": None,
+        "method": None,
+        "entrypoint": "crypto-scanner",
+        "required_params": [CapabilityParameter.OUTPUT_PATH],
         "optional_params": [],
         "default_timeout": 600,
         "risk_level": "info",
@@ -382,17 +470,23 @@ CAPABILITY_CONFIGS: dict[str, dict[str, Any]] = {
     AnalysisCapability.SECRET_DETECTION.value: {
         "name": "密鑰檢測",
         "description": "檢測原始碼中的密鑰和敏感資訊",
+        "module": "services.features.function_info_leak.sensitive_info_detector",
+        "class_name": "SensitiveInfoDetector",
+        "method": "detect_in_response",
+        "entrypoint": "services/features/function_info_leak/sensitive_info_detector.py",
         "required_params": [CapabilityParameter.OUTPUT_PATH],
         "optional_params": [],
         "default_timeout": 120,
         "risk_level": "high",
     },
-    
-    # Forensic
     ForensicCapability.MEMORY_ANALYSIS.value: {
         "name": "記憶體分析",
         "description": "分析記憶體傾印檔案",
-        "required_params": [CapabilityParameter.OUTPUT_PATH],  # dump 檔案路徑
+        "module": "services.features.function_forensic.manager",
+        "class_name": "ForensicManager",
+        "method": "analyze_memory_dump",
+        "entrypoint": "services/features/function_forensic/manager.py",
+        "required_params": [CapabilityParameter.OUTPUT_PATH],
         "optional_params": [],
         "default_timeout": 300,
         "risk_level": "info",
@@ -400,11 +494,39 @@ CAPABILITY_CONFIGS: dict[str, dict[str, Any]] = {
     ForensicCapability.STEGANOGRAPHY_DETECT.value: {
         "name": "隱寫術檢測",
         "description": "檢測圖片中的隱藏資訊",
-        "required_params": [CapabilityParameter.OUTPUT_PATH],  # 圖片路徑
+        "module": "services.features.function_steganography.manager",
+        "class_name": "SteganographyManager",
+        "method": "detect_hidden_data",
+        "entrypoint": "services/features/function_steganography/manager.py",
+        "required_params": [CapabilityParameter.OUTPUT_PATH],
         "optional_params": [],
         "default_timeout": 60,
         "risk_level": "info",
     },
+    ExploitCapability.PRIVILEGE_ESCALATION_LINUX.value: {
+        "module": "services.features.function_postex.engines.privilege_engine",
+        "class_name": "PrivilegeEscalator",
+        "method": "run_full_assessment",
+        "entrypoint": "services/features/function_postex/engines/privilege_engine.py",
+    },
+    ExploitCapability.PRIVILEGE_ESCALATION_WINDOWS.value: {
+        "module": "services.features.function_postex.engines.privilege_engine",
+        "class_name": "PrivilegeEscalator",
+        "method": "run_full_assessment",
+        "entrypoint": "services/features/function_postex/engines/privilege_engine.py",
+    },
+    ExploitCapability.LATERAL_MOVEMENT.value: {
+        "module": "services.features.function_postex.engines.lateral_engine",
+        "class_name": "LateralMovementTester",
+        "method": "run_full_assessment",
+        "entrypoint": "services/features/function_postex/engines/lateral_engine.py",
+    },
+    ExploitCapability.PERSISTENCE_INSTALL.value: {
+        "module": "services.features.function_postex.engines.persistence_engine",
+        "class_name": "PersistenceChecker",
+        "method": "run_full_assessment",
+        "entrypoint": "services/features/function_postex/engines/persistence_engine.py",
+    }
 }
 
 
