@@ -17,7 +17,6 @@ try:
 except ImportError:
     # 本地測試時的後備導入
     import sys
-    sys.path.insert(0, str(Path(__file__).parent))
     from core_analyzer import classify_script_type
 
 def load_analysis_data(results_dir: Path) -> dict:

@@ -70,7 +70,6 @@ DRY_RUN_MESSAGE = "[Dry Run] 不實際執行"
 
 # 嘗試導入統一路徑配置
 try:
-    sys.path.insert(0, str(PROJECT_ROOT))
     from services.integration.data.internal_exploration.paths_config import (
         ExternalPaths,
         DATA_ROOT,

@@ -31,11 +31,6 @@ from typing import Optional, Union, List, Dict, Any
 from dataclasses import dataclass, field
 from datetime import datetime
 
-# 添加專案路徑
-PROJECT_ROOT = Path(__file__).parent.parent.parent.parent
-sys.path.insert(0, str(PROJECT_ROOT / "services" / "core"))
-sys.path.insert(0, str(PROJECT_ROOT / "services"))
-
 @dataclass
 class SimpleExecutionResult:
     """簡化的執行結果 (給 AI 使用)"""

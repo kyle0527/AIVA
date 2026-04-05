@@ -38,7 +38,6 @@ try:
     from .analyze_connection_recommendations import ConnectionRecommendationAnalyzer
 except ImportError:
     # 本地執行時的路徑處理
-    sys.path.insert(0, str(Path(__file__).parent))
     from core_analyzer import CoreAnalyzer, AnalysisReport
     from analyze_dataflow_breakpoints import DataFlowBreakpointAnalyzer
     from analyze_missing_function_connections import MissingConnectionAnalyzer

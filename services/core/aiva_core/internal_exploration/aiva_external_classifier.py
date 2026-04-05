@@ -53,7 +53,6 @@ import argparse
 
 try:
     PATHS_CONFIG_DIR = Path(__file__).resolve().parent.parent.parent.parent / "integration" / "data" / "internal_exploration"
-    sys.path.insert(0, str(PATHS_CONFIG_DIR.parent.parent.parent))
     
     from services.integration.data.internal_exploration.paths_config import (
         ExternalPaths,

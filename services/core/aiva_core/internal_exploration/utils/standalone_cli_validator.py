@@ -29,7 +29,6 @@ AIVA_CORE = PROJECT_ROOT / "services/core/aiva_core"
 DATA_DIR = PROJECT_ROOT / "data/internal_exploration/analysis_history/v1"
 
 # 添加專案路徑到 sys.path
-sys.path.insert(0, str(PROJECT_ROOT))
 
 # ==================== 最小依賴檢查 ====================
 REQUIRED_PACKAGES = {

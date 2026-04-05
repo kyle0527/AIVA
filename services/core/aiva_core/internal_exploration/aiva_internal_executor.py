@@ -59,7 +59,6 @@ from glob import glob
 _THIS_FILE = Path(__file__).resolve()
 _CORE_DIR = _THIS_FILE.parents[2]  # 向上兩層到達 services/core
 if str(_CORE_DIR) not in sys.path:
-    sys.path.insert(0, str(_CORE_DIR))
 
 from ui import (
     console,
@@ -98,7 +97,6 @@ DEFAULT_JSON_PATH = CURRENT_DIR / "services_classification_v9_new" / FILENAME_CL
 # 我們需要將 .../ (aiva_core 的上一層) 加入 sys.path
 PROJECT_ROOT = CURRENT_DIR.parent.parent
 if str(PROJECT_ROOT) not in sys.path:
-    sys.path.insert(0, str(PROJECT_ROOT))
 
 # ✅ Integration 模組配置：定義基礎路徑（修正：使用正確的專案根目錄）
 AIVA_ROOT = CURRENT_DIR.parent.parent.parent.parent  # 向上4層到達 AIVA-git

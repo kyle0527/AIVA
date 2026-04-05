@@ -269,7 +269,6 @@ class AIVASystemRepair:
             ("services.features", "Features Module")
         ]
         
-        sys.path.insert(0, str(self.project_root))
         
         for import_path, module_name in test_imports:
             try:

@@ -139,15 +139,7 @@ class UnifiedVectorStore:
         if self._embedding_model is None:
             try:
                 # 導入 AIVA 自研 Embedding 層
-                import sys
-                from pathlib import Path
-                
-                # 確保可以導入 aiva_embedding
-                neural_path = Path(__file__).parent.parent / "neural"
-                if str(neural_path) not in sys.path:
-                    sys.path.insert(0, str(neural_path))
-                
-                from aiva_embedding import AIVAEmbedding
+                from services.core.aiva_core.cognitive_core.neural.aiva_embedding import AIVAEmbedding
 
                 self._embedding_model = AIVAEmbedding(
                     model_name_or_path=self.embedding_model_name

@@ -83,17 +83,13 @@ from aiva_common.schemas import (
 
 # ==================== 從 aiva_common 導入 Features 使用的類 ====================
 # 注意: 這些類實際定義在 aiva_common.schemas 中，而非本地 models 模組
-try:
-    from aiva_common.schemas.tasks import (
-        APISchemaPayload,
-        APISecurityTestPayload,
-        APITestCase,
-    )
-    from aiva_common.schemas.base import ExecutionError
-    from aiva_common.schemas.telemetry import FunctionTelemetry
-except ImportError:
-    # 如果相對導入失敗，先跳過這些導入
-    pass
+from aiva_common.schemas.tasks import (
+    APISchemaPayload,
+    APISecurityTestPayload,
+    APITestCase,
+)
+from aiva_common.schemas.base import ExecutionError
+from aiva_common.schemas.telemetry import FunctionTelemetry
 
 # ==================== 本模組專屬類型（待實現或移除） ====================
 # 以下類型暫時註釋，保留作為未來功能預留

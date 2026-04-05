@@ -260,11 +260,18 @@ class StranglerFigMigrationController:
         try:
             if use_modern:
                 # 嘗試使用新系統
-                result = self._call_modern_system(rule['modern_path'], operation, **kwargs)
-                self.migration_stats['modern_calls'] += 1
-                # 更新 Prometheus 指標
-                self._update_metrics()
-                return result
+                try:
+                    result = self._call_modern_system(rule['modern_path'], operation, **kwargs)
+                    self.migration_stats['modern_calls'] += 1
+                    self._update_metrics()
+                    return result
+                except Exception as modern_e:
+                    logger.warning(f"⚠️ 新系統調用失敗，嘗試降級至舊系統: {modern_e}")
+                    # 降級至舊系統
+                    result = self._call_legacy_system(rule['legacy_path'], operation, **kwargs)
+                    self.migration_stats['legacy_calls'] += 1
+                    self._update_metrics()
+                    return result
             else:
                 # 使用舊系統
                 result = self._call_legacy_system(rule['legacy_path'], operation, **kwargs)
@@ -275,11 +282,9 @@ class StranglerFigMigrationController:
                 
         except Exception as e:
             logger.error(f"❌ {service_name} 調用失敗: {e}")
-            # 嚴格模式：不降級，直接報錯
             raise RuntimeError(
                 f"服務 {service_name} 調用失敗: {e}。"
-                f"請檢查 {'modern' if use_modern else 'legacy'} 路徑 "
-                f"{rule['modern_path'] if use_modern else rule['legacy_path']} 是否正確配置。"
+                f"請檢查路徑配置。"
             ) from e
     
     def _call_modern_system(self, modern_path: str, operation: str, **kwargs) -> Any:
@@ -407,80 +412,36 @@ from aiva_common.enums import (
 )
 from aiva_common.schemas import CVEReference, CVSSv3Metrics, CWEReference
 
-# 從 core.ai_models 導入 AI 系統相關模型 (修復: ai_models 在 services/core/ 目錄)
-# 使用更智能的條件導入處理相對導入問題
-try:
-    # 首先嘗試相對導入 (當作為正確包導入時)
-    from ..ai_models import (
-        AIExperienceCreatedEvent,
-        AIModelDeployCommand,
-        AIModelUpdatedEvent,
-        AITraceCompletedEvent,
-        AITrainingCompletedPayload,
-        AITrainingProgressPayload,
-        AITrainingStartPayload,
-        AIVACommand,
-        AIVAEvent,
-        AIVARequest,
-        AIVAResponse,
-        AIVerificationRequest,
-        AIVerificationResult,
-        AttackPlan,
-        AttackStep,
-        ExperienceSample,
-        ModelTrainingConfig,
-        ModelTrainingResult,
-        PlanExecutionMetrics,
-        PlanExecutionResult,
-        RAGKnowledgeUpdatePayload,
-        RAGQueryPayload,
-        RAGResponsePayload,
-        ScenarioTestResult,
-        SessionState,
-        StandardScenario,
-        TraceRecord,
-    )
-except (ImportError, ValueError):
-    # 如果相對導入失敗，使用絕對導入
-    import sys
-    import os
-    # 添加項目根目錄到 sys.path
-    _current_path = os.path.dirname(os.path.abspath(__file__))  # aiva_core 目錄
-    _services_core_path = os.path.dirname(_current_path)  # services/core 目錄
-    _services_path = os.path.dirname(_services_core_path)  # services 目錄  
-    _project_root = os.path.dirname(_services_path)  # 項目根目錄
-    if _project_root not in sys.path:
-        sys.path.insert(0, _project_root)
-    
-    from services.core.ai_models import (
-        AIExperienceCreatedEvent,
-        AIModelDeployCommand,
-        AIModelUpdatedEvent,
-        AITraceCompletedEvent,
-        AITrainingCompletedPayload,
-        AITrainingProgressPayload,
-        AITrainingStartPayload,
-        AIVACommand,
-        AIVAEvent,
-        AIVARequest,
-        AIVAResponse,
-        AIVerificationRequest,
-        AIVerificationResult,
-        AttackPlan,
-        AttackStep,
-        ExperienceSample,
-        ModelTrainingConfig,
-        ModelTrainingResult,
-        PlanExecutionMetrics,
-        PlanExecutionResult,
-        RAGKnowledgeUpdatePayload,
-        RAGQueryPayload,
-        RAGResponsePayload,
-        ScenarioTestResult,
-        SessionState,
-        StandardScenario,
-        TraceRecord,
-    )
+# 從 core.ai_models 導入 AI 系統相關模型
+from services.core.ai_models import (
+    AIExperienceCreatedEvent,
+    AIModelDeployCommand,
+    AIModelUpdatedEvent,
+    AITraceCompletedEvent,
+    AITrainingCompletedPayload,
+    AITrainingProgressPayload,
+    AITrainingStartPayload,
+    AIVACommand,
+    AIVAEvent,
+    AIVARequest,
+    AIVAResponse,
+    AIVerificationRequest,
+    AIVerificationResult,
+    AttackPlan,
+    AttackStep,
+    ExperienceSample,
+    ModelTrainingConfig,
+    ModelTrainingResult,
+    PlanExecutionMetrics,
+    PlanExecutionResult,
+    RAGKnowledgeUpdatePayload,
+    RAGQueryPayload,
+    RAGResponsePayload,
+    ScenarioTestResult,
+    SessionState,
+    StandardScenario,
+    TraceRecord,
+)
 
 # 從 core.models 導入核心業務邏輯模型
 # 從 aiva_common.schemas 導入共享標準模型
@@ -499,60 +460,31 @@ from aiva_common.schemas import (
     TaskUpdatePayload,
 )
 
-# 從 core.models 導入核心擴展模型（conftest.py 已將 services/core/ 加入 Python 路徑）
-# 使用智能條件導入處理相對導入問題
-try:
-    # 首先嘗試相對導入
-    from ..models import (
-        AttackPathEdge,
-        AttackPathNode,
-        AttackPathPayload,
-        AttackPathRecommendation,
-        CodeLevelRootCause,
-        EnhancedAttackPath,
-        EnhancedAttackPathNode,
-        EnhancedFindingPayload,
-        EnhancedModuleStatus,
-        EnhancedRiskAssessment,
-        EnhancedTaskExecution,
-        EnhancedVulnerability,
-        EnhancedVulnerabilityCorrelation,
-        RiskAssessmentContext,
-        RiskAssessmentResult,
-        RiskFactor,
-        RiskTrendAnalysis,
-        SystemOrchestration,
-        TaskDependency,
-        TaskQueue,
-        TestStrategy,
-        VulnerabilityCorrelation,
-    )
-except (ImportError, ValueError):
-    # 如果相對導入失敗，使用絕對導入
-    from services.core.models import (
-        AttackPathEdge,
-        AttackPathNode,
-        AttackPathPayload,
-        AttackPathRecommendation,
-        CodeLevelRootCause,
-        EnhancedAttackPath,
-        EnhancedAttackPathNode,
-        EnhancedFindingPayload,
-        EnhancedModuleStatus,
-        EnhancedRiskAssessment,
-        EnhancedTaskExecution,
-        EnhancedVulnerability,
-        EnhancedVulnerabilityCorrelation,
-        RiskAssessmentContext,
-        RiskAssessmentResult,
-        RiskFactor,
-        RiskTrendAnalysis,
-        SystemOrchestration,
-        TaskDependency,
-        TaskQueue,
-        TestStrategy,
-        VulnerabilityCorrelation,
-    )
+# 從 core.models 導入核心擴展模型
+from services.core.models import (
+    AttackPathEdge,
+    AttackPathNode,
+    AttackPathPayload,
+    AttackPathRecommendation,
+    CodeLevelRootCause,
+    EnhancedAttackPath,
+    EnhancedAttackPathNode,
+    EnhancedFindingPayload,
+    EnhancedModuleStatus,
+    EnhancedRiskAssessment,
+    EnhancedTaskExecution,
+    EnhancedVulnerability,
+    EnhancedVulnerabilityCorrelation,
+    RiskAssessmentContext,
+    RiskAssessmentResult,
+    RiskFactor,
+    RiskTrendAnalysis,
+    SystemOrchestration,
+    TaskDependency,
+    TaskQueue,
+    TestStrategy,
+    VulnerabilityCorrelation,
+)
 
 # 從新遷移的核心服務組件導入 (從 aiva_core_v2 遷移而來)
 from .task_planning.command_router import (
